@@ -87,30 +87,39 @@ static void getstat(jiff *cuse, jiff *cice, jiff *csys, jiff long *cide, jiff lo
 	     unsigned *pin, unsigned *pout, unsigned *s_in, unsigned *sout,
 	     unsigned *itot, unsigned *i1, unsigned *ct) {
   static int Stat;
+  int need_extra_file = 0;
+  char* b;
+  buff[BUFFSIZE-1] = 0;  /* ensure null termination in buffer */
 
-  if ((Stat=open("/proc/stat", O_RDONLY, 0)) != -1) {
-    char* b;
-    buff[BUFFSIZE-1] = 0;  /* ensure null termination in buffer */
-    read(Stat,buff,BUFFSIZE-1);
-    close(Stat);
-    *itot = 0; 
-    *i1 = 1;   /* ensure assert below will fail if the sscanf bombs */
-    *ciow = 0;  /* not separated out until the 2.5.41 kernel */
-    b = strstr(buff, "cpu ");
-    if(b) sscanf(b,  "cpu  %lu %lu %lu %lu %lu", cuse, cice, csys, cide, ciow);
-    b = strstr(buff, "page ");
-    if(b) sscanf(b,  "page %u %u", pin, pout);
-    b = strstr(buff, "swap ");
-    if(b) sscanf(b,  "swap %u %u", s_in, sout);
-    b = strstr(buff, "intr ");
-    if(b) sscanf(b,  "intr %u %u", itot, i1);
-    b = strstr(buff, "ctxt ");
-    if(b) sscanf(b,  "ctxt %u", ct);
+  if(Stat){
+    lseek(Stat, 0L, SEEK_SET);
+  }else{
+    Stat = open("/proc/stat", O_RDONLY, 0);
+    if(Stat == -1) crash("/proc/stat");
   }
-  else {
-    crash("/proc/stat");
-  }
-  if(1){
+  read(Stat,buff,BUFFSIZE-1);
+  *itot = 0; 
+  *i1 = 1;   /* ensure assert below will fail if the sscanf bombs */
+  *ciow = 0;  /* not separated out until the 2.5.41 kernel */
+
+  b = strstr(buff, "cpu ");
+  if(b) sscanf(b,  "cpu  %lu %lu %lu %lu %lu", cuse, cice, csys, cide, ciow);
+
+  b = strstr(buff, "page ");
+  if(b) sscanf(b,  "page %u %u", pin, pout);
+  else need_extra_file = 1;
+
+  b = strstr(buff, "swap ");
+  if(b) sscanf(b,  "swap %u %u", s_in, sout);
+  else need_extra_file = 1;
+
+  b = strstr(buff, "intr ");
+  if(b) sscanf(b,  "intr %u %u", itot, i1);
+
+  b = strstr(buff, "ctxt ");
+  if(b) sscanf(b,  "ctxt %u", ct);
+
+  if(need_extra_file){  /* 2.5.40-bk4 and above */
     vminfo();
     *pin  = vm_pgpgout;
     *pout = vm_pgpgin;
