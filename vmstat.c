@@ -909,7 +909,7 @@ int main(int argc, char *argv[])
 		case 'p':
 			statMode |= PARTITIONSTAT;
 			partition = optarg;
-			if (memcmp(partition, "/dev/", 5) == 0)
+			if (strncmp(partition, "/dev/", 5) == 0)
 				partition += 5;
 			break;
 		case 'S':
