@@ -3,3 +3,4 @@ ps
 *.o
 .deps
 .libs
+Makefile
