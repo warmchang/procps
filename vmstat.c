@@ -191,7 +191,8 @@ int main(int argc, char *argv[]) {
 #endif
   unsigned int moreheaders=TRUE;
   unsigned int tog=0; /* toggle switch for cleaner code */
-  unsigned int i,hz;
+  unsigned int i;
+  unsigned int hz = Hertz;
   unsigned int running,blocked,swapped;
   jiff cpu_use[2], cpu_nic[2], cpu_sys[2], cpu_idl[2], cpu_iow[2];
   jiff duse,dsys,didl,Div,divo2;
@@ -257,7 +258,6 @@ int main(int argc, char *argv[]) {
   dsys= *cpu_sys;
   didl= *cpu_idl + *cpu_iow;
   Div= duse+dsys+didl;
-  hz=Hertz; /* get ticks/s from libproc */
   divo2= Div/2UL;
   printf(format,
 	 running,blocked,swapped,

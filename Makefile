@@ -47,12 +47,12 @@ usr/include              := $(DESTDIR)/usr/include/
 
 BINFILES := $(usr/bin)uptime $(usr/bin)tload $(usr/bin)free $(usr/bin)w \
             $(usr/bin)top $(usr/bin)vmstat $(usr/bin)watch $(usr/bin)skill \
-            $(usr/bin)snice $(bin)kill $(sbin)sysctl \
+            $(usr/bin)snice $(bin)kill $(sbin)sysctl $(usr/bin)pmap \
             $(usr/proc/bin)pgrep $(usr/proc/bin)pkill
 
 MANFILES := $(man1)uptime.1 $(man1)tload.1 $(man1)free.1 $(man1)w.1 \
             $(man1)top.1 $(man1)watch.1 $(man1)skill.1 $(man1)kill.1 \
-            $(man1)snice.1 $(man1)pgrep.1 $(man1)pkill.1 \
+            $(man1)snice.1 $(man1)pgrep.1 $(man1)pkill.1 $(man1)pmap.1 \
             $(man5)sysctl.conf.5 $(man8)vmstat.8 $(man8)sysctl.8
 
 TARFILES := AUTHORS BUGS NEWS README TODO COPYING COPYING.LIB ChangeLog \
@@ -146,7 +146,7 @@ w.o:    w.c
 
 ############ prog.o --> prog
 
-w uptime tload free vmstat utmp pgrep skill: % : %.o $(LIBPROC)
+pmap w uptime tload free vmstat utmp pgrep skill: % : %.o $(LIBPROC)
 	$(CC) $(LDFLAGS) -o $@ $^
 
 top:   % : %.o $(LIBPROC)

@@ -1,3 +1,9 @@
+procps-3.0.5 --> procps-3.0.6
+
+can build w/o shared library (set SHARED=0)
+when IO-wait hidden, count as idle, not as sys
+pmap command added (like Sun has)
+
 procps-3.0.4 --> procps-3.0.5
 
 top tolerates super-wide displays
