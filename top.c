@@ -861,9 +861,11 @@ static proc_t **refreshprocs (proc_t **tbl)
 {
 #define PTRsz  sizeof(proc_t *)         /* eyeball candy */
 #define ENTsz  sizeof(proc_t)
-   static int flags = PROC_FILLMEM | PROC_FILLCOM | PROC_FILLUSR
-#ifndef UGH_ITS_4_RH
-                    | PROC_FILLGRP
+   static int flags = PROC_FILLMEM | PROC_FILLUSR
+#ifdef UGH_ITS_4_RH
+                    | PROC_FILLCMD
+#else
+                    | PROC_FILLGRP | PROC_FILLCOM
 #endif
                     | PROC_FILLSTATUS | PROC_FILLSTAT;
    static unsigned savmax = 0;          /* first time, Bypass: (i)  */
@@ -931,7 +933,11 @@ static void before (char *me)
 #ifdef PRETEND4CPUS
    Cpu_tot = 4;
 #else
+#ifdef UGH_ITS_4_RH
+   Cpu_tot = sysconf(_SC_NPROCESSORS_ONLN);
+#else
    Cpu_tot = smp_num_cpus;
+#endif
 #endif
    Cpu_map = alloc_r(NULL, sizeof(int) * Cpu_tot);
    for (i = 0; i < Cpu_tot; i++)

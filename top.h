@@ -503,7 +503,7 @@ typedef struct win {
 //atic int         chin (int ech, char *buf, unsigned cnt);
 //atic const char *fmtmk (const char *fmts, ...);
 //atic char       *strim (int sp, char *str);
-//atic char       *tg2 (int x, int y);
+//atic const char *tg2 (int x, int y);
 /*------  Exit/Interrput routines  ---------------------------------------*/
 //atic void        bye_bye (int eno, const char *str);
 //atic void        stop (int dont_care_sig);
@@ -519,8 +519,8 @@ typedef struct win {
 //atic char       *ask4str (const char *prompt);
 //atic float       get_float (const char *prompt);
 //atic int         get_int (const char *prompt);
-//atic char       *scale_num (unsigned num, const int width, const unsigned type);
-//atic char       *scale_tics (TICS_t tics, const int width);
+//atic const char *scale_num (unsigned num, const int width, const unsigned type);
+//atic const char *scale_tics (TICS_t tics, const int width);
 //atic void        time_elapsed (void);
 /*------  Library Alternatives  ------------------------------------------*/
 //atic void       *alloc_c (unsigned numb);
