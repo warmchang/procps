@@ -14,8 +14,8 @@
  * GNU Library General Public License for more details.
  */
 /* For their contributions to this program, the author wishes to thank:
- *    Craig Small, <csmall@small.dropbear.id.au>
  *    Albert D. Cahalan, <albert@users.sf.net>
+ *    Craig Small, <csmall@small.dropbear.id.au>
  */
 #ifndef _Itop
 #define _Itop
@@ -224,7 +224,7 @@ enum scale_num {
 
         /* Flags for each possible field */
 enum pflag {
-   P_PID, P_PPD, P_RUN, P_UID, P_USR, P_GRP, P_TTY,
+   P_PID, P_PPD, P_URR, P_UID, P_URE, P_GRP, P_TTY,
    P_PRI, P_NCE,
    P_CPN, P_CPU, P_TME, P_TM2,
    P_MEM, P_VRT, P_SWP, P_RES, P_COD, P_DAT, P_SHR,
@@ -328,7 +328,7 @@ typedef struct WIN_t {
         /* Pre-configured field groupss */
 #define JOB_FIELDS  "ABXcefgjlrstuvyzMKNHIWOPQD"
 #define MEM_FIELDS  "ANOPQRSTUVXbcdefgjlmyzWHIK"
-#define USR_FIELDS  "DEFGABXchijlopqrstuvyzMKNW"
+#define USR_FIELDS  "DECGABXfhijlopqrstuvyzMKNW"
         /* Used by fields_sort, placed here for peace-of-mind */
 #define NUL_FIELDS  "abcdefghijklmnopqrstuvwxyz"
 
@@ -345,7 +345,7 @@ typedef struct WIN_t {
    { P_MEM, DEF_WINFLGS, 0, \
       COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA, \
       "Mem", MEM_FIELDS }, \
-   { P_USR, DEF_WINFLGS, 0, \
+   { P_URE, DEF_WINFLGS, 0, \
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
    } }
@@ -604,6 +604,7 @@ typedef struct WIN_t {
 //atic const char  *rc_write_whatever (void);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void         before (char *me);
+//atic void         confighlp (char *fields);
 //atic void         configs_read (void);
 //atic void         parse_args (char **args);
 //atic void         whack_terminal (void);

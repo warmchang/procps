@@ -14,8 +14,8 @@
  * GNU Library General Public License for more details.
  */
 /* For their contributions to this program, the author wishes to thank:
- *    Craig Small, <csmall@small.dropbear.id.au>
  *    Albert D. Cahalan, <albert@users.sf.net>
+ *    Craig Small, <csmall@small.dropbear.id.au>
  */
 #include <sys/ioctl.h>
 #include <sys/resource.h>
@@ -65,7 +65,6 @@ static char *Myname;
            overridden with the local rcfile (old or new-style) values */
 static char  Rc_name [OURPATHSZ];
 static RCF_t Rc = DEF_RCFILE;
-static const RCF_t DefRc = DEF_RCFILE;
 
         /* The run-time acquired page size */
 static int Page_size;
@@ -167,11 +166,12 @@ static int       Frame_srtflg,    // the subject window's sort direction
          * values.  Note that 2 of these routines serve double duty --
          * 2 columns each.
          */
+
 SCB_NUMx(P_PID, pid)
 SCB_NUMx(P_PPD, ppid)
-SCB_STRx(P_RUN, ruser)
+SCB_STRx(P_URR, ruser)
 SCB_NUMx(P_UID, euid)
-SCB_STRx(P_USR, euser)
+SCB_STRx(P_URE, euser)
 SCB_STRx(P_GRP, egroup)
 SCB_NUMx(P_TTY, tty)
 SCB_NUMx(P_PRI, priority)
@@ -947,7 +947,7 @@ static void prochlp (proc_t *this)
    // this task wins it's displayable screen row lottery... */
    this->pcpu = tics;
    strim(1, this->cmd);
-// if (Frams_maxcmdln)
+// if (Frams_maxcmdln) { }
    // shout this to the world with the final call (or us the next time in)
    Frame_maxtask++;
 }
@@ -1046,9 +1046,9 @@ static FLD_t Fieldstab[] = {
      ------  -----------    -------  ------  -----  -----  ----------------------   -------- */
    { "AaAa", "  PID ",      "%5u ",     -1,    -1, SF(PID), "Process Id",           L_NONE   },
    { "BbBb", " PPID ",      "%5u ",     -1,    -1, SF(PPD), "Parent Process Pid",   L_EITHER },
-   { "CcQq", "RUSER    ",   "%-8.8s ",  -1,    -1, SF(RUN), "Real user name",       L_RUSER  },
+   { "CcQq", "RUSER    ",   "%-8.8s ",  -1,    -1, SF(URR), "Real user name",       L_RUSER  },
    { "DdCc", " UID ",       "%4u ",     -1,    -1, SF(UID), "User Id",              L_NONE   },
-   { "EeDd", "USER     ",   "%-8.8s ",  -1,    -1, SF(USR), "User Name",            L_EUSER  },
+   { "EeDd", "USER     ",   "%-8.8s ",  -1,    -1, SF(URE), "User Name",            L_EUSER  },
    { "FfNn", "GROUP    ",   "%-8.8s ",  -1,    -1, SF(GRP), "Group Name",           L_GROUP  },
    { "GgGg", "TTY      ",   "%-8.8s ",   8,    -1, SF(TTY), "Controlling Tty",      L_stat   },
    { "HhHh", " PR ",        "%3d ",     -1,    -1, SF(PRI), "Priority",             L_stat   },
@@ -1125,11 +1125,12 @@ static inline int ft_get_char (const int fr, int i) {
    if (i < 0) return 0;
    if (i >= MAXTBL(Fieldstab)) return 0;
    c = Fieldstab[i].keys[fr];
-   if (c == '.') c = 0;   // '.' marks a bad entry
+   if (c == '.') c = 0;         // '.' marks a bad entry
    return c;
 }
 
 
+#if 0
         // convert, or -1 for failure
 static int ft_get_idx (const int fr, int c) {
    int j = -1;
@@ -1140,6 +1141,7 @@ static int ft_get_idx (const int fr, int c) {
    }
    return -1;
 }
+#endif
 
 
         // convert, or NULL for failure
@@ -1154,12 +1156,14 @@ static const FLD_t *ft_get_ptr (const int fr, int c) {
 }
 
 
+#if 0
         // convert, or NULL for failure
 static const FLD_t *ft_idx_to_ptr (const int i) {
    if (i < 0) return NULL;
    if (i >= MAXTBL(Fieldstab)) return NULL;
    return Fieldstab + i;
 }
+#endif
 
 
         // convert, or -1 for failure
@@ -1172,7 +1176,7 @@ static int ft_ptr_to_idx (const FLD_t *p) {
 }
 
 
-#if 1
+#if 0
 static void rc_bugless (const RCF_t *const rc) {
    const RCW_t *w;
    int i = 0;
@@ -1242,7 +1246,7 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
    unsigned u;
    const char *cp;
    unsigned c_show = 0;
-   int badchar = 0; // allow a limited number of duplicates and junk
+   int badchar = 0;     // allow a limited number of duplicates and junk
 
    char scoreboard[256];
    memset(scoreboard, '\0', sizeof scoreboard);
@@ -1255,19 +1259,19 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
       if (c == '\0') return -2;
       if (c == '\n') break;
       if (c & ~0x7f) return -3;
-      if (~c & 0x20) c_show |= 1 << (c & 0x1f);  // 0x20 means lowercase means hidden
-      if (scoreboard[c|0xe0u]) badchar++; // duplicates not allowed
+      if (~c & 0x20) c_show |= 1 << (c & 0x1f); // 0x20 means lowercase means hidden
+      if (scoreboard[c|0xe0u]) badchar++;       // duplicates not allowed
       scoreboard[c|0xe0u]++;
-      if (c == '|') continue; // Rik's top ships with a garbage character
+      if (c == '|') continue;   // Rik's top ships with a garbage character
       if (c == '[') c = 'Y';    // Rik's top ships with 3x of "#C"
       if (c == '{') c = 'y';    // another one... and '}' to please Jim's editor
       if (c == 'N') c = 'n';    // usage differs, so turn this off
       if (c == 'Q') c = 'q';    // usage differs, so turn this off
       if (c == 'R') c = 'r';    // usage differs, so turn this off
       c = ft_cvt_char(FT_OLD_fmt, FT_NEW_fmt, c);
-      if (!c) return -4;     // error value
-      if (c == '.') return -5; // error value
-      if (scoreboard[c&0x1fu]) badchar++; // duplicates not allowed
+      if (!c) return -4;        // error value
+      if (c == '.') return -5;  // error value
+      if (scoreboard[c&0x1fu]) badchar++;       // duplicates not allowed
       scoreboard[c&0x1fu]++;
       rc->win[0].fieldscur[u++] = c;
    }
@@ -1456,7 +1460,7 @@ static void rc_write_old (FILE *fp) {
          break;
    }
    *cp++ = '\0';
-   fprintf(fp, "%s\n\n\n", buf);        // important "\n\n" separator!
+   fprintf(fp, "%s\n\n\n", buf);            // important "\n\n" separator!
 }
 
 
@@ -1501,15 +1505,18 @@ static void before (char *me)
 }
 
 
-// Anything missing won't show as a choice in the field editor,
-// so make sure there is exactly one of each letter.
-//
-// Due to Rik blindly accepting damem's broken patches, procps-2.0.1x
-// has 3 ("three"!!!) instances of "#C", "LC", or "CPU". Fix that too.
-// Some people are maintainers, and others are human patchbots.
-static void add_missing_fields(char *fields){
-   unsigned upper[32];
-   unsigned lower[32];
+       /*
+        * Config file read *helper* function.
+        * Anything missing won't show as a choice in the field editor,
+        * so make sure there is exactly one of each letter.
+        *
+        * Due to Rik blindly accepting damem's broken patches, procps-2.0.1x
+        * has 3 ("three"!!!) instances of "#C", "LC", or "CPU". Fix that too.
+        * Some people are maintainers, and others are human patchbots.
+        * (thanks, Albert) */
+static void confighlp (char *fields) {
+   unsigned upper[PFLAGSSIZ];
+   unsigned lower[PFLAGSSIZ];
    char c;
    char *cp;
 
@@ -1527,31 +1534,32 @@ static void add_missing_fields(char *fields){
    c = 'a';
    while (c <= 'z') {
       if (upper[c&0x1f] && lower[c&0x1f]) {
-         lower[c&0x1f] = 0;  // got both, so wipe out unseen column
+         lower[c&0x1f] = 0;             // got both, so wipe out unseen column
          for (;;) {
             cp = strchr(fields, c);
-            if (cp) memmove(cp,cp+1,strlen(cp));
+            if (cp) memmove(cp, cp+1, strlen(cp));
             else break;
          }
       }
-      while (lower[c&0x1f] > 1) {   // got too many a..z
+      while (lower[c&0x1f] > 1) {       // got too many a..z
          lower[c&0x1f]--;
          cp = strchr(fields, c);
-         memmove(cp,cp+1,strlen(cp));
+         memmove(cp, cp+1, strlen(cp));
       }
-      while (upper[c&0x1f] > 1) {   // got too many A..Z
+      while (upper[c&0x1f] > 1) {       // got too many A..Z
          upper[c&0x1f]--;
          cp = strchr(fields, toupper(c));
-         memmove(cp,cp+1,strlen(cp));
+         memmove(cp, cp+1, strlen(cp));
       }
       if (!upper[c&0x1f] && !lower[c&0x1f]) {  // both missing
          lower[c&0x1f]++;
-         memmove(fields+1,fields,strlen(fields)+1);
+         memmove(fields+1, fields, strlen(fields)+1);
          fields[0] = c;
       }
       c++;
    }
 }
+
 
         /*
          * First attempt to read the /etc/rcfile which contains two lines
@@ -1567,12 +1575,13 @@ static void add_missing_fields(char *fields){
          *       Delay_time will be ignored except for root. */
 static void configs_read (void)
 {
+   const RCF_t def_rcf = DEF_RCFILE;
    char fbuf[MEDBUFSIZ];
    int i, fd;
    RCF_t rcf;
    float delay = Rc.delay_time;
 
-   // Read part of an old-style config in /etc/toprc
+   // read part of an old-style config in /etc/toprc
    fd = open(SYS_RCFILESPEC, O_RDONLY);
    if (fd > 0) {
       ssize_t num;
@@ -1594,7 +1603,7 @@ static void configs_read (void)
    if (getenv("HOME"))
       snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", getenv("HOME"), Myname);
 
-   rcf = DefRc;
+   rcf = def_rcf;
    fd = open(Rc_name, O_RDONLY);
    if (fd > 0) {
       ssize_t num;
@@ -1604,7 +1613,7 @@ static void configs_read (void)
          fbuf[1] = '\n';
          fbuf[num+2] = '\0';
          if (rc_read_old(fbuf, &rcf) > 0) Crufty_rcf = 1;
-         else rcf = DefRc;                     // on failure, maybe mangled
+         else rcf = def_rcf;                     // on failure, maybe mangled
          rc_read_new(fbuf, &rcf);
          delay = rcf.delay_time;
       }
@@ -1618,7 +1627,7 @@ static void configs_read (void)
    Curwin = &Winstk[rcf.win_index];
    for (i = 0; i < GROUPSMAX; i++) {
       memcpy(&Winstk[i].rc, &rcf.win[i], sizeof rcf.win[i]);
-      add_missing_fields(Winstk[i].rc.fieldscur);
+      confighlp(Winstk[i].rc.fieldscur);
    }
 
    // lastly, establish the true runtime secure mode and delay time
@@ -1637,7 +1646,7 @@ static void parse_args (char **args)
 {
    /* differences between us and the former top:
       -C (separate CPU states for SMP) is left to an rcfile
-      -p (pid monitoring) allows, not requires, a comma delimited list
+      -p (pid monitoring) allows a comma delimited list
       -q (zero delay) eliminated as redundant, incomplete and inappropriate
             use: "nice -n-10 top -d0" to achieve what was only claimed
       -c,i,S act as toggles (not 'on' switches) for enhanced user flexibility
@@ -1927,7 +1936,7 @@ static void reframewins (void)
    int i, needpsdb = 0;
 
 // Frams_libflags = 0;  // should be called only when it's zero
-// Frams_maxcmdln = 0;  // to become the largest from the 4 windows
+// Frams_maxcmdln = 0;  // becomes largest from up to 4 windows, if visible
    w = Curwin;
    do {
       if (!Rc.mode_altscr || CHKw(w, VISIBLE_tsk)) {
@@ -2730,8 +2739,6 @@ static void task_show (const WIN_t *q, const proc_t *p)
       pad += q->len_rowhigh; \
       if (!(CHKw(q, Show_HIROWS) && 'R' == p->state)) pad += q->len_rownorm; \
    } } while (0)
-   // the format for 'command line' display in absence of same (kernel thread)
-
    char rbuf[ROWBUFSIZ], *rp;
    int j, x, pad;
 
@@ -2822,9 +2829,6 @@ static void task_show (const WIN_t *q, const proc_t *p)
          case P_RES:
             MKCOL(scale_num(PAGES_2K(p->resident), w, s));
             break;
-         case P_RUN:
-            MKCOL(p->ruser);
-            break;
          case P_SHR:
             MKCOL(scale_num(PAGES_2K(p->share), w, s));
             break;
@@ -2855,8 +2859,11 @@ static void task_show (const WIN_t *q, const proc_t *p)
          case P_UID:
             MKCOL((unsigned)p->euid);
             break;
-         case P_USR:
+         case P_URE:
             MKCOL(p->euser);
+            break;
+         case P_URR:
+            MKCOL(p->ruser);
             break;
          case P_VRT:
             MKCOL(scale_num(PAGES_2K(p->size), w, s));
