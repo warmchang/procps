@@ -1,4 +1,11 @@
-Recent changes:
+procps-3.0.0 --> procps-3.0.1
+
+"ps" is now about 2x faster than in procps-2.x.x
+"ps -F" now documented
+w works in KOI8-R locale
+vmstat documentation update
+
+procps-2.x.x --> procps-3.0.0
 
 designed to support Linux 2.0 through 2.5.41 and beyond
 new top, with optional: color, windowing, SMP stats
