@@ -3,7 +3,7 @@ Summary: System and process monitoring utilities
 Name: procps
 %define major_version 3
 %define minor_version 2
-%define revision 2
+%define revision 3
 %define version %{major_version}.%{minor_version}.%{revision}
 Version: %{version}
 Release: 1
@@ -22,7 +22,7 @@ tload, top, uptime, vmstat, w, and watch. You need some of these.
 %setup
 
 %build
-make SKIP="/bin/kill /usr/share/man/man1/kill.1" CC="gcc $RPM_OPT_FLAGS" LDFLAGS=-s
+make SKIP="/bin/kill /usr/share/man/man1/kill.1" CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -37,8 +37,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(0644,root,root,755)
-%doc NEWS BUGS TODO COPYING COPYING.LIB README.top README AUTHORS
-%attr(555,root,root) /lib*/libproc.so*
+%doc NEWS BUGS TODO COPYING COPYING.LIB README.top README AUTHORS sysctl.conf
+%attr(555,root,root) /lib*/libproc*.so*
 %attr(555,root,root) /bin/*
 %attr(555,root,root) /sbin/*
 %attr(555,root,root) /usr/bin/*
