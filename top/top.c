@@ -3112,6 +3112,7 @@ static void before (char *me) {
 #define SIGRTMAX 32
 #endif
    // lastly, establish a robust signals environment
+   memset(&sa, 0, sizeof(sa));
    sigemptyset(&sa.sa_mask);
    // with user position preserved through SIGWINCH, we must avoid SA_RESTART
    sa.sa_flags = 0;
