@@ -211,4 +211,10 @@ extern void freeproc(proc_t* p);
 #define PROC_PID     0x1000  /* process id numbers ( 0   terminated) */
 #define PROC_UID     0x4000  /* user id numbers    ( length needed ) */
 
+// it helps to give app code a few spare bits
+#define PROC_SPARE_1 0x01000000
+#define PROC_SPARE_2 0x02000000
+#define PROC_SPARE_3 0x04000000
+#define PROC_SPARE_4 0x08000000
+
 #endif
