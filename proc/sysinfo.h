@@ -31,7 +31,7 @@ extern unsigned kb_active;
 extern unsigned kb_inact_dirty;
 extern unsigned kb_inact_clean;
 extern unsigned kb_inact_target;
-extern unsigned kb_swap_cached;  /* late 2.4 only */
+extern unsigned kb_swap_cached;  /* late 2.4+ */
 /* derived values */
 extern unsigned kb_swap_used;
 extern unsigned kb_main_used;
@@ -39,7 +39,6 @@ extern unsigned kb_main_used;
 extern unsigned kb_writeback;
 extern unsigned kb_slab;
 extern unsigned nr_reversemaps;
-extern unsigned kb_active;
 extern unsigned kb_committed_as;
 extern unsigned kb_dirty;
 extern unsigned kb_inactive;

@@ -61,10 +61,10 @@ CURSES := -I/usr/include/ncurses -lncurses
 LDFLAGS := -Wl,-warn-common
 
 CFLAGS := -D_GNU_SOURCE -O2 -g3 -fno-common -ffast-math -I proc \
-  -Wcast-align -Wconversion -Wredundant-decls \
+  -W -Wall -Wshadow -Wcast-align -Wredundant-decls \
   -Wbad-function-cast -Wcast-qual -Wwrite-strings -Waggregate-return \
 #  -Wpadded -Wunreachable-code -Wdisabled-optimization \
-  -W -Wall -Wstrict-prototypes -Wshadow -Wmissing-prototypes
+  -Wstrict-prototypes -Wmissing-prototypes # -Wconversion
 
 ############ misc.
 
