@@ -1078,6 +1078,7 @@ static FTAB_t  Fieldstab[] = {
 #else
    { "ZzZz", "Flags    ",   "%08lx ",   -1,    -1, SF(FLG), "Task Flags <sched.h>", L_stat   },
 #endif
+#if 0
    { "..Qq", "  A ",        "%4.4s ",    4, SK_no, SF(PID), "Accessed Page count",  L_stat   },
    { "..Nn", " TRS ",       "%4.4s ",    4, SK_Kb, SF(PID), "Code in memory (kb)",  L_stat   },
    { "..Rr", " WP ",        "%4.4s ",    4, SK_no, SF(PID), "Unwritable Pages",     L_stat   },
@@ -1085,6 +1086,7 @@ static FTAB_t  Fieldstab[] = {
    { "..\\|","Bad ",        "%2u ",     -1,    -1, SF(CPN), "-- must ignore | --",  0        },
    { "..]}", "Bad ",        "%2u ",     -1,    -1, SF(CPN), "-- not used --",       0        },
    { "..^~", "Bad ",        "%2u ",     -1,    -1, SF(CPN), "-- not used --",       0        },
+#endif
 };
 #undef SF
 
@@ -1234,54 +1236,76 @@ static void print_rc (const RCF_t *const rc){
 
 static int read_config_rik (const char * const fbuf, ssize_t num, RCF_t * const rc)
 {
-   int i;
-   int cnt;
+   unsigned u;
    const char *cp;
    unsigned c_show = 0;
-   unsigned C_show = 0;
    int badchar = 0; // allow a limited number of duplicates and junk
 
    char scoreboard[256];
+   memset(scoreboard, '\0', sizeof scoreboard);
 
    (void)num;
 
    cp = fbuf+2;  // skip the "\n\n" we stuck at the beginning
-   cnt = strspn(cp,"AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz[{\\|]}^~");
-   if(cnt<22) return -1;  // catch junk, but not good files (had 25 chars in one)
-   if(cnt>37) return -1;  // catch junk, but not good files (had 29 chars in one)
-   if(cp[cnt] != '\n') return -2;
-   i = cnt;
-   rc->win[0].fieldscur[i] = '\0';
-   memset(scoreboard, '\0', sizeof scoreboard);
-   while (i--) {                        // go over each letter of the format string
-      int c = cp[i] & 0xffu;
-      int C = rik_to_jim(c);
-//      fprintf(stderr, "0x%02x -> 0x%02x, <%c> -> <%c>, %d\n",
-//           c,C,c,C,badchar); // debug
-      if (~c & 0x20) c_show |= 1 << (c & 0x1f); // 0x20 means lowercase means hidden
+   u = 0;
+   for(;;){
+      if(u+1 >= sizeof rc->win[0].fieldscur) return -1;
+      int c = *cp++;
+      if(c=='\0') return -2;
+      if(c=='\n') break;
+      if (c & ~0x7f) return -3;
+      if (~c & 0x20) c_show |= 1 << (c & 0x1f);  // 0x20 means lowercase means hidden
       if(scoreboard[c|0xe0u]) badchar++; // duplicates not allowed
-//      fprintf(stderr, "badchar=<%c> 0x%02x\n",badchar, (unsigned char)badchar); for(;;);  // debug
-      scoreboard[c|0xe0u] = 1;
-      if (C) {
-         if (~C & 0x20) C_show |= 1 << (C & 0x1f); // 0x20 means lowercase means hidden
-         if(scoreboard[C&0x1fu]) badchar++; // duplicates not allowed
-         scoreboard[C&0x1fu] = 1;
-      } else {
-         badchar++;
-         C = '.';     // a value we hope will be ignored on output
-      }
-      rc->win[0].fieldscur[i] = C;
+      scoreboard[c|0xe0u]++;
+      if(c=='|') continue; // Rik's top ships with a garbage character
+      if(c=='[') c='Y';    // Rik's top ships with 3x of "#C"
+      if(c=='{') c='y';    // another one... and '}' to please Jim's editor
+      if(c=='n') continue; // unimplemented
+      if(c=='N') continue; // unimplemented
+      if(c=='q') continue; // unimplemented
+      if(c=='Q') continue; // unimplemented
+      if(c=='r') continue; // unimplemented
+      if(c=='R') continue; // unimplemented
+      c = rik_to_jim(c);
+      if(!c) return -4;     // error value
+      if(c=='.') return -5; // error value
+      if(scoreboard[c&0x1fu]) badchar++; // duplicates not allowed
+      scoreboard[c&0x1fu]++;
+      rc->win[0].fieldscur[u++] = c;
    }
-//   fprintf(stderr, "badchar=%d\n",badchar); for(;;);  // debug
-   if (badchar > 4) return -9; // Rik messed up his format string, so allow 4
-   if (!c_show) return -10;   // nothing was shown
-   if (!C_show) return -11;   // nothing will be shown
+   rc->win[0].fieldscur[u++] = '\0';
+   if(u<21) return -6;  // catch junk, but not good files (had 23 chars in one)
+   if(u>33) return -7;  // catch junk, but not good files (had 29 chars in one)
+//fprintf(stderr,"badchar: %d\n",badchar); sleep(2);
+   if(badchar>3) return -8;   // too much junk
+   if (!c_show) return -9;   // nothing was shown
 
-//fprintf(stderr,"converted <%s>\n",rc->win[0].fieldscur);
-//for(;;);
-
-   cp += cnt;
-   cp++;  // go past newline which we already checked
+   // Due to Rik blindly accepting damem's broken patches, procps-2.0.10
+   // has 3 ("three"!!!) instances of "#C", "LC", or "CPU". Fix that here.
+   // Some people are maintainers, and others are human patchbots.
+   // The 'y' and 'Y' above have become 'j' and 'J' after translation.
+   if(scoreboard['j' & 0x1fu] > 1){  // more than one "#C" column
+      int letter;
+      char *fields = rc->win[0].fieldscur;
+      char *tmp = strchr(fields,'J');
+      if (tmp) {
+         *tmp='.';  // save one by hiding it
+         letter = 'J';
+      } else {
+         tmp = strchr(fields,'j');
+         *tmp='.';
+         letter = 'j';
+      }
+      while (( tmp=strchr(fields,'J') )) *tmp='j'; // cannonicalize it
+      while (( tmp=strchr(fields,'j') )) {
+         char *dst = tmp;
+         char *src = tmp+1;
+         int n = strlen(src) + 1;
+         memmove(dst,src,n);
+      }
+      tmp = strchr(fields,'.');  // find back saved spot
+      *tmp = letter;
+   }
 
    // rest of file is optional, but better look right if it exists
    if (!*cp) return 12;
@@ -1374,18 +1398,6 @@ static int read_config_jim (const char * const fbuf, ssize_t num, RCF_t * const 
    int cnt;
    const char *cp;
    (void)num;
-#if 0
-   if (fp) {
-      fbuf[0] = '\0';
-      fgets(fbuf, sizeof(fbuf), fp);            /* sys rc file, line #1 */
-      if (strchr(fbuf, 's')) Secure_mode = 1;
-
-      fbuf[0] = '\0';
-      fgets(fbuf, sizeof(fbuf), fp);            /* sys rc file, line #2 */
-      fclose(fp);
-      sscanf(fbuf, "%f", &Delay_time);
-   }
-#endif
 
    cp = strstr(fbuf,"\n\nRCfile for ");
    if (!cp) return -1;
@@ -1461,10 +1473,12 @@ static void configs_read (void)
          fbuf[1] = '\n';
          num = read(fd, fbuf+2, sizeof(fbuf)-3);
          if (num>0) {
+//int i;
             fbuf[num+2] = '\0';
 //            fprintf(stderr, "%d\n", read_config_rik(fbuf,num,&usr_rcfile)); for(;;);
             if (read_config_rik(fbuf,num,&usr_rcfile) > 0) Crufty_config = 1;
             else memcpy(&usr_rcfile, &RCf_Defaults, sizeof(usr_rcfile));  // maybe mangled
+//if(i<=0){ fprintf(stderr,"FAILURE: read_config_rik returned %d\n",i); for(;;); }
             read_config_jim(fbuf,num,&usr_rcfile);
          }
          close(fd);
@@ -1490,8 +1504,8 @@ static void configs_read (void)
    } else {
       Delay_time = usr_rcfile.Delay_time;
    }
-print_rc(&sys_rcfile);
-print_rc(&usr_rcfile);
+//print_rc(&sys_rcfile);
+//print_rc(&usr_rcfile);
 }
 
 static void write_config_rik(FILE *fp, const RCF_t * const rc){
