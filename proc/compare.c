@@ -10,9 +10,9 @@
 #include <string.h>		/* for strcmp */
 #include <stdio.h>		/* for parse error output */
 
-#include "proc/readproc.h"	/* for proc_t */
+#include "readproc.h"	/* for proc_t */
 
-#include "proc/compare.h"	/* for this code */
+#include "compare.h"	/* for this code */
 
 
 /*

@@ -24,6 +24,11 @@ LIBSRC :=  $(wildcard proc/*.c)
 LIBHDR :=  $(wildcard proc/*.h)
 LIBOBJ :=  $(LIBSRC:.c=.o)
 
+
+LIB_X := COPYING Makefile.noam module.mk
+TARFILES += $(LIBSRC) $(LIBHDR) $(addprefix proc/,$(LIB_X))
+
+
 # Clean away all output files, .depend, and symlinks.
 # Use wildcards in case the version has changed.
 CLEAN += proc/.depend proc/lib*.so* proc/lib*.a $(LIBOBJ)
@@ -42,7 +47,9 @@ proc/.depend: $(LIBSRC) $(LIBHDR)
 	$(strip $(CC) $(LIB_CFLAGS) -MM -MG $(LIBSRC) > $@)
 
 ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(MAKECMDGOALS),tar)
 -include proc/.depend
+endif
 endif
 
 

@@ -10,7 +10,7 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <pwd.h>
-#include "proc/procps.h"
+#include "procps.h"
 #include <grp.h>
 
 #define	HASHSIZE	16			/* power of 2 */

@@ -7,8 +7,8 @@
 \***********************************************************************/
 
 
-#include "proc/procps.h"
-#include "proc/readproc.h"
+#include "procps.h"
+#include "readproc.h"
 #include "status.h"
 
 char * status(proc_t* task) {

@@ -14,6 +14,7 @@
 VERSION      := 3
 SUBVERSION   := 0
 MINORVERSION := 1
+TARVERSION   := 3.0.1
 LIBVERSION   := 3.0.1
 
 ############ vars
@@ -49,6 +50,12 @@ MANFILES := $(man1)uptime.1 $(man1)tload.1 $(man1)free.1 $(man1)w.1 \
             $(man1)snice.1 $(man1)pgrep.1 $(man1)pkill.1 \
             $(man5)sysctl.conf.5 $(man8)vmstat.8 $(man8)sysctl.8
 
+TARFILES := AUTHORS BUGS NEWS README TODO COPYING COPYING.LIB ChangeLog \
+            Makefile Makefile.noam procps.lsm procps.spec v t \
+            minimal.c $(notdir $(SCRFILES)) $(notdir $(MANFILES)) \
+            uptime.c tload.c free.c w.c top.c vmstat.c watch.c skill.c \
+            sysctl.c pgrep.c top.h
+
 CURSES := -I/usr/include/ncurses -lncurses
 
 LDFLAGS := -Wl,-warn-common
@@ -67,7 +74,7 @@ CFLAGS := -D_GNU_SOURCE -O2 -g3 -fno-common -ffast-math -I proc \
 .SUFFIXES:
 .SUFFIXES: .a .o .c .s .h
 
-.PHONY: all clean do_all install  # ps
+.PHONY: all clean do_all install tar  # ps
 
 ALL := $(notdir $(BINFILES))
 
@@ -104,19 +111,26 @@ CLEAN += $(junk) $(foreach dir,$(DIRS),$(addprefix $(dir), $(junk)))
 #%.d: %.c
 #	depend.sh $(CFLAGS) $< > $@
 
+# don't want to type "make procps-$(TARVERSION).tar.gz"
+tar: $(TARFILES)
+	mkdir procps-$(TARVERSION)
+	(tar cf - $(TARFILES)) | (cd procps-$(TARVERSION) && tar xf -)
+	tar cf procps-$(TARVERSION).tar procps-$(TARVERSION)
+	gzip -9 procps-$(TARVERSION).tar
+
 clean:
 	rm -f $(CLEAN)
 
 ###### install
 
 $(BINFILES) : $(@F)
-	$(install) --mode a=rx --strip $< $@
+	$(install) --mode a=rx --strip $(notdir $@) $@
 
 $(SCRFILES) : $(@F)
-	$(install) --mode a=rx $< $@
+	$(install) --mode a=rx $(notdir $@) $@
 
 $(MANFILES) : $(@F)
-	$(install) --mode a=r $< $@
+	$(install) --mode a=r $(notdir $@) $@
 
 install: $(INSTALL)
 	cd $(usr/bin) && ($(ln-f) skill snice; $(ln-f) skill kill; $(ln-f) pgrep pkill)

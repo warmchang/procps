@@ -18,9 +18,9 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <sys/utsname.h>
-#include "proc/procps.h"
-#include "proc/version.h"
-#include "proc/sysinfo.h" /* smp_num_cpus */
+#include "procps.h"
+#include "version.h"
+#include "sysinfo.h" /* smp_num_cpus */
 
 #define KSYMS_FILENAME "/proc/ksyms"
 

@@ -21,9 +21,9 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <proc/sig.h>
-#include <proc/devname.h>
-#include <proc/procps.h>  /* char *user_from_uid(uid_t uid) */
+#include "proc/sig.h"
+#include "proc/devname.h"
+#include "proc/procps.h"  /* char *user_from_uid(uid_t uid) */
 #include "proc/version.h" /* procps_version */
 
 static int f_flag, i_flag, v_flag, w_flag, n_flag;
