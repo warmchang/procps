@@ -93,7 +93,7 @@ out_destroy:
 }
 
 
-static const char *mapping_name(proc_t *p, unsigned KLONG addr, unsigned KLONG len, const char *mapbuf, unsigned advance, unsigned dev_major, unsigned dev_minor, unsigned long long inode){
+static const char *mapping_name(proc_t *p, unsigned KLONG addr, unsigned KLONG len, const char *mapbuf, unsigned showpath, unsigned dev_major, unsigned dev_minor, unsigned long long inode){
   const char *cp;
 
   if(!dev_major && dev_minor==shm_minor && strstr(mapbuf,"/SYSV")){
@@ -104,8 +104,8 @@ static const char *mapping_name(proc_t *p, unsigned KLONG addr, unsigned KLONG l
 
   cp = strrchr(mapbuf,'/');
   if(cp){
-    if(cp[1]) cp += advance;
-    return cp;
+    if(showpath) return strchr(mapbuf,'/');
+    return cp[1] ? cp+1 : cp;
   }
 
   cp = "  [ anon ]";
@@ -171,7 +171,7 @@ static int one_proc(proc_t *p){
     flags[5] = '\0';
 
     if(x_option){
-      const char *cp = mapping_name(p, start, diff, mapbuf, 1, dev_major, dev_minor, inode);
+      const char *cp = mapping_name(p, start, diff, mapbuf, 0, dev_major, dev_minor, inode);
       printf(
         (sizeof(KLONG)==8)
           ? "%016"KLF"x %7lu       -       -       - %s  %s\n"
@@ -183,7 +183,7 @@ static int one_proc(proc_t *p){
       );
     }
     if(d_option){
-      const char *cp = mapping_name(p, start, diff, mapbuf, 1, dev_major, dev_minor, inode);
+      const char *cp = mapping_name(p, start, diff, mapbuf, 0, dev_major, dev_minor, inode);
       printf(
         (sizeof(KLONG)==8)
           ? "%016"KLF"x %7lu %s %016Lx %03x:%05x %s\n"
@@ -197,7 +197,7 @@ static int one_proc(proc_t *p){
       );
     }
     if(!x_option && !d_option){
-      const char *cp = mapping_name(p, start, diff, mapbuf, 0, dev_major, dev_minor, inode);
+      const char *cp = mapping_name(p, start, diff, mapbuf, 1, dev_major, dev_minor, inode);
       printf(
         (sizeof(KLONG)==8)
           ? "%016"KLF"x %6luK %s  %s\n"
