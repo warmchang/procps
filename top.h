@@ -326,19 +326,19 @@ typedef struct win {
 #define STATES_line1  "Tasks:\03" \
    " %3u \02total,\03 %3u \02running,\03 %3u \02sleeping,\03 %3u \02stopped,\03 %3u \02zombie\03\n"
 #define STATES_line2x4  "%s\03" \
-   " %#5.1f%% \02user,\03 %#5.1f%% \02system,\03 %#5.1f%% \02nice,\03 %#5.1f%% \02idle\03\n"
+   " %#5.1f\02%% user,\03 %#5.1f\02%% system,\03 %#5.1f\02%% nice,\03 %#5.1f\02%% idle\03\n"
 #define STATES_line2x5  "%s\03" \
-   " %#5.1f%% \02user,\03 %#5.1f%% \02system,\03 %#5.1f%% \02nice,\03 %#5.1f%% \02idle,\03 %#5.1f%% \02IO-wait\03\n"
+   " %#5.1f\02%% user,\03 %#5.1f\02%% system,\03 %#5.1f\02%% nice,\03 %#5.1f\02%% idle,\03 %#5.1f\02%% IO-wait\03\n"
 #ifdef CASEUP_SUMMK
 #define MEMORY_line1  "Mem: \03" \
-   " %8uK \02total,\03 %8uK \02used,\03 %8uK \02free,\03 %8uK \02buffers\03\n"
+   " %8u\02K total,\03 %8u\02K used,\03 %8u\02K free,\03 %8u\02K buffers\03\n"
 #define MEMORY_line2  "Swap:\03" \
-   " %8uK \02total,\03 %8uK \02used,\03 %8uK \02free,\03 %8uK \02cached\03\n"
+   " %8u\02K total,\03 %8u\02K used,\03 %8u\02K free,\03 %8u\02K cached\03\n"
 #else
 #define MEMORY_line1  "Mem: \03" \
-   " %8uk \02total,\03 %8uk \02used,\03 %8uk \02free,\03 %8uk \02buffers\03\n"
+   " %8u\02k total,\03 %8u\02k used,\03 %8u\02k free,\03 %8u\02k buffers\03\n"
 #define MEMORY_line2  "Swap:\03" \
-   " %8uk \02total,\03 %8uk \02used,\03 %8uk \02free,\03 %8uk \02cached\03\n"
+   " %8u\02k total,\03 %8u\02k used,\03 %8u\02k free,\03 %8u\02k cached\03\n"
 #endif
 
         /* Keyboard Help specially formatted string(s) --
@@ -442,7 +442,7 @@ typedef struct win {
    "\n" \
    "   color -\03 04:25:44 up 8 days, 50 min,  7 users,  load average:\n" \
    "   Tasks:\03  64 \02total,\03   2 \02running,\03  62 \02sleeping,\03   0 \02stopped,\03\n" \
-   "   State cpu0 :\03   76.5%% \02user,\03  11.2%% \02system,\03   0.0%% \02nice,\03\n" \
+   "   State cpu0 :\03   76.5\02%% user,\03  11.2\02%% system,\03   0.0\02%% nice,\03\n" \
    "   \01 Nasty Message! \04  -or-  \01Input Prompt\05\n" \
    "   \01  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP STA Command  \06\n" \
    "   17284 \10pts/2  \07  8   0  0.0   0:00.75  1380    0 S   /bin/bash \10\n" \
