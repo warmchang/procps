@@ -9,10 +9,12 @@
  * GNU Library General Public License for more details.
  */
 
-/* return -1 on failure */
-extern int signal_name_to_number(char *name);
+#include "procps.h"
 
-extern int print_given_signals(int argc, char *argv[], int max_line);
+/* return -1 on failure */
+extern int signal_name_to_number(const char *restrict name);
+
+extern int print_given_signals(int argc,  const char **argv, int max_line);
 
 extern void pretty_print_signals(void);
 

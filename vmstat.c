@@ -54,7 +54,7 @@ static void crash(const char *filename) {
 
 ////////////////////////////////////////////////////////////////////////
 
-static void getrunners(unsigned int *restirct running, unsigned int *restrict blocked) {
+static void getrunners(unsigned int *restrict running, unsigned int *restrict blocked) {
   static struct direct *ent;
   DIR *proc;
 

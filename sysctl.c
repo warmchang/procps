@@ -26,6 +26,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <errno.h>
+#include "proc/procps.h"
 
 /*
  *    Additional types we might need.

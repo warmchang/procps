@@ -102,11 +102,8 @@ static int compare_signal_names(const void *a, const void *b){
 }
 
 /* return -1 on failure */
-int signal_name_to_number(char *name){
-  const mapstruct *ptr;
-  mapstruct ms;
+int signal_name_to_number(const char *restrict name){
   long val;
-  char *endp;
   int offset;
 
   /* clean up name */
@@ -117,11 +114,17 @@ int signal_name_to_number(char *name){
   if(!strcasecmp(name,"IOT")) return SIGABRT;
 
   /* search the table */
-  ms.name = name;
-  ptr = bsearch(&ms, sigtable, number_of_signals,
-     sizeof(mapstruct), compare_signal_names
-  );
-  if(ptr) return ptr->num;
+  {
+    const mapstruct ms = {name,0};
+    const mapstruct *restrict const ptr = bsearch(
+      &ms,
+      sigtable,
+      number_of_signals,
+      sizeof(mapstruct),
+      compare_signal_names
+    );
+    if(ptr) return ptr->num;
+  }
 
   if(!strcasecmp(name,"RTMIN")) return SIGRTMIN;
   if(!strcasecmp(name,"EXIT"))  return 0;
@@ -134,8 +137,11 @@ int signal_name_to_number(char *name){
   }
 
   /* not found, so try as a number */
-  val = strtol(name,&endp,10);
-  if(*endp || endp==name) return -1; /* not valid */
+  {
+    char *endp;
+    val = strtol(name,&endp,10);
+    if(*endp || endp==name) return -1; /* not valid */
+  }
   if(val+SIGRTMIN>127) return -1; /* not valid */
   return val+offset;
 }
@@ -153,7 +159,7 @@ static const char *signal_number_to_name(int signo){
   return buf;
 }
 
-int print_given_signals(int argc, char *argv[], int max_line){
+int print_given_signals(int argc, const char **argv, int max_line){
   char buf[1280]; /* 128 signals, "RTMIN+xx" is largest */
   int ret = 0;  /* to be used as exit code by caller */
   int place = 0; /* position on this line */
@@ -161,8 +167,7 @@ int print_given_signals(int argc, char *argv[], int max_line){
   if(argc > 128) return 1;
   while(argc--){
     char tmpbuf[16];
-    char *txt; /* convenient alias */
-    txt = *argv;
+    const char *restrict const txt = *argv;
     if(*txt >= '0' && *txt <= '9'){
       long val;
       char *endp;

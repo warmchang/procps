@@ -42,7 +42,6 @@ thing##s[thing##_count++] = addme; \
 
 static int my_pid;
 static int saved_argc;
-static char **saved_argv;
 
 static int sig_or_pri;
 
@@ -245,7 +244,7 @@ static void kill_usage(void){
 }
 
 /***** kill */
-static void kill_main(int argc, const char *restrict argv[]){
+static void kill_main(int argc, const char *restrict const *restrict argv){
   const char *sigptr;
   int signo = SIGTERM;
   int exitvalue = 0;
@@ -368,12 +367,12 @@ static void _skillsnice_usage(int line){
 
 /***** common skill/snice argument parsing code */
 #define NO_PRI_VAL ((int)0xdeafbeef)
-static void skillsnice_parse(int argc, char *argv[]){
+static void skillsnice_parse(int argc, const char *restrict const *restrict argv){
   int signo = -1;
   int prino = NO_PRI_VAL;
   int force = 0;
   int num_found = 0;
-  char *argptr;
+  const char *restrict argptr;
   if(argc<2) skillsnice_usage();
   if(argc==2 && argv[1][0]=='-'){
     if(!strcmp(argv[1],"-L")){
@@ -539,7 +538,6 @@ selection_collection:
 int main(int argc, char *argv[]){
   char *tmpstr;
   my_pid = getpid();
-  saved_argv = argv;
   saved_argc = argc;
   if(!argc){
     fprintf(stderr,"ERROR: could not determine own name.\n");

@@ -781,7 +781,8 @@ static const char *scale_tics (TICS_t tics, const int width)
          * Handle our own memory stuff without the risk of leaving the
          * user's terminal in an ugly state should things go sour. */
 
-static void *alloc_c (unsigned numb) MALLOC
+static void *alloc_c (unsigned numb) MALLOC;
+static void *alloc_c (unsigned numb)
 {
    void * p;
 
@@ -791,8 +792,8 @@ static void *alloc_c (unsigned numb) MALLOC
    return p;
 }
 
-
-static void *alloc_r (void *q, unsigned numb) MALLOC
+static void *alloc_r (void *q, unsigned numb) MALLOC;
+static void *alloc_r (void *q, unsigned numb)
 {
    void *p;
 
