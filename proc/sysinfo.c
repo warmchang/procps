@@ -191,16 +191,20 @@ static unsigned long find_elf_note(unsigned long findme){
 
 static void init_libproc(void) __attribute__((constructor));
 static void init_libproc(void){
-  /* ought to count CPUs in /proc/stat instead of relying
-   * on glibc, which foolishly tries to parse /proc/cpuinfo
-   */
-  smp_num_cpus = sysconf(_SC_NPROCESSORS_CONF); // or _SC_NPROCESSORS_ONLN
+  // ought to count CPUs in /proc/stat instead of relying
+  // on glibc, which foolishly tries to parse /proc/cpuinfo
+  //
+  // SourceForge has an old Alpha running Linux 2.2.20 that
+  // appears to have a non-SMP kernel on a 2-way SMP box.
+  // _SC_NPROCESSORS_CONF returns 2, resulting in HZ=512
+  // _SC_NPROCESSORS_ONLN returns 1, which should work OK
+  smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
   if(smp_num_cpus<1) smp_num_cpus=1; /* SPARC glibc is buggy */
 
   if(linux_version_code > LINUX_VERSION(2, 4, 0)){ 
     Hertz = find_elf_note(AT_CLKTCK);
     if(Hertz!=NOTE_NOT_FOUND) return;
-    fprintf(stderr, "2.4 kernel w/o ELF notes? -- report to albert@users.sf.net\n");
+    fprintf(stderr, "2.4 kernel w/o ELF notes? -- report this\n");
   }
   old_Hertz_hack();
 }
