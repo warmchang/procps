@@ -478,6 +478,15 @@ static const char *parse_sysv_option(void){
       trace("-z shows aliased MAC info\n");
       format_modifiers |= FM_M;
       break;
+    // Solaris 10 does this
+    case 'z':     /* select by zone */
+      trace("-z secects by zone\n");
+      arg=get_opt_arg();
+      if(!arg) return "List of zones (contexts, labels, whatever?) must follow -z.";
+      err=parse_list(arg, parse_zone);
+      if(err) return err;
+      selection_list->typecode = SEL_ZONE;
+      return NULL; /* can't have any more options */
 #endif
     case '-':
       return "Embedded '-' among SysV options makes no sense.";

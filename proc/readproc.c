@@ -725,7 +725,7 @@ proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
   proc_t *ret;
   proc_t *saved_p;
 
-  if (PT->did_fake) PT->did_fake=0;
+  PT->did_fake=0;
 //  if (PT->taskdir) {
 //    closedir(PT->taskdir);
 //    PT->taskdir = NULL;
