@@ -1224,8 +1224,7 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
   }
   p->tgid = strtoul(ent->d_name, NULL, 10);
   p->tid = p->tgid;
-  memcpy(path, "/proc/", 6);
-  strcpy(path+6, ent->d_name);  // trust /proc to not contain evil top-level entries
+  snprintf(path, PROCPATHLEN, "/proc/%s", ent->d_name);
   return 1;
 }
 
