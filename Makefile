@@ -61,12 +61,13 @@ MANFILES := $(man1)uptime.1 $(man1)tload.1 $(man1)free.1 $(man1)w.1 \
 
 TARFILES := AUTHORS BUGS NEWS README TODO COPYING COPYING.LIB \
             Makefile procps.lsm procps.spec v t README.top \
-            minimal.c $(notdir $(MANFILES)) \
+            minimal.c $(notdir $(MANFILES)) dummy.c \
             uptime.c tload.c free.c w.c top.c vmstat.c watch.c skill.c \
             sysctl.c pgrep.c top.h pmap.c slabtop.c
 
 # Stuff (tests, temporary hacks, etc.) left out of the standard tarball
-_TARFILES :=
+# plus the top-level Makefile to make it work stand-alone.
+_TARFILES := Makefile
 
 CURSES := -I/usr/include/ncurses -lncurses
 
@@ -93,6 +94,27 @@ ALL_CFLAGS := $(PKG_CFLAGS) $(CFLAGS)
 PKG_LDFLAGS := -Wl,-warn-common
 LDFLAGS :=
 ALL_LDFLAGS := $(PKG_LDFLAGS) $(LDFLAGS)
+
+############ Add some extra flags if gcc allows
+
+ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(MAKECMDGOALS),tar)  
+ifneq ($(MAKECMDGOALS),extratar)
+
+# Unlike the kernel one, this check_gcc goes all the way to
+# producing an executable. There might be a -m64 that works
+# until you go looking for a 64-bit curses library.
+check_gcc = $(shell if $(CC) $(ALL_CFLAGS) dummy.c $(ALL_LDFLAGS) $(1) -o /dev/null $(CURSES) > /dev/null 2>&1; then echo "$(1)"; else echo "$(2)"; fi ;)
+
+ALL_CFLAGS += $(call check_gcc,-Wdeclaration-after-statement,)
+ALL_CFLAGS += $(call check_gcc,-Wpadded,)
+
+# Be 64-bit if at all possible.
+ALL_CFLAGS += $(call check_gcc,-m64,)
+
+endif
+endif
+endif
 
 ############ misc.
 
@@ -179,13 +201,13 @@ w.o:    w.c
 ############ prog.o --> prog
 
 pmap w uptime tload free sysctl vmstat utmp pgrep skill: % : %.o $(LIBPROC)
-	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^
+	$(CC) $(ALL_CFLAGS) $^ $(ALL_LDFLAGS) -o $@
 
 slabtop top: % : %.o $(LIBPROC)
-	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^ $(CURSES)
+	$(CC) $(ALL_CFLAGS) $^ $(ALL_LDFLAGS) -o $@ $(CURSES)
 
 watch: % : %.o
-	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^ $(CURSES)
+	$(CC) $(ALL_CFLAGS) $^ $(ALL_LDFLAGS) -o $@ $(CURSES)
 
 ############ progX --> progY
 

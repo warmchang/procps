@@ -55,7 +55,9 @@ proc/.depend: $(LIBSRC) $(LIBHDR)
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),tar)
+ifneq ($(MAKECMDGOALS),extratar)
 -include proc/.depend
+endif
 endif
 endif
 
