@@ -140,7 +140,7 @@ static unsigned    idx_room;
  * /proc/ksyms and System.map data files.
  */
 #if 0
-static void chop_version(char *arg){
+static char *chop_version(char *arg){
   char *cp;
   cp = strchr(arg,'\t');
   if(cp) *cp = '\0';  /* kill trailing module name first */
@@ -152,7 +152,7 @@ static void chop_version(char *arg){
     for(p=cp; *++p; ){
       switch(*p){
       default:
-        return;
+        goto out;
       case '0' ... '9':
       case 'a' ... 'f':
         len++;
@@ -166,9 +166,18 @@ static void chop_version(char *arg){
     if(len<8) break;
     cp[-1] = '\0';
   }
+out:
+  if(*arg=='G'){
+    int len = strlen(arg);
+    while( len>8 && !memcmp(arg,"GPLONLY_",8) ){
+      arg += 8;
+      len -= 8;
+    }
+  }
+  return arg;
 }
 #endif
-static void chop_version(char *arg){
+static char *chop_version(char *arg){
   char *cp;
   cp = strchr(arg,'\t');
   if(cp) *cp = '\0';  /* kill trailing module name first */
@@ -182,6 +191,14 @@ static void chop_version(char *arg){
     if(strspn(cp+len-8,"0123456789abcdef")!=8) break;
     cp[-1] = '\0';
   }
+  if(*arg=='G'){
+    int len = strlen(arg);
+    while( len>8 && !memcmp(arg,"GPLONLY_",8) ){
+      arg += 8;
+      len -= 8;
+    }
+  }
+  return arg;
 }
 
 /***********************************/
@@ -293,12 +310,11 @@ bypass:
       ksyms_index[ksyms_count].addr = STRTOUKL(endp, &endp, 16);
       if(endp==saved || *endp != ' ') goto bad_parse;
       endp++;
-      ksyms_index[ksyms_count].name = endp;
       saved = endp;
       endp = strchr(endp,'\n');
       if(!endp) goto bad_parse;   /* no newline */
       *endp = '\0';
-      chop_version(saved);
+      ksyms_index[ksyms_count].name = chop_version(saved);
       ++endp;
       if(++ksyms_count >= idx_room) break;  /* need more space */
     }
@@ -400,13 +416,13 @@ good_match:;
       endp++;
       if(*endp != ' ') goto bad_parse;
       endp++;
-      sysmap_index[sysmap_count].name = endp;
       vstart = endp;
       endp = strchr(endp,'\n');
       if(!endp) goto bad_parse;   /* no newline */
       *endp = '\0';
       ++endp;
-      chop_version(vstart);
+      vstart = chop_version(vstart);
+      sysmap_index[sysmap_count].name = vstart;
       if(*vstart=='V' && *Version && !strcmp(Version,vstart)) *Version='\0';
       if(++sysmap_count >= sysmap_room) break;  /* need more space */
     }

@@ -166,8 +166,8 @@ extern PROCTAB* openproc(int flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] 
 
 /* Convenient wrapper around openproc and readproc to slurp in the whole process
  * table subset satisfying the constraints of flags and the optional PID list.
- * Free allocated memory with freeproctab().  Access via tab[N]->member.  The
- * pointer list is NULL terminated.
+ * Free allocated memory with exit().  Access via tab[N]->member.  The pointer
+ * list is NULL terminated.
  */
 extern proc_t** readproctab(int flags, ... /* same as openproc */ );
 

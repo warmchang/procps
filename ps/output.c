@@ -85,17 +85,20 @@
 static unsigned max_rightward = 0x12345678; /* space for RIGHT stuff */
 static unsigned max_leftward = 0x12345678; /* space for LEFT stuff */
 
-/* Justification control for flags field. */
-#define JUST_MASK 0x0f
-     /* AIXHACK   0 */
-#define USER      1  /* left if text, right if numeric */
-#define LEFT      2
-#define RIGHT     3
-#define UNLIMITED 4
-#define WCHAN     5  /* left if text, right if numeric */
-#define SIGNAL    6  /* right in 9, or 16 if screen_cols>107 */
 
-#define CUMUL     16  /* mark cumulative (Summed) headers with 'C' */
+/* Justification control for flags field. */
+#define JUST_MASK   0x0f
+//      AIXHACK        0
+#define USER           1  // left if text, right if numeric
+#define LEFT           2
+#define RIGHT          3
+#define UNLIMITED      4
+#define WCHAN          5  // left if text, right if numeric
+#define SIGNAL         6  // right in 9, or 16 if screen_cols>107
+
+#define CUMUL       0x10  // mark cumulative (Summed) headers with 'C' */
+#define PIDMAX      0x20  // react to pid_max
+
 
 static int wide_signals;  /* true if we have room */
 
@@ -1212,7 +1215,7 @@ static const format_struct format_array[] = {
 {"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, RIGHT},
 {"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, RIGHT}, /* login ID */
 {"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, USER}, /* login USER */
-{"lwp",       "LWP",     pr_thread,   sr_nop,     5,   0,    SUN, RIGHT},
+{"lwp",       "LWP",     pr_thread,   sr_nop,     5,   0,    SUN, PIDMAX|RIGHT},
 {"m_drs",     "DRS",     pr_drs,      sr_drs,     5, MEM,    LNx, RIGHT},
 {"m_dt",      "DT",      pr_nop,      sr_dt,      4, MEM,    LNx, RIGHT},
 {"m_lrs",     "LRS",     pr_nop,      sr_lrs,     5, MEM,    LNx, RIGHT},
@@ -1245,13 +1248,13 @@ static const format_struct format_array[] = {
 {"pagein",    "PAGEIN",  pr_majflt,   sr_nop,     6,   0,    XXX, RIGHT},
 {"pcpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    U98, RIGHT}, /*%cpu*/
 {"pending",   "PENDING", pr_sig,      sr_nop,     9,   0,    BSD, SIGNAL}, /*sig*/
-{"pgid",      "PGID",    pr_pgid,     sr_pgrp,    5,   0,    U98, RIGHT},
-{"pgrp",      "PGRP",    pr_pgid,     sr_pgrp,    5,   0,    LNX, RIGHT},
-{"pid",       "PID",     pr_pid,      sr_pid,     5,   0,    U98, RIGHT},
+{"pgid",      "PGID",    pr_pgid,     sr_pgrp,    5,   0,    U98, PIDMAX|RIGHT},
+{"pgrp",      "PGRP",    pr_pgid,     sr_pgrp,    5,   0,    LNX, PIDMAX|RIGHT},
+{"pid",       "PID",     pr_pid,      sr_pid,     5,   0,    U98, PIDMAX|RIGHT},
 {"pmem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    XXX, RIGHT}, /*%mem*/
 {"poip",      "-",       pr_nop,      sr_nop,     1,   0,    BSD, RIGHT},
 {"policy",    "POL",     pr_class,    sr_sched,   3,   0,    DEC, LEFT},
-{"ppid",      "PPID",    pr_ppid,     sr_ppid,    5,   0,    U98, RIGHT},
+{"ppid",      "PPID",    pr_ppid,     sr_ppid,    5,   0,    U98, PIDMAX|RIGHT},
 {"pri",       "PRI",     pr_pri,      sr_nop,     3,   0,    XXX, RIGHT},
 {"priority",  "PRI",     pr_priority, sr_priority, 3,  0,    LNX, RIGHT}, /*ni,nice*/ /* from Linux sorting names */
 {"prmgrp",    "-",       pr_nop,      sr_nop,     1,   0,    HPU, RIGHT},
@@ -1275,14 +1278,14 @@ static const format_struct format_array[] = {
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, RIGHT},  /* man page misspelling of scount? */
 {"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, RIGHT},  /* scnt==scount, DEC claims both */
 {"secsid",    "SID",     pr_secsid,   sr_secsid,  6,   0,    LNX, RIGHT}, /* Flask Linux */
-{"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, RIGHT},
-{"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, RIGHT},
+{"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, PIDMAX|RIGHT},
+{"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, PIDMAX|RIGHT},
 {"sgi_p",     "P",       pr_sgi_p,    sr_nop,     1,   0,    LNX, RIGHT}, /* "cpu" number */
 {"sgi_rss",   "RSS",     pr_rss,      sr_nop,     4,   0,    LNX, LEFT}, /* SZ:RSS */
 {"sgid",      "SGID",    pr_sgid,     sr_sgid,    5,   0,    LNX, RIGHT},
 {"sgroup",    "SGROUP",  pr_sgroup,   sr_sgroup,  8, GRP,    LNX, USER},
 {"share",     "-",       pr_nop,      sr_share,   1, MEM,    LNX, RIGHT},
-{"sid",       "SID",     pr_sess,     sr_session, 5,   0,    XXX, RIGHT}, /* Sun & HP */
+{"sid",       "SID",     pr_sess,     sr_session, 5,   0,    XXX, PIDMAX|RIGHT}, /* Sun & HP */
 {"sig",       "PENDING", pr_sig,      sr_nop,     9,   0,    XXX, SIGNAL}, /*pending*/
 {"sig_block", "BLOCKED",  pr_sigmask, sr_nop,     9,   0,    LNX, SIGNAL},
 {"sig_catch", "CATCHED", pr_sigcatch, sr_nop,     9,   0,    LNX, SIGNAL},
@@ -1293,7 +1296,7 @@ static const format_struct format_array[] = {
 {"sigmask",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    XXX, SIGNAL}, /*blocked*/
 {"size",      "SZ",      pr_swapable, sr_swapable, 1,  0,    SCO, RIGHT},
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, RIGHT},
-{"spid",      "SPID",    pr_thread,   sr_nop,     5,   0,    SGI, RIGHT},
+{"spid",      "SPID",    pr_thread,   sr_nop,     5,   0,    SGI, PIDMAX|RIGHT},
 {"stackp",    "STACKP",  pr_stackp,   sr_nop,     8,   0,    LNX, RIGHT}, /*start_stack*/
 {"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, RIGHT},
 {"start_code", "S_CODE",  pr_nop,     sr_start_code, 8, 0,   LNx, RIGHT},
@@ -1313,16 +1316,16 @@ static const format_struct format_array[] = {
 {"sz",        "SZ",      pr_sz,       sr_nop,     5,   0,    HPU, RIGHT},
 {"tdev",      "TDEV",    pr_nop,      sr_nop,     4,   0,    XXX, RIGHT},
 {"thcount",   "THCNT",   pr_nlwp,     sr_nop,     5,   0,    AIX, RIGHT},
-{"tid",       "TID",     pr_thread,   sr_nop,     5,   0,    AIX, RIGHT},
+{"tid",       "TID",     pr_thread,   sr_nop,     5,   0,    AIX, PIDMAX|RIGHT},
 {"time",      "TIME",    pr_time,     sr_nop,     8,   0,    U98, CUMUL|RIGHT}, /*cputime*/ /* was 6 wide */
 {"timeout",   "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, RIGHT},
 {"tmout",     "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, RIGHT},
 {"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, LEFT},
-{"tpgid",     "TPGID",   pr_tpgid,    sr_tpgid,   5,   0,    XXX, RIGHT},
+{"tpgid",     "TPGID",   pr_tpgid,    sr_tpgid,   5,   0,    XXX, PIDMAX|RIGHT},
 {"trs",       "TRS",     pr_trs,      sr_trs,     4, MEM,    AIX, RIGHT},
 {"trss",      "TRSS",    pr_trs,      sr_trs,     4, MEM,    BSD, RIGHT}, /* 4.3BSD NET/2 */
-{"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, RIGHT},
-{"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, RIGHT},
+{"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, PIDMAX|RIGHT},
+{"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, PIDMAX|RIGHT},
 {"tsiz",      "TSIZ",    pr_tsiz,     sr_nop,     4,   0,    BSD, RIGHT},
 {"tt",        "TT",      pr_tty8,     sr_tty,     8,   0,    BSD, LEFT},
 {"tty",       "TT",      pr_tty8,     sr_tty,     8,   0,    U98, LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */
@@ -1596,7 +1599,7 @@ static void check_header_width(void){
 /********** show one process (NULL proc prints header) **********/
 
 //#define SPACE_AMOUNT page_size
-#define SPACE_AMOUNT 128
+#define SPACE_AMOUNT 144
 
 static char *saved_outbuf;
 

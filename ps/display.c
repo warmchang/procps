@@ -29,6 +29,7 @@
 #include "../proc/version.h"
 #include "../proc/readproc.h"
 #include "../proc/sysinfo.h"
+#include "../proc/sig.h"
 
 #ifndef SIGCHLD
 #define SIGCHLD SIGCLD

@@ -734,8 +734,8 @@ HIDDEN_ALIAS(readproc);
 
 /* Convenient wrapper around openproc and readproc to slurp in the whole process
  * table subset satisfying the constraints of flags and the optional PID list.
- * Free allocated memory with freeproctab().  Access via tab[N]->member.  The
- * pointer list is NULL terminated.
+ * Free allocated memory with exit().  Access via tab[N]->member.  The pointer
+ * list is NULL terminated.
  */
 proc_t** readproctab(int flags, ...) {
     PROCTAB* PT = NULL;

@@ -22,6 +22,7 @@
 #include <grp.h>
 
 #include "../proc/readproc.h"
+#include "../proc/sysinfo.h"
 #include "common.h"
 
 static sf_node *sf_list = NULL;         /* deferred sorting and formatting */
@@ -34,6 +35,11 @@ static int already_parsed_format = 0;
 #define parse_sort_opt <-- arrgh! do not use this -->
 #define gnusort_parse  <-- arrgh! do not use this -->
 
+#ifndef COL_PIDMAX
+#warning Ugly wart needs fixing, use common.h to sync w/ output.c
+#define COL_PIDMAX 0x20
+#endif
+
 
 /****************  Parse single format specifier *******************/
 static format_node *do_one_spec(const char *spec, const char *override){
@@ -45,7 +51,13 @@ static format_node *do_one_spec(const char *spec, const char *override){
     int w1, w2;
     format_node *thisnode;
     thisnode = malloc(sizeof(format_node));
-    w1 = fs->width;
+    if(fs->flags & COL_PIDMAX){
+      w1 = (int)get_pid_digits();
+      w2 = strlen(fs->head);
+      if(w2>w1) w1=w2; // FIXME w/ separate header/body column sizing
+    }else{
+      w1 = fs->width;
+    }
     if(override){
       w2 = strlen(override);
       thisnode->width = (w1>w2)?w1:w2;

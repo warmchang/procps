@@ -127,5 +127,7 @@ typedef struct slab_cache{
 
 extern unsigned int getslabinfo (struct slab_cache**);
 
+extern unsigned get_pid_digits(void) FUNCTION;
+
 EXTERN_C_END
 #endif /* SYSINFO_H */

@@ -93,7 +93,7 @@ static int one_proc(unsigned pid){
     char *tmp; // to clean up unprintables
     unsigned long start, end, diff;
     unsigned long long pgoff;
-    sscanf(mapbuf,"%lx-%lx %s %Lx", &start, &end, flags, &pgoff);
+    sscanf(mapbuf,"%lx-%lx %31s %Lx", &start, &end, flags, &pgoff);
     tmp = strchr(mapbuf,'\n');
     if(tmp) *tmp='\0';
     tmp = mapbuf;

@@ -757,3 +757,32 @@ unsigned int getslabinfo (struct slab_cache **slab){
   return cSlab;
 }
 
+///////////////////////////////////////////////////////////////////////////
+
+unsigned get_pid_digits(void){
+  char buf[24];
+  char *endp;
+  long rc;
+  int fd;
+  static unsigned ret;
+
+  if(ret) goto out;
+  ret = 5;
+  fd = open("/proc/sys/kernel/pid_max", O_RDONLY);
+  if(fd==-1) goto out;
+  rc = read(fd, buf, sizeof buf);
+  close(fd);
+  if(rc<3) goto out;
+  buf[rc] = '\0';
+  rc = strtol(buf,&endp,10);
+  if(rc<42) goto out;
+  if(*endp && *endp!='\n') goto out;
+  rc--;  // the pid_max value is really the max PID plus 1
+  ret = 0;
+  while(rc){
+    rc /= 10;
+    ret++;
+  }
+out:
+  return ret;
+}
