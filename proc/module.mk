@@ -20,6 +20,7 @@ INSTALL    += $(lib)/$(SONAME)
 $(LIBOBJ) : CFLAGS += -fpic
 LIBPROC    := proc/$(SONAME)
 else
+ALL        += proc/lib$(NAME).a
 LIBPROC    := proc/lib$(NAME).a
 endif
 
@@ -33,8 +34,8 @@ TARFILES += $(LIBSRC) $(LIBHDR) $(addprefix proc/,$(LIB_X))
 CLEAN += proc/.depend proc/lib*.so* proc/lib*.a $(LIBOBJ)
 DIRS  += proc/
 
-#proc/lib$(NAME).a: $(LIBOBJ)
-#	$(AR) rcs $@ $^
+proc/lib$(NAME).a: $(LIBOBJ)
+	$(AR) rcs $@ $^
 
 proc/$(SONAME): $(LIBOBJ)
 	$(CC) -shared -Wl,-soname,$(SONAME) -o $@ $^ -lc
