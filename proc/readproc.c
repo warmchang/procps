@@ -302,8 +302,6 @@ static char** file2strvec(const char* directory, const char* what) {
  * searched for in /proc.  If other lists are given in addition to the PID list,
  * the same logic can follow through as for the no-PID list case.  This is
  * fairly complex, but it does try to not to do any unnecessary work.
- * Unfortunately, the reverse filtering option in which any PID *except* the
- * ones listed is pursued.
  */
 proc_t* readproc(PROCTAB* PT, proc_t* p) {
     static struct direct *ent;		/* dirent handle */
@@ -413,8 +411,6 @@ next_proc:				/* get next PID for consideration */
  * searched for in /proc.  If other lists are given in addition to the PID list,
  * the same logic can follow through as for the no-PID list case.  This is
  * fairly complex, but it does try to not to do any unnecessary work.
- * Unfortunately, the reverse filtering option in which any PID *except* the
- * ones listed is pursued.
  */
 proc_t* ps_readproc(PROCTAB* PT, proc_t* p) {
     static struct direct *ent;		/* dirent handle */

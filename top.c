@@ -48,13 +48,8 @@
 #include "proc/procps.h"
         /* need: 2 types + openproc, readproc, closeproc */
 #include "proc/readproc.h"
-#ifdef UGH_ITS_4_RH
-        /* need: get_signal2 */
-#include "proc/signals.h"
-#else
         /* need: signal_name_to_number */
 #include "proc/sig.h"
-#endif
 #ifdef USE_LIB_STA3
         /* need: status */
 #include "proc/status.h"
@@ -82,9 +77,6 @@ static char *Myname;
 static char  RCfile [OURPATHSZ];
         /* The run-time acquired page size */
 static int  Page_size;
-#ifdef UGH_ITS_4_RH
-static unsigned Mem_pages;
-#endif
 
         /* SMP, Irix/Solaris mode, Linux 2.5.xx support */
 static int   Cpu_tot,
@@ -178,11 +170,7 @@ _SC_STRx(P_GRP, egroup)
 _SC_NUMx(P_TTY, tty)
 _SC_NUMx(P_PRI, priority)
 _SC_NUMx(P_NCE, nice)
-#ifdef UGH_ITS_4_RH
-_SC_NUMx(P_CPN, lproc)
-#else
 _SC_NUMx(P_CPN, processor)
-#endif
 _SC_NUM1(P_CPU, pcpu)
                                         /* also serves P_TM2 ! */
 static int sort_P_TME (const proc_t **P, const proc_t **Q)
@@ -304,10 +292,6 @@ static const char *tg2 (int x, int y)
          * called only by functions in this section. */
 static void bye_bye (int eno, const char *str)
 {
-#ifdef UGH_ITS_4_RH
-   if (PSDBopen)
-      close_psdb();
-#endif
    if (!Batch)
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Savedtty);
    putp(tg2(0, Screen_rows));
@@ -935,11 +919,7 @@ static void before (char *me)
 #ifdef PRETEND4CPUS
    Cpu_tot = 4;
 #else
-#ifdef UGH_ITS_4_RH
-   Cpu_tot = sysconf(_SC_NPROCESSORS_ONLN);
-#else
    Cpu_tot = smp_num_cpus;
-#endif
 #endif
    Cpu_map = alloc_r(NULL, sizeof(int) * Cpu_tot);
    for (i = 0; i < Cpu_tot; i++)
@@ -1850,40 +1830,6 @@ static void frame_states (proc_t **ppt, int show)
 }
 
 
-#ifdef UGH_ITS_4_RH
-        /*
-         * Obtain memory information and display it.
-         * 'Return' the total memory available as a page count. */
-static void frame_storage (void)
-{  /* don't be mislead by the proc/sysinfo subscripts, they're just poorly
-      chosen names for enum's apparently designed to make source lines as
-      imbalanced and long as possible (not to mention the constant, recurring
-      run-time costs of subscript resolution in the first place - duh?!) */
-   unsigned long long **memarray;
-
-   if (!(memarray = meminfo()))
-      std_err("failed /proc/meminfo read");
-
-   if (CHKw(Curwin, View_MEMORY)) {
-      show_special(fmtmk(MEMORY_line1
-         , BYTES_2K(memarray[meminfo_main][meminfo_total])
-         , BYTES_2K(memarray[meminfo_main][meminfo_used])
-         , BYTES_2K(memarray[meminfo_main][meminfo_free])
-         , BYTES_2K(memarray[meminfo_main][meminfo_buffers])));
-
-      show_special(fmtmk(MEMORY_line2
-         , BYTES_2K(memarray[meminfo_swap][meminfo_total])
-         , BYTES_2K(memarray[meminfo_swap][meminfo_used])
-         , BYTES_2K(memarray[meminfo_swap][meminfo_free])
-         , BYTES_2K(memarray[meminfo_total][meminfo_cached])));
-      Msg_row += 2;
-   }
-
-   Mem_pages = PAGE_CNT(memarray[meminfo_main][meminfo_total]);
-}
-
-#else
-
         /*
          * Obtain memory information and display it. */
 static void frame_storage (void)
@@ -1897,7 +1843,6 @@ static void frame_storage (void)
       Msg_row += 2;
    }
 }
-#endif /* end: UGH_ITS_4_RH */
 
 
         /*
@@ -1992,11 +1937,7 @@ static void show_a_task (WIN_t *q, proc_t *task)
             MKCOL(q, i, a, &pad, cbuf, scale_num(PAGES_2K(task->trs), w, s));
             break;
          case P_CPN:
-#ifdef UGH_ITS_4_RH
-            MKCOL(q, i, a, &pad, cbuf, task->lproc);
-#else
             MKCOL(q, i, a, &pad, cbuf, task->processor);
-#endif
             break;
          case P_CPU:
          {  float u = (float)task->pcpu * Frame_tscale;
@@ -2023,13 +1964,8 @@ static void show_a_task (WIN_t *q, proc_t *task)
             MKCOL(q, i, a, &pad, cbuf, task->egroup);
             break;
          case P_MEM:
-#ifdef UGH_ITS_4_RH
-            MKCOL(q, i, a, &pad, cbuf
-               , (float)task->resident * 100 / Mem_pages);
-#else
             MKCOL(q, i, a, &pad, cbuf
                , (float)PAGES_2K(task->resident) * 100 / kb_main_total);
-#endif
             break;
          case P_NCE:
             MKCOL(q, i, a, &pad, cbuf, (long)task->nice);
@@ -2265,11 +2201,7 @@ static void do_key (unsigned c)
             int sig, pid = get_int("PID to kill");
 
             if (-1 != pid) {
-#ifdef UGH_ITS_4_RH
-               sig = get_signal2(
-#else
                sig = signal_name_to_number(
-#endif
                   ask4str(fmtmk("Kill PID %d with signal [%i]"
                      , pid, DEF_SIGNAL)));
                if (-1 == sig) sig = DEF_SIGNAL;
@@ -2464,13 +2396,6 @@ static void do_key (unsigned c)
          * and then, returning a pointer to the pointers to the proc_t's! */
 static proc_t **do_summary (void)
 {
-#ifdef UGH_ITS_4_RH
-#define myCMD  PROC_FILLCMD
-#define myGRP  0
-#else
-#define myCMD  PROC_FILLCOM
-#define myGRP  PROC_FILLGRP
-#endif
    static proc_t **p_table = NULL;
    int p_flags = PROC_FILLMEM | PROC_FILLSTAT | PROC_FILLSTATUS;
    WIN_t *w;
@@ -2479,9 +2404,9 @@ static proc_t **do_summary (void)
    w = Curwin;
    do {
       if (!Mode_altscr || CHKw(w, VISIBLE_tsk)) {
-         p_flags |= (CHKw(w, Show_CMDLIN) && win_fldviz(w, P_CMD)) ? myCMD : 0;
+         p_flags |= (CHKw(w, Show_CMDLIN) && win_fldviz(w, P_CMD)) ? PROC_FILLCOM : 0;
          p_flags |= win_fldviz(w, P_USR) ? PROC_FILLUSR : 0;
-         p_flags |= win_fldviz(w, P_GRP) ? myGRP : 0;
+         p_flags |= win_fldviz(w, P_GRP) ? PROC_FILLGRP : 0;
       }
       if (Mode_altscr) w = w->next;
    } while (w != Curwin);

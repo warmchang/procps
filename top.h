@@ -20,9 +20,6 @@
 #ifndef _Itop
 #define _Itop
 
-        /* Determines for whom we're destined ------------------------------ */
-//#define UGH_ITS_4_RH            /* use the redhat libproc conventions      */
-
         /* Defines intended to be experimented with ------------------------ */
 //#define CASEUP_HEXES            /* show any hex values in upper case       */
 //#define CASEUP_SCALE            /* show scaled time/num suffix upper case  */
