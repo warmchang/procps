@@ -1,3 +1,9 @@
+procps-3.1.0 --> procps-3.1.1
+
+vmstat faster on 2.5.xx kernels
+vmstat header fixed
+vmstat -a re-fixed
+
 procps-3.1.0 --> procps-3.1.0
 
 vmstat displays IO-wait time instead of bogus "w"
