@@ -8,4 +8,7 @@ Version ????
 
 	Put most of the Debian diffs in.
 
+	ps no longer crashes if System.map is %1024. Debian #109237
+	(Thanks Colin Walters)
+
 

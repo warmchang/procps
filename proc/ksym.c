@@ -356,7 +356,7 @@ static int sysmap_mmap(const char *filename, void (*message)(const char *, ...))
     sysmap_index = vp;
     for(;;){
       char *vstart;
-      if(!*endp){                /* if we reached the end */
+      if(endp - sysmap_data >= sbuf.st_size){   /* if we reached the end */
         int i = VCNT;            /* check VCNT times to verify this file */
         if(*Version) goto bad_version;
         if(!ksyms_index) return 1; /* if can not verify, assume success */
