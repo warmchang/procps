@@ -189,7 +189,7 @@ int main(int argc, char **argv)
 		for (i = 1;; ++i) {
 			char *p;
 			row = nrows - (i * scale_fact);
-			if (row < 0)
+			if (row < 0 || row >= nrows)
 				break;
 			if (*(p = screen + row * ncols + col) == ' ')
 				*p = '-';
