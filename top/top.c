@@ -345,9 +345,17 @@ static const char *fmtmk (const char *fmts, ...) {
         /*
          * This guy is just our way of avoiding the overhead of the standard
          * strcat function (should the caller choose to participate) */
-static inline char *scat (char *dst, const char *src) {
-   while (*dst) dst++;
-   while ((*(dst++) = *(src++)));
+static inline char *scat (char *dst, const char *src, char *buf, size_t size) {
+   char *end = buf + size;
+   if (size <= 0) return buf;
+   if (dst < buf) return buf;
+
+   while (dst < end && *dst) dst++;
+   while (dst < end && (*(dst++) = *(src++)));
+   if (dst >= end) {
+      *--end = '\0';
+      return end;
+   }
    return --dst;
 } // end: scat
 
@@ -654,7 +662,7 @@ static void xalloc_our_handler (const char *fmts, ...) {
    va_start(va, fmts);
    vsnprintf(buf, sizeof(buf), fmts, va);
    va_end(va);
-   scat(buf, "\n");
+   scat(buf, "\n", buf, sizeof(buf));
    bye_bye(buf);
 } // end: xalloc_our_handler
 
@@ -971,7 +979,7 @@ static void show_special (int interact, const char *glob) {
                *sub_end = '\0';
                snprintf(tmp, sizeof(tmp), "%s%.*s%s"
                   , Curwin->captab[ch], utf8_embody(sub_beg, room), sub_beg, Caps_off);
-               rp = scat(rp, tmp);
+               rp = scat(rp, tmp, row, sizeof(row));
                room -= (sub_end - sub_beg);
                room += utf8_delta(sub_beg);
                sub_beg = (sub_end += 2);
@@ -2050,12 +2058,12 @@ static void build_headers (void) {
          if (UNSAFE_SORTINDX(w->rc.sortindx, sizeof(Fieldstab) / sizeof(Fieldstab[0])))
             w->rc.sortindx = EU_PID;
          memset((s = w->columnhdr), 0, sizeof(w->columnhdr));
-         if (Rc.mode_altscr) s = scat(s, fmtmk("%d", w->winnum));
+         if (Rc.mode_altscr) s = scat(s, fmtmk("%d", w->winnum), w->columnhdr, sizeof(w->columnhdr));
          for (i = 0; i < w->maxpflgs; i++) {
             f = w->procflgs[i];
 #ifdef USE_X_COLHDR
             if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx) {
-               s = scat(s, fmtmk("%s%s", Caps_off, w->capclr_msg));
+               s = scat(s, fmtmk("%s%s", Caps_off, w->capclr_msg), w->columnhdr, sizeof(w->columnhdr));
                w->hdrcaplen += strlen(Caps_off) + strlen(w->capclr_msg);
             }
 #else
@@ -2065,10 +2073,10 @@ static void build_headers (void) {
             Frames_libflags |= Fieldstab[f].lflg;
             s = scat(s, utf8_justify(N_col(f)
                , VARcol(f) ? w->varcolsz : Fieldstab[f].width
-               , CHKw(w, Fieldstab[f].align)));
+               , CHKw(w, Fieldstab[f].align)), w->columnhdr, sizeof(w->columnhdr));
 #ifdef USE_X_COLHDR
             if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx) {
-               s = scat(s, fmtmk("%s%s", Caps_off, w->capclr_hdr));
+               s = scat(s, fmtmk("%s%s", Caps_off, w->capclr_hdr), w->columnhdr, sizeof(w->columnhdr));
                w->hdrcaplen += strlen(Caps_off) + strlen(w->capclr_hdr);
             }
 #endif
@@ -2152,7 +2160,7 @@ static void calibrate_fields (void) {
             while accounting for a possible leading window number */
          w->varcolsz = varcolcnt = 0;
          *(s = w->columnhdr) = '\0';
-         if (Rc.mode_altscr) s = scat(s, " ");
+         if (Rc.mode_altscr) s = scat(s, " ", w->columnhdr, sizeof(w->columnhdr));
          for (i = 0; i + w->begpflg < w->totpflgs; i++) {
             f = w->pflgsall[i + w->begpflg];
             w->procflgs[i] = f;
@@ -2164,7 +2172,7 @@ static void calibrate_fields (void) {
             // oops, won't fit -- we're outta here...
             if (Screen_cols < ((int)(s - w->columnhdr) + len)) break;
             if (VARcol(f)) { ++varcolcnt; w->varcolsz += strlen(h); }
-            s = scat(s, fmtmk("%*.*s", len, len, h));
+            s = scat(s, fmtmk("%*.*s", len, len, h), w->columnhdr, sizeof(w->columnhdr));
          }
 #ifndef USE_X_COLHDR
          if (EU_XON == w->procflgs[i - 1]) --i;
@@ -2180,7 +2188,7 @@ static void calibrate_fields (void) {
          /* establish the field where all remaining fields would still
             fit within screen width, including a leading window number */
          *(s = w->columnhdr) = '\0';
-         if (Rc.mode_altscr) s = scat(s, " ");
+         if (Rc.mode_altscr) s = scat(s, " ", w->columnhdr, sizeof(w->columnhdr));
          for (i = w->totpflgs - 1; -1 < i; i--) {
             f = w->pflgsall[i];
 #ifndef USE_X_COLHDR
@@ -2189,7 +2197,7 @@ static void calibrate_fields (void) {
             h = N_col(f);
             len = (VARcol(f) ? (int)strlen(h) : Fieldstab[f].width) + COLPADSIZ;
             if (Screen_cols < ((int)(s - w->columnhdr) + len)) break;
-            s = scat(s, fmtmk("%*.*s", len, len, h));
+            s = scat(s, fmtmk("%*.*s", len, len, h), w->columnhdr, sizeof(w->columnhdr));
             w->endpflg = i;
          }
 #ifndef USE_X_COLHDR
@@ -3469,7 +3477,7 @@ static void inspection_utility (int pid) {
       Inspect.tab[sel].caps = "~4"; dst[0] = '\0'; \
       for (i = 0; i < Inspect.total; i++) { char _s[SMLBUFSIZ]; \
          snprintf(_s, sizeof(_s), " %s %s", Inspect.tab[i].name, Inspect.tab[i].caps); \
-         strcat(dst, _s); } }
+         scat(dst, _s, dst, sizeof(dst)); } }
    char sels[MEDBUFSIZ];
    static int sel;
    int i, key;
@@ -3754,13 +3762,13 @@ error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
          case 'f':                          // 3.3.0 thru 3.3.3 (ng)
             SETw(w, Show_JRNUMS);
          case 'g':                          // from 3.3.4 thru 3.3.8
-            scat(w->rc.fieldscur, RCF_PLUS_H);
+            scat(w->rc.fieldscur, RCF_PLUS_H, w->rc.fieldscur, sizeof(w->rc.fieldscur));
          case 'h':                          // this is release 3.3.9
             w->rc.graph_cpus = w->rc.graph_mems = 0;
             // these next 2 are really global, but best documented here
             Rc.summ_mscale = Rc.task_mscale = SK_Kb;
          case 'i':                          // actual RCF_VERSION_ID
-            scat(w->rc.fieldscur, RCF_PLUS_J);
+            scat(w->rc.fieldscur, RCF_PLUS_J, w->rc.fieldscur, sizeof(w->rc.fieldscur));
          case 'j':                          // and the next version
          default:
             if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
@@ -5678,7 +5686,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
 
    // we must begin a row with a possible window number in mind...
    *(rp = rbuf) = '\0';
-   if (Rc.mode_altscr) rp = scat(rp, " ");
+   if (Rc.mode_altscr) rp = scat(rp, " ", rbuf, sizeof(rbuf));
 
    for (x = 0; x < q->maxpflgs; x++) {
       const char *cp = NULL;
@@ -5888,7 +5896,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
 
       if (cp) {
          if (q->osel_tot && !osel_matched(q, i, cp)) return "";
-         rp = scat(rp, cp);
+         rp = scat(rp, cp, rbuf, sizeof(rbuf));
       }
       #undef S
       #undef W
