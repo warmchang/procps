@@ -108,6 +108,12 @@ static const char *mapping_name(proc_t *p, unsigned KLONG addr, unsigned KLONG l
     return cp[1] ? cp+1 : cp;
   }
 
+  cp = strchr(mapbuf,'/');
+  if(cp){
+    if(showpath) return cp;
+    return strrchr(cp,'/') + 1;  // it WILL succeed
+  }
+
   cp = "  [ anon ]";
   if( (p->start_stack >= addr) && (p->start_stack <= addr+len) )  cp = "  [ stack ]";
   return cp;
