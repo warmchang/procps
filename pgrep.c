@@ -483,6 +483,7 @@ static struct el * select_procs (int *num)
 {
 	PROCTAB *ptp;
 	proc_t task;
+	proc_t subtask;
 	unsigned long long saved_start_time;      /* for new/old support */
 	pid_t saved_pid = 0;                      /* for new/old support */
 	int matches = 0;
@@ -510,6 +511,7 @@ static struct el * select_procs (int *num)
 	}
 
 	memset(&task, 0, sizeof (task));
+	memset(&subtask, 0, sizeof (subtask));
 	while(readproc(ptp, &task)) {
 		int match = 1;
 
@@ -615,8 +617,6 @@ static struct el * select_procs (int *num)
 			// argparse time, but a further
 			// control is free
 			if (opt_threads && !i_am_pkill) {
-				proc_t subtask;
-				memset(&subtask, 0, sizeof (subtask));
 				while (readtask(ptp, &task, &subtask)){
 					// don't add redundand tasks
 					if (task.XXXID == subtask.XXXID)
@@ -635,19 +635,9 @@ static struct el * select_procs (int *num)
 					} else {
 						list[matches++].num = subtask.XXXID;
 					}
-					memset(&subtask, 0, sizeof (subtask));
 				}
 			}
-
-
-
 		}
-
-
-
-
-
-		memset (&task, 0, sizeof (task));
 	}
 	closeproc (ptp);
 	*num = matches;
