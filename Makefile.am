@@ -33,7 +33,7 @@ w_SOURCES = w.c
 vmstat_SOURCES = vmstat.c
 pgrep_SOURCES = pgrep.c
 
-top_SOURCES = top.c
+top_SOURCES = top.c top.h
 top_LDADD = proc/libproc.la @NCURSES_LIB@
 
 watch_SOURCES = watch.c
@@ -42,4 +42,4 @@ watch_LDADD = @NCURSES_LIB@
 man_MANS = free.1 kill.1 pgrep.1 pkill.1 skill.1 snice.1 sysctl.8 \
 	       sysctl.conf.5 tload.1 top.1 uptime.1 vmstat.8 w.1 watch.1
 
-EXTRA_DIST = man_MANS
+EXTRA_DIST = $(man_MANS)
