@@ -274,6 +274,9 @@ Modifications to the arguments are not shown.
 
 // FIXME: some of these may hit the guard page in forest mode
 
+#define OUTBUF_SIZE_AT(endp) \
+  (((endp) >= outbuf && (endp) < outbuf + OUTBUF_SIZE) ? (outbuf + OUTBUF_SIZE) - (endp) : 0)
+
 /*
  * "args", "cmd", "command" are all the same:  long  unless  c
  * "comm", "ucmd", "ucomm"  are all the same:  short unless -f
@@ -287,13 +290,13 @@ setREL2(CMDLINE,ENVIRON)
   fh = forest_helper(outbuf);
   endp += fh;
   rightward -= fh;
-  endp += escaped_copy(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE, &rightward);
+  endp += escaped_copy(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
   if(bsd_e_option && rightward>1) {
     char *e = rSv(ENVIRON, str, pp);
     if(*e != '-' || *(e+1) != '\0') {
       *endp++ = ' ';
       rightward--;
-      escaped_copy(endp, e, OUTBUF_SIZE, &rightward);
+      escaped_copy(endp, e, OUTBUF_SIZE_AT(endp), &rightward);
     }
   }
   return max_rightward-rightward;
@@ -313,15 +316,15 @@ setREL3(CMD,CMDLINE,ENVIRON)
   endp += fh;
   rightward -= fh;
   if(unix_f_option)
-    endp += escaped_copy(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE, &rightward);
+    endp += escaped_copy(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
   else
-    endp += escaped_copy(endp, rSv(CMD, str, pp), OUTBUF_SIZE, &rightward);
+    endp += escaped_copy(endp, rSv(CMD, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
   if(bsd_e_option && rightward>1) {
     char *e = rSv(ENVIRON, str, pp);
     if(*e != '-' || *(e+1) != '\0') {
       *endp++ = ' ';
       rightward--;
-      escaped_copy(endp, e, OUTBUF_SIZE, &rightward);
+      escaped_copy(endp, e, OUTBUF_SIZE_AT(endp), &rightward);
     }
   }
   return max_rightward-rightward;
@@ -355,10 +358,12 @@ setREL1(CMD)
   rightward -= fh;
   if (rightward>8)  /* 8=default, but forest maybe feeds more */
     rightward = 8;
-  endp += escape_str(endp, rSv(CMD, str, pp), OUTBUF_SIZE, &rightward);
+  endp += escape_str(endp, rSv(CMD, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
   //return endp - outbuf;
   return max_rightward-rightward;
 }
+
+#undef OUTBUF_SIZE_AT
 
 /* elapsed wall clock time, [[dd-]hh:]mm:ss format (not same as "time") */
 static int pr_etime(char *restrict const outbuf, const proc_t *restrict const pp){
