@@ -48,6 +48,25 @@ static struct slab_info *get_slabnode(void)
 }
 
 /*
+ * slab_badname_detect - return true if current slab was declared with
+ *                       whitespaces for instance 
+ *			 FIXME :Other cases ?
+ */
+
+static int slab_badname_detect(const char *restrict buffer)
+{
+	int numberarea=0;
+	while (*buffer){
+		if((*buffer)==' ')
+			numberarea=1;
+		if(isalpha(*buffer)&&numberarea)	
+			return 1;
+		buffer++;	
+	}
+	return 0;
+}
+
+/*
  * put_slabinfo - return all allocated nodes to the free list
  */
 void put_slabinfo(struct slab_info *head)
@@ -137,7 +156,7 @@ static int parse_slabinfo20(struct slab_info **list, struct slab_stat *stats,
 	}
 
 	if (!curr) {
-		fprintf(stderr, "error reading slabinfo!\n");
+		fprintf(stderr, "\rerror reading slabinfo!\n");
 		return 1;
 	}
 
@@ -183,7 +202,9 @@ static int parse_slabinfo11(struct slab_info **list, struct slab_stat *stats,
 				&curr->pages_per_slab);
 
 		if (assigned < 6) {
-			fprintf(stderr, "unrecognizable data in slabinfo!\n");
+			fprintf(stderr, "unrecognizable data in  your slabinfo version 1.1\n\r");
+			if(slab_badname_detect(buffer))
+				fprintf(stderr, "Found an error in cache name at line %s\n", buffer); 
 			curr = NULL;
 			break;
 		}
@@ -218,7 +239,7 @@ static int parse_slabinfo11(struct slab_info **list, struct slab_stat *stats,
 	}
 
 	if (!curr) {
-		fprintf(stderr, "error reading slabinfo!\n");
+		fprintf(stderr, "\rerror reading slabinfo!\n");
 		return 1;
 	}
 

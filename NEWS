@@ -1,9 +1,11 @@
 procps-3.2.0 --> procps-3.2.1
 
-build even w/ curses in an odd location
+build even w/ curses in an odd location -- thanks to Segher Boessenkool
 ps: STAT flags for fg process group and session leader
 ps: STAT flags for swapped out process dropped (was broken)
 ps: new -M and Z options for security data (SE Linux, etc.)
+slabtop: detect broken /proc/slabinfo -- thanks to Fabian Frederick
+slabtop: ensure that error messages show up on the screen -- FF again
 
 procps-3.1.15 --> procps-3.2.0
 

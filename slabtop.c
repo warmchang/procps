@@ -399,5 +399,6 @@ int main(int argc, char *argv[])
 
 	tcsetattr(0, TCSAFLUSH, &saved_tty);
 	free_slabinfo(slab_list);
+	endwin();
 	return 0;
 }
