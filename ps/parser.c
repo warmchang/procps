@@ -144,15 +144,15 @@ static const char *parse_tty(char *str, sel_union *ret){
   lookup("/dev/pty%s");
   lookup("/dev/%snsole"); /* "co" means "console", maybe do all VCs too? */
   if(!strcmp(str,"-")){   /* "-" means no tty (from AIX) */
-    ret->tty = -1;  /* processes w/o tty */
+    ret->tty = 0;  /* processes w/o tty */
     return 0;
   }
   if(!strcmp(str,"?")){   /* "?" means no tty, which bash eats (Reno BSD?) */
-    ret->tty = -1;  /* processes w/o tty */
+    ret->tty = 0;  /* processes w/o tty */
     return 0;
   }
   if(!*(str+1) && (stat(str,&sbuf)>=0)){  /* Kludge! Assume bash ate '?'. */
-    ret->tty = -1;  /* processes w/o tty */
+    ret->tty = 0;  /* processes w/o tty */
     return 0;
   }
 #undef lookup

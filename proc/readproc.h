@@ -9,6 +9,7 @@
  * in the file COPYING
  */
 
+#include "procps.h"
 
 #define SIGNAL_STRING
 
@@ -173,6 +174,9 @@ extern void closeproc(PROCTAB* PT);
  */
 extern proc_t* readproc(PROCTAB* PT, proc_t* return_buf);
 extern proc_t* ps_readproc(PROCTAB* PT, proc_t* return_buf);
+
+// warning: interface may change
+extern int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid);
 
 extern void look_up_our_self(proc_t *p);
 

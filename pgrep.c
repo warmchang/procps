@@ -386,7 +386,7 @@ select_procs (void)
 		else if (opt_sid && ! match_numlist (task.session, opt_sid))
 			match = 0;
 		else if (opt_term) {
-			if (task.tty == -1) {
+			if (task.tty == 0) {
 				match = 0;
 			} else {
 				char tty[256];

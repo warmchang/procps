@@ -468,7 +468,7 @@ selection_collection:
           case '-':
           case '?':
             num_found++;
-            ENLIST(tty,-1);
+            ENLIST(tty,0);
             if(!NEXTARG) break;
           }
         }

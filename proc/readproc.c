@@ -14,6 +14,7 @@
 #include "procps.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <stdarg.h>
 #include <string.h>
 #include <unistd.h>
@@ -74,19 +75,35 @@ void freeproc(proc_t* p) {
 
 
 
-static void status2proc(const char *S, proc_t *restrict P, int fill){
+static void status2proc(const char *S, proc_t *restrict P){
     char* tmp;
-    if (fill == 1) {
-        memset(P->cmd, 0, sizeof P->cmd);
-        sscanf (S, "Name:\t%15c", P->cmd);
-        tmp = strchr(P->cmd,'\n');
-        *tmp='\0';
-        tmp = strstr (S,"State");
-        sscanf (tmp, "State:\t%c", &P->state);
+    int i;
+
+    // The cmd is escaped, with \\ and \n for backslash and newline.
+    // It certainly may contain "VmSize:" and similar crap.
+    if(unlikely(strncmp("Name:\t",S,6))) fprintf(stderr, "Internal error!\n");
+    S += 6;
+    i = 0;
+    while(i < sizeof P->cmd - 1){
+      int c = *S++;
+      if(unlikely(c=='\n')) break;
+      if(unlikely(c=='\0')) return; // should never happen
+      if(unlikely(c=='\\')){
+        c = *S++;
+        if(c=='\n') break; // should never happen
+        if(!c) break; // should never happen
+        if(c=='n') c='\n'; // else we assume it is '\\'
+      }
+      P->cmd[i++] = c;
     }
+    P->cmd[i] = '\0';
+
+    tmp = strstr (S,"State:\t");
+    if(likely((long)tmp)) P->state = tmp[7];
+    else fprintf(stderr, "Internal error!\n");
 
     tmp = strstr (S,"Pid:");
-    if(tmp) sscanf (tmp,
+    if(likely((long)tmp)) sscanf (tmp,
         "Pid:\t%d\n"
         "PPid:\t%d\n",
         &P->pid,
@@ -95,21 +112,21 @@ static void status2proc(const char *S, proc_t *restrict P, int fill){
     else fprintf(stderr, "Internal error!\n");
 
     tmp = strstr (S,"Uid:");
-    if(tmp) sscanf (tmp,
+    if(likely((long)tmp)) sscanf (tmp,
         "Uid:\t%d\t%d\t%d\t%d",
         &P->ruid, &P->euid, &P->suid, &P->fuid
     );
     else fprintf(stderr, "Internal error!\n");
 
     tmp = strstr (S,"Gid:");
-    if(tmp) sscanf (tmp,
+    if(likely((long)tmp)) sscanf (tmp,
         "Gid:\t%d\t%d\t%d\t%d",
         &P->rgid, &P->egid, &P->sgid, &P->fgid
     );
     else fprintf(stderr, "Internal error!\n");
 
     tmp = strstr (S,"VmSize:");
-    if(tmp) sscanf (tmp,
+    if(likely((long)tmp)) sscanf (tmp,
         "VmSize: %lu kB\n"
         "VmLck: %lu kB\n"
         "VmRSS: %lu kB\n"
@@ -132,7 +149,7 @@ static void status2proc(const char *S, proc_t *restrict P, int fill){
     }
 
     tmp = strstr (S,"SigPnd:");
-    if(tmp) sscanf (tmp,
+    if(likely((long)tmp)) sscanf (tmp,
 #ifdef SIGNAL_STRING
         "SigPnd: %s SigBlk: %s SigIgn: %s %*s %s",
         P->signal, P->blocked, P->sigignore, P->sigcatch
@@ -153,17 +170,25 @@ static void status2proc(const char *S, proc_t *restrict P, int fill){
  */
 static void stat2proc(const char* S, proc_t *restrict P) {
     int num;
-    char* tmp = strrchr(S, ')');	/* split into "PID (cmd" and "<rest>" */
-    *tmp = '\0';			/* replace trailing ')' with NUL */
+    char* tmp;
+
     /* fill in default values for older kernels */
     P->exit_signal = SIGCHLD;
     P->processor = 0;
     P->rtprio = -1;
     P->sched = -1;
-    /* parse these two strings separately, skipping the leading "(". */
-    memset(P->cmd, 0, sizeof P->cmd);	/* clear even though *P xcalloc'd ?! */
-    sscanf(S, "%d (%15c", &P->pid, P->cmd);   /* comm[16] in kernel */
-    num = sscanf(tmp + 2,			/* skip space after ')' too */
+
+    P->pid = strtol(S, &tmp, 10);
+    S = tmp + 2;
+    tmp = strrchr(S, ')');	 // split into "PID (cmd" and "<rest>"
+    num = tmp - S;
+    if(unlikely(num > sizeof P->cmd)) num = sizeof P->cmd; // 1 too big
+    num--;                       // ditch the ')' character
+    memcpy(P->cmd, S, num);
+    P->cmd[num] = '\0';
+    S = tmp + 2;                 // skip ") "
+
+    num = sscanf(S,
        "%c "
        "%d %d %d %d %d "
        "%lu %lu %lu %lu %lu "
@@ -193,10 +218,6 @@ static void stat2proc(const char* S, proc_t *restrict P) {
 /* -- Linux 2.2.8 to 2.5.17 end here -- */
        &P->rtprio, &P->sched  /* both added to 2.5.18 */
     );
-    
-    /* fprintf(stderr, "stat2proc converted %d fields.\n",num); */
-    if (P->tty == 0)
-	P->tty = -1;  /* the old notty val, update elsewhere bef. moving to 0 */
 }
 
 static void statm2proc(const char* s, proc_t *restrict P) {
@@ -212,8 +233,10 @@ static int file2str(const char *directory, const char *what, char *ret, int cap)
     int fd, num_read;
 
     sprintf(filename, "%s/%s", directory, what);
-    if ( (fd       = open(filename, O_RDONLY, 0)) == -1 ) return -1;
-    if ( (num_read = read(fd, ret, cap - 1))      <= 0 ) num_read = -1;
+    fd = open(filename, O_RDONLY, 0);
+    if(unlikely(fd==-1)) return -1;
+    num_read = read(fd, ret, cap - 1);
+    if(unlikely(num_read<=0)) num_read = -1;
     else ret[num_read] = 0;
     close(fd);
     return num_read;
@@ -226,7 +249,8 @@ static char** file2strvec(const char* directory, const char* what) {
     int align;
 
     sprintf(buf, "%s/%s", directory, what);
-    if ( (fd = open(buf, O_RDONLY, 0) ) == -1 ) return NULL;
+    fd = open(buf, O_RDONLY, 0);
+    if(fd==-1) return NULL;
 
     /* read whole file into a memory buffer, allocating as we go */
     while ((n = read(fd, buf, sizeof buf - 1)) > 0) {
@@ -272,6 +296,37 @@ static char** file2strvec(const char* directory, const char* what) {
     return ret;
 }
 
+// warning: interface may change
+int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid){
+    char name[32];
+    int fd;
+    int n = 0;
+    snprintf(name, sizeof name, "/proc/%u/cmdline", pid);
+    fd = open(name, O_RDONLY);
+    if(fd==-1) return NULL;
+    dst[0] = '\0';
+    for(;;){
+        ssize_t r = read(fd,dst+n,sz-n);
+        if(r==-1){
+            if(errno==EINTR) continue;
+            break;
+        }
+        n += r;
+        if(n==sz) break; // filled the buffer
+        if(r==0) break;  // EOF
+    }
+    if(n){
+        int i;
+        if(n==sz) n--;
+        dst[n] = '\0';
+        i=n;
+        while(i--){
+          int c = dst[i];
+          if(c<' ' || c>'~') dst[i]=' ';
+        }
+    }
+    return n;
+}
 
 /* These are some nice GNU C expression subscope "inline" functions.
  * The can be used with arbitrary types and evaluate their arguments
@@ -361,7 +416,7 @@ next_proc:				/* get next PID for consideration */
 
     if (flags & PROC_FILLSTATUS) {         /* read, parse /proc/#/status */
        if ((file2str(path, "status", sbuf, sizeof sbuf)) != -1 ){
-           status2proc(sbuf, p, 0 /*FIXME*/);
+           status2proc(sbuf, p);
        }
     }
 
@@ -459,7 +514,7 @@ next_proc:				/* get next PID for consideration */
 
   /*  if (flags & PROC_FILLSTATUS) { */        /* read, parse /proc/#/status */
        if ((file2str(path, "status", sbuf, sizeof sbuf)) != -1 ){
-           status2proc(sbuf, p, 0 /*FIXME*/);
+           status2proc(sbuf, p);
        }
 /*    }*/
 
@@ -509,7 +564,7 @@ void look_up_our_self(proc_t *p) {
     file2str(path, "statm", sbuf, sizeof sbuf);
     statm2proc(sbuf, p);		/* ignore statm errors here */
     file2str(path, "status", sbuf, sizeof sbuf);
-    status2proc(sbuf, p, 0 /*FIXME*/);
+    status2proc(sbuf, p);
 }
 
 

@@ -195,7 +195,7 @@ unsigned dev_to_tty(char *restrict ret, unsigned chop, int dev, int pid, unsigne
   char *restrict tmp = buf;
   unsigned i = 0;
   int c;
-  if((short)dev == (short)-1) goto fail;
+  if((short)dev == (short)0) goto no_tty;
   if(linux_version_code > LINUX_VERSION(2, 5, 0)){ /* didn't get done yet */
     if(link_name(tmp, major(dev), minor(dev), pid, "tty"   )) goto abbrev;
   }
@@ -203,7 +203,8 @@ unsigned dev_to_tty(char *restrict ret, unsigned chop, int dev, int pid, unsigne
   if(  link_name(tmp, major(dev), minor(dev), pid, "fd/2"  )) goto abbrev;
   if( guess_name(tmp, major(dev), minor(dev)               )) goto abbrev;
   if(  link_name(tmp, major(dev), minor(dev), pid, "fd/255")) goto abbrev;
-fail:
+  // fall through if unable to find a device file
+no_tty:
   strcpy(ret, "?");
   return 1;
 abbrev:
@@ -232,7 +233,7 @@ abbrev:
 int tty_to_dev(const char *restrict const name) {
   struct stat sbuf;
   static char buf[32];
-  if(stat(name, &sbuf) >= 0) return sbuf.st_rdev;
+  if(name[0]=='/' && stat(name, &sbuf) >= 0) return sbuf.st_rdev;
   snprintf(buf,32,"/dev/%s",name);
   if(stat(buf, &sbuf) >= 0) return sbuf.st_rdev;
   snprintf(buf,32,"/dev/tty%s",name);

@@ -19,7 +19,7 @@
 
 #define session_leader(p)       ((p)->session == (p)->pid)
 #define process_group_leader(p) ((p)->pgid    == (p)->pid)
-#define without_a_tty(p)        ((unsigned short)((p)->tty) == (unsigned short)-1)
+#define without_a_tty(p)        ((unsigned short)((p)->tty) == (unsigned short)0)
 #define some_other_user(p)      ((p)->euid    != cached_euid)
 #define running(p)              (((p)->state=='R')||((p)->state=='D'))
 #define has_our_euid(p)         ((unsigned short)((p)->euid) == (unsigned short)cached_euid)
