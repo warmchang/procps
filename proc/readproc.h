@@ -209,6 +209,9 @@ extern void look_up_our_self(proc_t *p);
 
 extern void freeproc(proc_t* p);
 
+//fill out a proc_t for a single task
+extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
+
 // openproc/readproctab:
 //
 // Return PROCTAB* / *proc_t[] or NULL on error ((probably) "/proc" cannot be

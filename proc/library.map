@@ -15,6 +15,6 @@ global:
   kb_main_free; kb_main_total; kb_main_used; kb_swap_free;
   kb_swap_total; kb_swap_used; kb_main_shared;
   vm_pgpgin; vm_pgpgout; vm_pswpin; vm_pswpout; free_slabinfo; put_slabinfo;
-  get_slabinfo;
+  get_slabinfo; get_proc_stats;
 local: *;
 };

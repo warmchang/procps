@@ -17,7 +17,8 @@
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
-#include "proc/version.h"  // FIXME: we need to link the lib for this :-(
+#include "proc/readproc.h"
+#include "proc/version.h"
 
 static void usage(void) NORETURN;
 static void usage(void){
@@ -75,6 +76,14 @@ static const char *get_args(unsigned pid){
   return "[]";  // as good as anything
 }
 
+static const char *anon_name(int pid, unsigned KLONG addr, unsigned KLONG len){
+  const char *cp = "  [ anon ]";
+  proc_t proc;
+  if (get_proc_stats(pid, &proc)){
+    if( (proc.start_stack >= addr) && (proc.start_stack <= addr+len) )  cp = "  [ stack ]";
+  }
+  return cp;
+}
 
 static int one_proc(unsigned pid){
   char buf[32];
@@ -91,9 +100,9 @@ static int one_proc(unsigned pid){
     char flags[32];
     const char *perms;
     char *tmp; // to clean up unprintables
-    unsigned long start, end, diff;
+    unsigned KLONG start, end, diff;
     unsigned long long pgoff;
-    sscanf(mapbuf,"%lx-%lx %31s %Lx", &start, &end, flags, &pgoff);
+    sscanf(mapbuf,"%"KLF"x-%"KLF"x %31s %Lx", &start, &end, flags, &pgoff);
     tmp = strchr(mapbuf,'\n');
     if(tmp) *tmp='\0';
     tmp = mapbuf;
@@ -125,27 +134,27 @@ static int one_proc(unsigned pid){
     if(x_option){
       const char *cp = strrchr(mapbuf,'/');
       if(cp && cp[1]) cp++;
-      if(!cp) cp = " [ anon ]";    // yeah, 1 space
+      if(!cp) cp = anon_name(pid, start, diff);
       printf(
-        (sizeof(long)==8)
-          ? "%016lx %7ld       - %7ld %7ld %s   %s\n"
-          : "%08lx %7ld       - %7ld %7ld %s   %s\n",
+        (sizeof(KLONG)==8)
+          ? "%016"KLF"x %7lu       - %7lu %7lu %s   %s\n"
+          :      "%08lx %7lu       - %7lu %7lu %s   %s\n",
         start,
-        diff>>10,
-        (flags[3]=='s') ? diff>>10 : 0,
-        (flags[3]=='p') ? diff>>10 : 0,
+        (unsigned long)(diff>>10),
+        (flags[3]=='s') ? (unsigned long)(diff>>10) : 0,
+        (flags[3]=='p') ? (unsigned long)(diff>>10) : 0,
         perms,
         cp
       );
     }else{
       const char *cp = strchr(mapbuf,'/');
-      if(!cp) cp = "  [ anon ]";   // yeah, 2 spaces
+      if(!cp) cp = anon_name(pid, start, diff);
       printf(
-        (sizeof(long)==8)
-          ? "%016lx %6ldK %s   %s\n"
-          : "%08lx %6ldK %s   %s\n",
+        (sizeof(KLONG)==8)
+          ? "%016"KLF"x %6luK %s   %s\n"
+          :      "%08lx %6luK %s   %s\n",
         start,
-        diff>>10,
+        (unsigned long)(diff>>10),
         perms,
         cp
       );
@@ -153,7 +162,7 @@ static int one_proc(unsigned pid){
     
   }
   if(x_option){
-    if(sizeof(long)==8){
+    if(sizeof(KLONG)==8){
       printf("----------------  ------  ------  ------  ------\n");
       printf(
         "total kB %15ld       - %7ld %7ld\n",
@@ -171,8 +180,8 @@ static int one_proc(unsigned pid){
       );
     }
   }else{
-    if(sizeof(long)==8) printf(" total %16ldK\n", (total_shared + total_private) >> 10);
-    else                printf(" total %8ldK\n", (total_shared + total_private) >> 10);
+    if(sizeof(KLONG)==8) printf(" total %16ldK\n", (total_shared + total_private) >> 10);
+    else                 printf(" total %8ldK\n",  (total_shared + total_private) >> 10);
   }
   return 0;
 }
@@ -214,7 +223,11 @@ int main(int argc, char *argv[]){
       char *walk = *argv;
       char *endp;
       unsigned long pid;
-      if(!strncmp("/proc/",walk,6)) walk += 6;
+      if(!strncmp("/proc/",walk,6)){
+        walk += 6;
+        // user allowed to do: pmap /proc/*
+        if(*walk<'0' || *walk>'9') continue;
+      }
       if(*walk<'0' || *walk>'9') usage();
       pid = strtoul(walk, &endp, 0);
       if(pid<1ul || pid>0x7ffffffful || *endp) usage();
