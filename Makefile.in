@@ -78,7 +78,7 @@ SUBDIRS = proc ps
 myexecbin_PROGRAMS = kill
 myexecbindir = $(prefix)/bin
 
-bin_PROGRAMS = oldps uptime tload free w top vmstat watch pgrep
+bin_PROGRAMS = uptime tload free w top vmstat watch pgrep
 
 # Derived (symlinked binaries)
 bin_SCRIPTS = skill snice pkill
@@ -91,7 +91,6 @@ kill_SOURCES = skill.c
 kill_INCLUDES = -DSYSV
 #kill_LDADD =
 
-oldps_SOURCES = oldps.c
 uptime_SOURCES = uptime.c
 tload_SOURCES = tload.c
 free_SOURCES = free.c
@@ -105,7 +104,7 @@ top_LDADD = proc/libproc.la @NCURSES_LIB@
 watch_SOURCES = watch.c
 watch_LDADD = @NCURSES_LIB@
 
-man_MANS = free.1 kill.1 oldps.1 pgrep.1 pkill.1 skill.1 snice.1 sysctl.8 	       sysctl.conf.5 tload.1 top.1 uptime.1 vmstat.8 w.1 watch.1
+man_MANS = free.1 kill.1 pgrep.1 pkill.1 skill.1 snice.1 sysctl.8 	       sysctl.conf.5 tload.1 top.1 uptime.1 vmstat.8 w.1 watch.1
 
 
 EXTRA_DIST = man_MANS
@@ -119,10 +118,6 @@ DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-oldps_OBJECTS =  oldps.o
-oldps_LDADD = $(LDADD)
-oldps_DEPENDENCIES =  proc/libproc.la
-oldps_LDFLAGS = 
 uptime_OBJECTS =  uptime.o
 uptime_LDADD = $(LDADD)
 uptime_DEPENDENCIES =  proc/libproc.la
@@ -185,11 +180,11 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/free.P .deps/oldps.P .deps/pgrep.P .deps/skill.P \
+DEP_FILES =  .deps/free.P .deps/pgrep.P .deps/skill.P \
 .deps/sysctl.P .deps/tload.P .deps/top.P .deps/uptime.P .deps/vmstat.P \
 .deps/w.P .deps/watch.P
-SOURCES = $(oldps_SOURCES) $(uptime_SOURCES) $(tload_SOURCES) $(free_SOURCES) $(w_SOURCES) $(top_SOURCES) $(vmstat_SOURCES) $(watch_SOURCES) $(pgrep_SOURCES) $(kill_SOURCES) sysctl.c
-OBJECTS = $(oldps_OBJECTS) $(uptime_OBJECTS) $(tload_OBJECTS) $(free_OBJECTS) $(w_OBJECTS) $(top_OBJECTS) $(vmstat_OBJECTS) $(watch_OBJECTS) $(pgrep_OBJECTS) $(kill_OBJECTS) sysctl.o
+SOURCES = $(uptime_SOURCES) $(tload_SOURCES) $(free_SOURCES) $(w_SOURCES) $(top_SOURCES) $(vmstat_SOURCES) $(watch_SOURCES) $(pgrep_SOURCES) $(kill_SOURCES) sysctl.c
+OBJECTS = $(uptime_OBJECTS) $(tload_OBJECTS) $(free_OBJECTS) $(w_OBJECTS) $(top_OBJECTS) $(vmstat_OBJECTS) $(watch_OBJECTS) $(pgrep_OBJECTS) $(kill_OBJECTS) sysctl.o
 
 all: all-redirect
 .SUFFIXES:
@@ -316,9 +311,6 @@ distclean-libtool:
 
 maintainer-clean-libtool:
 
-oldps: $(oldps_OBJECTS) $(oldps_DEPENDENCIES)
-	@rm -f oldps
-	$(LINK) $(oldps_LDFLAGS) $(oldps_OBJECTS) $(oldps_LDADD) $(LIBS)
 
 uptime: $(uptime_OBJECTS) $(uptime_DEPENDENCIES)
 	@rm -f uptime

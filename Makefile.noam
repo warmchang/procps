@@ -20,10 +20,10 @@ export INSTALLSCT =  install --mode a=rx
 export INSTALLMAN =  install --mode a=r
 
 BPROG      =  kill #					-> BINDIR
-UPROG      =  oldps uptime tload free w top vmstat watch skill snice # -> USRBINDIR
+UPROG      =  uptime tload free w top vmstat watch skill snice # -> USRBINDIR
 PPROG      =  pgrep pkill# -> PROCDIR
 SPROG      =  sysctl
-MAN1       =  oldps.1 uptime.1 tload.1 free.1 w.1 top.1 watch.1 skill.1 kill.1 snice.1 pgrep.1 pkill.1
+MAN1       =  uptime.1 tload.1 free.1 w.1 top.1 watch.1 skill.1 kill.1 snice.1 pgrep.1 pkill.1
 MAN5       =  sysctl.conf.5
 MAN8       =  vmstat.8 sysctl.8
 DESKTOP    =  top.desktop
@@ -133,14 +133,14 @@ build_ps:				; $(MAKE) -C ps
 install_ps:      ps		; $(MAKE) -C ps install
 
 # executable dependencies
-oldps kill skill snice top w uptime tload free vmstat utmp : $(LIB_TGT)
+kill skill snice top w uptime tload free vmstat utmp : $(LIB_TGT)
 
 # static pattern build/link rules:
 
 %.o : %.c
 	$(strip $(CC) $(CFLAGS) -c $^)
 
-oldps w uptime tload free vmstat utmp pgrep: % : %.o
+w uptime tload free vmstat utmp pgrep: % : %.o
 	$(strip $(CC) $(LDFLAGS) -o $@ $< $(LIB_TGT) $(EXTRALIBS))
 
 

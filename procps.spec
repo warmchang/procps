@@ -72,7 +72,6 @@ rm -f /etc/psdevtab /etc/psdatabase
 %attr(755,root,root) /lib/libproc.so.2.0.7
 %attr(555,root,root) /bin/ps
 %attr(555,root,root) /sbin/sysctl
-%attr(555,root,root) /usr/bin/oldps
 %attr(555,root,root) /usr/bin/uptime
 %attr(555,root,root) /usr/bin/tload
 %attr(555,root,root) /usr/bin/free
@@ -87,7 +86,6 @@ rm -f /etc/psdevtab /etc/psdatabase
 
 %attr(0644,root,root) /usr/man/man1/free.1
 %attr(0644,root,root) /usr/man/man1/ps.1
-%attr(0644,root,root) /usr/man/man1/oldps.1
 %attr(0644,root,root) /usr/man/man1/sessreg.1
 %attr(0644,root,root) /usr/man/man1/skill.1
 %attr(0644,root,root) /usr/man/man1/snice.1
