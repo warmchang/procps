@@ -1,6 +1,6 @@
 /* top.h - Header file:         show Linux processes */
 /*
- * Copyright (c) June, 2002 -   James C. Warner
+ * Copyright (c) 2002, by:      James C. Warner
  *    All rights reserved.      8921 Hilloway Road
  *                              Eden Prairie, Minnesota 55347 USA
  *                             <warnerjc@worldnet.att.net>
@@ -27,7 +27,7 @@
 //#define CASEUP_HEXES            /* show any hex values in upper case       */
 //#define CASEUP_SCALE            /* show scaled times & memory upper case   */
 //#define CASEUP_SUMMK            /* show memory summary kilobytes with 'K'  */
-//#define QUIT_NORMALQ            /* use 'q' to quit, not new default <Esc>  */
+//#define QUIT_NORMALQ            /* use 'q' to quit, not new default 'Q'    */
 //#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
 //#define USE_LIB_STA3            /* use lib status (3 ch) vs. proc_t (1 ch) */
 //#define WARN_NOT_SMP            /* restrict '1' & 'I' commands to true smp */
@@ -41,7 +41,7 @@
 /*######  Some Miscellaneous constants  ##################################*/
 
         /* The default delay twix updates */
-#define DEF_DELAY  2.0
+#define DEF_DELAY  3.0
 
         /* The length of time a 'message' is displayed */
 #define MSG_SLEEP  2
@@ -168,14 +168,9 @@ enum pflag {
 #define GRPNAMSIZ  6            /* window's name + number as in: '#:...'  */
 #define CAPTABMAX  9            /* a window's captab used by show_special */
 
-#define Def_WINDOW  0           /* these represent the pre-allocated      */
-#define Job_WINDOW  1           /* WIN_t's relative position in the       */
-#define Mem_WINDOW  2           /* window stack pointer array...          */
-#define Usr_WINDOW  3
-
-#define Flgs_TOG  1             /* these are used to direct wins_reflag   */
-#define Flgs_SET  2
-#define Flgs_OFF  3
+#define Flags_TOG  1            /* these are used to direct wins_reflag   */
+#define Flags_SET  2
+#define Flags_OFF  3
 
         /* The Persistent 'Mode' flags!
            All of these are preserved in the rc file, as a single integer.
@@ -221,10 +216,6 @@ enum pflag {
 #define VIZTOGc(f)  (!Show_altscr || Curwin->winflags & VISIBLE_tsk) \
                         ? TOGw(Curwin, f) : win_warn()
 
-        /* Just create a printable window number -- represented here since
-           we can't decide which to prefer (relative 0 or 1) */
-#define mkWNO(q)  q->winnum + 1
-
         /* This structure stores configurable information for each window.
            By expending a little effort in its creation and user requested
            maintainence, the only real additional per frame cost of having
@@ -233,7 +224,7 @@ enum pflag {
 typedef struct win {
    struct win *next,                    /* next window in window stack    */
               *prev;                    /* prior window in window stack   */
-   int         winnum,                  /* this window's num/array pos    */
+   int         winnum,                  /* window's num (array pos + 1)   */
                winlines;                /* task window's rows (volatile)  */
    int         winflags;        /* 'view', 'show' and 'sort' mode flags   */
    char        grpname   [GRPNAMSIZ],   /* window number:name, printable  */
@@ -267,7 +258,7 @@ typedef struct win {
 /*######  Display Support *Data*  ########################################*/
 
         /* An rcfile 'footprint' used to invalidate existing */
-#define RCF_FILEID  'c'
+#define RCF_FILEID  'd'
 
         /* The default fields displayed and their order,
            if nothing is specified by the loser, oops user */
@@ -341,9 +332,9 @@ typedef struct win {
         /* Keyboard Help specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
 #ifdef QUIT_NORMALQ
-#define HELP_STOPkey  "  q           "
+#define HELP_QUITkey  "  q           "
 #else
-#define HELP_STOPkey  "  <Esc>       "
+#define HELP_QUITkey  "  Q           "
 #endif
 #define KEYS_help \
    "%s's - \01Help for Interactive Commands\02 - %s\n" \
@@ -364,7 +355,7 @@ typedef struct win {
    "  u         . Show specific user only\n" \
    "  # or n    . Set maximum tasks displayed\n" \
    "  W           Write configuration file\n" \
-   HELP_STOPkey  "Quit\n" \
+   HELP_QUITkey  "Quit\n" \
    "            ( commands shown with '.' require a \01visible\02 task display \01window\02 ) \n" \
    "Press '\01h\02' or '\01?\02' for help with \01Windows\02,\n" \
    "any other key to continue " \

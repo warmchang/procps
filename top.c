@@ -1,6 +1,6 @@
 /* top.c - Source file:         show Linux processes */
 /*
- * Copyright (c) June, 2002 -   James C. Warner
+ * Copyright (c) 2002, by:      James C. Warner
  *    All rights reserved.      8921 Hilloway Road
  *                              Eden Prairie, Minnesota 55347 USA
  *                             <warnerjc@worldnet.att.net>
@@ -1304,7 +1304,7 @@ static void win_colsheads (WIN_t *q)
       /* now we can build the true run-time columns header and format the
          command column heading if P_CMD is really being displayed --
          show_a_task is aware of the addition of winnum to the header */
-   sprintf(q->columnhdr, "%s", Show_altscr ? fmtmk("%d", mkWNO(q)) : "");
+   sprintf(q->columnhdr, "%s", Show_altscr ? fmtmk("%d", q->winnum) : "");
    for (i = 0; i < q->maxpflgs; i++) {
          /* are we gonna' need the kernel symbol table? */
       if (P_WCHAN == q->procflags[i]) needpsdb = 1;
@@ -1339,7 +1339,7 @@ static void win_names (WIN_t *q, const char *name)
       internal, they can be trusted -- it's those darn users that we
       worry 'bout... */
    sprintf(q->winname, "%.*s", WINNAMSIZ -1, name);
-   sprintf(q->grpname, "%d:%.*s", mkWNO(q), WINNAMSIZ -1, name);
+   sprintf(q->grpname, "%d:%.*s", q->winnum, WINNAMSIZ -1, name);
 }
 
 
@@ -1357,22 +1357,14 @@ static void win_select (int ch)
    }
    switch (ch) {
       case 'a':                         /* we don't carry 'a' / 'w' in our */
-         Curwin = Curwin->next;         /* user prompt - those case labels */
-         break;                         /* are just here for a good friend */
-      case 'w':                         /* of ours, wins_colors (however,  */
-         Curwin = Curwin->prev;         /* those letters work via the pmt  */
-         break;                         /* too -- but really the end-loser */
-      case '1':                         /* should just press the darn key  */
-         Curwin = Winstk[Def_WINDOW];   /* in the first place)             */
-         break;
-      case '2':
-         Curwin = Winstk[Job_WINDOW];
-         break;
-      case '3':
-         Curwin = Winstk[Mem_WINDOW];
-         break;
-      case '4':
-         Curwin = Winstk[Usr_WINDOW];
+         Curwin = Curwin->next;         /* pmt - they're here for a good   */
+         break;                         /* friend of ours -- wins_colors.  */
+      case 'w':                         /* (however, those lettrs work via */
+         Curwin = Curwin->prev;         /* the pmt too but gee, end-loser  */
+         break;                         /* should just press the darn key) */
+      case '1': case '2':
+      case '3': case '4':
+         Curwin = Winstk[ch - '1'];
          break;
    }
 }
@@ -1422,8 +1414,7 @@ static void win_sortset (WIN_t *q, const int which)
 static int win_warn (void)
 {
    show_msg(fmtmk("\aCommand disabled, activate window #%d with '-' or '_'"
-      , mkWNO(Curwin)));
-
+      , Curwin->winnum));
    /* we gotta' return false 'cause we're somewhat well known within
       macro society, by way of that sassy little tertiary operator... */
    return 0;
@@ -1534,13 +1525,13 @@ static void wins_reflag (int what, int flg)
    w = Curwin;
    do {
       switch (what) {
-         case Flgs_TOG:
+         case Flags_TOG:
             TOGw(w, flg);
             break;
-         case Flgs_SET:
-            SETw(w, flg);
-            break;
-         case Flgs_OFF:
+         case Flags_SET:                /* Ummmm, i can't find anybody */
+            SETw(w, flg);               /* who uses Flags_set -- maybe  */
+            break;                      /* ol' gcc will opt it away... */
+         case Flags_OFF:
             OFFw(w, flg);
             break;
       }
@@ -1616,7 +1607,7 @@ static void windows_stage1 (void)
 
    for (i = 0; i < GROUPSMAX; i++) {
       Winstk[i] = w;
-      w->winnum = i;
+      w->winnum = i + 1;
       strcpy(w->winname, wtab[i].name);
       strcpy(w->fieldscur, wtab[i].flds);
       w->sorttype  = wtab[i].sort;
@@ -1636,8 +1627,8 @@ static void windows_stage1 (void)
       ++w;
    }
       /* fixup the circular chains... */
-   Winstk[Usr_WINDOW]->next = Winstk[0];
-   Winstk[0]->prev = Winstk[Usr_WINDOW];
+   Winstk[3]->next = Winstk[0];
+   Winstk[0]->prev = Winstk[3];
    Curwin = Winstk[0];
    Show_altscr = 0;
 }
@@ -2120,9 +2111,6 @@ static void show_a_task (WIN_t *q, proc_t *task)
          * Process keyboard input during the main loop */
 static void do_key (unsigned c)
 {
-#ifndef QUIT_NORMALQ
-#define kbdESCAPE  27
-#endif
 #define kbdCTRL_L  12
       /* standardized 'secure mode' errors */
    const char *err_secure = "\aCan't %s in secure mode";
@@ -2140,7 +2128,7 @@ static void do_key (unsigned c)
 
       case '_':                 /* 'Dash' upper case ----------------------- */
          if (Show_altscr)       /* switcharoo, all viz & inviz ............. */
-            wins_reflag(Flgs_TOG, VISIBLE_tsk);
+            wins_reflag(Flags_TOG, VISIBLE_tsk);
          break;
 
       case '=':                 /* 'Equals' lower case --------------------- */
@@ -2395,10 +2383,10 @@ static void do_key (unsigned c)
                putp(Cap_clr_scr);
                show_special(fmtmk(WINDOWS_help
                   , Myname, Curwin->grpname
-                  , Winstk[Def_WINDOW]->winname
-                  , Winstk[Job_WINDOW]->winname
-                  , Winstk[Mem_WINDOW]->winname
-                  , Winstk[Usr_WINDOW]->winname));
+                  , Winstk[0]->winname
+                  , Winstk[1]->winname
+                  , Winstk[2]->winname
+                  , Winstk[3]->winname));
                chin(0, &ch, 1);
                win_select(ch);
             } while ('\n' != ch);
@@ -2435,7 +2423,7 @@ static void do_key (unsigned c)
 #ifdef QUIT_NORMALQ
       case 'q':
 #else
-      case kbdESCAPE:
+      case 'Q':
 #endif
          stop(0);
 
@@ -2443,9 +2431,6 @@ static void do_key (unsigned c)
          show_msg("\aUnknown command - try 'h' for help");
    }
 
-#ifndef QUIT_NORMALQ
-#undef kbdESCAPE
-#endif
 #undef kbdCTRL_L
 }
 
@@ -2628,7 +2613,8 @@ static void so_lets_see_em (void)
    Max_lines = (Screen_rows - Msg_row) - 1;
 
    if (CHKw(Curwin, EQUWINS_cwo))
-      wins_reflag(Flgs_OFF, EQUWINS_cwo);
+      wins_reflag(Flags_OFF, EQUWINS_cwo);
+
       /* sure hope each window's columns header begins with a newline... */
    putp(tg2(0, Msg_row));
 
@@ -2743,8 +2729,8 @@ int main (int dont_care_argc, char **argv)
 
    \---------------------------------------------------------------------/
    Sheeesh, didn't that dufus know the return statement can't be executed,
-   or a signal & stop() will do-us-in?  Oh Lordy, I is DROWNING in morons;
-   they done REACHED clear up to my OUTER braces.  We's all DOOMED, I say!
+   or we end via that stop() function?  Oh Lordy, I is DROWNING in morons;
+   they done REACHED clear up to my OUTER braces!  We's surely DOOMED now!
    /---------------------------------------------------------------------\
   */
    return 0;
