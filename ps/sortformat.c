@@ -269,7 +269,7 @@ static const char *format_parse(sf_node *sfn){
     if(colon_loc){   /* if width override */
       *colon_loc = '\0';
       colon_loc++;
-      if(strspn(colon_loc,"0123456789") != strlen(colon_loc) || *colon_loc=='0' || !*colon_loc){
+      if(strspn(colon_loc,"0123456789") != strlen(colon_loc) || *colon_loc=='0' || !*colon_loc || atoi(colon_loc) <= 0){
         free(buf);
         goto badwidth;
       }
@@ -294,6 +294,7 @@ static const char *format_parse(sf_node *sfn){
       }
       // FIXME: enforce signal width to 8, 9, or 16 (grep: SIGNAL wide_signals)
       fnode->width = atoi(colon_loc); // already verified to be a number
+      if(fnode->width <= 0) catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
     }
     endp = fnode; while(endp->next) endp = endp->next;  /* find end */
     endp->next = sfn->f_cooked;
