@@ -270,7 +270,6 @@ static const char *parse_sysv_option(void){
     case 'M':  /* someday, maybe, we will have MAC like SGI's Irix */
       trace("-M Print security label for Mandatory Access Control.\n");
       format_modifiers |= FM_M;
-      return "Sorry, no Mandatory Access Control support.";
       break;
     case 'N':
       trace("-N negates.\n");
@@ -567,6 +566,10 @@ static const char *parse_bsd_option(void){
     case 'X':
       trace("X Old Linux i386 register format\n");
       format_flags |= FF_LX;
+      break;
+    case 'Z':  /* FreeBSD does MAC like SGI's Irix does it */
+      trace("Z Print security label for Mandatory Access Control.\n");
+      format_modifiers |= FM_M;
       break;
     case 'a':
       trace("a Select all w/tty, including other users\n");

@@ -264,6 +264,8 @@ static const char *set_personality(void){
   case_tru64:
   case_compaq:
   case_digital:
+    // no PER_NO_DEFAULT_g even though man page claims it
+    // Reality: the g is a NOP
     personality = PER_GOOD_o | PER_BSD_h;
     prefer_bsd_defaults = 1;
     sysv_f_format  = "F5FMT";

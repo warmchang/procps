@@ -925,6 +925,11 @@ did_lwp:
       fn = do_one_spec("nlwp", NULL);
       fmt_add_after("%CPU",  fn);
     }
+    if(format_modifiers & FM_M){    // Mandatory Access Control, IRIX style
+      fn = do_one_spec("label", NULL);
+      fn->next=format_list;
+      format_list=fn;
+    }
     /* Do personality-specific translations not covered by format_flags.
      * Generally, these only get hit when personality overrides unix output.
      * That (mostly?) means the Digital and Debian personalities.

@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2002 by Albert Cahalan; all rights reserved.
+ * Copyright 1998-2004 by Albert Cahalan; all rights reserved.
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
  * at your option, as published by the Free Software Foundation.
@@ -31,21 +31,21 @@ const char *help_message =
 "x  processes w/o controlling ttys     t  by tty\n"
 "*********** output format **********  *********** long options ***********\n"
 "-o,o user-defined  -f full            --Group --User --pid --cols --ppid\n"
-"-j,j job control   s  signal          --group --user --sid --rows\n"
+"-j,j job control   s  signal          --group --user --sid --rows --info\n"
 "-O,O preloaded -o  v  virtual memory  --cumulative --format --deselect\n"
 "-l,l long          u  user-oriented   --sort --tty --forest --version\n"
 "-F   extra full    X  registers       --heading --no-heading --context\n"
 "                    ********* misc options *********\n"
 "-V,V  show version      L  list format codes  f  ASCII art forest\n"
 "-m,m,-L,-T,H  threads   S  children in sum    -y change -l format\n"
-"-c    scheduling class  c  true command name  n  numeric WCHAN,UID\n"
-"-w,w  wide output       e  show environment   -H process hierarchy\n"
+"-M,Z  security data     c  true command name  -c scheduling class\n"
+"-w,w  wide output       n  numeric WCHAN,UID  -H process hierarchy\n"
 ;
 
 
 
 /* Missing:
  *
- * -P -M --info
+ * -P e
  *
  */
