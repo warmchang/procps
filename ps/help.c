@@ -19,11 +19,11 @@ const char *help_message =
 "-A all processes                      -C by command name\n"
 "-N negate selection                   -G by real group ID (supports names)\n"
 "-a all w/ tty except session leaders  -U by real user ID (supports names)\n"
-"-d all except session leaders         -g by session leader OR by group name\n"
+"-d all except session leaders         -g by session OR by effective group name\n"
 "-e all processes                      -p by process ID\n"
 "T  all processes on this terminal     -s processes in the sessions given\n"
 "a  all w/ tty, including other users  -t by tty\n"
-"g  all, even group leaders!           -u by effective user ID (supports names)\n"
+"g  OBSOLETE -- DO NOT USE             -u by effective user ID (supports names)\n"
 "r  only running processes             U  processes for specified users\n"
 "x  processes w/o controlling ttys     t  by tty\n"
 "*********** output format **********  *********** long options ***********\n"
@@ -43,6 +43,6 @@ const char *help_message =
 
 /* Missing:
  *
- * -P e
+ * -P e k
  *
  */

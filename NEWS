@@ -6,6 +6,7 @@ new names for shared libraries (packagers: watch out!)
 "make install" no longer rebuilds everything
 wchan now '*' for multi-threaded processes
 vmstat: some overflow problems fixed -- thanks Holger Kiehl
+sysctl: man page fix
 
 procps-3.2.1 --> procps-3.2.2
 
