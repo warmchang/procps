@@ -582,6 +582,7 @@ static void sig_abexit (int sig) {
       , sig, signal_number_to_name(sig), Myname);
    signal(sig, SIG_DFL);     // allow core dumps, if applicable
    raise(sig);               // ( plus set proper return code )
+   _exit(sig | 0x80);        // if default sig action is ignore
 } // end: sig_abexit
 
 
