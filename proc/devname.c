@@ -56,7 +56,6 @@ static void load_drivers(void){
     tty_map_node *tmn;
     int len;
     char *end;
-    int rc;
     p += 6;
     end = strchr(p, ' ');
     if(!end) continue;
