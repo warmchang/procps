@@ -1,3 +1,5 @@
 p
 ps
 *.o
+.deps
+.libs

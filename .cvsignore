@@ -16,3 +16,6 @@ uptime
 vmstat
 w
 watch
+Makefile
+libtool
+*.tar.gz

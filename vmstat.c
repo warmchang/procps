@@ -1,4 +1,3 @@
-#define VERSION Version: 0.99, last modified 15 January 94: ALPHA 
 #define PROGNAME "vmstat"
 /* Copyright 1994 by Henry Ware <al172@yfn.ysu.edu>. Copyleft same year. */
 /* This attempts to display virtual memory statistics.
