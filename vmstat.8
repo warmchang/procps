@@ -15,6 +15,9 @@ vmstat \- Report virtual memory statistics
 .RB [ "\-s" ]
 .br
 .B vmstat
+.RB [ "\-S unit"]
+.br
+.B vmstat
 .RB [ "\-V" ]
 .SH DESCRIPTION
 \fBvmstat\fP reports information about processes, memory, paging,
@@ -46,6 +49,8 @@ only one report is printed with the average values since boot.
 is the number of updates.  If no count is specified and delay is
 defined, \fIcount\fP defaults to infinity.
 .PP
+The \fB-S\fP followed by k or K or m or M switches outputs between 1000, 1024, 1000000, or 1048576 bytes 
+.PP
 The \fB-V\fP switch results in displaying version information.
 .PP
 .SH FIELD DESCRIPTIONS
@@ -53,25 +58,25 @@ The \fB-V\fP switch results in displaying version information.
 .B "Procs"
 .nf
 r: The number of processes waiting for run time.  
-b: The number of processes in uninterruptable sleep.
+b: The number of processes in uninterruptible sleep.
 .fi
 .PP
 .SS
 .B "Memory"
 .nf
-swpd: the amount of virtual memory used (kB).
-free: the amount of idle memory (kB).
-buff: the amount of memory used as buffers (kB).
-cache: the amount of memory used as cache (kB).
-inact: the amount of inactive memory (kB). (-a option)
-active: the amount of active memory (kB). (-a option)
+swpd: the amount of virtual memory used.
+free: the amount of idle memory.
+buff: the amount of memory used as buffers.
+cache: the amount of memory used as cache.
+inact: the amount of inactive memory. (-a option)
+active: the amount of active memory. (-a option)
 .fi
 .PP
 .SS
 .B "Swap"
 .nf
-si: Amount of memory swapped in from disk (kB/s).
-so: Amount of memory swapped to disk (kB/s).
+si: Amount of memory swapped in from disk (/s).
+so: Amount of memory swapped to disk (/s).
 .fi
 .PP
 .SS
@@ -107,6 +112,8 @@ does not count itself as a running process.
 .PP
 All linux blocks are currently 1024 bytes. Old kernels may report
 blocks as 512 bytes, 2048 bytes, or 4096 bytes.
+.PP
+Since procps 3.1.9, vmstat lets you choose units (k, K, m, M)
 .PP
 .SH FILES
 .ta

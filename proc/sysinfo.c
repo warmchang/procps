@@ -269,6 +269,127 @@ void loadavg(double *restrict av1, double *restrict av5, double *restrict av15) 
     SET_IF_DESIRED(av15, avg_15);
 }
 
+  static char buff[BUFFSIZE]; /* used in the procedures */
+/***********************************************************************/
+
+static void crash(const char *filename) {
+    perror(filename);
+    exit(EXIT_FAILURE);
+}
+
+/***********************************************************************/
+
+static void getrunners(unsigned int *restrict running, unsigned int *restrict blocked) {
+  struct direct *ent;
+  DIR *proc;
+
+  *running=0;
+  *blocked=0;
+
+  if((proc=opendir("/proc"))==NULL) crash("/proc");
+
+  while(( ent=readdir(proc) )) {
+    unsigned size;
+    int fd;
+    char filename[80];
+    char c;
+    if (!isdigit(ent->d_name[0])) continue;
+    sprintf(filename, "/proc/%s/stat", ent->d_name);
+    fd = open(filename, O_RDONLY, 0);
+    if (fd == -1) continue;
+    read(fd,buff,BUFFSIZE-1);
+    sscanf(
+      buff,
+      "%*d %*s %c "
+      "%*d %*d %*d %*d %*d %*u %*u"
+      " %*u %*u %*u %*d %*d %*d %*d %*d %*d %*u %*u %*d %*u %u"
+      /*  " %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u\n"  */ ,
+      &c,
+      &size
+    );
+    close(fd);
+
+    if (c=='R') {
+      (*running)++;
+      continue;
+    }
+    if (c=='D') {
+      (*blocked)++;
+      continue;
+    }
+  }
+  closedir(proc);
+}
+
+/***********************************************************************/
+
+void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow,
+	     unsigned long *restrict pin, unsigned long *restrict pout, unsigned long *restrict s_in, unsigned long *restrict sout,
+	     unsigned *restrict intr, unsigned *restrict ctxt,
+	     unsigned int *restrict running, unsigned int *restrict blocked,
+	     unsigned int *restrict btime, unsigned int *restrict processes) {
+  static int fd;
+  int need_vmstat_file = 0;
+  int need_proc_scan = 0;
+  const char* b;
+  buff[BUFFSIZE-1] = 0;  /* ensure null termination in buffer */
+
+  if(fd){
+    lseek(fd, 0L, SEEK_SET);
+  }else{
+    fd = open("/proc/stat", O_RDONLY, 0);
+    if(fd == -1) crash("/proc/stat");
+  }
+  read(fd,buff,BUFFSIZE-1);
+  *intr = 0; 
+  *ciow = 0;  /* not separated out until the 2.5.41 kernel */
+
+  b = strstr(buff, "cpu ");
+  if(b) sscanf(b,  "cpu  %Lu %Lu %Lu %Lu %Lu", cuse, cice, csys, cide, ciow);
+
+  b = strstr(buff, "page ");
+  if(b) sscanf(b,  "page %lu %lu", pin, pout);
+  else need_vmstat_file = 1;
+
+  b = strstr(buff, "swap ");
+  if(b) sscanf(b,  "swap %lu %lu", s_in, sout);
+  else need_vmstat_file = 1;
+
+  b = strstr(buff, "intr ");
+  if(b) sscanf(b,  "intr %u", intr);
+
+  b = strstr(buff, "ctxt ");
+  if(b) sscanf(b,  "ctxt %u", ctxt);
+
+  b = strstr(buff, "btime ");
+  if(b) sscanf(b,  "btime %u", btime);
+
+  b = strstr(buff, "processes ");
+  if(b) sscanf(b,  "processes %u", processes);
+
+  b = strstr(buff, "procs_running ");
+  if(b) sscanf(b,  "procs_running %u", running);
+  else need_proc_scan = 1;
+
+  b = strstr(buff, "procs_blocked ");
+  if(b) sscanf(b,  "procs_blocked %u", blocked);
+  else need_proc_scan = 1;
+
+  if(need_proc_scan){   /* Linux 2.5.46 (approximately) and below */
+    getrunners(running, blocked);
+  }
+
+  (*running)--;   // exclude vmstat itself
+
+  if(need_vmstat_file){  /* Linux 2.5.40-bk4 and above */
+    vminfo();
+    *pin  = vm_pgpgin;
+    *pout = vm_pgpgout;
+    *s_in = vm_pswpin;
+    *sout = vm_pswpout;
+  }
+}
+
 /***********************************************************************/
 /*
  * Copyright 1999 by Albert Cahalan; all rights reserved.
@@ -529,4 +650,4 @@ nextline:
     head = tail+1;
   }
 }
-/*****************************************************************/
+
