@@ -41,6 +41,8 @@ extern void __cyg_profile_func_enter(void*,void*);
 #define LEAVE(x)
 #endif
 
+static int task_dir_missing;
+
 ///////////////////////////////////////////////////////////////////////////
 
 typedef struct status_table_struct {
@@ -211,7 +213,7 @@ ENTER(0x220);
         P->ppid = strtol(S,&S,10);
         continue;
     case_Pid:
-        P->pid = strtol(S,&S,10);
+        P->tid = strtol(S,&S,10);
         continue;
 
     case_ShdPnd:
@@ -464,9 +466,10 @@ int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid){
 // This reads process info from /proc in the traditional way, for one process.
 // The pid (tgid? tid?) is already in p, and a path to it in path, with some
 // room to spare.
-static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
+static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict const p) {
     static struct stat sb;		// stat() buffer
     static char sbuf[1024];	// buffer for stat,statm
+    char *restrict const path = PT->path;
     unsigned flags = PT->flags;
 
     if (unlikely(stat(path, &sb) == -1))	/* no such dirent (anymore) */
@@ -531,39 +534,143 @@ next_proc:
 }
 
 //////////////////////////////////////////////////////////////////////////////////
+// This reads /proc/*/task/* data, for one task.
+// p is the POSIX process (task group summary) (not needed by THIS implementation)
+// t is the POSIX thread (task group member, generally not the leader)
+// path is a path to the task, with some room to spare.
+static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict const t, char *restrict const path) {
+    static struct stat sb;		// stat() buffer
+    static char sbuf[1024];	// buffer for stat,statm
+    unsigned flags = PT->flags;
+
+    if (unlikely(stat(path, &sb) == -1))	/* no such dirent (anymore) */
+	goto next_task;
+
+//    if ((flags & PROC_UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
+//	goto next_task;			/* not one of the requested uids */
+
+    t->euid = sb.st_uid;			/* need a way to get real uid */
+    t->egid = sb.st_gid;			/* need a way to get real gid */
+
+    if (flags & PROC_FILLSTAT) {         /* read, parse /proc/#/stat */
+	if (unlikely( file2str(path, "stat", sbuf, sizeof sbuf) == -1 ))
+	    goto next_task;			/* error reading /proc/#/stat */
+	stat2proc(sbuf, t);				/* parse /proc/#/stat */
+    }
+
+    if (unlikely(flags & PROC_FILLMEM)) {	/* read, parse /proc/#/statm */
+	if (likely( file2str(path, "statm", sbuf, sizeof sbuf) != -1 ))
+	    statm2proc(sbuf, t);		/* ignore statm errors here */
+    }						/* statm fields just zero */
+
+    if (flags & PROC_FILLSTATUS) {         /* read, parse /proc/#/status */
+       if (likely( file2str(path, "status", sbuf, sizeof sbuf) != -1 )){
+           status2proc(sbuf, t);
+       }
+    }
+
+    /* some number->text resolving which is time consuming */
+    if (flags & PROC_FILLUSR){
+	strncpy(t->euser,   user_from_uid(t->euid), sizeof t->euser);
+        if(flags & PROC_FILLSTATUS) {
+            strncpy(t->ruser,   user_from_uid(t->ruid), sizeof t->ruser);
+            strncpy(t->suser,   user_from_uid(t->suid), sizeof t->suser);
+            strncpy(t->fuser,   user_from_uid(t->fuid), sizeof t->fuser);
+        }
+    }
+
+    /* some number->text resolving which is time consuming */
+    if (flags & PROC_FILLGRP){
+        strncpy(t->egroup, group_from_gid(t->egid), sizeof t->egroup);
+        if(flags & PROC_FILLSTATUS) {
+            strncpy(t->rgroup, group_from_gid(t->rgid), sizeof t->rgroup);
+            strncpy(t->sgroup, group_from_gid(t->sgid), sizeof t->sgroup);
+            strncpy(t->fgroup, group_from_gid(t->fgid), sizeof t->fgroup);
+        }
+    }
+
+#if 0
+    if ((flags & PROC_FILLCOM) || (flags & PROC_FILLARG))	/* read+parse /proc/#/cmdline */
+	t->cmdline = file2strvec(path, "cmdline");
+    else
+        t->cmdline = NULL;
+
+    if (unlikely(flags & PROC_FILLENV))			/* read+parse /proc/#/environ */
+	t->environ = file2strvec(path, "environ");
+    else
+        t->environ = NULL;
+#else
+    t->cmdline = p->cmdline;  // better not free these until done with all threads!
+    t->environ = p->environ;
+#endif
+
+    return t;
+next_task:
+    return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////////////////
 // This finds processes in /proc in the traditional way.
 // Return non-zero on success.
-static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
+static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
   static struct direct *ent;		/* dirent handle */
+  char *restrict const path = PT->path;
   for (;;) {
     ent = readdir(PT->procfs);
     if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return 0;
     if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name <= '9') )) break;
   }
-  p->pid = strtoul(ent->d_name, NULL, 10);
+  p->tgid = strtoul(ent->d_name, NULL, 10);
+  p->tid = p->tgid;
   memcpy(path, "/proc/", 6);
   strcpy(path+6, ent->d_name);  // trust /proc to not contain evil top-level entries
   return 1;
 }
 
-#define PROCPATHLEN 64   // must hold /proc/2000222000/task/2000222000/cmdline
+//////////////////////////////////////////////////////////////////////////////////
+// This finds tasks in /proc/*/task/ in the traditional way.
+// Return non-zero on success.
+static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict const t, char *restrict const path) {
+  static struct direct *ent;		/* dirent handle */
+  (void)p;
+  if(!PT->taskdir){
+    // use "path" as some tmp space
+    snprintf(path, PROCPATHLEN, "%s/task", PT->path);
+    PT->taskdir = opendir(path);
+    if(!PT->taskdir) return 0;
+  }
+  for (;;) {
+    ent = readdir(PT->taskdir);
+    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return 0;
+    if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name <= '9') )) break;
+  }
+  t->tid = strtoul(ent->d_name, NULL, 10);
+  t->tgid = p->tgid;
+  t->ppid = p->ppid;  // cover for kernel behavior? we want both actually...?
+  snprintf(path, PROCPATHLEN, "%s/task/%s", PT->path, ent->d_name);
+  return 1;
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 // This "finds" processes in a list that was given to openproc().
-// Return non-zero on success. (pid was handy)
-static int listed_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
-  pid_t pid = *(PT->pids)++;
-  if(likely( pid )){
-    snprintf(path, PROCPATHLEN, "/proc/%d", pid);
-    p->pid = pid;
+// Return non-zero on success. (tgid was handy)
+static int listed_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
+  char *restrict const path = PT->path;
+  pid_t tgid = *(PT->pids)++;
+  if(likely( tgid )){
+    snprintf(path, PROCPATHLEN, "/proc/%d", tgid);
+    p->tgid = tgid;
+    p->tid = tgid;  // they match for leaders
   }
-  return pid;
+  return tgid;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 // This "finds" processes by guessing every possible one of them!
 // Return non-zero on success. (pid was handy)
-static int stupid_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
+#if 0
+static int stupid_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
+  char *restrict const path = PT->path;
   pid_t pid = --PT->u;
   if(likely( pid )){
     snprintf(path, PROCPATHLEN, "/proc/%d", pid);
@@ -571,15 +678,16 @@ static int stupid_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p, 
   }
   return pid;
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////////
 // This reads process info from proc_t structs already attached to a PROCTAB.
 // Yeah, we don't retain any pointer for freeing the memory later. Oh well.
 // This code is for development only.
-static proc_t* predone_readproc(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
+#if 0
+static proc_t* predone_readproc(PROCTAB *restrict const PT, proc_t *restrict const p) {
   proc_t *tmp;
   proc_t *ret = NULL;
-  (void)path;
   for(;;){
     tmp = PT->vp;
     if(!tmp) _exit(49);  // can't happen
@@ -598,15 +706,17 @@ static proc_t* predone_readproc(PROCTAB *restrict const PT, proc_t *restrict con
   }
   return ret;
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////////
 // This "finds" processes by pulling them off of a list.
 // Return non-zero on success.
-static int predone_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
+#if 0
+static int predone_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
   (void)p;
-  (void)path;
   return !!PT->vp;
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////////
 /* readproc: return a pointer to a proc_t filled with requested info about the
@@ -620,29 +730,70 @@ static int predone_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p,
  * fairly complex, but it does try to not to do any unnecessary work.
  */
 proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
-  static char path[PROCPATHLEN];       // must hold /proc/2000222000/task/2000222000/cmdline
   proc_t *ret;
   proc_t *saved_p;
+
+  if (PT->did_fake) PT->did_fake=0;
+  if (PT->taskdir) {
+    closedir(PT->taskdir);
+    PT->taskdir = NULL;
+  }
 
   saved_p = p;
   if(!p) p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
 
   for(;;){
-    // fills in the path and the p->pid
-    if (unlikely(! PT->finder(PT,p,path) )) goto out;
+    // fills in the path, plus p->tid and p->tgid
+    if (unlikely(! PT->finder(PT,p) )) goto out;
 
     // go read the process data
-    ret = PT->reader(PT,p,path);
+    ret = PT->reader(PT,p);
     if(ret) return ret;
   }
 
 out:
   if(!saved_p) free(p);
+  // FIXME: maybe set tid to -1 here, for "-" in display?
+  return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+// readtask: return a pointer to a proc_t filled with requested info about the
+// next task available.  If no more such tasks are available, return a null
+// pointer (boolean false).  Use the passed buffer instead of allocating
+// space if it is non-NULL.
+proc_t* readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict t) {
+  static char path[PROCPATHLEN];       // must hold /proc/2000222000/task/2000222000/cmdline
+  proc_t *ret;
+  proc_t *saved_t;
+
+  saved_t = t;
+  if(!t) t = xcalloc(t, sizeof *t); /* passed buf or alloced mem */
+
+  if(task_dir_missing){  // got to fake a thread for old kernels
+    if(PT->did_fake) goto out;
+    PT->did_fake=1;
+    memcpy(t,p,sizeof(proc_t));
+    return t;
+  }
+
+  for(;;){
+    // fills in the path, plus t->tid and t->tgid
+    if (unlikely(! PT->taskfinder(PT,p,t,path) )) goto out;  // simple_nexttid
+
+    // go read the task data
+    ret = PT->taskreader(PT,p,t,path);          // simple_readtask
+    if(ret) return ret;
+  }
+
+out:
+  if(!saved_t) free(t);
   return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 
+#if 0
 static void evil_grouping_hack(PROCTAB* PT){
   proc_t *tp;
   // first we read them
@@ -676,13 +827,23 @@ static void evil_grouping_hack(PROCTAB* PT){
   PT->finder = predone_nextpid;
   PT->reader = predone_readproc;
 }
-
+#endif
 
 // initiate a process table scan
 PROCTAB* openproc(int flags, ...) {
     va_list ap;
+    struct stat sbuf;
+    static int did_stat;
     PROCTAB* PT = xmalloc(sizeof(PROCTAB));
-    
+
+    if(!did_stat){
+      task_dir_missing = stat("/proc/self/task", &sbuf);
+      did_stat = 1;
+    }
+    PT->taskdir = NULL;
+    PT->taskfinder = simple_nexttid;
+    PT->taskreader = simple_readtask;
+
     PT->reader = simple_readproc;
     if (flags & PROC_PID){
       PT->procfs = NULL;
@@ -694,10 +855,12 @@ PROCTAB* openproc(int flags, ...) {
     }
     PT->flags = flags;
 
+#if 0
     if(getenv("EVIL_FINDER_HACK")){  // for development only
       PT->finder = stupid_nextpid;
       PT->u = 10000;
     }
+#endif
 
     va_start(ap, flags);		/*  Init args list */
     if (flags & PROC_PID)
@@ -708,7 +871,9 @@ PROCTAB* openproc(int flags, ...) {
     }
     va_end(ap);				/*  Clean up args list */
 
+#if 0
     if(getenv("EVIL_GROUPING_HACK")) evil_grouping_hack(PT);
+#endif
 
     return PT;
 }
@@ -717,6 +882,7 @@ PROCTAB* openproc(int flags, ...) {
 void closeproc(PROCTAB* PT) {
     if (PT){
         if (PT->procfs) closedir(PT->procfs);
+        if (PT->taskdir) closedir(PT->taskdir);
         free(PT);
     }
 }

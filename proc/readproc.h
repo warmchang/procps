@@ -26,6 +26,11 @@ EXTERN_C_BEGIN
  lu	start_time, vsize, wchan, nswap, cnswap,
 */
 
+// This is to help document a transition from pid to tgid/tid caused
+// by the introduction of thread support. It is used in cases where
+// neither tgid nor tid seemed correct. (in other words, FIXME)
+#define XXXID tid
+
 /* Basic data structure which holds all information we can get about a process.
  * (unless otherwise specified, fields are read from /proc/#/stat)
  *
@@ -34,7 +39,7 @@ EXTERN_C_BEGIN
 typedef struct proc_t {
 // 1st 16 bytes
     int
-        pid,		/* process id */
+        tid,		/* process id */
     	ppid;		/* pid of parent process */
     unsigned
         pcpu;           /* %CPU usage (is not filled in by readproc!!!) */
@@ -144,10 +149,17 @@ typedef struct proc_t {
 #include <sys/types.h>
 #include <dirent.h>
 #include <unistd.h>
+
+#define PROCPATHLEN 64  // must hold /proc/2000222000/task/2000222000/cmdline
+
 typedef struct PROCTAB {
     DIR*	procfs;
-    int(*finder)(struct PROCTAB *restrict const, proc_t *restrict const, char *restrict const);
-    proc_t*(*reader)(struct PROCTAB *restrict const, proc_t *restrict const, char *restrict const);
+    DIR*	taskdir;  // for threads
+    int         did_fake; // used when taskdir is missing
+    int(*finder)(struct PROCTAB *restrict const, proc_t *restrict const);
+    proc_t*(*reader)(struct PROCTAB *restrict const, proc_t *restrict const);
+    int(*taskfinder)(struct PROCTAB *restrict const, const proc_t *restrict const, proc_t *restrict const, char *restrict const);
+    proc_t*(*taskreader)(struct PROCTAB *restrict const, const proc_t *restrict const, proc_t *restrict const, char *restrict const);
     unsigned	flags;
     pid_t*	pids;	/* pids of the procs */
     uid_t*	uids;	/* uids of procs */
@@ -155,6 +167,8 @@ typedef struct PROCTAB {
     int         i;  // generic
     unsigned    u;  // generic
     void *      vp; // generic
+    char        path[PROCPATHLEN];  // must hold /proc/2000222000/task/2000222000/cmdline
+    unsigned pathlen;        // length of string in the above (w/o '\0')
 } PROCTAB;
 
 // initialize a PROCTAB structure holding needed call-to-call persistent data
@@ -172,7 +186,8 @@ extern proc_t** readproctab(int flags, ... /* same as openproc */ );
 extern void closeproc(PROCTAB* PT);
 
 // retrieve the next process matching the criteria set by the openproc()
-extern proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict const return_buf);
+extern proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p);
+extern proc_t* readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict t);
 
 // warning: interface may change
 extern int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid);
@@ -206,8 +221,6 @@ extern void freeproc(proc_t* p);
 #define PROC_FILLSTAT   0x0040 /* read stat -- currently unconditional */
 #define PROC_FILLWCHAN  0x0080 /* look up WCHAN name */
 #define PROC_FILLARG    0x0100 /* alloc and fill in `cmdline' */
-
-#define PROC_FILLANY    0x0000 /* either stat or status will do */
 
 /* Obsolete, consider only processes with one of the passed: */
 #define PROC_PID     0x1000  /* process id numbers ( 0   terminated) */

@@ -73,6 +73,7 @@ const char     *sysv_f_format = (const char *)0xdeadbeef;
 const char     *sysv_fl_format = (const char *)0xdeadbeef;
 const char     *sysv_j_format = (const char *)0xdeadbeef;
 const char     *sysv_l_format = (const char *)0xdeadbeef;
+unsigned        thread_flags = 0xffffffff;
 int             unix_f_option = -1;
 int             user_is_number = -1;
 int             wchan_is_number = -1;
@@ -343,6 +344,7 @@ void reset_global(void){
   selection_list        = NULL;
   simple_select         = 0;
   sort_list             = NULL;
+  thread_flags          = 0;
   unix_f_option         = 0;
   user_is_number        = 0;
   wchan_is_number       = 0;

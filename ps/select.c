@@ -17,8 +17,8 @@
 #include "../proc/readproc.h"
 #include "../proc/procps.h"
 
-#define session_leader(p)       ((p)->session == (p)->pid)
-#define process_group_leader(p) ((p)->pgid    == (p)->pid)
+#define session_leader(p)       ((p)->session == (p)->tgid)
+#define process_group_leader(p) ((p)->pgid    == (p)->tgid)
 #define without_a_tty(p)        ((unsigned short)((p)->tty) == (unsigned short)0)
 #define some_other_user(p)      ((p)->euid    != cached_euid)
 #define running(p)              (((p)->state=='R')||((p)->state=='D'))
@@ -101,7 +101,7 @@ static int proc_was_listed(proc_t *buf){
     break; case SEL_FGID: return_if_match(fgid,gid);
 
     break; case SEL_PGRP: return_if_match(pgrp,pid);
-    break; case SEL_PID : return_if_match(pid,pid);
+    break; case SEL_PID : return_if_match(tgid,pid);
     break; case SEL_PPID: return_if_match(ppid,ppid);
     break; case SEL_TTY : return_if_match(tty,tty);
     break; case SEL_SESS: return_if_match(session,pid);

@@ -73,6 +73,10 @@
 
 #define needs_for_select (PROC_FILLSTAT | PROC_FILLSTATUS)
 
+/* thread_flags */
+#define TF_show_proc 0x0001  // show the summary line
+#define TF_show_task 0x0002  // show the per-thread lines
+
 /* personality control flags */
 #define PER_BROKEN_o      0x0001
 #define PER_BSD_h         0x0002
@@ -270,6 +274,7 @@ extern const char     *sysv_f_format;
 extern const char     *sysv_fl_format;
 extern const char     *sysv_j_format;
 extern const char     *sysv_l_format;
+extern unsigned        thread_flags;
 extern int             unix_f_option;
 extern int             user_is_number;
 extern int             wchan_is_number;

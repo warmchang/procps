@@ -264,6 +264,7 @@ static const char *parse_sysv_option(void){
        * SCO UnixWare uses -L too.
        */
       trace("-L Print LWP (thread) info.\n");
+      thread_flags |= TF_show_task;
       format_modifiers |= FM_L;
       break;
     case 'M':  /* someday, maybe, we will have MAC like SGI's Irix */
@@ -298,6 +299,7 @@ static const char *parse_sysv_option(void){
        * Also, testing shows PID==SPID for all normal processes.
        */
       trace("-T adds strange SPID column (old sproc() threads?)\n");
+      thread_flags |= TF_show_task;
       format_modifiers |= FM_T;
       break;
     case 'U': /* end */
@@ -367,7 +369,8 @@ static const char *parse_sysv_option(void){
     case 'm':
       trace("-m shows threads.\n");
       /* note that AIX shows 2 lines for a normal process */
-      /* not implemented -- silently ignore the option */
+      thread_flags |= TF_show_proc;
+      thread_flags |= TF_show_task;
       break;
     case 'n': /* end */
       trace("-n sets namelist file.\n");
@@ -494,6 +497,11 @@ static const char *parse_bsd_option(void){
       return "Option C is reserved.";
       break;
 #endif
+    case 'H':    // The FreeBSD way (NetBSD:s OpenBSD:k FreeBSD:H  -- NIH???)
+      trace("H Print LWP (thread) info.\n");   // was: Use /vmcore as c-dumpfile\n");
+      thread_flags |= TF_show_task;  // FIXME: determine if TF_show_proc is needed
+      //format_modifiers |= FM_L;    // FIXME: determine if we need something like this
+      break;
     case 'L': /* single */
       trace("L List all format specifiers\n");
       exclusive("L");
@@ -587,12 +595,11 @@ static const char *parse_bsd_option(void){
       trace("j job control format\n");
       format_flags |= FF_Bj;
       break;
-#if 0
-    case 'k':
-      trace("k N/A Use /vmcore as c-dumpfile\n");
-      return "Obsolete k option not supported.";
+    case 'k':    // The OpenBSD way (NetBSD:s OpenBSD:k FreeBSD:H  -- NIH???)
+      trace("k Print LWP (thread) info.\n");   // was: Use /vmcore as c-dumpfile\n");
+      thread_flags |= TF_show_task;  // FIXME: determine if TF_show_proc is needed
+      //format_modifiers |= FM_L;    // FIXME: determine if we need something like this
       break;
-#endif
     case 'l':
       trace("l Display long format\n");
       format_flags |= FF_Bl;
@@ -607,7 +614,8 @@ static const char *parse_bsd_option(void){
         defer_sf_option("pmem", SF_B_m);
         break;
       }
-      /* not implemented -- silently ignore the option */
+      thread_flags |= TF_show_proc;
+      thread_flags |= TF_show_task;
       break;
     case 'n':
       trace("n Numeric output for WCHAN, and USER replaced by UID\n");

@@ -81,12 +81,12 @@ void hex_dump(void *vp){
   }
 }
 
-static void show_pid(char *s, int n, sel_union *data){
+static void show_tgid(char *s, int n, sel_union *data){
   printf("%s  ", s);
   while(--n){
-    printf("%d,", data[n].pid);
+    printf("%d,", data[n].tgid);
   }
-  printf("%d\n", data[0].pid);
+  printf("%d\n", data[0].tgid);
 }
 
 static void show_uid(char *s, int n, sel_union *data){
@@ -247,9 +247,18 @@ static void simple_spew(void){
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
   }
+  if(!thread_flags) thread_flags=TF_show_proc;
   memset(&buf, '#', sizeof(proc_t));
   while(readproc(ptp,&buf)){
-    if(want_this_proc(&buf)) show_one_proc(&buf);
+    if(want_this_proc(&buf)){
+      if(thread_flags & TF_show_proc) show_one_proc(&buf);
+      if(thread_flags & TF_show_task){
+        proc_t buf2;
+        // must still have the process allocated
+        while(readtask(ptp,&buf,&buf2)) show_one_proc(&buf2);
+        // must not attempt to free cmdline and environ
+      }
+    }
     if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
     if(buf.environ) free((void*)*buf.environ); // ought to reuse
 //    memset(&buf, '#', sizeof(proc_t));
@@ -331,7 +340,7 @@ static void show_tree(const int self, const int n, const int level, const int ha
 //  if(processes[self]->environ) free((void*)*processes[self]->environ);
   for(;;){  /* look for children */
     if(i >= n) return; /* no children */
-    if(processes[i]->ppid == processes[self]->pid) break;
+    if(processes[i]->ppid == processes[self]->XXXID) break;
     i++;
   }
   if(level){
@@ -344,7 +353,7 @@ static void show_tree(const int self, const int n, const int level, const int ha
     int self_pid;
     int more_children = 1;
     if(i >= n) break; /* over the edge */
-    self_pid=processes[self]->pid;
+    self_pid=processes[self]->XXXID;
     if(i+1 >= n)
       more_children = 0;
     else
@@ -367,7 +376,7 @@ static void show_forest(const int n){
   while(i--){   /* cover whole array looking for trees */
     j = n;
     while(j--){   /* search for parent: if none, i is a tree! */
-      if(processes[j]->pid == processes[i]->ppid) goto not_root;
+      if(processes[j]->XXXID == processes[i]->ppid) goto not_root;
     }
     show_tree(i,n,0,0);
 not_root:
@@ -381,6 +390,10 @@ static void fancy_spew(void){
   proc_t *retbuf = NULL;
   PROCTAB *restrict ptp;
   int n = 0;  /* number of processes & index into array */
+  if(thread_flags){
+    fprintf(stderr, "can't have threads with sorting or forest output\n");
+    exit(49);
+  }
   ptp = openproc(needs_for_format | needs_for_sort | needs_for_select);
   if(!ptp) {
     fprintf(stderr, "Error: can not access /proc.\n");

@@ -201,7 +201,8 @@ CMP_INT(suid)
 CMP_INT(sgid)
 CMP_INT(fuid)
 CMP_INT(fgid)
-CMP_SMALL(pid)
+CMP_SMALL(tid)
+CMP_SMALL(tgid)
 CMP_SMALL(ppid)
 CMP_SMALL(pgrp)
 CMP_SMALL(session)
@@ -457,7 +458,7 @@ static int pr_pgid(char *restrict const outbuf, const proc_t *restrict const pp)
   return snprintf(outbuf, COLWID, "%u", pp->pgrp);
 }
 static int pr_pid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%u", pp->pid);
+  return snprintf(outbuf, COLWID, "%u", pp->tgid);
 }
 static int pr_ppid(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%u", pp->ppid);
@@ -561,20 +562,20 @@ static int pr_wchan(char *restrict const outbuf, const proc_t *restrict const pp
  */
     if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "%s", "-");
     if(wchan_is_number) return snprintf(outbuf, COLWID, "%x", (unsigned)(pp->wchan) & 0xffffffu);
-    return snprintf(outbuf, COLWID, "%s", wchan(pp->wchan, pp->pid));
+    return snprintf(outbuf, COLWID, "%s", wchan(pp->wchan, pp->XXXID));
 }
 
 /* Terrible trunctuation, like BSD crap uses: I999 J999 K999 */
 /* FIXME: disambiguate /dev/tty69 and /dev/pts/69. */
 static int pr_tty4(char *restrict const outbuf, const proc_t *restrict const pp){
 /* snprintf(outbuf, COLWID, "%02x:%02x", pp->tty>>8, pp->tty&0xff); */
-  return dev_to_tty(outbuf, 4, pp->tty, pp->pid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS);
+  return dev_to_tty(outbuf, 4, pp->tty, pp->XXXID, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS);
 }
 
 /* Unix98: format is unspecified, but must match that used by who(1). */
 static int pr_tty8(char *restrict const outbuf, const proc_t *restrict const pp){
 /* snprintf(outbuf, COLWID, "%02x:%02x", pp->tty>>8, pp->tty&0xff); */
-  return dev_to_tty(outbuf, PAGE_SIZE-1, pp->tty, pp->pid, ABBREV_DEV);
+  return dev_to_tty(outbuf, PAGE_SIZE-1, pp->tty, pp->XXXID, ABBREV_DEV);
 }
 
 #if 0
@@ -767,7 +768,7 @@ static int pr_wname(char *restrict const outbuf, const proc_t *restrict const pp
  * more than one thread waiting in the kernel.
  */
     if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "%s", "-");
-    return snprintf(outbuf, COLWID, "%s", wchan(pp->wchan, pp->pid));
+    return snprintf(outbuf, COLWID, "%s", wchan(pp->wchan, pp->XXXID));
 }
 
 static int pr_nwchan(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -937,7 +938,7 @@ static int pr_suser(char *restrict const outbuf, const proc_t *restrict const pp
 
 
 static int pr_thread(char *restrict const outbuf, const proc_t *restrict const pp){  /* TID tid LWP lwp SPID spid */
-  return snprintf(outbuf, COLWID, "%u", pp->pid);  /* for now... FIXME */
+  return snprintf(outbuf, COLWID, "%u", pp->tid);
 }
 static int pr_nlwp(char *restrict const outbuf, const proc_t *restrict const pp){  /* THCNT thcount NLWP nlwp */
   (void)pp; // FIXME
@@ -1215,7 +1216,7 @@ static const format_struct format_array[] = {
 {"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, RIGHT},
 {"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, RIGHT}, /* login ID */
 {"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, USER}, /* login USER */
-{"lwp",       "LWP",     pr_thread,   sr_nop,     5,   0,    SUN, PIDMAX|RIGHT},
+{"lwp",       "LWP",     pr_thread,   sr_tid,     5,   0,    SUN, PIDMAX|RIGHT},
 {"m_drs",     "DRS",     pr_drs,      sr_drs,     5, MEM,    LNx, RIGHT},
 {"m_dt",      "DT",      pr_nop,      sr_dt,      4, MEM,    LNx, RIGHT},
 {"m_lrs",     "LRS",     pr_nop,      sr_lrs,     5, MEM,    LNx, RIGHT},
@@ -1250,7 +1251,7 @@ static const format_struct format_array[] = {
 {"pending",   "PENDING", pr_sig,      sr_nop,     9,   0,    BSD, SIGNAL}, /*sig*/
 {"pgid",      "PGID",    pr_pgid,     sr_pgrp,    5,   0,    U98, PIDMAX|RIGHT},
 {"pgrp",      "PGRP",    pr_pgid,     sr_pgrp,    5,   0,    LNX, PIDMAX|RIGHT},
-{"pid",       "PID",     pr_pid,      sr_pid,     5,   0,    U98, PIDMAX|RIGHT},
+{"pid",       "PID",     pr_pid,      sr_tgid,    5,   0,    U98, PIDMAX|RIGHT},
 {"pmem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    XXX, RIGHT}, /*%mem*/
 {"poip",      "-",       pr_nop,      sr_nop,     1,   0,    BSD, RIGHT},
 {"policy",    "POL",     pr_class,    sr_sched,   3,   0,    DEC, LEFT},
@@ -1296,7 +1297,7 @@ static const format_struct format_array[] = {
 {"sigmask",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    XXX, SIGNAL}, /*blocked*/
 {"size",      "SZ",      pr_swapable, sr_swapable, 1,  0,    SCO, RIGHT},
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, RIGHT},
-{"spid",      "SPID",    pr_thread,   sr_nop,     5,   0,    SGI, PIDMAX|RIGHT},
+{"spid",      "SPID",    pr_thread,   sr_tid,     5,   0,    SGI, PIDMAX|RIGHT},
 {"stackp",    "STACKP",  pr_stackp,   sr_nop,     8,   0,    LNX, RIGHT}, /*start_stack*/
 {"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, RIGHT},
 {"start_code", "S_CODE",  pr_nop,     sr_start_code, 8, 0,   LNx, RIGHT},
@@ -1316,7 +1317,7 @@ static const format_struct format_array[] = {
 {"sz",        "SZ",      pr_sz,       sr_nop,     5,   0,    HPU, RIGHT},
 {"tdev",      "TDEV",    pr_nop,      sr_nop,     4,   0,    XXX, RIGHT},
 {"thcount",   "THCNT",   pr_nlwp,     sr_nop,     5,   0,    AIX, RIGHT},
-{"tid",       "TID",     pr_thread,   sr_nop,     5,   0,    AIX, PIDMAX|RIGHT},
+{"tid",       "TID",     pr_thread,   sr_tid,     5,   0,    AIX, PIDMAX|RIGHT},
 {"time",      "TIME",    pr_time,     sr_nop,     8,   0,    U98, CUMUL|RIGHT}, /*cputime*/ /* was 6 wide */
 {"timeout",   "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, RIGHT},
 {"tmout",     "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, RIGHT},

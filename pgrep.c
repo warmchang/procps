@@ -375,7 +375,7 @@ select_procs (void)
 	while (readproc (ptp, &task)) {
 		int match = 1;
 
-		if (task.pid == myself)
+		if (task.XXXID == myself)
 			continue;
 		else if (opt_newest && task.start_time < saved_start_time)
 			match = 0;
@@ -399,7 +399,7 @@ select_procs (void)
 			} else {
 				char tty[256];
 				dev_to_tty (tty, sizeof(tty) - 1,
-					    task.tty, task.pid, ABBREV_DEV);
+					    task.tty, task.XXXID, ABBREV_DEV);
 				match = match_strlist (tty, opt_term);
 			}
 		}
@@ -433,26 +433,26 @@ select_procs (void)
 		if (match ^ opt_negate) {	/* Exclusive OR is neat */
 			if (opt_newest) {
 				if (saved_start_time == task.start_time &&
-				    saved_pid > task.pid)
+				    saved_pid > task.XXXID)
 					continue;
 				saved_start_time = task.start_time;
-				saved_pid = task.pid;
+				saved_pid = task.XXXID;
 				matches = 0;
 			}
 			if (opt_oldest) {
 				if (saved_start_time == task.start_time &&
-				    saved_pid < task.pid)
+				    saved_pid < task.XXXID)
 					continue;
 				saved_start_time = task.start_time;
-				saved_pid = task.pid;
+				saved_pid = task.XXXID;
 				matches = 0;
 			}
 			if (opt_long) {
 				char buff[5096];  // FIXME
-				sprintf (buff, "%d %s", task.pid, cmd);
+				sprintf (buff, "%d %s", task.XXXID, cmd);
 				list[++matches].str = strdup (buff);
 			} else {
-				list[++matches].num = task.pid;
+				list[++matches].num = task.XXXID;
 			}
 			if (matches == size) {
 				size *= 2;

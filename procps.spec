@@ -3,7 +3,7 @@ Summary: System and process monitoring utilities
 Name: procps
 %define major_version 3
 %define minor_version 1
-%define revision 12
+%define revision 13
 %define version %{major_version}.%{minor_version}.%{revision}
 Version: %{version}
 Release: 1

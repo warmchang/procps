@@ -175,7 +175,7 @@ static int       Frame_srtflg,          // the subject window's sort direction
          * 2 columns each.
          */
 
-SCB_NUMx(P_PID, pid)
+SCB_NUMx(P_PID, XXXID)
 SCB_NUMx(P_PPD, ppid)
 SCB_STRx(P_URR, ruser)
 SCB_NUMx(P_UID, euid)
@@ -976,7 +976,7 @@ static void prochlp (proc_t *this)
    /* calculate time in this process; the sum of user time (utime) and
       system time (stime) -- but PLEASE dont waste time and effort on
       calcs and saves that go unused, like the old top! */
-   hist_new[Frame_maxtask].pid  = this->pid;
+   hist_new[Frame_maxtask].pid  = this->tid;
    hist_new[Frame_maxtask].tics = tics = (this->utime + this->stime);
 
 #if 0
@@ -987,9 +987,9 @@ static void prochlp (proc_t *this)
    // find matching entry from previous frame and make ticks elapsed
    while (lo <= hi) {
       i = (lo + hi) / 2;
-      if (this->pid < hist_sav[i].pid)
+      if (this->tid < hist_sav[i].pid)
          hi = i - 1;
-      else if (likely(this->pid > hist_sav[i].pid))
+      else if (likely(this->tid > hist_sav[i].pid))
          lo = i + 1;
       else {
          tics -= hist_sav[i].tics;
@@ -1001,7 +1001,7 @@ static void prochlp (proc_t *this)
 {
    HST_t tmp;
    const HST_t *ptr;
-   tmp.pid = this->pid;
+   tmp.pid = this->tid;
    ptr = bsearch(&tmp, hist_sav, maxt_sav, sizeof tmp, sort_HST_t);
    if(ptr) tics -= ptr->tics;
 }
@@ -1066,7 +1066,7 @@ static proc_t **procs_refresh (proc_t **table, int flags)
       savmax = curmax + 1;
    }
    // this frame's end, but not necessarily end of allocated space
-   table[curmax]->pid = -1;
+   table[curmax]->tid = -1;
    return table;
 
 #undef PTRsz
@@ -2974,7 +2974,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
             MKCOL((int)p->nice);
             break;
          case P_PID:
-            MKCOL((unsigned)p->pid);
+            MKCOL((unsigned)p->XXXID);
             break;
          case P_PPD:
             MKCOL((unsigned)p->ppid);
@@ -3012,7 +3012,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
             break;
          case P_TTY:
          {  char tmp[TNYBUFSIZ];
-            dev_to_tty(tmp, (int)w, p->tty, p->pid, ABBREV_DEV);
+            dev_to_tty(tmp, (int)w, p->tty, p->XXXID, ABBREV_DEV);
             MKCOL(tmp);
          }
             break;
@@ -3037,7 +3037,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
 #endif
                MKCOL((long)p->wchan);
             } else {
-               MKCOL(wchan(p->wchan, p->pid));
+               MKCOL(wchan(p->wchan, p->XXXID));
             }
             break;
 
@@ -3094,7 +3094,7 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
    lwin = 1;
    i = 0;
 
-   while ( -1 != ppt[i]->pid && *lscr < Max_lines  &&  (!q->winlines || (lwin <= q->winlines)) ) {
+   while ( -1 != ppt[i]->tid && *lscr < Max_lines  &&  (!q->winlines || (lwin <= q->winlines)) ) {
       if ((CHKw(q, Show_IDLEPS) || ('S' != ppt[i]->state && 'Z' != ppt[i]->state))
       && good_uid(ppt[i]) ) {
          /*
