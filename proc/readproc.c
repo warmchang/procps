@@ -99,11 +99,11 @@ static void status2proc(const char *S, proc_t *restrict P){
     P->cmd[i] = '\0';
 
     tmp = strstr (S,"State:\t");
-    if(likely((long)tmp)) P->state = tmp[7];
+    if(likely(tmp)) P->state = tmp[7];
     else fprintf(stderr, "Internal error!\n");
 
     tmp = strstr (S,"Pid:");
-    if(likely((long)tmp)) sscanf (tmp,
+    if(likely(tmp)) sscanf (tmp,
         "Pid:\t%d\n"
         "PPid:\t%d\n",
         &P->pid,
@@ -112,21 +112,21 @@ static void status2proc(const char *S, proc_t *restrict P){
     else fprintf(stderr, "Internal error!\n");
 
     tmp = strstr (S,"Uid:");
-    if(likely((long)tmp)) sscanf (tmp,
+    if(likely(tmp)) sscanf (tmp,
         "Uid:\t%d\t%d\t%d\t%d",
         &P->ruid, &P->euid, &P->suid, &P->fuid
     );
     else fprintf(stderr, "Internal error!\n");
 
     tmp = strstr (S,"Gid:");
-    if(likely((long)tmp)) sscanf (tmp,
+    if(likely(tmp)) sscanf (tmp,
         "Gid:\t%d\t%d\t%d\t%d",
         &P->rgid, &P->egid, &P->sgid, &P->fgid
     );
     else fprintf(stderr, "Internal error!\n");
 
     tmp = strstr (S,"VmSize:");
-    if(likely((long)tmp)) sscanf (tmp,
+    if(likely(tmp)) sscanf (tmp,
         "VmSize: %lu kB\n"
         "VmLck: %lu kB\n"
         "VmRSS: %lu kB\n"
@@ -149,7 +149,7 @@ static void status2proc(const char *S, proc_t *restrict P){
     }
 
     tmp = strstr (S,"SigPnd:");
-    if(likely((long)tmp)) sscanf (tmp,
+    if(likely(tmp)) sscanf (tmp,
 #ifdef SIGNAL_STRING
         "SigPnd: %s SigBlk: %s SigIgn: %s %*s %s",
         P->signal, P->blocked, P->sigignore, P->sigcatch

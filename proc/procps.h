@@ -25,8 +25,8 @@
 // won't alias anything, and aligned enough for anything
 #define MALLOC __attribute__ ((__malloc__))
 // tell gcc what to expect:   if(unlikely(err)) die(err);
-#define likely(x)       __builtin_expect((x),1)
-#define unlikely(x)     __builtin_expect((x),0)
+#define likely(x)       __builtin_expect(!!(x),1)
+#define unlikely(x)     __builtin_expect(!!(x),0)
 #else
 #define MALLOC
 #define likely(x)       (x)
