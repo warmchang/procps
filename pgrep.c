@@ -251,11 +251,11 @@ static struct el *read_pidfile(void)
 	if(opt_lock && !has_flock(fd) && !has_fcntl(fd))
 		goto out;
 	memset(buf,'\0',sizeof buf);
-	n = read(fd,buf+1,sizeof buf-2);
+	n = read(fd,buf,sizeof buf-1);
 	if (n<1)
 		goto out;
-	pid = strtoul(buf+1,&endp,10);
-	if(endp<=buf+1 || pid<1 || pid>0x7fffffff)
+	pid = strtoul(buf,&endp,10);
+	if(endp<=buf || pid<1 || pid>0x7fffffff)
 		goto out;
 	if(*endp && !isspace(*endp))
 		goto out;
