@@ -524,14 +524,6 @@ selection_collection:
     fprintf(stderr,"ERROR: -v makes no sense with -i and -f.\n");
     skillsnice_usage();
   }
-  if(n_flag && signo>=0){
-    fprintf(stderr,"ERROR: -n makes no sense with a signal.\n");
-    skillsnice_usage();
-  }
-  if(n_flag && prino!=NO_PRI_VAL){
-    fprintf(stderr,"ERROR: -n makes no sense with a priority value.\n");
-    skillsnice_usage();
-  }
   /* OK, set up defaults */
   if(prino==NO_PRI_VAL) prino=4;
   if(signo<0) signo=SIGTERM;
