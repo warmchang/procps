@@ -76,14 +76,14 @@ endif
 
 # INSTALL LIBRARIES + HEADERS (OPTIONAL)
 libinstall:
-	$(MAKE) -C proc install $(LIBPROCPASS)
+	$(MAKE) -C proc -f Makefile.noam install $(LIBPROCPASS)
 
 clean:
 	$(RM) -f $(OBJ) $(BPROG) $(UPROG) $(PPROG) $(SPROG)
-	for i in proc $(SUBDIRS); do $(MAKE) -C $$i clean; done
+	for i in proc $(SUBDIRS); do $(MAKE) -C $$i -f Makefile.noam clean; done
 
 distclean: clean
-	for i in proc $(SUBDIRS); do $(MAKE) -C $$i clean; done
+	for i in proc $(SUBDIRS); do $(MAKE) -C $$i -f Makefile.noam clean; done
 	$(RM) -f $(OBJ) $(BPROG) $(UPROG) $(SPROG) \
 	      proc/.depend
 
@@ -122,15 +122,15 @@ else
 endif
 
 $(LIB_TGT): $(wildcard proc/*.[ch])
-	$(MAKE) -C proc `basename $(LIB_TGT)` $(LIBPROCPASS)
+	$(MAKE) -C proc -f Makefile.noam `basename $(LIB_TGT)` $(LIBPROCPASS)
 
 # component package setup -- the pattern should be obvious: A build rule and
 # unified executable+documentation install rule. (An extra makefile rule is
 # needed for those packages which use Imake.)
 
 ps:              build_ps
-build_ps:				; $(MAKE) -C ps
-install_ps:      ps		; $(MAKE) -C ps install
+build_ps:				; $(MAKE) -C ps -f Makefile.noam
+install_ps:      ps		; $(MAKE) -C ps -f Makefile.noam install
 
 # executable dependencies
 kill skill snice top w uptime tload free vmstat utmp : $(LIB_TGT)
