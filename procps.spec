@@ -1,8 +1,8 @@
 Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
-%define major_version 2
+%define major_version 3
 %define minor_version 0
-%define revision 7
+%define revision 0
 %define version %{major_version}.%{minor_version}.%{revision}
 Version: %{version}
 Release: 1
