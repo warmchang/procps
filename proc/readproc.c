@@ -1565,7 +1565,7 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
             data = xrealloc(data,sizeof(proc_t)*n_alloc);
             // have to move tmp too
             tmp = data+(tmp-old);
-            memset(data+n_used+1, 0, sizeof(proc_t)*(n_alloc-(n_used+1)));
+            memset(data+n_used, 0, sizeof(proc_t)*(n_alloc-n_used));
           }
           if(n_task_alloc == n_task){
             //proc_t **old = ttab;
