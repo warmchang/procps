@@ -747,24 +747,25 @@ static int one_proc (struct pids_stack *p)
 	return 0;
 }
 
-static void range_arguments(char *optarg)
+static void range_arguments(const char *optarg)
 {
 	char *buf, *arg1, *arg2;
 
-	buf = xstrdup(optarg);
+	if ((buf = xstrdup(optarg)) == NULL) {
+        xerrx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"),
+              optarg);
+    }
 	arg1 = buf;
 	arg2 = strchr(arg1, ',');
 	if (arg2)
-		*arg2 = '\0';
-	if (arg2)
-		++arg2;
+		*arg2++ = '\0';
 	else
 		arg2 = arg1;
 	if (arg1[0] != '\0')
 		range_low = strtoul(arg1, &arg1, 16);
 	if (arg2[0] != '\0')
 		range_high = strtoul(arg2, &arg2, 16);
-	if (arg1 && (*arg1 || *arg2)) {
+	if (*arg1 || *arg2) {
         free(buf);
 		xerrx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"),
 		      optarg);
