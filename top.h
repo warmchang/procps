@@ -30,7 +30,6 @@
 //#define POSIX_CMDLIN            /* use '[ ]' for kernel threads, not '( )' */
 //#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
 //#define TICS_64_BITS            /* accommodate Linux 2.5.xx 64-bit jiffies */
-//#define UNEQUAL_SORT            /* use pid's as a secondary sort key       */
 //#define USE_LIB_STA3            /* use lib status (3 ch) vs. proc_t (1 ch) */
 //#define WARN_NOT_SMP            /* restrict '1' & 'I' commands to true smp */
 
@@ -83,17 +82,14 @@
 #define PAGES_2K(n)  BYTES_2K(PAGES_2B(n))
 #define PAGE_CNT(n)  (unsigned)( (n) / Page_size )
 
-        /* Used as return arguments to achieve normal/reversed/unequal
-           sorts in the sort callbacks */
-#define SORT_lt  ( Frame_srtflg ?  1 : -1 )
-#define SORT_gt  ( Frame_srtflg ? -1 :  1 )
-#ifdef UNEQUAL_SORT
-#define SORT_eq  sort_P_PID(P, Q)
-#else
+        /* Used as return arguments in *some* of the sort callbacks */
+#define SORT_lt  ( Frame_srtflg > 0 ?  1 : -1 )
+#define SORT_gt  ( Frame_srtflg > 0 ? -1 :  1 )
 #define SORT_eq  0
-#endif
 
-        /* Used to reference and create sort callback functions */
+        /* Used to reference and create sort callback functions --
+           note: some of the callbacks are NOT your father's callbacks, they're
+                 highly optimized to save them ol' precious cycles! */
 #define _SF(f)  (QSORT_t)sort_ ## f
 #define _SC_NUM1(f,n) \
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
@@ -105,11 +101,12 @@
       if ( ((*P)->n1 - (*P)->n2) < ((*Q)->n1 - (*Q)->n2) ) return SORT_lt; \
       if ( ((*P)->n1 - (*P)->n2) > ((*Q)->n1 - (*Q)->n2) ) return SORT_gt; \
       return SORT_eq; }
-#define _SC_STRZ(f,s) \
+#define _SC_NUMx(f,n) \
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
-      if ( 0 > strcmp((*P)->s, (*Q)->s) ) return SORT_lt; \
-      if ( 0 < strcmp((*P)->s, (*Q)->s) ) return SORT_gt; \
-      return SORT_eq; }
+      return Frame_srtflg * ( (*Q)->n - (*P)->n ); }
+#define _SC_STRx(f,s) \
+   static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
+      return Frame_srtflg * strcmp((*Q)->s, (*P)->s); }
 
 /*------  Special Macros (debug and/or informative)  ---------------------*/
 

@@ -161,25 +161,22 @@ static int  Frame_maxtask,      /* last known number of active tasks */
 
         /*
          * These happen to be coded in the same order as the enum 'pflag'
-         * values -- but the only positionally dependent sort callback is
-         * the 'pid' guy who MAY be invoked under 'return SORT_eq' and
-         * thus must be first.
-         *
-         * Note: 2 of these routines serve double duty -- 2 columns each.
+         * values.  Note that 2 of these routines serve double duty --
+         * 2 columns each.
          */
-_SC_NUM1(P_PID, pid)
-_SC_NUM1(P_PPD, ppid)
-_SC_NUM1(P_PGD, pgrp)
-_SC_NUM1(P_UID, euid)
-_SC_STRZ(P_USR, euser)
-_SC_STRZ(P_GRP, egroup)
-_SC_NUM1(P_TTY, tty)
-_SC_NUM1(P_PRI, priority)
-_SC_NUM1(P_NCE, nice)
+_SC_NUMx(P_PID, pid)
+_SC_NUMx(P_PPD, ppid)
+_SC_NUMx(P_PGD, pgrp)
+_SC_NUMx(P_UID, euid)
+_SC_STRx(P_USR, euser)
+_SC_STRx(P_GRP, egroup)
+_SC_NUMx(P_TTY, tty)
+_SC_NUMx(P_PRI, priority)
+_SC_NUMx(P_NCE, nice)
 #ifdef UGH_ITS_4_RH
-_SC_NUM1(P_CPN, lproc)
+_SC_NUMx(P_CPN, lproc)
 #else
-_SC_NUM1(P_CPN, processor)
+_SC_NUMx(P_CPN, processor)
 #endif
 _SC_NUM1(P_CPU, pcpu)
                                         /* also serves P_TM2 ! */
@@ -209,25 +206,20 @@ _SC_NUM1(P_DAT, drs)
 _SC_NUM1(P_SHR, share)
 _SC_NUM1(P_FLT, maj_flt)
 _SC_NUM1(P_DRT, dt)
-_SC_NUM1(P_STA, state)
+_SC_NUMx(P_STA, state)
 
 static int sort_P_CMD (const proc_t **P, const proc_t **Q)
 {
    /* if a process doesn't have a cmdline, we'll consider it a kernel thread
       -- since show_a_task gives such tasks special treatment, we must too */
    if (Frame_cmdlin && ((*P)->cmdline || (*Q)->cmdline)) {
-      if (!(*P)->cmdline) return SORT_lt;
-      if (!(*Q)->cmdline) return SORT_gt;
-      if ( 0 > strncmp((*P)->cmdline[0], (*Q)->cmdline[0], (unsigned)Curwin->maxcmdln) )
-         return SORT_lt;
-      if ( 0 < strncmp((*P)->cmdline[0], (*Q)->cmdline[0], (unsigned)Curwin->maxcmdln) )
-         return SORT_gt;
-   } else {
-      /* this part also handles the compare if both are kernel threads */
-      if ( 0 > strcmp((*P)->cmd, (*Q)->cmd) ) return SORT_lt;
-      if ( 0 < strcmp((*P)->cmd, (*Q)->cmd) ) return SORT_gt;
+      if (!(*Q)->cmdline) return Frame_srtflg * -1;
+      if (!(*P)->cmdline) return Frame_srtflg;
+      return Frame_srtflg *
+         strncmp((*Q)->cmdline[0], (*P)->cmdline[0], (unsigned)Curwin->maxcmdln);
    }
-   return SORT_eq;
+   /* this part also handles the compare if both are kernel threads */
+   return Frame_srtflg * strcmp((*Q)->cmd, (*P)->cmd);
 }
 
 _SC_NUM1(P_WCH, wchan)
@@ -323,8 +315,8 @@ static void bye_bye (int eno, const char *str)
       "\n\t   %s, using Hertz = %u (%u bytes, %u-bit time)"
       "\n\t   sizeof(CPUS_t) = %u, sizeof(HIST_t) = %u (%u HIST_t's/Page)"
       "\n\t   CPU_FMTS_JUST1 = %s"
-      "  \t   CPU_FMTS_MULTI = %s"
-      "  \tTerminal: %s"
+      "\n\t   CPU_FMTS_MULTI = %s"
+      "\n\tTerminal: %s"
       "\n\t   device = %s, ncurses = v%s"
       "\n\t   max_colors = %d, max_pairs = %d"
       "\n\t   Cap_can_goto = %s"
@@ -679,8 +671,8 @@ static int get_int (const char *prompt)
          *    SK_Gb (3) it's gigabytes  */
 static char *scale_num (unsigned num, const unsigned width, const unsigned type)
 {
-      /* kilobytes, megabytes, gigabytes, too-big-for-int-bytes */
-   static double scale[] = { 1024, 1024*1024, 1024*1024*1024, 0 };
+      /* kilobytes, megabytes, gigabytes, duh! */
+   static float scale[] = { 1024, 1024*1024, 1024*1024*1024, 0 };
       /* kilo, mega, giga, none */
 #ifdef CASEUP_SCALE
    static char nextup[] =  { 'K', 'M', 'G', 0 };
@@ -688,24 +680,22 @@ static char *scale_num (unsigned num, const unsigned width, const unsigned type)
    static char nextup[] =  { 'k', 'm', 'g', 0 };
 #endif
    static char buf[TNYBUFSIZ];
-   double *dp;
+   float *dp;
    char *up;
+   int n;
 
       /* try an unscaled version first... */
-   sprintf(buf, "%d", num);
-   if (strlen(buf) <= width)
-      return buf;
+   if (-1 != (n = snprintf(buf, sizeof(buf), "%u", num))
+   && width >= n) return buf;
 
       /* now try successively higher types until it fits */
    for (up = nextup + type, dp = scale; *dp; ++dp, ++up) {
          /* the most accurate version */
-      sprintf(buf, "%.1f%c", num / *dp, *up);
-      if (strlen(buf) <= width)
-         return buf;
+      if (-1 != (n = snprintf(buf, sizeof(buf), "%.1f%c", num / *dp, *up))
+      && width >= n) return buf;
          /* the integer version */
-      sprintf(buf, "%d%c", (int)(num / *dp), *up);
-      if (strlen(buf) <= width)
-         return buf;
+      if (-1 != (n = snprintf(buf, sizeof(buf), "%d%c", (int)(num / *dp), *up))
+      && width >= n) return buf;
    }
       /* well shoot, this outta' fit... */
    return "?";
@@ -717,41 +707,48 @@ static char *scale_num (unsigned num, const unsigned width, const unsigned type)
          * Format 'tics' to fit 'width' */
 static char *scale_tics (TICS_t tics, const unsigned width)
 {
-   static struct {
-      unsigned    div;
-      const char *fmt;
-   } ttab[] = {
-     /* minutes        hours          days            weeks */
+#define T1 "%u:%02u.%02u"
+#define T2 "%u:%02u"
 #ifdef CASEUP_SCALE
-      { 60, "%uM" }, { 60, "%uH" }, { 24, "%uD" }, {  7, "%uW" }
+#define HH "%uH"
+#define DD "%uD"
+#define WW "%uW"
 #else
-      { 60, "%um" }, { 60, "%uh" }, { 24, "%ud" }, {  7, "%uw" }
+#define HH "%uh"
+#define DD "%ud"
+#define WW "%uw"
 #endif
-   };
    static char buf[TNYBUFSIZ];
-   unsigned i, t;
+   unsigned ss;
+   int n;
+   TICS_t t = (tics * 100) / (TICS_t)Hertz;
 
-      /* try successively higher units until it fits */
-   t = (tics * 100) / (TICS_t)Hertz;
-   sprintf(buf, "%u:%02u.%02u"                  /* mins:secs.hundredths */
-      , t / 6000, (t / 100) % 60, t % 100);
-   if (strlen(buf) <= width)
-      return buf;
-   t /= 100;
+   if (-1 != (n = snprintf(buf, sizeof(buf), T1
+      , (unsigned)t / 6000, (unsigned)(t / 100) % 60, (unsigned)t % 100))
+         && width >= n) return buf;
+   t  /= 100;
+   ss  = t % 60;
+   t  /= 60;
+   if (-1 != (n = snprintf(buf, sizeof(buf), T2, (unsigned)t, ss))
+   && width >= n) return buf;
+   t  /= 60;
+   if (-1 != (n = snprintf(buf, sizeof(buf), HH, (unsigned)t))
+   && width >= n) return buf;
+   t  /= 24;
+   if (-1 != (n = snprintf(buf, sizeof(buf), DD, (unsigned)t))
+   && width >= n) return buf;
+   t /= 7;
+   if (-1 != (n = snprintf(buf, sizeof(buf), WW, (unsigned)t))
+   && width >= n) return buf;
 
-   sprintf(buf, "%u:%02u", t / 60, t % 60);     /* minutes:seconds */
-   if (strlen(buf) <= width)
-      return buf;
-
-      /* try successively: minutes; hours; days; weeks */
-   for (i = 0; i < MAXTBL(ttab); i++) {
-      t /= ttab[i].div;
-      sprintf(buf, ttab[i].fmt, t);
-      if (strlen(buf) <= width)
-         return buf;
-   };
       /* well shoot, this outta' fit... */
    return "?";
+
+#undef T1
+#undef T2
+#undef HH
+#undef DD
+#undef WW
 }
 
 
@@ -812,7 +809,8 @@ static CPUS_t *refreshcpus (CPUS_t *cpus)
 {
    static FILE *fp = NULL;
    int i;
-   char buf[256]; /* enough for a /proc/stat CPU line (not the intr line) */
+      /* enough for a /proc/stat CPU line (not the intr line) */
+   char buf[SMLBUFSIZ];
 
       /* by opening this file once, we'll avoid the hit on minor page faults
          (sorry Linux, but you'll have to close it for us) */
@@ -828,7 +826,7 @@ static CPUS_t *refreshcpus (CPUS_t *cpus)
    fflush(fp);
 
       /* first value the last slot with the cpu summary line */
-   if(!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
+   if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
    if (4 > sscanf(buf, CPU_FMTS_JUST1
       , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i, &cpus[Cpu_tot].I))
          std_err("failed /proc/stat read");
@@ -837,10 +835,10 @@ static CPUS_t *refreshcpus (CPUS_t *cpus)
    for (i = 0; i < Cpu_tot; i++) {
 #ifdef PRETEND4CPUS
       rewind(fp);
-      if(!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
+      if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
       if (4 > sscanf(buf, CPU_FMTS_JUST1
 #else
-      if(!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
+      if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
       if (4 > sscanf(buf, CPU_FMTS_MULTI
 #endif
          , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].I))
@@ -1697,6 +1695,7 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
            which has happened with some SMP kernels (pre-2.4?) */
 #define TRIMz(x)  ((tz = (STIC_t)x) < 0 ? 0 : tz)
    STIC_t u_frme, s_frme, n_frme, i_frme, I_frme, tot_frme, tz;
+   float scale;
 
    u_frme = TRIMz(cpu->u - cpu->u_sav);
    s_frme = TRIMz(cpu->s - cpu->s_sav);
@@ -1705,16 +1704,17 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
    I_frme = TRIMz(cpu->I - cpu->I_sav);
    tot_frme = u_frme + s_frme + n_frme + i_frme + I_frme;
    if (1 > tot_frme) tot_frme = 1;
+   scale = 100.0 / (float)tot_frme;
 
       /* display some kinda' cpu state percentages
          (who or what is explained by the passed prefix) */
    show_special(fmtmk(STATES_line2
       , pfx
-      , (float)u_frme * 100 / tot_frme
-      , (float)s_frme * 100 / tot_frme
-      , (float)n_frme * 100 / tot_frme
-      , (float)i_frme * 100 / tot_frme
-      , (float)I_frme * 100 / tot_frme));
+      , (float)u_frme * scale
+      , (float)s_frme * scale
+      , (float)n_frme * scale
+      , (float)i_frme * scale
+      , (float)I_frme * scale));
    Msg_row += 1;
 
       /* remember for next time around */
@@ -1814,12 +1814,12 @@ static void frame_states (proc_t **ppt, int show)
 
       if (CHKw(Curwin, View_CPUSUM)) {
             /* display just the 1st /proc/stat line */
-         cpudo(&smpcpu[Cpu_tot], "CPU use:");
+         cpudo(&smpcpu[Cpu_tot], "Cpu(s):");
       } else {
          char tmp[SMLBUFSIZ];
             /* display each cpu's states separately */
          for (i = 0; i < Cpu_tot; i++) {
-            sprintf(tmp, "CPU%4d:", Mode_irixps ? i : Cpu_map[i]);
+            sprintf(tmp, " Cpu%-2d:", Mode_irixps ? i : Cpu_map[i]);
             cpudo(&smpcpu[i], tmp);
          }
       }
@@ -2502,7 +2502,9 @@ static void do_window (proc_t **ppt, WIN_t *q, int *lscr)
       sav_indx = q->sortindx;
       sav_flgs = (q->winflags & srtMASK);
 #endif
-      Frame_srtflg = CHKw(q, Qsrt_NORMAL);      /* this one's always needed! */
+                                                /* this one's always needed! */
+      if (CHKw(q, Qsrt_NORMAL)) Frame_srtflg = 1;
+         else Frame_srtflg = -1;
       Frame_ctimes = CHKw(q, Show_CTIMES);      /* this and next, only maybe */
       Frame_cmdlin = CHKw(q, Show_CMDLIN);
       qsort(ppt, (unsigned)Frame_maxtask, sizeof(proc_t *)
@@ -2731,4 +2733,3 @@ int main (int dont_care_argc, char **argv)
   */
    return 0;
 }
-
