@@ -1771,7 +1771,7 @@ static void parse_args (char **args)
                break;
             case 'p':
                do {
-                  if (selection_type) std_err("conflicting process selection");
+                  if (selection_type && selection_type != 'p') std_err("conflicting process selection");
                   selection_type = 'p';
                   if (cp[1]) cp++;
                   else if (*args) cp = *args++;
@@ -1798,7 +1798,7 @@ static void parse_args (char **args)
             case 'u':
                do {
                   const char *errmsg;
-                  if (selection_type) std_err("conflicting process selection");
+                  if (selection_type /* && selection_type != 'u' */) std_err("conflicting process selection");
                   if (cp[1]) cp++;
                   else if (*args) cp = *args++;
                   else std_err("-u missing name");
@@ -1811,7 +1811,7 @@ static void parse_args (char **args)
             case 'U':
                do {
                   const char *errmsg;
-                  if (selection_type) std_err("conflicting process selection");
+                  if (selection_type && /* selection_type != 'U' */) std_err("conflicting process selection");
                   if (cp[1]) cp++;
                   else if (*args) cp = *args++;
                   else std_err("-u missing name");
