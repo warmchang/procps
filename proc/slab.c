@@ -89,9 +89,35 @@ void free_slabinfo(struct slab_info *list)
 	}
 }
 
-/*
- * parse_slabinfo20 - actual parse routine for slabinfo 2.0 (2.6 kernels)
- */
+// parse_slabinfo20 - actual parse routine for slabinfo 2.x (2.6 kernels)
+// Note: difference between 2.0 and 2.1 is in the ": globalstat" part where version 2.1 
+// has extra column <nodeallocs>. We don't use ": globalstat" part in both versions.
+//
+// Formats (we don't use "statistics" extensions)
+//
+//  slabinfo - version: 2.1
+//  # name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab> \
+//  : tunables <batchcount> <limit> <sharedfactor> \
+//  : slabdata <active_slabs> <num_slabs> <sharedavail>
+//
+//  slabinfo - version: 2.1 (statistics)
+//  # name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab> \
+//  : tunables <batchcount> <limit> <sharedfactor> \
+//  : slabdata <active_slabs> <num_slabs> <sharedavail> \
+//  : globalstat <listallocs> <maxobjs> <grown> <reaped> <error> <maxfreeable> <freelimit> <nodeallocs> \
+//  : cpustat <allochit> <allocmiss> <freehit> <freemiss>
+//             
+//  slabinfo - version: 2.0
+//  # name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab> \
+//  : tunables <batchcount> <limit> <sharedfactor> \
+//  : slabdata <active_slabs> <num_slabs> <sharedavail>
+//
+//  slabinfo - version: 2.0 (statistics)
+//  # name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab> \
+//  : tunables <batchcount> <limit> <sharedfactor> \
+//  : slabdata <active_slabs> <num_slabs> <sharedavail> \
+//  : globalstat <listallocs> <maxobjs> <grown> <reaped> <error> <maxfreeable> <freelimit> \
+//  : cpustat <allochit> <allocmiss> <freehit> <freemiss>
 static int parse_slabinfo20(struct slab_info **list, struct slab_stat *stats,
 				FILE *f)
 {
