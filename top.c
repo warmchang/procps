@@ -65,6 +65,7 @@ static char *Myname;
            overridden with the local rcfile (old or new-style) values */
 static char  Rc_name [OURPATHSZ];
 static RCF_t Rc = DEF_RCFILE;
+static const RCF_t DefRc = DEF_RCFILE;
 
         /* The run-time acquired page size */
 static int Page_size;
@@ -168,7 +169,7 @@ static int       Frame_srtflg,    // the subject window's sort direction
          */
 SCB_NUMx(P_PID, pid)
 SCB_NUMx(P_PPD, ppid)
-SCB_NUMx(P_PGD, pgrp)
+SCB_STRx(P_RUN, ruser)
 SCB_NUMx(P_UID, euid)
 SCB_STRx(P_USR, euser)
 SCB_STRx(P_GRP, egroup)
@@ -1018,7 +1019,8 @@ static proc_t **procs_refresh (proc_t **table, int flags)
 #define L_statm    PROC_FILLMEM
 #define L_status   PROC_FILLSTATUS
 #define L_CMDLINE  L_stat   | PROC_FILLARG
-#define L_EUSER    L_status | PROC_FILLUSR
+#define L_EUSER    PROC_FILLUSR
+#define L_RUSER    L_status | PROC_FILLUSR
 #define L_GROUP    L_status | PROC_FILLGRP
 #define L_NONE     0
    // from either 'stat' or 'status' (preferred), via bits not otherwise used
@@ -1042,9 +1044,9 @@ static FLD_t Fieldstab[] = {
       L_EITHER       - must L_status, else 64-bit math, __udivdi3 on 32-bit !
       keys   head           fmts     width   scale  sort   desc                     lflg
      ------  -----------    -------  ------  -----  -----  ----------------------   -------- */
-   { "AaAa", "  PID ",      "%5u ",     -1,    -1, SF(PID), "Process Id",           L_EITHER },
+   { "AaAa", "  PID ",      "%5u ",     -1,    -1, SF(PID), "Process Id",           L_NONE   },
    { "BbBb", " PPID ",      "%5u ",     -1,    -1, SF(PPD), "Parent Process Pid",   L_EITHER },
-   { "CcQq", "RUSER    ",   "%8u ",     -1,    -1, SF(PGD), "FIXME: ruser",         L_stat   },
+   { "CcQq", "RUSER    ",   "%-8.8s ",  -1,    -1, SF(RUN), "Real user name",       L_RUSER  },
    { "DdCc", " UID ",       "%4u ",     -1,    -1, SF(UID), "User Id",              L_NONE   },
    { "EeDd", "USER     ",   "%-8.8s ",  -1,    -1, SF(USR), "User Name",            L_EUSER  },
    { "FfNn", "GROUP    ",   "%-8.8s ",  -1,    -1, SF(GRP), "Group Name",           L_GROUP  },
@@ -1067,7 +1069,7 @@ static FLD_t Fieldstab[] = {
 #ifdef USE_LIB_STA3
    { "WwVv", "STA ",        "%3.3s ",   -1,    -1, SF(STA), "Process Status",       L_status },
 #else
-   { "WwVv", "S ",          "%c ",      -1,    -1, SF(STA), "Process Status",       L_status },
+   { "WwVv", "S ",          "%c ",      -1,    -1, SF(STA), "Process Status",       L_EITHER },
 #endif
    // next entry's special: '.head' will be formatted using table entry's own
    //                       '.fmts' plus runtime supplied conversion args!
@@ -1525,6 +1527,55 @@ static void before (char *me)
    Page_size = getpagesize();
 }
 
+
+// Anything missing won't show as a choice in the field editor,
+// so make sure there is exactly one of each letter.
+static void add_missing_fields(char *fields){
+   unsigned upper[32];
+   unsigned lower[32];
+   char c;
+   char *cp;
+   
+   memset(upper, '\0', sizeof upper);
+   memset(lower, '\0', sizeof lower);
+
+   cp = fields;
+   for (;;) {
+      c = *cp++;
+      if (!c) break;
+      if(isupper(c)) upper[c&0x1f]++;
+      else           lower[c&0x1f]++;
+   }
+
+   c = 'a';
+   while (c <= 'z') {
+      if (upper[c&0x1f] && lower[c&0x1f]) {
+         lower[c&0x1f] = '\0';  // got both, so wipe out unseen column
+         for (;;) {
+            cp = strchr(fields, c);
+            if (cp) memmove(cp,cp+1,strlen(cp));
+            else break;
+         }
+      }
+      while (lower[c&0x1f] > 1) {   // got too many a..z
+         lower[c&0x1f]--;
+         cp = strchr(fields, c);
+         memmove(cp,cp+1,strlen(cp));
+      }
+      while (upper[c&0x1f] > 1) {   // got too many A..Z
+         upper[c&0x1f]--;
+         cp = strchr(fields, toupper(c));
+         memmove(cp,cp+1,strlen(cp));
+      }
+      if (!upper[c&0x1f] && !lower[c&0x1f]) {  // both missing
+         lower[c&0x1f]++;
+         memmove(fields+1,fields,strlen(fields)+1);
+         fields[0] = c;
+      }
+      c++;
+   }
+}
+
         /*
          * First attempt to read the /etc/rcfile which contains two lines
          * consisting of the secure mode switch and an update interval.
@@ -1566,7 +1617,7 @@ static void configs_read (void)
    if (getenv("HOME"))
       snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", getenv("HOME"), Myname);
 
-   rcf = DEF_RCFILE;
+   rcf = DefRc;
    fd = open(Rc_name, O_RDONLY);
    if (fd > 0) {
       ssize_t num;
@@ -1576,7 +1627,7 @@ static void configs_read (void)
          fbuf[1] = '\n';
          fbuf[num+2] = '\0';
          if (rc_read_old(fbuf, &rcf) > 0) Crufty_rcf = 1;
-         else rcf = DEF_RCFILE;                     // on failure, maybe mangled
+         else rcf = DefRc;                     // on failure, maybe mangled
          rc_read_new(fbuf, &rcf);
          delay = rcf.delay_time;
       }
@@ -1588,7 +1639,10 @@ static void configs_read (void)
    Rc.mode_irixps = rcf.mode_irixps;
    if (rcf.win_index >= GROUPSMAX) rcf.win_index = 0;
    Curwin = Winstk[rcf.win_index];
-   for (i = 0; i < GROUPSMAX; i++) Winstk[i]->rc = rcf.win[i];
+   for (i = 0; i < GROUPSMAX; i++) {
+      Winstk[i]->rc = rcf.win[i];
+      add_missing_fields(Winstk[i]->rc.fieldscur);
+   }
 
    // lastly, establish the true runtime secure mode and delay time
    if (!getuid()) Secure_mode = 0;
@@ -2778,9 +2832,6 @@ static void task_show (const WIN_t *q, const proc_t *p)
          case P_NCE:
             MKCOL((int)p->nice);
             break;
-         case P_PGD:
-            MKCOL((unsigned)p->pgrp);
-            break;
          case P_PID:
             MKCOL((unsigned)p->pid);
             break;
@@ -2796,6 +2847,9 @@ static void task_show (const WIN_t *q, const proc_t *p)
             break;
          case P_RES:
             MKCOL(scale_num(PAGES_2K(p->resident), w, s));
+            break;
+         case P_RUN:
+            MKCOL(p->ruser);
             break;
          case P_SHR:
             MKCOL(scale_num(PAGES_2K(p->share), w, s));

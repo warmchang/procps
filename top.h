@@ -224,7 +224,7 @@ enum scale_num {
 
         /* Flags for each possible field */
 enum pflag {
-   P_PID, P_PPD, P_PGD, P_UID, P_USR, P_GRP, P_TTY,
+   P_PID, P_PPD, P_RUN, P_UID, P_USR, P_GRP, P_TTY,
    P_PRI, P_NCE,
    P_CPN, P_CPU, P_TME, P_TM2,
    P_MEM, P_VRT, P_SWP, P_RES, P_COD, P_DAT, P_SHR,
