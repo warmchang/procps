@@ -6,6 +6,7 @@ avoid warning about -lncurses when not linking -- thanks FLWM
 tolerate IA-64 headers without PAGE_SIZE
 ps: k option, same as --sort
 ps: personality-specific -x support (HP-UX and SVR4-MP)
+pgrep: man page SEE ALSO updated                    #226817
 sysctl: -q and -N options
 sysctl: better error handling of failed writes
 top: tolerate sparse CPU numbering
