@@ -492,8 +492,8 @@ static struct el * select_procs (int *num)
     regex_t *preg;
     pid_t myself = getpid();
     struct el *list = NULL;
-    char cmdsearch[CMDSTRSIZE];
-    char cmdoutput[CMDSTRSIZE];
+    char cmdsearch[CMDSTRSIZE] = "";
+    char cmdoutput[CMDSTRSIZE] = "";
     char *task_cmdline;
     enum pids_fetch_type which;
 
