@@ -23,9 +23,6 @@
 #include <ctype.h>
 #include <curses.h>
 #include <errno.h>
-#ifndef YIELDCPU_OFF
-#include <sched.h>
-#endif
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -1147,20 +1144,23 @@ static void whack_terminal (void)
 /*######  Field Selection/Ordering routines  #############################*/
 
         /* These are our gosh darn 'Fields' !
-           They MUST be kept in sync with pflags !! */
+           They MUST be kept in sync with pflags !!
+           note: for integer data, the length modifiers found in .fmts may be
+                 smaller than the true length found in the proc_t -- this plus
+                 a cast in show_a_task provides some width protection. */
 static FTAB_t  Fieldstab[] = {
 /*   head           fmts     width   scale  sort      desc
      -----------    -------  ------  -----  --------  ---------------------- */
-   { "  PID ",      "%5d ",     -1,    -1, _SF(P_PID), "Process Id"           },
-   { " PPID ",      "%5d ",     -1,    -1, _SF(P_PPD), "Parent Process Pid"   },
-   { " PGID ",      "%5d ",     -1,    -1, _SF(P_PGD), "Process Group Id"     },
-   { " UID ",       "%4d ",     -1,    -1, _SF(P_UID), "User Id"              },
+   { "  PID ",      "%5u ",     -1,    -1, _SF(P_PID), "Process Id"           },
+   { " PPID ",      "%5u ",     -1,    -1, _SF(P_PPD), "Parent Process Pid"   },
+   { " PGID ",      "%5u ",     -1,    -1, _SF(P_PGD), "Process Group Id"     },
+   { " UID ",       "%4u ",     -1,    -1, _SF(P_UID), "User Id"              },
    { "USER     ",   "%-8.8s ",  -1,    -1, _SF(P_USR), "User Name"            },
    { "GROUP    ",   "%-8.8s ",  -1,    -1, _SF(P_GRP), "Group Name"           },
    { "TTY      ",   "%-8.8s ",   8,    -1, _SF(P_TTY), "Controlling Tty"      },
-   { " PR ",        "%3ld ",    -1,    -1, _SF(P_PRI), "Priority"             },
-   { " NI ",        "%3ld ",    -1,    -1, _SF(P_NCE), "Nice value"           },
-   { "#C ",         "%2d ",     -1,    -1, _SF(P_CPN), "Last used cpu (SMP)"  },
+   { " PR ",        "%3d ",     -1,    -1, _SF(P_PRI), "Priority"             },
+   { " NI ",        "%3d ",     -1,    -1, _SF(P_NCE), "Nice value"           },
+   { "#C ",         "%2u ",     -1,    -1, _SF(P_CPN), "Last used cpu (SMP)"  },
    { "%CPU ",       "%#4.1f ",  -1,    -1, _SF(P_CPU), "CPU usage"            },
    { "  TIME ",     "%6.6s ",    6,    -1, _SF(P_TME), "CPU Time"             },
    { "   TIME+  ",  "%9.9s ",    9,    -1, _SF(P_TME), "CPU Time, hundredths" },
@@ -1848,24 +1848,24 @@ static void frame_storage (void)
         /*
          * Task display *Helper* function to handle highlighted
          * column transitions.  */
-static void mkcol (WIN_t *q, PFLG_t idx, int sta, int *pad, char *buf, ...)
-{
+static void mkcol (WIN_t *q, int a, int c, int *p, char *b, const char *f, ...)
+{     /* a = status, c = hicol, p = pad, b = buf, f = fmt */
    char tmp[COLBUFSIZ];
    va_list va;
 
-   va_start(va, buf);
+   va_start(va, f);
       /* this conditional is for piece-of-mind only, it should NOT be needed
          given the macro employed by show_a_task (which calls us only when
          the target column is the current sort field and Show_HICOLS is on) */
-   if (!CHKw(q, Show_HICOLS) || q->sortindx != idx) {
-      vsprintf(buf, Fieldstab[idx].fmts, va);
+   if (!c) {
+      vsprintf(b, f, va);
    } else {
-      vsnprintf(tmp, sizeof(tmp), Fieldstab[idx].fmts, va);
-      sprintf(buf, "%s%s", q->capclr_rowhigh, tmp);
-      *pad += q->len_rowhigh;
-      if (!CHKw(q, Show_HIROWS) || 'R' != sta) {
-         strcat(buf, q->capclr_rownorm);
-         *pad += q->len_rownorm;
+      vsnprintf(tmp, sizeof(tmp), f, va);
+      sprintf(b, "%s%s", q->capclr_rowhigh, tmp);
+      *p += q->len_rowhigh;
+      if (!CHKw(q, Show_HIROWS) || 'R' != a) {
+         strcat(b, q->capclr_rownorm);
+         *p += q->len_rownorm;
       }
    }
    va_end(va);
@@ -1878,10 +1878,10 @@ static void show_a_task (WIN_t *q, proc_t *task)
 {
    /* the following macro is our means to 'inline' emitting a column -- that's
       far and away the most frequent and costly part of top's entire job! */
-#define MKCOL(q,idx,sta,pad,buf,arg...) do{ \
-           if (!b) \
-              snprintf(buf, sizeof(buf), f, ## arg); \
-           else mkcol(q, idx, sta, pad, buf, ## arg); }while(0)
+#define MKCOL(q,a,c,p,b,f,v...) do{ \
+           if (!c) \
+              snprintf(b, sizeof(b), f, ## v); \
+           else mkcol(q, a, c, p, b, f, ## v); } while(0)
 
    char rbuf[ROWBUFSIZ];
    int j, x, pad;
@@ -1893,12 +1893,12 @@ static void show_a_task (WIN_t *q, proc_t *task)
 
    for (x = 0; x < q->maxpflgs; x++) {
       char cbuf[COLBUFSIZ];
-      char        a = task->state;              /* we'll use local var's so  */
-      PFLG_t      i = q->procflags[x];          /* gcc doesn't reinvent the  */
-      unsigned    s = Fieldstab[i].scale;       /* wheel -- yields a cryptic */
-      unsigned    w = Fieldstab[i].width;       /* mkcol, but saves +1k code */
-      const char *f = Fieldstab[i].fmts;        /* (this & next macro only) */
-      int         b = (CHKw(q, Show_HICOLS) && q->sortindx == i);
+      char        a = task->state;              /* we'll use local var's so */
+      PFLG_t      i = q->procflags[x];          /* gcc doesn't reinvent the */
+      const char *f = Fieldstab[i].fmts;        /* wheel - yields a cryptic */
+      unsigned    s = Fieldstab[i].scale;       /* mkcol, but saves a bunch */
+      unsigned    w = Fieldstab[i].width;       /* of generated code...     */
+      int         c = (CHKw(q, Show_HICOLS) && q->sortindx == i);
 
       cbuf[0] = '\0';
       switch (i) {
@@ -1930,76 +1930,76 @@ static void show_a_task (WIN_t *q, proc_t *task)
                }
                cmdptr = cmdnam;
             }
-            MKCOL(q, i, a, &pad, cbuf, q->maxcmdln, q->maxcmdln, cmdptr);
+            MKCOL(q, a, c, &pad, cbuf, f, q->maxcmdln, q->maxcmdln, cmdptr);
          }
             break;
          case P_COD:
-            MKCOL(q, i, a, &pad, cbuf, scale_num(PAGES_2K(task->trs), w, s));
+            MKCOL(q, a, c, &pad, cbuf, f, scale_num(PAGES_2K(task->trs), w, s));
             break;
          case P_CPN:
-            MKCOL(q, i, a, &pad, cbuf, task->processor);
+            MKCOL(q, a, c, &pad, cbuf, f, (unsigned)task->processor);
             break;
          case P_CPU:
          {  float u = (float)task->pcpu * Frame_tscale;
 
             if (99.9 < u) u = 99.9;
-            MKCOL(q, i, a, &pad, cbuf, u);
+            MKCOL(q, a, c, &pad, cbuf, f, u);
          }
             break;
          case P_DAT:
-            MKCOL(q, i, a, &pad, cbuf, scale_num(PAGES_2K(task->drs), w, s));
+            MKCOL(q, a, c, &pad, cbuf, f, scale_num(PAGES_2K(task->drs), w, s));
             break;
          case P_DRT:
-            MKCOL(q, i, a, &pad, cbuf, scale_num((unsigned)task->dt, w, s));
+            MKCOL(q, a, c, &pad, cbuf, f, scale_num((unsigned)task->dt, w, s));
             break;
          case P_FLG:
-            MKCOL(q, i, a, &pad, cbuf, (long)task->flags);
+            MKCOL(q, a, c, &pad, cbuf, f, (long)task->flags);
             for (j = 0; cbuf[j]; j++)
                if ('0' == cbuf[j]) cbuf[j] = '.';
             break;
          case P_FLT:
-            MKCOL(q, i, a, &pad, cbuf, scale_num(task->maj_flt, w, s));
+            MKCOL(q, a, c, &pad, cbuf, f, scale_num(task->maj_flt, w, s));
             break;
          case P_GRP:
-            MKCOL(q, i, a, &pad, cbuf, task->egroup);
+            MKCOL(q, a, c, &pad, cbuf, f, task->egroup);
             break;
          case P_MEM:
-            MKCOL(q, i, a, &pad, cbuf
+            MKCOL(q, a, c, &pad, cbuf, f
                , (float)PAGES_2K(task->resident) * 100 / kb_main_total);
             break;
          case P_NCE:
-            MKCOL(q, i, a, &pad, cbuf, (long)task->nice);
+            MKCOL(q, a, c, &pad, cbuf, f, (int)task->nice);
             break;
          case P_PGD:
-            MKCOL(q, i, a, &pad, cbuf, task->pgrp);
+            MKCOL(q, a, c, &pad, cbuf, f, (unsigned)task->pgrp);
             break;
          case P_PID:
-            MKCOL(q, i, a, &pad, cbuf, task->pid);
+            MKCOL(q, a, c, &pad, cbuf, f, (unsigned)task->pid);
             break;
          case P_PPD:
-            MKCOL(q, i, a, &pad, cbuf, task->ppid);
+            MKCOL(q, a, c, &pad, cbuf, f, (unsigned)task->ppid);
             break;
          case P_PRI:
-               /* quick & dirty response to 2.5.xx RT priority */
-            if (-99 > task->priority) task->priority = -99;
-            else if (+99 < task->priority) task->priority = +99;
-            MKCOL(q, i, a, &pad, cbuf, (long)task->priority);
+            if (-99 > task->priority || +99 < task->priority)
+               MKCOL(q, a, c, &pad, cbuf, " RT ");
+            else
+               MKCOL(q, a, c, &pad, cbuf, f, (int)task->priority);
             break;
          case P_RES:
-            MKCOL(q, i, a, &pad, cbuf, scale_num(PAGES_2K(task->resident), w, s));
+            MKCOL(q, a, c, &pad, cbuf, f, scale_num(PAGES_2K(task->resident), w, s));
             break;
          case P_SHR:
-            MKCOL(q, i, a, &pad, cbuf, scale_num(PAGES_2K(task->share), w, s));
+            MKCOL(q, a, c, &pad, cbuf, f, scale_num(PAGES_2K(task->share), w, s));
             break;
          case P_STA:
 #ifdef USE_LIB_STA3
-            MKCOL(q, i, a, &pad, cbuf, status(task));
+            MKCOL(q, a, c, &pad, cbuf, f, status(task));
 #else
-            MKCOL(q, i, a, &pad, cbuf, task->state);
+            MKCOL(q, a, c, &pad, cbuf, f, task->state);
 #endif
             break;
          case P_SWP:
-            MKCOL(q, i, a, &pad, cbuf
+            MKCOL(q, a, c, &pad, cbuf, f
                , scale_num(PAGES_2K(task->size - task->resident), w, s));
             break;
          case P_TME:
@@ -2009,34 +2009,34 @@ static void show_a_task (WIN_t *q, proc_t *task)
             t = task->utime + task->stime;
             if (CHKw(q, Show_CTIMES))
                t += (task->cutime + task->cstime);
-            MKCOL(q, i, a, &pad, cbuf, scale_tics(t, w));
+            MKCOL(q, a, c, &pad, cbuf, f, scale_tics(t, w));
          }
             break;
          case P_TTY:
          {  char tmp[TNYBUFSIZ];
 
             dev_to_tty(tmp, (int)w, task->tty, task->pid, ABBREV_DEV);
-            MKCOL(q, i, a, &pad, cbuf, tmp);
+            MKCOL(q, a, c, &pad, cbuf, f, tmp);
          }
             break;
          case P_UID:
-            MKCOL(q, i, a, &pad, cbuf, task->euid);
+            MKCOL(q, a, c, &pad, cbuf, f, (unsigned)task->euid);
             break;
          case P_USR:
-            MKCOL(q, i, a, &pad, cbuf, task->euser);
+            MKCOL(q, a, c, &pad, cbuf, f, task->euser);
             break;
          case P_VRT:
-            MKCOL(q, i, a, &pad, cbuf, scale_num(PAGES_2K(task->size), w, s));
+            MKCOL(q, a, c, &pad, cbuf, f, scale_num(PAGES_2K(task->size), w, s));
             break;
          case P_WCH:
             if (No_ksyms) {
 #ifdef CASEUP_HEXES
-               MKCOL(q, i, a, &pad, cbuf, fmtmk("x%08lX", (long)task->wchan));
+               MKCOL(q, a, c, &pad, cbuf, "%08lX  ", (long)task->wchan);
 #else
-               MKCOL(q, i, a, &pad, cbuf, fmtmk("x%08lx", (long)task->wchan));
+               MKCOL(q, a, c, &pad, cbuf, "%08lx  ", (long)task->wchan);
 #endif
             } else {
-               MKCOL(q, i, a, &pad, cbuf, wchan(task->wchan));
+               MKCOL(q, a, c, &pad, cbuf, f, wchan(task->wchan));
             }
             break;
 
@@ -2444,17 +2444,6 @@ static proc_t **do_summary (void)
        ** Display Memory and Swap space usage */
    frame_storage();
 
-#ifndef YIELDCPU_OFF
-   /* jeeze pucker up, it's time to kiss the scheduler's butt...
-
-      Alright Mr. Kernel, that's ENOUGH already.  This swell little program
-      is SICK and TIRED of being PUNISHED for its CAREFUL USE of cpu cycles
-      (quite unlike old top who just threw them away).  You constantly make
-      me FIGHT my way back up the RUN-QUEUE!  Dammit, I am GOOD, regardless
-      of whether your GOODNESS says so.  So here's the deal: I'll yield the
-      darn cpu, if you'll promise to re-dispatch me real soon, ok? */
-   sched_yield();
-#endif
    SETw(Curwin, NEWFRAM_cwo);
    return p_table;
 

@@ -34,7 +34,6 @@
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
-//#define YIELDCPU_OFF            /* hang on tight, DON'T issue sched_yield  */
 
 #ifdef PRETEND2_5_X
 #define linux_version_code LINUX_VERSION(2,5,43)
@@ -118,7 +117,7 @@
            char _str[ROWBUFSIZ]; \
            snprintf(_str, sizeof(_str), fmt, ## arg); \
            putp(_str); \
-        } while (0);
+        } while (0)
 
 /*------  Special Macros (debug and/or informative)  ---------------------*/
 
@@ -557,7 +556,7 @@ typedef struct win {
 //atic void        cpudo (CPUS_t *cpu, const char *pfx);
 //atic void        frame_states (proc_t **ppt, int show);
 //atic void        frame_storage (void);
-//atic void        mkcol (WIN_t *q, PFLG_t idx, int sta, int *pad, char *buf, ...);
+//atic void        mkcol (WIN_t *q, int a, int c, int *p, char *b, const char *f, ...);
 //atic void        show_a_task (WIN_t *q, proc_t *task);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void        do_key (unsigned c);

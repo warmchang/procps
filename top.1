@@ -185,11 +185,11 @@ Even so, items shown with an \*(AS could be overridden through the
 command-line.
 
     \fIGlobal_defaults\fR
-       'A' - Alt display        \fBOff\fR (full-screen)
+       'A' - Alt display        Off (full-screen)
      * 'd' - Delay time         3.0 seconds
        'I' - Irix mode          On\ \ (no, 'solaris' smp)
-     * 'p' - PID monitoring     \fBOff\fR
-     * 's' - Secure mode        \fBOff\fR (unsecured)
+     * 'p' - PID monitoring     Off
+     * 's' - Secure mode        Off (unsecured)
     \fISummary_Area_defaults\fR
        'l' - Load Avg/Uptime    On\ \ (thus program name)
        't' - Task/Cpu state     On\ \ (1+1 lines, see '1')
@@ -197,13 +197,13 @@ command-line.
        '1' - Single Cpu         On\ \ (thus 1 line if smp)
     \fITask_Area_defaults\fR
        'b' - Bold hilite        On\ \ (not 'reverse')
-     * 'c' - Command line       \fBOff\fR (name, not cmdline)
+     * 'c' - Command line       Off (name, not cmdline)
      * 'i' - Idle tasks         On\ \ (show all tasks)
        'R' - Reverse sort       On\ \ (sort pids high-to-low)
-     * 'S' - Cumulative time    \fBOff\fR (exclude dead children)
-       'x' - Column hilite      \fBOff\fR\ (no, sort field)
+     * 'S' - Cumulative time    Off (exclude dead children)
+       'x' - Column hilite      Off\ (no, sort field)
        'y' - Row hilite         On\ \ (yes, running tasks)
-       'z' - color/mono         \fBOff\fR\ (no, colors)
+       'z' - color/mono         Off\ (no, colors)
 
 
 .\" ----------------------------------------------------------------------
@@ -876,7 +876,7 @@ in all four windows before returning to the \*(Me display.
         <Enter>   :apply and exit
         'q'       :abandon current changes and exit
 
-\*(NT If your use 'a' or 'w' to cycle the targeted window, you will
+If your use 'a' or 'w' to cycle the targeted window, you will
 have applied the color scheme that was displayed when you left that window.
 You can, of course, easily return to any window and reapply different
 colors or turn colors \*F completely with the 'z' toggle.
@@ -898,7 +898,6 @@ as you return to the \*(Me display.
 In \*(FM there is a single window represented by the entire screen.
 That single window can still be changed to display 1 of 4 different\fB field
 groups\fR (\*(Xc 'G' \*(CI, repeated below).
-
 Each of the 4 field groups has a unique separately configurable\fB \*(SA\fR
 and its own configurable\fB \*(TA\fR.
 
@@ -927,13 +926,13 @@ know what window is the \*(CW.
 .SS 4b. COMMANDS for Windows
 .TP 7
 \ \ \'\fB-\fR\' and \'\fB_\fR\' :\fIShow/Hide_Window(s)_toggles\fR
-The '-' (minus) key turns the \*(CW's \*(TD \*O and \*F.
+The '-' key turns the \*(CW's \*(TD \*O and \*F.
 When \*O, that \*(TA will show a minimum of the columns header you've
 established with the 'f' and 'o' commands.
 It will also reflect any other \*(TA options/toggles you've applied yielding
 zero or more tasks.
 
-The '_' (upper case minus) key does the same for all \*(TDs.
+The '_' key does the same for all \*(TDs.
 In other words, it switches between the currently visible \*(TD(s) and any
 \*(TD(s) you had toggled \*F.
 If all 4 \*(TDs are currently visible, this \*(CI will leave the \*(SA
@@ -941,11 +940,11 @@ as the only display element.
 
 .TP 7
 *\ \'\fB=\fR\' and \'\fB+\fR\' :\fIEqualize_(re-balance)_Window(s)\fR
-The '=' (equals) key forces the \*(CW's \*(TD to be visible.
+The '=' key forces the \*(CW's \*(TD to be visible.
 It also reverses any 'i' (idle tasks) and 'n' (max tasks) commands that might
 be active.
 
-The \'+' (upper case equals) key does the same for all windows.
+The '+' key does the same for all windows.
 The four \*(TDs will reappear, nice and even.  They will also have retained
 any customizations you had previously applied, except for the 'i'
 (idle tasks) and 'n' (max tasks) commands.
@@ -1016,8 +1015,8 @@ Here is an example of the contents of\fI /etc/toprc\fR:
 
 .\" ......................................................................
 .SS 5b. PERSONAL Configuration File
-This file, written as '$HOME/.your-name-4-top' + 'rc'.
-You use the 'W' \*(CI to create it or update it.
+This file is written as '$HOME/.your-name-4-top' + 'rc'.
+Use the 'W' \*(CI to create it or update it.
 
 Here is the general layout:
    global    # line 1: the program name/alias notation
@@ -1078,22 +1077,19 @@ For these stupid tricks, \*(Me needs \*(AM.
 
 .New
 With 3 or 4 \*(TDs visible, pick any window other than the last
-and turn idle processes \*F.  
-
+and turn idle processes \*F.
 Depending on where you applied 'i', sometimes several \*(TDs are bouncing and
 sometimes it's like an accordion, as \*(Me tries his best to allocate space.
 
 .New
 Set each window's summary lines differently: one with no memory; another with
-no states; maybe one with nothing at all, just the message line.  
-
-Then hold down 'a' or 'w' and watch a variation on bouncing windows.
-What say we call these 'hopping windows'.
+no states; maybe one with nothing at all, just the message line.
+Then hold down 'a' or 'w' and watch a variation on bouncing windows \*(EM
+hopping windows.
 
 .New
 Display all 4 windows and for each, in turn, set idle processes to \*F.
-
-You've just entered the "extreme bounce" zone.  
+You've just entered the "extreme bounce" zone.
 
 .\" ......................................................................
 .SS 6c. The Big Bird Window
