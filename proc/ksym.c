@@ -206,13 +206,13 @@ static const symb *search(unsigned long address, symb *idx, unsigned count){
 /*********************************/
 
 /* allocate if needed, read, and return buffer size */
-static void read_file(const char *filename, char **bufp, unsigned *roomp) {
+static void read_file(const char *restrict filename, char **bufp, unsigned *restrict roomp) {
   int fd = 0;
   ssize_t done;
-  char *buf;
+  char *buf = *bufp;
   ssize_t total = 0;
   unsigned room = *roomp;
-  buf = *bufp;
+
   if(!room) goto hell;     /* failed before */
   if(!buf) buf = malloc(room);
   if(!buf) goto hell;
@@ -322,7 +322,7 @@ quiet_goodbye:
 
 #define VCNT 16
 
-static int sysmap_mmap(const char *filename, void (*message)(const char *, ...)) {
+static int sysmap_mmap(const char *restrict const filename, void (*message)(const char *restrict, ...)) {
   struct stat sbuf;
   char *endp;
   int fd;
@@ -454,7 +454,7 @@ static void read_and_parse(void){
 
 /*********************************/
 
-static void default_message(const char *format, ...) {
+static void default_message(const char *restrict format, ...) {
     va_list arg;
 
     va_start (arg, format);
@@ -464,7 +464,7 @@ static void default_message(const char *format, ...) {
 
 /*********************************/
 
-int open_psdb_message(const char *override, void (*message)(const char *, ...)) {
+int open_psdb_message(const char *restrict override, void (*message)(const char *, ...)) {
   static const char *sysmap_paths[] = {
     "/boot/System.map-%s",
     "/boot/System.map",
@@ -500,7 +500,7 @@ int open_psdb_message(const char *override, void (*message)(const char *, ...)) 
 
 /***************************************/
 
-int open_psdb(const char *override) {
+int open_psdb(const char *restrict override) {
     return open_psdb_message(override, default_message);
 }
 

@@ -266,7 +266,7 @@ static const char *fmtmk (const char *fmts, ...)
         /*
          * This guy is just our way of avoiding the overhead of the standard
          * strcat function (should the caller choose to participate) */
-static inline char *scat (register char *dst, register const char *src)
+static inline char *scat (char *restrict dst, const char *restrict src)
 {
    while (*dst) dst++;
    while ((*(dst++) = *(src++)));
@@ -857,7 +857,7 @@ static CPUS_t *cpus_refresh (CPUS_t *cpus)
          *    2) counting the number of tasks in each state (run, sleep, etc)
          *    3) maintaining the HIST_t's and priming the proc_t pcpu field
          *    4) establishing the total number tasks for this frame */
-static void prochlp (register proc_t *this)
+static void prochlp (proc_t *this)
 {
    static HIST_t   *hist_sav = NULL;
    static HIST_t   *hist_new = NULL;
@@ -919,9 +919,9 @@ static void prochlp (register proc_t *this)
    hist_new[Frame_maxtask].pid  = this->pid;
    hist_new[Frame_maxtask].tics = tics = (this->utime + this->stime);
 
-{  register int i;
-   register int lo = 0;
-   register int hi = maxt_sav - 1;
+{  int i;
+   int lo = 0;
+   int hi = maxt_sav - 1;
 
    // find matching entry from previous frame and make ticks elapsed
    while (lo <= hi) {
@@ -955,7 +955,7 @@ static proc_t **procs_refresh (proc_t **table, int flags)
 #define ENTsz  sizeof(proc_t)
    static unsigned savmax = 0;          // first time, Bypass: (i)
    proc_t *ptsk = (proc_t *)-1;         // first time, Force: (ii)
-   register unsigned curmax = 0;        // every time  (jeeze)
+   unsigned curmax = 0;        // every time  (jeeze)
    PROCTAB* PT;
 
    prochlp(NULL);                       // prep for a new frame
@@ -2163,7 +2163,7 @@ static void do_key (unsigned c)
          *    2) modest smp boxes with room for each cpu's percentages
          *    3) massive smp guys leaving little or no room for process
          *       display and thus requiring the cpu summary toggle */
-static void summaryhlp (CPUS_t *cpu, const char *pfx)
+static void summaryhlp (CPUS_t *restrict cpu, const char *restrict pfx)
 {
    /* we'll trim to zero if we get negative time ticks,
       which has happened with some SMP kernels (pre-2.4?) */
@@ -2303,7 +2303,7 @@ static void task_show (WIN_t *q, proc_t *p)
 
    for (x = 0; x < q->maxpflgs; x++) {
       char cbuf[ROWBUFSIZ], _z[ROWBUFSIZ];
-      register PFLG_t  i = q->procflags[x];     // support for our field/column
+      PFLG_t           i = q->procflags[x];     // support for our field/column
       const char      *f = Fieldstab[i].fmts;   // macro AND sometimes the fmt
       unsigned         s = Fieldstab[i].scale;  // string must be altered !
       unsigned         w = Fieldstab[i].width;
@@ -2519,7 +2519,7 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
          * remaining amount of screen real estate under multiple windows */
 static void framehlp (int wix, int max)
 {
-   register int i;
+   int i;
    int rsvd, size, wins;
 
    // calc remaining number of visible windows + total 'user' lines

@@ -1,6 +1,8 @@
 #ifndef SYSINFO_H
 #define SYSINFO_H
 
+#include "procps.h"
+
 extern unsigned long long Hertz;   /* clock tick frequency */
 extern long smp_num_cpus;     /* number of CPUs */
 

@@ -74,7 +74,7 @@ void freeproc(proc_t* p) {
 
 
 
-static void status2proc (char* S, proc_t* P, int fill) {
+static void status2proc(const char *S, proc_t *restrict P, int fill){
     char* tmp;
     if (fill == 1) {
         memset(P->cmd, 0, sizeof P->cmd);
@@ -151,7 +151,7 @@ static void status2proc (char* S, proc_t* P, int fill) {
  * Such names confuse %s (see scanf(3)), so the string is split and %39c
  * is used instead. (except for embedded ')' "(%[^)]c)" would work.
  */
-static void stat2proc(char* S, proc_t* P) {
+static void stat2proc(const char* S, proc_t *restrict P) {
     int num;
     char* tmp = strrchr(S, ')');	/* split into "PID (cmd" and "<rest>" */
     *tmp = '\0';			/* replace trailing ')' with NUL */
@@ -199,7 +199,7 @@ static void stat2proc(char* S, proc_t* P) {
 	P->tty = -1;  /* the old notty val, update elsewhere bef. moving to 0 */
 }
 
-static void statm2proc(char* s, proc_t* P) {
+static void statm2proc(const char* s, proc_t *restrict P) {
     int num;
     num = sscanf(s, "%ld %ld %ld %ld %ld %ld %ld",
 	   &P->size, &P->resident, &P->share,

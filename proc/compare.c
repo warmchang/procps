@@ -91,7 +91,7 @@ static int cmp_ ## NAME (proc_t** P, proc_t** Q) { \
 */
 
 /* CMP_STR(cmdline) */
-CMP_STR(ruser)
+/* CMP_STR(ruser) */
 CMP_STR(euser)
 CMP_STR(cmd)
 /* CMP_INT(state) */

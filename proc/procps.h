@@ -1,3 +1,6 @@
+#ifndef PROCPS_PROC_PROCPS_H
+#define PROCPS_PROC_PROCPS_H
+
 /* The shadow of the original with only common prototypes now. */
 #include <stdio.h>
 #include <sys/types.h>
@@ -18,10 +21,17 @@
 #endif
 #endif
 
+// won't alias anything, and aligned enough for anything
+#if __GNUC__ > 2 || __GNUC_MINOR__ >= 96
+#define MALLOC __attribute__ ((__malloc__))
+#else
+#define MALLOC
+#endif
 
-extern void *xrealloc(void *oldp, unsigned int size);
-extern void *xmalloc(unsigned int size);
-extern void *xcalloc(void *pointer, int size);
+
+extern void *xrealloc(void *oldp, unsigned int size) MALLOC;
+extern void *xmalloc(unsigned int size) MALLOC;
+extern void *xcalloc(void *pointer, int size) MALLOC;
        
 extern int   mult_lvl_cmp(void* a, void* b);
        
@@ -29,8 +39,10 @@ extern char *user_from_uid(uid_t uid);
 extern char *group_from_gid(gid_t gid);
 
 extern const char * wchan(unsigned long address);
-extern int   open_psdb(const char *override);
-extern int   open_psdb_message(const char *override, void (*message)(const char *, ...));
+extern int   open_psdb(const char *restrict override);
+extern int   open_psdb_message(const char *restrict override, void (*message)(const char *, ...));
 
-extern unsigned print_str    (FILE* file, char *s, unsigned max);
-extern unsigned print_strlist(FILE* file, char **strs, unsigned max);
+extern unsigned print_str    (FILE *restrict file, const char *restrict s, unsigned max);
+extern unsigned print_strlist(FILE *restrict file, const char *restrict const *restrict strs, unsigned max);
+
+#endif

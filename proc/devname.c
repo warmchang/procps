@@ -95,7 +95,7 @@ fail:
 }
 
 /* Try to guess the device name from /proc/tty/drivers info. */
-static int driver_name(char * const buf, int maj, int min){
+static int driver_name(char *restrict const buf, int maj, int min){
   struct stat sbuf;
   tty_map_node *tmn;
   if(!tty_map) load_drivers();
@@ -118,7 +118,7 @@ static int driver_name(char * const buf, int maj, int min){
 }
 
 /* Try to guess the device name (useful until /proc/PID/tty is added) */
-static int guess_name(char * const buf, int maj, int min){
+static int guess_name(char *restrict const buf, int maj, int min){
   struct stat sbuf;
   int t0, t1;
   int tmpmin = min;
@@ -175,7 +175,7 @@ static int guess_name(char * const buf, int maj, int min){
  * Useful names could be in /proc/PID/fd/2 (stderr, seldom redirected)
  * and in /proc/PID/fd/255 (used by bash to remember the tty).
  */
-static int link_name(char * const buf, int maj, int min, int pid, const char *name){
+static int link_name(char *restrict const buf, int maj, int min, int pid, const char *restrict name){
   struct stat sbuf;
   char path[32];
   int count;
@@ -190,10 +190,10 @@ static int link_name(char * const buf, int maj, int min, int pid, const char *na
 }
 
 /* number --> name */
-int dev_to_tty(char *ret, int chop, int dev, int pid, unsigned int flags) {
+unsigned dev_to_tty(char *restrict ret, unsigned chop, int dev, int pid, unsigned int flags) {
   static char buf[PAGE_SIZE];
-  char *tmp = buf;
-  int i = 0;
+  char *restrict tmp = buf;
+  unsigned i = 0;
   int c;
   if((short)dev == (short)-1) goto fail;
   if(linux_version_code > LINUX_VERSION(2, 5, 0)){ /* didn't get done yet */
@@ -211,7 +211,7 @@ abbrev:
   if((flags&ABBREV_TTY) && !strncmp(tmp,"tty",  3) && tmp[3]) tmp += 3;
   if((flags&ABBREV_PTS) && !strncmp(tmp,"pts/", 4) && tmp[4]) tmp += 4;
   /* gotta check before we chop or we may chop someone else's memory */
-  if(tmp + chop - buf <= PAGE_SIZE)
+  if(chop + (unsigned long)(tmp-buf) <= sizeof buf)
     tmp[chop] = '\0';
   /* replace non-ASCII characters with '?' and return the number of chars */
   for(;;){
@@ -229,7 +229,7 @@ abbrev:
 }
 
 /* name --> number */
-int tty_to_dev(char *name) {
+int tty_to_dev(const char *restrict const name) {
   struct stat sbuf;
   static char buf[32];
   if(stat(name, &sbuf) >= 0) return sbuf.st_rdev;

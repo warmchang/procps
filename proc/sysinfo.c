@@ -69,9 +69,9 @@ static char buf[1024];
 
 
 /***********************************************************************/
-int uptime(double *uptime_secs, double *idle_secs) {
+int uptime(double *restrict uptime_secs, double *restrict idle_secs) {
     double up=0, idle=0;
-    char *savelocale;
+    char *restrict savelocale;
 
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);
     savelocale = setlocale(LC_NUMERIC, NULL);
@@ -125,7 +125,7 @@ static void old_Hertz_hack(void){
   double up_1, up_2, seconds;
   unsigned long long jiffies;
   unsigned h;
-  char *savelocale;
+  char *restrict savelocale;
 
   savelocale = setlocale(LC_NUMERIC, NULL);
   setlocale(LC_NUMERIC, "C");
@@ -212,7 +212,7 @@ static void init_libproc(void){
 #define NAN (-0.0)
 #endif
 #define JT unsigned long long
-void five_cpu_numbers(double *uret, double *nret, double *sret, double *iret, double *wret){
+void five_cpu_numbers(double *restrict uret, double *restrict nret, double *restrict sret, double *restrict iret, double *restrict wret){
     double tmp_u, tmp_n, tmp_s, tmp_i, tmp_w;
     double scale;  /* scale values to % */
     static JT old_u, old_n, old_s, old_i, old_w;
@@ -253,9 +253,9 @@ void five_cpu_numbers(double *uret, double *nret, double *sret, double *iret, do
 #undef JT
 
 /***********************************************************************/
-void loadavg(double *av1, double *av5, double *av15) {
+void loadavg(double *restrict av1, double *restrict av5, double *restrict av15) {
     double avg_1=0, avg_5=0, avg_15=0;
-    char *savelocale;
+    char *restrict savelocale;
     
     FILE_TO_BUF(LOADAVG_FILE,loadavg_fd);
     savelocale = setlocale(LC_NUMERIC, NULL);
