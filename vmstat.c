@@ -315,7 +315,7 @@ static void new_format(void) {
            running, blocked,
 	   kb_swap_used,kb_main_free,
 	   a_option?kb_inactive:kb_main_buffers,
-	   a_option?kb_inactive:kb_main_cached,
+	   a_option?kb_active:kb_main_cached,
 	   (unsigned)( ( (pswpin [tog] - pswpin [!tog])*kb_per_page+sleep_half )/sleep_time ),
 	   (unsigned)( ( (pswpout[tog] - pswpout[!tog])*kb_per_page+sleep_half )/sleep_time ),
 	   (unsigned)( (  pgpgin [tog] - pgpgin [!tog]             +sleep_half )/sleep_time ),
