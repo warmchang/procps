@@ -106,7 +106,7 @@ MINORVERSION = $(shell awk '/^%define revision/ { print $$3 }' < procps.spec)
 # Note: LIBVERSION may be less than $(VERSION).$(SUBVERSION).$(MINORVERSION)
 # LIBVERSION is only set to current $(VERSION).$(SUBVERSION).$(MINORVERSION)
 # when an incompatible change is made in libproc.
-LIBVERSION   =  3.0.2
+LIBVERSION   =  3.0.3
 ifdef MINORVERSION
 LIBPROCPASS  =  SHARED=$(SHARED) SHLIBDIR=$(SHLIBDIR) VERSION=$(VERSION) SUBVERSION=$(SUBVERSION) MINORVERSION=$(MINORVERSION) LIBVERSION=$(LIBVERSION)
 else

@@ -1,3 +1,10 @@
+procps-3.0.2 --> procps-3.0.3
+
+more "make install" fixes
+lib CFLAGS working again
+top.1 codes fixed
+bad (int*) cast in top removed
+
 procps-3.0.1 --> procps-3.0.2
 
 top defaults to the old layout
