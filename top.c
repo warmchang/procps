@@ -1001,14 +1001,6 @@ static void configs_read (void)
               hunky-dory with nothing in an rcfile except the 1st 2 lines */
          fscanf(fp, "%s\tfieldscur=%s\n"
             , Winstk[i]->winname, Winstk[i]->fieldscur);
-         /*
-            Our winname buffer is 4 bytes big - 3 chars + '\0'.
-            Q. let's say someone manually edits the rcfile and increases
-               a winname name to oh, 500 bytes - what's the net result?
-            A. fscanf wipes out 496 bytes of adjacent stg (fieldscur, etc),
-               then we catch it with strlen and end via std_err - no worries!
-               we might not have been so lucky if our WIN_t was laid out
-               differently and statically allocated or stack based!! */
          if (WINNAMSIZ <= strlen(Winstk[i]->winname)
          || strlen(DEF_FIELDS) != strlen(Winstk[i]->fieldscur))
             std_err(fmtmk(err_rc, RCfile));
@@ -1251,7 +1243,8 @@ static void display_fields (const char *fields, const char *xtra)
          ++i;
          printf("%s%.*s"
             , tg2((i / rmax) * cmax, (i % rmax) + yRSVD)
-            , p - xtra, xtra);
+            , (int)(p - xtra)
+            , xtra);
          xtra = ++p;
       }
    }
