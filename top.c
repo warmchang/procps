@@ -105,6 +105,10 @@ static volatile struct timeval tv;
         /* Current terminal screen size. */
 static int Screen_cols, Screen_rows, Max_lines;
 
+// set to 1 if writing to the last column would be troublesome
+// (we don't distinguish the lowermost row from the other rows)
+static int avoid_last_column;
+
         /* This is really the number of lines needed to display the summary
            information (0 - nn), but is used as the relative row where we
            stick the cursor between frames. */
@@ -484,8 +488,19 @@ static void capsmk (WIN_t *q)
       CAPCOPY(Cap_clr_eol, clr_eol);
       CAPCOPY(Cap_clr_eos, clr_eos);
       CAPCOPY(Cap_clr_scr, clear_screen);
-      CAPCOPY(Cap_rmam, exit_am_mode);
-      CAPCOPY(Cap_smam, enter_am_mode);
+
+      if (!eat_newline_glitch) {  // we like the eat_newline_glitch
+         CAPCOPY(Cap_rmam, exit_am_mode);
+         CAPCOPY(Cap_smam, enter_am_mode);
+         if (!*Cap_rmam || !*Cap_smam) {  // need both
+            *Cap_rmam = '\0';
+            *Cap_smam = '\0';
+            if (auto_right_margin) {
+               avoid_last_column = 1;
+            }
+         }
+      }
+
       CAPCOPY(Cap_curs_huge, cursor_visible);
       CAPCOPY(Cap_curs_norm, cursor_normal);
       CAPCOPY(Cap_home, cursor_home);
@@ -2347,6 +2362,9 @@ static void wins_resize (int dont_care_sig)
       t = strtol(env_lines, &endptr, 0);
       if(!*endptr && (t>0) && (t<=0x7fffffffL)) Screen_rows = (int)t;
    }
+
+   // be crudely tolerant of crude tty emulators
+   if (avoid_last_column) Screen_cols--;
 
    // we might disappoint some folks (but they'll deserve it)
    if (SCREENMAX < Screen_cols) Screen_cols = SCREENMAX;

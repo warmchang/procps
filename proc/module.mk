@@ -43,6 +43,7 @@ DIRS  += proc/
 proc/lib$(NAME).a: $(LIBOBJ)
 	$(AR) rcs $@ $^
 
+.PHONY: proc/$(SONAME)
 #proc/$(SONAME): proc/library.map
 proc/$(SONAME): $(LIBOBJ)
 	$(CC) -shared -Wl,-soname,$(SONAME) -Wl,--version-script=proc/library.map -o $@ $^ -lc

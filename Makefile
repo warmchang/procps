@@ -84,6 +84,8 @@ ALL_CPPFLAGS := $(PKG_CPPFLAGS) $(CPPFLAGS)
 # to compile procps, they might best be moved to CFLAGS.
 # On the other hand, they aren't normal -O -g things either.
 #
+# TODO: determine why -fomit-frame-pointer is missing
+#
 PKG_CFLAGS   := -fno-common -ffast-math \
   -W -Wall -Wshadow -Wcast-align -Wredundant-decls \
   -Wbad-function-cast -Wcast-qual -Wwrite-strings -Waggregate-return \
