@@ -436,29 +436,31 @@ static int compare_vm_table_structs(const void *a, const void *b){
   return strcmp(((const vm_table_struct*)a)->name,((const vm_table_struct*)b)->name);
 }
 
-unsigned vm_nr_dirty;
-unsigned vm_nr_writeback;
-unsigned vm_nr_pagecache;
-unsigned vm_nr_page_table_pages;
-unsigned vm_nr_reverse_maps;
-unsigned vm_nr_mapped;
-unsigned vm_nr_slab;
-unsigned vm_pgpgin;
-unsigned vm_pgpgout;
-unsigned vm_pswpin;  /* same as 1st num on /proc/stat swap line */
-unsigned vm_pswpout; /* same as 2nd num on /proc/stat swap line */
-unsigned vm_pgalloc;
-unsigned vm_pgfree;
-unsigned vm_pgactivate;
-unsigned vm_pgdeactivate;
-unsigned vm_pgfault;
-unsigned vm_pgmajfault;
-unsigned vm_pgscan;
-unsigned vm_pgrefill;
-unsigned vm_pgsteal;
-unsigned vm_kswapd_steal;
-unsigned vm_pageoutrun;
-unsigned vm_allocstall;
+unsigned vm_nr_dirty;           // dirty writable pages
+unsigned vm_nr_writeback;       // pages under writeback
+unsigned vm_nr_pagecache;       // pages in pagecache
+unsigned vm_nr_page_table_pages;// pages used for pagetables
+unsigned vm_nr_reverse_maps;    // includes PageDirect
+unsigned vm_nr_mapped;          // mapped into pagetables
+unsigned vm_nr_slab;            // in slab
+unsigned vm_pgpgin;             // disk reads  (same as 1st num on /proc/stat page line)
+unsigned vm_pgpgout;            // disk writes (same as 2nd num on /proc/stat page line)
+unsigned vm_pswpin;             // swap reads  (same as 1st num on /proc/stat swap line)
+unsigned vm_pswpout;            // swap writes (same as 2nd num on /proc/stat swap line)
+unsigned vm_pgalloc;            // page allocations
+unsigned vm_pgfree;             // page freeings
+unsigned vm_pgactivate;         // pages moved inactive -> active
+unsigned vm_pgdeactivate;       // pages moved active -> inactive
+unsigned vm_pgfault;           // total faults (major+minor)
+unsigned vm_pgmajfault;       // major faults
+unsigned vm_pgscan;          // pages scanned by page reclaim
+unsigned vm_pgrefill;       // inspected by refill_inactive_zone
+unsigned vm_pgsteal;       // total pages reclaimed
+unsigned vm_kswapd_steal; // pages reclaimed by kswapd
+// next 3 as defined by the 2.5.52 kernel
+unsigned vm_pageoutrun;  // times kswapd ran page reclaim
+unsigned vm_allocstall; // times a page allocator ran direct reclaim
+unsigned vm_pgrotated; // pages rotated to the tail of the LRU for immediate reclaim
 
 void vminfo(void){
   char namebuf[16]; /* big enough to hold any row name */
@@ -486,6 +488,7 @@ void vminfo(void){
   {"pgpgin",              &vm_pgpgin},
   {"pgpgout",             &vm_pgpgout},
   {"pgrefill",            &vm_pgrefill},
+  {"pgrotated",           &vm_pgrotated},
   {"pgscan",              &vm_pgscan},
   {"pgsteal",             &vm_pgsteal},
   {"pswpin",              &vm_pswpin},
