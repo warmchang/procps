@@ -18,9 +18,9 @@
 
 VERSION      := 3
 SUBVERSION   := 1
-MINORVERSION := 2
-TARVERSION   := 3.1.2
-LIBVERSION   := 3.1.2
+MINORVERSION := 3
+TARVERSION   := 3.1.3
+LIBVERSION   := 3.1.3
 
 ############ vars
 

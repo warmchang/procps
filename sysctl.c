@@ -379,12 +379,24 @@ int main(int argc, char **argv) {
 
    if (argc < 2) {
        return Usage(me);
-   } /* endif */
+   }
 
    argv++;
 
    for (; argv && *argv && **argv; argv++) {
       if (SwitchesAllowed && **argv == '-') {        /* we have a switch */
+         if ((*argv)[1] && (*argv)[2]){       // don't yet handle "sysctl -ew"
+              if (!strcmp("--help",*argv)) {
+                 Usage(me);
+                 exit(0);
+              }
+              if (!strcmp("--version",*argv)) {
+                 fprintf(stdout, "sysctl (%s)\n",procps_version);
+                 exit(0);
+              }
+              fprintf(stderr, ERR_UNKNOWN_PARAMETER, *argv);
+              return Usage(me);
+         }
          switch((*argv)[1]) {
          case 'b':
               /* This is "binary" format, which means more for BSD. */
