@@ -228,14 +228,14 @@ static void simple_spew(void){
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
   }
-  /* memset(&buf, '#', sizeof(proc_t)); */
+  memset(&buf, '#', sizeof(proc_t));
   /* use "ps_" prefix to catch library mismatch */
   while(ps_readproc(ptp,&buf)){
     fill_pcpu(&buf);
     if(want_this_proc(&buf)) show_one_proc(&buf);
-    /* if(buf.cmdline) free(buf.cmdline); */   /* these crash */
-    /* if(buf.environ) free(buf.environ); */
-    /* memset(&buf, '#', sizeof(proc_t)); */
+    if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
+    if(buf.environ) free((void*)*buf.environ); // ought to reuse
+//    memset(&buf, '#', sizeof(proc_t));
   }
   closeproc(ptp);
 }
@@ -286,10 +286,11 @@ static void show_proc_array(int n){
   proc_t **p = processes;
   while(n--){
     show_one_proc(*p);
-    /* if(p->cmdline) free(p->cmdline); */   /* this crashes */
-    /* if(p->environ) free(p->environ); */   /* this crashes */
-    /* memset(*p, '%', sizeof(proc_t)); */ /* debug */
-    free(*p);
+    /* no point freeing any of this -- won't need more mem */
+//    if((*p)->cmdline) free((void*)*(*p)->cmdline);
+//    if((*p)->environ) free((void*)*(*p)->environ);
+//    memset(*p, '%', sizeof(proc_t)); /* debug */
+//    free(*p);
     p++;
   }
 }
@@ -306,9 +307,9 @@ static void show_tree(const int self, const int n, const int level, const int ha
     forest_prefix[level] = '\0';
   }
   show_one_proc(processes[self]);  /* first show self */
-  /* if(p->cmdline) free(p->cmdline); */   /* this crashes */
-  /* if(p->environ) free(p->environ); */   /* this crashes */
-  /* memset(*p, '%', sizeof(proc_t)); */ /* debug */
+  /* no point freeing any of this -- won't need more mem */
+//  if(processes[self]->cmdline) free((void*)*processes[self]->cmdline);
+//  if(processes[self]->environ) free((void*)*processes[self]->environ);
   for(;;){  /* look for children */
     if(i >= n) return; /* no children */
     if(processes[i]->ppid == processes[self]->pid) break;
@@ -337,6 +338,7 @@ static void show_tree(const int self, const int n, const int level, const int ha
   }
   /* chop prefix that children added -- do we need this? */
   forest_prefix[level] = '\0';
+//  memset(processes[self], '$', sizeof(proc_t));  /* debug */
 }
 
 /***** show forest */
