@@ -122,6 +122,8 @@ static int No_ksyms = -1,       // set to '0' if ksym avail, '1' otherwise
 static char  Cap_clr_eol    [CAPBUFSIZ] = "",
              Cap_clr_eos    [CAPBUFSIZ] = "",
              Cap_clr_scr    [CAPBUFSIZ] = "",
+             Cap_rmam       [CAPBUFSIZ] = "",
+             Cap_smam       [CAPBUFSIZ] = "",
              Cap_curs_norm  [CAPBUFSIZ] = "",
              Cap_curs_huge  [CAPBUFSIZ] = "",
              Cap_home       [CAPBUFSIZ] = "",
@@ -326,6 +328,7 @@ static void bye_bye (int eno, const char *str)
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Savedtty);
    putp(tg2(0, Screen_rows));
    putp(Cap_curs_norm);
+   putp(Cap_smam);
    putp("\n");
    fflush(stdout);
 
@@ -475,6 +478,8 @@ static void capsmk (WIN_t *q)
       strcpy(Cap_clr_eol, tIF(clr_eol));
       strcpy(Cap_clr_eos, tIF(clr_eos));
       strcpy(Cap_clr_scr, tIF(clear_screen));
+      strcpy(Cap_rmam, tIF(exit_am_mode));
+      strcpy(Cap_smam, tIF(enter_am_mode));
       strcpy(Cap_curs_huge, tIF(cursor_visible));
       strcpy(Cap_curs_norm, tIF(cursor_normal));
       strcpy(Cap_home, tIF(cursor_home));
@@ -2853,6 +2858,7 @@ static proc_t **summary_show (void)
    if (!p_table) {
       p_table = procs_refresh(NULL, Frames_libflags);
       putp(Cap_clr_scr);
+      putp(Cap_rmam);
 #ifndef PROF
       // sleep for half a second
       tv.tv_sec = 0;
