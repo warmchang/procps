@@ -1128,12 +1128,14 @@ fail:
 static int pr_t_unlimited(char *restrict const outbuf, const proc_t *restrict const pp){
   static const char *const vals[] = {"[123456789-12345] <defunct>","ps","123456789-123456"};
   (void)pp;
-  return snprintf(outbuf, max_rightward+1, "%s", vals[lines_to_next_header%3u]);
+  snprintf(outbuf, max_rightward+1, "%s", vals[lines_to_next_header%3u]);
+  return strlen(outbuf);
 }
 static int pr_t_unlimited2(char *restrict const outbuf, const proc_t *restrict const pp){
   static const char *const vals[] = {"unlimited", "[123456789-12345] <defunct>","ps","123456789-123456"};
   (void)pp;
-  return snprintf(outbuf, max_rightward+1, "%s", vals[lines_to_next_header%4u]);
+  snprintf(outbuf, max_rightward+1, "%s", vals[lines_to_next_header%4u]);
+  return strlen(outbuf);
 }
 
 // like "etime"
