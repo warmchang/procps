@@ -32,6 +32,25 @@
  * Most of it comes from task_struct in linux/sched.h
  */
 typedef struct proc_t {
+// 1st 16 bytes
+    int
+        pid,		/* process id */
+    	ppid;		/* pid of parent process */
+    unsigned
+        pcpu;           /* %CPU usage (is not filled in by readproc!!!) */
+    char
+    	state,		/* single-char code for process state (S=sleeping) */
+    	pad_1,		/* padding */
+    	pad_2,		/* padding */
+    	pad_3;		/* padding */
+// 2nd 16 bytes
+    unsigned long long
+	utime,		/* user-mode CPU time accumulated by process */
+	stime,		/* kernel-mode CPU time accumulated by process */
+// and so on...
+	cutime,		/* cumulative utime of process and reaped children */
+	cstime,		/* cumulative stime of process and reaped children */
+	start_time;	/* start time of process -- seconds since 1-1-70 */
 #ifdef SIGNAL_STRING
     char
 	/* Linux 2.1.7x and up have more signals. This handles 88. */
@@ -47,12 +66,6 @@ typedef struct proc_t {
 	sigignore,	/* mask of ignored signals */
 	sigcatch;	/* mask of caught  signals */
 #endif
-    unsigned long long
-	cutime,		/* cumulative utime of process and reaped children */
-	cstime,		/* cumulative stime of process and reaped children */
-	utime,		/* user-mode CPU time accumulated by process */
-	stime,		/* kernel-mode CPU time accumulated by process */
-	start_time;	/* start time of process -- seconds since 1-1-70 */
     long
 	priority,	/* kernel scheduling priority */
 	timeout,	/* ? */
@@ -68,7 +81,6 @@ typedef struct proc_t {
 	drs,		/* data resident set size */
 	dt;		/* dirty pages */
     unsigned long
-	/* FIXME: are these longs? Maybe when the alpha does PCI bounce buffers */
 	vm_size,        /* same as vsize in kb */
 	vm_lock,        /* locked pages in kb */
 	vm_rss,         /* same as rss in kb */
@@ -114,18 +126,12 @@ typedef struct proc_t {
         euid, egid,     /* effective */
         suid, sgid,     /* saved     */
         fuid, fgid,     /* fs (used for file access only) */
-    	pid,		/* process id */
-    	ppid,		/* pid of parent process */
 	pgrp,		/* process group id */
 	session,	/* session id */
 	tty,		/* full device number of controlling terminal */
 	tpgid,		/* terminal process group id */
 	exit_signal,	/* might not be SIGCHLD */
 	processor;      /* current (or most recent?) CPU */
-    unsigned
-        pcpu;           /* %CPU usage (is not filled in by readproc!!!) */
-    char
-    	state;		/* single-char code for process state (S=sleeping) */
 #ifdef FLASK_LINUX
     security_id_t sid;
 #endif

@@ -1744,7 +1744,6 @@ static void frame_states (proc_t **ppt, int show)
    static unsigned  hist_siz; // number of structs
    HIST_t          *hist_new;
    unsigned         total, running, sleeping, stopped, zombie;
-   int              i;
 
    if (!hist_sav) {
       Frame_maxtask = 0;
@@ -1759,6 +1758,7 @@ static void frame_states (proc_t **ppt, int show)
    while (-1 != ppt[total]->pid) {                      /* calculations //// */
       TICS_t tics;
       proc_t *this = ppt[total];
+      int i;
 
       switch (this->state) {
          case 'S':
@@ -1801,6 +1801,11 @@ static void frame_states (proc_t **ppt, int show)
    } /* end: while 'pids' */
 
 
+   free(hist_sav);
+   hist_sav = hist_new;
+      /* shout results to the world (and us too, the next time around) */
+   Frame_maxtask = total;
+
    if (show) {                                          /* display ///////// */
       static CPUS_t *smpcpu = NULL;
 
@@ -1816,6 +1821,7 @@ static void frame_states (proc_t **ppt, int show)
             /* display just the 1st /proc/stat line */
          cpudo(&smpcpu[Cpu_tot], "Cpu(s):");
       } else {
+         int i;
          char tmp[SMLBUFSIZ];
             /* display each cpu's states separately */
          for (i = 0; i < Cpu_tot; i++) {
@@ -1824,11 +1830,6 @@ static void frame_states (proc_t **ppt, int show)
          }
       }
    } /* end: if 'show' */
-
-   free(hist_sav);
-   hist_sav = hist_new;
-      /* shout results to the world (and us too, the next time around) */
-   Frame_maxtask = total;
 }
 
 
