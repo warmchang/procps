@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include "proc/version.h"  // FIXME: we need to link the lib for this :-(
 
+static void usage(void) NORETURN;
 static void usage(void){
   fprintf(stderr,
     "Usage: pmap [-r] [-x] pid...\n"

@@ -231,6 +231,7 @@ static void iterate(void){
 }
 
 /***** kill help */
+static void kill_usage(void) NORETURN;
 static void kill_usage(void){
   fprintf(stderr,
     "Usage:\n"
@@ -245,6 +246,7 @@ static void kill_usage(void){
 }
 
 /***** kill */
+static void kill_main(int argc, const char *restrict const *restrict argv) NORETURN;
 static void kill_main(int argc, const char *restrict const *restrict argv){
   const char *sigptr;
   int signo = SIGTERM;
@@ -317,6 +319,7 @@ no_more_args:
 }
 
 /***** skill/snice help */
+static void skillsnice_usage(void) NORETURN;
 static void skillsnice_usage(void){
   if(program==PROG_SKILL){
     fprintf(stderr,

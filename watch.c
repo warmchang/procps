@@ -42,15 +42,15 @@ static int first_screen = 1;
 
 #define min(x,y) ((x) > (y) ? (y) : (x))
 
-static void
-do_usage(void)
+static void do_usage(void) NORETURN;
+static void do_usage(void)
 {
 	fprintf(stderr, usage, progname);
 	exit(1);
 }
 
-static void
-do_exit(int status)
+static void do_exit(int status) NORETURN;
+static void do_exit(int status)
 {
 	if (curses_started)
 		endwin();
@@ -58,8 +58,8 @@ do_exit(int status)
 }
 
 /* signal handler */
-static void
-die(int notused)
+static void die(int notused) NORETURN;
+static void die(int notused)
 {
 	(void) notused;
 	do_exit(0);

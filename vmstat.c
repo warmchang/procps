@@ -36,7 +36,7 @@ static unsigned int moreheaders=TRUE;
 
 /////////////////////////////////////////////////////////////////////////
 
-
+static void usage(void) NORETURN;
 static void usage(void) {
   fprintf(stderr,"usage: vmstat [-V] [-n] [delay [count]]\n");
   fprintf(stderr,"              -V prints version.\n");
@@ -47,6 +47,7 @@ static void usage(void) {
   exit(EXIT_FAILURE);
 }
 
+static void crash(const char *filename) NORETURN;
 static void crash(const char *filename) {
     perror(filename);
     exit(EXIT_FAILURE);

@@ -57,8 +57,8 @@ static union el *opt_ruid = NULL;
 static char *opt_pattern = NULL;
 
 
-static int
-usage (int opt)
+static int usage (int opt) NORETURN;
+static int usage (int opt)
 {
 	if (i_am_pkill)
 		fprintf (stderr, "Usage: pkill [-SIGNAL] [-fvx] ");

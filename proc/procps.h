@@ -18,6 +18,9 @@
 #endif
 #endif
 
+// since gcc-2.5
+#define NORETURN __attribute__((__noreturn__))
+
 #if __GNUC__ > 2 || __GNUC_MINOR__ >= 96
 // won't alias anything, and aligned enough for anything
 #define MALLOC __attribute__ ((__malloc__))

@@ -324,6 +324,7 @@ static const char *tg2 (int x, int y)
         /*
          * The usual program end --
          * called only by functions in this section. */
+static void bye_bye (int eno, const char *str) NORETURN;
 static void bye_bye (int eno, const char *str)
 {
    if (!Batch)
@@ -408,6 +409,7 @@ static void bye_bye (int eno, const char *str)
          * Normal end of execution.
          * catches:
          *    SIGALRM, SIGHUP, SIGINT, SIGPIPE, SIGQUIT and SIGTERM */
+static void end_pgm (int dont_care_sig) NORETURN;
 static void end_pgm (int dont_care_sig)
 {
    (void)dont_care_sig;
@@ -417,6 +419,7 @@ static void end_pgm (int dont_care_sig)
 
         /*
          * Standard error handler to normalize the look of all err o/p */
+static void std_err (const char *str) NORETURN;
 static void std_err (const char *str)
 {
    static char buf[SMLBUFSIZ];
