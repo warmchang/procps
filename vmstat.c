@@ -1,5 +1,6 @@
-/* Copyright 1994 by Henry Ware <al172@yfn.ysu.edu>. Copyleft same year. */
-   
+// old: "Copyright 1994 by Henry Ware <al172@yfn.ysu.edu>. Copyleft same year."
+// most code copyright 2002 Albert Cahalan
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -98,8 +99,9 @@ static void getrunners(unsigned int *restrict running, unsigned int *restrict bl
 
 static void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow,
 	     unsigned *restrict pin, unsigned *restrict pout, unsigned *restrict s_in, unsigned *restrict sout,
-	     unsigned *restrict itot, unsigned *restrict i1, unsigned *restrict ct,
-	     unsigned int *restrict running, unsigned int *restrict blocked) {
+	     unsigned *restrict intr, unsigned *restrict ctxt,
+	     unsigned int *restrict running, unsigned int *restrict blocked,
+	     unsigned int *restrict btime, unsigned int *restrict processes) {
   static int fd;
   int need_vmstat_file = 0;
   int need_proc_scan = 0;
@@ -113,8 +115,7 @@ static void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csy
     if(fd == -1) crash("/proc/stat");
   }
   read(fd,buff,BUFFSIZE-1);
-  *itot = 0; 
-  *i1 = 1;   /* ensure assert below will fail if the sscanf bombs */
+  *intr = 0; 
   *ciow = 0;  /* not separated out until the 2.5.41 kernel */
 
   b = strstr(buff, "cpu ");
@@ -129,10 +130,16 @@ static void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csy
   else need_vmstat_file = 1;
 
   b = strstr(buff, "intr ");
-  if(b) sscanf(b,  "intr %u %u", itot, i1);
+  if(b) sscanf(b,  "intr %u", intr);
 
   b = strstr(buff, "ctxt ");
-  if(b) sscanf(b,  "ctxt %u", ct);
+  if(b) sscanf(b,  "ctxt %u", ctxt);
+
+  b = strstr(buff, "btime ");
+  if(b) sscanf(b,  "btime %u", btime);
+
+  b = strstr(buff, "processes ");
+  if(b) sscanf(b,  "processes %u", processes);
 
   b = strstr(buff, "procs_running ");
   if(b) sscanf(b,  "procs_running %u", running);
@@ -245,11 +252,11 @@ static void new_format(void) {
   unsigned int tog=0; /* toggle switch for cleaner code */
   unsigned int i;
   unsigned int hz = Hertz;
-  unsigned int running,blocked;
+  unsigned int running,blocked,dummy_1,dummy_2;
   jiff cpu_use[2], cpu_nic[2], cpu_sys[2], cpu_idl[2], cpu_iow[2];
-  jiff duse,dsys,didl,diow,Div,divo2;
+  jiff duse, dsys, didl, diow, Div, divo2;
   unsigned int pgpgin[2], pgpgout[2], pswpin[2], pswpout[2];
-  unsigned int inter[2],ticks[2],ctxt[2];
+  unsigned int intr[2], ctxt[2];
   unsigned int sleep_half; 
   unsigned int kb_per_page = sysconf(_SC_PAGESIZE) / 1024;
   int debt = 0;  // handle idle ticks running backwards
@@ -260,8 +267,9 @@ static void new_format(void) {
   meminfo();
   getstat(cpu_use,cpu_nic,cpu_sys,cpu_idl,cpu_iow,
 	  pgpgin,pgpgout,pswpin,pswpout,
-	  inter,ticks,ctxt,
-	  &running,&blocked);
+	  intr,ctxt,
+	  &running,&blocked,
+	  &dummy_1, &dummy_2);
   duse= *cpu_use + *cpu_nic; 
   dsys= *cpu_sys;
   didl= *cpu_idl;
@@ -277,7 +285,7 @@ static void new_format(void) {
 	 (unsigned)( (*pswpout * kb_per_page * hz + divo2) / Div ),
 	 (unsigned)( (*pgpgin                * hz + divo2) / Div ),
 	 (unsigned)( (*pgpgout               * hz + divo2) / Div ),
-	 (unsigned)( (*inter                 * hz + divo2) / Div ),
+	 (unsigned)( (*intr                  * hz + divo2) / Div ),
 	 (unsigned)( (*ctxt                  * hz + divo2) / Div ),
 	 (unsigned)( (100*duse                    + divo2) / Div ),
 	 (unsigned)( (100*dsys                    + divo2) / Div ),
@@ -293,8 +301,9 @@ static void new_format(void) {
     meminfo();
     getstat(cpu_use+tog,cpu_nic+tog,cpu_sys+tog,cpu_idl+tog,cpu_iow+tog,
 	  pgpgin+tog,pgpgout+tog,pswpin+tog,pswpout+tog,
-	  inter+tog,ticks+tog,ctxt+tog,
-	  &running,&blocked);
+	  intr+tog,ctxt+tog,
+	  &running,&blocked,
+	  &dummy_1,&dummy_2);
     duse= cpu_use[tog]-cpu_use[!tog] + cpu_nic[tog]-cpu_nic[!tog];
     dsys= cpu_sys[tog]-cpu_sys[!tog];
     didl= cpu_idl[tog]-cpu_idl[!tog];
@@ -321,7 +330,7 @@ static void new_format(void) {
 	   (unsigned)( ( (pswpout[tog] - pswpout[!tog])*kb_per_page+sleep_half )/sleep_time ),
 	   (unsigned)( (  pgpgin [tog] - pgpgin [!tog]             +sleep_half )/sleep_time ),
 	   (unsigned)( (  pgpgout[tog] - pgpgout[!tog]             +sleep_half )/sleep_time ),
-	   (unsigned)( (  inter  [tog] - inter  [!tog]             +sleep_half )/sleep_time ),
+	   (unsigned)( (  intr   [tog] - intr   [!tog]             +sleep_half )/sleep_time ),
 	   (unsigned)( (  ctxt   [tog] - ctxt   [!tog]             +sleep_half )/sleep_time ),
 	   (unsigned)( (100*duse+divo2)/Div ),
 	   (unsigned)( (100*dsys+divo2)/Div ),
@@ -333,6 +342,58 @@ static void new_format(void) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
+
+static void sum_format(void) {
+  unsigned int running, blocked, btime, processes;
+  jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow;
+  unsigned int pgpgin, pgpgout, pswpin, pswpout;
+  unsigned int intr, ctxt;
+
+  meminfo();
+  getstat(&cpu_use, &cpu_nic, &cpu_sys, &cpu_idl, &cpu_iow,
+	  &pgpgin, &pgpgout, &pswpin, &pswpout,
+	  &intr, &ctxt,
+	  &running, &blocked,
+	  &btime, &processes);
+  printf("%13u kB total memory\n", kb_main_total);
+  printf("%13u kB used memory\n", kb_main_used);
+  printf("%13u kB active memory\n", kb_active);
+  printf("%13u kB inactive memory\n", kb_inactive);
+  printf("%13u kB free memory\n", kb_main_free);
+  printf("%13u kB buffer memory\n", kb_main_buffers);
+  printf("%13u kB swap cache\n", kb_main_cached);
+  printf("%13u kB total swap\n", kb_swap_total);
+  printf("%13u kB used swap\n", kb_swap_used);
+  printf("%13u kB free swap\n", kb_swap_free);
+  printf("%13Lu non-nice user cpu ticks\n", cpu_use);
+  printf("%13Lu nice user cpu ticks\n", cpu_nic);
+  printf("%13Lu system cpu ticks\n", cpu_sys);
+  printf("%13Lu idle cpu ticks\n", cpu_idl);
+  printf("%13Lu IO-wait cpu ticks\n", cpu_iow);
+  printf("%13u pages paged in\n", pgpgin);
+  printf("%13u pages paged out\n", pgpgout);
+  printf("%13u pages swapped in\n", pswpin);
+  printf("%13u pages swapped out\n", pswpout);
+  printf("%13u interrupts\n", intr);
+  printf("%13u CPU context switches\n", ctxt);
+  printf("%13u boot time\n", btime);
+  printf("%13u forks\n", processes);
+}
+
+static void fork_format(void) {
+  unsigned int running, blocked, btime, processes;
+  jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow;
+  unsigned int pgpgin, pgpgout, pswpin, pswpout;
+  unsigned int intr, ctxt;
+
+  getstat(&cpu_use, &cpu_nic, &cpu_sys, &cpu_idl, &cpu_iow,
+	  &pgpgin, &pgpgout, &pswpin, &pswpout,
+	  &intr, &ctxt,
+	  &running, &blocked,
+	  &btime, &processes);
+  printf("%13u forks\n", processes);
+}
+
 
 static int winhi(void) {
     struct winsize win;
@@ -357,10 +418,18 @@ int main(int argc, char *argv[]) {
 	/* active/inactive mode */
 	a_option=1;
         break;
+      case 'f':
+        // FIXME: check for conflicting args
+	fork_format();
+        exit(0);
       case 'n':
 	/* print only one header */
 	moreheaders=FALSE;
         break;
+      case 's':
+        // FIXME: check for conflicting args
+	sum_format();
+        exit(0);
       default:
 	/* no other aguments defined yet. */
 	usage();

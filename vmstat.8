@@ -11,6 +11,10 @@ vmstat \- Report virtual memory statistics
 .RI [ delay " [ " count ]]
 .br
 .B vmstat
+.RB [ "\-f" ]
+.RB [ "\-s" ]
+.br
+.B vmstat
 .RB [ "\-V" ]
 .SH DESCRIPTION
 \fBvmstat\fP reports information about processes, memory, paging,
@@ -23,7 +27,16 @@ The process and memory reports are instantaneous in either case.
 .SS Options
 The \fB-a\fP switch displays active/inactive memory, given a 2.5.41 kernel or better.
 .PP
+The \fB-f\fP switch displays the number of forks since boot.
+This includes the fork, vfork, and clone system calls, and is
+equivalent to the total number of tasks created. Each process
+is represented by one or more tasks, depending on thread usage.
+This display does not repeat.
+.PP
 The \fB-n\fP switch causes the header to be displayed only once rather than periodically.
+.PP
+The \fB-s\fP switch displays a table of various event counters
+and memory statistics. This display does not repeat.
 .PP
 .I delay
 is the delay between updates in seconds.  If no delay is specified,
