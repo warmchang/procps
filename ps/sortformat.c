@@ -260,6 +260,7 @@ static const char *format_parse(sf_node *sfn){
     format_node *endp;
     char *equal_loc;
     char *colon_loc;
+    if(!walk) catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
     sep_loc = strpbrk(walk," ,\t\n");
     /* if items left, then sep_loc is not in header override */
     if(items && sep_loc) *sep_loc = '\0';
@@ -302,7 +303,7 @@ static const char *format_parse(sf_node *sfn){
     endp = fnode; while(endp->next) endp = endp->next;  /* find end */
     endp->next = sfn->f_cooked;
     sfn->f_cooked = fnode;
-    walk = sep_loc + 1; /* point to next item, if any */
+    walk = sep_loc ? sep_loc + 1 : NULL; /* point to next item, if any */
   }
   free(buf);
   already_parsed_format = 1;
