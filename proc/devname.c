@@ -341,7 +341,7 @@ unsigned dev_to_tty(char *restrict ret, unsigned chop, dev_t dev_t_dev, int pid,
   if(  link_name(tmp, MAJOR_OF(dev), MINOR_OF(dev), pid, "fd/255")) goto abbrev;
   // fall through if unable to find a device file
 no_tty:
-  strcpy(ret, "?");
+  strcpy(ret, chop >= 1 ? "?" : "");
   return 1;
 abbrev:
   if((flags&ABBREV_DEV) && !strncmp(tmp,"/dev/",5) && tmp[5]) tmp += 5;
