@@ -287,7 +287,7 @@ static inline char *scat (char *restrict dst, const char *restrict src)
          * in some proc cmdlines, a choice was offered twix space or null. */
 static char *strim_0 (char *str)
 {
-   static const char ws[] = "\b\e\f\n\r\t\v\0133";  // \0133 is an escape
+   static const char ws[] = "\b\e\f\n\r\t\v\133";  // 0133 is an escape
    char *p;
 
    if ((p = strpbrk(str, ws))) *p = 0;
@@ -301,7 +301,7 @@ static char *strim_0 (char *str)
          * in some proc cmdlines, a choice was offered twix space or null. */
 static char *strim_1 (char *str)
 {
-   static const char ws[] = "\b\e\f\n\r\t\v\0133";  // \0133 is an escape
+   static const char ws[] = "\b\e\f\n\r\t\v\133";  // 0133 is an escape
    char *p;
 
    while (unlikely(p = strpbrk(str, ws))) *p = ' ';
