@@ -303,7 +303,10 @@ static void new_header(void)
         (void) time( &the_time );
         tm_ptr = localtime( &the_time );
 		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
-            timebuf[strlen(timestamp_header) - 1] = '\0';
+			const size_t len = strlen(timestamp_header);
+			if (len >= 1 && len - 1 < sizeof(timebuf)) {
+				timebuf[len - 1] = '\0';
+			}
         } else {
             timebuf[0] = '\0';
         }
@@ -617,7 +620,10 @@ static void diskheader(void)
         (void) time( &the_time );
         tm_ptr = localtime( &the_time );
 		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
-            timebuf[strlen(timestamp_header) - 1] = '\0';
+			const size_t len = strlen(timestamp_header);
+			if (len >= 1 && len - 1 < sizeof(timebuf)) {
+				timebuf[len - 1] = '\0';
+			}
         } else {
             timebuf[0] = '\0';
         }
