@@ -12,8 +12,8 @@ INSTALLATION
     named t, v, and p to ensure the correct libproc
     is used during your testing.
 
-    In case the fancy stuff gives you trouble, you may use
-    the previous Makefile: "make -f Makefile.noam install"
+    If you need to add a compiler option, use CC to do it:
+    make CC='gcc -foo'
 
 BUG REPORTS
 

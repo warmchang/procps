@@ -24,7 +24,7 @@ LIBPROC    := proc/lib$(NAME).a
 endif
 
 
-LIB_X := COPYING Makefile.noam module.mk
+LIB_X := COPYING module.mk
 TARFILES += $(LIBSRC) $(LIBHDR) $(addprefix proc/,$(LIB_X))
 
 

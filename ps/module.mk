@@ -16,7 +16,7 @@ PSNAMES := $(addprefix ps/,$(PS_C))
 PSOBJ   := $(addsuffix .o,$(PSNAMES))
 PSSRC   := $(addsuffix .c,$(PSNAMES))
 
-PS_X := COPYING HACKING TRANSLATION Makefile.noam common.h module.mk it p ps.1 regression
+PS_X := COPYING HACKING TRANSLATION common.h module.mk it p ps.1 regression
 TARFILES += $(PSSRC) $(addprefix ps/,$(PS_X))
 
 ps/ps: $(PSOBJ) $(LIBPROC)
