@@ -123,7 +123,9 @@ static void print_logintime(time_t logt, FILE* fout) {
  */
 static proc_t *getproc(const utmp_t *restrict const u, const char *restrict const tty, const unsigned long long *restrict jcpu, const int *restrict found_utpid) {
     int line;
-    proc_t **p, *best = NULL, *secondbest = NULL;
+    proc_t **pptr = procs;
+    proc_t *best = NULL;
+    proc_t *secondbest = NULL;
     unsigned uid = ~0U;
 
     if(!ignoreuser){
@@ -139,22 +141,23 @@ static proc_t *getproc(const utmp_t *restrict const u, const char *restrict cons
     line = tty_to_dev(tty);
     *jcpu = 0;
     *found_utpid = 0;
-    for(p = procs; *p; p++) {
-	if((**p).pid == u->ut_pid) {
+    for(; *pptr; pptr++) {
+	const proc_t *restrict const tmp = *pptr;
+	if(tmp->pid == u->ut_pid) {
 	    *found_utpid = 1;
-	    best = *p;
+	    best = tmp;
 	}
-	if((**p).tty != line) continue;
-	(*jcpu) += (**p).utime + (**p).stime;
-	secondbest = *p;
+	if(tmp->tty != line) continue;
+	(*jcpu) += tmp->utime + tmp->stime;
+	secondbest = tmp;
 	/* same time-logic here as for "best" below */
-	if(!  (secondbest && (**p).start_time <= secondbest->start_time)  ){
-	    secondbest = *p;
+	if(!  (secondbest && tmp->start_time <= secondbest->start_time)  ){
+	    secondbest = tmp;
 	}
-	if(!ignoreuser && uid != (**p).euid && uid != (**p).ruid) continue;
-	if((**p).pid != (**p).tpgid) continue;
-	if(best && (**p).start_time <= best->start_time) continue;
-    	best = *p;
+	if(!ignoreuser && uid != tmp->euid && uid != tmp->ruid) continue;
+	if(tmp->pid != tmp->tpgid) continue;
+	if(best && tmp->start_time <= best->start_time) continue;
+    	best = tmp;
     }
     return best ? best : secondbest;
 }
