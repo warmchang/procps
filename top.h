@@ -185,8 +185,8 @@ typedef struct FLD_t {
            information from one frame to the next -- we don't calc
            and save data that goes unused like the old top! */
 typedef struct HST_t {
-   int   pid;
    TIC_t tics;
+   int   pid;
 } HST_t;
 
         /* This structure stores a frame's cpu tics used in history

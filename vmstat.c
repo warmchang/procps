@@ -163,7 +163,7 @@ static void new_header(void){
 
 ////////////////////////////////////////////////////////////////////////////
 
-static void new_diskheader(void){
+static void diskheader(void){
   printf("disk ----------reads------------ -----------writes----------- -------IO-------\n");
 
   printf("%3s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s\n",   " ", "total", "merged","sectors","ms","total","merged","sectors","ms","cur","s");
@@ -172,13 +172,13 @@ static void new_diskheader(void){
 
 ////////////////////////////////////////////////////////////////////////////
 
-static void new_diskpartition_header(const char *partition_name){
+static void diskpartition_header(const char *partition_name){
   printf("%-10s %10s %10s %10s %10s\n",partition_name, "reads  ", "read sectors", "writes   ", "requested writes");
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
-static void new_slabheader(void){
+static void slabheader(void){
   printf("%-24s %6s %6s %6s %6s\n","Cache","Num", "Total", "Size", "Pages");
 }
 
@@ -290,7 +290,7 @@ static void new_format(void) {
 
 ////////////////////////////////////////////////////////////////////////////
 
-static int new_diskpartition_format(const char* partition_name){
+static int diskpartition_format(const char* partition_name){
   FILE *fDiskstat;
   struct disk_stat *disks;
   struct partition_stat *partitions, *current_partition=NULL;
@@ -309,14 +309,14 @@ static int new_diskpartition_format(const char* partition_name){
     if(!current_partition){
          return -1;
     }
-    new_diskpartition_header(partition_name);
+    diskpartition_header(partition_name);
     printf (format,
        current_partition->reads,current_partition->reads_sectors,current_partition->writes,current_partition->requested_writes);
     fflush(stdout);
     free(disks);
     free(partitions);
     for(j=1; j<num_updates; j++){ 
-        if (moreheaders && ((j%height)==0)) new_diskpartition_header(partition_name);
+        if (moreheaders && ((j%height)==0)) diskpartition_header(partition_name);
         sleep(sleep_time);
         ndisks=getdiskstat(&disks,&partitions);
         npartitions=getpartitions_num(disks, ndisks);
@@ -343,7 +343,7 @@ static int new_diskpartition_format(const char* partition_name){
 
 ////////////////////////////////////////////////////////////////////////////
 
-static void new_diskformat(void){
+static void diskformat(void){
   FILE *fDiskstat;
   struct disk_stat *disks;
   struct partition_stat *partitions;
@@ -353,7 +353,7 @@ static void new_diskformat(void){
     fclose(fDiskstat);
     ndisks=getdiskstat(&disks,&partitions);
     for(k=0; k<ndisks; k++){
-      if (moreheaders && ((k%height)==0)) new_diskheader();
+      if (moreheaders && ((k%height)==0)) diskheader();
       printf(format,
         disks[k].disk_name,disks[k].reads, disks[k].merged_reads,disks[k].reads_sectors, disks[k].milli_reading, disks[k].writes, disks[k].merged_writes, disks[k].written_sectors,disks[k].milli_writing, disks[k].inprogress_IO?disks[k].inprogress_IO/1000:0, disks[k].milli_spent_IO?disks[k].milli_spent_IO/1000:0/*, disks[i].weighted_milli_spent_IO/1000*/);
       fflush(stdout);
@@ -364,7 +364,7 @@ static void new_diskformat(void){
       sleep(sleep_time);
       ndisks=getdiskstat(&disks,&partitions);
       for(i=0; i<ndisks; i++,k++){
-        if (moreheaders && ((k%height)==0)) new_diskheader();
+        if (moreheaders && ((k%height)==0)) diskheader();
         printf(format,
           disks[i].disk_name,
           disks[i].reads,
@@ -392,7 +392,7 @@ static void new_diskformat(void){
 
 ////////////////////////////////////////////////////////////////////////////
 
-static void new_slabformat (void){
+static void slabformat (void){
   FILE *fSlab;
   struct slab_cache *slabs;
   unsigned long nSlab,i,j,k;
@@ -406,7 +406,7 @@ static void new_slabformat (void){
 
   nSlab = getslabinfo(&slabs);
   for(k=0; k<nSlab; k++){
-    if (moreheaders && ((k%height)==0)) new_slabheader();
+    if (moreheaders && ((k%height)==0)) slabheader();
     printf(format,
       slabs[k].name,
       slabs[k].active_objs,
@@ -420,7 +420,7 @@ static void new_slabformat (void){
     sleep(sleep_time);
     nSlab = getslabinfo(&slabs);
     for(i=0; i<nSlab; i++,k++){
-      if (moreheaders && ((k%height)==0)) new_slabheader();
+      if (moreheaders && ((k%height)==0)) slabheader();
       printf(format,
         slabs[i].name,
         slabs[i].active_objs,
@@ -644,12 +644,12 @@ int main(int argc, char *argv[]) {
 			     break;
 	case(VMSUMSTAT):     sum_format();
 			     break;
-	case(DISKSTAT):      new_diskformat();
+	case(DISKSTAT):      diskformat();
 			     break;
-	case(PARTITIONSTAT): if(new_diskpartition_format(partition)==-1)
+	case(PARTITIONSTAT): if(diskpartition_format(partition)==-1)
                                   printf("Partition was not found\n");
 			     break;	
-	case(SLABSTAT):      new_slabformat();
+	case(SLABSTAT):      slabformat();
 			     break;
 	case(DISKSUMSTAT):   disksum_format();  
 			     break;	

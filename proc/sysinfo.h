@@ -89,20 +89,20 @@ extern unsigned long vm_allocstall;
 extern void vminfo(void);
 
 typedef struct disk_stat{
-	unsigned int disk_type;
-	char disk_name [16];
-	unsigned           reads;
-	unsigned           merged_reads;
 	unsigned long long reads_sectors;
-	unsigned           milli_reading;
-	unsigned           writes;
-	unsigned           merged_writes;
 	unsigned long long written_sectors;
-	unsigned           milli_writing;
+	char               disk_name [16];
+	unsigned int       disk_type;
 	unsigned           inprogress_IO;
+	unsigned           merged_reads;
+	unsigned           merged_writes;
+	unsigned           milli_reading;
 	unsigned           milli_spent_IO;
-	unsigned           weighted_milli_spent_IO;
+	unsigned           milli_writing;
 	unsigned           partitions;
+	unsigned           reads;
+	unsigned           weighted_milli_spent_IO;
+	unsigned           writes;
 }disk_stat;
 
 typedef struct partition_stat{
