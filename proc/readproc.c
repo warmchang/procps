@@ -763,10 +763,15 @@ static char** file2strvec(const char* directory, const char* what) {
     //     PROC_EDITCGRPCVT, PROC_EDITCMDLCVT and PROC_EDITENVRCVT
 static int read_unvectored(char *restrict const dst, unsigned sz, const char* whom, const char *what, char sep) {
     char path[PROCPATHLEN];
-    int fd;
+    int fd, len;
     unsigned n = 0;
 
-    snprintf(path, sizeof(path), "%s/%s", whom, what);
+    if(sz <= 0) return 0;
+    if(sz >= INT_MAX) sz = INT_MAX-1;
+    dst[0] = '\0';
+
+    len = snprintf(path, sizeof(path), "%s/%s", whom, what);
+    if(len <= 0 || (size_t)len >= sizeof(path)) return 0;
     fd = open(path, O_RDONLY);
     if(fd==-1) return 0;
 
@@ -776,16 +781,16 @@ static int read_unvectored(char *restrict const dst, unsigned sz, const char* wh
             if(errno==EINTR) continue;
             break;
         }
+        if(r<=0) break;  // EOF
         n += r;
         if(n==sz) {      // filled the buffer
             --n;         // make room for '\0'
             break;
         }
-        if(r==0) break;  // EOF
     }
     close(fd);
     if(n){
-        int i=n;
+        unsigned i = n;
         while(i && dst[i-1]=='\0') --i; // skip trailing zeroes
         while(i--)
             if(dst[i]=='\n' || dst[i]=='\0') dst[i]=sep;
