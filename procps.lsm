@@ -1,16 +1,15 @@
-Begin3
+Begin4
 Title: procps
 Version: 3.0.1
-Entered-date: 10OCT02
-Description: Procps is a library which parses the textual /proc filesystem
-	and a suite of utilites which use the library.
+Entered-date: 2002-10-10
+Description: Linux system utilities
 Keywords: procps /proc libproc sysctl
 	ps uptime tload free w top vmstat watch skill snice kill pgrep pkill
 Author: Albert Cahalan, Michael K. Johnson, Jim Warner, etc.
 Maintained-by: various <procps-feedback@lists.sf.net>
 Primary-site: http://procps.sf.net/
-	185kB procps-3.0.1.tar.gz
+	230kB procps-3.0.1.tar.gz
 Alternate-site: http://www.debian.org/Packages/unstable/base/procps.html
-	185kB procps-3.0.1.tar.gz
+	230kB procps-3.0.1.tar.gz
 Copying-policy: mixed
 End
