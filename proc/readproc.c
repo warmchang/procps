@@ -394,17 +394,17 @@ next_proc:				/* get next PID for consideration */
         }
     }
 
-    if (Do(FILLCMD))				/* read+parse /proc/#/cmdline */
+    if (Do(FILLCOM) || Do(FILLARG))	/* read+parse /proc/#/cmdline */
 	p->cmdline = file2strvec(path, "cmdline");
     else
         p->cmdline = NULL;
 
-    if (Do(FILLENV))				/* read+parse /proc/#/environ */
+    if (Do(FILLENV))			/* read+parse /proc/#/environ */
 	p->environ = file2strvec(path, "environ");
     else
         p->environ = NULL;
     
-    if (p->state == 'Z')			/* fixup cmd for zombies */
+    if (p->state == 'Z')		/* fixup cmd for zombies */
 	strncat(p->cmd," <defunct>", sizeof p->cmd);
 
     return p;
@@ -494,7 +494,7 @@ next_proc:				/* get next PID for consideration */
 /*        }*/
     }
 
-    if (Do(FILLCMD))				/* read+parse /proc/#/cmdline */
+    if (Do(FILLCOM) || Do(FILLARG))	/* read+parse /proc/#/cmdline */
 	p->cmdline = file2strvec(path, "cmdline");
     else
         p->cmdline = NULL;
@@ -504,7 +504,7 @@ next_proc:				/* get next PID for consideration */
     else
         p->environ = NULL;
     
-    if (p->state == 'Z')			/* fixup cmd for zombies */
+    if (p->state == 'Z')		/* fixup cmd for zombies */
 	strncat(p->cmd," <defunct>", sizeof p->cmd);
 
     return p;

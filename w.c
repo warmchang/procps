@@ -271,7 +271,7 @@ int main(int argc, char **argv) {
     if (maxcmd < 3)
 	fprintf(stderr, "warning: screen width %d suboptimal.\n", win.ws_col);
 
-    procs = readproctab(PROC_FILLCMD | PROC_FILLUSR);
+    procs = readproctab(PROC_FILLCOM | PROC_FILLUSR);
 
     if (header) {				/* print uptime and headers */
 	print_uptime();

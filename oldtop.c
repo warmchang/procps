@@ -1186,7 +1186,7 @@ static void show_procs(void)
     static int first=0;
 
     if (first==0) {
-	proc_flags=PROC_FILLMEM|PROC_FILLCMD|PROC_FILLUSR|PROC_FILLSTATUS|PROC_FILLSTAT;
+	proc_flags=PROC_FILLMEM|PROC_FILLCOM|PROC_FILLUSR|PROC_FILLSTATUS|PROC_FILLSTAT;
 	if (monpids_index)
 	    proc_flags |= PROC_PID;
 	p_table=readproctab2(proc_flags, p_table, monpids);

@@ -6,10 +6,12 @@ vmstat \- Report virtual memory statistics
 .SH SYNOPSIS
 .ft B
 .B vmstat
+.RB [ "\-a" ]
 .RB [ "\-n" ]
 .RI [ delay " [ " count ]]
 .br
-.BR vmstat [ "\-V" ]
+.B vmstat
+.RB [ "\-V" ]
 .SH DESCRIPTION
 \fBvmstat\fP reports information about processes, memory, paging,
 block IO, traps, and cpu activity.
@@ -19,7 +21,9 @@ reports give information on a sampling period of length \fIdelay\fP.
 The process and memory reports are instantaneous in either case.
 
 .SS Options
-The \fB-n\fP switch  causes the header to be displayed only once rather than periodically.
+The \fB-a\fP switch displays active/inactive memory, given a 2.5.41 kernel or better.
+.PP
+The \fB-n\fP switch causes the header to be displayed only once rather than periodically.
 .PP
 .I delay
 is the delay between updates in seconds.  If no delay is specified,

@@ -192,21 +192,22 @@ extern void freeproc(proc_t* p);
  * argument is the length of the list (currently only used for lists of user
  * id's since unsigned short[] supports no convenient termination sentinel.)
  */
-#define PROC_FILLANY    0x00 /* either stat or status will do */
-#define PROC_FILLMEM    0x01 /* read statm into the appropriate proc_t entries */
-#define PROC_FILLCMD    0x02 /* alloc and fill in `cmdline' part of proc_t */
-#define PROC_FILLENV    0x04 /* alloc and fill in `environ' part of proc_t */
-#define PROC_FILLUSR    0x08 /* resolve user id number -> user name */
-#define PROC_FILLGRP    0x10 /* resolve group id number -> group name */
-#define PROC_FILLSTATUS 0x20
-#define PROC_FILLSTAT   0x40
-#define PROC_FILLWCHAN  0x80
-#define PROC_FILLBUG    0xff    /* No idea what we need */
+#define PROC_FILLMEM    0x001 /* read statm */
+#define PROC_FILLENV    0x002 /* alloc and fill in `environ' */
+#define PROC_FILLUSR    0x004 /* resolve user id number -> user name */
+#define PROC_FILLGRP    0x008 /* resolve group id number -> group name */
+#define PROC_FILLSTATUS 0x010 /* read status -- currently unconditional */
+#define PROC_FILLSTAT   0x020 /* read stat -- currently unconditional */
+#define PROC_FILLWCHAN  0x040 /* look up WCHAN name */
+#define PROC_FILLCOM    0x080 /* alloc and fill in `cmdline' */
+#define PROC_FILLARG    0x100 /* alloc and fill in `cmdline' */
 
+#define PROC_FILLBUG    ~0    /* No idea what we need */
+#define PROC_FILLANY    0x00 /* either stat or status will do */
 
 /* Obsolete, consider only processes with one of the passed: */
-#define PROC_PID     0x0100  /* process id numbers ( 0   terminated) */
-#define PROC_TTY     0x0200  /* ctty device nos.   ( 0   terminated) */
-#define PROC_UID     0x0400  /* user id numbers    ( length needed ) */
+#define PROC_PID     0x1000  /* process id numbers ( 0   terminated) */
+#define PROC_TTY     0x2000  /* ctty device nos.   ( 0   terminated) */
+#define PROC_UID     0x4000  /* user id numbers    ( length needed ) */
 
 #endif

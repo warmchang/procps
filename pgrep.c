@@ -409,7 +409,7 @@ do_openproc (void)
 	int flags = PROC_FILLANY;
 
 	if (opt_pattern || opt_full)
-		flags |= PROC_FILLCMD;
+		flags |= PROC_FILLCOM;
 	if (opt_uid)
 		flags |= PROC_FILLSTATUS;
 	if (opt_euid && !opt_negate) {

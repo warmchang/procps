@@ -857,7 +857,7 @@ static proc_t **refreshprocs (proc_t **tbl)
 {
 #define PTRsz  sizeof(proc_t *)         /* eyeball candy */
 #define ENTsz  sizeof(proc_t)
-   static int flags = PROC_FILLMEM | PROC_FILLCMD | PROC_FILLUSR
+   static int flags = PROC_FILLMEM | PROC_FILLCOM | PROC_FILLUSR
                     | PROC_FILLGRP | PROC_FILLSTATUS | PROC_FILLSTAT;
    static unsigned savmax = 0;          /* first time, Bypass: (i)  */
    proc_t *ptsk = (proc_t *)-1;         /* first time, Force: (ii)  */
