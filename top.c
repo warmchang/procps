@@ -871,6 +871,9 @@ static proc_t **refreshprocs (proc_t **table, int flags)
 {
 #define PTRsz  sizeof(proc_t *)         /* eyeball candy */
 #define ENTsz  sizeof(proc_t)
+           /* quick & dirty response to 2.5.xx RT */
+#define RTx(p) { if (-99 > p->priority) p->priority = -99; \
+                 if (+99 < p->priority) p->priority = +99; }
    static unsigned savmax = 0;          /* first time, Bypass: (i)  */
    proc_t *ptsk = (proc_t *)-1;         /* first time, Force: (ii)  */
    unsigned curmax = 0;                 /* every time  (jeeze)      */
@@ -890,6 +893,7 @@ static proc_t **refreshprocs (proc_t **table, int flags)
          table[curmax]->cmdline = NULL;
       }
       if (!(ptsk = readproc(PT, table[curmax]))) break;
+      RTx(ptsk)
       ++curmax;
    }
 
@@ -898,8 +902,10 @@ static proc_t **refreshprocs (proc_t **table, int flags)
          /* realloc as we go, keeping 'table' ahead of 'currmax++' */
       table = alloc_r(table, (curmax + 1) * PTRsz);
          /* here, readproc will allocate the underlying proc_t stg */
-      if ((ptsk = readproc(PT, NULL)))
+      if ((ptsk = readproc(PT, NULL))) {
+         RTx(ptsk)
          table[curmax++] = ptsk;
+      }
    }
    closeproc(PT);
 
@@ -916,6 +922,7 @@ static proc_t **refreshprocs (proc_t **table, int flags)
 
 #undef PTRsz
 #undef ENTsz
+#undef RTx
 }
 
 
@@ -1931,10 +1938,11 @@ static void show_a_task (WIN_t *q, proc_t *task)
 {
    /* the following macro is our means to 'inline' emitting a column -- that's
       far and away the most frequent and costly part of top's entire job! */
-#define MKCOL(q,idx,sta,pad,buf,arg...) \
+#define MKCOL(q,idx,sta,pad,buf,arg...) do{ \
            if (!b) \
               snprintf(buf, sizeof(buf), f, ## arg); \
-           else mkcol(q, idx, sta, pad, buf, ## arg);
+           else mkcol(q, idx, sta, pad, buf, ## arg); }while(0)
+
    char rbuf[ROWBUFSIZ];
    int j, x, pad;
 
