@@ -64,12 +64,12 @@ endif
 
 
 $(lib)/$(SONAME) : proc/$(SONAME)
-	$(install) --mode a=rx --strip $< $@
+	$(install) --mode a=rx $< $@
 	cd $(lib) && $(ln_sf) $(SONAME) lib$(NAME).so
 	$(ldconfig)
 
 #$(usr/lib)/lib$(NAME).a : proc/lib$(NAME).a
-#	$(install) --mode a=r --strip $< $@
+#	$(install) --mode a=r $< $@
 
 # Junk anyway... supposed to go in /usr/include/$(NAME)
 #$(HDRFILES) ??? : $(addprefix proc/,$(HDRFILES)) ???

@@ -33,7 +33,7 @@ ps/stacktrace.o: ps/stacktrace.c
 
 
 $(bin)ps: ps/ps
-	$(install) --mode a=rx --strip $< $@
+	$(install) --mode a=rx $< $@
 
 $(man1)ps.1 : ps/ps.1
 	$(install) --mode a=r $< $@

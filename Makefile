@@ -77,20 +77,23 @@ CPPFLAGS     := -I/usr/include/ncurses
 ALL_CPPFLAGS := $(PKG_CPPFLAGS) $(CPPFLAGS)
 
 # Left out -Wconversion due to noise in glibc headers.
-# Left out a number of things that older compilers lack:
-# -Wpadded -Wunreachable-code -Wdisabled-optimization
+# Left out -Wunreachable-code and -Wdisabled-optimization
+# because gcc spews many useless warnings with them.
 #
 # Since none of the PKG_CFLAGS things are truly required
 # to compile procps, they might best be moved to CFLAGS.
 # On the other hand, they aren't normal -O -g things either.
 #
-# TODO: determine why -fomit-frame-pointer is missing
+# Note that -O2 includes -fomit-frame-pointer only if the arch
+# doesn't lose some debugging ability.
 #
 PKG_CFLAGS   := -fno-common -ffast-math \
   -W -Wall -Wshadow -Wcast-align -Wredundant-decls \
   -Wbad-function-cast -Wcast-qual -Wwrite-strings -Waggregate-return \
   -Wstrict-prototypes -Wmissing-prototypes
-CFLAGS       := -O2 -g3
+# Note that some stuff below is conditional on CFLAGS containing
+# an option that starts with "-g". (-g, -g2, -g3, -ggdb, etc.)
+CFLAGS       := -O2 -s
 ALL_CFLAGS   := $(PKG_CFLAGS) $(CFLAGS)
 
 PKG_LDFLAGS  := -Wl,-warn-common
@@ -116,10 +119,15 @@ ALL_CFLAGS += $(call check_gcc,-Wstrict-aliasing=2,)
 # use computed goto.
 #ALL_CFLAGS += $(call check_gcc,-fno-gcse,)
 
-# These are part of -O3 but we dislike -finline-functions.
-# Using -fno-inline-functions with -O3 would work too.
+# if not debugging, enable things that could confuse gdb
+ifeq (,$(findstring -g,$(filter -g%,$(CFLAGS))))
 ALL_CFLAGS += $(call check_gcc,-fweb,)
 ALL_CFLAGS += $(call check_gcc,-frename-registers,)
+ALL_CFLAGS += $(call check_gcc,-fomit-frame-pointer,)
+endif
+
+# in case -O3 is enabled, avoid bloat
+ALL_CFLAGS += $(call check_gcc,-fno-inline-functions,)
 
 # Be 64-bit if at all possible. In a cross-compiling situation, one may
 # do "make m64=-m32 lib64=lib" to produce 32-bit executables. DO NOT
@@ -197,7 +205,7 @@ clean:
 ###### install
 
 $(BINFILES) : all
-	$(install) --mode a=rx --strip $(notdir $@) $@
+	$(install) --mode a=rx $(notdir $@) $@
 
 $(MANFILES) : all
 	$(install) --mode a=r $(notdir $@) $@

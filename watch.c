@@ -96,7 +96,7 @@ main(int argc, char *argv[])
 	int option_differences = 0,
 	    option_differences_cumulative = 0,
 	    option_help = 0, option_version = 0;
-	int interval = 2;
+	float interval = 2;
 	char *command;
 	int command_length = 0;	/* not including final \0 */
 
@@ -120,9 +120,11 @@ main(int argc, char *argv[])
 		case 'n':
 			{
 				char *str;
-				interval = strtol(optarg, &str, 10);
+				interval = strtof(optarg, &str);
 				if (!*optarg || *str)
 					do_usage();
+				if(interval < 0.1)
+					interval = 0.1;
 			}
 			break;
 		case 'v':
@@ -203,8 +205,8 @@ main(int argc, char *argv[])
 		if (show_title) {
 			// left justify interval and command,
 			// right justify time, clipping all to fit window width
-			asprintf(&header, "Every %ds: %.*s",
-				 interval, min(width - 1, command_length), command);
+			asprintf(&header, "Every %.1fs: %.*s",
+				interval, min(width - 1, command_length), command);
 			mvaddstr(0, 0, header);
 			if (strlen(header) > (size_t) (width - tsl - 1))
 				mvaddstr(0, width - tsl - 4, "...  ");
@@ -268,7 +270,7 @@ main(int argc, char *argv[])
 
 		first_screen = 0;
 		refresh();
-		sleep(interval);
+		usleep(interval * 1000000);
 	}
 
 	endwin();

@@ -674,11 +674,10 @@ static void show_special (int interact, const char *glob)
    if (*glob) PUTT("%.*s", Screen_cols, glob);
 }
 
-
+
 /*######  Small Utility routines  ########################################*/
 
-        /*
-         * Get a string from the user */
+// Get a string from the user
 static char *ask4str (const char *prompt)
 {
    static char buf[GETBUFSIZ];
@@ -691,8 +690,7 @@ static char *ask4str (const char *prompt)
 }
 
 
-        /*
-         * Get a float from the user */
+// Get a float from the user
 static float get_float (const char *prompt)
 {
    char *line;
@@ -709,8 +707,7 @@ static float get_float (const char *prompt)
 }
 
 
-        /*
-         * Get an integer from the user */
+// Get an integer from the user
 static int get_int (const char *prompt)
 {
    char *line;
@@ -1151,51 +1148,47 @@ static FLD_t Fieldstab[] = {
       L_EITHER       - must L_status, else 64-bit math, __udivdi3 on 32-bit !
       keys   head           fmts     width   scale  sort   desc                     lflg
      ------  -----------    -------  ------  -----  -----  ----------------------   -------- */
-   { "AaAa", "  PID ",      "%5u ",     -1,    -1, SF(PID), "Process Id",           L_NONE   },
-   { "BbBb", " PPID ",      "%5u ",     -1,    -1, SF(PPD), "Parent Process Pid",   L_EITHER },
-   { "CcQq", "RUSER    ",   "%-8.8s ",  -1,    -1, SF(URR), "Real user name",       L_RUSER  },
-   { "DdCc", " UID ",       "%4u ",     -1,    -1, SF(UID), "User Id",              L_NONE   },
-   { "EeDd", "USER     ",   "%-8.8s ",  -1,    -1, SF(URE), "User Name",            L_EUSER  },
-   { "FfNn", "GROUP    ",   "%-8.8s ",  -1,    -1, SF(GRP), "Group Name",           L_GROUP  },
-   { "GgGg", "TTY      ",   "%-8.8s ",   8,    -1, SF(TTY), "Controlling Tty",      L_stat   },
-   { "HhHh", " PR ",        "%3d ",     -1,    -1, SF(PRI), "Priority",             L_stat   },
-   { "IiIi", " NI ",        "%3d ",     -1,    -1, SF(NCE), "Nice value",           L_stat   },
-   { "JjYy", "#C ",         "%2u ",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
-   { "KkEe", "%CPU ",       "%#4.1f ",  -1,    -1, SF(CPU), "CPU usage",            L_stat   },
-   { "LlWw", "  TIME ",     "%6.6s ",    6,    -1, SF(TME), "CPU Time",             L_stat   },
-   { "MmRr", "   TIME+  ",  "%9.9s ",    9,    -1, SF(TME), "CPU Time, hundredths", L_stat   },
-   { "NnFf", "%MEM ",       "%#4.1f ",  -1,    -1, SF(RES), "Memory usage (RES)",   L_statm  },
-   { "OoMm", " VIRT ",      "%5.5s ",    5, SK_Kb, SF(VRT), "Virtual Image (kb)",   L_statm  },
-   { "PpOo", "SWAP ",       "%4.4s ",    4, SK_Kb, SF(SWP), "Swapped size (kb)",    L_statm  },
-   { "QqTt", " RES ",       "%4.4s ",    4, SK_Kb, SF(RES), "Resident size (kb)",   L_statm  },
-   { "RrKk", "CODE ",       "%4.4s ",    4, SK_Kb, SF(COD), "Code size (kb)",       L_statm  },
-   { "SsLl", "DATA ",       "%4.4s ",    4, SK_Kb, SF(DAT), "Data+Stack size (kb)", L_statm  },
-   { "TtPp", " SHR ",       "%4.4s ",    4, SK_Kb, SF(SHR), "Shared Mem size (kb)", L_statm  },
-   { "UuJj", "nFLT ",       "%4.4s ",    4, SK_no, SF(FLT), "Page Fault count",     L_stat   },
-   { "VvSs", "nDRT ",       "%4.4s ",    4, SK_no, SF(DRT), "Dirty Pages count",    L_statm  },
+   { "AaAa", "   PID",      " %5u",     -1,    -1, SF(PID), "Process Id",           L_NONE   },
+   { "BbBb", "  PPID",      " %5u",     -1,    -1, SF(PPD), "Parent Process Pid",   L_EITHER },
+   { "CcQq", " RUSER   ",   " %-8.8s",  -1,    -1, SF(URR), "Real user name",       L_RUSER  },
+   { "DdCc", "  UID",       " %4u",     -1,    -1, SF(UID), "User Id",              L_NONE   },
+   { "EeDd", " USER    ",   " %-8.8s",  -1,    -1, SF(URE), "User Name",            L_EUSER  },
+   { "FfNn", " GROUP   ",   " %-8.8s",  -1,    -1, SF(GRP), "Group Name",           L_GROUP  },
+   { "GgGg", " TTY     ",   " %-8.8s",   8,    -1, SF(TTY), "Controlling Tty",      L_stat   },
+   { "HhHh", "  PR",        " %3d",     -1,    -1, SF(PRI), "Priority",             L_stat   },
+   { "IiIi", "  NI",        " %3d",     -1,    -1, SF(NCE), "Nice value",           L_stat   },
+   { "JjYy", " #C",         " %2u",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
+   { "KkEe", " %CPU",       " %#4.1f",  -1,    -1, SF(CPU), "CPU usage",            L_stat   },
+   { "LlWw", "   TIME",     " %6.6s",    6,    -1, SF(TME), "CPU Time",             L_stat   },
+   { "MmRr", "    TIME+ ",  " %9.9s",    9,    -1, SF(TME), "CPU Time, hundredths", L_stat   },
+   { "NnFf", " %MEM",       " %#4.1f",  -1,    -1, SF(RES), "Memory usage (RES)",   L_statm  },
+   { "OoMm", "  VIRT",      " %5.5s",    5, SK_Kb, SF(VRT), "Virtual Image (kb)",   L_statm  },
+   { "PpOo", " SWAP",       " %4.4s",    4, SK_Kb, SF(SWP), "Swapped size (kb)",    L_statm  },
+   { "QqTt", "  RES",       " %4.4s",    4, SK_Kb, SF(RES), "Resident size (kb)",   L_statm  },
+   { "RrKk", " CODE",       " %4.4s",    4, SK_Kb, SF(COD), "Code size (kb)",       L_statm  },
+   { "SsLl", " DATA",       " %4.4s",    4, SK_Kb, SF(DAT), "Data+Stack size (kb)", L_statm  },
+   { "TtPp", "  SHR",       " %4.4s",    4, SK_Kb, SF(SHR), "Shared Mem size (kb)", L_statm  },
+   { "UuJj", " nFLT",       " %4.4s",    4, SK_no, SF(FLT), "Page Fault count",     L_stat   },
+   { "VvSs", " nDRT",       " %4.4s",    4, SK_no, SF(DRT), "Dirty Pages count",    L_statm  },
 #ifdef USE_LIB_STA3
-   { "WwVv", "STA ",        "%3.3s ",   -1,    -1, SF(STA), "Process Status",       L_stat   },
+   { "WwVv", " STA",        " %3.3s",   -1,    -1, SF(STA), "Process Status",       L_stat   },
 #else
-   { "WwVv", "S ",          "%c ",      -1,    -1, SF(STA), "Process Status",       L_EITHER },
+   { "WwVv", " S",          " %c",      -1,    -1, SF(STA), "Process Status",       L_EITHER },
 #endif
    // next entry's special: '.head' will be formatted using table entry's own
    //                       '.fmts' plus runtime supplied conversion args!
-   { "XxXx", "COMMAND ",    "%-*.*s ",  -1,    -1, SF(CMD), "Command name/line",    L_EITHER },
-   { "YyUu", "WCHAN     ",  "%-9.9s ",  -1,    -1, SF(WCH), "Sleeping in Function", L_stat   },
+   { "XxXx", " COMMAND",    " %-*.*s",  -1,    -1, SF(CMD), "Command name/line",    L_EITHER },
+   { "YyUu", " WCHAN    ",  " %-9.9s",  -1,    -1, SF(WCH), "Sleeping in Function", L_stat   },
    // next entry's special: the 0's will be replaced with '.'!
-#ifdef CASEUP_HEXES
-   { "ZzZz", "Flags    ",   "%08lX ",   -1,    -1, SF(FLG), "Task Flags <sched.h>", L_stat   },
-#else
-   { "ZzZz", "Flags    ",   "%08lx ",   -1,    -1, SF(FLG), "Task Flags <sched.h>", L_stat   },
-#endif
+   { "ZzZz", " Flags   ",   " %08lx",   -1,    -1, SF(FLG), "Task Flags <sched.h>", L_stat   },
 #if 0
-   { "..Qq", "  A ",        "%4.4s ",    4, SK_no, SF(PID), "Accessed Page count",  L_stat   },
-   { "..Nn", " TRS ",       "%4.4s ",    4, SK_Kb, SF(PID), "Code in memory (kb)",  L_stat   },
-   { "..Rr", " WP ",        "%4.4s ",    4, SK_no, SF(PID), "Unwritable Pages",     L_stat   },
-   { "Jj[{", "#C ",         "%2u ",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
-   { "..\\|","Bad ",        "%2u ",     -1,    -1, SF(CPN), "-- must ignore | --",  0        },
-   { "..]}", "Bad ",        "%2u ",     -1,    -1, SF(CPN), "-- not used --",       0        },
-   { "..^~", "Bad ",        "%2u ",     -1,    -1, SF(CPN), "-- not used --",       0        },
+   { "..Qq", "   A",        " %4.4s",    4, SK_no, SF(PID), "Accessed Page count",  L_stat   },
+   { "..Nn", "  TRS",       " %4.4s",    4, SK_Kb, SF(PID), "Code in memory (kb)",  L_stat   },
+   { "..Rr", "  WP",        " %4.4s",    4, SK_no, SF(PID), "Unwritable Pages",     L_stat   },
+   { "Jj[{", " #C",         " %2u",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
+   { "..\\|"," Bad",        " %2u",     -1,    -1, SF(CPN), "-- must ignore | --",  0        },
+   { "..]}", " Bad",        " %2u",     -1,    -1, SF(CPN), "-- not used --",       0        },
+   { "..^~", " Bad",        " %2u",     -1,    -1, SF(CPN), "-- not used --",       0        },
 #endif
 };
 #undef SF
@@ -2022,7 +2015,7 @@ static void reframewins (void)
          for (i = 0; i < w->maxpflgs; i++) {
             h = Fieldstab[w->procflags[i]].head;
             // oops, won't fit -- we're outta here...
-            if (Screen_cols < (int)((s - w->columnhdr) + strlen(h))) break;
+            if (Screen_cols+1 < (int)((s - w->columnhdr) + strlen(h))) break;
             s = scat(s, h);
          }
 
@@ -2030,28 +2023,29 @@ static void reframewins (void)
          // heading via maxcmdln - it may be a fib if P_CMD wasn't encountered,
          // but that's ok because it won't be displayed anyway
          w->maxpflgs = i;
-         w->maxcmdln = Screen_cols
-            - (strlen(w->columnhdr) - strlen(Fieldstab[P_CMD].head)) - 1;
+         w->maxcmdln = Screen_cols - (strlen(w->columnhdr) - strlen(Fieldstab[P_CMD].head));
 
          // finally, we can build the true run-time columns header, format the
          // command column heading, if P_CMD is really being displayed, and
          // rebuild the all-important PROC_FILLxxx flags that will be used
          // until/if we're we're called again
          *(s = w->columnhdr) = '\0';
-         if (Rc.mode_altscr) s = scat(s, fmtmk("%d", w->winnum));
+//         if (Rc.mode_altscr) s = scat(s, fmtmk("%d", w->winnum));
          for (i = 0; i < w->maxpflgs; i++) {
+            int advance = (i==0) && !Rc.mode_altscr;
             h = Fieldstab[w->procflags[i]].head;
             if (P_WCH == w->procflags[i]) needpsdb = 1;
             if (P_CMD == w->procflags[i]) {
-               s = scat(s, fmtmk(Fieldstab[P_CMD].fmts, w->maxcmdln, w->maxcmdln, h));
+               s = scat(s, fmtmk(Fieldstab[P_CMD].fmts+advance, w->maxcmdln, w->maxcmdln, "COMMAND"/*h*/  ));
                if (CHKw(w, Show_CMDLIN)) {
                   Frames_libflags |= L_CMDLINE;
 //                if (w->maxcmdln > Frames_maxcmdln) Frames_maxcmdln = w->maxcmdln;
                }
             } else
-               s = scat(s, h);
+               s = scat(s, h+advance);
             Frames_libflags |= Fieldstab[w->procflags[i]].lflg;
          }
+         if (Rc.mode_altscr) w->columnhdr[0] = w->winnum + '0';
       }
       if (Rc.mode_altscr) w = w->next;
    } while (w != Curwin);
@@ -2904,12 +2898,14 @@ static proc_t **summary_show (void)
 // Display information for a single task row.
 static void task_show (const WIN_t *q, const proc_t *p)
 {
-   char rbuf[ROWBUFSIZ], *rp;
+   char rbuf[ROWBUFSIZ];
+   char *rp = rbuf;
    int j, x, pad;
 
-   // we must begin a row with a possible window number in mind...
-   *(rp = rbuf) = '\0';
-   if ((pad = Rc.mode_altscr)) rp = scat(rp, " ");
+   *rp = '\0';
+
+   pad = Rc.mode_altscr;
+//   if (pad) rp = scat(rp, " ");
 
    for (x = 0; x < q->maxpflgs; x++) {
       char cbuf[ROWBUFSIZ], _z[ROWBUFSIZ];
@@ -2917,6 +2913,8 @@ static void task_show (const WIN_t *q, const proc_t *p)
       const char *f = Fieldstab[i].fmts;        // macro AND sometimes the fmt
       unsigned    s = Fieldstab[i].scale;       // string must be altered !
       unsigned    w = Fieldstab[i].width;
+
+      int advance = (x==0) && !Rc.mode_altscr;
 
       switch (i) {
          case P_CMD:
@@ -2974,7 +2972,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
             break;
          case P_PRI:
             if (unlikely(-99 > p->priority) || unlikely(999 < p->priority)) {
-               f = " RT ";
+               f = "  RT";
                MKCOL("");
             } else
                MKCOL((int)p->priority);
@@ -3023,11 +3021,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
             break;
          case P_WCH:
             if (No_ksyms) {
-#ifdef CASEUP_HEXES
-               f = "%08lX  ";
-#else
-               f = "%08lx  ";
-#endif
+               f = " %08lx ";
                MKCOL((long)p->wchan);
             } else {
                MKCOL(wchan(p->wchan, p->XXXID));
@@ -3036,7 +3030,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
 
         } /* end: switch 'procflag' */
 
-        rp = scat(rp, cbuf);
+        rp = scat(rp, cbuf+advance);
    } /* end: for 'maxpflgs' */
 
    PUFF(
@@ -3045,7 +3039,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
       Screen_cols + pad,
       rbuf,
       Caps_off,
-      Cap_clr_eol
+      "" /*Cap_clr_eol*/
    );
 
 #undef MKCOL

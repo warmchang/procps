@@ -131,7 +131,7 @@ int escape_strlist(char *restrict dst, const char *restrict const *restrict src,
 ///////////////////////////////////////////////////
 
 int escape_command(char *restrict const outbuf, const proc_t *restrict const pp, int bytes, int glyphs, unsigned flags){
-  int overhead = 1;  // the trailing NUL
+  int overhead = 0;
   int end = 0;
 
   if(bytes > glyphs+1) bytes=glyphs+1; // FIXME: assumes 8-bit locale
@@ -147,7 +147,7 @@ int escape_command(char *restrict const outbuf, const proc_t *restrict const pp,
     if(pp->state=='Z') overhead += 10;    // chars in " <defunct>"
     else flags &= ~ESC_DEFUNCT;
   }
-  if(overhead >= bytes){  // if no room for even one byte of the command name
+  if(overhead + 1 >= bytes){  // if no room for even one byte of the command name
     // you'd damn well better have _some_ space
     outbuf[0] = '-';
     outbuf[1] = '\0';
@@ -156,7 +156,7 @@ int escape_command(char *restrict const outbuf, const proc_t *restrict const pp,
   if(flags & ESC_BRACKETS){
     outbuf[end++] = '[';
   }
-  end += escape_str(outbuf+end, pp->cmd, bytes-overhead, glyphs-overhead+1);
+  end += escape_str(outbuf+end, pp->cmd, bytes-overhead, glyphs-overhead);
 
   // Hmmm, do we want "[foo] <defunct>" or "[foo <defunct>]"?
   if(flags & ESC_BRACKETS){

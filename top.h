@@ -128,19 +128,37 @@
 // - may NOT contain cursor motion terminfo escapes
 // - assumed to represent a complete screen ROW
 // - subject to optimization, thus MAY be discarded
-#define PUFF(fmt,arg...) do { \
-      char _str[ROWBUFSIZ]; \
-      char *_ptr = &Pseudo_scrn[Pseudo_row++ * Pseudo_cols]; \
-      int _len = 1 + snprintf(_str, sizeof(_str), fmt, ## arg); \
-      if (Batch) putp(_str); \
-      else { \
-         if (!memcmp(_ptr, _str, _len)) \
-            putp("\n"); \
-         else { \
-            memcpy(_ptr, _str, _len); \
-            putp(_ptr); \
-      } } \
-   } while (0)
+
+// The evil version   (53892 byte stripped top, oddly enough)
+#define _PUFF(fmt,arg...)                               \
+do {                                                     \
+   char _str[ROWBUFSIZ];                                   \
+   int _len = 1 + snprintf(_str, sizeof(_str), fmt, ## arg);   \
+   putp ( Batch ? _str :                                   \
+   ({                                                 \
+      char *restrict const _pse = &Pseudo_scrn[Pseudo_row++ * Pseudo_cols];  \
+      memcmp(_pse, _str, _len) ? memcpy(_pse, _str, _len) : "\n";  \
+   })                                \
+   );                   \
+} while (0)
+
+// The good version  (53876 byte stripped top)
+#define PUFF(fmt,arg...)                               \
+do {                                                     \
+   char _str[ROWBUFSIZ];                                   \
+   char *_ptr;                                               \
+   int _len = 1 + snprintf(_str, sizeof(_str), fmt, ## arg);   \
+   if (Batch) _ptr = _str;                                   \
+   else {                                                 \
+      _ptr = &Pseudo_scrn[Pseudo_row++ * Pseudo_cols];  \
+      if (memcmp(_ptr, _str, _len)) {                \
+         memcpy(_ptr, _str, _len);                \
+      } else {                                 \
+         _ptr = "\n";                       \
+      }                                 \
+   }                                \
+   putp(_ptr);                   \
+} while (0)
 
 
 /*------  Special Macros (debug and/or informative)  ---------------------*/
