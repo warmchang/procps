@@ -1513,7 +1513,6 @@ static const char *rc_write_whatever (void) {
    FILE *fp = fopen(Rc_name, "w");
 
    if (!fp) return strerror(errno);
-//   if (Crufty_rcf) rc_write_old(fp);
    rc_write_new(fp);
    fclose(fp);
    return NULL;

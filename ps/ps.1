@@ -60,26 +60,6 @@ displays information about a selection of the active processes.
 If you want a repetitive update of the selection and the
 displayed information, use\ \fItop\fR(1) instead.
 .P
-By default, \fBps\fR selects all processes with the same effective user
-ID (EUID) as the curent user and associated with the same terminal as the
-invoker.  It displays the process ID (PID), the terminal (tty) associated
-with the process (TTY), the cumulated CPU time in [dd\-]hh:mm:ss format
-(TIME), and the executable name (CMD). The use of BSD\-style options
-will add process state (STAT) to the default display. The use of BSD\-style
-options will also change the process selection to include processes
-on other terminals (TTYs) that are owned by you; alternately, this may
-be described as setting the selection to be the set of all processes
-filtered to exclude processes owned by other users or not on a terminal.
-Output is unsorted by default.
-.P
-Except as described below, process selection options are additive.
-The default selection is discarded, and then the selected processes
-are added to the set of processes to be displayed.
-A\ process will thus be shown if it meets any of the selection
-criteria.
-.PP
-.PP
-.SH "COMMAND\-LINE OPTIONS"
 This version of \fBps\fR accepts several kinds of options:
 .PD 0
 .IP 1 4
@@ -103,6 +83,29 @@ not exist, this \fBps\fR may interpret the command as "\fBps\ aux\fR"
 instead and print a warning. This behavior is intended to aid in
 transitioning old scripts and habits. It is fragile, subject to change,
 and thus should not be relied upon.
+.P
+By default, \fBps\fR selects all processes with the same effective user
+ID (EUID) as the curent user and associated with the same terminal as the
+invoker.  It displays the process ID (PID), the terminal associated
+with the process (TTY), the cumulated CPU time in [dd\-]hh:mm:ss format
+(TIME), and the executable name (CMD). Output is unsorted by default.
+.P
+The use of BSD\-style options will add process state (STAT) to the
+default display and show the command args (COMMAND) instead of the
+executable name. You can override this with the \fBPS_FORMAT\fR
+environment variable. The use of BSD\-style options will also change the
+process selection to include processes on other terminals (TTYs) that
+are owned by you; alternately, this may be described as setting the
+selection to be the set of all processes filtered to exclude
+processes owned by other users or not on a terminal. These effects
+are not considered when options are described as being "identical" below,
+so \fB\-M\fR will be considered identical to \fBZ\fR and so on.
+.P
+Except as described below, process selection options are additive.
+The default selection is discarded, and then the selected processes
+are added to the set of processes to be displayed.
+A\ process will thus be shown if it meets any of the given
+selection criteria.
 .PP
 .\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .SH "EXAMPLES"
@@ -138,8 +141,8 @@ To get security info:
 .br
 .B ps\ -eM
 .TP
-To see every process except those running as root (real\ &\ effective\ ID)
-.B ps\ \-U\ root\ \-u\ root\ \-N
+To see every process running as root (real\ &\ effective\ ID) in user format:
+.B ps\ \-U\ root\ \-u\ root\ u
 .TP
 To see every process with a user\-defined format:
 .B ps\ \-eo\ pid,tid,class,rtprio,ni,pri,psr,pcpu,stat,wchan:14,comm
@@ -147,9 +150,6 @@ To see every process with a user\-defined format:
 .B ps\ axo\ stat,euid,ruid,tty,tpgid,sess,pgrp,ppid,pid,pcpu,comm
 .br
 .B ps\ \-eopid,tt,user,fname,tmout,f,wchan
-.TP
-Odd display with AIX field descriptors:
-.B ps\ \-o\ "%u\ :\ %U\ :\ %p\ :\ %a"
 .TP
 Print only the process IDs of syslogd:
 .B ps\ \-C\ syslogd\ \-o\ pid=
@@ -167,6 +167,7 @@ Select all processes.  Identical to \fB\-e\fR.
 .TP
 .B \-N
 Select all processes except those that fulfill the specified conditions.
+(negates the selection) Identical to \fB\-\-deselect\fR.
 
 .opt T
 Select all processes associated with this terminal.  Identical to the
@@ -225,6 +226,7 @@ or to list all processes when used together with the \fBa\fR option.
 .TP
 .B \-\-deselect
 Select all processes except those that fulfill the specified conditions.
+(negates the selection) Identical to \fB\-N\fR.
 
 .\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .PD
@@ -409,7 +411,7 @@ BSD\ personality.
 
 .TP
 .B \-M
-Add a column of security data. (for\ SE\ Linux)
+Add a column of security data. Identical to \fBZ\fR. (for\ SE\ Linux)
 
 .TP
 .B X
@@ -417,7 +419,7 @@ Register format.
 
 .TP
 .B Z
-Add a column of security data. (for\ SE\ Linux)
+Add a column of security data. Identical to \fB\-M\fR. (for\ SE\ Linux)
 
 .TP
 .B \-c
@@ -429,6 +431,8 @@ does full\-format listing. This option can be combined with many
 other UNIX\-style options to add additional columns. It also causes
 the command arguments to be printed. When used with \fB\-L\fR, the
 NLWP (number of threads) and LWP (thread ID) columns will be added.
+See the \fBc\fR option, the format keyword \fBargs\fR, and the
+format keyword \fBcomm\fR.
 
 .TP
 .B j
@@ -548,6 +552,8 @@ parent process repeatedly forks off short\-lived children to do work.
 Show the true command name. This is derived from the name of the
 executable file, rather than from the argv value which could be
 modified by a user. Command arguments are not shown.
+See the \fB\-f\fR option, the format keyword \fBargs\fR, and the
+format keyword \fBcomm\fR.
 
 .TP
 .B e
@@ -928,9 +934,21 @@ the machine, expressed as a percentage.  (alias\ \fBpmem\fR).
 T}
 
 args	COMMAND	T{
-command with all its arguments as a string.  May chop as desired.
-Modifications to the arguments are not shown.  The output in this column
-may contain spaces.  (alias\ \fBcmd\fR,\ \fBcommand\fR).
+command with all its arguments as a string. Modifications to the arguments
+may be shown. The output in this column may contain spaces.
+A\ process marked <defunct> is partly dead, waiting
+to be fully destroyed by its parent. Sometimes the process args
+will be unavailable; when this happens, \fBps\fR will instead
+print the executable name in brackets.
+(alias\ \fBcmd\fR,\ \fBcommand\fR). See also the \fBcomm\fR format
+keyword, the \fB\-f\fR option, and the \fBc\fR option.
+.br
+When specified last, this column will extend to the edge of the display.
+If \fBps\fR can not determine display width, as when output is redirected
+(piped) into a file or another command, the width of this column is undefined.
+The \fBCOLUMNS\fR environment variable or \fB\-\-cols\fR option may
+be used to exactly determine the width in this case.
+The \fBw\fR or \fB\-w\fR option may be also be used to adjust width.
 T}
 
 blocked	BLOCKED	T{
@@ -998,8 +1016,19 @@ see \fBargs\fR.  (alias\ \fBargs\fR,\ \fBcommand\fR).
 T}
 
 comm	COMMAND	T{
-command name (only\ the executable\ name).  The output in this
+command name (only\ the executable\ name).  Modifications to the command
+name will not be shown. A\ process marked <defunct> is partly dead, waiting
+to be fully destroyed by its parent. The output in this
 column may contain spaces.  (alias\ \fBucmd\fR,\ \fBucomm\fR).
+See also the \fBargs\fR format
+keyword, the \fB\-f\fR option, and the \fBc\fR option.
+.br
+When specified last, this column will extend to the edge of the display.
+If \fBps\fR can not determine display width, as when output is redirected
+(piped) into a file or another command, the width of this column is undefined.
+The \fBCOLUMNS\fR environment variable or \fB\-\-cols\fR option may
+be used to exactly determine the width in this case.
+The \fBw\fR or \fB\-w\fR option may be also be used to adjust width.
 T}
 
 command	COMMAND	T{
@@ -1347,6 +1376,8 @@ T}
 sz	SZ	T{
 size in physical pages of the core image of the process.
 This includes text, data, and stack space.
+Device mappings are currently excluded; this is subject to change.
+See \fBvsz\fR and \fBrss\fR.
 T}
 
 thcount	THCNT	T{
@@ -1402,12 +1433,13 @@ see \fBeuser\fR.  (alias\ \fBeuser\fR,\ \fBuname\fR).
 T}
 
 vsize	VSZ	T{
-virtual memory usage of entire process.
-vm_lib\ +\ vm_exe\ +\ vm_data\ +\ vm_stack
+see \fBvsz\fR.  (alias\ \fBvsz\fR).
 T}
 
 vsz	VSZ	T{
-see \fBvsize\fR.  (alias\ \fBvsize\fR).
+virtual memory size of the process in KiB (1024\-byte\ units).
+Device mappings are currently excluded; this is subject to change.
+(alias\ \fBvsize\fR).
 T}
 
 wchan	WCHAN	T{
@@ -1447,7 +1479,9 @@ Date format.
 Not currently supported.
 .TP
 .B PS_FORMAT
-Default output format override.
+Default output format override. You may set this to a format
+string of the type used for the \fB\-o\fR option.
+The \fBDefSysV\fR and \fBDefBSD\fR values are particularly useful.
 .TP
 .B PS_SYSMAP
 Default namelist (System.map) location.

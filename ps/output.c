@@ -1218,9 +1218,9 @@ static const format_struct format_array[] = {
 {"rgid",      "RGID",    pr_rgid,     sr_rgid,    5,   0,    XXX, ET|RIGHT},
 {"rgroup",    "RGROUP",  pr_rgroup,   sr_rgroup,  8, GRP,    U98, ET|USER}, /* was 8 wide */
 {"rlink",     "RLINK",   pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
-{"rss",       "RSS",     pr_rss,      sr_rss,     4,   0,    XXX, PO|RIGHT}, /* was 5 wide */
-{"rssize",    "RSS",     pr_rss,      sr_vm_rss,  4,   0,    DEC, PO|RIGHT}, /*rsz*/
-{"rsz",       "RSZ",     pr_rss,      sr_vm_rss,  4,   0,    BSD, PO|RIGHT}, /*rssize*/
+{"rss",       "RSS",     pr_rss,      sr_rss,     5,   0,    XXX, PO|RIGHT}, /* was 5 wide */
+{"rssize",    "RSS",     pr_rss,      sr_vm_rss,  5,   0,    DEC, PO|RIGHT}, /*rsz*/
+{"rsz",       "RSZ",     pr_rss,      sr_vm_rss,  5,   0,    BSD, PO|RIGHT}, /*rssize*/
 {"rtprio",    "RTPRIO",  pr_rtprio,   sr_rtprio,  6,   0,    BSD, TO|RIGHT},
 {"ruid",      "RUID",    pr_ruid,     sr_ruid,    5,   0,    XXX, ET|RIGHT},
 {"ruser",     "RUSER",   pr_ruser,    sr_ruser,   8, USR,    U98, ET|USER},
@@ -1244,7 +1244,7 @@ static const format_struct format_array[] = {
 {"sigcatch",  "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*caught*/
 {"sigignore", "IGNORED", pr_sigignore,sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*ignored*/
 {"sigmask",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*blocked*/
-{"size",      "SZ",      pr_swapable, sr_swapable, 1,  0,    SCO, PO|RIGHT},
+{"size",      "SZ",      pr_swapable, sr_swapable, 5,  0,    SCO, PO|RIGHT},
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, AN|RIGHT},
 {"spid",      "SPID",    pr_thread,   sr_tid,     5,   0,    SGI, TO|PIDMAX|RIGHT},
 {"stackp",    "STACKP",  pr_stackp,   sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*start_stack*/
@@ -1301,8 +1301,8 @@ static const format_struct format_array[] = {
 {"vm_lib",    "LIB",     pr_nop,      sr_vm_lib,  5,   0,    LNx, PO|RIGHT},
 {"vm_lock",   "LCK",     pr_nop,      sr_vm_lock, 3,   0,    LNx, PO|RIGHT},
 {"vm_stack",  "STACK",   pr_nop,      sr_vm_stack, 5,  0,    LNx, PO|RIGHT},
-{"vsize",     "VSZ",     pr_vsz,      sr_vsize,   5,   0,    DEC, PO|RIGHT}, /*vsz*/
-{"vsz",       "VSZ",     pr_vsz,      sr_vm_size, 5,   0,    U98, PO|RIGHT}, /*vsize*/
+{"vsize",     "VSZ",     pr_vsz,      sr_vsize,   6,   0,    DEC, PO|RIGHT}, /*vsz*/
+{"vsz",       "VSZ",     pr_vsz,      sr_vm_size, 6,   0,    U98, PO|RIGHT}, /*vsize*/
 {"wchan",     "WCHAN",   pr_wchan,    sr_wchan,   6, WCH,    XXX, TO|WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
 {"wname",     "WCHAN",   pr_wname,    sr_nop,     6, WCH,    SGI, TO|WCHAN}, /* opposite of nwchan */
 {"xstat",     "XSTAT",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT},

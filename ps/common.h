@@ -119,6 +119,8 @@
 #define PER_SANE_USER     0x0200
 #define PER_HPUX_x        0x0400
 #define PER_SVR4_x        0x0800
+#define PER_BSD_COLS      0x1000
+#define PER_UNIX_COLS     0x2000
 
 /* Simple selections by bit mask */
 #define SS_B_x 0x01

@@ -218,10 +218,16 @@ parse_error:
 static const char *parse_sysv_option(void){
   const char *arg;
   const char *err;
+
   flagptr = ps_argv[thisarg];
   while(*++flagptr){
-    /* Find any excuse to ignore stupid Unix98 misfeatures. */
+    // Find any excuse to ignore stupid Unix98 misfeatures.
+    //
+    // This list of options is ONLY for those defined by the
+    // "IEEE Std 1003.1, 2004 Edition", "ISO/IEC 9945:2003",
+    // or "Version 2 of the Single Unix Specification".
     if(!strchr("aAdefgGlnoptuU", *flagptr)) not_pure_unix = 1;
+
     switch(*flagptr){
     case 'A':
       trace("-A selects all processes.\n");

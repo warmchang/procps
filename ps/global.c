@@ -16,6 +16,9 @@
 #include <pwd.h>
 #include <grp.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+                     
 
 #include "common.h"
 
@@ -95,24 +98,48 @@ static void reset_selection_list(void){
   selection_list = NULL;
 }
 
-/* The rules:
- * 1. Defaults are implementation-specific. (ioctl,termcap,guess)
- * 2. COLUMNS and LINES override the defaults. (standards compliance)
- * 3. Command line options override everything else.
- * 4. Actual output may be more if the above is too narrow.
- */
+// The rules:
+// 1. Defaults are implementation-specific. (ioctl,termcap,guess)
+// 2. COLUMNS and LINES override the defaults. (standards compliance)
+// 3. Command line options override everything else.
+// 4. Actual output may be more if the above is too narrow.
+//
+// SysV tends to spew semi-wide output in all cases. The args
+// will be limited to 64 or 80 characters, without regard to
+// screen size. So lines of 120 to 160 chars are normal.
+// Tough luck if you want more or less than that! HP-UX has a
+// new "-x" option for 1024-char args in place of comm that
+// we'll implement at some point.
+//
+// BSD tends to make a good effort, then fall back to 80 cols.
+// Use "ww" to get infinity. This is nicer for "ps | less"
+// and "watch ps". It can run faster too.
 static void set_screen_size(void){
   struct winsize ws;
   char *columns; /* Unix98 environment variable */
   char *lines;   /* Unix98 environment variable */
-  if(ioctl(1, TIOCGWINSZ, &ws) != -1 && ws.ws_col>0 && ws.ws_row>0){
-    screen_cols = ws.ws_col;
-    screen_rows = ws.ws_row;
-  }else{  /* TODO: ought to do tgetnum("co") and tgetnum("li") now */
-    screen_cols = 80;
-    screen_rows = 24;
-  }
+
+  do{
+    int fd;
+    if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != -1 && ws.ws_col>0 && ws.ws_row>0) break;
+    if(ioctl(STDERR_FILENO, TIOCGWINSZ, &ws) != -1 && ws.ws_col>0 && ws.ws_row>0) break;
+    if(ioctl(STDIN_FILENO,  TIOCGWINSZ, &ws) != -1 && ws.ws_col>0 && ws.ws_row>0) break;
+    fd = open("/dev/tty", O_NOCTTY|O_NONBLOCK|O_RDONLY);
+    if(fd != -1){
+      int ret = ioctl(fd, TIOCGWINSZ, &ws);
+      close(fd);
+      if(ret != -1 && ws.ws_col>0 && ws.ws_row>0) break;
+    }
+    // TODO: ought to do tgetnum("co") and tgetnum("li") here
+    ws.ws_col = 80;
+    ws.ws_row = 24;
+  }while(0);
+  screen_cols = ws.ws_col;  // hmmm, NetBSD subtracts 1
+  screen_rows = ws.ws_row;
+
+  // TODO: delete this line
   if(!isatty(STDOUT_FILENO)) screen_cols = OUTBUF_SIZE;
+
   columns = getenv("COLUMNS");
   if(columns && *columns){
     long t;
@@ -120,6 +147,7 @@ static void set_screen_size(void){
     t = strtol(columns, &endptr, 0);
     if(!*endptr && (t>0) && (t<(long)OUTBUF_SIZE)) screen_cols = (int)t;
   }
+
   lines   = getenv("LINES");
   if(lines && *lines){
     long t;
@@ -127,6 +155,7 @@ static void set_screen_size(void){
     t = strtol(lines, &endptr, 0);
     if(!*endptr && (t>0) && (t<(long)OUTBUF_SIZE)) screen_rows = (int)t;
   }
+
   if((screen_cols<9) || (screen_rows<2))
     fprintf(stderr,"Your %dx%d screen size is bogus. Expect trouble.\n",
       screen_cols, screen_rows

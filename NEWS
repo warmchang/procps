@@ -1,3 +1,7 @@
+procps-3.2.3 --> procps-3.2.4
+
+ps: more room for some columns
+
 procps-3.2.2 --> procps-3.2.3
 
 avoid truncating long usernames

@@ -26,3 +26,14 @@ s             signal format
 u             user-oriented format
 --forest      ASCII art forest (process hierarchy)
 c             show true command name
+
+List of man page translators:
+
+de  Wed Jan 10 19:09:15 2001 by Martin Schulze <joey@infodrom.ffis.de>
+es  19 Jan 1999 by Diego Sevilla Ruiz (dsevilla@ditec.um.es)
+fr  09/06/1997 par Christophe Blaess (ccb@club-internet.fr)
+hu  Horv#th Andr#s (the '#' is 'a' w/ '/') <horvatha@rs1.szif.hu>
+it  Traduzione in italiano di Giovanni Bortolozzo <borto@dei.unipd.it>
+it  Revisione parziale di Daniele Giacomini <daniele@evo.it> 30/03/1999
+ja  Tue Nov 14 2000 by NAKANO Takeo <nakano@apm.seikei.ac.jp>
+nl  <manpages-nl@nl.linux.org>
