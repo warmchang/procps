@@ -2169,6 +2169,9 @@ void init_output(void){
     -1,
     0
   );
+  if(outbuf == MAP_FAILED)
+    catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
+
   memset(outbuf, ' ', SPACE_AMOUNT);
   if(SPACE_AMOUNT==page_size) mprotect(outbuf, page_size, PROT_READ);
   mprotect(outbuf + page_size*outbuf_pages, page_size, PROT_NONE); // guard page
