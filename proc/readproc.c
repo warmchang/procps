@@ -1343,11 +1343,19 @@ proc_t* readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, pro
 #ifdef QUICK_THREADS
     MK_THREAD(t);
 #else
-    t->environ = NULL;
-    t->cmdline = vectorize_this_str("n/a");
-    t->cgroup  = NULL;
-    t->supgid  = NULL;
-    t->supgrp  = NULL;
+    t->environ  = NULL;
+    t->cmdline  = vectorize_this_str("n/a");
+    t->cgroup   = NULL;
+    t->cgname   = NULL;
+    t->supgid   = NULL;
+    t->supgrp   = NULL;
+    t->sd_mach  = NULL;
+    t->sd_ouid  = NULL;
+    t->sd_seat  = NULL;
+    t->sd_sess  = NULL;
+    t->sd_slice = NULL;
+    t->sd_unit  = NULL;
+    t->sd_uunit = NULL;
 #endif
     return t;
   }
