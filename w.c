@@ -236,7 +236,7 @@ static void print_time_ival7(time_t t, int centi_sec, FILE * fout)
 {
 	if ((long)t < (long)0) {
 		/* system clock changed? */
-		printf("   ?   ");
+		fprintf(fout, "   ?   ");
 		return;
 	}
 	if (oldstyle) {
