@@ -614,9 +614,10 @@ main (int argc, char **argv)
 	if (i_am_pkill) {
 		int i;
 		for (i = 1; i <= procs[0].num; i++) {
-			if (kill (procs[i].num, opt_signal) == -1)
-				fprintf (stderr, "pkill: %ld - %s\n",
-					 procs[i].num, strerror (errno));
+			if (kill (procs[i].num, opt_signal) != -1) continue;
+			if (errno==ESRCH) continue; // gone now, which is OK
+			fprintf (stderr, "pkill: %ld - %s\n",
+				 procs[i].num, strerror (errno));
 		}
 	} else {
 		if (opt_long)
