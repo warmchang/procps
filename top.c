@@ -1747,7 +1747,6 @@ static void frame_states (proc_t **ppt, int show)
    HIST_t          *hist_tmp;
 
    if (!hist_sav) {           // 1st time through
-      Frame_maxtask = 0;
       hist_siz = 100;
       hist_sav = alloc_c(sizeof(HIST_t)*hist_siz);
       hist_new = alloc_c(sizeof(HIST_t)*hist_siz);
@@ -1783,7 +1782,7 @@ static void frame_states (proc_t **ppt, int show)
             running++;
             break;
       }
-      if (total >= hist_siz) {
+      if (total+1 >= hist_siz) {
          hist_siz = hist_siz * 5 / 4 + 1;  // grow by at least 25%
          hist_sav = alloc_r(hist_sav, sizeof(HIST_t)*hist_siz);
          hist_new = alloc_r(hist_new, sizeof(HIST_t)*hist_siz);

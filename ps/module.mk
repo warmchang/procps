@@ -1,6 +1,6 @@
 # This file gets included into the main Makefile, in the top directory.
 
-INSTALL += $(bin)ps
+INSTALL += $(bin)ps $(man1)ps.1
 
 # files to remove
 CLEAN += ps/ps ps/debug
