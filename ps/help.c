@@ -34,7 +34,7 @@ const char *help_message =
 "-j,j job control   s  signal          --group --user --sid --rows\n"
 "-O,O preloaded -o  v  virtual memory  --cumulative --format --deselect\n"
 "-l,l long          u  user-oriented   --sort --tty --forest --version\n"
-"                   X  registers       --heading --no-heading\n"
+"-F   extra full    X  registers       --heading --no-heading\n"
 #ifdef FLASK_LINUX
 "                                      --context --SID   (Flask only)\n"
 #endif
