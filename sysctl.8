@@ -12,9 +12,9 @@ sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
 .B "sysctl [-n] [-e] variable ..."
 .br
-.B "sysctl [-n] [-e] -w variable=value ..."
+.B "sysctl [-n] [-e] [-q] -w variable=value ..."
 .br
-.B "sysctl [-n] [-e] -p <filename>"
+.B "sysctl [-n] [-e] [-q] -p <filename>"
 .br
 .B "sysctl [-n] [-e] -a"
 .br
@@ -44,6 +44,9 @@ Use this option to disable printing of the key name when printing values.
 .TP
 .B "-e"
 Use this option to ignore errors about unknown keys.
+.TP
+.B "-q"
+Use this option to not display the values set to stdout.
 .TP
 .B "-w"
 Use this option when you want to change a sysctl setting.

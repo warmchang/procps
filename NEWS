@@ -4,6 +4,8 @@ move striping from install command to CFLAGS
 now using gcc -fweb and -frename-registers options
 avoid warning about -lncurses when not linking -- thanks FLWM
 watch: allow sub-second intervals -- thanks Thomas Stewart
+sysctl: -q option
+sysctl: better error handling of failed writes
 ps: personality-specific -x support (HP-UX and SVR4-MP)
 ps: k option, same as --sort
 vmstat: fixed -d

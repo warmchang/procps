@@ -15,6 +15,8 @@
  * Changelog:
  *            v1.01:
  *                   - added -p <preload> to preload values from a file
+ *            Horms: 
+ *                   - added -q to be quiet when modifying values
  *
  * Changes by Albert Cahalan, 2002.
  */
@@ -46,6 +48,7 @@ static const char DEFAULT_PRELOAD[] = "/etc/sysctl.conf";
 static bool PrintName;
 static bool PrintNewline;
 static bool IgnoreError;
+static bool Quiet;
 
 /* error messages */
 static const char ERR_UNKNOWN_PARAMETER[] = "error: Unknown parameter '%s'\n";
@@ -80,9 +83,9 @@ static void slashdot(char *restrict p, char old, char new){
  */
 static int Usage(const char *restrict const name) {
    printf("usage:  %s [-n] [-e] variable ... \n"
-          "        %s [-n] [-e] -w variable=value ... \n" 
+          "        %s [-n] [-e] [-q] -w variable=value ... \n" 
           "        %s [-n] [-e] -a \n" 
-          "        %s [-n] [-e] -p <file>   (default /etc/sysctl.conf) \n"
+          "        %s [-n] [-e] [-q] -p <file>   (default /etc/sysctl.conf) \n"
           "        %s [-n] [-e] -A\n", name, name, name, name, name);
    return -1;
 }
@@ -287,16 +290,24 @@ static int WriteSetting(const char *setting) {
          break;
       }
    } else {
-      fprintf(fp, "%s\n", value);
-      fclose(fp);
-
-      if (PrintName) {
-         fprintf(stdout, "%s = %s\n", outname, value);
+      rc = fprintf(fp, "%s\n", value);
+      if (rc < 0) {
+         fprintf(stderr, ERR_UNKNOWN_WRITING, errno, outname);
+         fclose(fp);
       } else {
-         if (PrintNewline)
-            fprintf(stdout, "%s\n", value);
-         else
-            fprintf(stdout, "%s", value);
+         rc=fclose(fp);
+         if (rc != 0) 
+            fprintf(stderr, ERR_UNKNOWN_WRITING, errno, outname);
+      }
+      if (rc==0 && !Quiet) {
+         if (PrintName) {
+            fprintf(stdout, "%s = %s\n", outname, value);
+         } else {
+            if (PrintNewline)
+               fprintf(stdout, "%s\n", value);
+            else
+               fprintf(stdout, "%s", value);
+         }
       }
    }
 
@@ -377,6 +388,7 @@ int main(int argc, char **argv) {
    PrintName = true;
    PrintNewline = true;
    IgnoreError = false;
+   Quiet = false;
 
    if (argc < 2) {
        return Usage(me);
@@ -419,6 +431,9 @@ int main(int argc, char **argv) {
                  preloadfile = *argv;
               }
               return Preload(preloadfile);
+	 case 'q':
+	      Quiet = true;
+	   break;
          case 'a': /* string and integer values (for Linux, all of them) */
          case 'A': /* the above, including "opaques" (would be unprintable) */
          case 'X': /* the above, with opaques completly printed in hex */

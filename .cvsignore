@@ -7,6 +7,9 @@ kill
 oldps
 pgrep
 pkill
+slabtop
+patches
+test
 proc
 ps
 skill
