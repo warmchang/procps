@@ -164,9 +164,11 @@ static void stat2proc(char* S, proc_t* P) {
     num = sscanf(tmp + 2,			/* skip space after ')' too */
        "%c "
        "%d %d %d %d %d "
-       "%lu %lu %lu %lu %lu %lu %lu "
-       "%ld %ld %ld %ld %ld %ld "
-       "%lu %lu "
+       "%lu %lu %lu %lu %lu "
+       "%Lu %Lu %Lu %Lu "  /* utime stime cutime cstime */
+       "%ld %ld %ld %ld "
+       "%Lu "  /* start_time */
+       "%lu "
        "%ld "
        "%lu %lu %lu %lu %lu %lu "
        "%*s %*s %*s %*s " /* discard, no RT signals & Linux 2.1 used hex */
@@ -174,9 +176,11 @@ static void stat2proc(char* S, proc_t* P) {
        "%d %d",
        &P->state,
        &P->ppid, &P->pgrp, &P->session, &P->tty, &P->tpgid,
-       &P->flags, &P->min_flt, &P->cmin_flt, &P->maj_flt, &P->cmaj_flt, &P->utime, &P->stime,
-       &P->cutime, &P->cstime, &P->priority, &P->nice, &P->timeout, &P->it_real_value,
-       &P->start_time, &P->vsize,
+       &P->flags, &P->min_flt, &P->cmin_flt, &P->maj_flt, &P->cmaj_flt,
+       &P->utime, &P->stime, &P->cutime, &P->cstime,
+       &P->priority, &P->nice, &P->timeout, &P->it_real_value,
+       &P->start_time,
+       &P->vsize,
        &P->rss,
        &P->rss_rlim, &P->start_code, &P->end_code, &P->start_stack, &P->kstk_esp, &P->kstk_eip,
 /*     P->signal, P->blocked, P->sigignore, P->sigcatch,   */ /* can't use */

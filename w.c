@@ -128,7 +128,7 @@ static void print_logintime(time_t logt, FILE* fout) {
  * for the "best" process to report as "(w)hat" the user for that login
  * session is doing currently.  This the essential core of 'w'.
  */
-static proc_t *getproc(utmp_t *u, char *tty, int *jcpu, int *found_utpid) {
+static proc_t *getproc(utmp_t *u, char *tty, unsigned long long *jcpu, int *found_utpid) {
     int line;
     proc_t **p, *best = NULL, *secondbest = NULL;
     unsigned uid = ~0U;
@@ -168,7 +168,7 @@ static proc_t *getproc(utmp_t *u, char *tty, int *jcpu, int *found_utpid) {
 
 /***** showinfo */
 static void showinfo(utmp_t *u, int formtype, int maxcmd, int from) {
-    int jcpu, ut_pid_found;
+    unsigned long long jcpu, ut_pid_found;
     unsigned i;
     char uname[USERSZ + 1] = "",
 	tty[5 + sizeof u->ut_line + 1] = "/dev/";
@@ -201,7 +201,7 @@ static void showinfo(utmp_t *u, int formtype, int maxcmd, int from) {
 	    print_time_ival7(idletime(tty), 0, stdout);
 	print_time_ival7(jcpu/Hertz, (jcpu%Hertz)*(100./Hertz), stdout);
 	if (best) {
-	    int pcpu = best->utime + best->stime;
+	    unsigned long long pcpu = best->utime + best->stime;
 	    print_time_ival7(pcpu/Hertz, (pcpu%Hertz)*(100./Hertz), stdout);
 	} else
 	    printf("   ?   ");

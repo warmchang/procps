@@ -44,9 +44,13 @@ typedef struct proc_s {
 	sigignore,	/* mask of ignored signals */
 	sigcatch;	/* mask of caught  signals */
 #endif
-    long
+    unsigned long long
 	cutime,		/* cumulative utime of process and reaped children */
 	cstime,		/* cumulative stime of process and reaped children */
+	utime,		/* user-mode CPU time accumulated by process */
+	stime,		/* kernel-mode CPU time accumulated by process */
+	start_time;	/* start time of process -- seconds since 1-1-70 */
+    long
 	priority,	/* kernel scheduling priority */
 	timeout,	/* ? */
 	nice,		/* standard unix nice level of process */
@@ -78,14 +82,11 @@ typedef struct proc_s {
 	cmaj_flt,	/* cumulative maj_flt of process and child processes */
 	nswap,		/* ? */
 	cnswap,		/* cumulative nswap ? */
-	utime,		/* user-mode CPU time accumulated by process */
-	stime,		/* kernel-mode CPU time accumulated by process */
 	start_code,	/* address of beginning of code segment */
 	end_code,	/* address of end of code segment */
 	start_stack,	/* address of the bottom of stack for the process */
 	kstk_esp,	/* kernel stack pointer */
 	kstk_eip,	/* kernel instruction pointer */
-	start_time,	/* start time of process -- seconds since 1-1-70 */
 	wchan;		/* address of kernel wait channel proc is sleeping in */
     struct proc_s *l,	/* ptrs for building arbitrary linked structs */
                   *r;	/* (i.e. singly/doubly-linked lists and trees */

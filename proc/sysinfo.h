@@ -1,7 +1,7 @@
 #ifndef SYSINFO_H
 #define SYSINFO_H
 
-extern unsigned long Hertz;   /* clock tick frequency */
+extern unsigned long long Hertz;   /* clock tick frequency */
 extern long smp_num_cpus;     /* number of CPUs */
 
 #define JT double

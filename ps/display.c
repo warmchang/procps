@@ -191,7 +191,7 @@ static void fill_pcpu(proc_t *buf){
 
   total_time = buf->utime + buf->stime;
   if(include_dead_children) total_time += (buf->cutime + buf->cstime);
-  seconds = (seconds_since_boot - ((unsigned long)buf->start_time) / Hertz);
+  seconds = seconds_since_boot - buf->start_time / Hertz;
   if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
   buf->pcpu = (pcpu > 999) ? 999 : pcpu;
 }

@@ -115,12 +115,12 @@ int uptime(double *uptime_secs, double *idle_secs) {
  * used with a kernel that doesn't support the ELF note. On some other
  * architectures there may be a system call or sysctl() that will work.
  */
-unsigned long Hertz;
+unsigned long long Hertz;
 static void init_Hertz_value(void) __attribute__((constructor));
 static void init_Hertz_value(void){
-  unsigned long user_j, nice_j, sys_j, other_j;  /* jiffies (clock ticks) */
+  unsigned long long user_j, nice_j, sys_j, other_j;  /* jiffies (clock ticks) */
   double up_1, up_2, seconds;
-  unsigned long jiffies, h;
+  unsigned long long jiffies, h;
   char *savelocale;
 
   smp_num_cpus = sysconf(_SC_NPROCESSORS_CONF);
@@ -134,11 +134,11 @@ static void init_Hertz_value(void){
     sscanf(buf, "cpu %lu %lu %lu %lu", &user_j, &nice_j, &sys_j, &other_j);
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_2);
     /* uptime(&up_2, NULL); */
-  } while((long)( (up_2-up_1)*1000.0/up_1 )); /* want under 0.1% error */
+  } while((long long)( (up_2-up_1)*1000.0/up_1 )); /* want under 0.1% error */
   setlocale(LC_NUMERIC, savelocale);
   jiffies = user_j + nice_j + sys_j + other_j;
   seconds = (up_1 + up_2) / 2;
-  h = (unsigned long)( (double)jiffies/seconds/smp_num_cpus );
+  h = (unsigned long long)( (double)jiffies/seconds/smp_num_cpus );
   /* actual values used by 2.4 kernels: 32 64 100 128 1000 1024 1200 */
   switch(h){
   case    9 ...   11 :  Hertz =   10; break; /* S/390 (sometimes) */
@@ -158,7 +158,7 @@ static void init_Hertz_value(void){
   case 1180 ... 1220 :  Hertz = 1200; break; /* Alpha */
   default:
 #ifdef HZ
-    Hertz = (unsigned long)HZ;    /* <asm/param.h> */
+    Hertz = (unsigned long long)HZ;    /* <asm/param.h> */
 #else
     /* If 32-bit or big-endian (not Alpha or ia64), assume HZ is 100. */
     Hertz = (sizeof(long)==sizeof(int) || htons(999)==999) ? 100UL : 1024UL;
@@ -176,7 +176,7 @@ static void init_Hertz_value(void){
 #ifndef NAN
 #define NAN (-0.0)
 #endif
-#define JT unsigned long
+#define JT unsigned long long
 void four_cpu_numbers(double *uret, double *nret, double *sret, double *iret){
     double tmp_u, tmp_n, tmp_s, tmp_i;
     double scale;  /* scale values to % */

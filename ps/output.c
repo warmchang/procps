@@ -376,13 +376,10 @@ static int pr_fname(void){
 
 /* elapsed wall clock time, [[dd-]hh:]mm:ss format (not same as "time") */
 static int pr_etime(void){
-  unsigned t, dd,hh,mm,ss;
+  unsigned long long t;
+  unsigned dd,hh,mm,ss;
   char *cp = outbuf;
-  t = (
-          ((unsigned long)seconds_since_boot)
-        - ((unsigned long)pp->start_time)
-        / Hertz
-      );
+  t = seconds_since_boot - pp->start_time / Hertz;
   ss = t%60;
   t /= 60;
   mm = t%60;
@@ -401,48 +398,39 @@ static int pr_nice(void){
 
 /* "Processor utilisation for scheduling."  --- we use %cpu w/o fraction */
 static int pr_c(void){
-  unsigned long total_time;   /* jiffies used by this process */
-  unsigned long pcpu = 0;     /* scaled %cpu, 999 means 99.9% */
-  unsigned long seconds;      /* seconds of process life */
+  unsigned long long total_time;   /* jiffies used by this process */
+  unsigned pcpu = 0;               /* scaled %cpu, 999 means 99.9% */
+  unsigned long long seconds;      /* seconds of process life */
   total_time = pp->utime + pp->stime;
   if(include_dead_children) total_time += (pp->cutime + pp->cstime);
-  seconds =
-    seconds_since_boot  -  ((unsigned long)pp->start_time)  /  Hertz
-  ;
-  /* Use 100ULL (not 100) to avoid 32-bit overflow. */
+  seconds = seconds_since_boot - pp->start_time / Hertz;
   if(seconds) pcpu = (total_time * 100ULL / Hertz) / seconds;
-  if (pcpu > 99) pcpu = 99;
-  return snprintf(outbuf, COLWID, "%2u", (unsigned)pcpu);
+  if (pcpu > 99U) pcpu = 99U;
+  return snprintf(outbuf, COLWID, "%2u", pcpu);
 }
 /* normal %CPU in ##.# format. */
 static int pr_pcpu(void){
-  unsigned long total_time;   /* jiffies used by this process */
-  unsigned long pcpu = 0;     /* scaled %cpu, 999 means 99.9% */
-  unsigned long seconds;      /* seconds of process life */
+  unsigned long long total_time;   /* jiffies used by this process */
+  unsigned pcpu = 0;               /* scaled %cpu, 999 means 99.9% */
+  unsigned long long seconds;      /* seconds of process life */
   total_time = pp->utime + pp->stime;
   if(include_dead_children) total_time += (pp->cutime + pp->cstime);
-  seconds =
-    seconds_since_boot  -  ((unsigned long)pp->start_time)  /  Hertz
-  ;
-  /* Use 1000ULL (not 1000) to avoid 32-bit overflow. */
+  seconds = seconds_since_boot - pp->start_time / Hertz;
   if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
-  if (pcpu > 999) pcpu = 999;
-  return snprintf(outbuf, COLWID, "%2u.%u", (unsigned)(pcpu/10), (unsigned)(pcpu%10));
+  if (pcpu > 999U) pcpu = 999U;
+  return snprintf(outbuf, COLWID, "%2u.%u", pcpu/10U, pcpu%10U);
 }
 /* this is a "per-mill" format, like %cpu with no decimal point */
 static int pr_cp(void){
-  unsigned long total_time;   /* jiffies used by this process */
-  unsigned long pcpu = 0;     /* scaled %cpu, 999 means 99.9% */
-  unsigned long seconds;      /* seconds of process life */
+  unsigned long long total_time;   /* jiffies used by this process */
+  unsigned pcpu = 0;               /* scaled %cpu, 999 means 99.9% */
+  unsigned long long seconds;      /* seconds of process life */
   total_time = pp->utime + pp->stime;
   if(include_dead_children) total_time += (pp->cutime + pp->cstime);
-  seconds =
-    seconds_since_boot  -  ((unsigned long)pp->start_time)  /  Hertz
-  ;
-  /* Use 1000ULL (not 1000) to avoid 32-bit overflow. */
+  seconds = seconds_since_boot - pp->start_time / Hertz ;
   if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
-  if (pcpu > 999) pcpu = 999;
-  return snprintf(outbuf, COLWID, "%3u", (unsigned)pcpu);
+  if (pcpu > 999U) pcpu = 999U;
+  return snprintf(outbuf, COLWID, "%3u", pcpu);
 }
 
 static int pr_pgid(void){
@@ -458,17 +446,10 @@ static int pr_ppid(void){
 
 /* cumulative CPU time, [dd-]hh:mm:ss format (not same as "etime") */
 static int pr_time(void){
-  unsigned t, dd,hh,mm,ss;
+  unsigned long long t;
+  unsigned dd,hh,mm,ss;
   int c;
-  t = (unsigned)(
-      (
-        (unsigned long)(pp->utime)
-        +
-        (unsigned long)(pp->stime)
-      )
-      /
-      (unsigned long)Hertz
-  );
+  t = (pp->utime + pp->stime) / Hertz;
   ss = t%60;
   t /= 60;
   mm = t%60;
@@ -500,9 +481,13 @@ static int pr_vsz(void){
  */
 
 static int pr_ruser(void){
-  if(user_is_number || (strlen(pp->ruser)>max_rightward))
-    return snprintf(outbuf, COLWID, "%d", pp->ruid);
-  return snprintf(outbuf, COLWID, "%s", pp->ruser);
+    int width = COLWID;
+
+    if(user_is_number)
+        return snprintf(outbuf, COLWID, "%d", pp->ruid);
+    if (strlen(pp->ruser)>max_rightward)
+        width = max_rightward;
+    return snprintf(outbuf, width, "%s", pp->ruser);
 }
 static int pr_egroup(void){
   if(strlen(pp->egroup)>max_rightward) return snprintf(outbuf, COLWID, "%d", pp->egid);
@@ -513,8 +498,12 @@ static int pr_rgroup(void){
   return snprintf(outbuf, COLWID, "%s", pp->rgroup);
 }
 static int pr_euser(void){
-  if(user_is_number || (strlen(pp->euser)>max_rightward)) return snprintf(outbuf, COLWID, "%d", pp->euid);
-  return snprintf(outbuf, COLWID, "%s", pp->euser);
+    int width = COLWID;
+    if(user_is_number)
+        return snprintf(outbuf, COLWID, "%d", pp->euid);
+    if (strlen(pp->euser)>max_rightward)
+        width = max_rightward;
+    return snprintf(outbuf, width, "%s", pp->euser);
 }
 
 /********* maybe standard (Unix98 only defines the header) **********/
@@ -630,26 +619,27 @@ static int pr_eip(void){
 }
 
 /* This function helps print old-style time formats */
-static int old_time_helper(char *dst, unsigned long t, unsigned long rel) {
+static int old_time_helper(char *dst, unsigned long long t, unsigned long long rel) {
   if(!t)            return snprintf(dst, COLWID, "    -");
-  if((long)t == -1) return snprintf(dst, COLWID, "   xx");
-  if((long)(t-=rel) < 0)  t=0;
-  if(t>9999)        return snprintf(dst, COLWID, "%5lu", t/100);
-  else              return snprintf(dst, COLWID, "%2lu.%02lu", t/100, t%100);
+  if(t == ~0ULL)    return snprintf(dst, COLWID, "   xx");
+  if((long long)(t-=rel) < 0)  t=0ULL;
+  if(t>9999ULL)     return snprintf(dst, COLWID, "%5Lu", t/100ULL);
+  else              return snprintf(dst, COLWID, "%2lu.%02lu", (unsigned)t/100U, (unsigned)t%100U);
 }
 
 static int pr_bsdtime(void){
-    unsigned long t;
+    unsigned long long t;
+    unsigned u;
     t = pp->utime + pp->stime;
     if(include_dead_children) t += (pp->cutime + pp->cstime);
-    t /= Hertz;
-    return snprintf(outbuf, COLWID, "%3ld:%02d", t/60, (int)(t%60));
+    u = t / Hertz;
+    return snprintf(outbuf, COLWID, "%3u:%02u", u/60U, u%60U);
 }
 
 static int pr_bsdstart(void){
   time_t start;
   time_t seconds_ago;
-  start = time_of_boot + pp->start_time/Hertz;
+  start = time_of_boot + pp->start_time / Hertz;
   seconds_ago = seconds_since_1970 - start;
   if(seconds_ago < 0) seconds_ago=0;
   if(seconds_ago > 3600*24)  strcpy(outbuf, ctime(&start)+4);
@@ -663,7 +653,7 @@ static int pr_timeout(void){
 }
 
 static int pr_alarm(void){
-    return old_time_helper(outbuf, pp->it_real_value, 0);
+    return old_time_helper(outbuf, pp->it_real_value, 0ULL);
 }
 
 /* HP-UX puts this in pages and uses "vsz" for kB */
@@ -769,11 +759,7 @@ static int pr_pmem(void){
 
 static int pr_lstart(void){
   time_t t;
-  t = (
-           ((unsigned long)time_of_boot)
-         + ((unsigned long)pp->start_time)
-         / Hertz
-  );
+  t = time_of_boot + pp->start_time / Hertz;
   return snprintf(outbuf, COLWID, "%24.24s", ctime(&t));
 }
 
@@ -796,11 +782,7 @@ static int pr_stime(void){
   our_time = localtime(&seconds_since_1970);   /* not reentrant */
   tm_year = our_time->tm_year;
   tm_yday = our_time->tm_yday;
-  t = (time_t)(
-            ((unsigned long)time_of_boot)
-          + ((unsigned long)pp->start_time)
-          / Hertz
-  );
+  t = time_of_boot + pp->start_time / Hertz;
   proc_time = localtime(&t); /* not reentrant, this corrupts our_time */
   fmt = "%H:%M";                                   /* 03:02 23:59 */
   if(tm_yday != proc_time->tm_yday) fmt = "%b%d";  /* Jun06 Aug27 */
@@ -811,11 +793,7 @@ static int pr_stime(void){
 static int pr_start(void){
   time_t t;
   char *str;
-  t = (
-           ((unsigned long)time_of_boot)
-         + ((unsigned long)pp->start_time)
-         / Hertz
-  );
+  t = time_of_boot + pp->start_time / Hertz;
   str = ctime(&t);
   if(str[8]==' ')  str[8]='0';
   if(str[11]==' ') str[11]='0';
@@ -891,12 +869,22 @@ static int pr_sgroup(void){
   return snprintf(outbuf, COLWID, "%s", pp->sgroup);
 }
 static int pr_fuser(void){
-  if(user_is_number || (strlen(pp->fuser)>max_rightward)) return snprintf(outbuf, COLWID, "%d", pp->fuid);
-  return snprintf(outbuf, COLWID, "%s", pp->fuser);
+    int width = COLWID;
+
+    if(user_is_number)
+        return snprintf(outbuf, COLWID, "%d", pp->fuid);
+    if (strlen(pp->fuser)>max_rightward)
+        width = max_rightward;
+    return snprintf(outbuf, width, "%s", pp->fuser);
 }
 static int pr_suser(void){
-  if(user_is_number || (strlen(pp->suser)>max_rightward)) return snprintf(outbuf, COLWID, "%d", pp->suid);
-  return snprintf(outbuf, COLWID, "%s", pp->suser);
+    int width = COLWID;
+
+    if(user_is_number)
+        return snprintf(outbuf, COLWID, "%d", pp->suid);
+    if (strlen(pp->suser)>max_rightward)
+        width = max_rightward;
+    return snprintf(outbuf, width, "%s", pp->suser);
 }
 
 

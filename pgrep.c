@@ -473,7 +473,7 @@ select_procs ()
 {
 	PROCTAB *ptp;
 	proc_t task;
-	long newest_start_time = 0;
+	unsigned long long newest_start_time = 0;
 	pid_t newest_pid = 0;
 	int matches = 0;
 	int size = 32;
