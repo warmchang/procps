@@ -1740,18 +1740,18 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
          * AND establish the total number of tasks for this frame! */
 static void frame_states (proc_t **ppt, int show)
 {
-   static HIST_t   *hist_sav = NULL;
-   static unsigned  hist_siz;
+   static HIST_t   *hist_sav;
+   static unsigned  hist_siz; // number of structs
    HIST_t          *hist_new;
    unsigned         total, running, sleeping, stopped, zombie;
    int              i;
 
    if (!hist_sav) {
       Frame_maxtask = 0;
-      hist_siz = (Page_size / sizeof(HIST_t));
-      hist_sav = alloc_c(hist_siz);
+      hist_siz = 100;
+      hist_sav = alloc_c(sizeof(HIST_t)*hist_siz);
    }
-   hist_new = alloc_c(hist_siz);
+   hist_new = alloc_c(sizeof(HIST_t)*hist_siz);
    total = running = sleeping = stopped = zombie = 0;
    time_elapsed();
 
@@ -1775,10 +1775,10 @@ static void frame_states (proc_t **ppt, int show)
             running++;
             break;
       }
-      if (total * sizeof(HIST_t) >= hist_siz) {
-         hist_siz += (Page_size / sizeof(HIST_t));
-         hist_sav = alloc_r(hist_sav, hist_siz);
-         hist_new = alloc_r(hist_new, hist_siz);
+      if (total >= hist_siz) {
+         hist_siz = hist_siz * 5 / 4 + 1;  // grow by at least 25%
+         hist_sav = alloc_r(hist_sav, sizeof(HIST_t)*hist_siz);
+         hist_new = alloc_r(hist_new, sizeof(HIST_t)*hist_siz);
       }
          /* calculate time in this process; the sum of user time (utime)
             + system time (stime) -- but PLEASE dont waste time and effort on
@@ -1825,9 +1825,8 @@ static void frame_states (proc_t **ppt, int show)
       }
    } /* end: if 'show' */
 
-      /* save this frame's information */
-   memcpy(hist_sav, hist_new, hist_siz);
-   free(hist_new);
+   free(hist_sav);
+   hist_sav = hist_new;
       /* shout results to the world (and us too, the next time around) */
    Frame_maxtask = total;
 }
