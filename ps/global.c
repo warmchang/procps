@@ -348,6 +348,51 @@ void reset_global(void){
   wchan_is_number       = 0;
 }
 
+static const char archdefs[] =
+#ifdef __alpha__
+" alpha"
+#endif
+#ifdef __arm__
+" arm"
+#endif
+#ifdef __hppa__
+" hppa"
+#endif
+#ifdef __i386__
+" i386"
+#endif
+#ifdef __ia64__
+" ia64"
+#endif
+#ifdef __mc68000__
+" mc68000"
+#endif
+#ifdef __mips64__
+" mips64"
+#endif
+#ifdef __mips__
+" mips"
+#endif
+#ifdef __powerpc__
+" powerpc"
+#endif
+#ifdef __sh3__
+" sh3"
+#endif
+#ifdef __sh__
+" sh"
+#endif
+#ifdef __sparc__
+" sparc"
+#endif
+#ifdef __sparc_v9__
+" sparc_v9"
+#endif
+#ifdef __x86_64__
+" x86_64"
+#endif
+"";
+
 /*********** spew variables ***********/
 void self_info(void){
   fprintf(stderr,
@@ -379,8 +424,8 @@ void self_info(void){
     LINUX_VERSION_PATCH(linux_version_code)
   );
   /* __libc_print_version(); */  /* how can we get the run-time version? */
-  fprintf(stderr, "Compiled with: libc %d, internal version %d.%d\n\n",
-    __GNU_LIBRARY__, __GLIBC__, __GLIBC_MINOR__
+  fprintf(stderr, "Compiled with: glibc %d.%d, gcc %d.%d\n\n",
+    __GLIBC__, __GLIBC_MINOR__, __GNUC__, __GNUC_MINOR__
   );
 
   fprintf(stderr,
@@ -398,6 +443,13 @@ void self_info(void){
     cached_euid, (int)major(cached_tty), (int)minor(cached_tty), Hertz,
     (int)(PAGE_SIZE), (int)(page_size)
   );
+
+  fprintf(stderr,
+    "sizeof(proc_t)=%d sizeof(long)=%d sizeof(KLONG)=%d\n",
+    (int)sizeof(proc_t), (int)sizeof(long), (int)sizeof(KLONG)
+  );
+
+  fprintf(stderr, "archdefs:%s\n", archdefs);
 
   open_psdb(namelist_file);
   fprintf(stderr,"namelist_file=\"%s\"\n",namelist_file?namelist_file:"<no System.map file>");

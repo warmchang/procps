@@ -50,18 +50,23 @@
 #define OBSOLETE
 #endif
 
-// available when?
 // Tells gcc that function is library-internal;
 // so no need to do dynamic linking at run-time.
-#if __GNUC__ > 2     // FIXME: total random guess that's sure to be wrong
-#define VISIBILITY_HIDDEN visibility("hidden")
+// This might work with slightly older compilers too.
+#if ( __GNUC__ == 3 && __GNUC_MINOR__ > 1 ) || __GNUC__ > 3
+#define HIDDEN __attribute__((visibility("hidden")))
 #else
-#define VISIBILITY_HIDDEN
+#define HIDDEN
 #endif
-// mark function for internal use
-#define HIDDEN __attribute__((VISIBILITY_HIDDEN))
-// given foo, create a foo_direct for internal use
-#define HIDDEN_ALIAS(x) extern __typeof(x) x##_direct __attribute__((alias(#x),VISIBILITY_HIDDEN))
+
+// Like HIDDEN, but for an alias that gets created.
+// In gcc-3.2 there is an alias+hidden conflict.
+// Many will have patched this bug, but oh well.
+#if ( __GNUC__ == 3 && __GNUC_MINOR__ > 2 ) || __GNUC__ > 3
+#define HIDDEN_ALIAS(x) extern __typeof(x) x##_direct __attribute__((alias(#x),visibility("hidden")))
+#else
+#define HIDDEN_ALIAS(x) extern __typeof(x) x##_direct __attribute__((alias(#x)))
+#endif
 
 // since gcc-2.5
 #define NORETURN __attribute__((__noreturn__))
