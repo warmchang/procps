@@ -1603,6 +1603,9 @@ static void check_header_width(void){
 
 /********** show one process (NULL proc prints header) **********/
 
+//#define SPACE_AMOUNT page_size
+#define SPACE_AMOUNT 128
+
 static char *saved_outbuf;
 
 void show_one_proc(const proc_t *restrict const p){
@@ -1724,7 +1727,7 @@ void show_one_proc(const proc_t *restrict const p){
      */
     space = correct - actual + leftpad;
     if(space<1) space=dospace;
-    if(space>page_size) space=page_size;  // only have so much available
+    if(space>SPACE_AMOUNT) space=SPACE_AMOUNT;  // only have so much available
 
     /* print data, set x position stuff */
     amount = strlen(outbuf);  /* post-chop data width */
@@ -1786,23 +1789,21 @@ void init_output(void){
   case  1024: page_shift = 10; break;
   }
 
-  outbuf_pages = OUTBUF_SIZE/page_size+1;  // round up
+  // add page_size-1 to round up
+  outbuf_pages = (OUTBUF_SIZE+SPACE_AMOUNT+page_size-1)/page_size;
   outbuf = mmap(
     0,
-    page_size * (1+1+outbuf_pages+1),
+    page_size * (outbuf_pages+1), // 1 more, for guard page at high addresses
     PROT_READ | PROT_WRITE,
     MAP_PRIVATE | MAP_ANONYMOUS,
     -1,
     0
   );
-  mprotect(outbuf, page_size, PROT_NONE); // gaurd page
-  outbuf += page_size;
-  memset(outbuf, ' ', page_size);
-  mprotect(outbuf, page_size, PROT_READ); // space page
-  outbuf += page_size;
-  // now outbuf points where we want it
-  mprotect(outbuf + page_size * outbuf_pages, page_size, PROT_NONE); // gaurd page
-  saved_outbuf = outbuf;
+  memset(outbuf, ' ', SPACE_AMOUNT);
+  if(SPACE_AMOUNT==page_size) mprotect(outbuf, page_size, PROT_READ);
+  mprotect(outbuf + page_size*outbuf_pages, page_size, PROT_NONE); // gaurd page
+  saved_outbuf = outbuf + SPACE_AMOUNT;
+  // available space:  page_size*outbuf_pages-SPACE_AMOUNT
 
   seconds_since_1970 = time(NULL);
   time_of_boot = seconds_since_1970 - seconds_since_boot;
