@@ -265,7 +265,12 @@ acknowledge \*(Us's default settings ...
 .Rje
 
 .PP
-Within the following categories, \*(Us's startup defaults are documented
+\*(NT the width of \*(Me's display will be limited to 512 positions.
+Displaying all fields requires a minimum of 160 characters.
+The remaining width could be used for the 'Command' column.
+
+.PP
+Within the following categories, \*(Me's startup defaults are documented
 assuming no \*(CF, thus no user customizations.
 However, items shown with an \*(AS could be overridden through the\fB
 command line\fR \*(EM a subject soon to be dealt with.
@@ -595,8 +600,9 @@ screen width.
 .in +4
 \*(NT The 'Command' field/column is\fB unique\fR, in that \fRit is not
 fixed-width, like all other fields.
-When displayed, this column will be allocated \fBall remaining screen width\fR
-to provide for the potential growth of program names into command lines!
+When displayed, this column will be allocated \fBall remaining screen width\fR,
+up to the maximum 512 characters, so as to provide for the potential growth of
+program names into command lines!
 .in
 
 .TP 3
@@ -942,8 +948,13 @@ affect the window's size, as all prior \*(TDs will have already been painted.
 You will be prompted to enter the number of tasks to display.
 The lessor of your number and available screen rows will be used.
 
-This is the command that, when used in \*(AM, gives you precise control
-over the size of each currently visible \*(TD.
+When used in \*(AM, this is the command that gives you precise control over
+the size of each currently visible \*(TD, except for the very last.
+It will not affect the last window's size, as all prior \*(TDs will have
+already been painted.
+
+\*(NT If you wish to increase the size of the last visible \*(TD when in \*(AM,
+simply decrease the size of the \*(TD(s) above it.
 
 .PP
 .\" .........................

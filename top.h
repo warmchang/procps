@@ -59,20 +59,22 @@
 
         /* Miscellaneous buffer sizes with liberal values
            -- mostly just to pinpoint source code usage/dependancies */
+#define SCREENMAX   512
+   /* the above might seem pretty stingy, until you consider that with every
+      one of top's fields are displayed we're talking a 160 byte column header
+      -- so this will provide for all fields plus a 350+ byte command line */
 #define PFLAGSSIZ    32
 #define CAPBUFSIZ    32
 #define CLRBUFSIZ    64
 #define GETBUFSIZ    32
 #define TNYBUFSIZ    32
 #define SMLBUFSIZ   256
-#define MEDBUFSIZ   512
 #define OURPATHSZ  1024
-#define STATBUFSZ  1024
 #define BIGBUFSIZ  2048
-#define RCFBUFSIZ  SMLBUFSIZ
 #define USRNAMSIZ  GETBUFSIZ
+   /* colbufsz does NOT apply to command lines - that field uses rowbufsz */
 #define COLBUFSIZ  SMLBUFSIZ + CLRBUFSIZ
-#define ROWBUFSIZ  MEDBUFSIZ + CLRBUFSIZ
+#define ROWBUFSIZ  SCREENMAX + CLRBUFSIZ
 
 
 /*######  Some Miscellaneous Macro definitions  ##########################*/
@@ -169,16 +171,10 @@ typedef struct {
            calculations.  It exists primarily for SMP support but serves
            all environments. */
 typedef struct {
-   TICS_t u,            /* ticks count as represented in /proc/stat */
-          n,            /* (not in the order of our display) */
-          s,
-          i,
-          w;
-   TICS_t u_sav,        /* tics count in the order of our display */
-          s_sav,
-          n_sav,
-          i_sav,
-          w_sav;
+      /* ticks count as represented in /proc/stat */
+   TICS_t u, n, s, i, w;
+      /* tics count in the order of our display */
+   TICS_t u_sav, s_sav, n_sav, i_sav, w_sav;
 } CPUS_t;
 
         /* The scaling 'type' used with scale_num() -- this is how
@@ -286,7 +282,7 @@ typedef struct win {
    char        grpname   [GRPNAMSIZ],   /* window number:name, printable  */
                winname   [WINNAMSIZ],   /* window name, user changeable   */
                fieldscur [PFLAGSSIZ],   /* fields displayed and ordered   */
-               columnhdr [SMLBUFSIZ],   /* column headings for procflags  */
+               columnhdr [SCREENMAX],   /* column headings for procflags  */
                colusrnam [USRNAMSIZ];   /* if selected by the 'u' command */
 } WIN_t;
         /* ////////////////////////////////////////////////////////////// */

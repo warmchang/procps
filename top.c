@@ -80,7 +80,6 @@ static char *Myname;
 
         /* The Name of the local config file, dynamically constructed */
 static char  RCfile [OURPATHSZ];
-
         /* The run-time acquired page size */
 static int  Page_size;
 #ifdef UGH_ITS_4_RH
@@ -871,9 +870,6 @@ static proc_t **refreshprocs (proc_t **table, int flags)
 {
 #define PTRsz  sizeof(proc_t *)         /* eyeball candy */
 #define ENTsz  sizeof(proc_t)
-           /* quick & dirty response to 2.5.xx RT */
-#define RTx(p) { if (-99 > p->priority) p->priority = -99; \
-                 if (+99 < p->priority) p->priority = +99; }
    static unsigned savmax = 0;          /* first time, Bypass: (i)  */
    proc_t *ptsk = (proc_t *)-1;         /* first time, Force: (ii)  */
    unsigned curmax = 0;                 /* every time  (jeeze)      */
@@ -893,7 +889,6 @@ static proc_t **refreshprocs (proc_t **table, int flags)
          table[curmax]->cmdline = NULL;
       }
       if (!(ptsk = readproc(PT, table[curmax]))) break;
-      RTx(ptsk)
       ++curmax;
    }
 
@@ -902,10 +897,8 @@ static proc_t **refreshprocs (proc_t **table, int flags)
          /* realloc as we go, keeping 'table' ahead of 'currmax++' */
       table = alloc_r(table, (curmax + 1) * PTRsz);
          /* here, readproc will allocate the underlying proc_t stg */
-      if ((ptsk = readproc(PT, NULL))) {
-         RTx(ptsk)
+      if ((ptsk = readproc(PT, NULL)))
          table[curmax++] = ptsk;
-      }
    }
    closeproc(PT);
 
@@ -922,7 +915,6 @@ static proc_t **refreshprocs (proc_t **table, int flags)
 
 #undef PTRsz
 #undef ENTsz
-#undef RTx
 }
 
 
@@ -977,15 +969,15 @@ static void before (char *me)
 static void configs_read (void)
 {
    static const char err_rc[] = "bad rcfile, you should delete '%s'";
-   char fbuf[RCFBUFSIZ];
+   char fbuf[SMLBUFSIZ];
    FILE *fp;
    float delay = DEF_DELAY;
    char id;
    int i;
 
+   snprintf(RCfile, sizeof(RCfile), ".%src", Myname);
    if (getenv("HOME"))
-      strcpy(RCfile, fmtmk("%s%c", getenv("HOME"), '/'));
-   strcat(RCfile, fmtmk(".%src", Myname));
+      snprintf(RCfile, sizeof(RCfile), "%s/.%src", getenv("HOME"), Myname);
 
    fp = fopen(SYS_RCFILE, "r");
    if (fp) {
@@ -1277,7 +1269,7 @@ static void fields_reorder (void)
    putp(Cap_clr_scr);
    putp(Cap_curs_huge);
    display_fields(Curwin->fieldscur, FIELDS_xtra);
-   do {
+   for (;;) {
       show_special(fmtmk(FIELDS_current
          , Cap_home, Curwin->fieldscur, Curwin->grpname, prompt));
       chin(0, &c, 1);
@@ -1292,7 +1284,7 @@ static void fields_reorder (void)
             p[1] = c;
          }
       }
-   } while (1);
+   }
    putp(Cap_curs_norm);
 }
 
@@ -1310,7 +1302,7 @@ static void fields_sort (void)
    x = i = Curwin->sortindx;
    putp(Cap_clr_scr);
    putp(Cap_curs_huge);
-   do {
+   for (;;) {
       p  = phoney + i;
       *p = toupper(*p);
       display_fields(phoney, SORT_xtra);
@@ -1321,7 +1313,7 @@ static void fields_sort (void)
       if (i < 0 || i >= MAXTBL(Fieldstab)) break;
       *p = tolower(*p);
       x = i;
-   } while (1);
+   }
    if ((p = strchr(Curwin->fieldscur, x + 'a')))
       *p = x + 'A';
    Curwin->sortindx = x;
@@ -1340,7 +1332,7 @@ static void fields_toggle (void)
 
    putp(Cap_clr_scr);
    putp(Cap_curs_huge);
-   do {
+   for (;;) {
       display_fields(Curwin->fieldscur, FIELDS_xtra);
       show_special(fmtmk(FIELDS_current
          , Cap_home, Curwin->fieldscur, Curwin->grpname, prompt));
@@ -1351,7 +1343,7 @@ static void fields_toggle (void)
          *p = i + 'a';
       else if ((p = strchr(Curwin->fieldscur, i + 'a')))
          *p = i + 'A';
-   } while (1);
+   }
    putp(Cap_curs_norm);
 }
 
@@ -1623,6 +1615,9 @@ static void wins_resize (int dont_care_sig)
       Screen_cols = wz.ws_col;
       Screen_rows = wz.ws_row;
    }
+      /* we might disappoint some folks (but they'll deserve it) */
+   if (SCREENMAX < Screen_cols) Screen_cols = SCREENMAX;
+
    w = Curwin;
    do {
       win_colsheads(w);
@@ -2049,6 +2044,9 @@ static void show_a_task (WIN_t *q, proc_t *task)
             MKCOL(q, i, a, &pad, cbuf, task->ppid);
             break;
          case P_PRI:
+               /* quick & dirty response to 2.5.xx RT priority */
+            if (-99 > task->priority) task->priority = -99;
+            else if (+99 < task->priority) task->priority = +99;
             MKCOL(q, i, a, &pad, cbuf, (long)task->priority);
             break;
          case P_RES:
@@ -2739,7 +2737,7 @@ int main (int dont_care_argc, char **argv)
    signal(SIGCONT,  wins_resize);
    signal(SIGWINCH, wins_resize);
 
-   do {
+   for (;;) {
       struct timeval tv;
       fd_set fs;
       char c;
@@ -2761,7 +2759,7 @@ int main (int dont_care_argc, char **argv)
          &&  0 < chin(0, &c, 1))
             do_key((unsigned)c);
       }
-   } while (1);
+   }
 
   /*
    (listen before we return, aren't you sort of sad for 'so_lets_see-em'?)
