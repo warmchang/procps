@@ -318,6 +318,7 @@ int main (int argc, char **argv)
 		case 'c':
 			if (geteuid() == 0) {
 				opt_rootdir_check = 1;
+				safe_free(pidof_root);
 				pidof_root = pid_link(getpid(), "root");
 			}
 			break;
