@@ -1,53 +1,56 @@
-# Google "recursive make considered harmful" for how this works.
+# This file gets included into the main Makefile, in the top directory.
 
-SRC += $(wildcard proc/*.c) $(wildcard proc/*.c)
+NAME      :=  proc
+
+LIBSRC += $(wildcard proc/*.c)
+
+SONAME    :=  lib$(NAME).so.$(LIBVERSION)
+
+ALL        += proc/lib$(NAME).a
+INSTALL    += $(lib)/lib$(NAME).a
+LIB_CFLAGS := $(CFLAGS)
+
+ifeq ($(SHARED),1)
+ALL        += proc/$(SONAME)
+INSTALL    += $(lib)/$(SONAME)
+LIB_CFLAGS += -fpic
+endif
+
+# clean away all output files, .depend, and symlinks
+CLEAN += $(addprefix proc/,$(ALL) .depend)
 
 ------
 
-# PROJECT SPECIFIC MACROS
-NAME       =  proc
-
 # INSTALLATION OPTIONS
-TOPDIR     = /usr
-HDRDIR     = $(TOPDIR)/include/$(NAME)#	where to put .h files
-LIBDIR     = $(TOPDIR)/lib#		where to put library files
-SHLIBDIR   = /lib#			where to put shared library files
-HDROWN     = $(OWNERGROUP) #		owner of header files
-LIBOWN     = $(OWNERGROUP) #		owner of library files
-INSTALL    = install
+HDRDIR    := /usr/include/$(NAME)#	where to put .h files
+LIBDIR    := /usr/lib#		where to put library files
+HDROWN    := $(OWNERGROUP) #		owner of header files
+LIBOWN    := $(OWNERGROUP) #		owner of library files
+INSTALL   := install
 
-SRC        =  $(sort $(wildcard *.c) $(filter %.c,$(RCSFILES)))
-HDR        =  $(sort $(wildcard *.h) $(filter %.h,$(RCSFILES)))
-OBJ        =  $(SRC:.c=.o)
+SRC       :=  $(sort $(wildcard *.c) $(filter %.c,$(RCSFILES)))
+HDR       :=  $(sort $(wildcard *.h) $(filter %.h,$(RCSFILES)))
+OBJ       :=  $(SRC:.c=.o)
 
 
-SONAME     =  lib$(NAME).so.$(LIBVERSION)
-
-ifeq ($(SHARED),1)
-CFLAGS += -fpic
-all: lib$(NAME).a $(SONAME)
-else
-all: lib$(NAME).a
-endif
-
-lib$(NAME).a: $(OBJ)
+proc/lib$(NAME).a: $(OBJ)
 	$(AR) rcs $@ $^
 
-$(SONAME): $(OBJ)
+proc/$(SONAME): $(OBJ)
 	gcc -shared -Wl,-soname,$(SONAME) -o $@ $^ -lc
 	ln -sf $(SONAME) lib$(NAME).so
 
 
 # AUTOMATIC DEPENDENCY GENERATION -- GCC AND GNUMAKE DEPENDENT
 .depend:
-	$(strip $(CC) $(CFLAGS) -MM -MG $(SRC) > .depend)
+	$(strip $(CC) $(LIB_CFLAGS) -MM -MG $(SRC) > .depend)
 -include .depend
 
 
 # INSTALLATION
 install: all
 	if ! [ -d $(HDRDIR) ] ; then mkdir $(HDRDIR) ; fi
-	$(INSTALL) $(HDROWN) $(HDR) $(TOPDIR)/include/$(NAME)
+	$(INSTALL) $(HDROWN) $(HDR) /usr/include/$(NAME)
 	$(INSTALL) $(LIBOWN) lib$(NAME).a $(LIBDIR)
 ifeq ($(SHARED),1)
 	$(INSTALL) $(LIBOWN) $(SONAME) $(SHLIBDIR)
@@ -58,12 +61,12 @@ endif
 
 # CUSTOM c -> o rule so that command-line has minimal whitespace
 %.o : %.c
-	$(strip $(CC) $(CFLAGS) -c $<)
+	$(strip $(CC) $(LIB_CFLAGS) -c $<)
 
 
 version.o:	version.c version.h
 ifdef MINORVERSION
-	$(strip $(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c version.c)
+	$(strip $(CC) $(LIB_CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c version.c)
 else
-	$(strip $(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -c version.c)
+	$(strip $(CC) $(LIB_CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -c version.c)
 endif

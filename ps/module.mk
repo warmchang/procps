@@ -1,8 +1,15 @@
-INSTALL += install_ps
+# This file gets included into the main Makefile, in the top directory.
 
------
+INSTALL += $(bin)ps
 
-all: ps
+# a file to remove
+CLEAN += ps/ps
+
+# a directory for cleaning
+DIRS += ps
+
+# a file to create
+ALL += ps/ps
 
 ps: escape.o global.o help.o select.o sortformat.o output.o parser.o display.o
 	$(CC) -o ps   escape.o global.o help.o select.o sortformat.o output.o parser.o display.o -L../proc -lproc
@@ -30,10 +37,7 @@ display.o: display.c common.h
 stacktrace.o: stacktrace.c
 
 
-install: ps
+$(bin)ps: ps
 	install $(OWNERGROUP) --mode a=rx --strip ps $(BINDIR)/ps
 	install $(OWNERGROUP) --mode a=r ps.1 $(MAN1DIR)/ps.1
 	-rm -f $(DESTDIR)/var/catman/cat1/ps.1.gz $(DESTDIR)/var/man/cat1/ps.1.gz
-
-clean:
-	rm -f *.o DEADJOE *~ core ps gmon.out
