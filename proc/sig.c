@@ -134,7 +134,7 @@ int signal_name_to_number(char *name){
 
   /* not found, so try as a number */
   val = strtol(name,&endp,10);
-  if(*endp) return -1; /* not valid */
+  if(*endp || endp==name) return -1; /* not valid */
   if(val+SIGRTMIN>127) return -1; /* not valid */
   return val+offset;
 }
