@@ -302,7 +302,7 @@ static void new_header(void)
     if (t_option) {
         (void) time( &the_time );
         tm_ptr = localtime( &the_time );
-        if (strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
+		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
             timebuf[strlen(timestamp_header) - 1] = '\0';
         } else {
             timebuf[0] = '\0';
@@ -365,7 +365,11 @@ static void new_format(void)
     if (t_option) {
         (void) time( &the_time );
         tm_ptr = localtime( &the_time );
-        strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
+			;
+		} else {
+			timebuf[0] = '\0';
+		}
     }
     /* Do the initial fill */
     if (!(stat_stack = procps_stat_select(stat_info, First_stat_items, MAX_stat)))
@@ -440,7 +444,11 @@ static void new_format(void)
         if (t_option) {
             (void) time( &the_time );
             tm_ptr = localtime( &the_time );
-            strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+			if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
+				;
+			} else {
+				timebuf[0] = '\0';
+			}
         }
 
         /* idle can run backwards for a moment -- kernel "feature" */
@@ -608,7 +616,7 @@ static void diskheader(void)
     if (t_option) {
         (void) time( &the_time );
         tm_ptr = localtime( &the_time );
-        if (strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
+		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
             timebuf[strlen(timestamp_header) - 1] = '\0';
         } else {
             timebuf[0] = '\0';
@@ -643,7 +651,11 @@ static void diskformat(void)
         if (t_option) {
             (void) time( &the_time );
             tm_ptr = localtime( &the_time );
-            strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+			if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
+				;
+			} else {
+				timebuf[0] = '\0';
+			}
         }
         for (j = 0; j < reap->total; j++) {
             if (diskVAL(disk_TYPE, s_int) != DISKSTATS_TYPE_DISK)
