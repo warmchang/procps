@@ -476,13 +476,13 @@ void vminfo(void){
   static const vm_table_struct vm_table[] = {
   {"allocstall",          &vm_allocstall},
   {"kswapd_steal",        &vm_kswapd_steal},
-  {"nr_dirty",            &vm_nr_dirty},
-  {"nr_mapped",           &vm_nr_mapped},
-  {"nr_page_table_pages", &vm_nr_page_table_pages},
+  {"nr_dirty",            &vm_nr_dirty},           // page version of meminfo Dirty
+  {"nr_mapped",           &vm_nr_mapped},          // page version of meminfo Mapped
+  {"nr_page_table_pages", &vm_nr_page_table_pages},// same as meminfo PageTables
   {"nr_pagecache",        &vm_nr_pagecache},
-  {"nr_reverse_maps",     &vm_nr_reverse_maps},
-  {"nr_slab",             &vm_nr_slab},
-  {"nr_writeback",        &vm_nr_writeback},
+  {"nr_reverse_maps",     &vm_nr_reverse_maps},    // page version of meminfo ReverseMaps
+  {"nr_slab",             &vm_nr_slab},            // page version of meminfo Slab
+  {"nr_writeback",        &vm_nr_writeback},       // page version of meminfo Writeback
   {"pageoutrun",          &vm_pageoutrun},
   {"pgactivate",          &vm_pgactivate},
   {"pgalloc",             &vm_pgalloc},

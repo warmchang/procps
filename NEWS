@@ -1,3 +1,10 @@
+procps-3.1.5 --> procps-3.1.6
+
+handle SPARC Linux badness
+rare crash fixed
+compile with gcc 2.91.xx again
+more informative "ps --info"
+
 procps-3.1.4 --> procps-3.1.5
 
 ancient (2.x.xx era) data corruption fixed
