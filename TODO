@@ -53,7 +53,11 @@ units: kB and pages, seconds and jiffies) in the proc_t struct.
 
 Share more stuff with ps.
 
-'H' command
+'H' command (shows threads)
+
+Adjust PID-like and PSR-like columns to fit the data.
+The normal PID limit is 5 digits; it can go up to 10.
+The normal CPU limit is 1 digit; it can go to 3 or 4.
 
 ---------------- ps for now, maybe move to libproc ------------------
 
