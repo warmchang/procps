@@ -8,8 +8,8 @@ Keywords: procps /proc libproc sysctl pmap
 Author: Albert Cahalan, Michael K. Johnson, Jim Warner, etc.
 Maintained-by: various <procps-feedback@lists.sf.net>
 Primary-site: http://procps.sf.net/
-	230kB procps-3.1.2.tar.gz
+	236kB procps-3.1.2.tar.gz
 Alternate-site: http://www.debian.org/Packages/unstable/base/procps.html
-	230kB procps-3.1.2.tar.gz
+	236kB procps-3.1.2.tar.gz
 Copying-policy: mixed
 End
