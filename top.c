@@ -138,7 +138,7 @@ static char  Stdout_buf[2048];
         /* The pointers to our four WIN_t's, and which of those is considered
            the 'current' window (ie. which window is associated with any summ
            info displayed and to which window commands are directed) */
-static WIN_t *Winstk [GROUPSMAX],
+static WIN_t Winstk [GROUPSMAX],
              *Curwin;
 
         /* Frame oriented stuff that can't remain local to any 1 function
@@ -1172,7 +1172,7 @@ static int ft_ptr_to_idx (const FLD_t *p) {
 }
 
 
-#if (0)
+#if 1
 static void rc_bugless (const RCF_t *const rc) {
    const RCW_t *w;
    int i = 0;
@@ -1390,10 +1390,10 @@ static void rc_write_new (FILE *fp) {
       , Myname);
    fprintf(fp, RCF_DEPRECATED
       "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%d\n"
-      , Rc.mode_altscr, Rc.mode_irixps, Rc.delay_time, Curwin - Winstk[0]);
+      , Rc.mode_altscr, Rc.mode_irixps, Rc.delay_time, Curwin - Winstk);
    for (i = 0; i < GROUPSMAX; i++) {
       char buf[40];
-      char *cp = Winstk[i]->rc.fieldscur;
+      char *cp = Winstk[i].rc.fieldscur;
       int j = 0;
 
       while (j < 36) {
@@ -1409,12 +1409,12 @@ static void rc_write_new (FILE *fp) {
          if (!c) break;
       }
       fprintf(fp, "%s\tfieldscur=%s\n"
-         , Winstk[i]->rc.winname, buf);
+         , Winstk[i].rc.winname, buf);
       fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-         , Winstk[i]->rc.winflags, Winstk[i]->rc.sortindx, Winstk[i]->rc.maxtasks);
+         , Winstk[i].rc.winflags, Winstk[i].rc.sortindx, Winstk[i].rc.maxtasks);
       fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
-         , Winstk[i]->rc.summclr, Winstk[i]->rc.msgsclr
-         , Winstk[i]->rc.headclr, Winstk[i]->rc.taskclr);
+         , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
+         , Winstk[i].rc.headclr, Winstk[i].rc.taskclr);
    }
 }
 
@@ -1552,7 +1552,7 @@ static void add_missing_fields(char *fields){
    c = 'a';
    while (c <= 'z') {
       if (upper[c&0x1f] && lower[c&0x1f]) {
-         lower[c&0x1f] = '\0';  // got both, so wipe out unseen column
+         lower[c&0x1f] = 0;  // got both, so wipe out unseen column
          for (;;) {
             cp = strchr(fields, c);
             if (cp) memmove(cp,cp+1,strlen(cp));
@@ -1640,11 +1640,13 @@ static void configs_read (void)
    Rc.mode_altscr = rcf.mode_altscr;
    Rc.mode_irixps = rcf.mode_irixps;
    if (rcf.win_index >= GROUPSMAX) rcf.win_index = 0;
-   Curwin = Winstk[rcf.win_index];
+   Curwin = &Winstk[rcf.win_index];
    for (i = 0; i < GROUPSMAX; i++) {
-      Winstk[i]->rc = rcf.win[i];
-      add_missing_fields(Winstk[i]->rc.fieldscur);
+      memcpy(&Winstk[i].rc, &rcf.win[i], sizeof rcf.win[i]);
+      add_missing_fields(Winstk[i].rc.fieldscur);
    }
+
+rc_bugless(&rcf); sleep(2);
 
    // lastly, establish the true runtime secure mode and delay time
    if (!getuid()) Secure_mode = 0;
@@ -2051,7 +2053,7 @@ static void win_select (char ch)
          break;                         /* should just press the darn key) */
       case '1': case '2':
       case '3': case '4':
-         Curwin = Winstk[ch - '1'];
+         Curwin = &Winstk[ch - '1'];
          break;
    }
 }
@@ -2244,11 +2246,8 @@ static void windows_stage1 (void)
    WIN_t *w;
    int i;
 
-   // get all our window structs in one big chunk
-   w = alloc_c(sizeof(WIN_t) * GROUPSMAX);
-
    for (i = 0; i < GROUPSMAX; i++) {
-      Winstk[i] = w;
+      w = &Winstk[i];
       w->winnum = i + 1;
       w->rc = Rc.win[i];
       w->captab[0] = Cap_norm;
@@ -2265,9 +2264,9 @@ static void windows_stage1 (void)
       ++w;
    }
       /* fixup the circular chains... */
-   Winstk[3]->next = Winstk[0];
-   Winstk[0]->prev = Winstk[3];
-   Curwin = Winstk[0];
+   Winstk[3].next = &Winstk[0];
+   Winstk[0].prev = &Winstk[3];
+   Curwin = Winstk;
 }
 
 
@@ -2279,8 +2278,8 @@ static void windows_stage2 (void)
    int i;
 
    for (i = 0; i < GROUPSMAX; i++) {
-      win_names(Winstk[i], Winstk[i]->rc.winname);
-      capsmk(Winstk[i]);
+      win_names(&Winstk[i], Winstk[i].rc.winname);
+      capsmk(&Winstk[i]);
    }
    // rely on this next guy to force a call (eventually) to reframewins
    wins_resize(0);
@@ -2391,10 +2390,10 @@ static void do_key (unsigned c)
                putp(Cap_clr_scr);
                show_special(1, fmtmk(WINDOWS_help
                   , Curwin->grpname
-                  , Winstk[0]->rc.winname
-                  , Winstk[1]->rc.winname
-                  , Winstk[2]->rc.winname
-                  , Winstk[3]->rc.winname));
+                  , Winstk[0].rc.winname
+                  , Winstk[1].rc.winname
+                  , Winstk[2].rc.winname
+                  , Winstk[3].rc.winname));
                chin(0, &ch, 1);
                win_select(ch);
             } while ('\n' != ch);
@@ -2990,8 +2989,8 @@ static void framehlp (int wix, int max)
 
    // calc remaining number of visible windows + total 'user' lines
    for (i = wix, rsvd = 0, wins = 0; i < GROUPSMAX; i++) {
-      if (CHKw(Winstk[i], VISIBLE_tsk)) {
-         rsvd += Winstk[i]->rc.maxtasks;
+      if (CHKw(&Winstk[i], VISIBLE_tsk)) {
+         rsvd += Winstk[i].rc.maxtasks;
          ++wins;
          if (max <= rsvd) break;
       }
@@ -3006,9 +3005,9 @@ static void framehlp (int wix, int max)
       maxtask (1st choice) or our 'foxized' size calculation
       (foxized  adj. -  'fair and balanced') */
    for (i = wix ; i < GROUPSMAX; i++) {
-      if (CHKw(Winstk[i], VISIBLE_tsk)) {
-         Winstk[i]->winlines =
-            Winstk[i]->rc.maxtasks ? Winstk[i]->rc.maxtasks : size;
+      if (CHKw(&Winstk[i], VISIBLE_tsk)) {
+         Winstk[i].winlines =
+            Winstk[i].rc.maxtasks ? Winstk[i].rc.maxtasks : size;
       }
    }
 }
@@ -3062,9 +3061,9 @@ static void frame_make (void)
    } else {
       // maybe NO window is visible but assume, pieces o' cakes
       for (i = 0 ; i < GROUPSMAX; i++) {
-         if (CHKw(Winstk[i], VISIBLE_tsk)) {
+         if (CHKw(&Winstk[i], VISIBLE_tsk)) {
             framehlp(i, Max_lines - scrlins);
-            window_show(ppt, Winstk[i], &scrlins);
+            window_show(ppt, &Winstk[i], &scrlins);
          }
          if (Max_lines <= scrlins) break;
       }

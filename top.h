@@ -276,10 +276,10 @@ enum pflag {
    Show_HIBOLD | Show_HIROWS | Show_IDLEPS | Qsrt_NORMAL | VISIBLE_tsk )
 
         // Used to test/manipulate the window flags
-#define CHKw(q,f)   (int)(q->rc.winflags & (f))
-#define TOGw(q,f)   q->rc.winflags ^=  (f)
-#define SETw(q,f)   q->rc.winflags |=  (f)
-#define OFFw(q,f)   q->rc.winflags &= ~(f)
+#define CHKw(q,f)   (int)((q)->rc.winflags & (f))
+#define TOGw(q,f)   (q)->rc.winflags ^=  (f)
+#define SETw(q,f)   (q)->rc.winflags |=  (f)
+#define OFFw(q,f)   (q)->rc.winflags &= ~(f)
 #define VIZCHKc     (!Rc.mode_altscr || Curwin->rc.winflags & VISIBLE_tsk) \
                         ? 1 : win_warn()
 #define VIZTOGc(f)  (!Rc.mode_altscr || Curwin->rc.winflags & VISIBLE_tsk) \
