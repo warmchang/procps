@@ -375,13 +375,13 @@ static int conv_ns (const char *restrict name, struct el *restrict e)
 static int match_numlist (long value, const struct el *restrict list)
 {
     int found = 0;
-    if (list == NULL)
-        found = 0;
-    else {
+	if (list != NULL) {
         int i;
         for (i = list[0].num; i > 0; i--) {
-            if (list[i].num == value)
+			if (list[i].num == value) {
                 found = 1;
+				break;
+			}
         }
     }
     return found;
@@ -390,13 +390,13 @@ static int match_numlist (long value, const struct el *restrict list)
 static int match_strlist (const char *restrict value, const struct el *restrict list)
 {
     int found = 0;
-    if (list == NULL)
-        found = 0;
-    else {
+	if (list != NULL) {
         int i;
         for (i = list[0].num; i > 0; i--) {
-            if (! strcmp (list[i].str, value))
+			if (! strcmp (list[i].str, value)) {
                 found = 1;
+				break;
+			}
         }
     }
     return found;
@@ -414,11 +414,12 @@ static int match_ns (const int pid,
               _("Unable to read process namespace information"));
     for (i = 0; i < PROCPS_NS_COUNT; i++) {
         if (ns_flags & (1 << i)) {
-            if (proc_ns.ns[i] != match_ns->ns[i])
+            if (proc_ns.ns[i] != match_ns->ns[i]) {
                 found = 0;
+                break;
+            }
         }
     }
-
     return found;
 }
 
