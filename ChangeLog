@@ -1,21 +1,43 @@
-Version ????
+Recent changes:
 
-    uptime give help if you use invalid chars Debian #93490
+designed to support Linux 2.0 through 2.5.41 and beyond
+new top, with optional: color, windowing, SMP stats
+runs faster
+more "it crashes" bugs fixed
+top shows IO-wait time
+vmstat can show active/inactive memory stats
+real-time info supported in ps
+correct "ps -o size" and "ps --sort size"
+new maintainers
+reduced memory usage for ps
+allow large PIDs to be specified
+SELINUX support is just a recompile away
+the "F" column shrank, so "ps -l" has more command name room
+64-bit time reduces the overflow problem
+support S/390, IA-64 emulator, and user-mode Linux
+oldps is gone
+configure script -- use "make -f Makefile.noam" as a backup
+"w" program better at determining what a user is doing
+more stable
+code at http://procps.sf.net/ now (SourceForge)
 
-	/proc/tty/drivers correctly parsed. Debian #108654
-	(Thanks russell*AT*coker.com.au)
+Earlier changes, for those not using Debian already:
 
-	oldps doesn't FPE because of no shared mem Debian #101917
-	(Thanks David Murn <davey*AT*vision.doa.org>)
-
-	Put most of the Debian diffs in.
-
-	ps no longer crashes if System.map is %1024. Debian #109237
-	(Thanks Colin Walters)
-
-	libproc self buffer increased from 512 to 1024 bytes for
-	large number of groups. Debian #145085, #85775
-
-	w guesses the best process for the user better, good for samba and
-	some xdm session problems Debian #88758 (Thanks Eloy)
-
+more stable
+runs faster
+-F format option
+better error reporting in ps for unknown format specifiers
+BSD's sysctl options -b and -X
+top displays well on large-memory systems
+old BSD-style select-by-PID ("ps l$$")
+15-character user names
+ps 'f' ASCII art forest fixed
+add SIGSYS on i386
+top reports real RSS value
+large-memory systems work
+minimal ps program for embedded systems (minimal.c)
+BSD personality process selection fixed
+support locale (French) with ',' and '.' mixed up
+pgrep program
+includes the "kill" and "nice" programs
+don't chop non-tty ps output at 80 columns
