@@ -24,3 +24,4 @@ config.status
 config.log
 config.cache
 .deps
+.libs
