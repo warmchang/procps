@@ -200,9 +200,9 @@ static void stat2proc(const char* S, proc_t *restrict P) {
        "%Lu "  /* start_time */
        "%lu "
        "%ld "
-       "%lu %lu %lu %lu %lu %lu "
+       "%lu %"KLF"u %"KLF"u %"KLF"u %"KLF"u %"KLF"u "
        "%*s %*s %*s %*s " /* discard, no RT signals & Linux 2.1 used hex */
-       "%lu %lu %lu "
+       "%"KLF"u %lu %lu "
        "%d %d "
        "%lu %lu",
        &P->state,

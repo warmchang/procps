@@ -102,7 +102,8 @@ typedef struct proc_t {
 	cmin_flt,	/* cumulative min_flt of process and child processes */
 	cmaj_flt,	/* cumulative maj_flt of process and child processes */
 	nswap,		/* ? */
-	cnswap,		/* cumulative nswap ? */
+	cnswap;		/* cumulative nswap ? */
+    unsigned KLONG
 	start_code,	/* address of beginning of code segment */
 	end_code,	/* address of end of code segment */
 	start_stack,	/* address of the bottom of stack for the process */

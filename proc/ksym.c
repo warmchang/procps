@@ -105,7 +105,7 @@
 
 typedef struct symb {
   const char *name;
-  unsigned long addr;
+  unsigned KLONG addr;
 } symb;
 
 static const symb fail = { "?", 0 };
@@ -185,7 +185,7 @@ static void chop_version(char *arg){
 
 /***********************************/
 
-static const symb *search(unsigned long address, symb *idx, unsigned count){
+static const symb *search(unsigned KLONG address, symb *idx, unsigned count){
   unsigned left;
   unsigned mid;
   unsigned right;
@@ -289,7 +289,7 @@ bypass:
       char *saved;
       if(!*endp) return 1;
       saved = endp;
-      ksyms_index[ksyms_count].addr = strtoul(endp, &endp, 16);
+      ksyms_index[ksyms_count].addr = STRTOUKL(endp, &endp, 16);
       if(endp==saved || *endp != ' ') goto bad_parse;
       endp++;
       ksyms_index[ksyms_count].name = endp;
@@ -392,7 +392,7 @@ good_match:;
         }
         return 1; /* success */
       }
-      sysmap_index[sysmap_count].addr = strtoul(endp, &endp, 16);
+      sysmap_index[sysmap_count].addr = STRTOUKL(endp, &endp, 16);
       if(*endp != ' ') goto bad_parse;
       endp++;
       if(!strchr(SYMBOL_TYPE_CHARS, *endp)) goto bad_parse;
@@ -561,7 +561,7 @@ const char * read_wchan_file(unsigned pid){
 #define MAX_OFFSET (0x1000*sizeof(long))  /* past this is generally junk */
 
 /* return pointer to temporary static buffer with function name */
-const char * wchan(unsigned long address, unsigned pid) {
+const char * wchan(unsigned KLONG address, unsigned pid) {
   const symb *mod_symb;
   const symb *map_symb;
   const symb *good_symb;
