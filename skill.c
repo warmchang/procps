@@ -68,13 +68,13 @@ static int ns_pid;
 static proc_t ns_task;
 
 #define ENLIST(thing,addme) do{ \
-if(!thing##s) thing##s = xmalloc(sizeof(*thing##s)*saved_argc); \
+if(thing##_count < 0 || (size_t)thing##_count >= INT_MAX / sizeof(*thing##s)) \
+	xerrx(EXIT_FAILURE, _("integer overflow")); \
+thing##s = xrealloc(thing##s, sizeof(*thing##s)*(thing##_count+1)); \
 thing##s[thing##_count++] = addme; \
 }while(0)
 
 static int my_pid;
-static int saved_argc;
-
 static int sig_or_pri;
 
 enum {
