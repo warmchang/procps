@@ -38,9 +38,6 @@
  *
  * Table 5 could go in a file with the output functions.
  */
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
  
 #include <ctype.h>
 #include <fcntl.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2002 by Albert Cahalan; all rights resered.         
+ * Copyright 1998-2004 by Albert Cahalan; all rights resered.         
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version  
  * at your option, as published by the Free Software Foundation.
@@ -8,9 +8,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Library General Public License for more details.
  */                                 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include <stdlib.h>
 #include <stdio.h>

@@ -171,6 +171,7 @@ static const char *set_personality(void){
   {"sgi",      &&case_sgi},
   {"solaris2", &&case_solaris2},
   {"sunos4",   &&case_sunos4},
+  {"svr4",     &&case_svr4},
   {"sysv",     &&case_sysv},
   {"tru64",    &&case_tru64},
   {"unix",     &&case_unix},
@@ -304,10 +305,17 @@ static const char *set_personality(void){
 
   case_hp:
   case_hpux:
-  case_posix:
-  case_sco:
-  case_solaris2:
+    personality = PER_BROKEN_o | PER_HPUX_x;
+    return NULL;
+
+  case_svr4:
   case_sysv:
+  case_sco:
+    personality = PER_BROKEN_o | PER_SVR4_x;
+    return NULL;
+
+  case_posix:
+  case_solaris2:
   case_unix95:
   case_unix98:
   case_unix:

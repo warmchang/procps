@@ -29,24 +29,48 @@
 #include <fcntl.h>
 #include <dirent.h>
 
+
+#define DEV_ENCODE(M,m) ( \
+  ( (M&0xfff) << 8)   |   ( (m&0xfff00) << 12)   |   (m&0xff)   \
+)
+
+///////////////////////////////////////////////////////
 #ifdef __FreeBSD__
 #include <sys/param.h>
 #include <sys/sysctl.h>
 #include <sys/stat.h>
 #include <sys/proc.h>
 #include <sys/user.h>
+#define NO_TTY_VALUE DEV_ENCODE(-1,-1)
+#define HZ 1    // only bother with seconds
 #endif
 
+///////////////////////////////////////////////////////
 #ifdef __linux__
 #include <asm/param.h>  /* HZ */
 #include <asm/page.h>   /* PAGE_SIZE */
+#define NO_TTY_VALUE DEV_ENCODE(0,0)
+#ifndef HZ
+#warning HZ not defined, assuming it is 100
+#define HZ 100
+#endif
 #endif
 
-static int P_euid;
-static int P_pid;
+///////////////////////////////////////////////////////////
+
+#ifndef PAGE_SIZE
+#warning PAGE_SIZE not defined, assuming it is 4096
+#define PAGE_SIZE 4096
+#endif
+
+
+
+static char P_tty_text[16];
 static char P_cmd[16];
 static char P_state;
-static int P_ppid, P_pgrp, P_session, P_tty, P_tpgid;
+static int P_euid;
+static int P_pid;
+static int P_ppid, P_pgrp, P_session, P_tty_num, P_tpgid;
 static unsigned long P_flags, P_min_flt, P_cmin_flt, P_maj_flt, P_cmaj_flt, P_utime, P_stime;
 static long P_cutime, P_cstime, P_priority, P_nice, P_timeout, P_alarm;
 static unsigned long P_start_time, P_vsize;
@@ -54,6 +78,7 @@ static long P_rss;
 static unsigned long P_rss_rlim, P_start_code, P_end_code, P_start_stack, P_kstk_esp, P_kstk_eip;
 static unsigned P_signal, P_blocked, P_sigignore, P_sigcatch;
 static unsigned long P_wchan, P_nswap, P_cnswap;
+
 
 
 #if 0
@@ -78,16 +103,6 @@ static char **ps_argv; /* global argv */
 static int thisarg;    /* index into ps_argv */
 static char *flagptr;  /* current location in ps_argv[thisarg] */
 
-
-#ifndef PAGE_SIZE
-#warning PAGE_SIZE not defined, assuming it is 4096
-#define PAGE_SIZE 4096
-#endif
-
-#ifndef HZ
-#warning HZ not defined, assuming it is 100
-#define HZ 100
-#endif
 
 
 
@@ -334,8 +349,28 @@ static int stat2proc(int pid) {
        &P_euid, &P_euid   // don't know which is which
     );
 /*    fprintf(stderr, "stat2proc converted %d fields.\n",num); */
-    // convert FreeBSD tty numbers to Linux format :-)
-    P_tty = ((tty_min&0xfff00)<<12) | ((tty_maj&0xfff)<<8) | (tty_min&0xff) ;
+
+    snprintf(P_tty_text, sizeof P_tty_text, "%3d,%-3d", tty_maj, tty_min);
+    P_tty_num = DEV_ENCODE(tty_maj,tty_min);
+// tty decode is 224 to 256 bytes on i386
+#if 1
+    tmp = NULL;
+    if (tty_maj ==  5) tmp = " ttyp%c ";
+    if (tty_maj == 12) tmp = " ttyv%c ";
+    if (tty_maj == 28) tmp = " ttyd%c ";
+    if (P_tty_num == NO_TTY_VALUE) tmp = "   ?   ";
+    if (P_tty_num == DEV_ENCODE(0,0)) tmp = "console";
+    if (P_tty_num == DEV_ENCODE(12,255)) tmp = "consolectl";
+    if (tmp) {
+      snprintf(
+        P_tty_text,
+        sizeof P_tty_text,
+        tmp,
+        "0123456789abcdefghijklmnopqrstuvwxyz"[tty_min&31]
+      );
+    }
+#endif
+
     if(num < 9) return 0;
     if(P_pid != pid) return 0;
     return 1;
@@ -374,7 +409,7 @@ static int stat2proc(int pid) {
        "%u %u %u %u " /* no use for RT signals */
        "%lu %lu %lu",
        &P_state,
-       &P_ppid, &P_pgrp, &P_session, &P_tty, &P_tpgid,
+       &P_ppid, &P_pgrp, &P_session, &P_tty_num, &P_tpgid,
        &P_flags, &P_min_flt, &P_cmin_flt, &P_maj_flt, &P_cmaj_flt, &P_utime, &P_stime,
        &P_cutime, &P_cstime, &P_priority, &P_nice, &P_timeout, &P_alarm,
        &P_start_time, &P_vsize,
@@ -386,6 +421,14 @@ static int stat2proc(int pid) {
 /*    fprintf(stderr, "stat2proc converted %d fields.\n",num); */
     P_vsize /= 1024;
     P_rss *= (PAGE_SIZE/1024);
+
+    memcpy(P_tty_text, "   ?   ", 8);
+    if (P_tty_num != NO_TTY_VALUE) {
+      int tty_maj = (P_tty_num>>8)&0xfff;
+      int tty_min = (P_tty_num&0xff) | ((P_tty_num>>12)&0xfff00);
+      snprintf(P_tty_text, sizeof P_tty_text, "%3d,%-3d", tty_maj, tty_min);
+    }
+
     if(num < 30) return 0;
     if(P_pid != pid) return 0;
     return 1;
@@ -441,11 +484,9 @@ static const char *do_stime(void){
 }
 
 static void print_proc(void){
-  char tty[16];
-  snprintf(tty, sizeof tty, "%3d,%-3d", (P_tty>>8)&0xfff, (P_tty&0xff) | ((P_tty>>12)&0xfff00));
   switch(ps_format){
   case 0:
-    printf("%5d %s %s", P_pid, tty, do_time(P_utime+P_stime));
+    printf("%5d %s %s", P_pid, P_tty_text, do_time(P_utime+P_stime));
     break;
   case 'o':
     printf("%d\n", P_pid);
@@ -456,39 +497,39 @@ static void print_proc(void){
       "%5ld %06x %s %s",
       P_state, P_euid, P_pid, P_ppid, do_cpu(0),
       (int)P_priority, (int)P_nice, P_vsize/(PAGE_SIZE/1024),
-      (unsigned)(P_wchan&0xffffff), tty, do_time(P_utime+P_stime)
+      (unsigned)(P_wchan&0xffffff), P_tty_text, do_time(P_utime+P_stime)
     );
     break;
   case 'f':
     printf(
       "%8s %5d %5d %s %s %s %s",
-      do_user(), P_pid, P_ppid, do_cpu(0), do_stime(), tty, do_time(P_utime+P_stime)
+      do_user(), P_pid, P_ppid, do_cpu(0), do_stime(), P_tty_text, do_time(P_utime+P_stime)
     );
     break;
   case 'j':
     printf(
       "%5d %5d %5d %s %s",
-      P_pid, P_pgrp, P_session, tty, do_time(P_utime+P_stime)
+      P_pid, P_pgrp, P_session, P_tty_text, do_time(P_utime+P_stime)
     );
     break;
   case 'u'|0x80:
     printf(
       "%8s %5d %s %s %5ld %4ld %s %c %s %s",
-      do_user(), P_pid, do_cpu(1), do_mem(1), P_vsize, P_rss, tty, P_state,
+      do_user(), P_pid, do_cpu(1), do_mem(1), P_vsize, P_rss, P_tty_text, P_state,
       do_stime(), do_time(P_utime+P_stime)
     );
     break;
   case 'v'|0x80:
     printf(
       "%5d %s %c %s %6d   -   - %5d %s",
-      P_pid, tty, P_state, do_time(P_utime+P_stime), (int)P_maj_flt,
+      P_pid, P_tty_text, P_state, do_time(P_utime+P_stime), (int)P_maj_flt,
       (int)P_rss, do_mem(1)
     );
     break;
   case 'j'|0x80:
     printf(
       "%5d %5d %5d %5d %s %5d %c %5d %s",
-      P_ppid, P_pid, P_pgrp, P_session, tty, P_tpgid, P_state, P_euid, do_time(P_utime+P_stime)
+      P_ppid, P_pid, P_pgrp, P_session, P_tty_text, P_tpgid, P_state, P_euid, do_time(P_utime+P_stime)
     );
     break;
   case 'l'|0x80:
@@ -496,7 +537,7 @@ static void print_proc(void){
       "0 %5d %5d %5d %3d %3d "
       "%5ld %4ld %06x %c %s %s",
       P_euid, P_pid, P_ppid, (int)P_priority, (int)P_nice,
-      P_vsize, P_rss, (unsigned)(P_wchan&0xffffff), P_state, tty, do_time(P_utime+P_stime)
+      P_vsize, P_rss, (unsigned)(P_wchan&0xffffff), P_state, P_tty_text, do_time(P_utime+P_stime)
     );
     break;
   default:
@@ -544,7 +585,7 @@ int main(int argc, char *argv[]){
       if(want_one_command){
         if(strcmp(want_one_command,P_cmd)) continue;
       }else{
-        if(!select_notty && P_tty==-1) continue;
+        if(!select_notty && P_tty_num==NO_TTY_VALUE) continue;
         if(!select_all && P_euid!=ouruid) continue;
       }
       found_a_proc++;

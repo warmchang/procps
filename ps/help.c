@@ -13,9 +13,6 @@
  * The help message must not become longer, because it must fit
  * on an 80x24 screen _with_ the error message and command prompt.
  */
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 const char *help_message =
 "********* simple selection *********  ********* selection by list *********\n"

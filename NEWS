@@ -1,6 +1,8 @@
 procps-3.2.1 --> procps-3.2.2
 
 avoid warning about -lncurses when not linking -- thanks FLWM
+ps: personality-specific -x support (HP-UX and SVR4-MP)
+ps: k option, same as --sort
 
 procps-3.2.0 --> procps-3.2.1
 

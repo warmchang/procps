@@ -12,9 +12,6 @@
 /* Ought to have debug print stuff like this:
  * #define Print(fmt, args...) printf("Debug: " fmt, ## args)
  */
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -432,12 +429,20 @@ static const char *parse_sysv_option(void){
       trace("-w wide output.\n");
       w_count++;
       break;
-#ifdef NOBODY_HAS_BSD_HABITS_ANYMORE
-    case 'x':     /* Same as -y, but for System V Release 4 MP */
-      trace("-x works like Sun Solaris & SCO Unixware -y option\n");
-      format_modifiers |= FM_x;
-      break;
-#endif
+    case 'x':  /* behind personality until "ps -ax" habit is uncommon */
+      if(personality & PER_SVR4_x){
+        // Same as -y, but for System V Release 4 MP
+        trace("-x works like Sun Solaris & SCO Unixware -y option\n");
+        format_modifiers |= FM_y;
+        break;
+      }
+      if(personality & PER_HPUX_x){
+        trace("-x extends the command line\n");
+        w_count += 2;
+        unix_f_option = 1;
+        break;
+      }
+      return "Must set personality to get -x option.";
     case 'y':  /* Sun's -l hack (also: Irix "lnode" resource control info) */
       trace("-y Print lnone info in UID/USER column or do Sun -l hack.\n");
       format_modifiers |= FM_y;
@@ -445,7 +450,7 @@ static const char *parse_sysv_option(void){
 #if 0
     case 'z':     /* alias of Mandatory Access Control level info */
       trace("-z shows aliased MAC info\n");
-      return "Don't understand MAC on Linux.";
+      return "Don't understand MAC aliases on Linux.";
       break;
 #endif
     case '-':
@@ -601,11 +606,16 @@ static const char *parse_bsd_option(void){
       trace("j job control format\n");
       format_flags |= FF_Bj;
       break;
-#if 0
-    case 'k':    // OpenBSD: don't hide "kernel threads" -- like the swapper?
-      trace("k Print LWP (thread) info.\n");   // was: Use /vmcore as c-dumpfile\n");
-      break;
-#endif
+    case 'k':
+      // OpenBSD: don't hide "kernel threads" -- like the swapper?
+      // trace("k Print LWP (thread) info.\n");   // was: Use /vmcore as c-dumpfile\n");
+
+      // NetBSD, and soon (?) FreeBSD: sort-by-keyword
+      trace("k Specify sorting keywords.\n");
+      arg=get_opt_arg();
+      if(!arg) return "Long sort specification must follow 'k'.";
+      defer_sf_option(arg, SF_G_sort);
+      return NULL; /* can't have any more options */
     case 'l':
       trace("l Display long format\n");
       format_flags |= FF_Bl;
@@ -1178,6 +1188,11 @@ try_bsd:
   // get seriously confused. Ask yourself if users would freak out
   // about "ps -aux" suddenly changing behavior if a user "x" were
   // added to the system.
+  //
+  // Also, a "-x" option is coming. It's already there in fact,
+  // for some non-default personalities. So "ps -ax" will parse
+  // as SysV options... and you're screwed if you've been patching
+  // out the friendly warning. Cut-over is likely to be in 2005.
   if(!(personality & PER_FORCE_BSD))
     fprintf(stderr, "Warning: bad syntax, perhaps a bogus '-'? See http://procps.sf.net/faq.html\n");
   // Remember: contact albert@users.sf.net or procps-feedback@lists.sf.net

@@ -117,6 +117,8 @@
 #define PER_NO_DEFAULT_g  0x0080
 #define PER_ZAP_ADDR      0x0100
 #define PER_SANE_USER     0x0200
+#define PER_HPUX_x        0x0400
+#define PER_SVR4_x        0x0800
 
 /* Simple selections by bit mask */
 #define SS_B_x 0x01
