@@ -59,7 +59,7 @@ TARFILES := AUTHORS BUGS NEWS README TODO COPYING COPYING.LIB ChangeLog \
             Makefile procps.lsm procps.spec v t README.top \
             minimal.c $(notdir $(MANFILES)) \
             uptime.c tload.c free.c w.c top.c vmstat.c watch.c skill.c \
-            sysctl.c pgrep.c top.h
+            sysctl.c pgrep.c top.h pmap.c
 
 CURSES := -I/usr/include/ncurses -lncurses
 
