@@ -2015,8 +2015,10 @@ static void adj_geometry (void) {
       Screen_rows = w_rows ? w_rows : INT_MAX;
       Pseudo_size = (sizeof(*Pseudo_screen) * ROWMAXSIZ);
    } else {
+      const int max_rows = INT_MAX / (sizeof(*Pseudo_screen) * ROWMAXSIZ);
       if (w_cols && w_cols < Screen_cols) Screen_cols = w_cols;
       if (w_rows && w_rows < Screen_rows) Screen_rows = w_rows;
+      if (Screen_rows < 0 || Screen_rows > max_rows) Screen_rows = max_rows;
       Pseudo_size = (sizeof(*Pseudo_screen) * ROWMAXSIZ) * Screen_rows;
    }
    // we'll only grow our Pseudo_screen, never shrink it
