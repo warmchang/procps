@@ -37,16 +37,6 @@ static bool false = 0;
 
 
 /*
- *    Function Prototypes
- */
-static int Usage(const char *name);
-static void Preload(const char *filename);
-static int WriteSetting(const char *setting);
-static int ReadSetting(const char *setting);
-static int DisplayAll(const char *path, bool ShowTableUtil);
-
-
-/*
  *    Globals...
  */
 
@@ -79,74 +69,6 @@ static void slashdot(char *p, char old, char new){
     p = strpbrk(p+1,"/.");
   }
 }
-
-/*
- *    Main... 
- *
- */
-int main(int argc, char **argv) {
-   const char *me = (const char *)basename(argv[0]);
-   bool SwitchesAllowed = true;
-   bool WriteMode = false;
-   int ReturnCode = 0;
-   const char *preloadfile = DEFAULT_PRELOAD;
-
-   PrintName = true;
-   PrintNewline = true;
-
-   if (argc < 2) {
-       return Usage(me);
-   } /* endif */
-
-   argv++;
-
-   for (; argv && *argv && **argv; argv++) {
-      if (SwitchesAllowed && **argv == '-') {        /* we have a switch */
-         switch((*argv)[1]) {
-         case 'b':
-              /* This is "binary" format, which means more for BSD. */
-              PrintNewline = false;
-           /* FALL THROUGH */
-         case 'n':
-              PrintName = false;
-           break;
-         case 'w':
-              SwitchesAllowed = false;
-              WriteMode = true;
-           break;
-         case 'p':
-              argv++;
-              if (argv && *argv && **argv) {
-                 preloadfile = *argv;
-              } /* endif */
-
-              Preload(preloadfile);
-              return(0);
-           break;
-         case 'a': /* string and integer values (for Linux, all of them) */
-         case 'A': /* the above, including "opaques" (would be unprintable) */
-         case 'X': /* the above, with opaques completly printed in hex */
-              SwitchesAllowed = false;
-              return DisplayAll(PROC_PATH, ((*argv)[1] == 'a') ? false : true);
-         case 'h':
-         case '?':
-              return Usage(me);
-         default:
-              fprintf(stderr, ERR_UNKNOWN_PARAMETER, *argv);
-              return Usage(me);
-         } /* end switch */
-      } else {
-         SwitchesAllowed = false;
-         if (WriteMode)
-            ReturnCode = WriteSetting(*argv);
-         else ReadSetting(*argv);
-      } /* end if */
-   } /* end for */      
-
-return ReturnCode;
-} /* end main */
-
-
 
 
 
@@ -187,141 +109,6 @@ static char *StripLeadingAndTrailingSpaces(char *oneline) {
 
    return t;
 } /* end StripLeadingAndTrailingSpaces() */
-
-
-
-/*
- *     Preload the sysctl's from the conf file
- *           - we parse the file and then reform it (strip out whitespace)
- *
- */
-static void Preload(const char *filename) {
-   FILE *fp;
-   char oneline[257];
-   char buffer[257];
-   char *t;
-   int n = 0;
-   char *name, *value;
-
-   if (!filename || ((fp = fopen(filename, "r")) == NULL)) {
-      fprintf(stderr, ERR_PRELOAD_FILE, filename);
-      return;
-   } /* endif */
-
-   while (fgets(oneline, 256, fp)) {
-      oneline[256] = 0;
-      n++;
-      t = StripLeadingAndTrailingSpaces(oneline);
-
-      if (strlen(t) < 2)
-         continue;
-
-      if (*t == '#' || *t == ';')
-         continue;
-
-      name = strtok(t, "=");
-      if (!name || !*name) {
-         fprintf(stderr, WARN_BAD_LINE, filename, n);
-         continue;
-      } /* endif */
-
-      StripLeadingAndTrailingSpaces(name);
-
-      value = strtok(NULL, "\n\r");
-      if (!value || !*value) {
-         fprintf(stderr, WARN_BAD_LINE, filename, n);
-         continue;
-      } /* endif */
-
-      while ((*value == ' ' || *value == '\t') && *value != 0)
-         value++;
-
-      sprintf(buffer, "%s=%s", name, value);
-      WriteSetting(buffer);
-   } /* endwhile */
-
-   fclose(fp);
-} /* end Preload() */
-
-
-
-/*
- *     Write a sysctl setting 
- *
- */
-static int WriteSetting(const char *setting) {
-   int rc = 0;
-   const char *name = setting;
-   const char *value;
-   const char *equals;
-   char *tmpname;
-   FILE *fp;
-   char *outname;
-
-   if (!name) {        /* probably don't want to display this err */
-      return 0;
-   } /* end if */
-
-   equals = index(setting, '=');
- 
-   if (!equals) {
-      fprintf(stderr, ERR_NO_EQUALS, setting);
-      return -1;
-   } /* end if */
-
-   value = equals + 1;      /* point to the value in name=value */   
-
-   if (!*name || !*value || name == equals) { 
-      fprintf(stderr, ERR_MALFORMED_SETTING, setting);
-      return -2;
-   } /* end if */
-
-   /* used to open the file */
-   tmpname = malloc(equals-name+1+strlen(PROC_PATH));
-   strcpy(tmpname, PROC_PATH);
-   strncat(tmpname, name, (int)(equals-name)); 
-   tmpname[equals-name+strlen(PROC_PATH)] = 0;
-   slashdot(tmpname+strlen(PROC_PATH),'.','/'); /* change . to / */
-
-   /* used to display the output */
-   outname = malloc(equals-name+1);                       
-   strncpy(outname, name, (int)(equals-name)); 
-   outname[equals-name] = 0;
-   slashdot(outname,'/','.'); /* change / to . */
- 
-   fp = fopen(tmpname, "w");
-
-   if (!fp) {
-      switch(errno) {
-      case ENOENT:
-         fprintf(stderr, ERR_INVALID_KEY, outname);
-        break;
-      case EACCES:
-         fprintf(stderr, ERR_PERMISSION_DENIED, outname);
-        break;
-      default:
-         fprintf(stderr, ERR_UNKNOWN_WRITING, errno, outname);
-        break;
-      } /* end switch */
-      rc = -1;
-   } else {
-      fprintf(fp, "%s\n", value);
-      fclose(fp);
-
-      if (PrintName) {
-         fprintf(stdout, "%s = %s\n", outname, value);
-      } else {
-         if (PrintNewline)
-            fprintf(stdout, "%s\n", value);
-         else
-            fprintf(stdout, "%s", value);
-      }
-   } /* endif */
-
-   free(tmpname);
-   free(outname);
-   return rc;
-} /* end WriteSetting() */
 
 
 
@@ -428,4 +215,207 @@ static int DisplayAll(const char *path, bool ShowTableUtil) {
 
    return rc;
 } /* end DisplayAll() */
+
+
+/*
+ *     Write a sysctl setting 
+ *
+ */
+static int WriteSetting(const char *setting) {
+   int rc = 0;
+   const char *name = setting;
+   const char *value;
+   const char *equals;
+   char *tmpname;
+   FILE *fp;
+   char *outname;
+
+   if (!name) {        /* probably don't want to display this err */
+      return 0;
+   } /* end if */
+
+   equals = index(setting, '=');
+ 
+   if (!equals) {
+      fprintf(stderr, ERR_NO_EQUALS, setting);
+      return -1;
+   } /* end if */
+
+   value = equals + 1;      /* point to the value in name=value */   
+
+   if (!*name || !*value || name == equals) { 
+      fprintf(stderr, ERR_MALFORMED_SETTING, setting);
+      return -2;
+   } /* end if */
+
+   /* used to open the file */
+   tmpname = malloc(equals-name+1+strlen(PROC_PATH));
+   strcpy(tmpname, PROC_PATH);
+   strncat(tmpname, name, (int)(equals-name)); 
+   tmpname[equals-name+strlen(PROC_PATH)] = 0;
+   slashdot(tmpname+strlen(PROC_PATH),'.','/'); /* change . to / */
+
+   /* used to display the output */
+   outname = malloc(equals-name+1);                       
+   strncpy(outname, name, (int)(equals-name)); 
+   outname[equals-name] = 0;
+   slashdot(outname,'/','.'); /* change / to . */
+ 
+   fp = fopen(tmpname, "w");
+
+   if (!fp) {
+      switch(errno) {
+      case ENOENT:
+         fprintf(stderr, ERR_INVALID_KEY, outname);
+        break;
+      case EACCES:
+         fprintf(stderr, ERR_PERMISSION_DENIED, outname);
+        break;
+      default:
+         fprintf(stderr, ERR_UNKNOWN_WRITING, errno, outname);
+        break;
+      } /* end switch */
+      rc = -1;
+   } else {
+      fprintf(fp, "%s\n", value);
+      fclose(fp);
+
+      if (PrintName) {
+         fprintf(stdout, "%s = %s\n", outname, value);
+      } else {
+         if (PrintNewline)
+            fprintf(stdout, "%s\n", value);
+         else
+            fprintf(stdout, "%s", value);
+      }
+   } /* endif */
+
+   free(tmpname);
+   free(outname);
+   return rc;
+} /* end WriteSetting() */
+
+
+
+/*
+ *     Preload the sysctl's from the conf file
+ *           - we parse the file and then reform it (strip out whitespace)
+ *
+ */
+static void Preload(const char *filename) {
+   FILE *fp;
+   char oneline[257];
+   char buffer[257];
+   char *t;
+   int n = 0;
+   char *name, *value;
+
+   if (!filename || ((fp = fopen(filename, "r")) == NULL)) {
+      fprintf(stderr, ERR_PRELOAD_FILE, filename);
+      return;
+   } /* endif */
+
+   while (fgets(oneline, 256, fp)) {
+      oneline[256] = 0;
+      n++;
+      t = StripLeadingAndTrailingSpaces(oneline);
+
+      if (strlen(t) < 2)
+         continue;
+
+      if (*t == '#' || *t == ';')
+         continue;
+
+      name = strtok(t, "=");
+      if (!name || !*name) {
+         fprintf(stderr, WARN_BAD_LINE, filename, n);
+         continue;
+      } /* endif */
+
+      StripLeadingAndTrailingSpaces(name);
+
+      value = strtok(NULL, "\n\r");
+      if (!value || !*value) {
+         fprintf(stderr, WARN_BAD_LINE, filename, n);
+         continue;
+      } /* endif */
+
+      while ((*value == ' ' || *value == '\t') && *value != 0)
+         value++;
+
+      sprintf(buffer, "%s=%s", name, value);
+      WriteSetting(buffer);
+   } /* endwhile */
+
+   fclose(fp);
+} /* end Preload() */
+
+
+
+/*
+ *    Main... 
+ *
+ */
+int main(int argc, char **argv) {
+   const char *me = (const char *)basename(argv[0]);
+   bool SwitchesAllowed = true;
+   bool WriteMode = false;
+   int ReturnCode = 0;
+   const char *preloadfile = DEFAULT_PRELOAD;
+
+   PrintName = true;
+   PrintNewline = true;
+
+   if (argc < 2) {
+       return Usage(me);
+   } /* endif */
+
+   argv++;
+
+   for (; argv && *argv && **argv; argv++) {
+      if (SwitchesAllowed && **argv == '-') {        /* we have a switch */
+         switch((*argv)[1]) {
+         case 'b':
+              /* This is "binary" format, which means more for BSD. */
+              PrintNewline = false;
+           /* FALL THROUGH */
+         case 'n':
+              PrintName = false;
+           break;
+         case 'w':
+              SwitchesAllowed = false;
+              WriteMode = true;
+           break;
+         case 'p':
+              argv++;
+              if (argv && *argv && **argv) {
+                 preloadfile = *argv;
+              } /* endif */
+
+              Preload(preloadfile);
+              return(0);
+           break;
+         case 'a': /* string and integer values (for Linux, all of them) */
+         case 'A': /* the above, including "opaques" (would be unprintable) */
+         case 'X': /* the above, with opaques completly printed in hex */
+              SwitchesAllowed = false;
+              return DisplayAll(PROC_PATH, ((*argv)[1] == 'a') ? false : true);
+         case 'h':
+         case '?':
+              return Usage(me);
+         default:
+              fprintf(stderr, ERR_UNKNOWN_PARAMETER, *argv);
+              return Usage(me);
+         } /* end switch */
+      } else {
+         SwitchesAllowed = false;
+         if (WriteMode)
+            ReturnCode = WriteSetting(*argv);
+         else ReadSetting(*argv);
+      } /* end if */
+   } /* end for */      
+
+return ReturnCode;
+} /* end main */
+
 
