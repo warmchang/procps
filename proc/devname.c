@@ -16,7 +16,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/sysmacros.h>
 #include "version.h"
 #include "devname.h"
 
@@ -31,10 +30,23 @@
  * dev_to_tty   top, ps
  */
 
+#if 0
+#include <sys/sysmacros.h>
+#define MAJOR_OF(d) ((unsigned)major(d))
+#define MINOR_OF(d) ((unsigned)minor(d))
+#else
+#define MAJOR_OF(d) ( ((unsigned)(d)>>8u) & 0xfffu )
+#define MINOR_OF(d) ( ((unsigned)(d)&0xffu) | (((unsigned)(d)&0xfff00000u)>>20u) )
+#undef major
+#undef minor
+#define major <-- do not use -->
+#define minor <-- do not use -->
+#endif
+
 typedef struct tty_map_node {
   struct tty_map_node *next;
-  int major_number; /* not unsigned! Ugh... */
-  int minor_first, minor_last;
+  unsigned major_number;
+  unsigned minor_first, minor_last;
   char name[16];
   char devfs_type;
 } tty_map_node;
@@ -76,7 +88,7 @@ static void load_drivers(void){
     tmn->major_number = atoi(p);
     p += strspn(p, "0123456789");
     while(*p == ' ') p++;
-    switch(sscanf(p, "%d-%d", &tmn->minor_first, &tmn->minor_last)){
+    switch(sscanf(p, "%u-%u", &tmn->minor_first, &tmn->minor_last)){
     default:
       /* Can't finish parsing this line so we remove it from the list */
       tty_map = tty_map->next;
@@ -95,7 +107,7 @@ fail:
 }
 
 /* Try to guess the device name from /proc/tty/drivers info. */
-static int driver_name(char *restrict const buf, int maj, int min){
+static int driver_name(char *restrict const buf, unsigned maj, unsigned min){
   struct stat sbuf;
   tty_map_node *tmn;
   if(!tty_map) load_drivers();
@@ -112,16 +124,16 @@ static int driver_name(char *restrict const buf, int maj, int min){
     sprintf(buf, "/dev/%s", tmn->name);  /* like "/dev/ttyZZ255" */
     if(stat(buf, &sbuf) < 0) return 0;
   }
-  if(min != minor(sbuf.st_rdev)) return 0;
-  if(maj != major(sbuf.st_rdev)) return 0;
+  if(min != MINOR_OF(sbuf.st_rdev)) return 0;
+  if(maj != MAJOR_OF(sbuf.st_rdev)) return 0;
   return 1;
 }
 
 /* Try to guess the device name (useful until /proc/PID/tty is added) */
-static int guess_name(char *restrict const buf, int maj, int min){
+static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
   struct stat sbuf;
   int t0, t1;
-  int tmpmin = min;
+  unsigned tmpmin = min;
   switch(maj){
   case   4:
     if(min<64){
@@ -166,8 +178,8 @@ static int guess_name(char *restrict const buf, int maj, int min){
   default: return 0;
   }
   if(stat(buf, &sbuf) < 0) return 0;
-  if(min != minor(sbuf.st_rdev)) return 0;
-  if(maj != major(sbuf.st_rdev)) return 0;
+  if(min != MINOR_OF(sbuf.st_rdev)) return 0;
+  if(maj != MAJOR_OF(sbuf.st_rdev)) return 0;
   return 1;
 }
 
@@ -175,7 +187,7 @@ static int guess_name(char *restrict const buf, int maj, int min){
  * Useful names could be in /proc/PID/fd/2 (stderr, seldom redirected)
  * and in /proc/PID/fd/255 (used by bash to remember the tty).
  */
-static int link_name(char *restrict const buf, int maj, int min, int pid, const char *restrict name){
+static int link_name(char *restrict const buf, unsigned maj, unsigned min, int pid, const char *restrict name){
   struct stat sbuf;
   char path[32];
   int count;
@@ -184,25 +196,26 @@ static int link_name(char *restrict const buf, int maj, int min, int pid, const 
   if(count == -1) return 0;
   buf[count] = '\0';
   if(stat(buf, &sbuf) < 0) return 0;
-  if(min != minor(sbuf.st_rdev)) return 0;
-  if(maj != major(sbuf.st_rdev)) return 0;
+  if(min != MINOR_OF(sbuf.st_rdev)) return 0;
+  if(maj != MAJOR_OF(sbuf.st_rdev)) return 0;
   return 1;
 }
 
 /* number --> name */
-unsigned dev_to_tty(char *restrict ret, unsigned chop, int dev, int pid, unsigned int flags) {
+unsigned dev_to_tty(char *restrict ret, unsigned chop, dev_t dev_t_dev, int pid, unsigned int flags) {
   static char buf[PAGE_SIZE];
   char *restrict tmp = buf;
+  unsigned dev = dev_t_dev;
   unsigned i = 0;
   int c;
-  if((short)dev == (short)0) goto no_tty;
+  if(dev == 0u) goto no_tty;
   if(linux_version_code > LINUX_VERSION(2, 7, 0)){  // not likely to make 2.6.xx
-    if(link_name(tmp, major(dev), minor(dev), pid, "tty"   )) goto abbrev;
+    if(link_name(tmp, MAJOR_OF(dev), MINOR_OF(dev), pid, "tty"   )) goto abbrev;
   }
-  if(driver_name(tmp, major(dev), minor(dev)               )) goto abbrev;
-  if(  link_name(tmp, major(dev), minor(dev), pid, "fd/2"  )) goto abbrev;
-  if( guess_name(tmp, major(dev), minor(dev)               )) goto abbrev;
-  if(  link_name(tmp, major(dev), minor(dev), pid, "fd/255")) goto abbrev;
+  if(driver_name(tmp, MAJOR_OF(dev), MINOR_OF(dev)               )) goto abbrev;
+  if(  link_name(tmp, MAJOR_OF(dev), MINOR_OF(dev), pid, "fd/2"  )) goto abbrev;
+  if( guess_name(tmp, MAJOR_OF(dev), MINOR_OF(dev)               )) goto abbrev;
+  if(  link_name(tmp, MAJOR_OF(dev), MINOR_OF(dev), pid, "fd/255")) goto abbrev;
   // fall through if unable to find a device file
 no_tty:
   strcpy(ret, "?");

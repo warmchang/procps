@@ -65,7 +65,8 @@ typedef struct status_table_struct {
 // Derived from:
 // gperf -7 --language=ANSI-C --key-positions=1,3,4 -C -n -c sml.gperf
 
-static void status2proc(char *S, proc_t *restrict P){
+static void status2proc(char *S, proc_t *restrict P, int is_proc){
+    char ShdPnd[16] = "";
     static const unsigned char asso[] = {
         56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
         56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
@@ -271,6 +272,13 @@ ENTER(0x220);
         P->vm_stack = strtol(S,&S,10);
         continue;
     }
+
+    // recent kernels supply per-tgid pending signals
+    if(is_proc && *ShdPnd){
+	memcpy(P->signal, ShdPnd, 16);
+	P->signal[16] = '\0';
+    }
+
 LEAVE(0x220);
 }
 
@@ -494,7 +502,7 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
 
     if (flags & PROC_FILLSTATUS) {         /* read, parse /proc/#/status */
        if (likely( file2str(path, "status", sbuf, sizeof sbuf) != -1 )){
-           status2proc(sbuf, p);
+           status2proc(sbuf, p, 1);
        }
     }
 
@@ -559,13 +567,23 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     }
 
     if (unlikely(flags & PROC_FILLMEM)) {	/* read, parse /proc/#/statm */
+#if 0
 	if (likely( file2str(path, "statm", sbuf, sizeof sbuf) != -1 ))
 	    statm2proc(sbuf, t);		/* ignore statm errors here */
+#else
+	t->size     = p->size;
+	t->resident = p->resident;
+	t->share    = p->share;
+	t->trs      = p->trs;
+	t->lrs      = p->lrs;
+	t->drs      = p->drs;
+	t->dt       = p->dt;
+#endif
     }						/* statm fields just zero */
 
     if (flags & PROC_FILLSTATUS) {         /* read, parse /proc/#/status */
        if (likely( file2str(path, "status", sbuf, sizeof sbuf) != -1 )){
-           status2proc(sbuf, t);
+           status2proc(sbuf, t, 0);
        }
     }
 

@@ -1,14 +1,14 @@
 #ifndef PROCPS_PROC_READPROC_H
 #define PROCPS_PROC_READPROC_H
 /*
- * New Interface to Process Table -- PROCTAB Stream (a la Directory streams)
- * Copyright 1996 Charles L. Blake.
- * Copyright 1998 Michael K. Johnson
- * Copyright 1998-2003 Albert Cahalan
- * May be distributed under the terms of the
- * GNU Library General Public License, a copy of which is provided
- * in the file COPYING
- */
+// New Interface to Process Table -- PROCTAB Stream (a la Directory streams)
+// Copyright 1996 Charles L. Blake.
+// Copyright 1998 Michael K. Johnson
+// Copyright 1998-2003 Albert Cahalan
+// May be distributed under the terms of the
+// GNU Library General Public License, a copy of which is provided
+// in the file COPYING
+
 
 #include "procps.h"
 
@@ -16,136 +16,134 @@
 
 EXTERN_C_BEGIN
 
-/*
- ld	cutime, cstime, priority, nice, timeout, it_real_value, rss,
- c	state,
- d	ppid, pgrp, session, tty, tpgid,
- s	signal, blocked, sigignore, sigcatch,
- lu	flags, min_flt, cmin_flt, maj_flt, cmaj_flt, utime, stime,
- lu	rss_rlim, start_code, end_code, start_stack, kstk_esp, kstk_eip,
- lu	start_time, vsize, wchan, nswap, cnswap,
-*/
+// ld	cutime, cstime, priority, nice, timeout, it_real_value, rss,
+// c	state,
+// d	ppid, pgrp, session, tty, tpgid,
+// s	signal, blocked, sigignore, sigcatch,
+// lu	flags, min_flt, cmin_flt, maj_flt, cmaj_flt, utime, stime,
+// lu	rss_rlim, start_code, end_code, start_stack, kstk_esp, kstk_eip,
+// lu	start_time, vsize, wchan, nswap, cnswap,
 
 // This is to help document a transition from pid to tgid/tid caused
 // by the introduction of thread support. It is used in cases where
 // neither tgid nor tid seemed correct. (in other words, FIXME)
 #define XXXID tid
 
-/* Basic data structure which holds all information we can get about a process.
- * (unless otherwise specified, fields are read from /proc/#/stat)
- *
- * Most of it comes from task_struct in linux/sched.h
- */
+// Basic data structure which holds all information we can get about a process.
+// (unless otherwise specified, fields are read from /proc/#/stat)
+//
+// Most of it comes from task_struct in linux/sched.h
+//
 typedef struct proc_t {
 // 1st 16 bytes
     int
-        tid,		/* process id */
-    	ppid;		/* pid of parent process */
+        tid,		// (special)       task id, the POSIX thread ID (see also: tgid)
+    	ppid;		// stat,status     pid of parent process
     unsigned
-        pcpu;           /* %CPU usage (is not filled in by readproc!!!) */
+        pcpu;           // stat (special)  %CPU usage (is not filled in by readproc!!!)
     char
-    	state,		/* single-char code for process state (S=sleeping) */
-    	pad_1,		/* padding */
-    	pad_2,		/* padding */
-    	pad_3;		/* padding */
+    	state,		// stat,status     single-char code for process state (S=sleeping)
+    	pad_1,		// n/a             padding
+    	pad_2,		// n/a             padding
+    	pad_3;		// n/a             padding
 // 2nd 16 bytes
     unsigned long long
-	utime,		/* user-mode CPU time accumulated by process */
-	stime,		/* kernel-mode CPU time accumulated by process */
+	utime,		// stat            user-mode CPU time accumulated by process
+	stime,		// stat            kernel-mode CPU time accumulated by process
 // and so on...
-	cutime,		/* cumulative utime of process and reaped children */
-	cstime,		/* cumulative stime of process and reaped children */
-	start_time;	/* start time of process -- seconds since 1-1-70 */
+	cutime,		// stat            cumulative utime of process and reaped children
+	cstime,		// stat            cumulative stime of process and reaped children
+	start_time;	// stat            start time of process -- seconds since 1-1-70
 #ifdef SIGNAL_STRING
     char
-	/* Linux 2.1.7x and up have 64 signals. Allow 64, plus '\0' and padding. */
-	signal[18],	/* mask of pending signals */
-	blocked[18],	/* mask of blocked signals */
-	sigignore[18],	/* mask of ignored signals */
-	sigcatch[18];	/* mask of caught  signals */
+	// Linux 2.1.7x and up have 64 signals. Allow 64, plus '\0' and padding.
+	signal[18],	// status          mask of pending signals
+	blocked[18],	// status          mask of blocked signals
+	sigignore[18],	// status          mask of ignored signals
+	sigcatch[18];	// status          mask of caught  signals
 #else
     long long
-	/* Linux 2.1.7x and up have 64 signals. */
-	signal,		/* mask of pending signals */
-	blocked,	/* mask of blocked signals */
-	sigignore,	/* mask of ignored signals */
-	sigcatch;	/* mask of caught  signals */
+	// Linux 2.1.7x and up have 64 signals.
+	signal,		// status          mask of pending signals
+	blocked,	// status          mask of blocked signals
+	sigignore,	// status          mask of ignored signals
+	sigcatch;	// status          mask of caught  signals
 #endif
     long
-	priority,	/* kernel scheduling priority */
-	timeout,	/* ? */
-	nice,		/* standard unix nice level of process */
-	rss,		/* resident set size from /proc/#/stat (pages) */
-	it_real_value,	/* ? */
-    /* the next 7 members come from /proc/#/statm */
-	size,		/* total # of pages of memory */
-	resident,	/* number of resident set (non-swapped) pages (4k) */
-	share,		/* number of pages of shared (mmap'd) memory */
-	trs,		/* text resident set size */
-	lrs,		/* shared-lib resident set size */
-	drs,		/* data resident set size */
-	dt;		/* dirty pages */
+	priority,	// stat            kernel scheduling priority
+	timeout,	// stat            ?
+	nice,		// stat            standard unix nice level of process
+	rss,		// stat            resident set size from /proc/#/stat (pages)
+	it_real_value,	// stat            ?
+    // the next 7 members come from /proc/#/statm
+	size,		// statm           total # of pages of memory
+	resident,	// statm           number of resident set (non-swapped) pages (4k)
+	share,		// statm           number of pages of shared (mmap'd) memory
+	trs,		// statm           text resident set size
+	lrs,		// statm           shared-lib resident set size
+	drs,		// statm           data resident set size
+	dt;		// statm           dirty pages
     unsigned long
-	vm_size,        /* same as vsize in kb */
-	vm_lock,        /* locked pages in kb */
-	vm_rss,         /* same as rss in kb */
-	vm_data,        /* data size */
-	vm_stack,       /* stack size */
-	vm_exe,         /* executable size */
-	vm_lib,         /* library size (all pages, not just used ones) */
-	rtprio,		/* real-time priority */
-	sched,		/* scheduling class */
-	vsize,		/* number of pages of virtual memory ... */
-	rss_rlim,	/* resident set size limit? */
-	flags,		/* kernel flags for the process */
-	min_flt,	/* number of minor page faults since process start */
-	maj_flt,	/* number of major page faults since process start */
-	cmin_flt,	/* cumulative min_flt of process and child processes */
-	cmaj_flt,	/* cumulative maj_flt of process and child processes */
-	nswap,		/* ? */
-	cnswap;		/* cumulative nswap ? */
+	vm_size,        // status          same as vsize in kb
+	vm_lock,        // status          locked pages in kb
+	vm_rss,         // status          same as rss in kb
+	vm_data,        // status          data size
+	vm_stack,       // status          stack size
+	vm_exe,         // status          executable size
+	vm_lib,         // status          library size (all pages, not just used ones)
+	rtprio,		// stat            real-time priority
+	sched,		// stat            scheduling class
+	vsize,		// stat            number of pages of virtual memory ...
+	rss_rlim,	// stat            resident set size limit?
+	flags,		// stat            kernel flags for the process
+	min_flt,	// stat            number of minor page faults since process start
+	maj_flt,	// stat            number of major page faults since process start
+	cmin_flt,	// stat            cumulative min_flt of process and child processes
+	cmaj_flt,	// stat            cumulative maj_flt of process and child processes
+	nswap,		// stat            ?
+	cnswap;		// stat            cumulative nswap ?
     unsigned KLONG
-	start_code,	/* address of beginning of code segment */
-	end_code,	/* address of end of code segment */
-	start_stack,	/* address of the bottom of stack for the process */
-	kstk_esp,	/* kernel stack pointer */
-	kstk_eip,	/* kernel instruction pointer */
-	wchan;		/* address of kernel wait channel proc is sleeping in */
+	start_code,	// stat            address of beginning of code segment
+	end_code,	// stat            address of end of code segment
+	start_stack,	// stat            address of the bottom of stack for the process
+	kstk_esp,	// stat            kernel stack pointer
+	kstk_eip,	// stat            kernel instruction pointer
+	wchan;		// stat (special)  address of kernel wait channel proc is sleeping in
     char
-	**environ,	/* environment string vector (/proc/#/environ) */
-	**cmdline;	/* command line string vector (/proc/#/cmdline) */
+	**environ,	// (special)       environment string vector (/proc/#/environ)
+	**cmdline;	// (special)       command line string vector (/proc/#/cmdline)
     char
-	/* Be compatible: Digital allows 16 and NT allows 14 ??? */
-    	ruser[16],	/* real user name */
-    	euser[16],	/* effective user name */
-    	suser[16],	/* saved user name */
-    	fuser[16],	/* filesystem user name */
-    	rgroup[16],	/* real group name */
-    	egroup[16],	/* effective group name */
-    	sgroup[16],	/* saved group name */
-    	fgroup[16],	/* filesystem group name */
-    	cmd[16];	/* basename of executable file in call to exec(2) */
+	// Be compatible: Digital allows 16 and NT allows 14 ???
+    	euser[16],	// stat(),status   effective user name
+    	ruser[16],	// status          real user name
+    	suser[16],	// status          saved user name
+    	fuser[16],	// status          filesystem user name
+    	rgroup[16],	// status          real group name
+    	egroup[16],	// status          effective group name
+    	sgroup[16],	// status          saved group name
+    	fgroup[16],	// status          filesystem group name
+    	cmd[16];	// stat,status     basename of executable file in call to exec(2)
     struct proc_t
-	*ring,		// thread group ring
-	*next;		// various library uses
+	*ring,		// n/a             thread group ring
+	*next;		// n/a             various library uses
     int
-        ruid, rgid,     /* real      */
-        euid, egid,     /* effective */
-        suid, sgid,     /* saved     */
-        fuid, fgid,     /* fs (used for file access only) */
-	pgrp,		/* process group id */
-	session,	/* session id */
-	tty,		/* full device number of controlling terminal */
-	tpgid,		/* terminal process group id */
-	tgid,		/* thread group ID */
-	exit_signal,	/* might not be SIGCHLD */
-	processor;      /* current (or most recent?) CPU */
+	pgrp,		// stat            process group id
+	session,	// stat            session id
+	tgid,		// (special)       task group ID, the POSIX PID (see also: tid)
+	tty,		// stat            full device number of controlling terminal
+        euid, egid,     // stat(),status   effective
+        ruid, rgid,     // status          real
+        suid, sgid,     // status          saved
+        fuid, fgid,     // status          fs (used for file access only)
+	tpgid,		// stat            terminal process group id
+	exit_signal,	// stat            might not be SIGCHLD
+	processor;      // stat            current (or most recent?) CPU
 } proc_t;
 
-/* PROCTAB: data structure holding the persistent information readproc needs
- * from openproc().  The setup is intentionally similar to the dirent interface
- * and other system table interfaces (utmp+wtmp come to mind).
- */
+// PROCTAB: data structure holding the persistent information readproc needs
+// from openproc().  The setup is intentionally similar to the dirent interface
+// and other system table interfaces (utmp+wtmp come to mind).
+
 #include <sys/types.h>
 #include <dirent.h>
 #include <unistd.h>
@@ -161,9 +159,9 @@ typedef struct PROCTAB {
     int(*taskfinder)(struct PROCTAB *restrict const, const proc_t *restrict const, proc_t *restrict const, char *restrict const);
     proc_t*(*taskreader)(struct PROCTAB *restrict const, const proc_t *restrict const, proc_t *restrict const, char *restrict const);
     unsigned	flags;
-    pid_t*	pids;	/* pids of the procs */
-    uid_t*	uids;	/* uids of procs */
-    int		nuid;	/* cannot really sentinel-terminate unsigned short[] */
+    pid_t*	pids;	// pids of the procs
+    uid_t*	uids;	// uids of procs
+    int		nuid;	// cannot really sentinel-terminate unsigned short[]
     int         i;  // generic
     unsigned    u;  // generic
     void *      vp; // generic
@@ -175,11 +173,11 @@ typedef struct PROCTAB {
 extern PROCTAB* openproc(int flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
 
 
-/* Convenient wrapper around openproc and readproc to slurp in the whole process
- * table subset satisfying the constraints of flags and the optional PID list.
- * Free allocated memory with exit().  Access via tab[N]->member.  The pointer
- * list is NULL terminated.
- */
+// Convenient wrapper around openproc and readproc to slurp in the whole process
+// table subset satisfying the constraints of flags and the optional PID list.
+// Free allocated memory with exit().  Access via tab[N]->member.  The pointer
+// list is NULL terminated.
+
 extern proc_t** readproctab(int flags, ... /* same as openproc */ );
 
 // clean-up open files, etc from the openproc()
@@ -194,37 +192,37 @@ extern int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid);
 
 extern void look_up_our_self(proc_t *p);
 
-/* deallocate space allocated by readproc
- */
+// deallocate space allocated by readproc
+
 extern void freeproc(proc_t* p);
 
-/* openproc/readproctab:
- *   
- * Return PROCTAB* / *proc_t[] or NULL on error ((probably) "/proc" cannot be
- * opened.)  By default readproc will consider all processes as valid to parse
- * and return, but not actually fill in the cmdline, environ, and /proc/#/statm
- * derived memory fields.
- *
- * `flags' (a bitwise-or of PROC_* below) modifies the default behavior.  The
- * "fill" options will cause more of the proc_t to be filled in.  The "filter"
- * options all use the second argument as the pointer to a list of objects:
- * process status', process id's, user id's.  The third
- * argument is the length of the list (currently only used for lists of user
- * id's since uid_t supports no convenient termination sentinel.)
- */
-#define PROC_FILLMEM    0x0001 /* read statm */
-#define PROC_FILLCOM    0x0002 /* alloc and fill in `cmdline' */
-#define PROC_FILLENV    0x0004 /* alloc and fill in `environ' */
-#define PROC_FILLUSR    0x0008 /* resolve user id number -> user name */
-#define PROC_FILLGRP    0x0010 /* resolve group id number -> group name */
-#define PROC_FILLSTATUS 0x0020 /* read status -- currently unconditional */
-#define PROC_FILLSTAT   0x0040 /* read stat -- currently unconditional */
-#define PROC_FILLWCHAN  0x0080 /* look up WCHAN name */
-#define PROC_FILLARG    0x0100 /* alloc and fill in `cmdline' */
+// openproc/readproctab:
+//
+// Return PROCTAB* / *proc_t[] or NULL on error ((probably) "/proc" cannot be
+// opened.)  By default readproc will consider all processes as valid to parse
+// and return, but not actually fill in the cmdline, environ, and /proc/#/statm
+// derived memory fields.
+//
+// `flags' (a bitwise-or of PROC_* below) modifies the default behavior.  The
+// "fill" options will cause more of the proc_t to be filled in.  The "filter"
+// options all use the second argument as the pointer to a list of objects:
+// process status', process id's, user id's.  The third
+// argument is the length of the list (currently only used for lists of user
+// id's since uid_t supports no convenient termination sentinel.)
 
-/* Obsolete, consider only processes with one of the passed: */
-#define PROC_PID     0x1000  /* process id numbers ( 0   terminated) */
-#define PROC_UID     0x4000  /* user id numbers    ( length needed ) */
+#define PROC_FILLMEM    0x0001 // read statm
+#define PROC_FILLCOM    0x0002 // alloc and fill in `cmdline'
+#define PROC_FILLENV    0x0004 // alloc and fill in `environ'
+#define PROC_FILLUSR    0x0008 // resolve user id number -> user name
+#define PROC_FILLGRP    0x0010 // resolve group id number -> group name
+#define PROC_FILLSTATUS 0x0020 // read status -- currently unconditional
+#define PROC_FILLSTAT   0x0040 // read stat -- currently unconditional
+#define PROC_FILLWCHAN  0x0080 // look up WCHAN name
+#define PROC_FILLARG    0x0100 // alloc and fill in `cmdline'
+
+// Obsolete, consider only processes with one of the passed:
+#define PROC_PID     0x1000  // process id numbers ( 0   terminated)
+#define PROC_UID     0x4000  // user id numbers    ( length needed )
 
 // it helps to give app code a few spare bits
 #define PROC_SPARE_1 0x01000000

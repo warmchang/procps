@@ -315,10 +315,12 @@ static const char *parse_sysv_option(void){
       exclusive("-V");
       display_version();
       exit(0);
+#if 0
     case 'Z':     /* full Mandatory Access Control level info */
       trace("-Z shows full MAC info\n");
       return "Don't understand MAC on Linux.";
       break;
+#endif
     case 'a':
       trace("-a select all with a tty, but omit session leaders.\n");
       simple_select |= SS_U_a;
@@ -442,10 +444,12 @@ static const char *parse_sysv_option(void){
       trace("-y Print lnone info in UID/USER column or do Sun -l hack.\n");
       format_modifiers |= FM_y;
       break;
+#if 0
     case 'z':     /* alias of Mandatory Access Control level info */
       trace("-z shows aliased MAC info\n");
       return "Don't understand MAC on Linux.";
       break;
+#endif
     case '-':
       return "Embedded '-' among SysV options makes no sense.";
       break;
@@ -595,11 +599,13 @@ static const char *parse_bsd_option(void){
       trace("j job control format\n");
       format_flags |= FF_Bj;
       break;
-    case 'k':    // The OpenBSD way (NetBSD:s OpenBSD:k FreeBSD:H  -- NIH???)
+#if 0
+    case 'k':    // OpenBSD: don't hide "kernel threads" -- like the swapper?
       trace("k Print LWP (thread) info.\n");   // was: Use /vmcore as c-dumpfile\n");
       thread_flags |= TF_show_task;  // FIXME: determine if TF_show_proc is needed
       //format_modifiers |= FM_L;    // FIXME: determine if we need something like this
       break;
+#endif
     case 'l':
       trace("l Display long format\n");
       format_flags |= FF_Bl;

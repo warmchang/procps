@@ -1131,6 +1131,11 @@ static int sr_context ( const proc_t* P, const proc_t* Q ) {
 #define GRP PROC_FILLGRP     /* gid_t -> group names */
 #define WCH PROC_FILLWCHAN   /* do WCHAN lookup */
 
+#define TO PRINT_THREAD_ONLY
+#define PO PRINT_PROCESS_ONLY
+#define ET PRINT_EVERY_TIME
+#define AN PRINT_AS_NEEDED // no idea
+
 /* TODO
  *      pull out annoying BSD aliases into another table (to macro table?)
  *      add sorting functions here (to unify names)
@@ -1144,219 +1149,225 @@ static int sr_context ( const proc_t* P, const proc_t* Q ) {
 /* Many of these are placeholders for unsupported options. */
 static const format_struct format_array[] = {
 /* code       header     print()      sort()    width need vendor flags  */
-{"%cpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    BSD, RIGHT}, /*pcpu*/
-{"%mem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    BSD, RIGHT}, /*pmem*/
-{"acflag",    "ACFLG",   pr_nop,      sr_nop,     5,   0,    XXX, RIGHT}, /*acflg*/
-{"acflg",     "ACFLG",   pr_nop,      sr_nop,     5,   0,    BSD, RIGHT}, /*acflag*/
-{"addr",      "ADDR",    pr_nop,      sr_nop,     4,   0,    XXX, RIGHT},
-{"addr_1",    "ADDR",    pr_nop,      sr_nop,     1,   0,    LNX, LEFT},
-{"alarm",     "ALARM",   pr_alarm,    sr_it_real_value, 5, 0, LNX, RIGHT},
-{"argc",      "ARGC",    pr_nop,      sr_nop,     4,   0,    LNX, RIGHT},
-{"args",      "COMMAND", pr_args,     sr_nop,    16, ARG,    U98, UNLIMITED}, /*command*/
-{"atime",     "TIME",    pr_time,     sr_nop,     8,   0,    SOE, CUMUL|RIGHT}, /*cputime*/ /* was 6 wide */
-{"blocked",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    BSD, SIGNAL}, /*sigmask*/
-{"bnd",       "BND",     pr_nop,      sr_nop,     1,   0,    AIX, RIGHT},
-{"bsdstart",  "START",   pr_bsdstart, sr_nop,     6,   0,    LNX, RIGHT},
-{"bsdtime",   "TIME",    pr_bsdtime,  sr_nop,     6,   0,    LNX, RIGHT},
-{"c",         "C",       pr_c,        sr_pcpu,    2,   0,    SUN, RIGHT},
-{"caught",    "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    BSD, SIGNAL}, /*sigcatch*/
-{"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, LEFT},
-{"cls",       "-",       pr_nop,      sr_nop,     1,   0,    HPU, RIGHT},
-{"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, RIGHT},
-{"cmd",       "CMD",     pr_args,     sr_cmd,    16, ARG,    DEC, UNLIMITED}, /*ucomm*/
-{"cmin_flt",  "-",       pr_nop,      sr_cmin_flt, 1,  0,    LNX, RIGHT},
-{"cnswap",    "-",       pr_nop,      sr_cnswap,  1,   0,    LNX, RIGHT},
-{"comm",      "COMMAND", pr_comm,     sr_nop,    16, COM,    U98, UNLIMITED}, /*ucomm*/
-{"command",   "COMMAND", pr_args,     sr_nop,    16, ARG,    XXX, UNLIMITED}, /*args*/
-{"context",   "CONTEXT", pr_context,  sr_context,40,   0,    LNX, LEFT},
-{"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, RIGHT}, /*cpu*/
-{"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
-{"cputime",   "TIME",    pr_time,     sr_nop,     8,   0,    DEC, RIGHT}, /*time*/
-{"cstime",    "-",       pr_nop,      sr_cstime,  1,   0,    LNX, RIGHT},
-{"cursig",    "CURSIG",  pr_nop,      sr_nop,     6,   0,    DEC, RIGHT},
-{"cutime",    "-",       pr_nop,      sr_cutime,  1,   0,    LNX, RIGHT},
-{"cwd",       "CWD",     pr_nop,      sr_nop,     3,   0,    LNX, LEFT},
-{"drs",       "DRS",     pr_drs,      sr_drs,     4, MEM,    LNX, RIGHT},
-{"dsiz",      "DSIZ",    pr_dsiz,     sr_nop,     4,   0,    LNX, RIGHT},
-{"egid",      "EGID",    pr_egid,     sr_egid,    5,   0,    LNX, RIGHT},
-{"egroup",    "EGROUP",  pr_egroup,   sr_egroup,  8, GRP,    LNX, USER},
-{"eip",       "EIP",     pr_eip,      sr_kstk_eip, 8,  0,    LNX, RIGHT},
-{"end_code",  "E_CODE",  pr_nop,      sr_end_code, 8,  0,    LNx, RIGHT},
-{"environ","ENVIRONMENT",pr_nop,      sr_nop,    11, ENV,    LNx, UNLIMITED},
-{"esp",       "ESP",     pr_esp,      sr_kstk_esp, 8,  0,    LNX, RIGHT},
-{"etime",     "ELAPSED", pr_etime,    sr_nop,    11,   0,    U98, RIGHT}, /* was 7 wide */
-{"euid",      "EUID",    pr_euid,     sr_euid,    5,   0,    LNX, RIGHT},
-{"euser",     "EUSER",   pr_euser,    sr_euser,   8, USR,    LNX, USER},
-{"f",         "F",       pr_flag,     sr_nop,     1,   0,    XXX, RIGHT}, /*flags*/
-{"fgid",      "FGID",    pr_fgid,     sr_fgid,    5,   0,    LNX, RIGHT},
-{"fgroup",    "FGROUP",  pr_fgroup,   sr_fgroup,  8, GRP,    LNX, USER},
-{"flag",      "F",       pr_flag,     sr_flags,   1,   0,    DEC, RIGHT},
-{"flags",     "F",       pr_flag,     sr_flags,   1,   0,    BSD, RIGHT}, /*f*/ /* was FLAGS, 8 wide */
-{"fname",     "COMMAND", pr_fname,    sr_nop,     8,   0,    SUN, LEFT},
-{"fsgid",     "FSGID",   pr_fgid,     sr_fgid,    5,   0,    LNX, RIGHT},
-{"fsgroup",   "FSGROUP", pr_fgroup,   sr_fgroup,  8, GRP,    LNX, USER},
-{"fsuid",     "FSUID",   pr_fuid,     sr_fuid,    5,   0,    LNX, RIGHT},
-{"fsuser",    "FSUSER",  pr_fuser,    sr_fuser,   8, USR,    LNX, USER},
-{"fuid",      "FUID",    pr_fuid,     sr_fuid,    5,   0,    LNX, RIGHT},
-{"fuser",     "FUSER",   pr_fuser,    sr_fuser,   8, USR,    LNX, USER},
-{"gid",       "GID",     pr_egid,     sr_egid,    5,   0,    SUN, RIGHT},
-{"group",     "GROUP",   pr_egroup,   sr_egroup,  5, GRP,    U98, USER}, /* was 8 wide */
-{"ignored",   "IGNORED", pr_sigignore,sr_nop,     9,   0,    BSD, SIGNAL}, /*sigignore*/
-{"inblk",     "INBLK",   pr_nop,      sr_nop,     5,   0,    BSD, RIGHT}, /*inblock*/
-{"inblock",   "INBLK",   pr_nop,      sr_nop,     5,   0,    DEC, RIGHT}, /*inblk*/
-{"intpri",    "PRI",     pr_opri,     sr_priority, 3,  0,    HPU, RIGHT},
-{"jobc",      "JOBC",    pr_nop,      sr_nop,     4,   0,    XXX, RIGHT},
-{"ktrace",    "KTRACE",  pr_nop,      sr_nop,     8,   0,    BSD, RIGHT},
-{"ktracep",   "KTRACEP", pr_nop,      sr_nop,     8,   0,    BSD, RIGHT},
-{"label",     "LABEL",   pr_nop,      sr_nop,    25,  0,     SGI, LEFT},
-{"lim",       "LIM",     pr_lim,      sr_rss_rlim, 5,  0,    BSD, RIGHT},
-{"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, LEFT}, /*logname*/   /* double check */
-{"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, LEFT}, /*login*/
-{"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, LEFT},
-{"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, RIGHT},
-{"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, RIGHT}, /* login ID */
-{"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, USER}, /* login USER */
-{"lwp",       "LWP",     pr_thread,   sr_tid,     5,   0,    SUN, PIDMAX|RIGHT},
-{"m_drs",     "DRS",     pr_drs,      sr_drs,     5, MEM,    LNx, RIGHT},
-{"m_dt",      "DT",      pr_nop,      sr_dt,      4, MEM,    LNx, RIGHT},
-{"m_lrs",     "LRS",     pr_nop,      sr_lrs,     5, MEM,    LNx, RIGHT},
-{"m_resident", "RES",    pr_nop,      sr_resident, 5,MEM,    LNx, RIGHT},
-{"m_share",   "SHRD",    pr_nop,      sr_share,   5, MEM,    LNx, RIGHT},
-{"m_size",    "SIZE",    pr_size,     sr_size,    5, MEM,    LNX, RIGHT},
-{"m_swap",    "SWAP",    pr_nop,      sr_nop,     5,   0,    LNx, RIGHT},
-{"m_trs",     "TRS",     pr_trs,      sr_trs,     5, MEM,    LNx, RIGHT},
-{"maj_flt",   "MAJFL",   pr_majflt,   sr_maj_flt, 6,   0,    LNX, CUMUL|RIGHT},
-{"majflt",    "MAJFLT",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, RIGHT},
-{"min_flt",   "MINFL",   pr_minflt,   sr_min_flt, 6,   0,    LNX, CUMUL|RIGHT},
-{"minflt",    "MINFLT",  pr_minflt,   sr_min_flt, 6,   0,    XXX, RIGHT},
-{"msgrcv",    "MSGRCV",  pr_nop,      sr_nop,     6,   0,    XXX, RIGHT},
-{"msgsnd",    "MSGSND",  pr_nop,      sr_nop,     6,   0,    XXX, RIGHT},
-{"ni",        "NI",      pr_nice,     sr_nice,    3,   0,    BSD, RIGHT}, /*nice*/
-{"nice",      "NI",      pr_nice,     sr_nice,    3,   0,    U98, RIGHT}, /*ni*/
-{"nivcsw",    "IVCSW",   pr_nop,      sr_nop,     5,   0,    XXX, RIGHT},
-{"nlwp",      "NLWP",    pr_nlwp,     sr_nop,     4,   0,    SUN, RIGHT},
-{"nsignals",  "NSIGS",   pr_nop,      sr_nop,     5,   0,    DEC, RIGHT}, /*nsigs*/
-{"nsigs",     "NSIGS",   pr_nop,      sr_nop,     5,   0,    BSD, RIGHT}, /*nsignals*/
-{"nswap",     "NSWAP",   pr_nop,      sr_nswap,   5,   0,    XXX, RIGHT},
-{"nvcsw",     "VCSW",    pr_nop,      sr_nop,     5,   0,    XXX, RIGHT},
-{"nwchan",    "WCHAN",   pr_nwchan,   sr_nop,     6,   0,    XXX, RIGHT},
-{"opri",      "PRI",     pr_opri,     sr_priority, 3,  0,    SUN, RIGHT},
-{"osz",       "SZ",      pr_nop,      sr_nop,     2,   0,    SUN, RIGHT},
-{"oublk",     "OUBLK",   pr_nop,      sr_nop,     5,   0,    BSD, RIGHT}, /*oublock*/
-{"oublock",   "OUBLK",   pr_nop,      sr_nop,     5,   0,    DEC, RIGHT}, /*oublk*/
-{"p_ru",      "P_RU",    pr_nop,      sr_nop,     6,   0,    BSD, RIGHT},
-{"paddr",     "PADDR",   pr_nop,      sr_nop,     6,   0,    BSD, RIGHT},
-{"pagein",    "PAGEIN",  pr_majflt,   sr_nop,     6,   0,    XXX, RIGHT},
-{"pcpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    U98, RIGHT}, /*%cpu*/
-{"pending",   "PENDING", pr_sig,      sr_nop,     9,   0,    BSD, SIGNAL}, /*sig*/
-{"pgid",      "PGID",    pr_pgid,     sr_pgrp,    5,   0,    U98, PIDMAX|RIGHT},
-{"pgrp",      "PGRP",    pr_pgid,     sr_pgrp,    5,   0,    LNX, PIDMAX|RIGHT},
-{"pid",       "PID",     pr_pid,      sr_tgid,    5,   0,    U98, PIDMAX|RIGHT},
-{"pmem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    XXX, RIGHT}, /*%mem*/
-{"poip",      "-",       pr_nop,      sr_nop,     1,   0,    BSD, RIGHT},
-{"policy",    "POL",     pr_class,    sr_sched,   3,   0,    DEC, LEFT},
-{"ppid",      "PPID",    pr_ppid,     sr_ppid,    5,   0,    U98, PIDMAX|RIGHT},
-{"pri",       "PRI",     pr_pri,      sr_nop,     3,   0,    XXX, RIGHT},
-{"priority",  "PRI",     pr_priority, sr_priority, 3,  0,    LNX, RIGHT}, /*ni,nice*/ /* from Linux sorting names */
-{"prmgrp",    "-",       pr_nop,      sr_nop,     1,   0,    HPU, RIGHT},
-{"prmid",     "-",       pr_nop,      sr_nop,     1,   0,    HPU, RIGHT},
-{"pset",      "PSET",    pr_nop,      sr_nop,     4,   0,    DEC, RIGHT},
-{"psr",       "PSR",     pr_psr,      sr_nop,     3,   0,    DEC, RIGHT},
-{"psxpri",    "PPR",     pr_nop,      sr_nop,     3,   0,    DEC, RIGHT},
-{"re",        "RE",      pr_nop,      sr_nop,     3,   0,    BSD, RIGHT},
-{"resident",  "RES",     pr_nop,      sr_resident, 5,MEM,    LNX, RIGHT},
-{"rgid",      "RGID",    pr_rgid,     sr_rgid,    5,   0,    XXX, RIGHT},
-{"rgroup",    "RGROUP",  pr_rgroup,   sr_rgroup,  8, GRP,    U98, USER}, /* was 8 wide */
-{"rlink",     "RLINK",   pr_nop,      sr_nop,     8,   0,    BSD, RIGHT},
-{"rss",       "RSS",     pr_rss,      sr_rss,     4,   0,    XXX, RIGHT}, /* was 5 wide */
-{"rssize",    "RSS",     pr_rss,      sr_vm_rss,  4,   0,    DEC, RIGHT}, /*rsz*/
-{"rsz",       "RSZ",     pr_rss,      sr_vm_rss,  4,   0,    BSD, RIGHT}, /*rssize*/
-{"rtprio",    "RTPRIO",  pr_rtprio,   sr_rtprio,  6,   0,    BSD, RIGHT},
-{"ruid",      "RUID",    pr_ruid,     sr_ruid,    5,   0,    XXX, RIGHT},
-{"ruser",     "RUSER",   pr_ruser,    sr_ruser,   8, USR,    U98, USER},
-{"s",         "S",       pr_s,        sr_state,   1,   0,    SUN, LEFT}, /*stat,state*/
-{"sched",     "SCH",     pr_sched,    sr_sched,   3,   0,    AIX, RIGHT},
-{"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, RIGHT},  /* man page misspelling of scount? */
-{"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, RIGHT},  /* scnt==scount, DEC claims both */
-{"secsid",    "SID",     pr_secsid,   sr_secsid,  6,   0,    LNX, RIGHT}, /* Flask Linux */
-{"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, PIDMAX|RIGHT},
-{"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, PIDMAX|RIGHT},
-{"sgi_p",     "P",       pr_sgi_p,    sr_nop,     1,   0,    LNX, RIGHT}, /* "cpu" number */
-{"sgi_rss",   "RSS",     pr_rss,      sr_nop,     4,   0,    LNX, LEFT}, /* SZ:RSS */
-{"sgid",      "SGID",    pr_sgid,     sr_sgid,    5,   0,    LNX, RIGHT},
-{"sgroup",    "SGROUP",  pr_sgroup,   sr_sgroup,  8, GRP,    LNX, USER},
-{"share",     "-",       pr_nop,      sr_share,   1, MEM,    LNX, RIGHT},
-{"sid",       "SID",     pr_sess,     sr_session, 5,   0,    XXX, PIDMAX|RIGHT}, /* Sun & HP */
-{"sig",       "PENDING", pr_sig,      sr_nop,     9,   0,    XXX, SIGNAL}, /*pending*/
-{"sig_block", "BLOCKED",  pr_sigmask, sr_nop,     9,   0,    LNX, SIGNAL},
-{"sig_catch", "CATCHED", pr_sigcatch, sr_nop,     9,   0,    LNX, SIGNAL},
-{"sig_ignore", "IGNORED",pr_sigignore, sr_nop,    9,   0,    LNX, SIGNAL},
-{"sig_pend",  "SIGNAL",   pr_sig,     sr_nop,     9,   0,    LNX, SIGNAL},
-{"sigcatch",  "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    XXX, SIGNAL}, /*caught*/
-{"sigignore", "IGNORED", pr_sigignore,sr_nop,     9,   0,    XXX, SIGNAL}, /*ignored*/
-{"sigmask",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    XXX, SIGNAL}, /*blocked*/
-{"size",      "SZ",      pr_swapable, sr_swapable, 1,  0,    SCO, RIGHT},
-{"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, RIGHT},
-{"spid",      "SPID",    pr_thread,   sr_tid,     5,   0,    SGI, PIDMAX|RIGHT},
-{"stackp",    "STACKP",  pr_stackp,   sr_nop,     8,   0,    LNX, RIGHT}, /*start_stack*/
-{"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, RIGHT},
-{"start_code", "S_CODE",  pr_nop,     sr_start_code, 8, 0,   LNx, RIGHT},
-{"start_stack", "STACKP", pr_stackp,  sr_start_stack, 8, 0,  LNX, RIGHT}, /*stackp*/
-{"start_time", "START",  pr_stime,    sr_start_time, 5, 0,   LNx, RIGHT},
-{"stat",      "STAT",    pr_stat,     sr_state,   4,   0,    BSD, LEFT}, /*state,s*/
-{"state",     "S",       pr_s,        sr_state,   1,   0,    XXX, LEFT}, /*stat,s*/ /* was STAT */
-{"status",    "STATUS",  pr_nop,      sr_nop,     6,   0,    DEC, RIGHT},
-{"stime",     "STIME",   pr_stime,    sr_stime,   5,   0,    XXX, /* CUMUL| */RIGHT}, /* was 6 wide */
-{"suid",      "SUID",    pr_suid,     sr_suid,    5,   0,    LNx, RIGHT},
-{"suser",     "SUSER",   pr_suser,    sr_suser,   8, USR,    LNx, USER},
-{"svgid",     "SVGID",   pr_sgid,     sr_sgid,    5,   0,    XXX, RIGHT},
-{"svgroup",   "SVGROUP", pr_sgroup,   sr_sgroup,  8, GRP,    LNX, USER},
-{"svuid",     "SVUID",   pr_suid,     sr_suid,    5,   0,    XXX, RIGHT},
-{"svuser",    "SVUSER",  pr_suser,    sr_suser,   8, USR,    LNX, USER},
-{"systime",   "SYSTEM",  pr_nop,      sr_nop,     6,   0,    DEC, RIGHT},
-{"sz",        "SZ",      pr_sz,       sr_nop,     5,   0,    HPU, RIGHT},
-{"tdev",      "TDEV",    pr_nop,      sr_nop,     4,   0,    XXX, RIGHT},
-{"thcount",   "THCNT",   pr_nlwp,     sr_nop,     5,   0,    AIX, RIGHT},
-{"tid",       "TID",     pr_thread,   sr_tid,     5,   0,    AIX, PIDMAX|RIGHT},
-{"time",      "TIME",    pr_time,     sr_nop,     8,   0,    U98, CUMUL|RIGHT}, /*cputime*/ /* was 6 wide */
-{"timeout",   "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, RIGHT},
-{"tmout",     "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, RIGHT},
-{"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, LEFT},
-{"tpgid",     "TPGID",   pr_tpgid,    sr_tpgid,   5,   0,    XXX, PIDMAX|RIGHT},
-{"trs",       "TRS",     pr_trs,      sr_trs,     4, MEM,    AIX, RIGHT},
-{"trss",      "TRSS",    pr_trs,      sr_trs,     4, MEM,    BSD, RIGHT}, /* 4.3BSD NET/2 */
-{"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, PIDMAX|RIGHT},
-{"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, PIDMAX|RIGHT},
-{"tsiz",      "TSIZ",    pr_tsiz,     sr_nop,     4,   0,    BSD, RIGHT},
-{"tt",        "TT",      pr_tty8,     sr_tty,     8,   0,    BSD, LEFT},
-{"tty",       "TT",      pr_tty8,     sr_tty,     8,   0,    U98, LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */
-{"tty4",      "TTY",     pr_tty4,     sr_tty,     4,   0,    LNX, LEFT},
-{"tty8",      "TTY",     pr_tty8,     sr_tty,     8,   0,    LNX, LEFT},
-{"u_procp",   "UPROCP",  pr_nop,      sr_nop,     6,   0,    DEC, RIGHT},
-{"ucmd",      "CMD",     pr_comm,     sr_cmd,    16, COM,    DEC, UNLIMITED}, /*ucomm*/
-{"ucomm",     "COMMAND", pr_comm,     sr_nop,    16, COM,    XXX, UNLIMITED}, /*comm*/
-{"uid",       "UID",     pr_euid,     sr_euid,    5,   0,    XXX, RIGHT},
-{"uid_hack",  "UID",     pr_euser,    sr_nop,     8, USR,    XXX, USER},
-{"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, RIGHT},
-{"uname",     "USER",    pr_euser,    sr_euser,   8, USR,    DEC, USER}, /* man page misspelling of user? */
-{"upr",       "UPR",     pr_nop,      sr_nop,     3,   0,    BSD, RIGHT}, /*usrpri*/
-{"uprocp",    "-",       pr_nop,      sr_nop,     1,   0,    BSD, RIGHT},
-{"user",      "USER",    pr_euser,    sr_euser,   8, USR,    U98, USER}, /* BSD n forces this to UID */
-{"usertime",  "USER",    pr_nop,      sr_nop,     4,   0,    DEC, RIGHT},
-{"usrpri",    "UPR",     pr_nop,      sr_nop,     3,   0,    DEC, RIGHT}, /*upr*/
-{"utime",     "UTIME",   pr_nop,      sr_utime,   6,   0,    LNx, CUMUL|RIGHT},
-{"vm_data",   "DATA",    pr_nop,      sr_vm_data, 5,   0,    LNx, RIGHT},
-{"vm_exe",    "EXE",     pr_nop,      sr_vm_exe,  5,   0,    LNx, RIGHT},
-{"vm_lib",    "LIB",     pr_nop,      sr_vm_lib,  5,   0,    LNx, RIGHT},
-{"vm_lock",   "LCK",     pr_nop,      sr_vm_lock, 3,   0,    LNx, RIGHT},
-{"vm_stack",  "STACK",   pr_nop,      sr_vm_stack, 5,  0,    LNx, RIGHT},
-{"vsize",     "VSZ",     pr_vsz,      sr_vsize,   5,   0,    DEC, RIGHT}, /*vsz*/
-{"vsz",       "VSZ",     pr_vsz,      sr_vm_size, 5,   0,    U98, RIGHT}, /*vsize*/
-{"wchan",     "WCHAN",   pr_wchan,    sr_wchan,   6, WCH,    XXX, WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
-{"wname",     "WCHAN",   pr_wname,    sr_nop,     6, WCH,    SGI, WCHAN}, /* opposite of nwchan */
-{"xstat",     "XSTAT",   pr_nop,      sr_nop,     5,   0,    BSD, RIGHT},
-{"~",         "-",       pr_nop,      sr_nop,     1,   0,    LNX, RIGHT}  /* NULL would ruin alphabetical order */
+{"%cpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    BSD, ET|RIGHT}, /*pcpu*/
+{"%mem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    BSD, PO|RIGHT}, /*pmem*/
+{"acflag",    "ACFLG",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT}, /*acflg*/
+{"acflg",     "ACFLG",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*acflag*/
+{"addr",      "ADDR",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
+{"addr_1",    "ADDR",    pr_nop,      sr_nop,     1,   0,    LNX, AN|LEFT},
+{"alarm",     "ALARM",   pr_alarm,    sr_it_real_value,5, 0, LNX, AN|RIGHT},
+{"argc",      "ARGC",    pr_nop,      sr_nop,     4,   0,    LNX, PO|RIGHT},
+{"args",      "COMMAND", pr_args,     sr_nop,    16, ARG,    U98, PO|UNLIMITED}, /*command*/
+{"atime",     "TIME",    pr_time,     sr_nop,     8,   0,    SOE, ET|CUMUL|RIGHT}, /*cputime*/ /* was 6 wide */
+{"blocked",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigmask*/
+{"bnd",       "BND",     pr_nop,      sr_nop,     1,   0,    AIX, TO|RIGHT},
+{"bsdstart",  "START",   pr_bsdstart, sr_nop,     6,   0,    LNX, AN|RIGHT},
+{"bsdtime",   "TIME",    pr_bsdtime,  sr_nop,     6,   0,    LNX, AN|RIGHT},
+{"c",         "C",       pr_c,        sr_pcpu,    2,   0,    SUN, ET|RIGHT},
+{"caught",    "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigcatch*/
+{"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, TO|LEFT},
+{"cls",       "-",       pr_nop,      sr_nop,     1,   0,    HPU, AN|RIGHT},
+{"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, AN|RIGHT},
+{"cmd",       "CMD",     pr_args,     sr_cmd,    16, ARG,    DEC, PO|UNLIMITED}, /*ucomm*/
+{"cmin_flt",  "-",       pr_nop,      sr_cmin_flt, 1,  0,    LNX, AN|RIGHT},
+{"cnswap",    "-",       pr_nop,      sr_cnswap,  1,   0,    LNX, AN|RIGHT},
+{"comm",      "COMMAND", pr_comm,     sr_nop,    16, COM,    U98, PO|UNLIMITED}, /*ucomm*/
+{"command",   "COMMAND", pr_args,     sr_nop,    16, ARG,    XXX, PO|UNLIMITED}, /*args*/
+{"context",   "CONTEXT", pr_context,  sr_context,40,   0,    LNX, AN|LEFT},
+{"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, ET|RIGHT}, /*cpu*/
+{"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
+{"cputime",   "TIME",    pr_time,     sr_nop,     8,   0,    DEC, ET|RIGHT}, /*time*/
+{"cstime",    "-",       pr_nop,      sr_cstime,  1,   0,    LNX, AN|RIGHT},
+{"cursig",    "CURSIG",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
+{"cutime",    "-",       pr_nop,      sr_cutime,  1,   0,    LNX, AN|RIGHT},
+{"cwd",       "CWD",     pr_nop,      sr_nop,     3,   0,    LNX, AN|LEFT},
+{"drs",       "DRS",     pr_drs,      sr_drs,     4, MEM,    LNX, ET|RIGHT},
+{"dsiz",      "DSIZ",    pr_dsiz,     sr_nop,     4,   0,    LNX, ET|RIGHT},
+{"egid",      "EGID",    pr_egid,     sr_egid,    5,   0,    LNX, ET|RIGHT},
+{"egroup",    "EGROUP",  pr_egroup,   sr_egroup,  8, GRP,    LNX, ET|USER},
+{"eip",       "EIP",     pr_eip,      sr_kstk_eip, 8,  0,    LNX, TO|RIGHT},
+{"end_code",  "E_CODE",  pr_nop,      sr_end_code, 8,  0,    LNx, PO|RIGHT},
+{"environ","ENVIRONMENT",pr_nop,      sr_nop,    11, ENV,    LNx, PO|UNLIMITED},
+{"esp",       "ESP",     pr_esp,      sr_kstk_esp, 8,  0,    LNX, PO|RIGHT},
+{"etime",     "ELAPSED", pr_etime,    sr_nop,    11,   0,    U98, AN|RIGHT}, /* was 7 wide */
+{"euid",      "EUID",    pr_euid,     sr_euid,    5,   0,    LNX, ET|RIGHT},
+{"euser",     "EUSER",   pr_euser,    sr_euser,   8, USR,    LNX, ET|USER},
+{"f",         "F",       pr_flag,     sr_nop,     1,   0,    XXX, ET|RIGHT}, /*flags*/
+{"fgid",      "FGID",    pr_fgid,     sr_fgid,    5,   0,    LNX, ET|RIGHT},
+{"fgroup",    "FGROUP",  pr_fgroup,   sr_fgroup,  8, GRP,    LNX, ET|USER},
+{"flag",      "F",       pr_flag,     sr_flags,   1,   0,    DEC, ET|RIGHT},
+{"flags",     "F",       pr_flag,     sr_flags,   1,   0,    BSD, ET|RIGHT}, /*f*/ /* was FLAGS, 8 wide */
+{"fname",     "COMMAND", pr_fname,    sr_nop,     8,   0,    SUN, PO|LEFT},
+{"fsgid",     "FSGID",   pr_fgid,     sr_fgid,    5,   0,    LNX, ET|RIGHT},
+{"fsgroup",   "FSGROUP", pr_fgroup,   sr_fgroup,  8, GRP,    LNX, ET|USER},
+{"fsuid",     "FSUID",   pr_fuid,     sr_fuid,    5,   0,    LNX, ET|RIGHT},
+{"fsuser",    "FSUSER",  pr_fuser,    sr_fuser,   8, USR,    LNX, ET|USER},
+{"fuid",      "FUID",    pr_fuid,     sr_fuid,    5,   0,    LNX, ET|RIGHT},
+{"fuser",     "FUSER",   pr_fuser,    sr_fuser,   8, USR,    LNX, ET|USER},
+{"gid",       "GID",     pr_egid,     sr_egid,    5,   0,    SUN, ET|RIGHT},
+{"group",     "GROUP",   pr_egroup,   sr_egroup,  5, GRP,    U98, ET|USER}, /* was 8 wide */
+{"ignored",   "IGNORED", pr_sigignore,sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigignore*/
+{"inblk",     "INBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*inblock*/
+{"inblock",   "INBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*inblk*/
+{"intpri",    "PRI",     pr_opri,     sr_priority, 3,  0,    HPU, TO|RIGHT},
+{"jobc",      "JOBC",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
+{"ktrace",    "KTRACE",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
+{"ktracep",   "KTRACEP", pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
+{"label",     "LABEL",   pr_nop,      sr_nop,    25,  0,     SGI, AN|LEFT},
+{"lim",       "LIM",     pr_lim,      sr_rss_rlim, 5,  0,    BSD, AN|RIGHT},
+{"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, AN|LEFT}, /*logname*/   /* double check */
+{"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, AN|LEFT}, /*login*/
+{"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, AN|LEFT},
+{"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, AN|RIGHT},
+{"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, ET|RIGHT}, /* login ID */
+{"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, ET|USER}, /* login USER */
+{"lwp",       "LWP",     pr_thread,   sr_tid,     5,   0,    SUN, TO|PIDMAX|RIGHT},
+{"m_drs",     "DRS",     pr_drs,      sr_drs,     5, MEM,    LNx, PO|RIGHT},
+{"m_dt",      "DT",      pr_nop,      sr_dt,      4, MEM,    LNx, PO|RIGHT},
+{"m_lrs",     "LRS",     pr_nop,      sr_lrs,     5, MEM,    LNx, PO|RIGHT},
+{"m_resident", "RES",    pr_nop,      sr_resident, 5,MEM,    LNx, PO|RIGHT},
+{"m_share",   "SHRD",    pr_nop,      sr_share,   5, MEM,    LNx, PO|RIGHT},
+{"m_size",    "SIZE",    pr_size,     sr_size,    5, MEM,    LNX, PO|RIGHT},
+{"m_swap",    "SWAP",    pr_nop,      sr_nop,     5,   0,    LNx, PO|RIGHT},
+{"m_trs",     "TRS",     pr_trs,      sr_trs,     5, MEM,    LNx, PO|RIGHT},
+{"maj_flt",   "MAJFL",   pr_majflt,   sr_maj_flt, 6,   0,    LNX, AN|CUMUL|RIGHT},
+{"majflt",    "MAJFLT",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
+{"min_flt",   "MINFL",   pr_minflt,   sr_min_flt, 6,   0,    LNX, AN|CUMUL|RIGHT},
+{"minflt",    "MINFLT",  pr_minflt,   sr_min_flt, 6,   0,    XXX, AN|RIGHT},
+{"msgrcv",    "MSGRCV",  pr_nop,      sr_nop,     6,   0,    XXX, AN|RIGHT},
+{"msgsnd",    "MSGSND",  pr_nop,      sr_nop,     6,   0,    XXX, AN|RIGHT},
+{"mwchan",    "MWCHAN",  pr_nop,      sr_nop,     6, WCH,    BSD, AN|WCHAN}, /* mutex (FreeBSD) */
+{"ni",        "NI",      pr_nice,     sr_nice,    3,   0,    BSD, TO|RIGHT}, /*nice*/
+{"nice",      "NI",      pr_nice,     sr_nice,    3,   0,    U98, TO|RIGHT}, /*ni*/
+{"nivcsw",    "IVCSW",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
+{"nlwp",      "NLWP",    pr_nlwp,     sr_nop,     4,   0,    SUN, AN|RIGHT},
+{"nsignals",  "NSIGS",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*nsigs*/
+{"nsigs",     "NSIGS",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*nsignals*/
+{"nswap",     "NSWAP",   pr_nop,      sr_nswap,   5,   0,    XXX, AN|RIGHT},
+{"nvcsw",     "VCSW",    pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
+{"nwchan",    "WCHAN",   pr_nwchan,   sr_nop,     6,   0,    XXX, TO|RIGHT},
+{"opri",      "PRI",     pr_opri,     sr_priority, 3,  0,    SUN, TO|RIGHT},
+{"osz",       "SZ",      pr_nop,      sr_nop,     2,   0,    SUN, PO|RIGHT},
+{"oublk",     "OUBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*oublock*/
+{"oublock",   "OUBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*oublk*/
+{"p_ru",      "P_RU",    pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
+{"paddr",     "PADDR",   pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
+{"pagein",    "PAGEIN",  pr_majflt,   sr_nop,     6,   0,    XXX, AN|RIGHT},
+{"pcpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    U98, TO|RIGHT}, /*%cpu*/
+{"pending",   "PENDING", pr_sig,      sr_nop,     9,   0,    BSD, ET|SIGNAL}, /*sig*/
+{"pgid",      "PGID",    pr_pgid,     sr_pgrp,    5,   0,    U98, PO|PIDMAX|RIGHT},
+{"pgrp",      "PGRP",    pr_pgid,     sr_pgrp,    5,   0,    LNX, PO|PIDMAX|RIGHT},
+{"pid",       "PID",     pr_pid,      sr_tgid,    5,   0,    U98, PO|PIDMAX|RIGHT},
+{"pmem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    XXX, PO|RIGHT}, /*%mem*/
+{"poip",      "-",       pr_nop,      sr_nop,     1,   0,    BSD, AN|RIGHT},
+{"policy",    "POL",     pr_class,    sr_sched,   3,   0,    DEC, TO|LEFT},
+{"ppid",      "PPID",    pr_ppid,     sr_ppid,    5,   0,    U98, AN|PIDMAX|RIGHT},
+{"pri",       "PRI",     pr_pri,      sr_nop,     3,   0,    XXX, TO|RIGHT},
+{"priority",  "PRI",     pr_priority, sr_priority, 3,  0,    LNX, TO|RIGHT}, /*ni,nice*/ /* from Linux sorting names */
+{"prmgrp",    "-",       pr_nop,      sr_nop,     1,   0,    HPU, PO|RIGHT},
+{"prmid",     "-",       pr_nop,      sr_nop,     1,   0,    HPU, PO|RIGHT},
+{"pset",      "PSET",    pr_nop,      sr_nop,     4,   0,    DEC, TO|RIGHT},
+{"psr",       "PSR",     pr_psr,      sr_nop,     3,   0,    DEC, TO|RIGHT},
+{"psxpri",    "PPR",     pr_nop,      sr_nop,     3,   0,    DEC, TO|RIGHT},
+{"re",        "RE",      pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT},
+{"resident",  "RES",     pr_nop,      sr_resident, 5,MEM,    LNX, PO|RIGHT},
+{"rgid",      "RGID",    pr_rgid,     sr_rgid,    5,   0,    XXX, ET|RIGHT},
+{"rgroup",    "RGROUP",  pr_rgroup,   sr_rgroup,  8, GRP,    U98, ET|USER}, /* was 8 wide */
+{"rlink",     "RLINK",   pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
+{"rss",       "RSS",     pr_rss,      sr_rss,     4,   0,    XXX, PO|RIGHT}, /* was 5 wide */
+{"rssize",    "RSS",     pr_rss,      sr_vm_rss,  4,   0,    DEC, PO|RIGHT}, /*rsz*/
+{"rsz",       "RSZ",     pr_rss,      sr_vm_rss,  4,   0,    BSD, PO|RIGHT}, /*rssize*/
+{"rtprio",    "RTPRIO",  pr_rtprio,   sr_rtprio,  6,   0,    BSD, TO|RIGHT},
+{"ruid",      "RUID",    pr_ruid,     sr_ruid,    5,   0,    XXX, ET|RIGHT},
+{"ruser",     "RUSER",   pr_ruser,    sr_ruser,   8, USR,    U98, ET|USER},
+{"s",         "S",       pr_s,        sr_state,   1,   0,    SUN, ET|LEFT}, /*stat,state*/
+{"sched",     "SCH",     pr_sched,    sr_sched,   3,   0,    AIX, TO|RIGHT},
+{"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, AN|RIGHT},  /* man page misspelling of scount? */
+{"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, AN|RIGHT},  /* scnt==scount, DEC claims both */
+{"secsid",    "SID",     pr_secsid,   sr_secsid,  6,   0,    LNX, AN|RIGHT}, /* Flask Linux */
+{"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT},
+{"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, PO|PIDMAX|RIGHT},
+{"sgi_p",     "P",       pr_sgi_p,    sr_nop,     1,   0,    LNX, TO|RIGHT}, /* "cpu" number */
+{"sgi_rss",   "RSS",     pr_rss,      sr_nop,     4,   0,    LNX, PO|LEFT}, /* SZ:RSS */
+{"sgid",      "SGID",    pr_sgid,     sr_sgid,    5,   0,    LNX, ET|RIGHT},
+{"sgroup",    "SGROUP",  pr_sgroup,   sr_sgroup,  8, GRP,    LNX, ET|USER},
+{"share",     "-",       pr_nop,      sr_share,   1, MEM,    LNX, PO|RIGHT},
+{"sid",       "SID",     pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT}, /* Sun & HP */
+{"sig",       "PENDING", pr_sig,      sr_nop,     9,   0,    XXX, ET|SIGNAL}, /*pending*/
+{"sig_block", "BLOCKED",  pr_sigmask, sr_nop,     9,   0,    LNX, TO|SIGNAL},
+{"sig_catch", "CATCHED", pr_sigcatch, sr_nop,     9,   0,    LNX, TO|SIGNAL},
+{"sig_ignore", "IGNORED",pr_sigignore, sr_nop,    9,   0,    LNX, TO|SIGNAL},
+{"sig_pend",  "SIGNAL",   pr_sig,     sr_nop,     9,   0,    LNX, ET|SIGNAL},
+{"sigcatch",  "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*caught*/
+{"sigignore", "IGNORED", pr_sigignore,sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*ignored*/
+{"sigmask",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*blocked*/
+{"size",      "SZ",      pr_swapable, sr_swapable, 1,  0,    SCO, PO|RIGHT},
+{"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, AN|RIGHT},
+{"spid",      "SPID",    pr_thread,   sr_tid,     5,   0,    SGI, TO|PIDMAX|RIGHT},
+{"stackp",    "STACKP",  pr_stackp,   sr_nop,     8,   0,    LNX, AN|RIGHT}, /*start_stack*/
+{"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, AN|RIGHT},
+{"start_code", "S_CODE",  pr_nop,     sr_start_code, 8, 0,   LNx, PO|RIGHT},
+{"start_stack", "STACKP", pr_stackp,  sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*stackp*/
+{"start_time", "START",  pr_stime,    sr_start_time, 5, 0,   LNx, AN|RIGHT},
+{"stat",      "STAT",    pr_stat,     sr_state,   4,   0,    BSD, TO|LEFT}, /*state,s*/
+{"state",     "S",       pr_s,        sr_state,   1,   0,    XXX, TO|LEFT}, /*stat,s*/ /* was STAT */
+{"status",    "STATUS",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
+{"stime",     "STIME",   pr_stime,    sr_stime,   5,   0,    XXX, AN|/* CUMUL| */RIGHT}, /* was 6 wide */
+{"suid",      "SUID",    pr_suid,     sr_suid,    5,   0,    LNx, ET|RIGHT},
+{"suser",     "SUSER",   pr_suser,    sr_suser,   8, USR,    LNx, ET|USER},
+{"svgid",     "SVGID",   pr_sgid,     sr_sgid,    5,   0,    XXX, ET|RIGHT},
+{"svgroup",   "SVGROUP", pr_sgroup,   sr_sgroup,  8, GRP,    LNX, ET|USER},
+{"svuid",     "SVUID",   pr_suid,     sr_suid,    5,   0,    XXX, ET|RIGHT},
+{"svuser",    "SVUSER",  pr_suser,    sr_suser,   8, USR,    LNX, ET|USER},
+{"systime",   "SYSTEM",  pr_nop,      sr_nop,     6,   0,    DEC, ET|RIGHT},
+{"sz",        "SZ",      pr_sz,       sr_nop,     5,   0,    HPU, PO|RIGHT},
+{"tdev",      "TDEV",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
+{"thcount",   "THCNT",   pr_nlwp,     sr_nop,     5,   0,    AIX, AN|RIGHT},
+{"tid",       "TID",     pr_thread,   sr_tid,     5,   0,    AIX, TO|PIDMAX|RIGHT},
+{"time",      "TIME",    pr_time,     sr_nop,     8,   0,    U98, ET|CUMUL|RIGHT}, /*cputime*/ /* was 6 wide */
+{"timeout",   "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, AN|RIGHT},
+{"tmout",     "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, AN|RIGHT},
+{"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, AN|LEFT},
+{"tpgid",     "TPGID",   pr_tpgid,    sr_tpgid,   5,   0,    XXX, AN|PIDMAX|RIGHT},
+{"trs",       "TRS",     pr_trs,      sr_trs,     4, MEM,    AIX, PO|RIGHT},
+{"trss",      "TRSS",    pr_trs,      sr_trs,     4, MEM,    BSD, PO|RIGHT}, /* 4.3BSD NET/2 */
+{"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, AN|PIDMAX|RIGHT},
+{"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, AN|PIDMAX|RIGHT},
+{"tsiz",      "TSIZ",    pr_tsiz,     sr_nop,     4,   0,    BSD, AN|RIGHT},
+{"tt",        "TT",      pr_tty8,     sr_tty,     8,   0,    BSD, AN|LEFT},
+{"tty",       "TT",      pr_tty8,     sr_tty,     8,   0,    U98, AN|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */
+{"tty4",      "TTY",     pr_tty4,     sr_tty,     4,   0,    LNX, AN|LEFT},
+{"tty8",      "TTY",     pr_tty8,     sr_tty,     8,   0,    LNX, AN|LEFT},
+{"u_procp",   "UPROCP",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
+{"ucmd",      "CMD",     pr_comm,     sr_cmd,    16, COM,    DEC, PO|UNLIMITED}, /*ucomm*/
+{"ucomm",     "COMMAND", pr_comm,     sr_nop,    16, COM,    XXX, PO|UNLIMITED}, /*comm*/
+{"uid",       "UID",     pr_euid,     sr_euid,    5,   0,    XXX, ET|RIGHT},
+{"uid_hack",  "UID",     pr_euser,    sr_nop,     8, USR,    XXX, ET|USER},
+{"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT},
+{"uname",     "USER",    pr_euser,    sr_euser,   8, USR,    DEC, AN|USER}, /* man page misspelling of user? */
+{"upr",       "UPR",     pr_nop,      sr_nop,     3,   0,    BSD, TO|RIGHT}, /*usrpri*/
+{"uprocp",    "-",       pr_nop,      sr_nop,     1,   0,    BSD, AN|RIGHT},
+{"user",      "USER",    pr_euser,    sr_euser,   8, USR,    U98, ET|USER}, /* BSD n forces this to UID */
+{"usertime",  "USER",    pr_nop,      sr_nop,     4,   0,    DEC, ET|RIGHT},
+{"usrpri",    "UPR",     pr_nop,      sr_nop,     3,   0,    DEC, TO|RIGHT}, /*upr*/
+{"utime",     "UTIME",   pr_nop,      sr_utime,   6,   0,    LNx, ET|CUMUL|RIGHT},
+{"vm_data",   "DATA",    pr_nop,      sr_vm_data, 5,   0,    LNx, PO|RIGHT},
+{"vm_exe",    "EXE",     pr_nop,      sr_vm_exe,  5,   0,    LNx, PO|RIGHT},
+{"vm_lib",    "LIB",     pr_nop,      sr_vm_lib,  5,   0,    LNx, PO|RIGHT},
+{"vm_lock",   "LCK",     pr_nop,      sr_vm_lock, 3,   0,    LNx, PO|RIGHT},
+{"vm_stack",  "STACK",   pr_nop,      sr_vm_stack, 5,  0,    LNx, PO|RIGHT},
+{"vsize",     "VSZ",     pr_vsz,      sr_vsize,   5,   0,    DEC, PO|RIGHT}, /*vsz*/
+{"vsz",       "VSZ",     pr_vsz,      sr_vm_size, 5,   0,    U98, PO|RIGHT}, /*vsize*/
+{"wchan",     "WCHAN",   pr_wchan,    sr_wchan,   6, WCH,    XXX, TO|WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
+{"wname",     "WCHAN",   pr_wname,    sr_nop,     6, WCH,    SGI, TO|WCHAN}, /* opposite of nwchan */
+{"xstat",     "XSTAT",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT},
+{"~",         "-",       pr_nop,      sr_nop,     1,   0,    LNX, AN|RIGHT}  /* NULL would ruin alphabetical order */
 };
+
+#undef PO
+#undef TO
+#undef AN
+#undef ET
 
 static const int format_array_count = sizeof(format_array)/sizeof(format_struct);
 

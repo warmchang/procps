@@ -17,13 +17,13 @@
 #include "../proc/readproc.h"
 #include "../proc/procps.h"
 
-#define session_leader(p)       ((p)->session == (p)->tgid)
-#define process_group_leader(p) ((p)->pgid    == (p)->tgid)
-#define without_a_tty(p)        ((unsigned short)((p)->tty) == (unsigned short)0)
-#define some_other_user(p)      ((p)->euid    != cached_euid)
+//#define process_group_leader(p) ((p)->pgid    == (p)->tgid)
+//#define some_other_user(p)      ((p)->euid    != cached_euid)
+#define has_our_euid(p)         ((unsigned)(p)->euid    == (unsigned)cached_euid)
+#define on_our_tty(p)           ((unsigned)(p)->tty == (unsigned)cached_tty)
 #define running(p)              (((p)->state=='R')||((p)->state=='D'))
-#define has_our_euid(p)         ((unsigned short)((p)->euid) == (unsigned short)cached_euid)
-#define on_our_tty(p)           ((unsigned short)((p)->tty)  == (unsigned short)cached_tty)
+#define session_leader(p)       ((p)->session == (p)->tgid)
+#define without_a_tty(p)        (!(p)->tty)
 
 static unsigned long select_bits = 0;
 
@@ -87,7 +87,7 @@ static int proc_was_listed(proc_t *buf){
 
 #define return_if_match(foo,bar) \
         i=sn->n; while(i--) \
-        if((unsigned short )(buf->foo) == (unsigned short)(*(sn->u+i)).bar) \
+        if((unsigned)(buf->foo) == (unsigned)(*(sn->u+i)).bar) \
         return 1
 
     break; case SEL_RUID: return_if_match(ruid,uid);

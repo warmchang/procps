@@ -9,7 +9,7 @@ EXTERN_C_BEGIN
 #define ABBREV_TTY  2     /* remove tty           */
 #define ABBREV_PTS  4     /* remove pts/          */
 
-extern unsigned dev_to_tty(char *restrict ret, unsigned chop, int dev, int pid, unsigned int flags);
+extern unsigned dev_to_tty(char *restrict ret, unsigned chop, dev_t dev_t_dev, int pid, unsigned int flags);
 
 extern int tty_to_dev(const char *restrict const name);
 

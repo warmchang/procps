@@ -1,3 +1,7 @@
+procps-3.1.13 --> procps-3.1.14
+
+handle 32-bit dev_t of Linux 2.6
+
 procps-3.1.12 --> procps-3.1.13
 
 ps: can display NPTL threads w/ kernel patch
