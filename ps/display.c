@@ -48,7 +48,7 @@ static void signal_handler(int signo){
   _exit(signo+128);
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////
 #undef DEBUG
 #ifdef DEBUG
 void init_stack_trace(char *prog_name);
@@ -153,6 +153,7 @@ static void arg_show(void){
 }
 
 #endif
+//////////////////////////////////////////////////////////////////////////
 
 
 /***** check the header */
@@ -376,7 +377,7 @@ not_root:
 /***** sorted or forest */
 static void fancy_spew(void){
   proc_t *retbuf = NULL;
-  PROCTAB* ptp;
+  PROCTAB *restrict ptp;
   int n = 0;  /* number of processes & index into array */
   ptp = openproc(needs_for_format | needs_for_sort);
   if(!ptp) {

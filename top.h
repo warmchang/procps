@@ -128,14 +128,14 @@
    } while (0)
 #define PUFF(fmt,arg...) do { \
       char _str[ROWBUFSIZ]; \
-      register char *_ptr = &Pseudo_scrn[Pseudo_row * Pseudo_cols]; \
-      register int _len = snprintf(_str, sizeof(_str), fmt, ## arg); \
-      if (Batch) fputs(_str, stdout); \
+      char *_ptr = &Pseudo_scrn[Pseudo_row * Pseudo_cols]; \
+      int _len = 1 + snprintf(_str, sizeof(_str), fmt, ## arg); \
+      if (Batch) putp(_str); \
       else { \
          if (!memcmp(_ptr, _str, _len)) \
-            putchar('\n'); \
+            putp("\n"); \
          else { \
-            memcpy(_ptr, _str, ++_len); \
+            memcpy(_ptr, _str, _len); \
             putp(_ptr); \
       } } Pseudo_row++; \
    } while (0)
@@ -523,11 +523,11 @@ typedef struct win {
 /*        for each possible field, in the form of:                        */
 /*atic int          sort_P_XXX (const proc_t **P, const proc_t **Q);       */
 /*        additional specialized sort callback(s)                         */
-static int          sort_HIST_t (const HIST_t *P, const HIST_t *Q);
+//atic int          sort_HIST_t (const HIST_t *P, const HIST_t *Q);
 /*------  Tiny useful routine(s)  ----------------------------------------*/
 //atic int          chin (int ech, char *buf, unsigned cnt);
 //atic const char  *fmtmk (const char *fmts, ...);
-//atic inline char *scat (register char *dst, register const char *src);
+//atic inline char *scat (char *dst, const char *src);
 //atic char        *strim (int sp, char *str);
 //atic const char  *tg2 (int x, int y);
 /*------  Exit/Interrput routines  ---------------------------------------*/
@@ -551,7 +551,7 @@ static int          sort_HIST_t (const HIST_t *P, const HIST_t *Q);
 //atic void        *alloc_c (unsigned numb);
 //atic void        *alloc_r (void *q, unsigned numb);
 //atic CPUS_t      *cpus_refresh (CPUS_t *cpus);
-//atic void         prochlp (register proc_t *this);
+//atic void         prochlp (proc_t *this);
 //atic proc_t     **procs_refresh (proc_t **table, int flags);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void         before (char *me);

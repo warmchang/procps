@@ -80,9 +80,8 @@
 
 #define COLWID 240 /* satisfy snprintf, which is faster than sprintf */
 
-static char  whitespace_and_outbuf[OUTBUF_SIZE + SPACE_AMOUNT + PAGE_SIZE*2];
-static char *outbuf = whitespace_and_outbuf+SPACE_AMOUNT;
-static char *whitespace = whitespace_and_outbuf;
+static char *outbuf;
+
 static unsigned max_rightward = 0x12345678; /* space for RIGHT stuff */
 static unsigned max_leftward = 0x12345678; /* space for LEFT stuff */
 
@@ -100,7 +99,7 @@ static unsigned max_leftward = 0x12345678; /* space for LEFT stuff */
 
 static int wide_signals;  /* true if we have room */
 
-static proc_t *pp;     /* the process being printed */
+static const proc_t *pp;     /* the process being printed */
 
 static unsigned long seconds_since_1970;
 static unsigned long time_of_boot;
@@ -1146,7 +1145,7 @@ static int sr_context ( const proc_t* P, const proc_t* Q ) {
 /* temporary hack -- mark new stuff grabbed from Debian ps */
 #define LNx LNX
 
-/* there are about 195 listed */
+/* there are about 211 listed */
 
 /* Many of these are placeholders for unsupported options. */
 static const format_struct format_array[] = {
@@ -1605,7 +1604,7 @@ static void check_header_width(void){
 
 
 /********** show one process (NULL proc prints header) **********/
-void show_one_proc(proc_t* p){
+void show_one_proc(const proc_t *restrict const p){
   /* unknown: maybe set correct & actual to 1, remove +/- 1 below */
   int correct  = 0;  /* screen position we should be at */
   int actual   = 0;  /* screen position we are at */
@@ -1614,7 +1613,7 @@ void show_one_proc(proc_t* p){
   int space    = 0;  /* amount of space we actually need to print */
   int dospace  = 0;  /* previous column determined that we need a space */
   int legit    = 0;  /* legitimately stolen extra space */
-  format_node *fmt = format_list;
+  const format_node *restrict fmt = format_list;
   static int did_stuff = 0;  /* have we ever printed anything? */
 
   if(-1==(long)p){    /* true only once, at the end */
@@ -1724,7 +1723,7 @@ void show_one_proc(proc_t* p){
      */
     space = correct - actual + leftpad;
     if(space<1) space=dospace;
-    if(space>SPACE_AMOUNT) space=SPACE_AMOUNT;
+    if(space>page_size) space=page_size;  // only have so much available
 
     /* print data, set x position stuff */
     amount = strlen(outbuf);  /* post-chop data width */
@@ -1759,6 +1758,7 @@ void show_one_proc(proc_t* p){
   }
 }
 
+
 #ifdef TESTING
 static void sanity_check(void){
   format_struct *fs = format_array;
@@ -1769,19 +1769,11 @@ static void sanity_check(void){
 }
 #endif
 
+
 void init_output(void){
-  memset(whitespace, ' ', PAGE_SIZE);
-#if 0
-  mprotect(whitespace, PAGE_SIZE, PROT_READ); /* FIXME may fail if unaligned */
-  mprotect(
-    (void *)((unsigned long)(whitespace_and_outbuf-PAGE_SIZE) &~ (PAGE_SIZE-1)),
-    PAGE_SIZE, PROT_NONE
-  );
-#endif
-  seconds_since_1970 = time(NULL);
-  time_of_boot = seconds_since_1970 - seconds_since_boot;
-  meminfo();
-  switch(getpagesize()){
+  int outbuf_pages;
+
+  switch(page_size){
   case 65536: page_shift = 16; break;
   case 32768: page_shift = 15; break;
   case 16384: page_shift = 14; break;
@@ -1791,5 +1783,28 @@ void init_output(void){
   case  2048: page_shift = 11; break;
   case  1024: page_shift = 10; break;
   }
+
+  outbuf_pages = OUTBUF_SIZE/page_size+1;  // round up
+  outbuf = mmap(
+    0,
+    page_size * (1+1+outbuf_pages+1),
+    PROT_READ | PROT_WRITE,
+    MAP_PRIVATE | MAP_ANONYMOUS,
+    -1,
+    0
+  );
+  mprotect(outbuf, page_size, PROT_NONE); // gaurd page
+  outbuf += page_size;
+  memset(outbuf, ' ', page_size);
+  mprotect(outbuf, page_size, PROT_READ); // space page
+  outbuf += page_size;
+  // now outbuf points where we want it
+  mprotect(outbuf + page_size * outbuf_pages, page_size, PROT_NONE); // gaurd page
+
+  seconds_since_1970 = time(NULL);
+  time_of_boot = seconds_since_1970 - seconds_since_boot;
+
+  meminfo();
+
   check_header_width();
 }

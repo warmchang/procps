@@ -9,14 +9,16 @@
  * GNU Library General Public License for more details.
  */                                 
 #include <sys/types.h>
+#include "../proc/procps.h"
+#include "common.h"
 
 /* sanitize a string, without the nice BSD library function:     */
 /* strvis(vis_args, k->ki_args, VIS_TAB | VIS_NL | VIS_NOSLASH)  */
-int octal_escape_str(char *dst, const char *src, size_t n){
+int octal_escape_str(char *restrict dst, const char *restrict src, size_t n){
   unsigned char c;
   char d;
   size_t i;
-  const char *codes =
+  const char codes[] =
   "Z------abtnvfr-------------e----"
   " *******************************"  /* better: do not print any space */
   "****************************\\***"
@@ -57,10 +59,10 @@ leave:
 }
 
 /* sanitize a string via one-way mangle */
-int simple_escape_str(char *dst, const char *src, size_t n){
+int simple_escape_str(char *restrict dst, const char *restrict src, size_t n){
   unsigned char c;
   size_t i;
-  const char *codes =
+  const char codes[] =
   "Z-------------------------------"
   "********************************"
   "********************************"
@@ -90,16 +92,16 @@ leave:
 }
 
 /* escape a string as desired */
-int escape_str(char *dst, const char *src, size_t n){
+int escape_str(char *restrict dst, const char *restrict src, size_t n){
   return simple_escape_str(dst, src, n);
 }
 
 /* escape an argv or environment string array */
-int escape_strlist(char *dst, const char **src, size_t n){
+int escape_strlist(char *restrict dst, const char *restrict const *restrict src, size_t n){
   size_t i = 0;
   while(*src){
     i += simple_escape_str(dst+i, *src, n-i);
-    if((n-i > 1) && (*(src+1))) dst[i++] = ' ';
+    if((n-i > 1) && src[1]) dst[i++] = ' ';
     src++;
   }
   return i;

@@ -12,6 +12,7 @@
 #ifndef PROCPS_PS_H
 #define PROCPS_PS_H
 
+#include "../proc/procps.h"
 #include "../proc/readproc.h"
 #include <asm/page.h>  /* looks safe for glibc, we need PAGE_SIZE */
 
@@ -54,23 +55,18 @@
 #define SOE 10 /* IBM's S/390 OpenEdition */
 
 /*
- * Must not overflow the output buffer:
+ * Try not to overflow the output buffer:
  *    32 pages for env+cmd
- *    8 kB pages on the Alpha
- *    5 chars for "\001 "
+ *    64 kB pages on IA-64
+ *    4 chars for "\377"
  *    plus some slack for other stuff
- * That is about 1.3 MB on the Alpha
- *
- * This isn't good enough for setuid. If anyone cares, mmap() over the
- * last page with something unwriteable.
+ * That is about 8.5 MB on IA-64, or 0.6 MB on i386
  */
 
-/* maximum escape expansion is 6, for &quot; */
-#define ESC_STRETCH 6
+/* maximum escape expansion is 4, for \377 */
+#define ESC_STRETCH 4
 /* output buffer size */
 #define OUTBUF_SIZE (32*PAGE_SIZE*ESC_STRETCH + 8*PAGE_SIZE)
-/* spaces used to right-justify things */
-#define SPACE_AMOUNT (int)(PAGE_SIZE)
 
 /******************* PS DEFINE *******************/
 
@@ -223,15 +219,15 @@ typedef struct sf_node {
 /*********************** GENERAL GLOBALS *************************/
 
 /* escape.c */
-extern int escape_strlist(char *dst, const char **src, size_t n);
-extern int escape_str(char *dst, const char *src, size_t n);
-extern int octal_escape_str(char *dst, const char *src, size_t n);
-extern int simple_escape_str(char *dst, const char *src, size_t n);
+extern int escape_strlist(char *restrict dst, const char *restrict const *restrict src, size_t n);
+extern int escape_str(char *restrict dst, const char *restrict src, size_t n);
+extern int octal_escape_str(char *restrict dst, const char *restrict src, size_t n);
+extern int simple_escape_str(char *restrict dst, const char *restrict src, size_t n);
 
 /********************* UNDECIDED GLOBALS **************/
 
 /* output.c */
-extern void show_one_proc(proc_t* p);
+extern void show_one_proc(const proc_t *restrict const p);
 extern void print_format_specifiers(void);
 extern const aix_struct *search_aix_array(const int findme);
 extern const shortsort_struct *search_shortsort_array(const int findme);
@@ -265,6 +261,7 @@ extern int             lines_to_next_header;
 extern int             max_line_width;
 extern const char     *namelist_file;
 extern int             negate_selection;
+extern int             page_size;  // "int" for math reasons?
 extern unsigned        personality;
 extern int             prefer_bsd_defaults;
 extern int             running_only;

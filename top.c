@@ -116,14 +116,15 @@ static char  Cap_clr_eol    [CAPBUFSIZ] = "",
              Caps_off       [CAPBUFSIZ] = "";
 static int   Cap_can_goto = 0;
 
-        /* Some optimization stuff...
-           The Pseudo_ guys are managed by reframewins and utilized in a macro.
+        /* Some optimization stuff reducing output demands...
+           The Pseudo_ guys are managed by wins_resize and frame_make.  They
+           are exploited in a macro and represent 90% of our optimization.
            The Stdout_buf is transparent to our code and regardless of whose
            buffer is used, stdout is flushed at frame end or if interactive. */
 static char *Pseudo_scrn;
 static int   Pseudo_row, Pseudo_cols, Pseudo_size;
 #ifndef STDOUT_IOLBF
-        // much less than typical xterm but, with luck, mostly newlines anyway
+        // less than stdout's normal buffer but with luck mostly '\n' anyway
 static char  Stdout_buf[2048];
 #endif
 
@@ -139,7 +140,7 @@ static WIN_t *Winstk [GROUPSMAX],
 
         /* Frame oriented stuff that can't remain local to any 1 function
            and/or that would be too cumbersome managed as parms,
-           and/or that are simply more efficient handle as globals */
+           and/or that are simply more efficiently handled as globals */
 static int       Frame_libflgs; // current PROC_FIILxxx flags (0 = need new)
 static unsigned  Frame_maxtask; // last known number of active tasks
                                 // ie. current 'size' of proc table
@@ -148,7 +149,7 @@ static unsigned  Frame_running, // state categories for this frame
                  Frame_stopped,
                  Frame_zombied;
 static float     Frame_tscale;  // so we can '*' vs. '/' WHEN 'pcpu'
-static int       Frame_srtflg,  // the subject window sort direction
+static int       Frame_srtflg,  // the subject window's sort direction
                  Frame_ctimes,  // the subject window's ctimes flag
                  Frame_cmdlin;  // the subject window's cmdlin flag
         /* ////////////////////////////////////////////////////////////// */
@@ -780,7 +781,7 @@ static const char *scale_tics (TICS_t tics, const int width)
          * Handle our own memory stuff without the risk of leaving the
          * user's terminal in an ugly state should things go sour. */
 
-static void *alloc_c (unsigned numb)
+static void *alloc_c (unsigned numb) MALLOC
 {
    void * p;
 
@@ -791,7 +792,7 @@ static void *alloc_c (unsigned numb)
 }
 
 
-static void *alloc_r (void *q, unsigned numb)
+static void *alloc_r (void *q, unsigned numb) MALLOC
 {
    void *p;
 
@@ -808,7 +809,7 @@ static void *alloc_r (void *q, unsigned numb)
          * as follows:
          *    cpus[0] thru cpus[n] == tics for each separate cpu
          *    cpus[Cpu_tot]        == tics from the 1st /proc/stat line */
-static CPUS_t *cpus_refresh (CPUS_t *cpus)
+static CPUS_t *cpus_refresh (CPUS_t *restrict cpus)
 {
    static FILE *fp = NULL;
    int i;
@@ -955,7 +956,7 @@ static proc_t **procs_refresh (proc_t **table, int flags)
 #define ENTsz  sizeof(proc_t)
    static unsigned savmax = 0;          // first time, Bypass: (i)
    proc_t *ptsk = (proc_t *)-1;         // first time, Force: (ii)
-   unsigned curmax = 0;        // every time  (jeeze)
+   unsigned curmax = 0;                 // every time  (jeeze)
    PROCTAB* PT;
 
    prochlp(NULL);                       // prep for a new frame
@@ -1272,13 +1273,13 @@ static void whack_terminal (void)
                  NOT reflect the true field type found in proc_t -- this plus
                  a cast when/if displayed provides minimal width protection. */
 static FTAB_t  Fieldstab[] = {
-// .lflg anomolies:
-//     P_UID, L_NONE  - natural outgrowth of 'stat()' in readproc        (euid)
-//     P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
-//     P_CMD, L_stat  - may yet require L_CMDLINE in reframewins  (cmd/cmdline)
-//     L_EITHER       - must L_status, else 64-bit math, __udivdi3 on 32-bit !
-//   head           fmts     width   scale  sort      desc                     lflg
-//   -----------    -------  ------  -----  --------  ----------------------   --------
+/* .lflg anomolies:
+      P_UID, L_NONE  - natural outgrowth of 'stat()' in readproc        (euid)
+      P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
+      P_CMD, L_stat  - may yet require L_CMDLINE in reframewins  (cmd/cmdline)
+      L_EITHER       - must L_status, else 64-bit math, __udivdi3 on 32-bit !
+     head           fmts     width   scale  sort      desc                     lflg
+     -----------    -------  ------  -----  --------  ----------------------   -------- */
    { "  PID ",      "%5u ",     -1,    -1, _SF(P_PID), "Process Id",           L_EITHER },
    { " PPID ",      "%5u ",     -1,    -1, _SF(P_PPD), "Parent Process Pid",   L_EITHER },
    { " PGID ",      "%5u ",     -1,    -1, _SF(P_PGD), "Process Group Id",     L_stat   },
@@ -1470,13 +1471,6 @@ static void reframewins (void)
    char *s;
    const char *h;
    int i, needpsdb = 0;
-
-   // should already be allocated and likely hasn't changed...
-   Pseudo_cols = Screen_cols + CLRBUFSIZ + 1;
-   if (Batch) Pseudo_size = ROWBUFSIZ + 1;
-      else Pseudo_size = Pseudo_cols * Screen_rows;
-   Pseudo_scrn = alloc_r(Pseudo_scrn, Pseudo_size);
-   memset(Pseudo_scrn, '\0', Pseudo_size);
 
 // Frame_libflgs = 0;   // should be called only when it's zero
    w = Curwin;
@@ -1741,6 +1735,17 @@ static void wins_resize (int dont_care_sig)
 
    // we might disappoint some folks (but they'll deserve it)
    if (SCREENMAX < Screen_cols) Screen_cols = SCREENMAX;
+
+   /* keep our support for output optimization in sync with current reality
+      note: when we're in Batch mode, we don't really need a Pseudo_scrn and
+            when not Batch, our buffer will contain 1 extra 'line' since
+            Msg_row is never represented -- but it's nice to have some space
+            between us and the great-beyond... */
+   Pseudo_cols = Screen_cols + CLRBUFSIZ + 1;
+   if (Batch) Pseudo_size = ROWBUFSIZ + 1;
+      else Pseudo_size = Pseudo_cols * Screen_rows;
+   Pseudo_scrn = alloc_r(Pseudo_scrn, Pseudo_size);
+
    // force rebuild of column headers AND libproc/readproc requirements
    Frame_libflgs = 0;
 }
@@ -2163,11 +2168,11 @@ static void do_key (unsigned c)
          *    2) modest smp boxes with room for each cpu's percentages
          *    3) massive smp guys leaving little or no room for process
          *       display and thus requiring the cpu summary toggle */
-static void summaryhlp (CPUS_t *restrict cpu, const char *restrict pfx)
+static void summaryhlp (const CPUS_t *restrict cpu, const char *restrict const pfx)
 {
    /* we'll trim to zero if we get negative time ticks,
       which has happened with some SMP kernels (pre-2.4?) */
-#define TRIMz(x)  ((tz = (STIC_t)x) < 0 ? 0 : tz)
+#define TRIMz(x)  ((tz = (STIC_t)(x)) < 0 ? 0 : tz)
    STIC_t u_frme, s_frme, n_frme, i_frme, w_frme, tot_frme, tz;
    float scale;
 
@@ -2279,7 +2284,7 @@ static proc_t **summary_show (void)
 
         /*
          * Display information for a single task row. */
-static void task_show (WIN_t *q, proc_t *p)
+static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
 {
    /* the following macro is our means to 'inline' emitting a column -- next to
       procs_refresh, that's the most frequent and costly part of top's job ! */
@@ -2303,10 +2308,10 @@ static void task_show (WIN_t *q, proc_t *p)
 
    for (x = 0; x < q->maxpflgs; x++) {
       char cbuf[ROWBUFSIZ], _z[ROWBUFSIZ];
-      PFLG_t           i = q->procflags[x];     // support for our field/column
-      const char      *f = Fieldstab[i].fmts;   // macro AND sometimes the fmt
-      unsigned         s = Fieldstab[i].scale;  // string must be altered !
-      unsigned         w = Fieldstab[i].width;
+      PFLG_t      i = q->procflags[x];          // support for our field/column
+      const char *restrict const f = Fieldstab[i].fmts;        // macro AND sometimes the fmt
+      unsigned    s = Fieldstab[i].scale;       // string must be altered !
+      unsigned    w = Fieldstab[i].width;
 
       switch (i) {
          case P_CMD:
@@ -2519,8 +2524,7 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
          * remaining amount of screen real estate under multiple windows */
 static void framehlp (int wix, int max)
 {
-   int i;
-   int rsvd, size, wins;
+   int i, rsvd, size, wins;
 
    // calc remaining number of visible windows + total 'user' lines
    for (i = wix, rsvd = 0, wins = 0; i < GROUPSMAX; i++) {
@@ -2575,7 +2579,10 @@ static void frame_make (void)
 
    /* note: except for PROC_PID, all libproc flags are managed by
             reframewins(), who also builds each window's column headers */
-   if (!Frame_libflgs) reframewins();
+   if (!Frame_libflgs) {
+      reframewins();
+      memset(Pseudo_scrn, '\0', Pseudo_size);
+   }
    Pseudo_row = Msg_row = scrlins = 0;
    ppt = summary_show();
    Max_lines = (Screen_rows - Msg_row) - 1;

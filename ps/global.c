@@ -47,7 +47,7 @@ int             bsd_c_option = -1;
 int             bsd_e_option = -1;
 uid_t           cached_euid = -1;
 dev_t           cached_tty = -1;
-char            forest_prefix[4 * 32*1024 + 100];
+char            forest_prefix[4 * 32*1024 + 100];     // FIXME
 int             forest_type = -1;
 unsigned        format_flags = 0xffffffff;   /* -l -f l u s -j... */
 format_node    *format_list = (format_node *)0xdeadbeef; /* digested formatting options */
@@ -59,6 +59,7 @@ int             lines_to_next_header = -1;
 const char     *namelist_file = (const char *)0xdeadbeef;
 int             negate_selection = -1;
 int             running_only = -1;
+int             page_size = -1;  // "int" for math reasons?
 unsigned        personality = 0xffffffff;
 int             prefer_bsd_defaults = -1;
 int             screen_cols = -1;
@@ -335,6 +336,7 @@ void reset_global(void){
   lines_to_next_header  = 1;
   namelist_file         = NULL;
   negate_selection      = 0;
+  page_size             = getpagesize();
   running_only          = 0;
   seconds_since_boot    = uptime(0,0);
   selection_list        = NULL;
@@ -388,14 +390,14 @@ void self_info(void){
     screen_cols, screen_rows
   );
 
-/*  open_psdb(namelist_file); */
   fprintf(stderr,
     "personality=0x%08x (from \"%s\")\n"
-    "EUID=%d TTY=%d,%d Hertz=%Ld\n"
-/*    "namelist_file=\"%s\"\n" */
-    ,
+    "EUID=%d TTY=%d,%d Hertz=%Ld PAGE_SIZE=%d page_size=%d\n",
     personality, saved_personality_text,
-    cached_euid, (int)major(cached_tty), (int)minor(cached_tty), Hertz   /* ,
-    namelist_file?namelist_file:"<no System.map file>"  */
+    cached_euid, (int)major(cached_tty), (int)minor(cached_tty), Hertz,
+    (int)(PAGE_SIZE), (int)(page_size)
   );
+
+  open_psdb(namelist_file);
+  fprintf(stderr,"namelist_file=\"%s\"\n",namelist_file?namelist_file:"<no System.map file>");
 }
