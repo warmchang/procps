@@ -1131,7 +1131,8 @@ static int sr_context ( const proc_t* P, const proc_t* Q ) {
 
 /* short names to save space */
 #define MEM PROC_FILLMEM     /* read statm  */
-#define CMD PROC_FILLCMD     /* read cmdline */
+#define ARG PROC_FILLARG     /* read cmdline (cleared if c option) */
+#define COM PROC_FILLCOM     /* read cmdline (cleared if not -f option) */
 #define ENV PROC_FILLENV     /* read environ */
 #define USR PROC_FILLUSR     /* uid_t -> user names */
 #define GRP PROC_FILLGRP     /* gid_t -> group names */
@@ -1158,7 +1159,7 @@ static const format_struct format_array[] = {
 {"addr_1",    "ADDR",    pr_nop,      sr_nop,     1,   0,    LNX, LEFT},
 {"alarm",     "ALARM",   pr_alarm,    sr_it_real_value, 5, 0, LNX, RIGHT},
 {"argc",      "ARGC",    pr_nop,      sr_nop,     4,   0,    LNX, RIGHT},
-{"args",      "COMMAND", pr_args,     sr_nop,    16,   0,    U98, UNLIMITED}, /*command*/
+{"args",      "COMMAND", pr_args,     sr_nop,    16, ARG,    U98, UNLIMITED}, /*command*/
 {"atime",     "TIME",    pr_time,     sr_nop,     8,   0,    SOE, CUMUL|RIGHT}, /*cputime*/ /* was 6 wide */
 {"blocked",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    BSD, SIGNAL}, /*sigmask*/
 {"bnd",       "BND",     pr_nop,      sr_nop,     1,   0,    AIX, RIGHT},
@@ -1169,11 +1170,11 @@ static const format_struct format_array[] = {
 {"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, LEFT},
 {"cls",       "-",       pr_nop,      sr_nop,     1,   0,    HPU, RIGHT},
 {"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, RIGHT},
-{"cmd",       "CMD",     pr_args,     sr_cmd,    16,   0,    DEC, UNLIMITED}, /*ucomm*/
+{"cmd",       "CMD",     pr_args,     sr_cmd,    16, ARG,    DEC, UNLIMITED}, /*ucomm*/
 {"cmin_flt",  "-",       pr_nop,      sr_cmin_flt, 1,  0,    LNX, RIGHT},
 {"cnswap",    "-",       pr_nop,      sr_cnswap,  1,   0,    LNX, RIGHT},
-{"comm",      "COMMAND", pr_comm,     sr_nop,    16,   0,    U98, UNLIMITED}, /*ucomm*/
-{"command",   "COMMAND", pr_args,     sr_nop,    16,   0,    XXX, UNLIMITED}, /*args*/
+{"comm",      "COMMAND", pr_comm,     sr_nop,    16, COM,    U98, UNLIMITED}, /*ucomm*/
+{"command",   "COMMAND", pr_args,     sr_nop,    16, ARG,    XXX, UNLIMITED}, /*args*/
 {"context",   "CONTEXT", pr_context,  sr_context,40,   0,    LNX, LEFT},
 {"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, RIGHT}, /*cpu*/
 {"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
@@ -1339,8 +1340,8 @@ static const format_struct format_array[] = {
 {"tty4",      "TTY",     pr_tty4,     sr_tty,     4,   0,    LNX, LEFT},
 {"tty8",      "TTY",     pr_tty8,     sr_tty,     8,   0,    LNX, LEFT},
 {"u_procp",   "UPROCP",  pr_nop,      sr_nop,     6,   0,    DEC, RIGHT},
-{"ucmd",      "CMD",     pr_comm,     sr_cmd,    16,   0,    DEC, UNLIMITED}, /*ucomm*/
-{"ucomm",     "COMMAND", pr_comm,     sr_nop,    16,   0,    XXX, UNLIMITED}, /*comm*/
+{"ucmd",      "CMD",     pr_comm,     sr_cmd,    16, COM,    DEC, UNLIMITED}, /*ucomm*/
+{"ucomm",     "COMMAND", pr_comm,     sr_nop,    16, COM,    XXX, UNLIMITED}, /*comm*/
 {"uid",       "UID",     pr_euid,     sr_euid,    5,   0,    XXX, RIGHT},
 {"uid_hack",  "UID",     pr_euser,    sr_nop,     8, USR,    XXX, USER},
 {"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, RIGHT},

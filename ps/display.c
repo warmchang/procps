@@ -219,11 +219,23 @@ static void fill_pcpu(proc_t *buf){
   buf->pcpu = (pcpu > 999) ? 999 : pcpu;
 }
 
+/***** figure out what we need */
+static void compute_needs(void){
+  if(bsd_c_option){
+    needs_for_format &= ~PROC_FILLARG;
+    needs_for_sort   &= ~PROC_FILLARG;
+  }
+  if(!unix_f_option){
+    needs_for_format &= ~PROC_FILLCOM;
+    needs_for_sort   &= ~PROC_FILLCOM;
+  }
+}
+
 /***** just display */
 static void simple_spew(void){
   proc_t buf;
   PROCTAB* ptp;
-  ptp = openproc(needs_for_format | needs_for_sort | PROC_FILLCMD);
+  ptp = openproc(needs_for_format | needs_for_sort);
   if(!ptp) {
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
@@ -362,7 +374,7 @@ static void fancy_spew(void){
   proc_t *retbuf = NULL;
   PROCTAB* ptp;
   int n = 0;  /* number of processes & index into array */
-  ptp = openproc(needs_for_format | needs_for_sort | PROC_FILLCMD);
+  ptp = openproc(needs_for_format | needs_for_sort);
   if(!ptp) {
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
@@ -420,11 +432,12 @@ int main(int argc, char *argv[]){
 
   init_output(); /* must be between parser and output */
   check_headers();
-  check_needs();
 
+  check_needs();
   /* filthy hack -- got to unify some stuff here */
   if( ( (needs_for_format|needs_for_sort) & PROC_FILLWCHAN) && !wchan_is_number)
     if (open_psdb(namelist_file)) wchan_is_number = 1;
+  compute_needs();
 
   if(forest_type || sort_list) fancy_spew(); /* sort or forest */
   else simple_spew(); /* no sort, no forest */
