@@ -287,7 +287,7 @@ static inline char *scat (char *restrict dst, const char *restrict src)
          * in some proc cmdlines, a choice was offered twix space or null. */
 static char *strim (int sp, char *str)
 {
-   static const char ws[] = "\b\e\f\n\r\t\v";
+   static const char ws[] = "\b\e\f\n\r\t\v\0133";  // \0133 is an escape
    char *p;
 
    if (sp)
@@ -1278,6 +1278,7 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
    if (badchar > 3) return -8;          // too much junk
    if (!c_show) return -9;              // nothing was shown
 
+#if 0
    // Due to Rik blindly accepting damem's broken patches, procps-2.0.10
    // has 3 ("three"!!!) instances of "#C", "LC", or "CPU". Fix that here.
    // Some people are maintainers, and others are human patchbots.
@@ -1304,6 +1305,7 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
       tmp = strchr(fields, '.');        // find back saved spot
       *tmp = letter;
    }
+#endif
 
    // rest of file is optional, but better look right if it exists
    if (!*cp) return 12;
