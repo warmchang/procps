@@ -333,6 +333,8 @@ static void print_extended_maps (FILE *f)
 		c = mapbuf[strlen(mapbuf) - 1];
 		while (c != '\n') {
 			fgets(mapbuf, sizeof mapbuf, f);
+			if (!ret || !mapbuf[0])
+				xerrx(EXIT_FAILURE, _("Unknown format in smaps file!"));
 			c = mapbuf[strlen(mapbuf) - 1];
 		}
 
@@ -344,8 +346,8 @@ static void print_extended_maps (FILE *f)
 		if (strlen(inode ) > maxw5)	maxw5 = strlen(inode);
 
 		ret = fgets(mapbuf, sizeof mapbuf, f);
-		nfields = sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
-				 detail_desc, value_str, &c);
+		nfields = ret ? sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
+					detail_desc, value_str, &c) : 0;
 		listnode = listhead;
 		/* === READ MAPPING DETAILS === */
 		while (ret != NULL && nfields == 2) {
@@ -387,12 +389,12 @@ static void print_extended_maps (FILE *f)
 			listnode = listnode->next;
 loop_end:
 			ret = fgets(mapbuf, sizeof mapbuf, f);
-			nfields = sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
-					 detail_desc, value_str, &c);
+			nfields = ret ? sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
+						detail_desc, value_str, &c) : 0;
 		}
 
 		/* === GET VMFLAGS === */
-		nfields = sscanf(mapbuf, "VmFlags: %[a-z ]", vmflags);
+		nfields = ret ? sscanf(mapbuf, "VmFlags: %[a-z ]", vmflags) : 0;
 		if (nfields == 1) {
 			if (! has_vmflags) has_vmflags = 1;
 			ret = fgets(mapbuf, sizeof mapbuf, f);
