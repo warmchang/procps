@@ -542,10 +542,9 @@ static int snice_prio_option(int *argc, char **argv)
 			if (prio < INT_MIN || INT_MAX < prio)
 				xerrx(EXIT_FAILURE,
 				     _("priority %lu out of range"), prio);
+			memmove(argv + i, argv + i + 1,
+				sizeof(char *) * (nargs - i));
 			nargs--;
-			if (nargs - i)
-				memmove(argv + i, argv + i + 1,
-					sizeof(char *) * (nargs - i));
 		} else
 			i++;
 	}
