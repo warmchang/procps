@@ -1,6 +1,11 @@
 procps-3.0.3 --> procps-3.0.4
 
-only Linux 2.4.0 supply the ELF note
+make top go faster
+Linux 2.2.xx ELF note warning removed
+only show IO-wait on recent kernels
+fix top's SMP stats
+fix top for "dumb" and "vt510" terminals
+top displays better on 2.5.xx console
 
 procps-3.0.2 --> procps-3.0.3
 
