@@ -1260,12 +1260,9 @@ static int read_config_rik (const char * const fbuf, ssize_t num, RCF_t * const 
       if(c=='|') continue; // Rik's top ships with a garbage character
       if(c=='[') c='Y';    // Rik's top ships with 3x of "#C"
       if(c=='{') c='y';    // another one... and '}' to please Jim's editor
-      if(c=='n') continue; // unimplemented
-      if(c=='N') continue; // unimplemented
-      if(c=='q') continue; // unimplemented
-      if(c=='Q') continue; // unimplemented
-      if(c=='r') continue; // unimplemented
-      if(c=='R') continue; // unimplemented
+      if(c=='N') c='n';    // usage differs, so turn this off
+      if(c=='Q') c='q';    // usage differs, so turn this off
+      if(c=='R') c='r';    // usage differs, so turn this off
       c = rik_to_jim(c);
       if(!c) return -4;     // error value
       if(c=='.') return -5; // error value
