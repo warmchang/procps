@@ -3,7 +3,7 @@ README for procps package
 
 COMPATIBILITY
 
-    This code is intended for use with Linux 2.0.xx and 2.2.xx.
+    This code is intended for use with Linux 2.0.xx and above.
     Both libc 5 and libc 6 should work.
 
 PS/TOP WCHAN FIELD

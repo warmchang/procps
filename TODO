@@ -58,10 +58,6 @@ ones get filled in with something logical -- entries must never be deleted!
 
 Add all the stuff Solaris has. This would also replace ptrace.
 
-The kernel should report these task_struct members:
-    has_cpu
-    processor
-
 ---------------------- w --------------------------
 
 The LOGIN@ column sometimes has a space in it. This makes correct
@@ -122,12 +118,6 @@ Internationalization, as specified by XPG3, Volume 1, Commands and Utilities.
 (and suggested by Unix98) LC_TIME affects date format.
 
 ----------------------- ps -----------------------
-
-Solve the "ps reports wrong date" bug. (recent processes on an SMP system
-are reported as being 5 days old, while boot processes look normal)
-(reported for procps-2.0.2 in May 1999)
-
-Show real-time priorities. (type & number)
 
 Add an option to select all processes that a user can kill.
 (related to RUID, EUID, tty, etc. -- but maybe ignore root power)
