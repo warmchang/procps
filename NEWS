@@ -2,6 +2,9 @@ procps-3.0.4 --> procps-3.0.5
 
 top tolerates super-wide displays
 better (?) RPM generation
+XConsole and top.desktop removed
+old build system removed
+code cleanup
 
 procps-3.0.3 --> procps-3.0.4
 
