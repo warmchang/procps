@@ -53,61 +53,12 @@ static void crash(const char *filename) {
 
 ////////////////////////////////////////////////////////////////////////
 
-static void getstat(jiff *cuse, jiff *cice, jiff *csys, jiff *cide, jiff *ciow,
-	     unsigned *pin, unsigned *pout, unsigned *s_in, unsigned *sout,
-	     unsigned *itot, unsigned *i1, unsigned *ct) {
-  static int fd;
-  int need_extra_file = 0;
-  char* b;
-  buff[BUFFSIZE-1] = 0;  /* ensure null termination in buffer */
-
-  if(fd){
-    lseek(fd, 0L, SEEK_SET);
-  }else{
-    fd = open("/proc/stat", O_RDONLY, 0);
-    if(fd == -1) crash("/proc/stat");
-  }
-  read(fd,buff,BUFFSIZE-1);
-  *itot = 0; 
-  *i1 = 1;   /* ensure assert below will fail if the sscanf bombs */
-  *ciow = 0;  /* not separated out until the 2.5.41 kernel */
-
-  b = strstr(buff, "cpu ");
-  if(b) sscanf(b,  "cpu  %Lu %Lu %Lu %Lu %Lu", cuse, cice, csys, cide, ciow);
-
-  b = strstr(buff, "page ");
-  if(b) sscanf(b,  "page %u %u", pin, pout);
-  else need_extra_file = 1;
-
-  b = strstr(buff, "swap ");
-  if(b) sscanf(b,  "swap %u %u", s_in, sout);
-  else need_extra_file = 1;
-
-  b = strstr(buff, "intr ");
-  if(b) sscanf(b,  "intr %u %u", itot, i1);
-
-  b = strstr(buff, "ctxt ");
-  if(b) sscanf(b,  "ctxt %u", ct);
-
-  if(need_extra_file){  /* 2.5.40-bk4 and above */
-    vminfo();
-    *pin  = vm_pgpgin;
-    *pout = vm_pgpgout;
-    *s_in = vm_pswpin;
-    *sout = vm_pswpout;
-  }
-}
-
-
-static void getrunners(unsigned int *running, unsigned int *blocked, 
-		unsigned int *r_swapp, unsigned int *d_swapp) {
+static void getrunners(unsigned int *running, unsigned int *blocked) {
   static struct direct *ent;
   DIR *proc;
 
   *running=0;
   *blocked=0;
-  *r_swapp=0;
-  *d_swapp=0;
 
   if((proc=opendir("/proc"))==NULL) crash("/proc");
 
@@ -133,129 +84,78 @@ static void getrunners(unsigned int *running, unsigned int *blocked,
     close(fd);
 
     if (c=='R') {
-      if (size>0) (*running)++;
-      else        (*r_swapp)++; // supposedly swapped
+      (*running)++;
       continue;
     }
     if (c=='D') {
-      if (size>0) (*blocked)++;
-      else        (*d_swapp)++; // supposedly swapped
+      (*blocked)++;
       continue;
     }
   }
   closedir(proc);
-
-#if 1
-  /* is this next line a good idea?  It removes this thing which
-     uses (hopefully) little time, from the count of running processes */
-  (*running)--;
-#endif
 }
 
+static void getstat(jiff *cuse, jiff *cice, jiff *csys, jiff *cide, jiff *ciow,
+	     unsigned *pin, unsigned *pout, unsigned *s_in, unsigned *sout,
+	     unsigned *itot, unsigned *i1, unsigned *ct,
+	     unsigned int *running, unsigned int *blocked) {
+  static int fd;
+  int need_vmstat_file = 0;
+  int need_proc_scan = 0;
+  char* b;
+  buff[BUFFSIZE-1] = 0;  /* ensure null termination in buffer */
 
+  if(fd){
+    lseek(fd, 0L, SEEK_SET);
+  }else{
+    fd = open("/proc/stat", O_RDONLY, 0);
+    if(fd == -1) crash("/proc/stat");
+  }
+  read(fd,buff,BUFFSIZE-1);
+  *itot = 0; 
+  *i1 = 1;   /* ensure assert below will fail if the sscanf bombs */
+  *ciow = 0;  /* not separated out until the 2.5.41 kernel */
 
-//////////////////////////////////////////////////////////////////////////////////////
-#if 0
+  b = strstr(buff, "cpu ");
+  if(b) sscanf(b,  "cpu  %Lu %Lu %Lu %Lu %Lu", cuse, cice, csys, cide, ciow);
 
-static void old_header(void){
-  printf("%8s%28s%10s%12s%11s%9s\n",
-	 "procs","memory","swap","io","system","cpu");
-  printf("%2s %2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %5s %2s %2s %2s\n",
-	 "r","b","w","swpd","free",
-	 a_option?"inact":"buff", a_option?"active":"cache",
-	 "si","so","bi","bo",
-	 "in","cs","us","sy","id");
-}
+  b = strstr(buff, "page ");
+  if(b) sscanf(b,  "page %u %u", pin, pout);
+  else need_vmstat_file = 1;
 
-static void old_format(void) {
-  const char format[]="%2u %2u %2u %6u %6u %6u %6u %4u %4u %5u %5u %4u %5u %2u %2u %2u\n";
-  unsigned int tog=0; /* toggle switch for cleaner code */
-  unsigned int i;
-  unsigned int hz = Hertz;
-  unsigned int running,blocked,r_swapp,d_swapp;
-  jiff cpu_use[2], cpu_nic[2], cpu_sys[2], cpu_idl[2], cpu_iow[2];
-  jiff duse,dsys,didl,diow,Div,divo2;
-  unsigned int pgpgin[2], pgpgout[2], pswpin[2], pswpout[2];
-  unsigned int inter[2],ticks[2],ctxt[2];
-  unsigned int sleep_half; 
-  unsigned int kb_per_page = sysconf(_SC_PAGESIZE) / 1024;
-  int debt = 0;  // handle idle ticks running backwards
+  b = strstr(buff, "swap ");
+  if(b) sscanf(b,  "swap %u %u", s_in, sout);
+  else need_vmstat_file = 1;
 
-  sleep_half=(sleep_time/2);
-  old_header();
+  b = strstr(buff, "intr ");
+  if(b) sscanf(b,  "intr %u %u", itot, i1);
 
-  getrunners(&running,&blocked,&r_swapp,&d_swapp);
-  meminfo();
-  getstat(cpu_use,cpu_nic,cpu_sys,cpu_idl,cpu_iow,
-	  pgpgin,pgpgout,pswpin,pswpout,
-	  inter,ticks,ctxt);
-  duse= *cpu_use + *cpu_nic; 
-  dsys= *cpu_sys;
-  didl= *cpu_idl;
-  diow= *cpu_iow;
-  Div= duse+dsys+didl+diow;
-  divo2= Div/2UL;
-  printf(format,
-	 running,blocked,r_swapp+d_swapp,
-	 kb_swap_used,kb_main_free,
-	 a_option?kb_inactive:kb_main_buffers,
-	 a_option?kb_active:kb_main_cached,
-	 (unsigned)( (*pswpin  * kb_per_page * hz + divo2) / Div ),
-	 (unsigned)( (*pswpout * kb_per_page * hz + divo2) / Div ),
-	 (unsigned)( (*pgpgin                * hz + divo2) / Div ),
-	 (unsigned)( (*pgpgout               * hz + divo2) / Div ),
-	 (unsigned)( (*inter                 * hz + divo2) / Div ),
-	 (unsigned)( (*ctxt                  * hz + divo2) / Div ),
-	 (unsigned)( (100*duse                    + divo2) / Div ),
-	 (unsigned)( (100*dsys                    + divo2) / Div ),
-	 (unsigned)( (100*(didl+diow)             + divo2) / Div )
-  );
+  b = strstr(buff, "ctxt ");
+  if(b) sscanf(b,  "ctxt %u", ct);
 
-  for(i=1;i<num_updates;i++) { /* \\\\\\\\\\\\\\\\\\\\ main loop ////////////////// */
-    sleep(sleep_time);
-    if (moreheaders && ((i%height)==0)) old_header();
-    tog= !tog;
+  b = strstr(buff, "procs_running ");
+  if(b) sscanf(b,  "procs_running %u", running);
+  else need_proc_scan = 1;
 
-    getrunners(&running,&blocked,&r_swapp,&d_swapp);
-    meminfo();
-    getstat(cpu_use+tog,cpu_nic+tog,cpu_sys+tog,cpu_idl+tog,cpu_iow+tog,
-	  pgpgin+tog,pgpgout+tog,pswpin+tog,pswpout+tog,
-	  inter+tog,ticks+tog,ctxt+tog);
-    duse= cpu_use[tog]-cpu_use[!tog] + cpu_nic[tog]-cpu_nic[!tog];
-    dsys= cpu_sys[tog]-cpu_sys[!tog];
-    didl= cpu_idl[tog]-cpu_idl[!tog];
-    diow= cpu_iow[tog]-cpu_iow[!tog];
+  b = strstr(buff, "procs_blocked ");
+  if(b) sscanf(b,  "procs_blocked %u", blocked);
+  else need_proc_scan = 1;
 
-    /* idle can run backwards for a moment -- kernel "feature" */
-    if(debt){
-      didl = (int)didl + debt;
-      debt = 0;
-    }
-    if( (int)didl < 0 ){
-      debt = (int)didl;
-      didl = 0;
-    }
+  if(need_proc_scan){   /* Linux 2.5.46 (approximately) and below */
+    getrunners(running, blocked);
+  }
 
-    Div= duse+dsys+didl+diow;
-    divo2= Div/2UL;
-    printf(format,
-	   running,blocked,r_swapp+d_swapp,
-	   kb_swap_used,kb_main_free,
-	   a_option?kb_inactive:kb_main_buffers,
-	   a_option?kb_inactive:kb_main_cached,
-	   (unsigned)( ( (pswpin [tog] - pswpin [!tog])*kb_per_page+sleep_half )/sleep_time ),
-	   (unsigned)( ( (pswpout[tog] - pswpout[!tog])*kb_per_page+sleep_half )/sleep_time ),
-	   (unsigned)( (  pgpgin [tog] - pgpgin [!tog]             +sleep_half )/sleep_time ),
-	   (unsigned)( (  pgpgout[tog] - pgpgout[!tog]             +sleep_half )/sleep_time ),
-	   (unsigned)( (  inter  [tog] - inter  [!tog]             +sleep_half )/sleep_time ),
-	   (unsigned)( (  ctxt   [tog] - ctxt   [!tog]             +sleep_half )/sleep_time ),
-	   (unsigned)( (100* duse      +divo2)/Div ),
-	   (unsigned)( (100* dsys      +divo2)/Div ),
-	   (unsigned)( (100*(didl+diow)+divo2)/Div )
-    );
+  (*running)--;   // exclude vmstat itself
+
+  if(need_vmstat_file){  /* Linux 2.5.40-bk4 and above */
+    vminfo();
+    *pin  = vm_pgpgin;
+    *pout = vm_pgpgout;
+    *s_in = vm_pswpin;
+    *sout = vm_pswpout;
   }
 }
-#endif
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -330,7 +230,7 @@ static void new_header(void){
   printf("procs -----------memory---------- ---swap-- -----io---- --system-- ----cpu----\n");
   printf(
     "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %5s %2s %2s %2s %2s\n",
-    "b","w",
+    "r","b",
     "swpd", "free", a_option?"inact":"buff", a_option?"active":"cache",
     "si","so",
     "bi","bo",
@@ -344,7 +244,7 @@ static void new_format(void) {
   unsigned int tog=0; /* toggle switch for cleaner code */
   unsigned int i;
   unsigned int hz = Hertz;
-  unsigned int running,blocked,r_swapp,d_swapp;
+  unsigned int running,blocked;
   jiff cpu_use[2], cpu_nic[2], cpu_sys[2], cpu_idl[2], cpu_iow[2];
   jiff duse,dsys,didl,diow,Div,divo2;
   unsigned int pgpgin[2], pgpgout[2], pswpin[2], pswpout[2];
@@ -356,11 +256,11 @@ static void new_format(void) {
   sleep_half=(sleep_time/2);
   new_header();
 
-  getrunners(&running,&blocked,&r_swapp,&d_swapp);
   meminfo();
   getstat(cpu_use,cpu_nic,cpu_sys,cpu_idl,cpu_iow,
 	  pgpgin,pgpgout,pswpin,pswpout,
-	  inter,ticks,ctxt);
+	  inter,ticks,ctxt,
+	  &running,&blocked);
   duse= *cpu_use + *cpu_nic; 
   dsys= *cpu_sys;
   didl= *cpu_idl;
@@ -368,7 +268,7 @@ static void new_format(void) {
   Div= duse+dsys+didl+diow;
   divo2= Div/2UL;
   printf(format,
-	 running+r_swapp, blocked+d_swapp,
+	 running, blocked,
 	 kb_swap_used, kb_main_free,
 	 a_option?kb_inactive:kb_main_buffers,
 	 a_option?kb_active:kb_main_cached,
@@ -389,11 +289,11 @@ static void new_format(void) {
     if (moreheaders && ((i%height)==0)) new_header();
     tog= !tog;
 
-    getrunners(&running,&blocked,&r_swapp,&d_swapp);
     meminfo();
     getstat(cpu_use+tog,cpu_nic+tog,cpu_sys+tog,cpu_idl+tog,cpu_iow+tog,
 	  pgpgin+tog,pgpgout+tog,pswpin+tog,pswpout+tog,
-	  inter+tog,ticks+tog,ctxt+tog);
+	  inter+tog,ticks+tog,ctxt+tog,
+	  &running,&blocked);
     duse= cpu_use[tog]-cpu_use[!tog] + cpu_nic[tog]-cpu_nic[!tog];
     dsys= cpu_sys[tog]-cpu_sys[!tog];
     didl= cpu_idl[tog]-cpu_idl[!tog];
@@ -412,7 +312,7 @@ static void new_format(void) {
     Div= duse+dsys+didl+diow;
     divo2= Div/2UL;
     printf(format,
-           running+r_swapp, blocked+d_swapp,
+           running, blocked,
 	   kb_swap_used,kb_main_free,
 	   a_option?kb_inactive:kb_main_buffers,
 	   a_option?kb_inactive:kb_main_cached,
