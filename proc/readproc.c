@@ -37,6 +37,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <limits.h>
+#include <stdint.h>
 #ifdef WITH_SYSTEMD
 #include <systemd/sd-login.h>
 #endif
@@ -1369,7 +1370,7 @@ PROCTAB* openproc(unsigned flags, ...) {
     va_list ap;
     struct stat sbuf;
     static int did_stat;
-    PROCTAB* PT = malloc(sizeof(PROCTAB));
+    PROCTAB* PT = calloc(1, sizeof(PROCTAB));
 
     if (!PT)
         return NULL;
