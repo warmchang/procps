@@ -37,6 +37,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <limits.h>
 #ifdef WITH_SYSTEMD
 #include <systemd/sd-login.h>
 #endif
@@ -252,8 +253,8 @@ ENTER(0x220);
 
         // examine a field name (hash and compare)
     base:
-        if(unlikely(!*S)) break;
-        entry = table[(GPERF_TABLE_SIZE -1) & (asso[(int)S[3]] + asso[(int)S[2]] + asso[(int)S[0]])];
+        if(unlikely(!S[0] || !S[1] || !S[2] || !S[3])) break;
+        entry = table[(GPERF_TABLE_SIZE -1) & (asso[S[3]&127] + asso[S[2]&127] + asso[S[0]&127])];
         colon = strchr(S, ':');
         if(unlikely(!colon)) break;
         if(unlikely(colon[1]!='\t')) break;
@@ -386,9 +387,9 @@ ENTER(0x220);
         continue;
     case_Groups:
     {   char *nl = strchr(S, '\n');
-        int j = nl ? (nl - S) : strlen(S);
+        size_t j = nl ? (size_t)(nl - S) : strlen(S);
 
-        if (j) {
+        if (j > 0 && j < INT_MAX) {
             P->supgid = xmalloc(j+1);       // +1 in case space disappears
             memcpy(P->supgid, S, j);
             if (unlikely(' ' != P->supgid[--j])) ++j;
