@@ -174,9 +174,9 @@ static void discover_shm_minor(void)
 		unsigned KLONG start, end;
 		unsigned long long file_offset, inode;
 		unsigned dev_major, dev_minor;
-		sscanf(mapbuf_b, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
-		       &end, perms, &file_offset, &dev_major, &dev_minor,
-		       &inode);
+		if (sscanf(mapbuf_b, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
+			&end, perms, &file_offset, &dev_major, &dev_minor, &inode) < 6)
+			continue;
 		tmp = strchr(mapbuf_b, '\n');
 		if (tmp)
 			*tmp = '\0';
