@@ -146,7 +146,7 @@ w.o:    w.c
 
 ############ prog.o --> prog
 
-pmap w uptime tload free vmstat utmp pgrep skill: % : %.o $(LIBPROC)
+pmap w uptime tload free sysctl vmstat utmp pgrep skill: % : %.o $(LIBPROC)
 	$(CC) $(LDFLAGS) -o $@ $^
 
 top:   % : %.o $(LIBPROC)

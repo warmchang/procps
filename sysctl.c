@@ -27,15 +27,13 @@
 #include <string.h>
 #include <errno.h>
 #include "proc/procps.h"
+#include "proc/version.h"
 
-/*
- *    Additional types we might need.
- */
+
+// Proof that C++ causes brain damage:
 typedef int bool;
-
 static bool true  = 1;
 static bool false = 0;
-
 
 /*
  *    Globals...
@@ -45,6 +43,7 @@ static const char PROC_PATH[] = "/proc/sys/";
 static const char DEFAULT_PRELOAD[] = "/etc/sysctl.conf";
 static bool PrintName;
 static bool PrintNewline;
+static bool IgnoreError;
 
 /* error messages */
 static const char ERR_UNKNOWN_PARAMETER[] = "error: Unknown parameter '%s'\n";
@@ -78,13 +77,13 @@ static void slashdot(char *restrict p, char old, char new){
  *
  */
 static int Usage(const char *restrict const name) {
-   printf("usage:  %s [-n] variable ... \n"
-          "        %s [-n] -w variable=value ... \n" 
-          "        %s [-n] -a \n" 
-          "        %s [-n] -p <file>   (default /etc/sysctl.conf) \n"
-          "        %s [-n] -A\n", name, name, name, name, name);
+   printf("usage:  %s [-n] [-e] variable ... \n"
+          "        %s [-n] [-e] -w variable=value ... \n" 
+          "        %s [-n] [-e] -a \n" 
+          "        %s [-n] [-e] -p <file>   (default /etc/sysctl.conf) \n"
+          "        %s [-n] [-e] -A\n", name, name, name, name, name);
    return -1;
-}  /* end Usage() */
+}
 
 
 /*
@@ -109,7 +108,7 @@ static char *StripLeadingAndTrailingSpaces(char *oneline) {
       t++;
 
    return t;
-} /* end StripLeadingAndTrailingSpaces() */
+}
 
 
 
@@ -144,16 +143,20 @@ static int ReadSetting(const char *restrict const name) {
    if (!fp) {
       switch(errno) {
       case ENOENT:
-         fprintf(stderr, ERR_INVALID_KEY, outname);
-        break;
+         if (!IgnoreError) {
+            fprintf(stderr, ERR_INVALID_KEY, outname);
+            rc = -1;
+         }
+         break;
       case EACCES:
          fprintf(stderr, ERR_PERMISSION_DENIED, outname);
-        break;
+         rc = -1;
+         break;
       default:
          fprintf(stderr, ERR_UNKNOWN_READING, errno, outname);
-        break;
-      } /* end switch */
-      rc = -1;
+         rc = -1;
+         break;
+      }
    } else {
       while(fgets(inbuf, 1024, fp)) {
          /* already has the \n in it */
@@ -166,14 +169,14 @@ static int ReadSetting(const char *restrict const name) {
             }
             fprintf(stdout, "%s", inbuf);
          }
-      } /* endwhile */
+      }
       fclose(fp);
-   } /* endif */
+   }
 
    free(tmpname);
    free(outname);
    return rc;
-} /* end ReadSetting() */
+}
 
 
 
@@ -240,14 +243,14 @@ static int WriteSetting(const char *setting) {
    if (!equals) {
       fprintf(stderr, ERR_NO_EQUALS, setting);
       return -1;
-   } /* end if */
+   }
 
    value = equals + 1;      /* point to the value in name=value */   
 
    if (!*name || !*value || name == equals) { 
       fprintf(stderr, ERR_MALFORMED_SETTING, setting);
       return -2;
-   } /* end if */
+   }
 
    /* used to open the file */
    tmpname = malloc(equals-name+1+strlen(PROC_PATH));
@@ -267,16 +270,20 @@ static int WriteSetting(const char *setting) {
    if (!fp) {
       switch(errno) {
       case ENOENT:
-         fprintf(stderr, ERR_INVALID_KEY, outname);
-        break;
+         if (!IgnoreError) {
+            fprintf(stderr, ERR_INVALID_KEY, outname);
+            rc = -1;
+         }
+         break;
       case EACCES:
          fprintf(stderr, ERR_PERMISSION_DENIED, outname);
-        break;
+         rc = -1;
+         break;
       default:
          fprintf(stderr, ERR_UNKNOWN_WRITING, errno, outname);
-        break;
-      } /* end switch */
-      rc = -1;
+         rc = -1;
+         break;
+      }
    } else {
       fprintf(fp, "%s\n", value);
       fclose(fp);
@@ -289,12 +296,12 @@ static int WriteSetting(const char *setting) {
          else
             fprintf(stdout, "%s", value);
       }
-   } /* endif */
+   }
 
    free(tmpname);
    free(outname);
    return rc;
-} /* end WriteSetting() */
+}
 
 
 
@@ -303,18 +310,19 @@ static int WriteSetting(const char *setting) {
  *           - we parse the file and then reform it (strip out whitespace)
  *
  */
-static void Preload(const char *restrict const filename) {
+static int Preload(const char *restrict const filename) {
    FILE *fp;
    char oneline[257];
    char buffer[257];
    char *t;
    int n = 0;
+   int rc = 0;
    char *name, *value;
 
    if (!filename || ((fp = fopen(filename, "r")) == NULL)) {
       fprintf(stderr, ERR_PRELOAD_FILE, filename);
-      return;
-   } /* endif */
+      return -1;
+   }
 
    while (fgets(oneline, 256, fp)) {
       oneline[256] = 0;
@@ -331,7 +339,7 @@ static void Preload(const char *restrict const filename) {
       if (!name || !*name) {
          fprintf(stderr, WARN_BAD_LINE, filename, n);
          continue;
-      } /* endif */
+      }
 
       StripLeadingAndTrailingSpaces(name);
 
@@ -339,17 +347,18 @@ static void Preload(const char *restrict const filename) {
       if (!value || !*value) {
          fprintf(stderr, WARN_BAD_LINE, filename, n);
          continue;
-      } /* endif */
+      }
 
       while ((*value == ' ' || *value == '\t') && *value != 0)
          value++;
 
       sprintf(buffer, "%s=%s", name, value);
-      WriteSetting(buffer);
-   } /* endwhile */
+      rc |= WriteSetting(buffer);
+   }
 
    fclose(fp);
-} /* end Preload() */
+   return rc;
+}
 
 
 
@@ -366,6 +375,7 @@ int main(int argc, char **argv) {
 
    PrintName = true;
    PrintNewline = true;
+   IgnoreError = false;
 
    if (argc < 2) {
        return Usage(me);
@@ -383,6 +393,9 @@ int main(int argc, char **argv) {
          case 'n':
               PrintName = false;
            break;
+         case 'e':
+              IgnoreError = true;
+           break;
          case 'w':
               SwitchesAllowed = false;
               WriteMode = true;
@@ -391,32 +404,33 @@ int main(int argc, char **argv) {
               argv++;
               if (argv && *argv && **argv) {
                  preloadfile = *argv;
-              } /* endif */
-
-              Preload(preloadfile);
-              return(0);
-           break;
+              }
+              return Preload(preloadfile);
          case 'a': /* string and integer values (for Linux, all of them) */
          case 'A': /* the above, including "opaques" (would be unprintable) */
          case 'X': /* the above, with opaques completly printed in hex */
               SwitchesAllowed = false;
               return DisplayAll(PROC_PATH, ((*argv)[1] == 'a') ? false : true);
+         case 'V':
+              fprintf(stdout, "sysctl (%s)\n",procps_version);
+              exit(0);
          case 'h':
          case '?':
               return Usage(me);
          default:
               fprintf(stderr, ERR_UNKNOWN_PARAMETER, *argv);
               return Usage(me);
-         } /* end switch */
+         }
       } else {
          SwitchesAllowed = false;
          if (WriteMode)
             ReturnCode = WriteSetting(*argv);
-         else ReadSetting(*argv);
-      } /* end if */
-   } /* end for */      
+         else
+            ReturnCode = ReadSetting(*argv);
+      }
+   }
 
-return ReturnCode;
-} /* end main */
+   return ReturnCode;
+}
 
 

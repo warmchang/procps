@@ -10,15 +10,15 @@
 .SH NAME
 sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
-.B "sysctl [-n] variable ..."
+.B "sysctl [-n] [-e] variable ..."
 .br
-.B "sysctl [-n] -w variable=value ..."
+.B "sysctl [-n] [-e] -w variable=value ..."
 .br
-.B "sysctl [-n] -p <filename>    (default /etc/sysctl.conf)"
+.B "sysctl [-n] [-e] -p <filename>    (default /etc/sysctl.conf)"
 .br
-.B "sysctl [-n] -a"
+.B "sysctl [-n] [-e] -a"
 .br
-.B "sysctl [-n] -A"
+.B "sysctl [-n] [-e] -A"
 .SH DESCRIPTION
 .B sysctl
 is used to modify kernel parameters at runtime.  The parameters available
@@ -41,6 +41,9 @@ quotes.  This requires the -w parameter to use.
 .TP
 .B "-n"
 Use this option to disable printing of the key name when printing values.
+.TP
+.B "-e"
+Use this option to ignore errors about unknown keys.
 .TP
 .B "-w"
 Use this option when you want to change a sysctl setting.
