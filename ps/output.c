@@ -75,8 +75,8 @@
 
 #define COLWID 240 /* satisfy snprintf, which is faster than sprintf */
 
-static unsigned max_rightward = 0x12345678; /* space for RIGHT stuff */
-static unsigned max_leftward = 0x12345678; /* space for LEFT stuff */
+static unsigned max_rightward = OUTBUF_SIZE-1; /* space for RIGHT stuff */
+static unsigned max_leftward = OUTBUF_SIZE-1; /* space for LEFT stuff */
 
 
 
@@ -1061,7 +1061,7 @@ static int do_pr_name(char *restrict const outbuf, const char *restrict const na
       return len;  /* returns number of cells */
 
     // only use '+' when not on a multi-byte char, else show uid
-    if ((unsigned)outbuf[max_rightward-1] < 127) {
+    if (max_rightward >= 1 && (unsigned)outbuf[max_rightward-1] < 127) {
       len = max_rightward-1;
       outbuf[len++] = '+';
       outbuf[len] = 0;
@@ -1943,7 +1943,12 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
 	max_rightward = active_cols - ( (correct>actual) ? correct : actual );
       }
     }
+    if(max_rightward <= 0) max_rightward = 0;
+    else if(max_rightward >= OUTBUF_SIZE) max_rightward = OUTBUF_SIZE-1;
+
     max_leftward  = fmt->width + actual - correct; /* TODO check this */
+    if(max_leftward <= 0) max_leftward = 0;
+    else if(max_leftward >= OUTBUF_SIZE) max_leftward = OUTBUF_SIZE-1;
 
 //    fprintf(stderr, "cols: %d, max_rightward: %d, max_leftward: %d, actual: %d, correct: %d\n",
 //		    active_cols, max_rightward, max_leftward, actual, correct);
