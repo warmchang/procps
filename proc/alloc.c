@@ -15,9 +15,8 @@ void *xcalloc(void *pointer, int size) {
     if (!(ret = calloc(1, size))) {
         fprintf(stderr, "xcalloc: allocation error, size = %d\n", size);
         exit(1);
-    } else {
-        return ret;
     }
+    return ret;
 }
 
 void *xmalloc(unsigned int size) {
