@@ -161,11 +161,11 @@ typedef struct PROCTAB {
     proc_t*(*reader)(struct PROCTAB *restrict const, proc_t *restrict const);
     int(*taskfinder)(struct PROCTAB *restrict const, const proc_t *restrict const, proc_t *restrict const, char *restrict const);
     proc_t*(*taskreader)(struct PROCTAB *restrict const, const proc_t *restrict const, proc_t *restrict const, char *restrict const);
-    unsigned	flags;
     pid_t*	pids;	// pids of the procs
     uid_t*	uids;	// uids of procs
     int		nuid;	// cannot really sentinel-terminate unsigned short[]
     int         i;  // generic
+    unsigned	flags;
     unsigned    u;  // generic
     void *      vp; // generic
     char        path[PROCPATHLEN];  // must hold /proc/2000222000/task/2000222000/cmdline

@@ -512,7 +512,6 @@ static int want_this_proc_nop(proc_t *dummy){
 
 /***** sorted or forest */
 static void fancy_spew(void){
-  proc_t *retbuf = NULL;
   proc_data_t *pd = NULL;
   PROCTAB *restrict ptp;
   int n = 0;  /* number of processes & index into array */

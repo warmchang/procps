@@ -119,17 +119,17 @@ static int No_ksyms = -1,       // set to '0' if ksym avail, '1' otherwise
 
         /* Some cap's stuff to reduce runtime calls --
            to accomodate 'Batch' mode, they begin life as empty strings */
-static char  Cap_clr_eol    [CAPBUFSIZ] = "",
-             Cap_clr_eos    [CAPBUFSIZ] = "",
-             Cap_clr_scr    [CAPBUFSIZ] = "",
-             Cap_rmam       [CAPBUFSIZ] = "",
-             Cap_smam       [CAPBUFSIZ] = "",
-             Cap_curs_norm  [CAPBUFSIZ] = "",
-             Cap_curs_huge  [CAPBUFSIZ] = "",
-             Cap_home       [CAPBUFSIZ] = "",
-             Cap_norm       [CAPBUFSIZ] = "",
-             Cap_reverse    [CAPBUFSIZ] = "",
-             Caps_off       [CAPBUFSIZ] = "";
+static char  Cap_clr_eol    [CAPBUFSIZ],
+             Cap_clr_eos    [CAPBUFSIZ],
+             Cap_clr_scr    [CAPBUFSIZ],
+             Cap_rmam       [CAPBUFSIZ],
+             Cap_smam       [CAPBUFSIZ],
+             Cap_curs_norm  [CAPBUFSIZ],
+             Cap_curs_huge  [CAPBUFSIZ],
+             Cap_home       [CAPBUFSIZ],
+             Cap_norm       [CAPBUFSIZ],
+             Cap_reverse    [CAPBUFSIZ],
+             Caps_off       [CAPBUFSIZ];
 static int   Cap_can_goto = 0;
 
         /* Some optimization stuff, to reduce output demands...
@@ -461,6 +461,11 @@ static void suspend (int dont_care_sig)
 
 /*######  Misc Color/Display support  ####################################*/
 
+   /* macro to test if a basic (non-color) capability is valid
+         thanks: Floyd Davidson <floyd@ptialaska.net> */
+#define tIF(s)  s ? s : ""
+#define CAPCOPY(dst,src) src && strcpy(dst,src)
+
         /*
          * Make the appropriate caps/color strings and set some
          * lengths which are used to distinguish twix the displayed
@@ -469,9 +474,6 @@ static void suspend (int dont_care_sig)
          *       compatibility with the user's xterm settings */
 static void capsmk (WIN_t *q)
 {
-   /* macro to test if a basic (non-color) capability is valid
-         thanks: Floyd Davidson <floyd@ptialaska.net> */
-#define tIF(s)  s ? s : ""
    static int capsdone = 0;
 
    // we must NOT disturb our 'empty' terminfo strings!
@@ -479,16 +481,17 @@ static void capsmk (WIN_t *q)
 
    // these are the unchangeable puppies, so we only do 'em once
    if (!capsdone) {
-      strcpy(Cap_clr_eol, tIF(clr_eol));
-      strcpy(Cap_clr_eos, tIF(clr_eos));
-      strcpy(Cap_clr_scr, tIF(clear_screen));
-      strcpy(Cap_rmam, tIF(exit_am_mode));
-      strcpy(Cap_smam, tIF(enter_am_mode));
-      strcpy(Cap_curs_huge, tIF(cursor_visible));
-      strcpy(Cap_curs_norm, tIF(cursor_normal));
-      strcpy(Cap_home, tIF(cursor_home));
-      strcpy(Cap_norm, tIF(exit_attribute_mode));
-      strcpy(Cap_reverse, tIF(enter_reverse_mode));
+      CAPCOPY(Cap_clr_eol, clr_eol);
+      CAPCOPY(Cap_clr_eos, clr_eos);
+      CAPCOPY(Cap_clr_scr, clear_screen);
+      CAPCOPY(Cap_rmam, exit_am_mode);
+      CAPCOPY(Cap_smam, enter_am_mode);
+      CAPCOPY(Cap_curs_huge, cursor_visible);
+      CAPCOPY(Cap_curs_norm, cursor_normal);
+      CAPCOPY(Cap_home, cursor_home);
+      CAPCOPY(Cap_norm, exit_attribute_mode);
+      CAPCOPY(Cap_reverse, enter_reverse_mode);
+
       snprintf(Caps_off, sizeof(Caps_off), "%s%s", Cap_norm, tIF(orig_pair));
       if (tgoto(cursor_address, 1, 1)) Cap_can_goto = 1;
       capsdone = 1;

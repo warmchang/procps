@@ -5,6 +5,7 @@
 
 struct slab_info {
 	char name[SLAB_INFO_NAME_LEN];	/* name of this cache */
+	struct slab_info *next;
 	int nr_objs;			/* number of objects in this cache */
 	int nr_active_objs;		/* number of active objects */
 	int obj_size;			/* size of each object */
@@ -14,7 +15,6 @@ struct slab_info {
 	int nr_active_slabs;		/* number of active slabs */
 	int use;			/* percent full: total / active */
 	int cache_size;			/* size of entire cache */
-	struct slab_info *next;
 };
 
 struct slab_stat {

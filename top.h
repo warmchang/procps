@@ -56,9 +56,15 @@
         /* Specific process id monitoring support (command line only) */
 #define MONPIDMAX  20
 
+// Power-of-two sizes lead to trouble; the largest power of
+// two factor should be the cache line size. It'll mean the
+// array indexing math gets slower, but cache aliasing is
+// avoided.
+#define CACHE_TWEAK_FACTOR 64
+
         /* Miscellaneous buffer sizes with liberal values
            -- mostly just to pinpoint source code usage/dependancies */
-#define SCREENMAX   512
+#define SCREENMAX ( 512 + CACHE_TWEAK_FACTOR)
    /* the above might seem pretty stingy, until you consider that with every
       one of top's fields displayed we're talking a 160 byte column header --
       so that will provide for all fields plus a 350+ byte command line */
@@ -69,10 +75,10 @@
 #define CLRBUFSIZ    64
 #define GETBUFSIZ    32
 #define TNYBUFSIZ    32
-#define SMLBUFSIZ   256
-#define OURPATHSZ  1024
-#define MEDBUFSIZ  1024
-#define BIGBUFSIZ  2048
+#define SMLBUFSIZ ( 256 + CACHE_TWEAK_FACTOR)
+#define OURPATHSZ (1024 + CACHE_TWEAK_FACTOR)
+#define MEDBUFSIZ (1024 + CACHE_TWEAK_FACTOR)
+#define BIGBUFSIZ (2048 + CACHE_TWEAK_FACTOR)
 #define USRNAMSIZ  GETBUFSIZ
 #define ROWBUFSIZ  SCREENMAX + CLRBUFSIZ
 
@@ -628,4 +634,3 @@ typedef struct WIN_t {
 //     int          main (int dont_care_argc, char **argv);
 
 #endif /* _Itop */
-
