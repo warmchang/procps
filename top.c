@@ -226,7 +226,7 @@ SCB_NUM1(P_FLG, flags)
         /* ///////////////////////////////// special sort for prochlp() ! */
 static int sort_HST_t (const HST_t *P, const HST_t *Q)
 {
-   return -1 * ( Q->pid - P->pid );
+   return P->pid - Q->pid;
 }
 
 
@@ -284,15 +284,26 @@ static inline char *scat (char *restrict dst, const char *restrict src)
          * any 'open_psdb_message' result which arrived with an inappropriate
          * newline (thanks to 'sysmap_mmap') -- but when tabs (^I) were found
          * in some proc cmdlines, a choice was offered twix space or null. */
-static char *strim (int sp, char *str)
+static char *strim_0 (char *str)
 {
    static const char ws[] = "\b\e\f\n\r\t\v\0133";  // \0133 is an escape
    char *p;
 
-   if (sp)
-      while ((p = strpbrk(str, ws))) *p = ' ';
-   else
-      if ((p = strpbrk(str, ws))) *p = 0;
+   if ((p = strpbrk(str, ws))) *p = 0;
+   return str;
+}
+
+        /*
+         * This guy was originally designed just to trim the rc file lines and
+         * any 'open_psdb_message' result which arrived with an inappropriate
+         * newline (thanks to 'sysmap_mmap') -- but when tabs (^I) were found
+         * in some proc cmdlines, a choice was offered twix space or null. */
+static char *strim_1 (char *str)
+{
+   static const char ws[] = "\b\e\f\n\r\t\v\0133";  // \0133 is an escape
+   char *p;
+
+   while (unlikely(p = strpbrk(str, ws))) *p = ' ';
    return str;
 }
 
@@ -520,7 +531,7 @@ static void msg_save (const char *fmts, ...)
    vsnprintf(tmp, sizeof(tmp), fmts, va);
    va_end(va);
       /* we'll add some extra attention grabbers to whatever this is */
-   snprintf(Msg_delayed, sizeof(Msg_delayed), "\a***  %s  ***", strim(0, tmp));
+   snprintf(Msg_delayed, sizeof(Msg_delayed), "\a***  %s  ***", strim_0(tmp));
    Msg_awaiting = 1;
 }
 
@@ -622,7 +633,7 @@ static void show_special (int interact, const char *glob)
             default:                    /* nothin' special, just text */
                ++sub_end;
          }
-         if (0 >= room) break;          /* skip substrings that won't fit */
+         if (unlikely(0 >= room)) break; /* skip substrings that won't fit */
       }
 
       if (interact) PUTT("%s%s\n", row, Cap_clr_eol);
@@ -650,7 +661,7 @@ static char *ask4str (const char *prompt)
    memset(buf, '\0', sizeof(buf));
    chin(1, buf, sizeof(buf) - 1);
    putp(Cap_curs_norm);
-   return strim(0, buf);
+   return strim_0(buf);
 }
 
 
@@ -871,7 +882,7 @@ static void prochlp (proc_t *this)
    static unsigned  maxt_sav;           // prior frame's max tasks
    TIC_t tics;
 
-   if (!this) {
+   if (unlikely(!this)) {
       static struct timeval oldtimev;
       struct timeval timev;
       struct timezone timez;
@@ -914,7 +925,7 @@ static void prochlp (proc_t *this)
          break;
    }
 
-   if (Frame_maxtask+1 >= hist_siz) {
+   if (unlikely(Frame_maxtask+1 >= hist_siz)) {
       hist_siz = hist_siz * 5 / 4 + 100;  // grow by at least 25%
       hist_sav = alloc_r(hist_sav, sizeof(HST_t) * hist_siz);
       hist_new = alloc_r(hist_new, sizeof(HST_t) * hist_siz);
@@ -934,7 +945,7 @@ static void prochlp (proc_t *this)
       i = (lo + hi) / 2;
       if (this->pid < hist_sav[i].pid)
          hi = i - 1;
-      else if (this->pid > hist_sav[i].pid)
+      else if (likely(this->pid > hist_sav[i].pid))
          lo = i + 1;
       else {
          tics -= hist_sav[i].tics;
@@ -945,7 +956,7 @@ static void prochlp (proc_t *this)
    // we're just saving elapsed tics, to be converted into %cpu if
    // this task wins it's displayable screen row lottery... */
    this->pcpu = tics;
-   strim(1, this->cmd);
+   strim_1(this->cmd);
 // if (Frames_maxcmdln) { }
    // shout this to the world with the final call (or us the next time in)
    Frame_maxtask++;
@@ -977,7 +988,7 @@ static proc_t **procs_refresh (proc_t **table, int flags)
          free(*table[curmax]->cmdline);
          table[curmax]->cmdline = NULL;
       }
-      if (!(ptsk = readproc(PT, table[curmax]))) break;
+      if (unlikely(!(ptsk = readproc(PT, table[curmax])))) break;
       prochlp(ptsk);                    // tally & complete this proc_t
       ++curmax;
    }
@@ -987,7 +998,7 @@ static proc_t **procs_refresh (proc_t **table, int flags)
       // realloc as we go, keeping 'table' ahead of 'currmax++'
       table = alloc_r(table, (curmax + 1) * PTRsz);
       // here, readproc will allocate the underlying proc_t stg
-      if ((ptsk = readproc(PT, NULL))) {
+      if (likely(ptsk = readproc(PT, NULL))) {
          prochlp(ptsk);                 // tally & complete this proc_t
          table[curmax++] = ptsk;
       }
@@ -2745,7 +2756,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
    /* the following macro is our means to 'inline' emitting a column -- next to
       procs_refresh, that's the most frequent and costly part of top's job ! */
 #define MKCOL(va...) do { \
-   if (!(CHKw(q, Show_HICOLS) && q->rc.sortindx == i)) \
+   if (likely(!(CHKw(q, Show_HICOLS) && q->rc.sortindx == i))) \
       snprintf(cbuf, sizeof(cbuf), f, ## va); \
    else { \
       snprintf(_z, sizeof(_z), f, ## va); \
@@ -2781,7 +2792,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
                      tp = scat(tp, fmtmk("%.*s ", q->maxcmdln, p->cmdline[j]));
                      if (q->maxcmdln < (tp - tmp)) break;
                   } while (p->cmdline[++j]);
-                  strim(1, tmp);
+                  strim_1(tmp);
                } else
                   strcpy(tmp, fmtmk(CMDLINE_FMTS, p->cmd));
                cp = tmp;
@@ -2835,7 +2846,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
             MKCOL((unsigned)p->ppid);
             break;
          case P_PRI:
-            if (-99 > p->priority || 999 < p->priority) {
+            if (unlikely(-99 > p->priority) || unlikely(999 < p->priority)) {
                f = " RT ";
                MKCOL("");
             } else

@@ -95,13 +95,13 @@
                  highly optimized to save them ol' precious cycles! */
 #define SCB_NUM1(f,n) \
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
-      if ( (*P)->n < (*Q)->n ) return SORT_lt; \
-      if ( (*P)->n > (*Q)->n ) return SORT_gt; \
+      if (        (*P)->n < (*Q)->n  ) return SORT_lt; \
+      if (likely( (*P)->n > (*Q)->n )) return SORT_gt; \
       return SORT_eq; }
 #define SCB_NUM2(f,n1,n2) \
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
-      if ( ((*P)->n1 - (*P)->n2) < ((*Q)->n1 - (*Q)->n2) ) return SORT_lt; \
-      if ( ((*P)->n1 - (*P)->n2) > ((*Q)->n1 - (*Q)->n2) ) return SORT_gt; \
+      if (        ((*P)->n1 - (*P)->n2) < ((*Q)->n1 - (*Q)->n2)  ) return SORT_lt; \
+      if (likely( ((*P)->n1 - (*P)->n2) > ((*Q)->n1 - (*Q)->n2) )) return SORT_gt; \
       return SORT_eq; }
 #define SCB_NUMx(f,n) \
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
@@ -563,7 +563,8 @@ typedef struct WIN_t {
 //atic int          chin (int ech, char *buf, unsigned cnt);
 //atic const char  *fmtmk (const char *fmts, ...);
 //atic inline char *scat (char *restrict dst, const char *restrict src);
-//atic char        *strim (int sp, char *str);
+//atic char        *strim_0 (char *str);
+//atic char        *strim_1 (char *str);
 //atic const char  *tg2 (int x, int y);
 /*------  Exit/Interrput routines  ---------------------------------------*/
 //atic void         bye_bye (int eno, const char *str);
