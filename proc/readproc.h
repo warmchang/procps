@@ -133,6 +133,7 @@ typedef struct proc_t {
 	session,	/* session id */
 	tty,		/* full device number of controlling terminal */
 	tpgid,		/* terminal process group id */
+	tgid,		/* thread group ID */
 	exit_signal,	/* might not be SIGCHLD */
 	processor;      /* current (or most recent?) CPU */
 #ifdef FLASK_LINUX

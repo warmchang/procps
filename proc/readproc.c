@@ -31,6 +31,15 @@
 #include <fs_secure.h>
 #endif
 
+#ifdef PROF
+extern void __cyg_profile_func_enter(void*,void*);
+#define ENTER(x) __cyg_profile_func_enter((void*)x,(void*)x)
+#define LEAVE(x) __cyg_profile_func_exit((void*)x,(void*)x)
+#else
+#define ENTER(x)
+#define LEAVE(x)
+#endif
+
 /* initiate a process table scan
  */
 PROCTAB* openproc(int flags, ...) {
@@ -77,109 +86,245 @@ void freeproc(proc_t* p) {
 }
 
 
-// 2.5.xx looks like:
-//
-// "State:\t%s\n"
-// "Tgid:\t%d\n"
-// "Pid:\t%d\n"
-// "PPid:\t%d\n"
-// "TracerPid:\t%d\n"
+///////////////////////////////////////////////////////////////////////////
 
-static void status2proc(const char *S, proc_t *restrict P){
-    char* tmp;
-    unsigned i;
-
-    // The cmd is escaped, with \\ and \n for backslash and newline.
-    // It certainly may contain "VmSize:" and similar crap.
-    if(unlikely(strncmp("Name:\t",S,6))) fprintf(stderr, "Internal error!\n");
-    S += 6;
-    i = 0;
-    while(i < sizeof P->cmd - 1){
-      int c = *S++;
-      if(unlikely(c=='\n')) break;
-      if(unlikely(c=='\0')) return; // should never happen
-      if(unlikely(c=='\\')){
-        c = *S++;
-        if(c=='\n') break; // should never happen
-        if(!c) break; // should never happen
-        if(c=='n') c='\n'; // else we assume it is '\\'
-      }
-      P->cmd[i++] = c;
-    }
-    P->cmd[i] = '\0';
-
-    tmp = strstr (S,"State:\t");
-    if(likely(tmp)) P->state = tmp[7];
-    else fprintf(stderr, "Internal error!\n");
-
-    tmp = strstr (S,"PPid:");
-    if(likely(tmp)) sscanf (tmp,
-        "PPid:\t%d\n",
-        &P->ppid
-    );
-    else fprintf(stderr, "Internal error!\n");
-
-    tmp = strstr (S,"Uid:");
-    if(likely(tmp)) sscanf (tmp,
-        "Uid:\t%d\t%d\t%d\t%d",
-        &P->ruid, &P->euid, &P->suid, &P->fuid
-    );
-    else fprintf(stderr, "Internal error!\n");
-
-    tmp = strstr (S,"Gid:");
-    if(likely(tmp)) sscanf (tmp,
-        "Gid:\t%d\t%d\t%d\t%d",
-        &P->rgid, &P->egid, &P->sgid, &P->fgid
-    );
-    else fprintf(stderr, "Internal error!\n");
-
-    tmp = strstr (S,"VmSize:");
-    if(likely(tmp)) sscanf (tmp,
-        "VmSize: %lu kB\n"
-        "VmLck: %lu kB\n"
-        "VmRSS: %lu kB\n"
-        "VmData: %lu kB\n"
-        "VmStk: %lu kB\n"
-        "VmExe: %lu kB\n"
-        "VmLib: %lu kB\n",
-        &P->vm_size, &P->vm_lock, &P->vm_rss, &P->vm_data,
-        &P->vm_stack, &P->vm_exe, &P->vm_lib
-    );
-    else /* looks like an annoying kernel thread */
-    {
-        P->vm_size  = 0;
-        P->vm_lock  = 0;
-        P->vm_rss   = 0;
-        P->vm_data  = 0;
-        P->vm_stack = 0;
-        P->vm_exe   = 0;
-        P->vm_lib   = 0;
-    }
-
-    // 2.1   SigPnd SigBlk SigIgn SigCat  ("SigCat")
-    // other SigPnd SigBlk SigIgn SigCgt
-    // 2.5+  SigPnd ShdPnd SigBlk SigIgn SigCgt
-
-    tmp = strstr (S,"SigPnd:");
-    if(likely(tmp)) sscanf (tmp,
-#ifdef SIGNAL_STRING
-        "SigPnd: %s SigBlk: %s SigIgn: %s %*s %s",
-        P->signal, P->blocked, P->sigignore, P->sigcatch
+typedef struct status_table_struct {
+    unsigned char name[6];        // /proc/*/status field name
+    short len;                    // name length
+#ifdef LABEL_OFFSET
+    long offset;                  // jump address offset
 #else
-        "SigPnd: %Lx SigBlk: %Lx SigIgn: %Lx %*s %Lx",
-        &P->signal, &P->blocked, &P->sigignore, &P->sigcatch
+    void *addr;
 #endif
-    );
-    else fprintf(stderr, "Internal error!\n");
+} status_table_struct;
+
+#ifdef LABEL_OFFSET
+#define F(x) {#x, sizeof(#x)-1, (int)(&&case_##x-&&base)},
+#else
+#define F(x) {#x, sizeof(#x)-1, &&case_##x},
+#endif
+#define NUL  {"", 0, 0},
+
+// Derived from:
+// gperf -7 --language=ANSI-C --key-positions=1,3,4 -C -n -c sml.gperf
+
+static void status2proc(char *S, proc_t *restrict P){
+    static const unsigned char asso[] = {
+        56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
+        56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
+        56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
+        56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 15, 56, 56, 56, 56, 56,
+        56, 56, 25, 30, 15,  3, 56,  5, 56,  3, 56, 56,  3, 56, 10, 56,
+        18, 56, 13,  0, 30, 25,  0, 56, 56, 56, 56, 56, 56, 56, 56, 56,
+        56, 30, 56,  8,  0,  0, 56, 25, 56,  5, 56, 56, 56,  0, 56, 56,
+        56, 56, 56, 56,  0, 56, 56, 56,  0, 56, 56, 56, 56, 56, 56, 56
+    };
+    static const status_table_struct table[] = {
+        F(VmStk)
+        NUL
+        NUL
+        F(VmExe)
+        NUL
+        F(VmSize)
+        NUL
+        NUL
+        F(VmLib)
+        NUL
+        F(Name)
+        F(VmLck)
+        NUL
+        F(VmRSS)
+        NUL
+        NUL
+        NUL
+        NUL
+        F(ShdPnd)
+        NUL
+        F(Gid)
+        NUL
+        NUL
+        F(PPid)
+        NUL
+        NUL
+        NUL
+        NUL
+        F(SigIgn)
+        NUL
+        F(State)
+        NUL
+        NUL
+        F(Pid)
+        NUL
+        F(Tgid)
+        NUL
+        NUL
+        NUL
+        NUL
+        F(Uid)
+        NUL
+        NUL
+        F(SigPnd)
+        NUL
+        F(VmData)
+        NUL
+        NUL
+        NUL
+        NUL
+        F(SigBlk)
+        NUL
+        NUL
+        NUL
+        NUL
+        F(SigCgt)
+        NUL
+        NUL
+        NUL
+        NUL
+        NUL
+        NUL
+        NUL
+        NUL
+    };
+
+#undef F
+#undef NUL
+
+ENTER(0x220);
+
+    P->vm_size = 0;
+    P->vm_lock = 0;
+    P->vm_rss  = 0;
+    P->vm_data = 0;
+    P->vm_stack= 0;
+    P->vm_exe  = 0;
+    P->vm_lib  = 0;
+
+    goto base;
+
+    for(;;){
+        char *colon;
+        status_table_struct entry;
+
+        // advance to next line
+        S = strchr(S, '\n');
+        if(unlikely(!S)) break;  // if no newline
+        S++;
+
+        // examine a field name (hash and compare)
+    base:
+        if(unlikely(!*S)) break;
+        entry = table[63 & (asso[S[3]] + asso[S[2]] + asso[S[0]])];
+        colon = strchr(S, ':');
+        if(unlikely(!colon)) break;
+        if(unlikely(colon[1]!='\t')) break;
+        if(unlikely(colon-S != entry.len)) continue;
+        if(unlikely(memcmp(entry.name,S,colon-S))) continue;
+
+        S = colon+2; // past the '\t'
+
+#ifdef LABEL_OFFSET
+        goto *(&&base + entry.offset);
+#else
+        goto *entry.addr;
+#endif
+
+    case_Gid:
+        P->rgid = strtol(S,&S,10);
+        P->egid = strtol(S,&S,10);
+        P->sgid = strtol(S,&S,10);
+        P->fgid = strtol(S,&S,10);
+        continue;
+    case_Name:{
+        int i = 0;
+        while(i < sizeof P->cmd - 1){
+            int c = *S++;
+            if(unlikely(c=='\n')) break;
+            if(unlikely(c=='\0')) return; // should never happen
+            if(unlikely(c=='\\')){
+                c = *S++;
+                if(c=='\n') break; // should never happen
+                if(!c)      break; // should never happen
+                if(c=='n') c='\n'; // else we assume it is '\\'
+            }
+            P->cmd[i++] = c;
+        }
+        P->cmd[i] = '\0';
+        continue;
+    }
+    case_PPid:
+        P->ppid = strtol(S,&S,10);
+        continue;
+    case_Pid:
+        P->pid = strtol(S,&S,10);
+        continue;
+
+    case_ShdPnd:
+        memcpy(P->signal, S, 16);
+        P->signal[16] = '\0';
+        continue;
+    case_SigBlk:
+        memcpy(P->blocked, S, 16);
+        P->blocked[16] = '\0';
+        continue;
+    case_SigCgt:
+        memcpy(P->sigcatch, S, 16);
+        P->sigcatch[16] = '\0';
+        continue;
+    case_SigIgn:
+        memcpy(P->sigignore, S, 16);
+        P->sigignore[16] = '\0';
+        continue;
+    case_SigPnd:
+        memcpy(P->signal, S, 16);
+        P->signal[16] = '\0';
+        continue;
+
+    case_State:
+        P->state = *S;
+        continue;
+    case_Tgid:
+        P->tgid = strtol(S,&S,10);
+        continue;
+    case_Uid:
+        P->ruid = strtol(S,&S,10);
+        P->euid = strtol(S,&S,10);
+        P->suid = strtol(S,&S,10);
+        P->fuid = strtol(S,&S,10);
+        continue;
+    case_VmData:
+        P->vm_data = strtol(S,&S,10);
+        continue;
+    case_VmExe:
+        P->vm_exe = strtol(S,&S,10);
+        continue;
+    case_VmLck:
+        P->vm_lock = strtol(S,&S,10);
+        continue;
+    case_VmLib:
+        P->vm_lib = strtol(S,&S,10);
+        continue;
+    case_VmRSS:
+        P->vm_rss = strtol(S,&S,10);
+        continue;
+    case_VmSize:
+        P->vm_size = strtol(S,&S,10);
+        continue;
+    case_VmStk:
+        P->vm_stack = strtol(S,&S,10);
+        continue;
+    }
+LEAVE(0x220);
 }
 
-
+///////////////////////////////////////////////////////////////////////
 
 // Reads /proc/*/stat files, being careful not to trip over processes with
 // names like ":-) 1 2 3 4 5 6".
 static void stat2proc(const char* S, proc_t *restrict P) {
     unsigned num;
     char* tmp;
+
+ENTER(0x160);
 
     /* fill in default values for older kernels */
     P->exit_signal = SIGCHLD;
@@ -225,7 +370,10 @@ static void stat2proc(const char* S, proc_t *restrict P) {
 /* -- Linux 2.2.8 to 2.5.17 end here -- */
        &P->rtprio, &P->sched  /* both added to 2.5.18 */
     );
+LEAVE(0x160);
 }
+
+/////////////////////////////////////////////////////////////////////////
 
 static void statm2proc(const char* s, proc_t *restrict P) {
     int num;
@@ -243,9 +391,9 @@ static int file2str(const char *directory, const char *what, char *ret, int cap)
     fd = open(filename, O_RDONLY, 0);
     if(unlikely(fd==-1)) return -1;
     num_read = read(fd, ret, cap - 1);
-    if(unlikely(num_read<=0)) num_read = -1;
-    else ret[num_read] = 0;
     close(fd);
+    if(unlikely(num_read<=0)) return -1;
+    ret[num_read] = '\0';
     return num_read;
 }
 
@@ -329,8 +477,8 @@ int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid){
         dst[n] = '\0';
         i=n;
         while(i--){
-          int c = dst[i];
-          if(c<' ' || c>'~') dst[i]=' ';
+            int c = dst[i];
+            if(c<' ' || c>'~') dst[i]=' ';
         }
     }
     return n;

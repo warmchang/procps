@@ -14,19 +14,22 @@ LIBOBJ :=  $(LIBSRC:.c=.o)
 #ALL        += proc/lib$(NAME).a
 #INSTALL    += $(usr/lib)/lib$(NAME).a # plus $(usr/include)$(NAME) gunk
 
+FPIC       := -fpic
+
 ifeq ($(SHARED),1)
 ALL        += proc/$(SONAME)
 INSTALL    += $(lib)/$(SONAME)
-FPIC       := -fpic
+LIBFLAGS   := -DSHARED=1 $(FPIC)
 LIBPROC    := proc/$(SONAME)
 else
 ALL        += proc/lib$(NAME).a
+LIBFLAGS   := -DSHARED=0
 LIBPROC    := proc/lib$(NAME).a
 endif
 
 # Separate rule for this directory, to use -fpic or -fPIC
 $(filter-out proc/version.o,$(LIBOBJ)): proc/%.o: proc/%.c
-	$(CC) -c $(CFLAGS) $(FPIC) $< -o $@
+	$(CC) -c $(CFLAGS) $(LIBFLAGS) $< -o $@
 
 LIB_X := COPYING module.mk library.map
 TARFILES += $(LIBSRC) $(LIBHDR) $(addprefix proc/,$(LIB_X))
@@ -71,4 +74,4 @@ $(lib)/$(SONAME) : proc/$(SONAME)
 
 
 proc/version.o:	proc/version.c proc/version.h
-	$(CC) $(CFLAGS) $(FPIC) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c -o $@ $<
+	$(CC) $(CFLAGS) $(LIBFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c -o $@ $<

@@ -64,6 +64,11 @@
 #define expected(x,y)   (x)
 #endif
 
+#if SHARED==1 && (__GNUC__ > 2 || __GNUC_MINOR__ >= 96)
+#define LABEL_OFFSET
+#endif
+
+
 // marks old junk, to warn non-procps library users
 #if ( __GNUC__ == 3 && __GNUC_MINOR__ > 0 ) || __GNUC__ > 3
 #define OBSOLETE __attribute__((deprecated))
