@@ -4,15 +4,15 @@ move striping from install command to CFLAGS
 now using gcc -fweb and -frename-registers options
 avoid warning about -lncurses when not linking -- thanks FLWM
 tolerate IA-64 headers without PAGE_SIZE
-watch: allow sub-second intervals -- thanks Thomas Stewart
-sysctl: -q option
-sysctl: better error handling of failed writes
-ps: personality-specific -x support (HP-UX and SVR4-MP)
 ps: k option, same as --sort
-vmstat: fixed -d
+ps: personality-specific -x support (HP-UX and SVR4-MP)
+sysctl: -q and -N options
+sysctl: better error handling of failed writes
+top: tolerate sparse CPU numbering
 top: try to handle terminals lacking rmam and smam     #235003
 top: xterm dislikes clear-to-eol at eol (char lost)
-top: tolerate sparse CPU numbering
+vmstat: fixed -d
+watch: allow sub-second intervals -- thanks Thomas Stewart
 
 procps-3.2.0 --> procps-3.2.1
 

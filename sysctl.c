@@ -45,6 +45,7 @@ static bool false = 0;
 
 static const char PROC_PATH[] = "/proc/sys/";
 static const char DEFAULT_PRELOAD[] = "/etc/sysctl.conf";
+static bool NameOnly;
 static bool PrintName;
 static bool PrintNewline;
 static bool IgnoreError;
@@ -115,7 +116,7 @@ static char *StripLeadingAndTrailingSpaces(char *oneline) {
    return t;
 }
 
-
+static int DisplayAll(const char *restrict const path);
 
 /*
  *     Read a sysctl setting 
@@ -163,16 +164,43 @@ static int ReadSetting(const char *restrict const name) {
          break;
       }
    } else {
-      while(fgets(inbuf, 1024, fp)) {
-         /* already has the \n in it */
-         if (PrintName) {
-            fprintf(stdout, "%s = %s", outname, inbuf);
-         } else {
-            if (!PrintNewline) {
-              char *nlptr = strchr(inbuf,'\n');
-              if(nlptr) *nlptr='\0';
+      if(fgets(inbuf, sizeof inbuf - 1, fp)) {
+         // this loop is required, see
+         // /sbin/sysctl -a | egrep -6 dev.cdrom.info
+         do {
+            if (NameOnly) {
+               fprintf(stdout, "%s\n", outname);
+            } else {
+               /* already has the \n in it */
+               if (PrintName) {
+                  fprintf(stdout, "%s = %s", outname, inbuf);
+               } else {
+                  if (!PrintNewline) {
+                    char *nlptr = strchr(inbuf,'\n');
+                    if(nlptr) *nlptr='\0';
+                  }
+                  fprintf(stdout, "%s", inbuf);
+               }
             }
-            fprintf(stdout, "%s", inbuf);
+         } while(fgets(inbuf, sizeof inbuf - 1, fp));
+      } else {
+         switch(errno) {
+         case EACCES:
+            fprintf(stderr, ERR_PERMISSION_DENIED, outname);
+            rc = -1;
+            break;
+         case EISDIR:{
+            size_t len;
+            len = strlen(tmpname);
+            tmpname[len] = '/';
+            tmpname[len+1] = '\0';
+            rc = DisplayAll(tmpname);
+            break;
+         }
+         default:
+            fprintf(stderr, ERR_UNKNOWN_READING, errno, outname);
+            rc = -1;
+            break;
          }
       }
       fclose(fp);
@@ -189,12 +217,11 @@ static int ReadSetting(const char *restrict const name) {
  *     Display all the sysctl settings 
  *
  */
-static int DisplayAll(const char *restrict const path, bool ShowTableUtil) {
+static int DisplayAll(const char *restrict const path) {
    int rc = 0;
    int rc2;
    DIR *restrict dp;
    struct dirent *restrict de;
-   char *restrict tmpdir;
    struct stat ts;
 
    dp = opendir(path);
@@ -203,17 +230,19 @@ static int DisplayAll(const char *restrict const path, bool ShowTableUtil) {
       fprintf(stderr, ERR_OPENING_DIR, path);
       rc = -1;
    } else {
-      readdir(dp); readdir(dp);   /* skip . and .. */
+      readdir(dp);  // skip .
+      readdir(dp);  // skip ..
       while (( de = readdir(dp) )) {
+         char *restrict tmpdir;
          tmpdir = (char *restrict)malloc(strlen(path)+strlen(de->d_name)+2);
          sprintf(tmpdir, "%s%s", path, de->d_name);
-         rc2 = stat(tmpdir, &ts);       /* should check this return code */
+         rc2 = stat(tmpdir, &ts);
          if (rc2 != 0) {
             perror(tmpdir);
          } else {
             if (S_ISDIR(ts.st_mode)) {
                strcat(tmpdir, "/");
-               DisplayAll(tmpdir, ShowTableUtil);
+               DisplayAll(tmpdir);
             } else {
                rc |= ReadSetting(tmpdir+strlen(PROC_PATH));
             }
@@ -300,13 +329,17 @@ static int WriteSetting(const char *setting) {
             fprintf(stderr, ERR_UNKNOWN_WRITING, errno, outname);
       }
       if (rc==0 && !Quiet) {
-         if (PrintName) {
-            fprintf(stdout, "%s = %s\n", outname, value);
+         if (NameOnly) {
+            fprintf(stdout, "%s\n", outname);
          } else {
-            if (PrintNewline)
-               fprintf(stdout, "%s\n", value);
-            else
-               fprintf(stdout, "%s", value);
+            if (PrintName) {
+               fprintf(stdout, "%s = %s\n", outname, value);
+            } else {
+               if (PrintNewline)
+                  fprintf(stdout, "%s\n", value);
+               else
+                  fprintf(stdout, "%s", value);
+            }
          }
       }
    }
@@ -364,6 +397,7 @@ static int Preload(const char *restrict const filename) {
       while ((*value == ' ' || *value == '\t') && *value != 0)
          value++;
 
+      // should NameOnly affect this?
       sprintf(buffer, "%s=%s", name, value);
       rc |= WriteSetting(buffer);
    }
@@ -421,6 +455,9 @@ int main(int argc, char **argv) {
          case 'e':
               IgnoreError = true;
            break;
+         case 'N':
+              NameOnly = true;
+           break;
          case 'w':
               SwitchesAllowed = false;
               WriteMode = true;
@@ -438,7 +475,7 @@ int main(int argc, char **argv) {
          case 'A': /* the above, including "opaques" (would be unprintable) */
          case 'X': /* the above, with opaques completly printed in hex */
               SwitchesAllowed = false;
-              return DisplayAll(PROC_PATH, ((*argv)[1] == 'a') ? false : true);
+              return DisplayAll(PROC_PATH);
          case 'V':
               fprintf(stdout, "sysctl (%s)\n",procps_version);
               exit(0);
@@ -450,6 +487,8 @@ int main(int argc, char **argv) {
               return Usage(me);
          }
       } else {
+         if (NameOnly && Quiet)   // nonsense
+            return Usage(me);
          SwitchesAllowed = false;
          if (WriteMode)
             ReturnCode = WriteSetting(*argv);
