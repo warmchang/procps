@@ -1,6 +1,7 @@
 procps-3.2.4 --> procps-3.2.5
 
 display problem on 64-bit systems fixed
+sysctl: better error messages
 ps: security labels can contain any printable ASCII
 top: help and version message on stdout, with exit(0)    #283541
 ps: SIGTSTP from ^Z shouldn't print bug email address

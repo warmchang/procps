@@ -52,15 +52,15 @@ static bool IgnoreError;
 static bool Quiet;
 
 /* error messages */
-static const char ERR_UNKNOWN_PARAMETER[] = "error: Unknown parameter '%s'\n";
-static const char ERR_MALFORMED_SETTING[] = "error: Malformed setting '%s'\n";
-static const char ERR_NO_EQUALS[] = "error: '%s' must be of the form name=value\n";
-static const char ERR_INVALID_KEY[] = "error: '%s' is an unknown key\n";
-static const char ERR_UNKNOWN_WRITING[] = "error: unknown error %d setting key '%s'\n";
-static const char ERR_UNKNOWN_READING[] = "error: unknown error %d reading key '%s'\n";
+static const char ERR_UNKNOWN_PARAMETER[] = "error: Unknown parameter \"%s\"\n";
+static const char ERR_MALFORMED_SETTING[] = "error: Malformed setting \"%s\"\n";
+static const char ERR_NO_EQUALS[] = "error: \"%s\" must be of the form name=value\n";
+static const char ERR_INVALID_KEY[] = "error: \"%s\" is an unknown key\n";
+static const char ERR_UNKNOWN_WRITING[] = "error: \"%s\" setting key \"%s\"\n";
+static const char ERR_UNKNOWN_READING[] = "error: \"%s\" reading key \"%s\"\n";
 static const char ERR_PERMISSION_DENIED[] = "error: permission denied on key '%s'\n";
-static const char ERR_OPENING_DIR[] = "error: unable to open directory '%s'\n";
-static const char ERR_PRELOAD_FILE[] = "error: unable to open preload file '%s'\n";
+static const char ERR_OPENING_DIR[] = "error: unable to open directory \"%s\"\n";
+static const char ERR_PRELOAD_FILE[] = "error: unable to open preload file \"%s\"\n";
 static const char WARN_BAD_LINE[] = "warning: %s(%d): invalid syntax, continuing...\n";
 
 
@@ -159,7 +159,7 @@ static int ReadSetting(const char *restrict const name) {
          rc = -1;
          break;
       default:
-         fprintf(stderr, ERR_UNKNOWN_READING, errno, outname);
+         fprintf(stderr, ERR_UNKNOWN_READING, strerror(errno), outname);
          rc = -1;
          break;
       }
@@ -198,7 +198,7 @@ static int ReadSetting(const char *restrict const name) {
             break;
          }
          default:
-            fprintf(stderr, ERR_UNKNOWN_READING, errno, outname);
+            fprintf(stderr, ERR_UNKNOWN_READING, strerror(errno), outname);
             rc = -1;
             break;
          }
@@ -314,19 +314,19 @@ static int WriteSetting(const char *setting) {
          rc = -1;
          break;
       default:
-         fprintf(stderr, ERR_UNKNOWN_WRITING, errno, outname);
+         fprintf(stderr, ERR_UNKNOWN_WRITING, strerror(errno), outname);
          rc = -1;
          break;
       }
    } else {
       rc = fprintf(fp, "%s\n", value);
       if (rc < 0) {
-         fprintf(stderr, ERR_UNKNOWN_WRITING, errno, outname);
+         fprintf(stderr, ERR_UNKNOWN_WRITING, strerror(errno), outname);
          fclose(fp);
       } else {
          rc=fclose(fp);
          if (rc != 0) 
-            fprintf(stderr, ERR_UNKNOWN_WRITING, errno, outname);
+            fprintf(stderr, ERR_UNKNOWN_WRITING, strerror(errno), outname);
       }
       if (rc==0 && !Quiet) {
          if (NameOnly) {
