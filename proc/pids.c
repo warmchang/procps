@@ -97,9 +97,10 @@ struct pids_info {
 static char** pids_vectorize_this (const char* src) {
  #define pSZ  (sizeof(char*))
     char *cpy, **vec;
-    int adj, tot;
+    size_t adj, tot;
 
     tot = strlen(src) + 1;                       // prep for our vectors
+    if (tot < 1 || tot >= INT_MAX) tot = INT_MAX-1; // integer overflow?
     adj = (pSZ-1) - ((tot + pSZ-1) & (pSZ-1));   // calc alignment bytes
     cpy = calloc(1, tot + adj + (2 * pSZ));      // get new larger buffer
     if (!cpy) return NULL;                       // oops, looks like ENOMEM
