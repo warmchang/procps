@@ -156,6 +156,10 @@ static void status2proc(const char *S, proc_t *restrict P){
         P->vm_lib   = 0;
     }
 
+    // 2.1   SigPnd SigBlk SigIgn SigCat  ("SigCat")
+    // other SigPnd SigBlk SigIgn SigCgt
+    // 2.5+  SigPnd ShdPnd SigBlk SigIgn SigCgt
+
     tmp = strstr (S,"SigPnd:");
     if(likely(tmp)) sscanf (tmp,
 #ifdef SIGNAL_STRING
