@@ -711,7 +711,7 @@ static const char *scale_tics (TICS_t tics, const int width)
    unsigned cc;         // centiseconds
    unsigned nn;         // multi-purpose whatever
 
-   nt  = (tics * 100) / Hertz;
+   nt  = (tics * 100ull) / Hertz;
    cc  = nt % 100;                              // centiseconds past second
    nt /= 100;                                   // total seconds
    nn  = nt % 60;                               // seconds past the minute

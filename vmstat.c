@@ -155,6 +155,8 @@ static void getrunners(unsigned int *running, unsigned int *blocked,
 
 
 //////////////////////////////////////////////////////////////////////////////////////
+#if 0
+
 static void old_header(void){
   printf("%8s%28s%10s%12s%11s%9s\n",
 	 "procs","memory","swap","io","system","cpu");
@@ -253,10 +255,11 @@ static void old_format(void) {
     );
   }
 }
-
+#endif
 
 //////////////////////////////////////////////////////////////////////////////////////
 
+#if 0
 // produce:  "  6  ", "123  ", "123k ", etc.
 static int format_1024(unsigned long long val64, char *dst){
   unsigned oldval;
@@ -321,21 +324,19 @@ static int format_1000(unsigned long long val64, char *dst){
   }
   return sprintf(dst, "%3u%c ", val32, suffix[level]);
 }
-
-
-/*
-procs -----------memory---------- --swap-   ----io---  ---system---  ---cpu---
- r  b   swpd   free   buff  cache  si  so    bi    bo   in    cs  us  sy  id  wa
-*/
+#endif
 
 static void new_header(void){
-  printf("%5s%28s%10s%12s%11s%12s\n",
-	 "procs","memory","swap","io","system","cpu");
-  printf("%2s %2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %5s %2s %2s %2s %2s\n",
-	 "r","b","w","swpd","free",
-	 a_option?"inact":"buff", a_option?"active":"cache",
-	 "si","so","bi","bo",
-	 "in","cs","us","sy","id","wa");
+  printf("procs -----------memory---------- ---swap-- -----io---- --system-- ----cpu----\n");
+  printf(
+    "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %5s %2s %2s %2s %2s\n",
+    "b","w",
+    "swpd", "free", a_option?"inact":"buff", a_option?"active":"cache",
+    "si","so",
+    "bi","bo",
+    "in","cs",
+    "us","sy","id","wa"
+  );
 }
 
 static void new_format(void) {
@@ -353,7 +354,7 @@ static void new_format(void) {
   int debt = 0;  // handle idle ticks running backwards
 
   sleep_half=(sleep_time/2);
-  old_header();
+  new_header();
 
   getrunners(&running,&blocked,&r_swapp,&d_swapp);
   meminfo();
@@ -385,7 +386,7 @@ static void new_format(void) {
 
   for(i=1;i<num_updates;i++) { /* \\\\\\\\\\\\\\\\\\\\ main loop ////////////////// */
     sleep(sleep_time);
-    if (moreheaders && ((i%height)==0)) old_header();
+    if (moreheaders && ((i%height)==0)) new_header();
     tog= !tog;
 
     getrunners(&running,&blocked,&r_swapp,&d_swapp);
@@ -487,7 +488,7 @@ int main(int argc, char *argv[]) {
 
   setlinebuf(stdout);
 
-  old_format();
+  new_format();
   return 0;
 }
 

@@ -1,9 +1,11 @@
 procps-3.0.5 --> procps-3.0.6
 
+vmstat displays IO-wait time instead of bogus "w"
 can build w/o shared library (set SHARED=0)
 when IO-wait hidden, count as idle, not as sys
 pmap command added (like Sun has)
 do not crash GNU make 3.79
+top slightly faster
 
 procps-3.0.4 --> procps-3.0.5
 

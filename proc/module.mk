@@ -25,7 +25,7 @@ LIBPROC    := proc/lib$(NAME).a
 endif
 
 # Separate rule for this directory, to use -fpic or -fPIC
-$(LIBOBJ): proc/%.o: proc/%.c
+$(filter-out proc/version.o,$(LIBOBJ)): proc/%.o: proc/%.c
 	$(CC) -c $(CFLAGS) $(FPIC) $< -o $@
 
 LIB_X := COPYING module.mk
@@ -70,8 +70,4 @@ $(lib)/$(SONAME) : proc/$(SONAME)
 
 
 proc/version.o:	proc/version.c proc/version.h
-ifdef MINORVERSION
-	$(strip $(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c -o $@ $<)
-else
-	$(strip $(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -c -o $@ $<)
-endif
+	$(CC) $(CFLAGS) $(FPIC) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c -o $@ $<

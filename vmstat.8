@@ -41,8 +41,6 @@ The \fB-V\fP switch results in displaying version information.
 .nf
 r: The number of processes waiting for run time.  
 b: The number of processes in uninterruptable sleep.
-w: The number of processes swapped out but otherwise runnable.  This 
-   field is calculated, but Linux never desperation swaps.
 .fi
 .PP
 .SS
@@ -81,9 +79,10 @@ cs: The number of context switches per second.
 .B "CPU "
 These are percentages of total CPU time.
 .nf
-us: user time
-sy: system time
-id: idle time 
+us: Time spent running non-kernel code. (user time, including nice time)
+sy: Time spent running kernel code. (system time)
+id: Time spent idle. Prior to Linux 2.5.41, this includes IO-wait time.
+wa: Time spent waiting for IO. Prior to Linux 2.5.41, shown as zero.
 .nf
 .SH NOTES
 .B "vmstat "
@@ -93,7 +92,8 @@ These reports are intended to help identify system bottlenecks.  Linux
 .B "vmstat "
 does not count itself as a running process.
 .PP
-All linux blocks are currently 1k, except for CD-ROM blocks which are 2k.
+All linux blocks are currently 1024 bytes. Old kernels may report
+blocks as 512 bytes, 2048 bytes, or 4096 bytes.
 .PP
 .SH FILES
 .ta
