@@ -66,6 +66,7 @@ static void signal_handler(int signo){
       error_at_line(0, 0, __FILE__, __LINE__, "%s", _("please report this bug"));
       signal(signo, SIG_DFL);  /* allow core file creation */
       kill(getpid(), signo);
+      _exit(EXIT_FAILURE);
   }
 }
 
