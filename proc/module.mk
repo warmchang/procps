@@ -7,22 +7,21 @@ SHARED := 1
 
 SONAME    :=  lib$(NAME).so.$(LIBVERSION)
 
+LIBSRC :=  $(wildcard proc/*.c)
+LIBHDR :=  $(wildcard proc/*.h)
+LIBOBJ :=  $(LIBSRC:.c=.o)
+
 #ALL        += proc/lib$(NAME).a
 #INSTALL    += $(usr/lib)/lib$(NAME).a # plus $(usr/include)$(NAME) gunk
-LIB_CFLAGS := $(CFLAGS)
 
 ifeq ($(SHARED),1)
 ALL        += proc/$(SONAME)
 INSTALL    += $(lib)/$(SONAME)
-LIB_CFLAGS += -fpic
+$(LIBOBJ) : CFLAGS += -fpic
 LIBPROC    := proc/$(SONAME)
 else
 LIBPROC    := proc/lib$(NAME).a
 endif
-
-LIBSRC :=  $(wildcard proc/*.c)
-LIBHDR :=  $(wildcard proc/*.h)
-LIBOBJ :=  $(LIBSRC:.c=.o)
 
 
 LIB_X := COPYING Makefile.noam module.mk
