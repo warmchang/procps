@@ -1210,7 +1210,7 @@ try_bsd:
   // as SysV options... and you're screwed if you've been patching
   // out the friendly warning. Cut-over is likely to be in 2005.
   if(!(personality & PER_FORCE_BSD))
-    fprintf(stderr, "Warning: bad syntax, perhaps a bogus '-'? See http://procps.sf.net/faq.html\n");
+    fprintf(stderr, "Warning: bad ps syntax, perhaps a bogus '-'? See http://procps.sf.net/faq.html\n");
   // Remember: contact albert@users.sf.net or procps-feedback@lists.sf.net
   // if you should feel tempted. Be damn sure you understand all
   // the issues. The same goes for other stuff too, BTW. Please ask.
