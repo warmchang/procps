@@ -878,7 +878,7 @@ int main(int argc, char *argv[])
 
 	while ((c =
 		getopt_long(argc, argv, "afmnsdDp:S:wthV", longopts,
-			    NULL)) != EOF)
+			    NULL)) != -1)
 		switch (c) {
 		case 'V':
 			printf(PROCPS_NG_VERSION);
