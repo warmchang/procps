@@ -3071,7 +3071,7 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
    i = 0;
 
    while ( ppt[i]->tid != -1 && *lscr < Max_lines  &&  (!q->winlines || (lwin <= q->winlines)) ) {
-      if ((CHKw(q, Show_IDLEPS) || ('S' != ppt[i]->state && 'Z' != ppt[i]->state))
+      if ((CHKw(q, Show_IDLEPS) || ('S' != ppt[i]->state && 'Z' != ppt[i]->state && 'T' != ppt[i]->state))
       && good_uid(ppt[i]) ) {
          // Display a process Row
          task_show(q, ppt[i]);
