@@ -38,7 +38,7 @@ DIRS  += proc/
 
 proc/$(SONAME): $(LIBOBJ)
 	$(CC) -shared -Wl,-soname,$(SONAME) -o $@ $^ -lc
-	cd proc && $(ln-sf) $(SONAME) lib$(NAME).so
+	cd proc && $(ln_sf) $(SONAME) lib$(NAME).so
 
 
 # AUTOMATIC DEPENDENCY GENERATION -- GCC AND GNUMAKE DEPENDENT
@@ -54,7 +54,7 @@ endif
 
 $(lib)/$(SONAME) : proc/$(SONAME)
 	$(install) --mode a=rx --strip $< $@
-	cd $(lib) && $(ln-sf) $(SONAME) lib$(NAME).so
+	cd $(lib) && $(ln_sf) $(SONAME) lib$(NAME).so
 	$(ldconfig)
 
 #$(usr/lib)/lib$(NAME).a : proc/lib$(NAME).a
