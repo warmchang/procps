@@ -1,7 +1,7 @@
 Begin4
 Title: procps
 Version: 3.0.3
-Entered-date: 2002-10-10
+Entered-date: 2002-10-14
 Description: Linux system utilities
 Keywords: procps /proc libproc sysctl
 	ps uptime tload free w top vmstat watch skill snice kill pgrep pkill
