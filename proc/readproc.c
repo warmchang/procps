@@ -801,9 +801,10 @@ static int read_unvectored(char *restrict const dst, unsigned sz, const char* wh
 static char** vectorize_this_str (const char* src) {
  #define pSZ  (sizeof(char*))
     char *cpy, **vec;
-    int adj, tot;
+    size_t adj, tot;
 
     tot = strlen(src) + 1;                       // prep for our vectors
+    if (tot < 1 || tot >= INT_MAX) tot = INT_MAX-1; // integer overflow?
     adj = (pSZ-1) - ((tot + pSZ-1) & (pSZ-1));   // calc alignment bytes
     cpy = xcalloc(tot + adj + (2 * pSZ));        // get new larger buffer
     snprintf(cpy, tot, "%s", src);               // duplicate their string
