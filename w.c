@@ -23,7 +23,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <utmp.h>
-/* #include <sys/param.h>*/	/* for HZ */
+#include <locale.h>
 
 static int ignoreuser = 0;	/* for '-u' */
 static proc_t **procs;		/* our snapshot of the process table */
@@ -238,6 +238,7 @@ int main(int argc, char **argv) {
     from = 0;
 #endif
 
+    setlocale(LC_ALL, "");
     for (args=0; (ch = getopt(argc, argv, "hlusfV")) != EOF; args++)
 	switch (ch) {
 	  case 'h': header = 0;		break;

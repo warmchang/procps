@@ -16,7 +16,7 @@ unsigned print_str(FILE* file, char *s, unsigned max) {
 	    fputc(s[i], file);
 	else {
 	    if (max - i > 3) {
-		fprintf(file, "\\%03o", s[i]);
+		fprintf(file, "\\%03o", (unsigned char)s[i]);
 		i += 3; /* 4 printed, but i counts one */
 	    } else
 		return max - i;
@@ -36,7 +36,7 @@ unsigned print_strlist(FILE* file, char **strs, char* sep, unsigned max) {
 		fputc(strs[0][i], file);
 	    else {
 		if (max-(n+i) > 3) {
-		    fprintf(file, "\\%03o", strs[0][i]);
+		    fprintf(file, "\\%03o", (unsigned char)strs[0][i]);
 		    n += 3; /* 4 printed, but i counts one */
 		} else
 		    return max - n;
