@@ -43,6 +43,7 @@
 #include "proc/wchan.h"
 #include "proc/procps.h"
 #include "proc/readproc.h"
+#include "proc/escape.h"
 #include "proc/sig.h"
 #ifdef USE_LIB_STA3
 #include "proc/status.h"
@@ -282,31 +283,14 @@ static inline char *scat (char *restrict dst, const char *restrict src)
 }
 
 
-        /*
-         * This guy was originally designed just to trim the rc file lines and
-         * any 'open_psdb_message' result which arrived with an inappropriate
-         * newline (thanks to 'sysmap_mmap') -- but when tabs (^I) were found
-         * in some proc cmdlines, a choice was offered twix space or null. */
+// Trim the rc file lines and any 'open_psdb_message' result which arrives
+// with an inappropriate newline (thanks to 'sysmap_mmap')
 static char *strim_0 (char *str)
 {
    static const char ws[] = "\b\e\f\n\r\t\v\x9b";  // 0x9b is an escape
    char *p;
 
    if ((p = strpbrk(str, ws))) *p = 0;
-   return str;
-}
-
-        /*
-         * This guy was originally designed just to trim the rc file lines and
-         * any 'open_psdb_message' result which arrived with an inappropriate
-         * newline (thanks to 'sysmap_mmap') -- but when tabs (^I) were found
-         * in some proc cmdlines, a choice was offered twix space or null. */
-static char *strim_1 (char *str)
-{
-   static const char ws[] = "\b\e\f\n\r\t\v\x9b";  // 0x9b is an escape
-   char *p;
-
-   while (unlikely(p = strpbrk(str, ws))) *p = ' ';
    return str;
 }
 
@@ -1016,7 +1000,6 @@ static void prochlp (proc_t *this)
    // we're just saving elapsed tics, to be converted into %cpu if
    // this task wins it's displayable screen row lottery... */
    this->pcpu = tics;
-   strim_1(this->cmd);
 // if (Frames_maxcmdln) { }
    // shout this to the world with the final call (or us the next time in)
    Frame_maxtask++;
@@ -2909,6 +2892,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
       unsigned    w = Fieldstab[i].width;
 
       switch (i) {
+#if 0
          case P_CMD:
          {  const char *cp;
             if (CHKw(q, Show_CMDLIN)) {
@@ -2928,6 +2912,16 @@ static void task_show (const WIN_t *q, const proc_t *p)
             } else
                cp = p->cmd;
             MKCOL(q->maxcmdln, q->maxcmdln, cp);
+         }
+            break;
+#endif
+         case P_CMD:
+         {  char tmp[ROWBUFSIZ];
+            unsigned flags;
+            if (CHKw(q, Show_CMDLIN)) flags = ESC_DEFUNCT | ESC_BRACKETS | ESC_ARGS;
+            else                      flags = ESC_DEFUNCT;
+            escape_command(tmp, p, sizeof tmp, q->maxcmdln, flags);
+            MKCOL(q->maxcmdln, q->maxcmdln, tmp);
          }
             break;
          case P_COD:
