@@ -142,18 +142,12 @@ main(int argc, char *argv[])
 
 	if (option_help) {
 		fprintf(stderr, usage, progname);
-		fputs
-		    ("  -d, --differences[=cumulative]\thighlight changes between updates\n",
-		     stderr);
-		fputs("\t\t(cumulative means highlighting is cumulative)\n",
-		      stderr);
-		fputs("  -h, --help\t\t\t\tprint a summary of the options\n",
-		      stderr);
-		fputs
-		    ("  -n, --interval=<seconds>\t\tseconds to wait between updates\n",
-		     stderr);
-		fputs("  -v, --version\t\t\t\tprint the version number\n",
-		      stderr);
+		fputs("  -d, --differences[=cumulative]\thighlight changes between updates\n", stderr);
+		fputs("\t\t(cumulative means highlighting is cumulative)\n", stderr);
+		fputs("  -h, --help\t\t\t\tprint a summary of the options\n", stderr);
+		fputs("  -n, --interval=<seconds>\t\tseconds to wait between updates\n", stderr);
+		fputs("  -v, --version\t\t\t\tprint the version number\n", stderr);
+		fputs("  -t, --no-title\t\t\tturns off showing the header\n", stderr);
 		exit(0);
 	}
 
