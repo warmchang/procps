@@ -224,21 +224,19 @@ STIME	stime	hms or md time format
 static int forest_helper(char *restrict const outbuf){
   char *p = forest_prefix;
   char *q = outbuf;
-  int rightward=max_rightward;
+  int rightward = max_rightward < OUTBUF_SIZE ? max_rightward : OUTBUF_SIZE-1;
+  *q = '\0';
   if(!*p) return 0;
   /* Arrrgh! somebody defined unix as 1 */
   if(forest_type == 'u') goto unixy;
   while(*p){
+    if (rightward < 4) break;
     switch(*p){
     case ' ': strcpy(q, "    ");  break;
     case 'L': strcpy(q, " \\_ "); break;
     case '+': strcpy(q, " \\_ "); break;
     case '|': strcpy(q, " |  ");  break;
     case '\0': return q-outbuf;    /* redundant & not used */
-    }
-    if (rightward-4 < 0) {
-      *(q+rightward)='\0';
-      return max_rightward;
     }
     q += 4;
     rightward -= 4;
@@ -247,16 +245,13 @@ static int forest_helper(char *restrict const outbuf){
   return q-outbuf;   /* gcc likes this here */
 unixy:
   while(*p){
+    if (rightward < 2) break;
     switch(*p){
     case ' ': strcpy(q, "  "); break;
     case 'L': strcpy(q, "  "); break;
     case '+': strcpy(q, "  "); break;
     case '|': strcpy(q, "  "); break;
     case '\0': return q-outbuf;    /* redundant & not used */
-    }
-    if (rightward-2 < 0) {
-      *(q+rightward)='\0';
-      return max_rightward;
     }
     q += 2;
     rightward -= 2;
