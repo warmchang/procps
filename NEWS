@@ -1,7 +1,8 @@
 procps-3.1.8 --> procps-3.1.9
 
 top: fix suspend/resume behavior
-top: ditch warning until a GOOD interface is found
+top: ditch warning until a GOOD interface is found    #188271
+kill: more info in the man page           #182414
 
 procps-3.1.7 --> procps-3.1.8
 

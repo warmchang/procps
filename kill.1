@@ -13,7 +13,7 @@ kill \- report process status
 .TS
 l l.
 kill pid ...	Send SIGTERM to every process listed.
-kill signal pid ...	Send a signal to every process listed.
+kill -signal pid ...	Send a signal to every process listed.
 kill -s signal pid ...	Send a signal to every process listed.
 kill -l	List all signal names.
 kill -L	List all signal names in a nice table.
@@ -25,6 +25,9 @@ kill -V,--version Show version of program
 The default signal for kill is TERM. Use -l or -L to list available signals.
 Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.
 Alternate signals may be specified in three ways: -9 -SIGKILL -KILL.
+Negative PID values may be used to choose whole process groups; see the
+PGID column in ps command output. A PID of -1 is special; it indicates
+all processes except the kill process itself and init.
 
 .SH SIGNALS
 The signals listed below may be available for use with kill.
@@ -75,14 +78,31 @@ You may need to run the command described here as /bin/kill to solve
 the conflict.
 
 .SH EXAMPLES
-kill -9 -1
-.br
-kill -l 11
-.br
-kill -L
-.br
-kill 123 543 2341 3453
 
+.SS
+.B "kill -9 -1"
+.nf
+Kill all processes you can kill.
+.fi
+.PP
+.SS
+.B "kill -l 11"
+.nf
+Translate number 11 into a signal name.
+.fi
+.PP
+.SS
+.B "kill -L"
+.nf
+List the available signal choices in a nice table.
+.fi
+.PP
+.SS
+.B "kill 123 543 2341 3453"
+.nf
+Send the default signal, SIGTERM, to all those processes.
+.fi
+.PP
 .SH "SEE ALSO"
 top(1) skill(1) kill(2) renice(1) nice(1)
 
