@@ -224,15 +224,9 @@ will be destroyed by init(8) if the parent process exits.
 
 PROCESS FLAGS
 
-ALIGNWARN    001    print alignment warning msgs
-STARTING     002    being created
-EXITING      004    getting shut down
-PTRACED      010    set if ptrace (0) has been called
-TRACESYS     020    tracing system calls
-FORKNOEXEC   040    forked but didn't exec
-SUPERPRIV    100    used super-user privileges
-DUMPCORE     200    dumped core
-SIGNALED     400    killed by a signal
+FORKNOEXEC   1    forked but didn't exec
+SUPERPRIV    2    used super-user privileges
+DUMPCORE     4    dumped core
 
 
 PROCESS STATE CODES

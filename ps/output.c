@@ -584,8 +584,9 @@ static int pr_s(void){
 }
 
 static int pr_flag(void){
-    /* Unix98 requires octal -- good thing Linux hex looks octal! */
-    return snprintf(outbuf, COLWID, "%03lx", (pp->flags)&0x777);
+    /* Unix98 requires octal flags */
+    /* this user-hostile and volatile junk gets 1 character */
+    return snprintf(outbuf, COLWID, "%o", (pp->flags>>6)&0x7);
 }
 
 static int pr_euid(void){
@@ -999,11 +1000,11 @@ static const format_struct format_array[] = {
 {"etime",     "ELAPSED", pr_etime,    sr_nop,    11,   0,    U98, RIGHT}, /* was 7 wide */
 {"euid",      "EUID",    pr_euid,     sr_euid,    5,   0,    LNX, RIGHT},
 {"euser",     "EUSER",   pr_euser,    sr_euser,   8,   0,    LNX, USER},
-{"f",         "F",       pr_flag,     sr_nop,     3,   0,    XXX, RIGHT}, /*flags*/
+{"f",         "F",       pr_flag,     sr_nop,     1,   0,    XXX, RIGHT}, /*flags*/
 {"fgid",      "FGID",    pr_fgid,     sr_fgid,    5,   0,    LNX, RIGHT},
 {"fgroup",    "FGROUP",  pr_fgroup,   sr_fgroup,  8,   0,    LNX, USER},
-{"flag",      "F",       pr_flag,     sr_flags,   3,   0,    DEC, RIGHT},
-{"flags",     "F",       pr_flag,     sr_flags,   3,   0,    BSD, RIGHT}, /*f*/ /* was FLAGS, 8 wide */
+{"flag",      "F",       pr_flag,     sr_flags,   1,   0,    DEC, RIGHT},
+{"flags",     "F",       pr_flag,     sr_flags,   1,   0,    BSD, RIGHT}, /*f*/ /* was FLAGS, 8 wide */
 {"fname",     "COMMAND", pr_fname,    sr_nop,     8,   0,    SUN, LEFT},
 {"fsgid",     "FSGID",   pr_fgid,     sr_fgid,    5,   0,    LNX, RIGHT},
 {"fsgroup",   "FSGROUP", pr_fgroup,   sr_fgroup,  8,   0,    LNX, USER},
