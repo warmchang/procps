@@ -782,8 +782,8 @@ setREL1(TIME_START)
   start = boot_time + rSv(TIME_START, ull_int, pp) / Hertz;
   seconds_ago = seconds_since_1970 - start;
   if(seconds_ago < 0) seconds_ago=0;
-  if(seconds_ago > 3600*24)  strcpy(outbuf, ctime(&start)+4);
-  else                       strcpy(outbuf, ctime(&start)+10);
+  if(seconds_ago > 3600*24)  snprintf(outbuf, COLWID, "%s", ctime(&start)+4);
+  else                       snprintf(outbuf, COLWID, "%s", ctime(&start)+10);
   outbuf[6] = '\0';
   return 6;
 }
@@ -930,6 +930,7 @@ static int pr_stime(char *restrict const outbuf, const proc_t *restrict const pp
   const char *fmt;
   int tm_year;
   int tm_yday;
+  size_t len;
 setREL1(TIME_START)
   our_time = localtime(&seconds_since_1970);   /* not reentrant */
   tm_year = our_time->tm_year;
@@ -939,7 +940,9 @@ setREL1(TIME_START)
   fmt = "%H:%M";                                   /* 03:02 23:59 */
   if(tm_yday != proc_time->tm_yday) fmt = "%b%d";  /* Jun06 Aug27 */
   if(tm_year != proc_time->tm_year) fmt = "%Y";    /* 1991 2001 */
-  return strftime(outbuf, 42, fmt, proc_time);
+  len = strftime(outbuf, COLWID, fmt, proc_time);
+  if(len <= 0 || len >= COLWID) outbuf[len = 0] = '\0';
+  return len;
 }
 
 static int pr_start(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -956,14 +959,15 @@ setREL1(TIME_START)
 }
 
 static int help_pr_sig(char *restrict const outbuf, const char *restrict const sig){
-  long len = 0;
-  len = strlen(sig);
+  const size_t len = strlen(sig);
   if(wide_signals){
     if(len>8) return snprintf(outbuf, COLWID, "%s", sig);
     return snprintf(outbuf, COLWID, "00000000%s", sig);
   }
   if(len-strspn(sig,"0") > 8)
     return snprintf(outbuf, COLWID, "<%s", sig+len-8);
+  if(len < 8)
+    return snprintf(outbuf, COLWID, "%s%s", "00000000"+len, sig);
   return snprintf(outbuf, COLWID,  "%s", sig+len-8);
 }
 
@@ -1257,7 +1261,7 @@ setREL1(ID_TGID)
     len = strlen(context);
     if(len > max_len) len = max_len;
     memcpy(outbuf, context, len);
-    if (outbuf[len-1] == '\n') --len;
+    if (len >= 1 && outbuf[len-1] == '\n') --len;
     outbuf[len] = '\0';
     ps_freecon(context);
   }else{
