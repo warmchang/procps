@@ -83,7 +83,6 @@ static unsigned max_leftward = 0x12345678; /* space for LEFT stuff */
 static int wide_signals;  /* true if we have room */
 
 static time_t seconds_since_1970;
-static unsigned long page_shift;
 
 static unsigned int boot_time;
 static unsigned long memory_total;
@@ -2055,17 +2054,6 @@ void init_output(void)
 {
     int outbuf_pages;
     char *outbuf;
-
-    switch(page_size) {
-	case 65536: page_shift = 16; break;
-	case 32768: page_shift = 15; break;
-	case 16384: page_shift = 14; break;
-	case  8192: page_shift = 13; break;
-	default: /* Assume 4096 */
-	case  4096: page_shift = 12; break;
-	case  2048: page_shift = 11; break;
-	case  1024: page_shift = 10; break;
-    }
 
     // add page_size-1 to round up
     outbuf_pages = (OUTBUF_SIZE+SPACE_AMOUNT+page_size-1)/page_size;
