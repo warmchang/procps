@@ -127,7 +127,6 @@ static void parse_pid(const char *str){
   if(!str)            goto bad;
   num = strtol(str, &endp, 0);
   if(*endp != '\0')   goto bad;
-  if(num>0x7fff)      goto bad;  /* Linux PID limit */
   if(num<1)           goto bad;
   if(want_one_pid)    goto bad;
   want_one_pid = num;
