@@ -313,9 +313,9 @@ static int WriteSetting(const char *setting) {
  *
  */
 static int Preload(const char *restrict const filename) {
+   char oneline[256];
+   char buffer[256];
    FILE *fp;
-   char oneline[257];
-   char buffer[257];
    char *t;
    int n = 0;
    int rc = 0;
@@ -326,8 +326,7 @@ static int Preload(const char *restrict const filename) {
       return -1;
    }
 
-   while (fgets(oneline, 256, fp)) {
-      oneline[256] = 0;
+   while (fgets(oneline, sizeof oneline, fp)) {
       n++;
       t = StripLeadingAndTrailingSpaces(oneline);
 

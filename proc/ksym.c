@@ -479,7 +479,7 @@ int open_psdb_message(const char *restrict override, void (*message)(const char 
   };
   struct stat sbuf;
   struct utsname uts;
-  char path[64];
+  char path[128];
   const char **fmt = sysmap_paths;
   const char *sm;
 
@@ -509,9 +509,10 @@ int open_psdb_message(const char *restrict override, void (*message)(const char 
 
   // finally, search for the System.map file
   uname(&uts);
+  path[sizeof path - 1] = '\0';
   do{
     int did_ksyms = 0;
-    snprintf(path, sizeof path, *fmt, uts.release);
+    snprintf(path, sizeof path - 1, *fmt, uts.release);
     if(!stat(path, &sbuf)){
       if (did_ksyms++) read_and_parse();
       if (sysmap_mmap(path, message)) return 0;
