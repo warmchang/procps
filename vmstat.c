@@ -38,7 +38,7 @@
 
 #define NDEBUG !DEBUG
 
-#define BUFFSIZE 4096
+#define BUFFSIZE 8192
 #define FALSE 0
 #define TRUE 1
 
