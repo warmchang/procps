@@ -836,7 +836,7 @@ static void capsmk (WIN_t *q) {
    } else {
       q->capclr_sum[0] = '\0';
 #ifdef USE_X_COLHDR
-      snprintf(q->capclr_msg, sizeof(q->capclr_pmt), "%s%s"
+      snprintf(q->capclr_msg, sizeof(q->capclr_msg), "%s%s"
          , Cap_reverse, q->cap_bold);
 #else
       STRLCPY(q->capclr_msg, Cap_reverse)
