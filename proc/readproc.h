@@ -4,7 +4,7 @@
  * New Interface to Process Table -- PROCTAB Stream (a la Directory streams)
  * Copyright 1996 Charles L. Blake.
  * Copyright 1998 Michael K. Johnson
- * Copyright 1998-2002 Albert Cahalan
+ * Copyright 1998-2003 Albert Cahalan
  * May be distributed under the terms of the
  * GNU Library General Public License, a copy of which is provided
  * in the file COPYING
@@ -13,10 +13,6 @@
 #include "procps.h"
 
 #define SIGNAL_STRING
-
-#ifdef FLASK_LINUX
-#include <fs_secure.h>
-#endif
 
 EXTERN_C_BEGIN
 
@@ -124,6 +120,9 @@ typedef struct proc_t {
     	sgroup[16],	/* saved group name */
     	fgroup[16],	/* filesystem group name */
     	cmd[16];	/* basename of executable file in call to exec(2) */
+    struct proc_t
+	*ring,		// thread group ring
+	*next;		// various library uses
     int
         ruid, rgid,     /* real      */
         euid, egid,     /* effective */
@@ -136,9 +135,6 @@ typedef struct proc_t {
 	tgid,		/* thread group ID */
 	exit_signal,	/* might not be SIGCHLD */
 	processor;      /* current (or most recent?) CPU */
-#ifdef FLASK_LINUX
-	security_id_t secsid;
-#endif
 } proc_t;
 
 /* PROCTAB: data structure holding the persistent information readproc needs

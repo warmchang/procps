@@ -2,7 +2,7 @@
  * New Interface to Process Table -- PROCTAB Stream (a la Directory streams)
  * Copyright (C) 1996 Charles L. Blake.
  * Copyright (C) 1998 Michael K. Johnson
- * Copyright 1998-2002 Albert Cahalan
+ * Copyright 1998-2003 Albert Cahalan
  * May be distributed under the conditions of the
  * GNU Library General Public License; a copy is in COPYING
  */
@@ -561,7 +561,7 @@ static int listed_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p, 
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-// This "finds" processes by guessing every possible one of them.
+// This "finds" processes by guessing every possible one of them!
 // Return non-zero on success. (pid was handy)
 static int stupid_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
   pid_t pid = --PT->u;
@@ -570,6 +570,42 @@ static int stupid_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p, 
     p->pid = pid;
   }
   return pid;
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+// This reads process info from proc_t structs already attached to a PROCTAB.
+// Yeah, we don't retain any pointer for freeing the memory later. Oh well.
+// This code is for development only.
+static proc_t* predone_readproc(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
+  proc_t *tmp;
+  proc_t *ret = NULL;
+  (void)path;
+  for(;;){
+    tmp = PT->vp;
+    if(!tmp) _exit(49);  // can't happen
+    PT->vp = tmp->next;
+    if(tmp->pid == tmp->tgid){   // got a leader?
+      memcpy(p,tmp,sizeof(proc_t));  // copy it, pointers and all
+      ret = p;
+      break;
+    }
+  }
+  if(!ret) _exit(99); // can't happen
+  while(PT->vp){
+    tmp = PT->vp;
+    if(tmp->pid == tmp->tgid) break;  // OK, next one is a leader
+    PT->vp = tmp->next;
+  }
+  return ret;
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+// This "finds" processes by pulling them off of a list.
+// Return non-zero on success.
+static int predone_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
+  (void)p;
+  (void)path;
+  return !!PT->vp;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -607,6 +643,41 @@ out:
 
 //////////////////////////////////////////////////////////////////////////////////
 
+static void evil_grouping_hack(PROCTAB* PT){
+  proc_t *tp;
+  // first we read them
+  for(;;){
+    tp = malloc(sizeof(proc_t));
+    if(!tp) _exit(2);
+    if(!readproc(PT, tp)){
+      free(tp);
+      break;
+    }
+    tp->ring = tp;
+    tp->next = PT->vp;
+    PT->vp   = tp;
+  }
+  // now we scan
+  tp = PT->vp;
+  while(tp){
+    if(tp->pid == tp->tgid){  // if we found a leader
+      proc_t *tmp = PT->vp;
+      while(tmp){
+        if(tmp != tp && tmp->tgid == tp->tgid){
+          tmp->ring = tp->ring;
+          tp->ring = tmp;
+        }
+        tmp = tmp->next;
+      }
+    }
+    tp = tp->next;
+  }
+  // later, readproc returns what we already have
+  PT->finder = predone_nextpid;
+  PT->reader = predone_readproc;
+}
+
+
 // initiate a process table scan
 PROCTAB* openproc(int flags, ...) {
     va_list ap;
@@ -623,7 +694,7 @@ PROCTAB* openproc(int flags, ...) {
     }
     PT->flags = flags;
 
-    if(getenv("EVIL_PROC_HACK")){
+    if(getenv("EVIL_FINDER_HACK")){  // for development only
       PT->finder = stupid_nextpid;
       PT->u = 10000;
     }
@@ -636,6 +707,8 @@ PROCTAB* openproc(int flags, ...) {
 	PT->nuid = va_arg(ap, int);
     }
     va_end(ap);				/*  Clean up args list */
+
+    if(getenv("EVIL_GROUPING_HACK")) evil_grouping_hack(PT);
 
     return PT;
 }
