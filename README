@@ -8,12 +8,25 @@ INSTALLATION
     make
     make install
 
+    Only the second ("make install") is needed if you just
+    want to build and install procps in the normal way.
+
     If you wish to test before installing, use the scripts
-    named t, v, and p to ensure the correct libproc
-    is used during your testing.
+    named t, v, and p to ensure that the correct libproc
+    (the new one) is used during your testing.
 
     If you need to add a compiler option, use CC to do it:
     make CC='gcc -foo'
+
+    You may set SKIP to avoid building or installing things.
+    For example:
+
+    make SKIP='/bin/kill /usr/share/man/man1/kill.1' install
+
+    Use SHARED=0 to build procps without shared libraries.
+    This may be useful for installing in your home directory.
+
+    make SHARED=0 DESTDIR=$HOME install
 
 BUG REPORTS
 
