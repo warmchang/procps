@@ -48,6 +48,7 @@ static struct slab_info *free_index;
  */
 static struct slab_info *get_slabnode(void)
 {
+	static const struct slab_info initializer;
 	struct slab_info *node;
 
 	if (free_index) {
@@ -56,7 +57,7 @@ static struct slab_info *get_slabnode(void)
 	} else {
 		node = xmalloc(sizeof(struct slab_info));
 	}
-
+	*node = initializer;
 	return node;
 }
 
