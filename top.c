@@ -1287,7 +1287,7 @@ static FTAB_t  Fieldstab[] = {
    { "USER     ",   "%-8.8s ",  -1,    -1, _SF(P_USR), "User Name",            L_EUSER  },
    { "GROUP    ",   "%-8.8s ",  -1,    -1, _SF(P_GRP), "Group Name",           L_GROUP  },
    { "TTY      ",   "%-8.8s ",   8,    -1, _SF(P_TTY), "Controlling Tty",      L_stat   },
-   { " PR ",        "%3d ",     -1,    -1, _SF(P_PRI), "Priority",             L_stat   },
+   { " PR ",        "%s ",      -1,    -1, _SF(P_PRI), "Priority",             L_stat   },
    { " NI ",        "%3d ",     -1,    -1, _SF(P_NCE), "Nice value",           L_stat   },
    { "#C ",         "%2u ",     -1,    -1, _SF(P_CPN), "Last used cpu (SMP)",  L_stat   },
    { "%CPU ",       "%#4.1f ",  -1,    -1, _SF(P_CPU), "CPU usage",            L_stat   },
@@ -1312,11 +1312,7 @@ static FTAB_t  Fieldstab[] = {
    { "Command ",    "%-*.*s ",  -1,    -1, _SF(P_CMD), "Command name/line",    L_stat   },
    { "WCHAN     ",  "%-9.9s ",  -1,    -1, _SF(P_WCH), "Sleeping in Function", L_stat   },
    // next entry's special: the 0's will be replaced with '.'!
-#ifdef CASEUP_HEXES
-   { "Flags    ",   "%08lX ",   -1,    -1, _SF(P_FLG), "Task Flags <sched.h>", L_stat   }
-#else
-   { "Flags    ",   "%08lx ",   -1,    -1, _SF(P_FLG), "Task Flags <sched.h>", L_stat   }
-#endif
+   { "Flags    ",   "%s ",      -1,    -1, _SF(P_FLG), "Task Flags <sched.h>", L_stat   }
 };
 
 
@@ -2168,7 +2164,7 @@ static void do_key (unsigned c)
          *    2) modest smp boxes with room for each cpu's percentages
          *    3) massive smp guys leaving little or no room for process
          *       display and thus requiring the cpu summary toggle */
-static void summaryhlp (const CPUS_t *restrict cpu, const char *restrict const pfx)
+static void summaryhlp (CPUS_t *restrict const cpu, const char *restrict const pfx)
 {
    /* we'll trim to zero if we get negative time ticks,
       which has happened with some SMP kernels (pre-2.4?) */
@@ -2315,10 +2311,11 @@ static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
 
       switch (i) {
          case P_CMD:
-         {  char *cp;
+         {  const char *restrict ret;
             if (CHKw(q, Show_CMDLIN)) {
                char tmp[ROWBUFSIZ];
                if (p->cmdline) {
+                  char *cp;
                   j = 0;
                   *(cp = tmp) = '\0';
                   do {
@@ -2328,10 +2325,10 @@ static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
                   strim(1, tmp);
                } else
                   strcpy(tmp, fmtmk(CMDLINE_FMTS, p->cmd));
-               cp = tmp;
+               ret = tmp;
             } else
-               cp = p->cmd;
-            MKCOL(q->maxcmdln, q->maxcmdln, cp);
+               ret = p->cmd;
+            MKCOL(q->maxcmdln, q->maxcmdln, ret);
          }
             break;
          case P_COD:
@@ -2354,10 +2351,9 @@ static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
             break;
          case P_FLG:
          {  char tmp[TNYBUFSIZ];
-            snprintf(tmp, sizeof(tmp), f, (long)p->flags);
+            snprintf(tmp, sizeof(tmp), "%08x", (unsigned)p->flags);
             for (j = 0; tmp[j]; j++) if ('0' == tmp[j]) tmp[j] = '.';
-            f = tmp;
-            MKCOL();
+            MKCOL(tmp);
          }
             break;
          case P_FLT:
@@ -2382,11 +2378,13 @@ static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
             MKCOL((unsigned)p->ppid);
             break;
          case P_PRI:
-            if (-99 > p->priority || +99 < p->priority) {
-               f = " RT ";
-               MKCOL();
-            } else
-               MKCOL((int)p->priority);
+         {  char tmp[TNYBUFSIZ];
+            snprintf(tmp, sizeof(tmp), "%3d", (int)(p->priority));
+            if (-99 > p->priority || 999 < p->priority) {
+               memcpy(tmp, " RT", 4);
+            }
+            MKCOL(tmp);
+         }
             break;
          case P_RES:
             MKCOL(scale_num(PAGES_2K(p->resident), w, s));
@@ -2429,12 +2427,9 @@ static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
             break;
          case P_WCH:
             if (No_ksyms) {
-#ifdef CASEUP_HEXES
-               f = "%08lX  ";
-#else
-               f = "%08lx  ";
-#endif
-               MKCOL((long)p->wchan);
+               char tmp[TNYBUFSIZ];
+               snprintf(tmp, sizeof(tmp), "%08lx  ", (unsigned long)p->wchan);
+               MKCOL(tmp);
             } else {
                MKCOL(wchan(p->wchan));
             }
