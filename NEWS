@@ -4,6 +4,7 @@ support 64-bit MIPS with n32 binary
 sparc32 optimized for sparc32 again
 ps: more room for some columns
 watch: passes COLUMNS and LINES in environment
+top: in batch mode, tolerate unknown $TERM -- thanks Daniel Walsh
 
 procps-3.2.2 --> procps-3.2.3
 

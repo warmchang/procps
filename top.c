@@ -1810,35 +1810,31 @@ static void whack_terminal (void)
 {
    struct termios newtty;
 
-   // the curses part...
-#ifdef PRETENDNOCAP
-   setupterm("dumb", STDOUT_FILENO, NULL);
-#else
-   setupterm(NULL, STDOUT_FILENO, NULL);
-#endif
-   // our part...
-   if (!Batch) {
-      if (-1 == tcgetattr(STDIN_FILENO, &Savedtty))
-         std_err("failed tty get");
-      newtty = Savedtty;
-      newtty.c_lflag &= ~(ICANON | ECHO);
-      newtty.c_oflag &= ~(TAB3);
-      newtty.c_cc[VMIN] = 1;
-      newtty.c_cc[VTIME] = 0;
-
-      Ttychanged = 1;
-      if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &newtty) == -1) {
-         putp(Cap_clr_scr);
-         std_err(fmtmk("failed tty set: %s", strerror(errno)));
-      }
-      tcgetattr(STDIN_FILENO, &Rawtty);
-#ifndef STDOUT_IOLBF
-      // thanks anyway stdio, but we'll manage buffering at the frame level...
-      setbuffer(stdout, Stdout_buf, sizeof(Stdout_buf));
-#endif
-      putp(Cap_clr_scr);
-      fflush(stdout);
+   if (Batch) {
+      setupterm("dumb", STDOUT_FILENO, NULL);
+      return;
    }
+   setupterm(NULL, STDOUT_FILENO, NULL);
+   if (tcgetattr(STDIN_FILENO, &Savedtty) == -1)
+      std_err("failed tty get");
+   newtty = Savedtty;
+   newtty.c_lflag &= ~(ICANON | ECHO);
+   newtty.c_oflag &= ~(TAB3);
+   newtty.c_cc[VMIN] = 1;
+   newtty.c_cc[VTIME] = 0;
+
+   Ttychanged = 1;
+   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &newtty) == -1) {
+      putp(Cap_clr_scr);
+      std_err(fmtmk("failed tty set: %s", strerror(errno)));
+   }
+   tcgetattr(STDIN_FILENO, &Rawtty);
+#ifndef STDOUT_IOLBF
+   // thanks anyway stdio, but we'll manage buffering at the frame level...
+   setbuffer(stdout, Stdout_buf, sizeof(Stdout_buf));
+#endif
+   putp(Cap_clr_scr);
+   fflush(stdout);
 }
 
 

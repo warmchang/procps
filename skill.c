@@ -286,7 +286,8 @@ static void kill_main(int argc, const char *restrict const *restrict argv){
     goto no_more_args;
   }
   if(argv[1][1]=='-') kill_usage(); /* likely --help */
-  if(argv[1][1]=='s' && argv[1][2]=='\0'){
+  // FIXME: "kill -sWINCH $$" not handled
+  if(argv[1][2]=='\0' && (argv[1][1]=='s' || argv[1][1]=='n')){
     sigptr = argv[2];
     argv+=3;
     argc-=3;

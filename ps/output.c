@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2002 by Albert Cahalan; all rights reserved.
+ * Copyright 1999-2004 by Albert Cahalan; all rights reserved.
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
@@ -385,10 +385,6 @@ static int pr_etime(char *restrict const outbuf, const proc_t *restrict const pp
   cp +=                 snprintf(cp, COLWID, "%02u:%02u", mm, ss)       ;
   return (int)(cp-outbuf);
 }
-static int pr_nice(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(pp->sched!=0 && pp->sched!=-1) return snprintf(outbuf, COLWID, "-");
-  return snprintf(outbuf, COLWID, "%ld", pp->nice);
-}
 
 /* "Processor utilisation for scheduling."  --- we use %cpu w/o fraction */
 static int pr_c(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -411,8 +407,9 @@ static int pr_pcpu(char *restrict const outbuf, const proc_t *restrict const pp)
   if(include_dead_children) total_time += (pp->cutime + pp->cstime);
   seconds = seconds_since_boot - pp->start_time / Hertz;
   if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
-  if (pcpu > 999U) pcpu = 999U;
-  return snprintf(outbuf, COLWID, "%2u.%u", pcpu/10U, pcpu%10U);
+  if (pcpu > 999U)
+    return snprintf(outbuf, COLWID, "%u", pcpu/10U);
+  return snprintf(outbuf, COLWID, "%u.%u", pcpu/10U, pcpu%10U);
 }
 /* this is a "per-mill" format, like %cpu with no decimal point */
 static int pr_cp(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -468,8 +465,7 @@ static int pr_vsz(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%lu", pp->vm_size);
 }
 
-/********* maybe standard (Unix98 only defines the header) **********/
-
+//////////////////////////////////////////////////////////////////////////////////////
 
 // "PRI" is created by "opri", or by "pri" when -c is used.
 //
@@ -512,18 +508,94 @@ static int pr_vsz(char *restrict const outbuf, const proc_t *restrict const pp){
 // which is pp->priority+1. (3-digit max, positive is normal,
 // negative or 0 is RT, and meets the standard for PRI)
 //
+
+// legal as UNIX "PRI"
 // "priority"         (was -20..20, now -100..39)
 static int pr_priority(char *restrict const outbuf, const proc_t *restrict const pp){    /* -20..20 */
     return snprintf(outbuf, COLWID, "%ld", pp->priority);
 }
-// "pri"               (was 20..60, now    0..139)
-static int pr_pri(char *restrict const outbuf, const proc_t *restrict const pp){         /* 20..60 */
-    return snprintf(outbuf, COLWID, "%ld", 39 - pp->priority);
-}
+
+// legal as UNIX "PRI"
 // "intpri" and "opri" (was 39..79, now  -40..99)
 static int pr_opri(char *restrict const outbuf, const proc_t *restrict const pp){        /* 39..79 */
     return snprintf(outbuf, COLWID, "%ld", 60 + pp->priority);
 }
+
+// legal as UNIX "PRI"
+// "pri_foo"   --  match up w/ nice values of sleeping processes (-120..19)
+static int pr_pri_foo(char *restrict const outbuf, const proc_t *restrict const pp){
+    return snprintf(outbuf, COLWID, "%ld", pp->priority - 20);
+}
+
+// legal as UNIX "PRI"
+// "pri_bar"   --  makes RT pri show as negative       (-99..40)
+static int pr_pri_bar(char *restrict const outbuf, const proc_t *restrict const pp){
+    return snprintf(outbuf, COLWID, "%ld", pp->priority + 1);
+}
+
+// legal as UNIX "PRI"
+// "pri_baz"   --  the kernel's ->prio value, as of Linux 2.6.8     (1..140)
+static int pr_pri_baz(char *restrict const outbuf, const proc_t *restrict const pp){
+    return snprintf(outbuf, COLWID, "%ld", pp->priority + 100);
+}
+
+
+// not legal as UNIX "PRI"
+// "pri"               (was 20..60, now    0..139)
+static int pr_pri(char *restrict const outbuf, const proc_t *restrict const pp){         /* 20..60 */
+    return snprintf(outbuf, COLWID, "%ld", 39 - pp->priority);
+}
+
+// not legal as UNIX "PRI"
+// "pri_api"   --  match up w/ RT API    (-40..99)
+static int pr_pri_api(char *restrict const outbuf, const proc_t *restrict const pp){
+    return snprintf(outbuf, COLWID, "%ld", -1 - pp->priority);
+}
+
+static int pr_nice(char *restrict const outbuf, const proc_t *restrict const pp){
+  if(pp->sched!=0 && pp->sched!=-1) return snprintf(outbuf, COLWID, "-");
+  return snprintf(outbuf, COLWID, "%ld", pp->nice);
+}
+
+// HP-UX   "cls": RT RR RR2 ???? HPUX FIFO KERN
+// Solaris "class": SYS TS FX IA RT FSS (FIFO is RR w/ Inf quant)
+//                  FIFO+RR share RT; FIFO has Inf quant
+//                  IA=interactive; FX=fixed; TS=timeshare; SYS=system
+//                  FSS=fairshare; INTS=interrupts
+// Tru64   "policy": FF RR TS
+// IRIX    "class": RT TS B BC WL GN
+//                  RT=real-time; TS=time-share; B=batch; BC=batch-critical
+//                  WL=weightless; GN=gang-scheduled
+//                  see miser(1) for this; PRI has some letter codes too
+static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp){
+  switch(pp->sched){
+  case -1: return snprintf(outbuf, COLWID, "-");   // not reported
+  case  0: return snprintf(outbuf, COLWID, "TS");  // SCHED_OTHER
+  case  1: return snprintf(outbuf, COLWID, "FF");  // SCHED_FIFO
+  case  2: return snprintf(outbuf, COLWID, "RR");  // SCHED_RR
+  case  3: return snprintf(outbuf, COLWID, "#3");  // SCHED_BATCH? (will be "B")
+  case  4: return snprintf(outbuf, COLWID, "#4");  // SCHED_ISO? (Con Kolivas)
+  case  5: return snprintf(outbuf, COLWID, "#5");  //
+  case  8: return snprintf(outbuf, COLWID, "#8");  //
+  default: return snprintf(outbuf, COLWID, "?");   // unknown value
+  }
+}
+// Based on "type", FreeBSD would do:
+//    REALTIME  "real:%u", prio
+//    NORMAL    "normal"
+//    IDLE      "idle:%u", prio
+//    default   "%u:%u", type, prio
+// We just print the priority, and have other keywords for type.
+static int pr_rtprio(char *restrict const outbuf, const proc_t *restrict const pp){
+  if(pp->sched==0 || pp->sched==-1) return snprintf(outbuf, COLWID, "-");
+  return snprintf(outbuf, COLWID, "%ld", pp->rtprio);
+}
+static int pr_sched(char *restrict const outbuf, const proc_t *restrict const pp){
+  if(pp->sched==-1) return snprintf(outbuf, COLWID, "-");
+  return snprintf(outbuf, COLWID, "%ld", pp->sched);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 static int pr_wchan(char *restrict const outbuf, const proc_t *restrict const pp){
 /*
@@ -767,44 +839,6 @@ static int pr_pmem(char *restrict const outbuf, const proc_t *restrict const pp)
   pmem = pp->vm_rss * 1000ULL / kb_main_total;
   if (pmem > 999) pmem = 999;
   return snprintf(outbuf, COLWID, "%2u.%u", (unsigned)(pmem/10), (unsigned)(pmem%10));
-}
-
-// HP-UX   "cls": RT RR RR2 ???? HPUX FIFO KERN
-// Solaris "class": SYS TS FX IA RT FSS (FIFO is RR w/ Inf quant)
-//                  FIFO+RR share RT; FIFO has Inf quant
-//                  IA=interactive; FX=fixed; TS=timeshare; SYS=system
-//                  FSS=fairshare; INTS=interrupts
-// Tru64   "policy": FF RR TS
-// IRIX    "class": RT TS B BC WL GN
-//                  RT=real-time; TS=time-share; B=batch; BC=batch-critical
-//                  WL=weightless; GN=gang-scheduled
-//                  see miser(1) for this; PRI has some letter codes too
-static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp){
-  switch(pp->sched){
-  case -1: return snprintf(outbuf, COLWID, "-");   // not reported
-  case  0: return snprintf(outbuf, COLWID, "TS");  // SCHED_OTHER
-  case  1: return snprintf(outbuf, COLWID, "FF");  // SCHED_FIFO
-  case  2: return snprintf(outbuf, COLWID, "RR");  // SCHED_RR
-  case  3: return snprintf(outbuf, COLWID, "#3");  // SCHED_BATCH? (will be "B")
-  case  4: return snprintf(outbuf, COLWID, "#4");  // SCHED_ISO? (Con Kolivas)
-  case  5: return snprintf(outbuf, COLWID, "#5");  //
-  case  8: return snprintf(outbuf, COLWID, "#8");  //
-  default: return snprintf(outbuf, COLWID, "?");   // unknown value
-  }
-}
-// Based on "type", FreeBSD would do:
-//    REALTIME  "real:%u", prio
-//    NORMAL    "normal"
-//    IDLE      "idle:%u", prio
-//    default   "%u:%u", type, prio
-// We just print the priority, and have other keywords for type.
-static int pr_rtprio(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(pp->sched==0 || pp->sched==-1) return snprintf(outbuf, COLWID, "-");
-  return snprintf(outbuf, COLWID, "%ld", pp->rtprio);
-}
-static int pr_sched(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(pp->sched==-1) return snprintf(outbuf, COLWID, "-");
-  return snprintf(outbuf, COLWID, "%ld", pp->sched);
 }
 
 static int pr_lstart(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -1099,12 +1133,12 @@ static const format_struct format_array[] = {
 {"atime",     "TIME",    pr_time,     sr_nop,     8,   0,    SOE, ET|RIGHT}, /*cputime*/ /* was 6 wide */
 {"blocked",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigmask*/
 {"bnd",       "BND",     pr_nop,      sr_nop,     1,   0,    AIX, TO|RIGHT},
-{"bsdstart",  "START",   pr_bsdstart, sr_nop,     6,   0,    LNX, AN|RIGHT},
-{"bsdtime",   "TIME",    pr_bsdtime,  sr_nop,     6,   0,    LNX, AN|RIGHT},
+{"bsdstart",  "START",   pr_bsdstart, sr_nop,     6,   0,    LNX, ET|RIGHT},
+{"bsdtime",   "TIME",    pr_bsdtime,  sr_nop,     6,   0,    LNX, ET|RIGHT},
 {"c",         "C",       pr_c,        sr_pcpu,    2,   0,    SUN, ET|RIGHT},
 {"caught",    "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigcatch*/
 {"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, TO|LEFT},
-{"cls",       "CLS",     pr_class,    sr_sched,   3,   0,    HPU, AN|RIGHT}, /*says HPUX or RT*/
+{"cls",       "CLS",     pr_class,    sr_sched,   3,   0,    HPU, TO|RIGHT}, /*says HPUX or RT*/
 {"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, AN|RIGHT},
 {"cmd",       "CMD",     pr_args,     sr_cmd,    16, ARG,    DEC, PO|UNLIMITED}, /*ucomm*/
 {"cmin_flt",  "-",       pr_nop,      sr_cmin_flt, 1,  0,    LNX, AN|RIGHT},
@@ -1129,7 +1163,7 @@ static const format_struct format_array[] = {
 {"end_code",  "E_CODE",  pr_nop,      sr_end_code, 8,  0,    LNx, PO|RIGHT},
 {"environ","ENVIRONMENT",pr_nop,      sr_nop,    11, ENV,    LNx, PO|UNLIMITED},
 {"esp",       "ESP",     pr_esp,      sr_kstk_esp, 8,  0,    LNX, TO|RIGHT},
-{"etime",     "ELAPSED", pr_etime,    sr_nop,    11,   0,    U98, AN|RIGHT}, /* was 7 wide */
+{"etime",     "ELAPSED", pr_etime,    sr_nop,    11,   0,    U98, ET|RIGHT}, /* was 7 wide */
 {"euid",      "EUID",    pr_euid,     sr_euid,    5,   0,    LNX, ET|RIGHT},
 {"euser",     "EUSER",   pr_euser,    sr_euser,   8, USR,    LNX, ET|USER},
 {"f",         "F",       pr_flag,     sr_flags,   1,   0,    XXX, ET|RIGHT}, /*flags*/
@@ -1162,7 +1196,7 @@ static const format_struct format_array[] = {
 {"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, AN|LEFT}, /*logname*/   /* double check */
 {"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, AN|LEFT}, /*login*/
 {"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
-{"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, AN|RIGHT},
+{"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, ET|RIGHT},
 {"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, ET|RIGHT}, /* login ID */
 {"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, ET|USER}, /* login USER */
 {"lwp",       "LWP",     pr_thread,   sr_tid,     5,   0,    SUN, TO|PIDMAX|RIGHT},
@@ -1184,7 +1218,7 @@ static const format_struct format_array[] = {
 {"ni",        "NI",      pr_nice,     sr_nice,    3,   0,    BSD, TO|RIGHT}, /*nice*/
 {"nice",      "NI",      pr_nice,     sr_nice,    3,   0,    U98, TO|RIGHT}, /*ni*/
 {"nivcsw",    "IVCSW",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
-{"nlwp",      "NLWP",    pr_nlwp,     sr_nlwp,    4,   0,    SUN, AN|RIGHT},
+{"nlwp",      "NLWP",    pr_nlwp,     sr_nlwp,    4,   0,    SUN, PO|RIGHT},
 {"nsignals",  "NSIGS",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*nsigs*/
 {"nsigs",     "NSIGS",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*nsignals*/
 {"nswap",     "NSWAP",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
@@ -1207,7 +1241,11 @@ static const format_struct format_array[] = {
 {"policy",    "POL",     pr_class,    sr_sched,   3,   0,    DEC, TO|LEFT},
 {"ppid",      "PPID",    pr_ppid,     sr_ppid,    5,   0,    U98, PO|PIDMAX|RIGHT},
 {"pri",       "PRI",     pr_pri,      sr_nop,     3,   0,    XXX, TO|RIGHT},
-{"priority",  "PRI",     pr_priority, sr_priority, 3,  0,    LNX, TO|RIGHT}, /*ni,nice*/ /* from Linux sorting names */
+{"pri_api",   "API",     pr_pri_api,  sr_nop,     3,   0,    LNX, TO|RIGHT},
+{"pri_bar",   "BAR",     pr_pri_bar,  sr_nop,     3,   0,    LNX, TO|RIGHT},
+{"pri_baz",   "BAZ",     pr_pri_baz,  sr_nop,     3,   0,    LNX, TO|RIGHT},
+{"pri_foo",   "FOO",     pr_pri_foo,  sr_nop,     3,   0,    LNX, TO|RIGHT},
+{"priority",  "PRI",     pr_priority, sr_priority, 3,  0,    LNX, TO|RIGHT},
 {"prmgrp",    "PRMGRP",  pr_nop,      sr_nop,    12,   0,    HPU, PO|RIGHT},
 {"prmid",     "PRMID",   pr_nop,      sr_nop,    12,   0,    HPU, PO|RIGHT},
 {"pset",      "PSET",    pr_nop,      sr_nop,     4,   0,    DEC, TO|RIGHT},
@@ -1248,14 +1286,14 @@ static const format_struct format_array[] = {
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, AN|RIGHT},
 {"spid",      "SPID",    pr_thread,   sr_tid,     5,   0,    SGI, TO|PIDMAX|RIGHT},
 {"stackp",    "STACKP",  pr_stackp,   sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*start_stack*/
-{"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, AN|RIGHT},
+{"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, ET|RIGHT},
 {"start_code", "S_CODE",  pr_nop,     sr_start_code, 8, 0,   LNx, PO|RIGHT},
 {"start_stack", "STACKP", pr_stackp,  sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*stackp*/
-{"start_time", "START",  pr_stime,    sr_start_time, 5, 0,   LNx, AN|RIGHT},
+{"start_time", "START",  pr_stime,    sr_start_time, 5, 0,   LNx, ET|RIGHT},
 {"stat",      "STAT",    pr_stat,     sr_state,   4,   0,    BSD, TO|LEFT}, /*state,s*/
 {"state",     "S",       pr_s,        sr_state,   1,   0,    XXX, TO|LEFT}, /*stat,s*/ /* was STAT */
 {"status",    "STATUS",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
-{"stime",     "STIME",   pr_stime,    sr_stime,   5,   0,    XXX, AN|RIGHT}, /* was 6 wide */
+{"stime",     "STIME",   pr_stime,    sr_stime,   5,   0,    XXX, ET|RIGHT}, /* was 6 wide */
 {"suid",      "SUID",    pr_suid,     sr_suid,    5,   0,    LNx, ET|RIGHT},
 {"suser",     "SUSER",   pr_suser,    sr_suser,   8, USR,    LNx, ET|USER},
 {"svgid",     "SVGID",   pr_sgid,     sr_sgid,    5,   0,    XXX, ET|RIGHT},
@@ -1265,7 +1303,7 @@ static const format_struct format_array[] = {
 {"systime",   "SYSTEM",  pr_nop,      sr_nop,     6,   0,    DEC, ET|RIGHT},
 {"sz",        "SZ",      pr_sz,       sr_nop,     5,   0,    HPU, PO|RIGHT},
 {"tdev",      "TDEV",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
-{"thcount",   "THCNT",   pr_nlwp,     sr_nlwp,    5,   0,    AIX, AN|RIGHT},
+{"thcount",   "THCNT",   pr_nlwp,     sr_nlwp,    5,   0,    AIX, PO|RIGHT},
 {"tid",       "TID",     pr_thread,   sr_tid,     5,   0,    AIX, TO|PIDMAX|RIGHT},
 {"time",      "TIME",    pr_time,     sr_nop,     8,   0,    U98, ET|RIGHT}, /*cputime*/ /* was 6 wide */
 {"timeout",   "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era

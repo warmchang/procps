@@ -186,8 +186,8 @@ are used or when the \fBps\fR personality setting is BSD\-like.
 The set of processes selected in this manner is
 in addition to the set of processes selected by other means.
 An alternate description is that this option causes \fBps\fR to
-list all processes with a terminal (tty), or to list all processes
-when used together with the \fBx\fR option.
+list all processes with a terminal (tty),
+or to list all processes when used together with the \fBx\fR option.
 
 .TP
 .B \-d
@@ -215,9 +215,9 @@ Restrict the selection to only running processes.
 .TP
 .B x
 Lift the BSD\-style "must have a tty" restriction, which is imposed upon
-the set of all processes when
-some BSD\-style options are used or when the \fBps\fR personality
-setting is BSD\-like. The set of processes selected in this manner is
+the set of all processes when some BSD\-style (without\ "\-") options
+are used or when the \fBps\fR personality setting is BSD\-like.
+The set of processes selected in this manner is
 in addition to the set of processes selected by other means.
 An alternate description is that this option causes \fBps\fR to
 list all processes owned by you (same EUID as \fBps\fR),
@@ -923,7 +923,7 @@ lB1 l1  l.
 CODE	HEADER	DESCRIPTION
 
 %cpu	%CPU	T{
-cpu utilization of the process in "##.#" format.  It is the CPU time
+cpu utilization of the process in "##.#" format.  Currently, it is the CPU time
 used divided by the time the process has been running (cputime/realtime
 ratio), expressed as a percentage. It will not add up to 100% unless you
 are lucky.  (alias\ \fBpcpu\fR).
@@ -946,7 +946,7 @@ keyword, the \fB\-f\fR option, and the \fBc\fR option.
 .br
 When specified last, this column will extend to the edge of the display.
 If \fBps\fR can not determine display width, as when output is redirected
-(piped) into a file or another command, the width of this column is undefined.
+(piped) into a file or another command, the output width is undefined.
 (it may be 80, unlimited, determined by the \fBTERM\fR variable, and so on)
 The \fBCOLUMNS\fR environment variable or \fB\-\-cols\fR option may
 be used to exactly determine the width in this case.
@@ -974,7 +974,8 @@ minutes of cpu time.
 T}
 
 c	C	T{
-integer value of the processor utilisation percentage.  (see\ \fB%cpu\fR).
+processor utilization. Currently, this is the integer value of
+the percent usage over the lifetime of the process.  (see\ \fB%cpu\fR).
 T}
 
 caught	CAUGHT	T{
@@ -1027,7 +1028,7 @@ keyword, the \fB\-f\fR option, and the \fBc\fR option.
 .br
 When specified last, this column will extend to the edge of the display.
 If \fBps\fR can not determine display width, as when output is redirected
-(piped) into a file or another command, the width of this column is undefined.
+(piped) into a file or another command, the output width is undefined.
 (it may be 80, unlimited, determined by the \fBTERM\fR variable, and so on)
 The \fBCOLUMNS\fR environment variable or \fB\-\-cols\fR option may
 be used to exactly determine the width in this case.
@@ -1039,7 +1040,7 @@ see \fBargs\fR.  (alias\ \fBargs\fR,\ \fBcmd\fR).
 T}
 
 cp	CP	T{
-per\-mill CPU usage.  (see\ \fB%cpu\fR).
+per\-mill (tenths of a percent) CPU usage.  (see\ \fB%cpu\fR).
 T}
 
 cputime	TIME	T{
