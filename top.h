@@ -29,7 +29,6 @@
 //#define CASEUP_SUMMK            /* show memory summary kilobytes with 'K'  */
 //#define POSIX_CMDLIN            /* use '[ ]' for kernel threads, not '( )' */
 //#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
-//#define TICS_64_BITS            /* accommodate Linux 2.5.xx 64-bit jiffies */
 //#define USE_LIB_STA3            /* use lib status (3 ch) vs. proc_t (1 ch) */
 //#define WARN_NOT_SMP            /* restrict '1' & 'I' commands to true smp */
 
@@ -127,13 +126,8 @@
 typedef unsigned char PFLG_t;
 
         /* These typedefs attempt to ensure consistent 'ticks' handling */
-#ifdef TICS_64_BITS
 typedef unsigned long long TICS_t;
 typedef          long long STIC_t;
-#else
-typedef unsigned long TICS_t;
-typedef          long STIC_t;
-#endif
 
         /* Sorted columns support. */
 typedef int (*QSORT_t)(const void *, const void *);
@@ -293,7 +287,7 @@ typedef struct win {
 
         /* The default fields displayed and their order,
            if nothing is specified by the loser, oops user */
-#define DEF_FIELDS  "AbcdEfgHIjKlMNOPQrstuvWXyz"
+#define DEF_FIELDS  "AEHIOQTWKNMXbcdfgjplrsuvyz"
         /* Pre-configured field groupss */
 #define JOB_FIELDS  "ABXcefgjlrstuvyzMKNHIWOPQD"
 #define MEM_FIELDS  "ANOPQRSTUVXbcdefgjlmyzWHIK"
