@@ -44,7 +44,7 @@ typedef struct utmp utmp_t;
  * unprintable.  Always outputs at least 16 chars padded with spaces
  * on the right if necessary.
  */
-static void print_host(char* host, int len) {
+static void print_host(const char *restrict host, int len) {
     char *last;
     int width = 0;
 
@@ -62,15 +62,8 @@ static void print_host(char* host, int len) {
 	    break;
 	}
     }
-    if(!width){   /* blank fields screw up parsers */
-      fputc('-', stdout);
-      ++width;
-    }
-    /* if *any* unprintables(or blanks), replace rest of line with spaces */
-    while (width < 16) {
-	fputc(' ', stdout);
-	++width;
-    }
+    // space-fill, and a '-' too if needed to ensure the column exists
+    if(width < 16) fputs("-               "+width, stderr);
 }
 
 /***** compact 7 char format for time intervals (belongs in libproc?) */
@@ -90,7 +83,7 @@ static void print_time_ival7(time_t t, int centi_sec, FILE* fout) {
 }
 
 /**** stat the device file to get an idle time */
-static time_t idletime(char *tty) {
+static time_t idletime(const char *restrict const tty) {
     struct stat sbuf;
     if (stat(tty, &sbuf) != 0)
 	return 0;
@@ -128,7 +121,7 @@ static void print_logintime(time_t logt, FILE* fout) {
  * for the "best" process to report as "(w)hat" the user for that login
  * session is doing currently.  This the essential core of 'w'.
  */
-static proc_t *getproc(utmp_t *u, char *tty, unsigned long long *jcpu, int *found_utpid) {
+static proc_t *getproc(const utmp_t *restrict const u, const char *restrict const tty, const unsigned long long *restrict jcpu, const int *restrict found_utpid) {
     int line;
     proc_t **p, *best = NULL, *secondbest = NULL;
     unsigned uid = ~0U;
@@ -144,7 +137,8 @@ static proc_t *getproc(utmp_t *u, char *tty, unsigned long long *jcpu, int *foun
       /* OK to have passwd_data go out of scope here */
     }
     line = tty_to_dev(tty);
-    *jcpu = *found_utpid = 0;
+    *jcpu = 0;
+    *found_utpid = 0;
     for(p = procs; *p; p++) {
 	if((**p).pid == u->ut_pid) {
         *found_utpid = 1;

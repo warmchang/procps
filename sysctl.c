@@ -58,7 +58,7 @@ static const char ERR_PRELOAD_FILE[] = "error: unable to open preload file '%s'\
 static const char WARN_BAD_LINE[] = "warning: %s(%d): invalid syntax, continuing...\n";
 
 
-static void slashdot(char *p, char old, char new){
+static void slashdot(char *restrict p, char old, char new){
   p = strpbrk(p,"/.");
   if(!p) return;            /* nothing -- can't be, but oh well */
   if(*p==new) return;       /* already in desired format */
@@ -76,7 +76,7 @@ static void slashdot(char *p, char old, char new){
  *     Display the usage format
  *
  */
-static int Usage(const char *name) {
+static int Usage(const char *restrict const name) {
    printf("usage:  %s [-n] variable ... \n"
           "        %s [-n] -w variable=value ... \n" 
           "        %s [-n] -a \n" 
@@ -116,16 +116,17 @@ static char *StripLeadingAndTrailingSpaces(char *oneline) {
  *     Read a sysctl setting 
  *
  */
-static int ReadSetting(const char *setting) {
+static int ReadSetting(const char *restrict const name) {
    int rc = 0;
-   char *tmpname, *outname;
+   char *restrict tmpname;
+   char *restrict outname;
    char inbuf[1025];
-   const char *name = setting;
-   FILE *fp;
+   FILE *restrict fp;
 
-   if (!setting || !*setting) {
-      fprintf(stderr, ERR_INVALID_KEY, setting);
-   } /* endif */
+   if (!name || !*name) {
+      fprintf(stderr, ERR_INVALID_KEY, name);
+      return -1;
+   }
 
    /* used to open the file */
    tmpname = malloc(strlen(name)+strlen(PROC_PATH)+1);
@@ -179,12 +180,12 @@ static int ReadSetting(const char *setting) {
  *     Display all the sysctl settings 
  *
  */
-static int DisplayAll(const char *path, bool ShowTableUtil) {
+static int DisplayAll(const char *restrict const path, bool ShowTableUtil) {
    int rc = 0;
    int rc2;
-   DIR *dp;
-   struct dirent *de;
-   char *tmpdir;
+   DIR *restrict dp;
+   struct dirent *restrict de;
+   char *restrict tmpdir;
    struct stat ts;
 
    dp = opendir(path);
@@ -195,7 +196,7 @@ static int DisplayAll(const char *path, bool ShowTableUtil) {
    } else {
       readdir(dp); readdir(dp);   /* skip . and .. */
       while (( de = readdir(dp) )) {
-         tmpdir = (char *)malloc(strlen(path)+strlen(de->d_name)+2);
+         tmpdir = (char *restrict)malloc(strlen(path)+strlen(de->d_name)+2);
          sprintf(tmpdir, "%s%s", path, de->d_name);
          rc2 = stat(tmpdir, &ts);       /* should check this return code */
          if (rc2 != 0) {
@@ -206,15 +207,14 @@ static int DisplayAll(const char *path, bool ShowTableUtil) {
                DisplayAll(tmpdir, ShowTableUtil);
             } else {
                rc |= ReadSetting(tmpdir+strlen(PROC_PATH));
-            } /* endif */
-         } /* endif */
+            }
+         }
          free(tmpdir);
-      } /* end while */
+      }
       closedir(dp);
-   } /* endif */
-
+   }
    return rc;
-} /* end DisplayAll() */
+}
 
 
 /*
@@ -302,7 +302,7 @@ static int WriteSetting(const char *setting) {
  *           - we parse the file and then reform it (strip out whitespace)
  *
  */
-static void Preload(const char *filename) {
+static void Preload(const char *restrict const filename) {
    FILE *fp;
    char oneline[257];
    char buffer[257];
