@@ -200,7 +200,7 @@ int signal_name_to_number(const char *restrict name){
         if(*endp || endp==name)
             return -1; /* not valid */
     }
-    if(val+SIGRTMIN>127)
+    if(val<0 || val+SIGRTMIN>127)
         return -1; /* not valid */
     return val+offset;
 }
