@@ -11,7 +11,8 @@ pmap \- report memory map of a process
 
 .SH SYNOPSIS
 .nf
-pmap [-x] [-V] pids...
+pmap [ -x | -d ] [ -q ] pids...
+pmap -V
 .fi
 
 .SH DESCRIPTION
@@ -21,6 +22,8 @@ The pmap command reports the memory map of a process or processes.
 .TS
 l l l.
 -x	extended	Show the extended format.
+-d	device	Show the device format.
+-q	quiet	Do not display some header/footer lines.
 -V	show version	Displays version of program.
 .TE
 

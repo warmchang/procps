@@ -23,8 +23,11 @@
 static void usage(void) NORETURN;
 static void usage(void){
   fprintf(stderr,
-    "Usage: pmap [-r] [-x] pid...\n"
+    "Usage: pmap [-x | -d] [-q] pid...\n"
     "-x  show details\n"
+    "-d  show offset and device number\n"
+    "-q  quiet; less header/footer info\n"
+    "-V  show the version number\n"
   );
   exit(1);
 }
@@ -93,19 +96,25 @@ static int one_proc(unsigned pid){
   char buf[32];
   char mapbuf[9600];
   unsigned long total_shared = 0ul;
-  unsigned long total_private = 0ul;
+  unsigned long total_private_readonly = 0ul;
+  unsigned long total_private_writeable = 0ul;
 
   sprintf(buf,"/proc/%u/maps",pid);
   if(!freopen(buf, "r", stdin)) return 1;
   printf("%u:   %s\n", pid, get_args(pid));
-  if(x_option)
-    printf("Address   Kbytes       RSS    Anon  Locked Mode   Mapping\n");
+
+  if(x_option && !q_option)
+    printf("Address   Kbytes     RSS    Anon  Locked Mode   Mapping\n");
+  if(d_option && !q_option)
+    printf("Address   Kbytes Mode  Offset           Device     Mapping\n");
+
   while(fgets(mapbuf,sizeof mapbuf,stdin)){
     char flags[32];
     char *tmp; // to clean up unprintables
     unsigned KLONG start, end, diff;
-    unsigned long long pgoff;
-    sscanf(mapbuf,"%"KLF"x-%"KLF"x %31s %Lx", &start, &end, flags, &pgoff);
+    unsigned long long file_offset;
+    unsigned dev_major, dev_minor;
+    sscanf(mapbuf,"%"KLF"x-%"KLF"x %31s %Lx %x:%x", &start, &end, flags, &file_offset, &dev_major, &dev_minor);
     tmp = strchr(mapbuf,'\n');
     if(tmp) *tmp='\0';
     tmp = mapbuf;
@@ -116,7 +125,10 @@ static int one_proc(unsigned pid){
     
     diff = end-start;
     if(flags[3]=='s') total_shared  += diff;
-    if(flags[3]=='p') total_private += diff;
+    if(flags[3]=='p'){
+      if(flags[1]=='w') total_private_writeable += diff;
+      else              total_private_readonly  += diff;
+    }
 
     // format used by Solaris 9 and procps-3.2.0+
     if(flags[3] == 'p') flags[3] = '-';
@@ -136,7 +148,24 @@ static int one_proc(unsigned pid){
         flags,
         cp
       );
-    }else{
+    }
+    if(d_option){
+      const char *cp = strrchr(mapbuf,'/');
+      if(cp && cp[1]) cp++;
+      if(!cp) cp = anon_name(pid, start, diff);
+      printf(
+        (sizeof(KLONG)==8)
+          ? "%016"KLF"x %7lu %s %016Lx %03x:%05x  %s\n"
+          :      "%08lx %7lu %s %016Lx %03x:%05x  %s\n",
+        start,
+        (unsigned long)(diff>>10),
+        flags,
+        file_offset,
+        dev_major, dev_minor,
+        cp
+      );
+    }
+    if(!x_option && !d_option){
       const char *cp = strchr(mapbuf,'/');
       if(!cp) cp = anon_name(pid, start, diff);
       printf(
@@ -151,26 +180,35 @@ static int one_proc(unsigned pid){
     }
     
   }
-  if(x_option){
+
+  if(x_option && !q_option){
     if(sizeof(KLONG)==8){
       printf("----------------  ------  ------  ------  ------\n");
       printf(
-        "total kB %15ld       - %7ld %7ld\n",
-        (total_shared + total_private) >> 10,
-        total_shared >> 10,
-        total_private >> 10
+        "total kB %15ld       -       -       -\n",
+        (total_shared + total_private_writeable + total_private_readonly) >> 10
       );
     }else{
       printf("-------- ------- ------- ------- -------\n");
       printf(
         "total kB %7ld       -       -       -\n",
-        (total_shared + total_private) >> 10
+        (total_shared + total_private_writeable + total_private_readonly) >> 10
       );
     }
-  }else{
-    if(sizeof(KLONG)==8) printf(" total %16ldK\n", (total_shared + total_private) >> 10);
-    else                 printf(" total %8ldK\n",  (total_shared + total_private) >> 10);
   }
+  if(d_option && !q_option){
+      printf(
+        "mapped %ldK    writeable/private: %ldK    shared: %ldK\n",
+        (total_shared + total_private_writeable + total_private_readonly) >> 10,
+        total_private_writeable >> 10,
+        total_shared >> 10
+      );
+  }
+  if(!x_option && !d_option && !q_option){
+    if(sizeof(KLONG)==8) printf(" total %16ldK\n", (total_shared + total_private_writeable + total_private_readonly) >> 10);
+    else                 printf(" total %8ldK\n",  (total_shared + total_private_writeable + total_private_readonly) >> 10);
+  }
+
   return 0;
 }
 
@@ -236,6 +274,7 @@ int main(int argc, char *argv[]){
     return 0;
   }
   if(count<1) usage();   // no processes
+  if(d_option && x_option) usage();
 
   u=0;
   while(u<count) ret |= one_proc(pidlist[u++]);
