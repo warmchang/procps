@@ -5,6 +5,8 @@ avoid warning about -lncurses when not linking (more)
 new names for shared libraries (packagers: watch out!)
 "make install" no longer rebuilds everything
 wchan now '*' for multi-threaded processes
+ps: new man page -- thanks Nicolas Francois
+ps: STAT shows l for multi-threaded processes
 vmstat: some overflow problems fixed -- thanks Holger Kiehl
 sysctl: man page fix
 

@@ -8,6 +8,7 @@
 // See file COPYING for information on distribution conditions.
 
 #include <stdio.h>
+#include <string.h>
 #include <sys/types.h>
 #include <stdlib.h>
 #include <pwd.h>
