@@ -17,13 +17,16 @@ LIBOBJ :=  $(LIBSRC:.c=.o)
 ifeq ($(SHARED),1)
 ALL        += proc/$(SONAME)
 INSTALL    += $(lib)/$(SONAME)
-$(LIBOBJ) : CFLAGS += -fpic
+FPIC       := -fpic
 LIBPROC    := proc/$(SONAME)
 else
 ALL        += proc/lib$(NAME).a
 LIBPROC    := proc/lib$(NAME).a
 endif
 
+# Separate rule for this directory, to use -fpic or -fPIC
+$(LIBOBJ): proc/%.o: proc/%.c
+	$(CC) -c $(CFLAGS) $(FPIC) $< -o $@
 
 LIB_X := COPYING module.mk
 TARFILES += $(LIBSRC) $(LIBHDR) $(addprefix proc/,$(LIB_X))
