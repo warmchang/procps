@@ -10,6 +10,11 @@
 #
 # This file includes */module.mk files which add on to variables:
 # FOO += bar/baz
+#
+#
+# Set (or uncomment) SKIP if you wish to avoid something.
+# For example, you may prefer the /bin/kill from util-linux or bsdutils.
+
 
 VERSION      := 3
 SUBVERSION   := 0
@@ -37,6 +42,8 @@ usr/X11R6/bin            := $(DESTDIR)/usr/X11R6/bin/
 lib                      := $(DESTDIR)/lib/
 usr/lib                  := $(DESTDIR)/usr/lib/
 usr/include              := $(DESTDIR)/usr/include/
+
+#SKIP     := $(bin)kill $(man1)kill.1
 
 BINFILES := $(usr/bin)uptime $(usr/bin)tload $(usr/bin)free $(usr/bin)w \
             $(usr/bin)top $(usr/bin)vmstat $(usr/bin)watch $(usr/bin)skill \
@@ -96,10 +103,8 @@ junk := DEADJOE *~ *.o core gmon.out
 # Remove $(junk) from all $(DIRS)
 CLEAN += $(junk) $(foreach dir,$(DIRS),$(addprefix $(dir), $(junk)))
 
-# Unfortunately the program and directory name are the same.
-# So ps is a .PHONY that depends on ps/ps.
-#ps: ps/ps
-#	@echo MAKEFILE WANTS TO MAKE PS
+##########
+# not maintained because it isn't really needed:
 #
 #SRC :=
 #OBJ := $(patsubst %.c,%.o, $(filter %.c,$(SRC)))
@@ -110,6 +115,7 @@ CLEAN += $(junk) $(foreach dir,$(DIRS),$(addprefix $(dir), $(junk)))
 #
 #%.d: %.c
 #	depend.sh $(CFLAGS) $< > $@
+############
 
 # don't want to type "make procps-$(TARVERSION).tar.gz"
 tar: $(TARFILES)
@@ -132,7 +138,7 @@ $(SCRFILES) : all
 $(MANFILES) : all
 	$(install) --mode a=r $(notdir $@) $@
 
-install: $(INSTALL)
+install: $(filter-out $(SKIP),$(INSTALL))
 	cd $(usr/bin) && ($(ln-f) skill snice; $(ln-f) pgrep pkill)
 
 ############ prog.c --> prog.o
