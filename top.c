@@ -330,7 +330,7 @@ static void bye_bye (int eno, const char *str)
    putp("\n");
    fflush(stdout);
 
-#define ATEOJ_REPORT
+//#define ATEOJ_REPORT
 #ifdef ATEOJ_REPORT
 
    fprintf(stderr,
