@@ -22,9 +22,9 @@
 //
 // PowerPC: Big ugly problem! Macs are popular. :-/
 //
-// Unknown: HP-PA-RISC, zSeries, and x86-64
+// Unknown: PA-RISC, zSeries, and x86-64
 //
-#if defined(__sparc__)      // || defined(__mips__) || defined(__powerpc__)
+#if defined(k64test) || defined(__sparc__)  // || defined(__mips__) || defined(__powerpc__)
 #define KLONG long long    // not typedef; want "unsigned KLONG" to work
 #define KLF "L"
 #define STRTOUKL strtoull
