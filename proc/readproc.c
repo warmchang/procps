@@ -719,14 +719,13 @@ next_proc:				/* get next PID for consideration */
 
 
 void look_up_our_self(proc_t *p) {
-    static char path[32], sbuf[1024];	/* bufs for stat,statm */
-    sprintf(path, "/proc/%d", getpid());
-    file2str(path, "stat", sbuf, sizeof sbuf);
-    stat2proc(sbuf, p);				/* parse /proc/#/stat */
-    file2str(path, "statm", sbuf, sizeof sbuf);
-    statm2proc(sbuf, p);		/* ignore statm errors here */
-    file2str(path, "status", sbuf, sizeof sbuf);
-    status2proc(sbuf, p);
+    char sbuf[1024];
+
+    if(file2str("/proc/self", "stat", sbuf, sizeof sbuf) == -1){
+        fprintf(stderr, "Error, do this: mount -t proc none /proc\n");
+        _exit(47);
+    }
+    stat2proc(sbuf, p);    // parse /proc/self/stat
 }
 
 HIDDEN_ALIAS(readproc);
