@@ -1,3 +1,4 @@
+URL: http://procps.sf.net/
 Summary: System and process monitoring utilities
 Name: procps
 %define major_version 3
@@ -6,10 +7,11 @@ Name: procps
 %define version %{major_version}.%{minor_version}.%{revision}
 Version: %{version}
 Release: 1
-Copyright: GPL
+License: LGPL, GPL, BSD-like
 Group: Applications/System
 Source: http://procps.sf.net/procps-%{version}.tar.gz
-BuildRoot: /tmp/procps-root
+BuildRoot: %{_tmppath}/procps-root
+Packager: <procps-feedback@lists.sf.net>
 
 %description
 The procps package contains a set of system utilities which provide
