@@ -49,9 +49,6 @@
 #include "proc/readproc.h"
 #include "proc/escape.h"
 #include "proc/sig.h"
-#ifdef USE_LIB_STA3
-#include "proc/status.h"
-#endif
 #include "proc/sysinfo.h"
 #include "proc/version.h"
 #include "proc/whattime.h"
@@ -1114,25 +1111,24 @@ static proc_t **procs_refresh (proc_t **table, int flags)
 #undef ENTsz
 }
 
-
 /*######  Field Table/RCfile compatability support  ######################*/
 
-        /* These are the Fieldstab.lflg values used here and in reframewins.
-           (own identifiers as documentation and protection against changes) */
+// from either 'stat' or 'status' (preferred), via bits not otherwise used
+#define L_EITHER   PROC_SPARE_1
+// These are the Fieldstab.lflg values used here and in reframewins.
+// (own identifiers as documentation and protection against changes)
 #define L_stat     PROC_FILLSTAT
 #define L_statm    PROC_FILLMEM
 #define L_status   PROC_FILLSTATUS
-#define L_CMDLINE  L_stat   | PROC_FILLARG
+#define L_CMDLINE  L_EITHER | PROC_FILLARG
 #define L_EUSER    PROC_FILLUSR
 #define L_RUSER    L_status | PROC_FILLUSR
 #define L_GROUP    L_status | PROC_FILLGRP
 #define L_NONE     0
-   // from either 'stat' or 'status' (preferred), via bits not otherwise used
-#define L_EITHER   PROC_SPARE_1
-   // for reframewins and summary_show 1st pass
+// for reframewins and summary_show 1st pass
 #define L_DEFAULT  PROC_FILLSTAT
 
-   // a temporary macro, soon to be undef'd...
+// a temporary macro, soon to be undef'd...
 #define SF(f) (QFP_t)sort_P_ ## f
 
         /* These are our gosh darn 'Fields' !
@@ -1170,11 +1166,7 @@ static FLD_t Fieldstab[] = {
    { "TtPp", "  SHR",       " %4.4s",    4, SK_Kb, SF(SHR), "Shared Mem size (kb)", L_statm  },
    { "UuJj", " nFLT",       " %4.4s",    4, SK_no, SF(FLT), "Page Fault count",     L_stat   },
    { "VvSs", " nDRT",       " %4.4s",    4, SK_no, SF(DRT), "Dirty Pages count",    L_statm  },
-#ifdef USE_LIB_STA3
-   { "WwVv", " STA",        " %3.3s",   -1,    -1, SF(STA), "Process Status",       L_stat   },
-#else
    { "WwVv", " S",          " %c",      -1,    -1, SF(STA), "Process Status",       L_EITHER },
-#endif
    // next entry's special: '.head' will be formatted using table entry's own
    //                       '.fmts' plus runtime supplied conversion args!
    { "XxXx", " COMMAND",    " %-*.*s",  -1,    -1, SF(CMD), "Command name/line",    L_EITHER },
@@ -1638,9 +1630,14 @@ static void configs_read (void)
       close(fd);
    }
 
-   snprintf(Rc_name, sizeof(Rc_name), ".%src", Myname);  // eeew...
-   if (getenv("HOME"))
-      snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", getenv("HOME"), Myname);
+   if (getenv("TOPRC")) {    // should switch on Myname before documenting this?
+      // not the most optimal here...
+      snprintf(Rc_name, sizeof(Rc_name), "%s", getenv("TOPRC"));
+   } else {
+      snprintf(Rc_name, sizeof(Rc_name), ".%src", Myname);  // eeew...
+      if (getenv("HOME"))
+         snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", getenv("HOME"), Myname);
+   }
 
    rcf = def_rcf;
    fd = open(Rc_name, O_RDONLY);
@@ -2983,11 +2980,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
             MKCOL(scale_num(PAGES_TO_KB(p->share), w, s));
             break;
          case P_STA:
-#ifdef USE_LIB_STA3
-            MKCOL(status(p));
-#else
             MKCOL(p->state);
-#endif
             break;
          case P_SWP:
             MKCOL(scale_num(PAGES_TO_KB(p->size - p->resident), w, s));

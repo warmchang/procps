@@ -27,7 +27,6 @@
 //#define CASEUP_SCALE    // show scaled time/num suffix upper case
 //#define CASEUP_SUMMK    // show memory summary kilobytes with 'K'
 //#define SORT_SUPRESS    // *attempt* to reduce qsort overhead
-//#define USE_LIB_STA3    // use lib status (3 ch) vs. proc_t (1 ch)
 //#define WARN_NOT_SMP    // restrict '1' & 'I' commands to true smp
 
 // Development/Debugging defines -----------------------------------
