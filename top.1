@@ -259,6 +259,16 @@ Specifies the maximum number of iterations, or frames, \*(Me should
 produce before ending.
 
 .TP 5
+\-\fBu\fR :\fB Monitor by user\fR as:\fB\ \ -u somebody
+Monitor only processes with an effective UID or user name
+matching that given.
+
+.TP 5
+\-\fBU\fR :\fB Monitor by user\fR as:\fB\ \ -U somebody
+Monitor only processes with a UID or user name matching that given.
+This matches real, effective, saved, and filesystem UIDs.
+
+.TP 5
 \-\fBp\fR :\fB Monitor PIDs\fR as:\fB\ \ -pN1 -pN2 ...\fR\ \ or\fB\ \ -pN1, N2 [,...]
 Monitor only processes with specified process IDs.
 This option can be given up to 20 times, or you can provide a comma delimited
@@ -626,6 +636,18 @@ experimenting with \*(AM.
 When operating in 'Solaris mode' ('I' toggled \*F), a task's \*(Pu usage
 will be divided by the total number of \*(PUs.
 After issuing this command, you'll be informed of the new state of this toggle.
+
+.TP 7
+\ \ \'\fBu\fR\' :\fIselect a user\fR
+You will be prompted for a UID or username. Only processes
+belonging to the selected user will be displayed. This option
+matches on the effective UID.
+
+.TP 7
+\ \ \'\fBU\fR\' :\fIselect a user\fR
+You will be prompted for a UID or username. Only processes
+belonging to the selected user will be displayed. This option
+matches on the real, effective, saved, and filesystem UID.
 
 .TP 7
 *\ \'\fBk\fR\' :\fIKill_a_task\fR
