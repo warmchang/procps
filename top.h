@@ -1,7 +1,10 @@
 /* top.h - Header file:         show Linux processes */
 /*
- * Copyright (c) 2002 - James C. Warner, <warnerjc@worldnet.att.net>
- *    All rights reserved.
+ * Copyright (c) June, 2002 -   James C. Warner
+ *    All rights reserved.      8921 Hilloway Road
+ *                              Eden Prairie, Minnesota 55347 USA
+ *                             <warnerjc@worldnet.att.net>
+ *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
  * at your option, as published by the Free Software Foundation.
@@ -10,26 +13,90 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
  */
+/* For their contributions to this program, the author wishes to thank:
+ *    Craig Small, <csmall@eye-net.com.au>
+ *    Albert D. Cahalan, <acahalan@cs.uml.edu>
+ */
 #ifndef _Itop
 #define _Itop
 
-        /* Determines for whom we're destined, debian or !#@*#! redhat ----- */
+        /* Determines for whom we're destined ------------------------------ */
 //#define UGH_ITS_4_RH            /* use the redhat libproc conventions      */
 
-        /* Defines intended to be played with ------------------------------ */
-//#define UPCASE_HEXES            /* show any hex values in upper case       */
-//#define UPCASE_SCALE            /* show scaled times & memory upper case   */
-//#define UPCASE_SUMMK            /* show memory summary kilobytes with 'K'  */
-
-//#define COLOR_SLEEPY            /* purples and blues (sissy colors)        */
-//#define COLOR_CONSOL            /* for linux consoles (white on black)     */
+        /* Defines intended to be experimented with ------------------------ */
+//#define CASEUP_HEXES            /* show any hex values in upper case       */
+//#define CASEUP_SCALE            /* show scaled times & memory upper case   */
+//#define CASEUP_SUMMK            /* show memory summary kilobytes with 'K'  */
+//#define QUIT_NORMALQ            /* use 'q' to quit, not new default <Esc>  */
+//#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
+//#define USE_LIB_STA3            /* use lib status (3 ch) vs. proc_t (1 ch) */
+//#define WARN_NOT_SMP            /* restrict '1' & 'I' commands to true smp */
 
         /* Development/Debugging defines ----------------------------------- */
-//#define TRAK_MAXCAPS            /* track & report misc terminfo stuff      */
-//#define TRAK_MAXBUFS            /* track & report internal buffer usage    */
-
-        /* Special define to test extremely dumb terminals! ---------------- */
+//#define ATEOJ_REPORT            /* report a bunch of stuff, at end-of-job  */
+//#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
+
+
+/*######  Some Miscellaneous constants  ##################################*/
+
+        /* The default delay twix updates */
+#define DEF_DELAY  2.0
+
+        /* The length of time a 'message' is displayed */
+#define MSG_SLEEP  2
+
+        /* The default value for the 'k' (kill) request */
+#define DEF_SIGNAL  SIGTERM
+
+        /* Specific process id monitoring support (command line only) */
+#define MONPIDMAX  20
+
+        /* Miscellaneous buffer sizes with liberal values
+           -- mostly just to pinpoint source code usage/dependancies */
+#define PFLAGSSIZ    32
+#define CAPBUFSIZ    32
+#define CLRBUFSIZ    64
+#define GETBUFSIZ    32
+#define TNYBUFSIZ    32
+#define SMLBUFSIZ   256
+#define MEDBUFSIZ   512
+#define OURPATHSZ  1024
+#define BIGBUFSIZ  2048
+#define RCFBUFSIZ  SMLBUFSIZ
+#define USRNAMSIZ  GETBUFSIZ
+#define COLBUFSIZ  SMLBUFSIZ + CLRBUFSIZ
+#define ROWBUFSIZ  MEDBUFSIZ + CLRBUFSIZ
+
+
+/*######  Some Miscellaneous Macro definitions  ##########################*/
+
+        /* Used as return arguments to achieve normal/reversed sorts
+           in the sort callbacks */
+#define SORT_lt  ( Frame_srtflg ?  1 : -1 )
+#define SORT_gt  ( Frame_srtflg ? -1 :  1 )
+
+        /* Convert some proc stuff into vaules we can actually use */
+#define BYTES_2K(n)  (unsigned)( (n) >> 10 )
+#define PAGES_2B(n)  (unsigned)( (n) * Page_size )
+#define PAGES_2K(n)  BYTES_2K(PAGES_2B(n))
+#define PAGE_CNT(n)  (unsigned)( (n) / Page_size )
+
+        /* Yield table size as 'int' */
+#define MAXtbl(t)  ( (int)(sizeof(t)/sizeof(t[0])) )
+
+
+/*######  Special Macros (debug and/or informative)  #####################*/
+
+        /* Orderly end, with any sort of message - see fmtmk */
+#define debug_END(s)  { \
+           static void std_err (const char *); \
+           fputs(Cap_clr_scr, stdout); \
+           std_err(s); \
+        }
+
+        /* A poor man's breakpoint, if he's too lazy to learn gdb */
+#define its_YOUR_fault { *((char *)0) = '!'; }
 
 
 /*######  Some Typedef's and Enum's  #####################################*/
@@ -56,9 +123,10 @@ typedef struct {
    TICS_t tics;
 } HIST_t;
 
-        /* This structure serves single (non-smp), multiple (smp) and
-           consolidated (smp, but Show_cpusum == 1) environments.  It is
-           used to calculate a frame's cpu(s) state percentages */
+        /* This structure stores the prior frame's tics used in history
+           calculations.  It exists primarily for SMP support but serves
+           all environments.  There will always Cpu_tot + 1 allocated
+           -- see frame_states for details. */
 typedef struct {
    TICS_t u,    /* ticks count as represented in /proc/stat */
           n,    /* (not in the order of our display) */
@@ -80,7 +148,7 @@ enum scale_num {
 };
 
         /* Flags for each possible field.
-           At the moment 32 are supported [ see PFlags/PFLAGSSIZ ] */
+           At the moment 32 are supported [ see PFLAGSSIZ ] */
 enum pflag {
    P_PID, P_PPID, P_UID, P_USER, P_GROUP, P_TTY,
    P_PR, P_NI,
@@ -91,108 +159,120 @@ enum pflag {
 };
 
 
-/*######  Some Miscellaneous Macro definitions  ##########################*/
+        /* ////////////////////////////////////////////////////////////// */
+        /* Special Section: multiple windows/field groups  ---------------*/
+        /* (kind of a header within a header:  constants, macros & types) */
 
-        /* Message line placement at runtime */
-#define MSG_line  ( HSum_lines - 2 )
+#define GROUPSMAX  4            /* the max number of simultaneous windows */
+#define WINNAMSIZ  4            /* max size of a window's basic name      */
+#define GRPNAMSIZ  6            /* window's name + number as in: '#:...'  */
+#define CAPTABMAX  9            /* a window's captab used by show_special */
 
-        /* Used as return argument to achieve normal/reversed sorts
-           in the sort callbacks */
-#define SORT_lt  ( Sort_normal ?  1 : -1 )
-#define SORT_gt  ( Sort_normal ? -1 :  1 )
+#define Def_WINDOW  0           /* these represent the pre-allocated      */
+#define Job_WINDOW  1           /* WIN_t's relative position in the       */
+#define Mem_WINDOW  2           /* window stack pointer array...          */
+#define Usr_WINDOW  3
 
-        /* Convert some proc stuff into vaules we can actually use */
-#define BYTES_2K(n)  (unsigned)( (n) >> 10 )
-#define PAGES_2B(n)  (unsigned)( (n) * Page_size )
-#define PAGES_2K(n)  BYTES_2K(PAGES_2B(n))
-#define PAGE_CNT(n)  (unsigned)( (n) / Page_size )
+#define Flgs_TOG  1             /* these are used to direct wins_reflag   */
+#define Flgs_SET  2
+#define Flgs_OFF  3
 
-        /* Yield table size as 'int' */
-#define MAXtbl(t)  ( (int)(sizeof(t)/sizeof(t[0])) )
+        /* The Persistent 'Mode' flags!
+           All of these are preserved in the rc file, as a single integer.
+           Thus, once personalized, this top will stay personalized across
+           restarts (not like the old top, who only remembered fields)!
+           Note: the letter shown is the corresponding 'command' toggle
+         */
+        /* 'View_' flags affect the summary information, taken from 'Curwin' */
+#define View_CPUSUM  0x8000     /* '1' - show combined cpu stats (vs. each)  */
+#define View_LOADAV  0x4000     /* 'l' - display load avg and uptime summary */
+#define View_STATES  0x2000     /* 't' - display task/cpu(s) states summary  */
+#define View_MEMORY  0x1000     /* 'm' - display memory summary              */
+        /* 'Show_' & 'Qsrt_' flags are for task display in a visible window  */
+#define Show_COLORS  0x0800     /* 'z' - show in color (vs. mono)            */
+#define Show_HIBOLD  0x0400     /* 'b' - rows and/or cols bold (vs. reverse) */
+#define Show_HICOLS  0x0200     /* 'x' - show sort column highlighted        */
+#define Show_HIROWS  0x0100     /* 'y' - show running tasks highlighted      */
+#define Show_CMDLIN  0x0080     /* 'c' - show cmdline vs. name               */
+#define Show_CTIMES  0x0040     /* 'S' - show times as cumulative            */
+#define Show_IDLEPS  0x0020     /* 'i' - show idle processes (all tasks)     */
+#define Qsrt_NORMAL  0x0010     /* 'R' - reversed column sort (high to low)  */
+        /* these flag(s) have no command as such - they're for internal use  */
+#define VISIBLE_tsk  0x0008     /* tasks are showable in 'Show_altscr' mode  */
+#define NEWFRAM_cwo  0x0004     /* new frame (if anyone cares) - in Curwin   */
+#define EQUWINS_cwo  0x0002     /* rebalance tasks next frame (off 'i'/ 'n') */
+                                /* ...set in Curwin, but impacts all windows */
+#define flag_unused  0x0001     /* ----------------------- future use, maybe */
 
+        /* Current-window-only flags -- always turned off at end-of-window!  */
+#define FLGSOFF_cwo  EQUWINS_cwo | NEWFRAM_cwo
 
-/*######  Special Macros (debug and/or informative)  #####################*/
+        /* Default flags if there's no rcfile to provide user customizations */
+#define DEF_WINFLGS ( View_LOADAV | View_STATES | View_CPUSUM | View_MEMORY | \
+   Show_HIBOLD | Show_HIROWS | Show_IDLEPS | Qsrt_NORMAL | VISIBLE_tsk )
 
-        /* Orderly end, with any sort of message - see fmtmk */
-#define debug_END(s)  { \
-           static void std_err (const char *); \
-           fputs(Cap_clr_scr, stdout); \
-           std_err(s); \
-        }
+        /* Used to test/manipulate the window flags */
+#define CHKw(q,f)   (int)(q->winflags & (f))
+#define TOGw(q,f)   q->winflags ^=  (f)
+#define SETw(q,f)   q->winflags |=  (f)
+#define OFFw(q,f)   q->winflags &= ~(f)
+#define VIZCHKc     (!Show_altscr || Curwin->winflags & VISIBLE_tsk) \
+                        ? 1 : win_warn()
+#define VIZTOGc(f)  (!Show_altscr || Curwin->winflags & VISIBLE_tsk) \
+                        ? TOGw(Curwin, f) : win_warn()
 
-#ifdef TRAK_MAXBUFS
-        /* Provide for tracking maximum buffer sizes */
-#define ARPTBUF(f,b)  "\n\t%4d  of  %d\t" #f ", " #b
-#define ASIZBUF(f,b)  Siz_ ## f ## _ ## b
-#define AUSEBUF(f,b)  Use_ ## f ## _ ## b
-#define BUF2INT(f,b)  static int AUSEBUF(f,b) = 0, ASIZBUF(f,b) = 0;
-#define MAXBUFS(f,b)  { \
-           if ((int)strlen(b) > AUSEBUF(f,b)) \
-              AUSEBUF(f,b) = (int)strlen(b); \
-           ASIZBUF(f,b) = (int)sizeof(b); \
-        }
-#endif
+        /* Just create a printable window number -- represented here since
+           we can't decide which to prefer (relative 0 or 1) */
+#define mkWNO(q)  q->winnum + 1
 
-
-/*######  Some Miscellaneous constants  ##################################*/
-
-        /* The default value for the 'k' (kill) request */
-#define DEF_SIGNAL  SIGTERM
-
-        /* The default delay twix updates */
-#define DEF_DELAY  2.0
-
-        /* The length of time a 'message' is displayed */
-#define MSG_SLEEP  1
-
-        /* Minimum summary lines (thus, just msg line + col heads) */
-#define SUMMINLINS  2
-
-        /* Specific process id monitoring support (command line only) */
-#define MONPIDMAX  12
-
-        /* Miscellaneous buffer sizes with liberal values
-           -- mostly just to pinpoint source code usage/dependancies */
-#define PFLAGSSIZ    32
-#define CAPBUFSIZ    32
-#define CLRBUFSIZ    64
-#define GETBUFSIZ    32
-#define TNYBUFSIZ    32
-#define SMLBUFSIZ   256
-#define MEDBUFSIZ   512
-#define OURPATHSZ  1024
-#define BIGBUFSIZ  2048
-#define RCFBUFSIZ  SMLBUFSIZ
-#define USRNAMSIZ  GETBUFSIZ
-#define COLBUFSIZ  SMLBUFSIZ + CLRBUFSIZ
-#define ROWBUFSIZ  MEDBUFSIZ + CLRBUFSIZ
-
-        /* Color stuff...
-           note: we avoid the use of background color so as to maximize
-                 compatibility with the user's xterm settings */
-#ifdef COLOR_SLEEPY
-#define BASEcolor  COLOR_MAGENTA
-#define MSGScolor  COLOR_CYAN
-#define HEADcolor  COLOR_BLUE
-#else
-#ifdef COLOR_CONSOL
-#define BASEcolor  COLOR_CYAN
-#define MSGScolor  COLOR_RED
-#define HEADcolor  COLOR_WHITE
-#else
-#define BASEcolor  COLOR_RED
-#define MSGScolor  COLOR_RED
-#define HEADcolor  COLOR_YELLOW
-#endif
-#endif
+        /* This structure stores configurable information for each window.
+           By expending a little effort in its creation and user requested
+           maintainence, the only real additional per frame cost of having
+           windows is a *potential* extra sort -- but that's just on ptrs!
+         */
+typedef struct win {
+   struct win *next,                    /* next window in window stack    */
+              *prev;                    /* prior window in window stack   */
+   int         winnum,                  /* this window's num/array pos    */
+               winlines;                /* task window's rows (volatile)  */
+   int         winflags;        /* 'view', 'show' and 'sort' mode flags   */
+   char        grpname   [GRPNAMSIZ],   /* window number:name, printable  */
+               winname   [WINNAMSIZ],   /* window name, user changeable   */
+               fieldscur [PFLAGSSIZ],   /* fields displayed and ordered   */
+               columnhdr [SMLBUFSIZ],   /* column headings for procflags  */
+               colusrnam [USRNAMSIZ];   /* if selected by the 'u' command */
+   unsigned    procflags [PFLAGSSIZ];   /* fieldscur subset as: int/enum  */
+   int         maxpflgs,        /* number of procflags (upcase fieldscur) */
+               maxtasks,        /* user requested maximum, 0 equals all   */
+               maxcmdln,        /* max length of a process' command line  */
+               sorttype;        /* the last chosen sort field (as enum)   */
+   QSORT_t     sortfunc;        /* sort function for this window's tasks  */
+   int         summclr,                 /* color num used in summ info    */
+               msgsclr,                 /*        "       in msgs/pmts    */
+               headclr,                 /*        "       in cols head    */
+               taskclr;                 /*        "       in task display */
+   char        capclr_sum [CLRBUFSIZ],  /* terminfo strings built from    */
+               capclr_msg [CLRBUFSIZ],  /*    above clrs (& rebuilt too), */
+               capclr_pmt [CLRBUFSIZ],  /*    but NO recurring costs !!!  */
+               capclr_hdr [CLRBUFSIZ],     /* note: sum, msg and pmt strs */
+               capclr_rowhigh [CLRBUFSIZ], /*    are only used when this  */
+               capclr_rownorm [CLRBUFSIZ]; /*    window is the 'Curwin'!  */
+   int         len_rownorm,     /* lengths of the corresponding terminfo  */
+               len_rowhigh;     /* strings to save mkcol() a strlen call  */
+   char       *captab [CAPTABMAX];      /* captab needed by show_special  */
+} WIN_t;
+        /* ////////////////////////////////////////////////////////////// */
 
 
 /*######  Display Support *Data*  ########################################*/
 
+        /* An rcfile 'footprint' used to invalidate existing */
+#define RCF_FILEID  'c'
+
         /* The default fields displayed and their order,
            if nothing is specified by the loser, oops user */
 #define DEF_FIELDS  "AbcDefGHiJkLMNOPqrstuVWxy"
-        /* Help screen selectable grouped fields */
+        /* Pre-configured grouped fields */
 #define JOB_FIELDS  "ABWdefikqrstuxyLJMGHVNOPC"
 #define MEM_FIELDS  "AMNOPQRSTUWbcdefiklxyVGHJ"
 #define USR_FIELDS  "CDEFABWghiknopqrstuxyLJMV"
@@ -206,14 +286,15 @@ enum pflag {
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
-#define LOADAV_line   "%s -\03%s\n"
+#define LOADAV_line  "%s -%s\n"
+#define LOADAV_line_alt  "%s\06 -%s\n"
 #define STATES_line1  "Tasks:\03" \
    " %3u \02total,\03 %3u \02running,\03 %3u \02sleeping,\03" \
    " %3u \02stopped,\03 %3u \02zombie\03\n"
 #define STATES_line2  "%s\03" \
    " %#5.1f%% \02user,\03 %#5.1f%% \02system,\03" \
    " %#5.1f%% \02nice,\03 %#5.1f%% \02idle\03\n"
-#ifdef UPCASE_SUMMK
+#ifdef CASEUP_SUMMK
 #define MEMORY_line1  "Mem: \03" \
    " %8uK \02total,\03 %8uK \02used,\03" \
    " %8uK \02free,\03 %8uK \02buffers\03\n"
@@ -229,68 +310,72 @@ enum pflag {
    " %8uk \02free,\03 %8uk \02cached\03\n"
 #endif
 
-
         /* Colors Help specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
-#define COLOR_sample \
+#define COLOR_help \
    "%s%s's \01Help for color mapping\02 - %s\n" \
+   "current window: \01%s\06\n" \
    "\n" \
-   "   color -\03 08:41:24 up 1 day,  6:07,  7 users,  load average:\n" \
+   "   color -\03 04:25:44 up 8 days, 50 min,  7 users,  load average:\n" \
    "   Tasks:\03  64 \02total,\03   2 \02running,\03  62 \02sleeping,\03   0 \02stopped,\03\n" \
    "   State cpu0 :\03   76.5%% \02user,\03  11.2%% \02system,\03   0.0%% \02nice,\03\n" \
    "   \01 Nasty Message! \04  -or-  \01Input Prompt\05\n" \
-   "   \01  PID    TTY  PR  NI %%CPU    TIME+   VIRT SWAP STA Command \06\n" \
-   "   17284 \03 pts/2 \07  8   0  0.0   0:00.75  1380    0 S   /bin/bas\03\n" \
-   "   \01 8601  pts/1   7 -10  0.4   0:00.03   916    0 R<  color -b\07\n" \
-   "   11005 \03     ? \07  9   0  0.0   0:02.50  2852 1008 S   amor -se\03\n" \
-   "    2924 \03     ? \07  9  -1  0.0   1:08.16 30040  20m S<  X :0\03\n" \
-   "   (normal toggles available: \01b\02 = bold/reverse; \01z\02 = color/mono)\n" \
-   "\n\n" \
+   "   \01  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP STA Command  \06\n" \
+   "   17284 \10pts/2  \07  8   0  0.0   0:00.75  1380    0 S   /bin/bash \10\n" \
+   "   \01 8601 pts/1    7 -10  0.4   0:00.03   916    0 R < color -b \07\n" \
+   "   11005 \10?      \07  9   0  0.0   0:02.50  2852 1008 S   amor -ses \10\n" \
+   "   available toggles: \01b\02 =bold/reverse (\01%s\02), \01z\02 =color/mono (\01%s\02)\n" \
+   "\n" \
    "Select \01target\02 as upper case letter:\n" \
-   "   B\02 = Base color,\01  H\02 = Column Headings,\01  M\02 = Messages/Prompts\n" \
+   "   S\02 = Summary Data,\01  M\02 = Messages/Prompts,\n" \
+   "   H\02 = Column Heads,\01  T\02 = Task Information\n" \
    "Select \01color\02 as number:\n" \
    "   0\02 = black,\01  1\02 = red,    \01  2\02 = green,\01  3\02 = yellow,\n" \
    "   4\02 = blue, \01  5\02 = magenta,\01  6\02 = cyan, \01  7\02 = white\n" \
    "\n" \
    "Selected: \01target\02 \01 %c \04; \01color\02 \01 %d \04\n" \
-   "   press 'q' to abort or <Enter> to commit " \
+   "   press 'q' to abort changes to window '\01%s\02'\n" \
+   "   press 'a' or 'w' to commit & change another, <Enter> to commit and end " \
    ""
-
 
         /* Keyboard Help specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
-#define HELP_data \
-   "%s's \01Help for interactive commands\02 - %s\n" \
-   "status:  \01Secure mode \03%s\02;\01 Cumulative mode \03%s\02; \01Delay time \03%.1f\02 seconds\n" \
-   "   sp or ^L    Redraw screen\n" \
-   "   o or O      Rearrange fields\n" \
-   "   f or F      Add and remove fields, or select group now from:\n" \
-   "                  \01j\02) job fields; \01m\02) memory fields; \01u\02) user fields\n" \
-   "   Z           Change color mapping\05\n" \
+#ifdef QUIT_NORMALQ
+#define HELP_STOPkey  "  q           "
+#else
+#define HELP_STOPkey  "  <Esc>       "
+#endif
+#define KEYS_help \
+   "%s's - \01Help for Interactive Commands\02 - %s\n" \
+   "Window %s\06: \01Cumulative mode \03%s\02.  \01System\06: \01Delay time \03%.1f secs\02; \01Secure mode \03%s\02.\n" \
+   "  sp or ^L    Redraw screen\n" \
+   "  o           Rearrange current window's fields\n" \
+   "  f           Add and remove current window's fields\n" \
+   "  Z           Change color mappings for any window\05\n" \
    "\n" \
-   "C,M,P,T,U,Y,E  Sort: \01C\02) cmd; \01M\02) mem; \01P\02) pid; \01T\02) time; \01U\02) cpu; \01Y\02) tty; \01E\02) user\n" \
-   "   R           Toggle normal/reverse sort for any of above\n" \
-   "   l,t,m       Toggle summary: \01l\02) load avg; \01t\02) task/cpu stats; \01m\02) mem info\n" \
-   "   c,i,S       Toggle: \01c\02) cmd name/line; \01i\02) idle tasks; \01S\02) cumulative time\n" \
-   "   x,y\05         Toggle highlights: \01x\02) sort field; \01y\02) running tasks\n" \
-   "   z,b\05         Toggle: \01z\02) color/mono; \01b\02) bold/reverse if 'x' or 'y'\n" \
-   "   1,I         SMP views:\01 1\02) single/separate states; \01I\02) Irix/Solaris mode\n" \
-   "\n" \
+   "(7 letters) . Sort: \01C\02) cmd; \01M\02) mem; \01P\02) pid; \01T\02) time; \01U\02) cpu; \01Y\02) tty; \01E\02) user\n" \
+   "  R         . Toggle normal/reverse sort for any of above\n" \
+   "  l,t,m       Toggle summary: \01l\02) load avg; \01t\02) task/cpu stats; \01m\02) mem info\n" \
+   "  c,i,S     . Toggle: \01c\02) cmd name/line; \01i\02) idle tasks; \01S\02) cumulative time\n" \
+   "  x,y\05       . Toggle highlights: \01x\02) sort field; \01y\02) running tasks\n" \
+   "  z,b\05       . Toggle: \01z\02) color/mono; \01b\02) bold/reverse, only if 'x' or 'y'\n" \
+   "  1,I         Toggle SMP view:\01 1\02) single/separate states; \01I\02) Irix/Solaris mode\n" \
    "%s" \
-   "   u           Show specific user only\n" \
-   "   # or n      Set maximum tasks displayed\n" \
-   "   W           Write configuration file\n" \
-   "   q           Quit\n" \
-   "Press any key to continue " \
+   "  u         . Show specific user only\n" \
+   "  # or n    . Set maximum tasks displayed\n" \
+   "  W           Write configuration file\n" \
+   HELP_STOPkey  "Quit\n" \
+   "            ( commands shown with '.' require a \01visible\02 task display \01window\02 ) \n" \
+   "Press '\01h\02' or '\01?\02' for help with \01Windows\02,\n" \
+   "any other key to continue " \
    ""
 
         /* This guy goes above the 'u' help text (maybe) */
-#define HELP_unsecured \
-   "   k           Kill a task\n" \
-   "   r           Renice a task\n" \
-   "   s or d      Set update interval\n" \
+#define KEYS_help_unsecured \
+   "  k           Kill a task\n" \
+   "  r           Renice a task\n" \
+   "  s or d      Set update interval\n" \
    ""
-
 
         /* Fields Reorder/Toggle specially formatted string(s) --
            see 'show_special' for syntax details + other cautions
@@ -298,7 +383,7 @@ enum pflag {
                  if there's no 'cursor_home', the screen will be a mess
                  but this part will still be functional. */
 #define FIELDS_current \
-   "\n%s%s's\01 Current Fields\02: \01 %s \04\n%s " \
+   "\n%s%s's\01 Current Fields\02: \01 %s \04 for window \01%s\06\n%s " \
    ""
 
         /* Some extra explanatory text which accompanies the Fields display.
@@ -322,6 +407,36 @@ enum pflag {
    "  VIRT = SWAP + RES\n" \
    "  RES  = CODE + DATA\n" \
    ""
+
+        /* Windows/Field Group Help specially formatted string(s) --
+           see 'show_special' for syntax details + other cautions. */
+#define WINDOWS_help \
+   "%s's \01Help for Windows and Field Groups\02 - \"Current\" = \01 %s \06\n" \
+   "\n" \
+   ". Use multiple \01windows\02, each with separate config opts (color,fields,sort,etc)\n" \
+   ". The '\01Current\05' window controls the \01Summary Area\02 and responds to your \01Commands\02\n" \
+   "  . that window's \01task display\02 can be turned \01Off\02 & \01On\02, growing/shrinking others\n" \
+   "  . with \01NO\02 task display, some commands will be \01disabled\02 ('i','R','n','c', etc)\n" \
+   "    until a \01different window\02 has been activated, making it the '\01Current\05' window\n" \
+   ". You \01change\02 a '\01Current\05' window by: \01 1\02) cycling forward/backward; \01 2\02) choosing\n" \
+   "  a specific window with 'O' or 'F'; or \01 3\02) exiting the color mapping screen\n" \
+   ". Commands \01available anytime\02 -------------\n" \
+   "    \01A\02       . Alternate display mode toggle, show \01Single\02 / \01Multiple\02 windows\n" \
+   "    O or F  . Choose another field group and make it '\01Current\05', or change now\n" \
+   "              by selecting a number: \01 1\02 :%s; \01 2\02 :%s; \01 3\02 :%s; \01 4\02 :%s\n" \
+   ". Commands \01requiring\02 '\01A\02' mode  -----------\n" \
+   "    g       . Change the '\01Current\05' window name (field group)\n" \
+   " \01*\04  a , w   . Cycle through all four windows:  \01a\02 Forward;  \01w\02 Backward\n" \
+   " \01*\04  - , _   . Show/Hide:  '\01-\05' \01Current\02 window;  '\01_\05' all \01Visible\02/\01Invisible\02\n" \
+   "  The screen will be divided evenly between task displays.  But you can make\n" \
+   "  some \01larger\02 or \01smaller\02, using '\01n\02' and '\01i\02' commands.  Then later you could:\n" \
+   " \01*\04  = , +   . Rebalance tasks:  '\01=\05' \01Current\02 window;  '\01+\05' \01Every\02 window\n" \
+   "              (this also forces the \01current\02 or \01every\02 window to become visible)\n" \
+   "\n" \
+   "In '\01A\02' mode, '\01*\04' keys are your \01essential\02 commands.  Please try the '\01a\02' and '\01w\02'\n" \
+   "commands plus the 'O'/'F' sub-commands NOW.  Press <Enter> to make 'Current' " \
+   ""
+
 
 /*######  Some Prototypes (ha!)  #########################################*/
 
@@ -330,10 +445,10 @@ enum pflag {
     * Note also that functions are alphabetical within a group to aid
     * source code navigation, which often influences choice of identifers. */
 /*------  Sort callbacks  ------------------------------------------------*/
+//atic int         pid_sort (proc_t **P, proc_t **Q);
 //atic int         sort_cmd (proc_t **P, proc_t **Q);
 //atic int         sort_cpu (proc_t **P, proc_t **Q);
 //atic int         sort_mem (proc_t **P, proc_t **Q);
-//atic int         sort_pid (proc_t **P, proc_t **Q);
 //atic int         sort_tme (proc_t **P, proc_t **Q);
 //atic int         sort_tty (proc_t **P, proc_t **Q);
 //atic int         sort_usr (proc_t **P, proc_t **Q);
@@ -342,56 +457,61 @@ enum pflag {
 //atic const char *fmtmk (const char *fmts, ...);
 //atic char       *strim (int sp, char *str);
 //atic char       *tg2 (int x, int y);
+/*------  Exit/Interrput routines  ---------------------------------------*/
+//atic void        bye_bye (int eno, const char *str);
+//atic void        stop (int dont_care_sig);
+//atic void        std_err (const char *str);
+//atic void        suspend (int dont_care_sig);
 /*------  Misc Color/Highlighting support  -------------------------------*/
-//atic void        capsmk (void);
+//atic void        capsmk (WIN_t *q);
 //atic void        msg_save (const char *fmts, ...);
 //atic void        show_msg (const char *str);
 //atic void        show_pmt (const char *str);
 //atic void        show_special (const char *glob);
-//atic void        tweak_colors (void);
-/*------  Small utility routines  ----------------------------------------*/
-//atic char       *ask_str (const char *prompt);
+/*------  Small Utility routines  ----------------------------------------*/
+//atic char       *ask4str (const char *prompt);
 //atic float       get_float (const char *prompt);
 //atic int         get_int (const char *prompt);
-//atic void        mkheadings (void);
 //atic char       *scale_num (unsigned num, const unsigned width, const unsigned type);
 //atic char       *scale_tics (TICS_t tics, const unsigned width);
 //atic float       time_elapsed (void);
-/*------  Exit and Signal handled routines  ------------------------------*/
-//atic void        bye_bye (int eno, const char *str);
-//atic void        std_err (const char *str);
-//atic void        stop (int dont_care_sig);
-//atic void        suspend (int dont_care_sig);
-//atic void        window_resize (int dont_care_sig);
+/*------  Library Alternatives  ------------------------------------------*/
+//atic void       *alloc_c (unsigned numb);
+//atic void       *alloc_r (void *q, unsigned numb);
+//atic proc_t    **refreshprocs (proc_t **tbl);
 /*------  Startup routines  ----------------------------------------------*/
-//atic void        parse_argvs (char **argv);
-//atic void        parse_rc (char *opts);
-//atic void        rcfiles_read (void);
-//atic void        terminal_set (void);
+//atic void        before (char *me);
+//atic void        configs_read (void);
+//atic void        parse_args (char **args);
+//atic void        whack_terminal (void);
 /*------  Field Selection/Ordering routines  -----------------------------*/
 //atic void        display_fields (void);
 //atic void        fields_reorder (void);
 //atic void        fields_toggle (void);
-/*------  Library Alternatives  ------------------------------------------*/
-//atic void       *alloc_c (unsigned numb);
-//atic void       *alloc_r (void *q, unsigned numb);
-//atic proc_t    **readprocs (proc_t **tbl);
-/*------  Main screen routines  ------------------------------------------*/
-//atic void        do_key (unsigned c);
-#ifdef UGH_ITS_4_RH
-//atic unsigned    frame_memory (void);
-#else
-//atic void        frame_memory (void);
-#endif
-//atic void        frame_smp (FILE *fp, const char *fmt, CPUS_t *cpu, const char *pfx);
+/*------  Windows/Field Groups support  ----------------------------------*/
+//atic void        win_colsheads (WIN_t *q);
+//atic void        win_names (WIN_t *q, const char *name);
+//atic void        win_select (int ch);
+//atic void        win_sortset (WIN_t *q, const int which);
+//atic int         win_warn (void);
+//atic void        winsclr (WIN_t *q, int save);
+//atic void        wins_colors (void);
+//atic void        wins_reflag (int what, int flg);
+//atic void        wins_resize (int dont_care_sig);
+//atic void        windows_stage1 (void);
+//atic void        windows_stage2 (void);
+/*------  Per-Frame Display support  -------------------------------------*/
+//atic void        cpudo (FILE *fp, const char *fmt, CPUS_t *cpu, const char *pfx);
 //atic void        frame_states (proc_t **p, int show);
-//atic void        mkcol (unsigned idx, int sta, int *pad, char *buf, ...);
-#ifdef UGH_ITS_4_RH
-//atic void        show_a_task (proc_t *task, unsigned mempgs);
-#else
-//atic void        show_a_task (proc_t *task);
-#endif
-//atic void        show_everything (void);
+//atic void        frame_storage (void);
+//atic void        mkcol (WIN_t *q, unsigned idx, int sta, int *pad, char *buf, ...);
+//atic void        show_a_task (WIN_t *q, proc_t *task);
+/*------  Main Screen routines  ------------------------------------------*/
+//atic void        do_key (unsigned c);
+//atic proc_t    **do_summary (void);
+//atic void        do_window (proc_t **ppt, WIN_t *q, int *lscr);
+//atic void        sohelpme (int wix, int max);
+//atic void        so_lets_see_em (void);
 /*------  Entry point  ---------------------------------------------------*/
 //     int         main (int dont_care_argc, char **argv);
 
