@@ -297,12 +297,11 @@ static char** file2strvec(char* directory, char* what) {
  * Unfortunately, the reverse filtering option in which any PID *except* the
  * ones listed is pursued.
  */
-proc_t* readproc(PROCTAB* PT, proc_t* rbuf) {
+proc_t* readproc(PROCTAB* PT, proc_t* p) {
     static struct direct *ent;		/* dirent handle */
     static struct stat sb;		/* stat buffer */
     static char path[32], sbuf[1024];	/* bufs for stat,statm */
-    int allocated = 0, matched = 0;	/* flags */
-    proc_t *p = NULL;
+    int matched = 0;	/* flags */
 
     /* loop until a proc matching restrictions is found or no more processes */
     /* I know this could be a while loop -- this way is easier to indent ;-) */
@@ -329,10 +328,8 @@ next_proc:				/* get next PID for consideration */
     if (Do(UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
 	goto next_proc;			/* not one of the requested uids */
 
-    if (!allocated) {				 /* assign mem for return buf */
-	p = rbuf ? rbuf : xcalloc(p, sizeof *p); /* passed buf or alloced mem */
-	allocated = 1;				 /* remember space is set up */
-    }
+    if (!p)
+	p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
     p->euid = sb.st_uid;			/* need a way to get real uid */
 
     if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
@@ -397,12 +394,10 @@ next_proc:				/* get next PID for consideration */
  * Unfortunately, the reverse filtering option in which any PID *except* the
  * ones listed is pursued.
  */
-proc_t* ps_readproc(PROCTAB* PT, proc_t* rbuf) {
+proc_t* ps_readproc(PROCTAB* PT, proc_t* p) {
     static struct direct *ent;		/* dirent handle */
     static struct stat sb;		/* stat buffer */
     static char path[32], sbuf[1024];	/* bufs for stat,statm */
-    int allocated = 0 /* , matched = 0 */ ;	/* flags */
-    proc_t *p = NULL;
 
     /* loop until a proc matching restrictions is found or no more processes */
     /* I know this could be a while loop -- this way is easier to indent ;-) */
@@ -421,10 +416,8 @@ next_proc:				/* get next PID for consideration */
     if (stat(path, &sb) == -1)		/* no such dirent (anymore) */
 	goto next_proc;
 
-    if (!allocated) {				 /* assign mem for return buf */
-	p = rbuf ? rbuf : xcalloc(p, sizeof *p); /* passed buf or alloced mem */
-	allocated = 1;				 /* remember space is set up */
-    }
+    if (!p)
+	p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
     p->euid = sb.st_uid;			/* need a way to get real uid */
 
     if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
