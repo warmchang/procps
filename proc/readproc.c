@@ -805,7 +805,7 @@ static int read_unvectored(char *restrict const dst, unsigned sz, const char* wh
 static int fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
  #define vMAX ( MAX_BUFSZ - (int)(dst - dst_buffer) )
     char *src, *dst, *grp, *eob, *name;
-    int tot, x, whackable_int = MAX_BUFSZ;
+    int tot, x, whackable_int = MAX_BUFSZ, len;
 
     *(dst = dst_buffer) = '\0';                  // empty destination
     tot = read_unvectored(src_buffer, MAX_BUFSZ, directory, "cgroup", '\0');
@@ -817,7 +817,10 @@ static int fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
 #if 0
         grp += strspn(grp, "0123456789:");       // jump past group number
 #endif
-        dst += snprintf(dst, vMAX, "%s", (dst > dst_buffer) ? "," : "");
+        if (vMAX <= 1) break;
+        len = snprintf(dst, vMAX, "%s", (dst > dst_buffer) ? "," : "");
+        if (len < 0 || len >= vMAX) break;
+        dst += len;
         dst += escape_str(dst, grp, vMAX, &whackable_int);
     }
     if (!(p->cgroup = strdup(dst_buffer[0] ? dst_buffer : "-")))
