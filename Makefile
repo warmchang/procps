@@ -18,7 +18,7 @@
 
 VERSION      := 3
 SUBVERSION   := 2
-MINORVERSION := 3
+MINORVERSION := 4
 TARVERSION   := $(VERSION).$(SUBVERSION).$(MINORVERSION)
 
 ############ vars
@@ -121,7 +121,7 @@ ALL_CFLAGS += $(m64)
 
 ALL_CFLAGS += $(call check_gcc,-Wdeclaration-after-statement,)
 ALL_CFLAGS += $(call check_gcc,-Wpadded,)
-ALL_CFLAGS += $(call check_gcc,-Wstrict-aliasing=2,)
+ALL_CFLAGS += $(call check_gcc,-Wstrict-aliasing,)
 
 # Adding -fno-gcse might be good for those files which
 # use computed goto.

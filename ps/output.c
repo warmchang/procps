@@ -610,7 +610,7 @@ static int pr_wchan(char *restrict const outbuf, const proc_t *restrict const pp
  * only one thread waiting in the kernel, and '*' when there is
  * more than one thread waiting in the kernel.
  */
-    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "%s", "-");
+    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "-");
     if(wchan_is_number) return snprintf(outbuf, COLWID, "%x", (unsigned)(pp->wchan) & 0xffffffu);
     return snprintf(outbuf, COLWID, "%s", lookup_wchan(pp->wchan, pp->XXXID));
 }
@@ -804,7 +804,12 @@ static int pr_majflt(char *restrict const outbuf, const proc_t *restrict const p
 }
 
 static int pr_lim(char *restrict const outbuf, const proc_t *restrict const pp){
-    if(pp->rss_rlim == RLIM_INFINITY) return snprintf(outbuf, COLWID, "%s", "xx");
+    if(pp->rss_rlim == RLIM_INFINITY){
+      outbuf[0] = 'x';
+      outbuf[1] = 'x';
+      outbuf[2] = '\0';
+      return 2;
+    }
     return snprintf(outbuf, COLWID, "%5ld", pp->rss_rlim >> 10);
 }
 
@@ -820,7 +825,7 @@ static int pr_wname(char *restrict const outbuf, const proc_t *restrict const pp
  * only one thread waiting in the kernel, and '*' when there is
  * more than one thread waiting in the kernel.
  */
-    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "%s", "-");
+    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "-");
     return snprintf(outbuf, COLWID, "%s", lookup_wchan(pp->wchan, pp->XXXID));
 }
 
@@ -1059,6 +1064,44 @@ fail:
 }
 
 
+////////////////////////////// Test code /////////////////////////////////
+
+// like "args"
+static int pr_t_unlimited(char *restrict const outbuf, const proc_t *restrict const pp){
+  static const char *const vals[] = {"[123456789-12345] <defunct>","ps","123456789-123456"};
+  (void)pp;
+  return snprintf(outbuf, COLWID, "%s", vals[lines_to_next_header%3u]);
+}
+static int pr_t_unlimited2(char *restrict const outbuf, const proc_t *restrict const pp){
+  static const char *const vals[] = {"unlimited", "[123456789-12345] <defunct>","ps","123456789-123456"};
+  (void)pp;
+  return snprintf(outbuf, COLWID, "%s", vals[lines_to_next_header%4u]);
+}
+
+// like "etime"
+static int pr_t_right(char *restrict const outbuf, const proc_t *restrict const pp){
+  static const char *const vals[] = {"999-23:59:59","99-23:59:59","9-23:59:59","59:59"};
+  (void)pp;
+  return snprintf(outbuf, COLWID, "%s", vals[lines_to_next_header%4u]);
+}
+static int pr_t_right2(char *restrict const outbuf, const proc_t *restrict const pp){
+  static const char *const vals[] = {"999-23:59:59","99-23:59:59","9-23:59:59"};
+  (void)pp;
+  return snprintf(outbuf, COLWID, "%s", vals[lines_to_next_header%3u]);
+}
+
+// like "tty"
+static int pr_t_left(char *restrict const outbuf, const proc_t *restrict const pp){
+  static const char *const vals[] = {"tty7","pts/9999","iseries/vtty42","ttySMX0","3270/tty4"};
+  (void)pp;
+  return snprintf(outbuf, COLWID, "%s", vals[lines_to_next_header%5u]);
+}
+static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const pp){
+  static const char *const vals[] = {"tty7","pts/9999","ttySMX0","3270/tty4"};
+  (void)pp;
+  return snprintf(outbuf, COLWID, "%s", vals[lines_to_next_header%4u]);
+}
+
 /***************************************************************************/
 /*************************** other stuff ***********************************/
 
@@ -1123,13 +1166,19 @@ static const format_struct format_array[] = {
 /* code       header     print()      sort()    width need vendor flags  */
 {"%cpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    BSD, ET|RIGHT}, /*pcpu*/
 {"%mem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    BSD, PO|RIGHT}, /*pmem*/
+{"_left",     "LLLLLLLL", pr_t_left,  sr_nop,     8,   0,    TST, ET|LEFT},
+{"_left2",    "L2L2L2L2", pr_t_left2, sr_nop,     8,   0,    TST, ET|LEFT},
+{"_right",    "RRRRRRRRRRR", pr_t_right, sr_nop, 11,   0,    TST, ET|RIGHT},
+{"_right2",   "R2R2R2R2R2R", pr_t_right2, sr_nop, 11,  0,    TST, ET|RIGHT},
+{"_unlimited","U",   pr_t_unlimited,  sr_nop,    16,   0,    TST, ET|UNLIMITED},
+{"_unlimited2","U2", pr_t_unlimited2, sr_nop,    16,   0,    TST, ET|UNLIMITED},
 {"acflag",    "ACFLG",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT}, /*acflg*/
 {"acflg",     "ACFLG",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*acflag*/
 {"addr",      "ADDR",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
 {"addr_1",    "ADDR",    pr_nop,      sr_nop,     1,   0,    LNX, AN|LEFT},
 {"alarm",     "ALARM",   pr_alarm,    sr_alarm,   5,   0,    LNX, AN|RIGHT},
 {"argc",      "ARGC",    pr_nop,      sr_nop,     4,   0,    LNX, PO|RIGHT},
-{"args",      "COMMAND", pr_args,     sr_cmd,    16, ARG,    U98, PO|UNLIMITED}, /*command*/
+{"args",      "COMMAND", pr_args,     sr_cmd,    27, ARG,    U98, PO|UNLIMITED}, /*command*/
 {"atime",     "TIME",    pr_time,     sr_nop,     8,   0,    SOE, ET|RIGHT}, /*cputime*/ /* was 6 wide */
 {"blocked",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigmask*/
 {"bnd",       "BND",     pr_nop,      sr_nop,     1,   0,    AIX, TO|RIGHT},
@@ -1140,11 +1189,11 @@ static const format_struct format_array[] = {
 {"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, TO|LEFT},
 {"cls",       "CLS",     pr_class,    sr_sched,   3,   0,    HPU, TO|RIGHT}, /*says HPUX or RT*/
 {"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, AN|RIGHT},
-{"cmd",       "CMD",     pr_args,     sr_cmd,    16, ARG,    DEC, PO|UNLIMITED}, /*ucomm*/
+{"cmd",       "CMD",     pr_args,     sr_cmd,    27, ARG,    DEC, PO|UNLIMITED}, /*ucomm*/
 {"cmin_flt",  "-",       pr_nop,      sr_cmin_flt, 1,  0,    LNX, AN|RIGHT},
 {"cnswap",    "-",       pr_nop,      sr_nop,     1,   0,    LNX, AN|RIGHT},
-{"comm",      "COMMAND", pr_comm,     sr_cmd,    16, COM,    U98, PO|UNLIMITED}, /*ucomm*/
-{"command",   "COMMAND", pr_args,     sr_cmd,    16, ARG,    XXX, PO|UNLIMITED}, /*args*/
+{"comm",      "COMMAND", pr_comm,     sr_cmd,    15, COM,    U98, PO|UNLIMITED}, /*ucomm*/
+{"command",   "COMMAND", pr_args,     sr_cmd,    27, ARG,    XXX, PO|UNLIMITED}, /*args*/
 {"context",   "CONTEXT", pr_context,  sr_nop,    31,   0,    LNX, ET|LEFT},
 {"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, ET|RIGHT}, /*cpu*/
 {"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
@@ -1321,8 +1370,8 @@ static const format_struct format_array[] = {
 {"tty4",      "TTY",     pr_tty4,     sr_tty,     4,   0,    LNX, PO|LEFT},
 {"tty8",      "TTY",     pr_tty8,     sr_tty,     8,   0,    LNX, PO|LEFT},
 {"u_procp",   "UPROCP",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
-{"ucmd",      "CMD",     pr_comm,     sr_cmd,    16, COM,    DEC, PO|UNLIMITED}, /*ucomm*/
-{"ucomm",     "COMMAND", pr_comm,     sr_cmd,    16, COM,    XXX, PO|UNLIMITED}, /*comm*/
+{"ucmd",      "CMD",     pr_comm,     sr_cmd,    15, COM,    DEC, PO|UNLIMITED}, /*ucomm*/
+{"ucomm",     "COMMAND", pr_comm,     sr_cmd,    15, COM,    XXX, PO|UNLIMITED}, /*comm*/
 {"uid",       "UID",     pr_euid,     sr_euid,    5,   0,    XXX, ET|RIGHT},
 {"uid_hack",  "UID",     pr_euser,    sr_euser,   8, USR,    XXX, ET|USER},
 {"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT},

@@ -204,7 +204,7 @@ static void init_libproc(void){
   if(linux_version_code > LINUX_VERSION(2, 4, 0)){ 
     Hertz = find_elf_note(AT_CLKTCK);
     if(Hertz!=NOTE_NOT_FOUND) return;
-    fprintf(stderr, "2.4 kernel w/o ELF notes? -- report this\n");
+    fprintf(stderr, "2.4+ kernel w/o ELF notes? -- report this\n");
   }
   old_Hertz_hack();
 }

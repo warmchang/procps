@@ -54,6 +54,7 @@
 #define HPU  8 /* HP-UX */
 #define SGI  9 /* Irix */
 #define SOE 10 /* IBM's S/390 OpenEdition */
+#define TST 11 /* test code */
 
 /*
  * Try not to overflow the output buffer:
