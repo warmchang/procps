@@ -126,6 +126,10 @@ static int escaped_copy(char *restrict dst, const char *restrict src, int bufsiz
     if (bufsize > *maxroom+1)
         bufsize = *maxroom+1;
     n = snprintf(dst, bufsize, "%s", src);
+    if (n < 0) {
+        *dst = '\0';
+        return 0;
+    }
     if (n >= bufsize)
         n = bufsize-1;
     *maxroom -= n;
