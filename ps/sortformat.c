@@ -311,6 +311,7 @@ static sort_node *do_one_sort_spec(const char *spec){
     sort_node *thisnode;
     thisnode = malloc(sizeof(format_node));
     thisnode->sr = fs->sr;
+    thisnode->need = fs->need;
     thisnode->reverse = reverse;
     thisnode->next = NULL;
     return thisnode;

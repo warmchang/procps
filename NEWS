@@ -5,6 +5,10 @@ lib CFLAGS working again
 top.1 codes fixed
 bad (int*) cast in top removed
 top runs faster
+libproc memory corruption fixed
+rant moved out of top.1 man page
+ability to SKIP installing things
+fixed ps --sort crash
 
 procps-3.0.1 --> procps-3.0.2
 

@@ -266,6 +266,7 @@ static void prep_forest_sort(void){
     tmp_list->reverse = 0;
     tmp_list->typecode = '?'; /* what was this for? */
     tmp_list->sr = incoming->sr;
+    tmp_list->need = incoming->need;
     tmp_list->next = sort_list;
     sort_list = tmp_list;
   }
@@ -276,6 +277,7 @@ static void prep_forest_sort(void){
   tmp_list->reverse = 0;
   tmp_list->typecode = '?'; /* what was this for? */
   tmp_list->sr = incoming->sr;
+  tmp_list->need = incoming->need;
   tmp_list->next = sort_list;
   sort_list = tmp_list;
 }
