@@ -3019,7 +3019,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
 #endif
                MKCOL((long)p->wchan);
             } else {
-               MKCOL(wchan(p->wchan));
+               MKCOL(wchan(p->wchan, p->pid));
             }
             break;
 

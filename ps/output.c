@@ -567,7 +567,7 @@ static int pr_wchan(char *restrict const outbuf, const proc_t *restrict const pp
  */
     if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "%s", "-");
     if(wchan_is_number) return snprintf(outbuf, COLWID, "%lx", pp->wchan & 0xffffff);
-    return snprintf(outbuf, COLWID, "%s", wchan(pp->wchan));
+    return snprintf(outbuf, COLWID, "%s", wchan(pp->wchan, pp->pid));
 }
 
 /* Terrible trunctuation, like BSD crap uses: I999 J999 K999 */
@@ -773,7 +773,7 @@ static int pr_wname(char *restrict const outbuf, const proc_t *restrict const pp
  * more than one thread waiting in the kernel.
  */
     if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "%s", "-");
-    return snprintf(outbuf, COLWID, "%s", wchan(pp->wchan));
+    return snprintf(outbuf, COLWID, "%s", wchan(pp->wchan, pp->pid));
 }
 
 static int pr_nwchan(char *restrict const outbuf, const proc_t *restrict const pp){

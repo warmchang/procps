@@ -465,6 +465,8 @@ static void default_message(const char *restrict format, ...) {
 
 /*********************************/
 
+static int use_wchan_file;
+
 int open_psdb_message(const char *restrict override, void (*message)(const char *, ...)) {
   static const char *sysmap_paths[] = {
     "/boot/System.map-%s",
@@ -474,26 +476,45 @@ int open_psdb_message(const char *restrict override, void (*message)(const char 
     "/System.map",
     NULL
   };
+  struct stat sbuf;
   struct utsname uts;
   char path[64];
   const char **fmt = sysmap_paths;
-  const char *env;
-  read_and_parse();
+  const char *sm;
+
 #ifdef SYSMAP_FILENAME    /* debug feature */
   override = SYSMAP_FILENAME;
 #endif
-  if(override){           /* ought to search some path */
-    if(sysmap_mmap(override, message)) return 0;
-    return -1;           /* ought to return "Namelist not found." */
+
+  // first allow for a user-selected System.map file
+  if(
+    (sm=override)
+    ||
+    (sm=getenv("PS_SYSMAP"))
+    ||
+    (sm=getenv("PS_SYSTEM_MAP"))
+  ){
+    read_and_parse();
+    if(sysmap_mmap(sm, message)) return 0;
     /* failure is better than ignoring the user & using bad data */
+    return -1;           /* ought to return "Namelist not found." */
   }
-  /* Arrrgh, the old man page and code did not match. */
-  if ((env = getenv("PS_SYSMAP"))     && sysmap_mmap(env, message)) return 0;
-  if ((env = getenv("PS_SYSTEM_MAP")) && sysmap_mmap(env, message)) return 0;
+
+  // next try the Linux 2.5.xx method
+  if(!stat("/proc/self/wchan", &sbuf)){
+    use_wchan_file = 1; // hack
+    return 0;
+  }
+
+  // finally, search for the System.map file
   uname(&uts);
   do{
+    int did_ksyms = 0;
     snprintf(path, sizeof path, *fmt, uts.release);
-    if (sysmap_mmap(path, message)) return 0;
+    if(!stat(path, &sbuf)){
+      if (did_ksyms++) read_and_parse();
+      if (sysmap_mmap(path, message)) return 0;
+    }
   }while(*++fmt);
   /* TODO: Without System.map, no need to keep ksyms loaded. */
   return -1;
@@ -507,18 +528,51 @@ int open_psdb(const char *restrict override) {
 
 /***************************************/
 
+const char * read_wchan_file(unsigned pid){
+  static char buf[64];
+  const char *ret = buf;
+  ssize_t num;
+  int fd;
+
+  snprintf(buf, sizeof buf, "/proc/%d/wchan", pid);
+  fd = open(buf, O_RDONLY);
+  if(fd==-1) return "?";
+  num = read(fd, buf, sizeof buf - 1);
+  close(fd);
+  if(num<1) return "?"; // allow for "0"
+  buf[num] = '\0';
+
+  if(buf[0]=='0' && buf[1]=='\0') return "-";
+
+  // would skip over numbers if they existed -- but no
+
+  switch(*ret){
+    case 's': if(!strncmp(ret, "sys_", 4)) ret += 4;   break;
+    case 'd': if(!strncmp(ret, "do_",  3)) ret += 3;   break;
+    case '_': while(*ret=='_') ret++;                  break;
+  }
+  return ret;
+}
+
+/***************************************/
+
 #define MAX_OFFSET (0x1000*sizeof(long))  /* past this is generally junk */
 
 /* return pointer to temporary static buffer with function name */
-const char * wchan(unsigned long address) {
+const char * wchan(unsigned long address, unsigned pid) {
   const symb *mod_symb;
   const symb *map_symb;
   const symb *good_symb;
   const char *ret;
-  unsigned hash = (address >> 4) & 0xff;  /* got 56/63 hits & 7/63 misses */
-  if(!address) return dash;
-  read_and_parse();
+  unsigned hash;
 
+  // can't cache it due to a race condition :-(
+  if(use_wchan_file) return read_wchan_file(pid);
+
+  if(!address) return dash;
+
+  read_and_parse();
+  hash = (address >> 4) & 0xff;  /* got 56/63 hits & 7/63 misses */
   if(hashtable[hash].addr == address) return hashtable[hash].name;
   mod_symb = search(address, ksyms_index,  ksyms_count);
   if(!mod_symb) mod_symb = &fail;
