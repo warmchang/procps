@@ -744,26 +744,29 @@ static int one_proc(proc_t * p)
 	return 0;
 }
 
-static void range_arguments(char *optarg)
+static void range_arguments(const char *optarg)
 {
 	char *arg1;
 	char *arg2;
-
-	arg1 = xstrdup(optarg);
+	char *const copy = xstrdup(optarg);
+	if (!copy)
+		goto fail;
+	arg1 = copy;
 	arg2 = strchr(arg1, ',');
 	if (arg2)
-		*arg2 = '\0';
-	if (arg2)
-		++arg2;
+		*arg2++ = '\0';
 	else
 		arg2 = arg1;
-	if (arg1 && *arg1)
+	if (*arg1)
 		range_low = STRTOUKL(arg1, &arg1, 16);
 	if (*arg2)
 		range_high = STRTOUKL(arg2, &arg2, 16);
-	if (arg1 && (*arg1 || *arg2))
-		xerrx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"),
-		      optarg);
+	if (*arg1 || *arg2)
+		goto fail;
+	free(copy);
+	return;
+fail:
+	xerrx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"), optarg);
 }
 
 
