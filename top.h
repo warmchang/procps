@@ -57,8 +57,8 @@
            -- mostly just to pinpoint source code usage/dependancies */
 #define SCREENMAX   512
    /* the above might seem pretty stingy, until you consider that with every
-      one of top's fields are displayed we're talking a 160 byte column header
-      -- so this will provide for all fields plus a 350+ byte command line */
+      one of top's fields displayed we're talking a 160 byte column header --
+      so that will provide for all fields plus a 350+ byte command line */
 #define PFLAGSSIZ    32
 #define CAPBUFSIZ    32
 #define CLRBUFSIZ    64
@@ -268,7 +268,7 @@ typedef struct win {
                headclr,                 /*        "       in cols head    */
                taskclr;                 /*        "       in task display */
    int         len_rownorm,     /* lengths of the corresponding terminfo  */
-               len_rowhigh;     /* strings to save mkcol() a strlen call  */
+               len_rowhigh;     /* strings to avoid repeated strlen calls */
    char        capclr_sum [CLRBUFSIZ],  /* terminfo strings built from    */
                capclr_msg [CLRBUFSIZ],  /*    above clrs (& rebuilt too), */
                capclr_pmt [CLRBUFSIZ],  /*    but NO recurring costs !!!  */
@@ -501,6 +501,7 @@ typedef struct win {
 /*------  Sort callbacks  ------------------------------------------------*/
 /*        for each possible field, in the form of:                        */
 /*atic int         sort_P_XXX (const proc_t **P, const proc_t **Q);       */
+//atic int         sort_HIST_t (const HIST_t *P, const HIST_t *Q);
 /*------  Tiny useful routine(s)  ----------------------------------------*/
 //atic int         chin (int ech, char *buf, unsigned cnt);
 //atic const char *fmtmk (const char *fmts, ...);
@@ -523,12 +524,12 @@ typedef struct win {
 //atic int         get_int (const char *prompt);
 //atic const char *scale_num (unsigned num, const int width, const unsigned type);
 //atic const char *scale_tics (TICS_t tics, const int width);
-//atic void        time_elapsed (void);
 /*------  Library Alternatives  ------------------------------------------*/
 //atic void       *alloc_c (unsigned numb);
 //atic void       *alloc_r (void *q, unsigned numb);
-//atic CPUS_t     *refreshcpus (CPUS_t *cpus);
-//atic proc_t    **refreshprocs (proc_t **table, int flags);
+//atic CPUS_t     *cpus_refresh (CPUS_t *cpus);
+//atic void        prochlp (proc_t *this);
+//atic proc_t    **procs_refresh (proc_t **table, int flags);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void        before (char *me);
 //atic void        configs_read (void);
@@ -542,29 +543,26 @@ typedef struct win {
 //atic void        fields_toggle (void);
 /*------  Windows/Field Groups support  ----------------------------------*/
 //atic void        win_colsheads (WIN_t *q);
-//atic inline int  win_fldviz (WIN_t *q, int flg);
+//atic inline int  win_fldviz (WIN_t *q, PFLG_t flg);
 //atic void        win_names (WIN_t *q, const char *name);
 //atic void        win_select (char ch);
 //atic int         win_warn (void);
-//atic void        winsclr (WIN_t *q, int save);
+//atic void        winsclrhlp (WIN_t *q, int save);
 //atic void        wins_colors (void);
 //atic void        wins_reflag (int what, int flg);
 //atic void        wins_resize (int dont_care_sig);
 //atic void        windows_stage1 (void);
 //atic void        windows_stage2 (void);
-/*------  Per-Frame Display support  -------------------------------------*/
-//atic void        cpudo (CPUS_t *cpu, const char *pfx);
-//atic void        frame_states (proc_t **ppt, int show);
-//atic void        frame_storage (void);
-//atic void        mkcol (WIN_t *q, int a, int c, int *p, char *b, const char *f, ...);
-//atic void        show_a_task (WIN_t *q, proc_t *task);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void        do_key (unsigned c);
-//atic proc_t    **do_summary (void);
-//atic void        do_window (proc_t **ppt, WIN_t *q, int *lscr);
-//atic void        sohelpme (int wix, int max);
-//atic void        so_lets_see_em (void);
-/*------  Entry point  ---------------------------------------------------*/
+//atic void        summaryhlp (CPUS_t *cpu, const char *pfx);
+//atic proc_t    **summary_show (void);
+//atic void        taskhlp (WIN_t *q, int a, int c, int *p, char *b, const char *f, ...);
+//atic void        task_show (WIN_t *q, proc_t *task);
+//atic void        window_show (proc_t **ppt, WIN_t *q, int *lscr);
+/*------  Entry point plus two  ------------------------------------------*/
+//atic void        framehlp (int wix, int max);
+//atic void        frame_make (void);
 //     int         main (int dont_care_argc, char **argv);
 
         /* just sanity check(s)... */

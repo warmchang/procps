@@ -33,29 +33,16 @@
 #include <time.h>
 #include <unistd.h>
 #include <values.h>
-   /*
-      I am listing precisely why each header is needed because of the
-      construction of libproc -- separate header files may not always be
-      available and function names are not normalized.  We have avoided
-      some library routine(s) as overkill and have subsumed some others.
-   */
-        /* need: 1 define + dev_to_tty */
+
 #include "proc/devname.h"
-        /* need: (ksym.c) open_psdb_message, wchan, close_psdb (redhat only) */
 #include "proc/procps.h"
-        /* need: 2 types + openproc, readproc, closeproc */
 #include "proc/readproc.h"
-        /* need: signal_name_to_number */
 #include "proc/sig.h"
 #ifdef USE_LIB_STA3
-        /* need: status */
 #include "proc/status.h"
 #endif
-        /* need: meminfo stuff */
 #include "proc/sysinfo.h"
-        /* need: procps_version + kernel version stuff */
 #include "proc/version.h"
-        /* need: sprint_uptime */
 #include "proc/whattime.h"
 
 #include "top.h"
@@ -142,12 +129,16 @@ static WIN_t *Winstk [GROUPSMAX],
 
         /* Frame oriented stuff that can't remain local to any 1 function
            and/or that would be too cumbersome managed as parms */
-static int    Frame_maxtask;    /* last known number of active tasks */
+static unsigned  Frame_maxtask; /* last known number of active tasks */
                                 /* ie. current 'size' of proc table  */
-static float  Frame_tscale;     /* so we can '*' vs. '/' WHEN 'pcpu' */
-static int    Frame_srtflg,     /* the subject window sort direction */
-              Frame_ctimes,     /* the subject window's ctimes flag  */
-              Frame_cmdlin;     /* the subject window's cmdlin flag  */
+static unsigned  Frame_running, /* state categories for this frame   */
+                 Frame_sleepin,
+                 Frame_stopped,
+                 Frame_zombied;
+static float     Frame_tscale;  /* so we can '*' vs. '/' WHEN 'pcpu' */
+static int       Frame_srtflg,  /* the subject window sort direction */
+                 Frame_ctimes,  /* the subject window's ctimes flag  */
+                 Frame_cmdlin;  /* the subject window's cmdlin flag  */
         /* ////////////////////////////////////////////////////////////// */
 
 
@@ -169,7 +160,7 @@ _SC_NUMx(P_PRI, priority)
 _SC_NUMx(P_NCE, nice)
 _SC_NUMx(P_CPN, processor)
 _SC_NUM1(P_CPU, pcpu)
-                                        /* also serves P_TM2 ! */
+                                        // also serves P_TM2 !
 static int sort_P_TME (const proc_t **P, const proc_t **Q)
 {
    if (Frame_ctimes) {
@@ -190,7 +181,7 @@ static int sort_P_TME (const proc_t **P, const proc_t **Q)
 
 _SC_NUM1(P_VRT, size)
 _SC_NUM2(P_SWP, size, resident)
-_SC_NUM1(P_RES, resident)               /* also serves P_MEM ! */
+_SC_NUM1(P_RES, resident)               // also serves P_MEM !
 _SC_NUM1(P_COD, trs)
 _SC_NUM1(P_DAT, drs)
 _SC_NUM1(P_SHR, share)
@@ -201,19 +192,25 @@ _SC_NUMx(P_STA, state)
 static int sort_P_CMD (const proc_t **P, const proc_t **Q)
 {
    /* if a process doesn't have a cmdline, we'll consider it a kernel thread
-      -- since show_a_task gives such tasks special treatment, we must too */
+      -- since displayed tasks are given special treatment, we must too */
    if (Frame_cmdlin && ((*P)->cmdline || (*Q)->cmdline)) {
       if (!(*Q)->cmdline) return Frame_srtflg * -1;
       if (!(*P)->cmdline) return Frame_srtflg;
       return Frame_srtflg *
          strncmp((*Q)->cmdline[0], (*P)->cmdline[0], (unsigned)Curwin->maxcmdln);
    }
-   /* this part also handles the compare if both are kernel threads */
+   // this part also handles the compare if both are kernel threads
    return Frame_srtflg * strcmp((*Q)->cmd, (*P)->cmd);
 }
 
 _SC_NUM1(P_WCH, wchan)
 _SC_NUM1(P_FLG, flags)
+
+                                        // *special* sort for prochlp() !
+static int sort_HIST_t (const HIST_t *P, const HIST_t *Q)
+{
+   return -1 * ( Q->pid - P->pid );
+}
 
 
 /*######  Tiny useful routine(s)  ########################################*/
@@ -300,7 +297,7 @@ static void bye_bye (int eno, const char *str)
       "\nbye_bye's Summary report:"
       "\n\tProgram"
       "\n\t   Linux version = %u.%u.%u"
-      "\n\t   Page_size = %d, Cpu_tot = %d"
+      "\n\t   Page_size = %d, Cpu_tot = %d, sizeof(proc_t) = %u"
       "\n\t   %s, using Hertz = %u (%u bytes, %u-bit time)"
       "\n\t   sizeof(CPUS_t) = %u, sizeof(HIST_t) = %u (%u HIST_t's/Page)"
       "\n\t   CPU_FMTS_JUST1 = %s"
@@ -326,7 +323,7 @@ static void bye_bye (int eno, const char *str)
       , LINUX_VERSION_MAJOR(linux_version_code)
       , LINUX_VERSION_MINOR(linux_version_code)
       , LINUX_VERSION_PATCH(linux_version_code)
-      , Page_size, Cpu_tot
+      , Page_size, Cpu_tot, sizeof(proc_t)
       , procps_version, (unsigned)Hertz, sizeof(Hertz), sizeof(Hertz) * 8
       , sizeof(CPUS_t), sizeof(HIST_t), Page_size / sizeof(HIST_t)
       , CPU_FMTS_JUST1, CPU_FMTS_MULTI
@@ -628,7 +625,7 @@ static float get_float (const char *prompt)
    float f;
 
    if (!(*(line = ask4str(prompt)))) return -1;
-      /* note: we're not allowing negative floats */
+   // note: we're not allowing negative floats
    if (strcspn(line, ",.1234567890")) {
       show_msg("\aNot valid");
       return -1;
@@ -646,7 +643,7 @@ static int get_int (const char *prompt)
    int n;
 
    if (!(*(line = ask4str(prompt)))) return -1;
-      /* note: we've got to allow negative ints (renice)  */
+   // note: we've got to allow negative ints (renice)
    if (strcspn(line, "-1234567890")) {
       show_msg("\aNot valid");
       return -1;
@@ -697,11 +694,9 @@ static const char *scale_num (unsigned num, const int width, const unsigned type
 
         /*
          * Do some scaling stuff.
-         * Format 'tics' to fit 'width' */
+         * format 'tics' to fit 'width'. */
 static const char *scale_tics (TICS_t tics, const int width)
 {
-#define T1 "%u:%02u.%02u"
-#define T2 "%u:%02u"
 #ifdef CASEUP_SCALE
 #define HH "%uH"
 #define DD "%uD"
@@ -712,57 +707,38 @@ static const char *scale_tics (TICS_t tics, const int width)
 #define WW "%uw"
 #endif
    static char buf[TNYBUFSIZ];
-   unsigned ss;
-   unsigned nt; // narrow time, for speed on 32-bit
-   unsigned ct; // centiseconds past the second
+   unsigned long nt;    // narrow time, for speed on 32-bit
+   unsigned cc;         // centiseconds
+   unsigned nn;         // multi-purpose whatever
 
-   ct  = ((tics * 100) / Hertz)%100 ;
-   nt  = tics / Hertz;
-   if (width >= snprintf(buf, sizeof(buf), T1, nt/60, nt%60, ct))
-         return buf;
-   ss  = nt % 60;
-   nt  /= 60;
-   if (width >= snprintf(buf, sizeof buf, T2, nt, ss))
+   nt  = (tics * 100) / Hertz;
+   cc  = nt % 100;                              // centiseconds past second
+   nt /= 100;                                   // total seconds
+   nn  = nt % 60;                               // seconds past the minute
+   nt /= 60;                                    // total minutes
+   if (width >= snprintf(buf, sizeof(buf), "%lu:%02u.%02u", nt, nn, cc))
       return buf;
-   nt  /= 60;
-   if (width >= snprintf(buf, sizeof buf, HH, nt))
+   if (width >= snprintf(buf, sizeof buf, "%lu:%02u", nt, nn))
       return buf;
-   nt  /= 24;
-   if (width >= snprintf(buf, sizeof buf, DD, nt))
+   nn  = nt % 60;                               // now minutes
+   nt /= 60;                                    // now hours
+   if (width >= snprintf(buf, sizeof buf, "%lu,%02u", nt, nn))
       return buf;
-   nt /= 7;
-   if (width >= snprintf(buf, sizeof buf, WW, nt))
+   nn = nt;                                     // now also hours
+   if (width >= snprintf(buf, sizeof buf, HH, nn))
       return buf;
-
-      /* well shoot, this outta' fit... */
+   nn /= 24;                                    // now days
+   if (width >= snprintf(buf, sizeof buf, DD, nn))
+      return buf;
+   nn /= 7;                                     // now weeks
+   if (width >= snprintf(buf, sizeof buf, WW, nn))
+      return buf;
+      // well shoot, this outta' fit...
    return "?";
 
-#undef T1
-#undef T2
 #undef HH
 #undef DD
 #undef WW
-}
-
-
-        /*
-         * Calculate and the elapsed time since the last update along with the
-         * scaling factor used in multiplication (vs. division) when calculating
-         * a displayable task's %CPU. */
-static void time_elapsed (void)
-{
-    static struct timeval oldtimev;
-    struct timeval timev;
-    struct timezone timez;
-    float et;
-
-    gettimeofday(&timev, &timez);
-    et = (timev.tv_sec - oldtimev.tv_sec)
-       + (float)(timev.tv_usec - oldtimev.tv_usec) / 1000000.0;
-    oldtimev.tv_sec = timev.tv_sec;
-    oldtimev.tv_usec = timev.tv_usec;
-      /* if in Solaris mode, adjust our scaling for all cpus */
-    Frame_tscale = 100.0f / ((float)Hertz * (float)et * (Mode_irixps ? 1 : Cpu_tot));
 }
 
 
@@ -800,15 +776,15 @@ static void *alloc_r (void *q, unsigned numb)
          * as follows:
          *    cpus[0] thru cpus[n] == tics for each separate cpu
          *    cpus[Cpu_tot]        == tics from the 1st /proc/stat line */
-static CPUS_t *refreshcpus (CPUS_t *cpus)
+static CPUS_t *cpus_refresh (CPUS_t *cpus)
 {
    static FILE *fp = NULL;
    int i;
-      /* enough for a /proc/stat CPU line (not the intr line) */
+   // enough for a /proc/stat CPU line (not the intr line)
    char buf[SMLBUFSIZ];
 
-      /* by opening this file once, we'll avoid the hit on minor page faults
-         (sorry Linux, but you'll have to close it for us) */
+   /* by opening this file once, we'll avoid the hit on minor page faults
+      (sorry Linux, but you'll have to close it for us) */
    if (!fp) {
       if (!(fp = fopen("/proc/stat", "r")))
          std_err(fmtmk("Failed /proc/stat open: %s", strerror(errno)));
@@ -820,15 +796,15 @@ static CPUS_t *refreshcpus (CPUS_t *cpus)
    rewind(fp);
    fflush(fp);
 
-      /* first value the last slot with the cpu summary line */
+   // first value the last slot with the cpu summary line
    if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
    if (4 > sscanf(buf, CPU_FMTS_JUST1
       , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i, &cpus[Cpu_tot].w))
          std_err("failed /proc/stat read");
-      /* and just in case we're 2.2.xx compiled without SMP support... */
+   // and just in case we're 2.2.xx compiled without SMP support...
    if (1 == Cpu_tot) memcpy(cpus, &cpus[1], sizeof(CPUS_t));
 
-      /* and now value each separate cpu's tics */
+   // now value each separate cpu's tics
    for (i = 0; 1 < Cpu_tot && i < Cpu_tot; i++) {
 #ifdef PRETEND4CPUS
       rewind(fp);
@@ -838,8 +814,100 @@ static CPUS_t *refreshcpus (CPUS_t *cpus)
          , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].w))
             std_err("failed /proc/stat read");
    }
-
    return cpus;
+}
+
+
+        /*
+         * Refresh procs *Helper* function to eliminate yet one more need
+         * to loop through our darn proc_t table.  He's responsible for:
+         *    1) calculating the elapsed time since the previous frame
+         *    2) counting the number of tasks in each state (run, sleep, etc)
+         *    3) maintaining the HIST_t's and priming the proc_t pcpu field
+         *    4) establishing the total number tasks for this frame */
+static void prochlp (proc_t *this)
+{
+   static HIST_t   *hist_sav = NULL;
+   static HIST_t   *hist_new = NULL;
+   static unsigned  hist_siz = 0;       // number of structs
+   static unsigned  maxt_sav;           // prior frame's max tasks
+   int i, lo, hi;
+   TICS_t tics;
+
+   if (!this) {
+      static struct timeval oldtimev;
+      struct timeval timev;
+      struct timezone timez;
+      HIST_t *hist_tmp;
+      float et;
+
+      gettimeofday(&timev, &timez);
+      et = (timev.tv_sec - oldtimev.tv_sec)
+         + (float)(timev.tv_usec - oldtimev.tv_usec) / 1000000.0;
+      oldtimev.tv_sec = timev.tv_sec;
+      oldtimev.tv_usec = timev.tv_usec;
+
+      // if in Solaris mode, adjust our scaling for all cpus
+      Frame_tscale = 100.0f / ((float)Hertz * (float)et * (Mode_irixps ? 1 : Cpu_tot));
+      maxt_sav = Frame_maxtask;
+      Frame_maxtask = Frame_running = Frame_sleepin = Frame_stopped = Frame_zombied = 0;
+
+      // reuse memory each time around
+      hist_tmp = hist_sav;
+      hist_sav = hist_new;
+      hist_new = hist_tmp;
+      // prep for our binary search by sorting the last frame's HIST_t's
+      qsort(hist_sav, maxt_sav, sizeof(HIST_t), (QSORT_t)sort_HIST_t);
+      return;
+   }
+
+   switch (this->state) {
+      case 'R':
+         Frame_running++;
+         break;
+      case 'S':
+      case 'D':
+         Frame_sleepin++;
+         break;
+      case 'T':
+         Frame_stopped++;
+         break;
+      case 'Z':
+         Frame_zombied++;
+         break;
+   }
+
+   if (Frame_maxtask+1 >= hist_siz) {
+      hist_siz = hist_siz * 5 / 4 + 100;  // grow by at least 25%
+      hist_sav = alloc_r(hist_sav, sizeof(HIST_t) * hist_siz);
+      hist_new = alloc_r(hist_new, sizeof(HIST_t) * hist_siz);
+   }
+   /* calculate time in this process; the sum of user time (utime) and
+      system time (stime) -- but PLEASE dont waste time and effort on
+      calcs and saves that go unused, like the old top! */
+   hist_new[Frame_maxtask].pid  = this->pid;
+   hist_new[Frame_maxtask].tics = tics = (this->utime + this->stime);
+
+   // find matching entry from previous frame and make ticks elapsed
+   lo = 0;
+   hi = maxt_sav - 1;
+   while (lo <= hi) {
+      i = (lo + hi) / 2;
+      if (this->pid < hist_sav[i].pid)
+         hi = i - 1;
+      else if (this->pid > hist_sav[i].pid)
+         lo = i + 1;
+      else {
+         tics -= hist_sav[i].tics;
+         break;
+      }
+   }
+   /* we're just saving elapsed tics, to be converted into %cpu if
+      this task wins it's displayable screen row lottery... */
+   this->pcpu = tics;
+
+   // shout this to the world with the final call (or us the next time in)
+   Frame_maxtask++;
 }
 
 
@@ -847,50 +915,51 @@ static CPUS_t *refreshcpus (CPUS_t *cpus)
          * This guy's modeled on libproc's 'readproctab' function except
          * we reuse and extend any prior proc_t's.  He's been customized
          * for our specific needs and to avoid the use of <stdarg.h> */
-static proc_t **refreshprocs (proc_t **table, int flags)
+static proc_t **procs_refresh (proc_t **table, int flags)
 {
-#define PTRsz  sizeof(proc_t *)         /* eyeball candy */
+#define PTRsz  sizeof(proc_t *)
 #define ENTsz  sizeof(proc_t)
-   static unsigned savmax = 0;          /* first time, Bypass: (i)  */
-   proc_t *ptsk = (proc_t *)-1;         /* first time, Force: (ii)  */
-   unsigned curmax = 0;                 /* every time  (jeeze)      */
+   static unsigned savmax = 0;          // first time, Bypass: (i)
+   proc_t *ptsk = (proc_t *)-1;         // first time, Force: (ii)
+   unsigned curmax = 0;                 // every time  (jeeze)
    PROCTAB* PT;
 
-   if (Monpidsidx) {
+   prochlp(NULL);                       // prep for a new frame
+   if (Monpidsidx)
       PT = openproc(flags | PROC_PID, Monpids);
-         /* work around a previous bug in openproc (now corrected) */
-      PT->procfs = NULL;
-   } else
+   else
       PT = openproc(flags);
 
-      /* i) Allocated Chunks:  *Existing* table;  refresh + reuse */
+   // i) Allocated Chunks:  *Existing* table;  refresh + reuse
    while (curmax < savmax) {
-      if (table[curmax]->cmdline) {
+      if (table[curmax]->cmdline)
          free(*table[curmax]->cmdline);
-         table[curmax]->cmdline = NULL;
-      }
+      memset(table[curmax], '\0', ENTsz);
       if (!(ptsk = readproc(PT, table[curmax]))) break;
+      prochlp(ptsk);                    // tally & complete this proc_t
       ++curmax;
    }
 
-      /* ii) Unallocated Chunks:  *New* or *Existing* table;  extend + fill */
+   // ii) Unallocated Chunks:  *New* or *Existing* table;  extend + fill
    while (ptsk) {
-         /* realloc as we go, keeping 'table' ahead of 'currmax++' */
+      // realloc as we go, keeping 'table' ahead of 'currmax++'
       table = alloc_r(table, (curmax + 1) * PTRsz);
-         /* here, readproc will allocate the underlying proc_t stg */
-      if ((ptsk = readproc(PT, NULL)))
+      // here, readproc will allocate the underlying proc_t stg
+      if ((ptsk = readproc(PT, NULL))) {
+         prochlp(ptsk);                 // tally & complete this proc_t
          table[curmax++] = ptsk;
+      }
    }
    closeproc(PT);
 
-      /* iii) Chunkless:  make 'eot' entry, after possible extension */
+   // iii) Chunkless:  make 'eot' entry, after ensuring proc_t exists
    if (curmax >= savmax) {
       table = alloc_r(table, (curmax + 1) * PTRsz);
-         /* here, we must allocate the underlying proc_t stg ourselves */
+      // here, we must allocate the underlying proc_t stg ourselves
       table[curmax] = alloc_c(ENTsz);
       savmax = curmax + 1;
    }
-      /* this frame's end, but not necessarily end of allocated space */
+   // this frame's end, but not necessarily end of allocated space
    table[curmax]->pid = -1;
    return table;
 
@@ -1147,7 +1216,7 @@ static void whack_terminal (void)
            They MUST be kept in sync with pflags !!
            note: for integer data, the length modifiers found in .fmts may be
                  smaller than the true length found in the proc_t -- this plus
-                 a cast in show_a_task provides some width protection. */
+                 a cast if/when displayed provides some width protection. */
 static FTAB_t  Fieldstab[] = {
 /*   head           fmts     width   scale  sort      desc
      -----------    -------  ------  -----  --------  ---------------------- */
@@ -1363,8 +1432,8 @@ static void win_colsheads (WIN_t *q)
       - (strlen(q->columnhdr) - strlen(Fieldstab[P_CMD].head)) - 1;
 
       /* now we can build the true run-time columns header and format the
-         command column heading if P_CMD is really being displayed --
-         show_a_task is aware of the addition of winnum to the header */
+         command column heading if P_CMD is really being displayed -- the
+         task display guy is aware of the addition of winnum to the header */
    snprintf(q->columnhdr, sizeof(q->columnhdr), "%s"
       , Mode_altscr ? fmtmk("%d", q->winnum) : "");
    for (i = 0; i < q->maxpflgs; i++) {
@@ -1419,7 +1488,7 @@ static void win_select (char ch)
 {
    static const char prompt[] = "Choose field group (1 - 4)";
 
-   /* if there's no ch, it means we're supporting the normal do_key routine,
+   /* if there's no ch, it means we're supporting the external interface,
       so we must try to get our own darn ch by begging the user... */
    if (!ch) {
       show_pmt(prompt);
@@ -1455,7 +1524,7 @@ static int win_warn (void)
         /*
          * Change colors *Helper* function to save/restore settings;
          * ensure colors will show; and rebuild the terminfo strings. */
-static void winsclr (WIN_t *q, int save)
+static void winsclrhlp (WIN_t *q, int save)
 {
    static int flgssav, summsav, msgssav, headsav, tasksav;
 
@@ -1484,7 +1553,7 @@ static void wins_colors (void)
       show_msg("\aNo colors to map!");
       return;
    }
-   winsclr(Curwin, 1);
+   winsclrhlp(Curwin, 1);
    putp(Cap_clr_scr);
    putp(Cap_curs_huge);
 
@@ -1532,7 +1601,7 @@ static void wins_colors (void)
          case 'a':
          case 'w':
             win_select(ch);
-            winsclr(Curwin, 1);
+            winsclrhlp(Curwin, 1);
             clr = Curwin->taskclr, pclr = &Curwin->taskclr;
             tgt = 'T';
             break;
@@ -1541,7 +1610,7 @@ static void wins_colors (void)
    } while (kbdAPPLY != ch && kbdABORT != ch);
 
    if (kbdABORT == ch)
-      winsclr(Curwin, 0);
+      winsclrhlp(Curwin, 0);
    putp(Cap_curs_norm);
 
 #undef kbdABORT
@@ -1629,8 +1698,7 @@ static void windows_stage1 (void)
          { COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW } },
    };
    WIN_t *w;
-   char *pc;
-   int i, x, *pi;
+   int i;
 
       /* get all our window structs in one big chunk */
    w = alloc_c(sizeof(WIN_t) * GROUPSMAX);
@@ -1642,16 +1710,19 @@ static void windows_stage1 (void)
       strcpy(w->fieldscur, wtab[i].flds);
       w->sortindx = wtab[i].sort;
       w->winflags = DEF_WINFLGS;
-      for (x = 0, pi = &w->summclr; x < 4; x++, pi++)
-         *pi = wtab[i].clrs[x];
+      w->summclr = wtab[i].clrs[0];
+      w->msgsclr = wtab[i].clrs[1];
+      w->headclr = wtab[i].clrs[2];
+      w->taskclr = wtab[i].clrs[3];
       w->captab[0] = Cap_norm;
       w->captab[1] = Cap_norm;
       w->captab[2] = Cap_bold;
-         /* complete this win's captab, but not the brute force way... */
-      for (x = 3, pc = w->capclr_sum; x < CAPTABMAX; x++) {
-         w->captab[x] = pc;
-         pc += CLRBUFSIZ;
-      }
+      w->captab[3] = w->capclr_sum;
+      w->captab[4] = w->capclr_msg;
+      w->captab[5] = w->capclr_pmt;
+      w->captab[6] = w->capclr_hdr;
+      w->captab[7] = w->capclr_rowhigh;
+      w->captab[8] = w->capclr_rownorm;
       w->next = w + 1;
       w->prev = w - 1;
       ++w;
@@ -1684,20 +1755,336 @@ static void windows_stage2 (void)
 }
 
 
-/*######  Per-Frame Display support  #####################################*/
+/*######  Main Screen routines  ##########################################*/
+
+        /*
+         * Process keyboard input during the main loop */
+static void do_key (unsigned c)
+{
+   // standardized 'secure mode' errors
+   static const char err_secure[] = "\aUnavailable in secure mode";
+#ifdef WARN_NOT_SMP
+   // standardized 'smp' errors
+   static const char err_smp[] = "\aSorry, only 1 cpu detected";
+#endif
+
+   switch (c) {
+      case '1':
+#ifdef WARN_NOT_SMP
+         if (Cpu_tot > 1) TOGw(Curwin, View_CPUSUM);
+         else show_msg(err_smp);
+#else
+         TOGw(Curwin, View_CPUSUM);
+#endif
+         break;
+
+      case 'a':
+         if (Mode_altscr) Curwin = Curwin->next;
+         break;
+
+      case 'A':
+         Mode_altscr = !Mode_altscr;
+         wins_resize(0);
+         break;
+
+      case 'b':
+         if (VIZCHKc) {
+            if (!CHKw(Curwin, Show_HICOLS) && !CHKw(Curwin, Show_HIROWS))
+               show_msg("\aNothing to highlight!");
+            else {
+               TOGw(Curwin, Show_HIBOLD);
+               capsmk(Curwin);
+            }
+         }
+         break;
+
+      case 'c':
+         VIZTOGc(Show_CMDLIN);
+         break;
+
+      case 'd':
+      case 's':
+         if (Secure_mode)
+            show_msg(err_secure);
+         else {
+            float tmp =
+               get_float(fmtmk("Change delay from %.1f to", Delay_time));
+            if (-1 < tmp) Delay_time = tmp;
+         }
+         break;
+
+      case 'f':
+         if (VIZCHKc) {
+            fields_toggle();
+            win_colsheads(Curwin);
+         }
+         break;
+
+      case 'F':
+      case 'O':
+         if (VIZCHKc) {
+            fields_sort();
+            win_colsheads(Curwin);
+         }
+         break;
+
+      case 'g':
+         if (Mode_altscr) {
+            char tmp[GETBUFSIZ];
+            strcpy(tmp, ask4str(fmtmk("Rename window '%s' to (1-3 chars)"
+               , Curwin->winname)));
+            if (tmp[0]) win_names(Curwin, tmp);
+         }
+         break;
+
+      case 'G':
+         win_select(0);
+         break;
+
+      case 'h':
+      case '?':
+      {  char ch;
+         putp(Cap_clr_scr);
+         putp(Cap_curs_huge);
+            /* this string is well above ISO C89's minimum requirements! */
+         show_special(fmtmk(KEYS_help
+            , procps_version
+            , Curwin->grpname
+            , CHKw(Curwin, Show_CTIMES) ? "On" : "Off"
+            , Delay_time
+            , Secure_mode ? "On" : "Off"
+            , Secure_mode ? "" : KEYS_help_unsecured));
+         chin(0, &ch, 1);
+         if ('?' == ch || 'h' == ch) {
+            do {
+               putp(Cap_clr_scr);
+               show_special(fmtmk(WINDOWS_help
+                  , Curwin->grpname
+                  , Winstk[0]->winname
+                  , Winstk[1]->winname
+                  , Winstk[2]->winname
+                  , Winstk[3]->winname));
+               chin(0, &ch, 1);
+               win_select(ch);
+            } while ('\n' != ch);
+         }
+         putp(Cap_curs_norm);
+      }
+         break;
+
+      case 'i':
+         VIZTOGc(Show_IDLEPS);
+         break;
+
+      case 'I':
+#ifdef WARN_NOT_SMP
+         if (Cpu_tot > 1) {
+            Mode_irixps = !Mode_irixps;
+            show_msg(fmtmk("Irix mode %s", Mode_irixps ? "On" : "Off"));
+         } else
+            show_msg(err_smp);
+#else
+         Mode_irixps = !Mode_irixps;
+         show_msg(fmtmk("Irix mode %s", Mode_irixps ? "On" : "Off"));
+#endif
+         break;
+
+      case 'k':
+         if (Secure_mode) {
+            show_msg(err_secure);
+         } else {
+            int sig, pid = get_int("PID to kill");
+            if (0 < pid) {
+               sig = signal_name_to_number(
+                  ask4str(fmtmk("Kill PID %d with signal [%i]"
+                     , pid, DEF_SIGNAL)));
+               if (-1 == sig) sig = DEF_SIGNAL;
+               if (sig && kill(pid, sig))
+                  show_msg(fmtmk("\aKill of PID '%d' with '%d' failed: %s"
+                     , pid, sig, strerror(errno)));
+            }
+         }
+         break;
+
+      case 'l':
+         TOGw(Curwin, View_LOADAV);
+         break;
+
+      case 'm':
+         TOGw(Curwin, View_MEMORY);
+         break;
+
+      case 'n':
+      case '#':
+         if (VIZCHKc) {
+            int num =
+               get_int(fmtmk("Maximum tasks = %d, change to (0 is unlimited)"
+                  , Curwin->maxtasks));
+            if (-1 < num) Curwin->maxtasks = num;
+         }
+         break;
+
+      case 'o':
+         if (VIZCHKc) {
+            fields_reorder();
+            win_colsheads(Curwin);
+         }
+         break;
+
+      case 'q':
+         stop(0);
+
+      case 'r':
+         if (Secure_mode)
+            show_msg(err_secure);
+         else {
+            int val, pid = get_int("PID to renice");
+            if (0 < pid) {
+               val = get_int(fmtmk("Renice PID %d to value", pid));
+               if (setpriority(PRIO_PROCESS, (unsigned)pid, val))
+                  show_msg(fmtmk("\aRenice of PID %d to %d failed: %s"
+                     , pid, val, strerror(errno)));
+            }
+         }
+         break;
+
+      case 'R':
+         VIZTOGc(Qsrt_NORMAL);
+         break;
+
+      case 'S':
+         if (VIZCHKc) {
+            TOGw(Curwin, Show_CTIMES);
+            show_msg(fmtmk("Cumulative time %s"
+               , CHKw(Curwin, Show_CTIMES) ? "On" : "Off"));
+         }
+         break;
+
+      case 't':
+         TOGw(Curwin, View_STATES);
+         break;
+
+      case 'u':
+         if (VIZCHKc)
+            strcpy(Curwin->colusrnam, ask4str("Which user (blank for all)"));
+         break;
+
+      case 'w':
+         if (Mode_altscr) Curwin = Curwin->prev;
+         break;
+
+      case 'W':
+      {  FILE *fp = fopen(RCfile, "w"); int i;
+         if (fp) {
+            fprintf(fp, "RCfile for \"%s with windows\"\t\t# shameless braggin'\n"
+               , Myname);
+            fprintf(fp, "Id:%c, "
+               "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%d\n"
+               , RCF_FILEID
+               , Mode_altscr, Mode_irixps, Delay_time, Curwin - Winstk[0]);
+            for (i = 0; i < GROUPSMAX; i++) {
+               fprintf(fp, "%s\tfieldscur=%s\n"
+                  , Winstk[i]->winname, Winstk[i]->fieldscur);
+               fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
+                  , Winstk[i]->winflags
+                  , Winstk[i]->sortindx
+                  , Winstk[i]->maxtasks);
+               fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
+                  , Winstk[i]->summclr
+                  , Winstk[i]->msgsclr
+                  , Winstk[i]->headclr
+                  , Winstk[i]->taskclr);
+            }
+            fclose(fp);
+            show_msg(fmtmk("Wrote configuration to '%s'", RCfile));
+         } else
+            show_msg(fmtmk("\aFailed '%s' open: %s", RCfile, strerror(errno)));
+      }
+         break;
+
+      case 'x':
+         if (VIZCHKc) {
+            TOGw(Curwin, Show_HICOLS);
+            capsmk(Curwin);
+         }
+         break;
+
+      case 'y':
+         if (VIZCHKc) {
+            TOGw(Curwin, Show_HIROWS);
+            capsmk(Curwin);
+         }
+         break;
+
+      case 'z':
+         if (VIZCHKc) {
+            TOGw(Curwin, Show_COLORS);
+            capsmk(Curwin);
+         }
+         break;
+
+      case 'Z':
+         wins_colors();
+         break;
+
+      case '-':
+         if (Mode_altscr) TOGw(Curwin, VISIBLE_tsk);
+         break;
+
+      case '_':
+         if (Mode_altscr) wins_reflag(Flags_TOG, VISIBLE_tsk);
+         break;
+
+      case '=':
+         Curwin->maxtasks = 0;
+         SETw(Curwin, Show_IDLEPS | VISIBLE_tsk);
+         Monpidsidx = 0;
+         break;
+
+      case '+':
+         if (Mode_altscr) SETw(Curwin, EQUWINS_cwo);
+         break;
+
+      case '<':
+         if (VIZCHKc) {
+            PFLG_t *p = Curwin->procflags + Curwin->maxpflgs - 1;
+            while (*p != Curwin->sortindx) --p;
+            if (--p >= Curwin->procflags)
+               Curwin->sortindx = *p;
+         }
+         break;
+
+      case '>':
+         if (VIZCHKc) {
+            PFLG_t *p = Curwin->procflags;
+            while (*p != Curwin->sortindx) ++p;
+            if (++p < Curwin->procflags + Curwin->maxpflgs)
+               Curwin->sortindx = *p;
+         }
+         break;
+
+      case '\n':          /* just ignore these, they'll have the effect */
+      case ' ':           /* of refreshing display after waking us up ! */
+         break;
+
+      default:
+         show_msg("\aUnknown command - try 'h' for help");
+   }
+}
+
 
         /*
          * State display *Helper* function to calc and display the state
          * percentages for a single cpu.  In this way, we can support
          * the following environments without the usual code bloat.
-         *    1 - single cpu machines
-         *    2 - modest smp boxes with room for each cpu's percentages
-         *    3 - massive smp guys leaving little or no room for process
-         *        display and thus requiring the cpu summary toggle */
-static void cpudo (CPUS_t *cpu, const char *pfx)
+         *    1) single cpu machines
+         *    2) modest smp boxes with room for each cpu's percentages
+         *    3) massive smp guys leaving little or no room for process
+         *       display and thus requiring the cpu summary toggle */
+static void summaryhlp (CPUS_t *cpu, const char *pfx)
 {
-        /* we'll trim to zero if we get negative time ticks,
-           which has happened with some SMP kernels (pre-2.4?) */
+   /* we'll trim to zero if we get negative time ticks,
+      which has happened with some SMP kernels (pre-2.4?) */
 #define TRIMz(x)  ((tz = (STIC_t)x) < 0 ? 0 : tz)
    STIC_t u_frme, s_frme, n_frme, i_frme, w_frme, tot_frme, tz;
    float scale;
@@ -1711,8 +2098,8 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
    if (1 > tot_frme) tot_frme = 1;
    scale = 100.0 / (float)tot_frme;
 
-      /* display some kinda' cpu state percentages
-         (who or what is explained by the passed prefix) */
+   /* display some kinda' cpu state percentages
+      (who or what is explained by the passed prefix) */
    show_special(fmtmk(States_fmts
       , pfx
       , (float)u_frme * scale
@@ -1722,7 +2109,7 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
       , (float)w_frme * scale));
    Msg_row += 1;
 
-      /* remember for next time around */
+   // remember for next time around
    cpu->u_sav = cpu->u;
    cpu->s_sav = cpu->s;
    cpu->n_sav = cpu->n;
@@ -1734,106 +2121,80 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
 
 
         /*
-         * Calc the number of tasks in each state (run, sleep, etc)
-         * Prepare for the possible calculation of percent cpu usage (pcpu)
-         * Calc the cpu(s) percent in each state (user, system, nice, idle)
-         * AND establish the total number of tasks for this frame! */
-static void frame_states (proc_t **ppt, int show)
+         * Begin a new frame by:
+         *    1) Refreshing the all important proc table
+         *    2) Displaying uptime and load average (maybe)
+         *    3) Displaying task/cpu states (maybe)
+         *    4) Displaying memory & swap usage (maybe)
+         * and then, returning a pointer to the pointers to the proc_t's! */
+static proc_t **summary_show (void)
 {
-   static HIST_t   *hist_sav;
-   static HIST_t   *hist_new;
-   static unsigned  hist_siz; // number of structs
-   unsigned         total, running, sleeping, stopped, zombie;
-   HIST_t          *hist_tmp;
+   static proc_t **p_table = NULL;
+   static CPUS_t *smpcpu = NULL;
+   int p_flags = PROC_FILLMEM | PROC_FILLSTAT | PROC_FILLSTATUS;
+   WIN_t *w;
 
-   // reuse memory each time around
-   hist_tmp = hist_sav;
-   hist_sav = hist_new;
-   hist_new = hist_tmp;
-
-   total = running = sleeping = stopped = zombie = 0;
-   time_elapsed();
-
-      /* make a pass through the data to get stats */
-   while (-1 != ppt[total]->pid) {                      /* calculations //// */
-      TICS_t tics;
-      proc_t *this = ppt[total];
-      int i;
-
-      switch (this->state) {
-         case 'S':
-         case 'D':
-            sleeping++;
-            break;
-         case 'T':
-            stopped++;
-            break;
-         case 'Z':
-            zombie++;
-            break;
-         case 'R':
-            running++;
-            break;
+   // let's try to minimize the cost of this frame (cross your fingers)
+   w = Curwin;
+   do {
+      if (!Mode_altscr || CHKw(w, VISIBLE_tsk)) {
+         if ( CHKw(w, Show_CMDLIN)
+         && win_fldviz(w, P_CMD) ) p_flags |= PROC_FILLCOM;
+         if (win_fldviz(w, P_USR)) p_flags |= PROC_FILLUSR;
+         if (win_fldviz(w, P_GRP)) p_flags |= PROC_FILLGRP;
       }
-      if (total+1 >= hist_siz) {
-         hist_siz = hist_siz * 5 / 4 + 100;  // grow by at least 25%
-         hist_sav = alloc_r(hist_sav, sizeof(HIST_t) * hist_siz);
-         hist_new = alloc_r(hist_new, sizeof(HIST_t) * hist_siz);
-      }
-         /* calculate time in this process; the sum of user time (utime)
-            + system time (stime) -- but PLEASE dont waste time and effort on
-            calcs and saves that go unused, like the old top! */
-      hist_new[total].pid  = this->pid;
-      hist_new[total].tics = tics = (this->utime + this->stime);
+      if (Mode_altscr) w = w->next;
+   } while (w != Curwin);
 
-         /* find matching entry from previous pass and make ticks elapsed */
-      for (i = 0; i < Frame_maxtask; i++) {
-         if (this->pid == hist_sav[i].pid) {
-            tics -= hist_sav[i].tics;
-            break;
-         }
-      }
-         /* we're just saving elapsed tics, to be converted into %cpu if
-            this task wins it's displayable screen row lottery... */
-      this->pcpu = tics;
+   //* whoa first time, gotta' prime the pump...
+   if (!p_table) {
+      p_table = procs_refresh(NULL, p_flags);
+      putp(Cap_clr_scr);
+      sleep(1);
+   } else
+      putp(Batch ? "\n\n" : Cap_home);
 
-      total++;
-   } /* end: while 'pids' */
+   p_table = procs_refresh(p_table, p_flags);
 
-      /* shout results to the world (and us too, the next time around) */
-   Frame_maxtask = total;
-
-   if (show) {                                          /* display ///////// */
-      static CPUS_t *smpcpu = NULL;
-
-         /* display Task states */
-      show_special(fmtmk(STATES_line1
-         , total, running, sleeping, stopped, zombie));
+   /*
+    ** Display Uptime and Loadavg */
+   if (CHKw(Curwin, View_LOADAV)) {
+      if (!Mode_altscr)
+         show_special(fmtmk(LOADAV_line, Myname, sprint_uptime()));
+      else
+         show_special(fmtmk(CHKw(Curwin, VISIBLE_tsk)
+            ? LOADAV_line_alt
+            : LOADAV_line
+            , Curwin->grpname, sprint_uptime()));
       Msg_row += 1;
+   }
 
-         /* refresh our /proc/stat data... */
-      smpcpu = refreshcpus(smpcpu);
+   /*
+    ** Display Task and Cpu(s) States */
+   if (CHKw(Curwin, View_STATES)) {
+      show_special(fmtmk(STATES_line1
+         , Frame_maxtask, Frame_running, Frame_sleepin
+         , Frame_stopped, Frame_zombied));
+      Msg_row += 1;
+   }
 
-      if (CHKw(Curwin, View_CPUSUM)) {
-            /* display just the 1st /proc/stat line */
-         cpudo(&smpcpu[Cpu_tot], "Cpu(s):");
-      } else {
-         int i;
-         char tmp[SMLBUFSIZ];
-            /* display each cpu's states separately */
-         for (i = 0; i < Cpu_tot; i++) {
-            snprintf(tmp, sizeof(tmp), " Cpu%-2d:", Mode_irixps ? i : Cpu_map[i]);
-            cpudo(&smpcpu[i], tmp);
-         }
+   smpcpu = cpus_refresh(smpcpu);
+
+   if (CHKw(Curwin, View_CPUSUM)) {
+      // display just the 1st /proc/stat line
+      summaryhlp(&smpcpu[Cpu_tot], "Cpu(s):");
+   } else {
+      int i;
+      char tmp[SMLBUFSIZ];
+      // display each cpu's states separately
+      for (i = 0; i < Cpu_tot; i++) {
+         snprintf(tmp, sizeof(tmp), " Cpu%-2d:", Mode_irixps ? i : Cpu_map[i]);
+         summaryhlp(&smpcpu[i], tmp);
       }
-   } /* end: if 'show' */
-}
+   }
 
-
-        /*
-         * Obtain memory information and display it. */
-static void frame_storage (void)
-{
+   /*
+    ** Display Memory and Swap stats */
    meminfo();
    if (CHKw(Curwin, View_MEMORY)) {
       show_special(fmtmk(MEMORY_line1
@@ -1842,21 +2203,24 @@ static void frame_storage (void)
          , kb_swap_total, kb_swap_used, kb_swap_free, kb_main_cached));
       Msg_row += 2;
    }
+
+   SETw(Curwin, NEWFRAM_cwo);
+   return p_table;
 }
 
 
         /*
          * Task display *Helper* function to handle highlighted
          * column transitions.  */
-static void mkcol (WIN_t *q, int a, int c, int *p, char *b, const char *f, ...)
-{     /* a = status, c = hicol, p = pad, b = buf, f = fmt */
+static void taskhlp (WIN_t *q, int a, int c, int *p, char *b, const char *f, ...)
+{  // q = duh, a = status, c = hicol, p = pad, b = buf, f = fmt
    char tmp[COLBUFSIZ];
    va_list va;
 
    va_start(va, f);
-      /* this conditional is for piece-of-mind only, it should NOT be needed
-         given the macro employed by show_a_task (which calls us only when
-         the target column is the current sort field and Show_HICOLS is on) */
+   /* this conditional is for piece-of-mind only -- it should NOT be needed
+      given the macro employed to call us (only when the target column
+      is the current sort field and Show_HICOLS is on) */
    if (!c) {
       vsprintf(b, f, va);
    } else {
@@ -1874,30 +2238,28 @@ static void mkcol (WIN_t *q, int a, int c, int *p, char *b, const char *f, ...)
 
         /*
          * Display information for a single task row. */
-static void show_a_task (WIN_t *q, proc_t *task)
+static void task_show (WIN_t *q, proc_t *task)
 {
    /* the following macro is our means to 'inline' emitting a column -- that's
       far and away the most frequent and costly part of top's entire job! */
 #define MKCOL(q,a,c,p,b,f,v...) do{ \
            if (!c) \
               snprintf(b, sizeof(b), f, ## v); \
-           else mkcol(q, a, c, p, b, f, ## v); } while(0)
-
+           else taskhlp(q, a, c, p, b, f, ## v); } while(0)
    char rbuf[ROWBUFSIZ];
    int j, x, pad;
 
-      /* since win_colsheads adds a number to the window's column header,
-         we must begin a row with that in mind... */
-   pad = Mode_altscr;
-   if (pad) strcpy(rbuf, " "); else rbuf[0] = '\0';
+   /* since win_colsheads adds a number to the window's column header,
+      we must begin a row with that in mind... */
+   if ((pad = Mode_altscr)) strcpy(rbuf, " "); else rbuf[0] = '\0';
 
    for (x = 0; x < q->maxpflgs; x++) {
       char cbuf[COLBUFSIZ];
-      char        a = task->state;              /* we'll use local var's so */
-      PFLG_t      i = q->procflags[x];          /* gcc doesn't reinvent the */
-      const char *f = Fieldstab[i].fmts;        /* wheel - yields a cryptic */
-      unsigned    s = Fieldstab[i].scale;       /* mkcol, but saves a bunch */
-      unsigned    w = Fieldstab[i].width;       /* of generated code...     */
+      char        a = task->state;              // we'll use local var's so
+      PFLG_t      i = q->procflags[x];          // gcc doesn't reinvent the
+      const char *f = Fieldstab[i].fmts;        // wheel - yields a cryptic
+      unsigned    s = Fieldstab[i].scale;       // call, but saves a bunch
+      unsigned    w = Fieldstab[i].width;       // of generated code...
       int         c = (CHKw(q, Show_HICOLS) && q->sortindx == i);
 
       cbuf[0] = '\0';
@@ -1917,12 +2279,12 @@ static void show_a_task (WIN_t *q, proc_t *task)
                         intervening nulls -- so we must limit our strcat... */
                      strcat(cmdnam
                         , fmtmk("%.*s ", q->maxcmdln, task->cmdline[j++]));
-                     /* whoa, gnome's xscreensaver had a ^I in his cmdline
-                        creating a line wrap when the window was maximized &
-                        the tab came into view -- so whack those suckers... */
-                     strim(1, cmdnam);
                      if (q->maxcmdln < (int)strlen(cmdnam)) break;
                   } while (task->cmdline[j]);
+                  /* whoa, gnome's xscreensaver had a ^I in his cmdline
+                     creating a line wrap when the window was maximized &
+                     the tab came into view -- so whack those suckers... */
+                  strim(1, cmdnam);
                } else {
                   /* if cmdline is absent, consider it a kernel thread and
                      display it uniquely (need sort callback's complicity) */
@@ -1954,8 +2316,7 @@ static void show_a_task (WIN_t *q, proc_t *task)
             break;
          case P_FLG:
             MKCOL(q, a, c, &pad, cbuf, f, (long)task->flags);
-            for (j = 0; cbuf[j]; j++)
-               if ('0' == cbuf[j]) cbuf[j] = '.';
+            for (j = 0; cbuf[j]; j++) if ('0' == cbuf[j]) cbuf[j] = '.';
             break;
          case P_FLT:
             MKCOL(q, a, c, &pad, cbuf, f, scale_num(task->maj_flt, w, s));
@@ -2045,7 +2406,7 @@ static void show_a_task (WIN_t *q, proc_t *task)
         strcat(rbuf, cbuf);
    } /* end: for 'maxpflgs' */
 
-   /* This row buffer could be stuffed with parameterized strings... */
+   // This row buffer could be stuffed with parameterized strings...
    PUTP("\n%s%.*s%s%s", (CHKw(q, Show_HIROWS) && 'R' == task->state)
       ? q->capclr_rowhigh : q->capclr_rownorm
       , Screen_cols + pad
@@ -2056,417 +2417,22 @@ static void show_a_task (WIN_t *q, proc_t *task)
 #undef MKCOL
 }
 
-
-/*######  Main Screen routines  ##########################################*/
-
-        /*
-         * Process keyboard input during the main loop */
-static void do_key (unsigned c)
-{
-      /* standardized 'secure mode' errors */
-   static const char err_secure[] = "\aUnavailable in secure mode";
-#ifdef WARN_NOT_SMP
-      /* standardized 'smp' errors */
-   static const char err_smp[] = "\aSorry, only 1 cpu detected";
-#endif
-
-   switch (c) {
-      case '1':
-#ifdef WARN_NOT_SMP
-         if (Cpu_tot > 1)
-            TOGw(Curwin, View_CPUSUM);
-         else
-            show_msg(err_smp);
-#else
-         TOGw(Curwin, View_CPUSUM);
-#endif
-         break;
-
-      case 'a':
-         if (Mode_altscr) Curwin = Curwin->next;
-         break;
-
-      case 'A':
-         Mode_altscr = !Mode_altscr;
-         wins_resize(0);
-         break;
-
-      case 'b':
-         if (VIZCHKc) {
-            if (!CHKw(Curwin, Show_HICOLS) && !CHKw(Curwin, Show_HIROWS))
-               show_msg("\aNothing to highlight!");
-            else {
-               TOGw(Curwin, Show_HIBOLD);
-               capsmk(Curwin);
-            }
-         }
-         break;
-
-      case 'c':
-         VIZTOGc(Show_CMDLIN);
-         break;
-
-      case 'd':
-      case 's':
-         if (Secure_mode)
-            show_msg(err_secure);
-         else {
-            float tmp =
-               get_float(fmtmk("Change delay from %.1f to", Delay_time));
-            if (tmp > -1) Delay_time = tmp;
-         }
-         break;
-
-      case 'f':
-         if (VIZCHKc) {
-            fields_toggle();
-            win_colsheads(Curwin);
-         }
-         break;
-
-      case 'F':
-      case 'O':
-         if (VIZCHKc) {
-            fields_sort();
-            win_colsheads(Curwin);
-         }
-         break;
-
-      case 'g':
-         if (Mode_altscr) {
-            char tmp[GETBUFSIZ];
-            strcpy(tmp, ask4str(fmtmk("Rename window '%s' to (1-3 chars)"
-               , Curwin->winname)));
-            if (tmp[0]) win_names(Curwin, tmp);
-         }
-         break;
-
-      case 'G':
-         win_select(0);
-         break;
-
-      case 'h':
-      case '?':
-      {  char ch;
-
-         putp(Cap_clr_scr);
-         putp(Cap_curs_huge);
-            /* this string is well above ISO C89's minimum requirements! */
-         show_special(fmtmk(KEYS_help
-            , procps_version
-            , Curwin->grpname
-            , CHKw(Curwin, Show_CTIMES) ? "On" : "Off"
-            , Delay_time
-            , Secure_mode ? "On" : "Off"
-            , Secure_mode ? "" : KEYS_help_unsecured));
-         chin(0, &ch, 1);
-         if ('?' == ch || 'h' == ch) {
-            do {
-               putp(Cap_clr_scr);
-               show_special(fmtmk(WINDOWS_help
-                  , Curwin->grpname
-                  , Winstk[0]->winname
-                  , Winstk[1]->winname
-                  , Winstk[2]->winname
-                  , Winstk[3]->winname));
-               chin(0, &ch, 1);
-               win_select(ch);
-            } while ('\n' != ch);
-         }
-         putp(Cap_curs_norm);
-      }
-         break;
-
-      case 'i':
-         VIZTOGc(Show_IDLEPS);
-         break;
-
-      case 'I':
-#ifdef WARN_NOT_SMP
-         if (Cpu_tot > 1) {
-            Mode_irixps = !Mode_irixps;
-            show_msg(fmtmk("Irix mode %s", Mode_irixps ? "On" : "Off"));
-         } else
-            show_msg(err_smp);
-#else
-         Mode_irixps = !Mode_irixps;
-         show_msg(fmtmk("Irix mode %s", Mode_irixps ? "On" : "Off"));
-#endif
-         break;
-
-      case 'k':
-         if (Secure_mode) {
-            show_msg(err_secure);
-         } else {
-            int sig, pid = get_int("PID to kill");
-
-            if (-1 != pid) {
-               sig = signal_name_to_number(
-                  ask4str(fmtmk("Kill PID %d with signal [%i]"
-                     , pid, DEF_SIGNAL)));
-               if (-1 == sig) sig = DEF_SIGNAL;
-               if (sig && kill(pid, sig))
-                  show_msg(fmtmk("\aKill of PID '%d' with '%d' failed: %s"
-                     , pid, sig, strerror(errno)));
-            }
-         }
-         break;
-
-      case 'l':
-         TOGw(Curwin, View_LOADAV);
-         break;
-
-      case 'm':
-         TOGw(Curwin, View_MEMORY);
-         break;
-
-      case 'n':
-      case '#':
-         if (VIZCHKc) {
-            int num;
-            if (-1 < (num = get_int(
-               fmtmk("Maximum tasks = %d, change to (0 is unlimited)"
-                  , Curwin->maxtasks))))
-               Curwin->maxtasks = num;
-         }
-         break;
-
-      case 'o':
-         if (VIZCHKc) {
-            fields_reorder();
-            win_colsheads(Curwin);
-         }
-         break;
-
-      case 'q':
-         stop(0);
-
-      case 'r':
-         if (Secure_mode)
-            show_msg(err_secure);
-         else {
-            int pid, val;
-
-            pid = get_int("PID to renice");
-            if (-1 == pid) break;
-            val = get_int(fmtmk("Renice PID %d to value", pid));
-            if (setpriority(PRIO_PROCESS, (unsigned)pid, val))
-               show_msg(fmtmk("\aRenice of PID %d to %d failed: %s"
-                  , pid, val, strerror(errno)));
-         }
-         break;
-
-      case 'R':
-         VIZTOGc(Qsrt_NORMAL);
-         break;
-
-      case 'S':
-         if (VIZCHKc) {
-            TOGw(Curwin, Show_CTIMES);
-            show_msg(fmtmk("Cumulative time %s"
-               , CHKw(Curwin, Show_CTIMES) ? "On" : "Off"));
-         }
-         break;
-
-      case 't':
-         TOGw(Curwin, View_STATES);
-         break;
-
-      case 'u':
-         if (VIZCHKc)
-            strcpy(Curwin->colusrnam, ask4str("Which user (blank for all)"));
-         break;
-
-      case 'w':
-         if (Mode_altscr) Curwin = Curwin->prev;
-         break;
-
-      case 'W':
-      {  FILE *fp = fopen(RCfile, "w"); int i;
-
-         if (fp) {
-            fprintf(fp, "RCfile for \"%s with windows\"\t\t# shameless braggin'\n"
-               , Myname);
-            fprintf(fp, "Id:%c, "
-               "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%d\n"
-               , RCF_FILEID
-               , Mode_altscr, Mode_irixps, Delay_time, Curwin - Winstk[0]);
-            for (i = 0; i < GROUPSMAX; i++) {
-               fprintf(fp, "%s\tfieldscur=%s\n"
-                  , Winstk[i]->winname, Winstk[i]->fieldscur);
-               fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-                  , Winstk[i]->winflags
-                  , Winstk[i]->sortindx
-                  , Winstk[i]->maxtasks);
-               fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
-                  , Winstk[i]->summclr
-                  , Winstk[i]->msgsclr
-                  , Winstk[i]->headclr
-                  , Winstk[i]->taskclr);
-            }
-            fclose(fp);
-            show_msg(fmtmk("Wrote configuration to '%s'", RCfile));
-         } else
-            show_msg(fmtmk("\aFailed '%s' open: %s", RCfile, strerror(errno)));
-      }
-         break;
-
-      case 'x':
-         if (VIZCHKc) {
-            TOGw(Curwin, Show_HICOLS);
-            capsmk(Curwin);
-         }
-         break;
-
-      case 'y':
-         if (VIZCHKc) {
-            TOGw(Curwin, Show_HIROWS);
-            capsmk(Curwin);
-         }
-         break;
-
-      case 'z':
-         if (VIZCHKc) {
-            TOGw(Curwin, Show_COLORS);
-            capsmk(Curwin);
-         }
-         break;
-
-      case 'Z':
-         wins_colors();
-         break;
-
-      case '-':
-         if (Mode_altscr)
-            TOGw(Curwin, VISIBLE_tsk);
-         break;
-
-      case '_':
-         if (Mode_altscr)
-            wins_reflag(Flags_TOG, VISIBLE_tsk);
-         break;
-
-      case '=':
-         Curwin->maxtasks = 0;
-         SETw(Curwin, Show_IDLEPS | VISIBLE_tsk);
-         Monpidsidx = 0;
-         break;
-
-      case '+':
-         if (Mode_altscr)
-            SETw(Curwin, EQUWINS_cwo);
-         break;
-
-      case '<':
-         if (VIZCHKc) {
-            PFLG_t *p = Curwin->procflags + Curwin->maxpflgs - 1;
-            while (*p != Curwin->sortindx)
-               --p;
-            if (--p >= Curwin->procflags)
-               Curwin->sortindx = *p;
-         }
-         break;
-
-      case '>':
-         if (VIZCHKc) {
-            PFLG_t *p = Curwin->procflags;
-            while (*p != Curwin->sortindx)
-               ++p;
-            if (++p < Curwin->procflags + Curwin->maxpflgs)
-               Curwin->sortindx = *p;
-         }
-         break;
-
-      case '\n':          /* just ignore these, they'll have the effect */
-      case ' ':           /* of refreshing display after waking us up ! */
-         break;
-
-      default:
-         show_msg("\aUnknown command - try 'h' for help");
-   }
-}
-
-
-        /*
-         * Begin a new frame by:
-         *    1) Refreshing the all important proc table
-         *    2) Displaying uptime and load average (maybe)
-         *    3) Arranging for task/cpu states to be displayed
-         *    4) Arranging for memory & swap usage to be displayed
-         * and then, returning a pointer to the pointers to the proc_t's! */
-static proc_t **do_summary (void)
-{
-   static proc_t **p_table = NULL;
-   int p_flags = PROC_FILLMEM | PROC_FILLSTAT | PROC_FILLSTATUS;
-   WIN_t *w;
-
-      /* first try to minimize the cost of this frame (cross your fingers) */
-   w = Curwin;
-   do {
-      if (!Mode_altscr || CHKw(w, VISIBLE_tsk)) {
-         p_flags |= (CHKw(w, Show_CMDLIN) && win_fldviz(w, P_CMD)) ? PROC_FILLCOM : 0;
-         p_flags |= win_fldviz(w, P_USR) ? PROC_FILLUSR : 0;
-         p_flags |= win_fldviz(w, P_GRP) ? PROC_FILLGRP : 0;
-      }
-      if (Mode_altscr) w = w->next;
-   } while (w != Curwin);
-
-   if (!p_table) {
-         /* whoa first time, gotta' prime the pump... */
-      p_table = refreshprocs(NULL, p_flags);
-      frame_states(p_table, 0);
-      putp(Cap_clr_scr);
-      sleep(1);
-   } else
-      putp(Batch ? "\n\n" : Cap_home);
-
-
-      /*
-       ** Display Load averages */
-   if (CHKw(Curwin, View_LOADAV)) {
-      if (!Mode_altscr)
-         show_special(fmtmk(LOADAV_line, Myname, sprint_uptime()));
-      else
-         show_special(fmtmk(CHKw(Curwin, VISIBLE_tsk)
-            ? LOADAV_line_alt
-            : LOADAV_line
-            , Curwin->grpname, sprint_uptime()));
-      Msg_row += 1;
-   }
-
-      /*
-       ** Display Tasks and Cpu(s) states and also prime for potential 'pcpu',
-       ** but NO table sort yet -- that's done on a per window basis! */
-   p_table = refreshprocs(p_table, p_flags);
-   frame_states(p_table, CHKw(Curwin, View_STATES));
-
-      /*
-       ** Display Memory and Swap space usage */
-   frame_storage();
-
-   SETw(Curwin, NEWFRAM_cwo);
-   return p_table;
-
-#undef myCMD
-#undef myGRP
-}
-
 
         /*
          * Squeeze as many tasks as we can into a single window,
          * after sorting the passed proc table. */
-static void do_window (proc_t **ppt, WIN_t *q, int *lscr)
+static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
 {
 #ifdef SORT_SUPRESS
-   /* the 1 flag that DOES and 2 flags that MAY impact our proc table qsort */
+   // the 1 flag that DOES and 2 flags that MAY impact our proc table qsort
 #define srtMASK  ~( Qsrt_NORMAL | Show_CMDLIN | Show_CTIMES )
    static PFLG_t sav_indx = 0;
    static int    sav_flgs = -1;
 #endif
    int i, lwin;
 
-      /*
-       ** Display Column Headings -- and distract 'em while we sort (maybe) */
+   /*
+    ** Display Column Headings -- and distract 'em while we sort (maybe) */
    PUTP("\n%s%s%s%s", q->capclr_hdr, q->columnhdr, Caps_off, Cap_clr_eol);
 
 #ifdef SORT_SUPRESS
@@ -2476,17 +2442,16 @@ static void do_window (proc_t **ppt, WIN_t *q, int *lscr)
       sav_indx = q->sortindx;
       sav_flgs = (q->winflags & srtMASK);
 #endif
-                                                /* this one's always needed! */
-      if (CHKw(q, Qsrt_NORMAL)) Frame_srtflg = 1;
+      if (CHKw(q, Qsrt_NORMAL)) Frame_srtflg = 1; // this one's always needed!
          else Frame_srtflg = -1;
-      Frame_ctimes = CHKw(q, Show_CTIMES);      /* this and next, only maybe */
+      Frame_ctimes = CHKw(q, Show_CTIMES);        // this and next, only maybe
       Frame_cmdlin = CHKw(q, Show_CMDLIN);
       qsort(ppt, (unsigned)Frame_maxtask, sizeof(proc_t *)
          , Fieldstab[q->sortindx].sort);
 #ifdef SORT_SUPRESS
    }
 #endif
-      /* account for column headings */
+   // account for column headings
    if (!Batch) (*lscr)++;
    lwin = 1;
    i = 0;
@@ -2497,15 +2462,15 @@ static void do_window (proc_t **ppt, WIN_t *q, int *lscr)
       || ('S' != ppt[i]->state && 'Z' != ppt[i]->state))
       && ((!q->colusrnam[0])
       || (!strcmp(q->colusrnam, ppt[i]->euser)) ) ) {
-            /*
-             ** Display a process Row */
-         show_a_task(q, ppt[i]);
+         /*
+          ** Display a process Row */
+         task_show(q, ppt[i]);
          if (!Batch) (*lscr)++;
          ++lwin;
       }
       ++i;
    }
-      /* for this frame that window's toast, cleanup for next time */
+   // for this frame that window's toast, cleanup for next time
    q->winlines = 0;
    OFFw(Curwin, FLGSOFF_cwo);
 
@@ -2515,15 +2480,16 @@ static void do_window (proc_t **ppt, WIN_t *q, int *lscr)
 }
 
 
+/*######  Entry point plus two  ##########################################*/
+
         /*
          * This guy's just a *Helper* function who apportions the
-         * remaining amount of screen real estate under multiple windows
-         * -- i swear that's the whole truth, so-help-me ! */
-static void sohelpme (int wix, int max)
+         * remaining amount of screen real estate under multiple windows */
+static void framehlp (int wix, int max)
 {
    int i, rsvd, size, wins;
 
-      /* calc remaining number of visible windows + total 'user' lines */
+   // calc remaining number of visible windows + total 'user' lines
    for (i = wix, rsvd = 0, wins = 0; i < GROUPSMAX; i++) {
       if (CHKw(Winstk[i], VISIBLE_tsk)) {
          rsvd += Winstk[i]->maxtasks;
@@ -2532,14 +2498,14 @@ static void sohelpme (int wix, int max)
       }
    }
    if (!wins) wins = 1;
-      /* set aside 'rsvd' & deduct 1 line/window for the columns heading */
+   // set aside 'rsvd' & deduct 1 line/window for the columns heading
    size = (max - wins) - rsvd;
    if (0 <= size) size = max;
    size = (max - wins) / wins;
 
-      /* for remaining windows, set do_window's winlines to either the
-         user's maxtask (1st choice) or our 'foxized' size calculation
-         (foxized  adj. -  'fair and balanced') */
+   /* for remaining windows, set WIN_t winlines to either the user's
+      maxtask (1st choice) or our 'foxized' size calculation
+      (foxized  adj. -  'fair and balanced') */
    for (i = wix ; i < GROUPSMAX; i++) {
       if (CHKw(Winstk[i], VISIBLE_tsk)) {
          Winstk[i]->winlines =
@@ -2569,31 +2535,31 @@ static void sohelpme (int wix, int max)
          * (You say he even JUSTIFIES comments in his FUNCTION BODY?)
          * (Jeeze, how COULD I have known?  That sob's NOT IN SCOPE!)
          */
-static void so_lets_see_em (void)
+static void frame_make (void)
 {
    proc_t **ppt;
    int i, scrlins;
 
    Msg_row = scrlins = 0;
-   ppt = do_summary();
+   ppt = summary_show();
    Max_lines = (Screen_rows - Msg_row) - 1;
 
    if (CHKw(Curwin, EQUWINS_cwo))
       wins_reflag(Flags_OFF, EQUWINS_cwo);
 
-      /* sure hope each window's columns header begins with a newline... */
+   // sure hope each window's columns header begins with a newline...
    putp(tg2(0, Msg_row));
 
    if (!Mode_altscr) {
-         /* only 1 window to show so, piece o' cake */
+      // only 1 window to show so, piece o' cake
       Curwin->winlines = Curwin->maxtasks;
-      do_window(ppt, Curwin, &scrlins);
+      window_show(ppt, Curwin, &scrlins);
    } else {
-         /* maybe NO window is visible but assume, pieces o' cakes */
+      // maybe NO window is visible but assume, pieces o' cakes
       for (i = 0 ; i < GROUPSMAX; i++) {
          if (CHKw(Winstk[i], VISIBLE_tsk)) {
-            sohelpme(i, Max_lines - scrlins);
-            do_window(ppt, Winstk[i], &scrlins);
+            framehlp(i, Max_lines - scrlins);
+            window_show(ppt, Winstk[i], &scrlins);
          }
          if (Max_lines <= scrlins) break;
       }
@@ -2605,8 +2571,6 @@ static void so_lets_see_em (void)
    fflush(stdout);
 }
 
-
-/*######  Entry point  ###################################################*/
 
         /*
          * Darling, you DO look simply MARVELOUS -- have you been dieting?
@@ -2631,14 +2595,14 @@ int main (int dont_care_argc, char **argv)
    the usual slopped together, hacked up illogic.  I'm talkin' a carefully
    reasoned, artfully crafted, extremely capable, well behaved executable!
 
-   Well then, here, try THIS sandwich...
-                                                           +-------------+ */
-   windows_stage1();                                    /* top (sic) slice */
-   configs_read();                                      /* > spread etc, < */
-   parse_args(&argv[1]);                                /* > lean stuff, < */
-   whack_terminal();                                    /* > onions etc. < */
-   windows_stage2();                                    /* as bottom slice */
-  /*                                                       +-------------+ */
+   Well then, here, try THIS sandwich:  */
+                                        //                 +-------------+
+   windows_stage1();                    //                 top (sic) slice
+   configs_read();                      //                 > spread etc, <
+   parse_args(&argv[1]);                //                 > lean stuff, <
+   whack_terminal();                    //                 > onions etc. <
+   windows_stage2();                    //                 as bottom slice
+                                        //                 +-------------+
    signal(SIGALRM,  stop);
    signal(SIGHUP,   stop);
    signal(SIGINT,   stop);
@@ -2655,8 +2619,8 @@ int main (int dont_care_argc, char **argv)
       struct timeval tv;
       fd_set fs;
       char c;
-                                                           /*  This is it? */
-      so_lets_see_em();                                    /*  Impossible! */
+                                        //                     This is it?
+      frame_make();                     //                     Impossible!
 
       if (Msg_awaiting) show_msg(Msg_delayed);
       if (0 < Loops) --Loops;
@@ -2664,8 +2628,8 @@ int main (int dont_care_argc, char **argv)
 
       if (Batch)
          sleep((unsigned)Delay_time);
-      else {                             /*  Linux reports time not slept, */
-         tv.tv_sec = Delay_time;         /*  so we must reinit every time. */
+      else {                            //   Linux reports time not slept,
+         tv.tv_sec = Delay_time;        //   so we must reinit every time.
          tv.tv_usec = (Delay_time - (int)Delay_time) * 1000000;
          FD_ZERO(&fs);
          FD_SET(STDIN_FILENO, &fs);
@@ -2676,7 +2640,7 @@ int main (int dont_care_argc, char **argv)
    }
 
   /*
-   (listen before we return, aren't you sort of sad for 'so_lets_see-em'?)
+   (listen before we return, aren't you sort of sad for old 'frame_make'?)
    (so, uh, why don't we just move this main guy to near the beginning of)
    (the C source file.  then that poor old function would be sure to have)
    (at least a chance at scopin' us out, ya know what i mean?  so what do)
