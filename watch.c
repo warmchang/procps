@@ -196,6 +196,7 @@ main(int argc, char *argv[])
       char *header;
       FILE *p;
       int x, y;
+      int oldeolseen = 1;
 
       if (screen_size_changed)
 	{
@@ -240,7 +241,7 @@ main(int argc, char *argv[])
 		      c = getc(p);
 		    while (c != EOF && !isprint(c) && c != '\n' && c != '\t');
 		  if (c == '\n')
-		    if (x == 0) {
+		    if (!oldeolseen && x == 0) {
 		      x=-1;
 		      continue;
 		    } else
@@ -268,6 +269,7 @@ main(int argc, char *argv[])
 	      if (attr)
 		standend();
 	    }
+	  oldeolseen = eolseen;
 	}
 
       pclose(p);
