@@ -470,19 +470,56 @@ static int pr_vsz(char *restrict const outbuf, const proc_t *restrict const pp){
 /********* maybe standard (Unix98 only defines the header) **********/
 
 
-/*
- * "PRI" is created by "opri", or by "pri" when -c is used.
- *
- * Unix98 only specifies that a high "PRI" is low priority.
- * Sun and SCO add the -c behavior. Sun defines "pri" and "opri".
- * Linux may use "priority" for historical purposes.
- */
+// "PRI" is created by "opri", or by "pri" when -c is used.
+//
+// Unix98 only specifies that a high "PRI" is low priority.
+// Sun and SCO add the -c behavior. Sun defines "pri" and "opri".
+// Linux may use "priority" for historical purposes.
+//
+// According to the kernel's fs/proc/array.c and kernel/sched.c source,
+// the kernel reports it in /proc via this:
+//        p->prio - MAX_RT_PRIO
+// such that "RT tasks are offset by -200. Normal tasks are centered
+// around 0, value goes from -16 to +15" but who knows if that is
+// before or after the conversion...
+//
+// <linux/sched.h> says:
+// MAX_RT_PRIO is currently 100.       (so we see 0 in /proc)
+// RT tasks have a p->prio of 0 to 99. (so we see -100 to -1)
+// non-RT tasks are from 100 to 139.   (so we see 0 to 39)
+// Lower values have higher priority, as in the UNIX standard.
+//
+// In any case, pp->priority+100 should get us back to what the kernel
+// has for p->prio.
+//
+// Test results with the "yes" program on a 2.6.x kernel:
+//
+// # ps -C19,_20 -o pri,opri,intpri,priority,ni,pcpu,pid,comm
+// PRI PRI PRI PRI  NI %CPU  PID COMMAND
+//   0  99  99  39  19 10.6 8686 19
+//  34  65  65   5 -20 94.7 8687 _20
+//
+// Grrr. So the UNIX standard "PRI" must NOT be from "pri".
+// Either of the others will do. We use "opri" for this.
+// (and use "pri" when the "-c" option is used)
+// Probably we should have Linux-specific "pri_for_l" and "pri_for_lc"
+//
+// sched_get_priority_min.2 says the Linux static priority is
+// 1..99 for RT and 0 for other... maybe 100 is kernel-only?
+//
+// A nice range would be -99..0 for RT and 1..40 for normal,
+// which is pp->priority+1. (3-digit max, positive is normal,
+// negative or 0 is RT, and meets the standard for PRI)
+//
+// "priority"         (was -20..20, now -100..39)
 static int pr_priority(char *restrict const outbuf, const proc_t *restrict const pp){    /* -20..20 */
     return snprintf(outbuf, COLWID, "%ld", pp->priority);
 }
+// "pri"               (was 20..60, now    0..139)
 static int pr_pri(char *restrict const outbuf, const proc_t *restrict const pp){         /* 20..60 */
     return snprintf(outbuf, COLWID, "%ld", 39 - pp->priority);
 }
+// "intpri" and "opri" (was 39..79, now  -40..99)
 static int pr_opri(char *restrict const outbuf, const proc_t *restrict const pp){        /* 39..79 */
     return snprintf(outbuf, COLWID, "%ld", 60 + pp->priority);
 }
@@ -724,6 +761,8 @@ static int pr_pmem(char *restrict const outbuf, const proc_t *restrict const pp)
   return snprintf(outbuf, COLWID, "%2u.%u", (unsigned)(pmem/10), (unsigned)(pmem%10));
 }
 
+// HP-UX "cls" would use: RT RR RR2 ???? HPUX FIFO KERN
+// We're using a 2-char version like... Sun maybe? I forget.
 static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp){
   switch(pp->sched){
   case -1: return snprintf(outbuf, COLWID, "-");  /* not reported */
@@ -1039,7 +1078,7 @@ static const format_struct format_array[] = {
 {"c",         "C",       pr_c,        sr_pcpu,    2,   0,    SUN, ET|RIGHT},
 {"caught",    "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigcatch*/
 {"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, TO|LEFT},
-{"cls",       "-",       pr_nop,      sr_nop,     1,   0,    HPU, AN|RIGHT},
+{"cls",       "CLS",     pr_class,    sr_sched,   3,   0,    HPU, AN|RIGHT}, /*says HPUX or RT*/
 {"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, AN|RIGHT},
 {"cmd",       "CMD",     pr_args,     sr_cmd,    16, ARG,    DEC, PO|UNLIMITED}, /*ucomm*/
 {"cmin_flt",  "-",       pr_nop,      sr_cmin_flt, 1,  0,    LNX, AN|RIGHT},
@@ -1059,6 +1098,7 @@ static const format_struct format_array[] = {
 {"egid",      "EGID",    pr_egid,     sr_egid,    5,   0,    LNX, ET|RIGHT},
 {"egroup",    "EGROUP",  pr_egroup,   sr_egroup,  8, GRP,    LNX, ET|USER},
 {"eip",       "EIP",     pr_eip,      sr_kstk_eip, 8,  0,    LNX, TO|RIGHT},
+{"emul",      "EMUL",    pr_nop,      sr_nop,    13,   0,    BSD, PO|LEFT}, /* "FreeBSD ELF32" and such */
 {"end_code",  "E_CODE",  pr_nop,      sr_end_code, 8,  0,    LNx, PO|RIGHT},
 {"environ","ENVIRONMENT",pr_nop,      sr_nop,    11, ENV,    LNx, PO|UNLIMITED},
 {"esp",       "ESP",     pr_esp,      sr_kstk_esp, 8,  0,    LNX, TO|RIGHT},
@@ -1089,6 +1129,7 @@ static const format_struct format_array[] = {
 {"ktracep",   "KTRACEP", pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
 {"label",     "LABEL",   pr_context,  sr_nop,    31,  0,     SGI, ET|LEFT},
 {"lim",       "LIM",     pr_lim,      sr_rss_rlim, 5,  0,    BSD, AN|RIGHT},
+{"lockname",  "LOCK",    pr_nop,      sr_nop,     6, WCH,    BSD, TO|WCHAN}, /* mutex (FreeBSD) */
 {"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, AN|LEFT}, /*logname*/   /* double check */
 {"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, AN|LEFT}, /*login*/
 {"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
@@ -1138,8 +1179,8 @@ static const format_struct format_array[] = {
 {"ppid",      "PPID",    pr_ppid,     sr_ppid,    5,   0,    U98, PO|PIDMAX|RIGHT},
 {"pri",       "PRI",     pr_pri,      sr_nop,     3,   0,    XXX, TO|RIGHT},
 {"priority",  "PRI",     pr_priority, sr_priority, 3,  0,    LNX, TO|RIGHT}, /*ni,nice*/ /* from Linux sorting names */
-{"prmgrp",    "-",       pr_nop,      sr_nop,     1,   0,    HPU, PO|RIGHT},
-{"prmid",     "-",       pr_nop,      sr_nop,     1,   0,    HPU, PO|RIGHT},
+{"prmgrp",    "PRMGRP",  pr_nop,      sr_nop,    12,   0,    HPU, PO|RIGHT},
+{"prmid",     "PRMID",   pr_nop,      sr_nop,    12,   0,    HPU, PO|RIGHT},
 {"pset",      "PSET",    pr_nop,      sr_nop,     4,   0,    DEC, TO|RIGHT},
 {"psr",       "PSR",     pr_psr,      sr_nop,     3,   0,    DEC, TO|RIGHT},
 {"psxpri",    "PPR",     pr_nop,      sr_nop,     3,   0,    DEC, TO|RIGHT},
@@ -1206,6 +1247,7 @@ static const format_struct format_array[] = {
 {"trss",      "TRSS",    pr_trs,      sr_trs,     4, MEM,    BSD, PO|RIGHT}, /* 4.3BSD NET/2 */
 {"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, PO|PIDMAX|RIGHT},
 {"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, PO|PIDMAX|RIGHT},
+{"tsid",      "TSID",    pr_nop,      sr_nop,     5,   0,    BSD, PO|PIDMAX|RIGHT},
 {"tsiz",      "TSIZ",    pr_tsiz,     sr_nop,     4,   0,    BSD, PO|RIGHT},
 {"tt",        "TT",      pr_tty8,     sr_tty,     8,   0,    BSD, PO|LEFT},
 {"tty",       "TT",      pr_tty8,     sr_tty,     8,   0,    U98, PO|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */
@@ -1219,7 +1261,7 @@ static const format_struct format_array[] = {
 {"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT},
 {"uname",     "USER",    pr_euser,    sr_euser,   8, USR,    DEC, ET|USER}, /* man page misspelling of user? */
 {"upr",       "UPR",     pr_nop,      sr_nop,     3,   0,    BSD, TO|RIGHT}, /*usrpri*/
-{"uprocp",    "-",       pr_nop,      sr_nop,     1,   0,    BSD, AN|RIGHT},
+{"uprocp",    "UPROCP",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
 {"user",      "USER",    pr_euser,    sr_euser,   8, USR,    U98, ET|USER}, /* BSD n forces this to UID */
 {"usertime",  "USER",    pr_nop,      sr_nop,     4,   0,    DEC, ET|RIGHT},
 {"usrpri",    "UPR",     pr_nop,      sr_nop,     3,   0,    DEC, TO|RIGHT}, /*upr*/

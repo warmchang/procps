@@ -307,25 +307,23 @@ static void getrunners(unsigned int *restrict running, unsigned int *restrict bl
   if((proc=opendir("/proc"))==NULL) crash("/proc");
 
   while(( ent=readdir(proc) )) {
-    unsigned size;
+    char tbuf[32];
+    char *cp;
     int fd;
-    char filename[80];
     char c;
+
     if (!isdigit(ent->d_name[0])) continue;
-    sprintf(filename, "/proc/%s/stat", ent->d_name);
-    fd = open(filename, O_RDONLY, 0);
+    sprintf(tbuf, "/proc/%s/stat", ent->d_name);
+
+    fd = open(tbuf, O_RDONLY, 0);
     if (fd == -1) continue;
-    read(fd,buff,BUFFSIZE-1);
-    sscanf(
-      buff,
-      "%*d %*s %c "
-      "%*d %*d %*d %*d %*d %*u %*u"
-      " %*u %*u %*u %*d %*d %*d %*d %*d %*d %*u %*u %*d %*u %u"
-      /*  " %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u\n"  */ ,
-      &c,
-      &size
-    );
+    memset(tbuf, '\0', sizeof tbuf); // didn't feel like checking read()
+    read(fd, tbuf, sizeof tbuf - 1); // need 32 byte buffer at most
     close(fd);
+
+    cp = strrchr(tbuf, ')');
+    if(!cp) continue;
+    c = cp[2];
 
     if (c=='R') {
       (*running)++;
