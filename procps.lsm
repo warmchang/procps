@@ -1,15 +1,15 @@
 Begin4
 Title: procps
-Version: 3.1.8
-Entered-date: 2003-03-19
+Version: 3.1.9
+Entered-date: 2003-03-20
 Description: Linux system utilities
 Keywords: procps /proc libproc sysctl pmap ps uptime tload
 	free w top vmstat watch skill snice kill pgrep pkill
 Author: Albert Cahalan, Michael K. Johnson, Jim Warner, etc.
 Maintained-by: various <procps-feedback@lists.sf.net>
 Primary-site: http://procps.sf.net/
-	239kB procps-3.1.8.tar.gz
+	239kB procps-3.1.9.tar.gz
 Alternate-site: http://www.debian.org/Packages/unstable/base/procps.html
-	239kB procps-3.1.8.tar.gz
+	239kB procps-3.1.9.tar.gz
 Copying-policy: mixed
 End
