@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <getopt.h>
+#include <limits.h>
 
 #include "c.h"
 #include "fileutils.h"
@@ -29,7 +30,12 @@
 #include "proc/version.h" /* procps_version */
 
 
-#define grow_size(x)	(x = x * 5 / 4 + 1024)
+#define grow_size(x) do { \
+	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
+		xerrx(EXIT_FAILURE, _("integer overflow")); \
+	(x) = (x) * 5 / 4 + 1024; \
+} while (0)
+
 #define safe_free(x)	if (x) { free(x); x=NULL; }
 
 
