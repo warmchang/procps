@@ -37,15 +37,18 @@ static void print_uptime_since()
     struct timeval tim;
 
     /* Get the current time and convert it to a double */
-    gettimeofday(&tim, NULL);
+	if (gettimeofday(&tim, NULL) != 0)
+        xerr(EXIT_FAILURE, "gettimeofday");
     now = tim.tv_sec + (tim.tv_usec / 1000000.0);
 
     /* Get the uptime and calculate when that was */
-    procps_uptime(&uptime_secs, &idle_secs);
+	if (procps_uptime(&uptime_secs, &idle_secs) < 0)
+		xerrx(EXIT_FAILURE, "uptime");
     up_since_secs = (time_t) ((now - uptime_secs) + 0.5);
 
     /* Show this */
-    up_since = localtime(&up_since_secs);
+	if ((up_since = localtime(&up_since_secs)) == NULL)
+		xerrx(EXIT_FAILURE, "localtime");
     printf("%04d-%02d-%02d %02d:%02d:%02d\n",
         up_since->tm_year + 1900, up_since->tm_mon + 1, up_since->tm_mday,
         up_since->tm_hour, up_since->tm_min, up_since->tm_sec);
