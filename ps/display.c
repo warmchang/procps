@@ -330,19 +330,51 @@ static void simple_spew(void){
     exit(1);
   }
   memset(&buf, '#', sizeof(proc_t));
-  while(readproc(ptp,&buf)){
-    if(want_this_proc(&buf)){
-      if(thread_flags & TF_show_proc) show_one_proc(&buf, proc_format_list);
-      if(thread_flags & TF_show_task){
+  switch(thread_flags & (TF_show_proc|TF_loose_tasks|TF_show_task)){
+  case TF_show_proc:                   // normal non-thread output
+    while(readproc(ptp,&buf)){
+      if(want_this_proc(&buf)){
+        show_one_proc(&buf, proc_format_list);
+      }
+      if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
+      if(buf.environ) free((void*)*buf.environ); // ought to reuse
+    }
+    break;
+  case TF_show_proc|TF_loose_tasks:    // H option
+    while(readproc(ptp,&buf)){
+      proc_t buf2;
+      // must still have the process allocated
+      while(readtask(ptp,&buf,&buf2)){
+        if(!want_this_proc(&buf)) continue;
+        show_one_proc(&buf2, task_format_list);
+      }
+      if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
+      if(buf.environ) free((void*)*buf.environ); // ought to reuse
+    }
+    break;
+  case TF_show_proc|TF_show_task:      // m and -m options
+    while(readproc(ptp,&buf)){
+      if(want_this_proc(&buf)){
+        proc_t buf2;
+        show_one_proc(&buf, proc_format_list);
+        // must still have the process allocated
+        while(readtask(ptp,&buf,&buf2)) show_one_proc(&buf2, task_format_list);
+      }
+      if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
+      if(buf.environ) free((void*)*buf.environ); // ought to reuse
+    }
+    break;
+  case TF_show_task:                   // -L and -T options
+    while(readproc(ptp,&buf)){
+      if(want_this_proc(&buf)){
         proc_t buf2;
         // must still have the process allocated
         while(readtask(ptp,&buf,&buf2)) show_one_proc(&buf2, task_format_list);
-        // must not attempt to free cmdline and environ
       }
+      if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
+      if(buf.environ) free((void*)*buf.environ); // ought to reuse
     }
-    if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
-    if(buf.environ) free((void*)*buf.environ); // ought to reuse
-//    memset(&buf, '#', sizeof(proc_t));
+    break;
   }
   closeproc(ptp);
 }

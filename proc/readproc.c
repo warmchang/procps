@@ -666,7 +666,7 @@ static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict con
       closedir(PT->taskdir);
     }
     // use "path" as some tmp space
-    snprintf(path, PROCPATHLEN, "%s/task", PT->path);
+    snprintf(path, PROCPATHLEN, "/proc/%d/task", p->tgid);
     PT->taskdir = opendir(path);
     if(!PT->taskdir) return 0;
     PT->taskdir_user = p->tgid;
@@ -679,7 +679,7 @@ static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict con
   t->tid = strtoul(ent->d_name, NULL, 10);
   t->tgid = p->tgid;
   t->ppid = p->ppid;  // cover for kernel behavior? we want both actually...?
-  snprintf(path, PROCPATHLEN, "%s/task/%s", PT->path, ent->d_name);
+  snprintf(path, PROCPATHLEN, "/proc/%d/task/%s", p->tgid, ent->d_name);
   return 1;
 }
 
