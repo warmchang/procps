@@ -211,9 +211,9 @@ enum pflag {
 #define TOGw(q,f)   q->winflags ^=  (f)
 #define SETw(q,f)   q->winflags |=  (f)
 #define OFFw(q,f)   q->winflags &= ~(f)
-#define VIZCHKc     (!Show_altscr || Curwin->winflags & VISIBLE_tsk) \
+#define VIZCHKc     (!Mode_altscr || Curwin->winflags & VISIBLE_tsk) \
                         ? 1 : win_warn()
-#define VIZTOGc(f)  (!Show_altscr || Curwin->winflags & VISIBLE_tsk) \
+#define VIZTOGc(f)  (!Mode_altscr || Curwin->winflags & VISIBLE_tsk) \
                         ? TOGw(Curwin, f) : win_warn()
 
         /* This structure stores configurable information for each window.
@@ -258,7 +258,7 @@ typedef struct win {
 /*######  Display Support *Data*  ########################################*/
 
         /* An rcfile 'footprint' used to invalidate existing */
-#define RCF_FILEID  'd'
+#define RCF_FILEID  'e'
 
         /* The default fields displayed and their order,
            if nothing is specified by the loser, oops user */
@@ -268,12 +268,10 @@ typedef struct win {
 #define MEM_FIELDS  "AMNOPQRSTUWbcdefiklxyVGHJ"
 #define USR_FIELDS  "CDEFABWghiknopqrstuxyLJMV"
 
-
         /* These are the possible fscanf formats used in /proc/stat
            reads during history processing. */
 #define CPU_FMTS_MULTI  "cpu%*d %lu %lu %lu %lu\n"
 #define CPU_FMTS_JUST1  "cpu %lu %lu %lu %lu\n"
-
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
@@ -402,26 +400,26 @@ typedef struct win {
         /* Windows/Field Group Help specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
 #define WINDOWS_help \
-   "%s's \01Help for Windows and Field Groups\02 - \"Current\" = \01 %s \06\n" \
+   "%s's \01Help for Windows / Field Groups\02 - \"Current\" = \01 %s \06\n" \
    "\n" \
    ". Use multiple \01windows\02, each with separate config opts (color,fields,sort,etc)\n" \
-   ". The '\01Current\05' window controls the \01Summary Area\02 and responds to your \01Commands\02\n" \
+   ". The 'current' window controls the \01Summary Area\02 and responds to your \01Commands\02\n" \
    "  . that window's \01task display\02 can be turned \01Off\02 & \01On\02, growing/shrinking others\n" \
    "  . with \01NO\02 task display, some commands will be \01disabled\02 ('i','R','n','c', etc)\n" \
-   "    until a \01different window\02 has been activated, making it the '\01Current\05' window\n" \
-   ". You \01change\02 a '\01Current\05' window by: \01 1\02) cycling forward/backward; \01 2\02) choosing\n" \
-   "  a specific window with 'O' or 'F'; or \01 3\02) exiting the color mapping screen\n" \
-   ". Commands \01available anytime\02 -------------\n" \
+   "    until a \01different window\02 has been activated, making it the 'current' window\n" \
+   ". You \01change\02 the 'current' window by: \01 1\02) cycling forward/backward;\01 2\02) choosing\n" \
+   "  a specific window with 'O' or 'F'; or\01 3\02) exiting the color mapping screen\n" \
+   ". Commands \01available anytime   -------------\02\n" \
    "    \01A\02       . Alternate display mode toggle, show \01Single\02 / \01Multiple\02 windows\n" \
-   "    O or F  . Choose another field group and make it '\01Current\05', or change now\n" \
-   "              by selecting a number: \01 1\02 :%s; \01 2\02 :%s; \01 3\02 :%s; \01 4\02 :%s\n" \
-   ". Commands \01requiring\02 '\01A\02' mode  -----------\n" \
-   "    g       . Change the '\01Current\05' window name (field group)\n" \
-   " \01*\04  a , w   . Cycle through all four windows:  \01a\02 Forward;  \01w\02 Backward\n" \
-   " \01*\04  - , _   . Show/Hide:  '\01-\05' \01Current\02 window;  '\01_\05' all \01Visible\02/\01Invisible\02\n" \
+   "    O or F  . Choose another field group and make it 'current', or change now\n" \
+   "              by selecting a number from: \01 1\02 =%s;\01 2\02 =%s;\01 3\02 =%s; or\01 4\02 =%s\n" \
+   ". Commands \01requiring\02 '\01A\02' mode\01  -------------\02\n" \
+   "    g       . Change the \01Name\05 of the 'current' window/field group\n" \
+   " \01*\04  a , w   . Cycle through all four windows:  '\01a\05' Forward; '\01w\05' Backward\n" \
+   " \01*\04  - , _   . Show/Hide:  '\01-\05' \01Current\02 window; '\01_\05' all \01Visible\02/\01Invisible\02\n" \
    "  The screen will be divided evenly between task displays.  But you can make\n" \
    "  some \01larger\02 or \01smaller\02, using '\01n\02' and '\01i\02' commands.  Then later you could:\n" \
-   " \01*\04  = , +   . Rebalance tasks:  '\01=\05' \01Current\02 window;  '\01+\05' \01Every\02 window\n" \
+   " \01*\04  = , +   . Rebalance tasks:  '\01=\05' \01Current\02 window; '\01+\05' \01Every\02 window\n" \
    "              (this also forces the \01current\02 or \01every\02 window to become visible)\n" \
    "\n" \
    "In '\01A\02' mode, '\01*\04' keys are your \01essential\02 commands.  Please try the '\01a\02' and '\01w\02'\n" \
@@ -505,7 +503,6 @@ typedef struct win {
 //atic void        so_lets_see_em (void);
 /*------  Entry point  ---------------------------------------------------*/
 //     int         main (int dont_care_argc, char **argv);
-
 
         /* just sanity check(s)... */
 #if USRNAMSIZ < GETBUFSIZ

@@ -112,8 +112,9 @@ static int  Screen_cols, Screen_rows, Max_lines;
 static int  Msg_row;
 
         /* Global/Non-windows mode stuff that IS persistent (in rcfile) */
-static int    Show_altscr;      /* 'A' - 'Alt' display mode (multi windows)  */
-static int    Show_irixps = 1;  /* 'I' - Irix vs. Solaris mode (SMP-only)    */
+static int    Mode_altscr;      /* 'A' - 'Alt' display mode (multi windows)  */
+        /* next toggle physically alters a proc_t, it CANNOT be window based */
+static int    Mode_irixps = 1;  /* 'I' - Irix vs. Solaris mode (SMP-only)    */
 static float  Delay_time = DEF_DELAY;  /* how long to sleep between updates  */
 
         /* Global/Non-windows mode stuff that is NOT persistent */
@@ -949,7 +950,7 @@ static void before (char *me)
          *   ordinary users are allowed to do. */
         /* '$HOME/RCfile' contains multiple lines - 2 global + 3 per window.
          *   line 1: a shameless advertisement
-         *   line 2: an id, Show_altcsr, Show_irixps, Delay_time and Curwin.
+         *   line 2: an id, Mode_altcsr, Mode_irixps, Delay_time and Curwin.
          *           If running in secure mode via the /etc/rcfile,
          *           Delay_time will be ignored except for root.
          * For each of the 4 windows:
@@ -985,8 +986,8 @@ static void configs_read (void)
    if (fp) {
       fgets(fbuf, sizeof(fbuf), fp);    /* ignore shameless advertisement */
       if (5 != (fscanf(fp, "Id:%c, "
-         "Show_altscr=%d, Show_irixps=%d, Delay_time=%f, Curwin=%d\n"
-         , &id, &Show_altscr, &Show_irixps, &delay, &i)))
+         "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%f, Curwin=%d\n"
+         , &id, &Mode_altscr, &Mode_irixps, &delay, &i)))
             std_err(fmtmk(err_rc, RCfile));
 
          /* you saw that, right?  (fscanf stickin' it to 'i') */
@@ -1286,7 +1287,7 @@ static void win_colsheads (WIN_t *q)
 
       /* build a preliminary columns header not to exceed screen width
          (and account for a possible leading window number) */
-   if (Show_altscr) strcpy(q->columnhdr, " "); else q->columnhdr[0] = '\0';
+   if (Mode_altscr) strcpy(q->columnhdr, " "); else q->columnhdr[0] = '\0';
    for (i = 0; i < q->maxpflgs; i++) {
       h = Fieldstab[q->procflags[i]].head;
          /* oops, won't fit -- we're outta here... */
@@ -1304,7 +1305,7 @@ static void win_colsheads (WIN_t *q)
       /* now we can build the true run-time columns header and format the
          command column heading if P_CMD is really being displayed --
          show_a_task is aware of the addition of winnum to the header */
-   sprintf(q->columnhdr, "%s", Show_altscr ? fmtmk("%d", q->winnum) : "");
+   sprintf(q->columnhdr, "%s", Mode_altscr ? fmtmk("%d", q->winnum) : "");
    for (i = 0; i < q->maxpflgs; i++) {
          /* are we gonna' need the kernel symbol table? */
       if (P_WCHAN == q->procflags[i]) needpsdb = 1;
@@ -1630,7 +1631,7 @@ static void windows_stage1 (void)
    Winstk[3]->next = Winstk[0];
    Winstk[0]->prev = Winstk[3];
    Curwin = Winstk[0];
-   Show_altscr = 0;
+   Mode_altscr = 0;
 }
 
 
@@ -1643,7 +1644,7 @@ static void windows_stage2 (void)
    int i;
 
    if (Batch) {
-      Show_altscr = 0;
+      Mode_altscr = 0;
       OFFw(Curwin, Show_COLORS);
    }
    wins_resize(0);
@@ -1781,7 +1782,7 @@ static void frame_states (proc_t **p, int show)
       if (this->pcpu > 999) this->pcpu = 999;
          /* if in Solaris mode, adjust cpu percentage not only for the cpu
             the process is running on, but for all cpus together */
-      if (!Show_irixps) this->pcpu /= Cpu_tot;
+      if (!Mode_irixps) this->pcpu /= Cpu_tot;
 
       total++;
    } /* end: while 'pids' */
@@ -1823,7 +1824,7 @@ static void frame_states (proc_t **p, int show)
          for (i = 0; i < Cpu_tot; i++) {
             sprintf(tmp, "%-6scpu%-2d:"         /* [ cpu states as ]      */
                , i ? " " : "State"              /*    'State cpu0 : ... ' */
-               , Show_irixps ? i : Cpu_map[i]); /*    '      cpu1 : ... ' */
+               , Mode_irixps ? i : Cpu_map[i]); /*    '      cpu1 : ... ' */
             cpudo(fp, CPU_FMTS_MULTI, &smpcpu[i], tmp);
             Msg_row += 1;
          }
@@ -1928,7 +1929,7 @@ static void show_a_task (WIN_t *q, proc_t *task)
 
       /* since win_colsheads adds a number to the window's column header,
          we must begin a row with that in mind... */
-   pad = Show_altscr;
+   pad = Mode_altscr;
    if (pad) strcpy(rbuf, " "); else rbuf[0] = '\0';
 
    for (i = 0; i < q->maxpflgs; i++) {
@@ -2121,40 +2122,42 @@ static void do_key (unsigned c)
 
    switch (c) {
                        /* begin windows grouping /////////////////////////// */
+      case '=':                 /* 'Equals' lower case --------------------- */
+         /* special Key:            equalize current window (& make viz) ...
+            . began life as 'windows' oriented and restricted to Mode_altscr!
+            . but symbiosis of documenting and further testing led to lifting
+              of restrictions -- we feel MUCH better now, thank-you-SO-much! */
+         Curwin->maxtasks = 0;
+         SETw(Curwin, Show_IDLEPS | VISIBLE_tsk);
+         /* special Provision:
+            . escape from monitoring selected pids ('-p' cmdline switch)
+              -- just seems to go naturally with these new provisions
+            . and who knows, maybe the man doc will NOT be overlooked */
+         Monpidsidx = 0;
+         break;
+
+      case '+':                 /* 'Equals' upper case --------------------- */
+         if (Mode_altscr)       /*  equalize ALL task wins (& make viz) .... */
+            SETw(Curwin, EQUWINS_cwo);
+         break;
+
       case '-':                 /* 'Dash' lower case ----------------------- */
-         if (Show_altscr)
+         if (Mode_altscr)
             TOGw(Curwin, VISIBLE_tsk);
          break;
 
       case '_':                 /* 'Dash' upper case ----------------------- */
-         if (Show_altscr)       /* switcharoo, all viz & inviz ............. */
+         if (Mode_altscr)       /*  switcharoo, all viz & inviz ............ */
             wins_reflag(Flags_TOG, VISIBLE_tsk);
          break;
 
-      case '=':                 /* 'Equals' lower case --------------------- */
-         if (Show_altscr) {     /* equalize task display ................... */
-            Curwin->maxtasks = 0;
-            SETw(Curwin, Show_IDLEPS | VISIBLE_tsk);
-         }
-         break;
-
-      case '+':                 /* 'Equals' upper case --------------------- */
-         /* Special New Provision:
-            . escape from monitoring selected pids ('-p' cmdline switch)
-              -- just seems to go naturally with this new '+' command key
-            . and who knows, maybe the documentation will NOT be overlooked */
-         Monpidsidx = 0;
-         if (Show_altscr)       /* equalize ALL task windows (& make viz) .. */
-            SETw(Curwin, EQUWINS_cwo);
-         break;
-
       case 'A':
-         Show_altscr = !Show_altscr;
+         Mode_altscr = !Mode_altscr;
          wins_resize(0);
          break;
 
       case 'a':
-         if (Show_altscr) Curwin = Curwin->next;
+         if (Mode_altscr) Curwin = Curwin->next;
          break;
 
       case 'F':
@@ -2163,7 +2166,7 @@ static void do_key (unsigned c)
          break;
 
       case 'g':
-         if (Show_altscr) {
+         if (Mode_altscr) {
             char tmp[GETBUFSIZ];
             strcpy(tmp, ask4str(fmtmk("Rename window '%s' to (0-3 chars)"
                , Curwin->winname)));
@@ -2172,7 +2175,7 @@ static void do_key (unsigned c)
          break;
 
       case 'w':
-         if (Show_altscr) Curwin = Curwin->prev;
+         if (Mode_altscr) Curwin = Curwin->prev;
          break;
                        /* end windows grouping ///////////////////////////// */
       case 'b':
@@ -2204,13 +2207,13 @@ static void do_key (unsigned c)
       case 'I':
 #ifdef WARN_NOT_SMP
          if (Cpu_tot > 1) {
-            Show_irixps = !Show_irixps;
-            show_msg(fmtmk("Irix mode %s", Show_irixps ? "On" : "Off"));
+            Mode_irixps = !Mode_irixps;
+            show_msg(fmtmk("Irix mode %s", Mode_irixps ? "On" : "Off"));
          } else
             show_msg(err_smp);
 #else
-         Show_irixps = !Show_irixps;
-         show_msg(fmtmk("Irix mode %s", Show_irixps ? "On" : "Off"));
+         Mode_irixps = !Mode_irixps;
+         show_msg(fmtmk("Irix mode %s", Mode_irixps ? "On" : "Off"));
 #endif
          break;
 
@@ -2316,9 +2319,9 @@ static void do_key (unsigned c)
             fprintf(fp, "RCfile for \"%s with windows\"\t\t# shameless braggin'\n"
                , Myname);
             fprintf(fp, "Id:%c, "
-               "Show_altscr=%d, Show_irixps=%d, Delay_time=%.1f, Curwin=%d\n"
+               "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.1f, Curwin=%d\n"
                , RCF_FILEID
-               , Show_altscr, Show_irixps, Delay_time, Curwin - Winstk[0]);
+               , Mode_altscr, Mode_irixps, Delay_time, Curwin - Winstk[0]);
             for (i = 0; i < GROUPSMAX; i++) {
                fprintf(fp, "%s\tfieldscur=%s\n"
                   , Winstk[i]->winname, Winstk[i]->fieldscur);
@@ -2459,7 +2462,7 @@ static proc_t **do_summary (void)
       /*
        ** Display Load averages */
    if (CHKw(Curwin, View_LOADAV)) {
-      if (!Show_altscr)
+      if (!Mode_altscr)
          show_special(fmtmk(LOADAV_line, Myname, sprint_uptime()));
       else
          show_special(fmtmk(CHKw(Curwin, VISIBLE_tsk)
@@ -2618,7 +2621,7 @@ static void so_lets_see_em (void)
       /* sure hope each window's columns header begins with a newline... */
    putp(tg2(0, Msg_row));
 
-   if (!Show_altscr) {
+   if (!Mode_altscr) {
          /* only 1 window to show so, piece o' cake */
       Curwin->winlines = Curwin->maxtasks;
       do_window(ppt, Curwin, &scrlins);
