@@ -273,6 +273,7 @@ output_numlist (const union el *restrict list)
 static void
 output_strlist (const union el *restrict list)
 {
+// FIXME: escape codes
 	int i;
 	for (i = 1; i < list[0].num; i++)
 		printf ("%s%s", list[i].str, opt_delim);
@@ -447,7 +448,7 @@ select_procs (void)
 				matches = 0;
 			}
 			if (opt_long) {
-				char buff[4096];
+				char buff[5096];  // FIXME
 				sprintf (buff, "%d %s", task.pid, cmd);
 				list[++matches].str = strdup (buff);
 			} else {

@@ -2892,29 +2892,6 @@ static void task_show (const WIN_t *q, const proc_t *p)
       unsigned    w = Fieldstab[i].width;
 
       switch (i) {
-#if 0
-         case P_CMD:
-         {  const char *cp;
-            if (CHKw(q, Show_CMDLIN)) {
-               char tmp[ROWBUFSIZ];
-               char *tp;
-               if (p->cmdline) {
-                  j = 0;
-                  *(tp = tmp) = '\0';
-                  do {
-                     tp = scat(tp, fmtmk("%.*s ", q->maxcmdln, p->cmdline[j]));
-                     if (q->maxcmdln < (tp - tmp)) break;
-                  } while (p->cmdline[++j]);
-                  strim_1(tmp);
-               } else
-                  strcpy(tmp, fmtmk("[%s]", p->cmd));
-               cp = tmp;
-            } else
-               cp = p->cmd;
-            MKCOL(q->maxcmdln, q->maxcmdln, cp);
-         }
-            break;
-#endif
          case P_CMD:
          {  char tmp[ROWBUFSIZ];
             unsigned flags;
