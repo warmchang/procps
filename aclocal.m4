@@ -852,9 +852,9 @@ else
   ac_tool_prefix=
 fi
 
-# Transform linux* to *-*-linux-gnu*, to support old configure scripts.
+# Transform linux* to *-*-linux*, to support old configure scripts.
 case $host_os in
-linux-gnu*) ;;
+linux*) ;;
 linux*) host=`echo $host | sed 's/^\(.*-.*-linux\)\(.*\)$/\1-gnu\2/'`
 esac
 
@@ -2189,12 +2189,12 @@ irix5* | irix6* | nonstopux*)
   ;;
 
 # No shared lib support for Linux oldld, aout, or coff.
-linux-gnuoldld* | linux-gnuaout* | linux-gnucoff*)
+linuxoldld* | linuxaout* | linuxcoff*)
   dynamic_linker=no
   ;;
 
 # This must be Linux ELF.
-linux-gnu*)
+linux*)
   version_type=linux
   need_lib_prefix=no
   need_version=no
@@ -3396,7 +3396,7 @@ irix5* | irix6* | nonstopux*)
   ;;
 
 # This must be Linux ELF.
-linux-gnu*)
+linux*)
   case $host_cpu in
   alpha* | hppa* | i*86 | powerpc* | sparc* | ia64* )
     lt_cv_deplibs_check_method=pass_all ;;
