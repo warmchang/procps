@@ -27,8 +27,8 @@
 
 /* Who uses what:
  *
- * tty_to_dev   oldps, w (there is a fancy version in ps)
- * dev_to_tty   oldps, top, ps
+ * tty_to_dev   w (there is a fancy version in ps)
+ * dev_to_tty   top, ps
  */
 
 typedef struct tty_map_node {

@@ -576,6 +576,7 @@ void look_up_our_self(proc_t *p) {
     status2proc(sbuf, p);
 }
 
+HIDDEN_ALIAS(readproc);
 
 /* Convenient wrapper around openproc and readproc to slurp in the whole process
  * table subset satisfying the constraints of flags and the optional PID list.
@@ -607,7 +608,7 @@ proc_t** readproctab(int flags, ...) {
     va_end(ap);
     do {					/* read table: */
 	tab = xrealloc(tab, (n+1)*sizeof(proc_t*));/* realloc as we go, using */
-	tab[n] = readproc(PT, NULL);		  /* final null to terminate */
+	tab[n] = readproc_direct(PT, NULL);     /* final null to terminate */
     } while (tab[n++]);				  /* stop when NULL reached */
     closeproc(PT);
     return tab;

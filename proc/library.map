@@ -1,0 +1,4 @@
+_3_1_5 {
+  global: readproc;
+  local: *;
+};

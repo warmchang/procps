@@ -18,18 +18,42 @@
 #endif
 #endif
 
+// marks old junk, to warn non-procps library users
+#if ( __GNUC__ == 3 && __GNUC_MINOR__ > 0 ) || __GNUC__ > 3
+#define OBSOLETE __attribute__((deprecated))
+#else
+#define OBSOLETE
+#endif
+
+// available when?
+// Tells gcc that function is library-internal;
+// so no need to do dynamic linking at run-time.
+#if __GNUC__ > 2     // FIXME: total random guess that's sure to be wrong
+#define VISIBILITY_HIDDEN visibility("hidden")
+#else
+#define VISIBILITY_HIDDEN
+#endif
+// mark function for internal use
+#define HIDDEN __attribute__((VISIBILITY_HIDDEN))
+// given foo, create a foo_direct for internal use
+#define HIDDEN_ALIAS(x) extern __typeof(x) x##_direct __attribute__((alias(#x),VISIBILITY_HIDDEN))
+
 // since gcc-2.5
 #define NORETURN __attribute__((__noreturn__))
+#define FUNCTION __attribute__((__const__))  // no access to global mem, even via ptr, and no side effect
 
 #if __GNUC__ > 2 || __GNUC_MINOR__ >= 96
 // won't alias anything, and aligned enough for anything
 #define MALLOC __attribute__ ((__malloc__))
+// no side effect, may read globals
+#define PURE __attribute__ ((__pure__))
 // tell gcc what to expect:   if(unlikely(err)) die(err);
 #define likely(x)       __builtin_expect(!!(x),1)
 #define unlikely(x)     __builtin_expect(!!(x),0)
 #define expected(x,y)   __builtin_expect((x),(y))
 #else
 #define MALLOC
+#define PURE
 #define likely(x)       (x)
 #define unlikely(x)     (x)
 #define expected(x,y)   (x)
