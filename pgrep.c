@@ -56,19 +56,6 @@ static union el *opt_euid = NULL;
 static union el *opt_uid = NULL;
 static char *opt_pattern = NULL;
 
-/* Prototypes */
-
-static union el *split_list (const char *, char, int (*)(const char *, union el *));
-static int conv_uid (const char *, union el *);
-static int conv_gid (const char *, union el *);
-static int conv_sid (const char *, union el *);
-static int conv_pgrp (const char *, union el *);
-static int conv_num (const char *, union el *);
-static int conv_str (const char *, union el *);
-static int match_numlist (long, const union el *);
-static int match_strlist (const char *, const union el *);
-static void display_pgrep_version(void);
-
 
 static int
 usage (int opt)
@@ -349,18 +336,6 @@ do_regcomp (void)
 	}
 	return preg;
 }
-
-#ifdef NOT_USED
-static time_t
-jiffies_to_time_t (long jiffies)
-{
-	static time_t time_of_boot = 0;
-	if (time_of_boot == 0) {
-		time_of_boot = time (NULL) - uptime (0, 0);
-	}
-	return (time_of_boot + jiffies / Hertz);
-}
-#endif
 
 static union el *
 select_procs (void)
