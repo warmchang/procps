@@ -558,6 +558,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     static char sbuf[1024];	// buffer for stat,statm
     unsigned flags = PT->flags;
 
+//printf("hhh\n");
     if (unlikely(stat(path, &sb) == -1))	/* no such dirent (anymore) */
 	goto next_task;
 
@@ -567,6 +568,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     t->euid = sb.st_uid;			/* need a way to get real uid */
     t->egid = sb.st_gid;			/* need a way to get real gid */
 
+//printf("iii\n");
     if (flags & PROC_FILLSTAT) {         /* read, parse /proc/#/stat */
 	if (unlikely( file2str(path, "stat", sbuf, sizeof sbuf) == -1 ))
 	    goto next_task;			/* error reading /proc/#/stat */
@@ -659,12 +661,15 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
 // Return non-zero on success.
 static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict const t, char *restrict const path) {
   static struct direct *ent;		/* dirent handle */
-  (void)p;
-  if(!PT->taskdir){
+  if(PT->taskdir_user != p->tgid){
+    if(PT->taskdir){
+      closedir(PT->taskdir);
+    }
     // use "path" as some tmp space
     snprintf(path, PROCPATHLEN, "%s/task", PT->path);
     PT->taskdir = opendir(path);
     if(!PT->taskdir) return 0;
+    PT->taskdir_user = p->tgid;
   }
   for (;;) {
     ent = readdir(PT->taskdir);
@@ -761,10 +766,11 @@ proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
   proc_t *saved_p;
 
   if (PT->did_fake) PT->did_fake=0;
-  if (PT->taskdir) {
-    closedir(PT->taskdir);
-    PT->taskdir = NULL;
-  }
+//  if (PT->taskdir) {
+//    closedir(PT->taskdir);
+//    PT->taskdir = NULL;
+//    PT->taskdir_user = -1;
+//  }
 
   saved_p = p;
   if(!p) p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
@@ -868,6 +874,7 @@ PROCTAB* openproc(int flags, ...) {
       did_stat = 1;
     }
     PT->taskdir = NULL;
+    PT->taskdir_user = -1;
     PT->taskfinder = simple_nexttid;
     PT->taskreader = simple_readtask;
 
@@ -910,6 +917,7 @@ void closeproc(PROCTAB* PT) {
     if (PT){
         if (PT->procfs) closedir(PT->procfs);
         if (PT->taskdir) closedir(PT->taskdir);
+        memset(PT,'#',sizeof(PROCTAB));
         free(PT);
     }
 }
@@ -979,36 +987,20 @@ proc_t** readproctab(int flags, ...) {
 }
 
 // Try again, this time with threads and selection.
-proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), int flags, ...) {
-    PROCTAB* PT = NULL;
+proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), PROCTAB *restrict const PT) {
     proc_t** ptab = NULL;
-    proc_t** ttab = NULL;
-    proc_t*  data = NULL;
-    unsigned n_alloc = 0;
-    unsigned n_used = 0;
     unsigned n_proc_alloc = 0;
     unsigned n_proc = 0;
-    unsigned n_task = 0;
+
+    proc_t** ttab = NULL;
     unsigned n_task_alloc = 0;
-    va_list ap;
+    unsigned n_task = 0;
+
+    proc_t*  data = NULL;
+    unsigned n_alloc = 0;
+    unsigned long n_used = 0;
+
     proc_data_t *pd;
-
-    va_start(ap, flags);
-    if (flags & PROC_UID) {
-	// temporary variables ensure that va_arg() instances
-	// are called in the right order
-	uid_t* u;
-	int i;
-
-	u = va_arg(ap, uid_t*);
-	i = va_arg(ap, int);
-	PT = openproc(flags, u, i);
-    }
-    else if (flags & PROC_PID)
-	PT = openproc(flags, va_arg(ap, void*));
-    else
-	PT = openproc(flags);
-    va_end(ap);
 
     for(;;){
         proc_t *tmp;
@@ -1027,8 +1019,7 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
         tmp = readproc_direct(PT, data+n_used);
         if(!tmp) break;
         if(!want_proc(tmp)) continue;
-        ptab[n_proc++] = tmp;
-        n_used++;
+        ptab[n_proc++] = (proc_t*)(n_used++);
         if(!(  PT->flags & PROC_LOOSE_TASKS  )) continue;
         for(;;){
           proc_t *t;
@@ -1047,25 +1038,25 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
           t = readtask_direct(PT, tmp, data+n_used);
           if(!t) break;
           if(!want_task(t)) continue;
-          ttab[n_task++] = t;
-          n_used++;
+          ttab[n_task++] = (proc_t*)(n_used++);
         }
     }
-
-    closeproc(PT);
 
     pd = malloc(sizeof(proc_data_t));
     pd->proc = ptab;
     pd->task = ttab;
     pd->nproc = n_proc;
     pd->ntask = n_task;
-    if(flags & PROC_LOOSE_TASKS){
+    if(PT->flags & PROC_LOOSE_TASKS){
       pd->tab = ttab;
       pd->n   = n_task;
     }else{
       pd->tab = ptab;
       pd->n   = n_proc;
     }
+    // change array indexes to pointers
+    while(n_proc--) ptab[n_proc] = data+(long)(ptab[n_proc]);
+    while(n_task--) ttab[n_task] = data+(long)(ttab[n_task]);
 
     return pd;
 }

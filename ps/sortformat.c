@@ -800,11 +800,11 @@ const char *process_sf_options(int localbroken){
   // If nothing else, try to use $PS_FORMAT before the default.
   if(!format_flags && !format_modifiers && !format_list){
     char *tmp;
-    if(thread_flags&TF_must_use) return "Tell procps-feedback@sf.net what you want. (-L/-T, -m/m/H, and $PS_FORMAT)";
     tmp = getenv("PS_FORMAT");  /* user override kills default */
     if(tmp && *tmp){
       const char *err;
       sf_node sfn;
+      if(thread_flags&TF_must_use) return "Tell procps-feedback@sf.net what you want. (-L/-T, -m/m/H, and $PS_FORMAT)";
       sfn.sf = tmp;
       sfn.f_cooked = NULL;
       err = format_parse(&sfn);

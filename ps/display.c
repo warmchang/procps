@@ -302,10 +302,12 @@ static void lists_and_needs(void){
 
 /***** fill in %CPU; not in libproc because of include_dead_children */
 /* Note: for sorting, not display, so 0..0x7fffffff would be OK */
-static void fill_pcpu(proc_t *buf){
+static int want_this_proc_pcpu(proc_t *buf){
   unsigned long long used_jiffies;
   unsigned long pcpu = 0;
   unsigned long long avail_jiffies;
+
+  if(!want_this_proc(buf)) return 0;
 
   used_jiffies = buf->utime + buf->stime;
   if(include_dead_children) used_jiffies += (buf->cutime + buf->cstime);
@@ -314,6 +316,8 @@ static void fill_pcpu(proc_t *buf){
   if(avail_jiffies) pcpu = (used_jiffies << 24) / avail_jiffies;
 
   buf->pcpu = pcpu;  // fits in an int, summing children on 128 CPUs
+
+  return 1;
 }
 
 /***** just display */
@@ -469,6 +473,11 @@ not_root:
   /* don't free the array because it takes time and ps will exit anyway */
 }
 
+static int want_this_proc_nop(proc_t *dummy){
+  (void)dummy;
+  return 1;
+}
+
 /***** sorted or forest */
 static void fancy_spew(void){
   proc_t *retbuf = NULL;
@@ -480,23 +489,27 @@ static void fancy_spew(void){
     fprintf(stderr, "can't have threads with sorting or forest output\n");
     exit(49);
   }
+#endif
   ptp = openproc(needs_for_format | needs_for_sort | needs_for_select | needs_for_threads);
   if(!ptp) {
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
   }
+#if 0
   while((retbuf = readproc(ptp,retbuf))){
-    if(want_this_proc(retbuf)){
-      fill_pcpu(retbuf); // in case we might sort by %cpu
+    if(want_this_proc_pcpu(retbuf)){
+//      fill_pcpu(retbuf); // in case we might sort by %cpu
       processes[n++] = retbuf;
       retbuf = NULL;     // NULL asks readproc to allocate
     }
   }
   if(retbuf) free(retbuf);
-  closeproc(ptp);
 #else
-  // FIXME: need pcpu
-  pd = readproctab2(want_this_proc, want_this_proc, needs_for_format | needs_for_sort | needs_for_select | needs_for_threads);
+  if(thread_flags & TF_loose_tasks){
+    pd = readproctab2(want_this_proc_nop, want_this_proc_pcpu, ptp);
+  }else{
+    pd = readproctab2(want_this_proc_pcpu, (void*)0xdeadbeaful, ptp);
+  }
   n = pd->n;
   processes = pd->tab;
 #endif
@@ -505,6 +518,7 @@ static void fancy_spew(void){
   qsort(processes, n, sizeof(proc_t*), compare_two_procs);
   if(forest_type) show_forest(n);
   else show_proc_array(ptp,n);
+  closeproc(ptp);
 }
 
 

@@ -152,7 +152,10 @@ typedef struct proc_t {
 
 typedef struct PROCTAB {
     DIR*	procfs;
+//    char deBug0[64];
     DIR*	taskdir;  // for threads
+//    char deBug1[64];
+    pid_t	taskdir_user;  // for threads
     int         did_fake; // used when taskdir is missing
     int(*finder)(struct PROCTAB *restrict const, proc_t *restrict const);
     proc_t*(*reader)(struct PROCTAB *restrict const, proc_t *restrict const);
@@ -181,7 +184,7 @@ typedef struct proc_data_t {
     int ntask;
 } proc_data_t;
 
-extern proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), int flags, ... /* same as openproc */ );
+extern proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), PROCTAB *restrict const PT);
 
 // Convenient wrapper around openproc and readproc to slurp in the whole process
 // table subset satisfying the constraints of flags and the optional PID list.
