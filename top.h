@@ -60,6 +60,8 @@
    /* the above might seem pretty stingy, until you consider that with every
       one of top's fields displayed we're talking a 160 byte column header --
       so that will provide for all fields plus a 350+ byte command line */
+#define WINNAMSIZ     4
+#define CAPTABMAX     9
 #define PFLAGSSIZ    32
 #define CAPBUFSIZ    32
 #define CLRBUFSIZ    64
@@ -67,6 +69,7 @@
 #define TNYBUFSIZ    32
 #define SMLBUFSIZ   256
 #define OURPATHSZ  1024
+#define MEDBUFSIZ  1024
 #define BIGBUFSIZ  2048
 #define USRNAMSIZ  GETBUFSIZ
 #define ROWBUFSIZ  SCREENMAX + CLRBUFSIZ
@@ -87,23 +90,23 @@
 #define SORT_gt  ( Frame_srtflg > 0 ? -1 :  1 )
 #define SORT_eq  0
 
-        /* Used to reference and create sort callback functions --
+        /* Used to create *most* of the sort callback functions
            note: some of the callbacks are NOT your father's callbacks, they're
                  highly optimized to save them ol' precious cycles! */
-#define _SC_NUM1(f,n) \
+#define SCB_NUM1(f,n) \
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
       if ( (*P)->n < (*Q)->n ) return SORT_lt; \
       if ( (*P)->n > (*Q)->n ) return SORT_gt; \
       return SORT_eq; }
-#define _SC_NUM2(f,n1,n2) \
+#define SCB_NUM2(f,n1,n2) \
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
       if ( ((*P)->n1 - (*P)->n2) < ((*Q)->n1 - (*Q)->n2) ) return SORT_lt; \
       if ( ((*P)->n1 - (*P)->n2) > ((*Q)->n1 - (*Q)->n2) ) return SORT_gt; \
       return SORT_eq; }
-#define _SC_NUMx(f,n) \
+#define SCB_NUMx(f,n) \
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
       return Frame_srtflg * ( (*Q)->n - (*P)->n ); }
-#define _SC_STRx(f,s) \
+#define SCB_STRx(f,s) \
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
       return Frame_srtflg * strcmp((*Q)->s, (*P)->s); }
 
@@ -154,43 +157,64 @@
 /*######  Some Typedef's and Enum's  #####################################*/
 
         /* This typedef just ensures consistent 'process flags' handling */
-typedef unsigned PFLG_t;
+typedef unsigned FLG_t;
 
         /* These typedefs attempt to ensure consistent 'ticks' handling */
-typedef unsigned long long TICS_t;
-typedef          long long STIC_t;
+typedef unsigned long long TIC_t;
+typedef          long long SIC_t;
 
-        /* Sorted columns support. */
-typedef int (*QSORT_t)(const void *, const void *);
+        /* Sort support, callback funtion signature */
+typedef int (*QFP_t)(const void *, const void *);
 
         /* This structure consolidates the information that's used
            in a variety of display roles. */
-typedef struct {
-   const char    keys[4]; // order: Jim-on Jim-off Rik-on Rik-off
-   const char   *head;  /* name for column headings + toggle/reorder fields */
-   const char   *fmts;  /* sprintf format string for field display */
-   const int     width; /* field width, if applicable */
-   const int     scale; /* scale_num type, if applicable */
-   const QSORT_t sort;  /* sort function */
-   const char   *desc;  /* description for toggle/reorder fields */
-   const int     lflg;  /* PROC_FILLxxx flag(s) required for this field */
-} FTAB_t;
+typedef struct FLD_t {
+   const char    keys [4];      // order: New-on New-off Old-on Old-off
+   const char   *head;          // name for col heads + toggle/reorder fields
+   const char   *fmts;          // sprintf format string for field display
+   const int     width;         // field width, if applicable
+   const int     scale;         // scale_num type, if applicable
+   const QFP_t   sort;          // sort function
+   const char   *desc;          // description for toggle/reorder fields
+   const int     lflg;          // PROC_FILLxxx flag(s) needed by this field
+} FLD_t;
 
         /* This structure stores one piece of critical 'history'
            information from one frame to the next -- we don't calc
            and save data that goes unused like the old top! */
-typedef struct {
-   int    pid;
-   TICS_t tics;
-} HIST_t;
+typedef struct HST_t {
+   int   pid;
+   TIC_t tics;
+} HST_t;
 
         /* This structure stores a frame's cpu tics used in history
            calculations.  It exists primarily for SMP support but serves
            all environments. */
-typedef struct {
-   TICS_t u, n, s, i, w;                        // as represented in /proc/stat
-   TICS_t u_sav, s_sav, n_sav, i_sav, w_sav;    // in the order of our display
-} CPUS_t;
+typedef struct CPU_t {
+   TIC_t u, n, s, i, w;                         // as represented in /proc/stat
+   TIC_t u_sav, s_sav, n_sav, i_sav, w_sav;     // in the order of our display
+} CPU_t;
+
+        /* These 2 types support rcfile compatibility */
+typedef struct RCW_t {  // the 'window' portion of an rcfile
+   FLG_t  sortindx;             // sort field, represented as a procflag
+   int    winflags,             // 'view', 'show' and 'sort' mode flags
+          maxtasks,             // user requested maximum, 0 equals all
+          summclr,                      // color num used in summ info
+          msgsclr,                      //        "       in msgs/pmts
+          headclr,                      //        "       in cols head
+          taskclr;                      //        "       in task rows
+   char   winname [WINNAMSIZ],          // window name, user changeable
+          fieldscur [PFLAGSSIZ];        // fields displayed and ordered
+} RCW_t;
+
+typedef struct RCF_t {  // the complete rcfile (new style)
+   int    mode_altscr;          // 'A' - Alt display mode (multi task windows)
+   int    mode_irixps;          // 'I' - Irix vs. Solaris mode (SMP-only)
+   float  delay_time;           // 'd' or 's' - How long to sleep twixt updates
+   int    win_index;            // Curwin, as index
+   RCW_t  win [4];              // a 'WIN_t.rc' for each of the 4 windows
+} RCF_t;
 
         /* The scaling 'type' used with scale_num() -- this is how
            the passed number is interpreted should scaling be necessary */
@@ -214,9 +238,7 @@ enum pflag {
         /* (kind of a header within a header:  constants, macros & types) */
 
 #define GROUPSMAX  4            /* the max number of simultaneous windows */
-#define WINNAMSIZ  4            /* max size of a window's basic name      */
-#define GRPNAMSIZ  6            /* window's name + number as in: '#:...'  */
-#define CAPTABMAX  9            /* a window's captab used by show_special */
+#define GRPNAMSIZ  WINNAMSIZ+2  /* window's name + number as in: '#:...'  */
 
 #define Flags_TOG  1            /* these are used to direct wins_reflag   */
 #define Flags_SET  2
@@ -258,68 +280,47 @@ enum pflag {
 #define TOGw(q,f)   q->rc.winflags ^=  (f)
 #define SETw(q,f)   q->rc.winflags |=  (f)
 #define OFFw(q,f)   q->rc.winflags &= ~(f)
-#define VIZCHKc     (!Mode_altscr || Curwin->rc.winflags & VISIBLE_tsk) \
+#define VIZCHKc     (!Rc.mode_altscr || Curwin->rc.winflags & VISIBLE_tsk) \
                         ? 1 : win_warn()
-#define VIZTOGc(f)  (!Mode_altscr || Curwin->rc.winflags & VISIBLE_tsk) \
+#define VIZTOGc(f)  (!Rc.mode_altscr || Curwin->rc.winflags & VISIBLE_tsk) \
                         ? TOGw(Curwin, f) : win_warn()
-
-typedef struct rcwin {
-   char        winname   [WINNAMSIZ],   /* window name, user changeable   */
-               fieldscur [PFLAGSSIZ];   /* fields displayed and ordered   */
-   int         winflags;        /* 'view', 'show' and 'sort' mode flags   */
-   PFLG_t      sortindx;                /* sort field, as a procflag      */
-   int         maxtasks,        /* user requested maximum, 0 equals all   */
-               summclr,                 /* color num used in summ info    */
-               msgsclr,                 /*        "       in msgs/pmts    */
-               headclr,                 /*        "       in cols head    */
-               taskclr;                 /*        "       in task display */
-} rcwin;
-
-typedef struct rcf {    // global/system-wide
-   int   Secure_mode;           // Secure_mode (not in Jim-format files)
-   int   Mode_altscr;           // Mode_altscr
-   int   Mode_irixps;           // Mode_irixps
-   float Delay_time;            // Delay_time
-   int   Curwin;                // Curwin
-   rcwin win[4];                // each of 4 windows
-} RCF_t;
 
         /* This structure stores configurable information for each window.
            By expending a little effort in its creation and user requested
            maintainence, the only real additional per frame cost of having
            windows is an extra sort -- but that's just on ptrs! */
-typedef struct win {
-   struct win *next,                    /* next window in window stack    */
-              *prev;                    /* prior window in window stack   */
-   char       *captab [CAPTABMAX];      /* captab needed by show_special  */
-   int         winnum,                  /* window's num (array pos + 1)   */
-               winlines;                /* task window's rows (volatile)  */
-   PFLG_t      procflags [PFLAGSSIZ];   /* fieldscur subset, as enum      */
-   int         maxpflgs,        /* number of procflags (upcase fieldscur) */
-               maxcmdln;        /* max length of a process' command line  */
-   int         len_rownorm,     /* lengths of the corresponding terminfo  */
-               len_rowhigh;     /* strings to avoid repeated strlen calls */
-   rcwin       rc;              /* stuff that gets saved in a .toprc file */
-   char        capclr_sum [CLRBUFSIZ],  /* terminfo strings built from    */
-               capclr_msg [CLRBUFSIZ],  /*    above clrs (& rebuilt too), */
-               capclr_pmt [CLRBUFSIZ],  /*    but NO recurring costs !!!  */
-               capclr_hdr [CLRBUFSIZ],     /* note: sum, msg and pmt strs */
-               capclr_rowhigh [CLRBUFSIZ], /*    are only used when this  */
-               capclr_rownorm [CLRBUFSIZ]; /*    window is the 'Curwin'!  */
-   char        cap_bold [CAPBUFSIZ];    /* support for View_NOBOLD toggle */
-   char        grpname   [GRPNAMSIZ],   /* window number:name, printable  */
-               columnhdr [SCREENMAX],   /* column headings for procflags  */
-               colusrnam [USRNAMSIZ];   /* if selected by the 'u' command */
+typedef struct WIN_t {
+   struct WIN_t *next,                  // next window in window stack
+                *prev;                  // prior window in window stack
+   char       *captab [CAPTABMAX];      // captab needed by show_special
+   int         winnum,                  // window's num (array pos + 1)
+               winlines;                // task window's rows (volatile)
+   FLG_t       procflags [PFLAGSSIZ];   // fieldscur subset, as enum
+   int         maxpflgs,        // number of procflags (upcase fieldscur)
+               maxcmdln;        // max length of a process' command line
+   int         len_rownorm,     // lengths of the corresponding terminfo
+               len_rowhigh;     // strings to avoid repeated strlen calls
+   RCW_t       rc;              // stuff that gets saved in the rcfile
+   char        capclr_sum [CLRBUFSIZ],  // terminfo strings built from
+               capclr_msg [CLRBUFSIZ],  //    above clrs (& rebuilt too),
+               capclr_pmt [CLRBUFSIZ],  //    but NO recurring costs !!!
+               capclr_hdr [CLRBUFSIZ],     // note: sum, msg and pmt strs
+               capclr_rowhigh [CLRBUFSIZ], //    are only used when this
+               capclr_rownorm [CLRBUFSIZ]; //    window is the 'Curwin'!
+   char        cap_bold [CAPBUFSIZ];    // support for View_NOBOLD toggle
+   char        grpname   [GRPNAMSIZ],   // window number:name, printable
+               columnhdr [SCREENMAX],   // column headings for procflags
+               colusrnam [USRNAMSIZ];   // if selected by the 'u' command
 } WIN_t;
         /* ////////////////////////////////////////////////////////////// */
 
 
 /*######  Display Support *Data*  ########################################*/
 
-        /* An rcfile 'footprint' used to invalidate existing local rcfile
-           and the global rcfile path + name */
-#define RCF_FILEID  'a'
-#define SYS_RCFILE  "/etc/toprc"
+        /* Configuration files support */
+#define SYS_RCFILESPEC  "/etc/toprc"
+#define RCF_EYECATCHER  "RCfile for "
+#define RCF_DEPRECATED  "Id:a, "
 
         /* The default fields displayed and their order,
            if nothing is specified by the loser, oops user */
@@ -330,6 +331,24 @@ typedef struct win {
 #define USR_FIELDS  "DEFGABXchijlopqrstuvyzMKNW"
         /* Used by fields_sort, placed here for peace-of-mind */
 #define NUL_FIELDS  "abcdefghijklmnopqrstuvwxyz"
+
+
+        /* The default values for the local config file */
+#define DEF_RCFILE { \
+   0, 1, DEF_DELAY, 0, { \
+   { P_CPU, DEF_WINFLGS, 0, \
+      COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED, \
+      "Def", DEF_FIELDS }, \
+   { P_PID, DEF_WINFLGS, 0, \
+      COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, COLOR_CYAN, \
+      "Job", JOB_FIELDS }, \
+   { P_MEM, DEF_WINFLGS, 0, \
+      COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA, \
+      "Mem", MEM_FIELDS }, \
+   { P_USR, DEF_WINFLGS, 0, \
+      COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
+      "Usr", USR_FIELDS } \
+   } }
 
         /* These are the possible fscanf formats used in /proc/stat
            reads during history processing.
@@ -348,20 +367,6 @@ typedef struct win {
 #else
 #define CMDLINE_FMTS  "( %s )"
 #endif
-
-
-RCF_t RCf_Defaults = {
-   0, 0, 1, 3.0f, 0, {
-   { "Def", DEF_FIELDS, DEF_WINFLGS, P_CPU, 0,
-       COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED },
-   { "Job", JOB_FIELDS, DEF_WINFLGS, P_PID, 0,
-       COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, COLOR_CYAN },
-   { "Mem", MEM_FIELDS, DEF_WINFLGS, P_MEM, 0,
-       COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA },
-   { "Usr", USR_FIELDS, DEF_WINFLGS, P_USR, 0,
-       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW }
-   }
-};
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
@@ -547,15 +552,13 @@ RCF_t RCf_Defaults = {
 
 /*######  Some Prototypes (ha!)  #########################################*/
 
-   /* None of these are necessary when the source file is properly
-    * organized -- they're here for documentation purposes !
-    * Note also that functions are alphabetical within a group to aid
-    * source code navigation, which often influences the identifers. */
+   /* These 'prototypes' are here for documentation purposes and in
+    * preparation for a soon-to-occur top.c bust-up! */
 /*------  Sort callbacks  ------------------------------------------------*/
 /*        for each possible field, in the form of:                        */
 /*atic int          sort_P_XXX (const proc_t **P, const proc_t **Q);      */
 /*        additional specialized sort callback(s)                         */
-/*atic int          sort_HIST_t (const HIST_t *P, const HIST_t *Q);       */
+/*atic int          sort_HST_t (const HST_t *P, const HST_t *Q);         */
 /*------  Tiny useful routine(s)  ----------------------------------------*/
 //atic int          chin (int ech, char *buf, unsigned cnt);
 //atic const char  *fmtmk (const char *fmts, ...);
@@ -578,20 +581,33 @@ RCF_t RCf_Defaults = {
 //atic float        get_float (const char *prompt);
 //atic int          get_int (const char *prompt);
 //atic const char  *scale_num (unsigned num, const int width, const unsigned type);
-//atic const char  *scale_tics (TICS_t tics, const int width);
+//atic const char  *scale_tics (TIC_t tics, const int width);
 /*------  Library Alternatives  ------------------------------------------*/
 //atic void        *alloc_c (unsigned numb) MALLOC;
 //atic void        *alloc_r (void *q, unsigned numb) MALLOC;
-//atic CPUS_t      *cpus_refresh (CPUS_t *cpus);
+//atic CPU_t       *cpus_refresh (CPU_t *cpus);
 //atic void         prochlp (proc_t *this);
 //atic proc_t     **procs_refresh (proc_t **table, int flags);
+/*------  Field Table/RCfile compatability support  ----------------------*/
+/*atic FLD_t        Fieldstab[] = { ... }                                 */
+//atic int          ft_cvt_char (const int fr, const int to, int c);
+//atic inline int   ft_get_char (const int fr, int i);
+//atic int          ft_get_idx (const int fr, int c);
+//atic const FLD_t *ft_get_ptr (const int fr, int c);
+//atic const FLD_t *ft_idx_to_ptr (const int i);
+//atic int          ft_ptr_to_idx (const FLD_t *p);
+//atic void         rc_bugless (const RCF_t *const rc);
+//atic int          rc_read_new (const char *const buf, RCF_t *rc);
+//atic int          rc_read_old (const char *const buf, RCF_t *rc);
+//atic void         rc_write_new (FILE *fp);
+//atic void         rc_write_old (FILE *fp);
+//atic const char  *rc_write_whatever (void);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void         before (char *me);
 //atic void         configs_read (void);
 //atic void         parse_args (char **args);
 //atic void         whack_terminal (void);
 /*------  Field Selection/Ordering routines  -----------------------------*/
-/*atic FTAB_t       Fieldstab[] = { ... }                                 */
 //atic void         display_fields (const char *fields, const char *xtra);
 //atic void         fields_reorder (void);
 //atic void         fields_sort (void);
@@ -609,7 +625,7 @@ RCF_t RCf_Defaults = {
 //atic void         windows_stage2 (void);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void         do_key (unsigned c);
-//atic void         summaryhlp (CPUS_t *cpu, const char *pfx);
+//atic void         summaryhlp (CPU_t *cpu, const char *pfx);
 //atic proc_t     **summary_show (void);
 //atic void         task_show (const WIN_t *q, const proc_t *p);
 //atic void         window_show (proc_t **ppt, WIN_t *q, int *lscr);
