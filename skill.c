@@ -176,6 +176,7 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 	int tty;
 	int fd;
 	int i;
+	ssize_t len;
 	if (pid == my_pid || pid == 0)
 		return;
 	/* pid (cmd) state ppid pgrp session tty */
@@ -198,9 +199,10 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 		if (i == -1)
 			goto closure;
 	}
-	if (read(fd, buf, 128) <= 0)
-	    goto closure;
-	buf[127] = '\0';
+	len = read(fd, buf, sizeof(buf));
+	if (len <= 0 || (size_t)len >= sizeof(buf))
+		goto closure;
+	buf[len] = '\0';
 	tmp = strrchr(buf, ')');
 	*tmp++ = '\0';
 	i = 5;
