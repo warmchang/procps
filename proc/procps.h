@@ -10,7 +10,7 @@
 #endif
 
 #if !defined(restrict) && __STDC_VERSION__ < 199901
-#if __GNUC__ > 2 || __GNUC_MINOR__ >= 91    // maybe 92 or 95 ?
+#if __GNUC__ > 2 || __GNUC_MINOR__ >= 92    // maybe 92 or 95 ?
 #define restrict __restrict__
 #else
 #warning No restrict keyword?
