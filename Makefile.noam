@@ -36,7 +36,7 @@ export INCDIRS    =  -I/usr/include/ncurses -I/usr/X11R6/include
 
 export CC         =  gcc #-ggdb # this gets compiling and linking :-)
 export OPT        =  -O2
-export CFLAGS     =  -D_GNU_SOURCE $(OPT) -I$(shell pwd) $(INCDIRS) -W -Wall -Wstrict-prototypes -Wshadow -Wcast-align -Wmissing-prototypes
+export CFLAGS     =  -D_GNU_SOURCE $(OPT) -I$(shell pwd) $(INCDIRS) -ffast-math -W -Wall -Wstrict-prototypes -Wshadow -Wcast-align -Wmissing-prototypes
 
 export SHARED     =  1# build/install both a static and ELF shared library
 export SHLIBDIR   =  $(DESTDIR)/lib# where to install the shared library
