@@ -5,6 +5,9 @@
  * May be distributed under the conditions of the
  * GNU Library General Public License; a copy is in COPYING
  */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include "version.h"
 #include "readproc.h"
 #include "devname.h"
@@ -19,6 +22,10 @@
 #include <sys/dir.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+#ifdef FLASK_LINUX
+#include <fs_secure.h>
+#endif
 
 #define Do(x) (flags & PROC_ ## x)	/* convenient shorthand */
 
@@ -43,6 +50,10 @@ PROCTAB* openproc(int flags, ...) {
 	PT->nuid = va_arg(ap, int);
     } else if (Do(STAT))
     	PT->stats = va_arg(ap, char*);
+#ifdef FLASK_LINUX
+    else if ( Do(SID) || Do(CONTEXT) )
+        PT->sids = va_arg(ap, security_id_t*);
+#endif
     va_end(ap);				/*  Clean up args list */
     if (Do(ANYTTY) && Do(TTY))
 	PT->flags = PT->flags & ~PROC_TTY; /* turn off TTY flag */
@@ -306,6 +317,9 @@ proc_t* readproc(PROCTAB* PT, proc_t* p) {
     static struct stat sb;		/* stat buffer */
     static char path[32], sbuf[1024];	/* bufs for stat,statm */
     int matched = 0;	/* flags */
+#ifdef FLASK_LINUX
+    security_id_t sid;
+#endif
 
     /* loop until a proc matching restrictions is found or no more processes */
     /* I know this could be a while loop -- this way is easier to indent ;-) */
@@ -327,8 +341,13 @@ next_proc:				/* get next PID for consideration */
 	    return NULL;
 	sprintf(path, "/proc/%s", ent->d_name);
     }
+#ifdef FLASK_LINUX
+    if ( stat_secure(path, &sb, &sid) == -1 ) /* no such dirent (anymore) */
+#else
     if (stat(path, &sb) == -1)		/* no such dirent (anymore) */
+#endif
 	goto next_proc;
+
     if (Do(UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
 	goto next_proc;			/* not one of the requested uids */
 
@@ -336,9 +355,18 @@ next_proc:				/* get next PID for consideration */
 	p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
     p->euid = sb.st_uid;			/* need a way to get real uid */
 
+#ifdef FLASK_LINUX
+    p->sid = sid;
+#endif
+
     if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
 	goto next_proc;			/* error reading /proc/#/stat */
     stat2proc(sbuf, p);				/* parse /proc/#/stat */
+
+#ifdef FLASK_LINUX
+    if (!matched && (Do(SID) || Do(CONTEXT)) && !XinL(security_id_t, p->sid, PT->sids))
+	goto next_proc;			/* not one of the requested SIDs */
+#endif
 
     if (!matched && Do(TTY) && !XinL(dev_t, p->tty, PT->ttys))
 	goto next_proc;			/* not one of the requested ttys */
@@ -402,6 +430,9 @@ proc_t* ps_readproc(PROCTAB* PT, proc_t* p) {
     static struct direct *ent;		/* dirent handle */
     static struct stat sb;		/* stat buffer */
     static char path[32], sbuf[1024];	/* bufs for stat,statm */
+#ifdef FLASK_LINUX
+    security_id_t sid;
+#endif
 
     /* loop until a proc matching restrictions is found or no more processes */
     /* I know this could be a while loop -- this way is easier to indent ;-) */
@@ -417,12 +448,19 @@ next_proc:				/* get next PID for consideration */
 	    return NULL;
 	sprintf(path, "/proc/%s", ent->d_name);
 
+#ifdef FLASK_LINUX
+    if (stat_secure(path, &sb, &sid) == -1) /* no such dirent (anymore) */
+#else
     if (stat(path, &sb) == -1)		/* no such dirent (anymore) */
+#endif
 	goto next_proc;
 
     if (!p)
 	p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
     p->euid = sb.st_uid;			/* need a way to get real uid */
+#ifdef FLASK_LINUX
+    p->sid = sid;
+#endif
 
     if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
 	goto next_proc;			/* error reading /proc/#/stat */
@@ -528,6 +566,10 @@ proc_t** readproctab(int flags, ...) {
     }
     else if (Do(PID) || Do(TTY) || Do(STAT))
 	PT = openproc(flags, va_arg(ap, void*)); /* assume ptr sizes same */
+#ifdef FLASK_LINUX
+    else if ( Do(SID) || Do(CONTEXT) )
+        PT = openproc(flags, va_arg(ap, security_id_t*));
+#endif
     else
 	PT = openproc(flags);
     va_end(ap);

@@ -38,7 +38,9 @@
  *
  * Table 5 could go in a file with the output functions.
  */
-
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
  
 /* proc_t offset macro */
 #define PO(q) ((unsigned long)(&(((proc_t*)0)->q)))
@@ -63,6 +65,13 @@
 #include "../proc/procps.h"
 #include "../proc/devname.h"
 #include "common.h"
+
+#ifdef FLASK_LINUX
+#include <errno.h>
+#include <fs_secure.h>
+#include <ss.h>
+#define DEF_CTXTLEN 255
+#endif
 
 
 /* TODO:
@@ -191,6 +200,10 @@ CMP_INT(tpgid)
 CMP_INT(pcpu)
 
 CMP_INT(state)
+
+#ifdef FLASK_LINUX
+CMP_INT(sid)
+#endif
 
 /***************************************************************************/
 /************ Lots of format functions, starting with the NOP **************/
@@ -911,6 +924,134 @@ static int pr_sgi_p(void){          /* FIXME */
 
 
 
+#ifdef FLASK_LINUX
+
+/*
+ * The sr_fn() calls -- for sorting -- don't return errors because the same errors
+ * should show up when the printing function pr_fn() is called, at which point the
+ * error goes onscreen.
+ */
+
+static int pr_sid ( void ) {
+  return sprintf(outbuf, "%d", (int) pp->sid);
+}
+
+static int pr_context ( void ) {
+  char *ctxt; /* should be security_context_t */
+  unsigned int len;
+  int rv;
+
+
+  len = DEF_CTXTLEN;
+  ctxt = (char *) calloc(1, len);
+  if ( ctxt != NULL )
+    rv = security_sid_to_context(pp->sid, (security_context_t) ctxt, &len);
+  else
+    return sprintf(outbuf, "-");
+
+  if ( rv ) {
+    if ( errno != ENOSPC ) {
+      free(ctxt);
+      return sprintf(outbuf, "-");
+    }
+    else {
+      free(ctxt);
+      ctxt = (char *) calloc(1, len);
+      if ( ctxt != NULL ) {
+	rv = security_sid_to_context(pp->sid, (security_context_t) ctxt, &len);
+	if ( rv ) {
+	  free(ctxt);
+	  return sprintf(outbuf, "-");
+	}
+	else {
+	  rv = sprintf(outbuf, "%s", ctxt);
+	  free(ctxt);
+	  return rv;
+	}
+      }
+      else /* calloc() failed */
+	return sprintf(outbuf, "-");
+    }
+  }
+  else {
+    rv = sprintf(outbuf, "%s", ctxt);
+    free(ctxt);
+    return rv;
+  }
+}
+
+
+static int sr_context ( const proc_t* P, const proc_t* Q ) {
+  char *ctxt_P, *ctxt_Q; /* type should be security_context_t */
+  unsigned int len;
+  int rv;
+
+  len = DEF_CTXTLEN;
+  ctxt_P = (char *) calloc(1, len);
+  ctxt_Q = (char *) calloc(1, len);
+
+  rv = security_sid_to_context(P->sid, (security_context_t) ctxt_P, &len);
+  if ( rv ) {
+    if ( errno != ENOSPC ) {
+      free(ctxt_P);
+      /* error should resurface during printing */
+      return( 0 );
+    }
+    else {
+      free(ctxt_P);
+      ctxt_P = (char *) calloc(1, len);
+      if ( ctxt_P != NULL ) {
+	rv = security_sid_to_context(P->sid, (security_context_t) ctxt_P, &len);
+	if ( rv ) {
+	  free(ctxt_P);
+	  /* error should resurface during printing */
+	  return( 0 );
+	}
+      }
+      else /* calloc() failed */
+	/* error should resurface during printing */
+	return( 0 );
+    }
+  }
+
+  len = DEF_CTXTLEN;
+
+  rv = security_sid_to_context(Q->sid, (security_context_t) ctxt_Q, &len);
+  if ( rv ) {
+    if ( errno != ENOSPC ) {
+      free(ctxt_P);
+      free(ctxt_Q);
+      /* error should resurface during printing */
+      return( 0 );
+    }
+    else {
+      free(ctxt_Q);
+      ctxt_Q = (char *) calloc(1, len);
+      if ( ctxt_Q != NULL ) {
+	rv = security_sid_to_context(Q->sid, (security_context_t) ctxt_Q, &len);
+	if ( rv ) {
+	  free(ctxt_P);
+	  free(ctxt_Q);
+	  /* error should resurface during printing */
+	  return( 0 );
+	}
+      }
+      else /* calloc() failed */
+	/* error should resurface during printing */
+	free(ctxt_P);
+	return( 0 );
+    }
+  }
+
+  rv = strcmp(ctxt_P, ctxt_Q);
+
+  free(ctxt_P);
+  free(ctxt_Q);
+
+  return( rv );
+}
+#endif
+
 /***************************************************************************/
 /*************************** other stuff ***********************************/
 
@@ -981,6 +1122,9 @@ static const format_struct format_array[] = {
 {"cnswap",    "-",       pr_nop,      sr_cnswap,  1,   0,    LNX, RIGHT},
 {"comm",      "COMMAND", pr_comm,     sr_nop,    16,   0,    U98, UNLIMITED}, /*ucomm*/
 {"command",   "COMMAND", pr_args,     sr_nop,    16,   0,    XXX, UNLIMITED}, /*args*/
+#ifdef FLASK_LINUX
+{"context",   "CONTEXT", pr_context,  sr_context,40,   0,    LNX, LEFT},
+#endif
 {"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, RIGHT}, /*cpu*/
 {"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
 {"cputime",   "TIME",    pr_time,     sr_nop,     8,   0,    DEC, RIGHT}, /*time*/
@@ -1090,6 +1234,9 @@ static const format_struct format_array[] = {
 {"sched",     "SCH",     pr_nop,      sr_nop,     1,   0,    AIX, RIGHT},
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, RIGHT},  /* man page misspelling of scount? */
 {"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, RIGHT},  /* scnt==scount, DEC claims both */
+#ifdef FLASK_LINUX
+{"secsid",      "SID",   pr_sid,      sr_sid,     6,   0,    LNX, RIGHT}, /* Flask Linux */
+#endif
 {"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, RIGHT},
 {"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, RIGHT},
 {"sgi_p",     "P",       pr_sgi_p,    sr_nop,     1,   0,    LNX, RIGHT}, /* "cpu" number */
@@ -1198,6 +1345,11 @@ static const macro_struct macro_array[] = {
 {"FD_lj",    "flags,state,uid,pid,ppid,priority,nice,vsz,wchan,tty,time,pgid,sid,comm"}, /* Fictional Debian -jl */
 
 {"FL5FMT",   "f,state,uid,pid,ppid,pcpu,pri,nice,rss,wchan,start,time,command"},  /* Digital -fl */
+
+#ifdef FLASK_LINUX
+{"FLASK_context",   "pid,secsid,context,command"},  /* Flask Linux context, --context */
+{"FLASK_sid",       "pid,secsid,command"},          /* Flask Linux SID,     --SID */
+#endif
 
 {"HP_",      "pid,tty,time,comm"},  /* HP default */
 {"HP_f",     "user,pid,ppid,cpu,stime,tty,time,args"},  /* HP -f */

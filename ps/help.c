@@ -13,7 +13,9 @@
  * The help message must not become longer, because it must fit
  * on an 80x24 screen _with_ the error message and command prompt.
  */
-
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 const char *help_message =
 "********* simple selection *********  ********* selection by list *********\n"
@@ -33,6 +35,9 @@ const char *help_message =
 "-O,O preloaded -o  v  virtual memory  --cumulative --format --deselect\n"
 "-l,l long          u  user-oriented   --sort --tty --forest --version\n"
 "                   X  registers       --heading --no-heading\n"
+#ifdef FLASK_LINUX
+"                                      --context --SID   (Flask only)\n"
+#endif
 "                    ********* misc options *********\n"
 "-V,V show version       L  list format codes  f  ASCII art forest\n"
 "-m,m show threads       S  children in sum    -y change -l format\n"

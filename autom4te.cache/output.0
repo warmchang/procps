@@ -992,6 +992,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-dependency-tracking Speeds up one-time builds
   --enable-dependency-tracking  Do not reject slow dependency extractors
+  --enable-flask  Enable Security-Enhanced Linux features
   --enable-shared=PKGS  build shared libraries default=yes
   --enable-static=PKGS  build static libraries default=yes
   --enable-fast-install=PKGS  optimize for fast installation default=yes
@@ -1703,6 +1704,17 @@ INSTALL_STRIP_PROGRAM="\${SHELL} \$(install_sh) -c -s"
 # We need awk for the "check" target.  The system "awk" is bad on
 # some platforms.
 
+
+
+# Check whether --enable-flask or --disable-flask was given.
+if test "${enable_flask+set}" = set; then
+  enableval="$enable_flask"
+  
+cat >>confdefs.h <<\_ACEOF
+@%:@define FLASK_LINUX 1
+_ACEOF
+
+fi; 
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -8103,6 +8115,7 @@ s,@AMDEP_TRUE@,$AMDEP_TRUE,;t t
 s,@AMDEP_FALSE@,$AMDEP_FALSE,;t t
 s,@AMDEPBACKSLASH@,$AMDEPBACKSLASH,;t t
 s,@DEPDIR@,$DEPDIR,;t t
+s,@FLASK_LINUX@,$FLASK_LINUX,;t t
 s,@CC@,$CC,;t t
 s,@CFLAGS@,$CFLAGS,;t t
 s,@LDFLAGS@,$LDFLAGS,;t t

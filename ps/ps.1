@@ -95,6 +95,9 @@ s            display signal format
 u            display user-oriented format
 v            display virtual memory format
 --format     user-defined format
+--context    (SELinux only) Display security context format; implies --SID
+--secsid     (SELinux only) Display Security ID (SID)
+--SID	     (SELinux only) Display Security ID (SID)
 
 OUTPUT MODIFIERS
 -H           show process hierarchy (forest)
@@ -323,6 +326,7 @@ caught       CAUGHT
 cmd          CMD     
 comm         COMMAND 
 command      COMMAND 
+context	     CONTEXT
 cputime      TIME    
 drs          DRS     
 dsiz         DSIZ    
@@ -380,6 +384,7 @@ rsz          RSZ
 ruid         RUID    
 ruser        RUSER   
 s            S       
+secsid       SECSID
 sess         SESS    
 session      SESS    
 sgi_p        P       

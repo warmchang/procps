@@ -8,6 +8,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Library General Public License for more details.
  */                                 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -797,6 +800,10 @@ const char *process_sf_options(int localbroken){
     /* These are old Linux options. Option m is overloaded. */
     case FF_LX:          spec="OL_X";         break;
     case FF_Lm:          spec="OL_m";         break;
+#ifdef FLASK_LINUX
+    case FF_Fc:          spec="FLASK_context"; break;
+    case FF_Fs:          spec="FLASK_sid";     break;
+#endif
 
     }  /* end switch(format_flags) */
 

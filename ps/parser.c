@@ -12,7 +12,9 @@
 /* Ought to have debug print stuff like this:
  * #define Print(fmt, args...) printf("Debug: " fmt, ## args)
  */
-
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -724,9 +726,15 @@ static const char *parse_gnu_option(void){
   gnu_table_struct *found;
   static const gnu_table_struct gnu_table[] = {
   {"Group",         &&case_Group},       /* rgid */
+#ifdef FLASK_LINUX
+  {"SID",           &&case_secsid},
+#endif
   {"User",          &&case_User},        /* ruid */
   {"cols",          &&case_cols},
   {"columns",       &&case_columns},
+#ifdef FLASK_LINUX
+  {"context",       &&case_context},
+#endif
   {"cumulative",    &&case_cumulative},
   {"deselect",      &&case_deselect},    /* -N */
   {"forest",        &&case_forest},      /* f -H */
@@ -749,6 +757,9 @@ static const char *parse_gnu_option(void){
   {"noheadings",    &&case_noheadings},
   {"pid",           &&case_pid},
   {"rows",          &&case_rows},
+#ifdef FLASK_LINUX
+  {"secsid",        &&case_secsid},
+#endif
   {"sid",           &&case_sid},
   {"sort",          &&case_sort},
   {"tty",           &&case_tty},
@@ -925,6 +936,16 @@ static const char *parse_gnu_option(void){
     display_version();
     exit(0);
     return NULL;
+#ifdef FLASK_LINUX
+  case_context:
+    trace("--context\n");
+    format_flags |= FF_Fc;
+    return NULL;
+  case_secsid:
+     trace("--secsid\n");
+     format_flags |= FF_Fs;
+     return NULL;
+#endif
 }
 
 /*************** process trailing PIDs  **********************/
