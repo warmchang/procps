@@ -192,8 +192,8 @@ static struct el *split_list (const char *restrict str, int (*convert)(const cha
  * contains a plain number, FALSE if there are any non-digits. */
 static int strict_atol (const char *restrict str, long *restrict value)
 {
-	int res = 0;
-	int sign = 1;
+	long res = 0;
+	long sign = 1;
 
 	if (*str == '+')
 		++str;
