@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <limits.h>
+#include <ctype.h>
 
 #include "slab.h"
 #include "procps.h"
