@@ -255,6 +255,7 @@ open_again:
     /* FIXME: memory leak */
     _exit(42);
   }
+  buf[total] = '\0';   // parse_ksyms() expects NUL-terminated file
   *bufp = buf;
   *roomp = room;
   close(fd);
