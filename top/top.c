@@ -3303,6 +3303,9 @@ error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
       size_t lraw = strlen(Inspect.raw) +1;
       char *s;
 
+      if (i < 0 || (size_t)i >= INT_MAX / sizeof(struct I_ent)) break;
+      if (lraw >= INT_MAX - sizeof(fbuf)) break;
+
       if (!fgets(fbuf, sizeof(fbuf), fp)) break;
       lraw += strlen(fbuf) +1;
       Inspect.raw = alloc_r(Inspect.raw, lraw);
@@ -4163,6 +4166,9 @@ static void other_selection (int ch) {
    if (!(*pval)) {                             // #5: did we get some value?
       show_msg(fmtmk(N_fmt(OSEL_errvalu_fmt)
          , inc ? N_txt(WORD_include_txt) : N_txt(WORD_exclude_txt)));
+      return;
+   }
+   if (Curwin->osel_prt && strlen(Curwin->osel_prt) >= INT_MAX - (sizeof(raw) + 6)) {
       return;
    }
    osel = alloc_c(sizeof(struct osel_s));
