@@ -9,6 +9,16 @@
 /* get page info */
 #include <asm/page.h>
 
+#if !defined(restrict) && __STDC_VERSION__ < 199901
+#if __GNUC__ > 2 || __GNUC_MINOR__ >= 91    // maybe 92 or 95 ?
+#define restrict __restrict__
+#else
+#warning No restrict keyword?
+#define restrict
+#endif
+#endif
+
+
 extern void *xrealloc(void *oldp, unsigned int size);
 extern void *xmalloc(unsigned int size);
 extern void *xcalloc(void *pointer, int size);
