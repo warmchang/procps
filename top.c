@@ -810,7 +810,7 @@ static void *alloc_r (void *q, unsigned numb)
          * as follows:
          *    cpus[0] thru cpus[n] == tics for each separate cpu
          *    cpus[Cpu_tot]        == tics from the 1st /proc/stat line */
-static CPUS_t *cpus_refresh (CPUS_t *restrict cpus)
+static CPUS_t *cpus_refresh (CPUS_t *cpus)
 {
    static FILE *fp = NULL;
    int i;
@@ -1132,7 +1132,7 @@ static void parse_args (char **args)
    char *p;
 
    while (*args) {
-      char *cp = *(args++);
+      const char *cp = *(args++);
 
       while (*cp) {
          switch (*cp) {
@@ -1261,8 +1261,9 @@ static void whack_terminal (void)
 #define L_CMDLINE  L_stat   | PROC_FILLARG
 #define L_EUSER    L_status | PROC_FILLUSR
 #define L_GROUP    L_status | PROC_FILLGRP
-#define L_EITHER   PROC_SPARE_1
 #define L_NONE     0
+   // from either 'stat' or 'status' (preferred), via bits not otherwise used
+#define L_EITHER  ~(L_stat|L_statm|L_status|L_CMDLINE|L_EUSER|L_GROUP)
    // for reframewins and summary_show 1st pass
 #define L_DEFAULT  PROC_FILLSTAT
 
@@ -1287,7 +1288,7 @@ static FTAB_t  Fieldstab[] = {
    { "USER     ",   "%-8.8s ",  -1,    -1, _SF(P_USR), "User Name",            L_EUSER  },
    { "GROUP    ",   "%-8.8s ",  -1,    -1, _SF(P_GRP), "Group Name",           L_GROUP  },
    { "TTY      ",   "%-8.8s ",   8,    -1, _SF(P_TTY), "Controlling Tty",      L_stat   },
-   { " PR ",        "%s ",      -1,    -1, _SF(P_PRI), "Priority",             L_stat   },
+   { " PR ",        "%3d ",     -1,    -1, _SF(P_PRI), "Priority",             L_stat   },
    { " NI ",        "%3d ",     -1,    -1, _SF(P_NCE), "Nice value",           L_stat   },
    { "#C ",         "%2u ",     -1,    -1, _SF(P_CPN), "Last used cpu (SMP)",  L_stat   },
    { "%CPU ",       "%#4.1f ",  -1,    -1, _SF(P_CPU), "CPU usage",            L_stat   },
@@ -1312,7 +1313,11 @@ static FTAB_t  Fieldstab[] = {
    { "Command ",    "%-*.*s ",  -1,    -1, _SF(P_CMD), "Command name/line",    L_stat   },
    { "WCHAN     ",  "%-9.9s ",  -1,    -1, _SF(P_WCH), "Sleeping in Function", L_stat   },
    // next entry's special: the 0's will be replaced with '.'!
-   { "Flags    ",   "%s ",      -1,    -1, _SF(P_FLG), "Task Flags <sched.h>", L_stat   }
+#ifdef CASEUP_HEXES
+   { "Flags    ",   "%08lX ",   -1,    -1, _SF(P_FLG), "Task Flags <sched.h>", L_stat   }
+#else
+   { "Flags    ",   "%08lx ",   -1,    -1, _SF(P_FLG), "Task Flags <sched.h>", L_stat   }
+#endif
 };
 
 
@@ -2164,7 +2169,7 @@ static void do_key (unsigned c)
          *    2) modest smp boxes with room for each cpu's percentages
          *    3) massive smp guys leaving little or no room for process
          *       display and thus requiring the cpu summary toggle */
-static void summaryhlp (CPUS_t *restrict const cpu, const char *restrict const pfx)
+static void summaryhlp (CPUS_t *cpu, const char *pfx)
 {
    /* we'll trim to zero if we get negative time ticks,
       which has happened with some SMP kernels (pre-2.4?) */
@@ -2280,7 +2285,7 @@ static proc_t **summary_show (void)
 
         /*
          * Display information for a single task row. */
-static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
+static void task_show (const WIN_t *q, const proc_t *p)
 {
    /* the following macro is our means to 'inline' emitting a column -- next to
       procs_refresh, that's the most frequent and costly part of top's job ! */
@@ -2304,18 +2309,17 @@ static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
 
    for (x = 0; x < q->maxpflgs; x++) {
       char cbuf[ROWBUFSIZ], _z[ROWBUFSIZ];
-      PFLG_t      i = q->procflags[x];          // support for our make column
-      const char *restrict const f = Fieldstab[i].fmts; // macro AND sometimes
-      unsigned    s = Fieldstab[i].scale;       // fmt string must be altered !
+      PFLG_t      i = q->procflags[x];          // support for our field/column
+      const char *f = Fieldstab[i].fmts;        // macro AND sometimes the fmt
+      unsigned    s = Fieldstab[i].scale;       // string must be altered !
       unsigned    w = Fieldstab[i].width;
 
       switch (i) {
          case P_CMD:
-         {  const char *restrict ret;
+         {  char *cp;
             if (CHKw(q, Show_CMDLIN)) {
                char tmp[ROWBUFSIZ];
                if (p->cmdline) {
-                  char *cp;
                   j = 0;
                   *(cp = tmp) = '\0';
                   do {
@@ -2325,10 +2329,10 @@ static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
                   strim(1, tmp);
                } else
                   strcpy(tmp, fmtmk(CMDLINE_FMTS, p->cmd));
-               ret = tmp;
+               cp = tmp;
             } else
-               ret = p->cmd;
-            MKCOL(q->maxcmdln, q->maxcmdln, ret);
+               cp = (char *)p->cmd;
+            MKCOL(q->maxcmdln, q->maxcmdln, cp);
          }
             break;
          case P_COD:
@@ -2351,9 +2355,10 @@ static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
             break;
          case P_FLG:
          {  char tmp[TNYBUFSIZ];
-            snprintf(tmp, sizeof(tmp), "%08x", (unsigned)p->flags);
+            snprintf(tmp, sizeof(tmp), f, (long)p->flags);
             for (j = 0; tmp[j]; j++) if ('0' == tmp[j]) tmp[j] = '.';
-            MKCOL(tmp);
+            f = tmp;
+            MKCOL();
          }
             break;
          case P_FLT:
@@ -2378,13 +2383,11 @@ static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
             MKCOL((unsigned)p->ppid);
             break;
          case P_PRI:
-         {  char tmp[TNYBUFSIZ];
-            snprintf(tmp, sizeof(tmp), "%3d", (int)(p->priority));
-            if (-99 > p->priority || 999 < p->priority) {
-               memcpy(tmp, " RT", 4);
-            }
-            MKCOL(tmp);
-         }
+            if (-99 > p->priority || +99 < p->priority) {
+               f = " RT ";
+               MKCOL();
+            } else
+               MKCOL((int)p->priority);
             break;
          case P_RES:
             MKCOL(scale_num(PAGES_2K(p->resident), w, s));
@@ -2427,9 +2430,12 @@ static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
             break;
          case P_WCH:
             if (No_ksyms) {
-               char tmp[TNYBUFSIZ];
-               snprintf(tmp, sizeof(tmp), "%08lx  ", (unsigned long)p->wchan);
-               MKCOL(tmp);
+#ifdef CASEUP_HEXES
+               f = "%08lX  ";
+#else
+               f = "%08lx  ";
+#endif
+               MKCOL((long)p->wchan);
             } else {
                MKCOL(wchan(p->wchan));
             }

@@ -108,24 +108,23 @@
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
       return Frame_srtflg * strcmp((*Q)->s, (*P)->s); }
 
-        /* Used in the following ways, to 'inline' those portions of the
-           display requiring formatting while protecting against potential
-           embedded 'millesecond delay' escape sequences.
-              PUTT - Put to Tty
-               . for temporary interactive 'REPLACEMENT' output
+        /* The following two macros are used to 'inline' those portions of the
+         * display process requiring formatting, while protecting against any
+         * potential embedded 'millesecond delay' escape sequences. */
+        /**  PUTT - Put to Tty (used in many places)
+               . for temporary, possibly interactive, 'replacement' output
                . may contain ANY valid terminfo escape sequences
-               . need NOT represent an entire screen row
-              PUFF - Put for Frame
-               . for more permanent frame-oriented 'UPDATE' output
-               . may NOT contain cursor motion terminfo escapes
-               . represents a complete screen ROW
-               . subject to optimization, thus MAY be discarded
-               . when discarded, replaced by a NEWLINE */
+               . need NOT represent an entire screen row */
 #define PUTT(fmt,arg...) do { \
       char _str[ROWBUFSIZ]; \
       snprintf(_str, sizeof(_str), fmt, ## arg); \
       putp(_str); \
    } while (0)
+        /**  PUFF - Put for Frame (used in only 3 places)
+               . for more permanent frame-oriented 'update' output
+               . may NOT contain cursor motion terminfo escapes
+               . assumed to represent a complete screen ROW
+               . subject to optimization, thus MAY be discarded */
 #define PUFF(fmt,arg...) do { \
       char _str[ROWBUFSIZ]; \
       char *_ptr = &Pseudo_scrn[Pseudo_row++ * Pseudo_cols]; \
@@ -189,10 +188,8 @@ typedef struct {
            calculations.  It exists primarily for SMP support but serves
            all environments. */
 typedef struct {
-        // ticks count as represented in /proc/stat
-   TICS_t u, n, s, i, w;
-        // tics count in the order of our display
-   TICS_t u_sav, s_sav, n_sav, i_sav, w_sav;
+   TICS_t u, n, s, i, w;                        // as represented in /proc/stat
+   TICS_t u_sav, s_sav, n_sav, i_sav, w_sav;    // in the order of our display
 } CPUS_t;
 
         /* The scaling 'type' used with scale_num() -- this is how
@@ -512,6 +509,20 @@ typedef struct win {
    "commands plus the 'G' sub-commands NOW.  Press <Enter> to make 'Current' " \
    ""
 
+
+/*######  For Piece of mind and/or backward compatability ################*/
+
+        /* just sanity check(s)... */
+#if USRNAMSIZ < GETBUFSIZ
+# error "Jeeze, USRNAMSIZ Must NOT be less than GETBUFSIZ !"
+#endif
+#ifndef  MALLOC
+# define MALLOC
+#endif
+#ifndef  restrict
+# define restrict
+#endif
+
 
 /*######  Some Prototypes (ha!)  #########################################*/
 
@@ -521,9 +532,9 @@ typedef struct win {
     * source code navigation, which often influences the identifers. */
 /*------  Sort callbacks  ------------------------------------------------*/
 /*        for each possible field, in the form of:                        */
-/*atic int          sort_P_XXX (const proc_t **P, const proc_t **Q);       */
+/*atic int          sort_P_XXX (const proc_t **P, const proc_t **Q);      */
 /*        additional specialized sort callback(s)                         */
-//atic int          sort_HIST_t (const HIST_t *P, const HIST_t *Q);
+/*atic int          sort_HIST_t (const HIST_t *P, const HIST_t *Q);       */
 /*------  Tiny useful routine(s)  ----------------------------------------*/
 //atic int          chin (int ech, char *buf, unsigned cnt);
 //atic const char  *fmtmk (const char *fmts, ...);
@@ -550,7 +561,7 @@ typedef struct win {
 /*------  Library Alternatives  ------------------------------------------*/
 //atic void        *alloc_c (unsigned numb) MALLOC;
 //atic void        *alloc_r (void *q, unsigned numb) MALLOC;
-//atic CPUS_t      *cpus_refresh (CPUS_t *restrict cpus);
+//atic CPUS_t      *cpus_refresh (CPUS_t *cpus);
 //atic void         prochlp (proc_t *this);
 //atic proc_t     **procs_refresh (proc_t **table, int flags);
 /*------  Startup routines  ----------------------------------------------*/
@@ -559,7 +570,7 @@ typedef struct win {
 //atic void         parse_args (char **args);
 //atic void         whack_terminal (void);
 /*------  Field Selection/Ordering routines  -----------------------------*/
-/*atic FTAB_t       Fieldstab[] = { ... }                                  */
+/*atic FTAB_t       Fieldstab[] = { ... }                                 */
 //atic void         display_fields (const char *fields, const char *xtra);
 //atic void         fields_reorder (void);
 //atic void         fields_sort (void);
@@ -577,19 +588,14 @@ typedef struct win {
 //atic void         windows_stage2 (void);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void         do_key (unsigned c);
-//atic void         summaryhlp (CPUS_t *restrict const cpu, const char *restrict const pfx);
+//atic void         summaryhlp (CPUS_t *cpu, const char *pfx);
 //atic proc_t     **summary_show (void);
-//atic void         task_show (const WIN_t *restrict q, const proc_t *restrict p);
+//atic void         task_show (const WIN_t *q, const proc_t *p);
 //atic void         window_show (proc_t **ppt, WIN_t *q, int *lscr);
 /*------  Entry point plus two  ------------------------------------------*/
 //atic void         framehlp (int wix, int max);
 //atic void         frame_make (void);
 //     int          main (int dont_care_argc, char **argv);
-
-        /* just sanity check(s)... */
-#if USRNAMSIZ < GETBUFSIZ
-# error "Jeeze, USRNAMSIZ Must NOT be less than GETBUFSIZ !"
-#endif
 
 #endif /* _Itop */
 
