@@ -129,11 +129,24 @@ static int driver_name(char *restrict const buf, unsigned maj, unsigned min){
   return 1;
 }
 
+// major 204 is a mess -- "Low-density serial ports"
+static const char low_density_names[][4] = {
+"LU0",  "LU1",  "LU2",  "LU3",
+"FB0",
+"SA0",  "SA1",  "SA2",
+"SC0",  "SC1",  "SC2",  "SC3",
+"FW0",  "FW1",  "FW2",  "FW3",
+"AM0",  "AM1",  "AM2",  "AM3",  "AM4",  "AM5",  "AM6",  "AM7",
+"AM8",  "AM9",  "AM10", "AM11", "AM12", "AM13", "AM14", "AM15",
+"DB0",  "DB1",  "DB2",  "DB3",  "DB4",  "DB5",  "DB6",  "DB7",
+};
+
 /* Try to guess the device name (useful until /proc/PID/tty is added) */
 static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
   struct stat sbuf;
   int t0, t1;
   unsigned tmpmin = min;
+
   switch(maj){
   case   4:
     if(min<64){
@@ -176,6 +189,15 @@ static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
   case 172:  sprintf(buf, "/dev/ttyMX%d",  min); break;
   case 174:  sprintf(buf, "/dev/ttySI%d",  min); break;
   case 188:  sprintf(buf, "/dev/ttyUSB%d", min); break; /* bummer, 9-char */
+  case 204:
+    if(min >= sizeof low_density_names / sizeof low_density_names[0]) return 0;
+    sprintf(buf, "/dev/tty%s",  low_density_names[min]);
+    break;
+  case 208:  sprintf(buf, "/dev/ttyU%d",  min); break;
+  case 216:  sprintf(buf, "/dev/ttyUB%d",  min); break;
+  case 224:  sprintf(buf, "/dev/ttyY%d",  min); break;
+  case 227:  sprintf(buf, "/dev/3270/tty%d", min); break; /* bummer, HUGE */
+  case 229:  sprintf(buf, "/dev/iseries/vtty%d",  min); break; /* bummer, HUGE */
   default: return 0;
   }
   if(stat(buf, &sbuf) < 0) return 0;
