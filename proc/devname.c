@@ -287,10 +287,11 @@ static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
 static int link_name(char *restrict const buf, unsigned maj, unsigned min, int pid, const char *restrict name){
   struct stat sbuf;
   char path[32];
-  int count;
-  sprintf(path, "/proc/%d/%s", pid, name);  /* often permission denied */
+  ssize_t count;
+  const int len = snprintf(path, sizeof path, "/proc/%d/%s", pid, name);  /* often permission denied */
+  if(len <= 0 || (size_t)len >= sizeof path) return 0;
   count = readlink(path,buf,TTY_NAME_SIZE-1);
-  if(count == -1) return 0;
+  if(count <= 0 || count >= TTY_NAME_SIZE-1) return 0;
   buf[count] = '\0';
   if(stat(buf, &sbuf) < 0) return 0;
   if(min != MINOR_OF(sbuf.st_rdev)) return 0;
