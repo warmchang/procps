@@ -71,7 +71,8 @@ static char  Rc_name [OURPATHSZ];
 static RCF_t Rc = DEF_RCFILE;
 
         /* The run-time acquired page size */
-static int Page_size;
+static unsigned Page_size;
+static unsigned page_to_kb_shift;
 
         /* SMP, Irix/Solaris mode, Linux 2.5.xx support */
 static int  Cpu_tot,
@@ -1567,6 +1568,11 @@ static void before (char *me)
 
       /* get virtual page size -- nearing huge! */
    Page_size = getpagesize();
+   i = Page_size;
+   while(i>1024){
+     i >>= 1;
+     page_to_kb_shift++;
+   }
 }
 
 
@@ -2873,6 +2879,8 @@ static proc_t **summary_show (void)
    return p_table;
 }
 
+
+#define PAGES_2K(n)  (unsigned)( (n) << page_to_kb_shift )
 
         /*
          * Display information for a single task row. */

@@ -82,11 +82,6 @@
         /* Yield table size as 'int' */
 #define MAXTBL(t)  (int)(sizeof(t) / sizeof(t[0]))
 
-        /* Convert some proc stuff into vaules we can actually use */
-#define BYTES_2K(n)  (unsigned)( (n) >> 10 )
-#define PAGES_2B(n)  (unsigned)( (n) * Page_size )
-#define PAGES_2K(n)  BYTES_2K(PAGES_2B(n))
-
         /* Used as return arguments in *some* of the sort callbacks */
 #define SORT_lt  ( Frame_srtflg > 0 ?  1 : -1 )
 #define SORT_gt  ( Frame_srtflg > 0 ? -1 :  1 )
