@@ -125,7 +125,7 @@ CMP_SMALL(sched)
 CMP_INT(cutime)
 CMP_INT(cstime)
 CMP_SMALL(priority)                                             /* nice */
-CMP_INT(timeout)
+CMP_SMALL(nlwp)
 CMP_SMALL(nice)                                                 /* priority */
 CMP_INT(rss)      /* resident set size from stat file */ /* vm_rss, resident */
 CMP_INT(it_real_value)
@@ -655,10 +655,6 @@ static int pr_bsdstart(char *restrict const outbuf, const proc_t *restrict const
   return 6;
 }
 
-static int pr_timeout(char *restrict const outbuf, const proc_t *restrict const pp){
-    return old_time_helper(outbuf, pp->timeout, seconds_since_boot*Hertz);
-}
-
 static int pr_alarm(char *restrict const outbuf, const proc_t *restrict const pp){
     return old_time_helper(outbuf, pp->it_real_value, 0ULL);
 }
@@ -921,13 +917,13 @@ static int pr_suser(char *restrict const outbuf, const proc_t *restrict const pp
     return snprintf(outbuf, width, "%s", pp->suser);
 }
 
-
-static int pr_thread(char *restrict const outbuf, const proc_t *restrict const pp){  /* TID tid LWP lwp SPID spid */
+// TID tid LWP lwp SPID spid
+static int pr_thread(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%u", pp->tid);
 }
-static int pr_nlwp(char *restrict const outbuf, const proc_t *restrict const pp){  /* THCNT thcount NLWP nlwp */
-  (void)pp; // FIXME
-  return snprintf(outbuf, COLWID, "-");  /* for now... FIXME */
+// thcount THCNT
+static int pr_nlwp(char *restrict const outbuf, const proc_t *restrict const pp){
+    return snprintf(outbuf, COLWID, "%d", pp->nlwp);
 }
 
 static int pr_sess(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -1235,7 +1231,7 @@ static const format_struct format_array[] = {
 {"ni",        "NI",      pr_nice,     sr_nice,    3,   0,    BSD, TO|RIGHT}, /*nice*/
 {"nice",      "NI",      pr_nice,     sr_nice,    3,   0,    U98, TO|RIGHT}, /*ni*/
 {"nivcsw",    "IVCSW",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
-{"nlwp",      "NLWP",    pr_nlwp,     sr_nop,     4,   0,    SUN, AN|RIGHT},
+{"nlwp",      "NLWP",    pr_nlwp,     sr_nlwp,    4,   0,    SUN, AN|RIGHT},
 {"nsignals",  "NSIGS",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*nsigs*/
 {"nsigs",     "NSIGS",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*nsignals*/
 {"nswap",     "NSWAP",   pr_nop,      sr_nswap,   5,   0,    XXX, AN|RIGHT},
@@ -1317,11 +1313,11 @@ static const format_struct format_array[] = {
 {"systime",   "SYSTEM",  pr_nop,      sr_nop,     6,   0,    DEC, ET|RIGHT},
 {"sz",        "SZ",      pr_sz,       sr_nop,     5,   0,    HPU, PO|RIGHT},
 {"tdev",      "TDEV",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
-{"thcount",   "THCNT",   pr_nlwp,     sr_nop,     5,   0,    AIX, AN|RIGHT},
+{"thcount",   "THCNT",   pr_nlwp,     sr_nlwp,    5,   0,    AIX, AN|RIGHT},
 {"tid",       "TID",     pr_thread,   sr_tid,     5,   0,    AIX, TO|PIDMAX|RIGHT},
 {"time",      "TIME",    pr_time,     sr_nop,     8,   0,    U98, ET|CUMUL|RIGHT}, /*cputime*/ /* was 6 wide */
-{"timeout",   "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, AN|RIGHT},
-{"tmout",     "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, AN|RIGHT},
+{"timeout",   "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
+{"tmout",     "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
 {"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
 {"tpgid",     "TPGID",   pr_tpgid,    sr_tpgid,   5,   0,    XXX, PO|PIDMAX|RIGHT},
 {"trs",       "TRS",     pr_trs,      sr_trs,     4, MEM,    AIX, PO|RIGHT},

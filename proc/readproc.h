@@ -71,7 +71,6 @@ typedef struct proc_t {
 #endif
     long
 	priority,	// stat            kernel scheduling priority
-	timeout,	// stat            ?
 	nice,		// stat            standard unix nice level of process
 	rss,		// stat            resident set size from /proc/#/stat (pages)
 	it_real_value,	// stat            ?
@@ -129,6 +128,7 @@ typedef struct proc_t {
     int
 	pgrp,		// stat            process group id
 	session,	// stat            session id
+	nlwp,		// stat,status     number of threads, or 0 if no clue
 	tgid,		// (special)       task group ID, the POSIX PID (see also: tid)
 	tty,		// stat            full device number of controlling terminal
         euid, egid,     // stat(),status   effective
@@ -172,6 +172,16 @@ typedef struct PROCTAB {
 // initialize a PROCTAB structure holding needed call-to-call persistent data
 extern PROCTAB* openproc(int flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
 
+typedef struct proc_data_t {
+    proc_t **tab;
+    proc_t **proc;
+    proc_t **task;
+    int n;
+    int nproc;
+    int ntask;
+} proc_data_t;
+
+extern proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), int flags, ... /* same as openproc */ );
 
 // Convenient wrapper around openproc and readproc to slurp in the whole process
 // table subset satisfying the constraints of flags and the optional PID list.

@@ -216,6 +216,9 @@ ENTER(0x220);
     case_Pid:
         P->tid = strtol(S,&S,10);
         continue;
+    case_Threads:
+        P->nlwp = strtol(S,&S,10);
+        continue;
 
     case_ShdPnd:
         memcpy(ShdPnd, S, 16);
@@ -311,7 +314,9 @@ ENTER(0x160);
        "%d %d %d %d %d "
        "%lu %lu %lu %lu %lu "
        "%Lu %Lu %Lu %Lu "  /* utime stime cutime cstime */
-       "%ld %ld %ld %ld "
+       "%ld %ld "
+       "%d "
+       "%ld "
        "%Lu "  /* start_time */
        "%lu "
        "%ld "
@@ -324,7 +329,9 @@ ENTER(0x160);
        &P->ppid, &P->pgrp, &P->session, &P->tty, &P->tpgid,
        &P->flags, &P->min_flt, &P->cmin_flt, &P->maj_flt, &P->cmaj_flt,
        &P->utime, &P->stime, &P->cutime, &P->cstime,
-       &P->priority, &P->nice, &P->timeout, &P->it_real_value,
+       &P->priority, &P->nice,
+       &P->nlwp,
+       &P->it_real_value,
        &P->start_time,
        &P->vsize,
        &P->rss,
@@ -933,6 +940,7 @@ void look_up_our_self(proc_t *p) {
 }
 
 HIDDEN_ALIAS(readproc);
+HIDDEN_ALIAS(readtask);
 
 /* Convenient wrapper around openproc and readproc to slurp in the whole process
  * table subset satisfying the constraints of flags and the optional PID list.
@@ -969,3 +977,96 @@ proc_t** readproctab(int flags, ...) {
     closeproc(PT);
     return tab;
 }
+
+// Try again, this time with threads and selection.
+proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), int flags, ...) {
+    PROCTAB* PT = NULL;
+    proc_t** ptab = NULL;
+    proc_t** ttab = NULL;
+    proc_t*  data = NULL;
+    unsigned n_alloc = 0;
+    unsigned n_used = 0;
+    unsigned n_proc_alloc = 0;
+    unsigned n_proc = 0;
+    unsigned n_task = 0;
+    unsigned n_task_alloc = 0;
+    va_list ap;
+    proc_data_t *pd;
+
+    va_start(ap, flags);
+    if (flags & PROC_UID) {
+	// temporary variables ensure that va_arg() instances
+	// are called in the right order
+	uid_t* u;
+	int i;
+
+	u = va_arg(ap, uid_t*);
+	i = va_arg(ap, int);
+	PT = openproc(flags, u, i);
+    }
+    else if (flags & PROC_PID)
+	PT = openproc(flags, va_arg(ap, void*));
+    else
+	PT = openproc(flags);
+    va_end(ap);
+
+    for(;;){
+        proc_t *tmp;
+        if(n_alloc == n_used){
+          //proc_t *old = data;
+          n_alloc = n_alloc*5/4+30;  // grow by over 25%
+          data = realloc(data,sizeof(proc_t)*n_alloc);
+          //if(!data) return NULL;
+        }
+        if(n_proc_alloc == n_proc){
+          //proc_t **old = ptab;
+          n_proc_alloc = n_proc_alloc*5/4+30;  // grow by over 25%
+          ptab = realloc(ptab,sizeof(proc_t*)*n_proc_alloc);
+          //if(!ptab) return NULL;
+        }
+        tmp = readproc_direct(PT, data+n_used);
+        if(!tmp) break;
+        if(!want_proc(tmp)) continue;
+        ptab[n_proc++] = tmp;
+        n_used++;
+        if(!(  PT->flags & PROC_LOOSE_TASKS  )) continue;
+        for(;;){
+          proc_t *t;
+          if(n_alloc == n_used){
+            //proc_t *old = data;
+            n_alloc = n_alloc*5/4+30;  // grow by over 25%
+            data = realloc(data,sizeof(proc_t)*n_alloc);
+            //if(!data) return NULL;
+          }
+          if(n_task_alloc == n_task){
+            //proc_t **old = ttab;
+            n_task_alloc = n_task_alloc*5/4+1;  // grow by over 25%
+            ttab = realloc(ttab,sizeof(proc_t*)*n_task_alloc);
+            //if(!ttab) return NULL;
+          }
+          t = readtask_direct(PT, tmp, data+n_used);
+          if(!t) break;
+          if(!want_task(t)) continue;
+          ttab[n_task++] = t;
+          n_used++;
+        }
+    }
+
+    closeproc(PT);
+
+    pd = malloc(sizeof(proc_data_t));
+    pd->proc = ptab;
+    pd->task = ttab;
+    pd->nproc = n_proc;
+    pd->ntask = n_task;
+    if(flags & PROC_LOOSE_TASKS){
+      pd->tab = ttab;
+      pd->n   = n_task;
+    }else{
+      pd->tab = ptab;
+      pd->n   = n_proc;
+    }
+
+    return pd;
+}
+

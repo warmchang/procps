@@ -372,7 +372,8 @@ static void prep_forest_sort(void){
 }
 
 /* we rely on the POSIX requirement for zeroed memory */
-static proc_t *processes[98*1024];  // FIXME
+//static proc_t *processes[98*1024];  // FIXME
+static proc_t **processes;
 
 /***** compare function for qsort */
 static int compare_two_procs(const void *a, const void *b){
@@ -471,8 +472,10 @@ not_root:
 /***** sorted or forest */
 static void fancy_spew(void){
   proc_t *retbuf = NULL;
+  proc_data_t *pd = NULL;
   PROCTAB *restrict ptp;
   int n = 0;  /* number of processes & index into array */
+#if 0
   if(thread_flags){
     fprintf(stderr, "can't have threads with sorting or forest output\n");
     exit(49);
@@ -491,6 +494,12 @@ static void fancy_spew(void){
   }
   if(retbuf) free(retbuf);
   closeproc(ptp);
+#else
+  // FIXME: need pcpu
+  pd = readproctab2(want_this_proc, want_this_proc, needs_for_format | needs_for_sort | needs_for_select | needs_for_threads);
+  n = pd->n;
+  processes = pd->tab;
+#endif
   if(!n) return;  /* no processes */
   if(forest_type) prep_forest_sort();
   qsort(processes, n, sizeof(proc_t*), compare_two_procs);
