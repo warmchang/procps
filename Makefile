@@ -109,8 +109,14 @@ check_gcc = $(shell if $(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) dummy.c $(ALL_LDFLAGS
 ALL_CFLAGS += $(call check_gcc,-Wdeclaration-after-statement,)
 ALL_CFLAGS += $(call check_gcc,-Wpadded,)
 
-# Be 64-bit if at all possible.
-ALL_CFLAGS += $(call check_gcc,-m64,)
+# Be 64-bit if at all possible. In a cross-compiling situation, one may
+# do "make m64=-m32 lib64=lib" to produce 32-bit executables. DO NOT
+# attempt to use a 32-bit executable on a 64-bit kernel. Packagers MUST
+# produce separate executables for ppc and ppc64, s390 and s390x,
+# i386 and x86-64, mips and mips64, sparc and sparc64, and so on.
+# Failure to do so will cause data corruption.
+m64 := $(call check_gcc,-m64,)
+ALL_CFLAGS += $(m64)
 
 endif
 endif
