@@ -1,3 +1,7 @@
+procps-3.0.3 --> procps-3.0.4
+
+only Linux 2.4.0 supply the ELF note
+
 procps-3.0.2 --> procps-3.0.3
 
 more "make install" fixes

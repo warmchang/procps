@@ -127,7 +127,6 @@ static void old_Hertz_hack(void){
   unsigned h;
   char *savelocale;
 
-  fprintf(stderr, "ELF note not found - report to albert@users.sf.net\n");
   savelocale = setlocale(LC_NUMERIC, NULL);
   setlocale(LC_NUMERIC, "C");
   do{
@@ -195,8 +194,12 @@ static void init_libproc(void){
   smp_num_cpus = sysconf(_SC_NPROCESSORS_CONF); // or _SC_NPROCESSORS_ONLN
   if(smp_num_cpus<1) smp_num_cpus=1; /* SPARC glibc is buggy */
 
-  Hertz = find_elf_note(AT_CLKTCK);
-  if(Hertz==42) old_Hertz_hack();
+  if(linux_version_code > LINUX_VERSION(2, 4, 0)){ 
+    Hertz = find_elf_note(AT_CLKTCK);
+    if(Hertz!=42) return;
+    fprintf(stderr, "2.4 kernel w/o ELF notes? -- report to albert@users.sf.net\n");
+  }
+  old_Hertz_hack();
 }
 
 /***********************************************************************
