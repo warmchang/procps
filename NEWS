@@ -4,6 +4,7 @@ top: fix suspend/resume behavior
 top: ditch warning until a GOOD interface is found    #188271
 kill: more info in the man page           #182414
 ps: document the -o, o, -O, and O options    #169301
+vmstat: choose units you like: 1000, 1024, 1000000...
 
 procps-3.1.7 --> procps-3.1.8
 
