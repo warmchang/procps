@@ -79,7 +79,7 @@
 \#                          - hey, these two ain't too shabby, either
 .	ds Us this\ \*(Me
 .	ds US \fBthis\fR\ \*(Me
-\#                          - other misc strings
+\#                          - other misc strings for consistent usage
 .	ds F \fIOff\fR
 .	ds O \fIOn\fR
 .
@@ -97,8 +97,14 @@
 .	ds PU CPU
 .	ds Pu cpu
 .	ds SA summary area
-.	ds TD task display
 .	ds TA task area
+.	ds TD task display
+.	ds TW task window
+\#                          - xref's that depend on commands or topic names
+.	ds XC See the
+.	ds Xc see the
+.	ds XT See topic
+.	ds Xt see topic
 .
 .\" //////////////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
@@ -109,7 +115,7 @@
 .\" ----------------------------------------------------------------------
 .SH NAME
 .\" ----------------------------------------------------------------------
-top \- display Linux processes
+top \- display Linux tasks
 
 
 .\" ----------------------------------------------------------------------
@@ -136,8 +142,8 @@ manipulation\fR as well as a much more extensive interface for personal\fB
 configuration\fR \*(EM encompassing every aspect of its operation.
 And while \*(ME is referred to throughout this document, you are free
 to name the program anything you wish.
-That new name, possibly an alias, will then be reflected on several
-interactive screens and used when reading and writing \*(CFs.
+That new name, possibly an alias, will then be reflected on \*(Me's display
+and used when reading and writing a \*(CF.
 
 
 .\" ----------------------------------------------------------------------
@@ -153,19 +159,21 @@ Details regarding their exploitation will be covered in later sections.
 .SS Expanded Configurable Display Support
 .New
 In an SMP environment, you can choose between a\fB summary\fR display or
-you may display\fB each \*(Pu\fR separately.
+you may show\fB each \*(Pu\fR separately.
 This could be an important provision for a massively-parallel machine, where
 screen height is insufficient to simultaneously accommodate all \*(Pu
-states\fI plus\fR a \*(TD.
+states plus a meaningful \*(TD.
 
 .New
-There are new fields and new sort options.
-And with \*(Us, any sort column can be\fB instantly reversed\fR.
+There are new fields.
+With \*(Us,\fB any\fR field is selectable for sorting and your sorted
+column can be\fB instantly reversed\fR.
 
 .New
 You may optionally apply 2 distinct types of\fB highlighting\fR to
 running\fB tasks\fR and/or\fB sorted columns\fR.
-With \*(Us, you'll be able to spot running tasks instantly.
+With \*(Us, you'll be able to instantly spot running tasks and always
+know the current sort field.
 
 .New
 While you could continue to use the more familiar (and boring)\fB
@@ -207,9 +215,11 @@ then \*O again later!!
 .New
 Many Field/Column names have been changed to make them more intuitive,
 more self-descriptive.
+And with \*(Us you won't be fooled with field choices that are "not yet
+implemented".
 
 .New
-Task memory stats are more meaningful\fI and\fR more accurate\fR.
+Task memory statistics are more meaningful\fI and\fR more accurate\fR.
 
 .New
 You'll finally have complete\fB display integrity\fR regardless of field
@@ -347,8 +357,7 @@ command line\fR \*(EM a subject soon to be dealt with.
        'b' - Bold hilite        On\ \ (not 'reverse')
      * 'c' - Command line       \fBOff\fR (name, not cmdline)
      * 'i' - Idle tasks         On\ \ (show all tasks)
-       'P' - Sort on PIDs
-       'R' - Reverse sort       On\ \ (high-to-low)
+       'R' - Reverse sort       On\ \ (sort pids high-to-low)
      * 'S' - Cumulative time    \fBOff\fR (exclude dead child)
        'x' - Column hilite      \fBOff\fR\ (no, sort field)
        'y' - Row hilite         On\ \ (yes, running tasks)
@@ -434,32 +443,32 @@ Output is plain text suitable for any dumb terminal.
 Starts \*(Me with the last remembered '\fBc\fR' state reversed.
 Thus, if \*(Me was displaying command lines, now that field will show program
 names, and visa versa.
-See also the 'c' \*(CI.
+\*(XC 'c' \*(CI for additional information.
 
 .TP 5
 \-\fBd\fR :\fB Delay time\fR interval as:\ \ \fB-d ss.tt\fR (\fIseconds\fR.\fItenths\fR)
 Specifies the delay between screen updates, and overrides the corresponding
 value in one's personal \*(CF or the startup default.
-Later this can be changed with the 's' or 'd' \*(CIs.
+Later this can be changed with the 'd' or 's' \*(CIs.
 
 In all cases, however, such changes are\fI prohibited\fR if \*(Me is running
-in 'Secure mode',\fI except for root\fR and\fI excluding\fR the 's'
-\*(CO, documented later in this section.
-See also 'Secure mode' in section 5. FILES.
+in 'Secure mode', except for root and excluding\fR the 's' \*(CO, documented
+later in this section.
+For additional information on 'Secure mode'
+\*(Xt 5a. SYSTEM Configuration File.
 
-Fractional seconds will be honored.
-But if you start \*(Me with a delay of anything less than 1 second, and you
-expect him to do a proper job of it, then you really owe him a\fB scheduling
-boost\fR.
+Fractional seconds are honored, but a negative number is not allowed.
+If you set the delay to anything less than 1 second, and you expect \*(Me
+to do a proper job of it, then you really owe him a\fB scheduling boost\fR.
 So please renice him using \*(Me's own 'r' \*(CI or more directly with
 something like the following:
     nice -n-10 top -d.1
 
 With the ability to highlight\fB running\fR tasks, \*(Us will then produce
 an amazing display.
-One representing the results of the kernel's \fB previously unseen\fR
+One representing the results of the kernel's\fB previously unseen\fR
 scheduling efforts.
-You will be surprised, guaranteed.
+You may be surprised.
 .Rjb 2
  ( but try not to waste too many \*(Pu cycles )
  ( with such sub-second delays & refreshes! )
@@ -474,7 +483,6 @@ Show library version and the usage prompt, then quit.
 Starts \*(Me with the last remembered '\fBi\fR' state reversed.
 When this toggle is \*F, tasks that \fBare\fR idled or zombied
 will\fB not\fR be displayed.
-See also the 'i' \*(CI.
 
 .TP 5
 \-\fBn\fR :\fB Number of iterations\fR limit as:\ \ \fB -n number\fR
@@ -501,13 +509,6 @@ And should you wish to return to normal operation, it is not necessary
 to quit and and restart \*(Us \*(EM just issue the '=' \*(CI.
 
 .TP 5
-\-\fBS\fR :\fB Cumulative time mode\fR toggle
-Starts \*(Me with the last remembered '\fBS\fR' state reversed.
-When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
-time that\fB it\fR and its\fB dead children\fR has used.
-See also the 'S' \*(CI.
-
-.TP 5
 \-\fBs\fR :\fB Secure mode\fR operation
 Starts \*(Me with \fBsecure mode forced\fR, even for root.
 This mode is far better controlled through the system \*(CF.
@@ -527,6 +528,13 @@ Don't bother trying that precise command line with your old top
 he-sees-poorly-but-won't-wear-glasses.
 
 .TP 5
+\-\fBS\fR :\fB Cumulative time mode\fR toggle
+Starts \*(Me with the last remembered '\fBS\fR' state reversed.
+When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
+time that it\fB and\fR its dead children has used.
+\*(XC 'S' \*(CI for additional information regarding this mode.
+
+.TP 5
 \-\fBv\fR :\fB Version\fR
 Show library version and the usage prompt, then quit.
 
@@ -541,53 +549,58 @@ Listed below are \*(Us's\fB available\fR fields.
 They are always associated with the letter shown, regardless of the position
 you may have established for them with the 'o' (Order fields) \*(CI.
 
-Those fields shown with an \*(AS are selectable as\fB sort fields\fR,
-and you control whether they are sorted high-to-low or low-to-high
-(see the 'R' \*(CI).
+Any field is selectable as the\fB sort field\fR, and you control whether they
+are sorted high-to-low or low-to-high.
+For additional information on sort provisions \*(Xt 3c. TASK Display Commands.
 
-.TP 5
-*\ a:\fB PID\fR \*(EM Process Id\fR
+.TP 3
+a:\fB PID\fR \*(EM Process Id\fR
 The task's unique process ID, which periodically wraps at 32767,
 though never restarting at zero.
 
-.TP 5
-\ \ b:\fB PPID\fR \*(EM Parent Process Pid\fR
+.TP 3
+b:\fB PPID\fR \*(EM Parent Process Pid\fR
 The process ID of a task's parent.
 
-.TP 5
-\ \ c:\fB UID\fR \*(EM User Id\fR
+.TP 3
+c:\fB PGID\fR \*(EM Process Group Id\fR
+The group to which a task belongs which in turn is part of job control.
+There is one process group per pipeline.
+
+.TP 3
+d:\fB UID\fR \*(EM User Id\fR
 The user ID of the task's owner.
 
-.TP 5
-*\ d:\fB USER\fR \*(EM User Name
+.TP 3
+e:\fB USER\fR \*(EM User Name
 The user name of the task's owner.
 
-.TP 5
-\ \ e:\fB GROUP\fR \*(EM Group Name
+.TP 3
+f:\fB GROUP\fR \*(EM Group Name
 The group name of the task's owner.
 
-.TP 5
-*\ f:\fB TTY\fR \*(EM Controlling Tty
+.TP 3
+g:\fB TTY\fR \*(EM Controlling Tty
 The name of the controlling terminal.
 This is usually the\fB device\fR (serial port, pty, etc.) from which the
 process was started, and which it uses for input or output.
 However, a task need\fI not\fR be associated with a terminal, in which case
 you'll see '\fB?\fR' displayed.
 
-.TP 5
-\ \ g:\fB PR\fR \*(EM Priority
+.TP 3
+h:\fB PR\fR \*(EM Priority
 The priority of the task.
 
-.TP 5
-\ \ h:\fB NI\fR \*(EM Nice value
+.TP 3
+i:\fB NI\fR \*(EM Nice value
 The nice value of the task.
 A\fI negative\fR nice value means\fB higher priority\fR, whereas a\fI
 positive\fR nice value means\fB lower priority\fR.
 Zero in this field simply means priority will not be adjusted in determining a
 task's dispatchability.
 
-.TP 5
-\ \ i:\fB #C\fR \*(EM Last used \*(PU (SMP)
+.TP 3
+j:\fB #C\fR \*(EM Last used \*(PU (SMP)
 A number representing the last used processor.
 In a true SMP environment this will likely change frequently since the kernel
 intentionally uses weak affinity.
@@ -595,8 +608,8 @@ Also, the very act of running \*(Me may break this weak affinity and cause more
 processes to change \*(PUs more often (because of the extra demand for
 \*(Pu time).
 
-.TP 5
-*\ j:\fB %CPU\fR \*(EM \*(PU usage
+.TP 3
+k:\fB %CPU\fR \*(EM \*(PU usage
 The task's share of the elapsed \*(PU time since the last screen update, expressed
 as a percentage of total \*(PU time.
 In a true SMP environment, if 'Irix mode' is \*F, \*(Me will operate in
@@ -604,81 +617,88 @@ In a true SMP environment, if 'Irix mode' is \*F, \*(Me will operate in
 number of \*(PUs.
 You toggle 'Irix/Solaris' modes with the 'I' \*(CI.
 
-.TP 5
-*\ k:\fB TIME\fR \*(EM \*(PU Time
+.TP 3
+l:\fB TIME\fR \*(EM \*(PU Time
 Total \*(PU time the task has used since it started.
 When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
 time that\fB it\fR and its\fB dead children\fR has used.
 You toggle 'Cumulative mode' with 'S', which is a \*(CO and an \*(CI.
 
-.TP 5
-*\ l:\fB TIME+\fR \*(EM \*(PU Time, hundredths
+.TP 3
+m:\fB TIME+\fR \*(EM \*(PU Time, hundredths
 The same as 'TIME', but reflecting more granularity through hundredths of
 a second.
 
-.TP 5
-*\ m:\fB %MEM\fR \*(EM Memory usage (RES)
+.TP 3
+n:\fB %MEM\fR \*(EM Memory usage (RES)
 A task's currently used share of available \*(MP.
 
-.TP 5
-\ \ n:\fB VIRT\fR \*(EM Virtual Image (kb)
+.TP 3
+o:\fB VIRT\fR \*(EM Virtual Image (kb)
 The total amount of \*(MV used by the task.
 It includes all code, data and shared libraries plus pages that have been
 swapped out.
 
 VIRT = SWAP + RES.
 
-.TP 5
-\ \ o:\fB SWAP\fR \*(EM Swapped size (kb)
+.TP 3
+p:\fB SWAP\fR \*(EM Swapped size (kb)
 The swapped out portion of a task's total \*(MV image.
 
-.TP 5
-*\ p:\fB RES\fR \*(EM Resident size (kb)
+.TP 3
+q:\fB RES\fR \*(EM Resident size (kb)
 The non-swapped \*(MP a task has used.
 
 RES = CODE + DATA.
 
-.TP 5
-\ \ q:\fB CODE\fR \*(EM Code size (kb)
+.TP 3
+r:\fB CODE\fR \*(EM Code size (kb)
 The amount of \*(MP devoted to executable code, also known as
 the 'text resident set' size or TRS.
 
-.TP 5
-\ \ r:\fB DATA\fR \*(EM Data+Stack size (kb)
+.TP 3
+s:\fB DATA\fR \*(EM Data+Stack size (kb)
 The amount of \*(MP devoted to other than executable code, also known as
 the 'data resident set' size or DRS.
 
-.TP 5
-\ \ s:\fB SHR\fR \*(EM Shared Mem size (kb)
+.TP 3
+t:\fB SHR\fR \*(EM Shared Mem size (kb)
 The amount of \*(MS used by a task.
 It simply reflects memory that could be potentially shared with
 other processes.
 It is not an assurance that such memory is actually being shared.
 
-.TP 5
-\ \ t:\fB nFLT\fR \*(EM Page Fault count
+.TP 3
+u:\fB nFLT\fR \*(EM Page Fault count
 The number of\fB major\fR page faults that have occurred for a task.
 A page fault occurs when a process attempts to read from or write to a virtual
 page that is not currently present in its address space.
 A\fB major\fR page fault is when\fI disk access\fR is involved in making that
 page available.
 
-.TP 5
-\ \ u:\fB nDRT\fR \*(EM Dirty Pages count
+.TP 3
+v:\fB nDRT\fR \*(EM Dirty Pages count
 The number of pages that have been\fB modified\fR since they were last
 written to disk.
 Dirty pages must be written to disk before the corresponding physical memory
 location can be used for some other virtual page.
 
-.TP 5
-\ \ v:\fB S\fR \*(EM Process Status
+.TP 3
+w:\fB S\fR \*(EM Process Status
 The status of the task which can be one of:
-    '\fBD\fR' = uninterruptible sleep    '\fBR\fR' = running
-    '\fBS\fR' = sleeping                 '\fBT\fR' = stopped or traced
-    '\fBZ\fR' = zombies
+   '\fBD\fR' = uninterruptible sleep
+   '\fBR\fR' = running
+   '\fBS\fR' = sleeping
+   '\fBT\fR' = traced or stopped
+   '\fBZ\fR' = zombies
 
-.TP 5
-*\ w:\fB Command\fR \*(EM Command\fB line\fR or Program\fB name\fR
+Tasks shown as running should be more properly thought of as 'ready to run'
+\*(EM their task_struct is simply represented on Linux's run-queue.
+Even without a true SMP machine you may see numerous tasks in this state,
+depending on \*(Me's delay interval and nice value.
+
+.TP 3
+x:\fB Command\fR \*(EM Command\fB line\fR or Program\fB name\fR
 Display the command line used to start a task or the name of the associated
 program.
 You toggle between command\fI line\fR and\fI name\fR with 'c', which is both
@@ -701,8 +721,8 @@ When displayed, this column will be allocated \fBall remaining screen width\fR
 to provide for the potential growth of program names into command lines!
 .in
 
-.TP 5
-\ \ x:\fB WCHAN\fR \*(EM Sleeping in Function
+.TP 3
+y:\fB WCHAN\fR \*(EM Sleeping in Function
 Depending on the availability of\fI /boot/System.map\fR (the kernel link map)
 or\fI /boot/psdatabase\fR, this field will show the \fB name\fR or
 the\fB address\fR of the kernel function in which the task is
@@ -716,8 +736,8 @@ over 700Kb.
 Your only means of reducing that overhead will be to stop and restart \*(Me.
 .in
 
-.TP 5
-\ \ y:\fB Flags\fR \*(EM Task Flags
+.TP 3
+z:\fB Flags\fR \*(EM Task Flags
 This column represents the task's current scheduling flags which \*(Us
 expresses in hexadecimal notation, but with zeros suppressed.
 These flags are officially documented in <sched.h>.
@@ -735,7 +755,7 @@ Here is a sample\fB fields string\fR from one of \*(Us's four windows/field
 groups and an explanation of the conventions used:
 .Jbu
 Sample fields string:
-   \fIAMNOPQRSTUWbcdefiklxyVGHJ\fR
+   \fIANOPQRSTUVXbcdefgjlmyzWHIK\fR
 .Jbu
 The order of displayed fields corresponds to the order of the letters
 in that string.
@@ -744,11 +764,11 @@ If the letter is\fI upper case\fR the corresponding field itself will
 then be\fB shown\fR as part of the \*(TD (screen width permitting).
 This will also be indicated by a leading \*(AS, as in this excerpt:
     \fR...
-    \fR* J: %CPU       = CPU usage
-    \fR  k: TIME       = CPU Time
-    \fR  l: TIME+      = CPU Time, hundredths
-    \fR* M: %MEM       = Memory usage (RES)
-    \fR* N: VIRT       = Virtual Image (kb)
+    \fB* K: %CPU       = CPU usage
+    \fR  l: TIME       = CPU Time
+    \fR  m: TIME+      = CPU Time, hundredths
+    \fB* N: %MEM       = Memory usage (RES)
+    \fB* O: VIRT       = Virtual Image (kb)
     \fR...
 
 .TP
@@ -771,27 +791,36 @@ Some commands appear more than once \*(EM their meaning or scope may vary
 depending on the context in which they are issued.
 
   3a.\fI GLOBAL_Commands\fR
-        ?, ^L, <Sp>, =, A, d, F, h, O, I, k, Q, r, s, W, Z
+        <Ret>, <Sp> ?, =, A, d, G, h, I, k, Q, r, s, W, Z
   3b.\fI SUMMARY_Area_Commands\fR
         l, m, t, 1
   3c.\fI TASK_Area_Commands\fR
         Appearance:  b, x, y, z
-        Content:     c, f, S, u
-        Size:        i, n
-        Sort Order:  C, E, M, P, R, T, U, Y
+        Content:     c, f, o, S, u
+        Size:        #, i, n
+        Sorting:     <, >, F, O, R
   3d.\fI COLOR_Mapping\fR
-        <Enter>, a, b, H, M, q, S, T, w, z, 0 - 7
+        <Ret>, a, b, H, M, q, S, T, w, z, 0 - 7
   4b.\fI COMMANDS_for_Windows\fR
-        -, _, =, +, A, a, F, g, O, w
+        -, _, =, +, A, a, G, g, w
 
 .\" ......................................................................
 .SS 3a. GLOBAL Commands
 The global \*(CIs are\fB always\fR available\fR in both \*(FM and \*(AM.
-
 However, some of these \*(CIs are\fB not available\fR when running
 in 'Secure mode'.
-If you wish to know in advance whether or not your \*(Me has been\fI secured\fR,
+
+If you wish to know in advance whether or not your \*(Me has been secured,
 simply ask for help and view the system summary on the second line.
+
+.TP 7
+\ \ \<\fBEnter\fR> or <\fBSpace\fR> :\fIRefresh_Display\fR
+In truth, these commands do nothing, they are simply ignored.
+However, they will awaken \*(Me and following receipt of any input
+the entire display will be repainted within milliseconds.
+
+If you have set a large delay interval and wish to see current status,
+just use either of these keys.
 
 .TP 7
 \ \ \'\fB?\fR\' or \'\fBh\fR\' :\fIHelp\fR
@@ -802,17 +831,6 @@ If \*(Me is\fI secured\fR, that screen will be abbreviated.
 
 Typing 'h' or '?' on that help screen will take you to help for those \*(CIs
 applicable to \*(AM.
-
-.TP 7
-\ \ \fB^L\fR or <\fBspace\fR> :\fIRefresh_Display\fR
-In truth, all this command does is clear the screen, which itself is a
-wasted effort.
-Following receipt of any input a new frame is created and the entire display
-will be repainted anyway within milliseconds.
-This command, therefore, has no practical benefit and you can save your
-keyboard for real commands.
-
-The former top had this command, so \*(Us maintains the illusion.
 
 .TP 7
 \ \ \'\fB=\fR\' :\fIExit_Task_Limits\fR
@@ -827,25 +845,29 @@ When operating in \*(AM this command has a slightly broader meaning.
 .TP 7
 \ \ \'\fBA\fR\' :\fIAlternate_Display_Mode_toggle\fR
 This command will switch between \*(FM and \*(AM.
-See 4. ALTERNATE\-DISPLAY Mode and the 'F' or 'O' \*(CIs for insight into
+\*(XT 4. ALTERNATE\-DISPLAY Mode and the 'G' \*(CI for insight into
 \*(CWs and field groups.
 
 .TP 7
 *\ \'\fBd\fR\' or \'\fBs\fR\' :\fIChange_Delay_Time_interval\fR
-You will be prompted to enter the delay time, in seconds, between display
-updates.
+You will be prompted to enter the delay time, in seconds, between
+display updates.
+
 Fractional seconds are honored, but a negative number is not allowed.
-Entering 0 causes (nearly) continuous updates, with an unsatisfactory display
-as the system and tty driver try to keep up with \*(Me's demands.
+If you set the delay to anything less than 1 second, and you expect \*(Me
+to do a proper job of it, then you really owe him a\fB scheduling boost\fR.
+So please renice him using \*(Me's own 'r' \*(CI.
+
+Entering 0 causes (nearly) continuous updates, with an unsatisfactory
+display as the system and tty driver try to keep up with \*(Me's demands.
 The delay value is inversely proportional to system loading,
 so set it with care.
-See the '-d' \*(CO for additional information on delay time.
 
 If at any time you wish to know the current delay time, simply ask for help
 and view the system summary on the second line.
 
 .TP 7
-\ \ \'\fBF\fR\' or \'\fBO\fR\' :\fIChoose_Another_Window/Field_Group\fR
+\ \ \'\fBG\fR\' :\fIChoose_Another_Window/Field_Group\fR
 You will be prompted to enter a number between 1 and 4 designating the
 window/field group which should be made the \*(CW.
 You will soon grow comfortable with these 4 windows, especially after
@@ -887,15 +909,16 @@ favorably by the kernel.
 This will save all of your options and toggles plus the current
 display mode and delay time.
 By issuing this command just before quitting \*(Me, you will be able restart
-later in\fB exactly\fR that same state (see 5. FILES).
+later in\fB exactly\fR that same state.
 
 .TP 7
 \ \ \'\fBZ\fR\' :\fIChange_Color_Mapping
 This key will take you to a separate screen where you can change the
-colors for the \*(CW, or for all windows (see 3d. COLOR Mapping).
+colors for the \*(CW, or for all windows.
+For details regarding this \*(CI \*(Xt 3d. COLOR Mapping.
 
 .IP "*" 3
-The commands shown with an \*(AS are\fB not available\fR in\fI Secure mode\fR,
+The commands shown with an \*(AS are\fB not available\fR in 'Secure mode',
 nor will they be shown on the level-1 help screen.
 
 .\" ......................................................................
@@ -905,7 +928,7 @@ They affect the beginning lines of your display and will determine the position
 of messages and prompts.
 
 These commands always impact just the \*(CW/field group.
-See 4. ALTERNATE\-DISPLAY Mode and the 'F' or 'O' \*(CIs for insight into
+\*(XT 4. ALTERNATE\-DISPLAY Mode and the 'G' \*(CI for insight into
 \*(CWs and field groups.
 
 .TP 7
@@ -946,18 +969,18 @@ appropriate #define enabled so the command will be restricted to SMP.
 If the\fB entire\fR \*(SA has been toggled \*F for any window,
 you would be left with just the\fB message line\fR.
 In that way, you will have maximized available task rows but (temporarily)
-sacrificed the program name in \*(FM or the window name when
-entering \*(AM.
+sacrificed the program name in \*(FM or the \*(CW name when in \*(AM.
 
 .\" ......................................................................
 .SS 3c. TASK Area Commands
 The \*(TA \*(CIs are\fB always\fR available in \*(FM.
 
 The \*(TA \*(CIs are\fB never available\fR in \*(AM\fI if\fR the \*(CW's
-\*(TD has been toggled \*F (see 4. ALTERNATE\-DISPLAY Mode).
+\*(TD has been toggled \*F (\*(Xt 4. ALTERNATE\-DISPLAY Mode).
 
+.PP
 .\" .........................
-.B APPEARANCE\fR of task window
+.B APPEARANCE\fR of \*(TW
 .PD 0
 .TP 7
 \ \ \'\fBb\fR\' :\fIBold/Reverse_toggle\fR
@@ -966,11 +989,10 @@ Further, it will only be available when at least one of those toggles is \*O.
 
 .TP 7
 \ \ \'\fBx\fR\' :\fIColumn_Highlight_toggle\fR
-This \*(Me hopes that you always run with 'column highlight' \*F,
-due to the cost in pathlength (see 7. NOTES and Rantings).
-Besides, do you really need a constant visual reminder of your chosen sort
-column?
-If you forget which field \*(Me is sorting, just issue the 'R' command for a
+You probably don't need a constant visual reminder of your chosen sort
+field and \*(Us hopes that you always run with 'column highlight' \*F,
+due to the cost in path-length.
+However, if you forget which field \*(Me is sorting it can serve as a
 quick visual reminder.
 
 .TP 7
@@ -985,12 +1007,12 @@ your-brand-new-top and you'll make the program author a happy guy.
 \ \ \'\fBz\fR\' :\fIColor/Monochrome_toggle\fR
 Switches the \*(CW between your last used color scheme and the older form
 of black-on-white or white-on-black.
-This command will alter both the \*(SA and \*(TA but does not affect the
+This command will alter\fB both\fR the \*(SA and \*(TA but does not affect the
 state of the 'x', 'y' or 'b' toggles.
 
 .PP
 .\" .........................
-.B CONTENT\fR of task window
+.B CONTENT\fR of \*(TW
 .PD 0
 .TP 7
 \ \ \'\fBc\fR\' :\fICommand_Line/Program_Name_toggle\fR
@@ -999,32 +1021,40 @@ is\fB currently visible\fR.
 Later, should that field come into view, the change you applied will be seen.
 
 .TP 7
-\ \ \'\fBf\fR\' or \'\fBo\fR\' :\fIFields_select\fR or \fIOrder_fields\fR
+\ \ \'\fBf\fR\' and \'\fBo\fR\' :\fIFields_select\fR or \fIOrder_fields\fR
 These keys display separate screens where you can change which
-fields are displayed and their order (see 2b. SELECTING and ORDERING Columns).
+fields are displayed and their order.
+For additional information on these \*(CIs
+\*(Xt 2b. SELECTING and ORDERING Columns.
 
 .TP 7
 \ \ \'\fBS\fR\' :\fICumulative_Time_Mode_toggle\fR
 When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
-time that\fB it\fR and its\fB dead children\fR has used.
-See also the 'S' \*(CO.
+time that it\fB and\fR its dead children\fR has used.
+
+When \*F, programs that fork into many separate tasks will appear
+less demanding.
+For programs like 'init' or a shell this is appropriate but for others,
+like compilers, perhaps not.
+Experiment with two \*(TWs sharing the same sort field but with different 'S'
+states and see which representation you prefer.
 
 After issuing this command, you'll be informed of the new state of this toggle.
-If you wish to know in advance whether or not cumulative time mode is in
+If you wish to know in advance whether or not 'Cumulative mode' is in
 effect, simply ask for help and view the window summary on the second line.
 
 .TP 7
 \ \ \'\fBu\fR\' :\fIShow_Specific_User_Only\fR
 You will be prompted to enter the name of the user to display.
-Thereafter, only tasks matching that User ID will be shown, or possibly no
-tasks will be shown.
+Thereafter, in that \*(TW only matching User ID's will be shown, or possibly
+no tasks will be shown.
 
 Later, if you wish to monitor all tasks again, re-issue this command but
 just press <Enter> at the prompt, without providing a name.
 
 .PP
 .\" .........................
-.B SIZE\fR of task window
+.B SIZE\fR of \*(TW
 .PD 0
 .TP 7
 \ \ \'\fBi\fR\' :\fIIdle_Processes_toggle\fR
@@ -1045,48 +1075,63 @@ over the size of each currently visible \*(TD.
 
 .PP
 .\" .........................
-.B SORT ORDER\fR of task window
+.B SORTING\fR of \*(TW
 .br
-The sort order \*(CIs will\fB always\fR be honored whether or not a field
-is\fB currently visible\fR.
-Later, should that field come into view, the change(s) you applied will be seen.
+.in +2
+Before using any of these sort provisions, \*(Me suggests that you
+\fItemporarily\fR turn on column highlighting using the '\fBx\fR' \*(CI.
+That will help ensure that the actual sort environment matches your intent.
+
+The following \*(CIs will\fB only\fR be honored when the
+current sort field is\fB visible\fR.
+The sort field might\fI not\fR be visible because:
+     1) there is insufficient\fI Screen Width\fR
+     2) the 'f' \*(CI turned it \*F
+.in
+
+.TP 7
+\ \ \'\fB<\fR\' :\fIMove_Sort_Field_Left\fR
+Moves the sort column to the left unless the current sort field is
+the first field being displayed.
+
+.TP 7
+\ \ \'\fB>\fR\' :\fIMove_Sort_Field_Right\fR
+Moves the sort column to the right unless the current sort field is
+the last field being displayed.
+
+.PP
+.in +2
+The following \*(CIs will\fB always\fR be honored whether or not
+the current sort field is visible.
+.in
+
+.TP 7
+\ \ \'\fBF\fR\' or \'\fBO\fR\' :\fISelect_Sort_Field\fR
+These keys display a separate screen where you can change which field
+is used as the sort column.
+
+If a field is selected which was not previously being displayed, it will
+be forced \*O when you return to the \*(Me display.
+However, depending upon your screen width and the order of your fields,
+this sort field may not be displayable.
+
+These \*(CIs can be a convienent way to simply verify the current sort field,
+when running \*(Me with column highlighting turned \*F.
 
 .TP 7
 \ \ \'\fBR\fR\' :\fIReverse/Normal_Sort_Field_toggle\fR
 Internally to \*(Me, 'normal' is 'reverse'.
-.rj 1
+.Rjb 1
  ...\fBsay what\fR?
-.br
+.Rje
 Without 'R', \*(Me will sort fields high-to-low.
-.rj 1
+.Rjb 1
  ...that's\fI reverse\fR, \*(Me's\fI normal\fR mode!
+.Rje
 
 Try this:\ \ using 'R' you can\fI alternate\fR between high-to-low
 and low-to-high sorts.
 Lose no sleep over 'reverse' and 'normal', ok?
-
-.TP 7
-\ \ \fB\ 7\fR\ \ upper case letters which \fISelect_a_Sort_Column\fR:
-\'\fBC\fR\'\ \ :Sort by Command\fB line\fR or program\fB name\fR,
-.br
-\ \ \ \ \ \ depending on the state of the 'c' toggle
-.br
-\'\fBE\fR\'\ \ :Sort by USER
-.br
-\'\fBM\fR\'\ \ :Sort by %MEM and/or RES
-.br
-\'\fBP\fR\'\ \ :Sort by PID
-.br
-\'\fBT\fR\'\ \ :Sort by TIME and/or TIME+
-.br
-\'\fBU\fR\'\ \ :Sort by %CPU
-.br
-\'\fBY\fR\'\ \ :Sort by TTY
-
-.PP
-If you forget which field \*(Me is sorting, the '\fBR\fR' or '\fBx\fR'
-\*(CIs could be used for a quick visual reminder, without changing the
-selected sort column.
 
 .\" ......................................................................
 .SS 3d. COLOR Mapping
@@ -1166,7 +1211,7 @@ windows and prosper in \*(AM.
 .br
 In \*(FM there is a single window represented by the entire screen.
 That single window can still be\fI changed\fR to display 1 of 4 different\fB
-field groups\fR (see the 'F' and 'O' commands, repeated below).
+field groups\fR (\*(Xc 'G' \*(CI, repeated below).
 
 Each of the 4 field groups has a unique separately configurable\fB \*(SA\fR
 and its own configurable\fB \*(TA\fR.
@@ -1200,7 +1245,7 @@ Come on, let's hear it, who ya gonna' blame, huh?
 .\" ......................................................................
 .SS 4b. COMMANDS for Windows
 .TP 7
-\ \ \'\fB-\fR\' or \'\fB_\fR\' :\fIShow/Hide_Window(s)_toggle\fR
+\ \ \'\fB-\fR\' and \'\fB_\fR\' :\fIShow/Hide_Window(s)_toggles\fR
 The '-' (minus) key turns the \*(CW's \*(TD \*O and \*F.
 When \*O, that \*(TA will show a minimum of the columns header you've
 established with the 'f' and 'o' commands.
@@ -1214,17 +1259,20 @@ In other words, it switches between the currently visible \*(TD(s) and any
 If all 4 \*(TDs\fB are\fR currently visible, \*(Me is betting you will find
 the '_' command not terribly satisfying (inside, he'll wonder
 what-kind-of-user-he's-dealing-with).
+On the other hand, if all you're interested in is the system summary, \*(Me
+acknowledges this is the best means to that objective (inside, he'll wonder
+how-did-this-user-become-so-very-wise).
 
 .TP 7
-*\ \'\fB=\fR\' or \'\fB+\fR\' :\fIEqualize_(re-balance)_Window(s)\fR
+*\ \'\fB=\fR\' and \'\fB+\fR\' :\fIEqualize_(re-balance)_Window(s)\fR
 The '=' (equals) key\fB forces\fR the \*(CW's \*(TD to be visible.
 It also reverses any 'i' (idle tasks) and 'n' (max tasks) commands that might
 be active.
 
 The \'+' (upper case equals) key does the same for\fB all\fR windows.
-The four \*(TDs will reappear, nice and even, having retained any
-customizations you had previously applied (\fIexcept\fR for the 'i'
-and 'n' commands).
+The four \*(TDs will reappear, nice and even.  They will also have\fB
+retained\fR any customizations you had previously applied,\fI except\fR for
+the 'i' (idle tasks) and 'n' (max tasks) commands.
 
 This is the command you'll use when your screen has somehow become a mess
 (hmmm, how-in-the-world-did-THAT-happen?).
@@ -1238,7 +1286,7 @@ Thereafter when you switch modes, you will see only the \*(TD(s) you've
 chosen to make visible.
 
 .TP 7
-*\ \'\fBa\fR\' or \'\fBw\fR\' :\fINext_Window_Forward/Backward\fR
+*\ \'\fBa\fR\' and \'\fBw\fR\' :\fINext_Window_Forward/Backward\fR
 This will change the \*(CW, which in turn changes the window to which
 commands are directed.
 These keys act in a circular fashion so you can reach any desired \*(CW
@@ -1249,7 +1297,7 @@ whenever the \*(CW name loses its emphasis/color, that's a reminder
 the \*(TD is \*F and many commands will be restricted.
 
 .TP 7
-*\ \'\fBF\fR\' or \'\fBO\fR\' :\fIChoose_Another_Window/Field_Group\fR
+*\ \'\fBG\fR\' :\fIChoose_Another_Window/Field_Group\fR
 You will be prompted to enter a number between 1 and 4 designating the
 window/field group which should be made the \*(CW.
 
@@ -1265,8 +1313,8 @@ It does not require that the window name be visible
 
 .IP "*" 3
 The \*(CIs shown with an \*(AS have use beyond \*(AM.
-    \'=', 'A', 'F', 'O'\ \ are\fB always\fR available
-    \'a', 'w'\ \ act the same when\fB color mapping\fR
+    \'=', 'A', 'G'  are\fB always\fR available
+    \'a', 'w'       act the same when\fB color mapping\fR
 
 .\" ......................................................................
 .SS 4c. EXAMPLES of Windows
@@ -1414,19 +1462,19 @@ empty rows...
   & m = lost Mem/Swap |Cpu(s) state: \fB 10.6%\fR user,  \fB 0.0%\fR syst:
                       |______________________________________:
  2:Job was very busy: |\fI2__PID__PPID_Command____________TIME+_\fR:
-  'n' cmd, w/ 7 tasks |     6     0\fB ( kreclaimd )  \fR   0:00.00:
-  'c' cmd, cmd line   |     9     1\fB ( mdrecoveryd )\fR   0:00.00:
-  'C' cmd, sort 'c'   |    80     1\fB ( khubd )      \fR   0:00.00:
-  'R' cmd, sort bkwd  |   683     1\fB xinetd -stayali\fR   0:00.00:
-  'x' cmd, hi column  | 11358     1\fB /bin/bash/ /usr\fR   0:00.00:
- (when 2\fB WAS\fR current) |  1297     1\fB /sbin/mingetty \fR   0:00.00:
+  'n' cmd, w/ 7 tasks |    80     1\fB ( khubd )      \fR   0:00.00:
+  'c' cmd, cmd line   |     6     0\fB ( kreclaimd )  \fR   0:00.00:
+  'O' cmd, sort cmd   |     9     1\fB ( mdrecoveryd )\fR   0:00.00:
+  'R' cmd, sort bkwd  | 11358     1\fB /bin/bash/ /usr\fR   0:00.00:
+  'x' cmd, hi column  |  1297     1\fB /sbin/mingetty \fR   0:00.00:
+ (when 2\fB WAS\fR current) |   683     1\fB xinetd -stayali\fR   0:00.00:
                       |\fI___836_____1_\fBlogin_--_root\fI_____0:00.00\fR:
  3:Mem has altered    |\fI3__PID_%MEM__VIRT_SWAP__RES_CODE_DATA_\fR:
-  some std defaults:  |  4634\fB 12.3\fR 15620    0  15m\fB  860\fR  14m :
-  'y' turned Off      |  7337\fB 11.3\fR 14396   92  13m\fB   36\fR  13m :
-  'x' turned On       |   923\fB 10.6\fR 30544  16m  13m\fB 1120\fR  12m :
- (when 3\fB WAS\fR current) |   991\fB  7.2\fR  9492  316 9176\fB   12\fR 9164 :
-                      |\fI_7329___\fB7.0\fI__9036__140_8896___\fB36\fI_8860_\fR:
+  some std defaults:  |  4634\fB 12.3\fR 15620    0\fB  15m\fR  860  14m :
+  'y' turned Off      |  7337\fB 11.3\fR 14396   92\fB  13m\fR   36  13m :
+  'x' turned On       |   923\fB 10.6\fR 30544  16m\fB  13m\fR 1120  12m :
+ (when 3\fB WAS\fR current) |   991\fB  7.2\fR  9492  316\fB 9176\fR   12 9164 :
+                      |\fI__7329__\fB7.0\fI__9036__140_\fB8896\fR___36_8860_\fR:
  Huh?  4:Usr has some |\fI4_UID_USER_____GROUP____TTY________PID\fR:
   \fBblank rows\fR! ? ? ? ? | \fB   0 jtwm     root     pts/2     5561\fR:
  Aha, the 'i' command | \fB   0 root     root     ?         5560\fR:
@@ -1452,9 +1500,9 @@ to satisfy almost any user, don't ya think?
 
 .in +4
 \*(NT Use #3 above when you've messed up your screen beyond redemption.
-All \*(TDs will\fB reappear\fR, nice and even.
-They will also have\fB retained\fR any customizations you had previously
-applied,\fI except\fR for the 'i' (idle tasks) and 'n' (max tasks) commands!
+The four \*(TDs will reappear, nice and even.  They will also have\fB
+retained\fR any customizations you had previously applied,\fI except\fR for
+the 'i' (idle tasks) and 'n' (max tasks) commands.
 .in
 
 That's It !\ \ Piece of Cake !!\ \ Enjoy them there windows !!!\fR
@@ -1475,7 +1523,7 @@ They will\fB not\fR be able to issue the following commands (well, at least
 not successfully, ha ha):
    \fBk         Kill\fR a task
    \fBr         Renice\fR a task
-   \fBs\fR or\fB d\fR    Change\fB delay/update\fR interval
+   \fBd\fR or\fB s\fR    Change\fB delay/sleep\fR interval
 
 The system \*(CF is\fB not\fR created by \*(Me.
 Rather,\fB you create this file manually\fR and place it in the \fI/etc\fR
@@ -1497,9 +1545,9 @@ Rather, use the 'W' \*(CI to create it or update it.
 For the benefit of those who never follow such advise, here is the
 general layout.
    \fBglobal\fR    # line 1: a shameless advertisement
-   \fR  "   \fR    # line 2: id,altcsr,irixps,delay,curwin
+   \fR  "   \fR    # line 2: id,altscr,irixps,delay,curwin
    \fBper ea\fR    # line a: winname,fieldscur
-   \fBwindow\fR    # line b: winflags,sorttype,maxtasks
+   \fBwindow\fR    # line b: winflags,sortindx,maxtasks
    \fR  "   \fR    # line c: summclr,msgsclr,headclr,taskclr
    ( and good luck with those winflags on line #b! )
 
@@ -1605,7 +1653,8 @@ Then ponder this:
 .SS 7a. The top BINARY
 To whom it may/\fBshould\fR concern:  \*(Us, even with its vastly expanded
 capabilities, is essentially the same size as the old top.
-Were it not for extensive help text, it would be smaller.
+Were it not for extensive help text and additional sort callbacks, it would
+be smaller.
 .Rjb 6
  Throw source carelessly at objectives, it\fI will\fR
  produce equally careless machine instructions!
@@ -1620,43 +1669,44 @@ highlighting, just what are the\fB additional\fR run-time\fB costs\fR?
 .br
 Hmmm, let's see...
 
-.TP
+.TP 3
 .B Colors\fR \*(EM Nada.
 Once the terminfo strings are built (\fIat\fR and\fI during\fR a user's behest)
 they are SAVED with each window's stuff.
 And while there will be a few extra tty escape sequences transmitted because
 of colors, it makes NO difference which 'char *' is actually used.
 
-.TP
+.TP 3
 .B Highlighting\fR \*(EM Maybe Nada, or blame it on Rio.
 On second thought, let's blame it on the user.
 
 For\fI row\fR highlighting, there is NO extra cost (same reason as for colors).
 For\fI column\fR highlighting, there is a fairly\fB significant cost\fR for
-column transition management.
+column transition management incurred on every \*(TD row.
 
 Sooo... hey USER \*(EM \fIdo NOT highlight COLUMNS\fR.
-You should already know your sort field.
-If you don't, simply press 'R' and you'll quickly be reminded through
-a one-time cost.
+You shouldn't need a constant visual reminder of your chosen sort field.
+However, if you forget which field \*(Me is sorting it can serve as a
+quick visual reminder.
 
-.TP
+.TP 3
 .B Windows\fR \*(EM If just 1 window, Nada.
 If more than 1 window, almost certainly NOT Nada so blame it on reality.
 Colors are not an issue, but those sort fields are.
 
-If we could trust the user to always select the same sort field (hey, why
-ya got multiple windows then user, huh?) AND if we can trust someone to
-recompile \*(Me with a #define enabled, then we\fB could\fR achieve 'Nada'.
+If we could trust the user to always select the same 'c' state, 'S' state and
+sort field (hey, why ya got multiple windows then user, huh?) AND if we can
+trust someone to recompile \*(Me with a #define enabled, then we\fB could\fR
+achieve 'Nada'.
 
 Ok, not likely, so we're gonna' be doing multiple sorts.
 BUT, it may not be as bad as it sounds.
-Those sorts will involve\fB pointers only\fR!
+Those sorts involve\fB pointers only\fR.
 And,\fI that's as good as it gets\fR\ !\ \ (right Mr. N?)
 
 .\" ......................................................................
 .SS 7b. The top SOURCES
-.TP
+.TP 3
 .B top.h\fR:
 Unlike his predecessor, \*(Us has a proper header file.
 It contains ONLY declarations, NOT definitions.
@@ -1664,9 +1714,10 @@ And there are several conditionals present to help with further customizations
 and experimentation.
 All are \*F by default.
 
-.TP
+.TP 3
 .B top.c\fR:
-Hopefully proves that source code needn't be a disorganized, misaligned MESS.
+Hopefully proves that source code needn't be a disorganized,
+misaligned MESS.
 And, WHO says a source listing shouldn't occasionally make you SMILE?
 Why, \*(Me.c even does a darn good job of following the suggestions in a
 document hardly anybody seems to observe.
@@ -1822,13 +1873,13 @@ Plus many other individuals contributed over the years.
 This entirely new and enhanced replacement was written by:
    Jim / James C. Warner, <warnerjc@worldnet.att.net>
 .ig
-   ( as-a-means-to-learn-Linux, can you believe it? )
-   ( & he accidentally-learned-a-little-groff, too! )
+   ( as a means to learn Linux, can you believe it? )
+   ( & he accidentally learned a little groff, too! )
 ..
 
 With invaluable help from:
    Craig Small, <csmall@eye-net.com.au>
-   Albert D. Cahalan, <acahalan@cs.uml.edu>
+   Albert D\. Cahalan, <acahalan@cs.uml.edu>
 
 .ig
 .rj 2
@@ -1842,8 +1893,8 @@ With invaluable help from:
 .BR ps (1),
 .BR free (1),
 .BR uptime (1),
-.BR kill (1),
-.BR renice (1).
+.BR vmstat (8),
+.BR w (1).
 
 
 .\" ----------------------------------------------------------------------
@@ -1876,6 +1927,7 @@ A copy of the license is included in the section entitled
 .
 .\" end: active doc ||||||||||||||||||||||||||||||||||||||||||||||||||
 .\" ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
 
 .ig GFDLend
 .\" ----------------------------------------------------------------------

@@ -30,6 +30,7 @@
 //#define QUIT_NORMALQ            /* use 'q' to quit, not new default 'Q'    */
 //#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
 //#define TICS_64_BITS            /* accommodate Linux 2.5.xx 64-bit jiffies */
+//#define UNEQUAL_SORT            /* use pid's as a secondary sort key       */
 //#define USE_LIB_STA3            /* use lib status (3 ch) vs. proc_t (1 ch) */
 //#define WARN_NOT_SMP            /* restrict '1' & 'I' commands to true smp */
 
@@ -72,10 +73,8 @@
 
 /*######  Some Miscellaneous Macro definitions  ##########################*/
 
-        /* Used as return arguments to achieve normal/reversed sorts
-           in the sort callbacks */
-#define SORT_lt  ( Frame_srtflg ?  1 : -1 )
-#define SORT_gt  ( Frame_srtflg ? -1 :  1 )
+        /* Yield table size as 'int' */
+#define MAXTBL(t)  (int)(sizeof(t) / sizeof(t[0]))
 
         /* Convert some proc stuff into vaules we can actually use */
 #define BYTES_2K(n)  (unsigned)( (n) >> 10 )
@@ -83,14 +82,38 @@
 #define PAGES_2K(n)  BYTES_2K(PAGES_2B(n))
 #define PAGE_CNT(n)  (unsigned)( (n) / Page_size )
 
-        /* Yield table size as 'int' */
-#define MAXtbl(t)  ( (int)(sizeof(t)/sizeof(t[0])) )
+        /* Used as return arguments to achieve normal/reversed/unequal
+           sorts in the sort callbacks */
+#define SORT_lt  ( Frame_srtflg ?  1 : -1 )
+#define SORT_gt  ( Frame_srtflg ? -1 :  1 )
+#ifdef UNEQUAL_SORT
+#define SORT_eq  sort_P_PID(P, Q)
+#else
+#define SORT_eq  0
+#endif
 
+        /* Used to reference and create sort callback functions */
+#define _SF(f)  (QSORT_t)sort_ ## f
+#define _SC_NUM1(f,n) \
+   static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
+      if ( (*P)->n < (*Q)->n ) return SORT_lt; \
+      if ( (*P)->n > (*Q)->n ) return SORT_gt; \
+      return SORT_eq; }
+#define _SC_NUM2(f,n1,n2) \
+   static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
+      if ( ((*P)->n1 - (*P)->n2) < ((*Q)->n1 - (*Q)->n2) ) return SORT_lt; \
+      if ( ((*P)->n1 - (*P)->n2) > ((*Q)->n1 - (*Q)->n2) ) return SORT_gt; \
+      return SORT_eq; }
+#define _SC_STRZ(f,s) \
+   static int sort_ ## f(const proc_t **P, const proc_t **Q) { \
+      if ( 0 > strcmp((*P)->s, (*Q)->s) ) return SORT_lt; \
+      if ( 0 < strcmp((*P)->s, (*Q)->s) ) return SORT_gt; \
+      return SORT_eq; }
 
-/*######  Special Macros (debug and/or informative)  #####################*/
+/*------  Special Macros (debug and/or informative)  ---------------------*/
 
         /* Orderly end, with any sort of message - see fmtmk */
-#define debug_END(s)  { \
+#define debug_END(s) { \
            static void std_err (const char *); \
            fputs(Cap_clr_scr, stdout); \
            std_err(s); \
@@ -102,6 +125,9 @@
 
 /*######  Some Typedef's and Enum's  #####################################*/
 
+        /* This typedef just ensures consistent 'process flags' handling */
+typedef unsigned char PFLG_t;
+
         /* These typedefs attempt to ensure consistent 'ticks' handling */
 #ifdef TICS_64_BITS
 typedef unsigned long long TICS_t;
@@ -111,15 +137,18 @@ typedef unsigned long TICS_t;
 typedef          long STIC_t;
 #endif
 
+        /* Sorted columns support. */
+typedef int (*QSORT_t)(const void *, const void *);
+
         /* This structure consolidates the information that's used
            in a variety of display roles. */
 typedef struct {
-   const char *head;    /* name for column headings + toggle/reorder fields */
-   const char *fmts;    /* sprintf format string for field display */
-   const int   width;   /* field width, if applicable */
-   const int   scale;   /* scale_num type, if applicable */
-   const int   sort;    /* sort type, if applicable (used soley by mkcol) */
-   const char *desc;    /* description for toggle/reorder fields */
+   const char   *head;  /* name for column headings + toggle/reorder fields */
+   const char   *fmts;  /* sprintf format string for field display */
+   const int     width; /* field width, if applicable */
+   const int     scale; /* scale_num type, if applicable */
+   const QSORT_t sort;  /* sort function */
+   const char   *desc;  /* description for toggle/reorder fields */
 } FTAB_t;
 
         /* This structure stores one piece of critical 'history'
@@ -141,28 +170,20 @@ typedef struct {
           i;
 } CPUS_t;
 
-        /* Sorted columns support. */
-typedef int (*QSORT_t)(const void *, const void *);
-enum sort {
-   S_CMD = 'C', S_MEM = 'M', S_TME = 'T', S_PID = 'P', S_TTY = 'Y',
-   S_CPU = 'U', S_USR = 'E'
-};
-
         /* The scaling 'type' used with scale_num() -- this is how
            the passed number is interpreted should scaling be necessary */
 enum scale_num {
    SK_no, SK_Kb, SK_Mb, SK_Gb
 };
 
-        /* Flags for each possible field.
-           At the moment 32 are supported [ see PFLAGSSIZ ] */
+        /* Flags for each possible field */
 enum pflag {
-   P_PID, P_PPID, P_UID, P_USER, P_GROUP, P_TTY,
-   P_PR, P_NI,
-   P_NCPU, P_CPU, P_TIME, P_TIME2,
-   P_MEM, P_VIRT, P_SWAP, P_RES, P_CODE, P_DATA, P_SHR,
-   P_FAULT, P_DIRTY,
-   P_STA, P_CMD, P_WCHAN, P_FLAGS
+   P_PID, P_PPD, P_PGD, P_UID, P_USR, P_GRP, P_TTY,
+   P_PRI, P_NCE,
+   P_CPN, P_CPU, P_TME, P_TM2,
+   P_MEM, P_VRT, P_SWP, P_RES, P_COD, P_DAT, P_SHR,
+   P_FLT, P_DRT,
+   P_STA, P_CMD, P_WCH, P_FLG
 };
 
 
@@ -226,8 +247,7 @@ enum pflag {
         /* This structure stores configurable information for each window.
            By expending a little effort in its creation and user requested
            maintainence, the only real additional per frame cost of having
-           windows is a *potential* extra sort -- but that's just on ptrs!
-         */
+           windows is an extra sort -- but that's just on ptrs! */
 typedef struct win {
    struct win *next,                    /* next window in window stack    */
               *prev;                    /* prior window in window stack   */
@@ -239,13 +259,12 @@ typedef struct win {
                fieldscur [PFLAGSSIZ],   /* fields displayed and ordered   */
                columnhdr [SMLBUFSIZ],   /* column headings for procflags  */
                colusrnam [USRNAMSIZ];   /* if selected by the 'u' command */
-   unsigned    procflags [PFLAGSSIZ];   /* fieldscur subset as: int/enum  */
+   PFLG_t      procflags [PFLAGSSIZ],   /* fieldscur subset, as enum      */
+               sortindx;                /* sort field, as a procflag      */
    int         maxpflgs,        /* number of procflags (upcase fieldscur) */
                maxtasks,        /* user requested maximum, 0 equals all   */
                maxcmdln,        /* max length of a process' command line  */
-               sorttype;        /* the last chosen sort field (as enum)   */
-   QSORT_t     sortfunc;        /* sort function for this window's tasks  */
-   int         summclr,                 /* color num used in summ info    */
+               summclr,                 /* color num used in summ info    */
                msgsclr,                 /*        "       in msgs/pmts    */
                headclr,                 /*        "       in cols head    */
                taskclr;                 /*        "       in task display */
@@ -266,16 +285,18 @@ typedef struct win {
 
         /* An rcfile 'footprint' used to invalidate existing local rcfile
            and the global rcfile path + name */
-#define RCF_FILEID  'g'
+#define RCF_FILEID  'i'
 #define SYS_RCFILE  "/etc/toprc"
 
         /* The default fields displayed and their order,
            if nothing is specified by the loser, oops user */
-#define DEF_FIELDS  "AbcDefGHiJkLMNOPqrstuVWxy"
-        /* Pre-configured grouped fields */
-#define JOB_FIELDS  "ABWdefikqrstuxyLJMGHVNOPC"
-#define MEM_FIELDS  "AMNOPQRSTUWbcdefiklxyVGHJ"
-#define USR_FIELDS  "CDEFABWghiknopqrstuxyLJMV"
+#define DEF_FIELDS  "AbcdEfgHIjKlMNOPQrstuvWXyz"
+        /* Pre-configured field groupss */
+#define JOB_FIELDS  "ABXcefgjlrstuvyzMKNHIWOPQD"
+#define MEM_FIELDS  "ANOPQRSTUVXbcdefgjlmyzWHIK"
+#define USR_FIELDS  "DEFGABXchijlopqrstuvyzMKNW"
+        /* Used by fields_sort, placed here for peace-of-mind */
+#define NUL_FIELDS  "abcdefghijklmnopqrstuvwxyz"
 
         /* These are the possible fscanf formats used in /proc/stat
            reads during history processing. */
@@ -313,10 +334,104 @@ typedef struct win {
    " %8uk \02free,\03 %8uk \02cached\03\n"
 #endif
 
+        /* Keyboard Help specially formatted string(s) --
+           see 'show_special' for syntax details + other cautions. */
+#ifdef QUIT_NORMALQ
+#define HELP_Qkey  "  q         "
+#else
+#define HELP_Qkey  "  Q         "
+#endif
+#define KEYS_help \
+   "Help for Interactive Commands\02 - %s\n" \
+   "Window %s\06: \01Cumulative mode \03%s\02.  \01System\06: \01Delay time \03%.1f secs\02; \01Secure mode \03%s\02.\n" \
+   "\n" \
+   "  l,t,m     Toggle Summary: '\01l\02' load avg; '\01t\02' task/cpu stats; '\01m\02' mem info\n" \
+   "  1,I       Toggle SMP view: '\0011\02' single/separate states; '\01I\02' Irix/Solaris mode\n" \
+   "  Z\05         Change color mappings\n" \
+   "\n" \
+   "  f,o     . Fields change: '\01f\02' fields select; '\01o\02' order fields\n" \
+   "  F or O  . Fields select sort\n" \
+   "  <,>     . Move sort field: '\01<\02' next col left; '\01>\02' next col right\n" \
+   "  R       . Toggle normal/reverse sort\n" \
+   "  c,i,S   . Toggle: '\01c\02' cmd name/line; '\01i\02' idle tasks; '\01S\02' cumulative time\n" \
+   "  x,y\05     . Toggle highlights: '\01x\02' sort field; '\01y\02' running tasks\n" \
+   "  z,b\05     . Toggle: '\01z\02' color/mono; '\01b\02' bold/reverse (only if 'x' or 'y')\n" \
+   "  u       . Show specific user only\n" \
+   "  n or #  . Set maximum tasks displayed\n" \
+   "          ( commands shown with '.' require a \01visible\02 task display \01window\02 ) \n" \
+   "\n" \
+   "%s" \
+   "  W         Write configuration file\n" \
+   HELP_Qkey   "Quit\n" \
+   "Press '\01h\02' or '\01?\02' for help with \01Windows\02,\n" \
+   "any other key to continue " \
+   ""
+
+        /* This guy goes above the 'u' help text (maybe) */
+#define KEYS_help_unsecured \
+   "  k,r       Manipulate tasks: '\01k\02' kill; '\01r\02' renice\n" \
+   "  d or s    Set update interval\n" \
+   ""
+
+        /* Fields Reorder/Toggle specially formatted string(s) --
+           see 'show_special' for syntax details + other cautions
+           note: the leading newline below serves really dumb terminals;
+                 if there's no 'cursor_home', the screen will be a mess
+                 but this part will still be functional. */
+#define FIELDS_current \
+   "\n%sCurrent Fields\02: \01 %s \04 for window \01%s\06\n%s " \
+   ""
+
+        /* Some extra explanatory text which accompanies the Fields display.
+           note: the newlines cannot actually be used, they just serve as
+                 substring delimiters for the 'display_fields' routine. */
+#define FIELDS_xtra \
+   "Flags field:\n" \
+   "  0x00000001  PF_ALIGNWARN\n" \
+   "  0x00000002  PF_STARTING\n" \
+   "  0x00000004  PF_EXITING\n" \
+   "  0x00000040  PF_FORKNOEXEC\n" \
+   "  0x00000100  PF_SUPERPRIV\n" \
+   "  0x00000200  PF_DUMPCORE\n" \
+   "  0x00000400  PF_SIGNALED\n" \
+   "  0x00000800  PF_MEMALLOC\n" \
+   "  0x00040000  PF_KERNTHREAD (2.5)\n" \
+   "  0x00100000  PF_USEDFPU (thru 2.4)\n" \
+   "  0x00400000  PF_ATOMICALLOC\n" \
+   ""
+
+        /* Sort Select specially formatted string(s) --
+           see 'show_special' for syntax details + other cautions
+           note: the leading newline below serves really dumb terminals;
+                 if there's no 'cursor_home', the screen will be a mess
+                 but this part will still be functional. */
+#define SORT_fields \
+   "\n%sCurrent Sort Field\02: \01 %c \04 for window \01%s\06\n%s " \
+   ""
+
+        /* Some extra explanatory text which accompanies the Sort display.
+           note: the newlines cannot actually be used, they just serve as
+                 substring delimiters for the 'display_fields' routine. */
+#define SORT_xtra \
+   "Note1:\n" \
+   "  If a selected sort field can't be\n" \
+   "  shown due to screen width or your\n" \
+   "  field order, the '<' and '>' keys\n" \
+   "  will be unavailable until a field\n" \
+   "  within viewable range is chosen.\n" \
+   "\n" \
+   "Note2:\n" \
+   "  The WCHAN field will display a name\n" \
+   "  if the System.map exists, but it is\n" \
+   "  always sorted as an address.  Thus,\n" \
+   "  alphabetic sequence will not apply.\n" \
+   "  ( shame on you if you choose this )\n" \
+   ""
+
         /* Colors Help specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
 #define COLOR_help \
-   "%s%s's \01Help for color mapping\02 - %s\n" \
+   "%sHelp for color mapping\02 - %s\n" \
    "current window: \01%s\06\n" \
    "\n" \
    "   color -\03 04:25:44 up 8 days, 50 min,  7 users,  load average:\n" \
@@ -341,76 +456,10 @@ typedef struct win {
    "   press 'a' or 'w' to commit & change another, <Enter> to commit and end " \
    ""
 
-        /* Keyboard Help specially formatted string(s) --
-           see 'show_special' for syntax details + other cautions. */
-#ifdef QUIT_NORMALQ
-#define HELP_QUITkey  "  q           "
-#else
-#define HELP_QUITkey  "  Q           "
-#endif
-#define KEYS_help \
-   "%s's - \01Help for Interactive Commands\02 - %s\n" \
-   "Window %s\06: \01Cumulative mode \03%s\02.  \01System\06: \01Delay time \03%.1f secs\02; \01Secure mode \03%s\02.\n" \
-   "  sp or ^L    Redraw screen\n" \
-   "  o         . Rearrange current window's fields\n" \
-   "  f         . Add and remove current window's fields\n" \
-   "  Z           Change color mappings for any window\05\n" \
-   "\n" \
-   "(7 letters) . Sort: \01C\02) cmd; \01M\02) mem; \01P\02) pid; \01T\02) time; \01U\02) cpu; \01Y\02) tty; \01E\02) user\n" \
-   "  R         . Toggle normal/reverse sort for any of above\n" \
-   "  l,t,m       Toggle summary: \01l\02) load avg; \01t\02) task/cpu stats; \01m\02) mem info\n" \
-   "  c,i,S     . Toggle: \01c\02) cmd name/line; \01i\02) idle tasks; \01S\02) cumulative time\n" \
-   "  x,y\05       . Toggle highlights: \01x\02) sort field; \01y\02) running tasks\n" \
-   "  z,b\05       . Toggle: \01z\02) color/mono; \01b\02) bold/reverse, only if 'x' or 'y'\n" \
-   "  1,I         Toggle SMP view:\01 1\02) single/separate states; \01I\02) Irix/Solaris mode\n" \
-   "%s" \
-   "  u         . Show specific user only\n" \
-   "  # or n    . Set maximum tasks displayed\n" \
-   "  W           Write configuration file\n" \
-   HELP_QUITkey  "Quit\n" \
-   "            ( commands shown with '.' require a \01visible\02 task display \01window\02 ) \n" \
-   "Press '\01h\02' or '\01?\02' for help with \01Windows\02,\n" \
-   "any other key to continue " \
-   ""
-
-        /* This guy goes above the 'u' help text (maybe) */
-#define KEYS_help_unsecured \
-   "  k           Kill a task\n" \
-   "  r           Renice a task\n" \
-   "  s or d      Set update interval\n" \
-   ""
-
-        /* Fields Reorder/Toggle specially formatted string(s) --
-           see 'show_special' for syntax details + other cautions
-           note: the leading newline below serves really dumb terminals;
-                 if there's no 'cursor_home', the screen will be a mess
-                 but this part will still be functional. */
-#define FIELDS_current \
-   "\n%s%s's\01 Current Fields\02: \01 %s \04 for window \01%s\06\n%s " \
-   ""
-
-        /* Some extra explanatory text which accompanies the Fields display.
-           note: the newlines cannot actually be used, they just serve as
-                 substring delimiters for the 'display_fields' routine. */
-#define FIELDS_xtra \
-   "Flags field:\n" \
-   "  0x00000001  PF_ALIGNWARN\n" \
-   "  0x00000002  PF_STARTING\n" \
-   "  0x00000004  PF_EXITING\n" \
-   "  0x00000040  PF_FORKNOEXEC\n" \
-   "  0x00000100  PF_SUPERPRIV\n" \
-   "  0x00000200  PF_DUMPCORE\n" \
-   "  0x00000400  PF_SIGNALED\n" \
-   "  0x00000800  PF_MEMALLOC\n" \
-   "  0x00040000  PF_KERNTHREAD (2.5)\n" \
-   "  0x00100000  PF_USEDFPU (thru 2.4)\n" \
-   "  0x00400000  PF_ATOMICALLOC\n" \
-   ""
-
         /* Windows/Field Group Help specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
 #define WINDOWS_help \
-   "%s's \01Help for Windows / Field Groups\02 - \"Current\" = \01 %s \06\n" \
+   "Help for Windows / Field Groups\02 - \"Current\" = \01 %s \06\n" \
    "\n" \
    ". Use multiple \01windows\02, each with separate config opts (color,fields,sort,etc)\n" \
    ". The 'current' window controls the \01Summary Area\02 and responds to your \01Commands\02\n" \
@@ -421,7 +470,7 @@ typedef struct win {
    "  a specific window with 'O' or 'F'; or\01 3\02) exiting the color mapping screen\n" \
    ". Commands \01available anytime   -------------\02\n" \
    "    \01A\02       . Alternate display mode toggle, show \01Single\02 / \01Multiple\02 windows\n" \
-   "    O or F  . Choose another field group and make it 'current', or change now\n" \
+   "    G       . Choose another field group and make it 'current', or change now\n" \
    "              by selecting a number from: \01 1\02 =%s;\01 2\02 =%s;\01 3\02 =%s; or\01 4\02 =%s\n" \
    ". Commands \01requiring\02 '\01A\02' mode\01  -------------\02\n" \
    "    g       . Change the \01Name\05 of the 'current' window/field group\n" \
@@ -433,7 +482,7 @@ typedef struct win {
    "              (this also forces the \01current\02 or \01every\02 window to become visible)\n" \
    "\n" \
    "In '\01A\02' mode, '\01*\04' keys are your \01essential\02 commands.  Please try the '\01a\02' and '\01w\02'\n" \
-   "commands plus the 'O'/'F' sub-commands NOW.  Press <Enter> to make 'Current' " \
+   "commands plus the 'F' sub-commands NOW.  Press <Enter> to make 'Current' " \
    ""
 
 
@@ -442,15 +491,10 @@ typedef struct win {
    /* None of these are necessary when the source file is properly
     * organized -- they're here for documentation purposes !
     * Note also that functions are alphabetical within a group to aid
-    * source code navigation, which often influences choice of identifers. */
+    * source code navigation, which often influences the identifers. */
 /*------  Sort callbacks  ------------------------------------------------*/
-//atic int         pid_sort (proc_t **P, proc_t **Q);
-//atic int         sort_cmd (proc_t **P, proc_t **Q);
-//atic int         sort_cpu (proc_t **P, proc_t **Q);
-//atic int         sort_mem (proc_t **P, proc_t **Q);
-//atic int         sort_tme (proc_t **P, proc_t **Q);
-//atic int         sort_tty (proc_t **P, proc_t **Q);
-//atic int         sort_usr (proc_t **P, proc_t **Q);
+/*        for each possible field, in the form of:                        */
+/*atic int         sort_P_XXX (const proc_t **P, const proc_t **Q);       */
 /*------  Tiny useful routine(s)  ----------------------------------------*/
 //atic int         chin (int ech, char *buf, unsigned cnt);
 //atic const char *fmtmk (const char *fmts, ...);
@@ -484,14 +528,15 @@ typedef struct win {
 //atic void        parse_args (char **args);
 //atic void        whack_terminal (void);
 /*------  Field Selection/Ordering routines  -----------------------------*/
-//atic void        display_fields (void);
+/*atic FTAB_t      Fieldstab[] = { ... }                                  */
+//atic void        display_fields (const char *fields, const char *xtra);
 //atic void        fields_reorder (void);
+//atic void        fields_sort (void);
 //atic void        fields_toggle (void);
 /*------  Windows/Field Groups support  ----------------------------------*/
 //atic void        win_colsheads (WIN_t *q);
 //atic void        win_names (WIN_t *q, const char *name);
 //atic void        win_select (int ch);
-//atic void        win_sortset (WIN_t *q, const int which);
 //atic int         win_warn (void);
 //atic void        winsclr (WIN_t *q, int save);
 //atic void        wins_colors (void);
@@ -503,7 +548,7 @@ typedef struct win {
 //atic void        cpudo (FILE *fp, const char *fmt, CPUS_t *cpu, const char *pfx);
 //atic void        frame_states (proc_t **p, int show);
 //atic void        frame_storage (void);
-//atic void        mkcol (WIN_t *q, unsigned idx, int sta, int *pad, char *buf, ...);
+//atic void        mkcol (WIN_t *q, PFLG_t idx, int sta, int *pad, char *buf, ...);
 //atic void        show_a_task (WIN_t *q, proc_t *task);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void        do_key (unsigned c);
