@@ -45,7 +45,7 @@ typedef struct utmp utmp_t;
  * on the right if necessary.
  */
 static void print_host(const char *restrict host, int len) {
-    char *last;
+    const char *last;
     int width = 0;
 
     /* FIXME: there should really be a way to configure this... */
@@ -121,11 +121,11 @@ static void print_logintime(time_t logt, FILE* fout) {
  * for the "best" process to report as "(w)hat" the user for that login
  * session is doing currently.  This the essential core of 'w'.
  */
-static proc_t *getproc(const utmp_t *restrict const u, const char *restrict const tty, const unsigned long long *restrict jcpu, const int *restrict found_utpid) {
+static const proc_t *getproc(const utmp_t *restrict const u, const char *restrict const tty, unsigned long long *restrict const jcpu, int *restrict const found_utpid) {
     int line;
     proc_t **pptr = procs;
-    proc_t *best = NULL;
-    proc_t *secondbest = NULL;
+    const proc_t *best = NULL;
+    const proc_t *secondbest = NULL;
     unsigned uid = ~0U;
 
     if(!ignoreuser){
@@ -170,7 +170,7 @@ static void showinfo(utmp_t *u, int formtype, int maxcmd, int from) {
     unsigned i;
     char uname[USERSZ + 1] = "",
 	tty[5 + sizeof u->ut_line + 1] = "/dev/";
-    proc_t *best;
+    const proc_t *best;
 
     for (i=0; i < sizeof(u->ut_line); i++)	/* clean up tty if garbled */
 	if (isalnum(u->ut_line[i]) || (u->ut_line[i]=='/'))
