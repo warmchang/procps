@@ -146,6 +146,7 @@ static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
     }
     tmpmin = min & 0x3f;  /* FALL THROUGH */
   case   3:      /* /dev/[pt]ty[p-za-o][0-9a-z] is 936 */
+    if(tmpmin > 255) return 0;   // should never happen; array index protection
     t0 = "pqrstuvwxyzabcde"[tmpmin>>4];
     t1 = "0123456789abcdef"[tmpmin&0x0f];
     sprintf(buf, "/dev/tty%c%c", t0, t1);
