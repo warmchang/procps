@@ -832,7 +832,7 @@ static int config_read (char *rc_filename)
 				trimmed += SECTION_STR_MAPPING_LEN;
 				section_id = SECTION_ID_MAPPING;
 			} else {
-				while (*trimmed != ']' || *trimmed == '\0') trimmed++;
+				while (*trimmed != ']' && *trimmed != '\0') trimmed++;
 				if (*trimmed == ']') {
 					section_id = SECTION_ID_UNSUPPORTED;
 					xwarnx(_("unsupported section found in the config - line %d"), line_cnt);
