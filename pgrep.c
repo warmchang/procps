@@ -28,7 +28,7 @@
 #include "proc/version.h" /* procps_version */
 
 static int i_am_pkill = 0;
-char *progname = "pgrep";
+static const char *progname = "pgrep";
 
 union el {
 	long	num;
@@ -44,7 +44,7 @@ static int opt_negate = 0;
 static int opt_exact = 0;
 static int opt_signal = SIGTERM;
 
-static char *opt_delim = "\n";
+static const char *opt_delim = "\n";
 static union el *opt_pgrp = NULL;
 static union el *opt_gid = NULL;
 static union el *opt_ppid = NULL;

@@ -713,7 +713,7 @@ typedef struct gnu_table_struct {
 } gnu_table_struct;
 
 static int compare_gnu_table_structs(const void *a, const void *b){
-  return strcmp(((gnu_table_struct*)a)->name,((gnu_table_struct*)b)->name);
+  return strcmp(((const gnu_table_struct*)a)->name,((const gnu_table_struct*)b)->name);
 }
 
 /* Option arguments are after ':', after '=', or in argv[n+1] */

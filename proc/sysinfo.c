@@ -281,11 +281,11 @@ void loadavg(double *av1, double *av5, double *av15) {
 
 typedef struct mem_table_struct {
   const char *name;     /* memory type name */
-  const unsigned *slot; /* slot in return struct */
+  unsigned *slot; /* slot in return struct */
 } mem_table_struct;
 
 static int compare_mem_table_structs(const void *a, const void *b){
-  return strcmp(((mem_table_struct*)a)->name,((mem_table_struct*)b)->name);
+  return strcmp(((const mem_table_struct*)a)->name,((const mem_table_struct*)b)->name);
 }
 
 /* example data, following junk, with comments added:
@@ -342,7 +342,6 @@ unsigned kb_main_used;
 unsigned kb_writeback;
 unsigned kb_slab;
 unsigned nr_reversemaps;
-unsigned kb_active;
 unsigned kb_committed_as;
 unsigned kb_dirty;
 unsigned kb_inactive;
@@ -385,7 +384,7 @@ void meminfo(void){
 
   FILE_TO_BUF(MEMINFO_FILE,meminfo_fd);
 
-  kb_inactive = -1;
+  kb_inactive = ~0U;
 
   head = buf;
   for(;;){
@@ -412,7 +411,7 @@ nextline:
     kb_low_total = kb_main_total;
     kb_low_free  = kb_main_free;
   }
-  if(kb_inactive==-1){
+  if(kb_inactive==~0U){
     kb_inactive = kb_inact_dirty + kb_inact_clean;
   }
   kb_swap_used = kb_swap_total - kb_swap_free;
@@ -425,11 +424,11 @@ nextline:
 
 typedef struct vm_table_struct {
   const char *name;     /* VM statistic name */
-  const unsigned *slot; /* slot in return struct */
+  unsigned *slot;       /* slot in return struct */
 } vm_table_struct;
 
 static int compare_vm_table_structs(const void *a, const void *b){
-  return strcmp(((vm_table_struct*)a)->name,((vm_table_struct*)b)->name);
+  return strcmp(((const vm_table_struct*)a)->name,((const vm_table_struct*)b)->name);
 }
 
 unsigned vm_nr_dirty;

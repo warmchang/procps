@@ -157,7 +157,7 @@ watch: % : %.o
 ############ progX --> progY
 
 snice kill: skill
-	ln skill $@
+	ln -f skill $@
 
 pkill: pgrep
-	ln pgrep pkill
+	ln -f pgrep pkill

@@ -218,7 +218,7 @@ static void showinfo(utmp_t *u, int formtype, int maxcmd, int from) {
     fputs("  ", stdout);
     if (best) {
 	if (best->cmdline)
-	    print_strlist(stdout, best->cmdline, " ", maxcmd);
+	    print_strlist(stdout, best->cmdline, maxcmd);
 	else
 	    printf("%*.*s", -maxcmd, maxcmd, best->cmd);
     } else {

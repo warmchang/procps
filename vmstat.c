@@ -57,7 +57,7 @@ static void usage(void) {
   exit(EXIT_FAILURE);
 }
 
-static void crash(char *filename) {
+static void crash(const char *filename) {
     perror(filename);
     exit(EXIT_FAILURE);
 }

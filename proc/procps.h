@@ -23,4 +23,4 @@ extern int   open_psdb(const char *override);
 extern int   open_psdb_message(const char *override, void (*message)(const char *, ...));
 
 extern unsigned print_str    (FILE* file, char *s, unsigned max);
-extern unsigned print_strlist(FILE* file, char **strs, char* sep, unsigned max);
+extern unsigned print_strlist(FILE* file, char **strs, unsigned max);

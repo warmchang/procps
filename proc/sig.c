@@ -51,12 +51,12 @@
 #endif
 
 typedef struct mapstruct {
-  char *name;
+  const char *name;
   int num;
 } mapstruct;
 
 
-static mapstruct sigtable[] = {
+static const mapstruct sigtable[] = {
   {"ABRT",   SIGABRT},  /* IOT */
   {"ALRM",   SIGALRM},
   {"BUS",    SIGBUS},
@@ -98,7 +98,7 @@ static mapstruct sigtable[] = {
 static const int number_of_signals = sizeof(sigtable)/sizeof(mapstruct);
 
 static int compare_signal_names(const void *a, const void *b){
-  return strcasecmp( ((mapstruct*)a)->name, ((mapstruct*)b)->name );
+  return strcasecmp( ((const mapstruct*)a)->name, ((const mapstruct*)b)->name );
 }
 
 /* return -1 on failure */

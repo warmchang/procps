@@ -17,11 +17,7 @@
 #include <grp.h>
 #include <string.h>
 
-/*#undef __GLIBC_MINOR__
-#define __GLIBC_MINOR__ 1 */
 #include "common.h"
-/*#undef __GLIBC_MINOR__
-#define __GLIBC_MINOR__ 0 */
 
 #include <sys/sysmacros.h>
 #include "../proc/version.h"
@@ -39,14 +35,14 @@
 #endif
 
 
-static char *saved_personality_text = "You found a bug!";
+static const char * saved_personality_text = "You found a bug!";
 
 int             all_processes = -1;
-char           *bsd_j_format = (char *)0xdeadbeef;
-char           *bsd_l_format = (char *)0xdeadbeef;
-char           *bsd_s_format = (char *)0xdeadbeef;
-char           *bsd_u_format = (char *)0xdeadbeef;
-char           *bsd_v_format = (char *)0xdeadbeef;
+const char     *bsd_j_format = (const char *)0xdeadbeef;
+const char     *bsd_l_format = (const char *)0xdeadbeef;
+const char     *bsd_s_format = (const char *)0xdeadbeef;
+const char     *bsd_u_format = (const char *)0xdeadbeef;
+const char     *bsd_v_format = (const char *)0xdeadbeef;
 int             bsd_c_option = -1;
 int             bsd_e_option = -1;
 uid_t           cached_euid = -1;
@@ -71,10 +67,10 @@ unsigned long   seconds_since_boot = -1;
 selection_node *selection_list = (selection_node *)0xdeadbeef;
 unsigned        simple_select = 0xffffffff;
 sort_node      *sort_list = (sort_node *)0xdeadbeef; /* ready-to-use sort list */
-char           *sysv_f_format = (char *)0xdeadbeef;
-char           *sysv_fl_format = (char *)0xdeadbeef;
-char           *sysv_j_format = (char *)0xdeadbeef;
-char           *sysv_l_format = (char *)0xdeadbeef;
+const char     *sysv_f_format = (const char *)0xdeadbeef;
+const char     *sysv_fl_format = (const char *)0xdeadbeef;
+const char     *sysv_j_format = (const char *)0xdeadbeef;
+const char     *sysv_l_format = (const char *)0xdeadbeef;
 int             unix_f_option = -1;
 int             user_is_number = -1;
 int             wchan_is_number = -1;
@@ -142,11 +138,11 @@ typedef struct personality_table_struct {
 } personality_table_struct;
 
 static int compare_personality_table_structs(const void *a, const void *b){
-  return strcasecmp(((personality_table_struct*)a)->name,((personality_table_struct*)b)->name);
+  return strcasecmp(((const personality_table_struct*)a)->name,((const personality_table_struct*)b)->name);
 }
 
 static const char *set_personality(void){
-  char *s;
+  const char *s;
   size_t sl;
   char buf[16];
   personality_table_struct findme = { buf, NULL};

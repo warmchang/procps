@@ -211,7 +211,7 @@ static void statm2proc(char* s, proc_t* P) {
 /*    fprintf(stderr, "statm2proc converted %d fields.\n",num); */
 }
 
-static int file2str(char *directory, char *what, char *ret, int cap) {
+static int file2str(const char *directory, const char *what, char *ret, int cap) {
     static char filename[80];
     int fd, num_read;
 
@@ -223,7 +223,7 @@ static int file2str(char *directory, char *what, char *ret, int cap) {
     return num_read;
 }
 
-static char** file2strvec(char* directory, char* what) {
+static char** file2strvec(const char* directory, const char* what) {
     char buf[2048];	/* read buf bytes at a time */
     char *p, *rbuf = 0, *endbuf, **q, **ret;
     int fd, tot = 0, n, c, end_of_file = 0;

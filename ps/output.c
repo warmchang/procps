@@ -833,7 +833,7 @@ static int pr_stime(void){
   struct tm *proc_time;
   struct tm *our_time;
   time_t t;
-  char *fmt;
+  const char *fmt;
   int tm_year;
   int tm_yday;
   our_time = localtime(&seconds_since_1970);   /* not reentrant */
@@ -1510,11 +1510,11 @@ void print_format_specifiers(void){
 /************ comparison functions for bsearch *************/
 
 static int compare_format_structs(const void *a, const void *b){
-  return strcmp(((format_struct*)a)->spec,((format_struct*)b)->spec);
+  return strcmp(((const format_struct*)a)->spec,((const format_struct*)b)->spec);
 }
 
 static int compare_macro_structs(const void *a, const void *b){
-  return strcmp(((macro_struct*)a)->spec,((macro_struct*)b)->spec);
+  return strcmp(((const macro_struct*)a)->spec,((const macro_struct*)b)->spec);
 }
 
 /******** look up structs as needed by the sort & format parsers ******/

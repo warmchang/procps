@@ -175,7 +175,7 @@ static int guess_name(char * const buf, int maj, int min){
  * Useful names could be in /proc/PID/fd/2 (stderr, seldom redirected)
  * and in /proc/PID/fd/255 (used by bash to remember the tty).
  */
-static int link_name(char * const buf, int maj, int min, int pid, char *name){
+static int link_name(char * const buf, int maj, int min, int pid, const char *name){
   struct stat sbuf;
   char path[32];
   int count;

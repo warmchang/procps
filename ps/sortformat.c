@@ -93,7 +93,7 @@ static format_node *do_one_spec(const char *spec, const char *override){
 static void O_wrap(sf_node *sfn, int otype){
   format_node *fnode;
   format_node *endp;
-  char *trailer;
+  const char *trailer;
 
   trailer = (otype=='b') ? "END_BSD" : "END_SYS5" ;
 

@@ -112,7 +112,7 @@ static const char dash[] = "-";
 
 /* These mostly rely on POSIX to make them zero. */
 
-static const symb hashtable[256];
+static symb hashtable[256];
 
 static char       *sysmap_data;
 static unsigned    sysmap_room;
@@ -123,7 +123,7 @@ static char       *ksyms_data;
 static unsigned    ksyms_room     = 4096;
 static symb       *ksyms_index;
 static unsigned    ksyms_count;
-static int         idx_room;
+static unsigned    idx_room;
 
 /*********************************/
 

@@ -287,7 +287,7 @@ static char *strim (int sp, char *str)
          * This guy just facilitates Batch and protects against dumb ttys
          * -- we'd 'inline' him but he's only called twice per frame,
          * yet used in many other locations. */
-static char *tg2 (int x, int y)
+static const char *tg2 (int x, int y)
 {
    return Cap_can_goto ? tgoto(cursor_address, x, y) : "";
 }
@@ -375,6 +375,7 @@ static void bye_bye (int eno, const char *str)
          *    SIGALRM, SIGHUP, SIGINT, SIGPIPE, SIGQUIT and SIGTERM */
 static void stop (int dont_care_sig)
 {
+   (void)dont_care_sig;
    bye_bye(0, NULL);
 }
 
@@ -405,6 +406,7 @@ static void std_err (const char *str)
          *    SIGTSTP, SIGTTIN and SIGTTOU */
 static void suspend (int dont_care_sig)
 {
+  (void)dont_care_sig;
       /* reset terminal */
    tcsetattr(STDIN_FILENO, TCSAFLUSH, &Savedtty);
    printf("%s%s", tg2(0, Screen_rows), Cap_curs_norm);
@@ -670,7 +672,7 @@ static int get_int (const char *prompt)
          *    SK_Kb (1) it's kilobytes
          *    SK_Mb (2) it's megabytes
          *    SK_Gb (3) it's gigabytes  */
-static char *scale_num (unsigned num, const int width, const unsigned type)
+static const char *scale_num (unsigned num, const int width, const unsigned type)
 {
       /* kilobytes, megabytes, gigabytes, duh! */
    static float scale[] = { 1024, 1024*1024, 1024*1024*1024, 0 };
@@ -706,7 +708,7 @@ static char *scale_num (unsigned num, const int width, const unsigned type)
         /*
          * Do some scaling stuff.
          * Format 'tics' to fit 'width' */
-static char *scale_tics (TICS_t tics, const int width)
+static const char *scale_tics (TICS_t tics, const int width)
 {
 #define T1 "%u:%02u.%02u"
 #define T2 "%u:%02u"
@@ -1587,6 +1589,7 @@ static void wins_reflag (int what, int flg)
          *    SIGWINCH and SIGCONT */
 static void wins_resize (int dont_care_sig)
 {
+   (void)dont_care_sig;
    struct winsize wz;
    WIN_t *w;
 
@@ -2653,6 +2656,7 @@ static void so_lets_see_em (void)
          */
 int main (int dont_care_argc, char **argv)
 {
+   (void)dont_care_argc;
    before(*argv);
   /*
    Ok, she's gone now.  Don't you mind her, she means well but yes, she is

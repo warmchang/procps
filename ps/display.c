@@ -288,7 +288,7 @@ static int compare_two_procs(const void *a, const void *b){
   sort_node *tmp_list = sort_list;
   while(tmp_list){
     int result;
-    result = (*tmp_list->sr)(*(const proc_t **)a, *(const proc_t **)b);
+    result = (*tmp_list->sr)(*(const proc_t *const*)a, *(const proc_t *const*)b);
     if(result) return (tmp_list->reverse) ? -result : result;
     tmp_list = tmp_list->next;
   }
