@@ -35,6 +35,15 @@
 )
 
 ///////////////////////////////////////////////////////
+#ifdef __sun__
+#include <sys/mkdev.h>
+#define _STRUCTURED_PROC 1
+#include <sys/procfs.h>
+#define NO_TTY_VALUE DEV_ENCODE(-1,-1)
+#define HZ 1    // only bother with seconds
+#endif
+
+///////////////////////////////////////////////////////
 #ifdef __FreeBSD__
 #include <sys/param.h>
 #include <sys/sysctl.h>
@@ -297,6 +306,68 @@ static void arg_parse(int argc, char *argv[]){
   if(sel>1 || select_notty>1 || select_all>1 || bsd_c_option>1 || old_h_option>1) usage();
   if(bsd_c_option) show_args = 0;
 }
+
+#ifdef __sun__
+/* return 1 if it works, or 0 for failure */
+static int stat2proc(int pid) {
+    struct psinfo p;  //   /proc/*/psinfo, struct psinfo, psinfo_t
+    char buf[32];
+    int num;
+    int fd;
+    int tty_maj, tty_min;
+    snprintf(buf, sizeof buf, "/proc/%d/psinfo", pid);
+    if ( (fd = open(buf, O_RDONLY, 0) ) == -1 ) return 0;
+    num = read(fd, &p, sizeof p);
+    close(fd);
+    if(num != sizeof p) return 0;
+
+    num = PRFNSZ;
+    if (num >= sizeof P_cmd) num = sizeof P_cmd - 1;
+    memcpy(P_cmd, p.pr_fname, num);  // p.pr_fname or p.pr_lwp.pr_name
+    P_cmd[num] = '\0';
+
+    P_pid     = p.pr_pid;
+    P_ppid    = p.pr_ppid;
+    P_pgrp    = p.pr_pgid;
+    P_session = p.pr_sid;
+    P_euid    = p.pr_euid;
+    P_rss     = p.pr_rssize;
+    P_vsize   = p.pr_size;
+    P_start_time = p.pr_start.tv_sec;
+    P_wchan   = p.pr_lwp.pr_wchan;
+    P_state   = p.pr_lwp.pr_sname;
+    P_nice    = p.pr_lwp.pr_nice;
+    P_priority = p.pr_lwp.pr_pri;  // or pr_oldpri
+//    P_ruid    = p.pr_uid;
+//    P_rgid    = p.pr_gid;
+//    P_egid    = p.pr_egid;
+
+#if 0
+    // don't support these
+    P_tpgid; P_flags,
+    P_min_flt, P_cmin_flt, P_maj_flt, P_cmaj_flt, P_utime, P_stime;
+    P_cutime, P_cstime, P_timeout, P_alarm;
+    P_rss_rlim, P_start_code, P_end_code, P_start_stack, P_kstk_esp, P_kstk_eip;
+    P_signal, P_blocked, P_sigignore, P_sigcatch;
+    P_nswap, P_cnswap;
+#endif
+
+    // we like it Linux-encoded :-)
+    tty_maj = major(p.pr_ttydev);
+    tty_min = minor(p.pr_ttydev);
+    P_tty_num = DEV_ENCODE(tty_maj,tty_min);
+
+    snprintf(P_tty_text, sizeof P_tty_text, "%3d,%-3d", tty_maj, tty_min);
+#if 1
+    if (tty_maj == 24) snprintf(P_tty_text, sizeof P_tty_text, "pts/%-3u", tty_min);
+    if (P_tty_num == NO_TTY_VALUE)    memcpy(P_tty_text, "   ?   ", 8);
+    if (P_tty_num == DEV_ENCODE(0,0)) memcpy(P_tty_text, "console", 8);
+#endif
+
+    if(P_pid != pid) return 0;
+    return 1;
+}
+#endif
 
 #ifdef __FreeBSD__
 /* return 1 if it works, or 0 for failure */
