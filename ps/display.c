@@ -333,7 +333,7 @@ not_root:
 
 /***** sorted or forest */
 static void fancy_spew(void){
-  proc_t *retbuf;
+  proc_t *retbuf = NULL;
   PROCTAB* ptp;
   int n = 0;  /* number of processes & index into array */
   ptp = openproc(PROC_FILLBUG);
@@ -341,11 +341,14 @@ static void fancy_spew(void){
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
   }
-  while((retbuf = ps_readproc(ptp,NULL))){
+  while((retbuf = ps_readproc(ptp,retbuf))){
     fill_pcpu(retbuf);
-    if(want_this_proc(retbuf))  processes[n++] = retbuf;
-    else free(retbuf);
+    if(want_this_proc(retbuf)){
+      processes[n++] = retbuf;
+      retbuf = NULL;  /* NULL asks ps_readproc to allocate */
+    }
   }
+  if(retbuf) free(retbuf);
   closeproc(ptp);
   if(!n) return;  /* no processes */
   if(forest_type) prep_forest_sort();
