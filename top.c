@@ -1319,9 +1319,9 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
          case '0' ... '9':
             return -15;                     // not supposed to have digits here
 
-         case 's':                          // mostly for global rcfile
-            rc->mode_secure = 1;
-            break;
+//       case 's':                          // mostly for global rcfile
+//          rc->mode_secure = 1;
+//          break;
          case 'S':
             rc->win[0].winflags |= Show_CTIMES;
             break;
@@ -1529,6 +1529,7 @@ static void before (char *me)
          * First attempt to read the /etc/rcfile which contains two lines
          * consisting of the secure mode switch and an update interval.
          * It's presence limits what ordinary users are allowed to do.
+         * (it's actually an old-style config file)
          *
          * Then build the local rcfile name and try to read a crufty old-top
          * rcfile (whew, odoriferous), which may contain an embedded new-style
@@ -1539,29 +1540,33 @@ static void before (char *me)
 static void configs_read (void)
 {
    char fbuf[MEDBUFSIZ];
-   const char *cp;
    int i, fd;
    RCF_t rcf;
    float delay = Rc.delay_time;
 
-   // who says life's not fair -- at least the sys rcfiles are compatable
+   // Read part of an old-style config in /etc/toprc
    fd = open(SYS_RCFILESPEC, O_RDONLY);
    if (fd > 0) {
       ssize_t num;
       num = read(fd, fbuf, sizeof(fbuf) - 1);
       if (num > 0) {
-         if ((cp = strchr(fbuf, 's'))) Secure_mode = 1;
-         cp++;
-         if ((cp = strchr(cp, '\n'))) sscanf(cp+1, "%f", &Rc.delay_time);
+         const char *sec = strchr(fbuf, 's');
+         const char *eol = strchr(fbuf, '\n');
+         if (eol) {
+            const char *two = eol+1;  // line two
+            if (sec < eol) Secure_mode = !!sec;
+            eol = strchr(two, '\n');
+            if (eol && eol > two && isdigit(*two)) Rc.delay_time = atof(two);
+         }
       }
       close(fd);
    }
 
-   snprintf(Rc_name, sizeof(Rc_name), ".%src", Myname);
+   snprintf(Rc_name, sizeof(Rc_name), ".%src", Myname);  // eeew...
    if (getenv("HOME"))
       snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", getenv("HOME"), Myname);
 
-   rcf = Rc;
+   rcf = DEF_RCFILE;
    fd = open(Rc_name, O_RDONLY);
    if (fd > 0) {
       ssize_t num;
@@ -1571,7 +1576,7 @@ static void configs_read (void)
          fbuf[1] = '\n';
          fbuf[num+2] = '\0';
          if (rc_read_old(fbuf, &rcf) > 0) Crufty_rcf = 1;
-         else rcf = Rc;                     // on failure, maybe mangled
+         else rcf = DEF_RCFILE;                     // on failure, maybe mangled
          rc_read_new(fbuf, &rcf);
          delay = rcf.delay_time;
       }
@@ -1581,7 +1586,8 @@ static void configs_read (void)
    // update Rc defaults, establish a Curwin and fix up the window stack
    Rc.mode_altscr = rcf.mode_altscr;
    Rc.mode_irixps = rcf.mode_irixps;
-   Curwin = Winstk[(rcf.win_index)];
+   if (rcf.win_index >= GROUPSMAX) rcf.win_index = 0;
+   Curwin = Winstk[rcf.win_index];
    for (i = 0; i < GROUPSMAX; i++) Winstk[i]->rc = rcf.win[i];
 
    // lastly, establish the true runtime secure mode and delay time
