@@ -117,9 +117,10 @@ int uptime(double *uptime_secs, double *idle_secs) {
  * used with a kernel that doesn't support the ELF note. On some other
  * architectures there may be a system call or sysctl() that will work.
  */
+
 unsigned long long Hertz;
-static void init_Hertz_value(void) __attribute__((constructor));
-static void init_Hertz_value(void){
+
+static void init_Hertz_value_old(void){
   unsigned long long user_j, nice_j, sys_j, other_j;  /* jiffies (clock ticks) */
   double up_1, up_2, seconds;
   unsigned long long jiffies;
@@ -168,6 +169,34 @@ static void init_Hertz_value(void){
 #endif
     fprintf(stderr, "Unknown HZ value! (%d) Assume %Ld.\n", h, Hertz);
   }
+}
+
+#ifndef AT_CLKTCK
+#define AT_CLKTCK       17    /* frequency of times() */
+#endif
+
+extern char** environ;
+
+/* for ELF executables, notes are pushed before environment and args */
+static unsigned long find_elf_note(unsigned long findme){
+  unsigned long *ep = (unsigned long *)environ;
+  unsigned long ret = 42;
+  while(*ep++);
+  while(*ep++);
+  while(*ep){
+//  printf("%08lx %08lx %011ld %011ld%s\n",ep[0],ep[1],ep[0],ep[1],ep[0]==findme?" <<<":"");
+    if(ep[0]==findme) ret=ep[1];
+    ep+=2;
+  }
+  return ret;
+}
+
+static void init_Hertz_value(void) __attribute__((constructor));
+static void init_Hertz_value(void){
+  Hertz = find_elf_note(AT_CLKTCK);
+  if(Hertz==42) init_Hertz_value_old();
+  else smp_num_cpus = sysconf(_SC_NPROCESSORS_CONF);
+  if(smp_num_cpus<1) smp_num_cpus=1; /* SPARC glibc is buggy */
 }
 
 /***********************************************************************
