@@ -1,14 +1,19 @@
+procps-3.1.6 --> procps-3.1.7
+
+ps: warning directs users to the FAQ
+
 procps-3.1.5 --> procps-3.1.6
 
 handle the 2.5.61 kernel
 top: memory leak fixed
 ps: new --ppid option selects by PPID
-watch: new --no-title option     #179862
+watch: new --no-title option              #179862
 handle SPARC Linux badness
 rare crash fixed
 compile with gcc 2.91.xx again
 more informative "ps --info"
 README update
+ps: compare more with "ps -C verylongname"     #178127
 
 procps-3.1.4 --> procps-3.1.5
 

@@ -235,20 +235,21 @@ ENTER(0x220);
         P->fgid = strtol(S,&S,10);
         continue;
     case_Name:{
-        int i = 0;
-        while(i < sizeof P->cmd - 1){
+        unsigned u = 0;
+        while(u < sizeof P->cmd - 1u){
             int c = *S++;
             if(unlikely(c=='\n')) break;
-            if(unlikely(c=='\0')) return; // should never happen
+            if(unlikely(c=='\0')) break; // should never happen
             if(unlikely(c=='\\')){
                 c = *S++;
                 if(c=='\n') break; // should never happen
                 if(!c)      break; // should never happen
                 if(c=='n') c='\n'; // else we assume it is '\\'
             }
-            P->cmd[i++] = c;
+            P->cmd[u++] = c;
         }
-        P->cmd[i] = '\0';
+        P->cmd[u] = '\0';
+        S--;   // put back the '\n' or '\0'
         continue;
     }
     case_PPid:

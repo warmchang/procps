@@ -106,9 +106,8 @@ static int proc_was_listed(proc_t *buf){
     break; case SEL_TTY : return_if_match(tty,tty);
     break; case SEL_SESS: return_if_match(session,pid);
 
-    /* TODO Should use a long long cast for performance */
     break; case SEL_COMM: i=sn->n; while(i--)
-    if(!strncmp( buf->cmd, (*(sn->u+i)).cmd, 8 )) return 1;
+    if(!strncmp( buf->cmd, (*(sn->u+i)).cmd, 15 )) return 1;
 
 
 

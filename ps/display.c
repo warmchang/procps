@@ -246,7 +246,6 @@ static void simple_spew(void){
     exit(1);
   }
   memset(&buf, '#', sizeof(proc_t));
-  /* use "ps_" prefix to catch library mismatch */
   while(ps_readproc(ptp,&buf)){
     if(want_this_proc(&buf)) show_one_proc(&buf);
     if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse

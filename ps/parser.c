@@ -121,7 +121,7 @@ static const char *parse_gid(char *str, sel_union *ret){
 }
 
 static const char *parse_cmd(char *str, sel_union *ret){
-  strncpy(ret->cmd, str, 8);  /* strncpy pads to end */
+  strncpy(ret->cmd, str, sizeof ret->cmd);  // strncpy pads to end
   return 0;
 }
 
@@ -1130,8 +1130,17 @@ try_bsd:
   err2 = select_bits_setup();
   if(err2) goto total_failure;
 
+  // Feel a need to patch this out? First of all, read the FAQ.
+  // Second of all, talk to me. Without this warning, people can
+  // get seriously confused. Ask yourself if users would freak out
+  // about "ps -aux" suddenly changing behavior if a user "x" were
+  // added to the system.
   if(!(personality & PER_FORCE_BSD))
-    fprintf(stderr, "Bad syntax, perhaps a bogus '-'?\n");
+    fprintf(stderr, "Warning: bad '-'? See http://procps.sf.net/faq.html\n");
+  // Remember: contact albert@users.sf.net or procps-feedback@lists.sf.net
+  // if you should feel tempted. Be damn sure you understand all
+  // the issues. The same goes for other stuff too, BTW. Please ask.
+  // I'm happy to justify various implementation choices.
 
   choose_dimensions();
   return 0;
