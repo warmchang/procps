@@ -145,6 +145,17 @@ k           use /vmcore as c-dumpfile (try -n or N instead)
 
 NOTES
 
+User-defined format options ("o", "-o", "O", and "-O") offer
+a way to specify individual output columns. Headers may be
+renamed ("ps -o pid,ruser=RealUser -o comm=Command") as desired.
+If all column headers are empty ("ps -o pid= -o comm=") then the
+header line will not be output. Column width will increase as
+needed for wide headers; this may be used to widen up columns
+such as WCHAN ("ps -o pid,wchan=WIDE-WCHAN-COLUMN -o comm").
+The behavior of "ps -o pid=X,comm=Y" varies with personality;
+output may be one column named "X,comm=Y" or two columns
+named "X" and "Y". Use multiple -o options when in doubt.
+
 The "-g" option can select by session leader OR by group name.
 Selection by session leader is specified by many standards,
 but selection by group is the logical behavior that several other
