@@ -39,6 +39,9 @@
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define YIELDCPU_OFF            /* hang on tight, DON'T issue sched_yield  */
 
+#ifdef PRETEND2_5_X
+#define linux_version_code LINUX_VERSION(2,5,43)
+#endif
 
 /*######  Some Miscellaneous constants  ##################################*/
 

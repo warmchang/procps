@@ -944,11 +944,7 @@ static void before (char *me)
    Cpu_map = alloc_r(NULL, sizeof(int) * Cpu_tot);
    for (i = 0; i < Cpu_tot; i++)
       Cpu_map[i] = i;
-#ifndef PRETEND2_5_X
-   if ( 2 <= LINUX_VERSION_MAJOR(linux_version_code)
-   &&   5 <= LINUX_VERSION_MINOR(linux_version_code)
-   &&  41 <= LINUX_VERSION_PATCH(linux_version_code))
-#endif
+   if(linux_version_code > LINUX_VERSION(2, 5, 41))
       States_fmts = STATES_line2x5;
 
       /* get virtual page size -- nearing huge! */
