@@ -208,12 +208,12 @@ out_destroy:
 	return;
 }
 
-static char *mapping_name(proc_t * p, unsigned KLONG addr,
+static const char *mapping_name(const proc_t * p, unsigned KLONG addr,
 				unsigned KLONG len, const char *mapbuf_b,
 				unsigned showpath, unsigned dev_major,
 				unsigned dev_minor, unsigned long long inode)
 {
-	char *cp;
+	const char *cp;
 
 	if (!dev_major && dev_minor == shm_minor && strstr(mapbuf_b, "/SYSV")) {
 		static char shmbuf[64];
@@ -226,14 +226,6 @@ static char *mapping_name(proc_t * p, unsigned KLONG addr,
 		if (showpath)
 			return strchr(mapbuf_b, '/');
 		return cp[1] ? cp + 1 : cp;
-	}
-
-	cp = strchr(mapbuf_b, '/');
-	if (cp) {
-		if (showpath)
-			return cp;
-		/* it WILL succeed */
-		return strrchr(cp, '/') + 1;
 	}
 
 	cp = _("  [ anon ]");
