@@ -2,7 +2,7 @@
  * Copyright (c) 1995 Martin Schulze <joey@infodrom.north.de>
  * Ammended by cblake to only export the function symbol.
  *
- * Modified by Albert Cahalan
+ * Modified by Albert Cahalan, ????-2003
  *
  * Redistributable under the terms of the
  * GNU Library General Public License; see COPYING
@@ -31,14 +31,13 @@ void display_version(void) {
 
 #define LINUX_VERSION(x,y,z)   (0x10000*(x) + 0x100*(y) + z)
 
-int linux_version_code = 0;
+int linux_version_code;
 
 static void init_Linux_version(void) __attribute__((constructor));
 static void init_Linux_version(void) {
     static struct utsname uts;
     int x = 0, y = 0, z = 0;	/* cleared in case sscanf() < 3 */
     
-    if (linux_version_code) return;
     if (uname(&uts) == -1)	/* failure implies impending death */
 	exit(1);
     if (sscanf(uts.release, "%d.%d.%d", &x, &y, &z) < 3)

@@ -29,12 +29,13 @@ static struct option longopts[] = {
 	{"differences", optional_argument, 0, 'd'},
 	{"help", no_argument, 0, 'h'},
 	{"interval", required_argument, 0, 'n'},
+	{"no-title", no_argument, 0, 't'},
 	{"version", no_argument, 0, 'v'},
 	{0, 0, 0, 0}
 };
 
 static char usage[] =
-    "Usage: %s [-dhnv] [--differences[=cumulative]] [--help] [--interval=<n>] [--version] <command>\n";
+    "Usage: %s [-dhntv] [--differences[=cumulative]] [--help] [--interval=<n>] [--no-title] [--version] <command>\n";
 
 static char *progname;
 
@@ -42,6 +43,7 @@ static int curses_started = 0;
 static int height = 24, width = 80;
 static int screen_size_changed = 0;
 static int first_screen = 1;
+static int show_title = 2;  // number of lines used, 2 or 0
 
 #define min(x,y) ((x) > (y) ? (y) : (x))
 
@@ -101,7 +103,7 @@ main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	progname = argv[0];
 
-	while ((optc = getopt_long(argc, argv, "+d::hn:v", longopts, (int *) 0))
+	while ((optc = getopt_long(argc, argv, "+d::hn:vt", longopts, (int *) 0))
 	       != EOF) {
 		switch (optc) {
 		case 'd':
@@ -111,6 +113,9 @@ main(int argc, char *argv[])
 			break;
 		case 'h':
 			option_help = 1;
+			break;
+		case 't':
+			show_title = 0;
 			break;
 		case 'n':
 			{
@@ -201,22 +206,24 @@ main(int argc, char *argv[])
 			first_screen = 1;
 		}
 
-		/* left justify interval and command, right justify time, clipping all
-		   to fit window width */
-		asprintf(&header, "Every %ds: %.*s",
-			 interval, min(width - 1, command_length), command);
-		mvaddstr(0, 0, header);
-		if (strlen(header) > (size_t) (width - tsl - 1))
-			mvaddstr(0, width - tsl - 4, "...  ");
-		mvaddstr(0, width - tsl + 1, ts);
-		free(header);
+		if (show_title) {
+			// left justify interval and command,
+			// right justify time, clipping all to fit window width
+			asprintf(&header, "Every %ds: %.*s",
+				 interval, min(width - 1, command_length), command);
+			mvaddstr(0, 0, header);
+			if (strlen(header) > (size_t) (width - tsl - 1))
+				mvaddstr(0, width - tsl - 4, "...  ");
+			mvaddstr(0, width - tsl + 1, ts);
+			free(header);
+		}
 
 		if (!(p = popen(command, "r"))) {
 			perror("popen");
 			do_exit(2);
 		}
 
-		for (y = 2; y < height; y++) {
+		for (y = show_title; y < height; y++) {
 			int eolseen = 0, tabpending = 0;
 			for (x = 0; x < width; x++) {
 				int c = ' ';

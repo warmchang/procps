@@ -3,7 +3,7 @@
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
 .B watch
-.I [\-dhv] [\-n <seconds>] [\-\-differences[=cumulative]] [\-\-help] [\-\-interval=<seconds>] [\-\-version] <command>
+.I [\-dhvt] [\-n <seconds>] [\-\-differences[=cumulative]] [\-\-help] [\-\-interval=<seconds>] [\-\-no\-title] [\-\-version] <command>
 .SH DESCRIPTION
 .BR watch
 runs
@@ -23,7 +23,12 @@ or
 flag will highlight the differences between successive updates.  The 
 .I --cumulative
 option makes highlighting "sticky", presenting a running display of all
-positions that have ever changed.
+positions that have ever changed.  The
+.I -t
+or
+.I --no-title
+option turns off the header showing the interval, command, and current
+time at the top of the display, as well as the following blank line.
 .PP
 .BR watch
 will run until interrupted.
