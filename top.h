@@ -14,7 +14,7 @@
  * GNU Library General Public License for more details.
  */
 /* For their contributions to this program, the author wishes to thank:
- *    Craig Small, <csmall@eye-net.com.au>
+ *    Craig Small, <csmall@small.dropbear.id.au>
  *    Albert D. Cahalan, <acahalan@cs.uml.edu>
  */
 #ifndef _Itop
