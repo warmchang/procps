@@ -8,6 +8,8 @@
 
 EXTERN_C_BEGIN
 
+#define ESC_STRETCH 1  // since we mangle to '?' this is 1 (would be 4 for octal escapes)
+
 #define ESC_ARGS     0x1  // try to use cmdline instead of cmd
 #define ESC_BRACKETS 0x2  // if using cmd, put '[' and ']' around it
 #define ESC_DEFUNCT  0x4  // mark zombies with " <defunct>"

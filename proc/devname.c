@@ -22,7 +22,7 @@
 // This is the buffer size for a tty name. Any path is legal,
 // which makes PAGE_SIZE appropriate (see kernel source), but
 // that is only 99% portable and utmp only holds 32 anyway.
-#define NAME_SIZE 128
+#define TTY_NAME_SIZE 128
 
 /* Who uses what:
  *
@@ -219,7 +219,7 @@ static int link_name(char *restrict const buf, unsigned maj, unsigned min, int p
   char path[32];
   int count;
   sprintf(path, "/proc/%d/%s", pid, name);  /* often permission denied */
-  count = readlink(path,buf,NAME_SIZE-1);
+  count = readlink(path,buf,TTY_NAME_SIZE-1);
   if(count == -1) return 0;
   buf[count] = '\0';
   if(stat(buf, &sbuf) < 0) return 0;
@@ -230,7 +230,7 @@ static int link_name(char *restrict const buf, unsigned maj, unsigned min, int p
 
 /* number --> name */
 unsigned dev_to_tty(char *restrict ret, unsigned chop, dev_t dev_t_dev, int pid, unsigned int flags) {
-  static char buf[NAME_SIZE];
+  static char buf[TTY_NAME_SIZE];
   char *restrict tmp = buf;
   unsigned dev = dev_t_dev;
   unsigned i = 0;

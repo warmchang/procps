@@ -13,8 +13,8 @@
 #define PROCPS_PS_H
 
 #include "../proc/procps.h"
+#include "../proc/escape.h"
 #include "../proc/readproc.h"
-#include <asm/page.h>  /* looks safe for glibc, we need PAGE_SIZE */
 
 #if 0
 #define trace(args...) printf(## args)
@@ -60,15 +60,17 @@
  * Try not to overflow the output buffer:
  *    32 pages for env+cmd
  *    64 kB pages on IA-64
- *    4 chars for "\377"
+ *    4 chars for "\377", or 1 when mangling to '?'  (ESC_STRETCH)
  *    plus some slack for other stuff
  * That is about 8.5 MB on IA-64, or 0.6 MB on i386
+ *
+ * Sadly, current kernels only supply one page of env/command data.
+ * The buffer is now protected with a guard page, and via other means
+ * to avoid hitting the guard page.
  */
 
-/* maximum escape expansion is 4, for \377 */
-#define ESC_STRETCH 4
 /* output buffer size */
-#define OUTBUF_SIZE (32*PAGE_SIZE*ESC_STRETCH + 8*PAGE_SIZE)
+#define OUTBUF_SIZE (2 * 64*1024 * ESC_STRETCH)
 
 /******************* PS DEFINE *******************/
 

@@ -696,7 +696,7 @@ static int pr_tty4(char *restrict const outbuf, const proc_t *restrict const pp)
 /* Unix98: format is unspecified, but must match that used by who(1). */
 static int pr_tty8(char *restrict const outbuf, const proc_t *restrict const pp){
 /* snprintf(outbuf, COLWID, "%02x:%02x", pp->tty>>8, pp->tty&0xff); */
-  return dev_to_tty(outbuf, PAGE_SIZE-1, pp->tty, pp->XXXID, ABBREV_DEV);
+  return dev_to_tty(outbuf, COLWID, pp->tty, pp->XXXID, ABBREV_DEV);
 }
 
 #if 0
@@ -804,7 +804,7 @@ static int pr_alarm(char *restrict const outbuf, const proc_t *restrict const pp
 
 /* HP-UX puts this in pages and uses "vsz" for kB */
 static int pr_sz(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%lu", (pp->vm_size)/(PAGE_SIZE/1024));
+  return snprintf(outbuf, COLWID, "%lu", (pp->vm_size)/(page_size/1024));
 }
 
 
