@@ -81,7 +81,7 @@ static void setsize(int i)
 	memset(screen, ' ', scr_size - 1);
 	*(screen + scr_size - 2) = '\0';
 	if (i)
-		longjmp(jb, 0);
+		longjmp(jb, 1);
 }
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
