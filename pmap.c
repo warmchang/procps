@@ -252,7 +252,8 @@ static char *mapping_name(struct pids_stack *p, unsigned long addr,
 #define DETL "31"		/* for format strings */
 #define NUM_LENGTH 21		/* python says: len(str(2**64)) == 20 */
 #define NUML "20"		/* for format strings */
-#define VMFLAGS_LENGTH 81 /* There are 27 posible 2 character vmflags as of this patch */
+#define VMFLAGS_LENGTH 128	/* 30 2-char space-separated flags == 90+1, but be safe */
+#define VMFL "127"		/* for format strings */
 
 struct listnode {
 	char description[DETAIL_LENGTH];
@@ -394,7 +395,7 @@ loop_end:
 		}
 
 		/* === GET VMFLAGS === */
-		nfields = ret ? sscanf(mapbuf, "VmFlags: %[a-z ]", vmflags) : 0;
+		nfields = ret ? sscanf(mapbuf, "VmFlags: %"VMFL"[a-z ]", vmflags) : 0;
 		if (nfields == 1) {
 			if (! has_vmflags) has_vmflags = 1;
 			ret = fgets(mapbuf, sizeof mapbuf, f);
