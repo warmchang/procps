@@ -318,6 +318,7 @@ int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid){
         if(n==sz) break; // filled the buffer
         if(r==0) break;  // EOF
     }
+    close(fd);
     if(n){
         int i;
         if(n==sz) n--;
