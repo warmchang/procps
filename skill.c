@@ -419,7 +419,6 @@ static void __attribute__ ((__noreturn__))
     kill_main(int argc, char **argv)
 {
 	int signo, i;
-	int loop = 1;
 	long pid;
 	int exitvalue = EXIT_SUCCESS;
     char *sig_option;
@@ -446,7 +445,7 @@ static void __attribute__ ((__noreturn__))
 		signo = SIGTERM;
 
 	opterr=0; /* suppress errors on -123 */
-	while (loop == 1 && (i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
+	while ((i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
 		switch (i) {
 		case 'l':
             sig_option = NULL;
@@ -491,8 +490,7 @@ static void __attribute__ ((__noreturn__))
 				exitvalue = EXIT_FAILURE;
 			    exit(exitvalue);
 			}
-			loop=0;
-			break;
+			xerrx(EXIT_FAILURE, _("internal error"));
 		default:
 			kill_usage(stderr);
 		}
