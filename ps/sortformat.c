@@ -427,6 +427,7 @@ static const char *verify_short_sort(const char *arg){
   walk = arg;
   for(;;){
     tmp = *walk;
+    if(tmp < 0 || (size_t)tmp >= sizeof(checkoff)) return _("bad sorting code");
     switch(tmp){
     case '\0':
       return NULL;   /* looks good */
