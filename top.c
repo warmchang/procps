@@ -1264,7 +1264,7 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
       if (c == 'N') c = 'n';    // usage differs, so turn this off
       if (c == 'Q') c = 'q';    // usage differs, so turn this off
       if (c == 'R') c = 'r';    // usage differs, so turn this off
-      ft_cvt_char(FT_OLD_fmt, FT_NEW_fmt, c);
+      c = ft_cvt_char(FT_OLD_fmt, FT_NEW_fmt, c);
       if (!c) return -4;     // error value
       if (c == '.') return -5; // error value
       if (scoreboard[c&0x1fu]) badchar++; // duplicates not allowed
@@ -1277,35 +1277,6 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
 // fprintf(stderr,"badchar: %d\n",badchar); sleep(2);
    if (badchar > 3) return -8;          // too much junk
    if (!c_show) return -9;              // nothing was shown
-
-#if 0
-   // Due to Rik blindly accepting damem's broken patches, procps-2.0.10
-   // has 3 ("three"!!!) instances of "#C", "LC", or "CPU". Fix that here.
-   // Some people are maintainers, and others are human patchbots.
-   // The 'y' and 'Y' above have become 'j' and 'J' after translation.
-   if (scoreboard['j' & 0x1fu] > 1) {   // more than one "#C" column
-      int letter;
-      char *fields = rc->win[0].fieldscur;
-      char *tmp = strchr(fields, 'J');
-      if (tmp) {
-         *tmp = '.';                    // save one by hiding it
-         letter = 'J';
-      } else {
-         tmp = strchr(fields, 'j');
-         *tmp = '.';
-         letter = 'j';
-      }
-      while ((tmp = strchr(fields, 'J'))) *tmp='j'; // cannonicalize it
-      while ((tmp = strchr(fields, 'j'))) {
-         char *dst = tmp;
-         char *src = tmp + 1;
-         int n = strlen(src) + 1;
-         memmove(dst, src, n);
-      }
-      tmp = strchr(fields, '.');        // find back saved spot
-      *tmp = letter;
-   }
-#endif
 
    // rest of file is optional, but better look right if it exists
    if (!*cp) return 12;
@@ -1532,12 +1503,16 @@ static void before (char *me)
 
 // Anything missing won't show as a choice in the field editor,
 // so make sure there is exactly one of each letter.
+//
+// Due to Rik blindly accepting damem's broken patches, procps-2.0.1x
+// has 3 ("three"!!!) instances of "#C", "LC", or "CPU". Fix that too.
+// Some people are maintainers, and others are human patchbots.
 static void add_missing_fields(char *fields){
    unsigned upper[32];
    unsigned lower[32];
    char c;
    char *cp;
-   
+
    memset(upper, '\0', sizeof upper);
    memset(lower, '\0', sizeof lower);
 
@@ -1645,8 +1620,6 @@ static void configs_read (void)
       memcpy(&Winstk[i].rc, &rcf.win[i], sizeof rcf.win[i]);
       add_missing_fields(Winstk[i].rc.fieldscur);
    }
-
-rc_bugless(&rcf); sleep(2);
 
    // lastly, establish the true runtime secure mode and delay time
    if (!getuid()) Secure_mode = 0;
