@@ -77,6 +77,7 @@ static unsigned page_to_kb_shift;
 
         /* SMP Irix/Solaris mode */
 static int  Cpu_tot;
+static double pcpu_max_value;  // usually 99.9, for %CPU display
         /* assume no IO-wait stats, overridden if linux 2.5.41 */
 static const char *States_fmts = STATES_line2x4;
 
@@ -1551,6 +1552,39 @@ static void before (char *me)
      i >>= 1;
      page_to_kb_shift++;
    }
+
+   Fieldstab[P_CPU].head = " %CPU";
+   Fieldstab[P_CPU].fmts = " %#4.1f";
+   pcpu_max_value = 99.9;
+   Fieldstab[P_CPN].head = " P";
+   Fieldstab[P_CPN].fmts = " %1u";
+   if(smp_num_cpus>9){
+      Fieldstab[P_CPN].head = "  P";
+      Fieldstab[P_CPN].fmts = " %2u";
+      if(Rc.mode_irixps){
+         // this will do for up to 999; hopefully a 1024-node box
+         // will have at least 2.4% idle time
+         pcpu_max_value = 9999.0;
+         Fieldstab[P_CPU].fmts = " %4.0f";
+      }
+   }
+   if(smp_num_cpus>99){
+      Fieldstab[P_CPN].head = "   P";
+      Fieldstab[P_CPN].fmts = " %3u";
+   }
+   if(smp_num_cpus>999){
+      Fieldstab[P_CPN].head = "    P";
+      Fieldstab[P_CPN].fmts = " %4u";
+   }
+
+   unsigned pid_digits = get_pid_digits();
+   if(pid_digits<4) pid_digits=4;
+   static char pid_fmt[6];
+   snprintf(pid_fmt, sizeof pid_fmt, " %%%uu", pid_digits);
+   Fieldstab[P_PID].fmts = pid_fmt;
+   Fieldstab[P_PID].head = "        PID" + 10 - pid_digits;
+   Fieldstab[P_PPD].fmts = pid_fmt;
+   Fieldstab[P_PPD].head = "       PPID" + 10 - pid_digits;
 }
 
 
@@ -2941,7 +2975,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
             break;
          case P_CPU:
          {  float u = (float)p->pcpu * Frame_tscale;
-            if (99.9 < u) u = 99.9;
+            if (u > pcpu_max_value) u = pcpu_max_value;
             MKCOL(u);
          }
             break;

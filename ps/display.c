@@ -564,6 +564,7 @@ int main(int argc, char *argv[]){
     case 0:
     case SIGINT:   /* ^C */
     case SIGTSTP:  /* ^Z */
+    case SIGTTOU:  /* see stty(1) man page */
     case SIGQUIT:  /* ^\ */
     case SIGPROF:  /* profiling */
     case SIGKILL:  /* can not catch */
