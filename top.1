@@ -147,7 +147,6 @@ and used when reading and writing a \*(CF.
 .\" ----------------------------------------------------------------------
 .SH 0. OVERVIEW, Documentation and Operation
 .\" ----------------------------------------------------------------------
-.Scr
 Listed below are the remaining topics in this document.
 Be advised that none of these topics need be read now, or studied later,
 for a successful\fB close-encounter-of-the-1st-kind\fR with \*(Us.
@@ -155,9 +154,9 @@ for a successful\fB close-encounter-of-the-1st-kind\fR with \*(Us.
 You need remember just the\fB help key\fR ('h' or '?') to survive
 \*(EM nay, prosper!
 What about quitting, you ask?
-Well, of course there's the 'q' \*(CI, but then \*(Me does quite well
+Well, of course there's the 'q' \*(CI, but \*(Me does quite well
 with\fB signals\fR.
-So just zap him with the traditional \fI^C\fR when you're done.
+So just zap him with a \fI^C\fR when you're done.
 .br
 Oh, almost forgot...
 
@@ -189,7 +188,7 @@ Remaining Table of Contents
        a. SYSTEM Configuration File
        b. PERSONAL Configuration File
     6.\fB DIFFERENCES / New Features\fR
-       a. User Interface Etiquette
+       a. Interface Etiquette
        b. Expanded Configurable Display Support
        c. Enhanced Field/Column Management
        d. Customization Flexibility
@@ -200,14 +199,15 @@ Remaining Table of Contents
        lastly,\fB the usual\fR...
     8. BUGS, 9. HISTORY Former top, 10. AUTHOR, 11. SEE ALSO
 
-.Scr
+.PP
 When you start \*(Us for the first time, you'll be presented with the
 traditional screen elements: 1) Summary Area; 2) Message/Prompt Line;
 3) Columns Header; 4) Task Area.
 But even out-of-the-box, there are numerous subtle differences, compared to
 the former top.
 
-.SS Highlighting
+.TP 3
+.B Highlighting
 .I Summary_Area\fR:
 It's retina-friendly with\fB no\fR highlighting for load/uptime and
 only\fB values\fR highlighted for other elements.
@@ -216,9 +216,10 @@ only\fB values\fR highlighted for other elements.
 Tasks\fB running\fR (or ready to run) will be highlighted, and bold is
 only one way of emphasizing such processes.
 
-.SS Content/Labels
+.TP 3
+.B Content/Labels
 .I Summary_Area\fR:
-The program\fB name\fR is shown (symlinks/aliases, remember?).
+The program\fB name\fR is shown (perhaps a symlink/alias).
 The Cpu\fI(s)\fR state\fR\fB label\fR hints at other possibilities (smp folks,
 stand by).
 The\fB memory\fR stats use a lower case '\fBk\fR' (making numbers and letters
@@ -228,7 +229,7 @@ more distinct).
 Shows a\fB new\fR field and some\fB changed\fR labels (unseen to the right).
 Precious horizontal space is no longer squandered.
 
-.Scr
+.PP
 All of that, however, is just the tip of the old iceberg.
 So please, do not touch that dial!
 You may, however, peruse the following screen representation before we
@@ -263,7 +264,7 @@ acknowledge \*(Us's default settings ...
                       +\fB--------------------------------------\fR+
 .Rje
 
-.Scr
+.PP
 Within the following categories, \*(Us's startup defaults are documented
 assuming no \*(CF, thus no user customizations.
 However, items shown with an \*(AS could be overridden through the\fB
@@ -1436,12 +1437,14 @@ personal \*(CF to the current directory, subject to permissions.
 .SH 6. DIFFERENCES / New Features
 .\" ----------------------------------------------------------------------
 The following summarizes differences between \*(US and your former \*(Me.
-It was based on procps-2.0.7.
+It was originally based on procps-2.0.7.
+However, except for the separate/summary \*(PU toggle, all of these
+differences also apply through procps-2.0.10.
 
 .\" ......................................................................
-.SS 6a. User Interface Etiquette
+.SS 6a. Interface Etiquette
 .New
-Input and output are more carefully implemented.
+Input and output are far more carefully implemented in \*(Us.
 You won't be subjected to 4 - 5 'Unknown command' messages should you press the
 wrong key.
 
@@ -1457,11 +1460,15 @@ The Help screen will no longer overflow, even when running with a
 The fields selection/ordering screens do not carelessly destroy important
 information through unintended line wraps.
 
+.New
+Should you narrow a xterm window to less than 80 columns while \*(Us is
+running, you will not be left with an utterly worthless, embarrassing display.
+
 .\" ......................................................................
 .SS 6b. Expanded Configurable Display Support
 .New
-With \*(Us, you can alternate between a\fB summary\fR display or one
-showing\fB each \*(Pu\fR separately.
+In an SMP environment, you can choose between a\fB summary\fR display or
+you may show\fB each \*(Pu\fR separately.
 No longer must this choice be irrevocably made at startup.
 
 .New

@@ -405,10 +405,10 @@ static int pr_fname(void){
 
 /* elapsed wall clock time, [[dd-]hh:]mm:ss format (not same as "time") */
 static int pr_etime(void){
-  unsigned long long t;
+  unsigned long t;
   unsigned dd,hh,mm,ss;
   char *cp = outbuf;
-  t = seconds_since_boot - pp->start_time / Hertz;
+  t = seconds_since_boot - (unsigned long)(pp->start_time / Hertz);
   ss = t%60;
   t /= 60;
   mm = t%60;
@@ -475,7 +475,7 @@ static int pr_ppid(void){
 
 /* cumulative CPU time, [dd-]hh:mm:ss format (not same as "etime") */
 static int pr_time(void){
-  unsigned long long t;
+  unsigned long t;
   unsigned dd,hh,mm,ss;
   int c;
   t = (pp->utime + pp->stime) / Hertz;

@@ -34,8 +34,10 @@
 
         /* Development/Debugging defines ----------------------------------- */
 //#define ATEOJ_REPORT            /* report a bunch of stuff, at end-of-job  */
+//#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
+//#define YIELDCPU_OFF            /* hang on tight, DON'T issue sched_yield  */
 
 
 /*######  Some Miscellaneous constants  ##################################*/
@@ -106,6 +108,15 @@
 #define _SC_STRx(f,s) \
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
       return Frame_srtflg * strcmp((*Q)->s, (*P)->s); }
+
+        /* Used to 'inline' those portions of the display requiring formatting
+           while ensuring we won't be blindsided by some whacko terminal's
+           '$<..>' (millesecond delay) lurking in a terminfo string.  */
+#define PUTP(fmt,arg...) do { \
+           char _str[ROWBUFSIZ]; \
+           snprintf(_str, sizeof(_str), fmt, ## arg); \
+           putp(_str); \
+        } while (0);
 
 /*------  Special Macros (debug and/or informative)  ---------------------*/
 
@@ -318,25 +329,21 @@ typedef struct win {
 #define LOADAV_line  "%s -%s\n"
 #define LOADAV_line_alt  "%s\06 -%s\n"
 #define STATES_line1  "Tasks:\03" \
-   " %3u \02total,\03 %3u \02running,\03 %3u \02sleeping,\03" \
-   " %3u \02stopped,\03 %3u \02zombie\03\n"
-#define STATES_line2  "%s\03" \
-   " %#5.1f%% \02user,\03 %#5.1f%% \02system,\03" \
-   " %#5.1f%% \02nice,\03 %#5.1f%% \02idle,\03 %#5.1f%% \02IO-wait\03\n"
+   " %3u \02total,\03 %3u \02running,\03 %3u \02sleeping,\03 %3u \02stopped,\03 %3u \02zombie\03\n"
+#define STATES_line2x4  "%s\03" \
+   " %#5.1f%% \02user,\03 %#5.1f%% \02system,\03 %#5.1f%% \02nice,\03 %#5.1f%% \02idle\03\n"
+#define STATES_line2x5  "%s\03" \
+   " %#5.1f%% \02user,\03 %#5.1f%% \02system,\03 %#5.1f%% \02nice,\03 %#5.1f%% \02idle,\03 %#5.1f%% \02IO-wait\03\n"
 #ifdef CASEUP_SUMMK
 #define MEMORY_line1  "Mem: \03" \
-   " %8uK \02total,\03 %8uK \02used,\03" \
-   " %8uK \02free,\03 %8uK \02buffers\03\n"
+   " %8uK \02total,\03 %8uK \02used,\03 %8uK \02free,\03 %8uK \02buffers\03\n"
 #define MEMORY_line2  "Swap:\03" \
-   " %8uK \02total,\03 %8uK \02used,\03" \
-   " %8uK \02free,\03 %8uK \02cached\03\n"
+   " %8uK \02total,\03 %8uK \02used,\03 %8uK \02free,\03 %8uK \02cached\03\n"
 #else
 #define MEMORY_line1  "Mem: \03" \
-   " %8uk \02total,\03 %8uk \02used,\03" \
-   " %8uk \02free,\03 %8uk \02buffers\03\n"
+   " %8uk \02total,\03 %8uk \02used,\03 %8uk \02free,\03 %8uk \02buffers\03\n"
 #define MEMORY_line2  "Swap:\03" \
-   " %8uk \02total,\03 %8uk \02used,\03" \
-   " %8uk \02free,\03 %8uk \02cached\03\n"
+   " %8uk \02total,\03 %8uk \02used,\03 %8uk \02free,\03 %8uk \02cached\03\n"
 #endif
 
         /* Keyboard Help specially formatted string(s) --
@@ -435,7 +442,7 @@ typedef struct win {
         /* Colors Help specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
 #define COLOR_help \
-   "%sHelp for color mapping\02 - %s\n" \
+   "Help for color mapping\02 - %s\n" \
    "current window: \01%s\06\n" \
    "\n" \
    "   color -\03 04:25:44 up 8 days, 50 min,  7 users,  load average:\n" \
@@ -526,7 +533,7 @@ typedef struct win {
 //atic void       *alloc_c (unsigned numb);
 //atic void       *alloc_r (void *q, unsigned numb);
 //atic CPUS_t     *refreshcpus (CPUS_t *cpus);
-//atic proc_t    **refreshprocs (proc_t **tbl);
+//atic proc_t    **refreshprocs (proc_t **table, int flags);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void        before (char *me);
 //atic void        configs_read (void);
@@ -540,6 +547,7 @@ typedef struct win {
 //atic void        fields_toggle (void);
 /*------  Windows/Field Groups support  ----------------------------------*/
 //atic void        win_colsheads (WIN_t *q);
+//atic inline int  win_fldviz (WIN_t *q, int flg);
 //atic void        win_names (WIN_t *q, const char *name);
 //atic void        win_select (char ch);
 //atic int         win_warn (void);

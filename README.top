@@ -171,7 +171,7 @@ Thanks.
           read those lines |            case 5: case 6: case 7: case:
           from the LEFT to |               cap = Curwin->captab[(int:
           the RIGHT?  This |               *sub_end = '\0';         :
-          "innovation" may |               printf("%s%.*s%s", cap, r:
+          "innovation" may |               PUTP("%s%.*s%s", cap, roo:
           possibly benefit |               room -= (sub_end - sub_be:
           those particular |               sub_beg = ++sub_end;     :
           kinds of people, |               break;                   :
@@ -241,9 +241,11 @@ Enjoy...
 //#define CASEUP_SCALE            /* show scaled time/num suffix upper case  */
 //#define CASEUP_SUMMK            /* show memory summary kilobytes with 'K'  */
 //#define POSIX_CMDLIN            /* use '[ ]' for kernel threads, not '( )' */
+//#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
 //#define USE_LIB_STA3            /* use lib status (3 ch) vs. proc_t (1 ch) */
+//#define YIELDCPU_OFF            /* hang on tight, DON'T issue sched_yield  */
 //#define WARN_NOT_SMP            /* restrict '1' & 'I' commands to true smp */
 
