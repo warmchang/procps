@@ -224,7 +224,7 @@ open_again:
     default:     _exit(101);
     case EACCES:   /* somebody screwing around? */
       /* FIXME: set a flag to disable symbol lookup? */
-    case ENOENT:   /* no module support */
+    case ENOENT:;  /* no module support */
     }
     goto hell;
   }

@@ -327,6 +327,7 @@ static void show_forest(const int n){
     }
     show_tree(i,n,0,0);
 not_root:
+    ;
   }
   /* don't free the array because it takes time and ps will exit anyway */
 }
@@ -379,6 +380,7 @@ int main(int argc, char *argv[]){
     case SIGKILL:  /* can not catch */
     case SIGSTOP:  /* can not catch */
     case SIGWINCH: /* don't care if window size changes */
+      ;
     }
   } while (0);
 #endif

@@ -140,6 +140,7 @@ static const char *aix_format_parse(sf_node *sfn){
     if(c)         goto initial;
     return "Improper AIX field descriptor.";
   looks_ok:
+    ;
   }
 
   /*** sanity check passed ***/

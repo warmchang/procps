@@ -699,6 +699,7 @@ static const char *grab_gnu_arg(void){
     if(*++flagptr) return flagptr;   /* found it */
     return NULL;                     /* empty '=' or ':' */
   case '\0': /* try next argv[] */
+    ;
   }
   if(thisarg+2 > ps_argc) return NULL;   /* there is nothing left */
   /* argument follows ps_argv[thisarg] */
