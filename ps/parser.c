@@ -529,12 +529,10 @@ static const char *parse_bsd_option(void){
       exclusive("L");
       print_format_specifiers();
       exit(0);
-#if 0
-    case 'M':
-      trace("M junk (use alternate core)\n");
-      return "Option M is unsupported, try N or -n instead.";
+    case 'M':   // undocumented for now: these are proliferating!
+      trace("M MacOS X thread display, like AIX/Tru64\n");
+      thread_flags |= TF_B_m;
       break;
-#endif
     case 'N': /* end */
       trace("N Specify namelist file\n");
       arg=get_opt_arg();
@@ -711,6 +709,17 @@ static const char *parse_bsd_option(void){
       trace("x Select processes without controlling ttys\n");
       simple_select |= SS_B_x;
       break;
+#if 0
+    case 'y':
+      // DragonFlyBSD iac (interactivity measure) format
+      // uid,pid,ppid,cpu,pri,iac,nice,wchan,state,tt,time,command
+      // (they use 'Y' to sort by this "iac" thing; 'y' implies 'Y')
+      // Range is -127 .. 127, with lower numbers being more
+      // interactive and higher numbers more batch-like.
+      trace("y Display interactivity measure\n");
+      format_flags |= FF_Bv;
+      break;
+#endif
     case '-':
       return "Embedded '-' among BSD options makes no sense.";
       break;
@@ -901,7 +910,7 @@ static const char *parse_gnu_option(void){
   case_help:
     trace("--help\n");
     exclusive("--help");
-    fwrite(help_message,1,strlen(help_message),stderr);
+    fwrite(help_message,1,strlen(help_message),stdout);
     exit(0);
     return NULL;
   case_info:

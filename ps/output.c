@@ -386,6 +386,7 @@ static int pr_etime(char *restrict const outbuf, const proc_t *restrict const pp
   return (int)(cp-outbuf);
 }
 static int pr_nice(char *restrict const outbuf, const proc_t *restrict const pp){
+  if(pp->sched!=0 && pp->sched!=-1) return snprintf(outbuf, COLWID, "-");
   return snprintf(outbuf, COLWID, "%ld", pp->nice);
 }
 
@@ -562,15 +563,22 @@ static int pr_oldstate(char *restrict const outbuf, const proc_t *restrict const
 }
 #endif
 
-/* This state display is Unix98 compliant and has lots of info like BSD. */
+// This state display is Unix98 compliant and has lots of info like BSD.
 static int pr_stat(char *restrict const outbuf, const proc_t *restrict const pp){
     int end = 0;
     outbuf[end++] = pp->state;
 //  if(pp->rss==0 && pp->state!='Z')  outbuf[end++] = 'W'; // useless "swapped out"
     if(pp->nice < 0)                  outbuf[end++] = '<';
     if(pp->nice > 0)                  outbuf[end++] = 'N';
+// In this order, NetBSD would add:
+//     traced   'X'
+//     systrace 'x'
+//     exiting  'E' (not printed for zombies)
+//     vforked  'V'
+//     system   'K' (and do not print 'L' too)
     if(pp->vm_lock)                   outbuf[end++] = 'L';
     if(pp->session == pp->tgid)       outbuf[end++] = 's'; // session leader
+    if(pp->nlwp > 1)                  outbuf[end++] = 'l'; // multi-threaded
     if(pp->pgrp == pp->tpgid)         outbuf[end++] = '+'; // in foreground process group
     outbuf[end] = '\0';
     return end;
@@ -761,17 +769,35 @@ static int pr_pmem(char *restrict const outbuf, const proc_t *restrict const pp)
   return snprintf(outbuf, COLWID, "%2u.%u", (unsigned)(pmem/10), (unsigned)(pmem%10));
 }
 
-// HP-UX "cls" would use: RT RR RR2 ???? HPUX FIFO KERN
-// We're using a 2-char version like... Sun maybe? I forget.
+// HP-UX   "cls": RT RR RR2 ???? HPUX FIFO KERN
+// Solaris "class": SYS TS FX IA RT FSS (FIFO is RR w/ Inf quant)
+//                  FIFO+RR share RT; FIFO has Inf quant
+//                  IA=interactive; FX=fixed; TS=timeshare; SYS=system
+//                  FSS=fairshare; INTS=interrupts
+// Tru64   "policy": FF RR TS
+// IRIX    "class": RT TS B BC WL GN
+//                  RT=real-time; TS=time-share; B=batch; BC=batch-critical
+//                  WL=weightless; GN=gang-scheduled
+//                  see miser(1) for this; PRI has some letter codes too
 static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp){
   switch(pp->sched){
-  case -1: return snprintf(outbuf, COLWID, "-");  /* not reported */
-  case  0: return snprintf(outbuf, COLWID, "TS"); /* SCHED_OTHER */
-  case  1: return snprintf(outbuf, COLWID, "FF"); /* SCHED_FIFO */
-  case  2: return snprintf(outbuf, COLWID, "RR"); /* SCHED_RR */
-  default: return snprintf(outbuf, COLWID, "?");  /* unknown value */
+  case -1: return snprintf(outbuf, COLWID, "-");   // not reported
+  case  0: return snprintf(outbuf, COLWID, "TS");  // SCHED_OTHER
+  case  1: return snprintf(outbuf, COLWID, "FF");  // SCHED_FIFO
+  case  2: return snprintf(outbuf, COLWID, "RR");  // SCHED_RR
+  case  3: return snprintf(outbuf, COLWID, "#3");  // SCHED_BATCH? (will be "B")
+  case  4: return snprintf(outbuf, COLWID, "#4");  // SCHED_ISO? (Con Kolivas)
+  case  5: return snprintf(outbuf, COLWID, "#5");  //
+  case  8: return snprintf(outbuf, COLWID, "#8");  //
+  default: return snprintf(outbuf, COLWID, "?");   // unknown value
   }
 }
+// Based on "type", FreeBSD would do:
+//    REALTIME  "real:%u", prio
+//    NORMAL    "normal"
+//    IDLE      "idle:%u", prio
+//    default   "%u:%u", type, prio
+// We just print the priority, and have other keywords for type.
 static int pr_rtprio(char *restrict const outbuf, const proc_t *restrict const pp){
   if(pp->sched==0 || pp->sched==-1) return snprintf(outbuf, COLWID, "-");
   return snprintf(outbuf, COLWID, "%ld", pp->rtprio);
@@ -1088,6 +1114,7 @@ static const format_struct format_array[] = {
 {"context",   "CONTEXT", pr_context,  sr_nop,    31,   0,    LNX, ET|LEFT},
 {"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, ET|RIGHT}, /*cpu*/
 {"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
+{"cpuid",     "CPUID",   pr_psr,      sr_nop,     5,   0,    BSD, TO|RIGHT}, // OpenBSD: 8 wide!
 {"cputime",   "TIME",    pr_time,     sr_nop,     8,   0,    DEC, ET|RIGHT}, /*time*/
 {"cstime",    "-",       pr_nop,      sr_cstime,  1,   0,    LNX, AN|RIGHT},
 {"cursig",    "CURSIG",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
@@ -1119,6 +1146,7 @@ static const format_struct format_array[] = {
 {"fuser",     "FUSER",   pr_fuser,    sr_fuser,   8, USR,    LNX, ET|USER},
 {"gid",       "GID",     pr_egid,     sr_egid,    5,   0,    SUN, ET|RIGHT},
 {"group",     "GROUP",   pr_egroup,   sr_egroup,  8, GRP,    U98, ET|USER},
+{"iac",       "IAC",     pr_nop,      sr_nop,     4,   0,    BSD, AN|RIGHT}, // DragonFly
 {"ignored",   "IGNORED", pr_sigignore,sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigignore*/
 {"inblk",     "INBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*inblock*/
 {"inblock",   "INBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*inblk*/
@@ -1128,6 +1156,7 @@ static const format_struct format_array[] = {
 {"ktrace",    "KTRACE",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
 {"ktracep",   "KTRACEP", pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
 {"label",     "LABEL",   pr_context,  sr_nop,    31,  0,     SGI, ET|LEFT},
+{"lastcpu",   "C",       pr_psr,      sr_nop,     3,   0,    BSD, TO|RIGHT}, // DragonFly
 {"lim",       "LIM",     pr_lim,      sr_rss_rlim, 5,  0,    BSD, AN|RIGHT},
 {"lockname",  "LOCK",    pr_nop,      sr_nop,     6, WCH,    BSD, TO|WCHAN}, /* mutex (FreeBSD) */
 {"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, AN|LEFT}, /*logname*/   /* double check */
@@ -1265,6 +1294,7 @@ static const format_struct format_array[] = {
 {"user",      "USER",    pr_euser,    sr_euser,   8, USR,    U98, ET|USER}, /* BSD n forces this to UID */
 {"usertime",  "USER",    pr_nop,      sr_nop,     4,   0,    DEC, ET|RIGHT},
 {"usrpri",    "UPR",     pr_nop,      sr_nop,     3,   0,    DEC, TO|RIGHT}, /*upr*/
+{"util",      "C",       pr_c,        sr_pcpu,    2,   0,    SGI, ET|RIGHT}, // not sure about "C"
 {"utime",     "UTIME",   pr_nop,      sr_utime,   6,   0,    LNx, ET|RIGHT},
 {"vm_data",   "DATA",    pr_nop,      sr_vm_data, 5,   0,    LNx, PO|RIGHT},
 {"vm_exe",    "EXE",     pr_nop,      sr_vm_exe,  5,   0,    LNx, PO|RIGHT},
