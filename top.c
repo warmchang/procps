@@ -1498,6 +1498,10 @@ static const char *rc_write_whatever (void) {
 
 /*######  Startup routines  ##############################################*/
 
+#ifdef PRETEND4CPUS
+#define smp_num_cpus 4
+#endif
+
         /*
          * No mater what *they* say, we handle the really really BIG and
          * IMPORTANT stuff upon which all those lessor functions depend! */
@@ -1510,11 +1514,7 @@ static void before (char *me)
    if (Myname) ++Myname; else Myname = me;
 
       /* establish cpu particulars -- even bigger! */
-#ifdef PRETEND4CPUS
-   Cpu_tot = 4;
-#else
    Cpu_tot = smp_num_cpus;
-#endif
    Cpu_map = alloc_r(NULL, sizeof(int) * Cpu_tot);
    for (i = 0; i < Cpu_tot; i++)
       Cpu_map[i] = i;
@@ -1553,7 +1553,7 @@ static void configs_read (void)
          const char *sec = strchr(fbuf, 's');
          const char *eol = strchr(fbuf, '\n');
          if (eol) {
-            const char *two = eol+1;  // line two
+            const char *two = eol + 1;  // line two
             if (sec < eol) Secure_mode = !!sec;
             eol = strchr(two, '\n');
             if (eol && eol > two && isdigit(*two)) Rc.delay_time = atof(two);
@@ -1591,8 +1591,8 @@ static void configs_read (void)
    for (i = 0; i < GROUPSMAX; i++) Winstk[i]->rc = rcf.win[i];
 
    // lastly, establish the true runtime secure mode and delay time
-   Secure_mode = getuid() ? Secure_mode : 0;
-   if (!Secure_mode || !getuid()) Rc.delay_time = delay;
+   if (!getuid()) Secure_mode = 0;
+   if (!Secure_mode) Rc.delay_time = delay;
 }
 
 
