@@ -361,7 +361,6 @@ proc_t* readproc(PROCTAB* PT, proc_t* p) {
     static struct direct *ent;		/* dirent handle */
     static struct stat sb;		/* stat buffer */
     static char path[32], sbuf[1024];	/* bufs for stat,statm */
-    int matched = 0;	/* flags */
 #ifdef FLASK_LINUX
     security_id_t secsid;
 #endif
@@ -374,22 +373,21 @@ next_proc:				/* get next PID for consideration */
 #define flags (PT->flags)
 
     if (flags & PROC_PID) {
-	if (!*PT->pids)			/* set to next item in pids */
+	if (unlikely(!*PT->pids))	/* set to next item in pids */
 	    return NULL;
 	sprintf(path, "/proc/%d", *(PT->pids)++);
-	matched = 1;
     } else {					/* get next numeric /proc ent */
-	while ((ent = readdir(PT->procfs)) &&
-	       (*ent->d_name < '0' || *ent->d_name > '9'))
-	    ;
-	if (!ent || !ent->d_name)
-	    return NULL;
+	for (;;) {
+	    ent = readdir(PT->procfs);
+	    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return NULL;
+	    if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name < '9') )) break;
+	}
 	sprintf(path, "/proc/%s", ent->d_name);
     }
 #ifdef FLASK_LINUX
     if ( stat_secure(path, &sb, &secsid) == -1 ) /* no such dirent (anymore) */
 #else
-    if (stat(path, &sb) == -1)		/* no such dirent (anymore) */
+    if (unlikely(stat(path, &sb) == -1))	/* no such dirent (anymore) */
 #endif
 	goto next_proc;
 
@@ -405,18 +403,18 @@ next_proc:				/* get next PID for consideration */
 #endif
 
     if (flags & PROC_FILLSTAT) {         /* read, parse /proc/#/stat */
-	if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
+	if (unlikely( file2str(path, "stat", sbuf, sizeof sbuf) == -1 ))
 	    goto next_proc;			/* error reading /proc/#/stat */
 	stat2proc(sbuf, p);				/* parse /proc/#/stat */
     }
 
-    if (flags & PROC_FILLMEM) {				/* read, parse /proc/#/statm */
-	if ((file2str(path, "statm", sbuf, sizeof sbuf)) != -1 )
+    if (unlikely(flags & PROC_FILLMEM)) {				/* read, parse /proc/#/statm */
+	if (likely( file2str(path, "statm", sbuf, sizeof sbuf) != -1 ))
 	    statm2proc(sbuf, p);		/* ignore statm errors here */
     }						/* statm fields just zero */
 
     if (flags & PROC_FILLSTATUS) {         /* read, parse /proc/#/status */
-       if ((file2str(path, "status", sbuf, sizeof sbuf)) != -1 ){
+       if (likely( file2str(path, "status", sbuf, sizeof sbuf) != -1 )){
            status2proc(sbuf, p);
        }
     }
@@ -446,12 +444,12 @@ next_proc:				/* get next PID for consideration */
     else
         p->cmdline = NULL;
 
-    if (flags & PROC_FILLENV)			/* read+parse /proc/#/environ */
+    if (unlikely(flags & PROC_FILLENV))			/* read+parse /proc/#/environ */
 	p->environ = file2strvec(path, "environ");
     else
         p->environ = NULL;
     
-    if (p->state == 'Z')		/* fixup cmd for zombies */
+    if (unlikely(p->state == 'Z'))	/* fixup cmd for zombies */
 	strncat(p->cmd," <defunct>", sizeof p->cmd);
 
     return p;
