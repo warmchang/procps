@@ -595,8 +595,6 @@ static void skillsnice_parse(int argc,
 			sig_or_pri = signo;
 	}
 
-	pid_count = 0;
-
 	while ((ch =
 		getopt_long(argc, argv, "c:dfilnp:Lt:u:vwhV", longopts,
 			    NULL)) != -1)
@@ -623,7 +621,6 @@ static void skillsnice_parse(int argc,
 			ENLIST(pid,
 			       strtol_or_err(optarg,
 					     _("failed to parse argument")));
-			pid_count++;
 			break;
 		case 'L':
 			pretty_print_signals();
@@ -692,7 +689,6 @@ static void skillsnice_parse(int argc,
 		num = strtol(argv[0], &end, 10);
 		if (errno == 0 && argv[0] != end && end != NULL && *end == '\0') {
 			ENLIST(pid, num);
-			pid_count++;
 		} else {
 			ENLIST(cmd, argv[0]);
 		}
