@@ -389,6 +389,9 @@ Modifications to the arguments are not shown.
 
 // FIXME: some of these may hit the guard page in forest mode
 
+#define OUTBUF_SIZE_AT(endp) \
+  (((endp) >= outbuf && (endp) < outbuf + OUTBUF_SIZE) ? (outbuf + OUTBUF_SIZE) - (endp) : 0)
+
 /*
  * "args", "cmd", "command" are all the same:  long  unless  c
  * "comm", "ucmd", "ucomm"  are all the same:  short unless -f
@@ -402,15 +405,15 @@ static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp)
   rightward -= fh;
 
   if(pp->cmdline && !bsd_c_option)
-    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE, &rightward);
+    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE_AT(endp), &rightward);
   else
-    endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, ESC_DEFUNCT);
+    endp += escape_command(endp, pp, OUTBUF_SIZE_AT(endp), &rightward, ESC_DEFUNCT);
 
-  if(bsd_e_option && rightward>1) {
+  if(bsd_e_option && rightward>1 && OUTBUF_SIZE_AT(endp)>1) {
     if(pp->environ && *pp->environ) {
       *endp++ = ' ';
       rightward--;
-      endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE, &rightward);
+      endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE_AT(endp), &rightward);
     }
   }
   return max_rightward-rightward;
@@ -429,15 +432,15 @@ static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp)
   rightward -= fh;
 
   if(pp->cmdline && unix_f_option)
-    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE, &rightward);
+    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE_AT(endp), &rightward);
   else
-    endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, ESC_DEFUNCT);
+    endp += escape_command(endp, pp, OUTBUF_SIZE_AT(endp), &rightward, ESC_DEFUNCT);
 
-  if(bsd_e_option && rightward>1) {
+  if(bsd_e_option && rightward>1 && OUTBUF_SIZE_AT(endp)>1) {
     if(pp->environ && *pp->environ) {
       *endp++ = ' ';
       rightward--;
-      endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE, &rightward);
+      endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE_AT(endp), &rightward);
     }
   }
   return max_rightward-rightward;
@@ -469,10 +472,12 @@ static int pr_fname(char *restrict const outbuf, const proc_t *restrict const pp
   if (rightward>8)  /* 8=default, but forest maybe feeds more */
     rightward = 8;
 
-  endp += escape_str(endp, pp->cmd, OUTBUF_SIZE, &rightward);
+  endp += escape_str(endp, pp->cmd, OUTBUF_SIZE_AT(endp), &rightward);
   //return endp - outbuf;
   return max_rightward-rightward;
 }
+
+#undef OUTBUF_SIZE_AT
 
 /* elapsed wall clock time, [[dd-]hh:]mm:ss format (not same as "time") */
 static int pr_etime(char *restrict const outbuf, const proc_t *restrict const pp){
