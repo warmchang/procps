@@ -201,6 +201,16 @@ CMP_INT(pcpu)
 
 CMP_INT(state)
 
+/* approximation to: kB of address space that could end up in swap */
+static int sr_swapable(const proc_t* P, const proc_t* Q) {
+  unsigned long p_swapable = P->vm_data + P->vm_stack;
+  unsigned long q_swapable = Q->vm_data + Q->vm_stack;
+  if (p_swapable < q_swapable) return -1;
+  if (p_swapable > q_swapable) return  1;
+  return 0;
+}
+
+
 /***************************************************************************/
 /************ Lots of format functions, starting with the NOP **************/
 
@@ -714,6 +724,10 @@ static int pr_trs(void){
     return snprintf(outbuf, COLWID, "%ld", trs);
 }
 
+/* approximation to: kB of address space that could end up in swap */
+static int pr_swapable(void) {
+  return snprintf(outbuf, COLWID, "%ld", pp->vm_data + pp->vm_stack);
+}
 
 
 static int pr_minflt(void){
@@ -1180,7 +1194,7 @@ static const format_struct format_array[] = {
 {"m_lrs",     "LRS",     pr_nop,      sr_lrs,     5, MEM,    LNx, RIGHT},
 {"m_resident", "RES",    pr_nop,      sr_resident, 5,MEM,    LNx, RIGHT},
 {"m_share",   "SHRD",    pr_nop,      sr_share,   5, MEM,    LNx, RIGHT},
-{"m_size",    "SIZE",    pr_nop,      sr_size,    5, MEM,    LNx, RIGHT},
+{"m_size",    "SIZE",    pr_size,     sr_size,    5, MEM,    LNX, RIGHT},
 {"m_swap",    "SWAP",    pr_nop,      sr_nop,     5,   0,    LNx, RIGHT},
 {"m_trs",     "TRS",     pr_trs,      sr_trs,     5, MEM,    LNx, RIGHT},
 {"maj_flt",   "MAJFL",   pr_majflt,   sr_maj_flt, 6,   0,    LNX, CUMUL|RIGHT},
@@ -1253,7 +1267,7 @@ static const format_struct format_array[] = {
 {"sigcatch",  "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    XXX, SIGNAL}, /*caught*/
 {"sigignore", "IGNORED", pr_sigignore,sr_nop,     9,   0,    XXX, SIGNAL}, /*ignored*/
 {"sigmask",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    XXX, SIGNAL}, /*blocked*/
-{"size",      "-",       pr_nop,      sr_size,    1, MEM,    SCO, RIGHT},
+{"size",      "SZ",      pr_swapable, sr_swapable, 1,  0,    SCO, RIGHT},
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, RIGHT},
 {"spid",      "SPID",    pr_thread,   sr_nop,     5,   0,    SGI, RIGHT},
 {"stackp",    "STACKP",  pr_stackp,   sr_nop,     8,   0,    LNX, RIGHT}, /*start_stack*/
