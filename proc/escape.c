@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <string.h>
+#include <limits.h>
 #include "procps.h"
 #include "escape.h"
 #include "readproc.h"
@@ -32,11 +33,21 @@
 # include <langinfo.h>
 #endif
 
+#define SECURE_ESCAPE_ARGS(dst, bytes, cells) do { \
+  if ((bytes) <= 0) return 0; \
+  *(dst) = '\0'; \
+  if ((bytes) >= INT_MAX) return 0; \
+  if ((cells) >= INT_MAX) return 0; \
+  if ((cells) <= 0) return 0; \
+} while (0)
+
 #if (__GNU_LIBRARY__ >= 6) && (!defined(__UCLIBC__) || defined(__UCLIBC_HAS_WCHAR__))
 static int escape_str_utf8(char *restrict dst, const char *restrict src, int bufsize, int *maxcells){
   int my_cells = 0;
   int my_bytes = 0;
   mbstate_t s;
+
+  SECURE_ESCAPE_ARGS(dst, bufsize, *maxcells);
 
   memset(&s, 0, sizeof (s));
 
@@ -146,6 +157,7 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
   }
 #endif
 
+  SECURE_ESCAPE_ARGS(dst, bufsize, *maxcells);
   if(bufsize > *maxcells+1) bufsize=*maxcells+1; // FIXME: assumes 8-bit locale
 
   for(;;){
@@ -172,6 +184,8 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
 int escape_strlist(char *restrict dst, char *restrict const *restrict src, size_t bytes, int *cells){
   size_t i = 0;
 
+  SECURE_ESCAPE_ARGS(dst, bytes, *cells);
+
   for(;;){
     i += escape_str(dst+i, *src, bytes-i, cells);
     if(bytes-i < 3) break;  // need room for space, a character, and the NUL
@@ -189,6 +203,8 @@ int escape_strlist(char *restrict dst, char *restrict const *restrict src, size_
 int escape_command(char *restrict const outbuf, const proc_t *restrict const pp, int bytes, int *cells, unsigned flags){
   int overhead = 0;
   int end = 0;
+
+  SECURE_ESCAPE_ARGS(outbuf, bytes, *cells);
 
   if(flags & ESC_ARGS){
     char **lc = (char**)pp->cmdline;
@@ -231,7 +247,10 @@ int escape_command(char *restrict const outbuf, const proc_t *restrict const pp,
 // using the traditional escape.h calling conventions
 int escaped_copy(char *restrict dst, const char *restrict src, int bufsize, int *maxroom){
   int n;
+
+  SECURE_ESCAPE_ARGS(dst, bufsize, *maxroom);
   if (bufsize > *maxroom+1) bufsize = *maxroom+1;
+
   n = snprintf(dst, bufsize, "%s", src);
   if (n >= bufsize) n = bufsize-1;
   *maxroom -= n;
