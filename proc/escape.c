@@ -88,7 +88,7 @@ static int escape_str_utf8(char *restrict dst, const char *restrict src, int buf
       /* multibyte - printable */
       int wlen = wcwidth(wc);
 
-      if (wlen==0) {
+      if (wlen<=0) {
 	// invisible multibyte -- we don't ignore it, because some terminal
 	// interpret it wrong and more safe is replace it with '?'
 	*(dst++) = '?';
