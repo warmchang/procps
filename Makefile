@@ -26,8 +26,8 @@ LIBVERSION   := 3.0.3
 
 # so you can disable them or choose alternates
 ldconfig := ldconfig
-ln-f     := ln -f
-ln-sf    := ln -sf
+ln_f     := ln -f
+ln_sf    := ln -sf
 install  := install -D --owner 0 --group 0
 
 usr/bin                  := $(DESTDIR)/usr/bin/
@@ -139,7 +139,7 @@ $(MANFILES) : all
 	$(install) --mode a=r $(notdir $@) $@
 
 install: $(filter-out $(SKIP),$(INSTALL))
-	cd $(usr/bin) && ($(ln-f) skill snice; $(ln-f) pgrep pkill)
+	cd $(usr/bin) && ($(ln_f) skill snice; $(ln_f) pgrep pkill)
 
 ############ prog.c --> prog.o
 
