@@ -46,8 +46,8 @@ static int task_dir_missing;
 ///////////////////////////////////////////////////////////////////////////
 
 typedef struct status_table_struct {
-    unsigned char name[6];        // /proc/*/status field name
-    short len;                    // name length
+    unsigned char name[7];        // /proc/*/status field name
+    unsigned char len;            // name length
 #ifdef LABEL_OFFSET
     long offset;                  // jump address offset
 #else
@@ -64,84 +64,78 @@ typedef struct status_table_struct {
 
 // Derived from:
 // gperf -7 --language=ANSI-C --key-positions=1,3,4 -C -n -c sml.gperf
+//
+// Suggested method:
+// Grep this file for "case_", then strip those down to the name.
+// (leave the colon and newline) So "Pid:\n" and "Threads:\n"
+// would be lines in the file. (no quote, no escape, etc.)
+//
+// Watch out for name size in the status_table_struct (grrr, expanding)
+// and the number of entries (we mask with 63 for now). The table
+// must be padded out to 64 entries, maybe 128 in the future.
 
 static void status2proc(char *S, proc_t *restrict P, int is_proc){
     char ShdPnd[16] = "";
-    static const unsigned char asso[] = {
-        56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
-        56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
-        56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
-        56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 15, 56, 56, 56, 56, 56,
-        56, 56, 25, 30, 15,  3, 56,  5, 56,  3, 56, 56,  3, 56, 10, 56,
-        18, 56, 13,  0, 30, 25,  0, 56, 56, 56, 56, 56, 56, 56, 56, 56,
-        56, 30, 56,  8,  0,  0, 56, 25, 56,  5, 56, 56, 56,  0, 56, 56,
-        56, 56, 56, 56,  0, 56, 56, 56,  0, 56, 56, 56, 56, 56, 56, 56
+    long Threads = 0;
+    long Tgid = 0;
+    long Pid = 0;
+
+  static const unsigned char asso[] =
+    {
+      61, 61, 61, 61, 61, 61, 61, 61, 61, 61,
+      61, 61, 61, 61, 61, 61, 61, 61, 61, 61,
+      61, 61, 61, 61, 61, 61, 61, 61, 61, 61,
+      61, 61, 61, 61, 61, 61, 61, 61, 61, 61,
+      61, 61, 61, 61, 61, 61, 61, 61, 61, 61,
+      61, 61, 61, 61, 61, 61, 61, 61, 15, 61,
+      61, 61, 61, 61, 61, 61, 30,  3,  5,  5,
+      61,  5, 61,  8, 61, 61,  3, 61, 10, 61,
+       6, 61, 13,  0, 30, 25,  0, 61, 61, 61,
+      61, 61, 61, 61, 61, 61, 61,  3, 61, 13,
+       0,  0, 61, 30, 61, 25, 61, 61, 61,  0,
+      61, 61, 61, 61,  5, 61,  0, 61, 61, 61,
+       0, 61, 61, 61, 61, 61, 61, 61
     };
+
     static const status_table_struct table[] = {
-        F(VmStk)
-        NUL
-        NUL
-        F(VmExe)
-        NUL
-        F(VmSize)
-        NUL
-        NUL
-        F(VmLib)
-        NUL
-        F(Name)
-        F(VmLck)
-        NUL
-        F(VmRSS)
-        NUL
-        NUL
-        NUL
-        NUL
-        F(ShdPnd)
-        NUL
-        F(Gid)
-        NUL
-        NUL
-        F(PPid)
-        NUL
-        NUL
-        NUL
-        NUL
-        F(SigIgn)
-        NUL
-        F(State)
-        NUL
-        NUL
-        F(Pid)
-        NUL
-        F(Tgid)
-        NUL
-        NUL
-        NUL
-        NUL
-        F(Uid)
-        NUL
-        NUL
-        F(SigPnd)
-        NUL
-        F(VmData)
-        NUL
-        NUL
-        NUL
-        NUL
-        F(SigBlk)
-        NUL
-        NUL
-        NUL
-        NUL
-        F(SigCgt)
-        NUL
-        NUL
-        NUL
-        NUL
-        NUL
-        NUL
-        NUL
-        NUL
+      F(VmStk)
+      NUL NUL
+      F(State)
+      NUL
+      F(VmExe)
+      F(ShdPnd)
+      NUL
+      F(VmData)
+      NUL
+      F(Name)
+      NUL NUL
+      F(VmRSS)
+      NUL NUL
+      F(VmLck)
+      NUL NUL NUL
+      F(Gid)
+      F(Pid)
+      NUL NUL NUL
+      F(VmSize)
+      NUL NUL
+      F(VmLib)
+      NUL NUL
+      F(PPid)
+      NUL
+      F(SigCgt)
+      NUL
+      F(Threads)
+      F(SigPnd)
+      NUL
+      F(SigIgn)
+      NUL
+      F(Uid)
+      NUL NUL NUL NUL NUL NUL NUL NUL NUL
+      NUL NUL NUL NUL NUL
+      F(Tgid)
+      NUL NUL NUL NUL
+      F(SigBlk)
+      NUL NUL NUL
     };
 
 #undef F
@@ -156,6 +150,7 @@ ENTER(0x220);
     P->vm_stack= 0;
     P->vm_exe  = 0;
     P->vm_lib  = 0;
+    P->nlwp    = 0;
 
     goto base;
 
@@ -186,12 +181,6 @@ ENTER(0x220);
         goto *entry.addr;
 #endif
 
-    case_Gid:
-        P->rgid = strtol(S,&S,10);
-        P->egid = strtol(S,&S,10);
-        P->sgid = strtol(S,&S,10);
-        P->fgid = strtol(S,&S,10);
-        continue;
     case_Name:{
         unsigned u = 0;
         while(u < sizeof P->cmd - 1u){
@@ -210,16 +199,6 @@ ENTER(0x220);
         S--;   // put back the '\n' or '\0'
         continue;
     }
-    case_PPid:
-        P->ppid = strtol(S,&S,10);
-        continue;
-    case_Pid:
-        P->tid = strtol(S,&S,10);
-        continue;
-    case_Threads:
-        P->nlwp = strtol(S,&S,10);
-        continue;
-
     case_ShdPnd:
         memcpy(ShdPnd, S, 16);
         // we know it to be 16 char, so no '\0' needed
@@ -240,18 +219,32 @@ ENTER(0x220);
         memcpy(P->signal, S, 16);
         P->signal[16] = '\0';
         continue;
-
     case_State:
         P->state = *S;
         continue;
     case_Tgid:
-        P->tgid = strtol(S,&S,10);
+        Tgid = strtol(S,&S,10);
+        continue;
+    case_Pid:
+        Pid = strtol(S,&S,10);
+        continue;
+    case_PPid:
+        P->ppid = strtol(S,&S,10);
+        continue;
+    case_Threads:
+        Threads = strtol(S,&S,10);
         continue;
     case_Uid:
         P->ruid = strtol(S,&S,10);
         P->euid = strtol(S,&S,10);
         P->suid = strtol(S,&S,10);
         P->fuid = strtol(S,&S,10);
+        continue;
+    case_Gid:
+        P->rgid = strtol(S,&S,10);
+        P->egid = strtol(S,&S,10);
+        P->sgid = strtol(S,&S,10);
+        P->fgid = strtol(S,&S,10);
         continue;
     case_VmData:
         P->vm_data = strtol(S,&S,10);
@@ -282,6 +275,20 @@ ENTER(0x220);
 	P->signal[16] = '\0';
     }
 
+    // Linux 2.4.13-pre1 to max 2.4.xx have a useless "Tgid"
+    // that is not initialized for built-in kernel tasks.
+    // Only 2.6.0 and above have "Threads" (nlwp) info.
+
+    if(Threads){
+       P->nlwp = Threads;
+       P->tgid = Tgid;     // the POSIX PID value
+       P->tid  = Pid;      // the thread ID
+    }else{
+       P->nlwp = 1;
+       P->tgid = Pid;
+       P->tid  = Pid;
+    }
+
 LEAVE(0x220);
 }
 
@@ -296,10 +303,10 @@ static void stat2proc(const char* S, proc_t *restrict P) {
 ENTER(0x160);
 
     /* fill in default values for older kernels */
-    P->exit_signal = SIGCHLD;
     P->processor = 0;
     P->rtprio = -1;
     P->sched = -1;
+    P->nlwp = 0;
 
     S = strchr(S, '(') + 1;
     tmp = strrchr(S, ')');
@@ -343,6 +350,11 @@ ENTER(0x160);
 /* -- Linux 2.2.8 to 2.5.17 end here -- */
        &P->rtprio, &P->sched  /* both added to 2.5.18 */
     );
+
+    if(!P->nlwp){
+      P->nlwp = 1;
+    }
+
 LEAVE(0x160);
 }
 
@@ -698,59 +710,6 @@ static int listed_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-// This "finds" processes by guessing every possible one of them!
-// Return non-zero on success. (pid was handy)
-#if 0
-static int stupid_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
-  char *restrict const path = PT->path;
-  pid_t pid = --PT->u;
-  if(likely( pid )){
-    snprintf(path, PROCPATHLEN, "/proc/%d", pid);
-    p->pid = pid;
-  }
-  return pid;
-}
-#endif
-
-//////////////////////////////////////////////////////////////////////////////////
-// This reads process info from proc_t structs already attached to a PROCTAB.
-// Yeah, we don't retain any pointer for freeing the memory later. Oh well.
-// This code is for development only.
-#if 0
-static proc_t* predone_readproc(PROCTAB *restrict const PT, proc_t *restrict const p) {
-  proc_t *tmp;
-  proc_t *ret = NULL;
-  for(;;){
-    tmp = PT->vp;
-    if(!tmp) _exit(49);  // can't happen
-    PT->vp = tmp->next;
-    if(tmp->pid == tmp->tgid){   // got a leader?
-      memcpy(p,tmp,sizeof(proc_t));  // copy it, pointers and all
-      ret = p;
-      break;
-    }
-  }
-  if(!ret) _exit(99); // can't happen
-  while(PT->vp){
-    tmp = PT->vp;
-    if(tmp->pid == tmp->tgid) break;  // OK, next one is a leader
-    PT->vp = tmp->next;
-  }
-  return ret;
-}
-#endif
-
-//////////////////////////////////////////////////////////////////////////////////
-// This "finds" processes by pulling them off of a list.
-// Return non-zero on success.
-#if 0
-static int predone_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
-  (void)p;
-  return !!PT->vp;
-}
-#endif
-
-//////////////////////////////////////////////////////////////////////////////////
 /* readproc: return a pointer to a proc_t filled with requested info about the
  * next process available matching the restriction set.  If no more such
  * processes are available, return a null pointer (boolean false).  Use the
@@ -803,7 +762,9 @@ proc_t* readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, pro
   saved_t = t;
   if(!t) t = xcalloc(t, sizeof *t); /* passed buf or alloced mem */
 
-  if(task_dir_missing){  // got to fake a thread for old kernels
+  // 1. got to fake a thread for old kernels
+  // 2. for single-threaded processes, this is faster
+  if(task_dir_missing || p->nlwp < 2){
     if(PT->did_fake) goto out;
     PT->did_fake=1;
     memcpy(t,p,sizeof(proc_t));
@@ -825,42 +786,6 @@ out:
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-
-#if 0
-static void evil_grouping_hack(PROCTAB* PT){
-  proc_t *tp;
-  // first we read them
-  for(;;){
-    tp = malloc(sizeof(proc_t));
-    if(!tp) _exit(2);
-    if(!readproc(PT, tp)){
-      free(tp);
-      break;
-    }
-    tp->ring = tp;
-    tp->next = PT->vp;
-    PT->vp   = tp;
-  }
-  // now we scan
-  tp = PT->vp;
-  while(tp){
-    if(tp->pid == tp->tgid){  // if we found a leader
-      proc_t *tmp = PT->vp;
-      while(tmp){
-        if(tmp != tp && tmp->tgid == tp->tgid){
-          tmp->ring = tp->ring;
-          tp->ring = tmp;
-        }
-        tmp = tmp->next;
-      }
-    }
-    tp = tp->next;
-  }
-  // later, readproc returns what we already have
-  PT->finder = predone_nextpid;
-  PT->reader = predone_readproc;
-}
-#endif
 
 // initiate a process table scan
 PROCTAB* openproc(int flags, ...) {
@@ -889,13 +814,6 @@ PROCTAB* openproc(int flags, ...) {
     }
     PT->flags = flags;
 
-#if 0
-    if(getenv("EVIL_FINDER_HACK")){  // for development only
-      PT->finder = stupid_nextpid;
-      PT->u = 10000;
-    }
-#endif
-
     va_start(ap, flags);		/*  Init args list */
     if (flags & PROC_PID)
     	PT->pids = va_arg(ap, pid_t*);
@@ -904,10 +822,6 @@ PROCTAB* openproc(int flags, ...) {
 	PT->nuid = va_arg(ap, int);
     }
     va_end(ap);				/*  Clean up args list */
-
-#if 0
-    if(getenv("EVIL_GROUPING_HACK")) evil_grouping_hack(PT);
-#endif
 
     return PT;
 }

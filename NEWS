@@ -1,6 +1,8 @@
 procps-3.1.14 --> procps-3.1.15
 
 install to /lib64 if it exists
+hide kernel PID bug (Linux 2.4.13-pre1 to 2.4.MAX)   #217278 #219730 #217525
+ps: faster threaded display
 
 procps-3.1.13 --> procps-3.1.14
 
