@@ -24,7 +24,6 @@
 //#define CASEUP_HEXES            /* show any hex values in upper case       */
 //#define CASEUP_SCALE            /* show scaled time/num suffix upper case  */
 //#define CASEUP_SUMMK            /* show memory summary kilobytes with 'K'  */
-//#define POSIX_CMDLIN            /* use '[ ]' for kernel threads, not '( )' */
 //#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
 //#define USE_LIB_STA3            /* use lib status (3 ch) vs. proc_t (1 ch) */
 //#define WARN_NOT_SMP            /* restrict '1' & 'I' commands to true smp */
@@ -326,9 +325,9 @@ typedef struct WIN_t {
            if nothing is specified by the loser, oops user */
 #define DEF_FIELDS  "AEHIOQTWKNMbcdfgjplrsuvyzX"
         /* Pre-configured field groupss */
-#define JOB_FIELDS  "ABXcefgjlrstuvyzMKNHIWOPQD"
-#define MEM_FIELDS  "ANOPQRSTUVXbcdefgjlmyzWHIK"
-#define USR_FIELDS  "DECGABXfhijlopqrstuvyzMKNW"
+#define JOB_FIELDS  "ABcefgjlrstuvyzMKNHIWOPQDX"
+#define MEM_FIELDS  "ANOPQRSTUVbcdefgjlmyzWHIKX"
+#define USR_FIELDS  "ABDECGfhijlopqrstuvyzMKNWX"
         /* Used by fields_sort, placed here for peace-of-mind */
 #define NUL_FIELDS  "abcdefghijklmnopqrstuvwxyz"
 
@@ -358,14 +357,6 @@ typedef struct WIN_t {
 #define CPU_FMTS_MULTI CPU_FMTS_JUST1
 #else
 #define CPU_FMTS_MULTI  "cpu%*d %Lu %Lu %Lu %Lu %Lu"
-#endif
-
-        /* This is the format for 'command line' display in the absence
-           of a command line (kernel thread). */
-#ifdef POSIX_CMDLIN
-#define CMDLINE_FMTS  "[%s]"
-#else
-#define CMDLINE_FMTS  "( %s )"
 #endif
 
         /* Summary Lines specially formatted string(s) --

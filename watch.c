@@ -21,6 +21,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <locale.h>
+#include "proc/procps.h"
 
 static struct option longopts[] = {
 	{"differences", optional_argument, 0, 'd'},

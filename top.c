@@ -793,7 +793,51 @@ static const char *scale_tics (TIC_t tics, const int width)
 #undef WW
 }
 
-
+#include <pwd.h>
+
+static int selection_type;
+static uid_t selection_uid;
+
+// FIXME: this is "temporary" code we hope
+static int good_uid(const proc_t *restrict const pp){
+   switch(selection_type){
+   case 'p':
+      return 1;
+   case 0:
+      return 1;
+   case 'U':
+      if (pp->ruid == selection_uid) return 1;
+      if (pp->suid == selection_uid) return 1;
+      if (pp->fuid == selection_uid) return 1;
+      // FALLTHROUGH
+   case 'u':
+      if (pp->euid == selection_uid) return 1;
+      // FALLTHROUGH
+   default:
+      ;  // don't know what it is; find bugs fast
+   }
+   return 0;
+}
+
+// swiped from ps, and ought to be in libproc
+static const char *parse_uid(const char *restrict const str, uid_t *restrict const ret){
+   struct passwd *passwd_data;
+   char *endp;
+   unsigned long num;
+   static const char uidrange[] = "User ID out of range.";
+   static const char uidexist[] = "User name does not exist.";
+   num = strtoul(str, &endp, 0);
+   if(*endp != '\0'){  /* hmmm, try as login name */
+      passwd_data = getpwnam(str);
+      if(!passwd_data)    return uidexist;
+      num = passwd_data->pw_uid;
+   }
+   if(num > 0xfffffffeUL) return uidrange;
+   *ret = num;
+   return 0;
+}
+
+
 /*######  Library Alternatives  ##########################################*/
 
         /*
@@ -1721,6 +1765,8 @@ static void parse_args (char **args)
                break;
             case 'p':
                do {
+                  if (selection_type) std_err("conflicting process selection");
+                  selection_type = 'p';
                   if (cp[1]) cp++;
                   else if (*args) cp = *args++;
                   else std_err("-p argument missing");
@@ -1743,12 +1789,32 @@ static void parse_args (char **args)
             case 'S':
                TOGw(Curwin, Show_CTIMES);
                break;
-//          case 'u':
-//             if (cp[1]) cp++;
-//             else if (*args) cp = *args++;
-//             else std_err("-u missing name");
-//             cp += snprintf(Curwin->colusrnam, USRNAMSIZ-1, "%s", cp);
-//             break;
+            case 'u':
+               do {
+                  const char *errmsg;
+                  if (selection_type) std_err("conflicting process selection");
+                  if (cp[1]) cp++;
+                  else if (*args) cp = *args++;
+                  else std_err("-u missing name");
+                  errmsg = parse_uid(cp, &selection_uid);
+                  if (errmsg) std_err(errmsg);
+                  selection_type = 'u';
+                  cp += snprintf(Curwin->colusrnam, USRNAMSIZ-1, "%s", cp); // FIXME: junk
+               } while(0);
+               break;
+            case 'U':
+               do {
+                  const char *errmsg;
+                  if (selection_type) std_err("conflicting process selection");
+                  if (cp[1]) cp++;
+                  else if (*args) cp = *args++;
+                  else std_err("-u missing name");
+                  errmsg = parse_uid(cp, &selection_uid);
+                  if (errmsg) std_err(errmsg);
+                  selection_type = 'U';
+                  cp += snprintf(Curwin->colusrnam, USRNAMSIZ-1, "%s", cp); // FIXME: junk
+               } while(0);
+               break;
             default :
                std_err(fmtmk("unknown argument '%c'\nusage:\t%s%s"
                   , *cp, Myname, usage));
@@ -2027,6 +2093,9 @@ static void reframewins (void)
             PSDBopen = 1;
       }
    }
+
+   if (selection_type=='U') Frames_libflags |= L_status;
+
    if (Frames_libflags & L_EITHER) {
       Frames_libflags &= ~L_EITHER;
       if (!(Frames_libflags & L_stat)) Frames_libflags |= L_status;
@@ -2503,9 +2572,53 @@ static void do_key (unsigned c)
          TOGw(Curwin, View_STATES);
          break;
 
+//    case 'u':
+//       if (VIZCHKc)
+//          strcpy(Curwin->colusrnam, ask4str("Which user (blank for all)"));
+//       break;
+
       case 'u':
-         if (VIZCHKc)
-            strcpy(Curwin->colusrnam, ask4str("Which user (blank for all)"));
+//       if (!VIZCHKc) break;
+         do {
+            const char *errmsg;
+            const char *answer;
+            answer = ask4str("Which user (blank for all)");
+            // FIXME: do this better:
+            if (!answer || *answer=='\0' || *answer=='\n' || *answer=='\r' || *answer=='\t' || *answer==' ') {
+               selection_type = 0;
+               selection_uid = -1;
+               break;
+            }
+            errmsg = parse_uid(answer, &selection_uid);
+            if (errmsg) {
+               show_msg(errmsg);
+               // Change settings here? I guess not.
+               break;
+            }
+            selection_type = 'u';
+         } while(0);
+         break;
+
+      case 'U':
+//       if (!VIZCHKc) break;
+         do {
+            const char *errmsg;
+            const char *answer;
+            answer = ask4str("Which user (blank for all)");
+            // FIXME: do this better:
+            if (!answer || *answer=='\0' || *answer=='\n' || *answer=='\r' || *answer=='\t' || *answer==' ') {
+               selection_type = 0;
+               selection_uid = -1;
+               break;
+            }
+            errmsg = parse_uid(answer, &selection_uid);
+            if (errmsg) {
+               show_msg(errmsg);
+               // Change settings here? I guess not.
+               break;
+            }
+            selection_type = 'U';
+         } while(0);
          break;
 
       case 'w':
@@ -2798,7 +2911,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
                   } while (p->cmdline[++j]);
                   strim_1(tmp);
                } else
-                  strcpy(tmp, fmtmk(CMDLINE_FMTS, p->cmd));
+                  strcpy(tmp, fmtmk("[%s]", p->cmd));
                cp = tmp;
             } else
                cp = p->cmd;
@@ -2964,10 +3077,9 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
    lwin = 1;
    i = 0;
 
-   while ( -1 != ppt[i]->pid && *lscr < Max_lines
-   &&  (!q->winlines || (lwin <= q->winlines)) ) {
+   while ( -1 != ppt[i]->pid && *lscr < Max_lines  &&  (!q->winlines || (lwin <= q->winlines)) ) {
       if ((CHKw(q, Show_IDLEPS) || ('S' != ppt[i]->state && 'Z' != ppt[i]->state))
-      && ((!q->colusrnam[0]) || (!strcmp(q->colusrnam, ppt[i]->euser)))) {
+      && good_uid(ppt[i]) ) {
          /*
           ** Display a process Row */
          task_show(q, ppt[i]);
