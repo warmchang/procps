@@ -22,11 +22,11 @@ tload, top, uptime, vmstat, w, and watch. You need some of these.
 %setup
 
 %build
-make CC="gcc $RPM_OPT_FLAGS" LDFLAGS=-s
+make SKIP="/bin/kill /usr/share/man/man1/kill.1" CC="gcc $RPM_OPT_FLAGS" LDFLAGS=-s
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make DESTDIR=$RPM_BUILD_ROOT install=install install
+make SKIP="/bin/kill /usr/share/man/man1/kill.1" DESTDIR=$RPM_BUILD_ROOT install="install -D" install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -43,5 +43,5 @@ rm -rf $RPM_BUILD_ROOT
 %attr(555,root,root) /sbin/*
 %attr(555,root,root) /usr/bin/*
 
-%attr(0644,root,root) /usr/man/man1/*
-%attr(0644,root,root) /usr/man/man8/*
+%attr(0644,root,root) /usr/share/man/man1/*
+%attr(0644,root,root) /usr/share/man/man8/*

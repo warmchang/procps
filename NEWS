@@ -4,6 +4,7 @@ top: was trashing every "3" in a command name
 top: when killing a process, the PID was cut at a "3"
 top: more reliable %CPU
 update copyright dates (GPL & LGPL require this)
+RPM generation works now
 
 procps-3.1.2 --> procps-3.1.3
 
