@@ -278,11 +278,9 @@ char *strtosig(const char *restrict s)
     } else {
         for (i = 0; i < number_of_signals; i++){
             if (strcmp(p, get_sigtable_name(i)) == 0){
-                converted = malloc(sizeof(char) * 8);
+                converted = malloc(12);
                 if (converted)
-                    snprintf(converted,
-                         sizeof(converted) - 1,
-                         "%d", get_sigtable_num(i));
+                    snprintf(converted, 12, "%d", sigtable[i].num);
                 break;
             }
         }
