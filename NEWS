@@ -3,6 +3,7 @@ procps-3.1.1 --> procps-3.1.2
 better RPM generation
 general C99 clean-up
 some seLinux fixes
+now count Inact_laundry as needed  #172163
 ps: fewer globals
 ps: hardware-enforced buffer protection
 ps: smaller (was it 1 kB or 2 kB ?)

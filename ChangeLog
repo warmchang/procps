@@ -1,3 +1,25 @@
+procps-3.1.1 --> procps-3.1.2
+
+better RPM generation
+general C99 clean-up
+some seLinux fixes
+now count Inact_laundry as needed  #172163
+ps: fewer globals
+ps: hardware-enforced buffer protection
+ps: smaller (was it 1 kB or 2 kB ?)
+top: B command added (for bold on/off)
+top: handle old (and future) config files
+top: man page tweak
+top: old sort keys     #167249
+top: out-of-bounds RT as "RT"
+top: several times faster
+top: t command fixed
+vmstat: -f
+vmstat: -s
+w: much faster
+watch: don't drop empty lines   #171005
+watch: re-indented
+
 procps-3.1.0 --> procps-3.1.1
 
 vmstat faster on 2.5.xx kernels
