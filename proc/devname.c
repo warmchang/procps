@@ -66,8 +66,7 @@ static void load_drivers(void){
     tty_map = tmn;
     /* if we have a devfs type name such as /dev/tts/%d then strip the %d but
        keep a flag. */
-    if(len >= 3 && !strncmp(end - 2, "%d", 2))
-    {
+    if(len >= 3 && !strncmp(end - 2, "%d", 2)){
       len -= 2;
       tmn->devfs_type = 1;
     }
@@ -77,16 +76,17 @@ static void load_drivers(void){
     tmn->major_number = atoi(p);
     p += strspn(p, "0123456789");
     while(*p == ' ') p++;
-    rc = sscanf(p, "%d-%d", &tmn->minor_first, &tmn->minor_last);
-    if(rc == 1)
-    {
-      tmn->minor_last = tmn->minor_first;
-    }
-    else if(rc == 0)
-    {
+    switch(sscanf(p, "%d-%d", &tmn->minor_first, &tmn->minor_last)){
+    default:
       /* Can't finish parsing this line so we remove it from the list */
       tty_map = tty_map->next;
       free(tmn);
+      break;
+    case 1:
+      tmn->minor_last = tmn->minor_first;
+      break;
+    case 2:
+      break;
     }
   }
 fail:
@@ -107,12 +107,8 @@ static int driver_name(char * const buf, int maj, int min){
     tmn = tmn->next;
   }
   sprintf(buf, "/dev/%s%d", tmn->name, min);  /* like "/dev/ttyZZ255" */
-  if(tmn->devfs_type)
-  {
-    if(stat(buf, &sbuf) < 0) return 0;
-  }
-  else if(stat(buf, &sbuf) < 0)
-  {
+  if(stat(buf, &sbuf) < 0){
+    if(tmn->devfs_type) return 0;
     sprintf(buf, "/dev/%s", tmn->name);  /* like "/dev/ttyZZ255" */
     if(stat(buf, &sbuf) < 0) return 0;
   }
