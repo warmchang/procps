@@ -1,7 +1,5 @@
 /* Copyright 1994 by Henry Ware <al172@yfn.ysu.edu>. Copyleft same year. */
    
-#include "proc/sysinfo.h"
-#include "proc/version.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -14,6 +12,9 @@
 #include <sys/ioctl.h>
 #include <sys/dir.h>
 #include <dirent.h>
+
+#include "proc/sysinfo.h"
+#include "proc/version.h"
 
 #define BUFFSIZE 8192
 #define FALSE 0
@@ -53,7 +54,7 @@ static void crash(const char *filename) {
 
 ////////////////////////////////////////////////////////////////////////
 
-static void getrunners(unsigned int *running, unsigned int *blocked) {
+static void getrunners(unsigned int *restirct running, unsigned int *restrict blocked) {
   static struct direct *ent;
   DIR *proc;
 
@@ -95,14 +96,14 @@ static void getrunners(unsigned int *running, unsigned int *blocked) {
   closedir(proc);
 }
 
-static void getstat(jiff *cuse, jiff *cice, jiff *csys, jiff *cide, jiff *ciow,
-	     unsigned *pin, unsigned *pout, unsigned *s_in, unsigned *sout,
-	     unsigned *itot, unsigned *i1, unsigned *ct,
-	     unsigned int *running, unsigned int *blocked) {
+static void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow,
+	     unsigned *restrict pin, unsigned *restrict pout, unsigned *restrict s_in, unsigned *restrict sout,
+	     unsigned *restrict itot, unsigned *restrict i1, unsigned *restrict ct,
+	     unsigned int *restrict running, unsigned int *restrict blocked) {
   static int fd;
   int need_vmstat_file = 0;
   int need_proc_scan = 0;
-  char* b;
+  const char* b;
   buff[BUFFSIZE-1] = 0;  /* ensure null termination in buffer */
 
   if(fd){
@@ -161,7 +162,7 @@ static void getstat(jiff *cuse, jiff *cice, jiff *csys, jiff *cide, jiff *ciow,
 
 #if 0
 // produce:  "  6  ", "123  ", "123k ", etc.
-static int format_1024(unsigned long long val64, char *dst){
+static int format_1024(unsigned long long val64, char *restrict dst){
   unsigned oldval;
   const char suffix[] = " kmgtpe";
   unsigned level = 0;
@@ -194,7 +195,7 @@ static int format_1024(unsigned long long val64, char *dst){
 
 
 // produce:  "  6  ", "123  ", "123k ", etc.
-static int format_1000(unsigned long long val64, char *dst){
+static int format_1000(unsigned long long val64, char *restrict dst){
   unsigned oldval;
   const char suffix[] = " kmgtpe";
   unsigned level = 0;

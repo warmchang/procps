@@ -84,129 +84,6 @@ usage (int opt)
 }
 
 
-static void
-parse_opts (int argc, char **argv)
-{
-	char opts[32] = "";
-	int opt;
-	int criteria_count = 0;
-
-	if (strstr (argv[0], "pkill")) {
-		i_am_pkill = 1;
-		progname = "pkill";
-		/* Look for a signal name or number as first argument */
-		if (argc > 1 && argv[1][0] == '-') {
-			int sig;
-			sig = signal_name_to_number (argv[1] + 1);
-			if (sig == -1 && isdigit (argv[1][1]))
-				sig = atoi (argv[1] + 1);
-			if (sig != -1) {
-				int i;
-				for (i = 2; i < argc; i++)
-					argv[i-1] = argv[i];
-				--argc;
-				opt_signal = sig;
-			}
-		}
-	} else {
-		/* These options are for pgrep only */
-		strcat (opts, "ld:");
-	}
-			
-	strcat (opts, "fnovxP:g:s:u:U:G:t:?V");
-	
-	while ((opt = getopt (argc, argv, opts)) != -1) {
-		switch (opt) {
-		case 'f':
-			opt_full = 1;
-			break;
-		case 'l':
-			opt_long = 1;
-			break;
-		case 'n':
-			if (opt_oldest|opt_negate|opt_newest)
-				usage (opt);
-			opt_newest = 1;
-			++criteria_count;
-			break;
-		case 'o':
-			if (opt_oldest|opt_negate|opt_newest)
-				usage (opt);
-			opt_oldest = 1;
-			++criteria_count;
-			break;
-		case 'v':
-			if (opt_oldest|opt_negate|opt_newest)
-				usage (opt);
-	  		opt_negate = 1;
-			break;
-		case 'x':
-			opt_exact = 1;
-			break;
-		case 'd':
-			opt_delim = strdup (optarg);
-			break;
-		case 'P':
-	  		opt_ppid = split_list (optarg, ',', conv_num);
-			if (opt_ppid == NULL)
-				usage (opt);
-			++criteria_count;
-			break;
-		case 'g':
-	  		opt_pgrp = split_list (optarg, ',', conv_pgrp);
-			if (opt_pgrp == NULL)
-				usage (opt);
-			break;
-		case 's':
-	  		opt_sid = split_list (optarg, ',', conv_sid);
-			if (opt_sid == NULL)
-				usage (opt);
-			++criteria_count;
-			break;
-		case 'u':
-	  		opt_euid = split_list (optarg, ',', conv_uid);
-			if (opt_euid == NULL)
-				usage (opt);
-			++criteria_count;
-			break;
-		case 'U':
-	  		opt_uid = split_list (optarg, ',', conv_uid);
-			if (opt_uid == NULL)
-				usage (opt);
-			++criteria_count;
-			break;
-		case 'G':
-	  		opt_gid = split_list (optarg, ',', conv_gid);
-			if (opt_gid == NULL)
-				usage (opt);
-			++criteria_count;
-			break;
-		case 't':
-	  		opt_term = split_list (optarg, ',', conv_str);
-			if (opt_term == NULL)
-				usage (opt);
-			++criteria_count;
-			break;
-		case '?':
-			usage (opt);
-			break;
-        case 'V':
-            display_pgrep_version();
-            exit(0);
-		}
-	}
-        if (argc - optind == 1)
-		opt_pattern = argv[optind];
-	else if (argc - optind > 1)
-		usage (0);
-	else if (criteria_count == 0) {
-		fprintf (stderr, "%s: No matching criteria specified\n",
-			 progname);
-		usage (0);
-	}
-}
-
-
 static union el *
 split_list (const char *str, char sep, int (*convert)(const char *, union el *))
 {
@@ -612,6 +489,129 @@ select_procs (void)
 }
 
 
+static void
+parse_opts (int argc, char **argv)
+{
+	char opts[32] = "";
+	int opt;
+	int criteria_count = 0;
+
+	if (strstr (argv[0], "pkill")) {
+		i_am_pkill = 1;
+		progname = "pkill";
+		/* Look for a signal name or number as first argument */
+		if (argc > 1 && argv[1][0] == '-') {
+			int sig;
+			sig = signal_name_to_number (argv[1] + 1);
+			if (sig == -1 && isdigit (argv[1][1]))
+				sig = atoi (argv[1] + 1);
+			if (sig != -1) {
+				int i;
+				for (i = 2; i < argc; i++)
+					argv[i-1] = argv[i];
+				--argc;
+				opt_signal = sig;
+			}
+		}
+	} else {
+		/* These options are for pgrep only */
+		strcat (opts, "ld:");
+	}
+			
+	strcat (opts, "fnovxP:g:s:u:U:G:t:?V");
+	
+	while ((opt = getopt (argc, argv, opts)) != -1) {
+		switch (opt) {
+		case 'f':
+			opt_full = 1;
+			break;
+		case 'l':
+			opt_long = 1;
+			break;
+		case 'n':
+			if (opt_oldest|opt_negate|opt_newest)
+				usage (opt);
+			opt_newest = 1;
+			++criteria_count;
+			break;
+		case 'o':
+			if (opt_oldest|opt_negate|opt_newest)
+				usage (opt);
+			opt_oldest = 1;
+			++criteria_count;
+			break;
+		case 'v':
+			if (opt_oldest|opt_negate|opt_newest)
+				usage (opt);
+	  		opt_negate = 1;
+			break;
+		case 'x':
+			opt_exact = 1;
+			break;
+		case 'd':
+			opt_delim = strdup (optarg);
+			break;
+		case 'P':
+	  		opt_ppid = split_list (optarg, ',', conv_num);
+			if (opt_ppid == NULL)
+				usage (opt);
+			++criteria_count;
+			break;
+		case 'g':
+	  		opt_pgrp = split_list (optarg, ',', conv_pgrp);
+			if (opt_pgrp == NULL)
+				usage (opt);
+			break;
+		case 's':
+	  		opt_sid = split_list (optarg, ',', conv_sid);
+			if (opt_sid == NULL)
+				usage (opt);
+			++criteria_count;
+			break;
+		case 'u':
+	  		opt_euid = split_list (optarg, ',', conv_uid);
+			if (opt_euid == NULL)
+				usage (opt);
+			++criteria_count;
+			break;
+		case 'U':
+	  		opt_uid = split_list (optarg, ',', conv_uid);
+			if (opt_uid == NULL)
+				usage (opt);
+			++criteria_count;
+			break;
+		case 'G':
+	  		opt_gid = split_list (optarg, ',', conv_gid);
+			if (opt_gid == NULL)
+				usage (opt);
+			++criteria_count;
+			break;
+		case 't':
+	  		opt_term = split_list (optarg, ',', conv_str);
+			if (opt_term == NULL)
+				usage (opt);
+			++criteria_count;
+			break;
+		case '?':
+			usage (opt);
+			break;
+		case 'V':
+			fprintf(stdout, "%s (%s)\n", progname, procps_version);
+			exit(0);
+		}
+	}
+        if (argc - optind == 1)
+		opt_pattern = argv[optind];
+	else if (argc - optind > 1)
+		usage (0);
+	else if (criteria_count == 0) {
+		fprintf (stderr, "%s: No matching criteria specified\n",
+			 progname);
+		usage (0);
+	}
+}
+
+
 int
 main (int argc, char **argv)
 {
@@ -634,8 +634,4 @@ main (int argc, char **argv)
 			output_numlist (procs);
 	}
 	return ((procs[0].num) == 0 ? 1 : 0);
-}
-
-static void display_pgrep_version(){
-  fprintf(stdout, "%s (%s)\n", progname, procps_version);
 }
