@@ -572,12 +572,13 @@ static void msg_save (const char *fmts, ...)
          * Show an error message (caller may include a '\a' for sound) */
 static void show_msg (const char *str)
 {
-   PUTT("%s%s %s %s%s"
-      , tg2(0, Msg_row)
-      , Curwin->capclr_msg
-      , str
-      , Caps_off
-      , Cap_clr_eol);
+   PUTT("%s%s %s %s%s",
+      tg2(0, Msg_row),
+      Curwin->capclr_msg,
+      str,
+      Caps_off,
+      Cap_clr_eol
+   );
    fflush(stdout);
    sleep(MSG_SLEEP);
    Msg_awaiting = 0;
@@ -588,12 +589,13 @@ static void show_msg (const char *str)
          * Show an input prompt + larger cursor */
 static void show_pmt (const char *str)
 {
-   PUTT("%s%s%s: %s%s"
-      , tg2(0, Msg_row)
-      , Curwin->capclr_pmt
-      , str
-      , Cap_curs_huge
-      , Caps_off);
+   PUTT("%s%s%s: %s%s",
+      tg2(0, Msg_row),
+      Curwin->capclr_pmt,
+      str,
+      Cap_curs_huge,
+      Caps_off
+   );
    fflush(stdout);
 }
 
@@ -635,8 +637,8 @@ static void show_special (int interact, const char *glob)
      |   Row_color_high,                  =   \07           |
      |   Row_color_norm  };               =   \10 [octal!]  |
      +------------------------------------------------------+ */
-   char lin[BIGBUFSIZ], row[ROWBUFSIZ], tmp[ROWBUFSIZ]
-      , *rp, *cap, *lin_end, *sub_beg, *sub_end;
+   char lin[BIGBUFSIZ], row[ROWBUFSIZ], tmp[ROWBUFSIZ];
+   char *rp, *cap, *lin_end, *sub_beg, *sub_end;
    int room;
 
       /* handle multiple lines passed in a bunch */
@@ -905,6 +907,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus)
 {
    static FILE *fp = NULL;
    int i;
+   int num;
    // enough for a /proc/stat CPU line (not the intr line)
    char buf[SMLBUFSIZ];
 
@@ -925,11 +928,19 @@ static CPU_t *cpus_refresh (CPU_t *cpus)
    if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
    cpus[Cpu_tot].x = 0;  // FIXME: can't tell by kernel version number
    cpus[Cpu_tot].y = 0;  // FIXME: can't tell by kernel version number
-   if (4 > sscanf(buf, CPU_FMTS_JUST1
-      , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i, &cpus[Cpu_tot].w, &cpus[Cpu_tot].x, &cpus[Cpu_tot].y))
+   num = sscanf(buf, CPU_FMTS_JUST1,
+      &cpus[Cpu_tot].u,
+      &cpus[Cpu_tot].n,
+      &cpus[Cpu_tot].s,
+      &cpus[Cpu_tot].i,
+      &cpus[Cpu_tot].w,
+      &cpus[Cpu_tot].x,
+      &cpus[Cpu_tot].y
+   );
+   if (num < 4)
          std_err("failed /proc/stat read");
    // and just in case we're 2.2.xx compiled without SMP support...
-   if (1 == Cpu_tot) memcpy(cpus, &cpus[1], sizeof(CPU_t));
+   if (Cpu_tot == 1) memcpy(cpus, &cpus[1], sizeof(CPU_t));
 
    // now value each separate cpu's tics
    for (i = 0; 1 < Cpu_tot && i < Cpu_tot; i++) {
@@ -939,8 +950,10 @@ static CPU_t *cpus_refresh (CPU_t *cpus)
       if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
       cpus[i].x = 0;  // FIXME: can't tell by kernel version number
       cpus[i].y = 0;  // FIXME: can't tell by kernel version number
-      if (4 > sscanf(buf, CPU_FMTS_MULTI
-         , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].w, &cpus[i].x, &cpus[i].y))
+      num = sscanf(buf, CPU_FMTS_MULTI,
+         &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].w, &cpus[i].x, &cpus[i].y
+      );
+      if (num < 4)
             std_err("failed /proc/stat read");
    }
    return cpus;
@@ -1283,28 +1296,28 @@ static void rc_bugless (const RCF_t *const rc) {
    const RCW_t *w;
    int i = 0;
 
-   fprintf(stderr,"\n%d %d %f %d\n"
-      , rc->mode_altscr, rc->mode_irixps, rc->delay_time, rc->win_index);
+   fprintf(stderr,"\n%d %d %f %d\n",
+      rc->mode_altscr, rc->mode_irixps, rc->delay_time, rc->win_index
+   );
    while(i < 4) {
       w = &rc->win[i++];
-      fprintf(stderr, "<%s> <%s> %d %08x %d %d %d %d %d\n"
-         , w->winname, w->fieldscur, w->sortindx, w->winflags, w->maxtasks
-         , w->summclr, w->msgsclr, w->headclr, w->taskclr);
+      fprintf(stderr, "<%s> <%s> %d %08x %d %d %d %d %d\n",
+         w->winname, w->fieldscur, w->sortindx, w->winflags, w->maxtasks,
+         w->summclr, w->msgsclr, w->headclr, w->taskclr
+      );
    }
 }
 #endif
 
 
-        /*
-         * '$HOME/Rc_name' contains multiple lines - 2 global + 3 per window.
-         *   line 1: an eyecatcher, with a shameless advertisement
-         *   line 2: an id, Mode_altcsr, Mode_irixps, Delay_time and Curwin.
-         * For each of the 4 windows:
-         *   line a: contains winname, fieldscur
-         *   line b: contains winflags, sortindx, maxtasks
-         *   line c: contains summclr, msgsclr, headclr, taskclr
-         *   line d: if present, would crash procps-3.1.1
-         */
+// '$HOME/Rc_name' contains multiple lines - 2 global + 3 per window.
+//   line 1: an eyecatcher, with a shameless advertisement
+//   line 2: an id, Mode_altcsr, Mode_irixps, Delay_time and Curwin.
+// For each of the 4 windows:
+//   line a: contains winname, fieldscur
+//   line b: contains winflags, sortindx, maxtasks
+//   line c: contains summclr, msgsclr, headclr, taskclr
+//   line d: if present, would crash procps-3.1.1
 static int rc_read_new (const char *const buf, RCF_t *rc) {
    int i;
    int cnt;
@@ -1315,8 +1328,9 @@ static int rc_read_new (const char *const buf, RCF_t *rc) {
    cp = strchr(cp + 2, '\n');
    if (!cp++) return -2;
 
-   cnt = sscanf(cp, "Id:a, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%f, Curwin=%d\n"
-      , &rc->mode_altscr, &rc->mode_irixps, &rc->delay_time, &rc->win_index);
+   cnt = sscanf(cp, "Id:a, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%f, Curwin=%d\n",
+      &rc->mode_altscr, &rc->mode_irixps, &rc->delay_time, &rc->win_index
+   );
    if (cnt != 4) return -3;
    cp = strchr(cp, '\n');
    if (!cp++) return -4;
@@ -1330,14 +1344,16 @@ static int rc_read_new (const char *const buf, RCF_t *rc) {
       cp = strchr(cp, '\n');
       if (!cp++) return -(8+100*i);
 
-      cnt = sscanf(cp, "\twinflags=%d, sortindx=%u, maxtasks=%d \n"
-         , &ptr->winflags, &ptr->sortindx, &ptr->maxtasks);
+      cnt = sscanf(cp, "\twinflags=%d, sortindx=%u, maxtasks=%d \n",
+         &ptr->winflags, &ptr->sortindx, &ptr->maxtasks
+      );
       if (cnt != 3) return -(9+100*i);
       cp = strchr(cp, '\n');
       if (!cp++) return -(10+100*i);
 
-      cnt = sscanf(cp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d \n"
-         , &ptr->summclr, &ptr->msgsclr, &ptr->headclr, &ptr->taskclr);
+      cnt = sscanf(cp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d \n",
+         &ptr->summclr, &ptr->msgsclr, &ptr->headclr, &ptr->taskclr
+      );
       if (cnt != 4) return -(11+100*i);
       cp = strchr(cp, '\n');
       if (!cp++) return -(12+100*i);
@@ -1468,11 +1484,13 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
 static void rc_write_new (FILE *fp) {
    int i;
 
-   fprintf(fp, RCF_EYECATCHER "\"%s with windows\"\t\t# shameless braggin'\n"
-      , Myname);
+   fprintf(fp, RCF_EYECATCHER "\"%s with windows\"\t\t# shameless braggin'\n",
+      Myname
+   );
    fprintf(fp, RCF_DEPRECATED
-      "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%u\n"
-      , Rc.mode_altscr, Rc.mode_irixps, Rc.delay_time, (unsigned)(Curwin - Winstk));
+      "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%u\n",
+      Rc.mode_altscr, Rc.mode_irixps, Rc.delay_time, (unsigned)(Curwin - Winstk)
+   );
    for (i = 0; i < GROUPSMAX; i++) {
       char buf[40];
       char *cp = Winstk[i].rc.fieldscur;
@@ -1490,86 +1508,19 @@ static void rc_write_new (FILE *fp) {
          }
          if (!c) break;
       }
-      fprintf(fp, "%s\tfieldscur=%s\n"
-         , Winstk[i].rc.winname, buf);
-      fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-         , Winstk[i].rc.winflags, Winstk[i].rc.sortindx, Winstk[i].rc.maxtasks);
-      fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
-         , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
-         , Winstk[i].rc.headclr, Winstk[i].rc.taskclr);
+      fprintf(fp, "%s\tfieldscur=%s\n",
+         Winstk[i].rc.winname, buf
+      );
+      fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n",
+         Winstk[i].rc.winflags, Winstk[i].rc.sortindx, Winstk[i].rc.maxtasks
+      );
+      fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n",
+         Winstk[i].rc.summclr, Winstk[i].rc.msgsclr,
+         Winstk[i].rc.headclr, Winstk[i].rc.taskclr
+      );
    }
 }
 
-#if 0
-static void rc_write_old (FILE *fp) {
-   char buf[SMLBUFSIZ];
-   char *cp = Curwin->rc.fieldscur;
-   int j = 0;
-   int tmp;
-
-   while (j < 36) {
-      int c = *cp++ & 0xff;
-      if (c == 'M') c = 'L';
-      if (c == 'm') c = 'l';
-      switch (c) {
-         case '.':
-         case 'x':              // try not to crash Rik's top (move COMMAND)
-         case 'X':              // try not to crash Rik's top (move COMMAND)
-         case 1 ... ' ':
-         case 0x7f ... 0xff:
-            continue;           // throw away junk (some of it)
-         default:
-            c = ft_cvt_char(FT_NEW_fmt, FT_OLD_fmt, c);
-            if (!c) continue;   // skip one we can't represent
-            break;
-         case '\0':
-            buf[j++] = 'X';     // try not to crash Rik's top (move COMMAND)
-            break;
-      }
-      buf[j++] = c;
-      if (!c) break;
-   }
-
-   fprintf(fp, "%s\n", buf);
-   cp = buf;
-
-   tmp = (int)(Rc.delay_time + 0.5);
-   if (tmp < 2) tmp = 2;
-   if (tmp > 9) tmp = 9;
-   *cp++ = tmp + '0';
-
-   tmp = Curwin->rc.winflags;
-// if ( Secure_mode)       *cp++ = 's';     // stupid to have in local rcfile
-   if ( tmp & Show_CTIMES) *cp++ = 'S';
-   if ( tmp & Show_CMDLIN) *cp++ = 'c';
-   if (~tmp & Show_IDLEPS) *cp++ = 'i';
-// if (                  ) *cp++ = 'H';     // 'H' = show threads (yea, sure)
-   if (~tmp & View_MEMORY) *cp++ = 'm';
-   if (~tmp & View_LOADAV) *cp++ = 'l';
-   if (~tmp & View_STATES) *cp++ = 't';
-   if (!Rc.mode_irixps)    *cp++ = 'I';
-
-   switch (Curwin->rc.sortindx) {
-      case P_MEM:
-         *cp++ = 'M';
-         break;
-      case P_CPU:
-         *cp++ = 'P';
-         break;
-//    case P_???:                           // was by start_time (non-display)
-//       *cp++ = 'A';
-//       break;
-      case P_TM2:
-         *cp++ = 'T';
-         break;
-      case P_PID:
-         *cp++ = 'N';
-         break;
-   }
-   *cp++ = '\0';
-   fprintf(fp, "%s\n\n\n", buf);            // important "\n\n" separator!
-}
-#endif
 
 static const char *rc_write_whatever (void) {
    FILE *fp = fopen(Rc_name, "w");
@@ -1619,15 +1570,12 @@ static void before (char *me)
 }
 
 
-       /*
-        * Config file read *helper* function.
-        * Anything missing won't show as a choice in the field editor,
-        * so make sure there is exactly one of each letter.
-        *
-        * Due to Rik blindly accepting damem's broken patches, procps-2.0.1x
-        * has 3 ("three"!!!) instances of "#C", "LC", or "CPU". Fix that too.
-        * Some people are maintainers, and others are human patchbots.
-        * (thanks, Albert) */
+// Config file read *helper* function.
+// Anything missing won't show as a choice in the field editor,
+// so make sure there is exactly one of each letter.
+//
+// Due to Rik blindly accepting damem's broken patches, procps-2.0.1x
+// has 3 ("three"!!!) instances of "#C", "LC", or "CPU". Fix that too.
 static void confighlp (char *fields) {
    unsigned upper[PFLAGSSIZ];
    unsigned lower[PFLAGSSIZ];
@@ -1675,18 +1623,17 @@ static void confighlp (char *fields) {
 }
 
 
-        /*
-         * First attempt to read the /etc/rcfile which contains two lines
-         * consisting of the secure mode switch and an update interval.
-         * It's presence limits what ordinary users are allowed to do.
-         * (it's actually an old-style config file)
-         *
-         * Then build the local rcfile name and try to read a crufty old-top
-         * rcfile (whew, odoriferous), which may contain an embedded new-style
-         * rcfile.   Whether embedded or standalone, new-style rcfile values
-         * will always override that crufty stuff!
-         * note: If running in secure mode via the /etc/rcfile,
-         *       Delay_time will be ignored except for root. */
+// First attempt to read the /etc/rcfile which contains two lines
+// consisting of the secure mode switch and an update interval.
+// It's presence limits what ordinary users are allowed to do.
+// (it's actually an old-style config file)
+//
+// Then build the local rcfile name and try to read a crufty old-top
+// rcfile (whew, odoriferous), which may contain an embedded new-style
+// rcfile.   Whether embedded or standalone, new-style rcfile values
+// will always override that crufty stuff!
+// note: If running in secure mode via the /etc/rcfile,
+//       Delay_time will be ignored except for root.
 static void configs_read (void)
 {
    const RCF_t def_rcf = DEF_RCFILE;
@@ -1753,12 +1700,11 @@ static void configs_read (void)
 }
 
 
-        /*
-         * Parse command line arguments.
-         * Note: it's assumed that the rc file(s) have already been read
-         *       and our job is to see if any of those options are to be
-         *       overridden -- we'll force some on and negate others in our
-         *       best effort to honor the loser's (oops, user's) wishes... */
+// Parse command line arguments.
+// Note: it's assumed that the rc file(s) have already been read
+//       and our job is to see if any of those options are to be
+//       overridden -- we'll force some on and negate others in our
+//       best effort to honor the loser's (oops, user's) wishes...
 static void parse_args (char **args)
 {
    /* differences between us and the former top:
@@ -1794,13 +1740,12 @@ static void parse_args (char **args)
                else if (*args) cp = *args++;
                else std_err("-d requires argument");
                   /* a negative delay will be dealt with shortly... */
-               if (1 != sscanf(cp, "%f", &tmp_delay))
+               if (sscanf(cp, "%f", &tmp_delay) != 1)
                   std_err(fmtmk("bad delay '%s'", cp));
                break;
             case 'h': case 'H':
             case 'v': case 'V':
-               std_err(fmtmk("%s\nusage:\t%s%s"
-                  , procps_version, Myname, usage));
+               std_err(fmtmk("%s\nusage:\t%s%s", procps_version, Myname, usage));
             case 'i':
                TOGw(Curwin, Show_IDLEPS);
                Curwin->rc.maxtasks = 0;
@@ -1809,7 +1754,7 @@ static void parse_args (char **args)
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
                else std_err("-n requires argument");
-               if (1 != sscanf(cp, "%d", &Loops) || 1 > Loops)
+               if (sscanf(cp, "%d", &Loops) != 1 || Loops < 1)
                   std_err(fmtmk("bad iterations arg '%s'", cp));
                break;
             case 'p':
@@ -1821,8 +1766,7 @@ static void parse_args (char **args)
                   else std_err("-p argument missing");
                   if (Monpidsidx >= MONPIDMAX)
                      std_err(fmtmk("pid limit (%d) exceeded", MONPIDMAX));
-                  if (1 != sscanf(cp, "%d", &Monpids[Monpidsidx])
-                  || 0 > Monpids[Monpidsidx])
+                  if (sscanf(cp, "%d", &Monpids[Monpidsidx]) != 1 || Monpids[Monpidsidx] < 0)
                      std_err(fmtmk("bad pid '%s'", cp));
                   if (!Monpids[Monpidsidx])
                      Monpids[Monpidsidx] = getpid();
@@ -1877,7 +1821,7 @@ static void parse_args (char **args)
 
       /* fixup delay time, maybe... */
    if (MAXFLOAT != tmp_delay) {
-      if (Secure_mode || 0 > tmp_delay)
+      if (Secure_mode || tmp_delay < 0)
          msg_save("Delay time Not changed");
       else
          Rc.delay_time = tmp_delay;
@@ -1908,7 +1852,7 @@ static void whack_terminal (void)
       newtty.c_cc[VTIME] = 0;
 
       Ttychanged = 1;
-      if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &newtty)) {
+      if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &newtty) == -1) {
          putp(Cap_clr_scr);
          std_err(fmtmk("failed tty set: %s", strerror(errno)));
       }
@@ -1922,17 +1866,16 @@ static void whack_terminal (void)
    }
 }
 
-
+
 /*######  Field Selection/Ordering routines  #############################*/
 
 
-        /*
-         * Display each field represented in the Fields Table along with its
-         * description and mark (with a leading asterisk) fields associated
-         * with upper case letter(s) in the passed 'fields string'.
-         *
-         * After all fields have been displayed, some extra explanatory
-         * text may also be output */
+// Display each field represented in the Fields Table along with its
+// description and mark (with a leading asterisk) fields associated
+// with upper case letter(s) in the passed 'fields string'.
+//
+// After all fields have been displayed, some extra explanatory
+// text may also be output
 static void display_fields (const char *fields, const char *xtra)
 {
 #define yRSVD 3
@@ -1949,22 +1892,24 @@ static void display_fields (const char *fields, const char *xtra)
       if (!f) continue;                 // hey, should be std_err!
       for (p = f->head; ' ' == *p; ++p) // advance past any leading spaces
          ;
-      PUTT("%s%s%c %c: %-10s = %s"
-         , tg2((i / rmax) * cmax, (i % rmax) + yRSVD)
-         , b ? Curwin->cap_bold : Cap_norm
-         , b ? '*' : ' '
-         , fields[i]
-         , p
-         , f->desc);
+      PUTT("%s%s%c %c: %-10s = %s",
+         tg2((i / rmax) * cmax, (i % rmax) + yRSVD),
+         b ? Curwin->cap_bold : Cap_norm,
+         b ? '*' : ' ',
+         fields[i],
+         p,
+         f->desc
+      );
    }
    if (xtra) {
       putp(Curwin->capclr_rownorm);
       while ((p = strchr(xtra, '\n'))) {
          ++i;
-         PUTT("%s%.*s"
-            , tg2((i / rmax) * cmax, (i % rmax) + yRSVD)
-            , (int)(p - xtra)
-            , xtra);
+         PUTT("%s%.*s",
+            tg2((i / rmax) * cmax, (i % rmax) + yRSVD),
+            (int)(p - xtra),
+            xtra
+         );
          xtra = ++p;
       }
    }
@@ -1974,8 +1919,7 @@ static void display_fields (const char *fields, const char *xtra)
 }
 
 
-        /*
-         * Change order of displayed fields. */
+// Change order of displayed fields.
 static void fields_reorder (void)
 {
    static const char prompt[] =
@@ -2005,8 +1949,7 @@ static void fields_reorder (void)
    putp(Cap_curs_norm);
 }
 
-        /*
-         * Select sort field. */
+// Select sort field.
 static void fields_sort (void)
 {
    static const char prompt[] =
@@ -2023,8 +1966,7 @@ static void fields_sort (void)
       p  = phoney + i;
       *p = toupper(*p);
       display_fields(phoney, SORT_xtra);
-      show_special(1, fmtmk(SORT_fields
-         , Cap_home, *p, Curwin->grpname, prompt));
+      show_special(1, fmtmk(SORT_fields, Cap_home, *p, Curwin->grpname, prompt));
       chin(0, &c, 1);
       if (!ft_get_ptr(FT_NEW_fmt, c)) break;
       i = toupper(c) - 'A';
@@ -2038,8 +1980,7 @@ static void fields_sort (void)
 }
 
 
-        /*
-         * Toggle displayed fields. */
+// Toggle displayed fields.
 static void fields_toggle (void)
 {
    static const char prompt[] =
@@ -2051,8 +1992,7 @@ static void fields_toggle (void)
    putp(Cap_curs_huge);
    for (;;) {
       display_fields(Curwin->rc.fieldscur, FIELDS_xtra);
-      show_special(1, fmtmk(FIELDS_current
-         , Cap_home, Curwin->rc.fieldscur, Curwin->grpname, prompt));
+      show_special(1, fmtmk(FIELDS_current, Cap_home, Curwin->rc.fieldscur, Curwin->grpname, prompt));
       chin(0, &c, 1);
       if (!ft_get_ptr(FT_NEW_fmt, c)) break;
       i = toupper(c) - 'A';
@@ -2064,15 +2004,13 @@ static void fields_toggle (void)
    putp(Cap_curs_norm);
 }
 
-
 /*######  Windows/Field Groups support  #################################*/
 
-        /*
-         * For each of the four windows:
-         *    1) Set the number of fields/columns to display
-         *    2) Create the field columns heading
-         *    3) Set maximum cmdline length, if command lines are in use
-         * In the process, the required PROC_FILLxxx flags will be rebuilt! */
+// For each of the four windows:
+//    1) Set the number of fields/columns to display
+//    2) Create the field columns heading
+//    3) Set maximum cmdline length, if command lines are in use
+// In the process, the required PROC_FILLxxx flags will be rebuilt!
 static void reframewins (void)
 {
    WIN_t *w;
@@ -2134,7 +2072,7 @@ static void reframewins (void)
 
    // do we need the kernel symbol table (and is it already open?)
    if (needpsdb) {
-      if (-1 == No_ksyms) {
+      if (No_ksyms == -1) {
          No_ksyms = 0;
          if (open_psdb_message(NULL, msg_save))
             No_ksyms = 1;
@@ -2154,8 +2092,7 @@ static void reframewins (void)
 }
 
 
-        /*
-         * Value a window's name and make the associated group name. */
+// Value a window's name and make the associated group name.
 static void win_names (WIN_t *q, const char *name)
 {
    sprintf(q->rc.winname, "%.*s", WINNAMSIZ -1, name);
@@ -2163,8 +2100,7 @@ static void win_names (WIN_t *q, const char *name)
 }
 
 
-        /*
-         * Display a window/field group (ie. make it "current"). */
+// Display a window/field group (ie. make it "current").
 static void win_select (char ch)
 {
    static const char prompt[] = "Choose field group (1 - 4)";
@@ -2190,21 +2126,18 @@ static void win_select (char ch)
 }
 
 
-        /*
-         * Just warn the user when a command can't be honored. */
+// Just warn the user when a command can't be honored.
 static int win_warn (void)
 {
-   show_msg(fmtmk("\aCommand disabled, activate %s with '-' or '_'"
-      , Curwin->grpname));
-   /* we gotta' return false 'cause we're somewhat well known within
-      macro society, by way of that sassy little tertiary operator... */
+   show_msg(fmtmk("\aCommand disabled, activate %s with '-' or '_'", Curwin->grpname));
+   // we gotta' return false 'cause we're somewhat well known within
+   // macro society, by way of that sassy little tertiary operator...
    return 0;
 }
 
 
-        /*
-         * Change colors *Helper* function to save/restore settings;
-         * ensure colors will show; and rebuild the terminfo strings. */
+// Change colors *Helper* function to save/restore settings;
+// ensure colors will show; and rebuild the terminfo strings.
 static void winsclrhlp (WIN_t *q, int save)
 {
    static int flgssav, summsav, msgssav, headsav, tasksav;
@@ -2221,8 +2154,7 @@ static void winsclrhlp (WIN_t *q, int save)
 }
 
 
-        /*
-         * Change colors used in display */
+// Change colors used in display
 static void wins_colors (void)
 {
 #define kbdABORT  'q'
@@ -2241,12 +2173,20 @@ static void wins_colors (void)
    do {
       putp(Cap_home);
          /* this string is well above ISO C89's minimum requirements! */
-      show_special(1, fmtmk(COLOR_help
-         , procps_version, Curwin->grpname
-         , CHKw(Curwin, View_NOBOLD) ? "On" : "Off"
-         , CHKw(Curwin, Show_COLORS) ? "On" : "Off"
-         , CHKw(Curwin, Show_HIBOLD) ? "On" : "Off"
-         , tgt, clr, Curwin->grpname));
+      show_special(
+         1,
+         fmtmk(
+            COLOR_help,
+            procps_version,
+            Curwin->grpname,
+            CHKw(Curwin, View_NOBOLD) ? "On" : "Off",
+            CHKw(Curwin, Show_COLORS) ? "On" : "Off",
+            CHKw(Curwin, Show_HIBOLD) ? "On" : "Off",
+            tgt,
+            clr,
+            Curwin->grpname
+         )
+      );
       chin(0, &ch, 1);
       switch (ch) {
          case 'S':
@@ -2302,8 +2242,7 @@ static void wins_colors (void)
 }
 
 
-        /*
-         * Manipulate flag(s) for all our windows. */
+// Manipulate flag(s) for all our windows.
 static void wins_reflag (int what, int flg)
 {
    WIN_t *w;
@@ -2321,8 +2260,8 @@ static void wins_reflag (int what, int flg)
             OFFw(w, flg);
             break;
       }
-         /* a flag with special significance -- user wants to rebalance
-            display so we gotta' 'off' one number then force on two flags... */
+      // a flag with special significance -- user wants to rebalance
+      // display so we gotta' 'off' one number then force on two flags...
       if (EQUWINS_cwo == flg) {
          w->rc.maxtasks = 0;
          SETw(w, Show_IDLEPS | VISIBLE_tsk);
@@ -2332,10 +2271,9 @@ static void wins_reflag (int what, int flg)
 }
 
 
-        /*
-         * Set the screen dimensions and arrange for the real workhorse.
-         * (also) catches:
-         *    SIGWINCH and SIGCONT */
+// Set the screen dimensions and arrange for the real workhorse.
+// (also) catches:
+//    SIGWINCH and SIGCONT
 static void wins_resize (int dont_care_sig)
 {
    struct winsize wz;
@@ -2375,14 +2313,14 @@ static void wins_resize (int dont_care_sig)
    // we might disappoint some folks (but they'll deserve it)
    if (SCREENMAX < Screen_cols) Screen_cols = SCREENMAX;
 
-   /* keep our support for output optimization in sync with current reality
-      note: when we're in Batch mode, we don't really need a Pseudo_scrn and
-            when not Batch, our buffer will contain 1 extra 'line' since
-            Msg_row is never represented -- but it's nice to have some space
-            between us and the great-beyond... */
+   // keep our support for output optimization in sync with current reality
+   // note: when we're in Batch mode, we don't really need a Pseudo_scrn and
+   //       when not Batch, our buffer will contain 1 extra 'line' since
+   //       Msg_row is never represented -- but it's nice to have some space
+   //       between us and the great-beyond...
    Pseudo_cols = Screen_cols + CLRBUFSIZ + 1;
    if (Batch) Pseudo_size = ROWBUFSIZ + 1;
-      else Pseudo_size = Pseudo_cols * Screen_rows;
+   else       Pseudo_size = Pseudo_cols * Screen_rows;
    Pseudo_scrn = alloc_r(Pseudo_scrn, Pseudo_size);
 
    // force rebuild of column headers AND libproc/readproc requirements
@@ -2391,11 +2329,10 @@ static void wins_resize (int dont_care_sig)
 }
 
 
-        /*
-         * Set up the raw/incomplete field group windows --
-         * they'll be finished off after startup completes.
-         * [ and very likely that will override most/all of our efforts ]
-         * [               --- life-is-NOT-fair ---                     ] */
+// Set up the raw/incomplete field group windows --
+// they'll be finished off after startup completes.
+// [ and very likely that will override most/all of our efforts ]
+// [               --- life-is-NOT-fair ---                     ]
 static void windows_stage1 (void)
 {
    WIN_t *w;
@@ -2425,9 +2362,8 @@ static void windows_stage1 (void)
 }
 
 
-        /*
-         * This guy just completes the field group windows after the
-         * rcfiles have been read and command line arguments parsed */
+// This guy just completes the field group windows after the
+// rcfiles have been read and command line arguments parsed
 static void windows_stage2 (void)
 {
    int i;
@@ -2440,11 +2376,10 @@ static void windows_stage2 (void)
    wins_resize(0);
 }
 
-
+
 /*######  Main Screen routines  ##########################################*/
 
-        /*
-         * Process keyboard input during the main loop */
+// Process keyboard input during the main loop
 static void do_key (unsigned c)
 {
    // standardized 'secure mode' errors
@@ -2500,7 +2435,7 @@ static void do_key (unsigned c)
          else {
             float tmp =
                get_float(fmtmk("Change delay from %.1f to", Rc.delay_time));
-            if (-1 < tmp) Rc.delay_time = tmp;
+            if (tmp > -1) Rc.delay_time = tmp;
          }
          break;
 
@@ -2516,8 +2451,7 @@ static void do_key (unsigned c)
       case 'g':
          if (Rc.mode_altscr) {
             char tmp[GETBUFSIZ];
-            strcpy(tmp, ask4str(fmtmk("Rename window '%s' to (1-3 chars)"
-               , Curwin->rc.winname)));
+            strcpy(tmp, ask4str(fmtmk("Rename window '%s' to (1-3 chars)", Curwin->rc.winname)));
             if (tmp[0]) win_names(Curwin, tmp);
          }
          break;
@@ -2532,13 +2466,18 @@ static void do_key (unsigned c)
          putp(Cap_clr_scr);
          putp(Cap_curs_huge);
             /* this string is well above ISO C89's minimum requirements! */
-         show_special(1, fmtmk(KEYS_help
-            , procps_version
-            , Curwin->grpname
-            , CHKw(Curwin, Show_CTIMES) ? "On" : "Off"
-            , Rc.delay_time
-            , Secure_mode ? "On" : "Off"
-            , Secure_mode ? "" : KEYS_help_unsecured));
+         show_special(
+            1,
+            fmtmk(
+               KEYS_help,
+               procps_version,
+               Curwin->grpname,
+               CHKw(Curwin, Show_CTIMES) ? "On" : "Off",
+               Rc.delay_time,
+               Secure_mode ? "On" : "Off",
+               Secure_mode ? "" : KEYS_help_unsecured
+            )
+         );
          chin(0, &ch, 1);
          if ('?' == ch || 'h' == ch) {
             do {
@@ -2579,14 +2518,12 @@ static void do_key (unsigned c)
             show_msg(err_secure);
          } else {
             int sig, pid = get_int("PID to kill");
-            if (0 < pid) {
+            if (pid > 0) {
                sig = signal_name_to_number(
-                  ask4str(fmtmk("Kill PID %d with signal [%i]"
-                     , pid, DEF_SIGNAL)));
-               if (-1 == sig) sig = DEF_SIGNAL;
+                  ask4str(fmtmk("Kill PID %d with signal [%i]", pid, DEF_SIGNAL)));
+               if (sig == -1) sig = DEF_SIGNAL;
                if (sig && kill(pid, sig))
-                  show_msg(fmtmk("\aKill of PID '%d' with '%d' failed: %s"
-                     , pid, sig, strerror(errno)));
+                  show_msg(fmtmk("\aKill of PID '%d' with '%d' failed: %s", pid, sig, strerror(errno)));
             }
          }
          break;
@@ -2603,9 +2540,8 @@ static void do_key (unsigned c)
       case '#':
          if (VIZCHKc) {
             int num =
-               get_int(fmtmk("Maximum tasks = %d, change to (0 is unlimited)"
-                  , Curwin->rc.maxtasks));
-            if (-1 < num) Curwin->rc.maxtasks = num;
+               get_int(fmtmk("Maximum tasks = %d, change to (0 is unlimited)", Curwin->rc.maxtasks));
+            if (num > -1) Curwin->rc.maxtasks = num;
          }
          break;
 
@@ -2621,11 +2557,10 @@ static void do_key (unsigned c)
             show_msg(err_secure);
          else {
             int val, pid = get_int("PID to renice");
-            if (0 < pid) {
+            if (pid > 0) {
                val = get_int(fmtmk("Renice PID %d to value", pid));
                if (setpriority(PRIO_PROCESS, (unsigned)pid, val))
-                  show_msg(fmtmk("\aRenice of PID %d to %d failed: %s"
-                     , pid, val, strerror(errno)));
+                  show_msg(fmtmk("\aRenice of PID %d to %d failed: %s", pid, val, strerror(errno)));
             }
          }
          break;
@@ -2637,8 +2572,7 @@ static void do_key (unsigned c)
       case 'S':
          if (VIZCHKc) {
             TOGw(Curwin, Show_CTIMES);
-            show_msg(fmtmk("Cumulative time %s"
-               , CHKw(Curwin, Show_CTIMES) ? "On" : "Off"));
+            show_msg(fmtmk("Cumulative time %s", CHKw(Curwin, Show_CTIMES) ? "On" : "Off"));
          }
          break;
 
@@ -2798,40 +2732,38 @@ static void do_key (unsigned c)
       default:
          show_msg("\aUnknown command - try 'h' for help");
    }
-   /* The following assignment will force a rebuild of all column headers and
-      the PROC_FILLxxx flags.  It's NOT simply lazy programming.  Here are
-      some keys that COULD require new column headers and/or libproc flags:
-         'A' - likely
-         'c' - likely when !Mode_altscr, maybe when Mode_altscr
-         'F' - maybe, if new field forced on
-         'f' - likely
-         'G' - likely
-         'O' - maybe, if new field forced on
-         'o' - maybe, if new field brought into view
-         'Z' - likely, if 'Curwin' changed when !Mode_altscr
-         '-' - likely (restricted to Mode_altscr)
-         '_' - likely (restricted to Mode_altscr)
-         '=' - maybe, but only when Mode_altscr
-         '+' - likely (restricted to Mode_altscr)
-      ( At this point we have a human being involved and so have all the time )
-      ( in the world.  We can afford a few extra cpu cycles every now & then! )
-    */
+   // The following assignment will force a rebuild of all column headers and
+   // the PROC_FILLxxx flags.  It's NOT simply lazy programming.  Here are
+   // some keys that COULD require new column headers and/or libproc flags:
+   //    'A' - likely
+   //    'c' - likely when !Mode_altscr, maybe when Mode_altscr
+   //    'F' - maybe, if new field forced on
+   //    'f' - likely
+   //    'G' - likely
+   //    'O' - maybe, if new field forced on
+   //    'o' - maybe, if new field brought into view
+   //    'Z' - likely, if 'Curwin' changed when !Mode_altscr
+   //    '-' - likely (restricted to Mode_altscr)
+   //    '_' - likely (restricted to Mode_altscr)
+   //    '=' - maybe, but only when Mode_altscr
+   //    '+' - likely (restricted to Mode_altscr)
+   // ( At this point we have a human being involved and so have all the time )
+   // ( in the world.  We can afford a few extra cpu cycles every now & then! )
    Frames_libflags = 0;
 }
 
 
-        /*
-         * State display *Helper* function to calc and display the state
-         * percentages for a single cpu.  In this way, we can support
-         * the following environments without the usual code bloat.
-         *    1) single cpu machines
-         *    2) modest smp boxes with room for each cpu's percentages
-         *    3) massive smp guys leaving little or no room for process
-         *       display and thus requiring the cpu summary toggle */
+// State display *Helper* function to calc and display the state
+// percentages for a single cpu.  In this way, we can support
+// the following environments without the usual code bloat.
+//    1) single cpu machines
+//    2) modest smp boxes with room for each cpu's percentages
+//    3) massive smp guys leaving little or no room for process
+//       display and thus requiring the cpu summary toggle
 static void summaryhlp (CPU_t *cpu, const char *pfx)
 {
-   /* we'll trim to zero if we get negative time ticks,
-      which has happened with some SMP kernels (pre-2.4?) */
+   // we'll trim to zero if we get negative time ticks,
+   // which has happened with some SMP kernels (pre-2.4?)
 #define TRIMz(x)  ((tz = (SIC_t)(x)) < 0 ? 0 : tz)
    SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, tot_frme, tz;
    float scale;
@@ -2844,21 +2776,25 @@ static void summaryhlp (CPU_t *cpu, const char *pfx)
    x_frme = cpu->x - cpu->x_sav;
    y_frme = cpu->y - cpu->y_sav;
    tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme + x_frme + y_frme;
-   if (1 > tot_frme) tot_frme = 1;
+   if (tot_frme < 1) tot_frme = 1;
    scale = 100.0 / (float)tot_frme;
 
-   /* display some kinda' cpu state percentages
-      (who or what is explained by the passed prefix) */
-   show_special(0, fmtmk(States_fmts
-      , pfx
-      , (float)u_frme * scale
-      , (float)s_frme * scale
-      , (float)n_frme * scale
-      , (float)i_frme * scale
-      , (float)w_frme * scale
-      , (float)x_frme * scale
-      , (float)y_frme * scale
-   ));
+   // display some kinda' cpu state percentages
+   // (who or what is explained by the passed prefix)
+   show_special(
+      0,
+      fmtmk(
+         States_fmts,
+         pfx,
+         (float)u_frme * scale,
+         (float)s_frme * scale,
+         (float)n_frme * scale,
+         (float)i_frme * scale,
+         (float)w_frme * scale,
+         (float)x_frme * scale,
+         (float)y_frme * scale
+      )
+   );
    Msg_row += 1;
 
    // remember for next time around
@@ -2874,13 +2810,12 @@ static void summaryhlp (CPU_t *cpu, const char *pfx)
 }
 
 
-        /*
-         * Begin a new frame by:
-         *    1) Refreshing the all important proc table
-         *    2) Displaying uptime and load average (maybe)
-         *    3) Displaying task/cpu states (maybe)
-         *    4) Displaying memory & swap usage (maybe)
-         * and then, returning a pointer to the pointers to the proc_t's! */
+// Begin a new frame by:
+//    1) Refreshing the all important proc table
+//    2) Displaying uptime and load average (maybe)
+//    3) Displaying task/cpu states (maybe)
+//    4) Displaying memory & swap usage (maybe)
+// and then, returning a pointer to the pointers to the proc_t's!
 static proc_t **summary_show (void)
 {
    static proc_t **p_table = NULL;
@@ -2897,30 +2832,37 @@ static proc_t **summary_show (void)
       tv.tv_usec = 500000;
       select(0, NULL, NULL, NULL, &tv);  // ought to loop until done
 #endif
-   } else
+   } else {
       putp(Batch ? "\n\n" : Cap_home);
+   }
    p_table = procs_refresh(p_table, Frames_libflags);
 
-   /*
-    ** Display Uptime and Loadavg */
+   // Display Uptime and Loadavg
    if (CHKw(Curwin, View_LOADAV)) {
       if (!Rc.mode_altscr) {
          show_special(0, fmtmk(LOADAV_line, Myname, sprint_uptime()));
       } else {
-         show_special(0, fmtmk(CHKw(Curwin, VISIBLE_tsk)
-            ? LOADAV_line_alt
-            : LOADAV_line
-            , Curwin->grpname, sprint_uptime()));
+         show_special(
+            0,
+            fmtmk(
+               CHKw(Curwin, VISIBLE_tsk) ? LOADAV_line_alt : LOADAV_line,
+               Curwin->grpname,
+               sprint_uptime()
+            )
+         );
       }
       Msg_row += 1;
    }
 
-   /*
-    ** Display Task and Cpu(s) States */
+   // Display Task and Cpu(s) States
    if (CHKw(Curwin, View_STATES)) {
-      show_special(0, fmtmk(STATES_line1
-         , Frame_maxtask, Frame_running, Frame_sleepin
-         , Frame_stopped, Frame_zombied));
+      show_special(
+         0,
+         fmtmk(
+            STATES_line1,
+            Frame_maxtask, Frame_running, Frame_sleepin, Frame_stopped, Frame_zombied
+         )
+      );
       Msg_row += 1;
 
       smpcpu = cpus_refresh(smpcpu);
@@ -2939,8 +2881,7 @@ static proc_t **summary_show (void)
       }
    }
 
-   /*
-    ** Display Memory and Swap stats */
+   // Display Memory and Swap stats
    meminfo();
    if (CHKw(Curwin, View_MEMORY)) {
       show_special(0, fmtmk(MEMORY_line1
@@ -2957,12 +2898,11 @@ static proc_t **summary_show (void)
 
 #define PAGES_2K(n)  (unsigned)( (n) << page_to_kb_shift )
 
-        /*
-         * Display information for a single task row. */
+// Display information for a single task row.
 static void task_show (const WIN_t *q, const proc_t *p)
 {
-   /* the following macro is our means to 'inline' emitting a column -- next to
-      procs_refresh, that's the most frequent and costly part of top's job ! */
+   // the following macro is our means to 'inline' emitting a column -- next to
+   // procs_refresh, that's the most frequent and costly part of top's job !
 #define MKCOL(va...) do { \
    if (likely(!(CHKw(q, Show_HICOLS) && q->rc.sortindx == i))) \
       snprintf(cbuf, sizeof(cbuf), f, ## va); \
@@ -3108,20 +3048,21 @@ static void task_show (const WIN_t *q, const proc_t *p)
         rp = scat(rp, cbuf);
    } /* end: for 'maxpflgs' */
 
-   PUFF("\n%s%.*s%s%s", (CHKw(q, Show_HIROWS) && 'R' == p->state)
-      ? q->capclr_rowhigh : q->capclr_rownorm
-      , Screen_cols + pad
-      , rbuf
-      , Caps_off
-      , Cap_clr_eol);
+   PUFF(
+      "\n%s%.*s%s%s",
+      (CHKw(q, Show_HIROWS) && 'R' == p->state) ? q->capclr_rowhigh : q->capclr_rownorm,
+      Screen_cols + pad,
+      rbuf,
+      Caps_off,
+      Cap_clr_eol
+   );
 
 #undef MKCOL
 }
 
 
-        /*
-         * Squeeze as many tasks as we can into a single window,
-         * after sorting the passed proc table. */
+// Squeeze as many tasks as we can into a single window,
+// after sorting the passed proc table.
 static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
 {
 #ifdef SORT_SUPRESS
@@ -3132,8 +3073,7 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
 #endif
    int i, lwin;
 
-   /*
-    ** Display Column Headings -- and distract 'em while we sort (maybe) */
+   // Display Column Headings -- and distract 'em while we sort (maybe)
    PUFF("\n%s%s%s%s", q->capclr_hdr, q->columnhdr, Caps_off, Cap_clr_eol);
 
 #ifdef SORT_SUPRESS
@@ -3144,7 +3084,7 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
       sav_flgs = (q->rc.winflags & srtMASK);
 #endif
       if (CHKw(q, Qsrt_NORMAL)) Frame_srtflg = 1; // this one's always needed!
-         else Frame_srtflg = -1;
+      else                      Frame_srtflg = -1;
       Frame_ctimes = CHKw(q, Show_CTIMES);        // this and next, only maybe
       Frame_cmdlin = CHKw(q, Show_CMDLIN);
       qsort(ppt, Frame_maxtask, sizeof(proc_t *), Fieldstab[q->rc.sortindx].sort);
@@ -3156,11 +3096,10 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
    lwin = 1;
    i = 0;
 
-   while ( -1 != ppt[i]->tid && *lscr < Max_lines  &&  (!q->winlines || (lwin <= q->winlines)) ) {
+   while ( ppt[i]->tid != -1 && *lscr < Max_lines  &&  (!q->winlines || (lwin <= q->winlines)) ) {
       if ((CHKw(q, Show_IDLEPS) || ('S' != ppt[i]->state && 'Z' != ppt[i]->state))
       && good_uid(ppt[i]) ) {
-         /*
-          ** Display a process Row */
+         // Display a process Row
          task_show(q, ppt[i]);
          (*lscr)++;
          ++lwin;
@@ -3179,9 +3118,8 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
 
 /*######  Entry point plus two  ##########################################*/
 
-        /*
-         * This guy's just a *Helper* function who apportions the
-         * remaining amount of screen real estate under multiple windows */
+// This guy's just a *Helper* function who apportions the
+// remaining amount of screen real estate under multiple windows
 static void framehlp (int wix, int max)
 {
    int i, rsvd, size, wins;
@@ -3200,9 +3138,9 @@ static void framehlp (int wix, int max)
    if (0 <= size) size = max;
    size = (max - wins) / wins;
 
-   /* for remaining windows, set WIN_t winlines to either the user's
-      maxtask (1st choice) or our 'foxized' size calculation
-      (foxized  adj. -  'fair and balanced') */
+   // for remaining windows, set WIN_t winlines to either the user's
+   // maxtask (1st choice) or our 'foxized' size calculation
+   // (foxized  adj. -  'fair and balanced')
    for (i = wix ; i < GROUPSMAX; i++) {
       if (CHKw(&Winstk[i], VISIBLE_tsk)) {
          Winstk[i].winlines =
@@ -3212,26 +3150,24 @@ static void framehlp (int wix, int max)
 }
 
 
-        /*
-         * Initiate the Frame Display Update cycle at someone's whim!
-         * This routine doesn't do much, mostly he just calls others.
-         *
-         * (Whoa, wait a minute, we DO caretake those row guys, plus)
-         * (we CALCULATE that IMPORTANT Max_lines thingy so that the)
-         * (*subordinate* functions invoked know WHEN the user's had)
-         * (ENOUGH already.  And at Frame End, it SHOULD be apparent)
-         * (WE am d'MAN -- clearing UNUSED screen LINES and ensuring)
-         * (the CURSOR is STUCK in just the RIGHT place, know what I)
-         * (mean?  Huh, "doesn't DO MUCH"!  Never, EVER think or say)
-         * (THAT about THIS function again, Ok?  Good that's better.)
-         */
+// Initiate the Frame Display Update cycle at someone's whim!
+// This routine doesn't do much, mostly he just calls others.
+//
+// (Whoa, wait a minute, we DO caretake those row guys, plus)
+// (we CALCULATE that IMPORTANT Max_lines thingy so that the)
+// (*subordinate* functions invoked know WHEN the user's had)
+// (ENOUGH already.  And at Frame End, it SHOULD be apparent)
+// (WE am d'MAN -- clearing UNUSED screen LINES and ensuring)
+// (the CURSOR is STUCK in just the RIGHT place, know what I)
+// (mean?  Huh, "doesn't DO MUCH"!  Never, EVER think or say)
+// (THAT about THIS function again, Ok?  Good that's better.)
 static void frame_make (void)
 {
    proc_t **ppt;
    int i, scrlins;
 
-   /* note: all libproc flags are managed by
-            reframewins(), who also builds each window's column headers */
+   // note: all libproc flags are managed by
+   //       reframewins(), who also builds each window's column headers
    if (!Frames_libflags) {
       reframewins();
       memset(Pseudo_scrn, '\0', Pseudo_size);
@@ -3260,19 +3196,21 @@ static void frame_make (void)
          if (Max_lines <= scrlins) break;
       }
    }
-   /* clear to end-of-screen (critical if last window is 'idleps off'),
-      then put the cursor in-its-place, and rid us of any prior frame's msg
-      (main loop must iterate such that we're always called before sleep) */
-   PUTT("%s%s%s%s"
-      , scrlins < Max_lines ? "\n" : ""
-      , scrlins < Max_lines ? Cap_clr_eos : ""
-      , tg2(0, Msg_row)
-      , Cap_clr_eol);
+   // clear to end-of-screen (critical if last window is 'idleps off'),
+   // then put the cursor in-its-place, and rid us of any prior frame's msg
+   // (main loop must iterate such that we're always called before sleep)
+   PUTT(
+      "%s%s%s%s",
+      scrlins < Max_lines ? "\n"        : "",
+      scrlins < Max_lines ? Cap_clr_eos : "",
+      tg2(0, Msg_row),
+      Cap_clr_eol
+   );
    fflush(stdout);
 }
 
 
-int main (int dont_care_argc, char **argv)
+int main (int dont_care_argc, char *argv[])
 {
    (void)dont_care_argc;
    before(*argv);
@@ -3299,7 +3237,7 @@ int main (int dont_care_argc, char **argv)
       frame_make();
 
       if (Msg_awaiting) show_msg(Msg_delayed);
-      if (0 < Loops) --Loops;
+      if (Loops > 0) --Loops;
       if (!Loops) end_pgm(0);
 
       tv.tv_sec = Rc.delay_time;
