@@ -1,6 +1,9 @@
 procps-3.2.3 --> procps-3.2.4
 
+support 64-bit MIPS with n32 binary
+sparc32 optimized for sparc32 again
 ps: more room for some columns
+watch: passes COLUMNS and LINES in environment
 
 procps-3.2.2 --> procps-3.2.3
 

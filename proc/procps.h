@@ -90,10 +90,13 @@
 // so no need to do dynamic linking at run-time.
 // This might work with slightly older compilers too.
 #define HIDDEN __attribute__((visibility("hidden")))
+// The opposite, in case -fvisibility=hidden used
+#define EXPORT __attribute__((visibility("default")))
 // Tell g++ that a function won't throw exceptions.
 #define NOTHROW __attribute__((__nothrow__))
 #else
 #define HIDDEN
+#define EXPORT
 #define NOTHROW
 #endif
 

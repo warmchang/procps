@@ -550,8 +550,13 @@ parent process repeatedly forks off short\-lived children to do work.
 .TP
 .B c
 Show the true command name. This is derived from the name of the
-executable file, rather than from the argv value which could be
-modified by a user. Command arguments are not shown.
+executable file, rather than from the argv value. Command arguments
+and any modifications to them (see\ \fIsetproctitle\fR(3)) are
+thus not shown. This option
+effectively turns the \fBargs\fR format keyword into the \fBcomm\fR
+format keyword; it is useful with the \fB\-f\fR format option and with
+the various BSD\-style format options, which all normally
+display the command arguments.
 See the \fB\-f\fR option, the format keyword \fBargs\fR, and the
 format keyword \fBcomm\fR.
 
@@ -744,10 +749,6 @@ running during the entire lifetime of a process.
 This is not ideal, and\ it does not conform to the
 standards that \fBps\fR otherwise conforms\ to.
 CPU\ usage is unlikely to add up to exactly\ 100%.
-
-Programs swapped out to disk will be shown without command line arguments,
-and unless the \fBc\fR option is given,
-in\ brackets.
 
 The SIZE and RSS fields don't count some parts of a process including the
 page tables, kernel stack, struct thread_info, and struct task_struct.
@@ -946,6 +947,7 @@ keyword, the \fB\-f\fR option, and the \fBc\fR option.
 When specified last, this column will extend to the edge of the display.
 If \fBps\fR can not determine display width, as when output is redirected
 (piped) into a file or another command, the width of this column is undefined.
+(it may be 80, unlimited, determined by the \fBTERM\fR variable, and so on)
 The \fBCOLUMNS\fR environment variable or \fB\-\-cols\fR option may
 be used to exactly determine the width in this case.
 The \fBw\fR or \fB\-w\fR option may be also be used to adjust width.
@@ -1026,6 +1028,7 @@ keyword, the \fB\-f\fR option, and the \fBc\fR option.
 When specified last, this column will extend to the edge of the display.
 If \fBps\fR can not determine display width, as when output is redirected
 (piped) into a file or another command, the width of this column is undefined.
+(it may be 80, unlimited, determined by the \fBTERM\fR variable, and so on)
 The \fBCOLUMNS\fR environment variable or \fB\-\-cols\fR option may
 be used to exactly determine the width in this case.
 The \fBw\fR or \fB\-w\fR option may be also be used to adjust width.

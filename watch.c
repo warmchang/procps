@@ -25,6 +25,11 @@
 #include <locale.h>
 #include "proc/procps.h"
 
+#ifdef FORCE_8BIT
+#undef isprint
+#define isprint(x) ( (x>=' '&&x<='~') || (x>=0xa0) )
+#endif
+
 static struct option longopts[] = {
 	{"differences", optional_argument, 0, 'd'},
 	{"help", no_argument, 0, 'h'},
@@ -77,15 +82,54 @@ winch_handler(int notused)
 	screen_size_changed = 1;
 }
 
+static char env_col_buf[24];
+static char env_row_buf[24];
+static int incoming_cols;
+static int incoming_rows;
+
 static void
 get_terminal_size(void)
 {
 	struct winsize w;
-	if (ioctl(2, TIOCGWINSZ, &w) == 0) {
-		if (w.ws_row > 0)
-			height = w.ws_row;
-		if (w.ws_col > 0)
-			width = w.ws_col;
+	if(!incoming_cols){  // have we checked COLUMNS?
+		const char *s = getenv("COLUMNS");
+		incoming_cols = -1;
+		if(s && *s){
+			long t;
+			char *endptr;
+			t = strtol(s, &endptr, 0);
+			if(!*endptr && (t>0) && (t<(long)666)) incoming_cols = (int)t;
+			width = incoming_cols;
+			snprintf(env_col_buf, sizeof env_col_buf, "COLUMNS=%d", width);
+			putenv(env_col_buf);
+		}
+	}
+	if(!incoming_rows){  // have we checked LINES?
+		const char *s = getenv("LINES");
+		incoming_rows = -1;
+		if(s && *s){
+			long t;
+			char *endptr;
+			t = strtol(s, &endptr, 0);
+			if(!*endptr && (t>0) && (t<(long)666)) incoming_rows = (int)t;
+			height = incoming_rows;
+			snprintf(env_row_buf, sizeof env_row_buf, "LINES=%d", height);
+			putenv(env_row_buf);
+		}
+	}
+	if (incoming_cols<0 || incoming_rows<0){
+		if (ioctl(2, TIOCGWINSZ, &w) == 0) {
+			if (incoming_rows<0 && w.ws_row > 0){
+				height = w.ws_row;
+				snprintf(env_row_buf, sizeof env_row_buf, "LINES=%d", height);
+				putenv(env_row_buf);
+			}
+			if (incoming_cols<0 && w.ws_col > 0){
+				width = w.ws_col;
+				snprintf(env_col_buf, sizeof env_col_buf, "COLUMNS=%d", width);
+				putenv(env_col_buf);
+			}
+		}
 	}
 }
 

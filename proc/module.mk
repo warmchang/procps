@@ -44,6 +44,8 @@ ifeq ($(SHARED),1)
 ALL        += proc/$(SONAME)
 INSTALL    += ldconfig
 LIBFLAGS   := -DSHARED=1 $(FPIC)
+# This is in gcc 3.5, but exported functions must be marked.
+#LIBFLAGS += $(call check_gcc,-fvisibility=hidden,)
 LIBPROC    := proc/$(SONAME)
 else
 ALL        += proc/$(ANAME)

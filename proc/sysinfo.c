@@ -488,7 +488,7 @@ unsigned long kb_inact_laundry;
 unsigned long kb_inact_dirty;
 unsigned long kb_inact_clean;
 unsigned long kb_inact_target;
-unsigned long kb_swap_cached;  /* late 2.4 only */
+unsigned long kb_swap_cached;  /* late 2.4 and 2.6+ only */
 /* derived values */
 unsigned long kb_swap_used;
 unsigned long kb_main_used;
@@ -501,6 +501,10 @@ unsigned long kb_dirty;
 unsigned long kb_inactive;
 unsigned long kb_mapped;
 unsigned long kb_pagetables;
+// seen on a 2.6.x kernel:
+unsigned long kb_vmalloc_chunk;
+unsigned long kb_vmalloc_total;
+unsigned long kb_vmalloc_used;
 
 void meminfo(void){
   char namebuf[16]; /* big enough to hold any row name */
@@ -525,7 +529,7 @@ void meminfo(void){
   {"LowTotal",     &kb_low_total},
   {"Mapped",       &kb_mapped},       // kB version of vmstat nr_mapped
   {"MemFree",      &kb_main_free},    // important
-  {"MemShared",    &kb_main_shared},  // important
+  {"MemShared",    &kb_main_shared},  // important, but now gone!
   {"MemTotal",     &kb_main_total},   // important
   {"PageTables",   &kb_pagetables},   // kB version of vmstat nr_page_table_pages
   {"ReverseMaps",  &nr_reversemaps},  // same as vmstat nr_page_table_pages
@@ -533,6 +537,9 @@ void meminfo(void){
   {"SwapCached",   &kb_swap_cached},
   {"SwapFree",     &kb_swap_free},    // important
   {"SwapTotal",    &kb_swap_total},   // important
+  {"VmallocChunk", &kb_vmalloc_chunk},
+  {"VmallocTotal", &kb_vmalloc_total},
+  {"VmallocUsed",  &kb_vmalloc_used},
   {"Writeback",    &kb_writeback},    // kB version of vmstat nr_writeback
   };
   const int mem_table_count = sizeof(mem_table)/sizeof(mem_table_struct);
@@ -621,29 +628,48 @@ void vminfo(void){
   char *tail;
   static const vm_table_struct vm_table[] = {
   {"allocstall",          &vm_allocstall},
+  {"kswapd_inodesteal",          &vm_},
   {"kswapd_steal",        &vm_kswapd_steal},
   {"nr_dirty",            &vm_nr_dirty},           // page version of meminfo Dirty
   {"nr_mapped",           &vm_nr_mapped},          // page version of meminfo Mapped
   {"nr_page_table_pages", &vm_nr_page_table_pages},// same as meminfo PageTables
   {"nr_pagecache",        &vm_nr_pagecache},       // gone in 2.5.66+ kernels
-  {"nr_reverse_maps",     &vm_nr_reverse_maps},    // page version of meminfo ReverseMaps
+  {"nr_reverse_maps",     &vm_nr_reverse_maps},    // page version of meminfo ReverseMaps GONE
   {"nr_slab",             &vm_nr_slab},            // page version of meminfo Slab
+  {"nr_unstable",          &vm_},
   {"nr_writeback",        &vm_nr_writeback},       // page version of meminfo Writeback
   {"pageoutrun",          &vm_pageoutrun},
   {"pgactivate",          &vm_pgactivate},
-  {"pgalloc",             &vm_pgalloc},
+  {"pgalloc",             &vm_pgalloc},  // GONE (now separate dma,high,normal)
+  {"pgalloc_dma",          &vm_},
+  {"pgalloc_high",          &vm_},
+  {"pgalloc_normal",          &vm_},
   {"pgdeactivate",        &vm_pgdeactivate},
   {"pgfault",             &vm_pgfault},
   {"pgfree",              &vm_pgfree},
+  {"pginodesteal",          &vm_},
   {"pgmajfault",          &vm_pgmajfault},
   {"pgpgin",              &vm_pgpgin},     // important
   {"pgpgout",             &vm_pgpgout},     // important
-  {"pgrefill",            &vm_pgrefill},
+  {"pgrefill",            &vm_pgrefill},  // GONE (now separate dma,high,normal)
+  {"pgrefill_dma",          &vm_},
+  {"pgrefill_high",          &vm_},
+  {"pgrefill_normal",          &vm_},
   {"pgrotated",           &vm_pgrotated},
-  {"pgscan",              &vm_pgscan},
-  {"pgsteal",             &vm_pgsteal},
+  {"pgscan",              &vm_pgscan},  // GONE (now separate direct,kswapd and dma,high,normal)
+  {"pgscan_direct_dma",          &vm_},
+  {"pgscan_direct_high",          &vm_},
+  {"pgscan_direct_normal",          &vm_},
+  {"pgscan_kswapd_dma",          &vm_},
+  {"pgscan_kswapd_high",          &vm_},
+  {"pgscan_kswapd_normal",          &vm_},
+  {"pgsteal",             &vm_pgsteal},  // GONE (now separate dma,high,normal)
+  {"pgsteal_dma",          &vm_},
+  {"pgsteal_high",          &vm_},
+  {"pgsteal_normal",          &vm_},
   {"pswpin",              &vm_pswpin},     // important
   {"pswpout",             &vm_pswpout}     // important
+  {"slabs_scanned",          &vm_},
   };
   const int vm_table_count = sizeof(vm_table)/sizeof(vm_table_struct);
 
