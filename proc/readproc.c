@@ -686,25 +686,36 @@ static int file2str(const char *directory, const char *what, struct utlbuf_s *ub
 
 static char** file2strvec(const char* directory, const char* what) {
     char buf[2048];     /* read buf bytes at a time */
-    char *p, *rbuf = 0, *endbuf, **q, **ret;
+    char *p, *rbuf = 0, *endbuf, **q, **ret, *strp;
     int fd, tot = 0, n, c, end_of_file = 0;
     int align;
 
-    sprintf(buf, "%s/%s", directory, what);
+    const int len = snprintf(buf, sizeof buf, "%s/%s", directory, what);
+    if(len <= 0 || (size_t)len >= sizeof buf) return NULL;
     fd = open(buf, O_RDONLY, 0);
-    if(fd==-1)
-        return NULL;
+    if(fd==-1) return NULL;
 
     /* read whole file into a memory buffer, allocating as we go */
     while ((n = read(fd, buf, sizeof buf - 1)) >= 0) {
         if (n < (int)(sizeof buf - 1))
             end_of_file = 1;
-        if (n == 0 && rbuf == 0) {
-            close(fd);
-            return NULL;        /* process died between our open and read */
+        if (n <= 0 && tot <= 0) {  /* nothing read now, nothing read before */
+            break;                 /* process died between our open and read */
         }
-        if (end_of_file && (n == 0 || buf[n-1]))/* last read char not null */
+        /* ARG_LEN is our guesstimated median length of a command-line argument
+           or environment variable (the minimum is 1, the maximum is 131072) */
+        #define ARG_LEN 64
+        if (tot >= INT_MAX / (ARG_LEN + (int)sizeof(char*)) * ARG_LEN - n) {
+            end_of_file = 1;       /* integer overflow: null-terminate and break */
+            n = 0;                 /* but tot > 0 */
+        }
+        #undef ARG_LEN
+        if (end_of_file &&
+            ((n > 0 && buf[n-1] != '\0') ||     /* last read char not null */
+             (n <= 0 && rbuf[tot-1] != '\0')))  /* last read char not null */
             buf[n++] = '\0';                    /* so append null-terminator */
+
+        if (n <= 0) break;         /* unneeded (end_of_file = 1) but avoid realloc */
         rbuf = realloc(rbuf, tot + n);          /* allocate more memory */
         if (!rbuf) return NULL;
         memcpy(rbuf + tot, buf, n);             /* copy buffer into it */
@@ -713,31 +724,36 @@ static char** file2strvec(const char* directory, const char* what) {
             break;
     }
     close(fd);
-    if (n <= 0 && !end_of_file) {
-        if (rbuf)
-            free(rbuf);
-        return NULL;            /* read error */
+    if (n < 0 || tot <= 0) {       /* error, or nothing read */
+        if (rbuf) free(rbuf);
+        return NULL;               /* read error */
     }
-    endbuf = rbuf + tot;                        /* count space for pointers */
+
+    rbuf[tot-1] = '\0';            /* belt and suspenders (the while loop did it, too) */
+    endbuf = rbuf + tot;           /* count space for pointers */
     align = (sizeof(char*)-1) - ((tot + sizeof(char*)-1) & (sizeof(char*)-1));
-    for (c = 0, p = rbuf; p < endbuf; p++) {
-        if (!*p || *p == '\n')
+    c = sizeof(char*);             /* one extra for NULL term */
+    for (p = rbuf; p < endbuf; p++) {
+        if (!*p || *p == '\n') {
+            if (c >= INT_MAX - (tot + (int)sizeof(char*) + align)) break;
             c += sizeof(char*);
+        }
         if (*p == '\n')
             *p = 0;
     }
-    c += sizeof(char*);                         /* one extra for NULL term */
 
     rbuf = realloc(rbuf, tot + c + align);      /* make room for ptrs AT END */
     if (!rbuf) return NULL;
     endbuf = rbuf + tot;                        /* addr just past data buf */
     q = ret = (char**) (endbuf+align);          /* ==> free(*ret) to dealloc */
-    *q++ = p = rbuf;                            /* point ptrs to the strings */
-    endbuf--;                                   /* do not traverse final NUL */
-    while (++p < endbuf)
-        if (!*p)                                /* NUL char implies that */
-            *q++ = p+1;                         /* next string -> next char */
-
+    for (strp = p = rbuf; p < endbuf; p++) {
+        if (!*p) {                              /* NUL char implies that */
+            if (c < 2 * (int)sizeof(char*)) break;
+            c -= sizeof(char*);
+            *q++ = strp;                        /* point ptrs to the strings */
+            strp = p+1;                         /* next string -> next char */
+        }
+    }
     *q = 0;                                     /* null ptr list terminator */
     return ret;
 }
