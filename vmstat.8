@@ -47,6 +47,9 @@ w: The number of processes swapped out but otherwise runnable.  This
 swpd: the amount of virtual memory used (kB).
 free: the amount of idle memory (kB).
 buff: the amount of memory used as buffers (kB).
+cache: the amount of memory used as cache (kB).
+inact: the amount of inactive memory (kB). (-a option)
+active: the amount of active memory (kB). (-a option)
 .fi
 .PP
 .SS
@@ -59,8 +62,8 @@ so: Amount of memory swapped to disk (kB/s).
 .SS
 .B "IO"
 .nf
-bi: Blocks sent to a block device (blocks/s).
-bo: Blocks received from a block device (blocks/s).
+bi: Blocks received from a block device (blocks/s).
+bo: Blocks sent to a block device (blocks/s).
 .fi
 .PP
 .SS
