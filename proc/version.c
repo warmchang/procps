@@ -12,9 +12,9 @@
 #include "version.h"
 
 #ifdef MINORVERSION
-char procps_version[] = "procps version " VERSION "." SUBVERSION "." MINORVERSION;
+const char procps_version[] = "procps version " VERSION "." SUBVERSION "." MINORVERSION;
 #else
-char procps_version[] = "procps version " VERSION ;
+const char procps_version[] = "procps version " VERSION "." SUBVERSION;
 #endif
 
 void display_version(void) {

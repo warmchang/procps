@@ -755,6 +755,45 @@ static const char *scale_tics (TICS_t tics, const int width)
 }
 
 
+static const char *format_interval_wide(unsigned long long tick64)
+{
+   static char buf[TNYBUFSIZ];
+   unsigned day, hr, min, sec;
+
+   if( sizeof(long)==4 && (tick64>>32) ){  // if need 64-bit on 32-bit
+      sec = tick64 / Hertz;       // seconds won't overflow 32-bit
+      min = sec/60u;             // total minutes
+   }else{
+      unsigned long hz = Hertz;
+      unsigned long tick = tick64;
+      sec = tick / hz;            // total seconds
+      min = sec/60u;             // total minutes
+      if(min < 120u){    // less than 120 minutes --> use MMM:SS.XX
+         unsigned wee = tick - sec*hz;
+         if(100ul != hz){                  // if jiffies aren't centiseconds
+            if(1000ul == hz) wee /= 10u;
+            else             wee = wee * 100u / hz;
+         }
+         sec = sec - min * 60u;     // seconds past minute
+         snprintf(buf, sizeof buf, "%3u:%02u.%02u", min, sec, wee);
+         return buf;
+      }
+   }   
+   // won't fit in MMM:SS.XX format
+   sec = sec - min * 60u;     // seconds past minute
+   hr  = min / 60u;           // total hours
+   min = min - hr * 60u;      // min past the hour
+   if(hr < 48){
+      snprintf(buf, sizeof buf, "%3u:%02u:%02u", hr, min, sec);
+      return buf;
+   }
+   day = hr / 24u;            // total days
+   hr = hr - day * 24u;       // hours past the day
+   snprintf(buf, sizeof buf, "%3u-%02u:%02u", day, hr, min);
+   return buf;
+}
+
+
         /*
          * Calculate and the elapsed time since the last update along with the
          * scaling factor used in multiplication (vs. division) when calculating
@@ -2044,13 +2083,20 @@ static void show_a_task (WIN_t *q, proc_t *task)
                , scale_num(PAGES_2K(task->size - task->resident), w, s));
             break;
          case P_TME:
-         case P_TM2:
          {  TICS_t t;
 
             t = task->utime + task->stime;
             if (CHKw(q, Show_CTIMES))
                t += (task->cutime + task->cstime);
             MKCOL(q, i, a, &pad, cbuf, scale_tics(t, w));
+         }
+         case P_TM2:
+         {  TICS_t t;
+
+            t = task->utime + task->stime;
+            if (CHKw(q, Show_CTIMES))
+               t += (task->cutime + task->cstime);
+            MKCOL(q, i, a, &pad, cbuf, format_interval_wide(t));
          }
             break;
          case P_TTY:
