@@ -205,8 +205,8 @@ int main(int argc, char **argv)
 			for (row = nrows - 2; row >= 0; --row)
 				*(screen + row * ncols + col) = ' ';
 		}
-		i = sprintf(screen, " %.2f, %.2f, %.2f", av[0], av[1], av[2]);
-		if (i > 0)
+		i = snprintf(screen, scr_size, " %.2f, %.2f, %.2f", av[0], av[1], av[2]);
+		if (i > 0 && i < scr_size)
 			screen[i] = ' ';
 
 		if (write(fd, "\033[H", 3) < 0)
