@@ -133,7 +133,7 @@ build_ps:				; $(MAKE) -C ps -f Makefile.noam
 install_ps:      ps		; $(MAKE) -C ps -f Makefile.noam install
 
 # executable dependencies
-kill skill snice top w uptime tload free vmstat utmp : $(LIB_TGT)
+kill skill snice top w uptime tload free vmstat utmp oldtop : $(LIB_TGT)
 
 # static pattern build/link rules:
 
@@ -149,6 +149,9 @@ w uptime tload free vmstat utmp pgrep: % : %.o
 top:   % : %.o
 	$(strip $(CC)  $(LDFLAGS) -o $@ $^ $(LIB_TGT) $(LIBTERMCAP) $(EXTRALIBS))
 
+oldtop:   % : %.o
+	$(strip $(CC)  $(LDFLAGS) -o $@ $^ $(LIB_TGT) $(LIBTERMCAP) $(EXTRALIBS))
+
 watch:	% : %.o
 	$(strip $(CC) $(SLDFLAGS) -o $@ $< $(LIBCURSES) $(EXTRALIBS))
 
@@ -158,6 +161,9 @@ w.o:	w.c
 	$(strip $(CC) $(CFLAGS) $(W_SHOWFROM) -c $<)
 
 top.o:	top.c
+	$(strip $(CC) $(CFLAGS) -c $<)
+
+oldtop.o:	oldtop.c
 	$(strip $(CC) $(CFLAGS) -fwritable-strings -c $<)
 
 skill.o:	skill.c
