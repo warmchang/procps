@@ -1272,8 +1272,9 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
       if (scoreboard[c|0xe0u]) badchar++;       // duplicates not allowed
       scoreboard[c|0xe0u]++;
       tmp = strchr(old,c);
-      if (tmp) c = *((tmp-old)+std);
-      else     c = '.';
+      if (!tmp) continue;
+      c = *((tmp-old)+std);
+      if (c == '.') continue;
       if (scoreboard[c&0x1fu]) badchar++;       // duplicates not allowed
       scoreboard[c&0x1fu]++;
       rc->win[0].fieldscur[u++] = c;
