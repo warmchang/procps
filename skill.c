@@ -56,8 +56,7 @@ static int program;
 
 /********************************************************************/
 
-static void display_kill_version(){
-
+static void display_kill_version(void){
   switch(program) {
     case PROG_KILL:
       fprintf(stdout, "kill (%s)\n",procps_version);

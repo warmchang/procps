@@ -291,13 +291,18 @@ static void new_format(void) {
 ////////////////////////////////////////////////////////////////////////////
 
 static int diskpartition_format(const char* partition_name){
-  FILE *fDiskstat;
-  struct disk_stat *disks;
-  struct partition_stat *partitions, *current_partition=NULL;
-  unsigned long ndisks,i,j,k,npartitions;
-  const char format[]="%20u %10llu %10u %10u\n";
+    FILE *fDiskstat;
+    struct disk_stat *disks;
+    struct partition_stat *partitions, *current_partition=NULL;
+    unsigned long ndisks, j, k, npartitions;
+    const char format[] = "%20u %10llu %10u %10u\n";
 
-  if ((fDiskstat=fopen("/proc/diskstats", "rb"))){
+    fDiskstat=fopen("/proc/diskstats","rb");
+    if(!fDiskstat){
+        fprintf(stderr, "Your kernel doesn't support diskstat. (2.5.70 or above required)\n"); 
+        exit(0);
+    }
+
     fclose(fDiskstat);
     ndisks=getdiskstat(&disks,&partitions);
     npartitions=getpartitions_num(disks, ndisks);
@@ -335,10 +340,7 @@ static int diskpartition_format(const char* partition_name){
         free(disks);
         free(partitions);
     }
- }else{
-    fprintf(stderr, "Your kernel doesn't support diskstat (2.5.70 or above required)"); 
-    exit(0);
- }
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////

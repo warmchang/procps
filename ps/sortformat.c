@@ -31,10 +31,6 @@ static int have_gnu_sort = 0;           /* if true, "O" must be format */
 static int already_parsed_sort = 0;     /* redundantly set in & out of fn */
 static int already_parsed_format = 0;
 
-
-#define parse_sort_opt <-- arrgh! do not use this -->
-#define gnusort_parse  <-- arrgh! do not use this -->
-
 #ifndef COL_PIDMAX
 #warning Ugly wart needs fixing, use common.h to sync w/ output.c
 #define COL_PIDMAX 0x20

@@ -547,7 +547,7 @@ int open_psdb(const char *restrict override) {
 
 /***************************************/
 
-const char * read_wchan_file(unsigned pid){
+static const char * read_wchan_file(unsigned pid){
   static char buf[64];
   const char *ret = buf;
   ssize_t num;
@@ -565,6 +565,8 @@ const char * read_wchan_file(unsigned pid){
 
   // would skip over numbers if they existed -- but no
 
+  // lame ppc64 has a '.' in front of every name
+  if(*ret=='.') ret++;
   switch(*ret){
     case 's': if(!strncmp(ret, "sys_", 4)) ret += 4;   break;
     case 'd': if(!strncmp(ret, "do_",  3)) ret += 3;   break;
