@@ -297,7 +297,7 @@ typedef struct win {
 
         /* These are the possible fscanf formats used in /proc/stat
            reads during history processing.
-           ( 5th number added in anticipation of kernel change ) */
+           ( 5th number only for Linux 2.5.41 and above ) */
 #define CPU_FMTS_JUST1  "cpu %Lu %Lu %Lu %Lu %Lu"
 #ifdef PRETEND4CPUS
 #define CPU_FMTS_MULTI CPU_FMTS_JUST1

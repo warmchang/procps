@@ -1617,9 +1617,9 @@ static void windows_stage1 (void)
       const int   sort;
       const int   clrs[4];      /* summ, msgs, heads, task */
    } wtab[] = {
-      { "Def", DEF_FIELDS, P_PID,
+      { "Def", DEF_FIELDS, P_CPU,
          { COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED } },
-      { "Job", JOB_FIELDS, P_TM2,
+      { "Job", JOB_FIELDS, P_PID,
          { COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, COLOR_CYAN } },
       { "Mem", MEM_FIELDS, P_MEM,
          { COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA } },
