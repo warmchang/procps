@@ -467,38 +467,6 @@ static int pr_vsz(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%lu", pp->vm_size);
 }
 
-/*
- * internal terms:  ruid  euid  suid  fuid
- * kernel vars:      uid  euid  suid fsuid
- * command args:    ruid   uid svuid   n/a
- */
-
-static int pr_ruser(char *restrict const outbuf, const proc_t *restrict const pp){
-    int width = COLWID;
-
-    if(user_is_number)
-        return snprintf(outbuf, COLWID, "%d", pp->ruid);
-    if (strlen(pp->ruser)>max_rightward)
-        width = max_rightward;
-    return snprintf(outbuf, width, "%s", pp->ruser);
-}
-static int pr_egroup(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(strlen(pp->egroup)>max_rightward) return snprintf(outbuf, COLWID, "%d", pp->egid);
-  return snprintf(outbuf, COLWID, "%s", pp->egroup);
-}
-static int pr_rgroup(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(strlen(pp->rgroup)>max_rightward) return snprintf(outbuf, COLWID, "%d", pp->rgid);
-  return snprintf(outbuf, COLWID, "%s", pp->rgroup);
-}
-static int pr_euser(char *restrict const outbuf, const proc_t *restrict const pp){
-    int width = COLWID;
-    if(user_is_number)
-        return snprintf(outbuf, COLWID, "%d", pp->euid);
-    if (strlen(pp->euser)>max_rightward)
-        width = max_rightward;
-    return snprintf(outbuf, width, "%s", pp->euser);
-}
-
 /********* maybe standard (Unix98 only defines the header) **********/
 
 
@@ -584,9 +552,7 @@ static int pr_flag(char *restrict const outbuf, const proc_t *restrict const pp)
     return snprintf(outbuf, COLWID, "%o", (unsigned)(pp->flags>>6U)&0x7U);
 }
 
-static int pr_euid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%d", pp->euid);
-}
+// plus these: euid,ruid,egroup,rgroup (elsewhere in this file)
 
 /*********** non-standard ***********/
 
@@ -856,6 +822,14 @@ static int pr_sigcatch(char *restrict const outbuf, const proc_t *restrict const
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+
+/*
+ * internal terms:  ruid  euid  suid  fuid
+ * kernel vars:      uid  euid  suid fsuid
+ * command args:    ruid   uid svuid   n/a
+ */
+
 static int pr_egid(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%d", pp->egid);
 }
@@ -868,6 +842,10 @@ static int pr_sgid(char *restrict const outbuf, const proc_t *restrict const pp)
 static int pr_fgid(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%d", pp->fgid);
 }
+
+static int pr_euid(char *restrict const outbuf, const proc_t *restrict const pp){
+  return snprintf(outbuf, COLWID, "%d", pp->euid);
+}
 static int pr_ruid(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%d", pp->ruid);
 }
@@ -878,33 +856,53 @@ static int pr_fuid(char *restrict const outbuf, const proc_t *restrict const pp)
   return snprintf(outbuf, COLWID, "%d", pp->fuid);
 }
 
-
-static int pr_fgroup(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(strlen(pp->fgroup)>max_rightward) return snprintf(outbuf, COLWID, "%d", pp->fgid);
-  return snprintf(outbuf, COLWID, "%s", pp->fgroup);
+// The Open Group Base Specifications Issue 6 (IEEE Std 1003.1, 2004 Edition)
+// requires that user and group names print as decimal numbers if there is
+// not enough room in the column, so tough luck if you don't like it.
+//
+// The UNIX and POSIX way to change column width is to rename it:
+//      ps -o pid,user=CumbersomeUserNames -o comm
+// The easy way is to directly specify the desired width:
+//      ps -o pid,user:19,comm
+//
+static int do_pr_name(char *restrict const outbuf, const char *restrict const name, unsigned u){
+  if(!user_is_number){
+    size_t len = strlen(name);
+    if(len <= max_rightward) {
+      memcpy(outbuf, name, len+1);
+      return len;
+    }
+  }
+  return snprintf(outbuf, COLWID, "%u", u);
 }
-static int pr_sgroup(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(strlen(pp->sgroup)>max_rightward) return snprintf(outbuf, COLWID, "%d", pp->sgid);
-  return snprintf(outbuf, COLWID, "%s", pp->sgroup);
+
+static int pr_ruser(char *restrict const outbuf, const proc_t *restrict const pp){
+  return do_pr_name(outbuf, pp->ruser, pp->ruid);
+}
+static int pr_euser(char *restrict const outbuf, const proc_t *restrict const pp){
+  return do_pr_name(outbuf, pp->euser, pp->euid);
 }
 static int pr_fuser(char *restrict const outbuf, const proc_t *restrict const pp){
-    int width = COLWID;
-
-    if(user_is_number)
-        return snprintf(outbuf, COLWID, "%d", pp->fuid);
-    if (strlen(pp->fuser)>max_rightward)
-        width = max_rightward;
-    return snprintf(outbuf, width, "%s", pp->fuser);
+  return do_pr_name(outbuf, pp->fuser, pp->fuid);
 }
 static int pr_suser(char *restrict const outbuf, const proc_t *restrict const pp){
-    int width = COLWID;
-
-    if(user_is_number)
-        return snprintf(outbuf, COLWID, "%d", pp->suid);
-    if (strlen(pp->suser)>max_rightward)
-        width = max_rightward;
-    return snprintf(outbuf, width, "%s", pp->suser);
+  return do_pr_name(outbuf, pp->suser, pp->suid);
 }
+
+static int pr_egroup(char *restrict const outbuf, const proc_t *restrict const pp){
+  return do_pr_name(outbuf, pp->egroup, pp->egid);
+}
+static int pr_rgroup(char *restrict const outbuf, const proc_t *restrict const pp){
+  return do_pr_name(outbuf, pp->rgroup, pp->rgid);
+}
+static int pr_fgroup(char *restrict const outbuf, const proc_t *restrict const pp){
+  return do_pr_name(outbuf, pp->fgroup, pp->fgid);
+}
+static int pr_sgroup(char *restrict const outbuf, const proc_t *restrict const pp){
+  return do_pr_name(outbuf, pp->sgroup, pp->sgid);
+}
+
+//////////////////////////////////////////////////////////////////////////////////
 
 // TID tid LWP lwp SPID spid
 static int pr_thread(char *restrict const outbuf, const proc_t *restrict const pp){
