@@ -544,11 +544,11 @@ static int one_proc(proc_t * p)
 	printf("%u:   %s\n", p->tgid, cmdbuf);
 
 	if (x_option || X_option || c_option) {
-		sprintf(buf, "/proc/%u/smaps", p->tgid);
+		snprintf(buf, sizeof buf, "/proc/%u/smaps", p->tgid);
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	} else {
-		sprintf(buf, "/proc/%u/maps", p->tgid);
+		snprintf(buf, sizeof buf, "/proc/%u/maps", p->tgid);
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	}
