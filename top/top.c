@@ -3884,7 +3884,6 @@ default_or_error:
 #ifdef RCFILE_NOERR
 {  RCF_t rcdef = DEF_RCFILE;
    int i;
-   fclose(fp);
    Rc = rcdef;
    for (i = 0 ; i < GROUPSMAX; i++)
       Winstk[i].rc  = Rc.win[i];
