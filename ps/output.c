@@ -1066,7 +1066,7 @@ static int sr_context ( const proc_t* P, const proc_t* Q ) {
       free(ctxt_Q);
       ctxt_Q = (char *) calloc(1, len);
       if ( ctxt_Q != NULL ) {
-	rv = security_sid_to_context(Q->sid, (security_context_t) ctxt_Q, &len);
+	rv = security_sid_to_context(Q->secsid, (security_context_t) ctxt_Q, &len);
 	if ( rv ) {
 	  free(ctxt_P);
 	  free(ctxt_Q);

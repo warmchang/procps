@@ -131,7 +131,7 @@ typedef struct proc_t {
 	exit_signal,	/* might not be SIGCHLD */
 	processor;      /* current (or most recent?) CPU */
 #ifdef FLASK_LINUX
-    security_id_t sid;
+    security_id_t secsid;
 #endif
 } proc_t;
 
