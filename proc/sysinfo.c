@@ -443,7 +443,7 @@ static int compare_vm_table_structs(const void *a, const void *b){
 // see include/linux/page-flags.h and mm/page_alloc.c
 unsigned long vm_nr_dirty;           // dirty writable pages
 unsigned long vm_nr_writeback;       // pages under writeback
-unsigned long vm_nr_pagecache;       // pages in pagecache
+unsigned long vm_nr_pagecache;       // pages in pagecache -- gone in 2.5.66+ kernels
 unsigned long vm_nr_page_table_pages;// pages used for pagetables
 unsigned long vm_nr_reverse_maps;    // includes PageDirect
 unsigned long vm_nr_mapped;          // mapped into pagetables
@@ -479,7 +479,7 @@ void vminfo(void){
   {"nr_dirty",            &vm_nr_dirty},           // page version of meminfo Dirty
   {"nr_mapped",           &vm_nr_mapped},          // page version of meminfo Mapped
   {"nr_page_table_pages", &vm_nr_page_table_pages},// same as meminfo PageTables
-  {"nr_pagecache",        &vm_nr_pagecache},
+  {"nr_pagecache",        &vm_nr_pagecache},       // gone in 2.5.66+ kernels
   {"nr_reverse_maps",     &vm_nr_reverse_maps},    // page version of meminfo ReverseMaps
   {"nr_slab",             &vm_nr_slab},            // page version of meminfo Slab
   {"nr_writeback",        &vm_nr_writeback},       // page version of meminfo Writeback

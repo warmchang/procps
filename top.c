@@ -3141,13 +3141,6 @@ static void framehlp (int wix, int max)
          * (the CURSOR is STUCK in just the RIGHT place, know what I)
          * (mean?  Huh, "doesn't DO MUCH"!  Never, EVER think or say)
          * (THAT about THIS function again, Ok?  Good that's better.)
-         *
-         * (ps. we ARE the UNEQUALED justification KING of COMMENTS!)
-         * (No, I don't mean significance/relevance, only alignment.)
-         *
-         * (What's that?  Are you sure?  Old main's REALLY GOOD too?)
-         * (You say he even JUSTIFIES comments in his FUNCTION BODY?)
-         * (Jeeze, how COULD I have known?  That sob's NOT IN SCOPE!)
          */
 static void frame_make (void)
 {
@@ -3196,30 +3189,10 @@ static void frame_make (void)
 }
 
 
-        /*
-         * Darling, you DO look simply MARVELOUS -- have you been dieting?
-         * Or maybe it's because YOU and WINDOWS seem such a HAPPY couple.
-         *
-         * Of course NO.  Not THOSE deathly BLUE WINDOWS!  I mean your 'A'
-         * mode (alt display) windows.  Yes, yes those completely OPTIONAL
-         * ones.  We ALL know you'd NEVER FORCE that interface on ANY user
-         * - unlike You-Know-Who!  Well I've got to run.  But you're doing
-         * it just SPLENDIDLY!  You go right on doing it EXACTLY the SAME!
-         */
 int main (int dont_care_argc, char **argv)
 {
    (void)dont_care_argc;
    before(*argv);
-  /*
-   Ok, she's gone now.  Don't you mind her, she means well but yes, she is
-   a bit of a busy-body.  Always playing the matchmaker role, trying to do
-   away with unmarried windows and bachelors.  So, back to business buddy!
-
-   You're hungry, you said?  How'd you like a sandwich?  No, no, no -- not
-   the usual slopped together, hacked up illogic.  I'm talkin' a carefully
-   reasoned, artfully crafted, extremely capable, well behaved executable!
-
-   Well then, here, try THIS sandwich:  */
                                         //                 +-------------+
    windows_stage1();                    //                 top (sic) slice
    configs_read();                      //                 > spread etc, <
@@ -3261,7 +3234,11 @@ int main (int dont_care_argc, char **argv)
          if(file_flags==-1) file_flags=0;
          fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK|file_flags);
          // check 1st, in case tv zeroed (by sig handler) before it got set
-         if (chin(0, &c, 1) <= 0) select(1, &fs, NULL, NULL, &tv);
+         if (chin(0, &c, 1) <= 0) {
+            fcntl(STDIN_FILENO, F_SETFL, file_flags);
+            select(1, &fs, NULL, NULL, &tv);
+         }
+         fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK|file_flags);
          if (chin(0, &c, 1) > 0) {
             fcntl(STDIN_FILENO, F_SETFL, file_flags);
             do_key((unsigned)c);
@@ -3271,31 +3248,5 @@ int main (int dont_care_argc, char **argv)
       }
    }
 
-  /*
-   (listen before we return, aren't you sort of sad for old 'frame_make'?)
-   (so, uh, why don't we just move this main guy to near the beginning of)
-   (the C source file.  then that poor old function would be sure to have)
-   (at least a chance at scopin' us out, ya know what i mean?  so what do)
-   (ya think?  all things considered, would that be a proper thing to do?)
-
-   Now there's an EXCELLENT idea!  After all, SOME programmers DO code the
-   main function ANY OLD PLACE they feel like.  And in doing THAT, they're
-   helping to keep those that FOLLOW out of mischief, busy HUNTING for the
-   <bleepin'> thing.  Further, by moving it we can contribute to PROTOTYPE
-   PROLIFERATION for every function main calls.  Don't you KNOW that those
-   declarations OFTEN LINGER, usually long AFTER the REAL definitions have
-   DISAPPEARED, since programs do evolve?  Yep that's a GREAT idea you got
-   there, NICE GOING!  But, here's an opposing view: ANYONE who'd put main
-   ANYWHERE such that its LOCATION cannot be REACHED with JUST 1 KEYSTROKE
-   better turn in their Coding_Badge and Pocket_Protector then -- BE GONE!
-   The main function has only ONE proper HOME: always the LAST function in
-   that C Listing.  End-of-Story, No-More-Discussion, so BE QUIET already!
-
-   \---------------------------------------------------------------------/
-   Sheeesh, didn't that doofus know the return statement can't be executed
-   or that we end via a caught signal?  Oh Lordy, I is DROWNING in morons!
-   They done REACHED clear up to my OUTER braces!  We's surely DOOMED now!
-   /---------------------------------------------------------------------\
-  */
    return 0;
 }
