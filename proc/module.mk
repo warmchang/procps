@@ -65,14 +65,9 @@ $(lib)/$(SONAME) : proc/$(SONAME)
 #	$(install) --mode a=r $< $@
 
 
-# CUSTOM c -> o rule so that command-line has minimal whitespace
-%.o : %.c
-	$(strip $(CC) $(LIB_CFLAGS) -c $<)
-
-
 proc/version.o:	proc/version.c proc/version.h
 ifdef MINORVERSION
-	$(strip $(CC) $(LIB_CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c -o $@ $<)
+	$(strip $(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c -o $@ $<)
 else
-	$(strip $(CC) $(LIB_CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -c -o $@ $<)
+	$(strip $(CC) $(CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -c -o $@ $<)
 endif
