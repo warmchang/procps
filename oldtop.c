@@ -116,7 +116,7 @@
 #define PUTP(x) (tputs(x,1,putchar))
 #define BAD_INPUT -30
 
-#include "top.h"  /* new header for top specific things */
+#include "oldtop.h"  /* new header for top specific things */
 
 static int *cpu_mapping;
 
