@@ -1052,7 +1052,7 @@ static int pr_context(char *restrict const outbuf, const proc_t *restrict const 
   if(unlikely(num_read<=0)) goto fail;
   outbuf[num_read] = '\0';
 
-  len = strspn(outbuf, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:_0123456789");
+  len = strspn(outbuf, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:_0123456789/^");
   if(!len) goto fail;
   outbuf[len] = '\0';
   return len;
