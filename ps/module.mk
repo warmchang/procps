@@ -6,7 +6,7 @@ INSTALL += $(bin)ps
 CLEAN += ps/ps ps/debug
 
 # a directory for cleaning
-DIRS += ps
+DIRS += ps/
 
 # a file to create
 ALL += ps/ps
@@ -23,7 +23,7 @@ ps/debug: $(PSOBJ) stacktrace.o $(LIBPROC)
 	$(CC) -o $@ $^ -lefence
 
 $(PSOBJ): %.o: ps/%.c ps/common.h proc/$(SONAME)
-#	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) -c $(CFLAGS) $< -o $@
 
 ps/stacktrace.o: ps/stacktrace.c
 

@@ -27,7 +27,7 @@ LIBOBJ :=  $(LIBSRC:.c=.o)
 # Clean away all output files, .depend, and symlinks.
 # Use wildcards in case the version has changed.
 CLEAN += proc/.depend proc/lib*.so* proc/lib*.a $(LIBOBJ)
-DIRS  += proc
+DIRS  += proc/
 
 #proc/lib$(NAME).a: $(LIBOBJ)
 #	$(AR) rcs $@ $^
@@ -40,7 +40,10 @@ proc/$(SONAME): $(LIBOBJ)
 # AUTOMATIC DEPENDENCY GENERATION -- GCC AND GNUMAKE DEPENDENT
 proc/.depend: $(LIBSRC) $(LIBHDR)
 	$(strip $(CC) $(LIB_CFLAGS) -MM -MG $(LIBSRC) > $@)
+
+ifneq ($(MAKECMDGOALS),clean)
 -include proc/.depend
+endif
 
 
 $(lib)/$(SONAME) : proc/$(SONAME)
@@ -63,7 +66,7 @@ $(lib)/$(SONAME) : proc/$(SONAME)
 
 proc/version.o:	proc/version.c proc/version.h
 ifdef MINORVERSION
-	$(strip $(CC) $(LIB_CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c proc/version.c)
+	$(strip $(CC) $(LIB_CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c -o $@ $<)
 else
-	$(strip $(CC) $(LIB_CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -c proc/version.c)
+	$(strip $(CC) $(LIB_CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -c -o $@ $<)
 endif
