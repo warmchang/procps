@@ -371,7 +371,6 @@ static void bye_bye (int eno, const char *str)
       , (unsigned)Hertz, sizeof(Hertz), sizeof(Hertz) * 8
       , Page_size, Cpu_tot, sizeof(proc_t)
       , sizeof(CPU_t), sizeof(HST_t), Page_size / sizeof(HST_t)
-      , Crufty_rcf ? "Thar be dogshit - turn off the fan!" : "Whew, shoes clean."
 #ifdef PRETENDNOCAP
       , "dumb"
 #else
@@ -1125,7 +1124,7 @@ static FLD_t Fieldstab[] = {
    { "UuJj", "nFLT ",       "%4.4s ",    4, SK_no, SF(FLT), "Page Fault count",     L_stat   },
    { "VvSs", "nDRT ",       "%4.4s ",    4, SK_no, SF(DRT), "Dirty Pages count",    L_statm  },
 #ifdef USE_LIB_STA3
-   { "WwVv", "STA ",        "%3.3s ",   -1,    -1, SF(STA), "Process Status",       L_status },
+   { "WwVv", "STA ",        "%3.3s ",   -1,    -1, SF(STA), "Process Status",       L_stat   },
 #else
    { "WwVv", "S ",          "%c ",      -1,    -1, SF(STA), "Process Status",       L_EITHER },
 #endif
@@ -1722,7 +1721,7 @@ static void parse_args (char **args)
       .  bunched args are actually handled properly and none are ignored
       .  we tolerate NO whitespace and NO switches -- maybe too tolerant? */
    static const char usage[] =
-      " -hv | -bcisS -d delay -n iterations -p pid [,pid ...]";
+      " -hv | -bcisS -d delay -n iterations [-u user | -U user] -p pid [,pid ...]";
    float tmp_delay = MAXFLOAT;
    char *p;
 
