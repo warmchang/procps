@@ -1,4 +1,4 @@
-.ig igEND
+.ig
 . manual page for NEW top
 . Copyright (c) 2002, by:      JC Warner & Associates, Ltd.
 .
@@ -10,7 +10,6 @@
 .   all .ig sections, including this one
 .   DIFFERENCES / New Features
 .   STUPID TRICKS Sampler
-.   NOTES and Rantings
 .   AUTHOR
 .
 . A copy of the Free Documentation License is included in the section
@@ -19,8 +18,7 @@
 . [ that section is found near the end of this document & ]
 . [ can be made printable by disabling the .ig directive! ]
 .
-.igEND
-
+..
 .\" Setup ////////////////////////////////////////////////////////////////
 \#  ** Comment out '.nr' or set to 0 to eliminate WIDTH fiddlin' !
 .nr half_xtra 4
@@ -147,135 +145,65 @@ and used when reading and writing a \*(CF.
 
 
 .\" ----------------------------------------------------------------------
-.SH DIFFERENCES / New Features
-.\" ----------------------------------------------------------------------
-With no basis for comparison, those new to \*(ME might want to skip
-to the next section.
-For those who have used a prior version, fasten your seat-belts
-and hold on tight as we review the features of \*(US.
-Details regarding their exploitation will be covered in later sections.
-
-.\" ......................................................................
-.SS Expanded Configurable Display Support
-.New
-In an SMP environment, screen height may be insufficient to simultaneously
-accommodate all \*(Pu states plus a meaningful \*(TD.
-So with \*(Us, you can alternate between a\fB summary\fR display or one
-showing\fB each \*(Pu\fR separately.
-No longer must this choice be irrevocably made at startup.
-
-.New
-There are new fields and with \*(Us,\fB any\fR field is selectable for sorting.
-Plus, your sorted column can be\fB instantly reversed\fR with just a
-single keystroke.
-
-.New
-You may optionally apply 2 distinct types of\fB highlighting\fR to
-running\fB tasks\fR and/or\fB sorted columns\fR.
-With \*(Us, you'll be able to instantly spot running tasks and always
-know the current sort field.
-
-.New
-While you could continue to use the more familiar (and boring)\fB
-monochrome display\fR, you might want to try \*(Us's new\fB color display\fR.
-You can even create your own\fB unique colors\fR used in\fI summaries\fR,\fI
-messages\fR,\fI headings\fR and\fI tasks\fR, each of which can be made\fB
-persistent\fR until you choose to change them.
-
-.New
-Up to\fB four separate windows\fR can be displayed simultaneously,
-giving you four separate ways to\fB sort\fI and\fB view\fR the tasks
-currently cluttering up your system.
-You could have one view by\fB pids\fR, another by\fB \*(Pu usage\fR, yet another
-showing\fB memory consumption\fR.
-You get the idea...
-
-Each window comes with pre-configured (but user configurable)\fB fields\fR
-and you can\fB size\fR each window individually.
-
-Virtually every one of \*(Us's options (summaries, fields, colors, sorted column,
-etc.) is\fB separately configurable\fR for each of those four windows.
-
-Heck, you can even\fB change\fR a window's name, if you don't care for
-\*(Me's choices.
-Your changes will be reflected not only when you're in what \*(Me calls\fB
-\*(AM\fR but also on his special new 'Windows' help screen.
-
-And, [ ** Drum-Roll + Ta-Da ** ] with just one keystroke you can
-quickly\fB switch\fR between full-screen and multiple window modes!
-Or, with a different keystroke, toggle a single window \*F for now,
-then \*O again later!!
-
-.ce 2
-( come on, NONE of that's really TRUE, is it? )
-( ** you betcha' it is, AND there's MORE ! ** )
-
-.\" ......................................................................
-.SS Enhanced Field/Column Management
-.New
-Many Field/Column names have been changed to make them more intuitive,
-more self-descriptive.
-And with \*(Us you won't be fooled with field choices that are "not yet
-implemented".
-
-.New
-Task memory statistics are more meaningful\fI and\fR more accurate\fR.
-
-.New
-You'll finally have complete\fB display integrity\fR regardless of field
-selections, their order or screen width.
-And\fB that\fR means the\fI command\fR column no longer need be kept as the
-right-most field, lest your screen turn to <bleep> when all the following
-columns get misaligned.
-
-.\" ......................................................................
-.SS Customization Flexibility
-.New
-.I All\fR of your configuration choices can be\fB preserved\fR in a
-personal \*(CF, including any changes made on a per-window basis.
-Thus, once you personalize things they\fB remain personalized\fR until
-you decide to change them again.
-This \*(Me has been completely cured of:
-.Rjb 2
- i-cant-remember-so-please-do-that-all-over-again
- ( and again, and again ... )
-.Rje
-
-The bottom line is this:\ \ if you save your configuration before quitting
-\*(Me, upon restart the display will appear\fB exactly\fR as you left it.
-And\fB that\fR means you no longer have to keep \*(Me running
-until-the-end-of-time (ok, a long time anyway), lest your customizations
-go bye-bye.
-
-.New
-You have complete program\fB naming freedom\fR with no internal ties to a
-specific personal \*(CF.
-Symbolic links could be used to establish different \*(CFs reflecting
-the different personalities of your customized "\*(Mes", under whatever
-aliases you've used.
-
-Thus, you could have an alias for running \*(Me in 'Batch mode', another for
-when you work from the Linux console and maybe a third used with X-Windows.
-All of that, yet still just a single binary image!
-
-.\" ......................................................................
-.SS What?\fR\ \ A\fB Stupid Tricks\fR Section??
-.New
-Given all the enhanced capability of \*(Us, why not have a stupid tricks
-section?
-
-Just remember, \*(Us will never judge you, just support you.
-Ultimately, you'll decide when the time's right to sock-it-to-\fBm'self\fR
-and actually try that stuff!
-
-
-.\" ----------------------------------------------------------------------
-.SH 0. OVERVIEW, Operation and Documentation
+.SH 0. OVERVIEW, Documentation and Operation
 .\" ----------------------------------------------------------------------
 .Scr
-When you start \*(Us for the first time, you'll be presented with the traditional
-screen elements: 1) Summary Area; 2) Message/Prompt Line; 3) Columns Header;
-4) Task Area.
+Listed below are the remaining topics in this document.
+Be advised that none of these topics need be read now, or studied later,
+for a successful\fB close-encounter-of-the-1st-kind\fR with \*(Us.
+
+You need remember just the\fB help key\fR ('h' or '?') to survive
+\*(EM nay, prosper!
+What about quitting, you ask?
+Well, of course there's the 'q' \*(CI, but then \*(Me does quite well
+with\fB signals\fR.
+So just zap him with the traditional \fI^C\fR when you're done.
+.br
+Oh, almost forgot...
+
+You could use \*(Me's own '\fBk\fR' command, to sock-it-to-\fBhisself\fR.
+.Rjb 3
+ ( He actually enjoys that one, really! )
+ ( He sees suicide as a chance to rest; )
+ ( confronted-with-death, top'll laugh! )
+.Rje
+
+Remaining Table of Contents
+    1.\fB COMMAND\-LINE Options\fR
+    2.\fB FIELDS / Columns\fR
+       a. DESCRIPTIONS of Fields
+       b. SELECTING and ORDERING Columns
+    3.\fB INTERACTIVE Commands\fR
+       a. GLOBAL Commands
+       b. SUMMARY Area Commands
+       c. TASK Area Commands
+       d. COLOR Mapping
+    4.\fB ALTERNATE\-DISPLAY Mode\fR
+       a. WINDOWS Overview
+       b. COMMANDS for Windows
+       c. EXAMPLES of Windows
+          -*- The 'A' Mode Command Toggle -*-
+          -*- STACKIN' & WHACKIN' Windows -*-
+          -*- ALL TOGETHER Now, Window(s) -*-
+    5.\fB FILES\fR
+       a. SYSTEM Configuration File
+       b. PERSONAL Configuration File
+    6.\fB DIFFERENCES / New Features\fR
+       a. User Interface Etiquette
+       b. Expanded Configurable Display Support
+       c. Enhanced Field/Column Management
+       d. Customization Flexibility
+    7.\fB STUPID TRICKS Sampler\fR
+       a. Kernel Magic
+       b. Bouncing Windows
+       c. The Big Bird Window
+       lastly,\fB the usual\fR...
+    8. BUGS, 9. HISTORY Former top, 10. AUTHOR, 11. SEE ALSO
+
+.Scr
+When you start \*(Us for the first time, you'll be presented with the
+traditional screen elements: 1) Summary Area; 2) Message/Prompt Line;
+3) Columns Header; 4) Task Area.
 But even out-of-the-box, there are numerous subtle differences, compared to
 the former top.
 
@@ -304,8 +232,7 @@ Precious horizontal space is no longer squandered.
 All of that, however, is just the tip of the old iceberg.
 So please, do not touch that dial!
 You may, however, peruse the following screen representation before we
-acknowledge \*(Us's default settings and the topics which follow
-in this document...
+acknowledge \*(Us's default settings ...
 
 .Img
                       +\fB--------------------------------------\fR+
@@ -363,60 +290,6 @@ command line\fR \*(EM a subject soon to be dealt with.
        'y' - Row hilite         On\ \ (yes, running tasks)
        'z' - color/mono         \fBOff\fR\ (no, colors)
 
-Listed below are the remaining topics in this document.
-Be advised that none of these topics need be read now, or studied later,
-for a successful\fB close-encounter-of-the-1st-kind\fR with \*(Us.
-
-You need remember just the\fB help key\fR ('h' or '?') to survive
-\*(EM nay, prosper!
-What about quitting, you ask?
-Well, of course there's the 'q' \*(CI, but then \*(Me does quite well
-with\fB signals\fR.
-So just zap him with the traditional \fI^C\fR when you're done.
-.br
-Oh, almost forgot...
-
-You could use \*(Me's own '\fBk\fR' command, to sock-it-to-\fBhisself\fR.
-.Rjb 4
- ( He actually ENJOYS that one, really! )
- ( He sees SUICIDE as a chance to rest; )
- ( confronted-with-death, top'll LAUGH! )
-
- ( ooh, should 'k' be in stupid tricks? )
-.Rje
-
-Remaining Table of Contents
-    1.\fB COMMAND\-LINE Options\fR
-    2.\fB FIELDS / Columns\fR
-       a. DESCRIPTIONS of Fields
-       b. SELECTING and ORDERING Columns
-    3.\fB INTERACTIVE Commands\fR
-       a. GLOBAL Commands
-       b. SUMMARY Area Commands
-       c. TASK Area Commands
-       d. COLOR Mapping
-    4.\fB ALTERNATE\-DISPLAY Mode\fR
-       a. WINDOWS Overview
-       b. COMMANDS for Windows
-       c. EXAMPLES of Windows
-          -*- The 'A' Mode Command Toggle -*-
-          -*- STACKIN' & WHACKIN' Windows -*-
-          -*- ALL TOGETHER Now, Window(s) -*-
-    5.\fB FILES\fR
-       a. SYSTEM Configuration File
-       b. PERSONAL Configuration File
-    6.\fB STUPID TRICKS Sampler\fR
-       a. Kernel Magic
-       b. Bouncing Windows
-       c. The Big Bird Window
-    7.\fB NOTES and Rantings\fR
-       a. The top Binary
-       b. Comparing Performance
-       c. Cost of Stuff
-       d. The top Sources
-          -*- Rant On, and on -*-
-       lastly,\fB the usual\fR...
-    8. BUGS, 9. HISTORY Former top, 10. AUTHOR, 11. SEE ALSO
 
 .\" ----------------------------------------------------------------------
 .SH 1. COMMAND-LINE Options
@@ -1560,7 +1433,133 @@ personal \*(CF to the current directory, subject to permissions.
 
 
 .\" ----------------------------------------------------------------------
-.SH 6. STUPID TRICKS Sampler
+.SH 6. DIFFERENCES / New Features
+.\" ----------------------------------------------------------------------
+The following summarizes differences between \*(US and your former \*(Me.
+It was based on procps-2.0.7.
+
+.\" ......................................................................
+.SS 6a. User Interface Etiquette
+.New
+Input and output are more carefully implemented.
+You won't be subjected to 4 - 5 'Unknown command' messages should you press the
+wrong key.
+
+.New
+You need suffer a confirmation message only when the results of a command
+are not obvious by their effects on the display.
+
+.New
+The Help screen will no longer overflow, even when running with a
+24 row xterm (vt100).
+
+.New
+The fields selection/ordering screens do not carelessly destroy important
+information through unintended line wraps.
+
+.\" ......................................................................
+.SS 6b. Expanded Configurable Display Support
+.New
+With \*(Us, you can alternate between a\fB summary\fR display or one
+showing\fB each \*(Pu\fR separately.
+No longer must this choice be irrevocably made at startup.
+
+.New
+There are new fields and with \*(Us,\fB any\fR field is selectable for sorting.
+Plus, your sorted column can be\fB instantly reversed\fR with just a
+single keystroke.
+
+.New
+You may optionally apply 2 distinct types of\fB highlighting\fR to
+running\fB tasks\fR and/or\fB sorted columns\fR.
+With \*(Us, you'll be able to instantly spot running tasks and always
+know the current sort field.
+
+.New
+While you could continue to use the more familiar (and boring)\fB
+monochrome display\fR, you might want to try \*(Us's new\fB color display\fR.
+You can even create your own\fB unique colors\fR used in\fI summaries\fR,\fI
+messages\fR,\fI headings\fR and\fI tasks\fR, each of which can be made\fB
+persistent\fR until you choose to change them.
+
+.New
+Up to\fB four separate windows\fR can be displayed simultaneously,
+giving you four separate ways to\fB sort\fI and\fB view\fR the tasks
+currently cluttering up your system.
+You could have one view by\fB pids\fR, another by\fB \*(Pu usage\fR, yet another
+showing\fB memory consumption\fR.
+You get the idea...
+
+.New
+Each window comes with pre-configured (but user configurable)\fB fields\fR
+and you can\fB size\fR each window individually.
+
+.New
+Virtually every one of \*(Us's options (summaries, fields, colors, sorted column,
+etc.) is\fB separately configurable\fR for each of those four windows.
+
+Heck, you can even\fB change\fR a window's name, if you don't care for
+\*(Me's choices.
+Your changes will be reflected not only when you're in what \*(Me calls\fB
+\*(AM\fR but also on his special new 'Windows' help screen.
+
+.New
+And, [ ** Drum-Roll + Ta-Da ** ] with just one keystroke you can
+quickly\fB switch\fR between full-screen and multiple window modes!
+Or, with a different keystroke, toggle a single window \*F for now,
+then \*O again later!!
+
+.\" ......................................................................
+.SS 6c. Enhanced Field/Column Management
+.New
+Many Field/Column names have been changed to make them more intuitive,
+more self-descriptive.
+And with \*(Us you won't be fooled with field choices that are "not yet
+implemented".
+
+.New
+Task memory statistics are more meaningful\fI and\fR more accurate\fR.
+
+.New
+You'll finally have complete\fB display integrity\fR regardless of field
+selections, their order or screen width.
+And\fB that\fR means the\fI command\fR column no longer need be kept as the
+right-most field, lest your screen turn to <bleep> when all the following
+columns get misaligned.
+
+.\" ......................................................................
+.SS 6d.Customization Flexibility
+.New
+You have complete program\fB naming freedom\fR with no internal ties to a
+specific personal \*(CF.
+Symbolic links could be used to establish different \*(CFs reflecting
+the different personalities of your customized "\*(Mes", under whatever
+aliases you've used.
+
+Thus, you could have an alias for running \*(Me in 'Batch mode', another for
+when you work from the Linux console and maybe a third used with X-Windows.
+All of that, yet still just a single binary image!
+
+.New
+.I All\fR of your configuration choices can be\fB preserved\fR in a
+personal \*(CF, including any changes made on a per-window basis.
+Thus, once you personalize things they\fB remain personalized\fR until
+you decide to change them again.
+This \*(Me has been completely cured of:
+.Rjb 2
+ i-cant-remember-so-please-do-that-all-over-again
+ ( and again, and again ... )
+.Rje
+
+The bottom line is this:\ \ if you save your configuration before quitting
+\*(Me, upon restart the display will appear\fB exactly\fR as you left it.
+And\fB that\fR means you no longer have to keep \*(Me running
+until-the-end-of-time (ok, a long time anyway), lest your customizations
+go bye-bye.
+
+
+.\" ----------------------------------------------------------------------
+.SH 7. STUPID TRICKS Sampler
 .\" ----------------------------------------------------------------------
 With this task/process viewer, lots of things become\fB possible\fR.
 Of course, that doesn't mean they should become\fB probable\fR.
@@ -1571,7 +1570,7 @@ Many of these 'tricks' work best when you give ol' \*(Me a scheduling boost
 the authority).
 
 .\" ......................................................................
-.SS 6a. Kernel Magic
+.SS 7a. Kernel Magic
 .\" sorry, just can't help it -- don't ya love the sound of this?
 For these stupid tricks, \*(Me needs \*(FM.
 .\" ( apparently static was a potential concern )
@@ -1612,7 +1611,7 @@ Of course, a much better display is achieved by toggling idle processes \*F
 and using normal/visible colors.
 
 .\" ......................................................................
-.SS 6b. Bouncing Windows
+.SS 7b. Bouncing Windows
 For these stupid tricks, \*(Me needs \*(AM.
 
 .New
@@ -1636,7 +1635,7 @@ Display all 4 windows and for each, in turn, set idle processes to \*F.
 You've just entered the "\fBextreme bounce\fR" zone.  
 
 .\" ......................................................................
-.SS 6c. The Big Bird Window
+.SS 7c. The Big Bird Window
 This stupid trick also requires \*(AM.
 
 .New
@@ -1648,252 +1647,6 @@ When they've all been displaced, toggle between all visible/invisible windows.
 Then ponder this:
 .br
    is \*(Me fibbing or telling honestly your imposed truth?
-
-
-.\" ----------------------------------------------------------------------
-.SH 7. NOTES and Rantings
-.\" ----------------------------------------------------------------------
-.\" ......................................................................
-.SS 7a. The top Binary
-.PP
-To whom it may (should) concern:  \*(Us, even with its vastly expanded
-capabilities, is only slightly larger than the old top.
-Were it not for extensive help text and additional sort callbacks, it would
-be smaller.
-.Rjb 6
- Throw source carelessly at objectives, it\fI will\fR
- produce equally careless machine instructions.
- example: (num_\fBpages\fR - an_\fBaddress\fR)/1024 == duh?
- kicker: \fBdocument\fR result as broken, due to\fB elf\fR!
- \fB----------------------------------------------\fR
- I know you're out there, are you getting this?
-.Rje
-
-.PP
-Now, as for all those new capabilities like colors and windows and
-highlighting, you'd expect \*(Us to be the "mother of all pigs"
-compared to old \*(Me \*(EM right?
-
-Yea, with \*(US expect following piglets:
-.br
-\ \. A\fI smaller\fR virtual image and resident footprint
-.br
-\ \. Slightly\fI fewer\fR major page faults
-.br
-\ \. A\fI large reduction\fR in minor page faults for SMP
-.br
-\ \. The\fI same\fR or better response time
-.br
-\ \. The same or\fI even less\fR \*(PU costs
-
-Ideally any comparison of the old and new \*(Me should be against the same
-libproc format (32-bit or 64-bit tics) and run in a true or simulated SMP
-environment (producing separate \*(PU stats).
-This latter requirement will coax old \*(Me into handling his own '/proc/stat'
-access \*(EM something \*(Us always does, but with less cost.
-
-.\" ......................................................................
-.SS 7b. Comparing Performance
-.PP
-Even with equivalent libraries and '/proc/stat' access, it's difficult to
-accurately compare tops using their \fBown displays\fR.
-Results for these \*(Pu\-intensive programs (who frequently exceed their
-time-slice) generally show a wide disparity in %CPU.
-This is due to differing call patterns, kernel preemptions and the timing
-of process snapshots.
-For\fI slightly\fR better results, start each program with the following
-commands:
-     ./old-top -d 0.5
-     nice -n-10 ./new-top -d 0.4
-
-While actually putting \*(Us at a performance disadvantage, the higher
-scheduling priority and staggered timing will\fI periodically\fR yield
-a somewhat truer picture.
-You could even reverse those roles and get similar results.
-
-The most\fI consistent\fR performance results will be obtained 'off-line',
-using your shell's time pipe or the time program itself.
-And even in a single processor environment or without equivalent libraries,
-total cpu costs (user time + system time) are similar.
-
-However, \*(Us's \*(Pu costs ARE influenced by the capabilities you choose
-to exploit, even if they don't SEEM to be reflected in such timings.
-So let's examine some...
-
-.\" ......................................................................
-.SS 7c. Cost of Stuff
-.TP 3
-.B Colors Cost\fR \*(EM Nada (almost).
-Once the terminfo strings are built (\fIat\fR and\fI during\fR a user's behest)
-they are SAVED with each window's stuff.
-And while there will be extra tty escape sequences transmitted because
-of colors, it makes no difference which 'char *' is actually used.
-
-.TP 3
-.B Highlighting Cost\fR \*(EM Nada (maybe), or blame it on Rio.
-On second thought, let's blame it on the user.
-
-For\fI row\fR highlighting, there is only the cost of those extra tty
-escape sequences (same as for colors).
-For\fI column\fR highlighting, there is a fairly\fB significant cost\fR
-associated with column transition management combined with even more
-tty output.
-These increased costs are incurred on every \*(TD row.
-
-Sooo... hey USER \*(EM \fIdo NOT highlight COLUMNS\fR.
-You shouldn't need a constant visual reminder of your chosen sort field.
-However, if you forget which field \*(Me is sorting it can serve as a
-quick visual reminder.
-
-.TP 3
-.B Windows Cost\fR \*(EM Nada (if just 1 window).
-If more than 1 window, almost certainly NOT Nada so blame it on reality.
-Colors are not an issue, but those sort fields are.
-
-If we could trust the user to always select the same 'c' state, 'S' state and
-sort field (hey, why ya got multiple windows then user, huh?) AND if we can
-trust someone to recompile \*(Me with a #define enabled, then we\fB could\fR
-achieve 'Nada'.
-
-Ok, not likely, so we're gonna' be doing multiple sorts.
-BUT, it may not be as bad as it sounds.
-Those sorts involve\fB pointers only\fR.
-And,\fI that's as good as it gets\fR\ !\ \ (right Mr. N?)
-
-.\" ......................................................................
-.SS 7d. The top Sources
-.TP 3
-.B top.h\fR
-Unlike his predecessor, \*(Us has a proper header file.
-It contains ONLY declarations, NOT definitions.
-And there are several conditionals present to help with further customizations
-and experimentation.
-All are \*F by default.
-
-.TP 3
-.B top.c\fR
-Hopefully proves that source code needn't be a disorganized, misaligned MESS.
-And, WHO says a source listing shouldn't occasionally make you SMILE?
-Why, \*(Me.c even does a darn good job of following the suggestions in a
-document hardly anybody seems to observe.
-
-.Rjb 3
- \fRthe\fB Linus Torvalds CodingStyle\fR guidelines ...
- \fR-*- -*- -*- on indentation + etc. -*- -*- -*-\fR
- \fRwell\fB almost all\fR, except for those\fB stinkin'\fR...
-.Rje
-
-.P
-I suppose even Linus Torvalds is entitled to err now and again.
-How so you say?
-Tabs, me' bucko,\fB stinkin' tabs\fR!
-That, plus the simplistic position regarding\fB indentation\fR espoused
-in that otherwise excellent document.
-
-.\" ......................................................................
-.SS -*- Rant On, and on -*-
-Let's compare two approaches to the tab/indentation issue with a small
-code sample using tabs then spaces.
-This snippet happens to be the key to \*(Me's use of\fB dynamic\fR colors
-on many\fB static\fR screens, while also ensuring screen width isn't
-exceeded so as to avoid line wraps.
-We'll view just the first 40 columns, assuming one wishes to occasionally
-provide\fI comments\fR to the right of actual code (you\fB do\fR, don't you?).
-
-Then YOU decide which approach makes the most SENSE!
-
-.ImgC
-.B Stinkin' Tabs\fR versus\fB Spaces\fR: the Linus way
- Hey, where'd my +\fB----\fR+\fB----\fR1\fB----\fR+\fB----\fR2\fB----\fR+\fB----\fR3\fB----\fR+\fB----\fR4+
- many\fB code\fR lines |                while (*sub_beg) {      :
- up-and-gone-to? |                        switch (*sub_end:
-                 |                                case 0: :
- Gosh, wonder if |   \e Tabs Induced /                     :
- Linus expects a |                                case 1: :
- fellow to stick |   +\fB WASTE-Lands\fR! +             case 5: :
- his\fB comments\fR on |                                        :
- the\fB left\fR side?! |   + Not a Living +                     :
-                 |                                        :
- Ever see source |   +\fB line-of-code\fR +                     :
- with\fI not enough\fR |                                        :
- whitespace; and |   / To Be Found! \e                     :
- this is\fB better\fR? |                                default::
-                 |                                        :
- Oh\fI lookie here\fR, \e                        }               :
- there's just a\fB hint\fR of\fI REAL\fB code! ---->  if (0 >= room) b\fR:
-                 /                } /* end: while 'subtrin:
-                 +\fB----------------------------------------\fR+
-.Rje
-
-.ImgC
-.B Spaces\fR versus\fB Stinkin' Tabs\fR: the other way
-                  +\fB----\fR+\fB----\fR1\fB----\fR+\fB----\fR2\fB----\fR+\fB----\fR3\fB----\fR+\fB----\fR4+
- Wow, now\fB this\fR is |      while (*sub_beg) {                :\fB
- Visible\fR hackin'! |         switch (*sub_end) {            :
-                  |            case 0:                     :
- Hmmm, wonder\fB how\fR |               *(sub_end + 1) = '\e0';   :\fB
- many\fR programmers |            case 1: case 2: case 3: case:\fB
- read\fR those lines |            case 5: case 6: case 7: case:
- from the\fB LEFT\fR to |               cap = Curwin->captab[(int:
- the\fB RIGHT\fR?  This |               *sub_end = '\e0';         :
- "innovation" may |               printf("%s%.*s%s", cap, r:\fI
- possibly benefit\fR |               room -= (sub_end - sub_be:
- those particular |               sub_beg = ++sub_end;     :
- kinds of people, |               break;                   :
- you agree?  Duh! |            default:                    :
-                  |               ++sub_end;               :
- AND, there\fI might\fR |         }                              :
- even be room for |         if (0 >= room) break;          :
- unseen\fB comments\fR! |      } /* end: while 'subtrings' */    :
-                  +\fB----------------------------------------\fR+
-.Rje
-
-.PP
-.B Gosh, I just don't KNOW \*(EM\fB it's such a TOUGH choice...
-
-Oh you\fB Stinkin' Tabs\fR:\ \ correspondence, Who-Cares; documentation,
-Oh-Alright; even scripts, Well-If-You-Must.
-But you have NO place within the\fB code-space\fR of MY C-source
-listing!
-So\fB be gone\fR already!!
-
-.\" ......................................................................
-.SS In Summation...
-.Jbu
-If you want to use tabs to the\fB right\fR of the\fB code\fR, go-for-it.
-But PLEASE, not ever in the C-source\fB code-space\fR, thank-you-kindly.
-Just use\fB three little ol' spaces\fR (exactly 3, no-more, no-less)
-where you WOULD have stuck a stinkin' tab.
-
-We'll get far more READABLE files, much less WAISTED precious horizontal space,
-more consistent CURSORS and on, and ON, AND ON!
-Plus, without those awful *the-devil's-own-handiwork*, the
-aforementioned document need NEVER speak of their EVILS again.
-
-.Jbu
-Lastly, since SPACES (not stinkin' tabs) are SO beneficial, maybe
-we should use just a\fB few more\fR of 'em.
-Some of those C-thingies are VERY sensitive \*(EM they don't like being TOUCHED
-by any other syntax element!
-Which ones?
-Why these guys:
-
-   \fBbraces\fR, \fBreserved words\fR and\fB binary operators\fR
-   ( it's the TRUTH, they told me themselves )
-
-.Jp
-It's so EASY to keep 'em HAPPY!
-And lo-and-behold, the combination of <\fBsp\fR>thingy<\fBsp\fR> turns out
-to be a darn effective\fB bug repellent\fR, too.
-So much so, one can actually code while TOTALLY NUDE yet still avoid
-them ol' bug-bytes (sic-sic)!
-.Rjb 5
- step
- down_from
- me_punctilious
- soap-box_once_again
- [1 +5 +5 +5 = huh?]
-.Rje
 
 
 .\" ----------------------------------------------------------------------
@@ -1953,7 +1706,7 @@ With invaluable help from:
 
 
 .\" ----------------------------------------------------------------------
-.ig CCend
+.ig
 .rj 1
 \-*-
 .PD
@@ -1972,19 +1725,16 @@ DIFFERENCES\ /\ New Features;
 .br
 STUPID\ TRICKS\ Sampler;
 .br
-NOTES\ and\ Rantings;
-.br
 AUTHOR
 .in
 A copy of the license is included in the section entitled
 \(dqGNU Free Documentation License\(dq.
-.CCend
+..
 .
 .\" end: active doc ||||||||||||||||||||||||||||||||||||||||||||||||||
 .\" ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-
-.ig GFDLend
+.ig
 .\" ----------------------------------------------------------------------
 .SH GNU Free Documentation License
 Version 1.1, March 2000
@@ -2339,6 +2089,6 @@ to permit their use in free software.
 .SH \fRend of\fB GNU Free Documentation License
 .IP ""
 .PP
-.GFDLend
+..
 .\" end: gfdl license ||||||||||||||||||||||||||||||||||||||||||||||||
 .\" ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

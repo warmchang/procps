@@ -1,0 +1,249 @@
+
+Ok, ok, I yield -- much of what follows has been removed from the manual page
+and packaged separately as this README.  Which means, of course, that absolutely
+nobody will ever read it.
+
+If that proves to be wrong, I hope the individual will drop a line to:
+       procps-feedback@lists.sourceforge.net
+
+Just say "Ha, I read it!" and the author will die happy (but not right away).
+
+Thanks.
+
+
+## Table of Contents ---------------------------------------------------##
+   NOTES and Rantings
+   CUSTOMIZING the Sources
+
+
+## 7. NOTES and Rantings -----------------------------------------------##
+   7a. The top Binary
+       To  whom  it may (should) concern:  this top, even with its vastly
+       expanded capabilities, is only slightly larger than the  old  top.
+       Were it not for extensive help text and additional sort callbacks,
+       it would be smaller.
+                       Throw source carelessly at objectives, it will
+                       produce equally careless machine instructions.
+                       example: (num_pages - an_address)/1024 == duh?
+                       kicker: document result as broken, due to elf!
+                       ----------------------------------------------
+                       I know you're out there, are you getting this?
+
+       Now, as for all those new capabilities like colors and windows and
+       highlighting, you'd expect this top to be the "mother of all pigs"
+       compared to old top  --  right?
+
+       Yea, with this top expect following piglets:
+        . A smaller virtual image and resident footprint
+        . Slightly fewer major page faults
+        . A large reduction in minor page faults for SMP
+        . The same or better response time
+        . The same or even less CPU costs
+
+       Ideally any comparison of the old and new top  should  be  against
+       the  same libproc format (32-bit or 64-bit tics) and run in a true
+       or simulated SMP environment (producing separate CPU stats).  This
+       latter  requirement  will  coax  old  top  into  handling  his own
+       '/proc/stat' access  --  something this top always does, but  with
+       less cost.
+
+   7b. Comparing Performance
+       Even  with equivalent libraries and '/proc/stat' access, it's dif-
+       ficult to  accurately  compare  tops  using  their  own  displays.
+       Results  for  these  cpu-intensive programs (who frequently exceed
+       their time-slice) generally show a wide disparity in  %CPU.   This
+       is due to differing call patterns, kernel preemptions and the tim-
+       ing of process snapshots.  For slightly better results, start each
+       program with the following commands:
+            ./old-top -d 0.5
+            nice -n-10 ./new-top -d 0.4
+
+       While actually putting this top at a performance disadvantage, the
+       higher scheduling priority and staggered timing will  periodically
+       yield  a  somewhat  truer  picture.   You could even reverse those
+       roles and get similar results.
+
+       The most consistent performance results  will  be  obtained  'off-
+       line',  using  your  shell's time pipe or the time program itself.
+       And even in a single processor environment or  without  equivalent
+       libraries,  total cpu costs (user time + system time) are similar.
+
+       However, this top's cpu costs ARE influenced by  the  capabilities
+       you  choose to exploit, even if they don't SEEM to be reflected in
+       such timings.  So let's examine some...
+
+   7c. Cost of Stuff
+       Colors Cost  --  Nada (almost).
+          Once the terminfo strings are built (at  and  during  a  user's
+          behest)  they  are  SAVED  with each window's stuff.  And while
+          there will be extra tty escape sequences transmitted because of
+          colors, it makes no difference which 'char *' is actually used.
+
+       Highlighting Cost  --  Nada (maybe), or blame it on Rio.
+          On second thought, let's blame it on the user.
+
+          For row highlighting, there is only the cost of those extra tty
+          escape  sequences  (same as for colors).  For column highlight-
+          ing, there is a fairly significant cost associated with  column
+          transition  management  combined  with  even  more  tty output.
+          These increased costs are incurred on every task display row.
+
+          Sooo... hey USER  --  do NOT highlight COLUMNS.  You  shouldn't
+          need  a  constant  visual  reminder  of your chosen sort field.
+          However, if you forget which field top is sorting it can  serve
+          as a quick visual reminder.
+
+       Windows Cost  --  Nada (if just 1 window).
+          If more than 1 window, almost certainly NOT Nada so blame it on
+          reality.  Colors are not an issue, but those sort fields are.
+
+          If we could trust the user to always select the same 'c' state,
+          'S' state and sort field (hey, why ya got multiple windows then
+          user, huh?) AND if we can trust someone to recompile top with a
+          #define enabled, then we could achieve 'Nada'.
+
+          Ok,  not likely, so we're gonna' be doing multiple sorts.  BUT,
+          it may not be as bad as it sounds.  Those sorts involve  point-
+          ers only.  And, that's as good as it gets !  (right Mr. N?)
+
+   7d. The top Sources
+       top.h
+          Unlike  his predecessor, this top has a proper header file.  It
+          contains ONLY declarations, NOT  definitions.   And  there  are
+          several  conditionals  present  to help with further customiza-
+          tions and experimentation.  All are Off by default.
+
+       top.c
+          Hopefully proves that source code needn't  be  a  disorganized,
+          misaligned  MESS.   And,  WHO  says  a source listing shouldn't
+          occasionally make you SMILE?  Why, top.c even does a darn  good
+          job  of  following the suggestions in a document hardly anybody
+          seems to observe.
+
+                        the Linus Torvalds CodingStyle guidelines ...
+                        -*- -*- -*- on indentation + etc. -*- -*- -*-
+                        well almost all, except for those stinkin'...
+
+       I suppose even Linus Torvalds is entitled to err  now  and  again.
+       How  so  you say?  Tabs, me' bucko, stinkin' tabs!  That, plus the
+       simplistic position regarding indentation espoused in that  other-
+       wise excellent document.
+
+   -*- Rant On, and on -*-
+       Let's  compare  two approaches to the tab/indentation issue with a
+       small code sample using tabs then spaces.  This snippet happens to
+       be  the key to top's use of dynamic colors on many static screens,
+       while also ensuring screen width isn't exceeded  so  as  to  avoid
+       line  wraps.   We'll  view just the first 40 columns, assuming one
+       wishes to occasionally provide comments to  the  right  of  actual
+       code (you do, don't you?).
+
+       Then YOU decide which approach makes the most SENSE!
+
+                           Stinkin' Tabs versus Spaces: the Linus way
+           Hey, where'd my +----+----1----+----2----+----3----+----4+
+           many code lines |                while (*sub_beg) {      :
+           up-and-gone-to? |                        switch (*sub_end:
+                           |                                case 0: :
+           Gosh, wonder if |   \ Tabs Induced /                     :
+           Linus expects a |                                case 1: :
+           fellow to stick |   + WASTE-Lands! +             case 5: :
+           his comments on |                                        :
+           the left side?! |   + Not a Living +                     :
+                           |                                        :
+           Ever see source |   + line-of-code +                     :
+           with not enough |                                        :
+           whitespace; and |   / To Be Found! \                     :
+           this is better? |                                default::
+                           |                                        :
+           Oh lookie here, \                        }               :
+           there's just a hint of REAL code! ---->  if (0 >= room) b:
+                           /                } /* end: while 'subtrin:
+                           +----------------------------------------+
+
+                           Spaces versus Stinkin' Tabs: the other way
+                           +----+----1----+----2----+----3----+----4+
+          Wow, now this is |      while (*sub_beg) {                :
+          Visible hackin'! |         switch (*sub_end) {            :
+                           |            case 0:                     :
+          Hmmm, wonder how |               *(sub_end + 1) = '\0';   :
+          many programmers |            case 1: case 2: case 3: case:
+          read those lines |            case 5: case 6: case 7: case:
+          from the LEFT to |               cap = Curwin->captab[(int:
+          the RIGHT?  This |               *sub_end = '\0';         :
+          "innovation" may |               printf("%s%.*s%s", cap, r:
+          possibly benefit |               room -= (sub_end - sub_be:
+          those particular |               sub_beg = ++sub_end;     :
+          kinds of people, |               break;                   :
+          you agree?  Duh! |            default:                    :
+                           |               ++sub_end;               :
+          AND, there might |         }                              :
+          even be room for |         if (0 >= room) break;          :
+          unseen comments! |      } /* end: while 'subtrings' */    :
+                           +----------------------------------------+
+
+       Gosh, I just don't KNOW  --  it's such a TOUGH choice...
+
+       Oh  you  Stinkin' Tabs:  correspondence, Who-Cares; documentation,
+       Oh-Alright; even scripts, Well-If-You-Must.  But you have NO place
+       within  the  code-space  of  MY  C-source  listing!   So  be  gone
+       already!!
+
+   In Summation...
+       -  If you want to use tabs to the right of  the  code,  go-for-it.
+          But  PLEASE,  not  ever  in the C-source code-space, thank-you-
+          kindly.  Just use three little ol' spaces (exactly 3,  no-more,
+          no-less) where you WOULD have stuck a stinkin' tab.
+
+          We'll  get  far more READABLE files, much less WAISTED precious
+          horizontal space, more consistent CURSORS and on, and  ON,  AND
+          ON!  Plus, without those awful *the-devil's-own-handiwork*, the
+          aforementioned document need NEVER speak of their EVILS  again.
+
+       -  Lastly,  since  SPACES  (not  stinkin' tabs) are SO beneficial,
+          maybe we should use just a few more of 'em.  Some of  those  C-
+          thingies  are VERY sensitive  --  they don't like being TOUCHED
+          by any other syntax element!  Which ones?  Why these guys:
+
+             braces, reserved words and binary operators
+             ( it's the TRUTH, they told me themselves )
+
+          It's so EASY to keep 'em HAPPY!  And lo-and-behold, the  combi-
+          nation  of  <sp>thingy<sp> turns out to be a darn effective bug
+          repellent, too.  So  much  so,  one  can  actually  code  while
+          TOTALLY NUDE yet still avoid them ol' bug-bytes (sic-sic)!
+                                                                 step
+                                                            down_from
+                                                       me_punctilious
+                                                  soap-box_once_again
+                                                  [1 +5 +5 +5 = huh?]
+
+
+## CUSTOMIZING the Sources ---------------------------------------------##
+
+Listed below are the conditionals available should you wish to recompile
+this top.  The author's favorite is:  PRETEND4CPUS.
+
+That's the #define allowing you to simulate an SMP environment, and
+(perhaps) impress your friends.  It's currently set to display four
+separate CPUs, but could easily be changed.
+
+   Caution: do NOT use this provision in an effort to impress someone
+            who truly possesses such a machine!  The fact that all 4
+            CPUs show the same dynamic results will likely have the
+            opposite effect.
+
+Enjoy...
+
+
+//#define ATEOJ_REPORT            /* report a bunch of stuff, at end-of-job  */
+//#define CASEUP_HEXES            /* show any hex values in upper case       */
+//#define CASEUP_SCALE            /* show scaled time/num suffix upper case  */
+//#define CASEUP_SUMMK            /* show memory summary kilobytes with 'K'  */
+//#define POSIX_CMDLIN            /* use '[ ]' for kernel threads, not '( )' */
+//#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
+//#define PRETENDNOCAP            /* use a terminal without essential caps   */
+//#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
+//#define USE_LIB_STA3            /* use lib status (3 ch) vs. proc_t (1 ch) */
+//#define WARN_NOT_SMP            /* restrict '1' & 'I' commands to true smp */
+

@@ -58,7 +58,7 @@ MANFILES := $(man1)uptime.1 $(man1)tload.1 $(man1)free.1 $(man1)w.1 \
             $(man5)sysctl.conf.5 $(man8)vmstat.8 $(man8)sysctl.8
 
 TARFILES := AUTHORS BUGS NEWS README TODO COPYING COPYING.LIB ChangeLog \
-            Makefile Makefile.noam procps.lsm procps.spec v t \
+            Makefile Makefile.noam procps.lsm procps.spec v t README.top \
             minimal.c $(notdir $(SCRFILES)) $(notdir $(MANFILES)) \
             uptime.c tload.c free.c w.c top.c vmstat.c watch.c skill.c \
             sysctl.c pgrep.c top.h
