@@ -5,16 +5,16 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include "procps.h"
+#include "output.h"
 
-#if 0
+#if 1
 /* output a string, converting unprintables to octal as we go, and stopping after
    processing max chars of output (accounting for expansion due to octal rep).
 */
 unsigned print_str(FILE *restrict file, const char *restrict const s, unsigned max) {
     unsigned i;
-    for (i=0; s[i] && i < max; i++)
-	if (isprint(s[i]) || s[i] == ' ')
+    for (i=0; likely(s[i]) && likely(i<max); i++)
+	if (likely(isprint(s[i]) || s[i] == ' '))
 	    fputc(s[i], file);
 	else {
 	    if (max > i+3) {
@@ -33,9 +33,9 @@ unsigned print_str(FILE *restrict file, const char *restrict const s, unsigned m
 */
 unsigned print_strlist(FILE *restrict file, const char *restrict const *restrict strs, unsigned max) {
     unsigned i, n;
-    for (n=0; *strs && n < max; strs++) {
+    for (n=0; *strs && n<max; strs++) {
 	for (i=0; strs[0][i] && n+i < max; i++)
-	    if (isprint(strs[0][i]) || strs[0][i] == ' ')
+	    if (likely(isprint(strs[0][i]) || strs[0][i] == ' '))
 		fputc(strs[0][i], file);
 	    else {
 		if (max > n+i+3) {

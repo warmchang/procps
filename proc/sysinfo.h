@@ -1,7 +1,9 @@
-#ifndef SYSINFO_H
-#define SYSINFO_H
+#ifndef PROC_SYSINFO_H
+#define PROC_SYSINFO_H
 
 #include "procps.h"
+
+EXTERN_C_BEGIN
 
 extern unsigned long long Hertz;   /* clock tick frequency */
 extern long smp_num_cpus;     /* number of CPUs */
@@ -77,4 +79,5 @@ extern unsigned vm_allocstall;
 
 extern void vminfo(void);
 
+EXTERN_C_END
 #endif /* SYSINFO_H */

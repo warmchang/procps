@@ -10,6 +10,8 @@
 #endif
 #include "version.h"
 #include "readproc.h"
+#include "alloc.h"
+#include "pwcache.h"
 #include "devname.h"
 #include "procps.h"
 #include <stdio.h>

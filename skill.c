@@ -21,6 +21,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "proc/pwcache.h"
 #include "proc/sig.h"
 #include "proc/devname.h"
 #include "proc/procps.h"  /* char *user_from_uid(uid_t uid) */

@@ -17,6 +17,8 @@
 #include <fs_secure.h>
 #endif
 
+EXTERN_C_BEGIN
+
 /*
  ld	cutime, cstime, priority, nice, timeout, it_real_value, rss,
  c	state,
@@ -221,4 +223,5 @@ extern void freeproc(proc_t* p);
 #define PROC_SPARE_3 0x04000000
 #define PROC_SPARE_4 0x08000000
 
+EXTERN_C_END
 #endif

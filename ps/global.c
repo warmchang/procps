@@ -20,6 +20,7 @@
 #include "common.h"
 
 #include <sys/sysmacros.h>
+#include "../proc/wchan.h"
 #include "../proc/version.h"
 #include "../proc/sysinfo.h"
 

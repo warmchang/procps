@@ -38,6 +38,7 @@
 #include <values.h>
 
 #include "proc/devname.h"
+#include "proc/wchan.h"
 #include "proc/procps.h"
 #include "proc/readproc.h"
 #include "proc/sig.h"

@@ -25,7 +25,7 @@
 #include <signal.h>   /* catch signals */
 
 #include "common.h"
-#include "../proc/procps.h"
+#include "../proc/wchan.h"
 #include "../proc/version.h"
 #include "../proc/readproc.h"
 #include "../proc/sysinfo.h"

@@ -8,6 +8,7 @@
 #include "proc/readproc.h"
 #include "proc/devname.h"
 #include "proc/procps.h"
+#include "proc/output.h"
 #include "proc/sysinfo.h"
 #include <ctype.h>
 #include <errno.h>
@@ -143,7 +144,7 @@ static const proc_t *getproc(const utmp_t *restrict const u, const char *restric
     *found_utpid = 0;
     for(; *pptr; pptr++) {
 	const proc_t *restrict const tmp = *pptr;
-	if(tmp->pid == u->ut_pid) {
+	if(unlikely(tmp->pid == u->ut_pid)) {
 	    *found_utpid = 1;
 	    best = tmp;
 	}
@@ -212,8 +213,8 @@ static void showinfo(utmp_t *u, int formtype, int maxcmd, int from) {
 	else
 	    print_time_ival7(idletime(tty), 0, stdout);
     }
-    fputs("  ", stdout);
-    if (best) {
+    fputs(" ", stdout);
+    if (likely(best)) {
 	if (best->cmdline)
 	    print_strlist(stdout, best->cmdline, maxcmd);
 	else
@@ -276,17 +277,27 @@ int main(int argc, char **argv) {
 	if (from)
 	    printf("FROM            ");
 	if (longform)
-	    printf("  LOGIN@   IDLE   JCPU   PCPU  WHAT\n");
+	    printf("  LOGIN@   IDLE   JCPU   PCPU WHAT\n");
 	else
-	    printf("   IDLE  WHAT\n");
+	    printf("   IDLE WHAT\n");
     }
 
     utmpname(UTMP_FILE);
     setutent();
-    while ((u=getutent())) {
- 	if (u->ut_type == USER_PROCESS &&
- 	    (user ? !strncmp(u->ut_user, user, USERSZ) : *u->ut_user))
- 	    showinfo(u, longform, maxcmd, from);
+    if (user) {
+	for (;;) {
+	    u = getutent();
+	    if (unlikely(!u)) break;
+	    if (u->ut_type != USER_PROCESS) continue;
+ 	    if (!strncmp(u->ut_user, user, USERSZ)) showinfo(u, longform, maxcmd, from);
+	}
+    } else {
+	for (;;) {
+	    u = getutent();
+	    if (unlikely(!u)) break;
+	    if (u->ut_type != USER_PROCESS) continue;
+ 	    if (*u->ut_user) showinfo(u, longform, maxcmd, from);
+	}
     }
     endutent();
 

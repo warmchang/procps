@@ -10,12 +10,13 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <pwd.h>
-#include "procps.h"
+#include "alloc.h"
+#include "pwcache.h"
 #include <grp.h>
 
 // might as well fill cache lines... else we waste memory anyway
 
-#define	HASHSIZE	32			/* power of 2 */
+#define	HASHSIZE	64		/* power of 2 */
 #define	HASH(x)		((x) & (HASHSIZE - 1))
 
 #define NAMESIZE	20

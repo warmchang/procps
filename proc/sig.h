@@ -1,3 +1,5 @@
+#ifndef PROC_SIG_H
+#define PROC_SIG_H
 /*
  * Copyright 1998 by Albert Cahalan; all rights resered.
  * This file may be used subject to the terms and conditions of the
@@ -11,6 +13,8 @@
 
 #include "procps.h"
 
+EXTERN_C_BEGIN
+
 /* return -1 on failure */
 extern int signal_name_to_number(const char *restrict name);
 
@@ -19,3 +23,6 @@ extern int print_given_signals(int argc, const char *restrict const *restrict ar
 extern void pretty_print_signals(void);
 
 extern void unix_print_signals(void);
+
+EXTERN_C_END
+#endif
