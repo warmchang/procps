@@ -524,7 +524,7 @@ void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff
   int need_vmstat_file = 0;
   int need_proc_scan = 0;
   const char* b;
-  buff[BUFFSIZE-1] = 0;  /* ensure null termination in buffer */
+  memset(buff, '\0', BUFFSIZE);  /* ensure null termination in buffer */
 
   if(fd){
     lseek(fd, 0L, SEEK_SET);
