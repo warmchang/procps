@@ -22,7 +22,9 @@
 //
 // PowerPC: Big ugly problem! Macs are popular. :-/
 //
-// Unknown: PA-RISC, zSeries, and x86-64
+// x86-64: Red Hat gets this right. Debian???
+//
+// Unknown: PA-RISC and zSeries
 //
 #if defined(k64test) || defined(__sparc__)  // || defined(__mips__) || defined(__powerpc__)
 #define KLONG long long    // not typedef; want "unsigned KLONG" to work

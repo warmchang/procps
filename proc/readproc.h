@@ -16,7 +16,7 @@
 
 EXTERN_C_BEGIN
 
-// ld	cutime, cstime, priority, nice, timeout, it_real_value, rss,
+// ld	cutime, cstime, priority, nice, timeout, alarm, rss,
 // c	state,
 // d	ppid, pgrp, session, tty, tpgid,
 // s	signal, blocked, sigignore, sigcatch,
@@ -73,7 +73,7 @@ typedef struct proc_t {
 	priority,	// stat            kernel scheduling priority
 	nice,		// stat            standard unix nice level of process
 	rss,		// stat            resident set size from /proc/#/stat (pages)
-	it_real_value,	// stat            ?
+	alarm,		// stat            ?
     // the next 7 members come from /proc/#/statm
 	size,		// statm           total # of pages of memory
 	resident,	// statm           number of resident set (non-swapped) pages (4k)

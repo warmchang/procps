@@ -230,10 +230,10 @@ static const char *set_personality(void){
 
   case_debian:  /* Toss this? They don't seem to care much. */
   case_gnu:
-    personality = PER_GOOD_o | PER_CUMUL_MARKED | PER_OLD_m;
+    personality = PER_GOOD_o | PER_OLD_m;
     prefer_bsd_defaults = 1;
     sysv_f_format  = "RD_f";
-    /* sysv_fl_format = "RD_fl"; */   /* Debian can't do this! */
+    /* sysv_fl_format = "RD_fl"; */   /* old Debian ps can't do this! */
     sysv_j_format  = "RD_j";
     sysv_l_format  = "RD_l";
     return NULL;

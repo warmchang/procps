@@ -334,7 +334,7 @@ ENTER(0x160);
        &P->utime, &P->stime, &P->cutime, &P->cstime,
        &P->priority, &P->nice,
        &P->nlwp,
-       &P->it_real_value,
+       &P->alarm,
        &P->start_time,
        &P->vsize,
        &P->rss,

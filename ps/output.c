@@ -120,7 +120,7 @@ CMP_SMALL(priority)                                             /* nice */
 CMP_SMALL(nlwp)
 CMP_SMALL(nice)                                                 /* priority */
 CMP_INT(rss)      /* resident set size from stat file */ /* vm_rss, resident */
-CMP_INT(it_real_value)
+CMP_INT(alarm)
 CMP_INT(size)      /* total pages */                     /* vm_size, vsize */
 CMP_INT(resident)  /* resident pages */                     /* vm_rss, rss */
 CMP_INT(share)     /* shared pages */
@@ -648,7 +648,7 @@ static int pr_bsdstart(char *restrict const outbuf, const proc_t *restrict const
 }
 
 static int pr_alarm(char *restrict const outbuf, const proc_t *restrict const pp){
-    return old_time_helper(outbuf, pp->it_real_value, 0ULL);
+    return old_time_helper(outbuf, pp->alarm, 0ULL);
 }
 
 /* HP-UX puts this in pages and uses "vsz" for kB */
@@ -998,7 +998,6 @@ fail:
 #define UNLIMITED CF_UNLIMITED
 #define WCHAN     CF_WCHAN  // left if text, right if numeric
 #define SIGNAL    CF_SIGNAL // right in 9, or 16 if room
-#define CUMUL     CF_CUMUL
 #define PIDMAX    CF_PIDMAX
 #define TO        CF_PRINT_THREAD_ONLY
 #define PO        CF_PRINT_PROCESS_ONLY
@@ -1034,10 +1033,10 @@ static const format_struct format_array[] = {
 {"acflg",     "ACFLG",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*acflag*/
 {"addr",      "ADDR",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
 {"addr_1",    "ADDR",    pr_nop,      sr_nop,     1,   0,    LNX, AN|LEFT},
-{"alarm",     "ALARM",   pr_alarm,    sr_it_real_value,5, 0, LNX, AN|RIGHT},
+{"alarm",     "ALARM",   pr_alarm,    sr_alarm,   5,   0,    LNX, AN|RIGHT},
 {"argc",      "ARGC",    pr_nop,      sr_nop,     4,   0,    LNX, PO|RIGHT},
-{"args",      "COMMAND", pr_args,     sr_nop,    16, ARG,    U98, PO|UNLIMITED}, /*command*/
-{"atime",     "TIME",    pr_time,     sr_nop,     8,   0,    SOE, ET|CUMUL|RIGHT}, /*cputime*/ /* was 6 wide */
+{"args",      "COMMAND", pr_args,     sr_cmd,    16, ARG,    U98, PO|UNLIMITED}, /*command*/
+{"atime",     "TIME",    pr_time,     sr_nop,     8,   0,    SOE, ET|RIGHT}, /*cputime*/ /* was 6 wide */
 {"blocked",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigmask*/
 {"bnd",       "BND",     pr_nop,      sr_nop,     1,   0,    AIX, TO|RIGHT},
 {"bsdstart",  "START",   pr_bsdstart, sr_nop,     6,   0,    LNX, AN|RIGHT},
@@ -1050,9 +1049,9 @@ static const format_struct format_array[] = {
 {"cmd",       "CMD",     pr_args,     sr_cmd,    16, ARG,    DEC, PO|UNLIMITED}, /*ucomm*/
 {"cmin_flt",  "-",       pr_nop,      sr_cmin_flt, 1,  0,    LNX, AN|RIGHT},
 {"cnswap",    "-",       pr_nop,      sr_nop,     1,   0,    LNX, AN|RIGHT},
-{"comm",      "COMMAND", pr_comm,     sr_nop,    16, COM,    U98, PO|UNLIMITED}, /*ucomm*/
-{"command",   "COMMAND", pr_args,     sr_nop,    16, ARG,    XXX, PO|UNLIMITED}, /*args*/
-{"context",   "CONTEXT", pr_context,  sr_nop,    40,   0,    LNX, ET|LEFT},
+{"comm",      "COMMAND", pr_comm,     sr_cmd,    16, COM,    U98, PO|UNLIMITED}, /*ucomm*/
+{"command",   "COMMAND", pr_args,     sr_cmd,    16, ARG,    XXX, PO|UNLIMITED}, /*args*/
+{"context",   "CONTEXT", pr_context,  sr_nop,    31,   0,    LNX, ET|LEFT},
 {"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, ET|RIGHT}, /*cpu*/
 {"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
 {"cputime",   "TIME",    pr_time,     sr_nop,     8,   0,    DEC, ET|RIGHT}, /*time*/
@@ -1060,7 +1059,7 @@ static const format_struct format_array[] = {
 {"cursig",    "CURSIG",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
 {"cutime",    "-",       pr_nop,      sr_cutime,  1,   0,    LNX, AN|RIGHT},
 {"cwd",       "CWD",     pr_nop,      sr_nop,     3,   0,    LNX, AN|LEFT},
-{"drs",       "DRS",     pr_drs,      sr_drs,     4, MEM,    LNX, PO|RIGHT},
+{"drs",       "DRS",     pr_drs,      sr_drs,     5, MEM,    LNX, PO|RIGHT},
 {"dsiz",      "DSIZ",    pr_dsiz,     sr_nop,     4,   0,    LNX, PO|RIGHT},
 {"egid",      "EGID",    pr_egid,     sr_egid,    5,   0,    LNX, ET|RIGHT},
 {"egroup",    "EGROUP",  pr_egroup,   sr_egroup,  8, GRP,    LNX, ET|USER},
@@ -1071,7 +1070,7 @@ static const format_struct format_array[] = {
 {"etime",     "ELAPSED", pr_etime,    sr_nop,    11,   0,    U98, AN|RIGHT}, /* was 7 wide */
 {"euid",      "EUID",    pr_euid,     sr_euid,    5,   0,    LNX, ET|RIGHT},
 {"euser",     "EUSER",   pr_euser,    sr_euser,   8, USR,    LNX, ET|USER},
-{"f",         "F",       pr_flag,     sr_nop,     1,   0,    XXX, ET|RIGHT}, /*flags*/
+{"f",         "F",       pr_flag,     sr_flags,   1,   0,    XXX, ET|RIGHT}, /*flags*/
 {"fgid",      "FGID",    pr_fgid,     sr_fgid,    5,   0,    LNX, ET|RIGHT},
 {"fgroup",    "FGROUP",  pr_fgroup,   sr_fgroup,  8, GRP,    LNX, ET|USER},
 {"flag",      "F",       pr_flag,     sr_flags,   1,   0,    DEC, ET|RIGHT},
@@ -1084,7 +1083,7 @@ static const format_struct format_array[] = {
 {"fuid",      "FUID",    pr_fuid,     sr_fuid,    5,   0,    LNX, ET|RIGHT},
 {"fuser",     "FUSER",   pr_fuser,    sr_fuser,   8, USR,    LNX, ET|USER},
 {"gid",       "GID",     pr_egid,     sr_egid,    5,   0,    SUN, ET|RIGHT},
-{"group",     "GROUP",   pr_egroup,   sr_egroup,  5, GRP,    U98, ET|USER}, /* was 8 wide */
+{"group",     "GROUP",   pr_egroup,   sr_egroup,  8, GRP,    U98, ET|USER},
 {"ignored",   "IGNORED", pr_sigignore,sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigignore*/
 {"inblk",     "INBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*inblock*/
 {"inblock",   "INBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*inblk*/
@@ -1092,7 +1091,7 @@ static const format_struct format_array[] = {
 {"jobc",      "JOBC",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
 {"ktrace",    "KTRACE",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
 {"ktracep",   "KTRACEP", pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
-{"label",     "LABEL",   pr_context,  sr_nop,    25,  0,     SGI, ET|LEFT},
+{"label",     "LABEL",   pr_context,  sr_nop,    31,  0,     SGI, ET|LEFT},
 {"lim",       "LIM",     pr_lim,      sr_rss_rlim, 5,  0,    BSD, AN|RIGHT},
 {"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, AN|LEFT}, /*logname*/   /* double check */
 {"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, AN|LEFT}, /*login*/
@@ -1109,9 +1108,9 @@ static const format_struct format_array[] = {
 {"m_size",    "SIZE",    pr_size,     sr_size,    5, MEM,    LNX, PO|RIGHT},
 {"m_swap",    "SWAP",    pr_nop,      sr_nop,     5,   0,    LNx, PO|RIGHT},
 {"m_trs",     "TRS",     pr_trs,      sr_trs,     5, MEM,    LNx, PO|RIGHT},
-{"maj_flt",   "MAJFL",   pr_majflt,   sr_maj_flt, 6,   0,    LNX, AN|CUMUL|RIGHT},
+{"maj_flt",   "MAJFL",   pr_majflt,   sr_maj_flt, 6,   0,    LNX, AN|RIGHT},
 {"majflt",    "MAJFLT",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
-{"min_flt",   "MINFL",   pr_minflt,   sr_min_flt, 6,   0,    LNX, AN|CUMUL|RIGHT},
+{"min_flt",   "MINFL",   pr_minflt,   sr_min_flt, 6,   0,    LNX, AN|RIGHT},
 {"minflt",    "MINFLT",  pr_minflt,   sr_min_flt, 6,   0,    XXX, AN|RIGHT},
 {"msgrcv",    "MSGRCV",  pr_nop,      sr_nop,     6,   0,    XXX, AN|RIGHT},
 {"msgsnd",    "MSGSND",  pr_nop,      sr_nop,     6,   0,    XXX, AN|RIGHT},
@@ -1131,7 +1130,7 @@ static const format_struct format_array[] = {
 {"oublock",   "OUBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*oublk*/
 {"p_ru",      "P_RU",    pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
 {"paddr",     "PADDR",   pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
-{"pagein",    "PAGEIN",  pr_majflt,   sr_nop,     6,   0,    XXX, AN|RIGHT},
+{"pagein",    "PAGEIN",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
 {"pcpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    U98, ET|RIGHT}, /*%cpu*/
 {"pending",   "PENDING", pr_sig,      sr_nop,     9,   0,    BSD, ET|SIGNAL}, /*sig*/
 {"pgid",      "PGID",    pr_pgid,     sr_pgrp,    5,   0,    U98, PO|PIDMAX|RIGHT},
@@ -1182,7 +1181,7 @@ static const format_struct format_array[] = {
 {"size",      "SZ",      pr_swapable, sr_swapable, 1,  0,    SCO, PO|RIGHT},
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, AN|RIGHT},
 {"spid",      "SPID",    pr_thread,   sr_tid,     5,   0,    SGI, TO|PIDMAX|RIGHT},
-{"stackp",    "STACKP",  pr_stackp,   sr_nop,     8,   0,    LNX, AN|RIGHT}, /*start_stack*/
+{"stackp",    "STACKP",  pr_stackp,   sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*start_stack*/
 {"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, AN|RIGHT},
 {"start_code", "S_CODE",  pr_nop,     sr_start_code, 8, 0,   LNx, PO|RIGHT},
 {"start_stack", "STACKP", pr_stackp,  sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*stackp*/
@@ -1190,7 +1189,7 @@ static const format_struct format_array[] = {
 {"stat",      "STAT",    pr_stat,     sr_state,   4,   0,    BSD, TO|LEFT}, /*state,s*/
 {"state",     "S",       pr_s,        sr_state,   1,   0,    XXX, TO|LEFT}, /*stat,s*/ /* was STAT */
 {"status",    "STATUS",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
-{"stime",     "STIME",   pr_stime,    sr_stime,   5,   0,    XXX, AN|/* CUMUL| */RIGHT}, /* was 6 wide */
+{"stime",     "STIME",   pr_stime,    sr_stime,   5,   0,    XXX, AN|RIGHT}, /* was 6 wide */
 {"suid",      "SUID",    pr_suid,     sr_suid,    5,   0,    LNx, ET|RIGHT},
 {"suser",     "SUSER",   pr_suser,    sr_suser,   8, USR,    LNx, ET|USER},
 {"svgid",     "SVGID",   pr_sgid,     sr_sgid,    5,   0,    XXX, ET|RIGHT},
@@ -1202,7 +1201,7 @@ static const format_struct format_array[] = {
 {"tdev",      "TDEV",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
 {"thcount",   "THCNT",   pr_nlwp,     sr_nlwp,    5,   0,    AIX, AN|RIGHT},
 {"tid",       "TID",     pr_thread,   sr_tid,     5,   0,    AIX, TO|PIDMAX|RIGHT},
-{"time",      "TIME",    pr_time,     sr_nop,     8,   0,    U98, ET|CUMUL|RIGHT}, /*cputime*/ /* was 6 wide */
+{"time",      "TIME",    pr_time,     sr_nop,     8,   0,    U98, ET|RIGHT}, /*cputime*/ /* was 6 wide */
 {"timeout",   "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
 {"tmout",     "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
 {"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
@@ -1218,17 +1217,17 @@ static const format_struct format_array[] = {
 {"tty8",      "TTY",     pr_tty8,     sr_tty,     8,   0,    LNX, PO|LEFT},
 {"u_procp",   "UPROCP",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
 {"ucmd",      "CMD",     pr_comm,     sr_cmd,    16, COM,    DEC, PO|UNLIMITED}, /*ucomm*/
-{"ucomm",     "COMMAND", pr_comm,     sr_nop,    16, COM,    XXX, PO|UNLIMITED}, /*comm*/
+{"ucomm",     "COMMAND", pr_comm,     sr_cmd,    16, COM,    XXX, PO|UNLIMITED}, /*comm*/
 {"uid",       "UID",     pr_euid,     sr_euid,    5,   0,    XXX, ET|RIGHT},
-{"uid_hack",  "UID",     pr_euser,    sr_nop,     8, USR,    XXX, ET|USER},
+{"uid_hack",  "UID",     pr_euser,    sr_euser,   8, USR,    XXX, ET|USER},
 {"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT},
-{"uname",     "USER",    pr_euser,    sr_euser,   8, USR,    DEC, AN|USER}, /* man page misspelling of user? */
+{"uname",     "USER",    pr_euser,    sr_euser,   8, USR,    DEC, ET|USER}, /* man page misspelling of user? */
 {"upr",       "UPR",     pr_nop,      sr_nop,     3,   0,    BSD, TO|RIGHT}, /*usrpri*/
 {"uprocp",    "-",       pr_nop,      sr_nop,     1,   0,    BSD, AN|RIGHT},
 {"user",      "USER",    pr_euser,    sr_euser,   8, USR,    U98, ET|USER}, /* BSD n forces this to UID */
 {"usertime",  "USER",    pr_nop,      sr_nop,     4,   0,    DEC, ET|RIGHT},
 {"usrpri",    "UPR",     pr_nop,      sr_nop,     3,   0,    DEC, TO|RIGHT}, /*upr*/
-{"utime",     "UTIME",   pr_nop,      sr_utime,   6,   0,    LNx, ET|CUMUL|RIGHT},
+{"utime",     "UTIME",   pr_nop,      sr_utime,   6,   0,    LNx, ET|RIGHT},
 {"vm_data",   "DATA",    pr_nop,      sr_vm_data, 5,   0,    LNx, PO|RIGHT},
 {"vm_exe",    "EXE",     pr_nop,      sr_vm_exe,  5,   0,    LNx, PO|RIGHT},
 {"vm_lib",    "LIB",     pr_nop,      sr_vm_lib,  5,   0,    LNx, PO|RIGHT},
@@ -1248,7 +1247,6 @@ static const format_struct format_array[] = {
 #undef UNLIMITED
 #undef WCHAN
 #undef SIGNAL
-#undef CUMUL
 #undef PIDMAX
 #undef PO
 #undef TO

@@ -75,11 +75,8 @@ Query optimizer, put cheap/required process selection first.
 
 Avoid reading both /proc/*/status and /proc/*/stat.
 
-Maybe ps should put a 'C' in front of fields when they are affected
-by cumulative mode. Debian ps did that. (move flag to common.h...)
-
 Support printing the client hostname (the FROM that w(1) uses) in place
-of a pty. Maybe do this when PS_PERSONALITY=linux.
+of a pty.
 
 Disambiguate narrow tty info. (/dev/tty7 == /dev/pts/7 now)
 1------8     1--4
@@ -119,10 +116,6 @@ output encoding: UTF8 --nul --null
 
 Make BSD formats use non-standard BSD time format, at least when it
 doesn't violate the "no whitespace" rule.
-
-Try to make -jl fit in 80 columns. Do we need more than 1000 pty devices,
-9 flag bits, etc.? (hmmm, Linux supports 2048 pty devices now, and we
-might also want to steal whitespace there when the time column overflows)
 
 Better unmangling of '?' as a tty. The shell destroys '?' when there
 is a filename that matches. If the argument seems like garbage,

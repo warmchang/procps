@@ -82,8 +82,7 @@
 #define CF_WCHAN                       5 // left if text, right if numeric
 #define CF_SIGNAL                      6 // right in 9, or 16 if screen_cols>107
 // Then the other flags
-#define CF_CUMUL              0x00000010 // mark cumulative (Summed) headers with 'C' */
-#define CF_PIDMAX             0x00000020 // react to pid_max
+#define CF_PIDMAX             0x00000010 // react to pid_max
 // Only one allowed; use separate bits to catch errors.
 #define CF_PRINT_THREAD_ONLY  0x10000000
 #define CF_PRINT_PROCESS_ONLY 0x20000000
@@ -111,14 +110,13 @@
 #define PER_BROKEN_o      0x0001
 #define PER_BSD_h         0x0002
 #define PER_BSD_m         0x0004
-#define PER_CUMUL_MARKED  0x0008
+#define PER_IRIX_l        0x0008
 #define PER_FORCE_BSD     0x0010
 #define PER_GOOD_o        0x0020
 #define PER_OLD_m         0x0040
 #define PER_NO_DEFAULT_g  0x0080
 #define PER_ZAP_ADDR      0x0100
 #define PER_SANE_USER     0x0200
-#define PER_IRIX_l        0x0400
 
 /* Simple selections by bit mask */
 #define SS_B_x 0x01

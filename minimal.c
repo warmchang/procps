@@ -38,7 +38,7 @@ static char P_cmd[16];
 static char P_state;
 static int P_ppid, P_pgrp, P_session, P_tty, P_tpgid;
 static unsigned long P_flags, P_min_flt, P_cmin_flt, P_maj_flt, P_cmaj_flt, P_utime, P_stime;
-static long P_cutime, P_cstime, P_priority, P_nice, P_timeout, P_it_real_value;
+static long P_cutime, P_cstime, P_priority, P_nice, P_timeout, P_alarm;
 static unsigned long P_start_time, P_vsize;
 static long P_rss;
 static unsigned long P_rss_rlim, P_start_code, P_end_code, P_start_stack, P_kstk_esp, P_kstk_eip;
@@ -306,7 +306,7 @@ static int stat2proc(int pid) {
        &P_state,
        &P_ppid, &P_pgrp, &P_session, &P_tty, &P_tpgid,
        &P_flags, &P_min_flt, &P_cmin_flt, &P_maj_flt, &P_cmaj_flt, &P_utime, &P_stime,
-       &P_cutime, &P_cstime, &P_priority, &P_nice, &P_timeout, &P_it_real_value,
+       &P_cutime, &P_cstime, &P_priority, &P_nice, &P_timeout, &P_alarm,
        &P_start_time, &P_vsize,
        &P_rss,
        &P_rss_rlim, &P_start_code, &P_end_code, &P_start_stack, &P_kstk_esp, &P_kstk_eip,
