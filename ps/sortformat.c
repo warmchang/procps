@@ -400,7 +400,7 @@ static const char *long_sort_parse(sf_node *sfn){
  * reparse as formatting codes.
  */
 static const char *verify_short_sort(const char *arg){
-  const char *all = "CGJKMNPRSTUcfgjkmnoprstuvy+-";
+  const char all[] = "CGJKMNPRSTUcfgjkmnoprstuvy+-";
   char checkoff[256];
   int i;
   const char *walk;

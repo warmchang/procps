@@ -119,7 +119,6 @@
 #include "top.h"  /* new header for top specific things */
 
 static int *cpu_mapping;
-static int nr_cpu;
 
 /*#######################################################################
  *####  Startup routines: parse_options, get_options,      ##############
@@ -242,12 +241,10 @@ static void get_options(void)
     char Options[256] = "";
     int i;
 
-    nr_cpu = sysconf (_SC_NPROCESSORS_ONLN);
-    if (nr_cpu < 1) nr_cpu = 1;
-    cpu_mapping = (int *) xmalloc (sizeof (int) * nr_cpu);
+    cpu_mapping = (int *) xmalloc (sizeof (int) * smp_num_cpus);
     /* read cpuname */
-    for (i=0; i< nr_cpu; i++) cpu_mapping[i]=i;
-    header_lines = 6 + nr_cpu;
+    for (i=0; i< smp_num_cpus; i++) cpu_mapping[i]=i;
+    header_lines = 6 + smp_num_cpus;
     fp = fopen(SYS_TOPRC, "r");
     if (fp != NULL) {
 	fgets(Options, 254, fp);
@@ -504,7 +501,7 @@ int main(int argc, char **argv)
     breakargv:
     }
     
-    if (nr_cpu > 1 && CPU_states)
+    if (smp_num_cpus > 1 && CPU_states)
       header_lines++;
 
     meminfo();  /* need kb_main_total value filled in */

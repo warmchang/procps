@@ -76,8 +76,8 @@ static const char *get_opt_arg(void){
 static const char *parse_pid(char *str, sel_union *ret){
   char *endp;
   unsigned long num;
-  static const char *pidrange  = "Process ID out of range.";
-  static const char *pidsyntax = "Process ID list syntax error.";
+  static const char pidrange[]  = "Process ID out of range.";
+  static const char pidsyntax[] = "Process ID list syntax error.";
   num = strtoul(str, &endp, 0);
   if(*endp != '\0')      return pidsyntax;
   if(num<1)              return pidrange;
@@ -90,8 +90,8 @@ static const char *parse_uid(char *str, sel_union *ret){
   struct passwd *passwd_data;
   char *endp;
   unsigned long num;
-  static const char *uidrange = "User ID out of range.";
-  static const char *uidexist = "User name does not exist.";
+  static const char uidrange[] = "User ID out of range.";
+  static const char uidexist[] = "User name does not exist.";
   num = strtoul(str, &endp, 0);
   if(*endp != '\0'){  /* hmmm, try as login name */
     passwd_data = getpwnam(str);
@@ -107,8 +107,8 @@ static const char *parse_gid(char *str, sel_union *ret){
   struct group *group_data;
   char *endp;
   unsigned long num;
-  static const char *gidrange = "Group ID out of range.";
-  static const char *gidexist = "Group name does not exist.";
+  static const char gidrange[] = "Group ID out of range.";
+  static const char gidexist[] = "Group name does not exist.";
   num = strtoul(str, &endp, 0);
   if(*endp != '\0'){  /* hmmm, try as login name */
     group_data = getgrnam(str);
@@ -127,8 +127,8 @@ static const char *parse_cmd(char *str, sel_union *ret){
 
 static const char *parse_tty(char *str, sel_union *ret){
   struct stat sbuf;
-  static const char *missing = "TTY could not be found.";
-  static const char *not_tty = "List member was not a TTY.";
+  static const char missing[] = "TTY could not be found.";
+  static const char not_tty[] = "List member was not a TTY.";
   char path[4096];
   if(str[0]=='/'){
     if(stat(str, &sbuf) >= 0) goto found_it;

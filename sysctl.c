@@ -39,33 +39,33 @@ static bool false = 0;
 /*
  *    Function Prototypes
  */
-int Usage(const char *name);
-void Preload(const char *filename);
-int WriteSetting(const char *setting);
-int ReadSetting(const char *setting);
-int DisplayAll(const char *path, bool ShowTableUtil);
+static int Usage(const char *name);
+static void Preload(const char *filename);
+static int WriteSetting(const char *setting);
+static int ReadSetting(const char *setting);
+static int DisplayAll(const char *path, bool ShowTableUtil);
 
 
 /*
  *    Globals...
  */
 
-const char *PROC_PATH = "/proc/sys/";
-const char *DEFAULT_PRELOAD = "/etc/sysctl.conf";
+static const char PROC_PATH[] = "/proc/sys/";
+static const char DEFAULT_PRELOAD[] = "/etc/sysctl.conf";
 static bool PrintName;
 static bool PrintNewline;
 
 /* error messages */
-const char *ERR_UNKNOWN_PARAMETER = "error: Unknown parameter '%s'\n";
-const char *ERR_MALFORMED_SETTING = "error: Malformed setting '%s'\n";
-const char *ERR_NO_EQUALS = "error: '%s' must be of the form name=value\n";
-const char *ERR_INVALID_KEY = "error: '%s' is an unknown key\n";
-const char *ERR_UNKNOWN_WRITING = "error: unknown error %d setting key '%s'\n";
-const char *ERR_UNKNOWN_READING = "error: unknown error %d reading key '%s'\n";
-const char *ERR_PERMISSION_DENIED = "error: permission denied on key '%s'\n";
-const char *ERR_OPENING_DIR = "error: unable to open directory '%s'\n";
-const char *ERR_PRELOAD_FILE = "error: unable to open preload file '%s'\n";
-const char *WARN_BAD_LINE = "warning: %s(%d): invalid syntax, continuing...\n";
+static const char ERR_UNKNOWN_PARAMETER[] = "error: Unknown parameter '%s'\n";
+static const char ERR_MALFORMED_SETTING[] = "error: Malformed setting '%s'\n";
+static const char ERR_NO_EQUALS[] = "error: '%s' must be of the form name=value\n";
+static const char ERR_INVALID_KEY[] = "error: '%s' is an unknown key\n";
+static const char ERR_UNKNOWN_WRITING[] = "error: unknown error %d setting key '%s'\n";
+static const char ERR_UNKNOWN_READING[] = "error: unknown error %d reading key '%s'\n";
+static const char ERR_PERMISSION_DENIED[] = "error: permission denied on key '%s'\n";
+static const char ERR_OPENING_DIR[] = "error: unable to open directory '%s'\n";
+static const char ERR_PRELOAD_FILE[] = "error: unable to open preload file '%s'\n";
+static const char WARN_BAD_LINE[] = "warning: %s(%d): invalid syntax, continuing...\n";
 
 
 static void slashdot(char *p, char old, char new){
@@ -85,11 +85,11 @@ static void slashdot(char *p, char old, char new){
  *
  */
 int main(int argc, char **argv) {
-const char *me = (const char *)basename(argv[0]);
-bool SwitchesAllowed = true;
-bool WriteMode = false;
-int ReturnCode = 0;
-const char *preloadfile = DEFAULT_PRELOAD;
+   const char *me = (const char *)basename(argv[0]);
+   bool SwitchesAllowed = true;
+   bool WriteMode = false;
+   int ReturnCode = 0;
+   const char *preloadfile = DEFAULT_PRELOAD;
 
    PrintName = true;
    PrintNewline = true;
@@ -154,13 +154,13 @@ return ReturnCode;
  *     Display the usage format
  *
  */
-int Usage(const char *name) {
+static int Usage(const char *name) {
    printf("usage:  %s [-n] variable ... \n"
           "        %s [-n] -w variable=value ... \n" 
           "        %s [-n] -a \n" 
           "        %s [-n] -p <file>   (default /etc/sysctl.conf) \n"
           "        %s [-n] -A\n", name, name, name, name, name);
-return -1;
+   return -1;
 }  /* end Usage() */
 
 
@@ -168,24 +168,24 @@ return -1;
  *     Strip the leading and trailing spaces from a string
  *
  */
-char *StripLeadingAndTrailingSpaces(char *oneline) {
-char *t;
+static char *StripLeadingAndTrailingSpaces(char *oneline) {
+   char *t;
 
-if (!oneline || !*oneline)
-   return oneline;
+   if (!oneline || !*oneline)
+      return oneline;
 
-t = oneline;
-t += strlen(oneline)-1;
+   t = oneline;
+   t += strlen(oneline)-1;
 
-while ((*t == ' ' || *t == '\t' || *t == '\n' || *t == '\r') && t != oneline)
-   *t-- = 0;
+   while ((*t==' ' || *t=='\t' || *t=='\n' || *t=='\r') && t!=oneline)
+      *t-- = 0;
 
-t = oneline;
+   t = oneline;
 
-while ((*t == ' ' || *t == '\t') && *t != 0)
-   t++;
+   while ((*t==' ' || *t=='\t') && *t!=0)
+      t++;
 
-return t;
+   return t;
 } /* end StripLeadingAndTrailingSpaces() */
 
 
@@ -195,13 +195,13 @@ return t;
  *           - we parse the file and then reform it (strip out whitespace)
  *
  */
-void Preload(const char *filename) {
-FILE *fp;
-char oneline[257];
-char buffer[257];
-char *t;
-int n = 0;
-char *name, *value;
+static void Preload(const char *filename) {
+   FILE *fp;
+   char oneline[257];
+   char buffer[257];
+   char *t;
+   int n = 0;
+   char *name, *value;
 
    if (!filename || ((fp = fopen(filename, "r")) == NULL)) {
       fprintf(stderr, ERR_PRELOAD_FILE, filename);
@@ -249,14 +249,14 @@ char *name, *value;
  *     Write a sysctl setting 
  *
  */
-int WriteSetting(const char *setting) {
-int rc = 0;
-const char *name = setting;
-const char *value;
-const char *equals;
-char *tmpname;
-FILE *fp;
-char *outname;
+static int WriteSetting(const char *setting) {
+   int rc = 0;
+   const char *name = setting;
+   const char *value;
+   const char *equals;
+   char *tmpname;
+   FILE *fp;
+   char *outname;
 
    if (!name) {        /* probably don't want to display this err */
       return 0;
@@ -320,7 +320,7 @@ char *outname;
 
    free(tmpname);
    free(outname);
-return rc;
+   return rc;
 } /* end WriteSetting() */
 
 
@@ -329,12 +329,12 @@ return rc;
  *     Read a sysctl setting 
  *
  */
-int ReadSetting(const char *setting) {
-int rc = 0;
-char *tmpname, *outname;
-char inbuf[1025];
-const char *name = setting;
-FILE *fp;
+static int ReadSetting(const char *setting) {
+   int rc = 0;
+   char *tmpname, *outname;
+   char inbuf[1025];
+   const char *name = setting;
+   FILE *fp;
 
    if (!setting || !*setting) {
       fprintf(stderr, ERR_INVALID_KEY, setting);
@@ -383,7 +383,7 @@ FILE *fp;
 
    free(tmpname);
    free(outname);
-return rc;
+   return rc;
 } /* end ReadSetting() */
 
 
@@ -392,13 +392,13 @@ return rc;
  *     Display all the sysctl settings 
  *
  */
-int DisplayAll(const char *path, bool ShowTableUtil) {
-int rc = 0;
-int rc2;
-DIR *dp;
-struct dirent *de;
-char *tmpdir;
-struct stat ts;
+static int DisplayAll(const char *path, bool ShowTableUtil) {
+   int rc = 0;
+   int rc2;
+   DIR *dp;
+   struct dirent *de;
+   char *tmpdir;
+   struct stat ts;
 
    dp = opendir(path);
 
@@ -426,6 +426,6 @@ struct stat ts;
       closedir(dp);
    } /* endif */
 
-return rc;
+   return rc;
 } /* end DisplayAll() */
 

@@ -108,7 +108,7 @@ typedef struct symb {
 } symb;
 
 static const symb fail = { "?", 0 };
-static const char *dash = "-";
+static const char dash[] = "-";
 
 /* These mostly rely on POSIX to make them zero. */
 

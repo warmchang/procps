@@ -271,7 +271,7 @@ static const char *fmtmk (const char *fmts, ...)
          * in some proc cmdlines, a choice was offered twix space or null. */
 static char *strim (int sp, char *str)
 {
-   static const char *ws = "\b\f\n\r\t\v";
+   static const char ws[] = "\b\f\n\r\t\v";
    char *p;
 
    if (sp)
@@ -927,9 +927,8 @@ static void before (char *me)
 #ifdef PRETEND4CPUS
    Cpu_tot = 4;
 #else
-   Cpu_tot = sysconf(_SC_NPROCESSORS_ONLN);
+   Cpu_tot = smp_num_cpus;
 #endif
-   if (1 > Cpu_tot) Cpu_tot = 1;
    Cpu_map = alloc_r(NULL, sizeof(int) * Cpu_tot);
    for (i = 0; i < Cpu_tot; i++)
       Cpu_map[i] = i;
@@ -955,7 +954,7 @@ static void before (char *me)
          *   line c: contains w->summclr, msgsclr, headclr, taskclr */
 static void configs_read (void)
 {
-   static const char *err_rc = "bad rcfile, you should delete '%s'";
+   static const char err_rc[] = "bad rcfile, you should delete '%s'";
    char fbuf[RCFBUFSIZ];
    FILE *fp;
    float delay = DEF_DELAY;
@@ -1256,7 +1255,7 @@ static void display_fields (const char *fields, const char *xtra)
          * Change order of displayed fields. */
 static void fields_reorder (void)
 {
-   static const char *prompt =
+   static const char prompt[] =
       "Upper case letter moves field left, lower case right";
    char c, *p;
    int i;
@@ -1286,7 +1285,7 @@ static void fields_reorder (void)
          * Select sort field. */
 static void fields_sort (void)
 {
-   static const char *prompt =
+   static const char prompt[] =
       "Select sort field via field letter, type any other key to return";
    char phoney[PFLAGSSIZ];
    char c, *p;
@@ -1318,7 +1317,7 @@ static void fields_sort (void)
          * Toggle displayed fields. */
 static void fields_toggle (void)
 {
-   static const char *prompt =
+   static const char prompt[] =
       "Toggle fields via field letter, type any other key to return";
    char c, *p;
    int i;
@@ -1420,7 +1419,7 @@ static void win_names (WIN_t *q, const char *name)
          * Display a window/field group (ie. make it "current"). */
 static void win_select (char ch)
 {
-   static const char *prompt = "Choose field group (1 - 4)";
+   static const char prompt[] = "Choose field group (1 - 4)";
 
    /* if there's no ch, it means we're supporting the normal do_key routine,
       so we must try to get our own darn ch by begging the user... */
@@ -2107,10 +2106,10 @@ static void show_a_task (WIN_t *q, proc_t *task)
 static void do_key (unsigned c)
 {
       /* standardized 'secure mode' errors */
-   static const char *err_secure = "\aUnavailable in secure mode";
+   static const char err_secure[] = "\aUnavailable in secure mode";
 #ifdef WARN_NOT_SMP
       /* standardized 'smp' errors */
-   static const char *err_smp = "\aSorry, only 1 cpu detected";
+   static const char err_smp[] = "\aSorry, only 1 cpu detected";
 #endif
 
    switch (c) {

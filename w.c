@@ -99,8 +99,8 @@ static time_t idletime(char *tty) {
 
 /***** 7 character formatted login time */
 static void print_logintime(time_t logt, FILE* fout) {
-    char *weekday[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" },
-	 *month  [] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+    char weekday[4][] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" },
+	 month  [4][] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
 			"Aug", "Sep", "Oct", "Nov", "Dec" };
     time_t curt;
     struct tm *logtm, *curtm;

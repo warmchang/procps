@@ -39,7 +39,7 @@
 #endif
 
 
-static char *saved_personality_text = "You found a bug!";
+static char saved_personality_text[] = "You found a bug!";
 
 int             all_processes = -1;
 char           *bsd_j_format = (char *)0xdeadbeef;

@@ -179,15 +179,12 @@ extern char** environ;
 /* for ELF executables, notes are pushed before environment and args */
 static unsigned long find_elf_note(unsigned long findme){
   unsigned long *ep = (unsigned long *)environ;
-  unsigned long ret = 42;
   while(*ep++);
-//  while(*ep++);
   while(*ep){
-//  printf("%08lx %08lx %011ld %011ld%s\n",ep[0],ep[1],ep[0],ep[1],ep[0]==findme?" <<<":"");
-    if(ep[0]==findme) ret=ep[1];
+    if(ep[0]==findme) return ep[1];
     ep+=2;
   }
-  return ret;
+  return 42;
 }
 
 static void init_libproc(void) __attribute__((constructor));
@@ -195,7 +192,7 @@ static void init_libproc(void){
   /* ought to count CPUs in /proc/stat instead of relying
    * on glibc, which foolishly tries to parse /proc/cpuinfo
    */
-  smp_num_cpus = sysconf(_SC_NPROCESSORS_CONF);
+  smp_num_cpus = sysconf(_SC_NPROCESSORS_CONF); // or _SC_NPROCESSORS_ONLN
   if(smp_num_cpus<1) smp_num_cpus=1; /* SPARC glibc is buggy */
 
   Hertz = find_elf_note(AT_CLKTCK);
