@@ -212,7 +212,6 @@ extern void freeproc(proc_t* p);
 #define PROC_FILLWCHAN  0x0080 /* look up WCHAN name */
 #define PROC_FILLARG    0x0100 /* alloc and fill in `cmdline' */
 
-#define PROC_FILLBUG    0x0fff /* No idea what we need */
 #define PROC_FILLANY    0x0000 /* either stat or status will do */
 
 /* Obsolete, consider only processes with one of the passed: */

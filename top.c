@@ -1021,7 +1021,7 @@ static proc_t **procs_refresh (proc_t **table, int flags)
 
    prochlp(NULL);                       // prep for a new frame
    if (Monpidsidx)
-      PT = openproc(PROC_FILLBUG | PROC_PID, Monpids);
+      PT = openproc(flags, Monpids);
    else
       PT = openproc(flags);
 
@@ -2096,6 +2096,7 @@ static void reframewins (void)
       if (!(Frames_libflags & L_stat)) Frames_libflags |= L_status;
    }
    if (!Frames_libflags) Frames_libflags = L_DEFAULT;
+   if (selection_type=='p') Frames_libflags |= PROC_PID;
 }
 
 
@@ -2801,7 +2802,7 @@ static proc_t **summary_show (void)
 
    // whoa first time, gotta' prime the pump...
    if (!p_table) {
-      p_table = procs_refresh(NULL, L_DEFAULT);
+      p_table = procs_refresh(NULL, Frames_libflags);
       putp(Cap_clr_scr);
       sleep(1);
    } else
@@ -3141,7 +3142,7 @@ static void frame_make (void)
    proc_t **ppt;
    int i, scrlins;
 
-   /* note: except for PROC_PID, all libproc flags are managed by
+   /* note: all libproc flags are managed by
             reframewins(), who also builds each window's column headers */
    if (!Frames_libflags) {
       reframewins();

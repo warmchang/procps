@@ -1,5 +1,6 @@
 procps-3.1.5 --> procps-3.1.6
 
+top: memory leak fixed
 ps: new --ppid option selects by PPID
 watch: new --no-title option
 handle SPARC Linux badness

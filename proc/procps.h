@@ -34,43 +34,18 @@
 #define STRTOUKL strtoul
 #endif
 
+// since gcc-2.5
+#define NORETURN __attribute__((__noreturn__))
+#define FUNCTION __attribute__((__const__))  // no access to global mem, even via ptr, and no side effect
+
 #if !defined(restrict) && __STDC_VERSION__ < 199901
-#if __GNUC__ > 2 || __GNUC_MINOR__ >= 92    // maybe 92 or 95 ?
+#if __GNUC__ > 2 || __GNUC_MINOR__ >= 92
 #define restrict __restrict__
 #else
 #warning No restrict keyword?
 #define restrict
 #endif
 #endif
-
-// marks old junk, to warn non-procps library users
-#if ( __GNUC__ == 3 && __GNUC_MINOR__ > 0 ) || __GNUC__ > 3
-#define OBSOLETE __attribute__((deprecated))
-#else
-#define OBSOLETE
-#endif
-
-// Tells gcc that function is library-internal;
-// so no need to do dynamic linking at run-time.
-// This might work with slightly older compilers too.
-#if ( __GNUC__ == 3 && __GNUC_MINOR__ > 1 ) || __GNUC__ > 3
-#define HIDDEN __attribute__((visibility("hidden")))
-#else
-#define HIDDEN
-#endif
-
-// Like HIDDEN, but for an alias that gets created.
-// In gcc-3.2 there is an alias+hidden conflict.
-// Many will have patched this bug, but oh well.
-#if ( __GNUC__ == 3 && __GNUC_MINOR__ > 2 ) || __GNUC__ > 3
-#define HIDDEN_ALIAS(x) extern __typeof(x) x##_direct __attribute__((alias(#x),visibility("hidden")))
-#else
-#define HIDDEN_ALIAS(x) extern __typeof(x) x##_direct __attribute__((alias(#x)))
-#endif
-
-// since gcc-2.5
-#define NORETURN __attribute__((__noreturn__))
-#define FUNCTION __attribute__((__const__))  // no access to global mem, even via ptr, and no side effect
 
 #if __GNUC__ > 2 || __GNUC_MINOR__ >= 96
 // won't alias anything, and aligned enough for anything
@@ -87,6 +62,34 @@
 #define likely(x)       (x)
 #define unlikely(x)     (x)
 #define expected(x,y)   (x)
+#endif
+
+// marks old junk, to warn non-procps library users
+#if ( __GNUC__ == 3 && __GNUC_MINOR__ > 0 ) || __GNUC__ > 3
+#define OBSOLETE __attribute__((deprecated))
+#else
+#define OBSOLETE
+#endif
+
+#if ( __GNUC__ == 3 && __GNUC_MINOR__ > 1 ) || __GNUC__ > 3
+// Tells gcc that function is library-internal;
+// so no need to do dynamic linking at run-time.
+// This might work with slightly older compilers too.
+#define HIDDEN __attribute__((visibility("hidden")))
+// Tell g++ that a function won't throw exceptions.
+#define NOTHROW __attribute__((__nothrow__))
+#else
+#define HIDDEN
+#define NOTHROW
+#endif
+
+// Like HIDDEN, but for an alias that gets created.
+// In gcc-3.2 there is an alias+hidden conflict.
+// Many will have patched this bug, but oh well.
+#if ( __GNUC__ == 3 && __GNUC_MINOR__ > 2 ) || __GNUC__ > 3
+#define HIDDEN_ALIAS(x) extern __typeof(x) x##_direct __attribute__((alias(#x),visibility("hidden")))
+#else
+#define HIDDEN_ALIAS(x) extern __typeof(x) x##_direct __attribute__((alias(#x)))
 #endif
 
 #endif
