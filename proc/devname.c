@@ -140,6 +140,7 @@ static const char low_density_names[][4] = {
 "AM8",  "AM9",  "AM10", "AM11", "AM12", "AM13", "AM14", "AM15",
 "DB0",  "DB1",  "DB2",  "DB3",  "DB4",  "DB5",  "DB6",  "DB7",
 "SG0",
+"SMX0",  "SMX1",  "SMX2",
 };
 
 /* Try to guess the device name (useful until /proc/PID/tty is added) */

@@ -502,9 +502,9 @@ unsigned long kb_inactive;
 unsigned long kb_mapped;
 unsigned long kb_pagetables;
 // seen on a 2.6.x kernel:
-unsigned long kb_vmalloc_chunk;
-unsigned long kb_vmalloc_total;
-unsigned long kb_vmalloc_used;
+static unsigned long kb_vmalloc_chunk;
+static unsigned long kb_vmalloc_total;
+static unsigned long kb_vmalloc_used;
 
 void meminfo(void){
   char namebuf[16]; /* big enough to hold any row name */
@@ -619,6 +619,27 @@ unsigned long vm_kswapd_steal; // pages reclaimed by kswapd
 unsigned long vm_pageoutrun;  // times kswapd ran page reclaim
 unsigned long vm_allocstall; // times a page allocator ran direct reclaim
 unsigned long vm_pgrotated; // pages rotated to the tail of the LRU for immediate reclaim
+// seen on a 2.6.8-rc1 kernel, apparently replacing old fields
+static unsigned long vm_pgalloc_dma;          // 
+static unsigned long vm_pgalloc_high;         // 
+static unsigned long vm_pgalloc_normal;       // 
+static unsigned long vm_pgrefill_dma;         // 
+static unsigned long vm_pgrefill_high;        // 
+static unsigned long vm_pgrefill_normal;      // 
+static unsigned long vm_pgscan_direct_dma;    // 
+static unsigned long vm_pgscan_direct_high;   // 
+static unsigned long vm_pgscan_direct_normal; // 
+static unsigned long vm_pgscan_kswapd_dma;    // 
+static unsigned long vm_pgscan_kswapd_high;   // 
+static unsigned long vm_pgscan_kswapd_normal; // 
+static unsigned long vm_pgsteal_dma;          // 
+static unsigned long vm_pgsteal_high;         // 
+static unsigned long vm_pgsteal_normal;       // 
+// seen on a 2.6.8-rc1 kernel
+static unsigned long vm_kswapd_inodesteal;    //
+static unsigned long vm_nr_unstable;          //
+static unsigned long vm_pginodesteal;         //
+static unsigned long vm_slabs_scanned;        //
 
 void vminfo(void){
   char namebuf[16]; /* big enough to hold any row name */
@@ -628,7 +649,7 @@ void vminfo(void){
   char *tail;
   static const vm_table_struct vm_table[] = {
   {"allocstall",          &vm_allocstall},
-  {"kswapd_inodesteal",          &vm_},
+  {"kswapd_inodesteal",   &vm_kswapd_inodesteal},
   {"kswapd_steal",        &vm_kswapd_steal},
   {"nr_dirty",            &vm_nr_dirty},           // page version of meminfo Dirty
   {"nr_mapped",           &vm_nr_mapped},          // page version of meminfo Mapped
@@ -636,42 +657,47 @@ void vminfo(void){
   {"nr_pagecache",        &vm_nr_pagecache},       // gone in 2.5.66+ kernels
   {"nr_reverse_maps",     &vm_nr_reverse_maps},    // page version of meminfo ReverseMaps GONE
   {"nr_slab",             &vm_nr_slab},            // page version of meminfo Slab
-  {"nr_unstable",          &vm_},
+  {"nr_unstable",         &vm_nr_unstable},
   {"nr_writeback",        &vm_nr_writeback},       // page version of meminfo Writeback
   {"pageoutrun",          &vm_pageoutrun},
   {"pgactivate",          &vm_pgactivate},
   {"pgalloc",             &vm_pgalloc},  // GONE (now separate dma,high,normal)
-  {"pgalloc_dma",          &vm_},
-  {"pgalloc_high",          &vm_},
-  {"pgalloc_normal",          &vm_},
+  {"pgalloc_dma",         &vm_pgalloc_dma},
+  {"pgalloc_high",        &vm_pgalloc_high},
+  {"pgalloc_normal",      &vm_pgalloc_normal},
   {"pgdeactivate",        &vm_pgdeactivate},
   {"pgfault",             &vm_pgfault},
   {"pgfree",              &vm_pgfree},
-  {"pginodesteal",          &vm_},
+  {"pginodesteal",        &vm_pginodesteal},
   {"pgmajfault",          &vm_pgmajfault},
   {"pgpgin",              &vm_pgpgin},     // important
   {"pgpgout",             &vm_pgpgout},     // important
   {"pgrefill",            &vm_pgrefill},  // GONE (now separate dma,high,normal)
-  {"pgrefill_dma",          &vm_},
-  {"pgrefill_high",          &vm_},
-  {"pgrefill_normal",          &vm_},
+  {"pgrefill_dma",        &vm_pgrefill_dma},
+  {"pgrefill_high",       &vm_pgrefill_high},
+  {"pgrefill_normal",     &vm_pgrefill_normal},
   {"pgrotated",           &vm_pgrotated},
   {"pgscan",              &vm_pgscan},  // GONE (now separate direct,kswapd and dma,high,normal)
-  {"pgscan_direct_dma",          &vm_},
-  {"pgscan_direct_high",          &vm_},
-  {"pgscan_direct_normal",          &vm_},
-  {"pgscan_kswapd_dma",          &vm_},
-  {"pgscan_kswapd_high",          &vm_},
-  {"pgscan_kswapd_normal",          &vm_},
+  {"pgscan_direct_dma",   &vm_pgscan_direct_dma},
+  {"pgscan_direct_high",  &vm_pgscan_direct_high},
+  {"pgscan_direct_normal",&vm_pgscan_direct_normal},
+  {"pgscan_kswapd_dma",   &vm_pgscan_kswapd_dma},
+  {"pgscan_kswapd_high",  &vm_pgscan_kswapd_high},
+  {"pgscan_kswapd_normal",&vm_pgscan_kswapd_normal},
   {"pgsteal",             &vm_pgsteal},  // GONE (now separate dma,high,normal)
-  {"pgsteal_dma",          &vm_},
-  {"pgsteal_high",          &vm_},
-  {"pgsteal_normal",          &vm_},
+  {"pgsteal_dma",         &vm_pgsteal_dma},
+  {"pgsteal_high",        &vm_pgsteal_high},
+  {"pgsteal_normal",      &vm_pgsteal_normal},
   {"pswpin",              &vm_pswpin},     // important
-  {"pswpout",             &vm_pswpout}     // important
-  {"slabs_scanned",          &vm_},
+  {"pswpout",             &vm_pswpout},     // important
+  {"slabs_scanned",       &vm_slabs_scanned},
   };
   const int vm_table_count = sizeof(vm_table)/sizeof(vm_table_struct);
+
+  vm_pgalloc = 0;
+  vm_pgrefill = 0;
+  vm_pgscan = 0;
+  vm_pgsteal = 0;
 
   FILE_TO_BUF(VMINFO_FILE,vminfo_fd);
 
@@ -700,6 +726,15 @@ nextline:
     if(!tail) break;
     head = tail+1;
   }
+  if(!vm_pgalloc)
+    vm_pgalloc  = vm_pgalloc_dma + vm_pgalloc_high + vm_pgalloc_normal;
+  if(!vm_pgrefill)
+    vm_pgrefill = vm_pgrefill_dma + vm_pgrefill_high + vm_pgrefill_normal;
+  if(!vm_pgscan)
+    vm_pgscan   = vm_pgscan_direct_dma + vm_pgscan_direct_high + vm_pgscan_direct_normal
+                + vm_pgscan_kswapd_dma + vm_pgscan_kswapd_high + vm_pgscan_kswapd_normal;
+  if(!vm_pgsteal)
+    vm_pgsteal  = vm_pgsteal_dma + vm_pgsteal_high + vm_pgsteal_normal;
 }
 
 ///////////////////////////////////////////////////////////////////////
