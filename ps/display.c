@@ -283,7 +283,7 @@ static void prep_forest_sort(void){
 }
 
 /* we rely on the POSIX requirement for zeroed memory */
-static proc_t *processes[32*1024];
+static proc_t *processes[98*1024];  // FIXME
 
 /***** compare function for qsort */
 static int compare_two_procs(const void *a, const void *b){

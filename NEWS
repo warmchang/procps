@@ -1,4 +1,4 @@
-procps-3.0.5 --> procps-3.0.6
+procps-3.1.0 --> procps-3.1.0
 
 vmstat displays IO-wait time instead of bogus "w"
 can build w/o shared library (set SHARED=0)

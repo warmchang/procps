@@ -17,10 +17,10 @@
 
 
 VERSION      := 3
-SUBVERSION   := 0
-MINORVERSION := 5
-TARVERSION   := 3.0.5
-LIBVERSION   := 3.0.5
+SUBVERSION   := 1
+MINORVERSION := 0
+TARVERSION   := 3.1.0
+LIBVERSION   := 3.1.0
 
 ############ vars
 
