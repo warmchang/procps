@@ -44,4 +44,5 @@ rm -rf $RPM_BUILD_ROOT
 %attr(555,root,root) /usr/bin/*
 
 %attr(0644,root,root) /usr/share/man/man1/*
+%attr(0644,root,root) /usr/share/man/man5/*
 %attr(0644,root,root) /usr/share/man/man8/*

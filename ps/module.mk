@@ -33,8 +33,8 @@ ps/stacktrace.o: ps/stacktrace.c
 
 
 $(bin)ps: ps/ps
-	install --mode a=rx --strip $< $@
+	$(install) --mode a=rx --strip $< $@
 
 $(man1)ps.1 : ps/ps.1
-	install --mode a=r $< $@
+	$(install) --mode a=r $< $@
 	-rm -f $(DESTDIR)/var/catman/cat1/ps.1.gz $(DESTDIR)/var/man/cat1/ps.1.gz

@@ -3237,8 +3237,8 @@ int main (int dont_care_argc, char **argv)
          if (chin(0, &c, 1) <= 0) {
             fcntl(STDIN_FILENO, F_SETFL, file_flags);
             select(1, &fs, NULL, NULL, &tv);
+            fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK|file_flags);
          }
-         fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK|file_flags);
          if (chin(0, &c, 1) > 0) {
             fcntl(STDIN_FILENO, F_SETFL, file_flags);
             do_key((unsigned)c);
