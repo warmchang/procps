@@ -42,6 +42,7 @@
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <unistd.h>
+#include <limits.h>
 
 static char *screen;
 
@@ -69,9 +70,13 @@ static void setsize(int i)
 		if (win.ws_row > 0)
 			nrows = win.ws_row;
 	}
+	if (ncols < 2 || ncols >= INT_MAX)
+		xerrx(EXIT_FAILURE, _("screen too small or too large"));
+	if (nrows < 2 || nrows >= INT_MAX / ncols)
+		xerrx(EXIT_FAILURE, _("screen too small or too large"));
 	scr_size = nrows * ncols;
 	if (scr_size < 2)
-		xerr(EXIT_FAILURE, _("screen too small"));
+		xerrx(EXIT_FAILURE, _("screen too small"));
 	if (screen == NULL)
 		screen = (char *)xmalloc(scr_size);
 	else
