@@ -242,7 +242,7 @@ static int parse_slabinfo11(struct slab_info **list, struct slab_stat *stats,
 				&curr->nr_active_slabs, &curr->nr_slabs,
 				&curr->pages_per_slab);
 
-		if (assigned < 6) {
+		if (assigned < 7) {
 			fprintf(stderr, "unrecognizable data in  your slabinfo version 1.1\n\r");
 			if(slab_badname_detect(buffer))
 				fprintf(stderr, "Found an error in cache name at line %s\n", buffer);
