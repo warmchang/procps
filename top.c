@@ -149,11 +149,13 @@ static WIN_t *Winstk [GROUPSMAX],
 
         /* Frame oriented stuff that can't remain local to any 1 function
            and/or that would be too cumbersome managed as parms */
-static int  Frame_maxtask,      /* last known number of active tasks */
+static int    Frame_maxtask;    /* last known number of active tasks */
                                 /* ie. current 'size' of proc table  */
-            Frame_srtflg,       /* the subject window sort direction */
-            Frame_ctimes,       /* the subject window's ctimes flag  */
-            Frame_cmdlin;       /* the subject window's cmdlin flag  */
+static float  Frame_etime,      /* elapsed time twix this & prior    */
+              Frame_scale;      /* so we can '*' vs. '/' IF 'pcpu'   */
+static int    Frame_srtflg,     /* the subject window sort direction */
+              Frame_ctimes,     /* the subject window's ctimes flag  */
+              Frame_cmdlin;     /* the subject window's cmdlin flag  */
         /* ////////////////////////////////////////////////////////////// */
 
 
@@ -753,9 +755,10 @@ static char *scale_tics (TICS_t tics, const int width)
 
 
         /*
-         * Calculate and return the elapsed time since the last update
-         * which is then used in % CPU calc's. */
-static float time_elapsed (void)
+         * Calculate and the elapsed time since the last update along with the
+         * scaling factor used in multiplication (vs. division) when calculating
+         * a displayable task's %CPU. */
+static void time_elapsed (void)
 {
     static struct timeval oldtimev;
     struct timeval timev;
@@ -767,7 +770,9 @@ static float time_elapsed (void)
        + (float)(timev.tv_usec - oldtimev.tv_usec) / 1000000.0;
     oldtimev.tv_sec = timev.tv_sec;
     oldtimev.tv_usec = timev.tv_usec;
-    return et;
+    Frame_etime = et;
+      /* if in Solaris mode, adjust our scaling for all cpus */
+    Frame_scale = 100.0f / ((float)Hertz * (float)et * (Mode_irixps ? 1 : Cpu_tot));
 }
 
 
@@ -1731,7 +1736,7 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
 
         /*
          * Calc the number of tasks in each state (run, sleep, etc)
-         * Calc percent cpu usage for each task (pcpu)
+         * Prepare for the possible calculation of percent cpu usage (pcpu)
          * Calc the cpu(s) percent in each state (user, system, nice, idle)
          * AND establish the total number of tasks for this frame! */
 static void frame_states (proc_t **ppt, int show)
@@ -1740,7 +1745,6 @@ static void frame_states (proc_t **ppt, int show)
    static unsigned  hist_siz;
    HIST_t          *hist_new;
    unsigned         total, running, sleeping, stopped, zombie;
-   float            etime;
    int              i;
 
    if (!hist_sav) {
@@ -1750,7 +1754,7 @@ static void frame_states (proc_t **ppt, int show)
    }
    hist_new = alloc_c(hist_siz);
    total = running = sleeping = stopped = zombie = 0;
-   etime = time_elapsed();
+   time_elapsed();
 
       /* make a pass through the data to get stats */
    while (-1 != ppt[total]->pid) {                      /* calculations //// */
@@ -1790,13 +1794,9 @@ static void frame_states (proc_t **ppt, int show)
             break;
          }
       }
-         /* finally calculate an integer version of %cpu for this task
-            and plug it into the unfilled slot in proc_t */
-      this->pcpu = (tics * 1000 / (TICS_t)Hertz) / etime;
-      if (this->pcpu > 999) this->pcpu = 999;
-         /* if in Solaris mode, adjust cpu percentage not only for the cpu
-            the process is running on, but for all cpus together */
-      if (!Mode_irixps) this->pcpu /= Cpu_tot;
+         /* we're just saving elapsed tics, to be converted into %cpu if
+            this task wins it's displayable screen row lottery... */
+      this->pcpu = tics;
 
       total++;
    } /* end: while 'pids' */
@@ -1982,7 +1982,11 @@ static void show_a_task (WIN_t *q, proc_t *task)
 #endif
             break;
          case P_CPU:
-            MKCOL(q, i, a, &pad, cbuf, (float)task->pcpu / 10);
+         {  float u = (float)task->pcpu * Frame_scale;
+
+            if (99.9 < u) u = 99.9;
+            MKCOL(q, i, a, &pad, cbuf, u);
+         }
             break;
          case P_DAT:
             MKCOL(q, i, a, &pad, cbuf, scale_num(PAGES_2K(task->drs), w, s));
@@ -2465,7 +2469,7 @@ static proc_t **do_summary (void)
    }
 
       /*
-       ** Display Tasks and Cpu(s) states and also calc 'pcpu',
+       ** Display Tasks and Cpu(s) states and also prime for potential 'pcpu',
        ** but NO table sort yet -- that's done on a per window basis! */
    p_table = refreshprocs(p_table);
    frame_states(p_table, CHKw(Curwin, View_STATES));

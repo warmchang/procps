@@ -9,6 +9,7 @@
 #endif
 #include <stdio.h>
 #include <stdlib.h>
+#include "version.h"
 
 #ifdef MINORVERSION
 char procps_version[] = "procps version " VERSION "." SUBVERSION "." MINORVERSION;

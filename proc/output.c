@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include "procps.h"
 
 /* output a string, converting unprintables to octal as we go, and stopping after
    processing max chars of output (accounting for expansion due to octal rep).

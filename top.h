@@ -528,7 +528,7 @@ typedef struct win {
 //atic int         get_int (const char *prompt);
 //atic char       *scale_num (unsigned num, const int width, const unsigned type);
 //atic char       *scale_tics (TICS_t tics, const int width);
-//atic float       time_elapsed (void);
+//atic void        time_elapsed (void);
 /*------  Library Alternatives  ------------------------------------------*/
 //atic void       *alloc_c (unsigned numb);
 //atic void       *alloc_r (void *q, unsigned numb);

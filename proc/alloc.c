@@ -7,6 +7,7 @@
 \***********************************************************************/
 #include <stdlib.h>
 #include <stdio.h>
+#include "procps.h"
 
 void *xcalloc(void *pointer, int size) {
     void * ret;

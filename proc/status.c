@@ -9,6 +9,7 @@
 
 #include "proc/procps.h"
 #include "proc/readproc.h"
+#include "status.h"
 
 char * status(proc_t* task) {
     static char buf[4] = "   ";
