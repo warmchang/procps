@@ -49,7 +49,7 @@ static char *screen;
 static int nrows = 25;
 static int ncols = 80;
 static int scr_size;
-static int fd = 1;
+static int fd = STDOUT_FILENO;
 static unsigned int dly = 5;
 static jmp_buf jb;
 
@@ -150,7 +150,7 @@ int main(int argc, char **argv)
 		}
 
 	if (argc > optind)
-		if ((fd = open(argv[optind], 1)) == -1)
+		if ((fd = open(argv[optind], O_WRONLY)) == -1)
 			xerr(EXIT_FAILURE, _("can not open tty"));
 
 	setsize(0);
