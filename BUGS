@@ -9,15 +9,20 @@ documentation!
 
 Where to send
 =============
-Send comments, bug reports, patches, etc., to acahalan@cs.uml.edu
+Send comments, bug reports, patches, etc., to albert@users.sf.net
 
 
 What to send
 ============
-It is much more useful to me if a program really crases to recompile it
+It is much more useful to me if a program really crashes to recompile it
 with make "CC=gcc -ggdb -O", run it with "gdb prog" and "run" and send
 me a stack trace ('bt' command).  That said, any bug report is still
 better than none.
+
+strace and ltrace output are very helpful:
+
+        strace -o output-file ps --blah
+        bzip2 output-file
 
 It might be nice to get rid of miscellaneous compiler warnings, but
 don't bend over backwards to do it.
@@ -33,29 +38,20 @@ code was compiled.
 
 A macro is provide in libproc/version.h to construct the code from its
 components, e.g.
-  if (linux_version_code < LINUX_VERSION(1,1,30))
-     /* tty field is only a minor */
+  if (linux_version_code < LINUX_VERSION(2,5,41))
+     /* blah blah blah */
 A startup call to set_linux_version may also be necessary.
 
 Of course, if a bug is due to a change in kernel file formats, it would
 be best to first try to generalize the parsing, since the code is then
 more resilient against future change.
 
-If you send me patches which are specific to *compiling* on a particular
-version of Linux include a "#if LINUX_VERSION_CODE > 1*0x10000+3*0x100+54"
-markup of the patch so that the package may be compiled with older
-kernels as well as the "latest and greatest".  LINUX_VERSION_CODE is
-#define'd in <linux/version.h>.
-
-Note that you should not make patches specific to *compiling* on a
-particular version of Linux unless there is nothing else you can do.
-
 Also unified diffs (diff -u) are my preference, context diffs (diff -c )
 are kind of usable, and standard diffs (diff) are more useless than a
 generic text description of what you did.  Just use
-	diff -u oldfile newfile
+	diff -Naurd oldfile newfile
 or
-	diff -Naur old-procps-dir new-procps-dir
+	diff -Naurd old-procps-dir new-procps-dir
 to create your diffs and you will make me happy.  Also make sure to
 include a description of what the diff is for or I'm likely to ignore
 it because of general lack of time...
@@ -63,12 +59,8 @@ it because of general lack of time...
 
 Code Structure
 ==============
-My ultimate goal for this package is to be compilable with any kernel
-headers and to be able to run under any kernel's /proc.  (Don't bother
-telling me that I'm not especially close to my ultimate goal... who
-is? :-)
 
-Anyhow, another goal is to encapsulate *all* parsing dependent on /proc
+A goal is to encapsulate *all* parsing dependent on /proc
 file formats into the libproc library.  If the API is general enough
 it can hopefully stabilize and then /proc changes might only require
 updating libproc.so.  Beyond that having the set of utilities be simple

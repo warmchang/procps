@@ -15,7 +15,7 @@
  */
 /* For their contributions to this program, the author wishes to thank:
  *    Craig Small, <csmall@small.dropbear.id.au>
- *    Albert D. Cahalan, <acahalan@cs.uml.edu>
+ *    Albert D. Cahalan, <albert@users.sf.net>
  */
 #include <sys/ioctl.h>
 #include <sys/resource.h>
