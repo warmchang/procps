@@ -1756,7 +1756,7 @@ static void frame_states (proc_t **ppt, int show)
    // reuse memory each time around
    hist_tmp = hist_sav;
    hist_sav = hist_new;
-   hist_new = tmp;
+   hist_new = hist_tmp;
 
    total = running = sleeping = stopped = zombie = 0;
 
@@ -2412,18 +2412,20 @@ static void do_key (unsigned c)
 
       case '<':
          if (VIZCHKc) {
-            PFLG_t *p =
-               memchr(Curwin->procflags, Curwin->sortindx, Curwin->maxpflgs);
-            if (p && --p >= Curwin->procflags)
+            PFLG_t *p = Curwin->procflags + Curwin->maxpflgs - 1;
+            while (*p != Curwin->sortindx)
+               --p;
+            if (--p >= Curwin->procflags)
                Curwin->sortindx = *p;
          }
          break;
 
       case '>':
          if (VIZCHKc) {
-            PFLG_t *p =
-               memchr(Curwin->procflags, Curwin->sortindx, Curwin->maxpflgs);
-            if (p && ++p < Curwin->procflags + Curwin->maxpflgs)
+            PFLG_t *p = Curwin->procflags;
+            while (*p != Curwin->sortindx)
+               ++p;
+            if (++p < Curwin->procflags + Curwin->maxpflgs)
                Curwin->sortindx = *p;
          }
          break;
