@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include <sys/types.h>
 
@@ -171,7 +172,7 @@ static const char *aix_format_parse(sf_node *sfn){
         return _("AIX field descriptor processing bug");
       }
     } else {
-      int len;
+      size_t len;
       len = strcspn(walk, "%");
       memcpy(buf,walk,len);
       if(0){
@@ -182,7 +183,7 @@ double_percent:
       buf[len] = '\0';
       walk += len;
       fnode = xmalloc(sizeof(format_node));
-      fnode->width = len;
+      fnode->width = len < INT_MAX ? len : INT_MAX;
       fnode->name = strdup(buf);
       fnode->pr = NULL;     /* checked for */
       fnode->vendor = AIX;
