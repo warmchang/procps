@@ -109,9 +109,6 @@ typedef struct symb {
   unsigned KLONG addr;
 } symb;
 
-static const symb fail = { "?", 0 };
-static const char dash[] = "-";
-
 /* These mostly rely on POSIX to make them zero. */
 
 static symb hashtable[256];
@@ -602,10 +599,14 @@ static const char * read_wchan_file(unsigned pid){
 
 /***************************************/
 
+static const symb fail = { .name = "?" };
+static const char dash[] = "-";
+static const char star[] = "*";
+
 #define MAX_OFFSET (0x1000*sizeof(long))  /* past this is generally junk */
 
 /* return pointer to temporary static buffer with function name */
-const char * wchan(unsigned KLONG address, unsigned pid) {
+const char * lookup_wchan(unsigned KLONG address, unsigned pid) {
   const symb *mod_symb;
   const symb *map_symb;
   const symb *good_symb;
@@ -615,7 +616,8 @@ const char * wchan(unsigned KLONG address, unsigned pid) {
   // can't cache it due to a race condition :-(
   if(use_wchan_file) return read_wchan_file(pid);
 
-  if(!address) return dash;
+  if(!address)  return dash;
+  if(!~address) return star;
 
   read_and_parse();
   hash = (address >> 4) & 0xff;  /* got 56/63 hits & 7/63 misses */

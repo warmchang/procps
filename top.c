@@ -3024,7 +3024,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
                f = " %08lx ";
                MKCOL((long)p->wchan);
             } else {
-               MKCOL(wchan(p->wchan, p->XXXID));
+               MKCOL(lookup_wchan(p->wchan, p->XXXID));
             }
             break;
 

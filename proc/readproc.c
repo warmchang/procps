@@ -521,7 +521,12 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
        }
     }
 
-    /* some number->text resolving which is time consuming */
+    // if multithreaded, some values are crap
+    if(p->nlwp > 1){
+      p->wchan = (KLONG)~0ull;
+    }
+
+    /* some number->text resolving which is time consuming and kind of insane */
     if (flags & PROC_FILLUSR){
 	memcpy(p->euser,   user_from_uid(p->euid), sizeof p->euser);
         if(flags & PROC_FILLSTATUS) {
@@ -531,7 +536,7 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
         }
     }
 
-    /* some number->text resolving which is time consuming */
+    /* some number->text resolving which is time consuming and kind of insane */
     if (flags & PROC_FILLGRP){
         memcpy(p->egroup, group_from_gid(p->egid), sizeof p->egroup);
         if(flags & PROC_FILLSTATUS) {

@@ -4,6 +4,7 @@ avoid truncating long usernames
 avoid warning about -lncurses when not linking (more)
 new names for shared libraries (packagers: watch out!)
 "make install" no longer rebuilds everything
+wchan now '*' for multi-threaded processes
 
 procps-3.2.1 --> procps-3.2.2
 
