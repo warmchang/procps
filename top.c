@@ -2712,7 +2712,7 @@ static void do_key (unsigned c)
          for (i = 0; i < MAXTBL(xtab); ++i)
             if (c == xtab[i].xkey) {
                Curwin->rc.sortindx = xtab[i].sort;
-               show_msg(fmtmk("%s sort compatibility key honored", xtab[i].xmsg));
+//               show_msg(fmtmk("%s sort compatibility key honored", xtab[i].xmsg));
                break;
             }
       }
