@@ -16,8 +16,8 @@
 
 #include <unistd.h>
 #include <fcntl.h>
-#include "proc/version.h"
-#include "proc/sysinfo.h" /* include self to verify prototypes */
+#include "version.h"
+#include "sysinfo.h" /* include self to verify prototypes */
 
 #ifndef HZ
 #include <netinet/in.h>  /* htons */

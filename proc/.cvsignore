@@ -1,2 +1,3 @@
 libproc.so*
 *.o
+.depend

@@ -5,10 +5,10 @@
  * May be distributed under the conditions of the
  * GNU Library General Public License; a copy is in COPYING
  */
-#include "proc/version.h"
-#include "proc/readproc.h"
-#include "proc/devname.h"
-#include "proc/procps.h"
+#include "version.h"
+#include "readproc.h"
+#include "devname.h"
+#include "procps.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
