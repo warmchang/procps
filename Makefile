@@ -123,15 +123,13 @@ clean:
 
 ###### install
 
-.PHONY: $(INSTALL)   # FIXME
-
-$(BINFILES) : #$(notdir $@)
+$(BINFILES) : all
 	$(install) --mode a=rx --strip $(notdir $@) $@
 
-$(SCRFILES) : #$(notdir $@)
+$(SCRFILES) : all
 	$(install) --mode a=rx $(notdir $@) $@
 
-$(MANFILES) : #$(notdir $@)
+$(MANFILES) : all
 	$(install) --mode a=r $(notdir $@) $@
 
 install: $(INSTALL)
