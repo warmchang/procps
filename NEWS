@@ -8,7 +8,8 @@ ps: security labels can contain any printable ASCII
 top: help and version message on stdout, with exit(0)    #283541
 ps: SIGTSTP and SIGTTOU shouldn't print bug email address    #246123
 slabtop: compile with glibc 2.2.17 (and older, likely)
-slabtop: fix overflow on huge NUMA boxes   #264640
+slabtop: fix overflow on huge NUMA boxes                #264640
+slabtop: accept any slabinfo 2.x format              g77301
 
 procps-3.2.3 --> procps-3.2.4
 

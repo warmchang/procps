@@ -7,6 +7,7 @@
  * This program is licensed under the GNU Library General Public License, v2
  *
  * Copyright (C) 2003 Chris Rivera
+ * Copyright 2004, Albert Cahalan
  */
 
 #include <stdlib.h>
@@ -293,7 +294,7 @@ int get_slabinfo(struct slab_info **list, struct slab_stat *stats)
 		return 1;
 	}
 
-	if (major == 2 && minor == 0)
+	if (major == 2)
 		ret = parse_slabinfo20(list, stats, slabfile);
 	else if (major == 1 && minor == 1)
 		ret = parse_slabinfo11(list, stats, slabfile);
