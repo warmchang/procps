@@ -651,7 +651,7 @@ static void statm2proc(const char* s, proc_t *restrict P) {
 static int file2str(const char *directory, const char *what, struct utlbuf_s *ub) {
  #define buffGRW 1024
     char path[PROCPATHLEN];
-    int fd, num, tot_read = 0;
+    int fd, num, tot_read = 0, len;
 
     /* on first use we preallocate a buffer of minimum size to emulate
        former 'local static' behavior -- even if this read fails, that
@@ -662,11 +662,16 @@ static int file2str(const char *directory, const char *what, struct utlbuf_s *ub
         ub->buf = calloc(1, (ub->siz = buffGRW));
         if (!ub->buf) return -1;
     }
-    sprintf(path, "%s/%s", directory, what);
+    len = snprintf(path, sizeof path, "%s/%s", directory, what);
+    if (len <= 0 || (size_t)len >= sizeof path) return -1;
     if (-1 == (fd = open(path, O_RDONLY, 0))) return -1;
     while (0 < (num = read(fd, ub->buf + tot_read, ub->siz - tot_read))) {
         tot_read += num;
         if (tot_read < ub->siz) break;
+        if (ub->siz >= INT_MAX - buffGRW) {
+            tot_read--;
+            break;
+        }
         if (!(ub->buf = realloc(ub->buf, (ub->siz += buffGRW)))) {
             close(fd);
             return -1;
