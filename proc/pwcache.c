@@ -42,8 +42,9 @@ char *user_from_uid(uid_t uid)
     }
     *p = (struct pwbuf *) xmalloc(sizeof(struct pwbuf));
     (*p)->uid = uid;
-    if ((pw = getpwuid(uid)) == NULL)
-	sprintf((*p)->name, "#%d", uid);
+    pw = getpwuid(uid);
+    if (!pw)
+	sprintf((*p)->name, "%d", uid);
     else
 	sprintf((*p)->name, "%-." NAMELENGTH "s", pw->pw_name);
     (*p)->next = NULL;
@@ -69,8 +70,9 @@ char *group_from_gid(gid_t gid)
     }
     *g = (struct grpbuf *) malloc(sizeof(struct grpbuf));
     (*g)->gid = gid;
-    if ((gr = getgrgid(gid)) == NULL)
-       sprintf((*g)->name, "#%d", gid);
+    gr = getgrgid(gid);
+    if (!gr)
+       sprintf((*g)->name, "%d", gid);
     else
        sprintf((*g)->name, "%-." NAMELENGTH "s", gr->gr_name);
     (*g)->next = NULL;

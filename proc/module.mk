@@ -74,7 +74,7 @@ DIRS  += proc/
 proc/$(ANAME): $(LIBOBJ)
 	$(AR) rcs $@ $^
 
-#proc/$(SONAME): proc/library.map
+proc/$(SONAME): proc/library.map
 proc/$(SONAME): $(LIBOBJ)
 	$(CC) -shared -Wl,-soname,$(SONAME) -Wl,--version-script=proc/library.map -o $@ $^ -lc
 
