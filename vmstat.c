@@ -3,6 +3,10 @@
 // 27/05/2003 (Fabian) : Add unit conversion + interface
 //               	 Export proc/stat access to libproc
 //			 Adapt vmstat helpfile
+// 31/05/2003 (Fabian) : Add diskstat support (/libproc)
+// June 2003 (Fabian) : -S <x> -s & -s -S <x> patch
+// June 2003 (Fabian) : -Adding diskstat against 3.1.9, slabinfo
+//			 -patching 'header' in disk & slab
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,7 +23,21 @@
 
 #include "proc/sysinfo.h"
 #include "proc/version.h"
-#include "vmstat.h"
+
+static unsigned long dataUnit=1024;
+static char szDataUnit [16];
+#define UNIT_B 1
+#define UNIT_k 1000
+#define UNIT_K  1024
+#define UNIT_m 1000000
+#define UNIT_M  1048576
+
+#define VMSTAT 0
+#define DISKSTAT 0x00000001
+#define VMSUMSTAT 0x00000002
+#define SLABSTAT 0x00000004
+
+static int statMode=VMSTAT;
 
 #define FALSE 0
 #define TRUE 1
@@ -41,6 +59,8 @@ static void usage(void) {
   fprintf(stderr,"              -V prints version.\n");
   fprintf(stderr,"              -n causes the headers not to be reprinted regularly.\n");
   fprintf(stderr,"              -a print inactive/active page stats.\n");
+  fprintf(stderr,"              -d prints disk statistics\n");
+  fprintf(stderr,"              -m prints slabinfo\n");
   fprintf(stderr,"              -S unit size\n");
   fprintf(stderr,"              delay is the delay between updates in seconds. \n");
   fprintf(stderr,"              unit size k:1000 K:1024 m:1000000 M:1048576 (default is K)\n");
@@ -132,10 +152,25 @@ static void new_header(void){
 
 ////////////////////////////////////////////////////////////////////////////
 
-unsigned long unitConvert(unsigned int kbsize)
-{
+static void new_diskheader(void){
+  printf("disk ----------reads------------ -----------writes----------- -------IO-------\n");
+
+  printf("%3s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s\n",   " ", "total", "merged","sectors","ms","total","merged","sectors","ms","cur","s");
+
+}
+
+////////////////////////////////////////////////////////////////////////////
+
+static void new_slabheader(void){
+  printf("%-24s %6s %6s %6s %6s\n","Cache","Num", "Total", "Size", "Pages");
+}
+
+
+////////////////////////////////////////////////////////////////////////////
+
+static unsigned long unitConvert(unsigned int size){
  float cvSize;
- cvSize=(float)kbsize/dataUnit*1024;
+ cvSize=(float)size/dataUnit*((statMode==SLABSTAT)?1:1024);
  return ((unsigned long) cvSize);
 }
 
@@ -157,7 +192,6 @@ static void new_format(void) {
 
   sleep_half=(sleep_time/2);
   new_header();
-
   meminfo();
 
   getstat(cpu_use,cpu_nic,cpu_sys,cpu_idl,cpu_iow,
@@ -240,6 +274,98 @@ static void new_format(void) {
 
 ////////////////////////////////////////////////////////////////////////////
 
+static void new_diskformat(void){
+  FILE *fDiskstat;
+  struct disk_stat *disks;
+  struct partition_stat *partitions;
+  unsigned long ndisks,i,j,k;
+  const char format[]="%-3s %6u %6u %6llu %6u %6u %6u %6llu %6u %6u %6u\n";
+  if ((fDiskstat=fopen("/proc/diskstats", "rb"))){
+    fclose(fDiskstat);
+    ndisks=getdiskstat(&disks,&partitions);
+    for(k=0; k<ndisks; k++){
+      if (moreheaders && ((k%height)==0)) new_diskheader();
+      printf(format,
+        disks[k].disk_name,disks[k].reads, disks[k].merged_reads,disks[k].reads_sectors, disks[k].milli_reading, disks[k].writes, disks[k].merged_writes, disks[k].written_sectors,disks[k].milli_writing, disks[k].inprogress_IO?disks[k].inprogress_IO/1000:0, disks[k].milli_spent_IO?disks[k].milli_spent_IO/1000:0/*, disks[i].weighted_milli_spent_IO/1000*/);
+      fflush(stdout);
+    }
+    free(disks);
+    free(partitions);
+    for(j=1; j<num_updates; j++){ 
+      sleep(sleep_time);
+      ndisks=getdiskstat(&disks,&partitions);
+      for(i=0; i<ndisks; i++,k++){
+        if (moreheaders && ((k%height)==0)) new_diskheader();
+        printf(format,
+          disks[i].disk_name,
+          disks[i].reads,
+          disks[i].merged_reads,
+          disks[i].reads_sectors,
+          disks[i].milli_reading,
+          disks[i].writes,
+          disks[i].merged_writes,
+          disks[i].written_sectors,
+          disks[i].milli_writing,
+          disks[i].inprogress_IO?disks[i].inprogress_IO/1000:0,
+          disks[i].milli_spent_IO?disks[i].milli_spent_IO/1000:0/*,
+          disks[i].weighted_milli_spent_IO/1000*/
+        );
+        fflush(stdout);
+      }
+      free(disks);
+      free(partitions);
+    }
+  }else{
+    fprintf(stderr, "Your kernel doesn't support diskstat (2.5.70 or above required)"); 
+    exit(0);
+  } 
+}
+
+////////////////////////////////////////////////////////////////////////////
+
+static void new_slabformat (void){
+  FILE *fSlab;
+  struct slab_cache *slabs;
+  unsigned long nSlab,i,j,k;
+  const char format[]="%-24s %6u %6u %6u %6u\n";
+
+  fSlab=fopen("/proc/slabinfo", "rb");
+  if(!fSlab){
+    fprintf(stderr, "Your kernel doesn't support slabinfo");    
+    return;
+  }
+
+  nSlab = getslabinfo(&slabs);
+  for(k=0; k<nSlab; k++){
+    if (moreheaders && ((k%height)==0)) new_slabheader();
+    printf(format,
+      slabs[k].name,
+      slabs[k].active_objs,
+      slabs[k].num_objs,
+      slabs[k].objsize,
+      slabs[k].objperslab
+    );
+  }
+  free(slabs);
+  for(j=1,k=1; j<num_updates; j++) { 
+    sleep(sleep_time);
+    nSlab = getslabinfo(&slabs);
+    for(i=0; i<nSlab; i++,k++){
+      if (moreheaders && ((k%height)==0)) new_slabheader();
+      printf(format,
+        slabs[i].name,
+        slabs[i].active_objs,
+        slabs[i].num_objs,
+        slabs[i].objsize,
+        slabs[i].objperslab
+      );
+    }
+    free(slabs);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////
+
 static void sum_format(void) {
   unsigned int running, blocked, btime, processes;
   jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow;
@@ -278,6 +404,9 @@ static void sum_format(void) {
   printf("%13u boot time\n", btime);
   printf("%13u forks\n", processes);
 }
+
+////////////////////////////////////////////////////////////////////////////
+
 static void fork_format(void) {
   unsigned int running, blocked, btime, processes;
   jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow;
@@ -293,6 +422,7 @@ static void fork_format(void) {
   printf("%13u forks\n", processes);
 }
 
+////////////////////////////////////////////////////////////////////////////
 
 static int winhi(void) {
     struct winsize win;
@@ -304,16 +434,20 @@ static int winhi(void) {
     return rows;
 }
 
+////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char *argv[]) {
   argc=0; /* redefined as number of integer arguments */
   for (argv++;*argv;argv++) {
     if ('-' ==(**argv)) {
       switch (*(++(*argv))) {
-      	
+    
       case 'V':
 	display_version();
 	exit(0);
+      case 'd':
+	statMode |= DISKSTAT;
+	break;
       case 'a':
 	/* active/inactive mode */
 	a_option=1;
@@ -322,6 +456,9 @@ int main(int argc, char *argv[]) {
         // FIXME: check for conflicting args
 	fork_format();
         exit(0);
+      case 'm':
+        statMode |= SLABSTAT; 	
+	break;
       case 'n':
 	/* print only one header */
 	moreheaders=FALSE;
@@ -341,16 +478,14 @@ int main(int argc, char *argv[]) {
 		exit(EXIT_FAILURE);
 	 }
 	break;
-
       case 's':
-        // FIXME: check for conflicting args
-	sum_format();
-        exit(0);
+        statMode |= VMSUMSTAT; 	
+	break;
       default:
 	/* no other aguments defined yet. */
 	usage();
       }
-    } else {
+   }else{
       argc++;
       switch (argc) {
       case 1:
@@ -364,17 +499,25 @@ int main(int argc, char *argv[]) {
       default:
        usage();
       } /* switch */
-    }
   }
-
+}
   if (moreheaders) {
       int tmp=winhi()-3;
       height=((tmp>0)?tmp:22);
   }    
-
   setlinebuf(stdout);
-
-  new_format();
+  switch(statMode){
+	case(VMSTAT):   new_format();
+			break;
+	case(VMSUMSTAT):sum_format();
+			break;
+	case(DISKSTAT): new_diskformat();
+			break;
+	case(SLABSTAT): new_slabformat();
+			break;
+	default:	usage();
+			break;
+  }
   return 0;
 }
 

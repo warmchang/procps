@@ -19,9 +19,16 @@
 #define _IVMstat
 unsigned long dataUnit=1024;
 char szDataUnit [16];
+#define UNIT_B 1
 #define UNIT_k 1000
 #define UNIT_K  1024
 #define UNIT_m 1000000
 #define UNIT_M  1048576
 
+#define VMSTAT 1
+#define DISKSTAT 2
+#define VMSUMSTAT 3
+#define SLABSTAT 4
+
+int statMode=VMSTAT;
 #endif /* _IVMstat */

@@ -3,6 +3,9 @@ If you change an existing file, follow the existing style.
 
 Hard tabs are OK, as long as you consider the tab stops to
 be every 8 characters. You can also use 2, 3, or 4 spaces.
+Tabs are kind of yucky, since cut-and-paste mangles them
+sometimes and they make "diff -Naurd old new" output less
+readable.
 
 Spaces within a line don't matter much, and won't be
 considered part of the style. Just make it readable:
@@ -44,6 +47,8 @@ fprintf(fd, "%d %d %d %d %d %d\n",
   sfssss + wwwwfwfw
 );
 
+Keep these distinct: NULL, '\0', 0, 0.0
+
 Command-line parsers need to be bomb-proof. It is not acceptable
 to crash due to a messed up command-line. For an option "-x" that
 takes an argument, accept both "-x arg" and "-xarg". Remember to
@@ -56,15 +61,22 @@ non-ASCII characters to be printed. Assuming the console is
 not in UTF-8 mode, all of these are bad: "\b\e\f\n\r\t\v\x9b".
 (the "\x9b" is valid in UTF-8 mode, but equivalent to "\e["
 when not in UTF-8 mode -- which gives control of terminal
-settings)
+settings) It's best if you consider user-supplied data to
+be unsafe, since this makes for less work in case the code
+ends up needing to run setuid. Termcap data is user-supplied.
+Except for the above security issues, don't bother to check
+for something you can't handle... like printf() failing.
+It is expected that /dev exists and so on.
 
 Remember that a read() may return early, with partial data
 or with -1 and errno set to EINTR. You then must try again.
 
-char: may be signed or unsigned by default
-int: always 32-bit
+char:      may be signed or unsigned by default
+int:       always 32-bit
 long long: always 64-bit
-long: same size as a pointer, either 32-bit or 64-bit
+pointer:   either 32-bit or 64-bit
+long:      same size as a pointer
+KLONG:     same size as a pointer or long IN THE KERNEL
 
 Functions used in just one file must be marked static.
 Use the "const" and "restrict" keywords wherever you can.

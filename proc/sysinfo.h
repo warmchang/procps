@@ -88,5 +88,44 @@ extern unsigned long vm_allocstall;
 
 extern void vminfo(void);
 
+typedef struct disk_stat{
+	unsigned int disk_type;
+	char disk_name [16];
+	unsigned           reads;
+	unsigned           merged_reads;
+	unsigned long long reads_sectors;
+	unsigned           milli_reading;
+	unsigned           writes;
+	unsigned           merged_writes;
+	unsigned long long written_sectors;
+	unsigned           milli_writing;
+	unsigned           inprogress_IO;
+	unsigned           milli_spent_IO;
+	unsigned           weighted_milli_spent_IO;
+}disk_stat;
+
+typedef struct partition_stat{
+	unsigned int disk_type;
+	unsigned int partition_num;
+	char partition_name [16];
+	struct disk_stat* parent_disk;
+	unsigned           reads;
+	unsigned long long reads_sectors;
+	unsigned           writes;
+	unsigned           requested_writes;
+}partition_stat;
+
+extern unsigned int getdiskstat (struct disk_stat**,struct partition_stat**);
+
+typedef struct slab_cache{
+	char name[48];
+	unsigned active_objs;
+	unsigned num_objs;
+	unsigned objsize;
+	unsigned objperslab;
+}slab_cache;
+
+extern unsigned int getslabinfo (struct slab_cache**);
+
 EXTERN_C_END
 #endif /* SYSINFO_H */

@@ -13,9 +13,13 @@ vmstat \- Report virtual memory statistics
 .B vmstat
 .RB [ "\-f" ]
 .RB [ "\-s" ]
+.RB [ "\-m" ]
 .br
 .B vmstat
 .RB [ "\-S unit"]
+.br
+.B vmstat
+.RB [ "\-d"]
 .br
 .B vmstat
 .RB [ "\-V" ]
@@ -36,6 +40,8 @@ equivalent to the total number of tasks created. Each process
 is represented by one or more tasks, depending on thread usage.
 This display does not repeat.
 .PP
+The \fB-m\fP displays slabinfo.
+.PP
 The \fB-n\fP switch causes the header to be displayed only once rather than periodically.
 .PP
 The \fB-s\fP switch displays a table of various event counters
@@ -49,11 +55,13 @@ only one report is printed with the average values since boot.
 is the number of updates.  If no count is specified and delay is
 defined, \fIcount\fP defaults to infinity.
 .PP
+The \fB-d\fP reports disk statistics (2.5.70 or above required) 
+.PP
 The \fB-S\fP followed by k or K or m or M switches outputs between 1000, 1024, 1000000, or 1048576 bytes 
 .PP
 The \fB-V\fP switch results in displaying version information.
 .PP
-.SH FIELD DESCRIPTIONS
+.SH FIELD DESCRIPTION FOR VM MODE
 .SS
 .B "Procs"
 .nf
@@ -101,7 +109,47 @@ us: Time spent running non-kernel code. (user time, including nice time)
 sy: Time spent running kernel code. (system time)
 id: Time spent idle. Prior to Linux 2.5.41, this includes IO-wait time.
 wa: Time spent waiting for IO. Prior to Linux 2.5.41, shown as zero.
+
+.PP
+.SH FIELD DESCRIPTION FOR DISK MODE 
+.SS
+.B "Reads"
 .nf
+total: Total reads completed successfully 
+merged: grouped reads (resulting in one I/O)
+sectors: Sectors read successfully
+ms: milliseconds spent reading
+.fi
+.PP
+.SS
+.B "Writes"
+.nf
+total: Total writes completed successfully
+merged: grouped writes (resulting in one I/O)
+sectors: Sectors written successfully
+ms: milliseconds spent writing
+.fi
+.PP
+.SS
+.B "IO"
+.nf
+cur: I/O in progress
+s: seconds spent for I/O
+.fi
+
+
+.PP
+.SH FIELD DESCRIPTION FOR SLAB MODE 
+.nf
+cache: Cache name
+num: Number of currently active objects
+total: Total number of available objects
+size: Size of each object
+pages: Number of pages with at least one active object
+totpages: Total number of allocated pages
+pslab: Number of pages per slab
+.fi
+
 .SH NOTES
 .B "vmstat "
 does not require special permissions.
@@ -113,8 +161,9 @@ does not count itself as a running process.
 All linux blocks are currently 1024 bytes. Old kernels may report
 blocks as 512 bytes, 2048 bytes, or 4096 bytes.
 .PP
-Since procps 3.1.9, vmstat lets you choose units (k, K, m, M)
+Since procps 3.1.9, vmstat lets you choose units (k, K, m, M) default is K (1024 bytes) in the default mode
 .PP
+vmstat uses slabinfo 1.1    FIXME
 .SH FILES
 .ta
 .nf
@@ -128,5 +177,7 @@ iostat(1), sar(1), mpstat(1), ps(1), top(1), free(1)
 .PP
 .SH BUGS
 Does not tabulate the block io per device or count the number of system calls.
-.SH AUTHOR
+.SH AUTHORS
+.nf
 Written by Henry Ware <al172@yfn.ysu.edu>. 
+Diskstat,slab mode and some improvements by Fabian Frederick <fabian.frederick@gmx.fr>

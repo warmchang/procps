@@ -4,8 +4,10 @@
 // This file is placed under the conditions of the GNU Library
 // General Public License, version 2, or any later version.
 // See file COPYING for information on distribution conditions.
-
-/* File for parsing top-level /proc entities. */
+//
+// File for parsing top-level /proc entities. */
+//
+// June 2003, Fabian Frederick, disk and slab info
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -172,7 +174,9 @@ static void old_Hertz_hack(void){
 #define AT_CLKTCK       17    /* frequency of times() */
 #endif
 
-extern char** environ;
+#define NOTE_NOT_FOUND 42
+
+//extern char** environ;
 
 /* for ELF executables, notes are pushed before environment and args */
 static unsigned long find_elf_note(unsigned long findme){
@@ -182,7 +186,7 @@ static unsigned long find_elf_note(unsigned long findme){
     if(ep[0]==findme) return ep[1];
     ep+=2;
   }
-  return 42;
+  return NOTE_NOT_FOUND;
 }
 
 static void init_libproc(void) __attribute__((constructor));
@@ -195,7 +199,7 @@ static void init_libproc(void){
 
   if(linux_version_code > LINUX_VERSION(2, 4, 0)){ 
     Hertz = find_elf_note(AT_CLKTCK);
-    if(Hertz!=42) return;
+    if(Hertz!=NOTE_NOT_FOUND) return;
     fprintf(stderr, "2.4 kernel w/o ELF notes? -- report to albert@users.sf.net\n");
   }
   old_Hertz_hack();
@@ -649,5 +653,107 @@ nextline:
     if(!tail) break;
     head = tail+1;
   }
+}
+
+///////////////////////////////////////////////////////////////////////
+// based on Fabian Frederick's /proc/diskstats parser
+
+static unsigned int getFileLines(const char* szFile){
+  char szBuffer[1024];
+  FILE *fdiskStat;
+  int lines=0;
+  if ((fdiskStat=fopen (szFile,"rb"))){
+    while (fgets(szBuffer, 1024, fdiskStat)){
+      lines++;
+    }
+    fclose(fdiskStat);
+  } 
+  return lines;
+}
+
+unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **partitions){
+  FILE* fd;
+  buff[BUFFSIZE-1] = 0; 
+  int units,
+      i,
+      disk_type,
+      disk_num,
+      cDisk=0,
+      cPartition=0;
+  *disks = NULL;
+  *partitions = NULL;
+  units = getFileLines("/proc/diskstats");
+  fd = fopen("/proc/diskstats", "rb");
+  if(!fd) crash("/proc/diskstats");
+
+  for (i=0; i<units; i++){
+    if (!fgets(buff,BUFFSIZE-1,fd)){
+      fclose(fd);
+      crash("/proc/diskstats");
+    }
+    sscanf(buff, "    %d    %d", &disk_type, &disk_num);
+    if (disk_num == 0){
+      (*disks) = realloc(*disks, (cDisk+1)*sizeof(struct disk_stat));
+      sscanf(buff,  "   %d    %*d %15s %u %u %llu %u %u %u %llu %u %u %u %u",
+        &(*disks)[cDisk].disk_type,
+        //&unused,
+        (*disks)[cDisk].disk_name,
+        &(*disks)[cDisk].reads,
+        &(*disks)[cDisk].merged_reads,
+        &(*disks)[cDisk].reads_sectors,
+        &(*disks)[cDisk].milli_reading,
+        &(*disks)[cDisk].writes,
+        &(*disks)[cDisk].merged_writes,
+        &(*disks)[cDisk].written_sectors,
+        &(*disks)[cDisk].milli_writing,
+        &(*disks)[cDisk].inprogress_IO,
+        &(*disks)[cDisk].milli_spent_IO,
+        &(*disks)[cDisk].weighted_milli_spent_IO
+      );
+      cDisk++;
+    }else{
+      (*partitions) = realloc(*partitions, (cPartition+1)*sizeof(struct partition_stat));
+      fflush(stdout);
+      sscanf(buff,  "   %d    %d %15s %u %llu %u %u",
+        &(*partitions)[cPartition].disk_type,
+        &(*partitions)[cPartition].partition_num,
+        (*partitions)[cPartition].partition_name,
+        &(*partitions)[cPartition].reads,
+        &(*partitions)[cPartition].reads_sectors,
+        &(*partitions)[cPartition].writes,
+        &(*partitions)[cPartition].requested_writes
+      );
+      (*partitions)[cPartition++].parent_disk = &((*disks)[cDisk-1]);
+    }
+  }
+  fclose(fd);
+  return cDisk;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// based on Fabian Frederick's /proc/slabinfo parser
+
+unsigned int getslabinfo (struct slab_cache **slab){
+  FILE* fd;
+  int cSlab = 0;
+  buff[BUFFSIZE-1] = 0; 
+  *slab = NULL;
+  fd = fopen("/proc/slabinfo", "rb");
+  if(!fd) crash("/proc/slabinfo");
+  while (fgets(buff,BUFFSIZE-1,fd)){
+    if(!memcmp("slabinfo - version:",buff,19)) continue; // skip header
+    if(*buff == '#')                           continue; // skip comments
+    (*slab) = realloc(*slab, (cSlab+1)*sizeof(struct slab_cache));
+    sscanf(buff,  "%47s %u %u %u %u",  // allow 47; max seen is 24
+      (*slab)[cSlab].name,
+      &(*slab)[cSlab].active_objs,
+      &(*slab)[cSlab].num_objs,
+      &(*slab)[cSlab].objsize,
+      &(*slab)[cSlab].objperslab
+    ) ;
+    cSlab++;
+  }
+  fclose(fd);
+  return cSlab;
 }
 
