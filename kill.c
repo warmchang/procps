@@ -50,7 +50,7 @@ static void __attribute__ ((__noreturn__)) print_usage(FILE * out)
 
 int main(int argc, char **argv)
 {
-    int signo, i, loop=1;
+    int signo, i;
     long pid;
     int exitvalue = EXIT_SUCCESS;
     int optindex;
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
         signo = SIGTERM;
 
     opterr=0; /* suppress errors on -123 */
-    while (loop == 1 && (i = getopt_long(argc, argv, "l::Ls:hV", longopts, &optindex)) != -1)
+    while ((i = getopt_long(argc, argv, "l::Ls:hV", longopts, &optindex)) != -1)
         switch (i) {
         case 'l':
             sig_option = NULL;
@@ -124,8 +124,7 @@ int main(int argc, char **argv)
                 exitvalue = EXIT_FAILURE;
                 exit(exitvalue);
             }
-            loop=0;
-            break;
+            xerrx(EXIT_FAILURE, _("internal error"));
         default:
             print_usage(stderr);
         }
