@@ -8,7 +8,7 @@
 .\"
 .TH SKILL 1 "March 12, 1999" "Linux" "Linux User's Manual"
 .SH NAME
-skill, snice \- report process status
+skill, snice \- send a signal or report process status
 
 .SH SYNOPSIS
 .nf
@@ -60,6 +60,7 @@ lB rB lB lB
 lfCW r l l.
 Name	Num	Action	Description
 .TH
+0	0	n/a	exit code indicates if a signal may be sent
 ALRM	14	exit
 HUP	1	exit
 INT	2	exit
@@ -107,7 +108,7 @@ snice -17 root bash	Give priority to root's shell
 .TE
 
 .SH "SEE ALSO"
-killall(1) pkill(1) kill(1) renice(1) nice(1)
+killall(1) pkill(1) kill(1) renice(1) nice(1) signal(7) kill(2)
 
 .SH STANDARDS
 No standards apply.

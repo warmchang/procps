@@ -560,6 +560,7 @@ next_proc:				/* get next PID for consideration */
 	p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
 
     p->euid = sb.st_uid;			/* need a way to get real uid */
+    p->egid = sb.st_gid;			/* need a way to get real gid */
 #ifdef FLASK_LINUX
     p->secsid = secsid;
 #endif
@@ -663,6 +664,7 @@ next_proc:				/* get next PID for consideration */
 	p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
 
     p->euid = sb.st_uid;			/* need a way to get real uid */
+    p->egid = sb.st_gid;			/* need a way to get real gid */
 #ifdef FLASK_LINUX
     p->secsid = secsid;
 #endif

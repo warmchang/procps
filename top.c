@@ -1131,7 +1131,7 @@ static FLD_t Fieldstab[] = {
 #endif
    // next entry's special: '.head' will be formatted using table entry's own
    //                       '.fmts' plus runtime supplied conversion args!
-   { "XxXx", "Command ",    "%-*.*s ",  -1,    -1, SF(CMD), "Command name/line",    L_EITHER },
+   { "XxXx", "COMMAND ",    "%-*.*s ",  -1,    -1, SF(CMD), "Command name/line",    L_EITHER },
    { "YyUu", "WCHAN     ",  "%-9.9s ",  -1,    -1, SF(WCH), "Sleeping in Function", L_stat   },
    // next entry's special: the 0's will be replaced with '.'!
 #ifdef CASEUP_HEXES

@@ -7,7 +7,7 @@
 .\" Michael K. Johnson
 .TH KILL 1 "November 21, 1999" "Linux" "Linux User's Manual"
 .SH NAME
-kill \- report process status
+kill \- send a signal to a process
 
 .SH SYNOPSIS
 .TS
@@ -18,7 +18,7 @@ kill -s signal pid ...	Send a signal to every process listed.
 kill -l	List all signal names.
 kill -L	List all signal names in a nice table.
 kill -l signal	Convert a signal number into a name.
-kill -V,--version Show version of program
+kill -V,--version	Show version of program
 .TE
 
 .SH DESCRIPTION
@@ -38,6 +38,7 @@ lB rB lB lB
 lfCW r l l.
 Name	Num	Action	Description
 .TH
+0	0	n/a	exit code indicates if a signal may be sent
 ALRM	14	exit
 HUP	1	exit
 INT	2	exit
@@ -104,7 +105,7 @@ Send the default signal, SIGTERM, to all those processes.
 .fi
 .PP
 .SH "SEE ALSO"
-top(1) skill(1) kill(2) renice(1) nice(1)
+pkill(1) skill(1) kill(2) renice(1) nice(1) signal(7) killall(1)
 
 .SH STANDARDS
 This command meets appropriate standards. The -L flag is Linux-specific.
