@@ -99,7 +99,7 @@ typedef struct status_table_struct {
 } status_table_struct;
 
 #ifdef LABEL_OFFSET
-#define F(x) {#x, sizeof(#x)-1, (int)(&&case_##x-&&base)},
+#define F(x) {#x, sizeof(#x)-1, (long)(&&case_##x-&&base)},
 #else
 #define F(x) {#x, sizeof(#x)-1, &&case_##x},
 #endif
