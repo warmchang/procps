@@ -1622,7 +1622,7 @@ void show_one_proc(const proc_t *restrict const p){
   char *restrict const outbuf = saved_outbuf;
   static int did_stuff = 0;  /* have we ever printed anything? */
 
-  if(-1==(long)p){    /* true only once, at the end */
+  if(unlikely(-1==(long)p)){    /* true only once, at the end */
     check_header_width();  /* temporary test code */
     if(did_stuff) return;
     /* have _never_ printed anything, but might need a header */
@@ -1633,24 +1633,24 @@ void show_one_proc(const proc_t *restrict const p){
     /* fprintf(stderr, "No processes available.\n"); */  /* legal? */
     exit(1);
   }
-  if(p){   /* not header, maybe we should call ourselves for it */
-    if(!--lines_to_next_header){
+  if(likely(p)){  /* not header, maybe we should call ourselves for it */
+    if(unlikely(!--lines_to_next_header)){
       lines_to_next_header = header_gap;
       show_one_proc(NULL);
     }
   }
   did_stuff = 1;
-  if(active_cols>(int)OUTBUF_SIZE) fprintf(stderr,"Fix bigness error.\n");
+  if(unlikely(active_cols>(int)OUTBUF_SIZE)) fprintf(stderr,"Fix bigness error.\n");
 
   /* print row start sequence */
   for(;;){
     legit = 0;
     /* set width suggestion which might be ignored */
-    if(fmt->next) max_rightward = fmt->width;
+    if(likely(fmt->next)) max_rightward = fmt->width;
     else max_rightward = active_cols-((correct>actual) ? correct : actual);
     max_leftward  = fmt->width + actual - correct; /* TODO check this */
     /* prepare data and calculate leftpad */
-    if(p && fmt->pr) amount = (*fmt->pr)(outbuf,p);
+    if(likely(p) && likely(fmt->pr)) amount = (*fmt->pr)(outbuf,p);
     else amount = strlen(strcpy(outbuf, fmt->name)); /* AIX or headers */
     switch((fmt->flags) & JUST_MASK){
     case 0:  /* for AIX, assigned outside this file */
@@ -1699,7 +1699,7 @@ void show_one_proc(const proc_t *restrict const p){
         break;
       }
     case UNLIMITED:
-      if(fmt->next){
+      if(unlikely(fmt->next)){
         outbuf[fmt->width] = '\0';  /* Must chop, more columns! */
       }else{
         int chopspot;  /* place to chop */
@@ -1728,11 +1728,11 @@ void show_one_proc(const proc_t *restrict const p){
      */
     space = correct - actual + leftpad;
     if(space<1) space=dospace;
-    if(space>SPACE_AMOUNT) space=SPACE_AMOUNT;  // only have so much available
+    if(unlikely(space>SPACE_AMOUNT)) space=SPACE_AMOUNT;  // only so much available
 
     /* print data, set x position stuff */
     amount = strlen(outbuf);  /* post-chop data width */
-    if(!fmt->next){
+    if(unlikely(!fmt->next)){
       /* Last column. Write padding + data + newline all together. */
       outbuf[amount] = '\n';
       fwrite(outbuf-space, space+amount+1, 1, stdout);
