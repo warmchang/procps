@@ -547,6 +547,7 @@ static int one_proc(proc_t * p)
 
 	if (X_option || c_option) {
 		print_extended_maps(fp);
+		fclose(fp);
 		return 0;
 	}
 
