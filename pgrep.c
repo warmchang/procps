@@ -72,7 +72,7 @@ usage (int opt)
 
 
 static union el *
-split_list (const char *str, char sep, int (*convert)(const char *, union el *))
+split_list (const char *restrict str, int (*convert)(const char *, union el *))
 {
 	char *copy = strdup (str);
 	char *ptr = copy;
@@ -85,7 +85,7 @@ split_list (const char *str, char sep, int (*convert)(const char *, union el *))
 		exit (3);
 
 	do {
-		sep_pos = strchr (ptr, sep);
+		sep_pos = strchr (ptr, ',');
 		if (sep_pos)
 			*sep_pos = 0;
 		if (convert (ptr, &list[i]))
@@ -116,7 +116,7 @@ split_list (const char *str, char sep, int (*convert)(const char *, union el *))
    plain number, FALSE if there are any non-digits. */
 
 static int
-strict_atol (const char *str, long *value)
+strict_atol (const char *restrict str, long *restrict value)
 {
 	int res = 0;
 	int sign = 1;
@@ -139,7 +139,7 @@ strict_atol (const char *str, long *value)
 }
 
 static int
-conv_uid (const char *name, union el *e)
+conv_uid (const char *restrict name, union el *restrict e)
 {
 	struct passwd *pwd;
 
@@ -158,7 +158,7 @@ conv_uid (const char *name, union el *e)
 
 
 static int
-conv_gid (const char *name, union el *e)
+conv_gid (const char *restrict name, union el *restrict e)
 {
 	struct group *grp;
 
@@ -177,7 +177,7 @@ conv_gid (const char *name, union el *e)
 
 
 static int
-conv_pgrp (const char *name, union el *e)
+conv_pgrp (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
 		fprintf (stderr, "%s: invalid process group: %s\n",
@@ -191,7 +191,7 @@ conv_pgrp (const char *name, union el *e)
 
 
 static int
-conv_sid (const char *name, union el *e)
+conv_sid (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
 		fprintf (stderr, "%s: invalid session id: %s\n",
@@ -205,7 +205,7 @@ conv_sid (const char *name, union el *e)
 
 
 static int
-conv_num (const char *name, union el *e)
+conv_num (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
 		fprintf (stderr, "%s: not a number: %s\n",
@@ -217,7 +217,7 @@ conv_num (const char *name, union el *e)
 
 
 static int
-conv_str (const char *name, union el *e)
+conv_str (const char *restrict name, union el *restrict e)
 {
 	e->str = strdup (name);
 	return (1);
@@ -225,7 +225,7 @@ conv_str (const char *name, union el *e)
 
 
 static int
-match_numlist (long value, const union el *list)
+match_numlist (long value, const union el *restrict list)
 {
 	int found = 0;
 	if (list == NULL)
@@ -241,7 +241,7 @@ match_numlist (long value, const union el *list)
 }
 
 static int
-match_strlist (const char *value, const union el *list)
+match_strlist (const char *restrict value, const union el *restrict list)
 {
 	int found = 0;
 	if (list == NULL)
@@ -257,7 +257,7 @@ match_strlist (const char *value, const union el *list)
 }
 
 static void
-output_numlist (const union el *list)
+output_numlist (const union el *restrict list)
 {
 	int i;
 	for (i = 1; i < list[0].num; i++)
@@ -268,7 +268,7 @@ output_numlist (const union el *list)
 }
 
 static void
-output_strlist (const union el *list)
+output_strlist (const union el *restrict list)
 {
 	int i;
 	for (i = 1; i < list[0].num; i++)
@@ -527,42 +527,42 @@ parse_opts (int argc, char **argv)
 			opt_delim = strdup (optarg);
 			break;
 		case 'P':
-	  		opt_ppid = split_list (optarg, ',', conv_num);
+	  		opt_ppid = split_list (optarg, conv_num);
 			if (opt_ppid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
 		case 'g':
-	  		opt_pgrp = split_list (optarg, ',', conv_pgrp);
+	  		opt_pgrp = split_list (optarg, conv_pgrp);
 			if (opt_pgrp == NULL)
 				usage (opt);
 			break;
 		case 's':
-	  		opt_sid = split_list (optarg, ',', conv_sid);
+	  		opt_sid = split_list (optarg, conv_sid);
 			if (opt_sid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
 		case 'u':
-	  		opt_euid = split_list (optarg, ',', conv_uid);
+	  		opt_euid = split_list (optarg, conv_uid);
 			if (opt_euid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
 		case 'U':
-	  		opt_uid = split_list (optarg, ',', conv_uid);
+	  		opt_uid = split_list (optarg, conv_uid);
 			if (opt_uid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
 		case 'G':
-	  		opt_gid = split_list (optarg, ',', conv_gid);
+	  		opt_gid = split_list (optarg, conv_gid);
 			if (opt_gid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
 		case 't':
-	  		opt_term = split_list (optarg, ',', conv_str);
+	  		opt_term = split_list (optarg, conv_str);
 			if (opt_term == NULL)
 				usage (opt);
 			++criteria_count;

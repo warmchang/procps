@@ -75,7 +75,7 @@ static void display_kill_version(){
 }
 
 /***** kill or nice a process */
-static void hurt_proc(int tty, int uid, int pid, char *cmd){
+static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd){
   int failed;
   int saved_errno;
   char dn_buf[1000];
@@ -245,8 +245,8 @@ static void kill_usage(void){
 }
 
 /***** kill */
-static void kill_main(int argc, char *argv[]){
-  char *sigptr;
+static void kill_main(int argc, const char *restrict argv[]){
+  const char *sigptr;
   int signo = SIGTERM;
   int exitvalue = 0;
   if(argc<2) kill_usage();
