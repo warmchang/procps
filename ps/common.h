@@ -167,7 +167,7 @@ typedef struct sort_node {
 typedef struct format_node {
   struct format_node *next;
   char *name;                             /* user can override default name */
-  int (*pr)(void);                         /* print function */
+  int (*pr)(char *restrict const outbuf, const proc_t *restrict const pp); // print function
 /*  int (* const sr)(const proc_t* P, const proc_t* Q); */ /* sort function */
   int width;
   int need;
@@ -179,7 +179,7 @@ typedef struct format_node {
 typedef struct format_struct {
   const char *spec; /* format specifier */
   const char *head; /* default header in the POSIX locale */
-  int (* const pr)(void); /* print function */
+  int (* const pr)(char *restrict const outbuf, const proc_t *restrict const pp); // print function
   int (* const sr)(const proc_t* P, const proc_t* Q); /* sort function */
   const int width;
   const int need;       /* data we will need (files to read, etc.) */
