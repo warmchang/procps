@@ -2179,7 +2179,7 @@ static void calibrate_fields (void) {
             s = scat(s, fmtmk("%*.*s", len, len, h), w->columnhdr, sizeof(w->columnhdr));
          }
 #ifndef USE_X_COLHDR
-         if (EU_XON == w->procflgs[i - 1]) --i;
+         if (i >= 1 && EU_XON == w->procflgs[i - 1]) --i;
 #endif
 
          /* establish the final maxpflgs and prepare to grow the variable column
@@ -2193,6 +2193,7 @@ static void calibrate_fields (void) {
             fit within screen width, including a leading window number */
          *(s = w->columnhdr) = '\0';
          if (Rc.mode_altscr) s = scat(s, " ", w->columnhdr, sizeof(w->columnhdr));
+         w->endpflg = 0;
          for (i = w->totpflgs - 1; -1 < i; i--) {
             f = w->pflgsall[i];
 #ifndef USE_X_COLHDR
