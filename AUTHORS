@@ -1,0 +1,46 @@
+
+free:
+Brian Edmonds
+
+oldps/ps:
+Branko Lankester <lankeste@fwi.uva.nl>
+Michael K. Johnson <johnsonm@redhat.com>
+Michael Shields <mjshield@nyx.cs.du.edu>
+Charles Blake <cblake@bbn.com>
+David Mossberger-Tang
+Albert Cahalan <acahalan@cs.uml.edu>
+
+skill/kill/snice:
+Albert Cahalan <acahalan@cs.uml.edu>
+
+tload:
+Branko Lankester
+David Engel <david@ods.com>
+Michael K. Johnson <johnsonm@redhat.com>
+
+top:
+Branko Lankester <lankeste@fwi.uva.nl>
+Roger Binns
+Robert Nation <nation@rocket.sanders.lockheed.com>
+Michael K. Johnson <johnsonm@redhat.com>
+Michael Shields <mjshield@nyx.cs.du.edu>
+Tim Janik <timj@gtk.org>
+Helmut Geyer <Helmut.Geyer@iwr.uni-heidelberg.de>
+George Bonser <george@captech.com>
+
+uptime:
+Larry Greenfield <greenfie@gauss.rutgers.edu>
+Michael K. Johnson <johnsonm@sunsite.unc.edu>
+
+vmstat:
+Henry Ware <al172@yfn.ysu.edu>. 
+
+w:
+Larry Greenfield <greenfie@gauss.rutgers.edu>
+Michael K. Johnson <johnsonm@redhat.com>
+Charles Blake
+
+watch:
+Tony Rems <rembo@unisoft.com>
+Mike Coleman <mkc@acm.org>
+

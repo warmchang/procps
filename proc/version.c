@@ -10,7 +10,7 @@
 #ifdef MINORVERSION
 char procps_version[] = "procps version " VERSION "." SUBVERSION "." MINORVERSION;
 #else
-char procps_version[] = "procps version " VERSION "." SUBVERSION;
+char procps_version[] = "procps version " VERSION ;
 #endif
 
 void display_version(void) {
