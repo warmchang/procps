@@ -1,12 +1,12 @@
 procps-3.1.1 --> procps-3.1.2
 
 better RPM generation
-general C99 clean-up
+use C99 features
 some seLinux fixes
 now count Inact_laundry as needed  #172163
 ps: fewer globals
 ps: hardware-enforced buffer protection
-ps: smaller (was it 1 kB or 2 kB ?)
+ps: 1 kB smaller
 top: B command added (for bold on/off)
 top: handle old (and future) config files
 top: man page tweak
@@ -26,7 +26,7 @@ vmstat faster on 2.5.xx kernels
 vmstat header fixed
 vmstat -a re-fixed
 
-procps-3.1.0 --> procps-3.1.0
+procps-3.0.5 --> procps-3.1.0
 
 vmstat displays IO-wait time instead of bogus "w"
 can build w/o shared library (set SHARED=0)

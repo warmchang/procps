@@ -48,12 +48,12 @@ static int opt_signal = SIGTERM;
 
 static const char *opt_delim = "\n";
 static union el *opt_pgrp = NULL;
-static union el *opt_gid = NULL;
+static union el *opt_rgid = NULL;
 static union el *opt_ppid = NULL;
 static union el *opt_sid = NULL;
 static union el *opt_term = NULL;
 static union el *opt_euid = NULL;
-static union el *opt_uid = NULL;
+static union el *opt_ruid = NULL;
 static char *opt_pattern = NULL;
 
 
@@ -282,12 +282,16 @@ static PROCTAB *
 do_openproc (void)
 {
 	PROCTAB *ptp;
-	int flags = PROC_FILLANY;
+	int flags = 0;
 
 	if (opt_pattern || opt_full)
 		flags |= PROC_FILLCOM;
-	if (opt_uid)
+	if (opt_ruid || opt_rgid)
 		flags |= PROC_FILLSTATUS;
+	if (opt_oldest || opt_newest || opt_pgrp || opt_sid || opt_term)
+		flags |= PROC_FILLSTAT;
+	if (!(flags & PROC_FILLSTAT))
+		flags |= PROC_FILLSTATUS;  // FIXME: need one, and PROC_FILLANY broken
 	if (opt_euid && !opt_negate) {
 		int num = opt_euid[0].num;
 		int i = num;
@@ -379,9 +383,9 @@ select_procs (void)
 			match = 0;
 		else if (opt_euid && ! match_numlist (task.euid, opt_euid))
 			match = 0;
-		else if (opt_uid && ! match_numlist (task.ruid, opt_uid))
+		else if (opt_ruid && ! match_numlist (task.ruid, opt_ruid))
 			match = 0;
-		else if (opt_gid && ! match_numlist (task.rgid, opt_gid))
+		else if (opt_rgid && ! match_numlist (task.rgid, opt_rgid))
 			match = 0;
 		else if (opt_sid && ! match_numlist (task.session, opt_sid))
 			match = 0;
@@ -550,14 +554,14 @@ parse_opts (int argc, char **argv)
 			++criteria_count;
 			break;
 		case 'U':
-	  		opt_uid = split_list (optarg, conv_uid);
-			if (opt_uid == NULL)
+	  		opt_ruid = split_list (optarg, conv_uid);
+			if (opt_ruid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
 		case 'G':
-	  		opt_gid = split_list (optarg, conv_gid);
-			if (opt_gid == NULL)
+	  		opt_rgid = split_list (optarg, conv_gid);
+			if (opt_rgid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
