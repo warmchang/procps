@@ -98,7 +98,7 @@ static int escape_str_utf8(char *restrict dst, const char *restrict src, int buf
       } else {
         // multibyte - printable
         // Got space?
-        if (my_cells+wlen > *maxcells || my_bytes+1+len >= bufsize) break;
+        if (wlen > *maxcells-my_cells || len >= bufsize-(my_bytes+1)) break;
         // 0x9b is control byte for some terminals
         if (memchr(src, 0x9B, len)) {
 	  // unsafe multibyte
