@@ -1328,6 +1328,7 @@ out:
 proc_t* readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
     static proc_t skel_p;    // skeleton proc_t, only uses tid + tgid
     static proc_t *new_p;    // for process/task transitions
+    static int canary;
     char path[PROCPATHLEN];
     proc_t *saved_x, *ret;
 
@@ -1337,7 +1338,10 @@ proc_t* readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
         x = calloc(1, sizeof(*x));
         if (!x) goto end_procs;
     }
-    if (new_p) goto next_task;
+    if (new_p) {
+        if (new_p->tid != canary) new_p = NULL;
+        goto next_task;
+    }
 
 next_proc:
     new_p = NULL;
@@ -1355,7 +1359,10 @@ next_task:
     || (!(ret = PT->taskreader(PT,new_p,x,path)))) {       // simple_readtask
         goto next_proc;
     }
-    if (!new_p) new_p = ret;
+    if (!new_p) {
+        new_p = ret;
+        canary = new_p->tid;
+    }
     return ret;
 
 end_procs:
