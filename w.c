@@ -113,21 +113,22 @@ static void print_host(const char *restrict host, int len, const int fromlen)
 /* This routine prints the display part of the host or IPv6 link address interface */
 static void print_display_or_interface(const char *restrict host, int len, int restlen)
 {
-	char *disp,*tmp;
+	const char *const end = host + (len > 0 ? len : 0);
+	const char *disp, *tmp;
 
 	if (restlen <= 0) return; /* not enough space for printing anything */
 
 	/* search for a collon (might be a display) */
-	disp = (char *)host;
-	while ( (disp < (host + len)) && (*disp != ':') && isprint(*disp) ) disp++;
+	disp = host;
+	while ( (disp < end) && (*disp != ':') && isprint(*disp) ) disp++;
 
 	/* colon found */
-	if (*disp == ':') {
+	if (disp < end && *disp == ':') {
 		/* detect multiple colons -> IPv6 in the host (not a display) */
 		tmp = disp+1;
-		while ( (tmp < (host + len)) && (*tmp != ':') && isprint(*tmp) ) tmp++;
+		while ( (tmp < end) && (*tmp != ':') && isprint(*tmp) ) tmp++;
 
-		if (*tmp != ':') { /* multiple colons not found - it's a display */
+		if (tmp >= end || *tmp != ':') { /* multiple colons not found - it's a display */
 
 			/* number of chars till the end of the input field */
 			len -= (disp - host);
@@ -149,9 +150,9 @@ static void print_display_or_interface(const char *restrict host, int len, int r
 		} else { /* multiple colons found - it's an IPv6 address */
 
 			/* search for % (interface separator in case of IPv6 link address) */
-			while ( (tmp < (host + len)) && (*tmp != '%') && isprint(*tmp) ) tmp++;
+			while ( (tmp < end) && (*tmp != '%') && isprint(*tmp) ) tmp++;
 
-			if (*tmp == '%') { /* interface separator found */
+			if (tmp < end && *tmp == '%') { /* interface separator found */
 
 				/* number of chars till the end of the input field */
 				len -= (tmp - host);
@@ -170,7 +171,6 @@ static void print_display_or_interface(const char *restrict host, int len, int r
 					fputc('-', stdout);
 				}
 			}
-
 		}
 	}
 
