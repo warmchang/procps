@@ -563,6 +563,7 @@ int main(int argc, char *argv[]){
       sigaction(i,&sa,NULL);
     case 0:
     case SIGINT:   /* ^C */
+    case SIGTSTP:  /* ^Z */
     case SIGQUIT:  /* ^\ */
     case SIGPROF:  /* profiling */
     case SIGKILL:  /* can not catch */
