@@ -17,7 +17,7 @@
  *    Albert D. Cahalan, <albert@users.sf.net>
  *    Craig Small, <csmall@small.dropbear.id.au>
  *
- * Changes by Albert Cahalan, 2002-2003.
+ * Changes by Albert Cahalan, 2002-2004.
  */
 #include <sys/ioctl.h>
 #include <sys/resource.h>

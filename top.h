@@ -1,42 +1,41 @@
-/* top.h - Header file:         show Linux processes */
-/*
- * Copyright (c) 2002, by:      James C. Warner
- *    All rights reserved.      8921 Hilloway Road
- *                              Eden Prairie, Minnesota 55347 USA
- *                             <warnerjc@worldnet.att.net>
- *
- * This file may be used subject to the terms and conditions of the
- * GNU Library General Public License Version 2, or any later version
- * at your option, as published by the Free Software Foundation.
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- * 
- * For their contributions to this program, the author wishes to thank:
- *    Albert D. Cahalan, <albert@users.sf.net>
- *    Craig Small, <csmall@small.dropbear.id.au>
- *
- * Changes by Albert Cahalan, 2002.
- */
+// top.h - Header file:         show Linux processes
+//
+// Copyright (c) 2002, by:      James C. Warner
+//    All rights reserved.      8921 Hilloway Road
+//                              Eden Prairie, Minnesota 55347 USA
+//                             <warnerjc@worldnet.att.net>
+//
+// This file may be used subject to the terms and conditions of the
+// GNU Library General Public License Version 2, or any later version
+// at your option, as published by the Free Software Foundation.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+// 
+// For their contributions to this program, the author wishes to thank:
+//    Albert D. Cahalan, <albert@users.sf.net>
+//    Craig Small, <csmall@small.dropbear.id.au>
+//
+// Changes by Albert Cahalan, 2002, 2004.
 
 #ifndef _Itop
 #define _Itop
 
-        /* Defines intended to be experimented with ------------------------ */
-//#define CASEUP_HEXES            /* show any hex values in upper case       */
-//#define CASEUP_SCALE            /* show scaled time/num suffix upper case  */
-//#define CASEUP_SUMMK            /* show memory summary kilobytes with 'K'  */
-//#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
-//#define USE_LIB_STA3            /* use lib status (3 ch) vs. proc_t (1 ch) */
-//#define WARN_NOT_SMP            /* restrict '1' & 'I' commands to true smp */
+// Defines intended to be experimented with ------------------------
+//#define CASEUP_HEXES    // show any hex values in upper case
+//#define CASEUP_SCALE    // show scaled time/num suffix upper case
+//#define CASEUP_SUMMK    // show memory summary kilobytes with 'K'
+//#define SORT_SUPRESS    // *attempt* to reduce qsort overhead
+//#define USE_LIB_STA3    // use lib status (3 ch) vs. proc_t (1 ch)
+//#define WARN_NOT_SMP    // restrict '1' & 'I' commands to true smp
 
-        /* Development/Debugging defines ----------------------------------- */
-//#define ATEOJ_REPORT            /* report a bunch of stuff, at end-of-job  */
-//#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
-//#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
-//#define PRETENDNOCAP            /* use a terminal without essential caps   */
-//#define STDOUT_IOLBF            /* disable our own stdout _IOFBF override  */
+// Development/Debugging defines -----------------------------------
+//#define ATEOJ_REPORT    // report a bunch of stuff, at end-of-job
+//#define PRETEND2_5_X    // pretend we're linux 2.5.x (for IO-wait)
+//#define PRETEND4CPUS    // pretend we're smp with 4 ticsers (sic)
+//#define PRETENDNOCAP    // use a terminal without essential caps
+//#define STDOUT_IOLBF    // disable our own stdout _IOFBF override
 
 #ifdef PRETEND2_5_X
 #define linux_version_code LINUX_VERSION(2,5,43)
@@ -44,16 +43,16 @@
 
 /*######  Some Miscellaneous constants  ##################################*/
 
-        /* The default delay twix updates */
+// The default delay twix updates
 #define DEF_DELAY  3.0
 
-        /* The length of time a 'message' is displayed */
+// The length of time a 'message' is displayed
 #define MSG_SLEEP  2
 
-        /* The default value for the 'k' (kill) request */
+// The default value for the 'k' (kill) request
 #define DEF_SIGNAL  SIGTERM
 
-        /* Specific process id monitoring support (command line only) */
+// Specific process id monitoring support (command line only)
 #define MONPIDMAX  20
 
 // Power-of-two sizes lead to trouble; the largest power of
@@ -62,12 +61,12 @@
 // avoided.
 #define CACHE_TWEAK_FACTOR 64
 
-        /* Miscellaneous buffer sizes with liberal values
-           -- mostly just to pinpoint source code usage/dependancies */
+// Miscellaneous buffer sizes with liberal values -- mostly
+// just to pinpoint source code usage/dependancies
 #define SCREENMAX ( 512 + CACHE_TWEAK_FACTOR)
-   /* the above might seem pretty stingy, until you consider that with every
-      one of top's fields displayed we're talking a 160 byte column header --
-      so that will provide for all fields plus a 350+ byte command line */
+// the above might seem pretty stingy, until you consider that with every
+// one of top's fields displayed we're talking a 160 byte column header --
+// so that will provide for all fields plus a 350+ byte command line
 #define WINNAMSIZ     4
 #define CAPTABMAX     9
 #define PFLAGSSIZ    32
@@ -85,17 +84,15 @@
 
 /*######  Some Miscellaneous Macro definitions  ##########################*/
 
-        /* Yield table size as 'int' */
+// Yield table size as 'int'
 #define MAXTBL(t)  (int)(sizeof(t) / sizeof(t[0]))
 
-        /* Used as return arguments in *some* of the sort callbacks */
+// Used as return arguments in *some* of the sort callbacks
 #define SORT_lt  ( Frame_srtflg > 0 ?  1 : -1 )
 #define SORT_gt  ( Frame_srtflg > 0 ? -1 :  1 )
 #define SORT_eq  0
 
-        /* Used to create *most* of the sort callback functions
-           note: some of the callbacks are NOT your father's callbacks, they're
-                 highly optimized to save them ol' precious cycles! */
+// Used to create *most* of the sort callback functions
 #define SCB_NUM1(f,n) \
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
       if (        (*P)->n < (*Q)->n  ) return SORT_lt; \
@@ -113,23 +110,25 @@
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
       return Frame_srtflg * strcmp((*Q)->s, (*P)->s); }
 
-        /* The following two macros are used to 'inline' those portions of the
-         * display process requiring formatting, while protecting against any
-         * potential embedded 'millesecond delay' escape sequences. */
-        /**  PUTT - Put to Tty (used in many places)
-               . for temporary, possibly interactive, 'replacement' output
-               . may contain ANY valid terminfo escape sequences
-               . need NOT represent an entire screen row */
+// The following two macros are used to 'inline' those portions of the
+// display process requiring formatting, while protecting against any
+// potential embedded 'millesecond delay' escape sequences.
+
+// PUTT - Put to Tty (used in many places)
+// - for temporary, possibly interactive, 'replacement' output
+// - may contain ANY valid terminfo escape sequences
+// - need NOT represent an entire screen row
 #define PUTT(fmt,arg...) do { \
       char _str[ROWBUFSIZ]; \
       snprintf(_str, sizeof(_str), fmt, ## arg); \
       putp(_str); \
    } while (0)
-        /**  PUFF - Put for Frame (used in only 3 places)
-               . for more permanent frame-oriented 'update' output
-               . may NOT contain cursor motion terminfo escapes
-               . assumed to represent a complete screen ROW
-               . subject to optimization, thus MAY be discarded */
+
+// PUFF - Put for Frame (used in only 3 places)
+// - for more permanent frame-oriented 'update' output
+// - may NOT contain cursor motion terminfo escapes
+// - assumed to represent a complete screen ROW
+// - subject to optimization, thus MAY be discarded
 #define PUFF(fmt,arg...) do { \
       char _str[ROWBUFSIZ]; \
       char *_ptr = &Pseudo_scrn[Pseudo_row++ * Pseudo_cols]; \
@@ -144,33 +143,34 @@
       } } \
    } while (0)
 
+
 /*------  Special Macros (debug and/or informative)  ---------------------*/
 
-        /* Orderly end, with any sort of message - see fmtmk */
+// Orderly end, with any sort of message - see fmtmk
 #define debug_END(s) { \
            static void std_err (const char *); \
            fputs(Cap_clr_scr, stdout); \
            std_err(s); \
         }
 
-        /* A poor man's breakpoint, if he's too lazy to learn gdb */
+// A poor man's breakpoint, if he's too lazy to learn gdb
 #define its_YOUR_fault { *((char *)0) = '!'; }
 
 
 /*######  Some Typedef's and Enum's  #####################################*/
 
-        /* This typedef just ensures consistent 'process flags' handling */
+// This typedef just ensures consistent 'process flags' handling
 typedef unsigned FLG_t;
 
-        /* These typedefs attempt to ensure consistent 'ticks' handling */
+// These typedefs attempt to ensure consistent 'ticks' handling
 typedef unsigned long long TIC_t;
 typedef          long long SIC_t;
 
-        /* Sort support, callback funtion signature */
+// Sort support, callback funtion signature
 typedef int (*QFP_t)(const void *, const void *);
 
-        /* This structure consolidates the information that's used
-           in a variety of display roles. */
+// This structure consolidates the information that's used
+// in a variety of display roles.
 typedef struct FLD_t {
    const char    keys [4];      // order: New-on New-off Old-on Old-off
    // misaligned on 64-bit, but part of a table -- oh well
@@ -183,23 +183,23 @@ typedef struct FLD_t {
    const int     lflg;          // PROC_FILLxxx flag(s) needed by this field
 } FLD_t;
 
-        /* This structure stores one piece of critical 'history'
-           information from one frame to the next -- we don't calc
-           and save data that goes unused like the old top! */
+// This structure stores one piece of critical 'history'
+// information from one frame to the next -- we don't calc
+// and save data that goes unused
 typedef struct HST_t {
    TIC_t tics;
    int   pid;
 } HST_t;
 
-        /* This structure stores a frame's cpu tics used in history
-           calculations.  It exists primarily for SMP support but serves
-           all environments. */
+// This structure stores a frame's cpu tics used in history
+// calculations.  It exists primarily for SMP support but serves
+// all environments.
 typedef struct CPU_t {
    TIC_t u, n, s, i, w, x, y;                             // as represented in /proc/stat
    TIC_t u_sav, s_sav, n_sav, i_sav, w_sav, x_sav, y_sav; // in the order of our display
 } CPU_t;
 
-        /* These 2 types support rcfile compatibility */
+// These 2 types support rcfile compatibility
 typedef struct RCW_t {  // the 'window' portion of an rcfile
    FLG_t  sortindx;             // sort field, represented as a procflag
    int    winflags,             // 'view', 'show' and 'sort' mode flags
@@ -220,13 +220,13 @@ typedef struct RCF_t {  // the complete rcfile (new style)
    RCW_t  win [4];              // a 'WIN_t.rc' for each of the 4 windows
 } RCF_t;
 
-        /* The scaling 'type' used with scale_num() -- this is how
-           the passed number is interpreted should scaling be necessary */
+// The scaling 'type' used with scale_num() -- this is how
+// the passed number is interpreted should scaling be necessary
 enum scale_num {
    SK_no, SK_Kb, SK_Mb, SK_Gb
 };
 
-        /* Flags for each possible field */
+// Flags for each possible field
 enum pflag {
    P_PID, P_PPD, P_URR, P_UID, P_URE, P_GRP, P_TTY,
    P_PRI, P_NCE,
@@ -237,45 +237,48 @@ enum pflag {
 };
 
 
-        /* ////////////////////////////////////////////////////////////// */
-        /* Special Section: multiple windows/field groups  ---------------*/
-        /* (kind of a header within a header:  constants, macros & types) */
+///////////////////////////////////////////////////////////////////////////
+// Special Section: multiple windows/field groups  -------------
+// (kind of a header within a header:  constants, macros & types)
 
-#define GROUPSMAX  4            /* the max number of simultaneous windows */
-#define GRPNAMSIZ  WINNAMSIZ+2  /* window's name + number as in: '#:...'  */
+#define GROUPSMAX  4            // the max number of simultaneous windows
+#define GRPNAMSIZ  WINNAMSIZ+2  // window's name + number as in: '#:...'
 
-#define Flags_TOG  1            /* these are used to direct wins_reflag   */
+#define Flags_TOG  1            // these are used to direct wins_reflag
 #define Flags_SET  2
 #define Flags_OFF  3
 
-        /* The Persistent 'Mode' flags!
-           These are preserved in the rc file, as a single integer and the
-           letter shown is the corresponding 'command' toggle */
-        // 'View_' flags affect the summary (minimum), taken from 'Curwin'
-#define View_CPUSUM  0x8000     /* '1' - show combined cpu stats (vs. each)  */
-#define View_LOADAV  0x4000     /* 'l' - display load avg and uptime summary */
-#define View_STATES  0x2000     /* 't' - display task/cpu(s) states summary  */
-#define View_MEMORY  0x1000     /* 'm' - display memory summary              */
-#define View_NOBOLD  0x0001     /* 'B' - disable 'bold' attribute globally   */
-        // 'Show_' & 'Qsrt_' flags are for task display in a visible window
-#define Show_COLORS  0x0800     /* 'z' - show in color (vs. mono)            */
-#define Show_HIBOLD  0x0400     /* 'b' - rows and/or cols bold (vs. reverse) */
-#define Show_HICOLS  0x0200     /* 'x' - show sort column highlighted        */
-#define Show_HIROWS  0x0100     /* 'y' - show running tasks highlighted      */
-#define Show_CMDLIN  0x0080     /* 'c' - show cmdline vs. name               */
-#define Show_CTIMES  0x0040     /* 'S' - show times as cumulative            */
-#define Show_IDLEPS  0x0020     /* 'i' - show idle processes (all tasks)     */
-#define Qsrt_NORMAL  0x0010     /* 'R' - reversed column sort (high to low)  */
-        // these flag(s) have no command as such - they're for internal use
-#define VISIBLE_tsk  0x0008     /* tasks are showable when in 'Mode_altscr'  */
-#define NEWFRAM_cwo  0x0004     /* new frame (if anyone cares) - in Curwin   */
-#define EQUWINS_cwo  0x0002     /* rebalance tasks next frame (off 'i'/ 'n') */
-                                /* ...set in Curwin, but impacts all windows */
+// The Persistent 'Mode' flags!
+// These are preserved in the rc file, as a single integer and the
+// letter shown is the corresponding 'command' toggle
 
-        // Current-window-only flags -- always turned off at end-of-window!
+// 'View_' flags affect the summary (minimum), taken from 'Curwin'
+#define View_CPUSUM  0x8000     // '1' - show combined cpu stats (vs. each)
+#define View_LOADAV  0x4000     // 'l' - display load avg and uptime summary
+#define View_STATES  0x2000     // 't' - display task/cpu(s) states summary
+#define View_MEMORY  0x1000     // 'm' - display memory summary
+#define View_NOBOLD  0x0001     // 'B' - disable 'bold' attribute globally
+
+// 'Show_' & 'Qsrt_' flags are for task display in a visible window
+#define Show_COLORS  0x0800     // 'z' - show in color (vs. mono)
+#define Show_HIBOLD  0x0400     // 'b' - rows and/or cols bold (vs. reverse)
+#define Show_HICOLS  0x0200     // 'x' - show sort column highlighted
+#define Show_HIROWS  0x0100     // 'y' - show running tasks highlighted
+#define Show_CMDLIN  0x0080     // 'c' - show cmdline vs. name
+#define Show_CTIMES  0x0040     // 'S' - show times as cumulative
+#define Show_IDLEPS  0x0020     // 'i' - show idle processes (all tasks)
+#define Qsrt_NORMAL  0x0010     // 'R' - reversed column sort (high to low)
+
+// these flag(s) have no command as such - they're for internal use
+#define VISIBLE_tsk  0x0008     // tasks are showable when in 'Mode_altscr'
+#define NEWFRAM_cwo  0x0004     // new frame (if anyone cares) - in Curwin
+#define EQUWINS_cwo  0x0002     // rebalance tasks next frame (off 'i'/ 'n')
+                                // ...set in Curwin, but impacts all windows
+
+// Current-window-only flags -- always turned off at end-of-window!
 #define FLGSOFF_cwo  EQUWINS_cwo | NEWFRAM_cwo
 
-        // Default flags if there's no rcfile to provide user customizations
+// Default flags if there's no rcfile to provide user customizations
 #define DEF_WINFLGS ( View_LOADAV | View_STATES | View_CPUSUM | View_MEMORY | \
    Show_HIBOLD | Show_HIROWS | Show_IDLEPS | Qsrt_NORMAL | VISIBLE_tsk )
 
@@ -289,10 +292,10 @@ enum pflag {
 #define VIZTOGc(f)  (!Rc.mode_altscr || Curwin->rc.winflags & VISIBLE_tsk) \
                         ? TOGw(Curwin, f) : win_warn()
 
-        /* This structure stores configurable information for each window.
-           By expending a little effort in its creation and user requested
-           maintainence, the only real additional per frame cost of having
-           windows is an extra sort -- but that's just on ptrs! */
+// This structure stores configurable information for each window.
+// By expending a little effort in its creation and user requested
+// maintainence, the only real additional per frame cost of having
+// windows is an extra sort -- but that's just on ptrs!
 typedef struct WIN_t {
    struct WIN_t *next,                  // next window in window stack
                 *prev;                  // prior window in window stack
@@ -316,28 +319,26 @@ typedef struct WIN_t {
                columnhdr [SCREENMAX],   // column headings for procflags
                colusrnam [USRNAMSIZ];   // if selected by the 'u' command
 } WIN_t;
-        /* ////////////////////////////////////////////////////////////// */
 
 
 /*######  Display Support *Data*  ########################################*/
 
-        /* Configuration files support */
+// Configuration files support
 #define SYS_RCFILESPEC  "/etc/toprc"
 #define RCF_EYECATCHER  "RCfile for "
 #define RCF_DEPRECATED  "Id:a, "
 
-        /* The default fields displayed and their order,
-           if nothing is specified by the loser, oops user */
+// The default fields displayed and their order,
 #define DEF_FIELDS  "AEHIOQTWKNMbcdfgjplrsuvyzX"
-        /* Pre-configured field groupss */
+// Pre-configured field groupss
 #define JOB_FIELDS  "ABcefgjlrstuvyzMKNHIWOPQDX"
 #define MEM_FIELDS  "ANOPQRSTUVbcdefgjlmyzWHIKX"
 #define USR_FIELDS  "ABDECGfhijlopqrstuvyzMKNWX"
-        /* Used by fields_sort, placed here for peace-of-mind */
+// Used by fields_sort, placed here for peace-of-mind
 #define NUL_FIELDS  "abcdefghijklmnopqrstuvwxyz"
 
 
-        /* The default values for the local config file */
+// The default values for the local config file
 #define DEF_RCFILE { \
    0, 1, DEF_DELAY, 0, { \
    { P_CPU, DEF_WINFLGS, 0, \
@@ -354,9 +355,9 @@ typedef struct WIN_t {
       "Usr", USR_FIELDS } \
    } }
 
-        /* These are the possible fscanf formats used in /proc/stat
-           reads during history processing.
-           ( 5th number only for Linux 2.5.41 and above ) */
+// These are the possible fscanf formats used in /proc/stat
+// reads during history processing.
+// ( 5th number only for Linux 2.5.41 and above ) */
 #define CPU_FMTS_JUST1  "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
 #ifdef PRETEND4CPUS
 #define CPU_FMTS_MULTI CPU_FMTS_JUST1
@@ -364,8 +365,8 @@ typedef struct WIN_t {
 #define CPU_FMTS_MULTI  "cpu%*d %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
 #endif
 
-        /* Summary Lines specially formatted string(s) --
-           see 'show_special' for syntax details + other cautions. */
+// Summary Lines specially formatted string(s) --
+// see 'show_special' for syntax details + other cautions.
 #define LOADAV_line  "%s -%s\n"
 #define LOADAV_line_alt  "%s\06 -%s\n"
 #define STATES_line1  "Tasks:\03" \
@@ -388,8 +389,8 @@ typedef struct WIN_t {
    " %8uk \02total,\03 %8uk \02used,\03 %8uk \02free,\03 %8uk \02cached\03\n"
 #endif
 
-        /* Keyboard Help specially formatted string(s) --
-           see 'show_special' for syntax details + other cautions. */
+// Keyboard Help specially formatted string(s) --
+// see 'show_special' for syntax details + other cautions.
 #define KEYS_help \
    "Help for Interactive Commands\02 - %s\n" \
    "Window \01%s\06: \01Cumulative mode \03%s\02.  \01System\06: \01Delay \03%.1f secs\02; \01Secure mode \03%s\02.\n" \
@@ -416,24 +417,24 @@ typedef struct WIN_t {
    "any other key to continue " \
    ""
 
-        /* This guy goes into the help text (maybe) */
+// This guy goes into the help text (maybe)
 #define KEYS_help_unsecured \
    "  k,r       Manipulate tasks: '\01k\02' kill; '\01r\02' renice\n" \
    "  d or s    Set update interval\n" \
    ""
 
-        /* Fields Reorder/Toggle specially formatted string(s) --
-           see 'show_special' for syntax details + other cautions
-           note: the leading newline below serves really dumb terminals;
-                 if there's no 'cursor_home', the screen will be a mess
-                 but this part will still be functional. */
+// Fields Reorder/Toggle specially formatted string(s) --
+// see 'show_special' for syntax details + other cautions
+// note: the leading newline below serves really dumb terminals;
+//       if there's no 'cursor_home', the screen will be a mess
+//       but this part will still be functional.
 #define FIELDS_current \
    "\n%sCurrent Fields\02: \01 %s \04 for window \01%s\06\n%s " \
    ""
 
-        /* Some extra explanatory text which accompanies the Fields display.
-           note: the newlines cannot actually be used, they just serve as
-                 substring delimiters for the 'display_fields' routine. */
+// Some extra explanatory text which accompanies the Fields display.
+// note: the newlines cannot actually be used, they just serve as
+// substring delimiters for the 'display_fields' routine.
 #define FIELDS_xtra \
    "Flags field:\n" \
    "  0x00000001  PF_ALIGNWARN\n" \
@@ -453,18 +454,18 @@ typedef struct WIN_t {
 /* no room, sacrificed this one:  'Killed for out-of-memory' */
 /* "  0x00001000  PF_MEMDIE (2.5)\n" ....................... */
 
-        /* Sort Select specially formatted string(s) --
-           see 'show_special' for syntax details + other cautions
-           note: the leading newline below serves really dumb terminals;
-                 if there's no 'cursor_home', the screen will be a mess
-                 but this part will still be functional. */
+// Sort Select specially formatted string(s) --
+// see 'show_special' for syntax details + other cautions
+// note: the leading newline below serves really dumb terminals;
+//       if there's no 'cursor_home', the screen will be a mess
+//       but this part will still be functional.
 #define SORT_fields \
    "\n%sCurrent Sort Field\02: \01 %c \04 for window \01%s\06\n%s " \
    ""
 
-        /* Some extra explanatory text which accompanies the Sort display.
-           note: the newlines cannot actually be used, they just serve as
-                 substring delimiters for the 'display_fields' routine. */
+// Some extra explanatory text which accompanies the Sort display.
+// note: the newlines cannot actually be used, they just serve as
+//       substring delimiters for the 'display_fields' routine.
 #define SORT_xtra \
    "Note1:\n" \
    "  If a selected sort field can't be\n" \
@@ -481,8 +482,8 @@ typedef struct WIN_t {
    "  (shame on you if WCHAN is chosen)\n" \
    ""
 
-        /* Colors Help specially formatted string(s) --
-           see 'show_special' for syntax details + other cautions. */
+// Colors Help specially formatted string(s) --
+// see 'show_special' for syntax details + other cautions.
 #define COLOR_help \
    "Help for color mapping\02 - %s\n" \
    "current window: \01%s\06\n" \
@@ -510,8 +511,8 @@ typedef struct WIN_t {
    "   press 'a' or 'w' to commit & change another, <Enter> to commit and end " \
    ""
 
-        /* Windows/Field Group Help specially formatted string(s) --
-           see 'show_special' for syntax details + other cautions. */
+// Windows/Field Group Help specially formatted string(s) --
+// see 'show_special' for syntax details + other cautions.
 #define WINDOWS_help \
    "Help for Windows / Field Groups\02 - \"Current Window\" = \01 %s \06\n" \
    "\n" \
@@ -547,91 +548,6 @@ typedef struct WIN_t {
 # error "Jeeze, USRNAMSIZ Must NOT be less than GETBUFSIZ !"
 #endif
 
-
-/*######  Some Prototypes (ha!)  #########################################*/
 
-   /* These 'prototypes' are here for documentation purposes and in
-    * preparation for a soon-to-occur top.c bust-up! */
-/*------  Sort callbacks  ------------------------------------------------*/
-/*        for each possible field, in the form of:                        */
-/*atic int          sort_P_XXX (const proc_t **P, const proc_t **Q);      */
-/*        additional specialized sort callback(s)                         */
-/*atic int          sort_HST_t (const HST_t *P, const HST_t *Q);         */
-/*------  Tiny useful routine(s)  ----------------------------------------*/
-//atic int          chin (int ech, char *buf, unsigned cnt);
-//atic const char  *fmtmk (const char *fmts, ...);
-//atic inline char *scat (char *restrict dst, const char *restrict src);
-//atic char        *strim_0 (char *str);
-//atic char        *strim_1 (char *str);
-//atic const char  *tg2 (int x, int y);
-/*------  Exit/Interrput routines  ---------------------------------------*/
-//atic void         bye_bye (int eno, const char *str);
-//atic void         end_pgm (int dont_care_sig);
-//atic void         std_err (const char *str);
-//atic void         suspend (int dont_care_sig);
-/*------  Misc Color/Display support  ------------------------------------*/
-//atic void         capsmk (WIN_t *q);
-//atic void         msg_save (const char *fmts, ...);
-//atic void         show_msg (const char *str);
-//atic void         show_pmt (const char *str);
-//atic void         show_special (int interact, const char *glob);
-/*------  Small Utility routines  ----------------------------------------*/
-//atic char        *ask4str (const char *prompt);
-//atic float        get_float (const char *prompt);
-//atic int          get_int (const char *prompt);
-//atic const char  *scale_num (unsigned num, const int width, const unsigned type);
-//atic const char  *scale_tics (TIC_t tics, const int width);
-/*------  Library Alternatives  ------------------------------------------*/
-//atic void        *alloc_c (unsigned numb) MALLOC;
-//atic void        *alloc_r (void *q, unsigned numb) MALLOC;
-//atic CPU_t       *cpus_refresh (CPU_t *cpus);
-//atic void         prochlp (proc_t *this);
-//atic proc_t     **procs_refresh (proc_t **table, int flags);
-/*------  Field Table/RCfile compatability support  ----------------------*/
-/*atic FLD_t        Fieldstab[] = { ... }                                 */
-//atic int          ft_cvt_char (const int fr, const int to, int c);
-//atic inline int   ft_get_char (const int fr, int i);
-//atic int          ft_get_idx (const int fr, int c);
-//atic const FLD_t *ft_get_ptr (const int fr, int c);
-//atic const FLD_t *ft_idx_to_ptr (const int i);
-//atic int          ft_ptr_to_idx (const FLD_t *p);
-//atic void         rc_bugless (const RCF_t *const rc);
-//atic int          rc_read_new (const char *const buf, RCF_t *rc);
-//atic int          rc_read_old (const char *const buf, RCF_t *rc);
-//atic void         rc_write_new (FILE *fp);
-//atic void         rc_write_old (FILE *fp);
-//atic const char  *rc_write_whatever (void);
-/*------  Startup routines  ----------------------------------------------*/
-//atic void         before (char *me);
-//atic void         confighlp (char *fields);
-//atic void         configs_read (void);
-//atic void         parse_args (char **args);
-//atic void         whack_terminal (void);
-/*------  Field Selection/Ordering routines  -----------------------------*/
-//atic void         display_fields (const char *fields, const char *xtra);
-//atic void         fields_reorder (void);
-//atic void         fields_sort (void);
-//atic void         fields_toggle (void);
-/*------  Windows/Field Groups support  ----------------------------------*/
-//atic void         reframewins (void);
-//atic void         win_names (WIN_t *q, const char *name);
-//atic void         win_select (char ch);
-//atic int          win_warn (void);
-//atic void         winsclrhlp (WIN_t *q, int save);
-//atic void         wins_colors (void);
-//atic void         wins_reflag (int what, int flg);
-//atic void         wins_resize (int dont_care_sig);
-//atic void         windows_stage1 (void);
-//atic void         windows_stage2 (void);
-/*------  Main Screen routines  ------------------------------------------*/
-//atic void         do_key (unsigned c);
-//atic void         summaryhlp (CPU_t *cpu, const char *pfx);
-//atic proc_t     **summary_show (void);
-//atic void         task_show (const WIN_t *q, const proc_t *p);
-//atic void         window_show (proc_t **ppt, WIN_t *q, int *lscr);
-/*------  Entry point plus two  ------------------------------------------*/
-//atic void         framehlp (int wix, int max);
-//atic void         frame_make (void);
-//     int          main (int dont_care_argc, char **argv);
 
 #endif /* _Itop */
