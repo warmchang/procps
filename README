@@ -16,9 +16,6 @@ INSTALLATION
     named t, v, and p to ensure that the correct libproc
     (the new one) is used during your testing.
 
-    If you need to add a compiler option, use CC to do it:
-    make CC='gcc -foo'
-
     You may set SKIP to avoid building or installing things.
     For example:
 

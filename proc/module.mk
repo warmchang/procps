@@ -29,7 +29,7 @@ endif
 
 # Separate rule for this directory, to use -fpic or -fPIC
 $(filter-out proc/version.o,$(LIBOBJ)): proc/%.o: proc/%.c
-	$(CC) -c $(CFLAGS) $(LIBFLAGS) $< -o $@
+	$(CC) -c $(ALL_CPPFLAGS) $(ALL_CFLAGS) $(LIBFLAGS) $< -o $@
 
 LIB_X := COPYING module.mk library.map
 TARFILES += $(LIBSRC) $(LIBHDR) $(addprefix proc/,$(LIB_X))
@@ -51,7 +51,7 @@ proc/$(SONAME): $(LIBOBJ)
 
 # AUTOMATIC DEPENDENCY GENERATION -- GCC AND GNUMAKE DEPENDENT
 proc/.depend: $(LIBSRC) $(LIBHDR)
-	$(strip $(CC) $(LIB_CFLAGS) -MM -MG $(LIBSRC) > $@)
+	$(strip $(CC) $(ALL_CPPFLAGS) $(LIB_CFLAGS) -MM -MG $(LIBSRC) > $@)
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),tar)
@@ -74,4 +74,4 @@ $(lib)/$(SONAME) : proc/$(SONAME)
 
 
 proc/version.o:	proc/version.c proc/version.h
-	$(CC) $(CFLAGS) $(LIBFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c -o $@ $<
+	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) $(LIBFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c -o $@ $<

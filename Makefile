@@ -63,13 +63,29 @@ TARFILES := AUTHORS BUGS NEWS README TODO COPYING COPYING.LIB \
 
 CURSES := -I/usr/include/ncurses -lncurses
 
-LDFLAGS := -Wl,-warn-common
+# Preprocessor flags.
+PKG_CPPFLAGS := -D_GNU_SOURCE -I proc
+CPPFLAGS :=
+ALL_CPPFLAGS := $(PKG_CPPFLAGS) $(CPPFLAGS)
 
-CFLAGS := -D_GNU_SOURCE -O2 -g3 -fno-common -ffast-math -I proc \
+# Left out -Wconversion due to noise in glibc headers.
+# Left out a number of things that older compilers lack:
+# -Wpadded -Wunreachable-code -Wdisabled-optimization
+#
+# Since none of the PKG_CFLAGS things are truly required
+# to compile procps, they might best be moved to CFLAGS.
+# On the other hand, they aren't normal -O -g things either.
+#
+PKG_CFLAGS := -fno-common -ffast-math \
   -W -Wall -Wshadow -Wcast-align -Wredundant-decls \
   -Wbad-function-cast -Wcast-qual -Wwrite-strings -Waggregate-return \
-#  -Wpadded -Wunreachable-code -Wdisabled-optimization \
-  -Wstrict-prototypes -Wmissing-prototypes # -Wconversion
+  -Wstrict-prototypes -Wmissing-prototypes
+CFLAGS := -O2 -g3
+ALL_CFLAGS := $(PKG_CFLAGS) $(CFLAGS)
+
+PKG_LDFLAGS := -Wl,-warn-common
+LDFLAGS :=
+ALL_LDFLAGS := $(PKG_LDFLAGS) $(LDFLAGS)
 
 ############ misc.
 
@@ -112,7 +128,7 @@ CLEAN += $(junk) $(foreach dir,$(DIRS),$(addprefix $(dir), $(junk)))
 #endif
 #
 #%.d: %.c
-#	depend.sh $(CFLAGS) $< > $@
+#	depend.sh $(ALL_CPPFLAGS) $(ALL_CFLAGS) $< > $@
 ############
 
 # don't want to type "make procps-$(TARVERSION).tar.gz"
@@ -140,21 +156,21 @@ install: $(filter-out $(SKIP) $(addprefix $(DESTDIR),$(SKIP)),$(INSTALL))
 ############ prog.c --> prog.o
 
 %.o : %.c
-	$(CC) $(CFLAGS) -c -o $@ $^
+	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) -c -o $@ $^
 
 w.o:    w.c
-	$(CC) $(CFLAGS) $(W_SHOWFROM) -c $<
+	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) $(W_SHOWFROM) -c $<
 
 ############ prog.o --> prog
 
 pmap w uptime tload free sysctl vmstat utmp pgrep skill: % : %.o $(LIBPROC)
-	$(CC) $(LDFLAGS) -o $@ $^
+	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^
 
 top:   % : %.o $(LIBPROC)
-	$(CC) $(LDFLAGS) -o $@ $^ $(CURSES)
+	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^ $(CURSES)
 
 watch: % : %.o
-	$(CC) $(LDFLAGS) -o $@ $^ $(CURSES)
+	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^ $(CURSES)
 
 ############ progX --> progY
 
