@@ -29,6 +29,11 @@ INSTALLATION
 
     make SHARED=0 DESTDIR=$HOME install
 
+    Suppose you wanted to install stuff in strange places.
+    You might do something like this:
+
+    make usr/bin=/tmp/fff/iii/ DESTDIR=/tmp/fff install="install -D" ldconfig=echo install
+
 BUG REPORTS
 
     Debian users should use the Debian bug tracking system.

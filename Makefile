@@ -134,7 +134,8 @@ $(MANFILES) : all
 	$(install) --mode a=r $(notdir $@) $@
 
 install: $(filter-out $(SKIP) $(addprefix $(DESTDIR),$(SKIP)),$(INSTALL))
-	cd $(usr/bin) && ($(ln_f) skill snice; $(ln_f) pgrep pkill)
+	cd $(usr/bin) && $(ln_f) skill snice
+	cd $(usr/proc/bin) && $(ln_f) pgrep pkill
 
 ############ prog.c --> prog.o
 
