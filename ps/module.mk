@@ -26,7 +26,7 @@ ps/ps: $(PSOBJ) $(LIBPROC)
 ps/debug: $(PSOBJ) stacktrace.o $(LIBPROC)
 	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^ -lefence
 
-$(PSOBJ): %.o: %.c ps/common.h proc/$(SONAME)
+$(PSOBJ): %.o: %.c ps/common.h $(LIBPROC)
 	$(CC) -c $(ALL_CPPFLAGS) $(ALL_CFLAGS) $< -o $@
 
 ps/stacktrace.o: ps/stacktrace.c
