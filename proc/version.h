@@ -8,6 +8,8 @@
  * Linux kernel version information for procps utilities
  * Copyright (c) 1996 Charles Blake <cblake@bbn.com>
  * Distributable under the terms of the GNU Library General Public License
+ *
+ * Copyright 2002 Albert Cahalan
  */
 
 EXTERN_C_BEGIN

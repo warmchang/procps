@@ -2,6 +2,8 @@
  * scratch by Charles Blake circa June 1996.  Some vestigal traces of the
  * original may exist.  That was done in 1993 by Larry Greenfield with some
  * fixes by Michael K. Johnson.
+ *
+ * Changes by Albert Cahalan, 2002.
  */
 #include "proc/version.h"
 #include "proc/whattime.h"

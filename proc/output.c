@@ -1,7 +1,8 @@
-/*
-  Some output conversion routines for libproc
-  Copyright (C) 1996, Charles Blake.  See COPYING for details.
-*/
+// Some output conversion routines for libproc
+// Copyright (C) 1996, Charles Blake.  See COPYING for details.
+//
+// Copyright 2002, Albert Cahalan
+
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>

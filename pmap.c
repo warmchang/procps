@@ -1,5 +1,5 @@
 /*
- * Copyright 1998 by Albert Cahalan; all rights reserved.
+ * Copyright 2002 by Albert Cahalan; all rights reserved.
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
  * at your option, as published by the Free Software Foundation.

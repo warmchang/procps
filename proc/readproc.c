@@ -2,6 +2,7 @@
  * New Interface to Process Table -- PROCTAB Stream (a la Directory streams)
  * Copyright (C) 1996 Charles L. Blake.
  * Copyright (C) 1998 Michael K. Johnson
+ * Copyright 1998-2002 Albert Cahalan
  * May be distributed under the conditions of the
  * GNU Library General Public License; a copy is in COPYING
  */

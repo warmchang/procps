@@ -1,10 +1,9 @@
-/***********************************************************************\
-*   Copyright (C) 1992-1998 by Michael K. Johnson, johnsonm@redhat.com *
-*                                                                      *
-*      This file is placed under the conditions of the GNU Library     *
-*      General Public License, version 2, or any later version.        *
-*      See file COPYING for information on distribution conditions.    *
-\***********************************************************************/
+// Copyright (C) 1992-1998 by Michael K. Johnson, johnsonm@redhat.com
+// Copyright 1998-2002 Albert Cahalan
+//
+// This file is placed under the conditions of the GNU Library
+// General Public License, version 2, or any later version.
+// See file COPYING for information on distribution conditions.
 
 /* File for parsing top-level /proc entities. */
 

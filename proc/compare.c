@@ -5,6 +5,7 @@
  * under the conditions of the GNU Library General Public License.
  * See the file COPYING for details.
  *
+ * Copyright 2002 Albert Cahalan
  */
 
 #include <string.h>		/* for strcmp */

@@ -6,6 +6,9 @@
  *
  * May be distributed under the conditions of the
  * GNU General Public License; a copy is in COPYING
+ *
+ * Changes by Albert Cahalan, 2002.
+ * 
  */
 
 

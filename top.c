@@ -12,10 +12,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- */
-/* For their contributions to this program, the author wishes to thank:
+ * 
+ * For their contributions to this program, the author wishes to thank:
  *    Albert D. Cahalan, <albert@users.sf.net>
  *    Craig Small, <csmall@small.dropbear.id.au>
+ *
+ * Changes by Albert Cahalan, 2002.
  */
 #include <sys/ioctl.h>
 #include <sys/resource.h>

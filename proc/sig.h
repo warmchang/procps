@@ -1,7 +1,7 @@
 #ifndef PROC_SIG_H
 #define PROC_SIG_H
 /*
- * Copyright 1998 by Albert Cahalan; all rights resered.
+ * Copyright 1998-2002 by Albert Cahalan; all rights resered.
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
  * at your option, as published by the Free Software Foundation.

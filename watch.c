@@ -6,6 +6,8 @@
  * Substantially reworked, new features (differences option, SIGWINCH
  * handling, unlimited command length, long line handling) added Apr 1999 by
  * Mike Coleman <mkc@acm.org>.
+ *
+ * Changes by Albert Cahalan, 2002.
  */
 
 #define VERSION "0.2.0"

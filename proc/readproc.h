@@ -2,8 +2,9 @@
 #define PROCPS_PROC_READPROC_H
 /*
  * New Interface to Process Table -- PROCTAB Stream (a la Directory streams)
- * Copyright (C) 1996 Charles L. Blake.
- * Copyright (C) 1998 Michael K. Johnson
+ * Copyright 1996 Charles L. Blake.
+ * Copyright 1998 Michael K. Johnson
+ * Copyright 1998-2002 Albert Cahalan
  * May be distributed under the terms of the
  * GNU Library General Public License, a copy of which is provided
  * in the file COPYING

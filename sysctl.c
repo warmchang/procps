@@ -15,6 +15,8 @@
  * Changelog:
  *            v1.01:
  *                   - added -p <preload> to preload values from a file
+ *
+ * Changes by Albert Cahalan, 2002.
  */
 
 

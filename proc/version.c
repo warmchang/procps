@@ -1,6 +1,9 @@
 /* Suite version information for procps utilities
  * Copyright (c) 1995 Martin Schulze <joey@infodrom.north.de>
  * Ammended by cblake to only export the function symbol.
+ *
+ * Modified by Albert Cahalan
+ *
  * Redistributable under the terms of the
  * GNU Library General Public License; see COPYING
  */
