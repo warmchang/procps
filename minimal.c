@@ -1,5 +1,5 @@
 /*
- * Copyright 1998 by Albert Cahalan; all rights reserved.
+ * Copyright 1998,2004 by Albert Cahalan; all rights reserved.
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
  * at your option, as published by the Free Software Foundation.
@@ -27,10 +27,20 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <sys/dir.h>
+#include <dirent.h>
 
+#ifdef __FreeBSD__
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#include <sys/stat.h>
+#include <sys/proc.h>
+#include <sys/user.h>
+#endif
+
+#ifdef __linux__
 #include <asm/param.h>  /* HZ */
 #include <asm/page.h>   /* PAGE_SIZE */
+#endif
 
 static int P_euid;
 static int P_pid;
@@ -273,6 +283,66 @@ static void arg_parse(int argc, char *argv[]){
   if(bsd_c_option) show_args = 0;
 }
 
+#ifdef __FreeBSD__
+/* return 1 if it works, or 0 for failure */
+static int stat2proc(int pid) {
+    char buf[400];
+    int num;
+    int fd;
+    char* tmp;
+    int tty_maj, tty_min;
+    snprintf(buf, 32, "/proc/%d/status", pid);
+    if ( (fd = open(buf, O_RDONLY, 0) ) == -1 ) return 0;
+    num = read(fd, buf, sizeof buf - 1);
+    close(fd);
+    if(num<43) return 0;
+    buf[num] = '\0';
+
+    P_state = '-';
+
+    // FreeBSD /proc/*/status is seriously fucked. Unlike the Linux
+    // files, we can't use strrchr to find the end of a command name.
+    // Spaces in command names do not get escaped. To avoid spoofing,
+    // one may skip 20 characters and then look _forward_ only to
+    // find a pattern of entries that are {with,with,without} a comma.
+    // The entry without a comma is wchan. Then count backwards!
+    //
+    // Don't bother for now. FreeBSD isn't worth the trouble.
+
+    tmp = strchr(buf,' ');
+    num = tmp - buf;
+    if (num >= sizeof P_cmd) num = sizeof P_cmd - 1;
+    memcpy(P_cmd,buf,num);
+    P_cmd[num] = '\0';
+
+    num = sscanf(tmp+1,
+       "%d %d %d %d "
+       "%d,%d "
+       "%*s "
+       "%ld,%*d "
+       "%ld,%*d "
+       "%ld,%*d "
+       "%*s "
+       "%d %d ",
+       &P_pid, &P_ppid, &P_pgrp, &P_session,
+       &tty_maj, &tty_min,
+       /* SKIP funny flags thing */
+       &P_start_time, /* SKIP microseconds */
+       &P_utime, /* SKIP microseconds */
+       &P_stime, /* SKIP microseconds */
+       /* SKIP &P_wchan, for now -- it is a string */
+       &P_euid, &P_euid   // don't know which is which
+    );
+/*    fprintf(stderr, "stat2proc converted %d fields.\n",num); */
+    // convert FreeBSD tty numbers to Linux format :-)
+    P_tty = ((tty_min&0xfff00)<<12) | ((tty_maj&0xfff)<<8) | (tty_min&0xff) ;
+    if(num < 9) return 0;
+    if(P_pid != pid) return 0;
+    return 1;
+}
+#endif
+
+#ifdef __linux__
 /* return 1 if it works, or 0 for failure */
 static int stat2proc(int pid) {
     char buf[800]; /* about 40 fields, 64-bit decimal is about 20 chars */
@@ -320,6 +390,7 @@ static int stat2proc(int pid) {
     if(P_pid != pid) return 0;
     return 1;
 }
+#endif
 
 static const char *do_time(unsigned long t){
   int hh,mm,ss;
@@ -371,7 +442,7 @@ static const char *do_stime(void){
 
 static void print_proc(void){
   char tty[16];
-  snprintf(tty, sizeof tty, "%3d,%-3d", (P_tty>>8)&0xff, P_tty&0xff);
+  snprintf(tty, sizeof tty, "%3d,%-3d", (P_tty>>8)&0xfff, (P_tty&0xff) | ((P_tty>>12)&0xfff00));
   switch(ps_format){
   case 0:
     printf("%5d %s %s", P_pid, tty, do_time(P_utime+P_stime));
@@ -381,9 +452,9 @@ static void print_proc(void){
     return; /* don't want the command */
   case 'l':
     printf(
-      "%03x %c %5d %5d %5d %s %3d %3d - "
+      "0 %c %5d %5d %5d %s %3d %3d - "
       "%5ld %06x %s %s",
-      (unsigned)P_flags&0x777, P_state, P_euid, P_pid, P_ppid, do_cpu(0),
+      P_state, P_euid, P_pid, P_ppid, do_cpu(0),
       (int)P_priority, (int)P_nice, P_vsize/(PAGE_SIZE/1024),
       (unsigned)(P_wchan&0xffffff), tty, do_time(P_utime+P_stime)
     );
@@ -422,13 +493,14 @@ static void print_proc(void){
     break;
   case 'l'|0x80:
     printf(
-      "%03x %5d %5d %5d %3d %3d "
+      "0 %5d %5d %5d %3d %3d "
       "%5ld %4ld %06x %c %s %s",
-      (unsigned)P_flags&0x777, P_euid, P_pid, P_ppid, (int)P_priority, (int)P_nice,
+      P_euid, P_pid, P_ppid, (int)P_priority, (int)P_nice,
       P_vsize, P_rss, (unsigned)(P_wchan&0xffffff), P_state, tty, do_time(P_utime+P_stime)
     );
     break;
   default:
+    ;
   }
   if(show_args) printf(" [%s]\n", P_cmd);
   else          printf(" %s\n", P_cmd);
@@ -445,13 +517,13 @@ int main(int argc, char *argv[]){
     switch(ps_format){
     default: /* can't happen */
     case 0:        head = "  PID TTY         TIME CMD"; break;
-    case 'l':      head = "  F S   UID   PID  PPID  C PRI  NI ADDR SZ WCHAN    TTY       TIME CMD"; break;
+    case 'l':      head = "F S   UID   PID  PPID  C PRI  NI ADDR SZ WCHAN    TTY       TIME CMD"; break;
     case 'f':      head = "USER       PID  PPID  C STIME   TTY       TIME CMD"; break;
     case 'j':      head = "  PID  PGID   SID TTY         TIME CMD"; break;
     case 'u'|0x80: head = "USER       PID %CPU %MEM   VSZ  RSS   TTY   S START     TIME COMMAND"; break;
     case 'v'|0x80: head = "  PID   TTY   S     TIME  MAJFL TRS DRS   RSS %MEM COMMAND"; break;
     case 'j'|0x80: head = " PPID   PID  PGID   SID   TTY   TPGID S   UID     TIME COMMAND"; break;
-    case 'l'|0x80: head = "  F   UID   PID  PPID PRI  NI   VSZ  RSS WCHAN  S   TTY       TIME COMMAND"; break;
+    case 'l'|0x80: head = "F   UID   PID  PPID PRI  NI   VSZ  RSS WCHAN  S   TTY       TIME COMMAND"; break;
     }
     printf("%s\n",head);
   }
@@ -459,7 +531,7 @@ int main(int argc, char *argv[]){
     if(stat2proc(want_one_pid)) print_proc();
     else exit(1);
   }else{
-    struct direct *ent;          /* dirent handle */
+    struct dirent *ent;          /* dirent handle */
     DIR *dir;
     int ouruid;
     int found_a_proc;
