@@ -626,11 +626,14 @@ int main(int argc, char **argv)
 		maxcmd = atoi(p);
 	else
 		maxcmd = MAX_CMD_WIDTH;
-	if (MAX_CMD_WIDTH < maxcmd)
-		maxcmd = MAX_CMD_WIDTH;
+#define CLAMP_CMD_WIDTH(cw) do { \
+	if ((cw) < MIN_CMD_WIDTH) (cw) = MIN_CMD_WIDTH; \
+	if ((cw) > MAX_CMD_WIDTH) (cw) = MAX_CMD_WIDTH; \
+} while (0)
+	CLAMP_CMD_WIDTH(maxcmd);
 	maxcmd -= 21 + userlen + (from ? fromlen : 0) + (longform ? 20 : 0);
-	if (maxcmd < MIN_CMD_WIDTH)
-        maxcmd = MIN_CMD_WIDTH;
+	CLAMP_CMD_WIDTH(maxcmd);
+#undef CLAMP_CMD_WIDTH
 
 
 	if (header) {
