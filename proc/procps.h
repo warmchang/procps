@@ -14,19 +14,24 @@
 // make everything "long long", since that causes unneeded
 // slowness on 32-bit hardware.
 //
-// SPARC: 32-bit kernel is an ex-penguin, so use "long long".
+// SPARC: The 32-bit kernel was looking like an ex-penguin,
+// but it lives! ("I'm not dead yet.") So, 64-bit users will
+// just have to compile for 64-bit. Aw, the suffering.
 //
-// MIPS: Used for embedded systems and obsolete hardware.
-// Oh, there's a 64-bit version? SGI is headed toward IA-64,
-// so don't worry about 64-bit MIPS.
+// MIPS: Used 32-bit for embedded systems and obsolete hardware.
+// The 64-bit systems use an n32 format executable, defining
+// _ABIN32 to indicate this. Since n32 doesn't currently run on
+// any 32-bit system, nobody get hurt if it's bloated. Not that
+// this is sane of course, but it won't hurt the 32-bit users.
+// __mips_eabi means eabi, which comes in both sizes, but isn't used.
 //
-// PowerPC: Big ugly problem! Macs are popular. :-/
+// PowerPC: Big ugly problem! 32-bit Macs are still popular. :-/
 //
-// x86-64: Red Hat gets this right. Debian???
+// x86-64: So far, nobody has been dumb enough to go 32-bit.
 //
 // Unknown: PA-RISC and zSeries
 //
-#if defined(k64test) || defined(__sparc__)  // || defined(__mips__) || defined(__powerpc__)
+#if defined(k64test) || defined(_ABIN32)
 #define KLONG long long    // not typedef; want "unsigned KLONG" to work
 #define KLF "L"
 #define STRTOUKL strtoull
