@@ -35,7 +35,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(0644,root,root,755)
-%doc NEWS BUGS TODO COPYING COPYING.LIB README.top README
+%doc NEWS BUGS TODO COPYING COPYING.LIB README.top README AUTHORS
 %attr(555,root,root) /lib/libproc.so*
 %attr(555,root,root) /bin/*
 %attr(555,root,root) /sbin/*
