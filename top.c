@@ -230,7 +230,7 @@ static int sort_HST_t (const HST_t *P, const HST_t *Q)
    return P->pid - Q->pid;
 }
 
-
+
 /*######  Tiny useful routine(s)  ########################################*/
 
         /*
@@ -318,7 +318,7 @@ static const char *tg2 (int x, int y)
    return Cap_can_goto ? tgoto(cursor_address, x, y) : "";
 }
 
-
+
 /*######  Exit/Interrput routines  #######################################*/
 
         /*
@@ -983,6 +983,7 @@ static void prochlp (proc_t *this)
    hist_new[Frame_maxtask].pid  = this->pid;
    hist_new[Frame_maxtask].tics = tics = (this->utime + this->stime);
 
+#if 0
 {  int i;
    int lo = 0;
    int hi = maxt_sav - 1;
@@ -1000,6 +1001,16 @@ static void prochlp (proc_t *this)
       }
    }
 }
+#else
+{
+   HST_t tmp;
+   const HST_t *ptr;
+   tmp.pid = this->pid;
+   ptr = bsearch(&tmp, hist_sav, maxt_sav, sizeof tmp, sort_HST_t);
+   if(ptr) tics -= ptr->tics;
+}
+#endif
+
    // we're just saving elapsed tics, to be converted into %cpu if
    // this task wins it's displayable screen row lottery... */
    this->pcpu = tics;
@@ -1538,7 +1549,7 @@ static const char *rc_write_whatever (void) {
    return NULL;
 }
 
-
+
 /*######  Startup routines  ##############################################*/
 
 #ifdef PRETEND4CPUS
