@@ -350,7 +350,7 @@ abbrev:
   if(chop + (unsigned long)(tmp-buf) < sizeof buf)
     tmp[chop] = '\0';
   /* replace non-ASCII characters with '?' and return the number of chars */
-  for(;;){
+  while(i < chop){
     c = *tmp;
     tmp++;
     if(!c) break;
