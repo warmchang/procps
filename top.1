@@ -8,7 +8,6 @@
 . with no Front-Cover Texts, no Back-Cover Texts, and with the following
 . Invariant Sections (and any sub-sections therein):
 .   all .ig sections, including this one
-.   DIFFERENCES / New Features
 .   STUPID TRICKS Sampler
 .   AUTHOR
 .
@@ -25,17 +24,7 @@
 .
 .ll +(\n[half_xtra] + \n[half_xtra])
 .
-\#                      Special right justify macros ---------------------
-\#                          - right justify begin
-.de Rjb
-.ll -\n[half_xtra]
-.rj \\$1
-..
-\#                          - right justify end
-.de Rje
-.ll +\n[half_xtra]
-..
-\#                      Jimmy's darn Bullet style ------------------------
+\#                      Our darn Bullet style ----------------------------
 .de Jbu
 .IP "-" 3
 ..
@@ -47,26 +36,6 @@
 .de New
 .IP "-*-" 5
 ..
-\#                      Screen image style -------------------------------
-.de Img
-.IP "" -4
-.Rjb 26
-..
-\#                      Code image style ---------------------------------
-.de ImgC
-.IP "" -4
-.Rjb 20
-..
-\#                      Screen narrative (wide narrative) style ----------
-.de Scr
-.PP
-.in -4
-..
-\#                      Special emphasis ---------------------------------
-.de Zzz
-.ce
--*- -*- -*-
-..
 .
 \#                      Commonly used strings (for consistency) ----------
 \#                          - a real em-dash, darn-it
@@ -74,9 +43,6 @@
 \#                          - these two are for chuckles, makes great grammar
 .ds Me top
 .ds ME \fBtop\fR
-\#                          - hey, these two ain't too shabby, either
-.ds Us this\ \*(Me
-.ds US \fBthis\fR\ \*(Me
 \#                          - other misc strings for consistent usage/emphasis
 .ds F \fIOff\fR
 .ds O \fIOn\fR
@@ -135,9 +101,9 @@ The types of system summary information shown and the types, order and
 size of information displayed for tasks are all user configurable and
 that configuration can be made persistent across restarts.
 
-The program provides a limited interactive interface for process\fB
-manipulation\fR as well as a much more extensive interface for personal\fB
-configuration\fR \*(EM encompassing every aspect of its operation.
+The program provides a limited interactive interface for process
+manipulation as well as a much more extensive interface for personal
+configuration \*(EM encompassing every aspect of its operation.
 And while \*(ME is referred to throughout this document, you are free
 to name the program anything you wish.
 That new name, possibly an alias, will then be reflected on \*(Me's display
@@ -145,135 +111,78 @@ and used when reading and writing a \*(CF.
 
 
 .\" ----------------------------------------------------------------------
-.SH 0. OVERVIEW, Documentation and Operation
+.SH OVERVIEW
 .\" ----------------------------------------------------------------------
-Listed below are the remaining topics in this document.
-Be advised that none of these topics need be read now, or studied later,
-for a successful\fB close-encounter-of-the-1st-kind\fR with \*(Us.
-
-You need remember just the\fB help key\fR ('h' or '?') to survive
-\*(EM nay, prosper!
-What about quitting, you ask?
-Well, of course there's the 'q' \*(CI, but \*(Me does quite well
-with\fB signals\fR.
-So just zap him with a \fI^C\fR when you're done.
-.br
-Oh, almost forgot...
-
-You could use \*(Me's own '\fBk\fR' command, to sock-it-to-\fBhisself\fR.
-.Rjb 3
- ( He actually enjoys that one, really! )
- ( He sees suicide as a chance to rest; )
- ( confronted-with-death, top'll laugh! )
-.Rje
-
-Remaining Table of Contents
-    1.\fB COMMAND\-LINE Options\fR
-    2.\fB FIELDS / Columns\fR
+.\" ......................................................................
+.SS Documentation
+.\" ----------------------------------------------------------------------
+The remaining Table of Contents
+    1. COMMAND\-LINE Options
+    2. FIELDS / Columns
        a. DESCRIPTIONS of Fields
        b. SELECTING and ORDERING Columns
-    3.\fB INTERACTIVE Commands\fR
+    3. INTERACTIVE Commands
        a. GLOBAL Commands
        b. SUMMARY Area Commands
        c. TASK Area Commands
        d. COLOR Mapping
-    4.\fB ALTERNATE\-DISPLAY Mode\fR
+    4. ALTERNATE\-DISPLAY Mode
        a. WINDOWS Overview
        b. COMMANDS for Windows
-       c. EXAMPLES of Windows
-          -*- The 'A' Mode Command Toggle -*-
-          -*- STACKIN' & WHACKIN' Windows -*-
-          -*- ALL TOGETHER Now, Window(s) -*-
-    5.\fB FILES\fR
+    5. FILES
        a. SYSTEM Configuration File
        b. PERSONAL Configuration File
-    6.\fB DIFFERENCES / New Features\fR
-       a. Interface Etiquette
-       b. Expanded Configurable Display Support
-       c. Enhanced Field/Column Management
-       d. Customization Flexibility
-    7.\fB STUPID TRICKS Sampler\fR
+    6. STUPID TRICKS Sampler
        a. Kernel Magic
        b. Bouncing Windows
        c. The Big Bird Window
-       lastly,\fB the usual\fR...
-    8. BUGS, 9. HISTORY Former top, 10. AUTHOR, 11. SEE ALSO
+    7. BUGS, 8. HISTORY Former top, 9. AUTHOR, 10. SEE ALSO
 
-.PP
-When you start \*(Us for the first time, you'll be presented with the
+.\" ......................................................................
+.SS Operation
+.\" ----------------------------------------------------------------------
+When operating \*(Me, the two most important keys are help ('h' or '?') and
+quit ('q') key.
+Alternatively, you could simply use the traditional interrupt key ('^C')
+when you're done.
+
+When you start \*(Me for the first time, you'll be presented with the
 traditional screen elements: 1) Summary Area; 2) Message/Prompt Line;
 3) Columns Header; 4) Task Area.
-But even out-of-the-box, there are numerous subtle differences, compared to
-the former top.
+There will, however, be some differences when compared to the former top.
 
 .TP 3
 .B Highlighting
 .I Summary_Area\fR:
-It's retina-friendly with\fB no\fR highlighting for load/uptime and
-only\fB values\fR highlighted for other elements.
+There is no highlighting for load/uptime and only values are highlighted for
+other elements.
 
 .I Task_Area\fR:
-Tasks\fB running\fR (or ready to run) will be highlighted, and bold is
-only one way of emphasizing such processes.
+Tasks running (or ready to run) will be highlighted, and bold is only one way
+of emphasizing such processes.
 
 .TP 3
 .B Content/Labels
 .I Summary_Area\fR:
-The program\fB name\fR is shown (perhaps a symlink/alias).
-The Cpu\fI(s)\fR state\fR\fB label\fR hints at other possibilities (smp folks,
-stand by).
-The\fB memory\fR stats use a lower case '\fBk\fR' (making numbers and letters
-more distinct).
+The program name is shown, perhaps a symlink or alias.
+The Cpu(s) state label hints at other possibilities.
+The memory stats use a lower case 'k'.
 
 .I Columns_Header\fR:
-Shows a\fB new\fR field and some\fB changed\fR labels (unseen to the right).
-Precious horizontal space is no longer squandered.
-
-.PP
-All of that, however, is just the tip of the old iceberg.
-So please, do not touch that dial!
-You may, however, peruse the following screen representation before we
-acknowledge \*(Us's default settings ...
-
-.Img
-                      +\fB--------------------------------------\fR+
- 1.\fB Summary Area   .\fBl\fR |top - 15:37:33 up 16:16,  9 users,  lo:
-   via 4 toggles   .\fBt\fR |Tasks: \fB 73\fR total,  \fB 3\fR running, \fB 70\fR sle:
-     l, t, 1, m    .\fB1\fR |Cpu(s):  \fB 6.6%\fR user,  \fB 2.3%\fR system,   :\fB
-   ------------>   .\fBm\fR |Mem:   \fB 126588k\fR total,  \fB 116504k\fR used,:
-                    " |Swap:  \fB 265032k\fR total,  \fB   8232k\fR used,:
- 2.\fB Msg/Pmt line --->\fR |______________________________________:
- 3.\fB Columns Header ->\fR |\fI__PID_USER______PR__NI_%CPU____TIME+__\fR:
- 4.\fB Task Area ------>\fR |\fB 7328 root      10   0  0.6   0:00.09\fR :
-   via a bunch of   > | 7326 root       9   0  0.0   0:00.06 :
-   commands and     > | 7324 root       8   0  0.0   0:00.00 :
-   toggles !        > | 7321 root       9   0  0.0   0:00.05 :
-                  ... | 7320 root       9   0  0.0   0:00.00 :
-                      | 7316 jfvwm      8   0  0.0   0:00.00 :
- ( top provides\fI four\fR )| 7315 jfvwm      9   0  0.0   0:00.01 :
- ( \fIseparate\fR fld grps )| 7312 root       9   0  0.0   0:00.00 :
- ( or windows &\fB each\fR )| 6725 root       9   0  0.0   0:00.03 :
- ( could be shown in )| 6232 root       7 -10  1.9   4:25.86 :
- ( this way, or show )| 5561 root       9   0  0.0   0:00.33 :
- (\fB all concurrently\fR! )| 5560 xfs        9   0  0.0   0:00.01 :
-                      | 5325 root       9   0  0.0   0:00.05 :
- ( will\fI change\fR often )| 4634 root       9   0  0.0   0:04.23 :
-   -*-\fBRow hilites-->\fR  |\fB 1803 jgnome     9   0  0.0   1:55.30\fR :
- ( depending on your )| 1708 root       9   0  0.0   0:00.27 :
- ( \fIdelay time\fR value! )| 1703 lp         9   0  0.0   0:00.03 :
-                      +\fB--------------------------------------\fR+
-.Rje
+Will show a new field and some changed labels.
+More new fields will be found as you customize your \*(Me.
 
 .PP
 \*(NT the width of \*(Me's display will be limited to 512 positions.
 Displaying all fields requires a minimum of 160 characters.
 The remaining width could be used for the 'Command' column.
 
-.PP
-Within the following categories, \*(Me's startup defaults are documented
-assuming no \*(CF, thus no user customizations.
-However, items shown with an \*(AS could be overridden through the\fB
-command line\fR \*(EM a subject soon to be dealt with.
+.\" ......................................................................
+.SS Startup Defaults
+.\" ----------------------------------------------------------------------
+The following startup defaults assume no \*(CF, thus no user customizations.
+Even so, items shown with an \*(AS could be overridden through the
+command-line.
 
     \fIGlobal_defaults\fR
        'A' - Alt display        \fBOff\fR (full-screen)
@@ -300,7 +209,7 @@ command line\fR \*(EM a subject soon to be dealt with.
 .\" ----------------------------------------------------------------------
 .SH 1. COMMAND-LINE Options
 .\" ----------------------------------------------------------------------
-The command-line syntax for \*(Us consists of:
+The command-line syntax for \*(Me consists of:
 
      \-\fBhv\fR\ |\ -\fBbcisS\fR\ \-\fBd\fI\ delay\fR\ \-\fBn\fI\ iterations\
 \fR\ \-\fBp\fI\ pid\fR\ [,\fIpid\fR...]
@@ -312,16 +221,12 @@ optional.
 \-\fBb\fR :\fB Batch mode\fR operation
 Starts \*(Me in 'Batch mode', which could be useful for sending output
 from \*(Me to other programs or to a file.
-In this mode, \*(Me will\fB not\fR accept input and runs until the iterations
+In this mode, \*(Me will not accept input and runs until the iterations
 limit you've set with the '-n' \*(CO or until killed.
-
-Output is plain text suitable for any dumb terminal.
-.br
-( or dumb user, heh heh )
 
 .TP 5
 \-\fBc\fR :\fB Command line/Program name\fR toggle
-Starts \*(Me with the last remembered '\fBc\fR' state reversed.
+Starts \*(Me with the last remembered 'c' state reversed.
 Thus, if \*(Me was displaying command lines, now that field will show program
 names, and visa versa.
 \*(XC 'c' \*(CI for additional information.
@@ -332,28 +237,11 @@ Specifies the delay between screen updates, and overrides the corresponding
 value in one's personal \*(CF or the startup default.
 Later this can be changed with the 'd' or 's' \*(CIs.
 
-In all cases, however, such changes are\fI prohibited\fR if \*(Me is running
-in 'Secure mode', except for root and excluding\fR the 's' \*(CO, documented
-later in this section.
-For additional information on 'Secure mode'
-\*(Xt 5a. SYSTEM Configuration File.
-
 Fractional seconds are honored, but a negative number is not allowed.
-If you set the delay to anything less than 1 second, and you expect \*(Me
-to do a proper job of it, then you really owe him a\fB scheduling boost\fR.
-So please renice him using \*(Me's own 'r' \*(CI or more directly with
-something like the following:
-    nice -n-10 top -d.1
+In all cases, however, such changes are prohibited if \*(Me is running
+in 'Secure mode', except for root (unless the 's' \*(CO was used).
+For additional information on 'Secure mode' \*(Xt 5a. SYSTEM Configuration File.
 
-With the ability to highlight\fB running\fR tasks, \*(Us will then produce
-an amazing display.
-One representing the results of the kernel's\fB previously unseen\fR
-scheduling efforts.
-You may be surprised.
-.Rjb 2
- ( but try not to waste too many \*(Pu cycles )
- ( with such sub-second delays & refreshes! )
-.Rje
 
 .TP 5
 \-\fBh\fR :\fB Help\fR
@@ -361,58 +249,36 @@ Show library version and the usage prompt, then quit.
 
 .TP 5
 \-\fBi\fR :\fB Idle Processes\fR toggle
-Starts \*(Me with the last remembered '\fBi\fR' state reversed.
-When this toggle is \*F, tasks that \fBare\fR idled or zombied
-will\fB not\fR be displayed.
+Starts \*(Me with the last remembered 'i' state reversed.
+When this toggle is \*F, tasks that are idled or zombied will not be displayed.
 
 .TP 5
 \-\fBn\fR :\fB Number of iterations\fR limit as:\ \ \fB -n number\fR
 Specifies the maximum number of iterations, or frames, \*(Me should
-produce before:
-.Rjb 6
- tellin'-a-user-what-he-really-thinks :1
- stoppin'-4-a-beer-with-the-guys :2
- quittin'-an-going-2-hawaii :3
- hangin'-it-up-forever :4
- rollin'-deadover :5
- [1 -5-5-5-5 = huh?]
-.Rje
+produce before ending.
 
 .TP 5
 \-\fBp\fR :\fB Monitor PIDs\fR as:\fB\ \ -pN1 -pN2 ...\fR\ \ or\fB\ \ -pN1, N2 [,...]
 Monitor only processes with specified process IDs.
 This option can be given up to 20 times, or you can provide a comma delimited
 list with up to 20 pids.
-For the indecisive, go ahead and co-mingle both approaches.
+Co-mingling both approaches is permitted.
 
-This is a \*(CO \fBonly\fR.
+This is a \*(CO only.
 And should you wish to return to normal operation, it is not necessary
-to quit and and restart \*(Us \*(EM just issue the '=' \*(CI.
+to quit and and restart \*(Me \*(EM just issue the '=' \*(CI.
 
 .TP 5
 \-\fBs\fR :\fB Secure mode\fR operation
-Starts \*(Me with \fBsecure mode forced\fR, even for root.
-This mode is far better controlled through the system \*(CF.
-In fact, one could argue that this switch has little practical use\fB except\fR
-to test the nifty\fI delayed message handling\fR \*(Us employs during bootstrap.
-
-Oh, you wanna' see?
-Test thus:\ \ \*(Me\fB d.1s\fR
-.Rjb 3
- ( see, NO '-' & 'sp' but )
- ( you\fB can't change delay\fR )
- ( in\fI secure mode\fR, silly! )
-.Rje
-
-Don't bother trying that precise command line with your old top
-\*(EM he'll completely overlook that 's' \*(CO because
-he-sees-poorly-but-won't-wear-glasses.
+Starts \*(Me with secure mode forced, even for root.
+This mode is far better controlled through the system \*(CF
+(\*(Xt 5. FILES).
 
 .TP 5
 \-\fBS\fR :\fB Cumulative time mode\fR toggle
-Starts \*(Me with the last remembered '\fBS\fR' state reversed.
+Starts \*(Me with the last remembered 'S' state reversed.
 When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
-time that it\fB and\fR its dead children have used.
+time that it and its dead children have used.
 \*(XC 'S' \*(CI for additional information regarding this mode.
 
 .TP 5
@@ -426,12 +292,11 @@ Show library version and the usage prompt, then quit.
 .\" ......................................................................
 .SS 2a. DESCRIPTIONS of Fields
 .\" ----------------------------------------------------------------------
-Listed below are \*(Us's\fB available\fR fields.
+Listed below are \*(Me's available fields.
 They are always associated with the letter shown, regardless of the position
-you may have established for them with the 'o' (Order fields) \*(CI, reviewed
-in the following topic.
+you may have established for them with the 'o' (Order fields) \*(CI.
 
-Any field is selectable as the\fB sort field\fR, and you control whether they
+Any field is selectable as the sort field, and you control whether they
 are sorted high-to-low or low-to-high.
 For additional information on sort provisions \*(Xt 3c. TASK Area Commands.
 
@@ -465,10 +330,10 @@ The group name of the task's owner.
 .TP 3
 g:\fB TTY\fR \*(EM Controlling Tty
 The name of the controlling terminal.
-This is usually the\fB device\fR (serial port, pty, etc.) from which the
+This is usually the device (serial port, pty, etc.) from which the
 process was started, and which it uses for input or output.
-However, a task need\fI not\fR be associated with a terminal, in which case
-you'll see '\fB?\fR' displayed.
+However, a task need not be associated with a terminal, in which case
+you'll see '?' displayed.
 
 .TP 3
 h:\fB PR\fR \*(EM Priority
@@ -477,8 +342,8 @@ The priority of the task.
 .TP 3
 i:\fB NI\fR \*(EM Nice value
 The nice value of the task.
-A\fI negative\fR nice value means\fB higher priority\fR, whereas a\fI
-positive\fR nice value means\fB lower priority\fR.
+A negative nice value means higher priority, whereas a positive nice value
+means lower priority.
 Zero in this field simply means priority will not be adjusted in determining a
 task's dispatchability.
 
@@ -504,8 +369,9 @@ You toggle 'Irix/Solaris' modes with the 'I' \*(CI.
 l:\fB TIME\fR \*(EM \*(PU Time
 Total \*(PU time the task has used since it started.
 When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
-time that\fB it\fR and its\fB dead children\fR has used.
+time that it and its dead children has used.
 You toggle 'Cumulative mode' with 'S', which is a \*(CO and an \*(CI.
+\*(XC 'S' \*(CI for additional information regarding this mode.
 
 .TP 3
 m:\fB TIME+\fR \*(EM \*(PU Time, hundredths
@@ -549,19 +415,18 @@ t:\fB SHR\fR \*(EM Shared Mem size (kb)
 The amount of \*(MS used by a task.
 It simply reflects memory that could be potentially shared with
 other processes.
-It is not an assurance that such memory is actually being shared.
 
 .TP 3
 u:\fB nFLT\fR \*(EM Page Fault count
 The number of\fB major\fR page faults that have occurred for a task.
 A page fault occurs when a process attempts to read from or write to a virtual
 page that is not currently present in its address space.
-A\fB major\fR page fault is when\fI disk access\fR is involved in making that
+A major page fault is when disk access is involved in making that
 page available.
 
 .TP 3
 v:\fB nDRT\fR \*(EM Dirty Pages count
-The number of pages that have been\fB modified\fR since they were last
+The number of pages that have been modified since they were last
 written to disk.
 Dirty pages must be written to disk before the corresponding physical memory
 location can be used for some other virtual page.
@@ -587,31 +452,30 @@ program.
 You toggle between command\fI line\fR and\fI name\fR with 'c', which is both
 a \*(CO and an \*(CI.
 
-When you've chosen to display command\fB lines\fR, processes without a command
-line (kernel threads) will be shown with only the program name in parentheses,
-as in this example:
+When you've chosen to display command lines, processes without a command
+line (like kernel threads) will be shown with only the program name in
+parentheses, as in this example:
       \fR( mdrecoveryd )
 
 Either form of display is subject to potential truncation if it's too long to
-fit in this field's\fI current width\fR.
+fit in this field's current width.
 That width depends upon other fields selected, their order and the current
 screen width.
 
 .in +4
-\*(NT The 'Command' field/column is\fB unique\fR, in that \fRit is not
-fixed-width, like all other fields.
-When displayed, this column will be allocated \fBall remaining screen width\fR,
+\*(NT The 'Command' field/column is unique, in that it is not fixed-width,
+like all other fields.
+When displayed, this column will be allocated all remaining screen width,
 up to the maximum 512 characters, so as to provide for the potential growth of
 program names into command lines!
 .in
 
 .TP 3
 y:\fB WCHAN\fR \*(EM Sleeping in Function
-Depending on the availability of the kernel link map ('System.map'),
-this field will show the \fB name\fR or the\fB address\fR of the kernel
-function in which the task is currently sleeping.
-Running tasks will display a dash ('-') in this column (but only if you're
-using the best, the most proper libproc).
+Depending on the availability of the kernel link map ('System.map'), this field
+will show the name or the address of the kernel function in which the task is
+currently sleeping.
+Running tasks will display a dash ('-') in this column.
 
 .in +4
 \*(NT By displaying this field, \*(Me's own working set will be increased by
@@ -621,11 +485,11 @@ Your only means of reducing that overhead will be to stop and restart \*(Me.
 
 .TP 3
 z:\fB Flags\fR \*(EM Task Flags
-This column represents the task's current scheduling flags which \*(Us
-expresses in hexadecimal notation, but with zeros suppressed.
+This column represents the task's current scheduling flags which are
+expressed in hexadecimal notation and with zeros suppressed.
 These flags are officially documented in <linux/sched.h>.
 Less formal documentation can also be found on the 'Fields select'
-and 'Order fields' screens \*(EM the next topic.
+and 'Order fields' screens.
 
 .\" ......................................................................
 .SS 2b. SELECTING and ORDERING Columns
@@ -634,7 +498,7 @@ After pressing the \*(CIs 'f' (Fields select) or \'o' (Order fields) you will
 be shown a screen containing the current \fBfields string\fR followed by names
 and descriptions for all fields.
 
-Here is a sample\fB fields string\fR from one of \*(Us's four windows/field
+Here is a sample\fB fields string\fR from one of \*(Me's four windows/field
 groups and an explanation of the conventions used:
 .Jbu
 Sample fields string:
@@ -644,7 +508,7 @@ The order of displayed fields corresponds to the order of the letters
 in that string.
 .Jbu
 If the letter is\fI upper case\fR the corresponding field itself will
-then be\fB shown\fR as part of the \*(TD (screen width permitting).
+then be shown as part of the \*(TD (screen width permitting).
 This will also be indicated by a leading \*(AS, as in this excerpt:
     \fR...
     \fB* K: %CPU       = CPU usage
@@ -707,8 +571,7 @@ just use either of these keys.
 
 .TP 7
 \ \ \'\fB?\fR\' or \'\fBh\fR\' :\fIHelp\fR
-There are\fB two help levels\fR available.
-
+There are two help levels available.
 The first will provide a reminder of all the basic \*(CIs.
 If \*(Me is\fI secured\fR, that screen will be abbreviated.
 
@@ -737,10 +600,6 @@ You will be prompted to enter the delay time, in seconds, between
 display updates.
 
 Fractional seconds are honored, but a negative number is not allowed.
-If you set the delay to anything less than 1 second, and you expect \*(Me
-to do a proper job of it, then you really owe him a\fB scheduling boost\fR.
-So please renice him using \*(Me's own 'r' \*(CI.
-
 Entering 0 causes (nearly) continuous updates, with an unsatisfactory
 display as the system and tty driver try to keep up with \*(Me's demands.
 The delay value is inversely proportional to system loading,
@@ -768,10 +627,10 @@ You will be prompted for a PID and then the signal to send.
 The default signal, as reflected in the prompt, is SIGTERM.
 However, you can send any signal, via number or name.
 
-If you wish to\fI abort\fR the kill process, do one of the following
+If you wish to abort the kill process, do one of the following
 depending on your progress:
-   1) at the\fB pid\fR prompt, just press <Enter>
-   2) at the\fB signal\fR prompt, type 0
+   1) at the pid prompt, just press <Enter>
+   2) at the signal prompt, type 0
 
 .TP 7
 \ \ \'\fBq\fR\' :\fIQuit\fR
@@ -788,7 +647,7 @@ favorably by the kernel.
 This will save all of your options and toggles plus the current
 display mode and delay time.
 By issuing this command just before quitting \*(Me, you will be able restart
-later in\fB exactly\fR that same state.
+later in exactly that same state.
 
 .TP 7
 \ \ \'\fBZ\fR\' :\fIChange_Color_Mapping
@@ -797,7 +656,7 @@ colors for the \*(CW, or for all windows.
 For details regarding this \*(CI \*(Xt 3d. COLOR Mapping.
 
 .IP "*" 3
-The commands shown with an \*(AS are\fB not available\fR in 'Secure mode',
+The commands shown with an \*(AS are not available in 'Secure mode',
 nor will they be shown on the level-1 help screen.
 
 .\" ......................................................................
@@ -814,9 +673,6 @@ These commands always impact just the \*(CW/field group.
 \ \ \'\fBl\fR\' :\fIToggle_Load_Average/Uptime\fR \*(EM On/Off
 This is also the line containing the program name (possibly an alias) when
 operating in \*(FM or the \*(CW name when operating in \*(AM.
-
-If you murder-this-line, \*(Me will prosecute you.
-Later, get-out-of-jail by turning it back on.
 
 .TP 7
 \ \ \'\fBm\fR\' :\fIToggle_Memory/Swap_Usage\fR \*(EM On/Off
@@ -837,16 +693,9 @@ When you see 'Cpu(s):' in the \*(SA, the '1' toggle is \*O and all
 \*(Pu information is gathered in a single line.
 Otherwise, each \*(Pu is displayed separately as: 'Cpu0, Cpu1, ...'
 
-.in +4
-\*(NT If you receive a fatal error message in response to this command, your
-version of the kernel does not provide separate \*(Pu data in '/proc/stat'.
-You can either avoid issuing this command or recompile \*(Me with the
-appropriate #define enabled so the command will be restricted to SMP.
-.in
-
 .PP
-If the\fB entire\fR \*(SA has been toggled \*F for any window,
-you would be left with just the\fB message line\fR.
+\*(NT If the entire \*(SA has been toggled \*F for any window, you would be left
+with just the\fB message line\fR.
 In that way, you will have maximized available task rows but (temporarily)
 sacrificed the program name in \*(FM or the \*(CW name when in \*(AM.
 
@@ -869,17 +718,16 @@ Further, it will only be available when at least one of those toggles is \*O.
 .TP 7
 \ \ \'\fBx\fR\' :\fIColumn_Highlight_toggle\fR
 You probably don't need a constant visual reminder of your chosen sort
-field and \*(Us hopes that you always run with 'column highlight' \*F,
+field and \*(Me hopes that you always run with 'column highlight' \*F,
 due to the cost in path-length.
 However, if you forget which field \*(Me is sorting this command can serve
 as a quick visual reminder.
 
 .TP 7
 \ \ \'\fBy\fR\' :\fIRow_Highlight_toggle\fR
-Please use this toggle \*(EM highlight running tasks!
-It's an important insight into your system's health and it was largely this
-provision that was responsible for your-brand-new-top.
-You'll make the program author a happy guy.
+Feel free to use this toggle, it could be an important insight into your
+system's health.
+The only costs will be a few additional tty escape sequences.
 
 .TP 7
 \ \ \'\fBz\fR\' :\fIColor/Monochrome_toggle\fR
@@ -895,7 +743,7 @@ state of the 'x', 'y' or 'b' toggles.
 .TP 7
 \ \ \'\fBc\fR\' :\fICommand_Line/Program_Name_toggle\fR
 This command will be honored whether or not the 'Command' column
-is\fB currently visible\fR.
+is currently visible.
 Later, should that field come into view, the change you applied will be seen.
 
 .TP 7
@@ -908,7 +756,7 @@ For additional information on these \*(CIs
 .TP 7
 \ \ \'\fBS\fR\' :\fICumulative_Time_Mode_toggle\fR
 When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
-time that it\fB and\fR its dead children\fR have used.
+time that it and its dead children have used.
 
 When \*F, programs that fork into many separate tasks will appear
 less demanding.
@@ -937,8 +785,7 @@ just press <Enter> at the prompt, without providing a name.
 .TP 7
 \ \ \'\fBi\fR\' :\fIIdle_Processes_toggle\fR
 Displays all tasks or just active tasks.
-When this toggle is \*F, idled or zombied processes will\fB not\fR
-be displayed.
+When this toggle is \*F, idled or zombied processes will not be displayed.
 
 If this command is applied to the last \*(TD when in \*(AM, then it will not
 affect the window's size, as all prior \*(TDs will have already been painted.
@@ -1003,18 +850,7 @@ when running \*(Me with column highlighting turned \*F.
 
 .TP 7
 \ \ \'\fBR\fR\' :\fIReverse/Normal_Sort_Field_toggle\fR
-Internally to \*(Me, 'normal' is 'reverse'.
-.Rjb 1
- ...\fBsay what\fR?
-.Rje
-Without 'R', \*(Me will sort fields high-to-low.
-.Rjb 1
- ...that's\fI reverse\fR, \*(Me's\fI normal\fR mode!
-.Rje
-
-Try this:\ \ using 'R' you can\fI alternate\fR between high-to-low
-and low-to-high sorts.
-Lose no sleep over 'reverse' and 'normal', ok?
+Using this \*(CI you can alternate between high-to-low and low-to-high sorts.
 
 .PP
 .in +2
@@ -1024,12 +860,9 @@ Thus, the TTY and WCHAN fields will violate strict ASCII collating sequence.
 
 .\" ......................................................................
 .SS 3d. COLOR Mapping
-.Scr
-When you issue the 'Z' \*(CI, you are presented with the following screen.
-On that screen, separate commands (though sometimes related) are in effect.
-
-This screen can be used to change the colors in just the \*(CW or
-in\fB all\fR four windows before returning to the \*(Me display.
+When you issue the 'Z' \*(CI, you will be presented with a separate screen.
+That screen can be used to change the colors in just the \*(CW or
+in all four windows before returning to the \*(Me display.
 
 .P
 .B Available \*(CIs
@@ -1043,48 +876,15 @@ in\fB all\fR four windows before returning to the \*(Me display.
         <Enter>   :apply and exit
         'q'       :abandon current changes and exit
 
-.Img
-                      +\fB--------------------------------------\fR+
- this shows you the   |\fBHelp for color mapping\fR - procps versio:\fB
- Target Window ----->\fR |current window:\fB 1:Def\fR                 :
-          -*-         |                                      :
- a\fB Sample Screen\fR with |   color - 04:25:44 up 8 days, 50 min,:
- \fIyour_current_results\fR |   Tasks: \fB 64\fR total,  \fB 2\fR running, \fB 62\fR :
- \'\fBS\fR' color  \fB ---->\fR    |   State cpu0 :  \fB 76.5%\fR user, \fB 11.2%\fR s:
- \'\fBM\fR' color\fIs \fB ---->\fR    |  \fB _Nasty_Message!___-or-__Input_Promp\fR:
- \'\fBH\fR' color  \fB ---->\fR    |  \fI __PID_TTY_____PR__NI_%CPU____TIME+_\fR:
- \'\fBT\fR' color  \fB ---->\fR    |   17284\fB pts/2\fR    8   0  0.0   0:00.75:
- + a\fB row\fR for '\fBb\fR'\fB--->\fR |  \fB  8601\fB pts/1    7 -10  0.4   0:00.03\fR:
-          -*-         |   11005\fB ?    \fR    9   0  0.0   0:02.50:
- addt'l toggles \fB---->\fR |   available toggles:\fB b\fR =bold/reverse(:
- \'\fBb\fR'(bold), '\fBz\fR'(mono) |                                      :
-                      |Select\fB target\fR as upper case letter:   :
- instructions for the |  \fB S\fR = Summary Data, \fB M\fR = Messages/Pro:
-    target (4)        |  \fB H\fR = Column Heads, \fB T\fR = Task Informa:
-                      |Select\fB color\fR as number:               :
- instructions for the |  \fB 0\fR = black, \fB 1\fR = red,     \fB 2\fR = green:
-    colors (8)        |  \fB 4\fR = blue,  \fB 5\fR = magenta, \fB 6\fR = cyan,:
-                      |                                      :
-      -*- -*- -*-     |Selected:\fB target  T\fR ;\fB color  1\fR        :
- current\fB target\fR       |   press 'q' to abort changes to windo:
- current\fB color\fR        |   press 'a' or 'w' to commit & change:
-      -*- -*- -*-     |                                      :
-                      +\fB--------------------------------------\fR+
-.Rje
-
-.in +4
-\*(NT If your use 'a' or 'w' to cycle the targeted window, you\fI will
-have applied\fR the color scheme that was displayed when you left that window.
+\*(NT If your use 'a' or 'w' to cycle the targeted window, you will
+have applied the color scheme that was displayed when you left that window.
 You can, of course, easily return to any window and reapply different
 colors or turn colors \*F completely with the 'z' toggle.
-.in
 
 The Color Mapping screen can also be used to change the \*(CW/field group
 in either \*(FM or \*(AM.
-Whatever was targeted when 'q' or <Enter> was pressed\fI will\fR be
-made\fB current\fR as you return to the \*(Me display.
-
-.Zzz
+Whatever was targeted when 'q' or <Enter> was pressed will be made current
+as you return to the \*(Me display.
 
 
 .\" ----------------------------------------------------------------------
@@ -1092,23 +892,20 @@ made\fB current\fR as you return to the \*(Me display.
 .\" ----------------------------------------------------------------------
 .\" ......................................................................
 .SS 4a. WINDOWS Overview
-You must find comfort with two concepts if you are to successfully manage
-windows and prosper in \*(AM.
-
 .TP
 .B Field Groups/Windows\fR:
 .br
 In \*(FM there is a single window represented by the entire screen.
-That single window can still be\fI changed\fR to display 1 of 4 different\fB
-field groups\fR (\*(Xc 'G' \*(CI, repeated below).
+That single window can still be changed to display 1 of 4 different\fB field
+groups\fR (\*(Xc 'G' \*(CI, repeated below).
 
 Each of the 4 field groups has a unique separately configurable\fB \*(SA\fR
 and its own configurable\fB \*(TA\fR.
 
-In \*(AM, those 4 underlying\fB field groups\fR can now be made\fI visible\fR
+In \*(AM, those 4 underlying\fB field groups\fR can now be made visible
 simultaneously, or can be turned \*F individually at your command.
 
-The\fB \*(SA\fR will\fI always\fR exist, even if it's only the message line.
+The \*(SA will always exist, even if it's only the message line.
 At any given time only\fI one\fR \*(SA can be displayed.
 However, depending on your commands, there could be from\fI zero\fR
 to\fI four\fR separate \*(TDs currently showing on the screen.
@@ -1121,15 +918,10 @@ task related commands are always directed.
 Since in \*(AM you can toggle the \*(TD \*F, some commands might be
 restricted for the \*(CW.
 
-A further complication arises when you have toggled the\fB entire\fR \*(SA
-\*F, leaving only the\fB message line\fR visible.
-With the loss of the window\fB name\fR (the 'l' toggled line), you'll not
-easily know what window is the \*(CW.
-
-.PP
-You must never blame \*(Us for any potential confusion.
-Someone must have misapplied some commands.
-Come on, let's hear it, who ya gonna' blame, huh?
+A further complication arises when you have toggled the first \*(SA
+line \*F.
+With the loss of the window name (the 'l' toggled line), you'll not easily
+know what window is the \*(CW.
 
 .\" ......................................................................
 .SS 4b. COMMANDS for Windows
@@ -1141,30 +933,22 @@ established with the 'f' and 'o' commands.
 It will also reflect any other \*(TA options/toggles you've applied yielding
 zero or more tasks.
 
-The '_' (upper case minus) key does the same for\fB all\fR \*(TDs.
+The '_' (upper case minus) key does the same for all \*(TDs.
 In other words, it switches between the currently visible \*(TD(s) and any
 \*(TD(s) you had toggled \*F.
-
-If all 4 \*(TDs\fB are\fR currently visible, \*(Me is betting you will find
-the '_' command not terribly satisfying (inside, he'll wonder
-what-kind-of-user-he's-dealing-with).
-On the other hand, if all you're interested in is the system summary, \*(Me
-acknowledges this is the best means to that objective (inside, he'll wonder
-how-did-this-user-become-so-very-wise).
+If all 4 \*(TDs are currently visible, this \*(CI will leave the \*(SA
+as the only display element.
 
 .TP 7
 *\ \'\fB=\fR\' and \'\fB+\fR\' :\fIEqualize_(re-balance)_Window(s)\fR
-The '=' (equals) key\fB forces\fR the \*(CW's \*(TD to be visible.
+The '=' (equals) key forces the \*(CW's \*(TD to be visible.
 It also reverses any 'i' (idle tasks) and 'n' (max tasks) commands that might
 be active.
 
-The \'+' (upper case equals) key does the same for\fB all\fR windows.
-The four \*(TDs will reappear, nice and even.  They will also have\fB
-retained\fR any customizations you had previously applied,\fI except\fR for
-the 'i' (idle tasks) and 'n' (max tasks) commands.
-
-This is the command you'll use when your screen has somehow become a mess
-(hmmm, how-in-the-world-did-THAT-happen?).
+The \'+' (upper case equals) key does the same for all windows.
+The four \*(TDs will reappear, nice and even.  They will also have retained
+any customizations you had previously applied, except for the 'i'
+(idle tasks) and 'n' (max tasks) commands.
 
 .TP 7
 *\ \'\fBA\fR\' :\fIAlternate_Display_Mode_toggle\fR
@@ -1202,201 +986,8 @@ It does not require that the window name be visible
 
 .IP "*" 3
 The \*(CIs shown with an \*(AS have use beyond \*(AM.
-    \'=', 'A', 'G'  are\fB always\fR available
-    \'a', 'w'       act the same when\fB color mapping\fR
-
-.\" ......................................................................
-.SS 4c. EXAMPLES of Windows
-.Jp
-.ce
-.\" .........................
-.SS -*- The 'A' Mode Command Toggle -*-
-.Scr
-Here's what you'll see when you first invoke the \*(AM \*(CI.
-
-This particular display was produce on a VT100 xterm, with only 24 rows.
-All four \*(TDs are visible, but they could not be sized the same.
-Available lines are parceled out in the fairest way possible so the last
-two \*(TDs have an extra line each.
-
-Notice the \*(CW\fB name\fR in the \*(SA \*(EM it's been emphasized because
-the associated \*(TD is visible.
-Since 1:Def has a \*(TA, the full range of \*(CIs would be at your disposal.
-But remember, many of those commands will apply only to window 1:Def.
-
-.Img
-                      +\fB--------------------------------------\fR+
- 1:Def name is bold,  |\fB1:Def\fR - 15:46:37 up 16:25,  9 users,  :
-  thus all commands   |Tasks: \fB 76\fR total,  \fB 1\fR running, \fB 75\fR sle:
-  will be available.  |Cpu(s):  \fB 0.7%\fR user,  \fB 1.3%\fR system,   :
-                      |Mem:   \fB 126588k\fR total,  \fB 123688k\fR used,:
-                      |Swap:  \fB 265032k\fR total,  \fB   8232k\fR used,:
-                      |______________________________________:
- Tough luck windows   |\fI1__PID_USER______PR__NI_%CPU____TIME+_\fR:
-  #1 & 2 - you\fB lost\fR   |\fB  7343 jtwm      16   0  0.9   0:00.59\fR:\fB
-  one line\fR each \*(EM  |  7339 jtwm       9   0  0.0   0:00.02:
-  guess you'll just   |\fI__7337_root_______9___0__0.0___0:01.30\fR:
-  have to learn how   |\fI2__PID__PPID_Command____________TIME+_\fR:
-  to live with it.    |\fB   997   952 kdeinit          17:59.59\fR:
-                      |  1115   952 kdeinit           2:16.47:
-                      |\fI__1803__1116_led_______________1:55.30\fR:
-                      |\fI3__PID_%MEM__VIRT_SWAP__RES_CODE_DATA_\fR:
- The #3 & #4 windows  |  4634 12.3 15620    0  15m  860  14m :
-  better not gloat    |  7337 11.3 14396   92  13m   36  13m :
-  over 1 extra line.  |   923 10.6 30524  16m  13m 1120  12m :
- That user could yet  |\fI___991__7.2__9492__316_9176___12_9164_\fR:
-  sock 'em with the   |\fI4_UID_USER_____GROUP____TTY________PID\fR:
-  'n' command and     |   43 xfs      xfs      ?          806:
-  take\fI those lines\fR,   |    0 ykde     users    pts/7     5561:\fB
-  plus others\fR, away!  |    0 wgnome   users    pts/7     5560:
-                      |    0 root     root     pts/7     5325:
-                      +\fB--------------------------------------\fR+
-.Rje
-
-.Scr
-So, what say we start applying some of those "full range of \*(CIs"?
-
-Onward + Downward...
-
-.ce
-.\" .........................
-.SS -*- STACKIN' & WHACKIN' Windows -*-
-.Scr
-Whoa, hold on mate.
-Someone has already whacked these windows.
-See, there are no \*(TAs for windows 1:Def and 4:Usr.
-Well, we can at least retrace their steps...
-
-Here's what was done, after issuing the '\fBA\fR' command and entering \*(AM.
-   \fB1\fR) When #1\fB was\fR the \*(CW, '-' was pressed,
-      toggling \*F the associated \*(TD
-      ( if 'l t m'\fI had been\fR applied to its summary, too )
-      ( then there'll be\fI only\fR a msg line when 'current' )
-   \fB2\fR) Then the 'w' key was struck to cycle\fB backward\fR,
-      making 4:Usr the \*(CW
-      (could have used 'a a a', if one likes to type)
-   \fB3\fR) Then step #1 was repeated, and bye-bye window #4
-   \fB4\fR) Finally, window #2 was made the \*(CW
-      ( Q. how many keystrokes were used? )
-      ( A. minimum of 2:  'a a' or 'w w'. )
-
-.Img
-                      +\fB--------------------------------------\fR+
- No 'l','t','m','1'   |\fB2:Top\fR - 15:48:35 up 16:27,  9 users,  :
-  commands have been  |Tasks: \fB 75\fR total,  \fB 1\fR running, \fB 74\fR sle:
-  issued here,        |Cpu(s):  \fB 2.0%\fR user,  \fB 0.7%\fR system,   :
-  but...              |Mem:   \fB 126588k\fR total,  \fB 123712k\fR used,:
-                      |Swap:  \fB 265032k\fR total,  \fB   8232k\fR used,:
-                      |______________________________________:
- #2's been changed;   |\fI2__PID__PPID_Command____________TIME+_\fR:
-  user applied a 'c'  |\fB   997   952 kdeinit: konsol  18:00.70\fR:
-  command (when it    |  1115   952 kdeinit: konsol   2:16.47:\fB
-  was\fR current) - now  |  1803  1116 led tiptop.HELP   1:55.30:
-  shows cmd\fI lines\fR vs. |   923   922 X :0              1:09.60:
-  program names;      |   973     1 klaptopdaemon     0:59.63:
-  still seems to be   |   981   952 /usr/bin/artsd    0:48.63:
-  sorted on TIME+     |   987     1 kdeinit: kdeskt   0:24.34:
-  though              |\fI___991_____1_kdeinit:_kicker___0:04.59\fR:
-                      |\fI3__PID_%MEM__VIRT_SWAP__RES_CODE_DATA_\fR:
- This #3 guy appears  |  4634 12.3 15620    0  15m  860  14m :
-  to still be running |  7337 11.3 14396   92  13m   36  13m :
-  with the supplied   |   923 10.6 30544  16m  13m 1120  12m :
-  defaults, but no    |   991  7.2  9492  316 9176   12 9164 :
-  telling what\fI damage\fR |\fB  7329  7.0  9036  140 8896   36 8860\fR :
-  might have been     |  1115  6.9  8956  160 8796   36 8760 :
-  done to it's        |   987  6.4  8668  524 8144   20 8124 :\fB
-  summary info\fR stuff  |  1131  6.4  8268  144 8124   36 8088 :
-                      +\fB--------------------------------------\fR+
-.Rje
-
-.Scr
-And that's what brought us to this current state.
-No, wait.
-Oh lordy, will you look at that \*(EM someone has changed the\fB name\fR of
-window #2 from 'Job' to 'Top'!
-
-How'd they do that?
-Well, they just issued the 'g' \*(CI, of course.
-That command is available whenever \*(AM is active and always impacts
-just the \*(CW.
-Gosh, you can even issue the 'g' command when 'l' has toggled \*F the
-very \*(SA line containing the window name!
-
-Almost Done...
-
-.ce
-.\" .........................
-.SS -*- ALL TOGETHER Now, Window(s) -*-
-.Scr
-Here, the window 1:Def \*(TD has been toggled \*F but it remains the \*(CW.
-Since there is no \*(TA, many commands will be restricted.
-However, the commands ('l', 't', 'm', '1') affecting the \*(SA, as
-well as some other global commands ('k', 'Z', etc.), would still be active.
-
-Notice that the\fB Mem\fR and\fB Swap\fR lines are not shown.
-This means that the loser (oops, user) has, in fact, issued the 'm' command!
-Now, if you were to cycle the \*(CW with the 'a' or 'w' commands, the
-\*(TD would remain the same (except possibly growing/shrinking slightly)
-but the \*(SA would change periodically.
-
-The comments to the left of the image provide additional insights into how
-things came to be.
-Note especially the comments for window 4:Usr \*(EM the one with some
-empty rows...
-
-.Img
- 1:Def\fI no\fR highlight,  +\fB--------------------------------------\fR+
-  thus disabled cmds: |1:Def - 15:50:32 up 16:29,  9 users,  :
-  b,i,n,u,x,y, etc.   |Tasks: \fB 75\fR total,  \fB 2\fR running, \fB 73\fR sle:
-  & m = lost Mem/Swap |Cpu(s): \fB 10.6%\fR user,  \fB 0.0%\fR system,   :
-                      |______________________________________:
- 2:Job was very busy: |\fI2__PID__PPID_Command____________TIME+_\fR:
-  'n' cmd, w/ 7 tasks |    80     1\fB ( khubd )      \fR   0:00.00:
-  'c' cmd, cmd line   |     6     0\fB ( kreclaimd )  \fR   0:00.00:
-  'O' cmd, sort cmd   |     9     1\fB ( mdrecoveryd )\fR   0:00.00:
-  'R' cmd, sort bkwd  | 11358     1\fB /bin/bash/ /usr\fR   0:00.00:
-  'x' cmd, hi column  |  1297     1\fB /sbin/mingetty \fR   0:00.00:
- (when 2\fB WAS\fR current) |   683     1\fB xinetd -stayali\fR   0:00.00:
-                      |\fI___836_____1_\fBlogin_--_root\fI_____0:00.00\fR:
- 3:Mem has altered    |\fI3__PID_%MEM__VIRT_SWAP__RES_CODE_DATA_\fR:
-  some std defaults:  |  4634\fB 12.3\fR 15620    0  15m  860  14m :
-  'y' turned Off      |  7337\fB 11.3\fR 14396   92  13m   36  13m :
-  'x' turned On       |   923\fB 10.6\fR 30544  16m  13m 1120  12m :
- (when 3\fB WAS\fR current) |   991\fB  7.2\fR  9492  316 9176   12 9164 :
-                      |\fI__7329__\fB7.0\fI__9036__140_8896___36_8860_\fR:
- Huh?  4:Usr has some |\fI4_UID_USER_____GROUP____TTY________PID\fR:
-  \fBblank rows\fR! ? ? ? ? | \fB   0 jtwm     root     pts/2     5561\fR:
- Aha, the 'i' command | \fB   0 root     root     ?         5560\fR:
-  applied (when 4\fB WAS\fR |                                      :
-  current); could be  |                                      :
-  reversed with '=',  |                                      :
-  when 4\fB IS\fR current!  +\fB--------------------------------------\fR+
-.Rje
-
-.Scr
-Ok now, how about that \*(CW 1:Def and its\fB unseen tasks\fR?
-At any time, you can quickly\fB retrieve\fR lost tasks in a number of ways:
-   1) Press '-', toggling just the \*(CW
-   2) Press '_', toggling\fB all\fR visible/invisible windows
-      ( 1:Def is the\fI only\fR window currently\fB not shown\fR )
-      ( afterward, it'll be the\fI only\fR window\fB showing\fR! )
- * 3) Press '+', forcing all \*(TDs to become\fB visible\fR
-   4) Press 'A' to return to \*(FM,
-      with\fI only\fR 1:Def tasks shown and\fI without\fR a window name
-
-Now that should be enough ways of getting a \*(TA\fB visible\fR again
-to satisfy almost any user, don't ya think?
-
-.in +4
-\*(NT Use #3 above when you've messed up your screen beyond redemption.
-The four \*(TDs will reappear, nice and even.  They will also have\fB
-retained\fR any customizations you had previously applied,\fI except\fR for
-the 'i' (idle tasks) and 'n' (max tasks) commands.
-.in
-
-That's It !\ \ Piece of Cake !!\ \ Enjoy them there windows !!!\fR
-
-.Zzz
+    \'=', 'A', 'G'  are always available
+    \'a', 'w'       act the same when color mapping
 
 
 .\" ----------------------------------------------------------------------
@@ -1406,192 +997,51 @@ That's It !\ \ Piece of Cake !!\ \ Enjoy them there windows !!!\fR
 .SS 5a. SYSTEM Configuration File
 The presence of this file will influence which version of the 'help' screen
 is shown to an ordinary user.
-More importantly, it will\fI limit\fR what ordinary users are allowed
+More importantly, it will limit what ordinary users are allowed
 to do when \*(Me is running.
-They will\fB not\fR be able to issue the following commands (well, at least
-not successfully, ha ha):
-   \fBk         Kill\fR a task
-   \fBr         Renice\fR a task
-   \fBd\fR or\fB s\fR    Change\fB delay/sleep\fR interval
+They will not be able to issue the following commands.
+   k         Kill a task
+   r         Renice a task
+   d or s    Change delay/sleep interval
 
 The system \*(CF is\fB not\fR created by \*(Me.
-Rather,\fB you create this file manually\fR and place it in the \fI/etc\fR
+Rather, you create this file manually and place it in the \fI/etc\fR
 directory.
-Its name must be 'toprc' and must have\fI no\fR leading '.' (period).
-It must have only\fI two lines\fR.
+Its name must be 'toprc' and must have no leading '.' (period).
+It must have only two lines.
 
 Here is an example of the contents of\fI /etc/toprc\fR:
-   \fBs\fR         # line 1: 'secure' mode switch
-   \fB5.0\fR       # line 2: 'delay'\ \ interval in seconds
+   s         # line 1: 'secure' mode switch
+   5.0       # line 2: 'delay'\ \ interval in seconds
 
 .\" ......................................................................
 .SS 5b. PERSONAL Configuration File
-This file, written as '$HOME/\fI.your-name-4-top\fR' + '\fBrc\fR',
-is eminently editable due to the numerous labels it contains.
-But please don't!
-Rather, use the 'W' \*(CI to create it or update it.
+This file, written as '$HOME/.your-name-4-top' + 'rc'.
+You use the 'W' \*(CI to create it or update it.
 
-For the benefit of those who never follow such advise, here is the
-general layout.
-   \fBglobal\fR    # line 1: a shameless advertisement
-   \fR  "   \fR    # line 2: id,altscr,irixps,delay,curwin
-   \fBper ea\fR    # line a: winname,fieldscur
-   \fBwindow\fR    # line b: winflags,sortindx,maxtasks
-   \fR  "   \fR    # line c: summclr,msgsclr,headclr,taskclr
-   ( and good luck with those winflags on line #b! )
+Here is the general layout:
+   global    # line 1: the program name/alias notation
+     "       # line 2: id,altscr,irixps,delay,curwin
+   per ea    # line a: winname,fieldscur
+   window    # line b: winflags,sortindx,maxtasks
+     "       # line c: summclr,msgsclr,headclr,taskclr
 
-If the $HOME variable is not present, \*(US will try to write the
+If the $HOME variable is not present, \*(Me will try to write the
 personal \*(CF to the current directory, subject to permissions.
 
 
 .\" ----------------------------------------------------------------------
-.SH 6. DIFFERENCES / New Features
+.SH 6. STUPID TRICKS Sampler
 .\" ----------------------------------------------------------------------
-The following summarizes differences between \*(US and your former \*(Me.
-It was originally based on procps-2.0.7.
-However, except for the separate/summary \*(PU toggle, all of these
-differences also apply through procps-2.0.10.
-
-.\" ......................................................................
-.SS 6a. Interface Etiquette
-.New
-Input and output are far more carefully implemented in \*(Us.
-You won't be subjected to 4 - 5 'Unknown command' messages should you press the
-wrong key.
-
-.New
-You need suffer a confirmation message only when the results of a command
-are not obvious by their effects on the display.
-
-.New
-The Help screen will no longer overflow, even when running with a
-24 row xterm (vt100).
-
-.New
-The fields selection/ordering screens do not carelessly destroy important
-information through unintended line wraps.
-
-.New
-Should you narrow a xterm window to less than 80 columns while \*(Us is
-running, you will not be left with an utterly worthless, embarrassing display.
-
-.\" ......................................................................
-.SS 6b. Expanded Configurable Display Support
-.New
-In an SMP environment, you can choose between a\fB summary\fR display or
-you may show\fB each \*(Pu\fR separately.
-No longer must this choice be irrevocably made at startup.
-
-.New
-There are new fields and with \*(Us,\fB any\fR field is selectable for sorting.
-Plus, your sorted column can be\fB instantly reversed\fR with just a
-single keystroke.
-
-.New
-You may optionally apply 2 distinct types of\fB highlighting\fR to
-running\fB tasks\fR and/or\fB sorted columns\fR.
-With \*(Us, you'll be able to instantly spot running tasks and always
-know the current sort field.
-
-.New
-While you could continue to use the more familiar (and boring)\fB
-monochrome display\fR, you might want to try \*(Us's new\fB color display\fR.
-You can even create your own\fB unique colors\fR used in\fI summaries\fR,\fI
-messages\fR,\fI headings\fR and\fI tasks\fR, each of which can be made\fB
-persistent\fR until you choose to change them.
-
-.New
-Up to\fB four separate windows\fR can be displayed simultaneously,
-giving you four separate ways to\fB sort\fI and\fB view\fR the tasks
-currently cluttering up your system.
-You could have one view by\fB pids\fR, another by\fB \*(Pu usage\fR, yet another
-showing\fB memory consumption\fR.
-You get the idea...
-
-.New
-Each window comes with pre-configured (but user configurable)\fB fields\fR
-and you can\fB size\fR each window individually.
-
-.New
-Virtually every one of \*(Us's options (summaries, fields, colors, sorted column,
-etc.) is\fB separately configurable\fR for each of those four windows.
-
-Heck, you can even\fB change\fR a window's name, if you don't care for
-\*(Me's choices.
-Your changes will be reflected not only when you're in what \*(Me calls\fB
-\*(AM\fR but also on his special new 'Windows' help screen.
-
-.New
-And, [ ** Drum-Roll + Ta-Da ** ] with just one keystroke you can
-quickly\fB switch\fR between full-screen and multiple window modes!
-Or, with a different keystroke, toggle a single window \*F for now,
-then \*O again later!!
-
-.\" ......................................................................
-.SS 6c. Enhanced Field/Column Management
-.New
-Many Field/Column names have been changed to make them more intuitive,
-more self-descriptive.
-And with \*(Us you won't be fooled with field choices that are "not yet
-implemented".
-
-.New
-Task memory statistics are more meaningful\fI and\fR more accurate\fR.
-
-.New
-You'll finally have complete\fB display integrity\fR regardless of field
-selections, their order or screen width.
-And\fB that\fR means the\fI command\fR column no longer need be kept as the
-right-most field, lest your screen turn to <bleep> when all the following
-columns get misaligned.
-
-.\" ......................................................................
-.SS 6d.Customization Flexibility
-.New
-You have complete program\fB naming freedom\fR with no internal ties to a
-specific personal \*(CF.
-Symbolic links could be used to establish different \*(CFs reflecting
-the different personalities of your customized "\*(Mes", under whatever
-aliases you've used.
-
-Thus, you could have an alias for running \*(Me in 'Batch mode', another for
-when you work from the Linux console and maybe a third used with X-Windows.
-All of that, yet still just a single binary image!
-
-.New
-.I All\fR of your configuration choices can be\fB preserved\fR in a
-personal \*(CF, including any changes made on a per-window basis.
-Thus, once you personalize things they\fB remain personalized\fR until
-you decide to change them again.
-This \*(Me has been completely cured of:
-.Rjb 2
- i-cant-remember-so-please-do-that-all-over-again
- ( and again, and again ... )
-.Rje
-
-The bottom line is this:\ \ if you save your configuration before quitting
-\*(Me, upon restart the display will appear\fB exactly\fR as you left it.
-And\fB that\fR means you no longer have to keep \*(Me running
-until-the-end-of-time (ok, a long time anyway), lest your customizations
-go bye-bye.
-
-
-.\" ----------------------------------------------------------------------
-.SH 7. STUPID TRICKS Sampler
-.\" ----------------------------------------------------------------------
-With this task/process viewer, lots of things become\fB possible\fR.
-Of course, that doesn't mean they should become\fB probable\fR.
-So if you try any of them, just don't let anyone catch you.
-
-Many of these 'tricks' work best when you give ol' \*(Me a scheduling boost
+Many of these 'tricks' work best when you give \*(Me a scheduling boost
 \*(EM so plan on starting him with a nice value of -10 (assuming you've got
 the authority).
 
 .\" ......................................................................
-.SS 7a. Kernel Magic
+.SS 6a. Kernel Magic
 .\" sorry, just can't help it -- don't ya love the sound of this?
 For these stupid tricks, \*(Me needs \*(FM.
-.\" ( apparently static was a potential concern )
+.\" ( apparently AM static was a potential concern )
 
 .New
 The user interface, through prompts and help, intentionally implies
@@ -1611,12 +1061,8 @@ Then do the following:
     and normal or reverse sorts to bring the most
     active processes into view
 
-What you'll see is a\fB very busy Linux\fR doing what he's always done
-for you, but there was no program available to illustrate this (until now).
-.Rjb 2
- ( now please, don't waste too many )
- ( \*(Pu cycles in this way, alright? )
-.Rje
+What you'll see is a very busy Linux doing what he's always done for you,
+but there was no program available to illustrate this.
 
 .New
 Under an xterm using 'white-on-black' colors, try setting \*(Me's task color
@@ -1624,42 +1070,39 @@ to black and be sure that task highlighting is set to bold, not reverse.
 Then set the delay interval to around .3 seconds.
 
 After bringing the most active processes into view, what you'll see are
-the\fB ghostly images\fR of just the currently running tasks.
-Of course, a much better display is achieved by toggling idle processes \*F
-and using normal/visible colors.
+the ghostly images of just the currently running tasks.
 
 .\" ......................................................................
-.SS 7b. Bouncing Windows
+.SS 6b. Bouncing Windows
 For these stupid tricks, \*(Me needs \*(AM.
 
 .New
 With 3 or 4 \*(TDs visible, pick any window other than the last
 and turn idle processes \*F.  
 
-Depending on where you applied 'i', sometimes several \*(TDs are\fB bouncing\fR
-and sometimes it's like an\fB accordion\fR, as \*(Me tries his best to
-allocate space.
+Depending on where you applied 'i', sometimes several \*(TDs are bouncing and
+sometimes it's like an accordion, as \*(Me tries his best to allocate space.
 
 .New
 Set each window's summary lines differently: one with no memory; another with
 no states; maybe one with nothing at all, just the message line.  
 
 Then hold down 'a' or 'w' and watch a variation on bouncing windows.
-What say we call these '\fBhopping windows\fR'.
+What say we call these 'hopping windows'.
 
 .New
 Display all 4 windows and for each, in turn, set idle processes to \*F.
 
-You've just entered the "\fBextreme bounce\fR" zone.  
+You've just entered the "extreme bounce" zone.  
 
 .\" ......................................................................
-.SS 7c. The Big Bird Window
+.SS 6c. The Big Bird Window
 This stupid trick also requires \*(AM.
 
 .New
 Display all 4 windows and make sure that 1:Def is the \*(CW.
 Then, keep increasing window size until the all the other \*(TDs
-are "\fBpushed out of the nest\fR".
+are "pushed out of the nest".
 
 When they've all been displaced, toggle between all visible/invisible windows.
 Then ponder this:
@@ -1668,18 +1111,14 @@ Then ponder this:
 
 
 .\" ----------------------------------------------------------------------
-.SH 8. BUGS
+.SH 7. BUGS
 .\" ----------------------------------------------------------------------
-Bugs?  What bugs?  But, if ever there were, then...
-
-Please send bug reports to:
+Send bug reports to:
    Albert D\. Cahalan, <albert@users.sf.net>
 
-[ thanks Albert, heaven forbid author should be bothered ]
-
 
 .\" ----------------------------------------------------------------------
-.SH 9. HISTORY Former top
+.SH 8. HISTORY Former top
 .\" ----------------------------------------------------------------------
 The original top was written by Roger Binns,
 based on Branko Lankester's <lankeste@fwi.uva.nl> ps program.
@@ -1694,7 +1133,7 @@ Plus many other individuals contributed over the years.
 
 
 .\" ----------------------------------------------------------------------
-.SH 10. AUTHOR
+.SH 9. AUTHOR
 .\" ----------------------------------------------------------------------
 This entirely new and enhanced replacement was written by:
    Jim / James C. Warner, <warnerjc@worldnet.att.net>
@@ -1714,7 +1153,7 @@ With invaluable help from:
 ..
 
 .\" ----------------------------------------------------------------------
-.SH 11. SEE ALSO
+.SH 10. SEE ALSO
 .\" ----------------------------------------------------------------------
 .BR free (1),
 .BR ps (1),
@@ -1739,8 +1178,6 @@ Invariant Sections and any sub-sections therein:
 .na
 .hy 0
 .in +3
-DIFFERENCES\ /\ New Features;
-.br
 STUPID\ TRICKS\ Sampler;
 .br
 AUTHOR
