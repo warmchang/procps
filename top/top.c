@@ -3689,6 +3689,8 @@ static const char *config_file (FILE *fp, const char *name, float *delay) {
    if (Rc.id < 'a' || Rc.id > RCF_VERSION_ID)
       return p;
    // you saw that, right?  (fscanf stickin' it to 'i')
+   if (i < 0 || i >= GROUPSMAX)
+      return p;
    Curwin = &Winstk[i];
    // this may be ugly, but it keeps us locale independent...
    *delay = (float)tmp_whole + (float)tmp_fract / 1000;
