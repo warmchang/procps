@@ -3,6 +3,7 @@ procps-3.2.4 --> procps-3.2.5
 ps: security labels can contain any printable ASCII
 top: help and version message on stdout, with exit(0)    #283541
 ps: SIGTSTP from ^Z shouldn't print bug email address
+slabtop: compile with glibc 2.2.17 (and older, likely)
 
 procps-3.2.3 --> procps-3.2.4
 
