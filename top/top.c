@@ -5667,7 +5667,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
    if (Rc.mode_altscr) rp = scat(rp, " ");
 
    for (x = 0; x < q->maxpflgs; x++) {
-      const char *cp;
+      const char *cp = NULL;
       FLG_t       i = q->procflgs[x];
       #define S   Fieldstab[i].scale        // these used to be variables
       #define W   Fieldstab[i].width        // but it's much better if we
