@@ -1413,7 +1413,7 @@ PROCTAB* openproc(int flags, ...) {
     va_list ap;
     struct stat sbuf;
     static int did_stat;
-    PROCTAB* PT = xmalloc(sizeof(PROCTAB));
+    PROCTAB* PT = xcalloc(sizeof(PROCTAB));
 
     if (!did_stat){
         task_dir_missing = stat("/proc/self/task", &sbuf);
