@@ -505,9 +505,44 @@ parse_opts (int argc, char **argv)
 	
 	while ((opt = getopt (argc, argv, opts)) != -1) {
 		switch (opt) {
+		case 'G':
+	  		opt_rgid = split_list (optarg, conv_gid);
+			if (opt_rgid == NULL)
+				usage (opt);
+			++criteria_count;
+			break;
+//		case 'L':   // OpenBSD: print full args along w/ PID
+//			opt_printargs = 1;
+//			break;
+		case 'P':
+	  		opt_ppid = split_list (optarg, conv_num);
+			if (opt_ppid == NULL)
+				usage (opt);
+			++criteria_count;
+			break;
+		case 'U':
+	  		opt_ruid = split_list (optarg, conv_uid);
+			if (opt_ruid == NULL)
+				usage (opt);
+			++criteria_count;
+			break;
+		case 'V':
+			fprintf(stdout, "%s (%s)\n", progname, procps_version);
+			exit(0);
+		case 'd':
+			opt_delim = strdup (optarg);
+			break;
 		case 'f':
 			opt_full = 1;
 			break;
+		case 'g':
+	  		opt_pgrp = split_list (optarg, conv_pgrp);
+			if (opt_pgrp == NULL)
+				usage (opt);
+			break;
+//		case 'i':
+//			opt_insensitive = 1;
+//			break;
 		case 'l':
 			opt_long = 1;
 			break;
@@ -523,49 +558,9 @@ parse_opts (int argc, char **argv)
 			opt_oldest = 1;
 			++criteria_count;
 			break;
-		case 'v':
-			if (opt_oldest|opt_negate|opt_newest)
-				usage (opt);
-	  		opt_negate = 1;
-			break;
-		case 'x':
-			opt_exact = 1;
-			break;
-		case 'd':
-			opt_delim = strdup (optarg);
-			break;
-		case 'P':
-	  		opt_ppid = split_list (optarg, conv_num);
-			if (opt_ppid == NULL)
-				usage (opt);
-			++criteria_count;
-			break;
-		case 'g':
-	  		opt_pgrp = split_list (optarg, conv_pgrp);
-			if (opt_pgrp == NULL)
-				usage (opt);
-			break;
 		case 's':
 	  		opt_sid = split_list (optarg, conv_sid);
 			if (opt_sid == NULL)
-				usage (opt);
-			++criteria_count;
-			break;
-		case 'u':
-	  		opt_euid = split_list (optarg, conv_uid);
-			if (opt_euid == NULL)
-				usage (opt);
-			++criteria_count;
-			break;
-		case 'U':
-	  		opt_ruid = split_list (optarg, conv_uid);
-			if (opt_ruid == NULL)
-				usage (opt);
-			++criteria_count;
-			break;
-		case 'G':
-	  		opt_rgid = split_list (optarg, conv_gid);
-			if (opt_rgid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
@@ -575,12 +570,25 @@ parse_opts (int argc, char **argv)
 				usage (opt);
 			++criteria_count;
 			break;
+		case 'u':
+	  		opt_euid = split_list (optarg, conv_uid);
+			if (opt_euid == NULL)
+				usage (opt);
+			++criteria_count;
+			break;
+		case 'v':
+			if (opt_oldest|opt_negate|opt_newest)
+				usage (opt);
+	  		opt_negate = 1;
+			break;
+		// Solaris -x, the standard, does ^(regexp)$
+		// OpenBSD -x, being broken, does a plain string
+		case 'x':
+			opt_exact = 1;
+			break;
 		case '?':
 			usage (opt);
 			break;
-		case 'V':
-			fprintf(stdout, "%s (%s)\n", progname, procps_version);
-			exit(0);
 		}
 	}
         if (argc - optind == 1)
