@@ -168,9 +168,9 @@ tar: $(TARFILES)
 	gzip -9 procps-$(TARVERSION).tar
 
 extratar: $(_TARFILES)
-	mkdir extra-$(TARVERSION)
-	(tar cf - $(_TARFILES)) | (cd extra-$(TARVERSION) && tar xf -)
-	tar cf extra-$(TARVERSION).tar extra-$(TARVERSION)
+	mkdir procps-$(TARVERSION)
+	(tar cf - $(_TARFILES)) | (cd procps-$(TARVERSION) && tar xf -)
+	tar cf extra-$(TARVERSION).tar procps-$(TARVERSION)
 	gzip -9 extra-$(TARVERSION).tar
 
 clean:
