@@ -151,8 +151,7 @@ static WIN_t *Winstk [GROUPSMAX],
            and/or that would be too cumbersome managed as parms */
 static int    Frame_maxtask;    /* last known number of active tasks */
                                 /* ie. current 'size' of proc table  */
-static float  Frame_etime,      /* elapsed time twix this & prior    */
-              Frame_scale;      /* so we can '*' vs. '/' IF 'pcpu'   */
+static float  Frame_scale;      /* so we can '*' vs. '/' IF 'pcpu'   */
 static int    Frame_srtflg,     /* the subject window sort direction */
               Frame_ctimes,     /* the subject window's ctimes flag  */
               Frame_cmdlin;     /* the subject window's cmdlin flag  */
@@ -770,7 +769,6 @@ static void time_elapsed (void)
        + (float)(timev.tv_usec - oldtimev.tv_usec) / 1000000.0;
     oldtimev.tv_sec = timev.tv_sec;
     oldtimev.tv_usec = timev.tv_usec;
-    Frame_etime = et;
       /* if in Solaris mode, adjust our scaling for all cpus */
     Frame_scale = 100.0f / ((float)Hertz * (float)et * (Mode_irixps ? 1 : Cpu_tot));
 }
@@ -835,17 +833,16 @@ static CPUS_t *refreshcpus (CPUS_t *cpus)
    if (4 > sscanf(buf, CPU_FMTS_JUST1
       , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i, &cpus[Cpu_tot].w))
          std_err("failed /proc/stat read");
+      /* and just in case we're 2.2.xx compiled without SMP support... */
+   memcpy(cpus, &cpus[1], sizeof(CPUS_t));
 
       /* and now value each separate cpu's tics */
-   for (i = 0; i < Cpu_tot; i++) {
+   for (i = 0; 1 < Cpu_tot && i < Cpu_tot; i++) {
 #ifdef PRETEND4CPUS
       rewind(fp);
-      if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
-      if (4 > sscanf(buf, CPU_FMTS_JUST1
-#else
+#endif
       if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
       if (4 > sscanf(buf, CPU_FMTS_MULTI
-#endif
          , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].w))
             std_err("failed /proc/stat read");
    }

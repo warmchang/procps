@@ -304,12 +304,11 @@ typedef struct win {
         /* These are the possible fscanf formats used in /proc/stat
            reads during history processing.
            ( 5th number added in anticipation of kernel change ) */
-#ifdef TICS_64_BITS
 #define CPU_FMTS_JUST1  "cpu %Lu %Lu %Lu %Lu %Lu"
-#define CPU_FMTS_MULTI  "cpu%*d %Lu %Lu %Lu %Lu %Lu"
+#ifdef PRETEND4CPUS
+#define CPU_FMTS_MULTI CPU_FMTS_JUST1
 #else
-#define CPU_FMTS_JUST1  "cpu %lu %lu %lu %lu %lu"
-#define CPU_FMTS_MULTI  "cpu%*d %lu %lu %lu %lu %lu"
+#define CPU_FMTS_MULTI  "cpu%*d %Lu %Lu %Lu %Lu %Lu"
 #endif
 
         /* This is the format for 'command line' display in the absence
