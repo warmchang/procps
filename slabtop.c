@@ -364,6 +364,7 @@ int main(int argc, char *argv[])
 		memset(&stats, 0, sizeof(struct slab_stat));
 
 		if (get_slabinfo(&slab_list, &stats)) {
+			slab_list = NULL;
 			retval = EXIT_FAILURE;
 			break;
 		}
@@ -436,7 +437,8 @@ int main(int argc, char *argv[])
 
 	if (is_tty)
 		tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
-	free_slabinfo(slab_list);
+	if (slab_list)
+		free_slabinfo(slab_list);
 	if (!run_once)
 		endwin();
 	return retval;
