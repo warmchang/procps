@@ -90,7 +90,6 @@
         /* Used to reference and create sort callback functions --
            note: some of the callbacks are NOT your father's callbacks, they're
                  highly optimized to save them ol' precious cycles! */
-#define _SF(f)  (QSORT_t)sort_ ## f
 #define _SC_NUM1(f,n) \
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
       if ( (*P)->n < (*Q)->n ) return SORT_lt; \
@@ -167,6 +166,7 @@ typedef int (*QSORT_t)(const void *, const void *);
         /* This structure consolidates the information that's used
            in a variety of display roles. */
 typedef struct {
+   const char    keys[4]; // order: Jim-on Jim-off Rik-on Rik-off
    const char   *head;  /* name for column headings + toggle/reorder fields */
    const char   *fmts;  /* sprintf format string for field display */
    const int     width; /* field width, if applicable */
@@ -254,14 +254,35 @@ enum pflag {
    Show_HIBOLD | Show_HIROWS | Show_IDLEPS | Qsrt_NORMAL | VISIBLE_tsk )
 
         // Used to test/manipulate the window flags
-#define CHKw(q,f)   (int)(q->winflags & (f))
-#define TOGw(q,f)   q->winflags ^=  (f)
-#define SETw(q,f)   q->winflags |=  (f)
-#define OFFw(q,f)   q->winflags &= ~(f)
-#define VIZCHKc     (!Mode_altscr || Curwin->winflags & VISIBLE_tsk) \
+#define CHKw(q,f)   (int)(q->rc.winflags & (f))
+#define TOGw(q,f)   q->rc.winflags ^=  (f)
+#define SETw(q,f)   q->rc.winflags |=  (f)
+#define OFFw(q,f)   q->rc.winflags &= ~(f)
+#define VIZCHKc     (!Mode_altscr || Curwin->rc.winflags & VISIBLE_tsk) \
                         ? 1 : win_warn()
-#define VIZTOGc(f)  (!Mode_altscr || Curwin->winflags & VISIBLE_tsk) \
+#define VIZTOGc(f)  (!Mode_altscr || Curwin->rc.winflags & VISIBLE_tsk) \
                         ? TOGw(Curwin, f) : win_warn()
+
+typedef struct rcwin {
+   PFLG_t      sortindx;                /* sort field, as a procflag      */
+   int         winflags,        /* 'view', 'show' and 'sort' mode flags   */
+               maxtasks,        /* user requested maximum, 0 equals all   */
+               summclr,                 /* color num used in summ info    */
+               msgsclr,                 /*        "       in msgs/pmts    */
+               headclr,                 /*        "       in cols head    */
+               taskclr;                 /*        "       in task display */
+   char        winname   [WINNAMSIZ],   /* window name, user changeable   */
+               fieldscur [PFLAGSSIZ];   /* fields displayed and ordered   */
+} rcwin;
+
+typedef struct rcf {    // global/system-wide
+   char  rcfid;                 // RCF_FILEID
+   int   altscr;                // Mode_altscr
+   int   irixps;                // Mode_irixps
+   float delay;                 // Delay_time
+   int   curwin;                // Curwin
+   rcwin win[4];                // each of 4 windows
+} RCF_t;
 
         /* This structure stores configurable information for each window.
            By expending a little effort in its creation and user requested
@@ -273,18 +294,12 @@ typedef struct win {
    char       *captab [CAPTABMAX];      /* captab needed by show_special  */
    int         winnum,                  /* window's num (array pos + 1)   */
                winlines;                /* task window's rows (volatile)  */
-   int         winflags;        /* 'view', 'show' and 'sort' mode flags   */
-   PFLG_t      procflags [PFLAGSSIZ],   /* fieldscur subset, as enum      */
-               sortindx;                /* sort field, as a procflag      */
+   PFLG_t      procflags [PFLAGSSIZ];   /* fieldscur subset, as enum      */
    int         maxpflgs,        /* number of procflags (upcase fieldscur) */
-               maxtasks,        /* user requested maximum, 0 equals all   */
-               maxcmdln,        /* max length of a process' command line  */
-               summclr,                 /* color num used in summ info    */
-               msgsclr,                 /*        "       in msgs/pmts    */
-               headclr,                 /*        "       in cols head    */
-               taskclr;                 /*        "       in task display */
+               maxcmdln;        /* max length of a process' command line  */
    int         len_rownorm,     /* lengths of the corresponding terminfo  */
                len_rowhigh;     /* strings to avoid repeated strlen calls */
+   rcwin       rc;              /* stuff that gets saved in a .toprc file */
    char        capclr_sum [CLRBUFSIZ],  /* terminfo strings built from    */
                capclr_msg [CLRBUFSIZ],  /*    above clrs (& rebuilt too), */
                capclr_pmt [CLRBUFSIZ],  /*    but NO recurring costs !!!  */
@@ -293,8 +308,6 @@ typedef struct win {
                capclr_rownorm [CLRBUFSIZ]; /*    window is the 'Curwin'!  */
    char        cap_bold [CAPBUFSIZ];    /* support for View_NOBOLD toggle */
    char        grpname   [GRPNAMSIZ],   /* window number:name, printable  */
-               winname   [WINNAMSIZ],   /* window name, user changeable   */
-               fieldscur [PFLAGSSIZ],   /* fields displayed and ordered   */
                columnhdr [SCREENMAX],   /* column headings for procflags  */
                colusrnam [USRNAMSIZ];   /* if selected by the 'u' command */
 } WIN_t;
@@ -335,6 +348,44 @@ typedef struct win {
 #else
 #define CMDLINE_FMTS  "( %s )"
 #endif
+
+//typedef struct rcwin {
+//   PFLG_t      sortindx;                /* sort field, as a procflag      */
+//   int         winflags,        /* 'view', 'show' and 'sort' mode flags   */
+//               maxtasks,        /* user requested maximum, 0 equals all   */
+//               summclr,                 /* color num used in summ info    */
+//               msgsclr,                 /*        "       in msgs/pmts    */
+//               headclr,                 /*        "       in cols head    */
+//               taskclr;                 /*        "       in task display */
+//   char        winname   [WINNAMSIZ],   /* window name, user changeable   */
+//               fieldscur [PFLAGSSIZ];   /* fields displayed and ordered   */
+//} rcwin;
+//
+//typedef struct rcf {    // global/system-wide
+//   char  rcfid;                 // RCF_FILEID
+//   int   altscr;                // Mode_altscr
+//   int   irixps;                // Mode_irixps
+//   float delay;                 // Delay_time
+//   int   curwin;                // Curwin
+//   rcwin win[4];                // each of 4 windows
+//} RCF_t;
+
+RCF_t RCf_Defaults = {
+   RCF_FILEID, 0, 1, 3.0f, 0, {
+   { DEF_WINFLGS, P_CPU, 0,
+       COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED,
+       "Def", DEF_FIELDS },
+   { DEF_WINFLGS, P_PID, 0,
+       COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, COLOR_CYAN,
+       "Job", JOB_FIELDS },
+   { DEF_WINFLGS, P_MEM, 0,
+       COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA,
+       "Mem", MEM_FIELDS },
+   { DEF_WINFLGS, P_USR, 0,
+       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW,
+       "Usr", USR_FIELDS }
+   }
+};
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */

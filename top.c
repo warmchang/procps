@@ -338,15 +338,15 @@ static void bye_bye (int eno, const char *str)
 #endif
       "\n\tWindows and Curwin->"
       "\n\t   sizeof(WIN_t) = %u, GROUPSMAX = %d"
-      "\n\t   winname = %s, grpname = %s"
+      "\n\t   rc.winname = %s, grpname = %s"
 #ifdef CASEUP_HEXES
-      "\n\t   winflags = %08X, maxpflgs = %d"
+      "\n\t   rc.winflags = %08X, maxpflgs = %d"
 #else
-      "\n\t   winflags = %08x, maxpflgs = %d"
+      "\n\t   rc.winflags = %08x, maxpflgs = %d"
 #endif
-      "\n\t   fieldscur = %s"
-      "\n\t   winlines  = %d, maxtasks = %d, maxcmdln = %d"
-      "\n\t   sortindx  = %d"
+      "\n\t   rc.fieldscur = %s"
+      "\n\t   winlines  = %d, rc.maxtasks = %d, maxcmdln = %d"
+      "\n\t   rc.sortindx  = %d"
       "\n"
       , LINUX_VERSION_MAJOR(linux_version_code)
       , LINUX_VERSION_MINOR(linux_version_code)
@@ -369,11 +369,11 @@ static void bye_bye (int eno, const char *str)
       , sizeof(Stdout_buf), (unsigned)BUFSIZ
 #endif
       , sizeof(WIN_t), GROUPSMAX
-      , Curwin->winname, Curwin->grpname
-      , Curwin->winflags, Curwin->maxpflgs
-      , Curwin->fieldscur
-      , Curwin->winlines, Curwin->maxtasks, Curwin->maxcmdln
-      , Curwin->sortindx
+      , Curwin->rc.winname, Curwin->grpname
+      , Curwin->rc.winflags, Curwin->maxpflgs
+      , Curwin->rc.fieldscur
+      , Curwin->winlines, Curwin->rc.maxtasks, Curwin->maxcmdln
+      , Curwin->rc.sortindx
       );
 #endif
 
@@ -475,15 +475,15 @@ static void capsmk (WIN_t *q)
       the job's done until he/she/it has a change-of-heart */
    strcpy(q->cap_bold, CHKw(q, View_NOBOLD) ? Cap_norm : tIF(enter_bold_mode));
    if (CHKw(q, Show_COLORS) && max_colors > 0) {
-      strcpy(q->capclr_sum, tparm(set_a_foreground, q->summclr));
+      strcpy(q->capclr_sum, tparm(set_a_foreground, q->rc.summclr));
       snprintf(q->capclr_msg, sizeof(q->capclr_msg), "%s%s"
-         , tparm(set_a_foreground, q->msgsclr), Cap_reverse);
+         , tparm(set_a_foreground, q->rc.msgsclr), Cap_reverse);
       snprintf(q->capclr_pmt, sizeof(q->capclr_pmt), "%s%s"
-         , tparm(set_a_foreground, q->msgsclr), q->cap_bold);
+         , tparm(set_a_foreground, q->rc.msgsclr), q->cap_bold);
       snprintf(q->capclr_hdr, sizeof(q->capclr_hdr), "%s%s"
-         , tparm(set_a_foreground, q->headclr), Cap_reverse);
+         , tparm(set_a_foreground, q->rc.headclr), Cap_reverse);
       snprintf(q->capclr_rownorm, sizeof(q->capclr_rownorm), "%s%s"
-         , Caps_off, tparm(set_a_foreground, q->taskclr));
+         , Caps_off, tparm(set_a_foreground, q->rc.taskclr));
    } else {
       q->capclr_sum[0] = '\0';
       strcpy(q->capclr_msg, Cap_reverse);
@@ -1046,9 +1046,9 @@ static void before (char *me)
          *           If running in secure mode via the /etc/rcfile,
          *           Delay_time will be ignored except for root.
          * For each of the 4 windows:
-         *   line a: contains w->winname, fieldscur
-         *   line b: contains w->winflags, sortindx, maxtasks
-         *   line c: contains w->summclr, msgsclr, headclr, taskclr */
+         *   line a: contains w->rc.winname, rc.fieldscur
+         *   line b: contains w->rc.winflags, rc.sortindx, rc.maxtasks
+         *   line c: contains w->rc.summclr, rc.msgsclr, rc.headclr, rc.taskclr */
 static void configs_read (void)
 {
    static const char err_rc[] = "rcfile now incompatible, you should delete '%s'";
@@ -1087,19 +1087,19 @@ static void configs_read (void)
            /* we won't check fscanf returns from here on out -- we'll be
               hunky-dory with nothing in an rcfile except the 1st 2 lines */
          fscanf(fp, "%s\tfieldscur=%s\n"
-            , Winstk[i]->winname, Winstk[i]->fieldscur);
-         if (WINNAMSIZ <= strlen(Winstk[i]->winname)
-         || strlen(DEF_FIELDS) != strlen(Winstk[i]->fieldscur))
+            , Winstk[i]->rc.winname, Winstk[i]->rc.fieldscur);
+         if (WINNAMSIZ <= strlen(Winstk[i]->rc.winname)
+         || strlen(DEF_FIELDS) != strlen(Winstk[i]->rc.fieldscur))
             std_err(fmtmk(err_rc, RCfile));
          fscanf(fp, "\twinflags=%d, sortindx=%u, maxtasks=%d \n"
-            , &Winstk[i]->winflags
-            , &Winstk[i]->sortindx
-            , &Winstk[i]->maxtasks);
+            , &Winstk[i]->rc.winflags
+            , &Winstk[i]->rc.sortindx
+            , &Winstk[i]->rc.maxtasks);
          fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d \n"
-            , &Winstk[i]->summclr
-            , &Winstk[i]->msgsclr
-            , &Winstk[i]->headclr
-            , &Winstk[i]->taskclr);
+            , &Winstk[i]->rc.summclr
+            , &Winstk[i]->rc.msgsclr
+            , &Winstk[i]->rc.headclr
+            , &Winstk[i]->rc.taskclr);
       }
       fclose(fp);
    }
@@ -1159,7 +1159,7 @@ static void parse_args (char **args)
                   , procps_version, Myname, usage));
             case 'i':
                TOGw(Curwin, Show_IDLEPS);
-               Curwin->maxtasks = 0;
+               Curwin->rc.maxtasks = 0;
                break;
             case 'n':
                if (cp[1]) cp++;
@@ -1267,6 +1267,7 @@ static void whack_terminal (void)
    // for reframewins and summary_show 1st pass
 #define L_DEFAULT  PROC_FILLSTAT
 
+#define SF(f)  (QSORT_t)sort_P_ ## f
 
         /* These are our gosh darn 'Fields' !
            They MUST be kept in sync with pflags !!
@@ -1279,47 +1280,51 @@ static FTAB_t  Fieldstab[] = {
       P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
       P_CMD, L_stat  - may yet require L_CMDLINE in reframewins  (cmd/cmdline)
       L_EITHER       - must L_status, else 64-bit math, __udivdi3 on 32-bit !
-     head           fmts     width   scale  sort      desc                     lflg
-     -----------    -------  ------  -----  --------  ----------------------   -------- */
-   { "  PID ",      "%5u ",     -1,    -1, _SF(P_PID), "Process Id",           L_EITHER },
-   { " PPID ",      "%5u ",     -1,    -1, _SF(P_PPD), "Parent Process Pid",   L_EITHER },
-   { " PGID ",      "%5u ",     -1,    -1, _SF(P_PGD), "Process Group Id",     L_stat   },
-   { " UID ",       "%4u ",     -1,    -1, _SF(P_UID), "User Id",              L_NONE   },
-   { "USER     ",   "%-8.8s ",  -1,    -1, _SF(P_USR), "User Name",            L_EUSER  },
-   { "GROUP    ",   "%-8.8s ",  -1,    -1, _SF(P_GRP), "Group Name",           L_GROUP  },
-   { "TTY      ",   "%-8.8s ",   8,    -1, _SF(P_TTY), "Controlling Tty",      L_stat   },
-   { " PR ",        "%3d ",     -1,    -1, _SF(P_PRI), "Priority",             L_stat   },
-   { " NI ",        "%3d ",     -1,    -1, _SF(P_NCE), "Nice value",           L_stat   },
-   { "#C ",         "%2u ",     -1,    -1, _SF(P_CPN), "Last used cpu (SMP)",  L_stat   },
-   { "%CPU ",       "%#4.1f ",  -1,    -1, _SF(P_CPU), "CPU usage",            L_stat   },
-   { "  TIME ",     "%6.6s ",    6,    -1, _SF(P_TME), "CPU Time",             L_stat   },
-   { "   TIME+  ",  "%9.9s ",    9,    -1, _SF(P_TME), "CPU Time, hundredths", L_stat   },
-   { "%MEM ",       "%#4.1f ",  -1,    -1, _SF(P_RES), "Memory usage (RES)",   L_statm  },
-   { " VIRT ",      "%5.5s ",    5, SK_Kb, _SF(P_VRT), "Virtual Image (kb)",   L_statm  },
-   { "SWAP ",       "%4.4s ",    4, SK_Kb, _SF(P_SWP), "Swapped size (kb)",    L_statm  },
-   { " RES ",       "%4.4s ",    4, SK_Kb, _SF(P_RES), "Resident size (kb)",   L_statm  },
-   { "CODE ",       "%4.4s ",    4, SK_Kb, _SF(P_COD), "Code size (kb)",       L_statm  },
-   { "DATA ",       "%4.4s ",    4, SK_Kb, _SF(P_DAT), "Data+Stack size (kb)", L_statm  },
-   { " SHR ",       "%4.4s ",    4, SK_Kb, _SF(P_SHR), "Shared Mem size (kb)", L_statm  },
-   { "nFLT ",       "%4.4s ",    4, SK_no, _SF(P_FLT), "Page Fault count",     L_stat   },
-   { "nDRT ",       "%4.4s ",    4, SK_no, _SF(P_DRT), "Dirty Pages count",    L_statm  },
+      keys   head           fmts     width   scale  sort   desc                     lflg
+     ------  -----------    -------  ------  -----  -----  ----------------------   -------- */
+   { "AaAa", "  PID ",      "%5u ",     -1,    -1, SF(PID), "Process Id",           L_EITHER },
+   { "BbBb", " PPID ",      "%5u ",     -1,    -1, SF(PPD), "Parent Process Pid",   L_EITHER },
+   { "Cc..", " PGID ",      "%5u ",     -1,    -1, SF(PGD), "Process Group Id",     L_stat   },
+   { "DdCc", " UID ",       "%4u ",     -1,    -1, SF(UID), "User Id",              L_NONE   },
+   { "EeDd", "USER     ",   "%-8.8s ",  -1,    -1, SF(USR), "User Name",            L_EUSER  },
+   { "Ff..", "GROUP    ",   "%-8.8s ",  -1,    -1, SF(GRP), "Group Name",           L_GROUP  },
+   { "GgGg", "TTY      ",   "%-8.8s ",   8,    -1, SF(TTY), "Controlling Tty",      L_stat   },
+   { "HhHh", " PR ",        "%3d ",     -1,    -1, SF(PRI), "Priority",             L_stat   },
+   { "IiIi", " NI ",        "%3d ",     -1,    -1, SF(NCE), "Nice value",           L_stat   },
+   { "JjYy", "#C ",         "%2u ",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
+   { "KkEe", "%CPU ",       "%#4.1f ",  -1,    -1, SF(CPU), "CPU usage",            L_stat   },
+   { "LlWw", "  TIME ",     "%6.6s ",    6,    -1, SF(TME), "CPU Time",             L_stat   },
+   { "MmWw", "   TIME+  ",  "%9.9s ",    9,    -1, SF(TME), "CPU Time, hundredths", L_stat   },
+   { "NnFf", "%MEM ",       "%#4.1f ",  -1,    -1, SF(RES), "Memory usage (RES)",   L_statm  },
+   { "OoMm", " VIRT ",      "%5.5s ",    5, SK_Kb, SF(VRT), "Virtual Image (kb)",   L_statm  },
+   { "PpOo", "SWAP ",       "%4.4s ",    4, SK_Kb, SF(SWP), "Swapped size (kb)",    L_statm  },
+   { "QqTt", " RES ",       "%4.4s ",    4, SK_Kb, SF(RES), "Resident size (kb)",   L_statm  },
+   { "RrKk", "CODE ",       "%4.4s ",    4, SK_Kb, SF(COD), "Code size (kb)",       L_statm  },
+   { "SsLl", "DATA ",       "%4.4s ",    4, SK_Kb, SF(DAT), "Data+Stack size (kb)", L_statm  },
+   { "TtPp", " SHR ",       "%4.4s ",    4, SK_Kb, SF(SHR), "Shared Mem size (kb)", L_statm  },
+   { "UuJj", "nFLT ",       "%4.4s ",    4, SK_no, SF(FLT), "Page Fault count",     L_stat   },
+   { "VvSs", "nDRT ",       "%4.4s ",    4, SK_no, SF(DRT), "Dirty Pages count",    L_statm  },
 #ifdef USE_LIB_STA3
-   { "STA ",        "%3.3s ",   -1,    -1, _SF(P_STA), "Process Status",       L_status },
+   { "WwVv", "STA ",        "%3.3s ",   -1,    -1, SF(STA), "Process Status",       L_status },
 #else
-   { "S ",          "%c ",      -1,    -1, _SF(P_STA), "Process Status",       L_status },
+   { "WwVv", "S ",          "%c ",      -1,    -1, SF(STA), "Process Status",       L_status },
 #endif
    // next entry's special: '.head' will be formatted using table entry's own
    //                       '.fmts' plus runtime supplied conversion args!
-   { "Command ",    "%-*.*s ",  -1,    -1, _SF(P_CMD), "Command name/line",    L_stat   },
-   { "WCHAN     ",  "%-9.9s ",  -1,    -1, _SF(P_WCH), "Sleeping in Function", L_stat   },
+   { "XxXx", "Command ",    "%-*.*s ",  -1,    -1, SF(CMD), "Command name/line",    L_stat   },
+   { "YyUu", "WCHAN     ",  "%-9.9s ",  -1,    -1, SF(WCH), "Sleeping in Function", L_stat   },
    // next entry's special: the 0's will be replaced with '.'!
 #ifdef CASEUP_HEXES
-   { "Flags    ",   "%08lX ",   -1,    -1, _SF(P_FLG), "Task Flags <sched.h>", L_stat   }
+   { "ZzZz", "Flags    ",   "%08lX ",   -1,    -1, SF(FLG), "Task Flags <sched.h>", L_stat   },
 #else
-   { "Flags    ",   "%08lx ",   -1,    -1, _SF(P_FLG), "Task Flags <sched.h>", L_stat   }
+   { "ZzZz", "Flags    ",   "%08lx ",   -1,    -1, SF(FLG), "Task Flags <sched.h>", L_stat   },
 #endif
+   { "..Qq", "  A ",        "%4.4s ",    4, SK_no, SF(PID), "Accessed Page count",  L_stat   },
+   { "..Nn", " TRS ",       "%4.4s ",    4, SK_Kb, SF(PID), "Resident Text Size (kb)", L_stat   },
+   { "..Rr", " WP ",        "%4.4s ",    4, SK_no, SF(PID), "Write Protected Pages", L_stat   },
+   { "Jj[{", "CPU ",        "%2u ",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
 };
-
+#undef SF
 
         /*
          * Display each field represented in the Fields Table along with its
@@ -1378,17 +1383,17 @@ static void fields_reorder (void)
 
    putp(Cap_clr_scr);
    putp(Cap_curs_huge);
-   display_fields(Curwin->fieldscur, FIELDS_xtra);
+   display_fields(Curwin->rc.fieldscur, FIELDS_xtra);
    for (;;) {
       show_special(1, fmtmk(FIELDS_current
-         , Cap_home, Curwin->fieldscur, Curwin->grpname, prompt));
+         , Cap_home, Curwin->rc.fieldscur, Curwin->grpname, prompt));
       chin(0, &c, 1);
       i = toupper(c) - 'A';
       if (i < 0 || i >= MAXTBL(Fieldstab)) break;
-      if (((p = strchr(Curwin->fieldscur, i + 'A')))
-      || ((p = strchr(Curwin->fieldscur, i + 'a')))) {
+      if (((p = strchr(Curwin->rc.fieldscur, i + 'A')))
+      || ((p = strchr(Curwin->rc.fieldscur, i + 'a')))) {
          if (isupper(c)) p--;
-         if (('\0' != p[1]) && (p >= Curwin->fieldscur)) {
+         if (('\0' != p[1]) && (p >= Curwin->rc.fieldscur)) {
             c    = p[0];
             p[0] = p[1];
             p[1] = c;
@@ -1409,7 +1414,7 @@ static void fields_sort (void)
    int i, x;
 
    strcpy(phoney, NUL_FIELDS);
-   x = i = Curwin->sortindx;
+   x = i = Curwin->rc.sortindx;
    putp(Cap_clr_scr);
    putp(Cap_curs_huge);
    for (;;) {
@@ -1424,9 +1429,9 @@ static void fields_sort (void)
       *p = tolower(*p);
       x = i;
    }
-   if ((p = strchr(Curwin->fieldscur, x + 'a')))
+   if ((p = strchr(Curwin->rc.fieldscur, x + 'a')))
       *p = x + 'A';
-   Curwin->sortindx = x;
+   Curwin->rc.sortindx = x;
    putp(Cap_curs_norm);
 }
 
@@ -1443,15 +1448,15 @@ static void fields_toggle (void)
    putp(Cap_clr_scr);
    putp(Cap_curs_huge);
    for (;;) {
-      display_fields(Curwin->fieldscur, FIELDS_xtra);
+      display_fields(Curwin->rc.fieldscur, FIELDS_xtra);
       show_special(1, fmtmk(FIELDS_current
-         , Cap_home, Curwin->fieldscur, Curwin->grpname, prompt));
+         , Cap_home, Curwin->rc.fieldscur, Curwin->grpname, prompt));
       chin(0, &c, 1);
       i = toupper(c) - 'A';
       if (i < 0 || i >= MAXTBL(Fieldstab)) break;
-      if ((p = strchr(Curwin->fieldscur, i + 'A')))
+      if ((p = strchr(Curwin->rc.fieldscur, i + 'A')))
          *p = i + 'a';
-      else if ((p = strchr(Curwin->fieldscur, i + 'a')))
+      else if ((p = strchr(Curwin->rc.fieldscur, i + 'a')))
          *p = i + 'A';
    }
    putp(Cap_curs_norm);
@@ -1478,9 +1483,9 @@ static void reframewins (void)
    do {
       if (!Mode_altscr || CHKw(w, VISIBLE_tsk)) {
          // build window's procflags array and establish a tentative maxpflgs
-         for (i = 0, w->maxpflgs = 0; w->fieldscur[i]; i++) {
-            if (isupper(w->fieldscur[i]))
-               w->procflags[w->maxpflgs++] = w->fieldscur[i] - 'A';
+         for (i = 0, w->maxpflgs = 0; w->rc.fieldscur[i]; i++) {
+            if (isupper(w->rc.fieldscur[i]))
+               w->procflags[w->maxpflgs++] = w->rc.fieldscur[i] - 'A';
          }
 
          /* build a preliminary columns header not to exceed screen width
@@ -1543,7 +1548,7 @@ static void reframewins (void)
          * Value a window's name and make the associated group name. */
 static void win_names (WIN_t *q, const char *name)
 {
-   sprintf(q->winname, "%.*s", WINNAMSIZ -1, name);
+   sprintf(q->rc.winname, "%.*s", WINNAMSIZ -1, name);
    sprintf(q->grpname, "%d:%.*s", q->winnum, WINNAMSIZ -1, name);
 }
 
@@ -1595,12 +1600,12 @@ static void winsclrhlp (WIN_t *q, int save)
    static int flgssav, summsav, msgssav, headsav, tasksav;
 
    if (save) {
-      flgssav = q->winflags; summsav = q->summclr;
-      msgssav = q->msgsclr;  headsav = q->headclr; tasksav = q->taskclr;
+      flgssav = q->rc.winflags; summsav = q->rc.summclr;
+      msgssav = q->rc.msgsclr;  headsav = q->rc.headclr; tasksav = q->rc.taskclr;
       SETw(q, Show_COLORS);
    } else {
-      q->winflags = flgssav; q->summclr = summsav;
-      q->msgsclr = msgssav;  q->headclr = headsav; q->taskclr = tasksav;
+      q->rc.winflags = flgssav; q->rc.summclr = summsav;
+      q->rc.msgsclr = msgssav;  q->rc.headclr = headsav; q->rc.taskclr = tasksav;
    }
    capsmk(q);
 }
@@ -1612,7 +1617,7 @@ static void wins_colors (void)
 {
 #define kbdABORT  'q'
 #define kbdAPPLY  '\n'
-   int clr = Curwin->taskclr, *pclr = &Curwin->taskclr;
+   int clr = Curwin->rc.taskclr, *pclr = &Curwin->rc.taskclr;
    char ch, tgt = 'T';
 
    if (0 >= max_colors) {
@@ -1635,22 +1640,22 @@ static void wins_colors (void)
       chin(0, &ch, 1);
       switch (ch) {
          case 'S':
-            pclr = &Curwin->summclr;
+            pclr = &Curwin->rc.summclr;
             clr = *pclr;
             tgt = ch;
             break;
          case 'M':
-            pclr = &Curwin->msgsclr;
+            pclr = &Curwin->rc.msgsclr;
             clr = *pclr;
             tgt = ch;
             break;
          case 'H':
-            pclr = &Curwin->headclr;
+            pclr = &Curwin->rc.headclr;
             clr = *pclr;
             tgt = ch;
             break;
          case 'T':
-            pclr = &Curwin->taskclr;
+            pclr = &Curwin->rc.taskclr;
             clr = *pclr;
             tgt = ch;
             break;
@@ -1671,7 +1676,7 @@ static void wins_colors (void)
          case 'w':
             win_select(ch);
             winsclrhlp(Curwin, 1);
-            clr = Curwin->taskclr, pclr = &Curwin->taskclr;
+            clr = Curwin->rc.taskclr, pclr = &Curwin->rc.taskclr;
             tgt = 'T';
             break;
       }
@@ -1709,7 +1714,7 @@ static void wins_reflag (int what, int flg)
          /* a flag with special significance -- user wants to rebalance
             display so we gotta' 'off' one number then force on two flags... */
       if (EQUWINS_cwo == flg) {
-         w->maxtasks = 0;
+         w->rc.maxtasks = 0;
          SETw(w, Show_IDLEPS | VISIBLE_tsk);
       }
       w = w->next;
@@ -1783,14 +1788,14 @@ static void windows_stage1 (void)
    for (i = 0; i < GROUPSMAX; i++) {
       Winstk[i] = w;
       w->winnum = i + 1;
-      strcpy(w->winname, wtab[i].name);
-      strcpy(w->fieldscur, wtab[i].flds);
-      w->sortindx = wtab[i].sort;
-      w->winflags = DEF_WINFLGS;
-      w->summclr = wtab[i].clrs[0];
-      w->msgsclr = wtab[i].clrs[1];
-      w->headclr = wtab[i].clrs[2];
-      w->taskclr = wtab[i].clrs[3];
+      strcpy(w->rc.winname, wtab[i].name);
+      strcpy(w->rc.fieldscur, wtab[i].flds);
+      w->rc.sortindx = wtab[i].sort;
+      w->rc.winflags = DEF_WINFLGS;
+      w->rc.summclr = wtab[i].clrs[0];
+      w->rc.msgsclr = wtab[i].clrs[1];
+      w->rc.headclr = wtab[i].clrs[2];
+      w->rc.taskclr = wtab[i].clrs[3];
       w->captab[0] = Cap_norm;
       w->captab[1] = Cap_norm;
       w->captab[2] = w->cap_bold;
@@ -1820,7 +1825,7 @@ static void windows_stage2 (void)
    int i;
 
    for (i = 0; i < GROUPSMAX; i++) {
-      win_names(Winstk[i], Winstk[i]->winname);
+      win_names(Winstk[i], Winstk[i]->rc.winname);
       capsmk(Winstk[i]);
    }
    // rely on this next guy to force a call (eventually) to reframewins
@@ -1904,7 +1909,7 @@ static void do_key (unsigned c)
          if (Mode_altscr) {
             char tmp[GETBUFSIZ];
             strcpy(tmp, ask4str(fmtmk("Rename window '%s' to (1-3 chars)"
-               , Curwin->winname)));
+               , Curwin->rc.winname)));
             if (tmp[0]) win_names(Curwin, tmp);
          }
          break;
@@ -1932,10 +1937,10 @@ static void do_key (unsigned c)
                putp(Cap_clr_scr);
                show_special(1, fmtmk(WINDOWS_help
                   , Curwin->grpname
-                  , Winstk[0]->winname
-                  , Winstk[1]->winname
-                  , Winstk[2]->winname
-                  , Winstk[3]->winname));
+                  , Winstk[0]->rc.winname
+                  , Winstk[1]->rc.winname
+                  , Winstk[2]->rc.winname
+                  , Winstk[3]->rc.winname));
                chin(0, &ch, 1);
                win_select(ch);
             } while ('\n' != ch);
@@ -1991,8 +1996,8 @@ static void do_key (unsigned c)
          if (VIZCHKc) {
             int num =
                get_int(fmtmk("Maximum tasks = %d, change to (0 is unlimited)"
-                  , Curwin->maxtasks));
-            if (-1 < num) Curwin->maxtasks = num;
+                  , Curwin->rc.maxtasks));
+            if (-1 < num) Curwin->rc.maxtasks = num;
          }
          break;
 
@@ -2053,16 +2058,16 @@ static void do_key (unsigned c)
                , Mode_altscr, Mode_irixps, Delay_time, Curwin - Winstk[0]);
             for (i = 0; i < GROUPSMAX; i++) {
                fprintf(fp, "%s\tfieldscur=%s\n"
-                  , Winstk[i]->winname, Winstk[i]->fieldscur);
+                  , Winstk[i]->rc.winname, Winstk[i]->rc.fieldscur);
                fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-                  , Winstk[i]->winflags
-                  , Winstk[i]->sortindx
-                  , Winstk[i]->maxtasks);
+                  , Winstk[i]->rc.winflags
+                  , Winstk[i]->rc.sortindx
+                  , Winstk[i]->rc.maxtasks);
                fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
-                  , Winstk[i]->summclr
-                  , Winstk[i]->msgsclr
-                  , Winstk[i]->headclr
-                  , Winstk[i]->taskclr);
+                  , Winstk[i]->rc.summclr
+                  , Winstk[i]->rc.msgsclr
+                  , Winstk[i]->rc.headclr
+                  , Winstk[i]->rc.taskclr);
             }
             fclose(fp);
             show_msg(fmtmk("Wrote configuration to '%s'", RCfile));
@@ -2105,7 +2110,7 @@ static void do_key (unsigned c)
          break;
 
       case '=':
-         Curwin->maxtasks = 0;
+         Curwin->rc.maxtasks = 0;
          SETw(Curwin, Show_IDLEPS | VISIBLE_tsk);
          Monpidsidx = 0;
          break;
@@ -2117,18 +2122,18 @@ static void do_key (unsigned c)
       case '<':
          if (VIZCHKc) {
             PFLG_t *p = Curwin->procflags + Curwin->maxpflgs - 1;
-            while (*p != Curwin->sortindx) --p;
+            while (*p != Curwin->rc.sortindx) --p;
             if (--p >= Curwin->procflags)
-               Curwin->sortindx = *p;
+               Curwin->rc.sortindx = *p;
          }
          break;
 
       case '>':
          if (VIZCHKc) {
             PFLG_t *p = Curwin->procflags;
-            while (*p != Curwin->sortindx) ++p;
+            while (*p != Curwin->rc.sortindx) ++p;
             if (++p < Curwin->procflags + Curwin->maxpflgs)
-               Curwin->sortindx = *p;
+               Curwin->rc.sortindx = *p;
          }
          break;
 
@@ -2146,7 +2151,7 @@ static void do_key (unsigned c)
          int i;
          for (i = 0; i < MAXTBL(xtab); ++i)
             if (c == xtab[i].xkey) {
-               Curwin->sortindx = xtab[i].sort;
+               Curwin->rc.sortindx = xtab[i].sort;
                show_msg(fmtmk("%s sort compatibility key honored", xtab[i].xmsg));
                break;
             }
@@ -2311,7 +2316,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
    /* the following macro is our means to 'inline' emitting a column -- next to
       procs_refresh, that's the most frequent and costly part of top's job ! */
 #define MKCOL(va...) do { \
-   if (!(CHKw(q, Show_HICOLS) && q->sortindx == i)) \
+   if (!(CHKw(q, Show_HICOLS) && q->rc.sortindx == i)) \
       snprintf(cbuf, sizeof(cbuf), f, ## va); \
    else { \
       snprintf(_z, sizeof(_z), f, ## va); \
@@ -2498,16 +2503,16 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
 
 #ifdef SORT_SUPRESS
    if (CHKw(Curwin, NEWFRAM_cwo)
-   || sav_indx != q->sortindx
-   || sav_flgs != (q->winflags & srtMASK)) {
-      sav_indx = q->sortindx;
-      sav_flgs = (q->winflags & srtMASK);
+   || sav_indx != q->rc.sortindx
+   || sav_flgs != (q->rc.winflags & srtMASK)) {
+      sav_indx = q->rc.sortindx;
+      sav_flgs = (q->rc.winflags & srtMASK);
 #endif
       if (CHKw(q, Qsrt_NORMAL)) Frame_srtflg = 1; // this one's always needed!
          else Frame_srtflg = -1;
       Frame_ctimes = CHKw(q, Show_CTIMES);        // this and next, only maybe
       Frame_cmdlin = CHKw(q, Show_CMDLIN);
-      qsort(ppt, Frame_maxtask, sizeof(proc_t *), Fieldstab[q->sortindx].sort);
+      qsort(ppt, Frame_maxtask, sizeof(proc_t *), Fieldstab[q->rc.sortindx].sort);
 #ifdef SORT_SUPRESS
    }
 #endif
@@ -2552,7 +2557,7 @@ static void framehlp (int wix, int max)
    // calc remaining number of visible windows + total 'user' lines
    for (i = wix, rsvd = 0, wins = 0; i < GROUPSMAX; i++) {
       if (CHKw(Winstk[i], VISIBLE_tsk)) {
-         rsvd += Winstk[i]->maxtasks;
+         rsvd += Winstk[i]->rc.maxtasks;
          ++wins;
          if (max <= rsvd) break;
       }
@@ -2569,7 +2574,7 @@ static void framehlp (int wix, int max)
    for (i = wix ; i < GROUPSMAX; i++) {
       if (CHKw(Winstk[i], VISIBLE_tsk)) {
          Winstk[i]->winlines =
-            Winstk[i]->maxtasks ? Winstk[i]->maxtasks : size;
+            Winstk[i]->rc.maxtasks ? Winstk[i]->rc.maxtasks : size;
       }
    }
 }
@@ -2618,7 +2623,7 @@ static void frame_make (void)
 
    if (!Mode_altscr) {
       // only 1 window to show so, piece o' cake
-      Curwin->winlines = Curwin->maxtasks;
+      Curwin->winlines = Curwin->rc.maxtasks;
       window_show(ppt, Curwin, &scrlins);
    } else {
       // maybe NO window is visible but assume, pieces o' cakes
