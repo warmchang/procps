@@ -63,6 +63,8 @@ arbitrary data for the FROM column. (could set root's VGA color map!)
 
 Extract /proc/stat parsing from vmstat into libproc somewhere.
 
+Let the user choose: 1000, 1024, PAGE_SIZE, 1000000, 0x100000
+
 --------------------- libproc ----------------------
 
 Stop storing fields with duplicate info (often different

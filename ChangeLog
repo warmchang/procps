@@ -1,3 +1,23 @@
+procps-3.0.4 --> procps-3.0.5
+
+top tolerates super-wide displays
+better (?) RPM generation
+XConsole and top.desktop removed
+old build system removed
+code cleanup
+pgrep and pkill get "-o" (oldest matching process)
+had vmstat "bi" and "bo" output interchanged on 2.5.xx
+fix man page tbl directives
+
+procps-3.0.3 --> procps-3.0.4
+
+make top go faster
+Linux 2.2.xx ELF note warning removed
+only show IO-wait on recent kernels
+fix top's SMP stats
+fix top for "dumb" and "vt510" terminals
+in top, limit the priority values to -99 ... 99
+
 procps-3.0.2 --> procps-3.0.3
 
 more "make install" fixes
