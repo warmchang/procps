@@ -185,25 +185,26 @@ Even so, items shown with an \*(AS could be overridden through the
 command-line.
 
     \fIGlobal_defaults\fR
-       'A' - Alt display        Off (full-screen)
-     * 'd' - Delay time         3.0 seconds
-       'I' - Irix mode          On\ \ (no, 'solaris' smp)
-     * 'p' - PID monitoring     Off
-     * 's' - Secure mode        Off (unsecured)
+       'A' - Alt display      Off (full-screen)
+     * 'd' - Delay time       3.0 seconds
+       'I' - Irix mode        On\ \ (no, 'solaris' smp)
+     * 'p' - PID monitoring   Off
+     * 's' - Secure mode      Off (unsecured)
+       'B' - Bold disable     Off
     \fISummary_Area_defaults\fR
-       'l' - Load Avg/Uptime    On\ \ (thus program name)
-       't' - Task/Cpu state     On\ \ (1+1 lines, see '1')
-       'm' - Mem/Swap stats     On\ \ (2 lines worth)
-       '1' - Single Cpu         On\ \ (thus 1 line if smp)
+       'l' - Load Avg/Uptime  On\ \ (thus program name)
+       't' - Task/Cpu states  On\ \ (1+1 lines, see '1')
+       'm' - Mem/Swap usage   On\ \ (2 lines worth)
+       '1' - Single Cpu       On\ \ (thus 1 line if smp)
     \fITask_Area_defaults\fR
-       'b' - Bold hilite        On\ \ (not 'reverse')
-     * 'c' - Command line       Off (name, not cmdline)
-     * 'i' - Idle tasks         On\ \ (show all tasks)
-       'R' - Reverse sort       On\ \ (sort pids high-to-low)
-     * 'S' - Cumulative time    Off (exclude dead children)
-       'x' - Column hilite      Off\ (no, sort field)
-       'y' - Row hilite         On\ \ (yes, running tasks)
-       'z' - color/mono         Off\ (no, colors)
+       'b' - Bold hilite      On\ \ (not 'reverse')
+     * 'c' - Command line     Off (name, not cmdline)
+     * 'i' - Idle tasks       On\ \ (show all tasks)
+       'R' - Reverse sort     On\ \ (pids high-to-low)
+     * 'S' - Cumulative time  Off (no, dead children)
+       'x' - Column hilite    Off\ (no, sort field)
+       'y' - Row hilite       On\ \ (yes, running tasks)
+       'z' - color/mono       Off\ (no, colors)
 
 
 .\" ----------------------------------------------------------------------
@@ -438,11 +439,11 @@ The status of the task which can be one of:
    '\fBR\fR' = running
    '\fBS\fR' = sleeping
    '\fBT\fR' = traced or stopped
-   '\fBZ\fR' = zombies
+   '\fBZ\fR' = zombie
 
 Tasks shown as running should be more properly thought of as 'ready to run'
-\*(EM their task_struct is simply represented on Linux's run-queue.
-Even without a true SMP machine you may see numerous tasks in this state,
+\*(EM their task_struct is simply represented on the Linux run-queue.
+Even without a true SMP machine, you may see numerous tasks in this state
 depending on \*(Me's delay interval and nice value.
 
 .TP 3
@@ -462,13 +463,10 @@ fit in this field's current width.
 That width depends upon other fields selected, their order and the current
 screen width.
 
-.in +4
-\*(NT The 'Command' field/column is unique, in that it is not fixed-width,
-like all other fields.
-When displayed, this column will be allocated all remaining screen width,
-up to the maximum 512 characters, so as to provide for the potential growth of
-program names into command lines!
-.in
+\*(NT The 'Command' field/column is unique, in that it is not fixed-width.
+When displayed, this column will be allocated all remaining screen width (up
+to the maximum 512 characters) to provide for the potential growth of program
+names into command lines.
 
 .TP 3
 y:\fB WCHAN\fR \*(EM Sleeping in Function
@@ -477,11 +475,9 @@ will show the name or the address of the kernel function in which the task is
 currently sleeping.
 Running tasks will display a dash ('-') in this column.
 
-.in +4
 \*(NT By displaying this field, \*(Me's own working set will be increased by
 over 700Kb.
 Your only means of reducing that overhead will be to stop and restart \*(Me.
-.in
 
 .TP 3
 z:\fB Flags\fR \*(EM Task Flags
@@ -538,7 +534,7 @@ Some commands appear more than once \*(EM their meaning or scope may vary
 depending on the context in which they are issued.
 
   3a.\fI GLOBAL_Commands\fR
-        <Ret>, <Sp> ?, =, A, d, G, h, I, k, q, r, s, W, Z
+        <Ret/Sp> ?, =, A, B, d, G, h, I, k, q, r, s, W, Z
   3b.\fI SUMMARY_Area_Commands\fR
         l, m, t, 1
   3c.\fI TASK_Area_Commands\fR
@@ -547,7 +543,7 @@ depending on the context in which they are issued.
         Size:        #, i, n
         Sorting:     <, >, F, O, R
   3d.\fI COLOR_Mapping\fR
-        <Ret>, a, b, H, M, q, S, T, w, z, 0 - 7
+        <Ret>, a, B, b, H, M, q, S, T, w, z, 0 - 7
   4b.\fI COMMANDS_for_Windows\fR
         -, _, =, +, A, a, G, g, w
 
@@ -562,12 +558,12 @@ simply ask for help and view the system summary on the second line.
 
 .TP 7
 \ \ \<\fBEnter\fR> or <\fBSpace\fR> :\fIRefresh_Display\fR
-In truth, these commands do nothing, they are simply ignored.
+These commands do nothing, they are simply ignored.
 However, they will awaken \*(Me and following receipt of any input
-the entire display will be repainted within milliseconds.
+the entire display will be repainted.
 
-If you have set a large delay interval and wish to see current status,
-just use either of these keys.
+Use either of these keys if you have a large delay interval and wish to
+see current status,
 
 .TP 7
 \ \ \'\fB?\fR\' or \'\fBh\fR\' :\fIHelp\fR
@@ -593,6 +589,18 @@ When operating in \*(AM this command has a slightly broader meaning.
 This command will switch between \*(FM and \*(AM.
 \*(XT 4. ALTERNATE\-DISPLAY Mode and the 'G' \*(CI for insight into
 \*(CWs and field groups.
+
+.TP 7
+\ \ \'\fBB\fR\' :\fIBold_Disable/Enable_toggle\fR
+This command will influence use of the 'bold' terminfo capability and
+alters\fB both\fR the \*(SA and \*(TA for the \*(CW.
+While it is intended primarily for use with dumb terminals, it can be
+applied anytime.
+
+\*(NT When this toggle is \*O and \*(Me is operating in monochrome mode,
+the\fB entire display\fR will appear as normal text.
+Thus, unless the 'x' and/or 'y' toggles are using reverse for emphasis,
+there will be no visual confirmation that they are even on.
 
 .TP 7
 *\ \'\fBd\fR\' or \'\fBs\fR\' :\fIChange_Delay_Time_interval\fR
@@ -709,7 +717,12 @@ The \*(TA \*(CIs are\fB never available\fR in \*(AM\fI if\fR the \*(CW's
 .PP
 .\" .........................
 .B APPEARANCE\fR of \*(TW
-.PD 0
+.br
+.in +2
+The following commands will also be influenced by the state of the
+global 'B' (bold disable) toggle.
+.in
+
 .TP 7
 \ \ \'\fBb\fR\' :\fIBold/Reverse_toggle\fR
 This command will impact how the 'x' and 'y' toggles are displayed.
@@ -809,7 +822,7 @@ simply decrease the size of the \*(TD(s) above it.
 .br
 .in +2
 Before using any of these sort provisions, \*(Me suggests that you
-temporarily turn on column highlighting using the '\fBx\fR' \*(CI.
+temporarily turn on column highlighting using the 'x' \*(CI.
 That will help ensure that the actual sort environment matches your intent.
 
 The following \*(CIs will\fB only\fR be honored when the
@@ -869,7 +882,8 @@ in all four windows before returning to the \*(Me display.
     \fB4\fR upper case letters to select a\fB target\fR
     \fB8\fR numbers to select a\fB color\fR
     normal toggles available\fR
-        'b'       :bold/reverse
+        'B'       :bold disable/enable
+        'b'       :running tasks "bold"/reverse
         'z'       :color/mono
     other commands available\fR
         'a'/'w'   :apply, then go to next/prior
@@ -901,7 +915,7 @@ groups\fR (\*(Xc 'G' \*(CI, repeated below).
 Each of the 4 field groups has a unique separately configurable\fB \*(SA\fR
 and its own configurable\fB \*(TA\fR.
 
-In \*(AM, those 4 underlying\fB field groups\fR can now be made visible
+In \*(AM, those 4 underlying field groups can now be made visible
 simultaneously, or can be turned \*F individually at your command.
 
 The \*(SA will always exist, even if it's only the message line.
@@ -1032,9 +1046,9 @@ personal \*(CF to the current directory, subject to permissions.
 .\" ----------------------------------------------------------------------
 .SH 6. STUPID TRICKS Sampler
 .\" ----------------------------------------------------------------------
-Many of these 'tricks' work best when you give \*(Me a scheduling boost
-\*(EM so plan on starting him with a nice value of -10 (assuming you've got
-the authority).
+Many of these 'tricks' work best when you give \*(Me a scheduling boost.
+So plan on starting him with a nice value of -10, assuming you've got
+the authority.
 
 .\" ......................................................................
 .SS 6a. Kernel Magic

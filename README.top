@@ -51,6 +51,7 @@ separate CPUs, but could easily be changed.
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
+//#define STDOUT_IOLBF            /* disable our own stdout _IOFBF override  */
 //#define USE_LIB_STA3            /* use lib status (3 ch) vs. proc_t (1 ch) */
 //#define WARN_NOT_SMP            /* restrict '1' & 'I' commands to true smp */
 

@@ -34,6 +34,7 @@
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
+//#define STDOUT_IOLBF            /* disable our own stdout _IOFBF override  */
 
 #ifdef PRETEND2_5_X
 #define linux_version_code LINUX_VERSION(2,5,43)
@@ -68,8 +69,6 @@
 #define OURPATHSZ  1024
 #define BIGBUFSIZ  2048
 #define USRNAMSIZ  GETBUFSIZ
-   /* colbufsz does NOT apply to command lines - that field uses rowbufsz */
-#define COLBUFSIZ  SMLBUFSIZ + CLRBUFSIZ
 #define ROWBUFSIZ  SCREENMAX + CLRBUFSIZ
 
 
@@ -82,7 +81,6 @@
 #define BYTES_2K(n)  (unsigned)( (n) >> 10 )
 #define PAGES_2B(n)  (unsigned)( (n) * Page_size )
 #define PAGES_2K(n)  BYTES_2K(PAGES_2B(n))
-#define PAGE_CNT(n)  (unsigned)( (n) / Page_size )
 
         /* Used as return arguments in *some* of the sort callbacks */
 #define SORT_lt  ( Frame_srtflg > 0 ?  1 : -1 )
@@ -110,14 +108,37 @@
    static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
       return Frame_srtflg * strcmp((*Q)->s, (*P)->s); }
 
-        /* Used to 'inline' those portions of the display requiring formatting
-           while ensuring we won't be blindsided by some whacko terminal's
-           '$<..>' (millesecond delay) lurking in a terminfo string.  */
-#define PUTP(fmt,arg...) do { \
-           char _str[ROWBUFSIZ]; \
-           snprintf(_str, sizeof(_str), fmt, ## arg); \
-           putp(_str); \
-        } while (0)
+        /* Used in the following ways, to 'inline' those portions of the
+           display requiring formatting while protecting against potential
+           embedded 'millesecond delay' escape sequences.
+              PUTT - Put to Tty
+               . for temporary interactive 'REPLACEMENT' output
+               . may contain ANY valid terminfo escape sequences
+               . need NOT represent an entire screen row
+              PUFF - Put for Frame
+               . for more permanent frame-oriented 'UPDATE' output
+               . may NOT contain cursor motion terminfo escapes
+               . represents a complete screen ROW
+               . subject to optimization, thus MAY be discarded
+               . when discarded, replaced by a NEWLINE */
+#define PUTT(fmt,arg...) do { \
+      char _str[ROWBUFSIZ]; \
+      snprintf(_str, sizeof(_str), fmt, ## arg); \
+      putp(_str); \
+   } while (0)
+#define PUFF(fmt,arg...) do { \
+      char _str[ROWBUFSIZ]; \
+      register char *_ptr = &Pseudo_scrn[Pseudo_row * Pseudo_cols]; \
+      register int _len = snprintf(_str, sizeof(_str), fmt, ## arg); \
+      if (Batch) fputs(_str, stdout); \
+      else { \
+         if (!memcmp(_ptr, _str, _len)) \
+            putchar('\n'); \
+         else { \
+            memcpy(_ptr, _str, ++_len); \
+            putp(_ptr); \
+      } } Pseudo_row++; \
+   } while (0)
 
 /*------  Special Macros (debug and/or informative)  ---------------------*/
 
@@ -153,6 +174,7 @@ typedef struct {
    const int     scale; /* scale_num type, if applicable */
    const QSORT_t sort;  /* sort function */
    const char   *desc;  /* description for toggle/reorder fields */
+   const int     lflg;  /* PROC_FILLxxx flag(s) required for this field */
 } FTAB_t;
 
         /* This structure stores one piece of critical 'history'
@@ -167,9 +189,9 @@ typedef struct {
            calculations.  It exists primarily for SMP support but serves
            all environments. */
 typedef struct {
-      /* ticks count as represented in /proc/stat */
+        // ticks count as represented in /proc/stat
    TICS_t u, n, s, i, w;
-      /* tics count in the order of our display */
+        // tics count in the order of our display
    TICS_t u_sav, s_sav, n_sav, i_sav, w_sav;
 } CPUS_t;
 
@@ -204,17 +226,15 @@ enum pflag {
 #define Flags_OFF  3
 
         /* The Persistent 'Mode' flags!
-           All of these are preserved in the rc file, as a single integer.
-           Thus, once personalized, this top will stay personalized across
-           restarts (not like the old top, who only remembered fields)!
-           Note: the letter shown is the corresponding 'command' toggle
-         */
-        /* 'View_' flags affect the summary information, taken from 'Curwin' */
+           These are preserved in the rc file, as a single integer and the
+           letter shown is the corresponding 'command' toggle */
+        // 'View_' flags affect the summary (minimum), taken from 'Curwin'
 #define View_CPUSUM  0x8000     /* '1' - show combined cpu stats (vs. each)  */
 #define View_LOADAV  0x4000     /* 'l' - display load avg and uptime summary */
 #define View_STATES  0x2000     /* 't' - display task/cpu(s) states summary  */
 #define View_MEMORY  0x1000     /* 'm' - display memory summary              */
-        /* 'Show_' & 'Qsrt_' flags are for task display in a visible window  */
+#define View_NOBOLD  0x0001     /* 'B' - disable 'bold' attribute globally   */
+        // 'Show_' & 'Qsrt_' flags are for task display in a visible window
 #define Show_COLORS  0x0800     /* 'z' - show in color (vs. mono)            */
 #define Show_HIBOLD  0x0400     /* 'b' - rows and/or cols bold (vs. reverse) */
 #define Show_HICOLS  0x0200     /* 'x' - show sort column highlighted        */
@@ -228,16 +248,15 @@ enum pflag {
 #define NEWFRAM_cwo  0x0004     /* new frame (if anyone cares) - in Curwin   */
 #define EQUWINS_cwo  0x0002     /* rebalance tasks next frame (off 'i'/ 'n') */
                                 /* ...set in Curwin, but impacts all windows */
-#define flag_unused  0x0001     /* ----------------------- future use, maybe */
 
-        /* Current-window-only flags -- always turned off at end-of-window!  */
+        // Current-window-only flags -- always turned off at end-of-window!
 #define FLGSOFF_cwo  EQUWINS_cwo | NEWFRAM_cwo
 
-        /* Default flags if there's no rcfile to provide user customizations */
+        // Default flags if there's no rcfile to provide user customizations
 #define DEF_WINFLGS ( View_LOADAV | View_STATES | View_CPUSUM | View_MEMORY | \
    Show_HIBOLD | Show_HIROWS | Show_IDLEPS | Qsrt_NORMAL | VISIBLE_tsk )
 
-        /* Used to test/manipulate the window flags */
+        // Used to test/manipulate the window flags
 #define CHKw(q,f)   (int)(q->winflags & (f))
 #define TOGw(q,f)   q->winflags ^=  (f)
 #define SETw(q,f)   q->winflags |=  (f)
@@ -275,6 +294,7 @@ typedef struct win {
                capclr_hdr [CLRBUFSIZ],     /* note: sum, msg and pmt strs */
                capclr_rowhigh [CLRBUFSIZ], /*    are only used when this  */
                capclr_rownorm [CLRBUFSIZ]; /*    window is the 'Curwin'!  */
+   char        cap_bold [CAPBUFSIZ];    /* support for View_NOBOLD toggle */
    char        grpname   [GRPNAMSIZ],   /* window number:name, printable  */
                winname   [WINNAMSIZ],   /* window name, user changeable   */
                fieldscur [PFLAGSSIZ],   /* fields displayed and ordered   */
@@ -326,19 +346,19 @@ typedef struct win {
 #define STATES_line1  "Tasks:\03" \
    " %3u \02total,\03 %3u \02running,\03 %3u \02sleeping,\03 %3u \02stopped,\03 %3u \02zombie\03\n"
 #define STATES_line2x4  "%s\03" \
-   " %#5.1f\02%% user,\03 %#5.1f\02%% system,\03 %#5.1f\02%% nice,\03 %#5.1f\02%% idle\03\n"
+   " %#5.1f%% \02user,\03 %#5.1f%% \02system,\03 %#5.1f%% \02nice,\03 %#5.1f%% \02idle\03\n"
 #define STATES_line2x5  "%s\03" \
-   " %#5.1f\02%% user,\03 %#5.1f\02%% system,\03 %#5.1f\02%% nice,\03 %#5.1f\02%% idle,\03 %#5.1f\02%% IO-wait\03\n"
+   " %#5.1f%% \02user,\03 %#5.1f%% \02system,\03 %#5.1f%% \02nice,\03 %#5.1f%% \02idle,\03 %#5.1f%% \02IO-wait\03\n"
 #ifdef CASEUP_SUMMK
 #define MEMORY_line1  "Mem: \03" \
-   " %8u\02K total,\03 %8u\02K used,\03 %8u\02K free,\03 %8u\02K buffers\03\n"
+   " %8uK \02total,\03 %8uK \02used,\03 %8uK \02free,\03 %8uK \02buffers\03\n"
 #define MEMORY_line2  "Swap:\03" \
-   " %8u\02K total,\03 %8u\02K used,\03 %8u\02K free,\03 %8u\02K cached\03\n"
+   " %8uK \02total,\03 %8uK \02used,\03 %8uK \02free,\03 %8uK \02cached\03\n"
 #else
 #define MEMORY_line1  "Mem: \03" \
-   " %8u\02k total,\03 %8u\02k used,\03 %8u\02k free,\03 %8u\02k buffers\03\n"
+   " %8uk \02total,\03 %8uk \02used,\03 %8uk \02free,\03 %8uk \02buffers\03\n"
 #define MEMORY_line2  "Swap:\03" \
-   " %8u\02k total,\03 %8u\02k used,\03 %8u\02k free,\03 %8u\02k cached\03\n"
+   " %8uk \02total,\03 %8uk \02used,\03 %8uk \02free,\03 %8uk \02cached\03\n"
 #endif
 
         /* Keyboard Help specially formatted string(s) --
@@ -347,17 +367,17 @@ typedef struct win {
    "Help for Interactive Commands\02 - %s\n" \
    "Window \01%s\06: \01Cumulative mode \03%s\02.  \01System\06: \01Delay \03%.1f secs\02; \01Secure mode \03%s\02.\n" \
    "\n" \
-   "  l,t,m     Toggle Summary: '\01l\02' load avg; '\01t\02' task/cpu stats; '\01m\02' mem info\n" \
+   "  Z\05,\01B\05       Global: '\01Z\02' change color mappings; '\01B\02' disable/enable bold\n" \
+   "  l,t,m     Toggle Summaries: '\01l\02' load avg; '\01t\02' task/cpu stats; '\01m\02' mem info\n" \
    "  1,I       Toggle SMP view: '\0011\02' single/separate states; '\01I\02' Irix/Solaris mode\n" \
-   "  Z\05         Change color mappings\n" \
    "\n" \
    "  f,o     . Fields/Columns: '\01f\02' add or remove; '\01o\02' change display order\n" \
    "  F or O  . Select sort field\n" \
    "  <,>     . Move sort field: '\01<\02' next col left; '\01>\02' next col right\n" \
    "  R       . Toggle normal/reverse sort\n" \
    "  c,i,S   . Toggle: '\01c\02' cmd name/line; '\01i\02' idle tasks; '\01S\02' cumulative time\n" \
-   "  x,y\05     . Toggle highlights: '\01x\02' sort field; '\01y\02' running tasks\n" \
-   "  z,b\05     . Toggle: '\01z\02' color/mono; '\01b\02' bold/reverse (only if 'x' or 'y')\n" \
+   "  x\05,\01y\05     . Toggle highlights: '\01x\02' sort field; '\01y\02' running tasks\n" \
+   "  z\05,\01b\05     . Toggle: '\01z\02' color/mono; '\01b\02' bold/reverse (only if 'x' or 'y')\n" \
    "  u       . Show specific user only\n" \
    "  n or #  . Set maximum tasks displayed\n" \
    "\n" \
@@ -440,15 +460,16 @@ typedef struct win {
    "Help for color mapping\02 - %s\n" \
    "current window: \01%s\06\n" \
    "\n" \
-   "   color -\03 04:25:44 up 8 days, 50 min,  7 users,  load average:\n" \
-   "   Tasks:\03  64 \02total,\03   2 \02running,\03  62 \02sleeping,\03   0 \02stopped,\03\n" \
-   "   State cpu0 :\03   76.5\02%% user,\03  11.2\02%% system,\03   0.0\02%% nice,\03\n" \
+   "   color - 04:25:44 up 8 days, 50 min,  7 users,  load average:\n" \
+   "   Tasks:\03  64 \02total,\03   2 \03running,\03  62 \02sleeping,\03   0 \02stopped,\03\n" \
+   "   Cpu(s):\03  76.5%% \02user,\03  11.2%% \02system,\03   0.0%% \02nice,\03  12.3%% \02idle\03\n" \
    "   \01 Nasty Message! \04  -or-  \01Input Prompt\05\n" \
    "   \01  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP STA Command  \06\n" \
    "   17284 \10pts/2  \07  8   0  0.0   0:00.75  1380    0 S   /bin/bash \10\n" \
    "   \01 8601 pts/1    7 -10  0.4   0:00.03   916    0 R < color -b \07\n" \
    "   11005 \10?      \07  9   0  0.0   0:02.50  2852 1008 S   amor -ses \10\n" \
-   "   available toggles: \01b\02 =bold/reverse (\01%s\02), \01z\02 =color/mono (\01%s\02)\n" \
+   "   available toggles: \01B\02 =disable bold globally (\01%s\02),\n" \
+   "       \01z\02 =color/mono (\01%s\02), \01b\02 =tasks \"bold\"/reverse (\01%s\02)\n" \
    "\n" \
    "Select \01target\02 as upper case letter:\n" \
    "   S\02 = Summary Data,\01  M\02 = Messages/Prompts,\n" \
@@ -500,74 +521,74 @@ typedef struct win {
     * source code navigation, which often influences the identifers. */
 /*------  Sort callbacks  ------------------------------------------------*/
 /*        for each possible field, in the form of:                        */
-/*atic int         sort_P_XXX (const proc_t **P, const proc_t **Q);       */
-//atic int         sort_HIST_t (const HIST_t *P, const HIST_t *Q);
+/*atic int          sort_P_XXX (const proc_t **P, const proc_t **Q);       */
+/*        additional specialized sort callback(s)                         */
+static int          sort_HIST_t (const HIST_t *P, const HIST_t *Q);
 /*------  Tiny useful routine(s)  ----------------------------------------*/
-//atic int         chin (int ech, char *buf, unsigned cnt);
-//atic const char *fmtmk (const char *fmts, ...);
-//atic char       *strim (int sp, char *str);
-//atic const char *tg2 (int x, int y);
+//atic int          chin (int ech, char *buf, unsigned cnt);
+//atic const char  *fmtmk (const char *fmts, ...);
+//atic inline char *scat (register char *dst, register const char *src);
+//atic char        *strim (int sp, char *str);
+//atic const char  *tg2 (int x, int y);
 /*------  Exit/Interrput routines  ---------------------------------------*/
-//atic void        bye_bye (int eno, const char *str);
-//atic void        stop (int dont_care_sig);
-//atic void        std_err (const char *str);
-//atic void        suspend (int dont_care_sig);
+//atic void         bye_bye (int eno, const char *str);
+//atic void         end_pgm (int dont_care_sig);
+//atic void         std_err (const char *str);
+//atic void         suspend (int dont_care_sig);
 /*------  Misc Color/Display support  ------------------------------------*/
-//atic void        capsmk (WIN_t *q);
-//atic void        msg_save (const char *fmts, ...);
-//atic void        show_msg (const char *str);
-//atic void        show_pmt (const char *str);
-//atic void        show_special (const char *glob);
+//atic void         capsmk (WIN_t *q);
+//atic void         msg_save (const char *fmts, ...);
+//atic void         show_msg (const char *str);
+//atic void         show_pmt (const char *str);
+//atic void         show_special (int interact, const char *glob);
 /*------  Small Utility routines  ----------------------------------------*/
-//atic char       *ask4str (const char *prompt);
-//atic float       get_float (const char *prompt);
-//atic int         get_int (const char *prompt);
-//atic const char *scale_num (unsigned num, const int width, const unsigned type);
-//atic const char *scale_tics (TICS_t tics, const int width);
+//atic char        *ask4str (const char *prompt);
+//atic float        get_float (const char *prompt);
+//atic int          get_int (const char *prompt);
+//atic const char  *scale_num (unsigned num, const int width, const unsigned type);
+//atic const char  *scale_tics (TICS_t tics, const int width);
 /*------  Library Alternatives  ------------------------------------------*/
-//atic void       *alloc_c (unsigned numb);
-//atic void       *alloc_r (void *q, unsigned numb);
-//atic CPUS_t     *cpus_refresh (CPUS_t *cpus);
-//atic void        prochlp (proc_t *this);
-//atic proc_t    **procs_refresh (proc_t **table, int flags);
+//atic void        *alloc_c (unsigned numb);
+//atic void        *alloc_r (void *q, unsigned numb);
+//atic CPUS_t      *cpus_refresh (CPUS_t *cpus);
+//atic void         prochlp (register proc_t *this);
+//atic proc_t     **procs_refresh (proc_t **table, int flags);
 /*------  Startup routines  ----------------------------------------------*/
-//atic void        before (char *me);
-//atic void        configs_read (void);
-//atic void        parse_args (char **args);
-//atic void        whack_terminal (void);
+//atic void         before (char *me);
+//atic void         configs_read (void);
+//atic void         parse_args (char **args);
+//atic void         whack_terminal (void);
 /*------  Field Selection/Ordering routines  -----------------------------*/
-/*atic FTAB_t      Fieldstab[] = { ... }                                  */
-//atic void        display_fields (const char *fields, const char *xtra);
-//atic void        fields_reorder (void);
-//atic void        fields_sort (void);
-//atic void        fields_toggle (void);
+/*atic FTAB_t       Fieldstab[] = { ... }                                  */
+//atic void         display_fields (const char *fields, const char *xtra);
+//atic void         fields_reorder (void);
+//atic void         fields_sort (void);
+//atic void         fields_toggle (void);
 /*------  Windows/Field Groups support  ----------------------------------*/
-//atic void        win_colsheads (WIN_t *q);
-//atic inline int  win_fldviz (WIN_t *q, PFLG_t flg);
-//atic void        win_names (WIN_t *q, const char *name);
-//atic void        win_select (char ch);
-//atic int         win_warn (void);
-//atic void        winsclrhlp (WIN_t *q, int save);
-//atic void        wins_colors (void);
-//atic void        wins_reflag (int what, int flg);
-//atic void        wins_resize (int dont_care_sig);
-//atic void        windows_stage1 (void);
-//atic void        windows_stage2 (void);
+//atic void         reframewins (void);
+//atic void         win_names (WIN_t *q, const char *name);
+//atic void         win_select (char ch);
+//atic int          win_warn (void);
+//atic void         winsclrhlp (WIN_t *q, int save);
+//atic void         wins_colors (void);
+//atic void         wins_reflag (int what, int flg);
+//atic void         wins_resize (int dont_care_sig);
+//atic void         windows_stage1 (void);
+//atic void         windows_stage2 (void);
 /*------  Main Screen routines  ------------------------------------------*/
-//atic void        do_key (unsigned c);
-//atic void        summaryhlp (CPUS_t *cpu, const char *pfx);
-//atic proc_t    **summary_show (void);
-//atic void        taskhlp (WIN_t *q, int a, int c, int *p, char *b, const char *f, ...);
-//atic void        task_show (WIN_t *q, proc_t *task);
-//atic void        window_show (proc_t **ppt, WIN_t *q, int *lscr);
+//atic void         do_key (unsigned c);
+//atic void         summaryhlp (CPUS_t *cpu, const char *pfx);
+//atic proc_t     **summary_show (void);
+//atic void         task_show (WIN_t *q, proc_t *p);
+//atic void         window_show (proc_t **ppt, WIN_t *q, int *lscr);
 /*------  Entry point plus two  ------------------------------------------*/
-//atic void        framehlp (int wix, int max);
-//atic void        frame_make (void);
-//     int         main (int dont_care_argc, char **argv);
+//atic void         framehlp (int wix, int max);
+//atic void         frame_make (void);
+//     int          main (int dont_care_argc, char **argv);
 
         /* just sanity check(s)... */
 #if USRNAMSIZ < GETBUFSIZ
- #error "Jeeze, USRNAMSIZ Must NOT be less than GETBUFSIZ !"
+# error "Jeeze, USRNAMSIZ Must NOT be less than GETBUFSIZ !"
 #endif
 
 #endif /* _Itop */
