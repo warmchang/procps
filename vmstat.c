@@ -40,7 +40,7 @@
 
 static char buff[BUFFSIZE]; /* used in the procedures */
 
-typedef unsigned long jiff;
+typedef unsigned long long jiff;
 
 static int a_option; /* "-a" means "show active/inactive" */
 
@@ -83,7 +83,7 @@ static void showheader(void){
 	 "in","cs","us","sy","id");
 }
 
-static void getstat(jiff *cuse, jiff *cice, jiff *csys, jiff long *cide, jiff long *ciow,
+static void getstat(jiff *cuse, jiff *cice, jiff *csys, jiff *cide, jiff *ciow,
 	     unsigned *pin, unsigned *pout, unsigned *s_in, unsigned *sout,
 	     unsigned *itot, unsigned *i1, unsigned *ct) {
   static int Stat;
@@ -103,7 +103,7 @@ static void getstat(jiff *cuse, jiff *cice, jiff *csys, jiff long *cide, jiff lo
   *ciow = 0;  /* not separated out until the 2.5.41 kernel */
 
   b = strstr(buff, "cpu ");
-  if(b) sscanf(b,  "cpu  %lu %lu %lu %lu %lu", cuse, cice, csys, cide, ciow);
+  if(b) sscanf(b,  "cpu  %Lu %Lu %Lu %Lu %Lu", cuse, cice, csys, cide, ciow);
 
   b = strstr(buff, "page ");
   if(b) sscanf(b,  "page %u %u", pin, pout);
@@ -247,6 +247,7 @@ int main(int argc, char *argv[]) {
 
   pero2=(per/2);
   showheader();
+
   getrunners(&running,&blocked,&swapped);
   meminfo();
   getstat(cpu_use,cpu_nic,cpu_sys,cpu_idl,cpu_iow,
@@ -263,21 +264,22 @@ int main(int argc, char *argv[]) {
 	 kb_swap_used,kb_main_free,
 	 a_option?kb_inactive:kb_main_buffers,
 	 a_option?kb_active:kb_main_cached,
-	 (*pswpin *kb_per_page*hz+divo2)/Div,
-	 (*pswpout*kb_per_page*hz+divo2)/Div,
-	 (*pgpgin             *hz+divo2)/Div,
-	 (*pgpgout            *hz+divo2)/Div,
-	 (*inter              *hz+divo2)/Div,
-	 (*ctxt               *hz+divo2)/Div,
-	 (100*duse+divo2)/Div,
-	 (100*dsys+divo2)/Div,
-	 (100*didl+divo2)/Div
+	 (unsigned)( (*pswpin  * kb_per_page * hz + divo2) / Div ),
+	 (unsigned)( (*pswpout * kb_per_page * hz + divo2) / Div ),
+	 (unsigned)( (*pgpgin                * hz + divo2) / Div ),
+	 (unsigned)( (*pgpgout               * hz + divo2) / Div ),
+	 (unsigned)( (*inter                 * hz + divo2) / Div ),
+	 (unsigned)( (*ctxt                  * hz + divo2) / Div ),
+	 (unsigned)( (100*duse                    + divo2) / Div ),
+	 (unsigned)( (100*dsys                    + divo2) / Div ),
+	 (unsigned)( (100*didl                    + divo2) / Div )
   );
 
   for(i=1;i<num;i++) { /* \\\\\\\\\\\\\\\\\\\\ main loop ////////////////// */
     sleep(per);
     if (moreheaders && ((i%height)==0)) showheader();
     tog= !tog;
+
     getrunners(&running,&blocked,&swapped);
     meminfo();
     getstat(cpu_use+tog,cpu_nic+tog,cpu_sys+tog,cpu_idl+tog,cpu_iow+tog,
@@ -292,16 +294,18 @@ int main(int argc, char *argv[]) {
     divo2= Div/2UL;
     printf(format,
 	   running,blocked,swapped,
-	   kb_swap_used,kb_main_free,kb_main_buffers,kb_main_cached,
-	   ( (pswpin [tog]-pswpin [!tog])*kb_per_page+pero2 )/per,
-	   ( (pswpout[tog]-pswpout[!tog])*kb_per_page+pero2 )/per,
-	   (  pgpgin [tog]-pgpgin [!tog]             +pero2 )/per,
-	   (  pgpgout[tog]-pgpgout[!tog]             +pero2 )/per,
-	   (inter[tog]-inter[!tog]+pero2)/per,
-	   (ctxt[tog]-ctxt[!tog]+pero2)/per,
-	   (100*duse+divo2)/Div,
-	   (100*dsys+divo2)/Div,
-	   (100*didl+divo2)/Div
+	   kb_swap_used,kb_main_free,
+	   a_option?kb_inactive:kb_main_buffers,
+	   a_option?kb_inactive:kb_main_cached,
+	   (unsigned)( ( (pswpin [tog] - pswpin [!tog])*kb_per_page+pero2 )/per ),
+	   (unsigned)( ( (pswpout[tog] - pswpout[!tog])*kb_per_page+pero2 )/per ),
+	   (unsigned)( (  pgpgin [tog] - pgpgin [!tog]             +pero2 )/per ),
+	   (unsigned)( (  pgpgout[tog] - pgpgout[!tog]             +pero2 )/per ),
+	   (unsigned)( (  inter  [tog] - inter  [!tog]             +pero2 )/per ),
+	   (unsigned)( (  ctxt   [tog] - ctxt   [!tog]             +pero2 )/per ),
+	   (unsigned)( (100*duse+divo2)/Div ),
+	   (unsigned)( (100*dsys+divo2)/Div ),
+	   (unsigned)( (100*didl+divo2)/Div )
     );
   }
   exit(EXIT_SUCCESS);
