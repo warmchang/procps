@@ -6,6 +6,8 @@ sysctl handles net.ipv4.conf.eth1/0123.tag (VLAN interface)
 "ps -F" now documented
 w works in KOI8-R locale
 vmstat documentation update
+"skill -n blah blah blah" lets you test options
+simple "make && make install" now
 
 procps-2.x.x --> procps-3.0.0
 
