@@ -2751,12 +2751,12 @@ static void do_key (unsigned c)
       case 'P':         // be weaned, we would just whack this part...
       case 'T':
       {  static struct {
-            const unsigned  xkey;
             const char     *xmsg;
+            const unsigned  xkey;
             const FLG_t     sort;
          } xtab[] = {
-            { 'M', "Memory", P_MEM, }, { 'N', "Numerical", P_PID, },
-            { 'P', "CPU",    P_CPU, }, { 'T', "Time",      P_TM2  }, };
+            { "Memory", 'M', P_MEM, }, { "Numerical", 'N', P_PID, },
+            { "CPU",    'P', P_CPU, }, { "Time",      'T', P_TM2  }, };
          int i;
          for (i = 0; i < MAXTBL(xtab); ++i)
             if (c == xtab[i].xkey) {

@@ -111,9 +111,9 @@ typedef struct partition_stat{
 	unsigned int disk_type;
 	unsigned int partition_num;
 	char partition_name [16];
+	unsigned long long reads_sectors;
 	struct disk_stat* parent_disk;
 	unsigned           reads;
-	unsigned long long reads_sectors;
 	unsigned           writes;
 	unsigned           requested_writes;
 }partition_stat;

@@ -173,6 +173,7 @@ typedef int (*QFP_t)(const void *, const void *);
            in a variety of display roles. */
 typedef struct FLD_t {
    const char    keys [4];      // order: New-on New-off Old-on Old-off
+   // misaligned on 64-bit, but part of a table -- oh well
    const char   *head;          // name for col heads + toggle/reorder fields
    const char   *fmts;          // sprintf format string for field display
    const int     width;         // field width, if applicable
