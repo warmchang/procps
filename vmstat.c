@@ -16,10 +16,6 @@
  * Ideally, blocks in & out would be counted in 1k increments, rather than
    by block: this only makes a difference for CDs and is a problematic fix.
 */
-/* PROCPS
-   This is part of the procps package maintained by Michael K. Johnson
-   <johnsonm@redhat.com>; report bugs to <acahalan@cs.uml.edu>.
-*/
    
 #include "proc/sysinfo.h"
 #include "proc/version.h"
@@ -46,6 +42,7 @@ static char buff[BUFFSIZE]; /* used in the procedures */
 
 typedef unsigned long jiff;
 
+static int a_option; /* "-a" means "show active/inactive" */
 
 /****************************************************************/
 
@@ -54,6 +51,7 @@ static void usage(void) {
   fprintf(stderr,"usage: %s [-V] [-n] [delay [count]]\n",PROGNAME);
   fprintf(stderr,"              -V prints version.\n");
   fprintf(stderr,"              -n causes the headers not to be reprinted regularly.\n");
+  fprintf(stderr,"              -a print inactive/active page stats.\n");
   fprintf(stderr,"              delay is the delay between updates in seconds. \n");
   fprintf(stderr,"              count is the number of updates.\n");
   exit(EXIT_FAILURE);
@@ -76,14 +74,16 @@ static int winhi(void) {
 
 
 static void showheader(void){
-  printf("%8s%28s%8s%12s%11s%12s\n",
+  printf("%8s%28s%10s%12s%11s%9s\n",
 	 "procs","memory","swap","io","system","cpu");
-  printf("%2s %2s %2s %6s %6s %6s %6s %3s %3s %5s %5s %4s %5s %3s %3s %3s\n",
-	 "r","b","w","swpd","free","buff","cache","si","so","bi","bo",
+  printf("%2s %2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %5s %2s %2s %2s\n",
+	 "r","b","w","swpd","free",
+	 a_option?"inact":"buff", a_option?"active":"cache",
+	 "si","so","bi","bo",
 	 "in","cs","us","sy","id");
 }
 
-static void getstat(jiff *cuse, jiff *cice, jiff *csys, jiff long *cide,
+static void getstat(jiff *cuse, jiff *cice, jiff *csys, jiff long *cide, jiff long *ciow,
 	     unsigned *pin, unsigned *pout, unsigned *s_in, unsigned *sout,
 	     unsigned *itot, unsigned *i1, unsigned *ct) {
   static int Stat;
@@ -95,19 +95,27 @@ static void getstat(jiff *cuse, jiff *cice, jiff *csys, jiff long *cide,
     close(Stat);
     *itot = 0; 
     *i1 = 1;   /* ensure assert below will fail if the sscanf bombs */
+    *ciow = 0;  /* not separated out until the 2.5.41 kernel */
     b = strstr(buff, "cpu ");
-    sscanf(b, "cpu  %lu %lu %lu %lu", cuse, cice, csys, cide);
+    if(b) sscanf(b,  "cpu  %lu %lu %lu %lu %lu", cuse, cice, csys, cide, ciow);
     b = strstr(buff, "page ");
-    sscanf(b, "page %u %u", pin, pout);
+    if(b) sscanf(b,  "page %u %u", pin, pout);
     b = strstr(buff, "swap ");
-    sscanf(b, "swap %u %u", s_in, sout);
+    if(b) sscanf(b,  "swap %u %u", s_in, sout);
     b = strstr(buff, "intr ");
-    sscanf(b, "intr %u %u", itot, i1);
+    if(b) sscanf(b,  "intr %u %u", itot, i1);
     b = strstr(buff, "ctxt ");
-    sscanf(b, "ctxt %u", ct);
+    if(b) sscanf(b,  "ctxt %u", ct);
   }
   else {
     crash("/proc/stat");
+  }
+  if(1){
+    vminfo();
+    *pin  = vm_pgpgout;
+    *pout = vm_pgpgin;
+    *s_in = vm_pswpout;
+    *sout = vm_pswpin;
   }
 }
 
@@ -131,7 +139,15 @@ static void getrunners(unsigned int *running, unsigned int *blocked,
       sprintf(filename, "/proc/%s/stat", ent->d_name);
       if ((fd = open(filename, O_RDONLY, 0)) != -1) { /*this weeds the rest*/
 	read(fd,buff,BUFFSIZE-1);
-	sscanf(buff, "%*d %*s %c %*d %*d %*d %*d %*d %*u %*u %*u %*u %*u %*d %*d %*d %*d %*d %*d %*u %*u %*d %*u %u %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u\n",&c,&size);
+	sscanf(
+	  buff,
+	  "%*d %*s %c "
+	  "%*d %*d %*d %*d %*d %*u %*u"
+	  " %*u %*u %*u %*d %*d %*d %*d %*d %*d %*u %*u %*d %*u %u"
+	  /*  " %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u\n"  */ ,
+	  &c,
+	  &size
+	);
 	close(fd);
 
 	if (c=='R') {
@@ -159,7 +175,7 @@ static void getrunners(unsigned int *running, unsigned int *blocked,
 
 int main(int argc, char *argv[]) {
 
-  const char format[]="%2u %2u %2u %6u %6u %6u %6u %3u %3u %5u %5u %4u %5u %3u %3u %3u\n";
+  const char format[]="%2u %2u %2u %6u %6u %6u %6u %4u %4u %5u %5u %4u %5u %2u %2u %2u\n";
   unsigned int height=22; /* window height, reset later if needed. */
 #if 0
   unsigned long int args[2]={0,0};
@@ -168,7 +184,7 @@ int main(int argc, char *argv[]) {
   unsigned int tog=0; /* toggle switch for cleaner code */
   unsigned int i,hz;
   unsigned int running,blocked,swapped;
-  jiff cpu_use[2], cpu_nic[2], cpu_sys[2], cpu_idl[2];
+  jiff cpu_use[2], cpu_nic[2], cpu_sys[2], cpu_idl[2], cpu_iow[2];
   jiff duse,dsys,didl,Div,divo2;
   unsigned int pgpgin[2], pgpgout[2], pswpin[2], pswpout[2];
   unsigned int inter[2],ticks[2],ctxt[2];
@@ -183,13 +199,17 @@ int main(int argc, char *argv[]) {
   for (argv++;*argv;argv++) {
     if ('-' ==(**argv)) {
       switch (*(++(*argv))) {
-	case 'V':
+      case 'V':
 	display_version();
 	exit(0);
+      case 'a':
+	/* active/inactive mode */
+	a_option=1;
+        break;
       case 'n':
 	/* print only one header */
 	moreheaders=FALSE;
-      break;
+        break;
       default:
 	/* no other aguments defined yet. */
 	usage();
@@ -220,18 +240,20 @@ int main(int argc, char *argv[]) {
   showheader();
   getrunners(&running,&blocked,&swapped);
   meminfo();
-  getstat(cpu_use,cpu_nic,cpu_sys,cpu_idl,
+  getstat(cpu_use,cpu_nic,cpu_sys,cpu_idl,cpu_iow,
 	  pgpgin,pgpgout,pswpin,pswpout,
 	  inter,ticks,ctxt);
   duse= *cpu_use + *cpu_nic; 
-  dsys= *cpu_sys;
+  dsys= *cpu_sys + *cpu_iow;  /* ADC -- add IO-wait here? */
   didl= *cpu_idl;
   Div= duse+dsys+didl;
-  hz=sysconf(_SC_CLK_TCK); /* get ticks/s from system */
+  hz=Hertz; /* get ticks/s from libproc */
   divo2= Div/2UL;
   printf(format,
 	 running,blocked,swapped,
-	 kb_swap_used,kb_main_free,kb_main_buffers,kb_main_cached,
+	 kb_swap_used,kb_main_free,
+	 a_option?kb_inactive:kb_main_buffers,
+	 a_option?kb_active:kb_main_cached,
 	 (*pswpin *kb_per_page*hz+divo2)/Div,
 	 (*pswpout*kb_per_page*hz+divo2)/Div,
 	 (*pgpgin             *hz+divo2)/Div,
@@ -249,11 +271,11 @@ int main(int argc, char *argv[]) {
     tog= !tog;
     getrunners(&running,&blocked,&swapped);
     meminfo();
-    getstat(cpu_use+tog,cpu_nic+tog,cpu_sys+tog,cpu_idl+tog,
+    getstat(cpu_use+tog,cpu_nic+tog,cpu_sys+tog,cpu_idl+tog,cpu_iow+tog,
 	  pgpgin+tog,pgpgout+tog,pswpin+tog,pswpout+tog,
 	  inter+tog,ticks+tog,ctxt+tog);
     duse= cpu_use[tog]-cpu_use[!tog] + cpu_nic[tog]-cpu_nic[!tog];
-    dsys= cpu_sys[tog]-cpu_sys[!tog];
+    dsys= cpu_sys[tog]-cpu_sys[!tog] + cpu_iow[tog]-cpu_iow[!tog];
     didl= cpu_idl[tog]-cpu_idl[!tog];
     /* idle can run backwards for a moment -- kernel "feature" */
     if(cpu_idl[tog]<cpu_idl[!tog]) didl=0;

@@ -167,11 +167,13 @@ typedef struct {
    TICS_t u,            /* ticks count as represented in /proc/stat */
           n,            /* (not in the order of our display) */
           s,
-          i;
+          i,
+          I;
    TICS_t u_sav,        /* tics count in the order of our display */
           s_sav,
           n_sav,
-          i_sav;
+          i_sav,
+          I_sav;
 } CPUS_t;
 
         /* The scaling 'type' used with scale_num() -- this is how
@@ -306,11 +308,11 @@ typedef struct win {
            reads during history processing.
            ( 5th number added in anticipation of kernel change ) */
 #ifdef TICS_64_BITS
-#define CPU_FMTS_JUST1  "cpu %Lu %Lu %Lu %Lu \n"
-#define CPU_FMTS_MULTI  "cpu%*d %Lu %Lu %Lu %Lu %*d \n"
+#define CPU_FMTS_JUST1  "cpu %Lu %Lu %Lu %Lu %Lu"
+#define CPU_FMTS_MULTI  "cpu%*d %Lu %Lu %Lu %Lu %Lu"
 #else
-#define CPU_FMTS_JUST1  "cpu %lu %lu %lu %lu \n"
-#define CPU_FMTS_MULTI  "cpu%*d %lu %lu %lu %lu %*d \n"
+#define CPU_FMTS_JUST1  "cpu %lu %lu %lu %lu %lu"
+#define CPU_FMTS_MULTI  "cpu%*d %lu %lu %lu %lu %lu"
 #endif
 
         /* This is the format for 'command line' display in the absence
@@ -330,7 +332,7 @@ typedef struct win {
    " %3u \02stopped,\03 %3u \02zombie\03\n"
 #define STATES_line2  "%s\03" \
    " %#5.1f%% \02user,\03 %#5.1f%% \02system,\03" \
-   " %#5.1f%% \02nice,\03 %#5.1f%% \02idle\03\n"
+   " %#5.1f%% \02nice,\03 %#5.1f%% \02idle,\03 %#5.1f%% \02IO-wait\03\n"
 #ifdef CASEUP_SUMMK
 #define MEMORY_line1  "Mem: \03" \
    " %8uK \02total,\03 %8uK \02used,\03" \

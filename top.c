@@ -812,6 +812,7 @@ static CPUS_t *refreshcpus (CPUS_t *cpus)
 {
    static FILE *fp = NULL;
    int i;
+   char buf[256]; /* enough for a /proc/stat CPU line (not the intr line) */
 
       /* by opening this file once, we'll avoid the hit on minor page faults
          (sorry Linux, but you'll have to close it for us) */
@@ -827,19 +828,22 @@ static CPUS_t *refreshcpus (CPUS_t *cpus)
    fflush(fp);
 
       /* first value the last slot with the cpu summary line */
-   if (4 != fscanf(fp, CPU_FMTS_JUST1
-      , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i))
+   if(!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
+   if (4 > sscanf(buf, CPU_FMTS_JUST1
+      , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i, &cpus[Cpu_tot].I))
          std_err("failed /proc/stat read");
 
       /* and now value each separate cpu's tics */
    for (i = 0; i < Cpu_tot; i++) {
 #ifdef PRETEND4CPUS
       rewind(fp);
-      if (4 != fscanf(fp, CPU_FMTS_JUST1
+      if(!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
+      if (4 > sscanf(buf, CPU_FMTS_JUST1
 #else
-      if (4 != fscanf(fp, CPU_FMTS_MULTI
+      if(!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
+      if (4 > sscanf(buf, CPU_FMTS_MULTI
 #endif
-         , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i))
+         , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].I))
             std_err("failed /proc/stat read");
    }
 
@@ -1692,13 +1696,14 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
         /* we'll trim to zero if we get negative time ticks,
            which has happened with some SMP kernels (pre-2.4?) */
 #define TRIMz(x)  ((tz = (STIC_t)x) < 0 ? 0 : tz)
-   STIC_t u_frme, s_frme, n_frme, i_frme, tot_frme, tz;
+   STIC_t u_frme, s_frme, n_frme, i_frme, I_frme, tot_frme, tz;
 
    u_frme = TRIMz(cpu->u - cpu->u_sav);
    s_frme = TRIMz(cpu->s - cpu->s_sav);
    n_frme = TRIMz(cpu->n - cpu->n_sav);
    i_frme = TRIMz(cpu->i - cpu->i_sav);
-   tot_frme = u_frme + s_frme + n_frme + i_frme;
+   I_frme = TRIMz(cpu->I - cpu->I_sav);
+   tot_frme = u_frme + s_frme + n_frme + i_frme + I_frme;
    if (1 > tot_frme) tot_frme = 1;
 
       /* display some kinda' cpu state percentages
@@ -1708,7 +1713,8 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
       , (float)u_frme * 100 / tot_frme
       , (float)s_frme * 100 / tot_frme
       , (float)n_frme * 100 / tot_frme
-      , (float)i_frme * 100 / tot_frme));
+      , (float)i_frme * 100 / tot_frme
+      , (float)I_frme * 100 / tot_frme));
    Msg_row += 1;
 
       /* remember for next time around */
@@ -1716,6 +1722,7 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
    cpu->s_sav = cpu->s;
    cpu->n_sav = cpu->n;
    cpu->i_sav = cpu->i;
+   cpu->I_sav = cpu->I;
 
 #undef TRIMz
 }
@@ -1807,14 +1814,12 @@ static void frame_states (proc_t **ppt, int show)
 
       if (CHKw(Curwin, View_CPUSUM)) {
             /* display just the 1st /proc/stat line */
-         cpudo(&smpcpu[Cpu_tot], "Cpu(s) state:");
+         cpudo(&smpcpu[Cpu_tot], "CPU use:");
       } else {
          char tmp[SMLBUFSIZ];
             /* display each cpu's states separately */
          for (i = 0; i < Cpu_tot; i++) {
-            sprintf(tmp, "%-6scpu%-2d:"         /* [ cpu states as ]      */
-               , i ? " " : "State"              /*    'State cpu0 : ... ' */
-               , Mode_irixps ? i : Cpu_map[i]); /*    '      cpu1 : ... ' */
+            sprintf(tmp, "CPU%4d:", Mode_irixps ? i : Cpu_map[i]);
             cpudo(&smpcpu[i], tmp);
          }
       }

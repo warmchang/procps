@@ -1303,6 +1303,52 @@ static void show_meminfo(void)
 }
 
 
+/***********************************************************************
+ * The /proc filesystem calculates idle=jiffies-(user+nice+sys) and we
+ * recover jiffies by adding up the 4 numbers we are given. SMP kernels
+ * (as of pre-2.4 era) can report idle time going backwards, perhaps due
+ * to non-atomic reads and updates. There is no locking for these values.
+ */
+#ifndef NAN
+#define NAN (-0.0)
+#endif
+#define JT unsigned long long
+static void four_cpu_numbers(double *uret, double *nret, double *sret, double *iret){
+    double tmp_u, tmp_n, tmp_s, tmp_i;
+    double scale;  /* scale values to % */
+    static JT old_u, old_n, old_s, old_i;
+    JT new_u, new_n, new_s, new_i;
+    JT ticks_past; /* avoid div-by-0 by not calling too often :-( */
+ 
+    FILE_TO_BUF(STAT_FILE,stat_fd);
+    sscanf(buf, "cpu %Lu %Lu %Lu %Lu", &new_u, &new_n, &new_s, &new_i);
+    ticks_past = (new_u+new_n+new_s+new_i)-(old_u+old_n+old_s+old_i);
+    if(ticks_past){
+      scale = 100.0 / (double)ticks_past;
+      tmp_u = ( (double)new_u - (double)old_u ) * scale;
+      tmp_n = ( (double)new_n - (double)old_n ) * scale;
+      tmp_s = ( (double)new_s - (double)old_s ) * scale;
+      tmp_i = ( (double)new_i - (double)old_i ) * scale;
+    }else{
+      tmp_u = NAN;
+      tmp_n = NAN;
+      tmp_s = NAN;
+      tmp_i = NAN;
+    }
+    SET_IF_DESIRED(uret, tmp_u);
+    SET_IF_DESIRED(nret, tmp_n);
+    SET_IF_DESIRED(sret, tmp_s);
+    SET_IF_DESIRED(iret, tmp_i);
+    old_u=new_u;
+    old_n=new_n;
+    old_s=new_s;
+    old_i=new_i;
+}
+#undef JT
+
+/***********************************************************************/
+
+
 /*
  * Calculates the number of tasks in each state (running, sleeping, etc.).
  * Calculates the CPU time in each state (system, user, nice, etc).

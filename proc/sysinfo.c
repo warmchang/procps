@@ -39,6 +39,8 @@ static int uptime_fd = -1;
 static int loadavg_fd = -1;
 #define MEMINFO_FILE "/proc/meminfo"
 static int meminfo_fd = -1;
+#define VMINFO_FILE "/proc/vmstat"
+static int vminfo_fd = -1;
 
 static char buf[1024];
 
@@ -170,7 +172,7 @@ static void init_Hertz_value(void){
 
 /***********************************************************************
  * The /proc filesystem calculates idle=jiffies-(user+nice+sys) and we
- * recover jiffies by adding up the 4 numbers we are given. SMP kernels
+ * recover jiffies by adding up the 4 or 5 numbers we are given. SMP kernels
  * (as of pre-2.4 era) can report idle time going backwards, perhaps due
  * to non-atomic reads and updates. There is no locking for these values.
  */
@@ -178,36 +180,40 @@ static void init_Hertz_value(void){
 #define NAN (-0.0)
 #endif
 #define JT unsigned long long
-void four_cpu_numbers(double *uret, double *nret, double *sret, double *iret){
-    double tmp_u, tmp_n, tmp_s, tmp_i;
+void five_cpu_numbers(double *uret, double *nret, double *sret, double *iret, double *Iret){
+    double tmp_u, tmp_n, tmp_s, tmp_i, tmp_I;
     double scale;  /* scale values to % */
-    static JT old_u, old_n, old_s, old_i;
-    JT new_u, new_n, new_s, new_i;
+    static JT old_u, old_n, old_s, old_i, old_I;
+    JT new_u, new_n, new_s, new_i, new_I;
     JT ticks_past; /* avoid div-by-0 by not calling too often :-( */
  
     FILE_TO_BUF(STAT_FILE,stat_fd);
-    sscanf(buf, "cpu %Lu %Lu %Lu %Lu", &new_u, &new_n, &new_s, &new_i);
-    ticks_past = (new_u+new_n+new_s+new_i)-(old_u+old_n+old_s+old_i);
+    sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu", &new_u, &new_n, &new_s, &new_i, &new_I);
+    ticks_past = (new_u+new_n+new_s+new_i+new_I)-(old_u+old_n+old_s+old_i+old_I);
     if(ticks_past){
       scale = 100.0 / (double)ticks_past;
       tmp_u = ( (double)new_u - (double)old_u ) * scale;
       tmp_n = ( (double)new_n - (double)old_n ) * scale;
       tmp_s = ( (double)new_s - (double)old_s ) * scale;
       tmp_i = ( (double)new_i - (double)old_i ) * scale;
+      tmp_I = ( (double)new_I - (double)old_I ) * scale;
     }else{
       tmp_u = NAN;
       tmp_n = NAN;
       tmp_s = NAN;
       tmp_i = NAN;
+      tmp_I = NAN;
     }
     SET_IF_DESIRED(uret, tmp_u);
     SET_IF_DESIRED(nret, tmp_n);
     SET_IF_DESIRED(sret, tmp_s);
     SET_IF_DESIRED(iret, tmp_i);
+    SET_IF_DESIRED(iret, tmp_I);
     old_u=new_u;
     old_n=new_n;
     old_s=new_s;
     old_i=new_i;
+    old_i=new_I;
 }
 #undef JT
 
@@ -267,6 +273,14 @@ static int compare_mem_table_structs(const void *a, const void *b){
  * LowFree:          1436 kB
  * SwapTotal:      122580 kB    old
  * SwapFree:        60352 kB    old
+ * Inactive:        20420 kB    2.5.41+
+ * Dirty:               0 kB    2.5.41+
+ * Writeback:           0 kB    2.5.41+
+ * Mapped:           9792 kB    2.5.41+
+ * Slab:             4564 kB    2.5.41+
+ * Committed_AS:     8440 kB    2.5.41+
+ * PageTables:        304 kB    2.5.41+
+ * ReverseMaps:      5738       2.5.41+
  */
 
 /* obsolete */
@@ -292,6 +306,16 @@ unsigned kb_swap_cached;  /* late 2.4 only */
 /* derived values */
 unsigned kb_swap_used;
 unsigned kb_main_used;
+/* 2.5.41+ */
+unsigned kb_writeback;
+unsigned kb_slab;
+unsigned nr_reversemaps;
+unsigned kb_active;
+unsigned kb_committed_as;
+unsigned kb_dirty;
+unsigned kb_inactive;
+unsigned kb_mapped;
+unsigned kb_pagetables;
 
 void meminfo(void){
   char namebuf[16]; /* big enough to hold any row name */
@@ -303,23 +327,33 @@ void meminfo(void){
   {"Active",       &kb_active},
   {"Buffers",      &kb_main_buffers},
   {"Cached",       &kb_main_cached},
+  {"Committed_AS", &kb_committed_as},
+  {"Dirty",        &kb_dirty},
   {"HighFree",     &kb_high_free},
   {"HighTotal",    &kb_high_total},
   {"Inact_clean",  &kb_inact_clean},
   {"Inact_dirty",  &kb_inact_dirty},
   {"Inact_target", &kb_inact_target},
+  {"Inactive",     &kb_inactive},
   {"LowFree",      &kb_low_free},
   {"LowTotal",     &kb_low_total},
+  {"Mapped",       &kb_mapped},
   {"MemFree",      &kb_main_free},
   {"MemShared",    &kb_main_shared},
   {"MemTotal",     &kb_main_total},
+  {"PageTables",   &kb_pagetables},
+  {"ReverseMaps",  &nr_reversemaps},
+  {"Slab",         &kb_slab},
   {"SwapCached",   &kb_swap_cached},
   {"SwapFree",     &kb_swap_free},
-  {"SwapTotal",    &kb_swap_total}
+  {"SwapTotal",    &kb_swap_total},
+  {"Writeback",    &kb_writeback}
   };
   const int mem_table_count = sizeof(mem_table)/sizeof(mem_table_struct);
 
   FILE_TO_BUF(MEMINFO_FILE,meminfo_fd);
+
+  kb_inactive = -1;
 
   head = buf;
   for(;;){
@@ -346,6 +380,109 @@ nextline:
     kb_low_total = kb_main_total;
     kb_low_free  = kb_main_free;
   }
+  if(kb_inactive==-1){
+    kb_inactive = kb_inact_dirty + kb_inact_clean;
+  }
   kb_swap_used = kb_swap_total - kb_swap_free;
   kb_main_used = kb_main_total - kb_main_free;
 }
+
+/*****************************************************************/
+
+/* read /proc/vminfo only for 2.5.41 and above */
+
+typedef struct vm_table_struct {
+  const char *name;     /* VM statistic name */
+  const unsigned *slot; /* slot in return struct */
+} vm_table_struct;
+
+static int compare_vm_table_structs(const void *a, const void *b){
+  return strcmp(((vm_table_struct*)a)->name,((vm_table_struct*)b)->name);
+}
+
+unsigned vm_nr_dirty;
+unsigned vm_nr_writeback;
+unsigned vm_nr_pagecache;
+unsigned vm_nr_page_table_pages;
+unsigned vm_nr_reverse_maps;
+unsigned vm_nr_mapped;
+unsigned vm_nr_slab;
+unsigned vm_pgpgin;
+unsigned vm_pgpgout;
+unsigned vm_pswpin;  /* same as 1st num on /proc/stat swap line */
+unsigned vm_pswpout; /* same as 2nd num on /proc/stat swap line */
+unsigned vm_pgalloc;
+unsigned vm_pgfree;
+unsigned vm_pgactivate;
+unsigned vm_pgdeactivate;
+unsigned vm_pgfault;
+unsigned vm_pgmajfault;
+unsigned vm_pgscan;
+unsigned vm_pgrefill;
+unsigned vm_pgsteal;
+unsigned vm_kswapd_steal;
+unsigned vm_pageoutrun;
+unsigned vm_allocstall;
+
+void vminfo(void){
+  char namebuf[16]; /* big enough to hold any row name */
+  vm_table_struct findme = { namebuf, NULL};
+  vm_table_struct *found;
+  char *head;
+  char *tail;
+  static const vm_table_struct vm_table[] = {
+  {"allocstall",          &vm_allocstall},
+  {"kswapd_steal",        &vm_kswapd_steal},
+  {"nr_dirty",            &vm_nr_dirty},
+  {"nr_mapped",           &vm_nr_mapped},
+  {"nr_page_table_pages", &vm_nr_page_table_pages},
+  {"nr_pagecache",        &vm_nr_pagecache},
+  {"nr_reverse_maps",     &vm_nr_reverse_maps},
+  {"nr_slab",             &vm_nr_slab},
+  {"nr_writeback",        &vm_nr_writeback},
+  {"pageoutrun",          &vm_pageoutrun},
+  {"pgactivate",          &vm_pgactivate},
+  {"pgalloc",             &vm_pgalloc},
+  {"pgdeactivate",        &vm_pgdeactivate},
+  {"pgfault",             &vm_pgfault},
+  {"pgfree",              &vm_pgfree},
+  {"pgmajfault",          &vm_pgmajfault},
+  {"pgpgin",              &vm_pgpgin},
+  {"pgpgout",             &vm_pgpgout},
+  {"pgrefill",            &vm_pgrefill},
+  {"pgscan",              &vm_pgscan},
+  {"pgsteal",             &vm_pgsteal},
+  {"pswpin",              &vm_pswpin},
+  {"pswpout",             &vm_pswpout}
+  };
+  const int vm_table_count = sizeof(vm_table)/sizeof(vm_table_struct);
+
+  FILE_TO_BUF(VMINFO_FILE,vminfo_fd);
+
+  head = buf;
+  for(;;){
+    tail = strchr(head, ' ');
+    if(!tail) break;
+    *tail = '\0';
+    if(strlen(head) >= sizeof(namebuf)){
+      head = tail+1;
+      goto nextline;
+    }
+    strcpy(namebuf,head);
+    found = bsearch(&findme, vm_table, vm_table_count,
+        sizeof(vm_table_struct), compare_vm_table_structs
+    );
+    head = tail+1;
+    if(!found) goto nextline;
+    *(found->slot) = strtoul(head,&tail,10);
+nextline:
+
+//if(found) fprintf(stderr,"%s=%d\n",found->name,*(found->slot));
+//else      fprintf(stderr,"%s not found\n",findme.name);
+
+    tail = strchr(head, '\n');
+    if(!tail) break;
+    head = tail+1;
+  }
+}
+/*****************************************************************/
