@@ -1012,9 +1012,9 @@ static void configs_read (void)
          if (WINNAMSIZ <= strlen(Winstk[i]->winname)
          || strlen(DEF_FIELDS) != strlen(Winstk[i]->fieldscur))
             std_err(fmtmk(err_rc, RCfile));
-         fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d \n"
+         fscanf(fp, "\twinflags=%d, sortindx=%u, maxtasks=%d \n"
             , &Winstk[i]->winflags
-            , (int *)&Winstk[i]->sortindx
+            , &Winstk[i]->sortindx
             , &Winstk[i]->maxtasks);
          fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d \n"
             , &Winstk[i]->summclr

@@ -123,7 +123,7 @@
 /*######  Some Typedef's and Enum's  #####################################*/
 
         /* This typedef just ensures consistent 'process flags' handling */
-typedef unsigned char PFLG_t;
+typedef unsigned PFLG_t;
 
         /* These typedefs attempt to ensure consistent 'ticks' handling */
 typedef unsigned long long TICS_t;
@@ -248,14 +248,10 @@ enum pflag {
 typedef struct win {
    struct win *next,                    /* next window in window stack    */
               *prev;                    /* prior window in window stack   */
+   char       *captab [CAPTABMAX];      /* captab needed by show_special  */
    int         winnum,                  /* window's num (array pos + 1)   */
                winlines;                /* task window's rows (volatile)  */
    int         winflags;        /* 'view', 'show' and 'sort' mode flags   */
-   char        grpname   [GRPNAMSIZ],   /* window number:name, printable  */
-               winname   [WINNAMSIZ],   /* window name, user changeable   */
-               fieldscur [PFLAGSSIZ],   /* fields displayed and ordered   */
-               columnhdr [SMLBUFSIZ],   /* column headings for procflags  */
-               colusrnam [USRNAMSIZ];   /* if selected by the 'u' command */
    PFLG_t      procflags [PFLAGSSIZ],   /* fieldscur subset, as enum      */
                sortindx;                /* sort field, as a procflag      */
    int         maxpflgs,        /* number of procflags (upcase fieldscur) */
@@ -265,15 +261,19 @@ typedef struct win {
                msgsclr,                 /*        "       in msgs/pmts    */
                headclr,                 /*        "       in cols head    */
                taskclr;                 /*        "       in task display */
+   int         len_rownorm,     /* lengths of the corresponding terminfo  */
+               len_rowhigh;     /* strings to save mkcol() a strlen call  */
    char        capclr_sum [CLRBUFSIZ],  /* terminfo strings built from    */
                capclr_msg [CLRBUFSIZ],  /*    above clrs (& rebuilt too), */
                capclr_pmt [CLRBUFSIZ],  /*    but NO recurring costs !!!  */
                capclr_hdr [CLRBUFSIZ],     /* note: sum, msg and pmt strs */
                capclr_rowhigh [CLRBUFSIZ], /*    are only used when this  */
                capclr_rownorm [CLRBUFSIZ]; /*    window is the 'Curwin'!  */
-   int         len_rownorm,     /* lengths of the corresponding terminfo  */
-               len_rowhigh;     /* strings to save mkcol() a strlen call  */
-   char       *captab [CAPTABMAX];      /* captab needed by show_special  */
+   char        grpname   [GRPNAMSIZ],   /* window number:name, printable  */
+               winname   [WINNAMSIZ],   /* window name, user changeable   */
+               fieldscur [PFLAGSSIZ],   /* fields displayed and ordered   */
+               columnhdr [SMLBUFSIZ],   /* column headings for procflags  */
+               colusrnam [USRNAMSIZ];   /* if selected by the 'u' command */
 } WIN_t;
         /* ////////////////////////////////////////////////////////////// */
 
