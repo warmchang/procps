@@ -64,7 +64,7 @@ static void print_host(const char *restrict host, int len) {
 	}
     }
     // space-fill, and a '-' too if needed to ensure the column exists
-    if(width < 16) fputs("-               "+width, stderr);
+    if(width < 16) fputs("-               "+width, stdout);
 }
 
 /***** compact 7 char format for time intervals (belongs in libproc?) */
