@@ -30,6 +30,9 @@ ln_f     := ln -f
 ln_sf    := ln -sf
 install  := install -D --owner 0 --group 0
 
+# Lame x86-64 /lib64 and /usr/lib64 abomination:
+lib64    := lib$(shell [ -d /lib64 ] && echo 64)
+
 usr/bin                  := $(DESTDIR)/usr/bin/
 bin                      := $(DESTDIR)/bin/
 sbin                     := $(DESTDIR)/sbin/
@@ -39,8 +42,8 @@ man5                     := $(DESTDIR)/usr/share/man/man5/
 man8                     := $(DESTDIR)/usr/share/man/man8/
 etc/X11/applnk/Utilities := $(DESTDIR)/etc/X11/applnk/Utilities/
 usr/X11R6/bin            := $(DESTDIR)/usr/X11R6/bin/
-lib                      := $(DESTDIR)/lib/
-usr/lib                  := $(DESTDIR)/usr/lib/
+lib                      := $(DESTDIR)/$(lib64)/
+usr/lib                  := $(DESTDIR)/usr/$(lib64)/
 usr/include              := $(DESTDIR)/usr/include/
 
 #SKIP     := $(bin)kill $(man1)kill.1

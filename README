@@ -1,7 +1,7 @@
 COMPATIBILITY
 
     This code is intended for use with Linux 2.2.xx, 2.4.xx,
-    2.5.xx, and hopefully all future kernels. You should be
+    2.6.xx, and hopefully all future kernels. You should be
     running a system with libc 6, but libc 5 might work too.
 
 INSTALLATION
@@ -30,6 +30,12 @@ INSTALLATION
     You might do something like this:
 
     make usr/bin=/tmp/fff/iii/ DESTDIR=/tmp/fff install="install -D" ldconfig=echo install
+
+    If cross-compiling, you might need to set lib64 to
+    either "lib" or "lib64", like one of these examples:
+
+    make lib64=lib CFLAGS="-O2 -m32"
+    make lib64=lib64 CC=x86_64-gcc
 
 BUG REPORTS
 
