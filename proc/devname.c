@@ -164,6 +164,7 @@ static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
     t1 = "0123456789abcdef"[tmpmin&0x0f];
     sprintf(buf, "/dev/tty%c%c", t0, t1);
     break;
+  case  11:  sprintf(buf, "/dev/ttyB%d",  min); break;
   case  17:  sprintf(buf, "/dev/ttyH%d",  min); break;
   case  19:  sprintf(buf, "/dev/ttyC%d",  min); break;
   case  22:  sprintf(buf, "/dev/ttyD%d",  min); break; /* devices.txt */
