@@ -264,23 +264,23 @@ enum pflag {
                         ? TOGw(Curwin, f) : win_warn()
 
 typedef struct rcwin {
+   char        winname   [WINNAMSIZ],   /* window name, user changeable   */
+               fieldscur [PFLAGSSIZ];   /* fields displayed and ordered   */
+   int         winflags;        /* 'view', 'show' and 'sort' mode flags   */
    PFLG_t      sortindx;                /* sort field, as a procflag      */
-   int         winflags,        /* 'view', 'show' and 'sort' mode flags   */
-               maxtasks,        /* user requested maximum, 0 equals all   */
+   int         maxtasks,        /* user requested maximum, 0 equals all   */
                summclr,                 /* color num used in summ info    */
                msgsclr,                 /*        "       in msgs/pmts    */
                headclr,                 /*        "       in cols head    */
                taskclr;                 /*        "       in task display */
-   char        winname   [WINNAMSIZ],   /* window name, user changeable   */
-               fieldscur [PFLAGSSIZ];   /* fields displayed and ordered   */
 } rcwin;
 
 typedef struct rcf {    // global/system-wide
-   char  rcfid;                 // RCF_FILEID
-   int   altscr;                // Mode_altscr
-   int   irixps;                // Mode_irixps
-   float delay;                 // Delay_time
-   int   curwin;                // Curwin
+   int   Secure_mode;           // Secure_mode (not in Jim-format files)
+   int   Mode_altscr;           // Mode_altscr
+   int   Mode_irixps;           // Mode_irixps
+   float Delay_time;            // Delay_time
+   int   Curwin;                // Curwin
    rcwin win[4];                // each of 4 windows
 } RCF_t;
 
@@ -349,41 +349,17 @@ typedef struct win {
 #define CMDLINE_FMTS  "( %s )"
 #endif
 
-//typedef struct rcwin {
-//   PFLG_t      sortindx;                /* sort field, as a procflag      */
-//   int         winflags,        /* 'view', 'show' and 'sort' mode flags   */
-//               maxtasks,        /* user requested maximum, 0 equals all   */
-//               summclr,                 /* color num used in summ info    */
-//               msgsclr,                 /*        "       in msgs/pmts    */
-//               headclr,                 /*        "       in cols head    */
-//               taskclr;                 /*        "       in task display */
-//   char        winname   [WINNAMSIZ],   /* window name, user changeable   */
-//               fieldscur [PFLAGSSIZ];   /* fields displayed and ordered   */
-//} rcwin;
-//
-//typedef struct rcf {    // global/system-wide
-//   char  rcfid;                 // RCF_FILEID
-//   int   altscr;                // Mode_altscr
-//   int   irixps;                // Mode_irixps
-//   float delay;                 // Delay_time
-//   int   curwin;                // Curwin
-//   rcwin win[4];                // each of 4 windows
-//} RCF_t;
 
 RCF_t RCf_Defaults = {
-   RCF_FILEID, 0, 1, 3.0f, 0, {
-   { DEF_WINFLGS, P_CPU, 0,
-       COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED,
-       "Def", DEF_FIELDS },
-   { DEF_WINFLGS, P_PID, 0,
-       COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, COLOR_CYAN,
-       "Job", JOB_FIELDS },
-   { DEF_WINFLGS, P_MEM, 0,
-       COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA,
-       "Mem", MEM_FIELDS },
-   { DEF_WINFLGS, P_USR, 0,
-       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW,
-       "Usr", USR_FIELDS }
+   0, 0, 1, 3.0f, 0, {
+   { "Def", DEF_FIELDS, DEF_WINFLGS, P_CPU, 0,
+       COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED },
+   { "Job", JOB_FIELDS, DEF_WINFLGS, P_PID, 0,
+       COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, COLOR_CYAN },
+   { "Mem", MEM_FIELDS, DEF_WINFLGS, P_MEM, 0,
+       COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA },
+   { "Usr", USR_FIELDS, DEF_WINFLGS, P_USR, 0,
+       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW }
    }
 };
 

@@ -20,6 +20,9 @@
 #include <sys/ioctl.h>
 #include <sys/resource.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <ctype.h>
 #include <curses.h>
 #include <errno.h>
@@ -95,6 +98,9 @@ static int    Mode_altscr = 0;  /* 'A' - 'Alt' display mode (multi windows)  */
         /* 11/02 - next no longer alters a proc_t, it COULD be window based! */
 static int    Mode_irixps = 1;  /* 'I' - Irix vs. Solaris mode (SMP-only)    */
 static float  Delay_time = DEF_DELAY;  /* how long to sleep between updates  */
+
+        /* Global/Non-windows mode stuff for the persistance itself */
+static int    Crufty_config = 0;  /* if we read an old config, write one too */
 
         /* Global/Non-windows mode stuff that is NOT persistent */
 static int  No_ksyms = -1,      /* set to '0' if ksym avail, '1' otherwise   */
@@ -1005,6 +1011,180 @@ static proc_t **procs_refresh (proc_t **table, int flags)
 }
 
 
+/*######  field table  ##############################################*/
+        /* These are the Fieldstab.lflg values used here and in reframewins.
+           (own identifiers as documentation and protection against changes) */
+#define L_stat     PROC_FILLSTAT
+#define L_statm    PROC_FILLMEM
+#define L_status   PROC_FILLSTATUS
+#define L_CMDLINE  L_stat   | PROC_FILLARG
+#define L_EUSER    L_status | PROC_FILLUSR
+#define L_GROUP    L_status | PROC_FILLGRP
+#define L_NONE     0
+   // from either 'stat' or 'status' (preferred), via bits not otherwise used
+#define L_EITHER  ~(L_stat|L_statm|L_status|L_CMDLINE|L_EUSER|L_GROUP)
+   // for reframewins and summary_show 1st pass
+#define L_DEFAULT  PROC_FILLSTAT
+
+#define SF(f)  (QSORT_t)sort_P_ ## f
+
+        /* These are our gosh darn 'Fields' !
+           They MUST be kept in sync with pflags !!
+           note: for integer data, the length modifiers found in .fmts may
+                 NOT reflect the true field type found in proc_t -- this plus
+                 a cast when/if displayed provides minimal width protection. */
+static FTAB_t  Fieldstab[] = {
+/* .lflg anomolies:
+      P_UID, L_NONE  - natural outgrowth of 'stat()' in readproc        (euid)
+      P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
+      P_CMD, L_stat  - may yet require L_CMDLINE in reframewins  (cmd/cmdline)
+      L_EITHER       - must L_status, else 64-bit math, __udivdi3 on 32-bit !
+      keys   head           fmts     width   scale  sort   desc                     lflg
+     ------  -----------    -------  ------  -----  -----  ----------------------   -------- */
+   { "AaAa", "  PID ",      "%5u ",     -1,    -1, SF(PID), "Process Id",           L_EITHER },
+   { "BbBb", " PPID ",      "%5u ",     -1,    -1, SF(PPD), "Parent Process Pid",   L_EITHER },
+   { "Cc..", " PGID ",      "%5u ",     -1,    -1, SF(PGD), "Process Group Id",     L_stat   },
+   { "DdCc", " UID ",       "%4u ",     -1,    -1, SF(UID), "User Id",              L_NONE   },
+   { "EeDd", "USER     ",   "%-8.8s ",  -1,    -1, SF(USR), "User Name",            L_EUSER  },
+   { "Ff..", "GROUP    ",   "%-8.8s ",  -1,    -1, SF(GRP), "Group Name",           L_GROUP  },
+   { "GgGg", "TTY      ",   "%-8.8s ",   8,    -1, SF(TTY), "Controlling Tty",      L_stat   },
+   { "HhHh", " PR ",        "%3d ",     -1,    -1, SF(PRI), "Priority",             L_stat   },
+   { "IiIi", " NI ",        "%3d ",     -1,    -1, SF(NCE), "Nice value",           L_stat   },
+   { "JjYy", "#C ",         "%2u ",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
+   { "KkEe", "%CPU ",       "%#4.1f ",  -1,    -1, SF(CPU), "CPU usage",            L_stat   },
+   { "LlWw", "  TIME ",     "%6.6s ",    6,    -1, SF(TME), "CPU Time",             L_stat   },
+   { "MmWw", "   TIME+  ",  "%9.9s ",    9,    -1, SF(TME), "CPU Time, hundredths", L_stat   },
+   { "NnFf", "%MEM ",       "%#4.1f ",  -1,    -1, SF(RES), "Memory usage (RES)",   L_statm  },
+   { "OoMm", " VIRT ",      "%5.5s ",    5, SK_Kb, SF(VRT), "Virtual Image (kb)",   L_statm  },
+   { "PpOo", "SWAP ",       "%4.4s ",    4, SK_Kb, SF(SWP), "Swapped size (kb)",    L_statm  },
+   { "QqTt", " RES ",       "%4.4s ",    4, SK_Kb, SF(RES), "Resident size (kb)",   L_statm  },
+   { "RrKk", "CODE ",       "%4.4s ",    4, SK_Kb, SF(COD), "Code size (kb)",       L_statm  },
+   { "SsLl", "DATA ",       "%4.4s ",    4, SK_Kb, SF(DAT), "Data+Stack size (kb)", L_statm  },
+   { "TtPp", " SHR ",       "%4.4s ",    4, SK_Kb, SF(SHR), "Shared Mem size (kb)", L_statm  },
+   { "UuJj", "nFLT ",       "%4.4s ",    4, SK_no, SF(FLT), "Page Fault count",     L_stat   },
+   { "VvSs", "nDRT ",       "%4.4s ",    4, SK_no, SF(DRT), "Dirty Pages count",    L_statm  },
+#ifdef USE_LIB_STA3
+   { "WwVv", "STA ",        "%3.3s ",   -1,    -1, SF(STA), "Process Status",       L_status },
+#else
+   { "WwVv", "S ",          "%c ",      -1,    -1, SF(STA), "Process Status",       L_status },
+#endif
+   // next entry's special: '.head' will be formatted using table entry's own
+   //                       '.fmts' plus runtime supplied conversion args!
+   { "XxXx", "Command ",    "%-*.*s ",  -1,    -1, SF(CMD), "Command name/line",    L_stat   },
+   { "YyUu", "WCHAN     ",  "%-9.9s ",  -1,    -1, SF(WCH), "Sleeping in Function", L_stat   },
+   // next entry's special: the 0's will be replaced with '.'!
+#ifdef CASEUP_HEXES
+   { "ZzZz", "Flags    ",   "%08lX ",   -1,    -1, SF(FLG), "Task Flags <sched.h>", L_stat   },
+#else
+   { "ZzZz", "Flags    ",   "%08lx ",   -1,    -1, SF(FLG), "Task Flags <sched.h>", L_stat   },
+#endif
+   { "..Qq", "  A ",        "%4.4s ",    4, SK_no, SF(PID), "Accessed Page count",  L_stat   },
+   { "..Nn", " TRS ",       "%4.4s ",    4, SK_Kb, SF(PID), "Code in memory (kb)",  L_stat   },
+   { "..Rr", " WP ",        "%4.4s ",    4, SK_no, SF(PID), "Unwritable Pages",     L_stat   },
+   { "Jj[{", "#C ",         "%2u ",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
+   { "..\\|","Bad ",        "%2u ",     -1,    -1, SF(CPN), "-- must ignore | --",  0        },
+   { "..]}", "Bad ",        "%2u ",     -1,    -1, SF(CPN), "-- not used --",       0        },
+   { "..^~", "Bad ",        "%2u ",     -1,    -1, SF(CPN), "-- not used --",       0        },
+};
+#undef SF
+
+// convert, or NULL for failure
+static const FTAB_t * idx_to_ptr(int i){
+   if (i<0) return NULL;
+   if (i>=MAXTBL(Fieldstab)) return NULL;
+   return Fieldstab+i;
+}
+
+// convert, or -1 for failure
+static int ptr_to_idx(const FTAB_t *p){
+   int i;
+   if (p<Fieldstab) return -1;
+   i = p - Fieldstab;
+   if (i>=MAXTBL(Fieldstab)) return -1;
+   return i;
+}
+
+// convert
+static int ptr_to_jim(const FTAB_t *p, int off){
+   return p->keys[off];
+}
+
+// convert
+static int ptr_to_rik(const FTAB_t *p, int off){
+   return p->keys[off+2];
+}
+
+// convert
+static int idx_to_jim(int i, int off){
+   return Fieldstab[i].keys[off];
+}
+
+// convert
+static int idx_to_rik(int i, int off){
+   return Fieldstab[i].keys[off+2];
+}
+
+// convert, or -1 for failure
+static int jim_to_idx(int c){
+   int j = -1;
+   while (++j < MAXTBL(Fieldstab)) {
+      if (c == Fieldstab[j].keys[0]) return j;
+      if (c == Fieldstab[j].keys[1]) return j;
+   }
+   return -1;
+}
+
+// convert, or -1 for failure
+static int rik_to_idx(int c){
+   int j = -1;
+   while (++j < MAXTBL(Fieldstab)) {
+      if (c == Fieldstab[j].keys[2]) return j;
+      if (c == Fieldstab[j].keys[3]) return j;
+   }
+   return -1;
+}
+
+// convert, or NULL for failure
+static const FTAB_t * rik_to_ptr(int c){
+   int j = -1;
+   while (++j < MAXTBL(Fieldstab)) {
+      if (c == Fieldstab[j].keys[2]) return Fieldstab+j;
+      if (c == Fieldstab[j].keys[3]) return Fieldstab+j;
+   }
+   return NULL;
+}
+
+// convert, or NULL for failure
+static const FTAB_t * jim_to_ptr(int c){
+   int j = -1;
+   while (++j < MAXTBL(Fieldstab)) {
+      if (c == Fieldstab[j].keys[0]) return Fieldstab+j;
+      if (c == Fieldstab[j].keys[1]) return Fieldstab+j;
+   }
+   return NULL;
+}
+
+// convert, or 0 for failure
+static int rik_to_jim(int c){
+   int j = -1;
+   while (++j < MAXTBL(Fieldstab)) {     // find a Rik-to-Jim conversion for the letter
+      if (c == Fieldstab[j].keys[2]) return Fieldstab[j].keys[0];
+      if (c == Fieldstab[j].keys[3]) return Fieldstab[j].keys[1];
+   }
+   return 0;
+}
+
+// convert, or 0 for failure
+static int jim_to_rik(int c){
+   int j = -1;
+   while (++j < MAXTBL(Fieldstab)) {     // find a Jim-to-Rik conversion for the letter
+      if (c == Fieldstab[j].keys[0]) return Fieldstab[j].keys[2];
+      if (c == Fieldstab[j].keys[1]) return Fieldstab[j].keys[3];
+   }
+   return 0;
+}
+
+
 /*######  Startup routines  ##############################################*/
 
         /*
@@ -1035,11 +1215,150 @@ static void before (char *me)
 }
 
 
+static void print_rc (const RCF_t *const rc){
+   const rcwin *w;
+   int i = 0;
+   fprintf(stderr,"\n%d %d %d %f %d\n", rc->Secure_mode, rc->Mode_altscr, rc->Mode_irixps, rc->Delay_time, rc->Curwin);
+   while(i<4){
+      w = &rc->win[i];
+      fprintf(
+         stderr,
+         "<%s> <%s> %d %08x %d %d %d %d %d\n",
+         w->winname, w->fieldscur, w->sortindx,
+         w->winflags, w->maxtasks, w->summclr, w->msgsclr, w->headclr, w->taskclr
+      );
+      i++;
+   }
+}
+
+
+static int read_config_rik (const char * const fbuf, ssize_t num, RCF_t * const rc)
+{
+   int i;
+   int cnt;
+   const char *cp;
+   unsigned c_show = 0;
+   unsigned C_show = 0;
+   int badchar = 0; // allow a limited number of duplicates and junk
+
+   char scoreboard[256];
+
+   (void)num;
+
+   cp = fbuf+2;  // skip the "\n\n" we stuck at the beginning
+   cnt = strspn(cp,"AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz[{\\|]}^~");
+   if(cnt<22) return -1;  // catch junk, but not good files (had 25 chars in one)
+   if(cnt>37) return -1;  // catch junk, but not good files (had 29 chars in one)
+   if(cp[cnt] != '\n') return -2;
+   i = cnt;
+   rc->win[0].fieldscur[i] = '\0';
+   memset(scoreboard, '\0', sizeof scoreboard);
+   while (i--) {                        // go over each letter of the format string
+      int c = cp[i] & 0xffu;
+      int C = rik_to_jim(c);
+//      fprintf(stderr, "0x%02x -> 0x%02x, <%c> -> <%c>, %d\n",
+//           c,C,c,C,badchar); // debug
+      if (~c & 0x20) c_show |= 1 << (c & 0x1f); // 0x20 means lowercase means hidden
+      if(scoreboard[c|0xe0u]) badchar++; // duplicates not allowed
+//      fprintf(stderr, "badchar=<%c> 0x%02x\n",badchar, (unsigned char)badchar); for(;;);  // debug
+      scoreboard[c|0xe0u] = 1;
+      if (C) {
+         if (~C & 0x20) C_show |= 1 << (C & 0x1f); // 0x20 means lowercase means hidden
+         if(scoreboard[C&0x1fu]) badchar++; // duplicates not allowed
+         scoreboard[C&0x1fu] = 1;
+      } else {
+         badchar++;
+         C = '.';     // a value we hope will be ignored on output
+      }
+      rc->win[0].fieldscur[i] = C;
+   }
+//   fprintf(stderr, "badchar=%d\n",badchar); for(;;);  // debug
+   if (badchar > 4) return -9; // Rik messed up his format string, so allow 4
+   if (!c_show) return -10;   // nothing was shown
+   if (!C_show) return -11;   // nothing will be shown
+
+//fprintf(stderr,"converted <%s>\n",rc->win[0].fieldscur);
+//for(;;);
+
+   cp += cnt;
+   cp++;  // go past newline which we already checked
+
+   // rest of file is optional, but better look right if it exists
+   if (!*cp) return 12;
+   if (*cp < '2' || *cp > '9') return -13;  // stupid, and why isn't a '1' valid?
+   rc->Delay_time = *cp - '0';
+
+   memset(scoreboard, '\0', sizeof scoreboard);
+   for(;;){
+      int c = *++cp & 0xffu;  // protect scoreboard[] from negative char
+      if (!c) return -14;  // not OK to hit EOL w/o '\n'
+      if (c=='\n') break;
+      switch (c) {
+         case '0' ... '9':
+         case ' ':
+         case '.':
+            return -15;  // not supposed to have digits here
+
+         case 's':
+            rc->Secure_mode = 1;
+            break;
+         case 'S':
+            rc->win[0].winflags |= Show_CTIMES;
+            break;
+         case 'c':
+            rc->win[0].winflags |= Show_CMDLIN;
+            break;
+         case 'i':
+            rc->win[0].winflags &= ~Show_IDLEPS;
+            break;
+         case 'H':  // 'H' means to show threads
+            //rc->win[0].winflags |= ;
+            break;
+         case 'm':
+            rc->win[0].winflags &= ~View_MEMORY;
+            break;
+         case 'l':
+            rc->win[0].winflags &= ~View_LOADAV;
+            break;
+         case 't':
+            rc->win[0].winflags &= ~View_STATES;
+            break;
+         case 'I':
+            rc->Mode_irixps = 0;
+            break;
+
+         case 'M':
+            c = 0; // for scoreboard
+            rc->win[0].sortindx = P_MEM;
+            break;
+         case 'P':
+            c = 0; // for scoreboard
+            rc->win[0].sortindx = P_CPU;
+            break;
+         case 'A':
+            c = 0; // for scoreboard
+            rc->win[0].sortindx = P_PID;  // should be by start_time
+            break;
+         case 'T':
+            c = 0; // for scoreboard
+            rc->win[0].sortindx = P_TM2;
+            break;
+         case 'N':
+            c = 0; // for scoreboard
+            rc->win[0].sortindx = P_PID;
+            break;
+
+         default:
+            // just ignore it, except for the scoreboard of course
+            break;
+      }
+      if(scoreboard[c]) return -16; // duplicates not allowed
+      scoreboard[c] = 1;
+   }
+   return 17;
+}
+
         /*
-         * Build the local RC file name then try to read both of 'em.
-         * 'SYS_RCFILE' contains two lines consisting of the secure
-         *   mode switch and an update interval.  It's presence limits what
-         *   ordinary users are allowed to do.
          * '$HOME/RCfile' contains multiple lines - 2 global + 3 per window.
          *   line 1: a shameless advertisement
          *   line 2: an id, Mode_altcsr, Mode_irixps, Delay_time and Curwin.
@@ -1049,20 +1368,13 @@ static void before (char *me)
          *   line a: contains w->rc.winname, rc.fieldscur
          *   line b: contains w->rc.winflags, rc.sortindx, rc.maxtasks
          *   line c: contains w->rc.summclr, rc.msgsclr, rc.headclr, rc.taskclr */
-static void configs_read (void)
+static int read_config_jim (const char * const fbuf, ssize_t num, RCF_t * const rc)
 {
-   static const char err_rc[] = "rcfile now incompatible, you should delete '%s'";
-   char fbuf[SMLBUFSIZ];
-   FILE *fp;
-   float delay = DEF_DELAY;
-   char id;
    int i;
-
-   snprintf(RCfile, sizeof(RCfile), ".%src", Myname);
-   if (getenv("HOME"))
-      snprintf(RCfile, sizeof(RCfile), "%s/.%src", getenv("HOME"), Myname);
-
-   fp = fopen(SYS_RCFILE, "r");
+   int cnt;
+   const char *cp;
+   (void)num;
+#if 0
    if (fp) {
       fbuf[0] = '\0';
       fgets(fbuf, sizeof(fbuf), fp);            /* sys rc file, line #1 */
@@ -1071,43 +1383,243 @@ static void configs_read (void)
       fbuf[0] = '\0';
       fgets(fbuf, sizeof(fbuf), fp);            /* sys rc file, line #2 */
       fclose(fp);
-      sscanf(fbuf, "%f", &delay);
+      sscanf(fbuf, "%f", &Delay_time);
    }
-   fp = fopen(RCfile, "r");
-   if (fp) {
-      fgets(fbuf, sizeof(fbuf), fp);    /* ignore shameless advertisement */
-      if (5 != (fscanf(fp, "Id:%c, "
-         "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%f, Curwin=%d\n"
-         , &id, &Mode_altscr, &Mode_irixps, &delay, &i)) || RCF_FILEID != id)
-            std_err(fmtmk(err_rc, RCfile));
+#endif
 
-         /* you saw that, right?  (fscanf stickin' it to 'i') */
-      Curwin = Winstk[i];
-      for (i = 0; i < GROUPSMAX; i++) {
-           /* we won't check fscanf returns from here on out -- we'll be
-              hunky-dory with nothing in an rcfile except the 1st 2 lines */
-         fscanf(fp, "%s\tfieldscur=%s\n"
-            , Winstk[i]->rc.winname, Winstk[i]->rc.fieldscur);
-         if (WINNAMSIZ <= strlen(Winstk[i]->rc.winname)
-         || strlen(DEF_FIELDS) != strlen(Winstk[i]->rc.fieldscur))
-            std_err(fmtmk(err_rc, RCfile));
-         fscanf(fp, "\twinflags=%d, sortindx=%u, maxtasks=%d \n"
-            , &Winstk[i]->rc.winflags
-            , &Winstk[i]->rc.sortindx
-            , &Winstk[i]->rc.maxtasks);
-         fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d \n"
-            , &Winstk[i]->rc.summclr
-            , &Winstk[i]->rc.msgsclr
-            , &Winstk[i]->rc.headclr
-            , &Winstk[i]->rc.taskclr);
-      }
-      fclose(fp);
+   cp = strstr(fbuf,"\n\nRCfile for ");
+   if (!cp) return -1;
+   cp = strchr(cp+2,'\n');
+   if (!cp++) return -2;
+
+   cnt = sscanf(cp, "Id:a, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%f, Curwin=%d\n"
+      , &rc->Mode_altscr, &rc->Mode_irixps, &rc->Delay_time, &rc->Curwin);
+   if (cnt != 4) return -3;
+   cp = strchr(cp,'\n');
+   if (!cp++) return -4;
+
+   for (i = 0; i < GROUPSMAX; i++) {
+      rcwin *ptr = &rc->win[i];
+      cnt = sscanf(cp, "%s\tfieldscur=%s\n", ptr->winname, ptr->fieldscur);
+      if (cnt!=2) return 5+100*i;
+      if (WINNAMSIZ <= strlen(ptr->winname)) return -6;
+      if (strlen(DEF_FIELDS) != strlen(ptr->fieldscur)) return -7;
+      cp = strchr(cp,'\n');
+      if (!cp++) return -(8+100*i);
+
+      cnt = sscanf(cp, "\twinflags=%d, sortindx=%u, maxtasks=%d \n"
+         , &ptr->winflags
+         , &ptr->sortindx
+         , &ptr->maxtasks);
+      if (cnt!=3) return -(9+100*i);
+      cp = strchr(cp,'\n');
+      if (!cp++) return -(10+100*i);
+
+      cnt = sscanf(cp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d \n"
+         , &ptr->summclr
+         , &ptr->msgsclr
+         , &ptr->headclr
+         , &ptr->taskclr);
+      if (cnt!=4) return -(11+100*i);
+      cp = strchr(cp,'\n');
+      if (!cp++) return -(12+100*i);
    }
-      /* lastly, establish the true runtime secure mode and delay time */
-   Secure_mode = getuid() ? Secure_mode : 0;
-   if (!Secure_mode || !getuid()) Delay_time = delay;
+   return 13;
 }
 
+static void configs_read (void)
+{
+   char fbuf[1600];
+   const char *home;
+   int fd;
+   RCF_t sys_rcfile;
+   RCF_t usr_rcfile;
+
+   memcpy(&sys_rcfile, &RCf_Defaults, sizeof(sys_rcfile));
+   fd = open(SYS_RCFILE, O_RDONLY);
+   if (fd>0) {
+      ssize_t num;
+      fbuf[0] = '\n';
+      fbuf[1] = '\n';
+      num = read(fd, fbuf+2, sizeof(fbuf)-3);
+      if (num>0) {
+         fbuf[num+2] = '\0';
+         read_config_rik(fbuf,num,&sys_rcfile); // not setting Crufty_config
+         read_config_jim(fbuf,num,&sys_rcfile);
+      }
+      close(fd);
+   }
+
+   memcpy(&usr_rcfile, &RCf_Defaults, sizeof(usr_rcfile));
+   home = getenv("HOME");
+   if (home && *home) {
+      snprintf(RCfile, sizeof(RCfile), "%s/.%src", home, Myname);
+      fd = open(RCfile, O_RDONLY);
+      if (fd>0) {
+         ssize_t num;
+         fbuf[0] = '\n';
+         fbuf[1] = '\n';
+         num = read(fd, fbuf+2, sizeof(fbuf)-3);
+         if (num>0) {
+            fbuf[num+2] = '\0';
+//            fprintf(stderr, "%d\n", read_config_rik(fbuf,num,&usr_rcfile)); for(;;);
+            if (read_config_rik(fbuf,num,&usr_rcfile) > 0) Crufty_config = 1;
+            else memcpy(&usr_rcfile, &RCf_Defaults, sizeof(usr_rcfile));  // maybe mangled
+            read_config_jim(fbuf,num,&usr_rcfile);
+         }
+         close(fd);
+      }
+   }
+
+   memcpy(&Winstk[0]->rc, &usr_rcfile.win[0], sizeof(rcwin));
+   memcpy(&Winstk[1]->rc, &usr_rcfile.win[1], sizeof(rcwin));
+   memcpy(&Winstk[2]->rc, &usr_rcfile.win[2], sizeof(rcwin));
+   memcpy(&Winstk[3]->rc, &usr_rcfile.win[3], sizeof(rcwin));
+   Mode_altscr = usr_rcfile.Mode_altscr;
+   Mode_irixps = usr_rcfile.Mode_irixps;
+   Curwin = Winstk[usr_rcfile.Curwin];
+
+      /* lastly, establish the true runtime secure mode and delay time */
+   if (getuid()) {
+      Secure_mode = sys_rcfile.Secure_mode;
+   } else {
+      Secure_mode = 0;
+   }
+   if (Secure_mode) {
+      Delay_time = sys_rcfile.Delay_time;
+   } else {
+      Delay_time = usr_rcfile.Delay_time;
+   }
+print_rc(&sys_rcfile);
+print_rc(&usr_rcfile);
+}
+
+static void write_config_rik(FILE *fp, const RCF_t * const rc){
+   char buf[40];
+   char *cp = Winstk[0]->rc.fieldscur;
+   int j = 0;
+   int tmp;
+   while (j < 36) {
+      int c = *cp++ & 0xff;
+      switch (c) {
+         case 1 ... ' ':
+         case '.':
+         case 'X':     // trying not to crash Rik's top (move COMMAND)
+         case 0x7f ... 0xff:
+            continue;  // throw away junk (some of it)
+         default:
+            c = jim_to_rik(c);
+            if(!c) continue;   // skip one we can't represent
+            break;
+         case '\0':
+            buf[j++] = 'X';  // trying not to crash Rik's top (move COMMAND)
+            break;
+      }
+      buf[j++] = c;
+      if (!c) break;
+   }
+
+   fprintf(fp, "%s\n", buf);
+   cp = buf;
+
+   tmp = (int)(rc->Delay_time + 0.5);
+   if (tmp < 2) tmp = 2;
+   if (tmp > 9) tmp = 9;
+   *cp++ = tmp + '0';
+
+   tmp = rc->win[0].winflags;
+   if ( rc->Secure_mode)   *cp++ = 's';
+   if ( tmp & Show_CTIMES) *cp++ = 'S';
+   if ( tmp & Show_CMDLIN) *cp++ = 'c';
+   if (~tmp & Show_IDLEPS) *cp++ = 'i';
+   //if () *cp++ = 'H';
+   if (~tmp & View_MEMORY) *cp++ = 'm';
+   if (~tmp & View_LOADAV) *cp++ = 'l';
+   if (~tmp & View_STATES) *cp++ = 't';
+   if (!rc->Mode_irixps)   *cp++ = 'I';
+   switch (rc->win[0].sortindx) {
+      case P_MEM:
+         *cp++ = 'M';
+         break;
+      case P_CPU:
+         *cp++ = 'P';
+         break;
+//    case P_???: sort by start_time
+//       *cp++ = 'A';
+//       break;
+      case P_TM2:
+         *cp++ = 'T';
+         break;
+      case P_PID:
+         *cp++ = 'N';
+         break;
+   }
+
+   *cp++ = '\n';
+   *cp++ = '\n';
+   *cp++ = '\n';
+   *cp++ = '\0';
+   fprintf(fp, "%s\n", buf);
+}
+
+static void write_config_jim(FILE *fp){
+   int i;
+   fprintf(fp, "RCfile for \"%s with windows\"\t\t# shameless braggin'\n"
+      , Myname);
+   fprintf(fp, "Id:%c, "
+      "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%d\n"
+      , RCF_FILEID
+      , Mode_altscr, Mode_irixps, Delay_time, Curwin - Winstk[0]);
+   for (i = 0; i < GROUPSMAX; i++) {
+      char buf[40];
+      char *cp = Winstk[i]->rc.fieldscur;
+      int j = 0;
+      while (j < 36) {
+         int c = *cp++ & 0xff;
+         switch (c) {
+            case 1 ... ' ':
+            case '.':
+            case 0x7f ... 0xff:
+               continue;  // throw away junk (some of it)
+            default:
+               buf[j++] = c;  // gets the '\0' too
+         }
+         if (!c) break;
+      }
+      fprintf(fp, "%s\tfieldscur=%s\n"
+         , Winstk[i]->rc.winname, buf);
+      fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
+         , Winstk[i]->rc.winflags
+         , Winstk[i]->rc.sortindx
+         , Winstk[i]->rc.maxtasks);
+      fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
+         , Winstk[i]->rc.summclr
+         , Winstk[i]->rc.msgsclr
+         , Winstk[i]->rc.headclr
+         , Winstk[i]->rc.taskclr);
+   }
+}
+
+static const char * write_config(void){
+   RCF_t usr_rcfile;
+   FILE *fp = fopen(RCfile, "w");
+
+   memcpy(&usr_rcfile.win[0], &Winstk[0]->rc, sizeof(rcwin));
+   memcpy(&usr_rcfile.win[1], &Winstk[1]->rc, sizeof(rcwin));
+   memcpy(&usr_rcfile.win[2], &Winstk[2]->rc, sizeof(rcwin));
+   memcpy(&usr_rcfile.win[3], &Winstk[3]->rc, sizeof(rcwin));
+   usr_rcfile.Mode_altscr = Mode_altscr;
+   usr_rcfile.Mode_irixps = Mode_irixps;
+   usr_rcfile.Curwin      = Curwin - Winstk[0];
+   usr_rcfile.Secure_mode = Secure_mode;
+   usr_rcfile.Delay_time  = Delay_time;
+
+   if (!fp) return strerror(errno);
+   if(Crufty_config) write_config_rik(fp, &usr_rcfile);
+   write_config_jim(fp);
+   fclose(fp);
+   return NULL;
+}
 
         /*
          * Parse command line arguments.
@@ -1253,78 +1765,6 @@ static void whack_terminal (void)
 
 /*######  Field Selection/Ordering routines  #############################*/
 
-        /* These are the Fieldstab.lflg values used here and in reframewins.
-           (own identifiers as documentation and protection against changes) */
-#define L_stat     PROC_FILLSTAT
-#define L_statm    PROC_FILLMEM
-#define L_status   PROC_FILLSTATUS
-#define L_CMDLINE  L_stat   | PROC_FILLARG
-#define L_EUSER    L_status | PROC_FILLUSR
-#define L_GROUP    L_status | PROC_FILLGRP
-#define L_NONE     0
-   // from either 'stat' or 'status' (preferred), via bits not otherwise used
-#define L_EITHER  ~(L_stat|L_statm|L_status|L_CMDLINE|L_EUSER|L_GROUP)
-   // for reframewins and summary_show 1st pass
-#define L_DEFAULT  PROC_FILLSTAT
-
-#define SF(f)  (QSORT_t)sort_P_ ## f
-
-        /* These are our gosh darn 'Fields' !
-           They MUST be kept in sync with pflags !!
-           note: for integer data, the length modifiers found in .fmts may
-                 NOT reflect the true field type found in proc_t -- this plus
-                 a cast when/if displayed provides minimal width protection. */
-static FTAB_t  Fieldstab[] = {
-/* .lflg anomolies:
-      P_UID, L_NONE  - natural outgrowth of 'stat()' in readproc        (euid)
-      P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
-      P_CMD, L_stat  - may yet require L_CMDLINE in reframewins  (cmd/cmdline)
-      L_EITHER       - must L_status, else 64-bit math, __udivdi3 on 32-bit !
-      keys   head           fmts     width   scale  sort   desc                     lflg
-     ------  -----------    -------  ------  -----  -----  ----------------------   -------- */
-   { "AaAa", "  PID ",      "%5u ",     -1,    -1, SF(PID), "Process Id",           L_EITHER },
-   { "BbBb", " PPID ",      "%5u ",     -1,    -1, SF(PPD), "Parent Process Pid",   L_EITHER },
-   { "Cc..", " PGID ",      "%5u ",     -1,    -1, SF(PGD), "Process Group Id",     L_stat   },
-   { "DdCc", " UID ",       "%4u ",     -1,    -1, SF(UID), "User Id",              L_NONE   },
-   { "EeDd", "USER     ",   "%-8.8s ",  -1,    -1, SF(USR), "User Name",            L_EUSER  },
-   { "Ff..", "GROUP    ",   "%-8.8s ",  -1,    -1, SF(GRP), "Group Name",           L_GROUP  },
-   { "GgGg", "TTY      ",   "%-8.8s ",   8,    -1, SF(TTY), "Controlling Tty",      L_stat   },
-   { "HhHh", " PR ",        "%3d ",     -1,    -1, SF(PRI), "Priority",             L_stat   },
-   { "IiIi", " NI ",        "%3d ",     -1,    -1, SF(NCE), "Nice value",           L_stat   },
-   { "JjYy", "#C ",         "%2u ",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
-   { "KkEe", "%CPU ",       "%#4.1f ",  -1,    -1, SF(CPU), "CPU usage",            L_stat   },
-   { "LlWw", "  TIME ",     "%6.6s ",    6,    -1, SF(TME), "CPU Time",             L_stat   },
-   { "MmWw", "   TIME+  ",  "%9.9s ",    9,    -1, SF(TME), "CPU Time, hundredths", L_stat   },
-   { "NnFf", "%MEM ",       "%#4.1f ",  -1,    -1, SF(RES), "Memory usage (RES)",   L_statm  },
-   { "OoMm", " VIRT ",      "%5.5s ",    5, SK_Kb, SF(VRT), "Virtual Image (kb)",   L_statm  },
-   { "PpOo", "SWAP ",       "%4.4s ",    4, SK_Kb, SF(SWP), "Swapped size (kb)",    L_statm  },
-   { "QqTt", " RES ",       "%4.4s ",    4, SK_Kb, SF(RES), "Resident size (kb)",   L_statm  },
-   { "RrKk", "CODE ",       "%4.4s ",    4, SK_Kb, SF(COD), "Code size (kb)",       L_statm  },
-   { "SsLl", "DATA ",       "%4.4s ",    4, SK_Kb, SF(DAT), "Data+Stack size (kb)", L_statm  },
-   { "TtPp", " SHR ",       "%4.4s ",    4, SK_Kb, SF(SHR), "Shared Mem size (kb)", L_statm  },
-   { "UuJj", "nFLT ",       "%4.4s ",    4, SK_no, SF(FLT), "Page Fault count",     L_stat   },
-   { "VvSs", "nDRT ",       "%4.4s ",    4, SK_no, SF(DRT), "Dirty Pages count",    L_statm  },
-#ifdef USE_LIB_STA3
-   { "WwVv", "STA ",        "%3.3s ",   -1,    -1, SF(STA), "Process Status",       L_status },
-#else
-   { "WwVv", "S ",          "%c ",      -1,    -1, SF(STA), "Process Status",       L_status },
-#endif
-   // next entry's special: '.head' will be formatted using table entry's own
-   //                       '.fmts' plus runtime supplied conversion args!
-   { "XxXx", "Command ",    "%-*.*s ",  -1,    -1, SF(CMD), "Command name/line",    L_stat   },
-   { "YyUu", "WCHAN     ",  "%-9.9s ",  -1,    -1, SF(WCH), "Sleeping in Function", L_stat   },
-   // next entry's special: the 0's will be replaced with '.'!
-#ifdef CASEUP_HEXES
-   { "ZzZz", "Flags    ",   "%08lX ",   -1,    -1, SF(FLG), "Task Flags <sched.h>", L_stat   },
-#else
-   { "ZzZz", "Flags    ",   "%08lx ",   -1,    -1, SF(FLG), "Task Flags <sched.h>", L_stat   },
-#endif
-   { "..Qq", "  A ",        "%4.4s ",    4, SK_no, SF(PID), "Accessed Page count",  L_stat   },
-   { "..Nn", " TRS ",       "%4.4s ",    4, SK_Kb, SF(PID), "Resident Text Size (kb)", L_stat   },
-   { "..Rr", " WP ",        "%4.4s ",    4, SK_no, SF(PID), "Write Protected Pages", L_stat   },
-   { "Jj[{", "CPU ",        "%2u ",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
-};
-#undef SF
 
         /*
          * Display each field represented in the Fields Table along with its
@@ -1343,15 +1783,18 @@ static void display_fields (const char *fields, const char *xtra)
       flicker if they're too lazy to handle their own asterisk (*) logic */
    putp(Curwin->cap_bold);
    for (i = 0; i < MAXTBL(Fieldstab); ++i) {
+      int c;
       int b = (NULL != strchr(fields, i + 'A'));
          /* advance past any leading spaces */
       for (p = Fieldstab[i].head; ' ' == *p; ++p)
          ;
+      c = jim_to_rik(b ? i + 'A' : i + 'a');
+      if (!c) continue;
       PUTT("%s%s%c %c: %-10s = %s"
          , tg2((i / rmax) * cmax, (i % rmax) + yRSVD)
          , b ? Curwin->cap_bold : Cap_norm
          , b ? '*' : ' '
-         , b ? i + 'A' : i + 'a'
+         , c
          , p
          , Fieldstab[i].desc);
    }
@@ -1452,7 +1895,7 @@ static void fields_toggle (void)
       show_special(1, fmtmk(FIELDS_current
          , Cap_home, Curwin->rc.fieldscur, Curwin->grpname, prompt));
       chin(0, &c, 1);
-      i = toupper(c) - 'A';
+      i = rik_to_jim(c) & 0x1f;  // was:  i = toupper(c) - 'A';
       if (i < 0 || i >= MAXTBL(Fieldstab)) break;
       if ((p = strchr(Curwin->rc.fieldscur, i + 'A')))
          *p = i + 'a';
@@ -2048,31 +2491,11 @@ static void do_key (unsigned c)
          break;
 
       case 'W':
-      {  FILE *fp = fopen(RCfile, "w"); int i;
-         if (fp) {
-            fprintf(fp, "RCfile for \"%s with windows\"\t\t# shameless braggin'\n"
-               , Myname);
-            fprintf(fp, "Id:%c, "
-               "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%d\n"
-               , RCF_FILEID
-               , Mode_altscr, Mode_irixps, Delay_time, Curwin - Winstk[0]);
-            for (i = 0; i < GROUPSMAX; i++) {
-               fprintf(fp, "%s\tfieldscur=%s\n"
-                  , Winstk[i]->rc.winname, Winstk[i]->rc.fieldscur);
-               fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-                  , Winstk[i]->rc.winflags
-                  , Winstk[i]->rc.sortindx
-                  , Winstk[i]->rc.maxtasks);
-               fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
-                  , Winstk[i]->rc.summclr
-                  , Winstk[i]->rc.msgsclr
-                  , Winstk[i]->rc.headclr
-                  , Winstk[i]->rc.taskclr);
-            }
-            fclose(fp);
+      {  const char *err = write_config();
+         if (err)
+            show_msg(fmtmk("\aFailed '%s' open: %s", RCfile, err));
+         else
             show_msg(fmtmk("Wrote configuration to '%s'", RCfile));
-         } else
-            show_msg(fmtmk("\aFailed '%s' open: %s", RCfile, strerror(errno)));
       }
          break;
 
