@@ -161,7 +161,7 @@ static void select_procs (void)
 			}
 		}
 
-		if (!is_omitted(task.XXXID) && task.cmdline) {
+		if (!is_omitted(task.XXXID) && task.cmdline && *task.cmdline) {
 
 			cmd_arg0 = *task.cmdline;
 
