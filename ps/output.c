@@ -557,7 +557,7 @@ static int pr_wchan(char *restrict const outbuf, const proc_t *restrict const pp
  * more than one thread waiting in the kernel.
  */
     if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "%s", "-");
-    if(wchan_is_number) return snprintf(outbuf, COLWID, "%lx", pp->wchan & 0xffffff);
+    if(wchan_is_number) return snprintf(outbuf, COLWID, "%x", (unsigned)(pp->wchan) & 0xffffffu);
     return snprintf(outbuf, COLWID, "%s", wchan(pp->wchan, pp->pid));
 }
 
@@ -625,15 +625,15 @@ tsiz	text size (in Kbytes)
 ***/
 
 static int pr_stackp(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%08lx", pp->start_stack);
+    return snprintf(outbuf, COLWID, "%08x", (unsigned)(pp->start_stack));
 }
 
 static int pr_esp(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%08lx", pp->kstk_esp);
+    return snprintf(outbuf, COLWID, "%08x", (unsigned)(pp->kstk_esp));
 }
 
 static int pr_eip(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%08lx", pp->kstk_eip);
+    return snprintf(outbuf, COLWID, "%08x", (unsigned)(pp->kstk_eip));
 }
 
 /* This function helps print old-style time formats */
@@ -769,7 +769,7 @@ static int pr_wname(char *restrict const outbuf, const proc_t *restrict const pp
 
 static int pr_nwchan(char *restrict const outbuf, const proc_t *restrict const pp){
     if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "-");
-    return snprintf(outbuf, COLWID, "%lx", pp->wchan & 0xffffff);
+    return snprintf(outbuf, COLWID, "%x", (unsigned)(pp->wchan) & 0xffffffu);
 }
 
 static int pr_rss(char *restrict const outbuf, const proc_t *restrict const pp){
