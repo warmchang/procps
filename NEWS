@@ -1,3 +1,23 @@
+procps-3.1.1 --> procps-3.
+
+vmstat -s
+vmstat -f
+top handles old (and future) config files
+w is way faster
+top's B toggle
+top's t fixed    <--- minor bug
+top several times faster
+out-of-bounds RT as "RT"
+general C99 clean-up
+watch: don't drop empty lines   <--- minor bug
+watch: re-indented
+ps: smaller (was it 1 kB or 2 kB ?)
+ps: fewer globals
+ps: hardware-enforced buffer protection
+some seLinux fixes    <--- minor bug
+top: old sort keys
+top: man page tweak
+
 procps-3.1.0 --> procps-3.1.1
 
 vmstat faster on 2.5.xx kernels
