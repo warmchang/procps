@@ -2,7 +2,7 @@ Summary: Utilities for monitoring your system and processes on your system.
 Name: procps
 %define major_version 3
 %define minor_version 0
-%define revision 0
+%define revision 1
 %define version %{major_version}.%{minor_version}.%{revision}
 Version: %{version}
 Release: 1
@@ -54,7 +54,7 @@ mkdir -p $RPM_BUILD_ROOT/bin $RPM_BUILD_ROOT/usr/bin $RPM_BUILD_ROOT/sbin
 mkdir -p $RPM_BUILD_ROOT/usr/man/man1 $RPM_BUILD_ROOT/usr/man/man8
 mkdir -p $RPM_BUILD_ROOT/lib $RPM_BUILD_ROOT/usr/X11R6/bin
 
-make DESTDIR=$RPM_BUILD_ROOT OWNERGROUP= MANDIR=/usr/share/man install
+make DESTDIR=$RPM_BUILD_ROOT install=install install
 
 %clean
 rm -rf $RPM_BUILD_ROOT

@@ -1,4 +1,15 @@
-Recent changes:
+procps-3.0.0 --> procps-3.0.1
+
+sysctl handles net/ipv4/conf/eth1.0123/tag (VLAN interface)
+sysctl handles net.ipv4.conf.eth1/0123.tag (VLAN interface)
+"ps" is now about 2x faster than in procps-2.x.x
+"ps -F" now documented
+w works in KOI8-R locale
+vmstat documentation update
+"skill -n blah blah blah" lets you test options
+simple "make && make install" now
+
+procps-2.x.x --> procps-3.0.0
 
 designed to support Linux 2.0 through 2.5.41 and beyond
 new top, with optional: color, windowing, SMP stats
