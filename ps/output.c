@@ -943,8 +943,8 @@ static int pr_context(char *restrict const outbuf, const proc_t *restrict const 
   int fd;
 
 // wchan file is suitable for testing
-//snprintf(filename, sizeof filename, "/proc/%d/task/%d/wchan", pp->tgid, pp->tid);
-  snprintf(filename, sizeof filename, "/proc/%d/task/%d/attr/current", pp->tgid, pp->tid);
+//snprintf(filename, sizeof filename, "/proc/%d/wchan", pp->tgid);
+  snprintf(filename, sizeof filename, "/proc/%d/attr/current", pp->tgid);
 
   fd = open(filename, O_RDONLY, 0);
   if(likely(fd==-1)) goto fail;
@@ -1052,7 +1052,7 @@ static const format_struct format_array[] = {
 {"cnswap",    "-",       pr_nop,      sr_cnswap,  1,   0,    LNX, AN|RIGHT},
 {"comm",      "COMMAND", pr_comm,     sr_nop,    16, COM,    U98, PO|UNLIMITED}, /*ucomm*/
 {"command",   "COMMAND", pr_args,     sr_nop,    16, ARG,    XXX, PO|UNLIMITED}, /*args*/
-{"context",   "CONTEXT", pr_context,  sr_nop,    40,   0,    LNX, AN|LEFT},
+{"context",   "CONTEXT", pr_context,  sr_nop,    40,   0,    LNX, PO|LEFT},
 {"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, ET|RIGHT}, /*cpu*/
 {"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
 {"cputime",   "TIME",    pr_time,     sr_nop,     8,   0,    DEC, ET|RIGHT}, /*time*/
@@ -1092,7 +1092,7 @@ static const format_struct format_array[] = {
 {"jobc",      "JOBC",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
 {"ktrace",    "KTRACE",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
 {"ktracep",   "KTRACEP", pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
-{"label",     "LABEL",   pr_nop,      sr_nop,    25,  0,     SGI, AN|LEFT},
+{"label",     "LABEL",   pr_nop,      sr_nop,    25,  0,     SGI, PO|LEFT},
 {"lim",       "LIM",     pr_lim,      sr_rss_rlim, 5,  0,    BSD, AN|RIGHT},
 {"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, AN|LEFT}, /*logname*/   /* double check */
 {"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, AN|LEFT}, /*login*/

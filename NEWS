@@ -1,3 +1,8 @@
+procps-3.1.15 --> procps-3.1.16
+
+future-proof the tty handling   (thanks to Zhou Wei)
+slabtop  (Chris Rivera and Robert Love)          #226778 rh114012a
+
 procps-3.1.14 --> procps-3.1.15
 
 install to /lib64 if it exists

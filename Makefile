@@ -18,9 +18,9 @@
 
 VERSION      := 3
 SUBVERSION   := 1
-MINORVERSION := 14
-TARVERSION   := 3.1.14
-LIBVERSION   := 3.1.14
+MINORVERSION := 15
+TARVERSION   := 3.1.15
+LIBVERSION   := 3.1.15
 
 ############ vars
 
@@ -51,18 +51,22 @@ usr/include              := $(DESTDIR)/usr/include/
 BINFILES := $(usr/bin)uptime $(usr/bin)tload $(usr/bin)free $(usr/bin)w \
             $(usr/bin)top $(usr/bin)vmstat $(usr/bin)watch $(usr/bin)skill \
             $(usr/bin)snice $(bin)kill $(sbin)sysctl $(usr/bin)pmap \
-            $(usr/proc/bin)pgrep $(usr/proc/bin)pkill
+            $(usr/proc/bin)pgrep $(usr/proc/bin)pkill $(usr/bin)slabtop
 
 MANFILES := $(man1)uptime.1 $(man1)tload.1 $(man1)free.1 $(man1)w.1 \
             $(man1)top.1 $(man1)watch.1 $(man1)skill.1 $(man1)kill.1 \
             $(man1)snice.1 $(man1)pgrep.1 $(man1)pkill.1 $(man1)pmap.1 \
-            $(man5)sysctl.conf.5 $(man8)vmstat.8 $(man8)sysctl.8
+            $(man5)sysctl.conf.5 $(man8)vmstat.8 $(man8)sysctl.8 \
+            $(man1)slabtop.1
 
 TARFILES := AUTHORS BUGS NEWS README TODO COPYING COPYING.LIB \
             Makefile procps.lsm procps.spec v t README.top \
             minimal.c $(notdir $(MANFILES)) \
             uptime.c tload.c free.c w.c top.c vmstat.c watch.c skill.c \
-            sysctl.c pgrep.c top.h pmap.c
+            sysctl.c pgrep.c top.h pmap.c slabtop.c
+
+# Stuff (tests, temporary hacks, etc.) left out of the standard tarball
+_TARFILES :=
 
 CURSES := -I/usr/include/ncurses -lncurses
 
@@ -98,7 +102,7 @@ ALL_LDFLAGS := $(PKG_LDFLAGS) $(LDFLAGS)
 .SUFFIXES:
 .SUFFIXES: .a .o .c .s .h
 
-.PHONY: all clean do_all install tar  # ps
+.PHONY: all clean do_all install tar extratar
 
 ALL := $(notdir $(BINFILES))
 
@@ -141,6 +145,12 @@ tar: $(TARFILES)
 	tar cf procps-$(TARVERSION).tar procps-$(TARVERSION)
 	gzip -9 procps-$(TARVERSION).tar
 
+extratar: $(_TARFILES)
+	mkdir extra-$(TARVERSION)
+	(tar cf - $(_TARFILES)) | (cd extra-$(TARVERSION) && tar xf -)
+	tar cf extra-$(TARVERSION).tar extra-$(TARVERSION)
+	gzip -9 extra-$(TARVERSION).tar
+
 clean:
 	rm -f $(CLEAN)
 
@@ -171,7 +181,7 @@ w.o:    w.c
 pmap w uptime tload free sysctl vmstat utmp pgrep skill: % : %.o $(LIBPROC)
 	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^
 
-top:   % : %.o $(LIBPROC)
+slabtop top: % : %.o $(LIBPROC)
 	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -o $@ $^ $(CURSES)
 
 watch: % : %.o

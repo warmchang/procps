@@ -36,7 +36,7 @@
 #define MINOR_OF(d) ((unsigned)minor(d))
 #else
 #define MAJOR_OF(d) ( ((unsigned)(d)>>8u) & 0xfffu )
-#define MINOR_OF(d) ( ((unsigned)(d)&0xffu) | (((unsigned)(d)&0xfff00000u)>>20u) )
+#define MINOR_OF(d) ( ((unsigned)(d)&0xffu) | (((unsigned)(d)&0xfff00000u)>>12u) )
 #undef major
 #undef minor
 #define major <-- do not use -->

@@ -446,12 +446,16 @@ static void suspend (int dont_care_sig)
    tcsetattr(STDIN_FILENO, TCSAFLUSH, &Savedtty);
    putp(tg2(0, Screen_rows));
    putp(Cap_curs_norm);
+   putp(Cap_smam);
+   putp("\n");
    fflush(stdout);
    raise(SIGSTOP);
       /* later, after SIGCONT... */
    ZAP_TIMEOUT
    if (!Batch)
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Rawtty);
+   putp(Cap_clr_scr);
+   putp(Cap_rmam);
 }
 
 

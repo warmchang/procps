@@ -29,7 +29,7 @@ INSTALLATION
     Suppose you wanted to install stuff in strange places.
     You might do something like this:
 
-    make usr/bin=/tmp/fff/iii/ DESTDIR=/tmp/fff install="install -D" ldconfig=echo install
+    make usr/bin=/tmp/Q/iii/ DESTDIR=/tmp/Q install="install -D" ldconfig=echo install
 
     If cross-compiling, you might need to set lib64 to
     either "lib" or "lib64", like one of these examples:
