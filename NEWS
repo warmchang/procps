@@ -1,3 +1,7 @@
+procps-3.2.5 --> procps-3.2.6
+
+more MIPS crud  -- thanks Jim Gifford and Ryan Oliver
+
 procps-3.2.4 --> procps-3.2.5
 
 display problem on 64-bit systems fixed   #287947
