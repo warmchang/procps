@@ -210,7 +210,8 @@ static int sr_swapable(const proc_t* P, const proc_t* Q) {
 /***************************************************************************/
 /************ Lots of format functions, starting with the NOP **************/
 
-static int pr_nop(char *restrict const outbuf, const proc_t *restrict const pp){
+// so popular it can't be "static"
+int pr_nop(char *restrict const outbuf, const proc_t *restrict const pp){
   (void)pp;
   return snprintf(outbuf, COLWID, "%c", '-');
 }
@@ -1175,14 +1176,14 @@ static const format_struct format_array[] = {
 {"cursig",    "CURSIG",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
 {"cutime",    "-",       pr_nop,      sr_cutime,  1,   0,    LNX, AN|RIGHT},
 {"cwd",       "CWD",     pr_nop,      sr_nop,     3,   0,    LNX, AN|LEFT},
-{"drs",       "DRS",     pr_drs,      sr_drs,     4, MEM,    LNX, ET|RIGHT},
-{"dsiz",      "DSIZ",    pr_dsiz,     sr_nop,     4,   0,    LNX, ET|RIGHT},
+{"drs",       "DRS",     pr_drs,      sr_drs,     4, MEM,    LNX, PO|RIGHT},
+{"dsiz",      "DSIZ",    pr_dsiz,     sr_nop,     4,   0,    LNX, PO|RIGHT},
 {"egid",      "EGID",    pr_egid,     sr_egid,    5,   0,    LNX, ET|RIGHT},
 {"egroup",    "EGROUP",  pr_egroup,   sr_egroup,  8, GRP,    LNX, ET|USER},
 {"eip",       "EIP",     pr_eip,      sr_kstk_eip, 8,  0,    LNX, TO|RIGHT},
 {"end_code",  "E_CODE",  pr_nop,      sr_end_code, 8,  0,    LNx, PO|RIGHT},
 {"environ","ENVIRONMENT",pr_nop,      sr_nop,    11, ENV,    LNx, PO|UNLIMITED},
-{"esp",       "ESP",     pr_esp,      sr_kstk_esp, 8,  0,    LNX, PO|RIGHT},
+{"esp",       "ESP",     pr_esp,      sr_kstk_esp, 8,  0,    LNX, TO|RIGHT},
 {"etime",     "ELAPSED", pr_etime,    sr_nop,    11,   0,    U98, AN|RIGHT}, /* was 7 wide */
 {"euid",      "EUID",    pr_euid,     sr_euid,    5,   0,    LNX, ET|RIGHT},
 {"euser",     "EUSER",   pr_euser,    sr_euser,   8, USR,    LNX, ET|USER},
@@ -1211,7 +1212,7 @@ static const format_struct format_array[] = {
 {"lim",       "LIM",     pr_lim,      sr_rss_rlim, 5,  0,    BSD, AN|RIGHT},
 {"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, AN|LEFT}, /*logname*/   /* double check */
 {"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, AN|LEFT}, /*login*/
-{"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, AN|LEFT},
+{"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
 {"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, AN|RIGHT},
 {"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, ET|RIGHT}, /* login ID */
 {"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, ET|USER}, /* login USER */
@@ -1230,7 +1231,7 @@ static const format_struct format_array[] = {
 {"minflt",    "MINFLT",  pr_minflt,   sr_min_flt, 6,   0,    XXX, AN|RIGHT},
 {"msgrcv",    "MSGRCV",  pr_nop,      sr_nop,     6,   0,    XXX, AN|RIGHT},
 {"msgsnd",    "MSGSND",  pr_nop,      sr_nop,     6,   0,    XXX, AN|RIGHT},
-{"mwchan",    "MWCHAN",  pr_nop,      sr_nop,     6, WCH,    BSD, AN|WCHAN}, /* mutex (FreeBSD) */
+{"mwchan",    "MWCHAN",  pr_nop,      sr_nop,     6, WCH,    BSD, TO|WCHAN}, /* mutex (FreeBSD) */
 {"ni",        "NI",      pr_nice,     sr_nice,    3,   0,    BSD, TO|RIGHT}, /*nice*/
 {"nice",      "NI",      pr_nice,     sr_nice,    3,   0,    U98, TO|RIGHT}, /*ni*/
 {"nivcsw",    "IVCSW",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
@@ -1247,7 +1248,7 @@ static const format_struct format_array[] = {
 {"p_ru",      "P_RU",    pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
 {"paddr",     "PADDR",   pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
 {"pagein",    "PAGEIN",  pr_majflt,   sr_nop,     6,   0,    XXX, AN|RIGHT},
-{"pcpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    U98, TO|RIGHT}, /*%cpu*/
+{"pcpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    U98, ET|RIGHT}, /*%cpu*/
 {"pending",   "PENDING", pr_sig,      sr_nop,     9,   0,    BSD, ET|SIGNAL}, /*sig*/
 {"pgid",      "PGID",    pr_pgid,     sr_pgrp,    5,   0,    U98, PO|PIDMAX|RIGHT},
 {"pgrp",      "PGRP",    pr_pgid,     sr_pgrp,    5,   0,    LNX, PO|PIDMAX|RIGHT},
@@ -1255,7 +1256,7 @@ static const format_struct format_array[] = {
 {"pmem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    XXX, PO|RIGHT}, /*%mem*/
 {"poip",      "-",       pr_nop,      sr_nop,     1,   0,    BSD, AN|RIGHT},
 {"policy",    "POL",     pr_class,    sr_sched,   3,   0,    DEC, TO|LEFT},
-{"ppid",      "PPID",    pr_ppid,     sr_ppid,    5,   0,    U98, AN|PIDMAX|RIGHT},
+{"ppid",      "PPID",    pr_ppid,     sr_ppid,    5,   0,    U98, PO|PIDMAX|RIGHT},
 {"pri",       "PRI",     pr_pri,      sr_nop,     3,   0,    XXX, TO|RIGHT},
 {"priority",  "PRI",     pr_priority, sr_priority, 3,  0,    LNX, TO|RIGHT}, /*ni,nice*/ /* from Linux sorting names */
 {"prmgrp",    "-",       pr_nop,      sr_nop,     1,   0,    HPU, PO|RIGHT},
@@ -1274,7 +1275,7 @@ static const format_struct format_array[] = {
 {"rtprio",    "RTPRIO",  pr_rtprio,   sr_rtprio,  6,   0,    BSD, TO|RIGHT},
 {"ruid",      "RUID",    pr_ruid,     sr_ruid,    5,   0,    XXX, ET|RIGHT},
 {"ruser",     "RUSER",   pr_ruser,    sr_ruser,   8, USR,    U98, ET|USER},
-{"s",         "S",       pr_s,        sr_state,   1,   0,    SUN, ET|LEFT}, /*stat,state*/
+{"s",         "S",       pr_s,        sr_state,   1,   0,    SUN, TO|LEFT}, /*stat,state*/
 {"sched",     "SCH",     pr_sched,    sr_sched,   3,   0,    AIX, TO|RIGHT},
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, AN|RIGHT},  /* man page misspelling of scount? */
 {"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, AN|RIGHT},  /* scnt==scount, DEC claims both */
@@ -1321,17 +1322,17 @@ static const format_struct format_array[] = {
 {"time",      "TIME",    pr_time,     sr_nop,     8,   0,    U98, ET|CUMUL|RIGHT}, /*cputime*/ /* was 6 wide */
 {"timeout",   "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, AN|RIGHT},
 {"tmout",     "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, AN|RIGHT},
-{"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, AN|LEFT},
+{"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
 {"tpgid",     "TPGID",   pr_tpgid,    sr_tpgid,   5,   0,    XXX, AN|PIDMAX|RIGHT},
 {"trs",       "TRS",     pr_trs,      sr_trs,     4, MEM,    AIX, PO|RIGHT},
 {"trss",      "TRSS",    pr_trs,      sr_trs,     4, MEM,    BSD, PO|RIGHT}, /* 4.3BSD NET/2 */
 {"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, AN|PIDMAX|RIGHT},
 {"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, AN|PIDMAX|RIGHT},
-{"tsiz",      "TSIZ",    pr_tsiz,     sr_nop,     4,   0,    BSD, AN|RIGHT},
-{"tt",        "TT",      pr_tty8,     sr_tty,     8,   0,    BSD, AN|LEFT},
-{"tty",       "TT",      pr_tty8,     sr_tty,     8,   0,    U98, AN|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */
-{"tty4",      "TTY",     pr_tty4,     sr_tty,     4,   0,    LNX, AN|LEFT},
-{"tty8",      "TTY",     pr_tty8,     sr_tty,     8,   0,    LNX, AN|LEFT},
+{"tsiz",      "TSIZ",    pr_tsiz,     sr_nop,     4,   0,    BSD, PO|RIGHT},
+{"tt",        "TT",      pr_tty8,     sr_tty,     8,   0,    BSD, PO|LEFT},
+{"tty",       "TT",      pr_tty8,     sr_tty,     8,   0,    U98, PO|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */
+{"tty4",      "TTY",     pr_tty4,     sr_tty,     4,   0,    LNX, PO|LEFT},
+{"tty8",      "TTY",     pr_tty8,     sr_tty,     8,   0,    LNX, PO|LEFT},
 {"u_procp",   "UPROCP",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
 {"ucmd",      "CMD",     pr_comm,     sr_cmd,    16, COM,    DEC, PO|UNLIMITED}, /*ucomm*/
 {"ucomm",     "COMMAND", pr_comm,     sr_nop,    16, COM,    XXX, PO|UNLIMITED}, /*comm*/

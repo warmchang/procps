@@ -187,28 +187,115 @@ static void check_headers(void){
   if(!head_normal) lines_to_next_header = -1; /* how UNIX does --noheader */
 }
 
-static unsigned needs_for_format;
-static unsigned needs_for_sort;
+/***** check sort needs */
+/* see what files need to be read, etc. */
+static unsigned check_sort_needs(sort_node *walk){
+  unsigned needs = 0;
+  while(walk){
+    needs |= walk->need;
+    walk = walk->next;
+  }
+  return needs;
+}
 
 /***** check needs */
 /* see what files need to be read, etc. */
-static void check_needs(void){
-  format_node *walk_pr = format_list;
-  sort_node   *walk_sr = sort_list;
-  /* selection doesn't currently have expensive needs */
-
-  while(walk_pr){
-    needs_for_format |= walk_pr->need;
-    walk_pr = walk_pr->next;
+static unsigned collect_format_needs(format_node *walk){
+  unsigned needs = 0;
+  while(walk){
+    needs |= walk->need;
+    walk = walk->next;
   }
-  if(bsd_e_option) needs_for_format |= PROC_FILLENV;
-
-  while(walk_sr){
-    needs_for_sort |= walk_sr->need;
-    walk_sr = walk_sr->next;
-  }
-
+  return needs;
 }
+
+static format_node *proc_format_list;
+static format_node *task_format_list;
+
+static unsigned needs_for_sort;
+static unsigned proc_format_needs;
+static unsigned task_format_needs;
+
+#define needs_for_format (proc_format_needs|task_format_needs)
+
+#define PROC_ONLY_FLAGS (PROC_FILLENV|PROC_FILLARG|PROC_FILLCOM|PROC_FILLMEM)
+
+/***** munge lists and determine openproc() flags */
+static void lists_and_needs(void){
+  check_headers();
+
+  // only care about the difference when showing both
+  if(  (thread_flags & (TF_show_proc|TF_show_task))  ==  (TF_show_proc|TF_show_task)  ){
+    format_node pfn, tfn; // junk, to handle special case at begin of list
+    format_node *walk = format_list;
+    format_node *p_end = &pfn;
+    format_node *t_end = &tfn;
+    while(walk){
+      format_node *new = malloc(sizeof(format_node));
+      memcpy(new,walk,sizeof(format_node));
+      p_end->next = walk;
+      t_end->next = new;
+      p_end       = walk;
+      t_end       = new;
+      switch(walk->flags & CF_PRINT_MASK){
+      case CF_PRINT_THREAD_ONLY:
+        p_end->pr   = pr_nop;
+        p_end->need = 0;
+        break;
+      case CF_PRINT_PROCESS_ONLY:
+        t_end->pr   = pr_nop;
+        t_end->need = 0;
+        break;
+      default:
+        fprintf(stderr, "please report this bug\n");
+        // FALL THROUGH
+      case CF_PRINT_AS_NEEDED:
+      case CF_PRINT_EVERY_TIME:
+        break;
+      }
+      walk = walk->next;
+    }
+    t_end->next = NULL;
+    p_end->next = NULL;
+    proc_format_list = pfn.next;
+    task_format_list = tfn.next;
+  }else{
+    proc_format_list = format_list;
+    task_format_list = format_list;
+  }
+
+  proc_format_needs = collect_format_needs(proc_format_list);
+  task_format_needs = collect_format_needs(task_format_list);
+
+  needs_for_sort = check_sort_needs(sort_list);
+
+  // move process-only flags to the process
+  proc_format_needs |= (task_format_needs &~ PROC_ONLY_FLAGS);
+  task_format_needs &= ~PROC_ONLY_FLAGS;
+
+  if(bsd_c_option){
+    proc_format_needs &= ~PROC_FILLARG;
+    needs_for_sort    &= ~PROC_FILLARG;
+  }
+  if(!unix_f_option){
+    proc_format_needs &= ~PROC_FILLCOM;
+    needs_for_sort    &= ~PROC_FILLCOM;
+  }
+  // convert ARG to COM as a standard
+  if(proc_format_needs & PROC_FILLARG){
+    proc_format_needs |= PROC_FILLCOM;
+    proc_format_needs &= ~PROC_FILLARG;
+  }
+  if(bsd_e_option){
+    if(proc_format_needs&PROC_FILLCOM) proc_format_needs |= PROC_FILLENV;
+  }
+  
+  /* FIXME  broken filthy hack -- got to unify some stuff here */
+  if( ( (proc_format_needs|task_format_needs|needs_for_sort) & PROC_FILLWCHAN) && !wchan_is_number)
+    if (open_psdb(namelist_file)) wchan_is_number = 1;
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 /***** fill in %CPU; not in libproc because of include_dead_children */
 /* Note: for sorting, not display, so 0..0x7fffffff would be OK */
@@ -226,18 +313,6 @@ static void fill_pcpu(proc_t *buf){
   buf->pcpu = pcpu;  // fits in an int, summing children on 128 CPUs
 }
 
-/***** figure out what we need */
-static void compute_needs(void){
-  if(bsd_c_option){
-    needs_for_format &= ~PROC_FILLARG;
-    needs_for_sort   &= ~PROC_FILLARG;
-  }
-  if(!unix_f_option){
-    needs_for_format &= ~PROC_FILLCOM;
-    needs_for_sort   &= ~PROC_FILLCOM;
-  }
-}
-
 /***** just display */
 static void simple_spew(void){
   proc_t buf;
@@ -251,11 +326,11 @@ static void simple_spew(void){
   memset(&buf, '#', sizeof(proc_t));
   while(readproc(ptp,&buf)){
     if(want_this_proc(&buf)){
-      if(thread_flags & TF_show_proc) show_one_proc(&buf,format_list);
+      if(thread_flags & TF_show_proc) show_one_proc(&buf, proc_format_list);
       if(thread_flags & TF_show_task){
         proc_t buf2;
         // must still have the process allocated
-        while(readtask(ptp,&buf,&buf2)) show_one_proc(&buf2,format_list);
+        while(readtask(ptp,&buf,&buf2)) show_one_proc(&buf2, task_format_list);
         // must not attempt to free cmdline and environ
       }
     }
@@ -451,13 +526,8 @@ int main(int argc, char *argv[]){
   trace("======= ps output follows =======\n");
 
   init_output(); /* must be between parser and output */
-  check_headers();
 
-  check_needs();
-  /* filthy hack -- got to unify some stuff here */
-  if( ( (needs_for_format|needs_for_sort) & PROC_FILLWCHAN) && !wchan_is_number)
-    if (open_psdb(namelist_file)) wchan_is_number = 1;
-  compute_needs();
+  lists_and_needs();
 
   if(forest_type || sort_list) fancy_spew(); /* sort or forest */
   else simple_spew(); /* no sort, no forest */

@@ -188,7 +188,7 @@ double_percent:
       fnode->pr = NULL;     /* checked for */
       fnode->need = 0;
       fnode->vendor = AIX;
-      fnode->flags = 0;
+      fnode->flags = CF_PRINT_EVERY_TIME;
       fnode->next = NULL;
     }
     
@@ -695,7 +695,7 @@ static const char *generate_sysv_list(void){
       fn->pr = NULL;     /* checked for */
       fn->need = 0;
       fn->vendor = AIX;   /* yes, for SGI weirdness */
-      fn->flags = 0;
+      fn->flags = CF_PRINT_EVERY_TIME;
       fn->next = format_list;
       format_list=fn;
     }

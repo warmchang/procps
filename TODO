@@ -14,26 +14,10 @@ Cache results of dev_to_tty.
 Add an "adopted child" flag to mark processes that are not
 natural children of init. This can make --forest work better.
 
-Add a thread group ID, to be shared by all tasks that are related by
-the clone() system call. This ID might be made unique from boot to
-shutdown, perhaps being a 16-bit CPU number and 48-bit per-CPU
-serial number.
-
-Make the kernel group /proc listing output by thread group.
-Without this, a thread-aware ps must always sort processes.
-
-Supply the task ID (the "PID"/"TID") of the thread group leader.
-I define "leader" as the first process of a thread group.
-
-Don't reuse the task ID of a thread group leader until all threads
-are dead. Better yet, don't let the leader exit.
-
 Supply better data for top's CPU state display. Currently top has
 to subtract old numbers from new numbers and divide that result by
 the number of processors. The kernel won't even supply the number
 of processors in a portable way.
-
-Mark threads, and supply a list of other threads.
 
 Supply data for the ADDR and JOBC fields.
 
@@ -41,9 +25,6 @@ Support & supply data for SL and RE.
 
 Add a /proc/*/tty symlink to eliminate guessing when /proc/*/fd is
 not accessable.
-
-Put unique ID at the top of System.map and in /proc, to make sure
-there is never a mismatch.
 
 Add /proc/*/.bindata files to avoid string parsing. It should be an array
 of 64-bit values on all machines. New entries go on the end and obsolete
@@ -61,9 +42,7 @@ arbitrary data for the FROM column. (could set root's VGA color map!)
 
 ---------------------- vmstat --------------------------
 
-Extract /proc/stat parsing from vmstat into libproc somewhere.
-
-Let the user choose: 1000, 1024, PAGE_SIZE, 1000000, 0x100000
+Extract /proc/diskstats parsing from vmstat into libproc somewhere.
 
 --------------------- libproc ----------------------
 
@@ -73,6 +52,8 @@ units: kB and pages, seconds and jiffies) in the proc_t struct.
 ---------------------- top -------------------------
 
 Share more stuff with ps.
+
+'H' command
 
 ---------------- ps for now, maybe move to libproc ------------------
 
@@ -138,10 +119,6 @@ doesn't violate the "no whitespace" rule.
 Try to make -jl fit in 80 columns. Do we need more than 1000 pty devices,
 9 flag bits, etc.? (hmmm, Linux supports 2048 pty devices now, and we
 might also want to steal whitespace there when the time column overflows)
-
-When not in strict Unix98 mode, let foo=8 specify that foo is 8
-characters wide. Debian did that. Then foo=8=bar and foo=bar=8
-could change both header and width.
 
 Better unmangling of '?' as a tty. The shell destroys '?' when there
 is a filename that matches. If the argument seems like garbage,

@@ -1,6 +1,8 @@
 procps-3.1.13 --> procps-3.1.14
 
 handle 32-bit dev_t of Linux 2.6
+ps: finally, m and -m satisfy the original design
+ps: distinct per-thread and whole-process pending signals
 
 procps-3.1.12 --> procps-3.1.13
 

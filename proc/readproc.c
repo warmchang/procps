@@ -218,8 +218,8 @@ ENTER(0x220);
         continue;
 
     case_ShdPnd:
-        memcpy(P->signal, S, 16);
-        P->signal[16] = '\0';
+        memcpy(ShdPnd, S, 16);
+        // we know it to be 16 char, so no '\0' needed
         continue;
     case_SigBlk:
         memcpy(P->blocked, S, 16);
@@ -621,6 +621,8 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     t->cmdline = p->cmdline;  // better not free these until done with all threads!
     t->environ = p->environ;
 #endif
+
+    t->ppid = p->ppid;  // ought to put the per-task ppid somewhere
 
     return t;
 next_task:

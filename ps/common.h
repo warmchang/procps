@@ -84,11 +84,12 @@
 // Then the other flags
 #define CF_CUMUL              0x00000010 // mark cumulative (Summed) headers with 'C' */
 #define CF_PIDMAX             0x00000020 // react to pid_max
+// Only one allowed; use separate bits to catch errors.
 #define CF_PRINT_THREAD_ONLY  0x10000000
 #define CF_PRINT_PROCESS_ONLY 0x20000000
 #define CF_PRINT_EVERY_TIME   0x40000000
 #define CF_PRINT_AS_NEEDED    0x80000000 // means we have no clue, so assume EVERY TIME
-
+#define CF_PRINT_MASK         0xf0000000
 
 #define needs_for_select (PROC_FILLSTAT | PROC_FILLSTATUS)
 
@@ -252,6 +253,7 @@ extern const shortsort_struct *search_shortsort_array(const int findme);
 extern const format_struct *search_format_array(const char *findme);
 extern const macro_struct *search_macro_array(const char *findme);
 extern void init_output(void);
+extern int pr_nop(char *restrict const outbuf, const proc_t *restrict const pp);
 
 /* global.c */
 extern void reset_global(void);
