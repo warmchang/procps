@@ -132,7 +132,7 @@ ALL_CFLAGS += $(call check_gcc,-fno-inline-functions,)
 # produce separate executables for ppc and ppc64, s390 and s390x,
 # i386 and x86-64, mips and mips64, sparc and sparc64, and so on.
 # Failure to do so will cause data corruption.
-m64 := $(call check_gcc,-m64,)
+m64 := $(call check_gcc,-m64,$(call check_gcc,-mabi=64,))
 ALL_CFLAGS += $(m64)
 
 endif
