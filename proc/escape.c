@@ -159,7 +159,7 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
 // escape an argv or environment string array
 //
 // bytes arg means sizeof(buf)
-int escape_strlist(char *restrict dst, const char *restrict const *restrict src, size_t bytes, size_t *cells){
+int escape_strlist(char *restrict dst, const char *restrict const *restrict src, size_t bytes, int *cells){
   size_t i = 0;
 
   for(;;){
