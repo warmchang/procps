@@ -3810,6 +3810,20 @@ error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 } // end: config_file
 
 
+static int snprintf_Rc_name (const char *const format, ...) __attribute__((format(printf,1,2)));
+static int snprintf_Rc_name (const char *const format, ...) {
+   int len;
+   va_list ap;
+   va_start(ap, format);
+   len = vsnprintf(Rc_name, sizeof(Rc_name), format, ap);
+   va_end(ap);
+   if (len <= 0 || (size_t)len >= sizeof(Rc_name)) {
+      Rc_name[0] = '\0';
+      return 0;
+   }
+   return len;
+}
+
         /*
          * Try reading up to 3 rcfiles
          * 1. 'SYS_RCRESTRICT' contains two lines consisting of the secure
@@ -3842,23 +3856,31 @@ static void configs_read (void) {
       fclose(fp);
    }
 
+   Rc_name[0] = '\0'; // "fopen() shall fail if pathname is an empty string."
    // attempt to use the legacy file first, if we cannot access that file, use
    // the new XDG basedir locations (XDG_CONFIG_HOME or HOME/.config) instead.
    p_home = getenv("HOME");
-   if (!p_home || p_home[0] == '\0')
-      p_home = ".";
-   snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", p_home, Myname);
+   if (!p_home || p_home[0] != '/') {
+      const struct passwd *const pwd = getpwuid(getuid());
+      if (!pwd || !(p_home = pwd->pw_dir) || p_home[0] != '/') {
+         p_home = NULL;
+      }
+   }
+   if (p_home) {
+      snprintf_Rc_name("%s/.%src", p_home, Myname);
+   }
 
    if (!(fp = fopen(Rc_name, "r"))) {
       p = getenv("XDG_CONFIG_HOME");
       // ensure the path we get is absolute, fallback otherwise.
       if (!p || p[0] != '/') {
+         if (!p_home) goto system_default;
          p = fmtmk("%s/.config", p_home);
          (void)mkdir(p, 0700);
       }
-      snprintf(Rc_name, sizeof(Rc_name), "%s/procps", p);
+      if (!snprintf_Rc_name("%s/procps", p)) goto system_default;
       (void)mkdir(Rc_name, 0700);
-      snprintf(Rc_name, sizeof(Rc_name), "%s/procps/%src", p, Myname);
+      if (!snprintf_Rc_name("%s/procps/%src", p, Myname)) goto system_default;
       fp = fopen(Rc_name, "r");
    }
 
@@ -3867,6 +3889,7 @@ static void configs_read (void) {
       fclose(fp);
       if (p) goto default_or_error;
    } else {
+system_default:
       fp = fopen(SYS_RCDEFAULTS, "r");
       if (fp) {
          p = config_file(fp, SYS_RCDEFAULTS, &tmp_delay);
