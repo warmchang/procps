@@ -1172,15 +1172,16 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
 
 #ifdef FALSE_THREADS
     } else {
-        t->cmdline   = NULL;
-        t->cmdline_v = NULL;
         t->environ   = NULL;
-        t->environ_v = NULL;
+        t->cmdline   = NULL;
         t->cgname    = NULL;
         t->cgroup    = NULL;
+        t->environ_v = NULL;
+        t->cmdline_v = NULL;
         t->cgroup_v  = NULL;
         t->supgid    = NULL;
         t->supgrp    = NULL;
+        t->cmd       = NULL;
         t->sd_mach   = NULL;
         t->sd_ouid   = NULL;
         t->sd_seat   = NULL;
