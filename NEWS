@@ -1,6 +1,7 @@
 procps-3.2.0 --> procps-3.2.1
 
 build w/ curses in odd location
+ps: STAT flags for fg process group and session leader
 
 procps-3.1.15 --> procps-3.2.0
 

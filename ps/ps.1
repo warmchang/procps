@@ -261,18 +261,18 @@ D uninterruptible sleep (usually IO)
 R runnable (on run queue)
 S sleeping
 T traced or stopped
-W paging
+W paging (2.4 kernels and older only)
 X dead
 Z a defunct ("zombie") process
 
 For BSD formats and when the "stat" keyword is used, additional
-letters may be displayed:
+characters may be displayed:
 
-W has no resident pages
-< high-priority process
+< high-priority task
 N low-priority task
 L has pages locked into memory (for real-time and custom IO)
-
+s is a session leader
++ is in the foreground process group
 
 SORT KEYS
 

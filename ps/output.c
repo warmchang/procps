@@ -566,10 +566,12 @@ static int pr_oldstate(char *restrict const outbuf, const proc_t *restrict const
 static int pr_stat(char *restrict const outbuf, const proc_t *restrict const pp){
     int end = 0;
     outbuf[end++] = pp->state;
-    if(pp->rss == 0 && pp->state != 'Z')    outbuf[end++] = 'W';
-    if(pp->nice < 0)                        outbuf[end++] = '<';
-    if(pp->nice > 0)                        outbuf[end++] = 'N';
-    if(pp->vm_lock)                         outbuf[end++] = 'L';
+//  if(pp->rss==0 && pp->state!='Z')  outbuf[end++] = 'W'; // useless "swapped out"
+    if(pp->nice < 0)                  outbuf[end++] = '<';
+    if(pp->nice > 0)                  outbuf[end++] = 'N';
+    if(pp->vm_lock)                   outbuf[end++] = 'L';
+    if(pp->session == pp->tgid)       outbuf[end++] = 's'; // session leader
+    if(pp->pgrp == pp->tpgid)         outbuf[end++] = '+'; // in foreground process group
     outbuf[end] = '\0';
     return end;
 }
