@@ -2027,6 +2027,7 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
     if(space>SPACE_AMOUNT) space=SPACE_AMOUNT;  // only so much available
 
     /* real size -- don't forget in 'amount' is number of cells */
+    outbuf[OUTBUF_SIZE-1] = '\0';
     sz = strlen(outbuf);
 
     /* print data, set x position stuff */
