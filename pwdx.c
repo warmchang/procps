@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 	for (i = 0; i < argc; i++) {
 		char *s;
 		ssize_t len, buflen;
-		/* Constant 10 is the length of strings "/proc/" + "/cwd" + 1 */
+		/* Constant 10 is the length of strings "/proc/" + "/cwd" */
 		char *buf;
 		buflen = 10 + strlen(argv[i]) + 1;
 		buf = xmalloc(buflen);
