@@ -127,6 +127,8 @@ static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
     return 0; \
 }
 
+CMP_INT(rtprio)
+CMP_INT(sched)
 CMP_INT(cutime)
 CMP_INT(cstime)
 CMP_INT(priority)                                             /* nice */
@@ -729,6 +731,11 @@ static int pr_swapable(void) {
   return snprintf(outbuf, COLWID, "%ld", pp->vm_data + pp->vm_stack);
 }
 
+/* nasty old Debian thing */
+static int pr_size(void) {
+  return snprintf(outbuf, COLWID, "%ld", pp->size);
+}
+
 
 static int pr_minflt(void){
     long flt = pp->min_flt;
@@ -778,6 +785,24 @@ static int pr_pmem(void){
   pmem = pp->vm_rss * 1000ULL / kb_main_total;
   if (pmem > 999) pmem = 999;
   return snprintf(outbuf, COLWID, "%2u.%u", (unsigned)(pmem/10), (unsigned)(pmem%10));
+}
+
+static int pr_class(void){
+  switch(pp->sched){
+  case -1: return snprintf(outbuf, COLWID, "-");  /* not reported */
+  case  0: return snprintf(outbuf, COLWID, "TS"); /* SCHED_OTHER */
+  case  1: return snprintf(outbuf, COLWID, "FF"); /* SCHED_FIFO */
+  case  2: return snprintf(outbuf, COLWID, "RR"); /* SCHED_RR */
+  default: return snprintf(outbuf, COLWID, "?");  /* unknown value */
+  }
+}
+static int pr_rtprio(void){
+  if(pp->sched==0 || pp->sched==-1) return snprintf(outbuf, COLWID, "-");
+  return snprintf(outbuf, COLWID, "%ld", pp->rtprio);
+}
+static int pr_sched(void){
+  if(pp->sched==-1) return snprintf(outbuf, COLWID, "-");
+  return snprintf(outbuf, COLWID, "%ld", pp->sched);
 }
 
 static int pr_lstart(void){
@@ -1132,7 +1157,7 @@ static const format_struct format_array[] = {
 {"bsdtime",   "TIME",    pr_bsdtime,  sr_nop,     6,   0,    LNX, RIGHT},
 {"c",         "C",       pr_c,        sr_pcpu,    2,   0,    SUN, RIGHT},
 {"caught",    "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    BSD, SIGNAL}, /*sigcatch*/
-{"class",     "CLS",     pr_nop,      sr_nop,     5,   0,    XXX, RIGHT},
+{"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, LEFT},
 {"cls",       "-",       pr_nop,      sr_nop,     1,   0,    HPU, RIGHT},
 {"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, RIGHT},
 {"cmd",       "CMD",     pr_args,     sr_cmd,    16,   0,    DEC, UNLIMITED}, /*ucomm*/
@@ -1226,7 +1251,7 @@ static const format_struct format_array[] = {
 {"pid",       "PID",     pr_pid,      sr_pid,     5,   0,    U98, RIGHT},
 {"pmem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    XXX, RIGHT}, /*%mem*/
 {"poip",      "-",       pr_nop,      sr_nop,     1,   0,    BSD, RIGHT},
-{"policy",    "POL",     pr_nop,      sr_nop,     3,   0,    DEC, RIGHT},
+{"policy",    "POL",     pr_class,    sr_sched,   3,   0,    DEC, LEFT},
 {"ppid",      "PPID",    pr_ppid,     sr_ppid,    5,   0,    U98, RIGHT},
 {"pri",       "PRI",     pr_pri,      sr_nop,     3,   0,    XXX, RIGHT},
 {"priority",  "PRI",     pr_priority, sr_priority, 3,  0,    LNX, RIGHT}, /*ni,nice*/ /* from Linux sorting names */
@@ -1243,11 +1268,11 @@ static const format_struct format_array[] = {
 {"rss",       "RSS",     pr_rss,      sr_rss,     4,   0,    XXX, RIGHT}, /* was 5 wide */
 {"rssize",    "RSS",     pr_rss,      sr_vm_rss,  4,   0,    DEC, RIGHT}, /*rsz*/
 {"rsz",       "RSZ",     pr_rss,      sr_vm_rss,  4,   0,    BSD, RIGHT}, /*rssize*/
-{"rtprio",    "RTPRIO",  pr_nop,      sr_nop,     7,   0,    BSD, RIGHT},
+{"rtprio",    "RTPRIO",  pr_rtprio,   sr_rtprio,  6,   0,    BSD, RIGHT},
 {"ruid",      "RUID",    pr_ruid,     sr_ruid,    5,   0,    XXX, RIGHT},
 {"ruser",     "RUSER",   pr_ruser,    sr_ruser,   8, USR,    U98, USER},
 {"s",         "S",       pr_s,        sr_state,   1,   0,    SUN, LEFT}, /*stat,state*/
-{"sched",     "SCH",     pr_nop,      sr_nop,     1,   0,    AIX, RIGHT},
+{"sched",     "SCH",     pr_sched,    sr_sched,   3,   0,    AIX, RIGHT},
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, RIGHT},  /* man page misspelling of scount? */
 {"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, RIGHT},  /* scnt==scount, DEC claims both */
 {"secsid",    "SID",     pr_secsid,   sr_secsid,  6,   0,    LNX, RIGHT}, /* Flask Linux */

@@ -162,6 +162,8 @@ static void stat2proc(char* S, proc_t* P) {
     /* fill in default values for older kernels */
     P->exit_signal = SIGCHLD;
     P->processor = 0;
+    P->rtprio = -1;
+    P->sched = -1;
     /* parse these two strings separately, skipping the leading "(". */
     memset(P->cmd, 0, sizeof P->cmd);	/* clear even though *P xcalloc'd ?! */
     sscanf(S, "%d (%15c", &P->pid, P->cmd);   /* comm[16] in kernel */
@@ -177,7 +179,8 @@ static void stat2proc(char* S, proc_t* P) {
        "%lu %lu %lu %lu %lu %lu "
        "%*s %*s %*s %*s " /* discard, no RT signals & Linux 2.1 used hex */
        "%lu %lu %lu "
-       "%d %d",
+       "%d %d "
+       "%lu %lu",
        &P->state,
        &P->ppid, &P->pgrp, &P->session, &P->tty, &P->tpgid,
        &P->flags, &P->min_flt, &P->cmin_flt, &P->maj_flt, &P->cmaj_flt,
@@ -190,8 +193,9 @@ static void stat2proc(char* S, proc_t* P) {
 /*     P->signal, P->blocked, P->sigignore, P->sigcatch,   */ /* can't use */
        &P->wchan, &P->nswap, &P->cnswap,
 /* -- Linux 2.0.35 ends here -- */
-       &P->exit_signal, &P->processor  /* 2.2.1 ends with "exit_signal" */
-/* -- Linux 2.2.8 and 2.3.47 end here -- */
+       &P->exit_signal, &P->processor,  /* 2.2.1 ends with "exit_signal" */
+/* -- Linux 2.2.8 to 2.5.17 end here -- */
+       &P->rtprio, &P->sched  /* both added to 2.5.18 */
     );
     
     /* fprintf(stderr, "stat2proc converted %d fields.\n",num); */

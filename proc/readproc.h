@@ -76,6 +76,8 @@ typedef struct proc_t {
 	vm_stack,       /* stack size */
 	vm_exe,         /* executable size */
 	vm_lib,         /* library size (all pages, not just used ones) */
+	rtprio,		/* real-time priority */
+	sched,		/* scheduling class */
 	vsize,		/* number of pages of virtual memory ... */
 	rss_rlim,	/* resident set size limit? */
 	flags,		/* kernel flags for the process */
