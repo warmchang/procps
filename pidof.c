@@ -166,7 +166,7 @@ static void select_procs (void)
 			}
 		}
 
-		if (!is_omitted(tid) && p_cmdline) {
+		if (!is_omitted(tid) && p_cmdline && *p_cmdline) {
 
 			cmd_arg0 = *p_cmdline;
 
