@@ -22,6 +22,7 @@
 #include "procps.h"
 #include "version.h"
 #include "sysinfo.h" /* smp_num_cpus */
+#include "wchan.h"  // to verify prototypes
 
 #define KSYMS_FILENAME "/proc/ksyms"
 

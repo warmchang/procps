@@ -309,7 +309,7 @@ static sort_node *do_one_sort_spec(const char *spec){
   fs = search_format_array(spec);
   if(fs){
     sort_node *thisnode;
-    thisnode = malloc(sizeof(format_node));
+    thisnode = malloc(sizeof(sort_node));
     thisnode->sr = fs->sr;
     thisnode->need = fs->need;
     thisnode->reverse = reverse;

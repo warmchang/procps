@@ -99,7 +99,7 @@ static void getrunners(unsigned int *restrict running, unsigned int *restrict bl
 }
 
 static void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow,
-	     unsigned *restrict pin, unsigned *restrict pout, unsigned *restrict s_in, unsigned *restrict sout,
+	     unsigned long *restrict pin, unsigned long *restrict pout, unsigned long *restrict s_in, unsigned long *restrict sout,
 	     unsigned *restrict intr, unsigned *restrict ctxt,
 	     unsigned int *restrict running, unsigned int *restrict blocked,
 	     unsigned int *restrict btime, unsigned int *restrict processes) {
@@ -123,11 +123,11 @@ static void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csy
   if(b) sscanf(b,  "cpu  %Lu %Lu %Lu %Lu %Lu", cuse, cice, csys, cide, ciow);
 
   b = strstr(buff, "page ");
-  if(b) sscanf(b,  "page %u %u", pin, pout);
+  if(b) sscanf(b,  "page %lu %lu", pin, pout);
   else need_vmstat_file = 1;
 
   b = strstr(buff, "swap ");
-  if(b) sscanf(b,  "swap %u %u", s_in, sout);
+  if(b) sscanf(b,  "swap %lu %lu", s_in, sout);
   else need_vmstat_file = 1;
 
   b = strstr(buff, "intr ");
@@ -249,17 +249,17 @@ static void new_header(void){
 }
 
 static void new_format(void) {
-  const char format[]="%2u %2u %6u %6u %6u %6u %4u %4u %5u %5u %4u %5u %2u %2u %2u %2u\n";
+  const char format[]="%2u %2u %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %5u %2u %2u %2u %2u\n";
   unsigned int tog=0; /* toggle switch for cleaner code */
   unsigned int i;
   unsigned int hz = Hertz;
   unsigned int running,blocked,dummy_1,dummy_2;
   jiff cpu_use[2], cpu_nic[2], cpu_sys[2], cpu_idl[2], cpu_iow[2];
   jiff duse, dsys, didl, diow, Div, divo2;
-  unsigned int pgpgin[2], pgpgout[2], pswpin[2], pswpout[2];
+  unsigned long pgpgin[2], pgpgout[2], pswpin[2], pswpout[2];
   unsigned int intr[2], ctxt[2];
   unsigned int sleep_half; 
-  unsigned int kb_per_page = sysconf(_SC_PAGESIZE) / 1024;
+  unsigned long kb_per_page = sysconf(_SC_PAGESIZE) / 1024ul;
   int debt = 0;  // handle idle ticks running backwards
 
   sleep_half=(sleep_time/2);
@@ -347,7 +347,7 @@ static void new_format(void) {
 static void sum_format(void) {
   unsigned int running, blocked, btime, processes;
   jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow;
-  unsigned int pgpgin, pgpgout, pswpin, pswpout;
+  unsigned long pgpgin, pgpgout, pswpin, pswpout;
   unsigned int intr, ctxt;
 
   meminfo();
@@ -356,25 +356,25 @@ static void sum_format(void) {
 	  &intr, &ctxt,
 	  &running, &blocked,
 	  &btime, &processes);
-  printf("%13u kB total memory\n", kb_main_total);
-  printf("%13u kB used memory\n", kb_main_used);
-  printf("%13u kB active memory\n", kb_active);
-  printf("%13u kB inactive memory\n", kb_inactive);
-  printf("%13u kB free memory\n", kb_main_free);
-  printf("%13u kB buffer memory\n", kb_main_buffers);
-  printf("%13u kB swap cache\n", kb_main_cached);
-  printf("%13u kB total swap\n", kb_swap_total);
-  printf("%13u kB used swap\n", kb_swap_used);
-  printf("%13u kB free swap\n", kb_swap_free);
+  printf("%13lu kB total memory\n", kb_main_total);
+  printf("%13lu kB used memory\n", kb_main_used);
+  printf("%13lu kB active memory\n", kb_active);
+  printf("%13lu kB inactive memory\n", kb_inactive);
+  printf("%13lu kB free memory\n", kb_main_free);
+  printf("%13lu kB buffer memory\n", kb_main_buffers);
+  printf("%13lu kB swap cache\n", kb_main_cached);
+  printf("%13lu kB total swap\n", kb_swap_total);
+  printf("%13lu kB used swap\n", kb_swap_used);
+  printf("%13lu kB free swap\n", kb_swap_free);
   printf("%13Lu non-nice user cpu ticks\n", cpu_use);
   printf("%13Lu nice user cpu ticks\n", cpu_nic);
   printf("%13Lu system cpu ticks\n", cpu_sys);
   printf("%13Lu idle cpu ticks\n", cpu_idl);
   printf("%13Lu IO-wait cpu ticks\n", cpu_iow);
-  printf("%13u pages paged in\n", pgpgin);
-  printf("%13u pages paged out\n", pgpgout);
-  printf("%13u pages swapped in\n", pswpin);
-  printf("%13u pages swapped out\n", pswpout);
+  printf("%13lu pages paged in\n", pgpgin);
+  printf("%13lu pages paged out\n", pgpgout);
+  printf("%13lu pages swapped in\n", pswpin);
+  printf("%13lu pages swapped out\n", pswpout);
   printf("%13u interrupts\n", intr);
   printf("%13u CPU context switches\n", ctxt);
   printf("%13u boot time\n", btime);
@@ -384,7 +384,7 @@ static void sum_format(void) {
 static void fork_format(void) {
   unsigned int running, blocked, btime, processes;
   jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow;
-  unsigned int pgpgin, pgpgout, pswpin, pswpout;
+  unsigned long pgpgin, pgpgout, pswpin, pswpout;
   unsigned int intr, ctxt;
 
   getstat(&cpu_use, &cpu_nic, &cpu_sys, &cpu_idl, &cpu_iow,

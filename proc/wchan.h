@@ -5,7 +5,7 @@
 
 EXTERN_C_BEGIN
 
-extern const char * wchan(unsigned long address, unsigned pid);
+extern const char * wchan(unsigned KLONG address, unsigned pid);
 extern int   open_psdb(const char *restrict override);
 extern int   open_psdb_message(const char *restrict override, void (*message)(const char *, ...));
 
