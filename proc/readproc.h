@@ -22,7 +22,7 @@ EXTERN_C_BEGIN
 // s	signal, blocked, sigignore, sigcatch,
 // lu	flags, min_flt, cmin_flt, maj_flt, cmaj_flt, utime, stime,
 // lu	rss_rlim, start_code, end_code, start_stack, kstk_esp, kstk_eip,
-// lu	start_time, vsize, wchan, nswap, cnswap,
+// lu	start_time, vsize, wchan,
 
 // This is to help document a transition from pid to tgid/tid caused
 // by the introduction of thread support. It is used in cases where
@@ -98,9 +98,7 @@ typedef struct proc_t {
 	min_flt,	// stat            number of minor page faults since process start
 	maj_flt,	// stat            number of major page faults since process start
 	cmin_flt,	// stat            cumulative min_flt of process and child processes
-	cmaj_flt,	// stat            cumulative maj_flt of process and child processes
-	nswap,		// stat            ?
-	cnswap;		// stat            cumulative nswap ?
+	cmaj_flt;	// stat            cumulative maj_flt of process and child processes
     unsigned KLONG
 	start_code,	// stat            address of beginning of code segment
 	end_code,	// stat            address of end of code segment

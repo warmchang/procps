@@ -69,11 +69,11 @@ TARFILES := AUTHORS BUGS NEWS README TODO COPYING COPYING.LIB \
 # plus the top-level Makefile to make it work stand-alone.
 _TARFILES := Makefile
 
-CURSES := -I/usr/include/ncurses -lncurses
+CURSES := -lncurses
 
 # Preprocessor flags.
 PKG_CPPFLAGS := -D_GNU_SOURCE -I proc
-CPPFLAGS :=
+CPPFLAGS     := -I/usr/include/ncurses
 ALL_CPPFLAGS := $(PKG_CPPFLAGS) $(CPPFLAGS)
 
 # Left out -Wconversion due to noise in glibc headers.
@@ -84,16 +84,16 @@ ALL_CPPFLAGS := $(PKG_CPPFLAGS) $(CPPFLAGS)
 # to compile procps, they might best be moved to CFLAGS.
 # On the other hand, they aren't normal -O -g things either.
 #
-PKG_CFLAGS := -fno-common -ffast-math \
+PKG_CFLAGS   := -fno-common -ffast-math \
   -W -Wall -Wshadow -Wcast-align -Wredundant-decls \
   -Wbad-function-cast -Wcast-qual -Wwrite-strings -Waggregate-return \
   -Wstrict-prototypes -Wmissing-prototypes
-CFLAGS := -O2 -g3
-ALL_CFLAGS := $(PKG_CFLAGS) $(CFLAGS)
+CFLAGS       := -O2 -g3
+ALL_CFLAGS   := $(PKG_CFLAGS) $(CFLAGS)
 
-PKG_LDFLAGS := -Wl,-warn-common
-LDFLAGS :=
-ALL_LDFLAGS := $(PKG_LDFLAGS) $(LDFLAGS)
+PKG_LDFLAGS  := -Wl,-warn-common
+LDFLAGS      :=
+ALL_LDFLAGS  := $(PKG_LDFLAGS) $(LDFLAGS)
 
 ############ Add some extra flags if gcc allows
 
@@ -104,7 +104,7 @@ ifneq ($(MAKECMDGOALS),extratar)
 # Unlike the kernel one, this check_gcc goes all the way to
 # producing an executable. There might be a -m64 that works
 # until you go looking for a 64-bit curses library.
-check_gcc = $(shell if $(CC) $(ALL_CFLAGS) dummy.c $(ALL_LDFLAGS) $(1) -o /dev/null $(CURSES) > /dev/null 2>&1; then echo "$(1)"; else echo "$(2)"; fi ;)
+check_gcc = $(shell if $(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) dummy.c $(ALL_LDFLAGS) $(1) -o /dev/null $(CURSES) > /dev/null 2>&1; then echo "$(1)"; else echo "$(2)"; fi ;)
 
 ALL_CFLAGS += $(call check_gcc,-Wdeclaration-after-statement,)
 ALL_CFLAGS += $(call check_gcc,-Wpadded,)

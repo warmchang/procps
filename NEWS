@@ -1,3 +1,7 @@
+procps-3.2.1 --> procps-3.2.2
+
+avoid warning about -lncurses when not linking -- thanks FLWM
+
 procps-3.2.0 --> procps-3.2.1
 
 build even w/ curses in an odd location -- thanks to Segher Boessenkool

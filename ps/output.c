@@ -143,8 +143,6 @@ CMP_INT(min_flt)
 CMP_INT(maj_flt)
 CMP_INT(cmin_flt)
 CMP_INT(cmaj_flt)
-CMP_INT(nswap)
-CMP_INT(cnswap)
 CMP_INT(utime)
 CMP_INT(stime)    /* Old: sort by systime. New: show start time. Uh oh. */
 CMP_INT(start_code)
@@ -1051,7 +1049,7 @@ static const format_struct format_array[] = {
 {"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, AN|RIGHT},
 {"cmd",       "CMD",     pr_args,     sr_cmd,    16, ARG,    DEC, PO|UNLIMITED}, /*ucomm*/
 {"cmin_flt",  "-",       pr_nop,      sr_cmin_flt, 1,  0,    LNX, AN|RIGHT},
-{"cnswap",    "-",       pr_nop,      sr_cnswap,  1,   0,    LNX, AN|RIGHT},
+{"cnswap",    "-",       pr_nop,      sr_nop,     1,   0,    LNX, AN|RIGHT},
 {"comm",      "COMMAND", pr_comm,     sr_nop,    16, COM,    U98, PO|UNLIMITED}, /*ucomm*/
 {"command",   "COMMAND", pr_args,     sr_nop,    16, ARG,    XXX, PO|UNLIMITED}, /*args*/
 {"context",   "CONTEXT", pr_context,  sr_nop,    40,   0,    LNX, ET|LEFT},
@@ -1124,7 +1122,7 @@ static const format_struct format_array[] = {
 {"nlwp",      "NLWP",    pr_nlwp,     sr_nlwp,    4,   0,    SUN, AN|RIGHT},
 {"nsignals",  "NSIGS",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*nsigs*/
 {"nsigs",     "NSIGS",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*nsignals*/
-{"nswap",     "NSWAP",   pr_nop,      sr_nswap,   5,   0,    XXX, AN|RIGHT},
+{"nswap",     "NSWAP",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
 {"nvcsw",     "VCSW",    pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
 {"nwchan",    "WCHAN",   pr_nwchan,   sr_nop,     6,   0,    XXX, TO|RIGHT},
 {"opri",      "PRI",     pr_opri,     sr_priority, 3,  0,    SUN, TO|RIGHT},

@@ -325,7 +325,7 @@ ENTER(0x160);
        "%ld "
        "%lu %"KLF"u %"KLF"u %"KLF"u %"KLF"u %"KLF"u "
        "%*s %*s %*s %*s " /* discard, no RT signals & Linux 2.1 used hex */
-       "%"KLF"u %lu %lu "
+       "%"KLF"u %*lu %*lu "
        "%d %d "
        "%lu %lu",
        &P->state,
@@ -340,7 +340,7 @@ ENTER(0x160);
        &P->rss,
        &P->rss_rlim, &P->start_code, &P->end_code, &P->start_stack, &P->kstk_esp, &P->kstk_eip,
 /*     P->signal, P->blocked, P->sigignore, P->sigcatch,   */ /* can't use */
-       &P->wchan, &P->nswap, &P->cnswap,
+       &P->wchan, /* &P->nswap, &P->cnswap, */  /* nswap and cnswap dead for 2.4.xx and up */
 /* -- Linux 2.0.35 ends here -- */
        &P->exit_signal, &P->processor,  /* 2.2.1 ends with "exit_signal" */
 /* -- Linux 2.2.8 to 2.5.17 end here -- */
