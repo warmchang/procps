@@ -81,7 +81,7 @@ static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd)
   dev_to_tty(dn_buf, 999, tty, pid, ABBREV_DEV);
   if(i_flag){
     char buf[8];
-    fprintf(stderr, "%-8.8s %-8.8s %5d %-16.16s   ? ",
+    fprintf(stderr, "%-8s %-8s %5d %-16.16s   ? ",
       (char*)dn_buf,user_from_uid(uid),pid,cmd
     );
     if(!fgets(buf,7,stdin)){
@@ -95,7 +95,7 @@ static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd)
   else                    failed=setpriority(PRIO_PROCESS,pid,sig_or_pri);
   saved_errno = errno;
   if(w_flag && failed){
-    fprintf(stderr, "%-8.8s %-8.8s %5d %-16.16s   ",
+    fprintf(stderr, "%-8s %-8s %5d %-16.16s   ",
       (char*)dn_buf,user_from_uid(uid),pid,cmd
     );
     errno = saved_errno;
@@ -104,7 +104,7 @@ static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd)
   }
   if(i_flag) return;
   if(v_flag){
-    printf("%-8.8s %-8.8s %5d %-16.16s\n",
+    printf("%-8s %-8s %5d %-16.16s\n",
       (char*)dn_buf,user_from_uid(uid),pid,cmd
     );
     return;

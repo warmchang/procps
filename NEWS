@@ -1,3 +1,10 @@
+procps-3.2.2 --> procps-3.2.3
+
+avoid truncating long usernames
+avoid warning about -lncurses when not linking (more)
+new names for shared libraries (packagers: watch out!)
+"make install" no longer rebuilds everything
+
 procps-3.2.1 --> procps-3.2.2
 
 new packager (downstream maintainer) guidelines in README

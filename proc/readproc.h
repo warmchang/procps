@@ -11,6 +11,7 @@
 
 
 #include "procps.h"
+#include "pwcache.h"
 
 #define SIGNAL_STRING
 
@@ -111,14 +112,14 @@ typedef struct proc_t {
 	**cmdline;	// (special)       command line string vector (/proc/#/cmdline)
     char
 	// Be compatible: Digital allows 16 and NT allows 14 ???
-    	euser[16],	// stat(),status   effective user name
-    	ruser[16],	// status          real user name
-    	suser[16],	// status          saved user name
-    	fuser[16],	// status          filesystem user name
-    	rgroup[16],	// status          real group name
-    	egroup[16],	// status          effective group name
-    	sgroup[16],	// status          saved group name
-    	fgroup[16],	// status          filesystem group name
+    	euser[P_G_SZ],	// stat(),status   effective user name
+    	ruser[P_G_SZ],	// status          real user name
+    	suser[P_G_SZ],	// status          saved user name
+    	fuser[P_G_SZ],	// status          filesystem user name
+    	rgroup[P_G_SZ],	// status          real group name
+    	egroup[P_G_SZ],	// status          effective group name
+    	sgroup[P_G_SZ],	// status          saved group name
+    	fgroup[P_G_SZ],	// status          filesystem group name
     	cmd[16];	// stat,status     basename of executable file in call to exec(2)
     struct proc_t
 	*ring,		// n/a             thread group ring

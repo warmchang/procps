@@ -17,15 +17,13 @@
 # numbers for future use, the ELF soname can be set equal to the
 # file name until some future date when a stable ABI is declared.
 
+SHARED     := 1
+
 # for lib$(NAME).so and /usr/include/($NAME) and such
 NAME       :=  proc
 
-SHARED     := 1
-
-###########
-
 LIBVERSION := $(VERSION).$(SUBVERSION).$(MINORVERSION)
-ABIVERSION := 1
+ABIVERSION := 0
 
 SOFILE     := lib$(NAME)-$(LIBVERSION).so
 ifneq ($(ABIVERSION),0)
@@ -74,7 +72,7 @@ DIRS  += proc/
 proc/$(ANAME): $(LIBOBJ)
 	$(AR) rcs $@ $^
 
-proc/$(SONAME): proc/library.map
+#proc/$(SONAME): proc/library.map
 proc/$(SONAME): $(LIBOBJ)
 	$(CC) -shared -Wl,-soname,$(SONAME) -Wl,--version-script=proc/library.map -o $@ $^ -lc
 

@@ -20,19 +20,16 @@
 #define	HASHSIZE	64		/* power of 2 */
 #define	HASH(x)		((x) & (HASHSIZE - 1))
 
-#define NAMESIZE	20
-#define NAMELENGTH	"19"
-
 static struct pwbuf {
     struct pwbuf *next;
     uid_t uid;
-    char name[NAMESIZE];
+    char name[P_G_SZ];
 } *pwhash[HASHSIZE];
 
-char *user_from_uid(uid_t uid)
-{
+char *user_from_uid(uid_t uid) {
     struct pwbuf **p;
     struct passwd *pw;
+    size_t len;
 
     p = &pwhash[HASH(uid)];
     while (*p) {
@@ -43,10 +40,11 @@ char *user_from_uid(uid_t uid)
     *p = (struct pwbuf *) xmalloc(sizeof(struct pwbuf));
     (*p)->uid = uid;
     pw = getpwuid(uid);
-    if (!pw)
-	sprintf((*p)->name, "%d", uid);
+    len = pw ? strlen(pw) : 0;
+    if (len >= P_G_SZ)
+	sprintf((*p)->name, "%u", uid);
     else
-	sprintf((*p)->name, "%-." NAMELENGTH "s", pw->pw_name);
+        strcpy((*p)->name, pw->pw_name);
     (*p)->next = NULL;
     return((*p)->name);
 }
@@ -54,27 +52,28 @@ char *user_from_uid(uid_t uid)
 static struct grpbuf {
     struct grpbuf *next;
     gid_t gid;
-    char name[NAMESIZE];
+    char name[P_G_SZ];
 } *grphash[HASHSIZE];
 
-char *group_from_gid(gid_t gid)
-{
+char *group_from_gid(gid_t gid) {
     struct grpbuf **g;
     struct group *gr;
+    size_t len;
 
     g = &grphash[HASH(gid)];
     while (*g) {
-       if ((*g)->gid == gid)
-           return((*g)->name);
-       g = &(*g)->next;
+        if ((*g)->gid == gid)
+            return((*g)->name);
+        g = &(*g)->next;
     }
     *g = (struct grpbuf *) malloc(sizeof(struct grpbuf));
     (*g)->gid = gid;
     gr = getgrgid(gid);
-    if (!gr)
-       sprintf((*g)->name, "%d", gid);
+    len = gr ? strlen(gr) : 0;
+    if (len >= P_G_SZ)
+        sprintf((*g)->name, "%u", gid);
     else
-       sprintf((*g)->name, "%-." NAMELENGTH "s", gr->gr_name);
+        strcpy((*g)->name, gr->gr_name);
     (*g)->next = NULL;
     return((*g)->name);
 }
