@@ -325,13 +325,12 @@ static const char *parse_sysv_option(void){
       exclusive("-V");
       display_version();
       exit(0);
-#if 0
-    // This must be verified against SVR4-MP (UnixWare or Powermax)
+    // This must be verified against SVR4-MP. (UnixWare or Powermax)
+    // Leave it undocumented until that problem is solved.
     case 'Z':     /* full Mandatory Access Control level info */
       trace("-Z shows full MAC info\n");
       format_modifiers |= FM_M;
       break;
-#endif
     case 'a':
       trace("-a select all with a tty, but omit session leaders.\n");
       simple_select |= SS_U_a;
