@@ -12,6 +12,6 @@ int main(int argc, char *argv[]) {
         display_version();
         return 0;
     }
-    fprintf(stderr, "usage: w -V\n    -V    display version\n");
+    fprintf(stderr, "usage: uptime [-V]\n    -V    display version\n");
     return 1;
 }
