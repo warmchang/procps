@@ -30,7 +30,7 @@ extern "C" {
 int procps_linux_version(void);
 
 /* Convenience macros for composing/decomposing version codes */
-#define LINUX_VERSION(x,y,z)   (0x10000*(x) + 0x100*(y) + z)
+#define LINUX_VERSION(x,y,z)   (0x10000*(x) + 0x100*(y) + (z))
 #define LINUX_VERSION_MAJOR(x) (((x)>>16) & 0xFF)
 #define LINUX_VERSION_MINOR(x) (((x)>> 8) & 0xFF)
 #define LINUX_VERSION_PATCH(x) ( (x)      & 0xFF)
