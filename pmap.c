@@ -79,7 +79,9 @@ static const char *get_args(unsigned pid){
 static const char *anon_name(int pid, unsigned KLONG addr, unsigned KLONG len){
   const char *cp = "  [ anon ]";
   proc_t proc;
-  if (get_proc_stats(pid, &proc)){
+  static int oldpid = -1;
+  if (pid==oldpid || get_proc_stats(pid, &proc)){
+    oldpid = pid;
     if( (proc.start_stack >= addr) && (proc.start_stack <= addr+len) )  cp = "  [ stack ]";
   }
   return cp;
@@ -111,6 +113,12 @@ static int one_proc(unsigned pid){
       tmp++;
     }
     
+    diff = end-start;
+    if(flags[3]=='s') total_shared  += diff;
+    if(flags[3]=='p') total_private += diff;
+
+#if 1
+    // format used by Solaris 7 and old procps
     if(flags[0]=='r'){
       if(flags[1]=='w'){
         if(flags[2]=='x') perms = "read/write/exec";
@@ -128,9 +136,14 @@ static int one_proc(unsigned pid){
         else              perms = "none           ";
       }
     }
-    diff = end-start;
-    if(flags[3]=='s') total_shared  += diff;
-    if(flags[3]=='p') total_private += diff;
+#else
+    // format used by Solaris 9 and future procps
+    perms = flags;
+    if(flags[3] == 'p') flags[3] = '-';
+    flags[4] = '-';  // an 'R' if swap not reserved (MAP_NORESERVE, SysV ISM shared mem, etc.)
+    flags[5] = '\0';
+#endif
+
     if(x_option){
       const char *cp = strrchr(mapbuf,'/');
       if(cp && cp[1]) cp++;

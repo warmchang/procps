@@ -516,27 +516,13 @@ static void fancy_spew(void){
   proc_data_t *pd = NULL;
   PROCTAB *restrict ptp;
   int n = 0;  /* number of processes & index into array */
-#if 0
-  if(thread_flags){
-    fprintf(stderr, "can't have threads with sorting or forest output\n");
-    exit(49);
-  }
-#endif
+
   ptp = openproc(needs_for_format | needs_for_sort | needs_for_select | needs_for_threads);
   if(!ptp) {
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
   }
-#if 0
-  while((retbuf = readproc(ptp,retbuf))){
-    if(want_this_proc_pcpu(retbuf)){
-//      fill_pcpu(retbuf); // in case we might sort by %cpu
-      processes[n++] = retbuf;
-      retbuf = NULL;     // NULL asks readproc to allocate
-    }
-  }
-  if(retbuf) free(retbuf);
-#else
+
   if(thread_flags & TF_loose_tasks){
     pd = readproctab2(want_this_proc_nop, want_this_proc_pcpu, ptp);
   }else{
@@ -544,7 +530,7 @@ static void fancy_spew(void){
   }
   n = pd->n;
   processes = pd->tab;
-#endif
+
   if(!n) return;  /* no processes */
   if(forest_type) prep_forest_sort();
   qsort(processes, n, sizeof(proc_t*), compare_two_procs);

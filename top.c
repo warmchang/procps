@@ -2718,6 +2718,7 @@ static void do_key (unsigned c)
          Curwin->rc.maxtasks = 0;
          SETw(Curwin, Show_IDLEPS | VISIBLE_tsk);
          Monpidsidx = 0;
+         selection_type = '\0';
          break;
 
       case '+':

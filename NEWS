@@ -4,6 +4,7 @@ ps: also handle SELinux on the 2.4.xx kernels
 top: during a ^Z, the terminal was messed up     #228822
 future-proof the tty handling   (thanks to Zhou Wei)
 slabtop  (Chris Rivera and Robert Love)          #226778 rh114012a
+pmap: detect the primary stack
 
 procps-3.1.14 --> procps-3.1.15
 
