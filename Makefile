@@ -1,5 +1,5 @@
 # procps Makefile
-# Albert Cahalan, 2002-2003
+# Albert Cahalan, 2002-2004
 #
 # Recursive make is considered harmful:
 # http://google.com/search?q=%22recursive+make+considered+harmful%22
@@ -18,9 +18,9 @@
 
 VERSION      := 3
 SUBVERSION   := 2
-MINORVERSION := 1
-TARVERSION   := 3.2.1
-LIBVERSION   := 3.2.1
+MINORVERSION := 2
+TARVERSION   := 3.2.2
+LIBVERSION   := 3.2.2
 
 ############ vars
 

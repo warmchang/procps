@@ -4,7 +4,6 @@ pmap
 *.o
 free
 kill
-oldps
 pgrep
 pkill
 slabtop
@@ -23,11 +22,6 @@ vmstat
 w
 watch
 Makefile
-libtool
 *.tar.gz
-config.h
-config.status
-config.log
-config.cache
 .deps
 .libs

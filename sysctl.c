@@ -412,7 +412,7 @@ static int Preload(const char *restrict const filename) {
  *    Main... 
  *
  */
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
    const char *me = (const char *)basename(argv[0]);
    bool SwitchesAllowed = true;
    bool WriteMode = false;
@@ -453,6 +453,8 @@ int main(int argc, char **argv) {
               PrintName = false;
            break;
          case 'e':
+              // For FreeBSD, -e means a "%s=%s\n" format. ("%s: %s\n" default)
+              // We (and NetBSD) use "%s = %s\n" always, and -e to ignore errors.
               IgnoreError = true;
            break;
          case 'N':
@@ -462,6 +464,7 @@ int main(int argc, char **argv) {
               SwitchesAllowed = false;
               WriteMode = true;
            break;
+         case 'f':  // the NetBSD way
          case 'p':
               argv++;
               if (argv && *argv && **argv) {
@@ -471,15 +474,20 @@ int main(int argc, char **argv) {
 	 case 'q':
 	      Quiet = true;
 	   break;
-         case 'a': /* string and integer values (for Linux, all of them) */
-         case 'A': /* the above, including "opaques" (would be unprintable) */
-         case 'X': /* the above, with opaques completly printed in hex */
+	 case 'o':  // BSD: binary values too, 1st 16 bytes in hex
+	 case 'x':  // BSD: binary values too, whole thing in hex
+	      /* does nothing */ ;
+	   break;
+         case 'a': // string and integer values (for Linux, all of them)
+         case 'A': // same as -a -o
+         case 'X': // same as -a -x
               SwitchesAllowed = false;
               return DisplayAll(PROC_PATH);
          case 'V':
               fprintf(stdout, "sysctl (%s)\n",procps_version);
               exit(0);
-         case 'h':
+         case 'd':   // BSD: print description ("vm.kvm_size: Size of KVM")
+         case 'h':   // BSD: human-readable (did FreeBSD 5 make -e default?)
          case '?':
               return Usage(me);
          default:
@@ -490,7 +498,7 @@ int main(int argc, char **argv) {
          if (NameOnly && Quiet)   // nonsense
             return Usage(me);
          SwitchesAllowed = false;
-         if (WriteMode)
+         if (WriteMode || index(*argv, '='))
             ReturnCode = WriteSetting(*argv);
          else
             ReturnCode = ReadSetting(*argv);
