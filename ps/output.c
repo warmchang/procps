@@ -276,6 +276,7 @@ STIME	stime	hms or md time format
 static int forest_helper(char *restrict const outbuf){
   char *p = forest_prefix;
   char *q = outbuf;
+  int rightward=max_rightward;
   if(!*p) return 0;
   /* Arrrgh! somebody defined unix as 1 */
   if(forest_type == 'u') goto unixy;
@@ -287,7 +288,12 @@ static int forest_helper(char *restrict const outbuf){
     case '|': strcpy(q, " |  ");  break;
     case '\0': return q-outbuf;    /* redundant & not used */
     }
+    if (rightward-4 < 0) {
+      *(q+rightward)='\0';
+      return max_rightward;
+    }
     q += 4;
+    rightward -= 4;
     p++;
   }
   return q-outbuf;   /* gcc likes this here */
@@ -300,7 +306,12 @@ unixy:
     case '|': strcpy(q, "  "); break;
     case '\0': return q-outbuf;    /* redundant & not used */
     }
+    if (rightward-2 < 0) {
+      *(q+rightward)='\0';
+      return max_rightward;
+    }
     q += 2;
+    rightward -= 2;
     p++;
   }
   return q-outbuf;   /* gcc likes this here */
@@ -322,49 +333,73 @@ Modifications to the arguments are not shown.
 
 /* "command" is the same thing: long unless c */
 static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp){
-  char *endp;
+  char *endp = outbuf;
   unsigned flags;
+  int rightward=max_rightward;
 
-  endp = outbuf + forest_helper(outbuf);
+  if(forest_prefix){
+    int fh = forest_helper(outbuf);
+    endp += fh;
+    rightward -= fh;
+  }
   if(bsd_c_option) flags = ESC_DEFUNCT;
   else             flags = ESC_DEFUNCT | ESC_BRACKETS | ESC_ARGS;
-  endp += escape_command(endp, pp, OUTBUF_SIZE, OUTBUF_SIZE, flags);
+  endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, flags);
 
-  if(bsd_e_option){
+  if(bsd_e_option && rightward>1){
     const char **env = (const char**)pp->environ;
     if(env && *env){
       *endp++ = ' ';
-      endp += escape_strlist(endp, env, OUTBUF_SIZE);
+      rightward--;
+      endp += escape_strlist(endp, env, OUTBUF_SIZE, &rightward);
     }
   }
-  return endp - outbuf;
+  //return endp - outbuf;
+  return max_rightward-rightward;
 }
 
 /* "ucomm" is the same thing: short unless -f */
 static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp){
-  char *endp;
+  char *endp = outbuf;
   unsigned flags;
-
-  endp = outbuf + forest_helper(outbuf);
+  int rightward=max_rightward;
+  
+  if(forest_prefix){
+    int fh = forest_helper(outbuf);
+    endp += fh;
+    rightward -= fh;
+  }
   if(unix_f_option) flags = ESC_DEFUNCT | ESC_BRACKETS | ESC_ARGS;
   else              flags = ESC_DEFUNCT;
-  endp += escape_command(endp, pp, OUTBUF_SIZE, OUTBUF_SIZE, flags);
+  endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, flags);
 
-  if(bsd_e_option){
+  if(bsd_e_option && rightward>1){
     const char **env = (const char**)pp->environ;
     if(env && *env){
       *endp++ = ' ';
-      endp += escape_strlist(endp, env, OUTBUF_SIZE);
+      rightward--;
+      endp += escape_strlist(endp, env, OUTBUF_SIZE, &rightward);
     }
   }
-  return endp - outbuf;
+  //return endp - outbuf;
+  return max_rightward-rightward;
 }
 /* Non-standard, from SunOS 5 */
 static int pr_fname(char *restrict const outbuf, const proc_t *restrict const pp){
-  char *endp;
-  endp = outbuf + forest_helper(outbuf);
-  endp += escape_str(endp, pp->cmd, OUTBUF_SIZE, 8);
-  return endp - outbuf;
+  char *endp = outbuf;
+  int rightward = max_rightward;
+  
+  if(forest_prefix){
+    int fh = forest_helper(outbuf);
+    endp += fh;
+    rightward -= fh;
+  }
+  if (rightward>8)  /* 8=default, but forest maybe feeds more */
+    rightward = 8;
+  
+  endp += escape_str(endp, pp->cmd, OUTBUF_SIZE, &rightward);
+  //return endp - outbuf;
+  return max_rightward-rightward;
 }
 
 /* elapsed wall clock time, [[dd-]hh:]mm:ss format (not same as "time") */
@@ -609,10 +644,13 @@ static int pr_wchan(char *restrict const outbuf, const proc_t *restrict const pp
  * AIX uses '-' for running processes, the location when there is
  * only one thread waiting in the kernel, and '*' when there is
  * more than one thread waiting in the kernel.
+ *
+ * The output should be truncated to maximal columns width -- overflow
+ * is not supported for the "wchan".
  */
-    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "-");
-    if(wchan_is_number) return snprintf(outbuf, COLWID, "%x", (unsigned)(pp->wchan) & 0xffffffu);
-    return snprintf(outbuf, COLWID, "%s", lookup_wchan(pp->wchan, pp->XXXID));
+    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, max_rightward+1, "-");
+    if(wchan_is_number) return snprintf(outbuf, max_rightward+1, "%x", (unsigned)(pp->wchan) & 0xffffffu);
+    return snprintf(outbuf, max_rightward+1, "%s", lookup_wchan(pp->wchan, pp->XXXID));
 }
 
 /* Terrible trunctuation, like BSD crap uses: I999 J999 K999 */
@@ -824,14 +862,17 @@ static int pr_wname(char *restrict const outbuf, const proc_t *restrict const pp
  * We use '-' for running processes, the location when there is
  * only one thread waiting in the kernel, and '*' when there is
  * more than one thread waiting in the kernel.
+ *
+ * The output should be truncated to maximal columns width -- overflow
+ * is not supported for the "wchan".
  */
-    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "-");
-    return snprintf(outbuf, COLWID, "%s", lookup_wchan(pp->wchan, pp->XXXID));
+    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, max_rightward+1, "-");
+    return snprintf(outbuf, max_rightward+1, "%s", lookup_wchan(pp->wchan, pp->XXXID));
 }
 
 static int pr_nwchan(char *restrict const outbuf, const proc_t *restrict const pp){
-    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, COLWID, "-");
-    return snprintf(outbuf, COLWID, "%x", (unsigned)(pp->wchan) & 0xffffffu);
+    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, max_rightward+1, "-");
+    return snprintf(outbuf, max_rightward+1, "%x", (unsigned)(pp->wchan) & 0xffffffu);
 }
 
 static int pr_rss(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -971,11 +1012,14 @@ static int pr_fuid(char *restrict const outbuf, const proc_t *restrict const pp)
 //
 static int do_pr_name(char *restrict const outbuf, const char *restrict const name, unsigned u){
   if(!user_is_number){
-    size_t len = strlen(name);
-    if(len <= max_rightward) {
-      memcpy(outbuf, name, len+1);
-      return len;
-    }
+    int rightward = OUTBUF_SIZE;	/* max cells */
+    int len;				/* real cells */
+    
+    escape_str(outbuf, name, OUTBUF_SIZE, &rightward);
+    len = OUTBUF_SIZE-rightward;
+    
+    if(len <= (int)max_rightward)
+      return len;  /* returns number of cells */
   }
   return snprintf(outbuf, COLWID, "%u", u);
 }
@@ -1070,12 +1114,12 @@ fail:
 static int pr_t_unlimited(char *restrict const outbuf, const proc_t *restrict const pp){
   static const char *const vals[] = {"[123456789-12345] <defunct>","ps","123456789-123456"};
   (void)pp;
-  return snprintf(outbuf, COLWID, "%s", vals[lines_to_next_header%3u]);
+  return snprintf(outbuf, max_rightward+1, "%s", vals[lines_to_next_header%3u]);
 }
 static int pr_t_unlimited2(char *restrict const outbuf, const proc_t *restrict const pp){
   static const char *const vals[] = {"unlimited", "[123456789-12345] <defunct>","ps","123456789-123456"};
   (void)pp;
-  return snprintf(outbuf, COLWID, "%s", vals[lines_to_next_header%4u]);
+  return snprintf(outbuf, max_rightward+1, "%s", vals[lines_to_next_header%4u]);
 }
 
 // like "etime"
@@ -1656,6 +1700,8 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
   int space    = 0;  /* amount of space we actually need to print */
   int dospace  = 0;  /* previous column determined that we need a space */
   int legit    = 0;  /* legitimately stolen extra space */
+  int sz       = 0;  /* real size of data in outbuffer */
+  int tmpspace = 0;
   char *restrict const outbuf = saved_outbuf;
   static int did_stuff = 0;  /* have we ever printed anything? */
 
@@ -1682,12 +1728,30 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
   for(;;){
     legit = 0;
     /* set width suggestion which might be ignored */
-    if(likely(fmt->next)) max_rightward = fmt->width;
-    else max_rightward = active_cols-((correct>actual) ? correct : actual);
+//    if(likely(fmt->next)) max_rightward = fmt->width;
+//    else max_rightward = active_cols-((correct>actual) ? correct : actual);
+
+    if(likely(fmt->next)){
+      max_rightward = fmt->width;
+      tmpspace = 0;
+    }else{
+      tmpspace = correct-actual;
+      if (tmpspace<1){
+        tmpspace = dospace;
+        max_rightward = active_cols-actual-tmpspace;
+      }else{
+	max_rightward = active_cols - ( (correct>actual) ? correct : actual );
+      }
+    }
     max_leftward  = fmt->width + actual - correct; /* TODO check this */
+    
+//    fprintf(stderr, "cols: %d, max_rightward: %d, max_leftward: %d, actual: %d, correct: %d\n",
+//		    active_cols, max_rightward, max_leftward, actual, correct);
+    
     /* prepare data and calculate leftpad */
     if(likely(p) && likely(fmt->pr)) amount = (*fmt->pr)(outbuf,p);
     else amount = strlen(strcpy(outbuf, fmt->name)); /* AIX or headers */
+    
     switch((fmt->flags) & CF_JUST_MASK){
     case 0:  /* for AIX, assigned outside this file */
       leftpad = 0;
@@ -1720,34 +1784,18 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
         if(leftpad < 0) leftpad = 0;
         break;
       }else{
-        if(fmt->next){
-          outbuf[fmt->width] = '\0';  /* Must chop, more columns! */
-        }else{
-          int chopspot;  /* place to chop */
-          int tmpspace;  /* need "space" before it is calculated below */
-          tmpspace = correct - actual;
-          if(tmpspace<1) tmpspace = dospace;
-          chopspot = active_cols-actual-tmpspace;
-          if(chopspot<1) chopspot=1;  /* oops, we (mostly) lose this column... */
-          outbuf[chopspot] = '\0';    /* chop at screen/buffer limit */
-        }
+        if ((active_cols-actual-tmpspace)<1)
+          outbuf[1] = '\0';  /* oops, we (mostly) lose this column... */
         leftpad = 0;
         break;
       }
     case CF_UNLIMITED:
-      if(unlikely(fmt->next)){
-        outbuf[fmt->width] = '\0';  /* Must chop, more columns! */
-      }else{
-        int chopspot;  /* place to chop */
-        int tmpspace;  /* need "space" before it is calculated below */
-        tmpspace = correct - actual;
-        if(tmpspace<1) tmpspace = dospace;
-        chopspot = active_cols-actual-tmpspace;
-        if(chopspot<1) chopspot=1;  /* oops, we (mostly) lose this column... */
-        outbuf[chopspot] = '\0';    /* chop at screen/buffer limit */
-      }
+    {
+      if(active_cols-actual-tmpspace < 1)
+        outbuf[1] = '\0';    /* oops, we (mostly) lose this column... */
       leftpad = 0;
       break;
+    }
     default:
       fprintf(stderr, "bad alignment code\n");
       break;
@@ -1766,16 +1814,18 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
     if(space<1) space=dospace;
     if(unlikely(space>SPACE_AMOUNT)) space=SPACE_AMOUNT;  // only so much available
 
+    /* real size -- don't forget in 'amount' is number of cells */
+    sz = strlen(outbuf);
+    
     /* print data, set x position stuff */
-    amount = strlen(outbuf);  /* post-chop data width */
     if(unlikely(!fmt->next)){
       /* Last column. Write padding + data + newline all together. */
-      outbuf[amount] = '\n';
-      fwrite(outbuf-space, space+amount+1, 1, stdout);
+      outbuf[sz] = '\n';
+      fwrite(outbuf-space, space+sz+1, 1, stdout);
       break;
     }
     /* Not the last column. Write padding + data together. */
-    fwrite(outbuf-space, space+amount, 1, stdout);
+    fwrite(outbuf-space, space+sz, 1, stdout);
     actual  += space+amount;
     correct += fmt->width;
     correct += legit;        /* adjust for SIGNAL expansion */

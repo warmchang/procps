@@ -982,8 +982,7 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
  * On failure, returns NULL.  On success, returns 'p' and 'p' is a valid
  * and filled out proc_t structure.
  */
-proc_t * get_proc_stats(pid_t pid, proc_t *p)
-{
+proc_t * get_proc_stats(pid_t pid, proc_t *p) {
 	static char path[PATH_MAX], sbuf[1024];
 	struct stat statbuf;
 

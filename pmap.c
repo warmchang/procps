@@ -113,11 +113,6 @@ static const char *mapping_name(proc_t *p, unsigned KLONG addr, unsigned KLONG l
   return cp;
 }
 
-
-// Overkill, but who knows what is proper? The "w" prog
-// uses the tty width to determine this.
-#define maxcmd 0xfffff
-
 static int one_proc(proc_t *p){
   char buf[32];
   char mapbuf[9600];
@@ -126,10 +121,14 @@ static int one_proc(proc_t *p){
   unsigned long total_private_readonly = 0ul;
   unsigned long total_private_writeable = 0ul;
 
+  // Overkill, but who knows what is proper? The "w" prog
+  // uses the tty width to determine this.
+  int maxcmd = 0xfffff;
+
   sprintf(buf,"/proc/%u/maps",p->tgid);
   if(!freopen(buf, "r", stdin)) return 1;
 
-  escape_command(cmdbuf, p, sizeof cmdbuf, maxcmd, ESC_ARGS|ESC_BRACKETS);
+  escape_command(cmdbuf, p, sizeof cmdbuf, &maxcmd, ESC_ARGS|ESC_BRACKETS);
   printf("%u:   %s\n", p->tgid, cmdbuf);
 
   if(!q_option && (x_option|d_option)){

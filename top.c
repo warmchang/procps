@@ -2912,9 +2912,10 @@ static void task_show (const WIN_t *q, const proc_t *p)
          case P_CMD:
          {  char tmp[ROWBUFSIZ];
             unsigned flags;
+	    int maxcmd = q->maxcmdln;
             if (CHKw(q, Show_CMDLIN)) flags = ESC_DEFUNCT | ESC_BRACKETS | ESC_ARGS;
             else                      flags = ESC_DEFUNCT;
-            escape_command(tmp, p, sizeof tmp, q->maxcmdln, flags);
+            escape_command(tmp, p, sizeof tmp, &maxcmd, flags);
             MKCOL(q->maxcmdln, q->maxcmdln, tmp);
          }
             break;

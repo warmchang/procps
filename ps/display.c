@@ -14,6 +14,10 @@
 #include <string.h>
 #include <unistd.h>
 
+#if (__GNU_LIBRARY__ >= 6)
+# include <locale.h>
+#endif
+
 /* username lookups */
 #include <sys/types.h>
 #include <pwd.h>
@@ -541,6 +545,10 @@ static void fancy_spew(void){
 
 /***** no comment */
 int main(int argc, char *argv[]){
+#if (__GNU_LIBRARY__ >= 6)
+  setlocale (LC_CTYPE, "");
+#endif
+
 #ifdef DEBUG
   init_stack_trace(argv[0]);
 #else

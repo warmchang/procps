@@ -218,7 +218,7 @@ static void showinfo(utmp_t *u, int formtype, int maxcmd, int from) {
     fputs(" ", stdout);
     if (likely(best)) {
 	char cmdbuf[512];
-	escape_command(cmdbuf, best, sizeof cmdbuf, maxcmd, ESC_ARGS);
+	escape_command(cmdbuf, best, sizeof cmdbuf, &maxcmd, ESC_ARGS);
 	fputs(cmdbuf,stdout);
     } else {
 	printf("-");

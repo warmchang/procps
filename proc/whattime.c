@@ -82,7 +82,6 @@ char *sprint_uptime(void) {
   return buf;
 }
 
-void print_uptime(void)
-{
+void print_uptime(void) {
   printf("%s\n", sprint_uptime());
 }

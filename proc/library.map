@@ -1,7 +1,7 @@
 # for --version-script
 # WTF is the syntax for this file?
 # Give me a BNF, man!
-_3_1_14 {
+_3_2_4 {
 global:
   __cyg_profile_func_enter; __cyg_profile_func_exit; main;
 
