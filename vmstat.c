@@ -121,10 +121,10 @@ static void getstat(jiff *cuse, jiff *cice, jiff *csys, jiff *cide, jiff *ciow,
 
   if(need_extra_file){  /* 2.5.40-bk4 and above */
     vminfo();
-    *pin  = vm_pgpgout;
-    *pout = vm_pgpgin;
-    *s_in = vm_pswpout;
-    *sout = vm_pswpin;
+    *pin  = vm_pgpgin;
+    *pout = vm_pgpgout;
+    *s_in = vm_pswpin;
+    *sout = vm_pswpout;
   }
 }
 
