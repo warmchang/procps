@@ -30,6 +30,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <assert.h>
+#include <limits.h>
 
 #include "c.h"
 #include "fileutils.h"
@@ -1136,6 +1137,8 @@ int main(int argc, char **argv)
 
 	}
 
+	if ((size_t)argc >= INT_MAX / sizeof(pid_t))
+		xerrx(EXIT_FAILURE, _("too many arguments"));
 	pidlist = xmalloc(sizeof(pid_t) * (argc+1));
 
 	while (*argv) {
