@@ -255,7 +255,7 @@ static void new_header(void)
 	if (t_option) {
 		(void) time( &the_time );
 		tm_ptr = localtime( &the_time );
-		if (strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
+		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
 			timebuf[strlen(timestamp_header) - 1] = '\0';
 		} else {
 			timebuf[0] = '\0';
@@ -307,7 +307,11 @@ static void new_format(void)
 	if (t_option) {
 		(void) time( &the_time );
 		tm_ptr = localtime( &the_time );
-		strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
+			;
+		} else {
+			timebuf[0] = '\0';
+		}
 	}
 
 	duse = *cpu_use + *cpu_nic;
@@ -360,7 +364,11 @@ static void new_format(void)
 		if (t_option) {
 			(void) time( &the_time );
 			tm_ptr = localtime( &the_time );
-			strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+			if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
+				;
+			} else {
+				timebuf[0] = '\0';
+			}
 		}
 
 		duse =
@@ -557,7 +565,7 @@ static void diskheader(void)
 	if (t_option) {
 		(void) time( &the_time );
 		tm_ptr = localtime( &the_time );
-		if (strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
+		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
 			timebuf[strlen(timestamp_header) - 1] = '\0';
 		} else {
 			timebuf[0] = '\0';
@@ -591,7 +599,11 @@ static void diskformat(void)
 		if (t_option) {
 			(void) time( &the_time );
 			tm_ptr = localtime( &the_time );
-			strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+			if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
+				;
+			} else {
+				timebuf[0] = '\0';
+			}
 		}
 
 		if (!moreheaders)
@@ -630,7 +642,11 @@ static void diskformat(void)
 			if (t_option) {
 				(void) time( &the_time );
 				tm_ptr = localtime( &the_time );
-				strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+				if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
+					;
+				} else {
+					timebuf[0] = '\0';
+				}
 			}
 
 			for (i = 0; i < ndisks; i++, k++) {
