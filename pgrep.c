@@ -398,7 +398,7 @@ output_strlist (const union el *list)
 }
 
 static PROCTAB *
-do_openproc ()
+do_openproc (void)
 {
 	PROCTAB *ptp;
 	int flags = PROC_FILLANY;
@@ -425,7 +425,7 @@ do_openproc ()
 }
 
 static regex_t *
-do_regcomp ()
+do_regcomp (void)
 {
 	regex_t *preg = NULL;
 
@@ -469,7 +469,7 @@ jiffies_to_time_t (long jiffies)
 #endif
 
 static union el *
-select_procs ()
+select_procs (void)
 {
 	PROCTAB *ptp;
 	proc_t task;

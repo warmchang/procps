@@ -204,11 +204,5 @@ extern void freeproc(proc_t* p);
 #define PROC_PID     0x0100  /* process id numbers ( 0   terminated) */
 #define PROC_TTY     0x0200  /* ctty device nos.   ( 0   terminated) */
 #define PROC_UID     0x0400  /* user id numbers    ( length needed ) */
-#define PROC_STAT    0x0800  /* status fields      ('\0' terminated) */
-#define PROC_ANYTTY  0x1000  /* proc must have a controlling terminal */
-#ifdef FLASK_LINUX
-#define PROC_SID     0x2000
-#define PROC_CONTEXT 0x2000 /* synonym: SID gets converted to string if PROC_CONTEXT */
-#endif
 
 #endif

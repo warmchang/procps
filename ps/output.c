@@ -201,10 +201,6 @@ CMP_INT(pcpu)
 
 CMP_INT(state)
 
-#ifdef FLASK_LINUX
-CMP_INT(sid)
-#endif
-
 /***************************************************************************/
 /************ Lots of format functions, starting with the NOP **************/
 
@@ -923,17 +919,20 @@ static int pr_sgi_p(void){          /* FIXME */
 }
 
 
-
+/****************** FLASK security stuff **********************/
 #ifdef FLASK_LINUX
 
 /*
- * The sr_fn() calls -- for sorting -- don't return errors because the same errors
- * should show up when the printing function pr_fn() is called, at which point the
- * error goes onscreen.
+ * The sr_fn() calls -- for sorting -- don't return errors because
+ * the same errors should show up when the printing function pr_fn()
+ * is called, at which point the error goes onscreen.
  */
 
-static int pr_sid ( void ) {
-  return sprintf(outbuf, "%d", (int) pp->sid);
+/* as above, creates sr_secsid function */
+CMP_INT(secsid)  /* FLASK security ID, **NOT** a session ID -- ugh */
+
+static int pr_secsid ( void ) {
+  return sprintf(outbuf, "%d", (int) pp->secsid);
 }
 
 static int pr_context ( void ) {
@@ -941,11 +940,10 @@ static int pr_context ( void ) {
   unsigned int len;
   int rv;
 
-
   len = DEF_CTXTLEN;
   ctxt = (char *) calloc(1, len);
   if ( ctxt != NULL )
-    rv = security_sid_to_context(pp->sid, (security_context_t) ctxt, &len);
+    rv = security_sid_to_context(pp->secsid, (security_context_t) ctxt, &len);
   else
     return sprintf(outbuf, "-");
 
@@ -953,27 +951,24 @@ static int pr_context ( void ) {
     if ( errno != ENOSPC ) {
       free(ctxt);
       return sprintf(outbuf, "-");
-    }
-    else {
+    } else {
       free(ctxt);
       ctxt = (char *) calloc(1, len);
       if ( ctxt != NULL ) {
-	rv = security_sid_to_context(pp->sid, (security_context_t) ctxt, &len);
+	rv = security_sid_to_context(pp->secsid, (security_context_t) ctxt, &len);
 	if ( rv ) {
 	  free(ctxt);
 	  return sprintf(outbuf, "-");
-	}
-	else {
+	} else {
 	  rv = sprintf(outbuf, "%s", ctxt);
 	  free(ctxt);
 	  return rv;
 	}
-      }
-      else /* calloc() failed */
+      } else {           /* calloc() failed */
 	return sprintf(outbuf, "-");
+      }
     }
-  }
-  else {
+  } else {
     rv = sprintf(outbuf, "%s", ctxt);
     free(ctxt);
     return rv;
@@ -990,41 +985,39 @@ static int sr_context ( const proc_t* P, const proc_t* Q ) {
   ctxt_P = (char *) calloc(1, len);
   ctxt_Q = (char *) calloc(1, len);
 
-  rv = security_sid_to_context(P->sid, (security_context_t) ctxt_P, &len);
+  rv = security_sid_to_context(P->secsid, (security_context_t) ctxt_P, &len);
   if ( rv ) {
     if ( errno != ENOSPC ) {
       free(ctxt_P);
       /* error should resurface during printing */
       return( 0 );
-    }
-    else {
+    } else {
       free(ctxt_P);
       ctxt_P = (char *) calloc(1, len);
       if ( ctxt_P != NULL ) {
-	rv = security_sid_to_context(P->sid, (security_context_t) ctxt_P, &len);
+	rv = security_sid_to_context(P->secsid, (security_context_t) ctxt_P, &len);
 	if ( rv ) {
 	  free(ctxt_P);
 	  /* error should resurface during printing */
 	  return( 0 );
 	}
-      }
-      else /* calloc() failed */
+      } else {       /* calloc() failed */
 	/* error should resurface during printing */
 	return( 0 );
+      }
     }
   }
 
   len = DEF_CTXTLEN;
 
-  rv = security_sid_to_context(Q->sid, (security_context_t) ctxt_Q, &len);
+  rv = security_sid_to_context(Q->secsid, (security_context_t) ctxt_Q, &len);
   if ( rv ) {
     if ( errno != ENOSPC ) {
       free(ctxt_P);
       free(ctxt_Q);
       /* error should resurface during printing */
       return( 0 );
-    }
-    else {
+    } else {
       free(ctxt_Q);
       ctxt_Q = (char *) calloc(1, len);
       if ( ctxt_Q != NULL ) {
@@ -1035,11 +1028,11 @@ static int sr_context ( const proc_t* P, const proc_t* Q ) {
 	  /* error should resurface during printing */
 	  return( 0 );
 	}
-      }
-      else /* calloc() failed */
+      } else {      /* calloc() failed */
 	/* error should resurface during printing */
 	free(ctxt_P);
 	return( 0 );
+      }
     }
   }
 
@@ -1050,6 +1043,16 @@ static int sr_context ( const proc_t* P, const proc_t* Q ) {
 
   return( rv );
 }
+
+#else
+
+/****** dummy functions ******/
+
+#define pr_secsid pr_nop
+#define sr_secsid sr_nop
+#define pr_context pr_nop
+#define sr_context sr_nop
+
 #endif
 
 /***************************************************************************/
@@ -1122,9 +1125,7 @@ static const format_struct format_array[] = {
 {"cnswap",    "-",       pr_nop,      sr_cnswap,  1,   0,    LNX, RIGHT},
 {"comm",      "COMMAND", pr_comm,     sr_nop,    16,   0,    U98, UNLIMITED}, /*ucomm*/
 {"command",   "COMMAND", pr_args,     sr_nop,    16,   0,    XXX, UNLIMITED}, /*args*/
-#ifdef FLASK_LINUX
 {"context",   "CONTEXT", pr_context,  sr_context,40,   0,    LNX, LEFT},
-#endif
 {"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, RIGHT}, /*cpu*/
 {"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
 {"cputime",   "TIME",    pr_time,     sr_nop,     8,   0,    DEC, RIGHT}, /*time*/
@@ -1234,9 +1235,7 @@ static const format_struct format_array[] = {
 {"sched",     "SCH",     pr_nop,      sr_nop,     1,   0,    AIX, RIGHT},
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, RIGHT},  /* man page misspelling of scount? */
 {"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, RIGHT},  /* scnt==scount, DEC claims both */
-#ifdef FLASK_LINUX
-{"secsid",      "SID",   pr_sid,      sr_sid,     6,   0,    LNX, RIGHT}, /* Flask Linux */
-#endif
+{"secsid",    "SID",     pr_secsid,   sr_secsid,  6,   0,    LNX, RIGHT}, /* Flask Linux */
 {"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, RIGHT},
 {"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, RIGHT},
 {"sgi_p",     "P",       pr_sgi_p,    sr_nop,     1,   0,    LNX, RIGHT}, /* "cpu" number */
@@ -1346,10 +1345,8 @@ static const macro_struct macro_array[] = {
 
 {"FL5FMT",   "f,state,uid,pid,ppid,pcpu,pri,nice,rss,wchan,start,time,command"},  /* Digital -fl */
 
-#ifdef FLASK_LINUX
 {"FLASK_context",   "pid,secsid,context,command"},  /* Flask Linux context, --context */
 {"FLASK_sid",       "pid,secsid,command"},          /* Flask Linux SID,     --SID */
-#endif
 
 {"HP_",      "pid,tty,time,comm"},  /* HP default */
 {"HP_f",     "user,pid,ppid,cpu,stime,tty,time,args"},  /* HP -f */

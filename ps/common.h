@@ -105,10 +105,8 @@
 #define FF_Bv 0x0080 /* v */
 #define FF_LX 0x0100 /* X */
 #define FF_Lm 0x0200 /* m */  /* overloaded: threads, sort, format */
-#ifdef FLASK_LINUX
-#define FF_Fc 0x0400  /* --context */  /* Flask security context format */
-#define FF_Fs 0x0800  /* --SID */      /* Flask SID format */
-#endif
+#define FF_Fc 0x0400 /* --context */  /* Flask security context format */
+#define FF_Fs 0x0800 /* --SID */      /* Flask SID format */
 
 /* predefined format modifier flags such as:  -l -f l u s -j */
 #define FM_c 0x0001 /* -c */

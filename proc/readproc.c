@@ -48,15 +48,8 @@ PROCTAB* openproc(int flags, ...) {
     else if (Do(UID)) {
     	PT->uids = va_arg(ap, uid_t*);
 	PT->nuid = va_arg(ap, int);
-    } else if (Do(STAT))
-    	PT->stats = va_arg(ap, char*);
-#ifdef FLASK_LINUX
-    else if ( Do(SID) || Do(CONTEXT) )
-        PT->sids = va_arg(ap, security_id_t*);
-#endif
+    }
     va_end(ap);				/*  Clean up args list */
-    if (Do(ANYTTY) && Do(TTY))
-	PT->flags = PT->flags & ~PROC_TTY; /* turn off TTY flag */
     return PT;
 }
 
@@ -318,7 +311,7 @@ proc_t* readproc(PROCTAB* PT, proc_t* p) {
     static char path[32], sbuf[1024];	/* bufs for stat,statm */
     int matched = 0;	/* flags */
 #ifdef FLASK_LINUX
-    security_id_t sid;
+    security_id_t secsid;
 #endif
 
     /* loop until a proc matching restrictions is found or no more processes */
@@ -342,7 +335,7 @@ next_proc:				/* get next PID for consideration */
 	sprintf(path, "/proc/%s", ent->d_name);
     }
 #ifdef FLASK_LINUX
-    if ( stat_secure(path, &sb, &sid) == -1 ) /* no such dirent (anymore) */
+    if ( stat_secure(path, &sb, &secsid) == -1 ) /* no such dirent (anymore) */
 #else
     if (stat(path, &sb) == -1)		/* no such dirent (anymore) */
 #endif
@@ -356,26 +349,15 @@ next_proc:				/* get next PID for consideration */
     p->euid = sb.st_uid;			/* need a way to get real uid */
 
 #ifdef FLASK_LINUX
-    p->sid = sid;
+    p->secsid = secsid;
 #endif
 
     if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
 	goto next_proc;			/* error reading /proc/#/stat */
     stat2proc(sbuf, p);				/* parse /proc/#/stat */
 
-#ifdef FLASK_LINUX
-    if (!matched && (Do(SID) || Do(CONTEXT)) && !XinL(security_id_t, p->sid, PT->sids))
-	goto next_proc;			/* not one of the requested SIDs */
-#endif
-
     if (!matched && Do(TTY) && !XinL(dev_t, p->tty, PT->ttys))
 	goto next_proc;			/* not one of the requested ttys */
-
-    if (!matched && Do(ANYTTY) && p->tty == -1)
-	goto next_proc;			/* no controlling terminal */
-
-    if (!matched && Do(STAT) && !strchr(PT->stats,p->state))
-	goto next_proc;			/* not one of the requested states */
 
     if (Do(FILLMEM)) {				/* read, parse /proc/#/statm */
 	if ((file2str(path, "statm", sbuf, sizeof sbuf)) != -1 )
@@ -431,7 +413,7 @@ proc_t* ps_readproc(PROCTAB* PT, proc_t* p) {
     static struct stat sb;		/* stat buffer */
     static char path[32], sbuf[1024];	/* bufs for stat,statm */
 #ifdef FLASK_LINUX
-    security_id_t sid;
+    security_id_t secsid;
 #endif
 
     /* loop until a proc matching restrictions is found or no more processes */
@@ -449,7 +431,7 @@ next_proc:				/* get next PID for consideration */
 	sprintf(path, "/proc/%s", ent->d_name);
 
 #ifdef FLASK_LINUX
-    if (stat_secure(path, &sb, &sid) == -1) /* no such dirent (anymore) */
+    if (stat_secure(path, &sb, &secsid) == -1) /* no such dirent (anymore) */
 #else
     if (stat(path, &sb) == -1)		/* no such dirent (anymore) */
 #endif
@@ -459,7 +441,7 @@ next_proc:				/* get next PID for consideration */
 	p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
     p->euid = sb.st_uid;			/* need a way to get real uid */
 #ifdef FLASK_LINUX
-    p->sid = sid;
+    p->secsid = secsid;
 #endif
 
     if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
@@ -517,31 +499,6 @@ void look_up_our_self(proc_t *p) {
 
 
 /* Convenient wrapper around openproc and readproc to slurp in the whole process
- * tree subset satisfying the constraints of flags and the optional PID list.
- * Free allocated memory with freeproctree().  The tree structure is a classic
- * left-list children + right-list siblings.  The algorithm is a two-pass of the
- * process table.  Since most process trees will have children with strictly
- * increasing PIDs, most of the structure will be picked up in the first pass.
- * The second loop then cleans up any nodes which turn out to have preceeded
- * their parent in /proc order.
- */
-
-/* Traverse tree 't' breadth-first looking for a process with pid p */
-static proc_t* LookupPID(proc_t* t, pid_t p) {
-    proc_t* tmp = NULL;
-    if (!t)
-	return NULL;
-    if (t->pid == p)				/* look here/terminate recursion */
-	return t;
-    if ((tmp = LookupPID(t->l, p)))		/* recurse over children */
-	return tmp;
-    for (; t; t=t->r)				/* recurse over siblings */
-	if ((tmp = LookupPID(tmp, p)))
-	    return tmp;
-    return NULL;
-}
-
-/* Convenient wrapper around openproc and readproc to slurp in the whole process
  * table subset satisfying the constraints of flags and the optional PID list.
  * Free allocated memory with freeproctab().  Access via tab[N]->member.  The
  * pointer list is NULL terminated.
@@ -564,12 +521,8 @@ proc_t** readproctab(int flags, ...) {
 	i = va_arg(ap, int);
 	PT = openproc(flags, u, i);
     }
-    else if (Do(PID) || Do(TTY) || Do(STAT))
+    else if (Do(PID) || Do(TTY))
 	PT = openproc(flags, va_arg(ap, void*)); /* assume ptr sizes same */
-#ifdef FLASK_LINUX
-    else if ( Do(SID) || Do(CONTEXT) )
-        PT = openproc(flags, va_arg(ap, security_id_t*));
-#endif
     else
 	PT = openproc(flags);
     va_end(ap);
