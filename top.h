@@ -165,12 +165,12 @@ typedef struct {
           n,            /* (not in the order of our display) */
           s,
           i,
-          I;
+          w;
    TICS_t u_sav,        /* tics count in the order of our display */
           s_sav,
           n_sav,
           i_sav,
-          I_sav;
+          w_sav;
 } CPUS_t;
 
         /* The scaling 'type' used with scale_num() -- this is how
@@ -288,7 +288,7 @@ typedef struct win {
 
         /* An rcfile 'footprint' used to invalidate existing local rcfile
            and the global rcfile path + name */
-#define RCF_FILEID  'j'
+#define RCF_FILEID  'a'
 #define SYS_RCFILE  "/etc/toprc"
 
         /* The default fields displayed and their order,
@@ -402,10 +402,14 @@ typedef struct win {
    "  0x00000200  PF_DUMPCORE\n" \
    "  0x00000400  PF_SIGNALED\n" \
    "  0x00000800  PF_MEMALLOC\n" \
-   "  0x00040000  PF_KERNTHREAD (2.5)\n" \
+   "  0x00002000  PF_FREE_PAGES (2.5)\n" \
+   "  0x00008000  debug flag (2.5)\n" \
+   "  0x00024000  special threads (2.5)\n" \
+   "  0x001D0000  special states (2.5)\n" \
    "  0x00100000  PF_USEDFPU (thru 2.4)\n" \
-   "  0x00400000  PF_ATOMICALLOC\n" \
    ""
+/* no room, sacrificed this one:  'Killed for out-of-memory' */
+/* "  0x00001000  PF_MEMDIE (2.5)\n" ....................... */
 
         /* Sort Select specially formatted string(s) --
            see 'show_special' for syntax details + other cautions
@@ -522,8 +526,8 @@ typedef struct win {
 //atic char       *ask4str (const char *prompt);
 //atic float       get_float (const char *prompt);
 //atic int         get_int (const char *prompt);
-//atic char       *scale_num (unsigned num, const unsigned width, const unsigned type);
-//atic char       *scale_tics (TICS_t tics, const unsigned width);
+//atic char       *scale_num (unsigned num, const int width, const unsigned type);
+//atic char       *scale_tics (TICS_t tics, const int width);
 //atic float       time_elapsed (void);
 /*------  Library Alternatives  ------------------------------------------*/
 //atic void       *alloc_c (unsigned numb);
@@ -544,7 +548,7 @@ typedef struct win {
 /*------  Windows/Field Groups support  ----------------------------------*/
 //atic void        win_colsheads (WIN_t *q);
 //atic void        win_names (WIN_t *q, const char *name);
-//atic void        win_select (int ch);
+//atic void        win_select (char ch);
 //atic int         win_warn (void);
 //atic void        winsclr (WIN_t *q, int save);
 //atic void        wins_colors (void);

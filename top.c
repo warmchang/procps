@@ -669,7 +669,7 @@ static int get_int (const char *prompt)
          *    SK_Kb (1) it's kilobytes
          *    SK_Mb (2) it's megabytes
          *    SK_Gb (3) it's gigabytes  */
-static char *scale_num (unsigned num, const unsigned width, const unsigned type)
+static char *scale_num (unsigned num, const int width, const unsigned type)
 {
       /* kilobytes, megabytes, gigabytes, duh! */
    static float scale[] = { 1024, 1024*1024, 1024*1024*1024, 0 };
@@ -705,7 +705,7 @@ static char *scale_num (unsigned num, const unsigned width, const unsigned type)
         /*
          * Do some scaling stuff.
          * Format 'tics' to fit 'width' */
-static char *scale_tics (TICS_t tics, const unsigned width)
+static char *scale_tics (TICS_t tics, const int width)
 {
 #define T1 "%u:%02u.%02u"
 #define T2 "%u:%02u"
@@ -828,7 +828,7 @@ static CPUS_t *refreshcpus (CPUS_t *cpus)
       /* first value the last slot with the cpu summary line */
    if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
    if (4 > sscanf(buf, CPU_FMTS_JUST1
-      , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i, &cpus[Cpu_tot].I))
+      , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i, &cpus[Cpu_tot].w))
          std_err("failed /proc/stat read");
 
       /* and now value each separate cpu's tics */
@@ -841,7 +841,7 @@ static CPUS_t *refreshcpus (CPUS_t *cpus)
       if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
       if (4 > sscanf(buf, CPU_FMTS_MULTI
 #endif
-         , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].I))
+         , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].w))
             std_err("failed /proc/stat read");
    }
 
@@ -858,7 +858,10 @@ static proc_t **refreshprocs (proc_t **tbl)
 #define PTRsz  sizeof(proc_t *)         /* eyeball candy */
 #define ENTsz  sizeof(proc_t)
    static int flags = PROC_FILLMEM | PROC_FILLCOM | PROC_FILLUSR
-                    | PROC_FILLGRP | PROC_FILLSTATUS | PROC_FILLSTAT;
+#ifndef UGH_ITS_4_RH
+                    | PROC_FILLGRP
+#endif
+                    | PROC_FILLSTATUS | PROC_FILLSTAT;
    static unsigned savmax = 0;          /* first time, Bypass: (i)  */
    proc_t *ptsk = (proc_t *)-1;         /* first time, Force: (ii)  */
    unsigned curmax = 0;                 /* every time  (jeeze)      */
@@ -1216,9 +1219,8 @@ static void display_fields (const char *fields, const char *xtra)
    const char *p;
    int i, cmax = Screen_cols / 2, rmax = Screen_rows - yRSVD;
 
-   /* we're relying on our callers to first clear the screen --
-      thus 'fields_toggle' can avoid screen flicker since he's
-      too lazy to handle his own asterisk (*) logic */
+   /* we're relying on callers to first clear the screen and thus avoid screen
+      flicker if they're too lazy to handle their own asterisk (*) logic */
    putp(Cap_bold);
    for (i = 0; i < MAXTBL(Fieldstab); ++i) {
       int b = (NULL != strchr(fields, i + 'A'));
@@ -1416,7 +1418,7 @@ static void win_names (WIN_t *q, const char *name)
 
         /*
          * Display a window/field group (ie. make it "current"). */
-static void win_select (int ch)
+static void win_select (char ch)
 {
    static const char *prompt = "Choose field group (1 - 4)";
 
@@ -1694,15 +1696,15 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
         /* we'll trim to zero if we get negative time ticks,
            which has happened with some SMP kernels (pre-2.4?) */
 #define TRIMz(x)  ((tz = (STIC_t)x) < 0 ? 0 : tz)
-   STIC_t u_frme, s_frme, n_frme, i_frme, I_frme, tot_frme, tz;
+   STIC_t u_frme, s_frme, n_frme, i_frme, w_frme, tot_frme, tz;
    float scale;
 
    u_frme = TRIMz(cpu->u - cpu->u_sav);
    s_frme = TRIMz(cpu->s - cpu->s_sav);
    n_frme = TRIMz(cpu->n - cpu->n_sav);
    i_frme = TRIMz(cpu->i - cpu->i_sav);
-   I_frme = TRIMz(cpu->I - cpu->I_sav);
-   tot_frme = u_frme + s_frme + n_frme + i_frme + I_frme;
+   w_frme = TRIMz(cpu->w - cpu->w_sav);
+   tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme;
    if (1 > tot_frme) tot_frme = 1;
    scale = 100.0 / (float)tot_frme;
 
@@ -1714,7 +1716,7 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
       , (float)s_frme * scale
       , (float)n_frme * scale
       , (float)i_frme * scale
-      , (float)I_frme * scale));
+      , (float)w_frme * scale));
    Msg_row += 1;
 
       /* remember for next time around */
@@ -1722,7 +1724,7 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
    cpu->s_sav = cpu->s;
    cpu->n_sav = cpu->n;
    cpu->i_sav = cpu->i;
-   cpu->I_sav = cpu->I;
+   cpu->w_sav = cpu->w;
 
 #undef TRIMz
 }

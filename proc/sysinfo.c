@@ -212,40 +212,43 @@ static void init_libproc(void){
 #define NAN (-0.0)
 #endif
 #define JT unsigned long long
-void five_cpu_numbers(double *uret, double *nret, double *sret, double *iret, double *Iret){
-    double tmp_u, tmp_n, tmp_s, tmp_i, tmp_I;
+void five_cpu_numbers(double *uret, double *nret, double *sret, double *iret, double *wret){
+    double tmp_u, tmp_n, tmp_s, tmp_i, tmp_w;
     double scale;  /* scale values to % */
-    static JT old_u, old_n, old_s, old_i, old_I;
-    JT new_u, new_n, new_s, new_i, new_I;
+    static JT old_u, old_n, old_s, old_i, old_w;
+    JT new_u, new_n, new_s, new_i, new_w;
     JT ticks_past; /* avoid div-by-0 by not calling too often :-( */
+
+    tmp_w = 0.0;
+    new_w = 0;
  
     FILE_TO_BUF(STAT_FILE,stat_fd);
-    sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu", &new_u, &new_n, &new_s, &new_i, &new_I);
-    ticks_past = (new_u+new_n+new_s+new_i+new_I)-(old_u+old_n+old_s+old_i+old_I);
+    sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu", &new_u, &new_n, &new_s, &new_i, &new_w);
+    ticks_past = (new_u+new_n+new_s+new_i+new_w)-(old_u+old_n+old_s+old_i+old_w);
     if(ticks_past){
       scale = 100.0 / (double)ticks_past;
       tmp_u = ( (double)new_u - (double)old_u ) * scale;
       tmp_n = ( (double)new_n - (double)old_n ) * scale;
       tmp_s = ( (double)new_s - (double)old_s ) * scale;
       tmp_i = ( (double)new_i - (double)old_i ) * scale;
-      tmp_I = ( (double)new_I - (double)old_I ) * scale;
+      tmp_w = ( (double)new_w - (double)old_w ) * scale;
     }else{
       tmp_u = NAN;
       tmp_n = NAN;
       tmp_s = NAN;
       tmp_i = NAN;
-      tmp_I = NAN;
+      tmp_w = NAN;
     }
     SET_IF_DESIRED(uret, tmp_u);
     SET_IF_DESIRED(nret, tmp_n);
     SET_IF_DESIRED(sret, tmp_s);
     SET_IF_DESIRED(iret, tmp_i);
-    SET_IF_DESIRED(iret, tmp_I);
+    SET_IF_DESIRED(wret, tmp_w);
     old_u=new_u;
     old_n=new_n;
     old_s=new_s;
     old_i=new_i;
-    old_i=new_I;
+    old_w=new_w;
 }
 #undef JT
 

@@ -5,7 +5,7 @@ extern unsigned long long Hertz;   /* clock tick frequency */
 extern long smp_num_cpus;     /* number of CPUs */
 
 #define JT double
-extern void five_cpu_numbers(JT *uret, JT *nret, JT *sret, JT *iret, JT *Iret);
+extern void five_cpu_numbers(JT *uret, JT *nret, JT *sret, JT *iret, JT *wret);
 #undef JT
 
 extern int        uptime (double *uptime_secs, double *idle_secs);
