@@ -28,7 +28,7 @@
  *
  * Most of it comes from task_struct in linux/sched.h
  */
-typedef struct proc_s {
+typedef struct proc_t {
 #ifdef SIGNAL_STRING
     char
 	/* Linux 2.1.7x and up have more signals. This handles 88. */
@@ -130,7 +130,7 @@ typedef struct proc_s {
 #include <sys/types.h>
 #include <dirent.h>
 #include <unistd.h>
-typedef struct {
+typedef struct PROCTAB {
     DIR*	procfs;
     int		flags;
     pid_t*	pids;	/* pids of the procs */
@@ -142,7 +142,7 @@ typedef struct {
 
 /* initialize a PROCTAB structure holding needed call-to-call persistent data
  */
-PROCTAB* openproc(int flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
+extern PROCTAB* openproc(int flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
 
 
 /* Convenient wrapper around openproc and readproc to slurp in the whole process
@@ -150,22 +150,22 @@ PROCTAB* openproc(int flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
  * Free allocated memory with freeproctab().  Access via tab[N]->member.  The
  * pointer list is NULL terminated.
  */
-proc_t** readproctab(int flags, ... /* same as openproc */ );
+extern proc_t** readproctab(int flags, ... /* same as openproc */ );
 
 /* clean-up open files, etc from the openproc()
  */
-void closeproc(PROCTAB* PT);
+extern void closeproc(PROCTAB* PT);
 
 /* retrieve the next process matching the criteria set by the openproc()
  */
-proc_t* readproc(PROCTAB* PT, proc_t* return_buf);
-proc_t* ps_readproc(PROCTAB* PT, proc_t* return_buf);
+extern proc_t* readproc(PROCTAB* PT, proc_t* return_buf);
+extern proc_t* ps_readproc(PROCTAB* PT, proc_t* return_buf);
 
-void look_up_our_self(proc_t *p);
+extern void look_up_our_self(proc_t *p);
 
 /* deallocate space allocated by readproc
  */
-void freeproc(proc_t* p);
+extern void freeproc(proc_t* p);
 
 /* openproc/readproctab:
  *   
