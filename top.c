@@ -807,7 +807,6 @@ static void *alloc_r (void *q, unsigned numb)
          * as follows:
          *    cpus[0] thru cpus[n] == tics for each separate cpu
          *    cpus[Cpu_tot]        == tics from the 1st /proc/stat line */
-#include <fcntl.h>
 static CPUS_t *refreshcpus (CPUS_t *cpus)
 {
    static FILE *fp = NULL;
