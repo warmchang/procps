@@ -347,6 +347,7 @@ void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff
 	     unsigned int *restrict running, unsigned int *restrict blocked,
 	     unsigned int *restrict btime, unsigned int *restrict processes) {
   static int fd;
+  unsigned long long llbuf = 0;
   int need_vmstat_file = 0;
   int need_proc_scan = 0;
   const char* b;
@@ -376,10 +377,12 @@ void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff
   else need_vmstat_file = 1;
 
   b = strstr(buff, "intr ");
-  if(b) sscanf(b,  "intr %u", intr);
+  if(b) sscanf(b,  "intr %Lu", &llbuf);
+  *intr = llbuf;
 
   b = strstr(buff, "ctxt ");
-  if(b) sscanf(b,  "ctxt %u", ctxt);
+  if(b) sscanf(b,  "ctxt %Lu", &llbuf);
+  *ctxt = llbuf;
 
   b = strstr(buff, "btime ");
   if(b) sscanf(b,  "btime %u", btime);

@@ -2,10 +2,13 @@
 
 Implement /usr/proc/bin tools like Solaris has.
 The prstat command is interesting, like top in batch mode.
+SCO has a pstat command.
 
 Don't these really belong in the procps package?
          killall   pstree   fuser   lsof   who
 (they are maintained elsewhere, which causes version problems)
+
+OpenBSD has a pfind command.
 
 Cache results of dev_to_tty.
 
@@ -59,6 +62,10 @@ Adjust PID-like and PSR-like columns to fit the data.
 The normal PID limit is 5 digits; it can go up to 10.
 The normal CPU limit is 1 digit; it can go to 3 or 4.
 
+don't truncate long usernames
+
+have a --config option
+
 ---------------- ps for now, maybe move to libproc ------------------
 
 With forest output and a tty named /dev/this_is_my_tty, the position
@@ -96,7 +103,13 @@ Add an option to select all processes that a user can kill.
 (related to RUID, EUID, tty, etc. -- but maybe ignore root power)
 
 Add a nice display option for killing things.
-ruser,euser,ppid,pid,pmem,stime,args isn't too bad
+ruser,euser,ppid,pid,pmem,stime,args
+
+For RT stuff:
+pid,tid,class,rtprio,ni,pri,psr,pcpu,stat,wchan:14,comm
+
+For job control:
+stat,euid,ruid,tty,tpgid,sess,pgrp,ppid,pid,pcpu,comm
 
 Make the column alignment algorithm support this:
     FOO BAR
