@@ -2076,6 +2076,10 @@ void init_output(void)
 	    MAP_PRIVATE | MAP_ANONYMOUS,
 	    -1,
 	    0);
+
+    if(outbuf == MAP_FAILED)
+        catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
+
     memset(outbuf, ' ', SPACE_AMOUNT);
     if(SPACE_AMOUNT==page_size)
 	mprotect(outbuf, page_size, PROT_READ);
