@@ -60,7 +60,6 @@
 
 #include "../proc/readproc.h"
 #include "../proc/sysinfo.h"
-#include "../proc/status.h"
 #include "../proc/procps.h"
 #include "../proc/devname.h"
 #include "common.h"

@@ -11,7 +11,6 @@
 #include <stdio.h>		/* for parse error output */
 
 #include "proc/readproc.h"	/* for proc_t */
-#include "proc/tree.h"		/* for struct tree_node */
 
 #include "proc/compare.h"	/* for this code */
 
@@ -61,16 +60,6 @@ int mult_lvl_cmp(void* a, void* b) {
     int i, cmp_val;
     for(i = 0; i < sort_depth; i++) {
         cmp_val = sort_direction[i] * (*sort_function[i])(a,b);
-        if (cmp_val != 0)
-            return cmp_val;
-    }
-    return 0;
-}
-
-int node_mult_lvl_cmp(void* a, void* b) {
-    int i, cmp_val;
-    for(i = 0; i < sort_depth; i++) {
-        cmp_val = sort_direction[i] * (*sort_function[i])(&(((struct tree_node *)a)->proc),&(((struct tree_node *)b)->proc));
         if (cmp_val != 0)
             return cmp_val;
     }

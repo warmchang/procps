@@ -14,7 +14,6 @@ extern void *xmalloc(unsigned int size);
 extern void *xcalloc(void *pointer, int size);
        
 extern int   mult_lvl_cmp(void* a, void* b);
-extern int   node_mult_lvl_cmp(void* a, void* b);
        
 extern char *user_from_uid(uid_t uid);
 extern char *group_from_gid(gid_t gid);
