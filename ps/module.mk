@@ -2,8 +2,8 @@
 
 INSTALL += $(bin)ps
 
-# a file to remove
-CLEAN += ps/ps
+# files to remove
+CLEAN += ps/ps ps/debug
 
 # a directory for cleaning
 DIRS += ps
@@ -11,33 +11,26 @@ DIRS += ps
 # a file to create
 ALL += ps/ps
 
-ps: escape.o global.o help.o select.o sortformat.o output.o parser.o display.o
-	$(CC) -o ps   escape.o global.o help.o select.o sortformat.o output.o parser.o display.o -L../proc -lproc
+PSNAMES := $(addprefix ps/,display escape global help output parser select sortformat)
+PSOBJ   := $(addsuffix .o,$(PSNAMES))
+PSSRC   := $(addsuffix .c,$(PSNAMES))
+
+ps/ps: $(PSOBJ) $(LIBPROC)
+	$(CC) $(LDFLAGS) -o $@ $^
 
 # This just adds the stacktrace code
-debug: escape.o global.o help.o select.o sortformat.o output.o parser.o display.o stacktrace.o
-	$(CC) -o ps   escape.o global.o help.o select.o sortformat.o output.o parser.o display.o stacktrace.o -L../proc -lproc -lefence
+ps/debug: $(PSOBJ) stacktrace.o $(LIBPROC)
+	$(CC) -o $@ $^ -lefence
 
-sortformat.o: sortformat.c common.h
+$(PSOBJ): %.o: ps/%.c ps/common.h proc/$(SONAME)
+#	$(CC) -c $(CFLAGS) $< -o $@
 
-global.o: global.c common.h
-
-escape.o: escape.c
-
-help.o: help.c
-
-select.o: select.c common.h
-
-output.o: output.c common.h
-
-parser.o: parser.c common.h
-
-display.o: display.c common.h
-
-stacktrace.o: stacktrace.c
+ps/stacktrace.o: ps/stacktrace.c
 
 
-$(bin)ps: ps
-	install $(OWNERGROUP) --mode a=rx --strip ps $(BINDIR)/ps
-	install $(OWNERGROUP) --mode a=r ps.1 $(MAN1DIR)/ps.1
+$(bin)ps: ps/ps
+	install --mode a=rx --strip $< $@
+
+$(man1)ps.1 : ps/ps.1
+	install --mode a=r $< $@
 	-rm -f $(DESTDIR)/var/catman/cat1/ps.1.gz $(DESTDIR)/var/man/cat1/ps.1.gz

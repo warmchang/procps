@@ -1,62 +1,59 @@
 # This file gets included into the main Makefile, in the top directory.
 
+# for lib$(NAME).so and /usr/include/($NAME) and such
 NAME      :=  proc
 
-LIBSRC += $(wildcard proc/*.c)
+SHARED := 1
 
 SONAME    :=  lib$(NAME).so.$(LIBVERSION)
 
-ALL        += proc/lib$(NAME).a
-INSTALL    += $(lib)/lib$(NAME).a
+#ALL        += proc/lib$(NAME).a
+#INSTALL    += $(usr/lib)/lib$(NAME).a # plus $(usr/include)$(NAME) gunk
 LIB_CFLAGS := $(CFLAGS)
 
 ifeq ($(SHARED),1)
 ALL        += proc/$(SONAME)
 INSTALL    += $(lib)/$(SONAME)
 LIB_CFLAGS += -fpic
+LIBPROC    := proc/$(SONAME)
+else
+LIBPROC    := proc/lib$(NAME).a
 endif
 
-# clean away all output files, .depend, and symlinks
-CLEAN += $(addprefix proc/,$(ALL) .depend)
+LIBSRC :=  $(wildcard proc/*.c)
+LIBHDR :=  $(wildcard proc/*.h)
+LIBOBJ :=  $(LIBSRC:.c=.o)
 
-------
+# Clean away all output files, .depend, and symlinks.
+# Use wildcards in case the version has changed.
+CLEAN += proc/.depend proc/lib*.so* proc/lib*.a $(LIBOBJ)
+DIRS  += proc
 
-# INSTALLATION OPTIONS
-HDRDIR    := /usr/include/$(NAME)#	where to put .h files
-LIBDIR    := /usr/lib#		where to put library files
-HDROWN    := $(OWNERGROUP) #		owner of header files
-LIBOWN    := $(OWNERGROUP) #		owner of library files
-INSTALL   := install
+#proc/lib$(NAME).a: $(LIBOBJ)
+#	$(AR) rcs $@ $^
 
-SRC       :=  $(sort $(wildcard *.c) $(filter %.c,$(RCSFILES)))
-HDR       :=  $(sort $(wildcard *.h) $(filter %.h,$(RCSFILES)))
-OBJ       :=  $(SRC:.c=.o)
-
-
-proc/lib$(NAME).a: $(OBJ)
-	$(AR) rcs $@ $^
-
-proc/$(SONAME): $(OBJ)
-	gcc -shared -Wl,-soname,$(SONAME) -o $@ $^ -lc
-	ln -sf $(SONAME) lib$(NAME).so
+proc/$(SONAME): $(LIBOBJ)
+	$(CC) -shared -Wl,-soname,$(SONAME) -o $@ $^ -lc
+	cd proc && $(ln-sf) $(SONAME) lib$(NAME).so
 
 
 # AUTOMATIC DEPENDENCY GENERATION -- GCC AND GNUMAKE DEPENDENT
-.depend:
-	$(strip $(CC) $(LIB_CFLAGS) -MM -MG $(SRC) > .depend)
--include .depend
+proc/.depend: $(LIBSRC) $(LIBHDR)
+	$(strip $(CC) $(LIB_CFLAGS) -MM -MG $(LIBSRC) > $@)
+-include proc/.depend
 
 
-# INSTALLATION
-install: all
-	if ! [ -d $(HDRDIR) ] ; then mkdir $(HDRDIR) ; fi
-	$(INSTALL) $(HDROWN) $(HDR) /usr/include/$(NAME)
-	$(INSTALL) $(LIBOWN) lib$(NAME).a $(LIBDIR)
-ifeq ($(SHARED),1)
-	$(INSTALL) $(LIBOWN) $(SONAME) $(SHLIBDIR)
-	cd $(SHLIBDIR) && ln -sf $(SONAME) lib$(NAME).so
-	ldconfig
-endif
+$(lib)/$(SONAME) : proc/$(SONAME)
+	$(install) --mode a=rx --strip $< $@
+	cd $(lib) && $(ln-sf) $(SONAME) lib$(NAME).so
+	$(ldconfig)
+
+#$(usr/lib)/lib$(NAME).a : proc/lib$(NAME).a
+#	$(install) --mode a=r --strip $< $@
+
+# Junk anyway... supposed to go in /usr/include/$(NAME)
+#$(HDRFILES) ??? : $(addprefix proc/,$(HDRFILES)) ???
+#	$(install) --mode a=r $< $@
 
 
 # CUSTOM c -> o rule so that command-line has minimal whitespace
@@ -64,9 +61,9 @@ endif
 	$(strip $(CC) $(LIB_CFLAGS) -c $<)
 
 
-version.o:	version.c version.h
+proc/version.o:	proc/version.c proc/version.h
 ifdef MINORVERSION
-	$(strip $(CC) $(LIB_CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c version.c)
+	$(strip $(CC) $(LIB_CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c proc/version.c)
 else
-	$(strip $(CC) $(LIB_CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -c version.c)
+	$(strip $(CC) $(LIB_CFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -c proc/version.c)
 endif
