@@ -94,8 +94,13 @@
 #define needs_for_select (PROC_FILLSTAT | PROC_FILLSTATUS)
 
 /* thread_flags */
-#define TF_show_proc 0x0001  // show the summary line
-#define TF_show_task 0x0002  // show the per-thread lines
+#define TF_B_H         0x0001
+#define TF_B_m         0x0002
+#define TF_U_m         0x0004
+#define TF_U_T         0x0008
+#define TF_U_L         0x0010
+#define TF_show_proc   0x0100  // show the summary line
+#define TF_show_task   0x0200  // show the per-thread lines
 
 /* personality control flags */
 #define PER_BROKEN_o      0x0001

@@ -264,6 +264,7 @@ static const char *parse_sysv_option(void){
        * SCO UnixWare uses -L too.
        */
       trace("-L Print LWP (thread) info.\n");
+      thread_flags |= TF_U_L;
       thread_flags |= TF_show_task;
       format_modifiers |= FM_L;
       break;
@@ -299,6 +300,7 @@ static const char *parse_sysv_option(void){
        * Also, testing shows PID==SPID for all normal processes.
        */
       trace("-T adds strange SPID column (old sproc() threads?)\n");
+      thread_flags |= TF_U_T;
       thread_flags |= TF_show_task;
       format_modifiers |= FM_T;
       break;
@@ -371,6 +373,7 @@ static const char *parse_sysv_option(void){
     case 'm':
       trace("-m shows threads.\n");
       /* note that AIX shows 2 lines for a normal process */
+      thread_flags |= TF_U_m;
       thread_flags |= TF_show_proc;
       thread_flags |= TF_show_task;
       break;
@@ -503,6 +506,7 @@ static const char *parse_bsd_option(void){
 #endif
     case 'H':    // The FreeBSD way (NetBSD:s OpenBSD:k FreeBSD:H  -- NIH???)
       trace("H Print LWP (thread) info.\n");   // was: Use /vmcore as c-dumpfile\n");
+      thread_flags |= TF_B_H;
       thread_flags |= TF_show_task;  // FIXME: determine if TF_show_proc is needed
       //format_modifiers |= FM_L;    // FIXME: determine if we need something like this
       break;
@@ -620,6 +624,7 @@ static const char *parse_bsd_option(void){
         defer_sf_option("pmem", SF_B_m);
         break;
       }
+      thread_flags |= TF_B_m;
       thread_flags |= TF_show_proc;
       thread_flags |= TF_show_task;
       break;
@@ -1095,6 +1100,19 @@ static void choose_dimensions(void){
   /* perhaps --html and --null should set unlimited width */
 }
 
+static const char *thread_option_check(void){
+  if(!thread_flags) return NULL;
+
+  if((thread_flags&TF_B_H) && (thread_flags&(TF_B_m|TF_U_m)))
+    return "Thread flags conflict; can't use H with m or -m.";
+  if((thread_flags&TF_B_m) && (thread_flags&TF_U_m))
+    return "Thread flags conflict; can't use both m and -m.";
+  if((thread_flags&TF_U_L) && (thread_flags&TF_U_T))
+    return "Thread flags conflict; can't use both -L and -T.";
+
+  return NULL;
+}
+
 int arg_parse(int argc, char *argv[]){
   const char *err = NULL;
   const char *err2 = NULL;
@@ -1102,16 +1120,13 @@ int arg_parse(int argc, char *argv[]){
   ps_argv = argv;
   thisarg = 0;
 
-#if 0
-  {int debugloop = 0; while(debugloop<argc){
-  trace("argv[%d]=%s\n", debugloop, argv[debugloop]); debugloop++;}}
-#endif
-
   if(personality & PER_FORCE_BSD) goto try_bsd;
 
   err = parse_all_options();
   if(err) goto try_bsd;
   err = process_sf_options(!not_pure_unix);
+  if(err) goto try_bsd;
+  err = thread_option_check();
   if(err) goto try_bsd;
   err = select_bits_setup();
   if(err) goto try_bsd;
@@ -1140,6 +1155,8 @@ try_bsd:
   err2 = parse_all_options();
   if(err2) goto total_failure;
   err2 = process_sf_options(!not_pure_unix);
+  if(err2) goto total_failure;
+  err2 = thread_option_check();
   if(err2) goto total_failure;
   err2 = select_bits_setup();
   if(err2) goto total_failure;
