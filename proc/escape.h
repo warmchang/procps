@@ -13,7 +13,7 @@ EXTERN_C_BEGIN
 #define ESC_DEFUNCT  0x4  // mark zombies with " <defunct>"
 
 extern int escape_strlist(char *restrict dst, const char *restrict const *restrict src, size_t n);
-extern int escape_str(char *restrict dst, const char *restrict src, size_t n);
+extern int escape_str(char *restrict dst, const char *restrict src, int bufsize, int maxglyphs);
 extern int octal_escape_str(char *restrict dst, const char *restrict src, size_t n);
 extern int simple_escape_str(char *restrict dst, const char *restrict src, size_t n);
 

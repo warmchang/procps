@@ -342,22 +342,18 @@ Modifications to the arguments are not shown.
  * pp->environ   environment
  */
 
+// FIXME: some of these may hit the guard page in forest mode
+
 /* "command" is the same thing: long unless c */
 static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp;
+  unsigned flags;
+
   endp = outbuf + forest_helper(outbuf);
-  if(bsd_c_option){
-    endp += escape_str(endp, pp->cmd, PAGE_SIZE); /* short version */
-  }else{
-    const char **lc = (const char**)pp->cmdline; /* long version */
-    if(lc && *lc) {
-      endp += escape_strlist(endp, lc, OUTBUF_SIZE);
-    } else {
-      char buf[ESC_STRETCH*PAGE_SIZE]; /* TODO: avoid copy */
-      escape_str(buf, pp->cmd, ESC_STRETCH*PAGE_SIZE);
-      endp += snprintf(endp, COLWID, "[%s]", buf);
-    }
-  }
+  if(bsd_c_option) flags = ESC_DEFUNCT;
+  else             flags = ESC_DEFUNCT | ESC_BRACKETS | ESC_ARGS;
+  endp += escape_command(endp, pp, OUTBUF_SIZE, OUTBUF_SIZE, flags);
+
   if(bsd_e_option){
     const char **env = (const char**)pp->environ;
     if(env && *env){
@@ -371,19 +367,13 @@ static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp)
 /* "ucomm" is the same thing: short unless -f */
 static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp;
+  unsigned flags;
+
   endp = outbuf + forest_helper(outbuf);
-  if(!unix_f_option){ /* does -f matter? */
-    endp += escape_str(endp, pp->cmd, PAGE_SIZE); /* short version */
-  }else{
-    const char **lc = (const char**)pp->cmdline; /* long version */
-    if(lc && *lc) {
-      endp += escape_strlist(endp, lc, OUTBUF_SIZE);
-    } else {
-      char buf[ESC_STRETCH*PAGE_SIZE]; /* TODO: avoid copy */
-      escape_str(buf, pp->cmd, ESC_STRETCH*PAGE_SIZE);
-      endp += snprintf(endp, COLWID, "[%s]", buf);
-    }
-  }
+  if(unix_f_option) flags = ESC_DEFUNCT | ESC_BRACKETS | ESC_ARGS;
+  else              flags = ESC_DEFUNCT;
+  endp += escape_command(endp, pp, OUTBUF_SIZE, OUTBUF_SIZE, flags);
+
   if(bsd_e_option){
     const char **env = (const char**)pp->environ;
     if(env && *env){
@@ -397,7 +387,7 @@ static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp)
 static int pr_fname(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp;
   endp = outbuf + forest_helper(outbuf);
-  endp += escape_str(endp, pp->cmd, 8);
+  endp += escape_str(endp, pp->cmd, OUTBUF_SIZE, 8);
   return endp - outbuf;
 }
 

@@ -76,9 +76,10 @@ leave:
 #endif
 
 /* sanitize a string via one-way mangle */
-int escape_str(char *restrict dst, const char *restrict src, size_t bytes){
+int escape_str(char *restrict dst, const char *restrict src, int bufsize, int maxglyphs){
   unsigned char c;
-  size_t i;
+  int my_glyphs = 0;
+  int my_bytes = 0;
   const char codes[] =
   "Z-------------------------------"
   "********************************"
@@ -88,25 +89,21 @@ int escape_str(char *restrict dst, const char *restrict src, size_t bytes){
   "********************************"
   "********************************"
   "********************************";
-  bytes--;  // allow room for NUL character
-  for(i=0; i<bytes;){
+
+  if(bufsize > maxglyphs+1) bufsize=maxglyphs+1; // FIXME: assumes 8-bit locale
+
+  for(;;){
+    if(my_glyphs >= maxglyphs) break;
+    if(my_bytes+1 >= bufsize) break;
     c = (unsigned char) *(src++);
-    switch(codes[c]){
-    case 'Z':
-      goto leave;
-    case '*':
-      i++;
-      *(dst++) = c;
-      break;
-    case '-':
-      i++;
-      *(dst++) = '?';
-      break;
-    }
+    if(!c) break;
+    if(codes[c]=='-') c='?';
+    my_glyphs++;
+    my_bytes++;
+    *(dst++) = c;
   }
-leave:
   *(dst++) = '\0';
-  return i+1;        // bytes of text, excluding the NUL
+  return my_bytes;        // bytes of text, excluding the NUL
 }
 
 /////////////////////////////////////////////////
@@ -122,7 +119,7 @@ int escape_strlist(char *restrict dst, const char *restrict const *restrict src,
 //}
 
   for(;;){
-    i += escape_str(dst+i, *src, bytes-i);
+    i += escape_str(dst+i, *src, bytes-i, bytes-i);   // FIXME: byte/glyph
     if(bytes-i < 3) break;  // need room for space, a character, and the NUL
     src++;
     if(!*src) break;  // need something to print
@@ -159,7 +156,7 @@ int escape_command(char *restrict const outbuf, const proc_t *restrict const pp,
   if(flags & ESC_BRACKETS){
     outbuf[end++] = '[';
   }
-  end += escape_str(outbuf+end, pp->cmd, bytes-overhead);
+  end += escape_str(outbuf+end, pp->cmd, bytes-overhead, glyphs-overhead+1);
 
   // Hmmm, do we want "[foo] <defunct>" or "[foo <defunct>]"?
   if(flags & ESC_BRACKETS){
