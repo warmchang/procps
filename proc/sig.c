@@ -159,7 +159,7 @@ static const char *signal_number_to_name(int signo){
   return buf;
 }
 
-int print_given_signals(int argc, const char **argv, int max_line){
+int print_given_signals(int argc, const char *restrict const *restrict argv, int max_line){
   char buf[1280]; /* 128 signals, "RTMIN+xx" is largest */
   int ret = 0;  /* to be used as exit code by caller */
   int place = 0; /* position on this line */

@@ -31,7 +31,7 @@ static int f_flag, i_flag, v_flag, w_flag, n_flag;
 static int tty_count, uid_count, cmd_count, pid_count;
 static int *ttys;
 static uid_t *uids;
-static char **cmds;
+static const char **cmds;
 static int *pids;
 
 #define ENLIST(thing,addme) do{ \
@@ -535,8 +535,8 @@ selection_collection:
 }
 
 /***** main body */
-int main(int argc, char *argv[]){
-  char *tmpstr;
+int main(int argc, const char *argv[]){
+  const char *tmpstr;
   my_pid = getpid();
   saved_argc = argc;
   if(!argc){
