@@ -3269,6 +3269,7 @@ int main (int dont_care_argc, char *argv[])
          select(0, NULL, NULL, NULL, &tv);  // ought to loop until done
       } else {
          long file_flags;
+         int rc;
          char c;
          fd_set fs;
          FD_ZERO(&fs);
@@ -3276,8 +3277,13 @@ int main (int dont_care_argc, char *argv[])
          file_flags = fcntl(STDIN_FILENO, F_GETFL);
          if(file_flags==-1) file_flags=0;
          fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK|file_flags);
+
          // check 1st, in case tv zeroed (by sig handler) before it got set
-         if (chin(0, &c, 1) <= 0) {
+         rc = chin(0, &c, 1);
+         if (rc <= 0) {
+            // EOF is pretty much a "can't happen" except for a kernel bug.
+            // We should quickly die via SIGHUP, and thus not spin here.
+            // if (rc == 0) end_pgm(0); /* EOF from terminal */
             fcntl(STDIN_FILENO, F_SETFL, file_flags);
             select(1, &fs, NULL, NULL, &tv);
             fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK|file_flags);
