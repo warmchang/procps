@@ -120,15 +120,14 @@ int uptime(double *uptime_secs, double *idle_secs) {
 
 unsigned long long Hertz;
 
-static void init_Hertz_value_old(void){
+static void old_Hertz_hack(void){
   unsigned long long user_j, nice_j, sys_j, other_j;  /* jiffies (clock ticks) */
   double up_1, up_2, seconds;
   unsigned long long jiffies;
   unsigned h;
   char *savelocale;
 
-  smp_num_cpus = sysconf(_SC_NPROCESSORS_CONF);
-  if(smp_num_cpus<1) smp_num_cpus=1;
+  fprintf(stderr, "ELF note not found - report to albert@users.sf.net\n");
   savelocale = setlocale(LC_NUMERIC, NULL);
   setlocale(LC_NUMERIC, "C");
   do{
@@ -191,12 +190,16 @@ static unsigned long find_elf_note(unsigned long findme){
   return ret;
 }
 
-static void init_Hertz_value(void) __attribute__((constructor));
-static void init_Hertz_value(void){
-  Hertz = find_elf_note(AT_CLKTCK);
-  if(Hertz==42) init_Hertz_value_old();
-  else smp_num_cpus = sysconf(_SC_NPROCESSORS_CONF);
+static void init_libproc(void) __attribute__((constructor));
+static void init_libproc(void){
+  /* ought to count CPUs in /proc/stat instead of relying
+   * on glibc, which foolishly tries to parse /proc/cpuinfo
+   */
+  smp_num_cpus = sysconf(_SC_NPROCESSORS_CONF);
   if(smp_num_cpus<1) smp_num_cpus=1; /* SPARC glibc is buggy */
+
+  Hertz = find_elf_note(AT_CLKTCK);
+  if(Hertz==42) old_Hertz_hack();
 }
 
 /***********************************************************************
