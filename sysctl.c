@@ -68,24 +68,17 @@ const char *ERR_PRELOAD_FILE = "error: unable to open preload file '%s'\n";
 const char *WARN_BAD_LINE = "warning: %s(%d): invalid syntax, continuing...\n";
 
 
-#define DOTSLASH(x) do{ \
-  char *p_ = (x);           \
-  for(;;){                  \
-    p_ = strchr(p_, '.');   \
-    if(!p_) break;          \
-    *p_ = '/';              \
-  }                         \
-}while(0)
-
-#define SLASHDOT(x) do{ \
-  char *p_ = (x);           \
-  for(;;){                  \
-    p_ = strchr(p_, '.');   \
-    if(!p_) break;          \
-    *p_ = '/';              \
-  }                         \
-}while(0)
-
+static void slashdot(char *p, char old, char new){
+  p = strpbrk(p,"/.");
+  if(!p) return;            /* nothing -- can't be, but oh well */
+  if(*p==new) return;       /* already in desired format */
+  while(p){
+    char c = *p;
+    if(c==old) *p=new;
+    if(c==new) *p=old;
+    p = strpbrk(p+1,"/.");
+  }
+}
 
 /*
  *    Main... 
@@ -265,7 +258,7 @@ char *tmpname;
 FILE *fp;
 char *outname;
 
-   if (!name) {                /* probably dont' want to display this  err */
+   if (!name) {        /* probably don't want to display this err */
       return 0;
    } /* end if */
 
@@ -276,25 +269,26 @@ char *outname;
       return -1;
    } /* end if */
 
-   value = equals + sizeof(char);      /* point to the value in name=value */   
+   value = equals + 1;      /* point to the value in name=value */   
 
    if (!*name || !*value || name == equals) { 
       fprintf(stderr, ERR_MALFORMED_SETTING, setting);
       return -2;
    } /* end if */
 
-   tmpname = (char *)malloc((equals-name+1+strlen(PROC_PATH))*sizeof(char));
-   outname = (char *)malloc((equals-name+1)*sizeof(char));
-
+   /* used to open the file */
+   tmpname = malloc(equals-name+1+strlen(PROC_PATH));
    strcpy(tmpname, PROC_PATH);
    strncat(tmpname, name, (int)(equals-name)); 
    tmpname[equals-name+strlen(PROC_PATH)] = 0;
+   slashdot(tmpname+strlen(PROC_PATH),'.','/'); /* change . to / */
+
+   /* used to display the output */
+   outname = malloc(equals-name+1);                       
    strncpy(outname, name, (int)(equals-name)); 
    outname[equals-name] = 0;
+   slashdot(outname,'/','.'); /* change / to . */
  
-   DOTSLASH(tmpname); /* change . to / */
-   SLASHDOT(outname); /* change / to . */
-
    fp = fopen(tmpname, "w");
 
    if (!fp) {
@@ -313,6 +307,7 @@ char *outname;
    } else {
       fprintf(fp, "%s\n", value);
       fclose(fp);
+
       if (PrintName) {
          fprintf(stdout, "%s = %s\n", outname, value);
       } else {
@@ -345,16 +340,15 @@ FILE *fp;
       fprintf(stderr, ERR_INVALID_KEY, setting);
    } /* endif */
 
-   tmpname = (char *)malloc((strlen(name)+strlen(PROC_PATH)+1)*sizeof(char));
-   outname = (char *)malloc((strlen(name)+1)*sizeof(char));
-
+   /* used to open the file */
+   tmpname = malloc(strlen(name)+strlen(PROC_PATH)+1);
    strcpy(tmpname, PROC_PATH);
    strcat(tmpname, name); 
-   strcpy(outname, name); 
- 
+   slashdot(tmpname+strlen(PROC_PATH),'.','/'); /* change . to / */
 
-   DOTSLASH(tmpname); /* change . to / */
-   SLASHDOT(outname); /* change / to . */
+   /* used to display the output */
+   outname = strdup(name);
+   slashdot(outname,'/','.'); /* change / to . */
 
    fp = fopen(tmpname, "r");
 
