@@ -2,6 +2,7 @@ procps-3.2.3 --> procps-3.2.4
 
 support 64-bit MIPS with n32 binary
 sparc32 optimized for sparc32 again
+pwdx: new command -- thanks Nicholas Miell
 ps: more room for some columns
 watch: passes COLUMNS and LINES in environment
 top: in batch mode, tolerate unknown $TERM -- thanks Daniel Walsh

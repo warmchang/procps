@@ -48,19 +48,20 @@ usr/include              := $(DESTDIR)/usr/include/
 BINFILES := $(usr/bin)uptime $(usr/bin)tload $(usr/bin)free $(usr/bin)w \
             $(usr/bin)top $(usr/bin)vmstat $(usr/bin)watch $(usr/bin)skill \
             $(usr/bin)snice $(bin)kill $(sbin)sysctl $(usr/bin)pmap \
-            $(usr/proc/bin)pgrep $(usr/proc/bin)pkill $(usr/bin)slabtop
+            $(usr/proc/bin)pgrep $(usr/proc/bin)pkill $(usr/bin)slabtop \
+            $(usr/proc/bin)pwdx
 
 MANFILES := $(man1)uptime.1 $(man1)tload.1 $(man1)free.1 $(man1)w.1 \
             $(man1)top.1 $(man1)watch.1 $(man1)skill.1 $(man1)kill.1 \
             $(man1)snice.1 $(man1)pgrep.1 $(man1)pkill.1 $(man1)pmap.1 \
             $(man5)sysctl.conf.5 $(man8)vmstat.8 $(man8)sysctl.8 \
-            $(man1)slabtop.1
+            $(man1)slabtop.1 $(man1)pwdx.1
 
 TARFILES := AUTHORS BUGS NEWS README TODO COPYING COPYING.LIB \
             Makefile procps.lsm procps.spec v t README.top CodingStyle \
             sysctl.conf minimal.c $(notdir $(MANFILES)) dummy.c \
             uptime.c tload.c free.c w.c top.c vmstat.c watch.c skill.c \
-            sysctl.c pgrep.c top.h pmap.c slabtop.c
+            sysctl.c pgrep.c top.h pmap.c slabtop.c pwdx.c
 
 # Stuff (tests, temporary hacks, etc.) left out of the standard tarball
 # plus the top-level Makefile to make it work stand-alone.
@@ -108,6 +109,15 @@ ifneq ($(MAKECMDGOALS),extratar)
 # until you go looking for a 64-bit curses library.
 check_gcc = $(shell if $(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) dummy.c $(ALL_LDFLAGS) $(1) -o /dev/null $(CURSES) > /dev/null 2>&1; then echo "$(1)"; else echo "$(2)"; fi ;)
 
+# Be 64-bit if at all possible. In a cross-compiling situation, one may
+# do "make m64=-m32 lib64=lib" to produce 32-bit executables. DO NOT
+# attempt to use a 32-bit executable on a 64-bit kernel. Packagers MUST
+# produce separate executables for ppc and ppc64, s390 and s390x,
+# i386 and x86-64, mips and mips64, sparc and sparc64, and so on.
+# Failure to do so will cause data corruption.
+m64 := $(call check_gcc,-m64,$(call check_gcc,-mabi=64,))
+ALL_CFLAGS += $(m64)
+
 ALL_CFLAGS += $(call check_gcc,-Wdeclaration-after-statement,)
 ALL_CFLAGS += $(call check_gcc,-Wpadded,)
 ALL_CFLAGS += $(call check_gcc,-Wstrict-aliasing=2,)
@@ -125,15 +135,6 @@ endif
 
 # in case -O3 is enabled, avoid bloat
 ALL_CFLAGS += $(call check_gcc,-fno-inline-functions,)
-
-# Be 64-bit if at all possible. In a cross-compiling situation, one may
-# do "make m64=-m32 lib64=lib" to produce 32-bit executables. DO NOT
-# attempt to use a 32-bit executable on a 64-bit kernel. Packagers MUST
-# produce separate executables for ppc and ppc64, s390 and s390x,
-# i386 and x86-64, mips and mips64, sparc and sparc64, and so on.
-# Failure to do so will cause data corruption.
-m64 := $(call check_gcc,-m64,$(call check_gcc,-mabi=64,))
-ALL_CFLAGS += $(m64)
 
 endif
 endif
@@ -223,7 +224,7 @@ w.o:    w.c
 
 ############ prog.o --> prog
 
-pmap w uptime tload free sysctl vmstat utmp pgrep skill: % : %.o $(LIBPROC)
+pmap w uptime tload free sysctl vmstat utmp pgrep skill pwdx: % : %.o $(LIBPROC)
 	$(CC) $(ALL_CFLAGS) $^ $(ALL_LDFLAGS) -o $@
 
 slabtop top: % : %.o $(LIBPROC)
