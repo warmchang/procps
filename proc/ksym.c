@@ -431,31 +431,6 @@ bad_match:
   }
   if(0){
 bad_version:
-//
-// Dear Slackware Packager,
-//
-//      As I am unable to find any sane way to contact you,
-// I have resorted to an insane way. Forgive me.
-//      Do you have a bug to report? Why don't you do so?
-// The procps maintainer has kindly provided an email address
-// for you to send bug reports to. You have never done so.
-// Please use procps-feedback@lists.sf.net or, currently,
-// albert@users.sf.net directly. Genuinely useful and correct
-// patches will gladly be accepted, reducing your own work.
-// Broken patches will be patiently discussed. You are also
-// strongly encouraged to subscribe to procps-news@lists.sf.net
-// for news of changes that may affect you.
-//
-//      Yours Truly,
-//      Procps Maintainer
-//
-// P.S.
-//
-// A number of patches from the SuSE, Red Hat, and Mandrake
-// packagers have been accepted. One of those packagers was
-// saved from a disasterous patch (breaking thread support)
-// because he discussed the problem. It's the Open Source way.
-//
     message("Warning: %s has an incorrect kernel version.\n", filename);
   }
   if(0){
