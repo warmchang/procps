@@ -412,7 +412,7 @@ void self_info(void){
 /*  open_psdb(namelist_file); */
   fprintf(stderr,
     "personality=0x%08x (from \"%s\")\n"
-    "EUID=%d TTY=%d,%d Hertz=%ld\n"
+    "EUID=%d TTY=%d,%d Hertz=%Ld\n"
 /*    "namelist_file=\"%s\"\n" */
     ,
     personality, saved_personality_text,

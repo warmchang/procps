@@ -586,7 +586,7 @@ static int pr_s(void){
 static int pr_flag(void){
     /* Unix98 requires octal flags */
     /* this user-hostile and volatile junk gets 1 character */
-    return snprintf(outbuf, COLWID, "%o", (pp->flags>>6)&0x7);
+    return snprintf(outbuf, COLWID, "%o", (unsigned)(pp->flags>>6U)&0x7U);
 }
 
 static int pr_euid(void){
@@ -625,7 +625,7 @@ static int old_time_helper(char *dst, unsigned long long t, unsigned long long r
   if(t == ~0ULL)    return snprintf(dst, COLWID, "   xx");
   if((long long)(t-=rel) < 0)  t=0ULL;
   if(t>9999ULL)     return snprintf(dst, COLWID, "%5Lu", t/100ULL);
-  else              return snprintf(dst, COLWID, "%2lu.%02lu", (unsigned)t/100U, (unsigned)t%100U);
+  else              return snprintf(dst, COLWID, "%2u.%02u", (unsigned)t/100U, (unsigned)t%100U);
 }
 
 static int pr_bsdtime(void){
