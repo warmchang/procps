@@ -178,8 +178,10 @@ static int ask_user(struct pids_stack *stack)
             PIDS_GETINT(PID),
             PIDS_GETSTR(CMD));
     fflush(stdout);
-    if (getline(&buf, &len, stdin) == -1)
+    if (getline(&buf, &len, stdin) == -1) {
+        free(buf);
         return 0;
+    }
     if (rpmatch(buf) < 1) {
         free(buf);
         return 0;
