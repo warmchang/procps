@@ -404,9 +404,11 @@ next_proc:				/* get next PID for consideration */
     p->secsid = secsid;
 #endif
 
-    if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
-	goto next_proc;			/* error reading /proc/#/stat */
-    stat2proc(sbuf, p);				/* parse /proc/#/stat */
+    if (flags & PROC_FILLSTAT) {         /* read, parse /proc/#/stat */
+	if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
+	    goto next_proc;			/* error reading /proc/#/stat */
+	stat2proc(sbuf, p);				/* parse /proc/#/stat */
+    }
 
     if (flags & PROC_FILLMEM) {				/* read, parse /proc/#/statm */
 	if ((file2str(path, "statm", sbuf, sizeof sbuf)) != -1 )
