@@ -582,7 +582,7 @@ static void sd2proc(proc_t *restrict p) {
 // Reads /proc/*/stat files, being careful not to trip over processes with
 // names like ":-) 1 2 3 4 5 6".
 static void stat2proc(const char* S, proc_t *restrict P) {
-    unsigned num;
+    size_t num;
     char* tmp;
 
 ENTER(0x160);
@@ -593,15 +593,19 @@ ENTER(0x160);
     P->sched = -1;
     P->nlwp = 0;
 
-    S = strchr(S, '(') + 1;
+    S = strchr(S, '(');
+    if(unlikely(!S)) return;
+    S++;
     tmp = strrchr(S, ')');
+    if(unlikely(!tmp)) return;
+    if(unlikely(!tmp[1])) return;
     num = tmp - S;
     if(unlikely(num >= sizeof P->cmd)) num = sizeof P->cmd - 1;
     memcpy(P->cmd, S, num);
     P->cmd[num] = '\0';
     S = tmp + 2;                 // skip ") "
 
-    num = sscanf(S,
+    sscanf(S,
        "%c "
        "%d %d %d %d %d "
        "%lu %lu %lu %lu %lu "
