@@ -234,7 +234,7 @@ static char** file2strvec(const char* directory, const char* what) {
 
     /* read whole file into a memory buffer, allocating as we go */
     while ((n = read(fd, buf, sizeof buf - 1)) > 0) {
-	if (n < sizeof buf - 1)
+	if (n < (int)(sizeof buf - 1))
 	    end_of_file = 1;
 	if (n == 0 && rbuf == 0)
 	    return NULL;	/* process died between our open and read */

@@ -1306,6 +1306,7 @@ static void show_meminfo(void)
  * (as of pre-2.4 era) can report idle time going backwards, perhaps due
  * to non-atomic reads and updates. There is no locking for these values.
  */
+#if 0
 #ifndef NAN
 #define NAN (-0.0)
 #endif
@@ -1342,6 +1343,7 @@ static void four_cpu_numbers(double *uret, double *nret, double *sret, double *i
     old_i=new_i;
 }
 #undef JT
+#endif
 
 /***********************************************************************/
 
@@ -1356,7 +1358,7 @@ static void do_stats(proc_t** p, float elapsed_time, int pass)
     proc_t *this;
     int arrindex, total_time, cpumap, i, n = 0;
     int sleeping = 0, stopped = 0, zombie = 0, running = 0;
-    double system_ticks, user_ticks, nice_ticks, idle_ticks;
+    double system_ticks, user_ticks, nice_ticks, idle_ticks, junk;
     static int prev_count = 0;
     int systime, usrtime;
  
@@ -1443,7 +1445,7 @@ static void do_stats(proc_t** p, float elapsed_time, int pass)
 	       n, sleeping, running, zombie, stopped);
 	PUTP(top_clrtoeol);
 	putchar('\n');
-	four_cpu_numbers(&user_ticks,&nice_ticks,&system_ticks,&idle_ticks);
+	five_cpu_numbers(&user_ticks,&nice_ticks,&system_ticks,&idle_ticks,&junk);
 	printf("CPU states:"
 	    " %# 5.1f%% user, %# 5.1f%% system,"
 	    " %# 5.1f%% nice, %# 5.1f%% idle",
@@ -1772,7 +1774,7 @@ static proc_t** readproctab2(int flags, proc_t** tab, ...) {
 	/* share some process time, since we skipped opendir("/proc") */
 	usleep (50*1000);
     }
-    else if (Do(TTY) || Do(STAT))
+    else if (Do(TTY) /*|| Do(STAT) */)
 	PT = openproc(flags, va_arg(ap, void*)); /* assume ptr sizes same */
     else
 	PT = openproc(flags);
