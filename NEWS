@@ -1,7 +1,9 @@
 procps-3.0.1 --> procps-3.0.2
 
-new "make install" fixed
+top defaults to the old layout
+top defaults to sorting by %CPU
 fix top for non-SMP 2.2.xx and 2.0.xx
+new "make install" fixed
 vmstat -a fixed
 vmstat compiles with latest gcc-3.x
 vmstat does 64-bit time

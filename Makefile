@@ -13,9 +13,9 @@
 
 VERSION      := 3
 SUBVERSION   := 0
-MINORVERSION := 1
-TARVERSION   := 3.0.1
-LIBVERSION   := 3.0.1
+MINORVERSION := 2
+TARVERSION   := 3.0.2
+LIBVERSION   := 3.0.2
 
 ############ vars
 
@@ -82,7 +82,7 @@ CLEAN := $(notdir $(BINFILES))
 
 DIRS :=
 
-INSTALL := $(BINFILES) $(MANFILES) $(SCRFILES)
+INSTALL := $(BINFILES) $(MANFILES) # $(SCRFILES)
 
 # want this rule first, use := on ALL, and ALL not filled in yet
 all: do_all
