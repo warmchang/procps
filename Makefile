@@ -23,7 +23,7 @@ LIBVERSION   := 3.0.1
 ldconfig := ldconfig
 ln-f     := ln -f
 ln-sf    := ln -sf
-install  := install --owner 0 --group 0
+install  := install -D --owner 0 --group 0
 
 usr/bin                  := $(DESTDIR)/usr/bin/
 bin                      := $(DESTDIR)/bin/
@@ -133,7 +133,7 @@ $(MANFILES) : $(@F)
 	$(install) --mode a=r $(notdir $@) $@
 
 install: $(INSTALL)
-	cd $(usr/bin) && ($(ln-f) skill snice; $(ln-f) skill kill; $(ln-f) pgrep pkill)
+	cd $(usr/bin) && ($(ln-f) skill snice; $(ln-f) pgrep pkill)
 
 ############ prog.c --> prog.o
 
@@ -157,7 +157,7 @@ watch: % : %.o
 ############ progX --> progY
 
 snice kill: skill
-	$(ln-f) skill $@
+	ln skill $@
 
 pkill: pgrep
-	$(ln-f) pgrep pkill
+	ln pgrep pkill
