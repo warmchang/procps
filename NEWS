@@ -1,5 +1,6 @@
 procps-3.1.6 --> procps-3.1.7
 
+Makefile: made SKIP feature easier to use
 watch: --help now explains -t, --no-title    #182246
 ps: warning directs users to the FAQ
 top: batch mode can refresh by fractional seconds

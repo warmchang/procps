@@ -26,7 +26,7 @@ make SKIP="/bin/kill /usr/share/man/man1/kill.1" CC="gcc $RPM_OPT_FLAGS" LDFLAGS
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make SKIP="/bin/kill /usr/share/man/man1/kill.1" DESTDIR=$RPM_BUILD_ROOT install="install -D" install
+make SKIP="/bin/kill /usr/share/man/man1/kill.1" DESTDIR=$RPM_BUILD_ROOT ldconfig=echo install="install -D" install
 
 %clean
 rm -rf $RPM_BUILD_ROOT

@@ -1,5 +1,5 @@
 # procps Makefile
-# Albert Cahalan, 2002
+# Albert Cahalan, 2002-2003
 #
 # Recursive make is considered harmful:
 # http://google.com/search?q=%22recursive+make+considered+harmful%22
@@ -133,7 +133,7 @@ $(BINFILES) : all
 $(MANFILES) : all
 	$(install) --mode a=r $(notdir $@) $@
 
-install: $(filter-out $(SKIP),$(INSTALL))
+install: $(filter-out $(SKIP) $(addprefix $(DESTDIR),$(SKIP)),$(INSTALL))
 	cd $(usr/bin) && ($(ln_f) skill snice; $(ln_f) pgrep pkill)
 
 ############ prog.c --> prog.o

@@ -1136,7 +1136,7 @@ try_bsd:
   // about "ps -aux" suddenly changing behavior if a user "x" were
   // added to the system.
   if(!(personality & PER_FORCE_BSD))
-    fprintf(stderr, "Warning: bad '-'? See http://procps.sf.net/faq.html\n");
+    fprintf(stderr, "Warning: bad syntax, perhaps a bogus '-'? See http://procps.sf.net/faq.html\n");
   // Remember: contact albert@users.sf.net or procps-feedback@lists.sf.net
   // if you should feel tempted. Be damn sure you understand all
   // the issues. The same goes for other stuff too, BTW. Please ask.
