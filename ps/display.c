@@ -468,14 +468,22 @@ static void show_proc_array(PROCTAB *restrict ptp, int n){
 /***** show tree */
 /* this needs some optimization work */
 #define ADOPTED(x) 1
+
+#define IS_LEVEL_SAFE(level) \
+  ((level) >= 0 && (size_t)(level) < sizeof(forest_prefix))
+
 static void show_tree(const int self, const int n, const int level, const int have_sibling){
   int i = 0;
+
+  if(!IS_LEVEL_SAFE(level))
+    catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
+
   if(level){
     /* add prefix of "+" or "L" */
     if(have_sibling) forest_prefix[level-1] = '+';
     else             forest_prefix[level-1] = 'L';
-    forest_prefix[level] = '\0';
   }
+  forest_prefix[level] = '\0';
   show_one_proc(processes[self],format_list);  /* first show self */
   for(;;){  /* look for children */
     if(i >= n) return; /* no children */
@@ -486,8 +494,8 @@ static void show_tree(const int self, const int n, const int level, const int ha
     /* change our prefix to "|" or " " for the children */
     if(have_sibling) forest_prefix[level-1] = '|';
     else             forest_prefix[level-1] = ' ';
-    forest_prefix[level] = '\0';
   }
+  forest_prefix[level] = '\0';
   for(;;){
     int self_pid;
     int more_children = 1;
@@ -498,15 +506,17 @@ static void show_tree(const int self, const int n, const int level, const int ha
     else
       if(processes[i+1]->ppid != self_pid) more_children = 0;
     if(self_pid==1 && ADOPTED(processes[i]) && forest_type!='u')
-      show_tree(i++, n, level,   more_children);
+      show_tree(i++, n, level, more_children);
     else
-      show_tree(i++, n, level+1, more_children);
+      show_tree(i++, n, IS_LEVEL_SAFE(level+1) ? level+1 : level, more_children);
     if(!more_children) break;
   }
-  /* chop prefix that children added -- do we need this? */
+  /* chop prefix that children added */
   forest_prefix[level] = '\0';
 //  memset(processes[self], '$', sizeof(proc_t));  /* debug */
 }
+
+#undef IS_LEVEL_SAFE
 
 /***** show forest */
 static void show_forest(const int n){
