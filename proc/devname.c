@@ -17,6 +17,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/sysmacros.h>
+#include "version.h"
 #include "devname.h"
 
 #include <asm/page.h>
@@ -195,7 +196,9 @@ int dev_to_tty(char *ret, int chop, int dev, int pid, unsigned int flags) {
   int i = 0;
   int c;
   if((short)dev == (short)-1) goto fail;
-  if(  link_name(tmp, major(dev), minor(dev), pid, "tty"   )) goto abbrev;
+  if(linux_version_code > LINUX_VERSION(2, 5, 0)){ /* didn't get done yet */
+    if(link_name(tmp, major(dev), minor(dev), pid, "tty"   )) goto abbrev;
+  }
   if(driver_name(tmp, major(dev), minor(dev)               )) goto abbrev;
   if(  link_name(tmp, major(dev), minor(dev), pid, "fd/2"  )) goto abbrev;
   if( guess_name(tmp, major(dev), minor(dev)               )) goto abbrev;

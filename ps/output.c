@@ -1085,8 +1085,9 @@ static int sr_context ( const proc_t* P, const proc_t* Q ) {
 #define MEM PROC_FILLMEM     /* read statm  */
 #define CMD PROC_FILLCMD     /* read cmdline */
 #define ENV PROC_FILLENV     /* read environ */
-#define USR PROC_FILLUSR     /* uid_t and gid_t -> user and group names */
-#define BUG PROC_FILLBUG     /* what does this need? */
+#define USR PROC_FILLUSR     /* uid_t -> user names */
+#define GRP PROC_FILLGRP     /* gid_t -> group names */
+#define WCH PROC_FILLWCHAN   /* do WCHAN lookup */
 
 /* TODO
  *      pull out annoying BSD aliases into another table (to macro table?)
@@ -1100,7 +1101,7 @@ static int sr_context ( const proc_t* P, const proc_t* Q ) {
 
 /* Many of these are placeholders for unsupported options. */
 static const format_struct format_array[] = {
-/* code       header     print()      sort()    width  ?   vendor flags  */
+/* code       header     print()      sort()    width need vendor flags  */
 {"%cpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    BSD, RIGHT}, /*pcpu*/
 {"%mem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    BSD, RIGHT}, /*pmem*/
 {"acflag",    "ACFLG",   pr_nop,      sr_nop,     5,   0,    XXX, RIGHT}, /*acflg*/
@@ -1133,31 +1134,31 @@ static const format_struct format_array[] = {
 {"cursig",    "CURSIG",  pr_nop,      sr_nop,     6,   0,    DEC, RIGHT},
 {"cutime",    "-",       pr_nop,      sr_cutime,  1,   0,    LNX, RIGHT},
 {"cwd",       "CWD",     pr_nop,      sr_nop,     3,   0,    LNX, LEFT},
-{"drs",       "DRS",     pr_drs,      sr_drs,     4,   0,    LNX, RIGHT},
+{"drs",       "DRS",     pr_drs,      sr_drs,     4, MEM,    LNX, RIGHT},
 {"dsiz",      "DSIZ",    pr_dsiz,     sr_nop,     4,   0,    LNX, RIGHT},
 {"egid",      "EGID",    pr_egid,     sr_egid,    5,   0,    LNX, RIGHT},
-{"egroup",    "EGROUP",  pr_egroup,   sr_egroup,  8,   0,    LNX, USER},
+{"egroup",    "EGROUP",  pr_egroup,   sr_egroup,  8, GRP,    LNX, USER},
 {"eip",       "EIP",     pr_eip,      sr_kstk_eip, 8,  0,    LNX, RIGHT},
 {"end_code",  "E_CODE",  pr_nop,      sr_end_code, 8,  0,    LNx, RIGHT},
-{"environ","ENVIRONMENT",pr_nop,      sr_nop,    11,   0,    LNx, UNLIMITED},
+{"environ","ENVIRONMENT",pr_nop,      sr_nop,    11, ENV,    LNx, UNLIMITED},
 {"esp",       "ESP",     pr_esp,      sr_kstk_esp, 8,  0,    LNX, RIGHT},
 {"etime",     "ELAPSED", pr_etime,    sr_nop,    11,   0,    U98, RIGHT}, /* was 7 wide */
 {"euid",      "EUID",    pr_euid,     sr_euid,    5,   0,    LNX, RIGHT},
-{"euser",     "EUSER",   pr_euser,    sr_euser,   8,   0,    LNX, USER},
+{"euser",     "EUSER",   pr_euser,    sr_euser,   8, USR,    LNX, USER},
 {"f",         "F",       pr_flag,     sr_nop,     1,   0,    XXX, RIGHT}, /*flags*/
 {"fgid",      "FGID",    pr_fgid,     sr_fgid,    5,   0,    LNX, RIGHT},
-{"fgroup",    "FGROUP",  pr_fgroup,   sr_fgroup,  8,   0,    LNX, USER},
+{"fgroup",    "FGROUP",  pr_fgroup,   sr_fgroup,  8, GRP,    LNX, USER},
 {"flag",      "F",       pr_flag,     sr_flags,   1,   0,    DEC, RIGHT},
 {"flags",     "F",       pr_flag,     sr_flags,   1,   0,    BSD, RIGHT}, /*f*/ /* was FLAGS, 8 wide */
 {"fname",     "COMMAND", pr_fname,    sr_nop,     8,   0,    SUN, LEFT},
 {"fsgid",     "FSGID",   pr_fgid,     sr_fgid,    5,   0,    LNX, RIGHT},
-{"fsgroup",   "FSGROUP", pr_fgroup,   sr_fgroup,  8,   0,    LNX, USER},
+{"fsgroup",   "FSGROUP", pr_fgroup,   sr_fgroup,  8, GRP,    LNX, USER},
 {"fsuid",     "FSUID",   pr_fuid,     sr_fuid,    5,   0,    LNX, RIGHT},
-{"fsuser",    "FSUSER",  pr_fuser,    sr_fuser,   8,   0,    LNX, USER},
+{"fsuser",    "FSUSER",  pr_fuser,    sr_fuser,   8, USR,    LNX, USER},
 {"fuid",      "FUID",    pr_fuid,     sr_fuid,    5,   0,    LNX, RIGHT},
-{"fuser",     "FUSER",   pr_fuser,    sr_fuser,   8,   0,    LNX, USER},
+{"fuser",     "FUSER",   pr_fuser,    sr_fuser,   8, USR,    LNX, USER},
 {"gid",       "GID",     pr_egid,     sr_egid,    5,   0,    SUN, RIGHT},
-{"group",     "GROUP",   pr_egroup,   sr_egroup,  5,   0,    U98, USER}, /* was 8 wide */
+{"group",     "GROUP",   pr_egroup,   sr_egroup,  5, GRP,    U98, USER}, /* was 8 wide */
 {"ignored",   "IGNORED", pr_sigignore,sr_nop,     9,   0,    BSD, SIGNAL}, /*sigignore*/
 {"inblk",     "INBLK",   pr_nop,      sr_nop,     5,   0,    BSD, RIGHT}, /*inblock*/
 {"inblock",   "INBLK",   pr_nop,      sr_nop,     5,   0,    DEC, RIGHT}, /*inblk*/
@@ -1172,16 +1173,16 @@ static const format_struct format_array[] = {
 {"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, LEFT},
 {"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, RIGHT},
 {"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, RIGHT}, /* login ID */
-{"luser",     "LUSER",   pr_nop,      sr_nop,     8,   0,    LNX, USER}, /* login USER */
+{"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, USER}, /* login USER */
 {"lwp",       "LWP",     pr_thread,   sr_nop,     5,   0,    SUN, RIGHT},
-{"m_drs",     "DRS",     pr_drs,      sr_drs,     5,   0,    LNx, RIGHT},
-{"m_dt",      "DT",      pr_nop,      sr_dt,      4,   0,    LNx, RIGHT},
-{"m_lrs",     "LRS",     pr_nop,      sr_lrs,     5,   0,    LNx, RIGHT},
-{"m_resident", "RES",    pr_nop,      sr_resident, 5,  0,    LNx, RIGHT},
-{"m_share",   "SHRD",    pr_nop,      sr_share,   5,   0,    LNx, RIGHT},
-{"m_size",    "SIZE",    pr_nop,      sr_size,    5,   0,    LNx, RIGHT},
+{"m_drs",     "DRS",     pr_drs,      sr_drs,     5, MEM,    LNx, RIGHT},
+{"m_dt",      "DT",      pr_nop,      sr_dt,      4, MEM,    LNx, RIGHT},
+{"m_lrs",     "LRS",     pr_nop,      sr_lrs,     5, MEM,    LNx, RIGHT},
+{"m_resident", "RES",    pr_nop,      sr_resident, 5,MEM,    LNx, RIGHT},
+{"m_share",   "SHRD",    pr_nop,      sr_share,   5, MEM,    LNx, RIGHT},
+{"m_size",    "SIZE",    pr_nop,      sr_size,    5, MEM,    LNx, RIGHT},
 {"m_swap",    "SWAP",    pr_nop,      sr_nop,     5,   0,    LNx, RIGHT},
-{"m_trs",     "TRS",     pr_trs,      sr_trs,     5,   0,    LNx, RIGHT},
+{"m_trs",     "TRS",     pr_trs,      sr_trs,     5, MEM,    LNx, RIGHT},
 {"maj_flt",   "MAJFL",   pr_majflt,   sr_maj_flt, 6,   0,    LNX, CUMUL|RIGHT},
 {"majflt",    "MAJFLT",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, RIGHT},
 {"min_flt",   "MINFL",   pr_minflt,   sr_min_flt, 6,   0,    LNX, CUMUL|RIGHT},
@@ -1221,16 +1222,16 @@ static const format_struct format_array[] = {
 {"psr",       "PSR",     pr_psr,      sr_nop,     3,   0,    DEC, RIGHT},
 {"psxpri",    "PPR",     pr_nop,      sr_nop,     3,   0,    DEC, RIGHT},
 {"re",        "RE",      pr_nop,      sr_nop,     3,   0,    BSD, RIGHT},
-{"resident",  "RES",     pr_nop,      sr_resident, 5,  0,    LNX, RIGHT},
+{"resident",  "RES",     pr_nop,      sr_resident, 5,MEM,    LNX, RIGHT},
 {"rgid",      "RGID",    pr_rgid,     sr_rgid,    5,   0,    XXX, RIGHT},
-{"rgroup",    "RGROUP",  pr_rgroup,   sr_rgroup,  6,   0,    U98, USER}, /* was 8 wide */
+{"rgroup",    "RGROUP",  pr_rgroup,   sr_rgroup,  8, GRP,    U98, USER}, /* was 8 wide */
 {"rlink",     "RLINK",   pr_nop,      sr_nop,     8,   0,    BSD, RIGHT},
 {"rss",       "RSS",     pr_rss,      sr_rss,     4,   0,    XXX, RIGHT}, /* was 5 wide */
 {"rssize",    "RSS",     pr_rss,      sr_vm_rss,  4,   0,    DEC, RIGHT}, /*rsz*/
 {"rsz",       "RSZ",     pr_rss,      sr_vm_rss,  4,   0,    BSD, RIGHT}, /*rssize*/
 {"rtprio",    "RTPRIO",  pr_nop,      sr_nop,     7,   0,    BSD, RIGHT},
 {"ruid",      "RUID",    pr_ruid,     sr_ruid,    5,   0,    XXX, RIGHT},
-{"ruser",     "RUSER",   pr_ruser,    sr_ruser,   8,   0,    U98, USER},
+{"ruser",     "RUSER",   pr_ruser,    sr_ruser,   8, USR,    U98, USER},
 {"s",         "S",       pr_s,        sr_state,   1,   0,    SUN, LEFT}, /*stat,state*/
 {"sched",     "SCH",     pr_nop,      sr_nop,     1,   0,    AIX, RIGHT},
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, RIGHT},  /* man page misspelling of scount? */
@@ -1241,8 +1242,8 @@ static const format_struct format_array[] = {
 {"sgi_p",     "P",       pr_sgi_p,    sr_nop,     1,   0,    LNX, RIGHT}, /* "cpu" number */
 {"sgi_rss",   "RSS",     pr_rss,      sr_nop,     4,   0,    LNX, LEFT}, /* SZ:RSS */
 {"sgid",      "SGID",    pr_sgid,     sr_sgid,    5,   0,    LNX, RIGHT},
-{"sgroup",    "SGROUP",  pr_sgroup,   sr_sgroup,  8,   0,    LNX, USER},
-{"share",     "-",       pr_nop,      sr_share,   1,   0,    LNX, RIGHT},
+{"sgroup",    "SGROUP",  pr_sgroup,   sr_sgroup,  8, GRP,    LNX, USER},
+{"share",     "-",       pr_nop,      sr_share,   1, MEM,    LNX, RIGHT},
 {"sid",       "SID",     pr_sess,     sr_session, 5,   0,    XXX, RIGHT}, /* Sun & HP */
 {"sig",       "PENDING", pr_sig,      sr_nop,     9,   0,    XXX, SIGNAL}, /*pending*/
 {"sig_block", "BLOCKED",  pr_sigmask, sr_nop,     9,   0,    LNX, SIGNAL},
@@ -1252,7 +1253,7 @@ static const format_struct format_array[] = {
 {"sigcatch",  "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    XXX, SIGNAL}, /*caught*/
 {"sigignore", "IGNORED", pr_sigignore,sr_nop,     9,   0,    XXX, SIGNAL}, /*ignored*/
 {"sigmask",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    XXX, SIGNAL}, /*blocked*/
-{"size",      "-",       pr_nop,      sr_size,    1,   0,    SCO, RIGHT},
+{"size",      "-",       pr_nop,      sr_size,    1, MEM,    SCO, RIGHT},
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, RIGHT},
 {"spid",      "SPID",    pr_thread,   sr_nop,     5,   0,    SGI, RIGHT},
 {"stackp",    "STACKP",  pr_stackp,   sr_nop,     8,   0,    LNX, RIGHT}, /*start_stack*/
@@ -1265,11 +1266,11 @@ static const format_struct format_array[] = {
 {"status",    "STATUS",  pr_nop,      sr_nop,     6,   0,    DEC, RIGHT},
 {"stime",     "STIME",   pr_stime,    sr_stime,   5,   0,    XXX, /* CUMUL| */RIGHT}, /* was 6 wide */
 {"suid",      "SUID",    pr_suid,     sr_suid,    5,   0,    LNx, RIGHT},
-{"suser",     "SUSER",   pr_suser,    sr_suser,   8,   0,    LNx, USER},
+{"suser",     "SUSER",   pr_suser,    sr_suser,   8, USR,    LNx, USER},
 {"svgid",     "SVGID",   pr_sgid,     sr_sgid,    5,   0,    XXX, RIGHT},
-{"svgroup",   "SVGROUP", pr_sgroup,   sr_sgroup,  8,   0,    LNX, USER},
+{"svgroup",   "SVGROUP", pr_sgroup,   sr_sgroup,  8, GRP,    LNX, USER},
 {"svuid",     "SVUID",   pr_suid,     sr_suid,    5,   0,    XXX, RIGHT},
-{"svuser",    "SVUSER",  pr_suser,    sr_suser,   8,   0,    LNX, USER},
+{"svuser",    "SVUSER",  pr_suser,    sr_suser,   8, USR,    LNX, USER},
 {"systime",   "SYSTEM",  pr_nop,      sr_nop,     6,   0,    DEC, RIGHT},
 {"sz",        "SZ",      pr_sz,       sr_nop,     5,   0,    HPU, RIGHT},
 {"tdev",      "TDEV",    pr_nop,      sr_nop,     4,   0,    XXX, RIGHT},
@@ -1280,8 +1281,8 @@ static const format_struct format_array[] = {
 {"tmout",     "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, RIGHT},
 {"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, LEFT},
 {"tpgid",     "TPGID",   pr_tpgid,    sr_tpgid,   5,   0,    XXX, RIGHT},
-{"trs",       "TRS",     pr_trs,      sr_trs,     4,   0,    AIX, RIGHT},
-{"trss",      "TRSS",    pr_trs,      sr_trs,     4,   0,    BSD, RIGHT}, /* 4.3BSD NET/2 */
+{"trs",       "TRS",     pr_trs,      sr_trs,     4, MEM,    AIX, RIGHT},
+{"trss",      "TRSS",    pr_trs,      sr_trs,     4, MEM,    BSD, RIGHT}, /* 4.3BSD NET/2 */
 {"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, RIGHT},
 {"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, RIGHT},
 {"tsiz",      "TSIZ",    pr_tsiz,     sr_nop,     4,   0,    BSD, RIGHT},
@@ -1293,12 +1294,12 @@ static const format_struct format_array[] = {
 {"ucmd",      "CMD",     pr_comm,     sr_cmd,    16,   0,    DEC, UNLIMITED}, /*ucomm*/
 {"ucomm",     "COMMAND", pr_comm,     sr_nop,    16,   0,    XXX, UNLIMITED}, /*comm*/
 {"uid",       "UID",     pr_euid,     sr_euid,    5,   0,    XXX, RIGHT},
-{"uid_hack",  "UID",     pr_euser,    sr_nop,     8,   0,    XXX, USER},
+{"uid_hack",  "UID",     pr_euser,    sr_nop,     8, USR,    XXX, USER},
 {"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, RIGHT},
-{"uname",     "USER",    pr_euser,    sr_euser,   8,   0,    DEC, USER}, /* man page misspelling of user? */
+{"uname",     "USER",    pr_euser,    sr_euser,   8, USR,    DEC, USER}, /* man page misspelling of user? */
 {"upr",       "UPR",     pr_nop,      sr_nop,     3,   0,    BSD, RIGHT}, /*usrpri*/
 {"uprocp",    "-",       pr_nop,      sr_nop,     1,   0,    BSD, RIGHT},
-{"user",      "USER",    pr_euser,    sr_euser,   8,   0,    U98, USER}, /* BSD n forces this to UID */
+{"user",      "USER",    pr_euser,    sr_euser,   8, USR,    U98, USER}, /* BSD n forces this to UID */
 {"usertime",  "USER",    pr_nop,      sr_nop,     4,   0,    DEC, RIGHT},
 {"usrpri",    "UPR",     pr_nop,      sr_nop,     3,   0,    DEC, RIGHT}, /*upr*/
 {"utime",     "UTIME",   pr_nop,      sr_utime,   6,   0,    LNx, CUMUL|RIGHT},
@@ -1309,8 +1310,8 @@ static const format_struct format_array[] = {
 {"vm_stack",  "STACK",   pr_nop,      sr_vm_stack, 5,  0,    LNx, RIGHT},
 {"vsize",     "VSZ",     pr_vsz,      sr_vsize,   5,   0,    DEC, RIGHT}, /*vsz*/
 {"vsz",       "VSZ",     pr_vsz,      sr_vm_size, 5,   0,    U98, RIGHT}, /*vsize*/
-{"wchan",     "WCHAN",   pr_wchan,    sr_wchan,   6,   0,    XXX, WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
-{"wname",     "WCHAN",   pr_wname,    sr_nop,     6,   0,    SGI, WCHAN}, /* opposite of nwchan */
+{"wchan",     "WCHAN",   pr_wchan,    sr_wchan,   6, WCH,    XXX, WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
+{"wname",     "WCHAN",   pr_wname,    sr_nop,     6, WCH,    SGI, WCHAN}, /* opposite of nwchan */
 {"xstat",     "XSTAT",   pr_nop,      sr_nop,     5,   0,    BSD, RIGHT},
 {"~",         "-",       pr_nop,      sr_nop,     1,   0,    LNX, RIGHT}  /* NULL would ruin alphabetical order */
 };

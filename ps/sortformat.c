@@ -57,7 +57,7 @@ static format_node *do_one_spec(const char *spec, const char *override){
       strcpy(thisnode->name, fs->head);
     }
     thisnode->pr = fs->pr;
-    thisnode->pad = fs->pad;
+    thisnode->need = fs->need;
     thisnode->vendor = fs->vendor;
     thisnode->flags = fs->flags;
     thisnode->next = NULL;
@@ -183,7 +183,7 @@ double_percent:
       fnode->name = malloc(len+1);
       strcpy(fnode->name, buf);
       fnode->pr = NULL;     /* checked for */
-      fnode->pad = 0;
+      fnode->need = 0;
       fnode->vendor = AIX;
       fnode->flags = 0;
       fnode->next = NULL;
@@ -669,7 +669,7 @@ static const char *generate_sysv_list(void){
       fn->name = malloc(2);
       strcpy(fn->name, ":");
       fn->pr = NULL;     /* checked for */
-      fn->pad = 0;
+      fn->need = 0;
       fn->vendor = AIX;   /* yes, for SGI weirdness */
       fn->flags = 0;
       fn->next = format_list;

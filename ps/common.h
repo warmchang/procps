@@ -165,6 +165,7 @@ typedef struct sort_node {
   int (*sr)(const proc_t* P, const proc_t* Q); /* sort function */
   int reverse;   /* can sort backwards */
   int typecode;
+  int need;
 } sort_node;
 
 typedef struct format_node {
@@ -173,7 +174,7 @@ typedef struct format_node {
   int (*pr)(void);                         /* print function */
 /*  int (* const sr)(const proc_t* P, const proc_t* Q); */ /* sort function */
   int width;
-  int pad;
+  int need;
   int vendor;                             /* Vendor that invented this */
   int flags;
   int typecode;
@@ -185,7 +186,7 @@ typedef struct format_struct {
   int (* const pr)(void); /* print function */
   int (* const sr)(const proc_t* P, const proc_t* Q); /* sort function */
   const int width;
-  const int pad;    /* could be second width */
+  const int need;       /* data we will need (files to read, etc.) */
   const int vendor; /* Where does this come from? */
   const int flags;
 } format_struct;

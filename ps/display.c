@@ -183,6 +183,29 @@ static void check_headers(void){
   if(!head_normal) lines_to_next_header = -1; /* how UNIX does --noheader */
 }
 
+static unsigned needs_for_format;
+static unsigned needs_for_sort;
+
+/***** check needs */
+/* see what files need to be read, etc. */
+static void check_needs(void){
+  format_node *walk_pr = format_list;
+  sort_node   *walk_sr = sort_list;
+  /* selection doesn't currently have expensive needs */
+
+  while(walk_pr){
+    needs_for_format |= walk_pr->need;
+    walk_pr = walk_pr->next;
+  }
+  if(bsd_e_option) needs_for_format |= PROC_FILLENV;
+
+  while(walk_sr){
+    needs_for_sort |= walk_sr->need;
+    walk_sr = walk_sr->next;
+  }
+
+}
+
 /***** fill in %CPU; not in libproc because of include_dead_children */
 static void fill_pcpu(proc_t *buf){
   unsigned long total_time;
@@ -200,19 +223,19 @@ static void fill_pcpu(proc_t *buf){
 static void simple_spew(void){
   proc_t buf;
   PROCTAB* ptp;
-  ptp = openproc(PROC_FILLBUG);
+  ptp = openproc(needs_for_format | needs_for_sort | PROC_FILLCMD);
   if(!ptp) {
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
   }
-  memset(&buf, '#', sizeof(proc_t));
+  /* memset(&buf, '#', sizeof(proc_t)); */
   /* use "ps_" prefix to catch library mismatch */
   while(ps_readproc(ptp,&buf)){
     fill_pcpu(&buf);
     if(want_this_proc(&buf)) show_one_proc(&buf);
     /* if(buf.cmdline) free(buf.cmdline); */   /* these crash */
     /* if(buf.environ) free(buf.environ); */
-    memset(&buf, '#', sizeof(proc_t));
+    /* memset(&buf, '#', sizeof(proc_t)); */
   }
   closeproc(ptp);
 }
@@ -337,7 +360,7 @@ static void fancy_spew(void){
   proc_t *retbuf = NULL;
   PROCTAB* ptp;
   int n = 0;  /* number of processes & index into array */
-  ptp = openproc(PROC_FILLBUG);
+  ptp = openproc(needs_for_format | needs_for_sort | PROC_FILLCMD);
   if(!ptp) {
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
@@ -395,7 +418,12 @@ int main(int argc, char *argv[]){
 
   init_output(); /* must be between parser and output */
   check_headers();
-  if (open_psdb(namelist_file)) wchan_is_number = 1;
+  check_needs();
+
+  /* filthy hack -- got to unify some stuff here */
+  if( ( (needs_for_format|needs_for_sort) & PROC_FILLWCHAN) && !wchan_is_number)
+    if (open_psdb(namelist_file)) wchan_is_number = 1;
+
   if(forest_type || sort_list) fancy_spew(); /* sort or forest */
   else simple_spew(); /* no sort, no forest */
   show_one_proc((proc_t *)-1); /* no output yet? */

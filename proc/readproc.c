@@ -373,21 +373,32 @@ next_proc:				/* get next PID for consideration */
     /* some number->text resolving which is time consuming */
     if (Do(FILLUSR)){
 	strncpy(p->euser,   user_from_uid(p->euid), sizeof p->euser);
-        strncpy(p->egroup, group_from_gid(p->egid), sizeof p->egroup);
         if(Do(FILLSTATUS)) {
             strncpy(p->ruser,   user_from_uid(p->ruid), sizeof p->ruser);
-            strncpy(p->rgroup, group_from_gid(p->rgid), sizeof p->rgroup);
             strncpy(p->suser,   user_from_uid(p->suid), sizeof p->suser);
-            strncpy(p->sgroup, group_from_gid(p->sgid), sizeof p->sgroup);
             strncpy(p->fuser,   user_from_uid(p->fuid), sizeof p->fuser);
+        }
+    }
+
+    /* some number->text resolving which is time consuming */
+    if (Do(FILLGRP)){
+        strncpy(p->egroup, group_from_gid(p->egid), sizeof p->egroup);
+        if(Do(FILLSTATUS)) {
+            strncpy(p->rgroup, group_from_gid(p->rgid), sizeof p->rgroup);
+            strncpy(p->sgroup, group_from_gid(p->sgid), sizeof p->sgroup);
             strncpy(p->fgroup, group_from_gid(p->fgid), sizeof p->fgroup);
         }
     }
 
     if (Do(FILLCMD))				/* read+parse /proc/#/cmdline */
 	p->cmdline = file2strvec(path, "cmdline");
+    else
+        p->cmdline = NULL;
+
     if (Do(FILLENV))				/* read+parse /proc/#/environ */
 	p->environ = file2strvec(path, "environ");
+    else
+        p->environ = NULL;
     
     if (p->state == 'Z')			/* fixup cmd for zombies */
 	strncat(p->cmd," <defunct>", sizeof p->cmd);
@@ -448,10 +459,10 @@ next_proc:				/* get next PID for consideration */
 	goto next_proc;			/* error reading /proc/#/stat */
     stat2proc(sbuf, p);				/* parse /proc/#/stat */
 
-/*    if (Do(FILLMEM)) {*/				/* read, parse /proc/#/statm */
+    if (Do(FILLMEM)) {				/* read, parse /proc/#/statm */
 	if ((file2str(path, "statm", sbuf, sizeof sbuf)) != -1 )
 	    statm2proc(sbuf, p);		/* ignore statm errors here */
-/*    }			*/			/* statm fields just zero */
+    }						/* statm fields just zero */
 
   /*  if (Do(FILLSTATUS)) { */        /* read, parse /proc/#/status */
        if ((file2str(path, "status", sbuf, sizeof sbuf)) != -1 ){
@@ -460,23 +471,34 @@ next_proc:				/* get next PID for consideration */
 /*    }*/
 
     /* some number->text resolving which is time consuming */
- /*   if (Do(FILLUSR)){ */
+    if (Do(FILLUSR)){
 	strncpy(p->euser,   user_from_uid(p->euid), sizeof p->euser);
-        strncpy(p->egroup, group_from_gid(p->egid), sizeof p->egroup);
 /*        if(Do(FILLSTATUS)) { */
             strncpy(p->ruser,   user_from_uid(p->ruid), sizeof p->ruser);
-            strncpy(p->rgroup, group_from_gid(p->rgid), sizeof p->rgroup);
             strncpy(p->suser,   user_from_uid(p->suid), sizeof p->suser);
-            strncpy(p->sgroup, group_from_gid(p->sgid), sizeof p->sgroup);
             strncpy(p->fuser,   user_from_uid(p->fuid), sizeof p->fuser);
+/*        }*/
+    }
+
+    /* some number->text resolving which is time consuming */
+    if (Do(FILLGRP)){
+        strncpy(p->egroup, group_from_gid(p->egid), sizeof p->egroup);
+/*        if(Do(FILLSTATUS)) { */
+            strncpy(p->rgroup, group_from_gid(p->rgid), sizeof p->rgroup);
+            strncpy(p->sgroup, group_from_gid(p->sgid), sizeof p->sgroup);
             strncpy(p->fgroup, group_from_gid(p->fgid), sizeof p->fgroup);
 /*        }*/
-/*    }*/
+    }
 
-/*    if (Do(FILLCMD))	*/			/* read+parse /proc/#/cmdline */
+    if (Do(FILLCMD))				/* read+parse /proc/#/cmdline */
 	p->cmdline = file2strvec(path, "cmdline");
-/*    if (Do(FILLENV))	*/			/* read+parse /proc/#/environ */
+    else
+        p->cmdline = NULL;
+
+    if (Do(FILLENV))			/* read+parse /proc/#/environ */
 	p->environ = file2strvec(path, "environ");
+    else
+        p->environ = NULL;
     
     if (p->state == 'Z')			/* fixup cmd for zombies */
 	strncat(p->cmd," <defunct>", sizeof p->cmd);

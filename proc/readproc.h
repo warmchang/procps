@@ -194,10 +194,12 @@ extern void freeproc(proc_t* p);
 #define PROC_FILLMEM    0x01 /* read statm into the appropriate proc_t entries */
 #define PROC_FILLCMD    0x02 /* alloc and fill in `cmdline' part of proc_t */
 #define PROC_FILLENV    0x04 /* alloc and fill in `environ' part of proc_t */
-#define PROC_FILLUSR    0x08 /* resolve user id number -> user name via passwd */
-#define PROC_FILLSTATUS 0x10
-#define PROC_FILLSTAT   0x20
-#define PROC_FILLBUG    0x3f    /* No idea what we need */
+#define PROC_FILLUSR    0x08 /* resolve user id number -> user name */
+#define PROC_FILLGRP    0x10 /* resolve group id number -> group name */
+#define PROC_FILLSTATUS 0x20
+#define PROC_FILLSTAT   0x40
+#define PROC_FILLWCHAN  0x80
+#define PROC_FILLBUG    0xff    /* No idea what we need */
 
 
 /* Obsolete, consider only processes with one of the passed: */
