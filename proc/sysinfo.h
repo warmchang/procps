@@ -30,6 +30,7 @@ extern unsigned kb_low_free;
 extern unsigned kb_low_total;
 /* 2.4.xx era */
 extern unsigned kb_active;
+extern unsigned kb_inact_laundry;  // grrr...
 extern unsigned kb_inact_dirty;
 extern unsigned kb_inact_clean;
 extern unsigned kb_inact_target;

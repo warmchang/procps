@@ -302,6 +302,7 @@ static int compare_mem_table_structs(const void *a, const void *b){
  * Inact_dirty:      7772 kB    new
  * Inact_clean:      2008 kB    new
  * Inact_target:        0 kB    new
+ * Inact_laundry:       0 kB    new, and might be missing too
  * HighTotal:           0 kB
  * HighFree:            0 kB
  * LowTotal:        61768 kB
@@ -334,6 +335,7 @@ unsigned kb_low_free;
 unsigned kb_low_total;
 /* 2.4.xx era */
 unsigned kb_active;
+unsigned kb_inact_laundry;
 unsigned kb_inact_dirty;
 unsigned kb_inact_clean;
 unsigned kb_inact_target;
@@ -367,6 +369,7 @@ void meminfo(void){
   {"HighTotal",    &kb_high_total},
   {"Inact_clean",  &kb_inact_clean},
   {"Inact_dirty",  &kb_inact_dirty},
+  {"Inact_laundry",&kb_inact_laundry},
   {"Inact_target", &kb_inact_target},
   {"Inactive",     &kb_inactive},
   {"LowFree",      &kb_low_free},
@@ -415,7 +418,7 @@ nextline:
     kb_low_free  = kb_main_free;
   }
   if(kb_inactive==~0U){
-    kb_inactive = kb_inact_dirty + kb_inact_clean;
+    kb_inactive = kb_inact_dirty + kb_inact_clean + kb_inact_laundry;
   }
   kb_swap_used = kb_swap_total - kb_swap_free;
   kb_main_used = kb_main_total - kb_main_free;
