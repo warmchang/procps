@@ -3,7 +3,7 @@ AC_INIT(free.c)
 AM_CONFIG_HEADER(config.h)
 
 dnl sets package name and version
-AM_INIT_AUTOMAKE(procps,3.0)
+AM_INIT_AUTOMAKE(procps,3.0.1)
 
 AC_SUBST(FLASK_LINUX)
 AC_ARG_ENABLE(flask,[  --enable-flask  Enable Security-Enhanced Linux features],	AC_DEFINE([FLASK_LINUX],1,[Use Security-Enhanced Linux features]),)
