@@ -254,8 +254,8 @@ int main(int argc, char *argv[]) {
 	  pgpgin,pgpgout,pswpin,pswpout,
 	  inter,ticks,ctxt);
   duse= *cpu_use + *cpu_nic; 
-  dsys= *cpu_sys + *cpu_iow;  /* ADC -- add IO-wait here? */
-  didl= *cpu_idl;
+  dsys= *cpu_sys;
+  didl= *cpu_idl + *cpu_iow;
   Div= duse+dsys+didl;
   hz=Hertz; /* get ticks/s from libproc */
   divo2= Div/2UL;
@@ -286,8 +286,8 @@ int main(int argc, char *argv[]) {
 	  pgpgin+tog,pgpgout+tog,pswpin+tog,pswpout+tog,
 	  inter+tog,ticks+tog,ctxt+tog);
     duse= cpu_use[tog]-cpu_use[!tog] + cpu_nic[tog]-cpu_nic[!tog];
-    dsys= cpu_sys[tog]-cpu_sys[!tog] + cpu_iow[tog]-cpu_iow[!tog];
-    didl= cpu_idl[tog]-cpu_idl[!tog];
+    dsys= cpu_sys[tog]-cpu_sys[!tog];
+    didl= cpu_idl[tog]-cpu_idl[!tog] + cpu_iow[tog]-cpu_iow[!tog];
     /* idle can run backwards for a moment -- kernel "feature" */
     if(cpu_idl[tog]<cpu_idl[!tog]) didl=0;
     Div= duse+dsys+didl;
