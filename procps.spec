@@ -69,35 +69,13 @@ rm -f /etc/psdevtab /etc/psdatabase
 %defattr(0644,root,root,755)
 %attr(0644,root,root) %config(missingok) /etc/X11/applnk/Utilities/top.desktop
 %doc NEWS BUGS TODO
-%attr(755,root,root) /lib/libproc.so.2.0.7
+%attr(755,root,root) /lib/libproc.so.3.0.?
 %attr(555,root,root) /bin/ps
 %attr(555,root,root) /sbin/sysctl
-%attr(555,root,root) /usr/bin/uptime
-%attr(555,root,root) /usr/bin/tload
-%attr(555,root,root) /usr/bin/free
-%attr(555,root,root) /usr/bin/w
-%attr(555,root,root) /usr/bin/top
-%attr(555,root,root) /usr/bin/vmstat
-%attr(555,root,root) /usr/bin/watch
-%attr(555,root,root) /usr/bin/skill
-%attr(555,root,root) /usr/bin/snice
-%attr(555,root,root) /usr/bin/pgrep
-%attr(555,root,root) /usr/bin/pkill
+%attr(555,root,root) /usr/bin/*
 
-%attr(0644,root,root) /usr/man/man1/free.1
-%attr(0644,root,root) /usr/man/man1/ps.1
-%attr(0644,root,root) /usr/man/man1/sessreg.1
-%attr(0644,root,root) /usr/man/man1/skill.1
-%attr(0644,root,root) /usr/man/man1/snice.1
-%attr(0644,root,root) /usr/man/man1/tload.1
-%attr(0644,root,root) /usr/man/man1/top.1
-%attr(0644,root,root) /usr/man/man1/uptime.1
-%attr(0644,root,root) /usr/man/man1/w.1
-%attr(0644,root,root) /usr/man/man1/watch.1
-%attr(0644,root,root) /usr/man/man1/pgrep.1
-%attr(0644,root,root) /usr/man/man1/pkill.1
-%attr(0644,root,root) /usr/man/man8/vmstat.8
-%attr(0644,root,root) /usr/man/man8/sysctl.8
+%attr(0644,root,root) /usr/man/man1/*
+%attr(0644,root,root) /usr/man/man8/*
 
 %files X11
 %attr(0755,root,root) /usr/X11R6/bin/XConsole

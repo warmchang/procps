@@ -1,7 +1,7 @@
 Begin3
 Title: procps
 Version: 3.0.0
-Entered-date: 14JAN01
+Entered-date: 30JAN02
 Description: Procps is a library which parses the textual /proc filesystem
 	and a suite of utilites which use the library.
 Keywords: procps /proc libproc
