@@ -40,8 +40,9 @@ DIRS  += proc/
 proc/lib$(NAME).a: $(LIBOBJ)
 	$(AR) rcs $@ $^
 
+#proc/$(SONAME): proc/library.map
 proc/$(SONAME): $(LIBOBJ)
-	$(CC) -shared -Wl,-soname,$(SONAME) -o $@ $^ -lc
+	$(CC) -shared -Wl,-soname,$(SONAME) -Wl,--version-script=proc/library.map -o $@ $^ -lc
 	cd proc && $(ln_sf) $(SONAME) lib$(NAME).so
 
 
