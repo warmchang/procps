@@ -464,10 +464,24 @@ static void supgrps_from_supgids (proc_t *p) {
     s = p->supgid;
     t = 0;
     do {
-        if (',' == *s) ++s;
-        g = pwcache_get_group((uid_t)strtol(s, &s, 10));
-        p->supgrp = xrealloc(p->supgrp, P_G_SZ+t+2);
-        t += snprintf(p->supgrp+t, P_G_SZ+2, "%s%s", t ? "," : "", g);
+        const int max = P_G_SZ+2;
+        char *end = NULL;
+        gid_t gid;
+        int len;
+
+        while (',' == *s) ++s;
+        gid = strtol(s, &end, 10);
+        if (end <= s) break;
+        s = end;
+        g = pwcache_get_group(gid);
+
+        if (t >= INT_MAX - max) break;
+        p->supgrp = xrealloc(p->supgrp, t + max);
+
+        len = snprintf(p->supgrp+t, max, "%s%s", t ? "," : "", g);
+        if (len <= 0) (p->supgrp+t)[len = 0] = '\0';
+        else if (len >= max) len = max-1;
+        t += len;
     } while (*s);
 }
 
