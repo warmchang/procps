@@ -1750,7 +1750,8 @@ static void adj_geometry (void) {
 #endif
 
    // we might disappoint some folks (but they'll deserve it)
-   if (SCREENMAX < Screen_cols) Screen_cols = SCREENMAX;
+   if (Screen_cols > SCREENMAX) Screen_cols = SCREENMAX;
+   if (Screen_cols < W_MIN_COL) Screen_cols = W_MIN_COL;
 
    if (!w_set) {
       if (Width_mode > 0)              // -w with arg, we'll try to honor
