@@ -292,7 +292,7 @@ static void lists_and_needs(void){
   needs_for_sort = check_sort_needs(sort_list);
 
   // move process-only flags to the process
-  proc_format_needs |= (task_format_needs &~ PROC_ONLY_FLAGS);
+  proc_format_needs |= (task_format_needs & PROC_ONLY_FLAGS);
   task_format_needs &= ~PROC_ONLY_FLAGS;
 
   if(bsd_c_option){
