@@ -648,9 +648,42 @@ static int pr_wchan(char *restrict const outbuf, const proc_t *restrict const pp
  * The output should be truncated to maximal columns width -- overflow
  * is not supported for the "wchan".
  */
-    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, max_rightward+1, "-");
-    if(wchan_is_number) return snprintf(outbuf, max_rightward+1, "%x", (unsigned)(pp->wchan) & 0xffffffu);
-    return snprintf(outbuf, max_rightward+1, "%s", lookup_wchan(pp->wchan, pp->XXXID));
+  const char *w;
+  size_t len;
+  if(!(pp->wchan & 0xffffff)) return memcpy(outbuf,"-",2),1;
+  if(wchan_is_number) return snprintf(outbuf, COLWID, "%x", (unsigned)(pp->wchan) & 0xffffffu);
+  w = lookup_wchan(pp->wchan, pp->XXXID);
+  len = strlen(w);
+  if(len>max_rightward) len=max_rightward;
+  memcpy(outbuf, w, len);
+  outbuf[len] = '\0';
+  return len;
+}
+
+static int pr_wname(char *restrict const outbuf, const proc_t *restrict const pp){
+/* SGI's IRIX always uses a number for "wchan", so "wname" is provided too.
+ *
+ * We use '-' for running processes, the location when there is
+ * only one thread waiting in the kernel, and '*' when there is
+ * more than one thread waiting in the kernel.
+ *
+ * The output should be truncated to maximal columns width -- overflow
+ * is not supported for the "wchan".
+ */
+  const char *w;
+  size_t len;
+  if(!(pp->wchan & 0xffffff)) return memcpy(outbuf,"-",2),1;
+  w = lookup_wchan(pp->wchan, pp->XXXID);
+  len = strlen(w);
+  if(len>max_rightward) len=max_rightward;
+  memcpy(outbuf, w, len);
+  outbuf[len] = '\0';
+  return len;
+}
+
+static int pr_nwchan(char *restrict const outbuf, const proc_t *restrict const pp){
+  if(!(pp->wchan & 0xffffff)) return memcpy(outbuf,"-",2),1;
+  return snprintf(outbuf, COLWID, "%x", (unsigned)(pp->wchan) & 0xffffffu);
 }
 
 /* Terrible trunctuation, like BSD crap uses: I999 J999 K999 */
@@ -854,25 +887,6 @@ static int pr_lim(char *restrict const outbuf, const proc_t *restrict const pp){
 /* should print leading tilde ('~') if process is bound to the CPU */
 static int pr_psr(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%d", pp->processor);
-}
-
-static int pr_wname(char *restrict const outbuf, const proc_t *restrict const pp){
-/* SGI's IRIX always uses a number for "wchan", so "wname" is provided too.
- *
- * We use '-' for running processes, the location when there is
- * only one thread waiting in the kernel, and '*' when there is
- * more than one thread waiting in the kernel.
- *
- * The output should be truncated to maximal columns width -- overflow
- * is not supported for the "wchan".
- */
-    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, max_rightward+1, "-");
-    return snprintf(outbuf, max_rightward+1, "%s", lookup_wchan(pp->wchan, pp->XXXID));
-}
-
-static int pr_nwchan(char *restrict const outbuf, const proc_t *restrict const pp){
-    if(!(pp->wchan & 0xffffff)) return snprintf(outbuf, max_rightward+1, "-");
-    return snprintf(outbuf, max_rightward+1, "%x", (unsigned)(pp->wchan) & 0xffffffu);
 }
 
 static int pr_rss(char *restrict const outbuf, const proc_t *restrict const pp){
