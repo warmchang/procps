@@ -210,25 +210,27 @@ extern void freeproc(proc_t* p);
 // argument is the length of the list (currently only used for lists of user
 // id's since uid_t supports no convenient termination sentinel.)
 
-#define PROC_FILLMEM    0x0001 // read statm
-#define PROC_FILLCOM    0x0002 // alloc and fill in `cmdline'
-#define PROC_FILLENV    0x0004 // alloc and fill in `environ'
-#define PROC_FILLUSR    0x0008 // resolve user id number -> user name
-#define PROC_FILLGRP    0x0010 // resolve group id number -> group name
-#define PROC_FILLSTATUS 0x0020 // read status -- currently unconditional
-#define PROC_FILLSTAT   0x0040 // read stat -- currently unconditional
-#define PROC_FILLWCHAN  0x0080 // look up WCHAN name
-#define PROC_FILLARG    0x0100 // alloc and fill in `cmdline'
+#define PROC_FILLMEM         0x0001 // read statm
+#define PROC_FILLCOM         0x0002 // alloc and fill in `cmdline'
+#define PROC_FILLENV         0x0004 // alloc and fill in `environ'
+#define PROC_FILLUSR         0x0008 // resolve user id number -> user name
+#define PROC_FILLGRP         0x0010 // resolve group id number -> group name
+#define PROC_FILLSTATUS      0x0020 // read status -- currently unconditional
+#define PROC_FILLSTAT        0x0040 // read stat -- currently unconditional
+#define PROC_FILLWCHAN       0x0080 // look up WCHAN name
+#define PROC_FILLARG         0x0100 // alloc and fill in `cmdline'
+
+#define PROC_LOOSE_TASKS     0x0200 // threat threads as if they were processes
 
 // Obsolete, consider only processes with one of the passed:
-#define PROC_PID     0x1000  // process id numbers ( 0   terminated)
-#define PROC_UID     0x4000  // user id numbers    ( length needed )
+#define PROC_PID             0x1000  // process id numbers ( 0   terminated)
+#define PROC_UID             0x4000  // user id numbers    ( length needed )
 
 // it helps to give app code a few spare bits
-#define PROC_SPARE_1 0x01000000
-#define PROC_SPARE_2 0x02000000
-#define PROC_SPARE_3 0x04000000
-#define PROC_SPARE_4 0x08000000
+#define PROC_SPARE_1     0x01000000
+#define PROC_SPARE_2     0x02000000
+#define PROC_SPARE_3     0x04000000
+#define PROC_SPARE_4     0x08000000
 
 EXTERN_C_END
 #endif

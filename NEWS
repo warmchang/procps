@@ -1,5 +1,6 @@
 procps-3.1.13 --> procps-3.1.14
 
+top: displays on more genuine serial terminals
 handle 32-bit dev_t of Linux 2.6
 ps: finally, m and -m satisfy the original design
 ps: distinct per-thread and whole-process pending signals

@@ -2302,15 +2302,35 @@ static void wins_reflag (int what, int flg)
 static void wins_resize (int dont_care_sig)
 {
    struct winsize wz;
+   char *env_columns;  // Unix98 environment variable COLUMNS
+   char *env_lines;    // Unix98 environment variable LINES
 
    (void)dont_care_sig;
-   Screen_cols = columns;
-   Screen_rows = lines;
-   if (-1 != (ioctl(STDOUT_FILENO, TIOCGWINSZ, &wz))) {
+
+   Screen_cols = columns;   // <term.h>
+   Screen_rows = lines;     // <term.h>
+
+   if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &wz) != -1 && wz.ws_col>0 && wz.ws_row>0) {
       Screen_cols = wz.ws_col;
       Screen_rows = wz.ws_row;
    }
+
    if (Batch) Screen_rows = MAXINT;
+
+   env_columns = getenv("COLUMNS");
+   if(env_columns && *env_columns){
+      long t;
+      char *endptr;
+      t = strtol(env_columns, &endptr, 0);
+      if(!*endptr && (t>0) && (t<=0x7fffffffL)) Screen_cols = (int)t;
+   }
+   env_lines   = getenv("LINES");
+   if(env_lines && *env_lines){
+      long t;
+      char *endptr;
+      t = strtol(env_lines, &endptr, 0);
+      if(!*endptr && (t>0) && (t<=0x7fffffffL)) Screen_rows = (int)t;
+   }
 
    // we might disappoint some folks (but they'll deserve it)
    if (SCREENMAX < Screen_cols) Screen_cols = SCREENMAX;

@@ -1323,11 +1323,11 @@ static const format_struct format_array[] = {
 {"timeout",   "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, AN|RIGHT},
 {"tmout",     "TMOUT",   pr_timeout,  sr_timeout, 5,   0,    LNX, AN|RIGHT},
 {"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
-{"tpgid",     "TPGID",   pr_tpgid,    sr_tpgid,   5,   0,    XXX, AN|PIDMAX|RIGHT},
+{"tpgid",     "TPGID",   pr_tpgid,    sr_tpgid,   5,   0,    XXX, PO|PIDMAX|RIGHT},
 {"trs",       "TRS",     pr_trs,      sr_trs,     4, MEM,    AIX, PO|RIGHT},
 {"trss",      "TRSS",    pr_trs,      sr_trs,     4, MEM,    BSD, PO|RIGHT}, /* 4.3BSD NET/2 */
-{"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, AN|PIDMAX|RIGHT},
-{"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, AN|PIDMAX|RIGHT},
+{"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, PO|PIDMAX|RIGHT},
+{"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, PO|PIDMAX|RIGHT},
 {"tsiz",      "TSIZ",    pr_tsiz,     sr_nop,     4,   0,    BSD, PO|RIGHT},
 {"tt",        "TT",      pr_tty8,     sr_tty,     8,   0,    BSD, PO|LEFT},
 {"tty",       "TT",      pr_tty8,     sr_tty,     8,   0,    U98, PO|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */

@@ -276,7 +276,7 @@ out:
     if(colon_loc){   /* if width override */
       *colon_loc = '\0';
       colon_loc++;
-      if(strspn(colon_loc,"0123456789") != strlen(colon_loc) || *colon_loc=='0'){
+      if(strspn(colon_loc,"0123456789") != strlen(colon_loc) || *colon_loc=='0' || !*colon_loc){
         free(buf);
         goto badwidth;
       }
@@ -351,7 +351,6 @@ static const char *long_sort_parse(sf_node *sfn){
   char *buf;                   /* temp copy of arg to hack on */
   char *sep_loc;               /* separator location: " \t,\n" */
   char *walk;
-  const char *err;       /* error code that could or did happen */
   sort_node *snode;
   int items;
   int need_item;
@@ -364,7 +363,6 @@ static const char *long_sort_parse(sf_node *sfn){
   need_item = 1; /* true */
   items = 0;
   walk = buf;
-  err = "Improper sort specifier list.";
   do{
     switch(*walk){
     case ' ': case ',': case '\t': case '\n': case '\0':
@@ -713,16 +711,16 @@ static const char *generate_sysv_list(void){
   }else if(format_flags & FF_Ul){
     PUSH("ni"); PUSH("opri");
   }
-  if((format_modifiers & FM_L) && (format_flags & FF_Uf)) PUSH("nlwp");
+  if((thread_flags & TF_U_L) && (format_flags & FF_Uf)) PUSH("nlwp");
   if( (format_flags & (FF_Uf|FF_Ul)) && !(format_modifiers & FM_c) ) PUSH("c");
   if(format_modifiers & FM_P) PUSH("psr");
-  if(format_modifiers & FM_L) PUSH("lwp");
+  if(thread_flags & TF_U_L) PUSH("lwp");
   if(format_modifiers & FM_j){
     PUSH("sid");
     PUSH("pgid");
   }
   if(format_flags & (FF_Uf|FF_Ul)) PUSH("ppid");
-  if(format_modifiers & FM_T) PUSH("spid");
+  if(thread_flags & TF_U_T) PUSH("spid");
   PUSH("pid");
   if(format_flags & FF_Uf){
     if(personality & PER_SANE_USER) PUSH("user");
@@ -737,7 +735,6 @@ static const char *generate_sysv_list(void){
   if(format_modifiers & FM_M){
     PUSH("label");  /* Mandatory Access Control */
   }
-  format_modifiers = 0;
   return NULL;
 }
 
@@ -749,7 +746,6 @@ static const char *generate_sysv_list(void){
  */
 const char *process_sf_options(int localbroken){
   sf_node *sf_walk;
-  int option_source;  /* true if user-defined */
 
   if(personality & PER_BROKEN_o) localbroken = 1;
   if(personality & PER_GOOD_o)   localbroken = 0;
@@ -794,10 +790,49 @@ const char *process_sf_options(int localbroken){
     sf_walk = sf_walk->next;
   }
 
+  // Get somebody to explain how -L/-T is supposed to interact
+  // with sorting. Do the threads remain grouped, with sorting
+  // by process, or do the threads get sorted by themselves?
+  if(sort_list && (thread_flags&TF_no_sort)){
+    return "Tell procps-feedback@lists.sf.net what you expected.";
+  }
+
+  // If nothing else, try to use $PS_FORMAT before the default.
+  if(!format_flags && !format_modifiers && !format_list){
+    char *tmp;
+    if(thread_flags&TF_must_use) return "Tell procps-feedback@sf.net what you want. (-L/-T, -m/m/H, and $PS_FORMAT)";
+    tmp = getenv("PS_FORMAT");  /* user override kills default */
+    if(tmp && *tmp){
+      const char *err;
+      sf_node sfn;
+      sfn.sf = tmp;
+      sfn.f_cooked = NULL;
+      err = format_parse(&sfn);
+      if(!err){
+        format_node *fmt_walk;
+        fmt_walk = sfn.f_cooked;
+        while(fmt_walk){   /* put any nodes onto format_list in opposite way */
+          format_node *travler;
+          travler = fmt_walk;
+          fmt_walk = fmt_walk->next;
+          travler->next = format_list;
+          format_list = travler;
+        }
+        return NULL;
+      }
+      // FIXME: prove that this won't be hit on valid bogus-BSD options
+      fprintf(stderr, "Warning: $PS_FORMAT ignored. (%s)\n", err);
+    }
+  }
+
   if(format_list){
     if(format_flags) return "Conflicting format options.";
-    option_source = 1;
-  }else{
+    if(format_modifiers) return "Can't use output modifiers with user-defined output";
+    if(thread_flags&TF_must_use) return "-L/-T with H/m/-m and -o/-O/o/O is nonsense";
+    return NULL;
+  }
+
+  do{
     const char *spec;
     switch(format_flags){
 
@@ -831,35 +866,10 @@ const char *process_sf_options(int localbroken){
 
     }  /* end switch(format_flags) */
 
-    option_source = 0;
-    if(!format_flags && !format_modifiers){   /* was default */
-      char *tmp;
-      tmp = getenv("PS_FORMAT");  /* user override kills default */
-      if(tmp && *tmp){
-        const char *err;
-        sf_node sfn;
-//        spec = tmp;
-//        option_source = 2;
-        sfn.sf = tmp;
-        sfn.f_cooked = NULL;
-        err = format_parse(&sfn);
-        if(!err){
-          format_node *fmt_walk;
-          fmt_walk = sfn.f_cooked;
-          while(fmt_walk){   /* put any nodes onto format_list in opposite way */
-            format_node *travler;
-            travler = fmt_walk;
-            fmt_walk = fmt_walk->next;
-            travler->next = format_list;
-            format_list = travler;
-          }
-          return NULL;
-        }
-        fprintf(stderr, "Warning: $PS_FORMAT ignored. (%s)\n", err);
-      }
-    }
+    // not just for case 0, since sysv_l_format and such may be NULL
+    if(!spec) return generate_sysv_list();
 
-    if(spec){
+    do{
       format_node *fmt_walk;
       fmt_walk = do_one_spec(spec, NULL); /* use override "" for no headers */
       while(fmt_walk){   /* put any nodes onto format_list in opposite way */
@@ -869,16 +879,11 @@ const char *process_sf_options(int localbroken){
         travler->next = format_list;
         format_list = travler;
       }
-    }else{
-      const char *err;
-      err = generate_sysv_list();
-      if(err) return err;
-      option_source = 3;
-    }
-  }
-  if(format_modifiers){  /* generate_sysv_list() may have cleared some bits */
+    }while(0);
+  }while(0);
+
+  do{
     format_node *fn;
-    if(option_source) return "Can't use output modifiers with user-defined output";
     if(format_modifiers & FM_j){
       fn = do_one_spec("pgid", NULL);
       if(!fmt_add_after("PPID", fn)) if(!fmt_add_after("PID", fn))
@@ -902,9 +907,25 @@ const char *process_sf_options(int localbroken){
       fn = do_one_spec("pri", NULL);
       if(!fmt_add_after("CLS", fn)) return "Lost my CLS!";
     }
-  }
-  if(!option_source){  /* OK to really muck with stuff */
-    format_node *fn;
+    if(thread_flags & TF_U_T){
+      fn = do_one_spec("spid", NULL);
+      if(!fmt_add_after("PID", fn) && (thread_flags&TF_must_use))
+        return "-T with H/-m/m but no PID for SPID to follow";
+    }
+    if(thread_flags & TF_U_L){
+      fn = do_one_spec("lwp", NULL);
+      if(fmt_add_after("SID",  fn)) goto did_lwp;
+      if(fmt_add_after("SESS", fn)) goto did_lwp;
+      if(fmt_add_after("PGID", fn)) goto did_lwp;
+      if(fmt_add_after("PGRP", fn)) goto did_lwp;
+      if(fmt_add_after("PPID", fn)) goto did_lwp;
+      if(fmt_add_after("PID",  fn)) goto did_lwp;
+      if(thread_flags&TF_must_use)
+        return "-L with H/-m/m but no PID/PGID/SID/SESS for NLWP to follow";
+did_lwp:
+      fn = do_one_spec("nlwp", NULL);
+      fmt_add_after("%CPU",  fn);
+    }
     /* Do personality-specific translations not covered by format_flags.
      * Generally, these only get hit when personality overrides unix output.
      * That (mostly?) means the Digital and Debian personalities.
@@ -917,9 +938,8 @@ const char *process_sf_options(int localbroken){
       fn = do_one_spec("user", NULL);
       if(fmt_add_after("UID", fn)) fmt_delete("UID");
     }
-  }
+  }while(0);
 
-  /* Could scan for duplicates (format and sort) here. Digital does. */
   return NULL;
 }
 

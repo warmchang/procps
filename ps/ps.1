@@ -102,7 +102,6 @@ v            display virtual memory format
 
 OUTPUT MODIFIERS
 -H           show process hierarchy (forest)
--m           show threads
 -n           set namelist file
 -w           wide output
 C            use raw CPU time for %CPU instead of decaying average
@@ -113,7 +112,6 @@ c            true command name
 e            show environment after the command
 f            ASCII-art process hierarchy (forest)
 h            no header (or, one header per screen in the BSD personality)
-m            all threads
 n            numeric output for WCHAN and USER
 w            wide output
 --cols       set screen width
@@ -126,6 +124,13 @@ w            wide output
 --rows       set screen height
 --sort       specify sorting order
 --width      set screen width
+
+THREAD DISPLAY
+-L           show threads, possibly with LWP and NLWP columns
+-T           show threads, possibly with SPID column
+-m           show threads after processes
+H            show threads as if they were processes
+m            show threads after processes
 
 INFORMATION
 -V          print version
@@ -159,6 +164,10 @@ named "X" and "Y". Use multiple -o options when in doubt.
 Use the $PS_FORMAT environment variable to specify a default
 as desired; DefSysV and DefBSD are macros that may be used to
 choose the default UNIX or BSD columns.
+
+The following user-defined format specifiers may contain
+spaces: comm, args, cmd, comm, command, fname, ucmd, ucomm,
+lstart, bsdstart, start
 
 The "-g" option can select by session leader OR by group name.
 Selection by session leader is specified by many standards,

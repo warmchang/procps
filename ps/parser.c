@@ -265,8 +265,7 @@ static const char *parse_sysv_option(void){
        */
       trace("-L Print LWP (thread) info.\n");
       thread_flags |= TF_U_L;
-      thread_flags |= TF_show_task;
-      format_modifiers |= FM_L;
+//      format_modifiers |= FM_L;
       break;
     case 'M':  /* someday, maybe, we will have MAC like SGI's Irix */
       trace("-M Print security label for Mandatory Access Control.\n");
@@ -301,8 +300,7 @@ static const char *parse_sysv_option(void){
        */
       trace("-T adds strange SPID column (old sproc() threads?)\n");
       thread_flags |= TF_U_T;
-      thread_flags |= TF_show_task;
-      format_modifiers |= FM_T;
+//      format_modifiers |= FM_T;
       break;
     case 'U': /* end */
       trace("-U select by RUID (supports names).\n");
@@ -362,7 +360,7 @@ static const char *parse_sysv_option(void){
       return "List of session leaders OR effective group IDs was invalid.";
     case 'j':
       trace("-j jobs format.\n");
-      /* Debian uses RD_j and Digital uses JFMT */
+      /* old Debian used RD_j and Digital uses JFMT */
       if(sysv_j_format) format_flags |= FF_Uj;
       else format_modifiers |= FM_j;
       break;
@@ -374,8 +372,6 @@ static const char *parse_sysv_option(void){
       trace("-m shows threads.\n");
       /* note that AIX shows 2 lines for a normal process */
       thread_flags |= TF_U_m;
-      thread_flags |= TF_show_proc;
-      thread_flags |= TF_show_task;
       break;
     case 'n': /* end */
       trace("-n sets namelist file.\n");
@@ -507,7 +503,6 @@ static const char *parse_bsd_option(void){
     case 'H':    // The FreeBSD way (NetBSD:s OpenBSD:k FreeBSD:H  -- NIH???)
       trace("H Print LWP (thread) info.\n");   // was: Use /vmcore as c-dumpfile\n");
       thread_flags |= TF_B_H;
-      thread_flags |= TF_show_task;  // FIXME: determine if TF_show_proc is needed
       //format_modifiers |= FM_L;    // FIXME: determine if we need something like this
       break;
     case 'L': /* single */
@@ -606,8 +601,6 @@ static const char *parse_bsd_option(void){
 #if 0
     case 'k':    // OpenBSD: don't hide "kernel threads" -- like the swapper?
       trace("k Print LWP (thread) info.\n");   // was: Use /vmcore as c-dumpfile\n");
-      thread_flags |= TF_show_task;  // FIXME: determine if TF_show_proc is needed
-      //format_modifiers |= FM_L;    // FIXME: determine if we need something like this
       break;
 #endif
     case 'l':
@@ -625,8 +618,6 @@ static const char *parse_bsd_option(void){
         break;
       }
       thread_flags |= TF_B_m;
-      thread_flags |= TF_show_proc;
-      thread_flags |= TF_show_task;
       break;
     case 'n':
       trace("n Numeric output for WCHAN, and USER replaced by UID\n");
@@ -1101,7 +1092,15 @@ static void choose_dimensions(void){
 }
 
 static const char *thread_option_check(void){
-  if(!thread_flags) return NULL;
+  if(!thread_flags){
+    thread_flags = TF_show_proc;
+    return NULL;
+  }
+
+  if(forest_type){
+    return "Thread display conflicts with forest display.";
+  }
+  //thread_flags |= TF_no_forest;
 
   if((thread_flags&TF_B_H) && (thread_flags&(TF_B_m|TF_U_m)))
     return "Thread flags conflict; can't use H with m or -m.";
@@ -1109,6 +1108,22 @@ static const char *thread_option_check(void){
     return "Thread flags conflict; can't use both m and -m.";
   if((thread_flags&TF_U_L) && (thread_flags&TF_U_T))
     return "Thread flags conflict; can't use both -L and -T.";
+
+  if(thread_flags&TF_B_H) thread_flags |= (TF_show_proc|TF_loose_tasks);
+  if(thread_flags&(TF_B_m|TF_U_m)) thread_flags |= (TF_show_proc|TF_show_task|TF_show_both);
+
+  if(thread_flags&(TF_U_T|TF_U_L)){
+    if(thread_flags&(TF_B_m|TF_U_m|TF_B_H)){
+      // Got a thread style, so format modification is a requirement?
+      // Maybe -T/-L has H thread style though. (sorting interaction?)
+      //return "Huh? Tell procps-feedback@lists.sf.net what you expected.";
+      thread_flags |= TF_must_use;
+    }else{
+      // using -L/-T thread style, so format from elsewhere is OK
+      thread_flags |= TF_show_task;  // or like the H option?
+      //thread_flags |= TF_no_sort;
+    }
+  }
 
   return NULL;
 }
@@ -1124,9 +1139,9 @@ int arg_parse(int argc, char *argv[]){
 
   err = parse_all_options();
   if(err) goto try_bsd;
-  err = process_sf_options(!not_pure_unix);
-  if(err) goto try_bsd;
   err = thread_option_check();
+  if(err) goto try_bsd;
+  err = process_sf_options(!not_pure_unix);
   if(err) goto try_bsd;
   err = select_bits_setup();
   if(err) goto try_bsd;
@@ -1154,9 +1169,9 @@ try_bsd:
 
   err2 = parse_all_options();
   if(err2) goto total_failure;
-  err2 = process_sf_options(!not_pure_unix);
-  if(err2) goto total_failure;
   err2 = thread_option_check();
+  if(err2) goto total_failure;
+  err2 = process_sf_options(!not_pure_unix);
   if(err2) goto total_failure;
   err2 = select_bits_setup();
   if(err2) goto total_failure;

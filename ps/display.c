@@ -212,6 +212,7 @@ static unsigned collect_format_needs(format_node *walk){
 static format_node *proc_format_list;
 static format_node *task_format_list;
 
+static unsigned needs_for_threads;
 static unsigned needs_for_sort;
 static unsigned proc_format_needs;
 static unsigned task_format_needs;
@@ -225,7 +226,7 @@ static void lists_and_needs(void){
   check_headers();
 
   // only care about the difference when showing both
-  if(  (thread_flags & (TF_show_proc|TF_show_task))  ==  (TF_show_proc|TF_show_task)  ){
+  if(thread_flags & TF_show_both){
     format_node pfn, tfn; // junk, to handle special case at begin of list
     format_node *walk = format_list;
     format_node *p_end = &pfn;
@@ -293,6 +294,8 @@ static void lists_and_needs(void){
   /* FIXME  broken filthy hack -- got to unify some stuff here */
   if( ( (proc_format_needs|task_format_needs|needs_for_sort) & PROC_FILLWCHAN) && !wchan_is_number)
     if (open_psdb(namelist_file)) wchan_is_number = 1;
+
+  if(thread_flags&TF_loose_tasks) needs_for_threads |= PROC_LOOSE_TASKS;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -317,12 +320,11 @@ static void fill_pcpu(proc_t *buf){
 static void simple_spew(void){
   proc_t buf;
   PROCTAB* ptp;
-  ptp = openproc(needs_for_format | needs_for_sort | needs_for_select);
+  ptp = openproc(needs_for_format | needs_for_sort | needs_for_select | needs_for_threads);
   if(!ptp) {
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
   }
-  if(!thread_flags) thread_flags=TF_show_proc;
   memset(&buf, '#', sizeof(proc_t));
   while(readproc(ptp,&buf)){
     if(want_this_proc(&buf)){
@@ -385,10 +387,16 @@ static int compare_two_procs(const void *a, const void *b){
 }
 
 /***** show pre-sorted array of process pointers */
-static void show_proc_array(int n){
+static void show_proc_array(PROCTAB *restrict ptp, int n){
   proc_t **p = processes;
   while(n--){
-    show_one_proc(*p,format_list);
+    if(thread_flags & TF_show_proc) show_one_proc(*p, proc_format_list);
+    if(thread_flags & TF_show_task){
+      proc_t buf2;
+      // must still have the process allocated
+      while(readtask(ptp,*p,&buf2)) show_one_proc(&buf2, task_format_list);
+      // must not attempt to free cmdline and environ
+    }
     /* no point freeing any of this -- won't need more mem */
 //    if((*p)->cmdline) free((void*)*(*p)->cmdline);
 //    if((*p)->environ) free((void*)*(*p)->environ);
@@ -469,7 +477,7 @@ static void fancy_spew(void){
     fprintf(stderr, "can't have threads with sorting or forest output\n");
     exit(49);
   }
-  ptp = openproc(needs_for_format | needs_for_sort | needs_for_select);
+  ptp = openproc(needs_for_format | needs_for_sort | needs_for_select | needs_for_threads);
   if(!ptp) {
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
@@ -487,7 +495,7 @@ static void fancy_spew(void){
   if(forest_type) prep_forest_sort();
   qsort(processes, n, sizeof(proc_t*), compare_two_procs);
   if(forest_type) show_forest(n);
-  else show_proc_array(n);
+  else show_proc_array(ptp,n);
 }
 
 

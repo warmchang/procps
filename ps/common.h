@@ -101,6 +101,11 @@
 #define TF_U_L         0x0010
 #define TF_show_proc   0x0100  // show the summary line
 #define TF_show_task   0x0200  // show the per-thread lines
+#define TF_show_both   0x0400  // distinct proc/task format lists
+#define TF_loose_tasks 0x0800  // let sorting break up task groups (BSDish)
+#define TF_no_sort     0x1000  // don't know if thread-grouping should survive a sort
+#define TF_no_forest   0x2000  // don't see how to do threads w/ forest option
+#define TF_must_use    0x4000  // options only make sense if LWP/SPID column added
 
 /* personality control flags */
 #define PER_BROKEN_o      0x0001
@@ -140,10 +145,10 @@
 #define FM_c 0x0001 /* -c */
 #define FM_j 0x0002 /* -j */  /* only set when !sysv_j_format */
 #define FM_y 0x0004 /* -y */
-#define FM_L 0x0008 /* -L */
+//#define FM_L 0x0008 /* -L */
 #define FM_P 0x0010 /* -P */
 #define FM_M 0x0020 /* -M */
-#define FM_T 0x0040 /* -T */
+//#define FM_T 0x0040 /* -T */
 #define FM_F 0x0080 /* -F */  /* -F also sets the regular -f flags */
 
 /* sorting & formatting */
