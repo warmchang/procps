@@ -1746,8 +1746,6 @@ static void do_key(char c)
  *#######   table entries.                                        #####
  *#####################################################################
  */
-#define Do(x) (flags & PROC_ ## x)
-
 static proc_t** readproctab2(int flags, proc_t** tab, ...) {
     PROCTAB* PT = NULL;
     static proc_t *buff;
@@ -1756,7 +1754,7 @@ static proc_t** readproctab2(int flags, proc_t** tab, ...) {
     va_list ap;
 
     va_start(ap, tab);		/* pass through args to openproc */
-    if (Do(UID)) {
+    if (flags & PROC_UID) {
 	/* temporary variables to ensure that va_arg() instances
 	 * are called in the right order
 	 */
@@ -1767,14 +1765,14 @@ static proc_t** readproctab2(int flags, proc_t** tab, ...) {
 	i = va_arg(ap, int);
 	PT = openproc(flags, u, i);
     }
-    else if (Do(PID)) {
+    else if (flags & PROC_PID) {
 	PT = openproc(flags, va_arg(ap, void*)); /* assume ptr sizes same */
 	/* work around a bug in openproc() */
 	PT->procfs = NULL;
 	/* share some process time, since we skipped opendir("/proc") */
 	usleep (50*1000);
     }
-    else if (Do(TTY) /*|| Do(STAT) */)
+    else if (flags & PROC_TTY)
 	PT = openproc(flags, va_arg(ap, void*)); /* assume ptr sizes same */
     else
 	PT = openproc(flags);

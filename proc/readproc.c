@@ -27,25 +27,21 @@
 #include <fs_secure.h>
 #endif
 
-#define Do(x) (flags & PROC_ ## x)	/* convenient shorthand */
-
 /* initiate a process table scan
  */
 PROCTAB* openproc(int flags, ...) {
     va_list ap;
     PROCTAB* PT = xmalloc(sizeof(PROCTAB));
     
-    if (Do(PID))
+    if (flags & PROC_PID)
       PT->procfs = NULL;
     else if (!(PT->procfs = opendir("/proc")))
       return NULL;
     PT->flags = flags;
     va_start(ap, flags);		/*  Init args list */
-    if (Do(PID))
+    if (flags & PROC_PID)
     	PT->pids = va_arg(ap, pid_t*);
-    else if (Do(TTY))
-    	PT->ttys = va_arg(ap, dev_t*);
-    else if (Do(UID)) {
+    else if (flags & PROC_UID) {
     	PT->uids = va_arg(ap, uid_t*);
 	PT->nuid = va_arg(ap, int);
     }
@@ -325,7 +321,7 @@ next_proc:				/* get next PID for consideration */
 /*printf("PT->flags is 0x%08x\n", PT->flags);*/
 #define flags (PT->flags)
 
-    if (Do(PID)) {
+    if (flags & PROC_PID) {
 	if (!*PT->pids)			/* set to next item in pids */
 	    return NULL;
 	sprintf(path, "/proc/%d", *(PT->pids)++);
@@ -345,7 +341,7 @@ next_proc:				/* get next PID for consideration */
 #endif
 	goto next_proc;
 
-    if (Do(UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
+    if ((flags & PROC_UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
 	goto next_proc;			/* not one of the requested uids */
 
     if (!p)
@@ -360,24 +356,21 @@ next_proc:				/* get next PID for consideration */
 	goto next_proc;			/* error reading /proc/#/stat */
     stat2proc(sbuf, p);				/* parse /proc/#/stat */
 
-    if (!matched && Do(TTY) && !XinL(dev_t, p->tty, PT->ttys))
-	goto next_proc;			/* not one of the requested ttys */
-
-    if (Do(FILLMEM)) {				/* read, parse /proc/#/statm */
+    if (flags & PROC_FILLMEM) {				/* read, parse /proc/#/statm */
 	if ((file2str(path, "statm", sbuf, sizeof sbuf)) != -1 )
 	    statm2proc(sbuf, p);		/* ignore statm errors here */
     }						/* statm fields just zero */
 
-    if (Do(FILLSTATUS)) {         /* read, parse /proc/#/status */
+    if (flags & PROC_FILLSTATUS) {         /* read, parse /proc/#/status */
        if ((file2str(path, "status", sbuf, sizeof sbuf)) != -1 ){
            status2proc(sbuf, p, 0 /*FIXME*/);
        }
     }
 
     /* some number->text resolving which is time consuming */
-    if (Do(FILLUSR)){
+    if (flags & PROC_FILLUSR){
 	strncpy(p->euser,   user_from_uid(p->euid), sizeof p->euser);
-        if(Do(FILLSTATUS)) {
+        if(flags & PROC_FILLSTATUS) {
             strncpy(p->ruser,   user_from_uid(p->ruid), sizeof p->ruser);
             strncpy(p->suser,   user_from_uid(p->suid), sizeof p->suser);
             strncpy(p->fuser,   user_from_uid(p->fuid), sizeof p->fuser);
@@ -385,21 +378,21 @@ next_proc:				/* get next PID for consideration */
     }
 
     /* some number->text resolving which is time consuming */
-    if (Do(FILLGRP)){
+    if (flags & PROC_FILLGRP){
         strncpy(p->egroup, group_from_gid(p->egid), sizeof p->egroup);
-        if(Do(FILLSTATUS)) {
+        if(flags & PROC_FILLSTATUS) {
             strncpy(p->rgroup, group_from_gid(p->rgid), sizeof p->rgroup);
             strncpy(p->sgroup, group_from_gid(p->sgid), sizeof p->sgroup);
             strncpy(p->fgroup, group_from_gid(p->fgid), sizeof p->fgroup);
         }
     }
 
-    if (Do(FILLCOM) || Do(FILLARG))	/* read+parse /proc/#/cmdline */
+    if ((flags & PROC_FILLCOM) || (flags & PROC_FILLARG))	/* read+parse /proc/#/cmdline */
 	p->cmdline = file2strvec(path, "cmdline");
     else
         p->cmdline = NULL;
 
-    if (Do(FILLENV))			/* read+parse /proc/#/environ */
+    if (flags & PROC_FILLENV)			/* read+parse /proc/#/environ */
 	p->environ = file2strvec(path, "environ");
     else
         p->environ = NULL;
@@ -463,21 +456,21 @@ next_proc:				/* get next PID for consideration */
 	goto next_proc;			/* error reading /proc/#/stat */
     stat2proc(sbuf, p);				/* parse /proc/#/stat */
 
-    if (Do(FILLMEM)) {				/* read, parse /proc/#/statm */
+    if (flags & PROC_FILLMEM) {				/* read, parse /proc/#/statm */
 	if ((file2str(path, "statm", sbuf, sizeof sbuf)) != -1 )
 	    statm2proc(sbuf, p);		/* ignore statm errors here */
     }						/* statm fields just zero */
 
-  /*  if (Do(FILLSTATUS)) { */        /* read, parse /proc/#/status */
+  /*  if (flags & PROC_FILLSTATUS) { */        /* read, parse /proc/#/status */
        if ((file2str(path, "status", sbuf, sizeof sbuf)) != -1 ){
            status2proc(sbuf, p, 0 /*FIXME*/);
        }
 /*    }*/
 
     /* some number->text resolving which is time consuming */
-    if (Do(FILLUSR)){
+    if (flags & PROC_FILLUSR){
 	strncpy(p->euser,   user_from_uid(p->euid), sizeof p->euser);
-/*        if(Do(FILLSTATUS)) { */
+/*        if(flags & PROC_FILLSTATUS) { */
             strncpy(p->ruser,   user_from_uid(p->ruid), sizeof p->ruser);
             strncpy(p->suser,   user_from_uid(p->suid), sizeof p->suser);
             strncpy(p->fuser,   user_from_uid(p->fuid), sizeof p->fuser);
@@ -485,21 +478,21 @@ next_proc:				/* get next PID for consideration */
     }
 
     /* some number->text resolving which is time consuming */
-    if (Do(FILLGRP)){
+    if (flags & PROC_FILLGRP){
         strncpy(p->egroup, group_from_gid(p->egid), sizeof p->egroup);
-/*        if(Do(FILLSTATUS)) { */
+/*        if(flags & PROC_FILLSTATUS) { */
             strncpy(p->rgroup, group_from_gid(p->rgid), sizeof p->rgroup);
             strncpy(p->sgroup, group_from_gid(p->sgid), sizeof p->sgroup);
             strncpy(p->fgroup, group_from_gid(p->fgid), sizeof p->fgroup);
 /*        }*/
     }
 
-    if (Do(FILLCOM) || Do(FILLARG))	/* read+parse /proc/#/cmdline */
+    if ((flags & PROC_FILLCOM) || (flags & PROC_FILLARG))	/* read+parse /proc/#/cmdline */
 	p->cmdline = file2strvec(path, "cmdline");
     else
         p->cmdline = NULL;
 
-    if (Do(FILLENV))			/* read+parse /proc/#/environ */
+    if (flags & PROC_FILLENV)			/* read+parse /proc/#/environ */
 	p->environ = file2strvec(path, "environ");
     else
         p->environ = NULL;
@@ -536,7 +529,7 @@ proc_t** readproctab(int flags, ...) {
     va_list ap;
 
     va_start(ap, flags);		/* pass through args to openproc */
-    if (Do(UID)) {
+    if (flags & PROC_UID) {
 	/* temporary variables to ensure that va_arg() instances
 	 * are called in the right order
 	 */
@@ -547,7 +540,7 @@ proc_t** readproctab(int flags, ...) {
 	i = va_arg(ap, int);
 	PT = openproc(flags, u, i);
     }
-    else if (Do(PID) || Do(TTY))
+    else if (flags & PROC_PID)
 	PT = openproc(flags, va_arg(ap, void*)); /* assume ptr sizes same */
     else
 	PT = openproc(flags);

@@ -146,12 +146,10 @@ typedef struct PROCTAB {
     DIR*	procfs;
     int		flags;
     pid_t*	pids;	/* pids of the procs */
-    dev_t*	ttys;	/* devnos of the cttys */
     uid_t*	uids;	/* uids of procs */
     int		nuid;	/* cannot really sentinel-terminate unsigned short[] */
-    char*	stats;	/* status chars (actually output into /proc//stat) */
 #ifdef FLASK_LINUX
-security_id_t* sids; /* SIDs of the procs */
+    security_id_t* sids; /* SIDs of the procs */
 #endif
 } PROCTAB;
 
@@ -192,9 +190,9 @@ extern void freeproc(proc_t* p);
  * `flags' (a bitwise-or of PROC_* below) modifies the default behavior.  The
  * "fill" options will cause more of the proc_t to be filled in.  The "filter"
  * options all use the second argument as the pointer to a list of objects:
- * process status', process id's, user id's, and tty device numbers.  The third
+ * process status', process id's, user id's.  The third
  * argument is the length of the list (currently only used for lists of user
- * id's since unsigned short[] supports no convenient termination sentinel.)
+ * id's since uid_t supports no convenient termination sentinel.)
  */
 #define PROC_FILLMEM    0x0001 /* read statm */
 #define PROC_FILLCOM    0x0002 /* alloc and fill in `cmdline' */
@@ -204,14 +202,13 @@ extern void freeproc(proc_t* p);
 #define PROC_FILLSTATUS 0x0020 /* read status -- currently unconditional */
 #define PROC_FILLSTAT   0x0040 /* read stat -- currently unconditional */
 #define PROC_FILLWCHAN  0x0080 /* look up WCHAN name */
-#define PROC_FILLARG    0x1000 /* alloc and fill in `cmdline' */
+#define PROC_FILLARG    0x0100 /* alloc and fill in `cmdline' */
 
-#define PROC_FILLBUG    0xf0ff /* No idea what we need */
+#define PROC_FILLBUG    0x0fff /* No idea what we need */
 #define PROC_FILLANY    0x0000 /* either stat or status will do */
 
 /* Obsolete, consider only processes with one of the passed: */
-#define PROC_PID     0x0100  /* process id numbers ( 0   terminated) */
-#define PROC_TTY     0x0200  /* ctty device nos.   ( 0   terminated) */
-#define PROC_UID     0x0400  /* user id numbers    ( length needed ) */
+#define PROC_PID     0x1000  /* process id numbers ( 0   terminated) */
+#define PROC_UID     0x4000  /* user id numbers    ( length needed ) */
 
 #endif
