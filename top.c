@@ -1043,17 +1043,17 @@ static FTAB_t  Fieldstab[] = {
      ------  -----------    -------  ------  -----  -----  ----------------------   -------- */
    { "AaAa", "  PID ",      "%5u ",     -1,    -1, SF(PID), "Process Id",           L_EITHER },
    { "BbBb", " PPID ",      "%5u ",     -1,    -1, SF(PPD), "Parent Process Pid",   L_EITHER },
-   { "Cc..", " PGID ",      "%5u ",     -1,    -1, SF(PGD), "Process Group Id",     L_stat   },
+   { "CcQq", "RUSER    ",   "%8u ",     -1,    -1, SF(PGD), "FIXME: ruser",         L_stat   },
    { "DdCc", " UID ",       "%4u ",     -1,    -1, SF(UID), "User Id",              L_NONE   },
    { "EeDd", "USER     ",   "%-8.8s ",  -1,    -1, SF(USR), "User Name",            L_EUSER  },
-   { "Ff..", "GROUP    ",   "%-8.8s ",  -1,    -1, SF(GRP), "Group Name",           L_GROUP  },
+   { "FfNn", "GROUP    ",   "%-8.8s ",  -1,    -1, SF(GRP), "Group Name",           L_GROUP  },
    { "GgGg", "TTY      ",   "%-8.8s ",   8,    -1, SF(TTY), "Controlling Tty",      L_stat   },
    { "HhHh", " PR ",        "%3d ",     -1,    -1, SF(PRI), "Priority",             L_stat   },
    { "IiIi", " NI ",        "%3d ",     -1,    -1, SF(NCE), "Nice value",           L_stat   },
    { "JjYy", "#C ",         "%2u ",     -1,    -1, SF(CPN), "Last used cpu (SMP)",  L_stat   },
    { "KkEe", "%CPU ",       "%#4.1f ",  -1,    -1, SF(CPU), "CPU usage",            L_stat   },
    { "LlWw", "  TIME ",     "%6.6s ",    6,    -1, SF(TME), "CPU Time",             L_stat   },
-   { "MmWw", "   TIME+  ",  "%9.9s ",    9,    -1, SF(TME), "CPU Time, hundredths", L_stat   },
+   { "MmRr", "   TIME+  ",  "%9.9s ",    9,    -1, SF(TME), "CPU Time, hundredths", L_stat   },
    { "NnFf", "%MEM ",       "%#4.1f ",  -1,    -1, SF(RES), "Memory usage (RES)",   L_statm  },
    { "OoMm", " VIRT ",      "%5.5s ",    5, SK_Kb, SF(VRT), "Virtual Image (kb)",   L_statm  },
    { "PpOo", "SWAP ",       "%4.4s ",    4, SK_Kb, SF(SWP), "Swapped size (kb)",    L_statm  },
@@ -1515,6 +1515,8 @@ static void write_config_rik(FILE *fp, const RCF_t * const rc){
    int tmp;
    while (j < 36) {
       int c = *cp++ & 0xff;
+      if(c=='M') c='L';
+      if(c=='m') c='l';
       switch (c) {
          case 1 ... ' ':
          case '.':
