@@ -10,7 +10,7 @@ global:
   Hertz; smp_num_cpus;
   sprint_uptime; uptime; user_from_uid; print_uptime; loadavg;
   pretty_print_signals; print_given_signals; unix_print_signals; signal_name_to_number; signal_number_to_name;
-  meminfo; vminfo; getstat; getdiskstat; getslabinfo; get_pid_digits;
+  meminfo; vminfo; getstat; getdiskstat; getpartitions_num; getslabinfo; get_pid_digits;
   kb_active; kb_inactive; kb_main_buffers; kb_main_cached;
   kb_main_free; kb_main_total; kb_main_used; kb_swap_free;
   kb_swap_total; kb_swap_used; kb_main_shared;

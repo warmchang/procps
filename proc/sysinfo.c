@@ -671,6 +671,21 @@ static unsigned int getFileLines(const char* szFile){
   return lines;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+
+unsigned int getpartitions_num(struct disk_stat *disks, int ndisks){
+  int i=0;
+  int partitions=0;
+
+  for (i=0;i<ndisks;i++){
+	partitions+=disks[i].partitions;
+  }
+  return partitions;
+
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
 unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **partitions){
   FILE* fd;
   int units,
@@ -711,6 +726,7 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
         &(*disks)[cDisk].milli_spent_IO,
         &(*disks)[cDisk].weighted_milli_spent_IO
       );
+        (*disks)[cDisk].partitions=0;
       cDisk++;
     }else{
       (*partitions) = realloc(*partitions, (cPartition+1)*sizeof(struct partition_stat));
@@ -725,6 +741,7 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
         &(*partitions)[cPartition].requested_writes
       );
       (*partitions)[cPartition++].parent_disk = &((*disks)[cDisk-1]);
+      (*disks)[cDisk-1].partitions++;	
     }
   }
   fclose(fd);

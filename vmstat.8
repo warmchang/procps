@@ -22,6 +22,9 @@ vmstat \- Report virtual memory statistics
 .RB [ "\-d"]
 .br
 .B vmstat
+.RB [ "\-p disk partition"]
+.br
+.B vmstat
 .RB [ "\-V" ]
 .SH DESCRIPTION
 \fBvmstat\fP reports information about processes, memory, paging,
@@ -56,6 +59,8 @@ is the number of updates.  If no count is specified and delay is
 defined, \fIcount\fP defaults to infinity.
 .PP
 The \fB-d\fP reports disk statistics (2.5.70 or above required) 
+.PP
+The \fB-p\fP followed by some partition name for detailed statistics (2.5.70 or above required) 
 .PP
 The \fB-S\fP followed by k or K or m or M switches outputs between 1000, 1024, 1000000, or 1048576 bytes 
 .PP
@@ -137,6 +142,15 @@ cur: I/O in progress
 s: seconds spent for I/O
 .fi
 
+.PP
+.SH FIELD DESCRIPTION FOR DISK PARTITION MODE
+.nf
+reads: Total number of reads issued to this partition
+read sectors: Total read sectors for partition
+writes : Total number of writes issued to this partition
+requested writes: Total number of write requests made for partition
+
+.fi
 
 .PP
 .SH FIELD DESCRIPTION FOR SLAB MODE 
@@ -180,4 +194,4 @@ Does not tabulate the block io per device or count the number of system calls.
 .SH AUTHORS
 .nf
 Written by Henry Ware <al172@yfn.ysu.edu>. 
-Diskstat,slab mode and some improvements by Fabian Frederick <fabian.frederick@gmx.fr>
+Fabian Fr\('ed\('erick <ffrederick@users.sourceforge.net> (diskstat, slab, partitions...)

@@ -1,12 +1,16 @@
 // old: "Copyright 1994 by Henry Ware <al172@yfn.ysu.edu>. Copyleft same year."
 // most code copyright 2002 Albert Cahalan
-// 27/05/2003 (Fabian) : Add unit conversion + interface
+// 
+// 27/05/2003 (Fabian Frederick) : Add unit conversion + interface
 //               	 Export proc/stat access to libproc
 //			 Adapt vmstat helpfile
 // 31/05/2003 (Fabian) : Add diskstat support (/libproc)
 // June 2003 (Fabian) : -S <x> -s & -s -S <x> patch
 // June 2003 (Fabian) : -Adding diskstat against 3.1.9, slabinfo
 //			 -patching 'header' in disk & slab
+// July 2003 (Fabian) : -Adding disk partition output
+//			-Adding disk table
+//			-Syncing help / usage
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,16 +30,18 @@
 
 static unsigned long dataUnit=1024;
 static char szDataUnit [16];
-#define UNIT_B 1
-#define UNIT_k 1000
-#define UNIT_K  1024
-#define UNIT_m 1000000
-#define UNIT_M  1048576
+#define UNIT_B        1
+#define UNIT_k        1000
+#define UNIT_K        1024
+#define UNIT_m        1000000
+#define UNIT_M        1048576
 
-#define VMSTAT 0
-#define DISKSTAT 0x00000001
-#define VMSUMSTAT 0x00000002
-#define SLABSTAT 0x00000004
+#define VMSTAT        0
+#define DISKSTAT      0x00000001
+#define VMSUMSTAT     0x00000002
+#define SLABSTAT      0x00000004
+#define PARTITIONSTAT 0x00000008
+#define DISKSUMSTAT   0x00000010
 
 static int statMode=VMSTAT;
 
@@ -60,6 +66,9 @@ static void usage(void) {
   fprintf(stderr,"              -n causes the headers not to be reprinted regularly.\n");
   fprintf(stderr,"              -a print inactive/active page stats.\n");
   fprintf(stderr,"              -d prints disk statistics\n");
+  fprintf(stderr,"              -D prints disk table\n");
+  fprintf(stderr,"              -p prints disk partition statistics\n");
+  fprintf(stderr,"              -s prints vm table\n");
   fprintf(stderr,"              -m prints slabinfo\n");
   fprintf(stderr,"              -S unit size\n");
   fprintf(stderr,"              delay is the delay between updates in seconds. \n");
@@ -137,6 +146,8 @@ static int format_1000(unsigned long long val64, char *restrict dst){
 }
 #endif
 
+////////////////////////////////////////////////////////////////////////////
+
 static void new_header(void){
   printf("procs -----------memory---------- ---swap-- -----io---- --system-- ----cpu----\n");
   printf(
@@ -161,10 +172,15 @@ static void new_diskheader(void){
 
 ////////////////////////////////////////////////////////////////////////////
 
+static void new_diskpartition_header(const char *partition_name){
+  printf("%-10s %10s %10s %10s %10s\n",partition_name, "reads  ", "read sectors", "writes   ", "requested writes");
+}
+
+////////////////////////////////////////////////////////////////////////////
+
 static void new_slabheader(void){
   printf("%-24s %6s %6s %6s %6s\n","Cache","Num", "Total", "Size", "Pages");
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -274,6 +290,59 @@ static void new_format(void) {
 
 ////////////////////////////////////////////////////////////////////////////
 
+static int new_diskpartition_format(const char* partition_name){
+  FILE *fDiskstat;
+  struct disk_stat *disks;
+  struct partition_stat *partitions, *current_partition=NULL;
+  unsigned long ndisks,i,j,k,npartitions;
+  const char format[]="%20u %10llu %10u %10u\n";
+
+  if ((fDiskstat=fopen("/proc/diskstats", "rb"))){
+    fclose(fDiskstat);
+    ndisks=getdiskstat(&disks,&partitions);
+    npartitions=getpartitions_num(disks, ndisks);
+    for(k=0; k<npartitions; k++){
+       if(!strcmp(partition_name, partitions[k].partition_name)){
+                current_partition=&(partitions[k]); 
+       }	
+    }
+    if(!current_partition){
+         return -1;
+    }
+    new_diskpartition_header(partition_name);
+    printf (format,
+       current_partition->reads,current_partition->reads_sectors,current_partition->writes,current_partition->requested_writes);
+    fflush(stdout);
+    free(disks);
+    free(partitions);
+    for(j=1; j<num_updates; j++){ 
+        if (moreheaders && ((j%height)==0)) new_diskpartition_header(partition_name);
+        sleep(sleep_time);
+        ndisks=getdiskstat(&disks,&partitions);
+        npartitions=getpartitions_num(disks, ndisks);
+	current_partition=NULL;
+        for(k=0; k<npartitions; k++){
+          if(!strcmp(partition_name, partitions[k].partition_name)){
+                  current_partition=&(partitions[k]); 
+          }	
+        }
+        if(!current_partition){
+           return -1;
+        }
+        printf (format,
+        current_partition->reads,current_partition->reads_sectors,current_partition->writes,current_partition->requested_writes);
+        fflush(stdout);
+        free(disks);
+        free(partitions);
+    }
+ }else{
+    fprintf(stderr, "Your kernel doesn't support diskstat (2.5.70 or above required)"); 
+    exit(0);
+ }
+}
+
+////////////////////////////////////////////////////////////////////////////
+
 static void new_diskformat(void){
   FILE *fDiskstat;
   struct disk_stat *disks;
@@ -366,6 +435,57 @@ static void new_slabformat (void){
 
 ////////////////////////////////////////////////////////////////////////////
 
+static void disksum_format(void) {
+
+  FILE *fDiskstat;
+  struct disk_stat *disks;
+  struct partition_stat *partitions;
+  int ndisks, i;
+  unsigned long reads, merged_reads, read_sectors, milli_reading, writes,
+                merged_writes, written_sectors, milli_writing, inprogress_IO,
+                milli_spent_IO, weighted_milli_spent_IO;
+
+  reads=merged_reads=read_sectors=milli_reading=writes=merged_writes= \
+  written_sectors=milli_writing=inprogress_IO=milli_spent_IO= \
+  weighted_milli_spent_IO=0;
+
+  if ((fDiskstat=fopen("/proc/diskstats", "rb"))){
+    fclose(fDiskstat);
+    ndisks=getdiskstat(&disks, &partitions);
+    printf("%13d disks \n", ndisks);
+    printf("%13d partitions \n", getpartitions_num(disks, ndisks));
+
+    for(i=0; i<ndisks; i++){
+         reads+=disks[i].reads;
+         merged_reads+=disks[i].merged_reads;
+         read_sectors+=disks[i].reads_sectors;
+         milli_reading+=disks[i].milli_reading;
+         writes+=disks[i].writes;
+         merged_writes+=disks[i].merged_writes;
+         written_sectors+=disks[i].written_sectors;
+         milli_writing+=disks[i].milli_writing;
+         inprogress_IO+=disks[i].inprogress_IO?disks[i].inprogress_IO/1000:0;
+         milli_spent_IO+=disks[i].milli_spent_IO?disks[i].milli_spent_IO/1000:0;
+      }
+
+    printf("%13lu total reads\n",reads);
+    printf("%13lu merged reads\n",merged_reads);
+    printf("%13lu read sectors\n",read_sectors);
+    printf("%13lu milli reading\n",milli_reading);
+    printf("%13lu writes\n",writes);
+    printf("%13lu merged writes\n",merged_writes);
+    printf("%13lu written sectors\n",written_sectors);
+    printf("%13lu milli writing\n",milli_writing);
+    printf("%13lu inprogress IO\n",inprogress_IO);
+    printf("%13lu milli spent IO\n",milli_spent_IO);
+
+    free(disks);
+    free(partitions);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////
+
 static void sum_format(void) {
   unsigned int running, blocked, btime, processes;
   jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow;
@@ -437,6 +557,7 @@ static int winhi(void) {
 ////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char *argv[]) {
+  char partition[16];
   argc=0; /* redefined as number of integer arguments */
   for (argv++;*argv;argv++) {
     if ('-' ==(**argv)) {
@@ -459,9 +580,21 @@ int main(int argc, char *argv[]) {
       case 'm':
         statMode |= SLABSTAT; 	
 	break;
+      case 'D':
+        statMode |= DISKSUMSTAT; 	
+	break;
       case 'n':
 	/* print only one header */
 	moreheaders=FALSE;
+        break;
+      case 'p':
+        statMode |= PARTITIONSTAT;
+	if (argv[1]){
+	           ++argv;
+		   sprintf(partition, "%s", *argv);
+	 }else{fprintf(stderr, "-p requires an argument\n");
+               exit(EXIT_FAILURE);
+	}
         break;
       case 'S':
 	if (argv[1]){
@@ -507,16 +640,21 @@ int main(int argc, char *argv[]) {
   }    
   setlinebuf(stdout);
   switch(statMode){
-	case(VMSTAT):   new_format();
-			break;
-	case(VMSUMSTAT):sum_format();
-			break;
-	case(DISKSTAT): new_diskformat();
-			break;
-	case(SLABSTAT): new_slabformat();
-			break;
-	default:	usage();
-			break;
+	case(VMSTAT):        new_format();
+			     break;
+	case(VMSUMSTAT):     sum_format();
+			     break;
+	case(DISKSTAT):      new_diskformat();
+			     break;
+	case(PARTITIONSTAT): if(new_diskpartition_format(partition)==-1)
+                                  printf("Partition was not found\n");
+			     break;	
+	case(SLABSTAT):      new_slabformat();
+			     break;
+	case(DISKSUMSTAT):   disksum_format();  
+			     break;	
+	default:	     usage();
+			     break;
   }
   return 0;
 }

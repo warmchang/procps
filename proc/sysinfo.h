@@ -102,6 +102,7 @@ typedef struct disk_stat{
 	unsigned           inprogress_IO;
 	unsigned           milli_spent_IO;
 	unsigned           weighted_milli_spent_IO;
+	unsigned           partitions;
 }disk_stat;
 
 typedef struct partition_stat{
@@ -115,6 +116,7 @@ typedef struct partition_stat{
 	unsigned           requested_writes;
 }partition_stat;
 
+extern unsigned int getpartitions_num(struct disk_stat *disks, int ndisks);
 extern unsigned int getdiskstat (struct disk_stat**,struct partition_stat**);
 
 typedef struct slab_cache{

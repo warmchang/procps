@@ -607,6 +607,8 @@ const char * wchan(unsigned KLONG address, unsigned pid) {
 
   /* good_symb->name has the data, but needs to be trimmed */
   ret = good_symb->name;
+  // lame ppc64 has a '.' in front of every name
+  if(*ret=='.') ret++;
   switch(*ret){
     case 's': if(!strncmp(ret, "sys_", 4)) ret += 4;   break;
     case 'd': if(!strncmp(ret, "do_",  3)) ret += 3;   break;
