@@ -17,6 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <limits.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <string.h>
@@ -33,11 +34,22 @@
 # include <langinfo.h>
 #endif
 
+#define SECURE_ESCAPE_ARGS(dst, bytes, cells) do { \
+  if ((bytes) <= 0) return 0; \
+  *(dst) = '\0'; \
+  if ((bytes) >= INT_MAX) return 0; \
+  if ((cells) >= INT_MAX) return 0; \
+  if ((cells) <= 0) return 0; \
+} while (0)
+
+
 #if (__GNU_LIBRARY__ >= 6) && (!defined(__UCLIBC__) || defined(__UCLIBC_HAS_WCHAR__))
 static int escape_str_utf8(char *restrict dst, const char *restrict src, int bufsize, int *maxcells){
   int my_cells = 0;
   int my_bytes = 0;
   mbstate_t s;
+
+  SECURE_ESCAPE_ARGS(dst, bufsize, *maxcells);
 
   memset(&s, 0, sizeof (s));
 
@@ -146,6 +158,8 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
      return escape_str_utf8(dst, src, bufsize, maxcells);
   }
 #endif
+
+  SECURE_ESCAPE_ARGS(dst, bufsize, *maxcells);
 
   if(bufsize > *maxcells+1) bufsize=*maxcells+1; // FIXME: assumes 8-bit locale
 
