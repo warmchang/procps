@@ -127,13 +127,22 @@ static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
     return 0; \
 }
 
+/* fast version, for values which either:
+ * a. differ by no more than 0x7fffffff
+ * b. only need to be grouped same w/ same
+ */
+#define CMP_SMALL(NAME) \
+static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
+    return (int)(P->NAME) - (int)(Q->NAME); \
+}
+
 CMP_INT(rtprio)
-CMP_INT(sched)
+CMP_SMALL(sched)
 CMP_INT(cutime)
 CMP_INT(cstime)
-CMP_INT(priority)                                             /* nice */
+CMP_SMALL(priority)                                             /* nice */
 CMP_INT(timeout)
-CMP_INT(nice)                                                 /* priority */
+CMP_SMALL(nice)                                                 /* priority */
 CMP_INT(rss)      /* resident set size from stat file */ /* vm_rss, resident */
 CMP_INT(it_real_value)
 CMP_INT(size)      /* total pages */                     /* vm_size, vsize */
@@ -153,7 +162,7 @@ CMP_INT(vm_exe)     /* kB "exec" == exec-lib */
 CMP_INT(vm_lib)     /* kB "libraries" */
 CMP_INT(vsize)      /* pages VM */                        /* size, vm_size */
 CMP_INT(rss_rlim)
-CMP_INT(flags)
+CMP_SMALL(flags)
 CMP_INT(min_flt)
 CMP_INT(maj_flt)
 CMP_INT(cmin_flt)
@@ -192,16 +201,16 @@ CMP_INT(suid)
 CMP_INT(sgid)
 CMP_INT(fuid)
 CMP_INT(fgid)
-CMP_INT(pid)
-CMP_INT(ppid)
-CMP_INT(pgrp)
-CMP_INT(session)
+CMP_SMALL(pid)
+CMP_SMALL(ppid)
+CMP_SMALL(pgrp)
+CMP_SMALL(session)
 CMP_INT(tty)
-CMP_INT(tpgid)
+CMP_SMALL(tpgid)
 
-CMP_INT(pcpu)
+CMP_SMALL(pcpu)
 
-CMP_INT(state)
+CMP_SMALL(state)
 
 /* approximation to: kB of address space that could end up in swap */
 static int sr_swapable(const proc_t* P, const proc_t* Q) {
