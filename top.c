@@ -316,8 +316,8 @@ static const char *tg2 (int x, int y)
 /*######  Exit/Interrput routines  #######################################*/
 
 // The usual program end -- called only by functions in this section.
-static void bye_bye (int eno, const char *str) NORETURN;
-static void bye_bye (int eno, const char *str)
+static void bye_bye (FILE *fp, int eno, const char *str) NORETURN;
+static void bye_bye (FILE *fp, int eno, const char *str)
 {
    if (!Batch)
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Savedtty);
@@ -330,7 +330,7 @@ static void bye_bye (int eno, const char *str)
 //#define ATEOJ_REPORT
 #ifdef ATEOJ_REPORT
 
-   fprintf(stderr,
+   fprintf(fp,
       "\n\tTerminal: %s"
       "\n\t   device = %s, ncurses = v%s"
       "\n\t   max_colors = %d, max_pairs = %d"
@@ -350,7 +350,7 @@ static void bye_bye (int eno, const char *str)
       , Max_lines, Pseudo_size
       );
 
-   fprintf(stderr,
+   fprintf(fp,
 #ifndef STDOUT_IOLBF
       "\n\t   Stdout_buf = %d, BUFSIZ = %u"
 #endif
@@ -373,7 +373,7 @@ static void bye_bye (int eno, const char *str)
       , Curwin->rc.sortindx
       );
 
-   fprintf(stderr,
+   fprintf(fp,
       "\n\tProgram"
       "\n\t   Linux version = %u.%u.%u, %s"
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
@@ -392,13 +392,7 @@ static void bye_bye (int eno, const char *str)
 
 #endif
 
-   if (str) {
-      if (eno) perror(str);
-      else {
-         fputs(str, stderr);
-         eno = 1;
-      }
-   }
+   if (str) fputs(str, fp);
    exit(eno);
 }
 
@@ -411,7 +405,7 @@ static void end_pgm (int dont_care_sig) NORETURN;
 static void end_pgm (int dont_care_sig)
 {
    (void)dont_care_sig;
-   bye_bye(0, NULL);
+   bye_bye(stdout, 1, NULL);
 }
 
 
@@ -432,7 +426,27 @@ static void std_err (const char *str)
       exit(1);
    }
       /* not to worry, he'll change our exit code to 1 due to 'buf' */
-   bye_bye(0, buf);
+   bye_bye(stderr, 1, buf);
+}
+
+
+        /*
+         * Standard out handler */
+static void std_out (const char *str) NORETURN;
+static void std_out (const char *str)
+{
+   static char buf[SMLBUFSIZ];
+
+   fflush(stdout);
+   /* we'll use our own buffer so callers can still use fmtmk() and, yes the
+      leading tab is not the standard convention, but the standard is wrong
+      -- OUR msg won't get lost in screen clutter, like so many others! */
+   snprintf(buf, sizeof(buf), "\t%s: %s\n", Myname, str);
+   if (!Ttychanged) {
+      fprintf(stdout, "%s\n", buf);
+      exit(0);
+   }
+   bye_bye(stdout, 0, buf);
 }
 
 
@@ -1720,7 +1734,7 @@ static void parse_args (char **args)
                break;
             case 'h': case 'H':
             case 'v': case 'V':
-               std_err(fmtmk("%s\nusage:\t%s%s", procps_version, Myname, usage));
+               std_out(fmtmk("%s\nusage:\t%s%s", procps_version, Myname, usage));
             case 'i':
                TOGw(Curwin, Show_IDLEPS);
                Curwin->rc.maxtasks = 0;
