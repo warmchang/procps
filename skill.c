@@ -209,8 +209,11 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 	*tmp++ = '\0';
 	i = 5;
 	while (i--)
-		while (*tmp++ != ' ')
-			/* scan to find tty */ ;
+		do {
+			if (!*tmp)
+				goto closure;
+			/* scan to find tty */
+		} while (*tmp++ != ' ');
 	tty = atoi(tmp);
 	if (ttys) {
 		i = tty_count;
