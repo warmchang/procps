@@ -43,6 +43,11 @@ static char buff[BUFFSIZE]; /* used in the procedures */
 typedef unsigned long long jiff;
 
 static int a_option; /* "-a" means "show active/inactive" */
+static unsigned sleep_time = 1;
+static unsigned long num_updates;
+
+static unsigned int height=22;   // window height, reset later if needed
+static unsigned int moreheaders=TRUE;
 
 /****************************************************************/
 
@@ -181,15 +186,9 @@ static void getrunners(unsigned int *running, unsigned int *blocked,
 
 
 
-
-int main(int argc, char *argv[]) {
-
+//////////////////////////////////////////////////////////////////////////////////////
+void old_format(void) {
   const char format[]="%2u %2u %2u %6u %6u %6u %6u %4u %4u %5u %5u %4u %5u %2u %2u %2u\n";
-  unsigned int height=22; /* window height, reset later if needed. */
-#if 0
-  unsigned long int args[2]={0,0};
-#endif
-  unsigned int moreheaders=TRUE;
   unsigned int tog=0; /* toggle switch for cleaner code */
   unsigned int i;
   unsigned int hz = Hertz;
@@ -198,55 +197,10 @@ int main(int argc, char *argv[]) {
   jiff duse,dsys,didl,Div,divo2;
   unsigned int pgpgin[2], pgpgout[2], pswpin[2], pswpout[2];
   unsigned int inter[2],ticks[2],ctxt[2];
-  unsigned int per=0, pero2; 
-  unsigned long num=0;
+  unsigned int sleep_half; 
   unsigned int kb_per_page = sysconf(_SC_PAGESIZE) / 1024;
 
-  setlinebuf(stdout);
-  argc=0; /* redefined as number of integer arguments */
-  per=1;
-  num=0;
-  for (argv++;*argv;argv++) {
-    if ('-' ==(**argv)) {
-      switch (*(++(*argv))) {
-      case 'V':
-	display_version();
-	exit(0);
-      case 'a':
-	/* active/inactive mode */
-	a_option=1;
-        break;
-      case 'n':
-	/* print only one header */
-	moreheaders=FALSE;
-        break;
-      default:
-	/* no other aguments defined yet. */
-	usage();
-      }
-    } else {
-      argc++;
-      switch (argc) {
-      case 1:
-        if ((per = atoi(*argv)) == 0)
-         usage();
-       num = ULONG_MAX;
-       break;
-      case 2:
-        num = atol(*argv);
-       break;
-      default:
-       usage();
-      } /* switch */
-    }
-  }
-
-  if (moreheaders) {
-      int tmp=winhi()-3;
-      height=((tmp>0)?tmp:22);
-  }    
-
-  pero2=(per/2);
+  sleep_half=(sleep_time/2);
   showheader();
 
   getrunners(&running,&blocked,&swapped);
@@ -275,8 +229,8 @@ int main(int argc, char *argv[]) {
 	 (unsigned)( (100*didl                    + divo2) / Div )
   );
 
-  for(i=1;i<num;i++) { /* \\\\\\\\\\\\\\\\\\\\ main loop ////////////////// */
-    sleep(per);
+  for(i=1;i<num_updates;i++) { /* \\\\\\\\\\\\\\\\\\\\ main loop ////////////////// */
+    sleep(sleep_time);
     if (moreheaders && ((i%height)==0)) showheader();
     tog= !tog;
 
@@ -297,12 +251,12 @@ int main(int argc, char *argv[]) {
 	   kb_swap_used,kb_main_free,
 	   a_option?kb_inactive:kb_main_buffers,
 	   a_option?kb_inactive:kb_main_cached,
-	   (unsigned)( ( (pswpin [tog] - pswpin [!tog])*kb_per_page+pero2 )/per ),
-	   (unsigned)( ( (pswpout[tog] - pswpout[!tog])*kb_per_page+pero2 )/per ),
-	   (unsigned)( (  pgpgin [tog] - pgpgin [!tog]             +pero2 )/per ),
-	   (unsigned)( (  pgpgout[tog] - pgpgout[!tog]             +pero2 )/per ),
-	   (unsigned)( (  inter  [tog] - inter  [!tog]             +pero2 )/per ),
-	   (unsigned)( (  ctxt   [tog] - ctxt   [!tog]             +pero2 )/per ),
+	   (unsigned)( ( (pswpin [tog] - pswpin [!tog])*kb_per_page+sleep_half )/sleep_time ),
+	   (unsigned)( ( (pswpout[tog] - pswpout[!tog])*kb_per_page+sleep_half )/sleep_time ),
+	   (unsigned)( (  pgpgin [tog] - pgpgin [!tog]             +sleep_half )/sleep_time ),
+	   (unsigned)( (  pgpgout[tog] - pgpgout[!tog]             +sleep_half )/sleep_time ),
+	   (unsigned)( (  inter  [tog] - inter  [!tog]             +sleep_half )/sleep_time ),
+	   (unsigned)( (  ctxt   [tog] - ctxt   [!tog]             +sleep_half )/sleep_time ),
 	   (unsigned)( (100*duse+divo2)/Div ),
 	   (unsigned)( (100*dsys+divo2)/Div ),
 	   (unsigned)( (100*didl+divo2)/Div )
@@ -310,3 +264,55 @@ int main(int argc, char *argv[]) {
   }
   exit(EXIT_SUCCESS);
 }
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+int main(int argc, char *argv[]) {
+  argc=0; /* redefined as number of integer arguments */
+  for (argv++;*argv;argv++) {
+    if ('-' ==(**argv)) {
+      switch (*(++(*argv))) {
+      case 'V':
+	display_version();
+	exit(0);
+      case 'a':
+	/* active/inactive mode */
+	a_option=1;
+        break;
+      case 'n':
+	/* print only one header */
+	moreheaders=FALSE;
+        break;
+      default:
+	/* no other aguments defined yet. */
+	usage();
+      }
+    } else {
+      argc++;
+      switch (argc) {
+      case 1:
+        if ((sleep_time = atoi(*argv)) == 0)
+         usage();
+       num_updates = ULONG_MAX;
+       break;
+      case 2:
+        num_updates = atol(*argv);
+       break;
+      default:
+       usage();
+      } /* switch */
+    }
+  }
+
+  if (moreheaders) {
+      int tmp=winhi()-3;
+      height=((tmp>0)?tmp:22);
+  }    
+
+  setlinebuf(stdout);
+
+  old_format();
+  return 0;
+}
+
+
