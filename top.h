@@ -28,7 +28,6 @@
 //#define CASEUP_SCALE            /* show scaled time/num suffix upper case  */
 //#define CASEUP_SUMMK            /* show memory summary kilobytes with 'K'  */
 //#define POSIX_CMDLIN            /* use '[ ]' for kernel threads, not '( )' */
-//#define QUIT_NORMALQ            /* use 'q' to quit, not new default 'Q'    */
 //#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
 //#define TICS_64_BITS            /* accommodate Linux 2.5.xx 64-bit jiffies */
 //#define UNEQUAL_SORT            /* use pid's as a secondary sort key       */
@@ -350,11 +349,6 @@ typedef struct win {
 
         /* Keyboard Help specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
-#ifdef QUIT_NORMALQ
-#define HELP_Qkey  "  q         "
-#else
-#define HELP_Qkey  "  Q         "
-#endif
 #define KEYS_help \
    "Help for Interactive Commands\02 - %s\n" \
    "Window \01%s\06: \01Cumulative mode \03%s\02.  \01System\06: \01Delay \03%.1f secs\02; \01Secure mode \03%s\02.\n" \
@@ -375,7 +369,7 @@ typedef struct win {
    "\n" \
    "%s" \
    "  W         Write configuration file\n" \
-   HELP_Qkey   "Quit\n" \
+   "  q         Quit\n" \
    "          ( commands shown with '.' require a \01visible\02 task display \01window\02 ) \n" \
    "Press '\01h\02' or '\01?\02' for help with \01Windows\02,\n" \
    "any other key to continue " \

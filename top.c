@@ -732,11 +732,12 @@ static char *scale_tics (TICS_t tics, const unsigned width)
    unsigned i, t;
 
       /* try successively higher units until it fits */
-   t = tics / Hertz;
+   t = (tics * 100) / (TICS_t)Hertz;
    sprintf(buf, "%u:%02u.%02u"                  /* mins:secs.hundredths */
-      , t / 60, t % 60, (unsigned)((tics * 100) / Hertz) % 100);
+      , t / 6000, (t / 100) % 60, t % 100);
    if (strlen(buf) <= width)
       return buf;
+   t /= 100;
 
    sprintf(buf, "%u:%02u", t / 60, t % 60);     /* minutes:seconds */
    if (strlen(buf) <= width)
@@ -1783,7 +1784,7 @@ static void frame_states (proc_t **ppt, int show)
       }
          /* finally calculate an integer version of %cpu for this task
             and plug it into the unfilled slot in proc_t */
-      this->pcpu = (tics * 1000 / Hertz) / etime;
+      this->pcpu = (tics * 1000 / (TICS_t)Hertz) / etime;
       if (this->pcpu > 999) this->pcpu = 999;
          /* if in Solaris mode, adjust cpu percentage not only for the cpu
             the process is running on, but for all cpus together */
@@ -2276,11 +2277,7 @@ static void do_key (unsigned c)
          }
          break;
 
-#ifdef QUIT_NORMALQ
       case 'q':
-#else
-      case 'Q':
-#endif
          stop(0);
 
       case 'r':

@@ -7,7 +7,7 @@
 . any later version published by the Free Software Foundation;
 . with no Front-Cover Texts, no Back-Cover Texts, and with the following
 . Invariant Sections (and any sub-sections therein):
-.   this .ig-section
+.   all .ig sections, including this one
 .   DIFFERENCES / New Features
 .   STUPID TRICKS Sampler
 .   NOTES and Rantings
@@ -25,86 +25,86 @@
 \#  ** Comment out '.nr' or set to 0 to eliminate WIDTH fiddlin' !
 .nr half_xtra 4
 .
-.	ll +(\n[half_xtra] + \n[half_xtra])
+.ll +(\n[half_xtra] + \n[half_xtra])
 .
 \#                      Special right justify macros ---------------------
-\#                          - right justify start
-.	de Rjb
-.	ll -\n[half_xtra]
-.	rj \\$1
+\#                          - right justify begin
+.de Rjb
+.ll -\n[half_xtra]
+.rj \\$1
 ..
 \#                          - right justify end
-.	de Rje
-.	ll +\n[half_xtra]
+.de Rje
+.ll +\n[half_xtra]
 ..
 \#                      Jimmy's darn Bullet style ------------------------
-.	de Jbu
-.	IP "-" 3
+.de Jbu
+.IP "-" 3
 ..
 \#                          - bullet continuation paragraph
-.	de Jp
-.	IP "" 3
+.de Jp
+.IP "" 3
 ..
 \#                      New features/differences style -------------------
-.	de New
-.	IP "-*-" 5
+.de New
+.IP "-*-" 5
 ..
 \#                      Screen image style -------------------------------
-.	de Img
-.	IP "" -4
-.	Rjb 26
+.de Img
+.IP "" -4
+.Rjb 26
 ..
 \#                      Code image style ---------------------------------
-.	de ImgC
-.	IP "" -4
-.	Rjb 20
+.de ImgC
+.IP "" -4
+.Rjb 20
 ..
 \#                      Screen narrative (wide narrative) style ----------
-.	de Scr
+.de Scr
 .PP
-.	in -4
+.in -4
 ..
 \#                      Special emphasis ---------------------------------
-.	de Zzz
-.	ce
+.de Zzz
+.ce
 -*- -*- -*-
 ..
 .
 \#                      Commonly used strings (for consistency) ----------
 \#                          - a real em-dash, darn-it
-.	ds EM \ \fB\-\-\ \fR
+.ds EM \ \fB\-\-\ \fR
 \#                          - these two are for chuckles, makes great grammar
-.	ds Me top
-.	ds ME \fBtop\fR
+.ds Me top
+.ds ME \fBtop\fR
 \#                          - hey, these two ain't too shabby, either
-.	ds Us this\ \*(Me
-.	ds US \fBthis\fR\ \*(Me
+.ds Us this\ \*(Me
+.ds US \fBthis\fR\ \*(Me
 \#                          - other misc strings for consistent usage/emphasis
-.	ds F \fIOff\fR
-.	ds O \fIOn\fR
+.ds F \fIOff\fR
+.ds O \fIOn\fR
 .
-.	ds AM alternate\-display mode
-.	ds AS asterisk ('*')
-.	ds CF configuration file
-.	ds CI interactive command
-.	ds CO command\-line option
-.	ds CW \'current' window
-.	ds FM full\-screen mode
-.	ds MP \fBphysical\fR memory
-.	ds MS \fBshared\fR memory
-.	ds MV \fBvirtual\fR memory
-.	ds NT \fBNote\fR:
-.	ds PU CPU
-.	ds Pu cpu
-.	ds SA summary area
-.	ds TA task area
-.	ds TD task display
-.	ds TW task window
+.ds AM alternate\-display mode
+.ds AS asterisk ('*')
+.ds CF configuration file
+.ds CI interactive command
+.ds CO command\-line option
+.ds CW \'current' window
+.ds FM full\-screen mode
+.ds MP \fBphysical\fR memory
+.ds MS \fBshared\fR memory
+.ds MV \fBvirtual\fR memory
+.ds NT \fBNote\fR:
+.ds PU CPU
+.ds Pu cpu
+.ds SA summary area
+.ds TA task area
+.ds TD task display
+.ds TW task window
 \#                          - xref's that depend on commands or topic names
-.	ds XC See the
-.	ds Xc see the
-.	ds XT See topic
-.	ds Xt see topic
+.ds XC See the
+.ds Xc see the
+.ds XT See topic
+.ds Xt see topic
 .
 .\" //////////////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
@@ -370,7 +370,7 @@ for a successful\fB close-encounter-of-the-1st-kind\fR with \*(Us.
 You need remember just the\fB help key\fR ('h' or '?') to survive
 \*(EM nay, prosper!
 What about quitting, you ask?
-Well, of course there's the 'Q' \*(CI, but then \*(Me does quite well
+Well, of course there's the 'q' \*(CI, but then \*(Me does quite well
 with\fB signals\fR.
 So just zap him with the traditional \fI^C\fR when you're done.
 .br
@@ -794,7 +794,7 @@ Some commands appear more than once \*(EM their meaning or scope may vary
 depending on the context in which they are issued.
 
   3a.\fI GLOBAL_Commands\fR
-        <Ret>, <Sp> ?, =, A, d, G, h, I, k, Q, r, s, W, Z
+        <Ret>, <Sp> ?, =, A, d, G, h, I, k, q, r, s, W, Z
   3b.\fI SUMMARY_Area_Commands\fR
         l, m, t, 1
   3c.\fI TASK_Area_Commands\fR
@@ -894,11 +894,7 @@ depending on your progress:
    2) at the\fB signal\fR prompt, type 0
 
 .TP 7
-\ \ \'\fBQ\fR\' :\fIQuit\fR
-Please note that this is a capital \'Q' since the 'a' and 'w' keys will
-probably be used frequently and they are adjacent to 'q'.
-This \*(Me cares deeply for you and does not want you quitting ever \*(EM
-make that accidentally.
+\ \ \'\fBq\fR\' :\fIQuit\fR
 
 .TP 7
 *\ \'\fBr\fR\' :\fIRenice_a_Task\fR
@@ -1982,7 +1978,7 @@ AUTHOR
 .in
 A copy of the license is included in the section entitled
 \(dqGNU Free Documentation License\(dq.
-.	CCend
+.CCend
 .
 .\" end: active doc ||||||||||||||||||||||||||||||||||||||||||||||||||
 .\" ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
