@@ -3285,6 +3285,8 @@ error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
    if (fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
       , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress))
          ;                                  // avoid -Wunused-result
+   if (Rc.fixed_widest < -1 || Rc.fixed_widest > SCREENMAX)
+      Rc.fixed_widest = 0;
 
    // we'll start off Inspect stuff with 1 'potential' blank line
    // ( only realized if we end up with Inspect.total > 0 )
@@ -4319,7 +4321,7 @@ static void keys_global (int ch) {
       case 'X':
       {  int wide = get_int(fmtmk(N_fmt(XTRA_fixwide_fmt), Rc.fixed_widest));
          if (wide > GET_NUM_NOT) {
-            if (wide > -1) Rc.fixed_widest = wide;
+            if (wide >= 0 && wide <= SCREENMAX) Rc.fixed_widest = wide;
             else Rc.fixed_widest = -1;
          }
       }
