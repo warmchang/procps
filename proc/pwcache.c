@@ -13,16 +13,18 @@
 #include "procps.h"
 #include <grp.h>
 
-#define	HASHSIZE	16			/* power of 2 */
+// might as well fill cache lines... else we waste memory anyway
+
+#define	HASHSIZE	32			/* power of 2 */
 #define	HASH(x)		((x) & (HASHSIZE - 1))
 
-#define NAMESIZE	16
-#define NAMELENGTH	"15"
+#define NAMESIZE	20
+#define NAMELENGTH	"19"
 
 static struct pwbuf {
+    struct pwbuf *next;
     uid_t uid;
     char name[NAMESIZE];
-    struct pwbuf *next;
 } *pwhash[HASHSIZE];
 
 char *user_from_uid(uid_t uid)
@@ -47,9 +49,9 @@ char *user_from_uid(uid_t uid)
 }
 
 static struct grpbuf {
+    struct grpbuf *next;
     gid_t gid;
     char name[NAMESIZE];
-    struct grpbuf *next;
 } *grphash[HASHSIZE];
 
 char *group_from_gid(gid_t gid)
