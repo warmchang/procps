@@ -1140,7 +1140,7 @@ unsigned get_pid_digits(void){
   ret = 5;
   fd = open("/proc/sys/kernel/pid_max", O_RDONLY);
   if(fd==-1) goto out;
-  rc = read(fd, pidbuf, sizeof pidbuf);
+  rc = read(fd, pidbuf, sizeof pidbuf - 1);
   close(fd);
   if(rc<3) goto out;
   pidbuf[rc] = '\0';
