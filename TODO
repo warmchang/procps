@@ -1,6 +1,7 @@
 -------------------------- general ------------------------
 
 Implement /usr/proc/bin tools like Solaris has.
+The prstat command is interesting, like top in batch mode.
 
 Don't these really belong in the procps package?
          killall   pstree   fuser   lsof   who

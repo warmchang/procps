@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <unistd.h>
 #include <ctype.h>
 #include <string.h>
@@ -39,6 +40,7 @@ union el {
 
 static int opt_full = 0;
 static int opt_long = 0;
+static int opt_oldest = 0;
 static int opt_newest = 0;
 static int opt_negate = 0;
 static int opt_exact = 0;
@@ -72,10 +74,10 @@ static int
 usage (int opt)
 {
 	if (i_am_pkill)
-		fprintf (stderr, "Usage: pkill [-SIGNAL] [-fnvx] ");
+		fprintf (stderr, "Usage: pkill [-SIGNAL] [-fvx] ");
 	else
-		fprintf (stderr, "Usage: pgrep [-flnvx] [-d DELIM] ");
-	fprintf (stderr, "[-P PPIDLIST] [-g PGRPLIST] [-s SIDLIST]\n"
+		fprintf (stderr, "Usage: pgrep [-flvx] [-d DELIM] ");
+	fprintf (stderr, "[-n|-o] [-P PPIDLIST] [-g PGRPLIST] [-s SIDLIST]\n"
 		 "\t[-u EUIDLIST] [-U UIDLIST] [-G GIDLIST] [-t TERMLIST] "
 		 "[PATTERN]\n");
 	exit (opt == '?' ? 0 : 2);
@@ -111,7 +113,7 @@ parse_opts (int argc, char **argv)
 		strcat (opts, "ld:");
 	}
 			
-	strcat (opts, "fnvxP:g:s:u:U:G:t:?V");
+	strcat (opts, "fnovxP:g:s:u:U:G:t:?V");
 	
 	while ((opt = getopt (argc, argv, opts)) != -1) {
 		switch (opt) {
@@ -122,10 +124,20 @@ parse_opts (int argc, char **argv)
 			opt_long = 1;
 			break;
 		case 'n':
+			if (opt_oldest|opt_negate|opt_newest)
+				usage (opt);
 			opt_newest = 1;
 			++criteria_count;
 			break;
+		case 'o':
+			if (opt_oldest|opt_negate|opt_newest)
+				usage (opt);
+			opt_oldest = 1;
+			++criteria_count;
+			break;
 		case 'v':
+			if (opt_oldest|opt_negate|opt_newest)
+				usage (opt);
 	  		opt_negate = 1;
 			break;
 		case 'x':
@@ -478,8 +490,8 @@ select_procs (void)
 {
 	PROCTAB *ptp;
 	proc_t task;
-	unsigned long long newest_start_time = 0;
-	pid_t newest_pid = 0;
+	unsigned long long saved_start_time;      // for new/old support
+	pid_t saved_pid = 0;                      // for new/old support
 	int matches = 0;
 	int size = 32;
 	regex_t *preg;
@@ -493,6 +505,11 @@ select_procs (void)
 
 	ptp = do_openproc ();
 	preg = do_regcomp ();
+
+	if (opt_newest) saved_start_time =  0ULL;
+	if (opt_oldest) saved_start_time = ~0ULL;
+	if (opt_newest) saved_pid = 0;
+	if (opt_oldest) saved_pid = INT_MAX;
 	
 	memset (&task, 0, sizeof (task));
 	while (readproc (ptp, &task)) {
@@ -500,7 +517,9 @@ select_procs (void)
 
 		if (task.pid == myself)
 			continue;
-		else if (opt_newest && task.start_time < newest_start_time)
+		else if (opt_newest && task.start_time < saved_start_time)
+			match = 0;
+		else if (opt_oldest && task.start_time > saved_start_time)
 			match = 0;
 		else if (opt_ppid && ! match_numlist (task.ppid, opt_ppid))
 			match = 0;
@@ -553,11 +572,19 @@ select_procs (void)
 
 		if (match ^ opt_negate) {	/* Exclusive OR is neat */
 			if (opt_newest) {
-				if (newest_start_time == task.start_time &&
-				    newest_pid > task.pid)
+				if (saved_start_time == task.start_time &&
+				    saved_pid > task.pid)
 					continue;
-				newest_start_time = task.start_time;
-				newest_pid = task.pid;
+				saved_start_time = task.start_time;
+				saved_pid = task.pid;
+				matches = 0;
+			}
+			if (opt_oldest) {
+				if (saved_start_time == task.start_time &&
+				    saved_pid < task.pid)
+					continue;
+				saved_start_time = task.start_time;
+				saved_pid = task.pid;
 				matches = 0;
 			}
 			if (opt_long) {

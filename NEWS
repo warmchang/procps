@@ -5,6 +5,7 @@ better (?) RPM generation
 XConsole and top.desktop removed
 old build system removed
 code cleanup
+pgrep and pkill get "-o" (oldest matching process)
 
 procps-3.0.3 --> procps-3.0.4
 
