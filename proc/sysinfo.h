@@ -94,7 +94,6 @@ typedef struct disk_stat{
 	unsigned long long reads_sectors;
 	unsigned long long written_sectors;
 	char               disk_name [16];
-	unsigned int       disk_type;
 	unsigned           inprogress_IO;
 	unsigned           merged_reads;
 	unsigned           merged_writes;
@@ -108,11 +107,9 @@ typedef struct disk_stat{
 }disk_stat;
 
 typedef struct partition_stat{
-	unsigned int disk_type;
-	unsigned int partition_num;
 	char partition_name [16];
 	unsigned long long reads_sectors;
-	struct disk_stat* parent_disk;
+	unsigned           parent_disk;  // index into a struct disk_stat array
 	unsigned           reads;
 	unsigned           writes;
 	unsigned           requested_writes;

@@ -163,27 +163,6 @@ static void new_header(void){
 
 ////////////////////////////////////////////////////////////////////////////
 
-static void diskheader(void){
-  printf("disk ----------reads------------ -----------writes----------- -------IO-------\n");
-
-  printf("%3s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s\n",   " ", "total", "merged","sectors","ms","total","merged","sectors","ms","cur","s");
-
-}
-
-////////////////////////////////////////////////////////////////////////////
-
-static void diskpartition_header(const char *partition_name){
-  printf("%-10s %10s %10s %10s %10s\n",partition_name, "reads  ", "read sectors", "writes   ", "requested writes");
-}
-
-////////////////////////////////////////////////////////////////////////////
-
-static void slabheader(void){
-  printf("%-24s %6s %6s %6s %6s\n","Cache","Num", "Total", "Size", "Pages");
-}
-
-////////////////////////////////////////////////////////////////////////////
-
 static unsigned long unitConvert(unsigned int size){
  float cvSize;
  cvSize=(float)size/dataUnit*((statMode==SLABSTAT)?1:1024);
@@ -290,6 +269,12 @@ static void new_format(void) {
 
 ////////////////////////////////////////////////////////////////////////////
 
+static void diskpartition_header(const char *partition_name){
+  printf("%-10s %10s %10s %10s %10s\n",partition_name, "reads  ", "read sectors", "writes   ", "requested writes");
+}
+
+////////////////////////////////////////////////////////////////////////////
+
 static int diskpartition_format(const char* partition_name){
     FILE *fDiskstat;
     struct disk_stat *disks;
@@ -345,19 +330,41 @@ static int diskpartition_format(const char* partition_name){
 
 ////////////////////////////////////////////////////////////////////////////
 
+static void diskheader(void){
+  printf("disk- ------------reads------------ ------------writes----------- -----IO------\n");
+
+  printf("%5s %6s %6s %7s %7s %6s %6s %7s %7s %6s %6s\n",
+         " ", "total", "merged","sectors","ms","total","merged","sectors","ms","cur","sec");
+
+}
+
+////////////////////////////////////////////////////////////////////////////
+
 static void diskformat(void){
   FILE *fDiskstat;
   struct disk_stat *disks;
   struct partition_stat *partitions;
   unsigned long ndisks,i,j,k;
-  const char format[]="%-3s %6u %6u %6llu %6u %6u %6u %6llu %6u %6u %6u\n";
+  const char format[]="%-5s %6u %6u %7llu %7u %6u %6u %7llu %7u %6u %6u\n";
   if ((fDiskstat=fopen("/proc/diskstats", "rb"))){
     fclose(fDiskstat);
     ndisks=getdiskstat(&disks,&partitions);
     for(k=0; k<ndisks; k++){
       if (moreheaders && ((k%height)==0)) diskheader();
       printf(format,
-        disks[k].disk_name,disks[k].reads, disks[k].merged_reads,disks[k].reads_sectors, disks[k].milli_reading, disks[k].writes, disks[k].merged_writes, disks[k].written_sectors,disks[k].milli_writing, disks[k].inprogress_IO?disks[k].inprogress_IO/1000:0, disks[k].milli_spent_IO?disks[k].milli_spent_IO/1000:0/*, disks[i].weighted_milli_spent_IO/1000*/);
+        disks[k].disk_name,
+        disks[k].reads,
+        disks[k].merged_reads,
+        disks[k].reads_sectors,
+        disks[k].milli_reading,
+        disks[k].writes,
+        disks[k].merged_writes,
+        disks[k].written_sectors,
+        disks[k].milli_writing,
+        disks[k].inprogress_IO?disks[k].inprogress_IO/1000:0,
+        disks[k].milli_spent_IO?disks[k].milli_spent_IO/1000:0/*,
+        disks[i].weighted_milli_spent_IO/1000*/
+      );
       fflush(stdout);
     }
     free(disks);
@@ -390,6 +397,12 @@ static void diskformat(void){
     fprintf(stderr, "Your kernel doesn't support diskstat (2.5.70 or above required)"); 
     exit(0);
   } 
+}
+
+////////////////////////////////////////////////////////////////////////////
+
+static void slabheader(void){
+  printf("%-24s %6s %6s %6s %6s\n","Cache","Num", "Total", "Size", "Pages");
 }
 
 ////////////////////////////////////////////////////////////////////////////

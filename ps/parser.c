@@ -253,6 +253,16 @@ static const char *parse_sysv_option(void){
       trace("-H Process hierarchy (like ASCII art forest option)\n");
       forest_type = 'u';
       break;
+#if 0
+    case 'J':  // specify list of job IDs in hex (IRIX) -- like HP "-R" maybe?
+      trace("-J select by job ID\n");  // want a JID ("jid") for "-j" too
+      arg=get_opt_arg();
+      if(!arg) return "List of jobs must follow -J.";
+      err=parse_list(arg, parse_jid);
+      if(err) return err;
+      selection_list->typecode = SEL_JID;
+      return NULL; /* can't have any more options */
+#endif
     case 'L':  /*  */
       /* In spite of the insane 2-level thread system, Sun appears to
        * have made this option Linux-compatible. If a process has N
@@ -264,7 +274,7 @@ static const char *parse_sysv_option(void){
       thread_flags |= TF_U_L;
 //      format_modifiers |= FM_L;
       break;
-    case 'M':  /* someday, maybe, we will have MAC like SGI's Irix */
+    case 'M':  // typically the SE Linux context
       trace("-M Print security label for Mandatory Access Control.\n");
       format_modifiers |= FM_M;
       break;
@@ -279,14 +289,18 @@ static const char *parse_sysv_option(void){
       defer_sf_option(arg, SF_U_O);
       return NULL; /* can't have any more options */
     case 'P':     /* SunOS 5 "psr" or unknown HP/UX feature */
-      trace("-P adds columns of PRM info (HP) or PSR column (Sun)\n");
+      trace("-P adds columns of PRM info (HP-UX), PSR (SunOS), or capabilities (IRIX)\n");
       format_modifiers |= FM_P;
       break;
-#ifdef WE_UNDERSTAND_THIS
-    case 'R':     /* unknown HP/UX feature */
-      trace("-R selects PRM groups\n");
-      return "Don't understand PRM on Linux.";
-      break;
+#if 0
+    case 'R':    // unknown HP/UX feature, like IRIX "-J" maybe?
+      trace("-R select by PRM group\n");
+      arg=get_opt_arg();
+      if(!arg) return "List of PRM groups must follow -R.";
+      err=parse_list(arg, parse_prm);
+      if(err) return err;
+      selection_list->typecode = SEL_PRM;
+      return NULL; /* can't have any more options */
 #endif
     case 'T':
       /* IRIX 6.5 docs suggest POSIX threads get shown individually.
@@ -312,9 +326,10 @@ static const char *parse_sysv_option(void){
       display_version();
       exit(0);
 #if 0
+    // This must be verified against SVR4-MP (UnixWare or Powermax)
     case 'Z':     /* full Mandatory Access Control level info */
       trace("-Z shows full MAC info\n");
-      return "Don't understand MAC on Linux.";
+      format_modifiers |= FM_M;
       break;
 #endif
     case 'a':
@@ -394,7 +409,7 @@ static const char *parse_sysv_option(void){
       if(err) return err;
       selection_list->typecode = SEL_PID;
       return NULL; /* can't have any more options */
-#ifdef KNOW_WHAT_TO_DO_WITH_THIS
+#if 0
     case 'r':
       trace("-r some Digital Unix thing about warnings...\n");
       trace("   or SCO's option to chroot() for new /proc and /dev.\n");
@@ -448,9 +463,10 @@ static const char *parse_sysv_option(void){
       format_modifiers |= FM_y;
       break;
 #if 0
+    // This must be verified against SVR4-MP (UnixWare or Powermax)
     case 'z':     /* alias of Mandatory Access Control level info */
       trace("-z shows aliased MAC info\n");
-      return "Don't understand MAC aliases on Linux.";
+      format_modifiers |= FM_M;
       break;
 #endif
     case '-':

@@ -674,20 +674,6 @@ nextline:
 ///////////////////////////////////////////////////////////////////////
 // based on Fabian Frederick's /proc/diskstats parser
 
-static unsigned int getFileLines(const char* szFile){
-  char szBuffer[1024];
-  FILE *fdiskStat;
-  int lines=0;
-  if ((fdiskStat=fopen (szFile,"rb"))){
-    while (fgets(szBuffer, 1024, fdiskStat)){
-      lines++;
-    }
-    fclose(fdiskStat);
-  } 
-  return lines;
-}
-
-/////////////////////////////////////////////////////////////////////////////
 
 unsigned int getpartitions_num(struct disk_stat *disks, int ndisks){
   int i=0;
@@ -704,31 +690,28 @@ unsigned int getpartitions_num(struct disk_stat *disks, int ndisks){
 
 unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **partitions){
   FILE* fd;
-  int units,
-      i,
-      disk_type,
-      disk_num,
-      cDisk=0,
-      cPartition=0;
+  int cDisk = 0;
+  int cPartition = 0;
+  int fields;
+  unsigned dummy;
 
   *disks = NULL;
   *partitions = NULL;
   buff[BUFFSIZE-1] = 0; 
-  units = getFileLines("/proc/diskstats");
   fd = fopen("/proc/diskstats", "rb");
   if(!fd) crash("/proc/diskstats");
 
-  for (i=0; i<units; i++){
+  for (;;) {
     if (!fgets(buff,BUFFSIZE-1,fd)){
       fclose(fd);
-      crash("/proc/diskstats");
+      break;
     }
-    sscanf(buff, "    %d    %d", &disk_type, &disk_num);
-    if (disk_num == 0){
+    fields = sscanf(buff, " %*d %*d %*s %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %u", &dummy);
+    if (fields == 1){
       (*disks) = realloc(*disks, (cDisk+1)*sizeof(struct disk_stat));
-      sscanf(buff,  "   %d    %*d %15s %u %u %llu %u %u %u %llu %u %u %u %u",
-        &(*disks)[cDisk].disk_type,
-        //&unused,
+      sscanf(buff,  "   %*d    %*d %15s %u %u %llu %u %u %u %llu %u %u %u %u",
+        //&disk_major,
+        //&disk_minor,
         (*disks)[cDisk].disk_name,
         &(*disks)[cDisk].reads,
         &(*disks)[cDisk].merged_reads,
@@ -747,20 +730,20 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
     }else{
       (*partitions) = realloc(*partitions, (cPartition+1)*sizeof(struct partition_stat));
       fflush(stdout);
-      sscanf(buff,  "   %d    %d %15s %u %llu %u %u",
-        &(*partitions)[cPartition].disk_type,
-        &(*partitions)[cPartition].partition_num,
+      sscanf(buff,  "   %*d    %*d %15s %u %llu %u %u",
+        //&part_major,
+        //&part_minor,
         (*partitions)[cPartition].partition_name,
         &(*partitions)[cPartition].reads,
         &(*partitions)[cPartition].reads_sectors,
         &(*partitions)[cPartition].writes,
         &(*partitions)[cPartition].requested_writes
       );
-      (*partitions)[cPartition++].parent_disk = &((*disks)[cDisk-1]);
+      (*partitions)[cPartition++].parent_disk = cDisk-1;
       (*disks)[cDisk-1].partitions++;	
     }
   }
-  fclose(fd);
+
   return cDisk;
 }
 
