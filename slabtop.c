@@ -346,27 +346,17 @@ int main(int argc, char *argv[])
 		}
 
 		move(0,0);
-		printw(	" Active / Total Objects (%% used)    : "
-				"%d / %d (%.1f%%)\n"
-			" Active / Total Slabs (%% used)      : "
-				"%d / %d (%.1f%%)\n"
-			" Active / Total Caches (%% used)     : "
-				"%d / %d (%.1f%%)\n"
-			" Active / Total Size (%% used)       : "
-				"%.2fK / %.2fK (%.1f%%)\n"
-			" Minimum / Average / Maximum Object : "
-				"%.2fK / %.2fK / %.2fK\n\n",
-			stats.nr_active_objs, stats.nr_objs,
-			100.0 * stats.nr_active_objs / stats.nr_objs,
-			stats.nr_active_slabs, stats.nr_slabs,
-			100.0 * stats.nr_active_slabs / stats.nr_slabs,
-			stats.nr_active_caches, stats.nr_caches,
-			100.0 * stats.nr_active_caches / stats.nr_caches,
-			stats.active_size / 1024.0, stats.total_size / 1024.0,
-			100.0 * stats.active_size / stats.total_size,
-			stats.min_obj_size / 1024.0,
-			stats.avg_obj_size / 1024.0,
-			stats.max_obj_size / 1024.0);
+		printw(	" Active / Total Objects (%% used)    : %d / %d (%.1f%%)\n"
+			" Active / Total Slabs (%% used)      : %d / %d (%.1f%%)\n"
+			" Active / Total Caches (%% used)     : %d / %d (%.1f%%)\n"
+			" Active / Total Size (%% used)       : %.2fK / %.2fK (%.1f%%)\n"
+			" Minimum / Average / Maximum Object : %.2fK / %.2fK / %.2fK\n\n",
+			stats.nr_active_objs, stats.nr_objs, 100.0 * stats.nr_active_objs / stats.nr_objs,
+			stats.nr_active_slabs, stats.nr_slabs, 100.0 * stats.nr_active_slabs / stats.nr_slabs,
+			stats.nr_active_caches, stats.nr_caches, 100.0 * stats.nr_active_caches / stats.nr_caches,
+			stats.active_size / 1024.0, stats.total_size / 1024.0, 100.0 * stats.active_size / stats.total_size,
+			stats.min_obj_size / 1024.0, stats.avg_obj_size / 1024.0, stats.max_obj_size / 1024.0
+		);
 
 		slab_list = slabsort(slab_list);
 
@@ -378,10 +368,10 @@ int main(int argc, char *argv[])
 
 		curr = slab_list;
 		for (i = 0; i < rows - 8 && curr->next; i++) {
-			printw("%6d %6d %3d%% %7.2fK %6d %8d %9dK %-23s\n",
+			printw("%6u %6u %3u%% %7.2fK %6u %8u %9uK %-23s\n",
 				curr->nr_objs, curr->nr_active_objs, curr->use,
 				curr->obj_size / 1024.0, curr->nr_slabs,
-				curr->objs_per_slab, curr->cache_size / 1024,
+				curr->objs_per_slab, (unsigned)(curr->cache_size / 1024),
 				curr->name);
 			curr = curr->next;
 		}

@@ -136,8 +136,7 @@ static int parse_slabinfo20(struct slab_info **list, struct slab_stat *stats,
 		if (curr->obj_size > stats->max_obj_size)
 			stats->max_obj_size = curr->obj_size;
 
-		curr->cache_size = curr->nr_slabs * curr->pages_per_slab *
-			page_size;
+		curr->cache_size = (unsigned long)curr->nr_slabs * curr->pages_per_slab * page_size;
 
 		if (curr->nr_objs) {
 			curr->use = 100 * curr->nr_active_objs / curr->nr_objs;
@@ -147,8 +146,8 @@ static int parse_slabinfo20(struct slab_info **list, struct slab_stat *stats,
 
 		stats->nr_objs += curr->nr_objs;
 		stats->nr_active_objs += curr->nr_active_objs;
-		stats->total_size += curr->nr_objs * curr->obj_size;
-		stats->active_size += curr->nr_active_objs * curr->obj_size;
+		stats->total_size += (unsigned long)curr->nr_objs * curr->obj_size;
+		stats->active_size += (unsigned long)curr->nr_active_objs * curr->obj_size;
 		stats->nr_pages += curr->nr_slabs * curr->pages_per_slab;
 		stats->nr_slabs += curr->nr_slabs;
 		stats->nr_active_slabs += curr->nr_active_slabs;
@@ -215,8 +214,7 @@ static int parse_slabinfo11(struct slab_info **list, struct slab_stat *stats,
 		if (curr->obj_size > stats->max_obj_size)
 			stats->max_obj_size = curr->obj_size;
 
-		curr->cache_size = curr->nr_slabs * curr->pages_per_slab *
-			page_size;
+		curr->cache_size = (unsigned long)curr->nr_slabs * curr->pages_per_slab * page_size;
 
 		if (curr->nr_objs) {
 			curr->use = 100 * curr->nr_active_objs / curr->nr_objs;
@@ -230,8 +228,8 @@ static int parse_slabinfo11(struct slab_info **list, struct slab_stat *stats,
 
 		stats->nr_objs += curr->nr_objs;
 		stats->nr_active_objs += curr->nr_active_objs;
-		stats->total_size += curr->nr_objs * curr->obj_size;
-		stats->active_size += curr->nr_active_objs * curr->obj_size;
+		stats->total_size += (unsigned long)curr->nr_objs * curr->obj_size;
+		stats->active_size += (unsigned long)curr->nr_active_objs * curr->obj_size;
 		stats->nr_pages += curr->nr_slabs * curr->pages_per_slab;
 		stats->nr_slabs += curr->nr_slabs;
 		stats->nr_active_slabs += curr->nr_active_slabs;
