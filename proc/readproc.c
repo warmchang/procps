@@ -38,6 +38,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <limits.h>
+#include <stdint.h>
 #ifdef WITH_SYSTEMD
 #include <systemd/sd-login.h>
 #endif
@@ -1525,6 +1526,10 @@ proc_t** readproctab(int flags, ...) {
     if (!PT)
       return 0;
     do {					/* read table: */
+	if (n < 0 || (size_t)n >= INT_MAX / sizeof(proc_t*)) {
+	    xalloc_err_handler("integer overflow in %s (%s=%zu)", __func__, "n", (size_t)n);
+	    exit(EXIT_FAILURE);
+	}
 	tab = xrealloc(tab, (n+1)*sizeof(proc_t*));/* realloc as we go, using */
 	tab[n] = readproc_direct(PT, NULL);     /* final null to terminate */
     } while (tab[n++]);				  /* stop when NULL reached */
@@ -1532,33 +1537,44 @@ proc_t** readproctab(int flags, ...) {
     return tab;
 }
 
+#define grow_by_size(ptr, nmemb, over, size) do { \
+    if ((size_t)(nmemb) >= INT_MAX / 5) { \
+        xalloc_err_handler("integer overflow in %s (%s=%zu)", __func__, #nmemb, (size_t)(nmemb)); \
+        exit(EXIT_FAILURE); \
+    } \
+    (nmemb) = (nmemb) * 5 / 4 + (over); \
+    if ((size_t)(nmemb) >= SSIZE_MAX / (size)) { \
+        xalloc_err_handler("integer overflow in %s (%s=%zu)", __func__, #nmemb, (size_t)(nmemb)); \
+        exit(EXIT_FAILURE); \
+    } \
+    (ptr) = xrealloc((ptr), (nmemb) * (size)); \
+} while (0)
+
 // Try again, this time with threads and selection.
 proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), PROCTAB *restrict const PT) {
     static proc_data_t pd;
     proc_t** ptab = NULL;
-    unsigned n_proc_alloc = 0;
-    unsigned n_proc = 0;
+    size_t n_proc_alloc = 0;
+    size_t n_proc = 0;
 
     proc_t** ttab = NULL;
-    unsigned n_task_alloc = 0;
-    unsigned n_task = 0;
+    size_t n_task_alloc = 0;
+    size_t n_task = 0;
 
     proc_t*  data = NULL;
-    unsigned n_alloc = 0;
-    unsigned long n_used = 0;
+    size_t n_alloc = 0;
+    uintptr_t n_used = 0;
 
     for(;;){
         proc_t *tmp;
         if(n_alloc == n_used){
           //proc_t *old = data;
-          n_alloc = n_alloc*5/4+30;  // grow by over 25%
-          data = xrealloc(data,sizeof(proc_t)*n_alloc);
+          grow_by_size(data, n_alloc, 30, sizeof(proc_t));
           memset(data+n_used, 0, sizeof(proc_t)*(n_alloc-n_used));
         }
         if(n_proc_alloc == n_proc){
           //proc_t **old = ptab;
-          n_proc_alloc = n_proc_alloc*5/4+30;  // grow by over 25%
-          ptab = xrealloc(ptab,sizeof(proc_t*)*n_proc_alloc);
+          grow_by_size(ptab, n_proc_alloc, 30, sizeof(proc_t*));
         }
         tmp = readproc_direct(PT, data+n_used);
         if(!tmp) break;
@@ -1569,16 +1585,14 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
           proc_t *t;
           if(n_alloc == n_used){
             proc_t *old = data;
-            n_alloc = n_alloc*5/4+30;  // grow by over 25%
-            data = xrealloc(data,sizeof(proc_t)*n_alloc);
+            grow_by_size(data, n_alloc, 30, sizeof(proc_t));
             // have to move tmp too
             tmp = data+(tmp-old);
             memset(data+n_used, 0, sizeof(proc_t)*(n_alloc-n_used));
           }
           if(n_task_alloc == n_task){
             //proc_t **old = ttab;
-            n_task_alloc = n_task_alloc*5/4+1;  // grow by over 25%
-            ttab = xrealloc(ttab,sizeof(proc_t*)*n_task_alloc);
+            grow_by_size(ttab, n_task_alloc, 1, sizeof(proc_t*));
           }
           t = readtask_direct(PT, tmp, data+n_used);
           if(!t) break;
@@ -1599,8 +1613,8 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
       pd.n   = n_proc;
     }
     // change array indexes to pointers
-    while(n_proc--) ptab[n_proc] = data+(long)(ptab[n_proc]);
-    while(n_task--) ttab[n_task] = data+(long)(ttab[n_task]);
+    while(n_proc--) ptab[n_proc] = data+(uintptr_t)(ptab[n_proc]);
+    while(n_task--) ttab[n_task] = data+(uintptr_t)(ttab[n_task]);
 
     return &pd;
 }
@@ -1609,14 +1623,13 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
 proc_data_t *readproctab3 (int(*want_task)(proc_t *buf), PROCTAB *restrict const PT) {
     static proc_data_t pd;
     proc_t **tab = NULL;
-    unsigned n_alloc = 0;
-    unsigned n_used = 0;
+    size_t n_alloc = 0;
+    size_t n_used = 0;
     proc_t *p = NULL;
 
     for (;;) {
         if (n_alloc == n_used) {
-            n_alloc = n_alloc*5/4+30;  // grow by over 25%
-            tab = xrealloc(tab,sizeof(proc_t*)*n_alloc);
+            grow_by_size(tab, n_alloc, 30, sizeof(proc_t*));
         }
         // let this next guy allocate the necessary proc_t storage
         // (or recycle it) since he can't tolerate realloc relocations
