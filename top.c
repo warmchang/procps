@@ -1106,6 +1106,7 @@ static FLD_t Fieldstab[] = {
 #define FT_OLD_fmt 2
 
 
+#if 0
         // convert, or 0 for failure
 static int ft_cvt_char (const int fr, const int to, int c) {
    int j = -1;
@@ -1116,6 +1117,7 @@ static int ft_cvt_char (const int fr, const int to, int c) {
    }
    return 0;
 }
+#endif
 
 
         // convert
@@ -1263,8 +1265,8 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
    u = 0;
    for (;;) {
       const char *tmp;
-      if (u+1 >= sizeof rc->win[0].fieldscur) return -1;
       int c = *cp++;
+      if (u+1 >= sizeof rc->win[0].fieldscur) return -1;
       if (c == '\0') return -2;
       if (c == '\n') break;
       if (c & ~0x7f) return -3;
