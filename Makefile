@@ -103,6 +103,7 @@ ALL_LDFLAGS  := $(PKG_LDFLAGS) $(LDFLAGS)
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),tar)  
 ifneq ($(MAKECMDGOALS),extratar)
+ifneq ($(MAKECMDGOALS),beta)
 
 # Unlike the kernel one, this check_gcc goes all the way to
 # producing an executable. There might be a -m64 that works
@@ -139,6 +140,7 @@ ALL_CFLAGS += $(call check_gcc,-fno-inline-functions,)
 endif
 endif
 endif
+endif
 
 ############ misc.
 
@@ -148,7 +150,7 @@ endif
 .SUFFIXES:
 .SUFFIXES: .a .o .c .s .h
 
-.PHONY: all clean do_all install tar extratar
+.PHONY: all clean do_all install tar extratar beta
 
 ALL := $(notdir $(BINFILES))
 
@@ -196,6 +198,12 @@ extratar: $(_TARFILES)
 	(tar cf - $(_TARFILES)) | (cd procps-$(TARVERSION) && tar xf -)
 	tar cf extra-$(TARVERSION).tar procps-$(TARVERSION)
 	gzip -9 extra-$(TARVERSION).tar
+
+beta: $(TARFILES) $(_TARFILES)
+	mkdir beta-$(TARVERSION)
+	(tar cf - $(TARFILES) $(_TARFILES)) | (cd beta-$(TARVERSION) && tar xf -)
+	tar cf beta-$(TARVERSION).tar beta-$(TARVERSION)
+	gzip -9 beta-$(TARVERSION).tar
 
 clean:
 	rm -f $(CLEAN)

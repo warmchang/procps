@@ -70,6 +70,13 @@ typedef struct proc_t {
 	sigignore,	// status          mask of ignored signals
 	sigcatch;	// status          mask of caught  signals
 #endif
+    unsigned KLONG
+	start_code,	// stat            address of beginning of code segment
+	end_code,	// stat            address of end of code segment
+	start_stack,	// stat            address of the bottom of stack for the process
+	kstk_esp,	// stat            kernel stack pointer
+	kstk_eip,	// stat            kernel instruction pointer
+	wchan;		// stat (special)  address of kernel wait channel proc is sleeping in
     long
 	priority,	// stat            kernel scheduling priority
 	nice,		// stat            standard unix nice level of process
@@ -100,13 +107,6 @@ typedef struct proc_t {
 	maj_flt,	// stat            number of major page faults since process start
 	cmin_flt,	// stat            cumulative min_flt of process and child processes
 	cmaj_flt;	// stat            cumulative maj_flt of process and child processes
-    unsigned KLONG
-	start_code,	// stat            address of beginning of code segment
-	end_code,	// stat            address of end of code segment
-	start_stack,	// stat            address of the bottom of stack for the process
-	kstk_esp,	// stat            kernel stack pointer
-	kstk_eip,	// stat            kernel instruction pointer
-	wchan;		// stat (special)  address of kernel wait channel proc is sleeping in
     char
 	**environ,	// (special)       environment string vector (/proc/#/environ)
 	**cmdline;	// (special)       command line string vector (/proc/#/cmdline)

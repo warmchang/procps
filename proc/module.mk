@@ -76,7 +76,7 @@ proc/$(ANAME): $(LIBOBJ)
 
 #proc/$(SONAME): proc/library.map
 proc/$(SONAME): $(LIBOBJ)
-	$(CC) -shared -Wl,-soname,$(SONAME) -Wl,--version-script=proc/library.map -o $@ $^ -lc
+	$(CC) $(ALL_CFLAGS) $(ALL_LDFLAGS) -shared -Wl,-soname,$(SONAME) -Wl,--version-script=proc/library.map -o $@ $^ -lc
 
 
 # AUTOMATIC DEPENDENCY GENERATION -- GCC AND GNUMAKE DEPENDENT
@@ -86,7 +86,9 @@ proc/.depend: $(LIBSRC) $(LIBHDR)
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),tar)
 ifneq ($(MAKECMDGOALS),extratar)
+ifneq ($(MAKECMDGOALS),beta)
 -include proc/.depend
+endif
 endif
 endif
 endif

@@ -708,8 +708,13 @@ static const char *generate_sysv_list(void){
   }else if(format_flags & FF_Ul){
     PUSH("ni"); PUSH("opri");
   }
+
+  // FIXME TODO XXX -- this is a serious problem
+  // These somehow got flipped around.
+  // The bug is in procps-3.1.1, procps-990211, prior too?
   if((thread_flags & TF_U_L) && (format_flags & FF_Uf)) PUSH("nlwp");
   if( (format_flags & (FF_Uf|FF_Ul)) && !(format_modifiers & FM_c) ) PUSH("c");
+
   if(format_modifiers & FM_P) PUSH("psr");
   if(thread_flags & TF_U_L) PUSH("lwp");
   if(format_modifiers & FM_j){

@@ -105,8 +105,8 @@
  */
 
 typedef struct symb {
-  const char *name;
   unsigned KLONG addr;
+  const char *name;
 } symb;
 
 /* These mostly rely on POSIX to make them zero. */
