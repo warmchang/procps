@@ -120,7 +120,8 @@ static void init_Hertz_value(void) __attribute__((constructor));
 static void init_Hertz_value(void){
   unsigned long long user_j, nice_j, sys_j, other_j;  /* jiffies (clock ticks) */
   double up_1, up_2, seconds;
-  unsigned long long jiffies, h;
+  unsigned long long jiffies;
+  unsigned h;
   char *savelocale;
 
   smp_num_cpus = sysconf(_SC_NPROCESSORS_CONF);
@@ -131,22 +132,22 @@ static void init_Hertz_value(void){
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_1);
     /* uptime(&up_1, NULL); */
     FILE_TO_BUF(STAT_FILE,stat_fd);
-    sscanf(buf, "cpu %lu %lu %lu %lu", &user_j, &nice_j, &sys_j, &other_j);
+    sscanf(buf, "cpu %Lu %Lu %Lu %Lu", &user_j, &nice_j, &sys_j, &other_j);
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_2);
     /* uptime(&up_2, NULL); */
   } while((long long)( (up_2-up_1)*1000.0/up_1 )); /* want under 0.1% error */
   setlocale(LC_NUMERIC, savelocale);
   jiffies = user_j + nice_j + sys_j + other_j;
   seconds = (up_1 + up_2) / 2;
-  h = (unsigned long long)( (double)jiffies/seconds/smp_num_cpus );
+  h = (unsigned)( (double)jiffies/seconds/smp_num_cpus );
   /* actual values used by 2.4 kernels: 32 64 100 128 1000 1024 1200 */
   switch(h){
   case    9 ...   11 :  Hertz =   10; break; /* S/390 (sometimes) */
   case   18 ...   22 :  Hertz =   20; break; /* user-mode Linux */
   case   30 ...   34 :  Hertz =   32; break; /* ia64 emulator */
   case   48 ...   52 :  Hertz =   50; break;
-  case   58 ...   62 :  Hertz =   60; break;
-  case   63 ...   65 :  Hertz =   64; break; /* StrongARM /Shark */
+  case   58 ...   61 :  Hertz =   60; break;
+  case   62 ...   65 :  Hertz =   64; break; /* StrongARM /Shark */
   case   95 ...  105 :  Hertz =  100; break; /* normal Linux */
   case  124 ...  132 :  Hertz =  128; break; /* MIPS, ARM */
   case  195 ...  204 :  Hertz =  200; break; /* normal << 1 */
@@ -163,7 +164,7 @@ static void init_Hertz_value(void){
     /* If 32-bit or big-endian (not Alpha or ia64), assume HZ is 100. */
     Hertz = (sizeof(long)==sizeof(int) || htons(999)==999) ? 100UL : 1024UL;
 #endif
-    fprintf(stderr, "Unknown HZ value! (%ld) Assume %ld.\n", h, Hertz);
+    fprintf(stderr, "Unknown HZ value! (%d) Assume %Ld.\n", h, Hertz);
   }
 }
 
@@ -185,7 +186,7 @@ void four_cpu_numbers(double *uret, double *nret, double *sret, double *iret){
     JT ticks_past; /* avoid div-by-0 by not calling too often :-( */
  
     FILE_TO_BUF(STAT_FILE,stat_fd);
-    sscanf(buf, "cpu %lu %lu %lu %lu", &new_u, &new_n, &new_s, &new_i);
+    sscanf(buf, "cpu %Lu %Lu %Lu %Lu", &new_u, &new_n, &new_s, &new_i);
     ticks_past = (new_u+new_n+new_s+new_i)-(old_u+old_n+old_s+old_i);
     if(ticks_past){
       scale = 100.0 / (double)ticks_past;

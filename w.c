@@ -168,7 +168,8 @@ static proc_t *getproc(utmp_t *u, char *tty, unsigned long long *jcpu, int *foun
 
 /***** showinfo */
 static void showinfo(utmp_t *u, int formtype, int maxcmd, int from) {
-    unsigned long long jcpu, ut_pid_found;
+    unsigned long long jcpu;
+    int ut_pid_found;
     unsigned i;
     char uname[USERSZ + 1] = "",
 	tty[5 + sizeof u->ut_line + 1] = "/dev/";
