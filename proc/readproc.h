@@ -53,14 +53,14 @@ typedef struct proc_t {
 	start_time;	/* start time of process -- seconds since 1-1-70 */
 #ifdef SIGNAL_STRING
     char
-	/* Linux 2.1.7x and up have more signals. This handles 88. */
-	signal[24],	/* mask of pending signals */
-	blocked[24],	/* mask of blocked signals */
-	sigignore[24],	/* mask of ignored signals */
-	sigcatch[24];	/* mask of caught  signals */
+	/* Linux 2.1.7x and up have 64 signals. Allow 64, plus '\0' and padding. */
+	signal[18],	/* mask of pending signals */
+	blocked[18],	/* mask of blocked signals */
+	sigignore[18],	/* mask of ignored signals */
+	sigcatch[18];	/* mask of caught  signals */
 #else
     long long
-	/* Linux 2.1.7x and up have more signals. This handles 64. */
+	/* Linux 2.1.7x and up have 64 signals. */
 	signal,		/* mask of pending signals */
 	blocked,	/* mask of blocked signals */
 	sigignore,	/* mask of ignored signals */
@@ -105,8 +105,6 @@ typedef struct proc_t {
 	kstk_esp,	/* kernel stack pointer */
 	kstk_eip,	/* kernel instruction pointer */
 	wchan;		/* address of kernel wait channel proc is sleeping in */
-    struct proc_s *l,	/* ptrs for building arbitrary linked structs */
-                  *r;	/* (i.e. singly/doubly-linked lists and trees */
     char
 	**environ,	/* environment string vector (/proc/#/environ) */
 	**cmdline;	/* command line string vector (/proc/#/cmdline) */
