@@ -77,6 +77,13 @@ void freeproc(proc_t* p) {
 }
 
 
+// 2.5.xx looks like:
+//
+// "State:\t%s\n"
+// "Tgid:\t%d\n"
+// "Pid:\t%d\n"
+// "PPid:\t%d\n"
+// "TracerPid:\t%d\n"
 
 static void status2proc(const char *S, proc_t *restrict P){
     char* tmp;
@@ -105,11 +112,9 @@ static void status2proc(const char *S, proc_t *restrict P){
     if(likely(tmp)) P->state = tmp[7];
     else fprintf(stderr, "Internal error!\n");
 
-    tmp = strstr (S,"Pid:");
+    tmp = strstr (S,"PPid:");
     if(likely(tmp)) sscanf (tmp,
-        "Pid:\t%d\n"
         "PPid:\t%d\n",
-        &P->pid,
         &P->ppid
     );
     else fprintf(stderr, "Internal error!\n");
@@ -166,10 +171,8 @@ static void status2proc(const char *S, proc_t *restrict P){
 
 
 
-/* stat2proc() makes sure it can handle arbitrary executable file basenames
- * for `cmd', i.e. those with embedded whitespace or embedded ')'s.
- * Such names confuse %s (see scanf(3)), so the string is split and %39c
- * is used instead. (except for embedded ')' "(%[^)]c)" would work.
+/* Reads /proc/*/stat files, being careful not to trip over processes with
+ * names like ":-) 1 2 3 4 5 6".
  */
 static void stat2proc(const char* S, proc_t *restrict P) {
     unsigned num;
@@ -181,9 +184,8 @@ static void stat2proc(const char* S, proc_t *restrict P) {
     P->rtprio = -1;
     P->sched = -1;
 
-    P->pid = strtol(S, &tmp, 10);
-    S = tmp + 2;
-    tmp = strrchr(S, ')');	 // split into "PID (cmd" and "<rest>"
+    S = strchr(S, '(') + 1;
+    tmp = strrchr(S, ')');
     num = tmp - S;
     if(unlikely(num >= sizeof P->cmd)) num = sizeof P->cmd - 1;
     memcpy(P->cmd, S, num);
@@ -376,16 +378,20 @@ next_proc:				/* get next PID for consideration */
 #define flags (PT->flags)
 
     if (flags & PROC_PID) {
-	if (unlikely(!*PT->pids))	/* set to next item in pids */
-	    return NULL;
-	sprintf(path, "/proc/%d", *(PT->pids)++);
+        pid_t pid = *(PT->pids)++;
+	if (unlikely(!pid)) return NULL;
+	p->pid = pid;
+	snprintf(path, sizeof path, "/proc/%d", pid);
     } else {					/* get next numeric /proc ent */
 	for (;;) {
 	    ent = readdir(PT->procfs);
 	    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return NULL;
-	    if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name < '9') )) break;
+	    if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name <= '9') )) break;
 	}
-	sprintf(path, "/proc/%s", ent->d_name);
+	p->pid = strtoul(ent->d_name, NULL, 10);
+	memcpy(path, "/proc/", 6);
+	strcpy(path+6, ent->d_name);  // trust /proc to not contain evil top-level entries
+//	snprintf(path, sizeof path, "/proc/%s", ent->d_name);
     }
 #ifdef FLASK_LINUX
     if ( stat_secure(path, &sb, &secsid) == -1 ) /* no such dirent (anymore) */
@@ -452,9 +458,6 @@ next_proc:				/* get next PID for consideration */
     else
         p->environ = NULL;
     
-    if (unlikely(p->state == 'Z'))	/* fixup cmd for zombies */
-	strncat(p->cmd," <defunct>", sizeof p->cmd);
-
     return p;
 }
 #undef flags
@@ -484,12 +487,15 @@ next_proc:				/* get next PID for consideration */
 /*printf("PT->flags is 0x%08x\n", PT->flags);*/
 #define flags (PT->flags)
 
-	while ((ent = readdir(PT->procfs)) &&
-	       (*ent->d_name < '0' || *ent->d_name > '9'))
-	    ;
-	if (!ent || !ent->d_name)
-	    return NULL;
-	sprintf(path, "/proc/%s", ent->d_name);
+    for (;;) {
+	ent = readdir(PT->procfs);
+	if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return NULL;
+	if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name <= '9') )) break;
+    }
+    p->pid = strtoul(ent->d_name, NULL, 10);
+    memcpy(path, "/proc/", 6);
+    strcpy(path+6, ent->d_name);  // trust /proc to not contain evil top-level entries
+//  snprintf(path, sizeof path, "/proc/%s", ent->d_name);
 
 #ifdef FLASK_LINUX
     if (stat_secure(path, &sb, &secsid) == -1) /* no such dirent (anymore) */
@@ -550,9 +556,6 @@ next_proc:				/* get next PID for consideration */
     else
         p->environ = NULL;
     
-    if (p->state == 'Z')		/* fixup cmd for zombies */
-	strncat(p->cmd," <defunct>", sizeof p->cmd);
-
     return p;
 }
 #undef flags

@@ -42,7 +42,7 @@ const char *help_message =
 "-V,V show version       L  list format codes  f  ASCII art forest\n"
 "-m,m show threads       S  children in sum    -y change -l format\n"
 "-n,N set namelist file  c  true command name  n  numeric WCHAN,UID\n"
-"-w,w wide output        e  show environment   -H process heirarchy\n"
+"-w,w wide output        e  show environment   -H process hierarchy\n"
 ;
 
 

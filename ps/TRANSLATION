@@ -24,5 +24,5 @@ I think these are the most important options:
 -f            full format
 s             signal format
 u             user-oriented format
---forest      ASCII art forest (process heirarchy)
+--forest      ASCII art forest (process hierarchy)
 c             show true command name

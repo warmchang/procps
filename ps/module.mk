@@ -11,7 +11,7 @@ DIRS += ps/
 # a file to create
 ALL += ps/ps
 
-PS_C    := display escape global help output parser select sortformat
+PS_C    := display global help output parser select sortformat
 PSNAMES := $(addprefix ps/,$(PS_C))
 PSOBJ   := $(addsuffix .o,$(PSNAMES))
 PSSRC   := $(addsuffix .c,$(PSNAMES))

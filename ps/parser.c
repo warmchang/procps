@@ -253,7 +253,7 @@ static const char *parse_sysv_option(void){
       selection_list->typecode = SEL_RGID;
       return NULL; /* can't have any more options */
     case 'H':     /* another nice HP/UX feature */
-      trace("-H Process heirarchy (like ASCII art forest option)\n");
+      trace("-H Process hierarchy (like ASCII art forest option)\n");
       forest_type = 'u';
       break;
     case 'L':  /*  */
