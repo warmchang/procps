@@ -65,6 +65,7 @@
 #include "../proc/wchan.h"
 #include "../proc/procps.h"
 #include "../proc/devname.h"
+#include "../proc/escape.h"
 #include "common.h"
 
 #ifdef FLASK_LINUX

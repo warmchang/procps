@@ -171,9 +171,8 @@ static void status2proc(const char *S, proc_t *restrict P){
 
 
 
-/* Reads /proc/*/stat files, being careful not to trip over processes with
- * names like ":-) 1 2 3 4 5 6".
- */
+// Reads /proc/*/stat files, being careful not to trip over processes with
+// names like ":-) 1 2 3 4 5 6".
 static void stat2proc(const char* S, proc_t *restrict P) {
     unsigned num;
     char* tmp;

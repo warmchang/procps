@@ -215,15 +215,6 @@ typedef struct sf_node {
   int sf_code;
 } sf_node;
 
-
-/*********************** GENERAL GLOBALS *************************/
-
-/* escape.c */
-extern int escape_strlist(char *restrict dst, const char *restrict const *restrict src, size_t n);
-extern int escape_str(char *restrict dst, const char *restrict src, size_t n);
-extern int octal_escape_str(char *restrict dst, const char *restrict src, size_t n);
-extern int simple_escape_str(char *restrict dst, const char *restrict src, size_t n);
-
 /********************* UNDECIDED GLOBALS **************/
 
 /* output.c */
