@@ -44,7 +44,6 @@ static int first_screen=1;
 
 
 #define min(x,y) ((x) > (y) ? (y) : (x))
-#define max(x,y) ((x) > (y) ? (x) : (y))
 
 
 static void
@@ -105,8 +104,6 @@ main(int argc, char *argv[])
   int interval=2;
   char *command;
   int command_length=0;		/* not including final \0 */
-  int s;
-  char *endp;
 
   setlocale(LC_ALL,"");
   progname = argv[0];
@@ -162,13 +159,12 @@ main(int argc, char *argv[])
   if (optind >= argc)
     do_usage();
 
-  command_length = strlen(argv[optind]);
-  command = (char*)malloc(command_length + 1); /* space or \0 */
-  memcpy(command, argv[optind++], command_length);
-  command[command_length] = '\0';
+  command = strdup(argv[optind++]);
+  command_length = strlen(command);
   for (;optind<argc;optind++)
     {
-      s = strlen(argv[optind]);
+      char *endp;
+      int s = strlen(argv[optind]);
       command = realloc(command, command_length+s+2); /* space and \0 */
       endp = command + command_length;
       *endp = ' ';
