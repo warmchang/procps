@@ -990,21 +990,15 @@ rm -f conftest*
 
 fi
 
+#
+# Unfortunately not every gcc supports these:
+# -Wpadded -Wunreachable-code -Wdisabled-optimization
+#
 echo "$ac_t""$ac_cv_prog_cc_g" 1>&6
 if test "$ac_test_CFLAGS" = set; then
   CFLAGS="$ac_save_CFLAGS"
-elif test $ac_cv_prog_cc_g = yes; then
-  if test "$GCC" = yes; then
-    CFLAGS="-g -O2"
-  else
-    CFLAGS="-g"
-  fi
 else
-  if test "$GCC" = yes; then
-    CFLAGS="-O2"
-  else
-    CFLAGS=
-  fi
+  CFLAGS="-O2 -fno-common -Wcast-align -Wconversion -Wredundant-decls -Wbad-function-cast -Wcast-qual -Wwrite-strings -Waggregate-return -W -Wall -Wstrict-prototypes -Wshadow -Wmissing-prototypes"
 fi
 
 # Find a good install program.  We prefer a C program (faster),
