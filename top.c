@@ -932,9 +932,10 @@ static proc_t **procs_refresh (proc_t **table, int flags)
 
    // i) Allocated Chunks:  *Existing* table;  refresh + reuse
    while (curmax < savmax) {
-      if (table[curmax]->cmdline)
+      if (table[curmax]->cmdline) {
          free(*table[curmax]->cmdline);
-      memset(table[curmax], '\0', ENTsz);
+         table[curmax]->cmdline = NULL;
+      }
       if (!(ptsk = readproc(PT, table[curmax]))) break;
       prochlp(ptsk);                    // tally & complete this proc_t
       ++curmax;
@@ -2146,7 +2147,7 @@ static proc_t **summary_show (void)
       if (Mode_altscr) w = w->next;
    } while (w != Curwin);
 
-   //* whoa first time, gotta' prime the pump...
+   // whoa first time, gotta' prime the pump...
    if (!p_table) {
       p_table = procs_refresh(NULL, p_flags);
       putp(Cap_clr_scr);
@@ -2446,8 +2447,7 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
          else Frame_srtflg = -1;
       Frame_ctimes = CHKw(q, Show_CTIMES);        // this and next, only maybe
       Frame_cmdlin = CHKw(q, Show_CMDLIN);
-      qsort(ppt, (unsigned)Frame_maxtask, sizeof(proc_t *)
-         , Fieldstab[q->sortindx].sort);
+      qsort(ppt, Frame_maxtask, sizeof(proc_t *), Fieldstab[q->sortindx].sort);
 #ifdef SORT_SUPRESS
    }
 #endif
