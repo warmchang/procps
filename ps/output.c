@@ -1087,7 +1087,7 @@ static int pr_context(char *restrict const outbuf, const proc_t *restrict const 
 
 // wchan file is suitable for testing
 //snprintf(filename, sizeof filename, "/proc/%d/wchan", pp->tgid);
-  snprintf(filename, sizeof filename, "/proc/%d/attr/current", pp->tgid);
+snprintf(filename, sizeof filename, "/proc/%d/attr/current", pp->tgid);
 
   fd = open(filename, O_RDONLY, 0);
   if(likely(fd==-1)) goto fail;
@@ -1096,10 +1096,10 @@ static int pr_context(char *restrict const outbuf, const proc_t *restrict const 
   if(unlikely(num_read<=0)) goto fail;
   outbuf[num_read] = '\0';
 
-  len = strspn(outbuf, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:_0123456789/^");
-  if(!len) goto fail;
+  len = 0;
+  while(outbuf[len]>' ' && outbuf[len]<='~') len++;
   outbuf[len] = '\0';
-  return len;
+  if(len) return len;
 
 fail:
   outbuf[0] = '-';

@@ -1,3 +1,7 @@
+procps-3.2.4 --> procps-3.2.5
+
+ps: security labels can contain any printable ASCII
+
 procps-3.2.3 --> procps-3.2.4
 
 support 64-bit MIPS with n32 binary
