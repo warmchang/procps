@@ -1,7 +1,8 @@
 COMPATIBILITY
 
-    This code is intended for use with Linux 2.0.xx and above.
-    Both libc 5 and libc 6 should work.
+    This code is intended for use with Linux 2.2.xx, 2.4.xx,
+    2.5.xx, and hopefully all future kernels. You should be
+    running a system with libc 6, but libc 5 might work too.
 
 INSTALLATION
 

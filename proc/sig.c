@@ -146,7 +146,7 @@ int signal_name_to_number(const char *restrict name){
   return val+offset;
 }
 
-static const char *signal_number_to_name(int signo){
+const char *signal_number_to_name(int signo){
   static char buf[32];
   int n = number_of_signals;
   signo &= 0x7f; /* need to process exit values too */

@@ -87,6 +87,10 @@ static int   Monpidsidx = 0;
 static char Msg_delayed [SMLBUFSIZ];
 static int  Msg_awaiting = 0;
 
+// This is the select() timeout. Clear it in sig handlers to avoid a race.
+static volatile struct timeval tv;
+#define ZAP_TIMEOUT do{tv.tv_usec=0; tv.tv_sec=0;}while(0);
+
         /* Configurable Display support ##################################*/
 
         /* Current screen dimensions.
@@ -437,6 +441,7 @@ static void suspend (int dont_care_sig)
    fflush(stdout);
    raise(SIGSTOP);
       /* later, after SIGCONT... */
+   ZAP_TIMEOUT
    if (!Batch)
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Rawtty);
 }
@@ -2310,6 +2315,7 @@ static void wins_resize (int dont_care_sig)
 
    // force rebuild of column headers AND libproc/readproc requirements
    Frames_libflags = 0;
+   ZAP_TIMEOUT
 }
 
 
@@ -2804,7 +2810,12 @@ static proc_t **summary_show (void)
    if (!p_table) {
       p_table = procs_refresh(NULL, Frames_libflags);
       putp(Cap_clr_scr);
-      sleep(1);
+#ifndef PROF
+      // sleep for half a second
+      tv.tv_sec = 0;
+      tv.tv_usec = 500000;
+      select(0, NULL, NULL, NULL, &tv);  // ought to loop until done
+#endif
    } else
       putp(Batch ? "\n\n" : Cap_home);
    p_table = procs_refresh(p_table, Frames_libflags);
@@ -2812,13 +2823,14 @@ static proc_t **summary_show (void)
    /*
     ** Display Uptime and Loadavg */
    if (CHKw(Curwin, View_LOADAV)) {
-      if (!Rc.mode_altscr)
+      if (!Rc.mode_altscr) {
          show_special(0, fmtmk(LOADAV_line, Myname, sprint_uptime()));
-      else
+      } else {
          show_special(0, fmtmk(CHKw(Curwin, VISIBLE_tsk)
             ? LOADAV_line_alt
             : LOADAV_line
             , Curwin->grpname, sprint_uptime()));
+      }
       Msg_row += 1;
    }
 
@@ -3228,26 +3240,30 @@ int main (int dont_care_argc, char **argv)
    signal(SIGWINCH, wins_resize);
 
    for (;;) {
-      struct timeval tv;
-      fd_set fs;
-      char c;
-                                        //                     This is it?
-      frame_make();                     //                     Impossible!
+      frame_make();
 
       if (Msg_awaiting) show_msg(Msg_delayed);
       if (0 < Loops) --Loops;
       if (!Loops) end_pgm(0);
 
-      if (Batch)
-         sleep((unsigned)Rc.delay_time);
-      else {                            //   Linux reports time not slept,
-         tv.tv_sec = Rc.delay_time;     //   so we must reinit every time.
-         tv.tv_usec = (Rc.delay_time - (int)Rc.delay_time) * 1000000;
+      tv.tv_sec = Rc.delay_time;
+      tv.tv_usec = (Rc.delay_time - (int)Rc.delay_time) * 1000000;
+
+      if (Batch) {
+         select(0, NULL, NULL, NULL, &tv);  // ought to loop until done
+      } else {
+         long file_flags;
+         char c;
+         fd_set fs;
          FD_ZERO(&fs);
          FD_SET(STDIN_FILENO, &fs);
-         if (0 < select(STDIN_FILENO+1, &fs, NULL, NULL, &tv)
-         &&  0 < chin(0, &c, 1))
-            do_key((unsigned)c);
+         file_flags = fcntl(STDIN_FILENO, F_GETFL);
+         if(file_flags==-1) file_flags=0;
+         fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK|file_flags);
+         // check 1st, in case tv zeroed (by sig handler) before it got set
+         if (chin(0, &c, 1) <= 0) select(1, &fs, NULL, NULL, &tv);
+         if (chin(0, &c, 1) > 0) do_key((unsigned)c);
+         fcntl(STDIN_FILENO, F_SETFL, file_flags);
       }
    }
 

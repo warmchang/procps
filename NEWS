@@ -2,6 +2,10 @@ procps-3.1.6 --> procps-3.1.7
 
 watch: --help now explains -t, --no-title    #182246
 ps: warning directs users to the FAQ
+top: batch mode can refresh by fractional seconds
+top: faster start-up
+top: do not refresh like crazy
+ps: better crash message
 
 procps-3.1.5 --> procps-3.1.6
 

@@ -266,7 +266,7 @@ hell:
   *bufp = NULL;
   *roomp = 0;   /* this function will never work again */
   total = 0;
-  close(fd);
+  if(fd>0) close(fd);
   return;
 }
 
