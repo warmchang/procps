@@ -143,6 +143,7 @@ static void arg_show(void){
     case SEL_FGID: show_gid("FGID", walk->n, walk->u); break;
     case SEL_PGRP: show_pid("PGRP", walk->n, walk->u); break;
     case SEL_PID : show_pid("PID ", walk->n, walk->u); break;
+    case SEL_PPID: show_pid("PPID", walk->n, walk->u); break;
     case SEL_TTY : show_tty("TTY ", walk->n, walk->u); break;
     case SEL_SESS: show_pid("SESS", walk->n, walk->u); break;
     case SEL_COMM: show_cmd("COMM", walk->n, walk->u); break;

@@ -30,7 +30,7 @@ const char *help_message =
 "r  only running processes             U  processes for specified users\n"
 "x  processes w/o controlling ttys     t  by tty\n"
 "*********** output format **********  *********** long options ***********\n"
-"-o,o user-defined  -f full            --Group --User --pid --cols\n"
+"-o,o user-defined  -f full            --Group --User --pid --cols --ppid\n"
 "-j,j job control   s  signal          --group --user --sid --rows\n"
 "-O,O preloaded -o  v  virtual memory  --cumulative --format --deselect\n"
 "-l,l long          u  user-oriented   --sort --tty --forest --version\n"

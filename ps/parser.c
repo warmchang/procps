@@ -753,6 +753,7 @@ static const char *parse_gnu_option(void){
   {"noheading",     &&case_noheading},
   {"noheadings",    &&case_noheadings},
   {"pid",           &&case_pid},
+  {"ppid",          &&case_ppid},
   {"rows",          &&case_rows},
   {"secsid",        &&case_secsid},
   {"sid",           &&case_sid},
@@ -880,6 +881,14 @@ static const char *parse_gnu_option(void){
     err=parse_list(arg, parse_pid);
     if(err) return err;
     selection_list->typecode = SEL_PID;
+    return NULL;
+  case_ppid:
+    trace("--ppid\n");
+    arg = grab_gnu_arg();
+    if(!arg) return "List of process IDs must follow --ppid.";
+    err=parse_list(arg, parse_pid);
+    if(err) return err;
+    selection_list->typecode = SEL_PPID;
     return NULL;
   case_rows:
   case_lines:

@@ -102,6 +102,7 @@ static int proc_was_listed(proc_t *buf){
 
     break; case SEL_PGRP: return_if_match(pgrp,pid);
     break; case SEL_PID : return_if_match(pid,pid);
+    break; case SEL_PPID: return_if_match(ppid,ppid);
     break; case SEL_TTY : return_if_match(tty,tty);
     break; case SEL_SESS: return_if_match(session,pid);
 
