@@ -15,7 +15,7 @@ Send comments, bug reports, patches, etc., to albert@users.sf.net
 What to send
 ============
 It is much more useful to me if a program really crashes to recompile it
-with make "CC=gcc -ggdb -O", run it with "gdb prog" and "run" and send
+with make "CFLAGS=-ggdb -O", run it with "gdb prog" and "run" and send
 me a stack trace ('bt' command).  That said, any bug report is still
 better than none.
 
@@ -24,15 +24,13 @@ strace and ltrace output are very helpful:
         strace -o output-file ps --blah
         bzip2 output-file
 
-It might be nice to get rid of miscellaneous compiler warnings, but
-don't bend over backwards to do it.
-
+I also like "ps --info" output, even if there isn't a ps problem.
 
 Kernel-Dependent Patches
 ========================
 If you send me patches which are specific to *running* with a particular
 kernel version of /proc, please condition them with the runtime determined
-variable `linux_version_code' from libproc/kvers.c.  It is the same
+variable 'linux_version_code' from libproc/version.c.  It is the same
 number as the macro LINUX_VERSION_CODE for which the kernel /proc fs
 code was compiled.
 
@@ -55,6 +53,9 @@ or
 to create your diffs and you will make me happy.  Also make sure to
 include a description of what the diff is for or I'm likely to ignore
 it because of general lack of time...
+
+It might be nice to get rid of miscellaneous compiler warnings, but
+don't bend over backwards to do it.
 
 
 Code Structure
