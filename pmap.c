@@ -545,11 +545,11 @@ static int one_proc (struct pids_stack *p)
 	printf("%u:   %s\n", PIDS_VAL(tgid, s_int, p, Pids_info), PIDS_VAL(cmdline, str, p, Pids_info));
 
 	if (x_option || X_option || c_option) {
-		sprintf(buf, "/proc/%u/smaps", PIDS_VAL(tgid, s_int, p, Pids_info));
+		snprintf(buf, sizeof buf, "/proc/%u/smaps", PIDS_VAL(tgid, s_int, p, Pids_info));
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	} else {
-		sprintf(buf, "/proc/%u/maps", PIDS_VAL(tgid, s_int, p, Pids_info));
+		snprintf(buf, sizeof buf, "/proc/%u/maps", PIDS_VAL(tgid, s_int, p, Pids_info));
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	}
