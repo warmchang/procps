@@ -1,5 +1,0 @@
-#!/bin/sh
-# xconsole is capable of doing everything XConsole did, and is maintained...
-# it is not setuid root, so we just exit if called as non-root
-[ $(id -u) = 0 ] || exit 0
-exec xconsole -file /proc/kmsg "$@"

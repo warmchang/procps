@@ -18,9 +18,9 @@
 
 VERSION      := 3
 SUBVERSION   := 0
-MINORVERSION := 4
-TARVERSION   := 3.0.4
-LIBVERSION   := 3.0.4
+MINORVERSION := 5
+TARVERSION   := 3.0.5
+LIBVERSION   := 3.0.5
 
 ############ vars
 
@@ -50,8 +50,6 @@ BINFILES := $(usr/bin)uptime $(usr/bin)tload $(usr/bin)free $(usr/bin)w \
             $(usr/bin)snice $(bin)kill $(sbin)sysctl \
             $(usr/proc/bin)pgrep $(usr/proc/bin)pkill
 
-SCRFILES := $(etc/X11/applnk/Utilities)top.desktop $(usr/X11R6/bin)XConsole
-
 MANFILES := $(man1)uptime.1 $(man1)tload.1 $(man1)free.1 $(man1)w.1 \
             $(man1)top.1 $(man1)watch.1 $(man1)skill.1 $(man1)kill.1 \
             $(man1)snice.1 $(man1)pgrep.1 $(man1)pkill.1 \
@@ -59,7 +57,7 @@ MANFILES := $(man1)uptime.1 $(man1)tload.1 $(man1)free.1 $(man1)w.1 \
 
 TARFILES := AUTHORS BUGS NEWS README TODO COPYING COPYING.LIB ChangeLog \
             Makefile Makefile.noam procps.lsm procps.spec v t README.top \
-            minimal.c $(notdir $(SCRFILES)) $(notdir $(MANFILES)) \
+            minimal.c $(notdir $(MANFILES)) \
             uptime.c tload.c free.c w.c top.c vmstat.c watch.c skill.c \
             sysctl.c pgrep.c top.h
 
@@ -89,7 +87,7 @@ CLEAN := $(notdir $(BINFILES))
 
 DIRS :=
 
-INSTALL := $(BINFILES) $(MANFILES) # $(SCRFILES)
+INSTALL := $(BINFILES) $(MANFILES)
 
 # want this rule first, use := on ALL, and ALL not filled in yet
 all: do_all
@@ -131,9 +129,6 @@ clean:
 
 $(BINFILES) : all
 	$(install) --mode a=rx --strip $(notdir $@) $@
-
-$(SCRFILES) : all
-	$(install) --mode a=rx $(notdir $@) $@
 
 $(MANFILES) : all
 	$(install) --mode a=r $(notdir $@) $@

@@ -1,6 +1,0 @@
-[Desktop Entry]
-Name=Top
-Type=Application
-Comment=Repeatedly display processes by CPU time, memory usage, etc.
-Exec=top
-Terminal=true
