@@ -216,11 +216,10 @@ int escape_command(char *restrict const outbuf, const proc_t *restrict const pp,
     if(pp->state=='Z') overhead += 10;    // chars in " <defunct>"
     else flags &= ~ESC_DEFUNCT;
   }
-  if(overhead + 1 >= *cells){  // if no room for even one byte of the command name
-    // you'd damn well better have _some_ space
-//    outbuf[0] = '-';  // Oct23
-    outbuf[1] = '\0';
-    return 1;
+  if(overhead + 1 >= *cells || // if no room for even one byte of the command name
+     overhead + 1 >= bytes){
+    outbuf[0] = '\0';
+    return 0;
   }
   if(flags & ESC_BRACKETS){
     outbuf[end++] = '[';
