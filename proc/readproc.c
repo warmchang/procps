@@ -77,7 +77,7 @@ void freeproc(proc_t* p) {
 
 static void status2proc(const char *S, proc_t *restrict P){
     char* tmp;
-    int i;
+    unsigned i;
 
     // The cmd is escaped, with \\ and \n for backslash and newline.
     // It certainly may contain "VmSize:" and similar crap.
@@ -169,7 +169,7 @@ static void status2proc(const char *S, proc_t *restrict P){
  * is used instead. (except for embedded ')' "(%[^)]c)" would work.
  */
 static void stat2proc(const char* S, proc_t *restrict P) {
-    int num;
+    unsigned num;
     char* tmp;
 
     /* fill in default values for older kernels */
@@ -300,11 +300,11 @@ static char** file2strvec(const char* directory, const char* what) {
 int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid){
     char name[32];
     int fd;
-    int n = 0;
+    unsigned n = 0;
+    dst[0] = '\0';
     snprintf(name, sizeof name, "/proc/%u/cmdline", pid);
     fd = open(name, O_RDONLY);
-    if(fd==-1) return NULL;
-    dst[0] = '\0';
+    if(fd==-1) return 0;
     for(;;){
         ssize_t r = read(fd,dst+n,sz-n);
         if(r==-1){
