@@ -860,9 +860,8 @@ const char *process_sf_options(int localbroken){
     case FF_LX:          spec="OL_X";         break;
     case FF_Lm:          spec="OL_m";         break;
 
-    /* These are FLASK security options. */
+    /* This is the sole FLASK security option. */
     case FF_Fc:          spec="FLASK_context"; break;
-    case FF_Fs:          spec="FLASK_sid";     break;
 
     }  /* end switch(format_flags) */
 

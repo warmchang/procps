@@ -27,10 +27,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef FLASK_LINUX
-#include <fs_secure.h>
-#endif
-
 // sometimes it's easier to do this manually, w/o gcc helping
 #ifdef PROF
 extern void __cyg_profile_func_enter(void*,void*);

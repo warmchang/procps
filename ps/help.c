@@ -34,21 +34,18 @@ const char *help_message =
 "-j,j job control   s  signal          --group --user --sid --rows\n"
 "-O,O preloaded -o  v  virtual memory  --cumulative --format --deselect\n"
 "-l,l long          u  user-oriented   --sort --tty --forest --version\n"
-"-F   extra full    X  registers       --heading --no-heading\n"
-#ifdef FLASK_LINUX
-"                                      --context --SID   (Flask only)\n"
-#endif
+"-F   extra full    X  registers       --heading --no-heading --context\n"
 "                    ********* misc options *********\n"
-"-V,V show version       L  list format codes  f  ASCII art forest\n"
-"-m,m show threads       S  children in sum    -y change -l format\n"
-"-n,N set namelist file  c  true command name  n  numeric WCHAN,UID\n"
-"-w,w wide output        e  show environment   -H process hierarchy\n"
+"-V,V  show version      L  list format codes  f  ASCII art forest\n"
+"-m,m,-L,-T,H  threads   S  children in sum    -y change -l format\n"
+"-c    scheduling class  c  true command name  n  numeric WCHAN,UID\n"
+"-w,w  wide output       e  show environment   -H process hierarchy\n"
 ;
 
 
 
 /* Missing:
  *
- * -c -L -P -M --info
+ * -P -M --info
  *
  */

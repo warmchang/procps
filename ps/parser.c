@@ -737,7 +737,6 @@ static const char *parse_gnu_option(void){
   gnu_table_struct *found;
   static const gnu_table_struct gnu_table[] = {
   {"Group",         &&case_Group},       /* rgid */
-  {"SID",           &&case_secsid},
   {"User",          &&case_User},        /* ruid */
   {"cols",          &&case_cols},
   {"columns",       &&case_columns},
@@ -765,7 +764,6 @@ static const char *parse_gnu_option(void){
   {"pid",           &&case_pid},
   {"ppid",          &&case_ppid},
   {"rows",          &&case_rows},
-  {"secsid",        &&case_secsid},
   {"sid",           &&case_sid},
   {"sort",          &&case_sort},
   {"tty",           &&case_tty},
@@ -954,10 +952,6 @@ static const char *parse_gnu_option(void){
     trace("--context\n");
     format_flags |= FF_Fc;
     return NULL;
-  case_secsid:
-     trace("--secsid\n");
-     format_flags |= FF_Fs;
-     return NULL;
 }
 
 /*************** process trailing PIDs  **********************/

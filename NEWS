@@ -1,11 +1,11 @@
 procps-3.1.14 --> procps-3.1.15
 
 install to /lib64 if it exists
-hide kernel PID bug (Linux 2.4.13-pre1 to 2.4.MAX)   #217278 #219730 #217525
+hide kernel PID bug (Linux 2.4.13-pre1 to 2.4.MAX)   #217278 #219730 #217525 #224470
 ps: faster threaded display
-...top: Jim's fix
-...top: newline fix
-...sysctl: man page tweak
+top: auto-margin problem                           #217559
+ps: support NSA SELinux, all builds, Linux 2.6+    #193648
+sysctl: tweak man page for ESR's broken parser
 
 procps-3.1.13 --> procps-3.1.14
 
