@@ -128,7 +128,7 @@
    } while (0)
 #define PUFF(fmt,arg...) do { \
       char _str[ROWBUFSIZ]; \
-      char *_ptr = &Pseudo_scrn[Pseudo_row * Pseudo_cols]; \
+      char *_ptr = &Pseudo_scrn[Pseudo_row++ * Pseudo_cols]; \
       int _len = 1 + snprintf(_str, sizeof(_str), fmt, ## arg); \
       if (Batch) putp(_str); \
       else { \
@@ -137,7 +137,7 @@
          else { \
             memcpy(_ptr, _str, _len); \
             putp(_ptr); \
-      } } Pseudo_row++; \
+      } } \
    } while (0)
 
 /*------  Special Macros (debug and/or informative)  ---------------------*/
@@ -243,7 +243,7 @@ enum pflag {
 #define Show_CTIMES  0x0040     /* 'S' - show times as cumulative            */
 #define Show_IDLEPS  0x0020     /* 'i' - show idle processes (all tasks)     */
 #define Qsrt_NORMAL  0x0010     /* 'R' - reversed column sort (high to low)  */
-        /* these flag(s) have no command as such - they're for internal use  */
+        // these flag(s) have no command as such - they're for internal use
 #define VISIBLE_tsk  0x0008     /* tasks are showable when in 'Mode_altscr'  */
 #define NEWFRAM_cwo  0x0004     /* new frame (if anyone cares) - in Curwin   */
 #define EQUWINS_cwo  0x0002     /* rebalance tasks next frame (off 'i'/ 'n') */
@@ -527,7 +527,7 @@ typedef struct win {
 /*------  Tiny useful routine(s)  ----------------------------------------*/
 //atic int          chin (int ech, char *buf, unsigned cnt);
 //atic const char  *fmtmk (const char *fmts, ...);
-//atic inline char *scat (char *dst, const char *src);
+//atic inline char *scat (char *restrict dst, const char *restrict src);
 //atic char        *strim (int sp, char *str);
 //atic const char  *tg2 (int x, int y);
 /*------  Exit/Interrput routines  ---------------------------------------*/
@@ -548,9 +548,9 @@ typedef struct win {
 //atic const char  *scale_num (unsigned num, const int width, const unsigned type);
 //atic const char  *scale_tics (TICS_t tics, const int width);
 /*------  Library Alternatives  ------------------------------------------*/
-//atic void        *alloc_c (unsigned numb);
-//atic void        *alloc_r (void *q, unsigned numb);
-//atic CPUS_t      *cpus_refresh (CPUS_t *cpus);
+//atic void        *alloc_c (unsigned numb) MALLOC;
+//atic void        *alloc_r (void *q, unsigned numb) MALLOC;
+//atic CPUS_t      *cpus_refresh (CPUS_t *restrict cpus);
 //atic void         prochlp (proc_t *this);
 //atic proc_t     **procs_refresh (proc_t **table, int flags);
 /*------  Startup routines  ----------------------------------------------*/
@@ -577,9 +577,9 @@ typedef struct win {
 //atic void         windows_stage2 (void);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void         do_key (unsigned c);
-//atic void         summaryhlp (CPUS_t *cpu, const char *pfx);
+//atic void         summaryhlp (CPUS_t *restrict const cpu, const char *restrict const pfx);
 //atic proc_t     **summary_show (void);
-//atic void         task_show (WIN_t *q, proc_t *p);
+//atic void         task_show (const WIN_t *restrict q, const proc_t *restrict p);
 //atic void         window_show (proc_t **ppt, WIN_t *q, int *lscr);
 /*------  Entry point plus two  ------------------------------------------*/
 //atic void         framehlp (int wix, int max);

@@ -1261,8 +1261,7 @@ static void whack_terminal (void)
 #define L_CMDLINE  L_stat   | PROC_FILLARG
 #define L_EUSER    L_status | PROC_FILLUSR
 #define L_GROUP    L_status | PROC_FILLGRP
-   // from either 'stat' or 'status' (preferred), via bits not otherwise used
-#define L_EITHER  ~(L_stat|L_statm|L_status|L_CMDLINE|L_EUSER|L_GROUP)
+#define L_EITHER   PROC_SPARE_1
 #define L_NONE     0
    // for reframewins and summary_show 1st pass
 #define L_DEFAULT  PROC_FILLSTAT
@@ -2173,11 +2172,11 @@ static void summaryhlp (CPUS_t *restrict const cpu, const char *restrict const p
    STIC_t u_frme, s_frme, n_frme, i_frme, w_frme, tot_frme, tz;
    float scale;
 
-   u_frme = TRIMz(cpu->u - cpu->u_sav);
-   s_frme = TRIMz(cpu->s - cpu->s_sav);
-   n_frme = TRIMz(cpu->n - cpu->n_sav);
+   u_frme = cpu->u - cpu->u_sav;
+   s_frme = cpu->s - cpu->s_sav;
+   n_frme = cpu->n - cpu->n_sav;
    i_frme = TRIMz(cpu->i - cpu->i_sav);
-   w_frme = TRIMz(cpu->w - cpu->w_sav);
+   w_frme = cpu->w - cpu->w_sav;
    tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme;
    if (1 > tot_frme) tot_frme = 1;
    scale = 100.0 / (float)tot_frme;
@@ -2305,9 +2304,9 @@ static void task_show (const WIN_t *restrict q, const proc_t *restrict p)
 
    for (x = 0; x < q->maxpflgs; x++) {
       char cbuf[ROWBUFSIZ], _z[ROWBUFSIZ];
-      PFLG_t      i = q->procflags[x];          // support for our field/column
-      const char *restrict const f = Fieldstab[i].fmts;        // macro AND sometimes the fmt
-      unsigned    s = Fieldstab[i].scale;       // string must be altered !
+      PFLG_t      i = q->procflags[x];          // support for our make column
+      const char *restrict const f = Fieldstab[i].fmts; // macro AND sometimes
+      unsigned    s = Fieldstab[i].scale;       // fmt string must be altered !
       unsigned    w = Fieldstab[i].width;
 
       switch (i) {
