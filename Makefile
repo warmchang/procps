@@ -61,7 +61,7 @@ MANFILES := $(man1)uptime.1 $(man1)tload.1 $(man1)free.1 $(man1)w.1 \
 
 TARFILES := AUTHORS BUGS NEWS README TODO COPYING COPYING.LIB \
             Makefile procps.lsm procps.spec v t README.top CodingStyle \
-            minimal.c $(notdir $(MANFILES)) dummy.c \
+            sysctl.conf minimal.c $(notdir $(MANFILES)) dummy.c \
             uptime.c tload.c free.c w.c top.c vmstat.c watch.c skill.c \
             sysctl.c pgrep.c top.h pmap.c slabtop.c
 
