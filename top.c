@@ -1741,17 +1741,25 @@ static void cpudo (CPUS_t *cpu, const char *pfx)
 static void frame_states (proc_t **ppt, int show)
 {
    static HIST_t   *hist_sav;
+   static HIST_t   *hist_new;
    static unsigned  hist_siz; // number of structs
-   HIST_t          *hist_new;
    unsigned         total, running, sleeping, stopped, zombie;
+   HIST_t          *hist_tmp;
 
-   if (!hist_sav) {
+   if (!hist_sav) {           // 1st time through
       Frame_maxtask = 0;
       hist_siz = 100;
       hist_sav = alloc_c(sizeof(HIST_t)*hist_siz);
+      hist_new = alloc_c(sizeof(HIST_t)*hist_siz);
    }
-   hist_new = alloc_c(sizeof(HIST_t)*hist_siz);
+
+   // reuse memory each time around
+   hist_tmp = hist_sav;
+   hist_sav = hist_new;
+   hist_new = tmp;
+
    total = running = sleeping = stopped = zombie = 0;
+
    time_elapsed();
 
       /* make a pass through the data to get stats */
@@ -1800,9 +1808,6 @@ static void frame_states (proc_t **ppt, int show)
       total++;
    } /* end: while 'pids' */
 
-
-   free(hist_sav);
-   hist_sav = hist_new;
       /* shout results to the world (and us too, the next time around) */
    Frame_maxtask = total;
 
