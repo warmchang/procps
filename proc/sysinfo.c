@@ -108,6 +108,12 @@ int uptime(double *uptime_secs, double *idle_secs) {
  * This code should work fine, even if Linus fixes the kernel to match his
  * stated behavior. The code only fails in case of a partial conversion.
  *
+ * Recent update: on some architectures, the 2.4 kernel provides an
+ * ELF note to indicate HZ. This may be for ARM or user-mode Linux
+ * support. This ought to be investigated. Note that sysconf() is still
+ * unreliable, because it doesn't return an error code when it is
+ * used with a kernel that doesn't support the ELF note. On some other
+ * architectures there may be a system call or sysctl() that will work.
  */
 unsigned long Hertz;
 static void init_Hertz_value(void) __attribute__((constructor));
@@ -135,6 +141,8 @@ static void init_Hertz_value(void){
   h = (unsigned long)( (double)jiffies/seconds/smp_num_cpus );
   /* actual values used by 2.4 kernels: 32 64 100 128 1000 1024 1200 */
   switch(h){
+  case    9 ...   11 :  Hertz =   10; break; /* S/390 (sometimes) */
+  case   18 ...   22 :  Hertz =   20; break; /* user-mode Linux */
   case   30 ...   34 :  Hertz =   32; break; /* ia64 emulator */
   case   48 ...   52 :  Hertz =   50; break;
   case   58 ...   62 :  Hertz =   60; break;
@@ -143,16 +151,10 @@ static void init_Hertz_value(void){
   case  124 ...  132 :  Hertz =  128; break; /* MIPS, ARM */
   case  195 ...  204 :  Hertz =  200; break; /* normal << 1 */
   case  253 ...  260 :  Hertz =  256; break;
-  case  295 ...  304 :  Hertz =  300; break; /* 3 cpus */ 
   case  393 ...  408 :  Hertz =  400; break; /* normal << 2 */
-  case  495 ...  504 :  Hertz =  500; break; /* 5 cpus */
-  case  595 ...  604 :  Hertz =  600; break; /* 6 cpus */
-  case  695 ...  704 :  Hertz =  700; break; /* 7 cpus */  
   case  790 ...  808 :  Hertz =  800; break; /* normal << 3 */
-  case  895 ...  904 :  Hertz =  900; break; /* 9 cpus */ 
   case  990 ... 1010 :  Hertz = 1000; break; /* ARM */
   case 1015 ... 1035 :  Hertz = 1024; break; /* Alpha, ia64 */
-  case 1095 ... 1104 :  Hertz = 1100; break; /* 11 cpus */
   case 1180 ... 1220 :  Hertz = 1200; break; /* Alpha */
   default:
 #ifdef HZ
@@ -217,8 +219,8 @@ void loadavg(double *av1, double *av5, double *av15) {
     savelocale = setlocale(LC_NUMERIC, NULL);
     setlocale(LC_NUMERIC, "C");
     if (sscanf(buf, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3) {
-	    fprintf(stderr, "bad data in " LOADAVG_FILE "\n");
-	    exit(1);
+	fprintf(stderr, "bad data in " LOADAVG_FILE "\n");
+	exit(1);
     }
     setlocale(LC_NUMERIC, savelocale);
     SET_IF_DESIRED(av1,  avg_1);
@@ -285,6 +287,7 @@ unsigned kb_active;
 unsigned kb_inact_dirty;
 unsigned kb_inact_clean;
 unsigned kb_inact_target;
+unsigned kb_swap_cached;  /* late 2.4 only */
 /* derived values */
 unsigned kb_swap_used;
 unsigned kb_main_used;
@@ -309,6 +312,7 @@ void meminfo(void){
   {"MemFree",      &kb_main_free},
   {"MemShared",    &kb_main_shared},
   {"MemTotal",     &kb_main_total},
+  {"SwapCached",   &kb_swap_cached},
   {"SwapFree",     &kb_swap_free},
   {"SwapTotal",    &kb_swap_total}
   };
