@@ -1,6 +1,6 @@
 #ifndef PROCPS_PROC_READPROC_H
 #define PROCPS_PROC_READPROC_H
-/*
+
 // New Interface to Process Table -- PROCTAB Stream (a la Directory streams)
 // Copyright 1996 Charles L. Blake.
 // Copyright 1998 Michael K. Johnson

@@ -31,11 +31,6 @@ static int have_gnu_sort = 0;           /* if true, "O" must be format */
 static int already_parsed_sort = 0;     /* redundantly set in & out of fn */
 static int already_parsed_format = 0;
 
-#ifndef COL_PIDMAX
-#warning Ugly wart needs fixing, use common.h to sync w/ output.c
-#define COL_PIDMAX 0x20
-#endif
-
 
 /****************  Parse single format specifier *******************/
 static format_node *do_one_spec(const char *spec, const char *override){
@@ -47,7 +42,7 @@ static format_node *do_one_spec(const char *spec, const char *override){
     int w1, w2;
     format_node *thisnode;
     thisnode = malloc(sizeof(format_node));
-    if(fs->flags & COL_PIDMAX){
+    if(fs->flags & CF_PIDMAX){
       w1 = (int)get_pid_digits();
       w2 = strlen(fs->head);
       if(w2>w1) w1=w2; // FIXME w/ separate header/body column sizing

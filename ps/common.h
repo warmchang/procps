@@ -71,6 +71,25 @@
 
 /******************* PS DEFINE *******************/
 
+// Column flags
+// Justification control for flags field comes first.
+#define CF_JUST_MASK                0x0f
+//      CF_AIXHACK                     0
+#define CF_USER                        1 // left if text, right if numeric
+#define CF_LEFT                        2
+#define CF_RIGHT                       3
+#define CF_UNLIMITED                   4
+#define CF_WCHAN                       5 // left if text, right if numeric
+#define CF_SIGNAL                      6 // right in 9, or 16 if screen_cols>107
+// Then the other flags
+#define CF_CUMUL              0x00000010 // mark cumulative (Summed) headers with 'C' */
+#define CF_PIDMAX             0x00000020 // react to pid_max
+#define CF_PRINT_THREAD_ONLY  0x10000000
+#define CF_PRINT_PROCESS_ONLY 0x20000000
+#define CF_PRINT_EVERY_TIME   0x40000000
+#define CF_PRINT_AS_NEEDED    0x80000000 // means we have no clue, so assume EVERY TIME
+
+
 #define needs_for_select (PROC_FILLSTAT | PROC_FILLSTATUS)
 
 /* thread_flags */
@@ -226,7 +245,7 @@ typedef struct sf_node {
 /********************* UNDECIDED GLOBALS **************/
 
 /* output.c */
-extern void show_one_proc(const proc_t *restrict const p);
+extern void show_one_proc(const proc_t *restrict const p, const format_node *restrict fmt);
 extern void print_format_specifiers(void);
 extern const aix_struct *search_aix_array(const int findme);
 extern const shortsort_struct *search_shortsort_array(const int findme);

@@ -251,11 +251,11 @@ static void simple_spew(void){
   memset(&buf, '#', sizeof(proc_t));
   while(readproc(ptp,&buf)){
     if(want_this_proc(&buf)){
-      if(thread_flags & TF_show_proc) show_one_proc(&buf);
+      if(thread_flags & TF_show_proc) show_one_proc(&buf,format_list);
       if(thread_flags & TF_show_task){
         proc_t buf2;
         // must still have the process allocated
-        while(readtask(ptp,&buf,&buf2)) show_one_proc(&buf2);
+        while(readtask(ptp,&buf,&buf2)) show_one_proc(&buf2,format_list);
         // must not attempt to free cmdline and environ
       }
     }
@@ -313,7 +313,7 @@ static int compare_two_procs(const void *a, const void *b){
 static void show_proc_array(int n){
   proc_t **p = processes;
   while(n--){
-    show_one_proc(*p);
+    show_one_proc(*p,format_list);
     /* no point freeing any of this -- won't need more mem */
 //    if((*p)->cmdline) free((void*)*(*p)->cmdline);
 //    if((*p)->environ) free((void*)*(*p)->environ);
@@ -334,7 +334,7 @@ static void show_tree(const int self, const int n, const int level, const int ha
     else             forest_prefix[level-1] = 'L';
     forest_prefix[level] = '\0';
   }
-  show_one_proc(processes[self]);  /* first show self */
+  show_one_proc(processes[self],format_list);  /* first show self */
   /* no point freeing any of this -- won't need more mem */
 //  if(processes[self]->cmdline) free((void*)*processes[self]->cmdline);
 //  if(processes[self]->environ) free((void*)*processes[self]->environ);
@@ -461,6 +461,6 @@ int main(int argc, char *argv[]){
 
   if(forest_type || sort_list) fancy_spew(); /* sort or forest */
   else simple_spew(); /* no sort, no forest */
-  show_one_proc((proc_t *)-1); /* no output yet? */
+  show_one_proc((proc_t *)-1,format_list); /* no output yet? */
   return 0;
 }

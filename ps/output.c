@@ -42,9 +42,6 @@
 #include "config.h"
 #endif
  
-/* proc_t offset macro */
-#define PO(q) ((unsigned long)(&(((proc_t*)0)->q)))
-
 #include <ctype.h>
 #include <fcntl.h>
 #include <grp.h>
@@ -85,19 +82,6 @@
 static unsigned max_rightward = 0x12345678; /* space for RIGHT stuff */
 static unsigned max_leftward = 0x12345678; /* space for LEFT stuff */
 
-
-/* Justification control for flags field. */
-#define JUST_MASK   0x0f
-//      AIXHACK        0
-#define USER           1  // left if text, right if numeric
-#define LEFT           2
-#define RIGHT          3
-#define UNLIMITED      4
-#define WCHAN          5  // left if text, right if numeric
-#define SIGNAL         6  // right in 9, or 16 if screen_cols>107
-
-#define CUMUL       0x10  // mark cumulative (Summed) headers with 'C' */
-#define PIDMAX      0x20  // react to pid_max
 
 
 static int wide_signals;  /* true if we have room */
@@ -1122,6 +1106,20 @@ static int sr_context ( const proc_t* P, const proc_t* Q ) {
  * BSD n:   "user" becomes "uid" and "wchan" becomes "nwchan" (number)
  */
 
+/* Justification control for flags field. */
+#define USER      CF_USER   // left if text, right if numeric
+#define LEFT      CF_LEFT
+#define RIGHT     CF_RIGHT
+#define UNLIMITED CF_UNLIMITED
+#define WCHAN     CF_WCHAN  // left if text, right if numeric
+#define SIGNAL    CF_SIGNAL // right in 9, or 16 if room
+#define CUMUL     CF_CUMUL
+#define PIDMAX    CF_PIDMAX
+#define TO        CF_PRINT_THREAD_ONLY
+#define PO        CF_PRINT_PROCESS_ONLY
+#define ET        CF_PRINT_EVERY_TIME
+#define AN        CF_PRINT_AS_NEEDED // no idea
+
 /* short names to save space */
 #define MEM PROC_FILLMEM     /* read statm  */
 #define ARG PROC_FILLARG     /* read cmdline (cleared if c option) */
@@ -1131,10 +1129,6 @@ static int sr_context ( const proc_t* P, const proc_t* Q ) {
 #define GRP PROC_FILLGRP     /* gid_t -> group names */
 #define WCH PROC_FILLWCHAN   /* do WCHAN lookup */
 
-#define TO PRINT_THREAD_ONLY
-#define PO PRINT_PROCESS_ONLY
-#define ET PRINT_EVERY_TIME
-#define AN PRINT_AS_NEEDED // no idea
 
 /* TODO
  *      pull out annoying BSD aliases into another table (to macro table?)
@@ -1364,6 +1358,14 @@ static const format_struct format_array[] = {
 {"~",         "-",       pr_nop,      sr_nop,     1,   0,    LNX, AN|RIGHT}  /* NULL would ruin alphabetical order */
 };
 
+#undef USER
+#undef LEFT
+#undef RIGHT
+#undef UNLIMITED
+#undef WCHAN
+#undef SIGNAL
+#undef CUMUL
+#undef PIDMAX
 #undef PO
 #undef TO
 #undef AN
@@ -1567,19 +1569,19 @@ static void check_header_width(void){
   unsigned int i = 0;
   unsigned int sigs = 0;
   while(walk){
-    switch((walk->flags) & JUST_MASK){
+    switch((walk->flags) & CF_JUST_MASK){
     default:
       total += walk->width;
       total += was_normal;
       was_normal = 1;
       break;
-    case SIGNAL:
+    case CF_SIGNAL:
       sigs++;
       total += walk->width;
       total += was_normal;
       was_normal = 1;
       break;
-    case UNLIMITED:  /* could chop this a bit */
+    case CF_UNLIMITED:  /* could chop this a bit */
       if(walk->next) total += walk->width;
       else total += 3; /* not strlen(walk->name) */
       total += was_normal;
@@ -1599,12 +1601,6 @@ static void check_header_width(void){
     if(screen_cols*i >= OUTBUF_SIZE/2) break; /* can't go over */
   }
   wide_signals = (total+sigs*7 <= active_cols);
-  
-#if 0
-  printf("123456789-123456789-123456789-123456789-"
-         "123456789-123456789-123456789-123456789\n");
-  printf("need %d, using %d\n", total, active_cols);
-#endif
 }
 
 
@@ -1615,7 +1611,7 @@ static void check_header_width(void){
 
 static char *saved_outbuf;
 
-void show_one_proc(const proc_t *restrict const p){
+void show_one_proc(const proc_t *restrict const p, const format_node *restrict fmt){
   /* unknown: maybe set correct & actual to 1, remove +/- 1 below */
   int correct  = 0;  /* screen position we should be at */
   int actual   = 0;  /* screen position we are at */
@@ -1624,17 +1620,15 @@ void show_one_proc(const proc_t *restrict const p){
   int space    = 0;  /* amount of space we actually need to print */
   int dospace  = 0;  /* previous column determined that we need a space */
   int legit    = 0;  /* legitimately stolen extra space */
-  const format_node *restrict fmt = format_list;
   char *restrict const outbuf = saved_outbuf;
   static int did_stuff = 0;  /* have we ever printed anything? */
 
   if(unlikely(-1==(long)p)){    /* true only once, at the end */
-    check_header_width();  /* temporary test code */
     if(did_stuff) return;
     /* have _never_ printed anything, but might need a header */
     if(!--lines_to_next_header){
       lines_to_next_header = header_gap;
-      show_one_proc(NULL);
+      show_one_proc(NULL,fmt);
     }
     /* fprintf(stderr, "No processes available.\n"); */  /* legal? */
     exit(1);
@@ -1642,7 +1636,7 @@ void show_one_proc(const proc_t *restrict const p){
   if(likely(p)){  /* not header, maybe we should call ourselves for it */
     if(unlikely(!--lines_to_next_header)){
       lines_to_next_header = header_gap;
-      show_one_proc(NULL);
+      show_one_proc(NULL,fmt);
     }
   }
   did_stuff = 1;
@@ -1658,18 +1652,18 @@ void show_one_proc(const proc_t *restrict const p){
     /* prepare data and calculate leftpad */
     if(likely(p) && likely(fmt->pr)) amount = (*fmt->pr)(outbuf,p);
     else amount = strlen(strcpy(outbuf, fmt->name)); /* AIX or headers */
-    switch((fmt->flags) & JUST_MASK){
+    switch((fmt->flags) & CF_JUST_MASK){
     case 0:  /* for AIX, assigned outside this file */
       leftpad = 0;
       break;
-    case LEFT:          /* bad */
+    case CF_LEFT:          /* bad */
       leftpad = 0;
       break;
-    case RIGHT:     /* OK */
+    case CF_RIGHT:     /* OK */
       leftpad = fmt->width - amount;
       if(leftpad < 0) leftpad = 0;
       break;
-    case SIGNAL:
+    case CF_SIGNAL:
       /* if the screen is wide enough, use full 16-character output */
       if(wide_signals){
         leftpad = 16 - amount;
@@ -1679,12 +1673,12 @@ void show_one_proc(const proc_t *restrict const p){
       }
       if(leftpad < 0) leftpad = 0;
       break;
-    case USER:       /* bad */
+    case CF_USER:       /* bad */
       leftpad = fmt->width - amount;
       if(leftpad < 0) leftpad = 0;
       if(!user_is_number) leftpad = 0;
       break;
-    case WCHAN:       /* bad */
+    case CF_WCHAN:       /* bad */
       if(wchan_is_number){
         leftpad = fmt->width - amount;
         if(leftpad < 0) leftpad = 0;
@@ -1704,7 +1698,7 @@ void show_one_proc(const proc_t *restrict const p){
         leftpad = 0;
         break;
       }
-    case UNLIMITED:
+    case CF_UNLIMITED:
       if(unlikely(fmt->next)){
         outbuf[fmt->width] = '\0';  /* Must chop, more columns! */
       }else{
