@@ -53,8 +53,6 @@ extern unsigned long kb_pagetables;
 
 #define BUFFSIZE 8192
 typedef unsigned long long jiff;
-extern void crash(const char *filename);
-extern void getrunners(unsigned int *restrict running, unsigned int *restrict blocked);
 extern void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow,
 	     unsigned long *restrict pin, unsigned long *restrict pout, unsigned long *restrict s_in, unsigned long *restrict sout,
 	     unsigned *restrict intr, unsigned *restrict ctxt,
