@@ -1,31 +1,62 @@
 # This file gets included into the main Makefile, in the top directory.
 
+# Ideally, we want something like this:
+#
+# /lib/libproc.so.w        ELF soname ('w' is a digit, starting from 1)
+# /lib/procps-x.y.z.so     file itself (x.y.z is the procps version)
+# /lib/libproc.so          for linking, UNSUPPORTED
+# /usr/lib/libproc.a       for linking, UNSUPPORTED
+# proc/libproc.so.w        as above, if testing with LD_LIBRARY_PATH
+# proc/whatever            if testing with LD_PRELOAD
+# proc/libproc.a           for static build
+#
+# Without a stable ABI, there's no point in having any of that.
+# Without a stable API, there's no point in having the *.a file.
+#
+# A new ELF soname is required for every big ABI change. To conserve
+# numbers for future use, the ELF soname can be set equal to the
+# file name until some future date when a stable ABI is declared.
+
 # for lib$(NAME).so and /usr/include/($NAME) and such
-NAME      :=  proc
+NAME       :=  proc
 
-SHARED := 1
+SHARED     := 1
 
-SONAME    :=  lib$(NAME).so.$(LIBVERSION)
+###########
 
-LIBSRC :=  $(wildcard proc/*.c)
-LIBHDR :=  $(wildcard proc/*.h)
-LIBOBJ :=  $(LIBSRC:.c=.o)
+LIBVERSION := $(VERSION).$(SUBVERSION).$(MINORVERSION)
+ABIVERSION := 1
 
-#ALL        += proc/lib$(NAME).a
-#INSTALL    += $(usr/lib)/lib$(NAME).a # plus $(usr/include)$(NAME) gunk
+SOFILE     := lib$(NAME)-$(LIBVERSION).so
+ifneq ($(ABIVERSION),0)
+SOLINK     := lib$(NAME).so
+SONAME     := lib$(NAME).so.$(ABIVERSION)
+else
+SONAME     := $(SOFILE)
+SOLINK     := $(SOFILE)
+endif
+
+ANAME      := lib$(NAME).a
+
+############
 
 FPIC       := -fpic
 
 ifeq ($(SHARED),1)
 ALL        += proc/$(SONAME)
-INSTALL    += $(lib)/$(SONAME)
+INSTALL    += ldconfig
 LIBFLAGS   := -DSHARED=1 $(FPIC)
 LIBPROC    := proc/$(SONAME)
 else
-ALL        += proc/lib$(NAME).a
+ALL        += proc/$(ANAME)
+#INSTALL    += $(usr/lib)$(ANAME)
 LIBFLAGS   := -DSHARED=0
-LIBPROC    := proc/lib$(NAME).a
+LIBPROC    := proc/$(ANAME)
 endif
+
+LIBSRC :=  $(wildcard proc/*.c)
+LIBHDR :=  $(wildcard proc/*.h)
+LIBOBJ :=  $(LIBSRC:.c=.o)
 
 # Separate rule for this directory, to use -fpic or -fPIC
 $(filter-out proc/version.o,$(LIBOBJ)): proc/%.o: proc/%.c
@@ -40,14 +71,12 @@ TARFILES += $(LIBSRC) $(LIBHDR) $(addprefix proc/,$(LIB_X))
 CLEAN += proc/.depend proc/lib*.so* proc/lib*.a $(LIBOBJ)
 DIRS  += proc/
 
-proc/lib$(NAME).a: $(LIBOBJ)
+proc/$(ANAME): $(LIBOBJ)
 	$(AR) rcs $@ $^
 
-.PHONY: proc/$(SONAME)
 #proc/$(SONAME): proc/library.map
 proc/$(SONAME): $(LIBOBJ)
 	$(CC) -shared -Wl,-soname,$(SONAME) -Wl,--version-script=proc/library.map -o $@ $^ -lc
-	cd proc && $(ln_sf) $(SONAME) lib$(NAME).so
 
 
 # AUTOMATIC DEPENDENCY GENERATION -- GCC AND GNUMAKE DEPENDENT
@@ -62,19 +91,38 @@ endif
 endif
 endif
 
+#################### install rules ###########################
 
-$(lib)/$(SONAME) : proc/$(SONAME)
+$(lib)$(SOFILE) : proc/$(SONAME)
 	$(install) --mode a=rx $< $@
-	cd $(lib) && $(ln_sf) $(SONAME) lib$(NAME).so
+
+ifneq ($(SOLINK),$(SOFILE))
+.PHONY: $(lib)$(SOLINK)
+$(lib)$(SOLINK) : $(lib)$(SOFILE)
+	cd $(lib) && $(ln_sf) $(SOFILE) $(SOLINK)
+endif
+
+ifneq ($(SONAME),$(SOFILE))
+.PHONY: $(lib)$(SONAME)
+$(lib)$(SONAME) : $(lib)$(SOFILE)
+	cd $(lib) && $(ln_sf) $(SOFILE) $(SONAME)
+endif
+
+.PHONY: ldconfig
+ldconfig : $(lib)$(SONAME) $(lib)$(SOLINK)
 	$(ldconfig)
 
-#$(usr/lib)/lib$(NAME).a : proc/lib$(NAME).a
-#	$(install) --mode a=r $< $@
+$(usr/lib)$(ANAME) : proc/$(ANAME)
+	$(install) --mode a=r $< $@
 
 # Junk anyway... supposed to go in /usr/include/$(NAME)
-#$(HDRFILES) ??? : $(addprefix proc/,$(HDRFILES)) ???
+#INSTALL += $(addprefix $(include),$(HDRFILES))
+#
+#$(addprefix $(include),$(HDRFILES)): $(include)% : proc/%
+#$(include)% : proc/%
 #	$(install) --mode a=r $< $@
 
+##################################################################
 
 proc/version.o:	proc/version.c proc/version.h
 	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) $(LIBFLAGS) -DVERSION=\"$(VERSION)\" -DSUBVERSION=\"$(SUBVERSION)\" -DMINORVERSION=\"$(MINORVERSION)\" -c -o $@ $<

@@ -18,9 +18,8 @@
 
 VERSION      := 3
 SUBVERSION   := 2
-MINORVERSION := 2
-TARVERSION   := 3.2.2
-LIBVERSION   := 3.2.2
+MINORVERSION := 3
+TARVERSION   := $(VERSION).$(SUBVERSION).$(MINORVERSION)
 
 ############ vars
 
@@ -40,8 +39,6 @@ usr/proc/bin             := $(DESTDIR)/usr/bin/
 man1                     := $(DESTDIR)/usr/share/man/man1/
 man5                     := $(DESTDIR)/usr/share/man/man5/
 man8                     := $(DESTDIR)/usr/share/man/man8/
-etc/X11/applnk/Utilities := $(DESTDIR)/etc/X11/applnk/Utilities/
-usr/X11R6/bin            := $(DESTDIR)/usr/X11R6/bin/
 lib                      := $(DESTDIR)/$(lib64)/
 usr/lib                  := $(DESTDIR)/usr/$(lib64)/
 usr/include              := $(DESTDIR)/usr/include/
