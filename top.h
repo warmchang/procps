@@ -510,17 +510,11 @@ typedef struct win {
    ""
 
 
-/*######  For Piece of mind and/or backward compatability ################*/
+/*######  For Piece of mind  #############################################*/
 
         /* just sanity check(s)... */
 #if USRNAMSIZ < GETBUFSIZ
 # error "Jeeze, USRNAMSIZ Must NOT be less than GETBUFSIZ !"
-#endif
-#ifndef  MALLOC
-# define MALLOC
-#endif
-#ifndef  restrict
-# define restrict
 #endif
 
 

@@ -1051,7 +1051,7 @@ static void before (char *me)
          *   line c: contains w->summclr, msgsclr, headclr, taskclr */
 static void configs_read (void)
 {
-   static const char err_rc[] = "bad rcfile, you should delete '%s'";
+   static const char err_rc[] = "rcfile now incompatible, you should delete '%s'";
    char fbuf[SMLBUFSIZ];
    FILE *fp;
    float delay = DEF_DELAY;
@@ -2132,8 +2132,29 @@ static void do_key (unsigned c)
          }
          break;
 
-      case '\n':          /* just ignore these, they'll have the effect */
-      case ' ':           /* of refreshing display after waking us up ! */
+      case 'M':         // these keys represent old-top compatability
+      case 'N':         // -- grouped here so that if users could ever
+      case 'P':         // be weaned, we would just whack this part...
+      case 'T':
+      {  static struct {
+            const unsigned  xkey;
+            const char     *xmsg;
+            const PFLG_t    sort;
+         } xtab[] = {
+            { 'M', "Memory", P_MEM, }, { 'N', "Numerical", P_PID, },
+            { 'P', "CPU",    P_CPU, }, { 'T', "Time",      P_TM2  }, };
+         int i;
+         for (i = 0; i < MAXTBL(xtab); ++i)
+            if (c == xtab[i].xkey) {
+               Curwin->sortindx = xtab[i].sort;
+               show_msg(fmtmk("%s sort compatibility key honored", xtab[i].xmsg));
+               break;
+            }
+      }
+         break;
+
+      case '\n':        // just ignore these, they'll have the effect
+      case ' ':         // of refreshing display after waking us up !
          break;
 
       default:
@@ -2316,22 +2337,23 @@ static void task_show (const WIN_t *q, const proc_t *p)
 
       switch (i) {
          case P_CMD:
-         {  char *cp;
+         {  const char *cp;
             if (CHKw(q, Show_CMDLIN)) {
                char tmp[ROWBUFSIZ];
+               char *tp;
                if (p->cmdline) {
                   j = 0;
-                  *(cp = tmp) = '\0';
+                  *(tp = tmp) = '\0';
                   do {
-                     cp = scat(cp, fmtmk("%.*s ", q->maxcmdln, p->cmdline[j]));
-                     if (q->maxcmdln < (cp - tmp)) break;
+                     tp = scat(tp, fmtmk("%.*s ", q->maxcmdln, p->cmdline[j]));
+                     if (q->maxcmdln < (tp - tmp)) break;
                   } while (p->cmdline[++j]);
                   strim(1, tmp);
                } else
                   strcpy(tmp, fmtmk(CMDLINE_FMTS, p->cmd));
                cp = tmp;
             } else
-               cp = (char *)p->cmd;
+               cp = p->cmd;
             MKCOL(q->maxcmdln, q->maxcmdln, cp);
          }
             break;
@@ -2383,7 +2405,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
             MKCOL((unsigned)p->ppid);
             break;
          case P_PRI:
-            if (-99 > p->priority || +99 < p->priority) {
+            if (-99 > p->priority || 999 < p->priority) {
                f = " RT ";
                MKCOL();
             } else
