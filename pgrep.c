@@ -497,9 +497,9 @@ static struct el * select_procs (int *num)
 	regex_t *preg;
 	pid_t myself = getpid();
 	struct el *list = NULL;
-	char cmdline[CMDSTRSIZE];
-	char cmdsearch[CMDSTRSIZE];
-	char cmdoutput[CMDSTRSIZE];
+	char cmdline[CMDSTRSIZE] = "";
+	char cmdsearch[CMDSTRSIZE] = "";
+	char cmdoutput[CMDSTRSIZE] = "";
 	proc_t ns_task;
 
 	ptp = do_openproc();
