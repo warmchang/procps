@@ -279,8 +279,11 @@ enum pflag {
 #define FLGSOFF_cwo  EQUWINS_cwo | NEWFRAM_cwo
 
 // Default flags if there's no rcfile to provide user customizations
-#define DEF_WINFLGS ( View_LOADAV | View_STATES | View_CPUSUM | View_MEMORY | \
-   Show_HIBOLD | Show_HIROWS | Show_IDLEPS | Qsrt_NORMAL | VISIBLE_tsk )
+#define DEF_WINFLGS ( \
+   View_LOADAV | View_STATES | View_CPUSUM | View_MEMORY | View_NOBOLD | \
+   Show_HIBOLD | Show_HIROWS | Show_IDLEPS | Qsrt_NORMAL | \
+   VISIBLE_tsk \
+)
 
         // Used to test/manipulate the window flags
 #define CHKw(q,f)   (int)((q)->rc.winflags & (f))

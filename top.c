@@ -265,19 +265,18 @@ static int chin (int ech, char *buf, unsigned cnt)
       rc = read(STDIN_FILENO, buf, cnt);
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Rawtty);
    }
-      /* may be the beginning of a lengthy escape sequence  */
+   // may be the beginning of a lengthy escape sequence
    tcflush(STDIN_FILENO, TCIFLUSH);
-   return rc;                   /* note: we do NOT produce a vaid 'string' */
+   return rc;                   // note: we do NOT produce a vaid 'string'
 }
 
 
-        /*
-         * This routine simply formats whatever the caller wants and
-         * returns a pointer to the resulting 'const char' string... */
+// This routine simply formats whatever the caller wants and
+// returns a pointer to the resulting 'const char' string...
 static const char *fmtmk (const char *fmts, ...)
 {
-   static char buf[BIGBUFSIZ];          /* with help stuff, our buffer */
-   va_list va;                          /* requirements exceed 1k */
+   static char buf[BIGBUFSIZ];          // with help stuff, our buffer
+   va_list va;                          // requirements exceed 1k
 
    va_start(va, fmts);
    vsnprintf(buf, sizeof(buf), fmts, va);
@@ -286,9 +285,8 @@ static const char *fmtmk (const char *fmts, ...)
 }
 
 
-        /*
-         * This guy is just our way of avoiding the overhead of the standard
-         * strcat function (should the caller choose to participate) */
+// This guy is just our way of avoiding the overhead of the standard
+// strcat function (should the caller choose to participate)
 static inline char *scat (char *restrict dst, const char *restrict src)
 {
    while (*dst) dst++;
@@ -309,10 +307,9 @@ static char *strim_0 (char *str)
 }
 
 
-        /*
-         * This guy just facilitates Batch and protects against dumb ttys
-         * -- we'd 'inline' him but he's only called twice per frame,
-         * yet used in many other locations. */
+// This guy just facilitates Batch and protects against dumb ttys
+// -- we'd 'inline' him but he's only called twice per frame,
+// yet used in many other locations.
 static const char *tg2 (int x, int y)
 {
    return Cap_can_goto ? tgoto(cursor_address, x, y) : "";
@@ -321,9 +318,7 @@ static const char *tg2 (int x, int y)
 
 /*######  Exit/Interrput routines  #######################################*/
 
-        /*
-         * The usual program end --
-         * called only by functions in this section. */
+// The usual program end -- called only by functions in this section.
 static void bye_bye (int eno, const char *str) NORETURN;
 static void bye_bye (int eno, const char *str)
 {
@@ -335,18 +330,10 @@ static void bye_bye (int eno, const char *str)
    putp("\n");
    fflush(stdout);
 
+#define ATEOJ_REPORT
 #ifdef ATEOJ_REPORT
 
-   fprintf(stderr, "\n Screen_cols %d\n", Screen_cols);
-
    fprintf(stderr,
-      "\nbye_bye's Summary report:"
-      "\n\tProgram"
-      "\n\t   Linux version = %u.%u.%u, %s"
-      "\n\t   Hertz = %u (%u bytes, %u-bit time)"
-      "\n\t   Page_size = %d, Cpu_tot = %d, sizeof(proc_t) = %u"
-      "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%u HST_t's/Page)"
-      "\n\t   Crufty?  %s"
       "\n\tTerminal: %s"
       "\n\t   device = %s, ncurses = v%s"
       "\n\t   max_colors = %d, max_pairs = %d"
@@ -354,13 +341,6 @@ static void bye_bye (int eno, const char *str)
       "\n\t   Screen_cols = %d, Screen_rows = %d"
       "\n\t   Max_lines = %d, most recent Pseudo_size = %d"
       "\n"
-      , LINUX_VERSION_MAJOR(linux_version_code)
-      , LINUX_VERSION_MINOR(linux_version_code)
-      , LINUX_VERSION_PATCH(linux_version_code)
-      , procps_version
-      , (unsigned)Hertz, sizeof(Hertz), sizeof(Hertz) * 8
-      , Page_size, Cpu_tot, sizeof(proc_t)
-      , sizeof(CPU_t), sizeof(HST_t), Page_size / sizeof(HST_t)
 #ifdef PRETENDNOCAP
       , "dumb"
 #else
@@ -372,7 +352,6 @@ static void bye_bye (int eno, const char *str)
       , Screen_cols, Screen_rows
       , Max_lines, Pseudo_size
       );
-
 
    fprintf(stderr,
 #ifndef STDOUT_IOLBF
@@ -395,6 +374,22 @@ static void bye_bye (int eno, const char *str)
       , Curwin->rc.fieldscur
       , Curwin->winlines, Curwin->rc.maxtasks, Curwin->maxcmdln
       , Curwin->rc.sortindx
+      );
+
+   fprintf(stderr,
+      "\n\tProgram"
+      "\n\t   Linux version = %u.%u.%u, %s"
+      "\n\t   Hertz = %u (%u bytes, %u-bit time)"
+      "\n\t   Page_size = %d, Cpu_tot = %d, sizeof(proc_t) = %u"
+      "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%u HST_t's/Page)"
+      "\n"
+      , LINUX_VERSION_MAJOR(linux_version_code)
+      , LINUX_VERSION_MINOR(linux_version_code)
+      , LINUX_VERSION_PATCH(linux_version_code)
+      , procps_version
+      , (unsigned)Hertz, sizeof(Hertz), sizeof(Hertz) * 8
+      , Page_size, Cpu_tot, sizeof(proc_t)
+      , sizeof(CPU_t), sizeof(HST_t), Page_size / sizeof(HST_t)
       );
 
 
@@ -547,12 +542,10 @@ static void capsmk (WIN_t *q)
 }
 
 
-        /*
-         * Show an error, but not right now.
-         * Due to the postponed opening of ksym, using open_psdb_message,
-         * if P_WCH had been selected and the program is restarted, the
-         * message would otherwise be displayed prematurely.
-         * (old top handles that situation with typical inelegance) */
+// Show an error, but not right now.
+// Due to the postponed opening of ksym, using open_psdb_message,
+// if P_WCH had been selected and the program is restarted, the
+// message would otherwise be displayed prematurely.
 static void msg_save (const char *fmts, ...)
 {
    char tmp[SMLBUFSIZ];
@@ -2033,17 +2026,17 @@ static void reframewins (void)
             s = scat(s, h);
          }
 
-         /* establish the final maxpflgs and prepare to grow the command column
-            heading via maxcmdln - it may be a fib if P_CMD wasn't encountered,
-            but that's ok because it won't be displayed anyway */
+         // establish the final maxpflgs and prepare to grow the command column
+         // heading via maxcmdln - it may be a fib if P_CMD wasn't encountered,
+         // but that's ok because it won't be displayed anyway
          w->maxpflgs = i;
          w->maxcmdln = Screen_cols
             - (strlen(w->columnhdr) - strlen(Fieldstab[P_CMD].head)) - 1;
 
-         /* finally, we can build the true run-time columns header, format the
-            command column heading, if P_CMD is really being displayed, and
-            rebuild the all-important PROC_FILLxxx flags that will be used
-            until/if we're we're called again */
+         // finally, we can build the true run-time columns header, format the
+         // command column heading, if P_CMD is really being displayed, and
+         // rebuild the all-important PROC_FILLxxx flags that will be used
+         // until/if we're we're called again
          *(s = w->columnhdr) = '\0';
          if (Rc.mode_altscr) s = scat(s, fmtmk("%d", w->winnum));
          for (i = 0; i < w->maxpflgs; i++) {
@@ -2889,23 +2882,28 @@ static proc_t **summary_show (void)
 }
 
 
-#define PAGES_2K(n)  (unsigned)( (n) << page_to_kb_shift )
+#define PAGES_TO_KB(n)  (unsigned)( (n) << page_to_kb_shift )
+
+// the following macro is our means to 'inline' emitting a column -- next to
+// procs_refresh, that's the most frequent and costly part of top's job !
+#define MKCOL(va...) do {                                                    \
+   if(likely(!(   CHKw(q, Show_HICOLS)  &&  q->rc.sortindx==i   ))) {        \
+      snprintf(cbuf, sizeof(cbuf), f, ## va);                                \
+   } else {                                                                  \
+      snprintf(_z, sizeof(_z), f, ## va);                                    \
+      snprintf(cbuf, sizeof(cbuf), "%s%s%s",                                 \
+         q->capclr_rowhigh,                                                  \
+         _z,                                                                 \
+         !(CHKw(q, Show_HIROWS) && 'R' == p->state) ? q->capclr_rownorm : "" \
+      );                                                                     \
+      pad += q->len_rowhigh;                                                 \
+      if (!(CHKw(q, Show_HIROWS) && 'R' == p->state)) pad += q->len_rownorm; \
+   }                                                                         \
+} while (0)
 
 // Display information for a single task row.
 static void task_show (const WIN_t *q, const proc_t *p)
 {
-   // the following macro is our means to 'inline' emitting a column -- next to
-   // procs_refresh, that's the most frequent and costly part of top's job !
-#define MKCOL(va...) do { \
-   if (likely(!(CHKw(q, Show_HICOLS) && q->rc.sortindx == i))) \
-      snprintf(cbuf, sizeof(cbuf), f, ## va); \
-   else { \
-      snprintf(_z, sizeof(_z), f, ## va); \
-      snprintf(cbuf, sizeof(cbuf), "%s%s%s", q->capclr_rowhigh, _z \
-         , !(CHKw(q, Show_HIROWS) && 'R' == p->state) ? q->capclr_rownorm : ""); \
-      pad += q->len_rowhigh; \
-      if (!(CHKw(q, Show_HIROWS) && 'R' == p->state)) pad += q->len_rownorm; \
-   } } while (0)
    char rbuf[ROWBUFSIZ], *rp;
    int j, x, pad;
 
@@ -2931,7 +2929,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
          }
             break;
          case P_COD:
-            MKCOL(scale_num(PAGES_2K(p->trs), w, s));
+            MKCOL(scale_num(PAGES_TO_KB(p->trs), w, s));
             break;
          case P_CPN:
             MKCOL((unsigned)p->processor);
@@ -2943,7 +2941,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
          }
             break;
          case P_DAT:
-            MKCOL(scale_num(PAGES_2K(p->drs), w, s));
+            MKCOL(scale_num(PAGES_TO_KB(p->drs), w, s));
             break;
          case P_DRT:
             MKCOL(scale_num((unsigned)p->dt, w, s));
@@ -2963,7 +2961,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
             MKCOL(p->egroup);
             break;
          case P_MEM:
-            MKCOL((float)PAGES_2K(p->resident) * 100 / kb_main_total);
+            MKCOL((float)PAGES_TO_KB(p->resident) * 100 / kb_main_total);
             break;
          case P_NCE:
             MKCOL((int)p->nice);
@@ -2982,10 +2980,10 @@ static void task_show (const WIN_t *q, const proc_t *p)
                MKCOL((int)p->priority);
             break;
          case P_RES:
-            MKCOL(scale_num(PAGES_2K(p->resident), w, s));
+            MKCOL(scale_num(PAGES_TO_KB(p->resident), w, s));
             break;
          case P_SHR:
-            MKCOL(scale_num(PAGES_2K(p->share), w, s));
+            MKCOL(scale_num(PAGES_TO_KB(p->share), w, s));
             break;
          case P_STA:
 #ifdef USE_LIB_STA3
@@ -2995,7 +2993,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
 #endif
             break;
          case P_SWP:
-            MKCOL(scale_num(PAGES_2K(p->size - p->resident), w, s));
+            MKCOL(scale_num(PAGES_TO_KB(p->size - p->resident), w, s));
             break;
          case P_TME:
          case P_TM2:
@@ -3021,7 +3019,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
             MKCOL(p->ruser);
             break;
          case P_VRT:
-            MKCOL(scale_num(PAGES_2K(p->size), w, s));
+            MKCOL(scale_num(PAGES_TO_KB(p->size), w, s));
             break;
          case P_WCH:
             if (No_ksyms) {
