@@ -1589,10 +1589,10 @@ static void wins_reflag (int what, int flg)
          *    SIGWINCH and SIGCONT */
 static void wins_resize (int dont_care_sig)
 {
-   (void)dont_care_sig;
    struct winsize wz;
    WIN_t *w;
 
+   (void)dont_care_sig;
    Screen_cols = columns;
    Screen_rows = lines;
    if (-1 != (ioctl(STDOUT_FILENO, TIOCGWINSZ, &wz))) {

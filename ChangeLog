@@ -1,3 +1,13 @@
+procps-3.0.1 --> procps-3.0.2
+
+top defaults to the old layout
+top defaults to sorting by %CPU
+fix top for non-SMP 2.2.xx and 2.0.xx
+new "make install" fixed
+vmstat -a fixed
+vmstat compiles with latest gcc-3.x
+vmstat does 64-bit time
+
 procps-3.0.0 --> procps-3.0.1
 
 sysctl handles net/ipv4/conf/eth1.0123/tag (VLAN interface)
