@@ -555,19 +555,24 @@ static struct el * select_procs (int *num)
 		}
 		if (task.cmdline && (opt_longlong || opt_full) ) {
 			int i = 0;
-			int bytes = sizeof (cmdline) - 1;
+			int bytes = sizeof (cmdline);
+			char *str = cmdline;
 
 			/* make sure it is always NUL-terminated */
-			cmdline[bytes] = 0;
-			/* make room for SPC in loop below */
-			--bytes;
+			*str = '\0';
 
-			strncpy (cmdline, task.cmdline[i], bytes);
-			bytes -= strlen (task.cmdline[i++]);
-			while (task.cmdline[i] && bytes > 0) {
-				strncat (cmdline, " ", bytes);
-				strncat (cmdline, task.cmdline[i], bytes);
-				bytes -= strlen (task.cmdline[i++]) + 1;
+			while (task.cmdline[i] && bytes > 1) {
+				const int len = snprintf(str, bytes, "%s%s", i ? " " : "", task.cmdline[i]);
+				if (len < 0) {
+					*str = '\0';
+					break;
+				}
+				if (len >= bytes) {
+					break;
+				}
+				str += len;
+				bytes -= len;
+				i++;
 			}
 		}
 
