@@ -181,7 +181,7 @@ static unsigned long find_elf_note(unsigned long findme){
   unsigned long *ep = (unsigned long *)environ;
   unsigned long ret = 42;
   while(*ep++);
-  while(*ep++);
+//  while(*ep++);
   while(*ep){
 //  printf("%08lx %08lx %011ld %011ld%s\n",ep[0],ep[1],ep[0],ep[1],ep[0]==findme?" <<<":"");
     if(ep[0]==findme) ret=ep[1];
