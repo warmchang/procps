@@ -110,9 +110,19 @@ static void get_memory_total()
     procps_meminfo_unref(&mem_info);
 }
 
+#define SECURE_ESCAPE_ARGS(dst, bytes, cells) do { \
+  if ((bytes) <= 0) return 0; \
+  *(dst) = '\0'; \
+  if ((bytes) >= INT_MAX) return 0; \
+  if ((cells) >= INT_MAX) return 0; \
+  if ((cells) <= 0) return 0; \
+} while (0)
+
 // copy an already 'escaped' string,
 static int escaped_copy(char *restrict dst, const char *restrict src, int bufsize, int *maxroom){
     int n;
+
+    SECURE_ESCAPE_ARGS(dst, bufsize, *maxroom);
     if (bufsize > *maxroom+1)
         bufsize = *maxroom+1;
     n = snprintf(dst, bufsize, "%s", src);
