@@ -139,7 +139,6 @@ static void select_procs (void)
 	static int size = 0;
 	char *cmd_arg0, *cmd_arg0base;
 	char *cmd_arg1, *cmd_arg1base;
-	char *pos;
 	char *program_base;
 	char *root_link;
 	char *exe_link;
@@ -198,12 +197,10 @@ static void select_procs (void)
 
 			} else if (opt_scripts_too && *(p_cmdline+1)) {
 
-				pos = cmd_arg1base = cmd_arg1 = *(p_cmdline+1);
+				cmd_arg1 = *(p_cmdline+1);
 
 				/* get the arg1 base name */
-				while (*pos != '\0') {
-					if (*(pos++) == '/') cmd_arg1base = pos;
-				}
+                cmd_arg1base = get_basename(cmd_arg1);
 
 				/* if script, then cmd = argv1, otherwise cmd = argv0 */
 				if (p_cmd &&
