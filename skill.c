@@ -204,6 +204,8 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 		goto closure;
 	buf[len] = '\0';
 	tmp = strrchr(buf, ')');
+	if (!tmp)
+		goto closure;
 	*tmp++ = '\0';
 	i = 5;
 	while (i--)
@@ -218,7 +220,10 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 		if (i == -1)
 			goto closure;
 	}
-	tmp = strchr(buf, '(') + 1;
+	tmp = strchr(buf, '(');
+	if (!tmp)
+		goto closure;
+	tmp++;
 	if (cmds) {
 		i = cmd_count;
 		/* fast comparison trick -- useful? */
