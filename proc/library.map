@@ -1,15 +1,17 @@
 _3_1_5 {
 global:
-  readproc; openproc; closeproc; display_version; meminfo; vminfo;
-  dev_to_tty; escape_command; open_psdb_message; signal_name_to_number;
-  sprint_uptime; wchan; procps_version; linux_version_code;
-  Hertz; smp_num_cpus; escape_str; escape_strlist; look_up_our_self;
-  open_psdb; ps_readproc; uptime; pretty_print_signals;
-  unix_print_signals; user_from_uid; print_uptime; loadavg;
+  readproc; readproctab; ps_readproc; look_up_our_self; escape_command;
+  escape_str; escape_strlist;
+  openproc; closeproc;
+  tty_to_dev; dev_to_tty; open_psdb_message; open_psdb; wchan;
+  display_version; procps_version; linux_version_code;
+  Hertz; smp_num_cpus;
+  sprint_uptime; uptime; user_from_uid; print_uptime; loadavg;
+  pretty_print_signals; print_given_signals; unix_print_signals; signal_name_to_number;
+  meminfo; vminfo;
   kb_active; kb_inactive; kb_main_buffers; kb_main_cached;
   kb_main_free; kb_main_total; kb_main_used; kb_swap_free;
-  kb_swap_total; kb_swap_used; kb_main_shared; tty_to_dev;
-  vm_pgpgin; vm_pgpgout; vm_pswpin; vm_pswpout; readproctab;
-  print_given_signals;
+  kb_swap_total; kb_swap_used; kb_main_shared;
+  vm_pgpgin; vm_pgpgout; vm_pswpin; vm_pswpout;
 local: *;
 };

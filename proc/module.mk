@@ -28,7 +28,7 @@ endif
 $(filter-out proc/version.o,$(LIBOBJ)): proc/%.o: proc/%.c
 	$(CC) -c $(CFLAGS) $(FPIC) $< -o $@
 
-LIB_X := COPYING module.mk
+LIB_X := COPYING module.mk library.map
 TARFILES += $(LIBSRC) $(LIBHDR) $(addprefix proc/,$(LIB_X))
 
 
