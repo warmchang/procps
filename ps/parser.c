@@ -75,13 +75,13 @@ static const char *get_opt_arg(void){
 
 static const char *parse_pid(char *str, sel_union *ret){
   char *endp;
-  int num;
+  unsigned long num;
   static const char *pidrange  = "Process ID out of range.";
   static const char *pidsyntax = "Process ID list syntax error.";
-  num = strtol(str, &endp, 0);
-  if(*endp != '\0')   return pidsyntax;
-  if(num>0x7fff)      return pidrange;  /* Linux PID limit */
-  if(num<1)           return pidrange;
+  num = strtoul(str, &endp, 0);
+  if(*endp != '\0')      return pidsyntax;
+  if(num<1)              return pidrange;
+  if(num > 0x7fffffffUL) return pidrange;
   ret->pid = num;
   return 0;
 }
