@@ -78,9 +78,8 @@ static RCF_t Rc = DEF_RCFILE;
 static unsigned Page_size;
 static unsigned page_to_kb_shift;
 
-        /* SMP, Irix/Solaris mode, Linux 2.5.xx support */
-static int  Cpu_tot,
-           *Cpu_map;
+        /* SMP Irix/Solaris mode */
+static int  Cpu_tot;
         /* assume no IO-wait stats, overridden if linux 2.5.41 */
 static const char *States_fmts = STATES_line2x4;
 
@@ -928,7 +927,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus)
    if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
    cpus[Cpu_tot].x = 0;  // FIXME: can't tell by kernel version number
    cpus[Cpu_tot].y = 0;  // FIXME: can't tell by kernel version number
-   num = sscanf(buf, CPU_FMTS_JUST1,
+   num = sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu",
       &cpus[Cpu_tot].u,
       &cpus[Cpu_tot].n,
       &cpus[Cpu_tot].s,
@@ -939,18 +938,20 @@ static CPU_t *cpus_refresh (CPU_t *cpus)
    );
    if (num < 4)
          std_err("failed /proc/stat read");
+
    // and just in case we're 2.2.xx compiled without SMP support...
-   if (Cpu_tot == 1) memcpy(cpus, &cpus[1], sizeof(CPU_t));
+   if (Cpu_tot == 1) {
+      cpus[1].id = 0;
+      memcpy(cpus, &cpus[1], sizeof(CPU_t));
+   }
 
    // now value each separate cpu's tics
    for (i = 0; 1 < Cpu_tot && i < Cpu_tot; i++) {
-#ifdef PRETEND4CPUS
-      rewind(fp);
-#endif
       if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
       cpus[i].x = 0;  // FIXME: can't tell by kernel version number
       cpus[i].y = 0;  // FIXME: can't tell by kernel version number
-      num = sscanf(buf, CPU_FMTS_MULTI,
+      num = sscanf(buf, "cpu%u %Lu %Lu %Lu %Lu %Lu %Lu %Lu",
+         &cpus[i].id,
          &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].w, &cpus[i].x, &cpus[i].y
       );
       if (num < 4)
@@ -1535,13 +1536,8 @@ static const char *rc_write_whatever (void) {
 
 /*######  Startup routines  ##############################################*/
 
-#ifdef PRETEND4CPUS
-#define smp_num_cpus 4
-#endif
-
-        /*
-         * No mater what *they* say, we handle the really really BIG and
-         * IMPORTANT stuff upon which all those lessor functions depend! */
+// No mater what *they* say, we handle the really really BIG and
+// IMPORTANT stuff upon which all those lessor functions depend!
 static void before (char *me)
 {
    int i;
@@ -1552,9 +1548,6 @@ static void before (char *me)
 
       /* establish cpu particulars -- even bigger! */
    Cpu_tot = smp_num_cpus;
-   Cpu_map = alloc_r(NULL, sizeof(int) * Cpu_tot);
-   for (i = 0; i < Cpu_tot; i++)
-      Cpu_map[i] = i;
    if (linux_version_code > LINUX_VERSION(2, 5, 41))
       States_fmts = STATES_line2x5;
    if (linux_version_code >= LINUX_VERSION(2, 6, 0))  // grrr... only some 2.6.0-testX :-(
@@ -2875,7 +2868,7 @@ static proc_t **summary_show (void)
          char tmp[SMLBUFSIZ];
          // display each cpu's states separately
          for (i = 0; i < Cpu_tot; i++) {
-            snprintf(tmp, sizeof(tmp), " Cpu%-2d:", Rc.mode_irixps ? i : Cpu_map[i]);
+            snprintf(tmp, sizeof(tmp), "Cpu%-3d:", smpcpu[i].id);
             summaryhlp(&smpcpu[i], tmp);
          }
       }

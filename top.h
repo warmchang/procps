@@ -33,7 +33,6 @@
 // Development/Debugging defines -----------------------------------
 //#define ATEOJ_REPORT    // report a bunch of stuff, at end-of-job
 //#define PRETEND2_5_X    // pretend we're linux 2.5.x (for IO-wait)
-//#define PRETEND4CPUS    // pretend we're smp with 4 ticsers (sic)
 //#define PRETENDNOCAP    // use a terminal without essential caps
 //#define STDOUT_IOLBF    // disable our own stdout _IOFBF override
 
@@ -197,6 +196,7 @@ typedef struct HST_t {
 typedef struct CPU_t {
    TIC_t u, n, s, i, w, x, y;                             // as represented in /proc/stat
    TIC_t u_sav, s_sav, n_sav, i_sav, w_sav, x_sav, y_sav; // in the order of our display
+   unsigned id;  // the CPU ID number
 } CPU_t;
 
 // These 2 types support rcfile compatibility
@@ -355,15 +355,6 @@ typedef struct WIN_t {
       "Usr", USR_FIELDS } \
    } }
 
-// These are the possible fscanf formats used in /proc/stat
-// reads during history processing.
-// ( 5th number only for Linux 2.5.41 and above ) */
-#define CPU_FMTS_JUST1  "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
-#ifdef PRETEND4CPUS
-#define CPU_FMTS_MULTI CPU_FMTS_JUST1
-#else
-#define CPU_FMTS_MULTI  "cpu%*d %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
-#endif
 
 // Summary Lines specially formatted string(s) --
 // see 'show_special' for syntax details + other cautions.

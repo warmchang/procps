@@ -110,6 +110,16 @@ check_gcc = $(shell if $(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) dummy.c $(ALL_LDFLAGS
 
 ALL_CFLAGS += $(call check_gcc,-Wdeclaration-after-statement,)
 ALL_CFLAGS += $(call check_gcc,-Wpadded,)
+ALL_CFLAGS += $(call check_gcc,-Wstrict-aliasing=2,)
+
+# Adding -fno-gcse might be good for those files which
+# use computed goto.
+#ALL_CFLAGS += $(call check_gcc,-fno-gcse,)
+
+# These are part of -O3 but we dislike -finline-functions.
+# Using -fno-inline-functions with -O3 would work too.
+ALL_CFLAGS += $(call check_gcc,-fweb,)
+ALL_CFLAGS += $(call check_gcc,-frename-registers,)
 
 # Be 64-bit if at all possible. In a cross-compiling situation, one may
 # do "make m64=-m32 lib64=lib" to produce 32-bit executables. DO NOT
