@@ -673,15 +673,16 @@ static unsigned int getFileLines(const char* szFile){
 
 unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **partitions){
   FILE* fd;
-  buff[BUFFSIZE-1] = 0; 
   int units,
       i,
       disk_type,
       disk_num,
       cDisk=0,
       cPartition=0;
+
   *disks = NULL;
   *partitions = NULL;
+  buff[BUFFSIZE-1] = 0; 
   units = getFileLines("/proc/diskstats");
   fd = fopen("/proc/diskstats", "rb");
   if(!fd) crash("/proc/diskstats");
@@ -760,7 +761,7 @@ unsigned int getslabinfo (struct slab_cache **slab){
 ///////////////////////////////////////////////////////////////////////////
 
 unsigned get_pid_digits(void){
-  char buf[24];
+  char pidbuf[24];
   char *endp;
   long rc;
   int fd;
@@ -770,11 +771,11 @@ unsigned get_pid_digits(void){
   ret = 5;
   fd = open("/proc/sys/kernel/pid_max", O_RDONLY);
   if(fd==-1) goto out;
-  rc = read(fd, buf, sizeof buf);
+  rc = read(fd, pidbuf, sizeof pidbuf);
   close(fd);
   if(rc<3) goto out;
-  buf[rc] = '\0';
-  rc = strtol(buf,&endp,10);
+  pidbuf[rc] = '\0';
+  rc = strtol(pidbuf,&endp,10);
   if(rc<42) goto out;
   if(*endp && *endp!='\n') goto out;
   rc--;  // the pid_max value is really the max PID plus 1
