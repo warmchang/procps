@@ -525,6 +525,8 @@ static int one_proc (struct pids_stack *p)
 	unsigned long total_private_readonly = 0ul;
 	unsigned long total_private_writeable = 0ul;
 	unsigned long diff = 0;
+	unsigned long end;
+	char perms[32] = "";
 	const char *cp2 = NULL;
 	unsigned long long rss = 0ull;
 	unsigned long long private_dirty = 0ull;
@@ -585,10 +587,8 @@ static int one_proc (struct pids_stack *p)
 	}
 
 	while (fgets(mapbuf, sizeof mapbuf, fp)) {
-		char perms[32];
 		/* to clean up unprintables */
 		char *tmp;
-		unsigned long end;
 		unsigned long long file_offset, inode;
 		unsigned dev_major, dev_minor;
 		unsigned long long smap_value;
@@ -614,17 +614,20 @@ static int one_proc (struct pids_stack *p)
 					continue;
 				}
 				if (strcmp("Swap", smap_key) == 0) {
-					/*doesn't matter as long as last */
-					printf("%0*lx %*lu %*llu %*llu %*s %s\n",
-					       maxw1, start_To_Avoid_Warning,
-					       maxw2, (unsigned long)(diff >> 10),
-					       maxw3, rss,
-					       maxw4, (private_dirty + shared_dirty),
-					       maxw5, perms,
-					       cp2);
+					/* doesn't matter as long as last */
+					if (cp2)
+                        printf("%0*lx %*lu %*llu %*llu %*s %s\n",
+                               maxw1, start_To_Avoid_Warning,
+                               maxw2, (unsigned long)(diff >> 10),
+                               maxw3, rss,
+                               maxw4, (private_dirty + shared_dirty),
+                               maxw5, perms,
+                               cp2);
 					/* reset some counters */
 					rss = shared_dirty = private_dirty = 0ull;
-					diff = 0;
+                    diff = end = 0;
+                    perms[0] = '\0';
+                    cp2 = NULL;
 					continue;
 				}
 			}
