@@ -1950,7 +1950,10 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
 
     /* prepare data and calculate leftpad */
     if(p && fmt->pr) amount = (*fmt->pr)(outbuf,p);
-    else amount = strlen(strcpy(outbuf, fmt->name)); /* AIX or headers */
+    else amount = snprintf(outbuf, OUTBUF_SIZE, "%s", fmt->name); /* AIX or headers */
+
+    if(amount < 0) outbuf[amount = 0] = '\0';
+    else if(amount >= OUTBUF_SIZE) outbuf[amount = OUTBUF_SIZE-1] = '\0';
 
     switch((fmt->flags) & CF_JUST_MASK){
     case 0:  /* for AIX, assigned outside this file */
