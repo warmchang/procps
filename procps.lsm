@@ -1,0 +1,16 @@
+Begin3
+Title: procps
+Version: 010114
+Entered-date: 14JAN01
+Description: Procps is a library which parses the textual /proc filesystem
+	and a suite of utilites which use the library.
+Keywords: procps /proc libproc
+	ps uptime tload free w top vmstat watch skill snice kill pgrep pkill
+Author: Michael K. Johnson, Charles Blake, Albert Cahalan, many others.
+Maintained-by: various <acahalan@cs.uml.edu>
+Primary-site: http://www.cs.uml.edu/~acahalan/procps/
+	185kB procps-010114.tar.gz
+Alternate-site: http://www.debian.org/Packages/unstable/base/procps.html
+	185kB procps-010114.tar.gz
+Copying-policy: mixed
+End

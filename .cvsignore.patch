@@ -1,0 +1,18 @@
+diff -Naur procps-2.0.6/.cvsignore procps-2.0.7/.cvsignore
+--- procps-2.0.6/.cvsignore	Wed Dec 31 19:00:00 1969
++++ procps-2.0.7/.cvsignore	Fri Jul 14 16:45:01 2000
+@@ -0,0 +1,14 @@
++skill
++kill
++oldps
++uptime
++tload
++free
++w
++top
++vmstat
++watch
++snice
++pgrep
++pkill
++sysctl

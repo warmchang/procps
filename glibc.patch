@@ -1,0 +1,32 @@
+From: Nix <nix@esperi.demon.co.uk>
+Date: Tue, 2 Mar 1999 05:25:08 +0000 (GMT)
+Subject: Re: [PATCH] Re: that fputs() thing
+
+
+1999-03-02  Nix  <nix@esperi.demon.co.uk>
+
+	* stdlib/fputs.c (fputs): Return `len' rather than 0 on success.
+
+*** 2.1/stdio/fputs.c.orig      Tue Mar  2 05:17:12 1999
+--- 2.1/stdio/fputs.c   Tue Mar  2 05:18:07 1999
+***************
+*** 27,35 ****
+  {
+    const size_t len = strlen (s);
+    if (len == 1)
+!     return putc (*s, stream) == EOF ? EOF : 0;
+    if (fwrite ((void *) s, 1, len, stream) != len)
+      return EOF;
+!   return 0;
+  }
+  weak_alias (fputs, fputs_unlocked)
+--- 27,35 ----
+  {
+    const size_t len = strlen (s);
+    if (len == 1)
+!     return putc (*s, stream) == EOF ? EOF : len;
+    if (fwrite ((void *) s, 1, len, stream) != len)
+      return EOF;
+!   return len;
+  }
+  weak_alias (fputs, fputs_unlocked)

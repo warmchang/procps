@@ -1,0 +1,356 @@
+.\" This file Copyright 1992, 1997 Michael K. Johnson <johnsonm@redhat.com>
+.\" and 1996 Charles L. Blake <cblake@bbn.com>
+.\" It may be distributed under the GNU Public License, version 2, or
+.\" any higher version.  See section COPYING of the GNU Public license
+.\" for conditions under which this file may be redistributed.
+.TH PS 1 "3 Sep 1997" "Cohesive Systems" "Linux User's Manual"
+.SH NAME
+ps \- report process status
+.SH SYNOPSIS
+ps [\fBlujsvmaxScewhrnu\fR] [\fBt\fIxx\fR] \
+[\fBO\fR[\fB+\fR|\fB-\fR]\fIk1\fR[[\fB+\fR|\fB-\fR]\fIk2\fR...]] \
+[\fIpids\fR]
+
+there are also three long options:
+
+.BR \-\-sort\fIX [ + | - ] \fIkey [,[ + | - ] \fIkey [, ... ]]
+
+.B "\-\-help"
+
+.B "\-\-version"
+
+More long options are on the way...
+.SH DESCRIPTION
+.B "ps "
+gives a snapshot of the current processes.  If you want a repetitive
+update of this status, use
+.BR top .
+This man page documents the
+.IR /proc -based
+version of
+.BR ps ,
+or tries to.
+.PP
+.SH "COMMAND-LINE OPTIONS"
+The command-line options for this version of
+.B ps
+are derived from the BSD version of
+.BR ps ,
+not the System V version.
+
+The command-line arguments should \fBnot\fP be preceeded by a `\-' character,
+because in the future, a `\-' will be used to indicate Unix98-standard
+command-line arguments, while no `\-' will indicate the current
+``extended BSD'' style of command line arguments.
+
+For now, ps will give you a warning if you use a `\-' for a short option,
+but it will still work.  If you have shell scripts which use BSD-style
+arguments to ps, take heed of the warning and fix them, or else your
+scripts will fail to function correctly at some point in the future.
+If you want to turn off the warnings, set the
+.B I_WANT_A_BROKEN_PS
+environment variable. 
+
+There are also some ``long options'' in GNU style; see below for those.
+.PP
+.PD 0
+.TP 0.5i
+.B "l "
+long format
+.TP 0.5i
+.B "u "
+user format: gives user name and start time
+.TP 0.5i
+.B "j "
+jobs format: pgid sid
+.TP 0.5i
+.B "s"
+signal format
+.TP 0.5i
+.B "v "
+vm format
+.TP 0.5i
+.B "m "
+displays memory info (combine with
+.B p
+flag to get number of pages).
+.TP 0.5i
+.B "f "
+"forest" family tree format for command line
+.TP 0.5i
+.B "a "
+show processes of other users too
+.TP 0.5i
+.B "x "
+show processes without controlling terminal
+.TP 0.5i
+.B "S "
+add child cpu time and page faults
+.TP 0.5i
+.B "c "
+command name from task_struct
+.TP 0.5i
+.B "e "
+show environment after command line and ` + '
+.TP 0.5i
+.B "w "
+wide output: don't truncate command lines to fit on one line.
+To be exact, every w that is specified will add another possible
+line to the output. If the space isn't needed it isn't used. You
+may up to 100
+.BR w 's.
+.TP 0.5i
+.B "h "
+no header
+.TP 0.5i
+.B "r "
+running procs only
+.TP 0.5i
+.B "n "
+numeric output for
+.BR USER " and " WCHAN .
+.PD 1
+.TP 0.5i
+.BI t xx
+only procs with controlling tty \fIxx\fR; for \fIxx\fR you may use either the
+name of a device file under "/dev" or that name with either
+.IR tty " or " cu
+sliced off.  This is the reverse heuristic that ps uses to print out the
+abbreviated tty name in the \fBTT\fR field, e.g.
+.BR "ps t1" .
+.TP 0.5i
+.BR O [ + | - ] \fIk1 [,[ + | - ] \fIk2 [, ... ]]
+Order the process listing according to the multi-level sort specified by
+the sequence of \fIshort\fR keys from \fBSORT KEYS\fR, \fIk1\fR, \fIk2\fR, ...
+Default order specifications exist for each of the various formats of \fBps\fR.
+These are over-ridden by a user specified ordering.  The `+' is quite optional,
+merely re-iterating the default direction on a key.  `-' reverses direction only
+on the key it precedes.  As with \fBt\fR and \fIpids\fR, the O option must be
+the last option in a single command argument, but specifications in successive
+arguments are catenated.
+.TP 0.5i
+.I pids
+List only the specified processes; they are comma-delimited.  The 
+list must be given immediately after the last option in a single command-line
+argument, with no intervening space, e.g.
+.BR "ps j1,4,5" .
+Lists specified in subsequent arguments are catenated, e.g.
+.B ps l 1,2 3,4 5 6
+will list all of the processes 1-6 in long format.  If pids are given, they
+are listed no matter what.  If a tty is given matching processes are listed
+no matter what.  These two features override the 'a' and 'x' flags.
+.SH "LONG COMMAND\-LINE OPTIONS"
+These options are preceeded by a double\-hyphen.
+.TP 0.5i
+.BR \-\-sort\fIX [ + | - ] \fIkey [,[ + | - ] \fIkey [, ... ]]
+Choose a \fImulti-letter key\fR from the \fBSORT KEYS\fR section. \fIX\fR may be
+any convenient separator character.  To be GNU-ish use `='.  The `+' is really
+optional since default direction is increasing numerical or lexicographic order.
+E.g.:
+.B ps jax --sort=uid,-ppid,+pid
+.TP 0.5i
+.B "\-\-help"
+Get a help message that summarizes the usage and gives a list of
+supported sort keys.  This list may be more up to date than this man
+page.
+.TP 0.5i
+.B "\-\-version"
+Display version and source of this program.
+.SH "SORT KEYS"
+Note that the values used in sorting are the internal values \fBps\fR uses and
+\fInot\fR the `cooked' values used in some of the output format fields.  If
+someone wants to volunteer to write special comparison functions for the cooked
+values, ... ;-)
+
+SHORT   LONG            DESCRIPTION
+.PD 0
+.TP 0.5i
+c       cmd             simple name of executable
+.TP 0.5i
+C       cmdline         full command line
+.TP 0.5i
+f       flags           flags as in long format F field
+.TP 0.5i
+g       pgrp            process group ID
+.TP 0.5i
+G       tpgid           controlling tty process group ID
+.TP 0.5i
+j       cutime          cumulative user time
+.TP 0.5i
+J       cstime          cumulative system time
+.TP 0.5i
+k       utime           user time
+.TP 0.5i
+K       stime           system time
+.TP 0.5i
+m       min_flt         number of minor page faults
+.TP 0.5i
+M       maj_flt         number of major page faults
+.TP 0.5i
+n       cmin_flt        cumulative minor page faults
+.TP 0.5i
+N       cmaj_flt        cumulative major page faults
+.TP 0.5i
+o       session         session ID
+.TP 0.5i
+p       pid             process ID
+.TP 0.5i
+P       ppid            parent process ID
+.TP 0.5i
+r       rss             resident set size
+.TP 0.5i
+R       resident        resident pages
+.TP 0.5i
+s       size            memory size in kilobytes
+.TP 0.5i
+S       share           amount of shared pages
+.TP 0.5i
+t       tty             the minor device number of tty
+.TP 0.5i
+T       start_time      time process was started
+.TP 0.5i
+U       uid             user ID number
+.TP 0.5i
+u       user            user name
+.TP 0.5i
+v       vsize           total VM size in bytes
+.TP 0.5i
+y       priority        kernel scheduling priority
+.PD 1
+.SH "FIELD DESCRIPTIONS"
+.TP 0.5i
+.B "PRI "
+This is the counter field in the task struct.  It is the time in
+.B HZ
+of the process's possible timeslice.
+.TP 0.5i
+.B "NI "
+Standard unix nice value; a positive value means less cpu time.
+.TP 0.5i
+.B "SIZE "
+Virtual image size; size of text+data+stack.
+.TP 0.5i
+.B "RSS "
+Resident set size; kilobytes of program in memory.
+.TP 0.5i
+.B "WCHAN "
+Name of the kernel function where the process is sleeping, with the
+.RB ` sys_ '
+stripped from the function name.  If
+.I /etc/psdatabase
+does not exist, it is just a hex number instead.
+.TP 0.5i
+.B "STAT "
+Information about the status of the process.  The first field is
+.B R
+for runnable,
+.B S
+for sleeping,
+.B D
+for uninterruptible sleep,
+.B T
+for stopped or traced, or
+.B Z
+for a zombie process.  The second field contains
+.B W
+if the process has no resident pages.  The third field is
+.B N
+if the process has a positive nice value
+.RB ( NI
+field).
+.TP 0.5i
+.B "TT "
+Controlling tty.
+.TP 0.5i
+.B "PAGEIN "
+Number of major page faults (page faults that cause pages to be read
+from disk, including pages read from the buffer cache).
+.TP 0.5i
+.B "TRS "
+Text resident size.
+.TP 0.5i
+.B "SWAP "
+Kilobytes (or pages if
+.B p
+is used) on swap device.
+.TP 0.5i
+.B "SHARE "
+Shared memory.
+.SH UPDATING
+This
+.BR proc -based
+.B ps
+works by reading the files in the
+.B proc
+filesystem, mounted on
+.BR /proc .
+This
+.B ps
+does not need to be suid
+.B kmem
+or have any privileges to run.
+.I "Do not give this ps any special permissions."
+.PP
+You will need to put in place the appropriate System.map file
+when you install a new kernel in order
+to get meaningful information from the
+.B WCHAN
+field.  This should be done every time you compile a new kernel.  You should
+also run 'ps' as root once and then any time the tty devices in the "/dev"
+directory change.
+
+As of procps-1.00, ps/top read System.map directly if it is available.  The
+search path for kernel address-to-symbol resolution is:
+.nf
+            $PS_SYSTEM_MAP
+            /boot/System.map-`uname -r`
+            /boot/System.map
+            /lib/modules/`uname -r`/System.map
+            /etc/psdatabase
+            /boot/psdatabase-`uname -r`
+            /boot/psdatabase,
+            /lib/modules/`uname -r`/psdatabase
+.fi 
+.PP
+.SH NOTES
+The member
+.B used_math
+of
+.B task_struct
+is not shown, since
+.B crt0.s
+checks to see if math is present.  This causes the math flag to be set
+for all processes, and so it is worthless.
+.PP
+Programs swapped out to disk will be shown without command line
+arguments, and unless the
+.B c
+option is given, in parentheses.
+.PP
+.B %CPU
+shows the cputime/realtime percentage.  It will not add up to 100%
+unless you are lucky.  It is time used divided by the time the process
+has been running.
+.PP
+The
+.B SIZE
+and
+.B RSS
+fields don't count the page tables and the
+.B task_struct
+of a proc; this is at least 12k of memory that is always resident.
+.B SIZE
+is the virtual size of the proc (code+data+stack).
+.SH AUTHOR
+.B ps
+was originally written by Branko Lankester <lankeste@fwi.uva.nl>. Michael K.
+Johnson <johnsonm@redhat.com> re-wrote it significantly to use the proc
+filesystem, changing a few things in the process.  Michael Shields
+<mjshield@nyx.cs.du.edu> added the pid-list feature.  Charles
+Blake <cblake@bbn.com> added multi-level sorting, the dirent-style library, the
+device name-to-number mmaped database, the approximate binary search directly
+on System.map, and many code and documentation cleanups.  David Mossberger-Tang
+wrote the generic BFD support for psupdate.  Michael K. Johnson
+<johnsonm@redhat.com> is the current maintainer.
+
+Please send bug reports to <acahalan@cs.uml.edu>

@@ -1,0 +1,456 @@
+.\" This file Copyright 1992 Robert J. Nation 
+.\" (nation@rocket.sanders.lockheed.com)
+.\" It may be distributed under the GNU Public License, version 2, or
+.\" any higher version.  See section COPYING of the GNU Public license
+.\" for conditions under which this file may be redistributed.
+.\"
+.\" Modified 1994/04/25 Michael Shields <mjshield@nyx.cs.du.edu>
+.\" Cleaned up, and my changes documented.  New `.It' macro.  Edited.
+.\" modified 1996/01/27 Helmut Geyer to match my changes.
+.
+.de It
+.TP 0.5i
+.B "\\$1 "
+..
+.TH TOP 1 "Feb 1 1993" "Linux" "Linux User's Manual"
+.SH NAME
+top \- display top CPU processes
+.SH SYNOPSIS
+.B top
+.RB [ \- ]
+.RB [ d
+.IR delay ]
+.RB [ p
+.IR pid ]
+.RB [ q ]
+.RB [ c ]
+.RB [ C ]
+.RB [ S ]
+.RB [ s ]
+.RB [ i ]
+.RB [ n
+.IR iter ]
+.RB [ b ]
+.SH DESCRIPTION
+.B top
+provides an ongoing look at processor activity in real time.  It
+displays a listing of the most CPU-intensive tasks on the system, and
+can provide an interactive interface for manipulating processes.
+It can sort the tasks by CPU usage, memory usage and runtime.
+.N top
+can be better configured than the standard top from the procps suite.
+Most features can either be selected by an interactive command or by 
+specifying the feature in the personal or system-wide configuration
+file. See below for more information.
+.PP
+.SH "COMMAND\-LINE OPTIONS"
+.It d
+Specifies the delay between screen updates.  You can change this with
+the
+.B s
+interactive command.
+.It p
+Monitor only processes with given process id.
+This flag can be given up to twenty times. This option is neither
+available interactively nor can it be put into the configuration file.
+.It q
+This causes
+.B top
+to refresh without any delay. If the caller has superuser priviledges,
+top runs with the highest possible priority.
+.It S
+Specifies cumulative mode, where each process is listed with the CPU
+time that it
+.I as well as its dead children
+has spent.  This is like the
+.B -S
+flag to
+.BR ps (1).
+See the discussion below of the
+.B S
+interactive command.
+.It s
+Tells
+.B top
+to run in secure mode.  This disables the potentially dangerous of the
+interactive commands (see below).  A secure
+.B top
+is a nifty thing to leave running on a spare terminal.
+.It i
+Start
+.B top
+ignoring any idle or zombie processes. See the interactive command
+.B i
+below.
+.It C
+display total CPU states in addition to individual CPUs. This option
+only affects SMP systems.
+.It c
+display command line instead of the command name only. The default
+behaviour has been changed as this seems to be more useful.
+.It n
+Number of iterations. Update the display this number of times and then exit.
+.It b
+Batch mode. Useful for sending output from top to other programs or to a file.
+In this mode, 
+.B top
+will not accept command line input. It runs until it produces the number of
+iterations requested with the
+.B n
+option or until killed. Output is plain text suitable for display on a dumb
+terminal.
+.
+.SH "FIELD DESCRIPTIONS"
+.B top
+displays a variety of information about the processor state.  The
+display is updated every 5 seconds by default, but you can change that
+with the
+.B d
+command-line option or the
+.B s
+interactive command.
+.It "uptime"
+This line displays the time the system has been up, and the three load
+averages for the system.  The load averages are the average number of
+process ready to run during the last 1, 5 and 15 minutes.  This line is
+just like the output of
+.BR uptime (1).
+The uptime display may be toggled by the interactive 
+.B l
+command.
+.It processes
+The total number of processes running at the time of the last update.
+This is also broken down into the number of tasks which are running,
+sleeping, stopped, or undead. The processes and states display may be
+toggled by the 
+.B t
+interactive command.
+.It "CPU states"
+Shows the percentage of CPU time in user mode, system mode, niced tasks,
+and idle.  (Niced tasks are only those whose nice value is negative.)
+Time spent in niced tasks will also be counted in system and user time,
+so the total will be more than 100%.  The processes and states display
+may be
+toggled by the
+.B t
+interactive command.
+.It Mem
+Statistics on memory usage, including total available memory, free
+memory, used memory, shared memory, and memory used for buffers. The
+display of memory information may be toggled by the
+.B m
+interactive command.
+.It Swap
+Statistics on swap space, including total swap space, available swap
+space, and used swap space.  This and
+.B Mem
+are just like the output of
+.BR free (1).
+.It PID
+The process ID of each task.
+.It PPID
+The parent process ID each task.
+.It UID
+The user ID of the task's owner.
+.It USER
+The user name of the task's owner.
+.It PRI
+The priority of the task.
+.It NI
+The nice value of the task.  Negative nice values are higher priority.
+.It SIZE
+The size of the task's code plus data plus stack space, in kilobytes,
+is shown here.
+.It TSIZE
+The code size of the task. This gives strange values for kernel
+processes and is broken for ELF processes.
+.It DSIZE
+Data + Stack size. This is broken for ELF processes.
+.It TRS
+Text resident size.
+.It SWAP
+Size of the swapped out part of the task.
+.It D
+Size of pages marked dirty.
+.It LC
+Last used processor.  (That this changes from time to time is not
+a bug; Linux intentionally uses weak affinity.  Also notice that
+the very act of running top may break weak affinity and cause more
+processes to change current CPU more often because of the extra
+demand for CPU time.)
+.It RSS
+The total amount of physical memory used by the task, in kilobytes, is
+shown here. For ELF processes used library pages are counted here, for
+a.out processes not.
+.It SHARE
+The amount of shared memory used by the task is shown in this column.
+.It STAT
+The state of the task is shown here. The state is either
+.B S
+for sleeping,
+.B D
+for uninterruptible sleep,
+.B R
+for running,
+.B Z
+for zombies, or
+.B T
+for stopped or traced. These states are modified by trailing
+.B <
+for a process with negative nice value,
+.B N
+for a process with positive nice value,
+.B W
+for a swapped out process (this does not work correctly for kernel
+processes).
+.It WCHAN
+depending on the availablity of either 
+.I /boot/psdatabase
+or the kernel link map
+.I /boot/System.map
+this shows the address or the name of the kernel function the task
+currently is sleeping in.
+.It TIME
+Total CPU time the task has used since it started.  If cumulative mode
+is on, this also includes the CPU time used by the process's children
+which have died.  You can set cumulative mode with the
+.B S
+command line option or toggle it with the interactive command
+.BR S . 
+The header line will then be changed to 
+.BR CTIME .
+.It %CPU
+The task's share of the CPU time since the last screen update, expressed
+as a percentage of total CPU time per processor.
+.It %MEM
+The task's share of the physical memory.
+.It COMMAND
+The task's command name, which will be truncated if it is too long to be
+displayed on one line.  Tasks in memory will have a full command line,
+but swapped-out tasks will only have the name of the program in
+parentheses (for example, "(getty)").
+.It "A , WP"
+these fields from the kmem top are not supported.
+.
+.SH "INTERACTIVE COMMANDS"
+Several single-key commands are recognized while
+.B top
+is running.  Some are disabled if the
+.B s
+option has been given on the command line.
+.It space
+Immediately updates the display.
+.It ^L
+Erases and redraws the screen.
+.It "h\fR or \fB?"
+Displays a help screen giving a brief summary of commands, and the
+status of secure and cumulative modes.
+.It k
+Kill a process.  You will be prompted for the PID of the task, and the
+signal to send to it.  For a normal kill, send signal 15.  For a sure,
+but rather abrupt, kill, send signal 9.  The default signal, as with
+.BR kill (1),
+is 15,
+.BR SIGTERM .
+This command is not available in secure mode.
+.It i
+Ignore idle and zombie processes.  This is a toggle switch.
+.It I
+Toggle between Solaris (CPU percentage divided by total number of CPUs)
+and Irix (CPU percentage calculated solely by amount of time) views.
+This is a toggle switch that affects only SMP systems.
+.It "n\fR or \fB#"
+Change the number of processes to show.  You will be prompted to enter
+the number.  This overrides automatic determination of the number of
+processes to show, which is based on window size measurement.  If 0 is
+specified, then top will show as many processes as will fit on the
+screen; this is the default.
+.It q
+Quit.
+.It r
+Re-nice a process.  You will be prompted for the PID of the task, and
+the value to nice it to.  Entering a positve value will cause a process
+to be niced to negative values, and lose priority.  If root is running
+.BR top ,
+a negative value can be entered, causing a process to get a higher than
+normal priority.  The default renice value is 10.  This command is not
+available in secure mode.
+.It S
+This toggles cumulative mode, the equivalent of
+.BR "ps -S" ,
+i.e., that CPU times will include a process's defunct children.  For
+some programs, such as compilers, which work by forking into many
+seperate tasks, normal mode will make them appear less demanding than
+they actually are.  For others, however, such as shells and
+.BR init ,
+this behavior is correct.  In any case, try cumulative mode for an
+alternative view of CPU use.
+.It s
+Change the delay between updates.  You will be prompted to enter the
+delay time, in seconds, between updates.  Fractional values are
+recognized down to microseconds.  Entering 0 causes continuous updates.
+The default value is 5 seconds.  Note that low values cause nearly
+unreadably fast displays, and greatly raise the load.  This command is
+not available in secure mode.
+.It "f\fR or \fBF"
+Add fields to display or remove fields from the display. See below for
+more information.
+.It "o\fR or \fBO"
+Change order of displayed fields. See below for more information.
+.It l
+toggle display of load average and uptime information.
+.It m
+toggle display of memory information.
+.It t
+toggle display of processes and CPU states information.
+.It c
+toggle display of command name or full command line.
+.It N
+sort tasks by pid (\fIn\fPumerically).
+.It A
+sort tasks by age (newest first).
+.It P
+sort tasks by CPU usage (default).
+.It M
+sort tasks by resident memory usage.
+.It T
+sort tasks by time / cumulative time.
+.It W
+Write current setup to 
+.IR ~/.toprc .
+This is the recommended way to write a top configuration file.
+.
+.SH The Field and Order Screens
+After pressing 
+.BR f ,
+.BR F ,
+.B o
+or
+.B O
+you will be shown a screen specifying the field order on the top line
+and short descriptions of the field contents. The field order string
+uses the following syntax: If the letter in the filed string
+corresponding to a  field is upper case, the field will be displayed.
+This is furthermore indicated by an asterisk in front of the field
+description.
+The order of the fields corresponds to the order of the letters in the
+string. 
+ From the field select screen you can toggle the display of a field by
+pressing the corresponding letter. 
+ From the order screen you may move a field to the left by pressing
+the corresponding upper case letter resp. to the right by pressing the
+lower case one.
+.
+.SH Configuration Files
+Top reads it's default configuration from two files,
+.I /etc/toprc
+and
+.IR ~/.toprc .
+The global configuration file may be used to restrict the usage of top
+to the secure mode for non-priviledged users. If this is desired, the
+file should contain a 's' to specify secure mode and a digit d (2<=d<=9)
+for the default delay (in seconds) on a single line.
+.
+The personal configuration file contains two lines. The first line
+contains lower and upper letters to specify which fields in what
+order are to be displayed. The letters correspond to the letters in the
+Fields or Order screens from top. As this is not very instructive, it is
+recommended to select fields and order in a running top process and to
+save this using the 
+.I W
+interactive command. 
+.
+The second line is more interesting (and important). It contains
+information on the other options. Most important, if you have saved a
+configuration in secure mode, you will not get an insecure top without
+removing the lower 's' from the second line of your 
+.IR ~/.toprc .
+A digit specifies the delay time between updates, a capital 'S'
+cumulative mode, a lower 'i' no-idle mode, a capital 'I' Irix view. As
+in interactive mode, a lower 'm', 'l', and 't' suppresses the display
+of memory, uptime resp. process and CPU state information.
+Currently changing the default sorting order (by CPU usage) is not 
+supported.
+.
+.SH NOTES
+This
+.BR proc -based
+.B top
+works by reading the files in the
+.B proc
+filesystem,
+mounted on
+.IR /proc .
+If
+.I /proc
+is not mounted,
+.B top
+will not work.
+.PP
+.B %CPU
+shows the cputime/realtime percentage in the period of time between 
+updates.  For the first update, a short delay is used, and
+.B top
+itself dominates the CPU usage.  After that,
+.B top
+will drop back, and a more reliable estimate of CPU usage is available.
+.PP
+The
+.B SIZE
+and
+.B RSS fields don't count the page tables and the
+.B task_struct
+of a process; this is at least 12K of memory that is always resident.
+.B SIZE
+is the virtual size of the process (code+data+stack).
+.PP
+Keep in mind that a process must die for its time to be recorded on its
+parent by cumulative mode.  Perhaps more useful behavior would be to
+follow each process upwards, adding time, but that would be more
+expensive, possibly prohibitively so.  In any case, that would make
+.BR top 's
+behavior incompatible with
+.BR ps .
+.
+.SH FILES
+.I /etc/toprc 
+The global configuration file. 
+.I ~/.toprc
+The personal configuration file.
+.
+.SH "SEE ALSO"
+.BR ps (1),
+.BR free (1),
+.BR uptime (1),
+.BR kill (1),
+.BR renice (1).
+.
+.SH
+BUGS
+If the window is less than about 70x7,
+.B top
+will not format information correctly.
+ Many fields still have problems with ELF processes.
+ the help screens are not yet optimized for windows with less than 
+25 lines
+.
+.SH AUTHOR
+.B top
+was originally written by Roger Binns, based on Branko Lankester's
+<lankeste@fwi.uva.nl> ps program.
+Robert Nation <nation@rocket.sanders.lockheed.com> re-wrote it
+significantly to use the proc filesystem, based on Michael K. Johnson's
+<johnsonm@redhat.com> proc-based ps program.
+Michael Shields <mjshield@nyx.cs.du.edu> made many changes, including
+secure and cumulative modes and a general cleanup.
+Tim Janik <timj@gtk.org> added age sorting and the ability to monitor
+specific processes through their ids.
+
+Helmut Geyer <Helmut.Geyer@iwr.uni-heidelberg.de>
+Heavily changed it to include support for configurable fields and other
+new options, and did further cleanup and use of the new readproc interface.
+
+The "b" and "n" options contributed by George Bonser <george@captech.com> 
+for CapTech IT Services.
+
+Please send bug reports to <acahalan@cs.uml.edu>
