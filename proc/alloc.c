@@ -37,14 +37,14 @@ static void xdefault_error(const char *restrict fmts, ...) {
 message_fn xalloc_err_handler = xdefault_error;
 
 
-void *xcalloc(unsigned int size) {
+void *xcalloc(size_t size) {
     void * p;
 
     if (size == 0)
         ++size;
     p = calloc(1, size);
     if (!p) {
-        xalloc_err_handler("%s failed to allocate %u bytes of memory", __func__, size);
+        xalloc_err_handler("%s failed to allocate %zu bytes of memory", __func__, size);
         exit(EXIT_FAILURE);
     }
     return p;
@@ -57,20 +57,20 @@ void *xmalloc(size_t size) {
         ++size;
     p = malloc(size);
     if (!p) {
-	xalloc_err_handler("%s failed to allocate %zu bytes of memory", __func__, size);
+        xalloc_err_handler("%s failed to allocate %zu bytes of memory", __func__, size);
         exit(EXIT_FAILURE);
     }
     return(p);
 }
 
-void *xrealloc(void *oldp, unsigned int size) {
+void *xrealloc(void *oldp, size_t size) {
     void *p;
 
     if (size == 0)
         ++size;
     p = realloc(oldp, size);
     if (!p) {
-        xalloc_err_handler("%s failed to allocate %u bytes of memory", __func__, size);
+        xalloc_err_handler("%s failed to allocate %zu bytes of memory", __func__, size);
         exit(EXIT_FAILURE);
     }
     return(p);
@@ -80,13 +80,17 @@ char *xstrdup(const char *str) {
     char *p = NULL;
 
     if (str) {
-        unsigned int size = strlen(str) + 1;
-        p = malloc(size);
-        if (!p) {
-            xalloc_err_handler("%s failed to allocate %u bytes of memory", __func__, size);
+        size_t size = strlen(str) + 1;
+        if (size < 1) {
+            xalloc_err_handler("%s refused to allocate %zu bytes of memory", __func__, size);
             exit(EXIT_FAILURE);
         }
-        strcpy(p, str);
+        p = malloc(size);
+        if (!p) {
+            xalloc_err_handler("%s failed to allocate %zu bytes of memory", __func__, size);
+            exit(EXIT_FAILURE);
+        }
+        memcpy(p, str, size);
     }
     return(p);
 }
