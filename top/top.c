@@ -4112,7 +4112,7 @@ static void parse_args (char **args) {
                if (cp[1]) pn = &cp[1];
                else if (*args) { pn = *args; ai = 1; }
                if (pn && !(ci = strspn(pn, numbs_str))) { ai = 0; pn = NULL; }
-               if (pn && (!mkfloat(pn, &tmp, 1) || tmp < W_MIN_COL))
+               if (pn && (!mkfloat(pn, &tmp, 1) || tmp < W_MIN_COL || tmp > SCREENMAX))
                   error_exit(fmtmk(N_fmt(BAD_widtharg_fmt), pn));
                Width_mode = (int)tmp;
                cp++;
