@@ -4,7 +4,7 @@
 #define SLAB_INFO_NAME_LEN      128
 
 struct slab_info {
-	char name[SLAB_INFO_NAME_LEN];  /* name of this cache */
+	char name[SLAB_INFO_NAME_LEN+1];  /* name of this cache */
 	struct slab_info *next;
 	unsigned long cache_size;       /* size of entire cache */
 	unsigned nr_objs;               /* number of objects in this cache */
