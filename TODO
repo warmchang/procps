@@ -2,9 +2,6 @@
 
 Implement /usr/proc/bin tools like Solaris has.
 
-The main Makefile is broken. Try 'touch top.h' to see.
-The Makefile is too clever, so it's still not fixed.
-
 Don't these really belong in the procps package?
          killall   pstree   fuser   lsof   who
 (they are maintained elsewhere, which causes version problems)
@@ -47,11 +44,6 @@ not accessable.
 Put unique ID at the top of System.map and in /proc, to make sure
 there is never a mismatch.
 
-Maybe just put the symbols in the kernel like some other systems do.
-Raul Miller writes: You might want to implement this as user data which just
-happens to come from a wierd source -- instead of just freeing the memory
-(like happens with init code), you want it to wind up in the buffer cache.
-
 Add /proc/*/.bindata files to avoid string parsing. It should be an array
 of 64-bit values on all machines. New entries go on the end and obsolete
 ones get filled in with something logical -- entries must never be deleted!
@@ -84,8 +76,8 @@ Share more stuff with ps.
 With forest output and a tty named /dev/this_is_my_tty, the position
 of the command name gets messed up. (we print too many spaces) (fixed?)
 
-Fix missing stuff for these formats: FB_j FB_l FB_v HP_f HP_*_ HP_fl JFMT OL_m
-(jobc,cpu,sl,re,cpu,prmgrp,cp,m_size,m_swap,m_share,vm_lib,m_dt)
+Fix missing stuff for these formats: FB_j FB_l FB_v HP_f HP_l HP_fl JFMT OL_m
+(jobc,cpu,sl,re,cpu,prmgrp,m_swap,m_share,vm_lib,m_dt)
 Note that "cpu" has two meanings.
 
 Add Beowulf support. This is ugly, since the current patches use a
@@ -93,17 +85,13 @@ daemon to collect info and add a HOST field after the PID field.
 
 Query optimizer, put cheap/required process selection first.
 
-Avoid reading both /proc/*/status and /proc/*/stat. Actually, avoid
-reading lots of stuff! Avoidance got disabled. (at least don't read the
-environment!!!)
+Avoid reading both /proc/*/status and /proc/*/stat.
 
 Maybe ps should put a 'C' in front of fields when they are affected
 by cumulative mode. Debian ps did that. (move flag to common.h...)
 
 Support printing the client hostname (the FROM that w(1) uses) in place
 of a pty. Maybe do this when PS_PERSONALITY=linux.
-
-Disgusting color support, for completeness. (Debian ps had it)
 
 Disambiguate narrow tty info. (/dev/tty7 == /dev/pts/7 now)
 1------8     1--4
