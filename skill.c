@@ -187,7 +187,8 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 			xwarn(_("cannot open file %s"), buf);
 		return;
 	}
-	fstat(fd, &statbuf);
+	if (fstat(fd, &statbuf) != 0)
+		goto closure;
 	if (uids) {
 		/* check the EUID */
 		i = uid_count;
