@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <locale.h>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -68,12 +69,17 @@ static char buf[1024];
 /***********************************************************************/
 int uptime(double *uptime_secs, double *idle_secs) {
     double up=0, idle=0;
+    char *savelocale;
 
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);
+    savelocale = setlocale(LC_NUMERIC, NULL);
+    setlocale(LC_NUMERIC,"C");
     if (sscanf(buf, "%lf %lf", &up, &idle) < 2) {
-	fprintf(stderr, "bad data in " UPTIME_FILE "\n");
-	return 0;
+        setlocale(LC_NUMERIC,savelocale);
+        fprintf(stderr, "bad data in " UPTIME_FILE "\n");
+	    return 0;
     }
+    setlocale(LC_NUMERIC,savelocale);
     SET_IF_DESIRED(uptime_secs, up);
     SET_IF_DESIRED(idle_secs, idle);
     return up;	/* assume never be zero seconds in practice */
@@ -109,8 +115,12 @@ static void init_Hertz_value(void){
   unsigned long user_j, nice_j, sys_j, other_j;  /* jiffies (clock ticks) */
   double up_1, up_2, seconds;
   unsigned long jiffies, h;
+  char *savelocale;
+
   smp_num_cpus = sysconf(_SC_NPROCESSORS_CONF);
-  if(smp_num_cpus==-1) smp_num_cpus=1;
+  if(smp_num_cpus<1) smp_num_cpus=1;
+  savelocale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
   do{
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_1);
     /* uptime(&up_1, NULL); */
@@ -119,6 +129,7 @@ static void init_Hertz_value(void){
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_2);
     /* uptime(&up_2, NULL); */
   } while((long)( (up_2-up_1)*1000.0/up_1 )); /* want under 0.1% error */
+  setlocale(LC_NUMERIC, savelocale);
   jiffies = user_j + nice_j + sys_j + other_j;
   seconds = (up_1 + up_2) / 2;
   h = (unsigned long)( (double)jiffies/seconds/smp_num_cpus );
@@ -132,10 +143,16 @@ static void init_Hertz_value(void){
   case  124 ...  132 :  Hertz =  128; break; /* MIPS, ARM */
   case  195 ...  204 :  Hertz =  200; break; /* normal << 1 */
   case  253 ...  260 :  Hertz =  256; break;
+  case  295 ...  304 :  Hertz =  300; break; /* 3 cpus */ 
   case  393 ...  408 :  Hertz =  400; break; /* normal << 2 */
+  case  495 ...  504 :  Hertz =  500; break; /* 5 cpus */
+  case  595 ...  604 :  Hertz =  600; break; /* 6 cpus */
+  case  695 ...  704 :  Hertz =  700; break; /* 7 cpus */  
   case  790 ...  808 :  Hertz =  800; break; /* normal << 3 */
+  case  895 ...  904 :  Hertz =  900; break; /* 9 cpus */ 
   case  990 ... 1010 :  Hertz = 1000; break; /* ARM */
   case 1015 ... 1035 :  Hertz = 1024; break; /* Alpha, ia64 */
+  case 1095 ... 1104 :  Hertz = 1100; break; /* 11 cpus */
   case 1180 ... 1220 :  Hertz = 1200; break; /* Alpha */
   default:
 #ifdef HZ
@@ -194,12 +211,16 @@ void four_cpu_numbers(double *uret, double *nret, double *sret, double *iret){
 /***********************************************************************/
 void loadavg(double *av1, double *av5, double *av15) {
     double avg_1=0, avg_5=0, avg_15=0;
+    char *savelocale;
     
     FILE_TO_BUF(LOADAVG_FILE,loadavg_fd);
+    savelocale = setlocale(LC_NUMERIC, NULL);
+    setlocale(LC_NUMERIC, "C");
     if (sscanf(buf, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3) {
-	fprintf(stderr, "bad data in " LOADAVG_FILE "\n");
-	exit(1);
+	    fprintf(stderr, "bad data in " LOADAVG_FILE "\n");
+	    exit(1);
     }
+    setlocale(LC_NUMERIC, savelocale);
     SET_IF_DESIRED(av1,  avg_1);
     SET_IF_DESIRED(av5,  avg_5);
     SET_IF_DESIRED(av15, avg_15);

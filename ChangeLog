@@ -1,0 +1,11 @@
+Version ????
+
+	/proc/tty/drivers correctly parsed. Debian #108654
+	(Thanks russell*AT*coker.com.au)
+
+	oldps doesn't FPE because of no shared mem Debian #101917
+	(Thanks David Murn <davey*AT*vision.doa.org>)
+
+	Put most of the Debian diffs in.
+
+

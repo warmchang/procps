@@ -1,5 +1,0 @@
-diff -Naur procps-2.0.6/ps/.cvsignore procps-2.0.7/ps/.cvsignore
---- procps-2.0.6/ps/.cvsignore	Wed Dec 31 19:00:00 1969
-+++ procps-2.0.7/ps/.cvsignore	Fri Jul 14 16:45:01 2000
-@@ -0,0 +1 @@
-+ps

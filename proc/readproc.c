@@ -300,7 +300,7 @@ static char** file2strvec(char* directory, char* what) {
 proc_t* readproc(PROCTAB* PT, proc_t* rbuf) {
     static struct direct *ent;		/* dirent handle */
     static struct stat sb;		/* stat buffer */
-    static char path[32], sbuf[512];	/* bufs for stat,statm */
+    static char path[32], sbuf[1024];	/* bufs for stat,statm */
     int allocated = 0, matched = 0;	/* flags */
     proc_t *p = NULL;
 
@@ -400,7 +400,7 @@ next_proc:				/* get next PID for consideration */
 proc_t* ps_readproc(PROCTAB* PT, proc_t* rbuf) {
     static struct direct *ent;		/* dirent handle */
     static struct stat sb;		/* stat buffer */
-    static char path[32], sbuf[512];	/* bufs for stat,statm */
+    static char path[32], sbuf[1024];	/* bufs for stat,statm */
     int allocated = 0 /* , matched = 0 */ ;	/* flags */
     proc_t *p = NULL;
 

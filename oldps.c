@@ -209,6 +209,8 @@ int main(int argc, char **argv) {
         }
     } while (argc > 1);
 
+    meminfo();
+
     if (!CL_sort)	/* since the unsorted mode is intended to be speedy */
 	CL_forest = 0;	/* turn off the expensive forest option as well. */
 
@@ -425,7 +427,8 @@ static void show_jobs(char *s, proc_t *p) {
 
 /*****************************/
 static void show_user(char *s, proc_t *p) {
-    long pmem, total_time, seconds;
+    long pmem, total_time;
+    long long seconds;
     time_t start;
     unsigned int pcpu;
 

@@ -33,7 +33,9 @@
 typedef struct tty_map_node {
   struct tty_map_node *next;
   int major_number; /* not unsigned! Ugh... */
-  char name[4];
+  int minor_first, minor_last;
+  char name[16];
+  char devfs_type;
 } tty_map_node;
 
 static tty_map_node *tty_map = NULL;
@@ -46,25 +48,46 @@ static void load_drivers(void){
   int bytes;
   fd = open("/proc/tty/drivers",O_RDONLY);
   if(fd == -1) goto fail;
-  bytes = read(fd, buf, 9999);
+  bytes = read(fd, buf, sizeof(buf) - 1);
   if(bytes == -1) goto fail;
   buf[bytes] = '\0';
   p = buf;
-  while(( p = strstr(p, " /dev/tty") )){
+  while(( p = strstr(p, " /dev/") )){
     tty_map_node *tmn;
     int len;
-    p += 9;
-    len = strspn(p, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    if(!len) continue;
-    if(len>3) continue;
-    if((len=1) && (*p=='S')) continue;
-    tmn = malloc(sizeof(tty_map_node));
+    char *end;
+    int rc;
+    p += 6;
+    end = strchr(p, ' ');
+    if(!end) continue;
+    len = end - p;
+    tmn = calloc(1, sizeof(tty_map_node));
     tmn->next = tty_map;
     tty_map = tmn;
-    memset(tmn->name, '\0', 4);
+    /* if we have a devfs type name such as /dev/tts/%d then strip the %d but
+       keep a flag. */
+    if(len >= 3 && !strncmp(end - 2, "%d", 2))
+    {
+      len -= 2;
+      tmn->devfs_type = 1;
+    }
     strncpy(tmn->name, p, len);
-    p += len;
+    p = end; /* set p to point past the %d as well if there is one */
+    while(*p == ' ') p++;
     tmn->major_number = atoi(p);
+    p += strspn(p, "0123456789");
+    while(*p == ' ') p++;
+    rc = sscanf(p, "%d-%d", &tmn->minor_first, &tmn->minor_last);
+    if(rc == 1)
+    {
+      tmn->minor_last = tmn->minor_first;
+    }
+    else if(rc == 0)
+    {
+      /* Can't finish parsing this line so we remove it from the list */
+      tty_map = tty_map->next;
+      free(tmn);
+    }
   }
 fail:
   if(fd != -1) close(fd);
@@ -80,11 +103,19 @@ static int driver_name(char * const buf, int maj, int min){
   tmn = tty_map;
   for(;;){
     if(!tmn) return 0;
-    if(tmn->major_number == maj) break;
+    if(tmn->major_number == maj && tmn->minor_first <= min && tmn->minor_last >= min) break;
     tmn = tmn->next;
   }
-  sprintf(buf, "/dev/tty%s%d", tmn->name, min);  /* like "/dev/ttyZZ255" */
-  if(stat(buf, &sbuf) < 0) return 0;
+  sprintf(buf, "/dev/%s%d", tmn->name, min);  /* like "/dev/ttyZZ255" */
+  if(tmn->devfs_type)
+  {
+    if(stat(buf, &sbuf) < 0) return 0;
+  }
+  else if(stat(buf, &sbuf) < 0)
+  {
+    sprintf(buf, "/dev/%s", tmn->name);  /* like "/dev/ttyZZ255" */
+    if(stat(buf, &sbuf) < 0) return 0;
+  }
   if(min != minor(sbuf.st_rdev)) return 0;
   if(maj != major(sbuf.st_rdev)) return 0;
   return 1;
@@ -170,10 +201,10 @@ int dev_to_tty(char *ret, int chop, int dev, int pid, unsigned int flags) {
   int c;
   if((short)dev == (short)-1) goto fail;
   if(  link_name(tmp, major(dev), minor(dev), pid, "tty"   )) goto abbrev;
+  if(driver_name(tmp, major(dev), minor(dev)               )) goto abbrev;
   if(  link_name(tmp, major(dev), minor(dev), pid, "fd/2"  )) goto abbrev;
   if( guess_name(tmp, major(dev), minor(dev)               )) goto abbrev;
   if(  link_name(tmp, major(dev), minor(dev), pid, "fd/255")) goto abbrev;
-  if(driver_name(tmp, major(dev), minor(dev)               )) goto abbrev;
 fail:
   strcpy(ret, "?");
   return 1;
@@ -181,7 +212,10 @@ abbrev:
   if((flags&ABBREV_DEV) && !strncmp(tmp,"/dev/",5) && tmp[5]) tmp += 5;
   if((flags&ABBREV_TTY) && !strncmp(tmp,"tty",  3) && tmp[3]) tmp += 3;
   if((flags&ABBREV_PTS) && !strncmp(tmp,"pts/", 4) && tmp[4]) tmp += 4;
-  tmp[chop] = '\0';
+  /* gotta check before we chop or we may chop someone else's memory */
+  if(tmp + chop - buf <= PAGE_SIZE)
+    tmp[chop] = '\0';
+  /* replace non-ASCII characters with '?' and return the number of chars */
   for(;;){
     c = *tmp;
     tmp++;

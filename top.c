@@ -101,6 +101,7 @@
 #include <setjmp.h>
 #include <stdarg.h>
 #include <sys/param.h>
+#include <locale.h>
 
 #include "proc/sysinfo.h"
 #include "proc/procps.h"
@@ -235,39 +236,50 @@ static void get_options(void)
 {
     FILE *fp;
     char *pt;
-    char rcfile[MAXNAMELEN];
+    char *rcfile = NULL;        /* path to rc file... */
+    char *home = NULL;          /* path of user's home directory... */
+    size_t home_length = 0;     /* length of path... */
     char Options[256] = "";
     int i;
 
     nr_cpu = sysconf (_SC_NPROCESSORS_ONLN);
+    if (nr_cpu < 1) nr_cpu = 1;
     cpu_mapping = (int *) xmalloc (sizeof (int) * nr_cpu);
     /* read cpuname */
     for (i=0; i< nr_cpu; i++) cpu_mapping[i]=i;
     header_lines = 6 + nr_cpu;
-    strcpy(rcfile, SYS_TOPRC);
-    fp = fopen(rcfile, "r");
+    fp = fopen(SYS_TOPRC, "r");
     if (fp != NULL) {
 	fgets(Options, 254, fp);
 	fclose(fp);
     }
     parse_options(Options, 0);
     strcpy(Options, "");
-    if (getenv("HOME")) {
-	strcpy(rcfile, getenv("HOME"));
-	strcat(rcfile, "/");
+
+    if ( (home = getenv("HOME")) != NULL) {
+          home_length = strlen(home);
     }
-    strcat(rcfile, RCFILE);
-    fp = fopen(rcfile, "r");
-    if (fp == NULL) {
-	strcpy(Fields, DEFAULT_SHOW);
-    } else {
-	if (fgets(Fields, 254, fp) != NULL) {
-	    pt = strchr(Fields, '\n');
-	    if (pt) *pt = 0;
-	}
-	fgets(Options, 254, fp);
-	fclose(fp);
-    }
+
+    if ( (rcfile = malloc(home_length + strlen(RCFILE) + 2))) {
+        if (home != NULL) {
+            strcpy(rcfile, home);
+            strcat(rcfile, "/");
+        }
+        strcat(rcfile, RCFILE);
+        fp = fopen(rcfile, "r");
+        if (fp == NULL) {
+            strcpy(Fields, DEFAULT_SHOW);
+        } else {
+            if (fgets(Fields, 254, fp) != NULL) {
+                pt = strchr(Fields, '\n');
+                if (pt) *pt = 0;
+            }
+            fgets(Options, 254, fp);
+            fclose(fp);
+        }
+
+        free(rcfile);
+    }    
     parse_options(Options, getuid()? Secure : 0);
 }
 
@@ -722,6 +734,7 @@ static float getfloat(void)
     char *line;
     int i;
     float r;
+    char *savelocale;
 
     line = getstr();
 
@@ -736,7 +749,10 @@ static float getfloat(void)
     if (!line[0])
 	return (BAD_INPUT);
 
-    sscanf(line, "%f", &r);
+    savelocale = setlocale(LC_NUMERIC, NULL);
+    setlocale(LC_NUMERIC, "C");
+    sscanf(line, "%f", &r); 
+    setlocale(LC_NUMERIC, savelocale);
     return (r);
 }
 
@@ -1625,45 +1641,49 @@ static void do_key(char c)
 	change_order();
 	break;
       case 'W':
-	if (getenv("HOME")) {
-	    strcpy(rcfile, getenv("HOME"));
-	    strcat(rcfile, "/");
-	    strcat(rcfile, RCFILE);
-	    fp = fopen(rcfile, "w");
-	    if (fp != NULL) {
-		fprintf(fp, "%s\n", Fields);
-		i = (int) Sleeptime;
-		if (i < 2)
-		    i = 2;
-		if (i > 9)
-		    i = 9;
-		fprintf(fp, "%d", i);
-		if (Secure)
-		    fprintf(fp, "%c", 's');
-		if (Cumulative)
-		    fprintf(fp, "%c", 'S');
-		if (!show_cmd)
-		    fprintf(fp, "%c", 'c');
-		if (Noidle)
-		    fprintf(fp, "%c", 'i');
-		if (!show_memory)
-		    fprintf(fp, "%c", 'm');
-		if (!show_loadav)
-		    fprintf(fp, "%c", 'l');
-		if (!show_stats)
-		    fprintf(fp, "%c", 't');
-		if (!Irixmode)
-		    fprintf(fp, "%c", 'I');
-		fprintf(fp, "\n");
-		fclose(fp);
-		SHOWMESSAGE(("Wrote configuration to %s", rcfile));
-	    } else {
-		SHOWMESSAGE(("Couldn't open %s", rcfile));
-	    }
-	} else {
-	    SHOWMESSAGE(("Couldn't get $HOME -- not saving"));
-	}
-	break;
+	if (Secure)
+	    SHOWMESSAGE(("\aCan't write configuration in secure mode"));
+       else {
+	    if (getenv("HOME")) {
+	        strcpy(rcfile, getenv("HOME"));
+             strcat(rcfile, "/");
+              strcat(rcfile, RCFILE);
+              fp = fopen(rcfile, "w");
+              if (fp != NULL) {
+                  fprintf(fp, "%s\n", Fields);
+	 	  i = (int) Sleeptime;
+                  if (i < 2)
+                      i = 2;
+                  if (i > 9)
+                      i = 9;
+                  fprintf(fp, "%d", i);
+                  if (Secure)
+                      fprintf(fp, "%c", 's');
+                  if (Cumulative)
+                      fprintf(fp, "%c", 'S');
+                  if (!show_cmd)
+		              fprintf(fp, "%c", 'c');
+                  if (Noidle)
+                      fprintf(fp, "%c", 'i');
+                  if (!show_memory)
+                      fprintf(fp, "%c", 'm');
+                  if (!show_loadav)
+		              fprintf(fp, "%c", 'l');
+                  if (!show_stats)
+                      fprintf(fp, "%c", 't');
+                  if (!Irixmode)
+                      fprintf(fp, "%c", 'I');
+                  fprintf(fp, "\n");
+		  fclose(fp);
+		  SHOWMESSAGE(("Wrote configuration to %s", rcfile));
+              } else {
+                  SHOWMESSAGE(("Couldn't open %s", rcfile));
+              }
+            } else {
+                SHOWMESSAGE(("Couldn't get $HOME -- not saving"));
+            }
+          }
+        break;
       default:
 	SHOWMESSAGE(("\aUnknown command `%c' -- hit `h' for help", c));
     }

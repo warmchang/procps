@@ -40,9 +40,8 @@ char *sprint_uptime(void) {
 
   time(&realseconds);
   realtime = localtime(&realseconds);
-  pos = sprintf(buf, " %2d:%02d%s  ",
-		realtime->tm_hour%12 ? realtime->tm_hour%12 : 12,
-		realtime->tm_min, realtime->tm_hour > 11 ? "pm" : "am");
+  pos = sprintf(buf, " %02d:%02d:%02d ",
+    realtime->tm_hour, realtime->tm_min, realtime->tm_sec);
 
 /* read and calculate the amount of uptime */
 

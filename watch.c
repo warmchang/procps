@@ -21,7 +21,7 @@
 #include <sys/ioctl.h>
 #include <time.h>
 #include <unistd.h>
-
+#include <locale.h>
 
 static struct option longopts[] =
   {
@@ -105,7 +105,10 @@ main(int argc, char *argv[])
   int interval=2;
   char *command;
   int command_length=0;		/* not including final \0 */
+  int s;
+  char *endp;
 
+  setlocale(LC_ALL,"");
   progname = argv[0];
 
   while ((optc = getopt_long(argc, argv, "+d::hn:v", longopts, (int *) 0))
@@ -123,9 +126,9 @@ main(int argc, char *argv[])
 	  break;
 	case 'n':
 	  {
-	    char *s;
-	    interval = strtol(optarg, &s, 10);
-	    if (!*optarg || *s)
+	    char *str;
+	    interval = strtol(optarg, &str, 10);
+	    if (!*optarg || *str)
 	      do_usage();
 	  }
 	  break;
@@ -159,16 +162,19 @@ main(int argc, char *argv[])
   if (optind >= argc)
     do_usage();
 
-  command = strdup(argv[optind++]);
-  command_length = strlen(command);
+  command_length = strlen(argv[optind]);
+  command = (char*)malloc(command_length + 1); /* space or \0 */
+  memcpy(command, argv[optind++], command_length);
+  command[command_length] = '\0';
   for (;optind<argc;optind++)
     {
-      int s = strlen(argv[optind]);
-      char *endp = &command[command_length];
+      s = strlen(argv[optind]);
+      command = realloc(command, command_length+s+2); /* space and \0 */
+      endp = command + command_length;
       *endp = ' ';
-      command_length += s + 1;
-      command = realloc(command, command_length+1);
-      strcpy(endp+1, argv[optind]);
+      memcpy(endp+1, argv[optind],s);
+      command_length += 1+s; /* space then string length */
+      command[command_length] = '\0';
     }
 
   get_terminal_size();
@@ -208,10 +214,10 @@ main(int argc, char *argv[])
       /* left justify interval and command, right justify time, clipping all
 	 to fit window width */
       asprintf(&header, "Every %ds: %.*s",
-	       interval, max(width-1, command_length), command);
+	       interval, min(width-1, command_length), command);
       mvaddstr(0, 0, header);
-      if (strlen(header) > width - tsl - 1)
-	mvaddstr(0, width - tsl - 4, "...  ");
+      if (strlen(header) > (size_t)(width - tsl - 1))
+        mvaddstr(0, width - tsl - 4, "...  ");
       mvaddstr(0, width - tsl + 1, ts);
       free(header);
 
@@ -238,6 +244,10 @@ main(int argc, char *argv[])
 		      c = getc(p);
 		    while (c != EOF && !isprint(c) && c != '\n' && c != '\t');
 		  if (c == '\n')
+		    if (x == 0) {
+		      x=-1;
+		      continue;
+		    } else
 		    eolseen = 1;
 		  else if (c == '\t')
 		    tabpending = 1;

@@ -70,9 +70,9 @@ static int
 usage (int opt)
 {
 	if (i_am_pkill)
-		fprintf (stderr, "Usage: pgrep [-flnvx] [-d DELIM] ");
-	else
 		fprintf (stderr, "Usage: pkill [-SIGNAL] [-fnvx] ");
+	else
+		fprintf (stderr, "Usage: pgrep [-flnvx] [-d DELIM] ");
 	fprintf (stderr, "[-P PPIDLIST] [-g PGRPLIST] [-s SIDLIST]\n"
 		 "\t[-u EUIDLIST] [-U UIDLIST] [-G GIDLIST] [-t TERMLIST] "
 		 "[PATTERN]\n");

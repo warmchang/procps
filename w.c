@@ -104,8 +104,6 @@ static void print_logintime(time_t logt, FILE* fout) {
 			"Aug", "Sep", "Oct", "Nov", "Dec" };
     time_t curt;
     struct tm *logtm, *curtm;
-    int hour;
-    char *merid; /* meridian indicator */
     int today;
 
     curt = time(NULL);
@@ -113,18 +111,14 @@ static void print_logintime(time_t logt, FILE* fout) {
     /* localtime returns a pointer to static memory */
     today = curtm->tm_yday;
     logtm = localtime(&logt);
-    hour = logtm->tm_hour;
-    merid = (hour < 12) ? "am" : "pm";
-    if (hour >= 12) hour -= 12;
-    if (hour == 0)  hour = 12;
     if (curt - logt > 12*60*60 && logtm->tm_yday != today) {
 	if (curt - logt > 6*24*60*60)
 	    fprintf(fout, " %02d%3s%02d", logtm->tm_mday, month[logtm->tm_mon],
 		    logtm->tm_year % 100);
 	else
-	    fprintf(fout, " %3s%02d%s", weekday[logtm->tm_wday], hour, merid);
+            fprintf(fout, " %3s%02d  ", weekday[logtm->tm_wday], logtm->tm_hour);
     } else {
-	fprintf(fout, " %02d:%02d%s", hour, logtm->tm_min, merid);
+        fprintf(fout, " %02d:%02d  ", logtm->tm_hour, logtm->tm_min);
     }
 }
 
