@@ -43,6 +43,7 @@ T}
 .SH "PROCESS SELECTION OPTIONS"
 Selection criteria can be: terminal, user, pid, command.
 The options below may be used to ensure correct interpretation.
+Do not blame Albert for this interesting interface.
 .TS
 l l.
 -t	The next argument is a terminal (tty or pty).
@@ -99,14 +100,14 @@ lB lB
 lfCW l.
 Command	Description
 .TC
-snice netscape crack +7	Slow down netscape and crack
+snice seti crack +7	Slow down seti and crack
 skill -KILL -v /dev/pts/*	Kill users on new-style PTY devices
-skill -STOP torvalds davem tytso	Stop 3 users
+skill -STOP viro lm davem	Stop 3 users
 snice -17 root bash	Give priority to root's shell
 .TE
 
 .SH "SEE ALSO"
-top(1) kill(1) renice(1) nice(1)
+killall(1) pkill(1) kill(1) renice(1) nice(1)
 
 .SH STANDARDS
 No standards apply.
@@ -114,4 +115,4 @@ No standards apply.
 .SH AUTHOR
 Albert Cahalan <albert@users.sf.net> wrote skill and snice in 1999 as a
 replacement for a non-free version, and is the current maintainer of the
-procps collection. Please send bug reports to <albert@users.sf.net>
+procps collection. Please send bug reports to <procps-feedback@lists.sf.net>.
