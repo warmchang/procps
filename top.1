@@ -821,7 +821,17 @@ simply decrease the size of the \*(TD(s) above it.
 .B SORTING\fR of \*(TW
 .br
 .in +2
-Before using any of these sort provisions, \*(Me suggests that you
+For compatibility, this \*(Me supports most of the former \*(Me sort keys.
+Since this is primarily a service to former \*(Me users, these commands do
+not appear on any help screen.
+   command   sorted field                  supported
+     A         start time (non-display)      No
+     M         %MEM                          Yes
+     N         PID                           Yes
+     P         %CPU                          Yes
+     T         TIME+                         Yes
+
+Before using any of the following sort provisions, \*(Me suggests that you
 temporarily turn on column highlighting using the 'x' \*(CI.
 That will help ensure that the actual sort environment matches your intent.
 
@@ -1084,6 +1094,16 @@ Then set the delay interval to around .3 seconds.
 
 After bringing the most active processes into view, what you'll see are
 the ghostly images of just the currently running tasks.
+
+.New
+Delete the existing rcfile, or create a new symlink.
+Start this new version then type 'T' (a secret key, \*(Xt 3c. TASK Area
+Commands, Sorting) followed by 'W' and 'Q'.
+
+Restart the program with -d0 (zero delay) and watch while \*(Me climbs the
+TIME ladder.
+Be as patient as you can, while speculating whether or not \*(Me will ever
+reach the \*(Me.
 
 .\" ......................................................................
 .SS 6b. Bouncing Windows

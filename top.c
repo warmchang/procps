@@ -2380,7 +2380,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
             snprintf(tmp, sizeof(tmp), f, (long)p->flags);
             for (j = 0; tmp[j]; j++) if ('0' == tmp[j]) tmp[j] = '.';
             f = tmp;
-            MKCOL();
+            MKCOL("");
          }
             break;
          case P_FLT:
@@ -2407,7 +2407,7 @@ static void task_show (const WIN_t *q, const proc_t *p)
          case P_PRI:
             if (-99 > p->priority || 999 < p->priority) {
                f = " RT ";
-               MKCOL();
+               MKCOL("");
             } else
                MKCOL((int)p->priority);
             break;
