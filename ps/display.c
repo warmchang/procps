@@ -207,16 +207,19 @@ static void check_needs(void){
 }
 
 /***** fill in %CPU; not in libproc because of include_dead_children */
+/* Note: for sorting, not display, so 0..0x7fffffff would be OK */
 static void fill_pcpu(proc_t *buf){
-  unsigned long total_time;
+  unsigned long long used_jiffies;
   unsigned long pcpu = 0;
-  unsigned long seconds;
+  unsigned long long avail_jiffies;
 
-  total_time = buf->utime + buf->stime;
-  if(include_dead_children) total_time += (buf->cutime + buf->cstime);
-  seconds = seconds_since_boot - buf->start_time / Hertz;
-  if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
-  buf->pcpu = (pcpu > 999) ? 999 : pcpu;
+  used_jiffies = buf->utime + buf->stime;
+  if(include_dead_children) used_jiffies += (buf->cutime + buf->cstime);
+
+  avail_jiffies = seconds_since_boot * Hertz - buf->start_time;
+  if(avail_jiffies) pcpu = (used_jiffies << 24) / avail_jiffies;
+
+  buf->pcpu = pcpu;  // fits in an int, summing children on 128 CPUs
 }
 
 /***** figure out what we need */
@@ -243,7 +246,6 @@ static void simple_spew(void){
   memset(&buf, '#', sizeof(proc_t));
   /* use "ps_" prefix to catch library mismatch */
   while(ps_readproc(ptp,&buf)){
-    fill_pcpu(&buf);
     if(want_this_proc(&buf)) show_one_proc(&buf);
     if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
     if(buf.environ) free((void*)*buf.environ); // ought to reuse
@@ -380,8 +382,8 @@ static void fancy_spew(void){
     exit(1);
   }
   while((retbuf = ps_readproc(ptp,retbuf))){
-    fill_pcpu(retbuf);
     if(want_this_proc(retbuf)){
+      fill_pcpu(retbuf); // in case we might sort by %cpu
       processes[n++] = retbuf;
       retbuf = NULL;  /* NULL asks ps_readproc to allocate */
     }

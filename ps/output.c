@@ -428,7 +428,7 @@ static int pr_nice(void){
 /* "Processor utilisation for scheduling."  --- we use %cpu w/o fraction */
 static int pr_c(void){
   unsigned long long total_time;   /* jiffies used by this process */
-  unsigned pcpu = 0;               /* scaled %cpu, 999 means 99.9% */
+  unsigned pcpu = 0;               /* scaled %cpu, 99 means 99% */
   unsigned long long seconds;      /* seconds of process life */
   total_time = pp->utime + pp->stime;
   if(include_dead_children) total_time += (pp->cutime + pp->cstime);
