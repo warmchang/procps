@@ -573,16 +573,18 @@ static struct el * select_procs (int *num)
 
 		if (opt_long || opt_longlong || (match && opt_pattern)) {
 			if (opt_longlong && task.cmdline)
-				strncpy (cmdoutput, cmdline, CMDSTRSIZE);
+				strncpy (cmdoutput, cmdline, sizeof cmdoutput - 1);
 			else
-				strncpy (cmdoutput, task.cmd, CMDSTRSIZE);
+				strncpy (cmdoutput, task.cmd, sizeof cmdoutput - 1);
+			cmdoutput[sizeof cmdoutput - 1] = '\0';
 		}
 
 		if (match && opt_pattern) {
 			if (opt_full && task.cmdline)
-				strncpy (cmdsearch, cmdline, CMDSTRSIZE);
+				strncpy (cmdsearch, cmdline, sizeof cmdsearch - 1);
 			else
-				strncpy (cmdsearch, task.cmd, CMDSTRSIZE);
+				strncpy (cmdsearch, task.cmd, sizeof cmdsearch - 1);
+			cmdsearch[sizeof cmdsearch - 1] = '\0';
 
 			if (regexec (preg, cmdsearch, 0, NULL, 0) != 0)
 				match = 0;
