@@ -25,10 +25,11 @@
 
         /* Defines intended to be experimented with ------------------------ */
 //#define CASEUP_HEXES            /* show any hex values in upper case       */
-//#define CASEUP_SCALE            /* show scaled times & memory upper case   */
+//#define CASEUP_SCALE            /* show scaled time/num suffix upper case  */
 //#define CASEUP_SUMMK            /* show memory summary kilobytes with 'K'  */
 //#define QUIT_NORMALQ            /* use 'q' to quit, not new default 'Q'    */
 //#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
+//#define TICS_64_BITS            /* accommodate Linux 2.5.xx 64-bit jiffies */
 //#define USE_LIB_STA3            /* use lib status (3 ch) vs. proc_t (1 ch) */
 //#define WARN_NOT_SMP            /* restrict '1' & 'I' commands to true smp */
 
@@ -101,8 +102,14 @@
 
 /*######  Some Typedef's and Enum's  #####################################*/
 
-        /* This typedef attempts to ensure consistent 'ticks' handling. */
+        /* These typedefs attempt to ensure consistent 'ticks' handling */
+#ifdef TICS_64_BITS
+typedef unsigned long long TICS_t;
+typedef          long long STIC_t;
+#else
 typedef unsigned long TICS_t;
+typedef          long STIC_t;
+#endif
 
         /* This structure consolidates the information that's used
            in a variety of display roles. */
@@ -257,8 +264,10 @@ typedef struct win {
 
 /*######  Display Support *Data*  ########################################*/
 
-        /* An rcfile 'footprint' used to invalidate existing */
-#define RCF_FILEID  'e'
+        /* An rcfile 'footprint' used to invalidate existing local rcfile
+           and the global rcfile path + name */
+#define RCF_FILEID  'g'
+#define SYS_RCFILE  "/etc/toprc"
 
         /* The default fields displayed and their order,
            if nothing is specified by the loser, oops user */
@@ -270,8 +279,13 @@ typedef struct win {
 
         /* These are the possible fscanf formats used in /proc/stat
            reads during history processing. */
+#ifdef TICS_64_BITS
+#define CPU_FMTS_MULTI  "cpu%*d %Lu %Lu %Lu %Lu\n"
+#define CPU_FMTS_JUST1  "cpu %Lu %Lu %Lu %Lu\n"
+#else
 #define CPU_FMTS_MULTI  "cpu%*d %lu %lu %lu %lu\n"
 #define CPU_FMTS_JUST1  "cpu %lu %lu %lu %lu\n"
+#endif
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
@@ -338,8 +352,8 @@ typedef struct win {
    "%s's - \01Help for Interactive Commands\02 - %s\n" \
    "Window %s\06: \01Cumulative mode \03%s\02.  \01System\06: \01Delay time \03%.1f secs\02; \01Secure mode \03%s\02.\n" \
    "  sp or ^L    Redraw screen\n" \
-   "  o           Rearrange current window's fields\n" \
-   "  f           Add and remove current window's fields\n" \
+   "  o         . Rearrange current window's fields\n" \
+   "  f         . Add and remove current window's fields\n" \
    "  Z           Change color mappings for any window\05\n" \
    "\n" \
    "(7 letters) . Sort: \01C\02) cmd; \01M\02) mem; \01P\02) pid; \01T\02) time; \01U\02) cpu; \01Y\02) tty; \01E\02) user\n" \
@@ -391,10 +405,6 @@ typedef struct win {
    "  0x00040000  PF_KERNTHREAD (2.5)\n" \
    "  0x00100000  PF_USEDFPU (thru 2.4)\n" \
    "  0x00400000  PF_ATOMICALLOC\n" \
-   "\n" \
-   "Memory notes:\n" \
-   "  VIRT = SWAP + RES\n" \
-   "  RES  = CODE + DATA\n" \
    ""
 
         /* Windows/Field Group Help specially formatted string(s) --

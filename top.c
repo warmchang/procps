@@ -72,12 +72,11 @@ static struct termios Savedtty,
                       Rawtty;
 static int  Ttychanged = 0;
 
-        /* Program name used in error messages and 'rc' file names */
+        /* Program name used in error messages and local 'rc' file name */
 static char *Myname;
 
-        /* The Name of the config file(s), dynamically constructed */
-static char  RCfile     [OURPATHSZ],
-             RCfile_Sys [SMLBUFSIZ];
+        /* The Name of the local config file, dynamically constructed */
+static char  RCfile [OURPATHSZ];
 
         /* The run-time acquired page size */
 static int  Page_size;
@@ -380,7 +379,11 @@ static void bye_bye (int eno, const char *str)
       "\nbye_bye's Summary report:"
       "\n\tProgram"
       "\n\t   Page_size = %d, Cpu_tot = %d"
-      "\n\tTerminal: %s"
+      "\n\t   %s, Hertz = %u (size %u bytes, %u-bit time)"
+      "\n\t   sizeof(CPUS_t) = %u, sizeof(HIST_t) = %u (%u HIST_t's/Page)"
+      "\n\t   CPU_FMTS_JUST1 = %s"
+      "  \t   CPU_FMTS_MULTI = %s"
+      "  \tTerminal: %s"
       "\n\t   device = %s, ncurses = v%s"
       "\n\t   max_colors = %d, max_pairs = %d"
       "\n\t   Cap_can_goto = %s"
@@ -388,7 +391,7 @@ static void bye_bye (int eno, const char *str)
       "\n\t   Max_lines = %d"
       "\n\tWindows and Curwin->"
       "\n\t   sizeof(WIN_t) = %u, GROUPSMAX = %d"
-      "\n\t   winname = %s, grpname = %s,"
+      "\n\t   winname = %s, grpname = %s"
 #ifdef CASEUP_HEXES
       "\n\t   winflags = %08X, maxpflgs = %d"
 #else
@@ -399,6 +402,9 @@ static void bye_bye (int eno, const char *str)
       "\n\t   sorttype  = %c"
       "\n"
       , Page_size, Cpu_tot
+      , procps_version, (unsigned)Hertz, sizeof(Hertz), sizeof(Hertz) * 8
+      , sizeof(CPUS_t), sizeof(HIST_t), Page_size / sizeof(HIST_t)
+      , CPU_FMTS_JUST1, CPU_FMTS_MULTI
 #ifdef PRETENDNOCAP
       , "dumb"
 #else
@@ -787,12 +793,12 @@ static char *scale_tics (TICS_t tics, const unsigned width)
 
       /* try successively higher units until it fits */
    t = tics / Hertz;
-   sprintf(buf, "%d:%02d.%02d"                 /* minutes:seconds.tenths */
-      , t/60, t%60, (int)((tics*100)/Hertz)%100);
+   sprintf(buf, "%u:%02u.%02u"                 /* minutes:seconds.hundredths */
+      , t/60, t%60, (unsigned)((tics*100)/Hertz)%100);
    if (strlen(buf) <= width)
       return buf;
 
-   sprintf(buf, "%d:%02d", t/60, t%60);         /* minutes:seconds */
+   sprintf(buf, "%u:%02u", t/60, t%60);         /* minutes:seconds */
    if (strlen(buf) <= width)
       return buf;
 
@@ -944,8 +950,8 @@ static void before (char *me)
 
 
         /*
-         * Build the two RC file names then try to read 'em. */
-        /* '/etc/RCfile_Sys' contains two lines consisting of the secure
+         * Build the local RC file name then try to read both of 'em. */
+        /* 'SYS_RCFILE' contains two lines consisting of the secure
          *   mode switch and an update interval.  It's presence limits what
          *   ordinary users are allowed to do. */
         /* '$HOME/RCfile' contains multiple lines - 2 global + 3 per window.
@@ -966,12 +972,11 @@ static void configs_read (void)
    char id;
    int i;
 
-   strcpy(RCfile_Sys, fmtmk("/etc/%src", Myname));
    if (getenv("HOME"))
       strcpy(RCfile, fmtmk("%s%c", getenv("HOME"), '/'));
    strcat(RCfile, fmtmk(".%src", Myname));
 
-   fp = fopen(RCfile_Sys, "r");
+   fp = fopen(SYS_RCFILE, "r");
    if (fp) {
       fbuf[0] = '\0';
       fgets(fbuf, sizeof(fbuf), fp);            /* sys rc file, line #1 */
@@ -1079,7 +1084,7 @@ static void parse_args (char **args)
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
                else std_err("-n requires argument");
-               if (1 != sscanf(cp, "%d", &Loops) || 0 > Loops)
+               if (1 != sscanf(cp, "%d", &Loops) || 1 > Loops)
                   std_err(fmtmk("bad iterations arg '%s'", cp));
                break;
             case 'p':
@@ -1113,7 +1118,7 @@ static void parse_args (char **args)
          } /* end: switch (*cp) */
 
             /* advance cp and jump over any numerical args used above */
-         if (*cp) cp += strspn(++cp, "- ,.1234567890");
+         if (*cp) cp += strspn(&cp[1], "- ,.1234567890") + 1;
       } /* end: while (*cp) */
    } /* end: while (*args) */
 
@@ -1184,13 +1189,15 @@ static void display_fields (void)
       too lazy to handle his own asterisk (*) logic */
    putp(Cap_bold);
    for (i = 0; i < MAXtbl(Fieldstab); ++i) {
+      int b = (NULL != strchr(Curwin->fieldscur, i + 'A'));
          /* advance past any leading spaces */
       for (p = Fieldstab[i].head; ' ' == *p; ++p)
          ;
+
       printf("%s%c %c: %-10s = %s"
          , tg2((i / rmax) * cmax, (i % rmax) + yRSVD)
-         , strchr(Curwin->fieldscur, i + 'A') ? '*' : ' '
-         , i + 'A'
+         , b ? '*' : ' '
+         , b ? i + 'A' : i + 'a'
          , p
          , Fieldstab[i].desc);
    }
@@ -1670,9 +1677,9 @@ static void cpudo (FILE *fp, const char *fmt, CPUS_t *cpu, const char *pfx)
 {
         /* we'll trim to zero if we get negative time ticks,
            which has happened with some SMP kernels (pre-2.4?) */
-#define TRIMz(x)  ((tz = (long)x) < 0 ? 0 : tz)
+#define TRIMz(x)  ((tz = (STIC_t)x) < 0 ? 0 : tz)
    TICS_t u_tics, s_tics, n_tics, i_tics;
-   long   u_frme, s_frme, n_frme, i_frme, tot_frme, tz;
+   STIC_t u_frme, s_frme, n_frme, i_frme, tot_frme, tz;
 
 #ifdef PRETEND4CPUS
    rewind(fp);
@@ -1696,6 +1703,7 @@ static void cpudo (FILE *fp, const char *fmt, CPUS_t *cpu, const char *pfx)
       , (float)s_frme * 100 / tot_frme
       , (float)n_frme * 100 / tot_frme
       , (float)i_frme * 100 / tot_frme));
+   Msg_row += 1;
 
       /* remember for next time around */
    cpu->u = u_tics;
@@ -1716,7 +1724,6 @@ static void frame_states (proc_t **p, int show)
 {
    static HIST_t   *hist_sav = NULL;
    static unsigned  hist_siz;
-   static int       viewsav;
    static CPUS_t   *smpcpu;
    HIST_t          *hist_new;
    unsigned         total, running, sleeping, stopped, zombie;
@@ -1725,14 +1732,12 @@ static void frame_states (proc_t **p, int show)
 
    if (!hist_sav) {
       Frame_maxtask = 0;
-         /* room for 512 HIST_t's (if Page_size == 4k) */
       hist_siz = (Page_size / sizeof(HIST_t));
       hist_sav = alloc_c(hist_siz);
          /* note: we allocate one more CPUS_t than Cpu_tot so that the last
                   slot can hold tics representing the /proc/stat cpu summary
                   (first line read)  -- that slot supports summary cpu info */
       smpcpu = alloc_c((1 + Cpu_tot) * sizeof(CPUS_t));
-      viewsav = CHKw(Curwin, View_CPUSUM);
    }
    hist_new = alloc_c(hist_siz);
    total = running = sleeping = stopped = zombie = 0;
@@ -1796,37 +1801,23 @@ static void frame_states (proc_t **p, int show)
          , total, running, sleeping, stopped, zombie));
       Msg_row += 1;
 
-         /* clean old histories if we've changed modes */
-      if (CHKw(Curwin, View_CPUSUM) != viewsav) {
-         if (CHKw(Curwin, View_CPUSUM))
-               /* fresh start for the last slot in the history area */
-            memset(&smpcpu[Cpu_tot], '\0', sizeof(CPUS_t));
-         else
-               /* fresh start for the true smpcpu history area  */
-            memset(smpcpu, '\0', Cpu_tot * sizeof(CPUS_t));
-         viewsav = CHKw(Curwin, View_CPUSUM);
-      }
-
       if (!(fp = fopen("/proc/stat", "r")))
          std_err(fmtmk("Failed /proc/stat open: %s", strerror(errno)));
 
       if (CHKw(Curwin, View_CPUSUM)) {
             /* retrieve and display just the 1st /proc/stat line */
          cpudo(fp, CPU_FMTS_JUST1, &smpcpu[Cpu_tot], "Cpu(s) state:");
-         Msg_row += 1;
       } else {
          char tmp[SMLBUFSIZ];
 
             /* skip the 1st line, which reflects total cpu states */
-         if (!fgets(tmp, sizeof(tmp), fp))
-            std_err("Failed /proc/stat read");
+         if (!fgets(tmp, sizeof(tmp), fp)) std_err("Failed /proc/stat read");
             /* now do each cpu's states separately */
          for (i = 0; i < Cpu_tot; i++) {
             sprintf(tmp, "%-6scpu%-2d:"         /* [ cpu states as ]      */
                , i ? " " : "State"              /*    'State cpu0 : ... ' */
                , Mode_irixps ? i : Cpu_map[i]); /*    '      cpu1 : ... ' */
             cpudo(fp, CPU_FMTS_MULTI, &smpcpu[i], tmp);
-            Msg_row += 1;
          }
       }
       fclose(fp);
@@ -2168,7 +2159,7 @@ static void do_key (unsigned c)
       case 'g':
          if (Mode_altscr) {
             char tmp[GETBUFSIZ];
-            strcpy(tmp, ask4str(fmtmk("Rename window '%s' to (0-3 chars)"
+            strcpy(tmp, ask4str(fmtmk("Rename window '%s' to (1-3 chars)"
                , Curwin->winname)));
             if (tmp[0]) win_names(Curwin, tmp);
          }
@@ -2319,7 +2310,7 @@ static void do_key (unsigned c)
             fprintf(fp, "RCfile for \"%s with windows\"\t\t# shameless braggin'\n"
                , Myname);
             fprintf(fp, "Id:%c, "
-               "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.1f, Curwin=%d\n"
+               "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%d\n"
                , RCF_FILEID
                , Mode_altscr, Mode_irixps, Delay_time, Curwin - Winstk[0]);
             for (i = 0; i < GROUPSMAX; i++) {
@@ -2553,7 +2544,7 @@ static void do_window (proc_t **ppt, WIN_t *q, int *lscr)
          * -- i swear that's the whole truth, so-help-me ! */
 static void sohelpme (int wix, int max)
 {
-   WIN_t *w;
+   WIN_t *w = Winstk[wix];
    int i, rsvd, size, wins;
 
       /* calc remaining number of visible windows + total 'user' lines */
@@ -2656,7 +2647,9 @@ static void so_lets_see_em (void)
          * it just SPLENDIDLY!  You go right on doing it EXACTLY the SAME!
          */
 int main (int dont_care_argc, char **argv)
-{ /*
+{
+   before(*argv);
+  /*
    Ok, she's gone now.  Don't you mind her, she means well but yes, she is
    a bit of a busy-body.  Always playing the matchmaker role, trying to do
    away with unmarried windows and bachelors.  So, back to business buddy!
@@ -2668,7 +2661,6 @@ int main (int dont_care_argc, char **argv)
    Well then, here, try THIS sandwich...
                                                            +-------------+ */
    windows_stage1();                                    /* top (sic) slice */
-   before(*argv);                                       /* > seasonings, < */
    configs_read();                                      /* > spread etc, < */
    parse_args(&argv[1]);                                /* > lean stuff, < */
    whack_terminal();                                    /* > onions etc. < */

@@ -22,20 +22,20 @@
 .igEND
 .
 .\" Setup ////////////////////////////////////////////////////////////////
-.      \" ** Comment out 'll' to eliminate WIDTH fiddlin', 1 of 3
-.	ll +8
+\#  ** Comment out '.nr' or set to 0 to eliminate WIDTH fiddlin' !
+.nr half_xtra 4
+.
+.	ll +(\n[half_xtra] + \n[half_xtra])
 .
 \#                      Special right justify macros ---------------------
 \#                          - right justify start
 .	de Rjb
-.      \" ** Comment out 'll' to eliminate WIDTH fiddlin', 2 of 3
-.	ll -4
+.	ll -\n[half_xtra]
 .	rj \\$1
 ..
 \#                          - right justify end
 .	de Rje
-.      \" ** Comment out 'll' to eliminate WIDTH fiddlin', 3 of 3
-.	ll +4
+.	ll +\n[half_xtra]
 ..
 \#                      Jimmy's darn Bullet style ------------------------
 .	de Jbu
@@ -225,7 +225,7 @@ columns get misaligned.
 personal \*(CF, including any changes made on a per-window basis.
 Thus, once you personalize things they\fB remain personalized\fR until
 you decide to change them again.
-This \*(ME has been completely cured of:
+This \*(Me has been completely cured of:
 .Rjb 2
  i-cant-remember-so-please-do-that-all-over-again
  ( and again, and again ... )
@@ -239,14 +239,13 @@ go bye-bye.
 
 .New
 You have complete program\fB naming freedom\fR with no internal ties to a
-specific \*(CF.
-Thus, if you have permission to create symbolic links to /usr/bin (or can bribe
-the system administrator), these symlinks could be used to establish\fB
-different\fR \*(CFs reflecting the different\fB personalities\fR of your
-customized "\*(Mes", under whatever aliases you've used.
+specific personal \*(CF.
+Symbolic links could be used to establish different \*(CFs reflecting
+the different personalities of your customized "\*(Mes", under whatever
+aliases you've used.
 
-Thus, you could have an alias for running \*(Me in 'Batch mode', another for when
-you work from the Linux console and maybe a third used with X-Windows.
+Thus, you could have an alias for running \*(Me in 'Batch mode', another for
+when you work from the Linux console and maybe a third used with X-Windows.
 All of that, yet still just a single binary image!
 
 .\" ......................................................................
@@ -289,7 +288,7 @@ more distinct).
 
 .I Columns_Header\fR:
 Shows a\fB new\fR field and some\fB changed\fR labels (unseen to the right).
-Precious horizontal space is no longer squandered unlike your former top.
+Precious horizontal space is no longer squandered.
 
 .Scr
 All of that, however, is just the tip of the old iceberg.
@@ -318,7 +317,7 @@ in this document...
  ( or windows &\fB each\fR )| 6725 root       9   0  0.0   0:00.03 :
  ( could be shown in )| 6232 root       7 -10  1.9   4:25.86 :
  ( this way, or show )| 5561 root       9   0  0.0   0:00.33 :
- ( \fBall concurrently\fR! )| 5560 xfs        9   0  0.0   0:00.01 :
+ (\fB all concurrently\fR! )| 5560 xfs        9   0  0.0   0:00.01 :
                       | 5325 root       9   0  0.0   0:00.05 :
  ( will\fI change\fR often )| 4634 root       9   0  0.0   0:04.23 :
    -*-\fBRow hilites-->\fR  |\fB 1803 jgnome     9   0  0.0   1:55.30\fR :
@@ -333,7 +332,7 @@ assuming no \*(CF, thus no user customizations.
 However, items shown with an \*(AS could be overridden through the\fB
 command line\fR \*(EM a subject soon to be dealt with.
 
-    \fISystem_defaults\fR
+    \fIGlobal_defaults\fR
        'A' - Alt display        \fBOff\fR (full-screen)
      * 'd' - Delay time         3.0 seconds
        'I' - Irix mode          On\ \ (no, 'solaris' smp)
@@ -362,7 +361,7 @@ for a successful\fB close-encounter-of-the-1st-kind\fR with \*(Us.
 You need remember just the\fB help key\fR ('h' or '?') to survive
 \*(EM nay, prosper!
 What about quitting, you ask?
-Well, of course there's the 'Q' \*(CI, but then \*(ME does quite well
+Well, of course there's the 'Q' \*(CI, but then \*(Me does quite well
 with\fB signals\fR.
 So just zap him with the traditional \fI^C\fR when you're done.
 .br
@@ -746,8 +745,8 @@ then be\fB shown\fR as part of the \*(TD (screen width permitting).
 This will also be indicated by a leading \*(AS, as in this excerpt:
     \fR...
     \fR* J: %CPU       = CPU usage
-    \fR  K: TIME       = CPU Time
-    \fR  L: TIME+      = CPU Time, hundredths
+    \fR  k: TIME       = CPU Time
+    \fR  l: TIME+      = CPU Time, hundredths
     \fR* M: %MEM       = Memory usage (RES)
     \fR* N: VIRT       = Virtual Image (kb)
     \fR...
@@ -768,8 +767,8 @@ letter.
 .SH 3. INTERACTIVE Commands
 .\" ----------------------------------------------------------------------
 Listed below is a brief index of commands within categories.
-Some commands appear more than once and, while their meaning is consistent,
-the scope may vary depending on the context in which they are issued.
+Some commands appear more than once \*(EM their meaning or scope may vary
+depending on the context in which they are issued.
 
   3a.\fI GLOBAL_Commands\fR
         ?, ^L, <Sp>, =, A, d, F, h, O, I, k, Q, r, s, W, Z
@@ -783,7 +782,7 @@ the scope may vary depending on the context in which they are issued.
   3d.\fI COLOR_Mapping\fR
         <Enter>, a, b, H, M, q, S, T, w, z, 0 - 7
   4b.\fI COMMANDS_for_Windows\fR
-        -, _, =, +, A, F, g, O
+        -, _, =, +, A, a, F, g, O, w
 
 .\" ......................................................................
 .SS 3a. GLOBAL Commands
@@ -827,8 +826,9 @@ When operating in \*(AM this command has a slightly broader meaning.
 
 .TP 7
 \ \ \'\fBA\fR\' :\fIAlternate_Display_Mode_toggle\fR
-This command will switch between \*(FM and \*(AM
-(see 4. ALTERNATE\-DISPLAY Mode).
+This command will switch between \*(FM and \*(AM.
+See 4. ALTERNATE\-DISPLAY Mode and the 'F' or 'O' \*(CIs for insight into
+\*(CWs and field groups.
 
 .TP 7
 *\ \'\fBd\fR\' or \'\fBs\fR\' :\fIChange_Delay_Time_interval\fR
@@ -936,8 +936,8 @@ When you see 'Cpu(s) state:' in the \*(SA, the '1' toggle is \*O and all
 Otherwise, each \*(Pu is displayed separately as: 'cpu0, cpu1, ...'
 
 .in +4
-\*(NT If you receive a fatal error message in response to this command,
-your version of the kernel does not provide summary \*(Pu data in '/proc/stat'.
+\*(NT If you receive a fatal error message in response to this command, your
+version of the kernel does not provide separate \*(Pu data in '/proc/stat'.
 You can either avoid issuing this command or recompile \*(Me with the
 appropriate #define enabled so the command will be restricted to SMP.
 .in
@@ -985,7 +985,8 @@ your-brand-new-top and you'll make the program author a happy guy.
 \ \ \'\fBz\fR\' :\fIColor/Monochrome_toggle\fR
 Switches the \*(CW between your last used color scheme and the older form
 of black-on-white or white-on-black.
-It does not affect the state of the 'x', 'y' or 'b' toggles.
+This command will alter both the \*(SA and \*(TA but does not affect the
+state of the 'x', 'y' or 'b' toggles.
 
 .PP
 .\" .........................
@@ -1066,21 +1067,26 @@ Lose no sleep over 'reverse' and 'normal', ok?
 
 .TP 7
 \ \ \fB\ 7\fR\ \ upper case letters which \fISelect_a_Sort_Column\fR:
-\'C\fR\'\ \ :Sort by Command\fB line\fR or program\fB name\fR,
+\'\fBC\fR\'\ \ :Sort by Command\fB line\fR or program\fB name\fR,
 .br
 \ \ \ \ \ \ depending on the state of the 'c' toggle
 .br
-\'E\'\ \ :Sort by USER
+\'\fBE\fR\'\ \ :Sort by USER
 .br
-\'M\'\ \ :Sort by %MEM and/or RES
+\'\fBM\fR\'\ \ :Sort by %MEM and/or RES
 .br
-\'P\'\ \ :Sort by PID
+\'\fBP\fR\'\ \ :Sort by PID
 .br
-\'T\'\ \ :Sort by TIME and/or TIME+
+\'\fBT\fR\'\ \ :Sort by TIME and/or TIME+
 .br
-\'U\'\ \ :Sort by %CPU
+\'\fBU\fR\'\ \ :Sort by %CPU
 .br
-\'Y\'\ \ :Sort by TTY
+\'\fBY\fR\'\ \ :Sort by TTY
+
+.PP
+If you forget which field \*(Me is sorting, the '\fBR\fR' or '\fBx\fR'
+\*(CIs could be used for a quick visual reminder, without changing the
+selected sort column.
 
 .\" ......................................................................
 .SS 3d. COLOR Mapping
@@ -1196,9 +1202,10 @@ Come on, let's hear it, who ya gonna' blame, huh?
 .TP 7
 \ \ \'\fB-\fR\' or \'\fB_\fR\' :\fIShow/Hide_Window(s)_toggle\fR
 The '-' (minus) key turns the \*(CW's \*(TD \*O and \*F.
-When \*O, that \*(TA will show a minimum of 1 task and the columns header
-you've established with the 'f' and 'o' commands.
-It will also reflect any other \*(TA options/toggles you've applied.
+When \*O, that \*(TA will show a minimum of the columns header you've
+established with the 'f' and 'o' commands.
+It will also reflect any other \*(TA options/toggles you've applied yielding
+zero or more tasks.
 
 The '_' (upper case minus) key does the same for\fB all\fR \*(TDs.
 In other words, it switches between the currently visible \*(TD(s) and any
@@ -1403,7 +1410,7 @@ empty rows...
 .Img
  1:Def\fI no\fR highlight,  +\fB--------------------------------------\fR+
   thus disabled cmds: |1:Def - 15:50:32 up 16:29,  9 users,  :
-  b,i,n,u,x,y,z, etc. |Tasks: \fB 75\fR total,  \fB 2\fR running, \fB 73\fR sle:
+  b,i,n,u,x,y, etc.   |Tasks: \fB 75\fR total,  \fB 2\fR running, \fB 73\fR sle:
   & m = lost Mem/Swap |Cpu(s) state: \fB 10.6%\fR user,  \fB 0.0%\fR syst:
                       |______________________________________:
  2:Job was very busy: |\fI2__PID__PPID_Command____________TIME+_\fR:
@@ -1471,15 +1478,14 @@ not successfully, ha ha):
    \fBs\fR or\fB d\fR    Change\fB delay/update\fR interval
 
 The system \*(CF is\fB not\fR created by \*(Me.
-Rather,\fB you create this file manually\fR and place it in the\fI /etc\fR directory.
-Its name must agree with 'your-name-for-top'\ +\ 'rc' and must have\fI
-no\fR leading '.' (period).
-It must have\fI only_two_lines\fR.
+Rather,\fB you create this file manually\fR and place it in the \fI/etc\fR
+directory.
+Its name must be 'toprc' and must have\fI no\fR leading '.' (period).
+It must have only\fI two lines\fR.
 
-Here is an example of a system \*(CF placed in\fI /etc\fR
-as\fI top\fBrc\fR:\ \ /etc/\fItop\fBrc\fR
+Here is an example of the contents of\fI /etc/toprc\fR:
    \fBs\fR         # line 1: 'secure' mode switch
-   \fB5.0\fR       # line 2: 'delay'\ \ interval (secs)
+   \fB5.0\fR       # line 2: 'delay'\ \ interval in seconds
 
 .\" ......................................................................
 .SS 5b. PERSONAL Configuration File
