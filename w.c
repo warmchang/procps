@@ -12,6 +12,7 @@
 #include "proc/procps.h"
 #include "proc/output.h"
 #include "proc/sysinfo.h"
+#include "proc/escape.h"
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -217,10 +218,14 @@ static void showinfo(utmp_t *u, int formtype, int maxcmd, int from) {
     }
     fputs(" ", stdout);
     if (likely(best)) {
-	if (best->cmdline)
-	    print_strlist(stdout, best->cmdline, maxcmd);
-	else
-	    printf("%*.*s", -maxcmd, maxcmd, best->cmd);
+	char cmdbuf[512];
+	escape_command(cmdbuf, best, sizeof cmdbuf, maxcmd, ESC_ARGS);
+	fputs(cmdbuf,stdout);
+	
+//	if (best->cmdline)
+//	    print_strlist(stdout, best->cmdline, maxcmd);
+//	else
+//	    printf("%*.*s", -maxcmd, maxcmd, best->cmd);
     } else {
 	printf("-");
     }
