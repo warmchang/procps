@@ -25,6 +25,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <locale.h>
+#include <limits.h>
+#include <errno.h>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -1042,6 +1044,10 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
     }
     fields = sscanf(buff, " %*d %*d %34s %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %u", devname, &dummy);
     if (fields == 2 && is_disk(devname)){
+      if (cDisk < 0 || (size_t)cDisk >= INT_MAX / sizeof(struct disk_stat)) {
+        errno = EFBIG;
+        crash("/proc/diskstats");
+      }
       (*disks) = xrealloc(*disks, (cDisk+1)*sizeof(struct disk_stat));
       sscanf(buff,  "   %*d    %*d %31s %u %u %llu %u %u %u %llu %u %u %u %u",
         //&disk_major,
@@ -1062,6 +1068,10 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
         (*disks)[cDisk].partitions=0;
       cDisk++;
     }else{
+      if (cPartition < 0 || (size_t)cPartition >= INT_MAX / sizeof(struct partition_stat)) {
+        errno = EFBIG;
+        crash("/proc/diskstats");
+      }
       (*partitions) = xrealloc(*partitions, (cPartition+1)*sizeof(struct partition_stat));
       fflush(stdout);
       sscanf(buff,  (fields == 2)
@@ -1099,6 +1109,10 @@ unsigned int getslabinfo (struct slab_cache **slab){
   while (fgets(buff,BUFFSIZE-1,fd)){
     if(!memcmp("slabinfo - version:",buff,19)) continue; // skip header
     if(*buff == '#')                           continue; // skip comments
+    if(cSlab < 0 || (size_t)cSlab >= INT_MAX / sizeof(struct slab_cache)){
+      errno = EFBIG;
+      crash("/proc/slabinfo");
+    }
     (*slab) = xrealloc(*slab, (cSlab+1)*sizeof(struct slab_cache));
     sscanf(buff,  "%47s %u %u %u %u",  // allow 47; max seen is 24
       (*slab)[cSlab].name,
