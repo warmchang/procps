@@ -5404,8 +5404,8 @@ static int window_show (WIN_t *q, int wmax) {
  /* the isBUSY macro determines if a task is 'active' --
     it returns true if some cpu was used since the last sample.
     ( actual 'running' tasks will be a subset of those selected ) */
- #define isBUSY(x)   (0 < PID_VAL(EU_CPU, s_int, x))
- #define winMIN(a,b) ((a < b) ? a : b)
+ #define isBUSY(x)   (0 < PID_VAL(EU_CPU, s_int, (x)))
+ #define winMIN(a,b) (((a) < (b)) ? (a) : (b))
    int i, lwin;
 
    // Display Column Headings -- and distract 'em while we sort (maybe)
