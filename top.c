@@ -1219,7 +1219,7 @@ static int rc_read_new (const char *const buf, RCF_t *rc) {
 
    for (i = 0; i < GROUPSMAX; i++) {
       RCW_t *ptr = &rc->win[i];
-      cnt = sscanf(cp, "%s\tfieldscur=%s\n", ptr->winname, ptr->fieldscur);
+      cnt = sscanf(cp, "%3s\tfieldscur=%31s\n", ptr->winname, ptr->fieldscur);
       if (cnt != 2) return 5+100*i;  // OK to have less than 4 windows
       if (WINNAMSIZ <= strlen(ptr->winname)) return -6;
       if (strlen(DEF_FIELDS) != strlen(ptr->fieldscur)) return -7;
