@@ -207,11 +207,10 @@ RECURSIVE_TARGETS = info-recursive dvi-recursive install-info-recursive \
 	uninstall-info-recursive all-recursive install-data-recursive \
 	install-exec-recursive installdirs-recursive install-recursive \
 	uninstall-recursive check-recursive installcheck-recursive
-DIST_COMMON = README ././stamp-h.in ./stamp-h.in AUTHORS COPYING \
-	COPYING.LIB ChangeLog INSTALL Makefile.am Makefile.in NEWS TODO \
-	aclocal.m4 config.guess config.h.in config.sub configure \
-	configure.in depcomp install-sh ltconfig ltmain.sh missing \
-	mkinstalldirs
+DIST_COMMON = README ./stamp-h.in AUTHORS COPYING COPYING.LIB ChangeLog \
+	INSTALL Makefile.am Makefile.in NEWS TODO aclocal.m4 \
+	config.guess config.h.in config.sub configure configure.in \
+	depcomp install-sh ltconfig ltmain.sh missing mkinstalldirs
 DIST_SUBDIRS = $(SUBDIRS)
 SOURCES = $(free_SOURCES) $(kill_SOURCES) $(pgrep_SOURCES) sysctl.c $(tload_SOURCES) $(top_SOURCES) $(uptime_SOURCES) $(vmstat_SOURCES) $(w_SOURCES) $(watch_SOURCES)
 
@@ -653,7 +652,6 @@ GZIP_ENV = --best
 distdir: $(DISTFILES)
 	-chmod -R a+w $(distdir) >/dev/null 2>&1; rm -rf $(distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/./.
 	@for file in $(DISTFILES); do \
 	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
 	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
