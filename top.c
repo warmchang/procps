@@ -91,7 +91,7 @@ static unsigned Mem_pages;
 static int   Cpu_tot,
             *Cpu_map;
         /* assume no IO-wait stats, overridden if linux 2.5.41 */
-static char *States_fmts = STATES_line2x4;
+static const char *States_fmts = STATES_line2x4;
 
         /* Specific process id monitoring support */
 static pid_t  Monpids [MONPIDMAX] = { 0 };
@@ -738,7 +738,7 @@ static const char *scale_tics (TICS_t tics, const int width)
 
    ct  = ((tics * 100) / Hertz)%100 ;
    nt  = tics / Hertz;
-   if (width >= snprintf(buf, sizeof(buf), T1, nt/60, nt%60, ct)
+   if (width >= snprintf(buf, sizeof(buf), T1, nt/60, nt%60, ct))
          return buf;
    ss  = nt % 60;
    nt  /= 60;
