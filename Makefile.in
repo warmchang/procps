@@ -1,4 +1,4 @@
-# Makefile.in generated automatically by automake 1.4 from Makefile.am
+# Makefile.in generated automatically by automake 1.4-p4 from Makefile.am
 
 # Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
@@ -62,15 +62,17 @@ host_triplet = @host@
 AS = @AS@
 CC = @CC@
 DLLTOOL = @DLLTOOL@
-LD = @LD@
+ECHO = @ECHO@
+EXEEXT = @EXEEXT@
 LIBTOOL = @LIBTOOL@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 NCURSES_LIB = @NCURSES_LIB@
-NM = @NM@
 OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 RANLIB = @RANLIB@
+STRIP = @STRIP@
 VERSION = @VERSION@
 
 SUBDIRS = proc ps
@@ -111,6 +113,10 @@ EXTRA_DIST = man_MANS
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES = 
+bin_PROGRAMS =  uptime$(EXEEXT) tload$(EXEEXT) free$(EXEEXT) w$(EXEEXT) \
+top$(EXEEXT) vmstat$(EXEEXT) watch$(EXEEXT) pgrep$(EXEEXT)
+myexecbin_PROGRAMS =  kill$(EXEEXT)
+sbin_PROGRAMS =  sysctl$(EXEEXT)
 PROGRAMS =  $(bin_PROGRAMS) $(myexecbin_PROGRAMS) $(sbin_PROGRAMS)
 
 
@@ -118,42 +124,42 @@ DEFS = @DEFS@ -I. -I$(srcdir)
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-uptime_OBJECTS =  uptime.o
+uptime_OBJECTS =  uptime.$(OBJEXT)
 uptime_LDADD = $(LDADD)
 uptime_DEPENDENCIES =  proc/libproc.la
 uptime_LDFLAGS = 
-tload_OBJECTS =  tload.o
+tload_OBJECTS =  tload.$(OBJEXT)
 tload_LDADD = $(LDADD)
 tload_DEPENDENCIES =  proc/libproc.la
 tload_LDFLAGS = 
-free_OBJECTS =  free.o
+free_OBJECTS =  free.$(OBJEXT)
 free_LDADD = $(LDADD)
 free_DEPENDENCIES =  proc/libproc.la
 free_LDFLAGS = 
-w_OBJECTS =  w.o
+w_OBJECTS =  w.$(OBJEXT)
 w_LDADD = $(LDADD)
 w_DEPENDENCIES =  proc/libproc.la
 w_LDFLAGS = 
-top_OBJECTS =  top.o
+top_OBJECTS =  top.$(OBJEXT)
 top_DEPENDENCIES =  proc/libproc.la
 top_LDFLAGS = 
-vmstat_OBJECTS =  vmstat.o
+vmstat_OBJECTS =  vmstat.$(OBJEXT)
 vmstat_LDADD = $(LDADD)
 vmstat_DEPENDENCIES =  proc/libproc.la
 vmstat_LDFLAGS = 
-watch_OBJECTS =  watch.o
+watch_OBJECTS =  watch.$(OBJEXT)
 watch_DEPENDENCIES = 
 watch_LDFLAGS = 
-pgrep_OBJECTS =  pgrep.o
+pgrep_OBJECTS =  pgrep.$(OBJEXT)
 pgrep_LDADD = $(LDADD)
 pgrep_DEPENDENCIES =  proc/libproc.la
 pgrep_LDFLAGS = 
-kill_OBJECTS =  skill.o
+kill_OBJECTS =  skill.$(OBJEXT)
 kill_LDADD = $(LDADD)
 kill_DEPENDENCIES =  proc/libproc.la
 kill_LDFLAGS = 
 sysctl_SOURCES = sysctl.c
-sysctl_OBJECTS =  sysctl.o
+sysctl_OBJECTS =  sysctl.$(OBJEXT)
 sysctl_LDADD = $(LDADD)
 sysctl_DEPENDENCIES =  proc/libproc.la
 sysctl_LDFLAGS = 
@@ -180,15 +186,15 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-DEP_FILES =  .deps/free.P .deps/pgrep.P .deps/skill.P \
-.deps/sysctl.P .deps/tload.P .deps/top.P .deps/uptime.P .deps/vmstat.P \
-.deps/w.P .deps/watch.P
+DEP_FILES =  .deps/free.P .deps/pgrep.P .deps/skill.P .deps/sysctl.P \
+.deps/tload.P .deps/top.P .deps/uptime.P .deps/vmstat.P .deps/w.P \
+.deps/watch.P
 SOURCES = $(uptime_SOURCES) $(tload_SOURCES) $(free_SOURCES) $(w_SOURCES) $(top_SOURCES) $(vmstat_SOURCES) $(watch_SOURCES) $(pgrep_SOURCES) $(kill_SOURCES) sysctl.c
-OBJECTS = $(uptime_OBJECTS) $(tload_OBJECTS) $(free_OBJECTS) $(w_OBJECTS) $(top_OBJECTS) $(vmstat_OBJECTS) $(watch_OBJECTS) $(pgrep_OBJECTS) $(kill_OBJECTS) sysctl.o
+OBJECTS = $(uptime_OBJECTS) $(tload_OBJECTS) $(free_OBJECTS) $(w_OBJECTS) $(top_OBJECTS) $(vmstat_OBJECTS) $(watch_OBJECTS) $(pgrep_OBJECTS) $(kill_OBJECTS) sysctl.$(OBJEXT)
 
 all: all-redirect
 .SUFFIXES:
-.SUFFIXES: .S .c .lo .o .s
+.SUFFIXES: .S .c .lo .o .obj .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu Makefile
 
@@ -199,7 +205,7 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 $(ACLOCAL_M4):  configure.in 
 	cd $(srcdir) && $(ACLOCAL)
 
-config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
+config.status: $(srcdir)/configure.in $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
 $(srcdir)/configure: $(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
 	cd $(srcdir) && $(AUTOCONF)
@@ -279,6 +285,11 @@ uninstall-sbinPROGRAMS:
 	  rm -f $(DESTDIR)$(sbindir)/`echo $$p|sed 's/$(EXEEXT)$$//'|sed '$(transform)'|sed 's/$$/$(EXEEXT)/'`; \
 	done
 
+# FIXME: We should only use cygpath when building on Windows,
+# and only if it is available.
+.c.obj:
+	$(COMPILE) -c `cygpath -w $<`
+
 .s.o:
 	$(COMPILE) -c $<
 
@@ -287,6 +298,7 @@ uninstall-sbinPROGRAMS:
 
 mostlyclean-compile:
 	-rm -f *.o core *.core
+	-rm -f *.$(OBJEXT)
 
 clean-compile:
 
@@ -311,45 +323,44 @@ distclean-libtool:
 
 maintainer-clean-libtool:
 
-
-uptime: $(uptime_OBJECTS) $(uptime_DEPENDENCIES)
-	@rm -f uptime
+uptime$(EXEEXT): $(uptime_OBJECTS) $(uptime_DEPENDENCIES)
+	@rm -f uptime$(EXEEXT)
 	$(LINK) $(uptime_LDFLAGS) $(uptime_OBJECTS) $(uptime_LDADD) $(LIBS)
 
-tload: $(tload_OBJECTS) $(tload_DEPENDENCIES)
-	@rm -f tload
+tload$(EXEEXT): $(tload_OBJECTS) $(tload_DEPENDENCIES)
+	@rm -f tload$(EXEEXT)
 	$(LINK) $(tload_LDFLAGS) $(tload_OBJECTS) $(tload_LDADD) $(LIBS)
 
-free: $(free_OBJECTS) $(free_DEPENDENCIES)
-	@rm -f free
+free$(EXEEXT): $(free_OBJECTS) $(free_DEPENDENCIES)
+	@rm -f free$(EXEEXT)
 	$(LINK) $(free_LDFLAGS) $(free_OBJECTS) $(free_LDADD) $(LIBS)
 
-w: $(w_OBJECTS) $(w_DEPENDENCIES)
-	@rm -f w
+w$(EXEEXT): $(w_OBJECTS) $(w_DEPENDENCIES)
+	@rm -f w$(EXEEXT)
 	$(LINK) $(w_LDFLAGS) $(w_OBJECTS) $(w_LDADD) $(LIBS)
 
-top: $(top_OBJECTS) $(top_DEPENDENCIES)
-	@rm -f top
+top$(EXEEXT): $(top_OBJECTS) $(top_DEPENDENCIES)
+	@rm -f top$(EXEEXT)
 	$(LINK) $(top_LDFLAGS) $(top_OBJECTS) $(top_LDADD) $(LIBS)
 
-vmstat: $(vmstat_OBJECTS) $(vmstat_DEPENDENCIES)
-	@rm -f vmstat
+vmstat$(EXEEXT): $(vmstat_OBJECTS) $(vmstat_DEPENDENCIES)
+	@rm -f vmstat$(EXEEXT)
 	$(LINK) $(vmstat_LDFLAGS) $(vmstat_OBJECTS) $(vmstat_LDADD) $(LIBS)
 
-watch: $(watch_OBJECTS) $(watch_DEPENDENCIES)
-	@rm -f watch
+watch$(EXEEXT): $(watch_OBJECTS) $(watch_DEPENDENCIES)
+	@rm -f watch$(EXEEXT)
 	$(LINK) $(watch_LDFLAGS) $(watch_OBJECTS) $(watch_LDADD) $(LIBS)
 
-pgrep: $(pgrep_OBJECTS) $(pgrep_DEPENDENCIES)
-	@rm -f pgrep
+pgrep$(EXEEXT): $(pgrep_OBJECTS) $(pgrep_DEPENDENCIES)
+	@rm -f pgrep$(EXEEXT)
 	$(LINK) $(pgrep_LDFLAGS) $(pgrep_OBJECTS) $(pgrep_LDADD) $(LIBS)
 
-kill: $(kill_OBJECTS) $(kill_DEPENDENCIES)
-	@rm -f kill
+kill$(EXEEXT): $(kill_OBJECTS) $(kill_DEPENDENCIES)
+	@rm -f kill$(EXEEXT)
 	$(LINK) $(kill_LDFLAGS) $(kill_OBJECTS) $(kill_LDADD) $(LIBS)
 
-sysctl: $(sysctl_OBJECTS) $(sysctl_DEPENDENCIES)
-	@rm -f sysctl
+sysctl$(EXEEXT): $(sysctl_OBJECTS) $(sysctl_DEPENDENCIES)
+	@rm -f sysctl$(EXEEXT)
 	$(LINK) $(sysctl_LDFLAGS) $(sysctl_OBJECTS) $(sysctl_LDADD) $(LIBS)
 
 install-binSCRIPTS: $(bin_SCRIPTS)
