@@ -68,8 +68,8 @@
 ///////////////////////////////////////////////////////////
 
 #ifndef PAGE_SIZE
-#warning PAGE_SIZE not defined, assuming it is 4096
-#define PAGE_SIZE 4096
+#warning PAGE_SIZE not defined, using sysconf() to determine correct value
+#define PAGE_SIZE (sysconf(_SC_PAGESIZE))
 #endif
 
 
