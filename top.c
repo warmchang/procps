@@ -337,6 +337,9 @@ static void bye_bye (int eno, const char *str)
    fflush(stdout);
 
 #ifdef ATEOJ_REPORT
+
+   fprintf(stderr, "\n Screen_cols %d\n", Screen_cols);
+
    fprintf(stderr,
       "\nbye_bye's Summary report:"
       "\n\tProgram"
@@ -351,20 +354,6 @@ static void bye_bye (int eno, const char *str)
       "\n\t   Cap_can_goto = %s"
       "\n\t   Screen_cols = %d, Screen_rows = %d"
       "\n\t   Max_lines = %d, most recent Pseudo_size = %d"
-#ifndef STDOUT_IOLBF
-      "\n\t   Stdout_buf = %d, BUFSIZ = %u"
-#endif
-      "\n\tWindows and Curwin->"
-      "\n\t   sizeof(WIN_t) = %u, GROUPSMAX = %d"
-      "\n\t   rc.winname = %s, grpname = %s"
-#ifdef CASEUP_HEXES
-      "\n\t   rc.winflags = %08X, maxpflgs = %d"
-#else
-      "\n\t   rc.winflags = %08x, maxpflgs = %d"
-#endif
-      "\n\t   rc.fieldscur = %s"
-      "\n\t   winlines  = %d, rc.maxtasks = %d, maxcmdln = %d"
-      "\n\t   rc.sortindx  = %d"
       "\n"
       , LINUX_VERSION_MAJOR(linux_version_code)
       , LINUX_VERSION_MINOR(linux_version_code)
@@ -383,6 +372,21 @@ static void bye_bye (int eno, const char *str)
       , Cap_can_goto ? "yes" : "No!"
       , Screen_cols, Screen_rows
       , Max_lines, Pseudo_size
+      );
+
+
+   fprintf(stderr,
+#ifndef STDOUT_IOLBF
+      "\n\t   Stdout_buf = %d, BUFSIZ = %u"
+#endif
+      "\n\tWindows and Curwin->"
+      "\n\t   sizeof(WIN_t) = %u, GROUPSMAX = %d"
+      "\n\t   rc.winname = %s, grpname = %s"
+      "\n\t   rc.winflags = %08x, maxpflgs = %d"
+      "\n\t   rc.fieldscur = %s"
+      "\n\t   winlines  = %d, rc.maxtasks = %d, maxcmdln = %d"
+      "\n\t   rc.sortindx  = %d"
+      "\n"
 #ifndef STDOUT_IOLBF
       , sizeof(Stdout_buf), (unsigned)BUFSIZ
 #endif
@@ -393,6 +397,8 @@ static void bye_bye (int eno, const char *str)
       , Curwin->winlines, Curwin->rc.maxtasks, Curwin->maxcmdln
       , Curwin->rc.sortindx
       );
+
+
 #endif
 
    if (str) {

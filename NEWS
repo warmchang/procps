@@ -4,6 +4,7 @@ avoid warning about -lncurses when not linking -- thanks FLWM
 ps: personality-specific -x support (HP-UX and SVR4-MP)
 ps: k option, same as --sort
 vmstat: fixed -d
+top: try to handle terminals lacking rmam and smam
 
 procps-3.2.0 --> procps-3.2.1
 
