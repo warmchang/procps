@@ -37,8 +37,8 @@
 
 #define UPTIME_FILE "/proc/uptime"
 
-static __thread char upbuf[128];
-static __thread char shortbuf[128];
+static __thread char upbuf[256];
+static __thread char shortbuf[256];
 
 static int count_users(void)
 {
