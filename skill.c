@@ -131,13 +131,15 @@ static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd,
 	char dn_buf[1000];
 	dev_to_tty(dn_buf, 999, tty, pid, ABBREV_DEV);
 	if (run_time->interactive) {
-		char *buf;
+		char *buf = NULL;
 		size_t len = 0;
 		fprintf(stderr, "%-8s %-8s %5d %-16.16s   ? ",
 			(char *)dn_buf, pwcache_get_user(uid), pid, cmd);
 		fflush (stdout);
-		if (getline(&buf, &len, stdin) == -1)
+		if (getline(&buf, &len, stdin) == -1) {
+			free(buf);
 			return;
+		}
 		if (rpmatch(buf) < 1) {
 			free(buf);
 			return;
