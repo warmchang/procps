@@ -1577,14 +1577,16 @@ static void before (char *me)
       Fieldstab[P_CPN].fmts = " %4u";
    }
 
-   unsigned pid_digits = get_pid_digits();
-   if(pid_digits<4) pid_digits=4;
-   static char pid_fmt[6];
-   snprintf(pid_fmt, sizeof pid_fmt, " %%%uu", pid_digits);
-   Fieldstab[P_PID].fmts = pid_fmt;
-   Fieldstab[P_PID].head = "        PID" + 10 - pid_digits;
-   Fieldstab[P_PPD].fmts = pid_fmt;
-   Fieldstab[P_PPD].head = "       PPID" + 10 - pid_digits;
+   {
+      static char pid_fmt[6];
+      unsigned pid_digits = get_pid_digits();
+      if(pid_digits<4) pid_digits=4;
+      snprintf(pid_fmt, sizeof pid_fmt, " %%%uu", pid_digits);
+      Fieldstab[P_PID].fmts = pid_fmt;
+      Fieldstab[P_PID].head = "        PID" + 10 - pid_digits;
+      Fieldstab[P_PPD].fmts = pid_fmt;
+      Fieldstab[P_PPD].head = "       PPID" + 10 - pid_digits;
+   }
 }
 
 
