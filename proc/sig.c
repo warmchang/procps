@@ -177,7 +177,7 @@ int signal_name_to_number(const char *restrict name){
     val = strtol(name,&endp,10);
     if(*endp || endp==name) return -1; /* not valid */
   }
-  if(val+SIGRTMIN>127) return -1; /* not valid */
+  if(val<0 || val+SIGRTMIN>127) return -1; /* not valid */
   return val+offset;
 }
 
@@ -195,33 +195,36 @@ const char *signal_number_to_name(int signo){
 }
 
 int print_given_signals(int argc, const char *restrict const *restrict argv, int max_line){
-  char buf[1280]; /* 128 signals, "RTMIN+xx" is largest */
+  char tmpbuf[16];
+  char buf[128 * sizeof tmpbuf]; /* 128 signals, "RTMIN+xx" is largest */
   int ret = 0;  /* to be used as exit code by caller */
   int place = 0; /* position on this line */
-  int amt;
-  if(argc > 128) return 1;
+  if(argc < 0 || argc > 128) return 1;
   while(argc--){
-    char tmpbuf[16];
+    int amt = -1;
     const char *restrict const txt = *argv;
     if(*txt >= '0' && *txt <= '9'){
       long val;
       char *endp;
       val = strtol(txt,&endp,10);
-      if(*endp){
-        fprintf(stderr, "Signal \"%s\" not known.\n", txt);
-        ret = 1;
-        goto end;
+      if(*endp || endp==txt){
+        amt = -1;
+      }else{
+        amt = snprintf(tmpbuf, sizeof tmpbuf, "%s", signal_number_to_name(val));
       }
-      amt = sprintf(tmpbuf, "%s", signal_number_to_name(val));
     }else{
       int sno;
       sno = signal_name_to_number(txt);
       if(sno == -1){
-        fprintf(stderr, "Signal \"%s\" not known.\n", txt);
-        ret = 1;
-        goto end;
+        amt = -1;
+      }else{
+        amt = snprintf(tmpbuf, sizeof tmpbuf, "%d", sno);
       }
-      amt = sprintf(tmpbuf, "%d", sno);
+    }
+    if(amt <= 0 || (size_t)amt >= sizeof tmpbuf){
+      fprintf(stderr, "Signal \"%s\" not known.\n", txt);
+      ret = 1;
+      goto end;
     }
 
     if(!place){
