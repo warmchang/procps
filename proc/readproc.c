@@ -75,8 +75,10 @@ static unsigned long long unhex(const char *restrict cp){
     unsigned long long ull = 0;
     for(;;){
         char c = *cp++;
-        if(c<0x30) break;
-        ull = (ull<<4) | (c - (c>0x57) ? 0x57 : 0x30) ;
+        if(!( (c >= '0' && c <= '9') ||
+              (c >= 'A' && c <= 'F') ||
+              (c >= 'a' && c <= 'f') )) break;
+        ull = (ull<<4) | (c - (c >= 'a' ? 'a'-10 : c >= 'A' ? 'A'-10 : '0'));
     }
     return ull;
 }
