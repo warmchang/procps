@@ -196,7 +196,7 @@ unsigned dev_to_tty(char *restrict ret, unsigned chop, int dev, int pid, unsigne
   unsigned i = 0;
   int c;
   if((short)dev == (short)0) goto no_tty;
-  if(linux_version_code > LINUX_VERSION(2, 5, 0)){ /* didn't get done yet */
+  if(linux_version_code > LINUX_VERSION(2, 7, 0)){  // not likely to make 2.6.xx
     if(link_name(tmp, major(dev), minor(dev), pid, "tty"   )) goto abbrev;
   }
   if(driver_name(tmp, major(dev), minor(dev)               )) goto abbrev;
