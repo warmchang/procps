@@ -25,6 +25,7 @@
 #include "proc/sig.h"
 #include "proc/devname.h"
 #include "proc/sysinfo.h"
+#include "proc/version.h" /* procps_version */
 
 static int i_am_pkill = 0;
 char *progname = "pgrep";
@@ -64,6 +65,7 @@ static int conv_num (const char *, union el *);
 static int conv_str (const char *, union el *);
 static int match_numlist (long, const union el *);
 static int match_strlist (const char *, const union el *);
+static void display_pgrep_version(void);
 
 
 static int
@@ -109,7 +111,7 @@ parse_opts (int argc, char **argv)
 		strcat (opts, "ld:");
 	}
 			
-	strcat (opts, "fnvxP:g:s:u:U:G:t:?");
+	strcat (opts, "fnvxP:g:s:u:U:G:t:?V");
 	
 	while ((opt = getopt (argc, argv, opts)) != -1) {
 		switch (opt) {
@@ -176,6 +178,9 @@ parse_opts (int argc, char **argv)
 		case '?':
 			usage (opt);
 			break;
+        case 'V':
+            display_pgrep_version();
+            exit(0);
 		}
 	}
         if (argc - optind == 1)
@@ -602,4 +607,8 @@ main (int argc, char **argv)
 			output_numlist (procs);
 	}
 	return ((procs[0].num) == 0 ? 1 : 0);
+}
+
+static void display_pgrep_version(){
+  fprintf(stdout, "%s (%s)\n", progname, procps_version);
 }

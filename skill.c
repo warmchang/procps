@@ -24,6 +24,7 @@
 #include <proc/sig.h>
 #include <proc/devname.h>
 #include <proc/procps.h>  /* char *user_from_uid(uid_t uid) */
+#include "proc/version.h" /* procps_version */
 
 static int f_flag, i_flag, v_flag, w_flag, n_flag;
 
@@ -55,6 +56,23 @@ static int program;
 
 /********************************************************************/
 
+static void display_kill_version(){
+
+  switch(program) {
+    case PROG_KILL:
+      fprintf(stdout, "kill (%s)\n",procps_version);
+      return;
+    case PROG_SKILL:
+      fprintf(stdout, "skill (%s)\n",procps_version);
+      return;
+    case PROG_SNICE:
+      fprintf(stdout, "snice (%s)\n",procps_version);
+      return;
+    default:
+      fprintf(stdout, "unknown (%s)\n",procps_version);
+      return;
+  }
+}
 
 /***** kill or nice a process */
 static void hurt_proc(int tty, int uid, int pid, char *cmd){
@@ -232,6 +250,10 @@ static void kill_main(int argc, char *argv[]){
   int signo = SIGTERM;
   int exitvalue = 0;
   if(argc<2) kill_usage();
+  if(!strcmp(argv[1],"-V")|| !strcmp(argv[1],"--version")){
+    display_kill_version();
+    exit(0);
+  }
   if(argv[1][0]!='-'){
     argv++;
     argc--;
@@ -360,6 +382,10 @@ static void skillsnice_parse(int argc, char *argv[]){
     }
     if(!strcmp(argv[1],"-l")){
       unix_print_signals();
+      exit(0);
+    }
+    if(!strcmp(argv[1],"-V")|| !strcmp(argv[1],"--version")){
+      display_kill_version();
       exit(0);
     }
     skillsnice_usage();
