@@ -525,8 +525,6 @@ static void _skillsnice_usage(int line)
 #define skillsnice_usage() _skillsnice_usage(__LINE__)
 #endif
 
-#define NEXTARG (argc?( argc--, ((argptr=*++argv)) ):NULL)
-
 /* common skill/snice argument parsing code */
 
 static int snice_prio_option(int *argc, char **argv)
