@@ -158,7 +158,6 @@ static void select_procs (void)
 			safe_free(root_link);
 
 			if (!match) {  /* root check failed */
-				memset (&task, 0, sizeof (task));
 				continue;
 			}
 		}
@@ -233,8 +232,6 @@ static void select_procs (void)
 			}
 
 		}
-
-		memset (&task, 0, sizeof (task));
 	}
 
 	closeproc (ptp);
