@@ -71,6 +71,8 @@
 
 /******************* PS DEFINE *******************/
 
+#define needs_for_select (PROC_FILLSTAT | PROC_FILLSTATUS)
+
 /* personality control flags */
 #define PER_BROKEN_o      0x0001
 #define PER_BSD_h         0x0002

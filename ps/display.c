@@ -242,13 +242,13 @@ static void compute_needs(void){
 static void simple_spew(void){
   proc_t buf;
   PROCTAB* ptp;
-  ptp = openproc(needs_for_format | needs_for_sort);
+  ptp = openproc(needs_for_format | needs_for_sort | needs_for_select);
   if(!ptp) {
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
   }
   memset(&buf, '#', sizeof(proc_t));
-  while(ps_readproc(ptp,&buf)){
+  while(readproc(ptp,&buf)){
     if(want_this_proc(&buf)) show_one_proc(&buf);
     if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
     if(buf.environ) free((void*)*buf.environ); // ought to reuse
@@ -381,16 +381,16 @@ static void fancy_spew(void){
   proc_t *retbuf = NULL;
   PROCTAB *restrict ptp;
   int n = 0;  /* number of processes & index into array */
-  ptp = openproc(needs_for_format | needs_for_sort);
+  ptp = openproc(needs_for_format | needs_for_sort | needs_for_select);
   if(!ptp) {
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
   }
-  while((retbuf = ps_readproc(ptp,retbuf))){
+  while((retbuf = readproc(ptp,retbuf))){
     if(want_this_proc(retbuf)){
       fill_pcpu(retbuf); // in case we might sort by %cpu
       processes[n++] = retbuf;
-      retbuf = NULL;  /* NULL asks ps_readproc to allocate */
+      retbuf = NULL;     // NULL asks readproc to allocate
     }
   }
   if(retbuf) free(retbuf);

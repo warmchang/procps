@@ -31,6 +31,7 @@
 #include <fs_secure.h>
 #endif
 
+// sometimes it's easier to do this manually, w/o gcc helping
 #ifdef PROF
 extern void __cyg_profile_func_enter(void*,void*);
 #define ENTER(x) __cyg_profile_func_enter((void*)x,(void*)x)
@@ -39,52 +40,6 @@ extern void __cyg_profile_func_enter(void*,void*);
 #define ENTER(x)
 #define LEAVE(x)
 #endif
-
-/* initiate a process table scan
- */
-PROCTAB* openproc(int flags, ...) {
-    va_list ap;
-    PROCTAB* PT = xmalloc(sizeof(PROCTAB));
-    
-    if (flags & PROC_PID)
-      PT->procfs = NULL;
-    else if (!(PT->procfs = opendir("/proc")))
-      return NULL;
-    PT->flags = flags;
-    va_start(ap, flags);		/*  Init args list */
-    if (flags & PROC_PID)
-    	PT->pids = va_arg(ap, pid_t*);
-    else if (flags & PROC_UID) {
-    	PT->uids = va_arg(ap, uid_t*);
-	PT->nuid = va_arg(ap, int);
-    }
-    va_end(ap);				/*  Clean up args list */
-    return PT;
-}
-
-/* terminate a process table scan
- */
-void closeproc(PROCTAB* PT) {
-    if (PT){
-        if (PT->procfs) closedir(PT->procfs);
-        free(PT);
-    }
-}
-
-/* deallocate the space allocated by readproc if the passed rbuf was NULL
- */
-void freeproc(proc_t* p) {
-    if (!p)	/* in case p is NULL */
-	return;
-    /* ptrs are after strings to avoid copying memory when building them. */
-    /* so free is called on the address of the address of strvec[0]. */
-    if (p->cmdline)
-	free((void*)*p->cmdline);
-    if (p->environ)
-	free((void*)*p->environ);
-    free(p);
-}
-
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -505,66 +460,23 @@ int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid){
 	    i < n && l[i] == x;			\
 	} )
 
-/* readproc: return a pointer to a proc_t filled with requested info about the
- * next process available matching the restriction set.  If no more such
- * processes are available, return a null pointer (boolean false).  Use the
- * passed buffer instead of allocating space if it is non-NULL.  */
+//////////////////////////////////////////////////////////////////////////////////
+// This reads process info from /proc in the traditional way, for one process.
+// The pid (tgid? tid?) is already in p, and a path to it in path, with some
+// room to spare.
+static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
+    static struct stat sb;		// stat() buffer
+    static char sbuf[1024];	// buffer for stat,statm
+    unsigned flags = PT->flags;
 
-/* This is optimized so that if a PID list is given, only those files are
- * searched for in /proc.  If other lists are given in addition to the PID list,
- * the same logic can follow through as for the no-PID list case.  This is
- * fairly complex, but it does try to not to do any unnecessary work.
- */
-proc_t* readproc(PROCTAB* PT, proc_t* p) {
-    static struct direct *ent;		/* dirent handle */
-    static struct stat sb;		/* stat buffer */
-    static char path[32], sbuf[1024];	/* bufs for stat,statm */
-#ifdef FLASK_LINUX
-    security_id_t secsid;
-#endif
-    pid_t pid;  // saved until we have a proc_t allocated for sure
-
-    /* loop until a proc matching restrictions is found or no more processes */
-    /* I know this could be a while loop -- this way is easier to indent ;-) */
-next_proc:				/* get next PID for consideration */
-
-/*printf("PT->flags is 0x%08x\n", PT->flags);*/
-#define flags (PT->flags)
-
-    if (flags & PROC_PID) {
-        pid = *(PT->pids)++;
-	if (unlikely(!pid)) return NULL;
-	snprintf(path, sizeof path, "/proc/%d", pid);
-    } else {					/* get next numeric /proc ent */
-	for (;;) {
-	    ent = readdir(PT->procfs);
-	    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return NULL;
-	    if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name <= '9') )) break;
-	}
-	pid = strtoul(ent->d_name, NULL, 10);
-	memcpy(path, "/proc/", 6);
-	strcpy(path+6, ent->d_name);  // trust /proc to not contain evil top-level entries
-//	snprintf(path, sizeof path, "/proc/%s", ent->d_name);
-    }
-#ifdef FLASK_LINUX
-    if ( stat_secure(path, &sb, &secsid) == -1 ) /* no such dirent (anymore) */
-#else
     if (unlikely(stat(path, &sb) == -1))	/* no such dirent (anymore) */
-#endif
 	goto next_proc;
 
     if ((flags & PROC_UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
 	goto next_proc;			/* not one of the requested uids */
 
-    if (!p)
-	p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
-
     p->euid = sb.st_uid;			/* need a way to get real uid */
     p->egid = sb.st_gid;			/* need a way to get real gid */
-#ifdef FLASK_LINUX
-    p->secsid = secsid;
-#endif
-    p->pid  = pid;
 
     if (flags & PROC_FILLSTAT) {         /* read, parse /proc/#/stat */
 	if (unlikely( file2str(path, "stat", sbuf, sizeof sbuf) == -1 ))
@@ -572,7 +484,7 @@ next_proc:				/* get next PID for consideration */
 	stat2proc(sbuf, p);				/* parse /proc/#/stat */
     }
 
-    if (unlikely(flags & PROC_FILLMEM)) {				/* read, parse /proc/#/statm */
+    if (unlikely(flags & PROC_FILLMEM)) {	/* read, parse /proc/#/statm */
 	if (likely( file2str(path, "statm", sbuf, sizeof sbuf) != -1 ))
 	    statm2proc(sbuf, p);		/* ignore statm errors here */
     }						/* statm fields just zero */
@@ -614,10 +526,54 @@ next_proc:				/* get next PID for consideration */
         p->environ = NULL;
     
     return p;
+next_proc:
+    return NULL;
 }
-#undef flags
 
-/* ps_readproc: return a pointer to a proc_t filled with requested info about the
+//////////////////////////////////////////////////////////////////////////////////
+// This finds processes in /proc in the traditional way.
+// Return non-zero on success.
+static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
+  static struct direct *ent;		/* dirent handle */
+  for (;;) {
+    ent = readdir(PT->procfs);
+    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return 0;
+    if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name <= '9') )) break;
+  }
+  p->pid = strtoul(ent->d_name, NULL, 10);
+  memcpy(path, "/proc/", 6);
+  strcpy(path+6, ent->d_name);  // trust /proc to not contain evil top-level entries
+  return 1;
+}
+
+#define PROCPATHLEN 64   // must hold /proc/2000222000/task/2000222000/cmdline
+
+//////////////////////////////////////////////////////////////////////////////////
+// This "finds" processes in a list that was given to openproc().
+// Return non-zero on success. (pid was handy)
+static int listed_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
+  pid_t pid = *(PT->pids)++;
+  if(likely( pid )){
+    snprintf(path, PROCPATHLEN, "/proc/%d", pid);
+    p->pid = pid;
+  }
+  return pid;
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+// This "finds" processes by guessing every possible one of them.
+// Return non-zero on success. (pid was handy)
+static int stupid_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p, char *restrict const path) {
+  pid_t pid = --PT->u;
+  if(likely( pid )){
+    snprintf(path, PROCPATHLEN, "/proc/%d", pid);
+    p->pid = pid;
+  }
+  return pid;
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+/* readproc: return a pointer to a proc_t filled with requested info about the
  * next process available matching the restriction set.  If no more such
  * processes are available, return a null pointer (boolean false).  Use the
  * passed buffer instead of allocating space if it is non-NULL.  */
@@ -627,99 +583,86 @@ next_proc:				/* get next PID for consideration */
  * the same logic can follow through as for the no-PID list case.  This is
  * fairly complex, but it does try to not to do any unnecessary work.
  */
-proc_t* ps_readproc(PROCTAB* PT, proc_t* p) {
-    static struct direct *ent;		/* dirent handle */
-    static struct stat sb;		/* stat buffer */
-    static char path[32], sbuf[1024];	/* bufs for stat,statm */
-#ifdef FLASK_LINUX
-    security_id_t secsid;
-#endif
-    pid_t pid;  // saved until we have a proc_t allocated for sure
+proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
+  static char path[PROCPATHLEN];       // must hold /proc/2000222000/task/2000222000/cmdline
+  proc_t *ret;
+  proc_t *saved_p;
 
-    /* loop until a proc matching restrictions is found or no more processes */
-    /* I know this could be a while loop -- this way is easier to indent ;-) */
-next_proc:				/* get next PID for consideration */
+  saved_p = p;
+  if(!p) p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
 
-/*printf("PT->flags is 0x%08x\n", PT->flags);*/
-#define flags (PT->flags)
+  for(;;){
+    // fills in the path and the p->pid
+    if (unlikely(! PT->finder(PT,p,path) )) goto out;
 
-    for (;;) {
-	ent = readdir(PT->procfs);
-	if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return NULL;
-	if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name <= '9') )) break;
-    }
-    pid = strtoul(ent->d_name, NULL, 10);
-    memcpy(path, "/proc/", 6);
-    strcpy(path+6, ent->d_name);  // trust /proc to not contain evil top-level entries
-//  snprintf(path, sizeof path, "/proc/%s", ent->d_name);
+    // go read the process data
+    ret = PT->reader(PT,p,path);
+    if(ret) return ret;
+  }
 
-#ifdef FLASK_LINUX
-    if (stat_secure(path, &sb, &secsid) == -1) /* no such dirent (anymore) */
-#else
-    if (stat(path, &sb) == -1)		/* no such dirent (anymore) */
-#endif
-	goto next_proc;
-
-    if (!p)
-	p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
-
-    p->euid = sb.st_uid;			/* need a way to get real uid */
-    p->egid = sb.st_gid;			/* need a way to get real gid */
-#ifdef FLASK_LINUX
-    p->secsid = secsid;
-#endif
-    p->pid  = pid;
-
-    if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
-	goto next_proc;			/* error reading /proc/#/stat */
-    stat2proc(sbuf, p);				/* parse /proc/#/stat */
-
-    if (flags & PROC_FILLMEM) {				/* read, parse /proc/#/statm */
-	if ((file2str(path, "statm", sbuf, sizeof sbuf)) != -1 )
-	    statm2proc(sbuf, p);		/* ignore statm errors here */
-    }						/* statm fields just zero */
-
-  /*  if (flags & PROC_FILLSTATUS) { */        /* read, parse /proc/#/status */
-       if ((file2str(path, "status", sbuf, sizeof sbuf)) != -1 ){
-           status2proc(sbuf, p);
-       }
-/*    }*/
-
-    /* some number->text resolving which is time consuming */
-    if (flags & PROC_FILLUSR){
-	strncpy(p->euser,   user_from_uid(p->euid), sizeof p->euser);
-/*        if(flags & PROC_FILLSTATUS) { */
-            strncpy(p->ruser,   user_from_uid(p->ruid), sizeof p->ruser);
-            strncpy(p->suser,   user_from_uid(p->suid), sizeof p->suser);
-            strncpy(p->fuser,   user_from_uid(p->fuid), sizeof p->fuser);
-/*        }*/
-    }
-
-    /* some number->text resolving which is time consuming */
-    if (flags & PROC_FILLGRP){
-        strncpy(p->egroup, group_from_gid(p->egid), sizeof p->egroup);
-/*        if(flags & PROC_FILLSTATUS) { */
-            strncpy(p->rgroup, group_from_gid(p->rgid), sizeof p->rgroup);
-            strncpy(p->sgroup, group_from_gid(p->sgid), sizeof p->sgroup);
-            strncpy(p->fgroup, group_from_gid(p->fgid), sizeof p->fgroup);
-/*        }*/
-    }
-
-    if ((flags & PROC_FILLCOM) || (flags & PROC_FILLARG))	/* read+parse /proc/#/cmdline */
-	p->cmdline = file2strvec(path, "cmdline");
-    else
-        p->cmdline = NULL;
-
-    if (flags & PROC_FILLENV)			/* read+parse /proc/#/environ */
-	p->environ = file2strvec(path, "environ");
-    else
-        p->environ = NULL;
-    
-    return p;
+out:
+  if(!saved_p) free(p);
+  return NULL;
 }
-#undef flags
+
+//////////////////////////////////////////////////////////////////////////////////
+
+// initiate a process table scan
+PROCTAB* openproc(int flags, ...) {
+    va_list ap;
+    PROCTAB* PT = xmalloc(sizeof(PROCTAB));
+    
+    PT->reader = simple_readproc;
+    if (flags & PROC_PID){
+      PT->procfs = NULL;
+      PT->finder = listed_nextpid;
+    }else{
+      PT->procfs = opendir("/proc");
+      if(!PT->procfs) return NULL;
+      PT->finder = simple_nextpid;
+    }
+    PT->flags = flags;
+
+    if(getenv("EVIL_PROC_HACK")){
+      PT->finder = stupid_nextpid;
+      PT->u = 10000;
+    }
+
+    va_start(ap, flags);		/*  Init args list */
+    if (flags & PROC_PID)
+    	PT->pids = va_arg(ap, pid_t*);
+    else if (flags & PROC_UID) {
+    	PT->uids = va_arg(ap, uid_t*);
+	PT->nuid = va_arg(ap, int);
+    }
+    va_end(ap);				/*  Clean up args list */
+
+    return PT;
+}
+
+// terminate a process table scan
+void closeproc(PROCTAB* PT) {
+    if (PT){
+        if (PT->procfs) closedir(PT->procfs);
+        free(PT);
+    }
+}
+
+// deallocate the space allocated by readproc if the passed rbuf was NULL
+void freeproc(proc_t* p) {
+    if (!p)	/* in case p is NULL */
+	return;
+    /* ptrs are after strings to avoid copying memory when building them. */
+    /* so free is called on the address of the address of strvec[0]. */
+    if (p->cmdline)
+	free((void*)*p->cmdline);
+    if (p->environ)
+	free((void*)*p->environ);
+    free(p);
+}
 
 
+//////////////////////////////////////////////////////////////////////////////////
 void look_up_our_self(proc_t *p) {
     char sbuf[1024];
 

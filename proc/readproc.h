@@ -150,17 +150,18 @@ typedef struct proc_t {
 #include <unistd.h>
 typedef struct PROCTAB {
     DIR*	procfs;
-    int		flags;
+    int(*finder)(struct PROCTAB *restrict const, proc_t *restrict const, char *restrict const);
+    proc_t*(*reader)(struct PROCTAB *restrict const, proc_t *restrict const, char *restrict const);
+    unsigned	flags;
     pid_t*	pids;	/* pids of the procs */
     uid_t*	uids;	/* uids of procs */
     int		nuid;	/* cannot really sentinel-terminate unsigned short[] */
-#ifdef FLASK_LINUX
-    security_id_t* sids; /* SIDs of the procs */
-#endif
+    int         i;  // generic
+    unsigned    u;  // generic
+    void *      vp; // generic
 } PROCTAB;
 
-/* initialize a PROCTAB structure holding needed call-to-call persistent data
- */
+// initialize a PROCTAB structure holding needed call-to-call persistent data
 extern PROCTAB* openproc(int flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
 
 
@@ -171,14 +172,11 @@ extern PROCTAB* openproc(int flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] 
  */
 extern proc_t** readproctab(int flags, ... /* same as openproc */ );
 
-/* clean-up open files, etc from the openproc()
- */
+// clean-up open files, etc from the openproc()
 extern void closeproc(PROCTAB* PT);
 
-/* retrieve the next process matching the criteria set by the openproc()
- */
-extern proc_t* readproc(PROCTAB* PT, proc_t* return_buf);
-extern proc_t* ps_readproc(PROCTAB* PT, proc_t* return_buf);
+// retrieve the next process matching the criteria set by the openproc()
+extern proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict const return_buf);
 
 // warning: interface may change
 extern int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid);

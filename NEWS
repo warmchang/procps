@@ -1,3 +1,7 @@
+procps-3.1.12 --> procps-3.1.13
+
+no seLinux for now (new kernel interface)
+
 procps-3.1.11 --> procps-3.1.12
 
 ps: explicit width ("ps -o pid,wchan:42,args")
