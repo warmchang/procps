@@ -182,8 +182,7 @@ static void stat2proc(const char* S, proc_t *restrict P) {
     S = tmp + 2;
     tmp = strrchr(S, ')');	 // split into "PID (cmd" and "<rest>"
     num = tmp - S;
-    if(unlikely(num > sizeof P->cmd)) num = sizeof P->cmd; // 1 too big
-    num--;                       // ditch the ')' character
+    if(unlikely(num >= sizeof P->cmd)) num = sizeof P->cmd - 1;
     memcpy(P->cmd, S, num);
     P->cmd[num] = '\0';
     S = tmp + 2;                 // skip ") "
