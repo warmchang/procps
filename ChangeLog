@@ -1,5 +1,7 @@
 Version ????
 
+    uptime give help if you use invalid chars Debian #93490
+
 	/proc/tty/drivers correctly parsed. Debian #108654
 	(Thanks russell*AT*coker.com.au)
 
@@ -11,4 +13,9 @@ Version ????
 	ps no longer crashes if System.map is %1024. Debian #109237
 	(Thanks Colin Walters)
 
+	libproc self buffer increased from 512 to 1024 bytes for
+	large number of groups. Debian #145085, #85775
+
+	w guesses the best process for the user better, good for samba and
+	some xdm session problems Debian #88758 (Thanks Eloy)
 

@@ -146,7 +146,10 @@ static proc_t *getproc(utmp_t *u, char *tty, int *jcpu, int *found_utpid) {
     line = tty_to_dev(tty);
     *jcpu = *found_utpid = 0;
     for(p = procs; *p; p++) {
-	if((**p).pid == u->ut_pid)   *found_utpid = 1;
+	if((**p).pid == u->ut_pid) {
+        *found_utpid = 1;
+        best = *p;
+    }
 	if((**p).tty != line) continue;
         (*jcpu) += (**p).utime + (**p).stime;
         secondbest = *p;

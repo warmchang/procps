@@ -470,7 +470,7 @@ next_proc:				/* get next PID for consideration */
 
 
 void look_up_our_self(proc_t *p) {
-    static char path[32], sbuf[512];	/* bufs for stat,statm */
+    static char path[32], sbuf[1024];	/* bufs for stat,statm */
     sprintf(path, "/proc/%d", getpid());
     file2str(path, "stat", sbuf, sizeof sbuf);
     stat2proc(sbuf, p);				/* parse /proc/#/stat */
