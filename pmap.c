@@ -397,9 +397,11 @@ loop_end:
 		/* === GET VMFLAGS === */
 		nfields = ret ? sscanf(mapbuf, "VmFlags: %"VMFL"[a-z ]", vmflags) : 0;
 		if (nfields == 1) {
+			int len = strlen(vmflags);
+			if (len > 0 && vmflags[len-1] == ' ') vmflags[--len] = '\0';
+			if (len > maxwv) maxwv = len;
 			if (! has_vmflags) has_vmflags = 1;
 			ret = fgets(mapbuf, sizeof mapbuf, f);
-			if (strlen(vmflags) > maxwv) maxwv = strlen(vmflags);
 		}
 
 		if (firstmapping == 2) { /* width measurement stage, do not print anything yet */
@@ -442,7 +444,7 @@ loop_end:
 					justify_print(listnode->description, listnode->max_width, 1);
 
 				if (has_vmflags && is_enabled("VmFlags"))
-					printf(" %*s", maxwv, "VmFlags  ");
+					maxwv = justify_print("VmFlags", maxwv, 1);
 
 				if (is_enabled(nls_Mapping))
 					justify_print(nls_Mapping, 0, 0);
