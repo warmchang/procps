@@ -69,6 +69,12 @@ enum rel_items {
     EU_PID, EU_PPID, EU_PGRP, EU_EUID, EU_RUID, EU_RGID, EU_SESSION,
     EU_TGID, EU_STARTTIME, EU_TTYNAME, EU_CMD, EU_CMDLINE
 };
+#define grow_size(x) do { \
+	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
+		xerrx(EXIT_FAILURE, _("integer overflow")); \
+	(x) = (x) * 5 / 4 + 4; \
+} while (0)
+
 static int i_am_pkill = 0;
 
 struct el {
@@ -173,7 +179,7 @@ static struct el *split_list (const char *restrict str, int (*convert)(const cha
 
     do {
         if (i == size) {
-            size = size * 5 / 4 + 4;
+			grow_size(size);
             /* add 1 because slot zero is a count */
             list = xrealloc (list, (1 + size) * sizeof *list);
         }
@@ -575,7 +581,7 @@ static struct el * select_procs (int *num)
                 matches = 0;
             }
             if (matches == size) {
-                size = size * 5 / 4 + 4;
+				grow_size(size);
                 list = xrealloc(list, size * sizeof *list);
             }
             if (list && (opt_long || opt_longlong || opt_echo)) {
