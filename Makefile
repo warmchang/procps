@@ -155,8 +155,10 @@ install: $(filter-out $(SKIP) $(addprefix $(DESTDIR),$(SKIP)),$(INSTALL))
 
 ############ prog.c --> prog.o
 
+top.o : top.h
+
 %.o : %.c
-	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) -c -o $@ $^
+	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) -c -o $@ $<
 
 w.o:    w.c
 	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) $(W_SHOWFROM) -c $<

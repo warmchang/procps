@@ -1434,8 +1434,8 @@ static void rc_write_new (FILE *fp) {
    fprintf(fp, RCF_EYECATCHER "\"%s with windows\"\t\t# shameless braggin'\n"
       , Myname);
    fprintf(fp, RCF_DEPRECATED
-      "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%d\n"
-      , Rc.mode_altscr, Rc.mode_irixps, Rc.delay_time, Curwin - Winstk);
+      "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%u\n"
+      , Rc.mode_altscr, Rc.mode_irixps, Rc.delay_time, (unsigned)(Curwin - Winstk));
    for (i = 0; i < GROUPSMAX; i++) {
       char buf[40];
       char *cp = Winstk[i].rc.fieldscur;

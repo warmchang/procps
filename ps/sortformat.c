@@ -268,6 +268,7 @@ out:
   while(items--){
     format_node *endp;
     char *equal_loc;
+    char *colon_loc;
     sep_loc = strpbrk(walk," ,\t\n");
     /* if items left, then sep_loc is not in header override */
     if(items && sep_loc) *sep_loc = '\0';
@@ -275,6 +276,15 @@ out:
     if(equal_loc){   /* if header override */
       *equal_loc = '\0';
       equal_loc++;
+    }
+    colon_loc = strpbrk(walk,":");
+    if(colon_loc){   /* if width override */
+      *colon_loc = '\0';
+      colon_loc++;
+      if(strspn(colon_loc,"0123456789") != strlen(colon_loc) || *colon_loc=='0'){
+        free(buf);
+        goto badwidth;
+      }
     }
     fnode =  do_one_spec(walk,equal_loc);
     if(!fnode){
@@ -289,6 +299,14 @@ out:
       free(buf);
       goto unknown;
     }
+    if(colon_loc){
+      if(fnode->next){
+        free(buf);
+        goto notmacro;
+      }
+      // FIXME: enforce signal width to 8, 9, or 16 (grep: SIGNAL wide_signals)
+      fnode->width = atoi(colon_loc); // already verified to be a number
+    }
     endp = fnode; while(endp->next) endp = endp->next;  /* find end */
     endp->next = sfn->f_cooked;
     sfn->f_cooked = fnode;
@@ -302,6 +320,8 @@ out:
   if(0) unknown:  err=errbuf;
   if(0) empty:    err="Empty format list.";
   if(0) improper: err="Improper format list.";
+  if(0) badwidth: err="Column widths must be unsigned decimal numbers.";
+  if(0) notmacro: err="Can't set width for a macro (multi-column) format specifier.";
   if(strchr(sfn->sf,'%')) err = aix_format_parse(sfn);
   return err;
 }
@@ -733,13 +753,14 @@ static const char *generate_sysv_list(void){
  * The "broken" flag enables a really bad Unix98 misfeature.
  */
 const char *process_sf_options(int localbroken){
-  const char *err;
   sf_node *sf_walk;
   int option_source;  /* true if user-defined */
+
   if(personality & PER_BROKEN_o) localbroken = 1;
   if(personality & PER_GOOD_o)   localbroken = 0;
   broken = localbroken;
   if(sf_list){
+    const char *err;
     err = parse_O_option(sf_list);
     if(err) return err;
   }
@@ -782,8 +803,6 @@ const char *process_sf_options(int localbroken){
     if(format_flags) return "Conflicting format options.";
     option_source = 1;
   }else{
-    format_node *fmt_walk;
-    format_node *fn;
     const char *spec;
     switch(format_flags){
 
@@ -822,14 +841,32 @@ const char *process_sf_options(int localbroken){
       char *tmp;
       tmp = getenv("PS_FORMAT");  /* user override kills default */
       if(tmp && *tmp){
-        spec = tmp;
-        option_source = 2;
+        const char *err;
+        sf_node sfn;
+//        spec = tmp;
+//        option_source = 2;
+        sfn.sf = tmp;
+        sfn.f_cooked = NULL;
+        err = format_parse(&sfn);
+        if(!err){
+          format_node *fmt_walk;
+          fmt_walk = sfn.f_cooked;
+          while(fmt_walk){   /* put any nodes onto format_list in opposite way */
+            format_node *travler;
+            travler = fmt_walk;
+            fmt_walk = fmt_walk->next;
+            travler->next = format_list;
+            format_list = travler;
+          }
+          return NULL;
+        }
+        fprintf(stderr, "Warning: $PS_FORMAT ignored. (%s)\n", err);
       }
     }
 
     if(spec){
-      fn = do_one_spec(spec, NULL); /* use override "" for no headers */
-      fmt_walk = fn;
+      format_node *fmt_walk;
+      fmt_walk = do_one_spec(spec, NULL); /* use override "" for no headers */
       while(fmt_walk){   /* put any nodes onto format_list in opposite way */
         format_node *travler;
         travler = fmt_walk;
@@ -838,6 +875,7 @@ const char *process_sf_options(int localbroken){
         format_list = travler;
       }
     }else{
+      const char *err;
       err = generate_sysv_list();
       if(err) return err;
       option_source = 3;

@@ -1,9 +1,11 @@
 procps-3.1.11 --> procps-3.1.12
 
+ps: explicit width ("ps -o pid,wchan:42,args")
+ps: $PS_FORMAT works properly                    #201575
 top: new Linux 2.6.0-test4 CPU stats shown
 top: multiple -p options work again
 top: fixed 4 GB wrap-around
-ps: comes with tests
+ps: has a set of tests to ensure correctness
 man page: /var/run/utmp, not /etc/utmp           #206583
 required flags moved out of CFLAGS               #205429
 RPM generation handles /lib64
