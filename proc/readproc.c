@@ -1635,7 +1635,7 @@ proc_t * get_proc_stats(pid_t pid, proc_t *p) {
     static char path[32];
     struct stat statbuf;
 
-    sprintf(path, "/proc/%d", pid);
+    snprintf(path, sizeof path, "/proc/%d", pid);
     if (stat(path, &statbuf)) {
         perror("stat");
         return NULL;
