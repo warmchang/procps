@@ -1,5 +1,6 @@
-procps-3.1.15 --> procps-3.1.16
+procps-3.1.15 --> procps-3.2.0
 
+pmap: output like Solaris 9, not Solaris 7
 ps: also handle SELinux on the 2.4.xx kernels
 top: during a ^Z, the terminal was messed up     #228822
 future-proof the tty handling   (thanks to Zhou Wei)

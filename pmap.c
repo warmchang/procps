@@ -33,6 +33,8 @@ static void usage(void){
 static int V_option;
 static int r_option;  // ignored -- for SunOS compatibility
 static int x_option;
+static int d_option;
+static int q_option;
 
 
 static const char *get_args(unsigned pid){
@@ -97,10 +99,9 @@ static int one_proc(unsigned pid){
   if(!freopen(buf, "r", stdin)) return 1;
   printf("%u:   %s\n", pid, get_args(pid));
   if(x_option)
-    printf("Address       kB Resident Shared Private Permissions       Name\n");
+    printf("Address   Kbytes       RSS    Anon  Locked Mode   Mapping\n");
   while(fgets(mapbuf,sizeof mapbuf,stdin)){
     char flags[32];
-    const char *perms;
     char *tmp; // to clean up unprintables
     unsigned KLONG start, end, diff;
     unsigned long long pgoff;
@@ -117,32 +118,10 @@ static int one_proc(unsigned pid){
     if(flags[3]=='s') total_shared  += diff;
     if(flags[3]=='p') total_private += diff;
 
-#if 1
-    // format used by Solaris 7 and old procps
-    if(flags[0]=='r'){
-      if(flags[1]=='w'){
-        if(flags[2]=='x') perms = "read/write/exec";
-        else              perms = "read/write     ";
-      }else{
-        if(flags[2]=='x') perms = "read/exec      ";
-        else              perms = "read           ";
-      }
-    }else{
-      if(flags[1]=='w'){
-        if(flags[2]=='x') perms = "write/exec     ";
-        else              perms = "write          ";
-      }else{
-        if(flags[2]=='x') perms = "exec           ";
-        else              perms = "none           ";
-      }
-    }
-#else
-    // format used by Solaris 9 and future procps
-    perms = flags;
+    // format used by Solaris 9 and procps-3.2.0+
     if(flags[3] == 'p') flags[3] = '-';
     flags[4] = '-';  // an 'R' if swap not reserved (MAP_NORESERVE, SysV ISM shared mem, etc.)
     flags[5] = '\0';
-#endif
 
     if(x_option){
       const char *cp = strrchr(mapbuf,'/');
@@ -150,13 +129,11 @@ static int one_proc(unsigned pid){
       if(!cp) cp = anon_name(pid, start, diff);
       printf(
         (sizeof(KLONG)==8)
-          ? "%016"KLF"x %7lu       - %7lu %7lu %s   %s\n"
-          :      "%08lx %7lu       - %7lu %7lu %s   %s\n",
+          ? "%016"KLF"x %7lu       -       -       - %s  %s\n"
+          :      "%08lx %7lu       -       -       - %s  %s\n",
         start,
         (unsigned long)(diff>>10),
-        (flags[3]=='s') ? (unsigned long)(diff>>10) : 0,
-        (flags[3]=='p') ? (unsigned long)(diff>>10) : 0,
-        perms,
+        flags,
         cp
       );
     }else{
@@ -164,11 +141,11 @@ static int one_proc(unsigned pid){
       if(!cp) cp = anon_name(pid, start, diff);
       printf(
         (sizeof(KLONG)==8)
-          ? "%016"KLF"x %6luK %s   %s\n"
-          :      "%08lx %6luK %s   %s\n",
+          ? "%016"KLF"x %6luK %s  %s\n"
+          :      "%08lx %6luK %s  %s\n",
         start,
         (unsigned long)(diff>>10),
-        perms,
+        flags,
         cp
       );
     }
@@ -184,12 +161,10 @@ static int one_proc(unsigned pid){
         total_private >> 10
       );
     }else{
-      printf("--------  ------  ------  ------  ------\n");
+      printf("-------- ------- ------- ------- -------\n");
       printf(
-        "total kB %7ld       - %7ld %7ld\n",
-        (total_shared + total_private) >> 10,
-        total_shared >> 10,
-        total_private >> 10
+        "total kB %7ld       -       -       -\n",
+        (total_shared + total_private) >> 10
       );
     }
   }else{
@@ -228,6 +203,12 @@ int main(int argc, char *argv[]){
         case 'r':
           r_option++;
           break;
+        case 'd':
+          d_option++;
+          break;
+        case 'q':
+          q_option++;
+          break;
         default:
           usage();
         }
@@ -248,9 +229,9 @@ int main(int argc, char *argv[]){
     }
   }
 
-  if(x_option>1 || V_option>1 || r_option>1) usage();  // dupes
+  if( (x_option|V_option|r_option|d_option|q_option) >> 1 ) usage(); // dupes
   if(V_option){
-    if(count|x_option|r_option) usage();
+    if(count|x_option|r_option|d_option|q_option) usage();
     fprintf(stdout, "pmap (%s)\n", procps_version);
     return 0;
   }
