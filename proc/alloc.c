@@ -30,7 +30,7 @@ static void xdefault_error(const char *restrict fmts, ...) {
     va_list va;
 
     va_start(va, fmts);
-    fprintf(stderr, fmts, va);
+    vfprintf(stderr, fmts, va);
     va_end(va);
 }
 
