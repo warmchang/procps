@@ -98,8 +98,7 @@ static int Screen_cols, Screen_rows, Max_lines;
 static int Msg_row;
 
         /* Global/Non-windows mode stuff that is NOT persistent */
-static int Crufty_rcf = 0,      // if we read an old config, write one too
-           No_ksyms = -1,       // set to '0' if ksym avail, '1' otherwise
+static int No_ksyms = -1,       // set to '0' if ksym avail, '1' otherwise
            PSDBopen = 0,        // set to '1' if psdb opened (now postponed)
            Batch = 0,           // batch mode, collect no input, dumb output
            Loops = -1,          // number of iterations, -1 loops forever
@@ -144,18 +143,18 @@ static WIN_t Winstk [GROUPSMAX],
            and/or that would be too cumbersome managed as parms,
            and/or that are simply more efficiently handled as globals
            (first 2 persist beyond a single frame, changed infrequently) */
-static int       Frams_libflags;  // current PROC_FIILxxx flags (0 = need new)
-//atic int       Frams_maxcmdln;  // the largest from the 4 windows
-static unsigned  Frame_maxtask;   // last known number of active tasks
-                                  // ie. current 'size' of proc table
-static unsigned  Frame_running,   // state categories for this frame
+static int       Frames_libflags;       // PROC_FILLxxx flags (0 = need new)
+//atic int       Frames_maxcmdln;       // the largest from the 4 windows
+static unsigned  Frame_maxtask;         // last known number of active tasks
+                                        // ie. current 'size' of proc table
+static unsigned  Frame_running,         // state categories for this frame
                  Frame_sleepin,
                  Frame_stopped,
                  Frame_zombied;
-static float     Frame_tscale;    // so we can '*' vs. '/' WHEN 'pcpu'
-static int       Frame_srtflg,    // the subject window's sort direction
-                 Frame_ctimes,    // the subject window's ctimes flag
-                 Frame_cmdlin;    // the subject window's cmdlin flag
+static float     Frame_tscale;          // so we can '*' vs. '/' WHEN 'pcpu'
+static int       Frame_srtflg,          // the subject window's sort direction
+                 Frame_ctimes,          // the subject window's ctimes flag
+                 Frame_cmdlin;          // the subject window's cmdlin flag
         /* ////////////////////////////////////////////////////////////// */
 
 
@@ -947,7 +946,7 @@ static void prochlp (proc_t *this)
    // this task wins it's displayable screen row lottery... */
    this->pcpu = tics;
    strim(1, this->cmd);
-// if (Frams_maxcmdln) { }
+// if (Frames_maxcmdln) { }
    // shout this to the world with the final call (or us the next time in)
    Frame_maxtask++;
 }
@@ -1163,7 +1162,6 @@ static const FLD_t *ft_idx_to_ptr (const int i) {
    if (i >= MAXTBL(Fieldstab)) return NULL;
    return Fieldstab + i;
 }
-#endif
 
 
         // convert, or -1 for failure
@@ -1174,6 +1172,7 @@ static int ft_ptr_to_idx (const FLD_t *p) {
    if (i >= MAXTBL(Fieldstab)) return -1;
    return i;
 }
+#endif
 
 
 #if 0
@@ -1200,7 +1199,9 @@ static void rc_bugless (const RCF_t *const rc) {
          * For each of the 4 windows:
          *   line a: contains winname, fieldscur
          *   line b: contains winflags, sortindx, maxtasks
-         *   line c: contains summclr, msgsclr, headclr, taskclr */
+         *   line c: contains summclr, msgsclr, headclr, taskclr
+         *   line d: if present, would crash procps-3.1.1
+         */
 static int rc_read_new (const char *const buf, RCF_t *rc) {
    int i;
    int cnt;
@@ -1237,12 +1238,19 @@ static int rc_read_new (const char *const buf, RCF_t *rc) {
       if (cnt != 4) return -(11+100*i);
       cp = strchr(cp, '\n');
       if (!cp++) return -(12+100*i);
+      while (*cp == '\t') {  // skip unknown per-window settings
+        cp = strchr(cp, '\n');
+        if (!cp++) return -(13+100*i);
+      }
    }
    return 13;
 }
 
 
+
 static int rc_read_old (const char *const buf, RCF_t *rc) {
+   const char std[] = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzJj......";
+   const char old[] = "AaBb..CcDd..GgHhIiYyEeWw..FfMmOoTtKkLlPpJjSsVvXxUuZz[{QqNnRr";
    unsigned u;
    const char *cp;
    unsigned c_show = 0;
@@ -1254,6 +1262,7 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
    cp = buf+2;  // skip the "\n\n" we stuck at the beginning
    u = 0;
    for (;;) {
+      const char *tmp;
       if (u+1 >= sizeof rc->win[0].fieldscur) return -1;
       int c = *cp++;
       if (c == '\0') return -2;
@@ -1262,15 +1271,9 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
       if (~c & 0x20) c_show |= 1 << (c & 0x1f); // 0x20 means lowercase means hidden
       if (scoreboard[c|0xe0u]) badchar++;       // duplicates not allowed
       scoreboard[c|0xe0u]++;
-      if (c == '|') continue;   // Rik's top ships with a garbage character
-      if (c == '[') c = 'Y';    // Rik's top ships with 3x of "#C"
-      if (c == '{') c = 'y';    // another one... and '}' to please Jim's editor
-      if (c == 'N') c = 'n';    // usage differs, so turn this off
-      if (c == 'Q') c = 'q';    // usage differs, so turn this off
-      if (c == 'R') c = 'r';    // usage differs, so turn this off
-      c = ft_cvt_char(FT_OLD_fmt, FT_NEW_fmt, c);
-      if (!c) return -4;        // error value
-      if (c == '.') return -5;  // error value
+      tmp = strchr(old,c);
+      if (tmp) c = *((tmp-old)+std);
+      else     c = '.';
       if (scoreboard[c&0x1fu]) badchar++;       // duplicates not allowed
       scoreboard[c&0x1fu]++;
       rc->win[0].fieldscur[u++] = c;
@@ -1278,8 +1281,8 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
    rc->win[0].fieldscur[u++] = '\0';
    if (u < 21) return -6;  // catch junk, not good files (had 23 chars in one)
    if (u > 33) return -7;  // catch junk, not good files (had 29 chars in one)
-// fprintf(stderr,"badchar: %d\n",badchar); sleep(2);
-   if (badchar > 3) return -8;          // too much junk
+// fprintf(stderr, "badchar: %d\n", badchar); sleep(2);
+   if (badchar > 8) return -8;          // too much junk
    if (!c_show) return -9;              // nothing was shown
 
    // rest of file is optional, but better look right if it exists
@@ -1296,9 +1299,9 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
          case ' ':
          case '.':
          case '0' ... '9':
-            return -15;                     // not supposed to have digits here
+            return -15;                 // not supposed to have digits here
 
-//       case 's':                          // mostly for global rcfile
+//       case 's':                      // mostly for global rcfile
 //          rc->mode_secure = 1;
 //          break;
          case 'S':
@@ -1310,7 +1313,7 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
          case 'i':
             rc->win[0].winflags &= ~Show_IDLEPS;
             break;
-         case 'H':                          // 'H' = show threads (yea, sure)
+         case 'H':                      // 'H' = show threads (yea, sure)
             //rc->win[0].winflags |= ;
             break;
          case 'm':
@@ -1334,9 +1337,9 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
             c = 0; // for scoreboard
             rc->win[0].sortindx = P_CPU;
             break;
-         case 'A':
+         case 'A':                      // supposed to be start_time
             c = 0; // for scoreboard
-            rc->win[0].sortindx = P_PID;    // was by start_time (non-display)
+            rc->win[0].sortindx = P_PID;
             break;
          case 'T':
             c = 0; // for scoreboard
@@ -1351,7 +1354,7 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
             // just ignore it, except for the scoreboard of course
             break;
       }
-      if (scoreboard[c]) return -16;        // duplicates not allowed
+      if (scoreboard[c]) return -16;    // duplicates not allowed
       scoreboard[c] = 1;
    }
    return 17;
@@ -1393,7 +1396,7 @@ static void rc_write_new (FILE *fp) {
    }
 }
 
-
+#if 0
 static void rc_write_old (FILE *fp) {
    char buf[SMLBUFSIZ];
    char *cp = Curwin->rc.fieldscur;
@@ -1462,13 +1465,13 @@ static void rc_write_old (FILE *fp) {
    *cp++ = '\0';
    fprintf(fp, "%s\n\n\n", buf);            // important "\n\n" separator!
 }
-
+#endif
 
 static const char *rc_write_whatever (void) {
    FILE *fp = fopen(Rc_name, "w");
 
    if (!fp) return strerror(errno);
-   if (Crufty_rcf) rc_write_old(fp);
+//   if (Crufty_rcf) rc_write_old(fp);
    rc_write_new(fp);
    fclose(fp);
    return NULL;
@@ -1541,17 +1544,17 @@ static void confighlp (char *fields) {
             else break;
          }
       }
-      while (lower[c&0x1f] > 1) {       // got too many a..z
+      while (lower[c&0x1f] > 1) {               // got too many a..z
          lower[c&0x1f]--;
          cp = strchr(fields, c);
          memmove(cp, cp+1, strlen(cp));
       }
-      while (upper[c&0x1f] > 1) {       // got too many A..Z
+      while (upper[c&0x1f] > 1) {               // got too many A..Z
          upper[c&0x1f]--;
          cp = strchr(fields, toupper(c));
          memmove(cp, cp+1, strlen(cp));
       }
-      if (!upper[c&0x1f] && !lower[c&0x1f]) {  // both missing
+      if (!upper[c&0x1f] && !lower[c&0x1f]) {   // both missing
          lower[c&0x1f]++;
          memmove(fields+1, fields, strlen(fields)+1);
          fields[0] = c;
@@ -1612,9 +1615,12 @@ static void configs_read (void)
          fbuf[0] = '\n';
          fbuf[1] = '\n';
          fbuf[num+2] = '\0';
-         if (rc_read_old(fbuf, &rcf) > 0) Crufty_rcf = 1;
-         else rcf = def_rcf;                     // on failure, maybe mangled
-         rc_read_new(fbuf, &rcf);
+//fprintf(stderr,"rc_read_old returns %d\n",rc_read_old(fbuf, &rcf));
+//sleep(2);
+         if (rc_read_new(fbuf, &rcf) < 0) {
+            rcf = def_rcf;                       // on failure, maybe mangled
+            if (rc_read_old(fbuf, &rcf) < 0) rcf = def_rcf;
+         }
          delay = rcf.delay_time;
       }
       close(fd);
@@ -1719,6 +1725,12 @@ static void parse_args (char **args)
             case 'S':
                TOGw(Curwin, Show_CTIMES);
                break;
+//          case 'u':
+//             if (cp[1]) cp++;
+//             else if (*args) cp = *args++;
+//             else std_err("-u missing name");
+//             cp += snprintf(Curwin->colusrnam, USRNAMSIZ-1, "%s", cp);
+//             break;
             default :
                std_err(fmtmk("unknown argument '%c'\nusage:\t%s%s"
                   , *cp, Myname, usage));
@@ -1800,9 +1812,9 @@ static void display_fields (const char *fields, const char *xtra)
    for (i = 0; fields[i]; ++i) {
       const FLD_t *f = ft_get_ptr(FT_NEW_fmt, fields[i]);
       int b = isupper(fields[i]);
-      if (!f) continue;                // hey, should be std_err!
-         /* advance past any leading spaces */
-      for (p = f->head; ' ' == *p; ++p)
+
+      if (!f) continue;                 // hey, should be std_err!
+      for (p = f->head; ' ' == *p; ++p) // advance past any leading spaces
          ;
       PUTT("%s%s%c %c: %-10s = %s"
          , tg2((i / rmax) * cmax, (i % rmax) + yRSVD)
@@ -1935,8 +1947,8 @@ static void reframewins (void)
    const char *h;
    int i, needpsdb = 0;
 
-// Frams_libflags = 0;  // should be called only when it's zero
-// Frams_maxcmdln = 0;  // becomes largest from up to 4 windows, if visible
+// Frames_libflags = 0;  // should be called only when it's zero
+// Frames_maxcmdln = 0;  // to become largest from up to 4 windows, if visible
    w = Curwin;
    do {
       if (!Rc.mode_altscr || CHKw(w, VISIBLE_tsk)) {
@@ -1976,12 +1988,12 @@ static void reframewins (void)
             if (P_CMD == w->procflags[i]) {
                s = scat(s, fmtmk(Fieldstab[P_CMD].fmts, w->maxcmdln, w->maxcmdln, h));
                if (CHKw(w, Show_CMDLIN)) {
-                  Frams_libflags |= L_CMDLINE;
-//                if (w->maxcmdln > Frams_maxcmdln) Frams_maxcmdln = w->maxcmdln;
+                  Frames_libflags |= L_CMDLINE;
+//                if (w->maxcmdln > Frames_maxcmdln) Frames_maxcmdln = w->maxcmdln;
                }
             } else
                s = scat(s, h);
-            Frams_libflags |= Fieldstab[w->procflags[i]].lflg;
+            Frames_libflags |= Fieldstab[w->procflags[i]].lflg;
          }
       }
       if (Rc.mode_altscr) w = w->next;
@@ -1997,11 +2009,11 @@ static void reframewins (void)
             PSDBopen = 1;
       }
    }
-   if (Frams_libflags & L_EITHER) {
-      Frams_libflags &= ~L_EITHER;
-      if (!(Frams_libflags & L_stat)) Frams_libflags |= L_status;
+   if (Frames_libflags & L_EITHER) {
+      Frames_libflags &= ~L_EITHER;
+      if (!(Frames_libflags & L_stat)) Frames_libflags |= L_status;
    }
-   if (!Frams_libflags) Frams_libflags = L_DEFAULT;
+   if (!Frames_libflags) Frames_libflags = L_DEFAULT;
 }
 
 
@@ -2214,7 +2226,7 @@ static void wins_resize (int dont_care_sig)
    Pseudo_scrn = alloc_r(Pseudo_scrn, Pseudo_size);
 
    // force rebuild of column headers AND libproc/readproc requirements
-   Frams_libflags = 0;
+   Frames_libflags = 0;
 }
 
 
@@ -2598,7 +2610,7 @@ static void do_key (unsigned c)
       ( At this point we have a human being involved and so have all the time )
       ( in the world.  We can afford a few extra cpu cycles every now & then! )
     */
-   Frams_libflags = 0;
+   Frames_libflags = 0;
 }
 
 
@@ -2668,7 +2680,7 @@ static proc_t **summary_show (void)
       sleep(1);
    } else
       putp(Batch ? "\n\n" : Cap_home);
-   p_table = procs_refresh(p_table, Frams_libflags);
+   p_table = procs_refresh(p_table, Frames_libflags);
 
    /*
     ** Display Uptime and Loadavg */
@@ -2936,10 +2948,8 @@ static void window_show (proc_t **ppt, WIN_t *q, int *lscr)
 
    while ( -1 != ppt[i]->pid && *lscr < Max_lines
    &&  (!q->winlines || (lwin <= q->winlines)) ) {
-      if ((CHKw(q, Show_IDLEPS)
-      || ('S' != ppt[i]->state && 'Z' != ppt[i]->state))
-      && ((!q->colusrnam[0])
-      || (!strcmp(q->colusrnam, ppt[i]->euser)) ) ) {
+      if ((CHKw(q, Show_IDLEPS) || ('S' != ppt[i]->state && 'Z' != ppt[i]->state))
+      && ((!q->colusrnam[0]) || (!strcmp(q->colusrnam, ppt[i]->euser)))) {
          /*
           ** Display a process Row */
          task_show(q, ppt[i]);
@@ -3020,7 +3030,7 @@ static void frame_make (void)
 
    /* note: except for PROC_PID, all libproc flags are managed by
             reframewins(), who also builds each window's column headers */
-   if (!Frams_libflags) {
+   if (!Frames_libflags) {
       reframewins();
       memset(Pseudo_scrn, '\0', Pseudo_size);
    }
@@ -3051,8 +3061,9 @@ static void frame_make (void)
    /* clear to end-of-screen (critical if last window is 'idleps off'),
       then put the cursor in-its-place, and rid us of any prior frame's msg
       (main loop must iterate such that we're always called before sleep) */
-   PUTT("%s%s%s"
-      , (scrlins < Max_lines) ? Cap_clr_eos : ""
+   PUTT("%s%s%s%s"
+      , scrlins < Max_lines ? "\n" : ""
+      , scrlins < Max_lines ? Cap_clr_eos : ""
       , tg2(0, Msg_row)
       , Cap_clr_eol);
    fflush(stdout);

@@ -254,7 +254,7 @@ Starts \*(Me with the last remembered 'i' state reversed.
 When this toggle is \*F, tasks that are idled or zombied will not be displayed.
 
 .TP 5
-\-\fBn\fR :\fB Number of iterations\fR limit as:\ \ \fB -n number\fR
+\-\fBn\fR :\fB Number of iterations\fR limit as:\fB\ \ -n number\fR
 Specifies the maximum number of iterations, or frames, \*(Me should
 produce before ending.
 
@@ -303,7 +303,7 @@ For additional information on sort provisions \*(Xt 3c. TASK Area Commands.
 
 .TP 3
 a:\fB PID\fR \*(EM Process Id\fR
-The task's unique process ID, which periodically wraps at 32767,
+The task's unique process ID, which periodically wraps,
 though never restarting at zero.
 
 .TP 3
@@ -311,22 +311,20 @@ b:\fB PPID\fR \*(EM Parent Process Pid\fR
 The process ID of a task's parent.
 
 .TP 3
-c:\fB PGID\fR \*(EM Process Group Id\fR
-The grouping of tasks which becomes part of job control.
-It is used for distribution of signals and to arbitrate terminal I/O requests.
-There is one process group per pipeline.
+c:\fB RUSER\fR \*(EM Real User Name\fR
+The real user name of the task's owner.
 
 .TP 3
 d:\fB UID\fR \*(EM User Id\fR
-The user ID of the task's owner.
+The effective user ID of the task's owner.
 
 .TP 3
-e:\fB USER\fR \*(EM User Name
-The user name of the task's owner.
+e:\fB USER\fR \*(EM User Name\fR
+The effective user name of the task's owner.
 
 .TP 3
-f:\fB GROUP\fR \*(EM Group Name
-The group name of the task's owner.
+f:\fB GROUP\fR \*(EM Group Name\fR
+The effective group name of the task's owner.
 
 .TP 3
 g:\fB TTY\fR \*(EM Controlling Tty
@@ -1179,8 +1177,8 @@ This entirely new and enhanced replacement was written by:
 ..
 
 With invaluable help from:
-   Craig Small, <csmall@small.dropbear.id.au>
    Albert D\. Cahalan, <albert@users.sf.net>
+   Craig Small, <csmall@small.dropbear.id.au>
 
 .ig
 .rj 2

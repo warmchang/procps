@@ -324,7 +324,7 @@ typedef struct WIN_t {
 
         /* The default fields displayed and their order,
            if nothing is specified by the loser, oops user */
-#define DEF_FIELDS  "AEHIOQTWKNMXbcdfgjplrsuvyz"
+#define DEF_FIELDS  "AEHIOQTWKNMbcdfgjplrsuvyzX"
         /* Pre-configured field groupss */
 #define JOB_FIELDS  "ABXcefgjlrstuvyzMKNHIWOPQD"
 #define MEM_FIELDS  "ANOPQRSTUVXbcdefgjlmyzWHIK"
