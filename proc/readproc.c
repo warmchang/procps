@@ -574,7 +574,7 @@ static int sd2proc (proc_t *restrict p) {
 // Reads /proc/*/stat files, being careful not to trip over processes with
 // names like ":-) 1 2 3 4 5 6".
 static int stat2proc (const char* S, proc_t *restrict P) {
-    unsigned num;
+    size_t num;
     char* tmp;
 
 ENTER(0x160);
@@ -585,15 +585,17 @@ ENTER(0x160);
     P->sched = -1;
     P->nlwp = 0;
 
-    S = strchr(S, '(') + 1;
+    S = strchr(S, '(');
+    if (!S) return 0;
+    S++;
     tmp = strrchr(S, ')');
+    if (!tmp || !tmp[1]) return 0;
     num = tmp - S;
-    if(num >= 16) num = 15;
     if (!P->cmd && !(P->cmd = strndup(S, num)))
        return 1;
     S = tmp + 2;                 // skip ") "
 
-    num = sscanf(S,
+    sscanf(S,
        "%c "                      // state
        "%d %d %d %d %d "          // ppid, pgrp, sid, tty_nr, tty_pgrp
        "%lu %lu %lu %lu %lu "     // flags, min_flt, cmin_flt, maj_flt, cmaj_flt
