@@ -1,6 +1,6 @@
 Begin4
 Title: procps
-Version: 3.1.4
+Version: 3.1.5
 Entered-date: 2002-12-14
 Description: Linux system utilities
 Keywords: procps /proc libproc sysctl pmap
@@ -8,8 +8,8 @@ Keywords: procps /proc libproc sysctl pmap
 Author: Albert Cahalan, Michael K. Johnson, Jim Warner, etc.
 Maintained-by: various <procps-feedback@lists.sf.net>
 Primary-site: http://procps.sf.net/
-	236kB procps-3.1.4.tar.gz
+	236kB procps-3.1.5.tar.gz
 Alternate-site: http://www.debian.org/Packages/unstable/base/procps.html
-	236kB procps-3.1.4.tar.gz
+	236kB procps-3.1.5.tar.gz
 Copying-policy: mixed
 End

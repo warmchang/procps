@@ -368,6 +368,7 @@ proc_t* readproc(PROCTAB* PT, proc_t* p) {
 #ifdef FLASK_LINUX
     security_id_t secsid;
 #endif
+    pid_t pid;  // saved until we have a proc_t allocated for sure
 
     /* loop until a proc matching restrictions is found or no more processes */
     /* I know this could be a while loop -- this way is easier to indent ;-) */
@@ -377,9 +378,8 @@ next_proc:				/* get next PID for consideration */
 #define flags (PT->flags)
 
     if (flags & PROC_PID) {
-        pid_t pid = *(PT->pids)++;
+        pid = *(PT->pids)++;
 	if (unlikely(!pid)) return NULL;
-	p->pid = pid;
 	snprintf(path, sizeof path, "/proc/%d", pid);
     } else {					/* get next numeric /proc ent */
 	for (;;) {
@@ -387,7 +387,7 @@ next_proc:				/* get next PID for consideration */
 	    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return NULL;
 	    if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name <= '9') )) break;
 	}
-	p->pid = strtoul(ent->d_name, NULL, 10);
+	pid = strtoul(ent->d_name, NULL, 10);
 	memcpy(path, "/proc/", 6);
 	strcpy(path+6, ent->d_name);  // trust /proc to not contain evil top-level entries
 //	snprintf(path, sizeof path, "/proc/%s", ent->d_name);
@@ -404,11 +404,12 @@ next_proc:				/* get next PID for consideration */
 
     if (!p)
 	p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
-    p->euid = sb.st_uid;			/* need a way to get real uid */
 
+    p->euid = sb.st_uid;			/* need a way to get real uid */
 #ifdef FLASK_LINUX
     p->secsid = secsid;
 #endif
+    p->pid  = pid;
 
     if (flags & PROC_FILLSTAT) {         /* read, parse /proc/#/stat */
 	if (unlikely( file2str(path, "stat", sbuf, sizeof sbuf) == -1 ))
@@ -478,6 +479,7 @@ proc_t* ps_readproc(PROCTAB* PT, proc_t* p) {
 #ifdef FLASK_LINUX
     security_id_t secsid;
 #endif
+    pid_t pid;  // saved until we have a proc_t allocated for sure
 
     /* loop until a proc matching restrictions is found or no more processes */
     /* I know this could be a while loop -- this way is easier to indent ;-) */
@@ -491,7 +493,7 @@ next_proc:				/* get next PID for consideration */
 	if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return NULL;
 	if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name <= '9') )) break;
     }
-    p->pid = strtoul(ent->d_name, NULL, 10);
+    pid = strtoul(ent->d_name, NULL, 10);
     memcpy(path, "/proc/", 6);
     strcpy(path+6, ent->d_name);  // trust /proc to not contain evil top-level entries
 //  snprintf(path, sizeof path, "/proc/%s", ent->d_name);
@@ -505,10 +507,12 @@ next_proc:				/* get next PID for consideration */
 
     if (!p)
 	p = xcalloc(p, sizeof *p); /* passed buf or alloced mem */
+
     p->euid = sb.st_uid;			/* need a way to get real uid */
 #ifdef FLASK_LINUX
     p->secsid = secsid;
 #endif
+    p->pid  = pid;
 
     if ((file2str(path, "stat", sbuf, sizeof sbuf)) == -1)
 	goto next_proc;			/* error reading /proc/#/stat */
