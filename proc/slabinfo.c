@@ -76,7 +76,7 @@ struct slabs_summ {
 };
 
 struct slabs_node {
-    char name[SLABINFO_NAME_LEN];    // name of this cache
+    char name[SLABINFO_NAME_LEN+1];  // name of this cache
     unsigned long cache_size;        // size of entire cache
     unsigned int  nr_objs;           // number of objects in this cache
     unsigned int  nr_active_objs;    // number of active objects
