@@ -886,8 +886,10 @@ static CPU_t *cpus_refresh (CPU_t *cpus)
 
    // first value the last slot with the cpu summary line
    if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
+   cpus[Cpu_tot].x = 0;  // FIXME: can't tell by kernel version number
+   cpus[Cpu_tot].y = 0;  // FIXME: can't tell by kernel version number
    if (4 > sscanf(buf, CPU_FMTS_JUST1
-      , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i, &cpus[Cpu_tot].w))
+      , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i, &cpus[Cpu_tot].w, &cpus[Cpu_tot].x, &cpus[Cpu_tot].y))
          std_err("failed /proc/stat read");
    // and just in case we're 2.2.xx compiled without SMP support...
    if (1 == Cpu_tot) memcpy(cpus, &cpus[1], sizeof(CPU_t));
@@ -898,8 +900,10 @@ static CPU_t *cpus_refresh (CPU_t *cpus)
       rewind(fp);
 #endif
       if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
+      cpus[i].x = 0;  // FIXME: can't tell by kernel version number
+      cpus[i].y = 0;  // FIXME: can't tell by kernel version number
       if (4 > sscanf(buf, CPU_FMTS_MULTI
-         , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].w))
+         , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].w, &cpus[i].x, &cpus[i].y))
             std_err("failed /proc/stat read");
    }
    return cpus;
@@ -1565,6 +1569,8 @@ static void before (char *me)
       Cpu_map[i] = i;
    if (linux_version_code > LINUX_VERSION(2, 5, 41))
       States_fmts = STATES_line2x5;
+   if (linux_version_code >= LINUX_VERSION(2, 6, 0))  // grrr... only some 2.6.0-testX :-(
+      States_fmts = STATES_line2x6;
 
       /* get virtual page size -- nearing huge! */
    Page_size = getpagesize();
@@ -1811,7 +1817,7 @@ static void parse_args (char **args)
             case 'U':
                do {
                   const char *errmsg;
-                  if (selection_type && /* selection_type != 'U' */) std_err("conflicting process selection");
+                  if (selection_type /* && selection_type != 'U' */) std_err("conflicting process selection");
                   if (cp[1]) cp++;
                   else if (*args) cp = *args++;
                   else std_err("-u missing name");
@@ -2766,7 +2772,7 @@ static void summaryhlp (CPU_t *cpu, const char *pfx)
    /* we'll trim to zero if we get negative time ticks,
       which has happened with some SMP kernels (pre-2.4?) */
 #define TRIMz(x)  ((tz = (SIC_t)(x)) < 0 ? 0 : tz)
-   SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, tot_frme, tz;
+   SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, tot_frme, tz;
    float scale;
 
    u_frme = cpu->u - cpu->u_sav;
@@ -2774,7 +2780,9 @@ static void summaryhlp (CPU_t *cpu, const char *pfx)
    n_frme = cpu->n - cpu->n_sav;
    i_frme = TRIMz(cpu->i - cpu->i_sav);
    w_frme = cpu->w - cpu->w_sav;
-   tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme;
+   x_frme = cpu->x - cpu->x_sav;
+   y_frme = cpu->y - cpu->y_sav;
+   tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme + x_frme + y_frme;
    if (1 > tot_frme) tot_frme = 1;
    scale = 100.0 / (float)tot_frme;
 
@@ -2786,7 +2794,10 @@ static void summaryhlp (CPU_t *cpu, const char *pfx)
       , (float)s_frme * scale
       , (float)n_frme * scale
       , (float)i_frme * scale
-      , (float)w_frme * scale));
+      , (float)w_frme * scale
+      , (float)x_frme * scale
+      , (float)y_frme * scale
+   ));
    Msg_row += 1;
 
    // remember for next time around
@@ -2795,6 +2806,8 @@ static void summaryhlp (CPU_t *cpu, const char *pfx)
    cpu->n_sav = cpu->n;
    cpu->i_sav = cpu->i;
    cpu->w_sav = cpu->w;
+   cpu->x_sav = cpu->x;
+   cpu->y_sav = cpu->y;
 
 #undef TRIMz
 }

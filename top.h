@@ -188,8 +188,8 @@ typedef struct HST_t {
            calculations.  It exists primarily for SMP support but serves
            all environments. */
 typedef struct CPU_t {
-   TIC_t u, n, s, i, w;                         // as represented in /proc/stat
-   TIC_t u_sav, s_sav, n_sav, i_sav, w_sav;     // in the order of our display
+   TIC_t u, n, s, i, w, x, y;                             // as represented in /proc/stat
+   TIC_t u_sav, s_sav, n_sav, i_sav, w_sav, x_sav, y_sav; // in the order of our display
 } CPU_t;
 
         /* These 2 types support rcfile compatibility */
@@ -350,11 +350,11 @@ typedef struct WIN_t {
         /* These are the possible fscanf formats used in /proc/stat
            reads during history processing.
            ( 5th number only for Linux 2.5.41 and above ) */
-#define CPU_FMTS_JUST1  "cpu %Lu %Lu %Lu %Lu %Lu"
+#define CPU_FMTS_JUST1  "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
 #ifdef PRETEND4CPUS
 #define CPU_FMTS_MULTI CPU_FMTS_JUST1
 #else
-#define CPU_FMTS_MULTI  "cpu%*d %Lu %Lu %Lu %Lu %Lu"
+#define CPU_FMTS_MULTI  "cpu%*d %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
 #endif
 
         /* Summary Lines specially formatted string(s) --
@@ -367,6 +367,8 @@ typedef struct WIN_t {
    " %#5.1f%% \02user,\03 %#5.1f%% \02system,\03 %#5.1f%% \02nice,\03 %#5.1f%% \02idle\03\n"
 #define STATES_line2x5  "%s\03" \
    " %#5.1f%% \02user,\03 %#5.1f%% \02system,\03 %#5.1f%% \02nice,\03 %#5.1f%% \02idle,\03 %#5.1f%% \02IO-wait\03\n"
+#define STATES_line2x6  "%s\03" \
+   " %#4.1f%% \02us,\03 %#4.1f%% \02sy,\03 %#4.1f%% \02ni,\03 %#4.1f%% \02id,\03 %#4.1f%% \02wa,\03 %#4.1f%% \02hi,\03 %#4.1f%% \02si,\03\n"
 #ifdef CASEUP_SUMMK
 #define MEMORY_line1  "Mem: \03" \
    " %8uK \02total,\03 %8uK \02used,\03 %8uK \02free,\03 %8uK \02buffers\03\n"
@@ -626,4 +628,4 @@ typedef struct WIN_t {
 //     int          main (int dont_care_argc, char **argv);
 
 #endif /* _Itop */
-
+

@@ -9,9 +9,11 @@ EXTERN_C_BEGIN
 extern unsigned long long Hertz;   /* clock tick frequency */
 extern long smp_num_cpus;     /* number of CPUs */
 
+#if 0
 #define JT double
-extern void five_cpu_numbers(JT *uret, JT *nret, JT *sret, JT *iret, JT *wret);
+extern void seven_cpu_numbers(JT *uret, JT *nret, JT *sret, JT *iret, JT *wret, JT *xret, JT *yret);
 #undef JT
+#endif
 
 extern int        uptime (double *uptime_secs, double *idle_secs);
 extern void       loadavg(double *av1, double *av5, double *av15);
@@ -53,7 +55,7 @@ extern unsigned long kb_pagetables;
 
 #define BUFFSIZE 8192
 typedef unsigned long long jiff;
-extern void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow,
+extern void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow, jiff *restrict cxxx, jiff *restrict cyyy,
 	     unsigned long *restrict pin, unsigned long *restrict pout, unsigned long *restrict s_in, unsigned long *restrict sout,
 	     unsigned *restrict intr, unsigned *restrict ctxt,
 	     unsigned int *restrict running, unsigned int *restrict blocked,
