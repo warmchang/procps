@@ -351,9 +351,6 @@ void reset_global(void){
 
 /*********** spew variables ***********/
 void self_info(void){
-#ifndef EMULATE_FPUTS
-  int count;
-#endif
   fprintf(stderr,
     "BSD j    %s\n"
     "BSD l    %s\n"
@@ -386,20 +383,6 @@ void self_info(void){
   fprintf(stderr, "Compiled with: libc %d, internal version %d.%d\n\n",
     __GNU_LIBRARY__, __GLIBC__, __GLIBC_MINOR__
   );
-
-#ifdef EMULATE_FPUTS
-  fprintf(stderr, "libc assumed lame, using fprintf to emulate fputs.\n\n");
-#else
-  fprintf(stderr, "fputs(\"");
-  count = fputs("123456789", stderr);
-  fprintf(stderr, "\", stderr) gives %d, which is %s.\n",
-    count, count==9?"good":"BAD!\nAdjust ps/common.h or libc, then recompile"
-  );
-  if(count!=9){
-    fprintf(stderr, "(procps includes a libc patch called glibc.patch)\n");
-  }
-  fprintf(stderr, "\n");
-#endif
 
   fprintf(stderr,
     "header_gap=%d lines_to_next_header=%d\n"

@@ -864,7 +864,7 @@ static const char *parse_gnu_option(void){
   case_help:
     trace("--help\n");
     exclusive("--help");
-    fputs(help_message, stderr);
+    fwrite(help_message,1,strlen(help_message),stderr);
     exit(0);
     return NULL;
   case_info:
@@ -1131,7 +1131,7 @@ total_failure:
   reset_parser();
   if(personality & PER_FORCE_BSD) fprintf(stderr, "ERROR: %s\n", err2);
   else fprintf(stderr, "ERROR: %s\n", err);
-  fputs(help_message, stderr);
+  fwrite(help_message,1,strlen(help_message),stderr);
   exit(1);
   /* return 1; */ /* useless */
 }

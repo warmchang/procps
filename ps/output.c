@@ -1709,7 +1709,7 @@ void show_one_proc(proc_t* p){
       leftpad = 0;
       break;
     default:
-      fputs("bad alignment code\n", stderr);
+      fprintf(stderr, "bad alignment code\n");
       break;
     }
     /* At this point:

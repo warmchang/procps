@@ -230,28 +230,6 @@ extern int simple_escape_str(char *dst, const char *src, size_t n);
 
 /********************* UNDECIDED GLOBALS **************/
 
-/*
- * fputs(3) should (as in "good behavior") return the number of
- * characters written as it does on Digital Unix, AIX, Irix, and SunOS.
- * I'll assume glibc 2.1 has this extremely useful feature.
- *
- * Note: code ported from other systems will keep breaking until
- * the library is updated. You should patch the library itself if
- * at all possible. (for example, distributers who build libc from
- * source with automatic patching as part of the build process)
- */
-
-#if defined __GLIBC__ && ((__GLIBC__ == 2 && __GLIBC_MINOR__ > 2) || __GLIBC__ > 2)
-#warning Hopefully fputs(3) has been modernized...
-#else
-#define EMULATE_FPUTS
-#define fputs something_to_avoid_libc_troubles
-static inline int fputs(const char *s, FILE *fp){
-  return fwrite(s,1,strlen(s),fp);
-  /* return fprintf(fp, "%s", s); */
-}
-#endif
-
 /* output.c */
 extern void show_one_proc(proc_t* p);
 extern void print_format_specifiers(void);
