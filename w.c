@@ -127,33 +127,33 @@ static proc_t *getproc(const utmp_t *restrict const u, const char *restrict cons
     unsigned uid = ~0U;
 
     if(!ignoreuser){
-      char buf[UT_NAMESIZE+1];
-      struct passwd *passwd_data;   /* pointer to static data */
-      strncpy(buf,u->ut_user,UT_NAMESIZE);
-      buf[UT_NAMESIZE] = '\0';
-      passwd_data = getpwnam(buf);
-      if(!passwd_data) return NULL;
-      uid = passwd_data->pw_uid;
-      /* OK to have passwd_data go out of scope here */
+	char buf[UT_NAMESIZE+1];
+	struct passwd *passwd_data;   /* pointer to static data */
+	strncpy(buf,u->ut_user,UT_NAMESIZE);
+	buf[UT_NAMESIZE] = '\0';
+	passwd_data = getpwnam(buf);
+	if(!passwd_data) return NULL;
+	uid = passwd_data->pw_uid;
+	/* OK to have passwd_data go out of scope here */
     }
     line = tty_to_dev(tty);
     *jcpu = 0;
     *found_utpid = 0;
     for(p = procs; *p; p++) {
 	if((**p).pid == u->ut_pid) {
-        *found_utpid = 1;
-        best = *p;
-    }
+	    *found_utpid = 1;
+	    best = *p;
+	}
 	if((**p).tty != line) continue;
-        (*jcpu) += (**p).utime + (**p).stime;
-        secondbest = *p;
-        /* same time-logic here as for "best" below */
-        if(!  (secondbest && (**p).start_time <= secondbest->start_time)  ){
-          secondbest = *p;
-        }
-        if(!ignoreuser && uid != (**p).euid && uid != (**p).ruid) continue;
-        if((**p).pid != (**p).tpgid) continue;
-        if(best && (**p).start_time <= best->start_time) continue;
+	(*jcpu) += (**p).utime + (**p).stime;
+	secondbest = *p;
+	/* same time-logic here as for "best" below */
+	if(!  (secondbest && (**p).start_time <= secondbest->start_time)  ){
+	    secondbest = *p;
+	}
+	if(!ignoreuser && uid != (**p).euid && uid != (**p).ruid) continue;
+	if((**p).pid != (**p).tpgid) continue;
+	if(best && (**p).start_time <= best->start_time) continue;
     	best = *p;
     }
     return best ? best : secondbest;
