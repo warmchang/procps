@@ -123,8 +123,6 @@ static int  No_ksyms = -1,      /* set to '0' if ksym avail, '1' otherwise   */
             Loops = -1,         /* number of iterations, -1 loops forever    */
             Secure_mode = 0;    /* set if some functionality restricted      */
 
-        /* Miscellaneous global stuff ####################################*/
-
         /* Some cap's stuff to reduce runtime calls --
            to accomodate 'Batch' mode, they begin life as empty strings */
 static char  Cap_bold       [CAPBUFSIZ] = "",
@@ -139,10 +137,6 @@ static char  Cap_bold       [CAPBUFSIZ] = "",
              Caps_off       [CAPBUFSIZ] = "";
 static int   Cap_can_goto = 0;
 
-        /* Just to get gcc off our back and eliminate warnings about
-           '... discards qualifiers from pointer target type' */
-static char  Empty_str[] = "";
-static char  Question_mark[] = "?";
 
         /* ////////////////////////////////////////////////////////////// */
         /* Special Section: multiple windows/field groups  ---------------*/
@@ -165,10 +159,14 @@ static int  Frame_maxtask,      /* last known number of active tasks */
 
 /*######  Sort callbacks  ################################################*/
 
-        /* These happen to be coded in the same order as the enum 'pflag'
-           values -- but the only positionally dependent sort callback is
-           the 'pid' guy who MAY be invoked under return SORT_eq
-           (2 of these routines serve double duty -- 2 columns each) */
+        /*
+         * These happen to be coded in the same order as the enum 'pflag'
+         * values -- but the only positionally dependent sort callback is
+         * the 'pid' guy who MAY be invoked under 'return SORT_eq' and
+         * thus must be first.
+         *
+         * Note: 2 of these routines serve double duty -- 2 columns each.
+         */
 _SC_NUM1(P_PID, pid)
 _SC_NUM1(P_PPD, ppid)
 _SC_NUM1(P_PGD, pgrp)
@@ -275,16 +273,15 @@ static const char *fmtmk (const char *fmts, ...)
 
 
         /*
-         * What need be said... */
+         * This guy was originally designed just to trim the rc file lines and
+         * any 'open_psdb_message' result which arrived with an inappropriate
+         * newline (thanks to 'sysmap_mmap') -- but when tabs (^I) were found
+         * in some proc cmdlines, a choice was offered twix space or null. */
 static char *strim (int sp, char *str)
 {
-   const char *ws = "\b\f\n\r\t\v";
+   static const char *ws = "\b\f\n\r\t\v";
    char *p;
 
-   /* this guy was originally designed just to trim the rc file lines and
-      any 'open_psdb_message' result which arrived with an inappropriate
-      newline (thanks to 'sysmap_mmap') -- but when tabs (^I) were found
-      in some proc cmdlines, a choice was offered twix space or null... */
    if (sp)
       while ((p = strpbrk(str, ws))) *p = ' ';
    else
@@ -294,10 +291,12 @@ static char *strim (int sp, char *str)
 
 
         /*
-         * This guy just facilitates Batch and protects against dumb ttys. */
+         * This guy just facilitates Batch and protects against dumb ttys
+         * -- we'd 'inline' him but he's only called twice per frame,
+         * yet used in many other locations. */
 static char *tg2 (int x, int y)
 {
-   return Cap_can_goto ? tgoto(cursor_address, x, y) : Empty_str;
+   return Cap_can_goto ? tgoto(cursor_address, x, y) : "";
 }
 
 
@@ -321,7 +320,7 @@ static void bye_bye (int eno, const char *str)
       "\nbye_bye's Summary report:"
       "\n\tProgram"
       "\n\t   Page_size = %d, Cpu_tot = %d"
-      "\n\t   %s, Hertz = %u (size %u bytes, %u-bit time)"
+      "\n\t   %s, using Hertz = %u (%u bytes, %u-bit time)"
       "\n\t   sizeof(CPUS_t) = %u, sizeof(HIST_t) = %u (%u HIST_t's/Page)"
       "\n\t   CPU_FMTS_JUST1 = %s"
       "  \t   CPU_FMTS_MULTI = %s"
@@ -424,7 +423,7 @@ static void suspend (int dont_care_sig)
 }
 
 
-/*######  Misc Color/Highlighting support  ###############################*/
+/*######  Misc Color/Display support  ####################################*/
 
         /*
          * Make the appropriate caps/color strings and set some
@@ -612,7 +611,7 @@ static void show_special (const char *glob)
    /* if there's anything left in the glob (by virtue of no trailing '\n'),
       it probably means caller wants to retain cursor position on this final
       line -- ok then, we'll just do our 'fit-to-screen' thingy... */
-   if (strlen(glob)) printf("%.*s", Screen_cols, glob);
+   if (*glob) printf("%.*s", Screen_cols, glob);
    fflush(stdout);
 }
 
@@ -709,7 +708,7 @@ static char *scale_num (unsigned num, const unsigned width, const unsigned type)
          return buf;
    }
       /* well shoot, this outta' fit... */
-   return Question_mark;
+   return "?";
 }
 
 
@@ -734,12 +733,12 @@ static char *scale_tics (TICS_t tics, const unsigned width)
 
       /* try successively higher units until it fits */
    t = tics / Hertz;
-   sprintf(buf, "%u:%02u.%02u"                 /* minutes:seconds.hundredths */
-      , t/60, t%60, (unsigned)((tics*100)/Hertz)%100);
+   sprintf(buf, "%u:%02u.%02u"                  /* mins:secs.hundredths */
+      , t / 60, t % 60, (unsigned)((tics * 100) / Hertz) % 100);
    if (strlen(buf) <= width)
       return buf;
 
-   sprintf(buf, "%u:%02u", t/60, t%60);         /* minutes:seconds */
+   sprintf(buf, "%u:%02u", t / 60, t % 60);     /* minutes:seconds */
    if (strlen(buf) <= width)
       return buf;
 
@@ -751,7 +750,7 @@ static char *scale_tics (TICS_t tics, const unsigned width)
          return buf;
    };
       /* well shoot, this outta' fit... */
-   return Question_mark;
+   return "?";
 }
 
 
@@ -779,7 +778,6 @@ static float time_elapsed (void)
         /*
          * Handle our own memory stuff without the risk of leaving the
          * user's terminal in an ugly state should things go sour. */
-static const char *alloc_msg = "Failed memory allocate (%d bytes)";
 
 static void *alloc_c (unsigned numb)
 {
@@ -787,7 +785,7 @@ static void *alloc_c (unsigned numb)
 
    if (!numb) ++numb;
    if (!(p = calloc(1, numb)))
-      std_err(fmtmk(alloc_msg, numb));
+      std_err("failed memory allocate");
    return p;
 }
 
@@ -798,13 +796,59 @@ static void *alloc_r (void *q, unsigned numb)
 
    if (!numb) ++numb;
    if (!(p = realloc(q, numb)))
-      std_err(fmtmk(alloc_msg, numb));
+      std_err("failed memory allocate");
    return p;
 }
 
 
         /*
-         * This guy is modeled on libproc's readproctab function except
+         * This guy's modeled on libproc's 'four_cpu_numbers' function except
+         * we preserve all cpu data in our CPUS_t array which is organized
+         * as follows:
+         *    cpus[0] thru cpus[n] == tics for each separate cpu
+         *    cpus[Cpu_tot]        == tics from the 1st /proc/stat line */
+static CPUS_t *refreshcpus (CPUS_t *cpus)
+{
+#include <fcntl.h>
+   static FILE *fp = NULL;
+   int i;
+
+      /* by opening this file once, we'll avoid the hit on minor page faults
+         (sorry Linux, but you'll have to close it for us) */
+   if (!fp) {
+      if (!(fp = fopen("/proc/stat", "r")))
+         std_err(fmtmk("Failed /proc/stat open: %s", strerror(errno)));
+      /* note: we allocate one more CPUS_t than Cpu_tot so that the last slot
+               can hold tics representing the /proc/stat cpu summary (the first
+               line read) -- that slot supports our View_CPUSUM toggle */
+      cpus = alloc_c((1 + Cpu_tot) * sizeof(CPUS_t));
+   }
+   rewind(fp);
+   fflush(fp);
+
+      /* first value the last slot with the cpu summary line */
+   if (4 != fscanf(fp, CPU_FMTS_JUST1
+      , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i))
+         std_err("failed /proc/stat read");
+
+      /* and now value each separate cpu's tics */
+   for (i = 0; i < Cpu_tot; i++) {
+#ifdef PRETEND4CPUS
+      rewind(fp);
+      if (4 != fscanf(fp, CPU_FMTS_JUST1
+#else
+      if (4 != fscanf(fp, CPU_FMTS_MULTI
+#endif
+         , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i))
+            std_err("failed /proc/stat read");
+   }
+
+   return cpus;
+}
+
+
+        /*
+         * This guy's modeled on libproc's 'readproctab' function except
          * we reuse and extend any prior proc_t's.  He's been customized
          * for our specific needs and to avoid the use of <stdarg.h> */
 static proc_t **refreshprocs (proc_t **tbl)
@@ -933,7 +977,7 @@ static void configs_read (void)
       fgets(fbuf, sizeof(fbuf), fp);    /* ignore shameless advertisement */
       if (5 != (fscanf(fp, "Id:%c, "
          "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%f, Curwin=%d\n"
-         , &id, &Mode_altscr, &Mode_irixps, &delay, &i)))
+         , &id, &Mode_altscr, &Mode_irixps, &delay, &i)) || RCF_FILEID != id)
             std_err(fmtmk(err_rc, RCfile));
 
          /* you saw that, right?  (fscanf stickin' it to 'i') */
@@ -951,7 +995,7 @@ static void configs_read (void)
                then we catch it with strlen and end via std_err - no worries!
                we might not have been so lucky if our WIN_t was laid out
                differently and statically allocated or stack based!! */
-         if (RCF_FILEID != id || WINNAMSIZ <= strlen(Winstk[i]->winname)
+         if (WINNAMSIZ <= strlen(Winstk[i]->winname)
          || strlen(DEF_FIELDS) != strlen(Winstk[i]->fieldscur))
             std_err(fmtmk(err_rc, RCfile));
          fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d \n"
@@ -989,7 +1033,8 @@ static void parse_args (char **args)
       .  no deprecated/illegal use of 'breakargv:' with goto
       .  bunched args are actually handled properly and none are ignored
       .  we tolerate NO whitespace and NO switches -- maybe too tolerant? */
-   const char *usage = " -hv | -bcisS -d delay -n iterations -p pid [,pid ...]\n";
+   static const char *usage =
+      " -hv | -bcisS -d delay -n iterations -p pid [,pid ...]";
    float tmp_delay = MAXFLOAT;
    char *p;
 
@@ -1017,7 +1062,7 @@ static void parse_args (char **args)
                break;
             case 'h': case 'H':
             case 'v': case 'V':
-               std_err(fmtmk("\t%s\nusage:\t%s%s"
+               std_err(fmtmk("%s\nusage:\t%s%s"
                   , procps_version, Myname, usage));
             case 'i':
                TOGw(Curwin, Show_IDLEPS);
@@ -1083,14 +1128,14 @@ static void whack_terminal (void)
 
       /* first the curses part... */
 #ifdef PRETENDNOCAP
-   setupterm((char *)"dumb", STDOUT_FILENO, NULL);
+   setupterm("dumb", STDOUT_FILENO, NULL);
 #else
    setupterm(NULL, STDOUT_FILENO, NULL);
 #endif
       /* now our part... */
    if (!Batch) {
       if (-1 == tcgetattr(STDIN_FILENO, &Savedtty))
-         std_err("tcgetattr() failed");
+         std_err("failed tty get");
       newtty = Savedtty;
       newtty.c_lflag &= ~ICANON;
       newtty.c_lflag &= ~ECHO;
@@ -1100,7 +1145,7 @@ static void whack_terminal (void)
       Ttychanged = 1;
       if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &newtty)) {
          putp(Cap_clr_scr);
-         std_err(fmtmk("Failed tty set: %s", strerror(errno)));
+         std_err(fmtmk("failed tty set: %s", strerror(errno)));
       }
       tcgetattr(STDIN_FILENO, &Rawtty);
       putp(Cap_clr_scr);
@@ -1208,7 +1253,7 @@ static void display_fields (const char *fields, const char *xtra)
 static void fields_reorder (void)
 {
    static const char *prompt =
-      "Upper case characters move field left, lower case right";
+      "Upper case letter moves field left, lower case right";
    char c, *p;
    int i;
 
@@ -1241,10 +1286,10 @@ static void fields_sort (void)
       "Select sort field via field letter, type any other key to return";
    char phoney[PFLAGSSIZ];
    char c, *p;
-   int i;
+   int i, x;
 
    strcpy(phoney, NUL_FIELDS);
-   i = Curwin->sortindx;
+   x = i = Curwin->sortindx;
    printf("%s%s", Cap_clr_scr, Cap_curs_huge);
    do {
       p  = phoney + i;
@@ -1256,10 +1301,11 @@ static void fields_sort (void)
       i = toupper(c) - 'A';
       if (i < 0 || i >= MAXTBL(Fieldstab)) break;
       *p = tolower(*p);
-      if ((p = strchr(Curwin->fieldscur, i + 'a')))
-         *p = i + 'A';
-      Curwin->sortindx = i;
+      x = i;
    } while (1);
+   if ((p = strchr(Curwin->fieldscur, x + 'a')))
+      *p = x + 'A';
+   Curwin->sortindx = x;
    putp(Cap_curs_norm);
 }
 
@@ -1302,7 +1348,7 @@ static void win_colsheads (WIN_t *q)
    int i, needpsdb = 0;
 
       /* build window's procflags array and establish a tentative maxpflgs */
-   for (i = 0, q->maxpflgs = 0; i < (int)strlen(q->fieldscur); i++) {
+   for (i = 0, q->maxpflgs = 0; q->fieldscur[i]; i++) {
       if (isupper(q->fieldscur[i]))
          q->procflags[q->maxpflgs++] = q->fieldscur[i] - 'A';
    }
@@ -1321,7 +1367,6 @@ static void win_colsheads (WIN_t *q)
          column heading via maxcmdln -- it may be a fib if P_CMD wasn't
          encountered, but that's ok because it won't be displayed anyway */
    q->maxpflgs = i;
-   q->procflags[i] = '\0';
    q->maxcmdln = Screen_cols
       - (strlen(q->columnhdr) - strlen(Fieldstab[P_CMD].head)) - 1;
 
@@ -1398,8 +1443,8 @@ static void win_select (int ch)
          * Just warn the user when a command can't be honored. */
 static int win_warn (void)
 {
-   show_msg(fmtmk("\aCommand disabled, activate window #%d with '-' or '_'"
-      , Curwin->winnum));
+   show_msg(fmtmk("\aCommand disabled, activate %s with '-' or '_'"
+      , Curwin->grpname));
    /* we gotta' return false 'cause we're somewhat well known within
       macro society, by way of that sassy little tertiary operator... */
    return 0;
@@ -1514,27 +1559,20 @@ static void wins_reflag (int what, int flg)
             TOGw(w, flg);
             break;
          case Flags_SET:                /* Ummmm, i can't find anybody */
-            SETw(w, flg);               /* who uses Flags_set -- maybe  */
-            break;                      /* ol' gcc will opt it away... */
+            SETw(w, flg);               /* who uses Flags_set ...      */
+            break;
          case Flags_OFF:
             OFFw(w, flg);
             break;
       }
-      w = w->next;
-   } while (w != Curwin);
-
-      /* a flag with special significance -- user wants to rebalance display
-         so darn it, we gotta' spin thru all those windows one mo' time and
-         'off' one number then force on two flags... */
-      /* (jeeze, doesn't this idiot know there are just 4 windows?) */
-   if (EQUWINS_cwo == flg) {
-      w = Curwin;
-      do {
+         /* a flag with special significance -- user wants to rebalance
+            display so we gotta' 'off' one number then force on two flags... */
+      if (EQUWINS_cwo == flg) {
          w->maxtasks = 0;
          SETw(w, Show_IDLEPS | VISIBLE_tsk);
-         w = w->next;
-      } while (w != Curwin);
-   }
+      }
+      w = w->next;
+   } while (w != Curwin);
 }
 
 
@@ -1564,8 +1602,8 @@ static void wins_resize (int dont_care_sig)
         /*
          * Set up the raw/incomplete field group windows --
          * they'll be finished off after startup completes.
-         * (and very likely that will override most/all of our efforts)
-         * (              --- life-is-NOT-fair ---                    ) */
+         * [ and very likely that will override most/all of our efforts ]
+         * [               --- life-is-NOT-fair ---                     ] */
 static void windows_stage1 (void)
 {
    static struct {
@@ -1629,7 +1667,7 @@ static void windows_stage2 (void)
 
    if (Batch) {
       Mode_altscr = 0;
-      OFFw(Curwin, Show_COLORS);
+      OFFw(Curwin, Show_COLORS | Show_HICOLS | Show_HIROWS);
    }
    wins_resize(0);
    for (i = 0; i < GROUPSMAX; i++) {
@@ -1649,25 +1687,17 @@ static void windows_stage2 (void)
          *    2 - modest smp boxes with room for each cpu's percentages
          *    3 - massive smp guys leaving little or no room for process
          *        display and thus requiring the cpu summary toggle */
-static void cpudo (FILE *fp, const char *fmt, CPUS_t *cpu, const char *pfx)
+static void cpudo (CPUS_t *cpu, const char *pfx)
 {
         /* we'll trim to zero if we get negative time ticks,
            which has happened with some SMP kernels (pre-2.4?) */
 #define TRIMz(x)  ((tz = (STIC_t)x) < 0 ? 0 : tz)
-   TICS_t u_tics, s_tics, n_tics, i_tics;
    STIC_t u_frme, s_frme, n_frme, i_frme, tot_frme, tz;
 
-#ifdef PRETEND4CPUS
-   rewind(fp);
-   fmt = CPU_FMTS_JUST1;
-#endif
-   if (4 != fscanf(fp, fmt, &u_tics, &n_tics, &s_tics, &i_tics))
-      std_err("Failed /proc/stat read");
-
-   u_frme = TRIMz(u_tics - cpu->u);
-   s_frme = TRIMz(s_tics - cpu->s);
-   n_frme = TRIMz(n_tics - cpu->n);
-   i_frme = TRIMz(i_tics - cpu->i);
+   u_frme = TRIMz(cpu->u - cpu->u_sav);
+   s_frme = TRIMz(cpu->s - cpu->s_sav);
+   n_frme = TRIMz(cpu->n - cpu->n_sav);
+   i_frme = TRIMz(cpu->i - cpu->i_sav);
    tot_frme = u_frme + s_frme + n_frme + i_frme;
    if (1 > tot_frme) tot_frme = 1;
 
@@ -1682,10 +1712,10 @@ static void cpudo (FILE *fp, const char *fmt, CPUS_t *cpu, const char *pfx)
    Msg_row += 1;
 
       /* remember for next time around */
-   cpu->u = u_tics;
-   cpu->s = s_tics;
-   cpu->n = n_tics;
-   cpu->i = i_tics;
+   cpu->u_sav = cpu->u;
+   cpu->s_sav = cpu->s;
+   cpu->n_sav = cpu->n;
+   cpu->i_sav = cpu->i;
 
 #undef TRIMz
 }
@@ -1696,11 +1726,10 @@ static void cpudo (FILE *fp, const char *fmt, CPUS_t *cpu, const char *pfx)
          * Calc percent cpu usage for each task (pcpu)
          * Calc the cpu(s) percent in each state (user, system, nice, idle)
          * AND establish the total number of tasks for this frame! */
-static void frame_states (proc_t **p, int show)
+static void frame_states (proc_t **ppt, int show)
 {
    static HIST_t   *hist_sav = NULL;
    static unsigned  hist_siz;
-   static CPUS_t   *smpcpu;
    HIST_t          *hist_new;
    unsigned         total, running, sleeping, stopped, zombie;
    float            etime;
@@ -1710,19 +1739,15 @@ static void frame_states (proc_t **p, int show)
       Frame_maxtask = 0;
       hist_siz = (Page_size / sizeof(HIST_t));
       hist_sav = alloc_c(hist_siz);
-         /* note: we allocate one more CPUS_t than Cpu_tot so that the last
-                  slot can hold tics representing the /proc/stat cpu summary
-                  (first line read)  -- that slot supports summary cpu info */
-      smpcpu = alloc_c((1 + Cpu_tot) * sizeof(CPUS_t));
    }
    hist_new = alloc_c(hist_siz);
    total = running = sleeping = stopped = zombie = 0;
    etime = time_elapsed();
 
       /* make a pass through the data to get stats */
-   while (-1 != p[total]->pid) {                        /* calculations //// */
+   while (-1 != ppt[total]->pid) {                      /* calculations //// */
       TICS_t tics;
-      proc_t *this = p[total];
+      proc_t *this = ppt[total];
 
       switch (this->state) {
          case 'S':
@@ -1770,33 +1795,29 @@ static void frame_states (proc_t **p, int show)
 
 
    if (show) {                                          /* display ///////// */
-      FILE  *fp;
+      static CPUS_t *smpcpu = NULL;
 
          /* display Task states */
       show_special(fmtmk(STATES_line1
          , total, running, sleeping, stopped, zombie));
       Msg_row += 1;
 
-      if (!(fp = fopen("/proc/stat", "r")))
-         std_err(fmtmk("Failed /proc/stat open: %s", strerror(errno)));
+         /* refresh our /proc/stat data... */
+      smpcpu = refreshcpus(smpcpu);
 
       if (CHKw(Curwin, View_CPUSUM)) {
-            /* retrieve and display just the 1st /proc/stat line */
-         cpudo(fp, CPU_FMTS_JUST1, &smpcpu[Cpu_tot], "Cpu(s) state:");
+            /* display just the 1st /proc/stat line */
+         cpudo(&smpcpu[Cpu_tot], "Cpu(s) state:");
       } else {
          char tmp[SMLBUFSIZ];
-
-            /* skip the 1st line, which reflects total cpu states */
-         if (!fgets(tmp, sizeof(tmp), fp)) std_err("Failed /proc/stat read");
-            /* now do each cpu's states separately */
+            /* display each cpu's states separately */
          for (i = 0; i < Cpu_tot; i++) {
             sprintf(tmp, "%-6scpu%-2d:"         /* [ cpu states as ]      */
                , i ? " " : "State"              /*    'State cpu0 : ... ' */
                , Mode_irixps ? i : Cpu_map[i]); /*    '      cpu1 : ... ' */
-            cpudo(fp, CPU_FMTS_MULTI, &smpcpu[i], tmp);
+            cpudo(&smpcpu[i], tmp);
          }
       }
-      fclose(fp);
    } /* end: if 'show' */
 
       /* save this frame's information */
@@ -1819,7 +1840,7 @@ static void frame_storage (void)
    unsigned long long **memarray;
 
    if (!(memarray = meminfo()))
-      std_err("Failed /proc/meminfo read");
+      std_err("failed /proc/meminfo read");
 
    if (CHKw(Curwin, View_MEMORY)) {
       show_special(fmtmk(MEMORY_line1
@@ -1866,6 +1887,9 @@ static void mkcol (WIN_t *q, PFLG_t idx, int sta, int *pad, char *buf, ...)
    va_list va;
 
    va_start(va, buf);
+      /* this conditional is for piece-of-mind only, it should NOT be needed
+         given the macro employed by show_a_task (which calls us only when
+         the target column is the current sort field and Show_HICOLS is on) */
    if (!CHKw(q, Show_HICOLS) || q->sortindx != idx) {
       vsprintf(buf, Fieldstab[idx].fmts, va);
    } else {
@@ -1885,25 +1909,31 @@ static void mkcol (WIN_t *q, PFLG_t idx, int sta, int *pad, char *buf, ...)
          * Display information for a single task row. */
 static void show_a_task (WIN_t *q, proc_t *task)
 {
+   /* the following macro is our means to 'inline' emitting a column -- that's
+      far and away the most frequent and costly part of top's entire job! */
+#define MKCOL(q,idx,sta,pad,buf,arg...) \
+           if (!b) \
+              sprintf(buf, f, ## arg); \
+           else mkcol(q, idx, sta, pad, buf, ## arg);
    char rbuf[ROWBUFSIZ];
-   int i, x, pad;
+   int j, x, pad;
 
       /* since win_colsheads adds a number to the window's column header,
          we must begin a row with that in mind... */
    pad = Mode_altscr;
    if (pad) strcpy(rbuf, " "); else rbuf[0] = '\0';
 
-   for (i = 0; i < q->maxpflgs; i++) {
-      char     cbuf[COLBUFSIZ];
-      PFLG_t   f;
-      unsigned s, w;
+   for (x = 0; x < q->maxpflgs; x++) {
+      char cbuf[COLBUFSIZ];
+      char        a = task->state;              /* we'll use local var's so  */
+      PFLG_t      i = q->procflags[x];          /* gcc doesn't reinvent the  */
+      unsigned    s = Fieldstab[i].scale;       /* wheel -- yields a cryptic */
+      unsigned    w = Fieldstab[i].width;       /* mkcol, but saves +1k code */
+      const char *f = Fieldstab[i].fmts;        /* (this & next macro only) */
+      int         b = (CHKw(q, Show_HICOLS) && q->sortindx == i);
 
       cbuf[0] = '\0';
-      f = q->procflags[i];
-      s = Fieldstab[f].scale;
-      w = Fieldstab[f].width;
-
-      switch (f) {
+      switch (i) {
          case P_CMD:
          {  char *cmdptr, cmdnam[ROWBUFSIZ];
 
@@ -1912,104 +1942,98 @@ static void show_a_task (WIN_t *q, proc_t *task)
             else {
                cmdnam[0] = '\0';
                if (task->cmdline) {
-                  x = 0;
+                  j = 0;
                   do {
                      /* during a kernel build, parts of the make will create
                         cmdlines in excess of 3000 bytes but *without* the
                         intervening nulls -- so we must limit our strcat... */
                      strcat(cmdnam
-                        , fmtmk("%.*s ", q->maxcmdln, task->cmdline[x++]));
+                        , fmtmk("%.*s ", q->maxcmdln, task->cmdline[j++]));
                      /* whoa, gnome's xscreensaver had a ^I in his cmdline
                         creating a line wrap when the window was maximized &
                         the tab came into view -- so whack those suckers... */
                      strim(1, cmdnam);
                      if (q->maxcmdln < (int)strlen(cmdnam)) break;
-                  } while (task->cmdline[x]);
+                  } while (task->cmdline[j]);
                } else {
                   /* if cmdline is absent, consider it a kernel thread and
-                     display it uniquely (we'll need sort_cmd's complicity) */
-                  strcpy(cmdnam, fmtmk("( %s )", task->cmd));
+                     display it uniquely (need sort callback's complicity) */
+                  strcpy(cmdnam, fmtmk(CMDLINE_FMTS, task->cmd));
                }
                cmdptr = cmdnam;
             }
-            mkcol(q, f, task->state, &pad
-               , cbuf, q->maxcmdln, q->maxcmdln, cmdptr);
+            MKCOL(q, i, a, &pad, cbuf, q->maxcmdln, q->maxcmdln, cmdptr);
          }
             break;
          case P_COD:
-            mkcol(q, f, task->state, &pad, cbuf
-               , scale_num(PAGES_2K(task->trs), w, s));
+            MKCOL(q, i, a, &pad, cbuf, scale_num(PAGES_2K(task->trs), w, s));
             break;
          case P_CPN:
 #ifdef UGH_ITS_4_RH
-            mkcol(q, f, task->state, &pad, cbuf, task->lproc);
+            MKCOL(q, i, a, &pad, cbuf, task->lproc);
 #else
-            mkcol(q, f, task->state, &pad, cbuf, task->processor);
+            MKCOL(q, i, a, &pad, cbuf, task->processor);
 #endif
             break;
          case P_CPU:
-            mkcol(q, f, task->state, &pad, cbuf, (float)task->pcpu / 10);
+            MKCOL(q, i, a, &pad, cbuf, (float)task->pcpu / 10);
             break;
          case P_DAT:
-            mkcol(q, f, task->state, &pad, cbuf
-               , scale_num(PAGES_2K(task->drs), w, s));
+            MKCOL(q, i, a, &pad, cbuf, scale_num(PAGES_2K(task->drs), w, s));
             break;
          case P_DRT:
-            mkcol(q, f, task->state, &pad, cbuf
-               , scale_num((unsigned)task->dt, w, s));
+            MKCOL(q, i, a, &pad, cbuf, scale_num((unsigned)task->dt, w, s));
             break;
          case P_FLG:
-            mkcol(q, f, task->state, &pad, cbuf, task->flags);
-            for (x = 0; x < (int)strlen(cbuf); x++)
-               if ('0' == cbuf[x]) cbuf[x] = '.';
+            MKCOL(q, i, a, &pad, cbuf, (long)task->flags);
+            for (j = 0; cbuf[j]; j++)
+               if ('0' == cbuf[j]) cbuf[j] = '.';
             break;
          case P_FLT:
-            mkcol(q, f, task->state, &pad, cbuf
-               , scale_num(task->maj_flt, w, s));
+            MKCOL(q, i, a, &pad, cbuf, scale_num(task->maj_flt, w, s));
             break;
          case P_GRP:
-            mkcol(q, f, task->state, &pad, cbuf, task->egroup);
+            MKCOL(q, i, a, &pad, cbuf, task->egroup);
             break;
          case P_MEM:
-            mkcol(q, f, task->state, &pad, cbuf
 #ifdef UGH_ITS_4_RH
+            MKCOL(q, i, a, &pad, cbuf
                , (float)task->resident * 100 / Mem_pages);
 #else
+            MKCOL(q, i, a, &pad, cbuf
                , (float)PAGES_2K(task->resident) * 100 / kb_main_total);
 #endif
             break;
          case P_NCE:
-            mkcol(q, f, task->state, &pad, cbuf, task->nice);
+            MKCOL(q, i, a, &pad, cbuf, (long)task->nice);
             break;
          case P_PGD:
-            mkcol(q, f, task->state, &pad, cbuf, task->pgrp);
+            MKCOL(q, i, a, &pad, cbuf, task->pgrp);
             break;
          case P_PID:
-            mkcol(q, f, task->state, &pad, cbuf, task->pid);
+            MKCOL(q, i, a, &pad, cbuf, task->pid);
             break;
          case P_PPD:
-            mkcol(q, f, task->state, &pad, cbuf, task->ppid);
+            MKCOL(q, i, a, &pad, cbuf, task->ppid);
             break;
          case P_PRI:
-            mkcol(q, f, task->state, &pad, cbuf, task->priority);
+            MKCOL(q, i, a, &pad, cbuf, (long)task->priority);
             break;
          case P_RES:
-            mkcol(q, f, task->state, &pad, cbuf
-               , scale_num(PAGES_2K(task->resident), w, s));
+            MKCOL(q, i, a, &pad, cbuf, scale_num(PAGES_2K(task->resident), w, s));
             break;
          case P_SHR:
-            mkcol(q, f, task->state, &pad, cbuf
-               , scale_num(PAGES_2K(task->share), w, s));
+            MKCOL(q, i, a, &pad, cbuf, scale_num(PAGES_2K(task->share), w, s));
             break;
          case P_STA:
 #ifdef USE_LIB_STA3
-            mkcol(q, f, task->state, &pad, cbuf, status(task));
+            MKCOL(q, i, a, &pad, cbuf, status(task));
 #else
-            mkcol(q, f, task->state, &pad, cbuf, task->state);
+            MKCOL(q, i, a, &pad, cbuf, task->state);
 #endif
             break;
          case P_SWP:
-            mkcol(q, f, task->state, &pad, cbuf
+            MKCOL(q, i, a, &pad, cbuf
                , scale_num(PAGES_2K(task->size - task->resident), w, s));
             break;
          case P_TME:
@@ -2019,40 +2043,38 @@ static void show_a_task (WIN_t *q, proc_t *task)
             t = task->utime + task->stime;
             if (CHKw(q, Show_CTIMES))
                t += (task->cutime + task->cstime);
-            mkcol(q, f, task->state, &pad, cbuf, scale_tics(t, w));
+            MKCOL(q, i, a, &pad, cbuf, scale_tics(t, w));
          }
             break;
          case P_TTY:
          {  char tmp[TNYBUFSIZ];
 
             dev_to_tty(tmp, (int)w, task->tty, task->pid, ABBREV_DEV);
-            mkcol(q, f, task->state, &pad, cbuf, tmp);
+            MKCOL(q, i, a, &pad, cbuf, tmp);
          }
             break;
          case P_UID:
-            mkcol(q, f, task->state, &pad, cbuf, task->euid);
+            MKCOL(q, i, a, &pad, cbuf, task->euid);
             break;
          case P_USR:
-            mkcol(q, f, task->state, &pad, cbuf, task->euser);
+            MKCOL(q, i, a, &pad, cbuf, task->euser);
             break;
          case P_VRT:
-            mkcol(q, f, task->state, &pad, cbuf
-               , scale_num(PAGES_2K(task->size), w, s));
+            MKCOL(q, i, a, &pad, cbuf, scale_num(PAGES_2K(task->size), w, s));
             break;
          case P_WCH:
-            if (No_ksyms)
+            if (No_ksyms) {
 #ifdef CASEUP_HEXES
-               mkcol(q, f, task->state, &pad, cbuf
-                  , fmtmk("x%08lX", (long)task->wchan));
+               MKCOL(q, i, a, &pad, cbuf, fmtmk("x%08lX", (long)task->wchan));
 #else
-               mkcol(q, f, task->state, &pad, cbuf
-                  , fmtmk("x%08lx", (long)task->wchan));
+               MKCOL(q, i, a, &pad, cbuf, fmtmk("x%08lx", (long)task->wchan));
 #endif
-            else
-               mkcol(q, f, task->state, &pad, cbuf, wchan(task->wchan));
+            } else {
+               MKCOL(q, i, a, &pad, cbuf, wchan(task->wchan));
+            }
             break;
 
-        } /* end: switch 'flg' */
+        } /* end: switch 'procflag' */
 
         strcat(rbuf, cbuf);
    } /* end: for 'maxpflgs' */
@@ -2067,6 +2089,7 @@ static void show_a_task (WIN_t *q, proc_t *task)
       , Caps_off
       , Cap_clr_eol);
 
+#undef MKCOL
 }
 
 
@@ -2077,10 +2100,10 @@ static void show_a_task (WIN_t *q, proc_t *task)
 static void do_key (unsigned c)
 {
       /* standardized 'secure mode' errors */
-   const char *err_secure = "\aCan't %s in secure mode";
+   static const char *err_secure = "\aUnavailable in secure mode";
 #ifdef WARN_NOT_SMP
       /* standardized 'smp' errors */
-   const char *err_smp = "\aSorry, only 1 cpu detected";
+   static const char *err_smp = "\aSorry, only 1 cpu detected";
 #endif
 
    switch (c) {
@@ -2122,7 +2145,7 @@ static void do_key (unsigned c)
       case 'd':
       case 's':
          if (Secure_mode)
-            show_msg(fmtmk(err_secure, "change delay"));
+            show_msg(err_secure);
          else {
             float tmp =
                get_float(fmtmk("Change delay from %.1f to", Delay_time));
@@ -2166,7 +2189,7 @@ static void do_key (unsigned c)
             /* this string is well above ISO C89's minimum requirements! */
          show_special(fmtmk(KEYS_help
             , procps_version
-            , Curwin->winname
+            , Curwin->grpname
             , CHKw(Curwin, Show_CTIMES) ? "On" : "Off"
             , Delay_time
             , Secure_mode ? "On" : "Off"
@@ -2208,7 +2231,7 @@ static void do_key (unsigned c)
 
       case 'k':
          if (Secure_mode) {
-            show_msg(fmtmk(err_secure, "kill"));
+            show_msg(err_secure);
          } else {
             int sig, pid = get_int("PID to kill");
 
@@ -2263,7 +2286,7 @@ static void do_key (unsigned c)
 
       case 'r':
          if (Secure_mode)
-            show_msg(fmtmk(err_secure, "renice"));
+            show_msg(err_secure);
          else {
             int pid, val;
 
@@ -2356,32 +2379,24 @@ static void do_key (unsigned c)
          wins_colors();
          break;
 
-      case '-':                 /* 'Dash' lower case ----------------------- */
+      case '-':
          if (Mode_altscr)
             TOGw(Curwin, VISIBLE_tsk);
          break;
 
-      case '_':                 /* 'Dash' upper case ----------------------- */
-         if (Mode_altscr)       /*  switcharoo, all viz & inviz ............ */
+      case '_':
+         if (Mode_altscr)
             wins_reflag(Flags_TOG, VISIBLE_tsk);
          break;
 
-      case '=':                 /* 'Equals' lower case --------------------- */
-         /* special Key:            equalize current window (& make viz) ...
-            . began life as 'windows' oriented and restricted to Mode_altscr!
-            . but symbiosis of documenting and further testing led to lifting
-              of restrictions -- we feel MUCH better now, thank-you-SO-much! */
+      case '=':
          Curwin->maxtasks = 0;
          SETw(Curwin, Show_IDLEPS | VISIBLE_tsk);
-         /* special Provision:
-            . escape from monitoring selected pids ('-p' cmdline switch)
-              -- just seems to go naturally with these new provisions
-            . and who knows, maybe the man doc will NOT be overlooked */
          Monpidsidx = 0;
          break;
 
-      case '+':                 /* 'Equals' upper case --------------------- */
-         if (Mode_altscr)       /*  equalize ALL task wins (& make viz) .... */
+      case '+':
+         if (Mode_altscr)
             SETw(Curwin, EQUWINS_cwo);
          break;
 
@@ -2403,8 +2418,8 @@ static void do_key (unsigned c)
          }
          break;
 
-      case '\n':          /* just ignore these */
-      case ' ':
+      case '\n':          /* just ignore these, they'll have the effect */
+      case ' ':           /* of refreshing display after waking us up ! */
          break;
 
       default:
@@ -2449,7 +2464,7 @@ static proc_t **do_summary (void)
 
       /*
        ** Display Tasks and Cpu(s) states and also calc 'pcpu',
-       ** but NO p_table sort yet -- that's done on a per window basis! */
+       ** but NO table sort yet -- that's done on a per window basis! */
    p_table = refreshprocs(p_table);
    frame_states(p_table, CHKw(Curwin, View_STATES));
 

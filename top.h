@@ -27,6 +27,7 @@
 //#define CASEUP_HEXES            /* show any hex values in upper case       */
 //#define CASEUP_SCALE            /* show scaled time/num suffix upper case  */
 //#define CASEUP_SUMMK            /* show memory summary kilobytes with 'K'  */
+//#define POSIX_CMDLIN            /* use '[ ]' for kernel threads, not '( )' */
 //#define QUIT_NORMALQ            /* use 'q' to quit, not new default 'Q'    */
 //#define SORT_SUPRESS            /* *attempt* to reduce qsort overhead      */
 //#define TICS_64_BITS            /* accommodate Linux 2.5.xx 64-bit jiffies */
@@ -64,6 +65,7 @@
 #define SMLBUFSIZ   256
 #define MEDBUFSIZ   512
 #define OURPATHSZ  1024
+#define STATBUFSZ  1024
 #define BIGBUFSIZ  2048
 #define RCFBUFSIZ  SMLBUFSIZ
 #define USRNAMSIZ  GETBUFSIZ
@@ -105,7 +107,7 @@
       if ( ((*P)->n1 - (*P)->n2) > ((*Q)->n1 - (*Q)->n2) ) return SORT_gt; \
       return SORT_eq; }
 #define _SC_STRZ(f,s) \
-   static int sort_ ## f(const proc_t **P, const proc_t **Q) { \
+   static int sort_ ## f (const proc_t **P, const proc_t **Q) { \
       if ( 0 > strcmp((*P)->s, (*Q)->s) ) return SORT_lt; \
       if ( 0 < strcmp((*P)->s, (*Q)->s) ) return SORT_gt; \
       return SORT_eq; }
@@ -159,15 +161,18 @@ typedef struct {
    TICS_t tics;
 } HIST_t;
 
-        /* This structure stores the prior frame's tics used in history
+        /* This structure stores a frame's cpu tics used in history
            calculations.  It exists primarily for SMP support but serves
-           all environments.  There will always Cpu_tot + 1 allocated
-           -- see frame_states for details. */
+           all environments. */
 typedef struct {
-   TICS_t u,    /* ticks count as represented in /proc/stat */
-          n,    /* (not in the order of our display) */
+   TICS_t u,            /* ticks count as represented in /proc/stat */
+          n,            /* (not in the order of our display) */
           s,
           i;
+   TICS_t u_sav,        /* tics count in the order of our display */
+          s_sav,
+          n_sav,
+          i_sav;
 } CPUS_t;
 
         /* The scaling 'type' used with scale_num() -- this is how
@@ -221,7 +226,7 @@ enum pflag {
 #define Show_IDLEPS  0x0020     /* 'i' - show idle processes (all tasks)     */
 #define Qsrt_NORMAL  0x0010     /* 'R' - reversed column sort (high to low)  */
         /* these flag(s) have no command as such - they're for internal use  */
-#define VISIBLE_tsk  0x0008     /* tasks are showable in 'Show_altscr' mode  */
+#define VISIBLE_tsk  0x0008     /* tasks are showable when in 'Mode_altscr'  */
 #define NEWFRAM_cwo  0x0004     /* new frame (if anyone cares) - in Curwin   */
 #define EQUWINS_cwo  0x0002     /* rebalance tasks next frame (off 'i'/ 'n') */
                                 /* ...set in Curwin, but impacts all windows */
@@ -285,7 +290,7 @@ typedef struct win {
 
         /* An rcfile 'footprint' used to invalidate existing local rcfile
            and the global rcfile path + name */
-#define RCF_FILEID  'i'
+#define RCF_FILEID  'j'
 #define SYS_RCFILE  "/etc/toprc"
 
         /* The default fields displayed and their order,
@@ -299,13 +304,22 @@ typedef struct win {
 #define NUL_FIELDS  "abcdefghijklmnopqrstuvwxyz"
 
         /* These are the possible fscanf formats used in /proc/stat
-           reads during history processing. */
+           reads during history processing.
+           ( 5th number added in anticipation of kernel change ) */
 #ifdef TICS_64_BITS
-#define CPU_FMTS_MULTI  "cpu%*d %Lu %Lu %Lu %Lu\n"
-#define CPU_FMTS_JUST1  "cpu %Lu %Lu %Lu %Lu\n"
+#define CPU_FMTS_JUST1  "cpu %Lu %Lu %Lu %Lu \n"
+#define CPU_FMTS_MULTI  "cpu%*d %Lu %Lu %Lu %Lu %*d \n"
 #else
-#define CPU_FMTS_MULTI  "cpu%*d %lu %lu %lu %lu\n"
-#define CPU_FMTS_JUST1  "cpu %lu %lu %lu %lu\n"
+#define CPU_FMTS_JUST1  "cpu %lu %lu %lu %lu \n"
+#define CPU_FMTS_MULTI  "cpu%*d %lu %lu %lu %lu %*d \n"
+#endif
+
+        /* This is the format for 'command line' display in the absence
+           of a command line (kernel thread). */
+#ifdef POSIX_CMDLIN
+#define CMDLINE_FMTS  "[%s]"
+#else
+#define CMDLINE_FMTS  "( %s )"
 #endif
 
         /* Summary Lines specially formatted string(s) --
@@ -343,14 +357,14 @@ typedef struct win {
 #endif
 #define KEYS_help \
    "Help for Interactive Commands\02 - %s\n" \
-   "Window %s\06: \01Cumulative mode \03%s\02.  \01System\06: \01Delay time \03%.1f secs\02; \01Secure mode \03%s\02.\n" \
+   "Window \01%s\06: \01Cumulative mode \03%s\02.  \01System\06: \01Delay \03%.1f secs\02; \01Secure mode \03%s\02.\n" \
    "\n" \
    "  l,t,m     Toggle Summary: '\01l\02' load avg; '\01t\02' task/cpu stats; '\01m\02' mem info\n" \
    "  1,I       Toggle SMP view: '\0011\02' single/separate states; '\01I\02' Irix/Solaris mode\n" \
    "  Z\05         Change color mappings\n" \
    "\n" \
-   "  f,o     . Fields change: '\01f\02' fields select; '\01o\02' order fields\n" \
-   "  F or O  . Fields select sort\n" \
+   "  f,o     . Fields/Columns: '\01f\02' add or remove; '\01o\02' change display order\n" \
+   "  F or O  . Select sort field\n" \
    "  <,>     . Move sort field: '\01<\02' next col left; '\01>\02' next col right\n" \
    "  R       . Toggle normal/reverse sort\n" \
    "  c,i,S   . Toggle: '\01c\02' cmd name/line; '\01i\02' idle tasks; '\01S\02' cumulative time\n" \
@@ -358,16 +372,16 @@ typedef struct win {
    "  z,b\05     . Toggle: '\01z\02' color/mono; '\01b\02' bold/reverse (only if 'x' or 'y')\n" \
    "  u       . Show specific user only\n" \
    "  n or #  . Set maximum tasks displayed\n" \
-   "          ( commands shown with '.' require a \01visible\02 task display \01window\02 ) \n" \
    "\n" \
    "%s" \
    "  W         Write configuration file\n" \
    HELP_Qkey   "Quit\n" \
+   "          ( commands shown with '.' require a \01visible\02 task display \01window\02 ) \n" \
    "Press '\01h\02' or '\01?\02' for help with \01Windows\02,\n" \
    "any other key to continue " \
    ""
 
-        /* This guy goes above the 'u' help text (maybe) */
+        /* This guy goes into the help text (maybe) */
 #define KEYS_help_unsecured \
    "  k,r       Manipulate tasks: '\01k\02' kill; '\01r\02' renice\n" \
    "  d or s    Set update interval\n" \
@@ -421,11 +435,11 @@ typedef struct win {
    "  within viewable range is chosen.\n" \
    "\n" \
    "Note2:\n" \
-   "  The WCHAN field will display a name\n" \
-   "  if the System.map exists, but it is\n" \
-   "  always sorted as an address.  Thus,\n" \
-   "  alphabetic sequence will not apply.\n" \
-   "  ( shame on you if you choose this )\n" \
+   "  Field sorting uses internal values,\n" \
+   "  not those in column display.  Thus,\n" \
+   "  the TTY & WCHAN fields will violate\n" \
+   "  strict ASCII collating sequence.\n" \
+   "  (shame on you if WCHAN is chosen)\n" \
    ""
 
         /* Colors Help specially formatted string(s) --
@@ -459,7 +473,7 @@ typedef struct win {
         /* Windows/Field Group Help specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
 #define WINDOWS_help \
-   "Help for Windows / Field Groups\02 - \"Current\" = \01 %s \06\n" \
+   "Help for Windows / Field Groups\02 - \"Current Window\" = \01 %s \06\n" \
    "\n" \
    ". Use multiple \01windows\02, each with separate config opts (color,fields,sort,etc)\n" \
    ". The 'current' window controls the \01Summary Area\02 and responds to your \01Commands\02\n" \
@@ -467,9 +481,9 @@ typedef struct win {
    "  . with \01NO\02 task display, some commands will be \01disabled\02 ('i','R','n','c', etc)\n" \
    "    until a \01different window\02 has been activated, making it the 'current' window\n" \
    ". You \01change\02 the 'current' window by: \01 1\02) cycling forward/backward;\01 2\02) choosing\n" \
-   "  a specific window with 'O' or 'F'; or\01 3\02) exiting the color mapping screen\n" \
+   "  a specific field group; or\01 3\02) exiting the color mapping screen\n" \
    ". Commands \01available anytime   -------------\02\n" \
-   "    \01A\02       . Alternate display mode toggle, show \01Single\02 / \01Multiple\02 windows\n" \
+   "    A       . Alternate display mode toggle, show \01Single\02 / \01Multiple\02 windows\n" \
    "    G       . Choose another field group and make it 'current', or change now\n" \
    "              by selecting a number from: \01 1\02 =%s;\01 2\02 =%s;\01 3\02 =%s; or\01 4\02 =%s\n" \
    ". Commands \01requiring\02 '\01A\02' mode\01  -------------\02\n" \
@@ -482,7 +496,7 @@ typedef struct win {
    "              (this also forces the \01current\02 or \01every\02 window to become visible)\n" \
    "\n" \
    "In '\01A\02' mode, '\01*\04' keys are your \01essential\02 commands.  Please try the '\01a\02' and '\01w\02'\n" \
-   "commands plus the 'F' sub-commands NOW.  Press <Enter> to make 'Current' " \
+   "commands plus the 'G' sub-commands NOW.  Press <Enter> to make 'Current' " \
    ""
 
 
@@ -505,7 +519,7 @@ typedef struct win {
 //atic void        stop (int dont_care_sig);
 //atic void        std_err (const char *str);
 //atic void        suspend (int dont_care_sig);
-/*------  Misc Color/Highlighting support  -------------------------------*/
+/*------  Misc Color/Display support  ------------------------------------*/
 //atic void        capsmk (WIN_t *q);
 //atic void        msg_save (const char *fmts, ...);
 //atic void        show_msg (const char *str);
@@ -521,6 +535,7 @@ typedef struct win {
 /*------  Library Alternatives  ------------------------------------------*/
 //atic void       *alloc_c (unsigned numb);
 //atic void       *alloc_r (void *q, unsigned numb);
+//atic CPUS_t     *refreshcpus (CPUS_t *cpus);
 //atic proc_t    **refreshprocs (proc_t **tbl);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void        before (char *me);
@@ -545,8 +560,8 @@ typedef struct win {
 //atic void        windows_stage1 (void);
 //atic void        windows_stage2 (void);
 /*------  Per-Frame Display support  -------------------------------------*/
-//atic void        cpudo (FILE *fp, const char *fmt, CPUS_t *cpu, const char *pfx);
-//atic void        frame_states (proc_t **p, int show);
+//atic void        cpudo (CPUS_t *cpu, const char *pfx);
+//atic void        frame_states (proc_t **ppt, int show);
 //atic void        frame_storage (void);
 //atic void        mkcol (WIN_t *q, PFLG_t idx, int sta, int *pad, char *buf, ...);
 //atic void        show_a_task (WIN_t *q, proc_t *task);

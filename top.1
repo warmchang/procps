@@ -23,7 +23,7 @@
 .
 .\" Setup ////////////////////////////////////////////////////////////////
 \#  ** Comment out '.nr' or set to 0 to eliminate WIDTH fiddlin' !
-.nr half_xtra 4
+.nr half_xtra 0
 .
 .	ll +(\n[half_xtra] + \n[half_xtra])
 .
@@ -79,7 +79,7 @@
 \#                          - hey, these two ain't too shabby, either
 .	ds Us this\ \*(Me
 .	ds US \fBthis\fR\ \*(Me
-\#                          - other misc strings for consistent usage
+\#                          - other misc strings for consistent usage/emphasis
 .	ds F \fIOff\fR
 .	ds O \fIOn\fR
 .
@@ -108,7 +108,7 @@
 .
 .\" //////////////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "June 2002" "Linux" "Linux User's Manual"
+.TH TOP 1 "September 2002" "Linux" "Linux User's Manual"
 .\" ----------------------------------------------------------------------
 
 
@@ -124,7 +124,7 @@ top \- display Linux tasks
 \*(ME \-\fBhv\fR | \-\fBbcisS\fR \-\fBd\fI delay\fR \-\fBn\fI
 iterations\fR \-\fBp\fI pid\fR [,\fI pid\fR ...]
 
-The traditional switches '-' and even whitespace are optional.
+The traditional switches '-' and whitespace are optional.
 
 
 .\" ----------------------------------------------------------------------
@@ -158,16 +158,16 @@ Details regarding their exploitation will be covered in later sections.
 .\" ......................................................................
 .SS Expanded Configurable Display Support
 .New
-In an SMP environment, you can choose between a\fB summary\fR display or
-you may show\fB each \*(Pu\fR separately.
-This could be an important provision for a massively-parallel machine, where
-screen height is insufficient to simultaneously accommodate all \*(Pu
-states plus a meaningful \*(TD.
+In an SMP environment, screen height may be insufficient to simultaneously
+accommodate all \*(Pu states plus a meaningful \*(TD.
+So with \*(Us, you can alternate between a\fB summary\fR display or one
+showing\fB each \*(Pu\fR separately.
+No longer must this choice be irrevocably made at startup.
 
 .New
-There are new fields.
-With \*(Us,\fB any\fR field is selectable for sorting and your sorted
-column can be\fB instantly reversed\fR.
+There are new fields and with \*(Us,\fB any\fR field is selectable for sorting.
+Plus, your sorted column can be\fB instantly reversed\fR with just a
+single keystroke.
 
 .New
 You may optionally apply 2 distinct types of\fB highlighting\fR to
@@ -358,7 +358,7 @@ command line\fR \*(EM a subject soon to be dealt with.
      * 'c' - Command line       \fBOff\fR (name, not cmdline)
      * 'i' - Idle tasks         On\ \ (show all tasks)
        'R' - Reverse sort       On\ \ (sort pids high-to-low)
-     * 'S' - Cumulative time    \fBOff\fR (exclude dead child)
+     * 'S' - Cumulative time    \fBOff\fR (exclude dead children)
        'x' - Column hilite      \fBOff\fR\ (no, sort field)
        'y' - Row hilite         On\ \ (yes, running tasks)
        'z' - color/mono         \fBOff\fR\ (no, colors)
@@ -392,8 +392,8 @@ Remaining Table of Contents
        b. SELECTING and ORDERING Columns
     3.\fB INTERACTIVE Commands\fR
        a. GLOBAL Commands
-       b. SUMMARY Display Commands
-       c. TASK Display Commands
+       b. SUMMARY Area Commands
+       c. TASK Area Commands
        d. COLOR Mapping
     4.\fB ALTERNATE\-DISPLAY Mode\fR
        a. WINDOWS Overview
@@ -410,8 +410,10 @@ Remaining Table of Contents
        b. Bouncing Windows
        c. The Big Bird Window
     7.\fB NOTES and Rantings\fR
-       a. The top BINARY
-       b. The top SOURCES
+       a. The top Binary
+       b. Comparing Performance
+       c. Cost of Stuff
+       d. The top Sources
           -*- Rant On, and on -*-
        lastly,\fB the usual\fR...
     8. BUGS, 9. HISTORY Former top, 10. AUTHOR, 11. SEE ALSO
@@ -432,7 +434,7 @@ optional.
 Starts \*(Me in 'Batch mode', which could be useful for sending output
 from \*(Me to other programs or to a file.
 In this mode, \*(Me will\fB not\fR accept input and runs until the iterations
-limit you've set with the 'n' option or until killed.
+limit you've set with the '-n' \*(CO or until killed.
 
 Output is plain text suitable for any dumb terminal.
 .br
@@ -516,7 +518,7 @@ In fact, one could argue that this switch has little practical use\fB except\fR
 to test the nifty\fI delayed message handling\fR \*(Us employs during bootstrap.
 
 Oh, you wanna' see?
-Test thus:\ \ top\fB d.1s\fR
+Test thus:\ \ \*(Me\fB d.1s\fR
 .Rjb 3
  ( see, NO '-' & 'sp' but )
  ( you\fB can't change delay\fR )
@@ -524,14 +526,14 @@ Test thus:\ \ top\fB d.1s\fR
 .Rje
 
 Don't bother trying that precise command line with your old top
-\*(EM he'll completely overlook that 's' option because
+\*(EM he'll completely overlook that 's' \*(CO because
 he-sees-poorly-but-won't-wear-glasses.
 
 .TP 5
 \-\fBS\fR :\fB Cumulative time mode\fR toggle
 Starts \*(Me with the last remembered '\fBS\fR' state reversed.
 When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
-time that it\fB and\fR its dead children has used.
+time that it\fB and\fR its dead children have used.
 \*(XC 'S' \*(CI for additional information regarding this mode.
 
 .TP 5
@@ -547,11 +549,12 @@ Show library version and the usage prompt, then quit.
 .\" ----------------------------------------------------------------------
 Listed below are \*(Us's\fB available\fR fields.
 They are always associated with the letter shown, regardless of the position
-you may have established for them with the 'o' (Order fields) \*(CI.
+you may have established for them with the 'o' (Order fields) \*(CI, reviewed
+in the following topic.
 
 Any field is selectable as the\fB sort field\fR, and you control whether they
 are sorted high-to-low or low-to-high.
-For additional information on sort provisions \*(Xt 3c. TASK Display Commands.
+For additional information on sort provisions \*(Xt 3c. TASK Area Commands.
 
 .TP 3
 a:\fB PID\fR \*(EM Process Id\fR
@@ -564,7 +567,8 @@ The process ID of a task's parent.
 
 .TP 3
 c:\fB PGID\fR \*(EM Process Group Id\fR
-The group to which a task belongs which in turn is part of job control.
+The grouping of tasks which becomes part of job control.
+It is used for distribution of signals and to arbitrate terminal I/O requests.
 There is one process group per pipeline.
 
 .TP 3
@@ -723,12 +727,11 @@ to provide for the potential growth of program names into command lines!
 
 .TP 3
 y:\fB WCHAN\fR \*(EM Sleeping in Function
-Depending on the availability of\fI /boot/System.map\fR (the kernel link map)
-or\fI /boot/psdatabase\fR, this field will show the \fB name\fR or
-the\fB address\fR of the kernel function in which the task is
-currently sleeping.
-Running tasks will display a dash '-' in this column (but only if you're using
-the best, the most proper libproc).
+Depending on the availability of the kernel link map ('System.map'),
+this field will show the \fB name\fR or the\fB address\fR of the kernel
+function in which the task is currently sleeping.
+Running tasks will display a dash ('-') in this column (but only if you're
+using the best, the most proper libproc).
 
 .in +4
 \*(NT By displaying this field, \*(Me's own working set will be increased by
@@ -740,7 +743,7 @@ Your only means of reducing that overhead will be to stop and restart \*(Me.
 z:\fB Flags\fR \*(EM Task Flags
 This column represents the task's current scheduling flags which \*(Us
 expresses in hexadecimal notation, but with zeros suppressed.
-These flags are officially documented in <sched.h>.
+These flags are officially documented in <linux/sched.h>.
 Less formal documentation can also be found on the 'Fields select'
 and 'Order fields' screens \*(EM the next topic.
 
@@ -933,7 +936,7 @@ These commands always impact just the \*(CW/field group.
 
 .TP 7
 \ \ \'\fBl\fR\' :\fIToggle_Load_Average/Uptime\fR \*(EM On/Off
-This is the line containing the program name (possibly an alias) when
+This is also the line containing the program name (possibly an alias) when
 operating in \*(FM or the \*(CW name when operating in \*(AM.
 
 If you murder-this-line, \*(Me will prosecute you.
@@ -992,16 +995,15 @@ Further, it will only be available when at least one of those toggles is \*O.
 You probably don't need a constant visual reminder of your chosen sort
 field and \*(Us hopes that you always run with 'column highlight' \*F,
 due to the cost in path-length.
-However, if you forget which field \*(Me is sorting it can serve as a
-quick visual reminder.
+However, if you forget which field \*(Me is sorting this command can serve
+as a quick visual reminder.
 
 .TP 7
 \ \ \'\fBy\fR\' :\fIRow_Highlight_toggle\fR
 Please use this toggle \*(EM highlight running tasks!
-It's an important insight into your system's health and there is no extra
-run-time cost associated with its use.
-Besides, it is this provision alone that is largely responsible for
-your-brand-new-top and you'll make the program author a happy guy.
+It's an important insight into your system's health and it was largely this
+provision that was responsible for your-brand-new-top.
+You'll make the program author a happy guy.
 
 .TP 7
 \ \ \'\fBz\fR\' :\fIColor/Monochrome_toggle\fR
@@ -1030,7 +1032,7 @@ For additional information on these \*(CIs
 .TP 7
 \ \ \'\fBS\fR\' :\fICumulative_Time_Mode_toggle\fR
 When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
-time that it\fB and\fR its dead children\fR has used.
+time that it\fB and\fR its dead children\fR have used.
 
 When \*F, programs that fork into many separate tasks will appear
 less demanding.
@@ -1079,7 +1081,7 @@ over the size of each currently visible \*(TD.
 .br
 .in +2
 Before using any of these sort provisions, \*(Me suggests that you
-\fItemporarily\fR turn on column highlighting using the '\fBx\fR' \*(CI.
+temporarily turn on column highlighting using the '\fBx\fR' \*(CI.
 That will help ensure that the actual sort environment matches your intent.
 
 The following \*(CIs will\fB only\fR be honored when the
@@ -1115,7 +1117,7 @@ be forced \*O when you return to the \*(Me display.
 However, depending upon your screen width and the order of your fields,
 this sort field may not be displayable.
 
-These \*(CIs can be a convienent way to simply verify the current sort field,
+This \*(CI can be a convienent way to simply verify the current sort field,
 when running \*(Me with column highlighting turned \*F.
 
 .TP 7
@@ -1132,6 +1134,12 @@ Without 'R', \*(Me will sort fields high-to-low.
 Try this:\ \ using 'R' you can\fI alternate\fR between high-to-low
 and low-to-high sorts.
 Lose no sleep over 'reverse' and 'normal', ok?
+
+.PP
+.in +2
+\*(NT Field sorting uses internal values, not those in column display.
+Thus, the TTY and WCHAN fields will violate strict ASCII collating sequence.
+.in
 
 .\" ......................................................................
 .SS 3d. COLOR Mapping
@@ -1156,7 +1164,7 @@ in\fB all\fR four windows before returning to the \*(Me display.
 
 .Img
                       +\fB--------------------------------------\fR+
- this shows you the   |top's\fB Help for color mapping\fR - procps :\fB
+ this shows you the   |\fBHelp for color mapping\fR - procps versio:\fB
  Target Window ----->\fR |current window:\fB 1:Def\fR                 :
           -*-         |                                      :
  a\fB Sample Screen\fR with |   color - 04:25:44 up 8 days, 50 min,:
@@ -1470,11 +1478,11 @@ empty rows...
  (when 2\fB WAS\fR current) |   683     1\fB xinetd -stayali\fR   0:00.00:
                       |\fI___836_____1_\fBlogin_--_root\fI_____0:00.00\fR:
  3:Mem has altered    |\fI3__PID_%MEM__VIRT_SWAP__RES_CODE_DATA_\fR:
-  some std defaults:  |  4634\fB 12.3\fR 15620    0\fB  15m\fR  860  14m :
-  'y' turned Off      |  7337\fB 11.3\fR 14396   92\fB  13m\fR   36  13m :
-  'x' turned On       |   923\fB 10.6\fR 30544  16m\fB  13m\fR 1120  12m :
- (when 3\fB WAS\fR current) |   991\fB  7.2\fR  9492  316\fB 9176\fR   12 9164 :
-                      |\fI__7329__\fB7.0\fI__9036__140_\fB8896\fR___36_8860_\fR:
+  some std defaults:  |  4634\fB 12.3\fR 15620    0  15m  860  14m :
+  'y' turned Off      |  7337\fB 11.3\fR 14396   92  13m   36  13m :
+  'x' turned On       |   923\fB 10.6\fR 30544  16m  13m 1120  12m :
+ (when 3\fB WAS\fR current) |   991\fB  7.2\fR  9492  316 9176   12 9164 :
+                      |\fI__7329__\fB7.0\fI__9036__140_8896___36_8860_\fR:
  Huh?  4:Usr has some |\fI4_UID_USER_____GROUP____TTY________PID\fR:
   \fBblank rows\fR! ? ? ? ? | \fB   0 jtwm     root     pts/2     5561\fR:
  Aha, the 'i' command | \fB   0 root     root     ?         5560\fR:
@@ -1581,14 +1589,14 @@ seconds or less.
 
 For this experiment, under x-windows open an xterm and maximize it.
 Then do the following:
-  . provide a scheduling boost + tiny delay via:
+  . provide a scheduling boost and tiny delay via:
       nice -n -10 top -d.09
-  . keep sorted column highlighting \*F
-      to minimize path length
+  . keep sorted column highlighting \*F to minimize
+    path length
   . turn \*O reverse row highlighting for emphasis
   . try various sort columns (TIME/MEM work well),
-      and normal or reverse sorts to bring
-      the most active processes into view
+    and normal or reverse sorts to bring the most
+    active processes into view
 
 What you'll see is a\fB very busy Linux\fR doing what he's always done
 for you, but there was no program available to illustrate this (until now).
@@ -1650,39 +1658,91 @@ Then ponder this:
 .SH 7. NOTES and Rantings
 .\" ----------------------------------------------------------------------
 .\" ......................................................................
-.SS 7a. The top BINARY
-To whom it may/\fBshould\fR concern:  \*(Us, even with its vastly expanded
-capabilities, is essentially the same size as the old top.
+.SS 7a. The top Binary
+.PP
+To whom it may (should) concern:  \*(Us, even with its vastly expanded
+capabilities, is only slightly larger than the old top.
 Were it not for extensive help text and additional sort callbacks, it would
 be smaller.
 .Rjb 6
  Throw source carelessly at objectives, it\fI will\fR
- produce equally careless machine instructions!
+ produce equally careless machine instructions.
  example: (num_\fBpages\fR - an_\fBaddress\fR)/1024 == duh?
  kicker: \fBdocument\fR result as broken, due to\fB elf\fR!
  \fB----------------------------------------------\fR
  I know you're out there, are you getting this?
 .Rje
 
+.PP
 Now, as for all those new capabilities like colors and windows and
-highlighting, just what are the\fB additional\fR run-time\fB costs\fR?
-.br
-Hmmm, let's see...
+highlighting, you'd expect \*(Us to be the "mother of all pigs"
+compared to old \*(Me \*(EM right?
 
+Yea, with \*(US expect following piglets:
+.br
+\ \. A\fI smaller\fR virtual image and resident footprint
+.br
+\ \. Slightly\fI fewer\fR major page faults
+.br
+\ \. A\fI large reduction\fR in minor page faults for SMP
+.br
+\ \. The\fI same\fR or better response time
+.br
+\ \. The same or\fI even less\fR \*(PU costs
+
+Ideally any comparison of the old and new \*(Me should be against the same
+libproc format (32-bit or 64-bit tics) and run in a true or simulated SMP
+environment (producing separate \*(PU stats).
+This latter requirement will coax old \*(Me into handling his own '/proc/stat'
+access \*(EM something \*(Us always does, but with less cost.
+
+.\" ......................................................................
+.SS 7b. Comparing Performance
+.PP
+Even with equivalent libraries and '/proc/stat' access, it's difficult to
+accurately compare tops using their \fBown displays\fR.
+Results for these \*(Pu\-intensive programs (who frequently exceed their
+time-slice) generally show a wide disparity in %CPU.
+This is due to differing call patterns, kernel preemptions and the timing
+of process snapshots.
+For\fI slightly\fR better results, start each program with the following
+commands:
+     ./old-top -d 0.5
+     nice -n-10 ./new-top -d 0.4
+
+While actually putting \*(Us at a performance disadvantage, the higher
+scheduling priority and staggered timing will\fI periodically\fR yield
+a somewhat truer picture.
+You could even reverse those roles and get similar results.
+
+The most\fI consistent\fR performance results will be obtained 'off-line',
+using your shell's time pipe or the time program itself.
+And even in a single processor environment or without equivalent libraries,
+total cpu costs (user time + system time) are similar.
+
+However, \*(Us's \*(Pu costs ARE influenced by the capabilities you choose
+to exploit, even if they don't SEEM to be reflected in such timings.
+So let's examine some...
+
+.\" ......................................................................
+.SS 7c. Cost of Stuff
 .TP 3
-.B Colors\fR \*(EM Nada.
+.B Colors Cost\fR \*(EM Nada (almost).
 Once the terminfo strings are built (\fIat\fR and\fI during\fR a user's behest)
 they are SAVED with each window's stuff.
-And while there will be a few extra tty escape sequences transmitted because
-of colors, it makes NO difference which 'char *' is actually used.
+And while there will be extra tty escape sequences transmitted because
+of colors, it makes no difference which 'char *' is actually used.
 
 .TP 3
-.B Highlighting\fR \*(EM Maybe Nada, or blame it on Rio.
+.B Highlighting Cost\fR \*(EM Nada (maybe), or blame it on Rio.
 On second thought, let's blame it on the user.
 
-For\fI row\fR highlighting, there is NO extra cost (same reason as for colors).
-For\fI column\fR highlighting, there is a fairly\fB significant cost\fR for
-column transition management incurred on every \*(TD row.
+For\fI row\fR highlighting, there is only the cost of those extra tty
+escape sequences (same as for colors).
+For\fI column\fR highlighting, there is a fairly\fB significant cost\fR
+associated with column transition management combined with even more
+tty output.
+These increased costs are incurred on every \*(TD row.
 
 Sooo... hey USER \*(EM \fIdo NOT highlight COLUMNS\fR.
 You shouldn't need a constant visual reminder of your chosen sort field.
@@ -1690,7 +1750,7 @@ However, if you forget which field \*(Me is sorting it can serve as a
 quick visual reminder.
 
 .TP 3
-.B Windows\fR \*(EM If just 1 window, Nada.
+.B Windows Cost\fR \*(EM Nada (if just 1 window).
 If more than 1 window, almost certainly NOT Nada so blame it on reality.
 Colors are not an issue, but those sort fields are.
 
@@ -1705,9 +1765,9 @@ Those sorts involve\fB pointers only\fR.
 And,\fI that's as good as it gets\fR\ !\ \ (right Mr. N?)
 
 .\" ......................................................................
-.SS 7b. The top SOURCES
+.SS 7d. The top Sources
 .TP 3
-.B top.h\fR:
+.B top.h\fR
 Unlike his predecessor, \*(Us has a proper header file.
 It contains ONLY declarations, NOT definitions.
 And there are several conditionals present to help with further customizations
@@ -1715,9 +1775,8 @@ and experimentation.
 All are \*F by default.
 
 .TP 3
-.B top.c\fR:
-Hopefully proves that source code needn't be a disorganized,
-misaligned MESS.
+.B top.c\fR
+Hopefully proves that source code needn't be a disorganized, misaligned MESS.
 And, WHO says a source listing shouldn't occasionally make you SMILE?
 Why, \*(Me.c even does a darn good job of following the suggestions in a
 document hardly anybody seems to observe.
@@ -1816,7 +1875,7 @@ Plus, without those awful *the-devil's-own-handiwork*, the
 aforementioned document need NEVER speak of their EVILS again.
 
 .Jbu
-Lastly, since SPACES (not\fB stinkin' tabs\fR) are SO beneficial, maybe
+Lastly, since SPACES (not stinkin' tabs) are SO beneficial, maybe
 we should use just a\fB few more\fR of 'em.
 Some of those C-thingies are VERY sensitive \*(EM they don't like being TOUCHED
 by any other syntax element!
@@ -1890,8 +1949,8 @@ With invaluable help from:
 .\" ----------------------------------------------------------------------
 .SH 11. SEE ALSO
 .\" ----------------------------------------------------------------------
-.BR ps (1),
 .BR free (1),
+.BR ps (1),
 .BR uptime (1),
 .BR vmstat (8),
 .BR w (1).
