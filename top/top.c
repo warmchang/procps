@@ -203,7 +203,7 @@ static int   *PHash_sav = HHash_one,   // alternating 'old/new' hash tables
 static int Autox_array [EU_MAXPFLGS],
            Autox_found;
 #define AUTOX_NO      EU_MAXPFLGS
-#define AUTOX_COL(f)  if (EU_MAXPFLGS > f) Autox_array[f] = Autox_found = 1
+#define AUTOX_COL(f)  if (EU_MAXPFLGS > f && f >= 0) Autox_array[f] = Autox_found = 1
 #define AUTOX_MODE   (0 > Rc.fixed_widest)
 
         /* Support for scale_mem and scale_num (to avoid duplication. */
@@ -1643,7 +1643,10 @@ static inline const char *make_num (long num, int width, int justr, int col, int
       goto end_justifies;
 
    if (width < snprintf(buf, sizeof(buf), "%ld", num)) {
+      if (width <= 0 || (size_t)width >= sizeof(buf))
+         width = sizeof(buf)-1;
       buf[width-1] = COLPLUSCH;
+      buf[width] = '\0';
       AUTOX_COL(col);
    }
 end_justifies:
@@ -1658,7 +1661,10 @@ static inline const char *make_str (const char *str, int width, int justr, int c
    static char buf[SCREENMAX];
 
    if (width < snprintf(buf, sizeof(buf), "%s", str)) {
+      if (width <= 0 || (size_t)width >= sizeof(buf))
+         width = sizeof(buf)-1;
       buf[width-1] = COLPLUSCH;
+      buf[width] = '\0';
       AUTOX_COL(col);
    }
    return justify_pad(buf, width, justr);
