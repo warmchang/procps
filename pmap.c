@@ -230,7 +230,7 @@ static int one_proc(proc_t *p){
     }
     if(d_option){
         printf(
-          "mapped %ldK    writeable/private: %ldK    shared: %ldK\n",
+          "mapped: %ldK    writeable/private: %ldK    shared: %ldK\n",
           (total_shared + total_private_writeable + total_private_readonly) >> 10,
           total_private_writeable >> 10,
           total_shared >> 10
