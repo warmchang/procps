@@ -283,10 +283,8 @@ static time_t idletime(const char *restrict const tty)
 }
 
 /* 7 character formatted login time */
-
 static void print_logintime(time_t logt, FILE * fout)
 {
-
 	/* Abbreviated of weekday can be longer than 3 characters,
 	 * see for instance hu_HU.  Using 16 is few bytes more than
 	 * enough.  */
@@ -296,23 +294,29 @@ static void print_logintime(time_t logt, FILE * fout)
 	int today;
 
 	curt = time(NULL);
+	if (curt == (time_t)(-1)) goto error;
 	curtm = localtime(&curt);
+	if (!curtm) goto error;
 	/* localtime returns a pointer to static memory */
 	today = curtm->tm_yday;
 	logtm = localtime(&logt);
+	if (!logtm) goto error;
 	if (curt - logt > 12 * 60 * 60 && logtm->tm_yday != today) {
 		if (curt - logt > 6 * 24 * 60 * 60) {
-		        strftime(time_str, sizeof(time_str), "%b", logtm);
+			if (!strftime(time_str, sizeof(time_str), "%b", logtm)) goto error;
 			fprintf(fout, " %02d%3s%02d", logtm->tm_mday,
 				time_str, logtm->tm_year % 100);
 		} else {
-		        strftime(time_str, sizeof(time_str), "%a", logtm);
+			if (!strftime(time_str, sizeof(time_str), "%a", logtm)) goto error;
 			fprintf(fout, " %3s%02d  ", time_str,
 				logtm->tm_hour);
 		}
 	} else {
 		fprintf(fout, " %02d:%02d  ", logtm->tm_hour, logtm->tm_min);
 	}
+	return;
+error:
+	fprintf(fout, " ???????");
 }
 
 /*
