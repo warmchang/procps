@@ -490,7 +490,7 @@ static const char *ns_names[] = {
 };
 
 const char *get_ns_name(int id) {
-    if (id >= NUM_NS)
+    if (id < 0 || id >= NUM_NS)
         return NULL;
     return ns_names[id];
 }
@@ -498,6 +498,8 @@ const char *get_ns_name(int id) {
 int get_ns_id(const char *name) {
     int i;
 
+    if (!name)
+        return -1;
     for (i = 0; i < NUM_NS; i++)
         if (!strcmp(ns_names[i], name))
             return i;
