@@ -264,7 +264,10 @@ char *strtosig(const char *restrict s){
     p += 3;
   if (isdigit(*p)){
     numsignal = strtol(s,&endp,10);
-    if(*endp || endp==s) return NULL; /* not valid */
+    if(*endp || endp==s){ /* not valid */
+      free(copy);
+      return NULL;
+    }
   }
   if (numsignal){
     for (i = 0; i < number_of_signals; i++){
@@ -276,9 +279,9 @@ char *strtosig(const char *restrict s){
   } else {
     for (i = 0; i < number_of_signals; i++){
       if (strcmp(p, sigtable[i].name) == 0){
-	converted = malloc(sizeof(char) * 8);
+	converted = malloc(12);
 	if (converted)
-	  snprintf(converted, sizeof(converted) - 1, "%d", sigtable[i].num);
+	  snprintf(converted, 12, "%d", sigtable[i].num);
 	break;
       }
     }
