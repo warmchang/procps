@@ -733,24 +733,25 @@ static const char *scale_tics (TICS_t tics, const int width)
 #endif
    static char buf[TNYBUFSIZ];
    unsigned ss;
-   TICS_t t = (tics * 100) / (TICS_t)Hertz;
+   unsigned nt; // narrow time, for speed on 32-bit
+   unsigned ct; // centiseconds past the second
 
-   if (width >= snprintf(buf, sizeof(buf), T1
-      , (unsigned)t / 6000, (unsigned)(t / 100) % 60, (unsigned)t % 100))
+   ct  = ((tics * 100) / Hertz)%100 ;
+   nt  = tics / Hertz;
+   if (width >= snprintf(buf, sizeof(buf), T1, nt/60, nt%60, ct)
          return buf;
-   t  /= 100;
-   ss  = t % 60;
-   t  /= 60;
-   if (width >= snprintf(buf, sizeof(buf), T2, (unsigned)t, ss))
+   ss  = nt % 60;
+   nt  /= 60;
+   if (width >= snprintf(buf, sizeof buf, T2, nt, ss))
       return buf;
-   t  /= 60;
-   if (width >= snprintf(buf, sizeof(buf), HH, (unsigned)t))
+   nt  /= 60;
+   if (width >= snprintf(buf, sizeof buf, HH, nt))
       return buf;
-   t  /= 24;
-   if (width >= snprintf(buf, sizeof(buf), DD, (unsigned)t))
+   nt  /= 24;
+   if (width >= snprintf(buf, sizeof buf, DD, nt))
       return buf;
-   t /= 7;
-   if (width >= snprintf(buf, sizeof(buf), WW, (unsigned)t))
+   nt /= 7;
+   if (width >= snprintf(buf, sizeof buf, WW, nt))
       return buf;
 
       /* well shoot, this outta' fit... */
