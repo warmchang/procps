@@ -1,3 +1,7 @@
+procps-3.1.7 --> procps-3.1.8
+
+top: fix keyboard handling (help screen, etc.)
+
 procps-3.1.6 --> procps-3.1.7
 
 Makefile: made SKIP feature easier to use

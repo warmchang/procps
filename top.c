@@ -3262,8 +3262,12 @@ int main (int dont_care_argc, char **argv)
          fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK|file_flags);
          // check 1st, in case tv zeroed (by sig handler) before it got set
          if (chin(0, &c, 1) <= 0) select(1, &fs, NULL, NULL, &tv);
-         if (chin(0, &c, 1) > 0) do_key((unsigned)c);
-         fcntl(STDIN_FILENO, F_SETFL, file_flags);
+         if (chin(0, &c, 1) > 0) {
+            fcntl(STDIN_FILENO, F_SETFL, file_flags);
+            do_key((unsigned)c);
+         } else {
+            fcntl(STDIN_FILENO, F_SETFL, file_flags);
+         }
       }
    }
 
