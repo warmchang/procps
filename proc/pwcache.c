@@ -30,7 +30,6 @@ static struct pwbuf {
 char *user_from_uid(uid_t uid) {
     struct pwbuf **p;
     struct passwd *pw;
-    size_t len;
 
     p = &pwhash[HASH(uid)];
     while (*p) {
@@ -41,11 +40,11 @@ char *user_from_uid(uid_t uid) {
     *p = (struct pwbuf *) xmalloc(sizeof(struct pwbuf));
     (*p)->uid = uid;
     pw = getpwuid(uid);
-    len = pw ? strlen(pw) : 0;
-    if (len >= P_G_SZ)
+    if(!pw || strlen(pw->pw_name) >= P_G_SZ)
 	sprintf((*p)->name, "%u", uid);
     else
         strcpy((*p)->name, pw->pw_name);
+
     (*p)->next = NULL;
     return((*p)->name);
 }
@@ -59,7 +58,6 @@ static struct grpbuf {
 char *group_from_gid(gid_t gid) {
     struct grpbuf **g;
     struct group *gr;
-    size_t len;
 
     g = &grphash[HASH(gid)];
     while (*g) {
@@ -70,8 +68,7 @@ char *group_from_gid(gid_t gid) {
     *g = (struct grpbuf *) malloc(sizeof(struct grpbuf));
     (*g)->gid = gid;
     gr = getgrgid(gid);
-    len = gr ? strlen(gr) : 0;
-    if (len >= P_G_SZ)
+    if (!gr || strlen(gr->gr_name) >= P_G_SZ)
         sprintf((*g)->name, "%u", gid);
     else
         strcpy((*g)->name, gr->gr_name);
