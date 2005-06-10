@@ -509,8 +509,10 @@ int open_psdb_message(const char *restrict override, void (*message)(const char 
     ||
     (sm=getenv("PS_SYSTEM_MAP"))
   ){
-    read_and_parse();
-    if(sysmap_mmap(sm, message)) return 0;
+    if(!have_privs){
+      read_and_parse();
+      if(sysmap_mmap(sm, message)) return 0;
+    }
     /* failure is better than ignoring the user & using bad data */
     return -1;           /* ought to return "Namelist not found." */
   }

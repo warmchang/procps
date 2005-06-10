@@ -170,8 +170,13 @@ static void old_Hertz_hack(void){
   }
 }
 
+// same as:   euid != uid || egid != gid
+#ifndef AT_SECURE
+#define AT_SECURE      23     // secure mode boolean (true if setuid, etc.)
+#endif
+
 #ifndef AT_CLKTCK
-#define AT_CLKTCK       17    /* frequency of times() */
+#define AT_CLKTCK       17    // frequency of times()
 #endif
 
 #define NOTE_NOT_FOUND 42
@@ -189,8 +194,21 @@ static unsigned long find_elf_note(unsigned long findme){
   return NOTE_NOT_FOUND;
 }
 
+int have_privs;
+
+static int check_for_privs(void){
+  unsigned long rc = find_elf_note(AT_SECURE);
+  if(rc==NOTE_NOT_FOUND){
+    // not valid to run this code after UID or GID change!
+    // (if needed, may use AT_UID and friends instead)
+    rc = geteuid() != getuid() || getegid() != getgid();
+  }
+  return !!rc;
+}
+
 static void init_libproc(void) __attribute__((constructor));
 static void init_libproc(void){
+  have_privs = check_for_privs();
   // ought to count CPUs in /proc/stat instead of relying
   // on glibc, which foolishly tries to parse /proc/cpuinfo
   //
