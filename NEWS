@@ -1,5 +1,6 @@
 procps-3.2.5 --> procps-3.2.6
 
+top can do per-task display -- thanks John Blackwood     rh114012
 more MIPS crud  -- thanks Jim Gifford and Ryan Oliver
 begin prep for setuid
 

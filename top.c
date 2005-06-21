@@ -1081,6 +1081,7 @@ static proc_t **procs_refresh (proc_t **table, int flags)
    proc_t *ptsk = (proc_t *)-1;         // first time, Force: (ii)
    unsigned curmax = 0;                 // every time  (jeeze)
    PROCTAB* PT;
+   static int show_threads_was_enabled = 0; // optimization
 
    prochlp(NULL);                       // prep for a new frame
    if (Monpidsidx)
@@ -1089,24 +1090,75 @@ static proc_t **procs_refresh (proc_t **table, int flags)
       PT = openproc(flags);
 
    // i) Allocated Chunks:  *Existing* table;  refresh + reuse
-   while (curmax < savmax) {
-      if (table[curmax]->cmdline) {
-         free(*table[curmax]->cmdline);
-         table[curmax]->cmdline = NULL;
+   if (!(CHKw(Curwin, Show_THREADS))) {
+      while (curmax < savmax) {
+         if (table[curmax]->cmdline) {
+            unsigned idx;
+            // Skip if Show_THREADS was never enabled
+            if (show_threads_was_enabled) {
+               for (idx = curmax + 1; idx < savmax; idx++) {
+                  if (table[idx]->cmdline == table[curmax]->cmdline)
+                     table[idx]->cmdline = NULL;
+               }
+            }
+            free(*table[curmax]->cmdline);
+            table[curmax]->cmdline = NULL;
+         }
+         if (unlikely(!(ptsk = readproc(PT, table[curmax])))) break;
+         prochlp(ptsk);                    // tally & complete this proc_t
+         ++curmax;
       }
-      if (unlikely(!(ptsk = readproc(PT, table[curmax])))) break;
-      prochlp(ptsk);                    // tally & complete this proc_t
-      ++curmax;
+   }
+   else {                          // show each thread in a process separately
+      while (curmax < savmax) {
+         proc_t *ttsk;
+         if (unlikely(!(ptsk = readproc(PT, NULL)))) break;
+         show_threads_was_enabled = 1;
+         while (curmax < savmax) {
+            unsigned idx;
+            if (table[curmax]->cmdline) {
+               // threads share the same cmdline storage.  'table' is
+               // qsort()ed, so must look through the rest of the table.
+               for (idx = curmax + 1; idx < savmax; idx++) {
+                  if (table[idx]->cmdline == table[curmax]->cmdline)
+                     table[idx]->cmdline = NULL;
+               }
+               free(*table[curmax]->cmdline);  // only free once
+               table[curmax]->cmdline = NULL;
+            }
+            if (!(ttsk = readtask(PT, ptsk, table[curmax]))) break;
+            prochlp(ttsk);
+            ++curmax;
+         }
+         free(ptsk);  // readproc() proc_t not used
+      }
    }
 
    // ii) Unallocated Chunks:  *New* or *Existing* table;  extend + fill
-   while (ptsk) {
-      // realloc as we go, keeping 'table' ahead of 'currmax++'
-      table = alloc_r(table, (curmax + 1) * PTRsz);
-      // here, readproc will allocate the underlying proc_t stg
-      if (likely(ptsk = readproc(PT, NULL))) {
-         prochlp(ptsk);                 // tally & complete this proc_t
-         table[curmax++] = ptsk;
+   if (!(CHKw(Curwin, Show_THREADS))) {
+      while (ptsk) {
+         // realloc as we go, keeping 'table' ahead of 'currmax++'
+         table = alloc_r(table, (curmax + 1) * PTRsz);
+         // here, readproc will allocate the underlying proc_t stg
+         if (likely(ptsk = readproc(PT, NULL))) {
+            prochlp(ptsk);                 // tally & complete this proc_t
+            table[curmax++] = ptsk;
+         }
+      }
+   }
+   else {                          // show each thread in a process separately
+      while (ptsk) {
+         proc_t *ttsk;
+         if (likely(ptsk = readproc(PT, NULL))) {
+            show_threads_was_enabled = 1;
+            while (1) {
+               table = alloc_r(table, (curmax + 1) * PTRsz);
+               if (!(ttsk = readtask(PT, ptsk, NULL))) break;
+               prochlp(ttsk);
+               table[curmax++] = ttsk;
+            }
+            free(ptsk);   // readproc() proc_t not used
+         }
       }
    }
    closeproc(PT);
@@ -1427,8 +1479,8 @@ static int rc_read_old (const char *const buf, RCF_t *rc) {
          case 'i':
             rc->win[0].winflags &= ~Show_IDLEPS;
             break;
-         case 'H':                      // 'H' = show threads (yea, sure)
-            //rc->win[0].winflags |= ;
+         case 'H':
+            rc->win[0].winflags |= Show_THREADS;
             break;
          case 'm':
             rc->win[0].winflags &= ~View_MEMORY;
@@ -1742,7 +1794,7 @@ static void parse_args (char **args)
       .  bunched args are actually handled properly and none are ignored
       .  we tolerate NO whitespace and NO switches -- maybe too tolerant? */
    static const char usage[] =
-      " -hv | -bcisS -d delay -n iterations [-u user | -U user] -p pid [,pid ...]";
+      " -hv | -bcisSH -d delay -n iterations [-u user | -U user] -p pid [,pid ...]";
    float tmp_delay = MAXFLOAT;
    char *p;
 
@@ -1768,7 +1820,10 @@ static void parse_args (char **args)
                if (sscanf(cp, "%f", &tmp_delay) != 1)
                   std_err(fmtmk("bad delay '%s'", cp));
                break;
-            case 'h': case 'H':
+            case 'H':
+               TOGw(Curwin, Show_THREADS);
+               break;
+            case 'h':
             case 'v': case 'V':
                std_out(fmtmk("%s\nusage:\t%s%s", procps_version, Myname, usage));
             case 'i':
@@ -2480,6 +2535,14 @@ static void do_key (unsigned c)
 
       case 'G':
          win_select(0);
+         break;
+
+      case 'H':
+         if (VIZCHKc) {
+            TOGw(Curwin, Show_THREADS);
+            show_msg(fmtmk("Show threads %s"
+               , CHKw(Curwin, Show_THREADS) ? "On" : "Off"));
+         }
          break;
 
       case 'h':

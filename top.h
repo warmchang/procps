@@ -277,6 +277,7 @@ enum pflag {
 #define View_NOBOLD  0x0001     // 'B' - disable 'bold' attribute globally
 
 // 'Show_' & 'Qsrt_' flags are for task display in a visible window
+#define Show_THREADS 0x10000    // 'H' - show threads in each task
 #define Show_COLORS  0x0800     // 'z' - show in color (vs. mono)
 #define Show_HIBOLD  0x0400     // 'b' - rows and/or cols bold (vs. reverse)
 #define Show_HICOLS  0x0200     // 'x' - show sort column highlighted
@@ -413,7 +414,7 @@ typedef struct WIN_t {
    "  f,o     . Fields/Columns: '\01f\02' add or remove; '\01o\02' change display order\n" \
    "  F or O  . Select sort field\n" \
    "  <,>     . Move sort field: '\01<\02' next col left; '\01>\02' next col right\n" \
-   "  R       . Toggle normal/reverse sort\n" \
+   "  R,H     . Toggle: '\01R\02' normal/reverse sort; '\01H\02' show threads\n" \
    "  c,i,S   . Toggle: '\01c\02' cmd name/line; '\01i\02' idle tasks; '\01S\02' cumulative time\n" \
    "  x\05,\01y\05     . Toggle highlights: '\01x\02' sort field; '\01y\02' running tasks\n" \
    "  z\05,\01b\05     . Toggle: '\01z\02' color/mono; '\01b\02' bold/reverse (only if 'x' or 'y')\n" \
