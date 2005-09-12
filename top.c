@@ -1605,20 +1605,21 @@ static void before (char *me)
      page_to_kb_shift++;
    }
 
-   Fieldstab[P_CPU].head = " %CPU";
-   Fieldstab[P_CPU].fmts = " %#4.1f";
+// commented out because it is redundant with the table content
+//   Fieldstab[P_CPU].head = " %CPU";
+//   Fieldstab[P_CPU].fmts = " %#4.1f";
    pcpu_max_value = 99.9;
+   if(Rc.mode_irixps && smp_num_cpus>1){
+      // good for 100 CPUs per process
+      pcpu_max_value = 9999.0;
+      Fieldstab[P_CPU].fmts = " %4.0f";
+   }
+
    Fieldstab[P_CPN].head = " P";
    Fieldstab[P_CPN].fmts = " %1u";
    if(smp_num_cpus>9){
       Fieldstab[P_CPN].head = "  P";
       Fieldstab[P_CPN].fmts = " %2u";
-      if(Rc.mode_irixps){
-         // this will do for up to 999; hopefully a 1024-node box
-         // will have at least 2.4% idle time
-         pcpu_max_value = 9999.0;
-         Fieldstab[P_CPU].fmts = " %4.0f";
-      }
    }
    if(smp_num_cpus>99){
       Fieldstab[P_CPN].head = "   P";

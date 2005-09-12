@@ -1,5 +1,7 @@
 -------------------------- general ------------------------
 
+Consider using glibc obstacks for memory allocation.
+
 Implement /usr/proc/bin tools like Solaris has.
 The prstat command is interesting, like top in batch mode.
 SCO has a pstat command.
@@ -55,12 +57,6 @@ units: kB and pages, seconds and jiffies) in the proc_t struct.
 ---------------------- top -------------------------
 
 Share more stuff with ps.
-
-'H' command (shows threads)
-
-Adjust PID-like and PSR-like columns to fit the data.
-The normal PID limit is 5 digits; it can go up to 10.
-The normal CPU limit is 1 digit; it can go to 3 or 4.
 
 don't truncate long usernames
 
