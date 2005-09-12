@@ -939,9 +939,11 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
         for(;;){
           proc_t *t;
           if(n_alloc == n_used){
-            //proc_t *old = data;
+            proc_t *old = data;
             n_alloc = n_alloc*5/4+30;  // grow by over 25%
             data = realloc(data,sizeof(proc_t)*n_alloc);
+	    // have to move tmp too
+	    tmp = data+(tmp-old);
             //if(!data) return NULL;
           }
           if(n_task_alloc == n_task){
