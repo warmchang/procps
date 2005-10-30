@@ -707,7 +707,7 @@ static const char *generate_sysv_list(void){
     PUSH("pri"); PUSH("class");
   }else if(format_flags & FF_Ul){
     PUSH("ni");
-    if(personality & PER_IRIX_l) PUSH("opri");
+    if(personality & PER_IRIX_l) PUSH("priority");
     else /* is this good? */ PUSH("opri");
   }
 
