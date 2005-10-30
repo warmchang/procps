@@ -338,7 +338,7 @@ do_regcomp (void)
 		re_err = regcomp (preg, re, REG_EXTENDED | REG_NOSUB);
 		if (re_err) {
 			regerror (re_err, preg, errbuf, sizeof(errbuf));
-			fprintf (stderr, errbuf);
+			fputs(errbuf,stderr);
 			exit (2);
 		}
 	}

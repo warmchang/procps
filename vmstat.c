@@ -395,7 +395,7 @@ static void diskformat(void){
       free(partitions);
     }
   }else{
-    fprintf(stderr, "Your kernel doesn't support diskstat (2.5.70 or above required)"); 
+    fprintf(stderr, "Your kernel doesn't support diskstat (2.5.70 or above required)\n"); 
     exit(0);
   } 
 }
@@ -416,7 +416,7 @@ static void slabformat (void){
 
   fSlab=fopen("/proc/slabinfo", "rb");
   if(!fSlab){
-    fprintf(stderr, "Your kernel doesn't support slabinfo");    
+    fprintf(stderr, "Your kernel doesn't support slabinfo.\n");    
     return;
   }
 

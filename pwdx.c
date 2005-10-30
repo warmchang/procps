@@ -22,7 +22,7 @@
 static void die(const char *msg) NORETURN;
 static void die(const char *msg)
 {
-     fprintf(stderr, msg);
+     fputs(msg, stderr);
      exit(1);
 }
 

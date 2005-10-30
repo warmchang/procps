@@ -52,7 +52,7 @@ static char buf[1024];
 #define FILE_TO_BUF(filename, fd) do{				\
     static int local_n;						\
     if (fd == -1 && (fd = open(filename, O_RDONLY)) == -1) {	\
-	fprintf(stderr, BAD_OPEN_MESSAGE);			\
+	fputs(BAD_OPEN_MESSAGE, stderr);			\
 	fflush(NULL);						\
 	_exit(102);						\
     }								\
@@ -79,7 +79,7 @@ int uptime(double *restrict uptime_secs, double *restrict idle_secs) {
     setlocale(LC_NUMERIC,"C");
     if (sscanf(buf, "%lf %lf", &up, &idle) < 2) {
         setlocale(LC_NUMERIC,savelocale);
-        fprintf(stderr, "bad data in " UPTIME_FILE "\n");
+        fputs("bad data in " UPTIME_FILE "\n", stderr);
 	    return 0;
     }
     setlocale(LC_NUMERIC,savelocale);
@@ -222,7 +222,7 @@ static void init_libproc(void){
   if(linux_version_code > LINUX_VERSION(2, 4, 0)){ 
     Hertz = find_elf_note(AT_CLKTCK);
     if(Hertz!=NOTE_NOT_FOUND) return;
-    fprintf(stderr, "2.4+ kernel w/o ELF notes? -- report this\n");
+    fputs("2.4+ kernel w/o ELF notes? -- report this\n", stderr);
   }
   old_Hertz_hack();
 }
@@ -300,7 +300,7 @@ void loadavg(double *restrict av1, double *restrict av5, double *restrict av15) 
     savelocale = setlocale(LC_NUMERIC, NULL);
     setlocale(LC_NUMERIC, "C");
     if (sscanf(buf, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3) {
-	fprintf(stderr, "bad data in " LOADAVG_FILE "\n");
+	fputs("bad data in " LOADAVG_FILE "\n", stderr);
 	exit(1);
     }
     setlocale(LC_NUMERIC, savelocale);
