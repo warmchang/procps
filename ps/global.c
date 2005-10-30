@@ -9,6 +9,7 @@
  * GNU Library General Public License for more details.
  */                                 
 #include <stdlib.h>
+#include <termios.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/ioctl.h>

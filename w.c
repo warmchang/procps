@@ -27,6 +27,7 @@
 #include <unistd.h>
 #include <utmp.h>
 #include <locale.h>
+#include <termios.h>
 
 static int ignoreuser = 0;	/* for '-u' */
 static proc_t **procs;		/* our snapshot of the process table */

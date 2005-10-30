@@ -22,6 +22,7 @@
 #include <sys/ioctl.h>
 #include <time.h>
 #include <unistd.h>
+#include <termios.h>
 #include <locale.h>
 #include "proc/procps.h"
 

@@ -258,6 +258,7 @@ static void parse_bsd_option(void){
 }
 
 #if 0
+#include <termios.h>
 /* not used yet */
 static void choose_dimensions(void){
   struct winsize ws;

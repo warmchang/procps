@@ -1,6 +1,7 @@
 procps-3.2.5 --> procps-3.2.6
 
-top can do per-task display -- thanks John Blackwood     rh114012
+dietlibc needs termios.h for struct winsize -- thanks Thomas Ogrisegg
+top: can do per-task display -- thanks John Blackwood     rh114012
 more MIPS crud  -- thanks Jim Gifford and Ryan Oliver
 begin prep for setuid
 top: fix %CPU max on 2..9 CPU SMP -- thanks Ga*tan LEURENT
