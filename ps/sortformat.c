@@ -706,7 +706,9 @@ static const char *generate_sysv_list(void){
   if(format_modifiers & FM_c){
     PUSH("pri"); PUSH("class");
   }else if(format_flags & FF_Ul){
-    PUSH("ni"); PUSH("opri");
+    PUSH("ni");
+    if(personality & PER_IRIX_l) PUSH("opri");
+    else /* is this good? */ PUSH("opri");
   }
 
   // FIXME TODO XXX -- this is a serious problem
