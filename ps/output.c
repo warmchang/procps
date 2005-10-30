@@ -1122,8 +1122,11 @@ fail:
   return 1;
 }
 
-
-// move the bulk of this to libproc sometime
+#if 0
+// This needs more study, considering:
+// 1. the static linking option (maybe disable this in that case)
+// 2. the -z and -Z option issue
+// 3. width of output
 static int pr_context(char *restrict const outbuf, const proc_t *restrict const pp){
   static int (*ps_getpidcon)(pid_t pid, char **context) = 0;
   static int tried_load = 0;
@@ -1154,7 +1157,7 @@ static int pr_context(char *restrict const outbuf, const proc_t *restrict const 
   }
   return len;
 }
-
+#endif
 
 
 ////////////////////////////// Test code /////////////////////////////////

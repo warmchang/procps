@@ -69,6 +69,17 @@ _TARFILES := Makefile
 
 CURSES := -lncurses
 
+# This seems about right for the dynamic library stuff.
+# Something like this is probably needed to make the SE Linux
+# library loading not conflict with embedded systems stuff.
+#
+#ifeq ($(SHARED),1)
+#ldl := -ldl
+#LIBTYPE := -DSHAREDLIB
+#else
+#LIBTYPE := -DSTATICLIB
+#endif
+
 # Preprocessor flags.
 PKG_CPPFLAGS := -D_GNU_SOURCE -I proc
 CPPFLAGS     := -I/usr/include/ncurses
