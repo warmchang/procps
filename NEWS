@@ -5,9 +5,10 @@ dietlibc needs termios.h for struct winsize -- thanks Thomas Ogrisegg
 top: can do per-task display -- thanks John Blackwood     rh114012
 more MIPS crud  -- thanks Jim Gifford and Ryan Oliver
 begin prep for setuid
-top: fix %CPU max on 2..9 CPU SMP -- thanks Ga*tan LEURENT
+top: fix %CPU max on 2..9 CPU SMP -- thanks Ga*tan LEURENT  rh110555
 ps: fix crash related to realloc -- thanks David Houlder
 ps: man page more detailed                         #334682
+spelling fixes                       #300333 #334684 #334685
 
 procps-3.2.4 --> procps-3.2.5
 
