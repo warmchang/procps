@@ -608,10 +608,12 @@ int main(int argc, char *argv[]) {
       case 'p':
         statMode |= PARTITIONSTAT;
 	if (argv[1]){
-	           ++argv;
-		   sprintf(partition, "%s", *argv);
-	 }else{fprintf(stderr, "-p requires an argument\n");
-               exit(EXIT_FAILURE);
+	  char *cp = *++argv;
+	  if(!memcmp(cp,"/dev/",5)) cp += 5;
+	  snprintf(partition, sizeof partition, "%s", cp);
+	}else{
+	  fprintf(stderr, "-p requires an argument\n");
+          exit(EXIT_FAILURE);
 	}
         break;
       case 'S':

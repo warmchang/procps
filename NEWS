@@ -10,6 +10,7 @@ ps: fix crash related to realloc -- thanks David Houlder
 ps: man page more detailed                         #334682
 spelling fixes                       #300333 #334684 #334685
 top: crash on resize fixed -- thanks Michal Maruska   #320289
+vmstat: -p handles /dev/ and does not overflow  #319523 #330969
 
 procps-3.2.4 --> procps-3.2.5
 
