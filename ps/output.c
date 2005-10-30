@@ -53,6 +53,7 @@
 #include <sys/mman.h>
 #include <time.h>
 #include <unistd.h>
+#include <dlfcn.h>
 
 #include "../proc/readproc.h"
 #include "../proc/sysinfo.h"
@@ -1091,8 +1092,8 @@ static int pr_sgi_p(char *restrict const outbuf, const proc_t *restrict const pp
 
 
 /****************** FLASK & seLinux security stuff **********************/
-
 // move the bulk of this to libproc sometime
+
 static int pr_context(char *restrict const outbuf, const proc_t *restrict const pp){
   char filename[48];
   size_t len;
@@ -1120,6 +1121,40 @@ fail:
   outbuf[1] = '\0';
   return 1;
 }
+
+
+// move the bulk of this to libproc sometime
+static int pr_context(char *restrict const outbuf, const proc_t *restrict const pp){
+  static int (*ps_getpidcon)(pid_t pid, char **context) = 0;
+  static int tried_load = 0;
+  size_t len;
+  char *context;
+
+  if(!ps_getpidcon && !tried_load){
+    void *handle = dlopen("libselinux.so.1", RTLD_NOW);
+    if(handle){
+      dlerror();
+      ps_getpidcon = dlsym(handle, "getpidcon");
+      if(dlerror())
+        ps_getpidcon = 0;
+    }
+    tried_load++;
+  }
+  if(ps_getpidcon && !ps_getpidcon(pp->tgid, &context)){
+    size_t max_len = OUTBUF_SIZE-1;
+    len = strlen(context);
+    if(len > max_len) len = max_len;
+    memcpy(outbuf, context, len);
+    outbuf[len] = '\0';
+    free(context);
+  }else{
+    outbuf[0] = '-';
+    outbuf[1] = '\0';
+    len = 1;
+  }
+  return len;
+}
+
 
 
 ////////////////////////////// Test code /////////////////////////////////
