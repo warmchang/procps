@@ -90,6 +90,8 @@ static char Msg_delayed [SMLBUFSIZ];
 static int  Msg_awaiting = 0;
 
 // This is the select() timeout. Clear it in sig handlers to avoid a race.
+// (signal happens just as we are about to select() and thus does not
+// break us out of the select(), causing us to delay until timeout)
 static volatile struct timeval tv;
 #define ZAP_TIMEOUT do{tv.tv_usec=0; tv.tv_sec=0;}while(0);
 
@@ -2349,16 +2351,24 @@ static void wins_reflag (int what, int flg)
 }
 
 
+// using a flag to avoid other code seeing inconsistant state
+static volatile int need_resize;
+static void wins_resize_sighandler (int dont_care_sig)
+{
+   (void)dont_care_sig;
+   need_resize = 1;
+   ZAP_TIMEOUT
+}
+
+
 // Set the screen dimensions and arrange for the real workhorse.
 // (also) catches:
 //    SIGWINCH and SIGCONT
-static void wins_resize (int dont_care_sig)
+static void wins_resize (void)
 {
    struct winsize wz;
    char *env_columns;  // Unix98 environment variable COLUMNS
    char *env_lines;    // Unix98 environment variable LINES
-
-   (void)dont_care_sig;
 
    Screen_cols = columns;   // <term.h>
    Screen_rows = lines;     // <term.h>
@@ -2403,7 +2413,6 @@ static void wins_resize (int dont_care_sig)
 
    // force rebuild of column headers AND libproc/readproc requirements
    Frames_libflags = 0;
-   ZAP_TIMEOUT
 }
 
 
@@ -2451,7 +2460,7 @@ static void windows_stage2 (void)
       capsmk(&Winstk[i]);
    }
    // rely on this next guy to force a call (eventually) to reframewins
-   wins_resize(0);
+   wins_resize();
 }
 
 
@@ -2483,7 +2492,7 @@ static void do_key (unsigned c)
 
       case 'A':
          Rc.mode_altscr = !Rc.mode_altscr;
-         wins_resize(0);
+         wins_resize();
          break;
 
       case 'b':
@@ -3318,10 +3327,14 @@ int main (int dont_care_argc, char *argv[])
    signal(SIGTSTP,  suspend);
    signal(SIGTTIN,  suspend);
    signal(SIGTTOU,  suspend);
-   signal(SIGCONT,  wins_resize);
-   signal(SIGWINCH, wins_resize);
+   signal(SIGCONT,  wins_resize_sighandler);
+   signal(SIGWINCH, wins_resize_sighandler);
 
    for (;;) {
+      if (need_resize){
+         need_resize = 0;
+         wins_resize();
+      }
       frame_make();
 
       if (Msg_awaiting) show_msg(Msg_delayed);

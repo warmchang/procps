@@ -9,6 +9,7 @@ top: fix %CPU max on 2..9 CPU SMP -- thanks Ga*tan LEURENT  rh110555
 ps: fix crash related to realloc -- thanks David Houlder
 ps: man page more detailed                         #334682
 spelling fixes                       #300333 #334684 #334685
+top: crash on resize fixed -- thanks Michal Maruska   #320289
 
 procps-3.2.4 --> procps-3.2.5
 
