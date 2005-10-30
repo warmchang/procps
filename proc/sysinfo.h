@@ -54,7 +54,7 @@ extern unsigned long kb_inactive;
 extern unsigned long kb_mapped;
 extern unsigned long kb_pagetables;
 
-#define BUFFSIZE 8192
+#define BUFFSIZE (64*1024)
 typedef unsigned long long jiff;
 extern void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow, jiff *restrict cxxx, jiff *restrict cyyy,
 	     unsigned long *restrict pin, unsigned long *restrict pout, unsigned long *restrict s_in, unsigned long *restrict sout,

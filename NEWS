@@ -1,5 +1,6 @@
 procps-3.2.5 --> procps-3.2.6
 
+vmstat: /proc/stat buffer big enough for 1024 CPUs
 dietlibc needs termios.h for struct winsize -- thanks Thomas Ogrisegg
 top: can do per-task display -- thanks John Blackwood     rh114012
 more MIPS crud  -- thanks Jim Gifford and Ryan Oliver
