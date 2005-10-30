@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 
      for (i = 1; i < argc; i++) {
           if (regexec(&re, argv[i], 0, NULL, 0) != 0) {
-               sprintf(buf, "pwdx: invalid process id: %s\n", argv[i]); // FIXME (overflow)
+               snprintf(buf, sizeof buf, "pwdx: invalid process id: %s\n", argv[i]);
                die(buf);
           }
           if (!strcmp("-V", argv[i]) || !strcmp("--version", argv[i]))
