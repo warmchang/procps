@@ -63,15 +63,15 @@ displayed information, use\ \fItop\fR(1) instead.
 This version of \fBps\fR accepts several kinds of options:
 .PD 0
 .IP 1 4
-UNIX options, which may be grouped and must be preceeded by a dash.
+UNIX options, which may be grouped and must be preceded by a dash.
 .IP 2 4
 BSD options, which may be grouped and must not be used with a dash.
 .IP 3 4
-GNU long options, which are preceeded by two dashes.
+GNU long options, which are preceded by two dashes.
 .PD
 .PP
 Options of different types may be freely mixed, but conflicts can appear.
-There are some synonomous options, which are functionally identical, due
+There are some synonymous options, which are functionally identical, due
 to the many standards and \fBps\fR implementations that this \fBps\fR is
 compatible with.
 .P
@@ -85,7 +85,7 @@ transitioning old scripts and habits. It is fragile, subject to change,
 and thus should not be relied upon.
 .P
 By default, \fBps\fR selects all processes
-with the same effective user ID (euid=EUID) as the curent user
+with the same effective user ID (euid=EUID) as the current user
 and
 associated with the same terminal as the invoker.
 It displays the process ID (pid=PID),
@@ -776,7 +776,7 @@ r	rss	resident set size
 R	resident	resident pages
 s	size	memory size in kilobytes
 S	share	amount of shared pages
-t	tty	the device number of the controling tty
+t	tty	the device number of the controlling tty
 T	start_time	time process was started
 U	uid	user ID number
 u	user	user name
@@ -887,7 +887,7 @@ else it is "mmm\ dd"
 T}
 
 bsdtime	TIME	T{
-accumulated cpu time, user\ +\ system.  The display format is usualy
+accumulated cpu time, user\ +\ system.  The display format is usually
 "MMM:SS", but can be shifted to the right if the process used more than 999
 minutes of cpu time.
 T}
@@ -1184,7 +1184,7 @@ T}
 s	S	T{
 minimal state display (one\ character).
 See\ section \fBPROCESS STATE CODES\fR for the different values.
-See\ also \fBstat\fR if you want additionnal
+See\ also \fBstat\fR if you want additional
 information displayed.  (alias\ \fBstate\fR).
 T}
 
