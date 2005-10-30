@@ -84,14 +84,18 @@ instead and print a warning. This behavior is intended to aid in
 transitioning old scripts and habits. It is fragile, subject to change,
 and thus should not be relied upon.
 .P
-By default, \fBps\fR selects all processes with the same effective user
-ID (EUID) as the curent user and associated with the same terminal as the
-invoker.  It displays the process ID (PID), the terminal associated
-with the process (TTY), the cumulated CPU time in [dd\-]hh:mm:ss format
-(TIME), and the executable name (CMD). Output is unsorted by default.
+By default, \fBps\fR selects all processes
+with the same effective user ID (euid=EUID) as the curent user
+and
+associated with the same terminal as the invoker.
+It displays the process ID (pid=PID),
+the terminal associated with the process (tname=TTY),
+the cumulated CPU time in [dd\-]hh:mm:ss format (time=TIME),
+and the executable name (ucmd=CMD).
+Output is unsorted by default.
 .P
-The use of BSD\-style options will add process state (STAT) to the
-default display and show the command args (COMMAND) instead of the
+The use of BSD\-style options will add process state (stat=STAT) to the
+default display and show the command args (args=COMMAND) instead of the
 executable name. You can override this with the \fBPS_FORMAT\fR
 environment variable. The use of BSD\-style options will also change the
 process selection to include processes on other terminals (TTYs) that
