@@ -85,7 +85,7 @@ top \- display Linux tasks
 .\" ----------------------------------------------------------------------
 .SH SYNOPSIS
 .\" ----------------------------------------------------------------------
-\*(ME \-\fBhv\fR | \-\fBbcisS\fR \-\fBd\fI delay\fR \-\fBn\fI
+\*(ME \-\fBhv\fR | \-\fBbcHisS\fR \-\fBd\fI delay\fR \-\fBn\fI
 iterations\fR \-\fBp\fI pid\fR [,\fI pid\fR ...]
 
 The traditional switches '-' and whitespace are optional.
@@ -199,6 +199,7 @@ command-line.
     \fITask_Area_defaults\fR
        'b' - Bold hilite      On\ \ (not 'reverse')
      * 'c' - Command line     Off (name, not cmdline)
+     * 'H' - Threads          Off\ (show all threads)
      * 'i' - Idle tasks       On\ \ (show all tasks)
        'R' - Reverse sort     On\ \ (pids high-to-low)
      * 'S' - Cumulative time  Off (no, dead children)
@@ -212,7 +213,7 @@ command-line.
 .\" ----------------------------------------------------------------------
 The command-line syntax for \*(Me consists of:
 
-     \-\fBhv\fR\ |\ -\fBbcisS\fR\ \-\fBd\fI\ delay\fR\ \-\fBn\fI\ iterations\
+     \-\fBhv\fR\ |\ -\fBbcHisS\fR\ \-\fBd\fI\ delay\fR\ \-\fBn\fI\ iterations\
 \fR\ \-\fBp\fI\ pid\fR\ [,\fIpid\fR...]
 
 The typically mandatory switches ('-') and even whitespace are completely
@@ -247,6 +248,11 @@ For additional information on 'Secure mode' \*(Xt 5a. SYSTEM Configuration File.
 .TP 5
 \-\fBh\fR :\fB Help\fR
 Show library version and the usage prompt, then quit.
+
+.TP 5
+\-\fBH\fR :\fB Threads\fR toggle
+Starts \*(Me with the last remembered 'H' state reversed.
+When this toggle is \*O, all individual threads will be displayed.  Otherwise, \*(Me displays a summation of all threads in a process.
 
 .TP 5
 \-\fBi\fR :\fB Idle Processes\fR toggle
@@ -547,7 +553,7 @@ depending on the context in which they are issued.
         l, m, t, 1
   3c.\fI TASK_Area_Commands\fR
         Appearance:  b, x, y, z
-        Content:     c, f, o, S, u
+        Content:     c, f, H, o, S, u
         Size:        #, i, n
         Sorting:     <, >, F, O, R
   3d.\fI COLOR_Mapping\fR
@@ -790,6 +796,10 @@ These keys display separate screens where you can change which
 fields are displayed and their order.
 For additional information on these \*(CIs
 \*(Xt 2b. SELECTING and ORDERING Columns.
+
+.TP 7
+\ \ \'\fBH\fR\' :\fIThreads_toggle\fR
+When this toggle is \*O, all individual threads will be displayed.  Otherwise, \*(Me displays a summation of all threads in a process.
 
 .TP 7
 \ \ \'\fBS\fR\' :\fICumulative_Time_Mode_toggle\fR
