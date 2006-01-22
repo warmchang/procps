@@ -609,7 +609,7 @@ static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp
   case  0: return snprintf(outbuf, COLWID, "TS");  // SCHED_OTHER
   case  1: return snprintf(outbuf, COLWID, "FF");  // SCHED_FIFO
   case  2: return snprintf(outbuf, COLWID, "RR");  // SCHED_RR
-  case  3: return snprintf(outbuf, COLWID, "#3");  // SCHED_BATCH? (will be "B")
+  case  3: return snprintf(outbuf, COLWID, "B");   // SCHED_BATCH? (will be "B")
   case  4: return snprintf(outbuf, COLWID, "#4");  // SCHED_ISO? (Con Kolivas)
   case  5: return snprintf(outbuf, COLWID, "#5");  //
   case  8: return snprintf(outbuf, COLWID, "#8");  //
