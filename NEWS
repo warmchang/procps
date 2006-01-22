@@ -1,5 +1,6 @@
 procps-3.2.6 --> procps-3.2.7
 top: document H option -- thanks Tony Ernst
+top: terabytes -- thanks Tony Ernst
 
 procps-3.2.5 --> procps-3.2.6
 

@@ -745,23 +745,24 @@ static int get_int (const char *prompt)
          *    SK_no (0) it's a byte count
          *    SK_Kb (1) it's kilobytes
          *    SK_Mb (2) it's megabytes
-         *    SK_Gb (3) it's gigabytes  */
-static const char *scale_num (unsigned num, const int width, const unsigned type)
+         *    SK_Gb (3) it's gigabytes
+         *    SK_Tb (4) it's terabytes  */
+static const char *scale_num (unsigned long num, const int width, const unsigned type)
 {
-      /* kilobytes, megabytes, gigabytes, duh! */
-   static float scale[] = { 1024, 1024*1024, 1024*1024*1024, 0 };
-      /* kilo, mega, giga, none */
+      /* kilobytes, megabytes, gigabytes, terabytes, duh! */
+   static double scale[] = { 1024.0, 1024.0*1024, 1024.0*1024*1024, 1024.0*1024*1024*1024, 0 };
+      /* kilo, mega, giga, tera, none */
 #ifdef CASEUP_SCALE
-   static char nextup[] =  { 'K', 'M', 'G', 0 };
+   static char nextup[] =  { 'K', 'M', 'G', 'T', 0 };
 #else
-   static char nextup[] =  { 'k', 'm', 'g', 0 };
+   static char nextup[] =  { 'k', 'm', 'g', 't', 0 };
 #endif
    static char buf[TNYBUFSIZ];
-   float *dp;
+   double *dp;
    char *up;
 
       /* try an unscaled version first... */
-   if (width >= snprintf(buf, sizeof(buf), "%u", num)) return buf;
+   if (width >= snprintf(buf, sizeof(buf), "%lu", num)) return buf;
 
       /* now try successively higher types until it fits */
    for (up = nextup + type, dp = scale; *dp; ++dp, ++up) {
@@ -769,7 +770,7 @@ static const char *scale_num (unsigned num, const int width, const unsigned type
       if (width >= snprintf(buf, sizeof(buf), "%.1f%c", num / *dp, *up))
          return buf;
          /* the integer version */
-      if (width >= snprintf(buf, sizeof(buf), "%d%c", (int)(num / *dp), *up))
+      if (width >= snprintf(buf, sizeof(buf), "%ld%c", (unsigned long)(num / *dp), *up))
          return buf;
    }
       /* well shoot, this outta' fit... */
@@ -2991,7 +2992,7 @@ static proc_t **summary_show (void)
 }
 
 
-#define PAGES_TO_KB(n)  (unsigned)( (n) << page_to_kb_shift )
+#define PAGES_TO_KB(n)  (unsigned long)( (n) << page_to_kb_shift )
 
 // the following macro is our means to 'inline' emitting a column -- next to
 // procs_refresh, that's the most frequent and costly part of top's job !

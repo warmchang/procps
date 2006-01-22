@@ -240,7 +240,7 @@ typedef struct RCF_t {  // the complete rcfile (new style)
 // The scaling 'type' used with scale_num() -- this is how
 // the passed number is interpreted should scaling be necessary
 enum scale_num {
-   SK_no, SK_Kb, SK_Mb, SK_Gb
+   SK_no, SK_Kb, SK_Mb, SK_Gb, SK_Tb
 };
 
 // Flags for each possible field
