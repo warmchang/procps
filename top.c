@@ -1608,15 +1608,7 @@ static void before (char *me)
      page_to_kb_shift++;
    }
 
-// commented out because it is redundant with the table content
-//   Fieldstab[P_CPU].head = " %CPU";
-//   Fieldstab[P_CPU].fmts = " %#4.1f";
    pcpu_max_value = 99.9;
-   if(Rc.mode_irixps && smp_num_cpus>1){
-      // good for 100 CPUs per process
-      pcpu_max_value = 9999.0;
-      Fieldstab[P_CPU].fmts = " %4.0f";
-   }
 
    Fieldstab[P_CPN].head = " P";
    Fieldstab[P_CPN].fmts = " %1u";
@@ -1773,6 +1765,12 @@ static void configs_read (void)
    for (i = 0; i < GROUPSMAX; i++) {
       memcpy(&Winstk[i].rc, &rcf.win[i], sizeof rcf.win[i]);
       confighlp(Winstk[i].rc.fieldscur);
+   }
+
+   if(Rc.mode_irixps && smp_num_cpus>1){
+      // good for 100 CPUs per process
+      pcpu_max_value = 9999.0;
+      Fieldstab[P_CPU].fmts = " %4.0f";
    }
 
    // lastly, establish the true runtime secure mode and delay time
@@ -2607,6 +2605,14 @@ static void do_key (unsigned c)
          Rc.mode_irixps = !Rc.mode_irixps;
          show_msg(fmtmk("Irix mode %s", Rc.mode_irixps ? "On" : "Off"));
 #endif
+         if(Rc.mode_irixps && smp_num_cpus>1){
+            // good for 100 CPUs per process
+            pcpu_max_value = 9999.0;
+            Fieldstab[P_CPU].fmts = " %4.0f";
+         } else {
+            pcpu_max_value = 99.9;
+            Fieldstab[P_CPU].fmts = " %#4.1f";
+         }
          break;
 
       case 'k':
