@@ -8,6 +8,7 @@ ps: fix s format (signals) output with thread display
 watch: avoid integer overflow for the time delay
 pwdx: buffer overflow fixed -- thanks Ulf Harnhammar
 procps.spec needed a slash -- thanks Jesse Brandeburg
+w: stale utmp entries snuck in via uninitialized var -- thanks Robert A Basch
 
 procps-3.2.5 --> procps-3.2.6
 

@@ -132,6 +132,7 @@ static const proc_t *getproc(const utmp_t *restrict const u, const char *restric
     const proc_t *secondbest = NULL;
     unsigned uid = ~0U;
 
+    *found_utpid = 0;
     if(!ignoreuser){
 	char buf[UT_NAMESIZE+1];
 	struct passwd *passwd_data;   /* pointer to static data */
@@ -144,7 +145,6 @@ static const proc_t *getproc(const utmp_t *restrict const u, const char *restric
     }
     line = tty_to_dev(tty);
     *jcpu = 0;
-    *found_utpid = 0;
     for(; *pptr; pptr++) {
 	const proc_t *restrict const tmp = *pptr;
 	if(unlikely(tmp->tgid == u->ut_pid)) {
