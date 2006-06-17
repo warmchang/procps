@@ -141,7 +141,7 @@ main(int argc, char *argv[])
 	int option_differences = 0,
 	    option_differences_cumulative = 0,
 	    option_help = 0, option_version = 0;
-	float interval = 2;
+	double interval = 2;
 	char *command;
 	int command_length = 0;	/* not including final \0 */
 
@@ -165,11 +165,13 @@ main(int argc, char *argv[])
 		case 'n':
 			{
 				char *str;
-				interval = strtof(optarg, &str);
+				interval = strtod(optarg, &str);
 				if (!*optarg || *str)
 					do_usage();
 				if(interval < 0.1)
 					interval = 0.1;
+				if(interval > ~0u/1000000)
+					interval = ~0u/1000000;
 			}
 			break;
 		case 'v':
