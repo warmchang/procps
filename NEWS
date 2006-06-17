@@ -6,6 +6,7 @@ ps: SCHED_BATCH is B
 ps: fix s format (signals) output with thread display
 watch: avoid integer overflow for the time delay
 pwdx: buffer overflow fixed -- thanks Ulf Harnhammar
+procps.spec needed a slash -- thanks Jesse Brandeburg
 
 procps-3.2.5 --> procps-3.2.6
 

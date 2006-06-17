@@ -26,7 +26,7 @@ make SKIP="/bin/kill /usr/share/man/man1/kill.1" CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make SKIP="/bin/kill /usr/share/man/man1/kill.1" DESTDIR=$RPM_BUILD_ROOT ldconfig=echo install="install -D" lib="$RPM_BUILD_ROOT/%{_lib}" install
+make SKIP="/bin/kill /usr/share/man/man1/kill.1" DESTDIR=$RPM_BUILD_ROOT ldconfig=echo install="install -D" lib="$RPM_BUILD_ROOT/%{_lib}/" install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -46,3 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0644,root,root) /usr/share/man/man1/*
 %attr(0644,root,root) /usr/share/man/man5/*
 %attr(0644,root,root) /usr/share/man/man8/*
+
+%changelog
+* Fri Apr 14 09:23:45 PDT 2006  Jesse Brandeburg <jesse.brandeburg@in...>
+- fix missing trailing slash in %install to fix builds on x86_64
