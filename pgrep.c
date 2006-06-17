@@ -83,7 +83,7 @@ split_list (const char *restrict str, int (*convert)(const char *, union el *))
 	int i = 1, size = 32;
 	union el *list;
 
-	list = malloc (size * sizeof (union el));
+	list = malloc (size * sizeof *list);
 	if (list == NULL)
 		exit (3);
 
@@ -97,7 +97,7 @@ split_list (const char *restrict str, int (*convert)(const char *, union el *))
 			exit (2);
 		if (i == size) {
 			size *= 2;
-			list = realloc (list, size * sizeof (union el));
+			list = realloc (list, size * sizeof *list);
 			if (list == NULL)
 				exit (3);
 		}
@@ -112,7 +112,7 @@ split_list (const char *restrict str, int (*convert)(const char *, union el *))
 	} else {
 		list[0].num = i - 1;
 	}
-	return (list);
+	return list;
 }
 
 /* strict_atol returns a Boolean: TRUE if the input string contains a
@@ -138,7 +138,7 @@ strict_atol (const char *restrict str, long *restrict value)
 		res += *str - '0';
 	}
 	*value = sign * res;
-	return (1);
+	return 1;
 }
 
 static int
@@ -153,10 +153,10 @@ conv_uid (const char *restrict name, union el *restrict e)
 	if (pwd == NULL) {
 		fprintf (stderr, "%s: invalid user name: %s\n",
 			 progname, name);
-		return (0);
+		return 0;
 	}
 	e->num = pwd->pw_uid;
-	return (1);
+	return 1;
 }
 
 
@@ -166,16 +166,16 @@ conv_gid (const char *restrict name, union el *restrict e)
 	struct group *grp;
 
 	if (strict_atol (name, &e->num))
-		return (1);
+		return 1;
 
 	grp = getgrnam (name);
 	if (grp == NULL) {
 		fprintf (stderr, "%s: invalid group name: %s\n",
 			 progname, name);
-		return (0);
+		return 0;
 	}
 	e->num = grp->gr_gid;
-	return (1);
+	return 1;
 }
 
 
@@ -185,11 +185,11 @@ conv_pgrp (const char *restrict name, union el *restrict e)
 	if (! strict_atol (name, &e->num)) {
 		fprintf (stderr, "%s: invalid process group: %s\n",
 			 progname, name);
-		return (0);
+		return 0;
 	}
 	if (e->num == 0)
 		e->num = getpgrp ();
-	return (1);
+	return 1;
 }
 
 
@@ -199,11 +199,11 @@ conv_sid (const char *restrict name, union el *restrict e)
 	if (! strict_atol (name, &e->num)) {
 		fprintf (stderr, "%s: invalid session id: %s\n",
 			 progname, name);
-		return (0);
+		return 0;
 	}
 	if (e->num == 0)
 		e->num = getsid (0);
-	return (1);
+	return 1;
 }
 
 
@@ -213,9 +213,9 @@ conv_num (const char *restrict name, union el *restrict e)
 	if (! strict_atol (name, &e->num)) {
 		fprintf (stderr, "%s: not a number: %s\n",
 			 progname, name);
-		return (0);
+		return 0;
 	}
-	return (1);
+	return 1;
 }
 
 
@@ -223,7 +223,7 @@ static int
 conv_str (const char *restrict name, union el *restrict e)
 {
 	e->str = strdup (name);
-	return (1);
+	return 1;
 }
 
 
@@ -240,7 +240,7 @@ match_numlist (long value, const union el *restrict list)
 				found = 1;
 		}
 	}
-	return (found);
+	return found;
 }
 
 static int
@@ -256,7 +256,7 @@ match_strlist (const char *restrict value, const union el *restrict list)
 				found = 1;
 		}
 	}
-	return (found);
+	return found;
 }
 
 static void
@@ -310,7 +310,7 @@ do_openproc (void)
 	} else {
 		ptp = openproc (flags);
 	}
-	return (ptp);
+	return ptp;
 }
 
 static regex_t *
@@ -346,7 +346,7 @@ do_regcomp (void)
 }
 
 static union el *
-select_procs (void)
+select_procs (int *num)
 {
 	PROCTAB *ptp;
 	proc_t task;
@@ -359,7 +359,7 @@ select_procs (void)
 	union el *list;
 	char cmd[4096];
 
-	list = malloc (size * sizeof (union el));
+	list = malloc (size * sizeof *list);
 	if (list == NULL)
 		exit (3);
 
@@ -450,14 +450,13 @@ select_procs (void)
 			if (opt_long) {
 				char buff[5096];  // FIXME
 				sprintf (buff, "%d %s", task.XXXID, cmd);
-				list[++matches].str = strdup (buff);
+				list[matches++].str = strdup (buff);
 			} else {
-				list[++matches].num = task.XXXID;
+				list[matches++].num = task.XXXID;
 			}
 			if (matches == size) {
 				size *= 2;
-				list = realloc (list,
-						size * sizeof (union el));
+				list = realloc(list, size * sizeof *list);
 				if (list == NULL)
 					exit (3);
 			}
@@ -467,8 +466,8 @@ select_procs (void)
 	}
 	closeproc (ptp);
 
-	list[0].num = matches;
-	return (list);
+	*num = matches;
+	return list;
 }
 
 
@@ -607,13 +606,14 @@ int
 main (int argc, char **argv)
 {
 	union el *procs;
+	int num;
 
 	parse_opts (argc, argv);
 
-	procs = select_procs ();
+	procs = select_procs (&num);
 	if (i_am_pkill) {
 		int i;
-		for (i = 1; i <= procs[0].num; i++) {
+		for (i = 0; i < num; i++) {
 			if (kill (procs[i].num, opt_signal) != -1) continue;
 			if (errno==ESRCH) continue; // gone now, which is OK
 			fprintf (stderr, "pkill: %ld - %s\n",
@@ -625,5 +625,5 @@ main (int argc, char **argv)
 		else
 			output_numlist (procs);
 	}
-	return ((procs[0].num) == 0 ? 1 : 0);
+	return !num;
 }

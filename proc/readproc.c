@@ -37,6 +37,17 @@ extern void __cyg_profile_func_enter(void*,void*);
 #define LEAVE(x)
 #endif
 
+// convert hex string to unsigned long long
+static unsigned long long unhex(const char *restrict cp){
+    unsigned long long ull = 0;
+    for(;;){
+        char c = *cp++;
+        if(unlikely(c<0x30)) break;
+        ull = (ull<<4) | (c - (c>0x57) ? 0x57 : 0x30) ;
+    }
+    return ull;
+}
+
 static int task_dir_missing;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -71,7 +82,6 @@ typedef struct status_table_struct {
 // must be padded out to 64 entries, maybe 128 in the future.
 
 static void status2proc(char *S, proc_t *restrict P, int is_proc){
-    char ShdPnd[16] = "";
     long Threads = 0;
     long Tgid = 0;
     long Pid = 0;
@@ -147,6 +157,7 @@ ENTER(0x220);
     P->vm_exe  = 0;
     P->vm_lib  = 0;
     P->nlwp    = 0;
+    P->signal[0] = '\0';  // so we can detect it as missing for very old kernels
 
     goto base;
 
@@ -195,9 +206,10 @@ ENTER(0x220);
         S--;   // put back the '\n' or '\0'
         continue;
     }
+#ifdef SIGNAL_STRING
     case_ShdPnd:
-        memcpy(ShdPnd, S, 16);
-        // we know it to be 16 char, so no '\0' needed
+        memcpy(P->signal, S, 16);
+        P->signal[16] = '\0';
         continue;
     case_SigBlk:
         memcpy(P->blocked, S, 16);
@@ -212,9 +224,26 @@ ENTER(0x220);
         P->sigignore[16] = '\0';
         continue;
     case_SigPnd:
-        memcpy(P->signal, S, 16);
-        P->signal[16] = '\0';
+        memcpy(P->_sigpnd, S, 16);
+        P->_sigpnd[16] = '\0';
         continue;
+#else
+    case_ShdPnd:
+        P->signal = unhex(S);
+        continue;
+    case_SigBlk:
+        P->blocked = unhex(S);
+        continue;
+    case_SigCgt:
+        P->sigcatch = unhex(S);
+        continue;
+    case_SigIgn:
+        P->sigignore = unhex(S);
+        continue;
+    case_SigPnd:
+        P->_sigpnd = unhex(S);
+        continue;
+#endif
     case_State:
         P->state = *S;
         continue;
@@ -265,11 +294,25 @@ ENTER(0x220);
         continue;
     }
 
+#if 0
     // recent kernels supply per-tgid pending signals
     if(is_proc && *ShdPnd){
 	memcpy(P->signal, ShdPnd, 16);
 	P->signal[16] = '\0';
     }
+#endif
+
+    // recent kernels supply per-tgid pending signals
+#ifdef SIGNAL_STRING
+    if(!is_proc || !P->signal[0]){
+	memcpy(P->signal, P->_sigpnd, 16);
+	P->signal[16] = '\0';
+    }
+#else
+    if(!is_proc || !have_process_pending){
+	P->signal = P->_sigpnd;
+    }
+#endif
 
     // Linux 2.4.13-pre1 to max 2.4.xx have a useless "Tgid"
     // that is not initialized for built-in kernel tasks.
@@ -764,11 +807,17 @@ proc_t* readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, pro
   if(!t) t = xcalloc(t, sizeof *t); /* passed buf or alloced mem */
 
   // 1. got to fake a thread for old kernels
-  // 2. for single-threaded processes, this is faster
+  // 2. for single-threaded processes, this is faster (but must patch up stuff that differs!)
   if(task_dir_missing || p->nlwp < 2){
     if(PT->did_fake) goto out;
     PT->did_fake=1;
     memcpy(t,p,sizeof(proc_t));
+    // use the per-task pending, not per-tgid pending
+#ifdef SIGNAL_STRING
+	memcpy(&t->signal, &t->_sigpnd, sizeof t->signal);
+#else
+	t->signal = t->_sigpnd;
+#endif
     return t;
   }
 

@@ -1,7 +1,9 @@
 procps-3.2.6 --> procps-3.2.7
+
 top: document H option -- thanks Tony Ernst
 top: terabytes -- thanks Tony Ernst
 ps: SCHED_BATCH is B
+ps: fix s format (signals) output with thread display
 
 procps-3.2.5 --> procps-3.2.6
 

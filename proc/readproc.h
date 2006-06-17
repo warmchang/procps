@@ -58,17 +58,19 @@ typedef struct proc_t {
 #ifdef SIGNAL_STRING
     char
 	// Linux 2.1.7x and up have 64 signals. Allow 64, plus '\0' and padding.
-	signal[18],	// status          mask of pending signals
+	signal[18],	// status          mask of pending signals, per-task for readtask() but per-proc for readproc()
 	blocked[18],	// status          mask of blocked signals
 	sigignore[18],	// status          mask of ignored signals
-	sigcatch[18];	// status          mask of caught  signals
+	sigcatch[18],	// status          mask of caught  signals
+	_sigpnd[18];	// status          mask of PER TASK pending signals
 #else
     long long
 	// Linux 2.1.7x and up have 64 signals.
-	signal,		// status          mask of pending signals
+	signal,		// status          mask of pending signals, per-task for readtask() but per-proc for readproc()
 	blocked,	// status          mask of blocked signals
 	sigignore,	// status          mask of ignored signals
-	sigcatch;	// status          mask of caught  signals
+	sigcatch,	// status          mask of caught  signals
+	_sigpnd;	// status          mask of PER TASK pending signals
 #endif
     unsigned KLONG
 	start_code,	// stat            address of beginning of code segment
