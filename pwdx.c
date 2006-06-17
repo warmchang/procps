@@ -35,7 +35,7 @@ static void version(void)
 
 int main(int argc, char* argv[])
 {
-     char buf[PATH_MAX];
+     char buf[PATH_MAX+1];
      regex_t re;
      int i;
 
@@ -76,9 +76,9 @@ int main(int argc, char* argv[])
           // or nnnn, so a simple check based on the first char is
           // possible
           if (argv[i][0] != '/')
-               sprintf(buf, "/proc/%s/cwd", argv[i]);
+               snprintf(buf, sizeof buf, "/proc/%s/cwd", argv[i]);
           else
-               sprintf(buf, "%s/cwd", argv[i]);
+               snprintf(buf, sizeof buf, "%s/cwd", argv[i]);
 
           // buf contains /proc/nnnn/cwd symlink name on entry, the
           // target of that symlink on return
