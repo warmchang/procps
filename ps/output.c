@@ -1340,7 +1340,6 @@ static const format_struct format_array[] = {
 {"label",     "LABEL",   pr_context,  sr_nop,    31,  0,     SGI, ET|LEFT},
 {"lastcpu",   "C",       pr_psr,      sr_nop,     3,   0,    BSD, TO|RIGHT}, // DragonFly
 {"lim",       "LIM",     pr_lim,      sr_rss_rlim, 5,  0,    BSD, AN|RIGHT},
-{"lockname",  "LOCK",    pr_nop,      sr_nop,     6, WCH,    BSD, TO|WCHAN}, /* mutex (FreeBSD) */
 {"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, AN|LEFT}, /*logname*/   /* double check */
 {"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, AN|LEFT}, /*login*/
 {"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},

@@ -48,6 +48,7 @@ static int opt_newest = 0;
 static int opt_negate = 0;
 static int opt_exact = 0;
 static int opt_signal = SIGTERM;
+static int opt_case = 0;
 
 static const char *opt_delim = "\n";
 static union el *opt_pgrp = NULL;
@@ -335,7 +336,7 @@ do_regcomp (void)
 		 	re = opt_pattern;
 		}
 
-		re_err = regcomp (preg, re, REG_EXTENDED | REG_NOSUB);
+		re_err = regcomp (preg, re, REG_EXTENDED | REG_NOSUB | opt_case);
 		if (re_err) {
 			regerror (re_err, preg, errbuf, sizeof(errbuf));
 			fputs(errbuf,stderr);
@@ -504,22 +505,38 @@ parse_opts (int argc, char **argv)
 	
 	while ((opt = getopt (argc, argv, opts)) != -1) {
 		switch (opt) {
-		case 'G':
+//		case 'F':   // FreeBSD: the arg is a file containing a PID to match
+//			break;
+		case 'G':   // Solaris: match rgid/rgroup
 	  		opt_rgid = split_list (optarg, conv_gid);
 			if (opt_rgid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
+//		case 'I':   // FreeBSD: require confirmation before killing
+//			break;
+//		case 'J':   // Solaris: match by project ID (name or number)
+//			break;
+//		case 'L':   // FreeBSD: the pidfile (see -F) must be locked with flock()
+//			break;
 //		case 'L':   // OpenBSD: print full args along w/ PID
 //			opt_printargs = 1;
 //			break;
-		case 'P':
+//		case 'M':   // FreeBSD: specify core (OS crash dump) file
+//			break;
+//		case 'N':   // FreeBSD: specify alternate namelist file (for us, System.map -- but we don't need it)
+//			break;
+		case 'P':   // Solaris: match by PPID
 	  		opt_ppid = split_list (optarg, conv_num);
 			if (opt_ppid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
-		case 'U':
+//		case 'S':   // FreeBSD: don't ignore the built-in kernel tasks
+//			break;
+//		case 'T':   // Solaris: match by "task ID" (probably not a Linux task)
+//			break;
+		case 'U':   // Solaris: match by ruid/rgroup
 	  		opt_ruid = split_list (optarg, conv_uid);
 			if (opt_ruid == NULL)
 				usage (opt);
@@ -528,63 +545,70 @@ parse_opts (int argc, char **argv)
 		case 'V':
 			fprintf(stdout, "%s (%s)\n", progname, procps_version);
 			exit(0);
-		case 'd':
+//		case 'c':   // Solaris: match by contract ID
+//			break;
+		case 'd':   // Solaris: change the delimiter
 			opt_delim = strdup (optarg);
 			break;
-		case 'f':
+		case 'f':   // Solaris: match full process name (as in "ps -f")
 			opt_full = 1;
 			break;
-		case 'g':
+		case 'g':   // Solaris: match pgrp
 	  		opt_pgrp = split_list (optarg, conv_pgrp);
 			if (opt_pgrp == NULL)
 				usage (opt);
 			break;
-//		case 'i':
-//			opt_insensitive = 1;
+//		case 'i':   // FreeBSD: ignore case. OpenBSD: withdrawn. See -I. This sucks.
+//			if (opt_case)
+//				usage (opt);
+//			opt_case = REG_ICASE;
 //			break;
-		case 'l':
+//		case 'j':   // FreeBSD: restricted to the given jail ID
+//			break;
+		case 'l':   // Solaris: long output format (pgrep only)
 			opt_long = 1;
 			break;
-		case 'n':
+		case 'n':   // Solaris: match only the newest
 			if (opt_oldest|opt_negate|opt_newest)
 				usage (opt);
 			opt_newest = 1;
 			++criteria_count;
 			break;
-		case 'o':
+		case 'o':   // Solaris: match only the oldest
 			if (opt_oldest|opt_negate|opt_newest)
 				usage (opt);
 			opt_oldest = 1;
 			++criteria_count;
 			break;
-		case 's':
+		case 's':   // Solaris: match by session ID -- zero means self
 	  		opt_sid = split_list (optarg, conv_sid);
 			if (opt_sid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
-		case 't':
+		case 't':   // Solaris: match by tty
 	  		opt_term = split_list (optarg, conv_str);
 			if (opt_term == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
-		case 'u':
+		case 'u':   // Solaris: match by euid/egroup
 	  		opt_euid = split_list (optarg, conv_uid);
 			if (opt_euid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
-		case 'v':
+		case 'v':   // Solaris: as in grep, invert the matching (uh... applied after selection I think)
 			if (opt_oldest|opt_negate|opt_newest)
 				usage (opt);
 	  		opt_negate = 1;
 			break;
-		// Solaris -x, the standard, does ^(regexp)$
 		// OpenBSD -x, being broken, does a plain string
-		case 'x':
+		case 'x':   // Solaris: use ^(regexp)$ in place of regexp (FreeBSD too)
 			opt_exact = 1;
 			break;
+//		case 'z':   // Solaris: match by zone ID
+//			break;
 		case '?':
 			usage (opt);
 			break;
