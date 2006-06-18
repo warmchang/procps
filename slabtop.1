@@ -109,14 +109,16 @@ requires a 2.4 or later kernel (specifically, a version 1.1 or later
 .IR /proc/slabinfo ).
 Kernel 2.2 should be supported in the future.
 
+The slabtop statistic header is tracking how many bytes of slabs are being used
+and it not a measure of physical memory. The 'Slab' field in the /proc/meminfo
+file is tracking information about used slab physical memory.
+
 .SH AUTHORS
 Written by Chris Rivera and Robert Love.
 
 .BR slabtop (1)
 was inspired by Martin Bligh's perl script,
 .BR vmtop .
+The procps package is maintained by Albert Cahalan <albert@users.sf.net>.
 
-The procps package is maintained by Robert Love and was created by Michael
-Johnson.
-
-Send bug reports to <procps-list@redhat.com>.
+Please send bug reports to <procps-feedback@lists.sf.net>.
