@@ -7,7 +7,7 @@
  * May be distributed under the conditions of the
  * GNU General Public License; a copy is in COPYING
  *
- * Changes by Albert Cahalan, 2002.
+ * Changes by Albert Cahalan, 2002,2006.
  * 
  */
 
@@ -81,37 +81,34 @@ split_list (const char *restrict str, int (*convert)(const char *, union el *))
 	char *copy = strdup (str);
 	char *ptr = copy;
 	char *sep_pos;
-	int i = 1, size = 32;
-	union el *list;
-
-	list = malloc (size * sizeof *list);
-	if (list == NULL)
-		exit (3);
+	int i = 0;
+	int size = 0;
+	union el *list = NULL;
 
 	do {
-		sep_pos = strchr (ptr, ',');
-		if (sep_pos)
-			*sep_pos = 0;
-		if (convert (ptr, &list[i]))
-			++i;
-		else
-			exit (2);
 		if (i == size) {
-			size *= 2;
-			list = realloc (list, size * sizeof *list);
+			size = size * 5 / 4 + 4;
+			// add 1 because slot zero is a count
+			list = realloc (list, 1 + size * sizeof *list);
 			if (list == NULL)
 				exit (3);
 		}
+		sep_pos = strchr (ptr, ',');
+		if (sep_pos)
+			*sep_pos = 0;
+		// Use ++i instead of i++ because slot zero is a count
+		if (!convert (ptr, &list[++i]))
+			exit (2);
 		if (sep_pos)
 			ptr = sep_pos + 1;
 	} while (sep_pos);
 
 	free (copy);
-	if (i == 1) {
+	if (!i) {
 		free (list);
 		list = NULL;
 	} else {
-		list[0].num = i - 1;
+		list[0].num = i;
 	}
 	return list;
 }
@@ -261,26 +258,28 @@ match_strlist (const char *restrict value, const union el *restrict list)
 }
 
 static void
-output_numlist (const union el *restrict list)
+output_numlist (const union el *restrict list, int num)
 {
 	int i;
-	for (i = 1; i < list[0].num; i++)
-		printf ("%ld%s", list[i].num, opt_delim);
-
-	if (list[0].num)
-		printf ("%ld\n", list[i].num);
+	const char *delim = opt_delim;
+	for (i = 0; i < num; i++) {
+		if(i+1==num)
+			delim = "\n";
+		printf ("%ld%s", list[i].num, delim);
+	}
 }
 
 static void
-output_strlist (const union el *restrict list)
+output_strlist (const union el *restrict list, int num)
 {
 // FIXME: escape codes
 	int i;
-	for (i = 1; i < list[0].num; i++)
-		printf ("%s%s", list[i].str, opt_delim);
-
-	if (list[0].num)
-		printf ("%s\n", list[i].str);
+	const char *delim = opt_delim;
+	for (i = 0; i < num; i++) {
+		if(i+1==num)
+			delim = "\n";
+		printf ("%s%s", list[i].str, delim);
+	}
 }
 
 static PROCTAB *
@@ -354,26 +353,22 @@ select_procs (int *num)
 	unsigned long long saved_start_time;      // for new/old support
 	pid_t saved_pid = 0;                      // for new/old support
 	int matches = 0;
-	int size = 32;
+	int size = 0;
 	regex_t *preg;
 	pid_t myself = getpid();
-	union el *list;
+	union el *list = NULL;
 	char cmd[4096];
 
-	list = malloc (size * sizeof *list);
-	if (list == NULL)
-		exit (3);
-
-	ptp = do_openproc ();
-	preg = do_regcomp ();
+	ptp = do_openproc();
+	preg = do_regcomp();
 
 	if (opt_newest) saved_start_time =  0ULL;
 	if (opt_oldest) saved_start_time = ~0ULL;
 	if (opt_newest) saved_pid = 0;
 	if (opt_oldest) saved_pid = INT_MAX;
 	
-	memset (&task, 0, sizeof (task));
-	while (readproc (ptp, &task)) {
+	memset(&task, 0, sizeof (task));
+	while(readproc(ptp, &task)) {
 		int match = 1;
 
 		if (task.XXXID == myself)
@@ -448,18 +443,18 @@ select_procs (int *num)
 				saved_pid = task.XXXID;
 				matches = 0;
 			}
+			if (matches == size) {
+				size = size * 5 / 4 + 4;
+				list = realloc(list, size * sizeof *list);
+				if (list == NULL)
+					exit (3);
+			}
 			if (opt_long) {
 				char buff[5096];  // FIXME
 				sprintf (buff, "%d %s", task.XXXID, cmd);
 				list[matches++].str = strdup (buff);
 			} else {
 				list[matches++].num = task.XXXID;
-			}
-			if (matches == size) {
-				size *= 2;
-				list = realloc(list, size * sizeof *list);
-				if (list == NULL)
-					exit (3);
 			}
 		}
 		
@@ -645,9 +640,9 @@ main (int argc, char **argv)
 		}
 	} else {
 		if (opt_long)
-			output_strlist (procs);
+			output_strlist(procs,num);
 		else
-			output_numlist (procs);
+			output_numlist(procs,num);
 	}
 	return !num;
 }
