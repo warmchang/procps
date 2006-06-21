@@ -488,6 +488,8 @@ static void parse_opts (int argc, char **argv)
 	
 	while ((opt = getopt (argc, argv, opts)) != -1) {
 		switch (opt) {
+//		case 'D':   // FreeBSD: print info about non-matches for debugging
+//			break;
 //		case 'F':   // FreeBSD: the arg is a file containing a PID to match
 //			break;
 		case 'G':   // Solaris: match rgid/rgroup
@@ -500,10 +502,7 @@ static void parse_opts (int argc, char **argv)
 //			break;
 //		case 'J':   // Solaris: match by project ID (name or number)
 //			break;
-//		case 'L':   // FreeBSD: the pidfile (see -F) must be locked with flock()
-//			break;
-//		case 'L':   // OpenBSD: print full args along w/ PID
-//			opt_printargs = 1;
+//		case 'L':   // FreeBSD: fail if pidfile (see -F) not locked with flock()
 //			break;
 //		case 'M':   // FreeBSD: specify core (OS crash dump) file
 //			break;
@@ -548,7 +547,7 @@ static void parse_opts (int argc, char **argv)
 //			break;
 //		case 'j':   // FreeBSD: restricted to the given jail ID
 //			break;
-		case 'l':   // Solaris: long output format (pgrep only)
+		case 'l':   // Solaris: long output format (pgrep only) Should require -f for beyond argv[0] maybe?
 			opt_long = 1;
 			break;
 		case 'n':   // Solaris: match only the newest
