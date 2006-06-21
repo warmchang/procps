@@ -19,6 +19,8 @@
 #include <ctype.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <pwd.h>
 #include <grp.h>
@@ -53,17 +55,20 @@ static int opt_newest = 0;
 static int opt_negate = 0;
 static int opt_exact = 0;
 static int opt_signal = SIGTERM;
+static int opt_flock = 0;
 static int opt_case = 0;
 
 static const char *opt_delim = "\n";
 static union el *opt_pgrp = NULL;
 static union el *opt_rgid = NULL;
+static union el *opt_pid = NULL;
 static union el *opt_ppid = NULL;
 static union el *opt_sid = NULL;
 static union el *opt_term = NULL;
 static union el *opt_euid = NULL;
 static union el *opt_ruid = NULL;
 static char *opt_pattern = NULL;
+static char *opt_pidfile = NULL;
 
 
 static int usage (int opt) NORETURN;
@@ -139,6 +144,44 @@ static int strict_atol (const char *restrict str, long *restrict value)
 	}
 	*value = sign * res;
 	return 1;
+}
+
+#include <sys/file.h>
+
+static union el *read_pidfile(void)
+{
+	char buf[12];
+	int fd;
+	struct stat sbuf;
+	char *endp;
+	int pid;
+	union el *list = NULL;
+
+	fd = open(opt_pidfile, O_RDONLY|O_NOCTTY|O_NONBLOCK);
+	if(fd<0)
+		goto out;
+	if(fstat(fd,&sbuf) || !S_ISREG(sbuf.st_mode) || sbuf.st_size<1)
+		goto out;
+	if(opt_flock){   // Not that Linux uses this? Maybe fcntl is used?
+		// an errno==EWOULDBLOCK means we accept the PID
+		if(!flock(fd, LOCK_SH|LOCK_NB))  // success is bad
+			goto out;
+		if(errno != EWOULDBLOCK)
+			goto out;
+	}
+	memset(buf,'\0',sizeof buf);
+	buf[read(fd,buf+1,sizeof buf-2)] = '\0';
+	pid = strtoul(buf+1,&endp,10);
+	if(endp<=buf+1 || pid<1 || pid>0x7fffffff)
+		goto out;
+	if(*endp && !isspace(*endp))
+		goto out;
+	list = malloc(2 * sizeof *list);
+	list[0].num = 1;
+	list[1].num = pid;
+out:
+	close(fd);
+	return list;
 }
 
 static int conv_uid (const char *restrict name, union el *restrict e)
@@ -368,6 +411,8 @@ static union el * select_procs (int *num)
 			match = 0;
 		else if (opt_ppid && ! match_numlist (task.ppid, opt_ppid))
 			match = 0;
+		else if (opt_pid && ! match_numlist (task.tgid, opt_pid))
+			match = 0;
 		else if (opt_pgrp && ! match_numlist (task.pgrp, opt_pgrp))
 			match = 0;
 		else if (opt_euid && ! match_numlist (task.euid, opt_euid))
@@ -484,14 +529,16 @@ static void parse_opts (int argc, char **argv)
 		strcat (opts, "ld:");
 	}
 			
-	strcat (opts, "fnovxP:g:s:u:U:G:t:?V");
+	strcat (opts, "LF:fnovxP:g:s:u:U:G:t:?V");
 	
 	while ((opt = getopt (argc, argv, opts)) != -1) {
 		switch (opt) {
 //		case 'D':   // FreeBSD: print info about non-matches for debugging
 //			break;
-//		case 'F':   // FreeBSD: the arg is a file containing a PID to match
-//			break;
+		case 'F':   // FreeBSD: the arg is a file containing a PID to match
+			opt_pidfile = strdup (optarg);
+			++criteria_count;
+			break;
 		case 'G':   // Solaris: match rgid/rgroup
 	  		opt_rgid = split_list (optarg, conv_gid);
 			if (opt_rgid == NULL)
@@ -502,8 +549,9 @@ static void parse_opts (int argc, char **argv)
 //			break;
 //		case 'J':   // Solaris: match by project ID (name or number)
 //			break;
-//		case 'L':   // FreeBSD: fail if pidfile (see -F) not locked with flock()
-//			break;
+		case 'L':   // FreeBSD: fail if pidfile (see -F) not locked with flock()
+			opt_flock++;
+			break;
 //		case 'M':   // FreeBSD: specify core (OS crash dump) file
 //			break;
 //		case 'N':   // FreeBSD: specify alternate namelist file (for us, System.map -- but we don't need it)
@@ -596,6 +644,20 @@ static void parse_opts (int argc, char **argv)
 			break;
 		}
 	}
+
+	if(opt_flock && !opt_pidfile){
+		fprintf(stderr, "%s: -L without -F makes no sense\n",progname);
+		usage(0);
+	}
+
+	if(opt_pidfile){
+		opt_pid = read_pidfile();
+		if(!opt_pid){
+			fprintf(stderr, "%s: pidfile not valid\n",progname);
+			usage(0);
+		}
+	}
+
         if (argc - optind == 1)
 		opt_pattern = argv[optind];
 	else if (argc - optind > 1)
