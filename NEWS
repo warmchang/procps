@@ -3,12 +3,14 @@ procps-3.2.6 --> procps-3.2.7
 top: document H option -- thanks Tony Ernst
 top: terabytes -- thanks Tony Ernst
 top: CPU usage column width fixes -- thanks Tony Ernst
+top: *roff change                                   #326517
 ps: SCHED_BATCH is B
 ps: fix s format (signals) output with thread display
 watch: avoid integer overflow for the time delay
 pwdx: buffer overflow fixed -- thanks Ulf Harnhammar
 procps.spec needed a slash -- thanks Jesse Brandeburg
 w: stale utmp entries snuck in via uninitialized var -- thanks Robert A Basch
+pgrep/pkill: fix some realloc-related crashes       #353894
 
 procps-3.2.5 --> procps-3.2.6
 

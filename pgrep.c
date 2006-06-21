@@ -31,6 +31,11 @@
 #include "proc/sysinfo.h"
 #include "proc/version.h" /* procps_version */
 
+// EXIT_SUCCESS is 0
+// EXIT_FAILURE is 1
+#define EXIT_USAGE 2
+#define EXIT_FATAL 3
+
 static int i_am_pkill = 0;
 static const char *progname = "pgrep";
 
@@ -71,12 +76,11 @@ static int usage (int opt)
 	fprintf (stderr, "[-n|-o] [-P PPIDLIST] [-g PGRPLIST] [-s SIDLIST]\n"
 		 "\t[-u EUIDLIST] [-U UIDLIST] [-G GIDLIST] [-t TERMLIST] "
 		 "[PATTERN]\n");
-	exit (opt == '?' ? 0 : 2);
+	exit (opt == '?' ? EXIT_SUCCESS : EXIT_USAGE);
 }
 
 
-static union el *
-split_list (const char *restrict str, int (*convert)(const char *, union el *))
+static union el *split_list (const char *restrict str, int (*convert)(const char *, union el *))
 {
 	char *copy = strdup (str);
 	char *ptr = copy;
@@ -91,14 +95,14 @@ split_list (const char *restrict str, int (*convert)(const char *, union el *))
 			// add 1 because slot zero is a count
 			list = realloc (list, 1 + size * sizeof *list);
 			if (list == NULL)
-				exit (3);
+				exit (EXIT_FATAL);
 		}
 		sep_pos = strchr (ptr, ',');
 		if (sep_pos)
 			*sep_pos = 0;
 		// Use ++i instead of i++ because slot zero is a count
 		if (!convert (ptr, &list[++i]))
-			exit (2);
+			exit (EXIT_USAGE);
 		if (sep_pos)
 			ptr = sep_pos + 1;
 	} while (sep_pos);
@@ -113,11 +117,9 @@ split_list (const char *restrict str, int (*convert)(const char *, union el *))
 	return list;
 }
 
-/* strict_atol returns a Boolean: TRUE if the input string contains a
-   plain number, FALSE if there are any non-digits. */
-
-static int
-strict_atol (const char *restrict str, long *restrict value)
+// strict_atol returns a Boolean: TRUE if the input string
+// contains a plain number, FALSE if there are any non-digits.
+static int strict_atol (const char *restrict str, long *restrict value)
 {
 	int res = 0;
 	int sign = 1;
@@ -139,8 +141,7 @@ strict_atol (const char *restrict str, long *restrict value)
 	return 1;
 }
 
-static int
-conv_uid (const char *restrict name, union el *restrict e)
+static int conv_uid (const char *restrict name, union el *restrict e)
 {
 	struct passwd *pwd;
 
@@ -158,8 +159,7 @@ conv_uid (const char *restrict name, union el *restrict e)
 }
 
 
-static int
-conv_gid (const char *restrict name, union el *restrict e)
+static int conv_gid (const char *restrict name, union el *restrict e)
 {
 	struct group *grp;
 
@@ -177,8 +177,7 @@ conv_gid (const char *restrict name, union el *restrict e)
 }
 
 
-static int
-conv_pgrp (const char *restrict name, union el *restrict e)
+static int conv_pgrp (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
 		fprintf (stderr, "%s: invalid process group: %s\n",
@@ -191,8 +190,7 @@ conv_pgrp (const char *restrict name, union el *restrict e)
 }
 
 
-static int
-conv_sid (const char *restrict name, union el *restrict e)
+static int conv_sid (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
 		fprintf (stderr, "%s: invalid session id: %s\n",
@@ -205,8 +203,7 @@ conv_sid (const char *restrict name, union el *restrict e)
 }
 
 
-static int
-conv_num (const char *restrict name, union el *restrict e)
+static int conv_num (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
 		fprintf (stderr, "%s: not a number: %s\n",
@@ -217,16 +214,14 @@ conv_num (const char *restrict name, union el *restrict e)
 }
 
 
-static int
-conv_str (const char *restrict name, union el *restrict e)
+static int conv_str (const char *restrict name, union el *restrict e)
 {
 	e->str = strdup (name);
 	return 1;
 }
 
 
-static int
-match_numlist (long value, const union el *restrict list)
+static int match_numlist (long value, const union el *restrict list)
 {
 	int found = 0;
 	if (list == NULL)
@@ -241,8 +236,7 @@ match_numlist (long value, const union el *restrict list)
 	return found;
 }
 
-static int
-match_strlist (const char *restrict value, const union el *restrict list)
+static int match_strlist (const char *restrict value, const union el *restrict list)
 {
 	int found = 0;
 	if (list == NULL)
@@ -257,8 +251,7 @@ match_strlist (const char *restrict value, const union el *restrict list)
 	return found;
 }
 
-static void
-output_numlist (const union el *restrict list, int num)
+static void output_numlist (const union el *restrict list, int num)
 {
 	int i;
 	const char *delim = opt_delim;
@@ -269,8 +262,7 @@ output_numlist (const union el *restrict list, int num)
 	}
 }
 
-static void
-output_strlist (const union el *restrict list, int num)
+static void output_strlist (const union el *restrict list, int num)
 {
 // FIXME: escape codes
 	int i;
@@ -282,8 +274,7 @@ output_strlist (const union el *restrict list, int num)
 	}
 }
 
-static PROCTAB *
-do_openproc (void)
+static PROCTAB *do_openproc (void)
 {
 	PROCTAB *ptp;
 	int flags = 0;
@@ -301,7 +292,7 @@ do_openproc (void)
 		int i = num;
 		uid_t *uids = malloc (num * sizeof (uid_t));
 		if (uids == NULL)
-			exit (3);
+			exit (EXIT_FATAL);
 		while (i-- > 0) {
 			uids[i] = opt_euid[i+1].num;
 		}
@@ -313,8 +304,7 @@ do_openproc (void)
 	return ptp;
 }
 
-static regex_t *
-do_regcomp (void)
+static regex_t * do_regcomp (void)
 {
 	regex_t *preg = NULL;
 
@@ -325,11 +315,11 @@ do_regcomp (void)
 
 		preg = malloc (sizeof (regex_t));
 		if (preg == NULL)
-			exit (3);
+			exit (EXIT_FATAL);
 		if (opt_exact) {
 			re = malloc (strlen (opt_pattern) + 5);
 			if (re == NULL)
-				exit (3);
+				exit (EXIT_FATAL);
 			sprintf (re, "^(%s)$", opt_pattern);
 		} else {
 		 	re = opt_pattern;
@@ -339,14 +329,13 @@ do_regcomp (void)
 		if (re_err) {
 			regerror (re_err, preg, errbuf, sizeof(errbuf));
 			fputs(errbuf,stderr);
-			exit (2);
+			exit (EXIT_USAGE);
 		}
 	}
 	return preg;
 }
 
-static union el *
-select_procs (int *num)
+static union el * select_procs (int *num)
 {
 	PROCTAB *ptp;
 	proc_t task;
@@ -447,7 +436,7 @@ select_procs (int *num)
 				size = size * 5 / 4 + 4;
 				list = realloc(list, size * sizeof *list);
 				if (list == NULL)
-					exit (3);
+					exit (EXIT_FATAL);
 			}
 			if (opt_long) {
 				char buff[5096];  // FIXME
@@ -467,8 +456,7 @@ select_procs (int *num)
 }
 
 
-static void
-parse_opts (int argc, char **argv)
+static void parse_opts (int argc, char **argv)
 {
 	char opts[32] = "";
 	int opt;
@@ -539,7 +527,7 @@ parse_opts (int argc, char **argv)
 			break;
 		case 'V':
 			fprintf(stdout, "%s (%s)\n", progname, procps_version);
-			exit(0);
+			exit(EXIT_SUCCESS);
 //		case 'c':   // Solaris: match by contract ID
 //			break;
 		case 'd':   // Solaris: change the delimiter
@@ -621,8 +609,7 @@ parse_opts (int argc, char **argv)
 }
 
 
-int
-main (int argc, char **argv)
+int main (int argc, char *argv[])
 {
 	union el *procs;
 	int num;
@@ -644,5 +631,5 @@ main (int argc, char **argv)
 		else
 			output_numlist(procs,num);
 	}
-	return !num;
+	return !num; // exit(EXIT_SUCCESS) if match, otherwise exit(EXIT_FAILURE)
 }
