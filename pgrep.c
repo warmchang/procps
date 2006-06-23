@@ -148,6 +148,42 @@ static int strict_atol (const char *restrict str, long *restrict value)
 
 #include <sys/file.h>
 
+// Seen non-BSD code do this:
+//
+//if (fcntl_lock(pid_fd, F_SETLK, F_WRLCK, SEEK_SET, 0, 0) == -1)
+//                return -1;
+int fcntl_lock(int fd, int cmd, int type, int whence, int start, int len)
+{
+        struct flock lock[1];
+
+        lock->l_type = type;
+        lock->l_whence = whence;
+        lock->l_start = start;
+        lock->l_len = len;
+
+        return fcntl(fd, cmd, lock);
+}
+                                                
+
+// We try a read lock. The daemon should have a write lock.
+// Seen using flock: FreeBSD code
+static int has_flock(int fd)
+{
+	return flock(fd, LOCK_SH|LOCK_NB)==-1 && errno==EWOULDBLOCK;
+}
+
+// We try a read lock. The daemon should have a write lock.
+// Seen using fcntl: libslack
+static int has_fcntl(int fd)
+{
+	struct flock f;  // seriously, struct flock is for a fnctl lock!
+	f.l_type = F_RDLCK;
+	f.l_whence = SEEK_SET;
+	f.l_start = 0;
+	f.l_len = 0;
+	return fcntl(fd,F_SETLK,&f)==-1 && (errno==EACCES || errno==EAGAIN);
+}
+
 static union el *read_pidfile(void)
 {
 	char buf[12];
@@ -162,13 +198,9 @@ static union el *read_pidfile(void)
 		goto out;
 	if(fstat(fd,&sbuf) || !S_ISREG(sbuf.st_mode) || sbuf.st_size<1)
 		goto out;
-	if(opt_flock){   // Not that Linux uses this? Maybe fcntl is used?
-		// an errno==EWOULDBLOCK means we accept the PID
-		if(!flock(fd, LOCK_SH|LOCK_NB))  // success is bad
+	// type of lock, if any, is not standardized on Linux
+	if(opt_flock && !has_flock(fd) && !has_fcntl(fd))
 			goto out;
-		if(errno != EWOULDBLOCK)
-			goto out;
-	}
 	memset(buf,'\0',sizeof buf);
 	buf[read(fd,buf+1,sizeof buf-2)] = '\0';
 	pid = strtoul(buf+1,&endp,10);
