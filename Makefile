@@ -18,7 +18,7 @@
 
 VERSION      := 3
 SUBVERSION   := 2
-MINORVERSION := 6
+MINORVERSION := 7
 TARVERSION   := $(VERSION).$(SUBVERSION).$(MINORVERSION)
 
 ############ vars
@@ -255,7 +255,7 @@ watch: % : %.o
 ############ progX --> progY
 
 snice kill: skill
-	ln -f skill $@
+	$(ln_f) skill $@
 
 pkill: pgrep
-	ln -f pgrep pkill
+	$(ln_f) pgrep pkill
