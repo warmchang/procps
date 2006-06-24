@@ -365,7 +365,12 @@ static int Preload(const char *restrict const filename) {
    int rc = 0;
    char *name, *value;
 
-   if (!filename || ((fp = fopen(filename, "r")) == NULL)) {
+   fp = (filename[0]=='-' && !filename[1])
+      ? stdin
+      : fopen(filename, "r")
+   ;
+
+   if (!fp) {
       fprintf(stderr, ERR_PRELOAD_FILE, filename);
       return -1;
    }
