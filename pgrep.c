@@ -55,7 +55,7 @@ static int opt_newest = 0;
 static int opt_negate = 0;
 static int opt_exact = 0;
 static int opt_signal = SIGTERM;
-static int opt_flock = 0;
+static int opt_lock = 0;
 static int opt_case = 0;
 
 static const char *opt_delim = "\n";
@@ -199,7 +199,7 @@ static union el *read_pidfile(void)
 	if(fstat(fd,&sbuf) || !S_ISREG(sbuf.st_mode) || sbuf.st_size<1)
 		goto out;
 	// type of lock, if any, is not standardized on Linux
-	if(opt_flock && !has_flock(fd) && !has_fcntl(fd))
+	if(opt_lock && !has_flock(fd) && !has_fcntl(fd))
 			goto out;
 	memset(buf,'\0',sizeof buf);
 	buf[read(fd,buf+1,sizeof buf-2)] = '\0';
@@ -581,8 +581,8 @@ static void parse_opts (int argc, char **argv)
 //			break;
 //		case 'J':   // Solaris: match by project ID (name or number)
 //			break;
-		case 'L':   // FreeBSD: fail if pidfile (see -F) not locked with flock()
-			opt_flock++;
+		case 'L':   // FreeBSD: fail if pidfile (see -F) not locked
+			opt_lock++;
 			break;
 //		case 'M':   // FreeBSD: specify core (OS crash dump) file
 //			break;
@@ -619,6 +619,7 @@ static void parse_opts (int argc, char **argv)
 	  		opt_pgrp = split_list (optarg, conv_pgrp);
 			if (opt_pgrp == NULL)
 				usage (opt);
+			++criteria_count;
 			break;
 //		case 'i':   // FreeBSD: ignore case. OpenBSD: withdrawn. See -I. This sucks.
 //			if (opt_case)
@@ -677,7 +678,7 @@ static void parse_opts (int argc, char **argv)
 		}
 	}
 
-	if(opt_flock && !opt_pidfile){
+	if(opt_lock && !opt_pidfile){
 		fprintf(stderr, "%s: -L without -F makes no sense\n",progname);
 		usage(0);
 	}

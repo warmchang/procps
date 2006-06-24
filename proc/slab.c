@@ -306,7 +306,7 @@ int get_slabinfo(struct slab_info **list, struct slab_stat *stats)
 
 	slabfile = fopen(SLABINFO_FILE, "r");
 	if (!slabfile) {
-		perror("fopen");
+		perror("fopen " SLABINFO_FILE);
 		return 1;
 	}
 
