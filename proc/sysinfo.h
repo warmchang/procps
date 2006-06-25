@@ -12,7 +12,7 @@ extern int have_privs;     /* boolean, true if setuid or similar */
 
 #if 0
 #define JT double
-extern void seven_cpu_numbers(JT *uret, JT *nret, JT *sret, JT *iret, JT *wret, JT *xret, JT *yret);
+extern void eight_cpu_numbers(JT *uret, JT *nret, JT *sret, JT *iret, JT *wret, JT *xret, JT *yret, JT *zret);
 #undef JT
 #endif
 
@@ -56,7 +56,7 @@ extern unsigned long kb_pagetables;
 
 #define BUFFSIZE (64*1024)
 typedef unsigned long long jiff;
-extern void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow, jiff *restrict cxxx, jiff *restrict cyyy,
+extern void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow, jiff *restrict cxxx, jiff *restrict cyyy, jiff *restrict czzz,
 	     unsigned long *restrict pin, unsigned long *restrict pout, unsigned long *restrict s_in, unsigned long *restrict sout,
 	     unsigned *restrict intr, unsigned *restrict ctxt,
 	     unsigned int *restrict running, unsigned int *restrict blocked,

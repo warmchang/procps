@@ -238,11 +238,11 @@ static void init_libproc(void){
 #define NAN (-0.0)
 #endif
 #define JT unsigned long long
-void seven_cpu_numbers(double *restrict uret, double *restrict nret, double *restrict sret, double *restrict iret, double *restrict wret, double *restrict xret, double *restrict yret){
-    double tmp_u, tmp_n, tmp_s, tmp_i, tmp_w, tmp_x, tmp_y;
+void eight_cpu_numbers(double *restrict uret, double *restrict nret, double *restrict sret, double *restrict iret, double *restrict wret, double *restrict xret, double *restrict yret, double *restrict zret){
+    double tmp_u, tmp_n, tmp_s, tmp_i, tmp_w, tmp_x, tmp_y, tmp_z;
     double scale;  /* scale values to % */
-    static JT old_u, old_n, old_s, old_i, old_w, old_x, old_y;
-    JT new_u, new_n, new_s, new_i, new_w, new_x, new_y;
+    static JT old_u, old_n, old_s, old_i, old_w, old_x, old_y, old_z;
+    JT new_u, new_n, new_s, new_i, new_w, new_x, new_y, new_z;
     JT ticks_past; /* avoid div-by-0 by not calling too often :-( */
 
     tmp_w = 0.0;
@@ -251,10 +251,12 @@ void seven_cpu_numbers(double *restrict uret, double *restrict nret, double *res
     new_x = 0;
     tmp_y = 0.0;
     new_y = 0;
+    tmp_z = 0.0;
+    new_z = 0;
  
     FILE_TO_BUF(STAT_FILE,stat_fd);
-    sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &new_u, &new_n, &new_s, &new_i, &new_w, &new_x, &new_y);
-    ticks_past = (new_u+new_n+new_s+new_i+new_w+new_x+new_y)-(old_u+old_n+old_s+old_i+old_w+old_x+old_y);
+    sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &new_u, &new_n, &new_s, &new_i, &new_w, &new_x, &new_y, &new_z);
+    ticks_past = (new_u+new_n+new_s+new_i+new_w+new_x+new_y+new_z)-(old_u+old_n+old_s+old_i+old_w+old_x+old_y+old_z);
     if(ticks_past){
       scale = 100.0 / (double)ticks_past;
       tmp_u = ( (double)new_u - (double)old_u ) * scale;
@@ -264,6 +266,7 @@ void seven_cpu_numbers(double *restrict uret, double *restrict nret, double *res
       tmp_w = ( (double)new_w - (double)old_w ) * scale;
       tmp_x = ( (double)new_x - (double)old_x ) * scale;
       tmp_y = ( (double)new_y - (double)old_y ) * scale;
+      tmp_z = ( (double)new_z - (double)old_z ) * scale;
     }else{
       tmp_u = NAN;
       tmp_n = NAN;
@@ -272,21 +275,24 @@ void seven_cpu_numbers(double *restrict uret, double *restrict nret, double *res
       tmp_w = NAN;
       tmp_x = NAN;
       tmp_y = NAN;
+      tmp_z = NAN;
     }
     SET_IF_DESIRED(uret, tmp_u);
     SET_IF_DESIRED(nret, tmp_n);
     SET_IF_DESIRED(sret, tmp_s);
     SET_IF_DESIRED(iret, tmp_i);
     SET_IF_DESIRED(wret, tmp_w);
-    SET_IF_DESIRED(iret, tmp_x);
-    SET_IF_DESIRED(wret, tmp_y);
+    SET_IF_DESIRED(xret, tmp_x);
+    SET_IF_DESIRED(yret, tmp_y);
+    SET_IF_DESIRED(zret, tmp_z);
     old_u=new_u;
     old_n=new_n;
     old_s=new_s;
     old_i=new_i;
     old_w=new_w;
-    old_i=new_x;
-    old_w=new_y;
+    old_x=new_x;
+    old_y=new_y;
+    old_z=new_z;
 }
 #undef JT
 #endif
@@ -361,7 +367,7 @@ static void getrunners(unsigned int *restrict running, unsigned int *restrict bl
 
 /***********************************************************************/
 
-void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow, jiff *restrict cxxx, jiff *restrict cyyy,
+void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow, jiff *restrict cxxx, jiff *restrict cyyy, jiff *restrict czzz,
 	     unsigned long *restrict pin, unsigned long *restrict pout, unsigned long *restrict s_in, unsigned long *restrict sout,
 	     unsigned *restrict intr, unsigned *restrict ctxt,
 	     unsigned int *restrict running, unsigned int *restrict blocked,
@@ -384,9 +390,10 @@ void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff
   *ciow = 0;  /* not separated out until the 2.5.41 kernel */
   *cxxx = 0;  /* not separated out until the 2.6.0-test4 kernel */
   *cyyy = 0;  /* not separated out until the 2.6.0-test4 kernel */
+  *czzz = 0;  /* not separated out until the 2.6.11 kernel */
 
   b = strstr(buff, "cpu ");
-  if(b) sscanf(b,  "cpu  %Lu %Lu %Lu %Lu %Lu %Lu %Lu", cuse, cice, csys, cide, ciow, cxxx, cyyy);
+  if(b) sscanf(b,  "cpu  %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", cuse, cice, csys, cide, ciow, cxxx, cyyy, czzz);
 
   b = strstr(buff, "page ");
   if(b) sscanf(b,  "page %lu %lu", pin, pout);

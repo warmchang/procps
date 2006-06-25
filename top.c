@@ -934,14 +934,16 @@ static CPU_t *cpus_refresh (CPU_t *cpus)
    if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
    cpus[Cpu_tot].x = 0;  // FIXME: can't tell by kernel version number
    cpus[Cpu_tot].y = 0;  // FIXME: can't tell by kernel version number
-   num = sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu",
+   cpus[Cpu_tot].z = 0;  // FIXME: can't tell by kernel version number
+   num = sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu",
       &cpus[Cpu_tot].u,
       &cpus[Cpu_tot].n,
       &cpus[Cpu_tot].s,
       &cpus[Cpu_tot].i,
       &cpus[Cpu_tot].w,
       &cpus[Cpu_tot].x,
-      &cpus[Cpu_tot].y
+      &cpus[Cpu_tot].y,
+      &cpus[Cpu_tot].z
    );
    if (num < 4)
          std_err("failed /proc/stat read");
@@ -957,9 +959,10 @@ static CPU_t *cpus_refresh (CPU_t *cpus)
       if (!fgets(buf, sizeof(buf), fp)) std_err("failed /proc/stat read");
       cpus[i].x = 0;  // FIXME: can't tell by kernel version number
       cpus[i].y = 0;  // FIXME: can't tell by kernel version number
-      num = sscanf(buf, "cpu%u %Lu %Lu %Lu %Lu %Lu %Lu %Lu",
+      cpus[i].z = 0;  // FIXME: can't tell by kernel version number
+      num = sscanf(buf, "cpu%u %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu",
          &cpus[i].id,
-         &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].w, &cpus[i].x, &cpus[i].y
+         &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i, &cpus[i].w, &cpus[i].x, &cpus[i].y, &cpus[i].z
       );
       if (num < 4)
             std_err("failed /proc/stat read");
@@ -1601,6 +1604,8 @@ static void before (char *me)
       States_fmts = STATES_line2x5;
    if (linux_version_code >= LINUX_VERSION(2, 6, 0))  // grrr... only some 2.6.0-testX :-(
       States_fmts = STATES_line2x6;
+   if (linux_version_code >= LINUX_VERSION(2, 6, 11))
+      States_fmts = STATES_line2x7;
 
       /* get virtual page size -- nearing huge! */
    Page_size = getpagesize();
@@ -2874,7 +2879,7 @@ static void summaryhlp (CPU_t *cpu, const char *pfx)
    // we'll trim to zero if we get negative time ticks,
    // which has happened with some SMP kernels (pre-2.4?)
 #define TRIMz(x)  ((tz = (SIC_t)(x)) < 0 ? 0 : tz)
-   SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, tot_frme, tz;
+   SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, z_frme, tot_frme, tz;
    float scale;
 
    u_frme = cpu->u - cpu->u_sav;
@@ -2884,7 +2889,8 @@ static void summaryhlp (CPU_t *cpu, const char *pfx)
    w_frme = cpu->w - cpu->w_sav;
    x_frme = cpu->x - cpu->x_sav;
    y_frme = cpu->y - cpu->y_sav;
-   tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme + x_frme + y_frme;
+   z_frme = cpu->z - cpu->z_sav;
+   tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme + x_frme + y_frme + z_frme;
    if (tot_frme < 1) tot_frme = 1;
    scale = 100.0 / (float)tot_frme;
 
@@ -2901,7 +2907,8 @@ static void summaryhlp (CPU_t *cpu, const char *pfx)
          (float)i_frme * scale,
          (float)w_frme * scale,
          (float)x_frme * scale,
-         (float)y_frme * scale
+         (float)y_frme * scale,
+         (float)z_frme * scale
       )
    );
    Msg_row += 1;
@@ -2914,6 +2921,7 @@ static void summaryhlp (CPU_t *cpu, const char *pfx)
    cpu->w_sav = cpu->w;
    cpu->x_sav = cpu->x;
    cpu->y_sav = cpu->y;
+   cpu->z_sav = cpu->z;
 
 #undef TRIMz
 }

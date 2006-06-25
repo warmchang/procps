@@ -113,7 +113,8 @@ These are percentages of total CPU time.
 us: Time spent running non-kernel code. (user time, including nice time)
 sy: Time spent running kernel code. (system time)
 id: Time spent idle. Prior to Linux 2.5.41, this includes IO-wait time.
-wa: Time spent waiting for IO. Prior to Linux 2.5.41, shown as zero.
+wa: Time spent waiting for IO. Prior to Linux 2.5.41, included in idle.
+st: Time stolen from a virtual machine. Prior to Linux 2.6.11, unknown.
 
 .PP
 .SH FIELD DESCRIPTION FOR DISK MODE 

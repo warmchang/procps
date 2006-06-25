@@ -13,6 +13,7 @@ w: stale utmp entries snuck in via uninitialized var -- thanks Robert A Basch
 pgrep/pkill: fix some realloc-related crashes       #353894
 pgrep/pkill: g is criteria (PLD Linux, patch found in locked filing cabinet)
 sysctl: use - for stdin (PLD Linux: beware of the leopard)
+top: show CPU time stolen from a virtual machine
 
 procps-3.2.5 --> procps-3.2.6
 

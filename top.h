@@ -211,8 +211,8 @@ typedef struct HST_t {
 // calculations.  It exists primarily for SMP support but serves
 // all environments.
 typedef struct CPU_t {
-   TIC_t u, n, s, i, w, x, y;                             // as represented in /proc/stat
-   TIC_t u_sav, s_sav, n_sav, i_sav, w_sav, x_sav, y_sav; // in the order of our display
+   TIC_t u, n, s, i, w, x, y, z; // as represented in /proc/stat
+   TIC_t u_sav, s_sav, n_sav, i_sav, w_sav, x_sav, y_sav, z_sav; // in the order of our display
    unsigned id;  // the CPU ID number
 } CPU_t;
 
@@ -389,6 +389,8 @@ typedef struct WIN_t {
    " %#5.1f%% \02user,\03 %#5.1f%% \02system,\03 %#5.1f%% \02nice,\03 %#5.1f%% \02idle,\03 %#5.1f%% \02IO-wait\03\n"
 #define STATES_line2x6  "%s\03" \
    " %#4.1f%% \02us,\03 %#4.1f%% \02sy,\03 %#4.1f%% \02ni,\03 %#4.1f%% \02id,\03 %#4.1f%% \02wa,\03 %#4.1f%% \02hi,\03 %#4.1f%% \02si\03\n"
+#define STATES_line2x7  "%s\03" \
+   "%#5.1f%%\02us,\03%#5.1f%%\02sy,\03%#5.1f%%\02ni,\03%#5.1f%%\02id,\03%#5.1f%%\02wa,\03%#5.1f%%\02hi,\03%#5.1f%%\02si,\03%#5.1f%%\02st\03\n"
 #ifdef CASEUP_SUMMK
 #define MEMORY_line1  "Mem: \03" \
    " %8luK \02total,\03 %8luK \02used,\03 %8luK \02free,\03 %8luK \02buffers\03\n"

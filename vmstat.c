@@ -150,9 +150,9 @@ static int format_1000(unsigned long long val64, char *restrict dst){
 ////////////////////////////////////////////////////////////////////////////
 
 static void new_header(void){
-  printf("procs -----------memory---------- ---swap-- -----io---- --system-- ----cpu----\n");
+  printf("procs -----------memory---------- ---swap-- -----io---- -system-- ----cpu----\n");
   printf(
-    "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %5s %2s %2s %2s %2s\n",
+    "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s\n",
     "r","b",
     "swpd", "free", a_option?"inact":"buff", a_option?"active":"cache",
     "si","so",
@@ -173,13 +173,13 @@ static unsigned long unitConvert(unsigned int size){
 ////////////////////////////////////////////////////////////////////////////
 
 static void new_format(void) {
-  const char format[]="%2u %2u %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %5u %2u %2u %2u %2u\n";
+  const char format[]="%2u %2u %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u\n";
   unsigned int tog=0; /* toggle switch for cleaner code */
   unsigned int i;
   unsigned int hz = Hertz;
   unsigned int running,blocked,dummy_1,dummy_2;
-  jiff cpu_use[2], cpu_nic[2], cpu_sys[2], cpu_idl[2], cpu_iow[2], cpu_xxx[2], cpu_yyy[2];
-  jiff duse, dsys, didl, diow, Div, divo2;
+  jiff cpu_use[2], cpu_nic[2], cpu_sys[2], cpu_idl[2], cpu_iow[2], cpu_xxx[2], cpu_yyy[2], cpu_zzz[2];
+  jiff duse, dsys, didl, diow, dstl, Div, divo2;
   unsigned long pgpgin[2], pgpgout[2], pswpin[2], pswpout[2];
   unsigned int intr[2], ctxt[2];
   unsigned int sleep_half; 
@@ -190,7 +190,7 @@ static void new_format(void) {
   new_header();
   meminfo();
 
-  getstat(cpu_use,cpu_nic,cpu_sys,cpu_idl,cpu_iow,cpu_xxx,cpu_yyy,
+  getstat(cpu_use,cpu_nic,cpu_sys,cpu_idl,cpu_iow,cpu_xxx,cpu_yyy,cpu_zzz,
 	  pgpgin,pgpgout,pswpin,pswpout,
 	  intr,ctxt,
 	  &running,&blocked,
@@ -200,7 +200,8 @@ static void new_format(void) {
   dsys= *cpu_sys + *cpu_xxx + *cpu_yyy;
   didl= *cpu_idl;
   diow= *cpu_iow;
-  Div= duse+dsys+didl+diow;
+  dstl= *cpu_zzz;
+  Div= duse+dsys+didl+diow+dstl;
   divo2= Div/2UL;
   printf(format,
 	 running, blocked,
@@ -216,7 +217,8 @@ static void new_format(void) {
 	 (unsigned)( (100*duse                    + divo2) / Div ),
 	 (unsigned)( (100*dsys                    + divo2) / Div ),
 	 (unsigned)( (100*didl                    + divo2) / Div ),
-	 (unsigned)( (100*diow                    + divo2) / Div )
+	 (unsigned)( (100*diow                    + divo2) / Div ) /* ,
+	 (unsigned)( (100*dstl                    + divo2) / Div ) */
   );
 
   for(i=1;i<num_updates;i++) { /* \\\\\\\\\\\\\\\\\\\\ main loop ////////////////// */
@@ -226,7 +228,7 @@ static void new_format(void) {
 
     meminfo();
 
-    getstat(cpu_use+tog,cpu_nic+tog,cpu_sys+tog,cpu_idl+tog,cpu_iow+tog,cpu_xxx+tog,cpu_yyy+tog,
+    getstat(cpu_use+tog,cpu_nic+tog,cpu_sys+tog,cpu_idl+tog,cpu_iow+tog,cpu_xxx+tog,cpu_yyy+tog,cpu_zzz+tog,
 	  pgpgin+tog,pgpgout+tog,pswpin+tog,pswpout+tog,
 	  intr+tog,ctxt+tog,
 	  &running,&blocked,
@@ -236,6 +238,7 @@ static void new_format(void) {
     dsys= cpu_sys[tog]-cpu_sys[!tog] + cpu_xxx[tog]-cpu_xxx[!tog] + cpu_yyy[tog]-cpu_yyy[!tog];
     didl= cpu_idl[tog]-cpu_idl[!tog];
     diow= cpu_iow[tog]-cpu_iow[!tog];
+    dstl= cpu_zzz[tog]-cpu_zzz[!tog];
 
     /* idle can run backwards for a moment -- kernel "feature" */
     if(debt){
@@ -247,7 +250,7 @@ static void new_format(void) {
       didl = 0;
     }
 
-    Div= duse+dsys+didl+diow;
+    Div= duse+dsys+didl+diow+dstl;
     divo2= Div/2UL;
     printf(format,
            running, blocked,
@@ -263,7 +266,8 @@ static void new_format(void) {
 	   (unsigned)( (100*duse+divo2)/Div ), /*us*/
 	   (unsigned)( (100*dsys+divo2)/Div ), /*sy*/
 	   (unsigned)( (100*didl+divo2)/Div ), /*id*/
-	   (unsigned)( (100*diow+divo2)/Div )  /*wa*/
+	   (unsigned)( (100*diow+divo2)/Div )/*, //wa
+	   (unsigned)( (100*dstl+divo2)/Div )  //st  */
     );
   }
 }
@@ -504,13 +508,14 @@ static void disksum_format(void) {
 
 static void sum_format(void) {
   unsigned int running, blocked, btime, processes;
-  jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow, cpu_xxx, cpu_yyy;
+  jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow, cpu_xxx, cpu_yyy, cpu_zzz;
   unsigned long pgpgin, pgpgout, pswpin, pswpout;
   unsigned int intr, ctxt;
 
   meminfo();
 
-  getstat(&cpu_use, &cpu_nic, &cpu_sys, &cpu_idl, &cpu_iow, &cpu_xxx, &cpu_yyy,
+  getstat(&cpu_use, &cpu_nic, &cpu_sys, &cpu_idl,
+          &cpu_iow, &cpu_xxx, &cpu_yyy, &cpu_zzz,
 	  &pgpgin, &pgpgout, &pswpin, &pswpout,
 	  &intr, &ctxt,
 	  &running, &blocked,
@@ -533,6 +538,7 @@ static void sum_format(void) {
   printf("%13Lu IO-wait cpu ticks\n", cpu_iow);
   printf("%13Lu IRQ cpu ticks\n", cpu_xxx);
   printf("%13Lu softirq cpu ticks\n", cpu_yyy);
+  printf("%13Lu stolen cpu ticks\n", cpu_zzz);
   printf("%13lu pages paged in\n", pgpgin);
   printf("%13lu pages paged out\n", pgpgout);
   printf("%13lu pages swapped in\n", pswpin);
@@ -547,11 +553,12 @@ static void sum_format(void) {
 
 static void fork_format(void) {
   unsigned int running, blocked, btime, processes;
-  jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow, cpu_xxx, cpu_yyy;
+  jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow, cpu_xxx, cpu_yyy, cpu_zzz;
   unsigned long pgpgin, pgpgout, pswpin, pswpout;
   unsigned int intr, ctxt;
 
-  getstat(&cpu_use, &cpu_nic, &cpu_sys, &cpu_idl, &cpu_iow, &cpu_xxx, &cpu_yyy,
+  getstat(&cpu_use, &cpu_nic, &cpu_sys, &cpu_idl,
+	  &cpu_iow, &cpu_xxx, &cpu_yyy, &cpu_zzz,
 	  &pgpgin, &pgpgout, &pswpin, &pswpout,
 	  &intr, &ctxt,
 	  &running, &blocked,
