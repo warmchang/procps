@@ -273,6 +273,7 @@ static int chin (int ech, char *buf, unsigned cnt)
 
 // This routine simply formats whatever the caller wants and
 // returns a pointer to the resulting 'const char' string...
+static const char *fmtmk (const char *fmts, ...) __attribute__((format(printf,1,2)));
 static const char *fmtmk (const char *fmts, ...)
 {
    static char buf[BIGBUFSIZ];          // with help stuff, our buffer
@@ -560,6 +561,7 @@ static void capsmk (WIN_t *q)
 // Due to the postponed opening of ksym, using open_psdb_message,
 // if P_WCH had been selected and the program is restarted, the
 // message would otherwise be displayed prematurely.
+static void msg_save (const char *fmts, ...) __attribute__((format(printf,1,2)));
 static void msg_save (const char *fmts, ...)
 {
    char tmp[SMLBUFSIZ];
@@ -2470,6 +2472,7 @@ static void do_key (unsigned c)
 {
    // standardized 'secure mode' errors
    static const char err_secure[] = "\aUnavailable in secure mode";
+   static const char err_num_cpus[] = "\aSorry, terminal is not big enough";
 #ifdef WARN_NOT_SMP
    // standardized 'smp' errors
    static const char err_smp[] = "\aSorry, only 1 cpu detected";
@@ -2477,6 +2480,10 @@ static void do_key (unsigned c)
 
    switch (c) {
       case '1':
+         if (Cpu_tot+7 > Screen_rows && !CHKw(Curwin, View_CPUSUM)) {
+            show_msg(err_num_cpus);
+            break;
+         }
 #ifdef WARN_NOT_SMP
          if (Cpu_tot > 1) TOGw(Curwin, View_CPUSUM);
          else show_msg(err_smp);

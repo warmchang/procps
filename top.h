@@ -391,14 +391,14 @@ typedef struct WIN_t {
    " %#4.1f%% \02us,\03 %#4.1f%% \02sy,\03 %#4.1f%% \02ni,\03 %#4.1f%% \02id,\03 %#4.1f%% \02wa,\03 %#4.1f%% \02hi,\03 %#4.1f%% \02si\03\n"
 #ifdef CASEUP_SUMMK
 #define MEMORY_line1  "Mem: \03" \
-   " %8uK \02total,\03 %8uK \02used,\03 %8uK \02free,\03 %8uK \02buffers\03\n"
+   " %8luK \02total,\03 %8luK \02used,\03 %8luK \02free,\03 %8luK \02buffers\03\n"
 #define MEMORY_line2  "Swap:\03" \
-   " %8uK \02total,\03 %8uK \02used,\03 %8uK \02free,\03 %8uK \02cached\03\n"
+   " %8luK \02total,\03 %8luK \02used,\03 %8luK \02free,\03 %8luK \02cached\03\n"
 #else
 #define MEMORY_line1  "Mem: \03" \
-   " %8uk \02total,\03 %8uk \02used,\03 %8uk \02free,\03 %8uk \02buffers\03\n"
+   " %8luk \02total,\03 %8luk \02used,\03 %8luk \02free,\03 %8luk \02buffers\03\n"
 #define MEMORY_line2  "Swap:\03" \
-   " %8uk \02total,\03 %8uk \02used,\03 %8uk \02free,\03 %8uk \02cached\03\n"
+   " %8luk \02total,\03 %8luk \02used,\03 %8luk \02free,\03 %8luk \02cached\03\n"
 #endif
 
 // Keyboard Help specially formatted string(s) --
