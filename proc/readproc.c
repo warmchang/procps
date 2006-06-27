@@ -1201,7 +1201,7 @@ void look_up_our_self(proc_t *p) {
     char sbuf[1024];
 
     if(file2str("/proc/self", "stat", sbuf, sizeof sbuf) == -1){
-        fprintf(stderr, "Error, do this: mount -t proc none /proc\n");
+        fprintf(stderr, "Error, do this: mount -t proc proc /proc\n");
         _exit(47);
     }
     stat2proc(sbuf, p);    // parse /proc/self/stat

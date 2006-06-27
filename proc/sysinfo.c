@@ -30,8 +30,8 @@ long smp_num_cpus;     /* number of CPUs */
 #define BAD_OPEN_MESSAGE					\
 "Error: /proc must be mounted\n"				\
 "  To mount /proc at boot you need an /etc/fstab line like:\n"	\
-"      /proc   /proc   proc    defaults\n"			\
-"  In the meantime, run \"mount /proc /proc -t proc\"\n"
+"      proc   /proc   proc    defaults\n"			\
+"  In the meantime, run \"mount proc /proc -t proc\"\n"
 
 #define STAT_FILE    "/proc/stat"
 static int stat_fd = -1;
