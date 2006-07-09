@@ -46,10 +46,11 @@
 
 typedef struct tty_map_node {
   struct tty_map_node *next;
-  unsigned major_number;
-  unsigned minor_first, minor_last;
+  unsigned short devfs_type;  // bool
+  unsigned short major_number;
+  unsigned minor_first;
+  unsigned minor_last;
   char name[16];
-  char devfs_type;
 } tty_map_node;
 
 static tty_map_node *tty_map = NULL;
@@ -66,7 +67,7 @@ static void load_drivers(void){
   if(bytes == -1) goto fail;
   buf[bytes] = '\0';
   p = buf;
-  while(( p = strstr(p, " /dev/") )){
+  while(( p = strstr(p, " /dev/") )){  // " /dev/" is the second column
     tty_map_node *tmn;
     int len;
     char *end;
@@ -83,7 +84,9 @@ static void load_drivers(void){
       len -= 2;
       tmn->devfs_type = 1;
     }
-    strncpy(tmn->name, p, len);
+    if(len >= sizeof tmn->name)
+      len = sizeof tmn->name - 1; // mangle it to avoid overflow
+    memcpy(tmn->name, p, len);
     p = end; /* set p to point past the %d as well if there is one */
     while(*p == ' ') p++;
     tmn->major_number = atoi(p);
@@ -143,7 +146,7 @@ static const char low_density_names[][6] = {
 "SG0",
 "SMX0",  "SMX1",  "SMX2",
 "MM0",  "MM1",
-"CPM0", "CPM1", "CPM2", "CPM3", "CPM4", "CPM5",
+"CPM0", "CPM1", "CPM2", "CPM3", /* "CPM4", "CPM5", */  // bad allocation?
 "IOC0",  "IOC1",  "IOC2",  "IOC3",  "IOC4",  "IOC5",  "IOC6",  "IOC7",
 "IOC8",  "IOC9",  "IOC10", "IOC11", "IOC12", "IOC13", "IOC14", "IOC15",
 "IOC16", "IOC17", "IOC18", "IOC19", "IOC20", "IOC21", "IOC22", "IOC23",
@@ -162,8 +165,22 @@ static const char low_density_names[][6] = {
 "AT8",  "AT9",  "AT10", "AT11", "AT12", "AT13", "AT14", "AT15",
 "NX0",  "NX1",  "NX2",  "NX3",  "NX4",  "NX5",  "NX6",  "NX7",
 "NX8",  "NX9",  "NX10", "NX11", "NX12", "NX13", "NX14", "NX15",
-"J0",
+"J0",   // minor is 186
 };
+
+#if 0
+// test code
+#include <stdio.h>
+#define AS(x) (sizeof(x)/sizeof((x)[0]))
+int main(int argc, char *argv[]){
+  int i = 0;
+  while(i<AS(low_density_names)){
+    printf("%3d = /dev/tty%.6s\n",i,low_density_names[i]);
+    i++;
+  }
+  return 0;
+}
+#endif
 
 /* Try to guess the device name (useful until /proc/PID/tty is added) */
 static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
