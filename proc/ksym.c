@@ -338,7 +338,7 @@ quiet_goodbye:
 
 #define VCNT 16
 
-static int sysmap_mmap(const char *restrict const filename, void (*message)(const char *restrict, ...)) {
+static int sysmap_mmap(const char *restrict const filename, message_fn message) {
   struct stat sbuf;
   char *endp;
   int fd;
@@ -470,6 +470,7 @@ static void read_and_parse(void){
 
 /*********************************/
 
+static void default_message(const char *restrict format, ...) __attribute__((format(printf,1,2)));
 static void default_message(const char *restrict format, ...) {
     va_list arg;
 
@@ -482,7 +483,7 @@ static void default_message(const char *restrict format, ...) {
 
 static int use_wchan_file;
 
-int open_psdb_message(const char *restrict override, void (*message)(const char *, ...)) {
+int open_psdb_message(const char *restrict override, message_fn message) {
   static const char *sysmap_paths[] = {
     "/boot/System.map-%s",
     "/boot/System.map",

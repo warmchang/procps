@@ -22,6 +22,7 @@
 // This is the buffer size for a tty name. Any path is legal,
 // which makes PAGE_SIZE appropriate (see kernel source), but
 // that is only 99% portable and utmp only holds 32 anyway.
+// We need at least 20 for guess_name().
 #define TTY_NAME_SIZE 128
 
 /* Who uses what:
@@ -130,7 +131,7 @@ static int driver_name(char *restrict const buf, unsigned maj, unsigned min){
 }
 
 // major 204 is a mess -- "Low-density serial ports"
-static const char low_density_names[][4] = {
+static const char low_density_names[][6] = {
 "LU0",  "LU1",  "LU2",  "LU3",
 "FB0",
 "SA0",  "SA1",  "SA2",
@@ -142,6 +143,26 @@ static const char low_density_names[][4] = {
 "SG0",
 "SMX0",  "SMX1",  "SMX2",
 "MM0",  "MM1",
+"CPM0", "CPM1", "CPM2", "CPM3", "CPM4", "CPM5",
+"IOC0",  "IOC1",  "IOC2",  "IOC3",  "IOC4",  "IOC5",  "IOC6",  "IOC7",
+"IOC8",  "IOC9",  "IOC10", "IOC11", "IOC12", "IOC13", "IOC14", "IOC15",
+"IOC16", "IOC17", "IOC18", "IOC19", "IOC20", "IOC21", "IOC22", "IOC23",
+"IOC24", "IOC25", "IOC26", "IOC27", "IOC28", "IOC29", "IOC30", "IOC31",
+"VR0", "VR1",
+"IOC84",  "IOC85",  "IOC86",  "IOC87",  "IOC88",  "IOC89",  "IOC90",  "IOC91",
+"IOC92",  "IOC93",  "IOC94", "IOC95", "IOC96", "IOC97", "IOC98", "IOC99",
+"IOC100", "IOC101", "IOC102", "IOC103", "IOC104", "IOC105", "IOC106", "IOC107",
+"IOC108", "IOC109", "IOC110", "IOC111", "IOC112", "IOC113", "IOC114", "IOC115",
+"SIOC0",  "SIOC1",  "SIOC2",  "SIOC3",  "SIOC4",  "SIOC5",  "SIOC6",  "SIOC7",
+"SIOC8",  "SIOC9",  "SIOC10", "SIOC11", "SIOC12", "SIOC13", "SIOC14", "SIOC15",
+"SIOC16", "SIOC17", "SIOC18", "SIOC19", "SIOC20", "SIOC21", "SIOC22", "SIOC23",
+"SIOC24", "SIOC25", "SIOC26", "SIOC27", "SIOC28", "SIOC29", "SIOC30", "SIOC31",
+"PSC0", "PSC1", "PSC2", "PSC3", "PSC4", "PSC5",
+"AT0",  "AT1",  "AT2",  "AT3",  "AT4",  "AT5",  "AT6",  "AT7",
+"AT8",  "AT9",  "AT10", "AT11", "AT12", "AT13", "AT14", "AT15",
+"NX0",  "NX1",  "NX2",  "NX3",  "NX4",  "NX5",  "NX6",  "NX7",
+"NX8",  "NX9",  "NX10", "NX11", "NX12", "NX13", "NX14", "NX15",
+"J0",
 };
 
 /* Try to guess the device name (useful until /proc/PID/tty is added) */
@@ -151,21 +172,18 @@ static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
   unsigned tmpmin = min;
 
   switch(maj){
-  case   4:
-    if(min<64){
-      sprintf(buf, "/dev/tty%d", min);
-      break;
-    }
-    if(min<128){  /* to 255 on newer systems */
-      sprintf(buf, "/dev/ttyS%d", min-64);
-      break;
-    }
-    tmpmin = min & 0x3f;  /* FALL THROUGH */
   case   3:      /* /dev/[pt]ty[p-za-o][0-9a-z] is 936 */
     if(tmpmin > 255) return 0;   // should never happen; array index protection
     t0 = "pqrstuvwxyzabcde"[tmpmin>>4];
     t1 = "0123456789abcdef"[tmpmin&0x0f];
     sprintf(buf, "/dev/tty%c%c", t0, t1);
+    break;
+  case   4:
+    if(min<64){
+      sprintf(buf, "/dev/tty%d", min);
+      break;
+    }
+    sprintf(buf, "/dev/ttyS%d", min-64);
     break;
   case  11:  sprintf(buf, "/dev/ttyB%d",  min); break;
   case  17:  sprintf(buf, "/dev/ttyH%d",  min); break;
@@ -195,13 +213,17 @@ static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
   case 188:  sprintf(buf, "/dev/ttyUSB%d", min); break; /* bummer, 9-char */
   case 204:
     if(min >= sizeof low_density_names / sizeof low_density_names[0]) return 0;
-    sprintf(buf, "/dev/tty%s",  low_density_names[min]);
+    memcpy(buf,"/dev/tty",8);
+    memcpy(buf+8, low_density_names[min], sizeof low_density_names[0]);
+    buf[8 + sizeof low_density_names[0]] = '\0';
+//    snprintf(buf, 9 + sizeof low_density_names[0], "/dev/tty%.*s", sizeof low_density_names[0], low_density_names[min]);
     break;
   case 208:  sprintf(buf, "/dev/ttyU%d",  min); break;
-  case 216:  sprintf(buf, "/dev/ttyUB%d",  min); break;
+  case 216:  sprintf(buf, "/dev/ttyUB%d",  min); break; // "/dev/rfcomm%d" now?
   case 224:  sprintf(buf, "/dev/ttyY%d",  min); break;
   case 227:  sprintf(buf, "/dev/3270/tty%d", min); break; /* bummer, HUGE */
   case 229:  sprintf(buf, "/dev/iseries/vtty%d",  min); break; /* bummer, HUGE */
+  case 256:  sprintf(buf, "/dev/ttyEQ%d",  min); break;
   default: return 0;
   }
   if(stat(buf, &sbuf) < 0) return 0;
