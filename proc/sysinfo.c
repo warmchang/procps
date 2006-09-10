@@ -153,6 +153,7 @@ static void old_Hertz_hack(void){
   case   95 ...  105 :  Hertz =  100; break; /* normal Linux */
   case  124 ...  132 :  Hertz =  128; break; /* MIPS, ARM */
   case  195 ...  204 :  Hertz =  200; break; /* normal << 1 */
+  case  247 ...  252 :  Hertz =  250; break;
   case  253 ...  260 :  Hertz =  256; break;
   case  393 ...  408 :  Hertz =  400; break; /* normal << 2 */
   case  790 ...  808 :  Hertz =  800; break; /* normal << 3 */

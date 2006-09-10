@@ -231,7 +231,7 @@ static const char *parse_sysv_option(void){
     // In the meantime, please do not add to it. The list is
     // intended to ONLY contain flags defined by the POSIX and UNIX
     // standards published by The Open Group, IEEE, and ISO.
-    if(!strchr("aAdefgGlnoptuU", *flagptr)) not_pure_unix = 1;
+    if(!strchr("aAdefgGlnoptuU", *flagptr)) not_pure_unix = 1;  // dude, -Z ain't in POSIX
 
     switch(*flagptr){
     case 'A':

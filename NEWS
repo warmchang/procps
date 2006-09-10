@@ -1,3 +1,7 @@
+procps-3.2.7 --> procps-3.2.8
+
+ps: document SCHED_BATCH and add "see also" for stime
+
 procps-3.2.6 --> procps-3.2.7
 
 top: document H option -- thanks Tony Ernst

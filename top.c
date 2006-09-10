@@ -2485,7 +2485,7 @@ static void do_key (unsigned c)
 
    switch (c) {
       case '1':
-         if (Cpu_tot+7 > Screen_rows && !CHKw(Curwin, View_CPUSUM)) {
+         if (Cpu_tot+7 > Screen_rows && CHKw(Curwin, View_CPUSUM)) {
             show_msg(err_num_cpus);
             break;
          }

@@ -884,6 +884,7 @@ time the command started.  If the process was started less
 than 24 hours ago, the output format is "\ HH:MM",
 else it is "mmm\ dd"
 (where mmm is the three letters of the month).
+See also \fBlstart\fR, \fBstart\fR, \fBstart_time\fR, and \fBstime\fR.
 T}
 
 bsdtime	TIME	T{
@@ -915,6 +916,8 @@ FF	SCHED_FIFO
 .br
 RR	SCHED_RR
 .br
+B	SCHED_BATCH
+.br
 ?	unknown value
 T}
 
@@ -929,6 +932,8 @@ TS	SCHED_OTHER
 FF	SCHED_FIFO
 .br
 RR	SCHED_RR
+.br
+B	SCHED_BATCH
 .br
 ?	unknown value
 T}
@@ -1065,6 +1070,7 @@ T}
 
 lstart	STARTED	T{
 time the command started.
+See also \fBbsdstart\fR, \fBstart\fR, \fBstart_time\fR, and \fBstime\fR.
 T}
 
 lwp	LWP	T{
@@ -1132,6 +1138,8 @@ FF	SCHED_FIFO
 .br
 RR	SCHED_RR
 .br
+B	SCHED_BATCH
+.br
 ?	unknown value
 T}
 
@@ -1189,8 +1197,9 @@ information displayed.  (alias\ \fBstate\fR).
 T}
 
 sched	SCH	T{
-scheduling policy of the process.  The policies sched_other, sched_fifo,
-and sched_rr are respectively displayed as 0,\ 1,\ and\ 2.
+scheduling policy of the process.  The policies sched_other,
+sched_fifo, sched_rr, and sched_batch are respectively
+displayed as 0,\ 1,\ 2,\ and\ 3.
 T}
 
 sess	SESS	T{
@@ -1255,6 +1264,7 @@ If the process was started less than 24 hours ago,
 the output format is "HH:MM:SS",
 else it is "\ \ mmm\ dd"
 (where mmm is a three\-letter month\ name).
+See also \fBlstart\fR, \fBbsdstart\fR, \fBstart_time\fR, and \fBstime\fR.
 T}
 
 start_time	START	T{
@@ -1263,6 +1273,7 @@ Only the year will be displayed if the process was not
 started the same year \fBps\fR was invoked,
 or\ "mmmdd" if\ it was not started the same day,
 or\ "HH:MM" otherwise.
+See also \fBbsdstart\fR, \fBstart\fR, \fBlstart\fR, and \fBstime\fR.
 T}
 
 stat	STAT	T{
