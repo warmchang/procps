@@ -297,7 +297,7 @@ static int WriteSetting(const char *setting) {
       return 0;
    } /* end if */
 
-   equals = index(setting, '=');
+   equals = strchr(setting, '=');
  
    if (!equals) {
       fprintf(stderr, ERR_NO_EQUALS, setting);
@@ -546,7 +546,7 @@ int main(int argc, char *argv[]) {
          if (NameOnly && Quiet)   // nonsense
             return Usage(me);
          SwitchesAllowed = false;
-         if (WriteMode || index(*argv, '='))
+         if (WriteMode || strchr(*argv, '='))
             ReturnCode = WriteSetting(*argv);
          else
             ReturnCode = ReadSetting(*argv);
