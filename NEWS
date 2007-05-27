@@ -2,6 +2,7 @@ procps-3.2.7 --> procps-3.2.8
 
 ps: document SCHED_BATCH and add "see also" for stime
 ps: man page less ambiguous
+top: normal exit code should be 0          #341272
 
 procps-3.2.6 --> procps-3.2.7
 

@@ -405,11 +405,12 @@ static void bye_bye (FILE *fp, int eno, const char *str)
          * Normal end of execution.
          * catches:
          *    SIGALRM, SIGHUP, SIGINT, SIGPIPE, SIGQUIT and SIGTERM */
-static void end_pgm (int dont_care_sig) NORETURN;
-static void end_pgm (int dont_care_sig)
+static void end_pgm (int sig) NORETURN;
+static void end_pgm (int sig)
 {
-   (void)dont_care_sig;
-   bye_bye(stdout, 1, NULL);
+   if(sig)
+      sig |= 0x80; // for a proper process exit code
+   bye_bye(stdout, sig, NULL);
 }
 
 
@@ -653,7 +654,7 @@ static void show_special (int interact, const char *glob)
    while ((lin_end = strchr(glob, '\n'))) {
 
          /* create a local copy we can extend and otherwise abuse */
-      memcpy(lin, glob, (unsigned)(lin_end - glob));
+      memcpy(lin, glob, (unsigned)(lin_end - glob));    FIXME -- buffer overflow
          /* zero terminate this part and prepare to parse substrings */
       lin[lin_end - glob] = '\0';
       room = Screen_cols;
