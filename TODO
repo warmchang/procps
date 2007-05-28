@@ -37,13 +37,20 @@ ones get filled in with something logical -- entries must never be deleted!
 
 Add all the stuff Solaris has. This would also replace ptrace.
 
+---------------------- watch --------------------------
+
+Tolerate UTF-8.
+
+Tolerate color, bold, underline, etc. #129334
+
+Tolerate stderr.  #420377 #155227 #225549
+
 ---------------------- w --------------------------
 
 The LOGIN@ column sometimes has a space in it. This makes correct
 scripting difficult.
 
-Verify that DNS control does not give a user the power to specify
-arbitrary data for the FROM column. (could set root's VGA color map!)
+Time formats are demented.
 
 ---------------------- vmstat --------------------------
 

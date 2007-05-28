@@ -135,7 +135,7 @@ static int ReadSetting(const char *restrict const name) {
    }
 
    /* used to open the file */
-   tmpname = malloc(strlen(name)+strlen(PROC_PATH)+1);
+   tmpname = malloc(strlen(name)+strlen(PROC_PATH)+2);
    strcpy(tmpname, PROC_PATH);
    strcat(tmpname, name); 
    slashdot(tmpname+strlen(PROC_PATH),'.','/'); /* change . to / */
