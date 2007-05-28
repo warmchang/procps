@@ -290,7 +290,7 @@ static int diskpartition_format(const char* partition_name){
     fDiskstat=fopen("/proc/diskstats","rb");
     if(!fDiskstat){
         fprintf(stderr, "Your kernel doesn't support diskstat. (2.5.70 or above required)\n"); 
-        exit(0);
+        exit(EXIT_FAILURE);
     }
 
     fclose(fDiskstat);
@@ -400,7 +400,7 @@ static void diskformat(void){
     }
   }else{
     fprintf(stderr, "Your kernel doesn't support diskstat (2.5.70 or above required)\n"); 
-    exit(0);
+    exit(EXIT_FAILURE);
   } 
 }
 
