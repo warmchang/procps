@@ -296,10 +296,10 @@ main(int argc, char *argv[])
 				}
 				move(y, x);
 				if (option_differences) {
-					int oldch = inch();
+					chtype oldch = inch();
 					char oldc = oldch & A_CHARTEXT;
 					attr = !first_screen
-					    && (c != oldc
+					    && ((char)c != oldc
 						||
 						(option_differences_cumulative
 						 && (oldch & A_ATTRIBUTES)));

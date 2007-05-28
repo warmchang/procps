@@ -654,9 +654,12 @@ static void show_special (int interact, const char *glob)
    while ((lin_end = strchr(glob, '\n'))) {
 
          /* create a local copy we can extend and otherwise abuse */
-      memcpy(lin, glob, (unsigned)(lin_end - glob));    FIXME -- buffer overflow
+      size_t amt = lin_end - glob;
+      if(amt > sizeof lin - 1)
+         amt = sizeof lin - 1;  // shit happens
+      memcpy(lin, glob, amt);
          /* zero terminate this part and prepare to parse substrings */
-      lin[lin_end - glob] = '\0';
+      lin[amt] = '\0';
       room = Screen_cols;
       sub_beg = sub_end = lin;
       *(rp = row) = '\0';
@@ -669,6 +672,9 @@ static void show_special (int interact, const char *glob)
                cap = Curwin->captab[(int)*sub_end];
                *sub_end = '\0';
                snprintf(tmp, sizeof(tmp), "%s%.*s%s", cap, room, sub_beg, Caps_off);
+               amt = strlen(tmp);
+               if(rp - tmp + amt + 1 > sizeof tmp)
+                  goto overflow;  // shit happens
                rp = scat(rp, tmp);
                room -= (sub_end - sub_beg);
                sub_beg = ++sub_end;
@@ -678,7 +684,7 @@ static void show_special (int interact, const char *glob)
          }
          if (unlikely(0 >= room)) break; /* skip substrings that won't fit */
       }
-
+overflow:
       if (interact) PUTT("%s%s\n", row, Cap_clr_eol);
       else PUFF("%s%s\n", row, Cap_clr_eol);
       glob = ++lin_end;                 /* point to next line (maybe) */
