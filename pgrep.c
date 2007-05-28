@@ -70,18 +70,21 @@ static union el *opt_ruid = NULL;
 static char *opt_pattern = NULL;
 static char *opt_pidfile = NULL;
 
-
 static int usage (int opt) NORETURN;
 static int usage (int opt)
 {
+	int err = (opt=='?'); /* getopt() uses '?' to mark an error */
+	FILE *fp = err ? stderr : stdout;
+
 	if (i_am_pkill)
-		fprintf (stderr, "Usage: pkill [-SIGNAL] [-fvx] ");
+		fprintf (fp, "Usage: pkill [-SIGNAL] [-fvx] ");
 	else
-		fprintf (stderr, "Usage: pgrep [-flvx] [-d DELIM] ");
-	fprintf (stderr, "[-n|-o] [-P PPIDLIST] [-g PGRPLIST] [-s SIDLIST]\n"
+		fprintf (fp, "Usage: pgrep [-flvx] [-d DELIM] ");
+	fprintf (fp, "[-n|-o] [-P PPIDLIST] [-g PGRPLIST] [-s SIDLIST]\n"
 		 "\t[-u EUIDLIST] [-U UIDLIST] [-G GIDLIST] [-t TERMLIST] "
 		 "[PATTERN]\n");
-	exit (opt == '?' ? EXIT_SUCCESS : EXIT_USAGE);
+
+	exit(err ? EXIT_USAGE : EXIT_SUCCESS);
 }
 
 
