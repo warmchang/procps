@@ -316,6 +316,7 @@ no_more_args:
       // The standard says we return non-zero if an error occurs. Thus if
       // killing two processes gives 0 for one and EPERM for the other,
       // we are required to return both zero and non-zero. Quantum kill???
+      perror("kill");
       exitvalue = 1;
       continue;
     }
