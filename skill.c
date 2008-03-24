@@ -309,6 +309,14 @@ no_more_args:
     pid = strtol(argv[argc],&endp,10);
     if(!*endp){
       if(!kill((pid_t)pid,signo)) continue;
+      // The UNIX standard contradicts itself. If at least one process
+      // is matched for each PID (as if processes could share PID!) and
+      // "the specified signal was successfully processed" (the systcall
+      // returned zero?) for at least one of those processes, then we must
+      // exit with zero. Note that an error might have also occured.
+      // The standard says we return non-zero if an error occurs. Thus if
+      // killing two processes gives 0 for one and EPERM for the other,
+      // we are required to return both zero and non-zero. Quantum kill???
       exitvalue = 1;
       continue;
     }
