@@ -729,17 +729,6 @@ static const char *parse_bsd_option(void){
       trace("x Select processes without controlling ttys\n");
       simple_select |= SS_B_x;
       break;
-#if 0
-    case 'y':
-      // DragonFlyBSD iac (interactivity measure) format
-      // uid,pid,ppid,cpu,pri,iac,nice,wchan,state,tt,time,command
-      // (they use 'Y' to sort by this "iac" thing; 'y' implies 'Y')
-      // Range is -127 .. 127, with lower numbers being more
-      // interactive and higher numbers more batch-like.
-      trace("y Display interactivity measure\n");
-      format_flags |= FF_Bv;
-      break;
-#endif
     case '-':
       return "Embedded '-' among BSD options makes no sense.";
       break;

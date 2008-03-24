@@ -325,6 +325,8 @@ static sort_node *do_one_sort_spec(const char *spec){
   if(*spec == '-'){
     reverse = 1;
     spec++;
+  } else if(*spec == '+'){
+    spec++;
   }
   fs = search_format_array(spec);
   if(fs){

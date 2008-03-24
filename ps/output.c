@@ -612,10 +612,10 @@ static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp
   case  3: return snprintf(outbuf, COLWID, "B");   // SCHED_BATCH
   case  4: return snprintf(outbuf, COLWID, "#4");  // SCHED_ISO? (Con Kolivas)
   case  5: return snprintf(outbuf, COLWID, "#5");  // SCHED_IDLEPRIO? (Con Kolivas)
-  case  8: return snprintf(outbuf, COLWID, "#6");  //
-  case  8: return snprintf(outbuf, COLWID, "#7");  //
+  case  6: return snprintf(outbuf, COLWID, "#6");  //
+  case  7: return snprintf(outbuf, COLWID, "#7");  //
   case  8: return snprintf(outbuf, COLWID, "#8");  //
-  case  8: return snprintf(outbuf, COLWID, "#9");  //
+  case  9: return snprintf(outbuf, COLWID, "#9");  //
   default: return snprintf(outbuf, COLWID, "?");   // unknown value
   }
 }
@@ -971,6 +971,12 @@ static int help_pr_sig(unsigned long long sig){
 }
 #endif
 
+// This one is always thread-specific pending. (from Dragonfly BSD)
+static int pr_tsig(char *restrict const outbuf, const proc_t *restrict const pp){
+  return help_pr_sig(outbuf, pp->_sigpnd);
+}
+// This one is (wrongly?) thread-specific when printing thread lines,
+// but process-pending otherwise.
 static int pr_sig(char *restrict const outbuf, const proc_t *restrict const pp){
   return help_pr_sig(outbuf, pp->signal);
 }
@@ -1331,7 +1337,6 @@ static const format_struct format_array[] = {
 {"fuser",     "FUSER",   pr_fuser,    sr_fuser,   8, USR,    LNX, ET|USER},
 {"gid",       "GID",     pr_egid,     sr_egid,    5,   0,    SUN, ET|RIGHT},
 {"group",     "GROUP",   pr_egroup,   sr_egroup,  8, GRP,    U98, ET|USER},
-{"iac",       "IAC",     pr_nop,      sr_nop,     4,   0,    BSD, AN|RIGHT}, // DragonFly
 {"ignored",   "IGNORED", pr_sigignore,sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigignore*/
 {"inblk",     "INBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*inblock*/
 {"inblock",   "INBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*inblk*/
@@ -1468,6 +1473,7 @@ static const format_struct format_array[] = {
 {"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, PO|PIDMAX|RIGHT},
 {"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, PO|PIDMAX|RIGHT},
 {"tsid",      "TSID",    pr_nop,      sr_nop,     5,   0,    BSD, PO|PIDMAX|RIGHT},
+{"tsig",      "PENDING", pr_tsig,     sr_nop,     9,   0,    BSD, ET|SIGNAL},
 {"tsiz",      "TSIZ",    pr_tsiz,     sr_nop,     4,   0,    BSD, PO|RIGHT},
 {"tt",        "TT",      pr_tty8,     sr_tty,     8,   0,    BSD, PO|LEFT},
 {"tty",       "TT",      pr_tty8,     sr_tty,     8,   0,    U98, PO|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */

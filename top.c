@@ -405,6 +405,7 @@ static void bye_bye (FILE *fp, int eno, const char *str)
          * Normal end of execution.
          * catches:
          *    SIGALRM, SIGHUP, SIGINT, SIGPIPE, SIGQUIT and SIGTERM */
+// FIXME: can't do this shit in a signal handler
 static void end_pgm (int sig) NORETURN;
 static void end_pgm (int sig)
 {
@@ -459,6 +460,7 @@ static void std_out (const char *str)
          * Suspend ourself.
          * catches:
          *    SIGTSTP, SIGTTIN and SIGTTOU */
+// FIXME: can't do this shit in a signal handler!
 static void suspend (int dont_care_sig)
 {
   (void)dont_care_sig;
@@ -478,7 +480,7 @@ static void suspend (int dont_care_sig)
    putp(Cap_rmam);
 }
 
-
+
 /*######  Misc Color/Display support  ####################################*/
 
    /* macro to test if a basic (non-color) capability is valid
@@ -673,7 +675,7 @@ static void show_special (int interact, const char *glob)
                *sub_end = '\0';
                snprintf(tmp, sizeof(tmp), "%s%.*s%s", cap, room, sub_beg, Caps_off);
                amt = strlen(tmp);
-               if(rp - tmp + amt + 1 > sizeof tmp)
+               if(rp - row + amt + 1 > sizeof row)
                   goto overflow;  // shit happens
                rp = scat(rp, tmp);
                room -= (sub_end - sub_beg);

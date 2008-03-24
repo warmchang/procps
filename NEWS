@@ -1,8 +1,9 @@
 procps-3.2.7 --> procps-3.2.8
 
+ps: allow "+" in sort specifications, as in man page     rh208217
 ps: document SCHED_BATCH and add "see also" for stime
 ps: man page less ambiguous
-top: normal exit code should be 0          #341272 #354255
+top: normal exit code should be 0          #341272 #354255 rh199174
 pgrep: usage error should exit with 2       #413383
 vmstat: use EXIT_FAILURE -- thanks Yoshio Nakamura   #425492
 sysctl: fix crash -- thanks Steinar Gunderson      #423704

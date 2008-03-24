@@ -43,7 +43,9 @@ static int meminfo_fd = -1;
 #define VMINFO_FILE "/proc/vmstat"
 static int vminfo_fd = -1;
 
-static char buf[1024];
+// As of 2.6.24 /proc/meminfo seems to need 888 on 64-bit,
+// and would need 1258 if the obsolete fields were there.
+static char buf[2048];
 
 /* This macro opens filename only if necessary and seeks to 0 so
  * that successive calls to the functions are more efficient.
@@ -531,6 +533,13 @@ unsigned long kb_pagetables;
 static unsigned long kb_vmalloc_chunk;
 static unsigned long kb_vmalloc_total;
 static unsigned long kb_vmalloc_used;
+// seen on 2.6.24-rc6-git12
+static unsigned long kb_anon_pages;
+static unsigned long kb_bounce;
+static unsigned long kb_commit_limit;
+static unsigned long kb_nfs_unstable;
+static unsigned long kb_swap_reclaimable;
+static unsigned long kb_swap_unreclaimable;
 
 void meminfo(void){
   char namebuf[16]; /* big enough to hold any row name */
@@ -540,8 +549,11 @@ void meminfo(void){
   char *tail;
   static const mem_table_struct mem_table[] = {
   {"Active",       &kb_active},       // important
+  {"AnonPages",    &kb_anon_pages},
+  {"Bounce",       &kb_bounce},
   {"Buffers",      &kb_main_buffers}, // important
   {"Cached",       &kb_main_cached},  // important
+  {"CommitLimit",  &kb_commit_limit},
   {"Committed_AS", &kb_committed_as},
   {"Dirty",        &kb_dirty},        // kB version of vmstat nr_dirty
   {"HighFree",     &kb_high_free},
@@ -557,8 +569,11 @@ void meminfo(void){
   {"MemFree",      &kb_main_free},    // important
   {"MemShared",    &kb_main_shared},  // important, but now gone!
   {"MemTotal",     &kb_main_total},   // important
+  {"NFS_Unstable", &kb_nfs_unstable},
   {"PageTables",   &kb_pagetables},   // kB version of vmstat nr_page_table_pages
   {"ReverseMaps",  &nr_reversemaps},  // same as vmstat nr_page_table_pages
+  {"SReclaimable", &kb_swap_reclaimable}, // "swap reclaimable" (dentry and inode structures)
+  {"SUnreclaim",   &kb_swap_unreclaimable},
   {"Slab",         &kb_slab},         // kB version of vmstat nr_slab
   {"SwapCached",   &kb_swap_cached},
   {"SwapFree",     &kb_swap_free},    // important
