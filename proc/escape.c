@@ -15,7 +15,7 @@
 #include "escape.h"
 #include "readproc.h"
 
-#if (__GNU_LIBRARY__ >= 6)
+#if (__GNU_LIBRARY__ >= 6) && (!defined(__UCLIBC__) || defined(__UCLIBC_HAS_WCHAR__))
 # include <wchar.h>
 # include <wctype.h>
 # include <stdlib.h>  /* MB_CUR_MAX */
@@ -23,7 +23,7 @@
 # include <langinfo.h>
 #endif
 
-#if (__GNU_LIBRARY__ >= 6)
+#if (__GNU_LIBRARY__ >= 6) && (!defined(__UCLIBC__) || defined(__UCLIBC_HAS_WCHAR__))
 static int escape_str_utf8(char *restrict dst, const char *restrict src, int bufsize, int *maxcells){
   int my_cells = 0;
   int my_bytes = 0;
@@ -116,7 +116,7 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
   "????????????????????????????????"
   "????????????????????????????????";
   
-#if (__GNU_LIBRARY__ >= 6)
+#if (__GNU_LIBRARY__ >= 6) && (!defined(__UCLIBC__) || defined(__UCLIBC_HAS_WCHAR__))
   static int utf_init=0;
   
   if(utf_init==0){
