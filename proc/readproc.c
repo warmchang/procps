@@ -1354,7 +1354,7 @@ proc_data_t *readproctab3 (int(*want_task)(proc_t *buf), PROCTAB *restrict const
  * and filled out proc_t structure.
  */
 proc_t * get_proc_stats(pid_t pid, proc_t *p) {
-	static char path[PATH_MAX], sbuf[1024];
+	static char path[32], sbuf[1024];
 	struct stat statbuf;
 
 	sprintf(path, "/proc/%d", pid);

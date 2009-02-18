@@ -35,7 +35,6 @@ static void version(void)
 
 int main(int argc, char* argv[])
 {
-     static char buf[PATH_MAX+1];      // null terminate string via static
      regex_t re;
      int i;
 
@@ -59,6 +58,8 @@ int main(int argc, char* argv[])
 
      for (i = 1; i < argc; i++) {
           if (regexec(&re, argv[i], 0, NULL, 0) != 0) {
+               /* Constant 27 is the length of the error string "pwdx: ... " */
+               char buf[27 + strlen (argv[i]) + 1];
                snprintf(buf, sizeof buf, "pwdx: invalid process id: %s\n", argv[i]);
                buf[sizeof(buf)-1] = '\0';
                die(buf);
@@ -69,9 +70,14 @@ int main(int argc, char* argv[])
 
      regfree(&re);
 
+     int alloclen = 128;
+     char *pathbuf = malloc(alloclen);
+
      for (i = 1; i < argc; i++) {
-          char * s = buf;
+          char * s;
           int len;
+          /* Constant 10 is the length of strings "/proc/" + "/cwd" + 1 */
+          char buf[10 + strlen(argv[i]) + 1];
           
           // At this point, all arguments are in the form /proc/nnnn
           // or nnnn, so a simple check based on the first char is
@@ -83,10 +89,16 @@ int main(int argc, char* argv[])
 
           // buf contains /proc/nnnn/cwd symlink name on entry, the
           // target of that symlink on return
-          if ((len = readlink(buf, buf, PATH_MAX)) < 0) {
+          while ((len = readlink(buf, pathbuf, alloclen)) == alloclen) {
+               alloclen *= 2;
+               pathbuf = realloc(pathbuf, alloclen);
+          }
+
+          if (len < 0) {
                s = strerror(errno == ENOENT ? ESRCH : errno);
           } else {
-               buf[len] = 0;
+               pathbuf[len] = 0;
+               s = pathbuf;
           }
 
           printf("%s: %s\n", argv[i], s);
