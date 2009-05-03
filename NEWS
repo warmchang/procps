@@ -8,6 +8,7 @@ pgrep: usage error should exit with 2       #413383
 vmstat: use EXIT_FAILURE -- thanks Yoshio Nakamura   #425492
 sysctl: fix crash -- thanks Steinar Gunderson      #423704
 watch: tolerate umlauts                          #207103
+update /dev/tty* info to May 2009 devices.txt
 
 procps-3.2.6 --> procps-3.2.7
 

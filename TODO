@@ -63,6 +63,8 @@ Extract /proc/diskstats parsing from vmstat into libproc somewhere.
 Stop storing fields with duplicate info (often different
 units: kB and pages, seconds and jiffies) in the proc_t struct.
 
+Use own readdir code (assembly language) because glibc sucks ass.
+
 ---------------------- top -------------------------
 
 Share more stuff with ps.

@@ -28,22 +28,25 @@
 static void usage(void) NORETURN;
 static void usage(void){
   fprintf(stderr,
-    "Usage: pmap [-x | -d] [-q] pid...\n"
+    "Usage: pmap [-x | -d] [-q] [-A low,high] pid...\n"
     "-x  show details\n"
     "-d  show offset and device number\n"
     "-q  quiet; less header/footer info\n"
     "-V  show the version number\n"
+    "-A  limit results to the given range\n"
   );
   exit(1);
 }
 
+
+static unsigned KLONG range_low;
+static unsigned KLONG range_high = ~0ull;
 
 static int V_option;
 static int r_option;  // ignored -- for SunOS compatibility
 static int x_option;
 static int d_option;
 static int q_option;
-
 
 static unsigned shm_minor = ~0u;
 
@@ -155,6 +158,12 @@ static int one_proc(proc_t *p){
     unsigned long long file_offset, inode;
     unsigned dev_major, dev_minor;
     sscanf(mapbuf,"%"KLF"x-%"KLF"x %31s %Lx %x:%x %Lu", &start, &end, flags, &file_offset, &dev_major, &dev_minor, &inode);
+
+    if(start > range_high)
+      break;
+    if(end < range_low)
+      continue;
+
     tmp = strchr(mapbuf,'\n');
     if(tmp) *tmp='\0';
     tmp = mapbuf;
@@ -216,6 +225,9 @@ static int one_proc(proc_t *p){
     }
     
   }
+
+
+
 
   if(!q_option){
     if(x_option){
@@ -286,6 +298,35 @@ int main(int argc, char *argv[]){
         case 'q':
           q_option++;
           break;
+        case 'A':{
+            char *arg1;
+            if(walk[1]){
+              arg1 = walk+1;
+              walk += strlen(walk)-1;
+            }else{
+              arg1 = *++argv;
+              if(!arg1)
+                usage();
+            }
+            char *arg2 = strchr(arg1,',');
+            if(arg2)
+              *arg2 = '\0';
+            arg2 = arg2 ? arg2++ : arg1;
+            
+            if(*arg1)
+              range_low = STRTOUKL(arg1,&arg1,16);
+            if(*arg2)
+              range_high = STRTOUKL(arg2,&arg2,16);
+            if(*arg1 || *arg2)
+            	usage();
+          }
+          break;
+        case 'a': // Sun prints anon/swap reservations
+        case 'F': // Sun forces hostile ptrace-like grab
+        case 'l': // Sun shows unresolved dynamic names
+        case 'L': // Sun shows lgroup info
+        case 's': // Sun shows page sizes
+        case 'S': // Sun shows swap reservations
         default:
           usage();
         }

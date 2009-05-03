@@ -1431,7 +1431,7 @@ static const format_struct format_array[] = {
 {"sgroup",    "SGROUP",  pr_sgroup,   sr_sgroup,  8, GRP,    LNX, ET|USER},
 {"share",     "-",       pr_nop,      sr_share,   1, MEM,    LNX, PO|RIGHT},
 {"sid",       "SID",     pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT}, /* Sun & HP */
-{"sig",       "PENDING", pr_sig,      sr_nop,     9,   0,    XXX, ET|SIGNAL}, /*pending*/
+{"sig",       "PENDING", pr_sig,      sr_nop,     9,   0,    XXX, ET|SIGNAL}, /*pending -- Dragonfly uses this for whole-proc and "tsig" for thread */
 {"sig_block", "BLOCKED",  pr_sigmask, sr_nop,     9,   0,    LNX, TO|SIGNAL},
 {"sig_catch", "CATCHED", pr_sigcatch, sr_nop,     9,   0,    LNX, TO|SIGNAL},
 {"sig_ignore", "IGNORED",pr_sigignore, sr_nop,    9,   0,    LNX, TO|SIGNAL},
@@ -1473,7 +1473,7 @@ static const format_struct format_array[] = {
 {"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, PO|PIDMAX|RIGHT},
 {"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, PO|PIDMAX|RIGHT},
 {"tsid",      "TSID",    pr_nop,      sr_nop,     5,   0,    BSD, PO|PIDMAX|RIGHT},
-{"tsig",      "PENDING", pr_tsig,     sr_nop,     9,   0,    BSD, ET|SIGNAL},
+{"tsig",      "PENDING", pr_tsig,     sr_nop,     9,   0,    BSD, ET|SIGNAL}, /* Dragonfly used this for thread-specific, and "sig" for whole-proc */
 {"tsiz",      "TSIZ",    pr_tsiz,     sr_nop,     4,   0,    BSD, PO|RIGHT},
 {"tt",        "TT",      pr_tty8,     sr_tty,     8,   0,    BSD, PO|LEFT},
 {"tty",       "TT",      pr_tty8,     sr_tty,     8,   0,    U98, PO|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */

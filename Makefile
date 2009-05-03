@@ -148,9 +148,6 @@ endif
 # in case -O3 is enabled, avoid bloat
 ALL_CFLAGS += $(call check_gcc,-fno-inline-functions,)
 
-# ought to file a gcc bug about this nonsense
-ALL_CFLAGS += $(call check_gcc,-fno-threadsafe-statics,)
-
 endif
 endif
 endif

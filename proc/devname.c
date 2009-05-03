@@ -166,6 +166,12 @@ static const char low_density_names[][6] = {
 "NX0",  "NX1",  "NX2",  "NX3",  "NX4",  "NX5",  "NX6",  "NX7",
 "NX8",  "NX9",  "NX10", "NX11", "NX12", "NX13", "NX14", "NX15",
 "J0",   // minor is 186
+"UL0","UL1","UL2","UL3",
+"xvc0", // FAIL -- "/dev/xvc0" lacks "tty" prefix
+"PZ0","PZ1","PZ2","PZ3",
+"TX0","TX1","TX2","TX3","TX4","TX5","TX6","TX7",
+"SC0","SC1","SC2","SC3",
+"MAX0","MAX1","MAX2","MAX3",
 };
 
 #if 0
@@ -175,7 +181,7 @@ static const char low_density_names[][6] = {
 int main(int argc, char *argv[]){
   int i = 0;
   while(i<AS(low_density_names)){
-    printf("%3d = /dev/tty%.6s\n",i,low_density_names[i]);
+    printf("%3d = /dev/tty%.*s\n",i,sizeof low_density_names[i],low_density_names[i]);
     i++;
   }
   return 0;
