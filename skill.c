@@ -306,7 +306,7 @@ no_more_args:
     long pid;
     char *endp;
     pid = strtol(argv[argc],&endp,10);
-    if(!*endp){
+    if(!*endp && (endp != argv[argc])){
       if(!kill((pid_t)pid,signo)) continue;
       // The UNIX standard contradicts itself. If at least one process
       // is matched for each PID (as if processes could share PID!) and
