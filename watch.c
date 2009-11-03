@@ -9,6 +9,7 @@
  *
  * Changes by Albert Cahalan, 2002-2003.
  * stderr handling, exec, and beep option added by Morty Abzug, 2008
+ * Unicode Support added by Jarrod Lowe <procps@rrod.net> in 2009.
  */
 
 #include <ctype.h>
@@ -26,6 +27,7 @@
 #include <locale.h>
 #include "proc/procps.h"
 #include "config.h"
+#include <errno.h>
 
 #ifdef FORCE_8BIT
 #undef isprint
@@ -218,6 +220,32 @@ watch_usec_t get_time_usec() {
 	return USECS_PER_SEC*now.tv_sec + now.tv_usec;
 }
 
+// read a wide character from a popen'd stream
+#define MAX_ENC_BYTES 16
+wint_t my_getwc(FILE *s);
+wint_t my_getwc(FILE *s) {
+	char i[MAX_ENC_BYTES]; //assuming no encoding ever consumes more than 16 bytes
+	int byte = 0;
+	int convert;
+	int x;
+	wchar_t rval;
+	while(1) {
+		i[byte] = getc(s);
+		if (i[byte]==EOF) { return WEOF; }
+		byte++;
+		errno = 0;
+		mbtowc(NULL, NULL, 0);
+		convert = mbtowc(&rval, i, byte);
+		x = errno;
+		if(convert > 0) { return rval; } //legal conversion
+		if(byte == MAX_ENC_BYTES) {
+		while(byte > 1) { ungetc(i[--byte], s); } //at least *try* to fix up
+		errno = -EILSEQ;
+		return WEOF;
+		}
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -231,8 +259,11 @@ main(int argc, char *argv[])
 	    option_help = 0, option_version = 0;
 	double interval = 2;
 	char *command;
+	wchar_t *wcommand = NULL;
 	char **command_argv;
 	int command_length = 0;	/* not including final \0 */
+	int wcommand_columns = 0;	/* not including final \0 */
+	int wcommand_characters = 0; /* not including final \0 */
     watch_usec_t next_loop; /* next loop time in us, used for precise time
                                keeping only */
 	int pipefd[2];
@@ -331,6 +362,23 @@ main(int argc, char *argv[])
 		command[command_length] = '\0';
 	}
 
+	// convert to wide for printing purposes
+	//mbstowcs(NULL, NULL, 0);
+	wcommand_characters = mbstowcs(NULL, command, 0);
+	if(wcommand_characters < 0) {
+		fprintf(stderr, "Unicode Handling Error\n");
+		exit(1);
+	}
+	wcommand = (wchar_t*)malloc((wcommand_characters+1) * sizeof(wcommand));
+	if(wcommand == NULL) {
+		fprintf(stderr, "Unicode Handling Error (malloc)\n");
+		exit(1);
+	}
+	mbstowcs(wcommand, command, wcommand_characters+1);
+	wcommand_columns = wcswidth(wcommand, -1);
+
+
+
 	get_terminal_size();
 
 	/* Catch keyboard interrupts so we can put tty back in a sane state.  */
@@ -378,12 +426,44 @@ main(int argc, char *argv[])
 		if (show_title) {
 			// left justify interval and command,
 			// right justify time, clipping all to fit window width
-			asprintf(&header, "Every %.1fs: %.*s",
-				interval, min(width - 1, command_length), command);
-			mvaddstr(0, 0, header);
-			if (strlen(header) > (size_t) (width - tsl - 1))
-				mvaddstr(0, width - tsl - 4, "...  ");
-			mvaddstr(0, width - tsl + 1, ts);
+
+			int hlen = asprintf(&header, "Every %.1fs: ", interval);
+
+			// the rules:
+			//   width < tsl : print nothing
+			//   width < tsl + hlen + 1: print ts
+			//   width = tsl + hlen + 1: print header, ts
+			//   width < tsl + hlen + 4: print header, ..., ts
+			//   width < tsl + hlen + wcommand_columns: print header, truncated wcommand, ..., ts
+			//   width > "": print header, wcomand, ts
+			// this is slightly different from how it used to be
+			if(width >= tsl) {
+				if(width >= tsl + hlen + 1) {
+					mvaddstr(0, 0, header);
+					if(width >= tsl + hlen + 2) {
+						if(width < tsl + hlen + 4) {
+							mvaddstr(0, width - tsl - 4, "...  ");
+						}else{
+							if(width < tsl + hlen + wcommand_columns) {
+								// print truncated
+								int avail_columns = width - tsl - hlen;
+								int using_columns = wcommand_columns;
+								int using_characters = wcommand_characters;
+								while(using_columns > avail_columns - 4) {
+									using_characters--;
+								using_columns = wcswidth(wcommand, using_characters);
+								}
+								mvaddnwstr(0, hlen, wcommand, using_characters);
+								mvaddstr(0, width - tsl - 4, "... ");
+							}else{
+								mvaddwstr(0, hlen, wcommand);
+							}
+						}
+					}
+				}
+				mvaddstr(0, width - tsl + 1, ts);
+			}
+
 			free(header);
 		}
 
@@ -440,53 +520,69 @@ main(int argc, char *argv[])
 
 		for (y = show_title; y < height; y++) {
 			int eolseen = 0, tabpending = 0;
+			wint_t carry = WEOF;
 			for (x = 0; x < width; x++) {
-				int c = ' ';
+				wint_t c = ' ';
 				int attr = 0;
 
 				if (!eolseen) {
 					/* if there is a tab pending, just spit spaces until the
 					   next stop instead of reading characters */
-					if (!tabpending)
-						do
-							c = getc(p);
-						while (c != EOF && !isprint(c)
-						       && c != '\n'
-                                                      && c != '\t'
+					   if (!tabpending)
+                                                do {
+                                                        if(carry == WEOF) {
+                                                                c = my_getwc(p);
+                                                        }else{
+                                                                c = carry;
+                                                                carry = WEOF;
+                                                        }
+                                                }while (c != WEOF && !isprint(c) && c<12
+                                                        && wcwidth(c) == 0
+                                                        && c != L'\n'
+                                                        && c != L'\t'
                    && (c != L'\033' || option_color != 1));
           if (c == L'\033' && option_color == 1) {
             x--;
             process_ansi(p);
             continue;
           }
-					if (c == '\n')
+                                       if (c == L'\n')
+
 						if (!oldeolseen && x == 0) {
 							x = -1;
 							continue;
 						} else
 							eolseen = 1;
-					else if (c == '\t')
+					else if (c == L'\t')
 						tabpending = 1;
-					if (c == EOF || c == '\n' || c == '\t')
-						c = ' ';
+                                        if (x==width-1 && wcwidth(c)==2) {
+                                                y++;
+                                                x = -1; //process this double-width
+                                                carry = c; //character on the next line
+                                                continue; //because it won't fit here
+                                        }
+                                        if (c == WEOF || c == L'\n' || c == L'\t')
+                                                c = L' ';
 					if (tabpending && (((x + 1) % 8) == 0))
 						tabpending = 0;
 				}
 				move(y, x);
 				if (option_differences) {
-					chtype oldch = inch();
-					unsigned char oldc = oldch & A_CHARTEXT;
+                                        cchar_t oldc;
+                                        in_wch(&oldc);
 					attr = !first_screen
-					    && ((unsigned char)c != oldc
+					    && ((wchar_t)c != oldc.chars[0]
 						||
 						(option_differences_cumulative
-						 && (oldch & A_ATTRIBUTES)));
+						 && (oldc.attr & A_ATTRIBUTES)));
 				}
 				if (attr)
 					standout();
-				addch(c);
+				addnwstr((wchar_t*)&c,1);
 				if (attr)
 					standend();
+                                if(wcwidth(c) == 0) { x--; }
+                                if(wcwidth(c) == 2) { x++; }
 			}
 			oldeolseen = eolseen;
 		}

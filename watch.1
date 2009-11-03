@@ -144,6 +144,17 @@ highlighting is lost on that update as well.
 Non-printing characters are stripped from program output.  Use "cat -v" as
 part of the command pipeline if you want to see them.
 .PP
+Combining Characters that are supposed to display on the character at the
+last column on the screen may display one column early, or they may not
+display at all.
+.PP
+Combining Characters never count as different in
+.I \-\-differences
+mode. Only the base character counts.
+.PP
+Blank lines directly after a line which ends in the last column do not
+display.
+.PP
 .I \-\-precise
 mode doesn't yet have advanced temporal distortion technology to
 compensate for a
@@ -170,3 +181,4 @@ On a not so dark and stormy morning
 in March of 2003, Anthony DeRobertis <asd@suespammers.org> got sick of
 his watches that should update every minute eventually updating many
 seconds after the minute started, and added microsecond precision.
+Unicode support was added in 2009 by Jarrod Lowe <procps@rrod.net>.
