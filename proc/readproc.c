@@ -218,7 +218,7 @@ ENTER(0x220);
         // examine a field name (hash and compare)
     base:
         if(unlikely(!*S)) break;
-        entry = table[63 & (asso[S[3]] + asso[S[2]] + asso[S[0]])];
+        entry = table[63 & (asso[(int)S[3]] + asso[(int)S[2]] + asso[(int)S[0]])];
         colon = strchr(S, ':');
         if(unlikely(!colon)) break;
         if(unlikely(colon[1]!='\t')) break;
@@ -1239,6 +1239,8 @@ proc_t** readproctab(int flags, ...) {
     else
 	PT = openproc(flags);
     va_end(ap);
+    if (!PT)
+      return 0;
     do {					/* read table: */
 	tab = xrealloc(tab, (n+1)*sizeof(proc_t*));/* realloc as we go, using */
 	tab[n] = readproc_direct(PT, NULL);     /* final null to terminate */
