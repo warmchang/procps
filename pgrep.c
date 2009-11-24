@@ -54,6 +54,7 @@ static int opt_oldest = 0;
 static int opt_newest = 0;
 static int opt_negate = 0;
 static int opt_exact = 0;
+static int opt_count = 0;
 static int opt_signal = SIGTERM;
 static int opt_lock = 0;
 static int opt_case = 0;
@@ -79,7 +80,7 @@ static int usage (int opt)
 	if (i_am_pkill)
 		fprintf (fp, "Usage: pkill [-SIGNAL] [-fvx] ");
 	else
-		fprintf (fp, "Usage: pgrep [-flvx] [-d DELIM] ");
+		fprintf (fp, "Usage: pgrep [-cflvx] [-d DELIM] ");
 	fprintf (fp, "[-n|-o] [-P PPIDLIST] [-g PGRPLIST] [-s SIDLIST]\n"
 		 "\t[-u EUIDLIST] [-U UIDLIST] [-G GIDLIST] [-t TERMLIST] "
 		 "[PATTERN]\n");
@@ -567,7 +568,7 @@ static void parse_opts (int argc, char **argv)
 		strcat (opts, "ld:");
 	}
 			
-	strcat (opts, "LF:fnovxP:g:s:u:U:G:t:?V");
+	strcat (opts, "LF:cfnovxP:g:s:u:U:G:t:?V");
 	
 	while ((opt = getopt (argc, argv, opts)) != -1) {
 		switch (opt) {
@@ -615,6 +616,9 @@ static void parse_opts (int argc, char **argv)
 			exit(EXIT_SUCCESS);
 //		case 'c':   // Solaris: match by contract ID
 //			break;
+		case 'c':
+			opt_count = 1;
+			break;
 		case 'd':   // Solaris: change the delimiter
 			opt_delim = strdup (optarg);
 			break;
@@ -726,10 +730,14 @@ int main (int argc, char *argv[])
 				 procs[i].num, strerror (errno));
 		}
 	} else {
-		if (opt_long)
-			output_strlist(procs,num);
-		else
-			output_numlist(procs,num);
+		if (opt_count) {
+			fprintf(stdout, "%ld\n", num);
+		} else {
+			if (opt_long)
+				output_strlist (procs,num);
+			else
+				output_numlist (procs,num);
+		}
 	}
 	return !num; // exit(EXIT_SUCCESS) if match, otherwise exit(EXIT_FAILURE)
 }
