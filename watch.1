@@ -4,10 +4,13 @@ watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
 .na
 .B watch
-.RB [ \-dhvt ]
+.RB [ \-bdehvtx ]
 .RB [ \-n
 .IR seconds ]
+.RB [ \-\-beep ]
 .RB [ \-\-differences[=\fIcumulative\fP]]
+.RB [ \-\-errexit ]
+.RB [ \-\-exec ]
 .RB [ \-\-help ]
 .RB [ \-\-interval=\fIseconds\fP]
 .RB [ \-\-no\-title ]
@@ -17,7 +20,8 @@ watch \- execute a program periodically, showing output fullscreen
 .B watch
 runs
 .I command
-repeatedly, displaying its output (the first screenfull).  This allows you to
+repeatedly, displaying its output and errors (the first screenfull).  This
+allows you to
 watch the program output change over time.  By default, the program is run
 every 2 seconds; use 
 .B \-n
@@ -37,15 +41,33 @@ positions that have ever changed.  The
 or
 .B \-\-no\-title
 option turns off the header showing the interval, command, and current
-time at the top of the display, as well as the following blank line.
+time at the top of the display, as well as the following blank line.  The
+.I \-b
+or
+.I \-\-beep
+option causes the command to beep if it has a non-zero exit.
 .PP
 .B watch
-will run until interrupted.
+will normally run until interrupted. If you want
+.B watch
+to exit on an error from the program running use the
+.I \-e
+or
+.I \-\-errexit
+options, which will cause
+.B watch
+to exit if the return value from the program is non-zero.
+
 .SH NOTE
 Note that
 .I command
 is given to "sh \-c"
 which means that you may need to use extra quoting to get the desired effect.
+You can disable this with the
+.I -x
+or
+.I --exec
+option, which passes the command to exec(2) instead.
 .PP
 Note that POSIX option processing is used (i.e., option processing stops at
 the first non\-option argument).  This means that flags after
@@ -93,4 +115,5 @@ The original
 .B watch
 was written by Tony Rems <rembo@unisoft.com> in 1991, with mods and
 corrections by Francois Pinard.  It was reworked and new features added by
-Mike Coleman <mkc@acm.org> in 1999.
+Mike Coleman <mkc@acm.org> in 1999.  The beep, exec, and error handling
+features were added by Morty Abzug <morty@frakir.org> in 2008.

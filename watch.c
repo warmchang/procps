@@ -8,6 +8,7 @@
  * Mike Coleman <mkc@acm.org>.
  *
  * Changes by Albert Cahalan, 2002-2003.
+ * stderr handling, exec, and beep option added by Morty Abzug, 2008
  */
 
 #include <ctype.h>
@@ -34,13 +35,16 @@ static struct option longopts[] = {
 	{"differences", optional_argument, 0, 'd'},
 	{"help", no_argument, 0, 'h'},
 	{"interval", required_argument, 0, 'n'},
+	{"beep", no_argument, 0, 'b'},
+	{"errexit", no_argument, 0, 'e'},
+	{"exec", no_argument, 0, 'x'},
 	{"no-title", no_argument, 0, 't'},
 	{"version", no_argument, 0, 'v'},
 	{0, 0, 0, 0}
 };
 
 static char usage[] =
-    "Usage: %s [-dhntv] [--differences[=cumulative]] [--help] [--interval=<n>] [--no-title] [--version] <command>\n";
+    "Usage: %s [-bdhntvx] [--beep] [--differences[=cumulative]] [--exec] [--help] [--interval=<n>] [--no-title] [--version] <command>\n";
 
 static char *progname;
 
@@ -139,27 +143,43 @@ main(int argc, char *argv[])
 	int optc;
 	int option_differences = 0,
 	    option_differences_cumulative = 0,
+			option_exec = 0,
+			option_beep = 0,
+        option_errexit = 0,
 	    option_help = 0, option_version = 0;
 	double interval = 2;
 	char *command;
+	char **command_argv;
 	int command_length = 0;	/* not including final \0 */
+	int pipefd[2];
+	int status;
+	pid_t child;
 
 	setlocale(LC_ALL, "");
 	progname = argv[0];
 
-	while ((optc = getopt_long(argc, argv, "+d::hn:vt", longopts, (int *) 0))
+	while ((optc = getopt_long(argc, argv, "+bed::hn:vtx", longopts, (int *) 0))
 	       != EOF) {
 		switch (optc) {
+		case 'b':
+			option_beep = 1;
+			break;
 		case 'd':
 			option_differences = 1;
 			if (optarg)
 				option_differences_cumulative = 1;
 			break;
+        case 'e':
+            option_errexit = 1;
+            break;
 		case 'h':
 			option_help = 1;
 			break;
 		case 't':
 			show_title = 0;
+			break;
+		case 'x':
+		  option_exec = 1;
 			break;
 		case 'n':
 			{
@@ -190,17 +210,22 @@ main(int argc, char *argv[])
 
 	if (option_help) {
 		fprintf(stderr, usage, progname);
+		fputs("  -b, --beep\t\t\t\tbeep if the command has a non-zero exit\n", stderr);
 		fputs("  -d, --differences[=cumulative]\thighlight changes between updates\n", stderr);
 		fputs("\t\t(cumulative means highlighting is cumulative)\n", stderr);
+		fputs("  -e, --errexit\t\t\t\texit watch if the command has a non-zero exit\n", stderr);
 		fputs("  -h, --help\t\t\t\tprint a summary of the options\n", stderr);
 		fputs("  -n, --interval=<seconds>\t\tseconds to wait between updates\n", stderr);
 		fputs("  -v, --version\t\t\t\tprint the version number\n", stderr);
 		fputs("  -t, --no-title\t\t\tturns off showing the header\n", stderr);
+		fputs("  -x, --exec\t\t\t\tpass command to exec instead of sh\n", stderr);
 		exit(0);
 	}
 
 	if (optind >= argc)
 		do_usage();
+
+	command_argv=&(argv[optind]); /* save for later */
 
 	command = strdup(argv[optind++]);
 	command_length = strlen(command);
@@ -260,10 +285,56 @@ main(int argc, char *argv[])
 			free(header);
 		}
 
-		if (!(p = popen(command, "r"))) {
-			perror("popen");
+		/* allocate pipes */
+		if (pipe(pipefd)<0) {
+		  perror("pipe");
+			do_exit(7);
+	  }
+
+		/* flush stdout and stderr, since we're about to do fd stuff */
+		fflush(stdout);
+		fflush(stderr);
+
+		/* fork to prepare to run command */
+		child=fork();
+
+		if (child<0) { /* fork error */
+		  perror("fork");
 			do_exit(2);
+		} else if (child==0) { /* in child */
+			close (pipefd[0]); /* child doesn't need read side of pipe */
+			close (1); /* prepare to replace stdout with pipe */
+			if (dup2 (pipefd[1], 1)<0) { /* replace stdout with write side of pipe */
+			  perror("dup2");
+				exit(3);
+			}
+			dup2(1, 2); /* stderr should default to stdout */
+
+			if (option_exec) { /* pass command to exec instead of system */
+			  if (execvp(command_argv[0], command_argv)==-1) {
+				  perror("exec");
+				  exit(4);
+				}
+			} else {
+		    status=system(command); /* watch manpage promises sh quoting */
+
+			  /* propagate command exit status as child exit status */
+			  if (!WIFEXITED(status)) { /* child exits nonzero if command does */
+			    exit(1);
+			  } else {
+			    exit(WEXITSTATUS(status));
+		    }
+			}
+
 		}
+
+		/* otherwise, we're in parent */
+		close(pipefd[1]); /* close write side of pipe */
+		if ((p=fdopen(pipefd[0], "r"))==NULL) {
+		  perror("fdopen");
+			do_exit(5);
+		}
+
 
 		for (y = show_title; y < height; y++) {
 			int eolseen = 0, tabpending = 0;
@@ -312,7 +383,19 @@ main(int argc, char *argv[])
 			oldeolseen = eolseen;
 		}
 
-		pclose(p);
+		fclose(p);
+
+		/* harvest child process and get status, propagated from command */
+		if (waitpid(child, &status, 0)<0) {
+		  perror("waitpid");
+			do_exit(8);
+		};
+
+		/* if child process exited in error, beep if option_beep is set */
+		if ((!WIFEXITED(status) || WEXITSTATUS(status))) {
+          if (option_beep) beep();
+          if (option_errexit) do_exit(8);
+		}
 
 		first_screen = 0;
 		refresh();
