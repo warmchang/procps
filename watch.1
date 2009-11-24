@@ -4,7 +4,7 @@ watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
 .na
 .B watch
-.RB [ \-bdehvtx ]
+.RB [ \-bdehpvtx ]
 .RB [ \-n
 .IR seconds ]
 .RB [ \-\-beep ]
@@ -15,6 +15,7 @@ watch \- execute a program periodically, showing output fullscreen
 .RB [ \-\-help ]
 .RB [ \-\-interval=\fIseconds\fP]
 .RB [ \-\-no\-title ]
+.RB [ \-\-precise ]
 .RB [ \-\-version ]
 .I command
 .SH DESCRIPTION
@@ -28,7 +29,24 @@ every 2 seconds; use
 .B \-n
 or
 .B \-\-interval
-to specify a different interval.
+to specify a different interval. Normally, this interval is interpreted
+as the amout of time between the completion of one run of
+.I command
+and the beginning of the next run. However, with the
+.I \-p
+or
+.I \-\-precise
+option, you can make
+.BR watch
+attempt to run
+.I command
+every
+.I interval
+seconds. Try it with
+.B ntptime
+and notice how the fractional seconds stays
+(nearly) the same, as opposed to normal mode where they continuously
+increase.
 .PP
 The
 .B \-d
@@ -102,11 +120,21 @@ watch echo '$$'
 .br
 watch echo "'"'$$'"'"
 .PP
+To see the effect of precision time keeping, try adding
+.I \-p
+to
+.IP
+watch \-n 10 sleep 1
+.PP
 You can watch for your administrator to install the latest kernel with
 .IP
 watch uname \-r
 .PP
-(Just kidding.)
+(Note that
+.I \-p
+isn't guaranteed to work across reboots, especially in the face of
+.B ntpdate
+or other bootup time-changing mechanisms)
 .SH BUGS
 Upon terminal resize, the screen will not be correctly repainted until the
 next scheduled update.  All
@@ -115,6 +143,22 @@ highlighting is lost on that update as well.
 .PP
 Non-printing characters are stripped from program output.  Use "cat -v" as
 part of the command pipeline if you want to see them.
+.PP
+.I \-\-precise
+mode doesn't yet have advanced temporal distortion technology to
+compensate for a
+.I command
+that takes more than
+.I interval
+seconds to execute.
+.B watch
+also can get into a state where it rapid-fires as many executions of
+.I command
+as it can to catch up from a previous executions running longer than
+.I interval
+(for example,
+.B netstat
+taking ages on a DNS lookup).
 .SH AUTHORS
 The original
 .B watch
@@ -122,3 +166,7 @@ was written by Tony Rems <rembo@unisoft.com> in 1991, with mods and
 corrections by Francois Pinard.  It was reworked and new features added by
 Mike Coleman <mkc@acm.org> in 1999.  The beep, exec, and error handling
 features were added by Morty Abzug <morty@frakir.org> in 2008.
+On a not so dark and stormy morning
+in March of 2003, Anthony DeRobertis <asd@suespammers.org> got sick of
+his watches that should update every minute eventually updating many
+seconds after the minute started, and added microsecond precision.

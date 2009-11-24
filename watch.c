@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
 #include <termios.h>
@@ -39,13 +40,14 @@ static struct option longopts[] = {
 	{"beep", no_argument, 0, 'b'},
 	{"errexit", no_argument, 0, 'e'},
 	{"exec", no_argument, 0, 'x'},
+	{"precise", no_argument, 0, 'p'},
 	{"no-title", no_argument, 0, 't'},
 	{"version", no_argument, 0, 'v'},
 	{0, 0, 0, 0}
 };
 
 static char usage[] =
-    "Usage: %s [-bdhntvx] [--beep] [--color] [--differences[=cumulative]] [--exec] [--help] [--interval=<n>] [--no-title] [--version] <command>\n";
+    "Usage: %s [-bdhnptvx] [--beep] [--color] [--differences[=cumulative]] [--exec] [--help] [--interval=<n>] [--no-title] [--version] <command>\n";
 
 static char *progname;
 
@@ -54,6 +56,7 @@ static int height = 24, width = 80;
 static int screen_size_changed = 0;
 static int first_screen = 1;
 static int show_title = 2;  // number of lines used, 2 or 0
+static int precise_timekeeping = 0;
 
 #define min(x,y) ((x) > (y) ? (y) : (x))
 #define MAX_ANSIBUF 10
@@ -206,6 +209,15 @@ get_terminal_size(void)
 	}
 }
 
+/* get current time in usec */
+typedef unsigned long long watch_usec_t;
+#define USECS_PER_SEC (1000000ull)
+watch_usec_t get_time_usec() {
+	struct timeval now;
+	gettimeofday(&now, NULL);
+	return USECS_PER_SEC*now.tv_sec + now.tv_usec;
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -221,6 +233,8 @@ main(int argc, char *argv[])
 	char *command;
 	char **command_argv;
 	int command_length = 0;	/* not including final \0 */
+    watch_usec_t next_loop; /* next loop time in us, used for precise time
+                               keeping only */
 	int pipefd[2];
 	int status;
 	pid_t child;
@@ -228,7 +242,7 @@ main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	progname = argv[0];
 
-	while ((optc = getopt_long(argc, argv, "+bced::hn:vtx", longopts, (int *) 0))
+	while ((optc = getopt_long(argc, argv, "+bced::hn:pvtx", longopts, (int *) 0))
 	       != EOF) {
 		switch (optc) {
 		case 'b':
@@ -266,6 +280,9 @@ main(int argc, char *argv[])
 					interval = ~0u/1000000;
 			}
 			break;
+		case 'p':
+			precise_timekeeping = 1;
+			break;
 		case 'v':
 			option_version = 1;
 			break;
@@ -289,6 +306,7 @@ main(int argc, char *argv[])
 		fputs("  -e, --errexit\t\t\t\texit watch if the command has a non-zero exit\n", stderr);
 		fputs("  -h, --help\t\t\t\tprint a summary of the options\n", stderr);
 		fputs("  -n, --interval=<seconds>\t\tseconds to wait between updates\n", stderr);
+        fputs("  -p, --precise\t\t\t\tprecise timing, ignore command run time\n", stderr);
 		fputs("  -v, --version\t\t\t\tprint the version number\n", stderr);
 		fputs("  -t, --no-title\t\t\tturns off showing the header\n", stderr);
 		fputs("  -x, --exec\t\t\t\tpass command to exec instead of sh\n", stderr);
@@ -335,6 +353,9 @@ main(int argc, char *argv[])
 	nonl();
 	noecho();
 	cbreak();
+
+	if (precise_timekeeping)
+		next_loop = get_time_usec();
 
 	for (;;) {
 		time_t t = time(NULL);
@@ -486,6 +507,12 @@ main(int argc, char *argv[])
 
 		first_screen = 0;
 		refresh();
+		if (precise_timekeeping) {
+			watch_usec_t cur_time = get_time_usec();
+			next_loop += USECS_PER_SEC*interval;
+			if (cur_time < next_loop)
+				usleep(next_loop - cur_time);
+		} else
 		usleep(interval * 1000000);
 	}
 
