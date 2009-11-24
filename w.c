@@ -242,7 +242,7 @@ static void showinfo(utmp_t *u, int formtype, int maxcmd, int from) {
 
 /***** main */
 int main(int argc, char **argv) {
-    char *user = NULL;
+    char *user = NULL, *p;
     utmp_t *u;
     struct winsize win;
     int header=1, longform=1, from=1, args, maxcmd=80, ch;
@@ -278,6 +278,10 @@ int main(int argc, char **argv) {
 
     if (ioctl(1, TIOCGWINSZ, &win) != -1 && win.ws_col > 0)
 	maxcmd = win.ws_col;
+    else if (p = getenv("COLUMNS"))
+        maxcmd = atoi(p);
+    else
+        maxcmd = 80;
     if (maxcmd < 71) {
 	fprintf(stderr, "%d column window is too narrow\n", maxcmd);
 	exit(1);
