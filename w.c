@@ -31,6 +31,7 @@
 #include <termios.h>
 
 static int ignoreuser = 0;	/* for '-u' */
+static int oldstyle = 0;	/* for '-o' */
 static proc_t **procs;		/* our snapshot of the process table */
 
 typedef struct utmp utmp_t;
@@ -77,6 +78,16 @@ static void print_time_ival7(time_t t, int centi_sec, FILE* fout) {
       printf("   ?   ");
       return;
     }
+    if (oldstyle) {
+      if (t >= 48*60*60)               /* > 2 days */
+        fprintf(fout, " %2ludays", t/(24*60*60));
+      else if (t >= 60*60)            /* > 1 hour */
+        fprintf(fout, " %2lu:%02u ", t/(60*60), (unsigned) ((t/60)%60));
+      else if (t > 60)               /* > 1 minute */
+        fprintf(fout, " %2lu:%02um", t/60, (unsigned) t%60);
+      else
+        fprintf(fout, "       ");
+    } else {
     if (t >= 48*60*60)				/* > 2 days */
 	fprintf(fout, " %2ludays", t/(24*60*60));
     else if (t >= 60*60)			/* > 1 hour */
@@ -85,6 +96,7 @@ static void print_time_ival7(time_t t, int centi_sec, FILE* fout) {
 	fprintf(fout, " %2lu:%02u ", t/60, (unsigned) t%60);
     else
 	fprintf(fout, " %2lu.%02us", t, centi_sec);
+    }
 }
 
 /**** stat the device file to get an idle time */
@@ -240,7 +252,7 @@ int main(int argc, char **argv) {
 #endif
 
     setlocale(LC_ALL, "");
-    for (args=0; (ch = getopt(argc, argv, "hlusfV")) != EOF; args++)
+    for (args=0; (ch = getopt(argc, argv, "hlusfVo")) != EOF; args++)
 	switch (ch) {
 	  case 'h': header = 0;		break;
 	  case 'l': longform = 1;	break;
@@ -248,6 +260,7 @@ int main(int argc, char **argv) {
 	  case 'f': from = !from;	break;
 	  case 'V': display_version();	exit(0);
 	  case 'u': ignoreuser = 1;	break;
+	  case 'o': oldstyle = 1;	break;
 	  default:
 	    printf("usage: w -hlsufV [user]\n"
 		   "    -h    skip header\n"
@@ -255,6 +268,7 @@ int main(int argc, char **argv) {
 		   "    -s    short listing\n"
 		   "    -u    ignore uid of processes\n"
 		   "    -f    toggle FROM field (default %s)\n"
+		   "    -o    old-style output\n"
 		   "    -V    display version\n", FROM_STRING);
 	    exit(1);
 	}

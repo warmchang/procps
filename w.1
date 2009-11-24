@@ -5,7 +5,7 @@
 w \- Show who is logged on and what they are doing.
 .SH SYNOPSIS
 .B w
-.RB [ \-husfV ]
+.RB [ \-husfV- ]
 .RI [ user ]
 .SH DESCRIPTION
 .B w
@@ -54,6 +54,9 @@ field is shown by default.
 .TP 0.5i
 .B "\-V "
 Display version information.
+.TP 0.5i
+.B "\-o "
+Old style output. Prints blank space for idle times less than one minute.
 .TP 0.5i
 .B "user "
 Show information about the specified user only.
