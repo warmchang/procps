@@ -464,6 +464,7 @@ int main(int argc, char *argv[]) {
    const char *me = (const char *)basename(argv[0]);
    bool SwitchesAllowed = true;
    bool WriteMode = false;
+   bool DisplayAllOpt = false;
    int ReturnCode = 0;
    const char *preloadfile = DEFAULT_PRELOAD;
 
@@ -529,8 +530,8 @@ int main(int argc, char *argv[]) {
          case 'a': // string and integer values (for Linux, all of them)
          case 'A': // same as -a -o
          case 'X': // same as -a -x
-              SwitchesAllowed = false;
-              return DisplayAll(PROC_PATH);
+              DisplayAllOpt = true;
+              break;
          case 'V':
               fprintf(stdout, "sysctl (%s)\n",procps_version);
               exit(0);
@@ -545,12 +546,19 @@ int main(int argc, char *argv[]) {
       } else {
          if (NameOnly && Quiet)   // nonsense
             return Usage(me);
+         if (DisplayAllOpt)    // We cannot have values with -a
+            return Usage(me);
          SwitchesAllowed = false;
          if (WriteMode || strchr(*argv, '='))
             ReturnCode = WriteSetting(*argv);
          else
             ReturnCode = ReadSetting(*argv);
       }
+   }
+   if (DisplayAllOpt) {
+       if (Quiet)
+           return Usage(me);
+       return DisplayAll(PROC_PATH);
    }
 
    return ReturnCode;
