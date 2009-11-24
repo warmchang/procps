@@ -1,6 +1,6 @@
 .\"             -*-Nroff-*-
 .\"
-.TH W 1 "8 Dec 1993 " " " "Linux User's Manual"
+.TH W 1 "5 October 2009 " " " "Linux User's Manual"
 .SH NAME
 w \- Show who is logged on and what they are doing.
 .SH SYNOPSIS
@@ -60,6 +60,14 @@ Old style output. Prints blank space for idle times less than one minute.
 .TP 0.5i
 .B "user "
 Show information about the specified user only.
+
+.SH ENVIRONMENT
+.TP
+PROCPS_USERLEN
+Override the default width of the username column. Defaults to 8.
+.TP
+PROCPS_FROMLEN
+Override the default width of the from column. Defaults to 16.
 
 .SH FILES
 .TP
