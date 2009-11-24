@@ -684,7 +684,7 @@ static void parse_opts (int argc, char **argv)
 //		case 'z':   // Solaris: match by zone ID
 //			break;
 		case '?':
-			usage (opt);
+			usage (optopt ? optopt : opt);
 			break;
 		}
 	}
