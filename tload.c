@@ -30,9 +30,6 @@ static int fd=1;
 static int dly=5;
 static jmp_buf jb;
 
-extern int optind;
-extern char *optarg;
-
 static void alrm(int signo)
 {
     (void)signo;
