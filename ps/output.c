@@ -114,6 +114,20 @@ static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
     return (int)(P->WHAT) - (int)(Q->WHAT); \
 }
 
+#define cook_time(P) (P->utime + P->stime) / Hertz
+
+#define cook_etime(P) seconds_since_boot - (unsigned long)(P->start_time / Hertz)
+
+#define CMP_COOKED_TIME(NAME) \
+static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
+    unsigned long p_time,q_time; \
+    p_time=cook_ ##NAME (P); \
+    q_time=cook_ ##NAME (Q); \
+    if (p_time < q_time) return -1; \
+    if (p_time > q_time) return 1; \
+    return 0; \
+}
+
 CMP_INT(rtprio)
 CMP_SMALL(sched)
 CMP_INT(cutime)
@@ -188,6 +202,9 @@ CMP_SMALL(tpgid)
 CMP_SMALL(pcpu)
 
 CMP_SMALL(state)
+
+CMP_COOKED_TIME(time)
+CMP_COOKED_TIME(etime)
 
 /* approximation to: kB of address space that could end up in swap */
 static int sr_swapable(const proc_t* P, const proc_t* Q) {
@@ -424,7 +441,7 @@ static int pr_etime(char *restrict const outbuf, const proc_t *restrict const pp
   unsigned long t;
   unsigned dd,hh,mm,ss;
   char *cp = outbuf;
-  t = seconds_since_boot - (unsigned long)(pp->start_time / Hertz);
+  t = cook_etime(pp);
   ss = t%60;
   t /= 60;
   mm = t%60;
@@ -495,7 +512,7 @@ static int pr_time(char *restrict const outbuf, const proc_t *restrict const pp)
   unsigned long t;
   unsigned dd,hh,mm,ss;
   int c;
-  t = (pp->utime + pp->stime) / Hertz;
+  t = cook_time(pp);
   ss = t%60;
   t /= 60;
   mm = t%60;
@@ -1323,7 +1340,7 @@ static const format_struct format_array[] = {
 {"alarm",     "ALARM",   pr_alarm,    sr_alarm,   5,   0,    LNX, AN|RIGHT},
 {"argc",      "ARGC",    pr_nop,      sr_nop,     4,   0,    LNX, PO|RIGHT},
 {"args",      "COMMAND", pr_args,     sr_cmd,    27, ARG,    U98, PO|UNLIMITED}, /*command*/
-{"atime",     "TIME",    pr_time,     sr_nop,     8,   0,    SOE, ET|RIGHT}, /*cputime*/ /* was 6 wide */
+{"atime",     "TIME",    pr_time,     sr_time,    8,   0,    SOE, ET|RIGHT}, /*cputime*/ /* was 6 wide */
 {"blocked",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigmask*/
 {"bnd",       "BND",     pr_nop,      sr_nop,     1,   0,    AIX, TO|RIGHT},
 {"bsdstart",  "START",   pr_bsdstart, sr_nop,     6,   0,    LNX, ET|RIGHT},
@@ -1343,8 +1360,7 @@ static const format_struct format_array[] = {
 {"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, ET|RIGHT}, /*cpu*/
 {"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
 {"cpuid",     "CPUID",   pr_psr,      sr_nop,     5,   0,    BSD, TO|RIGHT}, // OpenBSD: 8 wide!
-{"cputime",   "TIME",    pr_time,     sr_nop,     8,   0,    DEC, ET|RIGHT}, /*time*/
-{"cstime",    "-",       pr_nop,      sr_cstime,  1,   0,    LNX, AN|RIGHT},
+{"cputime",   "TIME",    pr_time,     sr_time,    8,   0,    DEC, ET|RIGHT}, /*time*/
 {"ctid",      "CTID",    pr_nop,      sr_nop,     5,   0,    SUN, ET|RIGHT}, // resource contracts?
 {"cursig",    "CURSIG",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
 {"cutime",    "-",       pr_nop,      sr_cutime,  1,   0,    LNX, AN|RIGHT},
@@ -1358,7 +1374,7 @@ static const format_struct format_array[] = {
 {"end_code",  "E_CODE",  pr_nop,      sr_end_code, 8,  0,    LNx, PO|RIGHT},
 {"environ","ENVIRONMENT",pr_nop,      sr_nop,    11, ENV,    LNx, PO|UNLIMITED},
 {"esp",       "ESP",     pr_esp,      sr_kstk_esp, 8,  0,    LNX, TO|RIGHT},
-{"etime",     "ELAPSED", pr_etime,    sr_nop,    11,   0,    U98, ET|RIGHT}, /* was 7 wide */
+{"etime",     "ELAPSED", pr_etime,    sr_etime,  11,   0,    U98, ET|RIGHT}, /* was 7 wide */
 {"etimes",    "ELAPSED", pr_etimes,   sr_nop,     7,   0,    BSD, ET|RIGHT}, /* FreeBSD */
 {"euid",      "EUID",    pr_euid,     sr_euid,    5,   0,    LNX, ET|RIGHT},
 {"euser",     "EUSER",   pr_euser,    sr_euser,   8, USR,    LNX, ET|USER},
@@ -1505,7 +1521,7 @@ static const format_struct format_array[] = {
 {"thcount",   "THCNT",   pr_nlwp,     sr_nlwp,    5,   0,    AIX, PO|RIGHT},
 {"tgid",      "TGID",    pr_procs,    sr_procs,   5,   0,    LNX, PO|PIDMAX|RIGHT},
 {"tid",       "TID",     pr_tasks,    sr_tasks,   5,   0,    AIX, TO|PIDMAX|RIGHT},
-{"time",      "TIME",    pr_time,     sr_nop,     8,   0,    U98, ET|RIGHT}, /*cputime*/ /* was 6 wide */
+{"time",      "TIME",    pr_time,     sr_time,    8,   0,    U98, ET|RIGHT}, /*cputime*/ /* was 6 wide */
 {"timeout",   "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
 {"tmout",     "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
 {"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
