@@ -435,7 +435,8 @@ static union el * select_procs (int *num)
 	preg = do_regcomp();
 
 	if (opt_newest) saved_start_time =  0ULL;
-	if (opt_oldest) saved_start_time = ~0ULL;
+	else saved_start_time = ~0ULL;
+
 	if (opt_newest) saved_pid = 0;
 	if (opt_oldest) saved_pid = INT_MAX;
 	
