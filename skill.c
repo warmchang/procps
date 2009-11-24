@@ -127,7 +127,7 @@ static void check_proc(int pid){
   sprintf(buf, "/proc/%d/stat", pid); /* pid (cmd) state ppid pgrp session tty */
   fd = open(buf,O_RDONLY);
   if(fd==-1){  /* process exited maybe */
-    if(pids && w_flag) printf("WARNING: process %d could not be found.",pid);
+    if(pids && w_flag) printf("WARNING: process %d could not be found.\n",pid);
     return;
   }
   fstat(fd, &statbuf);
@@ -340,7 +340,7 @@ static void skillsnice_usage(void){
   }else{
     fprintf(stderr,
       "Usage:   snice [new priority] [options] process selection criteria\n"
-      "Example: snice netscape crack +7\n"
+      "Example: snice +7 netscape crack\n"
       "\n"
       "The default priority is +4. (snice +4 ...)\n"
       "Priority numbers range from +20 (slowest) to -20 (fastest).\n"
