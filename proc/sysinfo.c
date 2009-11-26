@@ -647,7 +647,7 @@ void meminfo(void){
     );
     head = tail+1;
     if(!found) goto nextline;
-    *(found->slot) = strtoul(head,&tail,10);
+    *(found->slot) = (unsigned long)strtoull(head,&tail,10);
 nextline:
     tail = strchr(head, '\n');
     if(!tail) break;
