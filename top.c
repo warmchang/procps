@@ -2190,7 +2190,8 @@ static void reframewins (void)
 // Value a window's name and make the associated group name.
 static void win_names (WIN_t *q, const char *name)
 {
-   sprintf(q->rc.winname, "%.*s", WINNAMSIZ -1, name);
+   if(q->rc.winname != name)  // src==dst is illegal, failing on ppc64
+      sprintf(q->rc.winname, "%.*s", WINNAMSIZ -1, name);
    sprintf(q->grpname, "%d:%.*s", q->winnum, WINNAMSIZ -1, name);
 }
 
