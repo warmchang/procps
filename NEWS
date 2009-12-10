@@ -1,14 +1,22 @@
+procps-3.2.8 --> procps-3.2.9
+
+top: fix an aliasing problem -- thanks David Owen
+
 procps-3.2.7 --> procps-3.2.8
 
 ps: allow "+" in sort specifications, as in man page     rh208217
-ps: document SCHED_BATCH and add "see also" for stime
+ps: recognize SCHED_ISO and SCHED_IDLE
+ps: document SCHED_BATCH and add a "see also" for stime
 ps: man page less ambiguous
-top: normal exit code should be 0          #341272 #354255 rh199174
+top: normal exit code should be 0     #341272 #354255 rh199174 suse493210
+top: misc fixes
 pgrep: usage error should exit with 2       #413383
 vmstat: use EXIT_FAILURE -- thanks Yoshio Nakamura   #425492
 sysctl: fix crash -- thanks Steinar Gunderson      #423704
 watch: tolerate umlauts                          #207103
+pmap: range limits with -A low,high
 update /dev/tty* info to May 2009 devices.txt
+don't read off end of string const                rh469495 rh498182
 
 procps-3.2.6 --> procps-3.2.7
 
