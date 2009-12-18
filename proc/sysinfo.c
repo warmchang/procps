@@ -85,17 +85,19 @@ static char buf[2048];
 /***********************************************************************/
 int uptime(double *restrict uptime_secs, double *restrict idle_secs) {
     double up=0, idle=0;
-    char *restrict savelocale;
+    char *savelocale;
 
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);
-    savelocale = setlocale(LC_NUMERIC, NULL);
+    savelocale = strdup(setlocale(LC_NUMERIC, NULL));
     setlocale(LC_NUMERIC,"C");
     if (sscanf(buf, "%lf %lf", &up, &idle) < 2) {
         setlocale(LC_NUMERIC,savelocale);
+        free(savelocale);
         fputs("bad data in " UPTIME_FILE "\n", stderr);
 	    return 0;
     }
     setlocale(LC_NUMERIC,savelocale);
+    free(savelocale);
     SET_IF_DESIRED(uptime_secs, up);
     SET_IF_DESIRED(idle_secs, idle);
     return up;	/* assume never be zero seconds in practice */
@@ -168,7 +170,7 @@ static void old_Hertz_hack(void){
   double up_1, up_2, seconds;
   unsigned long long jiffies;
   unsigned h;
-  char *restrict savelocale;
+  char *savelocale;
   long hz;
 
 #ifdef _SC_CLK_TCK
@@ -179,7 +181,7 @@ static void old_Hertz_hack(void){
 #endif
 
   wait_j = hirq_j = sirq_j = stol_j = 0;
-  savelocale = setlocale(LC_NUMERIC, NULL);
+  savelocale = strdup(setlocale(LC_NUMERIC, NULL));
   setlocale(LC_NUMERIC, "C");
   do{
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_1);
@@ -190,6 +192,7 @@ static void old_Hertz_hack(void){
     /* uptime(&up_2, NULL); */
   } while((long long)( (up_2-up_1)*1000.0/up_1 )); /* want under 0.1% error */
   setlocale(LC_NUMERIC, savelocale);
+  free(savelocale);
   jiffies = user_j + nice_j + sys_j + other_j + wait_j + hirq_j + sirq_j + stol_j ;
   seconds = (up_1 + up_2) / 2;
   h = (unsigned)( (double)jiffies/seconds/smp_num_cpus );
@@ -356,16 +359,18 @@ void eight_cpu_numbers(double *restrict uret, double *restrict nret, double *res
 /***********************************************************************/
 void loadavg(double *restrict av1, double *restrict av5, double *restrict av15) {
     double avg_1=0, avg_5=0, avg_15=0;
-    char *restrict savelocale;
+    char *savelocale;
     
     FILE_TO_BUF(LOADAVG_FILE,loadavg_fd);
-    savelocale = setlocale(LC_NUMERIC, NULL);
+    savelocale = strdup(setlocale(LC_NUMERIC, NULL));
     setlocale(LC_NUMERIC, "C");
     if (sscanf(buf, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3) {
 	fputs("bad data in " LOADAVG_FILE "\n", stderr);
+	free(savelocale);
 	exit(1);
     }
     setlocale(LC_NUMERIC, savelocale);
+    free(savelocale);
     SET_IF_DESIRED(av1,  avg_1);
     SET_IF_DESIRED(av5,  avg_5);
     SET_IF_DESIRED(av15, avg_15);
