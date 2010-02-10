@@ -462,6 +462,8 @@ selection_collection:
     switch(force){ /* fall through each data type */
     default: skillsnice_usage();
     case 0: /* not forced */
+      if (argptr && argptr[0] == '-') /* its the next argument not a parameter */
+        continue;
     case 't':
       if(argc){
         struct stat sbuf;
