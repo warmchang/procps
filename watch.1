@@ -1,4 +1,4 @@
-.TH WATCH 1 "2009 May 11" " " "Linux User's Manual"
+.TH WATCH 1 "2010 Mar 01" " " "Linux User's Manual"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -8,6 +8,7 @@ watch \- execute a program periodically, showing output fullscreen
 .RB [ \-n
 .IR seconds ]
 .RB [ \-\-beep ]
+.RB [ \-\-color ]
 .RB [ \-\-differences[=\fIcumulative\fP]]
 .RB [ \-\-errexit ]
 .RB [ \-\-exec ]
@@ -57,6 +58,10 @@ or
 options, which will cause
 .B watch
 to exit if the return value from the program is non-zero.
+.PP
+By default \fBwatch\fR will normally not pass escape characters, however
+if you use the \fI\-\-c\fR or \fI\-\-color\fR option, then
+\fBwatch\fR will interpret ANSI color sequences for the foreground.
 
 .SH NOTE
 Note that
