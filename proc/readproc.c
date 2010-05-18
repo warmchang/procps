@@ -77,7 +77,7 @@ typedef struct status_table_struct {
 // (leave the colon and newline) So "Pid:\n" and "Threads:\n"
 // would be lines in the file. (no quote, no escape, etc.)
 //
-// Watch out for name size in the status_table_struct (grrr, expanding)
+// In the status_table_struct watch out for name size (grrr, expanding)
 // and the number of entries (we mask with 63 for now). The table
 // must be padded out to 64 entries, maybe 128 in the future.
 
@@ -86,62 +86,81 @@ static void status2proc(char *S, proc_t *restrict P, int is_proc){
     long Tgid = 0;
     long Pid = 0;
 
+  // 128 entries because we trust the kernel to use ASCII names
   static const unsigned char asso[] =
     {
-      61, 61, 61, 61, 61, 61, 61, 61, 61, 61,
-      61, 61, 61, 61, 61, 61, 61, 61, 61, 61,
-      61, 61, 61, 61, 61, 61, 61, 61, 61, 61,
-      61, 61, 61, 61, 61, 61, 61, 61, 61, 61,
-      61, 61, 61, 61, 61, 61, 61, 61, 61, 61,
-      61, 61, 61, 61, 61, 61, 61, 61, 15, 61,
-      61, 61, 61, 61, 61, 61, 30,  3,  5,  5,
-      61,  5, 61,  8, 61, 61,  3, 61, 10, 61,
-       6, 61, 13,  0, 30, 25,  0, 61, 61, 61,
-      61, 61, 61, 61, 61, 61, 61,  3, 61, 13,
-       0,  0, 61, 30, 61, 25, 61, 61, 61,  0,
-      61, 61, 61, 61,  5, 61,  0, 61, 61, 61,
-       0, 61, 61, 61, 61, 61, 61, 61
+      64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+      64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+      64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+      64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+      64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+      64, 64, 64, 64, 64, 64, 64, 64, 28, 64,
+      64, 64, 64, 64, 64, 64,  8, 25, 23, 25,
+       6, 25,  0,  3, 64, 64,  3, 64, 25, 64,
+      20,  1,  1,  5,  0, 30,  0,  0, 64, 64,
+      64, 64, 64, 64, 64, 64, 64,  3, 64,  0,
+       0, 18, 64, 10, 64, 10, 64, 64, 64, 20,
+      64, 20,  0, 64, 25, 64,  3, 15, 64,  0,
+      30, 64, 64, 64, 64, 64, 64, 64
     };
 
     static const status_table_struct table[] = {
-      F(VmStk)
-      NUL NUL
-      F(State)
-      NUL
-      F(VmExe)
-      F(ShdPnd)
-      NUL
-      F(VmData)
-      NUL
-      F(Name)
-      NUL NUL
-      F(VmRSS)
+      F(VmHWM)
       NUL NUL
       F(VmLck)
-      NUL NUL NUL
-      F(Gid)
-      F(Pid)
-      NUL NUL NUL
-      F(VmSize)
-      NUL NUL
+      NUL
+      F(VmSwap)
+      F(VmRSS)
+      NUL
+      F(VmStk)
+      NUL
+      F(Tgid)
+      F(State)
+      NUL
       F(VmLib)
-      NUL NUL
-      F(PPid)
       NUL
-      F(SigCgt)
-      NUL
-      F(Threads)
-      F(SigPnd)
+      F(VmSize)
+      F(SigQ)
       NUL
       F(SigIgn)
       NUL
-      F(Uid)
-      NUL NUL NUL NUL NUL NUL NUL NUL NUL
-      NUL NUL NUL NUL NUL
-      F(Tgid)
-      NUL NUL NUL NUL
+      F(VmPTE)
+      F(FDSize)
+      NUL
       F(SigBlk)
-      NUL NUL NUL
+      NUL
+      F(ShdPnd)
+      F(VmData)
+      NUL
+      F(CapInh)
+      NUL
+      F(PPid)
+      NUL NUL
+      F(CapBnd)
+      NUL
+      F(SigPnd)
+      NUL NUL
+      F(VmPeak)
+      NUL
+      F(SigCgt)
+      NUL NUL
+      F(Threads)
+      NUL
+      F(CapPrm)
+      NUL NUL
+      F(Pid)
+      NUL
+      F(CapEff)
+      NUL NUL
+      F(Gid)
+      NUL
+      F(VmExe)
+      NUL NUL
+      F(Uid)
+      NUL
+      F(Groups)
+      NUL NUL
+      F(Name)
     };
 
 #undef F
@@ -291,6 +310,20 @@ ENTER(0x220);
         continue;
     case_VmStk:
         P->vm_stack = strtol(S,&S,10);
+        continue;
+    case_VmSwap: // Linux 2.6.34
+        P->vm_swap = strtol(S,&S,10);
+        continue;
+    case_CapBnd:
+    case_CapEff:
+    case_CapInh:
+    case_CapPrm:
+    case_FDSize:
+    case_Groups:
+    case_SigQ:
+    case_VmHWM: // 2005, peak VmRSS unless VmRSS is bigger
+    case_VmPTE:
+    case_VmPeak: // 2005, peak VmSize unless VmSize is bigger
         continue;
     }
 

@@ -98,6 +98,7 @@ typedef struct proc_t {
 	vm_rss,         // status          same as rss in kb
 	vm_data,        // status          data size
 	vm_stack,       // status          stack size
+	vm_swap,        // status          based on "swap ents", Linux 2.6.34
 	vm_exe,         // status          executable size
 	vm_lib,         // status          library size (all pages, not just used ones)
 	rtprio,		// stat            real-time priority
