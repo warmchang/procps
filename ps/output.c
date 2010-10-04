@@ -1326,7 +1326,7 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 static const format_struct format_array[] = {
 /* code       header     print()      sort()    width need vendor flags  */
 {"%cpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    BSD, ET|RIGHT}, /*pcpu*/
-{"%mem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    BSD, PO|RIGHT}, /*pmem*/
+{"%mem",      "%MEM",    pr_pmem,     sr_rss,     4,   0,    BSD, PO|RIGHT}, /*pmem*/
 {"_left",     "LLLLLLLL", pr_t_left,  sr_nop,     8,   0,    TST, ET|LEFT},
 {"_left2",    "L2L2L2L2", pr_t_left2, sr_nop,     8,   0,    TST, ET|LEFT},
 {"_right",    "RRRRRRRRRRR", pr_t_right, sr_nop, 11,   0,    TST, ET|RIGHT},
@@ -1446,7 +1446,7 @@ static const format_struct format_array[] = {
 {"pgid",      "PGID",    pr_pgid,     sr_pgrp,    5,   0,    U98, PO|PIDMAX|RIGHT},
 {"pgrp",      "PGRP",    pr_pgid,     sr_pgrp,    5,   0,    LNX, PO|PIDMAX|RIGHT},
 {"pid",       "PID",     pr_procs,    sr_procs,   5,   0,    U98, PO|PIDMAX|RIGHT},
-{"pmem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    XXX, PO|RIGHT}, /*%mem*/
+{"pmem",      "%MEM",    pr_pmem,     sr_rss,     4,   0,    XXX, PO|RIGHT}, /*%mem*/
 {"poip",      "-",       pr_nop,      sr_nop,     1,   0,    BSD, AN|RIGHT},
 {"policy",    "POL",     pr_class,    sr_sched,   3,   0,    DEC, TO|LEFT},
 {"ppid",      "PPID",    pr_ppid,     sr_ppid,    5,   0,    U98, PO|PIDMAX|RIGHT},
