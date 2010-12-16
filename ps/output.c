@@ -77,7 +77,6 @@ static unsigned max_leftward = 0x12345678; /* space for LEFT stuff */
 static int wide_signals;  /* true if we have room */
 
 static unsigned long seconds_since_1970;
-static unsigned long time_of_boot;
 static unsigned long page_shift;
 
 
@@ -813,7 +812,7 @@ static int pr_bsdtime(char *restrict const outbuf, const proc_t *restrict const 
 static int pr_bsdstart(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t start;
   time_t seconds_ago;
-  start = time_of_boot + pp->start_time / Hertz;
+  start = getbtime() + pp->start_time / Hertz;
   seconds_ago = seconds_since_1970 - start;
   if(seconds_ago < 0) seconds_ago=0;
   if(seconds_ago > 3600*24)  strcpy(outbuf, ctime(&start)+4);
@@ -927,7 +926,7 @@ static int pr_pmem(char *restrict const outbuf, const proc_t *restrict const pp)
 
 static int pr_lstart(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t t;
-  t = time_of_boot + pp->start_time / Hertz;
+  t = getbtime() + pp->start_time / Hertz;
   return snprintf(outbuf, COLWID, "%24.24s", ctime(&t));
 }
 
@@ -950,7 +949,7 @@ static int pr_stime(char *restrict const outbuf, const proc_t *restrict const pp
   our_time = localtime(&seconds_since_1970);   /* not reentrant */
   tm_year = our_time->tm_year;
   tm_yday = our_time->tm_yday;
-  t = time_of_boot + pp->start_time / Hertz;
+  t = getbtime() + pp->start_time / Hertz;
   proc_time = localtime(&t); /* not reentrant, this corrupts our_time */
   fmt = "%H:%M";                                   /* 03:02 23:59 */
   if(tm_yday != proc_time->tm_yday) fmt = "%b%d";  /* Jun06 Aug27 */
@@ -961,7 +960,7 @@ static int pr_stime(char *restrict const outbuf, const proc_t *restrict const pp
 static int pr_start(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t t;
   char *str;
-  t = time_of_boot + pp->start_time / Hertz;
+  t = getbtime() + pp->start_time / Hertz;
   str = ctime(&t);
   if(str[8]==' ')  str[8]='0';
   if(str[11]==' ') str[11]='0';
@@ -1982,7 +1981,6 @@ void init_output(void){
   // available space:  page_size*outbuf_pages-SPACE_AMOUNT
 
   seconds_since_1970 = time(NULL);
-  time_of_boot = seconds_since_1970 - seconds_since_boot;
 
   meminfo();
 

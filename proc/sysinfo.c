@@ -90,6 +90,35 @@ int uptime(double *restrict uptime_secs, double *restrict idle_secs) {
     return up;	/* assume never be zero seconds in practice */
 }
 
+unsigned long getbtime(void) {
+    static unsigned long btime = 0;
+    FILE *f;
+
+    if (btime)
+	return btime;
+
+    /* /proc/stat can get very large on multi-CPU systems so we
+       can't use FILE_TO_BUF */
+    if (!(f = fopen(STAT_FILE, "r"))) {
+	fputs(BAD_OPEN_MESSAGE, stderr);
+	fflush(NULL);
+	_exit(102);
+    }
+
+    while ((fgets(buf, sizeof buf, f))) {
+        if (sscanf(buf, "btime %lu", &btime) == 1)
+            break;
+    }
+    fclose(f);
+
+    if (!btime) {
+	fputs("missing btime in " STAT_FILE "\n", stderr);
+	exit(1);
+    }
+
+    return btime;
+}
+
 /***********************************************************************
  * Some values in /proc are expressed in units of 1/HZ seconds, where HZ
  * is the kernel clock tick rate. One of these units is called a jiffy.

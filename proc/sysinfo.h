@@ -17,6 +17,7 @@ extern void eight_cpu_numbers(JT *uret, JT *nret, JT *sret, JT *iret, JT *wret, 
 #endif
 
 extern int        uptime (double *uptime_secs, double *idle_secs);
+extern unsigned long getbtime(void);
 extern void       loadavg(double *av1, double *av5, double *av15);
 
 
