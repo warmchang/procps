@@ -140,6 +140,7 @@ typedef struct proc_t {
 	tpgid,		// stat            terminal process group id
 	exit_signal,	// stat            might not be SIGCHLD
 	processor;      // stat            current (or most recent?) CPU
+    	char **cgroup;  // cgroup	   current cgroup, looks like a classic filepath
 } proc_t;
 
 // PROCTAB: data structure holding the persistent information readproc needs
@@ -237,8 +238,9 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 #define PROC_FILLSTAT        0x0040 // read stat -- currently unconditional
 #define PROC_FILLWCHAN       0x0080 // look up WCHAN name
 #define PROC_FILLARG         0x0100 // alloc and fill in `cmdline'
+#define PROC_FILLCGROUP      0x0200 // alloc and fill in `cgroup`
 
-#define PROC_LOOSE_TASKS     0x0200 // threat threads as if they were processes
+#define PROC_LOOSE_TASKS     0x2000 // threat threads as if they were processes
 
 // Obsolete, consider only processes with one of the passed:
 #define PROC_PID             0x1000  // process id numbers ( 0   terminated)

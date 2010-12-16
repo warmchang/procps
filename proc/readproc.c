@@ -631,6 +631,17 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
 	p->environ = file2strvec(path, "environ");
     else
         p->environ = NULL;
+
+    if(linux_version_code>=LINUX_VERSION(2,6,24) && (flags & PROC_FILLCGROUP)) {
+	p->cgroup = file2strvec(path, "cgroup"); 	/* read /proc/#/cgroup */
+    	if(p->cgroup && *p->cgroup) {
+		int i = strlen(*p->cgroup);
+		if( (*p->cgroup)[i-1]=='\n' )
+			(*p->cgroup)[i-1] = ' '; //little hack to remove trailing \n
+	}
+    }
+    else
+	p->cgroup = NULL;
     
     return p;
 next_proc:
@@ -719,7 +730,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     t->cmdline = p->cmdline;  // better not free these until done with all threads!
     t->environ = p->environ;
 #endif
-
+    t->cgroup = p->cgroup;
     t->ppid = p->ppid;  // ought to put the per-task ppid somewhere
 
     return t;
@@ -929,6 +940,8 @@ void freeproc(proc_t* p) {
 	free((void*)*p->cmdline);
     if (p->environ)
 	free((void*)*p->environ);
+    if (p->cgroup)
+	free((void*)*p->cgroup);
     free(p);
 }
 

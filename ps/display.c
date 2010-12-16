@@ -223,8 +223,7 @@ static unsigned task_format_needs;
 
 #define needs_for_format (proc_format_needs|task_format_needs)
 
-#define PROC_ONLY_FLAGS (PROC_FILLENV|PROC_FILLARG|PROC_FILLCOM|PROC_FILLMEM)
-
+#define PROC_ONLY_FLAGS (PROC_FILLENV|PROC_FILLARG|PROC_FILLCOM|PROC_FILLMEM|PROC_FILLCGROUP)
 /***** munge lists and determine openproc() flags */
 static void lists_and_needs(void){
   check_headers();
@@ -342,6 +341,7 @@ static void simple_spew(void){
       }
       if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
       if(buf.environ) free((void*)*buf.environ); // ought to reuse
+      if(buf.cgroup)  free((void*)*buf.cgroup);
     }
     break;
   case TF_show_proc|TF_loose_tasks:    // H option
@@ -354,6 +354,7 @@ static void simple_spew(void){
       }
       if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
       if(buf.environ) free((void*)*buf.environ); // ought to reuse
+      if(buf.cgroup)  free((void*)*buf.cgroup);
     }
     break;
   case TF_show_proc|TF_show_task:      // m and -m options
@@ -366,7 +367,8 @@ static void simple_spew(void){
       }
       if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
       if(buf.environ) free((void*)*buf.environ); // ought to reuse
-    }
+      if(buf.cgroup)  free((void*)*buf.cgroup);
+     }
     break;
   case TF_show_task:                   // -L and -T options
     while(readproc(ptp,&buf)){
@@ -377,7 +379,8 @@ static void simple_spew(void){
       }
       if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
       if(buf.environ) free((void*)*buf.environ); // ought to reuse
-    }
+      if(buf.cgroup)  free((void*)*buf.cgroup);
+   }
     break;
   }
   closeproc(ptp);

@@ -359,6 +359,26 @@ static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp)
   return max_rightward-rightward;
 }
 
+static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp) {
+ if(pp->cgroup && *pp->cgroup) {
+   char *endp = outbuf;
+   int rightward=max_rightward;
+   if(forest_prefix){
+       int fh = forest_helper(outbuf);
+       endp += fh;
+       rightward -= fh;
+   }
+   if(rightward>1){
+     *endp++ = ' ';
+     rightward--;
+     endp += escape_str(endp, *pp->cgroup, OUTBUF_SIZE, &rightward);
+   }
+   return max_rightward-rightward;
+ }
+ else
+   return pr_nop(outbuf,pp);
+}
+
 /* "ucomm" is the same thing: short unless -f */
 static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp = outbuf;
@@ -1257,7 +1277,7 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 #define GRP PROC_FILLGRP     /* gid_t -> group names */
 #define WCH PROC_FILLWCHAN   /* do WCHAN lookup */
 
-
+#define CGRP PROC_FILLCGROUP /* read cgroup */
 /* TODO
  *      pull out annoying BSD aliases into another table (to macro table?)
  *      add sorting functions here (to unify names)
@@ -1293,6 +1313,7 @@ static const format_struct format_array[] = {
 {"bsdtime",   "TIME",    pr_bsdtime,  sr_nop,     6,   0,    LNX, ET|RIGHT},
 {"c",         "C",       pr_c,        sr_pcpu,    2,   0,    SUN, ET|RIGHT},
 {"caught",    "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigcatch*/
+{"cgroup",    "CGROUP",  pr_cgroup,     sr_nop,     27, CGRP,  LNX, PO|UNLIMITED},
 {"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, TO|LEFT},
 {"cls",       "CLS",     pr_class,    sr_sched,   3,   0,    HPU, TO|RIGHT}, /*says HPUX or RT*/
 {"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, AN|RIGHT},
