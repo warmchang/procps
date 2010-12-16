@@ -3036,9 +3036,10 @@ static proc_t **summary_show (void)
       snprintf(_z, sizeof(_z), f, ## va);                                    \
       snprintf(cbuf, sizeof(cbuf), "%s%s%s",                                 \
          q->capclr_rowhigh,                                                  \
-         _z,                                                                 \
+         _z+advance,                                                         \
          !(CHKw(q, Show_HIROWS) && 'R' == p->state) ? q->capclr_rownorm : "" \
       );                                                                     \
+      advance=0;                                                             \
       pad += q->len_rowhigh;                                                 \
       if (!(CHKw(q, Show_HIROWS) && 'R' == p->state)) pad += q->len_rownorm; \
    }                                                                         \
