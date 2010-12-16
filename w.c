@@ -159,7 +159,7 @@ static const proc_t *getproc(const utmp_t *restrict const u, const char *restric
 	    secondbest = tmp;
 	}
 	if(!ignoreuser && uid != tmp->euid && uid != tmp->ruid) continue;
-	if(tmp->tgid != tmp->tpgid) continue;
+	if(tmp->pgrp != tmp->tpgid) continue;
 	if(best && tmp->start_time <= best->start_time) continue;
     	best = tmp;
     }
