@@ -2071,6 +2071,7 @@ static void fields_sort (void)
       *p = x + 'A';
    Curwin->rc.sortindx = x;
    putp(Cap_curs_norm);
+   putp(Cap_clr_scr);
 }
 
 
@@ -2096,6 +2097,7 @@ static void fields_toggle (void)
          *p = i + 'A';
    }
    putp(Cap_curs_norm);
+   putp(Cap_clr_scr);
 }
 
 /*######  Windows/Field Groups support  #################################*/
