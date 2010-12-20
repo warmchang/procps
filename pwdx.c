@@ -60,6 +60,7 @@ int main(int argc, char* argv[])
      for (i = 1; i < argc; i++) {
           if (regexec(&re, argv[i], 0, NULL, 0) != 0) {
                snprintf(buf, sizeof buf, "pwdx: invalid process id: %s\n", argv[i]);
+               buf[sizeof(buf)-1] = '\0';
                die(buf);
           }
           if (!strcmp("-V", argv[i]) || !strcmp("--version", argv[i]))
