@@ -359,23 +359,39 @@ static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp)
 }
 
 static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp) {
- if(pp->cgroup && *pp->cgroup) {
-   char *endp = outbuf;
-   int rightward=max_rightward;
-   if(forest_prefix){
-       int fh = forest_helper(outbuf);
-       endp += fh;
-       rightward -= fh;
-   }
-   if(rightward>1){
-     *endp++ = ' ';
-     rightward--;
-     endp += escape_str(endp, *pp->cgroup, OUTBUF_SIZE, &rightward);
-   }
-   return max_rightward-rightward;
- }
- else
-   return pr_nop(outbuf,pp);
+  char *endp = outbuf;
+  int rightward = max_rightward;
+  
+  if(pp->cgroup) {
+    char **pcgroup = pp->cgroup;
+    
+    while(*pcgroup != NULL) {
+      //Skip root cgroups
+      if(!**pcgroup || (*pcgroup)[strlen(*pcgroup)-1] == '/') {
+        pcgroup++;
+        continue;
+      }
+      
+      //Skip initial cgroup number
+      char *ccgroup = strchr(*pcgroup, ':');
+      if(ccgroup == NULL)
+        ccgroup = *pcgroup;
+      else
+        ccgroup++;
+      
+      if(endp != outbuf)
+        endp += escape_str(endp, ";", OUTBUF_SIZE, &rightward);
+      
+      endp += escape_str(endp, ccgroup, OUTBUF_SIZE, &rightward);
+      
+      pcgroup++;
+    }
+  }
+  
+  if(endp == outbuf)
+    return pr_nop(outbuf,pp);
+  
+  return (int)(endp-outbuf);
 }
 
 /* "ucomm" is the same thing: short unless -f */
@@ -1312,7 +1328,7 @@ static const format_struct format_array[] = {
 {"bsdtime",   "TIME",    pr_bsdtime,  sr_nop,     6,   0,    LNX, ET|RIGHT},
 {"c",         "C",       pr_c,        sr_pcpu,    2,   0,    SUN, ET|RIGHT},
 {"caught",    "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigcatch*/
-{"cgroup",    "CGROUP",  pr_cgroup,     sr_nop,     27, CGRP,  LNX, PO|UNLIMITED},
+{"cgroup",    "CGROUP",  pr_cgroup,   sr_nop,    27,CGRP,    LNX, PO|UNLIMITED},
 {"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, TO|LEFT},
 {"cls",       "CLS",     pr_class,    sr_sched,   3,   0,    HPU, TO|RIGHT}, /*says HPUX or RT*/
 {"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, AN|RIGHT},

@@ -493,9 +493,12 @@ static char** file2strvec(const char* directory, const char* what) {
     }
     endbuf = rbuf + tot;			/* count space for pointers */
     align = (sizeof(char*)-1) - ((tot + sizeof(char*)-1) & (sizeof(char*)-1));
-    for (c = 0, p = rbuf; p < endbuf; p++)
-    	if (!*p)
+    for (c = 0, p = rbuf; p < endbuf; p++) {
+	if (!*p || *p == '\n')
 	    c += sizeof(char*);
+	if (*p == '\n')
+	    *p = 0;
+    }
     c += sizeof(char*);				/* one extra for NULL term */
 
     rbuf = xrealloc(rbuf, tot + c + align);	/* make room for ptrs AT END */
@@ -635,14 +638,8 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     else
         p->environ = NULL;
 
-    if(linux_version_code>=LINUX_VERSION(2,6,24) && (flags & PROC_FILLCGROUP)) {
+    if(linux_version_code>=LINUX_VERSION(2,6,24) && (flags & PROC_FILLCGROUP))
 	p->cgroup = file2strvec(path, "cgroup"); 	/* read /proc/#/cgroup */
-    	if(p->cgroup && *p->cgroup) {
-		int i = strlen(*p->cgroup);
-		if( (*p->cgroup)[i-1]=='\n' )
-			(*p->cgroup)[i-1] = ' '; //little hack to remove trailing \n
-	}
-    }
     else
 	p->cgroup = NULL;
     
