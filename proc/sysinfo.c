@@ -158,6 +158,14 @@ static void old_Hertz_hack(void){
   unsigned long long jiffies;
   unsigned h;
   char *restrict savelocale;
+  long hz;
+
+#ifdef _SC_CLK_TCK
+  if((hz = sysconf(_SC_CLK_TCK)) > 0){
+    Hertz = hz;
+    return;
+  }
+#endif
 
   savelocale = setlocale(LC_NUMERIC, NULL);
   setlocale(LC_NUMERIC, "C");
@@ -241,6 +249,7 @@ static int check_for_privs(void){
 static void init_libproc(void) __attribute__((constructor));
 static void init_libproc(void){
   have_privs = check_for_privs();
+  init_Linux_version(); /* Must be called before we check code */
   // ought to count CPUs in /proc/stat instead of relying
   // on glibc, which foolishly tries to parse /proc/cpuinfo
   //

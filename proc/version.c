@@ -33,8 +33,7 @@ void display_version(void) {
 
 int linux_version_code;
 
-static void init_Linux_version(void) __attribute__((constructor));
-static void init_Linux_version(void) {
+void init_Linux_version(void) {
     static struct utsname uts;
     int x = 0, y = 0, z = 0;	/* cleared in case sscanf() < 3 */
     
