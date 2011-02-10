@@ -922,6 +922,10 @@ RR	SCHED_RR
 .br
 B	SCHED_BATCH
 .br
+ISO	SCHED_ISO
+.br
+IDL	SCHED_IDLE
+.br
 ?	unknown value
 T}
 
@@ -938,6 +942,10 @@ FF	SCHED_FIFO
 RR	SCHED_RR
 .br
 B	SCHED_BATCH
+.br
+ISO	SCHED_ISO
+.br
+IDL	SCHED_IDLE
 .br
 ?	unknown value
 T}
@@ -1144,6 +1152,10 @@ RR	SCHED_RR
 .br
 B	SCHED_BATCH
 .br
+ISO	SCHED_ISO
+.br
+IDL	SCHED_IDLE
+.br
 ?	unknown value
 T}
 
@@ -1201,9 +1213,9 @@ information displayed.  (alias\ \fBstate\fR).
 T}
 
 sched	SCH	T{
-scheduling policy of the process.  The policies sched_other,
-sched_fifo, sched_rr, and sched_batch are respectively
-displayed as 0,\ 1,\ 2,\ and\ 3.
+scheduling policy of the process.  The policies SCHED_OTHER (SCHED_NORMAL),
+SCHED_FIFO, SCHED_RR, SCHED_BATCH, SCHED_ISO, and SCHED_IDLE are respectively
+displayed as 0,\ 1,\ 2,\ 3,\ 4,\ and\ 5.
 T}
 
 sess	SESS	T{

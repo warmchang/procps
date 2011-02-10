@@ -641,12 +641,12 @@ static int pr_nice(char *restrict const outbuf, const proc_t *restrict const pp)
 static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp){
   switch(pp->sched){
   case -1: return snprintf(outbuf, COLWID, "-");   // not reported
-  case  0: return snprintf(outbuf, COLWID, "TS");  // SCHED_OTHER
+  case  0: return snprintf(outbuf, COLWID, "TS");  // SCHED_OTHER SCHED_NORMAL
   case  1: return snprintf(outbuf, COLWID, "FF");  // SCHED_FIFO
   case  2: return snprintf(outbuf, COLWID, "RR");  // SCHED_RR
   case  3: return snprintf(outbuf, COLWID, "B");   // SCHED_BATCH
-  case  4: return snprintf(outbuf, COLWID, "#4");  // SCHED_ISO? (Con Kolivas)
-  case  5: return snprintf(outbuf, COLWID, "#5");  // SCHED_IDLEPRIO? (Con Kolivas)
+  case  4: return snprintf(outbuf, COLWID, "ISO"); // reserved for SCHED_ISO (Con Kolivas)
+  case  5: return snprintf(outbuf, COLWID, "IDL"); // SCHED_IDLE
   case  6: return snprintf(outbuf, COLWID, "#6");  //
   case  7: return snprintf(outbuf, COLWID, "#7");  //
   case  8: return snprintf(outbuf, COLWID, "#8");  //
