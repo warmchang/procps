@@ -1,6 +1,0 @@
-p
-ps
-*.o
-.deps
-.libs
-Makefile
