@@ -4,26 +4,26 @@
 .SH NAME
 w \- Show who is logged on and what they are doing.
 .SH SYNOPSIS
-.B w \-
-.RB [ husfV ]
+.B w
+.RB [ \-husfV ]
 .RI [ user ]
 .SH DESCRIPTION
-.B "w "
+.B w
 displays information about the users currently on the machine,
 and their processes.
 The header shows, in this order,  the current time,
 how long the system has been running,
 how many users are currently logged on,
 and the system load averages for the past 1, 5, and 15 minutes.
-.sp
+
 The following entries are displayed for each user:
 login name, the tty name, the remote host, login time, idle time, JCPU, PCPU,
 and the command line of their current process.
-.sp
+
 The JCPU time is the time used by all processes attached to the tty.  It
 does not include past background jobs, but does include currently
 running background jobs.
-.sp
+
 The PCPU time is the time used by the current process, named in the "what"
 field.
 
@@ -35,7 +35,7 @@ Don't print the header.
 .TP 0.5i
 .B "\-u "
 Ignores the username while figuring out the current process and cpu
-times.  To demonstrate this, do a "su" and do a "w" and a "w -u".
+times.  To demonstrate this, do a "su" and do a "w" and a "w \-u".
 .TP 0.5i
 .B "\-s "
 Use the short format.

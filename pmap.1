@@ -10,25 +10,29 @@
 pmap \- report memory map of a process
 
 .SH SYNOPSIS
-.nf
-pmap [ -x | -d ] [ -q ] pids...
-pmap -V
-.fi
+.B pmap
+.RB [ \-x | \-d ]
+.RB [ \-q ]
+.I pid
+\& ...
+.br
+.B pmap \-V
 
 .SH DESCRIPTION
 The pmap command reports the memory map of a process or processes.
 
 .SH "GENERAL OPTIONS"
 .TS
-l l l.
--x	extended	Show the extended format.
--d	device	Show the device format.
--q	quiet	Do not display some header/footer lines.
--V	show version	Displays version of program.
+lB l l.
+\-x	extended	Show the extended format.
+\-d	device	Show the device format.
+\-q	quiet	Do not display some header/footer lines.
+\-V	show version	Displays version of program.
 .TE
 
 .SH "SEE ALSO"
-ps(1) pgrep(1)
+.BR ps (1),
+.BR pgrep (1)
 
 .SH STANDARDS
 No standards apply, but pmap looks an awful lot like a SunOS command.
