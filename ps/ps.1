@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS 1 "July 28, 2004" "Linux" "Linux User's Manual"
+.TH PS 1 "February 25, 2010" "Linux" "Linux User's Manual"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -18,19 +18,13 @@
 .nh
 .if n .ss 12 0
 .\"
-.\" See /usr/share/groff/current/tmac/an-old.tmac for what these do.
-.\" Setting them to zero provides extra space, but only do that for
-.\" plain text output. PostScript and such will remain indented.
-.if n .nr IN 0n
-.if n .nr an-prevailing-indent 0n
-.\"
 .\"
 .\" ColSize is used for the format spec table.
 .\" It's the left margin, minus the right, minus
 .\" the space needed for the 1st two columns.
 .\" Making it messy: inches, ens, points, scaled points...
 .\"
-.nr ColSize ((\n(.lu-\n(.iu/\n(.Hu-20u)n)
+.nr ColSize ((\n[.l] - \n[.i]) / 1n - 29)
 .\"
 .\" This is for command options
 .nr OptSize (16u)
@@ -90,7 +84,7 @@ and
 associated with the same terminal as the invoker.
 It displays the process ID (pid=PID),
 the terminal associated with the process (tname=TTY),
-the cumulated CPU time in [dd\-]hh:mm:ss format (time=TIME),
+the cumulated CPU time in [DD\-]hh:mm:ss format (time=TIME),
 and the executable name (ucmd=CMD).
 Output is unsorted by default.
 .P
@@ -164,20 +158,6 @@ Print only the name of PID 42:
 .PP
 .\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .SH "SIMPLE PROCESS SELECTION"
-.opt \-A
-Select all processes.  Identical to \fB\-e\fR.
-
-.opt \-N
-Select all processes except those that fulfill the specified conditions.
-(negates the selection) Identical to \fB\-\-deselect\fR.
-
-.opt T
-Select all processes associated with this terminal.  Identical to the
-\fBt\fR option without any argument.
-
-.opt \-a
-Select all processes except both session leaders (see \fIgetsid\fR(2)) and
-processes not associated with a terminal.
 
 .opt a
 Lift the BSD\-style "only yourself" restriction, which is imposed upon
@@ -189,8 +169,20 @@ An alternate description is that this option causes \fBps\fR to
 list all processes with a terminal (tty),
 or to list all processes when used together with the \fBx\fR option.
 
+.opt \-A
+Select all processes.  Identical to \fB\-e\fR.
+
+.opt \-a
+Select all processes except both session leaders (see \fIgetsid\fR(2)) and
+processes not associated with a terminal.
+
 .opt \-d
 Select all processes except session leaders.
+
+.opt \-\-deselect
+Select all processes except those that fulfill the specified conditions
+(negates the selection). Identical to \fB\-N\fR.
+
 
 .opt \-e
 Select all processes.  Identical to \fB\-A\fR.
@@ -200,10 +192,19 @@ Select all processes.  Identical to \fB\-A\fR.
 .\" add in the group leaders -- at least according to the SunOS 4
 .\" man page on the FreeBSD site. Uh oh. I think I had tested SunOS
 .\" though, so maybe the code is correct.
+
 .opt g
 Really all, even session leaders.  This flag is obsolete and may be
 discontinued in a future release. It is normally implied by the \fBa\fR flag,
 and is only useful when operating in the sunos4 personality.
+
+.opt \-N
+Select all processes except those that fulfill the specified conditions
+(negates the selection). Identical to \fB\-\-deselect\fR.
+
+.opt T
+Select all processes associated with this terminal.  Identical to the
+\fBt\fR option without any argument.
 
 .opt r
 Restrict the selection to only running processes.
@@ -218,10 +219,6 @@ An alternate description is that this option causes \fBps\fR to
 list all processes owned by you (same EUID as \fBps\fR),
 or to list all processes when used together with the \fBa\fR option.
 
-.opt \-\-deselect
-Select all processes except those that fulfill the specified conditions.
-(negates the selection) Identical to \fB\-N\fR.
-
 .\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .PD
 .PP
@@ -230,6 +227,13 @@ These options accept a single argument in the form of a blank\-separated
 or comma\-separated list.  They can be used multiple times.
 For\ example:\ \fBps\ \-p\ "1\ 2"\ \-p\ 3,4\fR
 .P
+
+.opt \-\fI123\fR
+Identical to \fB\-\-sid\ \fI123\fR.
+
+.opt \fI123\fR
+Identical to \fB\-\-pid\ \fI123\fR.
+
 .opt \-C \ cmdlist
 Select by command name.
 .br
@@ -243,24 +247,6 @@ This selects the processes whose real group name or ID is in the
 \fIgrplist\fR list.  The real group ID identifies the group of the user
 who created the process, see \fIgetgid\fR(2).
 
-.opt U \ userlist
-Select by effective user ID (EUID) or name.
-.br
-This selects the processes whose effective user name
-or ID is in \fIuserlist\fR.
-The effective user\ ID describes the user whose file
-access permissions are used by the process
-(see\ \fIgeteuid\fR(2)).
-Identical to \fB\-u\fR and\ \fB\-\-user\fR.
-
-.opt \-U \ userlist
-select by real user ID (RUID) or name.
-.br
-It selects the processes whose real user name or ID is in the
-\fIuserlist\fR list.
-The real user ID identifies the user who created the process,
-see\ \fIgetuid\fR(2).
-
 .opt \-g \ grplist
 Select by session OR by effective group name.
 .br
@@ -272,6 +258,17 @@ is completely numeric (as\ sessions\ are).
 Group ID numbers will work only when some group names are also specified.
 See the \fB\-s\fR and \fB\-\-group\fR options.
 
+.opt \-\-Group \ grplist
+Select by real group ID (RGID) or name.  Identical to \fB\-G\fR.
+
+.opt \-\-group \ grplist
+Select by effective group ID (EGID) or name.
+.br
+This selects the processes whose effective group name or ID is in
+\fIgrouplist\fR.  The effective group ID describes the group whose file
+access permissions are used by the process (see\ \fIgetegid\fR(2)).
+The \fB\-g\fR option is often an alternative to\ \fB\-\-group\fR.
+
 .opt p \ pidlist
 Select by process ID.  Identical to \fB\-p\fR and\ \fB\-\-pid\fR.
 
@@ -281,17 +278,30 @@ Select by PID.
 This selects the processes whose process ID numbers appear in
 \fIpidlist\fR.  Identical to \fBp\fR and\ \fB\-\-pid\fR.
 
+.opt \-\-pid \ pidlist
+Select by process\ ID.  Identical to \fB\-p\fR\ and\ \fBp\fR.
+
+.opt \-\-ppid \ pidlist
+Select by parent process\ ID.
+This selects the processes
+with a parent\ process\ ID in \fIpidlist\fR.
+That\ is, it selects processes that are children
+of those listed in \fIpidlist\fR.
+
 .opt \-s \ sesslist
 Select by session ID.
 .br
 This selects the processes
 with a session ID specified in\ \fIsesslist\fR.
 
+.opt \-\-sid \ sesslist
+Select by session\ ID.  Identical to\ \fB\-s\fR.
+
 .opt t \ ttylist
 Select by tty.  Nearly identical to \fB\-t\fR and \fB\-\-tty\fR,
 but can also be used with an empty \fIttylist\fR to indicate
 the terminal associated with \fBps\fR.
-Using the \fBT\fR option is considered cleaner than using \fBT\fR with
+Using the \fBT\fR option is considered cleaner than using \fBt\fR with
 an\ empty\ \fIttylist\fR.
 
 .opt \-t \ ttylist
@@ -303,6 +313,27 @@ Terminals (ttys, or screens for text output) can be specified in several
 forms: /dev/ttyS1, ttyS1, S1.
 A\ plain "\-" may be used to select processes not attached to any terminal.
 
+.opt \-\-tty \ ttylist
+Select by terminal.  Identical to \fB\-t\fR and\ \fBt\fR.
+
+.opt U \ userlist
+Select by effective user ID (EUID) or name.
+.br
+This selects the processes whose effective user name
+or ID is in \fIuserlist\fR.
+The effective user\ ID describes the user whose file
+access permissions are used by the process
+(see\ \fIgeteuid\fR(2)).
+Identical to \fB\-u\fR and\ \fB\-\-user\fR.
+
+.opt \-U \ userlist
+Select by real user ID (RUID) or name.
+.br
+It selects the processes whose real user name or ID is in the
+\fIuserlist\fR list.
+The real user ID identifies the user who created the process,
+see\ \fIgetuid\fR(2).
+
 .opt \-u \ userlist
 Select by effective user ID (EUID) or name.
 .br
@@ -311,45 +342,12 @@ This selects the processes whose effective user name or ID is in
 access permissions are used by the process (see\ \fIgeteuid\fR(2)).
 Identical to \fBU\fR and \fB\-\-user\fR.
 
-.opt \-\-Group \ grplist
-Select by real group ID (RGID) or name.  Identical to \fB\-G\fR.
-
 .opt \-\-User \ userlist
 Select by real user ID (RUID) or name.  Identical to \fB\-U\fR.
-
-.opt \-\-group \ grplist
-Select by effective group ID (EGID) or name.
-.br
-This selects the processes whose effective group name or ID is in
-\fIgrouplist\fR.  The effective group ID describes the group whose file
-access permissions are used by the process (see\ \fIgeteuid\fR(2)).
-The \fB\-g\fR option is often an alternative to\ \fB\-\-group\fR.
-
-.opt \-\-pid \ pidlist
-Select by process\ ID.  Identical to \fB\-p\fR\ and\ \fBp\fR.
-
-.opt \-\-ppid \ pidlist
-Select by parent process\ ID.
-This selects the processes
-with a parent\ process\ ID in \fRpidlist\fR.
-That\ is, it selects processes that are children
-of those listed in \fRpidlist\fR.
-
-.opt \-\-sid \ sesslist
-Select by session\ ID.  Identical to\ \fB\-s\fR.
-
-.opt \-\-tty \ ttylist
-Select by terminal.  Identical to \fB\-t\fR and\ \fBt\fR.
 
 .opt \-\-user \ userlist
 Select by effective user ID (EUID) or name.
 Identical to \fB\-u\fR and\ \fBU\fR.
-
-.opt \-\fI123\fR
-Identical to \fB\-\-sid\ \fI123\fR.
-
-.opt \fI123\fR
-Identical to \fB\-\-pid\ \fI123\fR.
 
 .\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .PD
@@ -359,13 +357,40 @@ These options are used to choose the information displayed by \fBps\fR.
 The output may differ by personality.
 .PP
 
-.opt \-F
-extra full format. See the \fB\-f\fR option, which \fB\-F\fR implies.
+.opt \-c
+Show different scheduler information for the \fB\-l\fR option.
 
-.opt \-O \ format
-is like \fB\-o\fR, but preloaded with some default columns.
-Identical to \fB\-o\ pid,\fIformat\fB,state,tname,time,command\fR
-or \fB\-o\ pid,\fIformat\fB,tname,time,cmd\fR, see\ \fB\-o\fR\ below.
+.opt \-\-context
+Display security context format (for\ SE\ Linux).
+
+.opt \-f
+Do full\-format listing. This option can be combined with many
+other UNIX\-style options to add additional columns. It also causes
+the command arguments to be printed. When used with \fB\-L\fR, the
+NLWP (number of threads) and LWP (thread ID) columns will be added.
+See the \fBc\fR option, the format keyword \fBargs\fR, and the
+format keyword \fBcomm\fR.
+
+.opt \-F
+Extra full format. See the \fB\-f\fR option, which \fB\-F\fR implies.
+
+.opt \-\-format \ format
+user\-defined format.  Identical to \fB\-o\fR and \fBo\fR.
+
+.opt j
+BSD job control format.
+
+.opt \-j
+Jobs format
+
+.opt l
+Display BSD long format.
+
+.opt \-l
+Long format. The \fB\-y\fR option is often useful with this.
+
+.opt \-M
+Add a column of security data. Identical to \fBZ\fR (for\ SE\ Linux).
 
 .opt O \ format
 is preloaded \fBo\fR (overloaded).
@@ -379,44 +404,17 @@ formatting), specify the option in some other way
 When used as a formatting option, it is identical to \fB\-O\fR, with the
 BSD\ personality.
 
-.opt \-M
-Add a column of security data. Identical to \fBZ\fR. (for\ SE\ Linux)
-
-.opt X
-Register format.
-
-.opt Z
-Add a column of security data. Identical to \fB\-M\fR. (for\ SE\ Linux)
-
-.opt \-c
-Show different scheduler information for the \fB\-l\fR option.
-
-.opt \-f
-does full\-format listing. This option can be combined with many
-other UNIX\-style options to add additional columns. It also causes
-the command arguments to be printed. When used with \fB\-L\fR, the
-NLWP (number of threads) and LWP (thread ID) columns will be added.
-See the \fBc\fR option, the format keyword \fBargs\fR, and the
-format keyword \fBcomm\fR.
-
-.opt j
-BSD job control format.
-
-.opt \-j
-jobs format
-
-.opt l
-display BSD long format.
-
-.opt \-l
-long format. The \fB\-y\fR option is often useful with this.
+.opt \-O \ format
+Like \fB\-o\fR, but preloaded with some default columns.
+Identical to \fB\-o\ pid,\fIformat\fB,state,tname,time,command\fR
+or \fB\-o\ pid,\fIformat\fB,tname,time,cmd\fR, see\ \fB\-o\fR\ below.
 
 .opt o \ format
-specify user\-defined format.  Identical to \fB\-o\fR and
+Specify user\-defined format.  Identical to \fB\-o\fR and
 \fB\-\-format\fR.
 
 .opt \-o \ format
-user\-defined format.
+User\-defined format.
 .br
 \fIformat\fR is a single argument in the form of a
 blank\-separated or comma\-separated list, which offers
@@ -438,23 +436,23 @@ as desired; DefSysV and DefBSD are macros that may be used to
 choose the default UNIX or BSD columns.
 
 .opt s
-display signal format
+Display signal format
 
 .opt u
-display user\-oriented format
+Display user\-oriented format
 
 .opt v
-display virtual memory format
+Display virtual memory format
+
+.opt X
+Register format.
 
 .opt \-y
 Do not show flags; show rss in place of addr.
 This option can only be used with \fB\-l\fR.
 
-.opt \-\-format \ format
-user\-defined format.  Identical to \fB\-o\fR and \fBo\fR.
-
-.opt \-\-context
-Display security context format. (for\ SE\ Linux)
+.opt Z
+Add a column of security data. Identical to \fB\-M\fR (for\ SE\ Linux).
 
 .\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .PD
@@ -465,41 +463,10 @@ Display security context format. (for\ SE\ Linux)
 .\"  .B C
 .\"  use raw CPU time for %CPU instead of decaying average
 
-.opt \-H
-show process hierarchy (forest)
-
-.opt N \ namelist
-Specify namelist file.  Identical to \fB\-n\fR, see \fB\-n\fR above.
-
-.opt O \ order
-Sorting order. (overloaded)
-.br
-The BSD \fBO\fR option can act like \fB\-O\fR (user\-defined output
-format with some common fields predefined) or can be used to specify
-sort order.  Heuristics are used to determine the behavior of this
-option. To ensure that the desired behavior is obtained (sorting or
-formatting), specify the option in some other way (e.g. with \fB\-O\fR
-or \fB\-\-sort\fR).
-
-For sorting, obsolete BSD \fBO\fR option syntax is
-\fBO\fR[\fB+\fR|\fB\-\fR]\fIk1\fR[,[\fB+\fR|\fB\-\fR]\fIk2\fR[,...]].
-It orders the processes listing according to the multilevel sort specified by
-the sequence of one\-letter short keys \fIk1\fR, \fIk2\fR, ... described
-in the \fBOBSOLETE SORT KEYS\fR section below.
-The\ "+" is currently optional,
-merely re\-iterating the default direction on a key,
-but may help to distinguish an \fBO\fR sort from an \fBO\fR format.
-The\ "\-" reverses direction only on the key it precedes.
-
-.opt S
-Sum up some information, such as CPU usage, from dead child processes
-into their parent. This is useful for examining a system where a
-parent process repeatedly forks off short\-lived children to do work.
-
 .opt c
 Show the true command name. This is derived from the name of the
 executable file, rather than from the argv value. Command arguments
-and any modifications to them (see\ \fIsetproctitle\fR(3)) are
+and any modifications to them  are
 thus not shown. This option
 effectively turns the \fBargs\fR format keyword into the \fBcomm\fR
 format keyword; it is useful with the \fB\-f\fR format option and with
@@ -508,11 +475,23 @@ display the command arguments.
 See the \fB\-f\fR option, the format keyword \fBargs\fR, and the
 format keyword \fBcomm\fR.
 
+.opt \-\-cols \ n
+Set screen width
+
+.opt \-\-columns \ n
+Set screen width
+
+.opt \-\-cumulative
+Include some dead child process data (as a sum with the parent)
+
 .opt e
 Show the environment after the command.
 
 .opt f
-ASCII\-art process hierarchy (forest)
+ASCII art process hierarchy (forest).
+
+.opt \-\-forest
+ASCII art process tree.
 
 .opt h
 No header. (or, one header per screen in the BSD personality)
@@ -527,9 +506,15 @@ current personality, you can use the long options \fB\-\-headers\fR
 and \fB\-\-no\-headers\fR to enable printing headers each page or
 disable headers entirely, respectively.
 
+.opt \-H
+Show process hierarchy (forest).
+
+.opt \-\-headers
+Repeat header lines, one per page of output.
+
 .opt k \ spec
-specify sorting order. Sorting syntax is
-[\fB+\fR|\fB\-\fR]\fIkey\fR[,[\fB+\fR|\fB\-\fR]\fIkey\fR[,...]]
+Specify sorting order. Sorting syntax is
+[\fB+\fR|\fB\-\fR]\fIkey\fR[,[\fB+\fR|\fB\-\fR]\fIkey\fR[,...]].
 Choose a multi\-letter key from the \fBSTANDARD FORMAT SPECIFIERS\fR section.
 The\ "+" is optional since default direction is increasing numerical or
 lexicographic order. Identical to \fB\-\-sort\fR. Examples:
@@ -540,8 +525,11 @@ lexicographic order. Identical to \fB\-\-sort\fR. Examples:
 .br
 \fBps\ kstart_time\ \-ef\fR
 
+.opt \-\-lines \ n
+Set screen height.
+
 .opt \-n \ namelist
-set namelist file.  Identical to \fBN\fR.
+Set namelist file.  Identical to \fBN\fR.
 .br
 The namelist file is needed for a proper WCHAN display, and must match
 the current Linux kernel exactly for correct output.
@@ -564,45 +552,56 @@ Without this option, the default search path for the namelist is:
 	/System.map
 
 .opt n
-Numeric output for WCHAN and USER. (including all types of UID and GID)
+Numeric output for WCHAN and USER (including all types of UID and GID).
 
-.opt \-w
-Wide output. Use this option twice for unlimited width.
-
-.opt w
-Wide output. Use this option twice for unlimited width.
-
-.opt \-\-cols \ n
-set screen width
-
-.opt \-\-columns \ n
-set screen width
-
-.opt \-\-cumulative
-include some dead child process data (as a sum with the parent)
-
-.opt \-\-forest
-ASCII art process tree
-
-.opt \-\-headers
-repeat header lines, one per page of output
+.opt N \ namelist
+Specify namelist file.  Identical to \fB\-n\fR, see \fB\-n\fR above.
 
 .opt \-\-no\-headers
-print no header line at all
+Print no header line at all. \fB\-\-no\-heading\fR is an alias for this
+option.
 
-.opt \-\-lines \ n
-set screen height
+.opt O \ order
+Sorting order (overloaded).
+.br
+The BSD \fBO\fR option can act like \fB\-O\fR (user\-defined output
+format with some common fields predefined) or can be used to specify
+sort order.  Heuristics are used to determine the behavior of this
+option. To ensure that the desired behavior is obtained (sorting or
+formatting), specify the option in some other way (e.g. with \fB\-O\fR
+or \fB\-\-sort\fR).
+
+For sorting, obsolete BSD \fBO\fR option syntax is
+\fBO\fR[\fB+\fR|\fB\-\fR]\fIk1\fR[,[\fB+\fR|\fB\-\fR]\fIk2\fR[,...]].
+It orders the processes listing according to the multilevel sort specified by
+the sequence of one\-letter short keys \fIk1\fR, \fIk2\fR, ... described
+in the \fBOBSOLETE SORT KEYS\fR section below.
+The\ "+" is currently optional,
+merely re\-iterating the default direction on a key,
+but may help to distinguish an \fBO\fR sort from an \fBO\fR format.
+The\ "\-" reverses direction only on the key it precedes.
 
 .opt \-\-rows \ n
-set screen height
+Set screen height.
+
+.opt S
+Sum up some information, such as CPU usage, from dead child processes
+into their parent. This is useful for examining a system where a
+parent process repeatedly forks off short\-lived children to do work.
 
 .opt \-\-sort \ spec
-specify sorting order. Sorting syntax is
-[\fB+\fR|\fB\-\fR]\fIkey\fR[,[\fB+\fR|\fB\-\fR]\fIkey\fR[,...]]
+Specify sorting order. Sorting syntax is
+[\fB+\fR|\fB\-\fR]\fIkey\fR[,[\fB+\fR|\fB\-\fR]\fIkey\fR[,...]].
 Choose a multi\-letter key from the \fBSTANDARD FORMAT SPECIFIERS\fR section.
 The\ "+" is optional since default direction is increasing numerical or
 lexicographic order. Identical to\ \fBk\fR.
 For example: \fBps\ jax\ \-\-sort=uid,\-ppid,+pid\fR
+
+.opt w
+Wide output. Use this option twice for unlimited width.
+
+.opt \-w
+Wide output. Use this option twice for unlimited width.
 
 .opt \-\-width \ n
 set screen width
@@ -614,19 +613,19 @@ set screen width
 .PD 0
 
 .opt H
-Show threads as if they were processes
+Show threads as if they were processes.
 
 .opt \-L
-Show threads, possibly with LWP and NLWP columns
-
-.opt \-T
-Show threads, possibly with SPID column
+Show threads, possibly with LWP and NLWP columns.
 
 .opt m
-Show threads after processes
+Show threads after processes.
 
 .opt \-m
-Show threads after processes
+Show threads after processes.
+
+.opt \-T
+Show threads, possibly with SPID column.
 
 .\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .PD
@@ -634,20 +633,20 @@ Show threads after processes
 .SH "OTHER INFORMATION"
 .PD 0
 
-.opt L
-List all format specifiers.
-
-.opt \-V
-Print the procps version.
-
-.opt V
-Print the procps version.
-
 .opt \-\-help
 Print a help message.
 
 .opt \-\-info
 Print debugging info.
+
+.opt L
+List all format specifiers.
+
+.opt V
+Print the procps version.
+
+.opt \-V
+Print the procps version.
 
 .opt \-\-version
 Print the procps version.
@@ -678,10 +677,12 @@ Processes marked <defunct> are dead processes (so\-called\ "zombies") that
 remain because their parent has not destroyed them properly. These processes
 will be destroyed by \fIinit\fR(8) if the parent process exits.
 
+If the length of the username is greater than the length of
+the display column, the numeric user ID is displayed instead.
 
 .SH "PROCESS FLAGS"
 The sum of these values is displayed in the "F" column,
-which is provided by the \fBflags\fR output specifier.
+which is provided by the \fBflags\fR output specifier:
 .PD 0
 .TP 5
 1
@@ -694,20 +695,20 @@ used super\-user privileges
 .SH "PROCESS STATE CODES"
 Here are the different values that the \fBs\fR, \fBstat\fR and
 \fBstate\fR output specifiers (header\ "STAT"\ or\ "S") will display to
-describe the state of a process.
+describe the state of a process:
 .PD 0
 .TP 5
 D
-Uninterruptible sleep (usually\ IO)
+uninterruptible sleep (usually\ IO)
 .TP
 R
-Running or runnable (on\ run\ queue)
+running or runnable (on\ run\ queue)
 .TP
 S
-Interruptible sleep (waiting for an event to complete)
+interruptible sleep (waiting for an event to complete)
 .TP
 T
-Stopped, either by a job control signal or because it is being traced.
+stopped, either by a job control signal or because it is being traced.
 .TP
 W
 paging (not valid since the 2.6.xx kernel)
@@ -716,7 +717,7 @@ X
 dead (should never be seen)
 .TP
 Z
-Defunct ("zombie") process, terminated but not reaped by its parent.
+defunct ("zombie") process, terminated but not reaped by its parent.
 .PD
 .PP
 For BSD formats and when the \fBstat\fR keyword is used, additional
@@ -739,7 +740,7 @@ l
 is multi-threaded (using CLONE_THREAD, like NPTL pthreads\ do)
 .TP
 +
-is in the foreground process group
+is in the foreground process group.
 .PD
 .PP
 .PP
@@ -865,8 +866,8 @@ keyword, the \fB\-f\fR option, and the \fBc\fR option.
 .br
 When specified last, this column will extend to the edge of the display.
 If \fBps\fR can not determine display width, as when output is redirected
-(piped) into a file or another command, the output width is undefined.
-(it may be 80, unlimited, determined by the \fBTERM\fR variable, and so on)
+(piped) into a file or another command, the output width is undefined
+(it may be 80, unlimited, determined by the \fBTERM\fR variable, and so on).
 The \fBCOLUMNS\fR environment variable or \fB\-\-cols\fR option may
 be used to exactly determine the width in this case.
 The \fBw\fR or \fB\-w\fR option may be also be used to adjust width.
@@ -875,15 +876,15 @@ T}
 blocked	BLOCKED	T{
 mask of the blocked signals, see \fIsignal\fR(7).
 According to the width of the field,
-a\ 32\-bit or 64\-bit mask in hexadecimal format is displayed.
+a\ 32 or 64\-bit mask in hexadecimal format is displayed.
 (alias\ \fBsig_block\fR,\ \fBsigmask\fR).
 T}
 
 bsdstart	START	T{
 time the command started.  If the process was started less
 than 24 hours ago, the output format is "\ HH:MM",
-else it is "mmm\ dd"
-(where mmm is the three letters of the month).
+else it is "Mmm\ dd"
+(where Mmm is the three letters of the month).
 See also \fBlstart\fR, \fBstart\fR, \fBstart_time\fR, and \fBstime\fR.
 T}
 
@@ -964,8 +965,8 @@ keyword, the \fB\-f\fR option, and the \fBc\fR option.
 .br
 When specified last, this column will extend to the edge of the display.
 If \fBps\fR can not determine display width, as when output is redirected
-(piped) into a file or another command, the output width is undefined.
-(it may be 80, unlimited, determined by the \fBTERM\fR variable, and so on)
+(piped) into a file or another command, the output width is undefined
+(it may be 80, unlimited, determined by the \fBTERM\fR variable, and so on).
 The \fBCOLUMNS\fR environment variable or \fB\-\-cols\fR option may
 be used to exactly determine the width in this case.
 The \fBw\fR or \fB\-w\fR option may be also be used to adjust width.
@@ -980,7 +981,7 @@ per\-mill (tenths of a percent) CPU usage.  (see\ \fB%cpu\fR).
 T}
 
 cputime	TIME	T{
-cumulative CPU time, "[dd\-]hh:mm:ss" format.  (alias\ \fBtime\fR).
+cumulative CPU time, "[DD\-]hh:mm:ss" format.  (alias\ \fBtime\fR).
 T}
 
 egid	EGID	T{
@@ -1004,11 +1005,11 @@ T}
 
 etime	ELAPSED	T{
 elapsed time since the process was started,
-in\ the form\ [[dd\-]hh:]mm:ss.
+in\ the form\ [[DD\-]hh:]mm:ss.
 T}
 
 euid	EUID	T{
-effective user\ ID. (alias\ \fBuid\fR).
+effective user\ ID (alias\ \fBuid\fR).
 T}
 
 euser	EUSER	T{
@@ -1031,7 +1032,7 @@ T}
 
 fgroup	FGROUP	T{
 filesystem access group\ ID.
-This will be the textual user\ ID, if\ it can be obtained
+This will be the textual group\ ID, if\ it can be obtained
 and the field width permits,
 or\ a\ decimal representation otherwise.
 (alias\ \fBfsgroup\fR).
@@ -1070,7 +1071,7 @@ T}
 
 ignored	IGNORED	T{
 mask of the ignored signals, see \fIsignal\fR(7).  According to the
-width of the field, a\ 32\-bit or 64\-bit mask in hexadecimal format
+width of the field, a\ 32 or 64\ bits mask in hexadecimal format
 is displayed.  (alias \fBsig_ignore\fR, \fBsigignore\fR).
 T}
 
@@ -1088,6 +1089,14 @@ T}
 lwp	LWP	T{
 lwp (light weight process, or thread) ID of the lwp being reported.
 (alias\ \fBspid\fR,\ \fBtid\fR).
+T}
+
+maj_flt	MAJFLT	T{
+The number of major page faults that have occured with this process.
+T}
+
+min_flt	MINFLT	T{
+The number of minor page faults that have occured with this process.
 T}
 
 ni	NI	T{
@@ -1117,7 +1126,7 @@ pending	PENDING	T{
 mask of the pending signals. See\ \fIsignal\fR(7).  Signals pending on
 the process are distinct from signals pending on individual threads.
 Use the \fBm\fR option or the \fB\-m\fR option to see both.
-According to the width of the field, a\ 32\-bit or 64\-bit mask in
+According to the width of the field, a\ 32 or 64\ bits mask in
 hexadecimal format is displayed.  (alias\ \fBsig\fR).
 T}
 
@@ -1161,6 +1170,10 @@ T}
 
 ppid	PPID	T{
 parent process ID.
+T}
+
+pri	PRI	T{
+priority of the process. Higher number means lower priority.
 T}
 
 psr	PSR	T{
@@ -1278,8 +1291,8 @@ start	STARTED	T{
 time the command started.
 If the process was started less than 24 hours ago,
 the output format is "HH:MM:SS",
-else it is "\ \ mmm\ dd"
-(where mmm is a three\-letter month\ name).
+else it is "\ \ <mm\ dd"
+(where Mmm is a three\-letter month\ name).
 See also \fBlstart\fR, \fBbsdstart\fR, \fBstart_time\fR, and \fBstime\fR.
 T}
 
@@ -1287,7 +1300,7 @@ start_time	START	T{
 starting time or date of the process.
 Only the year will be displayed if the process was not
 started the same year \fBps\fR was invoked,
-or\ "mmmdd" if\ it was not started the same day,
+or\ "MmmDD" if\ it was not started the same day,
 or\ "HH:MM" otherwise.
 See also \fBbsdstart\fR, \fBstart\fR, \fBlstart\fR, and \fBstime\fR.
 T}
@@ -1340,7 +1353,7 @@ see\ \fBlwp\fR.  (alias\ \fBlwp\fR).
 T}
 
 time	TIME	T{
-cumulative CPU\ time, "[dd\-]hh:mm:ss" format.  (alias\ \fBcputime\fR).
+cumulative CPU\ time, "[DD\-]HH:MM:SS" format.  (alias\ \fBcputime\fR).
 T}
 
 tname	TTY	T{
@@ -1461,7 +1474,7 @@ Without that setting,
 .SH "PERSONALITY"
 .TS
 l	l.
-390	like the S/390 OpenEdition \fBps\fR
+390	like the OS/390 OpenEdition \fBps\fR
 aix	like AIX \fBps\fR
 bsd	like FreeBSD \fBps\fR (totally\ non\-standard)
 compaq	like Digital Unix \fBps\fR
@@ -1490,7 +1503,7 @@ unix98	standard
 .PP
 .PP
 .SH "SEE ALSO"
-\fItop\fR(1), \fIpgrep\fR(1), \fIpstree\fR(1), \fIproc\fR(5).
+\fBtop\fR(1), \fBpgrep\fR(1), \fBpstree\fR(1), \fBproc\fR(5).
 .PP
 .PP
 .SH STANDARDS
