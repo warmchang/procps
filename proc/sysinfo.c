@@ -778,6 +778,10 @@ void vminfo(void){
   };
   const int vm_table_count = sizeof(vm_table)/sizeof(vm_table_struct);
 
+#if __SIZEOF_LONG__ == 4
+  unsigned long long slotll;
+#endif
+
   vm_pgalloc = 0;
   vm_pgrefill = 0;
   vm_pgscan = 0;
@@ -800,7 +804,15 @@ void vminfo(void){
     );
     head = tail+1;
     if(!found) goto nextline;
+#if __SIZEOF_LONG__ == 4
+    // A 32 bit kernel would have already truncated the value, a 64 bit kernel
+    // doesn't need to.  Truncate here to let 32 bit programs to continue to get
+    // truncated values.  It's that or change the API for a larger data type.
+    slotll = strtoull(head,&tail,10);
+    *(found->slot) = (unsigned long)slotll;
+#else
     *(found->slot) = strtoul(head,&tail,10);
+#endif
 nextline:
 
 //if(found) fprintf(stderr,"%s=%d\n",found->name,*(found->slot));
