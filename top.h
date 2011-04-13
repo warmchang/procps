@@ -20,8 +20,8 @@
 #define _Itop
 
         /* Development/Debugging defines ----------------------------------- */
-//#define ATEOJ_HSHRPT            /* report on hash specifics, at end-of-job */
-//#define ATEOJ_STDRPT            /* report a bunch of stuff, at end-of-job  */
+//#define ATEOJ_RPTHSH            /* report on hash specifics, at end-of-job */
+//#define ATEOJ_RPTSTD            /* report on misc stuff, at end-of-job     */
 //#define CASEUP_HEXES            /* show any hex values in upper case       */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
@@ -37,6 +37,20 @@
 //#define STRCMPNOCASE            /* use strcasecmp vs. strcmp when sorting  */
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
 //#define TTYGETENVYES            /* environ vars can override tty col/row   */
+//#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
+//#define ZAP_SUSEONLY            /* enable the SuSE specific modifications  */
+
+
+/*######  Notes, etc.  ###################################################*/
+
+        /* The following conventions are used to identify areas where
+           adaptations for hotplugging are to be found ...
+              *** hotplug_cpu_acclimated ***
+              *** hotplug_mem_acclimated ***
+           ( hopefully libproc will also be supportive of our efforts )   */
+
+        /* And there are still some of these lurking here and there...
+              FIXME - blah, blah...                                       */
 
 
 #ifdef PRETEND2_5_X
@@ -49,17 +63,14 @@
 #define STRSORTCMP  strcmp
 #endif
 
-
-/*######  Notes  #########################################################*/
-
-        /* The following conventions are used to identify areas where
-           adaptations for hotplugging are to be found ...
-              *** hotplug_cpu_acclimated ***
-              *** hotplug_mem_acclimated ***
-           ( hopefully libproc will also be supportive of our efforts )   */
-
-        /* And there are still some of these lurking here and there...
-              FIXME - blah, blah...                                       */
+#ifdef ZAP_SUSEONLY
+        /* FIXME: perhaps making this a function in the suse version of
+           sysinfo.c was a prelude to hotpluggable updates -- unfortunately,
+           the return value is invariant as currently implemented! */
+#define SMP_NUM_CPUS  smp_num_cpus()
+#else
+#define SMP_NUM_CPUS  smp_num_cpus
+#endif
 
 
 /*######  Some Miscellaneous constants  ##################################*/
@@ -78,24 +89,23 @@
 #ifdef RESIZE_LIMIT
 #define SCRCOLMIN    16
 #define SCRROWMIN     8
-#else
-#define SCRROWMIN     1
 #endif
 #define SCREENMAX   512
    /* the above might seem pretty stingy, until you consider that with every
       one of top's fields displayed it's less than 200 bytes of column header
       -- so SCREENMAX provides for all fields plus a 300+ byte command line */
 #define CAPBUFSIZ    32
-#define ASKBUFSIZ    32
 #define CLRBUFSIZ    64
 #define PFLAGSSIZ    64
-#define SMLBUFSIZ    64
+#define SMLBUFSIZ   128
 #define MEDBUFSIZ   256
+#define LRGBUFSIZ   512
 #define OURPATHSZ  1024
 #define BIGBUFSIZ  2048
-   // in addition to the actual display data, our row might have to accomodate
-   // many termcap/color transitions - this ensures we'll have room for both */
-#define ROWBUFSIZ  SCREENMAX * 2
+   /* in addition to the actual display data, our row might have to accomodate
+      many termcap/color transitions - these definitions ensure we have room */
+#define ROWMINSIZ  ( SCREENMAX +  4 * (CAPBUFSIZ + CLRBUFSIZ) )
+#define ROWMAXSIZ  ( SCREENMAX + 16 * (CAPBUFSIZ + CLRBUFSIZ) )
 
    // support for keyboard stuff (cursor motion keystrokes, mostly)
 #define kbd_ENTER  '\n'
@@ -127,8 +137,16 @@ enum pflag {
    P_MEM, P_VRT, P_SWP, P_RES, P_COD, P_DAT, P_SHR,
    P_FL1, P_FL2, P_DRT,
    P_STA, P_CMD, P_WCH, P_FLG,
+#ifdef ZAP_SUSEONLY
+   P_OOA, P_OOM,
+#endif
+#ifdef USE_X_COLHDR
+   // not really pflags, used with tbl indexing
+   P_MAXPFLGS
+#else
    // not really pflags, used with tbl indexing & col highlighting
    P_MAXPFLGS, X_XON, X_XOF
+#endif
 };
 
         /* The scaling 'type' used with scale_num() -- this is how
@@ -216,7 +234,7 @@ typedef struct CPU_t {
         // 'Show_' & 'Qsrt_' flags are for task display in a visible window
 #define Show_COLORS  0x000800     // 'z' - show in color (vs. mono)
 #define Show_HIBOLD  0x000400     // 'b' - rows and/or cols bold (vs. reverse)
-#define Show_HICOLS  0x000200     // 'x' - show sort column highlighted
+#define Show_HICOLS  0x000200     // 'x' - show sort column emphasized
 #define Show_HIROWS  0x000100     // 'y' - show running tasks highlighted
 #define Show_CMDLIN  0x000080     // 'c' - show cmdline vs. name
 #define Show_CTIMES  0x000040     // 'S' - show times as cumulative
@@ -288,7 +306,14 @@ typedef struct WIN_t {
    int    usrseluid,                   // validated uid for 'u/U' select
           usrseltyp;                   // basis for matching above uid
    char   grpname [GRPNAMSIZ],         // window number:name, printable
+#ifdef USE_X_COLHDR
+          columnhdr [ROWMINSIZ];       // column headings for procflgs
+#ifdef EQUCOLHDRYES
+   int    hdrcaplen;                   // xtra length of caps strings
+#endif
+#else
           columnhdr [SCREENMAX];       // column headings for procflgs
+#endif
    char  *captab [CAPTABMAX];          // captab needed by show_special()
    struct WIN_t *next,                 // next window in window stack
                 *prev;                 // prior window in window stack
@@ -322,11 +347,8 @@ typedef struct WIN_t {
            ( and assuming callers don't need the string length returned ) */
 #define STRLCPY(dst,src) { strncpy(dst, src, sizeof(dst)); dst[sizeof(dst) - 1] = '\0'; }
 
-        /* Used by task_show() and window_show() to calculate CPU % used */
-#define CPU_USED(p) ((float)p->pcpu * Frame_etscale)
-
         /* Used to clear all or part of our Pseudo_screen */
-#define PSU_CLREOS(y) memset(&Pseudo_screen[ROWBUFSIZ*y], '\0', Pseudo_size-(ROWBUFSIZ*y))
+#define PSU_CLREOS(y) memset(&Pseudo_screen[ROWMAXSIZ*y], '\0', Pseudo_size-(ROWMAXSIZ*y))
 
         /* Used as return arguments in *some* of the sort callbacks */
 #define SORT_lt  ( Frame_srtflg > 0 ?  1 : -1 )
@@ -364,7 +386,7 @@ typedef struct WIN_t {
                . may contain ANY valid terminfo escape sequences
                . need NOT represent an entire screen row */
 #define PUTT(fmt,arg...) do { \
-      char _str[ROWBUFSIZ]; \
+      char _str[ROWMAXSIZ]; \
       snprintf(_str, sizeof(_str), fmt, ## arg); \
       putp(_str); \
    } while (0)
@@ -375,11 +397,11 @@ typedef struct WIN_t {
                . assumed to represent a complete screen ROW
                . subject to optimization, thus MAY be discarded */
 #define PUFF(fmt,arg...) do { \
-      char _str[ROWBUFSIZ]; \
+      char _str[ROWMAXSIZ]; \
       snprintf(_str, sizeof(_str), fmt, ## arg); \
       if (Batch) putp(_str); \
       else { \
-         char *_ptr = &Pseudo_screen[Pseudo_row * ROWBUFSIZ]; \
+         char *_ptr = &Pseudo_screen[Pseudo_row * ROWMAXSIZ]; \
          if (Pseudo_row + 1 < Screen_rows) ++Pseudo_row; \
          if (!strcmp(_ptr, _str)) putp("\n"); \
          else { \
@@ -501,6 +523,10 @@ typedef struct WIN_t {
    "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end! " \
    ""
 
+#ifdef ZAP_SUSEONLY
+        /* w/ 2 extra lines, no room for additional text on 24x80 terminal */
+#define FIELDS_notes  NULL
+#else
         /* Extra explanatory text which could accompany the Fields display.
            note: the newlines cannot actually be used, they just serve as
                  substring delimiters for the 'display_fields' routine. */
@@ -512,6 +538,7 @@ typedef struct WIN_t {
 /* no room in FIELDS_notes, sacrificed w/ 35 fields displayed .... */
 /* "  If a sort field is not displayed,\n"                         */
 /* "  the '<' & '>' keys are inactive.\n"                          */
+#endif
 
 #define FIELDS_flags \
    "Flags field:\n" \
@@ -595,9 +622,13 @@ typedef struct WIN_t {
 /*######  For Piece of mind  #############################################*/
 
         /* just sanity check(s)... */
-#if defined(ATEOJ_HSHRPT) && defined(OFF_HST_HASH)
-# error "Hey, 'ATEOJ_HSHRPT' conflicts with 'OFF_HST_HASH'"
+#if defined(ATEOJ_RPTHSH) && defined(OFF_HST_HASH)
+# error 'ATEOJ_RPTHSH' conflicts with 'OFF_HST_HASH'
 #endif
+#if defined(PRETEND4CPUS) && defined (ZAP_SUSEONLY)
+# error 'PRETEND4CPUS' conflicts with 'ZAP_SUSEONLY'
+#endif
+
 
 /*######  Some Prototypes (ha!)  #########################################*/
 

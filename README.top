@@ -1,3 +1,6 @@
+This file summarizes changes to the top program and supporting documentation
+introduced on March 31, 2011.
+
 Contents:
       DOCUMENT Changes
       INTERNAL Improvements
@@ -15,7 +18,8 @@ DOCUMENT Changes =========================================================
     - a new section "2. SUMMARY Display" added for symmetry with Fields
     - nine new fields were added to section "3a. DESCRIPTIONS of Fields"
     - a new section "3b. MANAGING Fields" replaced the obsolete section
-      "2b. SELECTING and ORDERING Columns" section
+      "2b. SELECTING and ORDERING Columns"
+    - section "5c. SCROLLING a Window" was added for that new feature
 
   . I don't know when the explanations for CODE and DATA were changed to
     show 'virtual' memory, but I think there's a reason their alternate
@@ -25,9 +29,16 @@ DOCUMENT Changes =========================================================
   . And as I indicated in a previous email, the former string identifier
     'ME' was restored as were the 'h' key/command conventions (vs. <h>).
 
+    Oops, the 'h' key/command conventions remain restored, but subsequent
+    testing revealed problems with the .ME string identifier.  Thus, it was
+    changed to .WE (along with the companion .Me/.We id).
+
   . Also previously mentioned, the 'man2html' program translates top.1 to
-    html with perfect fidelity.  I take that to mean there should be no
-    problems with the top.1 source on most other platforms.
+    HTML with near perfect fidelity.  I take that to mean there should be
+    no problems with the top.1 source on most other platforms.
+
+    To further improve translation to HTML, several .Bd and .Ed macros
+    were added to preserve literal (fixed width) spacing.
 
 
 INTERNAL Improvements ====================================================
@@ -41,11 +52,18 @@ INTERNAL Improvements ====================================================
   . The column highlighting costs for sort field visibility were
     virtually eliminated.
 
+    An optional define (USE_X_COLHDR) can be enabled to completely
+    eliminate any costs associated with the 'x' command toggle.
+
   . The management of the HST_t structures, used for %cpu calculations,
     was optimized with a hashing scheme.  Thus the need for a qsort then
     a binary search in each frame was completely eliminated.
 
-  . This far more capable new-top executable is 33% smaller.
+    An optional define can restore the former qsort/bsearch approach but
+    with an internal inlined binary search function offering substantially
+    better performance than the old top.
+
+  . This far more capable new-top executable is no larger than old top.
 
   . The above combine to produce substantially improved performance
     whose details are documented below under BENCHMARKS.
@@ -58,7 +76,7 @@ EXTERNAL Improvements ====================================================
 
     This function is dependent on cursor motion keys and should a device
     not have the customary arrow keys, alternatives are provided and
-    documented under section '3b. MANAGING Fields'.
+    documented under "Operation" near the beginning of the man page.
 
   . The following new fields have been added:
        Group Id
@@ -70,6 +88,14 @@ EXTERNAL Improvements ====================================================
        Saved User Name
        Session Id
        Tty Process Group Id
+
+  . Scrolling keys now allow one to move the view of any window vertically
+    or horizontally to reveal any desired task or column.  Previously, only
+    some tasks were viewable even with reversible, selectable sort columns.
+
+    Each of the four windows is capable of maintaining its own scrolled
+    coordinates and an optional toggle ('C') displays a message aiding
+    navigation within the available tasks and displayable fields.
 
   . User interactive line oriented input now provides for true line
     editing supported by these new keys:
