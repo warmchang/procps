@@ -25,13 +25,13 @@
 //#define CASEUP_HEXES            /* show any hex values in upper case       */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
-//#define FATAL_RCFILE            /* rcfile errors are fatal, vs. silent fix */
 //#define FIELD_CURSOR            /* cursor follows selection w/ fields mgmt */
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
+//#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
 //#define RESIZE_LIMIT            /* enable limits on lower sigwinch bounds  */
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
 //#define STRCMPNOCASE            /* use strcasecmp vs. strcmp when sorting  */
@@ -136,7 +136,7 @@ enum pflag {
    P_CPN, P_CPU, P_TME, P_TM2,
    P_MEM, P_VRT, P_SWP, P_RES, P_COD, P_DAT, P_SHR,
    P_FL1, P_FL2, P_DRT,
-   P_STA, P_CMD, P_WCH, P_FLG,
+   P_STA, P_CMD, P_WCH, P_FLG, P_CGR,
 #ifdef ZAP_SUSEONLY
    P_OOA, P_OOM,
 #endif
@@ -285,36 +285,34 @@ typedef struct RCF_t {
            maintainence, the only real additional per frame cost of having
            windows is an extra sort -- but that's just on pointers! */
 typedef struct WIN_t {
-   int    winnum,                      // window's num (array pos + 1)
-          winlines;                    // task window's rows (volatile)
-   FLG_t  pflgsall [PFLAGSSIZ];        // all 'active/on' fieldscur, as enum
-   FLG_t  procflgs [PFLAGSSIZ];        // fieldscur subset, as enum
-   int    maxpflgs,        // number of displayed procflgs ("on" in fieldscur)
+   FLG_t  pflgsall [PFLAGSSIZ],        // all 'active/on' fieldscur, as enum
+          procflgs [PFLAGSSIZ];        // fieldscur subset, as enum
+   RCW_t  rc;                          // stuff that gets saved in the rcfile
+   int    winnum,          // a window's number (array pos + 1)
+          winlines,        // current task window's rows (volatile)
+          maxpflgs,        // number of displayed procflgs ("on" in fieldscur)
           totpflgs,        // total of displayable procflgs in pflgsall array
           begpflg,         // scrolled beginning pos into pflgsall array
           endpflg,         // scrolled ending pos into pflgsall array
           begtask,         // scrolled beginning pos into Frame_maxtask
-          maxcmdln;        // max length of a process' command line
-   RCW_t  rc;              // stuff that gets saved in the rcfile
+          varcolsz,        // max length of variable width column(s)
+          usrseluid,       // validated uid for 'u/U' user selection
+          usrseltyp,       // the basis for matching above uid
+          hdrcaplen;       // column header xtra caps len, if any
    char   capclr_sum [CLRBUFSIZ],      // terminfo strings built from
           capclr_msg [CLRBUFSIZ],      //   RCW_t colors (& rebuilt too),
           capclr_pmt [CLRBUFSIZ],      //   but NO recurring costs !
           capclr_hdr [CLRBUFSIZ],      //   note: sum, msg and pmt strs
           capclr_rowhigh [CLRBUFSIZ],  //         are only used when this
-          capclr_rownorm [CLRBUFSIZ];  //         window is the 'Curwin'!
-   char   cap_bold [CAPBUFSIZ];        // support for View_NOBOLD toggle
-   int    usrseluid,                   // validated uid for 'u/U' select
-          usrseltyp;                   // basis for matching above uid
-   char   grpname [GRPNAMSIZ],         // window number:name, printable
+          capclr_rownorm [CLRBUFSIZ],  //         window is the 'Curwin'!
+          cap_bold [CAPBUFSIZ],        // support for View_NOBOLD toggle
+          grpname [GRPNAMSIZ],         // window number:name, printable
 #ifdef USE_X_COLHDR
-          columnhdr [ROWMINSIZ];       // column headings for procflgs
-#ifdef EQUCOLHDRYES
-   int    hdrcaplen;                   // xtra length of caps strings
-#endif
+          columnhdr [ROWMINSIZ],       // column headings for procflgs
 #else
-          columnhdr [SCREENMAX];       // column headings for procflgs
+          columnhdr [SCREENMAX],       // column headings for procflgs
 #endif
-   char  *captab [CAPTABMAX];          // captab needed by show_special()
+         *captab [CAPTABMAX];          // captab needed by show_special()
    struct WIN_t *next,                 // next window in window stack
                 *prev;                 // prior window in window stack
 } WIN_t;
@@ -458,6 +456,10 @@ typedef struct WIN_t {
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
    } }
+
+        /* The format string used with variable width columns --
+           see 'calibrate_fields' for supporting logic. */
+#define VARCOL_fmts  "%-*.*s "
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
@@ -633,6 +635,8 @@ typedef struct WIN_t {
 /*######  Some Prototypes (ha!)  #########################################*/
 
    /* These 'prototypes' are here solely for documentation purposes */
+/*------  Temporary Placement  -------------------------------------------*/
+//atic void          parse_cgroup (char *dst, size_t max, const proc_t *p);
 /*------  Sort callbacks  ------------------------------------------------*/
 /*        for each possible field, in the form of:                        */
 /*atic int           sort_P_XXX (const proc_t **P, const proc_t **Q);     */

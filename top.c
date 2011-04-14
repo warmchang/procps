@@ -186,6 +186,43 @@ static int   *PHash_sav = HHash_one,   // alternating 'old/new' hash tables
              *PHash_new = HHash_two;
 #endif
 
+/*######  Temporary Placement  ###########################################*/
+
+        /* For cgroup support inauguration, thanks to:
+              Jan Gorig <jgorig@redhat.com>  */
+        /*
+         * Create string from cgroup array --
+         * ( eventually to find a home in libproc ? ) */
+static void parse_cgroup (char *dst, size_t max, const proc_t *p) {
+   int whackable_int;
+   char *ccgroup, *endp = dst;
+
+   *dst = '\0';
+   if (p->cgroup) {
+      char **pcgroup = p->cgroup;
+
+      while (*pcgroup != NULL) {
+            // skip root cgroups
+         if (!**pcgroup || (*pcgroup)[strlen(*pcgroup) - 1] == '/') {
+            pcgroup++;
+            continue;
+         }
+            // skip initial cgroup number
+         ccgroup = strchr(*pcgroup, ':');
+         if (ccgroup == NULL)
+            ccgroup = *pcgroup;
+         else
+            ccgroup++;
+
+         if (endp != dst)
+            endp += escape_str(endp, ";", max, &whackable_int);
+         endp += escape_str(endp, ccgroup, max, &whackable_int);
+         pcgroup++;
+      }
+   }
+   if (!*dst) strncpy(dst, "-", max);
+}
+
 /*######  Sort callbacks  ################################################*/
 
         /*
@@ -194,6 +231,14 @@ static int   *PHash_sav = HHash_one,   // alternating 'old/new' hash tables
          * routine may serve more than one column.
          */
 
+static int SCB_NAME(CGR) (const proc_t **P, const proc_t **Q) {
+   char p[SCREENMAX], q[SCREENMAX];
+   /* we won't always re-parse these cgroups -- besides, it's only
+      a recurring burden when CGROUP is chosen as the sort column! */
+   parse_cgroup(p, sizeof(p), *P);
+   parse_cgroup(q, sizeof(q), *Q);
+   return Frame_srtflg * STRSORTCMP(q, p);
+}
 static int SCB_NAME(CMD) (const proc_t **P, const proc_t **Q) {
    /* if a process doesn't have a cmdline, we'll consider it a kernel thread
       -- since displayed tasks are given special treatment, we must too */
@@ -361,7 +406,7 @@ static void bye_bye (const char *str) {
       "\n\t   winflags = %08x, maxpflgs = %d"
 #endif
       "\n\t   fieldscur = %s, sortindx  = %d"
-      "\n\t   maxtasks = %d, maxcmdln = %d, winlines = %d"
+      "\n\t   maxtasks = %d, varcolsz = %d, winlines = %d"
       "\n\t   strlen(columnhdr) = %d"
       "\n"
       , __func__
@@ -392,7 +437,7 @@ static void bye_bye (const char *str) {
       , Curwin->rc.winname, Curwin->grpname
       , Curwin->rc.winflags, Curwin->maxpflgs
       , Curwin->rc.fieldscur, Curwin->rc.sortindx
-      , Curwin->rc.maxtasks, Curwin->maxcmdln, Curwin->winlines
+      , Curwin->rc.maxtasks, Curwin->varcolsz, Curwin->winlines
       , (int)strlen(Curwin->columnhdr)
       );
    }
@@ -1167,6 +1212,7 @@ static inline int user_matched (WIN_t *q, const proc_t *p) {
 #define L_stat     PROC_FILLSTAT
 #define L_statm    PROC_FILLMEM
 #define L_status   PROC_FILLSTATUS
+#define L_CGROUP   PROC_FILLCGROUP
 #define L_CMDLINE  PROC_FILLARG
 #define L_EUSER    PROC_FILLUSR
 #define L_OUSER    PROC_FILLSTATUS | PROC_FILLUSR
@@ -1188,7 +1234,8 @@ static FLD_t Fieldstab[] = {
  #define SF(f) (QFP_t)SCB_NAME(f)
 
 /* .head + .fmts anomolies:
-        entries shown with NULL are valued at runtime (see zap_fieldstab)
+        entries shown with NULL are either valued at runtime (see zap_fieldstab)
+        or, in the case of .fmts, represent variable width fields
    .lflg anomolies:
         P_UED, L_NONE  - natural outgrowth of 'stat()' in readproc        (euid)
         P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
@@ -1228,16 +1275,17 @@ static FLD_t Fieldstab[] = {
    { "nMin ",       "%4.4s ",     4,  SK_no,  SF(FL2),  L_stat,    "Minor Page Faults"    },
    { "nDRT ",       "%4.4s ",     4,  SK_no,  SF(DRT),  L_statm,   "Dirty Pages Count"    },
    { "S ",          "%c ",       -1,     -1,  SF(STA),  L_EITHER,  "Process Status"       },
-   // next entry's special: '.head' will be formatted using table entry's own
-   //                       '.fmts' plus runtime supplied conversion args!
-   { "COMMAND ",    "%-*.*s ",   -1,     -1,  SF(CMD),  L_EITHER,  "Command Name/Line"    },
+   // next entry's special: '.head' is variable width (see calibrate_fields)
+   { "COMMAND ",    NULL,        -1,     -1,  SF(CMD),  L_EITHER,  "Command Name/Line"    },
    { "WCHAN     ",  "%-9.9s ",   -1,     -1,  SF(WCH),  L_stat,    "Sleeping in Function" },
    // next entry's special: the 0's will be replaced with '.'!
 #ifdef CASEUP_HEXES
-   { "Flags    ",   "%08lX ",    -1,     -1,  SF(FLG),  L_stat,    "Task Flags <sched.h>" }
+   { "Flags    ",   "%08lX ",    -1,     -1,  SF(FLG),  L_stat,    "Task Flags <sched.h>" },
 #else
-   { "Flags    ",   "%08lx ",    -1,     -1,  SF(FLG),  L_stat,    "Task Flags <sched.h>" }
+   { "Flags    ",   "%08lx ",    -1,     -1,  SF(FLG),  L_stat,    "Task Flags <sched.h>" },
 #endif
+   // next entry's like P_CMD, and '.head' must be the same length -- they share varcolsz
+   { "CGROUP  ",    NULL,        -1,     -1,  SF(CGR),  L_CGROUP,  "Control Group"        }
 #ifdef ZAP_SUSEONLY
 #define L_oom      PROC_FILLOOM
   ,{ "Adj ",        "%3d ",      -1,     -1,  SF(OOA),  L_oom,     "oom_adjustment (2^X)" }
@@ -1333,6 +1381,7 @@ static void calibrate_fields (void) {
    int x, hdrmax = 0;
 #endif
    int i, needpsdb = 0;
+   int varcolcnt;
 
    // block SIGWINCH signals while we do our thing...
    sigemptyset(&newss);
@@ -1345,11 +1394,8 @@ static void calibrate_fields (void) {
 
    do {
       if (VIZISw(w)) {
-#ifdef USE_X_COLHDR
-#ifdef EQUCOLHDRYES
-         w->hdrcaplen = 0;
-#endif
-#endif
+         w->hdrcaplen = 0;   // > 0 only with USE_X_COLHDR but ref'd throughout
+                             // ( we were proliferating way too many #ifdef's )
          // build window's pflgsall array, establish upper bounds for maxpflgs
          for (i = 0, w->totpflgs = 0; i < P_MAXPFLGS; i++) {
             if (FLDviz(w, i)) {
@@ -1369,7 +1415,7 @@ static void calibrate_fields (void) {
 
          /* build a preliminary columns header not to exceed screen width
             while accounting for a possible leading window number */
-         w->maxcmdln = 0;
+         w->varcolsz = varcolcnt = 0;
          *(s = w->columnhdr) = '\0';
          if (Rc.mode_altscr) s = scat(s, " ");
          for (i = 0; i + w->begpflg < w->totpflgs; i++) {
@@ -1381,15 +1427,16 @@ static void calibrate_fields (void) {
             h = Fieldstab[f].head;
             // oops, won't fit -- we're outta here...
             if (Screen_cols <= ((int)(s - w->columnhdr) + (int)strlen(h))) break;
-            if (P_CMD == f) w->maxcmdln = strlen(h) - 1;
+            if (!Fieldstab[f].fmts) { ++varcolcnt; w->varcolsz += strlen(h) - 1; }
             s = scat(s, h);
          }
 
-         /* establish the final maxpflgs and prepare to grow the command column
-            heading via maxcmdln - it may be a fib if P_CMD wasn't encountered,
-            but that's ok because it won't be displayed anyway */
+         /* establish the final maxpflgs and prepare to grow the variable column
+            heading(s) via varcolsz - it may be a fib if their pflags wern't
+            encountered, but that's ok because they won't be displayed anyway */
          w->maxpflgs = i;
-         w->maxcmdln += Screen_cols - strlen(w->columnhdr) - 1;
+         w->varcolsz += Screen_cols - strlen(w->columnhdr);
+         if (varcolcnt) w->varcolsz = w->varcolsz / varcolcnt;
 
          /* establish the field where all remaining fields would still
             fit within screen width, including a leading window number */
@@ -1417,39 +1464,29 @@ static void calibrate_fields (void) {
 #ifdef USE_X_COLHDR
             if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx) {
                s = scat(s, fmtmk("%s%s", Caps_off, w->capclr_msg));
-#ifdef EQUCOLHDRYES
                w->hdrcaplen += strlen(Caps_off) + strlen(w->capclr_msg);
-#endif
             }
-#endif
-#ifndef USE_X_COLHDR
+#else
             if (P_MAXPFLGS < f) continue;
 #endif
             h = Fieldstab[f].head;
             if (P_WCH == f) needpsdb = 1;
-            if (P_CMD == f) {
-               if (CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
-               s = scat(s, fmtmk(Fieldstab[P_CMD].fmts, w->maxcmdln, w->maxcmdln, h));
-            } else
-               s = scat(s, h);
+            if (P_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
+            if (Fieldstab[f].fmts) s = scat(s, h);
+            else s = scat(s, fmtmk(VARCOL_fmts, w->varcolsz, w->varcolsz, h));
             Frames_libflags |= Fieldstab[w->procflgs[i]].lflg;
 #ifdef USE_X_COLHDR
             if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx) {
                s = scat(s, fmtmk("%s%s", Caps_off, w->capclr_hdr));
-#ifdef EQUCOLHDRYES
                w->hdrcaplen += strlen(Caps_off) + strlen(w->capclr_hdr);
-#endif
             }
 #endif
          }
 #ifdef EQUCOLHDRYES
          // prepare to even out column header lengths...
-#ifdef USE_X_COLHDR
          if (hdrmax + w->hdrcaplen < (x = strlen(w->columnhdr))) hdrmax = x - w->hdrcaplen;
-#else
-         if (hdrmax < (x = strlen(w->columnhdr))) hdrmax = x;
 #endif
-#endif
+
       } // end: VIZISw(w)
       if (Rc.mode_altscr) w = w->next;
    } while (w != Curwin);
@@ -1461,13 +1498,8 @@ static void calibrate_fields (void) {
       for (i = 0; i < GROUPSMAX; i++) {
          w = &Winstk[i];
          if (CHKw(w, Show_TASKON))
-#ifdef USE_X_COLHDR
             if (hdrmax + w->hdrcaplen > (x = strlen(w->columnhdr)))
                memset(&w->columnhdr[x], ' ', hdrmax + w->hdrcaplen - x);
-#else
-            if (hdrmax > (x = strlen(w->columnhdr)))
-               memset(&w->columnhdr[x], ' ', hdrmax - x);
-#endif
       }
 #endif
 
@@ -1652,6 +1684,7 @@ static void zap_fieldstab (void) {
    Fieldstab[P_PPD].head = " PPID ";
    Fieldstab[P_PPD].fmts = "%5d ";
    if (5 < (digits = get_pid_digits())) {
+      if (10 < digits) error_exit("failed pid size test");
       snprintf(fmts_pid, sizeof(fmts_pid), "%%%uu ", digits);
       Fieldstab[P_PID].head = "       PID " + 10 - digits;
       Fieldstab[P_PID].fmts = fmts_pid;
@@ -1661,7 +1694,8 @@ static void zap_fieldstab (void) {
 
    Fieldstab[P_CPN].head = "P ";
    Fieldstab[P_CPN].fmts = "%1d ";
-   if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%d", Cpu_tot))) {
+   if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_tot))) {
+      if (5 < digits) error_exit("failed num cpus test");
       snprintf(fmts_cpu, sizeof(fmts_cpu), "%%%ud ", digits);
       Fieldstab[P_CPN].head = "    P " + 5 - digits;
       Fieldstab[P_CPN].fmts = fmts_cpu;
@@ -2042,7 +2076,7 @@ static void before (char *me) {
          *   line b: contains w->winflags, sortindx, maxtasks
          *   line c: contains w->summclr, msgsclr, headclr, taskclr */
 static void configs_read (void) {
-#ifdef FATAL_RCFILE
+#ifndef RCFILE_NOERR
    static const char err_rcid[] = "incompatible rcfile, you should delete '%s'";
    static const char err_flds[] = "window entry #%d corrupt, please delete '%s'";
 #else
@@ -2075,7 +2109,7 @@ static void configs_read (void) {
          "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%f, Curwin=%d\n"
          , &id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_delay, &i))
       || RCF_VERSION_ID != id)
-#ifdef FATAL_RCFILE
+#ifndef RCFILE_NOERR
          error_exit(fmtmk(err_rcid, Rc_name));
 #else
          goto just_default_em;
@@ -2092,7 +2126,7 @@ static void configs_read (void) {
  # error "Hey, fix the above fscanf 'PFLAGSSIZ' dependency !"
 #endif
          if (strlen(Winstk[i].rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
-#ifdef FATAL_RCFILE
+#ifndef RCFILE_NOERR
             error_exit(fmtmk(err_flds, i+1, Rc_name));
 #else
             goto just_default_em;
@@ -2100,7 +2134,7 @@ static void configs_read (void) {
          for (x = 0; x < P_MAXPFLGS; ++x) {
             int f = FLDget(&Winstk[i], x);
             if (P_MAXPFLGS <= f)
-#ifdef FATAL_RCFILE
+#ifndef RCFILE_NOERR
                error_exit(fmtmk(err_flds, i+1, Rc_name));
 #else
                goto just_default_em;
@@ -2120,7 +2154,7 @@ static void configs_read (void) {
    if (!Secure_mode) Rc.delay_time = tmp_delay;
    return;
 
-#ifndef FATAL_RCFILE
+#ifdef RCFILE_NOERR
 just_default_em:
    fclose(fp);
    Rc = rcdef;
@@ -3167,6 +3201,7 @@ static void task_show (const WIN_t *q, const proc_t *p) {
       int         s = Fieldstab[i].scale;       // string must be altered !
       int         w = Fieldstab[i].width;
 
+      if (!f) f = VARCOL_fmts;                  // ah ha, a variable width field
       switch (i) {
 #ifndef USE_X_COLHDR
          // these 2 aren't real procflgs, they're used in column highlighting!
@@ -3178,14 +3213,20 @@ static void task_show (const WIN_t *q, const proc_t *p) {
                rp = scat(rp, X_XON == i ? q->capclr_rowhigh : q->capclr_rownorm);
             continue;
 #endif
+         case P_CGR:
+         {  char tmp[SCREENMAX];
+            parse_cgroup(tmp, sizeof(tmp), p);
+            makeCOL(q->varcolsz, q->varcolsz, tmp);
+         }
+            break;
          case P_CMD:
          {  char tmp[SCREENMAX];
             unsigned flags;
-            int whackable_int = q->maxcmdln;
+            int whackable_int = q->varcolsz;
             if (CHKw(q, Show_CMDLIN)) flags = ESC_DEFUNCT | ESC_BRACKETS | ESC_ARGS;
             else                      flags = ESC_DEFUNCT;
             escape_command(tmp, p, sizeof(tmp), &whackable_int, flags);
-            makeCOL(q->maxcmdln, q->maxcmdln, tmp);
+            makeCOL(q->varcolsz, q->varcolsz, tmp);
          }
             break;
          case P_COD:
