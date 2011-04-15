@@ -365,6 +365,19 @@ LEAVE(0x220);
 }
 
 ///////////////////////////////////////////////////////////////////////
+#ifdef ZAP_SUSEONLY
+static void oomscore2proc(const char* S, proc_t *restrict P)
+{
+    sscanf(S, "%d", &P->oom_score);
+}
+
+static void oomadj2proc(const char* S, proc_t *restrict P)
+{
+    sscanf(S, "%d", &P->oom_adj);
+}
+#endif
+///////////////////////////////////////////////////////////////////////
+
 
 // Reads /proc/*/stat files, being careful not to trip over processes with
 // names like ":-) 1 2 3 4 5 6".
@@ -637,7 +650,14 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
 	p->environ = file2strvec(path, "environ");
     else
         p->environ = NULL;
-
+#ifdef ZAP_SUSEONLY
+    if (unlikely(flags & PROC_FILLOOM)) {
+	if (likely( file2str(path, "oom_score", sbuf, sizeof sbuf) != -1 ))
+	    oomscore2proc(sbuf, p);
+	if (likely( file2str(path, "oom_adj", sbuf, sizeof sbuf) != -1 ))
+	    oomadj2proc(sbuf, p);
+    } /* struct has been zeroed out before, so no worries about clearing garbage here */
+#endif
     if(linux_version_code>=LINUX_VERSION(2,6,24) && (flags & PROC_FILLCGROUP))
 	p->cgroup = file2strvec(path, "cgroup"); 	/* read /proc/#/cgroup */
     else

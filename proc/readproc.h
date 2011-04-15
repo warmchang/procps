@@ -140,6 +140,10 @@ typedef struct proc_t {
 	tpgid,		// stat            terminal process group id
 	exit_signal,	// stat            might not be SIGCHLD
 	processor;      // stat            current (or most recent?) CPU
+#ifdef ZAP_SUSEONLY
+	int oom_score,  // oom_score       (badness for OOM killer)
+	    oom_adj;    // oom_adj         (adjustment to OOM score)
+#endif
     	char **cgroup;  // cgroup	   current cgroup, looks like a classic filepath
 } proc_t;
 
@@ -239,6 +243,7 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 #define PROC_FILLWCHAN       0x0080 // look up WCHAN name
 #define PROC_FILLARG         0x0100 // alloc and fill in `cmdline'
 #define PROC_FILLCGROUP      0x0200 // alloc and fill in `cgroup`
+#define PROC_FILLOOM         0x0400 // alloc and fill in oom_score, oom_adj
 
 #define PROC_LOOSE_TASKS     0x2000 // threat threads as if they were processes
 
