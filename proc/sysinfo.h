@@ -7,7 +7,11 @@
 EXTERN_C_BEGIN
 
 extern unsigned long long Hertz;   /* clock tick frequency */
+#ifndef ZAP_SUSEONLY
 extern long smp_num_cpus;     /* number of CPUs */
+#else
+extern long smp_num_cpus(void);     /* number of CPUs */
+#endif
 extern int have_privs;     /* boolean, true if setuid or similar */
 
 #if 0
