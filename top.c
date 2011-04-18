@@ -194,7 +194,7 @@ static int   *PHash_sav = HHash_one,   // alternating 'old/new' hash tables
          * Create string from cgroup array --
          * ( eventually to find a home in libproc ? ) */
 static void parse_cgroup (char *dst, size_t max, const proc_t *p) {
-   int whackable_int;
+   int whackable_int = max;
    char *ccgroup, *endp = dst;
 
    *dst = '\0';
@@ -1025,7 +1025,7 @@ static char *linein (const char *prompt) {
       }
       putp(fmtmk("%s%s%s", tg2(beg, Msg_row), Cap_clr_eol, buf));
       putp(tg2(beg+pos, Msg_row));
-   } while (kbd_ENTER != key && kbd_ESC != key);
+   } while (key && kbd_ENTER != key && kbd_ESC != key);
 
    return buf;
  #undef sqzSTR
@@ -1661,7 +1661,7 @@ static void fields_utility (void) {
          default:                 // keep gcc happy
             break;
       }
-   } while ('q' != key && kbd_ESC != key);
+   } while (key && 'q' != key && kbd_ESC != key);
    putp(Cap_curs_norm);
  #undef unSCRL
  #undef swapEM
@@ -1939,15 +1939,16 @@ static proc_t **procs_refresh (proc_t **ppt) {
    // i) Allocated Chunks:  *Existing* table;  refresh + reuse
    if (!Thread_mode) {
       while (curmax < savmax) {
-         if (ppt[curmax]->cmdline) {
-            // skip if thread mode was never enabled (see note below)
-            if (threadshown) {
-               for (i = curmax + 1; i < savmax; i++)
-                  if (ppt[i]->cmdline == ppt[curmax]->cmdline)
-                     ppt[i]->cmdline = NULL;
+         if (ppt[curmax]->cmdline || ppt[curmax]->cgroup) {
+            if (threadshown) {         // skip if never used (see note below)
+               for (i = curmax + 1; i < savmax; i++) {
+                  if (ppt[i]->cmdline == ppt[curmax]->cmdline) ppt[i]->cmdline = NULL;
+                  if (ppt[i]->cgroup  == ppt[curmax]->cgroup)  ppt[i]->cgroup  = NULL;
+               }
             }
-            free(*ppt[curmax]->cmdline);
-            ppt[curmax]->cmdline = NULL;
+            if (ppt[curmax]->cmdline) free(*ppt[curmax]->cmdline);
+            if (ppt[curmax]->cgroup)  free(*ppt[curmax]->cgroup);
+            ppt[curmax]->cmdline = ppt[curmax]->cgroup = NULL;
          }
          if (!(ptask = readproc(PT, ppt[curmax]))) break;
          prochlp(ptask);               // tally & complete this proc_t
@@ -1958,15 +1959,16 @@ static proc_t **procs_refresh (proc_t **ppt) {
       while (curmax < savmax) {
          if (!(ptask = readproc(PT, NULL))) break;
          while (curmax < savmax) {
-            if (ppt[curmax]->cmdline) {
-               /* note: threads share the same cmdline storage. so we must look
+            if (ppt[curmax]->cmdline || ppt[curmax]->cgroup) {
+               /* note: threads share some of the same storage, so we must look
                         through the rest of our table for duplicate ref's... */
-               for (i = curmax + 1; i < savmax; i++)
-                  if (ppt[i]->cmdline == ppt[curmax]->cmdline)
-                     ppt[i]->cmdline = NULL;
-               /*                                    ...but free only once ! */
-               free(*ppt[curmax]->cmdline);
-               ppt[curmax]->cmdline = NULL;
+               for (i = curmax + 1; i < savmax; i++) {
+                  if (ppt[i]->cmdline == ppt[curmax]->cmdline) ppt[i]->cmdline = NULL;
+                  if (ppt[i]->cgroup  == ppt[curmax]->cgroup)  ppt[i]->cgroup  = NULL;
+               }                                  /* ...but free only once ! */
+               if (ppt[curmax]->cmdline) free(*ppt[curmax]->cmdline);
+               if (ppt[curmax]->cgroup)  free(*ppt[curmax]->cgroup);
+               ppt[curmax]->cmdline = ppt[curmax]->cgroup = NULL;
             }
             if (!(pthrd = readtask(PT, ptask, ppt[curmax]))) break;
             threadshown = 1;
@@ -3402,7 +3404,7 @@ static int window_show (proc_t **ppt, WIN_t *q, int wmax) {
    qsort(ppt, Frame_maxtask, sizeof(proc_t *), Fieldstab[q->rc.sortindx].sort);
 
    i = q->begtask;
-   if (i > Frame_maxtask - 1) i = q->begtask = Frame_maxtask - 1;
+   if (i >= Frame_maxtask) i = q->begtask = Frame_maxtask - 1;
    lwin = 1;                                     // 1 for the ol' column header
    wmax = winMIN(wmax, q->winlines+1);           // ditto for winlines, too
 
