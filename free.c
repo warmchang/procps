@@ -1,122 +1,330 @@
-// free.c - free(1)
-// procps utility to display free memory information
-//
-// All new, Robert Love <rml@tech9.net>             18 Nov 2002
-// Original by Brian Edmonds and Rafal Maszkowski   14 Dec 1992
-//
-// This program is licensed under the GNU Library General Public License, v2
-//
-// Copyright 2003 Robert Love
-// Copyright 2004 Albert Cahalan
-
+/*
+ * free.c - free(1)
+ * procps utility to display free memory information
+ *
+ * Mostly new, Sami Kerola <kerolasa@iki.fi>		15 Apr 2011
+ * All new, Robert Love <rml@tech9.net>			18 Nov 2002
+ * Original by Brian Edmonds and Rafal Maszkowski	14 Dec 1992
+ *
+ * This program is licensed under the GNU Library General Public License, v2
+ *
+ * Copyright 2003 Robert Love
+ * Copyright 2004 Albert Cahalan
+ */
 #include "proc/sysinfo.h"
 #include "proc/version.h"
-//#include <errno.h>
-#include <fcntl.h>
+#include <errno.h>
+#include <err.h>
+#include <limits.h>
+#include <ctype.h>
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 
-#define S(X) ( ((unsigned long long)(X) << 10) >> shift)
+#ifndef SIZE_MAX
+#define SIZE_MAX		32
+#endif
 
-const char help_message[] =
-"usage: free [-b|-k|-m|-g] [-l] [-o] [-t] [-s delay] [-c count] [-V]\n"
-"  -b,-k,-m,-g show output in bytes, KB, MB, or GB\n"
-"  -l show detailed low and high memory statistics\n"
-"  -o use old format (no -/+buffers/cache line)\n"
-"  -t display total for RAM + swap\n"
-"  -s update every [delay] seconds\n"
-"  -c update [count] times\n"
-"  -V display version information and exit\n"
-;
+#define FREE_HUMANREADABLE	(1 << 1)
+#define FREE_LOHI		(1 << 2)
+#define FREE_OLDFMT		(1 << 3)
+#define FREE_TOTAL		(1 << 4)
+#define FREE_SI			(1 << 5)
+#define FREE_REPEAT		(1 << 6)
+#define FREE_REPEATCOUNT	(1 << 7)
 
-int main(int argc, char *argv[]){
-    int i;
-    int count = 0;
-    int shift = 10;
-    int pause_length = 0;
-    int show_high = 0;
-    int show_total = 0;
-    int old_fmt = 0;
+struct commandline_arguments {
+	int exponent;		/* demanded in kilos, magas... */
+	float repeat_interval;	/* delay in seconds */
+	int repeat_counter;	/* number of repeats */
+};
 
-    /* check startup flags */
-    while( (i = getopt(argc, argv, "bkmglotc:s:V") ) != -1 )
-        switch (i) {
-        case 'b': shift = 0;  break;
-        case 'k': shift = 10; break;
-        case 'm': shift = 20; break;
-        case 'g': shift = 30; break;
-        case 'l': show_high = 1; break;
-        case 'o': old_fmt = 1; break;
-        case 't': show_total = 1; break;
-        case 's': pause_length = 1000000 * atof(optarg); break;
-        case 'c': count = strtoul(optarg, NULL, 10); break;
-	case 'V': display_version(); exit(0);
-        default:
-            fwrite(help_message,1,strlen(help_message),stderr);
-	    return 1;
-    }
+/* function prototypes */
+static void usage(FILE * out);
+double power(unsigned int base, unsigned int expo);
+static const char *scale_size(unsigned long size, int flags, struct commandline_arguments args);
 
-    do {
-        meminfo();
-        printf("             total       used       free     shared    buffers     cached\n");
-        printf(
-            "%-7s %10Lu %10Lu %10Lu %10Lu %10Lu %10Lu\n", "Mem:",
-            S(kb_main_total),
-            S(kb_main_used),
-            S(kb_main_free),
-            S(kb_main_shared),
-            S(kb_main_buffers),
-            S(kb_main_cached)
-        );
-        // Print low vs. high information, if the user requested it.
-        // Note we check if low_total==0: if so, then this kernel does
-        // not export the low and high stats.  Note we still want to
-        // print the high info, even if it is zero.
-        if (show_high) {
-            printf(
-                "%-7s %10Lu %10Lu %10Lu\n", "Low:",
-                S(kb_low_total),
-                S(kb_low_total - kb_low_free),
-                S(kb_low_free)
-            );
-            printf(
-                "%-7s %10Lu %10Lu %10Lu\n", "High:",
-                S(kb_high_total),
-                S(kb_high_total - kb_high_free),
-                S(kb_high_free)
-            );
-        }
-        if(!old_fmt){
-            unsigned KLONG buffers_plus_cached = kb_main_buffers + kb_main_cached;
-            printf(
-                "-/+ buffers/cache: %10Lu %10Lu\n", 
-                S(kb_main_used - buffers_plus_cached),
-                S(kb_main_free + buffers_plus_cached)
-            );
-        }
-        printf(
-            "%-7s %10Lu %10Lu %10Lu\n", "Swap:",
-            S(kb_swap_total),
-            S(kb_swap_used),
-            S(kb_swap_free)
-        );
-        if(show_total){
-            printf(
-                "%-7s %10Lu %10Lu %10Lu\n", "Total:",
-                S(kb_main_total + kb_swap_total),
-                S(kb_main_used  + kb_swap_used),
-                S(kb_main_free  + kb_swap_free)
-            );
-        }
-        if(pause_length){
-	    fputc('\n', stdout);
-	    fflush(stdout);
-	    if (count != 1) usleep(pause_length);
+static void __attribute__ ((__noreturn__))
+    usage(FILE * out)
+{
+	fprintf(out, "\nUsage: %s [options]\n" "\nOptions:\n", program_invocation_short_name);
+	fprintf(out,
+		"  -b, --bytes         show output in bytes\n"
+		"  -k, --kilo          show output in kilobytes\n"
+		"  -m, --mega          show output in megabytes\n"
+		"  -g, --giga          show output in gigabytes\n"
+		"      --tera          show output in terabytes\n"
+		"  -h, --human         show human readable output\n"
+		"      --si            use powers of 1000 not 1024\n"
+		"  -l, --lohi          show detailed low and high memory statistics\n"
+		"  -o, --old           use old format (no -/+buffers/cache line)\n"
+		"  -t, --total         show total for RAM + swap\n"
+		"  -s N, --seconds N   repeat printing every N seconds\n"
+		"  -c N, --count N     repeat printing N times\n");
+	fprintf(out,
+		"      --help          display this help text\n"
+		"  -V, --version       display version information and exit\n");
+	fprintf(out, "\nFor more information see free(1).\n");
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
+double power(unsigned int base, unsigned int expo)
+{
+	return (expo == 0) ? 1 : base * power(base, expo - 1);
+}
+
+/* idea of this function is copied from top size scaling */
+static const char *scale_size(unsigned long size, int flags, struct commandline_arguments args)
+{
+	static char nextup[] = { 'B', 'K', 'M', 'G', 'T', 0 };
+	static char buf[SIZE_MAX];
+	int i;
+	char *up;
+	float base;
+
+	if (flags & FREE_SI)
+		base = 1000.0;
+	else
+		base = 1024.0;
+
+	/* default output */
+	if (args.exponent == 0 && !(flags & FREE_HUMANREADABLE)) {
+		snprintf(buf, sizeof(buf), "%ld", size);
+		return buf;
 	}
-    } while(pause_length && --count);
 
-    return 0;
+	if (!(flags & FREE_HUMANREADABLE)) {
+		if (args.exponent == 1) {
+			/* in bytes, which can not be in SI */
+			snprintf(buf, sizeof(buf), "%ld", (long int)(size * 1024));
+			return buf;
+		}
+		if (args.exponent == 2) {
+			if (!(flags & FREE_SI))
+				snprintf(buf, sizeof(buf), "%ld", size);
+			else
+				snprintf(buf, sizeof(buf), "%ld", (long int)(size / 0.9765625));
+			return buf;
+		}
+		if (args.exponent > 2) {
+			/* In desired scale. */
+			snprintf(buf, sizeof(buf), "%ld",
+				 (long int)(size / power(base, args.exponent - 2))
+			    );
+			return buf;
+		}
+	}
+
+	/* human readable output */
+	up = nextup;
+	for (i = 1; up[0] != '0'; i++, up++) {
+		switch (i) {
+		case 1:
+			if (4 >= snprintf(buf, sizeof(buf), "%ld%c", (long)size * 1024, *up))
+				return buf;
+			break;
+		case 2:
+
+			if (!(flags & FREE_SI)) {
+				if (4 >= snprintf(buf, sizeof(buf), "%ld%c", size, *up))
+					return buf;
+			} else {
+				if (4 >=
+				    snprintf(buf, sizeof(buf), "%ld%c",
+					     (long)(size / 0.9765625), *up))
+					return buf;
+			}
+			break;
+		case 3:
+		case 4:
+		case 5:
+			if (4 >=
+			    snprintf(buf, sizeof(buf), "%.1f%c",
+				     (float)(size / power(base, i - 2)), *up))
+				return buf;
+			if (4 >=
+			    snprintf(buf, sizeof(buf), "%ld%c",
+				     (long)(size / power(base, i - 2)), *up))
+				return buf;
+			break;
+		case 6:
+			break;
+		}
+	}
+	/*
+	 * On system where there is more than petabyte of memory or swap the
+	 * output does not fit to column. For incoming few years this should
+	 * not be a big problem (wrote at Apr, 2011).
+	 */
+	return buf;
+}
+
+int main(int argc, char **argv)
+{
+	int c, flags = 0;
+	char *endptr;
+	struct commandline_arguments args;
+	args.repeat_counter = 0;
+
+	/*
+	 * For long options that have no equivalent short option, use a
+	 * non-character as a pseudo short option, starting with CHAR_MAX + 1.
+	 */
+	enum {
+		SI_OPTION = CHAR_MAX + 1,
+		TERA_OPTION,
+		HELP_OPTION
+	};
+
+	static const struct option longopts[] = {
+		{  "bytes",	no_argument,	    NULL,  'b'		},
+		{  "kilo",	no_argument,	    NULL,  'k'		},
+		{  "mega",	no_argument,	    NULL,  'm'		},
+		{  "giga",	no_argument,	    NULL,  'g'		},
+		{  "tera",	no_argument,	    NULL,  TERA_OPTION	},
+		{  "human",	no_argument,	    NULL,  'h'		},
+		{  "si",	no_argument,	    NULL,  SI_OPTION	},
+		{  "lohi",	no_argument,	    NULL,  'l'		},
+		{  "old",	no_argument,	    NULL,  'o'		},
+		{  "total",	no_argument,	    NULL,  't'		},
+		{  "seconds",	required_argument,  NULL,  's'		},
+		{  "count",	required_argument,  NULL,  'c'		},
+		{  "help",	no_argument,	    NULL,  HELP_OPTION	},
+		{  "version",	no_argument,	    NULL,  'V'		},
+		{  NULL,	0,		    NULL,  0		}
+	};
+
+	/* defaults to old format */
+	args.exponent = 0;
+	args.repeat_interval = 1000000;
+
+	while ((c = getopt_long(argc, argv, "bkmghlotc:s:V", longopts, NULL)) != -1)
+		switch (c) {
+		case 'b':
+			args.exponent = 1;
+			break;
+		case 'k':
+			args.exponent = 2;
+			break;
+		case 'm':
+			args.exponent = 3;
+			break;
+		case 'g':
+			args.exponent = 4;
+			break;
+		case TERA_OPTION:
+			args.exponent = 5;
+			break;
+		case 'h':
+			flags |= FREE_HUMANREADABLE;
+			break;
+		case SI_OPTION:
+			flags |= FREE_SI;
+			break;
+		case 'l':
+			flags |= FREE_LOHI;
+			break;
+		case 'o':
+			flags |= FREE_OLDFMT;
+			break;
+		case 't':
+			flags |= FREE_TOTAL;
+			break;
+		case 's':
+			flags |= FREE_REPEAT;
+			args.repeat_interval = (1000000 * strtof(optarg, &endptr));
+			if (errno || optarg == endptr || (endptr && *endptr))
+				errx(EXIT_FAILURE, "seconds argument `%s' failed", optarg);
+			if (args.repeat_interval < 1)
+				errx(EXIT_FAILURE,
+				     "seconds argument `%s' is not positive number", optarg);
+			break;
+		case 'c':
+			flags |= FREE_REPEAT;
+			flags |= FREE_REPEATCOUNT;
+			args.repeat_counter = strtoul(optarg, &endptr, 10);
+			if (errno || optarg == endptr || (endptr && *endptr))
+				errx(EXIT_FAILURE, "count argument `%s' failed", optarg);
+
+			break;
+		case HELP_OPTION:
+			usage(stdout);
+		case 'V':
+			display_version();
+			exit(EXIT_SUCCESS);
+		default:
+			usage(stderr);
+		}
+
+	do {
+
+		meminfo();
+
+		printf
+		    ("             total       used       free     shared    buffers     cached\n");
+		printf("%-7s", "Mem:");
+		printf(" %10s", scale_size(kb_main_total, flags, args));
+		printf(" %10s", scale_size(kb_main_used, flags, args));
+		printf(" %10s", scale_size(kb_main_free, flags, args));
+		printf(" %10s", scale_size(kb_main_shared, flags, args));
+		printf(" %10s", scale_size(kb_main_buffers, flags, args));
+		printf(" %10s", scale_size(kb_main_cached, flags, args));
+		printf("\n");
+		/*
+		 * Print low vs. high information, if the user requested it.
+		 * Note we check if low_total == 0: if so, then this kernel
+		 * does not export the low and high stats. Note we still want
+		 * to print the high info, even if it is zero.
+		 */
+		if (flags & FREE_LOHI) {
+			printf("%-7s", "Low:");
+			printf(" %10s", scale_size(kb_low_total, flags, args));
+			printf(" %10s", scale_size(kb_low_total - kb_low_free, flags, args));
+			printf(" %10s", scale_size(kb_low_free, flags, args));
+			printf("\n");
+
+			printf("%-7s", "High:");
+			printf(" %10s", scale_size(kb_high_total, flags, args));
+			printf(" %10s", scale_size(kb_high_total - kb_high_free, flags, args));
+			printf(" %10s", scale_size(kb_high_free, flags, args));
+			printf("\n");
+		}
+
+		if (!(flags & FREE_OLDFMT)) {
+			unsigned KLONG buffers_plus_cached = kb_main_buffers + kb_main_cached;
+			printf("-/+ buffers/cache:");
+			printf(" %10s",
+			       scale_size(kb_main_used - buffers_plus_cached, flags, args));
+			printf(" %10s",
+			       scale_size(kb_main_free + buffers_plus_cached, flags, args));
+			printf("\n");
+		}
+		printf("%-7s", "Swap:");
+		printf(" %10s", scale_size(kb_swap_total, flags, args));
+		printf(" %10s", scale_size(kb_swap_used, flags, args));
+		printf(" %10s", scale_size(kb_swap_free, flags, args));
+		printf("\n");
+
+		if (flags & FREE_TOTAL) {
+			printf("%-7s", "Total:");
+			printf(" %10s", scale_size(kb_main_total + kb_swap_total, flags, args));
+			printf(" %10s", scale_size(kb_main_used + kb_swap_used, flags, args));
+			printf(" %10s", scale_size(kb_main_free + kb_swap_free, flags, args));
+			printf("\n");
+		}
+		fflush(stdout);
+		if (flags & FREE_REPEATCOUNT) {
+			args.repeat_counter--;
+			if (args.repeat_counter < 1)
+				exit(EXIT_SUCCESS);
+		}
+		if (flags & FREE_REPEAT) {
+			printf("\n");
+			usleep(args.repeat_interval);
+		}
+	} while ((flags & FREE_REPEAT));
+
+	exit(EXIT_SUCCESS);
 }
