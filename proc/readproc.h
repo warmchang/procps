@@ -251,6 +251,8 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 #define PROC_PID             0x1000  // process id numbers ( 0   terminated)
 #define PROC_UID             0x4000  // user id numbers    ( length needed )
 
+#define PROC_EDITCGRPCVT    0x10000 // edit `cgroup' as single vector
+
 // it helps to give app code a few spare bits
 #define PROC_SPARE_1     0x01000000
 #define PROC_SPARE_2     0x02000000

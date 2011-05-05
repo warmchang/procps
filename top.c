@@ -186,43 +186,6 @@ static int   *PHash_sav = HHash_one,   // alternating 'old/new' hash tables
              *PHash_new = HHash_two;
 #endif
 
-/*######  Temporary Placement  ###########################################*/
-
-        /* For cgroup support inauguration, thanks to:
-              Jan Gorig <jgorig@redhat.com>  */
-        /*
-         * Create string from cgroup array --
-         * ( eventually to find a home in libproc ? ) */
-static void parse_cgroup (char *dst, size_t max, const proc_t *p) {
-   int whackable_int = max;
-   char *ccgroup, *endp = dst;
-
-   *dst = '\0';
-   if (p->cgroup) {
-      char **pcgroup = p->cgroup;
-
-      while (*pcgroup != NULL) {
-            // skip root cgroups
-         if (!**pcgroup || (*pcgroup)[strlen(*pcgroup) - 1] == '/') {
-            pcgroup++;
-            continue;
-         }
-            // skip initial cgroup number
-         ccgroup = strchr(*pcgroup, ':');
-         if (ccgroup == NULL)
-            ccgroup = *pcgroup;
-         else
-            ccgroup++;
-
-         if (endp != dst)
-            endp += escape_str(endp, ";", max, &whackable_int);
-         endp += escape_str(endp, ccgroup, max, &whackable_int);
-         pcgroup++;
-      }
-   }
-   if (!*dst) strncpy(dst, "-", max);
-}
-
 /*######  Sort callbacks  ################################################*/
 
         /*
@@ -231,14 +194,7 @@ static void parse_cgroup (char *dst, size_t max, const proc_t *p) {
          * routine may serve more than one column.
          */
 
-static int SCB_NAME(CGR) (const proc_t **P, const proc_t **Q) {
-   char p[SCREENMAX], q[SCREENMAX];
-   /* we won't always re-parse these cgroups -- besides, it's only
-      a recurring burden when CGROUP is chosen as the sort column! */
-   parse_cgroup(p, sizeof(p), *P);
-   parse_cgroup(q, sizeof(q), *Q);
-   return Frame_srtflg * STRSORTCMP(q, p);
-}
+SCB_STRV(CGR, cgroup)
 static int SCB_NAME(CMD) (const proc_t **P, const proc_t **Q) {
    /* if a process doesn't have a cmdline, we'll consider it a kernel thread
       -- since displayed tasks are given special treatment, we must too */
@@ -385,7 +341,7 @@ static void bye_bye (const char *str) {
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
       "\n\t   Page_size = %d, Cpu_tot = %d"
       "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%u HST_t's/Page), HHist_siz = %u"
-      "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u"
+      "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t *) = %u"
       "\n\t   Frames_libflags = %08lX"
       "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
       "\n\tTerminal: %s"
@@ -417,7 +373,7 @@ static void bye_bye (const char *str) {
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
       , Page_size, Cpu_tot
       , (unsigned) sizeof(CPU_t), (unsigned)sizeof(HST_t), Page_size / (unsigned)sizeof(HST_t), HHist_siz
-      , (unsigned)sizeof(*p), (unsigned)sizeof(p->cmd)
+      , (unsigned)sizeof(*p), (unsigned)sizeof(p->cmd), (unsigned)sizeof(p)
       , (long)Frames_libflags
       , (unsigned)SCREENMAX, (unsigned)ROWMINSIZ, (unsigned)ROWMAXSIZ
 #ifdef PRETENDNOCAP
@@ -1212,7 +1168,7 @@ static inline int user_matched (WIN_t *q, const proc_t *p) {
 #define L_stat     PROC_FILLSTAT
 #define L_statm    PROC_FILLMEM
 #define L_status   PROC_FILLSTATUS
-#define L_CGROUP   PROC_FILLCGROUP
+#define L_CGROUP   PROC_EDITCGRPCVT | PROC_FILLCGROUP
 #define L_CMDLINE  PROC_FILLARG
 #define L_EUSER    PROC_FILLUSR
 #define L_OUSER    PROC_FILLSTATUS | PROC_FILLUSR
@@ -1275,9 +1231,9 @@ static FLD_t Fieldstab[] = {
    { "nMin ",       "%4.4s ",     4,  SK_no,  SF(FL2),  L_stat,    "Minor Page Faults"    },
    { "nDRT ",       "%4.4s ",     4,  SK_no,  SF(DRT),  L_statm,   "Dirty Pages Count"    },
    { "S ",          "%c ",       -1,     -1,  SF(STA),  L_EITHER,  "Process Status"       },
-   // next entry's special: '.head' is variable width (see calibrate_fields)
-   { "COMMAND ",    NULL,        -1,     -1,  SF(CMD),  L_EITHER,  "Command Name/Line"    },
-   { "WCHAN     ",  "%-9.9s ",   -1,     -1,  SF(WCH),  L_stat,    "Sleeping in Function" },
+   // next 2 entries are special: '.head' is variable width (see calibrate_fields)
+   { "COMMAND  ",   NULL,        -1,     -1,  SF(CMD),  L_EITHER,  "Command Name/Line"    },
+   { "WCHAN    ",   NULL,        -1,     -1,  SF(WCH),  L_stat,    "Sleeping in Function" },
    // next entry's special: the 0's will be replaced with '.'!
 #ifdef CASEUP_HEXES
    { "Flags    ",   "%08lX ",    -1,     -1,  SF(FLG),  L_stat,    "Task Flags <sched.h>" },
@@ -1285,7 +1241,7 @@ static FLD_t Fieldstab[] = {
    { "Flags    ",   "%08lx ",    -1,     -1,  SF(FLG),  L_stat,    "Task Flags <sched.h>" },
 #endif
    // next entry's like P_CMD, and '.head' must be the same length -- they share varcolsz
-   { "CGROUP  ",    NULL,        -1,     -1,  SF(CGR),  L_CGROUP,  "Control Group"        }
+   { "CGROUPS  ",   NULL,        -1,     -1,  SF(CGR),  L_CGROUP,  "Control Groups"       }
 #ifdef ZAP_SUSEONLY
 #define L_oom      PROC_FILLOOM
   ,{ "Adj ",        "%3d ",      -1,     -1,  SF(OOA),  L_oom,     "oom_adjustment (2^X)" }
@@ -1394,8 +1350,7 @@ static void calibrate_fields (void) {
 
    do {
       if (VIZISw(w)) {
-         w->hdrcaplen = 0;   // > 0 only with USE_X_COLHDR but ref'd throughout
-                             // ( we were proliferating way too many #ifdef's )
+         w->hdrcaplen = 0;   // really only used with USE_X_COLHDR
          // build window's pflgsall array, establish upper bounds for maxpflgs
          for (i = 0, w->totpflgs = 0; i < P_MAXPFLGS; i++) {
             if (FLDviz(w, i)) {
@@ -1432,7 +1387,7 @@ static void calibrate_fields (void) {
          }
 
          /* establish the final maxpflgs and prepare to grow the variable column
-            heading(s) via varcolsz - it may be a fib if their pflags wern't
+            heading(s) via varcolsz - it may be a fib if their pflags weren't
             encountered, but that's ok because they won't be displayed anyway */
          w->maxpflgs = i;
          w->varcolsz += Screen_cols - strlen(w->columnhdr);
@@ -1453,8 +1408,8 @@ static void calibrate_fields (void) {
             w->endpflg = i;
          }
 
-         /* finally, we can build the true run-time columns header, format the
-            command column heading, if P_CMD is really being displayed, and
+         /* finally, we can build the true run-time columns header, format any
+            variable column heading(s), if they're really being displayed, and
             rebuild the all-important PROC_FILLxxx flags that will be used
             until/if we're we're called again */
          memset((s = w->columnhdr), 0, sizeof(w->columnhdr));
@@ -1530,6 +1485,7 @@ static void calibrate_fields (void) {
          * Display each field represented in the current window's fieldscur
          * array along with its description.  Mark with bold and a leading
          * asterisk those fields associated with the "on" or "active" state.
+         *
          * Special highlighting will be accorded the "focus" field with such
          * highlighting potentially extended to include the description.
          *
@@ -1593,14 +1549,14 @@ static void display_fields (int focus, int extend, const char *xtra) {
          * Manage all fields aspects (order/toggle/sort), for all windows. */
 static void fields_utility (void) {
  #define unSCRL  w->begpflg = 0;
- #define swapEM  { unSCRL; c = w->rc.fieldscur[i]; \
+ #define swapEM  { char c; unSCRL; c = w->rc.fieldscur[i]; \
        w->rc.fieldscur[i] = *p; *p = c; p = &w->rc.fieldscur[i]; }
- #define spewFI  { f = w->rc.sortindx; t = strchr(w->rc.fieldscur, f + FLD_OFFSET); \
+ #define spewFI  { char *t; f = w->rc.sortindx; t = strchr(w->rc.fieldscur, f + FLD_OFFSET); \
        if (!t) t = strchr(w->rc.fieldscur, (f + FLD_OFFSET) | 0x80); \
        i = (t) ? (int)(t - w->rc.fieldscur) : 0; }
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
-   char c, *t, *p = NULL;
    const char *h = NULL;
+   char *p = NULL;
    int i, key;
    FLG_t f;
 
@@ -1724,7 +1680,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    char buf[MEDBUFSIZ]; // enough for /proc/stat CPU line (not the intr line)
    int i;
 
-      // *** hotplug_cpu_acclimated ***
+   /*** hotplug_acclimated ***/
    if (smp_sav != SMP_NUM_CPUS) {
       Cpu_tot = smp_sav = SMP_NUM_CPUS;
       zap_fieldstab();
@@ -3105,6 +3061,7 @@ static void summaryhlp (CPU_t *cpu, const char *pfx) {
          * and then, returning a pointer to the pointers to the proc_t's! */
 static proc_t **summary_show (void) {
  #define isROOM(f,n) (CHKw(w, f) && Msg_row + (n) < Screen_rows - 1)
+ #define anyFLG 0xffffff
    static proc_t **p_table = NULL;
    static CPU_t *smpcpu = NULL;
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
@@ -3152,7 +3109,7 @@ static proc_t **summary_show (void) {
             snprintf(tmp, sizeof(tmp), "Cpu%-3d:", smpcpu[i].id);
             summaryhlp(&smpcpu[i], tmp);
             Msg_row += 1;
-            if (!isROOM(-1, 1)) break;
+            if (!isROOM(anyFLG, 1)) break;
          }
       }
    }
@@ -3165,7 +3122,7 @@ static proc_t **summary_show (void) {
       const char *which = "Kb";
       int shift = 0;
 
-      // *** hotplug_mem_acclimated ***
+      /*** hotplug_acclimated ***/
       if (kb_main_total > 9999999)    { which = "Mb"; shift = 10; }
       if (kb_main_total > 9999999999) { which = "Gb"; shift = 20; }
 
@@ -3179,16 +3136,16 @@ static proc_t **summary_show (void) {
 
    return p_table;
  #undef isROOM
+ #undef anyFLG
 } // end: summary_show
 
 
         /*
          * Display information for a single task row. */
 static void task_show (const WIN_t *q, const proc_t *p) {
-   /* the following macro is our means to 'inline' emitting a column -- next to
-      procs_refresh, that's the most frequent and costly part of top's job ! */
- #define makeCOL(va...) snprintf(cbuf, sizeof(cbuf), f, ## va)
- #define pages2K(n) (unsigned long)( (n) << Pg2K_shft )
+ #define makeCOL(va...)  snprintf(cbuf, sizeof(cbuf), f, ## va)
+ #define makeVAR(v)  { f = VARCOL_fmts; makeCOL(q->varcolsz, q->varcolsz, v); }
+ #define pages2K(n)  (unsigned long)( (n) << Pg2K_shft )
    char rbuf[ROWMINSIZ], *rp;
    int j, x;
 
@@ -3203,7 +3160,6 @@ static void task_show (const WIN_t *q, const proc_t *p) {
       int         s = Fieldstab[i].scale;       // string must be altered !
       int         w = Fieldstab[i].width;
 
-      if (!f) f = VARCOL_fmts;                  // ah ha, a variable width field
       switch (i) {
 #ifndef USE_X_COLHDR
          // these 2 aren't real procflgs, they're used in column highlighting!
@@ -3216,10 +3172,8 @@ static void task_show (const WIN_t *q, const proc_t *p) {
             continue;
 #endif
          case P_CGR:
-         {  char tmp[SCREENMAX];
-            parse_cgroup(tmp, sizeof(tmp), p);
-            makeCOL(q->varcolsz, q->varcolsz, tmp);
-         }
+            // our kernel may not support cgroups
+            makeVAR(p->cgroup ? p->cgroup[0] : "n/a");
             break;
          case P_CMD:
          {  char tmp[SCREENMAX];
@@ -3228,7 +3182,7 @@ static void task_show (const WIN_t *q, const proc_t *p) {
             if (CHKw(q, Show_CMDLIN)) flags = ESC_DEFUNCT | ESC_BRACKETS | ESC_ARGS;
             else                      flags = ESC_DEFUNCT;
             escape_command(tmp, p, sizeof(tmp), &whackable_int, flags);
-            makeCOL(q->varcolsz, q->varcolsz, tmp);
+            makeVAR(tmp);
          }
             break;
          case P_COD:
@@ -3294,7 +3248,7 @@ static void task_show (const WIN_t *q, const proc_t *p) {
             break;
          case P_PRI:
             if (-99 > p->priority || 999 < p->priority) {
-               f = " RT ";
+               f = " rt ";
                makeCOL("");
             } else
                makeCOL((int)p->priority);
@@ -3357,14 +3311,12 @@ static void task_show (const WIN_t *q, const proc_t *p) {
          case P_WCH:
             if (No_ksyms) {
 #ifdef CASEUP_HEXES
-               f = "%08lX  ";
+               makeVAR(fmtmk("%010lX", (unsigned long)(unsigned int)p->wchan))
 #else
-               f = "%08lx  ";
+               makeVAR(fmtmk("%010lx", (unsigned long)(unsigned int)p->wchan))
 #endif
-               makeCOL((long)p->wchan);
-            } else {
-               makeCOL(lookup_wchan(p->wchan, p->tid));
-            }
+            } else
+               makeVAR(lookup_wchan(p->wchan, p->tid))
             break;
          default:                 // keep gcc happy
             break;
@@ -3379,6 +3331,7 @@ static void task_show (const WIN_t *q, const proc_t *p) {
       , rbuf
       , Caps_endline);
  #undef makeCOL
+ #undef makeVAR
  #undef pages2K
 } // end: task_show
 

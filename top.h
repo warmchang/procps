@@ -43,14 +43,16 @@
 
 /*######  Notes, etc.  ###################################################*/
 
-        /* The following conventions are used to identify areas where
+        /* The following convention is used to identify those areas where
            adaptations for hotplugging are to be found ...
-              *** hotplug_cpu_acclimated ***
-              *** hotplug_mem_acclimated ***
-           ( hopefully libproc will also be supportive of our efforts )   */
+              *** hotplug_acclimated ***
+           ( hopefully libproc will also be supportive of our efforts ) */
 
         /* And there are still some of these lurking here and there...
-              FIXME - blah, blah...                                       */
+              FIXME - blah, blah... */
+
+        /* For introducing inaugural cgroup support, thanks to:
+              Jan Gorig <jgorig@redhat.com> - April, 2011 */
 
 
 #ifdef PRETEND2_5_X
@@ -373,6 +375,11 @@ typedef struct WIN_t {
 #define SCB_STRS(f,s) \
    static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
       return Frame_srtflg * STRSORTCMP((*Q)->s, (*P)->s); }
+#define SCB_STRV(f,s) \
+   static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
+      if (!(*P)->s || !(*Q)->s) \
+         return SORT_eq; \
+      return Frame_srtflg * STRSORTCMP((*Q)->s[0], (*P)->s[0]); }
 
 /*
  * The following two macros are used to 'inline' those portions of the
@@ -635,8 +642,6 @@ typedef struct WIN_t {
 /*######  Some Prototypes (ha!)  #########################################*/
 
    /* These 'prototypes' are here solely for documentation purposes */
-/*------  Temporary Placement  -------------------------------------------*/
-//atic void          parse_cgroup (char *dst, size_t max, const proc_t *p);
 /*------  Sort callbacks  ------------------------------------------------*/
 /*        for each possible field, in the form of:                        */
 /*atic int           sort_P_XXX (const proc_t **P, const proc_t **Q);     */

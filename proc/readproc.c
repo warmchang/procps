@@ -560,6 +560,46 @@ int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid){
     return n;
 }
 
+// This routine reads /proc/#/cgroup for a single task.
+// It is similar to file2strvec except we filter and concatenate
+// the data into a single string represented as a single vector.
+static char** fill_cgroup_cvt(const char* directory) {
+ #define vMAX ( sizeof(dbuf) - (int)(dst - dbuf) )
+   char sbuf[1024], dbuf[1024];
+   char *src, *dst, *grp, *eob, **ret, **q;
+   int align, tot, x;
+
+   *(dst = dbuf) = '\0';                         // empty destination
+   tot = file2str(directory, "cgroup", sbuf, sizeof(sbuf));
+   if (0 < tot) {                                // ignore true errors
+      eob = sbuf + tot;
+      for (src = sbuf; src < eob; src++)         // disappear those darn nl's
+          if ('\n' == *src) *src = 0;
+      for (src = sbuf; src < eob; src += x) {
+          x = 1;                                 // loop assist
+          if (!*src) continue;
+          x = strlen((grp = src));
+          if ('/' == grp[x - 1]) continue;       // skip empty root cgroups
+#if 0                                            // ( undecided on the next! )
+          if (strchr(grp, ':')) ++grp;           // jump past hierarchy number
+#endif                                           // ( we'll keep it for now! )
+          dst += snprintf(dst, vMAX, "%s%s", (dst > dbuf) ? "," : "", grp);
+      }
+   }
+   if (!dbuf[0]) strncpy(dbuf, "-", sizeof(dbuf));
+   tot = strlen(dbuf) + 1;                       // prep for our vectors
+   align = (sizeof(char*)-1) - ((tot + sizeof(char*)-1) & (sizeof(char*)-1));
+   dst = xcalloc(NULL, tot + align + (2 * sizeof(char*)));
+   strncpy(dst, dbuf, tot);                      // propogate our handiwork
+   eob = dst + tot + align;                      // point to vectors home
+   q = ret = (char**)(eob);
+   *q++ = dst;                                   // point 1st vector to string
+   *q = 0;                                       // delimit 2nd (last) vector
+   return ret;                                   // ==> free(*ret) to dealloc
+ #undef vMAX
+}
+
+
 /* These are some nice GNU C expression subscope "inline" functions.
  * The can be used with arbitrary types and evaluate their arguments
  * exactly once.
@@ -658,11 +698,15 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
 	    oomadj2proc(sbuf, p);
     } /* struct has been zeroed out before, so no worries about clearing garbage here */
 #endif
-    if(linux_version_code>=LINUX_VERSION(2,6,24) && (flags & PROC_FILLCGROUP))
-	p->cgroup = file2strvec(path, "cgroup"); 	/* read /proc/#/cgroup */
-    else
+    if(linux_version_code>=LINUX_VERSION(2,6,24) && (flags & PROC_FILLCGROUP)) {
+        if((flags & PROC_EDITCGRPCVT)) {
+            p->cgroup = fill_cgroup_cvt(path);  /* read /proc/#/cgroup and edit results */
+        } else {
+            p->cgroup = file2strvec(path, "cgroup");  /* read /proc/#/cgroup */
+        }
+    } else
 	p->cgroup = NULL;
-    
+
     return p;
 next_proc:
     return NULL;
