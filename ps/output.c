@@ -359,39 +359,14 @@ static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp)
 }
 
 static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp) {
-  char *endp = outbuf;
   int rightward = max_rightward;
   
-  if(pp->cgroup) {
-    char **pcgroup = pp->cgroup;
-    
-    while(*pcgroup != NULL) {
-      //Skip root cgroups
-      if(!**pcgroup || (*pcgroup)[strlen(*pcgroup)-1] == '/') {
-        pcgroup++;
-        continue;
-      }
-      
-      //Skip initial cgroup number
-      char *ccgroup = strchr(*pcgroup, ':');
-      if(ccgroup == NULL)
-        ccgroup = *pcgroup;
-      else
-        ccgroup++;
-      
-      if(endp != outbuf)
-        endp += escape_str(endp, ";", OUTBUF_SIZE, &rightward);
-      
-      endp += escape_str(endp, ccgroup, OUTBUF_SIZE, &rightward);
-      
-      pcgroup++;
-    }
+  if(pp->cgroup && *pp->cgroup) {
+    escape_str(outbuf, *pp->cgroup, OUTBUF_SIZE, &rightward);
+    return max_rightward-rightward;
   }
-  
-  if(endp == outbuf)
+  else
     return pr_nop(outbuf,pp);
-  
-  return (int)(endp-outbuf);
 }
 
 /* "ucomm" is the same thing: short unless -f */
@@ -1292,7 +1267,7 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 #define GRP PROC_FILLGRP     /* gid_t -> group names */
 #define WCH PROC_FILLWCHAN   /* do WCHAN lookup */
 
-#define CGRP PROC_FILLCGROUP /* read cgroup */
+#define CGRP PROC_FILLCGROUP | PROC_EDITCGRPCVT /* read cgroup */
 /* TODO
  *      pull out annoying BSD aliases into another table (to macro table?)
  *      add sorting functions here (to unify names)
