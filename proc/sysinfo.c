@@ -24,7 +24,7 @@
 #include <netinet/in.h>  /* htons */
 #endif
 
-#ifndef ZAP_SUSEONLY
+#ifndef OOMEM_ENABLE
 long smp_num_cpus;     /* number of CPUs */
 #endif
 
@@ -182,7 +182,7 @@ static void old_Hertz_hack(void){
   setlocale(LC_NUMERIC, savelocale);
   jiffies = user_j + nice_j + sys_j + other_j;
   seconds = (up_1 + up_2) / 2;
-#ifndef ZAP_SUSEONLY
+#ifndef OOMEM_ENABLE
   h = (unsigned)( (double)jiffies/seconds/smp_num_cpus );
 #else
   h = (unsigned)( (double)jiffies/seconds/smp_num_cpus() );
@@ -252,7 +252,7 @@ static int check_for_privs(void){
   return !!rc;
 }
 
-#ifdef ZAP_SUSEONLY
+#ifdef OOMEM_ENABLE
 long smp_num_cpus(void)
 {
   static long _smp_num_cpus=-1;     /* number of CPUs */
@@ -279,7 +279,7 @@ static void init_libproc(void) __attribute__((constructor));
 static void init_libproc(void){
   have_privs = check_for_privs();
   init_Linux_version(); /* Must be called before we check code */
-#ifndef ZAP_SUSEONLY
+#ifndef OOMEM_ENABLE
   // ought to count CPUs in /proc/stat instead of relying
   // on glibc, which foolishly tries to parse /proc/cpuinfo
   //

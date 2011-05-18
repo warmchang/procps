@@ -17,6 +17,7 @@ EXTERN_C_BEGIN
 extern int escape_strlist(char *restrict dst, const char *restrict const *restrict src, size_t n, int *cells);
 extern int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *maxcells);
 extern int escape_command(char *restrict const outbuf, const proc_t *restrict const pp, int bytes, int *cells, unsigned flags);
+extern int escaped_copy(char *restrict dst, const char *restrict src, int bufsize, int *maxroom);
 
 EXTERN_C_END
 #endif

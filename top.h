@@ -28,6 +28,7 @@
 //#define FIELD_CURSOR            /* cursor follows selection w/ fields mgmt */
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
+//#define OOMEM_ENABLE            /* enable the SuSE out-of-memory additions *
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
@@ -38,7 +39,6 @@
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
 //#define TTYGETENVYES            /* environ vars can override tty col/row   */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
-//#define ZAP_SUSEONLY            /* enable the SuSE specific modifications  */
 
 
 /*######  Notes, etc.  ###################################################*/
@@ -65,7 +65,7 @@
 #define STRSORTCMP  strcmp
 #endif
 
-#ifdef ZAP_SUSEONLY
+#ifdef OOMEM_ENABLE
         /* FIXME: perhaps making this a function in the suse version of
            sysinfo.c was a prelude to hotpluggable updates -- unfortunately,
            the return value is invariant as currently implemented! */
@@ -139,7 +139,7 @@ enum pflag {
    P_MEM, P_VRT, P_SWP, P_RES, P_COD, P_DAT, P_SHR,
    P_FL1, P_FL2, P_DRT,
    P_STA, P_CMD, P_WCH, P_FLG, P_CGR,
-#ifdef ZAP_SUSEONLY
+#ifdef OOMEM_ENABLE
    P_OOA, P_OOM,
 #endif
 #ifdef USE_X_COLHDR
@@ -375,11 +375,12 @@ typedef struct WIN_t {
 #define SCB_STRS(f,s) \
    static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
       return Frame_srtflg * STRSORTCMP((*Q)->s, (*P)->s); }
-#define SCB_STRV(f,s) \
+#define SCB_STRV(f,b,v,s) \
    static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
-      if (!(*P)->s || !(*Q)->s) \
-         return SORT_eq; \
-      return Frame_srtflg * STRSORTCMP((*Q)->s[0], (*P)->s[0]); }
+      if (b) { \
+         if (!(*P)->v || !(*Q)->v) return SORT_eq; \
+         return Frame_srtflg * STRSORTCMP((*Q)->v[0], (*P)->v[0]); } \
+      return Frame_srtflg * STRSORTCMP((*Q)->s, (*P)->s); }
 
 /*
  * The following two macros are used to 'inline' those portions of the
@@ -532,7 +533,7 @@ typedef struct WIN_t {
    "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end! " \
    ""
 
-#ifdef ZAP_SUSEONLY
+#ifdef OOMEM_ENABLE
         /* w/ 2 extra lines, no room for additional text on 24x80 terminal */
 #define FIELDS_notes  NULL
 #else
@@ -634,8 +635,8 @@ typedef struct WIN_t {
 #if defined(ATEOJ_RPTHSH) && defined(OFF_HST_HASH)
 # error 'ATEOJ_RPTHSH' conflicts with 'OFF_HST_HASH'
 #endif
-#if defined(PRETEND4CPUS) && defined (ZAP_SUSEONLY)
-# error 'PRETEND4CPUS' conflicts with 'ZAP_SUSEONLY'
+#if defined(PRETEND4CPUS) && defined (OOMEM_ENABLE)
+# error 'PRETEND4CPUS' conflicts with 'OOMEM_ENABLE'
 #endif
 
 

@@ -7,7 +7,7 @@
 EXTERN_C_BEGIN
 
 extern unsigned long long Hertz;   /* clock tick frequency */
-#ifndef ZAP_SUSEONLY
+#ifndef OOMEM_ENABLE
 extern long smp_num_cpus;     /* number of CPUs */
 #else
 extern long smp_num_cpus(void);     /* number of CPUs */

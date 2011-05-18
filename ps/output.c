@@ -331,8 +331,11 @@ Modifications to the arguments are not shown.
 
 // FIXME: some of these may hit the guard page in forest mode
 
-/* "command" is the same thing: long unless c */
-static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp){
+/*
+ * "args", "cmd", "command" are all the same:  long  unless  c
+ * "comm", "ucmd", "ucomm"  are all the same:  short unless -f
+ * ( determinations are made in display.c, we just deal with results ) */
+static int pr_argcom(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp = outbuf;
   unsigned flags;
   int rightward=max_rightward;
@@ -342,17 +345,14 @@ static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp)
     endp += fh;
     rightward -= fh;
   }
-  if(bsd_c_option) flags = ESC_DEFUNCT;
-  else             flags = ESC_DEFUNCT | ESC_BRACKETS | ESC_ARGS;
-  endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, flags);
+  if(pp->cmdline)
+    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE, &rightward);
+  else
+    endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, ESC_DEFUNCT);
 
-  if(bsd_e_option && rightward>1){
-    const char **env = (const char**)pp->environ;
-    if(env && *env){
-      *endp++ = ' ';
-      rightward--;
-      endp += escape_strlist(endp, env, OUTBUF_SIZE, &rightward);
-    }
+  if(bsd_e_option && rightward>1) {
+    if(pp->environ && *pp->environ)
+      endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE, &rightward);
   }
   //return endp - outbuf;
   return max_rightward-rightward;
@@ -361,40 +361,14 @@ static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp)
 static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp) {
   int rightward = max_rightward;
   
-  if(pp->cgroup && *pp->cgroup) {
-    escape_str(outbuf, *pp->cgroup, OUTBUF_SIZE, &rightward);
+  if(pp->cgroup) {
+    escaped_copy(outbuf, *pp->cgroup, OUTBUF_SIZE, &rightward);
     return max_rightward-rightward;
   }
   else
     return pr_nop(outbuf,pp);
 }
 
-/* "ucomm" is the same thing: short unless -f */
-static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp){
-  char *endp = outbuf;
-  unsigned flags;
-  int rightward=max_rightward;
-  
-  if(forest_prefix){
-    int fh = forest_helper(outbuf);
-    endp += fh;
-    rightward -= fh;
-  }
-  if(unix_f_option) flags = ESC_DEFUNCT | ESC_BRACKETS | ESC_ARGS;
-  else              flags = ESC_DEFUNCT;
-  endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, flags);
-
-  if(bsd_e_option && rightward>1){
-    const char **env = (const char**)pp->environ;
-    if(env && *env){
-      *endp++ = ' ';
-      rightward--;
-      endp += escape_strlist(endp, env, OUTBUF_SIZE, &rightward);
-    }
-  }
-  //return endp - outbuf;
-  return max_rightward-rightward;
-}
 /* Non-standard, from SunOS 5 */
 static int pr_fname(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp = outbuf;
@@ -1295,7 +1269,7 @@ static const format_struct format_array[] = {
 {"addr_1",    "ADDR",    pr_nop,      sr_nop,     1,   0,    LNX, AN|LEFT},
 {"alarm",     "ALARM",   pr_alarm,    sr_alarm,   5,   0,    LNX, AN|RIGHT},
 {"argc",      "ARGC",    pr_nop,      sr_nop,     4,   0,    LNX, PO|RIGHT},
-{"args",      "COMMAND", pr_args,     sr_cmd,    27, ARG,    U98, PO|UNLIMITED}, /*command*/
+{"args",      "COMMAND", pr_argcom,   sr_cmd,    27, ARG,    U98, PO|UNLIMITED}, /*command*/
 {"atime",     "TIME",    pr_time,     sr_nop,     8,   0,    SOE, ET|RIGHT}, /*cputime*/ /* was 6 wide */
 {"blocked",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigmask*/
 {"bnd",       "BND",     pr_nop,      sr_nop,     1,   0,    AIX, TO|RIGHT},
@@ -1307,11 +1281,11 @@ static const format_struct format_array[] = {
 {"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, TO|LEFT},
 {"cls",       "CLS",     pr_class,    sr_sched,   3,   0,    HPU, TO|RIGHT}, /*says HPUX or RT*/
 {"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, AN|RIGHT},
-{"cmd",       "CMD",     pr_args,     sr_cmd,    27, ARG,    DEC, PO|UNLIMITED}, /*ucomm*/
+{"cmd",       "CMD",     pr_argcom,   sr_cmd,    27, ARG,    DEC, PO|UNLIMITED}, /*ucomm*/
 {"cmin_flt",  "-",       pr_nop,      sr_cmin_flt, 1,  0,    LNX, AN|RIGHT},
 {"cnswap",    "-",       pr_nop,      sr_nop,     1,   0,    LNX, AN|RIGHT},
-{"comm",      "COMMAND", pr_comm,     sr_cmd,    15, COM,    U98, PO|UNLIMITED}, /*ucomm*/
-{"command",   "COMMAND", pr_args,     sr_cmd,    27, ARG,    XXX, PO|UNLIMITED}, /*args*/
+{"comm",      "COMMAND", pr_argcom,   sr_cmd,    15, COM,    U98, PO|UNLIMITED}, /*ucomm*/
+{"command",   "COMMAND", pr_argcom,   sr_cmd,    27, ARG,    XXX, PO|UNLIMITED}, /*args*/
 {"context",   "CONTEXT", pr_context,  sr_nop,    31,   0,    LNX, ET|LEFT},
 {"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, ET|RIGHT}, /*cpu*/
 {"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
@@ -1491,8 +1465,8 @@ static const format_struct format_array[] = {
 {"tty4",      "TTY",     pr_tty4,     sr_tty,     4,   0,    LNX, PO|LEFT},
 {"tty8",      "TTY",     pr_tty8,     sr_tty,     8,   0,    LNX, PO|LEFT},
 {"u_procp",   "UPROCP",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
-{"ucmd",      "CMD",     pr_comm,     sr_cmd,    15, COM,    DEC, PO|UNLIMITED}, /*ucomm*/
-{"ucomm",     "COMMAND", pr_comm,     sr_cmd,    15, COM,    XXX, PO|UNLIMITED}, /*comm*/
+{"ucmd",      "CMD",     pr_argcom,   sr_cmd,    15, COM,    DEC, PO|UNLIMITED}, /*ucomm*/
+{"ucomm",     "COMMAND", pr_argcom,   sr_cmd,    15, COM,    XXX, PO|UNLIMITED}, /*comm*/
 {"uid",       "UID",     pr_euid,     sr_euid,    5,   0,    XXX, ET|RIGHT},
 {"uid_hack",  "UID",     pr_euser,    sr_euser,   8, USR,    XXX, ET|USER},
 {"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT},

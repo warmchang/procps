@@ -50,13 +50,6 @@ static int escape_str_utf8(char *restrict dst, const char *restrict src, int buf
       my_cells++; 
       my_bytes++;
 
-    } else if (len==1) {
-      /* non-multibyte */
-      *(dst++) = isprint(*src) ? *src : '?';
-      src++;
-      my_cells++;
-      my_bytes++;
-      
     } else if (!iswprint(wc)) {
       /* multibyte - no printable */
       *(dst++) = '?';
@@ -98,7 +91,7 @@ static int escape_str_utf8(char *restrict dst, const char *restrict src, int buf
     }
     //fprintf(stdout, "cells: %d\n", my_cells);
   }
-  *(dst++) = '\0';
+  *dst = '\0';
 
   // fprintf(stderr, "maxcells: %d, my_cells; %d\n", *maxcells, my_cells);
   
@@ -114,14 +107,14 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
   int my_cells = 0;
   int my_bytes = 0;
   const char codes[] =
-  "Z-------------------------------"
-  "********************************"
-  "********************************"
-  "*******************************-"
-  "--------------------------------"
-  "********************************"
-  "********************************"
-  "********************************";
+  "Z..............................."
+  "||||||||||||||||||||||||||||||||"
+  "||||||||||||||||||||||||||||||||"
+  "|||||||||||||||||||||||||||||||."
+  "????????????????????????????????"
+  "????????????????????????????????"
+  "????????????????????????????????"
+  "????????????????????????????????";
   
 #if (__GNU_LIBRARY__ >= 6)
   static int utf_init=0;
@@ -131,9 +124,10 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
      char *enc = nl_langinfo(CODESET);
      utf_init = enc && strcasecmp(enc, "UTF-8")==0 ? 1 : -1;
   }
-  if (utf_init==1)
+  if (utf_init==1 && MB_CUR_MAX>1) {
      /* UTF8 locales */
      return escape_str_utf8(dst, src, bufsize, maxcells);
+  }
 #endif
 		  
   if(bufsize > *maxcells+1) bufsize=*maxcells+1; // FIXME: assumes 8-bit locale
@@ -143,12 +137,12 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
       break;
     c = (unsigned char) *(src++);
     if(!c) break;
-    if(codes[c]=='-') c='?';
+    if(codes[c]!='|') c=codes[c];
     my_cells++;
     my_bytes++;
     *(dst++) = c;
   }
-  *(dst++) = '\0';
+  *dst = '\0';
   
   *maxcells -= my_cells;
   return my_bytes;        // bytes of text, excluding the NUL
@@ -213,4 +207,17 @@ int escape_command(char *restrict const outbuf, const proc_t *restrict const pp,
   }
   outbuf[end] = '\0';
   return end;  // bytes, not including the NUL
+}
+
+/////////////////////////////////////////////////
+
+// copy an already 'escaped' string,
+// using the traditional escape.h calling conventions
+int escaped_copy(char *restrict dst, const char *restrict src, int bufsize, int *maxroom){
+  int n;
+  if (bufsize > *maxroom+1) bufsize = *maxroom+1;
+  n = snprintf(dst, bufsize, "%s", src);
+  if (n >= bufsize) n = bufsize-1;
+  *maxroom -= n;
+  return n;
 }

@@ -111,8 +111,9 @@ typedef struct proc_t {
 	cmin_flt,	// stat            cumulative min_flt of process and child processes
 	cmaj_flt;	// stat            cumulative maj_flt of process and child processes
     char
-	**environ,	// (special)       environment string vector (/proc/#/environ)
-	**cmdline;	// (special)       command line string vector (/proc/#/cmdline)
+        **environ,      // (special)       environment string vector (/proc/#/environ)
+        **cmdline,      // (special)       command line string vector (/proc/#/cmdline)
+        **cgroup;       // (special)       cgroup string vector (/proc/#/cgroup)
     char
 	// Be compatible: Digital allows 16 and NT allows 14 ???
     	euser[P_G_SZ],	// stat(),status   effective user name
@@ -140,11 +141,11 @@ typedef struct proc_t {
 	tpgid,		// stat            terminal process group id
 	exit_signal,	// stat            might not be SIGCHLD
 	processor;      // stat            current (or most recent?) CPU
-#ifdef ZAP_SUSEONLY
-	int oom_score,  // oom_score       (badness for OOM killer)
-	    oom_adj;    // oom_adj         (adjustment to OOM score)
+#ifdef OOMEM_ENABLE
+    int
+        oom_score,      // oom_score       (badness for OOM killer)
+        oom_adj;        // oom_adj         (adjustment to OOM score)
 #endif
-    	char **cgroup;  // cgroup	   current cgroup, looks like a classic filepath
 } proc_t;
 
 // PROCTAB: data structure holding the persistent information readproc needs
@@ -252,6 +253,7 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 #define PROC_UID             0x4000  // user id numbers    ( length needed )
 
 #define PROC_EDITCGRPCVT    0x10000 // edit `cgroup' as single vector
+#define PROC_EDITCMDLCVT    0x20000 // edit `cmdline' as single vector
 
 // it helps to give app code a few spare bits
 #define PROC_SPARE_1     0x01000000

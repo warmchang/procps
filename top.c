@@ -40,7 +40,6 @@
 #include <values.h>
 
 #include "proc/devname.h"
-#include "proc/escape.h"
 #include "proc/procps.h"
 #include "proc/readproc.h"
 #include "proc/sig.h"
@@ -194,19 +193,8 @@ static int   *PHash_sav = HHash_one,   // alternating 'old/new' hash tables
          * routine may serve more than one column.
          */
 
-SCB_STRV(CGR, cgroup)
-static int SCB_NAME(CMD) (const proc_t **P, const proc_t **Q) {
-   /* if a process doesn't have a cmdline, we'll consider it a kernel thread
-      -- since displayed tasks are given special treatment, we must too */
-   if (Frame_cmdlin && ((*P)->cmdline || (*Q)->cmdline)) {
-      if (!(*Q)->cmdline) return Frame_srtflg * -1;
-      if (!(*P)->cmdline) return Frame_srtflg;
-      return Frame_srtflg *
-         STRSORTCMP((*Q)->cmdline[0], (*P)->cmdline[0]);
-   }
-   // this part also handles the compare if both are kernel threads
-   return Frame_srtflg * STRSORTCMP((*Q)->cmd, (*P)->cmd);
-}
+SCB_STRV(CGR, 1, cgroup, cgroup[0])
+SCB_STRV(CMD, Frame_cmdlin, cmdline, cmd)
 SCB_NUM1(COD, trs)
 SCB_NUMx(CPN, processor)
 SCB_NUM1(CPU, pcpu)
@@ -218,7 +206,7 @@ SCB_NUM1(FL2, min_flt)
 SCB_NUMx(GID, egid)
 SCB_STRS(GRP, egroup)
 SCB_NUMx(NCE, nice)
-#ifdef ZAP_SUSEONLY
+#ifdef OOMEM_ENABLE
 SCB_NUM1(OOA, oom_adj)
 SCB_NUM1(OOM, oom_score)
 #endif
@@ -1169,7 +1157,7 @@ static inline int user_matched (WIN_t *q, const proc_t *p) {
 #define L_statm    PROC_FILLMEM
 #define L_status   PROC_FILLSTATUS
 #define L_CGROUP   PROC_EDITCGRPCVT | PROC_FILLCGROUP
-#define L_CMDLINE  PROC_FILLARG
+#define L_CMDLINE  PROC_EDITCMDLCVT | PROC_FILLARG
 #define L_EUSER    PROC_FILLUSR
 #define L_OUSER    PROC_FILLSTATUS | PROC_FILLUSR
 #define L_EGROUP   PROC_FILLSTATUS | PROC_FILLGRP
@@ -1242,7 +1230,7 @@ static FLD_t Fieldstab[] = {
 #endif
    // next entry's like P_CMD, and '.head' must be the same length -- they share varcolsz
    { "CGROUPS  ",   NULL,        -1,     -1,  SF(CGR),  L_CGROUP,  "Control Groups"       }
-#ifdef ZAP_SUSEONLY
+#ifdef OOMEM_ENABLE
 #define L_oom      PROC_FILLOOM
   ,{ "Adj ",        "%3d ",      -1,     -1,  SF(OOA),  L_oom,     "oom_adjustment (2^X)" }
   ,{ " Badness ",   "%8d ",      -1,     -1,  SF(OOM),  L_oom,     "oom_score (badness)"  }
@@ -1441,7 +1429,10 @@ static void calibrate_fields (void) {
          // prepare to even out column header lengths...
          if (hdrmax + w->hdrcaplen < (x = strlen(w->columnhdr))) hdrmax = x - w->hdrcaplen;
 #endif
-
+         // we must also accommodate an out of view sort field...
+         f = w->rc.sortindx;
+         Frames_libflags |= Fieldstab[f].lflg;
+         if (P_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
       } // end: VIZISw(w)
       if (Rc.mode_altscr) w = w->next;
    } while (w != Curwin);
@@ -2977,9 +2968,10 @@ static void do_key (int ch) {
                break;
             }
 
-         if (i < MAXTBL(key_tab)) break;
-         show_msg("\aUnknown command - try 'h' for help");
-         return;
+         if (!(i < MAXTBL(key_tab))) {
+            show_msg("\aUnknown command - try 'h' for help");
+            return;
+         }
    };
 
    /* The following assignment will force a rebuild of all column headers and
@@ -3022,7 +3014,7 @@ static void summaryhlp (CPU_t *cpu, const char *pfx) {
    s_frme = cpu->s - cpu->s_sav;
    n_frme = cpu->n - cpu->n_sav;
    i_frme = TRIMz(cpu->i - cpu->i_sav);
-   if ((u_frme == 0) && (i_frme == 0)) i_frme = 100.0;
+   if ((u_frme == 0) && (i_frme == 0)) i_frme = 100;
    w_frme = cpu->w - cpu->w_sav;
    x_frme = cpu->x - cpu->x_sav;
    y_frme = cpu->y - cpu->y_sav;
@@ -3173,17 +3165,11 @@ static void task_show (const WIN_t *q, const proc_t *p) {
 #endif
          case P_CGR:
             // our kernel may not support cgroups
-            makeVAR(p->cgroup ? p->cgroup[0] : "n/a");
+            makeVAR(p->cgroup ? *p->cgroup : "n/a");
             break;
          case P_CMD:
-         {  char tmp[SCREENMAX];
-            unsigned flags;
-            int whackable_int = q->varcolsz;
-            if (CHKw(q, Show_CMDLIN)) flags = ESC_DEFUNCT | ESC_BRACKETS | ESC_ARGS;
-            else                      flags = ESC_DEFUNCT;
-            escape_command(tmp, p, sizeof(tmp), &whackable_int, flags);
-            makeVAR(tmp);
-         }
+            if (CHKw(q, Show_CMDLIN)) makeVAR(*p->cmdline)
+            else makeVAR(p->cmd);
             break;
          case P_COD:
             makeCOL(scale_num(pages2K(p->trs), w, s));
@@ -3229,7 +3215,7 @@ static void task_show (const WIN_t *q, const proc_t *p) {
          case P_NCE:
             makeCOL((int)p->nice);
             break;
-#ifdef ZAP_SUSEONLY
+#ifdef OOMEM_ENABLE
          case P_OOA:
             makeCOL((int)p->oom_adj);
             break;
@@ -3311,9 +3297,9 @@ static void task_show (const WIN_t *q, const proc_t *p) {
          case P_WCH:
             if (No_ksyms) {
 #ifdef CASEUP_HEXES
-               makeVAR(fmtmk("%010lX", (unsigned long)(unsigned int)p->wchan))
+               makeVAR(fmtmk("%08" KLF "X", p->wchan))
 #else
-               makeVAR(fmtmk("%010lx", (unsigned long)(unsigned int)p->wchan))
+               makeVAR(fmtmk("%08" KLF "x", p->wchan))
 #endif
             } else
                makeVAR(lookup_wchan(p->wchan, p->tid))
