@@ -24,7 +24,9 @@
 #include <netinet/in.h>  /* htons */
 #endif
 
+#ifndef OOMEM_ENABLE
 long smp_num_cpus;     /* number of CPUs */
+#endif
 
 #define BAD_OPEN_MESSAGE					\
 "Error: /proc must be mounted\n"				\
@@ -180,7 +182,11 @@ static void old_Hertz_hack(void){
   setlocale(LC_NUMERIC, savelocale);
   jiffies = user_j + nice_j + sys_j + other_j;
   seconds = (up_1 + up_2) / 2;
+#ifndef OOMEM_ENABLE
   h = (unsigned)( (double)jiffies/seconds/smp_num_cpus );
+#else
+  h = (unsigned)( (double)jiffies/seconds/smp_num_cpus() );
+#endif
   /* actual values used by 2.4 kernels: 32 64 100 128 1000 1024 1200 */
   switch(h){
   case    9 ...   11 :  Hertz =   10; break; /* S/390 (sometimes) */
@@ -246,10 +252,34 @@ static int check_for_privs(void){
   return !!rc;
 }
 
+#ifdef OOMEM_ENABLE
+long smp_num_cpus(void)
+{
+  static long _smp_num_cpus=-1;     /* number of CPUs */
+
+  if (_smp_num_cpus != -1)
+    return(_smp_num_cpus);
+
+  // ought to count CPUs in /proc/stat instead of relying
+  // on glibc, which foolishly tries to parse /proc/cpuinfo
+  //
+  // SourceForge has an old Alpha running Linux 2.2.20 that
+  // appears to have a non-SMP kernel on a 2-way SMP box.
+  // _SC_NPROCESSORS_CONF returns 2, resulting in HZ=512
+  // _SC_NPROCESSORS_ONLN returns 1, which should work OK
+
+  _smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
+  if(_smp_num_cpus<1) _smp_num_cpus=1; /* SPARC glibc is buggy */
+
+  return(_smp_num_cpus);
+}
+#endif
+
 static void init_libproc(void) __attribute__((constructor));
 static void init_libproc(void){
   have_privs = check_for_privs();
   init_Linux_version(); /* Must be called before we check code */
+#ifndef OOMEM_ENABLE
   // ought to count CPUs in /proc/stat instead of relying
   // on glibc, which foolishly tries to parse /proc/cpuinfo
   //
@@ -259,7 +289,7 @@ static void init_libproc(void){
   // _SC_NPROCESSORS_ONLN returns 1, which should work OK
   smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
   if(smp_num_cpus<1) smp_num_cpus=1; /* SPARC glibc is buggy */
-
+#endif
   if(linux_version_code > LINUX_VERSION(2, 4, 0)){ 
     Hertz = find_elf_note(AT_CLKTCK);
     if(Hertz!=NOTE_NOT_FOUND) return;

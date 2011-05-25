@@ -224,6 +224,7 @@ static unsigned task_format_needs;
 #define needs_for_format (proc_format_needs|task_format_needs)
 
 #define PROC_ONLY_FLAGS (PROC_FILLENV|PROC_FILLARG|PROC_FILLCOM|PROC_FILLMEM|PROC_FILLCGROUP)
+
 /***** munge lists and determine openproc() flags */
 static void lists_and_needs(void){
   check_headers();
@@ -283,11 +284,12 @@ static void lists_and_needs(void){
   }
   if(!unix_f_option){
     proc_format_needs &= ~PROC_FILLCOM;
+    proc_format_needs |=  PROC_EDITCMDLCVT;
     needs_for_sort    &= ~PROC_FILLCOM;
   }
   // convert ARG to COM as a standard
   if(proc_format_needs & PROC_FILLARG){
-    proc_format_needs |= PROC_FILLCOM;
+    proc_format_needs |= (PROC_FILLCOM | PROC_EDITCMDLCVT);
     proc_format_needs &= ~PROC_FILLARG;
   }
   if(bsd_e_option){

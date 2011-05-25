@@ -12,6 +12,7 @@
 #include "version.h"
 #include "readproc.h"
 #include "alloc.h"
+#include "escape.h"
 #include "pwcache.h"
 #include "devname.h"
 #include "procps.h"
@@ -365,6 +366,19 @@ LEAVE(0x220);
 }
 
 ///////////////////////////////////////////////////////////////////////
+#ifdef OOMEM_ENABLE
+static void oomscore2proc(const char* S, proc_t *restrict P)
+{
+    sscanf(S, "%d", &P->oom_score);
+}
+
+static void oomadj2proc(const char* S, proc_t *restrict P)
+{
+    sscanf(S, "%d", &P->oom_adj);
+}
+#endif
+///////////////////////////////////////////////////////////////////////
+
 
 // Reads /proc/*/stat files, being careful not to trip over processes with
 // names like ":-) 1 2 3 4 5 6".
@@ -514,13 +528,15 @@ static char** file2strvec(const char* directory, const char* what) {
     return ret;
 }
 
-// warning: interface may change
-int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid){
+    // this is the former under utilized 'read_cmdline', which has been
+    // generalized in support of these new libproc flags:
+    //     PROC_EDITCGRPCVT, PROC_EDITCMDLCVT
+static int read_unvectored(char *restrict const dst, unsigned sz, unsigned pid, const char *what, char sep) {
     char name[32];
     int fd;
     unsigned n = 0;
-    dst[0] = '\0';
-    snprintf(name, sizeof name, "/proc/%u/cmdline", pid);
+
+    snprintf(name, sizeof name, "/proc/%u/%s", pid, what);
     fd = open(name, O_RDONLY);
     if(fd==-1) return 0;
     for(;;){
@@ -530,22 +546,85 @@ int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid){
             break;
         }
         n += r;
-        if(n==sz) break; // filled the buffer
+        if(n==sz) {      // filled the buffer
+            --n;         // make room for '\0'
+            break;
+        }
         if(r==0) break;  // EOF
     }
     close(fd);
     if(n){
-        int i;
-        if(n==sz) n--;
-        dst[n] = '\0';
-        i=n;
-        while(i--){
-            int c = dst[i];
-            if(c<' ' || c>'~') dst[i]=' ';
-        }
+        int i=n;
+        while(i--)
+            if(dst[i]=='\n' || dst[i]=='\0') dst[i]=sep;
     }
+    dst[n] = '\0';
     return n;
 }
+
+static char** vectorize_this_str (const char* src) {
+ #define pSZ  (sizeof(char*))
+    char *cpy, **vec;
+    int adj, tot;
+
+    tot = strlen(src) + 1;                       // prep for our vectors
+    adj = (pSZ-1) - ((tot + pSZ-1) & (pSZ-1));   // calc alignment bytes
+    cpy = xcalloc(NULL, tot + adj + (2 * pSZ));  // get new larger buffer
+    snprintf(cpy, tot, "%s", src);               // duplicate their string
+    vec = (char**)(cpy + tot + adj);             // prep pointer to pointers
+    *vec = cpy;                                  // point 1st vector to string
+    *(vec+1) = NULL;                             // null ptr 'list' delimit
+    return vec;                                  // ==> free(*vec) to dealloc
+ #undef pSZ
+}
+
+    // This routine reads /proc/#/cgroup for a single task.
+    // It is similar to file2strvec except we filter and concatenate
+    // the data into a single string represented as a single vector.
+static void fill_cgroup_cvt (proc_t *restrict p) {
+ #define vMAX ( sizeof(dbuf) - (int)(dst - dbuf) )
+    char sbuf[1024], dbuf[1024];
+    char *src, *dst, *grp, *eob;
+    int tot, x, whackable_int = sizeof(dbuf);
+
+    *(dst = dbuf) = '\0';                        // empty destination
+    tot = read_unvectored(sbuf, sizeof(sbuf), p->tid, "cgroup", '\0');
+    for (src = sbuf, eob = sbuf + tot; src < eob; src += x) {
+        x = 1;                                   // loop assist
+        if (!*src) continue;
+        x = strlen((grp = src));
+        if ('/' == grp[x - 1]) continue;         // skip empty root cgroups
+#if 0
+        grp += strspn(grp, "0123456789:");       // jump past group number
+#endif
+        dst += snprintf(dst, vMAX, "%s", (dst > dbuf) ? "," : "");
+        dst += escape_str(dst, grp, vMAX, &whackable_int);
+    }
+    p->cgroup = vectorize_this_str(dbuf[0] ? dbuf : "-");
+ #undef vMAX
+}
+
+    // This routine reads /proc/#/cmdline for the designated task, "escapes"
+    // the result into a single string represented as a single vector and
+    // guarantees the caller a valid proc_t.cmdline pointer.
+static void fill_cmdline_cvt (proc_t *restrict p) {
+ #define uFLG ( ESC_BRACKETS | ESC_DEFUNCT )
+    char sbuf[2048], dbuf[2048];
+    int whackable_int = sizeof(dbuf);
+
+    if (read_unvectored(sbuf, sizeof(sbuf), p->tid, "cmdline", ' '))
+        escape_str(dbuf, sbuf, sizeof(dbuf), &whackable_int);
+    else
+        escape_command(dbuf, p, sizeof(dbuf), &whackable_int, uFLG);
+    p->cmdline = vectorize_this_str(dbuf);
+ #undef uFLG
+}
+
+// warning: interface may change
+int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid) {
+    return read_unvectored(dst, sz, pid, "cmdline", ' ');
+}
+
 
 /* These are some nice GNU C expression subscope "inline" functions.
  * The can be used with arbitrary types and evaluate their arguments
@@ -628,21 +707,37 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
         }
     }
 
-    if ((flags & PROC_FILLCOM) || (flags & PROC_FILLARG))	/* read+parse /proc/#/cmdline */
-	p->cmdline = file2strvec(path, "cmdline");
-    else
-        p->cmdline = NULL;
-
-    if (unlikely(flags & PROC_FILLENV))			/* read+parse /proc/#/environ */
-	p->environ = file2strvec(path, "environ");
+    if (unlikely(flags & PROC_FILLENV))          /* read /proc/#/environ */
+        p->environ = file2strvec(path, "environ");
     else
         p->environ = NULL;
 
-    if(linux_version_code>=LINUX_VERSION(2,6,24) && (flags & PROC_FILLCGROUP))
-	p->cgroup = file2strvec(path, "cgroup"); 	/* read /proc/#/cgroup */
-    else
-	p->cgroup = NULL;
-    
+    if (flags & (PROC_FILLCOM|PROC_FILLARG)) {   /* read /proc/#/cmdline */
+        if (flags & PROC_EDITCMDLCVT)
+            fill_cmdline_cvt(p);
+        else
+            p->cmdline = file2strvec(path, "cmdline");
+    } else
+        p->cmdline = NULL;
+
+    if ((flags & PROC_FILLCGROUP)                /* read /proc/#/cgroup, if possible */
+    && linux_version_code >= LINUX_VERSION(2,6,24)) {
+        if (flags & PROC_EDITCGRPCVT)
+            fill_cgroup_cvt(p);
+        else
+            p->cgroup = file2strvec(path, "cgroup");
+    } else
+        p->cgroup = NULL;
+
+#ifdef OOMEM_ENABLE
+    if (unlikely(flags & PROC_FILLOOM)) {
+        if (likely( file2str(path, "oom_score", sbuf, sizeof sbuf) != -1 ))
+            oomscore2proc(sbuf, p);
+        if (likely( file2str(path, "oom_adj", sbuf, sizeof sbuf) != -1 ))
+            oomadj2proc(sbuf, p);
+    }
+#endif
+
     return p;
 next_proc:
     return NULL;
