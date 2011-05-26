@@ -25,7 +25,6 @@
 //#define CASEUP_HEXES            /* show any hex values in upper case       */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
-//#define FIELD_CURSOR            /* cursor follows selection w/ fields mgmt */
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
 //#define OOMEM_ENABLE            /* enable the SuSE out-of-memory additions *
@@ -33,11 +32,9 @@
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
-//#define RESIZE_LIMIT            /* enable limits on lower sigwinch bounds  */
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
 //#define STRCMPNOCASE            /* use strcasecmp vs. strcmp when sorting  */
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
-//#define TTYGETENVYES            /* environ vars can override tty col/row   */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 
 
@@ -86,12 +83,12 @@
         /* Specific process id monitoring support (command line only) */
 #define MONPIDMAX  20
 
+        /* Output override minimums (the -w switch and/or env vars) */
+#define W_MIN_COL  3
+#define W_MIN_ROW  3
+
         /* Miscellaneous buffers with liberal values and some other defines
            -- mostly just to pinpoint source code usage/dependancies */
-#ifdef RESIZE_LIMIT
-#define SCRCOLMIN    16
-#define SCRROWMIN     8
-#endif
 #define SCREENMAX   512
    /* the above might seem pretty stingy, until you consider that with every
       one of top's fields displayed it's less than 200 bytes of column header
@@ -314,6 +311,7 @@ typedef struct WIN_t {
 #else
           columnhdr [SCREENMAX],       // column headings for procflgs
 #endif
+         *eolcap,                      // window specific eol termcap
          *captab [CAPTABMAX];          // captab needed by show_special()
    struct WIN_t *next,                 // next window in window stack
                 *prev;                 // prior window in window stack
@@ -528,47 +526,10 @@ typedef struct WIN_t {
         /* Fields Management specially formatted string(s) --
            see 'show_special' for syntax details + other cautions */
 #define FIELDS_heading \
-   "%sFields Management\02 for window \01%s\06, whose current sort field is \01%s\02\n" \
+   "Fields Management\02 for window \01%s\06, whose current sort field is \01%s\02\n" \
    "   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n" \
    "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end! " \
    ""
-
-#ifdef OOMEM_ENABLE
-        /* w/ 2 extra lines, no room for additional text on 24x80 terminal */
-#define FIELDS_notes  NULL
-#else
-        /* Extra explanatory text which could accompany the Fields display.
-           note: the newlines cannot actually be used, they just serve as
-                 substring delimiters for the 'display_fields' routine. */
-#define FIELDS_notes \
-   "Note(s):\n" \
-   "  Use the 'a' & 'w' keys to cycle\n" \
-   "  through all available windows.\n" \
-   ""
-/* no room in FIELDS_notes, sacrificed w/ 35 fields displayed .... */
-/* "  If a sort field is not displayed,\n"                         */
-/* "  the '<' & '>' keys are inactive.\n"                          */
-#endif
-
-#define FIELDS_flags \
-   "Flags field:\n" \
-   "  0x00000001  PF_ALIGNWARN\n" \
-   "  0x00000002  PF_STARTING\n" \
-   "  0x00000004  PF_EXITING\n" \
-   "  0x00000040  PF_FORKNOEXEC\n" \
-   "  0x00000100  PF_SUPERPRIV\n" \
-   "  0x00000200  PF_DUMPCORE\n" \
-   "  0x00000400  PF_SIGNALED\n" \
-   "  0x00000800  PF_MEMALLOC\n" \
-   "  0x00002000  PF_FREE_PAGES (2.5)\n" \
-   "  0x00008000  debug flag (2.5)\n" \
-   "  0x00024000  special threads (2.5)\n" \
-   "  0x001D0000  special states (2.5)\n" \
-   "  0x00100000  PF_USEDFPU (thru 2.4)\n" \
-   ""
-/* no room in FIELDS_flags, sacrificed w/ 26 fields displayed .... */
-/* ( PF_MEMDIE ==  'Killed for out-of-memory' )                    */
-/* "  0x00001000  PF_MEMDIE (2.5)\n"                               */
 
         /* Colors Help specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
@@ -638,6 +599,9 @@ typedef struct WIN_t {
 #if defined(PRETEND4CPUS) && defined (OOMEM_ENABLE)
 # error 'PRETEND4CPUS' conflicts with 'OOMEM_ENABLE'
 #endif
+#if (LRGBUFSIZ < SCREENMAX)
+# error 'LRGBUFSIZ' must NOT be less than 'SCREENMAX'
+#endif
 
 
 /*######  Some Prototypes (ha!)  #########################################*/
@@ -682,7 +646,7 @@ typedef struct WIN_t {
 /*atic FLD_t         Fieldstab[] = { ... }                                */
 //atic void          adj_geometry (void);
 //atic void          calibrate_fields (void);
-//atic void          display_fields (int focus, int extend, const char *xtra);
+//atic void          display_fields (int focus, int extend);
 //atic void          fields_utility (void);
 //atic void          zap_fieldstab (void);
 /*------  Library Interface  ---------------------------------------------*/

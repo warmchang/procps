@@ -99,8 +99,8 @@
 .\" ----------------------------------------------------------------------
 .SH SYNOPSIS
 .\" ----------------------------------------------------------------------
-\*(WE \-\fBhv\fR | \-\fBbcHisS\fR \-\fBd\fI delay\fR \-\fBn\fI limit\fR
-\-\fBu\fR|\fBU\fI user\fR | \-\fBp\fI pid\fR [,\fIpid\fR ...]
+\*(WE \-\fBhv\fR|\-\fBbcHisS\fR \-\fBd\fI delay\fR \-\fBn\fI limit\fR
+\-\fBu\fR|\fBU\fI user\fR \-\fBp\fI pid\fR \-\fBw\fR [\fIcols\fR] \fR
 
 The traditional switches '-' and whitespace are optional.
 
@@ -191,15 +191,14 @@ These areas will be explored in the sections that follow.
 There is also an Input/Message line between the Summary Area and Columns
 Header which needs no further explanation.
 
-.PP
 \*(NT the width of \*(We's display will be limited to \*(WX positions.
 Displaying all fields requires \*(WF characters.
-The remaining width is allocated to variable width columns currently being
-displayed which can expand to show additional information.
-
-An example would be the COMMAND field which could show the program name
-only or a complete command line reflecting path and arguments.
-Other variable width columns are noted in topic 3a. DESCRIPTIONS of Fields.
+Remaining screen width is usually allocated to any variable width columns
+currently visible.
+The variable width columns, such as COMMAND, are noted in topic
+3a. DESCRIPTIONS of Fields.
+Actual output width may also be influenced by the -w switch, which is
+discussed in topic 1. COMMAND\-LINE Options.
 
 .\" ......................................................................
 .SS Startup Defaults
@@ -243,7 +242,7 @@ All are explained in detail in the sections that follow.
 The command-line syntax for \*(We consists of:
 
   \-\fBhv\fR | \-\fBbcHisS\fR \-\fBd\fI delay\fR \-\fBn\fI limit\fR
-\-\fBu\fR|\fBU\fI user\fR | \-\fBp\fI pid\fR [,\fIpid\fR ...]
+\-\fBu\fR|\fBU\fI user\fR | \-\fBp\fI pid\fR \-\fBw\fR [\fIcols\fR] \fR
 
 The typically mandatory switches ('-') and even whitespace are completely
 optional.
@@ -254,7 +253,7 @@ Show library version and the usage prompt, then quit.
 
 .TP 5
 \-\fBb\fR :\fI Batch-mode\fR operation \fR
-Starts \*(We in 'Batch mode', which could be useful for sending output
+Starts \*(We in 'Batch' mode, which could be useful for sending output
 from \*(We to other programs or to a file.
 In this mode, \*(We will not accept input and runs until the iterations
 limit you've set with the '-n' \*(CO or until killed.
@@ -323,13 +322,29 @@ time that it and its dead children have used.
 \*(XC 'S' \*(CI for additional information regarding this mode.
 
 .TP 5
-\-\fBu\fR | \-\fBU\fR :\fI User-filter-mode\fR as:\ \ -u | -U\fB number\fR or\fB name \fR
+\-\fBu\fR | \-\fBU\fR :\fI User-filter-mode\fR as:\ \ \fB-u\fR | \fB-U number\fR or\fB name \fR
 Display only processes with a user id or user name matching that given.
-The '-u' option matches on \fB effective\fR user whereas the '-U' option
-matches on\fB any\fR user (real, effective, saved, or filesystem).
+The '-u' option matches on \fI effective\fR user whereas the '-U' option
+matches on\fI any\fR user (real, effective, saved, or filesystem).
 
 The 'p', 'u' and 'U' \*(COs are mutually exclusive.
 
+.TP 5
+\-\fBw\fR :\fI Output-width-override\fR as:\ \ \fB-w\fR [\fB number\fR ] \fR
+In 'Batch' mode, when used without an argument \*(We will format
+output using the COLUMNS= and LINES= environment variables, if set.
+Otherwise, width will be fixed at the maximum \*(WX columns.
+With an argument, output width can be decreased or increased (up to \*(WX)
+but the number of rows is considered unlimited.
+
+In normal display mode, when used without an argument \*(We will\fI attempt\fR
+to format output using the COLUMNS= and LINES= environment variables, if set.
+With an argument, output width can only be decreased, not increased.
+Whether using environment variables or an argument with -w, when\fI not\fR
+in 'Batch' mode actual terminal dimensions can never be exceeded.
+
+\*(NT Without the use of this \*(CO, output width is always based on the
+terminal at which \*(We was invoked whether or not in 'Batch' mode.
 
 .\" ----------------------------------------------------------------------
 .SH 2. SUMMARY Display
@@ -480,7 +495,7 @@ The\fI effective\fR group name.
 A task's currently used share of available \*(MP.
 
 .TP 4
- 10.\fB NI \*(Em Nice Value \fR
+10.\fB NI \*(Em Nice Value \fR
 The nice value of the task.
 A negative nice value means higher priority, whereas a positive nice value
 means lower priority.
@@ -1133,7 +1148,7 @@ The following \*(CIs are available.
         'q'       :abandon current changes and exit
 .Ed
 
-If your use 'a' or 'w' to cycle the targeted window, you will
+If you use 'a' or 'w' to cycle the targeted window, you will
 have applied the color scheme that was displayed when you left that window.
 You can, of course, easily return to any window and reapply different
 colors or turn colors \*F completely with the 'z' toggle.

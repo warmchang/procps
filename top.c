@@ -104,7 +104,8 @@ static int No_ksyms = -1,       // set to '0' if ksym avail, '1' otherwise
            Batch = 0,           // batch mode, collect no input, dumb output
            Loops = -1,          // number of iterations, -1 loops forever
            Secure_mode = 0,     // set if some functionality restricted
-           Thread_mode = 0;     // set w/ 'H' - show threads via readtask()
+           Thread_mode = 0,     // set w/ 'H' - show threads via readtask()
+           Width_mode = 0;      // set w/ 'w' - potential output override
 
         /* Unchangeable cap's stuff built just once (if at all) and
            thus NOT saved in a WIN_t's RCW_t.  To accomodate 'Batch'
@@ -316,7 +317,6 @@ static void bye_bye (const char *str) {
 #ifndef RMAN_IGNORED
       putp(Cap_smam);
 #endif
-      putp("\n");
    }
    fflush(stdout);
 
@@ -468,6 +468,7 @@ static void bye_bye (const char *str) {
       fputs(str, stderr);
       exit(1);
    }
+   putp("\n");
    exit(0);
 } // end: bye_bye
 
@@ -646,17 +647,19 @@ static void show_msg (const char *str) {
         /*
          * Show an input prompt + larger cursor (if possible) */
 static int show_pmt (const char *str) {
+   int rc;
+
    PUTT("%s%s%.*s: %s%s%s"
       , tg2(0, Msg_row)
       , Curwin->capclr_pmt
-      , Screen_cols - 2
+      , Screen_cols - 3
       , str
       , Cap_curs_huge
       , Caps_off
       , Cap_clr_eol);
    fflush(stdout);
-   // +2 for the ': ' characters we added (if anybody cares)...
-   return (int)strlen(str) + 2;
+   // +2 for the ': ' chars we added or -1 for the cursor...
+   return ((rc = (int)strlen(str)+2) < Screen_cols) ? rc : Screen_cols-1;
 } // end: show_pmt
 
 
@@ -754,8 +757,8 @@ static void show_special (int interact, const char *glob) {
    /* If there's anything left in the glob (by virtue of no trailing '\n'),
       it probably means caller wants to retain cursor position on this final
       line.  That, in turn, means we're interactive and so we'll just do our
-      'fit-to-screen' thingy... */
-   if (*glob) PUTT("%.*s", Screen_cols, glob);
+      'fit-to-screen' thingy while also leaving room for the cursor... */
+   if (*glob) PUTT("%.*s", Screen_cols -1, glob);
 } // end: show_special
 
 /*######  Low Level Memory/Keyboard support  #############################*/
@@ -920,7 +923,7 @@ static char *linein (const char *prompt) {
     // thank goodness memmove allows the two strings to overlap
  #define sqzSTR  { memmove(&buf[pos], &buf[pos+1], bufMAX-pos); \
        buf[sizeof(buf)-1] = '\0'; }
- #define expSTR  if (len+1 < bufMAX-1 && len+beg+1 < Screen_cols-1) { \
+ #define expSTR  if (len+1 < bufMAX && len+beg+1 < Screen_cols) { \
        memmove(&buf[pos+1], &buf[pos], bufMAX-pos); buf[pos] = ' '; }
  #define logCOL  (pos+1)
  #define phyCOL  (beg+pos+1)
@@ -963,7 +966,7 @@ static char *linein (const char *prompt) {
             pos = len;
             break;
          default:                      // what we REALLY wanted (maybe)
-            if (isprint(key) && logCOL+1 < bufMAX && phyCOL+1 < Screen_cols)
+            if (isprint(key) && logCOL < bufMAX && phyCOL < Screen_cols)
                buf[pos++] = key;
             break;
       }
@@ -1245,6 +1248,7 @@ static FLD_t Fieldstab[] = {
          * cached screen geometry and related variables */
 static void adj_geometry (void) {
    static size_t pseudo_max = 0;
+   static int w_set = 0, w_cols = 0, w_rows = 0;
    struct winsize wz;
 
    Screen_cols = columns;    // <term.h>
@@ -1256,27 +1260,6 @@ static void adj_geometry (void) {
       Screen_rows = wz.ws_row;
    }
 
-#ifdef TTYGETENVYES
-{  char *env_columns = getenv("COLUMNS");   // Unix98 environment vars
-   char *env_lines   = getenv("LINES");
-
-   if (env_columns && *env_columns && env_lines && *env_lines) {
-      long t, tc = 0, tr = 0;
-      char *endptr;
-
-      t = strtol(env_columns, &endptr, 0);
-      if (!*endptr && (t > 0) && (t <= 0x7fffffffL)) tc = t;
-      t = strtol(env_lines, &endptr, 0);
-      if (!*endptr && (t > 0) && (t <= 0x7fffffffL)) tr = t;
-      // only allow environment vars override if both make sense...
-      if (0 < tc && 0 < tr) {
-         Screen_cols = (int)tc;
-         Screen_rows = (int)tr;
-      }
-   }
-}
-#endif
-
 #ifndef RMAN_IGNORED
    // be crudely tolerant of crude tty emulators
    if (Cap_avoid_eol) Screen_cols--;
@@ -1284,9 +1267,33 @@ static void adj_geometry (void) {
 
    // we might disappoint some folks (but they'll deserve it)
    if (SCREENMAX < Screen_cols) Screen_cols = SCREENMAX;
-#ifdef RESIZE_LIMIT
-   if (SCRCOLMIN > Screen_cols || SCRROWMIN > Screen_rows) error_exit("too tiny tty");
-#endif
+
+   if (!w_set) {
+      if (Width_mode > 0)              // -w with arg, we'll try to honor
+         w_cols = Width_mode;
+      else
+      if (Width_mode < 0) {            // -w without arg, try environment
+         char *env_columns = getenv("COLUMNS"),
+              *env_lines = getenv("LINES"),
+              *ep;
+         if (env_columns && *env_columns) {
+            long t, tc = 0;
+            t = strtol(env_columns, &ep, 0);
+            if (!*ep && (t > 0) && (t <= 0x7fffffffL)) tc = t;
+            if (0 < tc) w_cols = (int)tc;
+         }
+         if (env_lines && *env_lines) {
+            long t, tr = 0;
+            t = strtol(env_lines, &ep, 0);
+            if (!*ep && (t > 0) && (t <= 0x7fffffffL)) tr = t;
+            if (0 < tr) w_rows = (int)tr;
+         }
+         if (!w_cols) w_cols = SCREENMAX;
+         if (w_cols && w_cols < W_MIN_COL) w_cols = W_MIN_COL;
+         if (w_rows && w_rows < W_MIN_ROW) w_rows = W_MIN_ROW;
+      }
+      w_set = 1;
+   }
 
    /* keep our support for output optimization in sync with current reality
       note: when we're in Batch mode, we don't really need a Pseudo_screen
@@ -1294,17 +1301,21 @@ static void adj_geometry (void) {
             Msg_row is never represented -- but it's nice to have some space
             between us and the great-beyond... */
    if (Batch) {
-      Screen_rows = MAXINT;
+      if (w_cols) Screen_cols = w_cols;
+      Screen_rows = w_rows ? w_rows : MAXINT;
       Pseudo_size = (sizeof(*Pseudo_screen) * ROWMAXSIZ);
-   } else
+   } else {
+      if (w_cols && w_cols < Screen_cols) Screen_cols = w_cols;
+      if (w_rows && w_rows < Screen_rows) Screen_rows = w_rows;
       Pseudo_size = (sizeof(*Pseudo_screen) * ROWMAXSIZ) * Screen_rows;
-
+   }
    // we'll only grow our Pseudo_screen, never shrink it
    if (pseudo_max < Pseudo_size) {
       pseudo_max = Pseudo_size;
       Pseudo_screen = alloc_r(Pseudo_screen, pseudo_max);
    }
    PSU_CLREOS(0);
+   if (Frames_resize) putp(Cap_clr_scr);
 } // end: adj_geometry
 
 
@@ -1428,6 +1439,11 @@ static void calibrate_fields (void) {
 #ifdef EQUCOLHDRYES
          // prepare to even out column header lengths...
          if (hdrmax + w->hdrcaplen < (x = strlen(w->columnhdr))) hdrmax = x - w->hdrcaplen;
+         if (Screen_cols > x - w->hdrcaplen) w->eolcap = Caps_endline;
+         else w->eolcap = Caps_off;
+#else
+         if (Screen_cols > strlen(w->columnhdr)) w->eolcap = Caps_endline;
+         else w->eolcap = Caps_off;
 #endif
          // we must also accommodate an out of view sort field...
          f = w->rc.sortindx;
@@ -1480,59 +1496,81 @@ static void calibrate_fields (void) {
          * Special highlighting will be accorded the "focus" field with such
          * highlighting potentially extended to include the description.
          *
-         * After all fields have been displayed, some extra explanatory
-         * text may also be output */
-static void display_fields (int focus, int extend, const char *xtra) {
+         * Below is the current Fieldstab space requirement and how
+         * we apportion it.  The xSUFX is considered sacrificial,
+         * something we can reduce or do without.
+         *            0        1         2         3
+         *            12345678901234567890123456789012
+         *            * HEADING = Longest Description!
+         *      xPRFX ----------______________________ xSUFX
+         *    ( xPRFX has pos 2 & 10 for 'extending' when at minimums )
+         *
+         * The first 4 screen rows are reserved for explanatory text.
+         * Thus, with our current 36 fields, a maximum of 6 columns and
+         * 1 space between columns, a tty will still remain useable under
+         * these extremes:
+         *            rows  cols   displayed
+         *            ----  ----   ------------------
+         *             10    66    xPRFX only
+         *             10   198    full xPRFX + xSUFX
+         *             22    22    xPRFX only
+         *             22    66    full xPRFX + xSUFX
+         *    ( if not, the user deserves our most cryptic messages )
+         */
+static void display_fields (int focus, int extend) {
+ #define mxCOL  6
  #define yRSVD  4
-   WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
-   const char *p;
-#ifdef FIELD_CURSOR
-   int savcol = 0, savrow = 0;    // make gcc happy (with initialization)
-#endif
-   int i,cmax, rmax;
+ #define xSUFX  22
+ #define xPRFX (10 + xadd)
+ #define xTOTL (xPRFX + xSUFX)
+   WIN_t *w = Curwin;                  // avoid gcc bloat with a local copy
+   int i;                              // utility int (a row, tot cols, ix)
+   int smax;                           // printable width of xSUFX
+   int xadd = 0;                       // spacing between data columns
+   int cmax = Screen_cols;             // total data column width
+   int rmax = Screen_rows - yRSVD;     // total useable rows
 
    fflush(stdout);
-   cmax = Screen_cols / 2;
-   rmax = Screen_rows - yRSVD;
+   i = (P_MAXPFLGS % mxCOL) ? 1 : 0;
+   if (rmax < i + (P_MAXPFLGS / mxCOL)) error_exit("++rows");
+   i = P_MAXPFLGS / rmax;
+   if (P_MAXPFLGS % rmax) ++i;
+   if (i > 1) { cmax = Screen_cols / i; xadd = 1; }
+   if (cmax > xTOTL) cmax = xTOTL;
+   smax = cmax - xPRFX;
+   if (smax < 0) error_exit("++cols");
 
    for (i = 0; i < P_MAXPFLGS; ++i) {
-      FLG_t f = FLDget(w, i);
+      char sbuf[xSUFX+1];
       int b = FLDviz(w, i);
+      FLG_t f = FLDget(w, i);
+      const char *h, *e = (i == focus && extend) ? w->capclr_msg : "";
 
-      // advance past leading spaces, if any
-      for (p = Fieldstab[f].head; ' ' == *p; ++p) ;
-      PUTT("%s%c  %s%s%-10.10s%s%s%s = %-20.20s%s"
+      // advance past leading header spaces and prep sacrificial suffix
+      for (h = Fieldstab[f].head; ' ' == *h; ++h) ;
+      snprintf(sbuf, sizeof(sbuf), "= %s", Fieldstab[f].desc);
+
+      PUTT("%s%c%s%s %s%-7.7s%s%s%s %-*.*s%s"
          , tg2((i / rmax) * cmax, (i % rmax) + yRSVD)
          , b ? '*' : ' '
          , b ? w->cap_bold : Cap_norm
+         , e
          , i == focus ? w->capclr_msg : ""
-         , p
+         , h
          , Cap_norm
          , b ? w->cap_bold : ""
-         , (i == focus && extend) ? w->capclr_msg : ""
-         , Fieldstab[f].desc
+         , e
+         , smax, smax
+         , sbuf
          , Cap_norm);
-#ifdef FIELD_CURSOR
-      if (i == focus) { savcol = (i / rmax) * cmax; savrow = (i % rmax) + yRSVD; }
-#endif
-   }
-   if (xtra) {
-      putp(w->capclr_rownorm);
-      while ((p = strchr(xtra, '\n'))) {
-         ++i;
-         PUTT("%s%.*s"
-            , tg2((i / rmax) * cmax, (i % rmax) + yRSVD)
-            , (int)(p - xtra)
-            , xtra);
-         xtra = ++p;
-      }
    }
 
-#ifdef FIELD_CURSOR
-   putp(tg2(savcol+1, savrow));
-#endif
    putp(Caps_off);
+ #undef mxCOL
  #undef yRSVD
+ #undef xSUFX
+ #undef xPRFX
+ #undef xTOTL
 } // end: display_fields
 
 
@@ -1552,23 +1590,15 @@ static void fields_utility (void) {
    FLG_t f;
 
    putp(Cap_clr_scr);
-#ifdef FIELD_CURSOR
-   putp(Cap_curs_huge);
-#else
-   putp(Cap_curs_hide);
-#endif
    spewFI
 
    do {
       // advance past leading spaces, if any
       if (!h) for (h = Fieldstab[f].head; ' ' == *h; ++h) ;
-#ifdef FIELD_CURSOR
-      show_special(1, fmtmk(FIELDS_heading, Cap_home, w->grpname, h));
-      display_fields(i, (p != NULL), FIELDS_notes);
-#else
-      display_fields(i, (p != NULL), FIELDS_notes);
-      show_special(1, fmtmk(FIELDS_heading, Cap_home, w->grpname, h));
-#endif
+      display_fields(i, (p != NULL));
+      putp(Cap_home);
+      show_special(1, fmtmk(FIELDS_heading, w->grpname, h));
+
       switch (key = keyin(0)) {
          case kbd_UP:
             if (i > 0) { --i; if (p) swapEM }
@@ -1609,7 +1639,6 @@ static void fields_utility (void) {
             break;
       }
    } while (key && 'q' != key && kbd_ESC != key);
-   putp(Cap_curs_norm);
  #undef unSCRL
  #undef swapEM
  #undef spewFI
@@ -2072,7 +2101,7 @@ static void configs_read (void) {
             , Winstk[i].rc.winname, Winstk[i].rc.fieldscur);
 #if PFLAGSSIZ > 64
  // too bad fscanf is not as flexible with his format string as snprintf
- # error "Hey, fix the above fscanf 'PFLAGSSIZ' dependency !"
+ # error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 #endif
          if (strlen(Winstk[i].rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
 #ifndef RCFILE_NOERR
@@ -2131,7 +2160,7 @@ static void parse_args (char **args) {
       .  bunched args are actually handled properly and none are ignored
       .  we tolerate NO whitespace and NO switches -- maybe too tolerant? */
    static const char usage_str[] =
-      " -hv | -bcHisS -d delay -n iterations -u|U user | -p pid [,pid ...]";
+      " -hv | -bcHiSs -d delay -n iters -u|U user | -p pid[,pid] -w [cols]";
    static const char sel_error[] = "conflicting process selections (U/p/u)";
    static const char numbs_str[] = "+,-.0123456789";
    float tmp_delay = MAXFLOAT;
@@ -2217,8 +2246,23 @@ static void parse_args (char **args) {
                else error_exit(fmtmk("-%c missing name", ch));
                if ((errmsg = user_certify(Curwin, cp, ch))) error_exit(errmsg);
                cp += strlen(cp);
-            }
                break;
+            }
+            case 'w':
+            {  char *pn = NULL;
+               int ai = 0, ci = 0;
+               Width_mode = -1;
+               if (cp[1]) pn = (char*)&cp[1];
+               else if (*args) { pn = *args; ai = 1; }
+               if (pn && !(ci = strspn(pn, "0123456789"))) { ai = 0; pn = NULL; }
+               if (pn && (1 != sscanf(pn, "%d", &Width_mode)
+               || Width_mode < W_MIN_COL))
+                  error_exit(fmtmk("bad width arg '%s', must > %d", pn, W_MIN_COL-1));
+               cp++;
+               args += ai;
+               if (pn) cp = pn + ci;
+               continue;
+            }
             default :
                error_exit(fmtmk("unknown option '%c'\nusage:\t%s%s", *cp, Myname, usage_str));
 
@@ -2529,6 +2573,8 @@ static void wins_stage_2 (void) {
       win_names(&Winstk[i], Winstk[i].rc.winname);
       capsmk(&Winstk[i]);
    }
+   if (Batch)
+      OFFw(Curwin, View_SCROLL);
    // this guy will build each window's columnhdr
    calibrate_fields();
 } // end: wins_stage_2
@@ -3315,7 +3361,7 @@ static void task_show (const WIN_t *q, const proc_t *p) {
    PUFF("\n%s%s%s", (CHKw(q, Show_HIROWS) && 'R' == p->state)
       ? q->capclr_rowhigh : q->capclr_rownorm
       , rbuf
-      , Caps_endline);
+      , q->eolcap);
  #undef makeCOL
  #undef makeVAR
  #undef pages2K
@@ -3334,7 +3380,7 @@ static int window_show (proc_t **ppt, WIN_t *q, int wmax) {
    int i, lwin;
 
    // Display Column Headings -- and distract 'em while we sort (maybe)
-   PUFF("\n%s%s%s", q->capclr_hdr, q->columnhdr, Caps_endline);
+   PUFF("\n%s%s%s", q->capclr_hdr, q->columnhdr, q->eolcap);
 
    if (CHKw(q, Qsrt_NORMAL)) Frame_srtflg =  1;  // this one's always needed!
    else                      Frame_srtflg = -1;
