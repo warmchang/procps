@@ -401,9 +401,10 @@ typedef struct WIN_t {
                . assumed to represent a complete screen ROW
                . subject to optimization, thus MAY be discarded */
 #define PUFF(fmt,arg...) do { \
-      char _str[ROWMAXSIZ]; \
-      snprintf(_str, sizeof(_str), fmt, ## arg); \
-      if (Batch) putp(_str); \
+      char _str[ROWMAXSIZ], *_eol; \
+      _eol = _str + snprintf(_str, sizeof(_str), fmt, ## arg); \
+      if (Batch) { \
+         while (*(--_eol) == ' '); *(++_eol) = '\0'; putp(_str); } \
       else { \
          char *_ptr = &Pseudo_screen[Pseudo_row * ROWMAXSIZ]; \
          if (Pseudo_row + 1 < Screen_rows) ++Pseudo_row; \
