@@ -219,7 +219,7 @@ SCB_NUM1(RES, resident)                // also serves MEM !
 SCB_NUM1(SHR, share)
 SCB_NUM1(SID, session)
 SCB_NUMx(STA, state)
-SCB_NUM2(SWP, size, resident)
+SCB_NUM1(SWP, vm_swap)
 SCB_NUMx(THD, nlwp)
                                        // also serves TM2 !
 static int SCB_NAME(TME) (const proc_t **P, const proc_t **Q) {
@@ -1213,7 +1213,7 @@ static FLD_t Fieldstab[] = {
    { "   TIME+  ",  "%9.9s ",     9,     -1,  SF(TME),  L_stat,    "CPU Time, hundredths" },
    { "%MEM ",       "%#4.1f ",   -1,     -1,  SF(RES),  L_statm,   "Memory Usage (RES)"   },
    { " VIRT ",      "%5.5s ",     5,  SK_Kb,  SF(VRT),  L_statm,   "Virtual Image (kb)"   },
-   { "SWAP ",       "%4.4s ",     4,  SK_Kb,  SF(SWP),  L_statm,   "Swapped Size (kb)"    },
+   { "SWAP ",       "%4.4s ",     4,  SK_Kb,  SF(SWP),  L_status,  "Swapped Size (kb)"    },
    { " RES ",       "%4.4s ",     4,  SK_Kb,  SF(RES),  L_statm,   "Resident Size (kb)"   },
    { "CODE ",       "%4.4s ",     4,  SK_Kb,  SF(COD),  L_statm,   "Code Size (kb)"       },
    { "DATA ",       "%4.4s ",     4,  SK_Kb,  SF(DAT),  L_statm,   "Data+Stack Size (kb)" },
@@ -3298,7 +3298,7 @@ static void task_show (const WIN_t *q, const proc_t *p) {
             makeCOL(p->state);
             break;
          case P_SWP:
-            makeCOL(scale_num(pages2K(p->size - p->resident), w, s));
+            makeCOL(scale_num(p->vm_swap, w, s));
             break;
          case P_THD:
             makeCOL(p->nlwp);

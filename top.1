@@ -625,8 +625,6 @@ The\fI saved\fR user name.
 28.\fB SWAP \*(Em Swapped Size (kb) \fR
 The non-resident portion of a task's address space.
 
-SWAP = VIRT - RES.
-
 .TP 4
 29.\fB TIME \*(Em \*(PU Time \fR
 Total \*(PU time the task has used since it started.
@@ -668,8 +666,6 @@ The\fI effective\fR user name of the task's owner.
 The total amount of \*(MV used by the task.
 It includes all code, data and shared libraries plus pages that have been
 swapped out and pages that have been mapped but not used.
-
-VIRT = SWAP + RES.
 
 .TP 4
 36.\fB WCHAN \*(Em Sleeping in Function \fR
