@@ -176,6 +176,7 @@ ENTER(0x220);
     P->vm_stack= 0;
     P->vm_exe  = 0;
     P->vm_lib  = 0;
+    P->vm_swap = 0;
     P->nlwp    = 0;
     P->signal[0] = '\0';  // so we can detect it as missing for very old kernels
 
