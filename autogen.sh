@@ -12,33 +12,33 @@ DIE=0
 
 test -f top.c || {
 	echo
-	echo "You must run this script in the top-level procps directory"
+	echo "You must run this script in the top-level procps-ng directory"
 	echo
 	DIE=1
 }
 
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
 	echo
-	echo "You must have autoconf installed to generate procps build system."
+	echo "You must have autoconf installed to generate procps-ng build system."
 	echo
 	DIE=1
 }
 (autoheader --version) < /dev/null > /dev/null 2>&1 || {
 	echo
-	echo "You must have autoheader installed to generate procps build system."
+	echo "You must have autoheader installed to generate procps-ng build system."
 	echo "The autoheader command is part of the GNU autoconf package."
 	echo
 	DIE=1
 }
 (libtool --version) < /dev/null > /dev/null 2>&1 || {
 	echo
-	echo "You must have libtool-2 installed to generate procps build system."
+	echo "You must have libtool-2 installed to generate procps-ng build system."
 	echo
 	DIE=1
 }
 (automake --version) < /dev/null > /dev/null 2>&1 || {
 	echo
-	echo "You must have automake installed to generate procps build system."
+	echo "You must have automake installed to generate procps-ng build system."
 	echo
 	DIE=1
 }

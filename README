@@ -10,7 +10,7 @@ INSTALLATION
     make install
 
     Only the second ("make install") is needed if you just
-    want to build and install procps in the normal way.
+    want to build and install procps-ng in the normal way.
 
     If you wish to test before installing, use the scripts
     named t, v, and p to ensure that the correct libproc
@@ -21,7 +21,7 @@ INSTALLATION
 
     make SKIP='/bin/kill /usr/share/man/man1/kill.1' install
 
-    Use SHARED=0 to build procps without shared libraries.
+    Use SHARED=0 to build procps-ng without shared libraries.
     This may be useful for installing in your home directory.
 
     make SHARED=0 DESTDIR=$HOME install
@@ -46,7 +46,7 @@ PACKAGING
 
     Send patches in regularly. Many patches made by vendors have been buggy,
     some quite severely so. Sending in a patch will at least get it reviewed,
-    if not included. There is a procps test suite that must be passed.
+    if not included. There is a procps-ng test suite that must be passed.
     Forward all bug reports. If your bug database is public and busy enough
     to bother with, please make this known. Follow Debian's lead in making
     the bug database easy to comment on via email w/o need for an account.
@@ -54,7 +54,7 @@ PACKAGING
     Do not change the user interface. Many of the programs are intended to be
     compatible with Solaris, FreeBSD, AIX, IRIX, Tru64, and the UNIX standard.
     Your nice new command options WILL BE BROKEN as needed to ensure that
-    procps remains compatible with the rest of the world. Sysadmins hate to
+    procps-ng remains compatible with the rest of the world. Sysadmins hate to
     deal with incompatible behavior. If you need a new option, ask for it.
 
     For normal packages, ensure that you do not add debugging flags
@@ -67,6 +67,4 @@ PACKAGING
 
 BUG REPORTS
 
-    Debian users should use the Debian bug tracking system.
-    Email to albert@users.sf.net or csmall@debian.org or
-    procps-feedback@lists.sf.net will also work.
+    Email to procps@freelists.org.

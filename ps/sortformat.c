@@ -800,7 +800,7 @@ const char *process_sf_options(int localbroken){
   // with sorting. Do the threads remain grouped, with sorting
   // by process, or do the threads get sorted by themselves?
   if(sort_list && (thread_flags&TF_no_sort)){
-    return "Tell procps-feedback@lists.sf.net what you expected.";
+    return "Tell procps@freelists.org what you expected.";
   }
 
   // If nothing else, try to use $PS_FORMAT before the default.
@@ -810,7 +810,7 @@ const char *process_sf_options(int localbroken){
     if(tmp && *tmp){
       const char *err;
       sf_node sfn;
-      if(thread_flags&TF_must_use) return "Tell procps-feedback@sf.net what you want. (-L/-T, -m/m/H, and $PS_FORMAT)";
+      if(thread_flags&TF_must_use) return "Tell procps@freelists.org what you want. (-L/-T, -m/m/H, and $PS_FORMAT)";
       sfn.sf = tmp;
       sfn.f_cooked = NULL;
       err = format_parse(&sfn);

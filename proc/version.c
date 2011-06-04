@@ -1,4 +1,4 @@
-/* Suite version information for procps utilities
+/* Suite version information for procps-ng utilities
  * Copyright (c) 1995 Martin Schulze <joey@infodrom.north.de>
  * Ammended by cblake to only export the function symbol.
  *
@@ -18,7 +18,7 @@ void display_version(void) {
     fprintf(stdout, "%s\n", procps_version);
 }
 
-/* Linux kernel version information for procps utilities
+/* Linux kernel version information for procps-ng utilities
  * Copyright (c) 1996 Charles Blake <cblake@bbn.com>
  */
 #include <sys/utsname.h>

@@ -1156,7 +1156,7 @@ static const char *thread_option_check(void){
     if(thread_flags&(TF_B_m|TF_U_m|TF_B_H)){
       // Got a thread style, so format modification is a requirement?
       // Maybe -T/-L has H thread style though. (sorting interaction?)
-      //return "Huh? Tell procps-feedback@lists.sf.net what you expected.";
+      //return "Huh? Tell procps@freelists.org what you expected.";
       thread_flags |= TF_must_use;
     }else{
       // using -L/-T thread style, so format from elsewhere is OK
@@ -1228,7 +1228,7 @@ try_bsd:
   // out the friendly warning. Cut-over is likely to be in 2005.
   if(!(personality & PER_FORCE_BSD))
     fprintf(stderr, "Warning: bad ps syntax, perhaps a bogus '-'? See http://procps.sf.net/faq.html\n");
-  // Remember: contact albert@users.sf.net or procps-feedback@lists.sf.net
+  // Remember: contact procps@freelists.org
   // if you should feel tempted. Be damn sure you understand all
   // the issues. The same goes for other stuff too, BTW. Please ask.
   // I'm happy to justify various implementation choices.

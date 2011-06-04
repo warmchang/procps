@@ -3,7 +3,7 @@ BUG REPORTS
 Please read this file before sending in a bug report or patch.
 
 Also, PLEASE read the documentation first.  90% of the mail I get
-complaining about procps is due to the sender not having read the
+complaining about procps-ng is due to the sender not having read the
 documentation!
 
 
@@ -49,7 +49,7 @@ are kind of usable, and standard diffs (diff) are more useless than a
 generic text description of what you did.  Just use
 	diff -Naurd oldfile newfile
 or
-	diff -Naurd old-procps-dir new-procps-dir
+	diff -Naurd old-procps-ng-dir new-procps-ng-dir
 to create your diffs and you will make me happy.  Also make sure to
 include a description of what the diff is for or I'm likely to ignore
 it because of general lack of time...

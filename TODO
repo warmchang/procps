@@ -6,8 +6,8 @@ Implement /usr/proc/bin tools like Solaris has.
 The prstat command is interesting, like top in batch mode.
 SCO has a pstat command.
 
-Don't these really belong in the procps package?
-         killall   pstree   fuser   lsof   who
+Don't these really belong in the procps-ng package?
+         killall pstree fuser lsof who
 (they are maintained elsewhere, which causes version problems)
 
 OpenBSD has a pfind command.

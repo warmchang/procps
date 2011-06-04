@@ -1,6 +1,6 @@
 /*
  * free.c - free(1)
- * procps utility to display free memory information
+ * procps-ng utility to display free memory information
  *
  * Mostly new, Sami Kerola <kerolasa@iki.fi>		15 Apr 2011
  * All new, Robert Love <rml@tech9.net>			18 Nov 2002
