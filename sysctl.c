@@ -30,6 +30,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <errno.h>
+#include <libgen.h>
 #include "proc/procps.h"
 #include "proc/version.h"
 
