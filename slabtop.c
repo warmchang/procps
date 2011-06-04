@@ -1,4 +1,4 @@
-/* 
+/*
  * slabtop.c - utility to display kernel slab information.
  *
  * Chris Rivera <cmrivera@ufl.edu>
@@ -24,12 +24,12 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <err.h>
 
 #include "proc/slab.h"
 #include "proc/version.h"
 
 #define DEF_SORT_FUNC		sort_nr_objs
-#define SLAB_STAT_ZERO		{ nr_objs: 0 }
 
 static unsigned short cols, rows;
 static struct termios saved_tty;
@@ -57,7 +57,7 @@ static struct slab_info *merge_objs(struct slab_info *a, struct slab_info *b)
 	return sorted_list.next;
 }
 
-/* 
+/*
  * slabsort - merge sort the slab_info linked list based on sort_func
  */
 static struct slab_info *slabsort(struct slab_info *list)
@@ -149,12 +149,11 @@ static int sort_cache_size(const struct slab_info *a, const struct slab_info *b)
 /*
  * term_size - set the globals 'cols' and 'rows' to the current terminal size
  */
-static void term_size(int unused)
+static void term_size(int unusused __attribute__ ((__unused__)))
 {
 	struct winsize ws;
-	(void) unused;
 
-	if ((ioctl(1, TIOCGWINSZ, &ws) != -1) && ws.ws_row > 10) {
+	if ((ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != -1) && ws.ws_row > 10) {
 		cols = ws.ws_col;
 		rows = ws.ws_row;
 	} else {
@@ -163,37 +162,34 @@ static void term_size(int unused)
 	}
 }
 
-static void sigint_handler(int unused)
+static void sigint_handler(int unused __attribute__ ((__unused__)))
 {
-	(void) unused;
-
 	delay = 0;
 }
 
-static void usage(const char *cmd)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(stderr, "usage: %s [options]\n\n", cmd);
-	fprintf(stderr, "options:\n");
-	fprintf(stderr, "  --delay=n, -d n    "
-		"delay n seconds between updates\n");
-	fprintf(stderr, "  --once, -o         "
-		"only display once, then exit\n");
-	fprintf(stderr, "  --sort=S, -s S     "
-		"specify sort criteria S (see below)\n");
-	fprintf(stderr, "  --version, -V      "
-		"display version information and exit\n");
-	fprintf(stderr, "  --help             display this help and exit\n\n");
-	fprintf(stderr, "The following are valid sort criteria:\n");
-	fprintf(stderr, "  a: sort by number of active objects\n");
-	fprintf(stderr, "  b: sort by objects per slab\n");
-	fprintf(stderr, "  c: sort by cache size\n");
-	fprintf(stderr, "  l: sort by number of slabs\n");
-	fprintf(stderr, "  v: sort by number of active slabs\n");
-	fprintf(stderr, "  n: sort by name\n");
-	fprintf(stderr, "  o: sort by number of objects\n");
-	fprintf(stderr, "  p: sort by pages per slab\n");
-	fprintf(stderr, "  s: sort by object size\n");
-	fprintf(stderr, "  u: sort by cache utilization\n");
+	fprintf(out, "Usage: %s [options]\n\n", program_invocation_short_name);
+	fprintf(out, "Options:\n");
+	fprintf(out, "  -d, --delay <secs>  delay updates\n");
+	fprintf(out, "  -o, --once          only display once, then exit\n");
+	fprintf(out, "  -s, --sort <char>   specify sort criteria by character (see below)\n");
+	fprintf(out, "  -V, --version       display version information and exit\n");
+	fprintf(out, "  -h, --help          display this help and exit\n\n");
+
+	fprintf(out, "The following are valid sort criteria:\n");
+	fprintf(out, "  a: sort by number of active objects\n");
+	fprintf(out, "  b: sort by objects per slab\n");
+	fprintf(out, "  c: sort by cache size\n");
+	fprintf(out, "  l: sort by number of slabs\n");
+	fprintf(out, "  v: sort by number of active slabs\n");
+	fprintf(out, "  n: sort by name\n");
+	fprintf(out, "  o: sort by number of objects (the default)\n");
+	fprintf(out, "  p: sort by pages per slab\n");
+	fprintf(out, "  s: sort by object size\n");
+	fprintf(out, "  u: sort by cache utilization\n\n");
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 /*
@@ -204,27 +200,27 @@ static void * set_sort_func(char key)
 {
 	switch (key) {
 	case 'n':
-		return sort_name;
+		return (void *) sort_name;
 	case 'o':
-		return sort_nr_objs;
+		return (void *) sort_nr_objs;
 	case 'a':
-		return sort_nr_active_objs;
+		return (void *) sort_nr_active_objs;
 	case 's':
-		return sort_obj_size;
+		return (void *) sort_obj_size;
 	case 'b':
-		return sort_objs_per_slab;
+		return (void *) sort_objs_per_slab;
 	case 'p':
-		return sort_pages_per_slab;
+		return (void *) sort_pages_per_slab;
 	case 'l':
-		return sort_nr_slabs;
+		return (void *) sort_nr_slabs;
 	case 'v':
-		return sort_nr_active_slabs;
+		return (void *) sort_nr_active_slabs;
 	case 'c':
-		return sort_cache_size;
+		return (void *) sort_cache_size;
 	case 'u':
-		return sort_use;
+		return (void *) sort_use;
 	default:
-		return DEF_SORT_FUNC;
+		return (void *) DEF_SORT_FUNC;
 	}
 }
 
@@ -276,71 +272,69 @@ int main(int argc, char *argv[])
 	struct slab_info *slab_list = NULL;
   int run_once=0;
 
-	struct option longopts[] = {
-		{ "delay",	1, NULL, 'd' },
-		{ "sort",	1, NULL, 's' },
-		{ "once",	0, NULL, 'o' },
-		{ "help",	0, NULL, 'h' },
-		{ "version",	0, NULL, 'V' },
-		{  NULL,	0, NULL, 0 }
+	static const struct option longopts[] = {
+		{ "delay",	required_argument, NULL, 'd' },
+		{ "sort",	required_argument, NULL, 's' },
+		{ "once",	no_argument,	   NULL, 'o' },
+		{ "help",	no_argument,	   NULL, 'h' },
+		{ "version",	no_argument,	   NULL, 'V' },
+		{  NULL, 0, NULL, 0 }
 	};
 
 	sort_func = DEF_SORT_FUNC;
 
 	while ((o = getopt_long(argc, argv, "d:s:ohV", longopts, NULL)) != -1) {
-		int ret = 1;
-
 		switch (o) {
+		char *end;
 		case 'd':
 			errno = 0;
-			delay = strtol(optarg, NULL, 10);
-			if (errno) {
-				perror("strtoul");
-				return 1;
-			}
-			if (delay < 0) {
-				fprintf(stderr, "error: can't have a "\
-					"negative delay\n");
-				exit(1);
-			}
+			delay = strtol(optarg, &end, 10);
+			if (errno || optarg == end || (end && *end))
+				errx(EXIT_FAILURE, "illegal delay `%s'",
+					optarg);
+			if (delay < 0)
+				errx(EXIT_FAILURE,
+					"delay can not have a "
+					"negative value");
 			break;
 		case 's':
-			sort_func = set_sort_func(optarg[0]);
+			sort_func = (int (*)(const struct slab_info*,
+				const struct slab_info *)) set_sort_func(optarg[0]);
 			break;
 		case 'o':
-      run_once=1;
+			run_once=1;
 			delay = 0;
 			break;
 		case 'V':
 			display_version();
-			return 0;
+			return EXIT_SUCCESS;
 		case 'h':
-			ret = 0;
+			usage(stdout);
 		default:
-			usage(argv[0]);
-			return ret;
+			usage(stderr);
 		}
 	}
 
-	if (tcgetattr(0, &saved_tty) == -1)
-		perror("tcgetattr");
+	if (tcgetattr(STDIN_FILENO, &saved_tty) == -1)
+		warn("tcgetattr");
 
 	old_rows = rows;
 	term_size(0);
-  if (!run_once) {
-    initscr();
-	  resizeterm(rows, cols);
-	  signal(SIGWINCH, term_size);
-  }
+	if (!run_once) {
+		initscr();
+		resizeterm(rows, cols);
+		signal(SIGWINCH, term_size);
+	}
 	signal(SIGINT, sigint_handler);
 
 	do {
 		struct slab_info *curr;
-		struct slab_stat stats = SLAB_STAT_ZERO;
+		struct slab_stat stats;
 		struct timeval tv;
 		fd_set readfds;
 		char c;
 		int i;
+		memset(&stats, 0, sizeof(struct slab_stat));
 
 		if (get_slabinfo(&slab_list, &stats))
 			break;
@@ -350,7 +344,7 @@ int main(int argc, char *argv[])
 			old_rows = rows;
 		}
 
-		move(0,0);
+		move(0, 0);
 		print_line(	" Active / Total Objects (%% used)    : %d / %d (%.1f%%)\n"
 			" Active / Total Slabs (%% used)      : %d / %d (%.1f%%)\n"
 			" Active / Total Caches (%% used)     : %d / %d (%.1f%%)\n"
@@ -382,23 +376,22 @@ int main(int argc, char *argv[])
 		}
 
 		put_slabinfo(slab_list);
-
 		if (!run_once) {
-      refresh();
-		  FD_ZERO(&readfds);
-		  FD_SET(0, &readfds);
-		  tv.tv_sec = delay;
-		  tv.tv_usec = 0;
-		  if (select(1, &readfds, NULL, NULL, &tv) > 0) {
-			  if (read(0, &c, 1) != 1)
-				  break;
-			  parse_input(c);
-		  }
-    }
+			refresh();
+			FD_ZERO(&readfds);
+			FD_SET(STDIN_FILENO, &readfds);
+			tv.tv_sec = delay;
+			tv.tv_usec = 0;
+			if (select(STDOUT_FILENO, &readfds, NULL, NULL, &tv) > 0) {
+				if (read(0, &c, 1) != 1)
+					break;
+				parse_input(c);
+			}
+		}
 	} while (delay);
 
-	tcsetattr(0, TCSAFLUSH, &saved_tty);
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
 	free_slabinfo(slab_list);
 	if (!run_once) endwin();
-	return 0;
+	return EXIT_SUCCESS;
 }
