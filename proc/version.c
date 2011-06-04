@@ -12,11 +12,7 @@
 #include <stdlib.h>
 #include "version.h"
 
-#ifdef MINORVERSION
-const char procps_version[] = "procps version " VERSION "." SUBVERSION "." MINORVERSION;
-#else
-const char procps_version[] = "procps version " VERSION "." SUBVERSION;
-#endif
+const char procps_version[] = PACKAGE_NAME " version " PACKAGE_VERSION;
 
 void display_version(void) {
     fprintf(stdout, "%s\n", procps_version);
