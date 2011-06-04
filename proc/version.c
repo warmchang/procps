@@ -7,9 +7,7 @@
  * Redistributable under the terms of the
  * GNU Library General Public License; see COPYING
  */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "version.h"
