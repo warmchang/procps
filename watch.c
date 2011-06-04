@@ -10,8 +10,6 @@
  * Changes by Albert Cahalan, 2002-2003.
  */
 
-#define VERSION "0.2.0"
-
 #include <ctype.h>
 #include <getopt.h>
 #include <signal.h>
@@ -25,6 +23,7 @@
 #include <termios.h>
 #include <locale.h>
 #include "proc/procps.h"
+#include "config.h"
 
 #ifdef FORCE_8BIT
 #undef isprint
@@ -184,7 +183,7 @@ main(int argc, char *argv[])
 	}
 
 	if (option_version) {
-		fprintf(stderr, "%s\n", VERSION);
+		fprintf(stderr, "%s\n", PACKAGE_NAME " version " PACKAGE_VERSION);
 		if (!option_help)
 			exit(0);
 	}
