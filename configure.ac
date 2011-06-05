@@ -7,7 +7,7 @@ AC_INIT([procps-ng],
 	[3.3.0],
 	[procps@freelists.org],,[http://gitorious.org/procps])
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([dummy.c])
+AC_CONFIG_SRCDIR([top.c])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.

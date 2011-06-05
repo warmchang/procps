@@ -66,8 +66,10 @@ EXTRA_DIST = \
 	autogen.sh \
 	BUGS \
 	CodingStyle \
+	contrib/dummy.c \
+	contrib/minimal.c \
+	contrib/tmp-junk.c \
+	contrib/utmp.c \
 	COPYING.LIB \
-	dummy.c \
 	README.top \
-	tmp-junk.c \
 	$(sysconf_DATA)
