@@ -22,20 +22,21 @@
  */
 
 
+#include <dirent.h>
+#include <errno.h>
+#include <getopt.h>
+#include <libgen.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <dirent.h>
-#include <string.h>
-#include <errno.h>
-#include <libgen.h>
+#include <unistd.h>
 #include "proc/procps.h"
 #include "proc/version.h"
 
 
-// Proof that C++ causes brain damage:
+/* Proof that C++ causes brain damage: */
 typedef int bool;
 static bool true  = 1;
 static bool false = 0;
@@ -53,7 +54,6 @@ static bool IgnoreError;
 static bool Quiet;
 
 /* error messages */
-static const char ERR_UNKNOWN_PARAMETER[] = "error: Unknown parameter \"%s\"\n";
 static const char ERR_MALFORMED_SETTING[] = "error: Malformed setting \"%s\"\n";
 static const char ERR_NO_EQUALS[] = "error: \"%s\" must be of the form name=value\n";
 static const char ERR_INVALID_KEY[] = "error: \"%s\" is an unknown key\n";
@@ -83,15 +83,33 @@ static void slashdot(char *restrict p, char old, char new){
  *     Display the usage format
  *
  */
-static int Usage(const char *restrict const name) {
-   printf("usage:  %s [-n] [-e] variable ... \n"
-          "        %s [-n] [-e] [-q] -w variable=value ... \n" 
-          "        %s [-n] [-e] -a \n" 
-          "        %s [-n] [-e] [-q] -p <file>   (default /etc/sysctl.conf) \n"
-          "        %s [-n] [-e] -A\n", name, name, name, name, name);
-   return -1;
-}
+static void __attribute__ ((__noreturn__))
+    Usage(FILE * out)
+{
+   fprintf(out,
+	   "\nUsage: %s [options] [variable[=value] ...]\n"
+	   "\nOptions:\n", program_invocation_short_name);
+   fprintf(out,
+	   "  -a, --all            display all variables\n"
+	   "  -A                   alias of -a\n"
+	   "  -X                   alias of -a\n"
+	   "  -b, --binary         print value without new line\n"
+	   "  -e, --ignore         ignore unknown variables errors\n"
+	   "  -N, --names          print variable names without values\n"
+	   "  -n, --values         print only values of a variables\n"
+	   "  -p, --load[=<file>]  read values from file\n"
+	   "  -f                   alias of -p\n"
+	   "  -q, --quiet          do not echo variable set\n"
+	   "  -w, --write          enable writing a value to variable\n"
+	   "  -o                   does nothing\n"
+	   "  -x                   does nothing\n"
+	   "  -h, --help           display this help text\n"
+	   "  -d                   alias of -h\n"
+	   "  -V, --version        display version information and exit\n");
+   fprintf(out, "\nFor more information see sysctl(8).\n");
 
+   exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
 
 /*
  *     Strip the leading and trailing spaces from a string
@@ -460,13 +478,29 @@ static int Preload(const char *restrict const filename) {
  *    Main... 
  *
  */
-int main(int argc, char *argv[]) {
-   const char *me = (const char *)basename(argv[0]);
+int main(int argc, char *argv[])
+{
    bool SwitchesAllowed = true;
    bool WriteMode = false;
    bool DisplayAllOpt = false;
+   bool preloadfileOpt = false;
    int ReturnCode = 0;
+   int c;
    const char *preloadfile = DEFAULT_PRELOAD;
+
+    static const struct option longopts[] = {
+       {"all", no_argument, NULL, 'a'},
+       {"binary", no_argument, NULL, 'b'},
+       {"ignore", no_argument, NULL, 'e'},
+       {"names", no_argument, NULL, 'N'},
+       {"values", no_argument, NULL, 'n'},
+       {"load", optional_argument, NULL, 'p'},
+       {"quiet", no_argument, NULL, 'q'},
+       {"write", no_argument, NULL, 'w'},
+       {"help", no_argument, NULL, 'h'},
+       {"version", no_argument, NULL, 'V'},
+       {NULL, 0, NULL, 0}
+    };
 
    PrintName = true;
    PrintNewline = true;
@@ -474,92 +508,83 @@ int main(int argc, char *argv[]) {
    Quiet = false;
 
    if (argc < 2) {
-       return Usage(me);
+       Usage(stderr);
    }
 
-   argv++;
-
-   for (; argv && *argv && **argv; argv++) {
-      if (SwitchesAllowed && **argv == '-') {        /* we have a switch */
-         if ((*argv)[1] && (*argv)[2]){       // don't yet handle "sysctl -ew"
-              if (!strcmp("--help",*argv)) {
-                 Usage(me);
-                 exit(0);
-              }
-              if (!strcmp("--version",*argv)) {
-                 fprintf(stdout, "sysctl (%s)\n",procps_version);
-                 exit(0);
-              }
-              fprintf(stderr, ERR_UNKNOWN_PARAMETER, *argv);
-              return Usage(me);
-         }
-         switch((*argv)[1]) {
-         case 'b':
-              /* This is "binary" format, which means more for BSD. */
-              PrintNewline = false;
-           /* FALL THROUGH */
-         case 'n':
-              PrintName = false;
+   while ((c =
+           getopt_long(argc, argv, "bneNwfpqoxaAXVdh", longopts,
+                       NULL)) != -1)
+      switch (c) {
+      case 'b':
+         /* This is "binary" format, which means more for BSD. */
+         PrintNewline = false;
+         /* FALL THROUGH */
+      case 'n':
+           PrintName = false;
+        break;
+      case 'e':
+      /*
+       * For FreeBSD, -e means a "%s=%s\n" format. ("%s: %s\n" default)
+       * We (and NetBSD) use "%s = %s\n" always, and -e to ignore errors.
+       */
+           IgnoreError = true;
+        break;
+      case 'N':
+           NameOnly = true;
+        break;
+      case 'w':
+           SwitchesAllowed = false;
+           WriteMode = true;
+        break;
+      case 'f':	/* the NetBSD way */
+      case 'p':
+           preloadfileOpt = true;
+           if (optarg)
+              preloadfile = optarg;
            break;
-         case 'e':
-              // For FreeBSD, -e means a "%s=%s\n" format. ("%s: %s\n" default)
-              // We (and NetBSD) use "%s = %s\n" always, and -e to ignore errors.
-              IgnoreError = true;
+      case 'q':
+           Quiet = true;
+        break;
+      case 'o':		/* BSD: binary values too, 1st 16 bytes in hex */
+      case 'x':		/* BSD: binary values too, whole thing in hex */
+           /* does nothing */ ;
+        break;
+      case 'a':         /* string and integer values (for Linux, all of them) */
+      case 'A':         /* same as -a -o */
+      case 'X':         /* same as -a -x */
+           DisplayAllOpt = true;
            break;
-         case 'N':
-              NameOnly = true;
-           break;
-         case 'w':
-              SwitchesAllowed = false;
-              WriteMode = true;
-           break;
-         case 'f':  // the NetBSD way
-         case 'p':
-              argv++;
-              if (argv && *argv && **argv) {
-                 preloadfile = *argv;
-              }
-              return Preload(preloadfile);
-	 case 'q':
-	      Quiet = true;
-	   break;
-	 case 'o':  // BSD: binary values too, 1st 16 bytes in hex
-	 case 'x':  // BSD: binary values too, whole thing in hex
-	      /* does nothing */ ;
-	   break;
-         case 'a': // string and integer values (for Linux, all of them)
-         case 'A': // same as -a -o
-         case 'X': // same as -a -x
-              DisplayAllOpt = true;
-              break;
-         case 'V':
-              fprintf(stdout, "sysctl (%s)\n",procps_version);
-              exit(0);
-         case 'd':   // BSD: print description ("vm.kvm_size: Size of KVM")
-         case 'h':   // BSD: human-readable (did FreeBSD 5 make -e default?)
-         case '?':
-              return Usage(me);
-         default:
-              fprintf(stderr, ERR_UNKNOWN_PARAMETER, *argv);
-              return Usage(me);
-         }
-      } else {
-         if (NameOnly && Quiet)   // nonsense
-            return Usage(me);
-         if (DisplayAllOpt)    // We cannot have values with -a
-            return Usage(me);
-         SwitchesAllowed = false;
-         if (WriteMode || strchr(*argv, '='))
-            ReturnCode = WriteSetting(*argv);
-         else
-            ReturnCode = ReadSetting(*argv);
+      case 'V':
+           fprintf(stdout, "sysctl (%s)\n",procps_version);
+           exit(0);
+      case 'd':         /* BSD: print description ("vm.kvm_size: Size of KVM") */
+      case 'h':         /* BSD: human-readable (did FreeBSD 5 make -e default?) */
+      case '?':
+           Usage(stdout);
+      default:
+           Usage(stderr);
       }
-   }
-   if (DisplayAllOpt) {
-       if (Quiet)
-           return Usage(me);
+    if (DisplayAllOpt)
        return DisplayAll(PROC_PATH);
-   }
+    if (preloadfileOpt)
+       return Preload(preloadfile);
+ 
+    argc -= optind;
+    argv += optind;
+ 
+    if (argc < 1) {
+       warnx("no variables specified");
+       Usage(stderr);
+    }
+    if (NameOnly && Quiet) {
+       warnx("options -N and -q can not coexist");
+       Usage(stderr);
+    }
+
+    if (WriteMode || index(*argv, '='))
+       ReturnCode = WriteSetting(*argv);
+    else
+       ReturnCode = ReadSetting(*argv);
 
    return ReturnCode;
 }
