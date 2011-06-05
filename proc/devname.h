@@ -2,6 +2,7 @@
 #define PROC_DEVNAME_H
 
 #include "procps.h"
+#include "readproc.h"
 
 EXTERN_C_BEGIN
 
