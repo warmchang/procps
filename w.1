@@ -1,74 +1,69 @@
 .\"             -*-Nroff-*-
 .\"
-.TH W 1 "5 October 2009 " " " "Linux User's Manual"
+.TH W "1" "June 2011" "procps-ng" "User Commands"
 .SH NAME
 w \- Show who is logged on and what they are doing.
 .SH SYNOPSIS
 .B w
-.RB [ \-husfV- ]
-.RI [ user ]
+[\fIoptions\fR] \fIuser\fR [...]
 .SH DESCRIPTION
 .B w
-displays information about the users currently on the machine,
-and their processes.
-The header shows, in this order,  the current time,
-how long the system has been running,
-how many users are currently logged on,
-and the system load averages for the past 1, 5, and 15 minutes.
-
-The following entries are displayed for each user:
-login name, the tty name, the remote host, login time, idle time, JCPU, PCPU,
-and the command line of their current process.
-
-The JCPU time is the time used by all processes attached to the tty.  It
-does not include past background jobs, but does include currently
-running background jobs.
-
+displays information about the users currently on the machine, and their
+processes.  The header shows, in this order, the current time, how long the
+system has been running, how many users are currently logged on, and the
+system load averages for the past 1, 5, and 15 minutes.
+.PP
+The following entries are displayed for each user: login name, the tty name,
+the remote host, login time, idle time, JCPU, PCPU, and the command line of
+their current process.
+.PP
+The JCPU time is the time used by all processes attached to the tty.  It does
+not include past background jobs, but does include currently running
+background jobs.
+.PP
 The PCPU time is the time used by the current process, named in the "what"
 field.
-
-.PP
 .SH "COMMAND\-LINE OPTIONS"
-.TP 0.5i
-.B "\-h "
+.TP
+\fB\-h\fR, \fB\-\-no\-header\fR
 Don't print the header.
-.TP 0.5i
-.B "\-u "
-Ignores the username while figuring out the current process and cpu
-times.  To demonstrate this, do a "su" and do a "w" and a "w \-u".
-.TP 0.5i
-.B "\-s "
-Use the short format.
-Don't print the login time, JCPU or PCPU times.
-.TP 0.5i
-.B "\-f "
+.TP
+\fB\-u\fR, \fB\-\-no\-current\fR
+Ignores the username while figuring out the
+current process and cpu times.  To demonstrate this, do a "su" and do a "w"
+and a "w \-u".
+.TP
+\fB\-s\fR, \fB\-\-short\fR
+Use the short format.  Don't print the login time, JCPU or PCPU times.
+.TP
+\fB\-f\fR, \fB\-\-from\fR
 Toggle printing the
 .B from
-(remote hostname) field.  The default as
-released is for the
+(remote hostname) field.  The default as released is for the
 .B from
-field to not be printed, although your system administrator or
-distribution maintainer may have compiled a version in which the
+field to not be printed, although your system administrator or distribution
+maintainer may have compiled a version in which the
 .B from
 field is shown by default.
-.TP 0.5i
-.B "\-V "
+.TP
+\fB\-\-help\fR
+Display help text and exit.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
 Display version information.
-.TP 0.5i
-.B "\-o "
-Old style output. Prints blank space for idle times less than one minute.
-.TP 0.5i
+.TP
+\fB\-o\fR, \fB\-\-old\-style\fR
+Old style output.  Prints blank space for idle times less than one minute.
+.TP
 .B "user "
 Show information about the specified user only.
-
 .SH ENVIRONMENT
 .TP
 PROCPS_USERLEN
-Override the default width of the username column. Defaults to 8.
+Override the default width of the username column.  Defaults to 8.
 .TP
 PROCPS_FROMLEN
-Override the default width of the from column. Defaults to 16.
-
+Override the default width of the from column.  Defaults to 16.
 .SH FILES
 .TP
 .I /var/run/utmp
@@ -76,8 +71,6 @@ information about who is currently logged on
 .TP
 .I /proc
 process information
-.PP
-
 .SH "SEE ALSO"
 .BR free (1),
 .BR ps (1),
@@ -85,11 +78,17 @@ process information
 .BR uptime (1),
 .BR utmp (5),
 .BR who (1)
-
 .SH AUTHORS
 .B w
-was re-written almost entirely by Charles Blake, based on the version by Larry
-Greenfield <greenfie@gauss.rutgers.edu> and Michael K. Johnson
-<johnsonm@redhat.com>.
-
-Please send bug reports to <procps@freelists.org>
+was re-written almost entirely by Charles Blake, based on the version by
+.UR greenfie\@\:gauss.\:rutgers.\:edu
+Larry Greenfield
+.UE
+and
+.UR johnsonm\@\:redhat.\:com
+Michael K. Johnson
+.UE
+.SH "REPORTING BUGS"
+Please send bug reports to
+.UR procps\@freelists.org
+.UE
