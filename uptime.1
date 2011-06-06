@@ -1,32 +1,35 @@
 .\"             -*-Nroff-*-
 .\"
-.TH UPTIME 1 "26 Jan 1993" "Cohesive Systems" "Linux User's Manual"
+.TH UPTIME "1" "June 2011" "procps-ng" "User Commands"
 .SH NAME
 uptime \- Tell how long the system has been running.
 .SH SYNOPSIS
 .B uptime
-.br
-.B uptime
-.RB [ \-V ]
+[\fIoptions\fR]
 .SH DESCRIPTION
 .B uptime
-gives a one line display of the following information.
-The current time,
-how long the system has been running,
-how many users are currently logged on,
-and the system load averages for the past 1, 5, and 15 minutes.
-
+gives a one line display of the following information.  The current time, how
+long the system has been running, how many users are currently logged on, and
+the system load averages for the past 1, 5, and 15 minutes.
+.PP
 This is the same information contained in the header line displayed by 
 .BR w (1).
-.sp
-System load averages is the average number of processes that are either
-in a runnable or uninterruptable state.  A process in a runnable state is
-either using the CPU or waiting to use the CPU. A process in
-uninterruptable state is waiting for some I/O access, eg waiting for
-disk.  The averages are taken over the three time intervals.
-Load averages are not normalized for the number of CPUs in a system, so
-a load average of 1 means a single CPU system is loaded all the time
-while on a 4 CPU system it means it was idle 75% of the time.
+.PP
+System load averages is the average number of processes that are either in a
+runnable or uninterruptable state.  A process in a runnable state is either
+using the CPU or waiting to use the CPU.  A process in uninterruptable state
+is waiting for some I/O access, eg waiting for disk.  The averages are taken
+over the three time intervals.  Load averages are not normalized for the
+number of CPUs in a system, so a load average of 1 means a single CPU system
+is loaded all the time while on a 4 CPU system it means it was idle 75% of
+the time.
+.SH OPTIONS
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+display this help text
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+display version information and exit
 .SH FILES
 .TP
 .I /var/run/utmp
@@ -36,12 +39,20 @@ information about who is currently logged on
 process information
 .SH AUTHORS
 .B uptime
-was written by Larry Greenfield <greenfie@gauss.rutgers.edu> and
-Michael K. Johnson <johnsonm@sunsite.unc.edu>.
-
-Please send bug reports to <procps@freelists.org>
+was written by
+.UR greenfie\@gauss.\:rutgers.\:edu
+Larry Greenfield
+.UE
+and
+.UR johnsonm\@sunsite.\:unc.\:edu
+Michael K. Johnson
+.UE
 .SH "SEE ALSO"
 .BR ps (1),
 .BR top (1),
 .BR utmp (5),
 .BR w (1)
+.SH "REPORTING BUGS"
+Please send bug reports to
+.UR procps\@freelists.org
+.UE
