@@ -6,40 +6,12 @@
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 .\" GNU General Public License for more details."
-.TH SYSCTL 8 "21 Sep 1999" "" ""
+.TH SYSCTL "8" "June 2011" "procps-ng" "System Administration"
 .SH NAME
 sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
 .B sysctl
-.RB [ \-n ]
-.RB [ \-e ]
-.I variable
-\&...
-.br
-.B sysctl
-.RB [ \-n ]
-.RB [ \-e ]
-.RB [ \-q ]
-.B \-w
-.IR variable = value
-\&...
-.br
-.B sysctl
-.RB [ \-n ]
-.RB [ \-e ]
-.RB [ \-q ]
-.B \-p
-.RI [ filename ]
-.br
-.B sysctl
-.RB [ \-n ]
-.RB [ \-e ]
-.B \-a
-.br
-.B sysctl
-.RB [ \-n ]
-.RB [ \-e ]
-.B \-A
+[\fIoptions\fR] [\fIvariable\fR[\fI=value\fR]] [...]
 .SH DESCRIPTION
 .B sysctl
 is used to modify kernel parameters at runtime.  The parameters available
@@ -67,31 +39,55 @@ quotes.  This requires the
 .B \-w
 parameter to use.
 .TP
-.B \-n
+\fB\-n\fR, \fB\-\-values\fR
 Use this option to disable printing of the key name when printing values.
 .TP
-.B \-e
+\fB\-e\fR, \fB\-\-ignore\fR
 Use this option to ignore errors about unknown keys.
 .TP
-.B \-N
-Use this option to only print the names. It may be useful with shells that
+\fB\-N\fR, \fB\-\-names\fR
+Use this option to only print the names.  It may be useful with shells that
 have programmable completion.
 .TP
-.B \-q
+\fB\-q\fR, \fB\-\-quiet\fR
 Use this option to not display the values set to stdout.
 .TP
-.B \-w
+\fB\-w\fR, \fB\-\-write\fR
 Use this option when you want to change a sysctl setting.
 .TP
-.B \-p
-Load in sysctl settings from the file specified or /etc/sysctl.conf if none given.
-Specifying \- as filename means reading data from standard input.
+\fB\-p\fR, \fB\-\-load\fR[=\fIFILE\fR]
+Load in sysctl settings from the file specified or /etc/sysctl.conf if none
+given.  Specifying \- as filename means reading data from standard input.
 .TP
-.B \-a
+\fB\-a\fR, \fB\-\-all\fR
 Display all values currently available.
 .TP
-.B \-A
-Display all values currently available in table form.
+\fB\-b\fR, \fB\-\-binary\fR
+Print value without new line.
+.TP
+\fB\-A\fR
+Alias of \fB\-a\fR
+.TP
+\fB\-d\fR
+Alias of \fB\-h\fR
+.TP
+\fB\-f\fR
+Alias of \fB\-p\fR
+.TP
+\fB\-X\fR
+Alias of \fB\-a\fR
+.TP
+\fB\-o\fR
+Does nothing in favour of BSD compatibility.
+.TP
+\fB\-x\fR
+Does nothing in favour of BSD compatibility.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help text and exit.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Display version information and exit.
 .SH EXAMPLES
 /sbin/sysctl \-a
 .br
@@ -106,12 +102,11 @@ Display all values currently available in table form.
 .I /etc/sysctl.conf
 .SH SEE ALSO
 .BR sysctl.conf (5)
-.SH BUGS
-The
-.B \-A
-parameter behaves just as
-.B \-a
-does.
 .SH AUTHOR
-George Staikos, <staikos@0wned.org>
-
+.UR staikos\@0wned.org
+George Staikos
+.UE
+.SH "REPORTING BUGS"
+Please send bug reports to
+.UR procps\@freelists.org
+.UE
