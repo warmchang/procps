@@ -36,10 +36,15 @@ int linux_version_code;
 void init_Linux_version(void) {
     static struct utsname uts;
     int x = 0, y = 0, z = 0;	/* cleared in case sscanf() < 3 */
+    int version_string_depth;
     
     if (uname(&uts) == -1)	/* failure implies impending death */
 	exit(1);
-    if (sscanf(uts.release, "%d.%d.%d", &x, &y, &z) < 3)
+
+    version_string_depth = sscanf(uts.release, "%d.%d.%d", &x, &y, &z);
+	
+    if ((version_string_depth < 2) ||		 /* Non-standard for all known kernels */
+       ((version_string_depth < 3) && (x < 3))) /* Non-standard for 2.x.x kernels */
 	fprintf(stderr,		/* *very* unlikely to happen by accident */
 		"Non-standard uts for running kernel:\n"
 		"release %s=%d.%d.%d gives version code %d\n",
