@@ -82,25 +82,25 @@ typedef struct proc_t {
     long
 	priority,	// stat            kernel scheduling priority
 	nice,		// stat            standard unix nice level of process
-	rss,		// stat            resident set size from /proc/#/stat (pages)
+	rss,		// stat            identical to 'resident'
 	alarm,		// stat            ?
     // the next 7 members come from /proc/#/statm
-	size,		// statm           total # of pages of memory
-	resident,	// statm           number of resident set (non-swapped) pages (4k)
-	share,		// statm           number of pages of shared (mmap'd) memory
-	trs,		// statm           text resident set size
-	lrs,		// statm           shared-lib resident set size
-	drs,		// statm           data resident set size
-	dt;		// statm           dirty pages
+	size,		// statm           total virtual memory (as # pages)
+	resident,	// statm           resident non-swapped memory (as # pages)
+	share,		// statm           shared (mmap'd) memory (as # pages)
+	trs,		// statm           text (exe) resident set (as # pages)
+	lrs,		// statm           library resident set (always 0 w/ 2.6)
+	drs,		// statm           data+stack resident set (as # pages)
+	dt;		// statm           dirty pages (always 0 w/ 2.6)
     unsigned long
-	vm_size,        // status          same as vsize in kb
-	vm_lock,        // status          locked pages in kb
-	vm_rss,         // status          same as rss in kb
-	vm_data,        // status          data size
-	vm_stack,       // status          stack size
-	vm_swap,        // status          based on "swap ents", Linux 2.6.34
-	vm_exe,         // status          executable size
-	vm_lib,         // status          library size (all pages, not just used ones)
+	vm_size,        // status          equals 'size' (as kb)
+	vm_lock,        // status          locked pages (as kb)
+	vm_rss,         // status          equals 'rss' and/or 'resident' (as kb)
+	vm_data,        // status          data only size (as kb)
+	vm_stack,       // status          stack only size (as kb)
+	vm_swap,        // status          based on linux-2.6.34 "swap ents" (as kb)
+	vm_exe,         // status          equals 'trs' (as kb)
+	vm_lib,         // status          total, not just used, library pages (as kb)
 	rtprio,		// stat            real-time priority
 	sched,		// stat            scheduling class
 	vsize,		// stat            number of pages of virtual memory ...
