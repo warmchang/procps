@@ -447,7 +447,7 @@ static void bye_bye (const char *str) {
             "\t %5d total entries occupied\n", cross_foot);
 
          if (maxdepth_sav) {
-            fprintf(stderr, "PIDs at max depth: ");
+            fprintf(stderr, "\nPIDs at max depth: ");
             for (i = 0; i < HHASH_SIZ; i++)
                if (depths[i] == maxdepth_sav) {
                   j = PHash_new[i];
@@ -1231,7 +1231,7 @@ static FLD_t Fieldstab[] = {
 #else
    { "Flags    ",   "%08lx ",    -1,     -1,  SF(FLG),  L_stat,    "Task Flags <sched.h>" },
 #endif
-   // next entry's like P_CMD, and '.head' must be the same length -- they share varcolsz
+   // next entry's like P_CMD/P_WCH, and '.head' must be same length -- they share varcolsz
    { "CGROUPS  ",   NULL,        -1,     -1,  SF(CGR),  L_CGROUP,  "Control Groups"       }
 #ifdef OOMEM_ENABLE
 #define L_oom      PROC_FILLOOM
@@ -1324,7 +1324,7 @@ static void adj_geometry (void) {
          * via adj_geometry(), for each visible window:
          *    1) Set the number of fields/columns to display
          *    2) Create the field columns heading
-         *    3) Set maximum cmdline length, if command lines are in use
+         *    3) Set maximum width for any variable columns, if in use
          * In the process, the required PROC_FILLxxx flags will be rebuilt! */
 static void calibrate_fields (void) {
    sigset_t newss, oldss;
@@ -1439,10 +1439,10 @@ static void calibrate_fields (void) {
 #ifdef EQUCOLHDRYES
          // prepare to even out column header lengths...
          if (hdrmax + w->hdrcaplen < (x = strlen(w->columnhdr))) hdrmax = x - w->hdrcaplen;
-         if (Screen_cols > x - w->hdrcaplen) w->eolcap = Caps_endline;
-         else w->eolcap = Caps_off;
+         // must sacrifice last header positon to avoid task row abberations
+         w->eolcap = Caps_endline;
 #else
-         if (Screen_cols > strlen(w->columnhdr)) w->eolcap = Caps_endline;
+         if (Screen_cols > (int)strlen(w->columnhdr)) w->eolcap = Caps_endline;
          else w->eolcap = Caps_off;
 #endif
          // we must also accommodate an out of view sort field...
@@ -1535,7 +1535,7 @@ static void display_fields (int focus, int extend) {
    if (rmax < i + (P_MAXPFLGS / mxCOL)) error_exit("++rows");
    i = P_MAXPFLGS / rmax;
    if (P_MAXPFLGS % rmax) ++i;
-   if (i > 1) { cmax = Screen_cols / i; xadd = 1; }
+   if (i > 1) { cmax /= i; xadd = 1; }
    if (cmax > xTOTL) cmax = xTOTL;
    smax = cmax - xPRFX;
    if (smax < 0) error_exit("++cols");
@@ -1806,7 +1806,9 @@ static inline void hstput (unsigned idx) {
          *    3) maintaining the HST_t's and priming the proc_t pcpu field
          *    4) establishing the total number tasks for this frame */
 static void prochlp (proc_t *this) {
+#ifdef OFF_HST_HASH
    static unsigned maxt_sav = 0;        // prior frame's max tasks
+#endif
    TIC_t tics;
    HST_t *h;
 
@@ -1825,7 +1827,9 @@ static void prochlp (proc_t *this) {
 
       // if in Solaris mode, adjust our scaling for all cpus
       Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_tot));
+#ifdef OFF_HST_HASH
       maxt_sav = Frame_maxtask;
+#endif
       Frame_maxtask = Frame_running = Frame_sleepin = Frame_stopped = Frame_zombied = 0;
 
       // prep for saving this frame's HST_t's (and reuse mem each time around)
@@ -2249,10 +2253,10 @@ static void parse_args (char **args) {
                break;
             }
             case 'w':
-            {  char *pn = NULL;
+            {  const char *pn = NULL;
                int ai = 0, ci = 0;
                Width_mode = -1;
-               if (cp[1]) pn = (char*)&cp[1];
+               if (cp[1]) pn = &cp[1];
                else if (*args) { pn = *args; ai = 1; }
                if (pn && !(ci = strspn(pn, "0123456789"))) { ai = 0; pn = NULL; }
                if (pn && (1 != sscanf(pn, "%d", &Width_mode)

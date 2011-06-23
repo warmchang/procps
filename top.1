@@ -422,8 +422,11 @@ For additional information on sort provisions
 \*(Xt 4c. TASK AREA Commands, SORTING.
 
 .TP 4
- 1.\fB CGROUPS \*(Em Code Size (kb) \fR
-Control groups provide for allocating resources (cpu, memory, network
+ 1.\fB CGROUPS \*(Em Control Groups \fR
+The names of the control group(s) to which a process belongs,
+or '-' if not applicable for that process.
+
+Control Groups provide for allocating resources (cpu, memory, network
 bandwidth, etc.) among installation-defined groups of processes.
 They enable fine-grained control over allocating, denying, prioritizing,
 managing and monitoring those resources.
@@ -558,8 +561,8 @@ a session ID for the session leader (\*(Xa SID);
 and a TTY process group ID for the process group leader (\*(Xa TPGID).
 
 .TP 4
-18.\fB PPID \*(Em Parent Process pid \fR
-The process ID of a task's parent.
+18.\fB PPID \*(Em Parent Process Id \fR
+The process ID (pid) of a task's parent.
 
 .TP 4
 19.\fB PR \*(Em Priority \fR
