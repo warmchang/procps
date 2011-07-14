@@ -1679,7 +1679,7 @@ static void zap_fieldstab (void) {
 
    Cpu_pmax = 99.0;
    Fieldstab[P_CPU].fmts = "%#4.1f ";
-   if (Rc.mode_irixps &&  Cpu_tot > 1 && !Thread_mode) {
+   if (Rc.mode_irixps && Cpu_tot > 1 && !Thread_mode) {
       Cpu_pmax = 9999.0;
       Fieldstab[P_CPU].fmts = "%4.0f ";
    }
@@ -1696,13 +1696,13 @@ static void zap_fieldstab (void) {
 static CPU_t *cpus_refresh (CPU_t *cpus) {
    static const char err_read[] = "failed /proc/stat read";
    static FILE *fp = NULL;
-   static int smp_sav = -1;
+   static int sav_cpus = -1;
    char buf[MEDBUFSIZ]; // enough for /proc/stat CPU line (not the intr line)
    int i;
 
    /*** hotplug_acclimated ***/
-   if (smp_sav != SMP_NUM_CPUS) {
-      Cpu_tot = smp_sav = SMP_NUM_CPUS;
+   if (sav_cpus != smp_num_cpus) {
+      Cpu_tot = sav_cpus = smp_num_cpus;
       zap_fieldstab();
       calibrate_fields();
       if (fp) { fclose(fp); fp = NULL; }
@@ -2000,11 +2000,38 @@ static proc_t **procs_refresh (proc_t **ppt) {
  #undef PTRsz
  #undef ENTsz
 } // end: procs_refresh
+
+
+        /*
+         * This serves as our interface to the memory & cpu count (sysinfo)
+         * portion of libproc.  In support of those hotpluggable resources,
+         * the sampling frequencies are reduced so as to minimize overhead.
+         * We'll strive to verify the number of cpus every 5 minutes and the
+         * memory availability/usage every 3 seconds. */
+static void sysinfo_refresh (int forced) {
+   static time_t mem_secs, cpu_secs;
+   time_t cur_secs;
+
+   if (forced)
+      mem_secs = cpu_secs = 0;
+   time(&cur_secs);
+
+   if (3 <= cur_secs - mem_secs) {
+      meminfo();
+      mem_secs = cur_secs;
+   }
+#ifndef PRETEND4CPUS
+   if (300 <= cur_secs - cpu_secs) {
+      cpuinfo();
+      cpu_secs = cur_secs;
+   }
+#endif
+} // end: sysinfo_refresh
 
 /*######  Startup routines  ##############################################*/
 
         /*
-         * No mater what *they* say, we handle the really really BIG and
+         * No matter what *they* say, we handle the really really BIG and
          * IMPORTANT stuff upon which all those lessor functions depend! */
 static void before (char *me) {
    int i;
@@ -2015,10 +2042,9 @@ static void before (char *me) {
 
    // establish cpu particulars -- even bigger!
 #ifdef PRETEND4CPUS
-   SMP_NUM_CPUS = Cpu_tot = 4;
-#else
-   Cpu_tot = SMP_NUM_CPUS;
+   smp_num_cpus = 4;
 #endif
+   Cpu_tot = smp_num_cpus;
    if (linux_version_code > LINUX_VERSION(2, 5, 41))
       Cpu_States_fmts = STATES_line2x5;
    if (linux_version_code >= LINUX_VERSION(2, 6, 0))
@@ -2081,6 +2107,7 @@ static void configs_read (void) {
       fbuf[0] = '\0';
       fgets(fbuf, sizeof(fbuf), fp);             // sys rc file, line 2
       sscanf(fbuf, "%f", &Rc.delay_time);
+      fclose(fp);
    }
 
    fp = fopen(Rc_name, "r");
@@ -3009,7 +3036,8 @@ static void do_key (int ch) {
          help_view();
          break;
       case kbd_ENTER:        // these two will have the effect of waking us
-      case kbd_SPACE:        // from 'select()' then refreshing the display
+      case kbd_SPACE:        // from 'select()', updating hotplugged resources
+         sysinfo_refresh(1); // and then refreshing the display
          break;
       default:               // and now, the real work...
          for (i = 0; i < MAXTBL(key_tab); ++i)
@@ -3110,14 +3138,14 @@ static proc_t **summary_show (void) {
 
    // whoa first time, gotta' prime the pump...
    if (!p_table) {
-      struct timeval tv = { 0, 300000 };
       p_table = procs_refresh(NULL);
       putp(Cap_clr_scr);
-      select(0, NULL, NULL, NULL, &tv);          // sleep for a bit...
+      usleep(LIB_USLEEP);
    } else
       putp(Batch ? "\n\n" : Cap_home);
 
    p_table = procs_refresh(p_table);
+   sysinfo_refresh(0);
 
    // Display Uptime and Loadavg
    if (isROOM(View_LOADAV, 1)) {
@@ -3157,7 +3185,6 @@ static proc_t **summary_show (void) {
    }
 
    // Display Memory and Swap stats
-   meminfo();
    if (isROOM(View_MEMORY, 2)) {
     #define mkM(x) (unsigned long)(kb_main_ ## x >> shift)
     #define mkS(x) (unsigned long)(kb_swap_ ## x >> shift)

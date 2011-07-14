@@ -62,23 +62,16 @@
 #define STRSORTCMP  strcmp
 #endif
 
-#ifdef OOMEM_ENABLE
-        /* FIXME: perhaps making this a function in the suse version of
-           sysinfo.c was a prelude to hotpluggable updates -- unfortunately,
-           the return value is invariant as currently implemented! */
-#define SMP_NUM_CPUS  smp_num_cpus()
-#else
-#define SMP_NUM_CPUS  smp_num_cpus
-#endif
-
 
 /*######  Some Miscellaneous constants  ##################################*/
 
         /* The default delay twix updates */
 #define DEF_DELAY  3.0
 
-        /* Length of time a 'message' is displayed (in microseconds) */
+        /* Length of time a message is displayed and the duration
+           of a 'priming' wait during library startup (in microseconds) */
 #define MSG_USLEEP  (useconds_t)1250000
+#define LIB_USLEEP  (useconds_t)150000
 
         /* Specific process id monitoring support (command line only) */
 #define MONPIDMAX  20
@@ -592,9 +585,6 @@ typedef struct WIN_t {
 #if defined(ATEOJ_RPTHSH) && defined(OFF_HST_HASH)
 # error 'ATEOJ_RPTHSH' conflicts with 'OFF_HST_HASH'
 #endif
-#if defined(PRETEND4CPUS) && defined (OOMEM_ENABLE)
-# error 'PRETEND4CPUS' conflicts with 'OOMEM_ENABLE'
-#endif
 #if (LRGBUFSIZ < SCREENMAX)
 # error 'LRGBUFSIZ' must NOT be less than 'SCREENMAX'
 #endif
@@ -655,6 +645,7 @@ typedef struct WIN_t {
 #endif
 //atic void          prochlp (proc_t *p);
 //atic proc_t      **procs_refresh (proc_t **ppt);
+//atic void          sysinfo_refresh (int forced);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
 //atic void          configs_read (void);

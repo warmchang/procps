@@ -7,12 +7,8 @@
 EXTERN_C_BEGIN
 
 extern unsigned long long Hertz;   /* clock tick frequency */
-#ifndef OOMEM_ENABLE
-extern long smp_num_cpus;     /* number of CPUs */
-#else
-extern long smp_num_cpus(void);     /* number of CPUs */
-#endif
-extern int have_privs;     /* boolean, true if setuid or similar */
+extern long smp_num_cpus;          /* number of CPUs */
+extern int have_privs;             /* boolean, true if setuid or similar */
 
 #if 0
 #define JT double
@@ -135,6 +131,8 @@ typedef struct slab_cache{
 extern unsigned int getslabinfo (struct slab_cache**);
 
 extern unsigned get_pid_digits(void) FUNCTION;
+
+extern void cpuinfo (void);
 
 EXTERN_C_END
 #endif /* SYSINFO_H */

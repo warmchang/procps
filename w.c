@@ -29,6 +29,7 @@
 #include <utmp.h>
 #include <locale.h>
 #include <termios.h>
+#include <arpa/inet.h>
 
 static int ignoreuser = 0;	/* for '-u' */
 static proc_t **procs;		/* our snapshot of the process table */
@@ -44,6 +45,7 @@ typedef struct utmp utmp_t;
 /* Uh... same thing as UT_NAMESIZE */
 #define USERSZ (sizeof u->ut_user)
 
+#define MAX_FROM_LEN	16
 
 /* This routine is careful since some programs leave utmp strings
  * unprintable.  Always outputs at least 16 chars padded with spaces
@@ -57,7 +59,7 @@ static void print_host(const char *restrict host, int len) {
     /* for now, we'll just limit it to the 16 that the libc5 version
      * of utmp uses.
      */
-    if (len > 16) len = 16;
+    if (len > MAX_FROM_LEN) len = MAX_FROM_LEN;
     last = host + len;
     for ( ; host < last ; host++){
         if (isprint(*host) && *host != ' ') {
@@ -67,8 +69,45 @@ static void print_host(const char *restrict host, int len) {
 	    break;
 	}
     }
-    // space-fill, and a '-' too if needed to ensure the column exists
-    if(width < 16) fputs("-               "+width, stdout);
+    /* space-fill, and a '-' too if needed to ensure the column exists */
+    if(width < MAX_FROM_LEN) fputs("-               "+width, stdout);
+}
+
+/* This routine prints either the hostname or the IP address of the remote */
+static void print_from(const utmp_t *restrict const u, int ip_addresses) {
+    char buf[MAX_FROM_LEN + 1];
+    char buf_ipv6[INET6_ADDRSTRLEN];
+    int len;
+    int32_t ut_addr_v6[4];      /* IP address of remote host.  */
+
+    if (ip_addresses) { /* -n switch used */
+	memcpy(&ut_addr_v6, &u->ut_addr_v6, sizeof(ut_addr_v6));
+	if (IN6_IS_ADDR_V4MAPPED(&ut_addr_v6)) { 
+	/* map back */
+	    ut_addr_v6[0] = ut_addr_v6[3];
+	    ut_addr_v6[1] = 0;
+	    ut_addr_v6[2] = 0;
+	    ut_addr_v6[3] = 0;
+	}
+	if (ut_addr_v6[1] || ut_addr_v6[2] || ut_addr_v6[3]) {
+	/* IPv6 */
+	    if (!inet_ntop(AF_INET6, &ut_addr_v6, buf_ipv6, sizeof(buf_ipv6)))  {
+		snprintf(buf_ipv6, INET6_ADDRSTRLEN, "?");
+	    }
+	    strncpy(buf, buf_ipv6, MAX_FROM_LEN);
+	} else {
+	/* IPv4 */
+	    if (!inet_ntop(AF_INET, &ut_addr_v6[0], buf, sizeof(buf)))  {
+		snprintf(buf, MAX_FROM_LEN, "?");
+	    }
+	}
+	buf[MAX_FROM_LEN] = 0;
+	for (len = strlen(buf); len < MAX_FROM_LEN; len++) buf[len]=' ';
+	buf[MAX_FROM_LEN] = 0;
+	fputs(buf, stdout);
+    } else {
+	print_host(u->ut_host, sizeof u->ut_host);
+    }
 }
 
 /***** compact 7 char format for time intervals (belongs in libproc?) */
@@ -169,7 +208,7 @@ static const proc_t *getproc(const utmp_t *restrict const u, const char *restric
 
 
 /***** showinfo */
-static void showinfo(utmp_t *u, int formtype, int maxcmd, int from) {
+static void showinfo(utmp_t *u, int formtype, int maxcmd, int from, int ip_addresses) {
     unsigned long long jcpu;
     int ut_pid_found;
     unsigned i;
@@ -196,7 +235,7 @@ static void showinfo(utmp_t *u, int formtype, int maxcmd, int from) {
     if (formtype) {
 	printf("%-9.8s%-9.8s", uname, u->ut_line);
 	if (from)
-	    print_host(u->ut_host, sizeof u->ut_host);
+	    print_from(u, ip_addresses);
 	print_logintime(u->ut_time, stdout);
 	if (*u->ut_line == ':')			/* idle unknown for xdm logins */
 	    printf(" ?xdm? ");
@@ -211,7 +250,7 @@ static void showinfo(utmp_t *u, int formtype, int maxcmd, int from) {
     } else {
 	printf("%-9.8s%-9.8s", u->ut_user, u->ut_line);
 	if (from)
-	    print_host(u->ut_host, sizeof u->ut_host);
+	    print_from(u, ip_addresses);
 	if (*u->ut_line == ':')			/* idle unknown for xdm logins */
 	    printf(" ?xdm? ");
 	else
@@ -233,14 +272,22 @@ int main(int argc, char **argv) {
     char *user = NULL;
     utmp_t *u;
     struct winsize win;
-    int header=1, longform=1, from=1, args, maxcmd=80, ch;
+    int args;
+    int maxcmd = 80;
+    int ch;
+
+    /* defaults */
+    int header = 1;
+    int longform = 1;
+    int from = 1;
+    int ip_addresses = 0;
 
 #ifndef W_SHOWFROM
     from = 0;
 #endif
 
     setlocale(LC_ALL, "");
-    for (args=0; (ch = getopt(argc, argv, "hlusfV")) != EOF; args++)
+    for (args=0; (ch = getopt(argc, argv, "hlusfnV")) != EOF; args++)
 	switch (ch) {
 	  case 'h': header = 0;		break;
 	  case 'l': longform = 1;	break;
@@ -248,6 +295,7 @@ int main(int argc, char **argv) {
 	  case 'f': from = !from;	break;
 	  case 'V': display_version();	exit(0);
 	  case 'u': ignoreuser = 1;	break;
+	  case 'n': ip_addresses = 1;	break;
 	  default:
 	    printf("usage: w -hlsufV [user]\n"
 		   "    -h    skip header\n"
@@ -255,6 +303,7 @@ int main(int argc, char **argv) {
 		   "    -s    short listing\n"
 		   "    -u    ignore uid of processes\n"
 		   "    -f    toggle FROM field (default %s)\n"
+		   "    -n    use IP addresses instead of hostname\n"
 		   "    -V    display version\n", FROM_STRING);
 	    exit(1);
 	}
@@ -292,14 +341,14 @@ int main(int argc, char **argv) {
 	    u = getutent();
 	    if (unlikely(!u)) break;
 	    if (u->ut_type != USER_PROCESS) continue;
- 	    if (!strncmp(u->ut_user, user, USERSZ)) showinfo(u, longform, maxcmd, from);
+ 	    if (!strncmp(u->ut_user, user, USERSZ)) showinfo(u, longform, maxcmd, from, ip_addresses);
 	}
     } else {
 	for (;;) {
 	    u = getutent();
 	    if (unlikely(!u)) break;
 	    if (u->ut_type != USER_PROCESS) continue;
- 	    if (*u->ut_user) showinfo(u, longform, maxcmd, from);
+ 	    if (*u->ut_user) showinfo(u, longform, maxcmd, from, ip_addresses);
 	}
     }
     endutent();

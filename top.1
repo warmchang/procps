@@ -59,9 +59,9 @@
 .ds FM full\-screen mode
 .ds KA arrow key
 .ds KS scrolling key
-.ds MP \fBphysical\fR memory
-.ds MS \fBshared\fR memory
-.ds MV \fBvirtual\fR memory
+.ds MP physical memory
+.ds MS shared memory
+.ds MV virtual memory
 .ds NT \fBNote\fR:
 .ds PU CPU
 .ds Pu cpu
@@ -775,9 +775,9 @@ line.
 
 .TP 7
 \ \ \<\fBEnter\fR> or <\fBSpace\fR> :\fIRefresh-Display \fR
-These commands do nothing, they are simply ignored.
-However, they will awaken \*(We and following receipt of any input
+These commands awaken \*(We and following receipt of any input
 the entire display will be repainted.
+They also force an update of any hotplugged \*(Pu or \*(MP changes.
 
 Use either of these keys if you have a large delay interval and wish
 to see current status,
