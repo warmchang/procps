@@ -947,6 +947,9 @@ out:
 void cpuinfo (void) {
   // ought to count CPUs in /proc/stat instead of relying
   // on glibc, which foolishly tries to parse /proc/cpuinfo
+  // note: that may have been the case but now /proc/stat
+  //       is the default source.  parsing of /proc/cpuinfo
+  //       only occurs if the open on /proc/stat fails
   //
   // SourceForge has an old Alpha running Linux 2.2.20 that
   // appears to have a non-SMP kernel on a 2-way SMP box.

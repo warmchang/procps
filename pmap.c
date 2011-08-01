@@ -358,11 +358,11 @@ int main(int argc, char *argv[]){
 
   discover_shm_minor();
 
+  memset(&p, '\0', sizeof(p));
   pidlist[count] = 0;  // old libproc interface is zero-terminated
   PT = openproc(PROC_FILLSTAT|PROC_FILLARG|PROC_PID, pidlist);
   while(readproc(PT, &p)){
     ret |= one_proc(&p);
-    if(p.cmdline) free((void*)*p.cmdline);
     count--;
   }
   closeproc(PT);

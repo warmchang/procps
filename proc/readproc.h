@@ -113,7 +113,9 @@ typedef struct proc_t {
     char
         **environ,      // (special)       environment string vector (/proc/#/environ)
         **cmdline,      // (special)       command line string vector (/proc/#/cmdline)
-        **cgroup;       // (special)       cgroup string vector (/proc/#/cgroup)
+        **cgroup,       // (special)       cgroup string vector (/proc/#/cgroup)
+         *supgid,       // status          supplementary gids as comma delimited str
+         *supgrp;       // supp grp names as comma delimited str, derived from supgid
     char
 	// Be compatible: Digital allows 16 and NT allows 14 ???
     	euser[P_G_SZ],	// stat(),status   effective user name
@@ -180,7 +182,7 @@ typedef struct PROCTAB {
     unsigned pathlen;        // length of string in the above (w/o '\0')
 } PROCTAB;
 
-// initialize a PROCTAB structure holding needed call-to-call persistent data
+// Initialize a PROCTAB structure holding needed call-to-call persistent data
 extern PROCTAB* openproc(int flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
 
 typedef struct proc_data_t {
@@ -198,13 +200,21 @@ extern proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(p
 // table subset satisfying the constraints of flags and the optional PID list.
 // Free allocated memory with exit().  Access via tab[N]->member.  The pointer
 // list is NULL terminated.
-
 extern proc_t** readproctab(int flags, ... /* same as openproc */ );
 
-// clean-up open files, etc from the openproc()
+// Clean-up open files, etc from the openproc()
 extern void closeproc(PROCTAB* PT);
 
-// retrieve the next process matching the criteria set by the openproc()
+// Retrieve the next process or task matching the criteria set by the openproc().
+//
+// Note: When NULL is used as the readproc 'p' or readtask 't' parameter,
+//       the library will allocate the necessary proc_t storage.
+//
+//       Alternately, you may provide your own reuseable buffer address
+//       in which case that buffer *MUST* be initialized to zero one time
+//       only before first use.  Thereafter, the library will manage such
+//       a passed proc_t, freeing any additional acquired memory associated
+//       with the previous process or thread.
 extern proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p);
 extern proc_t* readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict t);
 
@@ -213,11 +223,10 @@ extern int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid);
 
 extern void look_up_our_self(proc_t *p);
 
-// deallocate space allocated by readproc
-
+// Deallocate space allocated by readproc
 extern void freeproc(proc_t* p);
 
-//fill out a proc_t for a single task
+// Fill out a proc_t for a single task
 extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 
 // openproc/readproctab:
@@ -244,7 +253,8 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 #define PROC_FILLWCHAN       0x0080 // look up WCHAN name
 #define PROC_FILLARG         0x0100 // alloc and fill in `cmdline'
 #define PROC_FILLCGROUP      0x0200 // alloc and fill in `cgroup`
-#define PROC_FILLOOM         0x0400 // alloc and fill in oom_score, oom_adj
+#define PROC_FILLSUPGRP      0x0400 // resolve supplementary group id -> group name
+#define PROC_FILLOOM         0x0800 // alloc and fill in oom_score, oom_adj
 
 #define PROC_LOOSE_TASKS     0x2000 // threat threads as if they were processes
 

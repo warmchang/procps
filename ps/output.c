@@ -38,7 +38,7 @@
  *
  * Table 5 could go in a file with the output functions.
  */
- 
+
 #include <ctype.h>
 #include <fcntl.h>
 #include <grp.h>
@@ -360,7 +360,7 @@ static int pr_argcom(char *restrict const outbuf, const proc_t *restrict const p
 
 static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp) {
   int rightward = max_rightward;
-  
+
   if(pp->cgroup) {
     escaped_copy(outbuf, *pp->cgroup, OUTBUF_SIZE, &rightward);
     return max_rightward-rightward;
@@ -373,7 +373,7 @@ static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp
 static int pr_fname(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp = outbuf;
   int rightward = max_rightward;
-  
+
   if(forest_prefix){
     int fh = forest_helper(outbuf);
     endp += fh;
@@ -381,7 +381,7 @@ static int pr_fname(char *restrict const outbuf, const proc_t *restrict const pp
   }
   if (rightward>8)  /* 8=default, but forest maybe feeds more */
     rightward = 8;
-  
+
   endp += escape_str(endp, pp->cmd, OUTBUF_SIZE, &rightward);
   //return endp - outbuf;
   return max_rightward-rightward;
@@ -1022,10 +1022,10 @@ static int do_pr_name(char *restrict const outbuf, const char *restrict const na
   if(!user_is_number){
     int rightward = OUTBUF_SIZE;	/* max cells */
     int len;				/* real cells */
-    
+
     escape_str(outbuf, name, OUTBUF_SIZE, &rightward);
     len = OUTBUF_SIZE-rightward;
-    
+
     if(len <= (int)max_rightward)
       return len;  /* returns number of cells */
   }
@@ -1072,10 +1072,22 @@ static int pr_nlwp(char *restrict const outbuf, const proc_t *restrict const pp)
 static int pr_sess(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%u", pp->session);
 }
+
+static int pr_supgid(char *restrict const outbuf, const proc_t *restrict const pp){
+  int rightward = max_rightward;
+  escaped_copy(outbuf, pp->supgid ? pp->supgid : "n/a", OUTBUF_SIZE, &rightward);
+  return max_rightward-rightward;
+}
+
+static int pr_supgrp(char *restrict const outbuf, const proc_t *restrict const pp){
+  int rightward = max_rightward;
+  escaped_copy(outbuf, pp->supgrp ? pp->supgrp : "n/a", OUTBUF_SIZE, &rightward);
+  return max_rightward-rightward;
+}
+
 static int pr_tpgid(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%d", pp->tpgid);
 }
-
 
 /* SGI uses "cpu" to print the processor ID with header "P" */
 static int pr_sgi_p(char *restrict const outbuf, const proc_t *restrict const pp){          /* FIXME */
@@ -1241,7 +1253,9 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 #define GRP PROC_FILLGRP     /* gid_t -> group names */
 #define WCH PROC_FILLWCHAN   /* do WCHAN lookup */
 
+#define SGRP PROC_FILLSTATUS | PROC_FILLSUPGRP  /* supgid -> supgrp (names) */
 #define CGRP PROC_FILLCGROUP | PROC_EDITCGRPCVT /* read cgroup */
+
 /* TODO
  *      pull out annoying BSD aliases into another table (to macro table?)
  *      add sorting functions here (to unify names)
@@ -1437,6 +1451,8 @@ static const format_struct format_array[] = {
 {"status",    "STATUS",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
 {"stime",     "STIME",   pr_stime,    sr_stime,   5,   0,    XXX, ET|RIGHT}, /* was 6 wide */
 {"suid",      "SUID",    pr_suid,     sr_suid,    5,   0,    LNx, ET|RIGHT},
+{"supgid",    "SUPGID",  pr_supgid,   sr_nop,    20,   0,    LNX, PO|UNLIMITED},
+{"supgrp",    "SUPGRP",  pr_supgrp,   sr_nop,    40,SGRP,    LNX, PO|UNLIMITED},
 {"suser",     "SUSER",   pr_suser,    sr_suser,   8, USR,    LNx, ET|USER},
 {"svgid",     "SVGID",   pr_sgid,     sr_sgid,    5,   0,    XXX, ET|RIGHT},
 {"svgroup",   "SVGROUP", pr_sgroup,   sr_sgroup,  8, GRP,    LNX, ET|USER},
@@ -1797,14 +1813,14 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
       }
     }
     max_leftward  = fmt->width + actual - correct; /* TODO check this */
-    
+
 //    fprintf(stderr, "cols: %d, max_rightward: %d, max_leftward: %d, actual: %d, correct: %d\n",
 //		    active_cols, max_rightward, max_leftward, actual, correct);
-    
+
     /* prepare data and calculate leftpad */
     if(likely(p) && likely(fmt->pr)) amount = (*fmt->pr)(outbuf,p);
     else amount = strlen(strcpy(outbuf, fmt->name)); /* AIX or headers */
-    
+
     switch((fmt->flags) & CF_JUST_MASK){
     case 0:  /* for AIX, assigned outside this file */
       leftpad = 0;
@@ -1869,7 +1885,7 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
 
     /* real size -- don't forget in 'amount' is number of cells */
     sz = strlen(outbuf);
-    
+
     /* print data, set x position stuff */
     if(unlikely(!fmt->next)){
       /* Last column. Write padding + data + newline all together. */

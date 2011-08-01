@@ -327,61 +327,46 @@ static int want_this_proc_pcpu(proc_t *buf){
 
 /***** just display */
 static void simple_spew(void){
-  proc_t buf;
+  static proc_t buf, buf2;       // static avoids memset
   PROCTAB* ptp;
+
   ptp = openproc(needs_for_format | needs_for_sort | needs_for_select | needs_for_threads);
   if(!ptp) {
     fprintf(stderr, "Error: can not access /proc.\n");
     exit(1);
   }
-  memset(&buf, '#', sizeof(proc_t));
   switch(thread_flags & (TF_show_proc|TF_loose_tasks|TF_show_task)){
   case TF_show_proc:                   // normal non-thread output
     while(readproc(ptp,&buf)){
       if(want_this_proc(&buf)){
         show_one_proc(&buf, proc_format_list);
       }
-      if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
-      if(buf.environ) free((void*)*buf.environ); // ought to reuse
-      if(buf.cgroup)  free((void*)*buf.cgroup);
     }
     break;
   case TF_show_proc|TF_loose_tasks:    // H option
     while(readproc(ptp,&buf)){
-      proc_t buf2;
       // must still have the process allocated
       while(readtask(ptp,&buf,&buf2)){
         if(!want_this_proc(&buf)) continue;
         show_one_proc(&buf2, task_format_list);
       }
-      if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
-      if(buf.environ) free((void*)*buf.environ); // ought to reuse
-      if(buf.cgroup)  free((void*)*buf.cgroup);
     }
     break;
   case TF_show_proc|TF_show_task:      // m and -m options
     while(readproc(ptp,&buf)){
       if(want_this_proc(&buf)){
-        proc_t buf2;
         show_one_proc(&buf, proc_format_list);
         // must still have the process allocated
         while(readtask(ptp,&buf,&buf2)) show_one_proc(&buf2, task_format_list);
       }
-      if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
-      if(buf.environ) free((void*)*buf.environ); // ought to reuse
-      if(buf.cgroup)  free((void*)*buf.cgroup);
      }
     break;
   case TF_show_task:                   // -L and -T options
     while(readproc(ptp,&buf)){
       if(want_this_proc(&buf)){
-        proc_t buf2;
         // must still have the process allocated
         while(readtask(ptp,&buf,&buf2)) show_one_proc(&buf2, task_format_list);
       }
-      if(buf.cmdline) free((void*)*buf.cmdline); // ought to reuse
-      if(buf.environ) free((void*)*buf.environ); // ought to reuse
-      if(buf.cgroup)  free((void*)*buf.cgroup);
    }
     break;
   }
@@ -438,16 +423,10 @@ static void show_proc_array(PROCTAB *restrict ptp, int n){
   while(n--){
     if(thread_flags & TF_show_proc) show_one_proc(*p, proc_format_list);
     if(thread_flags & TF_show_task){
-      proc_t buf2;
+      static proc_t buf2;         // static avoids memset
       // must still have the process allocated
       while(readtask(ptp,*p,&buf2)) show_one_proc(&buf2, task_format_list);
-      // must not attempt to free cmdline and environ
     }
-    /* no point freeing any of this -- won't need more mem */
-//    if((*p)->cmdline) free((void*)*(*p)->cmdline);
-//    if((*p)->environ) free((void*)*(*p)->environ);
-//    memset(*p, '%', sizeof(proc_t)); /* debug */
-//    free(*p);
     p++;
   }
 }
@@ -464,9 +443,6 @@ static void show_tree(const int self, const int n, const int level, const int ha
     forest_prefix[level] = '\0';
   }
   show_one_proc(processes[self],format_list);  /* first show self */
-  /* no point freeing any of this -- won't need more mem */
-//  if(processes[self]->cmdline) free((void*)*processes[self]->cmdline);
-//  if(processes[self]->environ) free((void*)*processes[self]->environ);
   for(;;){  /* look for children */
     if(i >= n) return; /* no children */
     if(processes[i]->ppid == processes[self]->XXXID) break;

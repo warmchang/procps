@@ -129,6 +129,7 @@ enum pflag {
    P_MEM, P_VRT, P_SWP, P_RES, P_COD, P_DAT, P_SHR,
    P_FL1, P_FL2, P_DRT,
    P_STA, P_CMD, P_WCH, P_FLG, P_CGR,
+   P_SGD, P_SGN,
 #ifdef OOMEM_ENABLE
    P_OOA, P_OOM,
 #endif
@@ -367,6 +368,10 @@ typedef struct WIN_t {
          if (!(*P)->v || !(*Q)->v) return SORT_eq; \
          return Frame_srtflg * STRSORTCMP((*Q)->v[0], (*P)->v[0]); } \
       return Frame_srtflg * STRSORTCMP((*Q)->s, (*P)->s); }
+#define SCB_STRX(f,s) \
+   int strverscmp(const char *s1, const char *s2); \
+   static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
+      return Frame_srtflg * strverscmp((*Q)->s, (*P)->s); }
 
 /*
  * The following two macros are used to 'inline' those portions of the

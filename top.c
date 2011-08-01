@@ -216,6 +216,8 @@ SCB_NUMx(PID, tid)
 SCB_NUMx(PPD, ppid)
 SCB_NUMx(PRI, priority)
 SCB_NUM1(RES, resident)                // also serves MEM !
+SCB_STRX(SGD, supgid)
+SCB_STRS(SGN, supgrp)
 SCB_NUM1(SHR, share)
 SCB_NUM1(SID, session)
 SCB_NUMx(STA, state)
@@ -1164,6 +1166,7 @@ static inline int user_matched (WIN_t *q, const proc_t *p) {
 #define L_EUSER    PROC_FILLUSR
 #define L_OUSER    PROC_FILLSTATUS | PROC_FILLUSR
 #define L_EGROUP   PROC_FILLSTATUS | PROC_FILLGRP
+#define L_SUPGRP   PROC_FILLSTATUS | PROC_FILLSUPGRP
    // make 'none' non-zero (used to be important to Frames_libflags)
 #define L_NONE     PROC_SPARE_1
    // from either 'stat' or 'status' (preferred), via bits not otherwise used
@@ -1231,8 +1234,10 @@ static FLD_t Fieldstab[] = {
 #else
    { "Flags    ",   "%08lx ",    -1,     -1,  SF(FLG),  L_stat,    "Task Flags <sched.h>" },
 #endif
-   // next entry's like P_CMD/P_WCH, and '.head' must be same length -- they share varcolsz
-   { "CGROUPS  ",   NULL,        -1,     -1,  SF(CGR),  L_CGROUP,  "Control Groups"       }
+   // next 3 entries as P_CMD/P_WCH: '.head' must be same length -- they share varcolsz
+   { "CGROUPS  ",   NULL,        -1,     -1,  SF(CGR),  L_CGROUP,  "Control Groups"       },
+   { "SUPGIDS  ",   NULL,        -1,     -1,  SF(SGD),  L_status,  "Supp Groups IDs"      },
+   { "SUPGRPS  ",   NULL,        -1,     -1,  SF(SGN),  L_SUPGRP,  "Supp Groups Names"    }
 #ifdef OOMEM_ENABLE
 #define L_oom      PROC_FILLOOM
   ,{ "Adj ",        "%3d ",      -1,     -1,  SF(OOA),  L_oom,     "oom_adjustment (2^X)" }
@@ -1506,15 +1511,15 @@ static void calibrate_fields (void) {
          *    ( xPRFX has pos 2 & 10 for 'extending' when at minimums )
          *
          * The first 4 screen rows are reserved for explanatory text.
-         * Thus, with our current 36 fields, a maximum of 6 columns and
+         * Thus, with our current 38 fields, a maximum of 6 columns and
          * 1 space between columns, a tty will still remain useable under
          * these extremes:
          *            rows  cols   displayed
          *            ----  ----   ------------------
-         *             10    66    xPRFX only
-         *             10   198    full xPRFX + xSUFX
-         *             22    22    xPRFX only
-         *             22    66    full xPRFX + xSUFX
+         *             11    66    xPRFX only          (w/ room for +4)
+         *             11   198    full xPRFX + xSUFX  (w/ room for +4)
+         *             23    22    xPRFX only
+         *             23    66    full xPRFX + xSUFX
          *    ( if not, the user deserves our most cryptic messages )
          */
 static void display_fields (int focus, int extend) {
@@ -1904,13 +1909,11 @@ static void prochlp (proc_t *this) {
 static proc_t **procs_refresh (proc_t **ppt) {
  #define PTRsz  sizeof(proc_t *)
  #define ENTsz  sizeof(proc_t)
-   static int threadshown = 0;         // thread hack optimization
    static unsigned savmax = 0;         // first time, Bypass: (i)
    proc_t *ptask = (proc_t *)-1;       // first time, Force: (ii)
    unsigned curmax = 0;                // every time  (jeeze)
    PROCTAB* PT;
    proc_t *pthrd;                      // for thread hack
-   unsigned i;                         // ditto
 
    prochlp(NULL);                      // prep for a new frame
    if (NULL == (PT = openproc(Frames_libflags, Monpids)))
@@ -1919,17 +1922,6 @@ static proc_t **procs_refresh (proc_t **ppt) {
    // i) Allocated Chunks:  *Existing* table;  refresh + reuse
    if (!Thread_mode) {
       while (curmax < savmax) {
-         if (ppt[curmax]->cmdline || ppt[curmax]->cgroup) {
-            if (threadshown) {         // skip if never used (see note below)
-               for (i = curmax + 1; i < savmax; i++) {
-                  if (ppt[i]->cmdline == ppt[curmax]->cmdline) ppt[i]->cmdline = NULL;
-                  if (ppt[i]->cgroup  == ppt[curmax]->cgroup)  ppt[i]->cgroup  = NULL;
-               }
-            }
-            if (ppt[curmax]->cmdline) free(*ppt[curmax]->cmdline);
-            if (ppt[curmax]->cgroup)  free(*ppt[curmax]->cgroup);
-            ppt[curmax]->cmdline = ppt[curmax]->cgroup = NULL;
-         }
          if (!(ptask = readproc(PT, ppt[curmax]))) break;
          prochlp(ptask);               // tally & complete this proc_t
          ++curmax;
@@ -1939,23 +1931,11 @@ static proc_t **procs_refresh (proc_t **ppt) {
       while (curmax < savmax) {
          if (!(ptask = readproc(PT, NULL))) break;
          while (curmax < savmax) {
-            if (ppt[curmax]->cmdline || ppt[curmax]->cgroup) {
-               /* note: threads share some of the same storage, so we must look
-                        through the rest of our table for duplicate ref's... */
-               for (i = curmax + 1; i < savmax; i++) {
-                  if (ppt[i]->cmdline == ppt[curmax]->cmdline) ppt[i]->cmdline = NULL;
-                  if (ppt[i]->cgroup  == ppt[curmax]->cgroup)  ppt[i]->cgroup  = NULL;
-               }                                  /* ...but free only once ! */
-               if (ppt[curmax]->cmdline) free(*ppt[curmax]->cmdline);
-               if (ppt[curmax]->cgroup)  free(*ppt[curmax]->cgroup);
-               ppt[curmax]->cmdline = ppt[curmax]->cgroup = NULL;
-            }
             if (!(pthrd = readtask(PT, ptask, ppt[curmax]))) break;
-            threadshown = 1;
             prochlp(pthrd);            // tally & complete this thread
             ++curmax;
          }
-         free(ptask);                  // readproc's proc_t not needed
+         freeproc(ptask);              // readproc's proc_t not needed
       }
    }
 
@@ -1977,11 +1957,10 @@ static proc_t **procs_refresh (proc_t **ppt) {
             for (;;) {
                ppt = alloc_r(ppt, (curmax + 1) * PTRsz);
                if (!(pthrd = readtask(PT, ptask, NULL))) break;
-               threadshown = 1;
                prochlp(pthrd);         // tally & complete this thread
                ppt[curmax++] = pthrd;
             }
-            free(ptask);               // readproc's proc_t not needed
+            freeproc(ptask);           // readproc's proc_t not needed
          }
       }
    }
@@ -2191,7 +2170,7 @@ static void parse_args (char **args) {
       .  bunched args are actually handled properly and none are ignored
       .  we tolerate NO whitespace and NO switches -- maybe too tolerant? */
    static const char usage_str[] =
-      " -hv | -bcHiSs -d delay -n iters -u|U user | -p pid[,pid] -w [cols]";
+      " -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]";
    static const char sel_error[] = "conflicting process selections (U/p/u)";
    static const char numbs_str[] = "+,-.0123456789";
    float tmp_delay = MAXFLOAT;
@@ -2230,7 +2209,7 @@ static void parse_args (char **args) {
                break;
             case 'h':
             case 'v': case 'V':
-               fprintf(stdout, "\t%s\nusage:\t%s%s\n", procps_version, Myname, usage_str);
+               fprintf(stdout, "\t%s\nusage:\t%s%s", procps_version, Myname, usage_str);
                bye_bye(NULL);
             case 'i':
                TOGw(Curwin, Show_IDLEPS);
@@ -3318,6 +3297,12 @@ static void task_show (const WIN_t *q, const proc_t *p) {
             break;
          case P_RES:
             makeCOL(scale_num(pages2K(p->resident), w, s));
+            break;
+         case P_SGD:
+            makeVAR(p->supgid ? p->supgid : "n/a");
+            break;
+         case P_SGN:
+            makeVAR(p->supgrp ? p->supgrp : "n/a");
             break;
          case P_SHR:
             makeCOL(scale_num(pages2K(p->share), w, s));
