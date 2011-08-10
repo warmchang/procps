@@ -104,7 +104,7 @@ static int No_ksyms = -1,       // set to '0' if ksym avail, '1' otherwise
            Batch = 0,           // batch mode, collect no input, dumb output
            Loops = -1,          // number of iterations, -1 loops forever
            Secure_mode = 0,     // set if some functionality restricted
-           Thread_mode = 0,     // set w/ 'H' - show threads via readtask()
+           Thread_mode = 0,     // set w/ 'H' - show threads via readeither()
            Width_mode = 0;      // set w/ 'w' - potential output override
 
         /* Unchangeable cap's stuff built just once (if at all) and
@@ -1913,57 +1913,31 @@ static proc_t **procs_refresh (proc_t **ppt) {
    proc_t *ptask = (proc_t *)-1;       // first time, Force: (ii)
    unsigned curmax = 0;                // every time  (jeeze)
    PROCTAB* PT;
-   proc_t *pthrd;                      // for thread hack
+   proc_t*(*read_something)(PROCTAB*, proc_t*);
 
    prochlp(NULL);                      // prep for a new frame
    if (NULL == (PT = openproc(Frames_libflags, Monpids)))
       error_exit(fmtmk("failed openproc: %s", strerror(errno)));
+   read_something = Thread_mode ? readeither : readproc;
 
    // i) Allocated Chunks:  *Existing* table;  refresh + reuse
-   if (!Thread_mode) {
-      while (curmax < savmax) {
-         if (!(ptask = readproc(PT, ppt[curmax]))) break;
-         prochlp(ptask);               // tally & complete this proc_t
-         ++curmax;
-      }
-   }
-   else {                              // acquire as separate threads
-      while (curmax < savmax) {
-         if (!(ptask = readproc(PT, NULL))) break;
-         while (curmax < savmax) {
-            if (!(pthrd = readtask(PT, ptask, ppt[curmax]))) break;
-            prochlp(pthrd);            // tally & complete this thread
-            ++curmax;
-         }
-         freeproc(ptask);              // readproc's proc_t not needed
-      }
+   while (curmax < savmax) {
+      if (!(ptask = read_something(PT, ppt[curmax]))) break;
+      prochlp(ptask);               // tally & complete this proc_t
+      ++curmax;
    }
 
    // ii) Unallocated Chunks:  *New* or *Existing* table;  extend + fill
-   if (!Thread_mode) {
-      while (ptask) {
-         // realloc as we go, keeping 'ppt' ahead of 'currmax++'
-         ppt = alloc_r(ppt, (curmax + 1) * PTRsz);
-         // here, readproc will allocate the underlying proc_t stg
-         if ((ptask = readproc(PT, NULL))) {
-            prochlp(ptask);            // tally & complete this proc_t
-            ppt[curmax++] = ptask;
-         }
+   while (ptask) {
+      // realloc as we go, keeping 'ppt' ahead of 'currmax++'
+      ppt = alloc_r(ppt, (curmax + 1) * PTRsz);
+      // here, the library will allocate the underlying proc_t stg
+      if ((ptask = read_something(PT, NULL))) {
+         prochlp(ptask);            // tally & complete this proc_t
+         ppt[curmax++] = ptask;
       }
    }
-   else {                              // acquire as separate threads
-      while (ptask) {
-         if ((ptask = readproc(PT, NULL))) {
-            for (;;) {
-               ppt = alloc_r(ppt, (curmax + 1) * PTRsz);
-               if (!(pthrd = readtask(PT, ptask, NULL))) break;
-               prochlp(pthrd);         // tally & complete this thread
-               ppt[curmax++] = pthrd;
-            }
-            freeproc(ptask);           // readproc's proc_t not needed
-         }
-      }
-   }
+
    closeproc(PT);
 
    // iii) Chunkless:  make 'eot' entry, after ensuring proc_t exists

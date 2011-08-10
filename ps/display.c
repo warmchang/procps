@@ -7,7 +7,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Library General Public License for more details.
- */                                                                     
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -284,7 +284,6 @@ static void lists_and_needs(void){
   }
   if(!unix_f_option){
     proc_format_needs &= ~PROC_FILLCOM;
-    proc_format_needs |=  PROC_EDITCMDLCVT;
     needs_for_sort    &= ~PROC_FILLCOM;
   }
   // convert ARG to COM as a standard
@@ -295,7 +294,7 @@ static void lists_and_needs(void){
   if(bsd_e_option){
     if(proc_format_needs&PROC_FILLCOM) proc_format_needs |= PROC_FILLENV;
   }
-  
+
   /* FIXME  broken filthy hack -- got to unify some stuff here */
   if( ( (proc_format_needs|task_format_needs|needs_for_sort) & PROC_FILLWCHAN) && !wchan_is_number)
     if (open_psdb(namelist_file)) wchan_is_number = 1;
@@ -508,7 +507,7 @@ static void fancy_spew(void){
   }
 
   if(thread_flags & TF_loose_tasks){
-    pd = readproctab2(want_this_proc_nop, want_this_proc_pcpu, ptp);
+    pd = readproctab3(want_this_proc_pcpu, ptp);
   }else{
     pd = readproctab2(want_this_proc_pcpu, (void*)0xdeadbeaful, ptp);
   }

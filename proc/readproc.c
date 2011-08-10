@@ -38,6 +38,12 @@ extern void __cyg_profile_func_enter(void*,void*);
 #define LEAVE(x)
 #endif
 
+#ifdef QUICK_THREADS
+// used when multi-threaded and some memory must not be freed
+#define MK_THREAD(q)   q->pad_1 =  '\xee'
+#define IS_THREAD(q) ( q->pad_1 == '\xee' )
+#endif
+
 #ifndef SIGNAL_STRING
 // convert hex string to unsigned long long
 static unsigned long long unhex(const char *restrict cp){
@@ -56,11 +62,17 @@ static int task_dir_missing;
 // free any additional dynamically acquired storage associated with a proc_t
 // ( and if it's to be reused, refresh it otherwise destroy it )
 static inline void free_acquired (proc_t *p, int reuse) {
-    if (p->environ) free((void*)*p->environ);
-    if (p->cmdline) free((void*)*p->cmdline);
-    if (p->cgroup)  free((void*)*p->cgroup);
-    if (p->supgid)  free(p->supgid);
-    if (p->supgrp)  free(p->supgrp);
+#ifdef QUICK_THREADS
+    if (!IS_THREAD(p)) {
+#endif
+        if (p->environ) free((void*)*p->environ);
+        if (p->cmdline) free((void*)*p->cmdline);
+        if (p->cgroup)  free((void*)*p->cgroup);
+        if (p->supgid)  free(p->supgid);
+        if (p->supgrp)  free(p->supgrp);
+#ifdef QUICK_THREADS
+    }
+#endif
     memset(p, reuse ? '\0' : '\xff', sizeof(*p));
 }
 
@@ -571,14 +583,15 @@ static char** file2strvec(const char* directory, const char* what) {
     // this is the former under utilized 'read_cmdline', which has been
     // generalized in support of these new libproc flags:
     //     PROC_EDITCGRPCVT, PROC_EDITCMDLCVT
-static int read_unvectored(char *restrict const dst, unsigned sz, unsigned pid, const char *what, char sep) {
-    char name[32];
+static int read_unvectored(char *restrict const dst, unsigned sz, const char* whom, const char *what, char sep) {
+    char path[PROCPATHLEN];
     int fd;
     unsigned n = 0;
 
-    snprintf(name, sizeof name, "/proc/%u/%s", pid, what);
-    fd = open(name, O_RDONLY);
+    snprintf(path, sizeof(path), "%s/%s", whom, what);
+    fd = open(path, O_RDONLY);
     if(fd==-1) return 0;
+
     for(;;){
         ssize_t r = read(fd,dst+n,sz-n);
         if(r==-1){
@@ -618,17 +631,17 @@ static char** vectorize_this_str (const char* src) {
  #undef pSZ
 }
 
-    // This routine reads /proc/#/cgroup for a single task.
+    // This routine reads a 'cgroup' for the designated proc_t.
     // It is similar to file2strvec except we filter and concatenate
     // the data into a single string represented as a single vector.
-static void fill_cgroup_cvt (proc_t *restrict p) {
+static void fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
  #define vMAX ( sizeof(dbuf) - (int)(dst - dbuf) )
     char sbuf[1024], dbuf[1024];
     char *src, *dst, *grp, *eob;
     int tot, x, whackable_int = sizeof(dbuf);
 
     *(dst = dbuf) = '\0';                        // empty destination
-    tot = read_unvectored(sbuf, sizeof(sbuf), p->tid, "cgroup", '\0');
+    tot = read_unvectored(sbuf, sizeof(sbuf), directory, "cgroup", '\0');
     for (src = sbuf, eob = sbuf + tot; src < eob; src += x) {
         x = 1;                                   // loop assist
         if (!*src) continue;
@@ -644,15 +657,15 @@ static void fill_cgroup_cvt (proc_t *restrict p) {
  #undef vMAX
 }
 
-    // This routine reads /proc/#/cmdline for the designated task, "escapes"
-    // the result into a single string represented as a single vector and
-    // guarantees the caller a valid proc_t.cmdline pointer.
-static void fill_cmdline_cvt (proc_t *restrict p) {
+    // This routine reads a 'cmdline' for the designated proc_t, "escapes"
+    // the result into a single string represented as a single vector
+    // and guarantees the caller a valid proc_t.cmdline pointer.
+static void fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
  #define uFLG ( ESC_BRACKETS | ESC_DEFUNCT )
     char sbuf[2048], dbuf[2048];
     int whackable_int = sizeof(dbuf);
 
-    if (read_unvectored(sbuf, sizeof(sbuf), p->tid, "cmdline", ' '))
+    if (read_unvectored(sbuf, sizeof(sbuf), directory, "cmdline", ' '))
         escape_str(dbuf, sbuf, sizeof(dbuf), &whackable_int);
     else
         escape_command(dbuf, p, sizeof(dbuf), &whackable_int, uFLG);
@@ -662,7 +675,9 @@ static void fill_cmdline_cvt (proc_t *restrict p) {
 
 // warning: interface may change
 int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid) {
-    return read_unvectored(dst, sz, pid, "cmdline", ' ');
+    char path[PROCPATHLEN];
+    snprintf(path, sizeof(path), "/proc/%u", pid);
+    return read_unvectored(dst, sz, path, "cmdline", ' ');
 }
 
 
@@ -706,18 +721,18 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     p->egid = sb.st_gid;                        /* need a way to get real gid */
 
     if (flags & PROC_FILLSTAT) {                // read /proc/#/stat
-        if (unlikely( file2str(path, "stat", sbuf, sizeof sbuf) == -1 ))
+        if (unlikely(file2str(path, "stat", sbuf, sizeof sbuf) == -1))
             goto next_proc;
         stat2proc(sbuf, p);
     }
 
     if (flags & PROC_FILLMEM) {                 // read /proc/#/statm
-        if (likely(file2str(path, "statm", sbuf, sizeof sbuf) != -1 ))
+        if (likely(file2str(path, "statm", sbuf, sizeof sbuf) != -1))
             statm2proc(sbuf, p);
     }
 
     if (flags & PROC_FILLSTATUS) {              // read /proc/#/status
-        if (likely( file2str(path, "status", sbuf, sizeof sbuf) != -1 )){
+        if (likely(file2str(path, "status", sbuf, sizeof sbuf) != -1)){
             status2proc(sbuf, p, 1);
             if (flags & PROC_FILLSUPGRP)
                 supgrps_from_supgids(p);
@@ -756,7 +771,7 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
 
     if (flags & (PROC_FILLCOM|PROC_FILLARG)) {  // read /proc/#/cmdline
         if (flags & PROC_EDITCMDLCVT)
-            fill_cmdline_cvt(p);
+            fill_cmdline_cvt(path, p);
         else
             p->cmdline = file2strvec(path, "cmdline");
     } else
@@ -765,7 +780,7 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if ((flags & PROC_FILLCGROUP)               // read /proc/#/cgroup
     && linux_version_code >= LINUX_VERSION(2,6,24)) {
         if (flags & PROC_EDITCGRPCVT)
-            fill_cgroup_cvt(p);
+            fill_cgroup_cvt(path, p);
         else
             p->cgroup = file2strvec(path, "cgroup");
     } else
@@ -773,9 +788,9 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
 
 #ifdef OOMEM_ENABLE
     if (unlikely(flags & PROC_FILLOOM)) {
-        if (likely( file2str(path, "oom_score", sbuf, sizeof sbuf) != -1 ))
+        if (likely(file2str(path, "oom_score", sbuf, sizeof sbuf) != -1))
             oomscore2proc(sbuf, p);
-        if (likely( file2str(path, "oom_adj", sbuf, sizeof sbuf) != -1 ))
+        if (likely(file2str(path, "oom_adj", sbuf, sizeof sbuf) != -1))
             oomadj2proc(sbuf, p);
     }
 #endif
@@ -787,7 +802,11 @@ next_proc:
 
 //////////////////////////////////////////////////////////////////////////////////
 // This reads /proc/*/task/* data, for one task.
+#ifdef QUICK_THREADS
+// p is the POSIX process (task group summary) & source for some copies if !NULL
+#else
 // p is the POSIX process (task group summary) (not needed by THIS implementation)
+#endif
 // t is the POSIX thread (task group member, generally not the leader)
 // path is a path to the task, with some room to spare.
 static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict const t, char *restrict const path) {
@@ -798,39 +817,32 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     if (unlikely(stat(path, &sb) == -1))        /* no such dirent (anymore) */
         goto next_task;
 
-//    if ((flags & PROC_UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
-//      goto next_task;                 /* not one of the requested uids */
+//  if ((flags & PROC_UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
+//      goto next_task;                         /* not one of the requested uids */
 
     t->euid = sb.st_uid;                        /* need a way to get real uid */
     t->egid = sb.st_gid;                        /* need a way to get real gid */
 
-    if (flags & PROC_FILLSTAT) {                // read /proc/#/task/#/stat
-        if (unlikely( file2str(path, "stat", sbuf, sizeof sbuf) == -1 ))
+    if (flags & PROC_FILLSTAT) {                        // read /proc/#/task/#/stat
+        if (unlikely(file2str(path, "stat", sbuf, sizeof sbuf) == -1))
             goto next_task;
         stat2proc(sbuf, t);
     }
 
-    if (flags & PROC_FILLMEM) {                 // read /proc/#/task/#statm
-#if 1
-        if (likely(file2str(path, "statm", sbuf, sizeof sbuf) != -1 ))
+#ifndef QUICK_THREADS
+    if (flags & PROC_FILLMEM)                           // read /proc/#/task/#statm
+        if (likely(file2str(path, "statm", sbuf, sizeof sbuf) != -1))
             statm2proc(sbuf, t);
-#else
-        t->size     = p->size;
-        t->resident = p->resident;
-        t->share    = p->share;
-        t->trs      = p->trs;
-        t->lrs      = p->lrs;
-        t->drs      = p->drs;
-        t->dt       = p->dt;
 #endif
-    }
 
-    if (flags & PROC_FILLSTATUS) {              // read /proc/#/task/#/status
-       if (likely( file2str(path, "status", sbuf, sizeof sbuf) != -1 )){
-           status2proc(sbuf, t, 0);
-           if (flags & PROC_FILLSUPGRP)
-               supgrps_from_supgids(t);
-       }
+    if (flags & PROC_FILLSTATUS) {                      // read /proc/#/task/#/status
+        if (likely(file2str(path, "status", sbuf, sizeof sbuf) != -1)) {
+            status2proc(sbuf, t, 0);
+#ifndef QUICK_THREADS
+            if (flags & PROC_FILLSUPGRP)
+                supgrps_from_supgids(t);
+#endif
+        }
     }
 
     /* some number->text resolving which is time consuming */
@@ -853,47 +865,71 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         }
     }
 
-#if 1              // begin active ------------------------
-    if (unlikely(flags & PROC_FILLENV))         // read /proc/#/task/#/environ
-        t->environ = file2strvec(path, "environ");
-    else
-        t->environ = NULL;
+#ifdef QUICK_THREADS
+    if (!p) {
+        if (flags & PROC_FILLMEM)
+            if (likely(file2str(path, "statm", sbuf, sizeof sbuf) != -1))
+                statm2proc(sbuf, t);
 
-    if (flags & (PROC_FILLCOM|PROC_FILLARG)) {  // read /proc/#/task/#/cmdline
-        if (flags & PROC_EDITCMDLCVT)
-            fill_cmdline_cvt(t);
+        if (flags & PROC_FILLSUPGRP)
+            supgrps_from_supgids(t);
+#endif
+        if (unlikely(flags & PROC_FILLENV))             // read /proc/#/task/#/environ
+            t->environ = file2strvec(path, "environ");
         else
-            t->cmdline = file2strvec(path, "cmdline");
-    } else
-        t->cmdline = NULL;
+            t->environ = NULL;
 
-    if ((flags & PROC_FILLCGROUP)               // read /proc/#/task/#/cgroup
-    && linux_version_code >= LINUX_VERSION(2,6,24)) {
-        if (flags & PROC_EDITCGRPCVT)
-            fill_cgroup_cvt(t);
-    else
-            t->cgroup = file2strvec(path, "cgroup");
-    } else
-        t->cgroup = NULL;
-#else              // end active --------------------------
-    t->cmdline = p->cmdline;  // better not free these until done with all threads!
-    t->environ = p->environ;
-    t->cgroup  = p->cgroup;
-    t->supgid  = p->supgid;
-    t->supgrp  = p->supgrp;
-#error we DO NOT BURDEN library users with the above insanity ANYMORE !
-#endif             // end inactive ------------------------
+        if (flags & (PROC_FILLCOM|PROC_FILLARG)) {      // read /proc/#/task/#/cmdline
+            if (flags & PROC_EDITCMDLCVT)
+                fill_cmdline_cvt(path, t);
+            else
+                t->cmdline = file2strvec(path, "cmdline");
+        } else
+            t->cmdline = NULL;
 
-#ifdef OOMEM_ENABLE
-    t->oom_score = p->oom_score;
-    t->oom_adj = p->oom_adj;
+        if ((flags & PROC_FILLCGROUP)                   // read /proc/#/task/#/cgroup
+        && linux_version_code >= LINUX_VERSION(2,6,24)) {
+            if (flags & PROC_EDITCGRPCVT)
+                fill_cgroup_cvt(path, t);
+            else
+                t->cgroup = file2strvec(path, "cgroup");
+        } else
+            t->cgroup = NULL;
+
+#ifdef QUICK_THREADS
+    } else {
+        t->size     = p->size;
+        t->resident = p->resident;
+        t->share    = p->share;
+        t->trs      = p->trs;
+        t->lrs      = p->lrs;
+        t->drs      = p->drs;
+        t->dt       = p->dt;
+        t->cmdline  = p->cmdline;  // better not free these until done with all threads!
+        t->environ  = p->environ;
+        t->cgroup   = p->cgroup;
+        if (t->supgid) free(t->supgid);
+        t->supgid   = p->supgid;
+        t->supgrp   = p->supgrp;
+        MK_THREAD(t);
+    }
 #endif
 
-    t->ppid = p->ppid;  // ought to put the per-task ppid somewhere
+#ifdef OOMEM_ENABLE
+    if (unlikely(flags & PROC_FILLOOM)) {
+        if (likely(file2str(path, "oom_score", sbuf, sizeof sbuf) != -1))
+            oomscore2proc(sbuf, p);
+        if (likely(file2str(path, "oom_adj", sbuf, sizeof sbuf) != -1))
+            oomadj2proc(sbuf, p);
+    }
+#endif
 
     return t;
 next_task:
     return NULL;
+#ifndef QUICK_THREADS
+    (void)p;
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -905,7 +941,7 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
   for (;;) {
     ent = readdir(PT->procfs);
     if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return 0;
-    if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name <= '9') )) break;
+    if(likely(likely(*ent->d_name > '0') && likely(*ent->d_name <= '9'))) break;
   }
   p->tgid = strtoul(ent->d_name, NULL, 10);
   p->tid = p->tgid;
@@ -932,11 +968,11 @@ static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict con
   for (;;) {
     ent = readdir(PT->taskdir);
     if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return 0;
-    if(likely( likely(*ent->d_name > '0') && likely(*ent->d_name <= '9') )) break;
+    if(likely(likely(*ent->d_name > '0') && likely(*ent->d_name <= '9'))) break;
   }
   t->tid = strtoul(ent->d_name, NULL, 10);
   t->tgid = p->tgid;
-  t->ppid = p->ppid;  // cover for kernel behavior? we want both actually...?
+//t->ppid = p->ppid;  // cover for kernel behavior? we want both actually...?
   snprintf(path, PROCPATHLEN, "/proc/%d/task/%s", p->tgid, ent->d_name);
   return 1;
 }
@@ -947,7 +983,7 @@ static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict con
 static int listed_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
   char *restrict const path = PT->path;
   pid_t tgid = *(PT->pids)++;
-  if(likely( tgid )){
+  if(likely(tgid)){
     snprintf(path, PROCPATHLEN, "/proc/%d", tgid);
     p->tgid = tgid;
     p->tid = tgid;  // they match for leaders
@@ -983,7 +1019,7 @@ proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
 
   for(;;){
     // fills in the path, plus p->tid and p->tgid
-    if (unlikely(! PT->finder(PT,p) )) goto out;
+    if (unlikely(!PT->finder(PT,p))) goto out;
 
     // go read the process data
     ret = PT->reader(PT,p);
@@ -1002,7 +1038,7 @@ out:
 // pointer (boolean false).  Use the passed buffer instead of allocating
 // space if it is non-NULL.
 proc_t* readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict t) {
-  static char path[PROCPATHLEN];       // must hold /proc/2000222000/task/2000222000/cmdline
+  char path[PROCPATHLEN];    // must hold /proc/2000222000/task/2000222000/cmdline
   proc_t *ret;
   proc_t *saved_t;
 
@@ -1011,27 +1047,36 @@ proc_t* readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, pro
   else free_acquired(t, 1);
 
   // 1. got to fake a thread for old kernels
-  if(task_dir_missing) {
+#ifdef QUICK_THREADS
+  // 2. for single-threaded processes, this is faster (but must patch up stuff that differs!)
+  if(task_dir_missing || p->nlwp < 2){
+#else
+  if(task_dir_missing){
+#endif
     if(PT->did_fake) goto out;
     PT->did_fake=1;
     memcpy(t,p,sizeof(proc_t));
     // use the per-task pending, not per-tgid pending
 #ifdef SIGNAL_STRING
-      memcpy(&t->signal, &t->_sigpnd, sizeof t->signal);
+    memcpy(&t->signal, &t->_sigpnd, sizeof t->signal);
 #else
-      t->signal = t->_sigpnd;
+    t->signal = t->_sigpnd;
 #endif
+#ifdef QUICK_THREADS
+    MK_THREAD(t);
+#else
     t->environ = NULL;
     t->cmdline = vectorize_this_str("n/a");
     t->cgroup  = NULL;
     t->supgid  = NULL;
     t->supgrp  = NULL;
+#endif
     return t;
   }
 
   for(;;){
     // fills in the path, plus t->tid and t->tgid
-    if (unlikely(! PT->taskfinder(PT,p,t,path) )) goto out;  // simple_nexttid
+    if (unlikely(!PT->taskfinder(PT,p,t,path))) goto out;  // simple_nexttid
 
     // go read the task data
     ret = PT->taskreader(PT,p,t,path);          // simple_readtask
@@ -1042,6 +1087,48 @@ out:
   if(!saved_t) free(t);
   return NULL;
 }
+
+//////////////////////////////////////////////////////////////////////////////////
+// readeither: return a pointer to a proc_t filled with requested info about
+// the next unique process or task available.  If no more are available,
+// return a null pointer (boolean false).  Use the passed buffer instead
+// of allocating space if it is non-NULL.
+extern proc_t* readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
+    static proc_t skel_p;    // skeleton proc_t, only uses tid + tgid
+    static proc_t *new_p;    // for process/task transitions
+    char path[PROCPATHLEN];
+    proc_t *saved_x, *ret;
+
+    saved_x = x;
+    if (!x) x = xcalloc(NULL, sizeof(*x));
+    else free_acquired(x,1);
+    if (new_p) goto next_task;
+
+next_proc:
+    new_p = NULL;
+    for (;;) {
+        // fills in the PT->path, plus skel_p.tid and skel_p.tgid
+        if (!PT->finder(PT,&skel_p)) goto end_procs;       // simple_nextpid
+        if (!task_dir_missing) break;
+        if ((ret = PT->reader(PT,x))) return ret;          // simple_readproc
+    }
+
+next_task:
+    for (;;) {
+        // fills in our path, plus x->tid and x->tgid
+        if ((!(PT->taskfinder(PT,&skel_p,x,path)))         // simple_nexttid
+        || (!(ret = PT->taskreader(PT,new_p,x,path)))) {   // simple_readtask
+            goto next_proc;
+        }
+        if (!new_p) new_p = ret;
+        return ret;
+    }
+
+end_procs:
+    if (!saved_x) free(x);
+    return NULL;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -1116,6 +1203,7 @@ void look_up_our_self(proc_t *p) {
 
 HIDDEN_ALIAS(readproc);
 HIDDEN_ALIAS(readtask);
+HIDDEN_ALIAS(readeither);
 
 /* Convenient wrapper around openproc and readproc to slurp in the whole process
  * table subset satisfying the constraints of flags and the optional PID list.
@@ -1155,6 +1243,7 @@ proc_t** readproctab(int flags, ...) {
 
 // Try again, this time with threads and selection.
 proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), PROCTAB *restrict const PT) {
+    static proc_data_t pd;
     proc_t** ptab = NULL;
     unsigned n_proc_alloc = 0;
     unsigned n_proc = 0;
@@ -1166,8 +1255,6 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
     proc_t*  data = NULL;
     unsigned n_alloc = 0;
     unsigned long n_used = 0;
-
-    proc_data_t *pd;
 
     for(;;){
         proc_t *tmp;
@@ -1198,6 +1285,7 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
             // have to move tmp too
             tmp = data+(tmp-old);
             //if(!data) return NULL;
+            memset(data+n_used+1, 0, sizeof(proc_t)*(n_alloc-(n_used+1)));
           }
           if(n_task_alloc == n_task){
             //proc_t **old = ttab;
@@ -1212,23 +1300,49 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
         }
     }
 
-    pd = malloc(sizeof(proc_data_t));
-    pd->proc = ptab;
-    pd->task = ttab;
-    pd->nproc = n_proc;
-    pd->ntask = n_task;
+    pd.proc  = ptab;
+    pd.task  = ttab;
+    pd.nproc = n_proc;
+    pd.ntask = n_task;
     if(PT->flags & PROC_LOOSE_TASKS){
-      pd->tab = ttab;
-      pd->n   = n_task;
+      pd.tab = ttab;
+      pd.n   = n_task;
     }else{
-      pd->tab = ptab;
-      pd->n   = n_proc;
+      pd.tab = ptab;
+      pd.n   = n_proc;
     }
     // change array indexes to pointers
     while(n_proc--) ptab[n_proc] = data+(long)(ptab[n_proc]);
     while(n_task--) ttab[n_task] = data+(long)(ttab[n_task]);
 
-    return pd;
+    return &pd;
+}
+
+// Try try yet again, this time treating processes and threads the same...
+proc_data_t *readproctab3 (int(*want_task)(proc_t *buf), PROCTAB *restrict const PT) {
+    static proc_data_t pd;
+    proc_t **tab = NULL;
+    unsigned n_alloc = 0;
+    unsigned n_used = 0;
+    proc_t *p = NULL;
+
+    for (;;) {
+        if (n_alloc == n_used) {
+            n_alloc = n_alloc*5/4+30;  // grow by over 25%
+            tab = realloc(tab,sizeof(proc_t*)*n_alloc);
+        }
+        // let this next guy allocate the necessary proc_t storage
+        // (or recycle it) since he can't tolerate realloc relocations
+        if (!(p = readeither_direct(PT,p))) break;
+        if (want_task(p)) {
+            tab[n_used++] = p;
+            p = NULL;
+        }
+    }
+
+    pd.tab = tab;
+    pd.n = n_used;
+    return &pd;
 }
 
 /*
@@ -1256,3 +1370,6 @@ proc_t * get_proc_stats(pid_t pid, proc_t *p) {
 
 	return p;
 }
+
+#undef MK_THREAD
+#undef IS_THREAD

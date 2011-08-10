@@ -14,6 +14,7 @@
 #include "pwcache.h"
 
 #define SIGNAL_STRING
+#define QUICK_THREADS        /* copy (vs. read) some thread info from parent proc_t */
 
 EXTERN_C_BEGIN
 
@@ -44,7 +45,11 @@ typedef struct proc_t {
         pcpu;           // stat (special)  %CPU usage (is not filled in by readproc!!!)
     char
     	state,		// stat,status     single-char code for process state (S=sleeping)
-    	pad_1,		// n/a             padding
+#ifdef QUICK_THREADS
+        pad_1,          // n/a             padding (psst, also used if multi-threaded)
+#else
+        pad_1,          // n/a             padding
+#endif
     	pad_2,		// n/a             padding
     	pad_3;		// n/a             padding
 // 2nd 16 bytes
@@ -185,16 +190,17 @@ typedef struct PROCTAB {
 // Initialize a PROCTAB structure holding needed call-to-call persistent data
 extern PROCTAB* openproc(int flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
 
-typedef struct proc_data_t {
-    proc_t **tab;
-    proc_t **proc;
-    proc_t **task;
-    int n;
-    int nproc;
-    int ntask;
-} proc_data_t;
+typedef struct proc_data_t {  // valued by: (else zero)
+    proc_t **tab;             //     readproctab2, readproctab3
+    proc_t **proc;            //     readproctab2
+    proc_t **task;            //  *  readproctab2
+    int n;                    //     readproctab2, readproctab3
+    int nproc;                //     readproctab2
+    int ntask;                //  *  readproctab2
+} proc_data_t;                //  *  when PROC_LOOSE_TASKS set
 
 extern proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), PROCTAB *restrict const PT);
+extern proc_data_t *readproctab3(int(*want_task)(proc_t *buf), PROCTAB *restrict const PT);
 
 // Convenient wrapper around openproc and readproc to slurp in the whole process
 // table subset satisfying the constraints of flags and the optional PID list.
@@ -207,16 +213,17 @@ extern void closeproc(PROCTAB* PT);
 
 // Retrieve the next process or task matching the criteria set by the openproc().
 //
-// Note: When NULL is used as the readproc 'p' or readtask 't' parameter,
-//       the library will allocate the necessary proc_t storage.
+// Note: When NULL is used as the readproc 'p', readtask 't' or readeither 'x'
+//       parameter, the library will allocate the necessary proc_t storage.
 //
-//       Alternately, you may provide your own reuseable buffer address
+//       Alternatively, you may provide your own reuseable buffer address
 //       in which case that buffer *MUST* be initialized to zero one time
 //       only before first use.  Thereafter, the library will manage such
 //       a passed proc_t, freeing any additional acquired memory associated
 //       with the previous process or thread.
 extern proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p);
 extern proc_t* readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict t);
+extern proc_t* readeither(PROCTAB *restrict const PT, proc_t *restrict x);
 
 // warning: interface may change
 extern int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid);
@@ -254,9 +261,9 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 #define PROC_FILLARG         0x0100 // alloc and fill in `cmdline'
 #define PROC_FILLCGROUP      0x0200 // alloc and fill in `cgroup`
 #define PROC_FILLSUPGRP      0x0400 // resolve supplementary group id -> group name
-#define PROC_FILLOOM         0x0800 // alloc and fill in oom_score, oom_adj
+#define PROC_FILLOOM         0x0800 // fill in proc_t oom_score and oom_adj
 
-#define PROC_LOOSE_TASKS     0x2000 // threat threads as if they were processes
+#define PROC_LOOSE_TASKS     0x2000 // treat threads as if they were processes
 
 // Obsolete, consider only processes with one of the passed:
 #define PROC_PID             0x1000  // process id numbers ( 0   terminated)
