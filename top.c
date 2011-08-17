@@ -222,6 +222,7 @@ SCB_NUM1(SHR, share)
 SCB_NUM1(SID, session)
 SCB_NUMx(STA, state)
 SCB_NUM1(SWP, vm_swap)
+SCB_NUMx(TGD, tgid)
 SCB_NUMx(THD, nlwp)
                                        // also serves TM2 !
 static int SCB_NAME(TME) (const proc_t **P, const proc_t **Q) {
@@ -1203,10 +1204,10 @@ static FLD_t Fieldstab[] = {
    { "SUSER    ",   "%-8.8s ",   -1,     -1,  SF(USN),  L_OUSER,   "Saved User Name"      },
    { "  GID ",      "%5d ",      -1,     -1,  SF(GID),  L_NONE,    "Group Id"             },
    { "GROUP    ",   "%-8.8s ",   -1,     -1,  SF(GRP),  L_EGROUP,  "Group Name"           },
-   { " PGRP ",      "%5d ",      -1,     -1,  SF(PGD),  L_stat,    "Process Group Id"     },
+   { NULL,          NULL,        -1,     -1,  SF(PGD),  L_stat,    "Process Group Id"     },
    { "TTY      ",   "%-8.8s ",    8,     -1,  SF(TTY),  L_stat,    "Controlling Tty"      },
-   { "TPGID ",      "%5d ",      -1,     -1,  SF(TPG),  L_stat,    "Tty Process Grp Id"   },
-   { "  SID ",      "%5d ",      -1,     -1,  SF(SID),  L_stat,    "Session Id"           },
+   { NULL,          NULL,        -1,     -1,  SF(TPG),  L_stat,    "Tty Process Grp Id"   },
+   { NULL,          NULL,        -1,     -1,  SF(SID),  L_stat,    "Session Id"           },
    { " PR ",        "%3d ",      -1,     -1,  SF(PRI),  L_stat,    "Priority"             },
    { " NI ",        "%3d ",      -1,     -1,  SF(NCE),  L_stat,    "Nice Value"           },
    { "nTH ",        "%3d ",      -1,     -1,  SF(THD),  L_EITHER,  "Number of Threads"    },
@@ -1237,7 +1238,8 @@ static FLD_t Fieldstab[] = {
    // next 3 entries as P_CMD/P_WCH: '.head' must be same length -- they share varcolsz
    { "CGROUPS  ",   NULL,        -1,     -1,  SF(CGR),  L_CGROUP,  "Control Groups"       },
    { "SUPGIDS  ",   NULL,        -1,     -1,  SF(SGD),  L_status,  "Supp Groups IDs"      },
-   { "SUPGRPS  ",   NULL,        -1,     -1,  SF(SGN),  L_SUPGRP,  "Supp Groups Names"    }
+   { "SUPGRPS  ",   NULL,        -1,     -1,  SF(SGN),  L_SUPGRP,  "Supp Groups Names"    },
+   { NULL,          NULL,        -1,     -1,  SF(TGD),  L_status,  "Thread Group Id"      }
 #ifdef OOMEM_ENABLE
 #define L_oom      PROC_FILLOOM
   ,{ "Adj ",        "%3d ",      -1,     -1,  SF(OOA),  L_oom,     "oom_adjustment (2^X)" }
@@ -1511,15 +1513,15 @@ static void calibrate_fields (void) {
          *    ( xPRFX has pos 2 & 10 for 'extending' when at minimums )
          *
          * The first 4 screen rows are reserved for explanatory text.
-         * Thus, with our current 38 fields, a maximum of 6 columns and
+         * Thus, with our current 39 fields, a maximum of 6 columns and
          * 1 space between columns, a tty will still remain useable under
          * these extremes:
          *            rows  cols   displayed
          *            ----  ----   ------------------
-         *             11    66    xPRFX only          (w/ room for +4)
-         *             11   198    full xPRFX + xSUFX  (w/ room for +4)
-         *             23    22    xPRFX only
-         *             23    66    full xPRFX + xSUFX
+         *             11    66    xPRFX only          (w/ room for +3)
+         *             11   198    full xPRFX + xSUFX  (w/ room for +3)
+         *             24    22    xPRFX only          (w/ room for +1)
+         *             24    66    full xPRFX + xSUFX  (w/ room for +1)
          *    ( if not, the user deserves our most cryptic messages )
          */
 static void display_fields (int focus, int extend) {
@@ -1657,13 +1659,24 @@ static void fields_utility (void) {
 static void zap_fieldstab (void) {
    static char fmts_pid[8];
    static char fmts_cpu[8];
+   static int once;
    unsigned digits;
    char buf[8];
+
+   if (once) goto always;
 
    Fieldstab[P_PID].head = "  PID ";
    Fieldstab[P_PID].fmts = "%5d ";
    Fieldstab[P_PPD].head = " PPID ";
    Fieldstab[P_PPD].fmts = "%5d ";
+   Fieldstab[P_PGD].head = " PGRP ";
+   Fieldstab[P_PGD].fmts = "%5d ";
+   Fieldstab[P_SID].head = "  SID ";
+   Fieldstab[P_SID].fmts = "%5d ";
+   Fieldstab[P_TGD].head = " TGID ";
+   Fieldstab[P_TGD].fmts = "%5d ";
+   Fieldstab[P_TPG].head = "TPGID ";
+   Fieldstab[P_TPG].fmts = "%5d ";
    if (5 < (digits = get_pid_digits())) {
       if (10 < digits) error_exit("failed pid size test");
       snprintf(fmts_pid, sizeof(fmts_pid), "%%%uu ", digits);
@@ -1671,8 +1684,19 @@ static void zap_fieldstab (void) {
       Fieldstab[P_PID].fmts = fmts_pid;
       Fieldstab[P_PPD].head = "      PPID " + 10 - digits;
       Fieldstab[P_PPD].fmts = fmts_pid;
+      Fieldstab[P_PGD].head = "      PGRP " + 10 - digits;
+      Fieldstab[P_PGD].fmts = fmts_pid;
+      Fieldstab[P_SID].head = "       SID " + 10 - digits;
+      Fieldstab[P_SID].fmts = fmts_pid;
+      Fieldstab[P_TGD].head = "      TGID " + 10 - digits;
+      Fieldstab[P_TGD].fmts = fmts_pid;
+      Fieldstab[P_TPG].head = "     TPGID " + 10 - digits;
+      Fieldstab[P_TPG].fmts = fmts_pid;
    }
+   once = 1;
 
+   /*** hotplug_acclimated ***/
+always:
    Fieldstab[P_CPN].head = "P ";
    Fieldstab[P_CPN].fmts = "%1d ";
    if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_tot))) {
@@ -1969,11 +1993,13 @@ static void sysinfo_refresh (int forced) {
       mem_secs = cpu_secs = 0;
    time(&cur_secs);
 
+   /*** hotplug_acclimated ***/
    if (3 <= cur_secs - mem_secs) {
       meminfo();
       mem_secs = cur_secs;
    }
 #ifndef PRETEND4CPUS
+   /*** hotplug_acclimated ***/
    if (300 <= cur_secs - cpu_secs) {
       cpuinfo();
       cpu_secs = cur_secs;
@@ -3289,6 +3315,9 @@ static void task_show (const WIN_t *q, const proc_t *p) {
             break;
          case P_SWP:
             makeCOL(scale_num(p->vm_swap, w, s));
+            break;
+         case P_TGD:
+            makeCOL(p->tgid);
             break;
          case P_THD:
             makeCOL(p->nlwp);

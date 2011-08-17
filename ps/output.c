@@ -100,13 +100,17 @@ static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
     return 0; \
 }
 
-/* fast version, for values which either:
+/* fast versions, for values which either:
  * a. differ by no more than 0x7fffffff
  * b. only need to be grouped same w/ same
  */
 #define CMP_SMALL(NAME) \
 static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
     return (int)(P->NAME) - (int)(Q->NAME); \
+}
+#define CMP_SMALL2(NAME,WHAT) \
+static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
+    return (int)(P->WHAT) - (int)(Q->WHAT); \
 }
 
 CMP_INT(rtprio)
@@ -172,8 +176,8 @@ CMP_INT(suid)
 CMP_INT(sgid)
 CMP_INT(fuid)
 CMP_INT(fgid)
-CMP_SMALL(tid)
-CMP_SMALL(tgid)
+CMP_SMALL2(procs,tgid)
+CMP_SMALL2(tasks,tid)
 CMP_SMALL(ppid)
 CMP_SMALL(pgrp)
 CMP_SMALL(session)
@@ -337,14 +341,12 @@ Modifications to the arguments are not shown.
  * ( determinations are made in display.c, we mostly deal with results ) */
 static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp = outbuf;
-  unsigned flags;
-  int rightward=max_rightward;
+  int rightward = max_rightward;
+  int fh = forest_helper(outbuf);
 
-  if(forest_prefix){
-    int fh = forest_helper(outbuf);
-    endp += fh;
-    rightward -= fh;
-  }
+  endp += fh;
+  rightward -= fh;
+
   if(pp->cmdline && !bsd_c_option)
     endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE, &rightward);
   else
@@ -363,14 +365,12 @@ static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp)
  * ( determinations are made in display.c, we mostly deal with results ) */
 static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp = outbuf;
-  unsigned flags;
-  int rightward=max_rightward;
+  int rightward = max_rightward;
+  int fh = forest_helper(outbuf);
 
-  if(forest_prefix){
-    int fh = forest_helper(outbuf);
-    endp += fh;
-    rightward -= fh;
-  }
+  endp += fh;
+  rightward -= fh;
+
   if(pp->cmdline && unix_f_option)
     endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE, &rightward);
   else
@@ -398,12 +398,11 @@ static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp
 static int pr_fname(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp = outbuf;
   int rightward = max_rightward;
+  int fh = forest_helper(outbuf);
 
-  if(forest_prefix){
-    int fh = forest_helper(outbuf);
-    endp += fh;
-    rightward -= fh;
-  }
+  endp += fh;
+  rightward -= fh;
+
   if (rightward>8)  /* 8=default, but forest maybe feeds more */
     rightward = 8;
 
@@ -471,9 +470,6 @@ static int pr_cp(char *restrict const outbuf, const proc_t *restrict const pp){
 
 static int pr_pgid(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%u", pp->pgrp);
-}
-static int pr_pid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%u", pp->tgid);
 }
 static int pr_ppid(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%u", pp->ppid);
@@ -1085,8 +1081,12 @@ static int pr_sgroup(char *restrict const outbuf, const proc_t *restrict const p
 
 //////////////////////////////////////////////////////////////////////////////////
 
-// TID tid LWP lwp SPID spid
-static int pr_thread(char *restrict const outbuf, const proc_t *restrict const pp){
+// PID pid, TGID tgid
+static int pr_procs(char *restrict const outbuf, const proc_t *restrict const pp){
+  return snprintf(outbuf, COLWID, "%u", pp->tgid);
+}
+// LWP lwp, SPID spid, TID tid
+static int pr_tasks(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%u", pp->tid);
 }
 // thcount THCNT
@@ -1378,7 +1378,7 @@ static const format_struct format_array[] = {
 {"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, ET|RIGHT},
 {"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, ET|RIGHT}, /* login ID */
 {"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, ET|USER}, /* login USER */
-{"lwp",       "LWP",     pr_thread,   sr_tid,     5,   0,    SUN, TO|PIDMAX|RIGHT},
+{"lwp",       "LWP",     pr_tasks,    sr_tasks,   5,   0,    SUN, TO|PIDMAX|RIGHT},
 {"m_drs",     "DRS",     pr_drs,      sr_drs,     5, MEM,    LNx, PO|RIGHT},
 {"m_dt",      "DT",      pr_nop,      sr_dt,      4, MEM,    LNx, PO|RIGHT},
 {"m_lrs",     "LRS",     pr_nop,      sr_lrs,     5, MEM,    LNx, PO|RIGHT},
@@ -1414,7 +1414,7 @@ static const format_struct format_array[] = {
 {"pending",   "PENDING", pr_sig,      sr_nop,     9,   0,    BSD, ET|SIGNAL}, /*sig*/
 {"pgid",      "PGID",    pr_pgid,     sr_pgrp,    5,   0,    U98, PO|PIDMAX|RIGHT},
 {"pgrp",      "PGRP",    pr_pgid,     sr_pgrp,    5,   0,    LNX, PO|PIDMAX|RIGHT},
-{"pid",       "PID",     pr_pid,      sr_tgid,    5,   0,    U98, PO|PIDMAX|RIGHT},
+{"pid",       "PID",     pr_procs,    sr_procs,   5,   0,    U98, PO|PIDMAX|RIGHT},
 {"pmem",      "%MEM",    pr_pmem,     sr_nop,     4,   0,    XXX, PO|RIGHT}, /*%mem*/
 {"poip",      "-",       pr_nop,      sr_nop,     1,   0,    BSD, AN|RIGHT},
 {"policy",    "POL",     pr_class,    sr_sched,   3,   0,    DEC, TO|LEFT},
@@ -1465,7 +1465,7 @@ static const format_struct format_array[] = {
 {"sigmask",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*blocked*/
 {"size",      "SZ",      pr_swapable, sr_swapable, 5,  0,    SCO, PO|RIGHT},
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, AN|RIGHT},
-{"spid",      "SPID",    pr_thread,   sr_tid,     5,   0,    SGI, TO|PIDMAX|RIGHT},
+{"spid",      "SPID",    pr_tasks,    sr_tasks,   5,   0,    SGI, TO|PIDMAX|RIGHT},
 {"stackp",    "STACKP",  pr_stackp,   sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*start_stack*/
 {"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, ET|RIGHT},
 {"start_code", "S_CODE",  pr_nop,     sr_start_code, 8, 0,   LNx, PO|RIGHT},
@@ -1488,7 +1488,8 @@ static const format_struct format_array[] = {
 {"taskid",    "TASKID",  pr_nop,      sr_nop,     5,   0,    SUN, TO|PIDMAX|RIGHT}, // is this a thread ID?
 {"tdev",      "TDEV",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
 {"thcount",   "THCNT",   pr_nlwp,     sr_nlwp,    5,   0,    AIX, PO|RIGHT},
-{"tid",       "TID",     pr_thread,   sr_tid,     5,   0,    AIX, TO|PIDMAX|RIGHT},
+{"tgid",      "TGID",    pr_procs,    sr_procs,   5,   0,    LNX, PO|PIDMAX|RIGHT},
+{"tid",       "TID",     pr_tasks,    sr_tasks,   5,   0,    AIX, TO|PIDMAX|RIGHT},
 {"time",      "TIME",    pr_time,     sr_nop,     8,   0,    U98, ET|RIGHT}, /*cputime*/ /* was 6 wide */
 {"timeout",   "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
 {"tmout",     "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era

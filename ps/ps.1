@@ -147,7 +147,7 @@ To see every process with a user\-defined format:
 .br
 .B ps\ axo\ stat,euid,ruid,tty,tpgid,sess,pgrp,ppid,pid,pcpu,comm
 .br
-.B ps\ \-eopid,tt,user,fname,tmout,f,wchan
+.B ps\ \-Ao\ pid,tt,user,fname,tmout,f,wchan
 .TP
 Print only the process IDs of syslogd:
 .B ps\ \-C\ syslogd\ \-o\ pid=
@@ -1087,8 +1087,9 @@ See also \fBbsdstart\fR, \fBstart\fR, \fBstart_time\fR, and \fBstime\fR.
 T}
 
 lwp	LWP	T{
-lwp (light weight process, or thread) ID of the lwp being reported.
+light weight process (thread) ID of the dispatchable entity
 (alias\ \fBspid\fR,\ \fBtid\fR).
+See \fBtid\fR for additional information.
 T}
 
 maj_flt	MAJFLT	T{
@@ -1140,7 +1141,8 @@ see\ \fBpgid\fR.  (alias\ \fBpgid\fR).
 T}
 
 pid	PID	T{
-process\ ID number of the process.
+a number representing the process ID
+(alias\ \fBtgid\fR).
 T}
 
 pmem	%MEM	T{
@@ -1355,13 +1357,25 @@ Device mappings are currently excluded; this is subject to change.
 See \fBvsz\fR and \fBrss\fR.
 T}
 
+tgid	TGID	T{
+a number representing the thread group to which a task
+belongs (alias\ \fBpid\fR).
+It is the process ID of the thread group leader.
+T}
+
 thcount	THCNT	T{
 see \fBnlwp\fR.  (alias\ \fBnlwp\fR).
 number of kernel threads owned by the process.
 T}
 
 tid	TID	T{
-see\ \fBlwp\fR.  (alias\ \fBlwp\fR).
+the unique number representing a dispatacable entity
+(alias\ \fBlwp\fR,\ \fBspid\fR).
+This value may also appear as: a process ID (pid);
+a process group ID (pgrp);
+a session ID for the session leader (sid);
+a thread group ID for the thread group leader (tgid);
+and a tty process group ID for the process group leader (tpgid).
 T}
 
 time	TIME	T{

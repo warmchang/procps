@@ -555,9 +555,11 @@ member of a process group, called the process group leader.
 17.\fB PID \*(Em Process Id \fR
 The task's unique process ID, which periodically wraps, though never
 restarting at zero.
+In kernel terms, it is a dispatchable entity defined by a 'task_struct'.
 
 This value may also be used as: a process group ID (\*(Xa PGRP);
 a session ID for the session leader (\*(Xa SID);
+a thread group ID for the thread group leader (\*(Xa TGID);
 and a TTY process group ID for the process group leader (\*(Xa TPGID).
 
 .TP 4
@@ -649,7 +651,13 @@ The\fI saved\fR user name.
 The non-resident portion of a task's address space.
 
 .TP 4
-31.\fB TIME \*(Em \*(PU Time \fR
+31.\fB TGID \*(Em Thread Group Id \fR
+The ID of the thread group to which a task belongs.
+It is the PID of the thread group leader.
+In kernel terms, it represents those tasks that share an 'mm_struct'.
+
+.TP 4
+32.\fB TIME \*(Em \*(PU Time \fR
 Total \*(PU time the task has used since it started.
 When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
 time that it and its dead children have used.
@@ -657,19 +665,19 @@ You toggle 'Cumulative mode' with 'S', which is both a \*(CO and an \*(CI.
 \*(XC 'S' \*(CI for additional information regarding this mode.
 
 .TP 4
-32.\fB TIME+ \*(Em \*(PU Time, hundredths \fR
+33.\fB TIME+ \*(Em \*(PU Time, hundredths \fR
 The same as 'TIME', but reflecting more granularity through hundredths
 of a second.
 
 .TP 4
-33.\fB TPGID \*(Em Tty Process Group Id \fR
+34.\fB TPGID \*(Em Tty Process Group Id \fR
 The process group ID of the foreground process for the connected tty,
 or -1 if a process is not connected to a terminal.
 By convention, this value equals the process ID (\*(Xa PID) of the
 the process group leader (\*(Xa PGRP).
 
 .TP 4
-34.\fB TTY \*(Em Controlling Tty \fR
+35.\fB TTY \*(Em Controlling Tty \fR
 The name of the controlling terminal.
 This is usually the device (serial port, pty, etc.) from which the
 process was started, and which it uses for input or output.
@@ -677,21 +685,21 @@ However, a task need not be associated with a terminal, in which case
 you'll see '?' displayed.
 
 .TP 4
-35.\fB UID \*(Em User Id \fR
+36.\fB UID \*(Em User Id \fR
 The\fI effective\fR user ID of the task's owner.
 
 .TP 4
-36.\fB USER \*(Em User Name \fR
+37.\fB USER \*(Em User Name \fR
 The\fI effective\fR user name of the task's owner.
 
 .TP 4
-37.\fB VIRT \*(Em Virtual Memory Size (kb) \fR
+38.\fB VIRT \*(Em Virtual Memory Size (kb) \fR
 The total amount of \*(MV used by the task.
 It includes all code, data and shared libraries plus pages that have been
 swapped out and pages that have been mapped but not used.
 
 .TP 4
-38.\fB WCHAN \*(Em Sleeping in Function \fR
+39.\fB WCHAN \*(Em Sleeping in Function \fR
 Depending on the availability of the kernel link map ('System.map'), this
 field will show the name or the address of the kernel function in which the
 task is currently sleeping.

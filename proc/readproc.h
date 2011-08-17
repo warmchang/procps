@@ -139,7 +139,7 @@ typedef struct proc_t {
 	pgrp,		// stat            process group id
 	session,	// stat            session id
 	nlwp,		// stat,status     number of threads, or 0 if no clue
-	tgid,		// (special)       task group ID, the POSIX PID (see also: tid)
+	tgid,		// (special)       thread group ID, the POSIX PID (see also: tid)
 	tty,		// stat            full device number of controlling terminal
         euid, egid,     // stat(),status   effective
         ruid, rgid,     // status          real

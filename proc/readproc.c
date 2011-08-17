@@ -918,9 +918,9 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
 #ifdef OOMEM_ENABLE
     if (unlikely(flags & PROC_FILLOOM)) {
         if (likely(file2str(path, "oom_score", sbuf, sizeof sbuf) != -1))
-            oomscore2proc(sbuf, p);
+            oomscore2proc(sbuf, t);
         if (likely(file2str(path, "oom_adj", sbuf, sizeof sbuf) != -1))
-            oomadj2proc(sbuf, p);
+            oomadj2proc(sbuf, t);
     }
 #endif
 

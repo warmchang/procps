@@ -129,7 +129,7 @@ enum pflag {
    P_MEM, P_VRT, P_SWP, P_RES, P_COD, P_DAT, P_SHR,
    P_FL1, P_FL2, P_DRT,
    P_STA, P_CMD, P_WCH, P_FLG, P_CGR,
-   P_SGD, P_SGN,
+   P_SGD, P_SGN, P_TGD,
 #ifdef OOMEM_ENABLE
    P_OOA, P_OOM,
 #endif
