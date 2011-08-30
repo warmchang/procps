@@ -35,6 +35,7 @@
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
 //#define STRCMPNOCASE            /* use strcasecmp vs. strcmp when sorting  */
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
+//#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 
 
@@ -149,7 +150,7 @@ enum scale_num {
 };
 
         /* This typedef just ensures consistent 'process flags' handling */
-typedef unsigned FLG_t;
+typedef unsigned char FLG_t;
 
         /* These typedefs attempt to ensure consistent 'ticks' handling */
 typedef unsigned long long TIC_t;
@@ -233,6 +234,7 @@ typedef struct CPU_t {
 #define Show_CTIMES  0x000040     // 'S' - show times as cumulative
 #define Show_IDLEPS  0x000020     // 'i' - show idle processes (all tasks)
 #define Show_TASKON  0x000010     // '-' - tasks showable when Mode_altscr
+#define Show_FOREST  0x000002     // 'V' - show cmd/cmdlines with ascii art
 #define Qsrt_NORMAL  0x000004     // 'R' - reversed column sort (high to low)
         // these flag(s) have no command as such - they're for internal use
 #define EQUWINS_xxx  0x000001     // rebalance all wins & tasks (off 'i'/ 'n')
@@ -307,6 +309,7 @@ typedef struct WIN_t {
 #endif
          *eolcap,                      // window specific eol termcap
          *captab [CAPTABMAX];          // captab needed by show_special()
+   proc_t **ppt;                       // this window's proc_t ptr array
    struct WIN_t *next,                 // next window in window stack
                 *prev;                 // prior window in window stack
 } WIN_t;
@@ -325,6 +328,14 @@ typedef struct WIN_t {
 #define FLDget(q,i)  ((FLG_t)((q)->rc.fieldscur[i] & 0x7f) - FLD_OFFSET)
 #define FLDtog(q,i)  ((q)->rc.fieldscur[i] ^= 0x80)
 #define FLDviz(q,i)  ((q)->rc.fieldscur[i] &  0x80)
+#define ENUchk(w,E)  (NULL != strchr((w)->rc.fieldscur, (E + FLD_OFFSET) | 0x80))
+#define ENUset(w,E)  do { char *t; \
+      if ((t = strchr((w)->rc.fieldscur, E + FLD_OFFSET))) \
+         *t = (E + FLD_OFFSET) | 0x80; \
+   /* else fieldscur char already has high bit on! */ \
+   } while (0)
+#define ENUviz(w,E)  (NULL != memchr((w)->procflgs, E, (w)->maxpflgs))
+
 
         /* Special Section: end ------------------------------------------ */
         /* /////////////////////////////////////////////////////////////// */
@@ -495,7 +506,7 @@ typedef struct WIN_t {
    "  f,F       Manage Fields: add/remove; change order; select sort field\n" \
    "\n" \
    "  <,>     . Move sort field: '\01<\02' next col left; '\01>\02' next col right\n" \
-   "  R,H     . Toggle: '\01R\02' normal/reverse sort; '\01H\02' show threads\n" \
+   "  R,H,V   . Toggle: '\01R\02' norm/rev sort; '\01H\02' show threads; '\01V\02' forest view\n" \
    "  c,i,S   . Toggle: '\01c\02' cmd name/line; '\01i\02' idle tasks; '\01S\02' cumulative time\n" \
    "  x\05,\01y\05     . Toggle highlights: '\01x\02' sort field; '\01y\02' running tasks\n" \
    "  z\05,\01b\05     . Toggle: '\01z\02' color/mono; '\01b\02' bold/reverse (only if 'x' or 'y')\n" \
@@ -649,7 +660,7 @@ typedef struct WIN_t {
 //atic inline void   hstput (unsigned idx);
 #endif
 //atic void          prochlp (proc_t *p);
-//atic proc_t      **procs_refresh (proc_t **ppt);
+//atic void          procs_refresh (void);
 //atic void          sysinfo_refresh (int forced);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
@@ -673,12 +684,16 @@ typedef struct WIN_t {
 //atic void          keys_task (int ch);
 //atic void          keys_window (int ch);
 //atic void          keys_xtra (int ch);
+/*------  Forest View support  -------------------------------------------*/
+//atic void          forest_add (const int self, const int level);
+//atic void          forest_create (WIN_t *q);
+//atic inline const char *forest_display (const WIN_t *q, const proc_t *p);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void          do_key (int ch);
 //atic void          summaryhlp (CPU_t *cpu, const char *pfx);
-//atic proc_t      **summary_show (void);
+//atic void          summary_show (void);
 //atic void          task_show (const WIN_t *q, const proc_t *p);
-//atic int           window_show (proc_t **ppt, WIN_t *q, int wmax);
+//atic int           window_show (WIN_t *q, int wmax);
 /*------  Entry point plus two  ------------------------------------------*/
 //atic void          framehlp (int wix, int max);
 //atic void          frame_make (void);

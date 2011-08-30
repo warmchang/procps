@@ -75,7 +75,7 @@ static unsigned Pg2K_shft = 0;
         /* SMP, Irix/Solaris mode, Linux 2.5.xx support */
         /* (assume no IO-wait stats, overridden if linux 2.5.41) */
 static int         Cpu_tot;
-static float       Cpu_pmax = 99.9;    // for %CPU display (may later change!)
+static float       Cpu_pmax;
 static const char *Cpu_States_fmts = STATES_line2x4;
 
         /* Specific process id monitoring support */
@@ -137,7 +137,7 @@ static int   Cap_can_goto = 0;
            The Stdout_buf is transparent to our code and regardless of whose
            buffer is used, stdout is flushed at frame end or if interactive. */
 static char  *Pseudo_screen;
-static int    Pseudo_row;
+static int    Pseudo_row = -1;
 static size_t Pseudo_size;
 #ifndef OFF_STDIOLBF
         // less than stdout's normal buffer but with luck mostly '\n' anyway
@@ -162,6 +162,7 @@ static volatile int Frames_paused;     // become a paused background job
    // Frames_resize set by do_key() & sig_resize(), unset by calibrate_fields()
 static volatile int Frames_resize;     // time to rebuild all column headers
 static          int Frames_libflags;   // PROC_FILLxxx flags
+
 static int          Frame_maxtask;     // last known number of active tasks
                                        // ie. current 'size' of proc table
 static float        Frame_etscale;     // so we can '*' vs. '/' WHEN 'pcpu'
@@ -332,7 +333,7 @@ static void bye_bye (const char *str) {
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
       "\n\t   Page_size = %d, Cpu_tot = %d"
       "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%u HST_t's/Page), HHist_siz = %u"
-      "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t *) = %u"
+      "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t*) = %u"
       "\n\t   Frames_libflags = %08lX"
       "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
       "\n\tTerminal: %s"
@@ -364,7 +365,7 @@ static void bye_bye (const char *str) {
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
       , Page_size, Cpu_tot
       , (unsigned) sizeof(CPU_t), (unsigned)sizeof(HST_t), Page_size / (unsigned)sizeof(HST_t), HHist_siz
-      , (unsigned)sizeof(*p), (unsigned)sizeof(p->cmd), (unsigned)sizeof(p)
+      , (unsigned)sizeof(proc_t), (unsigned)sizeof(p->cmd), (unsigned)sizeof(proc_t*)
       , (long)Frames_libflags
       , (unsigned)SCREENMAX, (unsigned)ROWMINSIZ, (unsigned)ROWMAXSIZ
 #ifdef PRETENDNOCAP
@@ -1186,7 +1187,7 @@ static FLD_t Fieldstab[] = {
 
 /* .head + .fmts anomolies:
         entries shown with NULL are either valued at runtime (see zap_fieldstab)
-        or, in the case of .fmts, represent variable width fields
+        or, in the case of .fmts, may represent variable width fields
    .lflg anomolies:
         P_UED, L_NONE  - natural outgrowth of 'stat()' in readproc        (euid)
         P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
@@ -1212,7 +1213,7 @@ static FLD_t Fieldstab[] = {
    { " NI ",        "%3d ",      -1,     -1,  SF(NCE),  L_stat,    "Nice Value"           },
    { "nTH ",        "%3d ",      -1,     -1,  SF(THD),  L_EITHER,  "Number of Threads"    },
    { NULL,          NULL,        -1,     -1,  SF(CPN),  L_stat,    "Last Used Cpu (SMP)"  },
-   { "%CPU ",       NULL,        -1,     -1,  SF(CPU),  L_stat,    "CPU Usage"            },
+   { " %CPU ",      NULL,        -1,     -1,  SF(CPU),  L_stat,    "CPU Usage"            },
    { "  TIME ",     "%6.6s ",     6,     -1,  SF(TME),  L_stat,    "CPU Time"             },
    { "   TIME+  ",  "%9.9s ",     9,     -1,  SF(TME),  L_stat,    "CPU Time, hundredths" },
    { "%MEM ",       "%#4.1f ",   -1,     -1,  SF(RES),  L_statm,   "Memory Usage (RES)"   },
@@ -1452,6 +1453,8 @@ static void calibrate_fields (void) {
          if (Screen_cols > (int)strlen(w->columnhdr)) w->eolcap = Caps_endline;
          else w->eolcap = Caps_off;
 #endif
+         // to show only 'busy' processes requires L_stat...
+         if (!CHKw(w, Show_IDLEPS)) Frames_libflags |= L_stat;
          // we must also accommodate an out of view sort field...
          f = w->rc.sortindx;
          Frames_libflags |= Fieldstab[f].lflg;
@@ -1604,7 +1607,7 @@ static void fields_utility (void) {
       if (!h) for (h = Fieldstab[f].head; ' ' == *h; ++h) ;
       display_fields(i, (p != NULL));
       putp(Cap_home);
-      show_special(1, fmtmk(FIELDS_heading, w->grpname, h));
+      show_special(1, fmtmk(FIELDS_heading, w->grpname, CHKw(w, Show_FOREST) ? "forest view" : h));
 
       switch (key = keyin(0)) {
          case kbd_UP:
@@ -1633,7 +1636,11 @@ static void fields_utility (void) {
             if (!p) { FLDtog(w, i); unSCRL }
             break;
          case 's':
-            if (!p) { w->rc.sortindx = f = FLDget(w, i); h = NULL; unSCRL }
+#ifdef TREE_NORESET
+            if (!p && !CHKw(w, Show_FOREST)) { w->rc.sortindx = f = FLDget(w, i); h = NULL; unSCRL }
+#else
+            if (!p) { w->rc.sortindx = f = FLDget(w, i); h = NULL; unSCRL; OFFw(w, Show_FOREST); }
+#endif
             break;
          case 'a':
          case 'w':
@@ -1707,11 +1714,18 @@ always:
    }
 
    Cpu_pmax = 99.0;
-   Fieldstab[P_CPU].fmts = "%#4.1f ";
+   Fieldstab[P_CPU].fmts = " %#4.1f ";
    if (Rc.mode_irixps && Cpu_tot > 1 && !Thread_mode) {
-      Cpu_pmax = 9999.0;
-      Fieldstab[P_CPU].fmts = "%4.0f ";
+      Cpu_pmax = 999.0;
+      Fieldstab[P_CPU].fmts = "%#5.1f ";
+      if (Cpu_tot > 10) {
+         Cpu_pmax = 99999.0;
+         Fieldstab[P_CPU].fmts = "%5.0f ";
+      }
    }
+
+   // lastly, ensure we've got proper column headers...
+   calibrate_fields();
 } // end: zap_fieldstab
 
 /*######  Library Interface  #############################################*/
@@ -1733,7 +1747,6 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    if (sav_cpus != smp_num_cpus) {
       Cpu_tot = sav_cpus = smp_num_cpus;
       zap_fieldstab();
-      calibrate_fields();
       if (fp) { fclose(fp); fp = NULL; }
       if (cpus) { free(cpus); cpus = NULL; }
    }
@@ -1930,13 +1943,13 @@ static void prochlp (proc_t *this) {
          * This guy's modeled on libproc's 'readproctab' function except
          * we reuse and extend any prior proc_t's.  He's been customized
          * for our specific needs and to avoid the use of <stdarg.h> */
-static proc_t **procs_refresh (proc_t **ppt) {
- #define PTRsz  sizeof(proc_t *)
- #define ENTsz  sizeof(proc_t)
+static void procs_refresh (void) {
+   static proc_t **private_ppt;        // our base proc_t pointer table
    static unsigned savmax = 0;         // first time, Bypass: (i)
-   proc_t *ptask = (proc_t *)-1;       // first time, Force: (ii)
+   proc_t *ptask = (proc_t*)-1;        // first time, Force: (ii)
    unsigned curmax = 0;                // every time  (jeeze)
    PROCTAB* PT;
+   int i;
    proc_t*(*read_something)(PROCTAB*, proc_t*);
 
    prochlp(NULL);                      // prep for a new frame
@@ -1946,36 +1959,32 @@ static proc_t **procs_refresh (proc_t **ppt) {
 
    // i) Allocated Chunks:  *Existing* table;  refresh + reuse
    while (curmax < savmax) {
-      if (!(ptask = read_something(PT, ppt[curmax]))) break;
-      prochlp(ptask);               // tally & complete this proc_t
+      if (!(ptask = read_something(PT, private_ppt[curmax]))) break;
+      prochlp(ptask);                  // tally & complete this proc_t
       ++curmax;
    }
 
    // ii) Unallocated Chunks:  *New* or *Existing* table;  extend + fill
    while (ptask) {
       // realloc as we go, keeping 'ppt' ahead of 'currmax++'
-      ppt = alloc_r(ppt, (curmax + 1) * PTRsz);
+      private_ppt = alloc_r(private_ppt, (curmax + 1) * sizeof(proc_t*));
       // here, the library will allocate the underlying proc_t stg
       if ((ptask = read_something(PT, NULL))) {
-         prochlp(ptask);            // tally & complete this proc_t
-         ppt[curmax++] = ptask;
+         prochlp(ptask);               // tally & complete this proc_t
+         private_ppt[curmax++] = ptask;
       }
    }
 
    closeproc(PT);
 
-   // iii) Chunkless:  make 'eot' entry, after ensuring proc_t exists
-   if (curmax >= savmax) {
-      ppt = alloc_r(ppt, (curmax + 1) * PTRsz);
-      // here, we must allocate the underlying proc_t stg ourselves
-      ppt[curmax] = alloc_c(ENTsz);
-      savmax = curmax + 1;
+   // iii) Chunkless:  End frame, but not necessarily end of allocated space
+   if (savmax < curmax) savmax = curmax;
+
+   // lastly, refresh each window's proc pointers table...
+   for (i = 0; i < GROUPSMAX; i++) {
+      Winstk[i].ppt = alloc_r(Winstk[i].ppt, savmax * sizeof(proc_t*));
+      memcpy(Winstk[i].ppt, private_ppt, Frame_maxtask * sizeof(proc_t*));
    }
-   // this frame's end, but not necessarily end of allocated space
-   ppt[curmax]->tid = -1;
-   return ppt;
- #undef PTRsz
- #undef ENTsz
 } // end: procs_refresh
 
 
@@ -2042,9 +2051,6 @@ static void before (char *me) {
    memcpy(HHash_one, HHash_nul, sizeof(HHash_nul));
    memcpy(HHash_two, HHash_nul, sizeof(HHash_nul));
 #endif
-
-   // lastly, fill in the missing Fieldstab .head and .fmts members
-   zap_fieldstab();
 } // end: before
 
 
@@ -2128,8 +2134,8 @@ static void configs_read (void) {
                goto just_default_em;
 #endif
          }
-         fscanf(fp, "\twinflags=%d, sortindx=%u, maxtasks=%d\n"
-            , &Winstk[i].rc.winflags, &Winstk[i].rc.sortindx, &Winstk[i].rc.maxtasks);
+         fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
+            , &Winstk[i].rc.winflags, (int*)&Winstk[i].rc.sortindx, &Winstk[i].rc.maxtasks);
          fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
             , &Winstk[i].rc.summclr, &Winstk[i].rc.msgsclr
             , &Winstk[i].rc.headclr, &Winstk[i].rc.taskclr);
@@ -2585,8 +2591,9 @@ static void wins_stage_2 (void) {
    }
    if (Batch)
       OFFw(Curwin, View_SCROLL);
-   // this guy will build each window's columnhdr
-   calibrate_fields();
+
+   // fill in missing Fieldstab members and build each window's columnhdr
+   zap_fieldstab();
 } // end: wins_stage_2
 
 /*######  Interactive Input support (do_key helpers)  ####################*/
@@ -2612,7 +2619,7 @@ static void file_writerc (void) {
       fprintf(fp, "%s\tfieldscur=%s\n"
          , Winstk[i].rc.winname, Winstk[i].rc.fieldscur);
       fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-         , Winstk[i].rc.winflags, Winstk[i].rc.sortindx
+         , Winstk[i].rc.winflags, (int)Winstk[i].rc.sortindx
          , Winstk[i].rc.maxtasks);
       fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
          , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
@@ -2686,14 +2693,13 @@ static void keys_global (int ch) {
          break;
       case 'H':
          Thread_mode = !Thread_mode;
-         show_msg(fmtmk("Show threads %s", Thread_mode ? "On" : "Off"));
-         zap_fieldstab();
+         if (!CHKw(w, View_STATES))
+            show_msg(fmtmk("Show threads %s", Thread_mode ? "On" : "Off"));
          break;
       case 'I':
          if (Cpu_tot > 1) {
             Rc.mode_irixps = !Rc.mode_irixps;
             show_msg(fmtmk("Irix mode %s", Rc.mode_irixps ? "On" : "Off"));
-            zap_fieldstab();
          } else
             show_msg(err_notsmp);
          break;
@@ -2770,6 +2776,9 @@ static void keys_task (int ch) {
          }
          break;
       case '<':
+#ifdef TREE_NORESET
+         if (CHKw(w, Show_FOREST)) break;
+#endif
          if (VIZCHKw(w)) {
             FLG_t *p = w->procflgs + w->maxpflgs - 1;
             while (p > w->procflgs && *p != w->rc.sortindx) --p;
@@ -2778,11 +2787,19 @@ static void keys_task (int ch) {
 #ifndef USE_X_COLHDR
                if (P_MAXPFLGS < *p) --p;
 #endif
-               if (p >= w->procflgs) w->rc.sortindx = *p;
+               if (p >= w->procflgs) {
+                  w->rc.sortindx = *p;
+#ifndef TREE_NORESET
+                  OFFw(w, Show_FOREST);
+#endif
+               }
             }
          }
          break;
       case '>':
+#ifdef TREE_NORESET
+         if (CHKw(w, Show_FOREST)) break;
+#endif
          if (VIZCHKw(w)) {
             FLG_t *p = w->procflgs + w->maxpflgs - 1;
             while (p > w->procflgs && *p != w->rc.sortindx) --p;
@@ -2791,7 +2808,12 @@ static void keys_task (int ch) {
 #ifndef USE_X_COLHDR
                if (P_MAXPFLGS < *p) ++p;
 #endif
-               if (p < w->procflgs + w->maxpflgs) w->rc.sortindx = *p;
+               if (p < w->procflgs + w->maxpflgs) {
+                  w->rc.sortindx = *p;
+#ifndef TREE_NORESET
+                  OFFw(w, Show_FOREST);
+#endif
+               }
             }
          }
          break;
@@ -2816,7 +2838,14 @@ static void keys_task (int ch) {
          VIZTOGw(w, Show_IDLEPS);
          break;
       case 'R':
-         VIZTOGw(w, Qsrt_NORMAL);
+#ifdef TREE_NORESET
+         if (!CHKw(w, Show_FOREST)) VIZTOGw(w, Qsrt_NORMAL);
+#else
+         if (VIZCHKw(w)) {
+            TOGw(w, Qsrt_NORMAL);
+            OFFw(w, Show_FOREST);
+         }
+#endif
          break;
       case 'S':
          if (VIZCHKw(w)) {
@@ -2830,6 +2859,13 @@ static void keys_task (int ch) {
             const char *errmsg;
             if ((errmsg = user_certify(w, linein("Which user (blank for all)"), ch)))
                show_msg(errmsg);
+         }
+         break;
+      case 'V':
+         if (VIZCHKw(w)) {
+            TOGw(w, Show_FOREST);
+            if (!ENUviz(w, P_CMD))
+               show_msg(fmtmk("Forest mode %s", CHKw(w, Show_FOREST) ? "On" : "Off"));
          }
          break;
       case 'x':
@@ -2949,6 +2985,11 @@ static void keys_xtra (int ch) {
 // const char *xmsg;
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
 
+#ifdef TREE_NORESET
+   if (CHKw(w, Show_FOREST)) return;
+#else
+   OFFw(w, Show_FOREST);
+#endif
    /* these keys represent old-top compatability --
       they're grouped here so that if users could ever be weaned,
       we would just whack do_key's key_tab entry and this function... */
@@ -2976,6 +3017,67 @@ static void keys_xtra (int ch) {
 // show_msg(fmtmk("%s sort compatibility key honored", xtab[i].xmsg));
 } // end: keys_xtra
 
+/*######  Forest View support  ###########################################*/
+
+        /*
+         * We try to keep most existing code unaware of our activities. */
+static proc_t **Seed_ppt;                   // temporary window ppt ptr
+static proc_t **Tree_ppt;                   // resized by forest_create
+static int      Tree_idx;                   // frame_make initializes
+
+        /*
+         * This little recursive guy is the real forest view workhorse.
+         * He fills in the Tree_ppt array and also sets the child indent
+         * level which is stored in an unused proc_t padding byte. */
+static void forest_add (const int self, const int level) {
+   int i;
+
+   Tree_ppt[Tree_idx] = Seed_ppt[self];     // add this as root or child
+   Tree_ppt[Tree_idx++]->pad_3 = level;     // borrow 1 byte, 127 levels
+   for (i = self + 1; i < Frame_maxtask; i++) {
+      if (Seed_ppt[self]->tid == Seed_ppt[i]->tgid
+      || (Seed_ppt[self]->tid == Seed_ppt[i]->ppid && Seed_ppt[i]->tid == Seed_ppt[i]->tgid))
+         forest_add(i, level + 1);          // got one child any others?
+   }
+} // end: forest_add
+
+
+        /*
+         * This routine is responsible for preparing the proc_t's for
+         * a forest display in the designated window.  Upon completion,
+         * he'll replace the original window ppt with our specially
+         * ordered forest version. */
+static void forest_create (WIN_t *q) {
+   static int hwmsav;
+
+   Seed_ppt = q->ppt;                       // avoid passing WIN_t ptrs
+   if (!Tree_idx) {                         // do just once per frame
+      int i = 0;
+      Frame_srtflg = -1;                    // put in ascending ppid order
+      qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), Fieldstab[P_PPD].sort);
+      if (hwmsav < Frame_maxtask) {         // grow, but never shrink
+         hwmsav = Frame_maxtask;
+         Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
+      }
+      while (0 == Seed_ppt[i]->ppid)        // identify trees (expect 2)
+         forest_add(i++, 0);                // add parent plus children
+   }
+   memcpy(Seed_ppt, Tree_ppt, sizeof(proc_t*) * Frame_maxtask);
+} // end: forest_create
+
+
+        /*
+         * This guy adds the artwork to either p->cmd or p->cmdline
+         * when in forest view mode, otherwise he just returns 'em. */
+static inline const char *forest_display (const WIN_t *q, const proc_t *p) {
+   static char buf[ROWMINSIZ];
+   const char *which = (CHKw(q, Show_CMDLIN)) ? *p->cmdline : p->cmd;
+
+   if (!CHKw(q, Show_FOREST) || !p->pad_3) return which;
+   snprintf(buf, sizeof(buf), "%*s%s", 4 * p->pad_3, " `- ", which);
+   return buf;
+} // end: forest_display
+
 /*######  Main Screen routines  ##########################################*/
 
         /*
@@ -2991,7 +3093,7 @@ static void do_key (int ch) {
          { '1', 'C', 'l', 'm', 't' } },
       { keys_task,
          { '#', '<', '>', 'b', 'c', 'i', 'n', 'R', 'S'
-         , 'U', 'u', 'x', 'y', 'z' } },
+         , 'U', 'u', 'V', 'x', 'y', 'z' } },
       { keys_window,
          { '+', '-', '=', '_', 'A', 'a', 'G', 'w'
          , kbd_UP, kbd_DOWN, kbd_LEFT, kbd_RIGHT, kbd_PGUP, kbd_PGDN
@@ -3038,7 +3140,9 @@ static void do_key (int ch) {
          'c' - likely when !Mode_altscr, maybe when Mode_altscr
          'F' - likely
          'f' - likely
-         'G' - likely
+         'g' - likely
+         'H' - likely (%CPU .fmts)
+         'I' - likely (%CPU .fmts)
          'Z' - likely, if 'Curwin' changed when !Mode_altscr
          '-' - likely (restricted to Mode_altscr)
          '_' - likely (restricted to Mode_altscr)
@@ -3108,23 +3212,11 @@ static void summaryhlp (CPU_t *cpu, const char *pfx) {
          *    3) Displaying task/cpu states (maybe)
          *    4) Displaying memory & swap usage (maybe)
          * and then, returning a pointer to the pointers to the proc_t's! */
-static proc_t **summary_show (void) {
+static void summary_show (void) {
  #define isROOM(f,n) (CHKw(w, f) && Msg_row + (n) < Screen_rows - 1)
  #define anyFLG 0xffffff
-   static proc_t **p_table = NULL;
    static CPU_t *smpcpu = NULL;
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
-
-   // whoa first time, gotta' prime the pump...
-   if (!p_table) {
-      p_table = procs_refresh(NULL);
-      putp(Cap_clr_scr);
-      usleep(LIB_USLEEP);
-   } else
-      putp(Batch ? "\n\n" : Cap_home);
-
-   p_table = procs_refresh(p_table);
-   sysinfo_refresh(0);
 
    // Display Uptime and Loadavg
    if (isROOM(View_LOADAV, 1)) {
@@ -3182,7 +3274,6 @@ static proc_t **summary_show (void) {
     #undef mkS
    }
 
-   return p_table;
  #undef isROOM
  #undef anyFLG
 } // end: summary_show
@@ -3224,8 +3315,7 @@ static void task_show (const WIN_t *q, const proc_t *p) {
             makeVAR(p->cgroup ? *p->cgroup : "n/a");
             break;
          case P_CMD:
-            if (CHKw(q, Show_CMDLIN)) makeVAR(*p->cmdline)
-            else makeVAR(p->cmd);
+            makeVAR(forest_display(q, p));
             break;
          case P_COD:
             makeCOL(scale_num(pages2K(p->trs), w, s));
@@ -3390,7 +3480,7 @@ static void task_show (const WIN_t *q, const proc_t *p) {
         /*
          * Squeeze as many tasks as we can into a single window,
          * after sorting the passed proc table. */
-static int window_show (proc_t **ppt, WIN_t *q, int wmax) {
+static int window_show (WIN_t *q, int wmax) {
  /* the isBUSY macro determines if a task is 'active' --
     it returns true if some cpu was used since the last sample.
     ( actual 'running' tasks will be a subset of those selected ) */
@@ -3401,29 +3491,33 @@ static int window_show (proc_t **ppt, WIN_t *q, int wmax) {
    // Display Column Headings -- and distract 'em while we sort (maybe)
    PUFF("\n%s%s%s", q->capclr_hdr, q->columnhdr, q->eolcap);
 
-   if (CHKw(q, Qsrt_NORMAL)) Frame_srtflg =  1;  // this one's always needed!
-   else                      Frame_srtflg = -1;
-   Frame_ctimes = CHKw(q, Show_CTIMES);          // this and next, only maybe
-   Frame_cmdlin = CHKw(q, Show_CMDLIN);
-   qsort(ppt, Frame_maxtask, sizeof(proc_t *), Fieldstab[q->rc.sortindx].sort);
+   if (CHKw(q, Show_FOREST))
+      forest_create(q);
+   else {
+      if (CHKw(q, Qsrt_NORMAL)) Frame_srtflg = 1;   // this is always needed!
+      else Frame_srtflg = -1;
+      Frame_ctimes = CHKw(q, Show_CTIMES);          // this & next, only maybe
+      Frame_cmdlin = CHKw(q, Show_CMDLIN);
+      qsort(q->ppt, Frame_maxtask, sizeof(proc_t*), Fieldstab[q->rc.sortindx].sort);
+   }
 
    i = q->begtask;
    if (i >= Frame_maxtask) i = q->begtask = Frame_maxtask - 1;
-   lwin = 1;                                     // 1 for the ol' column header
-   wmax = winMIN(wmax, q->winlines+1);           // ditto for winlines, too
+   lwin = 1;                                        // 1 for the column header
+   wmax = winMIN(wmax, q->winlines + 1);            // ditto for winlines, too
 
    /* the least likely scenario is also the most costly, so we'll try to avoid
       checking some stuff with each iteration and check it just once... */
    if (CHKw(q, Show_IDLEPS) && !q->usrseltyp)
-      while (-1 != ppt[i]->tid && lwin < wmax) {
-         task_show(q, ppt[i++]);
+      while (i < Frame_maxtask && lwin < wmax) {
+         task_show(q, q->ppt[i++]);
          ++lwin;
       }
    else
-      while (-1 != ppt[i]->tid && lwin < wmax) {
-         if ((CHKw(q, Show_IDLEPS) || isBUSY(ppt[i]))
-         && user_matched(q, ppt[i])) {
-            task_show(q, ppt[i]);
+      while (i < Frame_maxtask && lwin < wmax) {
+         if ((CHKw(q, Show_IDLEPS) || isBUSY(q->ppt[i]))
+         && user_matched(q, q->ppt[i])) {
+            task_show(q, q->ppt[i]);
             ++lwin;
          }
          ++i;
@@ -3482,29 +3576,39 @@ static void framehlp (int wix, int max) {
          */
 static void frame_make (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
-   proc_t **ppt;
    int i, scrlins;
 
    // deal with potential signals since the last time around...
    if (Frames_endpgm) bye_bye(NULL);
    if (Frames_paused) pause_pgm();
-   if (Frames_resize) calibrate_fields();
+   if (Frames_resize) zap_fieldstab();
+
+   // whoa first time, gotta' prime the pump...
+   if (-1 == Pseudo_row) {
+      procs_refresh();
+      putp(Cap_clr_scr);
+      usleep(LIB_USLEEP);
+   } else
+      putp(Batch ? "\n\n" : Cap_home);
 
    putp(Cap_curs_hide);
-   Pseudo_row = Msg_row = scrlins = 0;
-   ppt = summary_show();
+   procs_refresh();
+   sysinfo_refresh(0);
+
+   Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
+   summary_show();
    Max_lines = (Screen_rows - Msg_row) - 1;
 
    if (!Rc.mode_altscr) {
       // only 1 window to show so, piece o' cake
       w->winlines = w->rc.maxtasks ? w->rc.maxtasks : Max_lines;
-      scrlins = window_show(ppt, w, Max_lines);
+      scrlins = window_show(w, Max_lines);
    } else {
       // maybe NO window is visible but assume, pieces o' cakes
       for (i = 0 ; i < GROUPSMAX; i++) {
          if (CHKw(&Winstk[i], Show_TASKON)) {
             framehlp(i, Max_lines - scrlins);
-            scrlins += window_show(ppt, &Winstk[i], Max_lines - scrlins);
+            scrlins += window_show(&Winstk[i], Max_lines - scrlins);
          }
          if (Max_lines <= scrlins) break;
       }

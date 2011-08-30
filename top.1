@@ -68,7 +68,7 @@
 .ds SA summary area
 .ds TA task area
 .ds TD task display
-.ds TT \fBtasks\fR or\fB threads\fR
+.ds TT \fBprocesses\fR or \fBthreads\fR
 .ds TW task window
 \#                      Reference to the various widths/sizes ------------
 \#                           - the max screen width limit
@@ -461,6 +461,9 @@ fit in this field's current width.
 That width depends upon other fields selected, their order and the current
 screen width.
 
+This field may also be impacted by the 'forest view' display mode.
+\*(XC 'V' \*(CI for additional information regarding that mode.
+
 \*(NT The 'COMMAND' field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
@@ -779,7 +782,7 @@ depending on the context in which they are issued.
         l, t, 1, m
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, x, y, z
-        Content:     c, f, F, S, u, U
+        Content:     c, f, F, S, u, U, V
         Size:        #, i, n
         Sorting:     <, >, f, F, R
   4d.\fI Color-Mapping \fR
@@ -1062,6 +1065,18 @@ Different \*(TWs can can be used to filter different users.
 
 Later, if you wish to monitor all tasks again in the \*(CW, re-issue this
 command but just press <Enter> at the prompt.
+
+.TP 7
+\ \ \'\fBV\fR' :\fIForest-View-Mode \fR toggle \fR
+In this mode, processes are reordered according to their parents and
+the layout of the COMMAND column resembles that of a tree.
+In forest view mode it is still possible to toggle between program
+name and commamd line (\*(Xc 'c' \*(CI) or between processes and
+threads (\*(Xc 'H' \*(CI).
+
+\*(NT Typing any key affecting the sort order will exit forest view
+mode in the \*(CW.
+\*(XT 4c. TASK AREA Commands, SORTING for information on those keys.
 
 .PP
 .\" ..................................................
