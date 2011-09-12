@@ -489,10 +489,12 @@ not_root:
   /* don't free the array because it takes time and ps will exit anyway */
 }
 
+#if 0
 static int want_this_proc_nop(proc_t *dummy){
   (void)dummy;
   return 1;
 }
+#endif
 
 /***** sorted or forest */
 static void fancy_spew(void){

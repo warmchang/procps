@@ -335,6 +335,7 @@ typedef struct WIN_t {
    /* else fieldscur char already has high bit on! */ \
    } while (0)
 #define ENUviz(w,E)  (NULL != memchr((w)->procflgs, E, (w)->maxpflgs))
+#define ENUpos(w,E)  ((int)((FLG_t*)memchr((w)->pflgsall, E, (w)->totpflgs) - (w)->pflgsall))
 
 
         /* Special Section: end ------------------------------------------ */
@@ -621,6 +622,7 @@ typedef struct WIN_t {
 //atic void          bye_bye (const char *str);
 //atic void          error_exit (const char *str);
 //atic void          pause_pgm (void);
+//atic void          sig_abexit (int sig);
 //atic void          sig_endpgm (int dont_care_sig);
 //atic void          sig_paused (int dont_care_sig);
 //atic void          sig_resize (int dont_care_sig);

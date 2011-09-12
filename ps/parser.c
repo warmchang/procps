@@ -617,6 +617,10 @@ static const char *parse_bsd_option(void){
       trace("c true command name\n");
       bsd_c_option = 1;
       break;
+//  case 'd':
+//    trace("d FreeBSD-style tree\n");
+//    forest_type = 'f';
+//    break;
     case 'e':
       trace("e environment\n");
       bsd_e_option = 1;

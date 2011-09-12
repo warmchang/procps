@@ -155,8 +155,6 @@ static WIN_t *Curwin;
            and/or that are simply more efficiently handled as globals
            [ 'Frames_...' (plural) stuff persists beyond 1 frame ]
            [ or are used in response to async signals received ! ] */
-   // Frames_endpgm set by sig_endpgm(), no need to unset
-static volatile int Frames_endpgm;     // time to quit this shit
    // Frames_paused set by sig_paused(), unset by pause_pgm()
 static volatile int Frames_paused;     // become a paused background job
    // Frames_resize set by do_key() & sig_resize(), unset by calibrate_fields()
@@ -513,11 +511,31 @@ static void pause_pgm (void) {
 
 
         /*
+         * Catches all remaining signals not otherwise handled */
+static void sig_abexit (int sig) NORETURN;
+static void sig_abexit (int sig) {
+   static const char *ab_msg =
+      "\n\tsignal %d (%s) was caught by %s, please"
+      "\n\tsee http://www.debian.org/Bugs/Reporting\n";
+   sigset_t ss;
+
+   sigfillset(&ss);
+   sigprocmask(SIG_BLOCK, &ss, NULL);
+   bye_bye(fmtmk(ab_msg, sig, signal_number_to_name(sig), Myname));
+} // end: sig_abexit
+
+
+        /*
          * Catches:
          *    SIGALRM, SIGHUP, SIGINT, SIGPIPE, SIGQUIT and SIGTERM */
+static void sig_endpgm (int dont_care_sig) NORETURN;
 static void sig_endpgm (int dont_care_sig) {
+   sigset_t ss;
+
+   sigfillset(&ss);
+   sigprocmask(SIG_BLOCK, &ss, NULL);
+   bye_bye(NULL);
    (void)dont_care_sig;
-   Frames_endpgm = 1;
 } // end: sig_endpgm
 
 
@@ -525,7 +543,7 @@ static void sig_endpgm (int dont_care_sig) {
          * Catches:
          *    SIGTSTP, SIGTTIN and SIGTTOU */
 static void sig_paused (int dont_care_sig) {
-  (void)dont_care_sig;
+   (void)dont_care_sig;
    Frames_paused = 1;
 } // end: sig_paused
 
@@ -671,11 +689,21 @@ static int show_pmt (const char *str) {
          * Show a special coordinate message, in support of scrolling */
 static inline void show_scroll (void) {
    char tmp[SMLBUFSIZ];
+   int totpflgs = Curwin->totpflgs;
+   int begpflgs = Curwin->begpflg + 1;
 
+#ifndef USE_X_COLHDR
+   if (CHKw(Curwin, Show_HICOLS)) {
+      totpflgs -= 2;
+      if (ENUpos(Curwin, Curwin->rc.sortindx) < Curwin->begpflg) begpflgs -= 2;
+   }
+#endif
+   if (1 > totpflgs) totpflgs = 1;
+   if (1 > begpflgs) begpflgs = 1;
    snprintf(tmp, sizeof(tmp)
       , "scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)"
       , Curwin->begtask + 1, Frame_maxtask
-      , Curwin->begpflg + 1, Curwin->totpflgs);
+      , begpflgs, totpflgs);
    PUTT("%s%s  %.*s%s", tg2(0, Msg_row), Caps_off, Screen_cols - 2, tmp, Cap_clr_eol);
    putp(tg2(0, Msg_row));
 } // end: show_scroll
@@ -1392,6 +1420,9 @@ static void calibrate_fields (void) {
             if (!Fieldstab[f].fmts) { ++varcolcnt; w->varcolsz += strlen(h) - 1; }
             s = scat(s, h);
          }
+#ifndef USE_X_COLHDR
+         if (X_XON == w->procflgs[i - 1]) --i;
+#endif
 
          /* establish the final maxpflgs and prepare to grow the variable column
             heading(s) via varcolsz - it may be a fib if their pflags weren't
@@ -1407,13 +1438,16 @@ static void calibrate_fields (void) {
          for (i = w->totpflgs - 1; -1 < i; i--) {
             f = w->pflgsall[i];
 #ifndef USE_X_COLHDR
-            if (P_MAXPFLGS < f) continue;
+            if (P_MAXPFLGS < f) { w->endpflg = i; continue; }
 #endif
             h = Fieldstab[f].head;
             if (Screen_cols <= ((int)(s - w->columnhdr) + (int)strlen(h))) break;
             s = scat(s, h);
             w->endpflg = i;
          }
+#ifndef USE_X_COLHDR
+         if (X_XOF == w->pflgsall[w->endpflg]) ++w->endpflg;
+#endif
 
          /* finally, we can build the true run-time columns header, format any
             variable column heading(s), if they're really being displayed, and
@@ -1453,13 +1487,16 @@ static void calibrate_fields (void) {
          if (Screen_cols > (int)strlen(w->columnhdr)) w->eolcap = Caps_endline;
          else w->eolcap = Caps_off;
 #endif
-         // to show only 'busy' processes requires L_stat...
+         // with forest view mode, we'll need tgid & ppid...
+         if (CHKw(w, Show_FOREST)) Frames_libflags |= L_status;
+         // for 'busy' only processes, we'll need pcpu (utime & stime)...
          if (!CHKw(w, Show_IDLEPS)) Frames_libflags |= L_stat;
          // we must also accommodate an out of view sort field...
          f = w->rc.sortindx;
          Frames_libflags |= Fieldstab[f].lflg;
          if (P_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
       } // end: VIZISw(w)
+
       if (Rc.mode_altscr) w = w->next;
    } while (w != Curwin);
 
@@ -1713,14 +1750,16 @@ always:
       Fieldstab[P_CPN].fmts = fmts_cpu;
    }
 
-   Cpu_pmax = 99.0;
+   Cpu_pmax = 99.9;
    Fieldstab[P_CPU].fmts = " %#4.1f ";
    if (Rc.mode_irixps && Cpu_tot > 1 && !Thread_mode) {
-      Cpu_pmax = 999.0;
-      Fieldstab[P_CPU].fmts = "%#5.1f ";
+      Cpu_pmax = 100.0 * Cpu_tot;
       if (Cpu_tot > 10) {
-         Cpu_pmax = 99999.0;
+         if (Cpu_pmax > 99999.0) Cpu_pmax = 99999.0;
          Fieldstab[P_CPU].fmts = "%5.0f ";
+      } else {
+         if (Cpu_pmax > 999.9) Cpu_pmax = 999.9;
+         Fieldstab[P_CPU].fmts = "%#5.1f ";
       }
    }
 
@@ -2022,6 +2061,7 @@ static void sysinfo_refresh (int forced) {
          * No matter what *they* say, we handle the really really BIG and
          * IMPORTANT stuff upon which all those lessor functions depend! */
 static void before (char *me) {
+   struct sigaction sa;
    int i;
 
    // setup our program name -- big!
@@ -2051,6 +2091,28 @@ static void before (char *me) {
    memcpy(HHash_one, HHash_nul, sizeof(HHash_nul));
    memcpy(HHash_two, HHash_nul, sizeof(HHash_nul));
 #endif
+
+   // lastly, establish a robust signals environment
+   sigemptyset(&sa.sa_mask);
+   sa.sa_flags = SA_RESTART;
+   for (i = SIGRTMAX + 1; i; i--) {
+      switch (i) {
+         case SIGALRM: case SIGHUP:  case SIGINT:
+         case SIGPIPE: case SIGQUIT: case SIGTERM:
+            sa.sa_handler = sig_endpgm;
+            break;
+         case SIGTSTP: case SIGTTIN: case SIGTTOU:
+            sa.sa_handler = sig_paused;
+            break;
+         case SIGCONT: case SIGWINCH:
+            sa.sa_handler = sig_resize;
+            break;
+         default:
+            sa.sa_handler = sig_abexit;
+            break;
+      }
+      sigaction(i, &sa, NULL);
+   }
 } // end: before
 
 
@@ -2707,11 +2769,11 @@ static void keys_global (int ch) {
          if (Secure_mode) {
             show_msg(err_secure);
          } else {
-            int sig, pid;
+            int pid, sig = SIGTERM;
+            char *str;
             if (-1 < (pid = get_int("pid to signal/kill"))) {
-               sig = signal_name_to_number(
-                  linein(fmtmk("Send pid %d signal [%d/sigterm]", pid, SIGTERM)));
-               if (-1 == sig) sig = SIGTERM;
+               str = linein(fmtmk("Send pid %d signal [%d/sigterm]", pid, SIGTERM));
+               if (*str) sig = signal_name_to_number(str);
                if (0 < sig && kill(pid, sig))
                   show_msg(fmtmk("\aFailed signal pid '%d' with '%d': %s"
                      , pid, sig, strerror(errno)));
@@ -2872,6 +2934,13 @@ static void keys_task (int ch) {
          if (VIZCHKw(w)) {
             TOGw(w, Show_HICOLS);
             capsmk(w);
+#ifndef USE_X_COLHDR
+            if (ENUpos(w, w->rc.sortindx) < w->begpflg) {
+               if (CHKw(w, Show_HICOLS)) w->begpflg += 2;
+               else w->begpflg -= 2;
+               if (0 > w->begpflg) w->begpflg = 0;
+            }
+#endif
          }
          break;
       case 'y':
@@ -3579,7 +3648,6 @@ static void frame_make (void) {
    int i, scrlins;
 
    // deal with potential signals since the last time around...
-   if (Frames_endpgm) bye_bye(NULL);
    if (Frames_paused) pause_pgm();
    if (Frames_resize) zap_fieldstab();
 
@@ -3635,7 +3703,6 @@ static void frame_make (void) {
         /*
          * duh... */
 int main (int dont_care_argc, char **argv) {
-   struct sigaction sa;
    (void)dont_care_argc;
    before(*argv);
                                         //                 +-------------+
@@ -3645,22 +3712,6 @@ int main (int dont_care_argc, char **argv) {
    whack_terminal();                    //                 > onions etc. <
    wins_stage_2();                      //                 as bottom slice
                                         //                 +-------------+
-   sigemptyset(&sa.sa_mask);
-   sa.sa_flags = SA_RESTART;
-   sa.sa_handler = sig_endpgm;
-   sigaction(SIGALRM,  &sa, NULL);
-   if (!Batch) sigaction(SIGHUP, &sa, NULL);
-   sigaction(SIGINT,   &sa, NULL);
-   sigaction(SIGPIPE,  &sa, NULL);
-   sigaction(SIGQUIT,  &sa, NULL);
-   sigaction(SIGTERM,  &sa, NULL);
-   sa.sa_handler = sig_paused;
-   sigaction(SIGTSTP,  &sa, NULL);
-   sigaction(SIGTTIN,  &sa, NULL);
-   sigaction(SIGTTOU,  &sa, NULL);
-   sa.sa_handler = sig_resize;
-   sigaction(SIGCONT,  &sa, NULL);
-   sigaction(SIGWINCH, &sa, NULL);
 
    for (;;) {
       struct timeval tv;
@@ -3686,7 +3737,7 @@ int main (int dont_care_argc, char **argv) {
          /* note:  above select might have been interrupted by some signal
                    in which case the return code would have been -1 and an
                    integer (volatile) switch set.  that in turn will cause
-                   frame_make() to deal with it as its first responsiblity
+                   frame_make() to deal with it if we survived the handler
          */
       }
    }
