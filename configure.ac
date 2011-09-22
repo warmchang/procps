@@ -43,7 +43,7 @@ AC_CHECK_HEADERS([\
 ])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADER_STDBOOL
+AC_HEADER_STDBOOL
 AC_CHECK_MEMBERS([struct stat.st_rdev])
 AC_C_INLINE
 AC_C_RESTRICT
