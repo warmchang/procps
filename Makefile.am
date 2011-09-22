@@ -4,7 +4,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = proc ps
 
 AM_CFLAGS = -Iproc
-AM_LDFLAGS = ./proc/libproc.la
+AM_LDFLAGS = ./proc/libproc-ng.la
 
 sbin_PROGRAMS = \
 	sysctl

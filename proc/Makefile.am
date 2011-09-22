@@ -1,12 +1,12 @@
+PACKAGE_VERSION = @PACKAGE_VERSION@
 AM_CPPFLAGS = -include $(top_builddir)/config.h
+lib_LTLIBRARIES = libproc-ng.la
 
-lib_LTLIBRARIES = libproc.la
+libproc_ng_ladir = $(ladir)
+libproc_ng_la_LIBADD = $(LIB_KPARTS)
+libproc_ng_la_LDFLAGS = $(all_libraries) -release $(PACKAGE_VERSION) -no-undefined
 
-libproc_ladir = $(ladir)
-libproc_la_LIBADD = $(LIB_KPARTS)
-libproc_la_LDFLAGS = $(all_libraries) -release 3.2.8 -no-undefined
-
-libproc_la_SOURCES = \
+libproc_ng_la_SOURCES = \
 	alloc.c \
 	alloc.h \
 	devname.c \
@@ -31,8 +31,8 @@ libproc_la_SOURCES = \
 	whattime.c \
 	whattime.h
 
-libproc_la_includedir = $(includedir)/proc/
-libproc_la_include_HEADERS =  \
+libproc_ng_la_includedir = $(includedir)/proc/
+libproc_ng_la_include_HEADERS =  \
 	alloc.h \
 	devname.h \
 	escape.h \

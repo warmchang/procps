@@ -27,7 +27,7 @@ pgrep
 pkill
 pmap
 proc/.depend
-proc/libproc.la
+proc/libproc-ng.la
 proc/Makefile
 proc/Makefile.in
 ps/Makefile
