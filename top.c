@@ -1416,7 +1416,7 @@ static void calibrate_fields (void) {
 #endif
             h = Fieldstab[f].head;
             // oops, won't fit -- we're outta here...
-            if (Screen_cols <= ((int)(s - w->columnhdr) + (int)strlen(h))) break;
+            if (Screen_cols < ((int)(s - w->columnhdr) + (int)strlen(h))) break;
             if (!Fieldstab[f].fmts) { ++varcolcnt; w->varcolsz += strlen(h) - 1; }
             s = scat(s, h);
          }
@@ -1441,7 +1441,7 @@ static void calibrate_fields (void) {
             if (P_MAXPFLGS < f) { w->endpflg = i; continue; }
 #endif
             h = Fieldstab[f].head;
-            if (Screen_cols <= ((int)(s - w->columnhdr) + (int)strlen(h))) break;
+            if (Screen_cols < ((int)(s - w->columnhdr) + (int)strlen(h))) break;
             s = scat(s, h);
             w->endpflg = i;
          }
@@ -2777,6 +2777,7 @@ static void keys_global (int ch) {
                if (0 < sig && kill(pid, sig))
                   show_msg(fmtmk("\aFailed signal pid '%d' with '%d': %s"
                      , pid, sig, strerror(errno)));
+               else if (0 > sig) show_msg("Invalid signal");
             }
          }
          break;
@@ -2834,7 +2835,10 @@ static void keys_task (int ch) {
       case 'n':
          if (VIZCHKw(w)) {
             int num = get_int(fmtmk("Maximum tasks = %d, change to (0 is unlimited)", w->rc.maxtasks));
-            if (INT_MIN < num) w->rc.maxtasks = num;
+            if (INT_MIN < num) {
+               if (-1 < num ) w->rc.maxtasks = num;
+               else show_msg("Invalid maximum");
+            }
          }
          break;
       case '<':
@@ -3275,12 +3279,10 @@ static void summaryhlp (CPU_t *cpu, const char *pfx) {
 
 
         /*
-         * Begin a new frame by:
-         *    1) Refreshing the all important proc table
-         *    2) Displaying uptime and load average (maybe)
-         *    3) Displaying task/cpu states (maybe)
-         *    4) Displaying memory & swap usage (maybe)
-         * and then, returning a pointer to the pointers to the proc_t's! */
+         * In support of a new frame:
+         *    1) Display uptime and load average (maybe)
+         *    2) Display task/cpu states (maybe)
+         *    3) Display memory & swap usage (maybe) */
 static void summary_show (void) {
  #define isROOM(f,n) (CHKw(w, f) && Msg_row + (n) < Screen_rows - 1)
  #define anyFLG 0xffffff

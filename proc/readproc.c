@@ -105,7 +105,7 @@ typedef struct status_table_struct {
 // "Threads:\n", etc. would be lines, but no quote, no escape, etc.
 //
 // After a pipe through gperf, insert the resulting 'asso_values'
-// into our 'assoc' array.  Then convert the gperf 'wordlist' array
+// into our 'asso' array.  Then convert the gperf 'wordlist' array
 // into our 'table' array by wrapping the string literals within
 // the F macro and replacing empty strings with the NUL define.
 //
