@@ -166,7 +166,6 @@ int main(int argc, char **argv)
 	int c, flags = 0;
 	char *endptr;
 	struct commandline_arguments args;
-	args.repeat_counter = 0;
 
 	/*
 	 * For long options that have no equivalent short option, use a
@@ -199,6 +198,7 @@ int main(int argc, char **argv)
 	/* defaults to old format */
 	args.exponent = 0;
 	args.repeat_interval = 1000000;
+	args.repeat_counter = 0;
 
 	while ((c = getopt_long(argc, argv, "bkmghlotc:s:V", longopts, NULL)) != -1)
 		switch (c) {
