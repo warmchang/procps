@@ -4,6 +4,10 @@ export DEJAGNU
 # Programs that are expected across the board.
 DEJATOOL =
 
+noinst_PROGRAMS = test-schedbatch
+
+test_schedbatch_SOURCES = ps.test/test-schedbatch.c
+
 if LINUX
 # These should be in defined in 'across the board' scope, but are
 # temporarily disabled on other than linux systems, see commit
@@ -35,6 +39,7 @@ EXTRA_DIST = \
     pmap.test/pmap.exp \
     ps.test/ps_output.exp \
     ps.test/ps_personality.exp \
+    ps.test/ps_sched_batch.exp \
     pwdx.test/pwdx.exp \
     slabtop.test/slabtop.exp \
     sysctl.test/sysctl_read.exp \
