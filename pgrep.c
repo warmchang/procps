@@ -26,6 +26,7 @@
 #include <grp.h>
 #include <regex.h>
 #include <errno.h>
+#include <getopt.h>
 
 #include "proc/readproc.h"
 #include "proc/sig.h"
@@ -71,23 +72,44 @@ static union el *opt_ruid = NULL;
 static char *opt_pattern = NULL;
 static char *opt_pidfile = NULL;
 
-static int usage (int opt) NORETURN;
-static int usage (int opt)
+static int __attribute__ ((__noreturn__)) usage(int opt)
 {
-	int err = (opt=='?'); /* getopt() uses '?' to mark an error */
+	int err = (opt == '?');
 	FILE *fp = err ? stderr : stdout;
 
-	if (i_am_pkill)
-		fprintf (fp, "Usage: pkill [-SIGNAL] [-fvx] ");
-	else
-		fprintf (fp, "Usage: pgrep [-cflvx] [-d DELIM] ");
-	fprintf (fp, "[-n|-o] [-P PPIDLIST] [-g PGRPLIST] [-s SIDLIST]\n"
-		 "\t[-u EUIDLIST] [-U UIDLIST] [-G GIDLIST] [-t TERMLIST] "
-		 "[PATTERN]\n");
+	fprintf(fp,
+		"\nUsage: %s [options] <pattern>\n" "\nOptions:\n", progname);
 
-	exit(err ? EXIT_USAGE : EXIT_SUCCESS);
+	if (i_am_pkill == 0)
+		fprintf(fp,
+			" -c, --count               count of matching processes\n"
+			" -d, --delimeter <string>  update delay in seconds\n"
+			" -l, --list-name           list PID and process name\n");
+	if (i_am_pkill == 1)
+		fprintf(fp,
+			" -<sig>, --signal <sig>    signal to send (either number or name)\n");
+
+	fprintf(fp,
+		" -f, --full                use full process name to match\n"
+		" -g, --pgroup <id,...>     match listed process group IDs\n"
+		" -G, --group <gid,...>     match real group IDs\n"
+		" -n, --newest              select most recently started\n"
+		" -o, --oldest              select least recently started\n"
+		" -P, --parent <ppid,...>   match only childs of given parent\n"
+		" -s, --session <sid,...>   match session IDs\n"
+		" -t, --terminal <tty,...>  match by controlling terminal\n"
+		" -u, --euid <id,...>       match by effective IDs\n"
+		" -U, --uid <id,...>        match by real IDs\n"
+		" -v, --inverse             negates the matching\n"
+		" -x, --exact               match exectly with command name\n"
+		" -F, --pidfile <file>      read PIDs from file\n"
+		" -L, --logpidfile          fail if PID file is not locked\n"
+		" -h, --help                display this help text\n"
+		" -V, --version             display version information and exit\n");
+	fprintf(fp, "\nFor more information see %s(1).\n", progname);
+
+	exit(fp == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
-
 
 static union el *split_list (const char *restrict str, int (*convert)(const char *, union el *))
 {
@@ -547,6 +569,33 @@ static void parse_opts (int argc, char **argv)
 	int opt;
 	int criteria_count = 0;
 
+	enum {
+		SIGNAL_OPTION = CHAR_MAX + 1
+	};
+	static const struct option longopts[] = {
+		{"signal", required_argument, NULL, SIGNAL_OPTION},
+		{"count", no_argument, NULL, 'c'},
+		{"delimeter", required_argument, NULL, 'd'},
+		{"list-name", no_argument, NULL, 'l'},
+		{"full", no_argument, NULL, 'f'},
+		{"pgroup", required_argument, NULL, 'g'},
+		{"group", required_argument, NULL, 'G'},
+		{"newest", no_argument, NULL, 'n'},
+		{"oldest", no_argument, NULL, 'o'},
+		{"parent", required_argument, NULL, 'P'},
+		{"session", required_argument, NULL, 's'},
+		{"terminal", required_argument, NULL, 't'},
+		{"euid", required_argument, NULL, 'u'},
+		{"uid", required_argument, NULL, 'U'},
+		{"inverse", no_argument, NULL, 'v'},
+		{"exact", no_argument, NULL, 'x'},
+		{"pidfile", required_argument, NULL, 'F'},
+		{"logpidfile", no_argument, NULL, 'L'},
+		{"help", no_argument, NULL, 'h'},
+		{"version", no_argument, NULL, 'V'},
+		{NULL, 0, NULL, 0}
+	};
+
 	if (strstr (argv[0], "pkill")) {
 		i_am_pkill = 1;
 		progname = "pkill";
@@ -566,13 +615,18 @@ static void parse_opts (int argc, char **argv)
 		}
 	} else {
 		/* These options are for pgrep only */
-		strcat (opts, "ld:");
+		strcat (opts, "cld:");
 	}
 			
-	strcat (opts, "LF:cfnovxP:g:s:u:U:G:t:?V");
+	strcat (opts, "LF:fnovxP:g:s:u:U:G:t:?Vh");
 	
-	while ((opt = getopt (argc, argv, opts)) != -1) {
+	while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
 		switch (opt) {
+		case SIGNAL_OPTION:
+			opt_signal = signal_name_to_number (optarg);
+			if (opt_signal == -1 && isdigit (optarg[0]))
+				opt_signal = atoi (optarg);
+			break;
 //		case 'D':   // FreeBSD: print info about non-matches for debugging
 //			break;
 		case 'F':   // FreeBSD: the arg is a file containing a PID to match
@@ -683,6 +737,9 @@ static void parse_opts (int argc, char **argv)
 			break;
 //		case 'z':   // Solaris: match by zone ID
 //			break;
+		case 'h':
+			usage (opt);
+			break;
 		case '?':
 			usage (optopt ? optopt : opt);
 			break;
