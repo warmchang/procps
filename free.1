@@ -2,38 +2,38 @@
 .\"  This page Copyright (C) 1993 Matt Welsh, mdw@sunsite.unc.edu.
 .\"  Long options where added at April 15th, 2011.
 .\"  Freely distributable under the terms of the GPL
-.TH FREE 1 "15 Apr 2011 " "Cohesive Systems" "Linux User's Manual"
+.TH FREE 1 "September 2011" "procps-ng" "User Commands"
 .SH NAME
 free \- Display amount of free and used memory in the system
 .SH SYNOPSIS
 .B free
-.RB [ options ]
+.RI [ options ]
 .SH DESCRIPTION
-\fBfree\fP displays the total amount of free and used physical and swap 
-memory in the system, as well as the buffers used by the kernel.
-The shared memory column should be ignored; it is obsolete.
-.SS OPTIONS
+.B free
+displays the total amount of free and used physical and swap memory in the
+system, as well as the buffers used by the kernel.  The shared memory column
+should be ignored; it is obsolete.
+.SH OPTIONS
 .TP
-\fB\-b, \-\-bytes\fR
+\fB\-b\fR, \fB\-\-bytes\fR
 Display the amount of memory in bytes.
 .TP
-\fB\-k, \-\-kilo\fR
-Display the amount of memory in kilobytes. This is the default.
+\fB\-k\fR, \fB\-\-kilo\fR
+Display the amount of memory in kilobytes.  This is the default.
 .TP
-\fB\-m, \-\-mega\fR
+\fB\-m\fR, \fB\-\-mega\fR
 Display the amount of memory in megabytes.
 .TP
-\fB\-g, \-\-giga\fR
+\fB\-g\fR, \fB\-\-giga\fR
 Display the amount of memory in gigabytes.
 .TP
-\fB\-\-tera
+\fB\-\-tera\fR
 Display the amount of memory in terabytes.
 .TP
-\fB\-h, \-\-human\fP
-Show all output fields automatically scaled to shortest three
-digit unit and display the units of print out. Following units
-are used.
-
+\fB\-h\fR, \fB\-\-human\fP
+Show all output fields automatically scaled to shortest three digit unit and
+display the units of print out.  Following units are used.
+.sp
 .nf
   B = bytes
   K = kilos
@@ -41,46 +41,57 @@ are used.
   G = gigas
   T = teras
 .fi
-
-If unit is missing, and you have petabyte of RAM or swap, the
-number is in terabytes and columns might not be aligned with
-header.
+.sp
+If unit is missing, and you have petabyte of RAM or swap, the number is in
+terabytes and columns might not be aligned with header.
 .TP
-\fB\-c, \-\-count\fR \fICOUNT\fR
-Display the result \fIcount\fR times.  Requires the \fB\-s\fR option.
+\fB\-c\fR, \fB\-\-count\fR \fIcount\fR
+Display the result
+.I count
+times.  Requires the
+.B \-s
+option.
 .TP
-\fB\-l, \-\-lohi\fR
+\fB\-l\fR, \fB\-\-lohi\fR
 Show detailed low and high memory statistics.
 .TP
-\fB\-o, \-\-old\fR
+\fB\-o\fR, \fB\-\-old\fR
 Display the output in old format, the only difference being this option
 will disable the display of the "buffer adjusted" line.
 .TP
-\fB\-s, \-\-seconds\fR \fISECONDS\fR
-Continuously display the result \fIdelay\fP seconds apart. You
-may actually specify any floating point number for \fIdelay\fP, 
+\fB\-s\fR, \fB\-\-seconds\fR \fIseconds\fR
+Continuously display the result delay
+.I seconds
+apart.  You may actually specify any floating point number for
+.IR delay ,
 .BR usleep (3)
 is used for microsecond resolution delay times.
 .TP
-\fB\-\-si\fP
+\fB\-\-si\fR
 Use power of 1000 not 1024.
 .TP
-\fB\-t, \-\-total\fR
+\fB\-t\fR, \fB\-\-total\fR
 Display a line showing the column totals.
 .TP
-\fB\-\-help\fP
+\fB\-\-help\fR
 Print help.
 .TP
-\fB\-V, \-\-version\fR
+\fB\-V\fR, \fB\-\-version\fR
 Display version information.
+.PD
 .SH FILES
-.nf
-/proc/meminfo memory information
-.fi
+.TP
+/proc/meminfo
+memory information
+.PD
+.SH "SEE ALSO"
+.BR ps (1),
+.BR slabtop (1),
+.BR top "(1),
+.BR vmstat (8).
 .SH AUTHORS
 Written by Brian Edmonds. 
-
-Send bug reports to <procps@freelists.org>
-.SH "SEE ALSO"
-.BR ps "(1), " slabtop "(1), " top "(1), " vmstat (8).
-.\"{{{}}}
+.SH "REPORTING BUGS"
+Please send bug reports to
+.UR procps\@freelists.org
+.UE
