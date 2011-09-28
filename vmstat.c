@@ -25,6 +25,8 @@
 #include <sys/ioctl.h>
 #include <sys/dir.h>
 #include <dirent.h>
+#include <errno.h>
+#include <getopt.h>
 
 #include "proc/sysinfo.h"
 #include "proc/version.h"
@@ -58,28 +60,28 @@ static unsigned long num_updates;
 static unsigned int height;   // window height
 static unsigned int moreheaders=TRUE;
 
+static void __attribute__ ((__noreturn__))
+    usage(FILE * out)
+{
+	fprintf(out,
+		"\nUsage: %s [options] [delay [count]]\n"
+		"\nOptions:\n", program_invocation_short_name);
+	fprintf(out,
+		" -a, --active           active/inactive memory\n"
+		" -f, --forks            number of forks since boot\n"
+		" -m, --slabs            slabinfo\n"
+		" -n, --one-header       do not redisplay header\n"
+		" -s, --stats            event counter statistics\n"
+		" -d, --disk             disk statistics\n"
+		" -D, --disk-sum         summarize disk statistics\n"
+		" -p, --partition <dev>  partition specific statistics\n"
+		" -S, --unit <char>      define display unit\n"
+		" -h, --help             display this help text\n"
+		" -V, --version          display version information and exit\n");
+	fprintf(out, "\nFor more information see vmstat(8).\n");
 
-/////////////////////////////////////////////////////////////////////////
-
-static void usage(void) NORETURN;
-static void usage(void) {
-  fprintf(stderr,"usage: vmstat [-V] [-n] [delay [count]]\n");
-  fprintf(stderr,"              -V prints version.\n");
-  fprintf(stderr,"              -n causes the headers not to be reprinted regularly.\n");
-  fprintf(stderr,"              -a print inactive/active page stats.\n");
-  fprintf(stderr,"              -d prints disk statistics\n");
-  fprintf(stderr,"              -D prints disk table\n");
-  fprintf(stderr,"              -p prints disk partition statistics\n");
-  fprintf(stderr,"              -s prints vm table\n");
-  fprintf(stderr,"              -m prints slabinfo\n");
-  fprintf(stderr,"              -S unit size\n");
-  fprintf(stderr,"              delay is the delay between updates in seconds. \n");
-  fprintf(stderr,"              unit size k:1000 K:1024 m:1000000 M:1048576 (default is K)\n");
-  fprintf(stderr,"              count is the number of updates.\n");
-  exit(EXIT_FAILURE);
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
-
-/////////////////////////////////////////////////////////////////////////////
 
 #if 0
 // produce:  "  6  ", "123  ", "123k ", etc.
@@ -593,10 +595,27 @@ int main(int argc, char *argv[]) {
   char *partition = NULL;
   int c;
 
-  while((c = getopt(argc, argv, "VdafmDnp:S:s")) != EOF) switch(c) {
+  static const struct option longopts[] = {
+    {"active", no_argument, NULL, 'a'},
+    {"forks", no_argument, NULL, 'f'},
+    {"slabs", no_argument, NULL, 'm'},
+    {"one-header", no_argument, NULL, 'n'},
+    {"stats", no_argument, NULL, 's'},
+    {"disk", no_argument, NULL, 'd'},
+    {"disk-sum", no_argument, NULL, 'D'},
+    {"partition", required_argument, NULL, 'p'},
+    {"unit", required_argument, NULL, 'S'},
+    {"help", no_argument, NULL, 'h'},
+    {"version", no_argument, NULL, 'V'},
+    {NULL, 0, NULL, 0}
+  };
+
+  while((c = getopt_long(argc, argv, "afmnsdDp:S:hV", longopts, NULL)) != EOF) switch(c) {
       case 'V':
 	display_version();
 	exit(0);
+      case 'h':
+        usage(stdout);
       case 'd':
 	statMode |= DISKSTAT;
 	break;
@@ -641,18 +660,18 @@ int main(int argc, char *argv[]) {
 	break;
       default:
 	/* no other aguments defined yet. */
-	usage();
+	usage(stderr);
   }
 
   if (optind < argc) {
     if ((sleep_time = atoi(argv[optind++])) == 0)
-         usage();
+         usage(stderr);
     num_updates = ULONG_MAX;
   }
   if (optind < argc)
     num_updates = atol(argv[optind++]);
   if (optind < argc)
-     usage();
+     usage(stderr);
 
   if (moreheaders) {
       int tmp=winhi()-3;
@@ -673,7 +692,7 @@ int main(int argc, char *argv[]) {
 			     break;
 	case(DISKSUMSTAT):   disksum_format();  
 			     break;	
-	default:	     usage();
+	default:	     usage(stderr);
 			     break;
   }
   return 0;
