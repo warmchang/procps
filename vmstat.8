@@ -1,83 +1,90 @@
 .\"  This page Copyright (C) 1994 Henry Ware <al172@yfn.ysu.edu>
 .\"  Distributed under the GPL, Copyleft 1994.
-.TH VMSTAT 8 "2009 Jan 9" "Throatwobbler Ginkgo Labs" "Linux Administrator's Manual"
+.TH VMSTAT 8 "September 2011" "procps-ng" "System Administration"
 .SH NAME
 vmstat \- Report virtual memory statistics
 .SH SYNOPSIS
-.ft B
 .B vmstat
-.RB [ "\-a" ]
-.RB [ "\-n" ]
-.RI [ delay " [ " count ]]
-.br
-.B vmstat
-.RB [ "\-f" ]
-.RB [ "\-s" ]
-.RB [ "\-m" ]
-.br
-.B vmstat
-.RB [ "\-S unit"]
-.br
-.B vmstat
-.RB [ "\-d"]
-.br
-.B vmstat
-.RB [ "\-D"]
-.br
-.B vmstat
-.RB [ "\-p disk partition"]
-.br
-.B vmstat
-.RB [ "\-V" ]
+[options]
+.RI [ delay " [" count ]]
 .SH DESCRIPTION
-\fBvmstat\fP reports information about processes, memory, paging,
-block IO, traps, disks and cpu activity.
-
+.B vmstat
+reports information about processes, memory, paging, block IO, traps, disks
+and cpu activity.
+.PP
 The first report produced gives averages since the last reboot.  Additional
-reports give information on a sampling period of length \fIdelay\fP.
+reports give information on a sampling period of length
+.IR delay .
 The process and memory reports are instantaneous in either case.
-
-.SS Options
-The \fB\-a\fP switch displays active/inactive memory, given a 2.5.41 kernel or better.
-.PP
-The \fB\-f\fP switch displays the number of forks since boot.
-This includes the fork, vfork, and clone system calls, and is
-equivalent to the total number of tasks created. Each process
-is represented by one or more tasks, depending on thread usage.
-This display does not repeat.
-.PP
-The \fB\-m\fP displays slabinfo.
-.PP
-The \fB\-n\fP switch causes the header to be displayed only once rather than periodically.
-.PP
-The \fB\-s\fP switch displays a table of various event counters
-and memory statistics. This display does not repeat.
-.PP
+.SH OPTIONS
+.TP
 .I delay
-is the delay between updates in seconds.  If no delay is specified,
-only one report is printed with the average values since boot.
-.PP
+The
+.I delay
+between updates in seconds.  If no
+.I delay
+is specified, only one report is printed with the average values since boot.
+.TP
 .I count
-is the number of updates.  If no count is specified and delay is
-defined, \fIcount\fP defaults to infinity.
-.PP
-The \fB\-d\fP reports disk statistics (2.5.70 or above required)
-.PP
-The \fB-D\fP reports some summary statistics about disk activity.
-.PP
-The \fB\-p\fP followed by some partition name for detailed statistics (2.5.70 or above required)
-.PP
-The \fB\-S\fP followed by k or K or m or M switches outputs between
-1000, 1024, 1000000, or 1048576 bytes.  Note this does not change the
-swap (si/so) or block (bi/bo) fields.
-.PP
-The \fB\-V\fP switch results in displaying version information.
-.PP
-.SH FIELD DESCRIPTION FOR VM MODE
+Number of updates.  In absense of
+.IR count ,
+when
+.I delay
+is defined, default is infinite.
+.TP
+\fB\-a\fR, \fB\-\-active\fR
+Display active and  inactive memory, given a 2.5.41 kernel or better.
+.TP
+\fB\-f\fR, \fB\-\-forks\fR
+The
+.B \-f
+switch displays the number of forks since boot.  This includes the fork,
+vfork, and clone system calls, and is equivalent to the total number of tasks
+created.  Each process is represented by one or more tasks, depending on
+thread usage.  This display does not repeat.
+.TP
+\fB\-m\fR, \fB\-\-slabs\fR
+Displays slabinfo.
+.TP
+\fB\-n\fR, \fB\-\-one-header\fR
+Display the header only once rather than periodically.
+.TP
+\fB\-s\fR, \fB\-\-stats\fR
+Displays a table of various event counters and memory statistics.  This
+display does not repeat.
+.TP
+\fB\-d\fR, \fB\-\-disk\fR
+Report disk statistics (2.5.70 or above required).
+.TP
+\fB\-D\fR, \fB\-\-disk-sum\fR
+Report some summary statistics about disk activity.
+.TP
+\fB\-p\fR, \fB\-\-partition\fR \fIdevice\fR
+Detailed statistics about partition (2.5.70 or above required).
+.TP
+\fB\-S\fR, \fB\-\-unit\fR \fIcharacter\fR
+Switches outputs between 1000
+.RI ( k ),
+1024
+.RI ( K ),
+1000000
+.RI ( m ),
+or 1048576
+.RI ( M )
+bytes.  Note this does not change the swap (si/so) or block (bi/bo)
+fields.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Display version information and exit.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help and exit.
+.PD
+.SH "FIELD DESCRIPTION FOR VM MODE"
 .SS
 .B "Procs"
 .nf
-r: The number of processes waiting for run time.  
+r: The number of processes waiting for run time.
 b: The number of processes in uninterruptible sleep.
 .fi
 .PP
@@ -88,8 +95,8 @@ swpd: the amount of virtual memory used.
 free: the amount of idle memory.
 buff: the amount of memory used as buffers.
 cache: the amount of memory used as cache.
-inact: the amount of inactive memory. (\-a option)
-active: the amount of active memory. (\-a option)
+inact: the amount of inactive memory.  (\-a option)
+active: the amount of active memory.  (\-a option)
 .fi
 .PP
 .SS
@@ -114,21 +121,21 @@ cs: The number of context switches per second.
 .fi
 .PP
 .SS
-.B "CPU "
+.B "CPU"
 These are percentages of total CPU time.
 .nf
-us: Time spent running non\-kernel code. (user time, including nice time)
-sy: Time spent running kernel code. (system time)
-id: Time spent idle. Prior to Linux 2.5.41, this includes IO\-wait time.
-wa: Time spent waiting for IO. Prior to Linux 2.5.41, included in idle.
-st: Time stolen from a virtual machine. Prior to Linux 2.6.11, unknown.
+us: Time spent running non\-kernel code.  (user time, including nice time)
+sy: Time spent running kernel code.  (system time)
+id: Time spent idle.  Prior to Linux 2.5.41, this includes IO\-wait time.
+wa: Time spent waiting for IO.  Prior to Linux 2.5.41, included in idle.
+st: Time stolen from a virtual machine.  Prior to Linux 2.6.11, unknown.
 .fi
 .PP
-.SH FIELD DESCRIPTION FOR DISK MODE 
+.SH "FIELD DESCRIPTION FOR DISK MODE"
 .SS
 .B "Reads"
 .nf
-total: Total reads completed successfully 
+total: Total reads completed successfully
 merged: grouped reads (resulting in one I/O)
 sectors: Sectors read successfully
 ms: milliseconds spent reading
@@ -149,19 +156,16 @@ ms: milliseconds spent writing
 cur: I/O in progress
 s: seconds spent for I/O
 .fi
-
 .PP
-.SH FIELD DESCRIPTION FOR DISK PARTITION MODE
+.SH "FIELD DESCRIPTION FOR DISK PARTITION MODE"
 .nf
 reads: Total number of reads issued to this partition
 read sectors: Total read sectors for partition
 writes : Total number of writes issued to this partition
 requested writes: Total number of write requests made for partition
-
 .fi
-
 .PP
-.SH FIELD DESCRIPTION FOR SLAB MODE 
+.SH "FIELD DESCRIPTION FOR SLAB MODE"
 .nf
 cache: Cache name
 num: Number of currently active objects
@@ -169,21 +173,21 @@ total: Total number of available objects
 size: Size of each object
 pages: Number of pages with at least one active object
 .fi
-
 .SH NOTES
 .B "vmstat "
 does not require special permissions.
 .PP
 These reports are intended to help identify system bottlenecks.  Linux
-.B "vmstat "
+.B vmstat
 does not count itself as a running process.
 .PP
-All linux blocks are currently 1024 bytes. Old kernels may report
-blocks as 512 bytes, 2048 bytes, or 4096 bytes.
+All linux blocks are currently 1024 bytes.  Old kernels may report blocks as
+512 bytes, 2048 bytes, or 4096 bytes.
 .PP
-Since procps 3.1.9, vmstat lets you choose units (k, K, m, M) default is K (1024 bytes) in the default mode
+Since procps 3.1.9, vmstat lets you choose units (k, K, m, M).  Default is K
+(1024 bytes) in the default mode.
 .PP
-vmstat uses slabinfo 1.1    FIXME
+vmstat uses slabinfo 1.1
 .SH FILES
 .ta
 .nf
@@ -191,18 +195,27 @@ vmstat uses slabinfo 1.1    FIXME
 /proc/stat
 /proc/*/stat
 .fi
-
 .SH "SEE ALSO"
+.BR free (1),
 .BR iostat (1),
-.BR sar (1),
 .BR mpstat (1),
 .BR ps (1),
-.BR top (1),
-.BR free (1)
+.BR sar (1),
+.BR top (1)
 .PP
 .SH BUGS
 Does not tabulate the block io per device or count the number of system calls.
 .SH AUTHORS
-.nf
-Written by Henry Ware <al172@yfn.ysu.edu>. 
-Fabian Fr\('ed\('erick <ffrederick@users.sourceforge.net> (diskstat, slab, partitions...)
+Written by
+.UR al172\@yfn.\:ysu.\:edu
+Henry Ware
+.UE .
+.br
+.UR ffrederick\@users.\:sourceforge.\:net
+Fabian Fr\('ed\('erick
+.UE
+(diskstat, slab, partitions...)
+.SH "REPORTING BUGS"
+Please send bug reports to
+.UR procps\@freelists.org
+.UE
