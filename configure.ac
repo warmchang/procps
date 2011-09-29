@@ -142,6 +142,14 @@ if test "x$with_ncurses" != xno; then
 fi
 AC_SUBST([NCURSES_LIBS])
 
+AC_ARG_ENABLE([oomem],
+  AS_HELP_STRING([--enable-oomem], [add out-of-memory fields to the library and top]),
+  [], enable_oomem=no
+)
+if test "x$enable_oomem" = xyes; then
+  AC_DEFINE(OOMEM_ENABLE, 1, [add out-of-memory fields to the library and top])
+fi
+
 AC_CONFIG_FILES([
 Makefile
 proc/Makefile
