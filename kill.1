@@ -5,73 +5,57 @@
 .\" Licensed under version 2 of the GNU General Public License.
 .\" Written by Albert Cahalan; converted to a man page by
 .\" Michael K. Johnson
-.TH KILL 1 "November 21, 1999" "Linux" "Linux User's Manual"
+.TH KILL 1 "October 2011" "procps-ng" "User Commands"
 .SH NAME
 kill \- send a signal to a process
-
 .SH SYNOPSIS
-\fBkill\fR [ \-\fBsignal\fR | \-s \fBsignal\fR ] \fBpid\fR ...
-.br
-\fBkill\fR [ \-L | -V, \-\-version ]
-.br
-\fBkill\fR \-l  [ \fBsignal\fR ]
-
+.B kill
+[options] <pid> [...]
 .SH DESCRIPTION
-The default signal for kill is TERM. Use \-l or \-L to list available signals.
-Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.
-Alternate signals may be specified in three ways: \-9 \-SIGKILL \-KILL.
-Negative PID values may be used to choose whole process groups; see the
-PGID column in ps command output. A PID of \-1 is special; it indicates
-all processes except the kill process itself and init.
-
+The default signal for kill is TERM.  Use
+.B \-l
+or
+.B \-L
+to list available signals.  Particularly useful signals include HUP,
+INT, KILL, STOP, CONT, and 0.  Alternate signals may be specified in
+three ways:
+.BR \-9 ", " \-SIGKILL
+or
+.BR \-KILL .
+Negative PID values may be used to choose whole process groups; see
+the PGID column in ps command output.  A PID of
+.B \-1
+is special; it indicates all processes except the kill process itself
+and init.
+.SH OPTIONS
+.TP
+.B <pid> [...]
+Send signal to every <pid> listed.
+.TP
+.B \-<signal>
+.TQ
+.B \-s <signal>
+Specify the
+.B signal
+to be sent.  The signal can be specified by using name or number.
+.TP
+.B \-l
+List signal names.
+.TP
+.B \-L
+List signal names in a nice table.
+.TP
+.B \-l <signal>
+Convert in between signal name and number.
+.PD
 .SH SIGNALS
-The signals listed below may be available for use with kill.
-When known constant, numbers and default behavior are shown.
-
-.TS
-lB rB lB lB
-lfCW r l l.
-Name	Num	Action	Description
-0	0	n/a	exit code indicates if a signal may be sent
-ALRM	14	exit
-HUP	1	exit
-INT	2	exit
-KILL	9	exit	cannot be blocked
-PIPE	13	exit
-POLL		exit
-PROF		exit
-TERM	15	exit
-USR1		exit
-USR2		exit
-VTALRM		exit
-STKFLT		exit	might not be implemented
-PWR		ignore	might exit on some systems
-WINCH		ignore
-CHLD		ignore
-URG		ignore
-TSTP		stop	might interact with the shell
-TTIN		stop	might interact with the shell
-TTOU		stop	might interact with the shell
-STOP		stop	cannot be blocked
-CONT		restart	continue if stopped, otherwise ignore
-ABRT	6	core
-FPE	8	core
-ILL	4	core
-QUIT	3	core
-SEGV	11	core
-TRAP	5	core
-SYS		core	might not be implemented
-EMT		core	might not be implemented
-BUS		core	core dump might fail
-XCPU		core	core dump might fail
-XFSZ		core	core dump might fail
-.TE
-
+The behavior of signals is explained in
+.BR signal (7)
+manual page.
 .SH NOTES
-Your shell (command line interpreter) may have a built-in kill command.
-You may need to run the command described here as /bin/kill to solve
-the conflict.
-
+Your shell (command line interpreter) may have a built-in kill
+command.  You may need to run the command described here as /bin/kill
+to solve the conflict.
 .SH EXAMPLES
 .TP
 .B kill \-9 \-1
@@ -85,22 +69,25 @@ List the available signal choices in a nice table.
 .TP
 .B kill 123 543 2341 3453
 Send the default signal, SIGTERM, to all those processes.
-
 .SH "SEE ALSO"
-.BR pkill (1),
-.BR skill (1),
 .BR kill (2),
-.BR renice (1),
+.BR killall (1),
 .BR nice (1),
+.BR pkill (1),
+.BR renice (1),
 .BR signal (7),
-.BR killall (1).
-
+.BR skill (1)
 .SH STANDARDS
-This command meets appropriate standards. The \-L flag is Linux-specific.
-
+This command meets appropriate standards. The
+.B \-L
+flag is Linux-specific.
 .SH AUTHOR
-Albert Cahalan <albert@users.sf.net> wrote kill in 1999 to replace a
-bsdutils one that was not standards compliant. The util-linux one might
-also work correctly.
-
-Please send bug reports to <procps@freelists.org>
+.UR albert\@users.sf.net
+Albert Cahalan
+.UE
+wrote kill in 1999 to replace a bsdutils one that was not standards
+compliant.  The util-linux one might also work correctly.
+.SH "REPORTING BUGS"
+Please send bug reports to
+.UR procps\@freelists.org
+.UE
