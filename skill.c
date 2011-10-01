@@ -229,18 +229,20 @@ static void iterate(void){
 }
 
 /***** kill help */
-static void kill_usage(void) NORETURN;
-static void kill_usage(void){
-  fprintf(stderr,
-    "Usage:\n"
-    "  kill pid ...              Send SIGTERM to every process listed.\n"
-    "  kill signal pid ...       Send a signal to every process listed.\n"
-    "  kill -s signal pid ...    Send a signal to every process listed.\n"
-    "  kill -l                   List all signal names.\n"
-    "  kill -L                   List all signal names in a nice table.\n"
-    "  kill -l signal            Convert between signal numbers and names.\n"
-  );
-  exit(1);
+static void __attribute__ ((__noreturn__)) kill_usage(void)
+{
+	fprintf(stderr,
+		"\nUsage: %s [options] <pid> [...]\n"
+		"\nOptions:\n"
+		"  <pid> [...]    send SIGTERM to every <pid> listed\n"
+		"  -<signal>      specify the <signal> to be sent\n"
+		"  -s <signal>    specify the <signal> to be sent\n"
+		"  -l             list all signal names\n"
+		"  -L             list all signal names in a nice table\n"
+		"  -l <signal>    convert between signal numbers and names\n"
+		"\nFor more information see kill(1).\n",
+		program_invocation_short_name);
+	exit(1);
 }
 
 /***** kill */
@@ -327,44 +329,51 @@ no_more_args:
 }
 
 /***** skill/snice help */
-static void skillsnice_usage(void) NORETURN;
-static void skillsnice_usage(void){
-  if(program==PROG_SKILL){
-    fprintf(stderr,
-      "Usage:   skill [signal to send] [options] process selection criteria\n"
-      "Example: skill -KILL -v pts/*\n"
-      "\n"
-      "The default signal is TERM. Use -l or -L to list available signals.\n"
-      "Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.\n"
-      "Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"
-    );
-  }else{
-    fprintf(stderr,
-      "Usage:   snice [new priority] [options] process selection criteria\n"
-      "Example: snice +7 netscape crack\n"
-      "\n"
-      "The default priority is +4. (snice +4 ...)\n"
-      "Priority numbers range from +20 (slowest) to -20 (fastest).\n"
-      "Negative priority numbers are restricted to administrative users.\n"
-    );
-  }
-  fprintf(stderr,
-    "\n"
-    "General options:\n"
-    "-f  fast mode            This is not currently useful.\n"
-    "-i  interactive use      You will be asked to approve each action.\n"
-    "-v  verbose output       Display information about selected processes.\n"
-    "-w  warnings enabled     This is not currently useful.\n"
-    "-n  no action            This only displays the process ID.\n"
-    "\n"
-    "Selection criteria can be: terminal, user, pid, command.\n"
-    "The options below may be used to ensure correct interpretation.\n"
-    "-t  The next argument is a terminal (tty or pty).\n"
-    "-u  The next argument is a username.\n"
-    "-p  The next argument is a process ID number.\n"
-    "-c  The next argument is a command name.\n"
-  );
-  exit(1);
+static void __attribute__ ((__noreturn__)) skillsnice_usage(void)
+{
+	if (program == PROG_SKILL) {
+		fprintf(stderr,
+			"\nUsage: %s [signal] [options] <expression>\n",
+			program_invocation_short_name);
+	} else {
+		fprintf(stderr,
+			"\nUsage: %s [new priority] [options] <expression>\n",
+			program_invocation_short_name);
+	}
+	fprintf(stderr,
+		"\n"
+		"Options:\n"
+		"  -f             fast mode (not implemented)\n"
+		"  -i             interactive\n"
+		"  -l             list all signal names\n"
+		"  -L             list all signal names in a nice table\n"
+		"  -n             no action\n"
+		"  -v             explain what is being done\n"
+		"  -w             enable warnings (not implemented)\n"
+		"  -V, --version  display version information and exit\n"
+		"\n"
+		"Expression can be: terminal, user, pid, command.\n"
+		"The options below may be used to ensure correct interpretation.\n"
+		"  -c <command>   expression is a command name\n"
+		"  -p <pid>       expression is a process id number\n"
+		"  -t <tty>       expression is a terminal\n"
+		"  -u <username>  expression is a username\n");
+	if (program == PROG_SKILL) {
+		fprintf(stderr,
+			"\n"
+			"The default signal is TERM. Use -l or -L to list available signals.\n"
+			"Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.\n"
+			"Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"
+			"\nFor more information see skill(1).\n");
+	} else {
+		fprintf(stderr,
+			"\n"
+			"The default priority is +4. (snice +4 ...)\n"
+			"Priority numbers range from +20 (slowest) to -20 (fastest).\n"
+			"Negative priority numbers are restricted to administrative users.\n"
+			"\nFor more information see snice(1).\n");
+	}
+	exit(1);
 }
 
 #if 0
