@@ -46,7 +46,7 @@ static void signal_handler(int signo){
   fprintf(stderr,
     "\n\n"
     "Signal %d (%s) caught by ps (%s).\n"
-    "Please send bug reports to <feedback@lists.sf.net> or <albert@users.sf.net>\n",
+    "Please send bug reports to <procps@freelists.org>\n",
     signo,
     signal_number_to_name(signo),
     procps_version

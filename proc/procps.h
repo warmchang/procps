@@ -78,7 +78,7 @@
 #define STRINGIFY_ARG(a)	#a
 #define STRINGIFY(a)		STRINGIFY_ARG(a)
 
-// marks old junk, to warn non-procps library users
+// marks old junk, to warn non-procps-ng library users
 #if ( __GNUC__ == 3 && __GNUC_MINOR__ > 0 ) || __GNUC__ > 3
 #define OBSOLETE __attribute__((deprecated))
 #else

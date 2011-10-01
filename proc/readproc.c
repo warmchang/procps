@@ -6,9 +6,7 @@
  * May be distributed under the conditions of the
  * GNU Library General Public License; a copy is in COPYING
  */
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+
 #include "version.h"
 #include "readproc.h"
 #include "alloc.h"
