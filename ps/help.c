@@ -9,37 +9,102 @@
  * GNU Library General Public License for more details.
  */
 
-/*
- * The help message must not become longer, because it must fit
- * on an 80x24 screen _with_ the error message and command prompt.
- */
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-const char *help_message =
-"********* simple selection *********  ********* selection by list *********\n"
-"-A all processes                      -C by command name\n"
-"-N negate selection                   -G by real group ID (supports names)\n"
-"-a all w/ tty except session leaders  -U by real user ID (supports names)\n"
-"-d all except session leaders         -g by session OR by effective group name\n"
-"-e all processes                      -p by process ID\n"
-"T  all processes on this terminal     -s processes in the sessions given\n"
-"a  all w/ tty, including other users  -t by tty\n"
-"g  OBSOLETE -- DO NOT USE             -u by effective user ID (supports names)\n"
-"r  only running processes             U  processes for specified users\n"
-"x  processes w/o controlling ttys     t  by tty\n"
-"*********** output format **********  *********** long options ***********\n"
-"-o,o user-defined  -f full            --Group --User --pid --cols --ppid\n"
-"-j,j job control   s  signal          --group --user --sid --rows --info\n"
-"-O,O preloaded -o  v  virtual memory  --cumulative --format --deselect\n"
-"-l,l long          u  user-oriented   --sort --tty --forest --version\n"
-"-F   extra full    X  registers       --heading --no-heading --context\n"
-"                    ********* misc options *********\n"
-"-V,V  show version      L  list format codes  f  ASCII art forest\n"
-"-m,m,-L,-T,H  threads   S  children in sum    -y change -l format\n"
-"-M,Z  security data     c  true command name  -c scheduling class\n"
-"-w,w  wide output       n  numeric WCHAN,UID  -H process hierarchy\n"
-;
+#include "common.h"
 
-
+void __attribute__ ((__noreturn__)) usage(FILE * out, int section)
+{
+	fprintf(out,
+		"\nUsage: %s [options]\n", program_invocation_short_name);
+	if (section == USAGE_SELECTION || section == USAGE_ALL) {
+		fprintf(out,
+		"\nSimple options:\n"
+		" -A               all processes\n"
+		" -N, --deselect   negate selection\n"
+		" -a               all without tty and session leader\n"
+		" -d               all except session leader\n"
+		" -e               all processes\n"
+		" T                all processes on this terminal\n"
+		" a                all without tty, including other users\n"
+		" g                obsolete, do not use\n"
+		" r                only running processes\n"
+		" x                processes without controlling ttys\n");
+	}
+	if (section == USAGE_LIST || section == USAGE_ALL) {
+		fprintf(out,
+		"\nSelection by list:\n"
+		" -C <command>         command name\n"
+		" U, -u, --user <uid>  effective user id or name\n"
+		" -U, --User <uid>     real user id or name\n"
+		" -G, --Group <gid>    real group id or name\n"
+		" -g, --group <group>  session or effective group name\n"
+		" -p, --pid <pid>      process id\n"
+		" --ppid <pid>         select by parent process id\n"
+		" -s, --sid <session>  session id\n"
+		" t, -t, --tty <tty>   terminal\n"
+		"\n selection <arguments> take csv list e.g. `-u root,nobody'\n");
+	}
+	if (section == USAGE_OUTPUT || section == USAGE_ALL) {
+		fprintf(out,
+		"\nOutput formats:\n"
+		" o, -o, --format <format>"
+		"                  user defined format\n"
+		" O  <format>      preloaded -o allowing sorting\n"
+		" -O <format>      preloaded, with default columns, allowing sorting\n"
+		" -j               jobs format\n"
+		" j                BSD job control format\n"
+		" -l               long format\n"
+		" l                BSD long format\n"
+		" y                do not show flags, show rrs in place addr (used with -l)\n"
+		" -f               full-format\n"
+		" -F               extra full\n"
+		" s                signal format\n"
+		" v                virtual memory\n"
+		" u                user-oriented format\n"
+		" X                register format\n"
+		" Z, -M            security data (for SE Linux)\n"
+		" f, --forest      ascii art process tree\n"
+		" -H               show process hierarchy\n"
+		" --context        display security context (for SE Linux)\n"
+		" --heading        repeat header lines\n"
+		" --no-headers     do not print header at all\n"
+		" --cols <num>     set screen width\n"
+		" --rows <num>     set screen height\n");
+	}
+	if (section == USAGE_THREADS || section == USAGE_ALL) {
+		fprintf(out,
+		"\nShow threads:\n"
+		" H                as if they where processes\n"
+		" -L               possibly with LWP and NLWP columns\n"
+		" -T               possibly with SPID column\n"
+		" m, -m            after processes\n");
+	}
+	if (section == USAGE_MISC || section == USAGE_ALL) {
+		fprintf(out,
+		"\nMisc options:\n"
+		" w, -w            unlimited output width\n"
+		" L                list format codes\n"
+		" c                true command name\n"
+		" n                display numeric uid and wchan\n"
+		" -y               do not show flags, show rss (only with -l)\n"
+		" -c               show scheduling class\n"
+		" --sort <spec>    specify sort order, can be a csv list\n"
+		" S, --cumulative  include some dead child process data\n"
+		" --info           print debuggin information\n"
+		" V,-V, --version  display version information and exit\n"
+		" --help <selection|list|output|threads|misc|all>\n"
+		"                  display help\n");
+	}
+	if (section == USAGE_DEFAULT)
+		fprintf(out,
+		"\n Try `%s --help <selection|list|output|threads|misc|all>'\n"
+		" for more information.\n", program_invocation_short_name);
+	fprintf(out, "\nFor more information see ps(1).\n");
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
 
 /* Missing:
  *

@@ -25,6 +25,16 @@
 
 /***************** GENERAL DEFINE ********************/
 
+/* usage output sections */
+enum {
+  USAGE_DEFAULT,
+  USAGE_ALL,
+  USAGE_SELECTION,
+  USAGE_LIST,
+  USAGE_OUTPUT,
+  USAGE_THREADS,
+  USAGE_MISC
+};
 
 /* selection list */
 #define SEL_RUID 1
@@ -326,7 +336,7 @@ extern int want_this_proc(proc_t *buf);
 extern const char *select_bits_setup(void);
 
 /* help.c */
-extern const char *help_message;
+extern void __attribute__ ((__noreturn__)) usage(FILE * out, int section);
 
 /* global.c */
 extern void self_info(void);

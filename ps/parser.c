@@ -162,6 +162,23 @@ found_it:
   return 0;
 }
 
+static int parse_usage_section(const char *opt)
+{
+  if (!strcmp(opt, "s") || !strcmp(opt, "selection"))
+    return USAGE_SELECTION;
+  if (!strcmp(opt, "e") || !strcmp(opt, "list"))
+    return USAGE_LIST;
+  if (!strcmp(opt, "o") || !strcmp(opt, "output"))
+    return USAGE_OUTPUT;
+  if (!strcmp(opt, "t") || !strcmp(opt, "threads"))
+    return USAGE_THREADS;
+  if (!strcmp(opt, "m") || !strcmp(opt, "misc"))
+    return USAGE_MISC;
+  if (!strcmp(opt, "a") || !strcmp(opt, "all"))
+    return USAGE_ALL;
+  return USAGE_DEFAULT;
+}
+
 /*
  * Used to parse lists in a generic way. (function pointers)
  */
@@ -786,6 +803,7 @@ static const char *parse_gnu_option(void){
   char buf[16];
   gnu_table_struct findme = { buf, NULL};
   gnu_table_struct *found;
+  int usage_section;
   static const gnu_table_struct gnu_table[] = {
   {"Group",         &&case_Group},       /* rgid */
   {"User",          &&case_User},        /* ruid */
@@ -923,10 +941,12 @@ static const char *parse_gnu_option(void){
     return NULL;
   case_help:
     trace("--help\n");
-    exclusive("--help");
-    fwrite(help_message,1,strlen(help_message),stdout);
-    exit(0);
-    return NULL;
+    arg = grab_gnu_arg();
+    if(!arg)
+      usage_section = USAGE_DEFAULT;
+    else
+      usage_section = parse_usage_section(arg);
+    usage(stdout, usage_section);
   case_info:
     trace("--info\n");
     exclusive("--info");
@@ -1256,7 +1276,5 @@ total_failure:
   reset_parser();
   if(personality & PER_FORCE_BSD) fprintf(stderr, "ERROR: %s\n", err2);
   else fprintf(stderr, "ERROR: %s\n", err);
-  fwrite(help_message,1,strlen(help_message),stderr);
-  exit(1);
-  /* return 1; */ /* useless */
+  usage(stderr, USAGE_DEFAULT);
 }
