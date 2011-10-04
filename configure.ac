@@ -156,6 +156,14 @@ if test "x$enable_oomem" = xyes; then
   AC_DEFINE(OOMEM_ENABLE, 1, [add out-of-memory fields to the library and top])
 fi
 
+AC_ARG_ENABLE([w-from],
+  AS_HELP_STRING([--enable-w-from], [enable w from field by default]),
+  [], enable_w_from=no
+)
+if test "x$enable_w_from" = xyes; then
+  AC_DEFINE(W_SHOWFROM, 1, [enable w from field by default])
+fi
+
 AC_CONFIG_FILES([
 Makefile
 proc/Makefile
