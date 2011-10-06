@@ -35,7 +35,7 @@ static void version(void)
 
 int main(int argc, char* argv[])
 {
-     char buf[PATH_MAX+1];
+     static char buf[PATH_MAX+1];      // null terminate string via static
      regex_t re;
      int i;
 
