@@ -103,7 +103,7 @@ static void O_wrap(sf_node *sfn, int otype){
   endp->next = fnode;
   
   fnode =  do_one_spec(trailer,NULL);
-  if(!fnode)fprintf(stderr,"Seriously crashing. Goodbye cruel world.\n");
+  if(!fnode) { fprintf(stderr,"Seriously crashing. Goodbye cruel world.\n"); exit(1); }
   endp = fnode; while(endp->next) endp = endp->next;  /* find end */
   endp->next = sfn->f_cooked;
   sfn->f_cooked = fnode;
