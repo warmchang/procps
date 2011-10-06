@@ -65,12 +65,16 @@ sysconf_DATA = sysctl.conf
 
 EXTRA_DIST = \
 	autogen.sh \
-	BUGS \
 	CodingStyle \
 	contrib/dummy.c \
 	contrib/minimal.c \
 	contrib/tmp-junk.c \
 	contrib/utmp.c \
 	COPYING.LIB \
-	README.top \
 	$(sysconf_DATA)
+
+procpsngdir = $(docdir)
+dist_procpsng_DATA = \
+	BUGS \
+	FAQ \
+	README.top
