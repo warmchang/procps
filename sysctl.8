@@ -65,6 +65,21 @@ Display all values currently available.
 \fB\-b\fR, \fB\-\-binary\fR
 Print value without new line.
 .TP
+\fB\-\-system\fR
+Load settings from all system configuration files.
+.br
+/run/sysctl.d/*.conf
+.br
+/etc/sysctl.d/*.conf
+.br
+/usr/local/lib/sysctl.d/*.conf
+.br
+/usr/lib/sysctl.d/*.conf
+.br
+/lib/sysctl.d/*.conf
+.br
+/etc/sysctl.conf
+.TP
 \fB\-A\fR
 Alias of \fB\-a\fR
 .TP

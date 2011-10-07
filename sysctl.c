@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <libgen.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -98,6 +99,7 @@ static void __attribute__ ((__noreturn__))
 	   "  -N, --names          print variable names without values\n"
 	   "  -n, --values         print only values of a variables\n"
 	   "  -p, --load[=<file>]  read values from file\n"
+	   "      --system         read values from all system directories\n"
 	   "  -f                   alias of -p\n"
 	   "  -q, --quiet          do not echo variable set\n"
 	   "  -w, --write          enable writing a value to variable\n"
@@ -472,6 +474,76 @@ static int Preload(const char *restrict const filename) {
    return rc;
 }
 
+struct pair {
+   char* name;
+   char* value;
+};
+
+static int sortpairs(const void* A, const void* B)
+{
+   const struct pair* a = *(struct pair* const*)A;
+   const struct pair* b = *(struct pair* const*)B;
+   return strcmp(a->name, b->name);
+}
+
+static int PreloadSystem(void) {
+   unsigned di, i;
+   const char* dirs[] = {
+      "/run/sysctl.d",
+      "/etc/sysctl.d",
+      "/usr/local/lib/sysctl.d",
+      "/usr/lib/sysctl.d",
+      "/lib/sysctl.d",
+   };
+   struct pair** cfgs = NULL;
+   unsigned ncfgs = 0;
+   enum { nprealloc = 16 };
+
+   for (di=0; di < sizeof(dirs)/sizeof(dirs[0]); ++di) {
+      struct dirent* de;
+      DIR* dp = opendir(dirs[di]);
+      if (!dp)
+	 continue;
+      while (( de = readdir(dp) )) {
+	 if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..")) {
+	    continue;
+	 }
+	 if (strlen(de->d_name) < 6 || !strcmp(de->d_name+strlen(de->d_name)-6, ".conf"))
+	    continue;
+	 /* check if config already known */
+	 for (i = 0; i < ncfgs; ++i) {
+	    if (!strcmp(cfgs[i]->name, de->d_name))
+	       break;
+	 }
+	 if (i < ncfgs) // already in
+	    continue;
+
+	 if (ncfgs % nprealloc == 0) {
+	    cfgs = realloc(cfgs, sizeof(struct pair*)*(ncfgs+nprealloc));
+	 }
+	 cfgs[ncfgs] = malloc(sizeof(struct pair) + strlen(de->d_name)*2+2 + strlen(dirs[di])+1);
+	 cfgs[ncfgs]->name = (char*)cfgs[ncfgs]+sizeof(struct pair);
+	 strcpy(cfgs[ncfgs]->name, de->d_name);
+	 cfgs[ncfgs]->value = (char*)cfgs[ncfgs]+sizeof(struct pair) + strlen(cfgs[ncfgs]->name)+1;
+	 sprintf(cfgs[ncfgs]->value, "%s/%s", dirs[di], de->d_name);
+	 ncfgs++;
+
+      }
+      closedir(dp);
+   }
+
+   qsort(cfgs, ncfgs, sizeof(struct cfg*), sortpairs);
+
+   for (i = 0; i < ncfgs; ++i) {
+      if (!Quiet)
+	 printf("* Applying %s ...\n", cfgs[i]->value);
+      Preload(cfgs[i]->value);
+   }
+
+   if (!Quiet)
+      printf("* Applying %s ...\n", DEFAULT_PRELOAD);
+   return Preload(DEFAULT_PRELOAD);
+}
 
 
 /*
@@ -488,6 +560,9 @@ int main(int argc, char *argv[])
    int c;
    const char *preloadfile = DEFAULT_PRELOAD;
 
+    enum {
+       SYSTEM_OPTION = CHAR_MAX + 1
+    };
     static const struct option longopts[] = {
        {"all", no_argument, NULL, 'a'},
        {"binary", no_argument, NULL, 'b'},
@@ -497,6 +572,7 @@ int main(int argc, char *argv[])
        {"load", optional_argument, NULL, 'p'},
        {"quiet", no_argument, NULL, 'q'},
        {"write", no_argument, NULL, 'w'},
+       {"system", no_argument, NULL, SYSTEM_OPTION},
        {"help", no_argument, NULL, 'h'},
        {"version", no_argument, NULL, 'V'},
        {NULL, 0, NULL, 0}
@@ -554,6 +630,9 @@ int main(int argc, char *argv[])
       case 'X':         /* same as -a -x */
            DisplayAllOpt = true;
            break;
+      case SYSTEM_OPTION:
+           IgnoreError = true;
+           return PreloadSystem();
       case 'V':
            fprintf(stdout, "sysctl (%s)\n",procps_version);
            exit(0);
