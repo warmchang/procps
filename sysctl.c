@@ -27,6 +27,7 @@
 #include <getopt.h>
 #include <libgen.h>
 #include <limits.h>
+#include <regex.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,6 +54,7 @@ static bool PrintName;
 static bool PrintNewline;
 static bool IgnoreError;
 static bool Quiet;
+static char *pattern;
 
 /* error messages */
 static const char ERR_MALFORMED_SETTING[] = "error: Malformed setting \"%s\"\n";
@@ -65,6 +67,7 @@ static const char ERR_OPENING_DIR[] = "error: unable to open directory \"%s\"\n"
 static const char ERR_PRELOAD_FILE[] = "error: unable to open preload file \"%s\"\n";
 static const char WARN_BAD_LINE[] = "warning: %s(%d): invalid syntax, continuing...\n";
 
+static int pattern_match(const char *string, const char *pattern);
 
 static void slashdot(char *restrict p, char old, char new){
   p = strpbrk(p,"/.");
@@ -99,8 +102,10 @@ static void __attribute__ ((__noreturn__))
 	   "  -N, --names          print variable names without values\n"
 	   "  -n, --values         print only values of a variables\n"
 	   "  -p, --load[=<file>]  read values from file\n"
-	   "      --system         read values from all system directories\n"
 	   "  -f                   alias of -p\n"
+	   "      --system         read values from all system directories\n"
+	   "  -r, --pattern <expression>\n"
+	   "                       select setting that match expression\n"
 	   "  -q, --quiet          do not echo variable set\n"
 	   "  -w, --write          enable writing a value to variable\n"
 	   "  -o                   does nothing\n"
@@ -154,6 +159,15 @@ static int ReadSetting(const char *restrict const name) {
    if (!name || !*name) {
       fprintf(stderr, ERR_INVALID_KEY, name);
       return -1;
+   }
+
+   /* used to display the output */
+   outname = strdup(name);
+   slashdot(outname,'/','.'); /* change / to . */
+
+   if (pattern && !pattern_match(outname, pattern)){
+      free(outname);
+      return 0;
    }
 
    /* used to open the file */
@@ -412,7 +426,21 @@ out:
    return rc;
 }
 
+static int pattern_match(const char *string, const char *pattern)
+{
+	int status;
+	regex_t re;
 
+	if (regcomp(&re, pattern, REG_EXTENDED | REG_NOSUB) != 0) {
+		return (0);	/* Report error. */
+	}
+	status = regexec(&re, string, (size_t) 0, NULL, 0);
+	regfree(&re);
+	if (status != 0) {
+		return (0);	/* Report error. */
+	}
+	return (1);
+}
 
 /*
  *     Preload the sysctl's from the conf file
@@ -455,6 +483,10 @@ static int Preload(const char *restrict const filename) {
       }
 
       StripLeadingAndTrailingSpaces(name);
+
+      if (pattern && !pattern_match(name, pattern)){
+         continue;
+      }
 
       value = strtok(NULL, "\n\r");
       if (!value || !*value) {
@@ -573,6 +605,7 @@ int main(int argc, char *argv[])
        {"quiet", no_argument, NULL, 'q'},
        {"write", no_argument, NULL, 'w'},
        {"system", no_argument, NULL, SYSTEM_OPTION},
+       {"pattern", required_argument, NULL, 'r'},
        {"help", no_argument, NULL, 'h'},
        {"version", no_argument, NULL, 'V'},
        {NULL, 0, NULL, 0}
@@ -588,7 +621,7 @@ int main(int argc, char *argv[])
    }
 
    while ((c =
-           getopt_long(argc, argv, "bneNwfpqoxaAXVdh", longopts,
+           getopt_long(argc, argv, "bneNwfp::qoxaAXr:Vdh", longopts,
                        NULL)) != -1)
       switch (c) {
       case 'b':
@@ -633,6 +666,9 @@ int main(int argc, char *argv[])
       case SYSTEM_OPTION:
            IgnoreError = true;
            return PreloadSystem();
+      case 'r':
+           pattern = strdup(optarg);
+           break;
       case 'V':
            fprintf(stdout, "sysctl (%s)\n",procps_version);
            exit(0);

@@ -80,6 +80,13 @@ Load settings from all system configuration files.
 .br
 /etc/sysctl.conf
 .TP
+\fB\-\-pattern\fR \fIpattern\fR
+Only apply settings that match
+.IR pattern .
+The
+.I pattern
+uses extended regular expression syntax.
+.TP
 \fB\-A\fR
 Alias of \fB\-a\fR
 .TP
@@ -111,12 +118,21 @@ Display version information and exit.
 /sbin/sysctl \-w kernel.domainname="example.com"
 .br
 /sbin/sysctl \-p /etc/sysctl.conf
+.br
+/sbin/sysctl \-a \-\-pattern forward
+.br
+/sbin/sysctl \-a \-\-pattern forward$
+.br
+/sbin/sysctl \-a \-\-pattern 'net.ipv4.conf.(eth|wlan)0.arp'
+.br
+/sbin/sysctl \-\-system \-\-pattern '^net.ipv6'
 .SH FILES
 .I /proc/sys
 .br
 .I /etc/sysctl.conf
 .SH SEE ALSO
 .BR sysctl.conf (5)
+.BR regex (7)
 .SH AUTHOR
 .UR staikos\@0wned.org
 George Staikos
