@@ -13,8 +13,10 @@
  */
 #include "proc/sysinfo.h"
 #include "proc/version.h"
+#include "c.h"
+#include "nls.h"
+
 #include <errno.h>
-#include <err.h>
 #include <limits.h>
 #include <ctype.h>
 #include <getopt.h>
@@ -48,24 +50,26 @@ static const char *scale_size(unsigned long size, int flags, struct commandline_
 static void __attribute__ ((__noreturn__))
     usage(FILE * out)
 {
-	fprintf(out, "\nUsage: %s [options]\n" "\nOptions:\n", program_invocation_short_name);
+        fputs(USAGE_HEADER, out);
 	fprintf(out,
-		"  -b, --bytes         show output in bytes\n"
-		"  -k, --kilo          show output in kilobytes\n"
-		"  -m, --mega          show output in megabytes\n"
-		"  -g, --giga          show output in gigabytes\n"
-		"      --tera          show output in terabytes\n"
-		"  -h, --human         show human readable output\n"
-		"      --si            use powers of 1000 not 1024\n"
-		"  -l, --lohi          show detailed low and high memory statistics\n"
-		"  -o, --old           use old format (no -/+buffers/cache line)\n"
-		"  -t, --total         show total for RAM + swap\n"
-		"  -s N, --seconds N   repeat printing every N seconds\n"
-		"  -c N, --count N     repeat printing N times\n");
-	fprintf(out,
-		"      --help          display this help text\n"
-		"  -V, --version       display version information and exit\n");
-	fprintf(out, "\nFor more information see free(1).\n");
+	      _(" %s [options]\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -b, --bytes         show output in bytes\n"), out);
+	fputs(_(" -k, --kilo          show output in kilobytes\n"), out);
+	fputs(_(" -m, --mega          show output in megabytes\n"), out);
+	fputs(_(" -g, --giga          show output in gigabytes\n"), out);
+	fputs(_("     --tera          show output in terabytes\n"), out);
+	fputs(_(" -h, --human         show human readable output\n"), out);
+	fputs(_("     --si            use powers of 1000 not 1024\n"), out);
+	fputs(_(" -l, --lohi          show detailed low and high memory statistics\n"), out);
+	fputs(_(" -o, --old           use old format (no -/+buffers/cache line)\n"), out);
+	fputs(_(" -t, --total         show total for RAM + swap\n"), out);
+	fputs(_(" -s N, --seconds N   repeat printing every N seconds\n"), out);
+	fputs(_(" -c N, --count N     repeat printing N times\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("      --help    display this help text\n"), out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("free(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -79,7 +83,7 @@ double power(unsigned int base, unsigned int expo)
 static const char *scale_size(unsigned long size, int flags, struct commandline_arguments args)
 {
 	static char nextup[] = { 'B', 'K', 'M', 'G', 'T', 0 };
-	static char buf[SIZE_MAX];
+	static char buf[BUFSIZ];
 	int i;
 	char *up;
 	float base;
@@ -236,23 +240,23 @@ int main(int argc, char **argv)
 			flags |= FREE_REPEAT;
 			args.repeat_interval = (1000000 * strtof(optarg, &endptr));
 			if (errno || optarg == endptr || (endptr && *endptr))
-				errx(EXIT_FAILURE, "seconds argument `%s' failed", optarg);
+				errx(EXIT_FAILURE, _("seconds argument `%s' failed"), optarg);
 			if (args.repeat_interval < 1)
 				errx(EXIT_FAILURE,
-				     "seconds argument `%s' is not positive number", optarg);
+				     _("seconds argument `%s' is not positive number"), optarg);
 			break;
 		case 'c':
 			flags |= FREE_REPEAT;
 			flags |= FREE_REPEATCOUNT;
 			args.repeat_counter = strtoul(optarg, &endptr, 10);
 			if (errno || optarg == endptr || (endptr && *endptr))
-				errx(EXIT_FAILURE, "count argument `%s' failed", optarg);
+				errx(EXIT_FAILURE, _("count argument `%s' failed"), optarg);
 
 			break;
 		case HELP_OPTION:
 			usage(stdout);
 		case 'V':
-			display_version();
+			printf(PROCPS_NG_VERSION);
 			exit(EXIT_SUCCESS);
 		default:
 			usage(stderr);
@@ -261,10 +265,10 @@ int main(int argc, char **argv)
 	do {
 
 		meminfo();
-
-		printf
-		    ("             total       used       free     shared    buffers     cached\n");
-		printf("%-7s", "Mem:");
+		printf("%7s %10s %10s %10s %10s %10s %10s\n",
+		       "", _("total"), _("used"), _("free"), _("shared"),
+		       _("buffers"), _("cached"));
+		printf("%-7s", _("Mem:"));
 		printf(" %10s", scale_size(kb_main_total, flags, args));
 		printf(" %10s", scale_size(kb_main_used, flags, args));
 		printf(" %10s", scale_size(kb_main_free, flags, args));
@@ -279,13 +283,13 @@ int main(int argc, char **argv)
 		 * to print the high info, even if it is zero.
 		 */
 		if (flags & FREE_LOHI) {
-			printf("%-7s", "Low:");
+			printf("%-7s", _("Low:"));
 			printf(" %10s", scale_size(kb_low_total, flags, args));
 			printf(" %10s", scale_size(kb_low_total - kb_low_free, flags, args));
 			printf(" %10s", scale_size(kb_low_free, flags, args));
 			printf("\n");
 
-			printf("%-7s", "High:");
+			printf("%-7s", _("High:"));
 			printf(" %10s", scale_size(kb_high_total, flags, args));
 			printf(" %10s", scale_size(kb_high_total - kb_high_free, flags, args));
 			printf(" %10s", scale_size(kb_high_free, flags, args));
@@ -294,21 +298,21 @@ int main(int argc, char **argv)
 
 		if (!(flags & FREE_OLDFMT)) {
 			unsigned KLONG buffers_plus_cached = kb_main_buffers + kb_main_cached;
-			printf("-/+ buffers/cache:");
+			printf(_("-/+ buffers/cache:"));
 			printf(" %10s",
 			       scale_size(kb_main_used - buffers_plus_cached, flags, args));
 			printf(" %10s",
 			       scale_size(kb_main_free + buffers_plus_cached, flags, args));
 			printf("\n");
 		}
-		printf("%-7s", "Swap:");
+		printf("%-7s", _("Swap:"));
 		printf(" %10s", scale_size(kb_swap_total, flags, args));
 		printf(" %10s", scale_size(kb_swap_used, flags, args));
 		printf(" %10s", scale_size(kb_swap_free, flags, args));
 		printf("\n");
 
 		if (flags & FREE_TOTAL) {
-			printf("%-7s", "Total:");
+			printf("%-7s", _("Total:"));
 			printf(" %10s", scale_size(kb_main_total + kb_swap_total, flags, args));
 			printf(" %10s", scale_size(kb_main_used + kb_swap_used, flags, args));
 			printf(" %10s", scale_size(kb_main_free + kb_swap_free, flags, args));
