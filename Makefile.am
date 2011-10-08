@@ -1,7 +1,11 @@
-AM_CPPFLAGS = -include $(top_builddir)/config.h
+AM_CPPFLAGS = -include $(top_builddir)/config.h -I$(top_srcdir)/include
 
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = proc ps testsuite
+SUBDIRS = \
+	po \
+	proc \
+	ps \
+	testsuite
 
 AM_CFLAGS = -Iproc
 AM_LDFLAGS = ./proc/libprocfs.la

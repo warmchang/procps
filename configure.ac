@@ -101,6 +101,32 @@ AC_CHECK_FUNCS([\
 	wcwidth
 ])
 
+usrbin_execdir='${exec_prefix}/usr/bin'
+AC_SUBST([usrbin_execdir])
+
+AM_GNU_GETTEXT_VERSION([0.14.1])
+AM_GNU_GETTEXT([external])
+dnl if test -d "$srcdir/po"
+dnl then
+dnl	ALL_LINGUAS=`cd $srcdir/po > /dev/null && echo *.po | sed 's/\.po//g'`
+dnl else
+dnl	ALL_LINGUAS="af am ar as be bg bn_IN bn ca cs cy da de el en_GB es et eu_ES fa fi fr gl gu he hi hr hu hy id is it ja ka kn ko ku lo lt lv mk ml mr ms my nb nl nn no nso or pa pl pt_BR pt ro ru si sk sl sq sr@Latn sr sv ta te th tr uk ur vi zh_CN zh_TW zu"
+dnl fi
+
+dnl UTIL_CHECK_LIB(LIBRARY, FUNCTION, [VARSUFFIX = $1]))
+dnl The VARSUFFIX is optional and overrides the default behaviour. For example:
+dnl     UTIL_CHECK_LIB(yyy, func, xxx) generates have_xxx and HAVE_LIBXXX
+dnl     UTIL_CHECK_LIB(yyy, func)      generates have_yyy and HAVE_LIBYYY
+dnl ---------------------------------
+AC_DEFUN([UTIL_CHECK_LIB], [
+  m4_define([suffix], m4_default([$3],$1))
+  [have_]suffix=yes
+  m4_ifdef([$3],
+    [AC_CHECK_LIB([$1], [$2], [AC_DEFINE(AS_TR_CPP([HAVE_LIB]suffix), 1)], [[have_]suffix=no])],
+    [AC_CHECK_LIB([$1], [$2], [], [[have_]suffix=no])])
+  AM_CONDITIONAL(AS_TR_CPP([HAVE_]suffix), [test [$have_]suffix = yes])
+])
+
 AC_ARG_WITH([ncurses],
   AS_HELP_STRING([--without-ncurses], [build only applications not needing ncurses]),
   [with_ncurses=no], [with_ncurses=yes]
@@ -168,6 +194,7 @@ AC_SUBST(DEJAGNU)
 
 AC_CONFIG_FILES([
 Makefile
+po/Makefile.in
 proc/Makefile
 proc/libprocfs.pc
 ps/Makefile

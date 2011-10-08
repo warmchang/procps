@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ ! -f "po/Makevars" ]; then
+	echo "You must run this script in the top-level directory"
+	exit 1
+fi
+
+find . -name '*.c' |
+	sort |
+	sed 's|^./||
+/^contrib/d' > po/POTFILES.in
