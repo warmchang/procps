@@ -28,6 +28,8 @@
 #include <errno.h>
 #include <getopt.h>
 
+#include "c.h"
+#include "nls.h"
 #include "proc/readproc.h"
 #include "proc/sig.h"
 #include "proc/devname.h"
@@ -77,36 +79,35 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	int err = (opt == '?');
 	FILE *fp = err ? stderr : stdout;
 
-	fprintf(fp,
-		"\nUsage: %s [options] <pattern>\n" "\nOptions:\n", progname);
-
-	if (i_am_pkill == 0)
-		fprintf(fp,
-			" -c, --count               count of matching processes\n"
-			" -d, --delimeter <string>  update delay in seconds\n"
-			" -l, --list-name           list PID and process name\n");
-	if (i_am_pkill == 1)
-		fprintf(fp,
-			" -<sig>, --signal <sig>    signal to send (either number or name)\n");
-
-	fprintf(fp,
-		" -f, --full                use full process name to match\n"
-		" -g, --pgroup <id,...>     match listed process group IDs\n"
-		" -G, --group <gid,...>     match real group IDs\n"
-		" -n, --newest              select most recently started\n"
-		" -o, --oldest              select least recently started\n"
-		" -P, --parent <ppid,...>   match only childs of given parent\n"
-		" -s, --session <sid,...>   match session IDs\n"
-		" -t, --terminal <tty,...>  match by controlling terminal\n"
-		" -u, --euid <id,...>       match by effective IDs\n"
-		" -U, --uid <id,...>        match by real IDs\n"
-		" -v, --inverse             negates the matching\n"
-		" -x, --exact               match exectly with command name\n"
-		" -F, --pidfile <file>      read PIDs from file\n"
-		" -L, --logpidfile          fail if PID file is not locked\n"
-		" -h, --help                display this help text\n"
-		" -V, --version             display version information and exit\n");
-	fprintf(fp, "\nFor more information see %s(1).\n", progname);
+	fputs(USAGE_HEADER, fp);
+	fprintf(fp, _(" %s [options] <pattern>\n"), progname);
+	fputs(USAGE_OPTIONS, fp);
+	if (i_am_pkill == 0) {
+		fputs(_(" -c, --count               count of matching processes\n"), fp);
+		fputs(_(" -d, --delimeter <string>  update delay in seconds\n"), fp);
+		fputs(_(" -l, --list-name           list PID and process name\n"), fp);
+	}
+	if (i_am_pkill == 1) {
+		fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"), fp);
+	}
+	fputs(_(" -f, --full                use full process name to match\n"), fp);
+	fputs(_(" -g, --pgroup <id,...>     match listed process group IDs\n"), fp);
+	fputs(_(" -G, --group <gid,...>     match real group IDs\n"), fp);
+	fputs(_(" -n, --newest              select most recently started\n"), fp);
+	fputs(_(" -o, --oldest              select least recently started\n"), fp);
+	fputs(_(" -P, --parent <ppid,...>   match only childs of given parent\n"), fp);
+	fputs(_(" -s, --session <sid,...>   match session IDs\n"), fp);
+	fputs(_(" -t, --terminal <tty,...>  match by controlling terminal\n"), fp);
+	fputs(_(" -u, --euid <id,...>       match by effective IDs\n"), fp);
+	fputs(_(" -U, --uid <id,...>        match by real IDs\n"), fp);
+	fputs(_(" -v, --inverse             negates the matching\n"), fp);
+	fputs(_(" -x, --exact               match exectly with command name\n"), fp);
+	fputs(_(" -F, --pidfile <file>      read PIDs from file\n"), fp);
+	fputs(_(" -L, --logpidfile          fail if PID file is not locked\n"), fp);
+	fputs(USAGE_SEPARATOR, fp);
+	fputs(USAGE_HELP, fp);
+	fputs(USAGE_VERSION, fp);
+	fprintf(fp, USAGE_MAN_TAIL("pgrep(1)"));
 
 	exit(fp == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -255,7 +256,7 @@ static int conv_uid (const char *restrict name, union el *restrict e)
 
 	pwd = getpwnam (name);
 	if (pwd == NULL) {
-		fprintf (stderr, "%s: invalid user name: %s\n",
+		fprintf (stderr, _("%s: invalid user name: %s\n"),
 			 progname, name);
 		return 0;
 	}
@@ -273,7 +274,7 @@ static int conv_gid (const char *restrict name, union el *restrict e)
 
 	grp = getgrnam (name);
 	if (grp == NULL) {
-		fprintf (stderr, "%s: invalid group name: %s\n",
+		fprintf (stderr, _("%s: invalid group name: %s\n"),
 			 progname, name);
 		return 0;
 	}
@@ -285,7 +286,7 @@ static int conv_gid (const char *restrict name, union el *restrict e)
 static int conv_pgrp (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
-		fprintf (stderr, "%s: invalid process group: %s\n",
+		fprintf (stderr, _("%s: invalid process group: %s\n"),
 			 progname, name);
 		return 0;
 	}
@@ -298,7 +299,7 @@ static int conv_pgrp (const char *restrict name, union el *restrict e)
 static int conv_sid (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
-		fprintf (stderr, "%s: invalid session id: %s\n",
+		fprintf (stderr, _("%s: invalid session id: %s\n"),
 			 progname, name);
 		return 0;
 	}
@@ -311,7 +312,7 @@ static int conv_sid (const char *restrict name, union el *restrict e)
 static int conv_num (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
-		fprintf (stderr, "%s: not a number: %s\n",
+		fprintf (stderr, _("%s: not a number: %s\n"),
 			 progname, name);
 		return 0;
 	}
@@ -667,7 +668,7 @@ static void parse_opts (int argc, char **argv)
 			++criteria_count;
 			break;
 		case 'V':
-			fprintf(stdout, "%s (%s)\n", progname, procps_version);
+			printf(PROCPS_NG_VERSION);
 			exit(EXIT_SUCCESS);
 //		case 'c':   // Solaris: match by contract ID
 //			break;
@@ -747,14 +748,14 @@ static void parse_opts (int argc, char **argv)
 	}
 
 	if(opt_lock && !opt_pidfile){
-		fprintf(stderr, "%s: -L without -F makes no sense\n",progname);
+		fprintf(stderr, _("%s: -L without -F makes no sense\n"),progname);
 		usage(0);
 	}
 
 	if(opt_pidfile){
 		opt_pid = read_pidfile();
 		if(!opt_pid){
-			fprintf(stderr, "%s: pidfile not valid\n",progname);
+			fprintf(stderr, _("%s: pidfile not valid\n"),progname);
 			usage(0);
 		}
 	}
@@ -764,7 +765,7 @@ static void parse_opts (int argc, char **argv)
 	else if (argc - optind > 1)
 		usage (0);
 	else if (criteria_count == 0) {
-		fprintf (stderr, "%s: No matching criteria specified\n",
+		fprintf (stderr, _("%s: No matching criteria specified\n"),
 			 progname);
 		usage (0);
 	}
