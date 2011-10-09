@@ -24,8 +24,9 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <err.h>
 
+#include "c.h"
+#include "nls.h"
 #include "proc/slab.h"
 #include "proc/version.h"
 
@@ -169,25 +170,28 @@ static void sigint_handler(int unused __attribute__ ((__unused__)))
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, "Usage: %s [options]\n\n", program_invocation_short_name);
-	fprintf(out, "Options:\n");
-	fprintf(out, "  -d, --delay <secs>  delay updates\n");
-	fprintf(out, "  -o, --once          only display once, then exit\n");
-	fprintf(out, "  -s, --sort <char>   specify sort criteria by character (see below)\n");
-	fprintf(out, "  -V, --version       display version information and exit\n");
-	fprintf(out, "  -h, --help          display this help and exit\n\n");
+	fputs(USAGE_HEADER, out);
+	fprintf(out, " %s [options]\n", program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fprintf(out, _(" -d, --delay <secs>  delay updates\n"));
+	fprintf(out, _(" -o, --once          only display once, then exit\n"));
+	fprintf(out, _(" -s, --sort <char>   specify sort criteria by character (see below)\n"));
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 
-	fprintf(out, "The following are valid sort criteria:\n");
-	fprintf(out, "  a: sort by number of active objects\n");
-	fprintf(out, "  b: sort by objects per slab\n");
-	fprintf(out, "  c: sort by cache size\n");
-	fprintf(out, "  l: sort by number of slabs\n");
-	fprintf(out, "  v: sort by number of active slabs\n");
-	fprintf(out, "  n: sort by name\n");
-	fprintf(out, "  o: sort by number of objects (the default)\n");
-	fprintf(out, "  p: sort by pages per slab\n");
-	fprintf(out, "  s: sort by object size\n");
-	fprintf(out, "  u: sort by cache utilization\n\n");
+	fprintf(out, _("\nThe following are valid sort criteria:\n"));
+	fprintf(out, _(" a: sort by number of active objects\n"));
+	fprintf(out, _(" b: sort by objects per slab\n"));
+	fprintf(out, _(" c: sort by cache size\n"));
+	fprintf(out, _(" l: sort by number of slabs\n"));
+	fprintf(out, _(" v: sort by number of active slabs\n"));
+	fprintf(out, _(" n: sort by name\n"));
+	fprintf(out, _(" o: sort by number of objects (the default)\n"));
+	fprintf(out, _(" p: sort by pages per slab\n"));
+	fprintf(out, _(" s: sort by object size\n"));
+	fprintf(out, _(" u: sort by cache utilization\n"));
+	fprintf(out, USAGE_MAN_TAIL("slabtop(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -290,12 +294,12 @@ int main(int argc, char *argv[])
 			errno = 0;
 			delay = strtol(optarg, &end, 10);
 			if (errno || optarg == end || (end && *end))
-				errx(EXIT_FAILURE, "illegal delay `%s'",
+				errx(EXIT_FAILURE, _("illegal delay `%s'"),
 					optarg);
 			if (delay < 0)
 				errx(EXIT_FAILURE,
-					"delay can not have a "
-					"negative value");
+					_("delay can not have a "
+					"negative value"));
 			break;
 		case 's':
 			sort_func = (int (*)(const struct slab_info*,
@@ -306,7 +310,7 @@ int main(int argc, char *argv[])
 			delay = 0;
 			break;
 		case 'V':
-			display_version();
+			printf(PROCPS_NG_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
 			usage(stdout);
@@ -316,7 +320,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (tcgetattr(STDIN_FILENO, &saved_tty) == -1)
-		warn("tcgetattr");
+		warn(_("tcgetattr"));
 
 	old_rows = rows;
 	term_size(0);
@@ -345,24 +349,34 @@ int main(int argc, char *argv[])
 		}
 
 		move(0, 0);
-		print_line(	" Active / Total Objects (%% used)    : %d / %d (%.1f%%)\n"
-			" Active / Total Slabs (%% used)      : %d / %d (%.1f%%)\n"
-			" Active / Total Caches (%% used)     : %d / %d (%.1f%%)\n"
-			" Active / Total Size (%% used)       : %.2fK / %.2fK (%.1f%%)\n"
-			" Minimum / Average / Maximum Object : %.2fK / %.2fK / %.2fK\n\n",
-			stats.nr_active_objs, stats.nr_objs, 100.0 * stats.nr_active_objs / stats.nr_objs,
-			stats.nr_active_slabs, stats.nr_slabs, 100.0 * stats.nr_active_slabs / stats.nr_slabs,
-			stats.nr_active_caches, stats.nr_caches, 100.0 * stats.nr_active_caches / stats.nr_caches,
-			stats.active_size / 1024.0, stats.total_size / 1024.0, 100.0 * stats.active_size / stats.total_size,
-			stats.min_obj_size / 1024.0, stats.avg_obj_size / 1024.0, stats.max_obj_size / 1024.0
-		);
+		printw(" %-35s: %d / %d (%.1f%%)\n"
+		       " %-35s: %d / %d (%.1f%%)\n"
+		       " %-35s: %d / %d (%.1f%%)\n"
+		       " %-35s: %.2fK / %.2fK (%.1f%%)\n"
+		       " %-35s: %.2fK / %.2fK / %.2fK\n\n",
+		       _("Active / Total Objects (% used)"),
+		       stats.nr_active_objs, stats.nr_objs,
+		       100.0 * stats.nr_active_objs / stats.nr_objs,
+		       _("Active / Total Slabs (% used)"),
+		       stats.nr_active_caches, stats.nr_caches,
+		       100.0 * stats.nr_active_caches / stats.nr_caches,
+		       _("Active / Total Caches (% used)"),
+		       stats.nr_active_slabs, stats.nr_slabs,
+		       100.0 * stats.nr_active_slabs / stats.nr_slabs,
+		       _("Active / Total Size (% used)"),
+		       stats.active_size / 1024.0, stats.total_size / 1024.0,
+		       100.0 * stats.active_size / stats.total_size,
+		       _("Minimum / Average / Maximum Object"),
+		       stats.min_obj_size / 1024.0, stats.avg_obj_size / 1024.0,
+		       stats.max_obj_size / 1024.0);
 
 		slab_list = slabsort(slab_list);
 
 		attron(A_REVERSE);
-		print_line(	"%6s %6s %4s %8s %6s %8s %10s %-23s\n",
-			"OBJS", "ACTIVE", "USE", "OBJ SIZE", "SLABS",
-			"OBJ/SLAB", "CACHE SIZE", "NAME");
+		print_line("%6s %6s %4s %8s %6s %8s %10s %-23s\n",
+			   _("OBJS"), _("ACTIVE"), _("USE"), _("OBJ SIZE"),
+			   _("SLABS"), _("OBJ/SLAB"), _("CACHE SIZE"),
+			   _("NAME"));
 		attroff(A_REVERSE);
 
 		curr = slab_list;
