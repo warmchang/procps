@@ -70,7 +70,7 @@ static void load_drivers(void){
   p = buf;
   while(( p = strstr(p, " /dev/") )){  // " /dev/" is the second column
     tty_map_node *tmn;
-    int len;
+    size_t len;
     char *end;
     p += 6;
     end = strchr(p, ' ');

@@ -77,7 +77,6 @@ static unsigned max_leftward = 0x12345678; /* space for LEFT stuff */
 static int wide_signals;  /* true if we have room */
 
 static time_t seconds_since_1970;
-static time_t time_of_boot;
 static unsigned long page_shift;
 
 
@@ -625,7 +624,7 @@ static int pr_pri_api(char *restrict const outbuf, const proc_t *restrict const 
 }
 
 static int pr_nice(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(pp->sched!=0 && pp->sched!=-1) return snprintf(outbuf, COLWID, "-");
+  if(pp->sched!=0 && pp->sched!=(unsigned long)-1) return snprintf(outbuf, COLWID, "-");
   return snprintf(outbuf, COLWID, "%ld", pp->nice);
 }
 
@@ -662,11 +661,11 @@ static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp
 //    default   "%u:%u", type, prio
 // We just print the priority, and have other keywords for type.
 static int pr_rtprio(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(pp->sched==0 || pp->sched==-1) return snprintf(outbuf, COLWID, "-");
+  if(pp->sched==0 || pp->sched==(unsigned long)-1) return snprintf(outbuf, COLWID, "-");
   return snprintf(outbuf, COLWID, "%ld", pp->rtprio);
 }
 static int pr_sched(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(pp->sched==-1) return snprintf(outbuf, COLWID, "-");
+  if(pp->sched==(unsigned long)-1) return snprintf(outbuf, COLWID, "-");
   return snprintf(outbuf, COLWID, "%ld", pp->sched);
 }
 

@@ -153,7 +153,7 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
 // escape an argv or environment string array
 //
 // bytes arg means sizeof(buf)
-int escape_strlist(char *restrict dst, const char *restrict const *restrict src, size_t bytes, int *cells){
+int escape_strlist(char *restrict dst, char *restrict const *restrict src, size_t bytes, int *cells){
   size_t i = 0;
 
   for(;;){
@@ -175,7 +175,7 @@ int escape_command(char *restrict const outbuf, const proc_t *restrict const pp,
   int end = 0;
 
   if(flags & ESC_ARGS){
-    const char **lc = (const char**)pp->cmdline;
+    char **lc = (char**)pp->cmdline;
     if(lc && *lc) return escape_strlist(outbuf, lc, bytes, cells);
   }
   if(flags & ESC_BRACKETS){
