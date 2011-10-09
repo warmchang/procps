@@ -20,15 +20,17 @@
 #include <unistd.h>
 
 #include "proc/version.h"
+#include "c.h"
+#include "nls.h"
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out, "\nUsage:\n"
-		" %s [options] pid...\n", program_invocation_short_name);
-	fprintf(out,
-		"\nOptions:\n"
-		"  -V, --version      output version information and exit\n"
-		"  -h, --help         output help screen and exit\n\n");
+	fputs(USAGE_HEADER, out);
+	fprintf(out, " %s [options] pid...\n", program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("pwdx(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -49,7 +51,7 @@ int main(int argc, char *argv[])
 	while ((ch = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'V':
-			display_version();
+			printf(PROCPS_NG_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
 			usage(stdout);
