@@ -28,6 +28,8 @@
 #include <errno.h>
 #include <getopt.h>
 
+#include "c.h"
+#include "nls.h"
 #include "proc/sysinfo.h"
 #include "proc/version.h"
 
@@ -49,9 +51,6 @@ static char szDataUnit[3] = "K";
 
 static int statMode=VMSTAT;
 
-#define FALSE 0
-#define TRUE 1
-
 static int a_option; /* "-a" means "show active/inactive" */
 
 static unsigned sleep_time = 1;
@@ -63,22 +62,23 @@ static unsigned int moreheaders=TRUE;
 static void __attribute__ ((__noreturn__))
     usage(FILE * out)
 {
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		"\nUsage: %s [options] [delay [count]]\n"
-		"\nOptions:\n", program_invocation_short_name);
-	fprintf(out,
-		" -a, --active           active/inactive memory\n"
-		" -f, --forks            number of forks since boot\n"
-		" -m, --slabs            slabinfo\n"
-		" -n, --one-header       do not redisplay header\n"
-		" -s, --stats            event counter statistics\n"
-		" -d, --disk             disk statistics\n"
-		" -D, --disk-sum         summarize disk statistics\n"
-		" -p, --partition <dev>  partition specific statistics\n"
-		" -S, --unit <char>      define display unit\n"
-		" -h, --help             display this help text\n"
-		" -V, --version          display version information and exit\n");
-	fprintf(out, "\nFor more information see vmstat(8).\n");
+		" %s [options] [delay [count]]\n", program_invocation_short_name);
+        fputs(USAGE_OPTIONS, out);
+	fputs(_(" -a, --active           active/inactive memory\n"), out);
+	fputs(_(" -f, --forks            number of forks since boot\n"), out);
+	fputs(_(" -m, --slabs            slabinfo\n"), out);
+	fputs(_(" -n, --one-header       do not redisplay header\n"), out);
+	fputs(_(" -s, --stats            event counter statistics\n"), out);
+	fputs(_(" -d, --disk             disk statistics\n"), out);
+	fputs(_(" -D, --disk-sum         summarize disk statistics\n"), out);
+	fputs(_(" -p, --partition <dev>  partition specific statistics\n"), out);
+	fputs(_(" -S, --unit <char>      define display unit\n"), out);
+        fputs(USAGE_SEPARATOR, out);
+        fputs(USAGE_HELP, out);
+        fputs(USAGE_VERSION, out);
+        fprintf(out, USAGE_MAN_TAIL("vmstat(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -278,7 +278,7 @@ static void new_format(void) {
 ////////////////////////////////////////////////////////////////////////////
 
 static void diskpartition_header(const char *partition_name){
-  printf("%-10s %10s %10s %10s %10s\n",partition_name, "reads  ", "read sectors", "writes   ", "requested writes");
+  printf("%-10s %10s %10s %10s %10s\n",partition_name, _("reads  "), _("read sectors"), _("writes   "), _("requested writes"));
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -292,7 +292,7 @@ static int diskpartition_format(const char* partition_name){
 
     fDiskstat=fopen("/proc/diskstats","rb");
     if(!fDiskstat){
-        fprintf(stderr, "Your kernel doesn't support diskstat. (2.5.70 or above required)\n"); 
+        fprintf(stderr, _("Your kernel doesn't support diskstat. (2.5.70 or above required)\n"));
         exit(EXIT_FAILURE);
     }
 
@@ -343,10 +343,10 @@ static int diskpartition_format(const char* partition_name){
 ////////////////////////////////////////////////////////////////////////////
 
 static void diskheader(void){
-  printf("disk- ------------reads------------ ------------writes----------- -----IO------\n");
+  printf(_("disk- ------------reads------------ ------------writes----------- -----IO------\n"));
 
   printf("%5s %6s %6s %7s %7s %6s %6s %7s %7s %6s %6s\n",
-         " ", "total", "merged","sectors","ms","total","merged","sectors","ms","cur","sec");
+         " ", _("total"), _("merged"),_("sectors"),_("ms"),_("total"),_("merged"),_("sectors"),_("ms"),_("cur"),_("sec"));
 
 }
 
@@ -407,7 +407,7 @@ static void diskformat(void){
       free(partitions);
     }
   }else{
-    fprintf(stderr, "Your kernel doesn't support diskstat (2.5.70 or above required)\n"); 
+    fprintf(stderr, _("Your kernel doesn't support diskstat (2.5.70 or above required)\n"));
     exit(EXIT_FAILURE);
   } 
 }
@@ -415,7 +415,7 @@ static void diskformat(void){
 ////////////////////////////////////////////////////////////////////////////
 
 static void slabheader(void){
-  printf("%-24s %6s %6s %6s %6s\n","Cache","Num", "Total", "Size", "Pages");
+  printf("%-24s %6s %6s %6s %6s\n",_("Cache"),_("Num"), _("Total"), _("Size"), _("Pages"));
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -428,7 +428,7 @@ static void slabformat (void){
 
   fSlab=fopen("/proc/slabinfo", "rb");
   if(!fSlab){
-    fprintf(stderr, "Your kernel doesn't support slabinfo or your permissions are insufficient.\n");
+    fprintf(stderr, _("Your kernel doesn't support slabinfo or your permissions are insufficient.\n"));
     return;
   }
 
@@ -482,8 +482,8 @@ static void disksum_format(void) {
   if ((fDiskstat=fopen("/proc/diskstats", "rb"))){
     fclose(fDiskstat);
     ndisks=getdiskstat(&disks, &partitions);
-    printf("%13d disks \n", ndisks);
-    printf("%13d partitions \n", getpartitions_num(disks, ndisks));
+    printf(_("%13d disks \n"), ndisks);
+    printf(_("%13d partitions \n"), getpartitions_num(disks, ndisks));
 
     for(i=0; i<ndisks; i++){
          reads+=disks[i].reads;
@@ -498,16 +498,16 @@ static void disksum_format(void) {
          milli_spent_IO+=disks[i].milli_spent_IO?disks[i].milli_spent_IO/1000:0;
       }
 
-    printf("%13lu total reads\n",reads);
-    printf("%13lu merged reads\n",merged_reads);
-    printf("%13lu read sectors\n",read_sectors);
-    printf("%13lu milli reading\n",milli_reading);
-    printf("%13lu writes\n",writes);
-    printf("%13lu merged writes\n",merged_writes);
-    printf("%13lu written sectors\n",written_sectors);
-    printf("%13lu milli writing\n",milli_writing);
-    printf("%13lu inprogress IO\n",inprogress_IO);
-    printf("%13lu milli spent IO\n",milli_spent_IO);
+    printf(_("%13lu total reads\n"),reads);
+    printf(_("%13lu merged reads\n"),merged_reads);
+    printf(_("%13lu read sectors\n"),read_sectors);
+    printf(_("%13lu milli reading\n"),milli_reading);
+    printf(_("%13lu writes\n"),writes);
+    printf(_("%13lu merged writes\n"),merged_writes);
+    printf(_("%13lu written sectors\n"),written_sectors);
+    printf(_("%13lu milli writing\n"),milli_writing);
+    printf(_("%13lu inprogress IO\n"),inprogress_IO);
+    printf(_("%13lu milli spent IO\n"),milli_spent_IO);
 
     free(disks);
     free(partitions);
@@ -531,32 +531,32 @@ static void sum_format(void) {
 	  &running, &blocked,
 	  &btime, &processes);
 
-  printf("%13lu %s total memory\n", unitConvert(kb_main_total),szDataUnit);
-  printf("%13lu %s used memory\n", unitConvert(kb_main_used),szDataUnit);
-  printf("%13lu %s active memory\n", unitConvert(kb_active),szDataUnit);
-  printf("%13lu %s inactive memory\n", unitConvert(kb_inactive),szDataUnit);
-  printf("%13lu %s free memory\n", unitConvert(kb_main_free),szDataUnit);
-  printf("%13lu %s buffer memory\n", unitConvert(kb_main_buffers),szDataUnit);
-  printf("%13lu %s swap cache\n", unitConvert(kb_main_cached),szDataUnit);
-  printf("%13lu %s total swap\n", unitConvert(kb_swap_total),szDataUnit);
-  printf("%13lu %s used swap\n", unitConvert(kb_swap_used),szDataUnit);
-  printf("%13lu %s free swap\n", unitConvert(kb_swap_free),szDataUnit);
-  printf("%13Lu non-nice user cpu ticks\n", cpu_use);
-  printf("%13Lu nice user cpu ticks\n", cpu_nic);
-  printf("%13Lu system cpu ticks\n", cpu_sys);
-  printf("%13Lu idle cpu ticks\n", cpu_idl);
-  printf("%13Lu IO-wait cpu ticks\n", cpu_iow);
-  printf("%13Lu IRQ cpu ticks\n", cpu_xxx);
-  printf("%13Lu softirq cpu ticks\n", cpu_yyy);
-  printf("%13Lu stolen cpu ticks\n", cpu_zzz);
-  printf("%13lu pages paged in\n", pgpgin);
-  printf("%13lu pages paged out\n", pgpgout);
-  printf("%13lu pages swapped in\n", pswpin);
-  printf("%13lu pages swapped out\n", pswpout);
-  printf("%13u interrupts\n", intr);
-  printf("%13u CPU context switches\n", ctxt);
-  printf("%13u boot time\n", btime);
-  printf("%13u forks\n", processes);
+  printf(_("%13lu %s total memory\n"), unitConvert(kb_main_total),szDataUnit);
+  printf(_("%13lu %s used memory\n"), unitConvert(kb_main_used),szDataUnit);
+  printf(_("%13lu %s active memory\n"), unitConvert(kb_active),szDataUnit);
+  printf(_("%13lu %s inactive memory\n"), unitConvert(kb_inactive),szDataUnit);
+  printf(_("%13lu %s free memory\n"), unitConvert(kb_main_free),szDataUnit);
+  printf(_("%13lu %s buffer memory\n"), unitConvert(kb_main_buffers),szDataUnit);
+  printf(_("%13lu %s swap cache\n"), unitConvert(kb_main_cached),szDataUnit);
+  printf(_("%13lu %s total swap\n"), unitConvert(kb_swap_total),szDataUnit);
+  printf(_("%13lu %s used swap\n"), unitConvert(kb_swap_used),szDataUnit);
+  printf(_("%13lu %s free swap\n"), unitConvert(kb_swap_free),szDataUnit);
+  printf(_("%13Lu non-nice user cpu ticks\n"), cpu_use);
+  printf(_("%13Lu nice user cpu ticks\n"), cpu_nic);
+  printf(_("%13Lu system cpu ticks\n"), cpu_sys);
+  printf(_("%13Lu idle cpu ticks\n"), cpu_idl);
+  printf(_("%13Lu IO-wait cpu ticks\n"), cpu_iow);
+  printf(_("%13Lu IRQ cpu ticks\n"), cpu_xxx);
+  printf(_("%13Lu softirq cpu ticks\n"), cpu_yyy);
+  printf(_("%13Lu stolen cpu ticks\n"), cpu_zzz);
+  printf(_("%13lu pages paged in\n"), pgpgin);
+  printf(_("%13lu pages paged out\n"), pgpgout);
+  printf(_("%13lu pages swapped in\n"), pswpin);
+  printf(_("%13lu pages swapped out\n"), pswpout);
+  printf(_("%13u interrupts\n"), intr);
+  printf(_("%13u CPU context switches\n"), ctxt);
+  printf(_("%13u boot time\n"), btime);
+  printf(_("%13u forks\n"), processes);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -574,7 +574,7 @@ static void fork_format(void) {
 	  &running, &blocked,
 	  &btime, &processes);
 
-  printf("%13u forks\n", processes);
+  printf(_("%13u forks\n"), processes);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -612,8 +612,8 @@ int main(int argc, char *argv[]) {
 
   while((c = getopt_long(argc, argv, "afmnsdDp:S:hV", longopts, NULL)) != EOF) switch(c) {
       case 'V':
-	display_version();
-	exit(0);
+	printf(PROCPS_NG_VERSION);
+	return EXIT_SUCCESS;
       case 'h':
         usage(stdout);
       case 'd':
@@ -650,7 +650,7 @@ int main(int argc, char *argv[]) {
 	case 'm': dataUnit = UNIT_m; break;
 	case 'M': dataUnit = UNIT_M; break;
 	default:
-	  fprintf(stderr, "-S requires k, K, m or M (default is kb)\n");
+	  fprintf(stderr, _("-S requires k, K, m or M (default is kb)\n"));
 	  exit(EXIT_FAILURE);
 	}
 	szDataUnit[0] = optarg[0];
@@ -686,7 +686,7 @@ int main(int argc, char *argv[]) {
 	case(DISKSTAT):      diskformat();
 			     break;
 	case(PARTITIONSTAT): if(diskpartition_format(partition)==-1)
-                                  printf("Partition was not found\n");
+                                  printf(_("Partition was not found\n"));
 			     break;	
 	case(SLABSTAT):      slabformat();
 			     break;
