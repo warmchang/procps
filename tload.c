@@ -11,7 +11,9 @@
  */
 #include "proc/version.h"
 #include "proc/sysinfo.h"
-#include <err.h>
+#include "c.h"
+#include "nls.h"
+
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
@@ -57,7 +59,7 @@ static void setsize(int i)
 		screen = (char *)realloc(screen, scr_size);
 
 	if (screen == NULL)
-		err(EXIT_FAILURE, "cannot allocate %zu bytes", scr_size);
+		err(EXIT_FAILURE, _("cannot allocate %zu bytes"), scr_size);
 
 	memset(screen, ' ', scr_size - 1);
 	*(screen + scr_size - 2) = '\0';
@@ -65,18 +67,17 @@ static void setsize(int i)
 		longjmp(jb, 0);
 }
 
-static void __attribute__ ((__noreturn__))
-    usage(FILE * out)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out,
-		"\nUsage: %s [options] [tty]\n"
-		"\nOptions:\n", program_invocation_short_name);
-	fprintf(out,
-		"  -d, --delay <secs>  update delay in seconds\n"
-		"  -s, --scale <num>   vertical scale\n"
-		"  -h, --help          display this help text\n"
-		"  -V, --version       display version information and exit\n");
-	fprintf(out, "\nFor more information see tload(1).\n");
+	fputs(USAGE_HEADER, out);
+	fprintf(out, " %s [options] [tty]\n", program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -d, --delay <secs>  update delay in seconds\n"), out);
+	fputs(_(" -s, --scale <num>   vertical scale\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("tload(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -106,8 +107,8 @@ int main(int argc, char **argv)
 			dly = atoi(optarg);
 			break;
 		case 'V':
-			display_version();
-			exit(0);
+			printf(PROCPS_NG_VERSION);
+			return EXIT_SUCCESS;
 			break;
 		case 'h':
 			usage(stdout);
@@ -117,7 +118,7 @@ int main(int argc, char **argv)
 
 	if (argc > optind)
 		if ((fd = open(argv[optind], 1)) == -1)
-			err(EXIT_FAILURE, "can not open tty");
+			err(EXIT_FAILURE, _("can not open tty"));
 
 	setsize(0);
 
