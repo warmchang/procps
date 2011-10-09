@@ -8,6 +8,9 @@
  *
  * Changes by Albert Cahalan, 2002.
  */
+
+#include "c.h"
+#include "nls.h"
 #include "proc/devname.h"
 #include "proc/escape.h"
 #include "proc/procps.h"
@@ -15,8 +18,8 @@
 #include "proc/sysinfo.h"
 #include "proc/version.h"
 #include "proc/whattime.h"
+
 #include <ctype.h>
-#include <err.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
@@ -98,29 +101,29 @@ static void print_time_ival7(time_t t, int centi_sec, FILE * fout)
 	if (oldstyle) {
 		if (t >= 48 * 60 * 60)
 			/* > 2 days */
-			fprintf(fout, " %2ludays", t / (24 * 60 * 60));
+			fprintf(fout, _(" %2ludays"), t / (24 * 60 * 60));
 		else if (t >= 60 * 60)
 			/* > 1 hour */
 			fprintf(fout, " %2lu:%02u ", t / (60 * 60),
 				(unsigned)((t / 60) % 60));
 		else if (t > 60)
 			/* > 1 minute */
-			fprintf(fout, " %2lu:%02um", t / 60, (unsigned)t % 60);
+			fprintf(fout, _(" %2lu:%02um"), t / 60, (unsigned)t % 60);
 		else
 			fprintf(fout, "       ");
 	} else {
 		if (t >= 48 * 60 * 60)
 			/* 2 days or more */
-			fprintf(fout, " %2ludays", t / (24 * 60 * 60));
+			fprintf(fout, _(" %2ludays"), t / (24 * 60 * 60));
 		else if (t >= 60 * 60)
 			/* 1 hour or more */
-			fprintf(fout, " %2lu:%02um", t / (60 * 60),
+			fprintf(fout, _(" %2lu:%02um"), t / (60 * 60),
 				(unsigned)((t / 60) % 60));
 		else if (t > 60)
 			/* 1 minute or more */
 			fprintf(fout, " %2lu:%02u ", t / 60, (unsigned)t % 60);
 		else
-			fprintf(fout, " %2lu.%02us", t, centi_sec);
+			fprintf(fout, _(" %2lu.%02us"), t, centi_sec);
 	}
 }
 
@@ -137,6 +140,7 @@ static time_t idletime(const char *restrict const tty)
 
 static void print_logintime(time_t logt, FILE * fout)
 {
+        /* FIXME: make use of locale, remember strftime() */
 	char weekday[][4] = {
 		"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
 	};
@@ -297,18 +301,19 @@ static void showinfo(utmp_t * u, int formtype, int maxcmd, int from,
 static void __attribute__ ((__noreturn__))
     usage(FILE * out)
 {
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		"\nUsage: %s [options]\n"
-		"\nOptions:\n", program_invocation_short_name);
-	fprintf(out,
-		"  -h, --no-header     do not print header\n"
-		"  -u, --no-current    ignore current process username\n"
-		"  -s, --short         short format\n"
-		"  -f, --from          show remote hostname field\n"
-		"  -o, --old-style     old style output\n"
-		"      --help          display this help text\n"
-		"  -V, --version       display version information and exit\n");
-	fprintf(out, "\nFor more information see w(1).\n");
+		" %s [options]\n", program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -h, --no-header     do not print header\n"), out);
+	fputs(_(" -u, --no-current    ignore current process username\n"), out);
+	fputs(_(" -s, --short         short format\n"), out);
+	fputs(_(" -f, --from          show remote hostname field\n"), out);
+	fputs(_(" -o, --old-style     old style output\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("     --help     display this help and exit\n"), out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("w(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -358,7 +363,7 @@ int main(int argc, char **argv)
 			from = !from;
 			break;
 		case 'V':
-			display_version();
+			printf(PROCPS_NG_VERSION);
 			exit(0);
 		case 'u':
 			ignoreuser = 1;
@@ -380,7 +385,7 @@ int main(int argc, char **argv)
 		userlen = atoi(env_var);
 		if (userlen < 8 || userlen > USERSZ) {
 			warnx
-			    ("User length environment PROCPS_USERLEN must be between 8 and %d, ignoring.\n",
+			    (_("User length environment PROCPS_USERLEN must be between 8 and %d, ignoring.\n"),
 			     USERSZ);
 			userlen = 8;
 		}
@@ -390,7 +395,7 @@ int main(int argc, char **argv)
 		fromlen = atoi(env_var);
 		if (fromlen < 8 || fromlen > HOSTSZ) {
 			warnx
-			    ("From length environment PROCPS_FROMLEN must be between 8 and %d, ignoring.\n",
+			    (_("From length environment PROCPS_FROMLEN must be between 8 and %d, ignoring.\n"),
 			     HOSTSZ);
 			fromlen = 16;
 		}
@@ -402,11 +407,11 @@ int main(int argc, char **argv)
 	else
 		maxcmd = 80;
 	if (maxcmd < 71)
-		errx(EXIT_FAILURE, "%d column window is too narrow", maxcmd);
+		errx(EXIT_FAILURE, _("%d column window is too narrow"), maxcmd);
 
 	maxcmd -= 21 + userlen + (from ? fromlen : 0) + (longform ? 20 : 0);
 	if (maxcmd < 3)
-		warnx("warning: screen width %d suboptimal", win.ws_col);
+		warnx(_("warning: screen width %d suboptimal"), win.ws_col);
 
 	procs = readproctab(PROC_FILLCOM | PROC_FILLUSR | PROC_FILLSTAT);
 
