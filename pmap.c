@@ -26,6 +26,7 @@
 #include "c.h"
 #include "nls.h"
 #include "proc/escape.h"
+#include "xalloc.h"
 #include "proc/readproc.h"
 #include "proc/version.h"
 
@@ -449,10 +450,7 @@ int main(int argc, char **argv)
 	if (d_option && x_option)
 		errx(EXIT_FAILURE, _("options -d and -x cannot coexist"));
 
-	pidlist = malloc(sizeof(unsigned) * argc);
-	if (pidlist == NULL)
-		err(EXIT_FAILURE, _("cannot allocate %zu bytes"),
-		    sizeof(unsigned) * argc);
+	pidlist = xmalloc(sizeof(unsigned) * argc);
 
 	while (*argv) {
 		char *walk = *argv++;

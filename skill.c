@@ -24,6 +24,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "xalloc.h"
 #include "proc/pwcache.h"
 #include "proc/sig.h"
 #include "proc/devname.h"
@@ -39,8 +40,7 @@ static const char **cmds;
 static int *pids;
 
 #define ENLIST(thing,addme) do{ \
-if(!thing##s) thing##s = malloc(sizeof(*thing##s)*saved_argc); \
-if(!thing##s) fprintf(stderr,_("No memory.\n")),exit(2); \
+if(!thing##s) thing##s = xmalloc(sizeof(*thing##s)*saved_argc); \
 thing##s[thing##_count++] = addme; \
 }while(0)
 

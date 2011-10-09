@@ -13,6 +13,7 @@
 #include "proc/sysinfo.h"
 #include "c.h"
 #include "nls.h"
+#include "xalloc.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -54,12 +55,9 @@ static void setsize(int i)
 	}
 	scr_size = nrows * ncols;
 	if (screen == NULL)
-		screen = (char *)malloc(scr_size);
+		screen = (char *)xmalloc(scr_size);
 	else
-		screen = (char *)realloc(screen, scr_size);
-
-	if (screen == NULL)
-		err(EXIT_FAILURE, _("cannot allocate %zu bytes"), scr_size);
+		screen = (char *)xrealloc(screen, scr_size);
 
 	memset(screen, ' ', scr_size - 1);
 	*(screen + scr_size - 2) = '\0';

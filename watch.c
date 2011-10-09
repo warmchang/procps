@@ -17,6 +17,7 @@
 #include "config.h"
 #include "nls.h"
 #include "proc/procps.h"
+#include "xalloc.h"
 #include <ctype.h>
 #include <errno.h>
 #include <errno.h>
@@ -366,13 +367,13 @@ int main(int argc, char *argv[])
 	/* save for later */
 	command_argv = &(argv[optind]);
 
-	command = strdup(argv[optind++]);
+	command = xstrdup(argv[optind++]);
 	command_length = strlen(command);
 	for (; optind < argc; optind++) {
 		char *endp;
 		int s = strlen(argv[optind]);
 		/* space and \0 */
-		command = realloc(command, command_length + s + 2);
+		command = xrealloc(command, command_length + s + 2);
 		endp = command + command_length;
 		*endp = ' ';
 		memcpy(endp + 1, argv[optind], s);

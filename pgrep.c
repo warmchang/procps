@@ -28,18 +28,20 @@
 #include <errno.h>
 #include <getopt.h>
 
+// EXIT_SUCCESS is 0
+// EXIT_FAILURE is 1
+#define EXIT_USAGE 2
+#define EXIT_FATAL 3
+#define XALLOC_EXIT_CODE EXIT_FATAL
+
 #include "c.h"
 #include "nls.h"
+#include "xalloc.h"
 #include "proc/readproc.h"
 #include "proc/sig.h"
 #include "proc/devname.h"
 #include "proc/sysinfo.h"
 #include "proc/version.h" /* procps_version */
-
-// EXIT_SUCCESS is 0
-// EXIT_FAILURE is 1
-#define EXIT_USAGE 2
-#define EXIT_FATAL 3
 
 static int i_am_pkill = 0;
 static const char *progname = "pgrep";
@@ -114,7 +116,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 
 static union el *split_list (const char *restrict str, int (*convert)(const char *, union el *))
 {
-	char *copy = strdup (str);
+	char *copy = xstrdup (str);
 	char *ptr = copy;
 	char *sep_pos;
 	int i = 0;
@@ -125,9 +127,7 @@ static union el *split_list (const char *restrict str, int (*convert)(const char
 		if (i == size) {
 			size = size * 5 / 4 + 4;
 			// add 1 because slot zero is a count
-			list = realloc (list, 1 + size * sizeof *list);
-			if (list == NULL)
-				exit (EXIT_FATAL);
+			list = xrealloc (list, 1 + size * sizeof *list);
 		}
 		sep_pos = strchr (ptr, ',');
 		if (sep_pos)
@@ -238,7 +238,7 @@ static union el *read_pidfile(void)
 		goto out;
 	if(*endp && !isspace(*endp))
 		goto out;
-	list = malloc(2 * sizeof *list);
+	list = xmalloc(2 * sizeof *list);
 	list[0].num = 1;
 	list[1].num = pid;
 out:
@@ -322,7 +322,7 @@ static int conv_num (const char *restrict name, union el *restrict e)
 
 static int conv_str (const char *restrict name, union el *restrict e)
 {
-	e->str = strdup (name);
+	e->str = xstrdup (name);
 	return 1;
 }
 
@@ -396,9 +396,7 @@ static PROCTAB *do_openproc (void)
 	if (opt_euid && !opt_negate) {
 		int num = opt_euid[0].num;
 		int i = num;
-		uid_t *uids = malloc (num * sizeof (uid_t));
-		if (uids == NULL)
-			exit (EXIT_FATAL);
+		uid_t *uids = xmalloc (num * sizeof (uid_t));
 		while (i-- > 0) {
 			uids[i] = opt_euid[i+1].num;
 		}
@@ -419,13 +417,9 @@ static regex_t * do_regcomp (void)
 		char errbuf[256];
 		int re_err;
 
-		preg = malloc (sizeof (regex_t));
-		if (preg == NULL)
-			exit (EXIT_FATAL);
+		preg = xmalloc (sizeof (regex_t));
 		if (opt_exact) {
-			re = malloc (strlen (opt_pattern) + 5);
-			if (re == NULL)
-				exit (EXIT_FATAL);
+			re = xmalloc (strlen (opt_pattern) + 5);
 			sprintf (re, "^(%s)$", opt_pattern);
 		} else {
 		 	re = opt_pattern;
@@ -543,14 +537,12 @@ static union el * select_procs (int *num)
 			}
 			if (matches == size) {
 				size = size * 5 / 4 + 4;
-				list = realloc(list, size * sizeof *list);
-				if (list == NULL)
-					exit (EXIT_FATAL);
+				list = xrealloc(list, size * sizeof *list);
 			}
 			if (opt_long) {
 				char buff[5096];  // FIXME
 				sprintf (buff, "%d %s", task.XXXID, cmd);
-				list[matches++].str = strdup (buff);
+				list[matches++].str = xstrdup (buff);
 			} else {
 				list[matches++].num = task.XXXID;
 			}
@@ -631,7 +623,7 @@ static void parse_opts (int argc, char **argv)
 //		case 'D':   // FreeBSD: print info about non-matches for debugging
 //			break;
 		case 'F':   // FreeBSD: the arg is a file containing a PID to match
-			opt_pidfile = strdup (optarg);
+			opt_pidfile = xstrdup (optarg);
 			++criteria_count;
 			break;
 		case 'G':   // Solaris: match rgid/rgroup
@@ -676,7 +668,7 @@ static void parse_opts (int argc, char **argv)
 			opt_count = 1;
 			break;
 		case 'd':   // Solaris: change the delimiter
-			opt_delim = strdup (optarg);
+			opt_delim = xstrdup (optarg);
 			break;
 		case 'f':   // Solaris: match full process name (as in "ps -f")
 			opt_full = 1;

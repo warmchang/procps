@@ -37,6 +37,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "xalloc.h"
 #include "proc/procps.h"
 #include "proc/version.h"
 
@@ -155,7 +156,7 @@ static int ReadSetting(const char *restrict const name) {
    }
 
    /* used to display the output */
-   outname = strdup(name);
+   outname = xstrdup(name);
    slashdot(outname,'/','.'); /* change / to . */
 
    if (pattern && !pattern_match(outname, pattern)){
@@ -164,13 +165,13 @@ static int ReadSetting(const char *restrict const name) {
    }
 
    /* used to open the file */
-   tmpname = malloc(strlen(name)+strlen(PROC_PATH)+2);
+   tmpname = xmalloc(strlen(name)+strlen(PROC_PATH)+2);
    strcpy(tmpname, PROC_PATH);
    strcat(tmpname, name); 
    slashdot(tmpname+strlen(PROC_PATH),'.','/'); /* change . to / */
 
    /* used to display the output */
-   outname = strdup(name);
+   outname = xstrdup(name);
    slashdot(outname,'/','.'); /* change / to . */
 
    if (stat(tmpname, &ts) < 0) {
@@ -285,7 +286,7 @@ static int DisplayAll(const char *restrict const path) {
       readdir(dp);  // skip ..
       while (( de = readdir(dp) )) {
          char *restrict tmpdir;
-         tmpdir = (char *restrict)malloc(strlen(path)+strlen(de->d_name)+2);
+         tmpdir = (char *restrict)xmalloc(strlen(path)+strlen(de->d_name)+2);
          sprintf(tmpdir, "%s%s", path, de->d_name);
          rc2 = stat(tmpdir, &ts);
          if (rc2 != 0) {
@@ -339,14 +340,14 @@ static int WriteSetting(const char *setting) {
    }
 
    /* used to open the file */
-   tmpname = malloc(equals-name+1+strlen(PROC_PATH));
+   tmpname = xmalloc(equals-name+1+strlen(PROC_PATH));
    strcpy(tmpname, PROC_PATH);
    strncat(tmpname, name, (int)(equals-name)); 
    tmpname[equals-name+strlen(PROC_PATH)] = 0;
    slashdot(tmpname+strlen(PROC_PATH),'.','/'); /* change . to / */
 
    /* used to display the output */
-   outname = malloc(equals-name+1);                       
+   outname = xmalloc(equals-name+1);
    strncpy(outname, name, (int)(equals-name)); 
    outname[equals-name] = 0;
    slashdot(outname,'/','.'); /* change / to . */
@@ -544,9 +545,9 @@ static int PreloadSystem(void) {
 	    continue;
 
 	 if (ncfgs % nprealloc == 0) {
-	    cfgs = realloc(cfgs, sizeof(struct pair*)*(ncfgs+nprealloc));
+	    cfgs = xrealloc(cfgs, sizeof(struct pair*)*(ncfgs+nprealloc));
 	 }
-	 cfgs[ncfgs] = malloc(sizeof(struct pair) + strlen(de->d_name)*2+2 + strlen(dirs[di])+1);
+	 cfgs[ncfgs] = xmalloc(sizeof(struct pair) + strlen(de->d_name)*2+2 + strlen(dirs[di])+1);
 	 cfgs[ncfgs]->name = (char*)cfgs[ncfgs]+sizeof(struct pair);
 	 strcpy(cfgs[ncfgs]->name, de->d_name);
 	 cfgs[ncfgs]->value = (char*)cfgs[ncfgs]+sizeof(struct pair) + strlen(cfgs[ncfgs]->name)+1;
@@ -660,7 +661,7 @@ int main(int argc, char *argv[])
            IgnoreError = true;
            return PreloadSystem();
       case 'r':
-           pattern = strdup(optarg);
+           pattern = xstrdup(optarg);
            break;
       case 'V':
            printf(PROCPS_NG_VERSION);
