@@ -39,6 +39,9 @@
 #include <unistd.h>
 #include <values.h>
 
+#include "c.h"
+#include "nls.h"
+
 #include "proc/devname.h"
 #include "proc/procps.h"
 #include "proc/readproc.h"
@@ -322,36 +325,36 @@ static void bye_bye (const char *str) {
 #ifdef ATEOJ_RPTSTD
 {  proc_t *p;
    if (!str) { fprintf(stderr,
-      "\n%s's Summary report:"
-      "\n\tProgram"
-      "\n\t   Linux version = %u.%u.%u, %s"
-      "\n\t   Hertz = %u (%u bytes, %u-bit time)"
-      "\n\t   Page_size = %d, Cpu_tot = %d"
-      "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%u HST_t's/Page), HHist_siz = %u"
-      "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t*) = %u"
-      "\n\t   Frames_libflags = %08lX"
-      "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
-      "\n\tTerminal: %s"
-      "\n\t   device = %s, ncurses = v%s"
-      "\n\t   max_colors = %d, max_pairs = %d"
-      "\n\t   Cap_can_goto = %s"
-      "\n\t   Screen_cols = %d, Screen_rows = %d"
-      "\n\t   Max_lines = %d, most recent Pseudo_size = %u"
+      _("\n%s's Summary report:")
+      _("\n\tProgram")
+        "\n\t   Linux version = %u.%u.%u, %s"
+        "\n\t   Hertz = %u (%u bytes, %u-bit time)"
+        "\n\t   Page_size = %d, Cpu_tot = %d"
+        "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%u HST_t's/Page), HHist_siz = %u"
+        "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t*) = %u"
+        "\n\t   Frames_libflags = %08lX"
+        "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
+      _("\n\tTerminal: %s")
+        "\n\t   device = %s, ncurses = v%s"
+        "\n\t   max_colors = %d, max_pairs = %d"
+        "\n\t   Cap_can_goto = %s"
+        "\n\t   Screen_cols = %d, Screen_rows = %d"
+        "\n\t   Max_lines = %d, most recent Pseudo_size = %u"
 #ifndef OFF_STDIOLBF
-      "\n\t   Stdout_buf = %u, BUFSIZ = %u"
+        "\n\t   Stdout_buf = %u, BUFSIZ = %u"
 #endif
-      "\n\tWindows and Curwin->"
-      "\n\t   sizeof(WIN_t) = %u, GROUPSMAX = %d"
-      "\n\t   winname = %s, grpname = %s"
+      _("\n\tWindows and Curwin->")
+        "\n\t   sizeof(WIN_t) = %u, GROUPSMAX = %d"
+        "\n\t   winname = %s, grpname = %s"
 #ifdef CASEUP_HEXES
-      "\n\t   winflags = %08X, maxpflgs = %d"
+        "\n\t   winflags = %08X, maxpflgs = %d"
 #else
-      "\n\t   winflags = %08x, maxpflgs = %d"
+        "\n\t   winflags = %08x, maxpflgs = %d"
 #endif
-      "\n\t   fieldscur = %s, sortindx  = %d"
-      "\n\t   maxtasks = %d, varcolsz = %d, winlines = %d"
-      "\n\t   strlen(columnhdr) = %d"
-      "\n"
+        "\n\t   fieldscur = %s, sortindx  = %d"
+        "\n\t   maxtasks = %d, varcolsz = %d, winlines = %d"
+        "\n\t   strlen(columnhdr) = %d"
+        "\n"
       , __func__
       , LINUX_VERSION_MAJOR(linux_version_code)
       , LINUX_VERSION_MINOR(linux_version_code)
@@ -410,15 +413,15 @@ static void bye_bye (const char *str) {
       maxdepth_sav = maxdepth;
 
       fprintf(stderr,
-         "\n%s's Supplementary HASH report:"
-         "\n\tTwo Tables providing for %d entries each + 1 extra for 'empty' image"
-         "\n\t%dk (%d bytes) per table, %d total bytes (including 'empty' image)"
-         "\n\tResults from latest hash (PHash_new + PHist_new)..."
-         "\n"
-         "\n\tTotal hashed = %d"
-         "\n\tLevel-0 hash entries = %d (%d%% occupied)"
-         "\n\tMax Depth = %d"
-         "\n\n"
+         _("\n%s's Supplementary HASH report:")
+         _("\n\tTwo Tables providing for %d entries each + 1 extra for 'empty' image")
+         _("\n\t%dk (%d bytes) per table, %d total bytes (including 'empty' image)")
+         _("\n\tResults from latest hash (PHash_new + PHist_new)...")
+           "\n"
+         _("\n\tTotal hashed = %d")
+         _("\n\tLevel-0 hash entries = %d (%d%% occupied)")
+         _("\n\tMax Depth = %d")
+           "\n\n"
          , __func__
          , HHASH_SIZ, sz / 1024, sz, sz * 3
          , Frame_maxtask
@@ -430,23 +433,23 @@ static void bye_bye (const char *str) {
             for (i = 0, numdepth = 0; i < HHASH_SIZ; i++)
                if (depths[i] == maxdepth) ++numdepth;
             fprintf(stderr,
-               "\t %5d (%3d%%) hash table entries at depth %d\n"
+               _("\t %5d (%3d%%) hash table entries at depth %d\n")
                , numdepth, (numdepth * 100) / total_occupied, maxdepth + 1);
             pop -= numdepth;
             cross_foot += numdepth;
             if (0 == pop && cross_foot == total_occupied) break;
          }
          if (pop) {
-            fprintf(stderr, "\t %5d (%3d%%) unchained hash table entries\n"
+            fprintf(stderr, _("\t %5d (%3d%%) unchained hash table entries\n")
                , pop, (pop * 100) / total_occupied);
             cross_foot += pop;
          }
          fprintf(stderr,
             "\t -----\n"
-            "\t %5d total entries occupied\n", cross_foot);
+            _("\t %5d total entries occupied\n"), cross_foot);
 
          if (maxdepth_sav) {
-            fprintf(stderr, "\nPIDs at max depth: ");
+            fprintf(stderr, _("\nPIDs at max depth: "));
             for (i = 0; i < HHASH_SIZ; i++)
                if (depths[i] == maxdepth_sav) {
                   j = PHash_new[i];
@@ -693,7 +696,7 @@ static inline void show_scroll (void) {
    if (1 > totpflgs) totpflgs = 1;
    if (1 > begpflgs) begpflgs = 1;
    snprintf(tmp, sizeof(tmp)
-      , "scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)"
+      , _("scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)")
       , Curwin->begtask + 1, Frame_maxtask
       , begpflgs, totpflgs);
    PUTT("%s%s  %.*s%s", tg2(0, Msg_row), Caps_off, Screen_cols - 2, tmp, Cap_clr_eol);
@@ -801,7 +804,7 @@ static void *alloc_c (size_t num) {
 
    if (!num) ++num;
    if (!(pv = calloc(1, num)))
-      error_exit("failed memory allocate");
+      error_exit(_("failed memory allocate"));
    return pv;
 } // end: alloc_c
 
@@ -812,7 +815,7 @@ static void *alloc_r (void *ptr, size_t num) {
 
    if (!num) ++num;
    if (!(pv = realloc(ptr, num)))
-      error_exit("failed memory re-allocate");
+      error_exit(_("failed memory re-allocate"));
    return pv;
 } // end: alloc_r
 
@@ -1150,7 +1153,7 @@ static const char *user_certify (WIN_t *q, const char *str, char typ) {
          pwd = getpwuid(num);
       else
          pwd = getpwnam(str);
-      if (!pwd) return "Invalid user";
+      if (!pwd) return _("Invalid user");
       q->usrseluid = pwd->pw_uid;
       q->usrseltyp = typ;
    }
@@ -1374,7 +1377,7 @@ static void calibrate_fields (void) {
    sigemptyset(&newss);
    sigaddset(&newss, SIGWINCH);
    if (-1 == sigprocmask(SIG_BLOCK, &newss, &oldss))
-      error_exit(fmtmk("failed sigprocmask, SIG_BLOCK: %s", strerror(errno)));
+      error_exit(fmtmk(_("failed sigprocmask, SIG_BLOCK: %s"), strerror(errno)));
 
    adj_geometry();
    Frames_libflags = 0;
@@ -1527,7 +1530,7 @@ static void calibrate_fields (void) {
 
    Frames_resize = 0;
    if (-1 == sigprocmask(SIG_SETMASK, &oldss, NULL))
-      error_exit(fmtmk("failed sigprocmask, SIG_SETMASK: %s", strerror(errno)));
+      error_exit(fmtmk(_("failed sigprocmask, SIG_SETMASK: %s"), strerror(errno)));
 } // end: calibrate_fields
 
 
@@ -1640,7 +1643,7 @@ static void fields_utility (void) {
       if (!h) for (h = Fieldstab[f].head; ' ' == *h; ++h) ;
       display_fields(i, (p != NULL));
       putp(Cap_home);
-      show_special(1, fmtmk(FIELDS_heading, w->grpname, CHKw(w, Show_FOREST) ? "forest view" : h));
+      show_special(1, fmtmk(FIELDS_heading, w->grpname, CHKw(w, Show_FOREST) ? _("forest view") : h));
 
       switch (key = keyin(0)) {
          case kbd_UP:
@@ -1718,7 +1721,7 @@ static void zap_fieldstab (void) {
    Fieldstab[P_TPG].head = "TPGID ";
    Fieldstab[P_TPG].fmts = "%5d ";
    if (5 < (digits = get_pid_digits())) {
-      if (10 < digits) error_exit("failed pid size test");
+      if (10 < digits) error_exit(_("failed pid size test"));
       snprintf(fmts_pid, sizeof(fmts_pid), "%%%uu ", digits);
       Fieldstab[P_PID].head = "       PID " + 10 - digits;
       Fieldstab[P_PID].fmts = fmts_pid;
@@ -1740,7 +1743,7 @@ always:
    Fieldstab[P_CPN].head = "P ";
    Fieldstab[P_CPN].fmts = "%1d ";
    if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_tot))) {
-      if (5 < digits) error_exit("failed num cpus test");
+      if (5 < digits) error_exit(_("failed num cpus test"));
       snprintf(fmts_cpu, sizeof(fmts_cpu), "%%%ud ", digits);
       Fieldstab[P_CPN].head = "    P " + 5 - digits;
       Fieldstab[P_CPN].fmts = fmts_cpu;
@@ -1772,7 +1775,6 @@ always:
          *    cpus[0] thru cpus[n] == tics for each separate cpu
          *    cpus[Cpu_tot]        == tics from the 1st /proc/stat line */
 static CPU_t *cpus_refresh (CPU_t *cpus) {
-   static const char err_read[] = "failed /proc/stat read";
    static FILE *fp = NULL;
    static int sav_cpus = -1;
    char buf[MEDBUFSIZ]; // enough for /proc/stat CPU line (not the intr line)
@@ -1790,7 +1792,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       (sorry Linux, but you'll have to close it for us) */
    if (!fp) {
       if (!(fp = fopen("/proc/stat", "r")))
-         error_exit(fmtmk("failed /proc/stat open: %s", strerror(errno)));
+         error_exit(fmtmk(_("failed /proc/stat open: %s"), strerror(errno)));
       /* note: we allocate one more CPU_t than Cpu_tot so that the last slot
                can hold tics representing the /proc/stat cpu summary (the first
                line read) -- that slot supports our View_CPUSUM toggle */
@@ -1802,11 +1804,11 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    // first value the last slot with the cpu summary line
    cpus[Cpu_tot].x = cpus[Cpu_tot].y = cpus[Cpu_tot].z = 0;
    // FIXME: can't tell above by kernel version number
-   if (!fgets(buf, sizeof(buf), fp)) error_exit(err_read);
+   if (!fgets(buf, sizeof(buf), fp)) error_exit(_("failed /proc/stat read"));
    if (4 > sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
       , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i
       , &cpus[Cpu_tot].w, &cpus[Cpu_tot].x, &cpus[Cpu_tot].y, &cpus[Cpu_tot].z))
-         error_exit(err_read);
+         error_exit(_("failed /proc/stat read"));
    // and just in case we're 2.2.xx compiled without SMP support...
    if (1 == Cpu_tot)
       memcpy(cpus, &cpus[1], sizeof(CPU_t));
@@ -1816,13 +1818,13 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       rewind(fp);
       fgets(buf, sizeof(buf), fp);
 #endif
-      if (!fgets(buf, sizeof(buf), fp)) error_exit(err_read);
+      if (!fgets(buf, sizeof(buf), fp)) error_exit(_("failed /proc/stat read"));
       cpus[i].x = cpus[i].y = cpus[i].z = 0;
       // FIXME: can't tell above by kernel version number
       if (4 > sscanf(buf, "cpu%u %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &cpus[i].id
          , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i
          , &cpus[i].w, &cpus[i].x, &cpus[i].y, &cpus[i].z)) {
-            error_exit(err_read);
+            error_exit(_("failed /proc/stat read"));
       }
 #ifdef PRETEND4CPUS
       cpus[i].id = i;
@@ -1990,7 +1992,7 @@ static void procs_refresh (void) {
 
    prochlp(NULL);                                // prep for a new frame
    if (NULL == (PT = openproc(Frames_libflags, Monpids)))
-      error_exit(fmtmk("failed openproc: %s", strerror(errno)));
+      error_exit(fmtmk(_("failed openproc: %s"), strerror(errno)));
    read_something = Thread_mode ? readeither : readproc;
 
    for (;;) {
@@ -2131,8 +2133,6 @@ static void before (char *me) {
          *   line c: contains w->summclr, msgsclr, headclr, taskclr */
 static void configs_read (void) {
 #ifndef RCFILE_NOERR
-   static const char err_rcid[] = "incompatible rcfile, you should delete '%s'";
-   static const char err_flds[] = "window entry #%d corrupt, please delete '%s'";
 #else
    RCF_t rcdef = DEF_RCFILE;
 #endif
@@ -2165,7 +2165,7 @@ static void configs_read (void) {
          , &id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_delay, &i))
       || RCF_VERSION_ID != id)
 #ifndef RCFILE_NOERR
-         error_exit(fmtmk(err_rcid, Rc_name));
+         error_exit(fmtmk(_("incompatible rcfile, you should delete '%s'"), Rc_name));
 #else
          goto just_default_em;
 #endif
@@ -2182,7 +2182,7 @@ static void configs_read (void) {
 #endif
          if (strlen(Winstk[i].rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
 #ifndef RCFILE_NOERR
-            error_exit(fmtmk(err_flds, i+1, Rc_name));
+            error_exit(fmtmk(_("window entry #%d corrupt, please delete '%s'"), i+1, Rc_name));
 #else
             goto just_default_em;
 #endif
@@ -2190,7 +2190,7 @@ static void configs_read (void) {
             int f = FLDget(&Winstk[i], x);
             if (P_MAXPFLGS <= f)
 #ifndef RCFILE_NOERR
-               error_exit(fmtmk(err_flds, i+1, Rc_name));
+               error_exit(fmtmk(_("window entry #%d corrupt, please delete '%s'"), i+1, Rc_name));
 #else
                goto just_default_em;
 #endif
@@ -2236,9 +2236,6 @@ static void parse_args (char **args) {
       .  no deprecated/illegal use of 'breakargv:' with goto
       .  bunched args are actually handled properly and none are ignored
       .  we tolerate NO whitespace and NO switches -- maybe too tolerant? */
-   static const char usage_str[] =
-      " -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]";
-   static const char sel_error[] = "conflicting process selections (U/p/u)";
    static const char numbs_str[] = "+,-.0123456789";
    float tmp_delay = MAXFLOAT;
    char *p;
@@ -2255,7 +2252,7 @@ static void parse_args (char **args) {
                if (cp[1]) ++cp;
                else if (*args) cp = *args++;
                if (strspn(cp, numbs_str))
-                  error_exit(fmtmk("inappropriate '%s'\nusage:\t%s%s", cp, Myname, usage_str));
+                  error_exit(fmtmk(_("inappropriate '%s'\nusage:\t%s%s"), cp, Myname, _(" -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]")));
                continue;
             case 'b':
                Batch = 1;
@@ -2266,17 +2263,17 @@ static void parse_args (char **args) {
             case 'd':
                if (cp[1]) ++cp;
                else if (*args) cp = *args++;
-               else error_exit("-d requires argument");
+               else error_exit(_("-d requires argument"));
                   /* a negative delay will be dealt with shortly... */
                if (1 != sscanf(cp, "%f", &tmp_delay))
-                  error_exit(fmtmk("bad delay '%s'", cp));
+                  error_exit(fmtmk(_("bad delay '%s'"), cp));
                break;
             case 'H':
                Thread_mode = 1;
                break;
             case 'h':
             case 'v': case 'V':
-               fprintf(stdout, "\t%s\nusage:\t%s%s", procps_version, Myname, usage_str);
+               fprintf(stdout, _("\t%s\nusage:\t%s%s"), procps_version, Myname, _(" -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]"));
                bye_bye(NULL);
             case 'i':
                TOGw(Curwin, Show_IDLEPS);
@@ -2285,21 +2282,21 @@ static void parse_args (char **args) {
             case 'n':
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
-               else error_exit("-n requires argument");
+               else error_exit(_("-n requires argument"));
                if (1 != sscanf(cp, "%d", &Loops) || 1 > Loops)
-                  error_exit(fmtmk("bad iterations arg '%s'", cp));
+                  error_exit(fmtmk(_("bad iterations arg '%s'"), cp));
                break;
             case 'p':
-               if (Curwin->usrseltyp) error_exit(sel_error);
+               if (Curwin->usrseltyp) error_exit(_("conflicting process selections (U/p/u)"));
                do {
                   if (cp[1]) cp++;
                   else if (*args) cp = *args++;
-                  else error_exit("-p argument missing");
+                  else error_exit(_("-p argument missing"));
                   if (Monpidsidx >= MONPIDMAX)
-                     error_exit(fmtmk("pid limit (%d) exceeded", MONPIDMAX));
+                     error_exit(fmtmk(_("pid limit (%d) exceeded"), MONPIDMAX));
                   if (1 != sscanf(cp, "%d", &Monpids[Monpidsidx])
                   || 0 > Monpids[Monpidsidx])
-                     error_exit(fmtmk("bad pid '%s'", cp));
+                     error_exit(fmtmk(_("bad pid '%s'"), cp));
                   if (!Monpids[Monpidsidx])
                      Monpids[Monpidsidx] = getpid();
                   Monpidsidx++;
@@ -2316,12 +2313,12 @@ static void parse_args (char **args) {
                break;
             case 'u':
             case 'U':
-            {  const char *errmsg;
-               if (Monpidsidx || Curwin->usrseltyp) error_exit(sel_error);
+            {  const char *err;
+               if (Monpidsidx || Curwin->usrseltyp) error_exit(_("conflicting process selections (U/p/u)"));
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
-               else error_exit(fmtmk("-%c missing name", ch));
-               if ((errmsg = user_certify(Curwin, cp, ch))) error_exit(errmsg);
+               else error_exit(fmtmk(_("-%c missing name"), ch));
+               if ((err = user_certify(Curwin, cp, ch))) error_exit(err);
                cp += strlen(cp);
                break;
             }
@@ -2334,14 +2331,14 @@ static void parse_args (char **args) {
                if (pn && !(ci = strspn(pn, "0123456789"))) { ai = 0; pn = NULL; }
                if (pn && (1 != sscanf(pn, "%d", &Width_mode)
                || Width_mode < W_MIN_COL))
-                  error_exit(fmtmk("bad width arg '%s', must > %d", pn, W_MIN_COL-1));
+                  error_exit(fmtmk(_("bad width arg '%s', must > %d"), pn, W_MIN_COL-1));
                cp++;
                args += ai;
                if (pn) cp = pn + ci;
                continue;
             }
             default :
-               error_exit(fmtmk("unknown option '%c'\nusage:\t%s%s", *cp, Myname, usage_str));
+               error_exit(fmtmk(_("unknown option '%c'\nusage:\t%s%s"), *cp, Myname, _(" -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]")));
 
          } // end: switch (*cp)
 
@@ -2354,9 +2351,9 @@ static void parse_args (char **args) {
    // fixup delay time, maybe...
    if (MAXFLOAT > tmp_delay) {
       if (Secure_mode)
-         error_exit("-d disallowed in \"secure\" mode");
+         error_exit(_("-d disallowed in \"secure\" mode"));
       if (0 > tmp_delay)
-         error_exit("-d requires positive argument");
+         error_exit(_("-d requires positive argument"));
       Rc.delay_time = tmp_delay;
    }
 } // end: parse_args
@@ -2380,7 +2377,7 @@ static void whack_terminal (void) {
 #endif
    // our part...
    if (-1 == tcgetattr(STDIN_FILENO, &Tty_original))
-      error_exit("failed tty get");
+      error_exit(_("failed tty get"));
    // ok, haven't really changed anything but we do have our snapshot
    Ttychanged = 1;
 
@@ -2395,7 +2392,7 @@ static void whack_terminal (void) {
       tmptty.c_cc[VERASE] = *key_backspace;
 #ifdef TERMIOS_ONLY
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &tmptty))
-      error_exit(fmtmk("failed Tty_tweaked set: %s", strerror(errno)));
+      error_exit(fmtmk(_("failed Tty_tweaked set: %s"), strerror(errno)));
    tcgetattr(STDIN_FILENO, &Tty_tweaked);
 #endif
    // lastly, a nearly raw mode for unsolicited single keystrokes
@@ -2403,7 +2400,7 @@ static void whack_terminal (void) {
    tmptty.c_cc[VMIN] = 1;
    tmptty.c_cc[VTIME] = 0;
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &tmptty))
-      error_exit(fmtmk("failed Tty_raw set: %s", strerror(errno)));
+      error_exit(fmtmk(_("failed Tty_raw set: %s"), strerror(errno)));
    tcgetattr(STDIN_FILENO, &Tty_raw);
 
 #ifndef OFF_STDIOLBF
@@ -2431,13 +2428,12 @@ static void win_names (WIN_t *q, const char *name) {
         /*
          * Display a window/field group (ie. make it "current"). */
 static WIN_t *win_select (char ch) {
-   static const char prompt[] = "Choose field group (1 - 4)";
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
 
    /* if there's no ch, it means we're supporting the external interface,
       so we must try to get our own darn ch by begging the user... */
    if (!ch) {
-      show_pmt(prompt);
+      show_pmt(_("Choose field group (1 - 4)"));
       if (1 > chin(0, (char *)&ch, 1)) return Curwin;
    }
    switch (ch) {
@@ -2671,22 +2667,22 @@ static void file_writerc (void) {
       return;
    }
    fprintf(fp, "%s's " RCF_EYECATCHER, Myname);
-   fprintf(fp, "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%d\n"
+   fprintf(fp, _("Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%d\n")
       , RCF_VERSION_ID
       , Rc.mode_altscr, Rc.mode_irixps, Rc.delay_time, (int)(Curwin - Winstk));
 
    for (i = 0 ; i < GROUPSMAX; i++) {
-      fprintf(fp, "%s\tfieldscur=%s\n"
+      fprintf(fp, _("%s\tfieldscur=%s\n")
          , Winstk[i].rc.winname, Winstk[i].rc.fieldscur);
-      fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
+      fprintf(fp, _("\twinflags=%d, sortindx=%d, maxtasks=%d\n")
          , Winstk[i].rc.winflags, (int)Winstk[i].rc.sortindx
          , Winstk[i].rc.maxtasks);
-      fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
+      fprintf(fp, _("\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n")
          , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
          , Winstk[i].rc.headclr, Winstk[i].rc.taskclr);
    }
    fclose(fp);
-   show_msg(fmtmk("Wrote configuration to '%s'", Rc_name));
+   show_msg(fmtmk(_("Wrote configuration to '%s'"), Rc_name));
 } // end: file_writerc
 
 
@@ -2768,10 +2764,10 @@ static void keys_global (int ch) {
       case 'd':
       case 's':
          if (Secure_mode)
-            show_msg(err_secure);
+            show_msg(_("Unavailable in secure mode"));
          else {
             float tmp =
-               get_float(fmtmk("Change delay from %.1f to", Rc.delay_time));
+               get_float(fmtmk(_("Change delay from %.1f to"), Rc.delay_time));
             if (-1 < tmp) Rc.delay_time = tmp;
          }
          break;
@@ -2785,38 +2781,38 @@ static void keys_global (int ch) {
       case 'H':
          Thread_mode = !Thread_mode;
          if (!CHKw(w, View_STATES))
-            show_msg(fmtmk("Show threads %s", Thread_mode ? "On" : "Off"));
+            show_msg(fmtmk(_("Show threads %s"), Thread_mode ? "On" : "Off"));
          break;
       case 'I':
          if (Cpu_tot > 1) {
             Rc.mode_irixps = !Rc.mode_irixps;
-            show_msg(fmtmk("Irix mode %s", Rc.mode_irixps ? "On" : "Off"));
+            show_msg(fmtmk(_("Irix mode %s"), Rc.mode_irixps ? "On" : "Off"));
          } else
-            show_msg(err_notsmp);
+            show_msg(_("Only 1 cpu detected"));
          break;
       case 'k':
          if (Secure_mode) {
-            show_msg(err_secure);
+            show_msg(_("Unavailable in secure mode"));
          } else {
             int pid, sig = SIGTERM;
             char *str;
-            if (-1 < (pid = get_int("pid to signal/kill"))) {
-               str = linein(fmtmk("Send pid %d signal [%d/sigterm]", pid, SIGTERM));
+            if (-1 < (pid = get_int(_("pid to signal/kill")))) {
+               str = linein(fmtmk(_("Send pid %d signal [%d/sigterm]"), pid, SIGTERM));
                if (*str) sig = signal_name_to_number(str);
                if (0 < sig && kill(pid, sig))
                   show_msg(fmtmk("Failed signal pid '%d' with '%d': %s"
                      , pid, sig, strerror(errno)));
-               else if (0 > sig) show_msg("Invalid signal");
+               else if (0 > sig) show_msg(_("Invalid signal"));
             }
          }
          break;
       case 'r':
          if (Secure_mode)
-            show_msg(err_secure);
+            show_msg(_("Unavailable in secure mode"));
          else {
             int val, pid;
-            if (-1 < (pid = get_int("PID to renice"))
-            && INT_MIN < (val = get_int(fmtmk("Renice PID %d to value", pid))))
+            if (-1 < (pid = get_int(_("PID to renice")))
+            && INT_MIN < (val = get_int(fmtmk(_("Renice PID %d to value"), pid))))
                if (setpriority(PRIO_PROCESS, (unsigned)pid, val))
                   show_msg(fmtmk("Failed renice of PID %d to %d: %s"
                      , pid, val, strerror(errno)));
@@ -2863,10 +2859,10 @@ static void keys_task (int ch) {
       case '#':
       case 'n':
          if (VIZCHKw(w)) {
-            int num = get_int(fmtmk("Maximum tasks = %d, change to (0 is unlimited)", w->rc.maxtasks));
+            int num = get_int(fmtmk(_("Maximum tasks = %d, change to (0 is unlimited)"), w->rc.maxtasks));
             if (INT_MIN < num) {
                if (-1 < num ) w->rc.maxtasks = num;
-               else show_msg("Invalid maximum");
+               else show_msg(_("Invalid maximum"));
             }
          }
          break;
@@ -2945,22 +2941,22 @@ static void keys_task (int ch) {
       case 'S':
          if (VIZCHKw(w)) {
             TOGw(w, Show_CTIMES);
-            show_msg(fmtmk("Cumulative time %s", CHKw(w, Show_CTIMES) ? "On" : "Off"));
+            show_msg(fmtmk(_("Cumulative time %s"), CHKw(w, Show_CTIMES) ? "On" : "Off"));
          }
          break;
       case 'U':
       case 'u':
          if (VIZCHKw(w)) {
-            const char *errmsg;
-            if ((errmsg = user_certify(w, linein("Which user (blank for all)"), ch)))
-               show_msg(errmsg);
+            const char *err;
+            if ((err = user_certify(w, linein(_("Which user (blank for all)")), ch)))
+               show_msg(err);
          }
          break;
       case 'V':
          if (VIZCHKw(w)) {
             TOGw(w, Show_FOREST);
             if (!ENUviz(w, P_CMD))
-               show_msg(fmtmk("Forest mode %s", CHKw(w, Show_FOREST) ? "On" : "Off"));
+               show_msg(fmtmk(_("Forest mode %s"), CHKw(w, Show_FOREST) ? "On" : "Off"));
          }
          break;
       case 'x':
@@ -3035,7 +3031,7 @@ static void keys_window (int ch) {
       case 'G':
          if (ALTCHKw) {
             char tmp[SMLBUFSIZ];
-            STRLCPY(tmp, linein(fmtmk("Rename window '%s' to (1-3 chars)", w->rc.winname)))
+            STRLCPY(tmp, linein(fmtmk(_("Rename window '%s' to (1-3 chars)"), w->rc.winname)))
             if (tmp[0]) win_names(w, tmp);
          }
          break;
