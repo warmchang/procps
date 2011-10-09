@@ -1848,7 +1848,7 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
     }
   }
   did_stuff = 1;
-  if(unlikely(active_cols>(int)OUTBUF_SIZE)) fprintf(stderr,"Fix bigness error.\n");
+  if(unlikely(active_cols>(int)OUTBUF_SIZE)) fprintf(stderr,_("Fix bigness error.\n"));
 
   /* print row start sequence */
   for(;;){
@@ -1923,7 +1923,7 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
       break;
     }
     default:
-      fprintf(stderr, "bad alignment code\n");
+      fprintf(stderr, _("bad alignment code\n"));
       break;
     }
     /* At this point:
@@ -1996,7 +1996,7 @@ void init_output(void){
   case 32768: page_shift = 15; break;
   case 16384: page_shift = 14; break;
   case  8192: page_shift = 13; break;
-  default: fprintf(stderr, "Unknown page size! (assume 4096)\n");
+  default: fprintf(stderr, _("Unknown page size! (assume 4096)\n"));
   case  4096: page_shift = 12; break;
   case  2048: page_shift = 11; break;
   case  1024: page_shift = 10; break;

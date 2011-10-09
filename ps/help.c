@@ -17,92 +17,88 @@
 
 void __attribute__ ((__noreturn__)) usage(FILE * out, int section)
 {
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		"\nUsage: %s [options]\n", program_invocation_short_name);
+		" %s [options]\n", program_invocation_short_name);
 	if (section == USAGE_SELECTION || section == USAGE_ALL) {
-		fprintf(out,
-		"\nSimple options:\n"
-		" -A               all processes\n"
-		" -N, --deselect   negate selection\n"
-		" -a               all without tty and session leader\n"
-		" -d               all except session leader\n"
-		" -e               all processes\n"
-		" T                all processes on this terminal\n"
-		" a                all without tty, including other users\n"
-		" g                obsolete, do not use\n"
-		" r                only running processes\n"
-		" x                processes without controlling ttys\n");
+	fputs(_("\nSimple options:\n"), out);
+	fputs(_(" -A               all processes\n"), out);
+	fputs(_(" -N, --deselect   negate selection\n"), out);
+	fputs(_(" -a               all without tty and session leader\n"), out);
+	fputs(_(" -d               all except session leader\n"), out);
+	fputs(_(" -e               all processes\n"), out);
+	fputs(_(" T                all processes on this terminal\n"), out);
+	fputs(_(" a                all without tty, including other users\n"), out);
+	fputs(_(" g                obsolete, do not use\n"), out);
+	fputs(_(" r                only running processes\n"), out);
+	fputs(_(" x                processes without controlling ttys\n"), out);
 	}
 	if (section == USAGE_LIST || section == USAGE_ALL) {
-		fprintf(out,
-		"\nSelection by list:\n"
-		" -C <command>         command name\n"
-		" U, -u, --user <uid>  effective user id or name\n"
-		" -U, --User <uid>     real user id or name\n"
-		" -G, --Group <gid>    real group id or name\n"
-		" -g, --group <group>  session or effective group name\n"
-		" -p, --pid <pid>      process id\n"
-		" --ppid <pid>         select by parent process id\n"
-		" -s, --sid <session>  session id\n"
-		" t, -t, --tty <tty>   terminal\n"
-		"\n selection <arguments> take csv list e.g. `-u root,nobody'\n");
+	fputs(_("\nSelection by list:\n"), out);
+	fputs(_(" -C <command>         command name\n"), out);
+	fputs(_(" U, -u, --user <uid>  effective user id or name\n"), out);
+	fputs(_(" -U, --User <uid>     real user id or name\n"), out);
+	fputs(_(" -G, --Group <gid>    real group id or name\n"), out);
+	fputs(_(" -g, --group <group>  session or effective group name\n"), out);
+	fputs(_(" -p, --pid <pid>      process id\n"), out);
+	fputs(_(" --ppid <pid>         select by parent process id\n"), out);
+	fputs(_(" -s, --sid <session>  session id\n"), out);
+	fputs(_(" t, -t, --tty <tty>   terminal\n"), out);
+	fputs(_("\n selection <arguments> take csv list e.g. `-u root,nobody'\n"), out);
 	}
 	if (section == USAGE_OUTPUT || section == USAGE_ALL) {
-		fprintf(out,
-		"\nOutput formats:\n"
-		" o, -o, --format <format>"
-		"                  user defined format\n"
-		" O  <format>      preloaded -o allowing sorting\n"
-		" -O <format>      preloaded, with default columns, allowing sorting\n"
-		" -j               jobs format\n"
-		" j                BSD job control format\n"
-		" -l               long format\n"
-		" l                BSD long format\n"
-		" y                do not show flags, show rrs in place addr (used with -l)\n"
-		" -f               full-format\n"
-		" -F               extra full\n"
-		" s                signal format\n"
-		" v                virtual memory\n"
-		" u                user-oriented format\n"
-		" X                register format\n"
-		" Z, -M            security data (for SE Linux)\n"
-		" f, --forest      ascii art process tree\n"
-		" -H               show process hierarchy\n"
-		" --context        display security context (for SE Linux)\n"
-		" --heading        repeat header lines\n"
-		" --no-headers     do not print header at all\n"
-		" --cols <num>     set screen width\n"
-		" --rows <num>     set screen height\n");
+	fputs(_("\nOutput formats:\n"), out);
+	fputs(_(" o, -o, --format <format>"), out);
+	fputs(_("                  user defined format\n"), out);
+	fputs(_(" O  <format>      preloaded -o allowing sorting\n"), out);
+	fputs(_(" -O <format>      preloaded, with default columns, allowing sorting\n"), out);
+	fputs(_(" -j               jobs format\n"), out);
+	fputs(_(" j                BSD job control format\n"), out);
+	fputs(_(" -l               long format\n"), out);
+	fputs(_(" l                BSD long format\n"), out);
+	fputs(_(" y                do not show flags, show rrs in place addr (used with -l)\n"), out);
+	fputs(_(" -f               full-format\n"), out);
+	fputs(_(" -F               extra full\n"), out);
+	fputs(_(" s                signal format\n"), out);
+	fputs(_(" v                virtual memory\n"), out);
+	fputs(_(" u                user-oriented format\n"), out);
+	fputs(_(" X                register format\n"), out);
+	fputs(_(" Z, -M            security data (for SE Linux)\n"), out);
+	fputs(_(" f, --forest      ascii art process tree\n"), out);
+	fputs(_(" -H               show process hierarchy\n"), out);
+	fputs(_(" --context        display security context (for SE Linux)\n"), out);
+	fputs(_(" --heading        repeat header lines\n"), out);
+	fputs(_(" --no-headers     do not print header at all\n"), out);
+	fputs(_(" --cols <num>     set screen width\n"), out);
+	fputs(_(" --rows <num>     set screen height\n"), out);
 	}
 	if (section == USAGE_THREADS || section == USAGE_ALL) {
-		fprintf(out,
-		"\nShow threads:\n"
-		" H                as if they where processes\n"
-		" -L               possibly with LWP and NLWP columns\n"
-		" -T               possibly with SPID column\n"
-		" m, -m            after processes\n");
+	fputs(_("\nShow threads:\n"), out);
+	fputs(_(" H                as if they where processes\n"), out);
+	fputs(_(" -L               possibly with LWP and NLWP columns\n"), out);
+	fputs(_(" -T               possibly with SPID column\n"), out);
+	fputs(_(" m, -m            after processes\n"), out);
 	}
 	if (section == USAGE_MISC || section == USAGE_ALL) {
-		fprintf(out,
-		"\nMisc options:\n"
-		" w, -w            unlimited output width\n"
-		" L                list format codes\n"
-		" c                true command name\n"
-		" n                display numeric uid and wchan\n"
-		" -y               do not show flags, show rss (only with -l)\n"
-		" -c               show scheduling class\n"
-		" --sort <spec>    specify sort order, can be a csv list\n"
-		" S, --cumulative  include some dead child process data\n"
-		" --info           print debuggin information\n"
-		" V,-V, --version  display version information and exit\n"
-		" --help <selection|list|output|threads|misc|all>\n"
-		"                  display help\n");
+	fputs(_("\nMisc options:\n"), out);
+	fputs(_(" w, -w            unlimited output width\n"), out);
+	fputs(_(" L                list format codes\n"), out);
+	fputs(_(" c                true command name\n"), out);
+	fputs(_(" n                display numeric uid and wchan\n"), out);
+	fputs(_(" -y               do not show flags, show rss (only with -l)\n"), out);
+	fputs(_(" -c               show scheduling class\n"), out);
+	fputs(_(" --sort <spec>    specify sort order, can be a csv list\n"), out);
+	fputs(_(" S, --cumulative  include some dead child process data\n"), out);
+	fputs(_(" --info           print debuggin information\n"), out);
+	fputs(_(" V,-V, --version  display version information and exit\n"), out);
+	fputs(_(" --help <selection|list|output|threads|misc|all>\n"), out);
+	fputs(_("                  display help\n"), out);
 	}
 	if (section == USAGE_DEFAULT)
-		fprintf(out,
-		"\n Try `%s --help <selection|list|output|threads|misc|all>'\n"
-		" for more information.\n", program_invocation_short_name);
-	fprintf(out, "\nFor more information see ps(1).\n");
+	fprintf(out,
+	      _("\n Try `%s --help <selection|list|output|threads|misc|all>'\n"
+		" for more information.\n"), program_invocation_short_name);
+	fprintf(out, USAGE_MAN_TAIL("ps(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 

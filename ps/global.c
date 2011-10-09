@@ -157,7 +157,7 @@ static void set_screen_size(void){
   }
 
   if((screen_cols<9) || (screen_rows<2))
-    fprintf(stderr,"Your %dx%d screen size is bogus. Expect trouble.\n",
+    fprintf(stderr,_("Your %dx%d screen size is bogus. Expect trouble.\n"),
       screen_cols, screen_rows
     );
 }
@@ -230,7 +230,7 @@ static const char *set_personality(void){
   if(!s || !*s) s="unknown";   /* "Do The Right Thing[tm]" */
   if(getenv("I_WANT_A_BROKEN_PS")) s="old";
   sl = strlen(s);
-  if(sl > 15) return "Environment specified an unknown personality.";
+  if(sl > 15) return _("Environment specified an unknown personality.");
   strncpy(buf, s, sl);
   buf[sl] = '\0';
   if ((saved_personality_text = strdup(buf))==NULL) {
@@ -242,7 +242,7 @@ static const char *set_personality(void){
       sizeof(personality_table_struct), compare_personality_table_structs
   );
 
-  if(!found) return "Environment specified an unknown personality.";
+  if(!found) return _("Environment specified an unknown personality.");
 
   goto *(found->jump);    /* See gcc extension info.  :-)   */
 
@@ -462,39 +462,39 @@ void self_info(void){
   );
 
   display_version();
-  fprintf(stderr, "Linux version %d.%d.%d\n",
+  fprintf(stderr, _("Linux version %d.%d.%d\n"),
     LINUX_VERSION_MAJOR(linux_version_code),
     LINUX_VERSION_MINOR(linux_version_code),
     LINUX_VERSION_PATCH(linux_version_code)
   );
   /* __libc_print_version(); */  /* how can we get the run-time version? */
-  fprintf(stderr, "Compiled with: glibc %d.%d, gcc %d.%d\n\n",
+  fprintf(stderr, _("Compiled with: glibc %d.%d, gcc %d.%d\n\n"),
     __GLIBC__, __GLIBC_MINOR__, __GNUC__, __GNUC_MINOR__
   );
 
   fprintf(stderr,
-    "header_gap=%d lines_to_next_header=%d\n"
-    "screen_cols=%d screen_rows=%d\n"
-    "\n",
+    _("header_gap=%d lines_to_next_header=%d\n"
+      "screen_cols=%d screen_rows=%d\n"
+      "\n"),
     header_gap, lines_to_next_header,
     screen_cols, screen_rows
   );
 
   fprintf(stderr,
-    "personality=0x%08x (from \"%s\")\n"
-    "EUID=%d TTY=%d,%d Hertz=%Ld page_size=%d\n",
+    _("personality=0x%08x (from \"%s\")\n"
+      "EUID=%d TTY=%d,%d Hertz=%Ld page_size=%d\n"),
     personality, saved_personality_text,
     cached_euid, (int)major(cached_tty), (int)minor(cached_tty), Hertz,
     (int)(page_size)
   );
 
   fprintf(stderr,
-    "sizeof(proc_t)=%d sizeof(long)=%d sizeof(KLONG)=%d\n",
+    _("sizeof(proc_t)=%d sizeof(long)=%d sizeof(KLONG)=%d\n"),
     (int)sizeof(proc_t), (int)sizeof(long), (int)sizeof(KLONG)
   );
 
-  fprintf(stderr, "archdefs:%s\n", archdefs);
+  fprintf(stderr, _("archdefs:%s\n"), archdefs);
 
   open_psdb(namelist_file);
-  fprintf(stderr,"namelist_file=\"%s\"\n",namelist_file?namelist_file:"<no System.map file>");
+  fprintf(stderr,_("namelist_file=\"%s\"\n"),namelist_file?namelist_file:"<no System.map file>");
 }

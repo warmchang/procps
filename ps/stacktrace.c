@@ -14,6 +14,8 @@
 #include <sys/wait.h>
 #include <sys/time.h>
 
+#include "common.h"
+
 #define INTERACTIVE 0
 #define STACK_TRACE 1
 
@@ -23,7 +25,7 @@ static int stack_trace_done;
 /***********/
 static void debug_stop(char **args){
   execvp (args[0], args);
-  perror ("exec failed");
+  perror (_("exec failed"));
   _exit (0);
 }
 
@@ -48,7 +50,7 @@ static void stack_trace(char **args){
   signal(SIGCHLD, stack_trace_sigchld);
   
   if((pipe (in_fd) == -1) || (pipe (out_fd) == -1)){
-    perror ("could open pipe");
+    perror (_("could open pipe"));
     _exit (0);
   }
 
@@ -58,11 +60,11 @@ static void stack_trace(char **args){
     close (1); dup (out_fd[1]);  /* set the stdout to the out pipe */
     close (2); dup (out_fd[1]);  /* set the stderr to the out pipe */
     execvp (args[0], args);      /* exec gdb */
-    perror ("exec failed");
+    perror (_("exec failed"));
     _exit (0);
   } else {
     if(pid == (pid_t) -1){
-      perror ("could not fork");
+      perror (_("could not fork"));
       _exit (0);
     }
   }
@@ -135,17 +137,17 @@ void debug(int method, char *prog_name){
   if(pid == 0){
     switch (method){
     case INTERACTIVE:
-      fprintf (stderr, "debug_stop\n");
+      fprintf (stderr, _("debug_stop\n"));
       debug_stop(args);
       break;
     case STACK_TRACE:
-      fprintf (stderr, "stack_trace\n");
+      fprintf (stderr, _("stack_trace\n"));
       stack_trace(args);
       break;
     }
     _exit(0);
   } else if(pid == (pid_t) -1){
-    perror ("could not fork");
+    perror (_("could not fork"));
     return;
   }
 

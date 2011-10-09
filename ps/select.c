@@ -59,7 +59,7 @@ const char *select_bits_setup(void){
     simple_select = 0;
     break;
   default:
-    return "Process selection options conflict.";
+    return _("Process selection options conflict.");
     break;
   }
   return NULL;
@@ -83,7 +83,7 @@ static int proc_was_listed(proc_t *buf){
   while(sn){
     switch(sn->typecode){
     default:
-      printf("Internal error in ps! Please report this bug.\n");
+      printf(_("Internal error in ps! Please report this bug.\n"));
 
 #define return_if_match(foo,bar) \
         i=sn->n; while(i--) \

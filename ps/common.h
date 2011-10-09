@@ -12,6 +12,8 @@
 #ifndef PROCPS_PS_H
 #define PROCPS_PS_H
 
+#include "c.h"
+#include "nls.h"
 #include "../proc/procps.h"
 #include "../proc/escape.h"
 #include "../proc/readproc.h"

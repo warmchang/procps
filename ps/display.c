@@ -45,11 +45,12 @@ static void signal_handler(int signo){
   if(signo==SIGPIPE) _exit(0);  /* "ps | head" will cause this */
   /* fprintf() is not reentrant, but we _exit() anyway */
   fprintf(stderr,
-    "\n\n"
-    "Signal %d (%s) caught by ps (%s).\n"
-    "Please send bug reports to <procps@freelists.org>\n",
+    _("\n\n"
+      "Signal %d (%s) caught by %s (%s).\n"
+      "Please send bug reports to <procps@freelists.org>\n"),
     signo,
     signal_number_to_name(signo),
+    program_invocation_short_name,
     procps_version
   );
   _exit(signo+128);
@@ -154,7 +155,7 @@ static void arg_show(void){
     case SEL_TTY : show_tty("TTY ", walk->n, walk->u); break;
     case SEL_SESS: show_pid("SESS", walk->n, walk->u); break;
     case SEL_COMM: show_cmd("COMM", walk->n, walk->u); break;
-    default: printf("Garbage typecode value!\n");
+    default: printf(_("Garbage typecode value!\n"));
     }
     walk = walk->next;
   }
@@ -253,7 +254,7 @@ static void lists_and_needs(void){
         t_end->need = 0;
         break;
       default:
-        fprintf(stderr, "please report this bug\n");
+        fprintf(stderr, _("please report this bug\n"));
         // FALL THROUGH
       case CF_PRINT_AS_NEEDED:
       case CF_PRINT_EVERY_TIME:
@@ -332,7 +333,7 @@ static void simple_spew(void){
 
   ptp = openproc(needs_for_format | needs_for_sort | needs_for_select | needs_for_threads);
   if(!ptp) {
-    fprintf(stderr, "Error: can not access /proc.\n");
+    fprintf(stderr, _("Error: can not access /proc.\n"));
     exit(1);
   }
   switch(thread_flags & (TF_show_proc|TF_loose_tasks|TF_show_task)){
@@ -380,7 +381,7 @@ static void prep_forest_sort(void){
 
   if(!sort_list) {     /* assume start time order */
     incoming = search_format_array("start_time");
-    if(!incoming) { fprintf(stderr, "Could not find start_time!\n"); exit(1); }
+    if(!incoming) { fprintf(stderr, _("Could not find start_time!\n")); exit(1); }
     tmp_list = malloc(sizeof(sort_node));
     tmp_list->reverse = 0;
     tmp_list->typecode = '?'; /* what was this for? */
@@ -391,7 +392,7 @@ static void prep_forest_sort(void){
   }
   /* this is required for the forest option */
   incoming = search_format_array("ppid");
-  if(!incoming) { fprintf(stderr, "Could not find ppid!\n"); exit(1); }
+  if(!incoming) { fprintf(stderr, _("Could not find ppid!\n")); exit(1); }
   tmp_list = malloc(sizeof(sort_node));
   tmp_list->reverse = 0;
   tmp_list->typecode = '?'; /* what was this for? */
@@ -505,7 +506,7 @@ static void fancy_spew(void){
 
   ptp = openproc(needs_for_format | needs_for_sort | needs_for_select | needs_for_threads);
   if(!ptp) {
-    fprintf(stderr, "Error: can not access /proc.\n");
+    fprintf(stderr, _("Error: can not access /proc.\n"));
     exit(1);
   }
 
@@ -562,9 +563,9 @@ int main(int argc, char *argv[]){
   arg_parse(argc,argv);
 
 /*  arg_show(); */
-  trace("screen is %ux%u\n",screen_cols,screen_rows);
+  trace(_("screen is %ux%u\n"),screen_cols,screen_rows);
 /*  printf("sizeof(proc_t) is %d.\n", sizeof(proc_t)); */
-  trace("======= ps output follows =======\n");
+  trace(_("======= ps output follows =======\n"));
 
   init_output(); /* must be between parser and output */
 

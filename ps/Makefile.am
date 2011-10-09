@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -include $(top_builddir)/config.h
 
-AM_CFLAGS = -I../proc
+AM_CFLAGS = -I../proc -I../include
 AM_LDFLAGS = ../proc/libprocfs.la
 
 dist_man_MANS = ps.1
