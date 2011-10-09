@@ -13,7 +13,9 @@
  * Unicode Support added by Jarrod Lowe <procps@rrod.net> in 2009.
  */
 
+#include "c.h"
 #include "config.h"
+#include "nls.h"
 #include "proc/procps.h"
 #include <ctype.h>
 #include <errno.h>
@@ -32,15 +34,15 @@
 #include <time.h>
 #include <unistd.h>
 #ifdef WITH_WATCH8BIT
-#include <wchar.h>
-#include <ncursesw/ncurses.h>
+# include <wchar.h>
+# include <ncursesw/ncurses.h>
 #else
-#include <ncurses.h>
+# include <ncurses.h>
 #endif	/* WITH_WATCH8BIT */
 
 #ifdef FORCE_8BIT
-#undef isprint
-#define isprint(x) ( (x>=' '&&x<='~') || (x>=0xa0) )
+# undef isprint
+# define isprint(x) ( (x>=' '&&x<='~') || (x>=0xa0) )
 #endif
 
 static int curses_started = 0;
@@ -56,21 +58,24 @@ static int precise_timekeeping = 0;
 static void __attribute__ ((__noreturn__))
     usage(FILE * out)
 {
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		"\nUsage: %s [options] command\n"
-		"\nOptions:\n", program_invocation_short_name);
-	fprintf(out,
-		"  -b, --beep             beep if command has a non-zero exit\n"
-		"  -c, --color            interpret ANSI color sequences\n"
-		"  -e, --errexit          exit if command has a non-zero exit\n"
-		"  -f, --differences      highlight changes between updates\n"
-		"  -n, --interval <secs>  seconds to wait between updates\n"
-		"  -p, --precise          attempt run command in precise intervals\n"
-		"  -t, --no-title         turn off header\n"
-		"  -x, --exec             pass command to exec instead of \"sh -c\"\n"
-		"  -h, --help             display this help text\n"
-		"  -v, --version          display version information and exit\n");
-	fprintf(out, "\nFor more information see watch(1).\n");
+		" %s [options] command\n", program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_("  -b, --beep             beep if command has a non-zero exit\n"), out);
+	fputs(_("  -c, --color            interpret ANSI color sequences\n"), out);
+	fputs(_("  -e, --errexit          exit if command has a non-zero exit\n"), out);
+	fputs(_("  -f, --differences      highlight changes between updates\n"), out);
+	fputs(_("  -n, --interval <secs>  seconds to wait between updates\n"), out);
+	fputs(_("  -p, --precise          attempt run command in precise intervals\n"), out);
+	fputs(_("  -t, --no-title         turn off header\n"), out);
+	fputs(_("  -x, --exec             pass command to exec instead of \"sh -c\"\n"), out);
+	fputs(_("  -h, --help             display this help text\n"), out);
+	fputs(_("  -v, --version          display version information and exit\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(_(" -v, --version  output version information and exit\n"), out);
+	fprintf(out, USAGE_MAN_TAIL("watch(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -347,7 +352,7 @@ int main(int argc, char *argv[])
 			usage(stdout);
 			break;
 		case 'v':
-			display_version();
+			printf(PROCPS_NG_VERSION);
 			return EXIT_SUCCESS;
 		default:
 			usage(stderr);
@@ -381,13 +386,13 @@ int main(int argc, char *argv[])
 	/*mbstowcs(NULL, NULL, 0); */
 	wcommand_characters = mbstowcs(NULL, command, 0);
 	if (wcommand_characters < 0) {
-		fprintf(stderr, "Unicode Handling Error\n");
+		fprintf(stderr, _("Unicode Handling Error\n"));
 		exit(EXIT_FAILURE);
 	}
 	wcommand =
 	    (wchar_t *) malloc((wcommand_characters + 1) * sizeof(wcommand));
 	if (wcommand == NULL) {
-		fprintf(stderr, "Unicode Handling Error (malloc)\n");
+		fprintf(stderr, _("Unicode Handling Error (malloc)\n"));
 		exit(EXIT_FAILURE);
 	}
 	mbstowcs(wcommand, command, wcommand_characters + 1);
@@ -445,7 +450,7 @@ int main(int argc, char *argv[])
 			 * justify time, clipping all to fit window
 			 * width
 			 */
-			int hlen = asprintf(&header, "Every %.1fs: ", interval);
+			int hlen = asprintf(&header, _("Every %.1fs: "), interval);
 
 			/*
 			 * the rules:
@@ -515,7 +520,7 @@ int main(int argc, char *argv[])
 
 		/* allocate pipes */
 		if (pipe(pipefd) < 0)
-			err(7, "pipe");
+			err(7, _("pipe"));
 
 		/* flush stdout and stderr, since we're about to do fd stuff */
 		fflush(stdout);
@@ -525,18 +530,18 @@ int main(int argc, char *argv[])
 		child = fork();
 
 		if (child < 0) {	/* fork error */
-			err(2, "fork");
+			err(2, _("fork"));
 		} else if (child == 0) {	/* in child */
 			close(pipefd[0]);	/* child doesn't need read side of pipe */
 			close(1);		/* prepare to replace stdout with pipe */
 			if (dup2(pipefd[1], 1) < 0) {	/* replace stdout with write side of pipe */
-				err(3, "dup2");
+				err(3, _("dup2"));
 			}
 			dup2(1, 2);	/* stderr should default to stdout */
 
 			if (option_exec) {	/* pass command to exec instead of system */
 				if (execvp(command_argv[0], command_argv) == -1) {
-					err(4, "exec");
+					err(4, _("exec"));
 				}
 			} else {
 				status = system(command);	/* watch manpage promises sh quoting */
@@ -554,7 +559,7 @@ int main(int argc, char *argv[])
 		/* otherwise, we're in parent */
 		close(pipefd[1]);	/* close write side of pipe */
 		if ((p = fdopen(pipefd[0], "r")) == NULL)
-			err(5, "fdopen");
+			err(5, _("fdopen"));
 
 		for (y = show_title; y < height; y++) {
 			int eolseen = 0, tabpending = 0;
@@ -677,7 +682,7 @@ int main(int argc, char *argv[])
 
 		/* harvest child process and get status, propagated from command */
 		if (waitpid(child, &status, 0) < 0)
-			err(8, "waitpid");
+			err(8, _("waitpid"));
 
 		/* if child process exited in error, beep if option_beep is set */
 		if ((!WIFEXITED(status) || WEXITSTATUS(status))) {
