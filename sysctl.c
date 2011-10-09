@@ -34,6 +34,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#include "c.h"
+#include "nls.h"
 #include "proc/procps.h"
 #include "proc/version.h"
 
@@ -55,17 +58,6 @@ static bool PrintNewline;
 static bool IgnoreError;
 static bool Quiet;
 static char *pattern;
-
-/* error messages */
-static const char ERR_MALFORMED_SETTING[] = "error: Malformed setting \"%s\"\n";
-static const char ERR_NO_EQUALS[] = "error: \"%s\" must be of the form name=value\n";
-static const char ERR_INVALID_KEY[] = "error: \"%s\" is an unknown key\n";
-static const char ERR_UNKNOWN_WRITING[] = "error: \"%s\" setting key \"%s\"\n";
-static const char ERR_UNKNOWN_READING[] = "error: \"%s\" reading key \"%s\"\n";
-static const char ERR_PERMISSION_DENIED[] = "error: permission denied on key '%s'\n";
-static const char ERR_OPENING_DIR[] = "error: unable to open directory \"%s\"\n";
-static const char ERR_PRELOAD_FILE[] = "error: unable to open preload file \"%s\"\n";
-static const char WARN_BAD_LINE[] = "warning: %s(%d): invalid syntax, continuing...\n";
 
 static int pattern_match(const char *string, const char *pattern);
 
@@ -90,30 +82,31 @@ static void slashdot(char *restrict p, char old, char new){
 static void __attribute__ ((__noreturn__))
     Usage(FILE * out)
 {
+   fputs(USAGE_HEADER, out);
    fprintf(out,
-	   "\nUsage: %s [options] [variable[=value] ...]\n"
-	   "\nOptions:\n", program_invocation_short_name);
-   fprintf(out,
-	   "  -a, --all            display all variables\n"
-	   "  -A                   alias of -a\n"
-	   "  -X                   alias of -a\n"
-	   "  -b, --binary         print value without new line\n"
-	   "  -e, --ignore         ignore unknown variables errors\n"
-	   "  -N, --names          print variable names without values\n"
-	   "  -n, --values         print only values of a variables\n"
-	   "  -p, --load[=<file>]  read values from file\n"
-	   "  -f                   alias of -p\n"
-	   "      --system         read values from all system directories\n"
-	   "  -r, --pattern <expression>\n"
-	   "                       select setting that match expression\n"
-	   "  -q, --quiet          do not echo variable set\n"
-	   "  -w, --write          enable writing a value to variable\n"
-	   "  -o                   does nothing\n"
-	   "  -x                   does nothing\n"
-	   "  -h, --help           display this help text\n"
-	   "  -d                   alias of -h\n"
-	   "  -V, --version        display version information and exit\n");
-   fprintf(out, "\nFor more information see sysctl(8).\n");
+	   " %s [options] [variable[=value] ...]\n", program_invocation_short_name);
+   fputs(USAGE_OPTIONS, out);
+   fputs(_("  -a, --all            display all variables\n"), out);
+   fputs(_("  -A                   alias of -a\n"), out);
+   fputs(_("  -X                   alias of -a\n"), out);
+   fputs(_("  -b, --binary         print value without new line\n"), out);
+   fputs(_("  -e, --ignore         ignore unknown variables errors\n"), out);
+   fputs(_("  -N, --names          print variable names without values\n"), out);
+   fputs(_("  -n, --values         print only values of a variables\n"), out);
+   fputs(_("  -p, --load[=<file>]  read values from file\n"), out);
+   fputs(_("  -f                   alias of -p\n"), out);
+   fputs(_("      --system         read values from all system directories\n"), out);
+   fputs(_("  -r, --pattern <expression>\n"), out);
+   fputs(_("                       select setting that match expression\n"), out);
+   fputs(_("  -q, --quiet          do not echo variable set\n"), out);
+   fputs(_("  -w, --write          enable writing a value to variable\n"), out);
+   fputs(_("  -o                   does nothing\n"), out);
+   fputs(_("  -x                   does nothing\n"), out);
+   fputs(_("  -d                   alias of -h\n"), out);
+   fputs(USAGE_SEPARATOR, out);
+   fputs(USAGE_HELP, out);
+   fputs(USAGE_VERSION, out);
+   fprintf(out, USAGE_MAN_TAIL("sysctl(8)"));
 
    exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -157,7 +150,7 @@ static int ReadSetting(const char *restrict const name) {
    struct stat ts;
 
    if (!name || !*name) {
-      fprintf(stderr, ERR_INVALID_KEY, name);
+      fprintf(stderr, _("error: \"%s\" is an unknown key\n"), name);
       return -1;
    }
 
@@ -205,16 +198,16 @@ static int ReadSetting(const char *restrict const name) {
       switch(errno) {
       case ENOENT:
          if (!IgnoreError) {
-            fprintf(stderr, ERR_INVALID_KEY, outname);
+            fprintf(stderr, _("error: \"%s\" is an unknown key\n"), outname);
             rc = -1;
          }
          break;
       case EACCES:
-         fprintf(stderr, ERR_PERMISSION_DENIED, outname);
+         fprintf(stderr, _("error: permission denied on key '%s'\n"), outname);
          rc = -1;
          break;
       default:
-         fprintf(stderr, ERR_UNKNOWN_READING, strerror(errno), outname);
+         fprintf(stderr, _("error: \"%s\" reading key \"%s\"\n"), strerror(errno), outname);
          rc = -1;
          break;
       }
@@ -242,7 +235,7 @@ static int ReadSetting(const char *restrict const name) {
       } else {
          switch(errno) {
          case EACCES:
-            fprintf(stderr, ERR_PERMISSION_DENIED, outname);
+            fprintf(stderr, _("error: permission denied on key '%s'\n"), outname);
             rc = -1;
             break;
          case EISDIR:{
@@ -255,7 +248,7 @@ static int ReadSetting(const char *restrict const name) {
             goto out;
          }
          default:
-            fprintf(stderr, ERR_UNKNOWN_READING, strerror(errno), outname);
+            fprintf(stderr, _("error: \"%s\" reading key \"%s\"\n"), strerror(errno), outname);
             rc = -1;
          case 0:
             break;
@@ -285,7 +278,7 @@ static int DisplayAll(const char *restrict const path) {
    dp = opendir(path);
 
    if (!dp) {
-      fprintf(stderr, ERR_OPENING_DIR, path);
+      fprintf(stderr, _("error: unable to open directory \"%s\"\n"), path);
       rc = -1;
    } else {
       readdir(dp);  // skip .
@@ -334,14 +327,14 @@ static int WriteSetting(const char *setting) {
    equals = strchr(setting, '=');
  
    if (!equals) {
-      fprintf(stderr, ERR_NO_EQUALS, setting);
+      fprintf(stderr, _("error: \"%s\" must be of the form name=value\n"), setting);
       return -1;
    }
 
    value = equals + 1;      /* point to the value in name=value */   
 
    if (!*name || !*value || name == equals) { 
-      fprintf(stderr, ERR_MALFORMED_SETTING, setting);
+      fprintf(stderr, _("error: Malformed setting \"%s\"\n"), setting);
       return -2;
    }
 
@@ -367,12 +360,12 @@ static int WriteSetting(const char *setting) {
    }
 
    if ((ts.st_mode & S_IWUSR) == 0) {
-      fprintf(stderr, ERR_UNKNOWN_WRITING, strerror(EACCES), outname);
+      fprintf(stderr, _("error: \"%s\" setting key \"%s\"\n"), strerror(EACCES), outname);
       goto out;
    }
 
    if (S_ISDIR(ts.st_mode)) {
-      fprintf(stderr, ERR_UNKNOWN_WRITING, strerror(EACCES), outname);
+      fprintf(stderr, _("error: \"%s\" setting key \"%s\"\n"), strerror(EACCES), outname);
       goto out;
    }
 
@@ -382,28 +375,28 @@ static int WriteSetting(const char *setting) {
       switch(errno) {
       case ENOENT:
          if (!IgnoreError) {
-            fprintf(stderr, ERR_INVALID_KEY, outname);
+            fprintf(stderr, _("error: \"%s\" is an unknown key\n"), outname);
             rc = -1;
          }
          break;
       case EACCES:
-         fprintf(stderr, ERR_PERMISSION_DENIED, outname);
+         fprintf(stderr, _("error: permission denied on key '%s'\n"), outname);
          rc = -1;
          break;
       default:
-         fprintf(stderr, ERR_UNKNOWN_WRITING, strerror(errno), outname);
+         fprintf(stderr, _("error: \"%s\" setting key \"%s\"\n"), strerror(errno), outname);
          rc = -1;
          break;
       }
    } else {
       rc = fprintf(fp, "%s\n", value);
       if (rc < 0) {
-         fprintf(stderr, ERR_UNKNOWN_WRITING, strerror(errno), outname);
+         fprintf(stderr, _("error: \"%s\" setting key \"%s\"\n"), strerror(errno), outname);
          fclose(fp);
       } else {
          rc=fclose(fp);
          if (rc != 0) 
-            fprintf(stderr, ERR_UNKNOWN_WRITING, strerror(errno), outname);
+            fprintf(stderr, _("error: \"%s\" setting key \"%s\"\n"), strerror(errno), outname);
       }
       if (rc==0 && !Quiet) {
          if (NameOnly) {
@@ -462,7 +455,7 @@ static int Preload(const char *restrict const filename) {
    ;
 
    if (!fp) {
-      fprintf(stderr, ERR_PRELOAD_FILE, filename);
+      fprintf(stderr, _("error: unable to open preload file \"%s\"\n"), filename);
       return -1;
    }
 
@@ -478,7 +471,7 @@ static int Preload(const char *restrict const filename) {
 
       name = strtok(t, "=");
       if (!name || !*name) {
-         fprintf(stderr, WARN_BAD_LINE, filename, n);
+         fprintf(stderr, _("warning: %s(%d): invalid syntax, continuing...\n"), filename, n);
          continue;
       }
 
@@ -490,7 +483,7 @@ static int Preload(const char *restrict const filename) {
 
       value = strtok(NULL, "\n\r");
       if (!value || !*value) {
-         fprintf(stderr, WARN_BAD_LINE, filename, n);
+         fprintf(stderr, _("warning: %s(%d): invalid syntax, continuing...\n"), filename, n);
          continue;
       }
 
@@ -568,12 +561,12 @@ static int PreloadSystem(void) {
 
    for (i = 0; i < ncfgs; ++i) {
       if (!Quiet)
-	 printf("* Applying %s ...\n", cfgs[i]->value);
+	 printf(_("* Applying %s ...\n"), cfgs[i]->value);
       Preload(cfgs[i]->value);
    }
 
    if (!Quiet)
-      printf("* Applying %s ...\n", DEFAULT_PRELOAD);
+      printf(_("* Applying %s ...\n"), DEFAULT_PRELOAD);
    return Preload(DEFAULT_PRELOAD);
 }
 
@@ -670,7 +663,7 @@ int main(int argc, char *argv[])
            pattern = strdup(optarg);
            break;
       case 'V':
-           fprintf(stdout, "sysctl (%s)\n",procps_version);
+           printf(PROCPS_NG_VERSION);
            exit(0);
       case 'd':         /* BSD: print description ("vm.kvm_size: Size of KVM") */
       case 'h':         /* BSD: human-readable (did FreeBSD 5 make -e default?) */
@@ -688,11 +681,11 @@ int main(int argc, char *argv[])
     argv += optind;
  
     if (argc < 1) {
-       warnx("no variables specified");
+       warnx(_("no variables specified"));
        Usage(stderr);
     }
     if (NameOnly && Quiet) {
-       warnx("options -N and -q can not coexist");
+       warnx(_("options -N and -q can not coexist"));
        Usage(stderr);
     }
 
