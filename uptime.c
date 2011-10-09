@@ -2,19 +2,20 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "c.h"
+#include "nls.h"
 #include "proc/whattime.h"
 #include "proc/version.h"
 
-static void __attribute__ ((__noreturn__))
-    usage(FILE * out)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out,
-		"\nUsage: %s [options]\n"
-		"\nOptions:\n", program_invocation_short_name);
-	fprintf(out,
-		"  -h, --help          display this help text\n"
-		"  -V, --version       display version information and exit\n");
-	fprintf(out, "\nFor more information see uptime(1).\n");
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("uptime(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -34,7 +35,7 @@ int main(int argc, char **argv)
 		case 'h':
 			usage(stdout);
 		case 'V':
-			display_version();
+			printf(PROCPS_NG_VERSION);
 			return EXIT_SUCCESS;
 		default:
 			usage(stderr);
