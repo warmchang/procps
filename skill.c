@@ -21,6 +21,9 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+
+#include "c.h"
+#include "nls.h"
 #include "proc/pwcache.h"
 #include "proc/sig.h"
 #include "proc/devname.h"
@@ -37,7 +40,7 @@ static int *pids;
 
 #define ENLIST(thing,addme) do{ \
 if(!thing##s) thing##s = malloc(sizeof(*thing##s)*saved_argc); \
-if(!thing##s) fprintf(stderr,"No memory.\n"),exit(2); \
+if(!thing##s) fprintf(stderr,_("No memory.\n")),exit(2); \
 thing##s[thing##_count++] = addme; \
 }while(0)
 
@@ -56,20 +59,7 @@ static int program = -1;
 /********************************************************************/
 
 static void display_kill_version(void){
-  switch(program) {
-    case PROG_KILL:
-      fprintf(stdout, "kill (%s)\n",procps_version);
-      return;
-    case PROG_SKILL:
-      fprintf(stdout, "skill (%s)\n",procps_version);
-      return;
-    case PROG_SNICE:
-      fprintf(stdout, "snice (%s)\n",procps_version);
-      return;
-    default:
-      fprintf(stdout, "unknown (%s)\n",procps_version);
-      return;
-  }
+      fprintf(stdout, PROCPS_NG_VERSION);
 }
 
 /***** kill or nice a process */
@@ -127,7 +117,7 @@ static void check_proc(int pid){
   sprintf(buf, "/proc/%d/stat", pid); /* pid (cmd) state ppid pgrp session tty */
   fd = open(buf,O_RDONLY);
   if(fd==-1){  /* process exited maybe */
-    if(pids && w_flag) printf("WARNING: process %d could not be found.\n",pid);
+    if(pids && w_flag) printf(_("WARNING: process %d could not be found.\n"),pid);
     return;
   }
   fstat(fd, &statbuf);
@@ -170,7 +160,7 @@ closure:
 static void show_lists(void){
   int i;
 
-  fprintf(stderr, "%d TTY: ", tty_count);
+  fprintf(stderr, _("%d TTY: "), tty_count);
   if(ttys){
     i=tty_count;
     while(i--){
@@ -178,19 +168,19 @@ static void show_lists(void){
     }
   }else fprintf(stderr, "\n");
   
-  fprintf(stderr, "%d UID: ", uid_count);
+  fprintf(stderr, _("%d UID: "), uid_count);
   if(uids){
     i=uid_count;
     while(i--) fprintf(stderr, "%d%c", uids[i], i?' ':'\n');
   }else fprintf(stderr, "\n");
   
-  fprintf(stderr, "%d PID: ", pid_count);
+  fprintf(stderr, _("%d PID: "), pid_count);
   if(pids){
     i=pid_count;
     while(i--) fprintf(stderr, "%d%c", pids[i], i?' ':'\n');
   }else fprintf(stderr, "\n");
   
-  fprintf(stderr, "%d CMD: ", cmd_count);
+  fprintf(stderr, _("%d CMD: "), cmd_count);
   if(cmds){
     i=cmd_count;
     while(i--) fprintf(stderr, "%s%c", cmds[i], i?' ':'\n');
@@ -231,17 +221,18 @@ static void iterate(void){
 /***** kill help */
 static void __attribute__ ((__noreturn__)) kill_usage(void)
 {
+	fputs(USAGE_HEADER, stderr);
 	fprintf(stderr,
-		"\nUsage: %s [options] <pid> [...]\n"
-		"\nOptions:\n"
-		"  <pid> [...]    send SIGTERM to every <pid> listed\n"
-		"  -<signal>      specify the <signal> to be sent\n"
-		"  -s <signal>    specify the <signal> to be sent\n"
-		"  -l             list all signal names\n"
-		"  -L             list all signal names in a nice table\n"
-		"  -l <signal>    convert between signal numbers and names\n"
-		"\nFor more information see kill(1).\n",
-		program_invocation_short_name);
+		" %s [options] <pid> [...]\n", program_invocation_short_name);
+	fputs(USAGE_OPTIONS, stderr);
+	fputs(_("  <pid> [...]    send SIGTERM to every <pid> listed\n"), stderr);
+	fputs(_("  -<signal>      specify the <signal> to be sent\n"), stderr);
+	fputs(_("  -s <signal>    specify the <signal> to be sent\n"), stderr);
+	fputs(_("  -l             list all signal names\n"), stderr);
+	fputs(_("  -L             list all signal names in a nice table\n"), stderr);
+	fputs(_("  -l <signal>    convert between signal numbers and names\n"), stderr);
+	fputs(USAGE_SEPARATOR, stderr);
+	fprintf(stderr, USAGE_MAN_TAIL("skill(1)"));
 	exit(1);
 }
 
@@ -299,7 +290,7 @@ static void kill_main(int argc, const char *restrict const *restrict argv){
   }
   signo = signal_name_to_number(sigptr);
   if(signo<0){
-    fprintf(stderr, "ERROR: unknown signal name \"%s\".\n", sigptr);
+    fprintf(stderr, _("ERROR: unknown signal name \"%s\".\n"), sigptr);
     kill_usage();
   }
 no_more_args:
@@ -322,7 +313,7 @@ no_more_args:
       exitvalue = 1;
       continue;
     }
-    fprintf(stderr, "ERROR: garbage process ID \"%s\".\n", argv[argc]);
+    fprintf(stderr, _("ERROR: garbage process ID \"%s\".\n"), argv[argc]);
     kill_usage();
   }
   exit(exitvalue);
@@ -331,54 +322,53 @@ no_more_args:
 /***** skill/snice help */
 static void __attribute__ ((__noreturn__)) skillsnice_usage(void)
 {
+        fputs(USAGE_HEADER, stderr);
 	if (program == PROG_SKILL) {
 		fprintf(stderr,
-			"\nUsage: %s [signal] [options] <expression>\n",
+			" %s [signal] [options] <expression>\n",
 			program_invocation_short_name);
 	} else {
 		fprintf(stderr,
-			"\nUsage: %s [new priority] [options] <expression>\n",
+			" %s [new priority] [options] <expression>\n",
 			program_invocation_short_name);
 	}
-	fprintf(stderr,
-		"\n"
-		"Options:\n"
-		"  -f             fast mode (not implemented)\n"
-		"  -i             interactive\n"
-		"  -l             list all signal names\n"
-		"  -L             list all signal names in a nice table\n"
-		"  -n             no action\n"
-		"  -v             explain what is being done\n"
-		"  -w             enable warnings (not implemented)\n"
-		"  -V, --version  display version information and exit\n"
-		"\n"
-		"Expression can be: terminal, user, pid, command.\n"
-		"The options below may be used to ensure correct interpretation.\n"
-		"  -c <command>   expression is a command name\n"
-		"  -p <pid>       expression is a process id number\n"
-		"  -t <tty>       expression is a terminal\n"
-		"  -u <username>  expression is a username\n");
+	fputs(USAGE_OPTIONS, stderr);
+	fputs(_(" -f             fast mode (not implemented)\n"), stderr);
+	fputs(_(" -i             interactive\n"), stderr);
+	fputs(_(" -l             list all signal names\n"), stderr);
+	fputs(_(" -L             list all signal names in a nice table\n"), stderr);
+	fputs(_(" -n             no action\n"), stderr);
+	fputs(_(" -v             explain what is being done\n"), stderr);
+	fputs(_(" -w             enable warnings (not implemented)\n"), stderr);
+	fputs(USAGE_VERSION, stderr);
+	fputs(_("\n"), stderr);
+	fputs(_("Expression can be: terminal, user, pid, command.\n"), stderr);
+	fputs(_("The options below may be used to ensure correct interpretation.\n"), stderr);
+	fputs(_(" -c <command>   expression is a command name\n"), stderr);
+	fputs(_(" -p <pid>       expression is a process id number\n"), stderr);
+	fputs(_(" -t <tty>       expression is a terminal\n"), stderr);
+	fputs(_(" -u <username>  expression is a username\n"), stderr);
 	if (program == PROG_SKILL) {
 		fprintf(stderr,
-			"\n"
-			"The default signal is TERM. Use -l or -L to list available signals.\n"
-			"Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.\n"
-			"Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"
-			"\nFor more information see skill(1).\n");
+			_("\n"
+			  "The default signal is TERM. Use -l or -L to list available signals.\n"
+			  "Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.\n"
+			  "Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"));
+                fprintf(stderr, USAGE_MAN_TAIL("skill(1)"));
 	} else {
 		fprintf(stderr,
-			"\n"
-			"The default priority is +4. (snice +4 ...)\n"
-			"Priority numbers range from +20 (slowest) to -20 (fastest).\n"
-			"Negative priority numbers are restricted to administrative users.\n"
-			"\nFor more information see snice(1).\n");
+			_("\n"
+			  "The default priority is +4. (snice +4 ...)\n"
+			  "Priority numbers range from +20 (slowest) to -20 (fastest).\n"
+			  "Negative priority numbers are restricted to administrative users.\n"));
+                fprintf(stderr, USAGE_MAN_TAIL("snice(1)"));
 	}
 	exit(1);
 }
 
 #if 0
 static void _skillsnice_usage(int line){
-  fprintf(stderr,"Something at line %d.\n", line);
+  fprintf(stderr,_("Something at line %d.\n"), line);
   skillsnice_usage();
 }
 #define skillsnice_usage() _skillsnice_usage(__LINE__)
@@ -414,7 +404,7 @@ static void skillsnice_parse(int argc, const char *restrict const *restrict argv
   /* Time for serious parsing. What does "skill -int 123 456" mean? */
   while(argc){
     if(force && !num_found){  /* if forced, _must_ find something */
-      fprintf(stderr,"ERROR: -%c used with bad data.\n", force);
+      fprintf(stderr,_("ERROR: -%c used with bad data.\n"), force);
       skillsnice_usage();
     }
     force = 0;
@@ -448,7 +438,7 @@ static void skillsnice_parse(int argc, const char *restrict const *restrict argv
         case 'c':
           if(!*argptr){ /* nothing left here, *argptr is '\0' */
             if(!NEXTARG){
-              fprintf(stderr,"ERROR: -%c with nothing after it.\n", force);
+              fprintf(stderr,_("ERROR: -%c with nothing after it.\n"), force);
               skillsnice_usage();
             }
           }
@@ -531,19 +521,19 @@ selection_collection:
   } /* END OF WHILE */
   /* No more arguments to process. Must sanity check. */
   if(!tty_count && !uid_count && !cmd_count && !pid_count){
-    fprintf(stderr,"ERROR: no process selection criteria.\n");
+    fprintf(stderr,_("ERROR: no process selection criteria.\n"));
     skillsnice_usage();
   }
   if((f_flag|i_flag|v_flag|w_flag|n_flag) & ~1){
-    fprintf(stderr,"ERROR: general flags may not be repeated.\n");
+    fprintf(stderr,_("ERROR: general flags may not be repeated.\n"));
     skillsnice_usage();
   }
   if(i_flag && (v_flag|f_flag|n_flag)){
-    fprintf(stderr,"ERROR: -i makes no sense with -v, -f, and -n.\n");
+    fprintf(stderr,_("ERROR: -i makes no sense with -v, -f, and -n.\n"));
     skillsnice_usage();
   }
   if(v_flag && (i_flag|f_flag)){
-    fprintf(stderr,"ERROR: -v makes no sense with -i and -f.\n");
+    fprintf(stderr,_("ERROR: -v makes no sense with -i and -f.\n"));
     skillsnice_usage();
   }
   /* OK, set up defaults */
@@ -563,7 +553,7 @@ int main(int argc, const char *argv[]){
   my_pid = getpid();
   saved_argc = argc;
   if(!argc){
-    fprintf(stderr,"ERROR: could not determine own name.\n");
+    fprintf(stderr,_("ERROR: could not determine own name.\n"));
     exit(1);
   }
   tmpstr=strrchr(*argv,'/');
@@ -584,7 +574,7 @@ int main(int argc, const char *argv[]){
     kill_main(argc, argv);
     break;
   default:
-    fprintf(stderr,"ERROR: no \"%s\" support.\n",tmpstr);
+    fprintf(stderr,_("ERROR: no \"%s\" support.\n"),tmpstr);
   }
   return 0;
 }
