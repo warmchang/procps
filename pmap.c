@@ -23,6 +23,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "c.h"
+#include "nls.h"
 #include "proc/escape.h"
 #include "proc/readproc.h"
 #include "proc/version.h"
@@ -30,17 +32,18 @@
 static void __attribute__ ((__noreturn__))
     usage(FILE * out)
 {
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		"\nUsage: %s [options] pid [pid ...]\n"
-		"\nOptions:\n", program_invocation_short_name);
-	fprintf(out,
-		"  -x, --extended              show details\n"
-		"  -d, --device                show the device format\n"
-		"  -q, --quiet                 do not display header and footer\n"
-		"  -A, --range=<low>[,<high>]  limit results to the given range\n"
-		"  -h, --help                  display this help text\n"
-		"  -V, --version               display version information and exit\n");
-	fprintf(out, "\nFor more information see pmap(1).\n");
+		_(" %s [options] pid [pid ...]\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_("  -x, --extended              show details\n"), out);
+	fputs(_("  -d, --device                show the device format\n"), out);
+	fputs(_("  -q, --quiet                 do not display header and footer\n"), out);
+	fputs(_("  -A, --range=<low>[,<high>]  limit results to the given range\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("pmap(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
@@ -104,11 +107,11 @@ static void discover_shm_minor(void)
 	}
 
 	if (shmdt(addr))
-		perror("shmdt");
+		perror(_("shmdt"));
 
  out_destroy:
 	if (shmctl(shmid, IPC_RMID, NULL))
-		perror("IPC_RMID");
+		perror(_("IPC_RMID"));
 
 	return;
 }
@@ -141,9 +144,9 @@ static const char *mapping_name(proc_t * p, unsigned KLONG addr,
 		return strrchr(cp, '/') + 1;
 	}
 
-	cp = "  [ anon ]";
+	cp = _("  [ anon ]");
 	if ((p->start_stack >= addr) && (p->start_stack <= addr + len))
-		cp = "  [ stack ]";
+		cp = _("  [ stack ]");
 	return cp;
 }
 
@@ -187,18 +190,18 @@ static int one_proc(proc_t * p)
 		if (x_option) {
 			if (sizeof(KLONG) == 4)
 				printf
-				    ("Address   Kbytes     RSS   Dirty Mode   Mapping\n");
+				    (_("Address   Kbytes     RSS   Dirty Mode   Mapping\n"));
 			else
 				printf
-				    ("Address           Kbytes     RSS   Dirty Mode   Mapping\n");
+				    (_("Address           Kbytes     RSS   Dirty Mode   Mapping\n"));
 		}
 		if (d_option) {
 			if (sizeof(KLONG) == 4)
 				printf
-				    ("Address   Kbytes Mode  Offset           Device    Mapping\n");
+				    (_("Address   Kbytes Mode  Offset           Device    Mapping\n"));
 			else
 				printf
-				    ("Address           Kbytes Mode  Offset           Device    Mapping\n");
+				    (_("Address           Kbytes Mode  Offset           Device    Mapping\n"));
 		}
 	}
 
@@ -323,7 +326,7 @@ static int one_proc(proc_t * p)
 			if (sizeof(KLONG) == 8) {
 				printf
 				    ("----------------  ------  ------  ------\n");
-				printf("total kB %15ld %7llu %7llu\n",
+				printf(_("total kB %15ld %7llu %7llu\n"),
 				       (total_shared + total_private_writeable +
 					total_private_readonly) >> 10,
 				       total_rss,
@@ -335,25 +338,25 @@ static int one_proc(proc_t * p)
 				printf
 				    ("-------- ------- ------- ------- -------\n");
 				printf
-				    ("total kB %7ld       -       -       -\n",
+				    (_("total kB %7ld       -       -       -\n"),
 				     (total_shared + total_private_writeable +
 				      total_private_readonly) >> 10);
 			}
 		}
 		if (d_option) {
 			printf
-			    ("mapped: %ldK    writeable/private: %ldK    shared: %ldK\n",
+			    (_("mapped: %ldK    writeable/private: %ldK    shared: %ldK\n"),
 			     (total_shared + total_private_writeable +
 			      total_private_readonly) >> 10,
 			     total_private_writeable >> 10, total_shared >> 10);
 		}
 		if (!x_option && !d_option) {
 			if (sizeof(KLONG) == 8)
-				printf(" total %16ldK\n",
+				printf(_(" total %16ldK\n"),
 				       (total_shared + total_private_writeable +
 					total_private_readonly) >> 10);
 			else
-				printf(" total %8ldK\n",
+				printf(_(" total %8ldK\n"),
 				       (total_shared + total_private_writeable +
 					total_private_readonly) >> 10);
 		}
@@ -388,7 +391,7 @@ int main(int argc, char **argv)
 			x_option = 1;
 			break;
 		case 'r':
-			warnx("option -r is ignored as SunOS compatibility");
+			warnx(_("option -r is ignored as SunOS compatibility"));
 			break;
 		case 'd':
 			d_option = 1;
@@ -426,7 +429,7 @@ int main(int argc, char **argv)
 		case 'h':
 			usage(stdout);
 		case 'V':
-			display_version();
+			printf(PROCPS_NG_VERSION);
 			return EXIT_SUCCESS;
 		case 'a':	/* Sun prints anon/swap reservations */
 		case 'F':	/* Sun forces hostile ptrace-like grab */
@@ -442,13 +445,13 @@ int main(int argc, char **argv)
 	argv += optind;
 
 	if (argc < 1)
-		errx(EXIT_FAILURE, "argument missing");
+		errx(EXIT_FAILURE, _("argument missing"));
 	if (d_option && x_option)
-		errx(EXIT_FAILURE, "options -d and -x can not coexist");
+		errx(EXIT_FAILURE, _("options -d and -x cannot coexist"));
 
 	pidlist = malloc(sizeof(unsigned) * argc);
 	if (pidlist == NULL)
-		err(EXIT_FAILURE, "cannot allocate %zu bytes",
+		err(EXIT_FAILURE, _("cannot allocate %zu bytes"),
 		    sizeof(unsigned) * argc);
 
 	while (*argv) {
