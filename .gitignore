@@ -46,7 +46,9 @@ snice
 stamp-h1
 sysctl
 tload
-top
+top/Makefile
+top/Makefile.in
+top/top
 uptime
 vmstat
 w

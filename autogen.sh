@@ -10,7 +10,7 @@ THEDIR=$(pwd)
 cd ${SRCDIR}
 DIE=0
 
-test -f top.c || {
+test -f free.c || {
 	echo "You must run this script in the top-level procps-ng directory"
 	DIE=1
 }

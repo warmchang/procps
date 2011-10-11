@@ -7,7 +7,8 @@ SUBDIRS = \
 	po \
 	proc \
 	ps \
-	testsuite
+	testsuite \
+	top
 
 AM_CFLAGS = -Iproc
 AM_LDFLAGS = ./proc/libprocfs.la
@@ -51,16 +52,12 @@ endif
 if WITH_NCURSES
 usrbin_exec_PROGRAMS += \
 	slabtop \
-	top \
 	watch
-top_SOURCES = top.c top.h
 dist_man_MANS += \
 	slabtop.1 \
-	top.1 \
 	watch.1
 slabtop_SOURCES = slabtop.c $(top_srcdir)/lib/strutils.c
 slabtop_LDADD = @NCURSES_LIBS@
-top_LDADD = @NCURSES_LIBS@
 watch_SOURCES = watch.c $(top_srcdir)/lib/strutils.c
 watch_LDADD = @NCURSES_LIBS@
 endif
@@ -84,5 +81,4 @@ EXTRA_DIST = \
 procpsngdir = $(docdir)
 dist_procpsng_DATA = \
 	BUGS \
-	FAQ \
-	README.top
+	FAQ

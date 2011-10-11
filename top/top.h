@@ -15,6 +15,7 @@
 /* For contributions to this program, the author wishes to thank:
  *    Craig Small, <csmall@small.dropbear.id.au>
  *    Albert D. Cahalan, <albert@users.sf.net>
+ *    Sami Kerola, <kerolasa@iki.fi>
  */
 #ifndef _Itop
 #define _Itop
@@ -47,14 +48,20 @@
         /* The following convention is used to identify those areas where
            adaptations for hotplugging are to be found ...
               *** hotplug_acclimated ***
-           ( hopefully libproc will also be supportive of our efforts ) */
+           ( hopefully libproc will also be supportive of our efforts )   */
 
         /* And there are still some of these lurking here and there...
-              FIXME - blah, blah... */
+              FIXME - blah, blah...                                       */
 
         /* For introducing inaugural cgroup support, thanks to:
-              Jan Gorig <jgorig@redhat.com> - April, 2011 */
+              Jan Gorig <jgorig@redhat.com> - April, 2011                 */
 
+        /* For the motivation and path to nls support, thanks to:
+              Sami Kerola, <kerolasa@iki.fi>                              */
+
+        /* There are still some short strings that may yet be candidates
+           for nls support inclusion.  They're identified with:
+              // nls_maybe                                                */
 
 #ifdef PRETEND2_5_X
 #define linux_version_code LINUX_VERSION(2,5,43)
@@ -436,6 +443,8 @@ typedef struct WIN_t {
 
 
 /*######  Display Support *Data*  ########################################*/
+/*######  Some Display Support *Data*  ###################################*/
+/*      ( see module top_nls.c for the nls translatable data ) */
 
         /* Configuration files support */
 #define SYS_RCFILESPEC  "/etc/toprc"
@@ -481,124 +490,7 @@ typedef struct WIN_t {
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
 #define LOADAV_line  "%s -%s\n"
-#define LOADAV_line_alt  "%s~6 -%s\n"
-#define STATES_line1  "%s:~3" \
-   " %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n"
-#define STATES_line2x4  "%%%s~3" \
-   " %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3\n"
-        /* These are the STATES_line evolutions
-              lnx 2.5.x, procps-3.0.5  : IO-wait = i/o wait time
-              lnx 2.6.x, procps-3.1.12 : IO-wait now wa, hi = hard irq, si = soft irq
-              lnx 2.7.x, procps-3.2.7  : st = steal time */
-#define STATES_line2x5  "%%%s~3" \
-   " %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,~3 %#5.1f  ~2IO-wait~3\n"
-#define STATES_line2x6  "%%%s~3" \
-   " %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n"
-#define STATES_line2x7  "%%%s~3" \
-   "%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
-#define MEMORY_twolines  \
-   "%s Mem: ~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2buffers~3\n" \
-   "%s Swap:~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2cached~3\n"
-
-        /* Keyboard Help specially formatted string(s) --
-           see 'show_special' for syntax details + other cautions. */
-#define KEYS_help \
-   "Help for Interactive Commands~2 - %s\n" \
-   "Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; ~1Secure mode ~3%s~2.\n" \
-   "\n" \
-   "  Z~5,~1B~5       Global: '~1Z~2' change color mappings; '~1B~2' disable/enable bold\n" \
-   "  l,t,m     Toggle Summaries: '~1l~2' load avg; '~1t~2' task/cpu stats; '~1m~2' mem info\n" \
-   "  1,I       Toggle SMP view: '~11~2' single/separate states; '~1I~2' Irix/Solaris mode\n" \
-   "  f,F       Manage Fields: add/remove; change order; select sort field\n" \
-   "\n" \
-   "  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n" \
-   "  R,H,V   . Toggle: '~1R~2' norm/rev sort; '~1H~2' show threads; '~1V~2' forest view\n" \
-   "  c,i,S   . Toggle: '~1c~2' cmd name/line; '~1i~2' idle tasks; '~1S~2' cumulative time\n" \
-   "  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n" \
-   "  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n" \
-   "  u,U     . Show: '~1u~2' effective user; '~1U~2' real, saved, file or effective user\n" \
-   "  n or #  . Set maximum tasks displayed\n" \
-   "  C,...   . Toggle scroll coordinates msg for: ~1up~2,~1down~2,~1left~2,right~2,~1home~2,~1end~2\n" \
-   "\n" \
-   "%s" \
-   "  W         Write configuration file\n" \
-   "  q         Quit\n" \
-   "          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n" \
-   "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n" \
-   "any other key to continue " \
-   ""
-
-        /* This guy goes into the help text (maybe) */
-#define KEYS_help_unsecured \
-   "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n" \
-   "  d or s    Set update interval\n" \
-   ""
-
-        /* Fields Management specially formatted string(s) --
-           see 'show_special' for syntax details + other cautions */
-#define FIELDS_heading \
-   "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n" \
-   "   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n" \
-   "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end! " \
-   ""
-
-        /* Colors Help specially formatted string(s) --
-           see 'show_special' for syntax details + other cautions. */
-#define COLOR_help \
-   "Help for color mapping~2 - %s\n" \
-   "current window: ~1%s~6\n" \
-   "\n" \
-   "   color - 04:25:44 up 8 days, 50 min,  7 users,  load average:\n" \
-   "   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,~3\n" \
-   "   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 ~2idle~3\n" \
-   "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5\n" \
-   "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP S COMMAND    ~6\n" \
-   "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n" \
-   "   ~1 8601 pts/1    7 -10  0.4   0:00.03   916    0 R color -b -z~7\n" \
-   "   11005 ~8?      ~7  9   0  0.0   0:02.50  2852 1008 S amor -sessi~8\n" \
-   "   available toggles: ~1B~2 =disable bold globally (~1%s~2),\n" \
-   "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks \"bold\"/reverse (~1%s~2)\n" \
-   "\n" \
-   "Select ~1target~2 as upper case letter:\n" \
-   "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n" \
-   "   H~2 = Column Heads,~1  T~2 = Task Information\n" \
-   "Select ~1color~2 as number:\n" \
-   "   0~2 = black,~1  1~2 = red,    ~1  2~2 = green,~1  3~2 = yellow,\n" \
-   "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan, ~1  7~2 = white\n" \
-   "\n" \
-   "Selected: ~1target~2 ~1 %c ~4; ~1color~2 ~1 %d ~4\n" \
-   "   press 'q' to abort changes to window '~1%s~2'\n" \
-   "   press 'a' or 'w' to commit & change another, <Enter> to commit and end " \
-   ""
-
-        /* Windows/Field Group Help specially formatted string(s) --
-           see 'show_special' for syntax details + other cautions. */
-#define WINDOWS_help \
-   "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n" \
-   "\n" \
-   ". Use multiple ~1windows~2, each with separate config opts (color,fields,sort,etc)\n" \
-   ". The 'current' window controls the ~1Summary Area~2 and responds to your ~1Commands~2\n" \
-   "  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/shrinking others\n" \
-   "  . with ~1NO~2 task display, some commands will be ~1disabled~2 ('i','R','n','c', etc)\n" \
-   "    until a ~1different window~2 has been activated, making it the 'current' window\n" \
-   ". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;~1 2~2) choosing\n" \
-   "  a specific field group; or~1 3~2) exiting the color mapping or fields screens\n" \
-   ". Commands ~1available anytime   -------------~2\n" \
-   "    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 windows\n" \
-   "    g       . Choose another field group and make it 'current', or change now\n" \
-   "              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; or~1 4~2 =%s\n" \
-   ". Commands ~1requiring~2 '~1A~2' mode~1  -------------~2\n" \
-   "    G       . Change the ~1Name~5 of the 'current' window/field group\n" \
-   " ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' Backward\n" \
-   " ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all ~1Visible~2/~1Invisible~2\n" \
-   "  The screen will be divided evenly between task displays.  But you can make\n" \
-   "  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then later you could:\n" \
-   " ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' ~1Every~2 window\n" \
-   "              (this also forces the ~1current~2 or ~1every~2 window to become visible)\n" \
-   "\n" \
-   "In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try the '~1a~2' and '~1w~2'\n" \
-   "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' " \
-   ""
+#define LOADAV_line_alt  "%s\06 -%s\n"
 
 
 /*######  For Piece of mind  #############################################*/

@@ -15,6 +15,7 @@
 /* For contributions to this program, the author wishes to thank:
  *    Craig Small, <csmall@small.dropbear.id.au>
  *    Albert D. Cahalan, <albert@users.sf.net>
+ *    Sami Kerola, <kerolasa@iki.fi>
  */
 #include <sys/ioctl.h>
 #include <sys/resource.h>
@@ -39,19 +40,17 @@
 #include <unistd.h>
 #include <values.h>
 
-#include "c.h"
-#include "nls.h"
-
-#include "proc/devname.h"
-#include "proc/procps.h"
-#include "proc/readproc.h"
-#include "proc/sig.h"
-#include "proc/sysinfo.h"
-#include "proc/version.h"
-#include "proc/wchan.h"
-#include "proc/whattime.h"
+#include "devname.h"
+#include "procps.h"
+#include "readproc.h"
+#include "sig.h"
+#include "sysinfo.h"
+#include "version.h"
+#include "wchan.h"
+#include "whattime.h"
 
 #include "top.h"
+#include "top_nls.h"
 
 /*######  Miscellaneous global stuff  ####################################*/
 
@@ -79,7 +78,7 @@ static unsigned Pg2K_shft = 0;
         /* (assume no IO-wait stats, overridden if linux 2.5.41) */
 static int         Cpu_tot;
 static float       Cpu_pmax;
-static const char *Cpu_States_fmts = STATES_line2x4;
+static const char *Cpu_States_fmts;
 
         /* Specific process id monitoring support */
 static pid_t Monpids [MONPIDMAX] = { 0 };
@@ -277,7 +276,7 @@ static const char *fmtmk (const char *fmts, ...) {
         /*
          * This guy is just our way of avoiding the overhead of the standard
          * strcat function (should the caller choose to participate) */
-static inline char *scat (char *dst, const char *src) {
+inline char *scat (char *dst, const char *src) {
    while (*dst) dst++;
    while ((*(dst++) = *(src++)));
    return --dst;
@@ -325,36 +324,36 @@ static void bye_bye (const char *str) {
 #ifdef ATEOJ_RPTSTD
 {  proc_t *p;
    if (!str) { fprintf(stderr,
-      _("\n%s's Summary report:")
-      _("\n\tProgram")
-        "\n\t   Linux version = %u.%u.%u, %s"
-        "\n\t   Hertz = %u (%u bytes, %u-bit time)"
-        "\n\t   Page_size = %d, Cpu_tot = %d"
-        "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%u HST_t's/Page), HHist_siz = %u"
-        "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t*) = %u"
-        "\n\t   Frames_libflags = %08lX"
-        "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
-      _("\n\tTerminal: %s")
-        "\n\t   device = %s, ncurses = v%s"
-        "\n\t   max_colors = %d, max_pairs = %d"
-        "\n\t   Cap_can_goto = %s"
-        "\n\t   Screen_cols = %d, Screen_rows = %d"
-        "\n\t   Max_lines = %d, most recent Pseudo_size = %u"
+      "\n%s's Summary report:"
+      "\n\tProgram"
+      "\n\t   Linux version = %u.%u.%u, %s"
+      "\n\t   Hertz = %u (%u bytes, %u-bit time)"
+      "\n\t   Page_size = %d, Cpu_tot = %d"
+      "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%u HST_t's/Page), HHist_siz = %u"
+      "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t*) = %u"
+      "\n\t   Frames_libflags = %08lX"
+      "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
+      "\n\tTerminal: %s"
+      "\n\t   device = %s, ncurses = v%s"
+      "\n\t   max_colors = %d, max_pairs = %d"
+      "\n\t   Cap_can_goto = %s"
+      "\n\t   Screen_cols = %d, Screen_rows = %d"
+      "\n\t   Max_lines = %d, most recent Pseudo_size = %u"
 #ifndef OFF_STDIOLBF
-        "\n\t   Stdout_buf = %u, BUFSIZ = %u"
+      "\n\t   Stdout_buf = %u, BUFSIZ = %u"
 #endif
-      _("\n\tWindows and Curwin->")
-        "\n\t   sizeof(WIN_t) = %u, GROUPSMAX = %d"
-        "\n\t   winname = %s, grpname = %s"
+      "\n\tWindows and Curwin->"
+      "\n\t   sizeof(WIN_t) = %u, GROUPSMAX = %d"
+      "\n\t   winname = %s, grpname = %s"
 #ifdef CASEUP_HEXES
-        "\n\t   winflags = %08X, maxpflgs = %d"
+      "\n\t   winflags = %08X, maxpflgs = %d"
 #else
-        "\n\t   winflags = %08x, maxpflgs = %d"
+      "\n\t   winflags = %08x, maxpflgs = %d"
 #endif
-        "\n\t   fieldscur = %s, sortindx  = %d"
-        "\n\t   maxtasks = %d, varcolsz = %d, winlines = %d"
-        "\n\t   strlen(columnhdr) = %d"
-        "\n"
+      "\n\t   fieldscur = %s, sortindx  = %d"
+      "\n\t   maxtasks = %d, varcolsz = %d, winlines = %d"
+      "\n\t   strlen(columnhdr) = %d"
+      "\n"
       , __func__
       , LINUX_VERSION_MAJOR(linux_version_code)
       , LINUX_VERSION_MINOR(linux_version_code)
@@ -413,15 +412,15 @@ static void bye_bye (const char *str) {
       maxdepth_sav = maxdepth;
 
       fprintf(stderr,
-         _("\n%s's Supplementary HASH report:")
-         _("\n\tTwo Tables providing for %d entries each + 1 extra for 'empty' image")
-         _("\n\t%dk (%d bytes) per table, %d total bytes (including 'empty' image)")
-         _("\n\tResults from latest hash (PHash_new + PHist_new)...")
-           "\n"
-         _("\n\tTotal hashed = %d")
-         _("\n\tLevel-0 hash entries = %d (%d%% occupied)")
-         _("\n\tMax Depth = %d")
-           "\n\n"
+         "\n%s's Supplementary HASH report:"
+         "\n\tTwo Tables providing for %d entries each + 1 extra for 'empty' image"
+         "\n\t%dk (%d bytes) per table, %d total bytes (including 'empty' image)"
+         "\n\tResults from latest hash (PHash_new + PHist_new)..."
+         "\n"
+         "\n\tTotal hashed = %d"
+         "\n\tLevel-0 hash entries = %d (%d%% occupied)"
+         "\n\tMax Depth = %d"
+         "\n\n"
          , __func__
          , HHASH_SIZ, sz / 1024, sz, sz * 3
          , Frame_maxtask
@@ -433,23 +432,23 @@ static void bye_bye (const char *str) {
             for (i = 0, numdepth = 0; i < HHASH_SIZ; i++)
                if (depths[i] == maxdepth) ++numdepth;
             fprintf(stderr,
-               _("\t %5d (%3d%%) hash table entries at depth %d\n")
+               "\t %5d (%3d%%) hash table entries at depth %d\n"
                , numdepth, (numdepth * 100) / total_occupied, maxdepth + 1);
             pop -= numdepth;
             cross_foot += numdepth;
             if (0 == pop && cross_foot == total_occupied) break;
          }
          if (pop) {
-            fprintf(stderr, _("\t %5d (%3d%%) unchained hash table entries\n")
+            fprintf(stderr, "\t %5d (%3d%%) unchained hash table entries\n"
                , pop, (pop * 100) / total_occupied);
             cross_foot += pop;
          }
          fprintf(stderr,
             "\t -----\n"
-            _("\t %5d total entries occupied\n"), cross_foot);
+            "\t %5d total entries occupied\n", cross_foot);
 
          if (maxdepth_sav) {
-            fprintf(stderr, _("\nPIDs at max depth: "));
+            fprintf(stderr, "\nPIDs at max depth: ");
             for (i = 0; i < HHASH_SIZ; i++)
                if (depths[i] == maxdepth_sav) {
                   j = PHash_new[i];
@@ -529,14 +528,11 @@ static void pause_pgm (void) {
          * Catches all remaining signals not otherwise handled */
 static void sig_abexit (int sig) NORETURN;
 static void sig_abexit (int sig) {
-   static const char *ab_msg =
-      "\n\tsignal %d (%s) was caught by %s, please"
-      "\n\tsee http://www.debian.org/Bugs/Reporting\n";
    sigset_t ss;
 
    sigfillset(&ss);
    sigprocmask(SIG_BLOCK, &ss, NULL);
-   bye_bye(fmtmk(ab_msg, sig, signal_number_to_name(sig), Myname));
+   bye_bye(fmtmk(N_fmt(EXIT_signals_fmt), sig, signal_number_to_name(sig), Myname));
 } // end: sig_abexit
 
 
@@ -696,7 +692,7 @@ static inline void show_scroll (void) {
    if (1 > totpflgs) totpflgs = 1;
    if (1 > begpflgs) begpflgs = 1;
    snprintf(tmp, sizeof(tmp)
-      , _("scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)")
+      , N_fmt(SCROLL_coord_fmt)
       , Curwin->begtask + 1, Frame_maxtask
       , begpflgs, totpflgs);
    PUTT("%s%s  %.*s%s", tg2(0, Msg_row), Caps_off, Screen_cols - 2, tmp, Cap_clr_eol);
@@ -709,13 +705,10 @@ static inline void show_scroll (void) {
          * what will fit within the current screen width.
          *    Our special formatting consists of:
          *       "some text <_delimiter_> some more text <_delimiter_>...\n"
-         *    Where <_delimiter_> is a two byte combination consisting of a
-         *    tilde followed by an ascii digit in the the range of 1 - 8.
-         *       examples: ~1,  ~5,  ~8, etc.
-         *    The tilde is effectively stripped and the next digit
-         *    converted to an index which is then used to select an
-         *    'attribute' from a capabilities table.  That attribute
-         *    is then applied to the *preceding* substring.
+         *    Where <_delimiter_> is a single byte in the range of:
+         *       \01 through \10  (in decimalizee, 1 - 8)
+         *    and is used to select an 'attribute' from a capabilities table
+         *    which is then applied to the *preceding* substring.
          * Once recognized, the delimiter is replaced with a null character
          * and viola, we've got a substring ready to output!  Strings or
          * substrings without delimiters will receive the Cap_norm attribute.
@@ -730,23 +723,24 @@ static inline void show_scroll (void) {
          *    Tabs must always be avoided or our efforts are wasted and
          *    lines will wrap.  To lessen but not eliminate the risk of
          *    terminfo string truncation, such non-display stuff should
-         *    be placed at the beginning of a "short" line. */
+         *    be placed at the beginning of a "short" line.
+         *    (and as for tabs, gimme 1 more color then no worries, mate) */
 static void show_special (int interact, const char *glob) {
   /* note: the following is for documentation only,
            the real captab is now found in a group's WIN_t !
      +------------------------------------------------------+
      | char *captab[] = {                 :   Cap's/Delim's |
-     |   Cap_norm, Cap_norm,              =   \000, \001,   |
-     |   cap_bold, capclr_sum,            =   \002, \003,   |
-     |   capclr_msg, capclr_pmt,          =   \004, \005,   |
-     |   capclr_hdr,                      =   \006,         |
-     |   capclr_rowhigh,                  =   \007,         |
-     |   capclr_rownorm  };               =   \010 [octal!] |
+     |   Cap_norm, Cap_norm,              =   \00, \01,     |
+     |   cap_bold, capclr_sum,            =   \02, \03,     |
+     |   capclr_msg, capclr_pmt,          =   \04, \05,     |
+     |   capclr_hdr,                      =   \06,          |
+     |   capclr_rowhigh,                  =   \07,          |
+     |   capclr_rownorm  };               =   \10 [octal!]  |
      +------------------------------------------------------+ */
   /* ( pssst, after adding the termcap transitions, row may )
      ( exceed 300+ bytes, even in an 80x24 terminal window! ) */
    char tmp[SMLBUFSIZ], lin[MEDBUFSIZ], row[LRGBUFSIZ];
-   char *rp, *lin_end, *sub_beg, *sub_end;
+   char *rp, *cap, *lin_end, *sub_beg, *sub_end;
    int room;
 
    // handle multiple lines passed in a bunch
@@ -760,18 +754,17 @@ static void show_special (int interact, const char *glob) {
       *(rp = row) = '\0';
 
       while (*sub_beg) {
-         int ch = *sub_end;
-         if ('~' == ch) ch = *(sub_end + 1) - '0';
-         switch (ch) {
+         switch (*sub_end) {
             case 0:                    // no end delim, captab makes normal
                *(sub_end + 1) = '\0';  // extend str end, then fall through
                *(sub_end + 2) = '\0';  // ( +1 optimization for usual path )
             case 1 ... 8:
+               cap = Curwin->captab[(int)*sub_end];
                *sub_end = '\0';
-               snprintf(tmp, sizeof(tmp), "%s%.*s%s", Curwin->captab[ch], room, sub_beg, Caps_off);
+               snprintf(tmp, sizeof(tmp), "%s%.*s%s", cap, room, sub_beg, Caps_off);
                rp = scat(rp, tmp);
                room -= (sub_end - sub_beg);
-               sub_beg = (sub_end += 2);
+               sub_beg = ++sub_end;
                break;
             default:                   // nothin' special, just text
                ++sub_end;
@@ -804,7 +797,7 @@ static void *alloc_c (size_t num) {
 
    if (!num) ++num;
    if (!(pv = calloc(1, num)))
-      error_exit(_("failed memory allocate"));
+      error_exit(N_txt(FAIL_alloc_c_txt));
    return pv;
 } // end: alloc_c
 
@@ -815,7 +808,7 @@ static void *alloc_r (void *ptr, size_t num) {
 
    if (!num) ++num;
    if (!(pv = realloc(ptr, num)))
-      error_exit(_("failed memory re-allocate"));
+      error_exit(N_txt(FAIL_alloc_r_txt));
    return pv;
 } // end: alloc_r
 
@@ -1025,7 +1018,7 @@ static float get_float (const char *prompt) {
    if (!(*(line = linein(prompt)))) return -1.0;
    // note: we're not allowing negative floats
    if (strcspn(line, "+,.0123456789")) {
-      show_msg("Unacceptable floating point");
+      show_msg(N_txt(BAD_numfloat_txt));
       return -1.0;
    }
    sscanf(line, "%f", &f);
@@ -1042,7 +1035,7 @@ static int get_int (const char *prompt) {
    if (!(*(line = linein(prompt)))) return INT_MIN;
    // note: we've got to allow negative ints (renice)
    if (strcspn(line, "-+0123456789")) {
-      show_msg("Unacceptable integer");
+      show_msg(N_txt(BAD_integers_txt));
       return INT_MIN;
    }
    sscanf(line, "%d", &n);
@@ -1094,11 +1087,11 @@ static const char *scale_num (unsigned long num, const int width, const int type
          * format 'tics' to fit 'width'. */
 static const char *scale_tics (TIC_t tics, const int width) {
 #ifdef CASEUP_SUFIX
- #define HH "%uH"
+ #define HH "%uH"                                                  // nls_maybe
  #define DD "%uD"
  #define WW "%uW"
 #else
- #define HH "%uh"
+ #define HH "%uh"                                                  // nls_maybe
  #define DD "%ud"
  #define WW "%uw"
 #endif
@@ -1153,7 +1146,7 @@ static const char *user_certify (WIN_t *q, const char *str, char typ) {
          pwd = getpwuid(num);
       else
          pwd = getpwnam(str);
-      if (!pwd) return _("Invalid user");
+      if (!pwd) return N_txt(BAD_username_txt);
       q->usrseluid = pwd->pw_uid;
       q->usrseltyp = typ;
    }
@@ -1215,63 +1208,65 @@ static FLD_t Fieldstab[] = {
 /* .head + .fmts anomolies:
         entries shown with NULL are either valued at runtime (see zap_fieldstab)
         or, in the case of .fmts, may represent variable width fields
-   .lflg anomolies:
+   .dsc anomolies:
+        the .desc field is always null initially, under nls support
+   .lflg anomolies:                                                NULL                         .
         P_UED, L_NONE  - natural outgrowth of 'stat()' in readproc        (euid)
         P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
         P_CMD, L_stat  - may yet require L_CMDLINE in calibrate_fields    (cmd/cmdline)
         L_EITHER       - must L_status, else L_stat == 64-bit math (__udivdi3) on 32-bit !
      .head          .fmts     .width  .scale  .sort     .lflg      .desc
-     ------------   --------  ------  ------  --------  --------   ---------------------- */
-   { NULL,          NULL,        -1,     -1,  SF(PID),  L_NONE,    "Process Id"           },
-   { NULL,          NULL,        -1,     -1,  SF(PPD),  L_EITHER,  "Parent Process pid"   },
-   { "  UID ",      "%5d ",      -1,     -1,  SF(UED),  L_NONE,    "Effective User Id"    },
-   { "USER     ",   "%-8.8s ",   -1,     -1,  SF(UEN),  L_EUSER,   "Effective User Name"  },
-   { " RUID ",      "%5d ",      -1,     -1,  SF(URD),  L_status,  "Real User Id"         },
-   { "RUSER    ",   "%-8.8s ",   -1,     -1,  SF(URN),  L_OUSER,   "Real User Name"       },
-   { " SUID ",      "%5d ",      -1,     -1,  SF(USD),  L_status,  "Saved User Id"        },
-   { "SUSER    ",   "%-8.8s ",   -1,     -1,  SF(USN),  L_OUSER,   "Saved User Name"      },
-   { "  GID ",      "%5d ",      -1,     -1,  SF(GID),  L_NONE,    "Group Id"             },
-   { "GROUP    ",   "%-8.8s ",   -1,     -1,  SF(GRP),  L_EGROUP,  "Group Name"           },
-   { NULL,          NULL,        -1,     -1,  SF(PGD),  L_stat,    "Process Group Id"     },
-   { "TTY      ",   "%-8.8s ",    8,     -1,  SF(TTY),  L_stat,    "Controlling Tty"      },
-   { NULL,          NULL,        -1,     -1,  SF(TPG),  L_stat,    "Tty Process Grp Id"   },
-   { NULL,          NULL,        -1,     -1,  SF(SID),  L_stat,    "Session Id"           },
-   { " PR ",        "%3d ",      -1,     -1,  SF(PRI),  L_stat,    "Priority"             },
-   { " NI ",        "%3d ",      -1,     -1,  SF(NCE),  L_stat,    "Nice Value"           },
-   { "nTH ",        "%3d ",      -1,     -1,  SF(THD),  L_EITHER,  "Number of Threads"    },
-   { NULL,          NULL,        -1,     -1,  SF(CPN),  L_stat,    "Last Used Cpu (SMP)"  },
-   { " %CPU ",      NULL,        -1,     -1,  SF(CPU),  L_stat,    "CPU Usage"            },
-   { "  TIME ",     "%6.6s ",     6,     -1,  SF(TME),  L_stat,    "CPU Time"             },
-   { "   TIME+  ",  "%9.9s ",     9,     -1,  SF(TME),  L_stat,    "CPU Time, hundredths" },
-   { "%MEM ",       "%#4.1f ",   -1,     -1,  SF(RES),  L_statm,   "Memory Usage (RES)"   },
-   { " VIRT ",      "%5.5s ",     5,  SK_Kb,  SF(VRT),  L_statm,   "Virtual Image (kb)"   },
-   { "SWAP ",       "%4.4s ",     4,  SK_Kb,  SF(SWP),  L_status,  "Swapped Size (kb)"    },
-   { " RES ",       "%4.4s ",     4,  SK_Kb,  SF(RES),  L_statm,   "Resident Size (kb)"   },
-   { "CODE ",       "%4.4s ",     4,  SK_Kb,  SF(COD),  L_statm,   "Code Size (kb)"       },
-   { "DATA ",       "%4.4s ",     4,  SK_Kb,  SF(DAT),  L_statm,   "Data+Stack Size (kb)" },
-   { " SHR ",       "%4.4s ",     4,  SK_Kb,  SF(SHR),  L_statm,   "Shared Mem Size (kb)" },
-   { "nMaj ",       "%4.4s ",     4,  SK_no,  SF(FL1),  L_stat,    "Major Page Faults"    },
-   { "nMin ",       "%4.4s ",     4,  SK_no,  SF(FL2),  L_stat,    "Minor Page Faults"    },
-   { "nDRT ",       "%4.4s ",     4,  SK_no,  SF(DRT),  L_statm,   "Dirty Pages Count"    },
-   { "S ",          "%c ",       -1,     -1,  SF(STA),  L_EITHER,  "Process Status"       },
+     ------------   --------  ------  ------  --------  --------   ------ */
+   { NULL,          NULL,        -1,     -1,  SF(PID),  L_NONE,    NULL },
+   { NULL,          NULL,        -1,     -1,  SF(PPD),  L_EITHER,  NULL },
+   { "  UID ",      "%5d ",      -1,     -1,  SF(UED),  L_NONE,    NULL },
+   { "USER     ",   "%-8.8s ",   -1,     -1,  SF(UEN),  L_EUSER,   NULL },
+   { " RUID ",      "%5d ",      -1,     -1,  SF(URD),  L_status,  NULL },
+   { "RUSER    ",   "%-8.8s ",   -1,     -1,  SF(URN),  L_OUSER,   NULL },
+   { " SUID ",      "%5d ",      -1,     -1,  SF(USD),  L_status,  NULL },
+   { "SUSER    ",   "%-8.8s ",   -1,     -1,  SF(USN),  L_OUSER,   NULL },
+   { "  GID ",      "%5d ",      -1,     -1,  SF(GID),  L_NONE,    NULL },
+   { "GROUP    ",   "%-8.8s ",   -1,     -1,  SF(GRP),  L_EGROUP,  NULL },
+   { NULL,          NULL,        -1,     -1,  SF(PGD),  L_stat,    NULL },
+   { "TTY      ",   "%-8.8s ",    8,     -1,  SF(TTY),  L_stat,    NULL },
+   { NULL,          NULL,        -1,     -1,  SF(TPG),  L_stat,    NULL },
+   { NULL,          NULL,        -1,     -1,  SF(SID),  L_stat,    NULL },
+   { " PR ",        "%3d ",      -1,     -1,  SF(PRI),  L_stat,    NULL },
+   { " NI ",        "%3d ",      -1,     -1,  SF(NCE),  L_stat,    NULL },
+   { "nTH ",        "%3d ",      -1,     -1,  SF(THD),  L_EITHER,  NULL },
+   { NULL,          NULL,        -1,     -1,  SF(CPN),  L_stat,    NULL },
+   { " %CPU ",      NULL,        -1,     -1,  SF(CPU),  L_stat,    NULL },
+   { "  TIME ",     "%6.6s ",     6,     -1,  SF(TME),  L_stat,    NULL },
+   { "   TIME+  ",  "%9.9s ",     9,     -1,  SF(TME),  L_stat,    NULL },
+   { "%MEM ",       "%#4.1f ",   -1,     -1,  SF(RES),  L_statm,   NULL },
+   { " VIRT ",      "%5.5s ",     5,  SK_Kb,  SF(VRT),  L_statm,   NULL },
+   { "SWAP ",       "%4.4s ",     4,  SK_Kb,  SF(SWP),  L_status,  NULL },
+   { " RES ",       "%4.4s ",     4,  SK_Kb,  SF(RES),  L_statm,   NULL },
+   { "CODE ",       "%4.4s ",     4,  SK_Kb,  SF(COD),  L_statm,   NULL },
+   { "DATA ",       "%4.4s ",     4,  SK_Kb,  SF(DAT),  L_statm,   NULL },
+   { " SHR ",       "%4.4s ",     4,  SK_Kb,  SF(SHR),  L_statm,   NULL },
+   { "nMaj ",       "%4.4s ",     4,  SK_no,  SF(FL1),  L_stat,    NULL },
+   { "nMin ",       "%4.4s ",     4,  SK_no,  SF(FL2),  L_stat,    NULL },
+   { "nDRT ",       "%4.4s ",     4,  SK_no,  SF(DRT),  L_statm,   NULL },
+   { "S ",          "%c ",       -1,     -1,  SF(STA),  L_EITHER,  NULL },
    // next 2 entries are special: '.head' is variable width (see calibrate_fields)
-   { "COMMAND  ",   NULL,        -1,     -1,  SF(CMD),  L_EITHER,  "Command Name/Line"    },
-   { "WCHAN    ",   NULL,        -1,     -1,  SF(WCH),  L_stat,    "Sleeping in Function" },
+   { "COMMAND  ",   NULL,        -1,     -1,  SF(CMD),  L_EITHER,  NULL },
+   { "WCHAN    ",   NULL,        -1,     -1,  SF(WCH),  L_stat,    NULL },
    // next entry's special: the 0's will be replaced with '.'!
 #ifdef CASEUP_HEXES
-   { "Flags    ",   "%08lX ",    -1,     -1,  SF(FLG),  L_stat,    "Task Flags <sched.h>" },
+   { "Flags    ",   "%08lX ",    -1,     -1,  SF(FLG),  L_stat,    NULL },
 #else
-   { "Flags    ",   "%08lx ",    -1,     -1,  SF(FLG),  L_stat,    "Task Flags <sched.h>" },
+   { "Flags    ",   "%08lx ",    -1,     -1,  SF(FLG),  L_stat,    NULL },
 #endif
    // next 3 entries as P_CMD/P_WCH: '.head' must be same length -- they share varcolsz
-   { "CGROUPS  ",   NULL,        -1,     -1,  SF(CGR),  L_CGROUP,  "Control Groups"       },
-   { "SUPGIDS  ",   NULL,        -1,     -1,  SF(SGD),  L_status,  "Supp Groups IDs"      },
-   { "SUPGRPS  ",   NULL,        -1,     -1,  SF(SGN),  L_SUPGRP,  "Supp Groups Names"    },
-   { NULL,          NULL,        -1,     -1,  SF(TGD),  L_status,  "Thread Group Id"      }
+   { "CGROUPS  ",   NULL,        -1,     -1,  SF(CGR),  L_CGROUP,  NULL },
+   { "SUPGIDS  ",   NULL,        -1,     -1,  SF(SGD),  L_status,  NULL },
+   { "SUPGRPS  ",   NULL,        -1,     -1,  SF(SGN),  L_SUPGRP,  NULL },
+   { NULL,          NULL,        -1,     -1,  SF(TGD),  L_status,  NULL }
 #ifdef OOMEM_ENABLE
 #define L_oom      PROC_FILLOOM
-  ,{ "Adj ",        "%3d ",      -1,     -1,  SF(OOA),  L_oom,     "oom_adjustment (2^X)" }
-  ,{ " Badness ",   "%8d ",      -1,     -1,  SF(OOM),  L_oom,     "oom_score (badness)"  }
+  ,{ "Adj ",        "%3d ",      -1,     -1,  SF(OOA),  L_oom,     NULL }
+  ,{ " Badness ",   "%8d ",      -1,     -1,  SF(OOM),  L_oom,     NULL }
 #undef L_oom
 #endif
  #undef SF
@@ -1377,7 +1372,7 @@ static void calibrate_fields (void) {
    sigemptyset(&newss);
    sigaddset(&newss, SIGWINCH);
    if (-1 == sigprocmask(SIG_BLOCK, &newss, &oldss))
-      error_exit(fmtmk(_("failed sigprocmask, SIG_BLOCK: %s"), strerror(errno)));
+      error_exit(fmtmk(N_fmt(FAIL_sigstop_fmt), strerror(errno)));
 
    adj_geometry();
    Frames_libflags = 0;
@@ -1411,7 +1406,7 @@ static void calibrate_fields (void) {
             f = w->pflgsall[i + w->begpflg];
             w->procflgs[i] = f;
 #ifndef USE_X_COLHDR
-            if (P_MAXPFLGS <= f) continue;
+            if (P_MAXPFLGS < f) continue;
 #endif
             h = Fieldstab[f].head;
             // oops, won't fit -- we're outta here...
@@ -1462,7 +1457,7 @@ static void calibrate_fields (void) {
                w->hdrcaplen += strlen(Caps_off) + strlen(w->capclr_msg);
             }
 #else
-            if (P_MAXPFLGS <= f) continue;
+            if (P_MAXPFLGS < f) continue;
 #endif
             h = Fieldstab[f].head;
             if (P_WCH == f) needpsdb = 1;
@@ -1530,7 +1525,7 @@ static void calibrate_fields (void) {
 
    Frames_resize = 0;
    if (-1 == sigprocmask(SIG_SETMASK, &oldss, NULL))
-      error_exit(fmtmk(_("failed sigprocmask, SIG_SETMASK: %s"), strerror(errno)));
+      error_exit(fmtmk(N_fmt(FAIL_sigmask_fmt), strerror(errno)));
 } // end: calibrate_fields
 
 
@@ -1578,13 +1573,13 @@ static void display_fields (int focus, int extend) {
 
    fflush(stdout);
    i = (P_MAXPFLGS % mxCOL) ? 1 : 0;
-   if (rmax < i + (P_MAXPFLGS / mxCOL)) error_exit("++rows");
+   if (rmax < i + (P_MAXPFLGS / mxCOL)) error_exit("++rows");      // nls_maybe
    i = P_MAXPFLGS / rmax;
    if (P_MAXPFLGS % rmax) ++i;
    if (i > 1) { cmax /= i; xadd = 1; }
    if (cmax > xTOTL) cmax = xTOTL;
    smax = cmax - xPRFX;
-   if (smax < 0) error_exit("++cols");
+   if (smax < 0) error_exit("++cols");                             // nls_maybe
 
    for (i = 0; i < P_MAXPFLGS; ++i) {
       char sbuf[xSUFX+1];
@@ -1643,7 +1638,8 @@ static void fields_utility (void) {
       if (!h) for (h = Fieldstab[f].head; ' ' == *h; ++h) ;
       display_fields(i, (p != NULL));
       putp(Cap_home);
-      show_special(1, fmtmk(FIELDS_heading, w->grpname, CHKw(w, Show_FOREST) ? _("forest view") : h));
+      show_special(1, fmtmk(N_unq(FIELD_header_fmt)
+         , w->grpname, CHKw(w, Show_FOREST) ? N_txt(FOREST_views_txt) : h));
 
       switch (key = keyin(0)) {
          case kbd_UP:
@@ -1703,6 +1699,7 @@ static void zap_fieldstab (void) {
    static char fmts_pid[8];
    static char fmts_cpu[8];
    static int once;
+   int i;
    unsigned digits;
    char buf[8];
 
@@ -1721,7 +1718,7 @@ static void zap_fieldstab (void) {
    Fieldstab[P_TPG].head = "TPGID ";
    Fieldstab[P_TPG].fmts = "%5d ";
    if (5 < (digits = get_pid_digits())) {
-      if (10 < digits) error_exit(_("failed pid size test"));
+      if (10 < digits) error_exit(N_txt(FAIL_widepid_txt));
       snprintf(fmts_pid, sizeof(fmts_pid), "%%%uu ", digits);
       Fieldstab[P_PID].head = "       PID " + 10 - digits;
       Fieldstab[P_PID].fmts = fmts_pid;
@@ -1736,6 +1733,10 @@ static void zap_fieldstab (void) {
       Fieldstab[P_TPG].head = "     TPGID " + 10 - digits;
       Fieldstab[P_TPG].fmts = fmts_pid;
    }
+
+   for (i = 0; i < P_MAXPFLGS; i++)
+      Fieldstab[i].desc = N_fld(i);
+
    once = 1;
 
    /*** hotplug_acclimated ***/
@@ -1743,7 +1744,7 @@ always:
    Fieldstab[P_CPN].head = "P ";
    Fieldstab[P_CPN].fmts = "%1d ";
    if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_tot))) {
-      if (5 < digits) error_exit(_("failed num cpus test"));
+      if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
       snprintf(fmts_cpu, sizeof(fmts_cpu), "%%%ud ", digits);
       Fieldstab[P_CPN].head = "    P " + 5 - digits;
       Fieldstab[P_CPN].fmts = fmts_cpu;
@@ -1792,7 +1793,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       (sorry Linux, but you'll have to close it for us) */
    if (!fp) {
       if (!(fp = fopen("/proc/stat", "r")))
-         error_exit(fmtmk(_("failed /proc/stat open: %s"), strerror(errno)));
+         error_exit(fmtmk(N_fmt(FAIL_statopn_fmt), strerror(errno)));
       /* note: we allocate one more CPU_t than Cpu_tot so that the last slot
                can hold tics representing the /proc/stat cpu summary (the first
                line read) -- that slot supports our View_CPUSUM toggle */
@@ -1804,11 +1805,11 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    // first value the last slot with the cpu summary line
    cpus[Cpu_tot].x = cpus[Cpu_tot].y = cpus[Cpu_tot].z = 0;
    // FIXME: can't tell above by kernel version number
-   if (!fgets(buf, sizeof(buf), fp)) error_exit(_("failed /proc/stat read"));
+   if (!fgets(buf, sizeof(buf), fp)) error_exit(N_txt(FAIL_statget_txt));
    if (4 > sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
       , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i
       , &cpus[Cpu_tot].w, &cpus[Cpu_tot].x, &cpus[Cpu_tot].y, &cpus[Cpu_tot].z))
-         error_exit(_("failed /proc/stat read"));
+         error_exit(N_txt(FAIL_statget_txt));
    // and just in case we're 2.2.xx compiled without SMP support...
    if (1 == Cpu_tot)
       memcpy(cpus, &cpus[1], sizeof(CPU_t));
@@ -1818,13 +1819,13 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       rewind(fp);
       fgets(buf, sizeof(buf), fp);
 #endif
-      if (!fgets(buf, sizeof(buf), fp)) error_exit(_("failed /proc/stat read"));
+      if (!fgets(buf, sizeof(buf), fp)) error_exit(N_txt(FAIL_statget_txt));
       cpus[i].x = cpus[i].y = cpus[i].z = 0;
       // FIXME: can't tell above by kernel version number
       if (4 > sscanf(buf, "cpu%u %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &cpus[i].id
          , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i
          , &cpus[i].w, &cpus[i].x, &cpus[i].y, &cpus[i].z)) {
-            error_exit(_("failed /proc/stat read"));
+            error_exit(N_txt(FAIL_statget_txt));
       }
 #ifdef PRETEND4CPUS
       cpus[i].id = i;
@@ -1992,7 +1993,7 @@ static void procs_refresh (void) {
 
    prochlp(NULL);                                // prep for a new frame
    if (NULL == (PT = openproc(Frames_libflags, Monpids)))
-      error_exit(fmtmk(_("failed openproc: %s"), strerror(errno)));
+      error_exit(fmtmk(N_fmt(FAIL_openlib_txt), strerror(errno)));
    read_something = Thread_mode ? readeither : readproc;
 
    for (;;) {
@@ -2062,23 +2063,27 @@ static void before (char *me) {
    struct sigaction sa;
    int i;
 
-   // setup our program name -- big!
+   // setup our program name
    Myname = strrchr(me, '/');
    if (Myname) ++Myname; else Myname = me;
 
-   // establish cpu particulars -- even bigger!
+   // accommodate nls/gettext potential translations
+   initialize_nsl();
+
+   // establish cpu particulars
 #ifdef PRETEND4CPUS
    smp_num_cpus = 4;
 #endif
    Cpu_tot = smp_num_cpus;
+   Cpu_States_fmts = N_unq(STATE_lin2x4_fmt);
    if (linux_version_code > LINUX_VERSION(2, 5, 41))
-      Cpu_States_fmts = STATES_line2x5;
+      Cpu_States_fmts = N_unq(STATE_lin2x5_fmt);
    if (linux_version_code >= LINUX_VERSION(2, 6, 0))
-      Cpu_States_fmts = STATES_line2x6;
+      Cpu_States_fmts = N_unq(STATE_lin2x6_fmt);
    if (linux_version_code >= LINUX_VERSION(2, 6, 11))
-      Cpu_States_fmts = STATES_line2x7;
+      Cpu_States_fmts = N_unq(STATE_lin2x7_fmt);
 
-   // get virtual page stuff -- nearing huge!
+   // get virtual page stuff
    Page_size = getpagesize();
    i = Page_size;
    while(i > 1024) { i >>= 1; Pg2K_shft++; }
@@ -2132,8 +2137,7 @@ static void before (char *me) {
          *   line b: contains w->winflags, sortindx, maxtasks
          *   line c: contains w->summclr, msgsclr, headclr, taskclr */
 static void configs_read (void) {
-#ifndef RCFILE_NOERR
-#else
+#ifdef RCFILE_NOERR
    RCF_t rcdef = DEF_RCFILE;
 #endif
    float tmp_delay = DEF_DELAY;
@@ -2165,7 +2169,7 @@ static void configs_read (void) {
          , &id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_delay, &i))
       || RCF_VERSION_ID != id)
 #ifndef RCFILE_NOERR
-         error_exit(fmtmk(_("incompatible rcfile, you should delete '%s'"), Rc_name));
+         error_exit(fmtmk(N_fmt(RC_bad_files_fmt), Rc_name));
 #else
          goto just_default_em;
 #endif
@@ -2182,7 +2186,7 @@ static void configs_read (void) {
 #endif
          if (strlen(Winstk[i].rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
 #ifndef RCFILE_NOERR
-            error_exit(fmtmk(_("window entry #%d corrupt, please delete '%s'"), i+1, Rc_name));
+            error_exit(fmtmk(N_fmt(RC_bad_entry_fmt), i+1, Rc_name));
 #else
             goto just_default_em;
 #endif
@@ -2190,7 +2194,7 @@ static void configs_read (void) {
             int f = FLDget(&Winstk[i], x);
             if (P_MAXPFLGS <= f)
 #ifndef RCFILE_NOERR
-               error_exit(fmtmk(_("window entry #%d corrupt, please delete '%s'"), i+1, Rc_name));
+               error_exit(fmtmk(N_fmt(RC_bad_entry_fmt), i+1, Rc_name));
 #else
                goto just_default_em;
 #endif
@@ -2252,7 +2256,7 @@ static void parse_args (char **args) {
                if (cp[1]) ++cp;
                else if (*args) cp = *args++;
                if (strspn(cp, numbs_str))
-                  error_exit(fmtmk(_("inappropriate '%s'\nusage:\t%s%s"), cp, Myname, _(" -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]")));
+                  error_exit(fmtmk(N_fmt(WRONG_switch_fmt), cp, Myname, N_txt(USAGE_abbrev_txt)));
                continue;
             case 'b':
                Batch = 1;
@@ -2263,17 +2267,18 @@ static void parse_args (char **args) {
             case 'd':
                if (cp[1]) ++cp;
                else if (*args) cp = *args++;
-               else error_exit(_("-d requires argument"));
+               else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
                   /* a negative delay will be dealt with shortly... */
                if (1 != sscanf(cp, "%f", &tmp_delay))
-                  error_exit(fmtmk(_("bad delay '%s'"), cp));
+                  error_exit(fmtmk(N_fmt(BAD_delayint_fmt), cp));
                break;
             case 'H':
                Thread_mode = 1;
                break;
             case 'h':
             case 'v': case 'V':
-               fprintf(stdout, _("\t%s\nusage:\t%s%s"), procps_version, Myname, _(" -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]"));
+               fprintf(stdout, N_fmt(HELP_cmdline_fmt)
+                  , procps_version, Myname, N_txt(USAGE_abbrev_txt));
                bye_bye(NULL);
             case 'i':
                TOGw(Curwin, Show_IDLEPS);
@@ -2282,21 +2287,21 @@ static void parse_args (char **args) {
             case 'n':
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
-               else error_exit(_("-n requires argument"));
+               else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
                if (1 != sscanf(cp, "%d", &Loops) || 1 > Loops)
-                  error_exit(fmtmk(_("bad iterations arg '%s'"), cp));
+                  error_exit(fmtmk(N_fmt(BAD_niterate_arg), cp));
                break;
             case 'p':
-               if (Curwin->usrseltyp) error_exit(_("conflicting process selections (U/p/u)"));
+               if (Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
                do {
                   if (cp[1]) cp++;
                   else if (*args) cp = *args++;
-                  else error_exit(_("-p argument missing"));
+                  else error_exit(fmtmk(N_txt(MISSING_args_fmt), ch));
                   if (Monpidsidx >= MONPIDMAX)
-                     error_exit(fmtmk(_("pid limit (%d) exceeded"), MONPIDMAX));
+                     error_exit(fmtmk(N_fmt(LIMIT_exceed_fmt), MONPIDMAX));
                   if (1 != sscanf(cp, "%d", &Monpids[Monpidsidx])
                   || 0 > Monpids[Monpidsidx])
-                     error_exit(fmtmk(_("bad pid '%s'"), cp));
+                     error_exit(fmtmk(N_fmt(BAD_mon_pids_fmt), cp));
                   if (!Monpids[Monpidsidx])
                      Monpids[Monpidsidx] = getpid();
                   Monpidsidx++;
@@ -2314,10 +2319,10 @@ static void parse_args (char **args) {
             case 'u':
             case 'U':
             {  const char *err;
-               if (Monpidsidx || Curwin->usrseltyp) error_exit(_("conflicting process selections (U/p/u)"));
+               if (Monpidsidx || Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
-               else error_exit(fmtmk(_("-%c missing name"), ch));
+               else error_exit(fmtmk(N_txt(MISSING_args_fmt), ch));
                if ((err = user_certify(Curwin, cp, ch))) error_exit(err);
                cp += strlen(cp);
                break;
@@ -2331,14 +2336,14 @@ static void parse_args (char **args) {
                if (pn && !(ci = strspn(pn, "0123456789"))) { ai = 0; pn = NULL; }
                if (pn && (1 != sscanf(pn, "%d", &Width_mode)
                || Width_mode < W_MIN_COL))
-                  error_exit(fmtmk(_("bad width arg '%s', must > %d"), pn, W_MIN_COL-1));
+                  error_exit(fmtmk(N_fmt(BAD_widtharg_fmt), pn, W_MIN_COL-1));
                cp++;
                args += ai;
                if (pn) cp = pn + ci;
                continue;
             }
             default :
-               error_exit(fmtmk(_("unknown option '%c'\nusage:\t%s%s"), *cp, Myname, _(" -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]")));
+               error_exit(fmtmk(N_fmt(UNKNOWN_opts_fmt), *cp, Myname, N_txt(USAGE_abbrev_txt)));
 
          } // end: switch (*cp)
 
@@ -2351,9 +2356,9 @@ static void parse_args (char **args) {
    // fixup delay time, maybe...
    if (MAXFLOAT > tmp_delay) {
       if (Secure_mode)
-         error_exit(_("-d disallowed in \"secure\" mode"));
+         error_exit(N_txt(DELAY_secure_txt));
       if (0 > tmp_delay)
-         error_exit(_("-d requires positive argument"));
+         error_exit(N_txt(DELAY_badarg_txt));
       Rc.delay_time = tmp_delay;
    }
 } // end: parse_args
@@ -2377,7 +2382,7 @@ static void whack_terminal (void) {
 #endif
    // our part...
    if (-1 == tcgetattr(STDIN_FILENO, &Tty_original))
-      error_exit(_("failed tty get"));
+      error_exit(N_txt(FAIL_tty_get_txt));
    // ok, haven't really changed anything but we do have our snapshot
    Ttychanged = 1;
 
@@ -2392,7 +2397,7 @@ static void whack_terminal (void) {
       tmptty.c_cc[VERASE] = *key_backspace;
 #ifdef TERMIOS_ONLY
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &tmptty))
-      error_exit(fmtmk(_("failed Tty_tweaked set: %s"), strerror(errno)));
+      error_exit(fmtmk(N_fmt(FAIL_tty_mod_fmt), strerror(errno)));
    tcgetattr(STDIN_FILENO, &Tty_tweaked);
 #endif
    // lastly, a nearly raw mode for unsolicited single keystrokes
@@ -2400,7 +2405,7 @@ static void whack_terminal (void) {
    tmptty.c_cc[VMIN] = 1;
    tmptty.c_cc[VTIME] = 0;
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &tmptty))
-      error_exit(fmtmk(_("failed Tty_raw set: %s"), strerror(errno)));
+      error_exit(fmtmk(N_fmt(FAIL_tty_raw_fmt), strerror(errno)));
    tcgetattr(STDIN_FILENO, &Tty_raw);
 
 #ifndef OFF_STDIOLBF
@@ -2433,7 +2438,7 @@ static WIN_t *win_select (char ch) {
    /* if there's no ch, it means we're supporting the external interface,
       so we must try to get our own darn ch by begging the user... */
    if (!ch) {
-      show_pmt(_("Choose field group (1 - 4)"));
+      show_pmt(N_txt(CHOOSE_group_txt));
       if (1 > chin(0, (char *)&ch, 1)) return Curwin;
    }
    switch (ch) {
@@ -2458,11 +2463,10 @@ static WIN_t *win_select (char ch) {
 static int win_warn (int what) {
    switch (what) {
       case Warn_ALT:
-         show_msg("Command disabled, 'A' mode required");
+         show_msg(N_txt(DISABLED_cmd_fmt));
          break;
       case Warn_VIZ:
-         show_msg(fmtmk("Command disabled, activate %s with '-' or '_'"
-            , Curwin->grpname));
+         show_msg(fmtmk(N_fmt(DISABLED_win_fmt), Curwin->grpname));
          break;
       default:                    // keep gcc happy
          break;
@@ -2501,7 +2505,7 @@ static void wins_colors (void) {
    char ch, tgt = 'T';
 
    if (0 >= max_colors) {
-      show_msg("No colors to map!");
+      show_msg(N_txt(COLORS_nomap_txt));
       return;
    }
    winsclrhlp(w, 1);
@@ -2511,11 +2515,11 @@ static void wins_colors (void) {
    do {
       putp(Cap_home);
       // this string is well above ISO C89's minimum requirements!
-      show_special(1, fmtmk(COLOR_help
+      show_special(1, fmtmk(N_unq(COLOR_custom_fmt)
          , procps_version, w->grpname
-         , CHKw(w, View_NOBOLD) ? "On" : "Off"
-         , CHKw(w, Show_COLORS) ? "On" : "Off"
-         , CHKw(w, Show_HIBOLD) ? "On" : "Off"
+         , CHKw(w, View_NOBOLD) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
+         , CHKw(w, Show_COLORS) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
+         , CHKw(w, Show_HIBOLD) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
          , tgt, clr, w->grpname));
       if (1 > chin(0, &ch, 1)) break;
       switch (ch) {
@@ -2663,26 +2667,26 @@ static void file_writerc (void) {
    int i;
 
    if (!(fp = fopen(Rc_name, "w"))) {
-      show_msg(fmtmk("Failed '%s' open: %s", Rc_name, strerror(errno)));
+      show_msg(fmtmk(N_fmt(FAIL_rc_open_fmt), Rc_name, strerror(errno)));
       return;
    }
    fprintf(fp, "%s's " RCF_EYECATCHER, Myname);
-   fprintf(fp, _("Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%d\n")
+   fprintf(fp, "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%d\n"
       , RCF_VERSION_ID
       , Rc.mode_altscr, Rc.mode_irixps, Rc.delay_time, (int)(Curwin - Winstk));
 
    for (i = 0 ; i < GROUPSMAX; i++) {
-      fprintf(fp, _("%s\tfieldscur=%s\n")
+      fprintf(fp, "%s\tfieldscur=%s\n"
          , Winstk[i].rc.winname, Winstk[i].rc.fieldscur);
-      fprintf(fp, _("\twinflags=%d, sortindx=%d, maxtasks=%d\n")
+      fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
          , Winstk[i].rc.winflags, (int)Winstk[i].rc.sortindx
          , Winstk[i].rc.maxtasks);
-      fprintf(fp, _("\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n")
+      fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
          , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
          , Winstk[i].rc.headclr, Winstk[i].rc.taskclr);
    }
    fclose(fp);
-   show_msg(fmtmk(_("Wrote configuration to '%s'"), Rc_name));
+   show_msg(fmtmk(N_fmt(WRITE_rcfile_fmt), Rc_name));
 } // end: file_writerc
 
 
@@ -2724,20 +2728,19 @@ static void help_view (void) {
    putp(Cap_clr_scr);
    putp(Cap_curs_huge);
 
-   // this string is well above ISO C89's minimum requirements!
-   show_special(1, fmtmk(KEYS_help
+   show_special(1, fmtmk(N_unq(KEYS_helpbas_fmt)
       , procps_version
       , w->grpname
-      , CHKw(w, Show_CTIMES) ? "On" : "Off"
+      , CHKw(w, Show_CTIMES) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
       , Rc.delay_time
-      , Secure_mode ? "On" : "Off"
-      , Secure_mode ? "" : KEYS_help_unsecured));
+      , Secure_mode ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
+      , Secure_mode ? "" : N_unq(KEYS_helpext_fmt)));
 
    if (0 < chin(0, &ch, 1)
    && ('?' == ch || 'h' == ch || 'H' == ch)) {
       do {
          putp(Cap_clr_scr);
-         show_special(1, fmtmk(WINDOWS_help
+         show_special(1, fmtmk(N_unq(WINDOWS_help_fmt)
             , w->grpname
             , Winstk[0].rc.winname, Winstk[1].rc.winname
             , Winstk[2].rc.winname, Winstk[3].rc.winname));
@@ -2752,8 +2755,6 @@ static void help_view (void) {
 
 static void keys_global (int ch) {
    // standardized error message(s)
-   static const char err_secure[] = "Unavailable in secure mode";
-   static const char err_notsmp[] = "Only 1 cpu detected";
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
 
    switch (ch) {
@@ -2764,10 +2765,10 @@ static void keys_global (int ch) {
       case 'd':
       case 's':
          if (Secure_mode)
-            show_msg(_("Unavailable in secure mode"));
+            show_msg(N_txt(NOT_onsecure_txt));
          else {
             float tmp =
-               get_float(fmtmk(_("Change delay from %.1f to"), Rc.delay_time));
+               get_float(fmtmk(N_fmt(DELAY_change_fmt), Rc.delay_time));
             if (-1 < tmp) Rc.delay_time = tmp;
          }
          break;
@@ -2781,40 +2782,42 @@ static void keys_global (int ch) {
       case 'H':
          Thread_mode = !Thread_mode;
          if (!CHKw(w, View_STATES))
-            show_msg(fmtmk(_("Show threads %s"), Thread_mode ? "On" : "Off"));
+            show_msg(fmtmk(N_fmt(THREADS_show_fmt)
+               , Thread_mode ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
          break;
       case 'I':
          if (Cpu_tot > 1) {
             Rc.mode_irixps = !Rc.mode_irixps;
-            show_msg(fmtmk(_("Irix mode %s"), Rc.mode_irixps ? "On" : "Off"));
+            show_msg(fmtmk(N_fmt(IRIX_curmode_fmt)
+               , Rc.mode_irixps ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
          } else
-            show_msg(_("Only 1 cpu detected"));
+            show_msg(N_txt(NOT_smp_cpus_txt));
          break;
       case 'k':
          if (Secure_mode) {
-            show_msg(_("Unavailable in secure mode"));
+            show_msg(N_txt(NOT_onsecure_txt));
          } else {
             int pid, sig = SIGTERM;
             char *str;
-            if (-1 < (pid = get_int(_("pid to signal/kill")))) {
-               str = linein(fmtmk(_("Send pid %d signal [%d/sigterm]"), pid, SIGTERM));
+            if (-1 < (pid = get_int(N_txt(GET_pid2kill_txt)))) {
+               str = linein(fmtmk(N_fmt(GET_sigs_num_fmt), pid, SIGTERM));
                if (*str) sig = signal_name_to_number(str);
                if (0 < sig && kill(pid, sig))
-                  show_msg(fmtmk("Failed signal pid '%d' with '%d': %s"
+                  show_msg(fmtmk(N_fmt(FAIL_signals_fmt)
                      , pid, sig, strerror(errno)));
-               else if (0 > sig) show_msg(_("Invalid signal"));
+               else if (0 > sig) show_msg(N_txt(BAD_signalid_txt));
             }
          }
          break;
       case 'r':
          if (Secure_mode)
-            show_msg(_("Unavailable in secure mode"));
+            show_msg(N_txt(NOT_onsecure_txt));
          else {
             int val, pid;
-            if (-1 < (pid = get_int(_("PID to renice")))
-            && INT_MIN < (val = get_int(fmtmk(_("Renice PID %d to value"), pid))))
+            if (-1 < (pid = get_int(N_txt(GET_pid2nice_txt)))
+            && INT_MIN < (val = get_int(fmtmk(N_fmt(GET_nice_num_fmt), pid))))
                if (setpriority(PRIO_PROCESS, (unsigned)pid, val))
-                  show_msg(fmtmk("Failed renice of PID %d to %d: %s"
+                  show_msg(fmtmk(N_fmt(FAIL_re_nice_fmt)
                      , pid, val, strerror(errno)));
          }
          break;
@@ -2859,10 +2862,10 @@ static void keys_task (int ch) {
       case '#':
       case 'n':
          if (VIZCHKw(w)) {
-            int num = get_int(fmtmk(_("Maximum tasks = %d, change to (0 is unlimited)"), w->rc.maxtasks));
+            int num = get_int(fmtmk(N_fmt(GET_max_task_fmt), w->rc.maxtasks));
             if (INT_MIN < num) {
                if (-1 < num ) w->rc.maxtasks = num;
-               else show_msg(_("Invalid maximum"));
+               else show_msg(N_txt(BAD_max_task_txt));
             }
          }
          break;
@@ -2915,7 +2918,7 @@ static void keys_task (int ch) {
 #else
             if (!CHKw(w, Show_HICOLS | Show_HIROWS))
 #endif
-               show_msg("Nothing to highlight!");
+               show_msg(N_txt(HILIGHT_cant_txt));
             else {
                TOGw(w, Show_HIBOLD);
                capsmk(w);
@@ -2941,14 +2944,14 @@ static void keys_task (int ch) {
       case 'S':
          if (VIZCHKw(w)) {
             TOGw(w, Show_CTIMES);
-            show_msg(fmtmk(_("Cumulative time %s"), CHKw(w, Show_CTIMES) ? "On" : "Off"));
+            show_msg(fmtmk(N_fmt(TIME_accumed_fmt), CHKw(w, Show_CTIMES) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
          }
          break;
       case 'U':
       case 'u':
          if (VIZCHKw(w)) {
             const char *err;
-            if ((err = user_certify(w, linein(_("Which user (blank for all)")), ch)))
+            if ((err = user_certify(w, linein(N_txt(GET_user_ids_txt)), ch)))
                show_msg(err);
          }
          break;
@@ -2956,7 +2959,8 @@ static void keys_task (int ch) {
          if (VIZCHKw(w)) {
             TOGw(w, Show_FOREST);
             if (!ENUviz(w, P_CMD))
-               show_msg(fmtmk(_("Forest mode %s"), CHKw(w, Show_FOREST) ? "On" : "Off"));
+               show_msg(fmtmk(N_fmt(FOREST_modes_fmt)
+                  , CHKw(w, Show_FOREST) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
          }
          break;
       case 'x':
@@ -3031,7 +3035,7 @@ static void keys_window (int ch) {
       case 'G':
          if (ALTCHKw) {
             char tmp[SMLBUFSIZ];
-            STRLCPY(tmp, linein(fmtmk(_("Rename window '%s' to (1-3 chars)"), w->rc.winname)))
+            STRLCPY(tmp, linein(fmtmk(N_fmt(NAME_windows_fmt), w->rc.winname)));
             if (tmp[0]) win_names(w, tmp);
          }
          break;
@@ -3249,7 +3253,7 @@ static void do_key (int ch) {
             }
 
          if (!(i < MAXTBL(key_tab))) {
-            show_msg("Unknown command - try 'h' for help");
+            show_msg(N_txt(UNKNOWN_cmds_txt));
             return;
          }
    };
@@ -3349,8 +3353,8 @@ static void summary_show (void) {
 
    // Display Task and Cpu(s) States
    if (isROOM(View_STATES, 2)) {
-      show_special(0, fmtmk(STATES_line1
-         , Thread_mode ? "Threads" : "Tasks"
+      show_special(0, fmtmk(N_unq(STATE_line_1_fmt)
+         , Thread_mode ? N_txt(WORD_threads_txt) : N_txt(WORD_process_txt)
          , Frame_maxtask, Frame_running, Frame_sleepin
          , Frame_stopped, Frame_zombied));
       Msg_row += 1;
@@ -3359,14 +3363,14 @@ static void summary_show (void) {
 
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
-         summaryhlp(&smpcpu[Cpu_tot], "Cpu(s):");
+         summaryhlp(&smpcpu[Cpu_tot], "Cpu(s):");                  // nls_maybe
          Msg_row += 1;
       } else {
          int i;
          char tmp[MEDBUFSIZ];
          // display each cpu's states separately, screen height permitting...
          for (i = 0; i < Cpu_tot; i++) {
-            snprintf(tmp, sizeof(tmp), "Cpu%-3d:", smpcpu[i].id);
+            snprintf(tmp, sizeof(tmp), "Cpu%-3d:", smpcpu[i].id);  // nls_maybe
             summaryhlp(&smpcpu[i], tmp);
             Msg_row += 1;
             if (!isROOM(anyFLG, 1)) break;
@@ -3378,14 +3382,14 @@ static void summary_show (void) {
    if (isROOM(View_MEMORY, 2)) {
     #define mkM(x) (unsigned long)(kb_main_ ## x >> shift)
     #define mkS(x) (unsigned long)(kb_swap_ ## x >> shift)
-      const char *which = "Kb";
+      const char *which = N_txt(AMT_kilobyte_txt);
       int shift = 0;
 
       /*** hotplug_acclimated ***/
-      if (kb_main_total > 9999999)       { which = "Mb"; shift = 10; }
-      if (kb_main_total > 9999999999ull) { which = "Gb"; shift = 20; }
+      if (kb_main_total > 9999999)    { which = N_txt(AMT_megabyte_txt); shift = 10; }
+      if (kb_main_total > 9999999999) { which = N_txt(AMT_gigabyte_txt); shift = 20; }
 
-      show_special(0, fmtmk(MEMORY_twolines
+      show_special(0, fmtmk(N_unq(MEMORY_lines_fmt)
          , which, mkM(total), mkM(used), mkM(free),  mkM(buffers)
          , which, mkS(total), mkS(used), mkS(free),  mkM(cached)));
       Msg_row += 2;

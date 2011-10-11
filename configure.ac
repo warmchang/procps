@@ -7,7 +7,7 @@ AC_INIT([procps-ng],
 	[3.3.2],
 	[procps@freelists.org],,[http://gitorious.org/procps])
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([top.c])
+AC_CONFIG_SRCDIR([free.c])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
@@ -141,7 +141,7 @@ else
   AM_CONDITIONAL(WITH_NCURSES, true)
   if test "$enable_watch8bit" = yes; then
     AC_CHECK_LIB([ncursesw], [addwstr], [WATCH_NCURSES_LIBS=-lncursesw],
-                [AC_MSG_ERROR([Cannot find ncurses wide library ncursesw with --enable-watch8bit])]) 
+                [AC_MSG_ERROR([Cannot find ncurses wide library ncursesw with --enable-watch8bit])])
   else
     WATCH_NCURSES_LIBS="-lncurses"
   fi
@@ -181,11 +181,11 @@ if test "x$enable_whining" = xyes; then
   AC_DEFINE(BUILD_WITH_WHINE, 1, [should extra warnings be printed (slackware-ism)])
 fi
 
-if test x"$DEJAGNU" = x                                                        
-then                                                                           
-  DEJAGNU="\$(top_srcdir)/testsuite/global-conf.exp"                         
-fi                                                                             
-AC_SUBST(DEJAGNU)   
+if test x"$DEJAGNU" = x
+then
+  DEJAGNU="\$(top_srcdir)/testsuite/global-conf.exp"
+fi
+AC_SUBST(DEJAGNU)
 
 AC_CONFIG_FILES([
 	Makefile
@@ -196,6 +196,7 @@ AC_CONFIG_FILES([
 	proc/libprocfs.pc
 	ps/Makefile
 	testsuite/Makefile
+	top/Makefile
 ])
 
 AC_OUTPUT
