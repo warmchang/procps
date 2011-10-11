@@ -44,7 +44,6 @@
 #include "proc/version.h" /* procps_version */
 
 static int i_am_pkill = 0;
-static const char *progname = "pgrep";
 
 union el {
 	long	num;
@@ -82,7 +81,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	FILE *fp = err ? stderr : stdout;
 
 	fputs(USAGE_HEADER, fp);
-	fprintf(fp, _(" %s [options] <pattern>\n"), progname);
+	fprintf(fp, _(" %s [options] <pattern>\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, fp);
 	if (i_am_pkill == 0) {
 		fputs(_(" -c, --count               count of matching processes\n"), fp);
@@ -256,8 +255,7 @@ static int conv_uid (const char *restrict name, union el *restrict e)
 
 	pwd = getpwnam (name);
 	if (pwd == NULL) {
-		fprintf (stderr, _("%s: invalid user name: %s\n"),
-			 progname, name);
+		warnx(_("invalid user name: %s"), name);
 		return 0;
 	}
 	e->num = pwd->pw_uid;
@@ -274,8 +272,7 @@ static int conv_gid (const char *restrict name, union el *restrict e)
 
 	grp = getgrnam (name);
 	if (grp == NULL) {
-		fprintf (stderr, _("%s: invalid group name: %s\n"),
-			 progname, name);
+		warnx(_("invalid group name: %s"), name);
 		return 0;
 	}
 	e->num = grp->gr_gid;
@@ -286,8 +283,7 @@ static int conv_gid (const char *restrict name, union el *restrict e)
 static int conv_pgrp (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
-		fprintf (stderr, _("%s: invalid process group: %s\n"),
-			 progname, name);
+		warnx(_("invalid process group: %s"), name);
 		return 0;
 	}
 	if (e->num == 0)
@@ -299,8 +295,7 @@ static int conv_pgrp (const char *restrict name, union el *restrict e)
 static int conv_sid (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
-		fprintf (stderr, _("%s: invalid session id: %s\n"),
-			 progname, name);
+		warnx(_("invalid session id: %s"), name);
 		return 0;
 	}
 	if (e->num == 0)
@@ -312,8 +307,7 @@ static int conv_sid (const char *restrict name, union el *restrict e)
 static int conv_num (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
-		fprintf (stderr, _("%s: not a number: %s\n"),
-			 progname, name);
+		warnx(_("not a number: %s"), name);
 		return 0;
 	}
 	return 1;
@@ -589,9 +583,8 @@ static void parse_opts (int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
-	if (strstr (argv[0], "pkill")) {
-		i_am_pkill = 1;
-		progname = "pkill";
+	if (strstr (program_invocation_short_name, "pkill")) {
+	        i_am_pkill = 1;
 		/* Look for a signal name or number as first argument */
 		if (argc > 1 && argv[1][0] == '-') {
 			int sig;
@@ -740,14 +733,14 @@ static void parse_opts (int argc, char **argv)
 	}
 
 	if(opt_lock && !opt_pidfile){
-		fprintf(stderr, _("%s: -L without -F makes no sense\n"),progname);
+		warnx(_("-L without -F makes no sense"));
 		usage(0);
 	}
 
 	if(opt_pidfile){
 		opt_pid = read_pidfile();
 		if(!opt_pid){
-			fprintf(stderr, _("%s: pidfile not valid\n"),progname);
+			warnx(_("pidfile not valid"));
 			usage(0);
 		}
 	}
@@ -757,14 +750,13 @@ static void parse_opts (int argc, char **argv)
 	else if (argc - optind > 1)
 		usage (0);
 	else if (criteria_count == 0) {
-		fprintf (stderr, _("%s: No matching criteria specified\n"),
-			 progname);
+		warnx(_("No matching criteria specified"));
 		usage (0);
 	}
 }
 
 
-int main (int argc, char *argv[])
+int main (int argc, char **argv)
 {
 	union el *procs;
 	int num;
@@ -775,10 +767,12 @@ int main (int argc, char *argv[])
 	if (i_am_pkill) {
 		int i;
 		for (i = 0; i < num; i++) {
-			if (kill (procs[i].num, opt_signal) != -1) continue;
-			if (errno==ESRCH) continue; // gone now, which is OK
-			fprintf (stderr, "pkill: %ld - %s\n",
-				 procs[i].num, strerror (errno));
+			if (kill (procs[i].num, opt_signal) != -1)
+			        continue;
+			if (errno==ESRCH)
+				 // gone now, which is OK
+			        continue;
+			warn(_("killing pid %ld failed"));
 		}
 	} else {
 		if (opt_count) {
