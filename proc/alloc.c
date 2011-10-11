@@ -12,7 +12,6 @@
 
 #include "alloc.h"
 
-
 static void xdefault_error(const char *restrict fmts, ...) __attribute__((format(printf,1,2)));
 static void xdefault_error(const char *restrict fmts, ...) {
     va_list va;

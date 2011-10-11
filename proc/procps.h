@@ -71,8 +71,10 @@
 #define expected(x,y)   (x)
 #endif
 
-#if SHARED==1 && (__GNUC__ > 2 || __GNUC_MINOR__ >= 96)
-#define LABEL_OFFSET
+#ifdef SHARED
+# if SHARED==1 && (__GNUC__ > 2 || __GNUC_MINOR__ >= 96)
+#  define LABEL_OFFSET
+# endif
 #endif
 
 #define STRINGIFY_ARG(a)	#a

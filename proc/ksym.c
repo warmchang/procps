@@ -275,7 +275,7 @@ open_again:
   close(fd);
   return;
 hell:
-  if(buf) free(buf);
+  free(buf);
   *bufp = NULL;
   *roomp = 0;   /* this function will never work again */
   total = 0;
@@ -321,9 +321,11 @@ bad_parse:
   }
 quiet_goodbye:
   idx_room = 0;
-  if(ksyms_data) free(ksyms_data) , ksyms_data = NULL;
+  free(ksyms_data);
+  ksyms_data = NULL;
   ksyms_room = 0;
-  if(ksyms_index) free(ksyms_index) , ksyms_index = NULL;
+  free(ksyms_index);
+  ksyms_index = NULL;
   ksyms_count = 0;
   return 0;
 }
@@ -445,7 +447,7 @@ bad_open:
 
   sysmap_room=0;
   sysmap_count=0;
-  if(sysmap_index) free(sysmap_index);
+  free(sysmap_index);
   sysmap_index = NULL;
   if(fd>=0) close(fd);
   if(sysmap_data) munmap(sysmap_data, sbuf.st_size + 1);

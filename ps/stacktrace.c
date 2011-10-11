@@ -128,7 +128,7 @@ void debug(int method, char *prog_name){
   char *args[4] = { "gdb", NULL, NULL, NULL };
   int x;
   
-  snprintf (buf, 99, "%d", getpid ());
+  snprintf (buf, 16, "%d", getpid ());
 
   args[1] = prog_name;
   args[2] = buf;

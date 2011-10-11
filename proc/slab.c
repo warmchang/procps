@@ -141,7 +141,8 @@ static int parse_slabinfo20(struct slab_info **list, struct slab_stat *stats,
 		if (entries++ == 0)
 			*list = curr;
 		else
-			prev->next = curr;
+			if (prev)
+				prev->next = curr;
 
 		assigned = sscanf(buffer, "%" STRINGIFY(SLAB_INFO_NAME_LEN)
 				"s %d %d %d %d %d : tunables %*d %*d %*d : \
@@ -218,7 +219,8 @@ static int parse_slabinfo11(struct slab_info **list, struct slab_stat *stats,
 		if (entries++ == 0)
 			*list = curr;
 		else
-			prev->next = curr;
+			if (prev)
+				prev->next = curr;
 
 		assigned = sscanf(buffer, "%" STRINGIFY(SLAB_INFO_NAME_LEN)
 				"s %d %d %d %d %d %d",
