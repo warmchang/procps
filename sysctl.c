@@ -151,7 +151,7 @@ static int ReadSetting(const char *restrict const name) {
    struct stat ts;
 
    if (!name || !*name) {
-      fprintf(stderr, _("error: \"%s\" is an unknown key\n"), name);
+      warnx(_("\"%s\" is an unknown key"), name);
       return -1;
    }
 
@@ -176,7 +176,7 @@ static int ReadSetting(const char *restrict const name) {
 
    if (stat(tmpname, &ts) < 0) {
       if (!IgnoreError) {
-         perror(tmpname);
+         warn(_("cannot stat %s"), tmpname);
          rc = -1;
       }
       goto out;
@@ -199,16 +199,16 @@ static int ReadSetting(const char *restrict const name) {
       switch(errno) {
       case ENOENT:
          if (!IgnoreError) {
-            fprintf(stderr, _("error: \"%s\" is an unknown key\n"), outname);
+            warnx(_("\"%s\" is an unknown key"), outname);
             rc = -1;
          }
          break;
       case EACCES:
-         fprintf(stderr, _("error: permission denied on key '%s'\n"), outname);
+         warnx(_("permission denied on key '%s'"), outname);
          rc = -1;
          break;
       default:
-         fprintf(stderr, _("error: \"%s\" reading key \"%s\"\n"), strerror(errno), outname);
+         warn(_("reading key \"%s\""), outname);
          rc = -1;
          break;
       }
@@ -236,7 +236,7 @@ static int ReadSetting(const char *restrict const name) {
       } else {
          switch(errno) {
          case EACCES:
-            fprintf(stderr, _("error: permission denied on key '%s'\n"), outname);
+            warnx(_("permission denied on key '%s'"), outname);
             rc = -1;
             break;
          case EISDIR:{
@@ -249,7 +249,7 @@ static int ReadSetting(const char *restrict const name) {
             goto out;
          }
          default:
-            fprintf(stderr, _("error: \"%s\" reading key \"%s\"\n"), strerror(errno), outname);
+            warnx(_("reading key \"%s\""), outname);
             rc = -1;
          case 0:
             break;
@@ -279,7 +279,7 @@ static int DisplayAll(const char *restrict const path) {
    dp = opendir(path);
 
    if (!dp) {
-      fprintf(stderr, _("error: unable to open directory \"%s\"\n"), path);
+      warnx(_("unable to open directory \"%s\""), path);
       rc = -1;
    } else {
       readdir(dp);  // skip .
@@ -290,7 +290,7 @@ static int DisplayAll(const char *restrict const path) {
          sprintf(tmpdir, "%s%s", path, de->d_name);
          rc2 = stat(tmpdir, &ts);
          if (rc2 != 0) {
-            perror(tmpdir);
+            warn(_("cannot stat %s"), tmpdir);
          } else {
             if (S_ISDIR(ts.st_mode)) {
                strcat(tmpdir, "/");
@@ -328,14 +328,14 @@ static int WriteSetting(const char *setting) {
    equals = strchr(setting, '=');
  
    if (!equals) {
-      fprintf(stderr, _("error: \"%s\" must be of the form name=value\n"), setting);
+      warnx(_("\"%s\" must be of the form name=value"), setting);
       return -1;
    }
 
    value = equals + 1;      /* point to the value in name=value */   
 
    if (!*name || !*value || name == equals) { 
-      fprintf(stderr, _("error: Malformed setting \"%s\"\n"), setting);
+      warnx(_("Malformed setting \"%s\""), setting);
       return -2;
    }
 
@@ -354,19 +354,19 @@ static int WriteSetting(const char *setting) {
  
    if (stat(tmpname, &ts) < 0) {
       if (!IgnoreError) {
-         perror(tmpname);
+         warn(_("cannot stat %s"), tmpname);
          rc = -1;
       }
       goto out;
    }
 
    if ((ts.st_mode & S_IWUSR) == 0) {
-      fprintf(stderr, _("error: \"%s\" setting key \"%s\"\n"), strerror(EACCES), outname);
+      warn(_("setting key \"%s\""), outname);
       goto out;
    }
 
    if (S_ISDIR(ts.st_mode)) {
-      fprintf(stderr, _("error: \"%s\" setting key \"%s\"\n"), strerror(EACCES), outname);
+      warn(_("setting key \"%s\""), outname);
       goto out;
    }
 
@@ -376,28 +376,28 @@ static int WriteSetting(const char *setting) {
       switch(errno) {
       case ENOENT:
          if (!IgnoreError) {
-            fprintf(stderr, _("error: \"%s\" is an unknown key\n"), outname);
+            warnx(_("\"%s\" is an unknown key"), outname);
             rc = -1;
          }
          break;
       case EACCES:
-         fprintf(stderr, _("error: permission denied on key '%s'\n"), outname);
+         warnx(_("permission denied on key '%s'"), outname);
          rc = -1;
          break;
       default:
-         fprintf(stderr, _("error: \"%s\" setting key \"%s\"\n"), strerror(errno), outname);
+         warn(_("setting key \"%s\""), outname);
          rc = -1;
          break;
       }
    } else {
       rc = fprintf(fp, "%s\n", value);
       if (rc < 0) {
-         fprintf(stderr, _("error: \"%s\" setting key \"%s\"\n"), strerror(errno), outname);
+         warn(_("setting key \"%s\""), outname);
          fclose(fp);
       } else {
          rc=fclose(fp);
          if (rc != 0) 
-            fprintf(stderr, _("error: \"%s\" setting key \"%s\"\n"), strerror(errno), outname);
+            warn(_("setting key \"%s\""), outname);
       }
       if (rc==0 && !Quiet) {
          if (NameOnly) {
@@ -456,7 +456,7 @@ static int Preload(const char *restrict const filename) {
    ;
 
    if (!fp) {
-      fprintf(stderr, _("error: unable to open preload file \"%s\"\n"), filename);
+      warn(_("cannot open \"%s\""), filename);
       return -1;
    }
 
@@ -472,7 +472,7 @@ static int Preload(const char *restrict const filename) {
 
       name = strtok(t, "=");
       if (!name || !*name) {
-         fprintf(stderr, _("warning: %s(%d): invalid syntax, continuing...\n"), filename, n);
+         warnx(_("%s(%d): invalid syntax, continuing..."), filename, n);
          continue;
       }
 
@@ -484,7 +484,7 @@ static int Preload(const char *restrict const filename) {
 
       value = strtok(NULL, "\n\r");
       if (!value || !*value) {
-         fprintf(stderr, _("warning: %s(%d): invalid syntax, continuing...\n"), filename, n);
+         warnx(_("%s(%d): invalid syntax, continuing..."), filename, n);
          continue;
       }
 
