@@ -63,11 +63,16 @@ static char *pattern;
 static int pattern_match(const char *string, const char *pattern);
 
 static void slashdot(char *restrict p, char old, char new){
+  int warned = 1;
   p = strpbrk(p,"/.");
   if(!p) return;            /* nothing -- can't be, but oh well */
   if(*p==new) return;       /* already in desired format */
   while(p){
     char c = *p;
+    if((*(p+1) == '/' || *(p+1) == '.') && warned) {
+      warnx(_("separators should not be repeated: %s"), p);
+      warned = 0;
+    }
     if(c==old) *p=new;
     if(c==new) *p=old;
     p = strpbrk(p+1,"/.");
