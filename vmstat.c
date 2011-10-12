@@ -291,10 +291,8 @@ static int diskpartition_format(const char* partition_name){
     const char format[] = "%20u %10llu %10u %10llu\n";
 
     fDiskstat=fopen("/proc/diskstats","rb");
-    if(!fDiskstat){
-        fprintf(stderr, _("Your kernel doesn't support diskstat. (2.5.70 or above required)\n"));
-        exit(EXIT_FAILURE);
-    }
+    if(!fDiskstat)
+        errx(EXIT_FAILURE, _("Your kernel doesn't support diskstat. (2.5.70 or above required)"));
 
     fclose(fDiskstat);
     ndisks=getdiskstat(&disks,&partitions);
@@ -406,10 +404,8 @@ static void diskformat(void){
       free(disks);
       free(partitions);
     }
-  }else{
-    fprintf(stderr, _("Your kernel doesn't support diskstat (2.5.70 or above required)\n"));
-    exit(EXIT_FAILURE);
-  } 
+  }else
+    errx(EXIT_FAILURE, _("Your kernel doesn't support diskstat (2.5.70 or above required)"));
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -428,7 +424,7 @@ static void slabformat (void){
 
   fSlab=fopen("/proc/slabinfo", "rb");
   if(!fSlab){
-    fprintf(stderr, _("Your kernel doesn't support slabinfo or your permissions are insufficient.\n"));
+    warnx(_("Your kernel doesn't support slabinfo or your permissions are insufficient."));
     return;
   }
 
@@ -650,8 +646,7 @@ int main(int argc, char *argv[]) {
 	case 'm': dataUnit = UNIT_m; break;
 	case 'M': dataUnit = UNIT_M; break;
 	default:
-	  fprintf(stderr, _("-S requires k, K, m or M (default is kb)\n"));
-	  exit(EXIT_FAILURE);
+	  errx(EXIT_FAILURE, _("-S requires k, K, m or M (default is kb)"));
 	}
 	szDataUnit[0] = optarg[0];
 	break;
