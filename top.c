@@ -1412,7 +1412,7 @@ static void calibrate_fields (void) {
             f = w->pflgsall[i + w->begpflg];
             w->procflgs[i] = f;
 #ifndef USE_X_COLHDR
-            if (P_MAXPFLGS < f) continue;
+            if (P_MAXPFLGS <= f) continue;
 #endif
             h = Fieldstab[f].head;
             // oops, won't fit -- we're outta here...
@@ -1463,7 +1463,7 @@ static void calibrate_fields (void) {
                w->hdrcaplen += strlen(Caps_off) + strlen(w->capclr_msg);
             }
 #else
-            if (P_MAXPFLGS < f) continue;
+            if (P_MAXPFLGS <= f) continue;
 #endif
             h = Fieldstab[f].head;
             if (P_WCH == f) needpsdb = 1;
@@ -3334,8 +3334,8 @@ static void summary_show (void) {
       int shift = 0;
 
       /*** hotplug_acclimated ***/
-      if (kb_main_total > 9999999)    { which = "Mb"; shift = 10; }
-      if (kb_main_total > 9999999999) { which = "Gb"; shift = 20; }
+      if (kb_main_total > 9999999)       { which = "Mb"; shift = 10; }
+      if (kb_main_total > 9999999999ull) { which = "Gb"; shift = 20; }
 
       show_special(0, fmtmk(MEMORY_twolines
          , which, mkM(total), mkM(used), mkM(free),  mkM(buffers)
