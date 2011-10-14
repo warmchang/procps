@@ -40,14 +40,14 @@
 #include <unistd.h>
 #include <values.h>
 
-#include "devname.h"
-#include "procps.h"
-#include "readproc.h"
-#include "sig.h"
-#include "sysinfo.h"
-#include "version.h"
-#include "wchan.h"
-#include "whattime.h"
+#include "../proc/devname.h"
+#include "../proc/procps.h"
+#include "../proc/readproc.h"
+#include "../proc/sig.h"
+#include "../proc/sysinfo.h"
+#include "../proc/version.h"
+#include "../proc/wchan.h"
+#include "../proc/whattime.h"
 
 #include "top.h"
 #include "top_nls.h"
@@ -1993,7 +1993,7 @@ static void procs_refresh (void) {
 
    prochlp(NULL);                                // prep for a new frame
    if (NULL == (PT = openproc(Frames_libflags, Monpids)))
-      error_exit(fmtmk(N_fmt(FAIL_openlib_txt), strerror(errno)));
+      error_exit(fmtmk(N_fmt(FAIL_openlib_fmt), strerror(errno)));
    read_something = Thread_mode ? readeither : readproc;
 
    for (;;) {
@@ -2289,14 +2289,14 @@ static void parse_args (char **args) {
                else if (*args) cp = *args++;
                else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
                if (1 != sscanf(cp, "%d", &Loops) || 1 > Loops)
-                  error_exit(fmtmk(N_fmt(BAD_niterate_arg), cp));
+                  error_exit(fmtmk(N_fmt(BAD_niterate_fmt), cp));
                break;
             case 'p':
                if (Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
                do {
                   if (cp[1]) cp++;
                   else if (*args) cp = *args++;
-                  else error_exit(fmtmk(N_txt(MISSING_args_fmt), ch));
+                  else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
                   if (Monpidsidx >= MONPIDMAX)
                      error_exit(fmtmk(N_fmt(LIMIT_exceed_fmt), MONPIDMAX));
                   if (1 != sscanf(cp, "%d", &Monpids[Monpidsidx])
@@ -2322,7 +2322,7 @@ static void parse_args (char **args) {
                if (Monpidsidx || Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
-               else error_exit(fmtmk(N_txt(MISSING_args_fmt), ch));
+               else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
                if ((err = user_certify(Curwin, cp, ch))) error_exit(err);
                cp += strlen(cp);
                break;
@@ -2463,7 +2463,7 @@ static WIN_t *win_select (char ch) {
 static int win_warn (int what) {
    switch (what) {
       case Warn_ALT:
-         show_msg(N_txt(DISABLED_cmd_fmt));
+         show_msg(N_txt(DISABLED_cmd_txt));
          break;
       case Warn_VIZ:
          show_msg(fmtmk(N_fmt(DISABLED_win_fmt), Curwin->grpname));

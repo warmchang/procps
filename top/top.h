@@ -20,7 +20,7 @@
 #ifndef _Itop
 #define _Itop
 
-#include "proc/readproc.h"
+#include "../proc/readproc.h"
 
         /* Development/Debugging defines ----------------------------------- */
 //#define ATEOJ_RPTHSH            /* report on hash specifics, at end-of-job */

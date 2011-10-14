@@ -19,8 +19,7 @@
 #ifndef _Itop_nls
 #define _Itop_nls
 
-//#include "../include/c.h"
-#include "nls.h"
+#include "../include/nls.h"
 
         /*
          * These are our three string tables with the following contents:
@@ -52,11 +51,11 @@ extern const char *Uniq_nlstab[];
          */
 enum norm_nls {
    AMT_kilobyte_txt, AMT_megabyte_txt, AMT_gigabyte_txt, BAD_delayint_fmt,
-   BAD_integers_txt, BAD_max_task_txt, BAD_mon_pids_fmt, BAD_niterate_arg,
+   BAD_integers_txt, BAD_max_task_txt, BAD_mon_pids_fmt, BAD_niterate_fmt,
    BAD_numfloat_txt, BAD_signalid_txt, BAD_username_txt, BAD_widtharg_fmt,
    CHOOSE_group_txt, COLORS_nomap_txt, DELAY_badarg_txt, DELAY_change_fmt,
-   DELAY_secure_txt, DISABLED_cmd_fmt, DISABLED_win_fmt, EXIT_signals_fmt,
-   FAIL_alloc_c_txt, FAIL_alloc_r_txt, FAIL_openlib_txt, FAIL_rc_open_fmt,
+   DELAY_secure_txt, DISABLED_cmd_txt, DISABLED_win_fmt, EXIT_signals_fmt,
+   FAIL_alloc_c_txt, FAIL_alloc_r_txt, FAIL_openlib_fmt, FAIL_rc_open_fmt,
    FAIL_re_nice_fmt, FAIL_sigmask_fmt, FAIL_signals_fmt, FAIL_sigstop_fmt,
    FAIL_statget_txt, FAIL_statopn_fmt, FAIL_tty_get_txt, FAIL_tty_mod_fmt,
    FAIL_tty_raw_fmt, FAIL_widecpu_txt, FAIL_widepid_txt, FOREST_modes_fmt,
