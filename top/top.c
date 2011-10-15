@@ -706,7 +706,7 @@ static inline void show_scroll (void) {
          *    Our special formatting consists of:
          *       "some text <_delimiter_> some more text <_delimiter_>...\n"
          *    Where <_delimiter_> is a single byte in the range of:
-         *       \01 through \10  (in decimalizee, 1 - 8)
+         *       \001 through \010  (in decimalizee, 1 - 8)
          *    and is used to select an 'attribute' from a capabilities table
          *    which is then applied to the *preceding* substring.
          * Once recognized, the delimiter is replaced with a null character
@@ -730,12 +730,12 @@ static void show_special (int interact, const char *glob) {
            the real captab is now found in a group's WIN_t !
      +------------------------------------------------------+
      | char *captab[] = {                 :   Cap's/Delim's |
-     |   Cap_norm, Cap_norm,              =   \00, \01,     |
-     |   cap_bold, capclr_sum,            =   \02, \03,     |
-     |   capclr_msg, capclr_pmt,          =   \04, \05,     |
-     |   capclr_hdr,                      =   \06,          |
-     |   capclr_rowhigh,                  =   \07,          |
-     |   capclr_rownorm  };               =   \10 [octal!]  |
+     |   Cap_norm, Cap_norm,              =   \000, \001,   |
+     |   cap_bold, capclr_sum,            =   \002, \003,   |
+     |   capclr_msg, capclr_pmt,          =   \004, \005,   |
+     |   capclr_hdr,                      =   \006,         |
+     |   capclr_rowhigh,                  =   \007,         |
+     |   capclr_rownorm  };               =   \010 [octal!] |
      +------------------------------------------------------+ */
   /* ( pssst, after adding the termcap transitions, row may )
      ( exceed 300+ bytes, even in an 80x24 terminal window! ) */
@@ -1208,9 +1208,9 @@ static FLD_t Fieldstab[] = {
 /* .head + .fmts anomolies:
         entries shown with NULL are either valued at runtime (see zap_fieldstab)
         or, in the case of .fmts, may represent variable width fields
-   .dsc anomolies:
+   .desc anomolies:
         the .desc field is always null initially, under nls support
-   .lflg anomolies:                                                NULL                         .
+   .lflg anomolies:
         P_UED, L_NONE  - natural outgrowth of 'stat()' in readproc        (euid)
         P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
         P_CMD, L_stat  - may yet require L_CMDLINE in calibrate_fields    (cmd/cmdline)

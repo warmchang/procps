@@ -33,7 +33,7 @@ extern const char *Norm_nlstab[];
 extern const char *Uniq_nlstab[];
 
         /*
-         * Simle optional macros to ease table access.
+         * Simple optional macros to ease table access.
          * The N_txt and N_fmt macros are interchangeable but
          * highlight the two types of strings found in Norm_nlstable.
          */
