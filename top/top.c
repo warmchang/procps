@@ -1699,8 +1699,7 @@ static void zap_fieldstab (void) {
    static char fmts_pid[8];
    static char fmts_cpu[8];
    static int once;
-   int i;
-   unsigned digits;
+   unsigned i, digits;
    char buf[8];
 
    if (once) goto always;
