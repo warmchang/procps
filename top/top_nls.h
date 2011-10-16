@@ -19,8 +19,6 @@
 #ifndef _Itop_nls
 #define _Itop_nls
 
-#include "../include/nls.h"
-
         /*
          * These are our three string tables with the following contents:
          *    Desc : field descriptions not to exceed 20 screen positions
