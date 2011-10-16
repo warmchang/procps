@@ -31,8 +31,14 @@
 #include "proc/procps.h"	/* char *user_from_uid(uid_t uid) */
 #include "proc/version.h"	/* procps_version */
 
-static int f_flag, i_flag, v_flag, w_flag, n_flag;
-
+struct run_time_conf_t {
+	int fast;
+	int interactive;
+	int verbose;
+	int warnings;
+	int noaction;
+	int debugging;
+};
 static int tty_count, uid_count, cmd_count, pid_count;
 static int *ttys;
 static uid_t *uids;
@@ -63,13 +69,14 @@ static void display_kill_version(void)
 }
 
 /* kill or nice a process */
-static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd)
+static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd,
+		      struct run_time_conf_t *run_time)
 {
 	int failed;
 	int saved_errno;
 	char dn_buf[1000];
 	dev_to_tty(dn_buf, 999, tty, pid, ABBREV_DEV);
-	if (i_flag) {
+	if (run_time->interactive) {
 		char buf[8];
 		fprintf(stderr, "%-8s %-8s %5d %-16.16s   ? ",
 			(char *)dn_buf, user_from_uid(uid), pid, cmd);
@@ -86,28 +93,28 @@ static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd)
 	else
 		failed = setpriority(PRIO_PROCESS, pid, sig_or_pri);
 	saved_errno = errno;
-	if (w_flag && failed) {
+	if (run_time->warnings && failed) {
 		fprintf(stderr, "%-8s %-8s %5d %-16.16s   ",
 			(char *)dn_buf, user_from_uid(uid), pid, cmd);
 		errno = saved_errno;
 		perror("");
 		return;
 	}
-	if (i_flag)
+	if (run_time->interactive)
 		return;
-	if (v_flag) {
+	if (run_time->verbose) {
 		printf("%-8s %-8s %5d %-16.16s\n",
 		       (char *)dn_buf, user_from_uid(uid), pid, cmd);
 		return;
 	}
-	if (n_flag) {
+	if (run_time->noaction) {
 		printf("%d\n", pid);
 		return;
 	}
 }
 
 /* check one process */
-static void check_proc(int pid)
+static void check_proc(int pid, struct run_time_conf_t *run_time)
 {
 	char buf[128];
 	struct stat statbuf;
@@ -122,7 +129,7 @@ static void check_proc(int pid)
 	fd = open(buf, O_RDONLY);
 	if (fd == -1) {
 		/* process exited maybe */
-		if (pids && w_flag)
+		if (pids && run_time->warnings)
 			printf(_("WARNING: process %d could not be found.\n"),
 			       pid);
 		return;
@@ -169,14 +176,13 @@ static void check_proc(int pid)
 	fprintf(stderr, "PID %d, UID %d, TTY %d,%d, COMM %s\n",
 		pid, statbuf.st_uid, tty >> 8, tty & 0xf, tmp);
 	*/
-	hurt_proc(tty, statbuf.st_uid, pid, tmp);
+	hurt_proc(tty, statbuf.st_uid, pid, tmp, run_time);
  closure:
 	/* kill/nice _first_ to avoid PID reuse */
 	close(fd);
 }
 
 /* debug function */
-#if 0
 static void show_lists(void)
 {
 	int i;
@@ -215,10 +221,9 @@ static void show_lists(void)
 	} else
 		fprintf(stderr, "\n");
 }
-#endif
 
 /* iterate over all PIDs */
-static void iterate(void)
+static void iterate(struct run_time_conf_t *run_time)
 {
 	int pid;
 	DIR *d;
@@ -226,12 +231,12 @@ static void iterate(void)
 	if (pids) {
 		pid = pid_count;
 		while (pid--)
-			check_proc(pids[pid]);
+			check_proc(pids[pid], run_time);
 		return;
 	}
 #if 0
 	/* could setuid() and kill -1 to have the kernel wipe out a user */
-	if (!ttys && !cmds && !pids && !i_flag) {
+	if (!ttys && !cmds && !pids && !run_time->interactive) {
 	}
 #endif
 	d = opendir("/proc");
@@ -246,7 +251,7 @@ static void iterate(void)
 			continue;
 		pid = atoi(de->d_name);
 		if (pid)
-			check_proc(pid);
+			check_proc(pid, run_time);
 	}
 	closedir(d);
 }
@@ -319,9 +324,9 @@ static void __attribute__ ((__noreturn__)) skillsnice_usage(void)
 }
 
 /* kill */
-static void kill_main(int argc,
-		      const char *restrict const *restrict argv) NORETURN;
-static void kill_main(int argc, const char *restrict const *restrict argv)
+static void __attribute__ ((__noreturn__))
+kill_main(int argc,  const char *restrict const *restrict argv,
+          struct run_time_conf_t *run_time)
 {
 	const char *sigptr;
 	int signo = SIGTERM;
@@ -427,9 +432,11 @@ static void _skillsnice_usage(int line)
 #define NEXTARG (argc?( argc--, ((argptr=*++argv)) ):NULL)
 
 /* common skill/snice argument parsing code */
+
 #define NO_PRI_VAL ((int)0xdeafbeef)
 static void skillsnice_parse(int argc,
-			     const char *restrict const *restrict argv)
+			     const char *restrict const *restrict argv,
+			     struct run_time_conf_t *run_time)
 {
 	int signo = -1;
 	int prino = NO_PRI_VAL;
@@ -507,19 +514,19 @@ static void skillsnice_parse(int argc,
 					}
 					goto selection_collection;
 				case 'f':
-					f_flag++;
+					run_time->fast++;
 					break;
 				case 'i':
-					i_flag++;
+					run_time->interactive++;
 					break;
 				case 'v':
-					v_flag++;
+					run_time->verbose++;
 					break;
 				case 'w':
-					w_flag++;
+					run_time->warnings++;
 					break;
 				case 'n':
-					n_flag++;
+					run_time->noaction++;
 					break;
 				case 0:
 					NEXTARG;
@@ -617,17 +624,17 @@ static void skillsnice_parse(int argc,
 		fprintf(stderr, _("ERROR: no process selection criteria.\n"));
 		skillsnice_usage();
 	}
-	if ((f_flag | i_flag | v_flag | w_flag | n_flag) & ~1) {
+	if ((run_time->fast | run_time->interactive | run_time->verbose | run_time->warnings | run_time->noaction) & ~1) {
 		fprintf(stderr,
 			_("ERROR: general flags may not be repeated.\n"));
 		skillsnice_usage();
 	}
-	if (i_flag && (v_flag | f_flag | n_flag)) {
+	if (run_time->interactive && (run_time->verbose | run_time->fast | run_time->noaction)) {
 		fprintf(stderr,
 			_("ERROR: -i makes no sense with -v, -f, and -n.\n"));
 		skillsnice_usage();
 	}
-	if (v_flag && (i_flag | f_flag)) {
+	if (run_time->verbose && (run_time->interactive | run_time->fast)) {
 		fprintf(stderr,
 			_("ERROR: -v makes no sense with -i and -f.\n"));
 		skillsnice_usage();
@@ -637,7 +644,7 @@ static void skillsnice_parse(int argc,
 		prino = 4;
 	if (signo < 0)
 		signo = SIGTERM;
-	if (n_flag) {
+	if (run_time->noaction) {
 		program = PROG_SKILL;
 		/* harmless */
 		signo = 0;
@@ -651,6 +658,8 @@ static void skillsnice_parse(int argc,
 /* main body */
 int main(int argc, const char *argv[])
 {
+	struct run_time_conf_t run_time;
+	memset(&run_time, 0, sizeof(struct run_time_conf_t));
 	my_pid = getpid();
 
 	if (strcmp(program_invocation_short_name, "kill") == 0 ||
@@ -667,13 +676,13 @@ int main(int argc, const char *argv[])
 	case PROG_SNICE:
 	case PROG_SKILL:
 		setpriority(PRIO_PROCESS, my_pid, -20);
-		skillsnice_parse(argc, argv);
-		/* show_lists(); */
-		/* this is it, go get them */
-		iterate();
+		skillsnice_parse(argc, argv, &run_time);
+		if (run_time.debugging)
+			show_lists();
+		iterate(&run_time);
 		break;
 	case PROG_KILL:
-		kill_main(argc, argv);
+		kill_main(argc, argv, &run_time);
 		break;
 	default:
 		fprintf(stderr, _("skill: \"%s\" is not support\n"),
