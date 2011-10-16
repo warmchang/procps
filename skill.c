@@ -269,6 +269,55 @@ static void __attribute__ ((__noreturn__)) kill_usage(void)
 	exit(1);
 }
 
+/* skill and snice help */
+static void __attribute__ ((__noreturn__)) skillsnice_usage(void)
+{
+	fputs(USAGE_HEADER, stderr);
+
+	if (program == PROG_SKILL) {
+		fprintf(stderr,
+			" %s [signal] [options] <expression>\n",
+			program_invocation_short_name);
+	} else {
+		fprintf(stderr,
+			" %s [new priority] [options] <expression>\n",
+			program_invocation_short_name);
+	}
+	fputs(USAGE_OPTIONS, stderr);
+	fputs(_(" -f             fast mode (not implemented)\n"), stderr);
+	fputs(_(" -i             interactive\n"), stderr);
+	fputs(_(" -l             list all signal names\n"), stderr);
+	fputs(_(" -L             list all signal names in a nice table\n"),
+	      stderr);
+	fputs(_(" -n             no action\n"), stderr);
+	fputs(_(" -v             explain what is being done\n"), stderr);
+	fputs(_(" -w             enable warnings (not implemented)\n"), stderr);
+	fputs(USAGE_VERSION, stderr);
+	fputs(_("\n"), stderr);
+	fputs(_("Expression can be: terminal, user, pid, command.\n"), stderr);
+	fputs(_("The options below may be used to ensure correct interpretation.\n"), stderr);
+	fputs(_(" -c <command>   expression is a command name\n"), stderr);
+	fputs(_(" -p <pid>       expression is a process id number\n"), stderr);
+	fputs(_(" -t <tty>       expression is a terminal\n"), stderr);
+	fputs(_(" -u <username>  expression is a username\n"), stderr);
+	if (program == PROG_SKILL) {
+		fprintf(stderr,
+			_("\n"
+			  "The default signal is TERM. Use -l or -L to list available signals.\n"
+			  "Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.\n"
+			  "Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"));
+		fprintf(stderr, USAGE_MAN_TAIL("skill(1)"));
+	} else {
+		fprintf(stderr,
+			_("\n"
+			  "The default priority is +4. (snice +4 ...)\n"
+			  "Priority numbers range from +20 (slowest) to -20 (fastest).\n"
+			  "Negative priority numbers are restricted to administrative users.\n"));
+		fprintf(stderr, USAGE_MAN_TAIL("snice(1)"));
+	}
+	exit(1);
+}
+
 /* kill */
 static void kill_main(int argc,
 		      const char *restrict const *restrict argv) NORETURN;
@@ -365,57 +414,6 @@ static void kill_main(int argc, const char *restrict const *restrict argv)
 	}
 	exit(exitvalue);
 }
-
-/* skill/snice help */
-static void __attribute__ ((__noreturn__)) skillsnice_usage(void)
-{
-	fputs(USAGE_HEADER, stderr);
-	if (program == PROG_SKILL) {
-		fprintf(stderr,
-			" %s [signal] [options] <expression>\n",
-			program_invocation_short_name);
-	} else {
-		fprintf(stderr,
-			" %s [new priority] [options] <expression>\n",
-			program_invocation_short_name);
-	}
-	fputs(USAGE_OPTIONS, stderr);
-	fputs(_(" -f             fast mode (not implemented)\n"), stderr);
-	fputs(_(" -i             interactive\n"), stderr);
-	fputs(_(" -l             list all signal names\n"), stderr);
-	fputs(_(" -L             list all signal names in a nice table\n"),
-	      stderr);
-	fputs(_(" -n             no action\n"), stderr);
-	fputs(_(" -v             explain what is being done\n"), stderr);
-	fputs(_(" -w             enable warnings (not implemented)\n"), stderr);
-	fputs(USAGE_VERSION, stderr);
-	fputs(_("\n"), stderr);
-	fputs(_("Expression can be: terminal, user, pid, command.\n"), stderr);
-	fputs(_
-	      ("The options below may be used to ensure correct interpretation.\n"),
-	      stderr);
-	fputs(_(" -c <command>   expression is a command name\n"), stderr);
-	fputs(_(" -p <pid>       expression is a process id number\n"), stderr);
-	fputs(_(" -t <tty>       expression is a terminal\n"), stderr);
-	fputs(_(" -u <username>  expression is a username\n"), stderr);
-	if (program == PROG_SKILL) {
-		fprintf(stderr,
-			_("\n"
-			  "The default signal is TERM. Use -l or -L to list available signals.\n"
-			  "Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.\n"
-			  "Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"));
-		fprintf(stderr, USAGE_MAN_TAIL("skill(1)"));
-	} else {
-		fprintf(stderr,
-			_("\n"
-			  "The default priority is +4. (snice +4 ...)\n"
-			  "Priority numbers range from +20 (slowest) to -20 (fastest).\n"
-			  "Negative priority numbers are restricted to administrative users.\n"));
-		fprintf(stderr, USAGE_MAN_TAIL("snice(1)"));
-	}
-	exit(1);
-}
-
 #if 0
 static void _skillsnice_usage(int line)
 {
