@@ -49,11 +49,13 @@ static int saved_argc;
 
 static int sig_or_pri;
 
-static int program = -1;
-#define PROG_KILL  1
-#define PROG_SKILL 2
-/*#define PROG_NICE  3*/	/* easy, but the old one isn't broken */
-#define PROG_SNICE 4
+enum {
+	PROG_UNKNOWN,
+	PROG_KILL,
+	PROG_SKILL,
+	PROG_SNICE
+};
+static int program = PROG_UNKNOWN;
 
 static void display_kill_version(void)
 {
@@ -651,24 +653,18 @@ static void skillsnice_parse(int argc,
 /* main body */
 int main(int argc, const char *argv[])
 {
-	const char *tmpstr;
 	my_pid = getpid();
-	saved_argc = argc;
-	if (!argc) {
-		fprintf(stderr, _("ERROR: could not determine own name.\n"));
-		exit(1);
-	}
-	tmpstr = strrchr(*argv, '/');
-	if (tmpstr)
-		tmpstr++;
-	if (!tmpstr)
-		tmpstr = *argv;
-	if (strstr(tmpstr, "kill"))
+
+	if (strcmp(program_invocation_short_name, "kill") == 0 ||
+	    strcmp(program_invocation_short_name, "lt-kill") == 0)
 		program = PROG_KILL;
-	if (strstr(tmpstr, "skill"))
+	else if (strcmp(program_invocation_short_name, "skill") == 0 ||
+		 strcmp(program_invocation_short_name, "lt-skill") == 0)
 		program = PROG_SKILL;
-	if (strstr(tmpstr, "snice"))
+	else if (strcmp(program_invocation_short_name, "snice") == 0 ||
+		 strcmp(program_invocation_short_name, "lt-snice") == 0)
 		program = PROG_SNICE;
+
 	switch (program) {
 	case PROG_SNICE:
 	case PROG_SKILL:
@@ -682,7 +678,10 @@ int main(int argc, const char *argv[])
 		kill_main(argc, argv);
 		break;
 	default:
-		fprintf(stderr, _("ERROR: no \"%s\" support.\n"), tmpstr);
+		fprintf(stderr, _("skill: \"%s\" is not support\n"),
+			program_invocation_short_name);
+		fprintf(stderr, USAGE_MAN_TAIL("skill(1)"));
+		return 1;
 	}
 	return 0;
 }
