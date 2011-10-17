@@ -360,8 +360,8 @@ static void bye_bye (const char *str) {
       , LINUX_VERSION_PATCH(linux_version_code)
       , procps_version
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
-      , Page_size, Cpu_tot
-      , (unsigned) sizeof(CPU_t), (unsigned)sizeof(HST_t), Page_size / (unsigned)sizeof(HST_t), HHist_siz
+      , Page_size, Cpu_tot , (unsigned) sizeof(CPU_t)
+      , (unsigned)sizeof(HST_t), Page_size / (unsigned)sizeof(HST_t), HHist_siz
       , (unsigned)sizeof(proc_t), (unsigned)sizeof(p->cmd), (unsigned)sizeof(proc_t*)
       , (long)Frames_libflags
       , (unsigned)SCREENMAX, (unsigned)ROWMINSIZ, (unsigned)ROWMAXSIZ
@@ -2255,7 +2255,8 @@ static void parse_args (char **args) {
                if (cp[1]) ++cp;
                else if (*args) cp = *args++;
                if (strspn(cp, numbs_str))
-                  error_exit(fmtmk(N_fmt(WRONG_switch_fmt), cp, Myname, N_txt(USAGE_abbrev_txt)));
+                  error_exit(fmtmk(N_fmt(WRONG_switch_fmt)
+                     , cp, Myname, N_txt(USAGE_abbrev_txt)));
                continue;
             case 'b':
                Batch = 1;
@@ -2342,7 +2343,8 @@ static void parse_args (char **args) {
                continue;
             }
             default :
-               error_exit(fmtmk(N_fmt(UNKNOWN_opts_fmt), *cp, Myname, N_txt(USAGE_abbrev_txt)));
+               error_exit(fmtmk(N_fmt(UNKNOWN_opts_fmt)
+                  , *cp, Myname, N_txt(USAGE_abbrev_txt)));
 
          } // end: switch (*cp)
 
@@ -2943,7 +2945,8 @@ static void keys_task (int ch) {
       case 'S':
          if (VIZCHKw(w)) {
             TOGw(w, Show_CTIMES);
-            show_msg(fmtmk(N_fmt(TIME_accumed_fmt), CHKw(w, Show_CTIMES) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
+            show_msg(fmtmk(N_fmt(TIME_accumed_fmt) , CHKw(w, Show_CTIMES)
+               ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
          }
          break;
       case 'U':
@@ -2958,8 +2961,8 @@ static void keys_task (int ch) {
          if (VIZCHKw(w)) {
             TOGw(w, Show_FOREST);
             if (!ENUviz(w, P_CMD))
-               show_msg(fmtmk(N_fmt(FOREST_modes_fmt)
-                  , CHKw(w, Show_FOREST) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
+               show_msg(fmtmk(N_fmt(FOREST_modes_fmt) , CHKw(w, Show_FOREST)
+                  ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
          }
          break;
       case 'x':
