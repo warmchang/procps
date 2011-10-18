@@ -63,8 +63,9 @@ top_LDADD = @NCURSES_LIBS@
 watch_LDADD = @WATCH_NCURSES_LIBS@
 endif
 
-kill_SOURCES = skill.c
-snice_SOURCES = skill.c
+kill_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
+skill_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
+snice_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
 pkill_SOURCES = pgrep.c
 
 sysconf_DATA = sysctl.conf

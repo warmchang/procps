@@ -8,10 +8,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Library General Public License for more details.
  */
-#include <fcntl.h>
-#include <pwd.h>
 #include <dirent.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <pwd.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +24,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "strutils.h"
 #include "nls.h"
 #include "xalloc.h"
 #include "proc/pwcache.h"
@@ -30,6 +32,8 @@
 #include "proc/devname.h"
 #include "proc/procps.h"	/* char *user_from_uid(uid_t uid) */
 #include "proc/version.h"	/* procps_version */
+
+#define DEFAULT_NICE 4
 
 struct run_time_conf_t {
 	int fast;
@@ -325,7 +329,7 @@ static void __attribute__ ((__noreturn__)) skillsnice_usage(void)
 
 /* kill */
 static void __attribute__ ((__noreturn__))
-kill_main(int argc,  const char *restrict const *restrict argv,
+kill_main(int argc, char ** argv,
           struct run_time_conf_t *run_time)
 {
 	const char *sigptr;
@@ -433,9 +437,33 @@ static void _skillsnice_usage(int line)
 
 /* common skill/snice argument parsing code */
 
+int snice_prio_option(int *argc, char **argv)
+{
+	int i = 1, nargs = *argc;
+	long prio = DEFAULT_NICE;
+
+	while (i < nargs) {
+		if ((argv[i][0] == '-' || argv[i][0] == '+')
+		    && isdigit(argv[i][1])) {
+			prio = strtol_or_err(argv[i],
+					     _("failed to parse argument"));
+			if (prio < INT_MIN || INT_MAX < prio)
+				errx(EXIT_FAILURE,
+				     _("priority %lu out of range"), prio);
+			nargs--;
+			if (nargs - i)
+				memmove(argv + i, argv + i + 1,
+					sizeof(char *) * (nargs - i));
+		} else
+			i++;
+	}
+	*argc = nargs;
+	return (int)prio;
+}
+
 #define NO_PRI_VAL ((int)0xdeafbeef)
 static void skillsnice_parse(int argc,
-			     const char *restrict const *restrict argv,
+			     char ** argv,
 			     struct run_time_conf_t *run_time)
 {
 	int signo = -1;
@@ -445,6 +473,10 @@ static void skillsnice_parse(int argc,
 	const char *restrict argptr;
 	if (argc < 2)
 		skillsnice_usage();
+
+        if (program == PROG_SNICE)
+	        prino = snice_prio_option(&argc, argv);
+
 	if (argc == 2 && argv[1][0] == '-') {
 		if (!strcmp(argv[1], "-L")) {
 			pretty_print_signals();
@@ -474,18 +506,6 @@ static void skillsnice_parse(int argc,
 			signo = signal_name_to_number(argptr + 1);
 			if (signo >= 0) {
 				/* found a signal */
-				if (!NEXTARG)
-					break;
-				continue;
-			}
-		}
-		if (program == PROG_SNICE && prino == NO_PRI_VAL
-		    && (*argptr == '+' || *argptr == '-') && argptr[1]) {
-			long val;
-			char *endp;
-			val = strtol(argptr, &endp, 10);
-			if (!*endp && val <= 999 && val >= -999) {
-				prino = val;
 				if (!NEXTARG)
 					break;
 				continue;
@@ -641,7 +661,7 @@ static void skillsnice_parse(int argc,
 	}
 	/* OK, set up defaults */
 	if (prino == NO_PRI_VAL)
-		prino = 4;
+		prino = DEFAULT_NICE;
 	if (signo < 0)
 		signo = SIGTERM;
 	if (run_time->noaction) {
@@ -656,7 +676,7 @@ static void skillsnice_parse(int argc,
 }
 
 /* main body */
-int main(int argc, const char *argv[])
+int main(int argc, char ** argv)
 {
 	struct run_time_conf_t run_time;
 	memset(&run_time, 0, sizeof(struct run_time_conf_t));
