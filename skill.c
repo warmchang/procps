@@ -461,6 +461,26 @@ int snice_prio_option(int *argc, char **argv)
 	return (int)prio;
 }
 
+int skill_sig_option(int *argc, char **argv)
+{
+	int i, nargs = *argc;
+	int signo = -1;
+	for (i = 1; i < nargs; i++) {
+		if (argv[i][0] == '-') {
+			signo = signal_name_to_number(argv[i] + 1);
+			if (-1 < signo) {
+				if (nargs - i) {
+					nargs--;
+					memmove(argv + i, argv + i + 1,
+						sizeof(char *) * (nargs - i));
+				}
+				return signo;
+			}
+		}
+	}
+	return signo;
+}
+
 #define NO_PRI_VAL ((int)0xdeafbeef)
 static void skillsnice_parse(int argc,
 			     char ** argv,
@@ -474,8 +494,10 @@ static void skillsnice_parse(int argc,
 	if (argc < 2)
 		skillsnice_usage();
 
-        if (program == PROG_SNICE)
-	        prino = snice_prio_option(&argc, argv);
+	if (program == PROG_SNICE)
+		prino = snice_prio_option(&argc, argv);
+	else if (program == PROG_SKILL)
+		signo = skill_sig_option(&argc, argv);
 
 	if (argc == 2 && argv[1][0] == '-') {
 		if (!strcmp(argv[1], "-L")) {
@@ -502,15 +524,6 @@ static void skillsnice_parse(int argc,
 			skillsnice_usage();
 		}
 		force = 0;
-		if (program == PROG_SKILL && signo < 0 && *argptr == '-') {
-			signo = signal_name_to_number(argptr + 1);
-			if (signo >= 0) {
-				/* found a signal */
-				if (!NEXTARG)
-					break;
-				continue;
-			}
-		}
 		/* If '-' found, collect any flags. (but lone "-" is a tty) */
 		if (*argptr == '-' && argptr[1]) {
 			argptr++;
