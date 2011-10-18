@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 
     if (argc > optind) {
 	if ((fd = open(argv[optind], 1)) == -1) {
-	    perror(argv[optind]);
+	    perror("tty");
 	    exit(1);
 	}
     }
