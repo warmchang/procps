@@ -188,6 +188,7 @@ AC_SUBST(DEJAGNU)
 AC_CONFIG_FILES([
 	Makefile
 	include/Makefile
+	lib/Makefile
 	po/Makefile.in
 	proc/Makefile
 	proc/libprocfs.pc
