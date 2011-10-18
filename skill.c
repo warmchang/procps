@@ -9,6 +9,7 @@
  * GNU Library General Public License for more details.
  */
 #include <dirent.h>
+#include <getopt.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -97,7 +98,7 @@ static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd,
 	else
 		failed = setpriority(PRIO_PROCESS, pid, sig_or_pri);
 	saved_errno = errno;
-	if (run_time->warnings && failed) {
+	if ((run_time->warnings && failed) || run_time->debugging) {
 		fprintf(stderr, "%-8s %-8s %5d %-16.16s   ",
 			(char *)dn_buf, user_from_uid(uid), pid, cmd);
 		errno = saved_errno;
@@ -126,7 +127,7 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 	int tty;
 	int fd;
 	int i;
-	if (pid == my_pid)
+	if (pid == my_pid || pid == 0)
 		return;
 	/* pid (cmd) state ppid pgrp session tty */
 	sprintf(buf, "/proc/%d/stat", pid);
@@ -190,6 +191,8 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 static void show_lists(void)
 {
 	int i;
+
+	fprintf(stderr, _("signal: %d\n"), sig_or_pri);
 
 	fprintf(stderr, _("%d TTY: "), tty_count);
 	if (ttys) {
@@ -330,7 +333,7 @@ static void __attribute__ ((__noreturn__)) skillsnice_usage(void)
 /* kill */
 static void __attribute__ ((__noreturn__))
 kill_main(int argc, char ** argv,
-          struct run_time_conf_t *run_time)
+	  struct run_time_conf_t *run_time)
 {
 	const char *sigptr;
 	int signo = SIGTERM;
@@ -481,125 +484,99 @@ int skill_sig_option(int *argc, char **argv)
 	return signo;
 }
 
-#define NO_PRI_VAL ((int)0xdeafbeef)
 static void skillsnice_parse(int argc,
-			     char ** argv,
-			     struct run_time_conf_t *run_time)
+			     char **argv, struct run_time_conf_t *run_time)
 {
 	int signo = -1;
-	int prino = NO_PRI_VAL;
+	int prino = DEFAULT_NICE;
 	int force = 0;
 	int num_found = 0;
+	int ch, i;
 	const char *restrict argptr;
+
+	static const struct option longopts[] = {
+		{"command", required_argument, NULL, 'c'},
+		{"debug", no_argument, NULL, 'd'},
+		{"fast", no_argument, NULL, 'f'},
+		{"interactive", no_argument, NULL, 'i'},
+		{"list", no_argument, NULL, 'l'},
+		{"no-action", no_argument, NULL, 'n'},
+		{"pid", required_argument, NULL, 'p'},
+		{"table", no_argument, NULL, 'L'},
+		{"tty", required_argument, NULL, 't'},
+		{"user", required_argument, NULL, 'u'},
+		{"verbose", no_argument, NULL, 'v'},
+		{"warnings", no_argument, NULL, 'w'},
+		{"help", no_argument, NULL, 'h'},
+		{"version", no_argument, NULL, 'V'},
+		{NULL, 0, NULL, 0}
+	};
+
 	if (argc < 2)
 		skillsnice_usage();
 
+	sig_or_pri = -1;
+
 	if (program == PROG_SNICE)
 		prino = snice_prio_option(&argc, argv);
-	else if (program == PROG_SKILL)
+	else if (program == PROG_SKILL) {
 		signo = skill_sig_option(&argc, argv);
-
-	if (argc == 2 && argv[1][0] == '-') {
-		if (!strcmp(argv[1], "-L")) {
-			pretty_print_signals();
-			exit(0);
-		}
-		if (!strcmp(argv[1], "-l")) {
-			unix_print_signals();
-			exit(0);
-		}
-		if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
-			display_kill_version();
-			exit(0);
-		}
-		skillsnice_usage();
+		if (-1 < signo)
+			sig_or_pri = signo;
 	}
-	NEXTARG;
-	/* Time for serious parsing. What does "skill -int 123 456" mean? */
-	while (argc) {
-		if (force && !num_found) {
-			/* if forced, _must_ find something */
-			fprintf(stderr, _("ERROR: -%c used with bad data.\n"),
-				force);
-			skillsnice_usage();
-		}
-		force = 0;
-		/* If '-' found, collect any flags. (but lone "-" is a tty) */
-		if (*argptr == '-' && argptr[1]) {
-			argptr++;
-			do {
-				switch ((force = *argptr++)) {
-				default:
-					skillsnice_usage();
-				case 't':
-				case 'u':
-				case 'p':
-				case 'c':
-					if (!*argptr) {
-						/* nothing left here, *argptr is '\0' */
-						if (!NEXTARG) {
-							fprintf(stderr,
-								_
-								("ERROR: -%c with nothing after it.\n"),
-								force);
-							skillsnice_usage();
-						}
-					}
-					goto selection_collection;
-				case 'f':
-					run_time->fast++;
-					break;
-				case 'i':
-					run_time->interactive++;
-					break;
-				case 'v':
-					run_time->verbose++;
-					break;
-				case 'w':
-					run_time->warnings++;
-					break;
-				case 'n':
-					run_time->noaction++;
-					break;
-				case 0:
-					NEXTARG;
-					/*
-					 * If no more arguments, all the
-					 * "if(argc)..." tests will fail and
-					 * the big loop will exit.
-					 */
-				} /* END OF SWITCH */
-			} while (force);
-		} /* END OF IF */
- selection_collection:
-		num_found = 0;	/* we should find at least one thing */
-		switch (force) {
-		/* fall through each data type */
-		default:
-			skillsnice_usage();
-		case 0:		/* not forced */
-			if (argptr && argptr[0] == '-')
-				/* its the next argument not a parameter */
-				continue;
+
+	pid_count = 0;
+
+	while ((ch =
+		getopt_long(argc, argv, "c:dfilnp:Lt:u:vwhV", longopts,
+			    NULL)) != -1)
+		switch (ch) {
+		case 'c':
+			ENLIST(cmd, optarg);
+			break;
+		case 'd':
+			run_time->debugging = 1;
+			break;
+		case 'f':
+			run_time->fast = 1;
+			break;
+		case 'i':
+			run_time->interactive = 1;
+			break;
+		case 'l':
+			unix_print_signals();
+			exit(EXIT_SUCCESS);
+		case 'n':
+			run_time->noaction = 1;
+			break;
+		case 'p':
+			ENLIST(pid,
+			       strtol_or_err(optarg,
+					     _("failed to parse argument")));
+			pid_count++;
+			break;
+		case 'L':
+			pretty_print_signals();
+			exit(EXIT_SUCCESS);
 		case 't':
-			if (argc) {
+			{
 				struct stat sbuf;
 				char path[32];
-				if (!argptr)
+				if (!optarg)
 					/* Huh? Maybe "skill -t ''". */
 					skillsnice_usage();
-				snprintf(path, 32, "/dev/%s", argptr);
+				snprintf(path, 32, "/dev/%s", optarg);
 				if (stat(path, &sbuf) >= 0
 				    && S_ISCHR(sbuf.st_mode)) {
 					num_found++;
 					ENLIST(tty, sbuf.st_rdev);
 					if (!NEXTARG)
 						break;
-				} else if (!(argptr[1])) {
+				} else if (!(optarg[1])) {
 					/* if only 1 character */
-					switch (*argptr) {
+					switch (*optarg) {
 					default:
-						if (stat(argptr, &sbuf) < 0)
+						if (stat(optarg, &sbuf) < 0)
 							/* the shell eats '?' */
 							break;
 					case '-':
@@ -611,10 +588,9 @@ static void skillsnice_parse(int argc,
 					}
 				}
 			}
-			if (force)
-				continue;
+			break;
 		case 'u':
-			if (argc) {
+			{
 				struct passwd *passwd_data;
 				passwd_data = getpwnam(argptr);
 				if (passwd_data) {
@@ -624,68 +600,52 @@ static void skillsnice_parse(int argc,
 						break;
 				}
 			}
-			if (force)
-				continue;
-		case 'p':
-			if (argc && *argptr >= '0' && *argptr <= '9') {
-				char *endp;
-				int num;
-				num = strtol(argptr, &endp, 0);
-				if (*endp == '\0') {
-					num_found++;
-					ENLIST(pid, num);
-					if (!NEXTARG)
-						break;
-				}
-			}
-			if (force)
-				continue;
-			if (num_found)
-				/* could still be an option */
-				continue;
-		case 'c':
-			if (argc) {
-				num_found++;
-				ENLIST(cmd, argptr);
-				if (!NEXTARG)
-					break;
-			}
-		} /* END OF SWITCH */
-	} /* END OF WHILE */
+			break;
+		case 'v':
+			run_time->verbose = 1;
+			break;
+		case 'w':
+			run_time->warnings = 1;
+			break;
+		case 'h':
+			skillsnice_usage();
+		case 'V':
+			display_kill_version();
+			exit(EXIT_SUCCESS);
+		default:
+			skillsnice_usage();
+		}
+
+	argc -= optind;
+	argv += optind;
+
+	for (i = 0; i < argc; i++) {
+		ENLIST(pid, strtol_or_err(argv[0],
+					  _("failed to parse argument")));
+		pid_count++;
+		argv++;
+	}
+
 	/* No more arguments to process. Must sanity check. */
-	if (!tty_count && !uid_count && !cmd_count && !pid_count) {
-		fprintf(stderr, _("ERROR: no process selection criteria.\n"));
-		skillsnice_usage();
-	}
-	if ((run_time->fast | run_time->interactive | run_time->verbose | run_time->warnings | run_time->noaction) & ~1) {
-		fprintf(stderr,
-			_("ERROR: general flags may not be repeated.\n"));
-		skillsnice_usage();
-	}
-	if (run_time->interactive && (run_time->verbose | run_time->fast | run_time->noaction)) {
-		fprintf(stderr,
-			_("ERROR: -i makes no sense with -v, -f, and -n.\n"));
-		skillsnice_usage();
-	}
-	if (run_time->verbose && (run_time->interactive | run_time->fast)) {
-		fprintf(stderr,
-			_("ERROR: -v makes no sense with -i and -f.\n"));
-		skillsnice_usage();
-	}
-	/* OK, set up defaults */
-	if (prino == NO_PRI_VAL)
-		prino = DEFAULT_NICE;
-	if (signo < 0)
-		signo = SIGTERM;
+	if (!tty_count && !uid_count && !cmd_count && !pid_count)
+		errx(EXIT_FAILURE, _("no process selection criteria"));
+	if ((run_time->fast | run_time->interactive | run_time->
+	     verbose | run_time->warnings | run_time->noaction) & ~1)
+		errx(EXIT_FAILURE, _("general flags may not be repeated"));
+	if (run_time->interactive
+	    && (run_time->verbose | run_time->fast | run_time->noaction))
+		errx(EXIT_FAILURE, _("-i makes no sense with -v, -f, and -n"));
+	if (run_time->verbose && (run_time->interactive | run_time->fast))
+		errx(EXIT_FAILURE, _("-v makes no sense with -i and -f"));
 	if (run_time->noaction) {
 		program = PROG_SKILL;
 		/* harmless */
-		signo = 0;
+		sig_or_pri = 0;
 	}
-	if (program == PROG_SKILL)
-		sig_or_pri = signo;
-	else
+	if (program == PROG_SNICE)
 		sig_or_pri = prino;
+	else if (sig_or_pri < 0)
+		sig_or_pri = SIGTERM;
 }
 
 /* main body */
