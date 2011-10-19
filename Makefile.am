@@ -66,10 +66,7 @@ sysconf_DATA = sysctl.conf
 EXTRA_DIST = \
 	autogen.sh \
 	CodingStyle \
-	contrib/dummy.c \
-	contrib/minimal.c \
-	contrib/tmp-junk.c \
-	contrib/utmp.c \
+	contrib/ \
 	COPYING.LIB \
 	$(sysconf_DATA)
 
