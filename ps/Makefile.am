@@ -23,6 +23,4 @@ pscommand_SOURCES =  \
 
 EXTRA_DIST = \
 	HACKING \
-	it \
-	regression \
-	TRANSLATION
+	regression
