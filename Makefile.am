@@ -70,7 +70,7 @@ sysconf_DATA = sysctl.conf
 EXTRA_DIST = \
 	autogen.sh \
 	CodingStyle \
-	contrib/ \
+	contrib \
 	COPYING.LIB \
 	$(sysconf_DATA)
 
