@@ -15,6 +15,12 @@ test -f top.c || {
 	DIE=1
 }
 
+(autopoint --version) < /dev/null > /dev/null 2>&1 || {
+	echo "You must have autopoint installed to generate util-linux build system."
+	echo "The autopoint command is part of the GNU gettext package."
+	DIE=1
+}
+
 (autoconf --version) < /dev/null > /dev/null || {
 	echo "You must have autoconf installed to generate procps-ng build system."
 	DIE=1
@@ -45,6 +51,7 @@ if test ${DIE} -ne 0; then
 fi
 
 echo "Generate build-system by:"
+echo "   autopoint:  $(autopoint --version | head -1)"
 echo "   aclocal:    $(aclocal --version | head -1)"
 echo "   autoconf:   $(autoconf --version | head -1)"
 echo "   autoheader: $(autoheader --version | head -1)"
