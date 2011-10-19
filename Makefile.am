@@ -2,6 +2,7 @@ AM_CPPFLAGS = -include $(top_builddir)/config.h -I$(top_srcdir)/include
 
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = \
+	include \
 	po \
 	proc \
 	ps \
