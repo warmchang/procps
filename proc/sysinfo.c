@@ -153,7 +153,7 @@ unsigned long getbtime(void) {
 unsigned long long Hertz;
 
 static void old_Hertz_hack(void){
-  unsigned long long user_j, nice_j, sys_j, other_j;  /* jiffies (clock ticks) */
+  unsigned long long user_j, nice_j, sys_j, other_j, wait_j, hirq_j, sirq_j, stol_j;  /* jiffies (clock ticks) */
   double up_1, up_2, seconds;
   unsigned long long jiffies;
   unsigned h;
@@ -167,18 +167,19 @@ static void old_Hertz_hack(void){
   }
 #endif
 
+  wait_j = hirq_j = sirq_j = stol_j = 0;
   savelocale = setlocale(LC_NUMERIC, NULL);
   setlocale(LC_NUMERIC, "C");
   do{
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_1);
     /* uptime(&up_1, NULL); */
     FILE_TO_BUF(STAT_FILE,stat_fd);
-    sscanf(buf, "cpu %Lu %Lu %Lu %Lu", &user_j, &nice_j, &sys_j, &other_j);
+    sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &user_j, &nice_j, &sys_j, &other_j, &wait_j, &hirq_j, &sirq_j, &stol_j);
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_2);
     /* uptime(&up_2, NULL); */
   } while((long long)( (up_2-up_1)*1000.0/up_1 )); /* want under 0.1% error */
   setlocale(LC_NUMERIC, savelocale);
-  jiffies = user_j + nice_j + sys_j + other_j;
+  jiffies = user_j + nice_j + sys_j + other_j + wait_j + hirq_j + sirq_j + stol_j ;
   seconds = (up_1 + up_2) / 2;
   h = (unsigned)( (double)jiffies/seconds/smp_num_cpus );
   /* actual values used by 2.4 kernels: 32 64 100 128 1000 1024 1200 */
@@ -253,11 +254,21 @@ static void init_libproc(void){
 
   cpuinfo();
 
+#ifdef __linux__
   if(linux_version_code > LINUX_VERSION(2, 4, 0)){ 
     Hertz = find_elf_note(AT_CLKTCK);
     if(Hertz!=NOTE_NOT_FOUND) return;
     fputs("2.4+ kernel w/o ELF notes? -- report this\n", stderr);
   }
+#endif /* __linux __ */
+#if defined(__FreeBSD_kernel__) || defined(__FreeBSD__)
+  /* On FreeBSD the Hertz hack is unrelaible, there is no ELF note and
+   * Hertz isn't defined in asm/params.h
+   * See Debian Bug #460331
+   */
+  Hertz = 100;
+  return;
+#endif /* __FreeBSD__ */
   old_Hertz_hack();
 }
 
