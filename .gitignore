@@ -26,6 +26,7 @@ missing
 pgrep
 pkill
 pmap
+procps-ng-*.tar.gz
 proc/.depend
 proc/libproc-ng.la
 proc/Makefile
