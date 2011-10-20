@@ -303,6 +303,8 @@ static int diskpartition_format(const char* partition_name){
        }	
     }
     if(!current_partition){
+         free(disks);
+         free(partitions);
          return -1;
     }
     diskpartition_header(partition_name);
@@ -323,6 +325,8 @@ static int diskpartition_format(const char* partition_name){
           }	
         }
         if(!current_partition){
+           free(disks);
+           free(partitions);
            return -1;
         }
         printf (format,
@@ -422,7 +426,7 @@ static void slabformat (void){
 
   fSlab=fopen("/proc/slabinfo", "rb");
   if(!fSlab){
-    fprintf(stderr, "Your kernel doesn't support slabinfo.\n");    
+    fprintf(stderr, "Your kernel doesn't support slabinfo or your permissions are insufficient.\n");
     return;
   }
 
@@ -454,6 +458,7 @@ static void slabformat (void){
     }
     free(slabs);
   }
+  free(fSlab);
 }
 
 ////////////////////////////////////////////////////////////////////////////

@@ -714,10 +714,13 @@ static inline void show_scroll (void) {
          * what will fit within the current screen width.
          *    Our special formatting consists of:
          *       "some text <_delimiter_> some more text <_delimiter_>...\n"
-         *    Where <_delimiter_> is a single byte in the range of:
-         *       \01 through \10  (in decimalizee, 1 - 8)
-         *    and is used to select an 'attribute' from a capabilities table
-         *    which is then applied to the *preceding* substring.
+         *    Where <_delimiter_> is a two bye combination consisting of a
+         *    tilde followed by an ascii digit in the the range of 1 - 8.
+         *       examples: ~1,  ~5,  ~8, etc.
+         *    The tilde is effectively stripped and the next digit
+         *    converted to an index which is then used to select an
+         *    'attribute' from a capabilities table.  That attribute
+         *    is then applied to the *preceding* substring.
          * Once recognized, the delimiter is replaced with a null character
          * and viola, we've got a substring ready to output!  Strings or
          * substrings without delimiters will receive the Cap_norm attribute.
@@ -732,24 +735,23 @@ static inline void show_scroll (void) {
          *    Tabs must always be avoided or our efforts are wasted and
          *    lines will wrap.  To lessen but not eliminate the risk of
          *    terminfo string truncation, such non-display stuff should
-         *    be placed at the beginning of a "short" line.
-         *    (and as for tabs, gimme 1 more color then no worries, mate) */
+         *    be placed at the beginning of a "short" line. */
 static void show_special (int interact, const char *glob) {
   /* note: the following is for documentation only,
            the real captab is now found in a group's WIN_t !
      +------------------------------------------------------+
      | char *captab[] = {                 :   Cap's/Delim's |
-     |   Cap_norm, Cap_norm,              =   \00, \01,     |
-     |   cap_bold, capclr_sum,            =   \02, \03,     |
-     |   capclr_msg, capclr_pmt,          =   \04, \05,     |
-     |   capclr_hdr,                      =   \06,          |
-     |   capclr_rowhigh,                  =   \07,          |
-     |   capclr_rownorm  };               =   \10 [octal!]  |
+     |   Cap_norm, Cap_norm,              =   \000, \001,   |
+     |   cap_bold, capclr_sum,            =   \002, \003,   |
+     |   capclr_msg, capclr_pmt,          =   \004, \005,   |
+     |   capclr_hdr,                      =   \006,         |
+     |   capclr_rowhigh,                  =   \007,         |
+     |   capclr_rownorm  };               =   \010 [octal!] |
      +------------------------------------------------------+ */
   /* ( pssst, after adding the termcap transitions, row may )
      ( exceed 300+ bytes, even in an 80x24 terminal window! ) */
    char tmp[SMLBUFSIZ], lin[MEDBUFSIZ], row[LRGBUFSIZ];
-   char *rp, *cap, *lin_end, *sub_beg, *sub_end;
+   char *rp, *lin_end, *sub_beg, *sub_end;
    int room;
 
    // handle multiple lines passed in a bunch
@@ -763,16 +765,17 @@ static void show_special (int interact, const char *glob) {
       *(rp = row) = '\0';
 
       while (*sub_beg) {
-         switch (*sub_end) {
+         int ch = *sub_end;
+         if ('~' == ch) ch = *(sub_end + 1) - '0';
+         switch (ch) {
             case 0:                    // no end delim, captab makes normal
                *(sub_end + 1) = '\0';  // extend str end, then fall through
             case 1 ... 8:
-               cap = Curwin->captab[(int)*sub_end];
                *sub_end = '\0';
-               snprintf(tmp, sizeof(tmp), "%s%.*s%s", cap, room, sub_beg, Caps_off);
+               snprintf(tmp, sizeof(tmp), "%s%.*s%s", Curwin->captab[ch], room, sub_beg, Caps_off);
                rp = scat(rp, tmp);
                room -= (sub_end - sub_beg);
-               sub_beg = ++sub_end;
+               sub_beg = (sub_end += (ch ? 2 : 1));
                break;
             default:                   // nothin' special, just text
                ++sub_end;
@@ -1412,7 +1415,7 @@ static void calibrate_fields (void) {
             f = w->pflgsall[i + w->begpflg];
             w->procflgs[i] = f;
 #ifndef USE_X_COLHDR
-            if (P_MAXPFLGS < f) continue;
+            if (P_MAXPFLGS <= f) continue;
 #endif
             h = Fieldstab[f].head;
             // oops, won't fit -- we're outta here...
@@ -1463,7 +1466,7 @@ static void calibrate_fields (void) {
                w->hdrcaplen += strlen(Caps_off) + strlen(w->capclr_msg);
             }
 #else
-            if (P_MAXPFLGS < f) continue;
+            if (P_MAXPFLGS <= f) continue;
 #endif
             h = Fieldstab[f].head;
             if (P_WCH == f) needpsdb = 1;
@@ -3334,8 +3337,8 @@ static void summary_show (void) {
       int shift = 0;
 
       /*** hotplug_acclimated ***/
-      if (kb_main_total > 9999999)    { which = "Mb"; shift = 10; }
-      if (kb_main_total > 9999999999) { which = "Gb"; shift = 20; }
+      if (kb_main_total > 9999999)       { which = "Mb"; shift = 10; }
+      if (kb_main_total > 9999999999ull) { which = "Gb"; shift = 20; }
 
       show_special(0, fmtmk(MEMORY_twolines
          , which, mkM(total), mkM(used), mkM(free),  mkM(buffers)

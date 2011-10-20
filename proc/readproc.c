@@ -1112,15 +1112,13 @@ next_proc:
     }
 
 next_task:
-    for (;;) {
-        // fills in our path, plus x->tid and x->tgid
-        if ((!(PT->taskfinder(PT,&skel_p,x,path)))         // simple_nexttid
-        || (!(ret = PT->taskreader(PT,new_p,x,path)))) {   // simple_readtask
-            goto next_proc;
-        }
-        if (!new_p) new_p = ret;
-        return ret;
+    // fills in our path, plus x->tid and x->tgid
+    if ((!(PT->taskfinder(PT,&skel_p,x,path)))             // simple_nexttid
+    || (!(ret = PT->taskreader(PT,new_p,x,path)))) {       // simple_readtask
+        goto next_proc;
     }
+    if (!new_p) new_p = ret;
+    return ret;
 
 end_procs:
     if (!saved_x) free(x);
@@ -1152,7 +1150,7 @@ PROCTAB* openproc(int flags, ...) {
       PT->finder = listed_nextpid;
     }else{
       PT->procfs = opendir("/proc");
-      if(!PT->procfs) return NULL;
+      if(!PT->procfs) { free(PT); return NULL; }
       PT->finder = simple_nextpid;
     }
     PT->flags = flags;

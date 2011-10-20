@@ -379,7 +379,7 @@ static void prep_forest_sort(void){
 
   if(!sort_list) {     /* assume start time order */
     incoming = search_format_array("start_time");
-    if(!incoming) fprintf(stderr, "Could not find start_time!\n");
+    if(!incoming) { fprintf(stderr, "Could not find start_time!\n"); exit(1); }
     tmp_list = malloc(sizeof(sort_node));
     tmp_list->reverse = 0;
     tmp_list->typecode = '?'; /* what was this for? */
@@ -390,7 +390,7 @@ static void prep_forest_sort(void){
   }
   /* this is required for the forest option */
   incoming = search_format_array("ppid");
-  if(!incoming) fprintf(stderr, "Could not find ppid!\n");
+  if(!incoming) { fprintf(stderr, "Could not find ppid!\n"); exit(1); }
   tmp_list = malloc(sizeof(sort_node));
   tmp_list->reverse = 0;
   tmp_list->typecode = '?'; /* what was this for? */

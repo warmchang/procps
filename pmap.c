@@ -311,7 +311,7 @@ int main(int argc, char *argv[]){
             char *arg2 = strchr(arg1,',');
             if(arg2)
               *arg2 = '\0';
-            arg2 = arg2 ? arg2++ : arg1;
+            arg2 = *arg2 ? arg2++ : arg1;
             
             if(*arg1)
               range_low = STRTOUKL(arg1,&arg1,16);

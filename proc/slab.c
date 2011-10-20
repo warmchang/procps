@@ -312,11 +312,13 @@ int get_slabinfo(struct slab_info **list, struct slab_stat *stats)
 
 	if (!fgets(buffer, SLABINFO_VER_LEN, slabfile)) {
 		fprintf(stderr, "cannot read from slabinfo\n");
+		free(slabfile);
 		return 1;
 	}
 
 	if (sscanf(buffer, "slabinfo - version: %d.%d", &major, &minor) != 2) {
 		fprintf(stderr, "not the good old slabinfo we know\n");
+		free(slabfile);
 		return 1;
 	}
 
@@ -328,6 +330,7 @@ int get_slabinfo(struct slab_info **list, struct slab_stat *stats)
 		ret = parse_slabinfo10(list, stats, slabfile);
 	else {
 		fprintf(stderr, "unrecognizable slabinfo version\n");
+		free(slabfile);
 		return 1;
 	}
 

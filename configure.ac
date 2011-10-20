@@ -142,12 +142,26 @@ if test "x$with_ncurses" != xno; then
 fi
 AC_SUBST([NCURSES_LIBS])
 
+AC_ARG_ENABLE([kill],
+  AS_HELP_STRING([--disable-kill], [do not build kill]),
+  [], enable_kill=yes
+)
+AM_CONDITIONAL(BUILD_KILL, test "x$enable_kill" = xyes)
+
 AC_ARG_ENABLE([oomem],
   AS_HELP_STRING([--enable-oomem], [add out-of-memory fields to the library and top]),
   [], enable_oomem=no
 )
 if test "x$enable_oomem" = xyes; then
   AC_DEFINE(OOMEM_ENABLE, 1, [add out-of-memory fields to the library and top])
+fi
+
+AC_ARG_ENABLE([w-from],
+  AS_HELP_STRING([--enable-w-from], [enable w from field by default]),
+  [], enable_w_from=no
+)
+if test "x$enable_w_from" = xyes; then
+  AC_DEFINE(W_SHOWFROM, 1, [enable w from field by default])
 fi
 
 AC_CONFIG_FILES([

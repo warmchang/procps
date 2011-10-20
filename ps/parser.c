@@ -119,6 +119,7 @@ static const char *parse_gid(char *str, sel_union *ret){
 
 static const char *parse_cmd(char *str, sel_union *ret){
   strncpy(ret->cmd, str, sizeof ret->cmd);  // strncpy pads to end
+  ret->cmd[sizeof(ret->cmd)-1] = '\0';      // but let's be safe
   return 0;
 }
 

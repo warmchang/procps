@@ -193,19 +193,22 @@ static union el *read_pidfile(void)
 	int fd;
 	struct stat sbuf;
 	char *endp;
-	int pid;
+	int n, pid;
 	union el *list = NULL;
 
 	fd = open(opt_pidfile, O_RDONLY|O_NOCTTY|O_NONBLOCK);
 	if(fd<0)
-		goto out;
+		goto just_ret;
 	if(fstat(fd,&sbuf) || !S_ISREG(sbuf.st_mode) || sbuf.st_size<1)
 		goto out;
 	// type of lock, if any, is not standardized on Linux
 	if(opt_lock && !has_flock(fd) && !has_fcntl(fd))
-			goto out;
+		goto out;
 	memset(buf,'\0',sizeof buf);
-	buf[read(fd,buf+1,sizeof buf-2)] = '\0';
+	n = read(fd,buf+1,sizeof buf-2);
+	if (n<1)
+		goto out;
+	buf[n] = '\0';
 	pid = strtoul(buf+1,&endp,10);
 	if(endp<=buf+1 || pid<1 || pid>0x7fffffff)
 		goto out;
@@ -216,6 +219,7 @@ static union el *read_pidfile(void)
 	list[1].num = pid;
 out:
 	close(fd);
+just_ret:
 	return list;
 }
 
@@ -376,6 +380,7 @@ static PROCTAB *do_openproc (void)
 		}
 		flags |= PROC_UID;
 		ptp = openproc (flags, uids, num);
+		free(uids);
 	} else {
 		ptp = openproc (flags);
 	}
@@ -404,6 +409,7 @@ static regex_t * do_regcomp (void)
 		}
 
 		re_err = regcomp (preg, re, REG_EXTENDED | REG_NOSUB | opt_case);
+		free(re);
 		if (re_err) {
 			regerror (re_err, preg, errbuf, sizeof(errbuf));
 			fputs(errbuf,stderr);
@@ -530,8 +536,8 @@ static union el * select_procs (int *num)
 		memset (&task, 0, sizeof (task));
 	}
 	closeproc (ptp);
-
 	*num = matches;
+	free(preg);
 	return list;
 }
 

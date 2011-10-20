@@ -9,9 +9,6 @@ AM_LDFLAGS = ./proc/libproc-ng.la
 sbin_PROGRAMS = \
 	sysctl
 
-bin_PROGRAMS = \
-	kill
-
 usrbin_exec_PROGRAMS = \
 	free \
 	pgrep \
@@ -27,7 +24,6 @@ usrbin_exec_PROGRAMS = \
 
 dist_man_MANS = \
 	free.1 \
-	kill.1 \
 	pgrep.1 \
 	pkill.1 \
 	pmap.1 \
@@ -40,6 +36,11 @@ dist_man_MANS = \
 	uptime.1 \
 	vmstat.8 \
 	w.1
+
+if BUILD_KILL
+bin_PROGRAMS = kill
+dist_man_MANS += kill.1
+endif
 
 if HAVE_NCURSES
 usrbin_exec_PROGRAMS += \
@@ -64,12 +65,13 @@ sysconf_DATA = sysctl.conf
 
 EXTRA_DIST = \
 	autogen.sh \
-	BUGS \
 	CodingStyle \
-	contrib/dummy.c \
-	contrib/minimal.c \
-	contrib/tmp-junk.c \
-	contrib/utmp.c \
+	contrib/ \
 	COPYING.LIB \
-	README.top \
 	$(sysconf_DATA)
+
+procpsngdir = $(docdir)
+dist_procpsng_DATA = \
+	BUGS \
+	FAQ \
+	README.top

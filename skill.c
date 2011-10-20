@@ -46,8 +46,7 @@ static int saved_argc;
 
 static int sig_or_pri;
 
-static int program;
-#define PROG_GARBAGE 0  /* keep this 0 */
+static int program = -1;
 #define PROG_KILL  1
 #define PROG_SKILL 2
 /* #define PROG_NICE  3 */ /* easy, but the old one isn't broken */
@@ -558,17 +557,13 @@ int main(int argc, const char *argv[]){
   tmpstr=strrchr(*argv,'/');
   if(tmpstr) tmpstr++;
   if(!tmpstr) tmpstr=*argv;
-  program = PROG_GARBAGE;
-  if(*tmpstr=='s'){
-    setpriority(PRIO_PROCESS,my_pid,-20);
-    if(!strcmp(tmpstr,"snice")) program = PROG_SNICE;
-    if(!strcmp(tmpstr,"skill")) program = PROG_SKILL;
-  }else{
-    if(!strcmp(tmpstr,"kill")) program = PROG_KILL;
-  }
+  if(strstr(tmpstr,"kill"))  program = PROG_KILL;
+  if(strstr(tmpstr,"skill")) program = PROG_SKILL;
+  if(strstr(tmpstr,"snice")) program = PROG_SNICE;
   switch(program){
   case PROG_SNICE:
   case PROG_SKILL:
+    setpriority(PRIO_PROCESS,my_pid,-20);
     skillsnice_parse(argc, argv);
 /*    show_lists(); */
     iterate(); /* this is it, go get them */
