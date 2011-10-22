@@ -261,70 +261,70 @@ static void iterate(struct run_time_conf_t *run_time)
 }
 
 /* kill help */
-static void __attribute__ ((__noreturn__)) kill_usage(void)
+static void __attribute__ ((__noreturn__)) kill_usage(FILE * out)
 {
-	fputs(USAGE_HEADER, stderr);
-	fprintf(stderr,
+	fputs(USAGE_HEADER, out);
+	fprintf(out,
 		" %s [options] <pid> [...]\n", program_invocation_short_name);
-	fputs(USAGE_OPTIONS, stderr);
-	fputs(_("  <pid> [...]    send SIGTERM to every <pid> listed\n"), stderr);
-	fputs(_("  -<signal>      specify the <signal> to be sent\n"), stderr);
-	fputs(_("  -s <signal>    specify the <signal> to be sent\n"), stderr);
-	fputs(_("  -l             list all signal names\n"), stderr);
-	fputs(_("  -L             list all signal names in a nice table\n"), stderr);
-	fputs(_("  -l <signal>    convert between signal numbers and names\n"), stderr);
-	fputs(USAGE_SEPARATOR, stderr);
-	fprintf(stderr, USAGE_MAN_TAIL("skill(1)"));
-	exit(1);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_("  <pid> [...]    send SIGTERM to every <pid> listed\n"), out);
+	fputs(_("  -<signal>      specify the <signal> to be sent\n"), out);
+	fputs(_("  -s <signal>    specify the <signal> to be sent\n"), out);
+	fputs(_("  -l             list all signal names\n"), out);
+	fputs(_("  -L             list all signal names in a nice table\n"), out);
+	fputs(_("  -l <signal>    convert between signal numbers and names\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fprintf(out, USAGE_MAN_TAIL("skill(1)"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 /* skill and snice help */
-static void __attribute__ ((__noreturn__)) skillsnice_usage(void)
+static void __attribute__ ((__noreturn__)) skillsnice_usage(FILE * out)
 {
-	fputs(USAGE_HEADER, stderr);
+	fputs(USAGE_HEADER, out);
 
 	if (program == PROG_SKILL) {
-		fprintf(stderr,
+		fprintf(out,
 			" %s [signal] [options] <expression>\n",
 			program_invocation_short_name);
 	} else {
-		fprintf(stderr,
+		fprintf(out,
 			" %s [new priority] [options] <expression>\n",
 			program_invocation_short_name);
 	}
-	fputs(USAGE_OPTIONS, stderr);
-	fputs(_(" -f             fast mode (not implemented)\n"), stderr);
-	fputs(_(" -i             interactive\n"), stderr);
-	fputs(_(" -l             list all signal names\n"), stderr);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -f             fast mode (not implemented)\n"), out);
+	fputs(_(" -i             interactive\n"), out);
+	fputs(_(" -l             list all signal names\n"), out);
 	fputs(_(" -L             list all signal names in a nice table\n"),
-	      stderr);
-	fputs(_(" -n             no action\n"), stderr);
-	fputs(_(" -v             explain what is being done\n"), stderr);
-	fputs(_(" -w             enable warnings (not implemented)\n"), stderr);
-	fputs(USAGE_VERSION, stderr);
-	fputs(_("\n"), stderr);
-	fputs(_("Expression can be: terminal, user, pid, command.\n"), stderr);
-	fputs(_("The options below may be used to ensure correct interpretation.\n"), stderr);
-	fputs(_(" -c <command>   expression is a command name\n"), stderr);
-	fputs(_(" -p <pid>       expression is a process id number\n"), stderr);
-	fputs(_(" -t <tty>       expression is a terminal\n"), stderr);
-	fputs(_(" -u <username>  expression is a username\n"), stderr);
+	      out);
+	fputs(_(" -n             no action\n"), out);
+	fputs(_(" -v             explain what is being done\n"), out);
+	fputs(_(" -w             enable warnings (not implemented)\n"), out);
+	fputs(USAGE_VERSION, out);
+	fputs(_("\n"), out);
+	fputs(_("Expression can be: terminal, user, pid, command.\n"), out);
+	fputs(_("The options below may be used to ensure correct interpretation.\n"), out);
+	fputs(_(" -c <command>   expression is a command name\n"), out);
+	fputs(_(" -p <pid>       expression is a process id number\n"), out);
+	fputs(_(" -t <tty>       expression is a terminal\n"), out);
+	fputs(_(" -u <username>  expression is a username\n"), out);
 	if (program == PROG_SKILL) {
-		fprintf(stderr,
+		fprintf(out,
 			_("\n"
 			  "The default signal is TERM. Use -l or -L to list available signals.\n"
 			  "Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.\n"
 			  "Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"));
-		fprintf(stderr, USAGE_MAN_TAIL("skill(1)"));
+		fprintf(out, USAGE_MAN_TAIL("skill(1)"));
 	} else {
-		fprintf(stderr,
+		fprintf(out,
 			_("\n"
 			  "The default priority is +4. (snice +4 ...)\n"
 			  "Priority numbers range from +20 (slowest) to -20 (fastest).\n"
 			  "Negative priority numbers are restricted to administrative users.\n"));
-		fprintf(stderr, USAGE_MAN_TAIL("snice(1)"));
+		fprintf(out, USAGE_MAN_TAIL("snice(1)"));
 	}
-	exit(1);
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 /* kill */
@@ -347,7 +347,7 @@ static void __attribute__ ((__noreturn__))
 	};
 
 	if (argc < 2)
-		kill_usage();
+		kill_usage(stderr);
 
 	signo = skill_sig_option(&argc, argv);
 	if (signo < 0)
@@ -378,12 +378,12 @@ static void __attribute__ ((__noreturn__))
 			signo = signal_name_to_number(optarg);
 			break;
 		case 'h':
-			kill_usage();
+			kill_usage(stdout);
 		case 'V':
 			display_kill_version();
 			exit(EXIT_SUCCESS);
 		default:
-			kill_usage();
+			kill_usage(stderr);
 		}
 
 	argc -= optind + sigopt;
@@ -404,7 +404,7 @@ static void __attribute__ ((__noreturn__))
 static void _skillsnice_usage(int line)
 {
 	fprintf(stderr, _("Something at line %d.\n"), line);
-	skillsnice_usage();
+	skillsnice_usage(stderr);
 }
 
 #define skillsnice_usage() _skillsnice_usage(__LINE__)
@@ -487,7 +487,7 @@ static void skillsnice_parse(int argc,
 	};
 
 	if (argc < 2)
-		skillsnice_usage();
+		skillsnice_usage(stderr);
 
 	sig_or_pri = -1;
 
@@ -538,7 +538,7 @@ static void skillsnice_parse(int argc,
 				char path[32];
 				if (!optarg)
 					/* Huh? Maybe "skill -t ''". */
-					skillsnice_usage();
+					skillsnice_usage(stderr);
 				snprintf(path, 32, "/dev/%s", optarg);
 				if (stat(path, &sbuf) >= 0
 				    && S_ISCHR(sbuf.st_mode)) {
@@ -582,12 +582,12 @@ static void skillsnice_parse(int argc,
 			run_time->warnings = 1;
 			break;
 		case 'h':
-			skillsnice_usage();
+			skillsnice_usage(stdout);
 		case 'V':
 			display_kill_version();
 			exit(EXIT_SUCCESS);
 		default:
-			skillsnice_usage();
+			skillsnice_usage(stderr);
 		}
 
 	argc -= optind;
