@@ -35,23 +35,23 @@ Send signal to every <pid> listed.
 .B \-<signal>
 .TQ
 .B \-s <signal>
+.TQ
+.B \-\-signal <signal>
 Specify the
 .B signal
 to be sent.  The signal can be specified by using name or number.
-.TP
-.B \-l
-List signal names.
-.TP
-.B \-L
-List signal names in a nice table.
-.TP
-.B \-l <signal>
-Convert in between signal name and number.
-.PD
-.SH SIGNALS
 The behavior of signals is explained in
 .BR signal (7)
 manual page.
+.TP
+\fB\-l\fR, \fB\-\-list\fR [\fIsignal\fR]
+List signal names.  This option has optional argument, which
+will convert signal number to signal name, or other way round.
+.TP
+.BR \-L , \ \-\-table
+List signal names in a nice table.
+.TP
+.PD
 .SH NOTES
 Your shell (command line interpreter) may have a built-in kill
 command.  You may need to run the command described here as /bin/kill
