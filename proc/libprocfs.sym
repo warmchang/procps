@@ -62,6 +62,7 @@ global:
 	signal_number_to_name;
 	smp_num_cpus;
 	sprint_uptime;
+	strtosig;
 	tty_to_dev;
 	unix_print_signals;
 	uptime;

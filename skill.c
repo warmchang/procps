@@ -361,9 +361,14 @@ static void __attribute__ ((__noreturn__))
 		switch (i) {
 		case 'l':
 			if (optarg) {
-				/* FIXME */
-				errx(EXIT_FAILURE,
-				     "signal name <-> number conversion is not implemented");
+				char *s;
+				s = strtosig(optarg);
+				if (s)
+					printf("%s\n", s);
+				else
+					warnx(_("unknown signal name %s"),
+					      optarg);
+				free(s);
 			} else {
 				unix_print_signals();
 			}
