@@ -20,8 +20,8 @@ skill, snice \- send a signal or report process status
 .RI [ options ]
 .I expression
 .SH DESCRIPTION
-These tools are probably obsolete and unportable.  The command syntax
-is poorly defined.  Consider using the killall, pkill, and pgrep
+These tools are obsolete and unportable.  The command syntax is
+poorly defined.  Consider using the killall, pkill, and pgrep
 commands instead.
 .PP
 The default signal for skill is TERM.  Use \-l or \-L to list
@@ -34,45 +34,48 @@ The default priority for snice is +4.  Priority numbers range from
 restricted to administrative users.
 .SH OPTIONS
 .TP
-.B \-f
+.BR \-f , \ \-\-fast
 Fast mode.  This option has not been implemented.
 .TP
-.B \-i
-Bnteractive move.
+.BR \-i , \ \-\-interactive
+Interactive use.  You will be asked to approve each action.
 .TP
-.B \-l
+.BR \-l , \ \-\-list
 List all signal names.
 .TP
-.B \-L
+.BR \-L , \ \-\-table
 List all signal names in a nice table.
 .TP
-.B \-n
+.BR \-n , \ \-\-no\-action
 No action; perform a simulation of events that would occur but do not
 actually change the system.
 .TP
-.B \-v
+.BR \-v , \ \-\-verbose
 Verbose; explain what is being done.
 .TP
-.B \-w
+.BR \-w , \ \-\-warnings
 Enable warnings.  This option has not been implemented.
 .TP
-.B \-V, \-\-verbose
-Display version information and exit.
+\fB\-h\fR, \fB\-\-help\fR
+Display help text and exit.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Display version information.
 .PD
 .SH "PROCESS SELECTION OPTIONS"
 Selection criteria can be: terminal, user, pid, command.  The options
 below may be used to ensure correct interpretation.
 .TP
-.B \-t
+\fB\-t\fR, \fB\-\-tty\fR \fItty\fR
 The next expression is a terminal (tty or pty).
 .TP
-.B \-u
+\fB\-u\fR, \fB\-\-user\fR \fIuser\fR
 The next expression is a username.
 .TP
-.B \-p
+\fB\-p\fR, \fB\-\-pid\fR \fIpid\fR
 The next expression is a process ID number.
 .TP
-.B \-c
+\fB\-c\fR, \fB\-\-command\fR \fIcommand\fR
 The next expression is a command name.
 .PD
 .SH SIGNALS
@@ -81,17 +84,14 @@ The behavior of signals is explained in
 manual page.
 .SH EXAMPLES
 .TP
-.B snice seti crack +7
+.B snice -c seti -c crack +7
 Slow down seti and crack commands.
 .TP
-.B skill \-KILL \-v /dev/pts/*
+.B skill \-KILL \-t /dev/pts/*
 Kill users on PTY devices.
 .TP
-.B skill \-STOP viro lm davem
+.B skill \-STOP \-u viro \-u lm \-u davem
 Stop three users.
-.TP
-.B snice \-17 root bash
-Give priority to root's shell
 .SH "SEE ALSO"
 .BR kill (1),
 .BR kill (2),
