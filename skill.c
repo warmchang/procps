@@ -8,10 +8,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Library General Public License for more details.
  */
+#include <ctype.h>
 #include <dirent.h>
-#include <getopt.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <getopt.h>
 #include <limits.h>
 #include <pwd.h>
 #include <signal.h>
@@ -78,7 +79,6 @@ static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd,
 		      struct run_time_conf_t *run_time)
 {
 	int failed;
-	int saved_errno;
 	char dn_buf[1000];
 	dev_to_tty(dn_buf, 999, tty, pid, ABBREV_DEV);
 	if (run_time->interactive) {
@@ -93,25 +93,19 @@ static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd,
 			return;
 	}
 	/* do the actual work */
+	errno = 0;
 	if (program == PROG_SKILL)
 		failed = kill(pid, sig_or_pri);
 	else
 		failed = setpriority(PRIO_PROCESS, pid, sig_or_pri);
-	saved_errno = errno;
-	if ((run_time->warnings && failed) || run_time->debugging) {
+	if ((run_time->warnings && failed) || run_time->debugging || run_time->verbose) {
 		fprintf(stderr, "%-8s %-8s %5d %-16.16s   ",
 			(char *)dn_buf, user_from_uid(uid), pid, cmd);
-		errno = saved_errno;
 		perror("");
 		return;
 	}
 	if (run_time->interactive)
 		return;
-	if (run_time->verbose) {
-		printf("%-8s %-8s %5d %-16.16s\n",
-		       (char *)dn_buf, user_from_uid(uid), pid, cmd);
-		return;
-	}
 	if (run_time->noaction) {
 		printf("%d\n", pid);
 		return;
@@ -329,11 +323,30 @@ static void __attribute__ ((__noreturn__)) skillsnice_usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+int skill_sig_option(int *argc, char **argv)
+{
+	int i, nargs = *argc;
+	int signo = -1;
+	for (i = 1; i < nargs; i++) {
+		if (argv[i][0] == '-') {
+			signo = signal_name_to_number(argv[i] + 1);
+			if (-1 < signo) {
+				if (nargs - i) {
+					nargs--;
+					memmove(argv + i, argv + i + 1,
+						sizeof(char *) * (nargs - i));
+				}
+				return signo;
+			}
+		}
+	}
+	return signo;
+}
+
 /* kill */
 static void __attribute__ ((__noreturn__))
-    kill_main(int argc, char **argv, struct run_time_conf_t *run_time)
+    kill_main(int argc, char **argv)
 {
-	const char *sigptr;
 	int signo, i;
 	int sigopt = 0;
 	long pid;
@@ -440,32 +453,11 @@ int snice_prio_option(int *argc, char **argv)
 	return (int)prio;
 }
 
-int skill_sig_option(int *argc, char **argv)
-{
-	int i, nargs = *argc;
-	int signo = -1;
-	for (i = 1; i < nargs; i++) {
-		if (argv[i][0] == '-') {
-			signo = signal_name_to_number(argv[i] + 1);
-			if (-1 < signo) {
-				if (nargs - i) {
-					nargs--;
-					memmove(argv + i, argv + i + 1,
-						sizeof(char *) * (nargs - i));
-				}
-				return signo;
-			}
-		}
-	}
-	return signo;
-}
-
 static void skillsnice_parse(int argc,
 			     char **argv, struct run_time_conf_t *run_time)
 {
 	int signo = -1;
 	int prino = DEFAULT_NICE;
-	int force = 0;
 	int num_found = 0;
 	int ch, i;
 	const char *restrict argptr;
@@ -568,7 +560,7 @@ static void skillsnice_parse(int argc,
 		case 'u':
 			{
 				struct passwd *passwd_data;
-				passwd_data = getpwnam(argptr);
+				passwd_data = getpwnam(optarg);
 				if (passwd_data) {
 					num_found++;
 					ENLIST(uid, passwd_data->pw_uid);
@@ -651,7 +643,7 @@ int main(int argc, char ** argv)
 		iterate(&run_time);
 		break;
 	case PROG_KILL:
-		kill_main(argc, argv, &run_time);
+		kill_main(argc, argv);
 		break;
 	default:
 		fprintf(stderr, _("skill: \"%s\" is not support\n"),
