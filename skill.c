@@ -87,7 +87,7 @@ static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd,
 			(char *)dn_buf, user_from_uid(uid), pid, cmd);
 		if (!fgets(buf, 7, stdin)) {
 			printf("\n");
-			exit(0);
+			exit(EXIT_FAILURE);
 		}
 		if (*buf != 'y' && *buf != 'Y')
 			return;
@@ -246,10 +246,8 @@ static void iterate(struct run_time_conf_t *run_time)
 	}
 #endif
 	d = opendir("/proc");
-	if (!d) {
-		perror("/proc");
-		exit(1);
-	}
+	if (!d)
+		err(EXIT_FAILURE, "/proc");
 	while ((de = readdir(d))) {
 		if (de->d_name[0] > '9')
 			continue;
@@ -657,7 +655,7 @@ int main(int argc, char ** argv)
 		fprintf(stderr, _("skill: \"%s\" is not support\n"),
 			program_invocation_short_name);
 		fprintf(stderr, USAGE_MAN_TAIL("skill(1)"));
-		return 1;
+		return EXIT_FAILURE;
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }
