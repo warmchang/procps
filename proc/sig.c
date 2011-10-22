@@ -209,6 +209,49 @@ end:
   return ret;
 }
 
+/* strtosig is similar to print_given_signals() with exception, that
+ * this function takes a string, and converts it to a signal name or
+ * a number string depending on which way a round conversion is
+ * queried.  Non-existing signals return NULL.  Notice that the
+ * returned string should be freed after use.
+ */
+char *strtosig(const char *restrict s){
+  char *converted = NULL, *copy, *p, *endp;
+  int i, numsignal = 0;
+
+  copy = strdup(s);
+  if (!copy)
+    err(EXIT_FAILURE, "cannot duplicate string");
+  for (p = copy; *p != '\0'; p++)
+    *p = toupper(*p);
+  p = copy;
+  if (p[0] == 'S' && p[1] == 'I' && p[2] == 'G')
+    p += 3;
+  if (isdigit(*p)){
+    numsignal = strtol(s,&endp,10);
+    if(*endp || endp==s) return NULL; /* not valid */
+  }
+  if (numsignal){
+    for (i = 0; i < number_of_signals; i++){
+      if (numsignal == sigtable[i].num){
+	converted = strdup(sigtable[i].name);
+	break;
+      }
+    }
+  } else {
+    for (i = 0; i < number_of_signals; i++){
+      if (strcmp(p, sigtable[i].name) == 0){
+	converted = malloc(sizeof(char) * 8);
+	if (converted)
+	  snprintf(converted, sizeof(converted) - 1, "%d", sigtable[i].num);
+	break;
+      }
+    }
+  }
+  free(p);
+  return converted;
+}
+
 void pretty_print_signals(void){
   int i = 0;
   while(++i <= number_of_signals){

@@ -22,6 +22,8 @@ extern const char *signal_number_to_name(int signo);
 
 extern int print_given_signals(int argc, const char *restrict const *restrict argv, int max_line);
 
+extern char *strtosig(const char *restrict s);
+
 extern void pretty_print_signals(void);
 
 extern void unix_print_signals(void);
