@@ -331,100 +331,72 @@ static void __attribute__ ((__noreturn__)) skillsnice_usage(void)
 
 /* kill */
 static void __attribute__ ((__noreturn__))
-kill_main(int argc, char ** argv,
-	  struct run_time_conf_t *run_time)
+    kill_main(int argc, char **argv, struct run_time_conf_t *run_time)
 {
 	const char *sigptr;
-	int signo = SIGTERM;
-	int exitvalue = 0;
+	int signo, i;
+	int sigopt = 0;
+	long pid;
+	int exitvalue = EXIT_SUCCESS;
+
+	static const struct option longopts[] = {
+		{"list", optional_argument, NULL, 'l'},
+		{"table", no_argument, NULL, 'L'},
+		{"signal", required_argument, NULL, 's'},
+		{"help", no_argument, NULL, 'h'},
+		{"version", no_argument, NULL, 'V'},
+		{NULL, 0, NULL, 0}
+	};
+
 	if (argc < 2)
 		kill_usage();
-	if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
-		display_kill_version();
-		exit(0);
-	}
-	if (argv[1][0] != '-') {
-		argv++;
-		argc--;
-		goto no_more_args;
-	}
 
-	/* The -l option prints out signal names. */
-	if (argv[1][1] == 'l' && argv[1][2] == '\0') {
-		if (argc == 2) {
-			unix_print_signals();
-			exit(0);
-		}
-		/* at this point, argc must be 3 or more */
-		if (argc > 128 || argv[2][0] == '-')
-			kill_usage();
-		exit(print_given_signals(argc - 2, argv + 2, 80));
-	}
+	signo = skill_sig_option(&argc, argv);
+	if (signo < 0)
+		signo = SIGTERM;
+	else
+		sigopt++;
 
-	/* The -L option prints out signal names in a nice table. */
-	if (argv[1][1] == 'L' && argv[1][2] == '\0') {
-		if (argc == 2) {
+	while ((i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
+		switch (i) {
+		case 'l':
+			if (optarg) {
+				/* FIXME */
+				errx(EXIT_FAILURE,
+				     "signal name <-> number conversion is not implemented");
+			} else {
+				unix_print_signals();
+			}
+			exit(EXIT_SUCCESS);
+		case 'L':
 			pretty_print_signals();
-			exit(0);
+			exit(EXIT_SUCCESS);
+		case 's':
+			signo = signal_name_to_number(optarg);
+			break;
+		case 'h':
+			kill_usage();
+		case 'V':
+			display_kill_version();
+			exit(EXIT_SUCCESS);
+		default:
+			kill_usage();
 		}
-		kill_usage();
-	}
-	if (argv[1][1] == '-' && argv[1][2] == '\0') {
-		argv += 2;
-		argc -= 2;
-		goto no_more_args;
-	}
-	if (argv[1][1] == '-')
-		kill_usage();	/* likely --help */
-	// FIXME: "kill -sWINCH $$" not handled
-	if (argv[1][2] == '\0' && (argv[1][1] == 's' || argv[1][1] == 'n')) {
-		sigptr = argv[2];
-		argv += 3;
-		argc -= 3;
-	} else {
-		sigptr = argv[1] + 1;
-		argv += 2;
-		argc -= 2;
-	}
-	signo = signal_name_to_number(sigptr);
-	if (signo < 0) {
-		fprintf(stderr, _("ERROR: unknown signal name \"%s\".\n"),
-			sigptr);
-		kill_usage();
-	}
- no_more_args:
-	if (!argc)
-		kill_usage();	/* nothing to kill? */
-	while (argc--) {
-		long pid;
-		char *endp;
-		pid = strtol(argv[argc], &endp, 10);
-		if (!*endp && (endp != argv[argc])) {
-			if (!kill((pid_t) pid, signo))
-				continue;
-			/*
-			 * The UNIX standard contradicts itself. If at least
-			 * one process is matched for each PID (as if
-			 * processes could share PID!) and "the specified
-			 * signal was successfully processed" (the systcall
-			 * returned zero?) for at least one of those
-			 * processes, then we must exit with zero.  Note that
-			 * an error might have also occured.  The standard
-			 * says we return non-zero if an error occurs.  Thus
-			 * if killing two processes gives 0 for one and EPERM
-			 * for the other, we are required to return both zero
-			 * and non-zero.  Quantum kill???
-			 */
-			perror("kill");
-			exitvalue = 1;
+
+	argc -= optind + sigopt;
+	argv += optind;
+
+	for (i = 0; i < argc; i++) {
+		pid = strtol_or_err(argv[i], _("failed to parse argument"));
+		if (!kill((pid_t) pid, signo))
 			continue;
-		}
-		fprintf(stderr, _("ERROR: garbage process ID \"%s\".\n"),
-			argv[argc]);
-		kill_usage();
+		exitvalue = EXIT_FAILURE;
+		continue;
 	}
+
 	exit(exitvalue);
 }
+
 #if 0
 static void _skillsnice_usage(int line)
 {
