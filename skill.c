@@ -267,14 +267,15 @@ static void __attribute__ ((__noreturn__)) kill_usage(FILE * out)
 	fprintf(out,
 		" %s [options] <pid> [...]\n", program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_("  <pid> [...]    send SIGTERM to every <pid> listed\n"), out);
-	fputs(_("  -<signal>      specify the <signal> to be sent\n"), out);
-	fputs(_("  -s <signal>    specify the <signal> to be sent\n"), out);
-	fputs(_("  -l             list all signal names\n"), out);
-	fputs(_("  -L             list all signal names in a nice table\n"), out);
-	fputs(_("  -l <signal>    convert between signal numbers and names\n"), out);
+	fputs(_(" <pid> [...]            send signal to every <pid> listed\n"), out);
+	fputs(_(" -<signal>, -s, --signal <signal>\n"), out);
+	fputs(_("                        specify the <signal> to be sent\n"), out);
+	fputs(_(" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"), out);
+	fputs(_(" -L, --table            list all signal names in a nice table\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fprintf(out, USAGE_MAN_TAIL("skill(1)"));
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("kill(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
@@ -293,22 +294,23 @@ static void __attribute__ ((__noreturn__)) skillsnice_usage(FILE * out)
 			program_invocation_short_name);
 	}
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -f             fast mode (not implemented)\n"), out);
-	fputs(_(" -i             interactive\n"), out);
-	fputs(_(" -l             list all signal names\n"), out);
-	fputs(_(" -L             list all signal names in a nice table\n"),
-	      out);
-	fputs(_(" -n             no action\n"), out);
-	fputs(_(" -v             explain what is being done\n"), out);
-	fputs(_(" -w             enable warnings (not implemented)\n"), out);
-	fputs(USAGE_VERSION, out);
-	fputs(_("\n"), out);
+	fputs(_(" -f, --fast         fast mode (not implemented)\n"), out);
+	fputs(_(" -i, --interactive  interactive\n"), out);
+	fputs(_(" -l, --list         list all signal names\n"), out);
+	fputs(_(" -L, --table        list all signal names in a nice table\n"), out);
+	fputs(_(" -n, --no-action    no action\n"), out);
+	fputs(_(" -v, --verbose      explain what is being done\n"), out);
+	fputs(_(" -w, --warnings     enable warnings (not implemented)\n"), out);
+	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Expression can be: terminal, user, pid, command.\n"), out);
 	fputs(_("The options below may be used to ensure correct interpretation.\n"), out);
-	fputs(_(" -c <command>   expression is a command name\n"), out);
-	fputs(_(" -p <pid>       expression is a process id number\n"), out);
-	fputs(_(" -t <tty>       expression is a terminal\n"), out);
-	fputs(_(" -u <username>  expression is a username\n"), out);
+	fputs(_(" -c, --command <command>  expression is a command name\n"), out);
+	fputs(_(" -p, --pid <pid>          expression is a process id number\n"), out);
+	fputs(_(" -t, --tty <tty>          expression is a terminal\n"), out);
+	fputs(_(" -u, --user <username>    expression is a username\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 	if (program == PROG_SKILL) {
 		fprintf(out,
 			_("\n"
