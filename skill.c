@@ -134,9 +134,8 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 	fd = open(buf, O_RDONLY);
 	if (fd == -1) {
 		/* process exited maybe */
-		if (pids && run_time->warnings)
-			printf(_("WARNING: process %d could not be found.\n"),
-			       pid);
+		if (run_time->warnings)
+			warn(_("cannot open file %s"), buf);
 		return;
 	}
 	fstat(fd, &statbuf);
