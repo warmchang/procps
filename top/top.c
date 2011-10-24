@@ -705,7 +705,7 @@ static inline void show_scroll (void) {
          * what will fit within the current screen width.
          *    Our special formatting consists of:
          *       "some text <_delimiter_> some more text <_delimiter_>...\n"
-         *    Where <_delimiter_> is a two bye combination consisting of a
+         *    Where <_delimiter_> is a two byte combination consisting of a
          *    tilde followed by an ascii digit in the the range of 1 - 8.
          *       examples: ~1,  ~5,  ~8, etc.
          *    The tilde is effectively stripped and the next digit
@@ -767,7 +767,7 @@ static void show_special (int interact, const char *glob) {
                snprintf(tmp, sizeof(tmp), "%s%.*s%s", Curwin->captab[ch], room, sub_beg, Caps_off);
                rp = scat(rp, tmp);
                room -= (sub_end - sub_beg);
-               sub_beg = (sub_end += (ch ? 2 : 1));
+               sub_beg = (sub_end += 2);
                break;
             default:                   // nothin' special, just text
                ++sub_end;
