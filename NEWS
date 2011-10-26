@@ -1,9 +1,59 @@
-procps-3.2.9 --> procps-ng-3.3.0
-
+procps-3.2.8 --> procps-ng-3.3.0
+------------------------------------------------------
 Debian, Fedora and openSUSE fork of procps.
 https://gitorious.org/procps
 
-procps-3.2.8 --> procps-3.2.9
+environment/build changes:
+ . autotools integrated
+ . procps-ng specific options
+     --enable-oomem  (add out-of-memory flds)
+     --disable-kill  (do not build kill pgm)
+     --enable-w-from (from as default for w)
+
+library changes:
+ . added control groups support
+ . added supplementary groups support
+ . introduced proc_t memory management
+ . enabled hot-plugged cpu support
+ . introduced new api's
+     readeither   (readproc.c)
+     readproctab3 (readproc.c)
+     escaped_copy (escape.c)
+
+free changes:
+ . rewritten/modernized
+     improved help
+     includes long options
+     added new processing options
+ . updated manual page
+
+ps changes:
+ . added new fields
+     cgroups,etimes,supgid,supgrp,tgid
+ . exploited new library api's
+
+top changes:
+ . redesigned fields management
+ . added new fields
+     cgroups,gid,nmin,nth,pgrp,ruid,
+     sid,suid,supgids,supgrps,suser,
+     tgid,tpgid
+ . added horizontal/vertical scrolling
+ . added flexible output override via -w
+ . added COMMAND column forest view via V
+ . added hot-plugged cpu/memory support
+ . improved user filtering via u|U
+ . improved signal handling
+ . restored zero delay functionality
+ . introduced true line input editing
+ . exploited new library api's
+ . improved performance up to 300%
+
+Debian, Fedora and openSUSE fork of procps.
+https://gitorious.org/procps
+------------------------------------------------------
+
+procps-3.2.8 --> procps-3.2.9 (pending)
 
 top: fix an aliasing problem -- thanks David Owen
 
