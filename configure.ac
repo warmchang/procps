@@ -17,9 +17,6 @@ AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
-# Checks for libraries.
-AC_CHECK_LIB([ncurses], [setupterm])
-
 # Checks for header files.
 AC_HEADER_MAJOR
 AC_CHECK_HEADERS([\
@@ -106,38 +103,29 @@ dnl ---------------------------------
 AC_DEFUN([UTIL_CHECK_LIB], [
   m4_define([suffix], m4_default([$3],$1))
   [have_]suffix=yes
-  m4_ifdef([$3],
-    [AC_CHECK_LIB([$1], [$2], [AC_DEFINE(AS_TR_CPP([HAVE_LIB]suffix), 1)], [[have_]suffix=no])],
-    [AC_CHECK_LIB([$1], [$2], [], [[have_]suffix=no])])
+  m4_ifdef([$3], [AC_CHECK_LIB([$1], [$2], [], [[have_]suffix=no])], [])
   AM_CONDITIONAL(AS_TR_CPP([HAVE_]suffix), [test [$have_]suffix = yes])
 ])
 
 AC_ARG_WITH([ncurses],
-  AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses, default is wide version
-                                    (--without-ncurses disables all ncurses(w) support)]),
-  [], with_ncurses=auto
+  AS_HELP_STRING([--without-ncurses], [build only applications not needing ncurses]),
+  [], with_ncurses=yes
 )
 AM_CONDITIONAL(HAVE_NCURSES, false)
 
 if test "x$with_ncurses" != xno; then
   have_ncurses=no
   AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [
-    if test "x$with_ncurses" = xauto; then
+    if test "x$with_ncurses" = xyes; then
       UTIL_CHECK_LIB(ncursesw, initscr, ncurses)
       if test "x$have_ncurses" = xyes; then
         AC_CHECK_HEADERS([ncursesw/ncurses.h])
         NCURSES_LIBS="-lncursesw"
       fi
     fi
-    if test "x$have_ncurses" = xno; then
-      UTIL_CHECK_LIB(ncurses, initscr)
-      if test "x$have_ncurses" = xyes; then
-        NCURSES_LIBS="-lncurses"
-      fi
-    fi
   ])
   if test "x$have_ncurses" = xno; then
-    AC_MSG_ERROR([ncurses or ncursesw selected, but library not found (--without-ncurses to disable)])
+    AC_MSG_ERROR([ncurses selected, but library not found (--without-ncurses to disable)])
   fi
 fi
 AC_SUBST([NCURSES_LIBS])
