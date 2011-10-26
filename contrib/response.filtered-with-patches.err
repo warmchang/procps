@@ -61,7 +61,7 @@ pgrep.c:558: data_index: Using tainted variable "(int)argv[1][1]" as an index to
 Error: EVALUATION_ORDER:
 	agree that there is a problem.
 	moreover, it deals with an undocumented command line argument (but sami has documentation addition pending)
-	a deference was added in line with intent, hopefully avoids this warning
+	the logic was altered in line with intent, hopefully avoids this warning
 	my_category: defect_was_fixed
 pmap.c:314: write_write_order: In "arg2 = (arg2 ? arg2++ : arg1)", "arg2" is written in "arg2" (the assignment left-hand side) and written in "arg2 ? arg2++ : arg1" but the order in which the side effects take place is undefined because there is no intervening sequence point.
 

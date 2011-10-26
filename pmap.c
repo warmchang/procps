@@ -311,14 +311,15 @@ int main(int argc, char *argv[]){
             char *arg2 = strchr(arg1,',');
             if(arg2)
               *arg2 = '\0';
-            arg2 = *arg2 ? arg2++ : arg1;
+            if(arg2) ++arg2;
+            else arg2 = arg1;
             
             if(*arg1)
               range_low = STRTOUKL(arg1,&arg1,16);
             if(*arg2)
               range_high = STRTOUKL(arg2,&arg2,16);
             if(*arg1 || *arg2)
-            	usage();
+              usage();
           }
           break;
         case 'a': // Sun prints anon/swap reservations
