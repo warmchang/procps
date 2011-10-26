@@ -645,7 +645,7 @@ static void msg_save (const char *fmts, ...) {
    vsnprintf(tmp, sizeof(tmp), fmts, va);
    va_end(va);
    // we'll add some extra attention grabbers to whatever this is
-   snprintf(Msg_delayed, sizeof(Msg_delayed), "\a***  %s  ***", strim(tmp));
+   snprintf(Msg_delayed, sizeof(Msg_delayed), "***  %s  ***", strim(tmp));
    Msg_awaiting = 1;
 } // end: msg_save
 
@@ -714,7 +714,7 @@ static inline void show_scroll (void) {
          * what will fit within the current screen width.
          *    Our special formatting consists of:
          *       "some text <_delimiter_> some more text <_delimiter_>...\n"
-         *    Where <_delimiter_> is a two bye combination consisting of a
+         *    Where <_delimiter_> is a two byte combination consisting of a
          *    tilde followed by an ascii digit in the the range of 1 - 8.
          *       examples: ~1,  ~5,  ~8, etc.
          *    The tilde is effectively stripped and the next digit
@@ -770,12 +770,13 @@ static void show_special (int interact, const char *glob) {
          switch (ch) {
             case 0:                    // no end delim, captab makes normal
                *(sub_end + 1) = '\0';  // extend str end, then fall through
+               *(sub_end + 2) = '\0';  // ( +1 optimization for usual path )
             case 1 ... 8:
                *sub_end = '\0';
                snprintf(tmp, sizeof(tmp), "%s%.*s%s", Curwin->captab[ch], room, sub_beg, Caps_off);
                rp = scat(rp, tmp);
                room -= (sub_end - sub_beg);
-               sub_beg = (sub_end += (ch ? 2 : 1));
+               sub_beg = (sub_end += 2);
                break;
             default:                   // nothin' special, just text
                ++sub_end;
@@ -965,9 +966,9 @@ static char *linein (const char *prompt) {
  #define bufMAX  ((int)sizeof(buf)-2)  // -1 for '\0' string delimeter
    static char buf[MEDBUFSIZ+1];       // +1 for '\0' string delimeter
    int beg, pos, len;
-   int i, key;
+   int key;
 
-   pos = i = 0;
+   pos = 0;
    beg = show_pmt(prompt);
    memset(buf, '\0', sizeof(buf));
    do {
@@ -1029,7 +1030,7 @@ static float get_float (const char *prompt) {
    if (!(*(line = linein(prompt)))) return -1.0;
    // note: we're not allowing negative floats
    if (strcspn(line, "+,.0123456789")) {
-      show_msg("Not valid");
+      show_msg("Unacceptable floating point");
       return -1.0;
    }
    sscanf(line, "%f", &f);
@@ -1046,7 +1047,7 @@ static int get_int (const char *prompt) {
    if (!(*(line = linein(prompt)))) return INT_MIN;
    // note: we've got to allow negative ints (renice)
    if (strcspn(line, "-+0123456789")) {
-      show_msg("\aNot valid");
+      show_msg("Unacceptable integer");
       return INT_MIN;
    }
    sscanf(line, "%d", &n);
@@ -2098,7 +2099,7 @@ static void before (char *me) {
    // lastly, establish a robust signals environment
    sigemptyset(&sa.sa_mask);
    sa.sa_flags = SA_RESTART;
-   for (i = SIGRTMAX + 1; i; i--) {
+   for (i = SIGRTMAX; i; i--) {
       switch (i) {
          case SIGALRM: case SIGHUP:  case SIGINT:
          case SIGPIPE: case SIGQUIT: case SIGTERM:
@@ -2466,10 +2467,10 @@ static WIN_t *win_select (char ch) {
 static int win_warn (int what) {
    switch (what) {
       case Warn_ALT:
-         show_msg("\aCommand disabled, 'A' mode required");
+         show_msg("Command disabled, 'A' mode required");
          break;
       case Warn_VIZ:
-         show_msg(fmtmk("\aCommand disabled, activate %s with '-' or '_'"
+         show_msg(fmtmk("Command disabled, activate %s with '-' or '_'"
             , Curwin->grpname));
          break;
       default:                    // keep gcc happy
@@ -2509,7 +2510,7 @@ static void wins_colors (void) {
    char ch, tgt = 'T';
 
    if (0 >= max_colors) {
-      show_msg("\aNo colors to map!");
+      show_msg("No colors to map!");
       return;
    }
    winsclrhlp(w, 1);
@@ -2634,7 +2635,6 @@ static void wins_stage_1 (void) {
       w->captab[8] = w->capclr_rownorm;
       w->next = w + 1;
       w->prev = w - 1;
-      ++w;
    }
 
    // fixup the circular chains...
@@ -2672,7 +2672,7 @@ static void file_writerc (void) {
    int i;
 
    if (!(fp = fopen(Rc_name, "w"))) {
-      show_msg(fmtmk("\aFailed '%s' open: %s", Rc_name, strerror(errno)));
+      show_msg(fmtmk("Failed '%s' open: %s", Rc_name, strerror(errno)));
       return;
    }
    fprintf(fp, "%s's " RCF_EYECATCHER, Myname);
@@ -2730,8 +2730,8 @@ static void help_view (void) {
 
 static void keys_global (int ch) {
    // standardized error message(s)
-   static const char err_secure[] = "\aUnavailable in secure mode";
-   static const char err_notsmp[] = "\aOnly 1 cpu detected";
+   static const char err_secure[] = "Unavailable in secure mode";
+   static const char err_notsmp[] = "Only 1 cpu detected";
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
 
    switch (ch) {
@@ -2778,7 +2778,7 @@ static void keys_global (int ch) {
                str = linein(fmtmk("Send pid %d signal [%d/sigterm]", pid, SIGTERM));
                if (*str) sig = signal_name_to_number(str);
                if (0 < sig && kill(pid, sig))
-                  show_msg(fmtmk("\aFailed signal pid '%d' with '%d': %s"
+                  show_msg(fmtmk("Failed signal pid '%d' with '%d': %s"
                      , pid, sig, strerror(errno)));
                else if (0 > sig) show_msg("Invalid signal");
             }
@@ -2792,7 +2792,7 @@ static void keys_global (int ch) {
             if (-1 < (pid = get_int("PID to renice"))
             && INT_MIN < (val = get_int(fmtmk("Renice PID %d to value", pid))))
                if (setpriority(PRIO_PROCESS, (unsigned)pid, val))
-                  show_msg(fmtmk("\aFailed renice of PID %d to %d: %s"
+                  show_msg(fmtmk("Failed renice of PID %d to %d: %s"
                      , pid, val, strerror(errno)));
          }
          break;
@@ -2893,7 +2893,7 @@ static void keys_task (int ch) {
 #else
             if (!CHKw(w, Show_HICOLS | Show_HIROWS))
 #endif
-               show_msg("\aNothing to highlight!");
+               show_msg("Nothing to highlight!");
             else {
                TOGw(w, Show_HIBOLD);
                capsmk(w);
@@ -3204,7 +3204,7 @@ static void do_key (int ch) {
             }
 
          if (!(i < MAXTBL(key_tab))) {
-            show_msg("\aUnknown command - try 'h' for help");
+            show_msg("Unknown command - try 'h' for help");
             return;
          }
    };
