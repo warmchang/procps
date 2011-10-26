@@ -3608,20 +3608,15 @@ static int window_show (WIN_t *q, int wmax) {
          * This guy's just a *Helper* function who apportions the
          * remaining amount of screen real estate under multiple windows */
 static void framehlp (int wix, int max) {
-   int i, rsvd, size, wins;
+   int i, size, wins;
 
-   // calc remaining number of visible windows + total 'user' lines
-   for (i = wix, rsvd = 0, wins = 0; i < GROUPSMAX; i++) {
-      if (CHKw(&Winstk[i], Show_TASKON)) {
-         rsvd += Winstk[i].rc.maxtasks;
+   // calc remaining number of visible windows
+   for (i = wix, wins = 0; i < GROUPSMAX; i++)
+      if (CHKw(&Winstk[i], Show_TASKON))
          ++wins;
-         if (max <= rsvd) break;
-      }
-   }
+
    if (!wins) wins = 1;
-   // set aside 'rsvd' & deduct 1 line/window for the columns heading
-   size = (max - wins) - rsvd;
-   if (0 <= size) size = max;
+   // deduct 1 line/window for the columns heading
    size = (max - wins) / wins;
 
    /* for subject window, set WIN_t winlines to either the user's

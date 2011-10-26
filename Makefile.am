@@ -42,7 +42,7 @@ bin_PROGRAMS = kill
 dist_man_MANS += kill.1
 endif
 
-if HAVE_NCURSES
+if WITH_NCURSES
 usrbin_exec_PROGRAMS += \
 	slabtop \
 	top \

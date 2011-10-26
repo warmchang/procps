@@ -92,43 +92,26 @@ AC_CHECK_FUNCS([\
 	wcwidth
 ])
 
-usrbin_execdir='${exec_prefix}/usr/bin'
-AC_SUBST([usrbin_execdir])
-
-dnl UTIL_CHECK_LIB(LIBRARY, FUNCTION, [VARSUFFIX = $1]))
-dnl The VARSUFFIX is optional and overrides the default behaviour. For example:
-dnl     UTIL_CHECK_LIB(yyy, func, xxx) generates have_xxx and HAVE_LIBXXX
-dnl     UTIL_CHECK_LIB(yyy, func)      generates have_yyy and HAVE_LIBYYY
-dnl ---------------------------------
-AC_DEFUN([UTIL_CHECK_LIB], [
-  m4_define([suffix], m4_default([$3],$1))
-  [have_]suffix=yes
-  m4_ifdef([$3], [AC_CHECK_LIB([$1], [$2], [], [[have_]suffix=no])], [])
-  AM_CONDITIONAL(AS_TR_CPP([HAVE_]suffix), [test [$have_]suffix = yes])
-])
-
 AC_ARG_WITH([ncurses],
   AS_HELP_STRING([--without-ncurses], [build only applications not needing ncurses]),
-  [], with_ncurses=yes
+  [with_ncurses=no], [with_ncurses=yes]
 )
-AM_CONDITIONAL(HAVE_NCURSES, false)
 
-if test "x$with_ncurses" != xno; then
-  have_ncurses=no
-  AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [
-    if test "x$with_ncurses" = xyes; then
-      UTIL_CHECK_LIB(ncursesw, initscr, ncurses)
-      if test "x$have_ncurses" = xyes; then
-        AC_CHECK_HEADERS([ncursesw/ncurses.h])
-        NCURSES_LIBS="-lncursesw"
-      fi
-    fi
-  ])
+if test "x$with_ncurses" = xno; then
+  AM_CONDITIONAL(WITH_NCURSES, false)
+else
+  AC_CHECK_LIB(ncursesw, initscr, [have_ncurses=yes], [have_ncurses=no])
+  AC_CHECK_HEADERS(ncursesw/ncurses.h, [], [have_ncurses=no])
   if test "x$have_ncurses" = xno; then
-    AC_MSG_ERROR([ncurses selected, but library not found (--without-ncurses to disable)])
+    AC_MSG_ERROR([ncurses support missing (for partial build use --without-ncurses)])
   fi
+  AM_CONDITIONAL(WITH_NCURSES, true)
+  NCURSES_LIBS="-lncursesw"
 fi
 AC_SUBST([NCURSES_LIBS])
+
+usrbin_execdir='${exec_prefix}/usr/bin'
+AC_SUBST([usrbin_execdir])
 
 AC_ARG_ENABLE([kill],
   AS_HELP_STRING([--disable-kill], [do not build kill]),
