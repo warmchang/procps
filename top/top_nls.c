@@ -495,18 +495,18 @@ static void build_uniq_nsltab (void) {
 .     If you decide to proceed with translation, do the following lines
 .     only taking care not to disturbe the '~' + number sequence.
 .
-.     "   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,~3\n"
-.     "   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 ~2idle~3\n"
+.        --> "   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62
+.        --> "   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~
 .
-.     "   available toggles: ~1B~2 =disable bold globally (~1%s~2),\n"
-.             ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks \"bold\"/reverse (~1%s~2)\n"
+.        --> "   available toggles: ~1B~2 =disable bold globa
+.        --> "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks
 .
-.     "Select ~1target~2 as upper case letter:\n"
-.     "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n"
-.     "   H~2 = Column Heads,~1  T~2 = Task Information\n"
-.     "Select ~1color~2 as number:\n"
-.     "   0~2 = black,~1  1~2 = red,    ~1  2~2 = green,~1  3~2 = yellow,\n"
-.     "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan, ~1  7~2 = white\n"
+.        --> "Select ~1target~2 as upper case letter:\n"
+.        --> "   S~2 = Summary Data,~1  M~2 = Messages/Prompt
+.        --> "   H~2 = Column Heads,~1  T~2 = Task Informatio
+.        --> "Select ~1color~2 as number:\n"
+.        --> "   0~2 = black,~1  1~2 = red,    ~1  2~2 = gree
+.        --> "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan
 .
 . */
    snprintf(buf, sizeof(buf), "%s", _(""
@@ -576,8 +576,8 @@ static void build_uniq_nsltab (void) {
    Uniq_nlstab[STATE_lin2x7_fmt] = strdup(buf);
 
 /* Translation Hint #5: Only the following need be translated
-   .                 abbreviations: Mem = physical memory/ram, Swap = the linux swap file
-   .                 words:         total, used, free, buffers, cached */
+   .                    abbreviations: Mem = physical memory/ram, Swap = the linux swap file
+   .                    words:         total, used, free, buffers, cached */
    snprintf(buf, sizeof(buf), "%s", _(""
       "%s Mem: ~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2buffers~3\n"
       "%s Swap:~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2cached~3\n"
