@@ -492,7 +492,7 @@ typedef struct WIN_t {
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
 #define LOADAV_line  "%s -%s\n"
-#define LOADAV_line_alt  "%s\06 -%s\n"
+#define LOADAV_line_alt  "%s~6 -%s\n"
 
 
 /*######  For Piece of mind  #############################################*/
