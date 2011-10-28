@@ -49,20 +49,20 @@
         /* The following convention is used to identify those areas where
            adaptations for hotplugging are to be found ...
               *** hotplug_acclimated ***
-           ( hopefully libproc will also be supportive of our efforts )   */
+           ( hopefully libproc will also be supportive of our efforts ) */
 
         /* And there are still some of these lurking here and there...
-              FIXME - blah, blah...                                       */
+              FIXME - blah, blah... */
 
         /* For introducing inaugural cgroup support, thanks to:
-              Jan Gorig <jgorig@redhat.com> - April, 2011                 */
+              Jan Gorig <jgorig@redhat.com> - April, 2011 */
 
         /* For the motivation and path to nls support, thanks to:
-              Sami Kerola, <kerolasa@iki.fi>                              */
+              Sami Kerola, <kerolasa@iki.fi> */
 
         /* There are still some short strings that may yet be candidates
            for nls support inclusion.  They're identified with:
-              // nls_maybe                                                */
+              // nls_maybe */
 
 #ifdef PRETEND2_5_X
 #define linux_version_code LINUX_VERSION(2,5,43)
