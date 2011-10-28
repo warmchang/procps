@@ -276,7 +276,7 @@ static const char *fmtmk (const char *fmts, ...) {
         /*
          * This guy is just our way of avoiding the overhead of the standard
          * strcat function (should the caller choose to participate) */
-inline char *scat (char *dst, const char *src) {
+static inline char *scat (char *dst, const char *src) {
    while (*dst) dst++;
    while ((*(dst++) = *(src++)));
    return --dst;
