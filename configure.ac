@@ -101,9 +101,11 @@ if test "x$with_ncurses" = xno; then
   AM_CONDITIONAL(WITH_NCURSES, false)
 else
   AC_CHECK_LIB(ncursesw, initscr, [have_ncurses=yes], [have_ncurses=no])
+  AC_CHECK_HEADERS(curses.h, [], [have_ncurses=no])
+  AC_CHECK_HEADERS(ncurses.h, [], [have_ncurses=no])
   AC_CHECK_HEADERS(ncursesw/ncurses.h, [], [have_ncurses=no])
   if test "x$have_ncurses" = xno; then
-    AC_MSG_ERROR([ncurses support missing (for partial build use --without-ncurses)])
+    AC_MSG_ERROR([ncurses support missing/incomplete (for partial build use --without-ncurses)])
   fi
   AM_CONDITIONAL(WITH_NCURSES, true)
   NCURSES_LIBS="-lncursesw"
