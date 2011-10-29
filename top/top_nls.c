@@ -589,7 +589,34 @@ static void build_uniq_nsltab (void) {
         /*
          * Duh... */
 void initialize_nsl (void) {
+#ifdef VALIDATE_NLS
+   static const char *nls_err ="\t%s_nlstab[%d] == NULL\n";
+   int i;
+
+   memset(Desc_nlstab, 0, sizeof(Desc_nlstab));
+   build_desc_nlstab();
+   for (i = 0; i < P_MAXPFLGS; i++)
+      if (!Desc_nlstab[i]) {
+         fprintf(stderr, nls_err, "Desc", i);
+         exit(1);
+      }
+   memset(Norm_nlstab, 0, sizeof(Norm_nlstab));
+   build_norm_nlstab();
+   for (i = 0; i < norm_MAX; i++)
+      if (!Norm_nlstab[i]) {
+         fprintf(stderr, nls_err, "Norm", i);
+         exit(1);
+      }
+   memset(Uniq_nlstab, 0, sizeof(Uniq_nlstab));
+   build_uniq_nsltab();
+   for (i = 0; i < uniq_MAX; i++)
+      if (!Uniq_nlstab[i]) {
+         fprintf(stderr, nls_err, "Uniq", i);
+         exit(1);
+      }
+#else
    build_desc_nlstab();
    build_norm_nlstab();
    build_uniq_nsltab();
+#endif
 }

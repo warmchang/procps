@@ -41,6 +41,7 @@
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
 //#define TREE_ONEPASS            /* for speed, tolerate dangling children   */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
+//#define VALIDATE_NLS            /* validate integrity of all 3 nls tables  */
 
 
 /*######  Notes, etc.  ###################################################*/
