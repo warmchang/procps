@@ -31,9 +31,11 @@ AC_HEADER_MAJOR
 AC_CHECK_HEADERS([\
 	fcntl.h \
 	langinfo.h \
+	libintl.h \
 	limits.h \
 	locale.h \
 	netinet/in.h \
+	stdint.h \
 	stdlib.h \
 	string.h \
 	sys/file.h \
