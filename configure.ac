@@ -86,7 +86,6 @@ AC_CHECK_FUNCS([\
 	select \
 	setlocale \
 	strcasecmp \
-	strverscmp \
 	strchr \
 	strcspn \
 	strdup \
@@ -98,6 +97,7 @@ AC_CHECK_FUNCS([\
 	strstr \
 	strtol \
 	strtoul \
+	strverscmp \
 	uname \
 	utmpname \
 	wcwidth
