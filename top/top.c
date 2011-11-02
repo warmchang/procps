@@ -17,6 +17,7 @@
  *    Albert D. Cahalan, <albert@users.sf.net>
  *    Sami Kerola, <kerolasa@iki.fi>
  */
+
 #include <sys/ioctl.h>
 #include <sys/resource.h>
 #include <sys/time.h>
@@ -48,6 +49,8 @@
 #include "../proc/version.h"
 #include "../proc/wchan.h"
 #include "../proc/whattime.h"
+
+#include "../include/nls.h"
 
 #include "top.h"
 #include "top_nls.h"

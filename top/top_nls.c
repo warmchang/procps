@@ -17,6 +17,7 @@
  *    Sami Kerola, <kerolasa@iki.fi>
  */
 
+#include <locale.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -25,18 +26,48 @@
 #include "top.h"
 #include "top_nls.h"
 
-        /* Programmer Note: Unless you have *something* following the gettext
-         .                  macro, gettext will refuse to see any TRANSLATORS
-         .                  comments.  Thus empty strings have been added for
-         .                  potential future comment additions.
-         .
-         .    /* TRANSLATORS: ...
-         .    snprintf(buf, sizeof(buf), "%s", _(           // unseen comment
-         .
-         .    /* TRANSLATORS: ...
-         .    snprintf(buf, sizeof(buf), "%s", _(""         // now it's seen!
-         */
-
+        // Programmer Note(s):
+        //  Preparation ---------------------------------------------
+        //    Unless you have *something* following the gettext macro,
+        //    xgettext will refuse to see any TRANSLATORS comments.
+        //    Thus empty strings have been added for potential future
+        //    comment additions.
+        //
+        //    Also, by omitting the argument for the --add-comments
+        //    XGETTEXT_OPTION in po/Makevars, *any* preceeding c style
+        //    comment will be propagated to the .pot file, providing
+        //    that the gettext macro isn't empty as discussed above.
+        //
+        //    /* Need Not Say 'TRANSLATORS': ...
+        //    snprintf(buf, sizeof(buf), "%s", _(      // unseen comment
+        //
+        //    /* Translator Hint: ...
+        //    snprintf(buf, sizeof(buf), "%s", _(""    // now it's seen!
+        //
+        //  Translation, from po/ directory after make --------------
+        //  ( this is the procedure used before any translations were  )
+        //  ( available in the po/ directory, which contained only the )
+        //  ( procps-ng.pot, this domain's template file.              )
+        //
+        //  ( below: ll_CC = language/country as in 'zh_CN' or 'en_AU' )
+        //
+        //    msginit --locale=ll_CC --no-wrap
+        //     . creates a ll_CC.po file from the template procps-ng.pot
+        //     . may also duplicate msgid as msgstr if languages similar
+        //    msgen --no-wrap ll_CC.po --output-file=ll_CC.po
+        //     . duplicates every msgid literal as msgstr value
+        //     . this is the file that's edited
+        //        . replace "Content-Type: ... charset=ASCII\n"
+        //                           with "... charset=UTF-8\n"
+        //        . translate msgstr values, leaving msgid unchanged
+        //    msgfmt ll_CC.po --strict --output-file=procps-ng.mo
+        //     . after which chmod 644
+        //     . move to /usr/share/local/ll_CC/LC_MESSAGES/ directory
+        //
+        //  Testing -------------------------------------------------
+        //    export LC_ALL= && export LANGUAGE=ll_CC
+        //    run some capable program like top
+        //
 
         /*
          * These are our three string tables with the following contents:
@@ -587,11 +618,32 @@ static void build_uniq_nsltab (void) {
 
 
         /*
-         * Duh... */
+         * This function must be called very early at startup, before
+         * any other function call, and especially before any changes
+         * have been made to the terminal if VALIDATE_NLS is defined!
+         *
+         * The gettext documentation suggests that alone among locale
+         * variables LANGUAGE=ll_CC may be abbreviated as LANGUAGE=ll
+         * to denote the language's main dialect.  Unfortunately this
+         * does not appear to be true.  One must specify the complete
+         * ll_CC.  Optionally, a '.UTF-8' or '.uft8' suffix, as shown
+         * in the following examples, may also be included:
+         *    export LANGUAGE=ll_CC          # minimal requirement
+         *    export LANGUAGE=ll_CC.UTF-8    # optional convention
+         *    export LANGUAGE=ll_CC.utf8     # ok, too
+         *
+         * Additionally, as suggested in the gettext documentation, a
+         * user will also have to export an empty LC_ALL= to actually
+         * enable any translations.
+         */
 void initialize_nsl (void) {
 #ifdef VALIDATE_NLS
    static const char *nls_err ="\t%s_nlstab[%d] == NULL\n";
    int i;
+
+   setlocale (LC_ALL, "");
+   bindtextdomain(PACKAGE, LOCALEDIR);
+   textdomain(PACKAGE);
 
    memset(Desc_nlstab, 0, sizeof(Desc_nlstab));
    build_desc_nlstab();
@@ -615,6 +667,10 @@ void initialize_nsl (void) {
          exit(1);
       }
 #else
+   setlocale (LC_ALL, "");
+   bindtextdomain(PACKAGE, LOCALEDIR);
+   textdomain(PACKAGE);
+
    build_desc_nlstab();
    build_norm_nlstab();
    build_uniq_nsltab();
