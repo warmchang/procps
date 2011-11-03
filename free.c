@@ -11,11 +11,13 @@
  * Copyright 2003 Robert Love
  * Copyright 2004 Albert Cahalan
  */
+
 #include "proc/sysinfo.h"
 #include "proc/version.h"
 #include "c.h"
 #include "nls.h"
 
+#include <locale.h>
 #include <errno.h>
 #include <limits.h>
 #include <ctype.h>
@@ -203,6 +205,10 @@ int main(int argc, char **argv)
 	args.exponent = 0;
 	args.repeat_interval = 1000000;
 	args.repeat_counter = 0;
+
+	setlocale (LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	while ((c = getopt_long(argc, argv, "bkmghlotc:s:V", longopts, NULL)) != -1)
 		switch (c) {
