@@ -9,6 +9,7 @@
  * Copyright (C) 2003 Chris Rivera
  */
 
+#include <locale.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -284,6 +285,10 @@ int main(int argc, char *argv[])
 		{ "version",	no_argument,	   NULL, 'V' },
 		{  NULL, 0, NULL, 0 }
 	};
+
+	setlocale (LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	sort_func = DEF_SORT_FUNC;
 
