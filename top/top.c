@@ -41,6 +41,8 @@
 #include <unistd.h>
 #include <values.h>
 
+#include "../include/nls.h"
+
 #include "../proc/devname.h"
 #include "../proc/procps.h"
 #include "../proc/readproc.h"
@@ -49,8 +51,6 @@
 #include "../proc/version.h"
 #include "../proc/wchan.h"
 #include "../proc/whattime.h"
-
-#include "../include/nls.h"
 
 #include "top.h"
 #include "top_nls.h"
