@@ -19,6 +19,9 @@
 
 #include <locale.h>
 #include <stdio.h>
+#ifdef VALIDATE_NLS
+#include <stdlib.h>
+#endif
 #include <string.h>
 
 #include "../include/nls.h"
