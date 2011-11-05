@@ -4,7 +4,12 @@ lib_LTLIBRARIES = libproc-ng.la
 
 libproc_ng_ladir = $(ladir)
 libproc_ng_la_LIBADD = $(LIB_KPARTS)
-libproc_ng_la_LDFLAGS = $(all_libraries) -release $(PACKAGE_VERSION) -no-undefined
+libproc_ng_la_LDFLAGS = \
+	$(AM_LDFLAGS) \
+	$(all_libraries) \
+	-release $(PACKAGE_VERSION) \
+	-no-undefined \
+	-Wl,--version-script=$(top_srcdir)/proc/library.map
 
 libproc_ng_la_SOURCES = \
 	alloc.c \
