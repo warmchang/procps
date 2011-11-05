@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libproc-ng
+Description: Library to control and query process state
+Version: @VERSION@
+Libs: -L${libdir} -lproc-ng
+Libs.private:
+Cflags: -I${includedir}

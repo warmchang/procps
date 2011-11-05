@@ -138,6 +138,7 @@ fi
 AC_CONFIG_FILES([
 Makefile
 proc/Makefile
+proc/libproc-ng.pc
 ps/Makefile
 ])
 AC_OUTPUT

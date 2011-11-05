@@ -11,6 +11,9 @@ libproc_ng_la_LDFLAGS = \
 	-no-undefined \
 	-Wl,--version-script=$(top_srcdir)/proc/library.map
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libproc-ng.pc
+
 libproc_ng_la_SOURCES = \
 	alloc.c \
 	alloc.h \
