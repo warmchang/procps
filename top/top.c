@@ -2073,7 +2073,7 @@ static void before (char *me) {
    if (Myname) ++Myname; else Myname = me;
 
    // accommodate nls/gettext potential translations
-   initialize_nsl();
+   initialize_nls();
 
    // establish cpu particulars
 #ifdef PRETEND4CPUS

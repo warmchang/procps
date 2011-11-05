@@ -75,7 +75,7 @@ enum uniq_nls {
       uniq_MAX
 };
 
-void initialize_nsl (void);
+void initialize_nls (void);
 
 #endif /* _Itop_nls */
 

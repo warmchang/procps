@@ -440,7 +440,7 @@ static void build_norm_nlstab (void) {
         /*
          * This routine builds the nls table containing specially
          * formatted strings designed to fit within an 80x24 terminal. */
-static void build_uniq_nsltab (void) {
+static void build_uniq_nlstab (void) {
    char buf[BIGBUFSIZ];
 
 /* Translation Notes ------------------------------------------------
@@ -650,7 +650,7 @@ static void build_uniq_nsltab (void) {
          * user will also have to export an empty LC_ALL= to actually
          * enable any translations.
          */
-void initialize_nsl (void) {
+void initialize_nls (void) {
 #ifdef VALIDATE_NLS
    static const char *nls_err ="\t%s_nlstab[%d] == NULL\n";
    int i;
@@ -674,7 +674,7 @@ void initialize_nsl (void) {
          exit(1);
       }
    memset(Uniq_nlstab, 0, sizeof(Uniq_nlstab));
-   build_uniq_nsltab();
+   build_uniq_nlstab();
    for (i = 0; i < uniq_MAX; i++)
       if (!Uniq_nlstab[i]) {
          fprintf(stderr, nls_err, "Uniq", i);
@@ -687,6 +687,6 @@ void initialize_nsl (void) {
 
    build_desc_nlstab();
    build_norm_nlstab();
-   build_uniq_nsltab();
+   build_uniq_nlstab();
 #endif
 }
