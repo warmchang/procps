@@ -37,11 +37,13 @@
         //    XGETTEXT_OPTION in po/Makevars, *any* preceeding c style
         //    comment will be propagated to the .pot file, providing
         //    that the gettext macro isn't empty as discussed above.
+        //    However, this is far too aggressive so we have chosen
+        //    the word 'Translation' to denote xgettext comments.
         //
         //    /* Need Not Say 'TRANSLATORS': ...
         //    snprintf(buf, sizeof(buf), "%s", _(      // unseen comment
         //
-        //    /* Translator Hint: ...
+        //    /* Translation Hint: ...
         //    snprintf(buf, sizeof(buf), "%s", _(""    // now it's seen!
         //
         //  Translation, from po/ directory after make --------------
@@ -89,17 +91,16 @@ const char *Uniq_nlstab[uniq_MAX];
 static void build_desc_nlstab (void) {
    char buf[SMLBUFSIZ];
 
-/* -----------------------------------------------------------------------
-.  Note #1 for Translators:
-.     It is strongly recommend that the --no-wrap command line option
-.     be used with all supporting translation tools, when available.
-.
-.     The following single lines contain only plain text used as
-.     the descriptions under Field Management when the 'f' key is typed.
-.
-.     To avoid truncation, each translated line MUST be kept to a length
-.     of 20 characters or less.\n"
-. */
+/* Translation Notes ------------------------------------------------
+   .  It is strongly recommend that the --no-wrap command line option
+   .  be used with all supporting translation tools, when available.
+   .
+   .  The following single lines contain only plain text used as the
+   .  descriptions under Field Management when the 'f' key is typed.
+   .
+   .  To avoid truncation, each translated line MUST be kept to a
+   .  length of 20 characters or less.
+   . */
 
    snprintf(buf, sizeof(buf), "%s", _("Process Id"));
    Desc_nlstab[P_PID] = strdup(buf);
@@ -194,17 +195,16 @@ static void build_desc_nlstab (void) {
 static void build_norm_nlstab (void) {
    char buf[MEDBUFSIZ];
 
-/* -----------------------------------------------------------------------
-.  Note #2 for Translators:
-.     It is strongly recommend that the --no-wrap command line option
-.     be used with all supporting translation tools, when available.
-.
-.     This group of lines contains both plain text and c-format strings.
-.
-.     Some strings reflect switches used to affect the running program
-.     and should not be translated without also making corresponding
-.     c-code logic changes.
-. */
+/* Translation Notes ------------------------------------------------
+   .  It is strongly recommend that the --no-wrap command line option
+   .  be used with all supporting translation tools, when available.
+   .
+   .  This group of lines contains both plain text and c-format strings.
+   .
+   .  Some strings reflect switches used to affect the running program
+   .  and should not be translated without also making corresponding
+   .  c-code logic changes.
+   . */
 
    snprintf(buf, sizeof(buf), "%s", _(""
       "\tsignal %d (%s) was caught by %s, please\n"
@@ -266,8 +266,8 @@ static void build_norm_nlstab (void) {
    snprintf(buf, sizeof(buf), "%s", _("Off"));
    Norm_nlstab[OFF_one_word_txt] = strdup(buf);
 
-/* Translation Hint #1: Only the following words should be translated
-   .                    delay, limit, user, cols */
+/* Translation Hint: Only the following words should be translated
+   .                 delay, limit, user, cols */
    snprintf(buf, sizeof(buf), "%s", _(" -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]"));
    Norm_nlstab[USAGE_abbrev_txt] = strdup(buf);
 
@@ -426,31 +426,30 @@ static void build_norm_nlstab (void) {
 static void build_uniq_nsltab (void) {
    char buf[BIGBUFSIZ];
 
-/* -----------------------------------------------------------------------
-.  Note #3 for Translators:
-.     It is strongly recommend that the --no-wrap command line option
-.     be used with all supporting translation tools, when available.
-.
-.     The next several text groups contain special escape sequences
-.     representing values used to index a table at run-time.
-.
-.     Each such sequence consists of a tilde (~) followed by an ascii
-.     number in the rage of '1' - '8'.  Examples are '~2', '~8', etc.
-.     These escape sequences must never themselves be translated but
-.     could be deleted.
-.
-.     If you remove these escape sequences (both tilde and number) it
-.     would make translation easier.  However, the ability to display
-.     colors and bold text at run-time will have been lost.
-.
-.     Additionally, each of these text groups was designed to display
-.     in a 80x24 terminal window.  Hopefully, any translations will
-.     adhere to that goal lest the translated text be truncated.
-.
-.     If you would like additional information regarding these strings,
-.     please see the prolog to the show_special function in the top.c
-.     source file.
-. */
+/* Translation Notes ------------------------------------------------
+   .  It is strongly recommend that the --no-wrap command line option
+   .  be used with all supporting translation tools, when available.
+   .
+   .  The next several text groups contain special escape sequences
+   .  representing values used to index a table at run-time.
+   .
+   .  Each such sequence consists of a tilde (~) followed by an ascii
+   .  number in the rage of '1' - '8'.  Examples are '~2', '~8', etc.
+   .  These escape sequences must never themselves be translated but
+   .  could be deleted.
+   .
+   .  If you remove these escape sequences (both tilde and number) it
+   .  would make translation easier.  However, the ability to display
+   .  colors and bold text at run-time will have been lost.
+   .
+   .  Additionally, each of these text groups was designed to display
+   .  in a 80x24 terminal window.  Hopefully, any translations will
+   .  adhere to that goal lest the translated text be truncated.
+   .
+   .  If you would like additional information regarding these strings,
+   .  please see the prolog to the show_special function in the top.c
+   .  source file.
+   . */
 
    snprintf(buf, sizeof(buf), "%s", _(""
       "Help for Interactive Commands~2 - %s\n"
@@ -479,9 +478,9 @@ static void build_uniq_nsltab (void) {
       ""));
    Uniq_nlstab[KEYS_helpbas_fmt] = strdup(buf);
 
-/* Translation Hint #2: As is true for the text above, the "keys" shown to the left and
-   .                    also imbedded in the translatable text (along with escape seqs)
-   .                    should never themselves be translated. */
+/* Translation Hint: As is true for the text above, the "keys" shown to the left and
+   .                 also imbedded in the translatable text (along with escape seqs)
+   .                 should never themselves be translated. */
    snprintf(buf, sizeof(buf), "%s", _(""
       "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
       "  d or s    Set update interval\n"
@@ -516,30 +515,28 @@ static void build_uniq_nsltab (void) {
       ""));
    Uniq_nlstab[WINDOWS_help_fmt] = strdup(buf);
 
-/* -----------------------------------------------------------------------
-.  Note #4 for Translators:
-.     The following 'Help for color mapping' simulated screen should
-.     probably NOT be translated.  It is terribly hard to follow in this
-.     form and any translation could produce unpleasing results that are
-.     unlikely to parallel the running top program.
-.
-.     If you decide to proceed with translation, do the following lines
-.     only taking care not to disturbe the '~' + number sequence.
-.
-.        --> "   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62
-.        --> "   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~
-.
-.        --> "   available toggles: ~1B~2 =disable bold globa
-.        --> "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks
-.
-.        --> "Select ~1target~2 as upper case letter:\n"
-.        --> "   S~2 = Summary Data,~1  M~2 = Messages/Prompt
-.        --> "   H~2 = Column Heads,~1  T~2 = Task Informatio
-.        --> "Select ~1color~2 as number:\n"
-.        --> "   0~2 = black,~1  1~2 = red,    ~1  2~2 = gree
-.        --> "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan
-.
-. */
+/* Translation Notes ------------------------------------------------
+   .  The following 'Help for color mapping' simulated screen should
+   .  probably NOT be translated.  It is terribly hard to follow in
+   .  this form and any translation could produce unpleasing results
+   .  that are unlikely to parallel the running top program.
+   .
+   .  If you decide to proceed with translation, do the following
+   .  line only, taking care not to disturbe the '~' + number.
+   .
+   .     --> "   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62
+   .     --> "   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~
+   .
+   .     --> "   available toggles: ~1B~2 =disable bold globa
+   .     --> "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks
+   .
+   .     --> "Select ~1target~2 as upper case letter:\n"
+   .     --> "   S~2 = Summary Data,~1  M~2 = Messages/Prompt
+   .     --> "   H~2 = Column Heads,~1  T~2 = Task Informatio
+   .     --> "Select ~1color~2 as number:\n"
+   .     --> "   0~2 = black,~1  1~2 = red,    ~1  2~2 = gree
+   .     --> "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan
+   . */
    snprintf(buf, sizeof(buf), "%s", _(""
       "Help for color mapping~2 - %s\n"
       "current window: ~1%s~6\n"
@@ -590,25 +587,25 @@ static void build_uniq_nsltab (void) {
       ""));
    Uniq_nlstab[STATE_lin2x5_fmt] = strdup(buf);
 
-/* Translation Hint #3: Only the following abbreviations need be translated
-   .                    us = user, sy = system, ni = nice, id = idle, wa = wait,
-   .                    hi hardware interrupt, si = software interrupt */
+/* Translation Hint: Only the following abbreviations need be translated
+   .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
+   .                 hi hardware interrupt, si = software interrupt */
    snprintf(buf, sizeof(buf), "%s", _("%%%s~3"
       " %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n"
       ""));
    Uniq_nlstab[STATE_lin2x6_fmt] = strdup(buf);
 
-/* Translation Hint #4: Only the following abbreviations need be translated
-   .                    us = user, sy = system, ni = nice, id = idle, wa = wait,
-   .                    hi hardware interrupt, si = software interrupt, st = steal time */
+/* Translation Hint: Only the following abbreviations need be translated
+   .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
+   .                 hi hardware interrupt, si = software interrupt, st = steal time */
    snprintf(buf, sizeof(buf), "%s", _("%%%s~3"
       "%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
       ""));
    Uniq_nlstab[STATE_lin2x7_fmt] = strdup(buf);
 
-/* Translation Hint #5: Only the following need be translated
-   .                    abbreviations: Mem = physical memory/ram, Swap = the linux swap file
-   .                    words:         total, used, free, buffers, cached */
+/* Translation Hint: Only the following need be translated
+   .                 abbreviations: Mem = physical memory/ram, Swap = the linux swap file
+   .                 words:         total, used, free, buffers, cached */
    snprintf(buf, sizeof(buf), "%s", _(""
       "%s Mem: ~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2buffers~3\n"
       "%s Swap:~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2cached~3\n"
