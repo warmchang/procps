@@ -267,7 +267,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[OFF_one_word_txt] = strdup(buf);
 
 /* Translation Hint: Only the following words should be translated
-   .                 delay, limit, user, cols */
+   .                 delay, limit, user, cols (abbreviation for columns)*/
    snprintf(buf, sizeof(buf), "%s", _(" -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]"));
    Norm_nlstab[USAGE_abbrev_txt] = strdup(buf);
 
@@ -403,12 +403,18 @@ static void build_norm_nlstab (void) {
    snprintf(buf, sizeof(buf), "%s", _("conflicting process selections (U/p/u)"));
    Norm_nlstab[SELECT_clash_txt] = strdup(buf);
 
+/* Translation Hint: This is an abbreviation (limit 2 characters) for:
+   .                 kilobytes (1000 bytes) */
    snprintf(buf, sizeof(buf), "%s", _("Kb"));
    Norm_nlstab[AMT_kilobyte_txt] = strdup(buf);
 
+/* Translation Hint: This is an abbreviation (limit 2 characters) for:
+   .                 megabytes (1,000,000 bytes) */
    snprintf(buf, sizeof(buf), "%s", _("Mb"));
    Norm_nlstab[AMT_megabyte_txt] = strdup(buf);
 
+/* Translation Hint: This is an abbreviation (limit 2 characters) for:
+   .                 gigabytes (1,000,000,000 bytes) */
    snprintf(buf, sizeof(buf), "%s", _("Gb"));
    Norm_nlstab[AMT_gigabyte_txt] = strdup(buf);
 
@@ -417,6 +423,17 @@ static void build_norm_nlstab (void) {
 
    snprintf(buf, sizeof(buf), "%s", _("Tasks"));
    Norm_nlstab[WORD_process_txt] = strdup(buf);
+
+/* Translation Hint: The following "word" is meant to represent either a single
+   .                 cpu or all of the processors in a multi-processor computer
+   .                 (should be exactly 6 characters, not counting the colon)*/
+   snprintf(buf, sizeof(buf), "%s", _("Cpu(s):"));
+   Norm_nlstab[WORD_allcpus_txt] = strdup(buf);
+
+/* Translation Hint: The following "word" is meant to represent a single processor
+   .                 (should be exactly 3 characters) */
+   snprintf(buf, sizeof(buf), "%s", _("Cpu%-3d:"));
+   Norm_nlstab[WORD_eachcpu_fmt] = strdup(buf);
 }
 
 

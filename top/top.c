@@ -3371,14 +3371,14 @@ static void summary_show (void) {
 
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
-         summaryhlp(&smpcpu[Cpu_tot], "Cpu(s):");                  // nls_maybe
+         summaryhlp(&smpcpu[Cpu_tot], N_txt(WORD_allcpus_txt));
          Msg_row += 1;
       } else {
          int i;
          char tmp[MEDBUFSIZ];
          // display each cpu's states separately, screen height permitting...
          for (i = 0; i < Cpu_tot; i++) {
-            snprintf(tmp, sizeof(tmp), "Cpu%-3d:", smpcpu[i].id);  // nls_maybe
+            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), smpcpu[i].id);
             summaryhlp(&smpcpu[i], tmp);
             Msg_row += 1;
             if (!isROOM(anyFLG, 1)) break;

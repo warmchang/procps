@@ -63,8 +63,8 @@ enum norm_nls {
    NAME_windows_fmt, NOT_onsecure_txt, NOT_smp_cpus_txt, OFF_one_word_txt,
    ON_word_only_txt, RC_bad_entry_fmt, RC_bad_files_fmt, SCROLL_coord_fmt,
    SELECT_clash_txt, THREADS_show_fmt, TIME_accumed_fmt, UNKNOWN_cmds_txt,
-   UNKNOWN_opts_fmt, USAGE_abbrev_txt, WORD_process_txt, WORD_threads_txt,
-   WRITE_rcfile_fmt, WRONG_switch_fmt,
+   UNKNOWN_opts_fmt, USAGE_abbrev_txt, WORD_allcpus_txt, WORD_eachcpu_fmt,
+   WORD_process_txt, WORD_threads_txt, WRITE_rcfile_fmt, WRONG_switch_fmt,
       norm_MAX
 };
 
