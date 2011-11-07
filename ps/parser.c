@@ -243,11 +243,11 @@ static const char *parse_sysv_option(void){
 
     switch(*flagptr){
     case 'A':
-      trace(_("-A selects all processes.\n"));
+      trace("-A selects all processes.\n");
       all_processes = 1;
       break;
     case 'C': /* end */
-      trace(_("-C select by process name.\n"));  /* Why only HP/UX and us? */
+      trace("-C select by process name.\n");  /* Why only HP/UX and us? */
       arg=get_opt_arg();
       if(!arg) return _("List of command names must follow -C.");
       err=parse_list(arg, parse_cmd);
@@ -255,13 +255,13 @@ static const char *parse_sysv_option(void){
       selection_list->typecode = SEL_COMM;
       return NULL; /* can't have any more options */
     case 'F':  /* DYNIX/ptx -f plus sz,rss,psr=ENG between c and stime */
-      trace(_("-F does fuller listing\n"));
+      trace("-F does fuller listing\n");
       format_modifiers |= FM_F;
       format_flags |= FF_Uf;
       unix_f_option = 1; /* does this matter? */
       break;
     case 'G': /* end */
-      trace(_("-G select by RGID (supports names)\n"));
+      trace("-G select by RGID (supports names)\n");
       arg=get_opt_arg();
       if(!arg) return _("List of real groups must follow -G.");
       err=parse_list(arg, parse_gid);
@@ -269,12 +269,12 @@ static const char *parse_sysv_option(void){
       selection_list->typecode = SEL_RGID;
       return NULL; /* can't have any more options */
     case 'H':     /* another nice HP/UX feature */
-      trace(_("-H Process hierarchy (like ASCII art forest option)\n"));
+      trace("-H Process hierarchy (like ASCII art forest option)\n");
       forest_type = 'u';
       break;
 #if 0
     case 'J':  // specify list of job IDs in hex (IRIX) -- like HP "-R" maybe?
-      trace(_("-J select by job ID\n"));  // want a JID ("jid") for "-j" too
+      trace("-J select by job ID\n");  // want a JID ("jid") for "-j" too
       arg=get_opt_arg();
       if(!arg) return _("List of jobs must follow -J.");
       err=parse_list(arg, parse_jid);
@@ -289,31 +289,31 @@ static const char *parse_sysv_option(void){
        * Zombies are the only exception, with NLWP==0 and 1 output line.
        * SCO UnixWare uses -L too.
        */
-      trace(_("-L Print LWP (thread) info.\n"));
+      trace("-L Print LWP (thread) info.\n");
       thread_flags |= TF_U_L;
 //      format_modifiers |= FM_L;
       break;
     case 'M':  // typically the SE Linux context
-      trace(_("-M Print security label for Mandatory Access Control.\n"));
+      trace("-M Print security label for Mandatory Access Control.\n");
       format_modifiers |= FM_M;
       break;
     case 'N':
-      trace(_("-N negates.\n"));
+      trace("-N negates.\n");
       negate_selection = 1;
       break;
     case 'O': /* end */
-      trace(_("-O is preloaded -o.\n"));
+      trace("-O is preloaded -o.\n");
       arg=get_opt_arg();
       if(!arg) return _("Format or sort specification must follow -O.");
       defer_sf_option(arg, SF_U_O);
       return NULL; /* can't have any more options */
     case 'P':     /* SunOS 5 "psr" or unknown HP/UX feature */
-      trace(_("-P adds columns of PRM info (HP-UX), PSR (SunOS), or capabilities (IRIX)\n"));
+      trace("-P adds columns of PRM info (HP-UX), PSR (SunOS), or capabilities (IRIX)\n");
       format_modifiers |= FM_P;
       break;
 #if 0
     case 'R':    // unknown HP/UX feature, like IRIX "-J" maybe?
-      trace(_("-R select by PRM group\n"));
+      trace("-R select by PRM group\n");
       arg=get_opt_arg();
       if(!arg) return _("List of PRM groups must follow -R.");
       err=parse_list(arg, parse_prm);
@@ -327,12 +327,12 @@ static const char *parse_sysv_option(void){
        * Testing (w/ normal processes) shows 1 line/process, not 2.
        * Also, testing shows PID==SPID for all normal processes.
        */
-      trace(_("-T adds strange SPID column (old sproc() threads?)\n"));
+      trace("-T adds strange SPID column (old sproc() threads?)\n");
       thread_flags |= TF_U_T;
 //      format_modifiers |= FM_T;
       break;
     case 'U': /* end */
-      trace(_("-U select by RUID (supports names).\n"));
+      trace("-U select by RUID (supports names).\n");
       arg=get_opt_arg();
       if(!arg) return _("List of real groups must follow -U.");
       err=parse_list(arg, parse_uid);
@@ -340,40 +340,40 @@ static const char *parse_sysv_option(void){
       selection_list->typecode = SEL_RUID;
       return NULL; /* can't have any more options */
     case 'V': /* single */
-      trace(_("-V prints version.\n"));
+      trace("-V prints version.\n");
       exclusive("-V");
       display_version();
       exit(0);
     // This must be verified against SVR4-MP. (UnixWare or Powermax)
     // Leave it undocumented until that problem is solved.
     case 'Z':     /* full Mandatory Access Control level info */
-      trace(_("-Z shows full MAC info\n"));
+      trace("-Z shows full MAC info\n");
       format_modifiers |= FM_M;
       break;
     case 'a':
-      trace(_("-a select all with a tty, but omit session leaders.\n"));
+      trace("-a select all with a tty, but omit session leaders.\n");
       simple_select |= SS_U_a;
       break;
     case 'c':
       /* HP-UX and SunOS 5 scheduling info modifier */
-      trace(_("-c changes scheduling info.\n"));
+      trace("-c changes scheduling info.\n");
       format_modifiers |= FM_c;
       break;
     case 'd':
-      trace(_("-d select all, but omit session leaders.\n"));
+      trace("-d select all, but omit session leaders.\n");
       simple_select |= SS_U_d;
       break;
     case 'e':
-      trace(_("-e selects all processes.\n"));
+      trace("-e selects all processes.\n");
       all_processes = 1;
       break;
     case 'f':
-      trace(_("-f does full listing\n"));
+      trace("-f does full listing\n");
       format_flags |= FF_Uf;
       unix_f_option = 1; /* does this matter? */
       break;
     case 'g': /* end */
-      trace(_("-g selects by session leader OR by group name\n"));
+      trace("-g selects by session leader OR by group name\n");
       arg=get_opt_arg();
       if(!arg) return _("List of session leaders OR effective group names must follow -g.");
       err=parse_list(arg, parse_pid);
@@ -388,22 +388,22 @@ static const char *parse_sysv_option(void){
       }
       return _("List of session leaders OR effective group IDs was invalid.");
     case 'j':
-      trace(_("-j jobs format.\n"));
+      trace("-j jobs format.\n");
       /* old Debian used RD_j and Digital uses JFMT */
       if(sysv_j_format) format_flags |= FF_Uj;
       else format_modifiers |= FM_j;
       break;
     case 'l':
-      trace(_("-l long format.\n"));
+      trace("-l long format.\n");
       format_flags |= FF_Ul;
       break;
     case 'm':
-      trace(_("-m shows threads.\n"));
+      trace("-m shows threads.\n");
       /* note that AIX shows 2 lines for a normal process */
       thread_flags |= TF_U_m;
       break;
     case 'n': /* end */
-      trace(_("-n sets namelist file.\n"));
+      trace("-n sets namelist file.\n");
       arg=get_opt_arg();
       if(!arg) return _("Alternate System.map file must follow -n.");
       namelist_file = arg;
@@ -414,13 +414,13 @@ static const char *parse_sysv_option(void){
       /* The result must be 2 columns: "PID NICE,tty=TERMINAL,comm"    */
       /* Yes, the second column has the name "NICE,tty=TERMINAL,comm"  */
       /* This parser looks for any excuse to ignore that braindamage.  */
-      trace(_("-o user-defined format.\n"));
+      trace("-o user-defined format.\n");
       arg=get_opt_arg();
       if(!arg) return _("Format specification must follow -o.");
       not_pure_unix |= defer_sf_option(arg, SF_U_o);
       return NULL; /* can't have any more options */
     case 'p': /* end */
-      trace(_("-p select by PID.\n"));
+      trace("-p select by PID.\n");
       arg=get_opt_arg();
       if(!arg) return _("List of process IDs must follow -p.");
       err=parse_list(arg, parse_pid);
@@ -429,13 +429,13 @@ static const char *parse_sysv_option(void){
       return NULL; /* can't have any more options */
 #if 0
     case 'r':
-      trace(_("-r some Digital Unix thing about warnings...\n"));
-      trace(_("   or SCO's option to chroot() for new /proc and /dev.\n"));
+      trace("-r some Digital Unix thing about warnings...\n");
+      trace("   or SCO's option to chroot() for new /proc and /dev.\n");
       return _("The -r option is reserved.");
       break;
 #endif
     case 's': /* end */
-      trace(_("-s Select processes belonging to the sessions given.\n"));
+      trace("-s Select processes belonging to the sessions given.\n");
       arg=get_opt_arg();
       if(!arg) return _("List of session IDs must follow -s.");
       err=parse_list(arg, parse_pid);
@@ -443,7 +443,7 @@ static const char *parse_sysv_option(void){
       selection_list->typecode = SEL_SESS;
       return NULL; /* can't have any more options */
     case 't': /* end */
-      trace(_("-t select by tty.\n"));
+      trace("-t select by tty.\n");
       arg=get_opt_arg();
       if(!arg) return _("List of terminals (pty, tty...) must follow -t.");
       err=parse_list(arg, parse_tty);
@@ -451,7 +451,7 @@ static const char *parse_sysv_option(void){
       selection_list->typecode = SEL_TTY;
       return NULL; /* can't have any more options */
     case 'u': /* end */
-      trace(_("-u select by user ID (the EUID?) (supports names).\n"));
+      trace("-u select by user ID (the EUID?) (supports names).\n");
       arg=get_opt_arg();
       if(!arg) return _("List of users must follow -u.");
       err=parse_list(arg, parse_uid);
@@ -459,36 +459,36 @@ static const char *parse_sysv_option(void){
       selection_list->typecode = SEL_EUID;
       return NULL; /* can't have any more options */
     case 'w':
-      trace(_("-w wide output.\n"));
+      trace("-w wide output.\n");
       w_count++;
       break;
     case 'x':  /* behind personality until "ps -ax" habit is uncommon */
       if(personality & PER_SVR4_x){
         // Same as -y, but for System V Release 4 MP
-        trace(_("-x works like Sun Solaris & SCO Unixware -y option\n"));
+        trace("-x works like Sun Solaris & SCO Unixware -y option\n");
         format_modifiers |= FM_y;
         break;
       }
       if(personality & PER_HPUX_x){
-        trace(_("-x extends the command line\n"));
+        trace("-x extends the command line\n");
         w_count += 2;
         unix_f_option = 1;
         break;
       }
       return _("Must set personality to get -x option.");
     case 'y':  /* Sun's -l hack (also: Irix "lnode" resource control info) */
-      trace(_("-y Print lnone info in UID/USER column or do Sun -l hack.\n"));
+      trace("-y Print lnone info in UID/USER column or do Sun -l hack.\n");
       format_modifiers |= FM_y;
       break;
 #if 0
     // This must be verified against SVR4-MP (UnixWare or Powermax)
     case 'z':     /* alias of Mandatory Access Control level info */
-      trace(_("-z shows aliased MAC info\n"));
+      trace("-z shows aliased MAC info\n");
       format_modifiers |= FM_M;
       break;
     // Solaris 10 does this
     case 'z':     /* select by zone */
-      trace(_("-z secects by zone\n"));
+      trace("-z secects by zone\n");
       arg=get_opt_arg();
       if(!arg) return _("List of zones (contexts, labels, whatever?) must follow -z.");
       err=parse_list(arg, parse_zone);
@@ -529,7 +529,7 @@ static const char *parse_bsd_option(void){
   while(*++flagptr){
     switch(*flagptr){
     case '0' ... '9': /* end */
-      trace(_("0..9  Old BSD-style select by process ID\n"));
+      trace("0..9  Old BSD-style select by process ID\n");
       arg=flagptr;
       err=parse_list(arg, parse_pid);
       if(err) return err;
@@ -538,48 +538,48 @@ static const char *parse_bsd_option(void){
 #if 0
     case 'A':
       /* maybe this just does a larger malloc() ? */
-      trace(_("A Increases the argument space (Digital Unix)\n"));
+      trace("A Increases the argument space (Digital Unix)\n");
       return _("Option A is reserved.");
       break;
     case 'C':
       /* should divide result by 1-(e**(foo*log(bar))) */
-      trace(_("C Use raw CPU time for %%CPU instead of decaying ave\n"));
+      trace("C Use raw CPU time for %%CPU instead of decaying ave\n");
       return _("Option C is reserved.");
       break;
 #endif
     case 'H':    // The FreeBSD way (NetBSD:s OpenBSD:k FreeBSD:H  -- NIH???)
-      trace(_("H Print LWP (thread) info.\n"));   // was: Use /vmcore as c-dumpfile\n");
+      trace("H Print LWP (thread) info.\n");   // was: Use /vmcore as c-dumpfile\n");
       thread_flags |= TF_B_H;
       //format_modifiers |= FM_L;    // FIXME: determine if we need something like this
       break;
     case 'L': /* single */
-      trace(_("L List all format specifiers\n"));
+      trace("L List all format specifiers\n");
       exclusive("L");
       print_format_specifiers();
       exit(0);
     case 'M':   // undocumented for now: these are proliferating!
-      trace(_("M MacOS X thread display, like AIX/Tru64\n"));
+      trace("M MacOS X thread display, like AIX/Tru64\n");
       thread_flags |= TF_B_m;
       break;
     case 'N': /* end */
-      trace(_("N Specify namelist file\n"));
+      trace("N Specify namelist file\n");
       arg=get_opt_arg();
       if(!arg) return _("Alternate System.map file must follow N.");
       namelist_file = arg;
       return NULL; /* can't have any more options */
     case 'O': /* end */
-      trace(_("O Like o + defaults, add new columns after PID. Also sort.\n"));
+      trace("O Like o + defaults, add new columns after PID. Also sort.\n");
       arg=get_opt_arg();
       if(!arg) return _("Format or sort specification must follow O.");
       defer_sf_option(arg, SF_B_O);
       return NULL; /* can't have any more options */
       break;
     case 'S':
-      trace(_("S include dead kids in sum\n"));
+      trace("S include dead kids in sum\n");
       include_dead_children = 1;
       break;
     case 'T':
-      trace(_("T Select all processes on this terminal\n"));
+      trace("T Select all processes on this terminal\n");
       /* put our tty on a tiny list */
       {
         selection_node *node;
@@ -593,7 +593,7 @@ static const char *parse_bsd_option(void){
       }
       break;
     case 'U': /* end */
-      trace(_("U Select processes for specified users.\n"));
+      trace("U Select processes for specified users.\n");
       arg=get_opt_arg();
       if(!arg) return _("List of users must follow U.");
       err=parse_list(arg, parse_uid);
@@ -601,54 +601,54 @@ static const char *parse_bsd_option(void){
       selection_list->typecode = SEL_EUID;
       return NULL; /* can't have any more options */
     case 'V': /* single */
-      trace(_("V show version info\n"));
+      trace("V show version info\n");
       exclusive("V");
       display_version();
       exit(0);
     case 'W':
-      trace(_("W N/A get swap info from ... not /dev/drum.\n"));
+      trace("W N/A get swap info from ... not /dev/drum.\n");
       return _("Obsolete W option not supported. (You have a /dev/drum?)");
       break;
     case 'X':
-      trace(_("X Old Linux i386 register format\n"));
+      trace("X Old Linux i386 register format\n");
       format_flags |= FF_LX;
       break;
     case 'Z':  /* FreeBSD does MAC like SGI's Irix does it */
-      trace(_("Z Print security label for Mandatory Access Control.\n"));
+      trace("Z Print security label for Mandatory Access Control.\n");
       format_modifiers |= FM_M;
       break;
     case 'a':
-      trace(_("a Select all w/tty, including other users\n"));
+      trace("a Select all w/tty, including other users\n");
       simple_select |= SS_B_a;
       break;
     case 'c':
-      trace(_("c true command name\n"));
+      trace("c true command name\n");
       bsd_c_option = 1;
       break;
 //  case 'd':
-//    trace(_("d FreeBSD-style tree\n"));
+//    trace("d FreeBSD-style tree\n");
 //    forest_type = 'f';
 //    break;
     case 'e':
-      trace(_("e environment\n"));
+      trace("e environment\n");
       bsd_e_option = 1;
       break;
     case 'f':
-      trace(_("f ASCII art forest\n"));
+      trace("f ASCII art forest\n");
       forest_type = 'b';
       break;
     case 'g':
-      trace(_("g _all_, even group leaders!.\n"));
+      trace("g _all_, even group leaders!.\n");
       simple_select |= SS_B_g;
       break;
     case 'h':
-      trace(_("h Repeat header... yow.\n"));
+      trace("h Repeat header... yow.\n");
       if(header_type) return _("Only one heading option may be specified.");
       if(personality & PER_BSD_h) header_type = HEAD_MULTI;
       else                        header_type = HEAD_NONE;
       break;
     case 'j':
-      trace(_("j job control format\n"));
+      trace("j job control format\n");
       format_flags |= FF_Bj;
       break;
     case 'k':
@@ -656,17 +656,17 @@ static const char *parse_bsd_option(void){
       // trace("k Print LWP (thread) info.\n");   // was: Use /vmcore as c-dumpfile\n");
 
       // NetBSD, and soon (?) FreeBSD: sort-by-keyword
-      trace(_("k Specify sorting keywords.\n"));
+      trace("k Specify sorting keywords.\n");
       arg=get_opt_arg();
       if(!arg) return _("Long sort specification must follow 'k'.");
       defer_sf_option(arg, SF_G_sort);
       return NULL; /* can't have any more options */
     case 'l':
-      trace(_("l Display long format\n"));
+      trace("l Display long format\n");
       format_flags |= FF_Bl;
       break;
     case 'm':
-      trace(_("m all threads, sort on mem use, show mem info\n"));
+      trace("m all threads, sort on mem use, show mem info\n");
       if(personality & PER_OLD_m){
         format_flags |= FF_Lm;
         break;
@@ -678,19 +678,19 @@ static const char *parse_bsd_option(void){
       thread_flags |= TF_B_m;
       break;
     case 'n':
-      trace(_("n Numeric output for WCHAN, and USER replaced by UID\n"));
+      trace("n Numeric output for WCHAN, and USER replaced by UID\n");
       wchan_is_number = 1;
       user_is_number = 1;
       /* TODO add tty_is_number too? */
       break;
     case 'o': /* end */
-      trace(_("o Specify user-defined format\n"));
+      trace("o Specify user-defined format\n");
       arg=get_opt_arg();
       if(!arg) return _("Format specification must follow o.");
       defer_sf_option(arg, SF_B_o);
       return NULL; /* can't have any more options */
     case 'p': /* end */
-      trace(_("p Select by process ID\n"));
+      trace("p Select by process ID\n");
       arg=get_opt_arg();
       if(!arg) return _("List of process IDs must follow p.");
       err=parse_list(arg, parse_pid);
@@ -698,15 +698,15 @@ static const char *parse_bsd_option(void){
       selection_list->typecode = SEL_PID;
       return NULL; /* can't have any more options */
     case 'r':
-      trace(_("r Select running processes\n"));
+      trace("r Select running processes\n");
       running_only = 1;
       break;
     case 's':
-      trace(_("s Display signal format\n"));
+      trace("s Display signal format\n");
       format_flags |= FF_Bs;
       break;
     case 't': /* end */
-      trace(_("t Select by tty.\n"));
+      trace("t Select by tty.\n");
       /* List of terminals (tty, pty...) _should_ follow t. */
       arg=get_opt_arg();
       if(!arg){
@@ -726,19 +726,19 @@ static const char *parse_bsd_option(void){
       selection_list->typecode = SEL_TTY;
       return NULL; /* can't have any more options */
     case 'u':
-      trace(_("u Display user-oriented\n"));
+      trace("u Display user-oriented\n");
       format_flags |= FF_Bu;
       break;
     case 'v':
-      trace(_("v Display virtual memory\n"));
+      trace("v Display virtual memory\n");
       format_flags |= FF_Bv;
       break;
     case 'w':
-      trace(_("w wide output\n"));
+      trace("w wide output\n");
       w_count++;
       break;
     case 'x':
-      trace(_("x Select processes without controlling ttys\n"));
+      trace("x Select processes without controlling ttys\n");
       simple_select |= SS_B_x;
       break;
     case '-':
@@ -1102,9 +1102,9 @@ static const char *parse_all_options(void){
   const char *err = NULL;
   int at;
   while(++thisarg < ps_argc){
-  trace(_("parse_all_options calling arg_type for \"%s\"\n"), ps_argv[thisarg]);
+  trace("parse_all_options calling arg_type for \"%s\"\n", ps_argv[thisarg]);
     at = arg_type(ps_argv[thisarg]);
-    trace(_("ps_argv[thisarg] is %s\n"), ps_argv[thisarg]);
+    trace("ps_argv[thisarg] is %s\n", ps_argv[thisarg]);
     if(at != ARG_SYSV) not_pure_unix = 1;
     switch(at){
     case ARG_GNU:
@@ -1128,7 +1128,7 @@ static const char *parse_all_options(void){
       break;
     case ARG_END:
     case ARG_FAIL:
-      trace(_("              FAIL/END on [%s]\n"),ps_argv[thisarg]);
+      trace("              FAIL/END on [%s]\n",ps_argv[thisarg]);
       return _("Garbage option.");
       break;
     default:
@@ -1205,7 +1205,7 @@ int arg_parse(int argc, char *argv[]){
   return 0;
 
 try_bsd:
-  trace(_("--------- now try BSD ------\n"));
+  trace("--------- now try BSD ------\n");
 
   reset_global();
   reset_parser();

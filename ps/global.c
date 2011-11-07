@@ -463,39 +463,39 @@ void self_info(void){
   );
 
   display_version();
-  fprintf(stderr, _("Linux version %d.%d.%d\n"),
+  fprintf(stderr, "Linux version %d.%d.%d\n",
     LINUX_VERSION_MAJOR(linux_version_code),
     LINUX_VERSION_MINOR(linux_version_code),
     LINUX_VERSION_PATCH(linux_version_code)
   );
   /* __libc_print_version(); */  /* how can we get the run-time version? */
-  fprintf(stderr, _("Compiled with: glibc %d.%d, gcc %d.%d\n\n"),
+  fprintf(stderr, "Compiled with: glibc %d.%d, gcc %d.%d\n\n",
     __GLIBC__, __GLIBC_MINOR__, __GNUC__, __GNUC_MINOR__
   );
 
   fprintf(stderr,
-    _("header_gap=%d lines_to_next_header=%d\n"
-      "screen_cols=%d screen_rows=%d\n"
-      "\n"),
+    "header_gap=%d lines_to_next_header=%d\n"
+    "screen_cols=%d screen_rows=%d\n"
+    "\n",
     header_gap, lines_to_next_header,
     screen_cols, screen_rows
   );
 
   fprintf(stderr,
-    _("personality=0x%08x (from \"%s\")\n"
-      "EUID=%d TTY=%d,%d Hertz=%Ld page_size=%d\n"),
+    "personality=0x%08x (from \"%s\")\n"
+    "EUID=%d TTY=%d,%d Hertz=%Ld page_size=%d\n",
     personality, saved_personality_text,
     cached_euid, (int)major(cached_tty), (int)minor(cached_tty), Hertz,
     (int)(page_size)
   );
 
   fprintf(stderr,
-    _("sizeof(proc_t)=%d sizeof(long)=%d sizeof(KLONG)=%d\n"),
+    "sizeof(proc_t)=%d sizeof(long)=%d sizeof(KLONG)=%d\n",
     (int)sizeof(proc_t), (int)sizeof(long), (int)sizeof(KLONG)
   );
 
-  fprintf(stderr, _("archdefs:%s\n"), archdefs);
+  fprintf(stderr, "archdefs:%s\n", archdefs);
 
   open_psdb(namelist_file);
-  fprintf(stderr,_("namelist_file=\"%s\"\n"),namelist_file?namelist_file:_("<no System.map file>"));
+  fprintf(stderr,"namelist_file=\"%s\"\n",namelist_file?namelist_file:"<no System.map file>");
 }

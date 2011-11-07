@@ -26,7 +26,7 @@ static int stack_trace_done;
 /***********/
 static void debug_stop(char **args){
   execvp (args[0], args);
-  perror (_("exec failed"));
+  perror ("exec failed");
   _exit (0);
 }
 
@@ -50,9 +50,9 @@ static void stack_trace(char **args){
 
   stack_trace_done = 0;
   signal(SIGCHLD, stack_trace_sigchld);
-  
+
   if((pipe (in_fd) == -1) || (pipe (out_fd) == -1)){
-    perror (_("could open pipe"));
+    perror ("could open pipe");
     _exit (0);
   }
 
@@ -62,11 +62,11 @@ static void stack_trace(char **args){
     close (1); dup (out_fd[1]);  /* set the stdout to the out pipe */
     close (2); dup (out_fd[1]);  /* set the stderr to the out pipe */
     execvp (args[0], args);      /* exec gdb */
-    perror (_("exec failed"));
+    perror ("exec failed");
     _exit (0);
   } else {
     if(pid == (pid_t) -1){
-      perror (_("could not fork"));
+      perror ("could not fork");
       _exit (0);
     }
   }
@@ -77,10 +77,10 @@ static void stack_trace(char **args){
   write (in_fd[1], "backtrace\n", 10);
   write (in_fd[1], "p x = 0\n", 8);
   write (in_fd[1], "quit\n", 5);
-  
+
   index = 0;
   state = 0;
-  
+
   for(;;){
     readset = fdset;
     tv.tv_sec = 1;
@@ -88,7 +88,7 @@ static void stack_trace(char **args){
 
     sel = select (FD_SETSIZE, &readset, NULL, NULL, &tv);
     if (sel == -1) break;
-    
+
     if((sel > 0) && (FD_ISSET (out_fd[0], &readset))){
       if(read (out_fd[0], &c, 1)){
         switch(state){
@@ -115,7 +115,7 @@ static void stack_trace(char **args){
     }
     else if(stack_trace_done) break;
   }
-  
+
   close (in_fd[0]);
   close (in_fd[1]);
   close (out_fd[0]);
@@ -129,8 +129,8 @@ void debug(int method, char *prog_name){
   char buf[16];
   char *args[4] = { "gdb", NULL, NULL, NULL };
   int x;
-  
-  snprintf (buf, 16, "%d", getpid ());
+
+  snprintf (buf, sizeof(buf), "%d", getpid ());
 
   args[1] = prog_name;
   args[2] = buf;
@@ -139,17 +139,17 @@ void debug(int method, char *prog_name){
   if(pid == 0){
     switch (method){
     case INTERACTIVE:
-      fprintf (stderr, _("debug_stop\n"));
+      fprintf (stderr, "debug_stop\n");
       debug_stop(args);
       break;
     case STACK_TRACE:
-      fprintf (stderr, _("stack_trace\n"));
+      fprintf (stderr, "stack_trace\n");
       stack_trace(args);
       break;
     }
     _exit(0);
   } else if(pid == (pid_t) -1){
-    perror (_("could not fork"));
+    perror ("could not fork");
     return;
   }
 

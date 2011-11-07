@@ -149,7 +149,7 @@ static void arg_show(void){
     case SEL_TTY : show_tty("TTY ", walk->n, walk->u); break;
     case SEL_SESS: show_pid("SESS", walk->n, walk->u); break;
     case SEL_COMM: show_cmd("COMM", walk->n, walk->u); break;
-    default: printf(_("Garbage typecode value!\n"));
+    default: printf("Garbage typecode value!\n");
     }
     walk = walk->next;
   }
@@ -557,9 +557,9 @@ int main(int argc, char *argv[]){
   arg_parse(argc,argv);
 
 /*  arg_show(); */
-  trace(_("screen is %ux%u\n"),screen_cols,screen_rows);
+  trace("screen is %ux%u\n",screen_cols,screen_rows);
 /*  printf("sizeof(proc_t) is %d.\n", sizeof(proc_t)); */
-  trace(_("======= ps output follows =======\n"));
+  trace("======= ps output follows =======\n");
 
   init_output(); /* must be between parser and output */
 
