@@ -73,6 +73,7 @@ AC_FUNC_REALLOC
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([\
 	alarm \
+	getline \
 	getpagesize \
 	gettimeofday \
 	iswprint \
@@ -83,6 +84,7 @@ AC_CHECK_FUNCS([\
 	nl_langinfo \
 	putenv \
 	regcomp \
+	rpmatch \
 	select \
 	setlocale \
 	strcasecmp \

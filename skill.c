@@ -82,15 +82,17 @@ static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd,
 	char dn_buf[1000];
 	dev_to_tty(dn_buf, 999, tty, pid, ABBREV_DEV);
 	if (run_time->interactive) {
-		char buf[8];
+		char *buf;
+		size_t len = 0;
 		fprintf(stderr, "%-8s %-8s %5d %-16.16s   ? ",
 			(char *)dn_buf, user_from_uid(uid), pid, cmd);
-		if (!fgets(buf, 7, stdin)) {
-			printf("\n");
-			exit(EXIT_FAILURE);
-		}
-		if (*buf != 'y' && *buf != 'Y')
+		fflush (stdout);
+		getline(&buf, &len, stdin);
+		if (rpmatch(buf) < 1) {
+			free(buf);
 			return;
+		}
+		free(buf);
 	}
 	/* do the actual work */
 	errno = 0;
