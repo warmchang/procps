@@ -71,6 +71,11 @@ global:
 	vm_pswpin;
 	vm_pswpout;
 	vminfo;
+	xalloc_err_handler;
+	xcalloc;
+	xmalloc;
+	xrealloc;
+	xstrdup;
 local:
 	*;
 };

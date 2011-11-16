@@ -5,19 +5,37 @@
 // General Public License, version 2, or any later version.
 // See file COPYING for information on distribution conditions.
 
-#include <stdlib.h>
+#include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "alloc.h"
 
-void *xcalloc(void *pointer, int size) {
-    void * ret;
-    if (pointer)
-        free(pointer);
-    if (!(ret = calloc(1, size))) {
-        fprintf(stderr, "xcalloc: allocation error, size = %d\n", size);
-        exit(1);
+
+static void xdefault_error(const char *restrict fmts, ...) __attribute__((format(printf,1,2)));
+static void xdefault_error(const char *restrict fmts, ...) {
+    va_list va;
+
+    va_start(va, fmts);
+    fprintf(stderr, fmts, va);
+    va_end(va);
+}
+
+message_fn xalloc_err_handler = xdefault_error;
+
+
+void *xcalloc(unsigned int size) {
+    void * p;
+
+    if (size == 0)
+        ++size;
+    p = calloc(1, size);
+    if (!p) {
+        xalloc_err_handler("%s failed to allocate %u bytes of memory", __func__, size);
+        exit(EXIT_FAILURE);
     }
-    return ret;
+    return p;
 }
 
 void *xmalloc(unsigned int size) {
@@ -27,9 +45,8 @@ void *xmalloc(unsigned int size) {
         ++size;
     p = malloc(size);
     if (!p) {
-	fprintf(stderr, "xmalloc: malloc(%d) failed", size);
-	perror(NULL);
-	exit(1);
+        xalloc_err_handler("%s failed to allocate %u bytes of memory", __func__, size);
+        exit(EXIT_FAILURE);
     }
     return(p);
 }
@@ -41,9 +58,23 @@ void *xrealloc(void *oldp, unsigned int size) {
         ++size;
     p = realloc(oldp, size);
     if (!p) {
-	fprintf(stderr, "xrealloc: realloc(%d) failed", size);
-	perror(NULL);
-	exit(1);
+        xalloc_err_handler("%s failed to allocate %u bytes of memory", __func__, size);
+        exit(EXIT_FAILURE);
+    }
+    return(p);
+}
+
+char *xstrdup(const char *str) {
+    char *p = NULL;
+
+    if (str) {
+        unsigned int size = strlen(str) + 1;
+        p = malloc(size);
+        if (!p) {
+            xalloc_err_handler("%s failed to allocate %u bytes of memory", __func__, size);
+            exit(EXIT_FAILURE);
+        }
+        strcpy(p, str);
     }
     return(p);
 }

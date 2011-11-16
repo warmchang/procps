@@ -109,4 +109,7 @@
 #define HIDDEN_ALIAS(x) extern __typeof(x) x##_direct __attribute__((alias(#x)))
 #endif
 
+
+typedef void (*message_fn)(const char *restrict, ...) __attribute__((format(printf,1,2)));
+
 #endif
