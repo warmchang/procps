@@ -1954,47 +1954,47 @@ static void prochlp (proc_t *this) {
          * we reuse and extend any prior proc_t's.  He's been customized
          * for our specific needs and to avoid the use of <stdarg.h> */
 static void procs_refresh (void) {
-   static proc_t **private_ppt;        // our base proc_t pointer table
-   static unsigned savmax = 0;         // first time, Bypass: (i)
-   proc_t *ptask = (proc_t*)-1;        // first time, Force: (ii)
-   unsigned curmax = 0;                // every time  (jeeze)
+ #define n_used  Frame_maxtask                   // maintained by prochlp()
+   static proc_t **private_ppt;                  // our base proc_t ptr table
+   static int n_alloc = 0;                       // size of our private_ppt
+   static int n_saved = 0;                       // last window ppt size
+   proc_t *ptask;
    PROCTAB* PT;
    int i;
    proc_t*(*read_something)(PROCTAB*, proc_t*);
 
-   prochlp(NULL);                      // prep for a new frame
+   prochlp(NULL);                                // prep for a new frame
    if (NULL == (PT = openproc(Frames_libflags, Monpids)))
       error_exit(fmtmk("failed openproc: %s", strerror(errno)));
    read_something = Thread_mode ? readeither : readproc;
 
-   // i) Allocated Chunks:  *Existing* table;  refresh + reuse
-   while (curmax < savmax) {
-      if (!(ptask = read_something(PT, private_ppt[curmax]))) break;
-      prochlp(ptask);                  // tally & complete this proc_t
-      ++curmax;
-   }
-
-   // ii) Unallocated Chunks:  *New* or *Existing* table;  extend + fill
-   while (ptask) {
-      // realloc as we go, keeping 'ppt' ahead of 'currmax++'
-      private_ppt = alloc_r(private_ppt, (curmax + 1) * sizeof(proc_t*));
-      // here, the library will allocate the underlying proc_t stg
-      if ((ptask = read_something(PT, NULL))) {
-         prochlp(ptask);               // tally & complete this proc_t
-         private_ppt[curmax++] = ptask;
+   for (;;) {
+      if (n_used == n_alloc) {
+         n_alloc = 10 + ((n_alloc * 5) / 4);     // grow by over 25%
+         private_ppt = xrealloc(private_ppt, sizeof(proc_t*) * n_alloc);
+         // ensure NULL pointers for the additional memory just acquired
+         memset(private_ppt + n_used, 0, sizeof(proc_t*) * (n_alloc - n_used));
       }
+      // on the way to n_alloc, the library will allocate the underlying
+      // proc_t storage whenever our private_ppt[] pointer is NULL...
+      if (!(ptask = read_something(PT, private_ppt[n_used]))) break;
+      prochlp((private_ppt[n_used] = ptask));    // tally this proc_t
    }
 
    closeproc(PT);
 
-   // iii) Chunkless:  End frame, but not necessarily end of allocated space
-   if (savmax < curmax) savmax = curmax;
-
    // lastly, refresh each window's proc pointers table...
-   for (i = 0; i < GROUPSMAX; i++) {
-      Winstk[i].ppt = alloc_r(Winstk[i].ppt, savmax * sizeof(proc_t*));
-      memcpy(Winstk[i].ppt, private_ppt, Frame_maxtask * sizeof(proc_t*));
+   if (n_saved == n_alloc)
+      for (i = 0; i < GROUPSMAX; i++)
+         memcpy(Winstk[i].ppt, private_ppt, sizeof(proc_t*) * n_used);
+   else {
+      n_saved = n_alloc;
+      for (i = 0; i < GROUPSMAX; i++) {
+         Winstk[i].ppt = xrealloc(Winstk[i].ppt, sizeof(proc_t*) * n_alloc);
+         memcpy(Winstk[i].ppt, private_ppt, sizeof(proc_t*) * n_used);
+      }
    }
+ #undef n_used
 } // end: procs_refresh
 
 
