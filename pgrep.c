@@ -409,7 +409,8 @@ static regex_t * do_regcomp (void)
 		}
 
 		re_err = regcomp (preg, re, REG_EXTENDED | REG_NOSUB | opt_case);
-		free(re);
+		if (opt_exact)
+			free(re);
 		if (re_err) {
 			regerror (re_err, preg, errbuf, sizeof(errbuf));
 			fputs(errbuf,stderr);
