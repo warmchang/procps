@@ -39,6 +39,7 @@
 #include <unistd.h>
 #include <values.h>
 
+#include "proc/alloc.h"
 #include "proc/devname.h"
 #include "proc/procps.h"
 #include "proc/readproc.h"
@@ -81,10 +82,6 @@ static const char *Cpu_States_fmts = STATES_line2x4;
         /* Specific process id monitoring support */
 static pid_t Monpids [MONPIDMAX] = { 0 };
 static int   Monpidsidx = 0;
-
-        /* A postponed error message */
-static char Msg_delayed [MEDBUFSIZ];
-static int  Msg_awaiting = 0;
 
         /* Current screen dimensions.
            note: the number of processes displayed is tracked on a per window
@@ -285,9 +282,9 @@ static inline char *scat (char *dst, const char *src) {
 } // end: scat
 
 
+#ifdef TERMIOS_ONLY
         /*
-         * Trim the rc file lines and any 'open_psdb_message' which arrives
-         * with an inappropriate newline (thanks to 'sysmap_mmap') */
+         * Trim line oriented input */
 static char *strim (char *str) {
    static const char ws[] = "\b\f\n\r\t\v\x1b\x9b";  // 0x1b + 0x9b are escape
    char *p;
@@ -295,6 +292,7 @@ static char *strim (char *str) {
    if ((p = strpbrk(str, ws))) *p = '\0';
    return str;
 } // end: strim
+#endif
 
 
         /*
@@ -490,6 +488,21 @@ static void error_exit (const char *str) {
 
 
         /*
+         * Handle library memory errors ourselves rather than accept a default
+         * fprintf to stderr (since we've mucked with the termios struct) */
+static void library_err (const char *fmts, ...) NORETURN;
+static void library_err (const char *fmts, ...) {
+   static char tmp[MEDBUFSIZ];
+   va_list va;
+
+   va_start(va, fmts);
+   vsnprintf(tmp, sizeof(tmp), fmts, va);
+   va_end(va);
+   error_exit(tmp);
+} // end: library_err
+
+
+        /*
          * Called in response to Frames_paused (tku: sig_paused) */
 static void pause_pgm (void) {
    Frames_paused = 0;
@@ -632,25 +645,6 @@ static void capsmk (WIN_t *q) {
 
 
         /*
-         * Show an error, but not right now.
-         * Due to the postponed opening of ksym, using open_psdb_message,
-         * if P_WCH had been selected and the program is restarted, the
-         * message would otherwise be displayed prematurely. */
-static void msg_save (const char *fmts, ...) __attribute__((format(printf,1,2)));
-static void msg_save (const char *fmts, ...) {
-   char tmp[MEDBUFSIZ];
-   va_list va;
-
-   va_start(va, fmts);
-   vsnprintf(tmp, sizeof(tmp), fmts, va);
-   va_end(va);
-   // we'll add some extra attention grabbers to whatever this is
-   snprintf(Msg_delayed, sizeof(Msg_delayed), "***  %s  ***", strim(tmp));
-   Msg_awaiting = 1;
-} // end: msg_save
-
-
-        /*
          * Show an error message (caller may include '\a' for sound) */
 static void show_msg (const char *str) {
    PUTT("%s%s %.*s %s%s"
@@ -662,7 +656,6 @@ static void show_msg (const char *str) {
       , Cap_clr_eol);
    fflush(stdout);
    usleep(MSG_USLEEP);
-   Msg_awaiting = 0;
 } // end: show_msg
 
 
@@ -797,33 +790,7 @@ static void show_special (int interact, const char *glob) {
    if (*glob) PUTT("%.*s", Screen_cols -1, glob);
 } // end: show_special
 
-/*######  Low Level Memory/Keyboard support  #############################*/
-
-        /*
-         * Handle our own memory stuff without the risk of leaving the
-         * user's terminal in an ugly state should things go sour. */
-
-static void *alloc_c (size_t num) MALLOC;
-static void *alloc_c (size_t num) {
-   void *pv;
-
-   if (!num) ++num;
-   if (!(pv = calloc(1, num)))
-      error_exit("failed memory allocate");
-   return pv;
-} // end: alloc_c
-
-
-static void *alloc_r (void *ptr, size_t num) MALLOC;
-static void *alloc_r (void *ptr, size_t num) {
-   void *pv;
-
-   if (!num) ++num;
-   if (!(pv = realloc(ptr, num)))
-      error_exit("failed memory re-allocate");
-   return pv;
-} // end: alloc_r
-
+/*######  Low Level Keyboard support  ####################################*/
 
         /*
          * This routine isolates ALL user INPUT and ensures that we
@@ -1352,7 +1319,7 @@ static void adj_geometry (void) {
    // we'll only grow our Pseudo_screen, never shrink it
    if (pseudo_max < Pseudo_size) {
       pseudo_max = Pseudo_size;
-      Pseudo_screen = alloc_r(Pseudo_screen, pseudo_max);
+      Pseudo_screen = xrealloc(Pseudo_screen, pseudo_max);
    }
    PSU_CLREOS(0);
    if (Frames_resize) putp(Cap_clr_scr);
@@ -1520,7 +1487,7 @@ static void calibrate_fields (void) {
    if (needpsdb) {
       if (-1 == No_ksyms) {
          No_ksyms = 0;
-         if (open_psdb_message(NULL, msg_save))
+         if (open_psdb_message(NULL, library_err))
             No_ksyms = 1;
          else
             PSDBopen = 1;
@@ -1802,7 +1769,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       /* note: we allocate one more CPU_t than Cpu_tot so that the last slot
                can hold tics representing the /proc/stat cpu summary (the first
                line read) -- that slot supports our View_CPUSUM toggle */
-      cpus = alloc_c((1 + Cpu_tot) * sizeof(CPU_t));
+      cpus = xcalloc((1 + Cpu_tot) * sizeof(CPU_t));
    }
    rewind(fp);
    fflush(fp);
@@ -1953,8 +1920,8 @@ static void prochlp (proc_t *this) {
 
    if (Frame_maxtask+1 >= HHist_siz) {
       HHist_siz = HHist_siz * 5 / 4 + 100;
-      PHist_sav = alloc_r(PHist_sav, sizeof(HST_t) * HHist_siz);
-      PHist_new = alloc_r(PHist_new, sizeof(HST_t) * HHist_siz);
+      PHist_sav = xrealloc(PHist_sav, sizeof(HST_t) * HHist_siz);
+      PHist_new = xrealloc(PHist_new, sizeof(HST_t) * HHist_siz);
    }
 
    /* calculate time in this process; the sum of user time (utime) and
@@ -2068,9 +2035,10 @@ static void before (char *me) {
    struct sigaction sa;
    int i;
 
-   // setup our program name -- big!
+   // setup our program name and library error message handler -- big!
    Myname = strrchr(me, '/');
    if (Myname) ++Myname; else Myname = me;
+   xalloc_err_handler = library_err;
 
    // establish cpu particulars -- even bigger!
 #ifdef PRETEND4CPUS
@@ -3133,7 +3101,7 @@ static void forest_create (WIN_t *q) {
       qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), Fieldstab[P_PPD].sort);
       if (hwmsav < Frame_maxtask) {         // grow, but never shrink
          hwmsav = Frame_maxtask;
-         Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
+         Tree_ppt = xrealloc(Tree_ppt, sizeof(proc_t*) * hwmsav);
       }
       while (0 == Seed_ppt[i]->ppid)        // identify trees (expect 2)
          forest_add(i++, 1);                // add parent plus children
@@ -3722,7 +3690,6 @@ int main (int dont_care_argc, char **argv) {
 
       frame_make();
 
-      if (Msg_awaiting) show_msg(Msg_delayed);
       if (0 < Loops) --Loops;
       if (!Loops) bye_bye(NULL);
 

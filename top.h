@@ -375,6 +375,7 @@ typedef struct WIN_t {
       return Frame_srtflg * ( (*Q)->n - (*P)->n ); }
 #define SCB_STRS(f,s) \
    static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
+      if (!(*P)->s || !(*Q)->s) return SORT_eq; \
       return Frame_srtflg * STRSORTCMP((*Q)->s, (*P)->s); }
 #define SCB_STRV(f,b,v,s) \
    static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
@@ -385,6 +386,7 @@ typedef struct WIN_t {
 #define SCB_STRX(f,s) \
    int strverscmp(const char *s1, const char *s2); \
    static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
+      if (!(*P)->s || !(*Q)->s) return SORT_eq; \
       return Frame_srtflg * strverscmp((*Q)->s, (*P)->s); }
 
 /*
@@ -618,11 +620,14 @@ typedef struct WIN_t {
 /*------  Tiny useful routine(s)  ----------------------------------------*/
 //atic const char   *fmtmk (const char *fmts, ...);
 //atic inline char  *scat (char *dst, const char *src);
+#ifdef TERMIOS_ONLY
 //atic char         *strim (char *str);
+#endif
 //atic const char   *tg2 (int x, int y);
 /*------  Exit/Interrput routines  ---------------------------------------*/
 //atic void          bye_bye (const char *str);
 //atic void          error_exit (const char *str);
+//atic void          library_err (const char *fmts, ...);
 //atic void          pause_pgm (void);
 //atic void          sig_abexit (int sig);
 //atic void          sig_endpgm (int dont_care_sig);
@@ -630,14 +635,11 @@ typedef struct WIN_t {
 //atic void          sig_resize (int dont_care_sig);
 /*------  Misc Color/Display support  ------------------------------------*/
 //atic void          capsmk (WIN_t *q);
-//atic void          msg_save (const char *fmts, ...);
 //atic void          show_msg (const char *str);
 //atic int           show_pmt (const char *str);
 //atic inline void   show_scroll (void);
 //atic void          show_special (int interact, const char *glob);
-/*------  Low Level Memory/Keyboard support  -----------------------------*/
-//atic void         *alloc_c (size_t num);
-//atic void         *alloc_r (void *ptr, size_t num);
+/*------  Low Level Keyboard support  ------------------------------------*/
 //atic int           chin (int ech, char *buf, unsigned cnt);
 //atic int           keyin (int init);
 //atic char         *linein (const char *prompt);
