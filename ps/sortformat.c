@@ -1,13 +1,13 @@
 /*
- * Copyright 1998-2004 by Albert Cahalan; all rights resered.         
+ * Copyright 1998-2004 by Albert Cahalan; all rights resered.
  * This file may be used subject to the terms and conditions of the
- * GNU Library General Public License Version 2, or any later version  
+ * GNU Library General Public License Version 2, or any later version
  * at your option, as published by the Free Software Foundation.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Library General Public License for more details.
- */                                 
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,6 +18,7 @@
 #include <pwd.h>
 #include <grp.h>
 
+#include "../proc/alloc.h"
 #include "../proc/readproc.h"
 #include "../proc/sysinfo.h"
 #include "common.h"
@@ -38,7 +39,7 @@ static format_node *do_one_spec(const char *spec, const char *override){
   if(fs){
     int w1, w2;
     format_node *thisnode;
-    thisnode = malloc(sizeof(format_node));
+    thisnode = xmalloc(sizeof(format_node));
     if(fs->flags & CF_PIDMAX){
       w1 = (int)get_pid_digits();
       w2 = strlen(fs->head);
@@ -49,12 +50,10 @@ static format_node *do_one_spec(const char *spec, const char *override){
     if(override){
       w2 = strlen(override);
       thisnode->width = (w1>w2)?w1:w2;
-      thisnode->name = malloc(strlen(override)+1);
-      strcpy(thisnode->name, override);
+      thisnode->name = xstrdup(override);
     }else{
       thisnode->width = w1;
-      thisnode->name = malloc(strlen(fs->head)+1);
-      strcpy(thisnode->name, fs->head);
+      thisnode->name = xstrdup(fs->head);
     }
     thisnode->pr = fs->pr;
     thisnode->need = fs->need;
@@ -101,7 +100,7 @@ static void O_wrap(sf_node *sfn, int otype){
   if(!fnode)fprintf(stderr,"Seriously crashing. Goodbye cruel world.\n");
   endp = sfn->f_cooked; while(endp->next) endp = endp->next;  /* find end */
   endp->next = fnode;
-  
+
   fnode =  do_one_spec(trailer,NULL);
   if(!fnode) { fprintf(stderr,"Seriously crashing. Goodbye cruel world.\n"); exit(1); }
   endp = fnode; while(endp->next) endp = endp->next;  /* find end */
@@ -144,10 +143,9 @@ static const char *aix_format_parse(sf_node *sfn){
   }
 
   /*** sanity check passed ***/
-  buf = malloc(strlen(sfn->sf)+1);
-  strcpy(buf, sfn->sf);
+  buf = xstrdup(sfn->sf);
   walk = sfn->sf;
-  
+
   while(items--){
     format_node *fnode;  /* newly allocated */
     format_node *endp;   /* for list manipulation */
@@ -178,17 +176,16 @@ double_percent:
       }
       buf[len] = '\0';
       walk += len;
-      fnode = malloc(sizeof(format_node));
+      fnode = xmalloc(sizeof(format_node));
       fnode->width = len;
-      fnode->name = malloc(len+1);
-      strcpy(fnode->name, buf);
+      fnode->name = xstrdup(buf);
       fnode->pr = NULL;     /* checked for */
       fnode->need = 0;
       fnode->vendor = AIX;
       fnode->flags = CF_PRINT_EVERY_TIME;
       fnode->next = NULL;
     }
-    
+
     endp = fnode; while(endp->next) endp = endp->next;  /* find end */
     endp->next = sfn->f_cooked;
     sfn->f_cooked = fnode;
@@ -215,9 +212,8 @@ static const char *format_parse(sf_node *sfn){
   static char errbuf[80]; /* for variable-text error message */
 
   /*** prepare to operate ***/
-  buf = malloc(strlen(sfn->sf)+1);
-  strcpy(buf, sfn->sf);
-  
+  buf = xstrdup(sfn->sf);
+
   /*** sanity check and count items ***/
   need_item = 1; /* true */
   items = 0;
@@ -331,7 +327,7 @@ static sort_node *do_one_sort_spec(const char *spec){
   fs = search_format_array(spec);
   if(fs){
     sort_node *thisnode;
-    thisnode = malloc(sizeof(sort_node));
+    thisnode = xmalloc(sizeof(sort_node));
     thisnode->sr = fs->sr;
     thisnode->need = fs->need;
     thisnode->reverse = reverse;
@@ -355,9 +351,8 @@ static const char *long_sort_parse(sf_node *sfn){
   int need_item;
 
   /*** prepare to operate ***/
-  buf = malloc(strlen(sfn->sf)+1);
-  strcpy(buf, sfn->sf);
-  
+  buf = xstrdup(sfn->sf);
+
   /*** sanity check and count items ***/
   need_item = 1; /* true */
   items = 0;
@@ -560,9 +555,8 @@ int defer_sf_option(const char *arg, int source){
   const format_struct *fs;
   int need_item = 1;
 
-  sfn = malloc(sizeof(sf_node));
-  sfn->sf = malloc(strlen(arg)+1);
-  strcpy(sfn->sf, arg);
+  sfn = xmalloc(sizeof(sf_node));
+  sfn->sf = xstrdup(arg);
   sfn->sf_code = source;
   sfn->s_cooked = NULL;
   sfn->f_cooked = NULL;
@@ -685,10 +679,9 @@ static const char *generate_sysv_list(void){
   if( (format_flags & FF_Ul) && !(format_modifiers & FM_y) ){
     if(personality & PER_IRIX_l){ /* add "rss" then ':' here */
       PUSH("sgi_rss");
-      fn = malloc(sizeof(format_node));
+      fn = xmalloc(sizeof(format_node));
       fn->width = 1;
-      fn->name = malloc(2);
-      strcpy(fn->name, ":");
+      fn->name = xstrdup(":");
       fn->pr = NULL;     /* checked for */
       fn->need = 0;
       fn->vendor = AIX;   /* yes, for SGI weirdness */

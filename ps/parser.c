@@ -26,6 +26,7 @@
 #include <unistd.h>
 
 #include "common.h"
+#include "../proc/alloc.h"
 #include "../proc/version.h"
 
 #define ARG_GNU  0
@@ -173,11 +174,10 @@ static const char *parse_list(const char *arg, const char *(*parse_fn)(char *, s
   int need_item;
   const char *err;       /* error code that could or did happen */
   /*** prepare to operate ***/
-  node = malloc(sizeof(selection_node));
-  node->u = malloc(strlen(arg)*sizeof(sel_union)); /* waste is insignificant */
+  node = xmalloc(sizeof(selection_node));
+  node->u = xmalloc(strlen(arg)*sizeof(sel_union)); /* waste is insignificant */
   node->n = 0;
-  buf = malloc(strlen(arg)+1);
-  strcpy(buf, arg);
+  buf = xstrdup(arg);
   /*** sanity check and count items ***/
   need_item = 1; /* true */
   items = 0;
@@ -576,8 +576,8 @@ static const char *parse_bsd_option(void){
       /* put our tty on a tiny list */
       {
         selection_node *node;
-        node = malloc(sizeof(selection_node));
-        node->u = malloc(sizeof(sel_union));
+        node = xmalloc(sizeof(selection_node));
+        node->u = xmalloc(sizeof(sel_union));
         node->u[0].tty = cached_tty;
         node->typecode = SEL_TTY;
         node->n = 1;
@@ -705,8 +705,8 @@ static const char *parse_bsd_option(void){
       if(!arg){
         /* Wow, obsolete BSD syntax. Put our tty on a tiny list. */
         selection_node *node;
-        node = malloc(sizeof(selection_node));
-        node->u = malloc(sizeof(sel_union));
+        node = xmalloc(sizeof(selection_node));
+        node->u = xmalloc(sizeof(sel_union));
         node->u[0].tty = cached_tty;
         node->typecode = SEL_TTY;
         node->n = 1;
@@ -1018,16 +1018,16 @@ static const char *parse_trailing_pids(void){
   argp = ps_argv + thisarg;
   thisarg = ps_argc - 1;   /* we must be at the end now */
 
-  pidnode = malloc(sizeof(selection_node));
-  pidnode->u = malloc(i*sizeof(sel_union)); /* waste is insignificant */
+  pidnode = xmalloc(sizeof(selection_node));
+  pidnode->u = xmalloc(i*sizeof(sel_union)); /* waste is insignificant */
   pidnode->n = 0;
 
-  grpnode = malloc(sizeof(selection_node));
-  grpnode->u = malloc(i*sizeof(sel_union)); /* waste is insignificant */
+  grpnode = xmalloc(sizeof(selection_node));
+  grpnode->u = xmalloc(i*sizeof(sel_union)); /* waste is insignificant */
   grpnode->n = 0;
 
-  sidnode = malloc(sizeof(selection_node));
-  sidnode->u = malloc(i*sizeof(sel_union)); /* waste is insignificant */
+  sidnode = xmalloc(sizeof(selection_node));
+  sidnode->u = xmalloc(i*sizeof(sel_union)); /* waste is insignificant */
   sidnode->n = 0;
 
   while(i--){

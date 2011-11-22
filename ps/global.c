@@ -1,13 +1,13 @@
 /*
- * Copyright 1998-2002 by Albert Cahalan; all rights resered.         
+ * Copyright 1998-2002 by Albert Cahalan; all rights resered.
  * This file may be used subject to the terms and conditions of the
- * GNU Library General Public License Version 2, or any later version  
+ * GNU Library General Public License Version 2, or any later version
  * at your option, as published by the Free Software Foundation.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Library General Public License for more details.
- */                                 
+ */
 #include <stdlib.h>
 #include <termios.h>
 #include <stdio.h>
@@ -19,11 +19,11 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-                     
 
 #include "common.h"
 
 #include <sys/sysmacros.h>
+#include "../proc/alloc.h"
 #include "../proc/wchan.h"
 #include "../proc/version.h"
 #include "../proc/sysinfo.h"
@@ -234,7 +234,7 @@ static const char *set_personality(void){
   if(sl > 15) return "Environment specified an unknown personality.";
   strncpy(buf, s, sl);
   buf[sl] = '\0';
-  saved_personality_text = strdup(buf);
+  saved_personality_text = xstrdup(buf);
 
   found = bsearch(&findme, personality_table, personality_table_count,
       sizeof(personality_table_struct), compare_personality_table_structs
@@ -361,7 +361,7 @@ void reset_global(void){
   look_up_our_self(&p);
   set_screen_size();
   set_personality();
-  
+
   all_processes         = 0;
   bsd_c_option          = 0;
   bsd_e_option          = 0;
