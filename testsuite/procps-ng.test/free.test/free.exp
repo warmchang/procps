@@ -1,0 +1,9 @@
+#
+# Testsuite for free program
+#
+
+set free "${topdir}free"
+set test "free with no arguments"
+spawn free
+expect_pass "$test" "^\\s+total\\s+used\\s+free\\s+shared\\s+buffers\\s+cached\\s*Mem:\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*-\\/\\+ buffers\\/cache:\\s+\\d+\\s+\\d+\\s*Swap:\\s+\\d+\\s+\\d+\\s+\\d+"
+

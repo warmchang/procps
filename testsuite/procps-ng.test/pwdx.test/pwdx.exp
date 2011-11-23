@@ -1,4 +1,5 @@
 
+set pwdx "${topdir}pwdx"
 # Run pwdx with no arguments
 set test "pwdx no args"
 spawn pwdx

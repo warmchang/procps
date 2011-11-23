@@ -1,8 +1,39 @@
 
+regexp "(.*\/)testsuite" $objdir objdir topdir
+
 proc pwdx_load { arg } { }
 proc pwdx_exit {} {}
 proc pwdx_version {} {
+  global topdir
   set tmp [ exec pwdx -V ]
   regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
-  clone_output "pwdx version $version\n"
+  clone_output "${topdir}pwdx version $version\n"
+}
+
+# free functions
+proc free_load { arg } { }
+proc free_exit {} {}
+proc free_version {} {
+  set tmp [ exec free --version ]
+  regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
+  clone_output "free version $version\n"
+}
+
+#
+#
+# common utilities
+proc expect_continue { testname reg } {
+    expect {
+        -re "$reg" { }
+        eof { fail "$testname" }
+        timeout { fail "$testname" }
+    }
+}
+
+proc expect_pass { testname reg } {
+    expect {
+        -re "$reg" { pass "$testname" }
+        eof { fail "$testname" }
+        timeout { fail "$testname" }
+    }
 }
