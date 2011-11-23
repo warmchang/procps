@@ -1,0 +1,8 @@
+
+proc pwdx_load { arg } { }
+proc pwdx_exit {} {}
+proc pwdx_version {} {
+  set tmp [ exec pwdx -V ]
+  regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
+  clone_output "pwdx version $version\n"
+}
