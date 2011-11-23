@@ -380,7 +380,6 @@ static PROCTAB *do_openproc (void)
 		}
 		flags |= PROC_UID;
 		ptp = openproc (flags, uids, num);
-		free(uids);
 	} else {
 		ptp = openproc (flags);
 	}
@@ -409,8 +408,6 @@ static regex_t * do_regcomp (void)
 		}
 
 		re_err = regcomp (preg, re, REG_EXTENDED | REG_NOSUB | opt_case);
-		if (opt_exact)
-			free(re);
 		if (re_err) {
 			regerror (re_err, preg, errbuf, sizeof(errbuf));
 			fputs(errbuf,stderr);
@@ -538,7 +535,6 @@ static union el * select_procs (int *num)
 	}
 	closeproc (ptp);
 	*num = matches;
-	free(preg);
 	return list;
 }
 
