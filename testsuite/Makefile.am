@@ -2,4 +2,11 @@ AUTOMAKE_OPTIONS = dejagnu
 export DEJAGNU
 
 DEJATOOL = \
-	procps-ng 
+		   free \
+		   pgrep \
+		   pmap \
+		   pwdx \
+		   w
+		
+	
+

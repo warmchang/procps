@@ -1,0 +1,5 @@
+#
+# Dejagnu tests for pgrep - part of procps
+#
+set pmap "${topdir}pmap"
+

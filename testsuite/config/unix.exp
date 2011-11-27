@@ -14,9 +14,20 @@ proc pwdx_version {} {
 proc free_load { arg } { }
 proc free_exit {} {}
 proc free_version {} {
-  set tmp [ exec free --version ]
+  global topdir
+  set tmp [ exec ${topdir}free --version ]
   regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
-  clone_output "free version $version\n"
+  clone_output "${topdir}free version $version\n"
+}
+
+# w functions
+proc w_load { arg } { }
+proc w_exit {} {}
+proc w_version {} {
+  global topdir
+  set tmp [ exec ${topdir}w -V ]
+  regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
+  clone_output "${topdir}w version $version\n"
 }
 
 #
@@ -43,5 +54,21 @@ proc expect_blank { testname } {
         -re "\\w" { fail "$testname" }
         eof { pass "$testname" }
         timeout { pass "$testname" }
+    }
+}
+
+proc make_testproc { } {
+    global testproc_path testproc_comm testproc1_pid testproc2_pid
+
+    set testproc_path [ exec mktemp -u ]
+    exec ln -s "/bin/sleep" $testproc_path
+    set testproc1_pid [ exec $testproc_path 600 & ]
+    set testproc2_pid [ exec $testproc_path 600 & ]
+    set testproc_comm [ exec basename $testproc_path ]
+    spawn readlink $testproc_path
+    expect {
+        -re "^/bin/sleep\\s*$" { }
+        timeout { perror "test proc does not link to sleep 1" }
+        eof { perror "test proc does not link to sleep 1" }
     }
 }
