@@ -20,6 +20,16 @@ proc free_version {} {
   clone_output "${topdir}free version $version\n"
 }
 
+# uptime functions
+proc uptime_load { arg } { }
+proc uptime_exit {} {}
+proc uptime_version {} {
+  global topdir
+  set tmp [ exec ${topdir}uptime -V ]
+  regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
+  clone_output "${topdir}uptime version $version\n"
+}
+
 # w functions
 proc w_load { arg } { }
 proc w_exit {} {}

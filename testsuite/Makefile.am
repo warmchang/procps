@@ -6,6 +6,8 @@ DEJATOOL = \
 		   pgrep \
 		   pmap \
 		   pwdx \
+		   uptime \
+		   vmstat \
 		   w
 		
 	
