@@ -114,7 +114,7 @@ typedef struct partition_stat{
 	unsigned           parent_disk;  // index into a struct disk_stat array
 	unsigned           reads;
 	unsigned           writes;
-	unsigned           requested_writes;
+	unsigned long long requested_writes;
 }partition_stat;
 
 extern unsigned int getpartitions_num(struct disk_stat *disks, int ndisks);
