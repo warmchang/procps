@@ -37,3 +37,11 @@ proc expect_pass { testname reg } {
         timeout { fail "$testname" }
     }
 }
+
+proc expect_blank { testname } {
+    expect {
+        -re "\\w" { fail "$testname" }
+        eof { pass "$testname" }
+        timeout { pass "$testname" }
+    }
+}

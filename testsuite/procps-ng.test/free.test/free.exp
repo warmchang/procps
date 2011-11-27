@@ -37,3 +37,8 @@ expect_pass "$test" "^\\s+total\\s+used\\s+free\\s+shared\\s+buffers\\s+cached\\
 set test "free old argument"
 spawn free -o
 expect_pass "$test" "^\\s+total\\s+used\\s+free\\s+shared\\s+buffers\\s+cached\\s*Mem:\\s+\\d+\\s+\\d+\\s+\\d+\\s+0\\s+\\d+\\s+\\d+\\s*Swap:\\s+\\d+\\s+\\d+\\s+\\d+"
+
+set test "free with total"
+spawn free -t
+expect_pass "$test" "^\\s+total\\s+used\\s+free\\s+shared\\s+buffers\\s+cached\\s*Mem:\\s+${memtotal_kb}\\s+\\d+\\s+\\d+\\s+0\\s+\\d+\\s+\\d+\\s*-\\/\\+ buffers\\/cache:\\s+\\d+\\s+\\d+\\s*Swap:\\s+${swaptotal_kb}\\s+\\d+\\s+\\d+\\s*Total:\\s+\\d+\\s+\\d+\\s+\\d+\\s*"
+
