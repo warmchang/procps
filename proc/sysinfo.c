@@ -836,6 +836,18 @@ unsigned int getpartitions_num(struct disk_stat *disks, int ndisks){
 }
 
 /////////////////////////////////////////////////////////////////////////////
+static int is_disk(char *dev)
+{
+  char syspath[32];
+  char *slash;
+
+  while ((slash = strchr(dev, '/')))
+    *slash = '!';
+  snprintf(syspath, sizeof(syspath), "/sys/block/%s", dev);
+  return !(access(syspath, F_OK));
+}
+
+/////////////////////////////////////////////////////////////////////////////
 
 unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **partitions){
   FILE* fd;
@@ -843,6 +855,7 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
   int cPartition = 0;
   int fields;
   unsigned dummy;
+  char devname[32];
 
   *disks = NULL;
   *partitions = NULL;
@@ -855,9 +868,9 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
       fclose(fd);
       break;
     }
-    fields = sscanf(buff, " %*d %*d %*s %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %u", &dummy);
-    (*disks) = realloc(*disks, (cDisk+1)*sizeof(struct disk_stat));
-    if (fields == 1){
+    fields = sscanf(buff, " %*d %*d %15s %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %u", devname, &dummy);
+    if (fields == 2 && is_disk(devname)){
+      (*disks) = realloc(*disks, (cDisk+1)*sizeof(struct disk_stat));
       sscanf(buff,  "   %*d    %*d %15s %u %u %llu %u %u %u %llu %u %u %u %u",
         //&disk_major,
         //&disk_minor,
@@ -879,7 +892,9 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
     }else{
       (*partitions) = realloc(*partitions, (cPartition+1)*sizeof(struct partition_stat));
       fflush(stdout);
-      sscanf(buff,  "   %*d    %*d %15s %u %llu %u %u",
+      sscanf(buff,  (fields == 2)
+          ? "   %*d    %*d %15s %u %*u %llu %*u %u %*u %llu %*u %*u %*u %*u"
+          : "   %*d    %*d %15s %u %llu %u %llu",
         //&part_major,
         //&part_minor,
         (*partitions)[cPartition].partition_name,
