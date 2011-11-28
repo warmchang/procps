@@ -1,0 +1,4 @@
+*.log
+*.sum
+site.bak
+site.exp

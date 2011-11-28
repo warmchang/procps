@@ -1,0 +1,84 @@
+
+regexp "(.*\/)testsuite" $objdir objdir topdir
+
+proc pwdx_load { arg } { }
+proc pwdx_exit {} {}
+proc pwdx_version {} {
+  global topdir
+  set tmp [ exec pwdx -V ]
+  regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
+  clone_output "${topdir}pwdx version $version\n"
+}
+
+# free functions
+proc free_load { arg } { }
+proc free_exit {} {}
+proc free_version {} {
+  global topdir
+  set tmp [ exec ${topdir}free --version ]
+  regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
+  clone_output "${topdir}free version $version\n"
+}
+
+# uptime functions
+proc uptime_load { arg } { }
+proc uptime_exit {} {}
+proc uptime_version {} {
+  global topdir
+  set tmp [ exec ${topdir}uptime -V ]
+  regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
+  clone_output "${topdir}uptime version $version\n"
+}
+
+# w functions
+proc w_load { arg } { }
+proc w_exit {} {}
+proc w_version {} {
+  global topdir
+  set tmp [ exec ${topdir}w -V ]
+  regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
+  clone_output "${topdir}w version $version\n"
+}
+
+#
+#
+# common utilities
+proc expect_continue { testname reg } {
+    expect {
+        -re "$reg" { }
+        eof { fail "$testname" }
+        timeout { fail "$testname" }
+    }
+}
+
+proc expect_pass { testname reg } {
+    expect {
+        -re "$reg" { pass "$testname" }
+        eof { fail "$testname" }
+        timeout { fail "$testname" }
+    }
+}
+
+proc expect_blank { testname } {
+    expect {
+        -re "\\w" { fail "$testname" }
+        eof { pass "$testname" }
+        timeout { pass "$testname" }
+    }
+}
+
+proc make_testproc { } {
+    global testproc_path testproc_comm testproc1_pid testproc2_pid
+
+    set testproc_path [ exec mktemp -u ]
+    exec ln -s "/bin/sleep" $testproc_path
+    set testproc1_pid [ exec $testproc_path 600 & ]
+    set testproc2_pid [ exec $testproc_path 600 & ]
+    set testproc_comm [ exec basename $testproc_path ]
+    spawn readlink $testproc_path
+    expect {
+        -re "^/bin/sleep\\s*$" { }
+        timeout { perror "test proc does not link to sleep 1" }
+        eof { perror "test proc does not link to sleep 1" }
+    }
+}

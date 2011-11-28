@@ -135,10 +135,17 @@ if test "x$enable_w_from" = xyes; then
   AC_DEFINE(W_SHOWFROM, 1, [enable w from field by default])
 fi
 
+if test x"$DEJAGNU" = x                                                        
+then                                                                           
+  DEJAGNU="\$(top_srcdir)/testsuite/global-conf.exp"                         
+fi                                                                             
+AC_SUBST(DEJAGNU)   
+
 AC_CONFIG_FILES([
 Makefile
 proc/Makefile
 proc/libproc-ng.pc
 ps/Makefile
+testsuite/Makefile
 ])
 AC_OUTPUT

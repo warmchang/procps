@@ -1,7 +1,7 @@
 AM_CPPFLAGS = -include $(top_builddir)/config.h
 
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = proc ps
+SUBDIRS = proc ps testsuite
 
 AM_CFLAGS = -Iproc
 AM_LDFLAGS = ./proc/libproc-ng.la

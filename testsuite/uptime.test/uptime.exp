@@ -1,0 +1,8 @@
+#
+# Dejagnu tests for uptime - part of procps
+#
+set uptime "${topdir}uptime"
+
+set test "uptime"
+spawn $uptime
+expect_pass "$test" "^\\s+\\d{2}:\\d{2}:\\d{2} up (\\d+ days?,)\\s*\\d+(min|:\\d+), +\\d+ users, +load average: \[0-9.\]+, \[0-9.\]+, \[0-9.\]+\\s*$"
