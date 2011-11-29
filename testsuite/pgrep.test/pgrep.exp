@@ -45,8 +45,8 @@ spawn $pgrep -d : $newsleep
 expect_pass "$test" "^${sleep1_pid}:${sleep2_pid}\\s*$"
 
 # FIXME - Need to test against -f flag
-#set test "pgrep match against full process name"
-#untested $test
+set test "pgrep match against full process name"
+untested $test
 
 set test "pgrep with matching gid"
 spawn $pgrep -G $gid $newsleep

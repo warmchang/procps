@@ -5,6 +5,7 @@ DEJATOOL = \
 		   free \
 		   pgrep \
 		   pmap \
+		   ps \
 		   pwdx \
 		   uptime \
 		   vmstat \
@@ -18,6 +19,8 @@ EXTRA_DIST = \
 			 config/unix.exp \
 			 uptime.test/uptime.exp \
 			 pmap.test/pmap.exp \
+			 ps.test/ps_output.exp \
+			 ps.test/ps_personality.exp \
 			 pwdx.test/pwdx.exp \
 			 free.test/free.exp \
 			 global-conf.exp \
