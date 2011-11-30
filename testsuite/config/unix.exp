@@ -1,44 +1,25 @@
 
 regexp "(.*\/)testsuite" $objdir objdir topdir
 
-proc pwdx_load { arg } { }
-proc pwdx_exit {} {}
-proc pwdx_version {} {
+proc procps_v_version { tool } {
   global topdir
-  set tmp [ exec pwdx -V ]
+  set toolpath ${topdir}${tool}
+send_user "$toolpath -V"
+  set tmp [ exec $toolpath -V ]
   regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
-  clone_output "${topdir}pwdx version $version\n"
+  clone_output "$toolpath version $version\n"
 }
 
-# free functions
-proc free_load { arg } { }
-proc free_exit {} {}
-proc free_version {} {
-  global topdir
-  set tmp [ exec ${topdir}free --version ]
-  regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
-  clone_output "${topdir}free version $version\n"
-}
-
-# uptime functions
-proc uptime_load { arg } { }
-proc uptime_exit {} {}
-proc uptime_version {} {
-  global topdir
-  set tmp [ exec ${topdir}uptime -V ]
-  regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
-  clone_output "${topdir}uptime version $version\n"
-}
-
-# w functions
-proc w_load { arg } { }
-proc w_exit {} {}
-proc w_version {} {
-  global topdir
-  set tmp [ exec ${topdir}w -V ]
-  regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
-  clone_output "${topdir}w version $version\n"
-}
+proc free_version {} { procps_v_version free } 
+proc kill_version {} { procps_v_version kill } 
+proc pgrep_version {} { procps_v_version pgrep } 
+proc pkill_version {} { procps_v_version pkill } 
+proc pmap_version {} { procps_v_version pmap } 
+proc pwdx_version {} { procps_v_version pwdx } 
+proc sysctl_version {} { procps_v_version sysctl } 
+proc uptime_version {} { procps_v_version uptime } 
+proc vmstat_version {} { procps_v_version vmstat } 
+proc w_version {} { procps_v_version w } 
 
 #
 #
@@ -68,17 +49,22 @@ proc expect_blank { testname } {
 }
 
 proc make_testproc { } {
+    # Time to run the whole job
+    set sleep_time 300
+
     global testproc_path testproc_comm testproc1_pid testproc2_pid
 
     set testproc_path [ exec mktemp -u ]
     exec ln -s "/bin/sleep" $testproc_path
-    set testproc1_pid [ exec $testproc_path 600 & ]
-    set testproc2_pid [ exec $testproc_path 600 & ]
     set testproc_comm [ exec basename $testproc_path ]
+
     spawn readlink $testproc_path
     expect {
         -re "^/bin/sleep\\s*$" { }
         timeout { perror "test proc does not link to sleep 1" }
         eof { perror "test proc does not link to sleep 1" }
     }
+
+    set testproc1_pid [ exec $testproc_path $sleep_time & ]
+    set testproc2_pid [ exec $testproc_path $sleep_time & ]
 }

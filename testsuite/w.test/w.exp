@@ -4,7 +4,7 @@
 # FIXME - the user lines only go to idle
 set w "${topdir}w"
 
-set w_uptime "\\s+\\d{2}:\\d{2}:\\d{2} up (\\d+ days?,)\\s*\\d+(min|:\\d+), +\\d+ users, +load average: \[0-9.\]+, \[0-9.\]+, \[0-9.\]+\\s+"
+set w_uptime "\\s+\\d{2}:\\d{2}:\\d{2} up (\\d+ days?,)?\\s*\\d+(min|:\\d+), +\\d+ users, +load average: \[0-9.\]+, \[0-9.\]+, \[0-9.\]+\\s+"
 set w_std_header "${w_uptime}USER\\s+TTY\\s+LOGIN@\\s+IDLE\\s+JCPU\\s+PCPU\\s+WHAT\\s+"
 set w_short_header "${w_uptime}USER\\s+TTY\\s+IDLE\\s+WHAT\\s+"
 set w_from_header "${w_uptime}USER\\s+TTY\\s+FROM\\s+LOGIN@\\s+IDLE\\s+JCPU\\s+PCPU\\s+WHAT\\s+"

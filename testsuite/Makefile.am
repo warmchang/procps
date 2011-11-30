@@ -3,7 +3,9 @@ export DEJAGNU
 
 DEJATOOL = \
 		   free \
+		   kill \
 		   pgrep \
+		   pkill \
 		   pmap \
 		   ps \
 		   pwdx \
@@ -13,8 +15,11 @@ DEJATOOL = \
 		
 	
 EXTRA_DIST = \
+			 free.test/free.exp \
+			 kill.test/kill.exp \
 			 w.test/w.exp \
 			 pgrep.test/pgrep.exp \
+			 pkill.test/pkill.exp \
 			 site.exp \
 			 config/unix.exp \
 			 uptime.test/uptime.exp \
@@ -22,7 +27,6 @@ EXTRA_DIST = \
 			 ps.test/ps_output.exp \
 			 ps.test/ps_personality.exp \
 			 pwdx.test/pwdx.exp \
-			 free.test/free.exp \
 			 global-conf.exp \
 			 sysctl.test/sysctl_read.exp \
 			 vmstat.test/vmstat.exp

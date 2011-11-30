@@ -11,117 +11,107 @@ set not_gid [ expr { $gid + 1 } ]
 set raw_tty [ exec tty ]
 regexp "/dev/(.+)" $raw_tty > tty
 
-set newsleep_path  [ exec mktemp -u ]
-exec ln -s "/bin/sleep" $newsleep_path
-set sleep1_pid [ exec $newsleep_path 600 & ]
-set sleep2_pid [ exec $newsleep_path 600 & ]
-set newsleep [ exec basename $newsleep_path ]
-set newsleep_len [ string length $newsleep ]
-set newsleep_trim [ string range $newsleep 0 [ expr { $newsleep_len - 2 } ] ]
-set sleep1_sid [ exec ps --no-headers -o sid $sleep1_pid ]
+make_testproc
 
-spawn readlink $newsleep_path
-expect {
-  -re "^/bin/sleep\\s*$" { }
-  timeout { fail "sleep symlink broken in prgrep tests" }
-  eof { fail "sleep symlink broken in prgrep tests" }
-}
+set testproc_len [ string length $testproc_comm ]
+set testproc_trim [ string range $testproc_comm 0 [ expr { $testproc_len - 2 } ] ]
+set testproc1_sid [ string trim [ exec ps --no-headers -o sid $testproc1_pid ] ]
 
 set test "pgprep with no arguments"
 spawn $pgrep
 expect_pass "$test" "^pgrep: No matching criteria specified\\s*"
 
 set test "pgrep find both test pids"
-spawn $pgrep $newsleep
-expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+spawn $pgrep $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 
 # In Debian only
 #set test "pgrep counts 2 test pids"
-#spawn $pgrep -c $newsleep
+#spawn $pgrep -c $testproc_comm
 #expect_pass "$test" "^2\\s*"
 
 set test "pgrep with : delimiter"
-spawn $pgrep -d : $newsleep
-expect_pass "$test" "^${sleep1_pid}:${sleep2_pid}\\s*$"
+spawn $pgrep -d : $testproc_comm
+expect_pass "$test" "^${testproc1_pid}:${testproc2_pid}\\s*$"
 
 # FIXME - Need to test against -f flag
 set test "pgrep match against full process name"
 untested $test
 
 set test "pgrep with matching gid"
-spawn $pgrep -G $gid $newsleep
-expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+spawn $pgrep -G $gid $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 
 set test "pgrep with not matching gid"
-spawn $pgrep -G $not_gid $newsleep
+spawn $pgrep -G $not_gid $testproc_comm
 expect_blank $test
 
 set test "pgrep with process name"
-spawn $pgrep -l $newsleep
-expect_pass "$test" "^$sleep1_pid\\s+$newsleep\\s+$sleep2_pid\\s+$newsleep\\s*$"
+spawn $pgrep -l $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc_comm\\s+$testproc2_pid\\s+$testproc_comm\\s*$"
 
 set test "pgrep find newest test pid"
-spawn $pgrep -n $newsleep
-expect_pass "$test" "^$sleep2_pid\\s*$"
+spawn $pgrep -n $testproc_comm
+expect_pass "$test" "^$testproc2_pid\\s*$"
 
 set test "pgrep find oldest test pid"
-spawn $pgrep -o $newsleep
-expect_pass "$test" "^$sleep1_pid\\s*$"
+spawn $pgrep -o $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s*$"
 
 set test "pgrep matches with parent pid"
-spawn $pgrep -P $mypid $newsleep
-expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+spawn $pgrep -P $mypid $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 
 set test "pgrep doesn't match with bogus parent pid"
-spawn $pgrep -P $not_ppid $newsleep
+spawn $pgrep -P $not_ppid $testproc_comm
 expect_blank "$test"
 
 set test "pgrep matches with its own sid"
-spawn $pgrep -s $sleep1_sid $newsleep
-expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+spawn $pgrep -s $testproc1_sid $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 
 set test "pgrep doesn't match with bogus sid"
-spawn $pgrep -s 1 $newsleep
+spawn $pgrep -s 1 $testproc_comm
 expect_blank "$test"
 
 set test "pgrep matches on tty"
-spawn $pgrep -t $tty $newsleep
-expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+spawn $pgrep -t $tty $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 
 set test "pgrep doesn't match with bogus tty"
-spawn $pgrep -t glass $newsleep
+spawn $pgrep -t glass $testproc_comm
 expect_blank "$test"
 
 set test "pgrep with matching euid"
-spawn $pgrep -u $uid $newsleep
-expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+spawn $pgrep -u $uid $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 
 set test "pgrep with not matching euid"
-spawn $pgrep -u $not_uid $newsleep
+spawn $pgrep -u $not_uid $testproc_comm
 expect_blank $test
 
 set test "pgrep with matching uid"
-spawn $pgrep -U $uid $newsleep
-expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+spawn $pgrep -U $uid $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 
 set test "pgrep with not matching uid"
-spawn $pgrep -U $not_uid $newsleep
+spawn $pgrep -U $not_uid $testproc_comm
 expect_blank $test
 
 set test "pgrep matches on substring"
-spawn $pgrep $newsleep_trim
-expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+spawn $pgrep $testproc_trim
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 
 set test "pgrep matches full string with exact"
-spawn $pgrep -x $newsleep
-expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+spawn $pgrep -x $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 
 set test "pgrep does not match substring with exact"
-spawn $pgrep -x $newsleep_trim
+spawn $pgrep -x $testproc_trim
 expect_blank $test
 
 
 # Cleanup
-exec kill $sleep1_pid
-exec kill $sleep2_pid
-exec rm $newsleep_path
+exec kill $testproc1_pid
+exec kill $testproc2_pid
+exec rm $testproc_path
