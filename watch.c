@@ -298,7 +298,7 @@ main(int argc, char *argv[])
 					chtype oldch = inch();
 					unsigned char oldc = oldch & A_CHARTEXT;
 					attr = !first_screen
-					    && ((char)c != oldc
+					    && ((unsigned char)c != oldc
 						||
 						(option_differences_cumulative
 						 && (oldch & A_ATTRIBUTES)));
