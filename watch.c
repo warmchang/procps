@@ -296,7 +296,7 @@ main(int argc, char *argv[])
 				move(y, x);
 				if (option_differences) {
 					chtype oldch = inch();
-					char oldc = oldch & A_CHARTEXT;
+					unsigned char oldc = oldch & A_CHARTEXT;
 					attr = !first_screen
 					    && ((char)c != oldc
 						||

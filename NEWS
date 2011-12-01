@@ -5,6 +5,7 @@ procps-3.3.0 --> procps-ng-3.3.1
   * Fixed pgrep crashing
   * vmstat -p <part> finds partitions. Was Debian patch vmstat_part_format
     fixes closed bugs RH#485243 and Debian#588677
+  * watch 8-bit clean, Was Debian patch watch_8bitchar
 
 procps-3.2.8 --> procps-ng-3.3.0
 ------------------------------------------------------
