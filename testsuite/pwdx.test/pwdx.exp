@@ -1,0 +1,20 @@
+
+set pwdx "${topdir}pwdx"
+# Run pwdx with no arguments
+set test "pwdx no args"
+spawn $pwdx
+expect_pass "$test" "^Usage: pwdx pid\.\.\."
+
+# Run pwdx with pid 1 which is not reachable
+set test "pwdx pid 1 should give permission denied"
+spawn $pwdx 1
+expect_pass "$test" "^1: Permission denied"
+
+# Run pwdx with existing pid
+set test "pwdx finds sleep in cwd"
+set sleep_pid [ exec sleep 600 & ]
+set sleep_pwd [ pwd ]
+spawn $pwdx $sleep_pid
+expect_pass "$test" "^$sleep_pid: $sleep_pwd"
+exec kill $sleep_pid
+

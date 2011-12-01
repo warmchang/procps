@@ -1,0 +1,25 @@
+#
+# Dejagnu tests for sysctl (read only) - part of procps
+#
+set sysctl ${topdir}sysctl
+set hostname [ exec cat "/proc/sys/kernel/hostname" ]
+
+set test "sysctl with no arguments"
+spawn $sysctl
+expect_pass "$test" "^usage:\\s+\(lt-\)?sysctl \\\[-n\\\] \\\[-e\\\] variable \\.\\.\\.\\s+"
+
+set test "sysctl reading a variable using slash delimiter"
+spawn $sysctl kernel/hostname
+expect_pass "$test" "kernel.hostname = ${hostname}"
+
+set test "sysctl reading a variable using dot delimiter"
+spawn $sysctl kernel.hostname
+expect_pass "$test" "kernel.hostname = ${hostname}"
+
+set test "sysctl reading a variable suppress key"
+spawn $sysctl -n kernel.hostname
+expect_pass "$test" "${hostname}"
+
+set test "sysctl reading a variable suppress value"
+spawn $sysctl -N kernel.hostname
+expect_pass "$test" "kernel.hostname"

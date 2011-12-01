@@ -1,0 +1,127 @@
+#
+# Dejagnu tests for pkill - part of procps
+#
+set mypid [pid]
+set not_ppid [ expr { $mypid + 1 } ]
+set pkill "${topdir}pkill"
+set uid [ exec id -u ]
+set not_uid [ expr { $uid + 1 } ] 
+set gid [ exec id -g ]
+set not_gid [ expr { $gid + 1 } ] 
+set raw_tty [ exec tty ]
+regexp "/dev/(.+)" $raw_tty > tty
+
+make_testproc
+set testproc_len [ string length $testproc_comm ]
+set testproc_trim [ string range $testproc_comm 0 [ expr { $testproc_len - 2 } ] ]
+set testproc1_sid [ exec ps --no-headers -o sid $testproc1_pid ]
+
+set test "pkill with no arguments"
+spawn $pkill
+expect_pass "$test" "^pkill: No matching criteria specified\\s*"
+
+set test "pkill find both test pids"
+#spawn $pkill $testproc
+#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+untested "$test"
+
+# In Debian only
+#set test "pkill counts 2 test pids"
+#spawn $pkill -c $testproc
+#expect_pass "$test" "^2\\s*"
+
+set test "pkill with matching gid"
+#spawn $pkill -G $gid $testproc
+#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+untested "$test"
+
+set test "pkill with not matching gid"
+#spawn $pkill -G $not_gid $testproc
+#expect_blank $test
+untested "$test"
+
+set test "pkill with process name"
+#spawn $pkill -l $testproc
+#expect_pass "$test" "^$sleep1_pid\\s+$testproc\\s+$sleep2_pid\\s+$testproc\\s*$"
+untested "$test"
+
+set test "pkill find newest test pid"
+#spawn $pkill -n $testproc
+#expect_pass "$test" "^$sleep2_pid\\s*$"
+untested "$test"
+
+set test "pkill find oldest test pid"
+#spawn $pkill -o $testproc
+#expect_pass "$test" "^$sleep1_pid\\s*$"
+untested "$test"
+
+set test "pkill matches with parent pid"
+#spawn $pkill -P $mypid $testproc
+#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+untested "$test"
+
+set test "pkill doesn't match with bogus parent pid"
+#spawn $pkill -P $not_ppid $testproc
+#expect_blank "$test"
+untested "$test"
+
+set test "pkill matches with its own sid"
+#spawn $pkill -s $sleep1_sid $testproc
+#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+untested "$test"
+
+set test "pkill doesn't match with bogus sid"
+#spawn $pkill -s 1 $testproc
+#expect_blank "$test"
+untested "$test"
+
+set test "pkill matches on tty"
+#spawn $pkill -t $tty $testproc
+#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+untested "$test"
+
+set test "pkill doesn't match with bogus tty"
+#spawn $pkill -t glass $testproc
+#expect_blank "$test"
+untested "$test"
+
+set test "pkill with matching euid"
+#spawn $pkill -u $uid $testproc
+#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+untested "$test"
+
+set test "pkill with not matching euid"
+#spawn $pkill -u $not_uid $testproc
+#expect_blank $test
+untested "$test"
+
+set test "pkill with matching uid"
+#spawn $pkill -U $uid $testproc
+#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+untested "$test"
+
+set test "pkill with not matching uid"
+#spawn $pkill -U $not_uid $testproc
+#expect_blank $test
+untested "$test"
+
+set test "pkill matches on substring"
+#spawn $pkill $testproc_trim
+#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+untested "$test"
+
+set test "pkill matches full string with exact"
+#spawn $pkill -x $testproc
+#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+untested "$test"
+
+set test "pkill does not match substring with exact"
+#spawn $pkill -x $testproc_trim
+#expect_blank $test
+untested "$test"
+
+
+# Cleanup
+exec kill $testproc1_pid
+exec kill $testproc2_pid
+exec rm $testproc_path

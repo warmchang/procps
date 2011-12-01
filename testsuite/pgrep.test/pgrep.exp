@@ -1,0 +1,117 @@
+#
+# Dejagnu tests for pgrep - part of procps
+#
+set mypid [pid]
+set not_ppid [ expr { $mypid + 1 } ]
+set pgrep "${topdir}pgrep"
+set uid [ exec id -u ]
+set not_uid [ expr { $uid + 1 } ] 
+set gid [ exec id -g ]
+set not_gid [ expr { $gid + 1 } ] 
+set raw_tty [ exec tty ]
+regexp "/dev/(.+)" $raw_tty > tty
+
+make_testproc
+
+set testproc_len [ string length $testproc_comm ]
+set testproc_trim [ string range $testproc_comm 0 [ expr { $testproc_len - 2 } ] ]
+set testproc1_sid [ string trim [ exec ps --no-headers -o sid $testproc1_pid ] ]
+
+set test "pgprep with no arguments"
+spawn $pgrep
+expect_pass "$test" "^pgrep: No matching criteria specified\\s*"
+
+set test "pgrep find both test pids"
+spawn $pgrep $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
+
+# In Debian only
+#set test "pgrep counts 2 test pids"
+#spawn $pgrep -c $testproc_comm
+#expect_pass "$test" "^2\\s*"
+
+set test "pgrep with : delimiter"
+spawn $pgrep -d : $testproc_comm
+expect_pass "$test" "^${testproc1_pid}:${testproc2_pid}\\s*$"
+
+# FIXME - Need to test against -f flag
+set test "pgrep match against full process name"
+untested $test
+
+set test "pgrep with matching gid"
+spawn $pgrep -G $gid $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
+
+set test "pgrep with not matching gid"
+spawn $pgrep -G $not_gid $testproc_comm
+expect_blank $test
+
+set test "pgrep with process name"
+spawn $pgrep -l $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc_comm\\s+$testproc2_pid\\s+$testproc_comm\\s*$"
+
+set test "pgrep find newest test pid"
+spawn $pgrep -n $testproc_comm
+expect_pass "$test" "^$testproc2_pid\\s*$"
+
+set test "pgrep find oldest test pid"
+spawn $pgrep -o $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s*$"
+
+set test "pgrep matches with parent pid"
+spawn $pgrep -P $mypid $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
+
+set test "pgrep doesn't match with bogus parent pid"
+spawn $pgrep -P $not_ppid $testproc_comm
+expect_blank "$test"
+
+set test "pgrep matches with its own sid"
+spawn $pgrep -s $testproc1_sid $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
+
+set test "pgrep doesn't match with bogus sid"
+spawn $pgrep -s 1 $testproc_comm
+expect_blank "$test"
+
+set test "pgrep matches on tty"
+spawn $pgrep -t $tty $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
+
+set test "pgrep doesn't match with bogus tty"
+spawn $pgrep -t glass $testproc_comm
+expect_blank "$test"
+
+set test "pgrep with matching euid"
+spawn $pgrep -u $uid $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
+
+set test "pgrep with not matching euid"
+spawn $pgrep -u $not_uid $testproc_comm
+expect_blank $test
+
+set test "pgrep with matching uid"
+spawn $pgrep -U $uid $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
+
+set test "pgrep with not matching uid"
+spawn $pgrep -U $not_uid $testproc_comm
+expect_blank $test
+
+set test "pgrep matches on substring"
+spawn $pgrep $testproc_trim
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
+
+set test "pgrep matches full string with exact"
+spawn $pgrep -x $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
+
+set test "pgrep does not match substring with exact"
+spawn $pgrep -x $testproc_trim
+expect_blank $test
+
+
+# Cleanup
+exec kill $testproc1_pid
+exec kill $testproc2_pid
+exec rm $testproc_path
