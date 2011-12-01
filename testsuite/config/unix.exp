@@ -4,7 +4,6 @@ regexp "(.*\/)testsuite" $objdir objdir topdir
 proc procps_v_version { tool } {
   global topdir
   set toolpath ${topdir}${tool}
-send_user "$toolpath -V"
   set tmp [ exec $toolpath -V ]
   regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
   clone_output "$toolpath version $version\n"
@@ -35,8 +34,7 @@ proc expect_continue { testname reg } {
 proc expect_pass { testname reg } {
     expect {
         -re "$reg" { pass "$testname" }
-        eof { fail "$testname" }
-        timeout { fail "$testname" }
+        default { fail "$testname" }
     }
 }
 
@@ -48,6 +46,23 @@ proc expect_blank { testname } {
     }
 }
 
+proc expect_table { test match_header match_items match_footer } {
+    expect {
+        -re "$match_header" {
+            expect {
+                -re "$match_items" {
+                    expect {
+                        -re "$match_footer" { pass "$test" }
+                        default { fail "$test (footer)" }
+                    }
+                }
+                default { fail "$test (items)" }
+            }
+        }
+        default { fail "$test (header)" }
+    }
+}
+            
 proc make_testproc { } {
     # Time to run the whole job
     set sleep_time 300
