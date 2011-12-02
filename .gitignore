@@ -49,3 +49,5 @@ vmstat
 w
 watch
 *~
+*.log
+*.sum

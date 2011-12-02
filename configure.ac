@@ -118,6 +118,7 @@ AC_ARG_ENABLE([kill],
   [], enable_kill=yes
 )
 AM_CONDITIONAL(BUILD_KILL, test "x$enable_kill" = xyes)
+AM_CONDITIONAL(LINUX, test "x$host_os" = xlinux-gnu)
 
 AC_ARG_ENABLE([oomem],
   AS_HELP_STRING([--enable-oomem], [add out-of-memory fields to the library and top]),

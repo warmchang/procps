@@ -11,7 +11,7 @@ set slabtop_header "^ $avst Objects $used \\d+ / \\d+ ${pct}\\s+$avst Slabs $use
 
 set test "slabtop help"
 spawn $slabtop --help
-expect_pass $test "usage: $slabtop \\\[options\\\]"
+expect_pass $test "usage: \\S+ \\\[options\\\]"
 
 set sort_tests {
     "a" "active objects" "^\\d+\\s+(\\d+)\\s+\\d+%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*"

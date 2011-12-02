@@ -1,17 +1,20 @@
 AUTOMAKE_OPTIONS = dejagnu
 export DEJAGNU
 
+if LINUX
+# Programs that are expected across the board
 DEJATOOL = \
 		   free \
-		   kill \
 		   pgrep \
 		   pkill \
-		   pmap \
 		   ps \
 		   pwdx \
 		   uptime \
 		   vmstat \
-		   w
+		   w \
+		   sysctl slabtop pmap kill
+
+endif
 		
 	
 EXTRA_DIST = \
@@ -29,4 +32,5 @@ EXTRA_DIST = \
 			 pwdx.test/pwdx.exp \
 			 global-conf.exp \
 			 sysctl.test/sysctl_read.exp \
+			 slabtop.test/slabtop.exp \
 			 vmstat.test/vmstat.exp
