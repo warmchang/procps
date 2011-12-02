@@ -63,6 +63,46 @@ proc expect_table { test match_header match_items match_footer } {
     }
 }
             
+proc expect_table_dsc { test match_header match_item } {
+    expect {
+        -re $match_header {}
+        default {
+            fail "$test (header)"
+            return
+        }
+    }
+
+    set do_loop 1
+    set last_value 999999
+    set found_item 0
+    while { $do_loop ==1 } {
+    expect {
+        -re $match_item {
+            set current_value $expect_out(1,string)
+            if { $current_value > $last_value } {
+                fail "$test (sorting $current_value > $last_value)"
+                return
+            } else {
+                set found_item 1
+                set last_value $current_value
+            }
+        }
+        default {
+            if { $found_item == 0 } {
+                fail "$test (items)"
+            } else {
+                pass $test
+            }
+            return
+        }
+    }
+    }
+    #expect {
+    #    -re $match_footer { pass $test }
+    #    default { fail "$test (footer)" }
+    #}
+}
+
 proc make_testproc { } {
     # Time to run the whole job
     set sleep_time 300
