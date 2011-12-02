@@ -42,6 +42,12 @@ extern void __cyg_profile_func_enter(void*,void*);
 #define IS_THREAD(q) ( q->pad_1 == '\xee' )
 #endif
 
+// utility buffers of MAX_BUFSZ bytes each, available to
+// any function following an openproc() call
+static char *src_buffer,
+            *dst_buffer;
+#define MAX_BUFSZ 1024*64*2
+
 #ifndef SIGNAL_STRING
 // convert hex string to unsigned long long
 static unsigned long long unhex(const char *restrict cp){
@@ -660,14 +666,13 @@ static void fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
     // and guarantees the caller a valid proc_t.cmdline pointer.
 static void fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
  #define uFLG ( ESC_BRACKETS | ESC_DEFUNCT )
-    char sbuf[2048], dbuf[2048];
-    int whackable_int = sizeof(dbuf);
+    int whackable_int = MAX_BUFSZ;
 
-    if (read_unvectored(sbuf, sizeof(sbuf), directory, "cmdline", ' '))
-        escape_str(dbuf, sbuf, sizeof(dbuf), &whackable_int);
+    if (read_unvectored(src_buffer, MAX_BUFSZ, directory, "cmdline", ' '))
+        escape_str(dst_buffer, src_buffer, MAX_BUFSZ, &whackable_int);
     else
-        escape_command(dbuf, p, sizeof(dbuf), &whackable_int, uFLG);
-    p->cmdline = vectorize_this_str(dbuf);
+        escape_command(dst_buffer, p, MAX_BUFSZ, &whackable_int, uFLG);
+    p->cmdline = vectorize_this_str(dst_buffer);
  #undef uFLG
 }
 
@@ -1135,9 +1140,9 @@ PROCTAB* openproc(int flags, ...) {
     static int did_stat;
     PROCTAB* PT = xmalloc(sizeof(PROCTAB));
 
-    if(!did_stat){
-      task_dir_missing = stat("/proc/self/task", &sbuf);
-      did_stat = 1;
+    if (!did_stat){
+        task_dir_missing = stat("/proc/self/task", &sbuf);
+        did_stat = 1;
     }
     PT->taskdir = NULL;
     PT->taskdir_user = -1;
@@ -1146,24 +1151,28 @@ PROCTAB* openproc(int flags, ...) {
 
     PT->reader = simple_readproc;
     if (flags & PROC_PID){
-      PT->procfs = NULL;
-      PT->finder = listed_nextpid;
+        PT->procfs = NULL;
+        PT->finder = listed_nextpid;
     }else{
-      PT->procfs = opendir("/proc");
-      if(!PT->procfs) { free(PT); return NULL; }
-      PT->finder = simple_nextpid;
+        PT->procfs = opendir("/proc");
+        if (!PT->procfs) { free(PT); return NULL; }
+        PT->finder = simple_nextpid;
     }
     PT->flags = flags;
 
-    va_start(ap, flags);		/*  Init args list */
+    va_start(ap, flags);
     if (flags & PROC_PID)
-    	PT->pids = va_arg(ap, pid_t*);
-    else if (flags & PROC_UID) {
-    	PT->uids = va_arg(ap, uid_t*);
-	PT->nuid = va_arg(ap, int);
+        PT->pids = va_arg(ap, pid_t*);
+    else if (flags & PROC_UID){
+        PT->uids = va_arg(ap, uid_t*);
+        PT->nuid = va_arg(ap, int);
     }
-    va_end(ap);				/*  Clean up args list */
+    va_end(ap);
 
+    if (!src_buffer){
+        src_buffer = xmalloc(MAX_BUFSZ);
+        dst_buffer = xmalloc(MAX_BUFSZ);
+    }
     return PT;
 }
 
@@ -1365,3 +1374,4 @@ proc_t * get_proc_stats(pid_t pid, proc_t *p) {
 
 #undef MK_THREAD
 #undef IS_THREAD
+#undef MAX_BUFSZ
