@@ -17,6 +17,7 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+#include "alloc.h"
 #include "version.h"
 #include "sysinfo.h" /* include self to verify prototypes */
 
@@ -870,7 +871,7 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
     }
     fields = sscanf(buff, " %*d %*d %15s %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %u", devname, &dummy);
     if (fields == 2 && is_disk(devname)){
-      (*disks) = realloc(*disks, (cDisk+1)*sizeof(struct disk_stat));
+      (*disks) = xrealloc(*disks, (cDisk+1)*sizeof(struct disk_stat));
       sscanf(buff,  "   %*d    %*d %15s %u %u %llu %u %u %u %llu %u %u %u %u",
         //&disk_major,
         //&disk_minor,
@@ -890,7 +891,7 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
         (*disks)[cDisk].partitions=0;
       cDisk++;
     }else{
-      (*partitions) = realloc(*partitions, (cPartition+1)*sizeof(struct partition_stat));
+      (*partitions) = xrealloc(*partitions, (cPartition+1)*sizeof(struct partition_stat));
       fflush(stdout);
       sscanf(buff,  (fields == 2)
           ? "   %*d    %*d %15s %u %*u %llu %*u %u %*u %llu %*u %*u %*u %*u"
@@ -924,7 +925,7 @@ unsigned int getslabinfo (struct slab_cache **slab){
   while (fgets(buff,BUFFSIZE-1,fd)){
     if(!memcmp("slabinfo - version:",buff,19)) continue; // skip header
     if(*buff == '#')                           continue; // skip comments
-    (*slab) = realloc(*slab, (cSlab+1)*sizeof(struct slab_cache));
+    (*slab) = xrealloc(*slab, (cSlab+1)*sizeof(struct slab_cache));
     sscanf(buff,  "%47s %u %u %u %u",  // allow 47; max seen is 24
       (*slab)[cSlab].name,
       &(*slab)[cSlab].active_objs,

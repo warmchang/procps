@@ -345,7 +345,7 @@ ENTER(0x220);
                 if (' '  == P->supgid[j])
                     P->supgid[j] = ',';
         } else
-            P->supgid = strdup("-");
+            P->supgid = xstrdup("-");
         continue;
     }
     case_CapBnd:
@@ -402,7 +402,7 @@ static void supgrps_from_supgids (proc_t *p) {
     int t;
 
     if (!p->supgid || '-' == *p->supgid) {
-        p->supgrp = strdup("-");
+        p->supgrp = xstrdup("-");
         return;
     }
     s = p->supgid;
@@ -410,7 +410,7 @@ static void supgrps_from_supgids (proc_t *p) {
     do {
         if (',' == *s) ++s;
         g = group_from_gid((uid_t)strtol(s, &s, 10));
-        p->supgrp = realloc(p->supgrp, P_G_SZ+t+2);
+        p->supgrp = xrealloc(p->supgrp, P_G_SZ+t+2);
         t += snprintf(p->supgrp+t, P_G_SZ+2, "%s%s", t ? "," : "", g);
     } while (*s);
 }
@@ -620,7 +620,7 @@ static char** vectorize_this_str (const char* src) {
 
     tot = strlen(src) + 1;                       // prep for our vectors
     adj = (pSZ-1) - ((tot + pSZ-1) & (pSZ-1));   // calc alignment bytes
-    cpy = xcalloc(NULL, tot + adj + (2 * pSZ));  // get new larger buffer
+    cpy = xcalloc(tot + adj + (2 * pSZ));        // get new larger buffer
     snprintf(cpy, tot, "%s", src);               // duplicate their string
     vec = (char**)(cpy + tot + adj);             // prep pointer to pointers
     *vec = cpy;                                  // point 1st vector to string
@@ -1012,7 +1012,7 @@ proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
 //  }
 
   saved_p = p;
-  if(!p) p = xcalloc(NULL, sizeof *p);
+  if(!p) p = xcalloc(sizeof *p);
   else free_acquired(p, 1);
 
   for(;;){
@@ -1041,7 +1041,7 @@ proc_t* readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, pro
   proc_t *saved_t;
 
   saved_t = t;
-  if(!t) t = xcalloc(NULL, sizeof *t);
+  if(!t) t = xcalloc(sizeof *t);
   else free_acquired(t, 1);
 
   // 1. got to fake a thread for old kernels
@@ -1098,7 +1098,7 @@ extern proc_t* readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
     proc_t *saved_x, *ret;
 
     saved_x = x;
-    if (!x) x = xcalloc(NULL, sizeof(*x));
+    if (!x) x = xcalloc(sizeof(*x));
     else free_acquired(x,1);
     if (new_p) goto next_task;
 
@@ -1257,15 +1257,13 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
         if(n_alloc == n_used){
           //proc_t *old = data;
           n_alloc = n_alloc*5/4+30;  // grow by over 25%
-          data = realloc(data,sizeof(proc_t)*n_alloc);
-          //if(!data) return NULL;
+          data = xrealloc(data,sizeof(proc_t)*n_alloc);
           memset(data+n_used, 0, sizeof(proc_t)*(n_alloc-n_used));
         }
         if(n_proc_alloc == n_proc){
           //proc_t **old = ptab;
           n_proc_alloc = n_proc_alloc*5/4+30;  // grow by over 25%
-          ptab = realloc(ptab,sizeof(proc_t*)*n_proc_alloc);
-          //if(!ptab) return NULL;
+          ptab = xrealloc(ptab,sizeof(proc_t*)*n_proc_alloc);
         }
         tmp = readproc_direct(PT, data+n_used);
         if(!tmp) break;
@@ -1277,17 +1275,15 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
           if(n_alloc == n_used){
             proc_t *old = data;
             n_alloc = n_alloc*5/4+30;  // grow by over 25%
-            data = realloc(data,sizeof(proc_t)*n_alloc);
+            data = xrealloc(data,sizeof(proc_t)*n_alloc);
             // have to move tmp too
             tmp = data+(tmp-old);
-            //if(!data) return NULL;
             memset(data+n_used+1, 0, sizeof(proc_t)*(n_alloc-(n_used+1)));
           }
           if(n_task_alloc == n_task){
             //proc_t **old = ttab;
             n_task_alloc = n_task_alloc*5/4+1;  // grow by over 25%
-            ttab = realloc(ttab,sizeof(proc_t*)*n_task_alloc);
-            //if(!ttab) return NULL;
+            ttab = xrealloc(ttab,sizeof(proc_t*)*n_task_alloc);
           }
           t = readtask_direct(PT, tmp, data+n_used);
           if(!t) break;
@@ -1325,7 +1321,7 @@ proc_data_t *readproctab3 (int(*want_task)(proc_t *buf), PROCTAB *restrict const
     for (;;) {
         if (n_alloc == n_used) {
             n_alloc = n_alloc*5/4+30;  // grow by over 25%
-            tab = realloc(tab,sizeof(proc_t*)*n_alloc);
+            tab = xrealloc(tab,sizeof(proc_t*)*n_alloc);
         }
         // let this next guy allocate the necessary proc_t storage
         // (or recycle it) since he can't tolerate realloc relocations

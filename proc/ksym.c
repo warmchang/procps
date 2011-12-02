@@ -20,6 +20,7 @@
 #include <sys/mman.h>
 #include <sys/utsname.h>
 #include "procps.h"
+#include "alloc.h"
 #include "version.h"
 #include "sysinfo.h" /* smp_num_cpus */
 #include "wchan.h"  // to verify prototypes
@@ -230,8 +231,7 @@ static void read_file(const char *restrict filename, char **bufp, unsigned *rest
   unsigned room = *roomp;
 
   if(!room) goto hell;     /* failed before */
-  if(!buf) buf = malloc(room);
-  if(!buf) goto hell;
+  if(!buf) buf = xmalloc(room);
 open_again:
   fd = open(filename, O_RDONLY|O_NOCTTY|O_NONBLOCK);
   if(fd<0){
@@ -257,8 +257,7 @@ open_again:
       total += done;
       /* more to go, but no room in buffer */
       room *= 2;
-      tmp = realloc(buf, room);
-      if(!tmp) goto hell;
+      tmp = xrealloc(buf, room);
       buf = tmp;
       continue;
     }
@@ -296,8 +295,7 @@ static int parse_ksyms(void) {
   for(;;){
     void *vp;
     idx_room *= 2;
-    vp = realloc(ksyms_index, sizeof(symb)*idx_room);
-    if(!vp) goto bad_alloc;
+    vp = xrealloc(ksyms_index, sizeof(symb)*idx_room);
     ksyms_index = vp;
 bypass:
     for(;;){
@@ -317,10 +315,6 @@ bypass:
     }
   }
 
-  if(0){
-bad_alloc:
-    fprintf(stderr, "Warning: not enough memory available\n");
-  }
   if(0){
 bad_parse:
     fprintf(stderr, "Warning: "KSYMS_FILENAME" not normal\n");
@@ -367,8 +361,7 @@ static int sysmap_mmap(const char *restrict const filename, message_fn message) 
   for(;;){
     void *vp;
     sysmap_room *= 2;
-    vp = realloc(sysmap_index, sizeof(symb)*sysmap_room);
-    if(!vp) goto bad_alloc;
+    vp = xrealloc(sysmap_index, sizeof(symb)*sysmap_room);
     sysmap_index = vp;
     for(;;){
       char *vstart;
@@ -432,10 +425,6 @@ bad_match:
   if(0){
 bad_version:
     message("Warning: %s has an incorrect kernel version.\n", filename);
-  }
-  if(0){
-bad_alloc:
-    message("Warning: not enough memory available\n");
   }
   if(0){
 bad_parse:

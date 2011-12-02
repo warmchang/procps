@@ -65,7 +65,7 @@ char *group_from_gid(gid_t gid) {
             return((*g)->name);
         g = &(*g)->next;
     }
-    *g = (struct grpbuf *) malloc(sizeof(struct grpbuf));
+    *g = (struct grpbuf *) xmalloc(sizeof(struct grpbuf));
     (*g)->gid = gid;
     gr = getgrgid(gid);
     if (!gr || strlen(gr->gr_name) >= P_G_SZ)

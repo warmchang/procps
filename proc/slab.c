@@ -18,6 +18,7 @@
 
 #include "slab.h"
 #include "procps.h"
+#include "alloc.h"
 
 #define SLABINFO_LINE_LEN	2048
 #define SLABINFO_VER_LEN	100
@@ -41,9 +42,7 @@ static struct slab_info *get_slabnode(void)
 		node = free_index;
 		free_index = free_index->next;
 	} else {
-		node = malloc(sizeof(struct slab_info));
-		if (!node)
-			perror("malloc");
+		node = xmalloc(sizeof(struct slab_info));
 	}
 
 	return node;
