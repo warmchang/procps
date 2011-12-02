@@ -7,6 +7,7 @@ procps-3.3.0 --> procps-ng-3.3.1
   * vmstat -p <part> finds partitions. Was Debian patch vmstat_part_format
     fixes closed bugs RH#485243 and Debian#588677
   * watch 8-bit clean, Was Debian patch watch_8bitchar
+  * slabtop prints plain ASCII in once mode
 
 procps-3.2.8 --> procps-ng-3.3.0
 ------------------------------------------------------
