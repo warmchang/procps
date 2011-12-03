@@ -44,5 +44,5 @@ expect_pass "$test" "^HUP\\s*"
 #        pass "$test"
 #    }
 #}
-
-
+## Cleanup
+#exec rm $testproc_path
