@@ -3,7 +3,7 @@ export DEJAGNU
 
 if LINUX
 # Programs that are expected across the board
-DEJATOOL = \
+test_tools = \
 		   free \
 		   pgrep \
 		   pkill \
@@ -15,6 +15,8 @@ DEJATOOL = \
 		   sysctl slabtop pmap kill
 
 endif
+
+DEJATOOL = $(test_tools)
 		
 	
 EXTRA_DIST = \

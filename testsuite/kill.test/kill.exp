@@ -3,7 +3,6 @@
 #
 set kill ${topdir}kill
 
-
 set test "kill with no arguments"
 spawn $kill
 expect_pass "$test" "Usage:\\s+kill pid ...\\s+Send SIGTERM to every process listed.\\r\\s+kill signal pid ...\\s+Send a signal to every process listed.\\r\\s+kill -s signal pid ...\\s+Send a signal to every process listed.\\r\\s+kill -l\\s+List all signal names.\\r\\s+kill -L\\s+List all signal names in a nice table.\\r\\s+kill -l signal\\s+Convert between signal numbers and names."
@@ -24,19 +23,26 @@ set test "kill convert signal number to name"
 spawn  $kill -l 1
 expect_pass "$test" "^HUP\\s*"
 
-set test "kill numbered process"
-make_testproc
-if { [ file isdirectory "/proc/$testproc1_pid" ] && [ file isdirectory "/proc/$testproc2_pid" ] } {
-} else {
-    perror "Could not start test processes"
-}
-set foo [ exec $kill -KILL $testproc1_pid $testproc2_pid ]
-wait
-wait
-if { [ file exists "/proc/$testproc1_pid" ] || [ file exists "/proc/$testproc2_pid" ] } {
-    fail "$test"
-} else {
-    pass "$test"
-}
+#set test "kill numbered process"
+#make_testproc
+#if { [ file isdirectory "/proc/$testproc1_pid" ] && [ file isdirectory "/proc/$testproc2_pid" ] } {
+#} else {
+#    perror "Could not start test processes"
+#}
+#exec $kill -KILL $testproc1_pid
+#wait
+#if { [ file exists "/proc/$testproc1_pid" ] } {
+#    exec kill $testproc2_pid
+#    fail "$test (proc 1 exists)"
+#} else {
+#    exec $kill -KILL $testproc2_pid
+#    wait
+#    if { [ file exists "/proc/$testproc2_pid" ] } {
+#        exec kill $testproc2_pid
+#        fail "$test (proc 2 exists)"
+#    } else {
+#        pass "$test"
+#    }
+#}
 
 

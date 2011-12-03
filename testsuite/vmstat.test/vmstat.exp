@@ -29,7 +29,7 @@ expect_pass "$test" "^disk\[ -\]+reads\[ -\]+writes\[ -\]+IO\[ -\]+\\s+total\\s+
 # Need a partition
 set diskstats [ exec cat /proc/diskstats ]
 regexp "\\s+\\d+\\s+\\d+\\s+\(\[a-z\]+\\d+\)" $diskstats -> partition
-set test "vmstat partition"
+set test "vmstat partition (using $partition)"
 spawn $vmstat -p $partition
 expect_pass "$test" "^${partition}\\s+reads"
 #\\s+read sectors\\s+writes\\s+requested writes"
