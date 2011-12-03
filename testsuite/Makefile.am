@@ -28,5 +28,4 @@ endif
 EXTRA_DIST = \
 	config/unix.exp \
 	global-conf.exp \
-	site.exp \
 	*.test
