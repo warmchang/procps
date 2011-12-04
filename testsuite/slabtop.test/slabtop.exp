@@ -7,6 +7,9 @@ set avst "Active / Total"
 set used "\\\(% used\\\)\\s+:"
 set pct "\\\(\\d+\\.\\d+%\\\)"
 
+if { [ file readable "/proc/slabinfo" ] == 0 } {
+    unsupported "slabtop tests disabled as /proc/slabinfo is unreadable"
+} else {
 set slabtop_header "^ $avst Objects $used \\d+ / \\d+ ${pct}\\s+$avst Slabs $used \\d+ / \\d+ ${pct}\\s+$avst Caches $used \\d+ / \\d+ ${pct}\\s+$avst Size $used \\d+\\.\\d+K / \\d+\\.\\d+K ${pct}\\s+Minimum / Average / Maximum Object : \\d+\\.\\d+K / \\d+\\.\\d+K / \\d+\\.\\d+K\\s+OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME\\s+"
 
 set test "slabtop help"
@@ -14,17 +17,17 @@ spawn $slabtop --help
 expect_pass $test "usage: \\S+ \\\[options\\\]"
 
 set sort_tests {
-    "a" "active objects" "^\\d+\\s+(\\d+)\\s+\\d+%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*"
+    "a" "active objects" "^\\s*\\d+\\s+(\\d+)\\s+\\d+%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*"
     "b" "objects per slab" "^\\s*\\d+\\s+\\d+\\s+\\d+%\\s+\\d+\\.\\d+K\\s+\\d+\\s+(\\d+)\\s+\\d+K\\s+\\S\[^\r\]+\\s*"
-    "c" "cache size" "^\\d+\\s+\\d+\\s+\\d+%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+(\\d+)K\\s+\\S\[^\r\]+\\s*"
-    "l" "number of slabs" "^\\d+\\s+\\d+\\s+\\d+%\\s+\\d+\\.\\d+K\\s+(\\d+)\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*"
-    "o" "object count" "^(\\d+)\\s+\\d+\\s+\\d+%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*" 
-    "s" "object size" "^\\d+\\s+\\d+\\s+\\d+%\\s+(\\d+\\.\\d+)K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*" 
-    "u" "utilisation" "^\\d+\\s+\\d+\\s+(\\d+)%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*" 
+    "c" "cache size" "^\\s*\\d+\\s+\\d+\\s+\\d+%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+(\\d+)K\\s+\\S\[^\r\]+\\s*"
+    "l" "number of slabs" "^\\s*\\d+\\s+\\d+\\s+\\d+%\\s+\\d+\\.\\d+K\\s+(\\d+)\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*"
+    "o" "object count" "^\\s*(\\d+)\\s+\\d+\\s+\\d+%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*" 
+    "s" "object size" "^\\s*\\d+\\s+\\d+\\s+\\d+%\\s+(\\d+\\.\\d+)K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*" 
+    "u" "utilisation" "^\\s*\\d+\\s+\\d+\\s+(\\d+)%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*" 
  }
 foreach { flag desc match } $sort_tests {
     set test "slabtop sorted by $desc"
     spawn $slabtop -o -s $flag
     expect_table_dsc $test $slabtop_header $match
 }
-
+}
