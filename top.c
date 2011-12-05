@@ -3136,7 +3136,10 @@ static void forest_create (WIN_t *q) {
          Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
       }
       while (0 == Seed_ppt[i]->ppid)        // identify trees (expect 2)
-         forest_add(i++, 0);                // add parent plus children
+         forest_add(i++, 1);                // add parent plus children
+      for (i = 0; i < Frame_maxtask; i++)   // finally, protect ourselves
+         if (!Seed_ppt[i]->pad_3)           // against any kernel anomaly
+            Tree_ppt[Tree_idx++] = Seed_ppt[i];
    }
    memcpy(Seed_ppt, Tree_ppt, sizeof(proc_t*) * Frame_maxtask);
 } // end: forest_create
@@ -3149,8 +3152,9 @@ static inline const char *forest_display (const WIN_t *q, const proc_t *p) {
    static char buf[ROWMINSIZ];
    const char *which = (CHKw(q, Show_CMDLIN)) ? *p->cmdline : p->cmd;
 
-   if (!CHKw(q, Show_FOREST) || !p->pad_3) return which;
-   snprintf(buf, sizeof(buf), "%*s%s", 4 * p->pad_3, " `- ", which);
+   if (!CHKw(q, Show_FOREST) || 1 == p->pad_3) return which;
+   if (!p->pad_3) snprintf(buf, sizeof(buf), " ?  %s", which);
+   else snprintf(buf, sizeof(buf), "%*s%s", 4 * (p->pad_3 - 1), " `- ", which);
    return buf;
 } // end: forest_display
 
