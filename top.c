@@ -3137,13 +3137,6 @@ static void forest_create (WIN_t *q) {
       }
       while (0 == Seed_ppt[i]->ppid)        // identify trees (expect 2)
          forest_add(i++, 0);                // add parent plus children
-      if (Frame_maxtask != Tree_idx) {      // guard against contingencies
-         error_exit(fmtmk(                  // in future kernels
-            "An anomaly was encountered, please see\n\t"
-            "http://www.debian.org/Bugs/Reporting\n\t"
-            "and note: 'Frame_maxtask(%d) != Tree_idx(%d)'\n"
-               , Frame_maxtask, Tree_idx));
-      }
    }
    memcpy(Seed_ppt, Tree_ppt, sizeof(proc_t*) * Frame_maxtask);
 } // end: forest_create
