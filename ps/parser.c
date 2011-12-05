@@ -1231,8 +1231,19 @@ try_bsd:
   // for some non-default personalities. So "ps -ax" will parse
   // as SysV options... and you're screwed if you've been patching
   // out the friendly warning. Cut-over is likely to be in 2005.
+#ifdef BUILD_WITH_WHINE
+  // Slackware:
+  //   IMO, people can change old habits if and when user 'x' comes
+  //   along.  I still find this warning to be a POLA violation.  No
+  //   offense...  that's the beauty of open source.  You've got your
+  //   ideas about this, and I have mine, and we're allowed to
+  //   disagree.  Nothing in the UNIX or POSIX standards requires
+  //   this (annoying) warning to be displayed, and we're not
+  //   changing the actual behavior of ps in any way.  I know of no
+  //   other 'ps' that produces this message.
   if(!(personality & PER_FORCE_BSD))
     fprintf(stderr, "Warning: bad ps syntax, perhaps a bogus '-'? See http://procps.sf.net/faq.html\n");
+#endif
   // Remember: contact procps@freelists.org
   // if you should feel tempted. Be damn sure you understand all
   // the issues. The same goes for other stuff too, BTW. Please ask.

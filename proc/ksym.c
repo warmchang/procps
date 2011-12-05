@@ -418,18 +418,26 @@ good_match:;
     }
   }
 
+#ifdef BUILD_WITH_WHINE
   if(0){
 bad_match:
     message("Warning: %s does not match kernel data.\n", filename);
   }
+#endif
   if(0){
 bad_version:
     message("Warning: %s has an incorrect kernel version.\n", filename);
   }
   if(0){
+bad_alloc:
+    message("Warning: not enough memory available\n");
+  }
+#ifdef BUILD_WITH_WHINE
+  if(0){
 bad_parse:
     message("Warning: %s not parseable as a System.map\n", filename);
   }
+#endif
   if(0){
 bad_open:
     message("Warning: %s could not be opened as a System.map\n", filename);

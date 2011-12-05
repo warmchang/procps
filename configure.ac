@@ -136,6 +136,14 @@ if test "x$enable_w_from" = xyes; then
   AC_DEFINE(W_SHOWFROM, 1, [enable w from field by default])
 fi
 
+AC_ARG_ENABLE([whining],
+  AS_HELP_STRING([--disable-whining], [do not print unnessary warnings (slackware-ism)]),
+  [], enable_whining=yes
+)
+if test "x$enable_whining" = xyes; then
+  AC_DEFINE(BUILD_WITH_WHINE, 1, [should extra warnings be printed (slackware-ism)])
+fi
+
 if test x"$DEJAGNU" = x                                                        
 then                                                                           
   DEJAGNU="\$(top_srcdir)/testsuite/global-conf.exp"                         
