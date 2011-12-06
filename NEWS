@@ -2,7 +2,7 @@ procps-3.3.0 --> procps-ng-3.3.1
 --------------------------------
 
   * Added DejaGNU regression testing
-  * Fixed pgrep -u not finding processes
+  * Fixed pgrep -u not finding processes Debian#649591
   * Fixed pgrep crashing
   * vmstat -p <part> finds partitions. Was Debian patch vmstat_part_format
     fixes closed bugs RH#485243 and Debian#588677

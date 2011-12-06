@@ -28,4 +28,16 @@ endif
 EXTRA_DIST = \
 	config/unix.exp \
 	global-conf.exp \
-	*.test
+    free.test/free.exp \
+    kill.test/kill.exp \
+    pgrep.test/pgrep.exp \
+    pkill.test/pkill.exp \
+    pmap.test/pmap.exp \
+    ps.test/ps_output.exp \
+    ps.test/ps_personality.exp \
+    pwdx.test/pwdx.exp \
+    slabtop.test/slabtop.exp \
+    sysctl.test/sysctl_read.exp \
+    uptime.test/uptime.exp \
+    vmstat.test/vmstat.exp \
+    w.test/w.exp 
