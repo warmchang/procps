@@ -2064,6 +2064,9 @@ static void before (char *me) {
    memcpy(HHash_two, HHash_nul, sizeof(HHash_nul));
 #endif
 
+#ifndef SIGRTMAX       // not available on hurd, maybe others too
+#define SIGRTMAX 32
+#endif
    // lastly, establish a robust signals environment
    sigemptyset(&sa.sa_mask);
    sa.sa_flags = SA_RESTART;
