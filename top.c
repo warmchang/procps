@@ -3083,7 +3083,12 @@ static void forest_add (const int self, const int level) {
 
    Tree_ppt[Tree_idx] = Seed_ppt[self];     // add this as root or child
    Tree_ppt[Tree_idx++]->pad_3 = level;     // borrow 1 byte, 127 levels
+#ifdef TREE_ONEPASS
    for (i = self + 1; i < Frame_maxtask; i++) {
+#else
+   for (i = 0; i < Frame_maxtask; i++) {
+      if (i == self) continue;
+#endif
       if (Seed_ppt[self]->tid == Seed_ppt[i]->tgid
       || (Seed_ppt[self]->tid == Seed_ppt[i]->ppid && Seed_ppt[i]->tid == Seed_ppt[i]->tgid))
          forest_add(i, level + 1);          // got one child any others?
@@ -3110,9 +3115,10 @@ static void forest_create (WIN_t *q) {
       }
       while (0 == Seed_ppt[i]->ppid)        // identify trees (expect 2)
          forest_add(i++, 1);                // add parent plus children
-      for (i = 0; i < Frame_maxtask; i++)   // finally, protect ourselves
-         if (!Seed_ppt[i]->pad_3)           // against any kernel anomaly
-            Tree_ppt[Tree_idx++] = Seed_ppt[i];
+      if (Tree_idx != Frame_maxtask)        // this will keep us sane...
+         for (i = 0; i < Frame_maxtask; i++)
+            if (!Seed_ppt[i]->pad_3)
+               Tree_ppt[Tree_idx++] = Seed_ppt[i];
    }
    memcpy(Seed_ppt, Tree_ppt, sizeof(proc_t*) * Frame_maxtask);
 } // end: forest_create

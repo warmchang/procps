@@ -38,6 +38,7 @@
 //#define STRCMPNOCASE            /* use strcasecmp vs. strcmp when sorting  */
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
+//#define TREE_ONEPASS            /* for speed, tolerate dangling children   */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 
 
