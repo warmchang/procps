@@ -1595,7 +1595,7 @@ static void display_fields (int focus, int extend) {
         /*
          * Manage all fields aspects (order/toggle/sort), for all windows. */
 static void fields_utility (void) {
- #define unSCRL  w->begpflg = 0;
+ #define unSCRL  { w->begpflg = 0; OFFw(w, Show_HICOLS); }
  #define swapEM  { char c; unSCRL; c = w->rc.fieldscur[i]; \
        w->rc.fieldscur[i] = *p; *p = c; p = &w->rc.fieldscur[i]; }
  #define spewFI  { char *t; f = w->rc.sortindx; t = strchr(w->rc.fieldscur, f + FLD_OFFSET); \
@@ -2907,13 +2907,18 @@ static void keys_task (int ch) {
          break;
       case 'x':
          if (VIZCHKw(w)) {
+#ifdef USE_X_COLHDR
             TOGw(w, Show_HICOLS);
             capsmk(w);
-#ifndef USE_X_COLHDR
-            if (ENUpos(w, w->rc.sortindx) < w->begpflg) {
-               if (CHKw(w, Show_HICOLS)) w->begpflg += 2;
-               else w->begpflg -= 2;
-               if (0 > w->begpflg) w->begpflg = 0;
+#else
+            if (ENUviz(w, w->rc.sortindx)) {
+               TOGw(w, Show_HICOLS);
+               if (ENUpos(w, w->rc.sortindx) < w->begpflg) {
+                  if (CHKw(w, Show_HICOLS)) w->begpflg += 2;
+                  else w->begpflg -= 2;
+                  if (0 > w->begpflg) w->begpflg = 0;
+               }
+               capsmk(w);
             }
 #endif
          }
