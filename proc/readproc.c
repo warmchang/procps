@@ -1096,7 +1096,7 @@ out:
 // the next unique process or task available.  If no more are available,
 // return a null pointer (boolean false).  Use the passed buffer instead
 // of allocating space if it is non-NULL.
-extern proc_t* readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
+proc_t* readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
     static proc_t skel_p;    // skeleton proc_t, only uses tid + tgid
     static proc_t *new_p;    // for process/task transitions
     char path[PROCPATHLEN];
