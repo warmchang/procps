@@ -1,3 +1,7 @@
+/* 
+ * This header was copied from util-linux at fall 2011.
+ */
+
 /*
  * General memory allocation wrappers for malloc, realloc, calloc
  * and strdup.

@@ -1,3 +1,7 @@
+/* 
+ * This file was copied from util-linux at fall 2011.
+ */
+
 #include <stdlib.h>
 
 #include "c.h"

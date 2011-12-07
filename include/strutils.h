@@ -1,3 +1,7 @@
+/* 
+ * This header was copied from util-linux at fall 2011.
+ */
+
 #ifndef PROCPS_NG_STRUTILS
 #define PROCPS_NG_STRUTILS
 
