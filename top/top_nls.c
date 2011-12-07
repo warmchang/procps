@@ -454,7 +454,7 @@ static void build_uniq_nlstab (void) {
    .  representing values used to index a table at run-time.
    .
    .  Each such sequence consists of a tilde (~) followed by an ascii
-   .  number in the rage of '1' - '8'.  Examples are '~2', '~8', etc.
+   .  number in the range of '1' - '8'.  Examples are '~2', '~8', etc.
    .  These escape sequences must never themselves be translated but
    .  could be deleted.
    .
@@ -542,10 +542,12 @@ static void build_uniq_nlstab (void) {
    .  that are unlikely to parallel the running top program.
    .
    .  If you decide to proceed with translation, do the following
-   .  line only, taking care not to disturbe the '~' + number.
+   .  lines only, taking care not to disturbe the tilde + number.
    .
+   .  Simulated screen excerpt:
    .     --> "   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62
    .     --> "   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~
+   .     --> "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5
    .
    .     --> "   available toggles: ~1B~2 =disable bold globa
    .     --> "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks
