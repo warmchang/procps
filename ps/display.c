@@ -530,7 +530,9 @@ static void fancy_spew(void){
 /***** no comment */
 int main(int argc, char *argv[]){
 #if (__GNU_LIBRARY__ >= 6)
-  setlocale (LC_CTYPE, "");
+  setlocale (LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
 #endif
 
 #ifdef DEBUG

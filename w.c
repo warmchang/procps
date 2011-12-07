@@ -343,12 +343,16 @@ int main(int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
+	setlocale (LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 #ifndef W_SHOWFROM
 	from = 0;
 #endif
 
-	setlocale(LC_ALL, "");
-	while ((ch = getopt_long(argc, argv, "hlusfVo", longopts, NULL)) != -1)
+	while ((ch =
+		getopt_long(argc, argv, "hlusfV", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'h':
 			header = 0;

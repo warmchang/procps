@@ -309,6 +309,8 @@ int main(int argc, char *argv[])
 	};
 
 	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	while ((optc =
 		getopt_long(argc, argv, "+bced::hn:pvtx", longopts, (int *)0))

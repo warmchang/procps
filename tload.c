@@ -96,7 +96,12 @@ int main(int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
-	while ((opt = getopt_long(argc, argv, "s:d:Vh", longopts, NULL)) != -1)
+	setlocale (LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
+	while ((opt =
+		getopt_long(argc, argv, "s:d:Vh", longopts, NULL)) != -1)
 		switch (opt) {
 		case 's':
 			scale_arg = optarg;

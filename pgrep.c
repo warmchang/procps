@@ -761,6 +761,10 @@ int main (int argc, char **argv)
 	union el *procs;
 	int num;
 
+	setlocale (LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	parse_opts (argc, argv);
 
 	procs = select_procs (&num);

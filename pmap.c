@@ -384,6 +384,10 @@ int main(int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
+	setlocale (LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	x_option = d_option = q_option = 0;
 
 	while ((c = getopt_long(argc, argv, "xrdqA:hV", longopts, NULL)) != -1)

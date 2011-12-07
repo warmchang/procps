@@ -30,6 +30,10 @@ int main(int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
+	setlocale (LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	while ((c = getopt_long(argc, argv, "hV", longopts, NULL)) != -1)
 		switch (c) {
 		case 'h':
