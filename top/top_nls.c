@@ -92,7 +92,6 @@ const char *Uniq_nlstab[uniq_MAX];
          * used as the field descriptions.  Each translated line MUST be
          * kept to a maximum of 20 characters or less! */
 static void build_desc_nlstab (void) {
-   char buf[SMLBUFSIZ];
 
 /* Translation Notes ------------------------------------------------
    .  It is strongly recommend that the --no-wrap command line option
@@ -105,89 +104,48 @@ static void build_desc_nlstab (void) {
    .  length of 20 characters or less.
    . */
 
-   snprintf(buf, sizeof(buf), "%s", _("Process Id"));
-   Desc_nlstab[P_PID] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Parent Process pid"));
-   Desc_nlstab[P_PPD] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Effective User Id"));
-   Desc_nlstab[P_UED] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Effective User Name"));
-   Desc_nlstab[P_UEN] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Real User Id"));
-   Desc_nlstab[P_URD] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Real User Name"));
-   Desc_nlstab[P_URN] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Saved User Id"));
-   Desc_nlstab[P_USD] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Saved User Name"));
-   Desc_nlstab[P_USN] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Group Id"));
-   Desc_nlstab[P_GID] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Group Name"));
-   Desc_nlstab[P_GRP] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Process Group Id"));
-   Desc_nlstab[P_PGD] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Controlling Tty"));
-   Desc_nlstab[P_TTY] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Tty Process Grp Id"));
-   Desc_nlstab[P_TPG] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Session Id"));
-   Desc_nlstab[P_SID] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Priority"));
-   Desc_nlstab[P_PRI] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Nice Value"));
-   Desc_nlstab[P_NCE] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Number of Threads"));
-   Desc_nlstab[P_THD] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Last Used Cpu (SMP)"));
-   Desc_nlstab[P_CPN] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("CPU Usage"));
-   Desc_nlstab[P_CPU] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("CPU Time"));
-   Desc_nlstab[P_TME] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("CPU Time, hundredths"));
-   Desc_nlstab[P_TM2] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Memory Usage (RES)"));
-   Desc_nlstab[P_MEM] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Virtual Image (kb)"));
-   Desc_nlstab[P_VRT] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Swapped Size (kb)"));
-   Desc_nlstab[P_SWP] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Resident Size (kb)"));
-   Desc_nlstab[P_RES] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Code Size (kb)"));
-   Desc_nlstab[P_COD] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Data+Stack Size (kb)"));
-   Desc_nlstab[P_DAT] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Shared Mem Size (kb)"));
-   Desc_nlstab[P_SHR] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Major Page Faults"));
-   Desc_nlstab[P_FL1] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Minor Page Faults"));
-   Desc_nlstab[P_FL2] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Dirty Pages Count"));
-   Desc_nlstab[P_DRT] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Process Status"));
-   Desc_nlstab[P_STA] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Command Name/Line"));
-   Desc_nlstab[P_CMD] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Sleeping in Function"));
-   Desc_nlstab[P_WCH] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Task Flags <sched.h>"));
-   Desc_nlstab[P_FLG] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Control Groups"));
-   Desc_nlstab[P_CGR] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Supp Groups IDs"));
-   Desc_nlstab[P_SGD] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Supp Groups Names"));
-   Desc_nlstab[P_SGN] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("Thread Group Id"));
-   Desc_nlstab[P_TGD] = strdup(buf);
+   Desc_nlstab[P_PID] = _("Process Id");
+   Desc_nlstab[P_PPD] = _("Parent Process pid");
+   Desc_nlstab[P_UED] = _("Effective User Id");
+   Desc_nlstab[P_UEN] = _("Effective User Name");
+   Desc_nlstab[P_URD] = _("Real User Id");
+   Desc_nlstab[P_URN] = _("Real User Name");
+   Desc_nlstab[P_USD] = _("Saved User Id");
+   Desc_nlstab[P_USN] = _("Saved User Name");
+   Desc_nlstab[P_GID] = _("Group Id");
+   Desc_nlstab[P_GRP] = _("Group Name");
+   Desc_nlstab[P_PGD] = _("Process Group Id");
+   Desc_nlstab[P_TTY] = _("Controlling Tty");
+   Desc_nlstab[P_TPG] = _("Tty Process Grp Id");
+   Desc_nlstab[P_SID] = _("Session Id");
+   Desc_nlstab[P_PRI] = _("Priority");
+   Desc_nlstab[P_NCE] = _("Nice Value");
+   Desc_nlstab[P_THD] = _("Number of Threads");
+   Desc_nlstab[P_CPN] = _("Last Used Cpu (SMP)");
+   Desc_nlstab[P_CPU] = _("CPU Usage");
+   Desc_nlstab[P_TME] = _("CPU Time");
+   Desc_nlstab[P_TM2] = _("CPU Time, hundredths");
+   Desc_nlstab[P_MEM] = _("Memory Usage (RES)");
+   Desc_nlstab[P_VRT] = _("Virtual Image (kb)");
+   Desc_nlstab[P_SWP] = _("Swapped Size (kb)");
+   Desc_nlstab[P_RES] = _("Resident Size (kb)");
+   Desc_nlstab[P_COD] = _("Code Size (kb)");
+   Desc_nlstab[P_DAT] = _("Data+Stack Size (kb)");
+   Desc_nlstab[P_SHR] = _("Shared Mem Size (kb)");
+   Desc_nlstab[P_FL1] = _("Major Page Faults");
+   Desc_nlstab[P_FL2] = _("Minor Page Faults");
+   Desc_nlstab[P_DRT] = _("Dirty Pages Count");
+   Desc_nlstab[P_STA] = _("Process Status");
+   Desc_nlstab[P_CMD] = _("Command Name/Line");
+   Desc_nlstab[P_WCH] = _("Sleeping in Function");
+   Desc_nlstab[P_FLG] = _("Task Flags <sched.h>");
+   Desc_nlstab[P_CGR] = _("Control Groups");
+   Desc_nlstab[P_SGD] = _("Supp Groups IDs");
+   Desc_nlstab[P_SGN] = _("Supp Groups Names");
+   Desc_nlstab[P_TGD] = _("Thread Group Id");
 #ifdef OOMEM_ENABLE
-   snprintf(buf, sizeof(buf), "%s", _("oom_adjustment (2^X)"));
-   Desc_nlstab[P_OOA] = strdup(buf);
-   snprintf(buf, sizeof(buf), "%s", _("oom_score (badness)"));
-   Desc_nlstab[P_OOM] = strdup(buf);
+   Desc_nlstab[P_OOA] = _("oom_adjustment (2^X)");
+   Desc_nlstab[P_OOM] = _("oom_score (badness)");
 #endif
 }
 
@@ -196,7 +154,6 @@ static void build_desc_nlstab (void) {
          * This routine builds the nls table containing both plain text
          * and regular c-format strings. */
 static void build_norm_nlstab (void) {
-   char buf[MEDBUFSIZ];
 
 /* Translation Notes ------------------------------------------------
    .  It is strongly recommend that the --no-wrap command line option
@@ -209,234 +166,95 @@ static void build_norm_nlstab (void) {
    .  c-code logic changes.
    . */
 
-   snprintf(buf, sizeof(buf), "%s", _(""
+   Norm_nlstab[EXIT_signals_fmt] = _(""
       "\tsignal %d (%s) was caught by %s, please\n"
-      "\tsee http://www.debian.org/Bugs/Reporting\n"
-      ""));
-   Norm_nlstab[EXIT_signals_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _(""
+      "\tsee http://www.debian.org/Bugs/Reporting\n");
+   Norm_nlstab[WRONG_switch_fmt] = _(""
       "inappropriate '%s'\n"
-      "usage:\t%s%s"
-      ""));
-   Norm_nlstab[WRONG_switch_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _(""
+      "usage:\t%s%s");
+   Norm_nlstab[HELP_cmdline_fmt] = _(""
       "\t%s\n"
-      "usage:\t%s%s"
-      ""));
-   Norm_nlstab[HELP_cmdline_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("failed /proc/stat open: %s"));
-   Norm_nlstab[FAIL_statopn_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("failed openproc: %s"));
-   Norm_nlstab[FAIL_openlib_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("bad delay interval '%s'"));
-   Norm_nlstab[BAD_delayint_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("bad iterations argument '%s'"));
-   Norm_nlstab[BAD_niterate_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("pid limit (%d) exceeded"));
-   Norm_nlstab[LIMIT_exceed_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("bad pid '%s'"));
-   Norm_nlstab[BAD_mon_pids_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("-%c requires argument"));
-   Norm_nlstab[MISSING_args_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("bad width arg '%s', must > %d"));
-   Norm_nlstab[BAD_widtharg_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _(""
+      "usage:\t%s%s");
+   Norm_nlstab[FAIL_statopn_fmt] = _("failed /proc/stat open: %s");
+   Norm_nlstab[FAIL_openlib_fmt] = _("failed openproc: %s");
+   Norm_nlstab[BAD_delayint_fmt] = _("bad delay interval '%s'");
+   Norm_nlstab[BAD_niterate_fmt] = _("bad iterations argument '%s'");
+   Norm_nlstab[LIMIT_exceed_fmt] = _("pid limit (%d) exceeded");
+   Norm_nlstab[BAD_mon_pids_fmt] = _("bad pid '%s'");
+   Norm_nlstab[MISSING_args_fmt] = _("-%c requires argument");
+   Norm_nlstab[BAD_widtharg_fmt] = _("bad width arg '%s', must > %d");
+   Norm_nlstab[UNKNOWN_opts_fmt] = _(""
       "unknown option '%c'\n"
-      "usage:\t%s%s"
-      ""));
-   Norm_nlstab[UNKNOWN_opts_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("-d disallowed in \"secure\" mode"));
-   Norm_nlstab[DELAY_secure_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("-d requires positive argument"));
-   Norm_nlstab[DELAY_badarg_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("On"));
-   Norm_nlstab[ON_word_only_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Off"));
-   Norm_nlstab[OFF_one_word_txt] = strdup(buf);
-
+      "usage:\t%s%s");
+   Norm_nlstab[DELAY_secure_txt] = _("-d disallowed in \"secure\" mode");
+   Norm_nlstab[DELAY_badarg_txt] = _("-d requires positive argument");
+   Norm_nlstab[ON_word_only_txt] = _("On");
+   Norm_nlstab[OFF_one_word_txt] = _("Off");
 /* Translation Hint: Only the following words should be translated
    .                 delay, limit, user, cols (abbreviation for columns)*/
-   snprintf(buf, sizeof(buf), "%s", _(" -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]"));
-   Norm_nlstab[USAGE_abbrev_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("failed /proc/stat read"));
-   Norm_nlstab[FAIL_statget_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Forest mode %s"));
-   Norm_nlstab[FOREST_modes_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("failed tty get"));
-   Norm_nlstab[FAIL_tty_get_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("failed Tty_tweaked set: %s"));
-   Norm_nlstab[FAIL_tty_mod_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("failed Tty_raw set: %s"));
-   Norm_nlstab[FAIL_tty_raw_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Choose field group (1 - 4)"));
-   Norm_nlstab[CHOOSE_group_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Command disabled, 'A' mode required"));
-   Norm_nlstab[DISABLED_cmd_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Command disabled, activate %s with '-' or '_'"));
-   Norm_nlstab[DISABLED_win_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("No colors to map!"));
-   Norm_nlstab[COLORS_nomap_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Failed '%s' open: %s"));
-   Norm_nlstab[FAIL_rc_open_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Wrote configuration to '%s'"));
-   Norm_nlstab[WRITE_rcfile_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Change delay from %.1f to"));
-   Norm_nlstab[DELAY_change_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Show threads %s"));
-   Norm_nlstab[THREADS_show_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Irix mode %s"));
-   Norm_nlstab[IRIX_curmode_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("pid to signal/kill"));
-   Norm_nlstab[GET_pid2kill_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Send pid %d signal [%d/sigterm]"));
-   Norm_nlstab[GET_sigs_num_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Failed signal pid '%d' with '%d': %s"));
-   Norm_nlstab[FAIL_signals_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Invalid signal"));
-   Norm_nlstab[BAD_signalid_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("PID to renice"));
-   Norm_nlstab[GET_pid2nice_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Renice PID %d to value"));
-   Norm_nlstab[GET_nice_num_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Failed renice of PID %d to %d: %s"));
-   Norm_nlstab[FAIL_re_nice_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Rename window '%s' to (1-3 chars)"));
-   Norm_nlstab[NAME_windows_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Cumulative time %s"));
-   Norm_nlstab[TIME_accumed_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Maximum tasks = %d, change to (0 is unlimited)"));
-   Norm_nlstab[GET_max_task_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Invalid maximum"));
-   Norm_nlstab[BAD_max_task_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Nothing to highlight!"));
-   Norm_nlstab[HILIGHT_cant_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Which user (blank for all)"));
-   Norm_nlstab[GET_user_ids_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Unknown command - try 'h' for help"));
-   Norm_nlstab[UNKNOWN_cmds_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)"));
-   Norm_nlstab[SCROLL_coord_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("failed memory allocate"));
-   Norm_nlstab[FAIL_alloc_c_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("failed memory re-allocate"));
-   Norm_nlstab[FAIL_alloc_r_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Unacceptable floating point"));
-   Norm_nlstab[BAD_numfloat_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Invalid user"));
-   Norm_nlstab[BAD_username_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("failed sigprocmask, SIG_BLOCK: %s"));
-   Norm_nlstab[FAIL_sigstop_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("failed sigprocmask, SIG_SETMASK: %s"));
-   Norm_nlstab[FAIL_sigmask_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("forest view"));
-   Norm_nlstab[FOREST_views_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("failed pid maximum size test"));
-   Norm_nlstab[FAIL_widepid_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("failed number of cpus test"));
-   Norm_nlstab[FAIL_widecpu_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("incompatible rcfile, you should delete '%s'"));
-   Norm_nlstab[RC_bad_files_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("window entry #%d corrupt, please delete '%s'"));
-   Norm_nlstab[RC_bad_entry_fmt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Unavailable in secure mode"));
-   Norm_nlstab[NOT_onsecure_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Only 1 cpu detected"));
-   Norm_nlstab[NOT_smp_cpus_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Unacceptable integer"));
-   Norm_nlstab[BAD_integers_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("conflicting process selections (U/p/u)"));
-   Norm_nlstab[SELECT_clash_txt] = strdup(buf);
-
+   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]");
+   Norm_nlstab[FAIL_statget_txt] = _("failed /proc/stat read");
+   Norm_nlstab[FOREST_modes_fmt] = _("Forest mode %s");
+   Norm_nlstab[FAIL_tty_get_txt] = _("failed tty get");
+   Norm_nlstab[FAIL_tty_mod_fmt] = _("failed Tty_tweaked set: %s");
+   Norm_nlstab[FAIL_tty_raw_fmt] = _("failed Tty_raw set: %s");
+   Norm_nlstab[CHOOSE_group_txt] = _("Choose field group (1 - 4)");
+   Norm_nlstab[DISABLED_cmd_txt] = _("Command disabled, 'A' mode required");
+   Norm_nlstab[DISABLED_win_fmt] = _("Command disabled, activate %s with '-' or '_'");
+   Norm_nlstab[COLORS_nomap_txt] = _("No colors to map!");
+   Norm_nlstab[FAIL_rc_open_fmt] = _("Failed '%s' open: %s");
+   Norm_nlstab[WRITE_rcfile_fmt] = _("Wrote configuration to '%s'");
+   Norm_nlstab[DELAY_change_fmt] = _("Change delay from %.1f to");
+   Norm_nlstab[THREADS_show_fmt] = _("Show threads %s");
+   Norm_nlstab[IRIX_curmode_fmt] = _("Irix mode %s");
+   Norm_nlstab[GET_pid2kill_txt] = _("pid to signal/kill");
+   Norm_nlstab[GET_sigs_num_fmt] = _("Send pid %d signal [%d/sigterm]");
+   Norm_nlstab[FAIL_signals_fmt] = _("Failed signal pid '%d' with '%d': %s");
+   Norm_nlstab[BAD_signalid_txt] = _("Invalid signal");
+   Norm_nlstab[GET_pid2nice_txt] = _("PID to renice");
+   Norm_nlstab[GET_nice_num_fmt] = _("Renice PID %d to value");
+   Norm_nlstab[FAIL_re_nice_fmt] = _("Failed renice of PID %d to %d: %s");
+   Norm_nlstab[NAME_windows_fmt] = _("Rename window '%s' to (1-3 chars)");
+   Norm_nlstab[TIME_accumed_fmt] = _("Cumulative time %s");
+   Norm_nlstab[GET_max_task_fmt] = _("Maximum tasks = %d, change to (0 is unlimited)");
+   Norm_nlstab[BAD_max_task_txt] = _("Invalid maximum");
+   Norm_nlstab[HILIGHT_cant_txt] = _("Nothing to highlight!");
+   Norm_nlstab[GET_user_ids_txt] = _("Which user (blank for all)");
+   Norm_nlstab[UNKNOWN_cmds_txt] = _("Unknown command - try 'h' for help");
+   Norm_nlstab[SCROLL_coord_fmt] = _("scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)");
+   Norm_nlstab[FAIL_alloc_c_txt] = _("failed memory allocate");
+   Norm_nlstab[FAIL_alloc_r_txt] = _("failed memory re-allocate");
+   Norm_nlstab[BAD_numfloat_txt] = _("Unacceptable floating point");
+   Norm_nlstab[BAD_username_txt] = _("Invalid user");
+   Norm_nlstab[FAIL_sigstop_fmt] = _("failed sigprocmask, SIG_BLOCK: %s");
+   Norm_nlstab[FAIL_sigmask_fmt] = _("failed sigprocmask, SIG_SETMASK: %s");
+   Norm_nlstab[FOREST_views_txt] = _("forest view");
+   Norm_nlstab[FAIL_widepid_txt] = _("failed pid maximum size test");
+   Norm_nlstab[FAIL_widecpu_txt] = _("failed number of cpus test");
+   Norm_nlstab[RC_bad_files_fmt] = _("incompatible rcfile, you should delete '%s'");
+   Norm_nlstab[RC_bad_entry_fmt] = _("window entry #%d corrupt, please delete '%s'");
+   Norm_nlstab[NOT_onsecure_txt] = _("Unavailable in secure mode");
+   Norm_nlstab[NOT_smp_cpus_txt] = _("Only 1 cpu detected");
+   Norm_nlstab[BAD_integers_txt] = _("Unacceptable integer");
+   Norm_nlstab[SELECT_clash_txt] = _("conflicting process selections (U/p/u)");
 /* Translation Hint: This is an abbreviation (limit 2 characters) for:
    .                 kilobytes (1000 bytes) */
-   snprintf(buf, sizeof(buf), "%s", _("Kb"));
-   Norm_nlstab[AMT_kilobyte_txt] = strdup(buf);
-
+   Norm_nlstab[AMT_kilobyte_txt] = _("Kb");
 /* Translation Hint: This is an abbreviation (limit 2 characters) for:
    .                 megabytes (1,000,000 bytes) */
-   snprintf(buf, sizeof(buf), "%s", _("Mb"));
-   Norm_nlstab[AMT_megabyte_txt] = strdup(buf);
-
+   Norm_nlstab[AMT_megabyte_txt] = _("Mb");
 /* Translation Hint: This is an abbreviation (limit 2 characters) for:
    .                 gigabytes (1,000,000,000 bytes) */
-   snprintf(buf, sizeof(buf), "%s", _("Gb"));
-   Norm_nlstab[AMT_gigabyte_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Threads"));
-   Norm_nlstab[WORD_threads_txt] = strdup(buf);
-
-   snprintf(buf, sizeof(buf), "%s", _("Tasks"));
-   Norm_nlstab[WORD_process_txt] = strdup(buf);
-
+   Norm_nlstab[AMT_gigabyte_txt] = _("Gb");
+   Norm_nlstab[WORD_threads_txt] = _("Threads");
+   Norm_nlstab[WORD_process_txt] = _("Tasks");
 /* Translation Hint: The following "word" is meant to represent either a single
    .                 cpu or all of the processors in a multi-processor computer
    .                 (should be exactly 6 characters, not counting the colon)*/
-   snprintf(buf, sizeof(buf), "%s", _("Cpu(s):"));
-   Norm_nlstab[WORD_allcpus_txt] = strdup(buf);
-
+   Norm_nlstab[WORD_allcpus_txt] = _("Cpu(s):");
 /* Translation Hint: The following "word" is meant to represent a single processor
    .                 (should be exactly 3 characters) */
-   snprintf(buf, sizeof(buf), "%s", _("Cpu%-3d:"));
-   Norm_nlstab[WORD_eachcpu_fmt] = strdup(buf);
+   Norm_nlstab[WORD_eachcpu_fmt] = _("Cpu%-3d:");
 }
 
 
@@ -444,7 +262,6 @@ static void build_norm_nlstab (void) {
          * This routine builds the nls table containing specially
          * formatted strings designed to fit within an 80x24 terminal. */
 static void build_uniq_nlstab (void) {
-   char buf[BIGBUFSIZ];
 
 /* Translation Notes ------------------------------------------------
    .  It is strongly recommend that the --no-wrap command line option
@@ -471,7 +288,7 @@ static void build_uniq_nlstab (void) {
    .  source file.
    . */
 
-   snprintf(buf, sizeof(buf), "%s", _(""
+   Uniq_nlstab[KEYS_helpbas_fmt] = _(""
       "Help for Interactive Commands~2 - %s\n"
       "Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; ~1Secure mode ~3%s~2.\n"
       "\n"
@@ -494,20 +311,16 @@ static void build_uniq_nlstab (void) {
       "  q         Quit\n"
       "          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
       "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
-      "any other key to continue "
-      ""));
-   Uniq_nlstab[KEYS_helpbas_fmt] = strdup(buf);
+      "any other key to continue ");
 
 /* Translation Hint: As is true for the text above, the "keys" shown to the left and
    .                 also imbedded in the translatable text (along with escape seqs)
    .                 should never themselves be translated. */
-   snprintf(buf, sizeof(buf), "%s", _(""
+   Uniq_nlstab[KEYS_helpext_fmt] = _(""
       "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
-      "  d or s    Set update interval\n"
-      ""));
-   Uniq_nlstab[KEYS_helpext_fmt] = strdup(buf);
+      "  d or s    Set update interval\n");
 
-   snprintf(buf, sizeof(buf), "%s", _(""
+   Uniq_nlstab[WINDOWS_help_fmt] = _(""
       "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
       "\n"
       ". Use multiple ~1windows~2, each with separate config opts (color,fields,sort,etc)\n"
@@ -531,9 +344,7 @@ static void build_uniq_nlstab (void) {
       "              (this also forces the ~1current~2 or ~1every~2 window to become visible)\n"
       "\n"
       "In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try the '~1a~2' and '~1w~2'\n"
-      "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' "
-      ""));
-   Uniq_nlstab[WINDOWS_help_fmt] = strdup(buf);
+      "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' ");
 
 /* Translation Notes ------------------------------------------------
    .  The following 'Help for color mapping' simulated screen should
@@ -559,7 +370,7 @@ static void build_uniq_nlstab (void) {
    .     --> "   0~2 = black,~1  1~2 = red,    ~1  2~2 = gree
    .     --> "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan
    . */
-   snprintf(buf, sizeof(buf), "%s", _(""
+   Uniq_nlstab[COLOR_custom_fmt] = _(""
       "Help for color mapping~2 - %s\n"
       "current window: ~1%s~6\n"
       "\n"
@@ -583,56 +394,40 @@ static void build_uniq_nlstab (void) {
       "\n"
       "Selected: ~1target~2 ~1 %c ~4; ~1color~2 ~1 %d ~4\n"
       "   press 'q' to abort changes to window '~1%s~2'\n"
-      "   press 'a' or 'w' to commit & change another, <Enter> to commit and end    "
-      ""));
-   Uniq_nlstab[COLOR_custom_fmt] = strdup(buf);
+      "   press 'a' or 'w' to commit & change another, <Enter> to commit and end ");
 
-   snprintf(buf, sizeof(buf), "%s", _(""
+   Uniq_nlstab[FIELD_header_fmt] = _(""
       "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
       "   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n"
-      "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end! "
-      ""));
-   Uniq_nlstab[FIELD_header_fmt] = strdup(buf);
+      "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end! ");
 
-   snprintf(buf, sizeof(buf), "%s", _("%s:~3"
-      " %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n"
-      ""));
-   Uniq_nlstab[STATE_line_1_fmt] = strdup(buf);
+   Uniq_nlstab[STATE_line_1_fmt] = _("%s:~3"
+      " %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n");
 
-   snprintf(buf, sizeof(buf), "%s", _("%%%s~3"
-      " %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3\n"
-      ""));
-   Uniq_nlstab[STATE_lin2x4_fmt] = strdup(buf);
+   Uniq_nlstab[STATE_lin2x4_fmt] = _("%%%s~3"
+      " %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3\n");
 
-   snprintf(buf, sizeof(buf), "%s", _("%%%s~3"
-      " %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,~3 %#5.1f  ~2IO-wait~3\n"
-      ""));
-   Uniq_nlstab[STATE_lin2x5_fmt] = strdup(buf);
+   Uniq_nlstab[STATE_lin2x5_fmt] = _("%%%s~3"
+      " %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,~3 %#5.1f  ~2IO-wait~3\n");
 
 /* Translation Hint: Only the following abbreviations need be translated
    .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
    .                 hi hardware interrupt, si = software interrupt */
-   snprintf(buf, sizeof(buf), "%s", _("%%%s~3"
-      " %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n"
-      ""));
-   Uniq_nlstab[STATE_lin2x6_fmt] = strdup(buf);
+   Uniq_nlstab[STATE_lin2x6_fmt] = _("%%%s~3"
+      " %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n");
 
 /* Translation Hint: Only the following abbreviations need be translated
    .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
    .                 hi hardware interrupt, si = software interrupt, st = steal time */
-   snprintf(buf, sizeof(buf), "%s", _("%%%s~3"
-      "%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
-      ""));
-   Uniq_nlstab[STATE_lin2x7_fmt] = strdup(buf);
+   Uniq_nlstab[STATE_lin2x7_fmt] = _("%%%s~3"
+      "%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n");
 
 /* Translation Hint: Only the following need be translated
    .                 abbreviations: Mem = physical memory/ram, Swap = the linux swap file
    .                 words:         total, used, free, buffers, cached */
-   snprintf(buf, sizeof(buf), "%s", _(""
+   Uniq_nlstab[MEMORY_lines_fmt] = _(""
       "%s Mem: ~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2buffers~3\n"
-      "%s Swap:~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2cached~3\n"
-      ""));
-   Uniq_nlstab[MEMORY_lines_fmt] = strdup(buf);
+      "%s Swap:~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2cached~3\n");
 }
 
 
