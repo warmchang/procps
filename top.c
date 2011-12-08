@@ -1409,7 +1409,7 @@ static void calibrate_fields (void) {
          for (i = w->totpflgs - 1; -1 < i; i--) {
             f = w->pflgsall[i];
 #ifndef USE_X_COLHDR
-            if (P_MAXPFLGS < f) { w->endpflg = i; continue; }
+            if (P_MAXPFLGS <= f) { w->endpflg = i; continue; }
 #endif
             h = Fieldstab[f].head;
             if (Screen_cols < ((int)(s - w->columnhdr) + (int)strlen(h))) break;
