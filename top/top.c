@@ -2324,12 +2324,12 @@ static void parse_args (char **args) {
                break;
             case 'u':
             case 'U':
-            {  const char *err;
+            {  const char *errmsg;
                if (Monpidsidx || Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
                else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
-               if ((err = user_certify(Curwin, cp, ch))) error_exit(err);
+               if ((errmsg = user_certify(Curwin, cp, ch))) error_exit(errmsg);
                cp += strlen(cp);
                break;
             }
@@ -2958,9 +2958,9 @@ static void keys_task (int ch) {
       case 'U':
       case 'u':
          if (VIZCHKw(w)) {
-            const char *err;
-            if ((err = user_certify(w, linein(N_txt(GET_user_ids_txt)), ch)))
-               show_msg(err);
+            const char *errmsg;
+            if ((errmsg = user_certify(w, linein(N_txt(GET_user_ids_txt)), ch)))
+               show_msg(errmsg);
          }
          break;
       case 'V':
