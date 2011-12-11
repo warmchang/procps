@@ -611,9 +611,10 @@ static int read_unvectored(char *restrict const dst, unsigned sz, const char* wh
     }
     close(fd);
     if(n){
-        int i=n-1;
+        int i=n;
         while(i--)
             if(dst[i]=='\n' || dst[i]=='\0') dst[i]=sep;
+        if(dst[n-1]==' ') dst[n-1]='\0';
     }
     dst[n] = '\0';
     return n;
