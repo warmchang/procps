@@ -1,4 +1,9 @@
-procps-3.3.0 --> procps-ng-3.3.1
+procps-ng-3.3.1 --> procps-ng-3.3.2
+--------------------------------
+
+  * Redefined library to use version-info
+
+procps-ng-3.3.0 --> procps-ng-3.3.1
 --------------------------------
 
   * Added DejaGNU regression testing

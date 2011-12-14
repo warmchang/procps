@@ -4,7 +4,7 @@
 AC_PREREQ([2.64])
 AC_CONFIG_MACRO_DIR([m4])
 AC_INIT([procps-ng],
-	[3.3.1],
+	[3.3.2],
 	[procps@freelists.org],,[http://gitorious.org/procps])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([top.c])
