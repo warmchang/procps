@@ -102,7 +102,6 @@ top \- display Linux processes
 
 The traditional switches '-' and whitespace are optional.
 
-
 .\" ----------------------------------------------------------------------
 .SH DESCRIPTION
 .\" ----------------------------------------------------------------------
@@ -120,7 +119,6 @@ And while \*(WE is referred to throughout this document, you are free
 to name the program anything you wish.
 That new name, possibly an alias, will then be reflected on \*(We's
 display and used when reading and writing a \*(CF.
-
 
 .\" ----------------------------------------------------------------------
 .SH OVERVIEW
@@ -143,11 +141,16 @@ The remaining Table of Contents
        a. GLOBAL Commands
        b. SUMMARY AREA Commands
        c. TASK AREA Commands
+          1. Appearance
+          2. Content
+          3. Size
+          4. Sorting
        d. COLOR Mapping
     5. ALTERNATE\-DISPLAY Provisions
        a. WINDOWS Overview
        b. COMMANDS for Windows
        c. SCROLLING a Window
+       d. SEARCHING in a Window
     6. FILES
        a. SYSTEM Configuration File
        b. PERSONAL Configuration File
@@ -232,7 +235,6 @@ All are explained in detail in the sections that follow.
        'y' - Row hilite       On\ \ (yes, running tasks)
        'z' - color/mono       Off (no, colors)
 .Ed
-
 
 .\" ----------------------------------------------------------------------
 .SH 1. COMMAND-LINE Options
@@ -765,7 +767,6 @@ Any\fI vertical\fR scrolled position, however, will not be affected.
 \*(XT 5c. SCROLLING a Window for additional information regarding vertical
 and horizontal scrolling.
 
-
 .\" ----------------------------------------------------------------------
 .SH 4. INTERACTIVE Commands
 .\" ----------------------------------------------------------------------
@@ -777,7 +778,7 @@ depending on the context in which they are issued.
   4a.\fI Global-Commands \fR
         <Ent/Sp> ?, =, A, B, d, g, h, H, I, k, q, r, s, W, Z
   4b.\fI Summary-Area-Commands \fR
-        l, t, 1, m
+        C, l, t, 1, m
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, x, y, z
         Content:     c, f, F, S, u, U, V
@@ -789,6 +790,8 @@ depending on the context in which they are issued.
         -, _, =, +, A, a, g, G, w
   5c.\fI Scrolling-a-Window \fR
         C, Up, Dn, Left, Right, PgUp, PgDn, Home, End
+  5d.\fI Searching-in-a-Window \fR
+        L, &
 .Ed
 
 .\" ......................................................................
@@ -979,14 +982,11 @@ The \*(TA \*(CIs are\fB always\fR available in \*(FM.
 The \*(TA \*(CIs are\fB never available\fR in \*(AM\fI if\fR the \*(CW's
 \*(TD has been toggled \*F (\*(Xt 5. ALTERNATE\-DISPLAY Provisions).
 
-.PP
+.TP 2
 .\" ..................................................
 .B APPEARANCE\fR of \*(TW
-.br
-.in +2
 The following commands will also be influenced by the state of the
 global 'B' (bold enable) toggle.
-.in
 
 .TP 7
 \ \ \'\fBb\fR\' :\fIBold/Reverse\fR toggle \fR
@@ -1105,11 +1105,9 @@ already been painted.
 \*(NT If you wish to increase the size of the last visible \*(TD when in \*(AM,
 simply decrease the size of the \*(TD(s) above it.
 
-.PP
+.TP 2
 .\" ..................................................
 .B SORTING\fR of \*(TW
-.br
-.in +2
 For compatibility, this \*(We supports most of the former \*(We sort keys.
 Since this is primarily a service to former \*(We users, these commands do
 not appear on any help screen.
@@ -1131,7 +1129,6 @@ is\fB visible\fR.
 The sort field might\fI not\fR be visible because:
      1) there is insufficient\fI Screen Width \fR
      2) the 'f' \*(CI turned it \*F
-.in
 
 .TP 7
 \ \ \'\fB<\fR\' :\fIMove-Sort-Field-Left \fR
@@ -1198,16 +1195,14 @@ either \*(FM or \*(AM.
 Whatever was targeted when 'q' or <Enter> was pressed will be made current
 as you return to the \*(We display.
 
-
 .\" ----------------------------------------------------------------------
 .SH 5. ALTERNATE\-DISPLAY Provisions
 .\" ----------------------------------------------------------------------
 .\" ......................................................................
 .SS 5a. WINDOWS Overview
 .\" ----------------------------------------------------------------------
-.TP
+.TP 3
 .B Field Groups/Windows\fR:
-.br
 In \*(FM there is a single window represented by the entire screen.
 That single window can still be changed to display 1 of 4 different\fB field
 groups\fR (\*(Xc 'g' \*(CI, repeated below).
@@ -1222,9 +1217,8 @@ At any given time only\fI one\fR \*(SA can be displayed.
 However, depending on your commands, there could be from\fI zero \fR
 to\fI four\fR separate \*(TDs currently showing on the screen.
 
-.TP
+.TP 3
 .B Current Window\fR:
-.br
 The \*(CW is the window associated with the \*(SA and the window to which
 task related commands are always directed.
 Since in \*(AM you can toggle the \*(TD \*F, some commands might be
@@ -1385,6 +1379,62 @@ established with the '\fBf\fR' \*(CI.
 The above \*(CIs are\fB always\fR available in \*(FM but\fB never\fR
 available in \*(AM if the \*(CW's \*(TD has been toggled \*F.
 
+.\" ......................................................................
+.SS 5d. SEARCHING in a Window
+.\" ----------------------------------------------------------------------
+You can use these \*(CIs to locate a task row containing a particular value.
+
+.TP 4
+'\fBL\fR\' :\fILocate-a-string\fR
+You will be prompted for the case-sensitive string to locate starting from
+the current window coordinates.
+There are no restrictions on search string content.
+
+Searches are not limited to values from a single field or column.
+All of the values displayed in a task row are allowed in a search string.
+You may include spaces, numbers, symbols and even forest view artwork.
+
+Keying <Enter> with no input will effectively disable the '&' key until
+a new search string is entered.
+
+.TP 4
+'\fB&\fR\' :\fILocate-next\fR
+Assuming a search string has been established, \*(We will attempt to locate
+the next occurrence.
+
+.PP
+When a match is found, the current window is repositioned vertically so the
+task row containing that string is first.
+The scroll coordinates message can provide confirmation of such vertical
+repositioning (\*(Xc 'C' \*(CI).
+Horizontal scrolling, however, is never altered via searching.
+
+The availability of a matching string will be influenced by the following
+factors.
+.RS +3
+.TP 3
+a. Which fields are displayable from the total available,
+\*(Xt 3b. MANAGING Fields.
+.TP 3
+b. Scrolling a window vertically and/or horizontally,
+\*(Xt 5c. SCROLLING a Window.
+.TP 3
+c. The state of the command/command-line toggle,
+\*(Xc 'c' \*(CI.
+.RS -3
+
+.PP
+If a search fails, restoring the \*(CW home (unscrolled) position, scrolling
+horizontally or displaying command-lines could yet produce a successful '&'
+search.
+
+The above \*(CIs are\fB always\fR available in \*(FM but\fB never\fR
+available in \*(AM if the \*(CW's \*(TD has been toggled \*F.
+
+\*(NT Whenever a search key is typed, \*(We forces idle tasks \*O and user
+filtering \*F to ensure that every task is encountered.
+\*(XC 'i' and 'u/U' \*(CIs for additional information on how displayed tasks
+might be filtered.
 
 .\" ----------------------------------------------------------------------
 .SH 6. FILES
@@ -1432,7 +1482,6 @@ Here is the general layout:
 
 If the $HOME variable is not present, \*(We will try to write the
 personal \*(CF to the current directory, subject to permissions.
-
 
 .\" ----------------------------------------------------------------------
 .SH 7. STUPID TRICKS Sampler
@@ -1536,7 +1585,6 @@ Then ponder this:
 To report bugs, follow the instructions at:
     http://www.debian.org/Bugs/Reporting
 
-
 .\" ----------------------------------------------------------------------
 .SH 9. HISTORY Former top
 .\" ----------------------------------------------------------------------
@@ -1550,7 +1598,6 @@ Helmut Geyer <Helmut.Geyer@iwr.uni-heidelberg.de>
 added support for configurable fields.
 
 Plus many other individuals contributed over the years.
-
 
 .\" ----------------------------------------------------------------------
 .SH 10. AUTHOR
