@@ -511,7 +511,7 @@ typedef struct WIN_t {
    "  1,I       Toggle SMP view: '~11~2' single/separate states; '~1I~2' Irix/Solaris mode\n" \
    "  f,F       Manage Fields: add/remove; change order; select sort field\n" \
    "\n" \
-   "  <,>     . Move sort field: '~1<~2' next col left; '~1>~2' next col right\n" \
+   "  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n" \
    "  R,H,V   . Toggle: '~1R~2' norm/rev sort; '~1H~2' show threads; '~1V~2' forest view\n" \
    "  c,i,S   . Toggle: '~1c~2' cmd name/line; '~1i~2' idle tasks; '~1S~2' cumulative time\n" \
    "  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n" \
@@ -614,7 +614,8 @@ typedef struct WIN_t {
 
 /*######  Some Prototypes (ha!)  #########################################*/
 
-   /* These 'prototypes' are here solely for documentation purposes */
+   /* These 'prototypes' are here mostly for documentation purposes --    */
+   /* for now, the only essential one is task_show needed by find_string */
 /*------  Sort callbacks  ------------------------------------------------*/
 /*        for each possible field, in the form of:                        */
 /*atic int           sort_P_XXX (const proc_t **P, const proc_t **Q);     */
@@ -685,6 +686,7 @@ typedef struct WIN_t {
 //atic void          wins_stage_2 (void);
 /*------  Interactive Input support (do_key helpers)  --------------------*/
 //atic void          file_writerc (void);
+//atic void          find_string (int ch);
 //atic void          help_view (void);
 //atic void          keys_global (int ch);
 //atic void          keys_summary (int ch);
@@ -699,7 +701,7 @@ typedef struct WIN_t {
 //atic void          do_key (int ch);
 //atic void          summaryhlp (CPU_t *cpu, const char *pfx);
 //atic void          summary_show (void);
-//atic void          task_show (const WIN_t *q, const proc_t *p);
+static void          task_show (const WIN_t *q, const proc_t *p, char *ptr);
 //atic int           window_show (WIN_t *q, int wmax);
 /*------  Entry point plus two  ------------------------------------------*/
 //atic void          framehlp (int wix, int max);

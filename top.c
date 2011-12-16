@@ -2666,6 +2666,37 @@ static void file_writerc (void) {
 } // end: file_writerc
 
 
+static void find_string (int ch) {
+ #define reDUX (found) ? "another " : ""
+   static char str[SCREENMAX];
+   static int found;
+   char buf[ROWMINSIZ];
+   int i;
+
+   if ('&' == ch && !str[0]) {
+      show_msg("Locate next inactive, use \"L\"");
+      return;
+   }
+   if ('L' == ch) {
+      strcpy(str, linein("Locate string"));
+      found = 0;
+   }
+   if (str[0]) {
+      for (i = Curwin->begtask; i < Frame_maxtask; i++) {
+         task_show(Curwin, Curwin->ppt[i], buf);
+         if (strstr(buf, str)) {
+            found = 1;
+            if (i == Curwin->begtask) continue;
+            Curwin->begtask = i;
+            return;
+         }
+      }
+      show_msg(fmtmk("%s\"%s\" not found", reDUX, str));
+   }
+ #undef reDUX
+} // end: find_string
+
+
 static void help_view (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    char ch;
@@ -2962,6 +2993,14 @@ static void keys_window (int ch) {
       case '_':
          if (ALTCHKw) wins_reflag(Flags_TOG, Show_TASKON);
          break;
+      case '&':
+      case 'L':
+         if (VIZCHKw(w)) {             // ( next 2 are strictly for the UI )
+            SETw(w, Show_IDLEPS);      // make sure we're showing idle tasks
+            w->usrseltyp = 0;          // make sure we're not user filtering
+            find_string(ch);           // ( we'll search entire ppt anyway )
+         }
+         break;
       case 'A':
          Rc.mode_altscr = !Rc.mode_altscr;
          break;
@@ -3157,7 +3196,7 @@ static void do_key (int ch) {
          { '#', '<', '>', 'b', 'c', 'i', 'n', 'R', 'S'
          , 'U', 'u', 'V', 'x', 'y', 'z' } },
       { keys_window,
-         { '+', '-', '=', '_', 'A', 'a', 'G', 'w'
+         { '+', '-', '=', '_', '&', 'A', 'a', 'G', 'L', 'w'
          , kbd_UP, kbd_DOWN, kbd_LEFT, kbd_RIGHT, kbd_PGUP, kbd_PGDN
          , kbd_HOME, kbd_END } },
       { keys_xtra,
@@ -3340,8 +3379,9 @@ static void summary_show (void) {
 
 
         /*
-         * Display information for a single task row. */
-static void task_show (const WIN_t *q, const proc_t *p) {
+         * Build the information for a single task row and
+         * display the results or return them to the caller. */
+static void task_show (const WIN_t *q, const proc_t *p, char *ptr) {
  #define makeCOL(va...)  snprintf(cbuf, sizeof(cbuf), f, ## va)
  #define makeVAR(v)  { f = VARCOL_fmts; makeCOL(q->varcolsz, q->varcolsz, v); }
  #define pages2K(n)  (unsigned long)( (n) << Pg2K_shft )
@@ -3364,6 +3404,7 @@ static void task_show (const WIN_t *q, const proc_t *p) {
          // these 2 aren't real procflgs, they're used in column highlighting!
          case X_XON:
          case X_XOF:
+            if (ptr) continue;
             /* treat running tasks specially - entire row may get highlighted
                so we needn't turn it on and we MUST NOT turn it off */
             if (!('R' == p->state && CHKw(q, Show_HIROWS)))
@@ -3527,10 +3568,13 @@ static void task_show (const WIN_t *q, const proc_t *p) {
         rp = scat(rp, cbuf);
    } // end: for 'maxpflgs'
 
-   PUFF("\n%s%s%s", (CHKw(q, Show_HIROWS) && 'R' == p->state)
-      ? q->capclr_rowhigh : q->capclr_rownorm
-      , rbuf
-      , q->eolcap);
+   if (ptr)
+      strcpy(ptr, rbuf);
+   else
+      PUFF("\n%s%s%s", (CHKw(q, Show_HIROWS) && 'R' == p->state)
+         ? q->capclr_rowhigh : q->capclr_rownorm
+         , rbuf
+         , q->eolcap);
  #undef makeCOL
  #undef makeVAR
  #undef pages2K
@@ -3570,14 +3614,14 @@ static int window_show (WIN_t *q, int wmax) {
       checking some stuff with each iteration and check it just once... */
    if (CHKw(q, Show_IDLEPS) && !q->usrseltyp)
       while (i < Frame_maxtask && lwin < wmax) {
-         task_show(q, q->ppt[i++]);
+         task_show(q, q->ppt[i++], NULL);
          ++lwin;
       }
    else
       while (i < Frame_maxtask && lwin < wmax) {
          if ((CHKw(q, Show_IDLEPS) || isBUSY(q->ppt[i]))
          && user_matched(q, q->ppt[i])) {
-            task_show(q, q->ppt[i]);
+            task_show(q, q->ppt[i], NULL);
             ++lwin;
          }
          ++i;
