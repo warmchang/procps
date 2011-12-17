@@ -1,4 +1,4 @@
-LIBPROC_NG_3_3_0 {
+LIBPROCFS_0 {
 global:
 	Hertz;
 	__cyg_profile_func_enter;
