@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: libproc-ng
+Name: libprocfs
 Description: Library to control and query process state
 Version: @VERSION@
-Libs: -L${libdir} -lproc-ng
+Libs: -L${libdir} -lprocfs
 Libs.private:
 Cflags: -I${includedir}
