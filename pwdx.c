@@ -26,7 +26,7 @@
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out, " %s [options] pid...\n", program_invocation_short_name);
+	fprintf(out, _(" %s [options] pid...\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);

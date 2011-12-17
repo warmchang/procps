@@ -187,6 +187,8 @@ static void show_lists(void)
 {
 	int i;
 
+	/* Translation Hint: the following few messages to "CMD" are
+	 * for debugging, and does not have to be translated. */
 	fprintf(stderr, _("signal: %d\n"), sig_or_pri);
 
 	fprintf(stderr, _("%d TTY: "), tty_count);
@@ -261,7 +263,7 @@ static void __attribute__ ((__noreturn__)) kill_usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		" %s [options] <pid> [...]\n", program_invocation_short_name);
+              _(" %s [options] <pid> [...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" <pid> [...]            send signal to every <pid> listed\n"), out);
 	fputs(_(" -<signal>, -s, --signal <signal>\n"), out);
@@ -282,11 +284,11 @@ static void __attribute__ ((__noreturn__)) skillsnice_usage(FILE * out)
 
 	if (program == PROG_SKILL) {
 		fprintf(out,
-			" %s [signal] [options] <expression>\n",
+			_(" %s [signal] [options] <expression>\n"),
 			program_invocation_short_name);
 	} else {
 		fprintf(out,
-			" %s [new priority] [options] <expression>\n",
+			_(" %s [new priority] [options] <expression>\n"),
 			program_invocation_short_name);
 	}
 	fputs(USAGE_OPTIONS, out);

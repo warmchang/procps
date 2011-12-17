@@ -90,7 +90,7 @@ static void __attribute__ ((__noreturn__))
 {
    fputs(USAGE_HEADER, out);
    fprintf(out,
-	   " %s [options] [variable[=value] ...]\n", program_invocation_short_name);
+	 _(" %s [options] [variable[=value] ...]\n"), program_invocation_short_name);
    fputs(USAGE_OPTIONS, out);
    fputs(_("  -a, --all            display all variables\n"), out);
    fputs(_("  -A                   alias of -a\n"), out);

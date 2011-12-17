@@ -108,11 +108,11 @@ static void discover_shm_minor(void)
 	}
 
 	if (shmdt(addr))
-		perror(_("shmdt"));
+		perror(_("shared memory detach"));
 
  out_destroy:
 	if (shmctl(shmid, IPC_RMID, NULL))
-		perror(_("IPC_RMID"));
+		perror(_("shared memory remove"));
 
 	return;
 }
@@ -190,6 +190,9 @@ static int one_proc(proc_t * p)
 	if (!q_option && (x_option | d_option)) {
 		if (x_option) {
 			if (sizeof(KLONG) == 4)
+				/* Translation Hint: Please keep
+				 * alignment of the following four
+				 * headers intact. */
 				printf
 				    (_("Address   Kbytes     RSS   Dirty Mode   Mapping\n"));
 			else
@@ -353,10 +356,14 @@ static int one_proc(proc_t * p)
 		}
 		if (!x_option && !d_option) {
 			if (sizeof(KLONG) == 8)
+				/* Translation Hint: keep total string length
+				 * as 24 characters. Adjust %16 if needed*/
 				printf(_(" total %16ldK\n"),
 				       (total_shared + total_private_writeable +
 					total_private_readonly) >> 10);
 			else
+				/* Translation Hint: keep total string length
+				 * as 16 characters. Adjust %8 if needed*/
 				printf(_(" total %8ldK\n"),
 				       (total_shared + total_private_writeable +
 					total_private_readonly) >> 10);

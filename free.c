@@ -271,9 +271,10 @@ int main(int argc, char **argv)
 	do {
 
 		meminfo();
-		printf("%7s %10s %10s %10s %10s %10s %10s\n",
-		       "", _("total"), _("used"), _("free"), _("shared"),
-		       _("buffers"), _("cached"));
+		/* Translation Hint: You can use 9 character words in
+		 * the header, and the words need to be right align to
+		 * beginning of a number. */
+		printf("%s\n", _("             total       used       free     shared    buffers     cached"));
 		printf("%-7s", _("Mem:"));
 		printf(" %10s", scale_size(kb_main_total, flags, args));
 		printf(" %10s", scale_size(kb_main_used, flags, args));

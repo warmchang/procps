@@ -750,7 +750,7 @@ static void parse_opts (int argc, char **argv)
 	else if (argc - optind > 1)
 		usage (0);
 	else if (criteria_count == 0) {
-		warnx(_("No matching criteria specified"));
+		warnx(_("no matching criteria specified"));
 		usage (0);
 	}
 }

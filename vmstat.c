@@ -66,7 +66,7 @@ static void __attribute__ ((__noreturn__))
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		" %s [options] [delay [count]]\n",
+	      _(" %s [options] [delay [count]]\n"),
 		program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --active           active/inactive memory\n"), out);
@@ -158,13 +158,48 @@ static int format_1000(unsigned long long val64, char *restrict dst)
 
 static void new_header(void)
 {
-	printf
-	    ("procs -----------memory---------- ---swap-- -----io---- -system-- ----cpu----\n");
+	/* Translation Hint: Translating folloging header & fields
+	 * that follow (marked with max x chars) might not work,
+	 * unless manual page is translated as well.  */
+	printf(_("procs -----------memory---------- ---swap-- -----io---- -system-- ----cpu----\n"));
 	printf
 	    ("%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s\n",
-	     "r", "b", "swpd", "free", a_option ? "inact" : "buff",
-	     a_option ? "active" : "cache", "si", "so", "bi", "bo", "in", "cs",
-	     "us", "sy", "id", "wa");
+	    /* Translation Hint: max 2 chars */
+	     _("r"),
+	    /* Translation Hint: max 2 chars */
+	     _("b"),
+	    /* Translation Hint: max 6 chars */
+	     _("swpd"),
+	    /* Translation Hint: max 6 chars */
+	     _("free"),
+	    /* Translation Hint: max 6 chars */
+	     a_option ? _("inact") :
+	    /* Translation Hint: max 6 chars */
+			_("buff"),
+	    /* Translation Hint: max 6 chars */
+	     a_option ? _("active") :
+	    /* Translation Hint: max 6 chars */
+			_("cache"),
+	    /* Translation Hint: max 4 chars */
+	     _("si"),
+	    /* Translation Hint: max 4 chars */
+	     _("so"),
+	    /* Translation Hint: max 5 chars */
+	     _("bi"),
+	    /* Translation Hint: max 5 chars */
+	     _("bo"),
+	    /* Translation Hint: max 4 chars */
+	     _("in"),
+	    /* Translation Hint: max 4 chars */
+	     _("cs"),
+	    /* Translation Hint: max 2 chars */
+	     _("us"),
+	    /* Translation Hint: max 2 chars */
+	     _("sy"),
+	    /* Translation Hint: max 2 chars */
+	     _("id"),
+	    /* Translation Hint: max 2 chars */
+	     _("wa"));
 }
 
 static unsigned long unitConvert(unsigned int size)
@@ -294,8 +329,23 @@ static void new_format(void)
 
 static void diskpartition_header(const char *partition_name)
 {
-	printf("%-10s %10s %10s %10s %10s\n", partition_name, _("reads  "),
-	       _("read sectors"), _("writes   "), _("requested writes"));
+	printf("%-10s %10s %10s %10s %10s\n",
+	       partition_name,
+       /* Translation Hint: Translating folloging disk partition
+	* header fields that follow (marked with max x chars) might
+	* not work, unless manual page is translated as well. */
+	       /* Translation Hint: max 10 chars. The word is
+	        * expected to be centralized, use spaces at the end
+	        * to do that. */
+	       _("reads  "),
+	       /* Translation Hint: max 10 chars */
+	       _("read sectors"),
+	       /* Translation Hint: max 10 chars. The word is
+	        * expected to be centralized, use spaces at the end
+	        * to do that. */
+	       _("writes   "),
+	       /* Translation Hint: max 10 chars */
+	       _("requested writes"));
 }
 
 static int diskpartition_format(const char *partition_name)
@@ -363,11 +413,32 @@ static int diskpartition_format(const char *partition_name)
 
 static void diskheader(void)
 {
+	/* Translation Hint: Translating folloging header & fields
+	 * that follow (marked with max x chars) might not work,
+	 * unless manual page is translated as well.  */
 	printf(_("disk- ------------reads------------ ------------writes----------- -----IO------\n"));
-
 	printf("%5s %6s %6s %7s %7s %6s %6s %7s %7s %6s %6s\n",
-	       " ", _("total"), _("merged"), _("sectors"), _("ms"), _("total"),
-	       _("merged"), _("sectors"), _("ms"), _("cur"), _("sec"));
+	       " ",
+	       /* Translation Hint: max 6 chars */
+	       _("total"),
+	       /* Translation Hint: max 6 chars */
+	       _("merged"),
+	       /* Translation Hint: max 7 chars */
+	       _("sectors"),
+	       /* Translation Hint: max 7 chars */
+	       _("ms"),
+	       /* Translation Hint: max 6 chars */
+	       _("total"),
+	       /* Translation Hint: max 6 chars */
+	       _("merged"),
+	       /* Translation Hint: max 7 chars */
+	       _("sectors"),
+	       /* Translation Hint: max 7 chars */
+	       _("ms"),
+	       /* Translation Hint: max 6 chars */
+	       _("cur"),
+	       /* Translation Hint: max 6 chars */
+	       _("sec"));
 }
 
 static void diskformat(void)
@@ -434,8 +505,20 @@ static void diskformat(void)
 
 static void slabheader(void)
 {
-	printf("%-24s %6s %6s %6s %6s\n", _("Cache"), _("Num"), _("Total"),
-	       _("Size"), _("Pages"));
+	printf("%-24s %6s %6s %6s %6s\n",
+	/* Translation Hint: Translating folloging slab fields that
+	 * follow (marked with max x chars) might not work, unless
+	 * manual page is translated as well.  */
+	       /* Translation Hint: max 24 chars */
+	       _("Cache"),
+	       /* Translation Hint: max 6 chars */
+	       _("Num"),
+	       /* Translation Hint: max 6 chars */
+	       _("Total"),
+	       /* Translation Hint: max 6 chars */
+	       _("Size"),
+	       /* Translation Hint: max 6 chars */
+	       _("Pages"));
 }
 
 static void slabformat(void)
@@ -680,8 +763,8 @@ int main(int argc, char *argv[])
 				break;
 			default:
 				errx(EXIT_FAILURE,
-				     _
-				     ("-S requires k, K, m or M (default is kb)"));
+				     /* Translation Hint: do not change argument characters */
+				     _("-S requires k, K, m or M (default is kb)"));
 			}
 			szDataUnit[0] = optarg[0];
 			break;

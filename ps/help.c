@@ -19,7 +19,7 @@ void __attribute__ ((__noreturn__)) usage(FILE * out, int section)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		" %s [options]\n", program_invocation_short_name);
+              _(" %s [options]\n"), program_invocation_short_name);
 	if (section == USAGE_SELECTION || section == USAGE_ALL) {
 	fputs(_("\nSimple options:\n"), out);
 	fputs(_(" -A               all processes\n"), out);
@@ -95,9 +95,16 @@ void __attribute__ ((__noreturn__)) usage(FILE * out, int section)
 	fputs(_("                  display help\n"), out);
 	}
 	if (section == USAGE_DEFAULT)
-	fprintf(out,
-	      _("\n Try `%s --help <selection|list|output|threads|misc|all>'\n"
-		" for more information.\n"), program_invocation_short_name);
+
+	/* Translation Hint: do not translate arguments, that breaks
+	 * string comparison. Outputting something like following
+	 * might work.
+	 *
+	 * Zry `%s --help <selection|list|output|threads|misc|all>
+	 *                (zlekzio|lizt|czreen vrites|threadz|mizc|trezt)
+	 */
+	fprintf(out, _("\n Try `%s --help <selection|list|output|threads|misc|all>'\n"
+		       " for more information.\n"), program_invocation_short_name);
 	fprintf(out, USAGE_MAN_TAIL("ps(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

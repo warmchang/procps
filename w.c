@@ -303,7 +303,7 @@ static void __attribute__ ((__noreturn__))
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		" %s [options]\n", program_invocation_short_name);
+              _(" %s [options]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -h, --no-header     do not print header\n"), out);
 	fputs(_(" -u, --no-current    ignore current process username\n"), out);
@@ -422,13 +422,15 @@ int main(int argc, char **argv)
 	if (header) {
 		/* print uptime and headers */
 		print_uptime();
-		printf("%-*s TTY      ", userlen, "USER");
+		/* Translation Hint: Following five uppercase messages are
+		 * headers. Try to keep alignment intact.  */
+		printf(_("%-*s TTY      "), userlen, _("USER"));
 		if (from)
-			printf("FROM            ");
+			printf(_("FROM            "));
 		if (longform)
-			printf("  LOGIN@   IDLE   JCPU   PCPU WHAT\n");
+			printf(_("  LOGIN@   IDLE   JCPU   PCPU WHAT\n"));
 		else
-			printf("   IDLE WHAT\n");
+			printf(_("   IDLE WHAT\n"));
 	}
 
 	utmpname(UTMP_FILE);

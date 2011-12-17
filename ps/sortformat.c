@@ -96,12 +96,12 @@ static void O_wrap(sf_node *sfn, int otype){
   trailer = (otype=='b') ? "END_BSD" : "END_SYS5" ;
 
   fnode =  do_one_spec("pid",NULL);
-  if(!fnode)fprintf(stderr,"Seriously crashing. Goodbye cruel world.\n");
+  if(!fnode)fprintf(stderr,_("Seriously crashing. Goodbye cruel world.\n"));
   endp = sfn->f_cooked; while(endp->next) endp = endp->next;  /* find end */
   endp->next = fnode;
 
   fnode =  do_one_spec(trailer,NULL);
-  if(!fnode) { fprintf(stderr,"Seriously crashing. Goodbye cruel world.\n"); exit(1); }
+  if(!fnode) { fprintf(stderr,_("Seriously crashing. Goodbye cruel world.\n")); exit(1); }
   endp = fnode; while(endp->next) endp = endp->next;  /* find end */
   endp->next = sfn->f_cooked;
   sfn->f_cooked = fnode;
@@ -792,7 +792,7 @@ const char *process_sf_options(int localbroken){
   // with sorting. Do the threads remain grouped, with sorting
   // by process, or do the threads get sorted by themselves?
   if(sort_list && (thread_flags&TF_no_sort)){
-    return _("Tell procps@freelists.org what you expected.");
+    return _("Tell PACKAGE_BUGREPORT what you expected.");
   }
 
   // If nothing else, try to use $PS_FORMAT before the default.
@@ -802,7 +802,7 @@ const char *process_sf_options(int localbroken){
     if(tmp && *tmp){
       const char *err;
       sf_node sfn;
-      if(thread_flags&TF_must_use) return _("Tell procps@freelists.org what you want. (-L/-T, -m/m/H, and $PS_FORMAT)");
+      if(thread_flags&TF_must_use) return _("Tell PACKAGE_BUGREPORT what you want. (-L/-T, -m/m/H, and $PS_FORMAT)");
       sfn.sf = tmp;
       sfn.f_cooked = NULL;
       err = format_parse(&sfn);

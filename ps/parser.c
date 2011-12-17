@@ -1134,7 +1134,7 @@ static const char *parse_all_options(void){
       return _("Garbage option.");
       break;
     default:
-      printf(_("                  ?    %s\n"),ps_argv[thisarg]);
+      printf("                  ?    %s\n",ps_argv[thisarg]);
       return _("Something broke.");
     } /* switch */
     if(err) return err;

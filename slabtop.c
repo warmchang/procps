@@ -172,7 +172,7 @@ static void sigint_handler(int unused __attribute__ ((__unused__)))
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out, " %s [options]\n", program_invocation_short_name);
+	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fprintf(out, _(" -d, --delay <secs>  delay updates\n"));
 	fprintf(out, _(" -o, --once          only display once, then exit\n"));
@@ -325,7 +325,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (tcgetattr(STDIN_FILENO, &saved_tty) == -1)
-		warn(_("tcgetattr"));
+		warn(_("terminal setting retrieval"));
 
 	old_rows = rows;
 	term_size(0);
@@ -359,6 +359,8 @@ int main(int argc, char *argv[])
 		       " %-35s: %d / %d (%.1f%%)\n"
 		       " %-35s: %.2fK / %.2fK (%.1f%%)\n"
 		       " %-35s: %.2fK / %.2fK / %.2fK\n\n",
+		       /* Translation Hint: Next five strings must not
+			* exceed 35 length in characters.  */
 		       _("Active / Total Objects (% used)"),
 		       stats.nr_active_objs, stats.nr_objs,
 		       100.0 * stats.nr_active_objs / stats.nr_objs,
@@ -378,10 +380,9 @@ int main(int argc, char *argv[])
 		slab_list = slabsort(slab_list);
 
 		attron(A_REVERSE);
-		print_line("%6s %6s %4s %8s %6s %8s %10s %-23s\n",
-			   _("OBJS"), _("ACTIVE"), _("USE"), _("OBJ SIZE"),
-			   _("SLABS"), _("OBJ/SLAB"), _("CACHE SIZE"),
-			   _("NAME"));
+		/* Translation Hint: Please keep alignment of the
+		 * following intact. */
+		printw("%-78s\n", _("  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"));
 		attroff(A_REVERSE);
 
 		curr = slab_list;

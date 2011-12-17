@@ -496,5 +496,5 @@ void self_info(void){
   fprintf(stderr, _("archdefs:%s\n"), archdefs);
 
   open_psdb(namelist_file);
-  fprintf(stderr,_("namelist_file=\"%s\"\n"),namelist_file?namelist_file:"<no System.map file>");
+  fprintf(stderr,_("namelist_file=\"%s\"\n"),namelist_file?namelist_file:_("<no System.map file>"));
 }

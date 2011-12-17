@@ -61,7 +61,7 @@ static void __attribute__ ((__noreturn__))
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		" %s [options] command\n", program_invocation_short_name);
+              _(" %s [options] command\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_("  -b, --beep             beep if command has a non-zero exit\n"), out);
 	fputs(_("  -c, --color            interpret ANSI color sequences\n"), out);

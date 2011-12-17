@@ -68,7 +68,8 @@ static void setsize(int i)
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out, " %s [options] [tty]\n", program_invocation_short_name);
+	fprintf(out,
+	      _(" %s [options] [tty]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -d, --delay <secs>  update delay in seconds\n"), out);
 	fputs(_(" -s, --scale <num>   vertical scale\n"), out);
