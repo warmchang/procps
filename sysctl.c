@@ -164,11 +164,6 @@ static int ReadSetting(const char *restrict const name) {
    outname = xstrdup(name);
    slashdot(outname,'/','.'); /* change / to . */
 
-   if (pattern && !pattern_match(outname, pattern)){
-      free(outname);
-      return 0;
-   }
-
    /* used to open the file */
    tmpname = xmalloc(strlen(name)+strlen(PROC_PATH)+2);
    strcpy(tmpname, PROC_PATH);
@@ -196,6 +191,11 @@ static int ReadSetting(const char *restrict const name) {
       tmpname[len+1] = '\0';
       rc = DisplayAll(tmpname);
       goto out;
+   }
+
+   if (pattern && !pattern_match(outname, pattern)){
+      free(outname);
+      return 0;
    }
 
    fp = fopen(tmpname, "r");
