@@ -687,22 +687,22 @@ int main(int argc, char *argv[])
     if (preloadfileOpt)
        return Preload(preloadfile);
  
-    argc -= optind;
-    argv += optind;
- 
-    if (argc < 1) {
-       warnx(_("no variables specified"));
-       Usage(stderr);
-    }
-    if (NameOnly && Quiet) {
-       warnx(_("options -N and -q can not coexist"));
-       Usage(stderr);
-    }
+   argc -= optind;
+   argv += optind;
 
-    if (WriteMode || index(*argv, '='))
-       ReturnCode = WriteSetting(*argv);
-    else
-       ReturnCode = ReadSetting(*argv);
+   if (argc < 1)
+      errx(EXIT_FAILURE, _("no variables specified\n"
+			   "Try `%s --help' for more information."),
+			   program_invocation_short_name);
+   if (NameOnly && Quiet)
+      errx(EXIT_FAILURE, _("options -N and -q cannot coexist\n"
+			   "Try `%s --help' for more information."),
+			   program_invocation_short_name);
+
+   if (WriteMode || index(*argv, '='))
+      ReturnCode = WriteSetting(*argv);
+   else
+      ReturnCode = ReadSetting(*argv);
 
    return ReturnCode;
 }
