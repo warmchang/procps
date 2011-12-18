@@ -31,6 +31,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "strutils.h"
 #include "proc/sysinfo.h"
 #include "proc/version.h"
 
@@ -56,6 +57,7 @@ static int statMode = VMSTAT;
 static int a_option;
 
 static unsigned sleep_time = 1;
+static int infinite_updates = 0;
 static unsigned long num_updates;
 /* window height */
 static unsigned int height;
@@ -260,7 +262,7 @@ static void new_format(void)
 	);
 
 	/* main loop */
-	for (i = 1; i < num_updates; i++) {
+	for (i = 1; infinite_updates || i < num_updates; i++) {
 		sleep(sleep_time);
 		if (moreheaders && ((i % height) == 0))
 			new_header();
@@ -381,7 +383,7 @@ static int diskpartition_format(const char *partition_name)
 	fflush(stdout);
 	free(disks);
 	free(partitions);
-	for (j = 1; j < num_updates; j++) {
+	for (j = 1; infinite_updates || j < num_updates; j++) {
 		if (moreheaders && ((j % height) == 0))
 			diskpartition_header(partition_name);
 		sleep(sleep_time);
@@ -474,7 +476,7 @@ static void diskformat(void)
 		}
 		free(disks);
 		free(partitions);
-		for (j = 1; j < num_updates; j++) {
+		for (j = 1; infinite_updates || j < num_updates; j++) {
 			sleep(sleep_time);
 			ndisks = getdiskstat(&disks, &partitions);
 		for (i = 0; i < ndisks; i++, k++) {
@@ -547,7 +549,7 @@ static void slabformat(void)
 		       slabs[k].objsize, slabs[k].objperslab);
 	}
 	free(slabs);
-	for (j = 1, k = 1; j < num_updates; j++) {
+	for (j = 1, k = 1; infinite_updates || j < num_updates; j++) {
 		sleep(sleep_time);
 		nSlab = getslabinfo(&slabs);
 		for (i = 0; i < nSlab; i++, k++) {
@@ -687,6 +689,7 @@ int main(int argc, char *argv[])
 {
 	char *partition = NULL;
 	int c;
+	long tmp;
 
 	static const struct option longopts[] = {
 		{"active", no_argument, NULL, 'a'},
@@ -777,12 +780,18 @@ int main(int argc, char *argv[])
 		}
 
 	if (optind < argc) {
-		if ((sleep_time = atoi(argv[optind++])) == 0)
-			usage(stderr);
-		num_updates = ULONG_MAX;
+		tmp = strtol_or_err(argv[optind++], _("failed to parse argument"));
+		if (tmp < 1)
+			errx(EXIT_FAILURE, _("delay must be positive integer"));
+		else if (UINT_MAX < tmp)
+			errx(EXIT_FAILURE, _("too large delay value"));
+		sleep_time = tmp;
+		infinite_updates = 1;
 	}
-	if (optind < argc)
-		num_updates = atol(argv[optind++]);
+	if (optind < argc) {
+		num_updates = strtol_or_err(argv[optind++], _("failed to parse argument"));
+		infinite_updates = 0;
+	}
 	if (optind < argc)
 		usage(stderr);
 

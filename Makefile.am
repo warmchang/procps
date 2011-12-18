@@ -68,6 +68,7 @@ skill_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
 snice_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
 tload_SOURCES = tload.c $(top_srcdir)/lib/strutils.c
 pkill_SOURCES = pgrep.c
+vmstat_SOURCES = vmstat.c $(top_srcdir)/lib/strutils.c
 
 sysconf_DATA = sysctl.conf
 
