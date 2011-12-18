@@ -732,27 +732,29 @@ static void parse_opts (int argc, char **argv)
 		}
 	}
 
-	if(opt_lock && !opt_pidfile){
-		warnx(_("-L without -F makes no sense"));
-		usage(0);
-	}
+	if(opt_lock && !opt_pidfile)
+		errx(EXIT_FAILURE, _("-L without -F makes no sense\n"
+                                     "Try `%s --help' for more information."),
+                                     program_invocation_short_name);
 
 	if(opt_pidfile){
 		opt_pid = read_pidfile();
-		if(!opt_pid){
-			warnx(_("pidfile not valid"));
-			usage(0);
-		}
+		if(!opt_pid)
+			errx(EXIT_FAILURE, _("pidfile not valid\n"
+			                     "Try `%s --help' for more information."),
+			                     program_invocation_short_name);
 	}
 
         if (argc - optind == 1)
 		opt_pattern = argv[optind];
 	else if (argc - optind > 1)
-		usage (0);
-	else if (criteria_count == 0) {
-		warnx(_("no matching criteria specified"));
-		usage (0);
-	}
+		errx(EXIT_FAILURE, _("only one pattern can be provided\n"
+		                     "Try `%s --help' for more information."),
+		                     program_invocation_short_name);
+	else if (criteria_count == 0)
+		errx(EXIT_FAILURE, _("no matching criteria specified\n"
+                                     "Try `%s --help' for more information."),
+                                     program_invocation_short_name);
 }
 
 
