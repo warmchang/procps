@@ -6,5 +6,6 @@
 #define PROCPS_NG_STRUTILS
 
 extern long strtol_or_err(const char *str, const char *errmesg);
+extern double strtod_or_err(const char *str, const char *errmesg);
 
 #endif
