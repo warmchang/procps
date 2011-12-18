@@ -337,16 +337,11 @@ int main(int argc, char *argv[])
 			option_exec = 1;
 			break;
 		case 'n':
-			{
-				char *str;
-				interval = strtod(optarg, &str);
-				if (!*optarg || *str)
-					usage(stderr);
-				if (interval < 0.1)
-					interval = 0.1;
-				if (interval > ~0u / 1000000)
-					interval = ~0u / 1000000;
-			}
+			interval = strtod_or_err(optarg, _("failed to parse argument"));
+			if (interval < 0.1)
+				interval = 0.1;
+			if (interval > ~0u / 1000000)
+				interval = ~0u / 1000000;
 			break;
 		case 'p':
 			precise_timekeeping = 1;
