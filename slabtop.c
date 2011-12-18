@@ -28,6 +28,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "strutils.h"
 #include "proc/slab.h"
 #include "proc/version.h"
 
@@ -297,14 +298,10 @@ int main(int argc, char *argv[])
 		char *end;
 		case 'd':
 			errno = 0;
-			delay = strtol(optarg, &end, 10);
-			if (errno || optarg == end || (end && *end))
-				errx(EXIT_FAILURE, _("illegal delay `%s'"),
-					optarg);
-			if (delay < 0)
+			delay = strtol_or_err(optarg, _("illegal delay"));
+			if (delay < 1)
 				errx(EXIT_FAILURE,
-					_("delay can not have a "
-					"negative value"));
+					_("delay must be positive integer"));
 			break;
 		case 's':
 			sort_func = (int (*)(const struct slab_info*,

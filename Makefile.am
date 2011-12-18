@@ -58,6 +58,7 @@ dist_man_MANS += \
 	slabtop.1 \
 	top.1 \
 	watch.1
+slabtop_SOURCES = slabtop.c $(top_srcdir)/lib/strutils.c
 slabtop_LDADD = @NCURSES_LIBS@
 top_LDADD = @NCURSES_LIBS@
 watch_LDADD = @WATCH_NCURSES_LIBS@
