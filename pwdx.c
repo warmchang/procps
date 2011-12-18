@@ -98,7 +98,9 @@ int main(int argc, char *argv[])
 
 		if (len < 0) {
 			s = strerror(errno == ENOENT ? ESRCH : errno);
-			retval = 1;
+			retval = EXIT_FAILURE;
+			fprintf(stderr, "%s: %s\n", argv[i], s);
+			continue;
 		} else {
 			pathbuf[len] = 0;
 			s = pathbuf;
