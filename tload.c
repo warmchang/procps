@@ -13,6 +13,7 @@
 #include "proc/sysinfo.h"
 #include "c.h"
 #include "nls.h"
+#include "strutils.h"
 #include "xalloc.h"
 
 #include <errno.h>
@@ -33,7 +34,7 @@ static int nrows = 25;
 static int ncols = 80;
 static int scr_size;
 static int fd = 1;
-static int dly = 5;
+static unsigned int dly = 5;
 static jmp_buf jb;
 
 static void alrm(int signo __attribute__ ((__unused__)))
@@ -88,6 +89,7 @@ int main(int argc, char **argv)
 	double av[3];
 	static double max_scale, scale_fact;
 	char *scale_arg = NULL;
+	long tmpdly;
 
 	static const struct option longopts[] = {
 		{"scale", required_argument, NULL, 's'},
@@ -108,7 +110,12 @@ int main(int argc, char **argv)
 			scale_arg = optarg;
 			break;
 		case 'd':
-			dly = atoi(optarg);
+			tmpdly = strtol_or_err(optarg, _("failed to parse argument"));
+			if (tmpdly < 1)
+				errx(EXIT_FAILURE, _("delay must be positive integer"));
+			else if (UINT_MAX < tmpdly)
+				errx(EXIT_FAILURE, _("too large delay value"));
+			dly = tmpdly;
 			break;
 		case 'V':
 			printf(PROCPS_NG_VERSION);
