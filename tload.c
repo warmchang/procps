@@ -87,8 +87,7 @@ int main(int argc, char **argv)
 	int lines, row, col = 0;
 	int i, opt;
 	double av[3];
-	static double max_scale, scale_fact;
-	char *scale_arg = NULL;
+	static double max_scale = 0, scale_fact;
 	long tmpdly;
 
 	static const struct option longopts[] = {
@@ -107,7 +106,9 @@ int main(int argc, char **argv)
 		getopt_long(argc, argv, "s:d:Vh", longopts, NULL)) != -1)
 		switch (opt) {
 		case 's':
-			scale_arg = optarg;
+			max_scale = strtod_or_err(optarg, _("failed to parse argument"));
+			if (max_scale < 0)
+			        errx(EXIT_FAILURE, _("scale cannot be negative"));
 			break;
 		case 'd':
 			tmpdly = strtol_or_err(optarg, _("failed to parse argument"));
@@ -133,9 +134,7 @@ int main(int argc, char **argv)
 
 	setsize(0);
 
-	if (scale_arg)
-		max_scale = atof(scale_arg);
-	else
+	if (max_scale == 0)
 		max_scale = nrows;
 
 	scale_fact = max_scale;
