@@ -2698,18 +2698,18 @@ static void file_writerc (void) {
 
 
 static void find_string (int ch) {
- #define reDUX (found) ? "another " : ""
+ #define reDUX (found) ? N_txt(WORD_another_txt) : ""
    static char str[SCREENMAX];
    static int found;
    char buf[ROWMINSIZ];
    int i;
 
    if ('&' == ch && !str[0]) {
-      show_msg("Locate next inactive, use \"L\"");
+      show_msg(N_txt(FIND_no_next_txt));
       return;
    }
    if ('L' == ch) {
-      strcpy(str, linein("Locate string"));
+      strcpy(str, linein(N_txt(GET_find_str_txt)));
       found = 0;
    }
    if (str[0]) {
@@ -2722,7 +2722,7 @@ static void find_string (int ch) {
             return;
          }
       }
-      show_msg(fmtmk("%s\"%s\" not found", reDUX, str));
+      show_msg(fmtmk(N_fmt(FIND_no_find_fmt), reDUX, str));
    }
  #undef reDUX
 } // end: find_string

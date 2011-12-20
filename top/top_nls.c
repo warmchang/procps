@@ -255,6 +255,11 @@ static void build_norm_nlstab (void) {
 /* Translation Hint: The following "word" is meant to represent a single processor
    .                 (should be exactly 3 characters) */
    Norm_nlstab[WORD_eachcpu_fmt] = _("Cpu%-3d:");
+/* Translation Hint: The following word "another" must have 1 trailing space */
+   Norm_nlstab[WORD_another_txt] = _("another ");
+   Norm_nlstab[FIND_no_next_txt] = _("Locate next inactive, use \"L\"");
+   Norm_nlstab[GET_find_str_txt] = _("Locate string");
+   Norm_nlstab[FIND_no_find_fmt] = _("%s\"%s\" not found");
 }
 
 
@@ -297,7 +302,7 @@ static void build_uniq_nlstab (void) {
       "  1,I       Toggle SMP view: '~11~2' single/separate states; '~1I~2' Irix/Solaris mode\n"
       "  f,F       Manage Fields: add/remove; change order; select sort field\n"
       "\n"
-      "  <,>     . Move sort field: '~1<~2' next col left; '~1>~2' next col right\n"
+      "  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n" \
       "  R,H,V   . Toggle: '~1R~2' norm/rev sort; '~1H~2' show threads; '~1V~2' forest view\n"
       "  c,i,S   . Toggle: '~1c~2' cmd name/line; '~1i~2' idle tasks; '~1S~2' cumulative time\n"
       "  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
