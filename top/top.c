@@ -1412,7 +1412,7 @@ static void calibrate_fields (void) {
             f = w->pflgsall[i + w->begpflg];
             w->procflgs[i] = f;
 #ifndef USE_X_COLHDR
-            if (P_MAXPFLGS < f) continue;
+            if (P_MAXPFLGS <= f) continue;
 #endif
             h = Fieldstab[f].head;
             // oops, won't fit -- we're outta here...
@@ -1463,7 +1463,7 @@ static void calibrate_fields (void) {
                w->hdrcaplen += strlen(Caps_off) + strlen(w->capclr_msg);
             }
 #else
-            if (P_MAXPFLGS < f) continue;
+            if (P_MAXPFLGS <= f) continue;
 #endif
             h = Fieldstab[f].head;
             if (P_WCH == f) needpsdb = 1;
