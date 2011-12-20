@@ -2,6 +2,36 @@ procps-ng-3.3.1 --> procps-ng-3.3.2
 --------------------------------
 
   * Redefined library to use version-info
+  * Imported a bunch of distribution patches:
+      watch: support unicode
+      watch: add precision wait time option -p
+      watch: interpret ANSI color code sequences
+      watch: add -exec and -beep flags and has better quoting
+      w: use environment to set user and from/host column widths
+      w: use COLUMNS environment if TIOCGWINSZ fails
+      w: bassman emulation with -o option
+      vmstat: do not scale si/so just like bi/bo
+      libprocps-ng: sysinfo.c: truncate the vmstat figure to 32 bits
+      tload: remote unneeded optarg and optind variables
+      sysctl: fix up some option processing
+      skill: kill prints perror
+      skill: do not treat skill null parameter as 0
+      skill: fix too greedy option parser
+      libprocps-ng: readproc.c: some type conversion help
+      ps: rename SZ to SIZE
+      ps: add sorting to %mem for ps
+      pmap: provide information for -x option
+      pgrep: distinguish between invalid commandline parameters and '-?'
+      pgrep: fix compiler warning saved_start_time might be used uninitialized
+      pgrep: add -c option for counting number of matched proceesses
+      pwdx & libprocps-ng: Hurd does not have MAX_PATH defined
+      ps: --sort does not work with time argument
+      skill: add CR to warning line
+      contrib: minimal ps: define mips PAGE_SIZE
+      libproc-ng: prettyfy proc mount messages
+      ps: add build option to disable ps option warning
+      libproc-ng: support building without WCHAR support
+      sysctl: remove index() for buildroot
 
 procps-ng-3.3.0 --> procps-ng-3.3.1
 --------------------------------

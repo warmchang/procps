@@ -12,10 +12,10 @@
  * Unicode Support added by Jarrod Lowe <procps@rrod.net> in 2009.
  */
 
+#include "config.h"
 #include <ctype.h>
 #include <getopt.h>
 #include <signal.h>
-#include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,8 +26,13 @@
 #include <termios.h>
 #include <locale.h>
 #include "proc/procps.h"
-#include "config.h"
 #include <errno.h>
+#ifdef WITH_WATCH8BIT
+#include <wchar.h>
+#include <ncursesw/ncurses.h>
+#else 
+#include <ncurses.h>
+#endif /* WITH_WATCH8BIT */
 
 #ifdef FORCE_8BIT
 #undef isprint
@@ -220,6 +225,7 @@ watch_usec_t get_time_usec() {
 	return USECS_PER_SEC*now.tv_sec + now.tv_usec;
 }
 
+#ifdef WITH_WATCH8BIT
 // read a wide character from a popen'd stream
 #define MAX_ENC_BYTES 16
 wint_t my_getwc(FILE *s);
@@ -245,6 +251,7 @@ wint_t my_getwc(FILE *s) {
 		}
 	}
 }
+#endif /* WITH_WATCH8BIT */
 
 int
 main(int argc, char *argv[])
@@ -259,13 +266,16 @@ main(int argc, char *argv[])
 	    option_help = 0, option_version = 0;
 	double interval = 2;
 	char *command;
-	wchar_t *wcommand = NULL;
 	char **command_argv;
 	int command_length = 0;	/* not including final \0 */
-	int wcommand_columns = 0;	/* not including final \0 */
-	int wcommand_characters = 0; /* not including final \0 */
     watch_usec_t next_loop; /* next loop time in us, used for precise time
                                keeping only */
+#ifdef WITH_WATCH8BIT
+	wchar_t *wcommand = NULL;
+	int wcommand_columns = 0;	/* not including final \0 */
+	int wcommand_characters = 0; /* not including final \0 */
+#endif /* WITH_WATCH8BIT */
+
 	int pipefd[2];
 	int status;
 	pid_t child;
@@ -362,6 +372,7 @@ main(int argc, char *argv[])
 		command[command_length] = '\0';
 	}
 
+#ifdef WITH_WATCH8BIT
 	// convert to wide for printing purposes
 	//mbstowcs(NULL, NULL, 0);
 	wcommand_characters = mbstowcs(NULL, command, 0);
@@ -376,7 +387,7 @@ main(int argc, char *argv[])
 	}
 	mbstowcs(wcommand, command, wcommand_characters+1);
 	wcommand_columns = wcswidth(wcommand, -1);
-
+#endif /* WITH_WATCH8BIT */
 
 
 	get_terminal_size();
@@ -444,6 +455,7 @@ main(int argc, char *argv[])
 						if(width < tsl + hlen + 4) {
 							mvaddstr(0, width - tsl - 4, "...  ");
 						}else{
+#ifdef WITH_WATCH8BIT
 							if(width < tsl + hlen + wcommand_columns) {
 								// print truncated
 								int avail_columns = width - tsl - hlen;
@@ -458,6 +470,9 @@ main(int argc, char *argv[])
 							}else{
 								mvaddwstr(0, hlen, wcommand);
 							}
+#else
+                            mvaddnstr(0, hlen, command, width - tsl - hlen);
+#endif /* WITH_WATCH8BIT */
 						}
 					}
 				}
@@ -520,15 +535,22 @@ main(int argc, char *argv[])
 
 		for (y = show_title; y < height; y++) {
 			int eolseen = 0, tabpending = 0;
+#ifdef WITH_WATCH8BIT
 			wint_t carry = WEOF;
+#endif /* WITH_WATCH8BIT */
 			for (x = 0; x < width; x++) {
+#ifdef WITH_WATCH8BIT
 				wint_t c = ' ';
+#else
+				int c = ' ';
+#endif /* WITH_WATCH8BIT */
 				int attr = 0;
 
 				if (!eolseen) {
 					/* if there is a tab pending, just spit spaces until the
 					   next stop instead of reading characters */
 					   if (!tabpending)
+#ifdef WITH_WATCH8BIT
                                                 do {
                                                         if(carry == WEOF) {
                                                                 c = my_getwc(p);
@@ -541,6 +563,14 @@ main(int argc, char *argv[])
                                                         && c != L'\n'
                                                         && c != L'\t'
                    && (c != L'\033' || option_color != 1));
+#else
+						do
+							c = getc(p);
+						while (c != EOF && !isprint(c)
+						       && c != '\n'
+						       && c != '\t'
+                   && (c != L'\033' || option_color != 1));
+#endif /* WITH_WATCH8BIT */
           if (c == L'\033' && option_color == 1) {
             x--;
             process_ansi(p);
@@ -555,6 +585,7 @@ main(int argc, char *argv[])
 							eolseen = 1;
 					else if (c == L'\t')
 						tabpending = 1;
+#ifdef WITH_WATCH8BIT
                                         if (x==width-1 && wcwidth(c)==2) {
                                                 y++;
                                                 x = -1; //process this double-width
@@ -563,11 +594,16 @@ main(int argc, char *argv[])
                                         }
                                         if (c == WEOF || c == L'\n' || c == L'\t')
                                                 c = L' ';
+#else
+					if (c == EOF || c == '\n' || c == '\t')
+						c = ' ';
+#endif /* WITH_WATCH8BIT */
 					if (tabpending && (((x + 1) % 8) == 0))
 						tabpending = 0;
 				}
 				move(y, x);
 				if (option_differences) {
+#ifdef WITH_WATCH8BIT
                                         cchar_t oldc;
                                         in_wch(&oldc);
 					attr = !first_screen
@@ -575,14 +611,29 @@ main(int argc, char *argv[])
 						||
 						(option_differences_cumulative
 						 && (oldc.attr & A_ATTRIBUTES)));
+#else
+					chtype oldch = inch();
+					unsigned char oldc = oldch & A_CHARTEXT;
+					attr = !first_screen
+					    && ((unsigned char)c != oldc
+						||
+						(option_differences_cumulative
+						 && (oldch & A_ATTRIBUTES)));
+#endif /* WITH_WATCH8BIT */
 				}
 				if (attr)
 					standout();
+#ifdef WITH_WATCH8BIT
 				addnwstr((wchar_t*)&c,1);
+#else
+				addch(c);
+#endif /* WITH_WATCH8BIT */
 				if (attr)
 					standend();
+#ifdef WITH_WATCH8BIT
                                 if(wcwidth(c) == 0) { x--; }
                                 if(wcwidth(c) == 2) { x++; }
+#endif /* WITH_WATCH8BIT */
 			}
 			oldeolseen = eolseen;
 		}

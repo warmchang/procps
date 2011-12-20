@@ -54,7 +54,7 @@ dist_man_MANS += \
 	watch.1
 slabtop_LDADD = @NCURSES_LIBS@
 top_LDADD = @NCURSES_LIBS@
-watch_LDADD = @NCURSES_LIBS@
+watch_LDADD = @WATCH_NCURSES_LIBS@
 endif
 
 kill_SOURCES = skill.c

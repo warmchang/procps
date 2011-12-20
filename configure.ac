@@ -17,6 +17,15 @@ AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
+AC_SUBST([WITH_WATCH8BIT])
+AC_ARG_ENABLE([watch8bit],
+              AS_HELP_STRING([--enable-watch8bit], [enable watch to be 8bit clean (requires ncursesw)]),
+              [enable_watch8bit=$enableval],
+              [enable_watch8bit="no"])
+if test "$enable_watch8bit" = "yes"; then
+  AC_DEFINE([WITH_WATCH8BIT], [1], [Enable 8 bit clean watch])
+fi
+
 # Checks for header files.
 AC_HEADER_MAJOR
 AC_CHECK_HEADERS([\
@@ -106,9 +115,16 @@ else
     AC_MSG_ERROR([ncurses support missing/incomplete (for partial build use --without-ncurses)])
   fi
   AM_CONDITIONAL(WITH_NCURSES, true)
+  if test "$enable_watch8bit" = yes; then
+    AC_CHECK_LIB([ncursesw], [addwstr], [WATCH_NCURSES_LIBS=-lncursesw],
+                [AC_MSG_ERROR([Cannot find ncurses wide library ncursesw with --enable-watch8bit])]) 
+  else
+    WATCH_NCURSES_LIBS="-lncurses"
+  fi
   NCURSES_LIBS="-lncurses"
 fi
 AC_SUBST([NCURSES_LIBS])
+AC_SUBST([WATCH_NCURSES_LIBS])
 
 usrbin_execdir='${exec_prefix}/usr/bin'
 AC_SUBST([usrbin_execdir])
