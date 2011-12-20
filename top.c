@@ -487,7 +487,7 @@ static void error_exit (const char *str) {
 
 
         /*
-         * Handle library memory errors ourselves rather than accept a default
+         * Handle library errors ourselves rather than accept a default
          * fprintf to stderr (since we've mucked with the termios struct) */
 static void library_err (const char *fmts, ...) NORETURN;
 static void library_err (const char *fmts, ...) {
@@ -789,7 +789,33 @@ static void show_special (int interact, const char *glob) {
    if (*glob) PUTT("%.*s", Screen_cols -1, glob);
 } // end: show_special
 
-/*######  Low Level Keyboard support  ####################################*/
+/*######  Low Level Memory/Keyboard support  #############################*/
+
+        /*
+         * Handle our own memory stuff without the risk of leaving the
+         * user's terminal in an ugly state should things go sour. */
+
+static void *alloc_c (size_t num) MALLOC;
+static void *alloc_c (size_t num) {
+   void *pv;
+
+   if (!num) ++num;
+   if (!(pv = calloc(1, num)))
+      error_exit("failed memory allocate");
+   return pv;
+} // end: alloc_c
+
+
+static void *alloc_r (void *ptr, size_t num) MALLOC;
+static void *alloc_r (void *ptr, size_t num) {
+   void *pv;
+
+   if (!num) ++num;
+   if (!(pv = realloc(ptr, num)))
+      error_exit("failed memory re-allocate");
+   return pv;
+} // end: alloc_r
+
 
         /*
          * This routine isolates ALL user INPUT and ensures that we
@@ -1318,7 +1344,7 @@ static void adj_geometry (void) {
    // we'll only grow our Pseudo_screen, never shrink it
    if (pseudo_max < Pseudo_size) {
       pseudo_max = Pseudo_size;
-      Pseudo_screen = realloc(Pseudo_screen, pseudo_max);
+      Pseudo_screen = alloc_r(Pseudo_screen, pseudo_max);
    }
    PSU_CLREOS(0);
    if (Frames_resize) putp(Cap_clr_scr);
@@ -1768,8 +1794,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       /* note: we allocate one more CPU_t than Cpu_tot so that the last slot
                can hold tics representing the /proc/stat cpu summary (the first
                line read) -- that slot supports our View_CPUSUM toggle */
-      if ((cpus = calloc((1 + Cpu_tot),sizeof(CPU_t)))==NULL)
-         error_exit(fmtmk("failed to allocate memory for CPU_t"));
+      cpus = alloc_c((1 + Cpu_tot) * sizeof(CPU_t));
    }
    rewind(fp);
    fflush(fp);
@@ -1920,8 +1945,8 @@ static void prochlp (proc_t *this) {
 
    if (Frame_maxtask+1 >= HHist_siz) {
       HHist_siz = HHist_siz * 5 / 4 + 100;
-      PHist_sav = realloc(PHist_sav, sizeof(HST_t) * HHist_siz);
-      PHist_new = realloc(PHist_new, sizeof(HST_t) * HHist_siz);
+      PHist_sav = alloc_r(PHist_sav, sizeof(HST_t) * HHist_siz);
+      PHist_new = alloc_r(PHist_new, sizeof(HST_t) * HHist_siz);
    }
 
    /* calculate time in this process; the sum of user time (utime) and
@@ -1971,7 +1996,7 @@ static void procs_refresh (void) {
    for (;;) {
       if (n_used == n_alloc) {
          n_alloc = 10 + ((n_alloc * 5) / 4);     // grow by over 25%
-         private_ppt = realloc(private_ppt, sizeof(proc_t*) * n_alloc);
+         private_ppt = alloc_r(private_ppt, sizeof(proc_t*) * n_alloc);
          // ensure NULL pointers for the additional memory just acquired
          memset(private_ppt + n_used, 0, sizeof(proc_t*) * (n_alloc - n_used));
       }
@@ -1990,7 +2015,7 @@ static void procs_refresh (void) {
    else {
       n_saved = n_alloc;
       for (i = 0; i < GROUPSMAX; i++) {
-         Winstk[i].ppt = realloc(Winstk[i].ppt, sizeof(proc_t*) * n_alloc);
+         Winstk[i].ppt = alloc_r(Winstk[i].ppt, sizeof(proc_t*) * n_alloc);
          memcpy(Winstk[i].ppt, private_ppt, sizeof(proc_t*) * n_used);
       }
    }
@@ -2035,7 +2060,7 @@ static void before (char *me) {
    struct sigaction sa;
    int i;
 
-   // setup our program name and library error message handler -- big!
+   // setup our program name -- big!
    Myname = strrchr(me, '/');
    if (Myname) ++Myname; else Myname = me;
 
@@ -3152,7 +3177,7 @@ static void forest_create (WIN_t *q) {
       qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), Fieldstab[P_PPD].sort);
       if (hwmsav < Frame_maxtask) {         // grow, but never shrink
          hwmsav = Frame_maxtask;
-         Tree_ppt = realloc(Tree_ppt, sizeof(proc_t*) * hwmsav);
+         Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
       }
       while (0 == Seed_ppt[i]->ppid)        // identify trees (expect 2)
          forest_add(i++, 1);                // add parent plus children

@@ -641,7 +641,9 @@ typedef struct WIN_t {
 //atic int           show_pmt (const char *str);
 //atic inline void   show_scroll (void);
 //atic void          show_special (int interact, const char *glob);
-/*------  Low Level Keyboard support  ------------------------------------*/
+/*------  Low Level Memory/Keyboard support  -----------------------------*/
+//atic void         *alloc_c (size_t num);
+//atic void         *alloc_r (void *ptr, size_t num);
 //atic int           chin (int ech, char *buf, unsigned cnt);
 //atic int           keyin (int init);
 //atic char         *linein (const char *prompt);
