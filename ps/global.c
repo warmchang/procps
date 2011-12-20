@@ -23,7 +23,6 @@
 #include "common.h"
 
 #include <sys/sysmacros.h>
-#include "../proc/alloc.h"
 #include "../proc/wchan.h"
 #include "../proc/version.h"
 #include "../proc/sysinfo.h"
@@ -234,7 +233,10 @@ static const char *set_personality(void){
   if(sl > 15) return "Environment specified an unknown personality.";
   strncpy(buf, s, sl);
   buf[sl] = '\0';
-  saved_personality_text = xstrdup(buf);
+  if ((saved_personality_text = strdup(buf))==NULL) {
+    fprintf(stderr, "Cannot strdup() personality text.\n");
+    exit(EXIT_FAILURE);
+  }
 
   found = bsearch(&findme, personality_table, personality_table_count,
       sizeof(personality_table_struct), compare_personality_table_structs

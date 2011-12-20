@@ -237,7 +237,7 @@ static void lists_and_needs(void){
     format_node *p_end = &pfn;
     format_node *t_end = &tfn;
     while(walk){
-      format_node *new = xmalloc(sizeof(format_node));
+      format_node *new = malloc(sizeof(format_node));
       memcpy(new,walk,sizeof(format_node));
       p_end->next = walk;
       t_end->next = new;
@@ -381,7 +381,7 @@ static void prep_forest_sort(void){
   if(!sort_list) {     /* assume start time order */
     incoming = search_format_array("start_time");
     if(!incoming) { fprintf(stderr, "Could not find start_time!\n"); exit(1); }
-    tmp_list = xmalloc(sizeof(sort_node));
+    tmp_list = malloc(sizeof(sort_node));
     tmp_list->reverse = 0;
     tmp_list->typecode = '?'; /* what was this for? */
     tmp_list->sr = incoming->sr;
@@ -392,7 +392,7 @@ static void prep_forest_sort(void){
   /* this is required for the forest option */
   incoming = search_format_array("ppid");
   if(!incoming) { fprintf(stderr, "Could not find ppid!\n"); exit(1); }
-  tmp_list = xmalloc(sizeof(sort_node));
+  tmp_list = malloc(sizeof(sort_node));
   tmp_list->reverse = 0;
   tmp_list->typecode = '?'; /* what was this for? */
   tmp_list->sr = incoming->sr;

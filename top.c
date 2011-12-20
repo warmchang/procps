@@ -39,7 +39,6 @@
 #include <unistd.h>
 #include <values.h>
 
-#include "proc/alloc.h"
 #include "proc/devname.h"
 #include "proc/procps.h"
 #include "proc/readproc.h"
@@ -1319,7 +1318,7 @@ static void adj_geometry (void) {
    // we'll only grow our Pseudo_screen, never shrink it
    if (pseudo_max < Pseudo_size) {
       pseudo_max = Pseudo_size;
-      Pseudo_screen = xrealloc(Pseudo_screen, pseudo_max);
+      Pseudo_screen = realloc(Pseudo_screen, pseudo_max);
    }
    PSU_CLREOS(0);
    if (Frames_resize) putp(Cap_clr_scr);
@@ -1769,7 +1768,8 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       /* note: we allocate one more CPU_t than Cpu_tot so that the last slot
                can hold tics representing the /proc/stat cpu summary (the first
                line read) -- that slot supports our View_CPUSUM toggle */
-      cpus = xcalloc((1 + Cpu_tot) * sizeof(CPU_t));
+      if ((cpus = calloc((1 + Cpu_tot),sizeof(CPU_t)))==NULL)
+         error_exit(fmtmk("failed to allocate memory for CPU_t"));
    }
    rewind(fp);
    fflush(fp);
@@ -1920,8 +1920,8 @@ static void prochlp (proc_t *this) {
 
    if (Frame_maxtask+1 >= HHist_siz) {
       HHist_siz = HHist_siz * 5 / 4 + 100;
-      PHist_sav = xrealloc(PHist_sav, sizeof(HST_t) * HHist_siz);
-      PHist_new = xrealloc(PHist_new, sizeof(HST_t) * HHist_siz);
+      PHist_sav = realloc(PHist_sav, sizeof(HST_t) * HHist_siz);
+      PHist_new = realloc(PHist_new, sizeof(HST_t) * HHist_siz);
    }
 
    /* calculate time in this process; the sum of user time (utime) and
@@ -1971,7 +1971,7 @@ static void procs_refresh (void) {
    for (;;) {
       if (n_used == n_alloc) {
          n_alloc = 10 + ((n_alloc * 5) / 4);     // grow by over 25%
-         private_ppt = xrealloc(private_ppt, sizeof(proc_t*) * n_alloc);
+         private_ppt = realloc(private_ppt, sizeof(proc_t*) * n_alloc);
          // ensure NULL pointers for the additional memory just acquired
          memset(private_ppt + n_used, 0, sizeof(proc_t*) * (n_alloc - n_used));
       }
@@ -1990,7 +1990,7 @@ static void procs_refresh (void) {
    else {
       n_saved = n_alloc;
       for (i = 0; i < GROUPSMAX; i++) {
-         Winstk[i].ppt = xrealloc(Winstk[i].ppt, sizeof(proc_t*) * n_alloc);
+         Winstk[i].ppt = realloc(Winstk[i].ppt, sizeof(proc_t*) * n_alloc);
          memcpy(Winstk[i].ppt, private_ppt, sizeof(proc_t*) * n_used);
       }
    }
@@ -2038,7 +2038,6 @@ static void before (char *me) {
    // setup our program name and library error message handler -- big!
    Myname = strrchr(me, '/');
    if (Myname) ++Myname; else Myname = me;
-   xalloc_err_handler = library_err;
 
    // establish cpu particulars -- even bigger!
 #ifdef PRETEND4CPUS
@@ -3153,7 +3152,7 @@ static void forest_create (WIN_t *q) {
       qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), Fieldstab[P_PPD].sort);
       if (hwmsav < Frame_maxtask) {         // grow, but never shrink
          hwmsav = Frame_maxtask;
-         Tree_ppt = xrealloc(Tree_ppt, sizeof(proc_t*) * hwmsav);
+         Tree_ppt = realloc(Tree_ppt, sizeof(proc_t*) * hwmsav);
       }
       while (0 == Seed_ppt[i]->ppid)        // identify trees (expect 2)
          forest_add(i++, 1);                // add parent plus children

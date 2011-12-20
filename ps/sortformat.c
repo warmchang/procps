@@ -18,7 +18,6 @@
 #include <pwd.h>
 #include <grp.h>
 
-#include "../proc/alloc.h"
 #include "../proc/readproc.h"
 #include "../proc/sysinfo.h"
 #include "common.h"
@@ -39,7 +38,7 @@ static format_node *do_one_spec(const char *spec, const char *override){
   if(fs){
     int w1, w2;
     format_node *thisnode;
-    thisnode = xmalloc(sizeof(format_node));
+    thisnode = malloc(sizeof(format_node));
     if(fs->flags & CF_PIDMAX){
       w1 = (int)get_pid_digits();
       w2 = strlen(fs->head);
@@ -50,10 +49,10 @@ static format_node *do_one_spec(const char *spec, const char *override){
     if(override){
       w2 = strlen(override);
       thisnode->width = (w1>w2)?w1:w2;
-      thisnode->name = xstrdup(override);
+      thisnode->name = strdup(override);
     }else{
       thisnode->width = w1;
-      thisnode->name = xstrdup(fs->head);
+      thisnode->name = strdup(fs->head);
     }
     thisnode->pr = fs->pr;
     thisnode->need = fs->need;
@@ -143,7 +142,7 @@ static const char *aix_format_parse(sf_node *sfn){
   }
 
   /*** sanity check passed ***/
-  buf = xstrdup(sfn->sf);
+  buf = strdup(sfn->sf);
   walk = sfn->sf;
 
   while(items--){
@@ -176,9 +175,9 @@ double_percent:
       }
       buf[len] = '\0';
       walk += len;
-      fnode = xmalloc(sizeof(format_node));
+      fnode = malloc(sizeof(format_node));
       fnode->width = len;
-      fnode->name = xstrdup(buf);
+      fnode->name = strdup(buf);
       fnode->pr = NULL;     /* checked for */
       fnode->need = 0;
       fnode->vendor = AIX;
@@ -212,7 +211,7 @@ static const char *format_parse(sf_node *sfn){
   static char errbuf[80]; /* for variable-text error message */
 
   /*** prepare to operate ***/
-  buf = xstrdup(sfn->sf);
+  buf = strdup(sfn->sf);
 
   /*** sanity check and count items ***/
   need_item = 1; /* true */
@@ -327,7 +326,7 @@ static sort_node *do_one_sort_spec(const char *spec){
   fs = search_format_array(spec);
   if(fs){
     sort_node *thisnode;
-    thisnode = xmalloc(sizeof(sort_node));
+    thisnode = malloc(sizeof(sort_node));
     thisnode->sr = fs->sr;
     thisnode->need = fs->need;
     thisnode->reverse = reverse;
@@ -351,7 +350,7 @@ static const char *long_sort_parse(sf_node *sfn){
   int need_item;
 
   /*** prepare to operate ***/
-  buf = xstrdup(sfn->sf);
+  buf = strdup(sfn->sf);
 
   /*** sanity check and count items ***/
   need_item = 1; /* true */
@@ -555,8 +554,8 @@ int defer_sf_option(const char *arg, int source){
   const format_struct *fs;
   int need_item = 1;
 
-  sfn = xmalloc(sizeof(sf_node));
-  sfn->sf = xstrdup(arg);
+  sfn = malloc(sizeof(sf_node));
+  sfn->sf = strdup(arg);
   sfn->sf_code = source;
   sfn->s_cooked = NULL;
   sfn->f_cooked = NULL;
@@ -679,9 +678,9 @@ static const char *generate_sysv_list(void){
   if( (format_flags & FF_Ul) && !(format_modifiers & FM_y) ){
     if(personality & PER_IRIX_l){ /* add "rss" then ':' here */
       PUSH("sgi_rss");
-      fn = xmalloc(sizeof(format_node));
+      fn = malloc(sizeof(format_node));
       fn->width = 1;
-      fn->name = xstrdup(":");
+      fn->name = strdup(":");
       fn->pr = NULL;     /* checked for */
       fn->need = 0;
       fn->vendor = AIX;   /* yes, for SGI weirdness */
