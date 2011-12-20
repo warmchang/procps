@@ -32,6 +32,7 @@ procps-ng-3.3.1 --> procps-ng-3.3.2
       ps: add build option to disable ps option warning
       libproc-ng: support building without WCHAR support
       sysctl: remove index() for buildroot
+  * top now has a search capability
 
 procps-ng-3.3.0 --> procps-ng-3.3.1
 --------------------------------
