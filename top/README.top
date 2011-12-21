@@ -325,3 +325,53 @@ notes:
     displayed due to limited screen width
  c  only in a full screen xterm window could all common fields
     actually be displayed
+
+
+BENCHMARKS, Redux (for NLS) ==============================================
+  December, 2011 benchmarks produced on a much more modern
+  platform containing:
+     Intel(R) Core(TM) i3-2310M CPU @ 2.10GHz
+     SMP with 4 cpus
+  reflected in the substantially reduced elapsed times.
+
+  Tested as root with nice -10 and using only common fields
+  but rcfiles specified identical sort fields and identical
+  settings for the 'B', 'b', 'x' and 'y' toggles (even though
+  the defaults are not necessarily identical).
+
+  Each test was run outside of X-windows at a linux console
+  offering 48 rows and 170 columns.  This was done to reduce
+  contention which sometimes made comparisions problematic.
+
+  old-top = procps-3.2.8 (debian patched and memory leaking)
+  new-top = procps-ng-3.3.2 with NLS support
+
+  ----------------------------------------------------------
+   The following comparisons were run with
+      -d0 -n5000
+      140 tasks & 275 threads
+
+  linux console (48x170)         new-top        old-top
+ d  1 win,  lflgs_none          2.6 secs      15.0 secs    + 577.0%
+    1 win,  default            16.1 secs      19.3 secs
+    1 win,  colors w/ x+y      16.6 secs      35.0 secs    + 210.8%
+ e  1 win,  show cpus          16.2 secs      20.1 secs    + 124.1%
+    1 win,  thread mode        31.8 secs      34.1 secs
+ f  1 win,  every field on     30.5 secs      34.0 secs
+    1 win,  cmdline            19.9 secs      23.1 secs
+    4 wins, default            31.9 secs      35.2 secs
+    4 wins, colors w/ x+y      29.2 secs      47.4 secs    + 162.3%
+ g  1 win,  b&w w/ bold x      30.0 secs      33.2 secs
+ h  1 win,  scroll msg on      31.1 secs      33.9 secs
+
+  . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+notes:
+ d  these represent the same anamoly as the original 'a' footnote
+ e  these represent the '1' toggle, where each of 4 cpus was shown
+      (not possible on the original uniprocessor)
+ f  every common field was turned on and all fields were visible
+ g  on a black and white display, sort column was shown in bold
+      (further proof of column highlighting improvements)
+ h  similar to 'g', but new top was showing scroll msg
+      (old top has no such provision)
