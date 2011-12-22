@@ -138,6 +138,7 @@ static int one_proc(proc_t *p){
   unsigned long long total_rss = 0ull;
   unsigned long long total_private_dirty = 0ull;
   unsigned long long total_shared_dirty = 0ull;
+  unsigned KLONG diff=0;
 
   // Overkill, but who knows what is proper? The "w" prog
   // uses the tty width to determine this.
@@ -167,7 +168,7 @@ static int one_proc(proc_t *p){
   while(fgets(mapbuf,sizeof mapbuf,fp)){
     char flags[32];
     char *tmp; // to clean up unprintables
-    unsigned KLONG start, end, diff=0;
+    unsigned KLONG start, end;
     unsigned long long file_offset, inode;
     unsigned dev_major, dev_minor;
     unsigned long long smap_value;
@@ -206,6 +207,7 @@ static int one_proc(proc_t *p){
           );
           /* reset some counters */
           rss = shared_dirty = private_dirty = 0ull;
+          diff=0;
           continue;
         }
         /* Other keys */
