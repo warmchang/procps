@@ -351,7 +351,7 @@ int main(int argc, char *argv[])
 		}
 
 		move(0, 0);
-		printw(" %-35s: %d / %d (%.1f%%)\n"
+		print_line(" %-35s: %d / %d (%.1f%%)\n"
 		       " %-35s: %d / %d (%.1f%%)\n"
 		       " %-35s: %d / %d (%.1f%%)\n"
 		       " %-35s: %.2fK / %.2fK (%.1f%%)\n"
@@ -379,7 +379,7 @@ int main(int argc, char *argv[])
 		attron(A_REVERSE);
 		/* Translation Hint: Please keep alignment of the
 		 * following intact. */
-		printw("%-78s\n", _("  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"));
+		print_line("%-78s\n", _("  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"));
 		attroff(A_REVERSE);
 
 		curr = slab_list;
