@@ -4,7 +4,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = proc ps testsuite
 
 AM_CFLAGS = -Iproc
-AM_LDFLAGS = ./proc/libprocfs.la
+AM_LDFLAGS = ./proc/libprocps.la
 
 sbin_PROGRAMS = \
 	sysctl

@@ -28,8 +28,8 @@ pkill
 pmap
 procps-ng-*.tar.gz
 proc/.depend
-proc/libprocfs.la
-proc/libprocfs.pc
+proc/libprocps.la
+proc/libprocps.pc
 proc/Makefile
 proc/Makefile.in
 ps/Makefile

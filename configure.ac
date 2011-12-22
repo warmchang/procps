@@ -169,7 +169,7 @@ AC_SUBST(DEJAGNU)
 AC_CONFIG_FILES([
 Makefile
 proc/Makefile
-proc/libprocfs.pc
+proc/libprocps.pc
 ps/Makefile
 testsuite/Makefile
 ])
