@@ -160,6 +160,7 @@ static int one_proc(proc_t * p)
 	unsigned long total_shared = 0ul;
 	unsigned long total_private_readonly = 0ul;
 	unsigned long total_private_writeable = 0ul;
+    KLONG diff = 0;
 
 	char *cp2 = NULL;
 	unsigned long long rss = 0ull;
@@ -213,7 +214,7 @@ static int one_proc(proc_t * p)
 		char flags[32];
 		/* to clean up unprintables */
 		char *tmp;
-		unsigned KLONG start, end, diff = 0;
+		unsigned KLONG start, end;
 		unsigned long long file_offset, inode;
 		unsigned dev_major, dev_minor;
 		unsigned long long smap_value;
@@ -253,6 +254,7 @@ static int one_proc(proc_t * p)
 					/* reset some counters */
 					rss = shared_dirty = private_dirty =
 					    0ull;
+                    diff = 0;
 					continue;
 				}
 				/* Other keys */

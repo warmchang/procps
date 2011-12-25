@@ -1,7 +1,7 @@
 AM_CPPFLAGS = -include $(top_builddir)/config.h
 
 AM_CFLAGS = -I../proc -I../include
-AM_LDFLAGS = ../proc/libprocfs.la
+AM_LDFLAGS = ../proc/libprocps.la
 
 if WITH_NCURSES
 usrbin_exec_PROGRAMS = \

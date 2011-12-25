@@ -193,7 +193,7 @@ AC_CONFIG_FILES([
 	lib/Makefile
 	po/Makefile.in
 	proc/Makefile
-	proc/libprocfs.pc
+	proc/libprocps.pc
 	ps/Makefile
 	testsuite/Makefile
 	top/Makefile

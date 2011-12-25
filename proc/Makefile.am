@@ -1,27 +1,27 @@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 AM_CPPFLAGS = -include $(top_builddir)/config.h
 
-LIBPROCFS_CURRENT=0
-LIBPROCFS_REVISION=0
-LIBPROCFS_AGE=0
+LIBprocps_CURRENT=0
+LIBprocps_REVISION=0
+LIBprocps_AGE=0
 
-lib_LTLIBRARIES = libprocfs.la
+lib_LTLIBRARIES = libprocps.la
 
-libprocfs_ladir = $(ladir)
-libprocfs_la_LIBADD = $(LIB_KPARTS)
-libprocfs_la_LDFLAGS = \
+libprocps_ladir = $(ladir)
+libprocps_la_LIBADD = $(LIB_KPARTS)
+libprocps_la_LDFLAGS = \
 	$(AM_LDFLAGS) \
 	$(all_libraries) \
-	-version-info $(LIBPROCFS_CURRENT):$(LIBPROCFS_REVISION):$(LIBPROCFS_AGE) \
+	-version-info $(LIBprocps_CURRENT):$(LIBprocps_REVISION):$(LIBprocps_AGE) \
 	-no-undefined \
-	-Wl,--version-script=$(top_srcdir)/proc/libprocfs.sym
+	-Wl,--version-script=$(top_srcdir)/proc/libprocps.sym
 
 EXTRA_DIST = library.map
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libprocfs.pc
+pkgconfig_DATA = libprocps.pc
 
-libprocfs_la_SOURCES = \
+libprocps_la_SOURCES = \
 	alloc.c \
 	alloc.h \
 	devname.c \
@@ -46,8 +46,8 @@ libprocfs_la_SOURCES = \
 	whattime.c \
 	whattime.h
 
-libprocfs_la_includedir = $(includedir)/proc/
-libprocfs_la_include_HEADERS =  \
+libprocps_la_includedir = $(includedir)/proc/
+libprocps_la_include_HEADERS =  \
 	alloc.h \
 	devname.h \
 	escape.h \
