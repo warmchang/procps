@@ -78,6 +78,8 @@ static void print_host(const char *restrict host, int len, const int fromlen)
 			fputc(*host, stdout);
 			++width;
 		} else {
+			fputc('-', stdout);
+			++width;
 			break;
 		}
 	}
