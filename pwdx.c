@@ -35,6 +35,23 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+int check_pid_argument(char *input)
+{
+	int skip = 0;
+	long pid;
+	char *end = NULL;
+
+	if (!strncmp("/proc/", input, 6))
+		skip = 6;
+	pid = strtol(input + skip, &end, 10);
+
+	if (errno || input + skip == end || (end && *end))
+		return 1;
+	if (pid < 1)
+		return 1;
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	char ch;
@@ -78,6 +95,9 @@ int main(int argc, char *argv[])
 		/* Constant 10 is the length of strings "/proc/" + "/cwd" + 1 */
 		char buf[10 + strlen(argv[i]) + 1];
 
+		if (check_pid_argument(argv[i]))
+			errx(EXIT_FAILURE, _("invalid process id: %s"),
+			     argv[i]);
 		/*
 		 * At this point, all arguments are in the form
 		 * /proc/NNNN or NNNN, so a simple check based on
