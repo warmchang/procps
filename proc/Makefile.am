@@ -16,7 +16,7 @@ libprocps_la_LDFLAGS = \
 	-no-undefined \
 	-Wl,--version-script=$(top_srcdir)/proc/libprocps.sym
 
-EXTRA_DIST = library.map
+EXTRA_DIST = libprocps.sym
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libprocps.pc
