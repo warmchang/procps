@@ -5,14 +5,15 @@
  * Modified for easy use by Albert Cahalan.
  */
 
-#include <unistd.h>
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/time.h>
 
 #include "common.h"
 

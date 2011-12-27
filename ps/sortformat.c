@@ -9,17 +9,17 @@
  * GNU Library General Public License for more details.
  */
 
-#include <stdlib.h>
+#include <grp.h>
+#include <pwd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-/* username lookups */
 #include <sys/types.h>
-#include <pwd.h>
-#include <grp.h>
 
 #include "../proc/readproc.h"
 #include "../proc/sysinfo.h"
+
 #include "common.h"
 
 static sf_node *sf_list = NULL;         /* deferred sorting and formatting */

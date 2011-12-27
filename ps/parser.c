@@ -13,21 +13,20 @@
  * #define Print(fmt, args...) printf("Debug: " fmt, ## args)
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
-/* username lookups */
-#include <sys/types.h>
-#include <pwd.h>
 #include <grp.h>
-
-#include <sys/stat.h>
+#include <pwd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
-#include "common.h"
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include "../proc/alloc.h"
 #include "../proc/version.h"
+
+#include "common.h"
 
 #define ARG_GNU  0
 #define ARG_END  1
@@ -154,8 +153,7 @@ found_it:
   return 0;
 }
 
-static int parse_usage_section(const char *opt)
-{
+static int parse_usage_section(const char *opt){
   if (!strcmp(opt, "s") || !strcmp(opt, "selection"))
     return USAGE_SELECTION;
   if (!strcmp(opt, "l") || !strcmp(opt, "list"))

@@ -9,32 +9,26 @@
  * GNU Library General Public License for more details.
  */
 
-#include <stdlib.h>
+#include <grp.h>
+#include <locale.h>
+#include <pwd.h>
+#include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-#if (__GNU_LIBRARY__ >= 6)
-# include <locale.h>
-#endif
-
-/* username lookups */
-#include <sys/types.h>
-#include <pwd.h>
-#include <grp.h>
-
-/* major/minor number */
 #include <sys/sysmacros.h>
+#include <sys/types.h>
 
-#include <signal.h>   /* catch signals */
+#include "../proc/alloc.h"
+#include "../proc/readproc.h"
+#include "../proc/sig.h"
+#include "../proc/sysinfo.h"
+#include "../proc/version.h"
+#include "../proc/wchan.h"
 
 #include "common.h"
-#include "../proc/alloc.h"
-#include "../proc/wchan.h"
-#include "../proc/version.h"
-#include "../proc/readproc.h"
-#include "../proc/sysinfo.h"
-#include "../proc/sig.h"
 
 #ifndef SIGCHLD
 #define SIGCHLD SIGCLD
@@ -529,11 +523,9 @@ static void fancy_spew(void){
 
 /***** no comment */
 int main(int argc, char *argv[]){
-#if (__GNU_LIBRARY__ >= 6)
   setlocale (LC_ALL, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
-#endif
 
 #ifdef DEBUG
   init_stack_trace(argv[0]);

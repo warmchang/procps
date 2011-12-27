@@ -1,21 +1,22 @@
 /*
- * Copyright 1998-2002 by Albert Cahalan; all rights resered.         
+ * Copyright 1998-2002 by Albert Cahalan; all rights resered.
  * This file may be used subject to the terms and conditions of the
- * GNU Library General Public License Version 2, or any later version  
+ * GNU Library General Public License Version 2, or any later version
  * at your option, as published by the Free Software Foundation.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Library General Public License for more details.
- */                                 
+ */
 
-#include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "../proc/procps.h"
+#include "../proc/readproc.h"
 
 #include "common.h"
-#include "../proc/readproc.h"
-#include "../proc/procps.h"
 
 //#define process_group_leader(p) ((p)->pgid    == (p)->tgid)
 //#define some_other_user(p)      ((p)->euid    != cached_euid)

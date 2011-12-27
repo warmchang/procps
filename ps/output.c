@@ -21,7 +21,6 @@
  * For example, Digital prints the real-time signals.
  */
 
-
 /*
  * Data table idea:
  *
@@ -40,6 +39,7 @@
  */
 
 #include <ctype.h>
+#include <dlfcn.h>
 #include <fcntl.h>
 #include <grp.h>
 #include <limits.h>
@@ -47,13 +47,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/ioctl.h>
-#include <sys/resource.h>
-#include <sys/types.h>
-#include <sys/mman.h>
 #include <time.h>
 #include <unistd.h>
-#include <dlfcn.h>
+
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <sys/resource.h>
+#include <sys/types.h>
 
 #include "../proc/readproc.h"
 #include "../proc/sysinfo.h"
@@ -61,6 +61,7 @@
 #include "../proc/procps.h"
 #include "../proc/devname.h"
 #include "../proc/escape.h"
+
 #include "common.h"
 
 /* TODO:

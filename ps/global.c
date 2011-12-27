@@ -8,25 +8,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Library General Public License for more details.
  */
-#include <stdlib.h>
-#include <termios.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <pwd.h>
-#include <grp.h>
-#include <string.h>
-#include <sys/stat.h>
+
 #include <fcntl.h>
+#include <grp.h>
+#include <pwd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <termios.h>
+#include <unistd.h>
 
-#include "common.h"
-
+#include <sys/ioctl.h>
+#include <sys/stat.h>
 #include <sys/sysmacros.h>
+#include <sys/types.h>
+
 #include "../proc/wchan.h"
 #include "../proc/version.h"
 #include "../proc/sysinfo.h"
 
+#include "common.h"
 
 #ifndef __GNU_LIBRARY__
 #define __GNU_LIBRARY__ -1
