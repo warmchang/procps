@@ -72,8 +72,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out,
 	      _(" %s [options] [tty]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -d, --delay <secs>  update delay in seconds\n"), out);
-	fputs(_(" -s, --scale <num>   vertical scale\n"), out);
+	fputs(_(" -d, --delay <secs>  update delay in seconds\n"
+	        " -s, --scale <num>   vertical scale\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);

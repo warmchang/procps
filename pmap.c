@@ -37,10 +37,10 @@ static void __attribute__ ((__noreturn__))
 	fprintf(out,
 		_(" %s [options] pid [pid ...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_("  -x, --extended              show details\n"), out);
-	fputs(_("  -d, --device                show the device format\n"), out);
-	fputs(_("  -q, --quiet                 do not display header and footer\n"), out);
-	fputs(_("  -A, --range=<low>[,<high>]  limit results to the given range\n"), out);
+	fputs(_("  -x, --extended              show details\n"
+		"  -d, --device                show the device format\n"
+		"  -q, --quiet                 do not display header and footer\n"
+		"  -A, --range=<low>[,<high>]  limit results to the given range\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);

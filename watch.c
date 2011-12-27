@@ -63,16 +63,16 @@ static void __attribute__ ((__noreturn__))
 	fprintf(out,
               _(" %s [options] command\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_("  -b, --beep             beep if command has a non-zero exit\n"), out);
-	fputs(_("  -c, --color            interpret ANSI color sequences\n"), out);
-	fputs(_("  -e, --errexit          exit if command has a non-zero exit\n"), out);
-	fputs(_("  -f, --differences      highlight changes between updates\n"), out);
-	fputs(_("  -n, --interval <secs>  seconds to wait between updates\n"), out);
-	fputs(_("  -p, --precise          attempt run command in precise intervals\n"), out);
-	fputs(_("  -t, --no-title         turn off header\n"), out);
-	fputs(_("  -x, --exec             pass command to exec instead of \"sh -c\"\n"), out);
-	fputs(_("  -h, --help             display this help text\n"), out);
-	fputs(_("  -v, --version          display version information and exit\n"), out);
+	fputs(_("  -b, --beep             beep if command has a non-zero exit\n"
+		"  -c, --color            interpret ANSI color sequences\n"
+		"  -e, --errexit          exit if command has a non-zero exit\n"
+		"  -f, --differences      highlight changes between updates\n"
+		"  -n, --interval <secs>  seconds to wait between updates\n"
+		"  -p, --precise          attempt run command in precise intervals\n"
+		"  -t, --no-title         turn off header\n"
+		"  -x, --exec             pass command to exec instead of \"sh -c\"\n"
+		"  -h, --help             display this help text\n"
+		"  -v, --version          display version information and exit\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(_(" -v, --version  output version information and exit\n"), out);

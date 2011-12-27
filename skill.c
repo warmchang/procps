@@ -265,11 +265,11 @@ static void __attribute__ ((__noreturn__)) kill_usage(FILE * out)
 	fprintf(out,
               _(" %s [options] <pid> [...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" <pid> [...]            send signal to every <pid> listed\n"), out);
-	fputs(_(" -<signal>, -s, --signal <signal>\n"), out);
-	fputs(_("                        specify the <signal> to be sent\n"), out);
-	fputs(_(" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"), out);
-	fputs(_(" -L, --table            list all signal names in a nice table\n"), out);
+	fputs(_(" <pid> [...]            send signal to every <pid> listed\n"
+		" -<signal>, -s, --signal <signal>\n"
+		"                        specify the <signal> to be sent\n"
+		" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
+		" -L, --table            list all signal names in a nice table\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -292,20 +292,20 @@ static void __attribute__ ((__noreturn__)) skillsnice_usage(FILE * out)
 			program_invocation_short_name);
 	}
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -f, --fast         fast mode (not implemented)\n"), out);
-	fputs(_(" -i, --interactive  interactive\n"), out);
-	fputs(_(" -l, --list         list all signal names\n"), out);
-	fputs(_(" -L, --table        list all signal names in a nice table\n"), out);
-	fputs(_(" -n, --no-action    no action\n"), out);
-	fputs(_(" -v, --verbose      explain what is being done\n"), out);
-	fputs(_(" -w, --warnings     enable warnings (not implemented)\n"), out);
+	fputs(_(" -f, --fast         fast mode (not implemented)\n"
+		" -i, --interactive  interactive\n"
+		" -l, --list         list all signal names\n"
+		" -L, --table        list all signal names in a nice table\n"
+		" -n, --no-action    no action\n"
+		" -v, --verbose      explain what is being done\n"
+		" -w, --warnings     enable warnings (not implemented)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Expression can be: terminal, user, pid, command.\n"), out);
-	fputs(_("The options below may be used to ensure correct interpretation.\n"), out);
-	fputs(_(" -c, --command <command>  expression is a command name\n"), out);
-	fputs(_(" -p, --pid <pid>          expression is a process id number\n"), out);
-	fputs(_(" -t, --tty <tty>          expression is a terminal\n"), out);
-	fputs(_(" -u, --user <username>    expression is a username\n"), out);
+	fputs(_("Expression can be: terminal, user, pid, command.\n"
+		"The options below may be used to ensure correct interpretation.\n"
+		" -c, --command <command>  expression is a command name\n"
+		" -p, --pid <pid>          expression is a process id number\n"
+		" -t, --tty <tty>          expression is a terminal\n"
+		" -u, --user <username>    expression is a username\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);

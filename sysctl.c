@@ -92,23 +92,23 @@ static void __attribute__ ((__noreturn__))
    fprintf(out,
 	 _(" %s [options] [variable[=value] ...]\n"), program_invocation_short_name);
    fputs(USAGE_OPTIONS, out);
-   fputs(_("  -a, --all            display all variables\n"), out);
-   fputs(_("  -A                   alias of -a\n"), out);
-   fputs(_("  -X                   alias of -a\n"), out);
-   fputs(_("  -b, --binary         print value without new line\n"), out);
-   fputs(_("  -e, --ignore         ignore unknown variables errors\n"), out);
-   fputs(_("  -N, --names          print variable names without values\n"), out);
-   fputs(_("  -n, --values         print only values of a variables\n"), out);
-   fputs(_("  -p, --load[=<file>]  read values from file\n"), out);
-   fputs(_("  -f                   alias of -p\n"), out);
-   fputs(_("      --system         read values from all system directories\n"), out);
-   fputs(_("  -r, --pattern <expression>\n"), out);
-   fputs(_("                       select setting that match expression\n"), out);
-   fputs(_("  -q, --quiet          do not echo variable set\n"), out);
-   fputs(_("  -w, --write          enable writing a value to variable\n"), out);
-   fputs(_("  -o                   does nothing\n"), out);
-   fputs(_("  -x                   does nothing\n"), out);
-   fputs(_("  -d                   alias of -h\n"), out);
+   fputs(_("  -a, --all            display all variables\n"
+	   "  -A                   alias of -a\n"
+	   "  -X                   alias of -a\n"
+	   "  -b, --binary         print value without new line\n"
+	   "  -e, --ignore         ignore unknown variables errors\n"
+	   "  -N, --names          print variable names without values\n"
+	   "  -n, --values         print only values of a variables\n"
+	   "  -p, --load[=<file>]  read values from file\n"
+	   "  -f                   alias of -p\n"
+	   "      --system         read values from all system directories\n"
+	   "  -r, --pattern <expression>\n"
+	   "                       select setting that match expression\n"
+	   "  -q, --quiet          do not echo variable set\n"
+	   "  -w, --write          enable writing a value to variable\n"
+	   "  -o                   does nothing\n"
+	   "  -x                   does nothing\n"
+	   "  -d                   alias of -h\n"), out);
    fputs(USAGE_SEPARATOR, out);
    fputs(USAGE_HELP, out);
    fputs(USAGE_VERSION, out);
