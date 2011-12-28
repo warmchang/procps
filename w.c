@@ -352,7 +352,7 @@ int main(int argc, char **argv)
 #endif
 
 	while ((ch =
-		getopt_long(argc, argv, "hlusfV", longopts, NULL)) != -1)
+		getopt_long(argc, argv, "husfoV", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'h':
 			header = 0;
