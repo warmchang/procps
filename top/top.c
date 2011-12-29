@@ -1775,7 +1775,7 @@ always:
 /*######  Library Interface  #############################################*/
 
         /*
-         * This guy's modeled on libproc's 'five_cpu_numbers' function except
+         * This guy's modeled on libproc's 'eight_cpu_numbers' function except
          * we preserve all cpu data in our CPU_t array which is organized
          * as follows:
          *    cpus[0] thru cpus[n] == tics for each separate cpu

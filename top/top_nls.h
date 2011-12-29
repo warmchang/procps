@@ -24,7 +24,17 @@
          *    Desc : field descriptions not to exceed 20 screen positions
          *    Norm : regular text possibly also containing c-format specifiers
          *    Uniq : show_special specially formatted strings
+         *
          * The latter table presents the greatest translation challenge !
+         *
+         * We go to the trouble of creating the nls string tables to achieve
+         * these objectives:
+         *    +  the overhead of repeated runtime calls to gettext()
+         *       will be avoided
+         *    +  the order of the strings in the template (.pot) file
+         *       can be completely controlled
+         *    +  none of the important translator only comments will
+         *       clutter and obscure the main program
          */
 extern const char *Desc_nlstab[];
 extern const char *Norm_nlstab[];

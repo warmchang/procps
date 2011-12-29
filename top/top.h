@@ -96,8 +96,8 @@
            -- mostly just to pinpoint source code usage/dependancies */
 #define SCREENMAX   512
    /* the above might seem pretty stingy, until you consider that with every
-      one of top's fields displayed it's less than 200 bytes of column header
-      -- so SCREENMAX provides for all fields plus a 300+ byte command line */
+      field displayed the column header would be approximately 250 bytes
+      -- so SCREENMAX provides for all fields plus a 250+ byte command line */
 #define CAPBUFSIZ    32
 #define CLRBUFSIZ    64
 #define PFLAGSSIZ    64
