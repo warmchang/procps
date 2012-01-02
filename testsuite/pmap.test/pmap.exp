@@ -7,19 +7,20 @@ set mypid [pid]
 set pmap_procname "${mypid}:\\s+\\S+\[^\\r\]+\\s+"
 set pmap_std_header $pmap_procname
 set pmap_device_header "${pmap_procname}Address\\s+Kbytes\\s+Mode\\s+Offset\\s+Device\\s+Mapping\\s+"
-set pmap_ext_header "${pmap_procname}Address\\s+Kbytes\\s+RSS\\s+Anon\\s+Locked\\s+Mode\\s+Mapping\\s+"
+set pmap_ext_header "${pmap_procname}Address\\s+Kbytes\\s+RSS\\s+Dirty\\s+Mode\\s+Mapping\\s+"
 
 set pmap_std_items "\(\[0-9a-f\]+\\s+\\d+K \[rwx-\]{5}\\s+\\S+\[^\\r\]+\\s*\)+"
 set pmap_device_items "\(\[0-9a-f\]+\\s+\\d+ \[rwx-\]{5}\\s+\[0-9a-f\]+\\s+\[0-9a-f\]{3}:\[0-9a-f\]{5}\\s+\\S+\[^\\r\]+\\s*\)+"
-set pmap_ext_items "\(\[0-9a-f\]+\\s+\\d+\\s+-\\s+-\\s+- \[rwx-\]{5}\\s+\\S+\[^\\r\]+\\s*\)+"
+set pmap_ext_items "\(\[0-9a-f\]+\\s+\\d+\\s+\\d+\\s+\\d+ \[rwx-\]{5}\\s+\\S+\[^\\r\]+\\s*\)+"
 
 set pmap_std_footer "total\\s+\\d+K\\s*\$"
 set pmap_device_footer "mapped:\\s+\\d+K\\s+writeable\/private:\\s+\\d+K\\s+shared:\\s+\\d+K\\s*\$"
-set pmap_ext_footer "\[ -\]+\\s+total kB\\s+\\d+\\s+-\\s+-\\s+-\\s*\$"
+set pmap_ext_footer "\[ -\]+\\s+total kB\\s+\\d+\\s+\\d+\\s+\\d+\\s*\$"
 
 set test "pmap with no arguments"
 spawn $pmap
-expect_pass "$test" "^Usage: pmap \\\[-x | -d\\\] \\\[-q\\\] \\\[-A low,high\\\] pid\\.\\.\\.\\s+-x\\s+show details\\s+-d\\s+show offset and device number\\s+-q\\s+quiet; less header/footer info\\s+-V\\s+show the version number\\s+-A\\s+limit results to the given range\\s*"
+expect_pass "$test" "^\(lt-\)\?pmap: argument missing"
+#expect_pass "$test" "^Usage: pmap \\\[-x | -d\\\] \\\[-q\\\] \\\[-A low,high\\\] pid\\.\\.\\.\\s+-x\\s+show details\\s+-d\\s+show offset and device number\\s+-q\\s+quiet; less header/footer info\\s+-V\\s+show the version number\\s+-A\\s+limit results to the given range\\s*"
 
 set test "pmap standard output"
 spawn $pmap $mypid

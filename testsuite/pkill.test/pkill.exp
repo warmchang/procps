@@ -18,7 +18,7 @@ set testproc1_sid [ exec ps --no-headers -o sid $testproc1_pid ]
 
 set test "pkill with no arguments"
 spawn $pkill
-expect_pass "$test" "^pkill: No matching criteria specified\\s*"
+expect_pass "$test" "^\(lt-\)\?pkill: no matching criteria specified\\s*"
 
 set test "pkill find both test pids"
 #spawn $pkill $testproc

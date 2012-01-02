@@ -5,7 +5,7 @@ set kill ${topdir}kill
 
 set test "kill with no arguments"
 spawn $kill
-expect_pass "$test" "Usage:\\s+kill pid ...\\s+Send SIGTERM to every process listed.\\r\\s+kill signal pid ...\\s+Send a signal to every process listed.\\r\\s+kill -s signal pid ...\\s+Send a signal to every process listed.\\r\\s+kill -l\\s+List all signal names.\\r\\s+kill -L\\s+List all signal names in a nice table.\\r\\s+kill -l signal\\s+Convert between signal numbers and names."
+expect_pass "$test" "Usage:\\s+\(lt-\)?kill \\\[options\\\] <pid> \\\[...\\\]\\s+Options:\\s+<pid> \\\[...\\\]\\s+send signal to every <pid> listed\\s+-<signal>, -s, --signal <signal>\\s+specify the <signal> to be sent\\s+-l, --list=\\\[<signal>\\\]\\s+list all signal names, or convert one to a name\\\s+-L, --table\\s+list all signal names in a nice table$usage_help$usage_version$usage_man"
 
 set test "kill list signal names"
 spawn $kill -l
@@ -16,7 +16,7 @@ spawn $kill -L
 expect_pass "$test" "^\(\\s+\\d+ \[A-Z12\]+\)+\\s*$"
 
 set test "kill convert signal name to number"
-spawn  $kill -l HUP
+spawn  $kill -lHUP
 expect_pass "$test" "^1\\s*"
 
 set test "kill convert signal number to name"

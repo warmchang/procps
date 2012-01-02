@@ -12,7 +12,7 @@ set w_fromshort_header "${w_uptime}USER\\s+TTY\\s+FROM\\s+IDLE\\s+WHAT\\s+"
 
 set w_user "\[A-Za-z0-9_-\]+"
 set w_tty "\[a-z0-9/]+"
-set w_from "\[A-Za-z0-9.:-\]+"
+set w_from "\[A-Za-z0-9.:-\]*"
 set w_login "\(\\d+\[A-Z\]\[a-z\]{2}\\d+\|\[A-Z\]\[a-z\]{2}\\d+\|\\d+:\\d+\)"
 set w_idle  "\(\\?xdm\\?\|\\?\|\\d+days\|\\d+:\\d+m?\|\\d+.\\d+s\)"
 set w_ival7  "\(\\?\|\\d+days\|\\d+:\\d+m?\|\\d+.\\d+s\)"

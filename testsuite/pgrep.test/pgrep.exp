@@ -19,7 +19,7 @@ set testproc1_sid [ string trim [ exec ps --no-headers -o sid $testproc1_pid ] ]
 
 set test "pgprep with no arguments"
 spawn $pgrep
-expect_pass "$test" "^pgrep: No matching criteria specified\\s*"
+expect_pass "$test" "^\(lt-\)\?pgrep: no matching criteria specified\\s*"
 
 set test "pgrep find both test pids"
 spawn $pgrep $testproc_comm

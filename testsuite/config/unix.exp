@@ -1,11 +1,16 @@
 
 regexp "(.*\/)testsuite" $objdir objdir topdir
 
+# These are the same as include/c.h
+set usage_help "\\s*-h, --help\\s+display this help and exit\\s+"
+set usage_version "\\s*-V, --version\\s+output version information and exit\\s+"
+set usage_man "\\s*For more details see \\S+\\."
+
 proc procps_v_version { tool } {
   global topdir
   set toolpath ${topdir}${tool}
   set tmp [ exec $toolpath -V ]
-  regexp "procps-ng version (\[0-9.\]*)" $tmp tmp version
+  regexp "from procps-ng (\[0-9.\]*)" $tmp tmp version
   clone_output "$toolpath version $version\n"
 }
 
