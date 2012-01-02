@@ -1,5 +1,8 @@
 PACKAGE_VERSION = @PACKAGE_VERSION@
-AM_CPPFLAGS = -include $(top_builddir)/config.h
+AM_CPPFLAGS = \
+	-include $(top_builddir)/config.h \
+	-I$(top_srcdir)/include \
+	-DLOCALEDIR=\"$(localedir)\"
 
 LIBprocps_CURRENT=0
 LIBprocps_REVISION=0

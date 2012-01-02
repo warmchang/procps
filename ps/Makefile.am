@@ -1,6 +1,8 @@
-AM_CPPFLAGS = -include $(top_builddir)/config.h
+AM_CPPFLAGS = \
+	-include $(top_builddir)/config.h \
+	-I$(top_srcdir)/include \
+	-DLOCALEDIR=\"$(localedir)\"
 
-AM_CFLAGS = -I../proc -I../include
 AM_LDFLAGS = ../proc/libprocps.la
 
 dist_man_MANS = ps.1
