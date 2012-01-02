@@ -338,7 +338,7 @@ extern int want_this_proc(proc_t *buf);
 extern const char *select_bits_setup(void);
 
 /* help.c */
-extern void __attribute__ ((__noreturn__)) usage(FILE * out, int section);
+extern void usage(FILE * out, int section) NORETURN;
 
 /* global.c */
 extern void self_info(void);

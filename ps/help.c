@@ -15,8 +15,8 @@
 
 #include "common.h"
 
-void __attribute__ ((__noreturn__)) usage(FILE * out, int section)
-{
+void usage(FILE * out, int section) NORETURN;
+void usage(FILE * out, int section){
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options]\n"), program_invocation_short_name);

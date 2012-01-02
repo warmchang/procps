@@ -30,7 +30,8 @@ static void debug_stop(char **args){
 }
 
 /***********/
-static void stack_trace_sigchld(int signum __attribute__ ((__unused__))){
+static void stack_trace_sigchld(int signum){
+  (void)signum;
   stack_trace_done = 1;
 }
 
@@ -156,7 +157,8 @@ void debug(int method, char *prog_name){
 }
 
 /************/
-static void stack_trace_sigsegv(int signum __attribute__ ((__unused__))){
+static void stack_trace_sigsegv(int signum){
+  (void)signum;
   debug(STACK_TRACE, stored_prog_name);
 }
 
