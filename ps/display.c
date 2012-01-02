@@ -34,6 +34,8 @@
 #define SIGCHLD SIGCLD
 #endif
 
+char *myname;
+
 /* just reports a crash */
 static void signal_handler(int signo){
   if(signo==SIGPIPE) _exit(0);  /* "ps | head" will cause this */
@@ -44,7 +46,7 @@ static void signal_handler(int signo){
       "Please send bug reports to <procps@freelists.org>\n"),
     signo,
     signal_number_to_name(signo),
-    program_invocation_short_name,
+    myname,
     procps_version
   );
   _exit(signo+128);
@@ -523,6 +525,9 @@ static void fancy_spew(void){
 
 /***** no comment */
 int main(int argc, char *argv[]){
+  myname = strrchr(*argv, '/');
+  if (myname) ++myname; else myname = *argv;
+
   setlocale (LC_ALL, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);

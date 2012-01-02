@@ -81,7 +81,7 @@ unsigned        thread_flags = 0xffffffff;
 int             unix_f_option = -1;
 int             user_is_number = -1;
 int             wchan_is_number = -1;
-
+const char     *the_word_help;
 
 static void reset_selection_list(void){
   selection_node *old;
@@ -391,6 +391,14 @@ void reset_global(void){
   unix_f_option         = 0;
   user_is_number        = 0;
   wchan_is_number       = 0;
+/* Translation Note:
+   . The following translatable word will be used to recognize the
+   . user's request for help text.  In other words, the translation
+   . you provide will alter program behavior.
+   .
+   . It must be limited to 15 characters or less.
+   */
+  the_word_help         = _("help");
 }
 
 static const char archdefs[] =

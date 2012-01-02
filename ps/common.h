@@ -12,7 +12,6 @@
 #ifndef PROCPS_PS_H
 #define PROCPS_PS_H
 
-#include "../include/c.h"
 #include "../include/nls.h"
 #include "../proc/procps.h"
 #include "../proc/escape.h"
@@ -26,17 +25,6 @@
 
 
 /***************** GENERAL DEFINE ********************/
-
-/* usage output sections */
-enum {
-  USAGE_DEFAULT,
-  USAGE_ALL,
-  USAGE_SELECTION,
-  USAGE_LIST,
-  USAGE_OUTPUT,
-  USAGE_THREADS,
-  USAGE_MISC
-};
 
 /* selection list */
 #define SEL_RUID 1
@@ -325,8 +313,12 @@ extern unsigned        thread_flags;
 extern int             unix_f_option;
 extern int             user_is_number;
 extern int             wchan_is_number;
+extern const char     *the_word_help;
 
 /************************* PS GLOBALS *********************/
+
+/* display.c */
+extern char *myname;
 
 /* sortformat.c */
 extern int defer_sf_option(const char *arg, int source);
@@ -338,7 +330,7 @@ extern int want_this_proc(proc_t *buf);
 extern const char *select_bits_setup(void);
 
 /* help.c */
-extern void usage(FILE * out, int section) NORETURN;
+extern void do_help(const char *opt, int rc) NORETURN;
 
 /* global.c */
 extern void self_info(void);

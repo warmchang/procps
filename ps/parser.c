@@ -153,22 +153,6 @@ found_it:
   return 0;
 }
 
-static int parse_usage_section(const char *opt){
-  if (!strcmp(opt, "s") || !strcmp(opt, "selection"))
-    return USAGE_SELECTION;
-  if (!strcmp(opt, "l") || !strcmp(opt, "list"))
-    return USAGE_LIST;
-  if (!strcmp(opt, "o") || !strcmp(opt, "output"))
-    return USAGE_OUTPUT;
-  if (!strcmp(opt, "t") || !strcmp(opt, "threads"))
-    return USAGE_THREADS;
-  if (!strcmp(opt, "m") || !strcmp(opt, "misc"))
-    return USAGE_MISC;
-  if (!strcmp(opt, "a") || !strcmp(opt, "all"))
-    return USAGE_ALL;
-  return USAGE_DEFAULT;
-}
-
 /*
  * Used to parse lists in a generic way. (function pointers)
  */
@@ -793,7 +777,6 @@ static const char *parse_gnu_option(void){
   char buf[16];
   gnu_table_struct findme = { buf, NULL};
   gnu_table_struct *found;
-  int usage_section;
   static const gnu_table_struct gnu_table[] = {
   {"Group",         &&case_Group},       /* rgid */
   {"User",          &&case_User},        /* ruid */
@@ -809,7 +792,7 @@ static const char *parse_gnu_option(void){
   {"headers",       &&case_headers},
   {"heading",       &&case_heading},
   {"headings",      &&case_headings},
-  {"help",          &&case_help},
+//{"help",          &&case_help},        /* now TRANSLATABLE ! */
   {"info",          &&case_info},
   {"lines",         &&case_lines},
   {"no-header",     &&case_no_header},
@@ -843,7 +826,11 @@ static const char *parse_gnu_option(void){
       sizeof(gnu_table_struct), compare_gnu_table_structs
   );
 
-  if(!found) return _("Unknown gnu long option.");
+  if(!found) {
+    if (!strcmp(buf, the_word_help))
+      goto case_help;
+    return _("Unknown gnu long option.");
+  }
 
   goto *(found->jump);    /* See gcc extension info.  :-)   */
 
@@ -932,11 +919,7 @@ static const char *parse_gnu_option(void){
   case_help:
     trace("--help\n");
     arg = grab_gnu_arg();
-    if(!arg)
-      usage_section = USAGE_DEFAULT;
-    else
-      usage_section = parse_usage_section(arg);
-    usage(stdout, usage_section);
+    do_help(arg, EXIT_SUCCESS);
   case_info:
     trace("--info\n");
     exclusive("--info");
@@ -1266,5 +1249,5 @@ total_failure:
   reset_parser();
   if(personality & PER_FORCE_BSD) fprintf(stderr, _("ERROR: %s\n"), err2);
   else fprintf(stderr, _("ERROR: %s\n"), err);
-  usage(stderr, USAGE_DEFAULT);
+  do_help(NULL, EXIT_FAILURE);
 }
