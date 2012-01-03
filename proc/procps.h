@@ -45,15 +45,6 @@
 #define NORETURN __attribute__((__noreturn__))
 #define FUNCTION __attribute__((__const__))  // no access to global mem, even via ptr, and no side effect
 
-#if !defined(restrict) && __STDC_VERSION__ < 199901
-#if __GNUC__ > 2 || __GNUC_MINOR__ >= 92
-#define restrict __restrict__
-#else
-#warning No restrict keyword?
-#define restrict
-#endif
-#endif
-
 #if __GNUC__ > 2 || __GNUC_MINOR__ >= 96
 // won't alias anything, and aligned enough for anything
 #define MALLOC __attribute__ ((__malloc__))

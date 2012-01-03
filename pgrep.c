@@ -255,7 +255,7 @@ static int conv_uid (const char *restrict name, union el *restrict e)
 
 	pwd = getpwnam (name);
 	if (pwd == NULL) {
-		warnx(_("invalid user name: %s"), name);
+		xwarnx(_("invalid user name: %s"), name);
 		return 0;
 	}
 	e->num = pwd->pw_uid;
@@ -272,7 +272,7 @@ static int conv_gid (const char *restrict name, union el *restrict e)
 
 	grp = getgrnam (name);
 	if (grp == NULL) {
-		warnx(_("invalid group name: %s"), name);
+		xwarnx(_("invalid group name: %s"), name);
 		return 0;
 	}
 	e->num = grp->gr_gid;
@@ -283,7 +283,7 @@ static int conv_gid (const char *restrict name, union el *restrict e)
 static int conv_pgrp (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
-		warnx(_("invalid process group: %s"), name);
+		xwarnx(_("invalid process group: %s"), name);
 		return 0;
 	}
 	if (e->num == 0)
@@ -295,7 +295,7 @@ static int conv_pgrp (const char *restrict name, union el *restrict e)
 static int conv_sid (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
-		warnx(_("invalid session id: %s"), name);
+		xwarnx(_("invalid session id: %s"), name);
 		return 0;
 	}
 	if (e->num == 0)
@@ -307,7 +307,7 @@ static int conv_sid (const char *restrict name, union el *restrict e)
 static int conv_num (const char *restrict name, union el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
-		warnx(_("not a number: %s"), name);
+		xwarnx(_("not a number: %s"), name);
 		return 0;
 	}
 	return 1;
@@ -733,14 +733,14 @@ static void parse_opts (int argc, char **argv)
 	}
 
 	if(opt_lock && !opt_pidfile)
-		errx(EXIT_FAILURE, _("-L without -F makes no sense\n"
+		xerrx(EXIT_FAILURE, _("-L without -F makes no sense\n"
                                      "Try `%s --help' for more information."),
                                      program_invocation_short_name);
 
 	if(opt_pidfile){
 		opt_pid = read_pidfile();
 		if(!opt_pid)
-			errx(EXIT_FAILURE, _("pidfile not valid\n"
+			xerrx(EXIT_FAILURE, _("pidfile not valid\n"
 			                     "Try `%s --help' for more information."),
 			                     program_invocation_short_name);
 	}
@@ -748,11 +748,11 @@ static void parse_opts (int argc, char **argv)
         if (argc - optind == 1)
 		opt_pattern = argv[optind];
 	else if (argc - optind > 1)
-		errx(EXIT_FAILURE, _("only one pattern can be provided\n"
+		xerrx(EXIT_FAILURE, _("only one pattern can be provided\n"
 		                     "Try `%s --help' for more information."),
 		                     program_invocation_short_name);
 	else if (criteria_count == 0)
-		errx(EXIT_FAILURE, _("no matching criteria specified\n"
+		xerrx(EXIT_FAILURE, _("no matching criteria specified\n"
                                      "Try `%s --help' for more information."),
                                      program_invocation_short_name);
 }
@@ -763,6 +763,7 @@ int main (int argc, char **argv)
 	union el *procs;
 	int num;
 
+	program_invocation_name = program_invocation_short_name;
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -778,7 +779,7 @@ int main (int argc, char **argv)
 			if (errno==ESRCH)
 				 // gone now, which is OK
 			        continue;
-			warn(_("killing pid %ld failed"));
+			xwarn(_("killing pid %ld failed"));
 		}
 	} else {
 		if (opt_count) {

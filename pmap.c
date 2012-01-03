@@ -10,7 +10,6 @@
  */
 
 #include <ctype.h>
-#include <err.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
@@ -393,6 +392,7 @@ int main(int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
+    program_invocation_name = program_invocation_short_name;
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -405,7 +405,7 @@ int main(int argc, char **argv)
 			x_option = 1;
 			break;
 		case 'r':
-			warnx(_("option -r is ignored as SunOS compatibility"));
+			xwarnx(_("option -r is ignored as SunOS compatibility"));
 			break;
 		case 'd':
 			d_option = 1;
@@ -460,9 +460,9 @@ int main(int argc, char **argv)
 	argv += optind;
 
 	if (argc < 1)
-		errx(EXIT_FAILURE, _("argument missing"));
+		xerrx(EXIT_FAILURE, _("argument missing"));
 	if (d_option && x_option)
-		errx(EXIT_FAILURE, _("options -d and -x cannot coexist"));
+		xerrx(EXIT_FAILURE, _("options -d and -x cannot coexist"));
 
 	pidlist = xmalloc(sizeof(unsigned) * argc);
 

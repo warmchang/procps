@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
 		{NULL, 0, 0, 0}
 	};
 
+    program_invocation_name = program_invocation_short_name;
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);

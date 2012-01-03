@@ -343,6 +343,7 @@ int main(int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
+	program_invocation_name = program_invocation_short_name;
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -388,7 +389,7 @@ int main(int argc, char **argv)
 	if ((env_var = getenv("PROCPS_USERLEN")) != NULL) {
 		userlen = atoi(env_var);
 		if (userlen < 8 || userlen > USERSZ) {
-			warnx
+			xwarnx
 			    (_("User length environment PROCPS_USERLEN must be between 8 and %d, ignoring.\n"),
 			     USERSZ);
 			userlen = 8;
@@ -398,7 +399,7 @@ int main(int argc, char **argv)
 	if ((env_var = getenv("PROCPS_FROMLEN")) != NULL) {
 		fromlen = atoi(env_var);
 		if (fromlen < 8 || fromlen > HOSTSZ) {
-			warnx
+			xwarnx
 			    (_("From length environment PROCPS_FROMLEN must be between 8 and %d, ignoring.\n"),
 			     HOSTSZ);
 			fromlen = 16;
@@ -411,11 +412,11 @@ int main(int argc, char **argv)
 	else
 		maxcmd = 80;
 	if (maxcmd < 71)
-		errx(EXIT_FAILURE, _("%d column window is too narrow"), maxcmd);
+		xerrx(EXIT_FAILURE, _("%d column window is too narrow"), maxcmd);
 
 	maxcmd -= 21 + userlen + (from ? fromlen : 0) + (longform ? 20 : 0);
 	if (maxcmd < 3)
-		warnx(_("warning: screen width %d suboptimal"), win.ws_col);
+		xwarnx(_("warning: screen width %d suboptimal"), win.ws_col);
 
 	procs = readproctab(PROC_FILLCOM | PROC_FILLUSR | PROC_FILLSTAT);
 

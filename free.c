@@ -206,6 +206,7 @@ int main(int argc, char **argv)
 	args.repeat_interval = 1000000;
 	args.repeat_counter = 0;
 
+    program_invocation_name = program_invocation_short_name;
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -246,9 +247,9 @@ int main(int argc, char **argv)
 			flags |= FREE_REPEAT;
 			args.repeat_interval = (1000000 * strtof(optarg, &endptr));
 			if (errno || optarg == endptr || (endptr && *endptr))
-				errx(EXIT_FAILURE, _("seconds argument `%s' failed"), optarg);
+				xerrx(EXIT_FAILURE, _("seconds argument `%s' failed"), optarg);
 			if (args.repeat_interval < 1)
-				errx(EXIT_FAILURE,
+				xerrx(EXIT_FAILURE,
 				     _("seconds argument `%s' is not positive number"), optarg);
 			break;
 		case 'c':
@@ -256,7 +257,7 @@ int main(int argc, char **argv)
 			flags |= FREE_REPEATCOUNT;
 			args.repeat_counter = strtoul(optarg, &endptr, 10);
 			if (errno || optarg == endptr || (endptr && *endptr))
-				errx(EXIT_FAILURE, _("count argument `%s' failed"), optarg);
+				xerrx(EXIT_FAILURE, _("count argument `%s' failed"), optarg);
 
 			break;
 		case HELP_OPTION:

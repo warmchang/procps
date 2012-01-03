@@ -245,7 +245,7 @@ static void iterate(struct run_time_conf_t *run_time)
 #endif
 	d = opendir("/proc");
 	if (!d)
-		err(EXIT_FAILURE, "/proc");
+		xerr(EXIT_FAILURE, "/proc");
 	while ((de = readdir(d))) {
 		if (de->d_name[0] > '9')
 			continue;
@@ -387,7 +387,7 @@ static void __attribute__ ((__noreturn__))
 				if (s)
 					printf("%s\n", s);
 				else
-					warnx(_("unknown signal name %s"),
+					xwarnx(_("unknown signal name %s"),
 					      optarg);
 				free(s);
 			} else {
@@ -448,7 +448,7 @@ int snice_prio_option(int *argc, char **argv)
 			prio = strtol_or_err(argv[i],
 					     _("failed to parse argument"));
 			if (prio < INT_MIN || INT_MAX < prio)
-				errx(EXIT_FAILURE,
+				xerrx(EXIT_FAILURE,
 				     _("priority %lu out of range"), prio);
 			nargs--;
 			if (nargs - i)
@@ -604,15 +604,15 @@ static void skillsnice_parse(int argc,
 
 	/* No more arguments to process. Must sanity check. */
 	if (!tty_count && !uid_count && !cmd_count && !pid_count)
-		errx(EXIT_FAILURE, _("no process selection criteria"));
+		xerrx(EXIT_FAILURE, _("no process selection criteria"));
 	if ((run_time->fast | run_time->interactive | run_time->
 	     verbose | run_time->warnings | run_time->noaction) & ~1)
-		errx(EXIT_FAILURE, _("general flags may not be repeated"));
+		xerrx(EXIT_FAILURE, _("general flags may not be repeated"));
 	if (run_time->interactive
 	    && (run_time->verbose | run_time->fast | run_time->noaction))
-		errx(EXIT_FAILURE, _("-i makes no sense with -v, -f, and -n"));
+		xerrx(EXIT_FAILURE, _("-i makes no sense with -v, -f, and -n"));
 	if (run_time->verbose && (run_time->interactive | run_time->fast))
-		errx(EXIT_FAILURE, _("-v makes no sense with -i and -f"));
+		xerrx(EXIT_FAILURE, _("-v makes no sense with -i and -f"));
 	if (run_time->noaction) {
 		program = PROG_SKILL;
 		/* harmless */
@@ -627,6 +627,7 @@ static void skillsnice_parse(int argc,
 /* main body */
 int main(int argc, char ** argv)
 {
+    program_invocation_name = program_invocation_short_name;
 	struct run_time_conf_t run_time;
 	memset(&run_time, 0, sizeof(struct run_time_conf_t));
 	my_pid = getpid();

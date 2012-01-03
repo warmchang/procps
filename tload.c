@@ -97,7 +97,8 @@ int main(int argc, char **argv)
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
 	};
-
+ 
+	program_invocation_name = program_invocation_short_name;
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -108,14 +109,14 @@ int main(int argc, char **argv)
 		case 's':
 			max_scale = strtod_or_err(optarg, _("failed to parse argument"));
 			if (max_scale < 0)
-			        errx(EXIT_FAILURE, _("scale cannot be negative"));
+			        xerrx(EXIT_FAILURE, _("scale cannot be negative"));
 			break;
 		case 'd':
 			tmpdly = strtol_or_err(optarg, _("failed to parse argument"));
 			if (tmpdly < 1)
-				errx(EXIT_FAILURE, _("delay must be positive integer"));
+				xerrx(EXIT_FAILURE, _("delay must be positive integer"));
 			else if (UINT_MAX < tmpdly)
-				errx(EXIT_FAILURE, _("too large delay value"));
+				xerrx(EXIT_FAILURE, _("too large delay value"));
 			dly = tmpdly;
 			break;
 		case 'V':
@@ -130,7 +131,7 @@ int main(int argc, char **argv)
 
 	if (argc > optind)
 		if ((fd = open(argv[optind], 1)) == -1)
-			err(EXIT_FAILURE, _("can not open tty"));
+			xerr(EXIT_FAILURE, _("can not open tty"));
 
 	setsize(0);
 

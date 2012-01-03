@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 	int o;
 	unsigned short old_rows;
 	struct slab_info *slab_list = NULL;
-  int run_once=0;
+	int run_once=0;
 
 	static const struct option longopts[] = {
 		{ "delay",	required_argument, NULL, 'd' },
@@ -287,6 +287,7 @@ int main(int argc, char *argv[])
 		{  NULL, 0, NULL, 0 }
 	};
 
+	program_invocation_name = program_invocation_short_name;
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -300,7 +301,7 @@ int main(int argc, char *argv[])
 			errno = 0;
 			delay = strtol_or_err(optarg, _("illegal delay"));
 			if (delay < 1)
-				errx(EXIT_FAILURE,
+				xerrx(EXIT_FAILURE,
 					_("delay must be positive integer"));
 			break;
 		case 's':
@@ -322,7 +323,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (tcgetattr(STDIN_FILENO, &saved_tty) == -1)
-		warn(_("terminal setting retrieval"));
+		xwarn(_("terminal setting retrieval"));
 
 	old_rows = rows;
 	term_size(0);

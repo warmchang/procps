@@ -360,7 +360,7 @@ static int diskpartition_format(const char *partition_name)
 
 	fDiskstat = fopen("/proc/diskstats", "rb");
 	if (!fDiskstat)
-		errx(EXIT_FAILURE,
+		xerrx(EXIT_FAILURE,
 		     _("Your kernel doesn't support diskstat. (2.5.70 or above required)"));
 
 	fclose(fDiskstat);
@@ -501,7 +501,7 @@ static void diskformat(void)
 			free(partitions);
 		}
 	} else
-		errx(EXIT_FAILURE,
+		xerrx(EXIT_FAILURE,
 		     _("Your kernel doesn't support diskstat (2.5.70 or above required)"));
 }
 
@@ -532,7 +532,7 @@ static void slabformat(void)
 
 	fSlab = fopen("/proc/slabinfo", "rb");
 	if (!fSlab) {
-		warnx(_("Your kernel doesn't support slabinfo or your permissions are insufficient."));
+		xwarnx(_("Your kernel doesn't support slabinfo or your permissions are insufficient."));
 		return;
 	}
 
@@ -706,6 +706,7 @@ int main(int argc, char *argv[])
 		{NULL, 0, NULL, 0}
 	};
 
+	program_invocation_name = program_invocation_short_name;
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -765,7 +766,7 @@ int main(int argc, char *argv[])
 				dataUnit = UNIT_M;
 				break;
 			default:
-				errx(EXIT_FAILURE,
+				xerrx(EXIT_FAILURE,
 				     /* Translation Hint: do not change argument characters */
 				     _("-S requires k, K, m or M (default is kb)"));
 			}
@@ -782,9 +783,9 @@ int main(int argc, char *argv[])
 	if (optind < argc) {
 		tmp = strtol_or_err(argv[optind++], _("failed to parse argument"));
 		if (tmp < 1)
-			errx(EXIT_FAILURE, _("delay must be positive integer"));
+			xerrx(EXIT_FAILURE, _("delay must be positive integer"));
 		else if (UINT_MAX < tmp)
-			errx(EXIT_FAILURE, _("too large delay value"));
+			xerrx(EXIT_FAILURE, _("too large delay value"));
 		sleep_time = tmp;
 		infinite_updates = 1;
 	}
