@@ -12,10 +12,12 @@
  * Copyright 2004 Albert Cahalan
  */
 
+#include "config.h"
 #include "proc/sysinfo.h"
 #include "proc/version.h"
 #include "c.h"
 #include "nls.h"
+#include "strutils.h"
 
 #include <locale.h>
 #include <errno.h>
@@ -255,10 +257,11 @@ int main(int argc, char **argv)
 		case 'c':
 			flags |= FREE_REPEAT;
 			flags |= FREE_REPEATCOUNT;
-			args.repeat_counter = strtoul(optarg, &endptr, 10);
-			if (errno || optarg == endptr || (endptr && *endptr))
-				xerrx(EXIT_FAILURE, _("count argument `%s' failed"), optarg);
-
+			args.repeat_counter = strtol_or_err(optarg,
+				_("failed to parse count argument"));
+			if (args.repeat_counter > ULONG_MAX/2)
+			  error(EXIT_FAILURE, ERANGE,
+				  _("failed to parse count argument: '%s'"), optarg);
 			break;
 		case HELP_OPTION:
 			usage(stdout);
