@@ -7,7 +7,7 @@ set meminfo [ exec cat /proc/meminfo ]
 regexp "MemTotal:\\s+\(\\d+\)" $meminfo -> memtotal_kb
 regexp "SwapTotal:\\s+\(\\d+\)" $meminfo -> swaptotal_kb
 
-set free_header "^\\s+total\\s+used\\s+free\\s+shared\\s+buffers\\s+cached\\s*"
+set free_header "\\s+total\\s+used\\s+free\\s+shared\\s+buffers\\s+cached\\s*"
 
 set test "free with no arguments"
 spawn $free
@@ -17,14 +17,14 @@ set test "free with -b argument"
 set memtotal [ expr { $memtotal_kb * 1024 } ]
 set swaptotal [ expr { $swaptotal_kb * 1024 } ]
 spawn $free -b
-expect_pass "$test" "${free_header}Mem:\\s+${memtotal}\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*-\\/\\+ buffers\\/cache:\\s+\\d+\\s+\\d+\\s*Swap:\\s+${swaptotal}\\s+\\d+\\s+\\d+\\s*"
+expect_pass "$test" "^${free_header}Mem:\\s+${memtotal}\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*-\\/\\+ buffers\\/cache:\\s+\\d+\\s+\\d+\\s*Swap:\\s+${swaptotal}\\s+\\d+\\s+\\d+\\s*"
 
 foreach {arg divisor } {-k 1 -m 1024 -g 1048576 } {
     set test "free with $arg argument"
     set memtotal [ expr { $memtotal_kb / $divisor } ]
     set swaptotal [ expr { $swaptotal_kb / $divisor } ]
     spawn $free $arg
-    expect_pass "$test"  "${free_header}Mem:\\s+$memtotal\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*-\\/\\+ buffers\\/cache:\\s+\\d+\\s+\\d+\\s*Swap:\\s+${swaptotal}\\s+\\d+\\s+\\d+\\s*"
+    expect_pass "$test"  "^${free_header}Mem:\\s+$memtotal\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*-\\/\\+ buffers\\/cache:\\s+\\d+\\s+\\d+\\s*Swap:\\s+${swaptotal}\\s+\\d+\\s+\\d+\\s*"
 }
 
 #set test "free with human readable output"
@@ -33,13 +33,26 @@ foreach {arg divisor } {-k 1 -m 1024 -g 1048576 } {
 
 set test "free with lo and hi memory statistics"
 spawn $free -l
-expect_pass "$test" "${free_header}Mem:\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*Low:\\s+\\d+\\s+\\d+\\s+\\d+\\s*High:\\s+\\d+\\s+\\d+\\s+\\d+\\s*-\\/\\+ buffers\\/cache:\\s+\\d+\\s+\\d+\\s*Swap:\\s+\\d+\\s+\\d+\\s+\\d+"
+expect_pass "$test" "^${free_header}Mem:\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*Low:\\s+\\d+\\s+\\d+\\s+\\d+\\s*High:\\s+\\d+\\s+\\d+\\s+\\d+\\s*-\\/\\+ buffers\\/cache:\\s+\\d+\\s+\\d+\\s*Swap:\\s+\\d+\\s+\\d+\\s+\\d+"
 
 set test "free old argument"
 spawn $free -o
-expect_pass "$test" "${free_header}Mem:\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*Swap:\\s+\\d+\\s+\\d+\\s+\\d+"
+expect_pass "$test" "^${free_header}Mem:\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*Swap:\\s+\\d+\\s+\\d+\\s+\\d+"
 
 set test "free with total"
 spawn $free -t
-expect_pass "$test" "${free_header}Mem:\\s+${memtotal_kb}\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*-\\/\\+ buffers\\/cache:\\s+\\d+\\s+\\d+\\s*Swap:\\s+${swaptotal_kb}\\s+\\d+\\s+\\d+\\s*Total:\\s+\\d+\\s+\\d+\\s+\\d+\\s*"
+expect_pass "$test" "^${free_header}Mem:\\s+${memtotal_kb}\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*-\\/\\+ buffers\\/cache:\\s+\\d+\\s+\\d+\\s*Swap:\\s+${swaptotal_kb}\\s+\\d+\\s+\\d+\\s*Total:\\s+\\d+\\s+\\d+\\s+\\d+\\s*"
 
+set test "free with negative repeat count"
+spawn $free -c -2
+expect_pass "$test" "\(lt-\)\?free: failed to parse count argument: '-2': Numerical result out of range"
+
+set test "free with zero repeat count"
+spawn $free -c 0
+expect_pass "$test" "\(lt-\)\?free: failed to parse count argument: '0': Numerical result out of range"
+
+set test "free with postive repeat count"
+set test "free with postive repeat count"
+spawn $free -c 2
+expect_continue "$test" "^${free_header}"
+expect_pass "$test" "${free_header}"
