@@ -519,7 +519,7 @@ int main(int argc, char *argv[])
 
 		/* allocate pipes */
 		if (pipe(pipefd) < 0)
-			err(7, _("pipe"));
+			xerr(7, _("Unable to create IPC pipes"));
 
 		/* flush stdout and stderr, since we're about to do fd stuff */
 		fflush(stdout);
@@ -529,18 +529,18 @@ int main(int argc, char *argv[])
 		child = fork();
 
 		if (child < 0) {	/* fork error */
-			err(2, _("fork"));
+			xerr(2, _("Unable to fork process"));
 		} else if (child == 0) {	/* in child */
 			close(pipefd[0]);	/* child doesn't need read side of pipe */
 			close(1);		/* prepare to replace stdout with pipe */
 			if (dup2(pipefd[1], 1) < 0) {	/* replace stdout with write side of pipe */
-				err(3, _("dup2"));
+				xerr(3, _("dup2 failed"));
 			}
 			dup2(1, 2);	/* stderr should default to stdout */
 
 			if (option_exec) {	/* pass command to exec instead of system */
 				if (execvp(command_argv[0], command_argv) == -1) {
-					err(4, _("exec"));
+					xerr(4, _("Unable to execute '%s'"), command_argv[0]);
 				}
 			} else {
 				status = system(command);	/* watch manpage promises sh quoting */
@@ -558,7 +558,7 @@ int main(int argc, char *argv[])
 		/* otherwise, we're in parent */
 		close(pipefd[1]);	/* close write side of pipe */
 		if ((p = fdopen(pipefd[0], "r")) == NULL)
-			err(5, _("fdopen"));
+			xerr(5, _("fdopen"));
 
 		for (y = show_title; y < height; y++) {
 			int eolseen = 0, tabpending = 0;
@@ -681,14 +681,16 @@ int main(int argc, char *argv[])
 
 		/* harvest child process and get status, propagated from command */
 		if (waitpid(child, &status, 0) < 0)
-			err(8, _("waitpid"));
+			xerr(8, _("waitpid"));
 
 		/* if child process exited in error, beep if option_beep is set */
 		if ((!WIFEXITED(status) || WEXITSTATUS(status))) {
 			if (option_beep)
 				beep();
-			if (option_errexit)
+			if (option_errexit) {
+				endwin();
 				exit(8);
+			}
 		}
 
 		first_screen = 0;
