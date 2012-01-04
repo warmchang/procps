@@ -336,6 +336,7 @@ static void bye_bye (const char *str) {
       "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t*) = %u"
       "\n\t   Frames_libflags = %08lX"
       "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
+      "\n\t   PACKAGE = '%s', LOCALEDIR = '%s'"
       "\n\tTerminal: %s"
       "\n\t   device = %s, ncurses = v%s"
       "\n\t   max_colors = %d, max_pairs = %d"
@@ -353,7 +354,7 @@ static void bye_bye (const char *str) {
 #else
       "\n\t   winflags = %08x, maxpflgs = %d"
 #endif
-      "\n\t   fieldscur = %s, sortindx  = %d"
+      "\n\t   sortindx  = %d, fieldscur = %s"
       "\n\t   maxtasks = %d, varcolsz = %d, winlines = %d"
       "\n\t   strlen(columnhdr) = %d"
       "\n"
@@ -368,6 +369,7 @@ static void bye_bye (const char *str) {
       , (unsigned)sizeof(proc_t), (unsigned)sizeof(p->cmd), (unsigned)sizeof(proc_t*)
       , (long)Frames_libflags
       , (unsigned)SCREENMAX, (unsigned)ROWMINSIZ, (unsigned)ROWMAXSIZ
+      , PACKAGE, LOCALEDIR
 #ifdef PRETENDNOCAP
       , "dumb"
 #else
@@ -384,7 +386,7 @@ static void bye_bye (const char *str) {
       , (unsigned)sizeof(WIN_t), GROUPSMAX
       , Curwin->rc.winname, Curwin->grpname
       , Curwin->rc.winflags, Curwin->maxpflgs
-      , Curwin->rc.fieldscur, Curwin->rc.sortindx
+      , Curwin->rc.sortindx, Curwin->rc.fieldscur
       , Curwin->rc.maxtasks, Curwin->varcolsz, Curwin->winlines
       , (int)strlen(Curwin->columnhdr)
       );
