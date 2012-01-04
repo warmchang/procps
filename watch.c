@@ -689,11 +689,14 @@ int main(int argc, char *argv[])
 			if (option_beep)
 				beep();
 			if (option_errexit) {
+				mvaddstr(height - 1, 0,
+					 _("Command exit with a non-zero status. Press a key to exit."));
+				refresh();
+				fgetc(stdin);
 				endwin();
 				exit(8);
 			}
 		}
-
 		first_screen = 0;
 		refresh();
 		if (precise_timekeeping) {
