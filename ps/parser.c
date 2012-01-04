@@ -1235,7 +1235,7 @@ try_bsd:
   //   changing the actual behavior of ps in any way.  I know of no
   //   other 'ps' that produces this message.
   if(!(personality & PER_FORCE_BSD))
-    fprintf(stderr, _("Warning: bad ps syntax, perhaps a bogus '-'? See http://procps.sf.net/faq.html\n"));
+    fprintf(stderr, _("Warning: bad ps syntax, perhaps a bogus '-'? See http://gitorious.org/procps/procps/blobs/master/FAQ\n"));
 #endif
   // Remember: contact procps@freelists.org
   // if you should feel tempted. Be damn sure you understand all
