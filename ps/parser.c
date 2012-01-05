@@ -46,9 +46,8 @@ static char *flagptr;  /* current location in ps_argv[thisarg] */
 static int not_pure_unix = 0;  /* set by BSD and GNU options */
 static int force_bsd = 0;  /* set when normal parsing fails */
 
-#define exclusive(x) if((ps_argc != 2) || strcmp(ps_argv[1],x))\
-  return _("The " x " option is exclusive.")
-
+#define exclusive(x) if((ps_argc != 2) || strcmp(ps_argv[1],x)) \
+  return _("the option is exclusive: " x)
 
 /********** utility functions **********/
 
@@ -318,7 +317,7 @@ static const char *parse_sysv_option(void){
     case 'U': /* end */
       trace("-U select by RUID (supports names).\n");
       arg=get_opt_arg();
-      if(!arg) return _("List of real groups must follow -U.");
+      if(!arg) return _("List of real users must follow -U.");
       err=parse_list(arg, parse_uid);
       if(err) return err;
       selection_list->typecode = SEL_RUID;
@@ -435,7 +434,7 @@ static const char *parse_sysv_option(void){
       selection_list->typecode = SEL_TTY;
       return NULL; /* can't have any more options */
     case 'u': /* end */
-      trace("-u select by user ID (the EUID?) (supports names).\n");
+      trace("-u select by user effective ID (supports names).\n");
       arg=get_opt_arg();
       if(!arg) return _("List of users must follow -u.");
       err=parse_list(arg, parse_uid);
