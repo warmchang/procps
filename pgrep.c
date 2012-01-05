@@ -85,7 +85,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(USAGE_OPTIONS, fp);
 	if (i_am_pkill == 0) {
 		fputs(_(" -c, --count               count of matching processes\n"
-			" -d, --delimeter <string>  update delay in seconds\n"
+			" -d, --delimeter <string>  specify output delimeter\n"
 			" -l, --list-name           list PID and process name\n"), fp);
 	}
 	if (i_am_pkill == 1) {
