@@ -45,36 +45,20 @@ sort criteria is to sort by the number of objects ("o").
 .PP
 The sort criteria can also be changed while slabtop is running by pressing
 the associated character.
-.TP
-.BR a: 
-sort by number of active objects
-.TP
-.BR b: 
-sort by objects per slab
-.TP
-.BR c: 
-sort by cache size
-.TP
-.BR l: 
-sort by number of slabs
-.TP
-.BR v
-sort by number of active slabs
-.TP
-.BR n: 
-sort by name
-.TP
-.BR o: 
-sort by number of objects
-.TP
-.BR p: 
-sort by pages per slab
-.TP
-.BR s: 
-sort by object size
-.TP
-.BR u: 
-sort by cache utilization
+.TS
+l l l.
+\fBcharacter	description	header\fR
+a	number of active objects	ACTIVE
+b	objects per slab	OBJ/SLAB
+c	cache size	CACHE SIZE
+l	number of slabs	SLABS
+v	number of active slabs	N/A
+n	name	NAME
+o	number of objects	OBJS
+p	pages per slab	N/A
+s	object size	OBJ SIZE
+u	cache utilization	USE
+.TE
 .SH COMMANDS
 .B slabtop
 accepts keyboard commands from the user during use.  The following are
