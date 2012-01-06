@@ -17,10 +17,13 @@ set test "vmstat fork option"
 spawn $vmstat -f
 expect_pass "$test" "^\\s+\\d+ forks\\s*$"
 
+if { [ file readable "/proc/slabinfo" ] == 0 } {
+    unsupported "slabinfo (-m option) test disabled as /proc/slabinfo is unreadable"
+} else {
 set test "vmstat slabinfo (-m option)"
 spawn $vmstat -m
 expect_pass "$test" "^Cache\\s+Num\\s+Total\\s+Size\\s+Pages\\s+\(\[\(\)A-Za-z0-9_-\]+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*\){1,}"
-
+}
 
 set test "vmstat disk information (-d option)"
 spawn $vmstat -d
