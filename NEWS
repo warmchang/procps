@@ -1,7 +1,9 @@
 procps-ng-3.3.1 --> procps-ng-3.3.2
 --------------------------------
 
-  * Redefined library to use version-info
+  * Redefined library to use version-info 
+  * NLS added! Programs can use po files to localise the output to suite
+    any supported languages.
   * Imported a bunch of distribution patches:
       watch: support unicode
       watch: add precision wait time option -p
@@ -33,6 +35,7 @@ procps-ng-3.3.1 --> procps-ng-3.3.2
       libproc-ng: support building without WCHAR support
       sysctl: remove index() for buildroot
   * top now has a search capability
+  * User import is validated better to stop negative values for intervals etc
 
 procps-ng-3.3.0 --> procps-ng-3.3.1
 --------------------------------
