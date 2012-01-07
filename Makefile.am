@@ -77,12 +77,13 @@ sysconf_DATA = sysctl.conf
 
 EXTRA_DIST = \
 	autogen.sh \
-	CodingStyle \
 	contrib \
 	COPYING.LIB \
+	Documentation/CodingStyle \
+	Documentation/TODO \
 	$(sysconf_DATA)
 
 procpsngdir = $(docdir)
 dist_procpsng_DATA = \
-	BUGS \
-	FAQ
+	Documentation/BUGS \
+	Documentation/FAQ
