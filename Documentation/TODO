@@ -39,12 +39,6 @@ Add all the stuff Solaris has. This would also replace ptrace.
 
 ---------------------- watch --------------------------
 
-Tolerate UTF-8.
-
-Tolerate color, bold, underline, etc. #129334
-
-Tolerate stderr.  #420377 #155227 #225549
-
 Tolerate VT100 line-drawing characters. Maybe translate them.
 
 ---------------------- w --------------------------
