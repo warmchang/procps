@@ -9,7 +9,7 @@ documentation!
 
 Where to send
 =============
-Send comments, bug reports, patches, etc., to albert@users.sf.net
+Send comments, bug reports, patches, etc., to procps@freelists.org
 
 
 What to send
@@ -25,6 +25,21 @@ strace and ltrace output are very helpful:
         bzip2 output-file
 
 I also like "ps --info" output, even if there isn't a ps problem.
+
+Patches
+=======
+
+Get latest version of the source from upstream git.
+
+git clone git://gitorious.org/procps/procps.git
+
+and use 'git format-patch' format. It is fine to attach patches as
+compressed tar balls.  When you are about to send very large number
+of patches consider setting up your personal clone, and send a pull
+request.
+
+git request-pull commit-id \
+	git://gitorious.org/~yourlogin/procps/your-clone.git
 
 Kernel-Dependent Patches
 ========================
@@ -43,20 +58,6 @@ A startup call to set_linux_version may also be necessary.
 Of course, if a bug is due to a change in kernel file formats, it would
 be best to first try to generalize the parsing, since the code is then
 more resilient against future change.
-
-Also unified diffs (diff -u) are my preference, context diffs (diff -c )
-are kind of usable, and standard diffs (diff) are more useless than a
-generic text description of what you did.  Just use
-	diff -Naurd oldfile newfile
-or
-	diff -Naurd old-procps-ng-dir new-procps-ng-dir
-to create your diffs and you will make me happy.  Also make sure to
-include a description of what the diff is for or I'm likely to ignore
-it because of general lack of time...
-
-It might be nice to get rid of miscellaneous compiler warnings, but
-don't bend over backwards to do it.
-
 
 Code Structure
 ==============
