@@ -30,7 +30,7 @@ mkinstalldirs
 pgrep
 pkill
 pmap
-procps-ng-*.tar.gz
+procps-ng-*.tar.xz
 proc/.depend
 proc/libprocps.la
 proc/libprocps.pc
