@@ -166,7 +166,7 @@ static void build_norm_nlstab (void) {
    .  c-code logic changes.
    . */
 
-   Norm_nlstab[EXIT_signals_fmt] = _(""
+   Norm_nlstab[EXIT_signals_fmt] = _("\n"
       "\tsignal %d (%s) was caught by %s, please\n"
       "\tsee http://www.debian.org/Bugs/Reporting\n");
    Norm_nlstab[WRONG_switch_fmt] = _(""
