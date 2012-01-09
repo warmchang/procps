@@ -62,7 +62,7 @@ dist_man_MANS += \
 slabtop_SOURCES = slabtop.c $(top_srcdir)/lib/strutils.c
 slabtop_LDADD = @NCURSES_LIBS@
 watch_SOURCES = watch.c $(top_srcdir)/lib/strutils.c
-watch_LDADD = @NCURSES_LIBS@
+watch_LDADD = @WATCH_NCURSES_LIBS@
 endif
 
 kill_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
