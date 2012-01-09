@@ -138,7 +138,7 @@ static int   Cap_can_goto = 0;
            The Stdout_buf is transparent to our code and regardless of whose
            buffer is used, stdout is flushed at frame end or if interactive. */
 static char  *Pseudo_screen;
-static int    Pseudo_row = -1;
+static int    Pseudo_row = PROC_XTRA;
 static size_t Pseudo_size;
 #ifndef OFF_STDIOLBF
         // less than stdout's normal buffer but with luck mostly '\n' anyway
@@ -2793,6 +2793,8 @@ static void keys_global (int ch) {
          if (!CHKw(w, View_STATES))
             show_msg(fmtmk(N_fmt(THREADS_show_fmt)
                , Thread_mode ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
+         // force an extra procs refresh to avoid %cpu distortions...
+         Pseudo_row = PROC_XTRA;
          break;
       case 'I':
          if (Cpu_tot > 1) {
@@ -3717,11 +3719,11 @@ static void frame_make (void) {
    if (Frames_paused) pause_pgm();
    if (Frames_resize) zap_fieldstab();
 
-   // whoa first time, gotta' prime the pump...
-   if (-1 == Pseudo_row) {
+   // whoa either first time or thread/task mode change, (re)prime the pump...
+   if (Pseudo_row == PROC_XTRA) {
       procs_refresh();
-      putp(Cap_clr_scr);
       usleep(LIB_USLEEP);
+      putp(Cap_clr_scr);
    } else
       putp(Batch ? "\n\n" : Cap_home);
 

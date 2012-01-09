@@ -127,6 +127,10 @@
 #define kbd_INS    '\x8a'
 #define kbd_DEL    '\x8b'
 
+        /* Special value in Pseudo_row to force an additional procs refresh
+           -- used at startup and for task/thread mode transitions */
+#define PROC_XTRA  -1
+
 
 /* #####  Enum's and Typedef's  ############################################ */
 
