@@ -57,11 +57,11 @@ extern unsigned long kb_pagetables;
 
 #define BUFFSIZE (64*1024)
 typedef unsigned long long jiff;
-extern void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff *restrict cide, jiff *restrict ciow, jiff *restrict cxxx, jiff *restrict cyyy, jiff *restrict czzz,
-	     unsigned long *restrict pin, unsigned long *restrict pout, unsigned long *restrict s_in, unsigned long *restrict sout,
-	     unsigned *restrict intr, unsigned *restrict ctxt,
-	     unsigned int *restrict running, unsigned int *restrict blocked,
-	     unsigned int *restrict btime, unsigned int *restrict processes);
+extern void getstat(jiff *__restrict cuse, jiff *__restrict cice, jiff *__restrict csys, jiff *__restrict cide, jiff *__restrict ciow, jiff *__restrict cxxx, jiff *__restrict cyyy, jiff *__restrict czzz,
+	     unsigned long *__restrict pin, unsigned long *__restrict pout, unsigned long *__restrict s_in, unsigned long *__restrict sout,
+	     unsigned *__restrict intr, unsigned *__restrict ctxt,
+	     unsigned int *__restrict running, unsigned int *__restrict blocked,
+	     unsigned int *__restrict btime, unsigned int *__restrict processes);
 
 extern void meminfo(void);
 

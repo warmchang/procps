@@ -103,6 +103,6 @@
 #endif
 
 
-typedef void (*message_fn)(const char *restrict, ...) __attribute__((format(printf,1,2)));
+typedef void (*message_fn)(const char *__restrict, ...) __attribute__((format(printf,1,2)));
 
 #endif

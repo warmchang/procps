@@ -173,10 +173,10 @@ typedef struct PROCTAB {
 //    char deBug1[64];
     pid_t	taskdir_user;  // for threads
     int         did_fake; // used when taskdir is missing
-    int(*finder)(struct PROCTAB *restrict const, proc_t *restrict const);
-    proc_t*(*reader)(struct PROCTAB *restrict const, proc_t *restrict const);
-    int(*taskfinder)(struct PROCTAB *restrict const, const proc_t *restrict const, proc_t *restrict const, char *restrict const);
-    proc_t*(*taskreader)(struct PROCTAB *restrict const, const proc_t *restrict const, proc_t *restrict const, char *restrict const);
+    int(*finder)(struct PROCTAB *__restrict const, proc_t *__restrict const);
+    proc_t*(*reader)(struct PROCTAB *__restrict const, proc_t *__restrict const);
+    int(*taskfinder)(struct PROCTAB *__restrict const, const proc_t *__restrict const, proc_t *__restrict const, char *__restrict const);
+    proc_t*(*taskreader)(struct PROCTAB *__restrict const, const proc_t *__restrict const, proc_t *__restrict const, char *__restrict const);
     pid_t*	pids;	// pids of the procs
     uid_t*	uids;	// uids of procs
     int		nuid;	// cannot really sentinel-terminate unsigned short[]
@@ -200,8 +200,8 @@ typedef struct proc_data_t {  // valued by: (else zero)
     int ntask;                //  *  readproctab2
 } proc_data_t;                //  *  when PROC_LOOSE_TASKS set
 
-extern proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), PROCTAB *restrict const PT);
-extern proc_data_t *readproctab3(int(*want_task)(proc_t *buf), PROCTAB *restrict const PT);
+extern proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), PROCTAB *__restrict const PT);
+extern proc_data_t *readproctab3(int(*want_task)(proc_t *buf), PROCTAB *__restrict const PT);
 
 // Convenient wrapper around openproc and readproc to slurp in the whole process
 // table subset satisfying the constraints of flags and the optional PID list.
@@ -222,12 +222,12 @@ extern void closeproc(PROCTAB* PT);
 //       only before first use.  Thereafter, the library will manage such
 //       a passed proc_t, freeing any additional acquired memory associated
 //       with the previous process or thread.
-extern proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p);
-extern proc_t* readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict t);
-extern proc_t* readeither(PROCTAB *restrict const PT, proc_t *restrict x);
+extern proc_t* readproc(PROCTAB *__restrict const PT, proc_t *__restrict p);
+extern proc_t* readtask(PROCTAB *__restrict const PT, const proc_t *__restrict const p, proc_t *__restrict t);
+extern proc_t* readeither(PROCTAB *__restrict const PT, proc_t *__restrict x);
 
 // warning: interface may change
-extern int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid);
+extern int read_cmdline(char *__restrict const dst, unsigned sz, unsigned pid);
 
 extern void look_up_our_self(proc_t *p);
 
