@@ -26,13 +26,6 @@ p             Script used to test ps when the library is not installed.
 utf           Empty file used to test "ps ut?" unmangling behavior.
 ps.1          Man page.
 
-Compiling:
-
-Whatever you do, don't trust the Makefiles. They are severely broken.
-You can touch top.h and top won't be recompiled, or you can change
-library files and discover that the library and programs won't be
-recompiled.
-
 Operation:
 
 Unless the personality forces BSD parsing, parser.c tries to parse the
