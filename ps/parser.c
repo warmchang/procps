@@ -483,7 +483,7 @@ static const char *parse_sysv_option(void){
       return _("Embedded '-' among SysV options makes no sense.");
       break;
     case '\0':
-      return _("Please report the \"SysV \\0 can't happen\" bug.");
+      catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
       break;
     default:
       return _("Unsupported SysV option.");
@@ -728,7 +728,7 @@ static const char *parse_bsd_option(void){
       return _("Embedded '-' among BSD options makes no sense.");
       break;
     case '\0':
-      return _("Please report the \"BSD \\0 can't happen\" bug.");
+      catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
       break;
     default:
       return _("Unsupported option (BSD syntax)");

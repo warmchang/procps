@@ -84,7 +84,7 @@ static int proc_was_listed(proc_t *buf){
   while(sn){
     switch(sn->typecode){
     default:
-      printf(_("Internal error in ps! Please report this bug.\n"));
+      catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
 
 #define return_if_match(foo,bar) \
         i=sn->n; while(i--) \

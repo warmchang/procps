@@ -507,3 +507,12 @@ void self_info(void){
   open_psdb(namelist_file);
   fprintf(stderr,"namelist_file=\"%s\"\n",namelist_file?namelist_file:"<no System.map file>");
 }
+
+void __attribute__ ((__noreturn__))
+catastrophic_failure(const char *filename,
+		     unsigned int linenum,
+		     const char *message)
+{
+  error_at_line(0, 0, filename, linenum, message);
+  abort();
+}

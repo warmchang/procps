@@ -96,12 +96,12 @@ static void O_wrap(sf_node *sfn, int otype){
   trailer = (otype=='b') ? "END_BSD" : "END_SYS5" ;
 
   fnode =  do_one_spec("pid",NULL);
-  if(!fnode)fprintf(stderr,_("Seriously crashing. Goodbye cruel world.\n"));
+  if(!fnode)catastrophic_failure(__FILE__, __LINE__, _("Seriously crashing. Goodbye cruel world."));
   endp = sfn->f_cooked; while(endp->next) endp = endp->next;  /* find end */
   endp->next = fnode;
 
   fnode =  do_one_spec(trailer,NULL);
-  if(!fnode) { fprintf(stderr,_("Seriously crashing. Goodbye cruel world.\n")); exit(1); }
+  if(!fnode)catastrophic_failure(__FILE__, __LINE__, _("Seriously crashing. Goodbye cruel world."));
   endp = fnode; while(endp->next) endp = endp->next;  /* find end */
   endp->next = sfn->f_cooked;
   sfn->f_cooked = fnode;
@@ -539,7 +539,7 @@ static const char *parse_O_option(sf_node *sfn){
       already_parsed_sort = 1;
       break;
     default:                                    /***  junk  ***/
-      return _("Bug: parse_O_option got weirdness!");
+      catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
   }
   return err; /* could be NULL */
 }
@@ -754,7 +754,7 @@ const char *process_sf_options(int localbroken){
     if(err) return err;
   }
 
-  if(format_list) printf(_("Bug: must reset the list first!\n"));
+  if(format_list) catastrophic_failure(__FILE__, __LINE__, _("Bug: must reset the list first!"));
 
   /* merge formatting info of sf_list into format_list here */
   sf_walk = sf_list;
@@ -884,7 +884,7 @@ const char *process_sf_options(int localbroken){
     if(format_modifiers & FM_j){
       fn = do_one_spec("pgid", NULL);
       if(!fmt_add_after("PPID", fn)) if(!fmt_add_after("PID", fn))
-        return _("Internal error, no PID or PPID for -j option.");
+        catastrophic_failure(__FILE__, __LINE__, _("Internal error, no PID or PPID for -j option."));
       fn = do_one_spec("sid", NULL);
       if(!fmt_add_after("PGID", fn)) return _("Lost my PGID!");
     }
@@ -899,7 +899,7 @@ const char *process_sf_options(int localbroken){
       fmt_delete("NI");
       fn = do_one_spec("class", NULL);
       if(!fmt_add_after("PRI", fn))
-        return _("Internal error, no PRI for -c option.");
+        catastrophic_failure(__FILE__, __LINE__, _("Internal error, no PRI for -c option."));
       fmt_delete("PRI"); /* we want a different one */
       fn = do_one_spec("pri", NULL);
       if(!fmt_add_after("CLS", fn)) return _("Lost my CLS!");

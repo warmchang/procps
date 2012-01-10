@@ -41,15 +41,13 @@ static void signal_handler(int signo){
   if(signo==SIGPIPE) _exit(0);  /* "ps | head" will cause this */
   /* fprintf() is not reentrant, but we _exit() anyway */
   fprintf(stderr,
-    _("\n\n"
-      "Signal %d (%s) caught by %s (%s).\n"
-      "Please send bug reports to <procps@freelists.org>\n"),
+    _("Signal %d (%s) caught by %s (%s).\n"),
     signo,
     signal_number_to_name(signo),
     myname,
     procps_version
   );
-  _exit(signo+128);
+  catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -250,7 +248,7 @@ static void lists_and_needs(void){
         t_end->need = 0;
         break;
       default:
-        fprintf(stderr, _("please report this bug\n"));
+        catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
         // FALL THROUGH
       case CF_PRINT_AS_NEEDED:
       case CF_PRINT_EVERY_TIME:

@@ -334,6 +334,8 @@ extern void do_help(const char *opt, int rc) NORETURN;
 
 /* global.c */
 extern void self_info(void);
+extern void catastrophic_failure(const char *filename, unsigned int linenum,
+				 const char *message);
 
 /* parser.c */
 extern int arg_parse(int argc, char *argv[]);
