@@ -1,3 +1,11 @@
+This file is no longer maintained.  Please see git log for the most
+up to date list about contributions.
+
+$ git clone git://gitorious.org/procps/procps.git
+# cd procps
+$ git shortlog --no-merges -sne
+
+-- Old credits ---
 free:
 Brian Edmonds
 
@@ -37,7 +45,7 @@ Larry Greenfield <greenfie@gauss.rutgers.edu>
 Michael K. Johnson <johnsonm@sunsite.unc.edu>
 
 vmstat:
-Henry Ware <al172@yfn.ysu.edu>. 
+Henry Ware <al172@yfn.ysu.edu>.
 
 w:
 Larry Greenfield <greenfie@gauss.rutgers.edu>
@@ -48,4 +56,3 @@ watch:
 Tony Rems <rembo@unisoft.com>
 Mike Coleman <mkc@acm.org>
 Jarrod Lowe <procps@rrod.net>
-
