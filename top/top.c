@@ -2148,13 +2148,13 @@ static void configs_read (void) {
    RCF_t rcdef = DEF_RCFILE;
 #endif
    float tmp_delay = DEF_DELAY;
-   char fbuf[LRGBUFSIZ];
+   char fbuf[LRGBUFSIZ], *p;
    FILE *fp;
    int i, x;
    char id;
 
-   if (!getenv("HOME")) snprintf(Rc_name, sizeof(Rc_name), ".%src", Myname);
-   else snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", getenv("HOME"), Myname);
+   p = getenv("HOME");
+   snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", (p && *p) ? p : ".", Myname);
 
    fp = fopen(SYS_RCFILESPEC, "r");
    if (fp) {
