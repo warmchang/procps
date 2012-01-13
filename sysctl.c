@@ -340,7 +340,7 @@ static int WriteSetting(const char *setting) {
    value = equals + 1;      /* point to the value in name=value */   
 
    if (!*name || !*value || name == equals) { 
-      xwarnx(_("Malformed setting \"%s\""), setting);
+      xwarnx(_("malformed setting \"%s\""), setting);
       return -2;
    }
 

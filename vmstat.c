@@ -361,7 +361,7 @@ static int diskpartition_format(const char *partition_name)
 	fDiskstat = fopen("/proc/diskstats", "rb");
 	if (!fDiskstat)
 		xerrx(EXIT_FAILURE,
-		     _("Your kernel doesn't support diskstat. (2.5.70 or above required)"));
+		     _("your kernel does not support diskstat. (2.5.70 or above required)"));
 
 	fclose(fDiskstat);
 	ndisks = getdiskstat(&disks, &partitions);
@@ -502,7 +502,7 @@ static void diskformat(void)
 		}
 	} else
 		xerrx(EXIT_FAILURE,
-		     _("Your kernel doesn't support diskstat (2.5.70 or above required)"));
+		     _("your kernel does not support diskstat (2.5.70 or above required)"));
 }
 
 static void slabheader(void)
@@ -532,7 +532,7 @@ static void slabformat(void)
 
 	fSlab = fopen("/proc/slabinfo", "rb");
 	if (!fSlab) {
-		xwarnx(_("Your kernel doesn't support slabinfo or your permissions are insufficient."));
+		xwarnx(_("your kernel does not support slabinfo or your permissions are insufficient"));
 		return;
 	}
 
@@ -813,7 +813,7 @@ int main(int argc, char *argv[])
 		break;
 	case (PARTITIONSTAT):
 		if (diskpartition_format(partition) == -1)
-			printf(_("Partition was not found\n"));
+			printf(_("partition was not found\n"));
 		break;
 	case (SLABSTAT):
 		slabformat();

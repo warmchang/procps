@@ -158,7 +158,7 @@ static void set_screen_size(void){
   }
 
   if((screen_cols<9) || (screen_rows<2))
-    fprintf(stderr,_("Your %dx%d screen size is bogus. Expect trouble.\n"),
+    fprintf(stderr,_("your %dx%d screen size is bogus. expect trouble\n"),
       screen_cols, screen_rows
     );
 }
@@ -231,11 +231,11 @@ static const char *set_personality(void){
   if(!s || !*s) s="unknown";   /* "Do The Right Thing[tm]" */
   if(getenv("I_WANT_A_BROKEN_PS")) s="old";
   sl = strlen(s);
-  if(sl > 15) return _("Environment specified an unknown personality.");
+  if(sl > 15) return _("environment specified an unknown personality");
   strncpy(buf, s, sl);
   buf[sl] = '\0';
   if ((saved_personality_text = strdup(buf))==NULL) {
-    fprintf(stderr, "Cannot strdup() personality text.\n");
+    fprintf(stderr, _("cannot strdup() personality text\n"));
     exit(EXIT_FAILURE);
   }
 
@@ -243,7 +243,7 @@ static const char *set_personality(void){
       sizeof(personality_table_struct), compare_personality_table_structs
   );
 
-  if(!found) return _("Environment specified an unknown personality.");
+  if(!found) return _("environment specified an unknown personality");
 
   goto *(found->jump);    /* See gcc extension info.  :-)   */
 

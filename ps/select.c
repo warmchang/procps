@@ -60,7 +60,7 @@ const char *select_bits_setup(void){
     simple_select = 0;
     break;
   default:
-    return _("Process selection options conflict.");
+    return _("process selection options conflict");
     break;
   }
   return NULL;

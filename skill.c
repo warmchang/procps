@@ -426,7 +426,7 @@ static void __attribute__ ((__noreturn__))
 #if 0
 static void _skillsnice_usage(int line)
 {
-	fprintf(stderr, _("Something at line %d.\n"), line);
+	fprintf(stderr, _("something at line %d\n"), line);
 	skillsnice_usage(stderr);
 }
 

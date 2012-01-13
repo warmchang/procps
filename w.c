@@ -392,7 +392,7 @@ int main(int argc, char **argv)
 		userlen = atoi(env_var);
 		if (userlen < 8 || userlen > USERSZ) {
 			xwarnx
-			    (_("User length environment PROCPS_USERLEN must be between 8 and %d, ignoring.\n"),
+			    (_("user length environment PROCPS_USERLEN must be between 8 and %d, ignoring\n"),
 			     USERSZ);
 			userlen = 8;
 		}
@@ -402,7 +402,7 @@ int main(int argc, char **argv)
 		fromlen = atoi(env_var);
 		if (fromlen < 8 || fromlen > HOSTSZ) {
 			xwarnx
-			    (_("From length environment PROCPS_FROMLEN must be between 8 and %d, ignoring.\n"),
+			    (_("from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"),
 			     HOSTSZ);
 			fromlen = 16;
 		}

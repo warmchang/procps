@@ -20,7 +20,7 @@
 #define INTERACTIVE 0
 #define STACK_TRACE 1
 
-char *stored_prog_name = "You forgot to set \"program\"";
+char *stored_prog_name = "you forgot to set \"program\"";
 static int stack_trace_done;
 
 /***********/

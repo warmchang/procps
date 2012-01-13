@@ -96,12 +96,12 @@ static void O_wrap(sf_node *sfn, int otype){
   trailer = (otype=='b') ? "END_BSD" : "END_SYS5" ;
 
   fnode =  do_one_spec("pid",NULL);
-  if(!fnode)catastrophic_failure(__FILE__, __LINE__, _("Seriously crashing. Goodbye cruel world."));
+  if(!fnode)catastrophic_failure(__FILE__, __LINE__, _("seriously crashing: goodbye cruel world"));
   endp = sfn->f_cooked; while(endp->next) endp = endp->next;  /* find end */
   endp->next = fnode;
 
   fnode =  do_one_spec(trailer,NULL);
-  if(!fnode)catastrophic_failure(__FILE__, __LINE__, _("Seriously crashing. Goodbye cruel world."));
+  if(!fnode)catastrophic_failure(__FILE__, __LINE__, _("seriously crashing: goodbye cruel world"));
   endp = fnode; while(endp->next) endp = endp->next;  /* find end */
   endp->next = sfn->f_cooked;
   sfn->f_cooked = fnode;
@@ -136,7 +136,7 @@ static const char *aix_format_parse(sf_node *sfn){
     items++;
     c = *walk++;
     if(c)         goto initial;
-    return _("Improper AIX field descriptor.");
+    return _("improper AIX field descriptor");
   looks_ok:
     ;
   }
@@ -157,12 +157,12 @@ static const char *aix_format_parse(sf_node *sfn){
       walk++;
       if(!aix){
         free(buf);
-        return _("Unknown AIX field descriptor.");
+        return _("unknown AIX field descriptor");
       }
       fnode =  do_one_spec(aix->spec, aix->head);
       if(!fnode){
         free(buf);
-        return _("AIX field descriptor processing bug.");
+        return _("AIX field descriptor processing bug");
       }
     } else {
       int len;
@@ -279,7 +279,7 @@ out:
         snprintf(
           errbuf,
           sizeof(errbuf),
-          _("Unknown user-defined format specifier \"%s\"."),
+          _("unknown user-defined format specifier \"%s\""),
           walk
         );
       }
@@ -305,10 +305,10 @@ out:
 
   /* errors may cause a retry looking for AIX format codes */
   if(0) unknown:  err=errbuf;
-  if(0) empty:    err=_("Empty format list.");
-  if(0) improper: err=_("Improper format list.");
-  if(0) badwidth: err=_("Column widths must be unsigned decimal numbers.");
-  if(0) notmacro: err=_("Can't set width for a macro (multi-column) format specifier.");
+  if(0) empty:    err=_("empty format list");
+  if(0) improper: err=_("improper format list");
+  if(0) badwidth: err=_("column widths must be unsigned decimal numbers");
+  if(0) notmacro: err=_("can not set width for a macro (multi-column) format specifier");
   if(strchr(sfn->sf,'%')) err = aix_format_parse(sfn);
   return err;
 }
@@ -361,7 +361,7 @@ static const char *long_sort_parse(sf_node *sfn){
     case ' ': case ',': case '\t': case '\n': case '\0':
       if(need_item){
         free(buf);
-        return _("Improper sort list");
+        return _("improper sort list");
       }
       need_item=1;
       break;
@@ -372,12 +372,12 @@ static const char *long_sort_parse(sf_node *sfn){
   } while (*++walk);
   if(!items){
     free(buf);
-    return _("Empty sort list.");
+    return _("empty sort list");
   }
 #ifdef STRICT_LIST
   if(need_item){    /* can't have trailing deliminator */
     free(buf);
-    return _("Improper sort list.");
+    return _("improper sort list");
   }
 #else
   if(need_item){    /* allow 1 trailing deliminator */
@@ -393,7 +393,7 @@ static const char *long_sort_parse(sf_node *sfn){
     snode = do_one_sort_spec(walk);
     if(!snode){
       free(buf);
-      return _("Unknown sort specifier.");
+      return _("unknown sort specifier");
     }
     endp = snode; while(endp->next) endp = endp->next;  /* find end */
     endp->next = sfn->s_cooked;
@@ -420,7 +420,7 @@ static const char *verify_short_sort(const char *arg){
   int i;
   const char *walk;
   int tmp;
-  if(strspn(arg,all) != strlen(arg)) return _("Bad sorting code.");
+  if(strspn(arg,all) != strlen(arg)) return _("bad sorting code");
   for(i=256; i--;) checkoff[i] = 0;
   walk = arg;
   for(;;){
@@ -431,13 +431,13 @@ static const char *verify_short_sort(const char *arg){
     case '+':
     case '-':
       tmp = *(walk+1);
-      if(!tmp || tmp=='+' || tmp=='-') return _("Bad sorting code.");
+      if(!tmp || tmp=='+' || tmp=='-') return _("bad sorting code");
       break;
     case 'P':
-      if(forest_type) return _("PPID sort and forest output conflict.");
+      if(forest_type) return _("PPID sort and forest output conflict");
       /* fall through */
     default:
-      if(checkoff[tmp]) return _("Bad sorting code.");   /* repeated */
+      if(checkoff[tmp]) return _("bad sorting code");   /* repeated */
       /* ought to check against already accepted sort options */
       checkoff[tmp] = 1;
       break;
@@ -471,9 +471,9 @@ static const char *short_sort_parse(sf_node *sfn){
       break;
     default:
       ss = search_shortsort_array(tmp);
-      if(!ss) return _("Unknown sort specifier.");
+      if(!ss) return _("unknown sort specifier");
       snode = do_one_sort_spec(ss->spec);
-      if(!snode) return _("Unknown sort specifier.");
+      if(!snode) return _("unknown sort specifier");
       snode->reverse = direction;
       endp = snode; while(endp->next) endp = endp->next;  /* find end */
       endp->next = sfn->s_cooked;
@@ -509,14 +509,14 @@ static const char *parse_O_option(sf_node *sfn){
       break;
     case SF_U_O:                                /*** format ***/
       /* Can have -l -f f u... set already_parsed_format like DEC does */
-      if(already_parsed_format) return _("option -O can not follow other format options.");
+      if(already_parsed_format) return _("option -O can not follow other format options");
       err = format_parse(sfn);
       if(err) return err;
       already_parsed_format = 1;
       O_wrap(sfn,'u'); /* must wrap user format in default */
       break;
     case SF_B_O:                                /***  both  ***/
-      if(have_gnu_sort || already_parsed_sort) err = _("Multiple sort options.");
+      if(have_gnu_sort || already_parsed_sort) err = _("multiple sort options");
       else err = verify_short_sort(sfn->sf);
       if(!err){ /* success as sorting code */
         short_sort_parse(sfn);
@@ -524,7 +524,7 @@ static const char *parse_O_option(sf_node *sfn){
         return NULL;
       }
       if(already_parsed_format){
-        err = _("option O is neither first format nor sort order.");
+        err = _("option O is neither first format nor sort order");
         break;
       }
       if(!format_parse(sfn)){ /* if success as format code */
@@ -534,7 +534,7 @@ static const char *parse_O_option(sf_node *sfn){
       }
       break;
     case SF_G_sort: case SF_B_m:                 /***  sort  ***/
-      if(already_parsed_sort) err = _("Multiple sort options.");
+      if(already_parsed_sort) err = _("multiple sort options");
       else err = long_sort_parse(sfn);
       already_parsed_sort = 1;
       break;
@@ -651,7 +651,7 @@ static int fmt_delete(const char *findme){
 static const char *generate_sysv_list(void){
   format_node *fn;
   if((format_modifiers & FM_y) && !(format_flags & FF_Ul))
-    return _("Modifier -y without format -l makes no sense.");
+    return _("modifier -y without format -l makes no sense");
   if(prefer_bsd_defaults){
     if(format_flags) PUSH("cmd");
     else PUSH("args");
@@ -754,7 +754,7 @@ const char *process_sf_options(int localbroken){
     if(err) return err;
   }
 
-  if(format_list) catastrophic_failure(__FILE__, __LINE__, _("Bug: must reset the list first!"));
+  if(format_list) catastrophic_failure(__FILE__, __LINE__, _("bug: must reset the list first"));
 
   /* merge formatting info of sf_list into format_list here */
   sf_walk = sf_list;
@@ -792,7 +792,7 @@ const char *process_sf_options(int localbroken){
   // with sorting. Do the threads remain grouped, with sorting
   // by process, or do the threads get sorted by themselves?
   if(sort_list && (thread_flags&TF_no_sort)){
-    return _("Tell <procps@freelists.org> what you expected.");
+    return _("tell <procps@freelists.org> what you expected");
   }
 
   // If nothing else, try to use $PS_FORMAT before the default.
@@ -802,7 +802,7 @@ const char *process_sf_options(int localbroken){
     if(tmp && *tmp){
       const char *err;
       sf_node sfn;
-      if(thread_flags&TF_must_use) return _("Tell <procps@freelists.org> what you want. (-L/-T, -m/m/H, and $PS_FORMAT)");
+      if(thread_flags&TF_must_use) return _("tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)");
       sfn.sf = tmp;
       sfn.f_cooked = NULL;
       err = format_parse(&sfn);
@@ -819,13 +819,13 @@ const char *process_sf_options(int localbroken){
         return NULL;
       }
       // FIXME: prove that this won't be hit on valid bogus-BSD options
-      fprintf(stderr, _("Warning: $PS_FORMAT ignored. (%s)\n"), err);
+      fprintf(stderr, _("warning: $PS_FORMAT ignored. (%s)\n"), err);
     }
   }
 
   if(format_list){
-    if(format_flags) return _("Conflicting format options.");
-    if(format_modifiers) return _("Can't use output modifiers with user-defined output");
+    if(format_flags) return _("conflicting format options");
+    if(format_modifiers) return _("can not use output modifiers with user-defined output");
     if(thread_flags&TF_must_use) return _("-L/-T with H/m/-m and -o/-O/o/O is nonsense");
     return NULL;
   }
@@ -834,7 +834,7 @@ const char *process_sf_options(int localbroken){
     const char *spec;
     switch(format_flags){
 
-    default:             return _("Conflicting format options.");
+    default:             return _("conflicting format options");
 
     /* These can be NULL, which enables SysV list generation code. */
     case 0:              spec=NULL;           break;
@@ -884,9 +884,9 @@ const char *process_sf_options(int localbroken){
     if(format_modifiers & FM_j){
       fn = do_one_spec("pgid", NULL);
       if(!fmt_add_after("PPID", fn)) if(!fmt_add_after("PID", fn))
-        catastrophic_failure(__FILE__, __LINE__, _("Internal error, no PID or PPID for -j option."));
+        catastrophic_failure(__FILE__, __LINE__, _("internal error: no PID or PPID for -j option"));
       fn = do_one_spec("sid", NULL);
-      if(!fmt_add_after("PGID", fn)) return _("Lost my PGID!");
+      if(!fmt_add_after("PGID", fn)) return _("lost my PGID");
     }
     if(format_modifiers & FM_y){
       /* TODO: check for failure to do something, and complain if so */
@@ -899,10 +899,10 @@ const char *process_sf_options(int localbroken){
       fmt_delete("NI");
       fn = do_one_spec("class", NULL);
       if(!fmt_add_after("PRI", fn))
-        catastrophic_failure(__FILE__, __LINE__, _("Internal error, no PRI for -c option."));
+        catastrophic_failure(__FILE__, __LINE__, _("internal error: no PRI for -c option"));
       fmt_delete("PRI"); /* we want a different one */
       fn = do_one_spec("pri", NULL);
-      if(!fmt_add_after("CLS", fn)) return _("Lost my CLS!");
+      if(!fmt_add_after("CLS", fn)) return _("lost my CLS");
     }
     if(thread_flags & TF_U_T){
       fn = do_one_spec("spid", NULL);

@@ -327,7 +327,7 @@ static void simple_spew(void){
 
   ptp = openproc(needs_for_format | needs_for_sort | needs_for_select | needs_for_threads);
   if(!ptp) {
-    fprintf(stderr, _("Error: can not access /proc.\n"));
+    fprintf(stderr, _("error: can not access /proc\n"));
     exit(1);
   }
   switch(thread_flags & (TF_show_proc|TF_loose_tasks|TF_show_task)){
@@ -375,7 +375,7 @@ static void prep_forest_sort(void){
 
   if(!sort_list) {     /* assume start time order */
     incoming = search_format_array("start_time");
-    if(!incoming) { fprintf(stderr, _("Could not find start_time!\n")); exit(1); }
+    if(!incoming) { fprintf(stderr, _("could not find start_time\n")); exit(1); }
     tmp_list = malloc(sizeof(sort_node));
     tmp_list->reverse = 0;
     tmp_list->typecode = '?'; /* what was this for? */
@@ -386,7 +386,7 @@ static void prep_forest_sort(void){
   }
   /* this is required for the forest option */
   incoming = search_format_array("ppid");
-  if(!incoming) { fprintf(stderr, _("Could not find ppid!\n")); exit(1); }
+  if(!incoming) { fprintf(stderr, _("could not find ppid\n")); exit(1); }
   tmp_list = malloc(sizeof(sort_node));
   tmp_list->reverse = 0;
   tmp_list->typecode = '?'; /* what was this for? */
@@ -500,7 +500,7 @@ static void fancy_spew(void){
 
   ptp = openproc(needs_for_format | needs_for_sort | needs_for_select | needs_for_threads);
   if(!ptp) {
-    fprintf(stderr, _("Error: can not access /proc.\n"));
+    fprintf(stderr, _("error: can not access /proc\n"));
     exit(1);
   }
 

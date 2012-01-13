@@ -384,13 +384,13 @@ int main(int argc, char *argv[])
 	/*mbstowcs(NULL, NULL, 0); */
 	wcommand_characters = mbstowcs(NULL, command, 0);
 	if (wcommand_characters < 0) {
-		fprintf(stderr, _("Unicode Handling Error\n"));
+		fprintf(stderr, _("unicode handling error\n"));
 		exit(EXIT_FAILURE);
 	}
 	wcommand =
 	    (wchar_t *) malloc((wcommand_characters + 1) * sizeof(wcommand));
 	if (wcommand == NULL) {
-		fprintf(stderr, _("Unicode Handling Error (malloc)\n"));
+		fprintf(stderr, _("unicode handling error (malloc)\n"));
 		exit(EXIT_FAILURE);
 	}
 	mbstowcs(wcommand, command, wcommand_characters + 1);
@@ -518,7 +518,7 @@ int main(int argc, char *argv[])
 
 		/* allocate pipes */
 		if (pipe(pipefd) < 0)
-			xerr(7, _("Unable to create IPC pipes"));
+			xerr(7, _("unable to create IPC pipes"));
 
 		/* flush stdout and stderr, since we're about to do fd stuff */
 		fflush(stdout);
@@ -528,7 +528,7 @@ int main(int argc, char *argv[])
 		child = fork();
 
 		if (child < 0) {	/* fork error */
-			xerr(2, _("Unable to fork process"));
+			xerr(2, _("unable to fork process"));
 		} else if (child == 0) {	/* in child */
 			close(pipefd[0]);	/* child doesn't need read side of pipe */
 			close(1);		/* prepare to replace stdout with pipe */
@@ -539,7 +539,7 @@ int main(int argc, char *argv[])
 
 			if (option_exec) {	/* pass command to exec instead of system */
 				if (execvp(command_argv[0], command_argv) == -1) {
-					xerr(4, _("Unable to execute '%s'"), command_argv[0]);
+					xerr(4, _("unable to execute '%s'"), command_argv[0]);
 				}
 			} else {
 				status = system(command);	/* watch manpage promises sh quoting */
@@ -688,7 +688,7 @@ int main(int argc, char *argv[])
 				beep();
 			if (option_errexit) {
 				mvaddstr(height - 1, 0,
-					 _("Command exit with a non-zero status. Press a key to exit."));
+					 _("command exit with a non-zero status, press a key to exit"));
 				refresh();
 				fgetc(stdin);
 				endwin();
