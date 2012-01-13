@@ -6,7 +6,7 @@
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 .\" GNU General Public License for more details."
-.TH SYSCTL "8" "June 2011" "procps-ng" "System Administration"
+.TH SYSCTL "8" "Jan 2012" "procps-ng" "System Administration"
 .SH NAME
 sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
@@ -55,7 +55,7 @@ Use this option to not display the values set to stdout.
 \fB\-w\fR, \fB\-\-write\fR
 Use this option when you want to change a sysctl setting.
 .TP
-\fB\-p\fR, \fB\-\-load\fR[=\fIFILE\fR]
+\fB\-p\fR[\fIFILE\fR], \fB\-\-load\fR[=\fIFILE\fR]
 Load in sysctl settings from the file specified or /etc/sysctl.conf if none
 given.  Specifying \- as filename means reading data from standard input.
 .TP
@@ -117,7 +117,7 @@ Display version information and exit.
 .br
 /sbin/sysctl \-w kernel.domainname="example.com"
 .br
-/sbin/sysctl \-p /etc/sysctl.conf
+/sbin/sysctl \-p/etc/sysctl.conf
 .br
 /sbin/sysctl \-a \-\-pattern forward
 .br
