@@ -634,7 +634,12 @@ static void capsmk (WIN_t *q) {
          , Caps_off, tparm(set_a_foreground, q->rc.taskclr));
    } else {
       q->capclr_sum[0] = '\0';
+#ifdef USE_X_COLHDR
+      snprintf(q->capclr_msg, sizeof(q->capclr_pmt), "%s%s"
+         , Cap_reverse, q->cap_bold);
+#else
       STRLCPY(q->capclr_msg, Cap_reverse)
+#endif
       STRLCPY(q->capclr_pmt, q->cap_bold)
       STRLCPY(q->capclr_hdr, Cap_reverse)
       STRLCPY(q->capclr_rownorm, Cap_norm)
