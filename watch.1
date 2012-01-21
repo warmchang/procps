@@ -140,6 +140,39 @@ as it can to catch up from a previous executions running longer than
 (for example,
 .B netstat
 taking ages on a DNS lookup).
+.SH "EXIT STATUS"
+.PP
+.RS
+.PD 0
+.TP
+.B 0
+Success.
+.TP
+.B 1
+Various failures.
+.TP
+.B 2
+Forking the process to watch failed.
+.TP
+.B 3
+Replacing child process stdout with write side pipe failed.
+.TP
+.B 4
+Command execution failed.
+.TP
+.B 5
+Closign child process write pipe failed.
+.TP
+.B 7
+IPC pipe creation failed.
+.TP
+.B 8
+Getting child process return value with
+.BR waitpid (2)
+failed, or command exited up on error.
+.TP
+.B other
+The watch will propagate command exit status as child exit status.
 .SH AUTHORS
 The original
 .B watch
