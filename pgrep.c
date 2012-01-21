@@ -779,7 +779,7 @@ int main (int argc, char **argv)
 			if (errno==ESRCH)
 				 // gone now, which is OK
 			        continue;
-			xwarn(_("killing pid %ld failed"));
+			xwarn(_("killing pid %d failed"), procs[i].num);
 		}
 	} else {
 		if (opt_count) {
