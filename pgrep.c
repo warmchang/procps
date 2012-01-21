@@ -783,7 +783,7 @@ int main (int argc, char **argv)
 		}
 	} else {
 		if (opt_count) {
-			fprintf(stdout, "%ld\n", num);
+			fprintf(stdout, "%d\n", num);
 		} else {
 			if (opt_long)
 				output_strlist (procs,num);
