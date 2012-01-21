@@ -45,7 +45,7 @@
 
 static int i_am_pkill = 0;
 
-union el {
+struct el {
 	long	num;
 	char *	str;
 };
@@ -62,16 +62,17 @@ static int opt_count = 0;
 static int opt_signal = SIGTERM;
 static int opt_lock = 0;
 static int opt_case = 0;
+static int opt_echo = 0;
 
 static const char *opt_delim = "\n";
-static union el *opt_pgrp = NULL;
-static union el *opt_rgid = NULL;
-static union el *opt_pid = NULL;
-static union el *opt_ppid = NULL;
-static union el *opt_sid = NULL;
-static union el *opt_term = NULL;
-static union el *opt_euid = NULL;
-static union el *opt_ruid = NULL;
+static struct el *opt_pgrp = NULL;
+static struct el *opt_rgid = NULL;
+static struct el *opt_pid = NULL;
+static struct el *opt_ppid = NULL;
+static struct el *opt_sid = NULL;
+static struct el *opt_term = NULL;
+static struct el *opt_euid = NULL;
+static struct el *opt_ruid = NULL;
 static char *opt_pattern = NULL;
 static char *opt_pidfile = NULL;
 
@@ -89,7 +90,8 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 			" -l, --list-name           list PID and process name\n"), fp);
 	}
 	if (i_am_pkill == 1) {
-		fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"), fp);
+		fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"
+			" -e, --echo                display what is killed\n"), fp);
 	}
 	fputs(_(" -f, --full                use full process name to match\n"
 		" -g, --pgroup <id,...>     match listed process group IDs\n"
@@ -113,14 +115,14 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	exit(fp == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static union el *split_list (const char *restrict str, int (*convert)(const char *, union el *))
+static struct el *split_list (const char *restrict str, int (*convert)(const char *, struct el *))
 {
 	char *copy = xstrdup (str);
 	char *ptr = copy;
 	char *sep_pos;
 	int i = 0;
 	int size = 0;
-	union el *list = NULL;
+	struct el *list = NULL;
 
 	do {
 		if (i == size) {
@@ -210,14 +212,14 @@ static int has_fcntl(int fd)
 	return fcntl(fd,F_SETLK,&f)==-1 && (errno==EACCES || errno==EAGAIN);
 }
 
-static union el *read_pidfile(void)
+static struct el *read_pidfile(void)
 {
 	char buf[12];
 	int fd;
 	struct stat sbuf;
 	char *endp;
 	int n, pid;
-	union el *list = NULL;
+	struct el *list = NULL;
 
 	fd = open(opt_pidfile, O_RDONLY|O_NOCTTY|O_NONBLOCK);
 	if(fd<0)
@@ -246,7 +248,7 @@ just_ret:
 	return list;
 }
 
-static int conv_uid (const char *restrict name, union el *restrict e)
+static int conv_uid (const char *restrict name, struct el *restrict e)
 {
 	struct passwd *pwd;
 
@@ -263,7 +265,7 @@ static int conv_uid (const char *restrict name, union el *restrict e)
 }
 
 
-static int conv_gid (const char *restrict name, union el *restrict e)
+static int conv_gid (const char *restrict name, struct el *restrict e)
 {
 	struct group *grp;
 
@@ -280,7 +282,7 @@ static int conv_gid (const char *restrict name, union el *restrict e)
 }
 
 
-static int conv_pgrp (const char *restrict name, union el *restrict e)
+static int conv_pgrp (const char *restrict name, struct el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
 		xwarnx(_("invalid process group: %s"), name);
@@ -292,7 +294,7 @@ static int conv_pgrp (const char *restrict name, union el *restrict e)
 }
 
 
-static int conv_sid (const char *restrict name, union el *restrict e)
+static int conv_sid (const char *restrict name, struct el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
 		xwarnx(_("invalid session id: %s"), name);
@@ -304,7 +306,7 @@ static int conv_sid (const char *restrict name, union el *restrict e)
 }
 
 
-static int conv_num (const char *restrict name, union el *restrict e)
+static int conv_num (const char *restrict name, struct el *restrict e)
 {
 	if (! strict_atol (name, &e->num)) {
 		xwarnx(_("not a number: %s"), name);
@@ -314,14 +316,14 @@ static int conv_num (const char *restrict name, union el *restrict e)
 }
 
 
-static int conv_str (const char *restrict name, union el *restrict e)
+static int conv_str (const char *restrict name, struct el *restrict e)
 {
 	e->str = xstrdup (name);
 	return 1;
 }
 
 
-static int match_numlist (long value, const union el *restrict list)
+static int match_numlist (long value, const struct el *restrict list)
 {
 	int found = 0;
 	if (list == NULL)
@@ -336,7 +338,7 @@ static int match_numlist (long value, const union el *restrict list)
 	return found;
 }
 
-static int match_strlist (const char *restrict value, const union el *restrict list)
+static int match_strlist (const char *restrict value, const struct el *restrict list)
 {
 	int found = 0;
 	if (list == NULL)
@@ -351,7 +353,7 @@ static int match_strlist (const char *restrict value, const union el *restrict l
 	return found;
 }
 
-static void output_numlist (const union el *restrict list, int num)
+static void output_numlist (const struct el *restrict list, int num)
 {
 	int i;
 	const char *delim = opt_delim;
@@ -362,7 +364,7 @@ static void output_numlist (const union el *restrict list, int num)
 	}
 }
 
-static void output_strlist (const union el *restrict list, int num)
+static void output_strlist (const struct el *restrict list, int num)
 {
 // FIXME: escape codes
 	int i;
@@ -370,7 +372,7 @@ static void output_strlist (const union el *restrict list, int num)
 	for (i = 0; i < num; i++) {
 		if(i+1==num)
 			delim = "\n";
-		printf ("%s%s", list[i].str, delim);
+		printf ("%lu %s%s", list[i].num, list[i].str, delim);
 	}
 }
 
@@ -429,7 +431,7 @@ static regex_t * do_regcomp (void)
 	return preg;
 }
 
-static union el * select_procs (int *num)
+static struct el * select_procs (int *num)
 {
 	PROCTAB *ptp;
 	proc_t task;
@@ -439,7 +441,7 @@ static union el * select_procs (int *num)
 	int size = 0;
 	regex_t *preg;
 	pid_t myself = getpid();
-	union el *list = NULL;
+	struct el *list = NULL;
 	char cmd[4096];
 
 	ptp = do_openproc();
@@ -533,10 +535,10 @@ static union el * select_procs (int *num)
 				size = size * 5 / 4 + 4;
 				list = xrealloc(list, size * sizeof *list);
 			}
-			if (opt_long) {
+			if (opt_long || opt_echo) {
 				char buff[5096];  // FIXME
-				sprintf (buff, "%d %s", task.XXXID, cmd);
-				list[matches++].str = xstrdup (buff);
+				list[matches].num = task.XXXID;
+				list[matches++].str = xstrdup (cmd);
 			} else {
 				list[matches++].num = task.XXXID;
 			}
@@ -578,6 +580,7 @@ static void parse_opts (int argc, char **argv)
 		{"exact", no_argument, NULL, 'x'},
 		{"pidfile", required_argument, NULL, 'F'},
 		{"logpidfile", no_argument, NULL, 'L'},
+		{"echo", no_argument, NULL, 'e'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -599,6 +602,8 @@ static void parse_opts (int argc, char **argv)
 				opt_signal = sig;
 			}
 		}
+		/* These options are for pkill only */
+		strcat (opts, "e");
 	} else {
 		/* These options are for pgrep only */
 		strcat (opts, "cld:");
@@ -612,6 +617,9 @@ static void parse_opts (int argc, char **argv)
 			opt_signal = signal_name_to_number (optarg);
 			if (opt_signal == -1 && isdigit (optarg[0]))
 				opt_signal = atoi (optarg);
+			break;
+		case 'e':
+			opt_echo = 1;
 			break;
 //		case 'D':   // FreeBSD: print info about non-matches for debugging
 //			break;
@@ -760,7 +768,7 @@ static void parse_opts (int argc, char **argv)
 
 int main (int argc, char **argv)
 {
-	union el *procs;
+	struct el *procs;
 	int num;
 
 	program_invocation_name = program_invocation_short_name;
@@ -774,8 +782,11 @@ int main (int argc, char **argv)
 	if (i_am_pkill) {
 		int i;
 		for (i = 0; i < num; i++) {
-			if (kill (procs[i].num, opt_signal) != -1)
-			        continue;
+			if (kill (procs[i].num, opt_signal) != -1) {
+				if (opt_echo)
+					printf(_("%s killed (pid %lu)\n"), procs[i].str, procs[i].num);
+				continue;
+			}
 			if (errno==ESRCH)
 				 // gone now, which is OK
 			        continue;
