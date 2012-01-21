@@ -187,8 +187,10 @@ int main(int argc, char **argv)
 		if (i > 0)
 			screen[i] = ' ';
 
-		write(fd, "\033[H", 3);
-		write(fd, screen, scr_size - 1);
+		if (write(fd, "\033[H", 3) < 0)
+			xerr(EXIT_FAILURE, _("writing to tty failed"));
+		if (write(fd, screen, scr_size - 1) < 0)
+			xerr(EXIT_FAILURE, _("writing to tty failed"));
 		pause();
 	}
 }
