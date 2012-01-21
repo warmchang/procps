@@ -151,17 +151,21 @@ int main(int argc, char **argv)
 
 		loadavg(&av[0], &av[1], &av[2]);
 
- repeat:
-		lines = av[0] * scale_fact;
-		row = nrows - 1;
+		while (1) {
+			lines = av[0] * scale_fact;
+			row = nrows - 1;
 
-		while (--lines >= 0) {
-			*(screen + row * ncols + col) = '*';
-			if (--row < 0) {
-				scale_fact /= 2.0;
-				goto repeat;
+			while (0 <= --lines) {
+				*(screen + row * ncols + col) = '*';
+				if (--row < 0) {
+					scale_fact /= 2.0;
+					break;
+				}
 			}
+			if (0 < row)
+				break;
 		}
+
 		while (row >= 0)
 			*(screen + row-- * ncols + col) = ' ';
 
