@@ -187,11 +187,9 @@ static void show_lists(void)
 {
 	int i;
 
-	/* Translation Hint: the following few messages to "CMD" are
-	 * for debugging, and does not have to be translated. */
-	fprintf(stderr, _("signal: %d\n"), sig_or_pri);
+	fprintf(stderr, "signal: %d\n", sig_or_pri);
 
-	fprintf(stderr, _("%d TTY: "), tty_count);
+	fprintf(stderr, "%d TTY: ", tty_count);
 	if (ttys) {
 		i = tty_count;
 		while (i--) {
@@ -201,7 +199,7 @@ static void show_lists(void)
 	} else
 		fprintf(stderr, "\n");
 
-	fprintf(stderr, _("%d UID: "), uid_count);
+	fprintf(stderr, "%d UID: ", uid_count);
 	if (uids) {
 		i = uid_count;
 		while (i--)
@@ -209,7 +207,7 @@ static void show_lists(void)
 	} else
 		fprintf(stderr, "\n");
 
-	fprintf(stderr, _("%d PID: "), pid_count);
+	fprintf(stderr, "%d PID: ", pid_count);
 	if (pids) {
 		i = pid_count;
 		while (i--)
@@ -217,7 +215,7 @@ static void show_lists(void)
 	} else
 		fprintf(stderr, "\n");
 
-	fprintf(stderr, _("%d CMD: "), cmd_count);
+	fprintf(stderr, "%d CMD: ", cmd_count);
 	if (cmds) {
 		i = cmd_count;
 		while (i--)
