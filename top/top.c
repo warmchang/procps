@@ -2772,6 +2772,10 @@ static void keys_global (int ch) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
 
    switch (ch) {
+      case '?':
+      case 'h':
+         help_view();
+         break;
       case 'B':
          TOGw(w, View_NOBOLD);
          capsmk(w);
@@ -2839,6 +2843,10 @@ static void keys_global (int ch) {
          break;
       case 'Z':
          wins_colors();
+         break;
+      case kbd_ENTER:        // these two have the effect of waking us
+      case kbd_SPACE:        // from 'select()', updating hotplugged
+         sysinfo_refresh(1); // resources and refreshing the display
          break;
       default:                    // keep gcc happy
          break;
@@ -3230,7 +3238,8 @@ static void do_key (int ch) {
       char keys[SMLBUFSIZ];
    } key_tab[] = {
       { keys_global,
-         { 'B', 'd', 'F', 'f', 'g', 'H', 'I', 'k', 'r', 's', 'Z' } },
+         { '?', 'B', 'd', 'F', 'f', 'g', 'H', 'h', 'I', 'k', 'r', 's', 'Z'
+         , kbd_ENTER, kbd_SPACE } },
       { keys_summary,
          { '1', 'C', 'l', 'm', 't' } },
       { keys_task,
@@ -3254,14 +3263,6 @@ static void do_key (int ch) {
       case 'W':              // no need for rebuilds
          file_writerc();
          return;
-      case '?':              // might need rebuilds,
-      case 'h':              // if curwin is changed
-         help_view();
-         break;
-      case kbd_ENTER:        // these two will have the effect of waking us
-      case kbd_SPACE:        // from 'select()', updating hotplugged resources
-         sysinfo_refresh(1); // and then refreshing the display
-         break;
       default:               // and now, the real work...
          for (i = 0; i < MAXTBL(key_tab); ++i)
             if (strchr(key_tab[i].keys, ch)) {
