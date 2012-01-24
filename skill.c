@@ -131,7 +131,7 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 	if (fd == -1) {
 		/* process exited maybe */
 		if (run_time->warnings)
-			warn(_("cannot open file %s"), buf);
+			xwarn(_("cannot open file %s"), buf);
 		return;
 	}
 	fstat(fd, &statbuf);
