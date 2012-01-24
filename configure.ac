@@ -127,7 +127,7 @@ AC_TRY_COMPILE([#include <argp.h>],
 
 AC_ARG_WITH([ncurses],
   AS_HELP_STRING([--without-ncurses], [build only applications not needing ncurses]),
-  [with_ncurses=no], [with_ncurses=yes]
+  [with_ncurses=$withval], [with_ncurses=yes]
 )
 
 if test "x$with_ncurses" = xno; then
