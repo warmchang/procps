@@ -31,6 +31,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
+#include <sys/wait.h>
 #include <termios.h>
 #include <termios.h>
 #include <time.h>
