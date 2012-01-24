@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 		char buf[10 + strlen(argv[i]) + 1];
 
 		if (check_pid_argument(argv[i]))
-			errx(EXIT_FAILURE, _("invalid process id: %s"),
+			xerrx(EXIT_FAILURE, _("invalid process id: %s"),
 			     argv[i]);
 		/*
 		 * At this point, all arguments are in the form

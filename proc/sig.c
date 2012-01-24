@@ -8,11 +8,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Library General Public License for more details.
  */
+#include <ctype.h>
 #include <signal.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "sig.h"
+#include "c.h"
 
 /* Linux signals:
  *
@@ -221,7 +223,7 @@ char *strtosig(const char *restrict s){
 
   copy = strdup(s);
   if (!copy)
-    err(EXIT_FAILURE, "cannot duplicate string");
+    xerrx(EXIT_FAILURE, "cannot duplicate string");
   for (p = copy; *p != '\0'; p++)
     *p = toupper(*p);
   p = copy;

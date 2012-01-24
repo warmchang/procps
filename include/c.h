@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <error.h>
 
 /*
  * Compiler specific stuff
