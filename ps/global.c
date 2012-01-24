@@ -17,6 +17,7 @@
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
+#include <error.h>
 
 #include <sys/ioctl.h>
 #include <sys/stat.h>
