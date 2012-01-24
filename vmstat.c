@@ -356,7 +356,7 @@ static int diskpartition_format(const char *partition_name)
 	struct disk_stat *disks;
 	struct partition_stat *partitions, *current_partition = NULL;
 	unsigned long ndisks, j, k, npartitions;
-	const char format[] = "%20u %10llu %10u %10u\n";
+	const char format[] = "%20u %10llu %10u %10llu\n";
 
 	fDiskstat = fopen("/proc/diskstats", "rb");
 	if (!fDiskstat)

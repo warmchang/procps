@@ -392,7 +392,7 @@ int main(int argc, char **argv)
 		userlen = atoi(env_var);
 		if (userlen < 8 || userlen > USERSZ) {
 			xwarnx
-			    (_("User length environment PROCPS_USERLEN must be between 8 and %d, ignoring.\n"),
+			    (_("User length environment PROCPS_USERLEN must be between 8 and %zu, ignoring.\n"),
 			     USERSZ);
 			userlen = 8;
 		}
