@@ -1,8 +1,6 @@
 LIBPROCPS_0 {
 global:
 	Hertz;
-	__cyg_profile_func_enter;
-	__cyg_profile_func_exit;
 	closeproc;
 	cpuinfo;
 	dev_to_tty;
@@ -12,16 +10,13 @@ global:
 	escape_strlist;
 	escaped_copy;
 	free_slabinfo;
-	freeproc;
 	get_pid_digits;
-	get_proc_stats;
 	get_slabinfo;
 	getbtime;
 	getdiskstat;
 	getpartitions_num;
 	getslabinfo;
 	getstat;
-	have_privs;
 	kb_active;
 	kb_high_free;
 	kb_high_total;
@@ -41,17 +36,14 @@ global:
 	loadavg;
 	look_up_our_self;
 	lookup_wchan;
-	main;
 	meminfo;
 	open_psdb;
 	open_psdb_message;
 	openproc;
 	pretty_print_signals;
-	print_given_signals;
 	print_uptime;
 	procps_version;
 	put_slabinfo;
-	read_cmdline;
 	readeither;
 	readproc;
 	readproctab2;
@@ -67,11 +59,6 @@ global:
 	unix_print_signals;
 	uptime;
 	user_from_uid;
-	vm_pgpgin;
-	vm_pgpgout;
-	vm_pswpin;
-	vm_pswpout;
-	vminfo;
 local:
 	*;
 };
