@@ -47,8 +47,9 @@ the symbolic signal name can be used.
 only.)
 .TP
 \fB\-c\fR, \fB\-\-count\fR
-Suppress normal output; instead print a count of matching processes.
-(\fBpgrep\fP only.)
+Suppress normal output; instead print a count of matching processes.  When
+count does not match anything, e.g. returns zero, the command will return
+non-zero value.  (\fBpgrep\fP only.)
 .TP
 \fB\-d\fR, \fB\-\-delimeter\fR \fIdelimiter\fP
 Sets the string used to delimit each process ID in the output (by default a
