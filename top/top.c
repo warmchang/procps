@@ -78,8 +78,7 @@ static unsigned Page_size;
 static unsigned Pg2K_shft = 0;
 
         /* SMP, Irix/Solaris mode, Linux 2.5.xx support */
-        /* (assume no IO-wait stats, overridden if linux 2.5.41) */
-static int         Cpu_tot;
+static int         Cpu_faux_tot;
 static float       Cpu_pmax;
 static const char *Cpu_States_fmts;
 
@@ -331,7 +330,7 @@ static void bye_bye (const char *str) {
       "\n\tProgram"
       "\n\t   Linux version = %u.%u.%u, %s"
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
-      "\n\t   Page_size = %d, Cpu_tot = %d"
+      "\n\t   Page_size = %d, Cpu_faux_tot = %d, smp_num_cpus = %d"
       "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%u HST_t's/Page), HHist_siz = %u"
       "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t*) = %u"
       "\n\t   Frames_libflags = %08lX"
@@ -364,7 +363,7 @@ static void bye_bye (const char *str) {
       , LINUX_VERSION_PATCH(linux_version_code)
       , procps_version
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
-      , Page_size, Cpu_tot , (unsigned) sizeof(CPU_t)
+      , Page_size, Cpu_faux_tot, (int)smp_num_cpus, (unsigned)sizeof(CPU_t)
       , (unsigned)sizeof(HST_t), Page_size / (unsigned)sizeof(HST_t), HHist_siz
       , (unsigned)sizeof(proc_t), (unsigned)sizeof(p->cmd), (unsigned)sizeof(proc_t*)
       , (long)Frames_libflags
@@ -1755,7 +1754,7 @@ static void zap_fieldstab (void) {
 always:
    Fieldstab[P_CPN].head = "P ";
    Fieldstab[P_CPN].fmts = "%1d ";
-   if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_tot))) {
+   if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)smp_num_cpus))) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
       snprintf(fmts_cpu, sizeof(fmts_cpu), "%%%ud ", digits);
       Fieldstab[P_CPN].head = "    P " + 5 - digits;
@@ -1764,9 +1763,9 @@ always:
 
    Cpu_pmax = 99.9;
    Fieldstab[P_CPU].fmts = " %#4.1f ";
-   if (Rc.mode_irixps && Cpu_tot > 1 && !Thread_mode) {
-      Cpu_pmax = 100.0 * Cpu_tot;
-      if (Cpu_tot > 10) {
+   if (Rc.mode_irixps && smp_num_cpus > 1 && !Thread_mode) {
+      Cpu_pmax = 100.0 * smp_num_cpus;
+      if (smp_num_cpus > 10) {
          if (Cpu_pmax > 99999.0) Cpu_pmax = 99999.0;
          Fieldstab[P_CPU].fmts = "%5.0f ";
       } else {
@@ -1786,7 +1785,7 @@ always:
          * we preserve all cpu data in our CPU_t array which is organized
          * as follows:
          *    cpus[0] thru cpus[n] == tics for each separate cpu
-         *    cpus[Cpu_tot]        == tics from the 1st /proc/stat line */
+         *    cpus[Cpu_faux_tot]   == tics from the 1st /proc/stat line */
 static CPU_t *cpus_refresh (CPU_t *cpus) {
    static FILE *fp = NULL;
    static int sav_cpus = -1;
@@ -1794,8 +1793,8 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    int i;
 
    /*** hotplug_acclimated ***/
-   if (sav_cpus != smp_num_cpus) {
-      Cpu_tot = sav_cpus = smp_num_cpus;
+   if (sav_cpus != Cpu_faux_tot) {
+      sav_cpus = Cpu_faux_tot;
       zap_fieldstab();
       if (fp) { fclose(fp); fp = NULL; }
       if (cpus) { free(cpus); cpus = NULL; }
@@ -1806,43 +1805,48 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    if (!fp) {
       if (!(fp = fopen("/proc/stat", "r")))
          error_exit(fmtmk(N_fmt(FAIL_statopn_fmt), strerror(errno)));
-      /* note: we allocate one more CPU_t than Cpu_tot so that the last slot
-               can hold tics representing the /proc/stat cpu summary (the first
-               line read) -- that slot supports our View_CPUSUM toggle */
-      cpus = alloc_c((1 + Cpu_tot) * sizeof(CPU_t));
+      /* note: we allocate one more CPU_t than Cpu_faux_tot so the last
+               slot can hold tics representing the /proc/stat cpu summary
+               (the 1st line) -- that slot supports our View_CPUSUM toggle */
+      cpus = alloc_c((1 + Cpu_faux_tot) * sizeof(CPU_t));
    }
    rewind(fp);
    fflush(fp);
 
-   // first value the last slot with the cpu summary line
-   cpus[Cpu_tot].x = cpus[Cpu_tot].y = cpus[Cpu_tot].z = 0;
-   // FIXME: can't tell above by kernel version number
+   // remember from last time around
+   memcpy(&cpus[Cpu_faux_tot].sav, &cpus[Cpu_faux_tot].cur, sizeof(CT_t));
+   // then value the last slot with the cpu summary line
    if (!fgets(buf, sizeof(buf), fp)) error_exit(N_txt(FAIL_statget_txt));
+   memset(&cpus[Cpu_faux_tot].cur, 0, sizeof(CT_t));
    if (4 > sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
-      , &cpus[Cpu_tot].u, &cpus[Cpu_tot].n, &cpus[Cpu_tot].s, &cpus[Cpu_tot].i
-      , &cpus[Cpu_tot].w, &cpus[Cpu_tot].x, &cpus[Cpu_tot].y, &cpus[Cpu_tot].z))
+      , &cpus[Cpu_faux_tot].cur.u, &cpus[Cpu_faux_tot].cur.n, &cpus[Cpu_faux_tot].cur.s
+      , &cpus[Cpu_faux_tot].cur.i, &cpus[Cpu_faux_tot].cur.w, &cpus[Cpu_faux_tot].cur.x
+      , &cpus[Cpu_faux_tot].cur.y, &cpus[Cpu_faux_tot].cur.z))
          error_exit(N_txt(FAIL_statget_txt));
-   // and just in case we're 2.2.xx compiled without SMP support...
-   if (1 == Cpu_tot)
-      memcpy(cpus, &cpus[1], sizeof(CPU_t));
-   // now value each separate cpu's tics
-   for (i = 0; i < Cpu_tot; i++) {
+
+   // now value each separate cpu's tics, maybe
+   for (i = 0; i < Cpu_faux_tot && i < Screen_rows; i++) {
 #ifdef PRETEND4CPUS
       rewind(fp);
       fgets(buf, sizeof(buf), fp);
 #endif
+      // remember from last time around
+      memcpy(&cpus[i].sav, &cpus[i].cur, sizeof(CT_t));
       if (!fgets(buf, sizeof(buf), fp)) error_exit(N_txt(FAIL_statget_txt));
-      cpus[i].x = cpus[i].y = cpus[i].z = 0;
-      // FIXME: can't tell above by kernel version number
-      if (4 > sscanf(buf, "cpu%u %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &cpus[i].id
-         , &cpus[i].u, &cpus[i].n, &cpus[i].s, &cpus[i].i
-         , &cpus[i].w, &cpus[i].x, &cpus[i].y, &cpus[i].z)) {
-            error_exit(N_txt(FAIL_statget_txt));
+      memset(&cpus[i].cur, 0, sizeof(CT_t));
+      if (4 > sscanf(buf, "cpu%d %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &cpus[i].id
+         , &cpus[i].cur.u, &cpus[i].cur.n, &cpus[i].cur.s
+         , &cpus[i].cur.i, &cpus[i].cur.w, &cpus[i].cur.x
+         , &cpus[i].cur.y, &cpus[i].cur.z)) {
+            memmove(&cpus[i], &cpus[Cpu_faux_tot], sizeof(CPU_t));
+            break;        // tolerate cpus taken offline
       }
 #ifdef PRETEND4CPUS
       cpus[i].id = i;
 #endif
    }
+   Cpu_faux_tot = i;      // tolerate cpus taken offline
+
    return cpus;
 } // end: cpus_refresh
 
@@ -1918,7 +1922,7 @@ static void prochlp (proc_t *this) {
       oldtimev.tv_usec = timev.tv_usec;
 
       // if in Solaris mode, adjust our scaling for all cpus
-      Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_tot));
+      Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : smp_num_cpus));
 #ifdef OFF_HST_HASH
       maxt_sav = Frame_maxtask;
 #endif
@@ -2061,6 +2065,7 @@ static void sysinfo_refresh (int forced) {
    /*** hotplug_acclimated ***/
    if (300 <= cur_secs - cpu_secs) {
       cpuinfo();
+      Cpu_faux_tot = smp_num_cpus;
       cpu_secs = cur_secs;
    }
 #endif
@@ -2086,7 +2091,7 @@ static void before (char *me) {
 #ifdef PRETEND4CPUS
    smp_num_cpus = 4;
 #endif
-   Cpu_tot = smp_num_cpus;
+   Cpu_faux_tot = smp_num_cpus;
    Cpu_States_fmts = N_unq(STATE_lin2x4_fmt);
    if (linux_version_code > LINUX_VERSION(2, 5, 41))
       Cpu_States_fmts = N_unq(STATE_lin2x5_fmt);
@@ -2806,7 +2811,7 @@ static void keys_global (int ch) {
          Pseudo_row = PROC_XTRA;
          break;
       case 'I':
-         if (Cpu_tot > 1) {
+         if (Cpu_faux_tot > 1) {
             Rc.mode_irixps = !Rc.mode_irixps;
             show_msg(fmtmk(N_fmt(IRIX_curmode_fmt)
                , Rc.mode_irixps ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
@@ -3309,20 +3314,21 @@ static void do_key (int ch) {
          *       display and thus requiring the cpu summary toggle */
 static void summaryhlp (CPU_t *cpu, const char *pfx) {
    /* we'll trim to zero if we get negative time ticks,
-      which has happened with some SMP kernels (pre-2.4?) */
+      which has happened with some SMP kernels (pre-2.4?)
+      and when cpus are dynamically added or removed */
  #define TRIMz(x)  ((tz = (SIC_t)(x)) < 0 ? 0 : tz)
    SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, z_frme, tot_frme, tz;
    float scale;
 
-   u_frme = cpu->u - cpu->u_sav;
-   s_frme = cpu->s - cpu->s_sav;
-   n_frme = cpu->n - cpu->n_sav;
-   i_frme = TRIMz(cpu->i - cpu->i_sav);
+   u_frme = TRIMz(cpu->cur.u - cpu->sav.u);
+   s_frme = TRIMz(cpu->cur.s - cpu->sav.s);
+   n_frme = TRIMz(cpu->cur.n - cpu->sav.n);
+   i_frme = TRIMz(cpu->cur.i - cpu->sav.i);
    if ((u_frme == 0) && (i_frme == 0)) i_frme = 100;
-   w_frme = cpu->w - cpu->w_sav;
-   x_frme = cpu->x - cpu->x_sav;
-   y_frme = cpu->y - cpu->y_sav;
-   z_frme = cpu->z - cpu->z_sav;
+   w_frme = TRIMz(cpu->cur.w - cpu->sav.w);
+   x_frme = TRIMz(cpu->cur.x - cpu->sav.x);
+   y_frme = TRIMz(cpu->cur.y - cpu->sav.y);
+   z_frme = TRIMz(cpu->cur.z - cpu->sav.z);
    tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme + x_frme + y_frme + z_frme;
    if (1 > tot_frme) tot_frme = 1;
    scale = 100.0 / (float)tot_frme;
@@ -3334,16 +3340,6 @@ static void summaryhlp (CPU_t *cpu, const char *pfx) {
       , (float)n_frme * scale, (float)i_frme * scale
       , (float)w_frme * scale, (float)x_frme * scale
       , (float)y_frme * scale, (float)z_frme * scale));
-
-   // remember for next time around
-   cpu->u_sav = cpu->u;
-   cpu->s_sav = cpu->s;
-   cpu->n_sav = cpu->n;
-   cpu->i_sav = cpu->i;
-   cpu->w_sav = cpu->w;
-   cpu->x_sav = cpu->x;
-   cpu->y_sav = cpu->y;
-   cpu->z_sav = cpu->z;
  #undef TRIMz
 } // end: summaryhlp
 
@@ -3381,13 +3377,13 @@ static void summary_show (void) {
 
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
-         summaryhlp(&smpcpu[Cpu_tot], N_txt(WORD_allcpus_txt));
+         summaryhlp(&smpcpu[Cpu_faux_tot], N_txt(WORD_allcpus_txt));
          Msg_row += 1;
       } else {
          int i;
          char tmp[MEDBUFSIZ];
          // display each cpu's states separately, screen height permitting...
-         for (i = 0; i < Cpu_tot; i++) {
+         for (i = 0; i < Cpu_faux_tot; i++) {
             snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), smpcpu[i].id);
             summaryhlp(&smpcpu[i], tmp);
             Msg_row += 1;

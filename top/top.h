@@ -51,9 +51,6 @@
               *** hotplug_acclimated ***
            ( hopefully libproc will also be supportive of our efforts ) */
 
-        /* And there are still some of these lurking here and there...
-              FIXME - blah, blah... */
-
         /* For introducing inaugural cgroup support, thanks to:
               Jan Gorig <jgorig@redhat.com> - April, 2011 */
 
@@ -207,19 +204,22 @@ typedef struct HST_t {
 } HST_t;
 #endif
 
-        /* This structure stores a frame's cpu tics used in history
-           calculations.  It exists primarily for SMP support but serves
+        /* These 2 structures store a frame's cpu tics used in history
+           calculations.  They exist primarily for SMP support but serve
            all environments. */
-typedef struct CPU_t {
+typedef struct CT_t {
    /* other kernels: u == user/us, n == nice/ni, s == system/sy, i == idle/id
       2.5.41 kernel: w == IO-wait/wa (io wait time)
       2.6.0  kernel: x == hi (hardware irq time), y == si (software irq time)
       2.6.11 kernel: z == st (virtual steal time) */
-   TIC_t u, n, s, i, w, x, y, z; // as represented in /proc/stat
-   TIC_t u_sav, s_sav, n_sav, i_sav, w_sav, x_sav, y_sav, z_sav; // in the order of our display
-   unsigned id;  // the CPU ID number
-} CPU_t;
+   TIC_t u, n, s, i, w, x, y, z;  // as represented in /proc/stat
+} CT_t;
 
+typedef struct CPU_t {
+   CT_t cur;                      // current frame's cpu tics
+   CT_t sav;                      // prior frame's cpu tics
+   int id;                        // the cpu id number (0 - nn)
+} CPU_t;
 
         /* /////////////////////////////////////////////////////////////// */
         /* Special Section: multiple windows/field groups  --------------- */
