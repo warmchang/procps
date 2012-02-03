@@ -27,6 +27,7 @@
 //#define ATEOJ_RPTSTD            /* report on misc stuff, at end-of-job     */
 //#define CASEUP_HEXES            /* show any hex values in upper case       */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
+//#define CPU_ZEROTICS            /* tolerate few tics when cpu off vs. idle */
 //#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */

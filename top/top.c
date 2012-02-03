@@ -3324,13 +3324,18 @@ static void summaryhlp (CPU_t *cpu, const char *pfx) {
    s_frme = TRIMz(cpu->cur.s - cpu->sav.s);
    n_frme = TRIMz(cpu->cur.n - cpu->sav.n);
    i_frme = TRIMz(cpu->cur.i - cpu->sav.i);
-   if ((u_frme == 0) && (i_frme == 0)) i_frme = 100;
    w_frme = TRIMz(cpu->cur.w - cpu->sav.w);
    x_frme = TRIMz(cpu->cur.x - cpu->sav.x);
    y_frme = TRIMz(cpu->cur.y - cpu->sav.y);
    z_frme = TRIMz(cpu->cur.z - cpu->sav.z);
    tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme + x_frme + y_frme + z_frme;
+#ifdef CPU_ZEROTICS
    if (1 > tot_frme) tot_frme = 1;
+#else
+   if (tot_frme < ((smp_num_cpus * 10) * Rc.delay_time))
+      tot_frme = u_frme = s_frme = n_frme = i_frme = w_frme = x_frme = y_frme = z_frme = 0;
+   if (1 > tot_frme) i_frme = tot_frme = 1;
+#endif
    scale = 100.0 / (float)tot_frme;
 
    /* display some kinda' cpu state percentages
