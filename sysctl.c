@@ -557,7 +557,7 @@ static int PreloadSystem(void)
 				continue;
 			/* check if config already known */
 			for (i = 0; i < ncfgs; ++i) {
-				if (!strcmp(cfgs[i]->name, de->d_name))
+				if (cfgs && !strcmp(cfgs[i]->name, de->d_name))
 					break;
 			}
 			if (i < ncfgs)
@@ -565,22 +565,32 @@ static int PreloadSystem(void)
 				continue;
 
 			if (ncfgs % nprealloc == 0)
-				cfgs = xrealloc(cfgs, sizeof(struct pair *) * (ncfgs + nprealloc));
-			cfgs[ncfgs] =
-			    xmalloc(sizeof(struct pair) + strlen(de->d_name) * 2 + 2 +
-				    strlen(dirs[di]) + 1);
-			cfgs[ncfgs]->name = (char *) cfgs[ncfgs] + sizeof(struct pair);
-			strcpy(cfgs[ncfgs]->name, de->d_name);
-			cfgs[ncfgs]->value =
-			    (char *) cfgs[ncfgs] + sizeof(struct pair) + strlen(cfgs[ncfgs]->name) +
-			    1;
-			sprintf(cfgs[ncfgs]->value, "%s/%s", dirs[di], de->d_name);
-			ncfgs++;
+				cfgs =
+				    xrealloc(cfgs,
+					     sizeof(struct pair *) * (ncfgs +
+								      nprealloc));
+
+			if (cfgs) {
+				cfgs[ncfgs] =
+				    xmalloc(sizeof(struct pair) +
+					    strlen(de->d_name) * 2 + 2 +
+					    strlen(dirs[di]) + 1);
+				cfgs[ncfgs]->name =
+				    (char *)cfgs[ncfgs] + sizeof(struct pair);
+				strcpy(cfgs[ncfgs]->name, de->d_name);
+				cfgs[ncfgs]->value =
+				    (char *)cfgs[ncfgs] + sizeof(struct pair) +
+				    strlen(cfgs[ncfgs]->name) + 1;
+				sprintf(cfgs[ncfgs]->value, "%s/%s", dirs[di],
+					de->d_name);
+				ncfgs++;
+			} else {
+				xerrx(EXIT_FAILURE, _("internal error"));
+			}
 
 		}
 		closedir(dp);
 	}
-
 	qsort(cfgs, ncfgs, sizeof(struct cfg *), sortpairs);
 
 	for (i = 0; i < ncfgs; ++i) {
