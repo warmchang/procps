@@ -129,6 +129,6 @@ int main(int argc, char *argv[])
 
 		printf("%s: %s\n", argv[i], s);
 	}
-
+	free(pathbuf);
 	return retval;
 }
