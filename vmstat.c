@@ -563,7 +563,7 @@ static void slabformat(void)
 		}
 		free(slabs);
 	}
-	free(fSlab);
+	fclose(fSlab);
 }
 
 static void disksum_format(void)
