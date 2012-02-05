@@ -116,12 +116,12 @@ static void discover_shm_minor(void)
 	return;
 }
 
-static const char *mapping_name(proc_t * p, unsigned KLONG addr,
+static char *mapping_name(proc_t * p, unsigned KLONG addr,
 				unsigned KLONG len, const char *mapbuf,
 				unsigned showpath, unsigned dev_major,
 				unsigned dev_minor, unsigned long long inode)
 {
-	const char *cp;
+	char *cp;
 
 	if (!dev_major && dev_minor == shm_minor && strstr(mapbuf, "/SYSV")) {
 		static char shmbuf[64];
@@ -433,11 +433,11 @@ int main(int argc, char **argv)
 				if(arg2) ++arg2;
 				else arg2 = arg1;
 
-				if (*arg1)
+				if (arg1 && *arg1)
 					range_low = STRTOUKL(arg1, &arg1, 16);
 				if (*arg2)
 					range_high = STRTOUKL(arg2, &arg2, 16);
-				if (*arg1 || *arg2)
+				if (arg1 && (*arg1 || *arg2))
 					usage(stderr);
 			}
 			break;
