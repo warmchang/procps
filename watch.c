@@ -707,7 +707,5 @@ int main(int argc, char *argv[])
 			usleep(interval * 1000000);
 	}
 
-	endwin();
-
-	return EXIT_SUCCESS;
+	return EXIT_FAILURE;
 }
