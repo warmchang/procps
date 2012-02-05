@@ -546,7 +546,7 @@ static void skillsnice_parse(int argc,
 					ENLIST(tty, sbuf.st_rdev);
 					if (!NEXTARG)
 						break;
-				} else if (!(optarg[1])) {
+				} else if (optarg && !(optarg[1])) {
 					/* if only 1 character */
 					switch (*optarg) {
 					default:
