@@ -134,7 +134,7 @@ static struct el *split_list (const char *restrict str, int (*convert)(const cha
 		if (sep_pos)
 			*sep_pos = 0;
 		// Use ++i instead of i++ because slot zero is a count
-		if (!convert (ptr, &list[++i]))
+		if (list && !convert (ptr, &list[++i]))
 			exit (EXIT_USAGE);
 		if (sep_pos)
 			ptr = sep_pos + 1;
@@ -535,12 +535,14 @@ static struct el * select_procs (int *num)
 				size = size * 5 / 4 + 4;
 				list = xrealloc(list, size * sizeof *list);
 			}
-			if (opt_long || opt_echo) {
+			if (list && (opt_long || opt_echo)) {
 				char buff[5096];  // FIXME
 				list[matches].num = task.XXXID;
 				list[matches++].str = xstrdup (cmd);
-			} else {
+			} else if (list) {
 				list[matches++].num = task.XXXID;
+			} else {
+				xerrx(EXIT_FAILURE, _("internal error"));
 			}
 		}
 		
