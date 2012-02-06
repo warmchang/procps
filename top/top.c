@@ -3417,7 +3417,7 @@ static void summary_show (void) {
       int shift = 0;
 
       /*** hotplug_acclimated ***/
-      if (kb_main_total > 9999999)
+      if (kb_main_total > 99999999)
          { which = N_txt(AMT_megabyte_txt); shift = 10; }
       if (kb_main_total > 9999999999ull)
          { which = N_txt(AMT_gigabyte_txt); shift = 20; }
