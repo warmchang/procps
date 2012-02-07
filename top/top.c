@@ -1826,13 +1826,14 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    cpus[Cpu_faux_tot].cur.tot = cpus[Cpu_faux_tot].cur.u + cpus[Cpu_faux_tot].cur.s
       + cpus[Cpu_faux_tot].cur.n + cpus[Cpu_faux_tot].cur.i + cpus[Cpu_faux_tot].cur.w
       + cpus[Cpu_faux_tot].cur.x + cpus[Cpu_faux_tot].cur.y + cpus[Cpu_faux_tot].cur.z;
+#ifndef CPU_ZEROTICS
    /* if a Nehalem type cpu has been turned off completely, and thus registers
       very few total tics, we'll force it to be treated as idle when that total
       falls below a % of those expected -- other cpus will register their full
       number of expected tics as 'idle' and thus won't be effected */
    cpus[Cpu_faux_tot].edge =
       ((cpus[Cpu_faux_tot].cur.tot - cpus[Cpu_faux_tot].sav.tot) / smp_num_cpus) / (100 / TICS_EDGE);
-
+#endif
    // now value each separate cpu's tics, maybe
    for (i = 0; i < Cpu_faux_tot && i < Screen_rows; i++) {
 #ifdef PRETEND4CPUS
@@ -1850,7 +1851,9 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
             memmove(&cpus[i], &cpus[Cpu_faux_tot], sizeof(CPU_t));
             break;        // tolerate cpus taken offline
       }
+#ifndef CPU_ZEROTICS
       cpus[i].edge = cpus[Cpu_faux_tot].edge;
+#endif
       // this is for symmetry only, it's not currently required
       cpus[i].cur.tot = cpus[Cpu_faux_tot].cur.tot;
 #ifdef PRETEND4CPUS

@@ -56,11 +56,15 @@
               Jan Gorig <jgorig@redhat.com> - April, 2011 */
 
         /* For the motivation and path to nls support, thanks to:
-              Sami Kerola, <kerolasa@iki.fi> */
+              Sami Kerola, <kerolasa@iki.fi> - December, 2011 */
 
         /* There are still some short strings that may yet be candidates
            for nls support inclusion.  They're identified with:
               // nls_maybe */
+
+        /* For initiating the topic of potential % CPU distortions due
+           to Nehalem type processors (see CPU_ZEROTICS), thanks to:
+               Jaromir Capik, <jcapik@redhat.com> - February, 2012 */
 
 #ifdef PRETEND2_5_X
 #define linux_version_code LINUX_VERSION(2,5,43)
@@ -225,7 +229,9 @@ typedef struct CT_t {
 typedef struct CPU_t {
    CT_t cur;                      // current frame's cpu tics
    CT_t sav;                      // prior frame's cpu tics
+#ifndef CPU_ZEROTICS
    SIC_t edge;                    // tics adjustment threshold boundary
+#endif
    int id;                        // the cpu id number (0 - nn)
 } CPU_t;
 
