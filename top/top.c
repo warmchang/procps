@@ -568,7 +568,7 @@ static void sig_paused (int dont_care_sig) {
          *    SIGCONT and SIGWINCH */
 static void sig_resize (int dont_care_sig) {
    (void)dont_care_sig;
-   Frames_resize = 1;
+   Frames_resize = 2;
 } // end: sig_resize
 
 /*######  Misc Color/Display support  ####################################*/
@@ -1357,7 +1357,7 @@ static void adj_geometry (void) {
       Pseudo_screen = alloc_r(Pseudo_screen, pseudo_max);
    }
    PSU_CLREOS(0);
-   if (Frames_resize) putp(Cap_clr_scr);
+   if (Frames_resize > 1) putp(Cap_clr_scr);
 } // end: adj_geometry
 
 
