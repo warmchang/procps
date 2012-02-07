@@ -252,7 +252,7 @@ SCB_NUM1(VRT, size)
 SCB_NUM1(WCH, wchan)
 
 #ifdef OFF_HST_HASH
-        /* special sort for prochlp() ! -------------------------- */
+        /* special sort for procs_hlp() ! ------------------------ */
 static int sort_HST_t (const HST_t *P, const HST_t *Q) {
    return P->pid - Q->pid;
 }
@@ -1916,7 +1916,7 @@ static inline void hstput (unsigned idx) {
          *    2) counting the number of tasks in each state (run, sleep, etc)
          *    3) maintaining the HST_t's and priming the proc_t pcpu field
          *    4) establishing the total number tasks for this frame */
-static void prochlp (proc_t *this) {
+static void procs_hlp (proc_t *this) {
 #ifdef OFF_HST_HASH
    static unsigned maxt_sav = 0;        // prior frame's max tasks
 #endif
@@ -2005,7 +2005,7 @@ static void prochlp (proc_t *this) {
 
    // shout this to the world with the final call (or us the next time in)
    Frame_maxtask++;
-} // end: prochlp
+} // end: procs_hlp
 
 
         /*
@@ -2013,7 +2013,7 @@ static void prochlp (proc_t *this) {
          * we reuse and extend any prior proc_t's.  He's been customized
          * for our specific needs and to avoid the use of <stdarg.h> */
 static void procs_refresh (void) {
- #define n_used  Frame_maxtask                   // maintained by prochlp()
+ #define n_used  Frame_maxtask                   // maintained by procs_hlp()
    static proc_t **private_ppt;                  // our base proc_t ptr table
    static int n_alloc = 0;                       // size of our private_ppt
    static int n_saved = 0;                       // last window ppt size
@@ -2022,7 +2022,7 @@ static void procs_refresh (void) {
    int i;
    proc_t*(*read_something)(PROCTAB*, proc_t*);
 
-   prochlp(NULL);                                // prep for a new frame
+   procs_hlp(NULL);                              // prep for a new frame
    if (NULL == (PT = openproc(Frames_libflags, Monpids)))
       error_exit(fmtmk(N_fmt(FAIL_openlib_fmt), strerror(errno)));
    read_something = Thread_mode ? readeither : readproc;
@@ -2037,7 +2037,7 @@ static void procs_refresh (void) {
       // on the way to n_alloc, the library will allocate the underlying
       // proc_t storage whenever our private_ppt[] pointer is NULL...
       if (!(ptask = read_something(PT, private_ppt[n_used]))) break;
-      prochlp((private_ppt[n_used] = ptask));    // tally this proc_t
+      procs_hlp((private_ppt[n_used] = ptask));  // tally this proc_t
    }
 
    closeproc(PT);
@@ -2514,7 +2514,7 @@ static int win_warn (int what) {
         /*
          * Change colors *Helper* function to save/restore settings;
          * ensure colors will show; and rebuild the terminfo strings. */
-static void winsclrhlp (WIN_t *q, int save) {
+static void wins_clrhlp (WIN_t *q, int save) {
    static int flgssav, summsav, msgssav, headsav, tasksav;
 
    if (save) {
@@ -2526,7 +2526,7 @@ static void winsclrhlp (WIN_t *q, int save) {
       q->rc.msgsclr = msgssav;  q->rc.headclr = headsav; q->rc.taskclr = tasksav;
    }
    capsmk(q);
-} // end: winsclrhlp
+} // end: wins_clrhlp
 
 
         /*
@@ -2542,7 +2542,7 @@ static void wins_colors (void) {
       show_msg(N_txt(COLORS_nomap_txt));
       return;
    }
-   winsclrhlp(w, 1);
+   wins_clrhlp(w, 1);
    putp(Cap_clr_scr);
    putp(Cap_curs_huge);
 
@@ -2592,7 +2592,7 @@ static void wins_colors (void) {
             break;
          case 'a':
          case 'w':
-            winsclrhlp((w = win_select(ch)), 1);
+            wins_clrhlp((w = win_select(ch)), 1);
             clr = w->rc.taskclr, pclr = &w->rc.taskclr;
             tgt = 'T';
             break;
@@ -2602,7 +2602,7 @@ static void wins_colors (void) {
       capsmk(w);
    } while (kbdAPPLY != ch && kbdABORT != ch);
 
-   if (kbdABORT == ch) winsclrhlp(w, 0);
+   if (kbdABORT == ch) wins_clrhlp(w, 0);
    putp(Cap_curs_norm);
  #undef kbdABORT
  #undef kbdAPPLY
@@ -3327,7 +3327,7 @@ static void do_key (int ch) {
          *    2) modest smp boxes with room for each cpu's percentages
          *    3) massive smp guys leaving little or no room for process
          *       display and thus requiring the cpu summary toggle */
-static void summaryhlp (CPU_t *cpu, const char *pfx) {
+static void summary_hlp (CPU_t *cpu, const char *pfx) {
    /* we'll trim to zero if we get negative time ticks,
       which has happened with some SMP kernels (pre-2.4?)
       and when cpus are dynamically added or removed */
@@ -3361,7 +3361,7 @@ static void summaryhlp (CPU_t *cpu, const char *pfx) {
       , (float)w_frme * scale, (float)x_frme * scale
       , (float)y_frme * scale, (float)z_frme * scale));
  #undef TRIMz
-} // end: summaryhlp
+} // end: summary_hlp
 
 
         /*
@@ -3397,7 +3397,7 @@ static void summary_show (void) {
 
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
-         summaryhlp(&smpcpu[Cpu_faux_tot], N_txt(WORD_allcpus_txt));
+         summary_hlp(&smpcpu[Cpu_faux_tot], N_txt(WORD_allcpus_txt));
          Msg_row += 1;
       } else {
          int i;
@@ -3405,7 +3405,7 @@ static void summary_show (void) {
          // display each cpu's states separately, screen height permitting...
          for (i = 0; i < Cpu_faux_tot; i++) {
             snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), smpcpu[i].id);
-            summaryhlp(&smpcpu[i], tmp);
+            summary_hlp(&smpcpu[i], tmp);
             Msg_row += 1;
             if (!isROOM(anyFLG, 1)) break;
          }
@@ -3697,7 +3697,7 @@ static int window_show (WIN_t *q, int wmax) {
         /*
          * This guy's just a *Helper* function who apportions the
          * remaining amount of screen real estate under multiple windows */
-static void framehlp (int wix, int max) {
+static void frame_hlp (int wix, int max) {
    int i, size, wins;
 
    // calc remaining number of visible windows
@@ -3714,7 +3714,7 @@ static void framehlp (int wix, int max) {
       (foxized  adj. -  'fair and balanced') */
    Winstk[wix].winlines =
       Winstk[wix].rc.maxtasks ? Winstk[wix].rc.maxtasks : size;
-} // end: framehlp
+} // end: frame_hlp
 
 
         /*
@@ -3765,7 +3765,7 @@ static void frame_make (void) {
       // maybe NO window is visible but assume, pieces o' cakes
       for (i = 0 ; i < GROUPSMAX; i++) {
          if (CHKw(&Winstk[i], Show_TASKON)) {
-            framehlp(i, Max_lines - scrlins);
+            frame_hlp(i, Max_lines - scrlins);
             scrlins += window_show(&Winstk[i], Max_lines - scrlins);
          }
          if (Max_lines <= scrlins) break;

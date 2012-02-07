@@ -580,7 +580,7 @@ typedef struct WIN_t {
 //atic inline HST_t *hstget (int pid);
 //atic inline void   hstput (unsigned idx);
 #endif
-//atic void          prochlp (proc_t *p);
+//atic void          procs_hlp (proc_t *p);
 //atic void          procs_refresh (void);
 //atic void          sysinfo_refresh (int forced);
 /*------  Startup routines  ----------------------------------------------*/
@@ -592,7 +592,7 @@ typedef struct WIN_t {
 //atic void          win_names (WIN_t *q, const char *name);
 //atic WIN_t        *win_select (char ch);
 //atic int           win_warn (int what);
-//atic void          winsclrhlp (WIN_t *q, int save);
+//atic void          wins_clrhlp (WIN_t *q, int save);
 //atic void          wins_colors (void);
 //atic void          wins_reflag (int what, int flg);
 //atic void          wins_stage_1 (void);
@@ -612,12 +612,12 @@ typedef struct WIN_t {
 //atic inline const char *forest_display (const WIN_t *q, const proc_t *p);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void          do_key (int ch);
-//atic void          summaryhlp (CPU_t *cpu, const char *pfx);
+//atic void          summary_hlp (CPU_t *cpu, const char *pfx);
 //atic void          summary_show (void);
 static void          task_show (const WIN_t *q, const proc_t *p, char *ptr);
 //atic int           window_show (WIN_t *q, int wmax);
 /*------  Entry point plus two  ------------------------------------------*/
-//atic void          framehlp (int wix, int max);
+//atic void          frame_hlp (int wix, int max);
 //atic void          frame_make (void);
 //     int           main (int dont_care_argc, char **argv);
 
