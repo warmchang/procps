@@ -214,6 +214,7 @@ typedef struct CT_t {
       2.6.0  kernel: x == hi (hardware irq time), y == si (software irq time)
       2.6.11 kernel: z == st (virtual steal time) */
    TIC_t u, n, s, i, w, x, y, z;  // as represented in /proc/stat
+   SIC_t tot;                     // total of above
 } CT_t;
 
 typedef struct CPU_t {

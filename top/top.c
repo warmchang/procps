@@ -1823,6 +1823,9 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       , &cpus[Cpu_faux_tot].cur.i, &cpus[Cpu_faux_tot].cur.w, &cpus[Cpu_faux_tot].cur.x
       , &cpus[Cpu_faux_tot].cur.y, &cpus[Cpu_faux_tot].cur.z))
          error_exit(N_txt(FAIL_statget_txt));
+   cpus[Cpu_faux_tot].cur.tot = cpus[Cpu_faux_tot].cur.u + cpus[Cpu_faux_tot].cur.s
+      + cpus[Cpu_faux_tot].cur.n + cpus[Cpu_faux_tot].cur.i + cpus[Cpu_faux_tot].cur.w
+      + cpus[Cpu_faux_tot].cur.x + cpus[Cpu_faux_tot].cur.y + cpus[Cpu_faux_tot].cur.z;
 
    // now value each separate cpu's tics, maybe
    for (i = 0; i < Cpu_faux_tot && i < Screen_rows; i++) {
@@ -1841,6 +1844,9 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
             memmove(&cpus[i], &cpus[Cpu_faux_tot], sizeof(CPU_t));
             break;        // tolerate cpus taken offline
       }
+      cpus[i].cur.tot = cpus[i].cur.u + cpus[i].cur.s
+         + cpus[i].cur.n + cpus[i].cur.i + cpus[i].cur.w
+         + cpus[i].cur.x + cpus[i].cur.y + cpus[i].cur.z;
 #ifdef PRETEND4CPUS
       cpus[i].id = i;
 #endif
@@ -3332,7 +3338,7 @@ static void summaryhlp (CPU_t *cpu, const char *pfx) {
 #ifdef CPU_ZEROTICS
    if (1 > tot_frme) tot_frme = 1;
 #else
-   if (tot_frme < ((smp_num_cpus * 10) * Rc.delay_time))
+   if (tot_frme < (cpu->cur.tot - cpu->sav.tot) / 10)
       tot_frme = u_frme = s_frme = n_frme = i_frme = w_frme = x_frme = y_frme = z_frme = 0;
    if (1 > tot_frme) i_frme = tot_frme = 1;
 #endif
