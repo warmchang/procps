@@ -8,7 +8,7 @@ expect_pass "$test" "^\\s*Usage:\\s+\(lt-\)\?pwdx \\\[options\\\] pid\.\.\."
 # Run pwdx with pid 0 which is invalid
 set test "pwdx pid 0 should be invalid"
 spawn $pwdx 0
-expect_pass "$test" "^0: No such process"
+expect_pass "$test" "\(lt-\)\?pwdx\: invalid process id\: 0"
 
 # Run pwdx with existing pid
 set test "pwdx finds sleep in cwd"
