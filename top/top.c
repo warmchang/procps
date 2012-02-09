@@ -1356,20 +1356,16 @@ static void adj_geometry (void) {
       pseudo_max = Pseudo_size;
       Pseudo_screen = alloc_r(Pseudo_screen, pseudo_max);
    }
+   // ensure each row is repainted and, if SIGWINCH, clear the screen
    PSU_CLREOS(0);
    if (Frames_resize > 1) putp(Cap_clr_scr);
 } // end: adj_geometry
 
 
         /*
-         * After ensuring the intergrity of our cached screen dimensions,
-         * via adj_geometry(), for each visible window:
-         *    1) Set the number of fields/columns to display
-         *    2) Create the field columns heading
-         *    3) Set maximum width for any variable columns, if in use
-         * In the process, the required PROC_FILLxxx flags will be rebuilt! */
-static void calibrate_fields (void) {
-   sigset_t newss, oldss;
+         * A calibrate_fields() *Helper* function to build the
+         * actual column headers and required library flags */
+static void build_headers (void) {
    FLG_t f;
    char *s;
    const char *h;
@@ -1378,87 +1374,11 @@ static void calibrate_fields (void) {
    int x, hdrmax = 0;
 #endif
    int i, needpsdb = 0;
-   int varcolcnt;
 
-   // block SIGWINCH signals while we do our thing...
-   sigemptyset(&newss);
-   sigaddset(&newss, SIGWINCH);
-   if (-1 == sigprocmask(SIG_BLOCK, &newss, &oldss))
-      error_exit(fmtmk(N_fmt(FAIL_sigstop_fmt), strerror(errno)));
-
-   adj_geometry();
    Frames_libflags = 0;
 
    do {
       if (VIZISw(w)) {
-         w->hdrcaplen = 0;   // really only used with USE_X_COLHDR
-         // build window's pflgsall array, establish upper bounds for maxpflgs
-         for (i = 0, w->totpflgs = 0; i < P_MAXPFLGS; i++) {
-            if (FLDviz(w, i)) {
-               f = FLDget(w, i);
-#ifdef USE_X_COLHDR
-               w->pflgsall[w->totpflgs++] = f;
-#else
-               if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx) {
-                  w->pflgsall[w->totpflgs++] = X_XON;
-                  w->pflgsall[w->totpflgs++] = f;
-                  w->pflgsall[w->totpflgs++] = X_XOF;
-               } else
-                  w->pflgsall[w->totpflgs++] = f;
-#endif
-            }
-         }
-
-         /* build a preliminary columns header not to exceed screen width
-            while accounting for a possible leading window number */
-         w->varcolsz = varcolcnt = 0;
-         *(s = w->columnhdr) = '\0';
-         if (Rc.mode_altscr) s = scat(s, " ");
-         for (i = 0; i + w->begpflg < w->totpflgs; i++) {
-            f = w->pflgsall[i + w->begpflg];
-            w->procflgs[i] = f;
-#ifndef USE_X_COLHDR
-            if (P_MAXPFLGS <= f) continue;
-#endif
-            h = Fieldstab[f].head;
-            // oops, won't fit -- we're outta here...
-            if (Screen_cols < ((int)(s - w->columnhdr) + (int)strlen(h))) break;
-            if (!Fieldstab[f].fmts) { ++varcolcnt; w->varcolsz += strlen(h) - 1; }
-            s = scat(s, h);
-         }
-#ifndef USE_X_COLHDR
-         if (X_XON == w->procflgs[i - 1]) --i;
-#endif
-
-         /* establish the final maxpflgs and prepare to grow the variable column
-            heading(s) via varcolsz - it may be a fib if their pflags weren't
-            encountered, but that's ok because they won't be displayed anyway */
-         w->maxpflgs = i;
-         w->varcolsz += Screen_cols - strlen(w->columnhdr);
-         if (varcolcnt) w->varcolsz = w->varcolsz / varcolcnt;
-
-         /* establish the field where all remaining fields would still
-            fit within screen width, including a leading window number */
-         *(s = w->columnhdr) = '\0';
-         if (Rc.mode_altscr) s = scat(s, " ");
-         for (i = w->totpflgs - 1; -1 < i; i--) {
-            f = w->pflgsall[i];
-#ifndef USE_X_COLHDR
-            if (P_MAXPFLGS <= f) { w->endpflg = i; continue; }
-#endif
-            h = Fieldstab[f].head;
-            if (Screen_cols < ((int)(s - w->columnhdr) + (int)strlen(h))) break;
-            s = scat(s, h);
-            w->endpflg = i;
-         }
-#ifndef USE_X_COLHDR
-         if (X_XOF == w->pflgsall[w->endpflg]) ++w->endpflg;
-#endif
-
-         /* finally, we can build the true run-time columns header, format any
-            variable column heading(s), if they're really being displayed, and
-            rebuild the all-important PROC_FILLxxx flags that will be used
-            until/if we're we're called again */
          memset((s = w->columnhdr), 0, sizeof(w->columnhdr));
          if (Rc.mode_altscr) s = scat(s, fmtmk("%d", w->winnum));
          for (i = 0; i < w->maxpflgs; i++) {
@@ -1528,12 +1448,102 @@ static void calibrate_fields (void) {
             PSDBopen = 1;
       }
    }
-
    // finalize/touchup the libproc PROC_FILLxxx flags for current config...
    if ((Frames_libflags & L_EITHER) && !(Frames_libflags & L_stat))
       Frames_libflags |= L_status;
    if (!Frames_libflags) Frames_libflags = L_DEFAULT;
    if (Monpidsidx) Frames_libflags |= PROC_PID;
+} // end: build_headers
+
+
+        /*
+         * This guy coordinates the activities surounding the maintainence
+         * of each visible window's columns headers and the library flags
+         * required for the openproc interface. */
+static void calibrate_fields (void) {
+   sigset_t newss, oldss;
+   FLG_t f;
+   char *s;
+   const char *h;
+   WIN_t *w = Curwin;
+   int i, varcolcnt;
+
+   // block SIGWINCH signals while we do our thing...
+   sigemptyset(&newss);
+   sigaddset(&newss, SIGWINCH);
+   if (-1 == sigprocmask(SIG_BLOCK, &newss, &oldss))
+      error_exit(fmtmk("failed sigprocmask, SIG_BLOCK: %s", strerror(errno)));
+
+   adj_geometry();
+
+   do {
+      if (VIZISw(w)) {
+         w->hdrcaplen = 0;   // really only used with USE_X_COLHDR
+         // build window's pflgsall array, establish upper bounds for maxpflgs
+         for (i = 0, w->totpflgs = 0; i < P_MAXPFLGS; i++) {
+            if (FLDviz(w, i)) {
+               f = FLDget(w, i);
+#ifdef USE_X_COLHDR
+               w->pflgsall[w->totpflgs++] = f;
+#else
+               if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx) {
+                  w->pflgsall[w->totpflgs++] = X_XON;
+                  w->pflgsall[w->totpflgs++] = f;
+                  w->pflgsall[w->totpflgs++] = X_XOF;
+               } else
+                  w->pflgsall[w->totpflgs++] = f;
+#endif
+            }
+         }
+
+         /* build a preliminary columns header not to exceed screen width
+            while accounting for a possible leading window number */
+         w->varcolsz = varcolcnt = 0;
+         *(s = w->columnhdr) = '\0';
+         if (Rc.mode_altscr) s = scat(s, " ");
+         for (i = 0; i + w->begpflg < w->totpflgs; i++) {
+            f = w->pflgsall[i + w->begpflg];
+            w->procflgs[i] = f;
+#ifndef USE_X_COLHDR
+            if (P_MAXPFLGS <= f) continue;
+#endif
+            h = Fieldstab[f].head;
+            // oops, won't fit -- we're outta here...
+            if (Screen_cols < ((int)(s - w->columnhdr) + (int)strlen(h))) break;
+            if (!Fieldstab[f].fmts) { ++varcolcnt; w->varcolsz += strlen(h) - 1; }
+            s = scat(s, h);
+         }
+#ifndef USE_X_COLHDR
+         if (X_XON == w->procflgs[i - 1]) --i;
+#endif
+
+         /* establish the final maxpflgs and prepare to grow the variable column
+            heading(s) via varcolsz - it may be a fib if their pflags weren't
+            encountered, but that's ok because they won't be displayed anyway */
+         w->maxpflgs = i;
+         w->varcolsz += Screen_cols - strlen(w->columnhdr);
+         if (varcolcnt) w->varcolsz = w->varcolsz / varcolcnt;
+
+         /* establish the field where all remaining fields would still
+            fit within screen width, including a leading window number */
+         *(s = w->columnhdr) = '\0';
+         if (Rc.mode_altscr) s = scat(s, " ");
+         for (i = w->totpflgs - 1; -1 < i; i--) {
+            f = w->pflgsall[i];
+#ifndef USE_X_COLHDR
+            if (P_MAXPFLGS <= f) { w->endpflg = i; continue; }
+#endif
+            h = Fieldstab[f].head;
+            if (Screen_cols < ((int)(s - w->columnhdr) + (int)strlen(h))) break;
+            s = scat(s, h);
+            w->endpflg = i;
+         }
+      } // end: if (VIZISw(w))
+
+      if (Rc.mode_altscr) w = w->next;
+   } while (w != Curwin);
+
+   build_headers();
 
    Frames_resize = 0;
    if (-1 == sigprocmask(SIG_SETMASK, &oldss, NULL))

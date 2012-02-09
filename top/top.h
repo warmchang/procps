@@ -568,6 +568,7 @@ typedef struct WIN_t {
 /*------  Fields Management support  -------------------------------------*/
 /*atic FLD_t         Fieldstab[] = { ... }                                */
 //atic void          adj_geometry (void);
+//atic void          build_headers (void);
 //atic void          calibrate_fields (void);
 //atic void          display_fields (int focus, int extend);
 //atic void          fields_utility (void);
