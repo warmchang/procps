@@ -129,6 +129,11 @@
            -- used at startup and for task/thread mode transitions */
 #define PROC_XTRA  -1
 
+        /* This is the % used in establishing the tics threshold below
+           which a cpu is treated as 'idle' rather than displaying
+           misleading state percentages */
+#define TICS_EDGE  20
+
 
 /* #####  Enum's and Typedef's  ############################################ */
 
@@ -214,12 +219,13 @@ typedef struct CT_t {
       2.6.0  kernel: x == hi (hardware irq time), y == si (software irq time)
       2.6.11 kernel: z == st (virtual steal time) */
    TIC_t u, n, s, i, w, x, y, z;  // as represented in /proc/stat
-   SIC_t tot;                     // total of above
+   SIC_t tot;                     // total from /proc/stat line 1
 } CT_t;
 
 typedef struct CPU_t {
    CT_t cur;                      // current frame's cpu tics
    CT_t sav;                      // prior frame's cpu tics
+   SIC_t edge;                    // tics adjustment threshold boundary
    int id;                        // the cpu id number (0 - nn)
 } CPU_t;
 
