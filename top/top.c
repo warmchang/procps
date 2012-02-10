@@ -1538,6 +1538,9 @@ static void calibrate_fields (void) {
             s = scat(s, h);
             w->endpflg = i;
          }
+#ifndef USE_X_COLHDR
+         if (X_XOF == w->pflgsall[w->endpflg]) ++w->endpflg;
+#endif
       } // end: if (VIZISw(w))
 
       if (Rc.mode_altscr) w = w->next;
