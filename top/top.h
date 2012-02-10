@@ -62,9 +62,9 @@
            for nls support inclusion.  They're identified with:
               // nls_maybe */
 
-        /* For initiating the topic of potential % CPU distortions due
-           to Nehalem type processors (see CPU_ZEROTICS), thanks to:
-               Jaromir Capik, <jcapik@redhat.com> - February, 2012 */
+        /* For initiating the topic of potential % CPU distortions due to
+           to kernel and/or cpu anomalies (see CPU_ZEROTICS), thanks to:
+              Jaromir Capik, <jcapik@redhat.com> - February, 2012 */
 
 #ifdef PRETEND2_5_X
 #define linux_version_code LINUX_VERSION(2,5,43)
@@ -133,10 +133,12 @@
            -- used at startup and for task/thread mode transitions */
 #define PROC_XTRA  -1
 
+#ifndef CPU_ZEROTICS
         /* This is the % used in establishing the tics threshold below
            which a cpu is treated as 'idle' rather than displaying
            misleading state percentages */
 #define TICS_EDGE  20
+#endif
 
 
 /* #####  Enum's and Typedef's  ############################################ */
@@ -223,7 +225,9 @@ typedef struct CT_t {
       2.6.0  kernel: x == hi (hardware irq time), y == si (software irq time)
       2.6.11 kernel: z == st (virtual steal time) */
    TIC_t u, n, s, i, w, x, y, z;  // as represented in /proc/stat
+#ifndef CPU_ZEROTICS
    SIC_t tot;                     // total from /proc/stat line 1
+#endif
 } CT_t;
 
 typedef struct CPU_t {

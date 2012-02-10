@@ -1836,14 +1836,13 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       , &cpus[Cpu_faux_tot].cur.i, &cpus[Cpu_faux_tot].cur.w, &cpus[Cpu_faux_tot].cur.x
       , &cpus[Cpu_faux_tot].cur.y, &cpus[Cpu_faux_tot].cur.z))
          error_exit(N_txt(FAIL_statget_txt));
+#ifndef CPU_ZEROTICS
    cpus[Cpu_faux_tot].cur.tot = cpus[Cpu_faux_tot].cur.u + cpus[Cpu_faux_tot].cur.s
       + cpus[Cpu_faux_tot].cur.n + cpus[Cpu_faux_tot].cur.i + cpus[Cpu_faux_tot].cur.w
       + cpus[Cpu_faux_tot].cur.x + cpus[Cpu_faux_tot].cur.y + cpus[Cpu_faux_tot].cur.z;
-#ifndef CPU_ZEROTICS
-   /* if a Nehalem type cpu has been turned off completely, and thus registers
-      very few total tics, we'll force it to be treated as idle when that total
-      falls below a % of those expected -- other cpus will register their full
-      number of expected tics as 'idle' and thus won't be effected */
+   /* if a cpu has registered substantially fewer tics than those expected,
+      we'll force it to be treated as 'idle' so as not to present misleading
+      percentages. */
    cpus[Cpu_faux_tot].edge =
       ((cpus[Cpu_faux_tot].cur.tot - cpus[Cpu_faux_tot].sav.tot) / smp_num_cpus) / (100 / TICS_EDGE);
 #endif
@@ -1866,9 +1865,9 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       }
 #ifndef CPU_ZEROTICS
       cpus[i].edge = cpus[Cpu_faux_tot].edge;
-#endif
       // this is for symmetry only, it's not currently required
       cpus[i].cur.tot = cpus[Cpu_faux_tot].cur.tot;
+#endif
 #ifdef PRETEND4CPUS
       cpus[i].id = i;
 #endif
