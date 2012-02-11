@@ -87,7 +87,8 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	if (i_am_pkill == 0) {
 		fputs(_(" -c, --count               count of matching processes\n"
 			" -d, --delimeter <string>  specify output delimeter\n"
-			" -l, --list-name           list PID and process name\n"), fp);
+			" -l, --list-name           list PID and process name\n"
+			" -v, --inverse             negates the matching\n"), fp);
 	}
 	if (i_am_pkill == 1) {
 		fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"
@@ -103,7 +104,6 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 		" -t, --terminal <tty,...>  match by controlling terminal\n"
 		" -u, --euid <id,...>       match by effective IDs\n"
 		" -U, --uid <id,...>        match by real IDs\n"
-		" -v, --inverse             negates the matching\n"
 		" -x, --exact               match exectly with command name\n"
 		" -F, --pidfile <file>      read PIDs from file\n"
 		" -L, --logpidfile          fail if PID file is not locked\n"), fp);
@@ -616,10 +616,10 @@ static void parse_opts (int argc, char **argv)
 		strcat (opts, "e");
 	} else {
 		/* These options are for pgrep only */
-		strcat (opts, "cld:");
+		strcat (opts, "cld:v");
 	}
 			
-	strcat (opts, "LF:fnovxP:g:s:u:U:G:t:?Vh");
+	strcat (opts, "LF:fnoxP:g:s:u:U:G:t:?Vh");
 	
 	while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
 		switch (opt) {
