@@ -553,6 +553,24 @@ static struct el * select_procs (int *num)
 	return list;
 }
 
+int signal_option(int *argc, char **argv)
+{
+	int sig;
+	int i = 1;
+	while (i < *argc) {
+		sig = signal_name_to_number(argv[i] + 1);
+		if (sig == -1 && isdigit(argv[1][1]))
+			sig = atoi(argv[1] + 1);
+		if (-1 < sig) {
+			memmove(argv + i, argv + i + 1,
+				sizeof(char *) * (*argc - i));
+			(*argc)--;
+			return sig;
+		}
+		i++;
+	}
+	return -1;
+}
 
 static void parse_opts (int argc, char **argv)
 {
@@ -589,21 +607,11 @@ static void parse_opts (int argc, char **argv)
 	};
 
 	if (strstr (program_invocation_short_name, "pkill")) {
-	        i_am_pkill = 1;
-		/* Look for a signal name or number as first argument */
-		if (argc > 1 && argv[1][0] == '-') {
-			int sig;
-			sig = signal_name_to_number (argv[1] + 1);
-			if (sig == -1 && isdigit (argv[1][1]))
-				sig = atoi (argv[1] + 1);
-			if (sig != -1) {
-				int i;
-				for (i = 2; i < argc; i++)
-					argv[i-1] = argv[i];
-				--argc;
-				opt_signal = sig;
-			}
-		}
+		int sig;
+		i_am_pkill = 1;
+		sig = signal_option(&argc, argv);
+		if (-1 < sig)
+			opt_signal = sig;
 		/* These options are for pkill only */
 		strcat (opts, "e");
 	} else {
