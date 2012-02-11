@@ -531,8 +531,8 @@ typedef struct WIN_t {
 
 /*######  Some Prototypes (ha!)  #########################################*/
 
-   /* These 'prototypes' are here mostly for documentation purposes --    */
-   /* for now, the only essential one is task_show needed by find_string */
+   /* These 'prototypes' are here exclusively for documentation purposes. */
+   /* ( see the find_string function for the one true required protoype ) */
 /*------  Sort callbacks  ------------------------------------------------*/
 /*        for each possible field, in the form of:                        */
 /*atic int           sort_P_XXX (const proc_t **P, const proc_t **Q);     */
@@ -618,7 +618,7 @@ typedef struct WIN_t {
 //atic void          do_key (int ch);
 //atic void          summary_hlp (CPU_t *cpu, const char *pfx);
 //atic void          summary_show (void);
-static void          task_show (const WIN_t *q, const proc_t *p, char *ptr);
+//atic void          task_show (const WIN_t *q, const proc_t *p, char *ptr);
 //atic int           window_show (WIN_t *q, int wmax);
 /*------  Entry point plus two  ------------------------------------------*/
 //atic void          frame_hlp (int wix, int max);

@@ -2723,6 +2723,12 @@ static void file_writerc (void) {
 } // end: file_writerc
 
 
+
+   /* This is currently the one true prototype require by top.
+      It is placed here, instead of top.h, so as to avoid a compiler
+      warning when top_nls.c is compiled. */
+static void task_show (const WIN_t *q, const proc_t *p, char *ptr);
+
 static void find_string (int ch) {
  #define reDUX (found) ? N_txt(WORD_another_txt) : ""
    static char str[SCREENMAX];
