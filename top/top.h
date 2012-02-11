@@ -22,6 +22,9 @@
 
 #include "../proc/readproc.h"
 
+        /* Defines represented in configure.ac ----------------------------- */
+//#define OOMEM_ENABLE            /* enable the SuSE out-of-memory additions */
+
         /* Development/Debugging defines ----------------------------------- */
 //#define ATEOJ_RPTHSH            /* report on hash specifics, at end-of-job */
 //#define ATEOJ_RPTSTD            /* report on misc stuff, at end-of-job     */
@@ -31,7 +34,6 @@
 //#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
-//#define OOMEM_ENABLE            /* enable the SuSE out-of-memory additions */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
