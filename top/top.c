@@ -285,19 +285,6 @@ static inline char *scat (char *dst, const char *src) {
 } // end: scat
 
 
-#ifdef TERMIOS_ONLY
-        /*
-         * Trim line oriented input */
-static char *strim (char *str) {
-   static const char ws[] = "\b\f\n\r\t\v\x1b\x9b";  // 0x1b + 0x9b are escape
-   char *p;
-
-   if ((p = strpbrk(str, ws))) *p = '\0';
-   return str;
-} // end: strim
-#endif
-
-
         /*
          * This guy just facilitates Batch and protects against dumb ttys
          * -- we'd 'inline' him but he's only called twice per frame,
@@ -944,7 +931,7 @@ static char *linein (const char *prompt) {
    putp(Cap_curs_norm);
 
    // note: we DO produce a vaid 'string'
-   return strim(buf);
+   return buf;
 } // end: linein
 
 #else

@@ -537,9 +537,6 @@ typedef struct WIN_t {
 /*------  Tiny useful routine(s)  ----------------------------------------*/
 //atic const char   *fmtmk (const char *fmts, ...);
 //atic inline char  *scat (char *dst, const char *src);
-#ifdef TERMIOS_ONLY
-//atic char         *strim (char *str);
-#endif
 //atic const char   *tg2 (int x, int y);
 /*------  Exit/Interrput routines  ---------------------------------------*/
 //atic void          bye_bye (const char *str);
