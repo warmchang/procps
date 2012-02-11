@@ -282,9 +282,6 @@ unsigned dev_to_tty(char *restrict ret, unsigned chop, dev_t dev_t_dev, int pid,
   unsigned i = 0;
   int c;
   if(dev == 0u) goto no_tty;
-  if(linux_version_code > LINUX_VERSION(2, 7, 0)){  // not likely to make 2.6.xx
-    if(link_name(tmp, MAJOR_OF(dev), MINOR_OF(dev), pid, "tty"   )) goto abbrev;
-  }
   if(driver_name(tmp, MAJOR_OF(dev), MINOR_OF(dev)               )) goto abbrev;
   if(  link_name(tmp, MAJOR_OF(dev), MINOR_OF(dev), pid, "fd/2"  )) goto abbrev;
   if( guess_name(tmp, MAJOR_OF(dev), MINOR_OF(dev)               )) goto abbrev;
