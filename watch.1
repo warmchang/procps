@@ -15,8 +15,10 @@ program is run every 2 seconds.
 will run until interrupted.
 .SH OPTIONS
 .TP
-\fB\-d\fR, \fB\-\-differences\fR
-Highlight the differences between successive updates.
+\fB\-d\fR, \fB\-\-differences\fR [\fIpermanent\fR]
+Highlight the differences between successive updates.  Option will read
+optional argument that changes highlight to be permanent, allowing to see what
+has changed at least once since first iteration.
 .TP
 \fB\-n\fR, \fB\-\-interval\fR \fIseconds\fR
 Specify update interval.  The command will not allow quicker than 0.1 second

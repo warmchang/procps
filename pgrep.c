@@ -28,8 +28,8 @@
 #include <errno.h>
 #include <getopt.h>
 
-// EXIT_SUCCESS is 0
-// EXIT_FAILURE is 1
+/* EXIT_SUCCESS is 0 */
+/* EXIT_FAILURE is 1 */
 #define EXIT_USAGE 2
 #define EXIT_FATAL 3
 #define XALLOC_EXIT_CODE EXIT_FATAL
@@ -87,7 +87,8 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	if (i_am_pkill == 0) {
 		fputs(_(" -c, --count               count of matching processes\n"
 			" -d, --delimeter <string>  specify output delimeter\n"
-			" -l, --list-name           list PID and process name\n"), fp);
+			" -l, --list-name           list PID and process name\n"
+			" -v, --inverse             negates the matching\n"), fp);
 	}
 	if (i_am_pkill == 1) {
 		fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"
@@ -103,7 +104,6 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 		" -t, --terminal <tty,...>  match by controlling terminal\n"
 		" -u, --euid <id,...>       match by effective IDs\n"
 		" -U, --uid <id,...>        match by real IDs\n"
-		" -v, --inverse             negates the matching\n"
 		" -x, --exact               match exectly with command name\n"
 		" -F, --pidfile <file>      read PIDs from file\n"
 		" -L, --logpidfile          fail if PID file is not locked\n"), fp);
@@ -127,13 +127,13 @@ static struct el *split_list (const char *restrict str, int (*convert)(const cha
 	do {
 		if (i == size) {
 			size = size * 5 / 4 + 4;
-			// add 1 because slot zero is a count
+			/* add 1 because slot zero is a count */
 			list = xrealloc (list, 1 + size * sizeof *list);
 		}
 		sep_pos = strchr (ptr, ',');
 		if (sep_pos)
 			*sep_pos = 0;
-		// Use ++i instead of i++ because slot zero is a count
+		/* Use ++i instead of i++ because slot zero is a count */
 		if (list && !convert (ptr, &list[++i]))
 			exit (EXIT_USAGE);
 		if (sep_pos)
@@ -150,8 +150,8 @@ static struct el *split_list (const char *restrict str, int (*convert)(const cha
 	return list;
 }
 
-// strict_atol returns a Boolean: TRUE if the input string
-// contains a plain number, FALSE if there are any non-digits.
+/* strict_atol returns a Boolean: TRUE if the input string
+ * contains a plain number, FALSE if there are any non-digits. */
 static int strict_atol (const char *restrict str, long *restrict value)
 {
 	int res = 0;
@@ -176,35 +176,35 @@ static int strict_atol (const char *restrict str, long *restrict value)
 
 #include <sys/file.h>
 
-// Seen non-BSD code do this:
-//
-//if (fcntl_lock(pid_fd, F_SETLK, F_WRLCK, SEEK_SET, 0, 0) == -1)
-//                return -1;
+/* Seen non-BSD code do this:
+ *
+ *if (fcntl_lock(pid_fd, F_SETLK, F_WRLCK, SEEK_SET, 0, 0) == -1)
+ *                return -1;
+ */
 int fcntl_lock(int fd, int cmd, int type, int whence, int start, int len)
 {
-        struct flock lock[1];
+	struct flock lock[1];
 
-        lock->l_type = type;
-        lock->l_whence = whence;
-        lock->l_start = start;
-        lock->l_len = len;
+	lock->l_type = type;
+	lock->l_whence = whence;
+	lock->l_start = start;
+	lock->l_len = len;
 
-        return fcntl(fd, cmd, lock);
+	return fcntl(fd, cmd, lock);
 }
-                                                
 
-// We try a read lock. The daemon should have a write lock.
-// Seen using flock: FreeBSD code
+/* We try a read lock. The daemon should have a write lock.
+ * Seen using flock: FreeBSD code */
 static int has_flock(int fd)
 {
 	return flock(fd, LOCK_SH|LOCK_NB)==-1 && errno==EWOULDBLOCK;
 }
 
-// We try a read lock. The daemon should have a write lock.
-// Seen using fcntl: libslack
+/* We try a read lock. The daemon should have a write lock.
+ * Seen using fcntl: libslack */
 static int has_fcntl(int fd)
 {
-	struct flock f;  // seriously, struct flock is for a fnctl lock!
+	struct flock f;  /* seriously, struct flock is for a fnctl lock! */
 	f.l_type = F_RDLCK;
 	f.l_whence = SEEK_SET;
 	f.l_start = 0;
@@ -226,7 +226,7 @@ static struct el *read_pidfile(void)
 		goto just_ret;
 	if(fstat(fd,&sbuf) || !S_ISREG(sbuf.st_mode) || sbuf.st_size<1)
 		goto out;
-	// type of lock, if any, is not standardized on Linux
+	/* type of lock, if any, is not standardized on Linux */
 	if(opt_lock && !has_flock(fd) && !has_fcntl(fd))
 		goto out;
 	memset(buf,'\0',sizeof buf);
@@ -366,7 +366,7 @@ static void output_numlist (const struct el *restrict list, int num)
 
 static void output_strlist (const struct el *restrict list, int num)
 {
-// FIXME: escape codes
+/* FIXME: escape codes */
 	int i;
 	const char *delim = opt_delim;
 	for (i = 0; i < num; i++) {
@@ -388,7 +388,7 @@ static PROCTAB *do_openproc (void)
 	if (opt_oldest || opt_newest || opt_pgrp || opt_sid || opt_term)
 		flags |= PROC_FILLSTAT;
 	if (!(flags & PROC_FILLSTAT))
-		flags |= PROC_FILLSTATUS;  // FIXME: need one, and PROC_FILLANY broken
+		flags |= PROC_FILLSTATUS;  /* FIXME: need one, and PROC_FILLANY broken */
 	if (opt_euid && !opt_negate) {
 		int num = opt_euid[0].num;
 		int i = num;
@@ -418,7 +418,7 @@ static regex_t * do_regcomp (void)
 			re = xmalloc (strlen (opt_pattern) + 5);
 			sprintf (re, "^(%s)$", opt_pattern);
 		} else {
-		 	re = opt_pattern;
+			re = opt_pattern;
 		}
 
 		re_err = regcomp (preg, re, REG_EXTENDED | REG_NOSUB | opt_case);
@@ -435,8 +435,8 @@ static struct el * select_procs (int *num)
 {
 	PROCTAB *ptp;
 	proc_t task;
-	unsigned long long saved_start_time;      // for new/old support
-	pid_t saved_pid = 0;                      // for new/old support
+	unsigned long long saved_start_time;      /* for new/old support */
+	pid_t saved_pid = 0;                      /* for new/old support */
 	int matches = 0;
 	int size = 0;
 	regex_t *preg;
@@ -536,7 +536,7 @@ static struct el * select_procs (int *num)
 				list = xrealloc(list, size * sizeof *list);
 			}
 			if (list && (opt_long || opt_echo)) {
-				char buff[5096];  // FIXME
+				char buff[5096];  /* FIXME */
 				list[matches].num = task.XXXID;
 				list[matches++].str = xstrdup (cmd);
 			} else if (list) {
@@ -553,6 +553,24 @@ static struct el * select_procs (int *num)
 	return list;
 }
 
+int signal_option(int *argc, char **argv)
+{
+	int sig;
+	int i = 1;
+	while (i < *argc) {
+		sig = signal_name_to_number(argv[i] + 1);
+		if (sig == -1 && isdigit(argv[1][1]))
+			sig = atoi(argv[1] + 1);
+		if (-1 < sig) {
+			memmove(argv + i, argv + i + 1,
+				sizeof(char *) * (*argc - i));
+			(*argc)--;
+			return sig;
+		}
+		i++;
+	}
+	return -1;
+}
 
 static void parse_opts (int argc, char **argv)
 {
@@ -589,29 +607,19 @@ static void parse_opts (int argc, char **argv)
 	};
 
 	if (strstr (program_invocation_short_name, "pkill")) {
-	        i_am_pkill = 1;
-		/* Look for a signal name or number as first argument */
-		if (argc > 1 && argv[1][0] == '-') {
-			int sig;
-			sig = signal_name_to_number (argv[1] + 1);
-			if (sig == -1 && isdigit (argv[1][1]))
-				sig = atoi (argv[1] + 1);
-			if (sig != -1) {
-				int i;
-				for (i = 2; i < argc; i++)
-					argv[i-1] = argv[i];
-				--argc;
-				opt_signal = sig;
-			}
-		}
+		int sig;
+		i_am_pkill = 1;
+		sig = signal_option(&argc, argv);
+		if (-1 < sig)
+			opt_signal = sig;
 		/* These options are for pkill only */
 		strcat (opts, "e");
 	} else {
 		/* These options are for pgrep only */
-		strcat (opts, "cld:");
+		strcat (opts, "cld:v");
 	}
 			
-	strcat (opts, "LF:fnovxP:g:s:u:U:G:t:?Vh");
+	strcat (opts, "LF:fnoxP:g:s:u:U:G:t:?Vh");
 	
 	while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
 		switch (opt) {
@@ -623,41 +631,41 @@ static void parse_opts (int argc, char **argv)
 		case 'e':
 			opt_echo = 1;
 			break;
-//		case 'D':   // FreeBSD: print info about non-matches for debugging
-//			break;
-		case 'F':   // FreeBSD: the arg is a file containing a PID to match
+/*		case 'D':   / * FreeBSD: print info about non-matches for debugging * /
+ *			break; */
+		case 'F':   /* FreeBSD: the arg is a file containing a PID to match */
 			opt_pidfile = xstrdup (optarg);
 			++criteria_count;
 			break;
-		case 'G':   // Solaris: match rgid/rgroup
-	  		opt_rgid = split_list (optarg, conv_gid);
+		case 'G':   /* Solaris: match rgid/rgroup */
+			opt_rgid = split_list (optarg, conv_gid);
 			if (opt_rgid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
-//		case 'I':   // FreeBSD: require confirmation before killing
-//			break;
-//		case 'J':   // Solaris: match by project ID (name or number)
-//			break;
-		case 'L':   // FreeBSD: fail if pidfile (see -F) not locked
+/*		case 'I':   / * FreeBSD: require confirmation before killing * /
+ *			break;
+/*		case 'J':   / * Solaris: match by project ID (name or number) * /
+ *			break; */
+		case 'L':   /* FreeBSD: fail if pidfile (see -F) not locked */
 			opt_lock++;
 			break;
-//		case 'M':   // FreeBSD: specify core (OS crash dump) file
-//			break;
-//		case 'N':   // FreeBSD: specify alternate namelist file (for us, System.map -- but we don't need it)
-//			break;
-		case 'P':   // Solaris: match by PPID
-	  		opt_ppid = split_list (optarg, conv_num);
+/*		case 'M':   / * FreeBSD: specify core (OS crash dump) file * /
+ *			break; */
+/*		case 'N':   / * FreeBSD: specify alternate namelist file (for us, System.map -- but we don't need it) * /
+ *			break; */
+		case 'P':   /* Solaris: match by PPID */
+			opt_ppid = split_list (optarg, conv_num);
 			if (opt_ppid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
-//		case 'S':   // FreeBSD: don't ignore the built-in kernel tasks
-//			break;
-//		case 'T':   // Solaris: match by "task ID" (probably not a Linux task)
-//			break;
-		case 'U':   // Solaris: match by ruid/rgroup
-	  		opt_ruid = split_list (optarg, conv_uid);
+/*		case 'S':   / * FreeBSD: don't ignore the built-in kernel tasks * /
+ *			break; */
+/*		case 'T':   / * Solaris: match by "task ID" (probably not a Linux task) * /
+ *			break; */
+		case 'U':   /* Solaris: match by ruid/rgroup */
+			opt_ruid = split_list (optarg, conv_uid);
 			if (opt_ruid == NULL)
 				usage (opt);
 			++criteria_count;
@@ -665,74 +673,74 @@ static void parse_opts (int argc, char **argv)
 		case 'V':
 			printf(PROCPS_NG_VERSION);
 			exit(EXIT_SUCCESS);
-//		case 'c':   // Solaris: match by contract ID
-//			break;
+/*		case 'c':   / * Solaris: match by contract ID * /
+ *			break; */
 		case 'c':
 			opt_count = 1;
 			break;
-		case 'd':   // Solaris: change the delimiter
+		case 'd':   /* Solaris: change the delimiter */
 			opt_delim = xstrdup (optarg);
 			break;
-		case 'f':   // Solaris: match full process name (as in "ps -f")
+		case 'f':   /* Solaris: match full process name (as in "ps -f") */
 			opt_full = 1;
 			break;
-		case 'g':   // Solaris: match pgrp
-	  		opt_pgrp = split_list (optarg, conv_pgrp);
+		case 'g':   /* Solaris: match pgrp */
+			opt_pgrp = split_list (optarg, conv_pgrp);
 			if (opt_pgrp == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
-//		case 'i':   // FreeBSD: ignore case. OpenBSD: withdrawn. See -I. This sucks.
-//			if (opt_case)
-//				usage (opt);
-//			opt_case = REG_ICASE;
-//			break;
-//		case 'j':   // FreeBSD: restricted to the given jail ID
-//			break;
-		case 'l':   // Solaris: long output format (pgrep only) Should require -f for beyond argv[0] maybe?
+/*		case 'i':   / * FreeBSD: ignore case. OpenBSD: withdrawn. See -I. This sucks. * /
+ *			if (opt_case)
+ *				usage (opt);
+ *			opt_case = REG_ICASE;
+ *			break; */
+/*		case 'j':   / * FreeBSD: restricted to the given jail ID * /
+ *			break; */
+		case 'l':   /* Solaris: long output format (pgrep only) Should require -f for beyond argv[0] maybe? */
 			opt_long = 1;
 			break;
-		case 'n':   // Solaris: match only the newest
+		case 'n':   /* Solaris: match only the newest */
 			if (opt_oldest|opt_negate|opt_newest)
 				usage (opt);
 			opt_newest = 1;
 			++criteria_count;
 			break;
-		case 'o':   // Solaris: match only the oldest
+		case 'o':   /* Solaris: match only the oldest */
 			if (opt_oldest|opt_negate|opt_newest)
 				usage (opt);
 			opt_oldest = 1;
 			++criteria_count;
 			break;
-		case 's':   // Solaris: match by session ID -- zero means self
-	  		opt_sid = split_list (optarg, conv_sid);
+		case 's':   /* Solaris: match by session ID -- zero means self */
+			opt_sid = split_list (optarg, conv_sid);
 			if (opt_sid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
-		case 't':   // Solaris: match by tty
-	  		opt_term = split_list (optarg, conv_str);
+		case 't':   /* Solaris: match by tty */
+			opt_term = split_list (optarg, conv_str);
 			if (opt_term == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
-		case 'u':   // Solaris: match by euid/egroup
-	  		opt_euid = split_list (optarg, conv_uid);
+		case 'u':   /* Solaris: match by euid/egroup */
+			opt_euid = split_list (optarg, conv_uid);
 			if (opt_euid == NULL)
 				usage (opt);
 			++criteria_count;
 			break;
-		case 'v':   // Solaris: as in grep, invert the matching (uh... applied after selection I think)
+		case 'v':   /* Solaris: as in grep, invert the matching (uh... applied after selection I think) */
 			if (opt_oldest|opt_negate|opt_newest)
 				usage (opt);
-	  		opt_negate = 1;
+			opt_negate = 1;
 			break;
-		// OpenBSD -x, being broken, does a plain string
-		case 'x':   // Solaris: use ^(regexp)$ in place of regexp (FreeBSD too)
+		/* OpenBSD -x, being broken, does a plain string */
+		case 'x':   /* Solaris: use ^(regexp)$ in place of regexp (FreeBSD too) */
 			opt_exact = 1;
 			break;
-//		case 'z':   // Solaris: match by zone ID
-//			break;
+/*		case 'z':   / * Solaris: match by zone ID * /
+ *			break; */
 		case 'h':
 			usage (opt);
 			break;
@@ -744,27 +752,27 @@ static void parse_opts (int argc, char **argv)
 
 	if(opt_lock && !opt_pidfile)
 		xerrx(EXIT_FAILURE, _("-L without -F makes no sense\n"
-                                     "Try `%s --help' for more information."),
-                                     program_invocation_short_name);
+				     "Try `%s --help' for more information."),
+				     program_invocation_short_name);
 
 	if(opt_pidfile){
 		opt_pid = read_pidfile();
 		if(!opt_pid)
 			xerrx(EXIT_FAILURE, _("pidfile not valid\n"
-			                     "Try `%s --help' for more information."),
-			                     program_invocation_short_name);
+					     "Try `%s --help' for more information."),
+					     program_invocation_short_name);
 	}
 
-        if (argc - optind == 1)
+	if (argc - optind == 1)
 		opt_pattern = argv[optind];
 	else if (argc - optind > 1)
 		xerrx(EXIT_FAILURE, _("only one pattern can be provided\n"
-		                     "Try `%s --help' for more information."),
-		                     program_invocation_short_name);
+				     "Try `%s --help' for more information."),
+				     program_invocation_short_name);
 	else if (criteria_count == 0)
 		xerrx(EXIT_FAILURE, _("no matching criteria specified\n"
-                                     "Try `%s --help' for more information."),
-                                     program_invocation_short_name);
+				     "Try `%s --help' for more information."),
+				     program_invocation_short_name);
 }
 
 
@@ -790,8 +798,8 @@ int main (int argc, char **argv)
 				continue;
 			}
 			if (errno==ESRCH)
-				 // gone now, which is OK
-			        continue;
+				 /* gone now, which is OK */
+				continue;
 			xwarn(_("killing pid %d failed"), procs[i].num);
 		}
 	} else {
@@ -804,5 +812,5 @@ int main (int argc, char **argv)
 				output_numlist (procs,num);
 		}
 	}
-	return !num; // exit(EXIT_SUCCESS) if match, otherwise exit(EXIT_FAILURE)
+	return !num; /* exit(EXIT_SUCCESS) if match, otherwise exit(EXIT_FAILURE) */
 }

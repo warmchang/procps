@@ -67,7 +67,8 @@ static void __attribute__ ((__noreturn__))
 	fputs(USAGE_OPTIONS, out);
 	fputs(_("  -b, --beep             beep if command has a non-zero exit\n"
 		"  -c, --color            interpret ANSI color sequences\n"
-		"  -d, --differences      highlight changes between updates\n"
+		"  -d, --differences[=<permanent>]\n"
+                "                         highlight changes between updates\n"
 		"  -e, --errexit          exit if command has a non-zero exit\n"
 		"  -n, --interval <secs>  seconds to wait between updates\n"
 		"  -p, --precise          attempt run command in precise intervals\n"

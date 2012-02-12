@@ -594,9 +594,16 @@ static void skillsnice_parse(int argc,
 	argv += optind;
 
 	for (i = 0; i < argc; i++) {
-		ENLIST(pid, strtol_or_err(argv[0],
-					  _("failed to parse argument")));
-		pid_count++;
+		long num;
+		char *end = NULL;
+		errno = 0;
+		num = strtol(argv[0], &end, 10);
+		if (errno == 0 && argv[0] != end && end != NULL && *end == '\0') {
+			ENLIST(pid, num);
+			pid_count++;
+		} else {
+			ENLIST(cmd, argv[0]);
+		}
 		argv++;
 	}
 
