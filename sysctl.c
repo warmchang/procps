@@ -47,6 +47,12 @@ static bool false = 0;
  */
 static const char PROC_PATH[] = "/proc/sys/";
 static const char DEFAULT_PRELOAD[] = "/etc/sysctl.conf";
+static const char *DEPRECATED[] = {
+	"base_reachable_time",
+	"retrans_time",
+	""
+};
+static bool IgnoreDeprecated;
 static bool NameOnly;
 static bool PrintName;
 static bool PrintNewline;
@@ -96,6 +102,7 @@ static void __attribute__ ((__noreturn__))
 	fputs(_("  -a, --all            display all variables\n"
 		"  -A                   alias of -a\n"
 		"  -X                   alias of -a\n"
+		"      --deprecated     include deprecated parameters to listing\n"
 		"  -b, --binary         print value without new line\n"
 		"  -e, --ignore         ignore unknown variables errors\n"
 		"  -N, --names          print variable names without values\n"
@@ -275,6 +282,16 @@ static int ReadSetting(const char *restrict const name)
 	return rc;
 }
 
+int is_deprecated(char *filename)
+{
+	int i;
+	for (i = 0; strlen(DEPRECATED[i]); i++) {
+		if (strcmp(DEPRECATED[i], filename) == 0)
+			return 1;
+	}
+	return 0;
+}
+
 /*
  * Display all the sysctl settings
  */
@@ -296,6 +313,8 @@ static int DisplayAll(const char *restrict const path)
 		readdir(dp);	/* skip .. */
 		while ((de = readdir(dp))) {
 			char *restrict tmpdir;
+			if (IgnoreDeprecated && is_deprecated(de->d_name))
+				continue;
 			tmpdir =
 			    (char *restrict) xmalloc(strlen(path) +
 						     strlen(de->d_name) +
@@ -369,6 +388,10 @@ static int WriteSetting(const char *setting)
 	outname[equals - name] = 0;
 	/* change / to . */
 	slashdot(outname, '/', '.');
+	if(is_deprecated(strrchr(outname, '.') + 1)) {
+		xwarnx(_("%s is deprecated, value not set"), outname);
+		goto out;
+        }
 
 	if (stat(tmpname, &ts) < 0) {
 		if (!IgnoreError) {
@@ -618,10 +641,12 @@ int main(int argc, char *argv[])
 	const char *preloadfile = DEFAULT_PRELOAD;
 
 	enum {
-		SYSTEM_OPTION = CHAR_MAX + 1
+		DEPRECATED_OPTION = CHAR_MAX + 1,
+		SYSTEM_OPTION
 	};
 	static const struct option longopts[] = {
 		{"all", no_argument, NULL, 'a'},
+		{"deprecated", no_argument, NULL, DEPRECATED_OPTION},
 		{"binary", no_argument, NULL, 'b'},
 		{"ignore", no_argument, NULL, 'e'},
 		{"names", no_argument, NULL, 'N'},
@@ -645,6 +670,7 @@ int main(int argc, char *argv[])
 	PrintNewline = true;
 	IgnoreError = false;
 	Quiet = false;
+	IgnoreDeprecated = true;
 
 	if (argc < 2)
 		Usage(stderr);
@@ -692,6 +718,9 @@ int main(int argc, char *argv[])
 		case 'A':	/* same as -a -o */
 		case 'X':	/* same as -a -x */
 			DisplayAllOpt = true;
+			break;
+		case DEPRECATED_OPTION:
+			IgnoreDeprecated = false;
 			break;
 		case SYSTEM_OPTION:
 			IgnoreError = true;

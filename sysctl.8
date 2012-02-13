@@ -62,6 +62,11 @@ given.  Specifying \- as filename means reading data from standard input.
 \fB\-a\fR, \fB\-\-all\fR
 Display all values currently available.
 .TP
+\fB\-\-deprecated\fR
+Include deprecated parameters to
+.B \-\-all
+values listing.
+.TP
 \fB\-b\fR, \fB\-\-binary\fR
 Print value without new line.
 .TP
@@ -126,6 +131,16 @@ Display version information and exit.
 /sbin/sysctl \-a \-\-pattern 'net.ipv4.conf.(eth|wlan)0.arp'
 .br
 /sbin/sysctl \-\-system \-\-pattern '^net.ipv6'
+.SH DEPRECATED PARAMETERS
+The
+.B base_reachable_time
+and
+.B retrans_time
+are deprecated.  The sysctl command does not allow changing values of there
+parameters.  Users who insist to use deprecated kernel interfaces should values
+to /proc file system by other means.  For example:
+.PP
+echo 256 > /proc/sys/net/ipv6/neigh/eth0/base_reachable_time
 .SH FILES
 .I /proc/sys
 .br
