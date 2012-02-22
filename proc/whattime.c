@@ -27,10 +27,11 @@
 static char buf[128];
 static double av[3];
 
-char *sprint_uptime(void) {
+char *sprint_uptime(int human_readable) {
   struct utmp *utmpstruct;
-  int upminutes, uphours, updays;
+  int upminutes, uphours, updays, upweeks, upyears, updecades;
   int pos;
+  int comma;
   struct tm *realtime;
   time_t realseconds;
   int numuser;
@@ -38,50 +39,107 @@ char *sprint_uptime(void) {
 
 /* first get the current time */
 
-  time(&realseconds);
-  realtime = localtime(&realseconds);
-  pos = sprintf(buf, " %02d:%02d:%02d ",
-    realtime->tm_hour, realtime->tm_min, realtime->tm_sec);
+  if (!human_readable) {
+    time(&realseconds);
+    realtime = localtime(&realseconds);
+    pos = sprintf(buf, " %02d:%02d:%02d ",
+      realtime->tm_hour, realtime->tm_min, realtime->tm_sec);
+  }
 
 /* read and calculate the amount of uptime */
 
   uptime(&uptime_secs, &idle_secs);
 
-  updays = (int) uptime_secs / (60*60*24);
+  if (human_readable) {
+    updecades = (int) uptime_secs / (60*60*24*365*10);
+    upyears = ((int) uptime_secs / (60*60*24*365)) % 10;
+    upweeks = ((int) uptime_secs / (60*60*24*7)) % 52;
+    updays = ((int) uptime_secs / (60*60*24)) % 7;
+  }
+  else
+    updays = (int) uptime_secs / (60*60*24);
+
   strcat (buf, "up ");
   pos += 3;
-  if (updays)
-    pos += sprintf(buf + pos, "%d day%s, ", updays, (updays != 1) ? "s" : "");
+
+  if (!human_readable) {
+    if (updays)
+      pos += sprintf(buf + pos, "%d day%s, ", updays, (updays != 1) ? "s" : "");
+  }
+
   upminutes = (int) uptime_secs / 60;
   uphours = upminutes / 60;
   uphours = uphours % 24;
   upminutes = upminutes % 60;
-  if(uphours)
-    pos += sprintf(buf + pos, "%2d:%02d, ", uphours, upminutes);
-  else
-    pos += sprintf(buf + pos, "%d min, ", upminutes);
+
+  if (!human_readable) {
+    if(uphours)
+      pos += sprintf(buf + pos, "%2d:%02d, ", uphours, upminutes);
+    else
+      pos += sprintf(buf + pos, "%d min, ", upminutes);
 
 /* count the number of users */
 
-  numuser = 0;
-  setutent();
-  while ((utmpstruct = getutent())) {
-    if ((utmpstruct->ut_type == USER_PROCESS) &&
-       (utmpstruct->ut_name[0] != '\0'))
-      numuser++;
+    numuser = 0;
+    setutent();
+    while ((utmpstruct = getutent())) {
+      if ((utmpstruct->ut_type == USER_PROCESS) &&
+         (utmpstruct->ut_name[0] != '\0'))
+        numuser++;
+    }
+    endutent();
+
+    pos += sprintf(buf + pos, "%2d user%s, ", numuser, numuser == 1 ? "" : "s");
+
+    loadavg(&av[0], &av[1], &av[2]);
+
+    pos += sprintf(buf + pos, " load average: %.2f, %.2f, %.2f",
+		   av[0], av[1], av[2]);
   }
-  endutent();
 
-  pos += sprintf(buf + pos, "%2d user%s, ", numuser, numuser == 1 ? "" : "s");
+  if (human_readable) {
+    comma = 0;
 
-  loadavg(&av[0], &av[1], &av[2]);
+    if (updecades) {
+      pos += sprintf(buf + pos, "%d %s", updecades,
+                     updecades > 1 ? "decades" : "decade");
+      comma += 1;
+    }
 
-  pos += sprintf(buf + pos, " load average: %.2f, %.2f, %.2f",
-		 av[0], av[1], av[2]);
+    if (upyears) {
+      pos += sprintf(buf + pos, "%s%d %s", comma > 0 ? ", " : "", upyears,
+                     upyears > 1 ? "years" : "year");
+      comma += 1;
+    }
+
+    if (upweeks) {
+      pos += sprintf(buf + pos, "%s%d %s", comma > 0 ? ", " : "", upweeks,
+                     upweeks > 1 ? "weeks" : "week");
+      comma += 1;
+    }
+
+    if (updays) {
+      pos += sprintf(buf + pos, "%s%d %s", comma > 0 ? ", " : "", updays,
+                     updays > 1 ? "days" : "day");
+      comma += 1;
+    }
+
+    if (uphours) {
+      pos += sprintf(buf + pos, "%s%d %s", comma > 0 ? ", " : "", uphours,
+                     uphours > 1 ? "hours" : "hour");
+      comma += 1;
+    }
+
+    if (upminutes) {
+      pos += sprintf(buf + pos, "%s%d %s", comma > 0 ? ", " : "", upminutes,
+                     upminutes > 1 ? "minutes" : "minute");
+      comma += 1;
+    }
+  }
 
   return buf;
 }
 
-void print_uptime(void) {
-  printf("%s\n", sprint_uptime());
+void print_uptime(int human_readable) {
+  printf("%s\n", sprint_uptime(human_readable));
 }

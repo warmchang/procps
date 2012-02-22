@@ -5,8 +5,8 @@
 
 EXTERN_C_BEGIN
 
-extern void print_uptime(void);
-extern char *sprint_uptime(void);
+extern void print_uptime(int human_readable);
+extern char *sprint_uptime(int human_readable);
 
 EXTERN_C_END
 
