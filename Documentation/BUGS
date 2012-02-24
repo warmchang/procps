@@ -41,6 +41,13 @@ request.
 git request-pull commit-id \
 	git://gitorious.org/~yourlogin/procps/your-clone.git
 
+Gitorious merge requests
+========================
+Prefer sending pull request to mail list.  More people will notice a
+change being proposed, making potential discussion to capture wider
+point of view.  Using gitorious merge reguest in combination mail
+list announcement is fine.
+
 Kernel-Dependent Patches
 ========================
 If you send me patches which are specific to *running* with a particular
