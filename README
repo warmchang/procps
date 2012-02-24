@@ -21,6 +21,10 @@ INSTALLATION
 
     make check
 
+HOW TO CONTRIBUTE
+
+    See Documentation/BUGS file.
+
 PACKAGING
 
     If you are a downstream maintainer (packager) for a Linux
