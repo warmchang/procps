@@ -131,7 +131,6 @@ static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
 CMP_INT(rtprio)
 CMP_SMALL(sched)
 CMP_INT(cutime)
-CMP_INT(cstime)
 CMP_SMALL(priority)                                             /* nice */
 CMP_SMALL(nlwp)
 CMP_SMALL(nice)                                                 /* priority */
@@ -817,7 +816,7 @@ static int old_time_helper(char *dst, unsigned long long t, unsigned long long r
   if(!t)            return snprintf(dst, COLWID, "    -");
   if(t == ~0ULL)    return snprintf(dst, COLWID, "   xx");
   if((long long)(t-=rel) < 0)  t=0ULL;
-  if(t>9999ULL)     return snprintf(dst, COLWID, "%5Lu", t/100ULL);
+  if(t>9999ULL)     return snprintf(dst, COLWID, "%5llu", t/100ULL);
   else              return snprintf(dst, COLWID, "%2u.%02u", (unsigned)t/100U, (unsigned)t%100U);
 }
 

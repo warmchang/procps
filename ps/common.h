@@ -18,9 +18,9 @@
 #include "../proc/readproc.h"
 
 #if 0
-#define trace(args...) printf(## args)
+#define trace(...) printf(## __VA_ARGS__)
 #else
-#define trace(args...)
+#define trace(...)
 #endif
 
 

@@ -492,7 +492,7 @@ void self_info(void){
 
   fprintf(stderr,
     "personality=0x%08x (from \"%s\")\n"
-    "EUID=%d TTY=%d,%d Hertz=%Ld page_size=%d\n",
+    "EUID=%d TTY=%d,%d Hertz=%lld page_size=%d\n",
     personality, saved_personality_text,
     cached_euid, (int)major(cached_tty), (int)minor(cached_tty), Hertz,
     (int)(page_size)
