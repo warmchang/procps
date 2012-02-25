@@ -16,7 +16,7 @@ test -f free.c || {
 }
 
 (autopoint --version) < /dev/null > /dev/null 2>&1 || {
-	echo "You must have autopoint installed to generate util-linux build system."
+	echo "You must have autopoint installed to generate procps-ng build system."
 	echo "The autopoint command is part of the GNU gettext package."
 	DIE=1
 }
