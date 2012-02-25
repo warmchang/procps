@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
 	    option_exec = 0,
 	    option_beep = 0,
 	    option_color = 0,
-	    option_errexit = 0, option_chgexit = 0, option_help = 0, option_version = 0;
+	    option_errexit = 0, option_chgexit = 0;
 	double interval = 2;
 	char *command;
 	char **command_argv;
