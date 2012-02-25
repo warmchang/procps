@@ -536,7 +536,6 @@ static struct el * select_procs (int *num)
 				list = xrealloc(list, size * sizeof *list);
 			}
 			if (list && (opt_long || opt_echo)) {
-				char buff[5096];  /* FIXME */
 				list[matches].num = task.XXXID;
 				list[matches++].str = xstrdup (cmd);
 			} else if (list) {
@@ -644,7 +643,7 @@ static void parse_opts (int argc, char **argv)
 			++criteria_count;
 			break;
 /*		case 'I':   / * FreeBSD: require confirmation before killing * /
- *			break;
+ *			break; */
 /*		case 'J':   / * Solaris: match by project ID (name or number) * /
  *			break; */
 		case 'L':   /* FreeBSD: fail if pidfile (see -F) not locked */
@@ -798,8 +797,8 @@ int main (int argc, char **argv)
 				continue;
 			}
 			if (errno==ESRCH)
-				 // gone now, which is OK
-			        continue;
+				 /* gone now, which is OK */
+				continue;
 			xwarn(_("killing pid %ld failed"), procs[i].num);
 		}
 	} else {
