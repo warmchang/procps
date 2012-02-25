@@ -325,7 +325,7 @@ int main(int argc, char **argv)
 	char *user = NULL, *p;
 	utmp_t *u;
 	struct winsize win;
-	int header = 1, longform = 1, from = 1, args, maxcmd = 80, ch;
+	int header = 1, longform = 1, from = 1, maxcmd = 80, ch;
 	int userlen = 8;
 	int fromlen = 16;
 	char *env_var;
@@ -409,7 +409,7 @@ int main(int argc, char **argv)
 	}
 	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) != -1 && win.ws_col > 0)
 		maxcmd = win.ws_col;
-	else if (p = getenv("COLUMNS"))
+	else if ((p = getenv("COLUMNS")))
 		maxcmd = atoi(p);
 	else
 		maxcmd = 80;
