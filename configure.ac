@@ -196,7 +196,7 @@ if test "x$enable_w_from" = xyes; then
 fi
 
 AC_ARG_ENABLE([whining],
-  AS_HELP_STRING([--disable-whining], [do not print unnessary warnings (slackware-ism)]),
+  AS_HELP_STRING([--disable-whining], [do not print unnecessary warnings (slackware-ism)]),
   [], enable_whining=yes
 )
 if test "x$enable_whining" = xyes; then
