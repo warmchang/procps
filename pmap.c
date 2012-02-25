@@ -82,7 +82,7 @@ static void discover_shm_minor(void)
 		unsigned KLONG start, end;
 		unsigned long long file_offset, inode;
 		unsigned dev_major, dev_minor;
-		sscanf(mapbuf, "%" KLF "x-%" KLF "x %31s %Lx %x:%x %Lu", &start,
+		sscanf(mapbuf, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
 		       &end, flags, &file_offset, &dev_major, &dev_minor,
 		       &inode);
 		tmp = strchr(mapbuf, '\n');
@@ -125,7 +125,7 @@ static char *mapping_name(proc_t * p, unsigned KLONG addr,
 
 	if (!dev_major && dev_minor == shm_minor && strstr(mapbuf, "/SYSV")) {
 		static char shmbuf[64];
-		snprintf(shmbuf, sizeof shmbuf, "  [ shmid=0x%Lx ]", inode);
+		snprintf(shmbuf, sizeof shmbuf, "  [ shmid=0x%llx ]", inode);
 		return shmbuf;
 	}
 
@@ -260,7 +260,7 @@ static int one_proc(proc_t * p)
 				continue;
 			}
 		}
-		sscanf(mapbuf, "%" KLF "x-%" KLF "x %31s %Lx %x:%x %Lu", &start,
+		sscanf(mapbuf, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
 		       &end, flags, &file_offset, &dev_major, &dev_minor,
 		       &inode);
 
@@ -308,8 +308,8 @@ static int one_proc(proc_t * p)
 			    mapping_name(p, start, diff, mapbuf, 0, dev_major,
 					 dev_minor, inode);
 			printf((sizeof(KLONG) == 8)
-			       ? "%016" KLF "x %7lu %s %016Lx %03x:%05x %s\n"
-			       : "%08lx %7lu %s %016Lx %03x:%05x %s\n",
+			       ? "%016" KLF "x %7lu %s %016llx %03x:%05x %s\n"
+			       : "%08lx %7lu %s %016llx %03x:%05x %s\n",
 			       start,
 			       (unsigned long)(diff >> 10),
 			       flags, file_offset, dev_major, dev_minor, cp);
