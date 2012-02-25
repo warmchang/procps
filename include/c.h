@@ -103,10 +103,10 @@ static inline char *prog_inv_sh_nm_from_file(char *f, char stripext)
 /*
  * Error printing.
  */
-#define xwarn(FMT...) error(0, errno, FMT)
-#define xwarnx(FMT...) error(0, 0, FMT)
-#define xerr(STATUS, FMT...) error(STATUS, errno, FMT)
-#define xerrx(STATUS, FMT...) error(STATUS, 0, FMT)
+#define xwarn(...) error(0, errno, __VA_ARGS__)
+#define xwarnx(...) error(0, 0, __VA_ARGS__)
+#define xerr(STATUS, ...) error(STATUS, errno, __VA_ARGS__)
+#define xerrx(STATUS, ...) error(STATUS, 0, __VA_ARGS__)
 
 /*
  * Constant strings for usage() functions.
