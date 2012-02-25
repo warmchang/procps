@@ -22,6 +22,7 @@
 #include "proc/version.h"
 #include "c.h"
 #include "nls.h"
+#include "xalloc.h"
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -91,9 +92,11 @@ int main(int argc, char *argv[])
 
 	for (i = 0; i < argc; i++) {
 		char *s;
-		ssize_t len;
+		ssize_t len, buflen;
 		/* Constant 10 is the length of strings "/proc/" + "/cwd" + 1 */
-		char buf[10 + strlen(argv[i]) + 1];
+		char *buf;
+		buflen = 10 + strlen(argv[i]) + 1;
+		buf = xmalloc(buflen);
 
 		if (check_pid_argument(argv[i]))
 			xerrx(EXIT_FAILURE, _("invalid process id: %s"),
@@ -104,9 +107,9 @@ int main(int argc, char *argv[])
 		 * the first char is possible
 		 */
 		if (argv[i][0] != '/')
-			snprintf(buf, sizeof buf, "/proc/%s/cwd", argv[i]);
+			snprintf(buf, buflen, "/proc/%s/cwd", argv[i]);
 		else
-			snprintf(buf, sizeof buf, "%s/cwd", argv[i]);
+			snprintf(buf, buflen, "%s/cwd", argv[i]);
 
 		/*
 		 * buf contains /proc/NNNN/cwd symlink name
@@ -116,6 +119,7 @@ int main(int argc, char *argv[])
 			alloclen *= 2;
 			pathbuf = realloc(pathbuf, alloclen);
 		}
+		free(buf);
 
 		if (len < 0) {
 			s = strerror(errno == ENOENT ? ESRCH : errno);
