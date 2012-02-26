@@ -270,7 +270,7 @@ static void parse_input(char c)
 	}
 }
 
-#define print_line(fmt, args...) if (run_once) printf(fmt, ## args); else printw(fmt, ## args)
+#define print_line(fmt, ...) if (run_once) printf(fmt, __VA_ARGS__); else printw(fmt, __VA_ARGS__)
 int main(int argc, char *argv[])
 {
 	int o;
@@ -296,7 +296,6 @@ int main(int argc, char *argv[])
 
 	while ((o = getopt_long(argc, argv, "d:s:ohV", longopts, NULL)) != -1) {
 		switch (o) {
-		char *end;
 		case 'd':
 			errno = 0;
 			delay = strtol_or_err(optarg, _("illegal delay"));
