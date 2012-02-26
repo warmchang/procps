@@ -46,6 +46,13 @@ double strtod_or_err(const char *str, const char *errmesg)
 #ifdef TEST_PROGRAM
 int main(int argc, char *argv[])
 {
-	return EXIT_FAILURE;
+	if (argc < 2) {
+		error(EXIT_FAILURE, 0, "no arguments");
+	} else if (argc < 3) {
+		printf("%ld\n", strtol_or_err(argv[1], "strtol_or_err"));
+	} else {
+		printf("%lf\n", strtod_or_err(argv[2], "strtod_or_err"));
+	}
+	return EXIT_SUCCESS;
 }
 #endif				/* TEST_PROGRAM */
