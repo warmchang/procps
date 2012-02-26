@@ -259,7 +259,7 @@ int main(int argc, char **argv)
 			flags |= FREE_REPEATCOUNT;
 			args.repeat_counter = strtol_or_err(optarg,
 				_("failed to parse count argument"));
-			if (args.repeat_counter < 1 || args.repeat_counter > ULONG_MAX/2)
+			if (args.repeat_counter < 1)
 			  error(EXIT_FAILURE, ERANGE,
 				  _("failed to parse count argument: '%s'"), optarg);
 			break;
