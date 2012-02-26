@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 	int o;
 	unsigned short old_rows;
 	struct slab_info *slab_list = NULL;
-	int run_once=0;
+	int run_once = 0, retval = EXIT_SUCCESS;
 
 	static const struct option longopts[] = {
 		{ "delay",	required_argument, NULL, 'd' },
@@ -342,8 +342,10 @@ int main(int argc, char *argv[])
 		int i;
 		memset(&stats, 0, sizeof(struct slab_stat));
 
-		if (get_slabinfo(&slab_list, &stats))
+		if (get_slabinfo(&slab_list, &stats)) {
+			retval = EXIT_FAILURE;
 			break;
+		}
 
 		if (!run_once && old_rows != rows) {
 			resizeterm(rows, cols);
@@ -409,6 +411,7 @@ int main(int argc, char *argv[])
 
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
 	free_slabinfo(slab_list);
-	if (!run_once) endwin();
-	return EXIT_SUCCESS;
+	if (!run_once)
+		endwin();
+	return retval;
 }
