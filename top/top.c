@@ -1597,7 +1597,7 @@ static void display_fields (int focus, int extend) {
       char sbuf[xSUFX+1];
       int b = FLDviz(w, i);
       FLG_t f = FLDget(w, i);
-      const char *h, *e = (i == focus && extend) ? w->capclr_msg : "";
+      const char *h, *e = (i == focus && extend) ? w->capclr_hdr : "";
 
       // advance past leading header spaces and prep sacrificial suffix
       for (h = Fieldstab[f].head; ' ' == *h; ++h) ;
@@ -1608,7 +1608,7 @@ static void display_fields (int focus, int extend) {
          , b ? '*' : ' '
          , b ? w->cap_bold : Cap_norm
          , e
-         , i == focus ? w->capclr_msg : ""
+         , i == focus ? w->capclr_hdr : ""
          , h
          , Cap_norm
          , b ? w->cap_bold : ""
