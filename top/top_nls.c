@@ -260,6 +260,9 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[FIND_no_next_txt] = _("Locate next inactive, use \"L\"");
    Norm_nlstab[GET_find_str_txt] = _("Locate string");
    Norm_nlstab[FIND_no_find_fmt] = _("%s\"%s\" not found");
+#ifndef WARN_CFG_OFF
+   Norm_nlstab[XTRA_warncfg_txt] = _("Overwrite existing old style rcfile?");
+#endif
 }
 
 

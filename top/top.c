@@ -72,6 +72,9 @@ static char *Myname;
         /* The 'local' config file support */
 static char  Rc_name [OURPATHSZ];
 static RCF_t Rc = DEF_RCFILE;
+#ifndef WARN_CFG_OFF
+static int   Rc_converted;
+#endif
 
         /* The run-time acquired page stuff */
 static unsigned Page_size;
@@ -658,7 +661,7 @@ static void show_msg (const char *str) {
 static int show_pmt (const char *str) {
    int rc;
 
-   PUTT("%s%s%.*s: %s%s%s"
+   PUTT("%s%s%.*s %s%s%s"
       , tg2(0, Msg_row)
       , Curwin->capclr_pmt
       , Screen_cols - 3
@@ -2154,6 +2157,70 @@ static void before (char *me) {
 
 
         /*
+         * A configs_read *Helper* function responsible for converting a
+         * single window's old rc stuff into a new top compatible rcfile entry */
+static int config_cvt (WIN_t *q) {
+ #define old_View_NOBOLD  0x000001
+ #define old_VISIBLE_tsk  0x000008
+ #define old_Qsrt_NORMAL  0x000010
+ #define old_Show_HICOLS  0x000200
+ #define old_Show_THREAD  0x010000
+   static struct flags {
+      int old, new;
+   } flags_tab[] = {
+      { old_View_NOBOLD, View_NOBOLD },
+      { old_VISIBLE_tsk, Show_TASKON },
+      { old_Qsrt_NORMAL, Qsrt_NORMAL },
+      { old_Show_HICOLS, Show_HICOLS },
+      { old_Show_THREAD, 0           }
+   };
+   static const char field_src[] = OLD_FIELDS;
+   char field_dst[PFLAGSSIZ];
+   int i, x;
+
+   // first we'll touch up this window's winflags...
+   x = q->rc.winflags;
+   q->rc.winflags = 0;
+   for (i = 0; i < MAXTBL(flags_tab); i++) {
+      if (x & flags_tab[i].old) {
+         x &= ~flags_tab[i].old;
+         q->rc.winflags |= flags_tab[i].new;
+      }
+   }
+   q->rc.winflags |= x;
+
+   // now let's convert old top's more limited 26 fields...
+   if (26 != strlen(q->rc.fieldscur))
+      return 0;
+   strcpy(field_dst, field_src);
+   for (i = 0; i < 26; i++) {
+      int c = q->rc.fieldscur[i];
+      x = toupper(c) - 'A';
+      if (x < 0 || x > 25)
+         return 0;
+      field_dst[i] = field_src[x];
+      if (isupper(c))
+         FLDon(field_dst[i]);
+   }
+   strcpy(q->rc.fieldscur, field_dst);
+
+   // lastly, we must adjust the old sort field enum...
+   x = q->rc.sortindx;
+   q->rc.sortindx = field_src[x] - FLD_OFFSET;
+
+#ifndef WARN_CFG_OFF
+   Rc_converted = 1;
+#endif
+   return 1;
+ #undef old_View_NOBOLD
+ #undef old_VISIBLE_tsk
+ #undef old_Qsrt_NORMAL
+ #undef old_Show_HICOLS
+ #undef old_Show_THREAD
+} // end: config_cvt
+
+
+        /*
          * Build the local RC file name then try to read both of 'em.
          * 'SYS_RCFILESPEC' contains two lines consisting of the secure
          *   mode switch and an update interval.  It's presence limits what
@@ -2168,14 +2235,11 @@ static void before (char *me) {
          *   line b: contains w->winflags, sortindx, maxtasks
          *   line c: contains w->summclr, msgsclr, headclr, taskclr */
 static void configs_read (void) {
-#ifdef RCFILE_NOERR
-   RCF_t rcdef = DEF_RCFILE;
-#endif
    float tmp_delay = DEF_DELAY;
-   char fbuf[LRGBUFSIZ], *p;
+   char fbuf[LRGBUFSIZ];
+   const char *p;
    FILE *fp;
    int i, x;
-   char id;
 
    p = getenv("HOME");
    snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", (p && *p) ? p : ".", Myname);
@@ -2195,61 +2259,66 @@ static void configs_read (void) {
    if (fp) {
       fbuf[0] = '\0';
       fgets(fbuf, sizeof(fbuf), fp);             // ignore eyecatcher
-      if (5 != (fscanf(fp, "Id:%c, "
-         "Mode_altscr=%d, Mode_irixps=%d, Delay_time=%f, Curwin=%d\n"
-         , &id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_delay, &i))
-      || RCF_VERSION_ID != id)
-#ifndef RCFILE_NOERR
-         error_exit(fmtmk(N_fmt(RC_bad_files_fmt), Rc_name));
-#else
-         goto just_default_em;
-#endif
+      if (5 != fscanf(fp
+         , "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%f, Curwin=%d\n"
+         , &Rc.id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_delay, &i)) {
+            p = fmtmk(N_fmt(RC_bad_files_fmt), Rc_name);
+            goto default_or_error;
+      }
       // you saw that, right?  (fscanf stickin' it to 'i')
       Curwin = &Winstk[i];
 
       for (i = 0 ; i < GROUPSMAX; i++) {
+         p = fmtmk(N_fmt(RC_bad_entry_fmt), i+1, Rc_name);
          // note: "fieldscur=%__s" on next line should equal PFLAGSSIZ !
-         fscanf(fp, "%3s\tfieldscur=%64s\n"
-            , Winstk[i].rc.winname, Winstk[i].rc.fieldscur);
+         if (2 != fscanf(fp, "%3s\tfieldscur=%64s\n"
+            , Winstk[i].rc.winname, Winstk[i].rc.fieldscur))
+               goto default_or_error;
 #if PFLAGSSIZ > 64
  // too bad fscanf is not as flexible with his format string as snprintf
  # error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 #endif
-         if (strlen(Winstk[i].rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
-#ifndef RCFILE_NOERR
-            error_exit(fmtmk(N_fmt(RC_bad_entry_fmt), i+1, Rc_name));
-#else
-            goto just_default_em;
-#endif
-         for (x = 0; x < P_MAXPFLGS; ++x) {
-            int f = FLDget(&Winstk[i], x);
-            if (P_MAXPFLGS <= f)
-#ifndef RCFILE_NOERR
-               error_exit(fmtmk(N_fmt(RC_bad_entry_fmt), i+1, Rc_name));
-#else
-               goto just_default_em;
-#endif
-         }
-         fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-            , &Winstk[i].rc.winflags, (int*)&Winstk[i].rc.sortindx, &Winstk[i].rc.maxtasks);
-         fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
+         if (3 != fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
+            , &Winstk[i].rc.winflags, (int*)&Winstk[i].rc.sortindx, &Winstk[i].rc.maxtasks))
+               goto default_or_error;
+         if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
             , &Winstk[i].rc.summclr, &Winstk[i].rc.msgsclr
-            , &Winstk[i].rc.headclr, &Winstk[i].rc.taskclr);
-      }
+            , &Winstk[i].rc.headclr, &Winstk[i].rc.taskclr))
+               goto default_or_error;
+
+         if (RCF_VERSION_ID != Rc.id) {
+            if (!config_cvt(&Winstk[i]))
+               goto default_or_error;
+         } else {
+            if (strlen(Winstk[i].rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
+               goto default_or_error;
+            for (x = 0; x < P_MAXPFLGS; ++x) {
+               int f = FLDget(&Winstk[i], x);
+               if (P_MAXPFLGS <= f)
+                  goto default_or_error;
+            }
+         }
+      } // end: for (GROUPSMAX)
+
       fclose(fp);
-   }
+   } // end: if (fp)
 
    // lastly, establish the true runtime secure mode and delay time
    if (!getuid()) Secure_mode = 0;
    if (!Secure_mode) Rc.delay_time = tmp_delay;
    return;
 
+default_or_error:
 #ifdef RCFILE_NOERR
-just_default_em:
-   fclose(fp);
+{  RCF_t rcdef = DEF_RCFILE;
+
+   flcose(fp);
    Rc = rcdef;
    for (i = 0 ; i < GROUPSMAX; i++)
       Winstk[i].rc  = Rc.win[i];
+}
+#else
+   error_exit(p);
 #endif
 } // end: configs_read
 
@@ -2699,6 +2768,14 @@ static void file_writerc (void) {
    FILE *fp;
    int i;
 
+#ifndef WARN_CFG_OFF
+   if (Rc_converted) {
+      show_pmt(N_fmt(XTRA_warncfg_txt));
+      if ('y' != tolower(keyin(0)))
+         return;
+      Rc_converted = 0;
+   }
+#endif
    if (!(fp = fopen(Rc_name, "w"))) {
       show_msg(fmtmk(N_fmt(FAIL_rc_open_fmt), Rc_name, strerror(errno)));
       return;

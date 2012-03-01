@@ -45,6 +45,7 @@
 //#define TREE_ONEPASS            /* for speed, tolerate dangling children   */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 //#define VALIDATE_NLS            /* validate integrity of all 3 nls tables  */
+//#define WARN_CFG_OFF            /* warning OFF when overwriting old rcfile */
 
 
 /*######  Notes, etc.  ###################################################*/
@@ -303,6 +304,7 @@ typedef struct RCW_t {  // the 'window' portion of an rcfile
 
         /* This represents the complete rcfile */
 typedef struct RCF_t {
+   char   id;                   // rcfile version id
    int    mode_altscr;          // 'A' - Alt display mode (multi task windows)
    int    mode_irixps;          // 'I' - Irix vs. Solaris mode (SMP-only)
    float  delay_time;           // 'd'/'s' - How long to sleep twixt updates
@@ -360,6 +362,7 @@ typedef struct WIN_t {
 #define VIZTOGw(q,f) (VIZISw(q)) ? TOGw(q,(f)) : win_warn(Warn_VIZ)
 
         // Used to test/manipulte fieldscur values
+#define FLDon(c)     ((c) |= 0x80)
 #define FLDget(q,i)  ((FLG_t)((q)->rc.fieldscur[i] & 0x7f) - FLD_OFFSET)
 #define FLDtog(q,i)  ((q)->rc.fieldscur[i] ^= 0x80)
 #define FLDviz(q,i)  ((q)->rc.fieldscur[i] &  0x80)
@@ -490,10 +493,12 @@ typedef struct WIN_t {
 #define JOB_FIELDS  "¥¦¹·º³´Ä»¼½§Å()*+,-./012568>?@ABCFGHIJKLMNOPQRSTUVWXYZ["
 #define MEM_FIELDS  "¥º»¼½¾¿ÀÁÃÄ³´·Å&'()*+,-./0125689BFGHIJKLMNOPQRSTUVWXYZ["
 #define USR_FIELDS  "¥¦§¨ª°¹·ºÄÅ)+,-./1234568;<=>?@ABCFGHIJKLMNOPQRSTUVWXYZ["
+        /* old top's fields (A-Z) in the first 26 positions */
+#define OLD_FIELDS  "%&*'(-0346789:;<=>?@ACDEFG)+,./125BHIJKLMNOPQRSTUVWXYZ["
 
         /* The default values for the local config file */
 #define DEF_RCFILE { \
-   0, 1, DEF_DELAY, 0, { \
+   RCF_VERSION_ID, 0, 1, DEF_DELAY, 0, { \
    { P_CPU, DEF_WINFLGS, 0, \
       COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED, \
       "Def", DEF_FIELDS }, \
@@ -589,6 +594,7 @@ typedef struct WIN_t {
 //atic void          sysinfo_refresh (int forced);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
+//atic int           config_cvt (WIN_t *q);
 //atic void          configs_read (void);
 //atic void          parse_args (char **args);
 //atic void          whack_terminal (void);
