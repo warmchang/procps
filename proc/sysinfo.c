@@ -1,13 +1,23 @@
-// Copyright (C) 1992-1998 by Michael K. Johnson, johnsonm@redhat.com
-// Copyright 1998-2003 Albert Cahalan
-//
-// This file is placed under the conditions of the GNU Library
-// General Public License, version 2, or any later version.
-// See file COPYING for information on distribution conditions.
-//
-// File for parsing top-level /proc entities. */
-//
-// June 2003, Fabian Frederick, disk and slab info
+/*
+ * File for parsing top-level /proc entities.
+ * Copyright (C) 1992-1998 by Michael K. Johnson, johnsonm@redhat.com
+ * Copyright 1998-2003 Albert Cahalan
+ * June 2003, Fabian Frederick, disk and slab info
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #include <stdio.h>
 #include <stdlib.h>

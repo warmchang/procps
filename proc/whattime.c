@@ -1,4 +1,5 @@
-/* This is a trivial uptime program.  I hereby release this program
+/*
+ * This is a trivial uptime program.  I hereby release this program
  * into the public domain.  I disclaim any responsibility for this
  * program --- use it at your own risk.  (as if there were any.. ;-)
  * -michaelkjohnson (johnsonm@sunsite.unc.edu)
@@ -11,6 +12,19 @@
  * Modified by J. Cowley to add printing the uptime message to a
  * string (for top) and to optimize file handling.  19 Mar 1993.
  *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <stdio.h>

@@ -1,4 +1,5 @@
-/* old: "Copyright 1994 by Henry Ware <al172@yfn.ysu.edu>. Copyleft same year."
+/*
+ * old: "Copyright 1994 by Henry Ware <al172@yfn.ysu.edu>. Copyleft same year."
  * most code copyright 2002 Albert Cahalan
  *
  * 27/05/2003 (Fabian Frederick) : Add unit conversion + interface
@@ -11,6 +12,20 @@
  * July 2003 (Fabian)  : Adding disk partition output
  *			 Adding disk table
  *			 Syncing help / usage
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <assert.h>
