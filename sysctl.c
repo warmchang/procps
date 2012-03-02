@@ -240,6 +240,8 @@ static int ReadSetting(const char *restrict const name)
 					if (PrintName) {
 						fprintf(stdout, "%s = %s",
 							outname, inbuf);
+						if (inbuf[strlen(inbuf) - 1] != '\n')
+							putchar('\n');
 					} else {
 						if (!PrintNewline) {
 							char *nlptr =
