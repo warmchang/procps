@@ -493,8 +493,16 @@ typedef struct WIN_t {
 #define JOB_FIELDS  "¥¦¹·º³´Ä»¼½§Å()*+,-./012568>?@ABCFGHIJKLMNOPQRSTUVWXYZ["
 #define MEM_FIELDS  "¥º»¼½¾¿ÀÁÃÄ³´·Å&'()*+,-./0125689BFGHIJKLMNOPQRSTUVWXYZ["
 #define USR_FIELDS  "¥¦§¨ª°¹·ºÄÅ)+,-./1234568;<=>?@ABCFGHIJKLMNOPQRSTUVWXYZ["
-        /* old top's fields (A-Z) in the first 26 positions */
-#define OLD_FIELDS  "%&*'(-0346789:;<=>?@ACDEFG)+,./125BHIJKLMNOPQRSTUVWXYZ["
+#ifdef OOMEM_ENABLE
+        // the suse old top fields ( 'a'-'z' + '{|' ) in positions 0-27
+        // ( the extra chars above represent the 'off' state )
+#define CVT_FIELDS  "%&*'(-0346789:;<=>?@ACDEFGML)+,./125BHIJKNOPQRSTUVWXYZ["
+#define CVT_FLDMAX  28
+#else
+        // other old top fields ( 'a'-'z' ) in positions 0-25
+#define CVT_FIELDS  "%&*'(-0346789:;<=>?@ACDEFG)+,./125BHIJKLMNOPQRSTUVWXYZ["
+#define CVT_FLDMAX  26
+#endif
 
         /* The default values for the local config file */
 #define DEF_RCFILE { \

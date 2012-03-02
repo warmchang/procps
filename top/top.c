@@ -2157,26 +2157,35 @@ static void before (char *me) {
 
 
         /*
-         * A configs_read *Helper* function responsible for converting a
-         * single window's old rc stuff into a new top compatible rcfile entry */
+         * A configs_read *Helper* function responsible for converting
+         * a single window's old rc stuff into a new style rcfile entry */
 static int config_cvt (WIN_t *q) {
- #define old_View_NOBOLD  0x000001
- #define old_VISIBLE_tsk  0x000008
- #define old_Qsrt_NORMAL  0x000010
- #define old_Show_HICOLS  0x000200
- #define old_Show_THREAD  0x010000
-   static struct flags {
+   static struct {
       int old, new;
    } flags_tab[] = {
+    #define old_View_NOBOLD  0x000001
+    #define old_VISIBLE_tsk  0x000008
+    #define old_Qsrt_NORMAL  0x000010
+    #define old_Show_HICOLS  0x000200
+    #define old_Show_THREAD  0x010000
       { old_View_NOBOLD, View_NOBOLD },
       { old_VISIBLE_tsk, Show_TASKON },
       { old_Qsrt_NORMAL, Qsrt_NORMAL },
       { old_Show_HICOLS, Show_HICOLS },
       { old_Show_THREAD, 0           }
+    #undef old_View_NOBOLD
+    #undef old_VISIBLE_tsk
+    #undef old_Qsrt_NORMAL
+    #undef old_Show_HICOLS
+    #undef old_Show_THREAD
    };
-   static const char field_src[] = OLD_FIELDS;
-   char field_dst[PFLAGSSIZ];
-   int i, x;
+   static const char fields_src[] = CVT_FIELDS;
+#ifdef OOMEM_ENABLE
+   char fields_dst[PFLAGSSIZ], *p1, *p2;
+#else
+   char fields_dst[PFLAGSSIZ];
+#endif
+   int i, j, x;
 
    // first we'll touch up this window's winflags...
    x = q->rc.winflags;
@@ -2189,34 +2198,43 @@ static int config_cvt (WIN_t *q) {
    }
    q->rc.winflags |= x;
 
-   // now let's convert old top's more limited 26 fields...
-   if (26 != strlen(q->rc.fieldscur))
-      return 0;
-   strcpy(field_dst, field_src);
-   for (i = 0; i < 26; i++) {
+   // now let's convert old top's more limited fields...
+   j = strlen(q->rc.fieldscur);
+   if (j > CVT_FLDMAX)
+      return 1;
+   strcpy(fields_dst, fields_src);
+#ifdef OOMEM_ENABLE
+   /* all other fields represent the 'on' state with a capitalized version
+      of a particular qwerty key.  for the 2 additional suse out-of-memory
+      fields it make perfect sense to do the exact opposite, doesn't it?
+      in any case, we must turn them 'off' temporarily... */
+   if ((p1 = strchr(q->rc.fieldscur, '[')))  *p1 = '{';
+   if ((p2 = strchr(q->rc.fieldscur, '\\'))) *p2 = '|';
+#endif
+   for (i = 0; i < j; i++) {
       int c = q->rc.fieldscur[i];
-      x = toupper(c) - 'A';
-      if (x < 0 || x > 25)
-         return 0;
-      field_dst[i] = field_src[x];
+      x = tolower(c) - 'a';
+      if (x < 0 || x >= CVT_FLDMAX)
+         return 1;
+      fields_dst[i] = fields_src[x];
       if (isupper(c))
-         FLDon(field_dst[i]);
+         FLDon(fields_dst[i]);
    }
-   strcpy(q->rc.fieldscur, field_dst);
+#ifdef OOMEM_ENABLE
+   // if we turned any suse only fields off, turn 'em back on OUR way...
+   if (p1) FLDon(fields_dst[p1 - q->rc.fieldscur]);
+   if (p2) FLDon(fields_dst[p2 - q->rc.fieldscur]);
+#endif
+   strcpy(q->rc.fieldscur, fields_dst);
 
    // lastly, we must adjust the old sort field enum...
    x = q->rc.sortindx;
-   q->rc.sortindx = field_src[x] - FLD_OFFSET;
+   q->rc.sortindx = fields_src[x] - FLD_OFFSET;
 
 #ifndef WARN_CFG_OFF
    Rc_converted = 1;
 #endif
-   return 1;
- #undef old_View_NOBOLD
- #undef old_VISIBLE_tsk
- #undef old_Qsrt_NORMAL
- #undef old_Show_HICOLS
- #undef old_Show_THREAD
+   return 0;
 } // end: config_cvt
 
 
@@ -2269,31 +2287,33 @@ static void configs_read (void) {
       Curwin = &Winstk[i];
 
       for (i = 0 ; i < GROUPSMAX; i++) {
+         WIN_t *w = &Winstk[i];
          p = fmtmk(N_fmt(RC_bad_entry_fmt), i+1, Rc_name);
+
          // note: "fieldscur=%__s" on next line should equal PFLAGSSIZ !
          if (2 != fscanf(fp, "%3s\tfieldscur=%64s\n"
-            , Winstk[i].rc.winname, Winstk[i].rc.fieldscur))
+            , w->rc.winname, w->rc.fieldscur))
                goto default_or_error;
 #if PFLAGSSIZ > 64
  // too bad fscanf is not as flexible with his format string as snprintf
  # error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 #endif
          if (3 != fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-            , &Winstk[i].rc.winflags, (int*)&Winstk[i].rc.sortindx, &Winstk[i].rc.maxtasks))
+            , &w->rc.winflags, (int*)&w->rc.sortindx, &w->rc.maxtasks))
                goto default_or_error;
          if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
-            , &Winstk[i].rc.summclr, &Winstk[i].rc.msgsclr
-            , &Winstk[i].rc.headclr, &Winstk[i].rc.taskclr))
+            , &w->rc.summclr, &w->rc.msgsclr
+            , &w->rc.headclr, &w->rc.taskclr))
                goto default_or_error;
 
          if (RCF_VERSION_ID != Rc.id) {
-            if (!config_cvt(&Winstk[i]))
+            if (config_cvt(w))
                goto default_or_error;
          } else {
-            if (strlen(Winstk[i].rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
+            if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
                goto default_or_error;
             for (x = 0; x < P_MAXPFLGS; ++x) {
-               int f = FLDget(&Winstk[i], x);
+               int f = FLDget(w, x);
                if (P_MAXPFLGS <= f)
                   goto default_or_error;
             }
@@ -2311,7 +2331,6 @@ static void configs_read (void) {
 default_or_error:
 #ifdef RCFILE_NOERR
 {  RCF_t rcdef = DEF_RCFILE;
-
    flcose(fp);
    Rc = rcdef;
    for (i = 0 ; i < GROUPSMAX; i++)
