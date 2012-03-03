@@ -4,8 +4,10 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-DLOCALEDIR=\"$(localedir)\"
 
+#
+# See http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
 LIBprocps_CURRENT=0
-LIBprocps_REVISION=0
+LIBprocps_REVISION=1
 LIBprocps_AGE=0
 
 lib_LTLIBRARIES = libprocps.la
