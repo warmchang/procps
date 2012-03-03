@@ -40,6 +40,7 @@ proc expect_pass { testname reg } {
     expect {
         -re "$reg" { pass "$testname" }
         default { fail "$testname" }
+		timeout { fail "$testname" }
     }
 }
 
