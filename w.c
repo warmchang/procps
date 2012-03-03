@@ -67,10 +67,6 @@ typedef struct utmp utmp_t;
 # define FROM_STRING "off"
 #endif
 
-/* Arbitary setting, not too big for the screen, max host size */
-#define HOSTSZ 40
-
-
 /*
  * This routine is careful since some programs leave utmp strings
  * unprintable. Always outputs at least 16 chars padded with
@@ -249,7 +245,7 @@ static void showinfo(utmp_t * u, int formtype, int maxcmd, int from,
 	char uname[UT_NAMESIZE + 1] = "", tty[5 + UT_LINESIZE + 1] = "/dev/";
 	const proc_t *best;
 
-	for (i = 0; i < sizeof(u->ut_line); i++)
+	for (i = 0; i < UT_LINESIZE; i++)
 		/* clean up tty if garbled */
 		if (isalnum(u->ut_line[i]) || (u->ut_line[i] == '/'))
 			tty[i + 5] = u->ut_line[i];
@@ -273,7 +269,7 @@ static void showinfo(utmp_t * u, int formtype, int maxcmd, int from,
 	if (formtype) {
 		printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, u->ut_line);
 		if (from)
-			print_host(u->ut_host, sizeof u->ut_host, fromlen);
+			print_host(u->ut_host, UT_HOSTSIZE, fromlen);
 		print_logintime(u->ut_time, stdout);
 		if (*u->ut_line == ':')
 			/* idle unknown for xdm logins */
@@ -293,7 +289,7 @@ static void showinfo(utmp_t * u, int formtype, int maxcmd, int from,
 		printf("%-*.*s%-9.8s", userlen + 1, userlen, u->ut_user,
 		       u->ut_line);
 		if (from)
-			print_host(u->ut_host, sizeof u->ut_host, fromlen);
+			print_host(u->ut_host, UT_HOSTSIZE, fromlen);
 		if (*u->ut_line == ':')
 			/* idle unknown for xdm logins */
 			printf(" ?xdm? ");
@@ -401,7 +397,7 @@ int main(int argc, char **argv)
 	/* Get user field length from environment */
 	if ((env_var = getenv("PROCPS_USERLEN")) != NULL) {
 		userlen = atoi(env_var);
-		if (userlen < 8 || userlen > UT_NAMESIZE) {
+		if (userlen < 8 || UT_NAMESIZE < userlen) {
 			xwarnx
 			    (_("User length environment PROCPS_USERLEN must be between 8 and %zu, ignoring.\n"),
 			     UT_NAMESIZE);
@@ -411,10 +407,10 @@ int main(int argc, char **argv)
 	/* Get from field length from environment */
 	if ((env_var = getenv("PROCPS_FROMLEN")) != NULL) {
 		fromlen = atoi(env_var);
-		if (fromlen < 8 || fromlen > HOSTSZ) {
+		if (fromlen < 8 || UT_HOSTSIZE < fromlen) {
 			xwarnx
 			    (_("from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"),
-			     HOSTSZ);
+			     UT_HOSTSIZE);
 			fromlen = 16;
 		}
 	}
