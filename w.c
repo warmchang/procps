@@ -436,7 +436,7 @@ int main(int argc, char **argv)
 		 * headers. Try to keep alignment intact.  */
 		printf(_("%-*s TTY      "), userlen, _("USER"));
 		if (from)
-			printf(_("FROM            "));
+			printf("%-*s", fromlen - 1, _("FROM"));
 		if (longform)
 			printf(_("  LOGIN@   IDLE   JCPU   PCPU WHAT\n"));
 		else
