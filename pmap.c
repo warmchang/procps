@@ -272,10 +272,10 @@ static int one_proc(proc_t * p)
 		       &end, flags, &file_offset, &dev_major, &dev_minor,
 		       &inode);
 
-		if (start > range_high)
-			break;
-		if (end < range_low)
+		if (end - 1 < range_low)
 			continue;
+		if (range_high < start)
+			break;
 
 		tmp = strchr(mapbuf, '\n');
 		if (tmp)
