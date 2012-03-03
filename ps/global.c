@@ -514,6 +514,6 @@ catastrophic_failure(const char *filename,
 		     unsigned int linenum,
 		     const char *message)
 {
-  error_at_line(0, 0, filename, linenum, message);
+  error_at_line(0, 0, filename, linenum, "%s", message);
   exit(EXIT_FAILURE);
 }
