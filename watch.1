@@ -11,6 +11,7 @@ runs
 repeatedly, displaying its output and errors (the first screenfull).  This
 allows you to watch the program output change over time.  By default, the
 program is run every 2 seconds.
+By default,
 .B watch
 will run until interrupted.
 .SH OPTIONS
@@ -45,6 +46,11 @@ Beep if command has a non-zero exit.
 .TP
 \fB\-e\fR, \fB\-\-errexit\fR
 Freeze updates on command error, and exit after a key press.
+.TP
+\fB\-g\fR, \fB\-\-chgexit\fR
+Exit when the output of
+.I command
+changes.
 .TP
 \fB\-c\fR, \fB\-\-color\fR
 Interpret ANSI color sequences.

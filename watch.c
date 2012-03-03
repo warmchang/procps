@@ -70,6 +70,7 @@ static void __attribute__ ((__noreturn__))
 		"  -d, --differences[=<permanent>]\n"
                 "                         highlight changes between updates\n"
 		"  -e, --errexit          exit if command has a non-zero exit\n"
+		"  -g, --chgexit          exit when output from command changes\n"
 		"  -n, --interval <secs>  seconds to wait between updates\n"
 		"  -p, --precise          attempt run command in precise intervals\n"
 		"  -t, --no-title         turn off header\n"
@@ -278,7 +279,7 @@ int main(int argc, char *argv[])
 	    option_exec = 0,
 	    option_beep = 0,
 	    option_color = 0,
-	    option_errexit = 0, option_help = 0, option_version = 0;
+	    option_errexit = 0, option_chgexit = 0, option_help = 0, option_version = 0;
 	double interval = 2;
 	char *command;
 	char **command_argv;
@@ -293,6 +294,7 @@ int main(int argc, char *argv[])
 
 	int pipefd[2];
 	int status;
+	int exit_early = 0;
 	pid_t child;
 
 	static struct option longopts[] = {
@@ -302,6 +304,7 @@ int main(int argc, char *argv[])
 		{"interval", required_argument, 0, 'n'},
 		{"beep", no_argument, 0, 'b'},
 		{"errexit", no_argument, 0, 'e'},
+		{"chgexit", no_argument, 0, 'g'},
 		{"exec", no_argument, 0, 'x'},
 		{"precise", no_argument, 0, 'p'},
 		{"no-title", no_argument, 0, 't'},
@@ -315,7 +318,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 
 	while ((optc =
-		getopt_long(argc, argv, "+bced::hn:pvtx", longopts, (int *)0))
+		getopt_long(argc, argv, "+bced::ghn:pvtx", longopts, (int *)0))
 	       != EOF) {
 		switch (optc) {
 		case 'b':
@@ -331,6 +334,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'e':
 			option_errexit = 1;
+			break;
+		case 'g':
+			option_chgexit = 1;
 			break;
 		case 't':
 			show_title = 0;
@@ -426,7 +432,7 @@ int main(int argc, char *argv[])
 	if (precise_timekeeping)
 		next_loop = get_time_usec();
 
-	for (;;) {
+	do {
 		time_t t = time(NULL);
 		char *ts = ctime(&t);
 		int tsl = strlen(ts);
@@ -637,6 +643,17 @@ int main(int argc, char *argv[])
 						tabpending = 0;
 				}
 				move(y, x);
+				if (!exit_early && option_chgexit) {
+#ifdef WITH_WATCH8BIT
+					cchar_t oldc;
+					in_wch(&oldc);
+					exit_early = (wchar_t) c != oldc.chars[0];
+#else
+					chtype oldch = inch();
+					unsigned char oldc = oldch & A_CHARTEXT;
+					exit_early = (unsigned char) c != oldc;
+#endif	/* WITH_WATCH8BIT */
+				}
 				if (option_differences) {
 #ifdef WITH_WATCH8BIT
 					cchar_t oldc;
@@ -706,7 +723,7 @@ int main(int argc, char *argv[])
 				usleep(next_loop - cur_time);
 		} else
 			usleep(interval * 1000000);
-	}
+	} while (!exit_early);
 
 	return EXIT_FAILURE;
 }
