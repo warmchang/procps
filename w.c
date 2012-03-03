@@ -149,14 +149,11 @@ static time_t idletime(const char *restrict const tty)
 
 static void print_logintime(time_t logt, FILE * fout)
 {
-        /* FIXME: make use of locale, remember strftime() */
-	char weekday[][4] = {
-		"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
-	};
-	char month[][4] = {
-		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
-		"Sep", "Oct", "Nov", "Dec"
-	};
+
+	/* Abbreviated of weekday can be longer than 3 characters,
+	 * see for instance hu_HU.  Using 16 is few bytes more than
+	 * enough.  */
+	char time_str[16];
 	time_t curt;
 	struct tm *logtm, *curtm;
 	int today;
@@ -167,12 +164,15 @@ static void print_logintime(time_t logt, FILE * fout)
 	today = curtm->tm_yday;
 	logtm = localtime(&logt);
 	if (curt - logt > 12 * 60 * 60 && logtm->tm_yday != today) {
-		if (curt - logt > 6 * 24 * 60 * 60)
+		if (curt - logt > 6 * 24 * 60 * 60) {
+		        strftime(time_str, sizeof(time_str), "%b", logtm);
 			fprintf(fout, " %02d%3s%02d", logtm->tm_mday,
-				month[logtm->tm_mon], logtm->tm_year % 100);
-		else
-			fprintf(fout, " %3s%02d  ", weekday[logtm->tm_wday],
+				time_str, logtm->tm_year % 100);
+		} else {
+		        strftime(time_str, sizeof(time_str), "%a", logtm);
+			fprintf(fout, " %3s%02d  ", time_str,
 				logtm->tm_hour);
+		}
 	} else {
 		fprintf(fout, " %02d:%02d  ", logtm->tm_hour, logtm->tm_min);
 	}
