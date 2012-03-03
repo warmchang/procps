@@ -161,7 +161,7 @@ static int one_proc(proc_t * p)
 	unsigned long total_private_writeable = 0ul;
     KLONG diff = 0;
 
-	char *cp2 = NULL;
+	const char *cp2 = NULL;
 	unsigned long long rss = 0ull;
 	unsigned long long private_dirty = 0ull;
 	unsigned long long shared_dirty = 0ull;

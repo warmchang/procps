@@ -624,8 +624,12 @@ static int pr_pri_api(char *restrict const outbuf, const proc_t *restrict const 
     return snprintf(outbuf, COLWID, "%ld", -1 - pp->priority);
 }
 
+// Linux applies nice value in the scheduling policies (classes)
+// SCHED_OTHER(0) and SCHED_BATCH(3).  Ref: sched_setscheduler(2).
+// Also print nice value for old kernels which didn't use scheduling
+// policies (-1).
 static int pr_nice(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(pp->sched!=0 && pp->sched!=(unsigned long)-1) return snprintf(outbuf, COLWID, "-");
+  if(pp->sched!=0 && pp->sched!=3 && pp->sched!=-1) return snprintf(outbuf, COLWID, "-");
   return snprintf(outbuf, COLWID, "%ld", pp->nice);
 }
 
