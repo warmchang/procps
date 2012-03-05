@@ -761,7 +761,8 @@ static void show_special (int interact, const char *glob) {
             case 0:                    // no end delim, captab makes normal
                *(sub_end + 1) = '\0';  // extend str end, then fall through
                *(sub_end + 2) = '\0';  // ( +1 optimization for usual path )
-            case 1 ... 8:
+            case 1: case 2: case 3: case 4:
+            case 5: case 6: case 7: case 8:
                *sub_end = '\0';
                snprintf(tmp, sizeof(tmp), "%s%.*s%s", Curwin->captab[ch], room, sub_beg, Caps_off);
                rp = scat(rp, tmp);
@@ -2299,7 +2300,7 @@ static void configs_read (void) {
  # error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 #endif
          if (3 != fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-            , &w->rc.winflags, (int*)&w->rc.sortindx, &w->rc.maxtasks))
+            , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks))
                goto default_or_error;
          if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
             , &w->rc.summclr, &w->rc.msgsclr
@@ -2569,7 +2570,7 @@ static WIN_t *win_select (char ch) {
       case 'w':                         // (however those letters work via
          w = w->prev;                   // the pmt too but gee, end-loser
          break;                         // should just press the darn key)
-      case '1' ... '4':
+      case '1': case '2' : case '3': case '4':
          w = &Winstk[ch - '1'];
          break;
       default:                    // keep gcc happy
@@ -2664,7 +2665,8 @@ static void wins_colors (void) {
             clr = *pclr;
             tgt = ch;
             break;
-         case '0' ... '7':
+         case '0': case '1': case '2': case '3':
+         case '4': case '5': case '6': case '7':
             clr = ch - '0';
             *pclr = clr;
             break;

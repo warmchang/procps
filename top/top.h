@@ -291,8 +291,8 @@ enum warn_enum {
 
         /* This type helps support both a window AND the rcfile */
 typedef struct RCW_t {  // the 'window' portion of an rcfile
-   FLG_t  sortindx;             // sort field, represented as a procflag
-   int    winflags,             // 'view', 'show' and 'sort' mode flags
+   int    sortindx,             // sort field, represented as a procflag
+          winflags,             // 'view', 'show' and 'sort' mode flags
           maxtasks,             // user requested maximum, 0 equals all
           summclr,                      // color num used in summ info
           msgsclr,                      //        "       in msgs/pmts
