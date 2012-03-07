@@ -687,7 +687,7 @@ int main(int argc, char *argv[])
 
 	while ((c =
 		getopt_long(argc, argv, "bneNwfp::qoxaAXr:Vdh", longopts,
-			    NULL)) != -1)
+			    NULL)) != -1) {
 		switch (c) {
 		case 'b':
 			/* This is "binary" format, which means more for BSD. */
@@ -748,6 +748,8 @@ int main(int argc, char *argv[])
 		default:
 			Usage(stderr);
 		}
+	}
+
 	if (DisplayAllOpt)
 		return DisplayAll(PROC_PATH);
 	if (preloadfileOpt)
@@ -765,10 +767,11 @@ int main(int argc, char *argv[])
 				      "Try `%s --help' for more information."),
 		      program_invocation_short_name);
 
-	if (WriteMode || index(*argv, '='))
-		ReturnCode = WriteSetting(*argv);
-	else
-		ReturnCode = ReadSetting(*argv);
-
+	for ( ; *argv; argv++) {
+		if (WriteMode || index(*argv, '='))
+			ReturnCode += WriteSetting(*argv);
+		else
+			ReturnCode += ReadSetting(*argv);
+	}
 	return ReturnCode;
 }
