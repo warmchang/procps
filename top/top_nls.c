@@ -126,12 +126,12 @@ static void build_desc_nlstab (void) {
    Desc_nlstab[P_TME] = _("CPU Time");
    Desc_nlstab[P_TM2] = _("CPU Time, hundredths");
    Desc_nlstab[P_MEM] = _("Memory Usage (RES)");
-   Desc_nlstab[P_VRT] = _("Virtual Image (kb)");
-   Desc_nlstab[P_SWP] = _("Swapped Size (kb)");
-   Desc_nlstab[P_RES] = _("Resident Size (kb)");
-   Desc_nlstab[P_COD] = _("Code Size (kb)");
-   Desc_nlstab[P_DAT] = _("Data+Stack Size (kb)");
-   Desc_nlstab[P_SHR] = _("Shared Mem Size (kb)");
+   Desc_nlstab[P_VRT] = _("Virtual Image (KiB)");
+   Desc_nlstab[P_SWP] = _("Swapped Size (KiB)");
+   Desc_nlstab[P_RES] = _("Resident Size (KiB)");
+   Desc_nlstab[P_COD] = _("Code Size (KiB)");
+   Desc_nlstab[P_DAT] = _("Data+Stack (KiB)");
+   Desc_nlstab[P_SHR] = _("Shared Memory (KiB)");
    Desc_nlstab[P_FL1] = _("Major Page Faults");
    Desc_nlstab[P_FL2] = _("Minor Page Faults");
    Desc_nlstab[P_DRT] = _("Dirty Pages Count");
@@ -237,15 +237,15 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[NOT_smp_cpus_txt] = _("Only 1 cpu detected");
    Norm_nlstab[BAD_integers_txt] = _("Unacceptable integer");
    Norm_nlstab[SELECT_clash_txt] = _("conflicting process selections (U/p/u)");
-/* Translation Hint: This is an abbreviation (limit 2 characters) for:
-   .                 kilobytes (1000 bytes) */
-   Norm_nlstab[AMT_kilobyte_txt] = _("Kb");
-/* Translation Hint: This is an abbreviation (limit 2 characters) for:
-   .                 megabytes (1,000,000 bytes) */
-   Norm_nlstab[AMT_megabyte_txt] = _("Mb");
-/* Translation Hint: This is an abbreviation (limit 2 characters) for:
-   .                 gigabytes (1,000,000,000 bytes) */
-   Norm_nlstab[AMT_gigabyte_txt] = _("Gb");
+/* Translation Hint: This is an abbreviation (limit 3 characters) for:
+   .                 kibibytes (1024 bytes) */
+   Norm_nlstab[AMT_kilobyte_txt] = _("KiB");
+/* Translation Hint: This is an abbreviation (limit 3 characters) for:
+   .                 mebibytes (1,048,576 bytes) */
+   Norm_nlstab[AMT_megabyte_txt] = _("MiB");
+/* Translation Hint: This is an abbreviation (limit 3 characters) for:
+   .                 gibibytes (1,073,741,824 bytes) */
+   Norm_nlstab[AMT_gigabyte_txt] = _("GiB");
    Norm_nlstab[WORD_threads_txt] = _("Threads");
    Norm_nlstab[WORD_process_txt] = _("Tasks");
 /* Translation Hint: The following "word" is meant to represent either a single
