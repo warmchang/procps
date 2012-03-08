@@ -2207,7 +2207,7 @@ static int config_cvt (WIN_t *q) {
 #ifdef OOMEM_ENABLE
    /* all other fields represent the 'on' state with a capitalized version
       of a particular qwerty key.  for the 2 additional suse out-of-memory
-      fields it make perfect sense to do the exact opposite, doesn't it?
+      fields it makes perfect sense to do the exact opposite, doesn't it?
       in any case, we must turn them 'off' temporarily... */
    if ((p1 = strchr(q->rc.fieldscur, '[')))  *p1 = '{';
    if ((p2 = strchr(q->rc.fieldscur, '\\'))) *p2 = '|';
@@ -2810,7 +2810,7 @@ static void file_writerc (void) {
       fprintf(fp, "%s\tfieldscur=%s\n"
          , Winstk[i].rc.winname, Winstk[i].rc.fieldscur);
       fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-         , Winstk[i].rc.winflags, (int)Winstk[i].rc.sortindx
+         , Winstk[i].rc.winflags, Winstk[i].rc.sortindx
          , Winstk[i].rc.maxtasks);
       fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
          , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
