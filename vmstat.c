@@ -694,7 +694,7 @@ static int winhi(void)
 	struct winsize win;
 	int rows = 24;
 
-	if (ioctl(1, TIOCGWINSZ, &win) != -1 && win.ws_row > 0)
+	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) != -1 && 0 < win.ws_row)
 		rows = win.ws_row;
 
 	return rows;

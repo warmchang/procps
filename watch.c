@@ -220,7 +220,7 @@ static void get_terminal_size(void)
 		}
 	}
 	if (incoming_cols < 0 || incoming_rows < 0) {
-		if (ioctl(2, TIOCGWINSZ, &w) == 0) {
+		if (ioctl(STDERR_FILENO, TIOCGWINSZ, &w) == 0) {
 			if (incoming_rows < 0 && w.ws_row > 0) {
 				height = w.ws_row;
 				snprintf(env_row_buf, sizeof env_row_buf,
