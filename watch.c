@@ -63,7 +63,7 @@
 #endif
 
 static int curses_started = 0;
-static int height = 24, width = 80;
+static long height = 24, width = 80;
 static int screen_size_changed = 0;
 static int first_screen = 1;
 static int show_title = 2;	/* number of lines used, 2 or 0 */
@@ -195,10 +195,10 @@ static void get_terminal_size(void)
 			long t;
 			char *endptr;
 			t = strtol(s, &endptr, 0);
-			if (!*endptr && (t > 0) && (t < (long)666))
-				incoming_cols = (int)t;
+			if (!*endptr && 0 < t)
+				incoming_cols = t;
 			width = incoming_cols;
-			snprintf(env_col_buf, sizeof env_col_buf, "COLUMNS=%d",
+			snprintf(env_col_buf, sizeof env_col_buf, "COLUMNS=%ld",
 				 width);
 			putenv(env_col_buf);
 		}
@@ -211,26 +211,26 @@ static void get_terminal_size(void)
 			long t;
 			char *endptr;
 			t = strtol(s, &endptr, 0);
-			if (!*endptr && (t > 0) && (t < (long)666))
-				incoming_rows = (int)t;
+			if (!*endptr && 0 < t)
+				incoming_rows = t;
 			height = incoming_rows;
-			snprintf(env_row_buf, sizeof env_row_buf, "LINES=%d",
+			snprintf(env_row_buf, sizeof env_row_buf, "LINES=%ld",
 				 height);
 			putenv(env_row_buf);
 		}
 	}
-	if (incoming_cols < 0 || incoming_rows < 0) {
-		if (ioctl(STDERR_FILENO, TIOCGWINSZ, &w) == 0) {
+	if (ioctl(STDERR_FILENO, TIOCGWINSZ, &w) == 0) {
+		if (incoming_cols < 0 || incoming_rows < 0) {
 			if (incoming_rows < 0 && w.ws_row > 0) {
 				height = w.ws_row;
 				snprintf(env_row_buf, sizeof env_row_buf,
-					 "LINES=%d", height);
+					 "LINES=%ld", height);
 				putenv(env_row_buf);
 			}
 			if (incoming_cols < 0 && w.ws_col > 0) {
 				width = w.ws_col;
 				snprintf(env_col_buf, sizeof env_col_buf,
-					 "COLUMNS=%d", width);
+					 "COLUMNS=%ld", width);
 				putenv(env_col_buf);
 			}
 		}
