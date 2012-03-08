@@ -783,7 +783,7 @@ int main(int argc, char *argv[])
 			default:
 				xerrx(EXIT_FAILURE,
 				     /* Translation Hint: do not change argument characters */
-				     _("-S requires k, K, m or M (default is kb)"));
+				     _("-S requires k, K, m or M (default is KiB)"));
 			}
 			szDataUnit[0] = optarg[0];
 			break;
