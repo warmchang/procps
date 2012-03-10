@@ -62,6 +62,16 @@
 # define isprint(x) ( (x>=' '&&x<='~') || (x>=0xa0) )
 #endif
 
+/* Boolean command line options */
+static int flags;
+#define WATCH_DIFF	(1 << 1)
+#define WATCH_CUMUL	(1 << 2)
+#define WATCH_EXEC	(1 << 3)
+#define WATCH_BEEP	(1 << 4)
+#define WATCH_COLOR	(1 << 5)
+#define WATCH_ERREXIT	(1 << 6)
+#define WATCH_CHGEXIT	(1 << 7)
+
 static int curses_started = 0;
 static long height = 24, width = 80;
 static int screen_size_changed = 0;
@@ -285,15 +295,268 @@ wint_t my_getwc(FILE * s)
 }
 #endif	/* WITH_WATCH8BIT */
 
+void output_header(char *restrict command, double interval)
+{
+	time_t t = time(NULL);
+	char *ts = ctime(&t);
+	int tsl = strlen(ts);
+	char *header;
+
+	/*
+	 * left justify interval and command, right justify time,
+	 * clipping all to fit window width
+	 */
+	int hlen = asprintf(&header, _("Every %.1fs: "), interval);
+
+	/*
+	 * the rules:
+	 *   width < tsl : print nothing
+	 *   width < tsl + hlen + 1: print ts
+	 *   width = tsl + hlen + 1: print header, ts
+	 *   width < tsl + hlen + 4: print header, ..., ts
+	 *   width < tsl + hlen +    wcommand_columns: print header,
+	 *                           truncated wcommand, ..., ts
+	 *   width > "": print header, wcomand, ts
+	 * this is slightly different from how it used to be
+	 */
+	if (width < tsl) {
+		free(header);
+		return;
+	}
+	if (tsl + hlen + 1 <= width) {
+		mvaddstr(0, 0, header);
+		if (tsl + hlen + 2 <= width) {
+			if (width < tsl + hlen + 4) {
+				mvaddstr(0, width - tsl - 4, "... ");
+			} else {
+#ifdef WITH_WATCH8BIT
+				if (width < tsl + hlen + wcommand_columns) {
+					/* print truncated */
+					int available = width - tsl - hlen;
+					int in_use = wcommand_columns;
+					int wcomm_len = wcommand_characters;
+					while (available - 4 < in_use) {
+						wcomm_len--;
+						in_use = wcswidth(wcommand, wcomm_len);
+					}
+					mvaddnwstr(0, hlen, wcommand, wcomm_len);
+					mvaddstr(0, width - tsl - 4, "... ");
+				} else {
+					mvaddwstr(0, hlen, wcommand);
+				}
+#else
+				mvaddnstr(0, hlen, command, width - tsl - hlen);
+#endif	/* WITH_WATCH8BIT */
+			}
+		}
+	}
+	mvaddstr(0, width - tsl + 1, ts);
+	free(header);
+	return;
+}
+
+int run_command(char *restrict command, char **restrict command_argv)
+{
+	FILE *p;
+	int x, y;
+	int oldeolseen = 1;
+	int pipefd[2];
+	pid_t child;
+	int exit_early = 0;
+	int status;
+
+	/* allocate pipes */
+	if (pipe(pipefd) < 0)
+		xerr(7, _("unable to create IPC pipes"));
+
+	/* flush stdout and stderr, since we're about to do fd stuff */
+	fflush(stdout);
+	fflush(stderr);
+
+	/* fork to prepare to run command */
+	child = fork();
+
+	if (child < 0) {		/* fork error */
+		xerr(2, _("unable to fork process"));
+	} else if (child == 0) {	/* in child */
+		close(pipefd[0]);		/* child doesn't need read side of pipe */
+		close(1);			/* prepare to replace stdout with pipe */
+		if (dup2(pipefd[1], 1) < 0) {	/* replace stdout with write side of pipe */
+			xerr(3, _("dup2 failed"));
+		}
+		dup2(1, 2);			/* stderr should default to stdout */
+
+		if (flags & WATCH_EXEC) {	/* pass command to exec instead of system */
+			if (execvp(command_argv[0], command_argv) == -1) {
+				xerr(4, _("unable to execute '%s'"),
+				     command_argv[0]);
+			}
+		} else {
+			status = system(command);	/* watch manpage promises sh quoting */
+			/* propagate command exit status as child exit status */
+			if (!WIFEXITED(status)) {	/* child exits nonzero if command does */
+				exit(EXIT_FAILURE);
+			} else {
+				exit(WEXITSTATUS(status));
+			}
+		}
+	}
+
+	/* otherwise, we're in parent */
+	close(pipefd[1]);	/* close write side of pipe */
+	if ((p = fdopen(pipefd[0], "r")) == NULL)
+		xerr(5, _("fdopen"));
+
+	for (y = show_title; y < height; y++) {
+		int eolseen = 0, tabpending = 0;
+#ifdef WITH_WATCH8BIT
+		wint_t carry = WEOF;
+#endif
+		for (x = 0; x < width; x++) {
+#ifdef WITH_WATCH8BIT
+			wint_t c = ' ';
+#else
+			int c = ' ';
+#endif
+			int attr = 0;
+
+			if (!eolseen) {
+				/* if there is a tab pending, just
+				 * spit spaces until the next stop
+				 * instead of reading characters */
+				if (!tabpending)
+#ifdef WITH_WATCH8BIT
+					do {
+						if (carry == WEOF) {
+							c = my_getwc(p);
+						} else {
+							c = carry;
+							carry = WEOF;
+						}
+					} while (c != WEOF && !isprint(c)
+						 && c < 12
+						 && wcwidth(c) == 0
+						 && c != L'\n'
+						 && c != L'\t'
+						 && (c != L'\033'
+						     || !(flags & WATCH_COLOR)));
+#else
+					do
+						c = getc(p);
+					while (c != EOF && !isprint(c)
+					       && c != '\n'
+					       && c != '\t'
+					       && (c != L'\033'
+						   || !(flags & WATCH_COLOR)));
+#endif
+				if (c == L'\033' && (flags & WATCH_COLOR)) {
+					x--;
+					process_ansi(p);
+					continue;
+				}
+				if (c == L'\n')
+					if (!oldeolseen && x == 0) {
+						x = -1;
+						continue;
+					} else
+						eolseen = 1;
+				else if (c == L'\t')
+					tabpending = 1;
+#ifdef WITH_WATCH8BIT
+				if (x == width - 1 && wcwidth(c) == 2) {
+					y++;
+					x = -1;		/* process this double-width */
+					carry = c;	/* character on the next line */
+					continue;	/* because it won't fit here */
+				}
+				if (c == WEOF || c == L'\n' || c == L'\t')
+					c = L' ';
+#else
+				if (c == EOF || c == '\n' || c == '\t')
+					c = ' ';
+#endif
+				if (tabpending && (((x + 1) % 8) == 0))
+					tabpending = 0;
+			}
+			move(y, x);
+			if (!first_screen && !exit_early && (flags & WATCH_CHGEXIT)) {
+#ifdef WITH_WATCH8BIT
+				cchar_t oldc;
+				in_wch(&oldc);
+				exit_early = (wchar_t) c != oldc.chars[0];
+#else
+				chtype oldch = inch();
+				unsigned char oldc = oldch & A_CHARTEXT;
+				exit_early = (unsigned char)c != oldc;
+#endif
+			}
+			if (flags & WATCH_DIFF) {
+#ifdef WITH_WATCH8BIT
+				cchar_t oldc;
+				in_wch(&oldc);
+				attr = !first_screen
+				    && ((wchar_t) c != oldc.chars[0]
+					||
+					((flags & WATCH_CUMUL)
+					 && (oldc.attr & A_ATTRIBUTES)));
+#else
+				chtype oldch = inch();
+				unsigned char oldc = oldch & A_CHARTEXT;
+				attr = !first_screen
+				    && ((unsigned char)c != oldc
+					||
+					((flags & WATCH_CUMUL)
+					 && (oldch & A_ATTRIBUTES)));
+#endif
+			}
+			if (attr)
+				standout();
+#ifdef WITH_WATCH8BIT
+			addnwstr((wchar_t *) & c, 1);
+#else
+			addch(c);
+#endif
+			if (attr)
+				standend();
+#ifdef WITH_WATCH8BIT
+			if (wcwidth(c) == 0) {
+				x--;
+			}
+			if (wcwidth(c) == 2) {
+				x++;
+			}
+#endif
+		}
+		oldeolseen = eolseen;
+	}
+
+	fclose(p);
+
+	/* harvest child process and get status, propagated from command */
+	if (waitpid(child, &status, 0) < 0)
+		xerr(8, _("waitpid"));
+
+	/* if child process exited in error, beep if option_beep is set */
+	if ((!WIFEXITED(status) || WEXITSTATUS(status))) {
+		if (flags & WATCH_BEEP)
+			beep();
+		if (flags & WATCH_ERREXIT) {
+			mvaddstr(height - 1, 0,
+				 _("command exit with a non-zero status, press a key to exit"));
+			refresh();
+			fgetc(stdin);
+			endwin();
+			exit(8);
+		}
+	}
+	first_screen = 0;
+	refresh();
+	return exit_early;
+}
+
 int main(int argc, char *argv[])
 {
 	int optc;
-	int option_differences = 0,
-	    option_differences_cumulative = 0,
-	    option_exec = 0,
-	    option_beep = 0,
-	    option_color = 0,
-	    option_errexit = 0, option_chgexit = 0;
 	double interval = 2;
 	char *command;
 	char **command_argv;
@@ -305,11 +568,6 @@ int main(int argc, char *argv[])
 	int wcommand_columns = 0;	/* not including final \0 */
 	int wcommand_characters = 0;	/* not including final \0 */
 #endif	/* WITH_WATCH8BIT */
-
-	int pipefd[2];
-	int status;
-	int exit_early = 0;
-	pid_t child;
 
 	static struct option longopts[] = {
 		{"color", no_argument, 0, 'c'},
@@ -336,27 +594,27 @@ int main(int argc, char *argv[])
 	       != EOF) {
 		switch (optc) {
 		case 'b':
-			option_beep = 1;
+			flags |= WATCH_BEEP;
 			break;
 		case 'c':
-			option_color = 1;
+			flags |= WATCH_COLOR;
 			break;
 		case 'd':
-			option_differences = 1;
+			flags |= WATCH_DIFF;
 			if (optarg)
-				option_differences_cumulative = 1;
+				flags |= WATCH_CUMUL;
 			break;
 		case 'e':
-			option_errexit = 1;
+			flags |= WATCH_ERREXIT;
 			break;
 		case 'g':
-			option_chgexit = 1;
+			flags |= WATCH_CHGEXIT;
 			break;
 		case 't':
 			show_title = 0;
 			break;
 		case 'x':
-			option_exec = 1;
+			flags |= WATCH_EXEC;
 			break;
 		case 'n':
 			interval = strtod_or_err(optarg, _("failed to parse argument"));
@@ -431,13 +689,14 @@ int main(int argc, char *argv[])
 	/* Set up tty for curses use.  */
 	curses_started = 1;
 	initscr();
-	if (option_color) {
+	if (flags & WATCH_COLOR) {
 		if (has_colors()) {
 			start_color();
 			use_default_colors();
 			init_ansi_colors();
-		} else
-			option_color = 0;
+		} else {
+			flags |= WATCH_COLOR;
+		}
 	}
 	nonl();
 	noecho();
@@ -446,15 +705,7 @@ int main(int argc, char *argv[])
 	if (precise_timekeeping)
 		next_loop = get_time_usec();
 
-	do {
-		time_t t = time(NULL);
-		char *ts = ctime(&t);
-		int tsl = strlen(ts);
-		char *header;
-		FILE *p;
-		int x, y;
-		int oldeolseen = 1;
-
+	while (1) {
 		if (screen_size_changed) {
 			get_terminal_size();
 			resizeterm(height, width);
@@ -464,272 +715,11 @@ int main(int argc, char *argv[])
 			first_screen = 1;
 		}
 
-		if (show_title) {
-			/*
-			 * left justify interval and command, right
-			 * justify time, clipping all to fit window
-			 * width
-			 */
-			int hlen = asprintf(&header, _("Every %.1fs: "), interval);
+		if (show_title)
+			output_header(command, interval);
 
-			/*
-			 * the rules:
-			 *   width < tsl : print nothing
-			 *   width < tsl + hlen + 1: print ts
-			 *   width = tsl + hlen + 1: print header, ts
-			 *   width < tsl + hlen + 4: print header, ..., ts
-			 *   width < tsl + hlen +    wcommand_columns: print
-			 *                           header, truncated wcommand,
-			 *                           ..., ts
-			 *   width > "": print header, wcomand, ts
-			 * this is slightly different from how it used to be
-			 */
-			if (width >= tsl) {
-				if (width >= tsl + hlen + 1) {
-					mvaddstr(0, 0, header);
-					if (width >= tsl + hlen + 2) {
-						if (width < tsl + hlen + 4) {
-							mvaddstr(0,
-								 width - tsl -
-								 4, "...  ");
-						} else {
-#ifdef WITH_WATCH8BIT
-							if (width <
-							    tsl + hlen +
-							    wcommand_columns) {
-								/* print truncated */
-								int avail_columns = width - tsl - hlen;
-								int using_columns = wcommand_columns;
-								int using_characters = wcommand_characters;
-								while (using_columns > avail_columns - 4) {
-									using_characters--;
-									using_columns
-									    =
-									    wcswidth
-									    (wcommand,
-									     using_characters);
-								}
-								mvaddnwstr(0,
-									   hlen,
-									   wcommand,
-									   using_characters);
-								mvaddstr(0,
-									 width -
-									 tsl -
-									 4,
-									 "... ");
-							} else {
-								mvaddwstr(0,
-									  hlen,
-									  wcommand);
-							}
-#else
-							mvaddnstr(0, hlen,
-								  command,
-								  width - tsl -
-								  hlen);
-#endif	/* WITH_WATCH8BIT */
-						}
-					}
-				}
-				mvaddstr(0, width - tsl + 1, ts);
-			}
-
-			free(header);
-		}
-
-		/* allocate pipes */
-		if (pipe(pipefd) < 0)
-			xerr(7, _("unable to create IPC pipes"));
-
-		/* flush stdout and stderr, since we're about to do fd stuff */
-		fflush(stdout);
-		fflush(stderr);
-
-		/* fork to prepare to run command */
-		child = fork();
-
-		if (child < 0) {	/* fork error */
-			xerr(2, _("unable to fork process"));
-		} else if (child == 0) {	/* in child */
-			close(pipefd[0]);	/* child doesn't need read side of pipe */
-			close(1);		/* prepare to replace stdout with pipe */
-			if (dup2(pipefd[1], 1) < 0) {	/* replace stdout with write side of pipe */
-				xerr(3, _("dup2 failed"));
-			}
-			dup2(1, 2);	/* stderr should default to stdout */
-
-			if (option_exec) {	/* pass command to exec instead of system */
-				if (execvp(command_argv[0], command_argv) == -1) {
-					xerr(4, _("unable to execute '%s'"), command_argv[0]);
-				}
-			} else {
-				status = system(command);	/* watch manpage promises sh quoting */
-
-				/* propagate command exit status as child exit status */
-				if (!WIFEXITED(status)) {	/* child exits nonzero if command does */
-					exit(EXIT_FAILURE);
-				} else {
-					exit(WEXITSTATUS(status));
-				}
-			}
-
-		}
-
-		/* otherwise, we're in parent */
-		close(pipefd[1]);	/* close write side of pipe */
-		if ((p = fdopen(pipefd[0], "r")) == NULL)
-			xerr(5, _("fdopen"));
-
-		for (y = show_title; y < height; y++) {
-			int eolseen = 0, tabpending = 0;
-#ifdef WITH_WATCH8BIT
-			wint_t carry = WEOF;
-#endif	/* WITH_WATCH8BIT */
-			for (x = 0; x < width; x++) {
-#ifdef WITH_WATCH8BIT
-				wint_t c = ' ';
-#else
-				int c = ' ';
-#endif	/* WITH_WATCH8BIT */
-				int attr = 0;
-
-				if (!eolseen) {
-					/* if there is a tab pending, just
-					 * spit spaces until the next stop
-					 * instead of reading characters */
-					if (!tabpending)
-#ifdef WITH_WATCH8BIT
-						do {
-							if (carry == WEOF) {
-								c = my_getwc(p);
-							} else {
-								c = carry;
-								carry = WEOF;
-							}
-						} while (c != WEOF
-							 && !isprint(c)
-							 && c < 12
-							 && wcwidth(c) == 0
-							 && c != L'\n'
-							 && c != L'\t'
-							 && (c != L'\033'
-							     || option_color !=
-							     1));
-#else
-						do
-							c = getc(p);
-						while (c != EOF && !isprint(c)
-						       && c != '\n'
-						       && c != '\t'
-						       && (c != L'\033'
-							   || option_color !=
-							   1));
-#endif	/* WITH_WATCH8BIT */
-					if (c == L'\033' && option_color == 1) {
-						x--;
-						process_ansi(p);
-						continue;
-					}
-					if (c == L'\n')
-						if (!oldeolseen && x == 0) {
-							x = -1;
-							continue;
-						} else
-							eolseen = 1;
-					else if (c == L'\t')
-						tabpending = 1;
-#ifdef WITH_WATCH8BIT
-					if (x == width - 1 && wcwidth(c) == 2) {
-						y++;
-						x = -1;		/* process this double-width */
-						carry = c;	/* character on the next line */
-						continue;	/* because it won't fit here */
-					}
-					if (c == WEOF || c == L'\n'
-					    || c == L'\t')
-						c = L' ';
-#else
-					if (c == EOF || c == '\n' || c == '\t')
-						c = ' ';
-#endif	/* WITH_WATCH8BIT */
-					if (tabpending && (((x + 1) % 8) == 0))
-						tabpending = 0;
-				}
-				move(y, x);
-				if (!first_screen && !exit_early && option_chgexit) {
-#ifdef WITH_WATCH8BIT
-					cchar_t oldc;
-					in_wch(&oldc);
-					exit_early = (wchar_t) c != oldc.chars[0];
-#else
-					chtype oldch = inch();
-					unsigned char oldc = oldch & A_CHARTEXT;
-					exit_early = (unsigned char) c != oldc;
-#endif	/* WITH_WATCH8BIT */
-				}
-				if (option_differences) {
-#ifdef WITH_WATCH8BIT
-					cchar_t oldc;
-					in_wch(&oldc);
-					attr = !first_screen
-					    && ((wchar_t) c != oldc.chars[0]
-						||
-						(option_differences_cumulative
-						 && (oldc.
-						     attr & A_ATTRIBUTES)));
-#else
-					chtype oldch = inch();
-					unsigned char oldc = oldch & A_CHARTEXT;
-					attr = !first_screen
-					    && ((unsigned char)c != oldc
-						||
-						(option_differences_cumulative
-						 && (oldch & A_ATTRIBUTES)));
-#endif	/* WITH_WATCH8BIT */
-				}
-				if (attr)
-					standout();
-#ifdef WITH_WATCH8BIT
-				addnwstr((wchar_t *) & c, 1);
-#else
-				addch(c);
-#endif	/* WITH_WATCH8BIT */
-				if (attr)
-					standend();
-#ifdef WITH_WATCH8BIT
-				if (wcwidth(c) == 0) {
-					x--;
-				}
-				if (wcwidth(c) == 2) {
-					x++;
-				}
-#endif	/* WITH_WATCH8BIT */
-			}
-			oldeolseen = eolseen;
-		}
-
-		fclose(p);
-
-		/* harvest child process and get status, propagated from command */
-		if (waitpid(child, &status, 0) < 0)
-			xerr(8, _("waitpid"));
-
-		/* if child process exited in error, beep if option_beep is set */
-		if ((!WIFEXITED(status) || WEXITSTATUS(status))) {
-			if (option_beep)
-				beep();
-			if (option_errexit) {
-				mvaddstr(height - 1, 0,
-					 _("command exit with a non-zero status, press a key to exit"));
-				refresh();
-				fgetc(stdin);
-				endwin();
-				exit(8);
-			}
-		}
-		first_screen = 0;
-		refresh();
+		if (run_command(command, command_argv))
+			break;
 		if (precise_timekeeping) {
 			watch_usec_t cur_time = get_time_usec();
 			next_loop += USECS_PER_SEC * interval;
@@ -737,9 +727,8 @@ int main(int argc, char *argv[])
 				usleep(next_loop - cur_time);
 		} else
 			usleep(interval * 1000000);
-	} while (!exit_early);
+	}
 
 	endwin();
-
 	return EXIT_SUCCESS;
 }
