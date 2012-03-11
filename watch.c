@@ -739,5 +739,7 @@ int main(int argc, char *argv[])
 			usleep(interval * 1000000);
 	} while (!exit_early);
 
-	return EXIT_FAILURE;
+	endwin();
+
+	return EXIT_SUCCESS;
 }
