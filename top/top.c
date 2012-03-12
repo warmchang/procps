@@ -60,7 +60,7 @@
         /* The original and new terminal definitions
            (only set when not in 'Batch' mode) */
 static struct termios Tty_original,    // our inherited terminal definition
-#ifdef TERMIOS_ONLY
+#ifndef TERMIO_PROXY
                       Tty_tweaked,     // for interactive 'line' input
 #endif
                       Tty_raw;         // for unsolicited input
@@ -824,7 +824,7 @@ static int chin (int ech, char *buf, unsigned cnt) {
    int rc = -1;
 
    fflush(stdout);
-#ifdef TERMIOS_ONLY
+#ifndef TERMIO_PROXY
    if (ech) {
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_tweaked);
       rc = read(STDIN_FILENO, buf, cnt);
@@ -922,18 +922,21 @@ static int keyin (int init) {
 } // end: keyin
 
 
-#ifdef TERMIOS_ONLY
+#ifndef TERMIO_PROXY
         /*
          * Get line oriented interactive input from the user,
          * using native tty support */
 static char *linein (const char *prompt) {
+   static const char ws[] = "\b\f\n\r\t\v\x1b\x9b";  // 0x1b + 0x9b are escape
    static char buf[MEDBUFSIZ];
+   char *p;
 
    show_pmt(prompt);
    memset(buf, '\0', sizeof(buf));
    chin(1, buf, sizeof(buf)-1);
    putp(Cap_curs_norm);
 
+   if ((p = strpbrk(buf, ws))) *p = '\0';
    // note: we DO produce a vaid 'string'
    return buf;
 } // end: linein
@@ -945,7 +948,9 @@ static char *linein (const char *prompt) {
          * Unlike native tty input support, this function provides:
          * . true line editing, not just destructive backspace
          * . an input limit that's sensitive to current screen dimensions
-         * . immediate signal response without the need to wait for '\n' */
+         * . immediate signal response without the need to wait for '\n'
+         * However, the user will loose the ability to paste keystrokes
+         * when this function is chosen over the smaller alternative above! */
 static char *linein (const char *prompt) {
     // thank goodness memmove allows the two strings to overlap
  #define sqzSTR  { memmove(&buf[pos], &buf[pos+1], bufMAX-pos); \
@@ -2517,7 +2522,7 @@ static void whack_terminal (void) {
    tmptty.c_iflag &= ~IGNBRK;
    if (key_backspace && 1 == strlen(key_backspace))
       tmptty.c_cc[VERASE] = *key_backspace;
-#ifdef TERMIOS_ONLY
+#ifndef TERMIO_PROXY
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &tmptty))
       error_exit(fmtmk(N_fmt(FAIL_tty_mod_fmt), strerror(errno)));
    tcgetattr(STDIN_FILENO, &Tty_tweaked);
