@@ -25,8 +25,6 @@ usrbin_exec_PROGRAMS = \
 	pkill \
 	pmap \
 	pwdx \
-	skill \
-	snice \
 	tload \
 	uptime \
 	vmstat \
@@ -38,8 +36,6 @@ dist_man_MANS = \
 	pkill.1 \
 	pmap.1 \
 	pwdx.1 \
-	skill.1 \
-	snice.1 \
 	sysctl.8 \
 	sysctl.conf.5 \
 	tload.1 \
@@ -65,9 +61,18 @@ watch_SOURCES = watch.c $(top_srcdir)/lib/strutils.c
 watch_LDADD = @WATCH_NCURSES_LIBS@
 endif
 
-kill_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
+if BUILD_SKILL
+usrbin_exec_PROGRAMS += \
+	skill \
+	snice
 skill_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
 snice_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
+dist_man_MANS += \
+	skill.1 \
+	snice.1
+endif
+
+kill_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
 tload_SOURCES = tload.c $(top_srcdir)/lib/strutils.c
 pkill_SOURCES = pgrep.c
 free_SOURCES = free.c $(top_srcdir)/lib/strutils.c

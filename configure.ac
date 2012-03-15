@@ -179,6 +179,12 @@ AC_ARG_ENABLE([kill],
 AM_CONDITIONAL(BUILD_KILL, test "x$enable_kill" = xyes)
 AM_CONDITIONAL(LINUX, test "x$host_os" = xlinux-gnu)
 
+AC_ARG_ENABLE([skill],
+  AS_HELP_STRING([--enable-skill], [build skill and snice]),
+  [], enable_skill=no
+)
+AM_CONDITIONAL(BUILD_SKILL, test "x$build_skill" = xyes)
+
 AC_ARG_ENABLE([oomem],
   AS_HELP_STRING([--enable-oomem], [add out-of-memory fields to the library and top]),
   [], enable_oomem=no
