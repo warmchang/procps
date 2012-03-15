@@ -657,7 +657,7 @@ int main(int argc, char *argv[])
 						tabpending = 0;
 				}
 				move(y, x);
-				if (!exit_early && option_chgexit) {
+				if (!first_screen && !exit_early && option_chgexit) {
 #ifdef WITH_WATCH8BIT
 					cchar_t oldc;
 					in_wch(&oldc);
@@ -739,5 +739,7 @@ int main(int argc, char *argv[])
 			usleep(interval * 1000000);
 	} while (!exit_early);
 
-	return EXIT_FAILURE;
+	endwin();
+
+	return EXIT_SUCCESS;
 }
