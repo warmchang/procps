@@ -949,7 +949,7 @@ static char *linein (const char *prompt) {
          * . true line editing, not just destructive backspace
          * . an input limit that's sensitive to current screen dimensions
          * . immediate signal response without the need to wait for '\n'
-         * However, the user will loose the ability to paste keystrokes
+         * However, the user will lose the ability to paste keystrokes
          * when this function is chosen over the smaller alternative above! */
 static char *linein (const char *prompt) {
     // thank goodness memmove allows the two strings to overlap
@@ -2337,7 +2337,7 @@ static void configs_read (void) {
 default_or_error:
 #ifdef RCFILE_NOERR
 {  RCF_t rcdef = DEF_RCFILE;
-   flcose(fp);
+   fclose(fp);
    Rc = rcdef;
    for (i = 0 ; i < GROUPSMAX; i++)
       Winstk[i].rc  = Rc.win[i];

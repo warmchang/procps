@@ -3,7 +3,7 @@ procps-ng-3.3.3
   * watch -g command repeats until something changes
   * top can read old toprc configuration files
   * Changed labels of kB etc to KiB Debian #662786
-  
+  * top supports input paste once again Debian #663334
 
 procps-ng-3.3.1 --> procps-ng-3.3.2
 --------------------------------
