@@ -308,7 +308,6 @@ int main(int argc, char *argv[])
 
 	int pipefd[2];
 	int status;
-	int exit_early = 0;
 	pid_t child;
 
 	static struct option longopts[] = {
@@ -446,7 +445,7 @@ int main(int argc, char *argv[])
 	if (precise_timekeeping)
 		next_loop = get_time_usec();
 
-	do {
+	while (1) {
 		time_t t = time(NULL);
 		char *ts = ctime(&t);
 		int tsl = strlen(ts);
@@ -581,6 +580,7 @@ int main(int argc, char *argv[])
 		if ((p = fdopen(pipefd[0], "r")) == NULL)
 			xerr(5, _("fdopen"));
 
+		int exit_early = 0;
 		for (y = show_title; y < height; y++) {
 			int eolseen = 0, tabpending = 0;
 #ifdef WITH_WATCH8BIT
@@ -730,6 +730,10 @@ int main(int argc, char *argv[])
 		}
 		first_screen = 0;
 		refresh();
+
+		if (exit_early)
+			break;
+
 		if (precise_timekeeping) {
 			watch_usec_t cur_time = get_time_usec();
 			next_loop += USECS_PER_SEC * interval;
@@ -737,7 +741,7 @@ int main(int argc, char *argv[])
 				usleep(next_loop - cur_time);
 		} else
 			usleep(interval * 1000000);
-	} while (!exit_early);
+	}
 
 	endwin();
 
