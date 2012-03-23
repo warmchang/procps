@@ -13,7 +13,8 @@ top_SOURCES =  \
 	top.h \
 	top.c \
 	top_nls.h \
-	top_nls.c
+	top_nls.c \
+	$(top_srcdir)/lib/fileutils.c
 
 dist_man_MANS = \
 	top.1

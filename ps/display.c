@@ -36,6 +36,7 @@
 #include "../proc/version.h"
 #include "../proc/wchan.h"
 
+#include "../include/fileutils.h"
 #include "common.h"
 
 #ifndef SIGCHLD
@@ -531,6 +532,7 @@ static void fancy_spew(void){
 
 /***** no comment */
 int main(int argc, char *argv[]){
+  atexit(close_stdout);
   myname = strrchr(*argv, '/');
   if (myname) ++myname; else myname = *argv;
 

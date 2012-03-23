@@ -24,6 +24,7 @@
  */
 
 #include "c.h"
+#include "fileutils.h"
 #include "nls.h"
 #include "proc/devname.h"
 #include "proc/escape.h"
@@ -356,6 +357,7 @@ int main(int argc, char **argv)
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 #ifndef W_SHOWFROM
 	from = 0;

@@ -35,6 +35,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "fileutils.h"
 #include "strutils.h"
 #include "nls.h"
 #include "xalloc.h"
@@ -375,6 +376,7 @@ static void __attribute__ ((__noreturn__))
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	if (argc < 2)
 		kill_usage(stderr);

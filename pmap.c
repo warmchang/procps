@@ -31,6 +31,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "fileutils.h"
 #include "nls.h"
 #include "proc/escape.h"
 #include "xalloc.h"
@@ -426,6 +427,7 @@ int main(int argc, char **argv)
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	x_option = d_option = q_option = 0;
 

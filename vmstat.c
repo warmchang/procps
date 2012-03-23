@@ -45,6 +45,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "fileutils.h"
 #include "nls.h"
 #include "strutils.h"
 #include "proc/sysinfo.h"
@@ -725,6 +726,7 @@ int main(int argc, char *argv[])
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c =
 		getopt_long(argc, argv, "afmnsdDp:S:hV", longopts,

@@ -32,6 +32,7 @@
 #include "c.h"
 #include "nls.h"
 #include "strutils.h"
+#include "fileutils.h"
 
 #include <locale.h>
 #include <errno.h>
@@ -226,6 +227,7 @@ int main(int argc, char **argv)
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "bkmghlotc:s:V", longopts, NULL)) != -1)
 		switch (c) {

@@ -29,6 +29,7 @@
 
 #include "c.h"
 #include "config.h"
+#include "fileutils.h"
 #include "nls.h"
 #include "proc/procps.h"
 #include "strutils.h"
@@ -588,6 +589,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((optc =
 		getopt_long(argc, argv, "+bced::ghn:pvtx", longopts, (int *)0))
