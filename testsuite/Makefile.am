@@ -20,6 +20,7 @@ DEJATOOL += \
 
 DEJATOOL += \
 	free \
+	lib \
 	pgrep \
 	pkill \
 	ps \
