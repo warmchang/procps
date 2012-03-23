@@ -443,14 +443,10 @@ static int WriteSetting(const char *setting)
 		}
 	} else {
 		rc = fprintf(fp, "%s\n", value);
-		if (rc < 0) {
+		if (0 < rc)
+			rc = 0;
+		if (close_stream(fp) != 0)
 			xwarn(_("setting key \"%s\""), outname);
-			fclose(fp);
-		} else {
-			rc = fclose(fp);
-			if (rc != 0)
-				xwarn(_("setting key \"%s\""), outname);
-		}
 		if (rc == 0 && !Quiet) {
 			if (NameOnly) {
 				fprintf(stdout, "%s\n", outname);
