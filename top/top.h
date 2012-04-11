@@ -39,7 +39,7 @@
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
-//#define STRCMPNOCASE            /* use strcasecmp vs. strcmp when sorting  */
+//#define STRINGCASENO            /* case insenstive compare/locate versions */
 //#define TERMIO_PROXY            /* true line editing, beyond native input  */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
 //#define TREE_ONEPASS            /* for speed, tolerate dangling children   */
@@ -73,10 +73,14 @@
 #define linux_version_code LINUX_VERSION(2,5,43)
 #endif
 
-#ifdef STRCMPNOCASE
-#define STRSORTCMP  strcasecmp
+#ifdef STRINGCASENO
+   // pretend as if #define _GNU_SOURCE
+char *strcasestr(const char *haystack, const char *needle);
+#define STRSTR  strcasestr
+#define STRCMP  strcasecmp
 #else
-#define STRSORTCMP  strcmp
+#define STRSTR  strstr
+#define STRCMP  strcmp
 #endif
 
 
@@ -412,13 +416,13 @@ typedef struct WIN_t {
 #define SCB_STRS(f,s) \
    static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
       if (!(*P)->s || !(*Q)->s) return SORT_eq; \
-      return Frame_srtflg * STRSORTCMP((*Q)->s, (*P)->s); }
+      return Frame_srtflg * STRCMP((*Q)->s, (*P)->s); }
 #define SCB_STRV(f,b,v,s) \
    static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
       if (b) { \
          if (!(*P)->v || !(*Q)->v) return SORT_eq; \
-         return Frame_srtflg * STRSORTCMP((*Q)->v[0], (*P)->v[0]); } \
-      return Frame_srtflg * STRSORTCMP((*Q)->s, (*P)->s); }
+         return Frame_srtflg * STRCMP((*Q)->v[0], (*P)->v[0]); } \
+      return Frame_srtflg * STRCMP((*Q)->s, (*P)->s); }
 #define SCB_STRX(f,s) \
    int strverscmp(const char *s1, const char *s2); \
    static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \

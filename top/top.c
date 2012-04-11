@@ -2850,7 +2850,7 @@ static void find_string (int ch) {
    if (str[0]) {
       for (i = Curwin->begtask; i < Frame_maxtask; i++) {
          task_show(Curwin, Curwin->ppt[i], buf);
-         if (strstr(buf, str)) {
+         if (STRSTR(buf, str)) {
             found = 1;
             if (i == Curwin->begtask) continue;
             Curwin->begtask = i;
