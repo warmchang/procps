@@ -461,10 +461,10 @@ static void bye_bye (const char *str) {
 
    if (str) {
       fputs(str, stderr);
-      exit(1);
+      exit(EXIT_FAILURE);
    }
    putp("\n");
-   exit(0);
+   exit(EXIT_SUCCESS);
 } // end: bye_bye
 
 
@@ -2566,7 +2566,7 @@ static WIN_t *win_select (char ch) {
       so we must try to get our own darn ch by begging the user... */
    if (!ch) {
       show_pmt(N_txt(CHOOSE_group_txt));
-      if (1 > chin(0, (char *)&ch, 1)) return Curwin;
+      if (1 > chin(0, (char *)&ch, 1)) return w;
    }
    switch (ch) {
       case 'a':                         // we don't carry 'a' / 'w' in our
@@ -2796,7 +2796,7 @@ static void file_writerc (void) {
 
 #ifndef WARN_CFG_OFF
    if (Rc_converted) {
-      show_pmt(N_fmt(XTRA_warncfg_txt));
+      show_pmt(N_txt(XTRA_warncfg_txt));
       if ('y' != tolower(keyin(0)))
          return;
       Rc_converted = 0;

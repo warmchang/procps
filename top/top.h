@@ -277,7 +277,7 @@ typedef struct CPU_t {
 #define Show_FOREST  0x000002     // 'V' - show cmd/cmdlines with ascii art
 #define Qsrt_NORMAL  0x000004     // 'R' - reversed column sort (high to low)
         // these flag(s) have no command as such - they're for internal use
-#define EQUWINS_xxx  0x000001     // rebalance all wins & tasks (off 'i'/ 'n')
+#define EQUWINS_xxx  0x000001     // rebalance all wins & tasks (off i,n,u/U)
 
         // Default flags if there's no rcfile to provide user customizations
 #define DEF_WINFLGS ( View_LOADAV | View_STATES | View_CPUSUM | View_MEMORY \
