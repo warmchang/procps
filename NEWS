@@ -1,14 +1,24 @@
 procps-ng-3.3.3
 ---------------
   * watch -g command repeats until something changes
-  * top can read old toprc configuration files
   * Changed labels of kB etc to KiB Debian #662786
+  * top supports hotplugged memory and cpus Debian #351934, #459287
+  * top %cpu not distorted when switch to/from threads Debian #441166
+  * top can read old toprc configuration files Debian #651213, #651863
   * top supports input paste once again Debian #663334
+  * top -p avoids SEGV when pid doesn't exist Debian 668335
+
+  * Documentation catch up (fixed prior to 3.3.3)
+    . top repeating "%" wastes space Debian #322984
+    . top -U user name parse error Debian #623200
+    . top memory leaks Debian #627257
+    . top impossible task swap statistics Debian #628462
+    . top forest view segfault Debian #650864
 
 procps-ng-3.3.1 --> procps-ng-3.3.2
 --------------------------------
 
-  * Redefined library to use version-info 
+  * Redefined library to use version-info
   * NLS added! Programs can use po files to localise the output to suite
     any supported languages.
   * Imported a bunch of distribution patches:
