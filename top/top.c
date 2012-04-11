@@ -3774,7 +3774,6 @@ static int window_show (WIN_t *q, int wmax) {
    }
 
    i = q->begtask;
-   if (i >= Frame_maxtask) i = q->begtask = Frame_maxtask - 1;
    lwin = 1;                                        // 1 for the column header
    wmax = winMIN(wmax, q->winlines + 1);            // ditto for winlines, too
 
