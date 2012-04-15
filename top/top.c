@@ -41,6 +41,7 @@
 #include <unistd.h>
 #include <values.h>
 
+#include "../include/fileutils.h"
 #include "../include/nls.h"
 
 #include "../proc/devname.h"
@@ -3901,6 +3902,7 @@ static void frame_make (void) {
          * duh... */
 int main (int dont_care_argc, char **argv) {
    (void)dont_care_argc;
+   atexit(close_stdout);
    before(*argv);
                                         //                 +-------------+
    wins_stage_1();                      //                 top (sic) slice

@@ -25,8 +25,6 @@ usrbin_exec_PROGRAMS = \
 	pkill \
 	pmap \
 	pwdx \
-	skill \
-	snice \
 	tload \
 	uptime \
 	vmstat \
@@ -38,8 +36,6 @@ dist_man_MANS = \
 	pkill.1 \
 	pmap.1 \
 	pwdx.1 \
-	skill.1 \
-	snice.1 \
 	sysctl.8 \
 	sysctl.conf.5 \
 	tload.1 \
@@ -50,6 +46,7 @@ dist_man_MANS = \
 if BUILD_KILL
 bin_PROGRAMS = kill
 dist_man_MANS += kill.1
+kill_SOURCES = skill.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
 endif
 
 if WITH_NCURSES
@@ -59,19 +56,33 @@ usrbin_exec_PROGRAMS += \
 dist_man_MANS += \
 	slabtop.1 \
 	watch.1
-slabtop_SOURCES = slabtop.c $(top_srcdir)/lib/strutils.c
+slabtop_SOURCES = slabtop.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
 slabtop_LDADD = @NCURSES_LIBS@
-watch_SOURCES = watch.c $(top_srcdir)/lib/strutils.c
+watch_SOURCES = watch.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
 watch_LDADD = @WATCH_NCURSES_LIBS@
 endif
 
-kill_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
-skill_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
-snice_SOURCES = skill.c $(top_srcdir)/lib/strutils.c
-tload_SOURCES = tload.c $(top_srcdir)/lib/strutils.c
-pkill_SOURCES = pgrep.c
-free_SOURCES = free.c $(top_srcdir)/lib/strutils.c
-vmstat_SOURCES = vmstat.c $(top_srcdir)/lib/strutils.c
+if BUILD_SKILL
+usrbin_exec_PROGRAMS += \
+	skill \
+	snice
+skill_SOURCES = skill.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
+snice_SOURCES = skill.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
+dist_man_MANS += \
+	skill.1 \
+	snice.1
+endif
+
+free_SOURCES = free.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
+pgrep_SOURCES = pgrep.c $(top_srcdir)/lib/fileutils.c
+pkill_SOURCES = pgrep.c $(top_srcdir)/lib/fileutils.c
+pmap_SOURCES = pmap.c $(top_srcdir)/lib/fileutils.c
+pwdx_SOURCES = pwdx.c $(top_srcdir)/lib/fileutils.c
+sysctl_SOURCES = sysctl.c $(top_srcdir)/lib/fileutils.c
+tload_SOURCES = tload.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
+uptime_SOURCES = uptime.c $(top_srcdir)/lib/fileutils.c
+vmstat_SOURCES = vmstat.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
+w_SOURCES = w.c $(top_srcdir)/lib/fileutils.c
 
 sysconf_DATA = sysctl.conf
 

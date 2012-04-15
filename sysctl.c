@@ -40,6 +40,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "fileutils.h"
 #include "nls.h"
 #include "xalloc.h"
 #include "proc/procps.h"
@@ -442,14 +443,10 @@ static int WriteSetting(const char *setting)
 		}
 	} else {
 		rc = fprintf(fp, "%s\n", value);
-		if (rc < 0) {
+		if (0 < rc)
+			rc = 0;
+		if (close_stream(fp) != 0)
 			xwarn(_("setting key \"%s\""), outname);
-			fclose(fp);
-		} else {
-			rc = fclose(fp);
-			if (rc != 0)
-				xwarn(_("setting key \"%s\""), outname);
-		}
 		if (rc == 0 && !Quiet) {
 			if (NameOnly) {
 				fprintf(stdout, "%s\n", outname);
@@ -675,6 +672,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	PrintName = true;
 	PrintNewline = true;

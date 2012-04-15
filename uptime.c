@@ -23,6 +23,7 @@
 #include <stdio.h>
 
 #include "c.h"
+#include "fileutils.h"
 #include "nls.h"
 #include "proc/whattime.h"
 #include "proc/version.h"
@@ -53,6 +54,7 @@ int main(int argc, char **argv)
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "hV", longopts, NULL)) != -1)
 		switch (c) {

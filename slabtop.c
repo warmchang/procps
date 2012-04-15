@@ -39,6 +39,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "fileutils.h"
 #include "nls.h"
 #include "strutils.h"
 #include "proc/slab.h"
@@ -303,6 +304,7 @@ int main(int argc, char *argv[])
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	sort_func = DEF_SORT_FUNC;
 
@@ -414,7 +416,7 @@ int main(int argc, char *argv[])
 			tv.tv_sec = delay;
 			tv.tv_usec = 0;
 			if (select(STDOUT_FILENO, &readfds, NULL, NULL, &tv) > 0) {
-				if (read(0, &c, 1) != 1)
+				if (read(STDIN_FILENO, &c, 1) != 1)
 					break;
 				parse_input(c);
 			}

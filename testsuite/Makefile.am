@@ -20,6 +20,7 @@ DEJATOOL += \
 
 DEJATOOL += \
 	free \
+	lib \
 	pgrep \
 	pkill \
 	ps \
@@ -34,6 +35,7 @@ EXTRA_DIST = \
 	global-conf.exp \
     free.test/free.exp \
     kill.test/kill.exp \
+    lib.test/fileutils.exp \
     lib.test/strutils.exp \
     pgrep.test/pgrep.exp \
     pkill.test/pkill.exp \

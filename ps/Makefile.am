@@ -21,7 +21,8 @@ pscommand_SOURCES =  \
 	parser.c \
 	select.c \
 	sortformat.c \
-	stacktrace.c
+	stacktrace.c \
+	$(top_srcdir)/lib/fileutils.c
 
 EXTRA_DIST = \
 	HACKING \
