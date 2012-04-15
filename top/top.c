@@ -2420,20 +2420,20 @@ static void parse_args (char **args) {
                break;
             case 'p':
                if (Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
-               do {
+               do { int i, pid;
                   if (cp[1]) cp++;
                   else if (*args) cp = *args++;
                   else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
                   if (Monpidsidx >= MONPIDMAX)
                      error_exit(fmtmk(N_fmt(LIMIT_exceed_fmt), MONPIDMAX));
-                  if (1 != sscanf(cp, "%d", &Monpids[Monpidsidx])
-                  || 0 > Monpids[Monpidsidx])
+                  if (1 != sscanf(cp, "%d", &pid) || 0 > pid)
                      error_exit(fmtmk(N_fmt(BAD_mon_pids_fmt), cp));
-                  if (!Monpids[Monpidsidx])
-                     Monpids[Monpidsidx] = getpid();
-                  Monpidsidx++;
-                  if (!(p = strchr(cp, ',')))
-                     break;
+                  if (!pid) pid = getpid();
+                  for (i = 0; i < Monpidsidx; i++)
+                     if (Monpids[i] == pid) goto next_pid;
+                  Monpids[Monpidsidx++] = pid;
+               next_pid:
+                  if (!(p = strchr(cp, ','))) break;
                   cp = p;
                } while (*cp);
                break;
