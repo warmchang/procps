@@ -136,7 +136,7 @@ dnl	ALL_LINGUAS="af am ar as be bg bn_IN bn ca cs cy da de el en_GB es et eu_ES 
 dnl fi
 
 AC_MSG_CHECKING(whether program_invocation_short_name is defined)
-AC_TRY_COMPILE([#include <argp.h>],
+AC_TRY_COMPILE([#include <errno.h>],
 		[program_invocation_short_name = "test";],
 		AC_DEFINE(HAVE_PROGRAM_INVOCATION_SHORT_NAME, 1,
 			[Define if program_invocation_short_name is defined])
