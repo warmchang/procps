@@ -116,12 +116,13 @@ proc make_testproc { } {
     global testproc_path testproc_comm testproc1_pid testproc2_pid
 
     set testproc_path [ exec mktemp -u ]
-    exec ln -s "/bin/sleep" $testproc_path
+    set sleep_path [ exec which sleep ]
+    exec ln -s $sleep_path $testproc_path
     set testproc_comm [ exec basename $testproc_path ]
 
     spawn readlink $testproc_path
     expect {
-        -re "^/bin/sleep\\s*$" { }
+        -re "^$sleep_path\\s*$" { }
         timeout { perror "test proc does not link to sleep 1" }
         eof { perror "test proc does not link to sleep 1" }
     }
