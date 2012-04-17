@@ -44,6 +44,7 @@
 #include "proc/devname.h"
 #include "proc/procps.h"	/* char *user_from_uid(uid_t uid) */
 #include "proc/version.h"	/* procps_version */
+#include "rpmatch.h"
 
 #define DEFAULT_NICE 4
 
