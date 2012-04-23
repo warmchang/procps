@@ -314,15 +314,15 @@ static void lists_and_needs(void){
 static int want_this_proc_pcpu(proc_t *buf){
   unsigned long long used_jiffies;
   unsigned long pcpu = 0;
-  unsigned long long avail_jiffies;
+  unsigned long long seconds;
 
   if(!want_this_proc(buf)) return 0;
 
   used_jiffies = buf->utime + buf->stime;
   if(include_dead_children) used_jiffies += (buf->cutime + buf->cstime);
 
-  avail_jiffies = seconds_since_boot * Hertz - buf->start_time;
-  if(avail_jiffies) pcpu = (used_jiffies << 24) / avail_jiffies;
+  seconds = seconds_since_boot - buf->start_time / Hertz;
+  if(seconds) pcpu = (used_jiffies * 1000ULL / Hertz) / seconds;
 
   buf->pcpu = pcpu;  // fits in an int, summing children on 128 CPUs
 
