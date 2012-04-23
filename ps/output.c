@@ -2024,7 +2024,7 @@ void init_output(void){
   );
   memset(outbuf, ' ', SPACE_AMOUNT);
   if(SPACE_AMOUNT==page_size) mprotect(outbuf, page_size, PROT_READ);
-  mprotect(outbuf + page_size*outbuf_pages, page_size, PROT_NONE); // gaurd page
+  mprotect(outbuf + page_size*outbuf_pages, page_size, PROT_NONE); // guard page
   saved_outbuf = outbuf + SPACE_AMOUNT;
   // available space:  page_size*outbuf_pages-SPACE_AMOUNT
 

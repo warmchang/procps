@@ -37,7 +37,7 @@
         //    comment additions.
         //
         //    Also, by omitting the argument for the --add-comments
-        //    XGETTEXT_OPTION in po/Makevars, *any* preceeding c style
+        //    XGETTEXT_OPTION in po/Makevars, *any* preceding c style
         //    comment will be propagated to the .pot file, providing
         //    that the gettext macro isn't empty as discussed above.
         //    However, this is far too aggressive so we have chosen

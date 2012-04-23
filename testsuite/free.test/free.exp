@@ -51,8 +51,7 @@ set test "free with zero repeat count"
 spawn $free -c 0
 expect_pass "$test" "\(lt-\)\?free: failed to parse count argument: '0': Numerical result out of range"
 
-set test "free with postive repeat count"
-set test "free with postive repeat count"
+set test "free with positive repeat count"
 spawn $free -c 2
 expect_continue "$test" "^${free_header}"
 expect_pass "$test" "${free_header}"

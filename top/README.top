@@ -341,7 +341,7 @@ BENCHMARKS, Redux (for NLS) ==============================================
 
   Each test was run outside of X-windows at a linux console
   offering 48 rows and 170 columns.  This was done to reduce
-  contention which sometimes made comparisions problematic.
+  contention which sometimes made comparisons problematic.
 
   old-top = procps-3.2.8 (debian patched and memory leaking)
   new-top = procps-ng-3.3.2 with NLS support

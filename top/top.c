@@ -112,7 +112,7 @@ static int No_ksyms = -1,       // set to '0' if ksym avail, '1' otherwise
            Width_mode = 0;      // set w/ 'w' - potential output override
 
         /* Unchangeable cap's stuff built just once (if at all) and
-           thus NOT saved in a WIN_t's RCW_t.  To accomodate 'Batch'
+           thus NOT saved in a WIN_t's RCW_t.  To accommodate 'Batch'
            mode, they begin life as empty strings so the overlying
            logic need not change ! */
 static char  Cap_clr_eol    [CAPBUFSIZ] = "",    // global and/or static vars
@@ -1404,7 +1404,7 @@ static void build_headers (void) {
 #ifdef EQUCOLHDRYES
          // prepare to even out column header lengths...
          if (hdrmax + w->hdrcaplen < (x = strlen(w->columnhdr))) hdrmax = x - w->hdrcaplen;
-         // must sacrifice last header positon to avoid task row abberations
+         // must sacrifice last header position to avoid task row abberations
          w->eolcap = Caps_endline;
 #else
          if (Screen_cols > (int)strlen(w->columnhdr)) w->eolcap = Caps_endline;
@@ -1454,7 +1454,7 @@ static void build_headers (void) {
 
 
         /*
-         * This guy coordinates the activities surounding the maintainence
+         * This guy coordinates the activities surrounding the maintainence
          * of each visible window's columns headers and the library flags
          * required for the openproc interface. */
 static void calibrate_fields (void) {
@@ -3259,7 +3259,7 @@ static void keys_xtra (int ch) {
 #else
    OFFw(w, Show_FOREST);
 #endif
-   /* these keys represent old-top compatability --
+   /* these keys represent old-top compatibility --
       they're grouped here so that if users could ever be weaned,
       we would just whack do_key's key_tab entry and this function... */
    switch (ch) {

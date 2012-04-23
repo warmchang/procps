@@ -226,7 +226,7 @@ static const char *parse_sysv_option(void){
     // "IEEE Std 1003.1, 2004 Edition", "ISO/IEC 9945:2003",
     // or "Version 2 of the Single Unix Specification".
     //
-    // It may be time to re-think the existance of this list.
+    // It may be time to re-think the existence of this list.
     // In the meantime, please do not add to it. The list is
     // intended to ONLY contain flags defined by the POSIX and UNIX
     // standards published by The Open Group, IEEE, and ISO.
