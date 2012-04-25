@@ -82,6 +82,7 @@ static void print_host(const char *restrict host, int len, const int fromlen)
 		len = fromlen;
 	last = host + len;
 	for (; host < last; host++) {
+	    if (*host == '\0') break;
 		if (isprint(*host) && *host != ' ') {
 			fputc(*host, stdout);
 			++width;
