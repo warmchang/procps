@@ -2101,8 +2101,12 @@ static void sysinfo_refresh (int forced) {
          * No matter what *they* say, we handle the really really BIG and
          * IMPORTANT stuff upon which all those lessor functions depend! */
 static void before (char *me) {
+   static proc_t p;
    struct sigaction sa;
    int i;
+
+   // is /proc mounted?
+   look_up_our_self(&p);
 
    // setup our program name
    Myname = strrchr(me, '/');
