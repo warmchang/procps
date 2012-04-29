@@ -79,7 +79,7 @@ Why are there so many procps projects?
 	represents the Debian, Fedora and openSUSE fork of procps.  To avoid
 	confusion and potential name clashes the package is now known as
 	procps-ng (next generation), the version number was raised to 3.3.0
-	and the library soname changed to libproc-ng-3.3.0.
+	and the library so-name changed to libprocps.so
 
 What is being done to procps-ng at its new home?
 
