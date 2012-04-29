@@ -84,7 +84,9 @@ uptime_SOURCES = uptime.c $(top_srcdir)/lib/fileutils.c
 vmstat_SOURCES = vmstat.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
 w_SOURCES = w.c $(top_srcdir)/lib/fileutils.c
 
+if EXAMPLE_FILES
 sysconf_DATA = sysctl.conf
+endif
 
 EXTRA_DIST = \
 	autogen.sh \
