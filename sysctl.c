@@ -29,6 +29,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <getopt.h>
+#include <glob.h>
 #include <libgen.h>
 #include <limits.h>
 #include <regex.h>
@@ -492,53 +493,61 @@ static int Preload(const char *restrict const filename)
 	int n = 0;
 	int rc = 0;
 	char *name, *value;
+	glob_t globbuf;
+	int globerr;
+	int j;
 
-	fp = (filename[0] == '-' && !filename[1])
-	    ? stdin : fopen(filename, "r");
+	globerr = glob(filename, GLOB_NOCHECK | GLOB_TILDE, NULL, &globbuf);
+	if (globerr != 0 && globerr != GLOB_NOMATCH)
+		xerr(EXIT_FAILURE, _("glob failed"));
 
-	if (!fp) {
-		xwarn(_("cannot open \"%s\""), filename);
-		return -1;
-	}
-
-	while (fgets(oneline, sizeof oneline, fp)) {
-		n++;
-		t = StripLeadingAndTrailingSpaces(oneline);
-
-		if (strlen(t) < 2)
-			continue;
-
-		if (*t == '#' || *t == ';')
-			continue;
-
-		name = strtok(t, "=");
-		if (!name || !*name) {
-			xwarnx(_("%s(%d): invalid syntax, continuing..."),
-			       filename, n);
-			continue;
+	for (j = 0; j < globbuf.gl_pathc; j++) {
+		fp = (globbuf.gl_pathv[j][0] == '-' && !globbuf.gl_pathv[j][1])
+		    ? stdin : fopen(globbuf.gl_pathv[j], "r");
+		if (!fp) {
+			xwarn(_("cannot open \"%s\""), globbuf.gl_pathv[j]);
+			return -1;
 		}
 
-		StripLeadingAndTrailingSpaces(name);
+		while (fgets(oneline, sizeof oneline, fp)) {
+			n++;
+			t = StripLeadingAndTrailingSpaces(oneline);
 
-		if (pattern && !pattern_match(name, pattern))
-			continue;
+			if (strlen(t) < 2)
+				continue;
 
-		value = strtok(NULL, "\n\r");
-		if (!value || !*value) {
-			xwarnx(_("%s(%d): invalid syntax, continuing..."),
-			       filename, n);
-			continue;
+			if (*t == '#' || *t == ';')
+				continue;
+
+			name = strtok(t, "=");
+			if (!name || !*name) {
+				xwarnx(_("%s(%d): invalid syntax, continuing..."),
+				       globbuf.gl_pathv[j], n);
+				continue;
+			}
+
+			StripLeadingAndTrailingSpaces(name);
+
+			if (pattern && !pattern_match(name, pattern))
+				continue;
+
+			value = strtok(NULL, "\n\r");
+			if (!value || !*value) {
+				xwarnx(_("%s(%d): invalid syntax, continuing..."),
+				       globbuf.gl_pathv[j], n);
+				continue;
+			}
+
+			while ((*value == ' ' || *value == '\t') && *value != 0)
+				value++;
+
+			/* should NameOnly affect this? */
+			sprintf(buffer, "%s=%s", name, value);
+			rc |= WriteSetting(buffer);
 		}
 
-		while ((*value == ' ' || *value == '\t') && *value != 0)
-			value++;
-
-		/* should NameOnly affect this? */
-		sprintf(buffer, "%s=%s", name, value);
-		rc |= WriteSetting(buffer);
+		fclose(fp);
 	}
-
-	fclose(fp);
 	return rc;
 }
 
@@ -641,7 +650,7 @@ int main(int argc, char *argv[])
 	bool preloadfileOpt = false;
 	int ReturnCode = 0;
 	int c;
-	const char *preloadfile = DEFAULT_PRELOAD;
+	const char *preloadfile = NULL;
 
 	enum {
 		DEPRECATED_OPTION = CHAR_MAX + 1,
@@ -744,13 +753,27 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (DisplayAllOpt)
-		return DisplayAll(PROC_PATH);
-	if (preloadfileOpt)
-		return Preload(preloadfile);
-
 	argc -= optind;
 	argv += optind;
+
+	if (DisplayAllOpt)
+		return DisplayAll(PROC_PATH);
+
+	if (preloadfileOpt) {
+		int ret = EXIT_SUCCESS, i;
+		if (!preloadfile) {
+			if (!argc) {
+				ret != Preload(DEFAULT_PRELOAD);
+			}
+		} else {
+			/* This happens when -pfile option is
+			 * used without space. */
+			Preload(preloadfile);
+		}
+		for (i = 0; i < argc; i++)
+			Preload(argv[i]);
+		return ret;
+	}
 
 	if (argc < 1)
 		xerrx(EXIT_FAILURE, _("no variables specified\n"

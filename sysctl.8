@@ -12,6 +12,8 @@ sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
 .B sysctl
 [\fIoptions\fR] [\fIvariable\fR[\fI=value\fR]] [...]
+.BR
+.B sysctl \-p [file or regexp] [...]
 .SH DESCRIPTION
 .B sysctl
 is used to modify kernel parameters at runtime.  The parameters available
@@ -58,6 +60,10 @@ Use this option when you want to change a sysctl setting.
 \fB\-p\fR[\fIFILE\fR], \fB\-\-load\fR[=\fIFILE\fR]
 Load in sysctl settings from the file specified or /etc/sysctl.conf if none
 given.  Specifying \- as filename means reading data from standard input.
+Using this option will mean arguments to
+.B sysctl
+are files, which are read in order they are specified.  The file argument can
+may be specified as reqular expression.
 .TP
 \fB\-a\fR, \fB\-\-all\fR
 Display all values currently available.
