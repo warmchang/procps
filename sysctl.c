@@ -578,8 +578,8 @@ static int PreloadSystem(void)
 			if (!strcmp(de->d_name, ".")
 			    || !strcmp(de->d_name, ".."))
 				continue;
-			if (strlen(de->d_name) < 6
-			    || !strcmp(de->d_name + strlen(de->d_name) - 6, ".conf"))
+			if (strlen(de->d_name) < 5
+			    || strcmp(de->d_name + strlen(de->d_name) - 5, ".conf"))
 				continue;
 			/* check if config already known */
 			for (i = 0; i < ncfgs; ++i) {
