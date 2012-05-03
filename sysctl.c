@@ -32,6 +32,7 @@
 #include <libgen.h>
 #include <limits.h>
 #include <regex.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,11 +46,6 @@
 #include "xalloc.h"
 #include "proc/procps.h"
 #include "proc/version.h"
-
-/* Proof that C++ causes brain damage: */
-typedef int bool;
-static bool true  = 1;
-static bool false = 0;
 
 /*
  *    Globals...
