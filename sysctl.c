@@ -359,6 +359,8 @@ static int WriteSetting(const char *setting)
 	const char *equals;
 	char *tmpname;
 	char *outname;
+	char *last_dot;
+
 	FILE *fp;
 	struct stat ts;
 
@@ -396,7 +398,8 @@ static int WriteSetting(const char *setting)
 	outname[equals - name] = 0;
 	/* change / to . */
 	slashdot(outname, '/', '.');
-	if(is_deprecated(strrchr(outname, '.') + 1)) {
+	last_dot = strrchr(outname, '.');
+	if (last_dot != NULL && is_deprecated(last_dot + 1)) {
 		xwarnx(_("%s is deprecated, value not set"), outname);
 		goto out;
         }
