@@ -15,7 +15,7 @@ set pmap_ext_items "\(\[0-9a-f\]+\\s+\\d+\\s+\\d+\\s+\\d+ \[rwx-\]{5}\\s+\\S+\[^
 
 set pmap_std_footer "total\\s+\\d+K\\s*\$"
 set pmap_device_footer "mapped:\\s+\\d+K\\s+writeable\/private:\\s+\\d+K\\s+shared:\\s+\\d+K\\s*\$"
-set pmap_ext_footer "\[ -\]+\\s+total kB\\s+\\d+\\s+\\d+\\s+\\d+\\s*\$"
+set pmap_ext_footer "\[ -\]+\\s+total kB\\s+\\d+(\\s+\[\\d-\]+){2,3}\\s*\$"
 
 set test "pmap with no arguments"
 spawn $pmap
