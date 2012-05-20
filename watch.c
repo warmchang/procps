@@ -296,7 +296,11 @@ wint_t my_getwc(FILE * s)
 }
 #endif	/* WITH_WATCH8BIT */
 
+#ifdef WITH_WATCH8BIT
+void output_header(wchar_t *restrict wcommand, int wcommand_columns, int wcommand_characters, double interval)
+#else
 void output_header(char *restrict command, double interval)
+#endif	/* WITH_WATCH8BIT */
 {
 	time_t t = time(NULL);
 	char *ts = ctime(&t);
@@ -718,7 +722,11 @@ int main(int argc, char *argv[])
 		}
 
 		if (show_title)
+#ifdef WITH_WATCH8BIT
+			output_header(wcommand, wcommand_columns, wcommand_characters, interval);
+#else
 			output_header(command, interval);
+#endif	/* WITH_WATCH8BIT */
 
 		if (run_command(command, command_argv))
 			break;
