@@ -399,11 +399,12 @@ int main(int argc, char **argv)
 
 	/* Get user field length from environment */
 	if ((env_var = getenv("PROCPS_USERLEN")) != NULL) {
+		int ut_namesize = UT_NAMESIZE;
 		userlen = atoi(env_var);
-		if (userlen < 8 || UT_NAMESIZE < userlen) {
+		if (userlen < 8 || ut_namesize < userlen) {
 			xwarnx
-			    (_("User length environment PROCPS_USERLEN must be between 8 and %zu, ignoring.\n"),
-			     UT_NAMESIZE);
+			    (_("User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"),
+			     ut_namesize);
 			userlen = 8;
 		}
 	}
