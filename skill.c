@@ -98,7 +98,8 @@ static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd,
 		fprintf(stderr, "%-8s %-8s %5d %-16.16s   ? ",
 			(char *)dn_buf, user_from_uid(uid), pid, cmd);
 		fflush (stdout);
-		getline(&buf, &len, stdin);
+		if (getline(&buf, &len, stdin) == -1)
+			return;
 		if (rpmatch(buf) < 1) {
 			free(buf);
 			return;
