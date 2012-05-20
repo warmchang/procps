@@ -7,6 +7,11 @@ procps-ng-3.3.3
   * top can read old toprc configuration files Debian #651213, #651863
   * top supports input paste once again Debian #663334
   * top -p avoids SEGV when pid doesn't exist Debian 668335
+  * Various DejaGNU test cases fixed
+  * pgrep.1 graoff syntax fix Debian #665425
+  * sysctl avoid crash when -p file has unexpected input
+  * sysctl .conf off-by-one error Debian #669128
+  * libprocps: protect locale env getting overwrite RedHat #548711
 
   * Documentation catch up (fixed prior to 3.3.3)
     . top repeating "%" wastes space Debian #322984
@@ -14,6 +19,7 @@ procps-ng-3.3.3
     . top memory leaks Debian #627257
     . top impossible task swap statistics Debian #628462
     . top forest view segfault Debian #650864
+
 
 procps-ng-3.3.1 --> procps-ng-3.3.2
 --------------------------------
