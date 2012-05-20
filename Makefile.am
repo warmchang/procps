@@ -43,10 +43,21 @@ dist_man_MANS = \
 	vmstat.8 \
 	w.1
 
+EXTRA_DIST = \
+	autogen.sh \
+	contrib \
+	COPYING.LIB \
+	misc/git-version-gen \
+	Documentation/CodingStyle \
+	Documentation/TODO \
+	$(sysconf_DATA)
+
 if BUILD_KILL
 bin_PROGRAMS = kill
 dist_man_MANS += kill.1
 kill_SOURCES = skill.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
+else
+  EXTRA_DIST += kill.1
 endif
 
 if WITH_NCURSES
@@ -71,6 +82,10 @@ snice_SOURCES = skill.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils
 dist_man_MANS += \
 	skill.1 \
 	snice.1
+else
+  EXTRA_DIST += \
+	skill.1 \
+	snice.1
 endif
 
 free_SOURCES = free.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
@@ -88,15 +103,14 @@ if EXAMPLE_FILES
 sysconf_DATA = sysctl.conf
 endif
 
-EXTRA_DIST = \
-	autogen.sh \
-	contrib \
-	COPYING.LIB \
-	Documentation/CodingStyle \
-	Documentation/TODO \
-	$(sysconf_DATA)
-
 procpsngdir = $(docdir)
 dist_procpsng_DATA = \
 	Documentation/BUGS \
 	Documentation/FAQ
+
+BUILT_SOURCES = $(top_srcdir)/.version
+$(top_srcdir)/.version:
+	echo $(VERSION) > $@-t && mv $@-t $@
+dist-hook:
+	echo $(VERSION) > $(distdir)/.tarball-version
+
