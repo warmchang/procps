@@ -803,6 +803,17 @@ if the parent process exits.
 .PP
 If the length of the username is greater than the length of the display
 column, the numeric user ID is displayed instead.
+.PP
+Commands options such as 
+.B ps
+.I\-aux
+are not recommended as it is a confusion of two different standards.
+According to the POSIX and UNIX standards, the above command asks to
+display all processes with a TTY (generally the commands users are
+running) plus all processes owned by a user named "x".  If that user
+doesn't exist, then 
+.B ps
+will assume you really meant "\fBps\fR \fIaux\fR".
 .SH "PROCESS FLAGS"
 The sum of these values is displayed in the "F" column,
 which is provided by the

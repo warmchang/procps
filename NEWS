@@ -1,3 +1,7 @@
+procps-ng-3.3.4
+---------------
+  * Removed ps -aux bogus message
+
 procps-ng-3.3.3
 ---------------
   * watch -g command repeats until something changes
