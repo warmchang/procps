@@ -53,6 +53,7 @@
 #include <unistd.h>
 #ifdef WITH_WATCH8BIT
 # include <wchar.h>
+# include <wctype.h>
 # include <ncursesw/ncurses.h>
 #else
 # include <ncurses.h>
@@ -438,8 +439,8 @@ int run_command(char *restrict command, char **restrict command_argv)
 							c = carry;
 							carry = WEOF;
 						}
-					} while (c != WEOF && !isprint(c)
-						 && c < 12
+					} while (c != WEOF && !iswprint(c)
+						 && c < 128
 						 && wcwidth(c) == 0
 						 && c != L'\n'
 						 && c != L'\t'
