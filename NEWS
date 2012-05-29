@@ -1,6 +1,7 @@
 procps-ng-3.3.4
 ---------------
   * Removed ps -aux bogus message
+  * w get -i option to display IP addresses
 
 procps-ng-3.3.3
 ---------------
