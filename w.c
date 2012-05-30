@@ -146,6 +146,7 @@ static void print_display(const char *restrict host, int len, int restlen)
 /* This routine prints either the hostname or the IP address of the remote */
 static void print_from(const utmp_t *restrict const u, const int ip_addresses, const int fromlen) {
 	char buf[fromlen + 1];
+	char buf_ipv6[INET6_ADDRSTRLEN];
 	int len;
 	int32_t ut_addr_v6[4];      /* IP address of the remote host */
 
@@ -160,8 +161,10 @@ static void print_from(const utmp_t *restrict const u, const int ip_addresses, c
 		}
 		if (ut_addr_v6[1] || ut_addr_v6[2] || ut_addr_v6[3]) {
 			/* IPv6 */
-			if (!inet_ntop(AF_INET6, &ut_addr_v6, buf, sizeof(buf))) {
+			if (!inet_ntop(AF_INET6, &ut_addr_v6, buf_ipv6, sizeof(buf_ipv6))) {
 				strcpy(buf, ""); /* invalid address, clean the buffer */
+			} else {
+				strncpy(buf, buf_ipv6, fromlen); /* adress valid, copy to buffer */
 			}
 		} else {
 			/* IPv4 */
