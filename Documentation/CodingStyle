@@ -2,7 +2,7 @@ Most developers find Linux coding style easy to read, and there is
 really no reason to reinvent this practise, so procps-ng goes along
 with others.
 
-http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=blob_plain;f=Documentation/CodingStyle
+http://git.kernel.org/?p=linux/kernel/git/torvalds/linux.git;a=blob_plain;f=Documentation/CodingStyle
 
 In addtion to Linux coding style this project has few additional
 wishes to contributors.

@@ -48,7 +48,7 @@ Why do ps and top show threads individually?
 
 What systems are supported?
 
-	Linux 2.4.xx and 2.6.xx are commonly tested and expected to work
+	Linux 2.4.xx 2.6.xx and 3.xx are commonly tested and expected to work
 	well.  SMP is well supported.  Multi-node cluster views require a
 	multi-node /proc filesystem; without that you will see a single-node
 	view.
