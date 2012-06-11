@@ -75,6 +75,7 @@ void init_Linux_version(void) {
 		"release %s=%d.%d.%d gives version code %d\n",
 		uts.release, x, y, z, LINUX_VERSION(x,y,z));
 #else
+	fprintf(stderr,		/* *very* unlikely to happen by accident */
 		"%s=%d.%d.%d gives version code %d\n",
 		buf, x, y, z, LINUX_VERSION(x,y,z));
 #endif /* __linux__ */

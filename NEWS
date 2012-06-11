@@ -2,6 +2,8 @@ procps-ng-3.3.4
 ---------------
   * Removed ps -aux bogus message
   * w get -i option to display IP addresses
+  * watch 8bit fixes Debian #675069
+  * Fixed FTBFS for non-linux Debian #677055
 
 procps-ng-3.3.3
 ---------------

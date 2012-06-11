@@ -15,6 +15,11 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
+/* Defined in Linux headers only */
+#ifndef SCHED_BATCH
+#define SCHED_BATCH 3
+#endif
+
 int main(int argc, const char *argv[])
 {
 	int nice = 19;
