@@ -4,6 +4,7 @@ procps-ng-3.3.4
   * w get -i option to display IP addresses
   * watch 8bit fixes Debian #675069
   * Fixed FTBFS for non-linux Debian #677055
+  * pkill -u <uid> doesnt need space Debian #676239
 
 procps-ng-3.3.3
 ---------------
