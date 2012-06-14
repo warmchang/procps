@@ -63,7 +63,7 @@ int check_pid_argument(char *input)
 
 int main(int argc, char *argv[])
 {
-	char ch;
+	int ch;
 	int retval = 0, i;
 	int alloclen = 128;
 	char *pathbuf;
