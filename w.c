@@ -103,35 +103,67 @@ static void print_host(const char *restrict host, int len, const int fromlen)
 }
 
 
-/* This routine prints the display part of the host */
-static void print_display(const char *restrict host, int len, int restlen)
+/* This routine prints the display part of the host or IPv6 link address interface */
+static void print_display_or_interface(const char *restrict host, int len, int restlen)
 {
-	char *disp;
+	char *disp,*tmp;
 
-	if (restlen <= 0) return; /* not enough space for the display */
+	if (restlen <= 0) return; /* not enough space for printing anything */
 
-	/* search for the display (collon) */
+	/* search for a collon (might be a display) */
 	disp = (char *)host;
-	while ( (disp < (host + len)) && (*disp != ':') && (*disp != '\0') ) disp++;
+	while ( (disp < (host + len)) && (*disp != ':') && isprint(*disp) ) disp++;
 
-	/* number of chars till the end of the input field */
-	len -= (disp - host);
-
-	/* if it is still longer than the rest of the output field, then cut it */
-	if (len > restlen) len = restlen;
-
-	/* display found, print it */
+	/* colon found */
 	if (*disp == ':') {
-		while ((len > 0) && (*disp != '\0')) {
-			len--; restlen--;
-			/* print only if printable and non-space */
-			if (isprint(*host) && *host != ' ') {
+		/* detect multiple colons -> IPv6 in the host (not a display) */
+		tmp = disp+1;
+		while ( (tmp < (host + len)) && (*tmp != ':') && isprint(*tmp) ) tmp++;
+
+		if (*tmp != ':') { /* multiple colons not found - it's a display */
+
+			/* number of chars till the end of the input field */
+			len -= (disp - host);
+
+			/* if it is still longer than the rest of the output field, then cut it */
+			if (len > restlen) len = restlen;
+
+			/* print the display */
+			while ((len > 0) && isprint(*disp) && (*disp != ' ')) {
+				len--; restlen--;
 				fputc(*disp, stdout);
 				disp++;
-			} else { /* space or nonprintable - replace with dash and stop printing */
-				fputc('-', stdout);
-				break;
 			}
+
+			if ((len > 0) && (*disp != '\0')) { /* space or nonprintable found - replace with dash and stop printing */
+				restlen--;
+				fputc('-', stdout);
+			}
+		} else { /* multiple colons found - it's an IPv6 address */
+			
+			/* search for % (interface separator in case of IPv6 link address) */
+			while ( (tmp < (host + len)) && (*tmp != '%') && isprint(*tmp) ) tmp++;
+
+			if (*tmp == '%') { /* interface separator found */
+				
+				/* number of chars till the end of the input field */
+				len -= (tmp - host);
+
+				/* if it is still longer than the rest of the output field, then cut it */
+				if (len > restlen) len = restlen;
+
+				/* print the interface */
+				while ((len > 0) && isprint(*tmp) && (*tmp != ' ')) {
+					len--; restlen--;
+					fputc(*tmp, stdout);
+					tmp++;
+				}
+				if ((len > 0) && (*tmp != '\0')) {  /* space or nonprintable found - replace with dash and stop printing */
+					restlen--;
+					fputc('-', stdout);
+				}
+			}
+
 		}
 	}
 
@@ -177,8 +209,8 @@ static void print_from(const utmp_t *restrict const u, const int ip_addresses, c
 		len = strlen(buf);
 		if (len) { /* IP address is non-empty, print it (and concatenate with display, if present) */
 			fputs(buf, stdout);
-			/* show the display part of the host, if present */
-			print_display(u->ut_host, UT_HOSTSIZE, fromlen - len);
+			/* show the display part of the host or IPv6 link addr. interface, if present */
+			print_display_or_interface(u->ut_host, UT_HOSTSIZE, fromlen - len);
 		} else { /* IP address is empty, print the host instead */
 			print_host(u->ut_host, UT_HOSTSIZE, fromlen);
 		}
