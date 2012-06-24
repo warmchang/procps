@@ -21,9 +21,8 @@ spawn $pkill
 expect_pass "$test" "^\(lt-\)\?pkill: no matching criteria specified\\s*"
 
 set test "pkill find both test pids"
-#spawn $pkill $testproc
-#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
-untested "$test"
+spawn $pkill -0 -e $testproc_comm
+expect_pass "$test" "^$testproc_comm killed \\(pid $testproc1_pid\\)\\s+$testproc_comm killed \\(pid $testproc2_pid\\)\\s*$"
 
 # In Debian only
 #set test "pkill counts 2 test pids"
@@ -32,7 +31,7 @@ untested "$test"
 
 set test "pkill with matching gid"
 #spawn $pkill -G $gid $testproc
-#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+#expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 untested "$test"
 
 set test "pkill with not matching gid"
@@ -42,22 +41,22 @@ untested "$test"
 
 set test "pkill with process name"
 #spawn $pkill -l $testproc
-#expect_pass "$test" "^$sleep1_pid\\s+$testproc\\s+$sleep2_pid\\s+$testproc\\s*$"
+#expect_pass "$test" "^$testproc1_pid\\s+$testproc\\s+$testproc2_pid\\s+$testproc\\s*$"
 untested "$test"
 
 set test "pkill find newest test pid"
 #spawn $pkill -n $testproc
-#expect_pass "$test" "^$sleep2_pid\\s*$"
+#expect_pass "$test" "^$testproc2_pid\\s*$"
 untested "$test"
 
 set test "pkill find oldest test pid"
 #spawn $pkill -o $testproc
-#expect_pass "$test" "^$sleep1_pid\\s*$"
+#expect_pass "$test" "^$testproc1_pid\\s*$"
 untested "$test"
 
 set test "pkill matches with parent pid"
 #spawn $pkill -P $mypid $testproc
-#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+#expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 untested "$test"
 
 set test "pkill doesn't match with bogus parent pid"
@@ -67,7 +66,7 @@ untested "$test"
 
 set test "pkill matches with its own sid"
 #spawn $pkill -s $sleep1_sid $testproc
-#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+#expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 untested "$test"
 
 set test "pkill doesn't match with bogus sid"
@@ -77,7 +76,7 @@ untested "$test"
 
 set test "pkill matches on tty"
 #spawn $pkill -t $tty $testproc
-#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+#expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 untested "$test"
 
 set test "pkill doesn't match with bogus tty"
@@ -87,7 +86,7 @@ untested "$test"
 
 set test "pkill with matching euid"
 #spawn $pkill -u $uid $testproc
-#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+#expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 untested "$test"
 
 set test "pkill with not matching euid"
@@ -97,7 +96,7 @@ untested "$test"
 
 set test "pkill with matching uid"
 #spawn $pkill -U $uid $testproc
-#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+#expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 untested "$test"
 
 set test "pkill with not matching uid"
@@ -107,12 +106,12 @@ untested "$test"
 
 set test "pkill matches on substring"
 #spawn $pkill $testproc_trim
-#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+#expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 untested "$test"
 
 set test "pkill matches full string with exact"
 #spawn $pkill -x $testproc
-#expect_pass "$test" "^$sleep1_pid\\s+$sleep2_pid\\s*$"
+#expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 untested "$test"
 
 set test "pkill does not match substring with exact"
