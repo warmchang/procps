@@ -563,18 +563,19 @@ static struct el * select_procs (int *num)
 int signal_option(int *argc, char **argv)
 {
 	int sig;
-	int i = 1;
-	if (*argc > 2 && argv[1][0] == '-') {
-		sig = signal_name_to_number(argv[i] + 1);
-		if (sig == -1 && isdigit(argv[1][1]))
-			sig = atoi(argv[1] + 1);
-		if (-1 < sig) {
-			memmove(argv + i, argv + i + 1,
-				sizeof(char *) * (*argc - i));
-			(*argc)--;
-			return sig;
+	int i;
+	for (i = 1; i < *argc; i++) {
+		if (argv[i][0] == '-') {
+			sig = signal_name_to_number(argv[i] + 1);
+			if (sig == -1 && isdigit(argv[i][1]))
+				sig = atoi(argv[i] + 1);
+			if (-1 < sig) {
+				memmove(argv + i, argv + i + 1,
+					sizeof(char *) * (*argc - i));
+				(*argc)--;
+				return sig;
+			}
 		}
-		i++;
 	}
 	return -1;
 }
