@@ -24,6 +24,10 @@ set test "pkill find both test pids"
 spawn $pkill -0 -e $testproc_comm
 expect_pass "$test" "^$testproc_comm killed \\(pid $testproc1_pid\\)\\s+$testproc_comm killed \\(pid $testproc2_pid\\)\\s*$"
 
+set test "pkill signal option order"
+spawn $pkill -e $testproc_comm -0
+expect_pass "$test" "^$testproc_comm killed \\(pid $testproc1_pid\\)\\s+$testproc_comm killed \\(pid $testproc2_pid\\)\\s*$"
+
 # In Debian only
 #set test "pkill counts 2 test pids"
 #spawn $pkill -c $testproc
