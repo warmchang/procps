@@ -108,10 +108,9 @@ dist_procpsng_DATA = \
 	Documentation/BUGS \
 	Documentation/FAQ
 
-@ if [ -f $(top_srcdir)/.version ]; then \
-  BUILT_SOURCES = $(top_srcdir)/.version \
-fi
+BUILT_SOURCES = $(top_srcdir)/.version
 $(top_srcdir)/.version:
+	touch $(top_srcdir)/.version
 	echo $(VERSION) > $@-t && mv $@-t $@
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
