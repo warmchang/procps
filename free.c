@@ -121,7 +121,7 @@ static const char *scale_size(unsigned long size, int flags, struct commandline_
 	if (!(flags & FREE_HUMANREADABLE)) {
 		if (args.exponent == 1) {
 			/* in bytes, which can not be in SI */
-			snprintf(buf, sizeof(buf), "%lld", (long long int)(size * 1024));
+			snprintf(buf, sizeof(buf), "%lld", ((long long int)size) * 1024);
 			return buf;
 		}
 		if (args.exponent == 2) {
