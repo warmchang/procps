@@ -384,8 +384,11 @@ static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp)
     endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, ESC_DEFUNCT);
 
   if(bsd_e_option && rightward>1) {
-    if(pp->environ && *pp->environ)
+    if(pp->environ && *pp->environ) {
+      *endp++ = ' ';
+      rightward--;
       endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE, &rightward);
+    }
   }
   return max_rightward-rightward;
 }
@@ -408,8 +411,11 @@ static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp)
     endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, ESC_DEFUNCT);
 
   if(bsd_e_option && rightward>1) {
-    if(pp->environ && *pp->environ)
+    if(pp->environ && *pp->environ) {
+      *endp++ = ' ';
+      rightward--;
       endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE, &rightward);
+    }
   }
   return max_rightward-rightward;
 }
