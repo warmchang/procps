@@ -1,7 +1,7 @@
 #ifndef _PROC_SLAB_H
 #define _PROC_SLAB_H
 
-#define SLAB_INFO_NAME_LEN      64
+#define SLAB_INFO_NAME_LEN      128
 
 struct slab_info {
 	char name[SLAB_INFO_NAME_LEN];  /* name of this cache */
