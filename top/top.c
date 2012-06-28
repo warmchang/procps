@@ -3585,8 +3585,7 @@ static void task_show (const WIN_t *q, const proc_t *p, char *ptr) {
             continue;
 #endif
          case P_CGR:
-            // our kernel may not support cgroups
-            makeVAR(p->cgroup ? *p->cgroup : "n/a");
+            makeVAR(p->cgroup[0]);
             break;
          case P_CMD:
             makeVAR(forest_display(q, p));
@@ -3663,10 +3662,10 @@ static void task_show (const WIN_t *q, const proc_t *p, char *ptr) {
             makeCOL(scale_num(pages2K(p->resident), w, s));
             break;
          case P_SGD:
-            makeVAR(p->supgid ? p->supgid : "n/a");
+            makeVAR(p->supgid);
             break;
          case P_SGN:
-            makeVAR(p->supgrp ? p->supgrp : "n/a");
+            makeVAR(p->supgrp);
             break;
          case P_SHR:
             makeCOL(scale_num(pages2K(p->share), w, s));
