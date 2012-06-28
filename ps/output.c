@@ -423,12 +423,8 @@ static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp)
 static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp) {
   int rightward = max_rightward;
 
-  if(pp->cgroup) {
-    escaped_copy(outbuf, *pp->cgroup, OUTBUF_SIZE, &rightward);
-    return max_rightward-rightward;
-  }
-  else
-    return pr_nop(outbuf,pp);
+  escaped_copy(outbuf, *pp->cgroup, OUTBUF_SIZE, &rightward);
+  return max_rightward-rightward;
 }
 
 /* Non-standard, from SunOS 5 */
@@ -1147,13 +1143,13 @@ static int pr_sess(char *restrict const outbuf, const proc_t *restrict const pp)
 
 static int pr_supgid(char *restrict const outbuf, const proc_t *restrict const pp){
   int rightward = max_rightward;
-  escaped_copy(outbuf, pp->supgid ? pp->supgid : "n/a", OUTBUF_SIZE, &rightward);
+  escaped_copy(outbuf, pp->supgid, OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
 static int pr_supgrp(char *restrict const outbuf, const proc_t *restrict const pp){
   int rightward = max_rightward;
-  escaped_copy(outbuf, pp->supgrp ? pp->supgrp : "n/a", OUTBUF_SIZE, &rightward);
+  escaped_copy(outbuf, pp->supgrp, OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
