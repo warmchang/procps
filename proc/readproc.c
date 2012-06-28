@@ -362,8 +362,7 @@ ENTER(0x220);
             for ( ; j; j--)
                 if (' '  == P->supgid[j])
                     P->supgid[j] = ',';
-        } else
-            P->supgid = xstrdup("-");
+        }
         continue;
     }
     case_CapBnd:
@@ -411,6 +410,9 @@ ENTER(0x220);
         P->tgid = Pid;
         P->tid  = Pid;
     }
+
+    if (!P->supgid)
+        P->supgid = xstrdup("-");
 
 LEAVE(0x220);
 }
@@ -793,8 +795,7 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     } else
         p->cmdline = NULL;
 
-    if ((flags & PROC_FILLCGROUP)               // read /proc/#/cgroup
-    && linux_version_code >= LINUX_VERSION(2,6,24)) {
+    if ((flags & PROC_FILLCGROUP)) {            // read /proc/#/cgroup
         if (flags & PROC_EDITCGRPCVT)
             fill_cgroup_cvt(path, p);
         else
@@ -903,8 +904,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         } else
             t->cmdline = NULL;
 
-        if ((flags & PROC_FILLCGROUP)                   // read /proc/#/task/#/cgroup
-        && linux_version_code >= LINUX_VERSION(2,6,24)) {
+        if ((flags & PROC_FILLCGROUP)) {                // read /proc/#/task/#/cgroup
             if (flags & PROC_EDITCGRPCVT)
                 fill_cgroup_cvt(path, t);
             else
