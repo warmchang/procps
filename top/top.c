@@ -201,7 +201,7 @@ static int   *PHash_sav = HHash_one,   // alternating 'old/new' hash tables
          * routine may serve more than one column.
          */
 
-SCB_STRV(CGR, 1, cgroup, cgroup[0])
+SCB_STRS(CGR, cgroup[0])
 SCB_STRV(CMD, Frame_cmdlin, cmdline, cmd)
 SCB_NUM1(COD, trs)
 SCB_NUMx(CPN, processor)
@@ -320,7 +320,7 @@ static void bye_bye (const char *str) {
 
 #ifdef ATEOJ_RPTSTD
 {  proc_t *p;
-   if (!str) { fprintf(stderr,
+   if (!str && Ttychanged) { fprintf(stderr,
       "\n%s's Summary report:"
       "\n\tProgram"
       "\n\t   Linux version = %u.%u.%u, %s"
@@ -390,7 +390,7 @@ static void bye_bye (const char *str) {
 
 #ifndef OFF_HST_HASH
 #ifdef ATEOJ_RPTHSH
-   if (!str) {
+   if (!str && Ttychanged) {
       int i, j, pop, total_occupied, maxdepth, maxdepth_sav, numdepth
          , cross_foot, sz = HHASH_SIZ * (unsigned)sizeof(int);
       int depths[HHASH_SIZ];
@@ -1234,12 +1234,12 @@ static FLD_t Fieldstab[] = {
    // a temporary macro, soon to be undef'd...
  #define SF(f) (QFP_t)SCB_NAME(f)
 
-/* .head + .fmts anomolies:
+/* .head + .fmts anomalies:
         entries shown with NULL are either valued at runtime (see zap_fieldstab)
         or, in the case of .fmts, may represent variable width fields
-   .desc anomolies:
+   .desc anomalies:
         the .desc field is always null initially, under nls support
-   .lflg anomolies:
+   .lflg anomalies:
         P_UED, L_NONE  - natural outgrowth of 'stat()' in readproc        (euid)
         P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
         P_CMD, L_stat  - may yet require L_CMDLINE in calibrate_fields    (cmd/cmdline)
@@ -1474,7 +1474,7 @@ static void build_headers (void) {
 
 
         /*
-         * This guy coordinates the activities surrounding the maintainence
+         * This guy coordinates the activities surrounding the maintenance
          * of each visible window's columns headers and the library flags
          * required for the openproc interface. */
 static void calibrate_fields (void) {
@@ -1590,16 +1590,16 @@ static void calibrate_fields (void) {
          *      xPRFX ----------______________________ xSUFX
          *    ( xPRFX has pos 2 & 10 for 'extending' when at minimums )
          *
-         * The first 4 screen rows are reserved for explanatory text.
-         * Thus, with our current 39 fields, a maximum of 6 columns and
-         * 1 space between columns, a tty will still remain useable under
-         * these extremes:
-         *            rows  cols   displayed
-         *            ----  ----   ------------------
-         *             11    66    xPRFX only          (w/ room for +3)
-         *             11   198    full xPRFX + xSUFX  (w/ room for +3)
-         *             24    22    xPRFX only          (w/ room for +1)
-         *             24    66    full xPRFX + xSUFX  (w/ room for +1)
+         * The first 4 screen rows are reserved for explanatory text, the
+         * maximum number of columns is currently 6 and a space is needed
+         * between columns.  Thus, for example, with 40 fields a tty will
+         * still remain useable under these extremes:
+         *       rows   cols   displayed
+         *       ----   ----   ------------------
+         *       24     22     xPRFX only
+         *       24     66     full xPRFX + xSUFX
+         *       11     66     xPRFX only          ( w/ room for +2 )
+         *       11    198     full xPRFX + xSUFX  ( w/ room for +2 )
          *    ( if not, the user deserves our most cryptic messages )
          */
 static void display_fields (int focus, int extend) {
@@ -1726,8 +1726,7 @@ static void fields_utility (void) {
          case 'w':
             Curwin = w = ('a' == key) ? w->next : w->prev;
             spewFI
-            p = NULL;
-            h = NULL;
+            h = p = NULL;
             break;
          default:                 // keep gcc happy
             break;
@@ -2127,9 +2126,11 @@ static void sysinfo_refresh (int forced) {
          * No matter what *they* say, we handle the really really BIG and
          * IMPORTANT stuff upon which all those lessor functions depend! */
 static void before (char *me) {
-   static proc_t p;
    struct sigaction sa;
+   proc_t p;
    int i;
+
+   atexit(close_stdout);
 
    // is /proc mounted?
    look_up_our_self(&p);
@@ -3998,7 +3999,6 @@ static void frame_make (void) {
          * duh... */
 int main (int dont_care_argc, char **argv) {
    (void)dont_care_argc;
-   atexit(close_stdout);
    before(*argv);
                                         //                 +-------------+
    wins_stage_1();                      //                 top (sic) slice

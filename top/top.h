@@ -116,7 +116,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define LRGBUFSIZ   512
 #define OURPATHSZ  1024
 #define BIGBUFSIZ  2048
-   /* in addition to the actual display data, our row might have to accomodate
+   /* in addition to the actual display data, our row might have to accommodate
       many termcap/color transitions - these definitions ensure we have room */
 #define ROWMINSIZ  ( SCREENMAX +  4 * (CAPBUFSIZ + CLRBUFSIZ) )
 #define ROWMAXSIZ  ( SCREENMAX + 16 * (CAPBUFSIZ + CLRBUFSIZ) )
@@ -319,7 +319,7 @@ typedef struct RCF_t {
 
         /* This structure stores configurable information for each window.
            By expending a little effort in its creation and user requested
-           maintainence, the only real additional per frame cost of having
+           maintenance, the only real additional per frame cost of having
            windows is an extra sort -- but that's just on pointers! */
 typedef struct WIN_t {
    FLG_t  pflgsall [PFLAGSSIZ],        // all 'active/on' fieldscur, as enum
