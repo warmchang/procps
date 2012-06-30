@@ -3488,16 +3488,11 @@ static void do_key (int ch) {
          for (i = 0; i < MAXTBL(key_tab); ++i)
             if (strchr(key_tab[i].keys, ch)) {
                key_tab[i].func(ch);
-               break;
+               Frames_resize = 1;
+               return;
             }
-
-         if (!(i < MAXTBL(key_tab))) {
-            show_msg(N_txt(UNKNOWN_cmds_txt));
-            return;
-         }
    };
-
-   /* The following assignment will force a rebuild of all column headers and
+   /* Frames_resize above will force a rebuild of all column headers and
       the PROC_FILLxxx flags.  It's NOT simply lazy programming.  Here are
       some keys that COULD require new column headers and/or libproc flags:
          'A' - likely
@@ -3516,7 +3511,8 @@ static void do_key (int ch) {
       ( At this point we have a human being involved and so have all the time )
       ( in the world.  We can afford a few extra cpu cycles every now & then! )
     */
-   Frames_resize = 1;
+
+   show_msg(N_txt(UNKNOWN_cmds_txt));
 } // end: do_key
 
 
