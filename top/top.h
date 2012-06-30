@@ -39,6 +39,7 @@
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
+//#define SCROLLVAR_NO            /* disable intra-column horizontal scroll  */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
 //#define TERMIO_PROXY            /* true line editing, beyond native input  */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
@@ -331,6 +332,9 @@ typedef struct WIN_t {
           begpflg,         // scrolled beginning pos into pflgsall array
           endpflg,         // scrolled ending pos into pflgsall array
           begtask,         // scrolled beginning pos into Frame_maxtask
+#ifndef SCROLLVAR_NO
+          varcolbeg,       // scrolled position within variable width col
+#endif
           varcolsz,        // max length of variable width column(s)
           usrseluid,       // validated uid for 'u/U' user selection
           usrseltyp,       // the basis for matching above uid
@@ -379,6 +383,18 @@ typedef struct WIN_t {
 #define ENUviz(w,E)  (NULL != memchr((w)->procflgs, E, (w)->maxpflgs))
 #define ENUpos(w,E)  ((int)((FLG_t*)memchr((w)->pflgsall, E, (w)->totpflgs) - (w)->pflgsall))
 
+        // Support for variable width columns (and potentially scrolling too)
+#define VARcol(E)    (NULL == Fieldstab[E].fmts)
+#ifndef SCROLLVAR_NO
+#ifdef USE_X_COLHDR
+#define VARright(w)  (1 == w->maxpflgs && VARcol(w->procflgs[0]))
+#else
+#define VARright(w) ((1 == w->maxpflgs && VARcol(w->procflgs[0])) || \
+                     (3 == w->maxpflgs && X_XON == w->procflgs[0] && VARcol(w->procflgs[1])))
+#endif
+#define VARleft(w)   (w->varcolbeg && VARright(w))
+#define SCROLLAMT    8
+#endif
 
         /* Special Section: end ------------------------------------------ */
         /* /////////////////////////////////////////////////////////////// */

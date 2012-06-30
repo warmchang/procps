@@ -680,6 +680,9 @@ static int show_pmt (const char *str) {
          * Show a special coordinate message, in support of scrolling */
 static inline void show_scroll (void) {
    char tmp[SMLBUFSIZ];
+#ifndef SCROLLVAR_NO
+   char tmp2[SMLBUFSIZ];
+#endif
    int totpflgs = Curwin->totpflgs;
    int begpflgs = Curwin->begpflg + 1;
 
@@ -695,7 +698,12 @@ static inline void show_scroll (void) {
       , N_fmt(SCROLL_coord_fmt)
       , Curwin->begtask + 1, Frame_maxtask
       , begpflgs, totpflgs);
+#ifndef SCROLLVAR_NO
+   snprintf(tmp2, sizeof(tmp2), Curwin->varcolbeg ? " + %d" : "", Curwin->varcolbeg);
+   PUTT("%s%s  %.*s%s%s", tg2(0, Msg_row), Caps_off, Screen_cols - 2, tmp, tmp2, Cap_clr_eol);
+#else
    PUTT("%s%s  %.*s%s", tg2(0, Msg_row), Caps_off, Screen_cols - 2, tmp, Cap_clr_eol);
+#endif
    putp(tg2(0, Msg_row));
 } // end: show_scroll
 
@@ -1391,7 +1399,7 @@ static void build_headers (void) {
             h = Fieldstab[f].head;
             if (P_WCH == f) needpsdb = 1;
             if (P_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
-            if (Fieldstab[f].fmts) s = scat(s, h);
+            if (!VARcol(f)) s = scat(s, h);
             else s = scat(s, fmtmk(VARCOL_fmts, w->varcolsz, w->varcolsz, h));
             Frames_libflags |= Fieldstab[w->procflgs[i]].lflg;
 #ifdef USE_X_COLHDR
@@ -1507,7 +1515,7 @@ static void calibrate_fields (void) {
             h = Fieldstab[f].head;
             // oops, won't fit -- we're outta here...
             if (Screen_cols < ((int)(s - w->columnhdr) + (int)strlen(h))) break;
-            if (!Fieldstab[f].fmts) { ++varcolcnt; w->varcolsz += strlen(h) - 1; }
+            if (VARcol(f)) { ++varcolcnt; w->varcolsz += strlen(h) - 1; }
             s = scat(s, h);
          }
 #ifndef USE_X_COLHDR
@@ -1640,7 +1648,11 @@ static void display_fields (int focus, int extend) {
         /*
          * Manage all fields aspects (order/toggle/sort), for all windows. */
 static void fields_utility (void) {
+#ifndef SCROLLVAR_NO
+ #define unSCRL  { w->begpflg = w->varcolbeg = 0; OFFw(w, Show_HICOLS); }
+#else
  #define unSCRL  { w->begpflg = 0; OFFw(w, Show_HICOLS); }
+#endif
  #define swapEM  { char c; unSCRL; c = w->rc.fieldscur[i]; \
        w->rc.fieldscur[i] = *p; *p = c; p = &w->rc.fieldscur[i]; }
  #define spewFI  { char *t; f = w->rc.sortindx; t = strchr(w->rc.fieldscur, f + FLD_OFFSET); \
@@ -2730,7 +2742,11 @@ static void wins_reflag (int what, int flg) {
          /* a flag with special significance -- user wants to rebalance
             display so we gotta' off some stuff then force on two flags... */
       if (EQUWINS_xxx == flg) {
+#ifndef SCROLLVAR_NO
+         w->rc.maxtasks = w->usrseltyp = w->begpflg = w->begtask = w->varcolbeg = 0;
+#else
          w->rc.maxtasks = w->usrseltyp = w->begpflg = w->begtask = 0;
+#endif
          Monpidsidx = 0;
          SETw(w, Show_IDLEPS | Show_TASKON);
       }
@@ -3169,7 +3185,11 @@ static void keys_window (int ch) {
          break;
       case '=':
          SETw(w, Show_IDLEPS | Show_TASKON);
+#ifndef SCROLLVAR_NO
+         w->rc.maxtasks = w->usrseltyp = w->begpflg = w->begtask = w->varcolbeg = 0;
+#else
          w->rc.maxtasks = w->usrseltyp = w->begpflg = w->begtask = 0;
+#endif
          Monpidsidx = 0;
          break;
       case '_':
@@ -3203,28 +3223,71 @@ static void keys_window (int ch) {
       case kbd_DOWN:
          if (VIZCHKw(w)) if (w->begtask < Frame_maxtask - 1) w->begtask += 1;
          break;
-#ifdef USE_X_COLHDR
+#ifdef USE_X_COLHDR // ------------------------------------
       case kbd_LEFT:
+#ifndef SCROLLVAR_NO
+         if (VIZCHKw(w)) {
+            if (VARleft(w))
+               w->varcolbeg -= SCROLLAMT;
+            else if (0 < w->begpflg)
+               w->begpflg -= 1;
+         }
+#else
          if (VIZCHKw(w)) if (0 < w->begpflg) w->begpflg -= 1;
+#endif
          break;
       case kbd_RIGHT:
-         if (VIZCHKw(w)) if (w->begpflg + 1 < w->totpflgs) w->begpflg += 1;
-         break;
+#ifndef SCROLLVAR_NO
+         if (VIZCHKw(w)) {
+            if (VARright(w)) {
+               w->varcolbeg += SCROLLAMT;
+               if (0 > w->varcolbeg) w->varcolbeg = 0;
+            } else if (w->begpflg + 1 < w->totpflgs)
+               w->begpflg += 1;
+         }
 #else
+         if (VIZCHKw(w)) if (w->begpflg + 1 < w->totpflgs) w->begpflg += 1;
+#endif
+         break;
+#else  // USE_X_COLHDR ------------------------------------
       case kbd_LEFT:
+#ifndef SCROLLVAR_NO
+         if (VIZCHKw(w)) {
+            if (VARleft(w))
+               w->varcolbeg -= SCROLLAMT;
+            else if (0 < w->begpflg) {
+               w->begpflg -= 1;
+               if (P_MAXPFLGS < w->pflgsall[w->begpflg]) w->begpflg -= 2;
+            }
+         }
+#else
          if (VIZCHKw(w)) if (0 < w->begpflg) {
             w->begpflg -= 1;
             if (P_MAXPFLGS < w->pflgsall[w->begpflg]) w->begpflg -= 2;
          }
+#endif
          break;
       case kbd_RIGHT:
+#ifndef SCROLLVAR_NO
+         if (VIZCHKw(w)) {
+            if (VARright(w)) {
+               w->varcolbeg += SCROLLAMT;
+               if (0 > w->varcolbeg) w->varcolbeg = 0;
+            } else if (w->begpflg + 1 < w->totpflgs) {
+               if (P_MAXPFLGS < w->pflgsall[w->begpflg])
+                  w->begpflg += (w->begpflg + 3 < w->totpflgs) ? 3 : 0;
+               else w->begpflg += 1;
+            }
+         }
+#else
          if (VIZCHKw(w)) if (w->begpflg + 1 < w->totpflgs) {
             if (P_MAXPFLGS < w->pflgsall[w->begpflg])
                w->begpflg += (w->begpflg + 3 < w->totpflgs) ? 3 : 0;
             else w->begpflg += 1;
          }
-         break;
 #endif
+         break;
+#endif // USE_X_COLHDR ------------------------------------
       case kbd_PGUP:
          if (VIZCHKw(w)) if (0 < w->begtask) {
                w->begtask -= (w->winlines - 1);
@@ -3239,13 +3302,20 @@ static void keys_window (int ch) {
              }
          break;
       case kbd_HOME:
+#ifndef SCROLLVAR_NO
+         if (VIZCHKw(w)) w->begtask = w->begpflg = w->varcolbeg = 0;
+#else
          if (VIZCHKw(w)) w->begtask = w->begpflg = 0;
+#endif
          break;
       case kbd_END:
          if (VIZCHKw(w)) {
             w->begtask = (Frame_maxtask - w->winlines) + 1;
             if (0 > w->begtask) w->begtask = 0;
             w->begpflg = w->endpflg;
+#ifndef SCROLLVAR_NO
+            w->varcolbeg = 0;
+#endif
          }
          break;
       default:                    // keep gcc happy
@@ -3352,7 +3422,11 @@ static void forest_create (WIN_t *q) {
          * This guy adds the artwork to either p->cmd or p->cmdline
          * when in forest view mode, otherwise he just returns 'em. */
 static inline const char *forest_display (const WIN_t *q, const proc_t *p) {
+#ifndef SCROLLVAR_NO
+   static char buf[1024*64*2]; // the same as readproc's MAX_BUFSZ
+#else
    static char buf[ROWMINSIZ];
+#endif
    const char *which = (CHKw(q, Show_CMDLIN)) ? *p->cmdline : p->cmd;
 
    if (!CHKw(q, Show_FOREST) || 1 == p->pad_3) return which;
@@ -3556,7 +3630,13 @@ static void summary_show (void) {
          * display the results or return them to the caller. */
 static void task_show (const WIN_t *q, const proc_t *p, char *ptr) {
  #define makeCOL(va...)  snprintf(cbuf, sizeof(cbuf), f, ## va)
+#ifndef SCROLLVAR_NO
+ #define makeVAR(v)  { const char *pv = v; f = VARCOL_fmts; \
+    if (!q->varcolbeg) makeCOL(q->varcolsz, q->varcolsz, pv); \
+    else makeCOL(q->varcolsz, q->varcolsz, q->varcolbeg < (int)strlen(pv) ? pv + q->varcolbeg : ""); }
+#else
  #define makeVAR(v)  { f = VARCOL_fmts; makeCOL(q->varcolsz, q->varcolsz, v); }
+#endif
  #define pages2K(n)  (unsigned long)( (n) << Pg2K_shft )
    char rbuf[ROWMINSIZ], *rp;
    int j, x;
@@ -3723,14 +3803,17 @@ static void task_show (const WIN_t *q, const proc_t *p, char *ptr) {
             makeCOL(scale_num(pages2K(p->size), w, s));
             break;
          case P_WCH:
-            if (No_ksyms) {
+         {  const char *u;
+            if (No_ksyms)
 #ifdef CASEUP_HEXES
-               makeVAR(fmtmk("%08" KLF "X", p->wchan))
+               u = fmtmk("%08" KLF "X", p->wchan);
 #else
-               makeVAR(fmtmk("%08" KLF "x", p->wchan))
+               u = fmtmk("%08" KLF "x", p->wchan);
 #endif
-            } else
-               makeVAR(lookup_wchan(p->wchan, p->tid))
+            else
+               u = lookup_wchan(p->wchan, p->tid);
+            makeVAR(u);
+         }
             break;
          default:                 // keep gcc happy
             break;
