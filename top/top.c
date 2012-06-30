@@ -102,6 +102,10 @@ static int Screen_cols, Screen_rows, Max_lines;
            stick the cursor between frames. */
 static int Msg_row;
 
+        /* The nearly complete scroll coordinates message for the current
+           window, built at the time column headers are constructed */
+static char Scroll_fmts [SMLBUFSIZ];
+
         /* Global/Non-windows mode stuff that is NOT persistent */
 static int No_ksyms = -1,       // set to '0' if ksym avail, '1' otherwise
            PSDBopen = 0,        // set to '1' if psdb opened (now postponed)
@@ -680,30 +684,9 @@ static int show_pmt (const char *str) {
          * Show a special coordinate message, in support of scrolling */
 static inline void show_scroll (void) {
    char tmp[SMLBUFSIZ];
-#ifndef SCROLLVAR_NO
-   char tmp2[SMLBUFSIZ];
-#endif
-   int totpflgs = Curwin->totpflgs;
-   int begpflgs = Curwin->begpflg + 1;
 
-#ifndef USE_X_COLHDR
-   if (CHKw(Curwin, Show_HICOLS)) {
-      totpflgs -= 2;
-      if (ENUpos(Curwin, Curwin->rc.sortindx) < Curwin->begpflg) begpflgs -= 2;
-   }
-#endif
-   if (1 > totpflgs) totpflgs = 1;
-   if (1 > begpflgs) begpflgs = 1;
-   snprintf(tmp, sizeof(tmp)
-      , N_fmt(SCROLL_coord_fmt)
-      , Curwin->begtask + 1, Frame_maxtask
-      , begpflgs, totpflgs);
-#ifndef SCROLLVAR_NO
-   snprintf(tmp2, sizeof(tmp2), Curwin->varcolbeg ? " + %d" : "", Curwin->varcolbeg);
-   PUTT("%s%s  %.*s%s%s", tg2(0, Msg_row), Caps_off, Screen_cols - 2, tmp, tmp2, Cap_clr_eol);
-#else
+   snprintf(tmp, sizeof(tmp), Scroll_fmts, Frame_maxtask);
    PUTT("%s%s  %.*s%s", tg2(0, Msg_row), Caps_off, Screen_cols - 2, tmp, Cap_clr_eol);
-#endif
    putp(tg2(0, Msg_row));
 } // end: show_scroll
 
@@ -796,6 +779,35 @@ static void show_special (int interact, const char *glob) {
       'fit-to-screen' thingy while also leaving room for the cursor... */
    if (*glob) PUTT("%.*s", Screen_cols -1, glob);
 } // end: show_special
+
+
+        /*
+         * Create a nearly complete scroll coordinates message, but still
+         * technically a format string since we're missing total tasks. */
+static void updt_scroll_msg (void) {
+#ifndef SCROLLVAR_NO
+   char tmp[SMLBUFSIZ];
+#endif
+   int totpflgs = Curwin->totpflgs;
+   int begpflgs = Curwin->begpflg + 1;
+
+#ifndef USE_X_COLHDR
+   if (CHKw(Curwin, Show_HICOLS)) {
+      totpflgs -= 2;
+      if (ENUpos(Curwin, Curwin->rc.sortindx) < Curwin->begpflg) begpflgs -= 2;
+   }
+#endif
+   if (1 > totpflgs) totpflgs = 1;
+   if (1 > begpflgs) begpflgs = 1;
+   snprintf(Scroll_fmts, sizeof(Scroll_fmts)
+      , N_fmt(SCROLL_coord_fmt)
+      , Curwin->begtask + 1
+      , begpflgs, totpflgs);
+#ifndef SCROLLVAR_NO
+   snprintf(tmp, sizeof(tmp), Curwin->varcolbeg ? " + %d" : "", Curwin->varcolbeg);
+   scat (Scroll_fmts, tmp);
+#endif
+} // end: updt_scroll_msg
 
 /*######  Low Level Memory/Keyboard support  #############################*/
 
@@ -1552,6 +1564,8 @@ static void calibrate_fields (void) {
    } while (w != Curwin);
 
    build_headers();
+   if (CHKw(Curwin, View_SCROLL))
+      updt_scroll_msg();
 
    Frames_resize = 0;
    if (-1 == sigprocmask(SIG_SETMASK, &oldss, NULL))
