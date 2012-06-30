@@ -654,14 +654,13 @@ static char** vectorize_this_str (const char* src) {
     // It is similar to file2strvec except we filter and concatenate
     // the data into a single string represented as a single vector.
 static void fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
- #define vMAX ( sizeof(dbuf) - (int)(dst - dbuf) )
-    char sbuf[1024], dbuf[1024];
+ #define vMAX ( MAX_BUFSZ - (int)(dst - dst_buffer) )
     char *src, *dst, *grp, *eob;
-    int tot, x, whackable_int = sizeof(dbuf);
+    int tot, x, whackable_int = MAX_BUFSZ;
 
-    *(dst = dbuf) = '\0';                        // empty destination
-    tot = read_unvectored(sbuf, sizeof(sbuf), directory, "cgroup", '\0');
-    for (src = sbuf, eob = sbuf + tot; src < eob; src += x) {
+    *(dst = dst_buffer) = '\0';                  // empty destination
+    tot = read_unvectored(src_buffer, MAX_BUFSZ, directory, "cgroup", '\0');
+    for (src = src_buffer, eob = src_buffer + tot; src < eob; src += x) {
         x = 1;                                   // loop assist
         if (!*src) continue;
         x = strlen((grp = src));
@@ -669,10 +668,10 @@ static void fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
 #if 0
         grp += strspn(grp, "0123456789:");       // jump past group number
 #endif
-        dst += snprintf(dst, vMAX, "%s", (dst > dbuf) ? "," : "");
+        dst += snprintf(dst, vMAX, "%s", (dst > dst_buffer) ? "," : "");
         dst += escape_str(dst, grp, vMAX, &whackable_int);
     }
-    p->cgroup = vectorize_this_str(dbuf[0] ? dbuf : "-");
+    p->cgroup = vectorize_this_str(dst_buffer[0] ? dst_buffer : "-");
  #undef vMAX
 }
 
