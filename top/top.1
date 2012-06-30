@@ -86,7 +86,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "April 2011" "procps-ng" "User Commands"
+.TH TOP 1 "June 2012" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -441,6 +441,9 @@ A subsystem represents a single resource.
 \*(NT The 'CGROUPS' field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
+Even so, such variable width fields could still suffer truncation.
+\*(XT 5c. SCROLLING a Window for additional information on accessing
+any truncated data.
 
 .TP 4
  2.\fB CODE \*(Em Code Size (KiB) \fR
@@ -459,17 +462,17 @@ line (like kernel threads) will be shown with only the program name in
 brackets, as in this example:
     \fR[ mdrecoveryd ]
 
-Either form of display is subject to potential truncation if it's too long to
-fit in this field's current width.
-That width depends upon other fields selected, their order and the current
-screen width.
-
 This field may also be impacted by the 'forest view' display mode.
 \*(XC 'V' \*(CI for additional information regarding that mode.
 
 \*(NT The 'COMMAND' field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
+Even so, such variable width fields could still suffer truncation.
+This is especially true for this field when command lines are being
+displayed (the 'c' \*(CI.)
+\*(XT 5c. SCROLLING a Window for additional information on accessing
+any truncated data.
 
 .TP 4
  4.\fB %CPU \*(Em \*(PU Usage \fR
@@ -637,6 +640,9 @@ They are displayed in a comma delimited list.
 \*(NT The 'SUPGIDS' field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
+Even so, such variable width fields could still suffer truncation.
+\*(XT 5c. SCROLLING a Window for additional information on accessing
+any truncated data.
 
 .TP 4
 28.\fB SUPGRPS \*(Em Supplementary Group Names \fR
@@ -647,6 +653,9 @@ They are displayed in a comma delimited list.
 \*(NT The 'SUPGRPS' field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
+Even so, such variable width fields could still suffer truncation.
+\*(XT 5c. SCROLLING a Window for additional information on accessing
+any truncated data.
 
 .TP 4
 29.\fB SUSER \*(Em Saved User Name \fR
@@ -719,6 +728,9 @@ and restart \*(We.
 \*(NT The 'WCHAN' field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
+Even so, such variable width fields could still suffer truncation.
+\*(XT 5c. SCROLLING a Window for additional information on accessing
+any truncated data.
 
 .\" ......................................................................
 .SS 3b. MANAGING Fields
@@ -1337,6 +1349,12 @@ allocated all remaining screen width when visible.
 When scrolling right or left, that feature may produce some
 unexpected results initially.
 
+Additionally, there are special provisions for any variable width field
+when positioned as the last displayed field.
+Once that field is reached via the right arrow key, and is thus the only
+column shown, you can continue scrolling horizontally within such a field.
+\*(XC 'C' \*(CI below for additional information.
+
 .TP 4
 \fBHome\fR :\fIJump-to-Home-Position \fR
 Reposition the display to the un-scrolled coordinates.
@@ -1355,13 +1373,20 @@ display element.
 '\fBC\fR' :\fIShow-scroll-coordinates\fR toggle \fR
 Toggle an informational message which is displayed whenever the message
 line is not otherwise being used.
+That message will take one of two forms depending on whether or not a
+variable width column has also been scrolled.
 
 .Bd -literal
-    "\fBscroll coordinates: y = n/n (tasks), x = n/n (fields)\fR"
+  \fBscroll coordinates: y = n/n (tasks), x = n/n (fields)\fR
+  \fRscroll coordinates: y = n/n (tasks), x = n/n (fields)\fB + nn\fR
 .Ed
 
 The coordinates shown as \fBn\fR/\fBn\fR are relative to the upper left
 corner of the \*(CW.
+The additional '\fB+\ nn\fR' represents the displacement into a variable
+width column when it has been scrolled horizontally.
+Such displacement occurs in normal 8 character tab stop amounts via
+the right and left arrow keys.
 
 .RS +4
 .TP 4
