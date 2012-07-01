@@ -600,7 +600,7 @@ static char** file2strvec(const char* directory, const char* what) {
 
     // this is the former under utilized 'read_cmdline', which has been
     // generalized in support of these new libproc flags:
-    //     PROC_EDITCGRPCVT, PROC_EDITCMDLCVT
+    //     PROC_EDITCGRPCVT, PROC_EDITCMDLCVT and PROC_EDITENVRCVT
 static int read_unvectored(char *restrict const dst, unsigned sz, const char* whom, const char *what, char sep) {
     char path[PROCPATHLEN];
     int fd;
@@ -688,6 +688,17 @@ static void fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
         escape_command(dst_buffer, p, MAX_BUFSZ, &whackable_int, uFLG);
     p->cmdline = vectorize_this_str(dst_buffer);
  #undef uFLG
+}
+
+    // This routine reads an 'environ' for the designated proc_t and
+    // guarantees the caller a valid proc_t.environ pointer.
+static void fill_environ_cvt (const char* directory, proc_t *restrict p) {
+    int whackable_int = MAX_BUFSZ;
+
+    dst_buffer[0] = '\0';
+    if (read_unvectored(src_buffer, MAX_BUFSZ, directory, "environ", ' '))
+        escape_str(dst_buffer, src_buffer, MAX_BUFSZ, &whackable_int);
+    p->environ = vectorize_this_str(dst_buffer[0] ? dst_buffer : "-");
 }
 
 // warning: interface may change
@@ -781,9 +792,12 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
         }
     }
 
-    if (unlikely(flags & PROC_FILLENV))         // read /proc/#/environ
-        p->environ = file2strvec(path, "environ");
-    else
+    if (unlikely(flags & PROC_FILLENV)) {       // read /proc/#/environ
+        if (flags & PROC_EDITENVRCVT)
+            fill_environ_cvt(path, p);
+        else
+            p->environ = file2strvec(path, "environ");
+    } else
         p->environ = NULL;
 
     if (flags & (PROC_FILLCOM|PROC_FILLARG)) {  // read /proc/#/cmdline
@@ -890,9 +904,12 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         if (flags & PROC_FILLSUPGRP)
             supgrps_from_supgids(t);
 #endif
-        if (unlikely(flags & PROC_FILLENV))             // read /proc/#/task/#/environ
-            t->environ = file2strvec(path, "environ");
-        else
+        if (unlikely(flags & PROC_FILLENV)) {           // read /proc/#/task/#/environ
+            if (flags & PROC_EDITENVRCVT)
+                fill_environ_cvt(path, t);
+            else
+                t->environ = file2strvec(path, "environ");
+        } else
             t->environ = NULL;
 
         if (flags & (PROC_FILLCOM|PROC_FILLARG)) {      // read /proc/#/task/#/cmdline

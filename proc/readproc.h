@@ -272,6 +272,7 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 
 #define PROC_EDITCGRPCVT    0x10000 // edit `cgroup' as single vector
 #define PROC_EDITCMDLCVT    0x20000 // edit `cmdline' as single vector
+#define PROC_EDITENVRCVT    0x40000 // edit `environ' as single vector
 
 // it helps to give app code a few spare bits
 #define PROC_SPARE_1     0x01000000
