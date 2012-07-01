@@ -166,6 +166,7 @@ enum pflag {
 #ifdef OOMEM_ENABLE
    P_OOA, P_OOM,
 #endif
+   P_ENV,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
    P_MAXPFLGS

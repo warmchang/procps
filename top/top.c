@@ -208,6 +208,7 @@ SCB_NUMx(CPN, processor)
 SCB_NUM1(CPU, pcpu)
 SCB_NUM1(DAT, drs)
 SCB_NUM1(DRT, dt)
+SCB_STRS(ENV, environ[0])
 SCB_NUM1(FLG, flags)
 SCB_NUM1(FL1, maj_flt)
 SCB_NUM1(FL2, min_flt)
@@ -1214,6 +1215,7 @@ static inline int user_matched (WIN_t *q, const proc_t *p) {
 #define L_status   PROC_FILLSTATUS
 #define L_CGROUP   PROC_EDITCGRPCVT | PROC_FILLCGROUP
 #define L_CMDLINE  PROC_EDITCMDLCVT | PROC_FILLARG
+#define L_ENVIRON  PROC_EDITENVRCVT | PROC_FILLENV
 #define L_EUSER    PROC_FILLUSR
 #define L_OUSER    PROC_FILLSTATUS | PROC_FILLUSR
 #define L_EGROUP   PROC_FILLSTATUS | PROC_FILLGRP
@@ -1291,13 +1293,14 @@ static FLD_t Fieldstab[] = {
    { "CGROUPS  ",   NULL,        -1,     -1,  SF(CGR),  L_CGROUP,  NULL },
    { "SUPGIDS  ",   NULL,        -1,     -1,  SF(SGD),  L_status,  NULL },
    { "SUPGRPS  ",   NULL,        -1,     -1,  SF(SGN),  L_SUPGRP,  NULL },
-   { NULL,          NULL,        -1,     -1,  SF(TGD),  L_status,  NULL }
+   { NULL,          NULL,        -1,     -1,  SF(TGD),  L_status,  NULL },
 #ifdef OOMEM_ENABLE
 #define L_oom      PROC_FILLOOM
-  ,{ "Adj ",        "%3d ",      -1,     -1,  SF(OOA),  L_oom,     NULL }
-  ,{ " Badness ",   "%8d ",      -1,     -1,  SF(OOM),  L_oom,     NULL }
+   { "Adj ",        "%3d ",      -1,     -1,  SF(OOA),  L_oom,     NULL },
+   { " Badness ",   "%8d ",      -1,     -1,  SF(OOM),  L_oom,     NULL },
 #undef L_oom
 #endif
+   { "ENVIRON  ",   NULL,        -1,     -1,  SF(ENV),  L_ENVIRON, NULL }
  #undef SF
 };
 
@@ -3698,6 +3701,9 @@ static void task_show (const WIN_t *q, const proc_t *p, char *ptr) {
             break;
          case P_DRT:
             makeCOL(scale_num((unsigned long)p->dt, w, s));
+            break;
+         case P_ENV:
+            makeVAR(*p->environ);
             break;
          case P_FLG:
          {  char tmp[SMLBUFSIZ];

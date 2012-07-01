@@ -147,6 +147,9 @@ static void build_desc_nlstab (void) {
    Desc_nlstab[P_OOA] = _("oom_adjustment (2^X)");
    Desc_nlstab[P_OOM] = _("oom_score (badness)");
 #endif
+/* Translation Hint: The abbreviation 'vars' below is shorthand for
+                     'variables' */
+   Desc_nlstab[P_ENV] = _("Environment vars");
 }
 
 
