@@ -43,7 +43,7 @@
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
 //#define TERMIO_PROXY            /* true line editing, beyond native input  */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
-//#define TREE_ONEPASS            /* for speed, tolerate dangling children   */
+//#define TREE_RESCANS            /* restart scan to avoid dangling children */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 //#define VALIDATE_NLS            /* validate integrity of all 3 nls tables  */
 //#define WARN_CFG_OFF            /* warning OFF when overwriting old rcfile */

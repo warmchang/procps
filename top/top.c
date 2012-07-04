@@ -3392,11 +3392,11 @@ static void forest_add (const int self, const int level) {
 
    Tree_ppt[Tree_idx] = Seed_ppt[self];     // add this as root or child
    Tree_ppt[Tree_idx++]->pad_3 = level;     // borrow 1 byte, 127 levels
-#ifdef TREE_ONEPASS
-   for (i = self + 1; i < Frame_maxtask; i++) {
+#ifdef TREE_RESCANS
+   for (i = 0; i < Frame_maxtask; i++) {    // this is hardly bullet proof now,
+      if (i == self) continue;              // with 3.3 proc hidepid provisions
 #else
-   for (i = 0; i < Frame_maxtask; i++) {
-      if (i == self) continue;
+   for (i = self + 1; i < Frame_maxtask; i++) {
 #endif
       if (Seed_ppt[self]->tid == Seed_ppt[i]->tgid
       || (Seed_ppt[self]->tid == Seed_ppt[i]->ppid && Seed_ppt[i]->tid == Seed_ppt[i]->tgid))
