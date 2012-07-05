@@ -43,6 +43,9 @@ typedef struct proc_t {
     	ppid;		// stat,status     pid of parent process
     unsigned
         pcpu;           // stat (special)  %CPU usage (is not filled in by readproc!!!)
+    unsigned long       // next 2 fields are NOT filled in by readproc
+        maj_delta,      // stat (special) major page faults since last update
+        min_delta;      // stat (special) minor page faults since last update
     char
     	state,		// stat,status     single-char code for process state (S=sleeping)
 #ifdef QUICK_THREADS
