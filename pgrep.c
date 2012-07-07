@@ -241,7 +241,6 @@ static struct el *read_pidfile(void)
 	n = read(fd,buf+1,sizeof buf-2);
 	if (n<1)
 		goto out;
-	buf[n] = '\0';
 	pid = strtoul(buf+1,&endp,10);
 	if(endp<=buf+1 || pid<1 || pid>0x7fffffff)
 		goto out;
