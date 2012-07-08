@@ -212,6 +212,8 @@ SCB_STRS(ENV, environ[0])
 SCB_NUM1(FLG, flags)
 SCB_NUM1(FL1, maj_flt)
 SCB_NUM1(FL2, min_flt)
+SCB_NUM1(FV1, maj_delta)
+SCB_NUM1(FV2, min_delta)
 SCB_NUMx(GID, egid)
 SCB_STRS(GRP, egroup)
 SCB_NUMx(NCE, nice)
@@ -1300,7 +1302,9 @@ static FLD_t Fieldstab[] = {
    { " Badness ",   "%8d ",      -1,     -1,  SF(OOM),  L_oom,     NULL },
 #undef L_oom
 #endif
-   { "ENVIRON  ",   NULL,        -1,     -1,  SF(ENV),  L_ENVIRON, NULL }
+   { "ENVIRON  ",   NULL,        -1,     -1,  SF(ENV),  L_ENVIRON, NULL },
+   { "vMj ",        "%3.3s ",     3,  SK_no,  SF(FV1),  L_stat,    NULL },
+   { "vMn ",        "%3.3s ",     3,  SK_no,  SF(FV2),  L_stat,    NULL }
  #undef SF
 };
 
@@ -2025,15 +2029,26 @@ static void procs_hlp (proc_t *this) {
       calcs and saves that go unused, like the old top! */
    PHist_new[Frame_maxtask].pid  = this->tid;
    PHist_new[Frame_maxtask].tics = tics = (this->utime + this->stime);
+   // finally, save major/minor fault counts in case the deltas are displayable
+   PHist_new[Frame_maxtask].maj = this->maj_flt;
+   PHist_new[Frame_maxtask].min = this->min_flt;
 
 #ifdef OFF_HST_HASH
-   // find matching entry from previous frame and make ticks elapsed
-   if ((h = hstbsrch(PHist_sav, maxt_sav - 1, this->tid))) tics -= h->tics;
+   // find matching entry from previous frame and make stuff elapsed
+   if ((h = hstbsrch(PHist_sav, maxt_sav - 1, this->tid))) {
+      tics -= h->tics;
+      this->maj_delta = this->maj_flt - h->maj;
+      this->min_delta = this->min_flt - h->min;
+   }
 #else
    // hash & save for the next frame
    hstput(Frame_maxtask);
-   // find matching entry from previous frame and make ticks elapsed
-   if ((h = hstget(this->tid))) tics -= h->tics;
+   // find matching entry from previous frame and make stuff elapsed
+   if ((h = hstget(this->tid))) {
+      tics -= h->tics;
+      this->maj_delta = this->maj_flt - h->maj;
+      this->min_delta = this->min_flt - h->min;
+   }
 #endif
 
    /* we're just saving elapsed tics, to be converted into %cpu if
@@ -3718,6 +3733,12 @@ static void task_show (const WIN_t *q, const proc_t *p, char *ptr) {
             break;
          case P_FL2:
             makeCOL(scale_num(p->min_flt, w, s));
+            break;
+         case P_FV1:
+            makeCOL(scale_num(p->maj_delta, w, s));
+            break;
+         case P_FV2:
+            makeCOL(scale_num(p->min_delta, w, s));
             break;
          case P_GID:
             makeCOL(p->egid);

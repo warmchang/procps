@@ -150,6 +150,8 @@ static void build_desc_nlstab (void) {
 /* Translation Hint: The abbreviation 'vars' below is shorthand for
                      'variables' */
    Desc_nlstab[P_ENV] = _("Environment vars");
+   Desc_nlstab[P_FV1] = _("Major Faults delta");
+   Desc_nlstab[P_FV2] = _("Minor Faults delta");
 }
 
 

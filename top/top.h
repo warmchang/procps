@@ -167,6 +167,7 @@ enum pflag {
    P_OOA, P_OOM,
 #endif
    P_ENV,
+   P_FV1, P_FV2,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
    P_MAXPFLGS
@@ -205,23 +206,25 @@ typedef struct FLD_t {
 } FLD_t;
 
 #ifdef OFF_HST_HASH
-        /* This structure supports 'history' processing and ultimately records
-           one piece of critical information from one frame to the next --
+        /* This structure supports 'history' processing and records the
+           bare minimum of needed information from one frame to the next --
            we don't calc and save data that goes unused like the old top. */
 typedef struct HST_t {
    TIC_t tics;                  // last frame's tics count
-   int   pid;                   // record 'key'
+   unsigned long maj, min;      // last frame's maj/min_flt counts
+   int pid;                     // record 'key'
 } HST_t;
 #else
-        /* This structure supports 'history' processing and ultimately records
-           one piece of critical information from one frame to the next --
+        /* This structure supports 'history' processing and records the
+           bare minimum of needed information from one frame to the next --
            we don't calc and save data that goes unused like the old top nor
            do we incure the overhead of sorting to support a binary search
            (or worse, a friggin' for loop) when retrieval is necessary! */
 typedef struct HST_t {
    TIC_t tics;                  // last frame's tics count
-   int   pid;                   // record 'key'
-   int   lnk;                   // next on hash chain
+   unsigned long maj, min;      // last frame's maj/min_flt counts
+   int pid;                     // record 'key'
+   int lnk;                     // next on hash chain
 } HST_t;
 #endif
 
