@@ -69,6 +69,8 @@ typedef struct utmp utmp_t;
 # define FROM_STRING "off"
 #endif
 
+#define MAX_CMD_WIDTH	512
+
 /*
  * This routine is careful since some programs leave utmp strings
  * unprintable. Always outputs at least 16 chars padded with
@@ -419,7 +421,7 @@ static void showinfo(utmp_t * u, int formtype, int maxcmd, int from,
 	}
 	fputs(" ", stdout);
 	if (likely(best)) {
-		char cmdbuf[512];
+		char cmdbuf[MAX_CMD_WIDTH];
 		escape_command(cmdbuf, best, sizeof cmdbuf, &maxcmd, ESC_ARGS);
 		fputs(cmdbuf, stdout);
 	} else {
@@ -554,10 +556,14 @@ int main(int argc, char **argv)
 	else if ((p = getenv("COLUMNS")))
 		maxcmd = atoi(p);
 	else
-		maxcmd = 80;
+		maxcmd = MAX_CMD_WIDTH;
 	if (maxcmd < 71)
 		xerrx(EXIT_FAILURE, _("%d column window is too narrow"), maxcmd);
-
+	if (MAX_CMD_WIDTH < maxcmd) {
+		xwarnx(_("%d column width exceeds command buffer size, truncating to %d"),
+		       maxcmd, MAX_CMD_WIDTH);
+		maxcmd = MAX_CMD_WIDTH;
+	}
 	maxcmd -= 21 + userlen + (from ? fromlen : 0) + (longform ? 20 : 0);
 	if (maxcmd < 3)
 		xwarnx(_("warning: screen width %d suboptimal"), win.ws_col);
