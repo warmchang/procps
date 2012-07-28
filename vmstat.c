@@ -220,7 +220,7 @@ static void new_header(void)
 	     _("wa"));
 }
 
-static unsigned long unitConvert(unsigned int size)
+static unsigned long unitConvert(unsigned long size)
 {
 	float cvSize;
 	cvSize = (float)size / dataUnit * ((statMode == SLABSTAT) ? 1 : 1024);
@@ -264,8 +264,8 @@ static void new_format(void)
 	       unitConvert(kb_swap_used), unitConvert(kb_main_free),
 	       unitConvert(a_option?kb_inactive:kb_main_buffers),
 	       unitConvert(a_option?kb_active:kb_main_cached),
-	       (unsigned)( (*pswpin  * unitConvert(kb_per_page) * hz + divo2) / Div ),
-	       (unsigned)( (*pswpout * unitConvert(kb_per_page) * hz + divo2) / Div ),
+	       (unsigned)( (unitConvert(*pswpin  * kb_per_page) * hz + divo2) / Div ),
+	       (unsigned)( (unitConvert(*pswpout * kb_per_page) * hz + divo2) / Div ),
 	       (unsigned)( (*pgpgin		   * hz + divo2) / Div ),
 	       (unsigned)( (*pgpgout		   * hz + divo2) / Div ),
 	       (unsigned)( (*intr		   * hz + divo2) / Div ),
@@ -320,9 +320,9 @@ static void new_format(void)
 		       unitConvert(a_option?kb_inactive:kb_main_buffers),
 		       unitConvert(a_option?kb_active:kb_main_cached),
 		       /*si */
-		       (unsigned)( ( (pswpin [tog] - pswpin [!tog])*unitConvert(kb_per_page)+sleep_half )/sleep_time ),
+		       (unsigned)( ( unitConvert((pswpin [tog] - pswpin [!tog])*kb_per_page)+sleep_half )/sleep_time ),
 		       /* so */
-		       (unsigned)( ( (pswpout[tog] - pswpout[!tog])*unitConvert(kb_per_page)+sleep_half )/sleep_time ),
+		       (unsigned)( ( unitConvert((pswpout[tog] - pswpout[!tog])*kb_per_page)+sleep_half )/sleep_time ),
 		       /* bi */
 		       (unsigned)( (  pgpgin [tog] - pgpgin [!tog]	       +sleep_half )/sleep_time ),
 		       /* bo */
