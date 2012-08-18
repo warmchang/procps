@@ -111,10 +111,10 @@ proc expect_table_dsc { test match_header match_item } {
 }
 
 proc make_testproc { } {
+    global testproc_path testproc_comm testproc1_pid testproc2_pid sleep_time
+
     # Time to run the whole job
     set sleep_time 300
-
-    global testproc_path testproc_comm testproc1_pid testproc2_pid
 
     set testproc_path [ exec mktemp -u ]
     set sleep_path [ exec which sleep ]

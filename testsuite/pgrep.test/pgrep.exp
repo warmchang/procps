@@ -51,6 +51,10 @@ set test "pgrep with process name"
 spawn $pgrep -l $testproc_comm
 expect_pass "$test" "^$testproc1_pid\\s+$testproc_comm\\s+$testproc2_pid\\s+$testproc_comm\\s*$"
 
+set test "pgrep with full command line"
+spawn $pgrep -a $testproc_comm
+expect_pass "$test" "^$testproc1_pid\\s+$testproc_path\\s+$sleep_time\\s+$testproc2_pid\\s+$testproc_path\\s+$sleep_time\\s*$"
+
 set test "pgrep find newest test pid"
 spawn $pgrep -n $testproc_comm
 expect_pass "$test" "^$testproc2_pid\\s*$"

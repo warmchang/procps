@@ -41,6 +41,8 @@
 #define EXIT_FATAL 3
 #define XALLOC_EXIT_CODE EXIT_FATAL
 
+#define CMDSTRSIZE 4096
+
 #include "c.h"
 #include "fileutils.h"
 #include "nls.h"
@@ -62,6 +64,7 @@ struct el {
 
 static int opt_full = 0;
 static int opt_long = 0;
+static int opt_longlong = 0;
 static int opt_oldest = 0;
 static int opt_newest = 0;
 static int opt_negate = 0;
@@ -449,7 +452,9 @@ static struct el * select_procs (int *num)
 	regex_t *preg;
 	pid_t myself = getpid();
 	struct el *list = NULL;
-	char cmd[4096];
+	char cmdline[CMDSTRSIZE];
+	char cmdsearch[CMDSTRSIZE];
+	char cmdoutput[CMDSTRSIZE];
 
 	ptp = do_openproc();
 	preg = do_regcomp();
@@ -494,30 +499,38 @@ static struct el * select_procs (int *num)
 				match = match_strlist (tty, opt_term);
 			}
 		}
-		if (opt_long || (match && opt_pattern)) {
-			if (opt_full && task.cmdline) {
-				int i = 0;
-				int bytes = sizeof (cmd) - 1;
+		if (task.cmdline && (opt_longlong || opt_full) && match && opt_pattern) {
+			int i = 0;
+			int bytes = sizeof (cmdline) - 1;
 
-				/* make sure it is always NUL-terminated */
-				cmd[bytes] = 0;
-				/* make room for SPC in loop below */
-				--bytes;
+			/* make sure it is always NUL-terminated */
+			cmdline[bytes] = 0;
+			/* make room for SPC in loop below */
+			--bytes;
 
-				strncpy (cmd, task.cmdline[i], bytes);
-				bytes -= strlen (task.cmdline[i++]);
-				while (task.cmdline[i] && bytes > 0) {
-					strncat (cmd, " ", bytes);
-					strncat (cmd, task.cmdline[i], bytes);
-					bytes -= strlen (task.cmdline[i++]) + 1;
-				}
-			} else {
-				strcpy (cmd, task.cmd);
+			strncpy (cmdline, task.cmdline[i], bytes);
+			bytes -= strlen (task.cmdline[i++]);
+			while (task.cmdline[i] && bytes > 0) {
+				strncat (cmdline, " ", bytes);
+				strncat (cmdline, task.cmdline[i], bytes);
+				bytes -= strlen (task.cmdline[i++]) + 1;
 			}
 		}
 
+		if (opt_long || opt_longlong || (match && opt_pattern)) {
+			if (opt_longlong && task.cmdline)
+				strncpy (cmdoutput, cmdline, CMDSTRSIZE);
+			else
+				strncpy (cmdoutput, task.cmd, CMDSTRSIZE);
+		}
+
 		if (match && opt_pattern) {
-			if (regexec (preg, cmd, 0, NULL, 0) != 0)
+			if (opt_full && task.cmdline)
+				strncpy (cmdsearch, cmdline, CMDSTRSIZE);
+			else
+				strncpy (cmdsearch, task.cmd, CMDSTRSIZE);
+
+			if (regexec (preg, cmdsearch, 0, NULL, 0) != 0)
 				match = 0;
 		}
 
@@ -542,9 +555,9 @@ static struct el * select_procs (int *num)
 				size = size * 5 / 4 + 4;
 				list = xrealloc(list, size * sizeof *list);
 			}
-			if (list && (opt_long || opt_echo)) {
+			if (list && (opt_long || opt_longlong || opt_echo)) {
 				list[matches].num = task.XXXID;
-				list[matches++].str = xstrdup (cmd);
+				list[matches++].str = xstrdup (cmdoutput);
 			} else if (list) {
 				list[matches++].num = task.XXXID;
 			} else {
@@ -593,6 +606,7 @@ static void parse_opts (int argc, char **argv)
 		{"count", no_argument, NULL, 'c'},
 		{"delimeter", required_argument, NULL, 'd'},
 		{"list-name", no_argument, NULL, 'l'},
+		{"list-full", no_argument, NULL, 'a'},
 		{"full", no_argument, NULL, 'f'},
 		{"pgroup", required_argument, NULL, 'g'},
 		{"group", required_argument, NULL, 'G'},
@@ -623,7 +637,7 @@ static void parse_opts (int argc, char **argv)
 		strcat (opts, "e");
 	} else {
 		/* These options are for pgrep only */
-		strcat (opts, "cld:v");
+		strcat (opts, "clad:v");
 	}
 			
 	strcat (opts, "LF:fnoxP:g:s:u:U:G:t:?Vh");
@@ -706,6 +720,9 @@ static void parse_opts (int argc, char **argv)
  *			break; */
 		case 'l':   /* Solaris: long output format (pgrep only) Should require -f for beyond argv[0] maybe? */
 			opt_long = 1;
+			break;
+		case 'a':
+			opt_longlong = 1;
 			break;
 		case 'n':   /* Solaris: match only the newest */
 			if (opt_oldest|opt_negate|opt_newest)
@@ -814,7 +831,7 @@ int main (int argc, char **argv)
 		if (opt_count) {
 			fprintf(stdout, "%d\n", num);
 		} else {
-			if (opt_long)
+			if (opt_long || opt_longlong)
 				output_strlist (procs,num);
 			else
 				output_numlist (procs,num);
