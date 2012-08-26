@@ -1437,8 +1437,8 @@ static void build_headers (void) {
          if (Screen_cols > (int)strlen(w->columnhdr)) w->eolcap = Caps_endline;
          else w->eolcap = Caps_off;
 #endif
-         // with forest view mode, we'll need tgid & ppid...
-         if (CHKw(w, Show_FOREST)) Frames_libflags |= L_status;
+         // with forest view mode, we'll need tgid, ppid & start_time...
+         if (CHKw(w, Show_FOREST)) Frames_libflags |= (L_status | L_stat);
          // for 'busy' only processes, we'll need pcpu (utime & stime)...
          if (!CHKw(w, Show_IDLEPS)) Frames_libflags |= L_stat;
          // we must also accommodate an out of view sort field...
@@ -3396,7 +3396,10 @@ static void keys_xtra (int ch) {
 /*######  Forest View support  ###########################################*/
 
         /*
-         * We try to keep most existing code unaware of our activities. */
+         * We try to keep most existing code unaware of our activities
+         * ( plus, maintain alphabetical order with carefully chosen )
+         * ( function names: forest_a, forest_b, forest_c & forest_d )
+         * ( each with exactly one letter more than its predecessor! ) */
 static proc_t **Seed_ppt;                   // temporary window ppt ptr
 static proc_t **Tree_ppt;                   // resized by forest_create
 static int      Tree_idx;                   // frame_make initializes
@@ -3405,22 +3408,28 @@ static int      Tree_idx;                   // frame_make initializes
          * This little recursive guy is the real forest view workhorse.
          * He fills in the Tree_ppt array and also sets the child indent
          * level which is stored in an unused proc_t padding byte. */
-static void forest_add (const int self, const int level) {
+static void forest_adds (const int self, const int level) {
    int i;
 
    Tree_ppt[Tree_idx] = Seed_ppt[self];     // add this as root or child
    Tree_ppt[Tree_idx++]->pad_3 = level;     // borrow 1 byte, 127 levels
-#ifdef TREE_RESCANS
-   for (i = 0; i < Frame_maxtask; i++) {    // this is hardly bullet proof now,
-      if (i == self) continue;              // with 3.3 proc hidepid provisions
-#else
    for (i = self + 1; i < Frame_maxtask; i++) {
-#endif
       if (Seed_ppt[self]->tid == Seed_ppt[i]->tgid
       || (Seed_ppt[self]->tid == Seed_ppt[i]->ppid && Seed_ppt[i]->tid == Seed_ppt[i]->tgid))
-         forest_add(i, level + 1);          // got one child any others?
+         forest_adds(i, level + 1);         // got one child any others?
    }
-} // end: forest_add
+} // end: forest_adds
+
+
+        /*
+         * Our qsort callback to order a ppt by the non-display start_time
+         * which will make us immune from any pid, ppid or tgid anomalies
+         * if/when pid values are wrapped by the kernel! */
+static int forest_based (const proc_t **x, const proc_t **y) {
+   if ( (*x)->start_time > (*y)->start_time ) return  1;
+   if ( (*x)->start_time < (*y)->start_time ) return -1;
+   return 0;
+} // end: forest_based
 
 
         /*
@@ -3430,22 +3439,18 @@ static void forest_add (const int self, const int level) {
          * ordered forest version. */
 static void forest_create (WIN_t *q) {
    static int hwmsav;
+   int i;
 
    Seed_ppt = q->ppt;                       // avoid passing WIN_t ptrs
    if (!Tree_idx) {                         // do just once per frame
-      int i = 0;
-      Frame_srtflg = -1;                    // put in ascending ppid order
-      qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), Fieldstab[P_PPD].sort);
       if (hwmsav < Frame_maxtask) {         // grow, but never shrink
          hwmsav = Frame_maxtask;
          Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
       }
-      while (0 == Seed_ppt[i]->ppid)        // identify trees (expect 2)
-         forest_add(i++, 1);                // add parent plus children
-      if (Tree_idx != Frame_maxtask)        // this will keep us sane...
-         for (i = 0; i < Frame_maxtask; i++)
-            if (!Seed_ppt[i]->pad_3)
-               Tree_ppt[Tree_idx++] = Seed_ppt[i];
+      qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), (QFP_t)forest_based);
+      for (i = 0; i < Frame_maxtask; i++)   // avoid any hidepid distortions
+         if (!Seed_ppt[i]->pad_3)           // identify real or pretend trees
+            forest_adds(i, 1);              // add as parent plus its children
    }
    memcpy(Seed_ppt, Tree_ppt, sizeof(proc_t*) * Frame_maxtask);
 } // end: forest_create
@@ -3463,8 +3468,7 @@ static inline const char *forest_display (const WIN_t *q, const proc_t *p) {
    const char *which = (CHKw(q, Show_CMDLIN)) ? *p->cmdline : p->cmd;
 
    if (!CHKw(q, Show_FOREST) || 1 == p->pad_3) return which;
-   if (!p->pad_3) snprintf(buf, sizeof(buf), " ?  %s", which);
-   else snprintf(buf, sizeof(buf), "%*s%s", 4 * (p->pad_3 - 1), " `- ", which);
+   snprintf(buf, sizeof(buf), "%*s%s", 4 * (p->pad_3 - 1), " `- ", which);
    return buf;
 } // end: forest_display
 
