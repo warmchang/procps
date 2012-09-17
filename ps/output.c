@@ -1075,7 +1075,9 @@ static int pr_fuid(char *restrict const outbuf, const proc_t *restrict const pp)
 
 // The Open Group Base Specifications Issue 6 (IEEE Std 1003.1, 2004 Edition)
 // requires that user and group names print as decimal numbers if there is
-// not enough room in the column, so tough luck if you don't like it.
+// not enough room in the column.  However, we will now truncate such names
+// and provide a visual hint of such truncation.  Hopefully, this will reduce
+// the volume of bug reports regarding that former 'feature'.
 //
 // The UNIX and POSIX way to change column width is to rename it:
 //      ps -o pid,user=CumbersomeUserNames -o comm
@@ -1092,6 +1094,11 @@ static int do_pr_name(char *restrict const outbuf, const char *restrict const na
 
     if(len <= (int)max_rightward)
       return len;  /* returns number of cells */
+
+    len = max_rightward-1;
+    outbuf[len++] = '+';
+    outbuf[len] = 0;
+    return len;
   }
   return snprintf(outbuf, COLWID, "%u", u);
 }
@@ -1108,7 +1115,6 @@ static int pr_fuser(char *restrict const outbuf, const proc_t *restrict const pp
 static int pr_suser(char *restrict const outbuf, const proc_t *restrict const pp){
   return do_pr_name(outbuf, pp->suser, pp->suid);
 }
-
 static int pr_egroup(char *restrict const outbuf, const proc_t *restrict const pp){
   return do_pr_name(outbuf, pp->egroup, pp->egid);
 }
