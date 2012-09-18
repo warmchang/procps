@@ -3390,7 +3390,7 @@ static void keys_xtra (int ch) {
          break;
    }
 // some have objected to this message, so we'll just keep silent...
-// show_msg(fmtmk("%s sort compatibility key honored", xtab[i].xmsg));
+// show_msg(fmtmk("%s sort compatibility key honored", xmsg));
 } // end: keys_xtra
 
 /*######  Forest View support  ###########################################*/
@@ -3483,18 +3483,18 @@ static void do_key (int ch) {
    } key_tab[] = {
       { keys_global,
          { '?', 'B', 'd', 'F', 'f', 'g', 'H', 'h', 'I', 'k', 'r', 's', 'Z'
-         , kbd_ENTER, kbd_SPACE } },
+         , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
-         { '1', 'C', 'l', 'm', 't' } },
+         { '1', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,
          { '#', '<', '>', 'b', 'c', 'i', 'n', 'R', 'S'
-         , 'U', 'u', 'V', 'x', 'y', 'z' } },
+         , 'U', 'u', 'V', 'x', 'y', 'z', '\0' } },
       { keys_window,
          { '+', '-', '=', '_', '&', 'A', 'a', 'G', 'L', 'w'
          , kbd_UP, kbd_DOWN, kbd_LEFT, kbd_RIGHT, kbd_PGUP, kbd_PGDN
-         , kbd_HOME, kbd_END } },
+         , kbd_HOME, kbd_END, '\0' } },
       { keys_xtra,
-         { 'M', 'N', 'P', 'T' } }
+         { 'M', 'N', 'P', 'T', '\0'} }
    };
    int i;
 
