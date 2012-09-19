@@ -20,7 +20,8 @@
 #define _Itop_nls
 
         /*
-         * These are our three string tables with the following contents:
+         * These are our string tables with the following contents:
+         *    Head : column headings with varying size limits
          *    Desc : field descriptions not to exceed 20 screen positions
          *    Norm : regular text possibly also containing c-format specifiers
          *    Uniq : show_special specially formatted strings
@@ -36,6 +37,7 @@
          *    +  none of the important translator only comments will
          *       clutter and obscure the main program
          */
+extern const char *Head_nlstab[];
 extern const char *Desc_nlstab[];
 extern const char *Norm_nlstab[];
 extern const char *Uniq_nlstab[];
@@ -45,14 +47,16 @@ extern const char *Uniq_nlstab[];
          * The N_txt and N_fmt macros are interchangeable but
          * highlight the two types of strings found in Norm_nlstable.
          */
+#define N_col(e) Head_nlstab[e]
 #define N_fld(e) Desc_nlstab[e]
 #define N_txt(e) Norm_nlstab[e]
 #define N_fmt(e) Norm_nlstab[e]
 #define N_unq(e) Uniq_nlstab[e]
 
         /*
-         * These enums are the means to access two of our three tables.
-         * The Desc_nlstab is accessed with standard top pflag enums.
+         * These enums are the means to access two of our four tables.
+         * The Head_nlstab and Desc_nlstab are accessed with standard
+         * top pflag enums.
          *
          * The norm_nls enums carry a suffix distinguishing plain text
          * from any text also containiing c-format specifiers.

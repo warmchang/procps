@@ -202,7 +202,6 @@ typedef int (*QFP_t)(const void *, const void *);
         /* This structure consolidates the information that's used
            in a variety of display roles. */
 typedef struct FLD_t {
-   const char   *head;          // name for col heads + toggle/reorder fields
    int           width;         // field width, if applicable
    const int     scale;         // scale_unum type, if applicable
    const int     align;         // the default column alignment flag

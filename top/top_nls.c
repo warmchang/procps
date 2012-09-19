@@ -75,13 +75,24 @@
         //
 
         /*
-         * These are our three string tables with the following contents:
+         * These are our string tables with the following contents:
+         *    Head : column headings with varying size limits
          *    Desc : fields descriptions not to exceed 20 screen positions
          *    Norm : regular text possibly also containing c-format specifiers
          *    Uniq : show_special specially formatted strings
          *
          * The latter table presents the greatest translation challenge !
+         *
+         * We go to the trouble of creating the nls string tables to achieve
+         * these objectives:
+         *    +  the overhead of repeated runtime calls to gettext()
+         *       will be avoided
+         *    +  the order of the strings in the template (.pot) file
+         *       can be completely controlled
+         *    +  none of the important translator only comments will
+         *       clutter and obscure the main program
          */
+const char *Head_nlstab[P_MAXPFLGS];
 const char *Desc_nlstab[P_MAXPFLGS];
 const char *Norm_nlstab[norm_MAX];
 const char *Uniq_nlstab[uniq_MAX];
@@ -91,66 +102,157 @@ const char *Uniq_nlstab[uniq_MAX];
          * This routine builds the nls table containing plain text only
          * used as the field descriptions.  Each translated line MUST be
          * kept to a maximum of 20 characters or less! */
-static void build_desc_nlstab (void) {
+static void build_two_nlstabs (void) {
 
 /* Translation Notes ------------------------------------------------
    .  It is strongly recommend that the --no-wrap command line option
    .  be used with all supporting translation tools, when available.
    .
-   .  The following single lines contain only plain text used as the
-   .  descriptions under Field Management when the 'f' key is typed.
+   .  The following line pairs contain only plain text and consist of:
+   .     1) a field name/column header - mostly upper case
+   .     2) the related description    - both upper and lower case
    .
-   .  To avoid truncation, each translated line MUST be kept to a
-   .  length of 20 characters or less.
+   .  To avoid truncation at runtime, each column header is noted with
+   .  its maximum size and the following description must not exceed
+   .  20 characters.  Fewer characters are ok.
+   .
    . */
 
+/* Translation Hint: maximum 'PID' = 5 */
+   Head_nlstab[P_PID] = _("PID");
    Desc_nlstab[P_PID] = _("Process Id");
+/* Translation Hint: maximum 'PPID' = 5 */
+   Head_nlstab[P_PPD] = _("PPID");
    Desc_nlstab[P_PPD] = _("Parent Process pid");
+/* Translation Hint: maximum 'UID' = 5 */
+   Head_nlstab[P_UED] = _("UID");
    Desc_nlstab[P_UED] = _("Effective User Id");
+/* Translation Hint: maximum 'USER' = 8 */
+   Head_nlstab[P_UEN] = _("USER");
    Desc_nlstab[P_UEN] = _("Effective User Name");
+/* Translation Hint: maximum 'RUID' = 5 */
+   Head_nlstab[P_URD] = _("RUID");
    Desc_nlstab[P_URD] = _("Real User Id");
+/* Translation Hint: maximum 'RUSER' = 8 */
+   Head_nlstab[P_URN] = _("RUSER");
    Desc_nlstab[P_URN] = _("Real User Name");
+/* Translation Hint: maximum 'SUID' = 5 */
+   Head_nlstab[P_USD] = _("SUID");
    Desc_nlstab[P_USD] = _("Saved User Id");
+/* Translation Hint: maximum 'SUSER' = 8 */
+   Head_nlstab[P_USN] = _("SUSER");
    Desc_nlstab[P_USN] = _("Saved User Name");
+/* Translation Hint: maximum 'GID' = 5 */
+   Head_nlstab[P_GID] = _("GID");
    Desc_nlstab[P_GID] = _("Group Id");
+/* Translation Hint: maximum 'GROUP' = 8 */
+   Head_nlstab[P_GRP] = _("GROUP");
    Desc_nlstab[P_GRP] = _("Group Name");
+/* Translation Hint: maximum 'PGRP' = 5 */
+   Head_nlstab[P_PGD] = _("PGRP");
    Desc_nlstab[P_PGD] = _("Process Group Id");
+/* Translation Hint: maximum 'TTY' = 8 */
+   Head_nlstab[P_TTY] = _("TTY");
    Desc_nlstab[P_TTY] = _("Controlling Tty");
+/* Translation Hint: maximum 'TPGID' = 5 */
+   Head_nlstab[P_TPG] = _("TPGID");
    Desc_nlstab[P_TPG] = _("Tty Process Grp Id");
+/* Translation Hint: maximum 'SID' = 5 */
+   Head_nlstab[P_SID] = _("SID");
    Desc_nlstab[P_SID] = _("Session Id");
+/* Translation Hint: maximum 'PR' = 3 */
+   Head_nlstab[P_PRI] = _("PR");
    Desc_nlstab[P_PRI] = _("Priority");
+/* Translation Hint: maximum 'NI' = 3 */
+   Head_nlstab[P_NCE] = _("NI");
    Desc_nlstab[P_NCE] = _("Nice Value");
+/* Translation Hint: maximum 'nTH' = 3 */
+   Head_nlstab[P_THD] = _("nTH");
    Desc_nlstab[P_THD] = _("Number of Threads");
+/* Translation Hint: maximum 'P' = 1 */
+   Head_nlstab[P_CPN] = _("P");
    Desc_nlstab[P_CPN] = _("Last Used Cpu (SMP)");
+/* Translation Hint: maximum '%CPU' = 4 */
+   Head_nlstab[P_CPU] = _("%CPU");
    Desc_nlstab[P_CPU] = _("CPU Usage");
+/* Translation Hint: maximum '' = 6 */
+   Head_nlstab[P_TME] = _("TIME");
    Desc_nlstab[P_TME] = _("CPU Time");
+/* Translation Hint: maximum 'TIME+' = 9 */
+   Head_nlstab[P_TM2] = _("TIME+");
    Desc_nlstab[P_TM2] = _("CPU Time, hundredths");
+/* Translation Hint: maximum '%MEM' = 4 */
+   Head_nlstab[P_MEM] = _("%MEM");
    Desc_nlstab[P_MEM] = _("Memory Usage (RES)");
+/* Translation Hint: maximum 'VIRT' = 5 */
+   Head_nlstab[P_VRT] = _("VIRT");
    Desc_nlstab[P_VRT] = _("Virtual Image (KiB)");
+/* Translation Hint: maximum 'SWAP' = 4 */
+   Head_nlstab[P_SWP] = _("SWAP");
    Desc_nlstab[P_SWP] = _("Swapped Size (KiB)");
+/* Translation Hint: maximum 'RES' = 4 */
+   Head_nlstab[P_RES] = _("RES");
    Desc_nlstab[P_RES] = _("Resident Size (KiB)");
+/* Translation Hint: maximum 'CODE' = 4 */
+   Head_nlstab[P_COD] = _("CODE");
    Desc_nlstab[P_COD] = _("Code Size (KiB)");
+/* Translation Hint: maximum 'DATA' = 4 */
+   Head_nlstab[P_DAT] = _("DATA");
    Desc_nlstab[P_DAT] = _("Data+Stack (KiB)");
+/* Translation Hint: maximum 'SHR' = 4 */
+   Head_nlstab[P_SHR] = _("SHR");
    Desc_nlstab[P_SHR] = _("Shared Memory (KiB)");
+/* Translation Hint: maximum 'nMaj' = 4 */
+   Head_nlstab[P_FL1] = _("nMaj");
    Desc_nlstab[P_FL1] = _("Major Page Faults");
+/* Translation Hint: maximum 'nMin' = 4 */
+   Head_nlstab[P_FL2] = _("nMin");
    Desc_nlstab[P_FL2] = _("Minor Page Faults");
+/* Translation Hint: maximum 'nDRT' = 4 */
+   Head_nlstab[P_DRT] = _("nDRT");
    Desc_nlstab[P_DRT] = _("Dirty Pages Count");
+/* Translation Hint: maximum 'S' = 1 */
+   Head_nlstab[P_STA] = _("S");
    Desc_nlstab[P_STA] = _("Process Status");
+/* Translation Hint: maximum 'COMMAND' = 7 */
+   Head_nlstab[P_CMD] = _("COMMAND");
    Desc_nlstab[P_CMD] = _("Command Name/Line");
+/* Translation Hint: maximum 'WCHAN' = 7 */
+   Head_nlstab[P_WCH] = _("WCHAN");
    Desc_nlstab[P_WCH] = _("Sleeping in Function");
+/* Translation Hint: maximum 'Flags' = 8 */
+   Head_nlstab[P_FLG] = _("Flags");
    Desc_nlstab[P_FLG] = _("Task Flags <sched.h>");
+/* Translation Hint: maximum 'CGROUPS' = 7 */
+   Head_nlstab[P_CGR] = _("CGROUPS");
    Desc_nlstab[P_CGR] = _("Control Groups");
+/* Translation Hint: maximum 'SUPGIDS' = 7 */
+   Head_nlstab[P_SGD] = _("SUPGIDS");
    Desc_nlstab[P_SGD] = _("Supp Groups IDs");
+/* Translation Hint: maximum 'SUPGRPS' = 7 */
+   Head_nlstab[P_SGN] = _("SUPGRPS");
    Desc_nlstab[P_SGN] = _("Supp Groups Names");
+/* Translation Hint: maximum 'TGID' = 5 */
+   Head_nlstab[P_TGD] = _("TGID");
    Desc_nlstab[P_TGD] = _("Thread Group Id");
 #ifdef OOMEM_ENABLE
+/* Translation Hint: maximum 'Adj' = 3 */
+   Head_nlstab[P_OOA] = _("Adj");
    Desc_nlstab[P_OOA] = _("oom_adjustment (2^X)");
+/* Translation Hint: maximum 'Badness' = 8 */
+   Head_nlstab[P_OOM] = _("Badness");
    Desc_nlstab[P_OOM] = _("oom_score (badness)");
 #endif
-/* Translation Hint: The abbreviation 'vars' below is shorthand for
+/* Translation Hint: maximum 'ENVIRON' = 7 */
+   Head_nlstab[P_ENV] = _("ENVIRON");
+/* Translation Hint: the abbreviation 'vars' below is shorthand for
                      'variables' */
    Desc_nlstab[P_ENV] = _("Environment vars");
+/* Translation Hint: maximum 'vMj' = 3 */
+   Head_nlstab[P_FV1] = _("vMj");
    Desc_nlstab[P_FV1] = _("Major Faults delta");
+/* Translation Hint: maximum 'vMn' = 3 */
+   Head_nlstab[P_FV2] = _("vMn");
    Desc_nlstab[P_FV2] = _("Minor Faults delta");
 }
 
@@ -472,13 +574,19 @@ void initialize_nls (void) {
    bindtextdomain(PACKAGE, LOCALEDIR);
    textdomain(PACKAGE);
 
+   memset(Head_nlstab, 0, sizeof(Head_nlstab));
    memset(Desc_nlstab, 0, sizeof(Desc_nlstab));
-   build_desc_nlstab();
-   for (i = 0; i < P_MAXPFLGS; i++)
+   build_two_nlstabs();
+   for (i = 0; i < P_MAXPFLGS; i++) {
+      if (!Head_nlstab[i]) {
+         fprintf(stderr, nls_err, "Head", i);
+         exit(1);
+      }
       if (!Desc_nlstab[i]) {
          fprintf(stderr, nls_err, "Desc", i);
          exit(1);
       }
+   }
    memset(Norm_nlstab, 0, sizeof(Norm_nlstab));
    build_norm_nlstab();
    for (i = 0; i < norm_MAX; i++)
@@ -498,7 +606,7 @@ void initialize_nls (void) {
    bindtextdomain(PACKAGE, LOCALEDIR);
    textdomain(PACKAGE);
 
-   build_desc_nlstab();
+   build_two_nlstabs();
    build_norm_nlstab();
    build_uniq_nlstab();
 #endif

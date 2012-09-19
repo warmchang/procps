@@ -1341,60 +1341,61 @@ static FLD_t Fieldstab[] = {
         P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
         P_CMD, L_stat  - may yet require L_CMDLINE in calibrate_fields    (cmd/cmdline)
         L_EITHER       - must L_status, else L_stat == 64-bit math (__udivdi3) on 32-bit !
-     .head      .width  .scale  .align    .sort     .lflg
-     ---------  ------  ------  -------   --------  --------   */
-   { "PID",         0,     -1,  A_right,  SF(PID),  L_NONE    },
-   { "PPID",        0,     -1,  A_right,  SF(PPD),  L_EITHER  },
-   { "UID",         5,     -1,  A_right,  SF(UED),  L_NONE    },
-   { "USER",        8,     -1,  A_left,   SF(UEN),  L_EUSER   },
-   { "RUID",        5,     -1,  A_right,  SF(URD),  L_status  },
-   { "RUSER",       8,     -1,  A_left,   SF(URN),  L_OUSER   },
-   { "SUID",        5,     -1,  A_right,  SF(USD),  L_status  },
-   { "SUSER",       8,     -1,  A_left,   SF(USN),  L_OUSER   },
-   { "GID",         5,     -1,  A_right,  SF(GID),  L_NONE    },
-   { "GROUP",       8,     -1,  A_left,   SF(GRP),  L_EGROUP  },
-   { "PGRP",        0,     -1,  A_right,  SF(PGD),  L_stat    },
-   { "TTY",         8,     -1,  A_left,   SF(TTY),  L_stat    },
-   { "TPGID",       0,     -1,  A_right,  SF(TPG),  L_stat    },
-   { "SID",         0,     -1,  A_right,  SF(SID),  L_stat    },
-   { "PR",          3,     -1,  A_right,  SF(PRI),  L_stat    },
-   { "NI",          3,     -1,  A_right,  SF(NCE),  L_stat    },
-   { "nTH",         3,     -1,  A_right,  SF(THD),  L_EITHER  },
-   { "P",           0,     -1,  A_right,  SF(CPN),  L_stat    },
-   { "%CPU",        0,     -1,  A_right,  SF(CPU),  L_stat    },
-   { "TIME",        6,     -1,  A_right,  SF(TME),  L_stat    },
-   { "TIME+",       9,     -1,  A_right,  SF(TME),  L_stat    },
+
+     .width  .scale  .align    .sort     .lflg
+     ------  ------  --------  --------  --------  */
+   {     0,     -1,  A_right,  SF(PID),  L_NONE    },
+   {     0,     -1,  A_right,  SF(PPD),  L_EITHER  },
+   {     5,     -1,  A_right,  SF(UED),  L_NONE    },
+   {     8,     -1,  A_left,   SF(UEN),  L_EUSER   },
+   {     5,     -1,  A_right,  SF(URD),  L_status  },
+   {     8,     -1,  A_left,   SF(URN),  L_OUSER   },
+   {     5,     -1,  A_right,  SF(USD),  L_status  },
+   {     8,     -1,  A_left,   SF(USN),  L_OUSER   },
+   {     5,     -1,  A_right,  SF(GID),  L_NONE    },
+   {     8,     -1,  A_left,   SF(GRP),  L_EGROUP  },
+   {     0,     -1,  A_right,  SF(PGD),  L_stat    },
+   {     8,     -1,  A_left,   SF(TTY),  L_stat    },
+   {     0,     -1,  A_right,  SF(TPG),  L_stat    },
+   {     0,     -1,  A_right,  SF(SID),  L_stat    },
+   {     3,     -1,  A_right,  SF(PRI),  L_stat    },
+   {     3,     -1,  A_right,  SF(NCE),  L_stat    },
+   {     3,     -1,  A_right,  SF(THD),  L_EITHER  },
+   {     0,     -1,  A_right,  SF(CPN),  L_stat    },
+   {     0,     -1,  A_right,  SF(CPU),  L_stat    },
+   {     6,     -1,  A_right,  SF(TME),  L_stat    },
+   {     9,     -1,  A_right,  SF(TME),  L_stat    },
 #ifdef PERCENTBOOST
-   { "%MEM",        5,     -1,  A_right,  SF(RES),  L_statm   },
+   {     5,     -1,  A_right,  SF(RES),  L_statm   },
 #else
-   { "%MEM",        4,     -1,  A_right,  SF(RES),  L_statm   },
+   {     4,     -1,  A_right,  SF(RES),  L_statm   },
 #endif
-   { "VIRT",        5,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
-   { "SWAP",        4,  SK_Kb,  A_right,  SF(SWP),  L_status  },
-   { "RES",         4,  SK_Kb,  A_right,  SF(RES),  L_statm   },
-   { "CODE",        4,  SK_Kb,  A_right,  SF(COD),  L_statm   },
-   { "DATA",        4,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
-   { "SHR",         4,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
-   { "nMaj",        4,  SK_no,  A_right,  SF(FL1),  L_stat    },
-   { "nMin",        4,  SK_no,  A_right,  SF(FL2),  L_stat    },
-   { "nDRT",        4,  SK_no,  A_right,  SF(DRT),  L_statm   },
-   { "S",           1,     -1,  A_right,  SF(STA),  L_EITHER  },
-   { "COMMAND",    -1,     -1,  A_left,   SF(CMD),  L_EITHER  },
-   { "WCHAN",      -1,     -1,  A_left,   SF(WCH),  L_stat    },
-   { "Flags",       8,     -1,  A_left,   SF(FLG),  L_stat    },
-   { "CGROUPS",    -1,     -1,  A_left,   SF(CGR),  L_CGROUP  },
-   { "SUPGIDS",    -1,     -1,  A_left,   SF(SGD),  L_status  },
-   { "SUPGRPS",    -1,     -1,  A_left,   SF(SGN),  L_SUPGRP  },
-   { "TGID",        0,     -1,  A_right,  SF(TGD),  L_status  },
+   {     5,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
+   {     4,  SK_Kb,  A_right,  SF(SWP),  L_status  },
+   {     4,  SK_Kb,  A_right,  SF(RES),  L_statm   },
+   {     4,  SK_Kb,  A_right,  SF(COD),  L_statm   },
+   {     4,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
+   {     4,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
+   {     4,  SK_no,  A_right,  SF(FL1),  L_stat    },
+   {     4,  SK_no,  A_right,  SF(FL2),  L_stat    },
+   {     4,  SK_no,  A_right,  SF(DRT),  L_statm   },
+   {     1,     -1,  A_right,  SF(STA),  L_EITHER  },
+   {    -1,     -1,  A_left,   SF(CMD),  L_EITHER  },
+   {    -1,     -1,  A_left,   SF(WCH),  L_stat    },
+   {     8,     -1,  A_left,   SF(FLG),  L_stat    },
+   {    -1,     -1,  A_left,   SF(CGR),  L_CGROUP  },
+   {    -1,     -1,  A_left,   SF(SGD),  L_status  },
+   {    -1,     -1,  A_left,   SF(SGN),  L_SUPGRP  },
+   {     0,     -1,  A_right,  SF(TGD),  L_status  },
 #ifdef OOMEM_ENABLE
 #define L_oom      PROC_FILLOOM
-   { "Adj",         3,     -1,  A_right,  SF(OOA),  L_oom     },
-   { "Badness",     8,     -1,  A_right,  SF(OOM),  L_oom     },
+   {     3,     -1,  A_right,  SF(OOA),  L_oom     },
+   {     8,     -1,  A_right,  SF(OOM),  L_oom     },
 #undef L_oom
 #endif
-   { "ENVIRON",    -1,     -1,  A_left,   SF(ENV),  L_ENVIRON },
-   { "vMj",         3,  SK_no,  A_right,  SF(FV1),  L_stat    },
-   { "vMn",         3,  SK_no,  A_right,  SF(FV2),  L_stat    }
+   {    -1,     -1,  A_left,   SF(ENV),  L_ENVIRON },
+   {     3,  SK_no,  A_right,  SF(FV1),  L_stat    },
+   {     3,  SK_no,  A_right,  SF(FV2),  L_stat    }
  #undef SF
  #undef A_left
  #undef A_right
@@ -1740,7 +1741,7 @@ static void display_fields (int focus, int extend) {
          , b ? w->cap_bold : Cap_norm
          , e
          , i == focus ? w->capclr_hdr : ""
-         , Fieldstab[f].head
+         , N_col(f)
          , Cap_norm
          , b ? w->cap_bold : ""
          , e
@@ -1781,7 +1782,7 @@ static void fields_utility (void) {
    spewFI
 
    do {
-      if (!h) h = Fieldstab[f].head;
+      if (!h) h = N_col(f);
       display_fields(i, (p != NULL));
       putp(Cap_home);
       show_special(1, fmtmk(N_unq(FIELD_header_fmt)
