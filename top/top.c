@@ -1076,90 +1076,22 @@ static int get_int (const char *prompt) {
 
 
         /*
-         * Do some scaling stuff.
-         * We'll interpret 'num' as one of the following types and
-         * try to format it to fit 'width'.
-         *    SK_no (0) it's a byte count
-         *    SK_Kb (1) it's kilobytes
-         *    SK_Mb (2) it's megabytes
-         *    SK_Gb (3) it's gigabytes
-         *    SK_Tb (4) it's terabytes  */
-static const char *scale_num (unsigned long num, const int width, const int type) {
-      // kilobytes, megabytes, gigabytes, terabytes, duh!
-   static double scale[] = { 1024.0, 1024.0*1024, 1024.0*1024*1024, 1024.0*1024*1024*1024, 0 };
-      // kilo, mega, giga, tera, none
-#ifdef CASEUP_SUFIX
-   static char nextup[] =  { 'K', 'M', 'G', 'T', 0 };
-#else
-   static char nextup[] =  { 'k', 'm', 'g', 't', 0 };
-#endif
+         * Make a hex value, and maybe suppress zeroes. */
+static inline const char *hex_make (KLONG num, int noz) {
    static char buf[SMLBUFSIZ];
-   double *dp;
-   char *up;
+   int i;
 
-   // try an unscaled version first...
-   if (width >= snprintf(buf, sizeof(buf), "%lu", num)) return buf;
-
-   // now try successively higher types until it fits
-   for (up = nextup + type, dp = scale; 0 < *dp; ++dp, ++up) {
-      // the most accurate version
-      if (width >= snprintf(buf, sizeof(buf), "%.1f%c", num / *dp, *up))
-         return buf;
-      // the integer version
-      if (width >= snprintf(buf, sizeof(buf), "%lu%c", (unsigned long)(num / *dp), *up))
-         return buf;
-   }
-   // well shoot, this outta' fit...
-   return "?";
-} // end: scale_num
-
-
-        /*
-         * Do some scaling stuff.
-         * format 'tics' to fit 'width'. */
-static const char *scale_tics (TIC_t tics, const int width) {
-#ifdef CASEUP_SUFIX
- #define HH "%uH"                                                  // nls_maybe
- #define DD "%uD"
- #define WW "%uW"
+#ifdef CASEUP_HEXES
+   snprintf(buf, sizeof(buf), "%08" KLF "X", num);
 #else
- #define HH "%uh"                                                  // nls_maybe
- #define DD "%ud"
- #define WW "%uw"
+   snprintf(buf, sizeof(buf), "%08" KLF "x", num);
 #endif
-   static char buf[SMLBUFSIZ];
-   unsigned long nt;    // narrow time, for speed on 32-bit
-   unsigned cc;         // centiseconds
-   unsigned nn;         // multi-purpose whatever
-
-   nt  = (tics * 100ull) / Hertz;               // up to 68 weeks of cpu time
-   cc  = nt % 100;                              // centiseconds past second
-   nt /= 100;                                   // total seconds
-   nn  = nt % 60;                               // seconds past the minute
-   nt /= 60;                                    // total minutes
-   if (width >= snprintf(buf, sizeof(buf), "%lu:%02u.%02u", nt, nn, cc))
-      return buf;
-   if (width >= snprintf(buf, sizeof(buf), "%lu:%02u", nt, nn))
-      return buf;
-   nn  = nt % 60;                               // minutes past the hour
-   nt /= 60;                                    // total hours
-   if (width >= snprintf(buf, sizeof(buf), "%lu,%02u", nt, nn))
-      return buf;
-   nn = nt;                                     // now also hours
-   if (width >= snprintf(buf, sizeof(buf), HH, nn))
-      return buf;
-   nn /= 24;                                    // now days
-   if (width >= snprintf(buf, sizeof(buf), DD, nn))
-      return buf;
-   nn /= 7;                                     // now weeks
-   if (width >= snprintf(buf, sizeof(buf), WW, nn))
-      return buf;
-      // well shoot, this outta' fit...
-   return "?";
- #undef HH
- #undef DD
- #undef WW
-} // end: scale_tics
+   if (noz)
+      for (i = 0; buf[i]; i++)
+         if ('0' == buf[i])
+            buf[i] = '.';
+   return buf;
+} // end: hex_make
 
 
         /*
@@ -1208,6 +1140,169 @@ static inline int user_matched (WIN_t *q, const proc_t *p) {
    return 0;
 } // end: user_matched
 
+/*######  Basic Formatting support  ######################################*/
+
+        /*
+         * Just do some justify stuff, then add post column padding. */
+static inline const char *justify_pad (const char *str, int width, int justr) {
+   static char l_fmt[]  = "%-*.*s%s", r_fmt[] = "%*.*s%s";
+   static char buf[SCREENMAX];
+
+   snprintf(buf, sizeof(buf), justr ? r_fmt : l_fmt, width, width, str, COLPADSTR);
+   return buf;
+} // end: justify_pad
+
+
+        /*
+         * Make and then justify a single character. */
+static const char *make_chr (const char ch, int width, int justr) {
+   static char buf[SMLBUFSIZ];
+
+   snprintf(buf, sizeof(buf), "%c", ch);
+   return justify_pad(buf, width, justr);
+} // end: make_chr
+
+
+        /*
+         * Make and then justify an integer NOT subject to scaling,
+         * and include a visual clue should tuncation be necessary. */
+static const char *make_num (long num, int width, int justr) {
+   static char buf[SMLBUFSIZ];
+
+   if (width < snprintf(buf, sizeof(buf), "%ld", num))
+      buf[width-1] = COLPLUSCH;
+   return justify_pad(buf, width, justr);
+} // end: make_num
+
+
+        /*
+         * Make and then justify a character string,
+         * and include a visual clue should tuncation be necessary. */
+static const char *make_str (const char *str, int width, int justr) {
+   static char buf[SCREENMAX];
+
+   if (width < snprintf(buf, sizeof(buf), "%s", str))
+      buf[width-1] = COLPLUSCH;
+   return justify_pad(buf, width, justr);
+} // end: make_str
+
+
+        /*
+         * Make and then justify a percentage, with decreasing precision. */
+static const char *scale_pcnt (float num, int width, int justr) {
+   static char buf[SMLBUFSIZ];
+
+#ifdef PERCENTBOOST
+   if (width >= snprintf(buf, sizeof(buf), "%#.3f", num))
+      goto end_justifies;
+   if (width >= snprintf(buf, sizeof(buf), "%#.2f", num))
+      goto end_justifies;
+#endif
+   if (width >= snprintf(buf, sizeof(buf), "%#.1f", num))
+      goto end_justifies;
+   if (width >= snprintf(buf, sizeof(buf), "%*.0f", width, num))
+      goto end_justifies;
+
+   // well shoot, this outta' fit...
+   snprintf(buf, sizeof(buf), "?");
+end_justifies:
+   return justify_pad(buf, width, justr);
+} // end: scale_pcnt
+
+
+        /*
+         * Do some scaling stuff.
+         * Format 'tics' to fit 'width', then justify it. */
+static const char *scale_tics (TIC_t tics, int width, int justr) {
+#ifdef CASEUP_SUFIX
+ #define HH "%uH"                                                  // nls_maybe
+ #define DD "%uD"
+ #define WW "%uW"
+#else
+ #define HH "%uh"                                                  // nls_maybe
+ #define DD "%ud"
+ #define WW "%uw"
+#endif
+   static char buf[SMLBUFSIZ];
+   unsigned long nt;    // narrow time, for speed on 32-bit
+   unsigned cc;         // centiseconds
+   unsigned nn;         // multi-purpose whatever
+
+   nt  = (tics * 100ull) / Hertz;               // up to 68 weeks of cpu time
+   cc  = nt % 100;                              // centiseconds past second
+   nt /= 100;                                   // total seconds
+   nn  = nt % 60;                               // seconds past the minute
+   nt /= 60;                                    // total minutes
+   if (width >= snprintf(buf, sizeof(buf), "%lu:%02u.%02u", nt, nn, cc))
+      goto end_justifies;
+   if (width >= snprintf(buf, sizeof(buf), "%lu:%02u", nt, nn))
+      goto end_justifies;
+   nn  = nt % 60;                               // minutes past the hour
+   nt /= 60;                                    // total hours
+   if (width >= snprintf(buf, sizeof(buf), "%lu,%02u", nt, nn))
+      goto end_justifies;
+   nn = nt;                                     // now also hours
+   if (width >= snprintf(buf, sizeof(buf), HH, nn))
+      goto end_justifies;
+   nn /= 24;                                    // now days
+   if (width >= snprintf(buf, sizeof(buf), DD, nn))
+      goto end_justifies;
+   nn /= 7;                                     // now weeks
+   if (width >= snprintf(buf, sizeof(buf), WW, nn))
+      goto end_justifies;
+
+   // well shoot, this outta' fit...
+   snprintf(buf, sizeof(buf), "?");
+end_justifies:
+   return justify_pad(buf, width, justr);
+ #undef HH
+ #undef DD
+ #undef WW
+} // end: scale_tics
+
+
+        /*
+         * Do some scaling then justify stuff.
+         * We'll interpret 'num' as one of the following types and
+         * try to format it to fit 'width'.
+         *    SK_no (0) it's a byte count
+         *    SK_Kb (1) it's kilobytes
+         *    SK_Mb (2) it's megabytes
+         *    SK_Gb (3) it's gigabytes
+         *    SK_Tb (4) it's terabytes  */
+static const char *scale_unum (unsigned long num, int type, int width, int justr) {
+      // kilobytes, megabytes, gigabytes, terabytes, duh!
+   static double scale[] = { 1024.0, 1024.0*1024, 1024.0*1024*1024, 1024.0*1024*1024*1024, 0 };
+      // kilo, mega, giga, tera, none
+#ifdef CASEUP_SUFIX
+   static char nextup[] =  { 'K', 'M', 'G', 'T', 0 };
+#else
+   static char nextup[] =  { 'k', 'm', 'g', 't', 0 };
+#endif
+   static char buf[SMLBUFSIZ];
+   double *dp;
+   char *up;
+
+   // try an unscaled version first...
+   if (width >= snprintf(buf, sizeof(buf), "%lu", num))
+      goto end_justifies;
+
+   // now try successively higher types until it fits
+   for (up = nextup + type, dp = scale; 0 < *dp; ++dp, ++up) {
+      // the most accurate version
+      if (width >= snprintf(buf, sizeof(buf), "%.1f%c", num / *dp, *up))
+         goto end_justifies;
+      // the integer version
+      if (width >= snprintf(buf, sizeof(buf), "%lu%c", (unsigned long)(num / *dp), *up))
+         goto end_justifies;
+   }
+
+   // well shoot, this outta' fit...
+   snprintf(buf, sizeof(buf), "?");
+end_justifies:
+   return justify_pad(buf, width, justr);
+} // end: scale_unum
+
 /*######  Fields Management support  #####################################*/
 
    /* These are the Fieldstab.lflg values used here and in calibrate_fields.
@@ -1230,82 +1325,79 @@ static inline int user_matched (WIN_t *q, const proc_t *p) {
 #define L_DEFAULT  PROC_FILLSTAT
 
         /* These are our gosh darn 'Fields' !
-           They MUST be kept in sync with pflags !!
-           note: for integer data, the length modifiers found in .fmts may
-                 NOT reflect the true field type found in proc_t -- this plus
-                 a cast when/if displayed provides minimal width protection. */
+           They MUST be kept in sync with pflags !! */
 static FLD_t Fieldstab[] = {
    // a temporary macro, soon to be undef'd...
  #define SF(f) (QFP_t)SCB_NAME(f)
+   // these identifiers reflect the default column alignment
+ #define A_right 1
+ #define A_left  0
 
-/* .head + .fmts anomalies:
-        entries shown with NULL are either valued at runtime (see zap_fieldstab)
-        or, in the case of .fmts, may represent variable width fields
-   .desc anomalies:
-        the .desc field is always null initially, under nls support
+/* .width anomalies:
+        entries with a -1 .width represent variable width columns
+        entries with zero .width are valued at runtime (see zap_fieldstab)
    .lflg anomalies:
         P_UED, L_NONE  - natural outgrowth of 'stat()' in readproc        (euid)
         P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
         P_CMD, L_stat  - may yet require L_CMDLINE in calibrate_fields    (cmd/cmdline)
         L_EITHER       - must L_status, else L_stat == 64-bit math (__udivdi3) on 32-bit !
-     .head          .fmts     .width  .scale  .sort     .lflg      .desc
-     ------------   --------  ------  ------  --------  --------   ------ */
-   { NULL,          NULL,        -1,     -1,  SF(PID),  L_NONE,    NULL },
-   { NULL,          NULL,        -1,     -1,  SF(PPD),  L_EITHER,  NULL },
-   { "  UID ",      "%5d ",      -1,     -1,  SF(UED),  L_NONE,    NULL },
-   { "USER     ",   "%-8.8s ",   -1,     -1,  SF(UEN),  L_EUSER,   NULL },
-   { " RUID ",      "%5d ",      -1,     -1,  SF(URD),  L_status,  NULL },
-   { "RUSER    ",   "%-8.8s ",   -1,     -1,  SF(URN),  L_OUSER,   NULL },
-   { " SUID ",      "%5d ",      -1,     -1,  SF(USD),  L_status,  NULL },
-   { "SUSER    ",   "%-8.8s ",   -1,     -1,  SF(USN),  L_OUSER,   NULL },
-   { "  GID ",      "%5d ",      -1,     -1,  SF(GID),  L_NONE,    NULL },
-   { "GROUP    ",   "%-8.8s ",   -1,     -1,  SF(GRP),  L_EGROUP,  NULL },
-   { NULL,          NULL,        -1,     -1,  SF(PGD),  L_stat,    NULL },
-   { "TTY      ",   "%-8.8s ",    8,     -1,  SF(TTY),  L_stat,    NULL },
-   { NULL,          NULL,        -1,     -1,  SF(TPG),  L_stat,    NULL },
-   { NULL,          NULL,        -1,     -1,  SF(SID),  L_stat,    NULL },
-   { " PR ",        "%3d ",      -1,     -1,  SF(PRI),  L_stat,    NULL },
-   { " NI ",        "%3d ",      -1,     -1,  SF(NCE),  L_stat,    NULL },
-   { "nTH ",        "%3d ",      -1,     -1,  SF(THD),  L_EITHER,  NULL },
-   { NULL,          NULL,        -1,     -1,  SF(CPN),  L_stat,    NULL },
-   { " %CPU ",      NULL,        -1,     -1,  SF(CPU),  L_stat,    NULL },
-   { "  TIME ",     "%6.6s ",     6,     -1,  SF(TME),  L_stat,    NULL },
-   { "   TIME+  ",  "%9.9s ",     9,     -1,  SF(TME),  L_stat,    NULL },
-   { "%MEM ",       "%#4.1f ",   -1,     -1,  SF(RES),  L_statm,   NULL },
-   { " VIRT ",      "%5.5s ",     5,  SK_Kb,  SF(VRT),  L_statm,   NULL },
-   { "SWAP ",       "%4.4s ",     4,  SK_Kb,  SF(SWP),  L_status,  NULL },
-   { " RES ",       "%4.4s ",     4,  SK_Kb,  SF(RES),  L_statm,   NULL },
-   { "CODE ",       "%4.4s ",     4,  SK_Kb,  SF(COD),  L_statm,   NULL },
-   { "DATA ",       "%4.4s ",     4,  SK_Kb,  SF(DAT),  L_statm,   NULL },
-   { " SHR ",       "%4.4s ",     4,  SK_Kb,  SF(SHR),  L_statm,   NULL },
-   { "nMaj ",       "%4.4s ",     4,  SK_no,  SF(FL1),  L_stat,    NULL },
-   { "nMin ",       "%4.4s ",     4,  SK_no,  SF(FL2),  L_stat,    NULL },
-   { "nDRT ",       "%4.4s ",     4,  SK_no,  SF(DRT),  L_statm,   NULL },
-   { "S ",          "%c ",       -1,     -1,  SF(STA),  L_EITHER,  NULL },
-   // next 2 entries are special: '.head' is variable width (see calibrate_fields)
-   { "COMMAND  ",   NULL,        -1,     -1,  SF(CMD),  L_EITHER,  NULL },
-   { "WCHAN    ",   NULL,        -1,     -1,  SF(WCH),  L_stat,    NULL },
-   // next entry's special: the 0's will be replaced with '.'!
-#ifdef CASEUP_HEXES
-   { "Flags    ",   "%08lX ",    -1,     -1,  SF(FLG),  L_stat,    NULL },
+     .head      .width  .scale  .align    .sort     .lflg
+     ---------  ------  ------  -------   --------  --------   */
+   { "PID",         0,     -1,  A_right,  SF(PID),  L_NONE    },
+   { "PPID",        0,     -1,  A_right,  SF(PPD),  L_EITHER  },
+   { "UID",         5,     -1,  A_right,  SF(UED),  L_NONE    },
+   { "USER",        8,     -1,  A_left,   SF(UEN),  L_EUSER   },
+   { "RUID",        5,     -1,  A_right,  SF(URD),  L_status  },
+   { "RUSER",       8,     -1,  A_left,   SF(URN),  L_OUSER   },
+   { "SUID",        5,     -1,  A_right,  SF(USD),  L_status  },
+   { "SUSER",       8,     -1,  A_left,   SF(USN),  L_OUSER   },
+   { "GID",         5,     -1,  A_right,  SF(GID),  L_NONE    },
+   { "GROUP",       8,     -1,  A_left,   SF(GRP),  L_EGROUP  },
+   { "PGRP",        0,     -1,  A_right,  SF(PGD),  L_stat    },
+   { "TTY",         8,     -1,  A_left,   SF(TTY),  L_stat    },
+   { "TPGID",       0,     -1,  A_right,  SF(TPG),  L_stat    },
+   { "SID",         0,     -1,  A_right,  SF(SID),  L_stat    },
+   { "PR",          3,     -1,  A_right,  SF(PRI),  L_stat    },
+   { "NI",          3,     -1,  A_right,  SF(NCE),  L_stat    },
+   { "nTH",         3,     -1,  A_right,  SF(THD),  L_EITHER  },
+   { "P",           0,     -1,  A_right,  SF(CPN),  L_stat    },
+   { "%CPU",        0,     -1,  A_right,  SF(CPU),  L_stat    },
+   { "TIME",        6,     -1,  A_right,  SF(TME),  L_stat    },
+   { "TIME+",       9,     -1,  A_right,  SF(TME),  L_stat    },
+#ifdef PERCENTBOOST
+   { "%MEM",        5,     -1,  A_right,  SF(RES),  L_statm   },
 #else
-   { "Flags    ",   "%08lx ",    -1,     -1,  SF(FLG),  L_stat,    NULL },
+   { "%MEM",        4,     -1,  A_right,  SF(RES),  L_statm   },
 #endif
-   // next 3 entries as P_CMD/P_WCH: '.head' must be same length -- they share varcolsz
-   { "CGROUPS  ",   NULL,        -1,     -1,  SF(CGR),  L_CGROUP,  NULL },
-   { "SUPGIDS  ",   NULL,        -1,     -1,  SF(SGD),  L_status,  NULL },
-   { "SUPGRPS  ",   NULL,        -1,     -1,  SF(SGN),  L_SUPGRP,  NULL },
-   { NULL,          NULL,        -1,     -1,  SF(TGD),  L_status,  NULL },
+   { "VIRT",        5,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
+   { "SWAP",        4,  SK_Kb,  A_right,  SF(SWP),  L_status  },
+   { "RES",         4,  SK_Kb,  A_right,  SF(RES),  L_statm   },
+   { "CODE",        4,  SK_Kb,  A_right,  SF(COD),  L_statm   },
+   { "DATA",        4,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
+   { "SHR",         4,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
+   { "nMaj",        4,  SK_no,  A_right,  SF(FL1),  L_stat    },
+   { "nMin",        4,  SK_no,  A_right,  SF(FL2),  L_stat    },
+   { "nDRT",        4,  SK_no,  A_right,  SF(DRT),  L_statm   },
+   { "S",           1,     -1,  A_right,  SF(STA),  L_EITHER  },
+   { "COMMAND",    -1,     -1,  A_left,   SF(CMD),  L_EITHER  },
+   { "WCHAN",      -1,     -1,  A_left,   SF(WCH),  L_stat    },
+   { "Flags",       8,     -1,  A_left,   SF(FLG),  L_stat    },
+   { "CGROUPS",    -1,     -1,  A_left,   SF(CGR),  L_CGROUP  },
+   { "SUPGIDS",    -1,     -1,  A_left,   SF(SGD),  L_status  },
+   { "SUPGRPS",    -1,     -1,  A_left,   SF(SGN),  L_SUPGRP  },
+   { "TGID",        0,     -1,  A_right,  SF(TGD),  L_status  },
 #ifdef OOMEM_ENABLE
 #define L_oom      PROC_FILLOOM
-   { "Adj ",        "%3d ",      -1,     -1,  SF(OOA),  L_oom,     NULL },
-   { " Badness ",   "%8d ",      -1,     -1,  SF(OOM),  L_oom,     NULL },
+   { "Adj",         3,     -1,  A_right,  SF(OOA),  L_oom     },
+   { "Badness",     8,     -1,  A_right,  SF(OOM),  L_oom     },
 #undef L_oom
 #endif
-   { "ENVIRON  ",   NULL,        -1,     -1,  SF(ENV),  L_ENVIRON, NULL },
-   { "vMj ",        "%3.3s ",     3,  SK_no,  SF(FV1),  L_stat,    NULL },
-   { "vMn ",        "%3.3s ",     3,  SK_no,  SF(FV2),  L_stat,    NULL }
+   { "ENVIRON",    -1,     -1,  A_left,   SF(ENV),  L_ENVIRON },
+   { "vMj",         3,  SK_no,  A_right,  SF(FV1),  L_stat    },
+   { "vMn",         3,  SK_no,  A_right,  SF(FV2),  L_stat    }
  #undef SF
+ #undef A_left
+ #undef A_right
 };
 
 
@@ -1392,7 +1484,6 @@ static void adj_geometry (void) {
 static void build_headers (void) {
    FLG_t f;
    char *s;
-   const char *h;
    WIN_t *w = Curwin;
 #ifdef EQUCOLHDRYES
    int x, hdrmax = 0;
@@ -1415,12 +1506,12 @@ static void build_headers (void) {
 #else
             if (P_MAXPFLGS <= f) continue;
 #endif
-            h = Fieldstab[f].head;
             if (P_WCH == f) needpsdb = 1;
             if (P_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
-            if (!VARcol(f)) s = scat(s, h);
-            else s = scat(s, fmtmk(VARCOL_fmts, w->varcolsz, w->varcolsz, h));
             Frames_libflags |= Fieldstab[w->procflgs[i]].lflg;
+            s = scat(s, justify_pad(N_col(f)
+               , VARcol(f) ? w->varcolsz : Fieldstab[f].width
+               , CHKw(w, Fieldstab[f].align)));
 #ifdef USE_X_COLHDR
             if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx) {
                s = scat(s, fmtmk("%s%s", Caps_off, w->capclr_hdr));
@@ -1490,7 +1581,7 @@ static void calibrate_fields (void) {
    char *s;
    const char *h;
    WIN_t *w = Curwin;
-   int i, varcolcnt;
+   int i, varcolcnt, len;
 
    // block SIGWINCH signals while we do our thing...
    sigemptyset(&newss);
@@ -1531,11 +1622,12 @@ static void calibrate_fields (void) {
 #ifndef USE_X_COLHDR
             if (P_MAXPFLGS <= f) continue;
 #endif
-            h = Fieldstab[f].head;
+            h = N_col(f);
+            len = (VARcol(f) ? (int)strlen(h) : Fieldstab[f].width) + COLPADSIZ;
             // oops, won't fit -- we're outta here...
-            if (Screen_cols < ((int)(s - w->columnhdr) + (int)strlen(h))) break;
-            if (VARcol(f)) { ++varcolcnt; w->varcolsz += strlen(h) - 1; }
-            s = scat(s, h);
+            if (Screen_cols < ((int)(s - w->columnhdr) + len)) break;
+            if (VARcol(f)) { ++varcolcnt; w->varcolsz += strlen(h); }
+            s = scat(s, fmtmk("%*.*s", len, len, h));
          }
 #ifndef USE_X_COLHDR
          if (X_XON == w->procflgs[i - 1]) --i;
@@ -1546,7 +1638,7 @@ static void calibrate_fields (void) {
             encountered, but that's ok because they won't be displayed anyway */
          w->maxpflgs = i;
          w->varcolsz += Screen_cols - strlen(w->columnhdr);
-         if (varcolcnt) w->varcolsz = w->varcolsz / varcolcnt;
+         if (varcolcnt) w->varcolsz /= varcolcnt;
 
          /* establish the field where all remaining fields would still
             fit within screen width, including a leading window number */
@@ -1557,9 +1649,10 @@ static void calibrate_fields (void) {
 #ifndef USE_X_COLHDR
             if (P_MAXPFLGS <= f) { w->endpflg = i; continue; }
 #endif
-            h = Fieldstab[f].head;
-            if (Screen_cols < ((int)(s - w->columnhdr) + (int)strlen(h))) break;
-            s = scat(s, h);
+            h = N_col(f);
+            len = (VARcol(f) ? (int)strlen(h) : Fieldstab[f].width) + COLPADSIZ;
+            if (Screen_cols < ((int)(s - w->columnhdr) + len)) break;
+            s = scat(s, fmtmk("%*.*s", len, len, h));
             w->endpflg = i;
          }
 #ifndef USE_X_COLHDR
@@ -1636,11 +1729,10 @@ static void display_fields (int focus, int extend) {
       char sbuf[xSUFX+1];
       int b = FLDviz(w, i);
       FLG_t f = FLDget(w, i);
-      const char *h, *e = (i == focus && extend) ? w->capclr_hdr : "";
+      const char *e = (i == focus && extend) ? w->capclr_hdr : "";
 
-      // advance past leading header spaces and prep sacrificial suffix
-      for (h = Fieldstab[f].head; ' ' == *h; ++h) ;
-      snprintf(sbuf, sizeof(sbuf), "= %s", Fieldstab[f].desc);
+      // prep sacrificial suffix
+      snprintf(sbuf, sizeof(sbuf), "= %s", N_fld(f));
 
       PUTT("%s%c%s%s %s%-7.7s%s%s%s %-*.*s%s"
          , tg2((i / rmax) * cmax, (i % rmax) + yRSVD)
@@ -1648,7 +1740,7 @@ static void display_fields (int focus, int extend) {
          , b ? w->cap_bold : Cap_norm
          , e
          , i == focus ? w->capclr_hdr : ""
-         , h
+         , Fieldstab[f].head
          , Cap_norm
          , b ? w->cap_bold : ""
          , e
@@ -1689,8 +1781,7 @@ static void fields_utility (void) {
    spewFI
 
    do {
-      // advance past leading spaces, if any
-      if (!h) for (h = Fieldstab[f].head; ' ' == *h; ++h) ;
+      if (!h) h = Fieldstab[f].head;
       display_fields(i, (p != NULL));
       putp(Cap_home);
       show_special(1, fmtmk(N_unq(FIELD_header_fmt)
@@ -1746,75 +1837,58 @@ static void fields_utility (void) {
 
 
         /*
-         * This routine exists just to consolidate all the messin' around
-         * with Fieldstab '.head' and '.fmts' members -- until we devise
-         * a more elegant soultion. */
+         * This routine exists just to consolidate all the messin'
+         * around with the Fieldstab array and some related stuff. */
 static void zap_fieldstab (void) {
-   static char fmts_pid[8];
-   static char fmts_cpu[8];
    static int once;
-   unsigned i, digits;
+   unsigned digits;
    char buf[8];
 
-   if (once) goto always;
-
-   Fieldstab[P_PID].head = "  PID ";
-   Fieldstab[P_PID].fmts = "%5d ";
-   Fieldstab[P_PPD].head = " PPID ";
-   Fieldstab[P_PPD].fmts = "%5d ";
-   Fieldstab[P_PGD].head = " PGRP ";
-   Fieldstab[P_PGD].fmts = "%5d ";
-   Fieldstab[P_SID].head = "  SID ";
-   Fieldstab[P_SID].fmts = "%5d ";
-   Fieldstab[P_TGD].head = " TGID ";
-   Fieldstab[P_TGD].fmts = "%5d ";
-   Fieldstab[P_TPG].head = "TPGID ";
-   Fieldstab[P_TPG].fmts = "%5d ";
-   if (5 < (digits = get_pid_digits())) {
-      if (10 < digits) error_exit(N_txt(FAIL_widepid_txt));
-      snprintf(fmts_pid, sizeof(fmts_pid), "%%%uu ", digits);
-      Fieldstab[P_PID].head = "       PID " + 10 - digits;
-      Fieldstab[P_PID].fmts = fmts_pid;
-      Fieldstab[P_PPD].head = "      PPID " + 10 - digits;
-      Fieldstab[P_PPD].fmts = fmts_pid;
-      Fieldstab[P_PGD].head = "      PGRP " + 10 - digits;
-      Fieldstab[P_PGD].fmts = fmts_pid;
-      Fieldstab[P_SID].head = "       SID " + 10 - digits;
-      Fieldstab[P_SID].fmts = fmts_pid;
-      Fieldstab[P_TGD].head = "      TGID " + 10 - digits;
-      Fieldstab[P_TGD].fmts = fmts_pid;
-      Fieldstab[P_TPG].head = "     TPGID " + 10 - digits;
-      Fieldstab[P_TPG].fmts = fmts_pid;
+   if (!once) {
+      Fieldstab[P_PID].width = Fieldstab[P_PPD].width
+         = Fieldstab[P_PGD].width = Fieldstab[P_SID].width
+         = Fieldstab[P_TGD].width = Fieldstab[P_TPG].width = 5;
+      if (5 < (digits = get_pid_digits())) {
+         if (10 < digits) error_exit(N_txt(FAIL_widepid_txt));
+         Fieldstab[P_PID].width = Fieldstab[P_PPD].width
+            = Fieldstab[P_PGD].width = Fieldstab[P_SID].width
+            = Fieldstab[P_TGD].width = Fieldstab[P_TPG].width = digits;
+      }
+      once = 1;
    }
-
-   for (i = 0; i < P_MAXPFLGS; i++)
-      Fieldstab[i].desc = N_fld(i);
-
-   once = 1;
 
    /*** hotplug_acclimated ***/
-always:
-   Fieldstab[P_CPN].head = "P ";
-   Fieldstab[P_CPN].fmts = "%1d ";
+
+   Fieldstab[P_CPN].width = 1;
    if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)smp_num_cpus))) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
-      snprintf(fmts_cpu, sizeof(fmts_cpu), "%%%ud ", digits);
-      Fieldstab[P_CPN].head = "    P " + 5 - digits;
-      Fieldstab[P_CPN].fmts = fmts_cpu;
+      Fieldstab[P_CPN].width = digits;
    }
 
+#ifdef PERCENTBOOST
    Cpu_pmax = 99.9;
-   Fieldstab[P_CPU].fmts = " %#4.1f ";
+   Fieldstab[P_CPU].width = 5;
    if (Rc.mode_irixps && smp_num_cpus > 1 && !Thread_mode) {
       Cpu_pmax = 100.0 * smp_num_cpus;
       if (smp_num_cpus > 10) {
          if (Cpu_pmax > 99999.0) Cpu_pmax = 99999.0;
-         Fieldstab[P_CPU].fmts = "%5.0f ";
       } else {
          if (Cpu_pmax > 999.9) Cpu_pmax = 999.9;
-         Fieldstab[P_CPU].fmts = "%#5.1f ";
       }
    }
+#else
+   Cpu_pmax = 99.9;
+   Fieldstab[P_CPU].width = 4;
+   if (Rc.mode_irixps && smp_num_cpus > 1 && !Thread_mode) {
+      Cpu_pmax = 100.0 * smp_num_cpus;
+      if (smp_num_cpus > 10) {
+         if (Cpu_pmax > 99999.0) Cpu_pmax = 99999.0;
+      } else {
+         if (Cpu_pmax > 999.9) Cpu_pmax = 999.9;
+      }
+      Fieldstab[P_CPU].width = 5;
+   }
+#endif
 
    // lastly, ensure we've got proper column headers...
    calibrate_fields();
@@ -2884,13 +2958,12 @@ static void file_writerc (void) {
    /* This is currently the one true prototype require by top.
       It is placed here, instead of top.h, so as to avoid a compiler
       warning when top_nls.c is compiled. */
-static void task_show (const WIN_t *q, const proc_t *p, char *ptr);
+static const char *task_show (const WIN_t *q, const proc_t *p);
 
 static void find_string (int ch) {
  #define reDUX (found) ? N_txt(WORD_another_txt) : ""
    static char str[SCREENMAX];
    static int found;
-   char buf[ROWMINSIZ];
    int i;
 
    if ('&' == ch && !str[0]) {
@@ -2902,9 +2975,9 @@ static void find_string (int ch) {
       found = 0;
    }
    if (str[0]) {
+      SETw(Curwin, INFINDS_xxx);
       for (i = Curwin->begtask; i < Frame_maxtask; i++) {
-         task_show(Curwin, Curwin->ppt[i], buf);
-         if (STRSTR(buf, str)) {
+         if (STRSTR(task_show(Curwin, Curwin->ppt[i]), str)) {
             found = 1;
             if (i == Curwin->begtask) continue;
             Curwin->begtask = i;
@@ -3523,8 +3596,8 @@ static void do_key (int ch) {
          'F' - likely
          'f' - likely
          'g' - likely
-         'H' - likely (%CPU .fmts)
-         'I' - likely (%CPU .fmts)
+         'H' - likely
+         'I' - likely
          'Z' - likely, if 'Curwin' changed when !Mode_altscr
          '-' - likely (restricted to Mode_altscr)
          '_' - likely (restricted to Mode_altscr)
@@ -3661,127 +3734,123 @@ static void summary_show (void) {
         /*
          * Build the information for a single task row and
          * display the results or return them to the caller. */
-static void task_show (const WIN_t *q, const proc_t *p, char *ptr) {
- #define makeCOL(va...)  snprintf(cbuf, sizeof(cbuf), f, ## va)
+static const char *task_show (const WIN_t *q, const proc_t *p) {
 #ifndef SCROLLVAR_NO
- #define makeVAR(v)  { const char *pv = v; f = VARCOL_fmts; \
-    if (!q->varcolbeg) makeCOL(q->varcolsz, q->varcolsz, pv); \
-    else makeCOL(q->varcolsz, q->varcolsz, q->varcolbeg < (int)strlen(pv) ? pv + q->varcolbeg : ""); }
+ #define makeVAR(v)  { const char *pv = v; \
+    if (!q->varcolbeg) cp = make_str(pv, q->varcolsz, Js); \
+    else cp = make_str(q->varcolbeg < (int)strlen(pv) ? pv + q->varcolbeg : "", q->varcolsz, Js); }
 #else
- #define makeVAR(v)  { f = VARCOL_fmts; makeCOL(q->varcolsz, q->varcolsz, v); }
+ #define makeVAR(v) cp = make_str(v, q->varcolsz, Js)
 #endif
  #define pages2K(n)  (unsigned long)( (n) << Pg2K_shft )
-   char rbuf[ROWMINSIZ], *rp;
-   int j, x;
+   static char rbuf[ROWMINSIZ];
+   char *rp;
+   int x;
 
    // we must begin a row with a possible window number in mind...
    *(rp = rbuf) = '\0';
    if (Rc.mode_altscr) rp = scat(rp, " ");
 
    for (x = 0; x < q->maxpflgs; x++) {
-      char        cbuf[SCREENMAX];
-      FLG_t       i = q->procflgs[x];           // support for our field/column
-      const char *f = Fieldstab[i].fmts;        // macro AND sometimes the fmt
-      int         s = Fieldstab[i].scale;       // string must be altered !
-      int         w = Fieldstab[i].width;
+      const char *cp;
+      FLG_t       i = q->procflgs[x];
+      #define S   Fieldstab[i].scale
+      #define W   Fieldstab[i].width
+      #define Js  0                             // left justify string data
+      #define Jn  1                             // right justify numeric data
 
       switch (i) {
 #ifndef USE_X_COLHDR
          // these 2 aren't real procflgs, they're used in column highlighting!
          case X_XON:
          case X_XOF:
-            if (ptr) continue;
-            /* treat running tasks specially - entire row may get highlighted
-               so we needn't turn it on and we MUST NOT turn it off */
-            if (!('R' == p->state && CHKw(q, Show_HIROWS)))
-               rp = scat(rp, X_XON == i ? q->capclr_rowhigh : q->capclr_rownorm);
-            continue;
+            cp = NULL;
+            if (!CHKw(q, INFINDS_xxx)) {
+               /* treat running tasks specially - entire row may get highlighted
+                  so we needn't turn it on and we MUST NOT turn it off */
+               if (!('R' == p->state && CHKw(q, Show_HIROWS)))
+                  cp = (X_XON == i ? q->capclr_rowhigh : q->capclr_rownorm);
+            }
+            break;
 #endif
          case P_CGR:
             makeVAR(p->cgroup[0]);
-            break;
          case P_CMD:
             makeVAR(forest_display(q, p));
             break;
          case P_COD:
-            makeCOL(scale_num(pages2K(p->trs), w, s));
+            cp = scale_unum(pages2K(p->trs), S, W, Jn);
             break;
          case P_CPN:
-            makeCOL(p->processor);
+            cp = make_num(p->processor, W, Jn);
             break;
          case P_CPU:
          {  float u = (float)p->pcpu * Frame_etscale;
             if (u > Cpu_pmax) u = Cpu_pmax;
-            makeCOL(u);
+            cp = scale_pcnt(u, W, Jn);
          }
             break;
          case P_DAT:
-            makeCOL(scale_num(pages2K(p->drs), w, s));
+            cp = scale_unum(pages2K(p->drs), S, W, Jn);
             break;
          case P_DRT:
-            makeCOL(scale_num((unsigned long)p->dt, w, s));
+            cp = scale_unum(p->dt, S, W, Jn);
             break;
          case P_ENV:
-            makeVAR(*p->environ);
+            makeVAR(p->environ[0]);
             break;
          case P_FLG:
-         {  char tmp[SMLBUFSIZ];
-            snprintf(tmp, sizeof(tmp), f, (long)p->flags);
-            for (j = 0; tmp[j]; j++) if ('0' == tmp[j]) tmp[j] = '.';
-            f = tmp;
-            makeCOL("");
-         }
+            cp = make_str(hex_make(p->flags, 1), W, Js);
             break;
          case P_FL1:
-            makeCOL(scale_num(p->maj_flt, w, s));
+            cp = scale_unum(p->maj_flt, S, W, Jn);
             break;
          case P_FL2:
-            makeCOL(scale_num(p->min_flt, w, s));
+            cp = scale_unum(p->min_flt, S, W, Jn);
             break;
          case P_FV1:
-            makeCOL(scale_num(p->maj_delta, w, s));
+            cp = scale_unum(p->maj_delta, S, W, Jn);
             break;
          case P_FV2:
-            makeCOL(scale_num(p->min_delta, w, s));
+            cp = scale_unum(p->min_delta, S, W, Jn);
             break;
          case P_GID:
-            makeCOL(p->egid);
+            cp = make_num(p->egid, W, Jn);
             break;
          case P_GRP:
-            makeCOL(p->egroup);
+            cp = make_str(p->egroup, W, Js);
             break;
          case P_MEM:
-            makeCOL((float)pages2K(p->resident) * 100 / kb_main_total);
+            cp = scale_pcnt((float)pages2K(p->resident) * 100 / kb_main_total, W, Jn);
             break;
          case P_NCE:
-            makeCOL((int)p->nice);
+            cp = make_num(p->nice, W, Jn);
             break;
 #ifdef OOMEM_ENABLE
          case P_OOA:
-            makeCOL((int)p->oom_adj);
+            cp = make_num(p->oom_adj, W, Jn);
             break;
          case P_OOM:
-            makeCOL((long)p->oom_score);
+            cp = make_num(p->oom_score, W, Jn);
             break;
 #endif
          case P_PGD:
-            makeCOL(p->pgrp);
+            cp = make_num(p->pgrp, W, Jn);
             break;
          case P_PID:
-            makeCOL(p->tid);
+            cp = make_num(p->tid, W, Jn);
             break;
          case P_PPD:
-            makeCOL(p->ppid);
+            cp = make_num(p->ppid, W, Jn);
             break;
          case P_PRI:
             if (-99 > p->priority || 999 < p->priority) {
-               f = " rt ";
-               makeCOL("");
+               cp = make_str("rt", W, Jn);
             } else
-               makeCOL((int)p->priority);
+               cp = make_num(p->priority, W, Jn);
             break;
          case P_RES:
-            makeCOL(scale_num(pages2K(p->resident), w, s));
+            cp = scale_unum(pages2K(p->resident), S, W, Jn);
             break;
          case P_SGD:
             makeVAR(p->supgid);
@@ -3790,89 +3859,91 @@ static void task_show (const WIN_t *q, const proc_t *p, char *ptr) {
             makeVAR(p->supgrp);
             break;
          case P_SHR:
-            makeCOL(scale_num(pages2K(p->share), w, s));
+            cp = scale_unum(pages2K(p->share), S, W, Jn);
             break;
          case P_SID:
-            makeCOL(p->session);
+            cp = make_num(p->session, W, Jn);
             break;
          case P_STA:
-            makeCOL(p->state);
+            cp = make_chr(p->state, W, Js);
             break;
          case P_SWP:
-            makeCOL(scale_num(p->vm_swap, w, s));
+            cp = scale_unum(p->vm_swap, S, W, Jn);
             break;
          case P_TGD:
-            makeCOL(p->tgid);
+            cp = make_num(p->tgid, W, Jn);
             break;
          case P_THD:
-            makeCOL(p->nlwp);
+            cp = make_num(p->nlwp, W, Jn);
             break;
          case P_TME:
          case P_TM2:
          {  TIC_t t = p->utime + p->stime;
             if (CHKw(q, Show_CTIMES)) t += (p->cutime + p->cstime);
-            makeCOL(scale_tics(t, w));
+            cp = scale_tics(t, W, Jn);
          }
             break;
          case P_TPG:
-            makeCOL(p->tpgid);
+            cp = make_num(p->tpgid, W, Jn);
             break;
          case P_TTY:
          {  char tmp[SMLBUFSIZ];
-            dev_to_tty(tmp, w, p->tty, p->tid, ABBREV_DEV);
-            makeCOL(tmp);
+            dev_to_tty(tmp, W, p->tty, p->tid, ABBREV_DEV);
+            cp = make_str(tmp, W, Js);
          }
             break;
          case P_UED:
-            makeCOL(p->euid);
+            cp = make_num(p->euid, W, Jn);
             break;
          case P_UEN:
-            makeCOL(p->euser);
+            cp = make_str(p->euser, W, Js);
             break;
          case P_URD:
-            makeCOL(p->ruid);
+            cp = make_num(p->ruid, W, Jn);
             break;
          case P_URN:
-            makeCOL(p->ruser);
+            cp = make_str(p->ruser, W, Js);
             break;
          case P_USD:
-            makeCOL(p->suid);
+            cp = make_num(p->suid, W, Jn);
             break;
          case P_USN:
-            makeCOL(p->suser);
+            cp = make_str(p->suser, W, Js);
             break;
          case P_VRT:
-            makeCOL(scale_num(pages2K(p->size), w, s));
+            cp = scale_unum(pages2K(p->size), S, W, Jn);
             break;
          case P_WCH:
          {  const char *u;
             if (No_ksyms)
-#ifdef CASEUP_HEXES
-               u = fmtmk("%08" KLF "X", p->wchan);
-#else
-               u = fmtmk("%08" KLF "x", p->wchan);
-#endif
+               u = hex_make(p->wchan, 0);
             else
                u = lookup_wchan(p->wchan, p->tid);
             makeVAR(u);
          }
             break;
          default:                 // keep gcc happy
+            continue;
             break;
 
-        } // end: switch 'procflag'
+      } // end: switch 'procflag'
 
-        rp = scat(rp, cbuf);
+      if (cp)
+         rp = scat(rp, cp);
+
+      #undef S
+      #undef W
+      #undef Js
+      #undef Jn
    } // end: for 'maxpflgs'
 
-   if (ptr)
-      strcpy(ptr, rbuf);
-   else
+   if (!CHKw(q, INFINDS_xxx)) {
       PUFF("\n%s%s%s", (CHKw(q, Show_HIROWS) && 'R' == p->state)
          ? q->capclr_rowhigh : q->capclr_rownorm
          , rbuf
          , q->eolcap);
- #undef makeCOL
+   }
+   return rbuf;
  #undef makeVAR
  #undef pages2K
 } // end: task_show
@@ -3910,14 +3981,14 @@ static int window_show (WIN_t *q, int wmax) {
       checking some stuff with each iteration and check it just once... */
    if (CHKw(q, Show_IDLEPS) && !q->usrseltyp)
       while (i < Frame_maxtask && lwin < wmax) {
-         task_show(q, q->ppt[i++], NULL);
+         task_show(q, q->ppt[i++]);
          ++lwin;
       }
    else
       while (i < Frame_maxtask && lwin < wmax) {
          if ((CHKw(q, Show_IDLEPS) || isBUSY(q->ppt[i]))
          && user_matched(q, q->ppt[i])) {
-            task_show(q, q->ppt[i], NULL);
+            task_show(q, q->ppt[i]);
             ++lwin;
          }
          ++i;
@@ -3992,6 +4063,7 @@ static void frame_make (void) {
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();
    Max_lines = (Screen_rows - Msg_row) - 1;
+   OFFw(Curwin, INFINDS_xxx);
 
    if (!Rc.mode_altscr) {
       // only 1 window to show so, piece o' cake

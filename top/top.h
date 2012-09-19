@@ -34,6 +34,7 @@
 //#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
+//#define PERCENTBOOST            /* enable extended precision for % fields  */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
@@ -120,6 +121,12 @@ char *strcasestr(const char *haystack, const char *needle);
 #define ROWMINSIZ  ( SCREENMAX +  4 * (CAPBUFSIZ + CLRBUFSIZ) )
 #define ROWMAXSIZ  ( SCREENMAX + 16 * (CAPBUFSIZ + CLRBUFSIZ) )
 
+   // space between task fields/columns
+#define COLPADSTR   " "
+#define COLPADSIZ   ( sizeof(COLPADSTR) - 1 )
+   // continuation ch when field/column truncated
+#define COLPLUSCH   '+'
+
    // support for keyboard stuff (cursor motion keystrokes, mostly)
 #define kbd_ENTER  '\n'
 #define kbd_ESC    '\033'
@@ -176,9 +183,9 @@ enum pflag {
 #endif
 };
 
-        /* The scaling 'type' used with scale_num() -- this is how
+        /* The scaling 'type' used with scale_unum() -- this is how
            the passed number is interpreted should scaling be necessary */
-enum scale_num {
+enum scale_unum {
    SK_no, SK_Kb, SK_Mb, SK_Gb, SK_Tb
 };
 
@@ -196,12 +203,11 @@ typedef int (*QFP_t)(const void *, const void *);
            in a variety of display roles. */
 typedef struct FLD_t {
    const char   *head;          // name for col heads + toggle/reorder fields
-   const char   *fmts;          // snprintf format string for field display
-   const int     width;         // field width, if applicable
-   const int     scale;         // scale_num type, if applicable
+   int           width;         // field width, if applicable
+   const int     scale;         // scale_unum type, if applicable
+   const int     align;         // the default column alignment flag
    const QFP_t   sort;          // sort function
    const int     lflg;          // PROC_FILLxxx flag(s) needed by this field
-   const char   *desc;          // description for fields management
 } FLD_t;
 
 #ifdef OFF_HST_HASH
@@ -281,6 +287,7 @@ typedef struct CPU_t {
 #define Show_FOREST  0x000002     // 'V' - show cmd/cmdlines with ascii art
 #define Qsrt_NORMAL  0x000004     // 'R' - reversed column sort (high to low)
         // these flag(s) have no command as such - they're for internal use
+#define INFINDS_xxx  0x010000     // build rows for find_string, not display
 #define EQUWINS_xxx  0x000001     // rebalance all wins & tasks (off i,n,u/U)
 
         // Default flags if there's no rcfile to provide user customizations
@@ -387,7 +394,7 @@ typedef struct WIN_t {
 #define ENUpos(w,E)  ((int)((FLG_t*)memchr((w)->pflgsall, E, (w)->totpflgs) - (w)->pflgsall))
 
         // Support for variable width columns (and potentially scrolling too)
-#define VARcol(E)    (NULL == Fieldstab[E].fmts)
+#define VARcol(E)    (-1 == Fieldstab[E].width)
 #ifndef SCROLLVAR_NO
 #ifdef USE_X_COLHDR
 #define VARright(w)  (1 == w->maxpflgs && VARcol(w->procflgs[0]))
@@ -544,10 +551,6 @@ typedef struct WIN_t {
       "Usr", USR_FIELDS } \
    } }
 
-        /* The format string used with variable width columns --
-           see 'calibrate_fields' for supporting logic. */
-#define VARCOL_fmts  "%-*.*s "
-
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
 #define LOADAV_line  "%s -%s\n"
@@ -601,10 +604,17 @@ typedef struct WIN_t {
 /*------  Small Utility routines  ----------------------------------------*/
 //atic float         get_float (const char *prompt);
 //atic int           get_int (const char *prompt);
-//atic const char   *scale_num (unsigned long num, const int width, const int type);
-//atic const char   *scale_tics (TIC_t tics, const int width);
+//atic inline const char *hex_make (KLONG num, int noz);
 //atic const char   *user_certify (WIN_t *q, const char *str, char typ);
 //atic inline int    user_matched (WIN_t *q, const proc_t *p);
+/*------  Basic Formatting support  --------------------------------------*/
+//atic inline const char *justify_pad (const char *str, int width, int justr);
+//atic const char   *make_chr (const char ch, int width, int justr);
+//atic const char   *make_num (long num, int width, int justr);
+//atic const char   *make_str (const char *str, int width, int justr);
+//atic const char   *scale_pcnt (float num, int width, int justr);
+//atic const char   *scale_tics (TIC_t tics, int width, int justr);
+//atic const char   *scale_unum (unsigned long num, int type, int width, int justr);
 /*------  Fields Management support  -------------------------------------*/
 /*atic FLD_t         Fieldstab[] = { ... }                                */
 //atic void          adj_geometry (void);
@@ -657,7 +667,7 @@ typedef struct WIN_t {
 //atic void          do_key (int ch);
 //atic void          summary_hlp (CPU_t *cpu, const char *pfx);
 //atic void          summary_show (void);
-//atic void          task_show (const WIN_t *q, const proc_t *p, char *ptr);
+//atic const char   *task_show (const WIN_t *q, const proc_t *p);
 //atic int           window_show (WIN_t *q, int wmax);
 /*------  Entry point plus two  ------------------------------------------*/
 //atic void          frame_hlp (int wix, int max);
