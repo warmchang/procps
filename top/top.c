@@ -1329,9 +1329,10 @@ end_justifies:
 static FLD_t Fieldstab[] = {
    // a temporary macro, soon to be undef'd...
  #define SF(f) (QFP_t)SCB_NAME(f)
-   // these identifiers reflect the default column alignment
- #define A_right 1
- #define A_left  0
+   // these identifiers reflect the default column alignment but they really
+   // contain the WIN_t flag used to check/change justification at run-time!
+ #define A_right Show_JRNUMS       /* toggled with upper case 'J' */
+ #define A_left  Show_JRSTRS       /* toggled with lower case 'j' */
 
 /* .width anomalies:
         entries with a -1 .width represent variable width columns
@@ -2437,17 +2438,20 @@ static void configs_read (void) {
             , &w->rc.headclr, &w->rc.taskclr))
                goto default_or_error;
 
-         if (RCF_VERSION_ID != Rc.id) {
-            if (config_cvt(w))
-               goto default_or_error;
-         } else {
-            if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
-               goto default_or_error;
-            for (x = 0; x < P_MAXPFLGS; ++x) {
-               int f = FLDget(w, x);
-               if (P_MAXPFLGS <= f)
+         switch (Rc.id) {
+            case 'f':                  // 3.3.0 thru 3.3.3 (procps-ng)
+               SETw(w, Show_JRNUMS);   //    fall through !
+            case 'g':                  // current RCF_VERSION_ID
+               if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
                   goto default_or_error;
-            }
+               for (x = 0; x < P_MAXPFLGS; ++x)
+                  if (P_MAXPFLGS <= FLDget(w, x))
+                     goto default_or_error;
+               break;
+            default:                   // 3.2.8 (former procps)
+               if (config_cvt(w))
+                  goto default_or_error;
+               break;
          }
       } // end: for (GROUPSMAX)
 
@@ -3211,6 +3215,12 @@ static void keys_task (int ch) {
       case 'i':
          VIZTOGw(w, Show_IDLEPS);
          break;
+      case 'J':
+         VIZTOGw(w, Show_JRNUMS);
+         break;
+      case 'j':
+         VIZTOGw(w, Show_JRSTRS);
+         break;
       case 'R':
 #ifdef TREE_NORESET
          if (!CHKw(w, Show_FOREST)) VIZTOGw(w, Qsrt_NORMAL);
@@ -3561,7 +3571,7 @@ static void do_key (int ch) {
       { keys_summary,
          { '1', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,
-         { '#', '<', '>', 'b', 'c', 'i', 'n', 'R', 'S'
+         { '#', '<', '>', 'b', 'c', 'i', 'J', 'j', 'n', 'R', 'S'
          , 'U', 'u', 'V', 'x', 'y', 'z', '\0' } },
       { keys_window,
          { '+', '-', '=', '_', '&', 'A', 'a', 'G', 'L', 'w'
@@ -3599,6 +3609,8 @@ static void do_key (int ch) {
          'g' - likely
          'H' - likely
          'I' - likely
+         'J' - always
+         'j' - always
          'Z' - likely, if 'Curwin' changed when !Mode_altscr
          '-' - likely (restricted to Mode_altscr)
          '_' - likely (restricted to Mode_altscr)
@@ -3757,8 +3769,8 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
       FLG_t       i = q->procflgs[x];
       #define S   Fieldstab[i].scale
       #define W   Fieldstab[i].width
-      #define Js  0                             // left justify string data
-      #define Jn  1                             // right justify numeric data
+      #define Js  CHKw(q, Show_JRSTRS)
+      #define Jn  CHKw(q, Show_JRNUMS)
 
       switch (i) {
 #ifndef USE_X_COLHDR

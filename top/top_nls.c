@@ -413,8 +413,8 @@ static void build_uniq_nlstab (void) {
       "  f,F       Manage Fields: add/remove; change order; select sort field\n"
       "\n"
       "  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n" \
-      "  R,H,V   . Toggle: '~1R~2' norm/rev sort; '~1H~2' show threads; '~1V~2' forest view\n"
-      "  c,i,S   . Toggle: '~1c~2' cmd name/line; '~1i~2' idle tasks; '~1S~2' cumulative time\n"
+      "  R,H,V,J . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1V~2' Forest view; '~1J~2' Num justify\n"
+      "  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; '~1j~2' Str justify\n"
       "  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
       "  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
       "  u,U     . Show: '~1u~2' effective user; '~1U~2' real, saved, file or effective user\n"

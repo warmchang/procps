@@ -285,13 +285,16 @@ typedef struct CPU_t {
 #define Show_TASKON  0x000010     // '-' - tasks showable when Mode_altscr
 #define Show_FOREST  0x000002     // 'V' - show cmd/cmdlines with ascii art
 #define Qsrt_NORMAL  0x000004     // 'R' - reversed column sort (high to low)
+#define Show_JRSTRS  0x040000     // 'j' - right justify "string" data cols
+#define Show_JRNUMS  0x020000     // 'J' - right justify "numeric" data cols
         // these flag(s) have no command as such - they're for internal use
 #define INFINDS_xxx  0x010000     // build rows for find_string, not display
 #define EQUWINS_xxx  0x000001     // rebalance all wins & tasks (off i,n,u/U)
 
         // Default flags if there's no rcfile to provide user customizations
 #define DEF_WINFLGS ( View_LOADAV | View_STATES | View_CPUSUM | View_MEMORY \
-   | Show_HIBOLD | Show_HIROWS | Show_IDLEPS | Show_TASKON | Qsrt_NORMAL )
+   | Show_HIBOLD | Show_HIROWS | Show_IDLEPS | Show_TASKON | Show_JRNUMS \
+   | Qsrt_NORMAL )
 
         /* These are used to direct wins_reflag */
 enum reflag_enum {
@@ -506,7 +509,7 @@ typedef struct WIN_t {
         /* Configuration files support */
 #define SYS_RCFILESPEC  "/etc/toprc"
 #define RCF_EYECATCHER  "Config File (Linux processes with windows)\n"
-#define RCF_VERSION_ID  'f'
+#define RCF_VERSION_ID  'g'
 
         /* The default fields displayed and their order, if nothing is
            specified by the loser, oops user.
