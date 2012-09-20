@@ -86,7 +86,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "June 2012" "procps-ng" "User Commands"
+.TH TOP 1 "September 2012" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -158,6 +158,7 @@ The remaining Table of Contents
        a. Kernel Magic
        b. Bouncing Windows
        c. The Big Bird Window
+       d. The Ol' Switcheroo
     8. BUGS, 9. HISTORY Former top, 10. AUTHOR, 11. SEE Also
 .Ed
 
@@ -227,6 +228,8 @@ All are explained in detail in the sections that follow.
        'b' - Bold hilite      On\ \ (not 'reverse')
      * 'c' - Command line     Off (name, not cmdline)
      * 'i' - Idle tasks       On\ \ (show all tasks)
+       'J' - Num align right  On\ \ (not left justify)
+       'j' - Str align right  Off (not right justify)
        'R' - Reverse sort     On\ \ (pids high-to-low)
      * 'S' - Cumulative time  Off (no, dead children)
      * 'u' - User filter      Off (show euid only)
@@ -821,7 +824,7 @@ depending on the context in which they are issued.
   4b.\fI Summary-Area-Commands \fR
         C, l, t, 1, m
   4c.\fI Task-Area-Commands \fR
-        Appearance:  b, x, y, z
+        Appearance:  b, J, j, x, y, z
         Content:     c, f, F, S, u, U, V
         Size:        #, i, n
         Sorting:     <, >, f, F, R
@@ -1026,8 +1029,26 @@ The \*(TA \*(CIs are\fB never available\fR in \*(AM\fI if\fR the \*(CW's
 .TP 2
 .\" ..................................................
 .B APPEARANCE\fR of \*(TW
+.PD 0
+.TP 7
+\ \ \'\fBJ\fR\' :\fIJustify-Numeric-Columns\fR toggle \fR
+Alternates between right-justified (the default) and
+left-justified numeric data.
+If the numeric data completely fills the available column, this
+\*(CT may impact the column header only.
+
+.TP 7
+\ \ \'\fBj\fR\' :\fIJustify-Character-Columns\fR toggle \fR
+Alternates between left-justified (the default) and
+right-justified character data.
+If the character data completely fills the available column, this
+\*(CT may impact the column header only.
+
+.PP
+.RS +2
 The following commands will also be influenced by the state of the
 global 'B' (bold enable) toggle.
+.RS -2
 
 .TP 7
 \ \ \'\fBb\fR\' :\fIBold/Reverse\fR toggle \fR
@@ -1634,6 +1655,33 @@ using the '_' \*(CT.
 Then ponder this:
 .br
    is \*(We fibbing or telling honestly your imposed truth?
+
+.\" ......................................................................
+.SS 7d. The Ol' Switcheroo
+.\" ----------------------------------------------------------------------
+This stupid trick works best without \*(AM, since justification is active
+on a per window basis.
+
+.jBu
+Start \*(We and make COMMAND the last (rightmost) column displayed.
+If necessary, use the 'c' \*(CT to display command lines and ensure
+that forest view mode is active with the 'V' \*(CT.
+
+Then use the up/down arrow keys to position the display so that some
+truncated command lines are shown ('+' in last position).
+You may have to resize your xterm to produce truncation.
+
+Lastly, use the 'j' \*(CT to make the COMMAND column right justified.
+
+Now use the right arrow key to reach the COMMAND column.
+Continuing with the right arrow key, watch closely the direction
+of travel for the command lines being shown.
+
+.br
+   some lines travel left, while others travel right
+
+   eventually all lines will Switcheroo, and move right
+
 .PP
 
 .\" ----------------------------------------------------------------------
