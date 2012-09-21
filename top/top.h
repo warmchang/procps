@@ -327,6 +327,7 @@ typedef struct RCF_t {
    float  delay_time;           // 'd'/'s' - How long to sleep twixt updates
    int    win_index;            // Curwin, as index
    RCW_t  win [GROUPSMAX];      // a 'WIN_t.rc' for each window
+   int    fixed_widest;         // 'X' - wider non-scalable col addition
 } RCF_t;
 
         /* This structure stores configurable information for each window.
@@ -551,7 +552,7 @@ typedef struct WIN_t {
    { P_UEN, DEF_WINFLGS, 0, \
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
-   } }
+   }, 0 }
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */

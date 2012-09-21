@@ -299,7 +299,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[OFF_one_word_txt] = _("Off");
 /* Translation Hint: Only the following words should be translated
    .                 delay, limit, user, cols (abbreviation for columns)*/
-   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcHiSs -d delay -n limit -u|U user | -p pid[,pid] -w [cols]");
+   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcHiSs -d delay -n limit -u|U user -p pid[,pid] -w [cols]");
    Norm_nlstab[FAIL_statget_txt] = _("failed /proc/stat read");
    Norm_nlstab[FOREST_modes_fmt] = _("Forest mode %s");
    Norm_nlstab[FAIL_tty_get_txt] = _("failed tty get");
@@ -367,6 +367,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[FIND_no_next_txt] = _("Locate next inactive, use \"L\"");
    Norm_nlstab[GET_find_str_txt] = _("Locate string");
    Norm_nlstab[FIND_no_find_fmt] = _("%s\"%s\" not found");
+   Norm_nlstab[XTRA_fixwide_fmt] = _("fixed-width incr is %d, change to (0 = default)");
 #ifndef WARN_CFG_OFF
    Norm_nlstab[XTRA_warncfg_txt] = _("Overwrite existing old style rcfile?");
 #endif
@@ -410,7 +411,7 @@ static void build_uniq_nlstab (void) {
       "  Z~5,~1B~5       Global: '~1Z~2' change color mappings; '~1B~2' disable/enable bold\n"
       "  l,t,m     Toggle Summaries: '~1l~2' load avg; '~1t~2' task/cpu stats; '~1m~2' mem info\n"
       "  1,I       Toggle SMP view: '~11~2' single/separate states; '~1I~2' Irix/Solaris mode\n"
-      "  f,F       Manage Fields: add/remove; change order; select sort field\n"
+      "  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase fixed-width\n"
       "\n"
       "  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n" \
       "  R,H,V,J . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1V~2' Forest view; '~1J~2' Num justify\n"

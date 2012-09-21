@@ -1892,6 +1892,14 @@ static void zap_fieldstab (void) {
    }
 #endif
 
+   /* and accommodate optional wider non-scalable columns... */
+   Fieldstab[P_UED].width = Fieldstab[P_URD].width
+      = Fieldstab[P_USD].width = Fieldstab[P_GID].width
+      = Rc.fixed_widest ? 5 + Rc.fixed_widest : 5;
+   Fieldstab[P_UEN].width = Fieldstab[P_URN].width
+      = Fieldstab[P_USN].width = Fieldstab[P_GRP].width
+      = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
+
    // lastly, ensure we've got proper column headers...
    calibrate_fields();
 } // end: zap_fieldstab
@@ -2375,15 +2383,14 @@ static int config_cvt (WIN_t *q) {
          * 'SYS_RCFILESPEC' contains two lines consisting of the secure
          *   mode switch and an update interval.  It's presence limits what
          *   ordinary users are allowed to do.
-         * 'Rc_name' contains multiple lines - 2 global + 3 per window.
-         *   line 1: an eyecatcher and creating program/alias name
-         *   line 2: an id, Mode_altcsr, Mode_irixps, Delay_time and Curwin.
-         *           If running in secure mode via the /etc/rcfile,
-         *           the 'delay time' will be ignored except for root.
-         * For each of the 4 windows:
-         *   line a: contains w->winname, fieldscur
-         *   line b: contains w->winflags, sortindx, maxtasks
-         *   line c: contains w->summclr, msgsclr, headclr, taskclr */
+         * 'Rc_name' contains multiple lines - 3 global + 3 per window.
+         *   line 1  : an eyecatcher and creating program/alias name
+         *   line 2  : an id, Mode_altcsr, Mode_irixps, Delay_time, Curwin.
+         *   For each of the 4 windows:
+         *     line a: contains w->winname, fieldscur
+         *     line b: contains w->winflags, sortindx, maxtasks
+         *     line c: contains w->summclr, msgsclr, headclr, taskclr
+         *   line 15 : Fixed_widest */
 static void configs_read (void) {
    float tmp_delay = DEF_DELAY;
    char fbuf[LRGBUFSIZ];
@@ -2454,6 +2461,10 @@ static void configs_read (void) {
                break;
          }
       } // end: for (GROUPSMAX)
+
+      // any new addition(s) last, for older rcfiles compatibility...
+      fscanf(fp, "Fixed_widest=%d\n", &Rc.fixed_widest);
+      if (0 > Rc.fixed_widest) Rc.fixed_widest = 0;
 
       fclose(fp);
    } // end: if (fp)
@@ -2954,6 +2965,10 @@ static void file_writerc (void) {
          , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
          , Winstk[i].rc.headclr, Winstk[i].rc.taskclr);
    }
+
+   // any new addition(s) last, for older rcfiles compatibility...
+   fprintf(fp, "Fixed_widest=%d\n", Rc.fixed_widest);
+
    fclose(fp);
    show_msg(fmtmk(N_fmt(WRITE_rcfile_fmt), Rc_name));
 } // end: file_writerc
@@ -3100,6 +3115,12 @@ static void keys_global (int ch) {
                   show_msg(fmtmk(N_fmt(FAIL_re_nice_fmt)
                      , pid, val, strerror(errno)));
          }
+         break;
+      case 'X':
+      {  int wide = get_int(fmtmk(N_fmt(XTRA_fixwide_fmt), Rc.fixed_widest));
+         if (-1 < wide) Rc.fixed_widest = wide;
+         else if (INT_MIN < wide && 0 > wide) show_msg(N_txt(BAD_integers_txt));
+      }
          break;
       case 'Z':
          wins_colors();
@@ -3566,7 +3587,7 @@ static void do_key (int ch) {
       char keys[SMLBUFSIZ];
    } key_tab[] = {
       { keys_global,
-         { '?', 'B', 'd', 'F', 'f', 'g', 'H', 'h', 'I', 'k', 'r', 's', 'Z'
+         { '?', 'B', 'd', 'F', 'f', 'g', 'H', 'h', 'I', 'k', 'r', 's', 'X', 'Z'
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '1', 'C', 'l', 'm', 't', '\0' } },
