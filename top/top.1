@@ -52,6 +52,9 @@
 .ds CF configuration file
 .ds CG \'current\' window/field group
 .ds CI interactive command
+\#                           - Note: our 'Command Line' used in 2 places
+.ds CL \-\fBhv\fR|\-\fBbcHiSs\fR \-\fBd\fR delay \-\fBn\fR limit \
+\-\fBu\fR|\fBU\fR user \-\fBp\fR pid[,pid] \-\fBw\fR [cols] \fR
 .ds CO command\-line option
 .ds CT command toggle
 .ds CW \'current\' window
@@ -97,8 +100,8 @@ top \- display Linux processes
 .\" ----------------------------------------------------------------------
 .SH SYNOPSIS
 .\" ----------------------------------------------------------------------
-\*(WE \-\fBhv\fR|\-\fBbcHisS\fR \-\fBd\fI delay\fR \-\fBn\fI limit\fR
-\-\fBu\fR|\fBU\fI user\fR \-\fBp\fI pid\fR \-\fBw\fR [\fIcols\fR] \fR
+\*(WE \*(CL
+
 
 The traditional switches '-' and whitespace are optional.
 
@@ -244,8 +247,7 @@ All are explained in detail in the sections that follow.
 .\" ----------------------------------------------------------------------
 The command-line syntax for \*(We consists of:
 
-  \-\fBhv\fR | \-\fBbcHisS\fR \-\fBd\fI delay\fR \-\fBn\fI limit\fR
-\-\fBu\fR|\fBU\fI user\fR | \-\fBp\fI pid\fR \-\fBw\fR [\fIcols\fR] \fR
+  \*(CL
 
 The typically mandatory switches ('-') and even whitespace are completely
 optional.
@@ -820,7 +822,7 @@ depending on the context in which they are issued.
 
 .Bd -literal
   4a.\fI Global-Commands \fR
-        <Ent/Sp> ?, =, A, B, d, g, h, H, I, k, q, r, s, W, Z
+        <Ent/Sp> ?, =, A, B, d, g, h, H, I, k, q, r, s, W, X, Z
   4b.\fI Summary-Area-Commands \fR
         C, l, t, 1, m
   4c.\fI Task-Area-Commands \fR
@@ -961,6 +963,26 @@ This will save all of your options and toggles plus the current
 display mode and delay time.
 By issuing this command just before quitting \*(We, you will be able
 restart later in exactly that same state.
+
+.TP 7
+\ \ \'\fBX\fR\' :\fIExtra-Fixed-Width \fR
+Some fields are fixed width and not scalable.
+As such, they are subject to truncation which would be indicated
+by a '+' in the last position.
+
+This \*(CI can be used to alter the widths for the following fields:
+
+.Bd -literal
+   \fI field  default    field  default \fR
+    GID       5       GROUP     8
+    RUID      5       RUSER     8
+    SUID      5       SUSER     8
+    UID       5       USER      8
+.Ed
+
+You will be prompted for the amount to be added to the default
+widths shown above.
+Entering zero forces a return to those defaults.
 
 .TP 7
 \ \ \'\fBZ\fR\' :\fIChange-Color-Mapping \fR
@@ -1556,6 +1578,7 @@ Here is the general layout:
     per ea   # line a: winname,fieldscur
     window   # line b: winflags,sortindx,maxtasks
       "      # line c: summclr,msgsclr,headclr,taskclr
+    global   # last  : fixed-width incr
 .Ed
 
 If the $HOME variable is not present, \*(We will try to write the
