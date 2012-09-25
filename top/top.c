@@ -1382,7 +1382,7 @@ static FLD_t Fieldstab[] = {
    {     4,  SK_no,  A_right,  SF(DRT),  L_statm   },
    {     1,     -1,  A_right,  SF(STA),  L_EITHER  },
    {    -1,     -1,  A_left,   SF(CMD),  L_EITHER  },
-   {    -1,     -1,  A_left,   SF(WCH),  L_stat    },
+   {    10,     -1,  A_left,   SF(WCH),  L_stat    },
    {     8,     -1,  A_left,   SF(FLG),  L_stat    },
    {    -1,     -1,  A_left,   SF(CGR),  L_CGROUP  },
    {    -1,     -1,  A_left,   SF(SGD),  L_status  },
@@ -1901,6 +1901,8 @@ static void zap_fieldstab (void) {
       = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
    Fieldstab[P_TTY].width
       = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
+   Fieldstab[P_WCH].width
+      = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
 
    // lastly, ensure we've got proper column headers...
    calibrate_fields();
@@ -3955,7 +3957,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
                u = hex_make(p->wchan, 0);
             else
                u = lookup_wchan(p->wchan, p->tid);
-            makeVAR(u);
+            cp = make_str(u, W, Js);
          }
             break;
          default:                 // keep gcc happy
