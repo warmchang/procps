@@ -1899,6 +1899,8 @@ static void zap_fieldstab (void) {
    Fieldstab[P_UEN].width = Fieldstab[P_URN].width
       = Fieldstab[P_USN].width = Fieldstab[P_GRP].width
       = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
+   Fieldstab[P_TTY].width
+      = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
 
    // lastly, ensure we've got proper column headers...
    calibrate_fields();
