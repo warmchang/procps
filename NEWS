@@ -4,7 +4,12 @@ procps-ng-3.3.4
   * w get -i option to display IP addresses
   * watch 8bit fixes Debian #675069
   * Fixed FTBFS for non-linux Debian #677055
-  * pkill -u <uid> doesnt need space Debian #676239
+  * pkill -u <uid> doesn't need space Debian #676239
+  * top enables intra-column horizontal scrolling
+  * top can display a task's environment
+  * top can display major/minor pg fault deltas, Debian ##84992
+  * top provides additional control over column widths
+  * top offers user controlled left/right justification
 
 procps-ng-3.3.3
 ---------------
