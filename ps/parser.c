@@ -284,7 +284,7 @@ static const char *parse_sysv_option(void){
       thread_flags |= TF_U_L;
 //      format_modifiers |= FM_L;
       break;
-    case 'M':  // typically the SE Linux context
+    case 'M':  // typically the SELinux context
       trace("-M print security label for Mandatory Access Control\n");
       format_modifiers |= FM_M;
       break;
