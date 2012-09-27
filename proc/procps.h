@@ -33,7 +33,7 @@
 //
 #if defined(k64test) || (defined(_ABIN32) && _MIPS_SIM == _ABIN32)
 #define KLONG long long    // not typedef; want "unsigned KLONG" to work
-#define KLF "L"
+#define KLF "ll"
 #define STRTOUKL strtoull
 #else
 #define KLONG long

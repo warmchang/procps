@@ -5,7 +5,7 @@
 .\" Licensed under version 2 of the GNU General Public License.
 .\" Written by Albert Cahalan.
 .\"
-.TH PMAP "1" "June 2011" "procps-ng" "User Commands"
+.TH PMAP "1" "September 2012" "procps-ng" "User Commands"
 .SH NAME
 pmap \- report memory map of a process
 .SH SYNOPSIS
@@ -31,6 +31,13 @@ and
 .I high
 address range.  Notice that the low and high arguments are single string
 separated with comma.
+.TP
+\fB\-X\fR
+Show even more details than the \fB\-x\fR option. WARNING: format changes
+according to \fI/proc/PID/smaps\fR
+.TP
+\fB\-XX\fR
+Show everything the kernel provides
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.

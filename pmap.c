@@ -29,6 +29,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include "c.h"
 #include "fileutils.h"
@@ -46,6 +47,9 @@ static void __attribute__ ((__noreturn__))
 		_(" %s [options] pid [pid ...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_("  -x, --extended              show details\n"
+		"  -X                          show even more details\n"
+		"            WARNING: format changes according to /proc/PID/smaps\n"
+		"  -XX                         show everything the kernel provides\n"
 		"  -d, --device                show the device format\n"
 		"  -q, --quiet                 do not display header and footer\n"
 		"  -A, --range=<low>[,<high>]  limit results to the given range\n"), out);
@@ -56,12 +60,16 @@ static void __attribute__ ((__noreturn__))
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+static char mapbuf[1024];
+static char cmdbuf[512];
+
 static unsigned KLONG range_low;
 static unsigned KLONG range_high = ~0ull;
 
 static int d_option;
 static int q_option;
 static int x_option;
+static int X_option;
 
 static unsigned shm_minor = ~0u;
 
@@ -159,11 +167,183 @@ static char *mapping_name(proc_t * p, unsigned KLONG addr,
 	return cp;
 }
 
+
+#define DETAIL_LENGTH 32
+#define DETL "31"		/* for format strings */
+#define NUM_LENGTH 21		/* python says: len(str(2**64)) == 20 */
+#define NUML "20"		/* for format strings */
+
+struct listnode {
+	char description[DETAIL_LENGTH];
+	char value_str[NUM_LENGTH];
+	unsigned KLONG value;
+	unsigned KLONG total;
+	int max_width;
+	struct listnode *next;
+};
+
+static struct listnode *listhead=NULL, *listtail=NULL;
+
+
+static int is_unimportant (char *s)
+{
+	if (strcmp(s, "AnonHugePages") == 0) return 1;
+	if (strcmp(s, "KernelPageSize") == 0) return 1;
+	if (strcmp(s, "MMUPageSize") == 0) return 1;
+	if (strcmp(s, "Shared_Dirty") == 0) return 1;
+	if (strcmp(s, "Private_Dirty") == 0) return 1;
+	if (strcmp(s, "Shared_Clean") == 0) return 1;
+	if (strcmp(s, "Private_Clean") == 0) return 1;
+	return 0;
+}
+
+static void print_extended_maps (FILE *f)
+{
+	struct listnode *listnode;
+	char flags[DETAIL_LENGTH], map_desc[128],
+	     detail_desc[DETAIL_LENGTH], value_str[NUM_LENGTH],
+	     start[NUM_LENGTH], end[NUM_LENGTH],
+	     offset[NUM_LENGTH], inode[NUM_LENGTH],
+	     dev[64], fmt_str[64];
+	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0;
+	int nfields, firstmapping, footer_gap, i;
+	unsigned KLONG value;
+	char *ret;
+	char c;
+
+	ret = fgets(mapbuf, sizeof mapbuf, f);
+	firstmapping = 1;
+	while (ret != NULL) {
+		/* === READ MAPPING === */
+		map_desc[0] = '\0';
+		nfields = sscanf(mapbuf,
+				 "%"NUML"[0-9a-f]-%"NUML"[0-9a-f] "
+				 "%"DETL"s %"NUML"[0-9a-f] "
+				 "%63[0-9a-f:] %"NUML"s %127[^\n]%c",
+				 start, end, flags, offset,
+				 dev, inode, map_desc, &c);
+		/* Must read at least up to inode, else something has changed! */
+		if (nfields < 6)
+			xerrx(EXIT_FAILURE, _("Unknown format in smaps file!"));
+		/* If line too long we dump everything else. */
+		while (c != '\n') {
+			ret = fgets(mapbuf, sizeof mapbuf, f);
+			c = mapbuf[strlen(mapbuf) - 1];
+		}
+		/* Store maximum widths for printing nice later */
+		if (strlen(start) > maxw1) 	maxw1 = strlen(start);
+		if (strlen(flags) > maxw2) 	maxw2 = strlen(flags);
+		if (strlen(offset) > maxw3) 	maxw3 = strlen(offset);
+		if (strlen(dev) > maxw4) 	maxw4 = strlen(dev);
+		if (strlen(inode) > maxw5) 	maxw5 = strlen(inode);
+
+		if (7 > maxw5) 	maxw5 = 7;
+
+		ret = fgets(mapbuf, sizeof mapbuf, f);
+		nfields = sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
+				 detail_desc, value_str, &c);
+		listnode = listhead;
+		/* === READ MAPPING DETAILS === */
+		while (ret != NULL && nfields == 2) {
+
+			if (X_option < 2 && is_unimportant(detail_desc))
+				goto loop_end;
+			/* === CREATE LIST AND FILL description FIELD === */
+			if (listnode == NULL) {
+				assert(firstmapping == 1);
+				listnode = calloc(1, sizeof *listnode);
+				if (listhead == NULL) {
+					assert(listtail == NULL);
+					listhead = listnode;
+				} else {
+					listtail->next = listnode;
+				}
+				listtail = listnode;
+				/* listnode was calloc()ed so all fields are already NULL! */
+				strcpy(listnode->description, detail_desc);
+				if (strlen(detail_desc) > 7)
+					listnode->max_width = strlen(detail_desc);
+				else
+					listnode->max_width = 7;
+			} else {
+			/* === LIST EXISTS  === */
+				if ((listnode == NULL) ||
+				    (strcmp(listnode->description, detail_desc) != 0))
+					xerrx(EXIT_FAILURE, "ERROR: %s %s",
+					      _("inconsistent detail field in smaps file, line:\n"),
+					      mapbuf);
+			}
+			strcpy(listnode->value_str, value_str);
+			sscanf(value_str, "%"KLF"u", &listnode->value);
+			listnode->total += listnode->value;
+			if (strlen(value_str) > listnode->max_width)
+				listnode->max_width = strlen(value_str);
+			listnode = listnode->next;
+loop_end:
+			ret = fgets(mapbuf, sizeof mapbuf, f);
+			nfields = sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
+					 detail_desc, value_str, &c);
+		}
+		/* === PRINT THIS MAPPING === */
+		/* Print header */
+		if (firstmapping && !q_option) {
+			if (strlen("Address") > maxw1) 	maxw1 = strlen("Address");
+			if (strlen("Flags") > maxw2) 	maxw2 = strlen("Flags");
+			if (strlen("Offset") > maxw3) 	maxw3 = strlen("Offset");
+			if (strlen("Device") > maxw4) 	maxw4 = strlen("Device");
+			if (strlen("Inode") > maxw5) 	maxw5 = strlen("Inode");
+			sprintf(fmt_str, "%%%ds %%%ds %%%ds %%%ds %%%ds",
+				maxw1, maxw2, maxw3, maxw4, maxw5);
+			printf(fmt_str, "Address", "Flags", "Offset", "Device", "Inode");
+
+			for (listnode=listhead; listnode=listnode->next;
+			     listnode!=NULL) {
+				sprintf(fmt_str, " %%%ds", listnode->max_width);
+				printf(fmt_str, listnode->description);
+			}
+			printf(" %s\n", "Description");
+		}
+		/* Print data */
+		sprintf(fmt_str, "%%%ds %%%ds %%%ds %%%ds %%%ds",
+			maxw1, maxw2, maxw3, maxw4, maxw5);
+		printf(fmt_str, start, flags, offset, dev, inode);
+
+		for (listnode=listhead; listnode=listnode->next;
+		     listnode!=NULL) {
+			sprintf(fmt_str, " %%%ds", listnode->max_width);
+			printf(fmt_str, listnode->value_str);
+		}
+		printf(" %s\n", map_desc);
+
+		firstmapping = 0;
+	}
+	/* === PRINT TOTALS === */
+	if (!q_option) {
+		footer_gap = maxw1+maxw2+maxw3+maxw4+maxw5+5;
+		for (i=0; i<footer_gap; i++)
+			putc(' ', stdout);
+		for (listnode=listhead; listnode=listnode->next;
+		     listnode!=NULL) {
+			for (i=0; i<listnode->max_width; i++)
+				putc('=', stdout);
+			putc(' ', stdout);
+		}
+		putc('\n', stdout);
+		for (i=0; i<footer_gap; i++)
+			putc(' ', stdout);
+		for (listnode=listhead; listnode=listnode->next;
+		     listnode!=NULL) {
+			sprintf(fmt_str, "%%%dd ", listnode->max_width);
+			printf(fmt_str, listnode->total);
+		}
+		fputs("KB \n", stdout);
+	}
+	/* We don't free() the list, it's used for all PIDs passed as arguments */
+}
+
 static int one_proc(proc_t * p)
 {
 	char buf[32];
-	char mapbuf[9600];
-	char cmdbuf[512];
 	FILE *fp;
 	unsigned long total_shared = 0ul;
 	unsigned long total_private_readonly = 0ul;
@@ -183,18 +363,24 @@ static int one_proc(proc_t * p)
 	 */
 	int maxcmd = 0xfffff;
 
-	sprintf(buf, "/proc/%u/maps", p->tgid);
-	if ((fp = fopen(buf, "r")) == NULL)
-		return 1;
-	if (x_option) {
+	if (x_option || X_option) {
 		sprintf(buf, "/proc/%u/smaps", p->tgid);
-		if ((fp = freopen(buf, "r", fp)) == NULL)
+		if ((fp = fopen(buf, "r")) == NULL)
+			return 1;
+	} else {
+		sprintf(buf, "/proc/%u/maps", p->tgid);
+		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	}
 
 	escape_command(cmdbuf, p, sizeof cmdbuf, &maxcmd,
 		       ESC_ARGS | ESC_BRACKETS);
 	printf("%u:   %s\n", p->tgid, cmdbuf);
+
+	if (X_option) {
+		print_extended_maps(fp);
+		return 0;
+	}
 
 	if (!q_option && (x_option | d_option)) {
 		if (x_option) {
@@ -431,10 +617,13 @@ int main(int argc, char **argv)
 
 	x_option = d_option = q_option = 0;
 
-	while ((c = getopt_long(argc, argv, "xrdqA:hV", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "xXrdqA:hV", longopts, NULL)) != -1)
 		switch (c) {
 		case 'x':
 			x_option = 1;
+			break;
+		case 'X':
+			X_option++;
 			break;
 		case 'r':
 			xwarnx(_("option -r is ignored as SunOS compatibility"));
@@ -468,8 +657,9 @@ int main(int argc, char **argv)
 
 	if (argc < 1)
 		xerrx(EXIT_FAILURE, _("argument missing"));
-	if (d_option && x_option)
-		xerrx(EXIT_FAILURE, _("options -d and -x cannot coexist"));
+	if (d_option && (x_option || X_option) ||
+	    x_option && (d_option || X_option))
+		xerrx(EXIT_FAILURE, _("options -d, -x, -X are mutually exclusive"));
 
 	pidlist = xmalloc(sizeof(unsigned) * argc);
 
