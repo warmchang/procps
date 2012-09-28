@@ -3813,6 +3813,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
 #endif
          case P_CGR:
             makeVAR(p->cgroup[0]);
+            break;
          case P_CMD:
             makeVAR(forest_display(q, p));
             break;
@@ -3962,7 +3963,6 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             break;
          default:                 // keep gcc happy
             continue;
-            break;
 
       } // end: switch 'procflag'
 
