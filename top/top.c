@@ -312,6 +312,7 @@ static const char *tg2 (int x, int y) {
 static void bye_bye (const char *str) NORETURN;
 static void bye_bye (const char *str) {
    if (Ttychanged) {
+      if (keypad_local) putp(keypad_local);
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_original);
       putp(tg2(0, Screen_rows));
       putp(Cap_curs_norm);
@@ -923,6 +924,7 @@ static int keyin (int init) {
       STRLCPY(buf15, fmtmk("\033%s", tOk(key_left)));
       // next is critical so returned results match bound terminfo keys
       putp(tOk(keypad_xmit));
+      // ( see the converse keypad_local at program end, just in case )
       return 0;
     #undef tOk
    }
