@@ -2341,6 +2341,7 @@ static int config_cvt (WIN_t *q) {
       }
    }
    q->rc.winflags |= x;
+   SETw(q, Show_JRNUMS);
 
    // now let's convert old top's more limited fields...
    j = strlen(q->rc.fieldscur);
