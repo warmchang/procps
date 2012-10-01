@@ -891,17 +891,21 @@ static int keyin (int init) {
       int key;
    } tinfo_tab[] = {
       { "\n", kbd_ENTER    }, { NULL, kbd_UP       }, { NULL, kbd_DOWN     },
-      { NULL, kbd_RIGHT    }, { NULL, kbd_LEFT     }, { NULL, kbd_PGUP     },
-      { NULL, kbd_PGDN     }, { NULL, kbd_END      }, { NULL, kbd_HOME     },
+      { NULL, kbd_LEFT     }, { NULL, kbd_RIGHT    }, { NULL, kbd_PGUP     },
+      { NULL, kbd_PGDN     }, { NULL, kbd_HOME     }, { NULL, kbd_END      },
       { NULL, kbd_BKSP     }, { NULL, kbd_INS      }, { NULL, kbd_DEL      },
          // next 4 destined to be meta + arrow keys...
       { buf12, kbd_PGUP    }, { buf13, kbd_PGDN    },
-      { buf14, kbd_END     }, { buf15, kbd_HOME    },
-         // remainder are alternatives for above, just in case
-         // ( the k,j,l,h entries are meta key + vim cursor motion keys )
-      { "\033\\",kbd_UP    }, { "\033/", kbd_DOWN  }, { "\033>", kbd_RIGHT },
-      { "\033<", kbd_LEFT  }, { "\033k", kbd_UP    }, { "\033j", kbd_DOWN  },
-      { "\033l", kbd_RIGHT }, { "\033h", kbd_LEFT  } };
+      { buf14, kbd_HOME    }, { buf15, kbd_END     },
+         // remainder are alternatives for above, just in case...
+         // ( the k,j,l,h entries are the vim cursor motion keys )
+      { "\033\\",   kbd_UP    }, { "\033/",    kbd_DOWN  }, /* meta+      \,/ */
+      { "\033<",    kbd_LEFT  }, { "\033>",    kbd_RIGHT }, /* meta+      <,> */
+      { "\033k",    kbd_UP    }, { "\033j",    kbd_DOWN  }, /* meta+      k,j */
+      { "\033h",    kbd_LEFT  }, { "\033l",    kbd_RIGHT }, /* meta+      h,l */
+      { "\033\013", kbd_PGUP  }, { "\033\012", kbd_PGDN  }, /* ctrl+meta+ k,j */
+      { "\033\010", kbd_HOME  }, { "\033\014", kbd_END   }  /* ctrl+meta+ h,l */
+   };
    char buf[SMLBUFSIZ], *pb;
    int i;
 
@@ -909,19 +913,19 @@ static int keyin (int init) {
     #define tOk(s)  s ? s : ""
       tinfo_tab[1].str  = tOk(key_up);
       tinfo_tab[2].str  = tOk(key_down);
-      tinfo_tab[3].str  = tOk(key_right);
-      tinfo_tab[4].str  = tOk(key_left);
+      tinfo_tab[3].str  = tOk(key_left);
+      tinfo_tab[4].str  = tOk(key_right);
       tinfo_tab[5].str  = tOk(key_ppage);
       tinfo_tab[6].str  = tOk(key_npage);
-      tinfo_tab[7].str  = tOk(key_end);
-      tinfo_tab[8].str  = tOk(key_home);
+      tinfo_tab[7].str  = tOk(key_home);
+      tinfo_tab[8].str  = tOk(key_end);
       tinfo_tab[9].str  = tOk(key_backspace);
       tinfo_tab[10].str = tOk(key_ic);
       tinfo_tab[11].str = tOk(key_dc);
       STRLCPY(buf12, fmtmk("\033%s", tOk(key_up)));
       STRLCPY(buf13, fmtmk("\033%s", tOk(key_down)));
-      STRLCPY(buf14, fmtmk("\033%s", tOk(key_right)));
-      STRLCPY(buf15, fmtmk("\033%s", tOk(key_left)));
+      STRLCPY(buf14, fmtmk("\033%s", tOk(key_left)));
+      STRLCPY(buf15, fmtmk("\033%s", tOk(key_right)));
       // next is critical so returned results match bound terminfo keys
       putp(tOk(keypad_xmit));
       // ( see the converse keypad_local at program end, just in case )
