@@ -363,6 +363,7 @@ static void __attribute__ ((__noreturn__))
 {
 	int signo, i;
 	int sigopt = 0;
+	int loop = 1;
 	long pid;
 	int exitvalue = EXIT_SUCCESS;
 
@@ -389,7 +390,8 @@ static void __attribute__ ((__noreturn__))
 	else
 		sigopt++;
 
-	while ((i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
+	opterr=0; /* suppress errors on -123 */
+	while (loop == 1 && (i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
 		switch (i) {
 		case 'l':
 			if (optarg) {
@@ -416,6 +418,13 @@ static void __attribute__ ((__noreturn__))
 		case 'V':
 			display_kill_version();
 			exit(EXIT_SUCCESS);
+		case '?':
+			if (!isdigit(optopt)) {
+				xwarnx(_("invalid argument %c"), optopt);
+				kill_usage(stderr);
+			}
+			loop=0;
+			break;
 		default:
 			kill_usage(stderr);
 		}
