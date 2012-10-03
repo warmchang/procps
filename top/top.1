@@ -963,7 +963,7 @@ Some fields are fixed width and not scalable.
 As such, they are subject to truncation which would be indicated
 by a '+' in the last position.
 
-This \*(CI can be used to alter the widths for the following fields:
+This \*(CI can be used to alter the widths of the following fields:
 
 .Bd -literal
    \fI field  default    field  default    field  default \fR
@@ -977,6 +977,15 @@ This \*(CI can be used to alter the widths for the following fields:
 You will be prompted for the amount to be added to the default
 widths shown above.
 Entering zero forces a return to those defaults.
+
+If you enter a negative number, \*(We will automatically increase
+the column size as needed until there is no more truncated data.
+You can accelerate this process by reducing the delay interval
+or holding down the <Space> bar.
+
+\*(NT Whether explicitly or automatically increased, the widths for
+these fields are never decreased by \*(We.
+To narrow them you must specify a smaller number or restore the defaults.
 
 .TP 7
 \ \ \'\fBZ\fR\' :\fIChange-Color-Mapping \fR
