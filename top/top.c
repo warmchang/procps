@@ -192,6 +192,14 @@ static int    HHash_one [HHASH_SIZ],   // actual hash tables ( hereafter known
 static int   *PHash_sav = HHash_one,   // alternating 'old/new' hash tables
              *PHash_new = HHash_two;
 #endif
+
+        /* Support for automatically sized fixed-width column expansions.
+         * (hopefully, the macros help clarify/document our new 'feature') */
+static int Autox_array [P_MAXPFLGS],
+           Autox_found;
+#define AUTOX_NO      P_MAXPFLGS
+#define AUTOX_COL(f)  if (P_MAXPFLGS > f) Autox_array[f] = Autox_found = 1
+#define AUTOX_MODE   (0 > Rc.fixed_widest)
 
 /*######  Sort callbacks  ################################################*/
 
@@ -1172,11 +1180,13 @@ static const char *make_chr (const char ch, int width, int justr) {
         /*
          * Make and then justify an integer NOT subject to scaling,
          * and include a visual clue should tuncation be necessary. */
-static const char *make_num (long num, int width, int justr) {
+static const char *make_num (long num, int width, int justr, int col) {
    static char buf[SMLBUFSIZ];
 
-   if (width < snprintf(buf, sizeof(buf), "%ld", num))
+   if (width < snprintf(buf, sizeof(buf), "%ld", num)) {
       buf[width-1] = COLPLUSCH;
+      AUTOX_COL(col);
+   }
    return justify_pad(buf, width, justr);
 } // end: make_num
 
@@ -1184,11 +1194,13 @@ static const char *make_num (long num, int width, int justr) {
         /*
          * Make and then justify a character string,
          * and include a visual clue should tuncation be necessary. */
-static const char *make_str (const char *str, int width, int justr) {
+static const char *make_str (const char *str, int width, int justr, int col) {
    static char buf[SCREENMAX];
 
-   if (width < snprintf(buf, sizeof(buf), "%s", str))
+   if (width < snprintf(buf, sizeof(buf), "%s", str)) {
       buf[width-1] = COLPLUSCH;
+      AUTOX_COL(col);
+   }
    return justify_pad(buf, width, justr);
 } // end: make_str
 
@@ -1341,8 +1353,8 @@ static FLD_t Fieldstab[] = {
  #define A_left  Show_JRSTRS       /* toggled with lower case 'j' */
 
 /* .width anomalies:
-        entries with a -1 .width represent variable width columns
-        entries with zero .width are valued at runtime (see zap_fieldstab)
+        a -1 width represents variable width columns
+        a  0 width represents columns set once at startup (see zap_fieldstab)
    .lflg anomalies:
         P_UED, L_NONE  - natural outgrowth of 'stat()' in readproc        (euid)
         P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
@@ -1371,11 +1383,11 @@ static FLD_t Fieldstab[] = {
    {     0,     -1,  A_right,  SF(CPN),  L_stat    },
    {     0,     -1,  A_right,  SF(CPU),  L_stat    },
    {     6,     -1,  A_right,  SF(TME),  L_stat    },
-   {     9,     -1,  A_right,  SF(TME),  L_stat    },
+   {     9,     -1,  A_right,  SF(TME),  L_stat    }, // P_TM2 slot
 #ifdef PERCENTBOOST
-   {     5,     -1,  A_right,  SF(RES),  L_statm   },
+   {     5,     -1,  A_right,  SF(RES),  L_statm   }, // P_MEM slot
 #else
-   {     4,     -1,  A_right,  SF(RES),  L_statm   },
+   {     4,     -1,  A_right,  SF(RES),  L_statm   }, // P_MEM slot
 #endif
    {     5,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(SWP),  L_status  },
@@ -1845,7 +1857,27 @@ static void fields_utility (void) {
 
 
         /*
-         * This routine exists just to consolidate all the messin'
+         * This routine takes care of auto sizing field widths
+         * if/when the user sets Rc.fixed_widest to -1.  Along the
+         * way he reinitializes some things for the next frame. */
+static inline void widths_resize (void) {
+   int i;
+
+   // next var may also be set by the guys that actually truncate stuff
+   Autox_found = 0;
+   for (i = 0; i < P_MAXPFLGS; i++) {
+      if (Autox_array[i]) {
+         Fieldstab[i].width++;
+         Autox_array[i] = 0;
+         Autox_found = 1;
+      }
+   }
+   if (Autox_found) calibrate_fields();
+} // end: widths_resize
+
+
+        /*
+         * This routine exists just to consolidate most of the messin'
          * around with the Fieldstab array and some related stuff. */
 static void zap_fieldstab (void) {
    static int once;
@@ -1898,17 +1930,19 @@ static void zap_fieldstab (void) {
    }
 #endif
 
-   /* and accommodate optional wider non-scalable columns... */
-   Fieldstab[P_UED].width = Fieldstab[P_URD].width
-      = Fieldstab[P_USD].width = Fieldstab[P_GID].width
-      = Rc.fixed_widest ? 5 + Rc.fixed_widest : 5;
-   Fieldstab[P_UEN].width = Fieldstab[P_URN].width
-      = Fieldstab[P_USN].width = Fieldstab[P_GRP].width
-      = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
-   Fieldstab[P_TTY].width
-      = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
-   Fieldstab[P_WCH].width
-      = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
+   /* and accommodate optional wider non-scalable columns (maybe) */
+   if (!AUTOX_MODE) {
+      Fieldstab[P_UED].width = Fieldstab[P_URD].width
+         = Fieldstab[P_USD].width = Fieldstab[P_GID].width
+         = Rc.fixed_widest ? 5 + Rc.fixed_widest : 5;
+      Fieldstab[P_UEN].width = Fieldstab[P_URN].width
+         = Fieldstab[P_USN].width = Fieldstab[P_GRP].width
+         = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
+      Fieldstab[P_TTY].width
+         = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
+      Fieldstab[P_WCH].width
+         = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
+   }
 
    // lastly, ensure we've got proper column headers...
    calibrate_fields();
@@ -2475,7 +2509,6 @@ static void configs_read (void) {
 
       // any new addition(s) last, for older rcfiles compatibility...
       fscanf(fp, "Fixed_widest=%d\n", &Rc.fixed_widest);
-      if (0 > Rc.fixed_widest) Rc.fixed_widest = 0;
 
       fclose(fp);
    } // end: if (fp)
@@ -3130,7 +3163,7 @@ static void keys_global (int ch) {
       case 'X':
       {  int wide = get_int(fmtmk(N_fmt(XTRA_fixwide_fmt), Rc.fixed_widest));
          if (-1 < wide) Rc.fixed_widest = wide;
-         else if (INT_MIN < wide && 0 > wide) show_msg(N_txt(BAD_integers_txt));
+         else if (INT_MIN < wide) Rc.fixed_widest = -1;
       }
          break;
       case 'Z':
@@ -3782,10 +3815,10 @@ static void summary_show (void) {
 static const char *task_show (const WIN_t *q, const proc_t *p) {
 #ifndef SCROLLVAR_NO
  #define makeVAR(v)  { const char *pv = v; \
-    if (!q->varcolbeg) cp = make_str(pv, q->varcolsz, Js); \
-    else cp = make_str(q->varcolbeg < (int)strlen(pv) ? pv + q->varcolbeg : "", q->varcolsz, Js); }
+    if (!q->varcolbeg) cp = make_str(pv, q->varcolsz, Js, AUTOX_NO); \
+    else cp = make_str(q->varcolbeg < (int)strlen(pv) ? pv + q->varcolbeg : "", q->varcolsz, Js, AUTOX_NO); }
 #else
- #define makeVAR(v) cp = make_str(v, q->varcolsz, Js)
+ #define makeVAR(v) cp = make_str(v, q->varcolsz, Js, AUTOX_NO)
 #endif
  #define pages2K(n)  (unsigned long)( (n) << Pg2K_shft )
    static char rbuf[ROWMINSIZ];
@@ -3828,7 +3861,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = scale_unum(pages2K(p->trs), S, W, Jn);
             break;
          case P_CPN:
-            cp = make_num(p->processor, W, Jn);
+            cp = make_num(p->processor, W, Jn, AUTOX_NO);
             break;
          case P_CPU:
          {  float u = (float)p->pcpu * Frame_etscale;
@@ -3846,7 +3879,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             makeVAR(p->environ[0]);
             break;
          case P_FLG:
-            cp = make_str(hex_make(p->flags, 1), W, Js);
+            cp = make_str(hex_make(p->flags, 1), W, Js, AUTOX_NO);
             break;
          case P_FL1:
             cp = scale_unum(p->maj_flt, S, W, Jn);
@@ -3861,39 +3894,39 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = scale_unum(p->min_delta, S, W, Jn);
             break;
          case P_GID:
-            cp = make_num(p->egid, W, Jn);
+            cp = make_num(p->egid, W, Jn, P_GID);
             break;
          case P_GRP:
-            cp = make_str(p->egroup, W, Js);
+            cp = make_str(p->egroup, W, Js, P_GRP);
             break;
          case P_MEM:
             cp = scale_pcnt((float)pages2K(p->resident) * 100 / kb_main_total, W, Jn);
             break;
          case P_NCE:
-            cp = make_num(p->nice, W, Jn);
+            cp = make_num(p->nice, W, Jn, AUTOX_NO);
             break;
 #ifdef OOMEM_ENABLE
          case P_OOA:
-            cp = make_num(p->oom_adj, W, Jn);
+            cp = make_num(p->oom_adj, W, Jn, AUTOX_NO);
             break;
          case P_OOM:
-            cp = make_num(p->oom_score, W, Jn);
+            cp = make_num(p->oom_score, W, Jn, AUTOX_NO);
             break;
 #endif
          case P_PGD:
-            cp = make_num(p->pgrp, W, Jn);
+            cp = make_num(p->pgrp, W, Jn, AUTOX_NO);
             break;
          case P_PID:
-            cp = make_num(p->tid, W, Jn);
+            cp = make_num(p->tid, W, Jn, AUTOX_NO);
             break;
          case P_PPD:
-            cp = make_num(p->ppid, W, Jn);
+            cp = make_num(p->ppid, W, Jn, AUTOX_NO);
             break;
          case P_PRI:
             if (-99 > p->priority || 999 < p->priority) {
-               cp = make_str("rt", W, Jn);
+               cp = make_str("rt", W, Jn, AUTOX_NO);
             } else
-               cp = make_num(p->priority, W, Jn);
+               cp = make_num(p->priority, W, Jn, AUTOX_NO);
             break;
          case P_RES:
             cp = scale_unum(pages2K(p->resident), S, W, Jn);
@@ -3908,7 +3941,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = scale_unum(pages2K(p->share), S, W, Jn);
             break;
          case P_SID:
-            cp = make_num(p->session, W, Jn);
+            cp = make_num(p->session, W, Jn, AUTOX_NO);
             break;
          case P_STA:
             cp = make_chr(p->state, W, Js);
@@ -3917,10 +3950,10 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = scale_unum(p->vm_swap, S, W, Jn);
             break;
          case P_TGD:
-            cp = make_num(p->tgid, W, Jn);
+            cp = make_num(p->tgid, W, Jn, AUTOX_NO);
             break;
          case P_THD:
-            cp = make_num(p->nlwp, W, Jn);
+            cp = make_num(p->nlwp, W, Jn, AUTOX_NO);
             break;
          case P_TME:
          case P_TM2:
@@ -3930,31 +3963,31 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          }
             break;
          case P_TPG:
-            cp = make_num(p->tpgid, W, Jn);
+            cp = make_num(p->tpgid, W, Jn, AUTOX_NO);
             break;
          case P_TTY:
          {  char tmp[SMLBUFSIZ];
             dev_to_tty(tmp, W, p->tty, p->tid, ABBREV_DEV);
-            cp = make_str(tmp, W, Js);
+            cp = make_str(tmp, W, Js, P_TTY);
          }
             break;
          case P_UED:
-            cp = make_num(p->euid, W, Jn);
+            cp = make_num(p->euid, W, Jn, P_UED);
             break;
          case P_UEN:
-            cp = make_str(p->euser, W, Js);
+            cp = make_str(p->euser, W, Js, P_UEN);
             break;
          case P_URD:
-            cp = make_num(p->ruid, W, Jn);
+            cp = make_num(p->ruid, W, Jn, P_URD);
             break;
          case P_URN:
-            cp = make_str(p->ruser, W, Js);
+            cp = make_str(p->ruser, W, Js, P_URN);
             break;
          case P_USD:
-            cp = make_num(p->suid, W, Jn);
+            cp = make_num(p->suid, W, Jn, P_USD);
             break;
          case P_USN:
-            cp = make_str(p->suser, W, Js);
+            cp = make_str(p->suser, W, Js, P_USN);
             break;
          case P_VRT:
             cp = scale_unum(pages2K(p->size), S, W, Jn);
@@ -3965,7 +3998,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
                u = hex_make(p->wchan, 0);
             else
                u = lookup_wchan(p->wchan, p->tid);
-            cp = make_str(u, W, Js);
+            cp = make_str(u, W, Js, P_WCH);
          }
             break;
          default:                 // keep gcc happy
@@ -4140,6 +4173,10 @@ static void frame_make (void) {
    /* we'll deem any terminal not supporting tgoto as dumb and disable
       the normal non-interactive output optimization... */
    if (!Cap_can_goto) PSU_CLREOS(0);
+
+   /* lastly, check auto-sized width needs for the next iteration */
+   if (AUTOX_MODE && Autox_found)
+      widths_resize();
 } // end: frame_make
 
 

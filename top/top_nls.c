@@ -367,7 +367,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[FIND_no_next_txt] = _("Locate next inactive, use \"L\"");
    Norm_nlstab[GET_find_str_txt] = _("Locate string");
    Norm_nlstab[FIND_no_find_fmt] = _("%s\"%s\" not found");
-   Norm_nlstab[XTRA_fixwide_fmt] = _("fixed-width incr is %d, change to (0 = default)");
+   Norm_nlstab[XTRA_fixwide_fmt] = _("width incr is %d, change to (0 default, -1 auto)");
 #ifndef WARN_CFG_OFF
    Norm_nlstab[XTRA_warncfg_txt] = _("Overwrite existing old style rcfile?");
 #endif
