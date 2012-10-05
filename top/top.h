@@ -612,10 +612,10 @@ typedef struct WIN_t {
 //atic inline int    user_matched (WIN_t *q, const proc_t *p);
 /*------  Basic Formatting support  --------------------------------------*/
 //atic inline const char *justify_pad (const char *str, int width, int justr);
-//atic const char   *make_chr (const char ch, int width, int justr);
-//atic const char   *make_num (long num, int width, int justr, int col);
-//atic const char   *make_str (const char *str, int width, int justr, int col);
-//atic const char   *scale_pcnt (float num, int width, int justr);
+//atic inline const char *make_chr (const char ch, int width, int justr);
+//atic inline const char *make_num (long num, int width, int justr, int col);
+//atic inline const char *make_str (const char *str, int width, int justr, int col);
+//atic inline const char *scale_pcnt (float num, int width, int justr);
 //atic const char   *scale_tics (TIC_t tics, int width, int justr);
 //atic const char   *scale_unum (unsigned long num, int type, int width, int justr);
 /*------  Fields Management support  -------------------------------------*/

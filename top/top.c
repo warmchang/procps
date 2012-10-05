@@ -360,7 +360,7 @@ static void bye_bye (const char *str) {
 #else
       "\n\t   winflags = %08x, maxpflgs = %d"
 #endif
-      "\n\t   sortindx  = %d, fieldscur = %s"
+      "\n\t   sortindx = %d, fieldscur = %s"
       "\n\t   maxtasks = %d, varcolsz = %d, winlines = %d"
       "\n\t   strlen(columnhdr) = %d"
       "\n"
@@ -1169,7 +1169,7 @@ static inline const char *justify_pad (const char *str, int width, int justr) {
 
         /*
          * Make and then justify a single character. */
-static const char *make_chr (const char ch, int width, int justr) {
+static inline const char *make_chr (const char ch, int width, int justr) {
    static char buf[SMLBUFSIZ];
 
    snprintf(buf, sizeof(buf), "%c", ch);
@@ -1180,7 +1180,7 @@ static const char *make_chr (const char ch, int width, int justr) {
         /*
          * Make and then justify an integer NOT subject to scaling,
          * and include a visual clue should tuncation be necessary. */
-static const char *make_num (long num, int width, int justr, int col) {
+static inline const char *make_num (long num, int width, int justr, int col) {
    static char buf[SMLBUFSIZ];
 
    if (width < snprintf(buf, sizeof(buf), "%ld", num)) {
@@ -1194,7 +1194,7 @@ static const char *make_num (long num, int width, int justr, int col) {
         /*
          * Make and then justify a character string,
          * and include a visual clue should tuncation be necessary. */
-static const char *make_str (const char *str, int width, int justr, int col) {
+static inline const char *make_str (const char *str, int width, int justr, int col) {
    static char buf[SCREENMAX];
 
    if (width < snprintf(buf, sizeof(buf), "%s", str)) {
@@ -1207,7 +1207,7 @@ static const char *make_str (const char *str, int width, int justr, int col) {
 
         /*
          * Make and then justify a percentage, with decreasing precision. */
-static const char *scale_pcnt (float num, int width, int justr) {
+static inline const char *scale_pcnt (float num, int width, int justr) {
    static char buf[SMLBUFSIZ];
 
 #ifdef PERCENTBOOST
