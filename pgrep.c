@@ -97,7 +97,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(USAGE_OPTIONS, fp);
 	if (i_am_pkill == 0) {
 		fputs(_(" -c, --count               count of matching processes\n"
-			" -d, --delimeter <string>  specify output delimeter\n"
+			" -d, --delimiter <string>  specify output delimiter\n"
 			" -l, --list-name           list PID and process name\n"
 			" -v, --inverse             negates the matching\n"), fp);
 	}
@@ -604,7 +604,7 @@ static void parse_opts (int argc, char **argv)
 	static const struct option longopts[] = {
 		{"signal", required_argument, NULL, SIGNAL_OPTION},
 		{"count", no_argument, NULL, 'c'},
-		{"delimeter", required_argument, NULL, 'd'},
+		{"delimiter", required_argument, NULL, 'd'},
 		{"list-name", no_argument, NULL, 'l'},
 		{"list-full", no_argument, NULL, 'a'},
 		{"full", no_argument, NULL, 'f'},
