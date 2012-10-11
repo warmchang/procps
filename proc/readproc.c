@@ -353,7 +353,9 @@ ENTER(0x220);
         P->vm_swap = strtol(S,&S,10);
         continue;
     case_Groups:
-    {   int j = strchr(S, '\n') - S;        // currently lines end space + \n
+    {   char *nl = strchr(S, '\n');
+        int j = nl ? (nl - S) : strlen(S);
+
         if (j) {
             P->supgid = xmalloc(j+1);       // +1 in case space disappears
             memcpy(P->supgid, S, j);
@@ -735,7 +737,7 @@ int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid) {
 // room to spare.
 static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict const p) {
     static struct stat sb;     // stat() buffer
-    static char sbuf[1024];    // buffer for stat,statm,status
+    static char sbuf[4096];    // buffer for stat,statm,status
     char *restrict const path = PT->path;
     unsigned flags = PT->flags;
 
@@ -841,7 +843,7 @@ next_proc:
 // path is a path to the task, with some room to spare.
 static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict const t, char *restrict const path) {
     static struct stat sb;     // stat() buffer
-    static char sbuf[1024];    // buffer for stat,statm,status
+    static char sbuf[4096];    // buffer for stat,statm,status
     unsigned flags = PT->flags;
 
     if (unlikely(stat(path, &sb) == -1))        /* no such dirent (anymore) */
@@ -1384,7 +1386,7 @@ proc_data_t *readproctab3 (int(*want_task)(proc_t *buf), PROCTAB *restrict const
  * and filled out proc_t structure.
  */
 proc_t * get_proc_stats(pid_t pid, proc_t *p) {
-	static char path[32], sbuf[1024];
+	static char path[32], sbuf[4096];
 	struct stat statbuf;
 
 	sprintf(path, "/proc/%d", pid);
