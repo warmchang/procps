@@ -3079,7 +3079,7 @@ static void help_view (void) {
             , Winstk[2].rc.winname, Winstk[3].rc.winname));
          if (1 > chin(0, &ch, 1)) break;
          w = win_select(ch);
-      } while (kbd_ENTER != ch);
+      } while (kbd_ENTER != ch && kbd_ESC != ch);
    }
 
    putp(Cap_curs_norm);
