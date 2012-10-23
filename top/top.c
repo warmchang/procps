@@ -695,10 +695,7 @@ static int show_pmt (const char *str) {
         /*
          * Show a special coordinate message, in support of scrolling */
 static inline void show_scroll (void) {
-   char tmp[SMLBUFSIZ];
-
-   snprintf(tmp, sizeof(tmp), Scroll_fmts, Frame_maxtask);
-   PUTT("%s%s  %.*s%s", tg2(0, Msg_row), Caps_off, Screen_cols - 2, tmp, Cap_clr_eol);
+   PUTT(Scroll_fmts, tg2(0, Msg_row), Frame_maxtask);
    putp(tg2(0, Msg_row));
 } // end: show_scroll
 
@@ -795,11 +792,9 @@ static void show_special (int interact, const char *glob) {
 
         /*
          * Create a nearly complete scroll coordinates message, but still
-         * technically a format string since we're missing total tasks. */
+         * a format string since we'll be missing a tgoto and total tasks. */
 static void updt_scroll_msg (void) {
-#ifndef SCROLLVAR_NO
-   char tmp[SMLBUFSIZ];
-#endif
+   char tmp1[SMLBUFSIZ], tmp2[SMLBUFSIZ];
    int totpflgs = Curwin->totpflgs;
    int begpflgs = Curwin->begpflg + 1;
 
@@ -811,14 +806,15 @@ static void updt_scroll_msg (void) {
 #endif
    if (1 > totpflgs) totpflgs = 1;
    if (1 > begpflgs) begpflgs = 1;
-   snprintf(Scroll_fmts, sizeof(Scroll_fmts)
-      , N_fmt(SCROLL_coord_fmt)
-      , Curwin->begtask + 1
-      , begpflgs, totpflgs);
+   snprintf(tmp1, sizeof(tmp1)
+      , N_fmt(SCROLL_coord_fmt), Curwin->begtask + 1, begpflgs, totpflgs);
+   strcpy(tmp2, tmp1);
 #ifndef SCROLLVAR_NO
-   snprintf(tmp, sizeof(tmp), Curwin->varcolbeg ? " + %d" : "", Curwin->varcolbeg);
-   scat (Scroll_fmts, tmp);
+   if (Curwin->varcolbeg)
+      snprintf(tmp2, sizeof(tmp2), "%s + %d", tmp1, Curwin->varcolbeg);
 #endif
+   snprintf(Scroll_fmts, sizeof(Scroll_fmts)
+      , "%%s%s  %.*s%s", Caps_off, Screen_cols - 3, tmp2, Cap_clr_eol);
 } // end: updt_scroll_msg
 
 /*######  Low Level Memory/Keyboard support  #############################*/
