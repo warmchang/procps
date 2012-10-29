@@ -50,7 +50,7 @@ EXTRA_DIST = \
 	misc/git-version-gen \
 	Documentation/CodingStyle \
 	Documentation/TODO \
-	$(sysconf_DATA)
+	sysctl.conf
 
 if BUILD_KILL
 bin_PROGRAMS = kill
