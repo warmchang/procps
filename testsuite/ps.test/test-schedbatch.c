@@ -30,9 +30,11 @@ int main(int argc, const char *argv[])
 		nice = atoi(argv[1]);
 	}
 	sp.sched_priority = 0;
+#ifdef SCHED_BATCH
 	if (sched_setscheduler(0, SCHED_BATCH, &sp)) {
 		perror("sched_setscheduler(0,SCHED_BATCH,{.sched_priority=0}");
 	}
+#endif /* SCHED_BATCH */
 	if (setpriority(PRIO_PROCESS, 0, nice) || errno) {
 		(void)snprintf(msg, sizeof(msg),
 			       "setpriority(PRIO_PROCESS, 0, %d)", nice);
