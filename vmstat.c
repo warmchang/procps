@@ -258,6 +258,7 @@ static void new_format(void)
 	diow = *cpu_iow;
 	dstl = *cpu_zzz;
 	Div = duse + dsys + didl + diow + dstl;
+	if (!Div) Div = 1, didl = 1;
 	divo2 = Div / 2UL;
 	printf(format,
 	       running, blocked,
@@ -312,6 +313,7 @@ static void new_format(void)
 		}
 
 		Div = duse + dsys + didl + diow + dstl;
+		if (!Div) Div = 1, didl = 1;
 		divo2 = Div / 2UL;
 		printf(format,
 		       running,
