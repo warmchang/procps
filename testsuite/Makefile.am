@@ -36,6 +36,8 @@ EXTRA_DIST = \
     free.test/free.exp \
     kill.test/kill.exp \
     lib.test/fileutils.exp \
+    lib.test/fileutils_badfd.sh \
+    lib.test/fileutils_full.sh \
     lib.test/strutils.exp \
     pgrep.test/pgrep.exp \
     pkill.test/pkill.exp \
