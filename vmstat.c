@@ -816,8 +816,8 @@ int main(int argc, char *argv[])
 		usage(stderr);
 
 	if (moreheaders) {
-		int tmp = winhi() - 3;
-		height = ((tmp > 0) ? tmp : 22);
+		int wheight = winhi() - 3;
+		height = ((wheight > 0) ? wheight : 22);
 	}
 	setlinebuf(stdout);
 	switch (statMode) {
