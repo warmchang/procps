@@ -187,23 +187,6 @@ static int strict_atol (const char *restrict str, long *restrict value)
 
 #include <sys/file.h>
 
-/* Seen non-BSD code do this:
- *
- *if (fcntl_lock(pid_fd, F_SETLK, F_WRLCK, SEEK_SET, 0, 0) == -1)
- *                return -1;
- */
-int fcntl_lock(int fd, int cmd, int type, int whence, int start, int len)
-{
-	struct flock lock[1];
-
-	lock->l_type = type;
-	lock->l_whence = whence;
-	lock->l_start = start;
-	lock->l_len = len;
-
-	return fcntl(fd, cmd, lock);
-}
-
 /* We try a read lock. The daemon should have a write lock.
  * Seen using flock: FreeBSD code */
 static int has_flock(int fd)
@@ -572,7 +555,7 @@ static struct el * select_procs (int *num)
 	return list;
 }
 
-int signal_option(int *argc, char **argv)
+static int signal_option(int *argc, char **argv)
 {
 	int sig;
 	int i;
