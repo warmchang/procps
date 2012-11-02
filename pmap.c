@@ -520,7 +520,7 @@ static int one_proc(proc_t * p)
 		}
 
 	}
-
+    fclose(fp);
 	if (!q_option) {
 		if (x_option) {
 			if (sizeof(KLONG) == 8) {
@@ -593,7 +593,7 @@ static void range_arguments(char *optarg)
 
 int main(int argc, char **argv)
 {
-	unsigned *pidlist;
+	unsigned long *pidlist;
 	unsigned count = 0;
 	PROCTAB *PT;
 	proc_t p;
@@ -692,6 +692,7 @@ int main(int argc, char **argv)
 		count--;
 	}
 	closeproc(PT);
+	free(pidlist);
 
 	if (count)
 		/* didn't find all processes asked for */
