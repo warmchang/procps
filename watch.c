@@ -252,7 +252,7 @@ static void get_terminal_size(void)
 /* get current time in usec */
 typedef unsigned long long watch_usec_t;
 #define USECS_PER_SEC (1000000ull)
-watch_usec_t get_time_usec()
+static watch_usec_t get_time_usec()
 {
 	struct timeval now;
 	gettimeofday(&now, NULL);
@@ -298,9 +298,9 @@ wint_t my_getwc(FILE * s)
 #endif	/* WITH_WATCH8BIT */
 
 #ifdef WITH_WATCH8BIT
-void output_header(wchar_t *restrict wcommand, int wcommand_columns, int wcommand_characters, double interval)
+static void output_header(wchar_t *restrict wcommand, int wcommand_columns, int wcommand_characters, double interval)
 #else
-void output_header(char *restrict command, double interval)
+static void output_header(char *restrict command, double interval)
 #endif	/* WITH_WATCH8BIT */
 {
 	time_t t = time(NULL);
@@ -361,7 +361,7 @@ void output_header(char *restrict command, double interval)
 	return;
 }
 
-int run_command(char *restrict command, char **restrict command_argv)
+static int run_command(char *restrict command, char **restrict command_argv)
 {
 	FILE *p;
 	int x, y;
