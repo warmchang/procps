@@ -67,7 +67,7 @@ static bool Quiet;
 static char *pattern;
 
 /* Function prototypes. */
-static int pattern_match(const char *string, const char *pattern);
+static int pattern_match(const char *string, const char *pat);
 static int DisplayAll(const char *restrict const path);
 
 static void slashdot(char *restrict p, char old, char new)
@@ -290,7 +290,7 @@ static int ReadSetting(const char *restrict const name)
 	return rc;
 }
 
-int is_deprecated(char *filename)
+static int is_deprecated(char *filename)
 {
 	int i;
 	for (i = 0; strlen(DEPRECATED[i]); i++) {
@@ -469,12 +469,12 @@ static int WriteSetting(const char *setting)
 	return rc;
 }
 
-static int pattern_match(const char *string, const char *pattern)
+static int pattern_match(const char *string, const char *pat)
 {
 	int status;
 	regex_t re;
 
-	if (regcomp(&re, pattern, REG_EXTENDED | REG_NOSUB) != 0)
+	if (regcomp(&re, pat, REG_EXTENDED | REG_NOSUB) != 0)
 		return (0);
 	status = regexec(&re, string, (size_t) 0, NULL, 0);
 	regfree(&re);
@@ -647,7 +647,6 @@ static int PreloadSystem(void)
  */
 int main(int argc, char *argv[])
 {
-	bool SwitchesAllowed = true;
 	bool WriteMode = false;
 	bool DisplayAllOpt = false;
 	bool preloadfileOpt = false;
@@ -714,7 +713,6 @@ int main(int argc, char *argv[])
 			NameOnly = true;
 			break;
 		case 'w':
-			SwitchesAllowed = false;
 			WriteMode = true;
 			break;
 		case 'f':	/* the NetBSD way */
