@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include "nls.h"
+#include "fileutils.h"
 
 int close_stream(FILE * stream)
 {
