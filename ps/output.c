@@ -1994,17 +1994,6 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
 }
 
 
-#ifdef TESTING
-static void sanity_check(void){
-  format_struct *fs = format_array;
-  while((fs->spec)[0] != '~'){
-    if(strlen(fs->head) > fs->width) printf("%d %s\n",strlen(fs->head),fs->spec);
-    fs++;
-  }
-}
-#endif
-
-
 void init_output(void){
   int outbuf_pages;
   char *outbuf;
