@@ -337,7 +337,7 @@ static void __attribute__ ((__noreturn__)) skillsnice_usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-int skill_sig_option(int *argc, char **argv)
+static int skill_sig_option(int *argc, char **argv)
 {
 	int i, nargs = *argc;
 	int signo = -1;
@@ -457,7 +457,7 @@ static void _skillsnice_usage(int line)
 
 /* common skill/snice argument parsing code */
 
-int snice_prio_option(int *argc, char **argv)
+static int snice_prio_option(int *argc, char **argv)
 {
 	int i = 1, nargs = *argc;
 	long prio = DEFAULT_NICE;
