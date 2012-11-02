@@ -77,7 +77,7 @@ static void discover_shm_minor(void)
 {
 	void *addr;
 	int shmid;
-	char mapbuf[256];
+	char mapbuf_b[256];
 
 	if (!freopen("/proc/self/maps", "r", stdin))
 		return;
@@ -92,20 +92,20 @@ static void discover_shm_minor(void)
 	if (addr == (void *)-1)
 		goto out_destroy;
 
-	while (fgets(mapbuf, sizeof mapbuf, stdin)) {
+	while (fgets(mapbuf_b, sizeof mapbuf_b, stdin)) {
 		char flags[32];
 		/* to clean up unprintables */
 		char *tmp;
 		unsigned KLONG start, end;
 		unsigned long long file_offset, inode;
 		unsigned dev_major, dev_minor;
-		sscanf(mapbuf, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
+		sscanf(mapbuf_b, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
 		       &end, flags, &file_offset, &dev_major, &dev_minor,
 		       &inode);
-		tmp = strchr(mapbuf, '\n');
+		tmp = strchr(mapbuf_b, '\n');
 		if (tmp)
 			*tmp = '\0';
-		tmp = mapbuf;
+		tmp = mapbuf_b;
 		while (*tmp) {
 			if (!isprint(*tmp))
 				*tmp = '?';
@@ -117,7 +117,7 @@ static void discover_shm_minor(void)
 			continue;
 		if (flags[3] != 's')
 			continue;
-		if (strstr(mapbuf, "/SYSV")) {
+		if (strstr(mapbuf_b, "/SYSV")) {
 			shm_minor = dev_minor;
 			break;
 		}
@@ -134,26 +134,26 @@ static void discover_shm_minor(void)
 }
 
 static char *mapping_name(proc_t * p, unsigned KLONG addr,
-				unsigned KLONG len, const char *mapbuf,
+				unsigned KLONG len, const char *mapbuf_b,
 				unsigned showpath, unsigned dev_major,
 				unsigned dev_minor, unsigned long long inode)
 {
 	char *cp;
 
-	if (!dev_major && dev_minor == shm_minor && strstr(mapbuf, "/SYSV")) {
+	if (!dev_major && dev_minor == shm_minor && strstr(mapbuf_b, "/SYSV")) {
 		static char shmbuf[64];
 		snprintf(shmbuf, sizeof shmbuf, "  [ shmid=0x%llx ]", inode);
 		return shmbuf;
 	}
 
-	cp = strrchr(mapbuf, '/');
+	cp = strrchr(mapbuf_b, '/');
 	if (cp) {
 		if (showpath)
-			return strchr(mapbuf, '/');
+			return strchr(mapbuf_b, '/');
 		return cp[1] ? cp + 1 : cp;
 	}
 
-	cp = strchr(mapbuf, '/');
+	cp = strchr(mapbuf_b, '/');
 	if (cp) {
 		if (showpath)
 			return cp;
