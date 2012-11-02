@@ -9,7 +9,7 @@ EXTERN_C_BEGIN
 extern message_fn xalloc_err_handler;
 
 extern void *xcalloc(unsigned int size) MALLOC;
-extern void *xmalloc(unsigned int size) MALLOC;
+extern void *xmalloc(size_t size) MALLOC;
 extern void *xrealloc(void *oldp, unsigned int size) MALLOC;
 extern char *xstrdup(const char *str) MALLOC;
 

@@ -661,7 +661,7 @@ int main(int argc, char **argv)
 	    x_option && (d_option || X_option))
 		xerrx(EXIT_FAILURE, _("options -d, -x, -X are mutually exclusive"));
 
-	pidlist = xmalloc(sizeof(unsigned) * argc);
+	pidlist = xmalloc(sizeof(unsigned long) * argc);
 
 	while (*argv) {
 		char *walk = *argv++;

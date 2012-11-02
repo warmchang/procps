@@ -50,14 +50,14 @@ void *xcalloc(unsigned int size) {
     return p;
 }
 
-void *xmalloc(unsigned int size) {
+void *xmalloc(size_t size) {
     void *p;
 
     if (size == 0)
         ++size;
     p = malloc(size);
     if (!p) {
-        xalloc_err_handler("%s failed to allocate %u bytes of memory", __func__, size);
+	xalloc_err_handler("%s failed to allocate %zu bytes of memory", __func__, size);
         exit(EXIT_FAILURE);
     }
     return(p);
