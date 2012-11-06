@@ -1,3 +1,11 @@
+procps-ng-3.3.6
+---------------
+  * Adjusted pmap pidlist storage Debian #688180
+
+procps-ng-3.3.5
+---------------
+  * Bumped SONAME to take into acccount API change
+
 procps-ng-3.3.4
 ---------------
   * Removed ps -aux bogus message
