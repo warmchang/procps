@@ -96,8 +96,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fprintf(fp, _(" %s [options] <pattern>\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, fp);
 	if (i_am_pkill == 0) {
-		fputs(_(" -c, --count               count of matching processes\n"
-			" -d, --delimiter <string>  specify output delimiter\n"
+		fputs(_(" -d, --delimiter <string>  specify output delimiter\n"
 			" -l, --list-name           list PID and process name\n"
 			" -v, --inverse             negates the matching\n"), fp);
 	}
@@ -105,7 +104,8 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 		fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"
 			" -e, --echo                display what is killed\n"), fp);
 	}
-	fputs(_(" -f, --full                use full process name to match\n"
+	fputs(_(" -c, --count               count of matching processes\n"
+		" -f, --full                use full process name to match\n"
 		" -g, --pgroup <id,...>     match listed process group IDs\n"
 		" -G, --group <gid,...>     match real group IDs\n"
 		" -n, --newest              select most recently started\n"
@@ -620,10 +620,10 @@ static void parse_opts (int argc, char **argv)
 		strcat (opts, "e");
 	} else {
 		/* These options are for pgrep only */
-		strcat (opts, "clad:v");
+		strcat (opts, "lad:v");
 	}
 			
-	strcat (opts, "LF:fnoxP:g:s:u:U:G:t:?Vh");
+	strcat (opts, "LF:cfnoxP:g:s:u:U:G:t:?Vh");
 	
 	while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
 		switch (opt) {
@@ -810,6 +810,8 @@ int main (int argc, char **argv)
 				continue;
 			xwarn(_("killing pid %ld failed"), procs[i].num);
 		}
+		if (opt_count) 
+			fprintf(stdout, "%d\n", num);
 	} else {
 		if (opt_count) {
 			fprintf(stdout, "%d\n", num);
