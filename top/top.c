@@ -1068,17 +1068,20 @@ static float get_float (const char *prompt) {
 } // end: get_float
 
 
+#define GET_INT_BAD  INT_MIN
+#define GET_INTNONE (INT_MIN + 1)
+
         /*
          * Get an integer from the user, returning INT_MIN for error */
 static int get_int (const char *prompt) {
    char *line;
    int n;
 
-   if (!(*(line = linein(prompt)))) return INT_MIN;
+   if (!(*(line = linein(prompt)))) return GET_INTNONE;
    // note: we've got to allow negative ints (renice)
    if (strcspn(line, "-+0123456789")) {
       show_msg(N_txt(BAD_integers_txt));
-      return INT_MIN;
+      return GET_INT_BAD;
    }
    sscanf(line, "%d", &n);
    return n;
@@ -3132,10 +3135,10 @@ static void keys_global (int ch) {
          if (Secure_mode) {
             show_msg(N_txt(NOT_onsecure_txt));
          } else {
-            int pid, sig = SIGTERM;
-            char *str;
-            if (-1 < (pid = get_int(N_txt(GET_pid2kill_txt)))) {
-               str = linein(fmtmk(N_fmt(GET_sigs_num_fmt), pid, SIGTERM));
+            int pid, sig = SIGTERM, def = w->ppt[w->begtask]->tid;
+            if (GET_INT_BAD < (pid = get_int(fmtmk(N_txt(GET_pid2kill_fmt), def)))) {
+               char *str = linein(fmtmk(N_fmt(GET_sigs_num_fmt), pid, SIGTERM));
+               if (0 > pid) pid = def;
                if (*str) sig = signal_name_to_number(str);
                if (0 < sig && kill(pid, sig))
                   show_msg(fmtmk(N_fmt(FAIL_signals_fmt)
@@ -3148,18 +3151,22 @@ static void keys_global (int ch) {
          if (Secure_mode)
             show_msg(N_txt(NOT_onsecure_txt));
          else {
-            int val, pid;
-            if (-1 < (pid = get_int(N_txt(GET_pid2nice_txt)))
-            && INT_MIN < (val = get_int(fmtmk(N_fmt(GET_nice_num_fmt), pid))))
-               if (setpriority(PRIO_PROCESS, (unsigned)pid, val))
-                  show_msg(fmtmk(N_fmt(FAIL_re_nice_fmt)
-                     , pid, val, strerror(errno)));
+            int val, pid, def = w->ppt[w->begtask]->tid;
+            if (GET_INT_BAD < (pid = get_int(fmtmk(N_txt(GET_pid2nice_fmt), def)))) {
+               if (0 > pid) pid = def;
+               if (GET_INTNONE < (val = get_int(fmtmk(N_fmt(GET_nice_num_fmt), pid))))
+                  if (setpriority(PRIO_PROCESS, (unsigned)pid, val))
+                     show_msg(fmtmk(N_fmt(FAIL_re_nice_fmt)
+                        , pid, val, strerror(errno)));
+            }
          }
          break;
       case 'X':
       {  int wide = get_int(fmtmk(N_fmt(XTRA_fixwide_fmt), Rc.fixed_widest));
-         if (-1 < wide) Rc.fixed_widest = wide;
-         else if (INT_MIN < wide) Rc.fixed_widest = -1;
+         if (GET_INTNONE < wide) {
+            if (-1 < wide) Rc.fixed_widest = wide;
+            else if (INT_MIN < wide) Rc.fixed_widest = -1;
+         }
       }
          break;
       case 'Z':

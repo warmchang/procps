@@ -314,11 +314,11 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[DELAY_change_fmt] = _("Change delay from %.1f to");
    Norm_nlstab[THREADS_show_fmt] = _("Show threads %s");
    Norm_nlstab[IRIX_curmode_fmt] = _("Irix mode %s");
-   Norm_nlstab[GET_pid2kill_txt] = _("pid to signal/kill");
+   Norm_nlstab[GET_pid2kill_fmt] = _("PID to signal/kill [default pid = %d]");
    Norm_nlstab[GET_sigs_num_fmt] = _("Send pid %d signal [%d/sigterm]");
    Norm_nlstab[FAIL_signals_fmt] = _("Failed signal pid '%d' with '%d': %s");
    Norm_nlstab[BAD_signalid_txt] = _("Invalid signal");
-   Norm_nlstab[GET_pid2nice_txt] = _("PID to renice");
+   Norm_nlstab[GET_pid2nice_fmt] = _("PID to renice [default pid = %d]");
    Norm_nlstab[GET_nice_num_fmt] = _("Renice PID %d to value");
    Norm_nlstab[FAIL_re_nice_fmt] = _("Failed renice of PID %d to %d: %s");
    Norm_nlstab[NAME_windows_fmt] = _("Rename window '%s' to (1-3 chars)");
