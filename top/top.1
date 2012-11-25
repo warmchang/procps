@@ -37,8 +37,8 @@
 .
 \#                      Commonly used strings (for consistency) ----------
 \#                           - our em-dashes
-.ds Em \fR\ \--\ \fR
-.ds EM \fB\ \--\ \fR
+.ds Em \fR\ \-\-\ \fR
+.ds EM \fB\ \-\-\ \fR
 \#                           - our program name (makes great grammar)
 .ds We top
 .ds WE \fBtop\fR
@@ -103,7 +103,7 @@ top \- display Linux processes
 \*(WE \*(CL
 
 
-The traditional switches '-' and whitespace are optional.
+The traditional switches '\-' and whitespace are optional.
 
 .\" ----------------------------------------------------------------------
 .SH DESCRIPTION
@@ -202,7 +202,7 @@ Remaining screen width is usually allocated to any variable width columns
 currently visible.
 The variable width columns, such as COMMAND, are noted in topic
 3a. DESCRIPTIONS of Fields.
-Actual output width may also be influenced by the -w switch, which is
+Actual output width may also be influenced by the \-w switch, which is
 discussed in topic 1. COMMAND\-LINE Options.
 
 .\" ......................................................................
@@ -249,7 +249,7 @@ The command-line syntax for \*(We consists of:
 
   \*(CL
 
-The typically mandatory switches ('-') and even whitespace are completely
+The typically mandatory switches ('\-') and even whitespace are completely
 optional.
 
 .TP 5
@@ -261,7 +261,7 @@ Show library version and the usage prompt, then quit.
 Starts \*(We in 'Batch' mode, which could be useful for sending output
 from \*(We to other programs or to a file.
 In this mode, \*(We will not accept input and runs until the iterations
-limit you've set with the '-n' \*(CO or until killed.
+limit you've set with the '\-n' \*(CO or until killed.
 
 .TP 5
 \-\fBc\fR :\fI Command-line/Program-name\fR toggle \fR
@@ -296,12 +296,12 @@ For additional information regarding this toggle
 \*(Xt 4c. TASK AREA Commands, SIZE.
 
 .TP 5
-\-\fBn\fR :\fI Number-of-iterations\fR limit as:\fB\ \ -n number \fR
+\-\fBn\fR :\fI Number-of-iterations\fR limit as:\fB\ \ \-n number \fR
 Specifies the maximum number of iterations, or frames, \*(We should
 produce before ending.
 
 .TP 5
-\-\fBp\fR :\fI Monitor-PIDs\fR mode as:\fB\ \ -pN1 -pN2 ...\fR\ \ or\fB\ \ -pN1,N2,N3 ... \fR
+\-\fBp\fR :\fI Monitor-PIDs\fR mode as:\fB\ \ \-pN1 -pN2 ...\fR\ \ or\fB\ \ \-pN1,N2,N3 ... \fR
 Monitor only processes with specified process IDs.
 This option can be given up to \*(WP times, or you can provide a comma delimited
 list with up to \*(WP pids.
@@ -332,7 +332,7 @@ time that it and its dead children have used.
 .TP 5
 \-\fBu\fR | \-\fBU\fR :\fI User-filter-mode\fR as:\ \ \fB-u\fR | \fB-U number\fR or\fB name \fR
 Display only processes with a user id or user name matching that given.
-The '-u' option matches on \fI effective\fR user whereas the '-U' option
+The '\-u' option matches on \fI effective\fR user whereas the '\-U' option
 matches on\fI any\fR user (real, effective, saved, or filesystem).
 
 The 'p', 'u' and 'U' \*(COs are mutually exclusive.
@@ -348,7 +348,7 @@ but the number of rows is considered unlimited.
 In normal display mode, when used without an argument \*(We will\fI attempt\fR
 to format output using the COLUMNS= and LINES= environment variables, if set.
 With an argument, output width can only be decreased, not increased.
-Whether using environment variables or an argument with -w, when\fI not\fR
+Whether using environment variables or an argument with \-w, when\fI not\fR
 in 'Batch' mode actual terminal dimensions can never be exceeded.
 
 \*(NT Without the use of this \*(CO, output width is always based on the
@@ -445,7 +445,7 @@ A task's currently used share of available \*(MP.
 .TP 4
  3.\fB CGROUPS \*(Em Control Groups \fR
 The names of the control group(s) to which a process belongs,
-or '-' if not applicable for that process.
+or '\-' if not applicable for that process.
 
 Control Groups provide for allocating resources (cpu, memory, network
 bandwidth, etc.) among installation-defined groups of processes.
@@ -680,7 +680,7 @@ of a second.
 .TP 4
 31.\fB TPGID \*(Em Tty Process Group Id \fR
 The process group ID of the foreground process for the connected tty,
-or -1 if a process is not connected to a terminal.
+or \-1 if a process is not connected to a terminal.
 By convention, this value equals the process ID (\*(Xa PID) of the
 the process group leader (\*(Xa PGRP).
 
@@ -711,7 +711,7 @@ swapped out and pages that have been mapped but not used.
 Depending on the availability of the kernel link map ('System.map'), this
 field will show the name or the address of the kernel function in which the
 task is currently sleeping.
-Running tasks will display a dash ('-') in this column.
+Running tasks will display a dash ('\-') in this column.
 
 By displaying this field, \*(We's own working set could be increased by over
 700Kb, depending on the kernel version.
@@ -868,7 +868,7 @@ Removes restrictions on which tasks are shown.
 This command will reverse any 'i' (idle tasks) and 'n' (max tasks)
 commands that might be active.
 It also provides for an 'exit' from pid monitoring\fI and\fR user filtering.
-See the '-p' \*(CO for a discussion of PID monitoring and the 'U' or 'u'
+See the '\-p' \*(CO for a discussion of PID monitoring and the 'U' or 'u'
 \*(CIs regarding user filtering.
 
 Additionally, any window that has been scrolled will be reset with
@@ -1141,7 +1141,7 @@ effect, simply ask for help and view the window summary on the second line.
 .TP 7
 \ \ \'\fBu\fR' | '\fBU\fR' :\fIShow-Specific-User-Only \fR
 You will be prompted for the\fB uid\fR or\fB name\fR of the user to display.
-The '-u' option matches on \fB effective\fR user whereas the '-U' option
+The '\-u' option matches on \fB effective\fR user whereas the '\-U' option
 matches on\fB any\fR user (real, effective, saved, or filesystem).
 
 Thereafter, in that \*(TW only matching users will be shown, or possibly
@@ -1321,7 +1321,7 @@ know what window is the \*(CW.
 .\" ----------------------------------------------------------------------
 .TP 7
 \ \ \'\fB-\fR\' | \'\fB_\fR\' :\fIShow/Hide-Window(s)\fR toggles \fR
-The '-' key turns the \*(CW's \*(TD \*O and \*F.
+The '\-' key turns the \*(CW's \*(TD \*O and \*F.
 When \*O, that \*(TA will show a minimum of the columns header you've
 established with the 'f' \*(CI.
 It will also reflect any other \*(TA options/toggles you've applied
@@ -1591,7 +1591,7 @@ personal \*(CF to the current directory, subject to permissions.
 .SH 7. STUPID TRICKS Sampler
 .\" ----------------------------------------------------------------------
 Many of these 'tricks' work best when you give \*(We a scheduling boost.
-So plan on starting him with a nice value of -10, assuming you've got
+So plan on starting him with a nice value of \-10, assuming you've got
 the authority.
 
 .\" ......................................................................
@@ -1637,7 +1637,7 @@ the ghostly images of just the currently running tasks.
 Delete the existing rcfile, or create a new symlink.
 Start this new version then type 'T' (a secret key,
 \*(Xt 4c. Task Area Commands, SORTING) followed by 'W' and 'q'.
-Finally, restart the program with -d0 (zero delay).
+Finally, restart the program with \-d0 (zero delay).
 
 Your display will be refreshed at three times the rate of the former \*(We,
 a 300% speed advantage.
