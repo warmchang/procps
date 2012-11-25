@@ -932,13 +932,20 @@ After issuing this command, you'll be told the new state of this toggle.
 .TP 7
 *\ \'\fBk\fR\' :\fIKill-a-task \fR
 You will be prompted for a PID and then the signal to send.
+
+Entering no PID or a negative number will be interpreted as
+the default shown in the prompt (the first task displayed).
+A PID value of zero means the \*(We program itself.
+
 The default signal, as reflected in the prompt, is SIGTERM.
 However, you can send any signal, via number or name.
 
 If you wish to abort the kill process, do one of the following
 depending on your progress:
-    1) at the pid prompt, just press <Enter>
-    2) at the signal prompt, type 0
+.Bd -literal
+    1) at the pid prompt, type an invalid number
+    2) at the signal prompt, type 0 (or any invalid signal)
+.Ed
 
 .TP 7
 \ \ \'\fBq\fR\' :\fIQuit \fR
@@ -946,9 +953,23 @@ depending on your progress:
 .TP 7
 *\ \'\fBr\fR\' :\fIRenice-a-Task \fR
 You will be prompted for a PID and then the value to nice it to.
-Entering a positive value will cause a process to lose priority.
-Conversely, a negative value will cause a process to be viewed more
-favorably by the kernel.
+
+Entering no PID or a negative number will be interpreted as
+the default shown in the prompt (the first task displayed).
+A PID value of zero means the \*(We program itself.
+
+A positive nice value will cause a process to lose priority.
+Conversely, a negative nice value will cause a process to be viewed
+more favorably by the kernel.
+As a general rule, ordinary users can only increase the nice value
+and are prevented from lowering it.
+
+If you wish to abort the renice process, do one of the following
+depending on your progress:
+.Bd -literal
+    1) at the pid prompt, type an invalid number
+    2) at the nice prompt, type <Enter> with no input
+.Ed
 
 .TP 7
 \ \ \'\fBW\fR\' :\fIWrite-the-Configuration-File \fR
