@@ -1,5 +1,10 @@
 procps-ng-3.3.6
 ---------------
+  * top adds a powerful new feature wherein the contents
+    of any file or the output from a command, pipeline or
+    shell script can be viewed in a separate scrollable,
+    searchable window
+  * top provides for a default PID with kill and nice
   * Adjusted pmap pidlist storage Debian #688180
 
 procps-ng-3.3.5
