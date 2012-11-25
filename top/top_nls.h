@@ -84,13 +84,20 @@ enum norm_nls {
 #ifndef WARN_CFG_OFF
    XTRA_warncfg_txt,
 #endif
+#ifndef INSP_OFFDEMO
+   YINSP_demo01_txt, YINSP_demo02_txt, YINSP_demo03_txt, YINSP_demo04_txt,
+   YINSP_demo05_txt,
+#endif
+   YINSP_failed_fmt, YINSP_noents_txt, YINSP_pidbad_fmt, YINSP_pidsee_fmt,
+   YINSP_rcfile_fmt, YINSP_status_fmt, YINSP_workin_txt,
       norm_MAX
 };
 
 enum uniq_nls {
    KEYS_helpbas_fmt, KEYS_helpext_fmt, WINDOWS_help_fmt, COLOR_custom_fmt,
    FIELD_header_fmt, MEMORY_lines_fmt, STATE_line_1_fmt, STATE_lin2x4_fmt,
-   STATE_lin2x5_fmt, STATE_lin2x6_fmt, STATE_lin2x7_fmt,
+   STATE_lin2x5_fmt, STATE_lin2x6_fmt, STATE_lin2x7_fmt, INSP_hdrbase_fmt,
+   INSP_hdrsels_fmt, INSP_hdrview_fmt,
       uniq_MAX
 };
 

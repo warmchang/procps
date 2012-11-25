@@ -371,6 +371,55 @@ static void build_norm_nlstab (void) {
 #ifndef WARN_CFG_OFF
    Norm_nlstab[XTRA_warncfg_txt] = _("Overwrite existing old style rcfile?");
 #endif
+#ifndef INSP_OFFDEMO
+   Norm_nlstab[YINSP_demo01_txt] = _("Open Files");
+   Norm_nlstab[YINSP_demo02_txt] = _("NUMA Info");
+   Norm_nlstab[YINSP_demo03_txt] = _("Log");
+   Norm_nlstab[YINSP_demo04_txt] = _(""
+      "This is simulated output representing the contents of some file or the output\n"
+      "from some command.  Exactly which commands and/or files are solely up to you.\n"
+      "\n"
+      "Although this text is for information purposes only, it can still be scrolled\n"
+      "and searched like real output will be.  You are encouraged to experiment with\n"
+      "those features as explained in the prologue above.\n"
+      "\n"
+      "To enable real Inspect functionality, entries must be added to the end of the\n"
+      "top personal personal configuration file.  You could use your favorite editor\n"
+      "to accomplish this, taking care not to disturb existing entries.\n"
+      "\n"
+      "Another way to add entries is illustrated below, but it risks overwriting the\n"
+      "rcfile.  Redirected echoes must not replace (>) but append (>>) to that file.\n"
+      "\n"
+      "  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
+      "  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
+      "  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
+      "\n"
+      "If you don't know the location or name of the top rcfile, use the 'W' command\n"
+      "and note those details.  After backing up the current rcfile, try issuing the\n"
+      "above echoes exactly as shown, replacing '.toprc' as appropriate.  The safest\n"
+      "approach would be to use copy then paste to avoid any typing mistakes.\n"
+      "\n"
+      "Finally, restart top to reveal what actual Inspect entries combined with this\n"
+      "new command can offer.  The possibilities are endless, especially considering\n"
+      "that 'pipe' type entries can include shell scripts too!\n"
+      "\n"
+      "For additional important information, please consult the top documentation.\n"
+      "Then enhance top with your very own customized 'file' and 'pipe' entries.\n"
+      "\n"
+      "Enjoy!\n");
+   Norm_nlstab[YINSP_demo05_txt] = _("the '=' key will eventually show the actual file read or command(s) excuted ...");
+#endif
+   Norm_nlstab[YINSP_failed_fmt] = _("Selection failed with: %s\n");
+#ifndef INSP_OFFDEMO
+   Norm_nlstab[YINSP_noents_txt] = _("to enable 'Y' press <Enter> then type 'W' and restart top");
+#else
+   Norm_nlstab[YINSP_noents_txt] = _("to enable 'Y' please consult the top man page (press Enter)");
+#endif
+   Norm_nlstab[YINSP_pidbad_fmt] = _("unable to inspect, pid %d not found");
+   Norm_nlstab[YINSP_pidsee_fmt] = _("inspect at PID [defailt pid = %d]");
+   Norm_nlstab[YINSP_rcfile_fmt] = _("could not parse rcfile inspect entry %d");
+   Norm_nlstab[YINSP_status_fmt] = _("%s: %*d-%-*d lines, %*d-%*d columns, %u bytes read");
+   Norm_nlstab[YINSP_workin_txt] = _("patience please, working...");
 }
 
 
@@ -400,7 +449,7 @@ static void build_uniq_nlstab (void) {
    .  adhere to that goal lest the translated text be truncated.
    .
    .  If you would like additional information regarding these strings,
-   .  please see the prolog to the show_special function in the top.c
+   .  please see the prologue to the show_special function in the top.c
    .  source file.
    . */
 
@@ -413,17 +462,17 @@ static void build_uniq_nlstab (void) {
       "  1,I       Toggle SMP view: '~11~2' single/separate states; '~1I~2' Irix/Solaris mode\n"
       "  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase fixed-width\n"
       "\n"
-      "  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n" \
+      "  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n"
       "  R,H,V,J . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1V~2' Forest view; '~1J~2' Num justify\n"
       "  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; '~1j~2' Str justify\n"
       "  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
       "  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
-      "  u,U     . Show: '~1u~2' effective user; '~1U~2' real, saved, file or effective user\n"
+      "  u,U     . Filter by: '~1u~2' effective user; '~1U~2' real, saved, file or effective user\n"
       "  n or #  . Set maximum tasks displayed\n"
       "  C,...   . Toggle scroll coordinates msg for: ~1up~2,~1down~2,~1left~2,right~2,~1home~2,~1end~2\n"
       "\n"
       "%s"
-      "  W         Write configuration file\n"
+      "  W,Y       Write configuration file '~1W~2'; Inspect other output '~1Y~2'\n"
       "  q         Quit\n"
       "          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
       "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
@@ -544,6 +593,19 @@ static void build_uniq_nlstab (void) {
    Uniq_nlstab[MEMORY_lines_fmt] = _(""
       "%s Mem: ~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2buffers~3\n"
       "%s Swap:~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2cached~3\n");
+
+   Uniq_nlstab[INSP_hdrbase_fmt] = _(""
+      "Inspection~2 Pause at:  pid ~1%d~6 running command ~1%s~6 as user ~1%s~6");
+
+   Uniq_nlstab[INSP_hdrsels_fmt] = _(""
+      "%s\n"
+      "Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to ~1end~5 !\n"
+      "Options~2: ~1%s\n");
+
+   Uniq_nlstab[INSP_hdrview_fmt] = _(""
+      "%s\n"
+      "Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to ~1locate~5/~1next~5.\n"
+      "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n");
 }
 
 
@@ -602,6 +664,16 @@ void initialize_nls (void) {
          fprintf(stderr, nls_err, "Uniq", i);
          exit(1);
       }
+ #ifndef INSP_OFFDEMO
+   if (READMINSZ < strlen(N_txt(YINSP_demo04_txt)) +1) {
+      fprintf(stderr
+         , "\nAssertion Failed in %s (%s):\n"
+            "\t'READMINSZ < strlen(N_txt(YINSP_demo04_txt)) + 1'\n"
+            "READMINSZ must be at least %u !\n\n"
+         , __FILE__,  __func__, (unsigned)strlen(N_txt(YINSP_demo04_txt)) + 1);
+         exit(1);
+   }
+ #endif
 #else
    setlocale (LC_ALL, "");
    bindtextdomain(PACKAGE, LOCALEDIR);

@@ -32,6 +32,9 @@
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define CPU_ZEROTICS            /* tolerate few tics when cpu off vs. idle */
 //#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
+//#define INSP_OFFDEMO            /* disable demo screens, issue msg instead */
+//#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents in a file  */
+//#define INSP_SLIDE_1            /* when scrolling left/right don't move 8  */
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
 //#define PERCENTBOOST            /* enable extended precision for % fields  */
@@ -120,6 +123,8 @@ char *strcasestr(const char *haystack, const char *needle);
       many termcap/color transitions - these definitions ensure we have room */
 #define ROWMINSIZ  ( SCREENMAX +  4 * (CAPBUFSIZ + CLRBUFSIZ) )
 #define ROWMAXSIZ  ( SCREENMAX + 16 * (CAPBUFSIZ + CLRBUFSIZ) )
+   // minimum size guarantee for dynamically acquired 'readfile' buffer
+#define READMINSZ  2048
 
    // space between task fields/columns
 #define COLPADSTR   " "
@@ -598,12 +603,13 @@ typedef struct WIN_t {
 //atic inline void   show_scroll (void);
 //atic void          show_special (int interact, const char *glob);
 //atic void          updt_scroll_msg (void);
-/*------  Low Level Memory/Keyboard support  -----------------------------*/
+/*------  Low Level Memory/Keyboard/File I/O support  --------------------*/
 //atic void         *alloc_c (size_t num);
 //atic void         *alloc_r (void *ptr, size_t num);
 //atic int           chin (int ech, char *buf, unsigned cnt);
 //atic int           keyin (int init);
 //atic char         *linein (const char *prompt);
+//atic int           readfile (FILE *fp, char **baddr, unsigned *bsize, unsigned *bread);
 /*------  Small Utility routines  ----------------------------------------*/
 //atic float         get_float (const char *prompt);
 //atic int           get_int (const char *prompt);
@@ -638,6 +644,17 @@ typedef struct WIN_t {
 //atic void          procs_hlp (proc_t *p);
 //atic void          procs_refresh (void);
 //atic void          sysinfo_refresh (int forced);
+/*------  Inspect Other Output  ------------------------------------------*/
+//atic void          insp_cnt_nl (void);
+#ifndef INSP_OFFDEMO
+//atic void          insp_do_demo (char *fmts, int pid);
+#endif
+//atic void          insp_do_file (char *fmts, int pid);
+//atic void          insp_do_pipe (char *fmts, int pid);
+//atic void          insp_find (int ch, int *col, int *row);
+//atic inline void   insp_show_pg (int col, int row, int max);
+//atic int           insp_view_this (char *hdr);
+//atic void          inspection_utility (int pid);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
 //atic int           config_cvt (WIN_t *q);
