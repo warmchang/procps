@@ -89,7 +89,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "September 2012" "procps-ng" "User Commands"
+.TH TOP 1 "November 2012" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -157,6 +157,7 @@ The remaining Table of Contents
     6. FILES
        a. SYSTEM Configuration File
        b. PERSONAL Configuration File
+       c. ADDING INSPECT Entries
     7. STUPID TRICKS Sampler
        a. Kernel Magic
        b. Bouncing Windows
@@ -815,7 +816,7 @@ depending on the context in which they are issued.
 
 .Bd -literal
   4a.\fI Global-Commands \fR
-        <Ent/Sp> ?, =, A, B, d, g, h, H, I, k, q, r, s, W, X, Z
+        <Ent/Sp> ?, =, A, B, d, g, h, H, I, k, q, r, s, W, X, Y, Z
   4b.\fI Summary-Area-Commands \fR
         C, l, t, 1, m
   4c.\fI Task-Area-Commands \fR
@@ -1007,6 +1008,35 @@ or holding down the <Space> bar.
 \*(NT Whether explicitly or automatically increased, the widths for
 these fields are never decreased by \*(We.
 To narrow them you must specify a smaller number or restore the defaults.
+
+.TP 7
+\ \ \'\fBY\fR\' :\fIInspect-Other-Output \fR
+After issuing the 'Y' \*(CI, you will be prompted for a target PID.
+Typing a value or accepting the default results in a separate screen.
+That screen can be used to view a variety of files or piped command output
+while the normal top iterative display is paused.
+
+\*(NT This \*(CI is only fully realized when supporting entries have been
+manually added to the end of the \*(We \*(CF.
+For details on creating those entries, \*(Xt 6c. ADDING INSPECT Entries.
+
+Most of the keys used to navigate the Inspect feature are reflected in
+its header prologue.
+There are, however, additional keys available once you have selected a
+particular file or command.
+They are familiar to anyone who has used the pager 'less' and are
+summarized here for future reference.
+
+.Bd -literal
+   \fI key      function \fR
+    '='      alternate status\-line, file or pipeline
+    '/'      find, equivalent to 'L' locate
+    'n'      find next, equivalent to '&' locate next
+    <Space>  scroll down, equivalent to <PgDn>
+    'b'      scroll up, equivalent to <PgUp>
+    'g'      first line, equivalent to <Home>
+    'G'      last line, equivalent to <End>
+.Ed
 
 .TP 7
 \ \ \'\fBZ\fR\' :\fIChange-Color-Mapping \fR
@@ -1597,16 +1627,138 @@ Use the 'W' \*(CI to create it or update it.
 
 Here is the general layout:
 .Bd -literal -compact
-    global   # line 1: the program name/alias notation
-      "      # line 2: id,altscr,irixps,delay,curwin
-    per ea   # line a: winname,fieldscur
-    window   # line b: winflags,sortindx,maxtasks
-      "      # line c: summclr,msgsclr,headclr,taskclr
-    global   # last  : fixed-width incr
+    global   # line  1: the program name/alias notation
+      "      # line  2: id,altscr,irixps,delay,curwin
+    per ea   # line  a: winname,fieldscur
+    window   # line  b: winflags,sortindx,maxtasks
+      "      # line  c: summclr,msgsclr,headclr,taskclr
+    global   # line 15: fixed-width incr
+      "      # any remaining lines are devoted to the
+      "      # generalized 'inspect' provisions
+      "      # discussed below
 .Ed
 
 If the $HOME variable is not present, \*(We will try to write the
 personal \*(CF to the current directory, subject to permissions.
+
+.\" ......................................................................
+.SS 6c. ADDING INSPECT Entries
+.\" ----------------------------------------------------------------------
+To exploit the 'Y' \*(CI, you must add entries at the\fB end\fR of the
+\*(We personal \*(CF.
+Such entries simply reflect a file to be read or command/pipeline to be
+executed whose results will then be displayed in a separate scrollable,
+searchable window.
+
+If you don't know the location or name of your top rcfile, use the 'W'
+\*(CI to rewrite it and note those details.
+
+Inspect entries can be added with a redirected echo or by editing the \*(CF.
+Redirecting an echo risks overwriting the rcfile should it replace (>)
+rather than append (>>) to that file.
+Conversely, when using an editor care must be taken not to corrupt existing
+lines, some of which will contain unprintable data or unusual characters.
+
+Those Inspect entries beginning with a '#' character are ignored, regardless
+of content.
+Otherwise they consist of the following 3 elements, each of which\fI must\fR
+be separated by a tab character (thus 2 '\\t' total):
+
+.Bd -literal -compact
+  .type:  literal 'file' or 'pipe'
+  .name:  selection shown on the Inspect screen
+  .fmts:  string representing a path or command
+.Ed
+
+The two types of Inspect entries are\fI not\fR interchangeable.
+Those designated '\fBfile\fR' will be accessed using fopen and
+must reference a single file in the '.fmts' element.
+Entries specifying '\fBpipe\fR' will employ popen, their '.fmts' element
+could contain many pipelined commands and, none can be interactive.
+
+If the file or pipeline represented in your '.fmts' deals with the specific PID
+input or accepted when prompted, then the format string must also contain the
+'\fB%d\fR' specifier, as these examples illustrate.
+
+.Bd -literal -compact
+  .fmts=  /proc/\fI%d\fR/numa_maps
+  .fmts=  lsof -P -p\fI %d\fR
+.Ed
+
+For '\fBpipe\fR' type entries only, you may also wish to redirect stderr to
+stdout for a more comprehensive result.
+Thus the format string becomes:
+
+.Bd -literal -compact
+  .fmts=  pmap -x %d\fI 2>&1\fR
+.Ed
+
+Here are examples of both types of Inspect entries as they might appear
+in the rcfile.
+The first entry will be ignored due to the initial '#' character.
+For clarity, the pseudo tab depictions (^I) are surrounded by an
+extra space but the actual tabs would not be.
+.Bd -literal -compact
+
+  # pipe ^I Sockets ^I lsof -n -P -i 2>&1
+  pipe ^I Open Files ^I lsof -P -p %d 2>&1
+  file ^I NUMA Info ^I /proc/%d/numa_maps
+  pipe ^I Log ^I tail -n100 /var/log/syslog | sort -Mr
+.Ed
+
+Except for the commented entry above, these next examples show what could
+be echoed to achieve similar results, assuming the rcfile name was '.toprc'.
+However, due to the embedded tab characters, each of these lines should be
+preceeded by '\fB/bin/echo \-e\fR', not just a simple an 'echo', to
+enable backslash interpretation regardless of which shell you use.
+
+.Bd -literal -compact
+  "pipe\\tOpen Files\\tlsof -P -p %d 2>&1" >> ~/.toprc
+  "file\\tNUMA Info\\t/proc/%d/numa_maps" >> ~/.toprc
+  "pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr" >> ~/.toprc
+.Ed
+
+\fBCaution\fR:
+If any inspect entry you create produces output with unprintable characters
+they will be displayed in either the ^C notation or hexidecimal <FF> form,
+depending on their value.
+This applies to tab characters as well, which will show as '^I'.
+If you want a truer representation, any embedded tabs should be expanded.
+
+.Bd -literal -compact
+  # next would have contained '\\t' ...
+  # file ^I <your_name> ^I /proc/%d/status
+  # but this will eliminate embedded '\\t' ...
+  pipe ^I <your_name> ^I cat /proc/%d/status | expand -
+.Ed
+
+The above example takes what could have been a 'file' entry but employs
+a 'pipe' instead so as to expand the embedded tabs.
+
+\*(NT While '\fBpipe\fR' type entries have been discussed in terms of pipelines
+and commands, there is nothing to prevent you from including \fI shell scripts\fR
+as well.
+Perhaps even newly created scripts designed specifically for the 'Y' \*(CI.
+
+Lastly, as the number of your Inspect entries grows over time, the 'Options:'
+row will be truncated when screen width is exceeded.
+That does not affect operation other than to make some selections invisible.
+
+However, if some choices are lost to truncation but you want to see more options,
+there is an easy solution hinted at below.
+
+.Bd -literal -compact
+  Inspection Pause at pid ...
+  Use:  left/right then <Enter> ...
+  Options:  help  1  2  3  4  5  6  7  8  9  10  11 ...
+.Ed
+
+The entries in the top rcfile would have a number for the '.name' element and
+the 'help' entry would identify a shell script you've written explaining what
+those numbered selections actually mean.
+In that way, many more choices can be made visible.
+
+.PP
 
 .\" ----------------------------------------------------------------------
 .SH 7. STUPID TRICKS Sampler
