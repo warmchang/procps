@@ -1603,7 +1603,7 @@ static void calibrate_fields (void) {
    sigemptyset(&newss);
    sigaddset(&newss, SIGWINCH);
    if (-1 == sigprocmask(SIG_BLOCK, &newss, &oldss))
-      error_exit(fmtmk("failed sigprocmask, SIG_BLOCK: %s", strerror(errno)));
+      error_exit(fmtmk(N_fmt(FAIL_sigstop_fmt), strerror(errno)));
 
    adj_geometry();
 
