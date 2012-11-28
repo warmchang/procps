@@ -1066,7 +1066,7 @@ static char *linein (const char *prompt) {
          *
          * He always creates a buffer at least READMINSZ big, possibly
          * all zeros (an empty string), even if the file wasn't read. */
-static int readfile (FILE *fp, char **baddr, unsigned *bsize, unsigned *bread) {
+static int readfile (FILE *fp, char **baddr, size_t *bsize, size_t *bread) {
    char chunk[4096*16];
    size_t num;
 
@@ -2354,8 +2354,8 @@ static void sysinfo_refresh (int forced) {
 static  char    **Insp_p;         // pointers to each line start
 static  int       Insp_nl;        // total lines, total Insp_p entries
 static  char     *Insp_buf;       // the results from insp_do_file/pipe
-static  unsigned  Insp_bufsz;     // allocated size of Insp_buf
-static  unsigned  Insp_bufrd;     // bytes actually in Insp_buf
+static  size_t    Insp_bufsz;     // allocated size of Insp_buf
+static  size_t    Insp_bufrd;     // bytes actually in Insp_buf
 static  char     *Insp_selname;   // the selected label, if anybody cares
 static  char     *Insp_selfmts;   // the selected path/command, ditto
 
@@ -2368,7 +2368,7 @@ static  char     *Insp_selfmts;   // the selected path/command, ditto
    putp(Caps_off); }
 
         // Our 'row length' macro, equivalent to a strlen() call
-#define INSP_RLEN(idx) (size_t)(Insp_p[idx +1] - Insp_p[idx] -1)
+#define INSP_RLEN(idx) (int)(Insp_p[idx +1] - Insp_p[idx] -1)
 
         // Our 'busy' (wait please) macro
 #define INSP_BUSY  { INSP_MKSL(0, N_txt(YINSP_workin_txt)); \
@@ -2423,7 +2423,7 @@ static void insp_cnt_nl (void) {
 static void insp_do_demo (char *fmts, int pid) {
    (void)fmts; (void)pid;
    Insp_bufsz = READMINSZ;
-   Insp_buf = alloc_c(Insp_bufsz);
+   Insp_buf   = alloc_c(READMINSZ);
    Insp_bufrd = snprintf(Insp_buf, Insp_bufsz, "%s", N_txt(YINSP_demo04_txt));
    insp_cnt_nl();
 } // end: insp_do_demo
@@ -2541,12 +2541,12 @@ static inline void insp_show_pg (int col, int row, int max) {
       , Insp_selname
       , r, l, r, ls
       , c, col + 1, c, col + Screen_cols
-      , Insp_bufrd);
+      , (unsigned long)Insp_bufrd);
    INSP_MKSL(0, buf);
 
    for ( ; max && row < Insp_nl; row++) {
       char tline[SCREENMAX];
-      size_t fr, to, len;
+      int fr, to, len;
 
       capNO;
       putp("\n");

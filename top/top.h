@@ -609,7 +609,7 @@ typedef struct WIN_t {
 //atic int           chin (int ech, char *buf, unsigned cnt);
 //atic int           keyin (int init);
 //atic char         *linein (const char *prompt);
-//atic int           readfile (FILE *fp, char **baddr, unsigned *bsize, unsigned *bread);
+//atic int           readfile (FILE *fp, char **baddr, size_t *bsize, size_t *bread);
 /*------  Small Utility routines  ----------------------------------------*/
 //atic float         get_float (const char *prompt);
 //atic int           get_int (const char *prompt);
