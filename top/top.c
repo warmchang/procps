@@ -2471,11 +2471,8 @@ static void insp_do_pipe (char *fmts, int pid) {
          * ( preceeding control chars would consume an unknown amount ) */
 static void insp_find (int ch, int *col, int *row) {
  #define reDUX (found) ? N_txt(WORD_another_txt) : ""
- #define begFS (int)(fnd - Insp_p[i])
    static char str[SCREENMAX];
    static int found;
-   char *fnd, *p;
-   int i, x, ccur = *col;
 
    if ((ch == '&' || ch == 'n') && !str[0]) {
       show_msg(N_txt(FIND_no_next_txt));
@@ -2486,29 +2483,33 @@ static void insp_find (int ch, int *col, int *row) {
       found = 0;
    }
    if (str[0]) {
+      int i, xx, yy;
       INSP_BUSY;
-      for (i = *row; i < Insp_nl; ) {
-         fnd = NULL;                                //  because our glob might
-         for (x = ccur +1; x < INSP_RLEN(i); x++) { //  be raw binary data, we
-            if (!*(p = Insp_p[i] + x))              //  could encounter a '\0'
-               continue;                            //  in what we view as the
-            if ((fnd = STRSTR(p, str)))             //  'row' -- so we'll have
-               break;                               //  to search it in chunks
-            x += strlen(str);                       //     ...
-         }                                          //  and, account for maybe
-         if (fnd && fnd < Insp_p[i +1]) {           //  overrunning that 'row'
-            found = 1;
-            *row = i;
-            *col = begFS;
-            return;
+      for (xx = *col, yy = *row; yy < Insp_nl; ) {
+            // let's skip this entire row, if there's no chance of a match
+         if (memchr(Insp_p[yy], str[0], INSP_RLEN(yy))) {
+            char *p, *fnd = NULL;
+            for (i = xx; i < INSP_RLEN(yy); i++) {
+               if (!*(p = Insp_p[yy] + i))         // skip any empty strings
+                  continue;
+               if ((fnd = STRSTR(p, str)))         // with binary data, each
+                  break;                           // row may have '\0'.  so
+               i += strlen(p);                     // our scans must be done
+            }                                      // in chunks, and we must
+            if (fnd && fnd < Insp_p[yy + 1]) {     // guard against overrun!
+               found = 1;
+               if (xx == *col) { ++xx; continue; } // matched where we were!
+               *row = yy;                          // ( tried to fool top? )
+               *col = (int)(fnd - Insp_p[yy]);
+               return;
+            }
          }
-         ++i;
-         ccur = 0;
+         xx = 0;
+         ++yy;
       }
       show_msg(fmtmk(N_fmt(FIND_no_find_fmt), reDUX, str));
    }
  #undef reDUX
- #undef begFS
 } // end: insp_find
 
 
