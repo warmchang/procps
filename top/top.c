@@ -2514,7 +2514,7 @@ static void insp_find (int ch, int *col, int *row) {
 
         /*
          * This guy is an insp_view_this() *Helper* function responsible
-         * for positioning us in both the x/y axes within the former glob
+         * for positioning us in both the x/y axes within the current glob
          * and displaying a page worth of damages.  Along the way, he makes
          * sure that any control characters and/or unprintable characters
          * use a less-like approach which distinguishes between two forms
@@ -2550,10 +2550,11 @@ static inline void insp_show_pg (int col, int row, int max) {
 
       capNO;
       putp("\n");
-      memset(tline, ' ', sizeof(tline));
       len = INSP_RLEN(row);
       if (col < len)
          memcpy(tline, Insp_p[row] + col, sizeof(tline));
+      else tline[0] = '\n';
+
       for (fr = 0, to = 0; fr < len && to < Screen_cols; fr++) {
          unsigned char uch = tline[fr];
          if (uch == '\n')   break;     // a no show  (he,he)
