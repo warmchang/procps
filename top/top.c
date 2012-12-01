@@ -958,8 +958,8 @@ static int keyin (int init) {
       if (!strcmp(tinfo_tab[i].str, pb))
          return tinfo_tab[i].key;
 
-   // no match, so we'll return single keystrokes only
-   if (buf[1]) return 0;
+   // no match, so we'll return single non-escaped keystrokes only
+   if (buf[0] == '\033' && buf[1]) return 0;
    return buf[0];
 } // end: keyin
 
@@ -2597,6 +2597,9 @@ static int insp_view_this (char *hdr) {
       putp(Cap_curs_hide);
       show_special(1, fmtmk(N_unq(INSP_hdrview_fmt), hdr));
       insp_show_pg(curcol, curlin, maxLN);
+      /* fflush(stdin) didn't do the trick, so we'll just dip a little deeper
+         lest repeated <Enter> keys produce immediate re-selection in caller */
+      tcflush(STDIN_FILENO, TCIFLUSH);
 
       switch (key = keyin(0)) {
          case kbd_ENTER:          // must force new keyin()
