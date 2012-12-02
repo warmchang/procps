@@ -73,9 +73,7 @@ static char *Myname;
         /* The 'local' config file support */
 static char  Rc_name [OURPATHSZ];
 static RCF_t Rc = DEF_RCFILE;
-#ifndef WARN_CFG_OFF
-static int   Rc_converted;
-#endif
+static int   Rc_questions;
 
         /* The run-time acquired page stuff */
 static unsigned Page_size;
@@ -2900,9 +2898,7 @@ static int config_cvt (WIN_t *q) {
    x = q->rc.sortindx;
    q->rc.sortindx = fields_src[x] - FLD_OFFSET;
 
-#ifndef WARN_CFG_OFF
-   Rc_converted = 1;
-#endif
+   Rc_questions = 1;
    return 0;
 } // end: config_cvt
 
@@ -2949,6 +2945,7 @@ static void configs_read (void) {
          , "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%f, Curwin=%d\n"
          , &Rc.id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_delay, &i)) {
             p = fmtmk(N_fmt(RC_bad_files_fmt), Rc_name);
+            Rc_questions = -1;
             goto try_inspect_entries;            // maybe a faulty 'inspect' echo
       }
       // you saw that, right?  (fscanf stickin' it to 'i')
@@ -2979,13 +2976,14 @@ static void configs_read (void) {
             case 'f':                  // 3.3.0 thru 3.3.3 (procps-ng)
                SETw(w, Show_JRNUMS);   //    fall through !
             case 'g':                  // current RCF_VERSION_ID
+            default:                   // and future versions?
                if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
                   goto default_or_error;
                for (x = 0; x < P_MAXPFLGS; ++x)
                   if (P_MAXPFLGS <= FLDget(w, x))
                      goto default_or_error;
                break;
-            default:                   // 3.2.8 (former procps)
+            case 'a':                  // 3.2.8 (former procps)
                if (config_cvt(w))
                   goto default_or_error;
                break;
@@ -3013,11 +3011,11 @@ try_inspect_entries:
          Inspect.tab = alloc_r(Inspect.tab, sizeof(struct I_entry) * (i + 1));
          p = fmtmk(N_fmt(YINSP_rcfile_fmt), i +1);
 
-         if (!(s = strtok(fbuf, "\t\n"))) goto default_or_error;
+         if (!(s = strtok(fbuf, "\t\n"))) { Rc_questions = 1; continue; }
          iT(type) = strdup(s);
-         if (!(s = strtok(NULL, "\t\n"))) goto default_or_error;
+         if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; continue; }
          iT(name) = strdup(s);
-         if (!(s = strtok(NULL, "\t\n"))) goto default_or_error;
+         if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; continue; }
          iT(fmts) = strdup(s);
 
          switch (toupper(fbuf[0])) {
@@ -3028,10 +3026,13 @@ try_inspect_entries:
                iT(func) = insp_do_pipe;
                break;
             default:
-               goto default_or_error;
+               Rc_questions = 1;
+               continue;
          }
 
          iT(farg) = (strstr(iT(fmts), "%d")) ? 1 : 0;
+
+         if (Rc_questions < 0) Rc_questions = 1;
          ++i;
        #undef iT
       } // end: for ('inspect' entries)
@@ -3053,6 +3054,10 @@ try_inspect_entries:
          Inspect.demo = 1;
       }
 #endif
+      if (Rc_questions < 0) {
+         p = fmtmk(N_fmt(RC_bad_files_fmt), Rc_name);
+         goto default_or_error;
+      }
       fclose(fp);
    } // end: if (fp)
 
@@ -3068,6 +3073,7 @@ default_or_error:
    Rc = rcdef;
    for (i = 0 ; i < GROUPSMAX; i++)
       Winstk[i].rc  = Rc.win[i];
+   Rc_questions = 1;
 }
 #else
    error_exit(p);
@@ -3526,14 +3532,12 @@ static void file_writerc (void) {
    FILE *fp;
    int i;
 
-#ifndef WARN_CFG_OFF
-   if (Rc_converted) {
+   if (Rc_questions) {
       show_pmt(N_txt(XTRA_warncfg_txt));
       if ('y' != tolower(keyin(0)))
          return;
-      Rc_converted = 0;
+      Rc_questions = 0;
    }
-#endif
    if (!(fp = fopen(Rc_name, "w"))) {
       show_msg(fmtmk(N_fmt(FAIL_rc_open_fmt), Rc_name, strerror(errno)));
       return;
@@ -3557,7 +3561,7 @@ static void file_writerc (void) {
    // any new addition(s) last, for older rcfiles compatibility...
    fprintf(fp, "Fixed_widest=%d\n", Rc.fixed_widest);
 
-   if (!Inspect.demo && Inspect.total)
+   if (Inspect.raw)
       fputs(Inspect.raw, fp);
 
    fclose(fp);

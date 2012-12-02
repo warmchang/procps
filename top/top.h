@@ -49,7 +49,6 @@
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 //#define VALIDATE_NLS            /* validate integrity of all 3 nls tables  */
-//#define WARN_CFG_OFF            /* warning OFF when overwriting old rcfile */
 
 
 /*######  Notes, etc.  ###################################################*/

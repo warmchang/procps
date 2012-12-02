@@ -368,9 +368,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[GET_find_str_txt] = _("Locate string");
    Norm_nlstab[FIND_no_find_fmt] = _("%s\"%s\" not found");
    Norm_nlstab[XTRA_fixwide_fmt] = _("width incr is %d, change to (0 default, -1 auto)");
-#ifndef WARN_CFG_OFF
-   Norm_nlstab[XTRA_warncfg_txt] = _("Overwrite existing old style rcfile?");
-#endif
+   Norm_nlstab[XTRA_warncfg_txt] = _("Overwrite existing obsolete/corrupted rcfile?");
 #ifndef INSP_OFFDEMO
    Norm_nlstab[YINSP_demo01_txt] = _("Open Files");
    Norm_nlstab[YINSP_demo02_txt] = _("NUMA Info");
