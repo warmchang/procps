@@ -32,6 +32,7 @@
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define CPU_ZEROTICS            /* tolerate few tics when cpu off vs. idle */
 //#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
+//#define INSP_JUSTNOT            /* don't smooth unprintable right margins  */
 //#define INSP_OFFDEMO            /* disable demo screens, issue msg instead */
 //#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents in a file  */
 //#define INSP_SLIDE_1            /* when scrolling left/right don't move 8  */
@@ -650,9 +651,11 @@ typedef struct WIN_t {
 #endif
 //atic void          insp_do_file (char *fmts, int pid);
 //atic void          insp_do_pipe (char *fmts, int pid);
-//atic void          insp_find (int ch, int *col, int *row);
-//atic inline void   insp_show_pg (int col, int row, int max);
-//atic int           insp_view_this (char *hdr);
+//atic inline int    insp_find_ofs (int col, int row);
+//atic void          insp_find_str (int ch, int *col, int *row);
+//atic inline void   insp_make_row (int col, int row);
+//atic void          insp_show_pgs (int col, int row, int max);
+//atic int           insp_view_choice (char *hdr);
 //atic void          inspection_utility (int pid);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);

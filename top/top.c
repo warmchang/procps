@@ -2356,6 +2356,8 @@ static  size_t    Insp_bufsz;     // allocated size of Insp_buf
 static  size_t    Insp_bufrd;     // bytes actually in Insp_buf
 static  char     *Insp_selname;   // the selected label, if anybody cares
 static  char     *Insp_selfmts;   // the selected path/command, ditto
+static  char     *Insp_findstr;   // the current active target for find/next
+static  int       Insp_findlen;   // the above's strlen()
 
 
         // Our 'make status line' macro
@@ -2463,11 +2465,41 @@ static void insp_do_pipe (char *fmts, int pid) {
 
 
         /*
+         * This guy is a *Helper* function serving the following two masters:
+         *   insp_find_str() - find the next Insp_findstr match
+         *   insp_make_row() - highlight any Insp_findstr matches in-view
+         * If Insp_findstr is found in the designated row (after 'col'), he
+         * returns the offest from the row start, otherwise he returns a huge
+         * integer so traditional fencepost usage can be employed. */
+static inline int insp_find_ofs (int col, int row) {
+ #define begFS (int)(fnd - Insp_p[row])
+   char *p, *fnd = NULL;
+
+   if (Insp_findstr) {
+      // skip this row, if there's no chance of a match
+      if (memchr(Insp_p[row], Insp_findstr[0], INSP_RLEN(row))) {
+         for ( ; col < INSP_RLEN(row); col++) {
+            if (!*(p = Insp_p[row] + col))       // skip any empty strings
+               continue;
+            if ((fnd = STRSTR(p, Insp_findstr))) // with binary data, each
+               break;                            // row may have '\0'.  so
+            col += strlen(p);                    // our scans must be done
+         }                                       // in chunks, and we must
+         if (fnd && fnd < Insp_p[row + 1])       // guard against overrun!
+            return begFS;
+      }
+   }
+   return INT_MAX;
+ #undef begFS
+} // end: insp_find_ofs
+
+
+        /*
          * This guy supports the inspect 'L' and '&' search provisions
-         * and returns the row and *optimal* col for viewing any match
+         * and returns the row and *optimal* column for viewing any match
          * ( we'll always opt for left column justification since any )
-         * ( preceeding control chars would consume an unknown amount ) */
-static void insp_find (int ch, int *col, int *row) {
+         * ( preceding ctrl chars appropriate an unpredictable amount ) */
+static void insp_find_str (int ch, int *col, int *row) {
  #define reDUX (found) ? N_txt(WORD_another_txt) : ""
    static char str[SCREENMAX];
    static int found;
@@ -2478,29 +2510,26 @@ static void insp_find (int ch, int *col, int *row) {
    }
    if (ch == 'L' || ch == '/') {
       strcpy(str, linein(N_txt(GET_find_str_txt)));
+      Insp_findstr = str;
+      Insp_findlen = strlen(str);
+      if (!Insp_findlen) Insp_findstr = NULL;
       found = 0;
    }
    if (str[0]) {
-      int i, xx, yy;
+      int xx, yy;
+
       INSP_BUSY;
       for (xx = *col, yy = *row; yy < Insp_nl; ) {
-            // let's skip this entire row, if there's no chance of a match
-         if (memchr(Insp_p[yy], str[0], INSP_RLEN(yy))) {
-            char *p, *fnd = NULL;
-            for (i = xx; i < INSP_RLEN(yy); i++) {
-               if (!*(p = Insp_p[yy] + i))         // skip any empty strings
-                  continue;
-               if ((fnd = STRSTR(p, str)))         // with binary data, each
-                  break;                           // row may have '\0'.  so
-               i += strlen(p);                     // our scans must be done
-            }                                      // in chunks, and we must
-            if (fnd && fnd < Insp_p[yy + 1]) {     // guard against overrun!
-               found = 1;
-               if (xx == *col) { ++xx; continue; } // matched where we were!
-               *row = yy;                          // ( tried to fool top? )
-               *col = (int)(fnd - Insp_p[yy]);
-               return;
+         xx = insp_find_ofs(xx, yy);
+         if (xx < INSP_RLEN(yy)) {
+            found = 1;
+            if (xx == *col) {     // matched where we were!
+               ++xx;              // ( was the user maybe )
+               continue;          // ( trying to fool us? )
             }
+            *col = xx;
+            *row = yy;
+            return;
          }
          xx = 0;
          ++yy;
@@ -2508,34 +2537,84 @@ static void insp_find (int ch, int *col, int *row) {
       show_msg(fmtmk(N_fmt(FIND_no_find_fmt), reDUX, str));
    }
  #undef reDUX
-} // end: insp_find
+} // end: insp_find_str
 
 
         /*
-         * This guy is an insp_view_this() *Helper* function responsible
-         * for positioning us in both the x/y axes within the current glob
-         * and displaying a page worth of damages.  Along the way, he makes
-         * sure that any control characters and/or unprintable characters
-         * use a less-like approach which distinguishes between two forms
-         * of representation:  ^C and <FF>.
-         *
-         * He also creates a customized status line based on the maximum
-         * number of digits for the current selection's position so it will
-         * hopefully serve to inform, not distract by being jumpy. */
-static inline void insp_show_pg (int col, int row, int max) {
+         * This guy is a *Helper* function responsible for positioning a
+         * single row in the current 'X axis', then displaying the results.
+         * Along the way, he makes sure control characters and/or unprintable
+         * characters display in a less-like fashion:
+         *    '^A'    for control chars
+         *    '<BC>'  for other unprintable stuff
+         * Those will be highlighted with the current windows's capclr_msg,
+         * while visible search matches display with capclr_hdr for emphasis.
+         * ( we hide ugly plumbing in macros to concentrate on the algorithm ) */
+static inline void insp_make_row (int col, int row) {
+ #define maxSZ ( Screen_cols - (to + 1) )
  #define capNO { if (hicap) { putp(Caps_off); hicap = 0; } }
+ #define mkFND { PUTT("%s%.*s%s", Curwin->capclr_hdr, maxSZ, Insp_findstr, Caps_off); \
+    fr += Insp_findlen -1; to += Insp_findlen; hicap = 0; }
+#ifndef INSP_JUSTNOT
+ #define mkCTL { int x = maxSZ; const char *p = fmtmk("^%c", uch + '@'); \
+    PUTT("%s%.*s", (!hicap) ? Curwin->capclr_msg : "", x, p); to += 2; hicap = 1; }
+ #define mkUNP { int x = maxSZ; const char *p = fmtmk("<%02X>", uch); \
+    PUTT("%s%.*s", (!hicap) ? Curwin->capclr_msg : "", x, p); to += 4; hicap = 1; }
+#else
  #define mkCTL { if ((to += 2) <= Screen_cols) \
     PUTT("%s^%c", (!hicap) ? Curwin->capclr_msg : "", uch + '@'); hicap = 1; }
  #define mkUNP { if ((to += 4) <= Screen_cols) \
     PUTT("%s<%02X>", (!hicap) ? Curwin->capclr_msg : "", uch); hicap = 1; }
- #define mkSTD { capNO; putchar(uch); to++; }
+#endif
+ #define mkSTD { capNO; if (++to <= Screen_cols) putchar(uch); }
+   char tline[SCREENMAX];
+   int fr, to, ofs;
+   int hicap = 0;
+
+   capNO;
+   if (col < INSP_RLEN(row))
+      memcpy(tline, Insp_p[row] + col, sizeof(tline));
+   else tline[0] = '\n';
+
+   for (fr = 0, to = 0, ofs = 0; to < Screen_cols -1; fr++) {
+      if (!ofs)
+         ofs = insp_find_ofs(col + fr, row);
+      if (col + fr < ofs) {
+         unsigned char uch = tline[fr];
+         if (uch == '\n')   break;     // a no show  (he,he)
+         if (uch > 126)     mkUNP      // show as: '<AB>'
+         else if (uch < 32) mkCTL      // show as:  '^C'
+         else               mkSTD      // a show off (he,he)
+      } else {              mkFND      // a big show (he,he)
+         ofs = 0;
+      }
+   }
+   capNO;
+   putp(Cap_clr_eol);
+
+ #undef maxSZ
+ #undef capNO
+ #undef mkFND
+ #undef mkCTL
+ #undef mkUNP
+ #undef mkSTD
+} // end: insp_make_row
+
+
+        /*
+         * This guy is an insp_view_choice() *Helper* function who displays
+         * a page worth of of the user's damages.  He also creates a status
+         * line based on maximum digits for the current selection's lines and
+         * hozizontal position (so it serves to inform, not distract, by
+         * otherwise being jumpy). */
+static inline void insp_show_pgs (int col, int row, int max) {
    char buf[SMLBUFSIZ];
    int r = snprintf(buf, sizeof(buf), "%d", Insp_nl);
    int c = snprintf(buf, sizeof(buf), "%d", col +Screen_cols);
    int l = row +1, ls = Insp_nl;;
-   int hicap = 0;
 
-   if (!Insp_bufrd) l = ls = 0;   // for a more honest representation
+   if (!Insp_bufrd)
+      l = ls = 0;
    snprintf(buf, sizeof(buf), N_fmt(YINSP_status_fmt)
       , Insp_selname
       , r, l, r, ls
@@ -2544,39 +2623,19 @@ static inline void insp_show_pg (int col, int row, int max) {
    INSP_MKSL(0, buf);
 
    for ( ; max && row < Insp_nl; row++) {
-      char tline[SCREENMAX];
-      int fr, to, len;
-
-      capNO;
       putp("\n");
-      len = INSP_RLEN(row);
-      if (col < len)
-         memcpy(tline, Insp_p[row] + col, sizeof(tline));
-      else tline[0] = '\n';
-
-      for (fr = 0, to = 0; fr < len && to < Screen_cols; fr++) {
-         unsigned char uch = tline[fr];
-         if (uch == '\n')   break;     // a no show  (he,he)
-         if (uch > 126)     mkUNP      // show as '<AB>'
-         else if (uch < 32) mkCTL      // show as '^C'
-         else               mkSTD      // a show off (he,he)
-      }
-      capNO;
-      putp(Cap_clr_eol);
+      insp_make_row(col, row);
       --max;
    }
-   if (max) putp(Cap_nl_clreos);
- #undef capNO
- #undef mkCTL
- #undef mkUNP
- #undef mkSTD
-} // end: insp_show_pg
+   if (max)
+      putp(Cap_nl_clreos);
+} // end: insp_show_pgs
 
 
         /*
          * This guy is responsible for displaying the Insp_buf contents and
          * managing all scrolling/locate requests until the user gives up. */
-static int insp_view_this (char *hdr) {
+static int insp_view_choice (char *hdr) {
 #ifdef INSP_SLIDE_1
  #define hzAMT  1
 #else
@@ -2594,7 +2653,7 @@ static int insp_view_this (char *hdr) {
       putp(Cap_home);
       putp(Cap_curs_hide);
       show_special(1, fmtmk(N_unq(INSP_hdrview_fmt), hdr));
-      insp_show_pg(curcol, curlin, maxLN);
+      insp_show_pgs(curcol, curlin, maxLN);
       /* fflush(stdin) didn't do the trick, so we'll just dip a little deeper
          lest repeated <Enter> keys produce immediate re-selection in caller */
       tcflush(STDIN_FILENO, TCIFLUSH);
@@ -2632,7 +2691,7 @@ static int insp_view_this (char *hdr) {
             break;
          case 'L': case '&': case '/': case 'n':
             putp(Cap_curs_norm);
-            insp_find(key, &curcol, &curlin);
+            insp_find_str(key, &curcol, &curlin);
             break;
          case '=':
             snprintf(buf, sizeof(buf), "%s", Insp_selfmts);
@@ -2644,8 +2703,9 @@ static int insp_view_this (char *hdr) {
             break;
       }
    }
+ #undef hzAMT
  #undef maxLN
-} // end: insp_view_this
+} // end: insp_view_choice
 
 
         /*
@@ -2673,7 +2733,7 @@ static struct I_struc Inspect;
          *   1) validating the passed pid (required, but not always used)
          *   2) presenting/establishing the target selection
          *   3) arranging to fill Insp_buf (via the Inspect.tab[?].func)
-         *   4) invoking insp_view_this() for viewing/scrolling/searching
+         *   4) invoking insp_view_choice for viewing/scrolling/searching
          *   5) cleaning up the dynamically acquired memory afterwards */
 static void inspection_utility (int pid) {
  #define mkSEL(dst) { for (i = 0; i < Inspect.total; i++) Inspect.tab[i].caps = "~1"; \
@@ -2730,7 +2790,7 @@ static void inspection_utility (int pid) {
             Insp_selname = Inspect.tab[sel].name;
             Insp_selfmts = Inspect.tab[sel].fmts;
             Inspect.tab[sel].func(Inspect.tab[sel].fmts, pid);
-            key = insp_view_this(head);
+            key = insp_view_choice(head);
             free(Insp_buf);
             free(Insp_p);
             break;
