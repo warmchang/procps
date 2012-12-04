@@ -2349,21 +2349,41 @@ static void sysinfo_refresh (int forced) {
          *     pipe ^I <your_name> ^I cat /proc/%d/status | expand -
          */
 
-static  char    **Insp_p;         // pointers to each line start
-static  int       Insp_nl;        // total lines, total Insp_p entries
-static  char     *Insp_buf;       // the results from insp_do_file/pipe
-static  size_t    Insp_bufsz;     // allocated size of Insp_buf
-static  size_t    Insp_bufrd;     // bytes actually in Insp_buf
-static  char     *Insp_selname;   // the selected label, if anybody cares
-static  char     *Insp_selfmts;   // the selected path/command, ditto
-static  char     *Insp_findstr;   // the current active target for find/next
-static  int       Insp_findlen;   // the above's strlen()
+        /*
+         * Our driving table support, the basis for generalized inspection,
+         * built at startup (if at all) from rcfile or demo entries. */
+struct I_ent {
+   void (*func)(char *, int);     // a pointer to file/pipe/demo function
+   char *type;                    // the type of entry ('file' or 'pipe')
+   char *name;                    // the selection label for display
+   char *fmts;                    // format string to build path or command
+   int   farg;                    // 1 = '%d' in fmts, 0 = not (future use)
+   const char *caps;              // not really caps, show_special() delim's
+   char *fstr;                    // entry's current/active search string
+   int   flen;                    // the above's strlen, but no call overhead
+};
+struct I_struc {
+   int demo;                      // do NOT save table entries in rcfile
+   int total;                     // total I_ent table entries
+   char *raw;                     // all entries for 'W', incl '#' & blank
+   struct I_ent *tab;
+};
+static struct I_struc Inspect;
 
+static char   **Insp_p;           // pointers to each line start
+static int      Insp_nl;          // total lines, total Insp_p entries
+static char    *Insp_buf;         // the results from insp_do_file/pipe
+static size_t   Insp_bufsz;       // allocated size of Insp_buf
+static size_t   Insp_bufrd;       // bytes actually in Insp_buf
+static struct I_ent *Insp_sel;    // currently selected Inspect entry
+
+        // The size of preallocated I_ent.fstr, same as linein()
+#define INSP_FBSZ MEDBUFSIZ
 
         // Our 'make status line' macro
 #define INSP_MKSL(big,txt) { int _sz = big ? Screen_cols : 80; \
    putp(tg2(0, (Msg_row = 3))); \
-   PUTT("%s%.*s", Curwin->capclr_hdr, Screen_cols \
+   PUTT("%s%.*s", Curwin->capclr_hdr, Screen_cols -1 \
       , fmtmk("%-*.*s%s", _sz, _sz, txt, Cap_clr_eol)); \
    putp(Caps_off); }
 
@@ -2424,7 +2444,7 @@ static void insp_do_demo (char *fmts, int pid) {
    (void)fmts; (void)pid;
    Insp_bufsz = READMINSZ;
    Insp_buf   = alloc_c(READMINSZ);
-   Insp_bufrd = snprintf(Insp_buf, Insp_bufsz, "%s", N_txt(YINSP_demo04_txt));
+   Insp_bufrd = snprintf(Insp_buf, Insp_bufsz, "%s", N_txt(YINSP_dstory_txt));
    insp_cnt_nl();
 } // end: insp_do_demo
 #endif
@@ -2466,27 +2486,28 @@ static void insp_do_pipe (char *fmts, int pid) {
 
         /*
          * This guy is a *Helper* function serving the following two masters:
-         *   insp_find_str() - find the next Insp_findstr match
-         *   insp_make_row() - highlight any Insp_findstr matches in-view
-         * If Insp_findstr is found in the designated row (after 'col'), he
-         * returns the offest from the row start, otherwise he returns a huge
+         *   insp_find_str() - find the next Insp_sel->fstr match
+         *   insp_make_row() - highlight any Insp_sel->fstr matches in-view
+         * If Insp_sel->fstr is found in the designated row, he returns the
+         * offest from the start of the row, otherwise he returns a huge
          * integer so traditional fencepost usage can be employed. */
 static inline int insp_find_ofs (int col, int row) {
  #define begFS (int)(fnd - Insp_p[row])
    char *p, *fnd = NULL;
 
-   if (Insp_findstr) {
+   if (Insp_sel->fstr[0]) {
       // skip this row, if there's no chance of a match
-      if (memchr(Insp_p[row], Insp_findstr[0], INSP_RLEN(row))) {
+      if (memchr(Insp_p[row], Insp_sel->fstr[0], INSP_RLEN(row))) {
          for ( ; col < INSP_RLEN(row); col++) {
             if (!*(p = Insp_p[row] + col))       // skip any empty strings
                continue;
-            if ((fnd = STRSTR(p, Insp_findstr))) // with binary data, each
-               break;                            // row may have '\0'.  so
-            col += strlen(p);                    // our scans must be done
-         }                                       // in chunks, and we must
-         if (fnd && fnd < Insp_p[row + 1])       // guard against overrun!
-            return begFS;
+            fnd = STRSTR(p, Insp_sel->fstr);     // with binary data, each
+            if (fnd)                             // row may have '\0'.  so
+               break;                            // our scans must be done
+            col += strlen(p);                    // as individual strings.
+         }
+         if (fnd && fnd < Insp_p[row + 1])       // and, we must watch out
+            return begFS;                        // for potential overrun!
       }
    }
    return INT_MAX;
@@ -2501,21 +2522,18 @@ static inline int insp_find_ofs (int col, int row) {
          * ( preceding ctrl chars appropriate an unpredictable amount ) */
 static void insp_find_str (int ch, int *col, int *row) {
  #define reDUX (found) ? N_txt(WORD_another_txt) : ""
-   static char str[SCREENMAX];
    static int found;
 
-   if ((ch == '&' || ch == 'n') && !str[0]) {
+   if ((ch == '&' || ch == 'n') && !Insp_sel->fstr[0]) {
       show_msg(N_txt(FIND_no_next_txt));
       return;
    }
    if (ch == 'L' || ch == '/') {
-      strcpy(str, linein(N_txt(GET_find_str_txt)));
-      Insp_findstr = str;
-      Insp_findlen = strlen(str);
-      if (!Insp_findlen) Insp_findstr = NULL;
+      snprintf(Insp_sel->fstr, INSP_FBSZ, "%s", linein(N_txt(GET_find_str_txt)));
+      Insp_sel->flen = strlen(Insp_sel->fstr);
       found = 0;
    }
-   if (str[0]) {
+   if (Insp_sel->fstr[0]) {
       int xx, yy;
 
       INSP_BUSY;
@@ -2534,7 +2552,7 @@ static void insp_find_str (int ch, int *col, int *row) {
          xx = 0;
          ++yy;
       }
-      show_msg(fmtmk(N_fmt(FIND_no_find_fmt), reDUX, str));
+      show_msg(fmtmk(N_fmt(FIND_no_find_fmt), reDUX, Insp_sel->fstr));
    }
  #undef reDUX
 } // end: insp_find_str
@@ -2553,8 +2571,8 @@ static void insp_find_str (int ch, int *col, int *row) {
 static inline void insp_make_row (int col, int row) {
  #define maxSZ ( Screen_cols - (to + 1) )
  #define capNO { if (hicap) { putp(Caps_off); hicap = 0; } }
- #define mkFND { PUTT("%s%.*s%s", Curwin->capclr_hdr, maxSZ, Insp_findstr, Caps_off); \
-    fr += Insp_findlen -1; to += Insp_findlen; hicap = 0; }
+ #define mkFND { PUTT("%s%.*s%s", Curwin->capclr_hdr, maxSZ, Insp_sel->fstr, Caps_off); \
+    fr += Insp_sel->flen -1; to += Insp_sel->flen; hicap = 0; }
 #ifndef INSP_JUSTNOT
  #define mkCTL { int x = maxSZ; const char *p = fmtmk("^%c", uch + '@'); \
     PUTT("%s%.*s", (!hicap) ? Curwin->capclr_msg : "", x, p); to += 2; hicap = 1; }
@@ -2616,7 +2634,7 @@ static inline void insp_show_pgs (int col, int row, int max) {
    if (!Insp_bufrd)
       l = ls = 0;
    snprintf(buf, sizeof(buf), N_fmt(YINSP_status_fmt)
-      , Insp_selname
+      , Insp_sel->name
       , r, l, r, ls
       , c, col + 1, c, col + Screen_cols
       , (unsigned long)Insp_bufrd);
@@ -2635,24 +2653,36 @@ static inline void insp_show_pgs (int col, int row, int max) {
         /*
          * This guy is responsible for displaying the Insp_buf contents and
          * managing all scrolling/locate requests until the user gives up. */
-static int insp_view_choice (char *hdr) {
+static int insp_view_choice (proc_t *obj) {
 #ifdef INSP_SLIDE_1
  #define hzAMT  1
 #else
  #define hzAMT  8
 #endif
  #define maxLN (Screen_rows - (Msg_row +1))
+ #define makHD(b1,b2,b3) { \
+    snprintf(b1, sizeof(b1), "%s", make_num(obj->tid,   5, 1, AUTOX_NO)); \
+    snprintf(b2, sizeof(b2), "%s", make_str(obj->cmd,   8, 1, AUTOX_NO)); \
+    snprintf(b3, sizeof(b3), "%s", make_str(obj->euser, 8, 1, AUTOX_NO)); }
+ #define makFS(dst) { if (Insp_sel->flen < 22) \
+       snprintf(dst, sizeof(dst), "%s", Insp_sel->fstr); \
+    else snprintf(dst, sizeof(dst), "%.19s...", Insp_sel->fstr); }
    char buf[SMLBUFSIZ];
    int key, curlin, curcol;
 
    for (curlin = curcol = 0;;) {
+      char pid[6], cmd[9], usr[9];
+
       if (curcol < 0) curcol = 0;
       if (curlin >= Insp_nl) curlin = Insp_nl -1;
       if (curlin < 0) curlin = 0;
 
       putp(Cap_home);
       putp(Cap_curs_hide);
-      show_special(1, fmtmk(N_unq(INSP_hdrview_fmt), hdr));
+      makFS(buf)
+      makHD(pid,cmd,usr)
+      show_special(1, fmtmk(N_unq(INSP_hdrview_fmt)
+         , pid, cmd, usr, (Insp_sel->fstr[0]) ? buf : " N/A "));   // nls_maybe
       insp_show_pgs(curcol, curlin, maxLN);
       /* fflush(stdin) didn't do the trick, so we'll just dip a little deeper
          lest repeated <Enter> keys produce immediate re-selection in caller */
@@ -2694,8 +2724,8 @@ static int insp_view_choice (char *hdr) {
             insp_find_str(key, &curcol, &curlin);
             break;
          case '=':
-            snprintf(buf, sizeof(buf), "%s", Insp_selfmts);
-            INSP_MKSL(1, buf);   // show an extended SL
+            snprintf(buf, sizeof(buf), "%s", Insp_sel->fmts);
+            INSP_MKSL(1, buf);    // show an extended SL
             key = keyin(0);
             if (!key) return key; // oops, we got signaled
             break;
@@ -2705,27 +2735,9 @@ static int insp_view_choice (char *hdr) {
    }
  #undef hzAMT
  #undef maxLN
+ #undef makHD
+ #undef makFS
 } // end: insp_view_choice
-
-
-        /*
-         * Our driving table support, the basis for generalized inspection,
-         * built at startup (if at all) from rcfile or demo entries. */
-struct I_entry {
-   void (*func)(char *, int);     // a pointer to file/pipe/demo function
-   char *type;                    // the type of entry ('file' or 'pipe')
-   char *name;                    // the selection label for display
-   char *fmts;                    // format string to build path or command
-   int farg;                      // 1 = '%d' in fmts, 0 = not (future use)
-   const char *caps;              // not really caps, show_special() delim's
-};
-struct I_struc {
-   int demo;                      // do NOT save table entries in rcfile
-   int total;                     // total I_entry table entries
-   char *raw;                     // all entries for 'W', incl '#' & blank
-   struct I_entry *tab;
-};
-static struct I_struc Inspect;
 
 
         /*
@@ -2741,7 +2753,7 @@ static void inspection_utility (int pid) {
       for (i = 0; i < Inspect.total; i++) { char _s[SMLBUFSIZ]; \
          snprintf(_s, sizeof(_s), " %s %s", Inspect.tab[i].name, Inspect.tab[i].caps); \
          strcat(dst, _s); } }
-   char head[MEDBUFSIZ], sels[MEDBUFSIZ];
+   char sels[MEDBUFSIZ];
    static int sel;
    int i, key;
    proc_t *p;
@@ -2762,9 +2774,8 @@ static void inspection_utility (int pid) {
       mkSEL(sels);
       putp(Cap_home);
       putp(Cap_curs_hide);
-      snprintf(head, sizeof(head), "%s", fmtmk(N_unq(INSP_hdrbase_fmt)
-         , pid, p->cmd, p->euser));
-      show_special(1, fmtmk(N_unq(INSP_hdrsels_fmt), head, sels));
+      show_special(1, fmtmk(N_unq(INSP_hdrsels_fmt)
+         , pid, p->cmd, p->euser, sels));
       INSP_MKSL(0, " ");
 
       if (-1 == key) key = keyin(0);
@@ -2787,10 +2798,9 @@ static void inspection_utility (int pid) {
             break;
          case kbd_ENTER:
             INSP_BUSY;
-            Insp_selname = Inspect.tab[sel].name;
-            Insp_selfmts = Inspect.tab[sel].fmts;
+            Insp_sel = &Inspect.tab[sel];
             Inspect.tab[sel].func(Inspect.tab[sel].fmts, pid);
-            key = insp_view_choice(head);
+            key = insp_view_choice(p);
             free(Insp_buf);
             free(Insp_p);
             break;
@@ -3068,7 +3078,7 @@ try_inspect_entries:
          strcat(Inspect.raw, fbuf);
 
          if (fbuf[0] == '#' || fbuf[0] == '\n') continue;
-         Inspect.tab = alloc_r(Inspect.tab, sizeof(struct I_entry) * (i + 1));
+         Inspect.tab = alloc_r(Inspect.tab, sizeof(struct I_ent) * (i + 1));
          p = fmtmk(N_fmt(YINSP_rcfile_fmt), i +1);
 
          if (!(s = strtok(fbuf, "\t\n"))) { Rc_questions = 1; continue; }
@@ -3091,6 +3101,8 @@ try_inspect_entries:
          }
 
          iT(farg) = (strstr(iT(fmts), "%d")) ? 1 : 0;
+         iT(fstr) = alloc_c(INSP_FBSZ);
+         iT(flen) = 0;
 
          if (Rc_questions < 0) Rc_questions = 1;
          ++i;
@@ -3100,18 +3112,17 @@ try_inspect_entries:
       Inspect.total = i;
 #ifndef INSP_OFFDEMO
       if (!Inspect.total) {
-         Inspect.tab = alloc_c(sizeof(struct I_entry) * 3);
-         Inspect.tab[0].name = strdup(N_txt(YINSP_demo01_txt));
-         Inspect.tab[0].func = insp_do_demo;
-         Inspect.tab[0].fmts = strdup(N_txt(YINSP_demo05_txt));
-         Inspect.tab[1].name = strdup(N_txt(YINSP_demo02_txt));
-         Inspect.tab[1].func = insp_do_demo;
-         Inspect.tab[1].fmts = strdup(N_txt(YINSP_demo05_txt));
-         Inspect.tab[2].name = strdup(N_txt(YINSP_demo03_txt));
-         Inspect.tab[2].func = insp_do_demo;
-         Inspect.tab[2].fmts = strdup(N_txt(YINSP_demo05_txt));
-         Inspect.total = 3;
-         Inspect.demo = 1;
+       #define mkS(n) N_txt(YINSP_demo ## n ## _txt)
+         const char *sels[] = { mkS(01), mkS(02), mkS(03) };
+         Inspect.total = Inspect.demo = MAXTBL(sels);
+         Inspect.tab = alloc_c(sizeof(struct I_ent) * Inspect.total);
+         for (i = 0; i < Inspect.total; i++) {
+            Inspect.tab[i].name = strdup(sels[i]);
+            Inspect.tab[i].func = insp_do_demo;
+            Inspect.tab[i].fmts = strdup(N_txt(YINSP_deqkey_txt));
+            Inspect.tab[i].fstr = alloc_c(INSP_FBSZ);
+         }
+       #undef mkS
       }
 #endif
       if (Rc_questions < 0) {

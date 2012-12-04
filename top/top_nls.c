@@ -373,7 +373,8 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[YINSP_demo01_txt] = _("Open Files");
    Norm_nlstab[YINSP_demo02_txt] = _("NUMA Info");
    Norm_nlstab[YINSP_demo03_txt] = _("Log");
-   Norm_nlstab[YINSP_demo04_txt] = _(""
+   Norm_nlstab[YINSP_deqkey_txt] = _("the '=' key will eventually show the actual file read or command(s) excuted ...");
+   Norm_nlstab[YINSP_dstory_txt] = _(""
       "This is simulated output representing the contents of some file or the output\n"
       "from some command.  Exactly which commands and/or files are solely up to you.\n"
       "\n"
@@ -405,14 +406,11 @@ static void build_norm_nlstab (void) {
       "Then enhance top with your very own customized 'file' and 'pipe' entries.\n"
       "\n"
       "Enjoy!\n");
-   Norm_nlstab[YINSP_demo05_txt] = _("the '=' key will eventually show the actual file read or command(s) excuted ...");
-#endif
-   Norm_nlstab[YINSP_failed_fmt] = _("Selection failed with: %s\n");
-#ifndef INSP_OFFDEMO
    Norm_nlstab[YINSP_noents_txt] = _("to enable 'Y' press <Enter> then type 'W' and restart top");
 #else
    Norm_nlstab[YINSP_noents_txt] = _("to enable 'Y' please consult the top man page (press Enter)");
 #endif
+   Norm_nlstab[YINSP_failed_fmt] = _("Selection failed with: %s\n");
    Norm_nlstab[YINSP_pidbad_fmt] = _("unable to inspect, pid %d not found");
    Norm_nlstab[YINSP_pidsee_fmt] = _("inspect at PID [defailt pid = %d]");
    Norm_nlstab[YINSP_rcfile_fmt] = _("could not parse rcfile inspect entry %d");
@@ -592,16 +590,13 @@ static void build_uniq_nlstab (void) {
       "%s Mem: ~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2buffers~3\n"
       "%s Swap:~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2cached~3\n");
 
-   Uniq_nlstab[INSP_hdrbase_fmt] = _(""
-      "Inspection~2 Pause at:  pid ~1%d~6 running command ~1%s~6 as user ~1%s~6");
-
    Uniq_nlstab[INSP_hdrsels_fmt] = _(""
-      "%s\n"
+      "Inspection~2 Pause at: pid ~1%d~6 running ~1%s~6 as user ~1%s~6\n"
       "Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to ~1end~5 !\n"
       "Options~2: ~1%s\n");
 
    Uniq_nlstab[INSP_hdrview_fmt] = _(""
-      "%s\n"
+      "Inspection~2 View at: ~1%s~3, ~1%s~3, ~1%s~3.  Locating: ~1%s~6\n"
       "Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to ~1locate~5/~1next~5.\n"
       "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n");
 }
@@ -663,12 +658,12 @@ void initialize_nls (void) {
          exit(1);
       }
  #ifndef INSP_OFFDEMO
-   if (READMINSZ < strlen(N_txt(YINSP_demo04_txt)) +1) {
+   if (READMINSZ < strlen(N_txt(YINSP_dstory_txt)) +1) {
       fprintf(stderr
          , "\nAssertion Failed in %s (%s):\n"
-            "\t'READMINSZ < strlen(N_txt(YINSP_demo04_txt)) + 1'\n"
+            "\t'READMINSZ < strlen(N_txt(YINSP_dstory_txt)) + 1'\n"
             "READMINSZ must be at least %u !\n\n"
-         , __FILE__,  __func__, (unsigned)strlen(N_txt(YINSP_demo04_txt)) + 1);
+         , __FILE__,  __func__, (unsigned)strlen(N_txt(YINSP_dstory_txt)) + 1);
          exit(1);
    }
  #endif

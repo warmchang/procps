@@ -655,7 +655,7 @@ typedef struct WIN_t {
 //atic void          insp_find_str (int ch, int *col, int *row);
 //atic inline void   insp_make_row (int col, int row);
 //atic void          insp_show_pgs (int col, int row, int max);
-//atic int           insp_view_choice (char *hdr);
+//atic int           insp_view_choice (proc_t *obj);
 //atic void          inspection_utility (int pid);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
