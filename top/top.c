@@ -3760,8 +3760,9 @@ static void keys_global (int ch) {
          } else {
             int pid, sig = SIGTERM, def = w->ppt[w->begtask]->tid;
             if (GET_INT_BAD < (pid = get_int(fmtmk(N_txt(GET_pid2kill_fmt), def)))) {
-               char *str = linein(fmtmk(N_fmt(GET_sigs_num_fmt), pid, SIGTERM));
+               char *str;
                if (0 > pid) pid = def;
+               str = linein(fmtmk(N_fmt(GET_sigs_num_fmt), pid, SIGTERM));
                if (*str) sig = signal_name_to_number(str);
                if (0 < sig && kill(pid, sig))
                   show_msg(fmtmk(N_fmt(FAIL_signals_fmt)
