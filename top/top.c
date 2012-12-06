@@ -2541,9 +2541,9 @@ static void insp_find_str (int ch, int *col, int *row) {
          xx = insp_find_ofs(xx, yy);
          if (xx < INSP_RLEN(yy)) {
             found = 1;
-            if (xx == *col) {     // matched where we were!
-               ++xx;              // ( was the user maybe )
-               continue;          // ( trying to fool us? )
+            if (xx == *col &&  yy == *row) {     // matched where we were!
+               ++xx;                             // ( was the user maybe )
+               continue;                         // ( trying to fool us? )
             }
             *col = xx;
             *row = yy;
