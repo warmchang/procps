@@ -2724,7 +2724,7 @@ static int insp_view_choice (proc_t *obj) {
             insp_find_str(key, &curcol, &curlin);
             break;
          case '=':
-            snprintf(buf, sizeof(buf), "%s", Insp_sel->fmts);
+            snprintf(buf, sizeof(buf), "%s: %s", Insp_sel->type, Insp_sel->fmts);
             INSP_MKSL(1, buf);    // show an extended SL
             key = keyin(0);
             if (!key) return key; // oops, we got signaled
