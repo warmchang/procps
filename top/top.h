@@ -125,6 +125,9 @@ char *strcasestr(const char *haystack, const char *needle);
 #define ROWMAXSIZ  ( SCREENMAX + 16 * (CAPBUFSIZ + CLRBUFSIZ) )
    // minimum size guarantee for dynamically acquired 'readfile' buffer
 #define READMINSZ  2048
+   // size of preallocated search string buffers, same as linein()
+#define FNDBUFSIZ  MEDBUFSIZ
+
 
    // space between task fields/columns
 #define COLPADSTR   " "
@@ -370,8 +373,9 @@ typedef struct WIN_t {
 #else
           columnhdr [SCREENMAX],       // column headings for procflgs
 #endif
-         *eolcap,                      // window specific eol termcap
          *captab [CAPTABMAX];          // captab needed by show_special()
+   char  *findstr;                     // window's current/active search string
+   int    findlen;                     // above's strlen, without call overhead
    proc_t **ppt;                       // this window's proc_t ptr array
    struct WIN_t *next,                 // next window in window stack
                 *prev;                 // prior window in window stack
@@ -464,8 +468,8 @@ typedef struct WIN_t {
       return Frame_srtflg * strverscmp((*Q)->s, (*P)->s); }
 
 /*
- * The following two macros are used to 'inline' those portions of the
- * display process requiring formatting, while protecting against any
+ * The following three macros are used to 'inline' those portions of the
+ * display process involved in formatting, while protecting against any
  * potential embedded 'millesecond delay' escape sequences.
  */
         /**  PUTT - Put to Tty (used in many places)
@@ -495,6 +499,14 @@ typedef struct WIN_t {
          else { \
             strcpy(_ptr, _str); \
             putp(_ptr); } } \
+   } while (0)
+
+        /**  POOF - Pulled Out of Frame (used in only 1 place)
+               . for output that is/was sent directly to the terminal
+                 but would otherwise have been counted as a Pseudo_row */
+#define POOF(str,cap) do { \
+      putp(str); putp(cap); \
+      if (Pseudo_row + 1 < Screen_rows) ++Pseudo_row; \
    } while (0)
 
         /* Orderly end, with any sort of message - see fmtmk */
@@ -674,6 +686,7 @@ typedef struct WIN_t {
 //atic void          wins_stage_2 (void);
 /*------  Interactive Input support (do_key helpers)  --------------------*/
 //atic void          file_writerc (void);
+//atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);
 //atic void          help_view (void);
 //atic void          keys_global (int ch);

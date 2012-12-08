@@ -1578,11 +1578,6 @@ static void build_headers (void) {
 #ifdef EQUCOLHDRYES
          // prepare to even out column header lengths...
          if (hdrmax + w->hdrcaplen < (x = strlen(w->columnhdr))) hdrmax = x - w->hdrcaplen;
-         // must sacrifice last header position to avoid task row abberations
-         w->eolcap = Caps_endline;
-#else
-         if (Screen_cols > (int)strlen(w->columnhdr)) w->eolcap = Caps_endline;
-         else w->eolcap = Caps_off;
 #endif
          // with forest view mode, we'll need tgid, ppid & start_time...
          if (CHKw(w, Show_FOREST)) Frames_libflags |= (L_status | L_stat);
@@ -2360,7 +2355,7 @@ struct I_ent {
    int   farg;                    // 1 = '%d' in fmts, 0 = not (future use)
    const char *caps;              // not really caps, show_special() delim's
    char *fstr;                    // entry's current/active search string
-   int   flen;                    // the above's strlen, but no call overhead
+   int   flen;                    // above's strlen, without call overhead
 };
 struct I_struc {
    int demo;                      // do NOT save table entries in rcfile
@@ -2376,9 +2371,6 @@ static char    *Insp_buf;         // the results from insp_do_file/pipe
 static size_t   Insp_bufsz;       // allocated size of Insp_buf
 static size_t   Insp_bufrd;       // bytes actually in Insp_buf
 static struct I_ent *Insp_sel;    // currently selected Inspect entry
-
-        // The size of preallocated I_ent.fstr, same as linein()
-#define INSP_FBSZ MEDBUFSIZ
 
         // Our 'make status line' macro
 #define INSP_MKSL(big,txt) { int _sz = big ? Screen_cols : 80; \
@@ -2489,7 +2481,7 @@ static void insp_do_pipe (char *fmts, int pid) {
          *   insp_find_str() - find the next Insp_sel->fstr match
          *   insp_make_row() - highlight any Insp_sel->fstr matches in-view
          * If Insp_sel->fstr is found in the designated row, he returns the
-         * offest from the start of the row, otherwise he returns a huge
+         * offset from the start of the row, otherwise he returns a huge
          * integer so traditional fencepost usage can be employed. */
 static inline int insp_find_ofs (int col, int row) {
  #define begFS (int)(fnd - Insp_p[row])
@@ -2529,7 +2521,7 @@ static void insp_find_str (int ch, int *col, int *row) {
       return;
    }
    if (ch == 'L' || ch == '/') {
-      snprintf(Insp_sel->fstr, INSP_FBSZ, "%s", linein(N_txt(GET_find_str_txt)));
+      snprintf(Insp_sel->fstr, FNDBUFSIZ, "%s", linein(N_txt(GET_find_str_txt)));
       Insp_sel->flen = strlen(Insp_sel->fstr);
       found = 0;
    }
@@ -3101,7 +3093,7 @@ try_inspect_entries:
          }
 
          iT(farg) = (strstr(iT(fmts), "%d")) ? 1 : 0;
-         iT(fstr) = alloc_c(INSP_FBSZ);
+         iT(fstr) = alloc_c(FNDBUFSIZ);
          iT(flen) = 0;
 
          if (Rc_questions < 0) Rc_questions = 1;
@@ -3120,7 +3112,7 @@ try_inspect_entries:
             Inspect.tab[i].name = strdup(sels[i]);
             Inspect.tab[i].func = insp_do_demo;
             Inspect.tab[i].fmts = strdup(N_txt(YINSP_deqkey_txt));
-            Inspect.tab[i].fstr = alloc_c(INSP_FBSZ);
+            Inspect.tab[i].fstr = alloc_c(FNDBUFSIZ);
          }
        #undef mkS
       }
@@ -3585,6 +3577,8 @@ static void wins_stage_2 (void) {
    for (i = 0; i < GROUPSMAX; i++) {
       win_names(&Winstk[i], Winstk[i].rc.winname);
       capsmk(&Winstk[i]);
+      Winstk[i].findstr = alloc_c(FNDBUFSIZ);
+      Winstk[i].findlen = 0;
    }
    if (Batch)
       OFFw(Curwin, View_SCROLL);
@@ -3640,6 +3634,21 @@ static void file_writerc (void) {
 } // end: file_writerc
 
 
+        /*
+         * This guy is a *Helper* function serving the following two masters:
+         *   find_string() - find the next match in a given window
+         *   task_show()   - highlight all matches currently in-view
+         * If q->findstr is found in the designated buffer, he returns the
+         * offset from the start of the buffer, otherwise he returns -1. */
+static inline int find_ofs (const WIN_t *q, const char *buf) {
+   char *fnd;
+
+   if (q->findstr[0] && (fnd = STRSTR(buf, q->findstr)))
+      return (int)(fnd - buf);
+   return -1;
+} // end: find_ofs
+
+
 
    /* This is currently the one true prototype require by top.
       It is placed here, instead of top.h, so as to avoid a compiler
@@ -3648,29 +3657,29 @@ static const char *task_show (const WIN_t *q, const proc_t *p);
 
 static void find_string (int ch) {
  #define reDUX (found) ? N_txt(WORD_another_txt) : ""
-   static char str[SCREENMAX];
    static int found;
    int i;
 
-   if ('&' == ch && !str[0]) {
+   if ('&' == ch && !Curwin->findstr[0]) {
       show_msg(N_txt(FIND_no_next_txt));
       return;
    }
    if ('L' == ch) {
-      strcpy(str, linein(N_txt(GET_find_str_txt)));
+      snprintf(Curwin->findstr, FNDBUFSIZ, "%s", linein(N_txt(GET_find_str_txt)));
+      Curwin->findlen = strlen(Curwin->findstr);
       found = 0;
    }
-   if (str[0]) {
+   if (Curwin->findstr[0]) {
       SETw(Curwin, INFINDS_xxx);
       for (i = Curwin->begtask; i < Frame_maxtask; i++) {
-         if (STRSTR(task_show(Curwin, Curwin->ppt[i]), str)) {
+         if (-1 < find_ofs(Curwin, task_show(Curwin, Curwin->ppt[i]))) {
             found = 1;
             if (i == Curwin->begtask) continue;
             Curwin->begtask = i;
             return;
          }
       }
-      show_msg(fmtmk(N_fmt(FIND_no_find_fmt), reDUX, str));
+      show_msg(fmtmk(N_fmt(FIND_no_find_fmt), reDUX, Curwin->findstr));
    }
  #undef reDUX
 } // end: find_string
@@ -4654,10 +4663,26 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
    } // end: for 'maxpflgs'
 
    if (!CHKw(q, INFINDS_xxx)) {
-      PUFF("\n%s%s%s", (CHKw(q, Show_HIROWS) && 'R' == p->state)
-         ? q->capclr_rowhigh : q->capclr_rownorm
-         , rbuf
-         , q->eolcap);
+      const char *cap = ((CHKw(q, Show_HIROWS) && 'R' == p->state))
+         ? q->capclr_rowhigh : q->capclr_rownorm;
+      char *row = rbuf;
+      int ofs;
+      /* since we can't predict what the search string will be and,
+         considering what a single space search request would do to
+         potential buffer needs, when any matches are found we skip
+         normal output routing and send all of the results directly
+         to the terminal (and we sound asthmatic: poof, putt, puff) */
+      if (-1 < (ofs = find_ofs(q, row))) {
+         POOF("\n", cap);
+         do {
+            row[ofs] = '\0';
+            PUTT("%s%s%s%s", row, q->capclr_hdr, q->findstr, cap);
+            row += (ofs + q->findlen);
+            ofs = find_ofs(q, row);
+         } while (-1 < ofs);
+         PUTT("%s%s", row, Caps_endline);
+      } else
+         PUFF("\n%s%s%s", cap, row, Caps_endline);
    }
    return rbuf;
  #undef makeVAR
@@ -4677,7 +4702,7 @@ static int window_show (WIN_t *q, int wmax) {
    int i, lwin;
 
    // Display Column Headings -- and distract 'em while we sort (maybe)
-   PUFF("\n%s%s%s", q->capclr_hdr, q->columnhdr, q->eolcap);
+   PUFF("\n%s%s%s", q->capclr_hdr, q->columnhdr, Caps_endline);
 
    if (CHKw(q, Show_FOREST))
       forest_create(q);
