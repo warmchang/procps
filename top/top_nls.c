@@ -373,7 +373,8 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[YINSP_demo01_txt] = _("Open Files");
    Norm_nlstab[YINSP_demo02_txt] = _("NUMA Info");
    Norm_nlstab[YINSP_demo03_txt] = _("Log");
-   Norm_nlstab[YINSP_deqkey_txt] = _("the '=' key will eventually show the actual file read or command(s) excuted ...");
+   Norm_nlstab[YINSP_deqfmt_txt] = _("the '=' key will eventually show the actual file read or command(s) excuted ...");
+   Norm_nlstab[YINSP_deqtyp_txt] = _("demo");
    Norm_nlstab[YINSP_dstory_txt] = _(""
       "This is simulated output representing the contents of some file or the output\n"
       "from some command.  Exactly which commands and/or files are solely up to you.\n"

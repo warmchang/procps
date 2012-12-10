@@ -3109,9 +3109,10 @@ try_inspect_entries:
          Inspect.total = Inspect.demo = MAXTBL(sels);
          Inspect.tab = alloc_c(sizeof(struct I_ent) * Inspect.total);
          for (i = 0; i < Inspect.total; i++) {
+            Inspect.tab[i].type = strdup(N_txt(YINSP_deqtyp_txt));
             Inspect.tab[i].name = strdup(sels[i]);
             Inspect.tab[i].func = insp_do_demo;
-            Inspect.tab[i].fmts = strdup(N_txt(YINSP_deqkey_txt));
+            Inspect.tab[i].fmts = strdup(N_txt(YINSP_deqfmt_txt));
             Inspect.tab[i].fstr = alloc_c(FNDBUFSIZ);
          }
        #undef mkS

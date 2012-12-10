@@ -85,8 +85,8 @@ enum norm_nls {
    XTRA_warncfg_txt,
 #endif
 #ifndef INSP_OFFDEMO
-   YINSP_demo01_txt, YINSP_demo02_txt, YINSP_demo03_txt, YINSP_deqkey_txt,
-   YINSP_dstory_txt,
+   YINSP_demo01_txt, YINSP_demo02_txt, YINSP_demo03_txt, YINSP_deqfmt_txt,
+   YINSP_deqtyp_txt, YINSP_dstory_txt,
 #endif
    YINSP_failed_fmt, YINSP_noents_txt, YINSP_pidbad_fmt, YINSP_pidsee_fmt,
    YINSP_rcfile_fmt, YINSP_status_fmt, YINSP_workin_txt,
