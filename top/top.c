@@ -3200,7 +3200,6 @@ static void parse_args (char **args) {
                break;
             case 'h':
             case 'v':
-            case 'V':
                fprintf(stdout, N_fmt(HELP_cmdline_fmt)
                   , procps_version, Myname, N_txt(USAGE_abbrev_txt));
                bye_bye(NULL);
