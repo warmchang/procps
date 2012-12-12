@@ -62,7 +62,9 @@ static void signal_handler(int signo){
     case SIGUSR2:
       exit(EXIT_FAILURE);
     default:
-      catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
+      error_at_line(0, 0, __FILE__, __LINE__, "%s", _("please report this bug"));
+      signal(signo, SIG_DFL);  /* allow core file creation */
+      kill(getpid(), signo);
   }
 }
 
