@@ -56,7 +56,14 @@ static void signal_handler(int signo){
     myname,
     procps_version
   );
-  catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
+  switch (signo) {
+    case SIGHUP:
+    case SIGUSR1:
+    case SIGUSR2:
+      exit(EXIT_FAILURE);
+    default:
+      catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
