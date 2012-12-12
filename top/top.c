@@ -547,7 +547,8 @@ static void sig_abexit (int sig) {
 
         /*
          * Catches:
-         *    SIGALRM, SIGHUP, SIGINT, SIGPIPE, SIGQUIT and SIGTERM */
+         *    SIGALRM, SIGHUP, SIGINT, SIGPIPE, SIGQUIT, SIGTERM,
+         *    SIGUSR1 and SIGUSR2 */
 static void sig_endpgm (int dont_care_sig) NORETURN;
 static void sig_endpgm (int dont_care_sig) {
    sigset_t ss;
@@ -2865,6 +2866,7 @@ static void before (char *me) {
       switch (i) {
          case SIGALRM: case SIGHUP:  case SIGINT:
          case SIGPIPE: case SIGQUIT: case SIGTERM:
+         case SIGUSR1: case SIGUSR2:
             sa.sa_handler = sig_endpgm;
             break;
          case SIGTSTP: case SIGTTIN: case SIGTTOU:
