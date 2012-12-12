@@ -123,7 +123,7 @@ static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
 
 #define cook_time(P) (P->utime + P->stime) / Hertz
 
-#define cook_etime(P) seconds_since_boot - (unsigned long)(P->start_time / Hertz)
+#define cook_etime(P) (((unsigned long long)seconds_since_boot >= (P->start_time / Hertz)) ? ((unsigned long long)seconds_since_boot - (P->start_time / Hertz)) : 0)
 
 #define CMP_COOKED_TIME(NAME) \
 static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
@@ -465,7 +465,7 @@ static int pr_etime(char *restrict const outbuf, const proc_t *restrict const pp
 
 /* elapsed wall clock time in seconds */
 static int pr_etimes(char *restrict const outbuf, const proc_t *restrict const pp){
-  unsigned t = seconds_since_boot - (unsigned long)(pp->start_time / Hertz);
+  unsigned t = cook_etime(pp);
   return snprintf(outbuf, COLWID, "%u", t);
 }
 
@@ -476,7 +476,7 @@ static int pr_c(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long seconds;      /* seconds of process life */
   total_time = pp->utime + pp->stime;
   if(include_dead_children) total_time += (pp->cutime + pp->cstime);
-  seconds = seconds_since_boot - pp->start_time / Hertz;
+  seconds = cook_etime(pp);
   if(seconds) pcpu = (total_time * 100ULL / Hertz) / seconds;
   if (pcpu > 99U) pcpu = 99U;
   return snprintf(outbuf, COLWID, "%2u", pcpu);
@@ -488,7 +488,7 @@ static int pr_pcpu(char *restrict const outbuf, const proc_t *restrict const pp)
   unsigned long long seconds;      /* seconds of process life */
   total_time = pp->utime + pp->stime;
   if(include_dead_children) total_time += (pp->cutime + pp->cstime);
-  seconds = seconds_since_boot - pp->start_time / Hertz;
+  seconds = cook_etime(pp);
   if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
   if (pcpu > 999U)
     return snprintf(outbuf, COLWID, "%u", pcpu/10U);
@@ -501,7 +501,7 @@ static int pr_cp(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long seconds;      /* seconds of process life */
   total_time = pp->utime + pp->stime;
   if(include_dead_children) total_time += (pp->cutime + pp->cstime);
-  seconds = seconds_since_boot - pp->start_time / Hertz ;
+  seconds = cook_etime(pp);
   if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
   if (pcpu > 999U) pcpu = 999U;
   return snprintf(outbuf, COLWID, "%3u", pcpu);
