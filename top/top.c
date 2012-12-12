@@ -314,9 +314,8 @@ static const char *tg2 (int x, int y) {
 /*######  Exit/Interrput routines  #######################################*/
 
         /*
-         * The real program end */
-static void bye_bye (const char *str) NORETURN;
-static void bye_bye (const char *str) {
+         * Reset the tty, if necessary */
+static void at_eoj (void) {
    if (Ttychanged) {
       if (keypad_local) putp(keypad_local);
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_original);
@@ -325,9 +324,18 @@ static void bye_bye (const char *str) {
 #ifndef RMAN_IGNORED
       putp(Cap_smam);
 #endif
+      putp("\n");
+      Ttychanged = 0;
    }
    fflush(stdout);
+} // end:
 
+
+        /*
+         * The real program end */
+static void bye_bye (const char *str) NORETURN;
+static void bye_bye (const char *str) {
+   at_eoj();                 // restore tty in preparation for exit
 #ifdef ATEOJ_RPTSTD
 {  proc_t *p;
    if (!str && Ttychanged) { fprintf(stderr,
@@ -478,7 +486,6 @@ static void bye_bye (const char *str) {
       fputs(str, stderr);
       exit(EXIT_FAILURE);
    }
-   putp("\n");
    exit(EXIT_SUCCESS);
 } // end: bye_bye
 
@@ -535,13 +542,16 @@ static void pause_pgm (void) {
 
         /*
          * Catches all remaining signals not otherwise handled */
-static void sig_abexit (int sig) NORETURN;
 static void sig_abexit (int sig) {
    sigset_t ss;
 
    sigfillset(&ss);
    sigprocmask(SIG_BLOCK, &ss, NULL);
-   bye_bye(fmtmk(N_fmt(EXIT_signals_fmt), sig, signal_number_to_name(sig), Myname));
+   at_eoj();                 // restore tty in preparation for exit
+   fprintf(stderr, N_fmt(EXIT_signals_fmt)
+      , sig, signal_number_to_name(sig), Myname);
+   signal(sig, SIG_DFL);     // allow core dumps, if applicable
+   raise(sig);               // ( plus set proper return code )
 } // end: sig_abexit
 
 

@@ -600,6 +600,7 @@ typedef struct WIN_t {
 //atic inline char  *scat (char *dst, const char *src);
 //atic const char   *tg2 (int x, int y);
 /*------  Exit/Interrput routines  ---------------------------------------*/
+//atic void          at_eoj (void);
 //atic void          bye_bye (const char *str);
 //atic void          error_exit (const char *str);
 //atic void          library_err (const char *fmts, ...);
