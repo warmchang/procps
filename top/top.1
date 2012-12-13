@@ -53,8 +53,9 @@
 .ds CG \'current\' window/field group
 .ds CI interactive command
 \#                           - Note: our 'Command Line' used in 2 places
-.ds CL \-\fBhv\fR|\-\fBbcHiSs\fR \-\fBd\fR delay \-\fBn\fR limit \
-\-\fBu\fR|\fBU\fR user \-\fBp\fR pid[,pid] \-\fBw\fR [cols] \fR
+\#                           ( and managed to fit in an 80x24 terminal )
+.ds CL \-\fBhv\fR|\-\fBbcHiOSs\fR \-\fBd\fR secs \-\fBn\fR max \
+\-\fBu\fR|\fBU\fR user \-\fBp\fR pid \-\fBo\fR fld \-\fBw\fR [cols] \fR
 .ds CO command\-line option
 .ds CT command toggle
 .ds CW \'current\' window
@@ -300,6 +301,21 @@ For additional information regarding this toggle
 \-\fBn\fR :\fI Number-of-iterations\fR limit as:\fB\ \ \-n number \fR
 Specifies the maximum number of iterations, or frames, \*(We should
 produce before ending.
+
+.TP 5
+\-\fBo\fR :\fI Override-sort-field\fR as:\fB\ \ \-o fieldname \fR
+Specifies the name of the field on which tasks will be sorted, independent
+of what is reflected in the configuration file.
+
+This option exists primarily to support automated/scripted batch mode
+operation.
+
+.TP 5
+\-\fBO\fR :\fI Output-field-names \fR
+This option acts as a form of help for the above \-o option.
+It will cause \*(We to print each of the available field names on a
+separate line, then quit.
+Such names are subject to nls translation.
 
 .TP 5
 \-\fBp\fR :\fI Monitor-PIDs\fR mode as:\fB\ \ \-pN1 -pN2 ...\fR\ \ or\fB\ \ \-pN1,N2,N3 ... \fR

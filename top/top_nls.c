@@ -278,10 +278,10 @@ static void build_norm_nlstab (void) {
       "\tsee http://www.debian.org/Bugs/Reporting\n");
    Norm_nlstab[WRONG_switch_fmt] = _(""
       "inappropriate '%s'\n"
-      "usage:\t%s%s");
+      "Usage:\n  %s%s");
    Norm_nlstab[HELP_cmdline_fmt] = _(""
-      "\t%s\n"
-      "usage:\t%s%s");
+      "  %s\n"
+      "Usage:\n  %s%s");
    Norm_nlstab[FAIL_statopn_fmt] = _("failed /proc/stat open: %s");
    Norm_nlstab[FAIL_openlib_fmt] = _("failed openproc: %s");
    Norm_nlstab[BAD_delayint_fmt] = _("bad delay interval '%s'");
@@ -292,14 +292,14 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[BAD_widtharg_fmt] = _("bad width arg '%s', must > %d");
    Norm_nlstab[UNKNOWN_opts_fmt] = _(""
       "unknown option '%c'\n"
-      "usage:\t%s%s");
+      "Usage:\n  %s%s");
    Norm_nlstab[DELAY_secure_txt] = _("-d disallowed in \"secure\" mode");
    Norm_nlstab[DELAY_badarg_txt] = _("-d requires positive argument");
    Norm_nlstab[ON_word_only_txt] = _("On");
    Norm_nlstab[OFF_one_word_txt] = _("Off");
 /* Translation Hint: Only the following words should be translated
    .                 delay, limit, user, cols (abbreviation for columns)*/
-   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcHiSs -d delay -n limit -u|U user -p pid[,pid] -w [cols]");
+   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]");
    Norm_nlstab[FAIL_statget_txt] = _("failed /proc/stat read");
    Norm_nlstab[FOREST_modes_fmt] = _("Forest mode %s");
    Norm_nlstab[FAIL_tty_get_txt] = _("failed tty get");
@@ -369,6 +369,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[FIND_no_find_fmt] = _("%s\"%s\" not found");
    Norm_nlstab[XTRA_fixwide_fmt] = _("width incr is %d, change to (0 default, -1 auto)");
    Norm_nlstab[XTRA_warncfg_txt] = _("Overwrite existing obsolete/corrupted rcfile?");
+   Norm_nlstab[XTRA_sortopt_fmt] = _("unrecognized field name '%s'");
 #ifndef INSP_OFFDEMO
    Norm_nlstab[YINSP_demo01_txt] = _("Open Files");
    Norm_nlstab[YINSP_demo02_txt] = _("NUMA Info");

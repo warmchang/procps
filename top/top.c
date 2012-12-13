@@ -3177,6 +3177,7 @@ static void parse_args (char **args) {
    static const char numbs_str[] = "+,-.0123456789";
    float tmp_delay = MAXFLOAT;
    char *p;
+   int i;
 
    while (*args) {
       const char *cp = *(args++);
@@ -3212,8 +3213,8 @@ static void parse_args (char **args) {
                break;
             case 'h':
             case 'v':
-               fprintf(stdout, N_fmt(HELP_cmdline_fmt)
-                  , procps_version, Myname, N_txt(USAGE_abbrev_txt));
+               puts(fmtmk(N_fmt(HELP_cmdline_fmt)
+                  , procps_version, Myname, N_txt(USAGE_abbrev_txt)));
                bye_bye(NULL);
             case 'i':
                TOGw(Curwin, Show_IDLEPS);
@@ -3226,9 +3227,25 @@ static void parse_args (char **args) {
                if (1 != sscanf(cp, "%d", &Loops) || 1 > Loops)
                   error_exit(fmtmk(N_fmt(BAD_niterate_fmt), cp));
                break;
+            case 'o':
+               if (cp[1]) cp++;
+               else if (*args) cp = *args++;
+               else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
+               for (i = 0; i < P_MAXPFLGS; i++)
+                  if (!STRCMP(cp, N_col(i))) break;
+               if (i == P_MAXPFLGS)
+                  error_exit(fmtmk(N_fmt(XTRA_sortopt_fmt), cp));
+               OFFw(Curwin, Show_FOREST);
+               Curwin->rc.sortindx = i;
+               cp += strlen(cp);
+               break;
+            case 'O':
+               for (i = 0; i < P_MAXPFLGS; i++)
+                  puts(N_col(i));
+               bye_bye(NULL);
             case 'p':
                if (Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
-               do { int i, pid;
+               do { int pid;
                   if (cp[1]) cp++;
                   else if (*args) cp = *args++;
                   else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
