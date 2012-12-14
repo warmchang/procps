@@ -421,14 +421,14 @@ kernel versions are shown first.
 .SS 2c. MEMORY Usage
 .\" ----------------------------------------------------------------------
 This portion consists of two lines which may express values in kibibytes (KiB),
-mebibytes (MiB) or gibibytes (GiB) depending on the amount of currently
-installed \*(MP.
+mebibytes (MiB) or gibibytes (GiB) depending on the scaling factor enforced
+with the 'E' \*(CI.
 
 Line 1 reflects \*(MP, classified as:
-    total, used, free, buffers
+    total, used, free and buffers
 
-Line 2 reflects \*(MV, classified as:
-    total, used, free, cached
+Line 2 reflects mostly \*(MV, classified as:
+    total, used, free and cached (which is \*(MP)
 
 .\" ----------------------------------------------------------------------
 .SH 3. FIELDS / Columns
@@ -832,7 +832,8 @@ depending on the context in which they are issued.
 
 .Bd -literal
   4a.\fI Global-Commands \fR
-        <Ent/Sp> ?, =, A, B, d, g, h, H, I, k, q, r, s, W, X, Y, Z
+        <Ent/Sp> ?, =,
+        A, B, d, E, g, h, H, I, k, q, r, s, W, X, Y, Z
   4b.\fI Summary-Area-Commands \fR
         C, l, t, 1, m
   4c.\fI Task-Area-Commands \fR
@@ -926,6 +927,16 @@ so set it with care.
 
 If at any time you wish to know the current delay time, simply ask for
 help and view the system summary on the second line.
+
+.TP 7
+\ \ \'\fBE\fR\' :\fIExtend-Memory-Scale\fR in Summary Area
+With this command you can cycle through the available \*(SA memory scaling
+which ranges from KiB (kibibytes or 1,024 bytes) through TiB (tebibytes or
+1,099,511,627,776 bytes).
+
+If you see a '+' between a displayed number and the following label, it
+means that \*(We was forced to truncate some portion of that number.
+By raising the scaling factor, such truncation can usually be avoided.
 
 .TP 7
 \ \ \'\fBg\fR\' :\fIChoose-Another-Window/Field-Group \fR

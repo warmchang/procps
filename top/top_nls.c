@@ -353,6 +353,9 @@ static void build_norm_nlstab (void) {
 /* Translation Hint: This is an abbreviation (limit 3 characters) for:
    .                 gibibytes (1,073,741,824 bytes) */
    Norm_nlstab[AMT_gigabyte_txt] = _("GiB");
+/* Translation Hint: This is an abbreviation (limit 3 characters) for:
+   .                 tebibytes (1,099,511,627,776 bytes) */
+   Norm_nlstab[AMT_terabyte_txt] = _("TiB");
    Norm_nlstab[WORD_threads_txt] = _("Threads");
    Norm_nlstab[WORD_process_txt] = _("Tasks");
 /* Translation Hint: The following "word" is meant to represent either a single
@@ -455,7 +458,7 @@ static void build_uniq_nlstab (void) {
       "Help for Interactive Commands~2 - %s\n"
       "Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; ~1Secure mode ~3%s~2.\n"
       "\n"
-      "  Z~5,~1B~5       Global: '~1Z~2' change color mappings; '~1B~2' disable/enable bold\n"
+      "  Z~5,~1B~5,E     Global: '~1Z~2' color mappings; '~1B~2' bold; '~1E~2' summary mem scale\n"
       "  l,t,m     Toggle Summaries: '~1l~2' load avg; '~1t~2' task/cpu stats; '~1m~2' mem info\n"
       "  1,I       Toggle SMP view: '~11~2' single/separate states; '~1I~2' Irix/Solaris mode\n"
       "  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase fixed-width\n"
@@ -465,7 +468,7 @@ static void build_uniq_nlstab (void) {
       "  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; '~1j~2' Str justify\n"
       "  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
       "  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
-      "  u,U     . Filter by: '~1u~2' effective user; '~1U~2' real, saved, file or effective user\n"
+      "  u,U     . Filter by: '~1u~2' effective user; '~1U~2' effective/file/real/saved user\n"
       "  n or #  . Set maximum tasks displayed\n"
       "  C,...   . Toggle scroll coordinates msg for: ~1up~2,~1down~2,~1left~2,right~2,~1home~2,~1end~2\n"
       "\n"
@@ -589,8 +592,8 @@ static void build_uniq_nlstab (void) {
    .                 abbreviations: Mem = physical memory/ram, Swap = the linux swap file
    .                 words:         total, used, free, buffers, cached */
    Uniq_nlstab[MEMORY_lines_fmt] = _(""
-      "%s Mem: ~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2buffers~3\n"
-      "%s Swap:~3 %8lu ~2total,~3 %8lu ~2used,~3 %8lu ~2free,~3 %8lu ~2cached~3\n");
+      "%s Mem: ~3 %9.9s~2total,~3 %9.9s~2used,~3 %9.9s~2free,~3 %9.9s~2buffers~3\n"
+      "%s Swap:~3 %9.9s~2total,~3 %9.9s~2used,~3 %9.9s~2free,~3 %9.9s~2cached~3\n");
 
    Uniq_nlstab[INSP_hdrsels_fmt] = _(""
       "Inspection~2 Pause at: pid ~1%d~6 running ~1%s~6 as user ~1%s~6\n"

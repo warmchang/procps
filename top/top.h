@@ -336,6 +336,7 @@ typedef struct RCF_t {
    int    win_index;            // Curwin, as index
    RCW_t  win [GROUPSMAX];      // a 'WIN_t.rc' for each window
    int    fixed_widest;         // 'X' - wider non-scalable col addition
+   int    summ_mscale;          // 'E' - scaling of summary memory values
 } RCF_t;
 
         /* This structure stores configurable information for each window.

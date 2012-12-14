@@ -3065,7 +3065,7 @@ static void configs_read (void) {
       } // end: for (GROUPSMAX)
 
       // any new addition(s) last, for older rcfiles compatibility...
-      fscanf(fp, "Fixed_widest=%d\n", &Rc.fixed_widest);
+      fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d\n", &Rc.fixed_widest, &Rc.summ_mscale);
 
 try_inspect_entries:
 
@@ -3653,7 +3653,7 @@ static void file_writerc (void) {
    }
 
    // any new addition(s) last, for older rcfiles compatibility...
-   fprintf(fp, "Fixed_widest=%d\n", Rc.fixed_widest);
+   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d\n", Rc.fixed_widest, Rc.summ_mscale);
 
    if (Inspect.raw)
       fputs(Inspect.raw, fp);
@@ -3768,6 +3768,10 @@ static void keys_global (int ch) {
                get_float(fmtmk(N_fmt(DELAY_change_fmt), Rc.delay_time));
             if (-1 < tmp) Rc.delay_time = tmp;
          }
+         break;
+      case 'E':
+         // current summary_show limits: 0 == kilo through 3 == tera
+         if (++Rc.summ_mscale > 3) Rc.summ_mscale = 0;
          break;
       case 'F':
       case 'f':
@@ -4307,7 +4311,7 @@ static void do_key (int ch) {
       char keys[SMLBUFSIZ];
    } key_tab[] = {
       { keys_global,
-         { '?', 'B', 'd', 'F', 'f', 'g', 'H', 'h', 'I', 'k', 'r', 's', 'X', 'Y', 'Z'
+         { '?', 'B', 'd', 'E', 'F', 'f', 'g', 'H', 'h', 'I', 'k', 'r', 's', 'X', 'Y', 'Z'
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '1', 'C', 'l', 'm', 't', '\0' } },
@@ -4461,23 +4465,47 @@ static void summary_show (void) {
 
    // Display Memory and Swap stats
    if (isROOM(View_MEMORY, 2)) {
-    #define mkM(x) (unsigned long)(kb_main_ ## x >> shift)
-    #define mkS(x) (unsigned long)(kb_swap_ ## x >> shift)
-      const char *which = N_txt(AMT_kilobyte_txt);
-      int shift = 0;
+    #define bfT(n)  buftab[n].buf
+    #define scT(e)  scaletab[Rc.summ_mscale]. e
+    #define mkM(x) (float)kb_main_ ## x / scT(div)
+    #define mkS(x) (float)kb_swap_ ## x / scT(div)
+    #define prT(b,z) { if (9 < snprintf(b, 10, scT(fmts), z)) b[8] = '+'; }
+      static struct {
+         float div;
+         const char *fmts;
+         const char *label;
+      } scaletab[] = {
+         { 1, "%8.0f ", NULL },                  // kilo
+         { 1024.0, "%#5.2f ", NULL },            // mega
+         { 1024.0*1024, "%#4.3f ", NULL },       // giga
+         { 1024.0*1024*1024, "%#3.4f ", NULL }   // tera
+      };
+      struct {
+      // after snprintf, contents of each buf:         'nnnnnnnn 0'
+      // and prT macro might replace space at buf[8] with: ---> +
+         char buf[10]; // MEMORY_lines_fmt provides for 8+1 bytes
+      } buftab[8];
 
-      /*** hotplug_acclimated ***/
-      if (kb_main_total > 99999999)
-         { which = N_txt(AMT_megabyte_txt); shift = 10; }
-      if (kb_main_total > 9999999999ull)
-         { which = N_txt(AMT_gigabyte_txt); shift = 20; }
+      if (!scaletab[0].label) {
+         scaletab[0].label = N_txt(AMT_kilobyte_txt);
+         scaletab[1].label = N_txt(AMT_megabyte_txt);
+         scaletab[2].label = N_txt(AMT_gigabyte_txt);
+         scaletab[3].label = N_txt(AMT_terabyte_txt);
+      }
+      prT(bfT(0), mkM(total)); prT(bfT(1), mkM(used));
+      prT(bfT(2), mkM(free));  prT(bfT(3), mkM(buffers));
+      prT(bfT(4), mkS(total)); prT(bfT(5), mkS(used));
+      prT(bfT(6), mkS(free));  prT(bfT(7), mkM(cached));
 
       show_special(0, fmtmk(N_unq(MEMORY_lines_fmt)
-         , which, mkM(total), mkM(used), mkM(free),  mkM(buffers)
-         , which, mkS(total), mkS(used), mkS(free),  mkM(cached)));
+         , scT(label), &bfT(0), &bfT(1), &bfT(2), &bfT(3)
+         , scT(label), &bfT(4), &bfT(5), &bfT(6), &bfT(7)));
       Msg_row += 2;
+    #undef bfT
+    #undef scT
     #undef mkM
     #undef mkS
+    #undef prT
    }
 
  #undef isROOM
