@@ -446,6 +446,10 @@ are sorted high-to-low or low-to-high.
 For additional information on sort provisions
 \*(Xt 4c. TASK AREA Commands, SORTING.
 
+The fields related to \*(MP or \*(MV reference '(KiB)' as the default,
+unsuffixed display mode.
+Such fields can, however, be scaled differently via the 'e' \*(CI.
+
 .TP 4
  1.\fB %CPU \*(Em \*(PU Usage \fR
 The task's share of the elapsed \*(PU time since the last screen update,
@@ -937,6 +941,17 @@ which ranges from KiB (kibibytes or 1,024 bytes) through TiB (tebibytes or
 If you see a '+' between a displayed number and the following label, it
 means that \*(We was forced to truncate some portion of that number.
 By raising the scaling factor, such truncation can usually be avoided.
+
+.TP 7
+\ \ \'\fBe\fR\' :\fIExtend-Memory-Scale\fR in Task Windows
+With this command you can cycle through the available \*(TW memory scaling
+which ranges from KiB (kibibytes or 1,024 bytes) through TiB (tebibytes or
+1,099,511,627,776 bytes).
+
+While \*(We will try to honor the selected target range, additional
+scaling might still be necessary in order to accommodate current values.
+If you wish to see a more homogeneous result in the memory columns,
+raising the scaling range will usually accomplish that goal.
 
 .TP 7
 \ \ \'\fBg\fR\' :\fIChoose-Another-Window/Field-Group \fR

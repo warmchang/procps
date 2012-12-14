@@ -198,6 +198,13 @@ static int Autox_array [P_MAXPFLGS],
 #define AUTOX_NO      P_MAXPFLGS
 #define AUTOX_COL(f)  if (P_MAXPFLGS > f) Autox_array[f] = Autox_found = 1
 #define AUTOX_MODE   (0 > Rc.fixed_widest)
+
+        /* Support for scale_mem and scale_num (to avoid duplication. */
+#ifdef CASEUP_SUFIX
+   static char Scaled_sfxtab[] =  { 'K', 'M', 'G', 'T', 0 };
+#else
+   static char Scaled_sfxtab[] =  { 'k', 'm', 'g', 't', 0 };
+#endif
 
 /*######  Sort callbacks  ################################################*/
 
@@ -1253,11 +1260,77 @@ static inline const char *make_str (const char *str, int width, int justr, int c
 
 
         /*
+         * Do some scaling then justify stuff.
+         * We'll interpret 'num' as a kibibytes quantity and try to
+         * format it to reach 'target' while also fitting 'width'. */
+static const char *scale_mem (int target, unsigned long num, int width, int justr) {
+#ifndef NOBOOST_MEMS
+   static const char *fmttab[] =  { "%.0f", "%#.2f%c", "%#.3f%c", "%#.4f%c", NULL };
+#else
+   static const char *fmttab[] =  { "%.0f", "%.0f%c", "%.0f%c", "%.0f%c", NULL };
+#endif
+   static char buf[SMLBUFSIZ];
+   float scaled_num;
+   char *psfx;
+   int i;
+
+   buf[0] = '\0';
+   if (Rc.zero_suppress && 0 >= num)
+      goto end_justifies;
+
+   scaled_num = num;
+   for (i = 0, psfx = Scaled_sfxtab; 0 < *psfx; psfx++, i++) {
+      if (i >= target
+      && (width >= snprintf(buf, sizeof(buf), fmttab[i], scaled_num, *psfx)))
+         goto end_justifies;
+      scaled_num /= 1024.0;
+   }
+
+   // well shoot, this outta' fit...
+   snprintf(buf, sizeof(buf), "?");
+end_justifies:
+   return justify_pad(buf, width, justr);
+} // end: scale_mem
+
+
+        /*
+         * Do some scaling then justify stuff. */
+static const char *scale_num (unsigned long num, int width, int justr) {
+   static char buf[SMLBUFSIZ];
+   float scaled_num;
+   char *psfx;
+
+   buf[0] = '\0';
+   if (Rc.zero_suppress && 0 >= num)
+      goto end_justifies;
+   if (width >= snprintf(buf, sizeof(buf), "%lu", num))
+      goto end_justifies;
+
+   scaled_num = num;
+   for (psfx = Scaled_sfxtab; 0 < *psfx; psfx++) {
+      scaled_num /= 1024.0;
+      if (width >= snprintf(buf, sizeof(buf), "%.1f%c", scaled_num, *psfx))
+         goto end_justifies;
+      if (width >= snprintf(buf, sizeof(buf), "%.0f%c", scaled_num, *psfx))
+         goto end_justifies;
+   }
+
+   // well shoot, this outta' fit...
+   snprintf(buf, sizeof(buf), "?");
+end_justifies:
+   return justify_pad(buf, width, justr);
+} // end: scale_num
+
+
+        /*
          * Make and then justify a percentage, with decreasing precision. */
-static inline const char *scale_pcnt (float num, int width, int justr) {
+static const char *scale_pcnt (float num, int width, int justr) {
    static char buf[SMLBUFSIZ];
 
-#ifdef PERCENTBOOST
+   buf[0] = '\0';
+   if (Rc.zero_suppress && 0 >= num)
+      goto end_justifies;
+#ifndef NOBOOST_PCNT
    if (width >= snprintf(buf, sizeof(buf), "%#.3f", num))
       goto end_justifies;
    if (width >= snprintf(buf, sizeof(buf), "%#.2f", num))
@@ -1293,7 +1366,10 @@ static const char *scale_tics (TIC_t tics, int width, int justr) {
    unsigned cc;         // centiseconds
    unsigned nn;         // multi-purpose whatever
 
+   buf[0] = '\0';
    nt  = (tics * 100ull) / Hertz;               // up to 68 weeks of cpu time
+   if (Rc.zero_suppress && 0 >= nt)
+      goto end_justifies;
    cc  = nt % 100;                              // centiseconds past second
    nt /= 100;                                   // total seconds
    nn  = nt % 60;                               // seconds past the minute
@@ -1324,49 +1400,6 @@ end_justifies:
  #undef DD
  #undef WW
 } // end: scale_tics
-
-
-        /*
-         * Do some scaling then justify stuff.
-         * We'll interpret 'num' as one of the following types and
-         * try to format it to fit 'width'.
-         *    SK_no (0) it's a byte count
-         *    SK_Kb (1) it's kilobytes
-         *    SK_Mb (2) it's megabytes
-         *    SK_Gb (3) it's gigabytes
-         *    SK_Tb (4) it's terabytes  */
-static const char *scale_unum (unsigned long num, int type, int width, int justr) {
-      // kilobytes, megabytes, gigabytes, terabytes, duh!
-   static double scale[] = { 1024.0, 1024.0*1024, 1024.0*1024*1024, 1024.0*1024*1024*1024, 0 };
-      // kilo, mega, giga, tera, none
-#ifdef CASEUP_SUFIX
-   static char nextup[] =  { 'K', 'M', 'G', 'T', 0 };
-#else
-   static char nextup[] =  { 'k', 'm', 'g', 't', 0 };
-#endif
-   static char buf[SMLBUFSIZ];
-   double *dp;
-   char *up;
-
-   // try an unscaled version first...
-   if (width >= snprintf(buf, sizeof(buf), "%lu", num))
-      goto end_justifies;
-
-   // now try successively higher types until it fits
-   for (up = nextup + type, dp = scale; 0 < *dp; ++dp, ++up) {
-      // the most accurate version
-      if (width >= snprintf(buf, sizeof(buf), "%.1f%c", num / *dp, *up))
-         goto end_justifies;
-      // the integer version
-      if (width >= snprintf(buf, sizeof(buf), "%lu%c", (unsigned long)(num / *dp), *up))
-         goto end_justifies;
-   }
-
-   // well shoot, this outta' fit...
-   snprintf(buf, sizeof(buf), "?");
-end_justifies:
-   return justify_pad(buf, width, justr);
-} // end: scale_unum
 
 /*######  Fields Management support  #####################################*/
 
@@ -1431,20 +1464,29 @@ static FLD_t Fieldstab[] = {
    {     0,     -1,  A_right,  SF(CPU),  L_stat    },
    {     6,     -1,  A_right,  SF(TME),  L_stat    },
    {     9,     -1,  A_right,  SF(TME),  L_stat    }, // P_TM2 slot
-#ifdef PERCENTBOOST
+#ifndef NOBOOST_PCNT
    {     5,     -1,  A_right,  SF(RES),  L_statm   }, // P_MEM slot
 #else
    {     4,     -1,  A_right,  SF(RES),  L_statm   }, // P_MEM slot
 #endif
+#ifndef NOBOOST_MEMS
+   {     8,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
+   {     7,  SK_Kb,  A_right,  SF(SWP),  L_status  },
+   {     7,  SK_Kb,  A_right,  SF(RES),  L_statm   },
+   {     7,  SK_Kb,  A_right,  SF(COD),  L_statm   },
+   {     7,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
+   {     7,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
+#else
    {     5,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(SWP),  L_status  },
    {     4,  SK_Kb,  A_right,  SF(RES),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(COD),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
-   {     4,  SK_no,  A_right,  SF(FL1),  L_stat    },
-   {     4,  SK_no,  A_right,  SF(FL2),  L_stat    },
-   {     4,  SK_no,  A_right,  SF(DRT),  L_statm   },
+#endif
+   {     4,     -1,  A_right,  SF(FL1),  L_stat    },
+   {     4,     -1,  A_right,  SF(FL2),  L_stat    },
+   {     4,     -1,  A_right,  SF(DRT),  L_statm   },
    {     1,     -1,  A_right,  SF(STA),  L_EITHER  },
    {    -1,     -1,  A_left,   SF(CMD),  L_EITHER  },
    {    10,     -1,  A_left,   SF(WCH),  L_stat    },
@@ -1460,8 +1502,8 @@ static FLD_t Fieldstab[] = {
 #undef L_oom
 #endif
    {    -1,     -1,  A_left,   SF(ENV),  L_ENVIRON },
-   {     3,  SK_no,  A_right,  SF(FV1),  L_stat    },
-   {     3,  SK_no,  A_right,  SF(FV2),  L_stat    }
+   {     3,     -1,  A_right,  SF(FV1),  L_stat    },
+   {     3,     -1,  A_right,  SF(FV2),  L_stat    }
  #undef SF
  #undef A_left
  #undef A_right
@@ -1947,7 +1989,7 @@ static void zap_fieldstab (void) {
       Fieldstab[P_CPN].width = digits;
    }
 
-#ifdef PERCENTBOOST
+#ifndef NOBOOST_PCNT
    Cpu_pmax = 99.9;
    Fieldstab[P_CPU].width = 5;
    if (Rc.mode_irixps && smp_num_cpus > 1 && !Thread_mode) {
@@ -1985,6 +2027,12 @@ static void zap_fieldstab (void) {
       Fieldstab[P_WCH].width
          = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
    }
+
+   /* plus user selectable scaling */
+   Fieldstab[P_VRT].scale = Fieldstab[P_SWP].scale
+      = Fieldstab[P_RES].scale = Fieldstab[P_COD].scale
+      = Fieldstab[P_DAT].scale = Fieldstab[P_SHR].scale
+      = Rc.task_mscale;
 
    // lastly, ensure we've got proper column headers...
    calibrate_fields();
@@ -3065,7 +3113,8 @@ static void configs_read (void) {
       } // end: for (GROUPSMAX)
 
       // any new addition(s) last, for older rcfiles compatibility...
-      fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d\n", &Rc.fixed_widest, &Rc.summ_mscale);
+      fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d\n"
+         , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale);
 
 try_inspect_entries:
 
@@ -3653,7 +3702,8 @@ static void file_writerc (void) {
    }
 
    // any new addition(s) last, for older rcfiles compatibility...
-   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d\n", Rc.fixed_widest, Rc.summ_mscale);
+   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d\n"
+      , Rc.fixed_widest, Rc.summ_mscale, Rc.task_mscale);
 
    if (Inspect.raw)
       fputs(Inspect.raw, fp);
@@ -3770,8 +3820,10 @@ static void keys_global (int ch) {
          }
          break;
       case 'E':
-         // current summary_show limits: 0 == kilo through 3 == tera
-         if (++Rc.summ_mscale > 3) Rc.summ_mscale = 0;
+         if (++Rc.summ_mscale >= SK_SENTINEL) Rc.summ_mscale = SK_Kb;
+         break;
+      case 'e':
+         if (++Rc.task_mscale >= SK_SENTINEL) Rc.task_mscale = SK_Kb;
          break;
       case 'F':
       case 'f':
@@ -4311,7 +4363,8 @@ static void do_key (int ch) {
       char keys[SMLBUFSIZ];
    } key_tab[] = {
       { keys_global,
-         { '?', 'B', 'd', 'E', 'F', 'f', 'g', 'H', 'h', 'I', 'k', 'r', 's', 'X', 'Y', 'Z'
+         { '?', 'B', 'd', 'E', 'e', 'F', 'f', 'g', 'H', 'h'
+         , 'I', 'k', 'r', 's', 'X', 'Y', 'Z'
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '1', 'C', 'l', 'm', 't', '\0' } },
@@ -4562,7 +4615,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             makeVAR(forest_display(q, p));
             break;
          case P_COD:
-            cp = scale_unum(pages2K(p->trs), S, W, Jn);
+            cp = scale_mem(S, pages2K(p->trs), W, Jn);
             break;
          case P_CPN:
             cp = make_num(p->processor, W, Jn, AUTOX_NO);
@@ -4574,10 +4627,10 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          }
             break;
          case P_DAT:
-            cp = scale_unum(pages2K(p->drs), S, W, Jn);
+            cp = scale_mem(S, pages2K(p->drs), W, Jn);
             break;
          case P_DRT:
-            cp = scale_unum(p->dt, S, W, Jn);
+            cp = scale_num(p->dt, W, Jn);
             break;
          case P_ENV:
             makeVAR(p->environ[0]);
@@ -4586,16 +4639,16 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = make_str(hex_make(p->flags, 1), W, Js, AUTOX_NO);
             break;
          case P_FL1:
-            cp = scale_unum(p->maj_flt, S, W, Jn);
+            cp = scale_num(p->maj_flt, W, Jn);
             break;
          case P_FL2:
-            cp = scale_unum(p->min_flt, S, W, Jn);
+            cp = scale_num(p->min_flt, W, Jn);
             break;
          case P_FV1:
-            cp = scale_unum(p->maj_delta, S, W, Jn);
+            cp = scale_num(p->maj_delta, W, Jn);
             break;
          case P_FV2:
-            cp = scale_unum(p->min_delta, S, W, Jn);
+            cp = scale_num(p->min_delta, W, Jn);
             break;
          case P_GID:
             cp = make_num(p->egid, W, Jn, P_GID);
@@ -4633,7 +4686,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
                cp = make_num(p->priority, W, Jn, AUTOX_NO);
             break;
          case P_RES:
-            cp = scale_unum(pages2K(p->resident), S, W, Jn);
+            cp = scale_mem(S, pages2K(p->resident), W, Jn);
             break;
          case P_SGD:
             makeVAR(p->supgid);
@@ -4642,7 +4695,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             makeVAR(p->supgrp);
             break;
          case P_SHR:
-            cp = scale_unum(pages2K(p->share), S, W, Jn);
+            cp = scale_mem(S, pages2K(p->share), W, Jn);
             break;
          case P_SID:
             cp = make_num(p->session, W, Jn, AUTOX_NO);
@@ -4651,7 +4704,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = make_chr(p->state, W, Js);
             break;
          case P_SWP:
-            cp = scale_unum(p->vm_swap, S, W, Jn);
+            cp = scale_mem(S, p->vm_swap, W, Jn);
             break;
          case P_TGD:
             cp = make_num(p->tgid, W, Jn, AUTOX_NO);
@@ -4694,7 +4747,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = make_str(p->suser, W, Js, P_USN);
             break;
          case P_VRT:
-            cp = scale_unum(pages2K(p->size), S, W, Jn);
+            cp = scale_mem(S, pages2K(p->size), W, Jn);
             break;
          case P_WCH:
          {  const char *u;

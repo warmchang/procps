@@ -36,9 +36,10 @@
 //#define INSP_OFFDEMO            /* disable demo screens, issue msg instead */
 //#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents in a file  */
 //#define INSP_SLIDE_1            /* when scrolling left/right don't move 8  */
+//#define NOBOOST_MEMS            /* disable extra precision for mem fields  */
+//#define NOBOOST_PCNT            /* disable extra precision for % fields    */
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
-//#define PERCENTBOOST            /* enable extended precision for % fields  */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
@@ -191,10 +192,9 @@ enum pflag {
 #endif
 };
 
-        /* The scaling 'type' used with scale_unum() -- this is how
-           the passed number is interpreted should scaling be necessary */
-enum scale_unum {
-   SK_no, SK_Kb, SK_Mb, SK_Gb, SK_Tb
+        /* The scaling 'target' used with memory fields */
+enum scale_enum {
+   SK_Kb, SK_Mb, SK_Gb, SK_Tb, SK_SENTINEL
 };
 
         /* This typedef just ensures consistent 'process flags' handling */
@@ -211,7 +211,7 @@ typedef int (*QFP_t)(const void *, const void *);
            in a variety of display roles. */
 typedef struct FLD_t {
    int           width;         // field width, if applicable
-   const int     scale;         // scale_unum type, if applicable
+   int           scale;         // scaled target, if applicable
    const int     align;         // the default column alignment flag
    const QFP_t   sort;          // sort function
    const int     lflg;          // PROC_FILLxxx flag(s) needed by this field
@@ -337,6 +337,8 @@ typedef struct RCF_t {
    RCW_t  win [GROUPSMAX];      // a 'WIN_t.rc' for each window
    int    fixed_widest;         // 'X' - wider non-scalable col addition
    int    summ_mscale;          // 'E' - scaling of summary memory values
+   int    task_mscale;          // 'e' - scaling of process memory values
+   int    zero_suppress;        // '0' - suppress scaled zeros toggle
 } RCF_t;
 
         /* This structure stores configurable information for each window.
@@ -635,9 +637,10 @@ typedef struct WIN_t {
 //atic inline const char *make_chr (const char ch, int width, int justr);
 //atic inline const char *make_num (long num, int width, int justr, int col);
 //atic inline const char *make_str (const char *str, int width, int justr, int col);
-//atic inline const char *scale_pcnt (float num, int width, int justr);
+//atic const char   *scale_mem (int target, unsigned long num, int width, int justr);
+//atic const char   *scale_num (unsigned long num, int width, int justr);
+//atic const char   *scale_pcnt (float num, int width, int justr);
 //atic const char   *scale_tics (TIC_t tics, int width, int justr);
-//atic const char   *scale_unum (unsigned long num, int type, int width, int justr);
 /*------  Fields Management support  -------------------------------------*/
 /*atic FLD_t         Fieldstab[] = { ... }                                */
 //atic void          adj_geometry (void);
