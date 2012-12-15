@@ -3113,8 +3113,8 @@ static void configs_read (void) {
       } // end: for (GROUPSMAX)
 
       // any new addition(s) last, for older rcfiles compatibility...
-      fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d\n"
-         , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale);
+      fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
+         , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress);
 
 try_inspect_entries:
 
@@ -3702,8 +3702,8 @@ static void file_writerc (void) {
    }
 
    // any new addition(s) last, for older rcfiles compatibility...
-   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d\n"
-      , Rc.fixed_widest, Rc.summ_mscale, Rc.task_mscale);
+   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
+      , Rc.fixed_widest, Rc.summ_mscale, Rc.task_mscale, Rc.zero_suppress);
 
    if (Inspect.raw)
       fputs(Inspect.raw, fp);
@@ -3900,6 +3900,9 @@ static void keys_global (int ch) {
          break;
       case 'Z':
          wins_colors();
+         break;
+      case '0':
+         Rc.zero_suppress = !Rc.zero_suppress;
          break;
       case kbd_ENTER:        // these two have the effect of waking us
       case kbd_SPACE:        // from 'select()', updating hotplugged
@@ -4364,7 +4367,7 @@ static void do_key (int ch) {
    } key_tab[] = {
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'F', 'f', 'g', 'H', 'h'
-         , 'I', 'k', 'r', 's', 'X', 'Y', 'Z'
+         , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '1', 'C', 'l', 'm', 't', '\0' } },

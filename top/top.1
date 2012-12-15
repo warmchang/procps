@@ -836,7 +836,7 @@ depending on the context in which they are issued.
 
 .Bd -literal
   4a.\fI Global-Commands \fR
-        <Ent/Sp> ?, =,
+        <Ent/Sp> ?, =, 0,
         A, B, d, E, g, h, H, I, k, q, r, s, W, X, Y, Z
   4b.\fI Summary-Area-Commands \fR
         C, l, t, 1, m
@@ -899,6 +899,12 @@ this command.
 vertical and horizontal scrolling.
 
 When operating in \*(AM this command has a broader meaning.
+
+.TP 7
+\ \ \'\fB0\fR\' :\fIZero-Suppress\fR toggle \fR
+This command determines whether zeros are shown or suppressed for many
+of the fields in a \*(TW.
+Fields like UID, GID, NI, PR or P are not affected by this toggle.
 
 .TP 7
 \ \ \'\fBA\fR\' :\fIAlternate-Display-Mode\fR toggle \fR
