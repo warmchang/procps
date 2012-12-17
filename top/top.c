@@ -3061,17 +3061,20 @@ static void configs_read (void) {
 
    fp = fopen(Rc_name, "r");
    if (fp) {
+      int tmp_whole, tmp_fract;
       fbuf[0] = '\0';
       fgets(fbuf, sizeof(fbuf), fp);             // ignore eyecatcher
-      if (5 != fscanf(fp
-         , "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%f, Curwin=%d\n"
-         , &Rc.id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_delay, &i)) {
+      if (6 != fscanf(fp
+         , "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%d.%d, Curwin=%d\n"
+         , &Rc.id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_whole, &tmp_fract, &i)) {
             p = fmtmk(N_fmt(RC_bad_files_fmt), Rc_name);
             Rc_questions = -1;
             goto try_inspect_entries;            // maybe a faulty 'inspect' echo
       }
       // you saw that, right?  (fscanf stickin' it to 'i')
       Curwin = &Winstk[i];
+      // this may be ugly, but it keeps us locale independent...
+      tmp_delay = (float)tmp_whole + (float)tmp_fract / 1000;
 
       for (i = 0 ; i < GROUPSMAX; i++) {
          int x;
@@ -3686,9 +3689,12 @@ static void file_writerc (void) {
       return;
    }
    fprintf(fp, "%s's " RCF_EYECATCHER, Myname);
-   fprintf(fp, "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%.3f, Curwin=%d\n"
+   fprintf(fp, "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%d.%d, Curwin=%d\n"
       , RCF_VERSION_ID
-      , Rc.mode_altscr, Rc.mode_irixps, Rc.delay_time, (int)(Curwin - Winstk));
+      , Rc.mode_altscr, Rc.mode_irixps
+        // this may be ugly, but it keeps us locale independent...
+      , (int)Rc.delay_time, (int)((Rc.delay_time - (int)Rc.delay_time) * 1000)
+      , (int)(Curwin - Winstk));
 
    for (i = 0 ; i < GROUPSMAX; i++) {
       fprintf(fp, "%s\tfieldscur=%s\n"
