@@ -3834,10 +3834,10 @@ static void keys_global (int ch) {
          }
          break;
       case 'E':
-         if (++Rc.summ_mscale >= SK_SENTINEL) Rc.summ_mscale = SK_Kb;
+         if (++Rc.summ_mscale > SK_Eb) Rc.summ_mscale = SK_Kb;
          break;
       case 'e':
-         if (++Rc.task_mscale >= SK_SENTINEL) Rc.task_mscale = SK_Kb;
+         if (++Rc.task_mscale > SK_Tb) Rc.task_mscale = SK_Kb;
          break;
       case 'F':
       case 'f':
@@ -4545,14 +4545,16 @@ static void summary_show (void) {
          const char *fmts;
          const char *label;
       } scaletab[] = {
-         { 1, "%8.0f ", NULL },                  // kilo
-         { 1024.0, "%#5.2f ", NULL },            // mega
-         { 1024.0*1024, "%#4.3f ", NULL },       // giga
-         { 1024.0*1024*1024, "%#3.4f ", NULL }   // tera
+         { 1, "%8.0f ", NULL },                            // kibibytes
+         { 1024.0, "%#4.3f ", NULL },                      // mebibytes
+         { 1024.0*1024, "%#4.3f ", NULL },                 // gibibytes
+         { 1024.0*1024*1024, "%#4.3f ", NULL },            // tebibytes
+         { 1024.0*1024*1024*1024, "%#4.3f ", NULL },       // pebibytes
+         { 1024.0*1024*1024*1024*1024, "%#4.3f ", NULL }   // exbibytes
       };
-      struct {
-      // after snprintf, contents of each buf:         'nnnnnnnn 0'
-      // and prT macro might replace space at buf[8] with: ---> +
+      struct { //                                            0123456789
+      // snprintf contents of each buf (after SK_Kb):       'nnnn.nnn 0'
+      // and prT macro might replace space at buf[8] with:   ------> +
          char buf[10]; // MEMORY_lines_fmt provides for 8+1 bytes
       } buftab[8];
 
@@ -4561,6 +4563,8 @@ static void summary_show (void) {
          scaletab[1].label = N_txt(AMT_megabyte_txt);
          scaletab[2].label = N_txt(AMT_gigabyte_txt);
          scaletab[3].label = N_txt(AMT_terabyte_txt);
+         scaletab[4].label = N_txt(AMT_petabyte_txt);
+         scaletab[5].label = N_txt(AMT_exxabyte_txt);
       }
       prT(bfT(0), mkM(total)); prT(bfT(1), mkM(used));
       prT(bfT(2), mkM(free));  prT(bfT(3), mkM(buffers));
@@ -4568,8 +4572,8 @@ static void summary_show (void) {
       prT(bfT(6), mkS(free));  prT(bfT(7), mkM(cached));
 
       show_special(0, fmtmk(N_unq(MEMORY_lines_fmt)
-         , scT(label), &bfT(0), &bfT(1), &bfT(2), &bfT(3)
-         , scT(label), &bfT(4), &bfT(5), &bfT(6), &bfT(7)));
+         , scT(label), bfT(0), bfT(1), bfT(2), bfT(3)
+         , scT(label), bfT(4), bfT(5), bfT(6), bfT(7)));
       Msg_row += 2;
     #undef bfT
     #undef scT

@@ -420,15 +420,29 @@ kernel versions are shown first.
 .\" ......................................................................
 .SS 2c. MEMORY Usage
 .\" ----------------------------------------------------------------------
-This portion consists of two lines which may express values in kibibytes (KiB),
-mebibytes (MiB) or gibibytes (GiB) depending on the scaling factor enforced
+This portion consists of two lines which may express values in kibibytes (KiB)
+through exbibytes (EiB) depending on the scaling factor enforced
 with the 'E' \*(CI.
 
 Line 1 reflects \*(MP, classified as:
+.Bd -literal -compact
     total, used, free and buffers
+.Ed
 
 Line 2 reflects mostly \*(MV, classified as:
+.Bd -literal -compact
     total, used, free and cached (which is \*(MP)
+.Ed
+
+This table may help in interpreting the scaled values displayed:
+.Bd -literal -compact
+    KiB = kibibyte = 1024 bytes
+    MiB = mebibyte = 1024 KiB = 1,048,576 bytes
+    GiB = gibibyte = 1024 MiB = 1,073,741,824 bytes
+    TiB = tebibyte = 1024 GiB = 1,099,511,627,776 bytes
+    PiB = pebibyte = 1024 TiB = 1,125,899,906,842,624 bytes
+    EiB = exbibyte = 1024 PiB = 1,152,921,504,606,846,976 bytes
+.Ed
 
 .\" ----------------------------------------------------------------------
 .SH 3. FIELDS / Columns
@@ -947,12 +961,12 @@ help and view the system summary on the second line.
 .TP 7
 \ \ \'\fBE\fR\' :\fIExtend-Memory-Scale\fR in Summary Area
 With this command you can cycle through the available \*(SA memory scaling
-which ranges from KiB (kibibytes or 1,024 bytes) through TiB (tebibytes or
-1,099,511,627,776 bytes).
+which ranges from KiB (kibibytes or 1,024 bytes) through EiB (exbibytes or
+1,152,921,504,606,846,976 bytes).
 
 If you see a '+' between a displayed number and the following label, it
 means that \*(We was forced to truncate some portion of that number.
-By raising the scaling factor, such truncation can usually be avoided.
+By raising the scaling factor, such truncation can be avoided.
 
 .TP 7
 \ \ \'\fBe\fR\' :\fIExtend-Memory-Scale\fR in Task Windows

@@ -356,6 +356,12 @@ static void build_norm_nlstab (void) {
 /* Translation Hint: This is an abbreviation (limit 3 characters) for:
    .                 tebibytes (1,099,511,627,776 bytes) */
    Norm_nlstab[AMT_terabyte_txt] = _("TiB");
+/* Translation Hint: This is an abbreviation (limit 3 characters) for:
+   .                 pebibytes (1,024 tebibytes) */
+   Norm_nlstab[AMT_petabyte_txt] = _("PiB");
+/* Translation Hint: This is an abbreviation (limit 3 characters) for:
+   .                 exbibytes (1,024 pebibytes) */
+   Norm_nlstab[AMT_exxabyte_txt] = _("EiB");
    Norm_nlstab[WORD_threads_txt] = _("Threads");
    Norm_nlstab[WORD_process_txt] = _("Tasks");
 /* Translation Hint: The following "word" is meant to represent either a single

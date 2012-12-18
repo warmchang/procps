@@ -194,7 +194,7 @@ enum pflag {
 
         /* The scaling 'target' used with memory fields */
 enum scale_enum {
-   SK_Kb, SK_Mb, SK_Gb, SK_Tb, SK_SENTINEL
+   SK_Kb, SK_Mb, SK_Gb, SK_Tb, SK_Pb, SK_Eb, SK_SENTINEL
 };
 
         /* This typedef just ensures consistent 'process flags' handling */
