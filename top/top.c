@@ -1174,9 +1174,16 @@ static const char *user_certify (WIN_t *q, const char *str, char typ) {
    Monpidsidx = 0;
    if (*str) {
       num = (uid_t)strtoul(str, &endp, 0);
-      if ('\0' == *endp)
+      if ('\0' == *endp) {
          pwd = getpwuid(num);
-      else
+         if (!pwd) {
+         /* allow foreign users, from e.g within chroot
+          ( thanks Dr. Werner Fink <werner@suse.de> ) */
+            q->usrseluid = num;
+            q->usrseltyp = typ;
+            return NULL;
+         }
+      } else
          pwd = getpwnam(str);
       if (!pwd) return N_txt(BAD_username_txt);
       q->usrseluid = pwd->pw_uid;
