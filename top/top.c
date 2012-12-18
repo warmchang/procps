@@ -3661,9 +3661,10 @@ static void wins_stage_2 (void) {
       Winstk[i].findstr = alloc_c(FNDBUFSIZ);
       Winstk[i].findlen = 0;
    }
-   if (Batch)
+   if (Batch) {
       OFFw(Curwin, View_SCROLL);
-
+      signal(SIGHUP, SIG_IGN);    // allow running under nohup
+   }
    // fill in missing Fieldstab members and build each window's columnhdr
    zap_fieldstab();
 } // end: wins_stage_2
