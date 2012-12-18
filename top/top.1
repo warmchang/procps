@@ -454,9 +454,15 @@ Such fields can, however, be scaled differently via the 'e' \*(CI.
  1.\fB %CPU \*(Em \*(PU Usage \fR
 The task's share of the elapsed \*(PU time since the last screen update,
 expressed as a percentage of total \*(PU time.
-In a true SMP environment, if 'Irix mode' is \*F, \*(We will operate
-in 'Solaris mode' where a task's \*(Pu usage will be divided by the total
-number of \*(PUs.
+
+In a true SMP environment, if a process is multi-threaded and \*(We is
+\fInot\fR operating in Threads mode, amounts greater than 100% may be
+reported.
+You toggle Threads mode with the 'H' \*(CI.
+
+Also for multi-processor environments, if 'Irix mode' is \*F, \*(We
+will operate in 'Solaris mode' where a task's \*(Pu usage will be
+divided by the total number of \*(PUs.
 You toggle 'Irix/Solaris' modes with the 'I' \*(CI.
 
 .TP 4

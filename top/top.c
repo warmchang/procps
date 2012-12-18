@@ -4631,6 +4631,9 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             break;
          case P_CPU:
          {  float u = (float)p->pcpu * Frame_etscale;
+            /* process can't use more %cpu than number of threads it has
+             ( thanks Jaromir Capik <jcapik@redhat.com> ) */
+            if (u > 100.0 * p->nlwp) u = 100.0 * p->nlwp;
             if (u > Cpu_pmax) u = Cpu_pmax;
             cp = scale_pcnt(u, W, Jn);
          }
