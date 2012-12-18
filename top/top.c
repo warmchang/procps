@@ -201,9 +201,9 @@ static int Autox_array [P_MAXPFLGS],
 
         /* Support for scale_mem and scale_num (to avoid duplication. */
 #ifdef CASEUP_SUFIX
-   static char Scaled_sfxtab[] =  { 'K', 'M', 'G', 'T', 0 };
+   static char Scaled_sfxtab[] =  { 'K', 'M', 'G', 'T', 'P', 'E', 0 };
 #else
-   static char Scaled_sfxtab[] =  { 'k', 'm', 'g', 't', 0 };
+   static char Scaled_sfxtab[] =  { 'k', 'm', 'g', 't', 'p', 'e', 0 };
 #endif
 
 /*######  Sort callbacks  ################################################*/
@@ -1272,9 +1272,10 @@ static inline const char *make_str (const char *str, int width, int justr, int c
          * format it to reach 'target' while also fitting 'width'. */
 static const char *scale_mem (int target, unsigned long num, int width, int justr) {
 #ifndef NOBOOST_MEMS
-   static const char *fmttab[] =  { "%.0f", "%#.2f%c", "%#.3f%c", "%#.4f%c", NULL };
+   //                               SK_Kb   SK_Mb      SK_Gb      SK_Tb      SK_Pb      SK_Eb
+   static const char *fmttab[] =  { "%.0f", "%#.1f%c", "%#.3f%c", "%#.3f%c", "%#.3f%c", NULL };
 #else
-   static const char *fmttab[] =  { "%.0f", "%.0f%c", "%.0f%c", "%.0f%c", NULL };
+   static const char *fmttab[] =  { "%.0f", "%.0f%c",  "%.0f%c",  "%.0f%c",  "%.0f%c",  NULL };
 #endif
    static char buf[SMLBUFSIZ];
    float scaled_num;
@@ -1286,7 +1287,7 @@ static const char *scale_mem (int target, unsigned long num, int width, int just
       goto end_justifies;
 
    scaled_num = num;
-   for (i = 0, psfx = Scaled_sfxtab; 0 < *psfx; psfx++, i++) {
+   for (i = SK_Kb, psfx = Scaled_sfxtab; i < SK_Eb; psfx++, i++) {
       if (i >= target
       && (width >= snprintf(buf, sizeof(buf), fmttab[i], scaled_num, *psfx)))
          goto end_justifies;
@@ -1477,18 +1478,18 @@ static FLD_t Fieldstab[] = {
    {     4,     -1,  A_right,  SF(RES),  L_statm   }, // P_MEM slot
 #endif
 #ifndef NOBOOST_MEMS
-   {     8,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
-   {     7,  SK_Kb,  A_right,  SF(SWP),  L_status  },
-   {     7,  SK_Kb,  A_right,  SF(RES),  L_statm   },
-   {     7,  SK_Kb,  A_right,  SF(COD),  L_statm   },
+   {     7,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
+   {     6,  SK_Kb,  A_right,  SF(SWP),  L_status  },
+   {     6,  SK_Kb,  A_right,  SF(RES),  L_statm   },
+   {     6,  SK_Kb,  A_right,  SF(COD),  L_statm   },
    {     7,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
-   {     7,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
+   {     6,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
 #else
    {     5,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(SWP),  L_status  },
    {     4,  SK_Kb,  A_right,  SF(RES),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(COD),  L_statm   },
-   {     4,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
+   {     5,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
 #endif
    {     4,     -1,  A_right,  SF(FL1),  L_stat    },
@@ -3044,7 +3045,7 @@ static int config_cvt (WIN_t *q) {
          *     line a: contains w->winname, fieldscur
          *     line b: contains w->winflags, sortindx, maxtasks
          *     line c: contains w->summclr, msgsclr, headclr, taskclr
-         *   line 15 : Fixed_widest */
+         *   line 15 : Fixed_widest, Summ_mscale, Task_mscale, Zero_suppress */
 static void configs_read (void) {
    float tmp_delay = DEF_DELAY;
    char fbuf[LRGBUFSIZ];
@@ -3837,7 +3838,7 @@ static void keys_global (int ch) {
          if (++Rc.summ_mscale > SK_Eb) Rc.summ_mscale = SK_Kb;
          break;
       case 'e':
-         if (++Rc.task_mscale > SK_Tb) Rc.task_mscale = SK_Kb;
+         if (++Rc.task_mscale > SK_Pb) Rc.task_mscale = SK_Kb;
          break;
       case 'F':
       case 'f':

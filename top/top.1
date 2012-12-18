@@ -857,7 +857,7 @@ depending on the context in which they are issued.
 .Bd -literal
   4a.\fI Global-Commands \fR
         <Ent/Sp> ?, =, 0,
-        A, B, d, E, g, h, H, I, k, q, r, s, W, X, Y, Z
+        A, B, d, E, e, g, h, H, I, k, q, r, s, W, X, Y, Z
   4b.\fI Summary-Area-Commands \fR
         C, l, t, 1, m
   4c.\fI Task-Area-Commands \fR
@@ -971,13 +971,15 @@ By raising the scaling factor, such truncation can be avoided.
 .TP 7
 \ \ \'\fBe\fR\' :\fIExtend-Memory-Scale\fR in Task Windows
 With this command you can cycle through the available \*(TW memory scaling
-which ranges from KiB (kibibytes or 1,024 bytes) through TiB (tebibytes or
-1,099,511,627,776 bytes).
+which ranges from KiB (kibibytes or 1,024 bytes) through PiB (pebibytes or
+1,125,899,906,842,624 bytes).
 
 While \*(We will try to honor the selected target range, additional
 scaling might still be necessary in order to accommodate current values.
 If you wish to see a more homogeneous result in the memory columns,
 raising the scaling range will usually accomplish that goal.
+Raising it too high, however, is likely to produce an all zero result
+which cannot be suppressed with the '0' \*(CI.
 
 .TP 7
 \ \ \'\fBg\fR\' :\fIChoose-Another-Window/Field-Group \fR
