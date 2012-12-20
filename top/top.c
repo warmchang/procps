@@ -4613,10 +4613,10 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
    for (x = 0; x < q->maxpflgs; x++) {
       const char *cp;
       FLG_t       i = q->procflgs[x];
-      #define S   Fieldstab[i].scale
-      #define W   Fieldstab[i].width
-      #define Js  CHKw(q, Show_JRSTRS)
-      #define Jn  CHKw(q, Show_JRNUMS)
+      #define S   Fieldstab[i].scale        // these used to be variables
+      #define W   Fieldstab[i].width        // but it's much better if we
+      #define Js  CHKw(q, Show_JRSTRS)      // represent them as #defines
+      #define Jn  CHKw(q, Show_JRNUMS)      // and only exec code if used
 
       switch (i) {
 #ifndef USE_X_COLHDR

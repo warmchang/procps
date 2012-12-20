@@ -50,7 +50,7 @@
 //#define TERMIO_PROXY            /* true line editing, beyond native input  */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
-//#define VALIDATE_NLS            /* validate integrity of all 3 nls tables  */
+//#define VALIDATE_NLS            /* validate the integrity of all nls tbls  */
 
 
 /*######  Notes, etc.  ###################################################*/
