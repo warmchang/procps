@@ -3291,6 +3291,8 @@ static void parse_args (char **args) {
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
                else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
+               if (*cp == '+') { SETw(Curwin, Qsrt_NORMAL); ++cp; }
+               else if (*cp == '-') { OFFw(Curwin, Qsrt_NORMAL); ++cp; }
                for (i = 0; i < P_MAXPFLGS; i++)
                   if (!STRCMP(cp, N_col(i))) break;
                if (i == P_MAXPFLGS)

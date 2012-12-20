@@ -306,6 +306,9 @@ produce before ending.
 \-\fBo\fR :\fI Override-sort-field\fR as:\fB\ \ \-o fieldname \fR
 Specifies the name of the field on which tasks will be sorted, independent
 of what is reflected in the configuration file.
+You can prepend a '+' or '\-' to the field name to also override the sort direction.
+A leading '+' will force sorting high to low, whereas a '\-' will ensure a low to high
+ordering.
 
 This option exists primarily to support automated/scripted batch mode
 operation.
