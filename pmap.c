@@ -318,7 +318,7 @@ loop_end:
 		firstmapping = 0;
 	}
 	/* === PRINT TOTALS === */
-	if (!q_option) {
+	if (!q_option && listhead!=NULL) {
 		footer_gap = maxw1+maxw2+maxw3+maxw4+maxw5+5;
 		for (i=0; i<footer_gap; i++)
 			putc(' ', stdout);
