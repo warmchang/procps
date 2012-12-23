@@ -5,9 +5,11 @@ set pmap "${topdir}pmap"
 set mypid [pid]
 
 set pmap_procname "${mypid}:\\s+\\S+\[^\\r\]+\\s+"
+set pmap_initname "1:\\s+\\S+\[^\\r\]+\\s+"
 set pmap_std_header $pmap_procname
 set pmap_device_header "${pmap_procname}Address\\s+Kbytes\\s+Mode\\s+Offset\\s+Device\\s+Mapping\\s+"
 set pmap_ext_header "${pmap_procname}Address\\s+Kbytes\\s+RSS\\s+Dirty\\s+Mode\\s+Mapping\\s+"
+set pmap_generic_header "${pmap_procname}\\s+\(?:\[A-Z\]\[a-z\]+ +\)+"
 
 set pmap_std_items "\(\[0-9a-f\]+\\s+\\d+K \[rwx-\]{5}\\s+\\S+\[^\\r\]+\\s*\)+"
 set pmap_device_items "\(\[0-9a-f\]+\\s+\\d+ \[rwx-\]{5}\\s+\[0-9a-f\]+\\s+\[0-9a-f\]{3}:\[0-9a-f\]{5}\\s+\\S+\[^\\r\]+\\s*\)+"
@@ -46,4 +48,21 @@ expect_table $test $pmap_procname $pmap_device_items "\$"
 set test "pmap extended output"
 spawn $pmap -x $mypid
 expect_table $test $pmap_ext_header $pmap_ext_items $pmap_ext_footer
+
+# -X and -XX have no real format as its dependent on smaps
+set test "pmap extra extended output"
+spawn $pmap -X $mypid
+expect_table $test $pmap_generic_header ".+" "\[= \]+"
+
+set test "pmap double extra extended output"
+spawn $pmap -XX $mypid
+expect_table $test $pmap_generic_header ".+" "\[= \]+"
+
+set test "pmap X with unreachable process"
+spawn $pmap -X 1
+expect_pass $test "$pmap_initname\$"
+
+set test "pmap XX with unreachable process"
+spawn $pmap -XX 1
+expect_pass $test "$pmap_initname\$"
 

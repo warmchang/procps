@@ -1,6 +1,7 @@
 *.lo
 *.o
 *.so
+*.swp
 .deps
 .libs
 .version
