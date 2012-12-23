@@ -2501,8 +2501,10 @@ static void insp_cnt_nl (void) {
          * The pseudo output DEMO utility. */
 static void insp_do_demo (char *fmts, int pid) {
    (void)fmts; (void)pid;
-   Insp_bufsz = READMINSZ;
-   Insp_buf   = alloc_c(READMINSZ);
+   /* next will put us on a par with the real file/pipe read buffers
+    ( and also avoid a harmless, but evil sounding, valgrind warning ) */
+   Insp_bufsz = READMINSZ + strlen(N_txt(YINSP_dstory_txt));
+   Insp_buf   = alloc_c(Insp_bufsz);
    Insp_bufrd = snprintf(Insp_buf, Insp_bufsz, "%s", N_txt(YINSP_dstory_txt));
    insp_cnt_nl();
 } // end: insp_do_demo
