@@ -21,12 +21,37 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
+#include <sys/time.h>
 
 #include "c.h"
 #include "fileutils.h"
 #include "nls.h"
+#include "proc/sysinfo.h"
 #include "proc/whattime.h"
 #include "proc/version.h"
+
+static void print_uptime_since()
+{
+	double now, uptime_secs, idle_secs;
+	time_t up_since_secs;
+	struct tm *up_since;
+	struct timeval tim;
+
+	/* Get the current time and convert it to a double */
+	gettimeofday(&tim, NULL);
+	now = tim.tv_sec + (tim.tv_usec / 1000000.0);
+
+	/* Get the uptime and calculate when that was */
+	uptime(&uptime_secs, &idle_secs);
+	up_since_secs = (time_t) ((now - uptime_secs) + 0.5);
+
+	/* Show this */
+	up_since = localtime(&up_since_secs);
+	printf("%04d-%02d-%02d %02d:%02d:%02d\n",
+		up_since->tm_year + 1900, up_since->tm_mon + 1, up_since->tm_mday,
+		up_since->tm_hour, up_since->tm_min, up_since->tm_sec);
+}
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -34,6 +59,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(USAGE_HELP, out);
+	fputs(_(" -s, --since    system up since\n"), out);
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("uptime(1)"));
 
@@ -46,6 +72,7 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] = {
 		{"help", no_argument, NULL, 'h'},
+		{"since", no_argument, NULL, 's'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
 	};
@@ -56,10 +83,13 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "hV", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "hsV", longopts, NULL)) != -1)
 		switch (c) {
 		case 'h':
 			usage(stdout);
+		case 's':
+			print_uptime_since();
+			return EXIT_SUCCESS;
 		case 'V':
 			printf(PROCPS_NG_VERSION);
 			return EXIT_SUCCESS;
