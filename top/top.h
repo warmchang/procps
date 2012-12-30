@@ -509,6 +509,7 @@ typedef struct WIN_t {
                  but would otherwise have been counted as a Pseudo_row */
 #define POOF(str,cap) do { \
       putp(str); putp(cap); \
+      Pseudo_screen[Pseudo_row * ROWMAXSIZ] = '\0'; \
       if (Pseudo_row + 1 < Screen_rows) ++Pseudo_row; \
    } while (0)
 
