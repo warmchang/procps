@@ -11,9 +11,10 @@
 sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
 .B sysctl
-[\fIoptions\fR] [\fIvariable\fR[\fI=value\fR]] [...]
-.BR
-.B sysctl \-p [file or regexp] [...]
+[\fIoptions\fR] [\fIvariable\fR[\fB=\fIvalue\fR]] [...]
+.br
+.B sysctl \-p
+[\fIfile\fR or \fIregexp\fR] [...]
 .SH DESCRIPTION
 .B sysctl
 is used to modify kernel parameters at runtime.  The parameters available
