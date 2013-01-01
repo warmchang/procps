@@ -13,6 +13,12 @@ procps-ng-3.3.6
   * top allows core dump generation, if a signal would
   * pmap adds 2 new options based on smaps, -X and -XX
   * Adjusted pmap pidlist storage Debian #688180
+  * programs will permit core-dumps RedHat #87825, 512857
+  * receiving a signal is not a crash RedHat #871824, 441656
+  * ps: Fixed negative etime RedHat #871819, #433266
+  * pkill -c option returns Debian #693783
+  * pmap uses correct types for memory allocation Debian #688180
+
 
 procps-ng-3.3.5
 ---------------
