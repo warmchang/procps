@@ -18,6 +18,7 @@ procps-ng-3.3.6
   * ps: Fixed negative etime RedHat #871819, #433266
   * pkill -c option returns Debian #693783
   * pmap uses correct types for memory allocation Debian #688180
+  * expose freeproc, adds function to API Debian #681653
 
 
 procps-ng-3.3.5

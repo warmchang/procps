@@ -10,6 +10,7 @@ global:
 	escape_strlist;
 	escaped_copy;
 	free_slabinfo;
+	freeproc;
 	get_pid_digits;
 	get_slabinfo;
 	getbtime;
