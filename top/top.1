@@ -1087,7 +1087,7 @@ To narrow them you must specify a smaller number or restore the defaults.
 After issuing the 'Y' \*(CI, you will be prompted for a target PID.
 Typing a value or accepting the default results in a separate screen.
 That screen can be used to view a variety of files or piped command output
-while the normal top iterative display is paused.
+while the normal \*(We iterative display is paused.
 
 \*(NT This \*(CI is only fully realized when supporting entries have been
 manually added to the end of the \*(We \*(CF.
@@ -1695,7 +1695,7 @@ Here is an example of the contents of\fI /etc/toprc\fR:
 .\" ......................................................................
 .SS 6b. PERSONAL Configuration File
 .\" ----------------------------------------------------------------------
-This file is written as '$HOME/.your-name-4-top' + 'rc'.
+This file is written as '$HOME/.your\-name\-4\-\*(We' + 'rc'.
 Use the 'W' \*(CI to create it or update it.
 
 Here is the general layout:
@@ -1723,7 +1723,7 @@ Such entries simply reflect a file to be read or command/pipeline to be
 executed whose results will then be displayed in a separate scrollable,
 searchable window.
 
-If you don't know the location or name of your top rcfile, use the 'W'
+If you don't know the location or name of your \*(We rcfile, use the 'W'
 \*(CI to rewrite it and note those details.
 
 Inspect entries can be added with a redirected echo or by editing the \*(CF.
@@ -1826,7 +1826,7 @@ there is an easy solution hinted at below.
   Options:  help  1  2  3  4  5  6  7  8  9  10  11 ...
 .Ed
 
-The entries in the top rcfile would have a number for the '.name' element and
+The entries in the \*(We rcfile would have a number for the '.name' element and
 the 'help' entry would identify a shell script you've written explaining what
 those numbered selections actually mean.
 In that way, many more choices can be made visible.
@@ -1858,7 +1858,7 @@ For this experiment, under x-windows open an xterm and maximize it.
 Then do the following:
 .Bd -literal -compact
   . provide a scheduling boost and tiny delay via:
-      nice -n -10 top -d.09
+      nice -n -10 \*(We -d.09
   . keep sorted column highlighting \*F so as to
     minimize path length
   . turn \*O reverse row highlighting for emphasis
@@ -1965,7 +1965,7 @@ To report bugs, follow the instructions at:
 .\" ----------------------------------------------------------------------
 .SH 9. HISTORY Former top
 .\" ----------------------------------------------------------------------
-The original top was written by Roger Binns,
+The original \*(We was written by Roger Binns,
 based on Branko Lankester's <lankeste@fwi.uva.nl> ps program.
 
 Robert Nation <nation@rocket.sanders.lockheed.com>

@@ -668,16 +668,6 @@ void initialize_nls (void) {
          fprintf(stderr, nls_err, "Uniq", i);
          exit(1);
       }
- #ifndef INSP_OFFDEMO
-   if (READMINSZ < strlen(N_txt(YINSP_dstory_txt)) +1) {
-      fprintf(stderr
-         , "\nAssertion Failed in %s (%s):\n"
-            "\t'READMINSZ < strlen(N_txt(YINSP_dstory_txt)) + 1'\n"
-            "READMINSZ must be at least %u !\n\n"
-         , __FILE__,  __func__, (unsigned)strlen(N_txt(YINSP_dstory_txt)) + 1);
-         exit(1);
-   }
- #endif
 #else
    setlocale (LC_ALL, "");
    bindtextdomain(PACKAGE, LOCALEDIR);

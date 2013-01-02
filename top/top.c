@@ -200,9 +200,9 @@ static int Autox_array [P_MAXPFLGS],
 #define AUTOX_MODE   (0 > Rc.fixed_widest)
 
         /* Support for scale_mem and scale_num (to avoid duplication. */
-#ifdef CASEUP_SUFIX
+#ifdef CASEUP_SUFIX                                                // nls_maybe
    static char Scaled_sfxtab[] =  { 'K', 'M', 'G', 'T', 'P', 'E', 0 };
-#else
+#else                                                              // nls_maybe
    static char Scaled_sfxtab[] =  { 'k', 'm', 'g', 't', 'p', 'e', 0 };
 #endif
 
@@ -345,7 +345,7 @@ static void bye_bye (const char *str) {
    at_eoj();                 // restore tty in preparation for exit
 #ifdef ATEOJ_RPTSTD
 {  proc_t *p;
-   if (!str && Ttychanged) { fprintf(stderr,
+   if (!str) { fprintf(stderr,
       "\n%s's Summary report:"
       "\n\tProgram"
       "\n\t   Linux version = %u.%u.%u, %s"
@@ -415,7 +415,7 @@ static void bye_bye (const char *str) {
 
 #ifndef OFF_HST_HASH
 #ifdef ATEOJ_RPTHSH
-   if (!str && Ttychanged) {
+   if (!str) {
       int i, j, pop, total_occupied, maxdepth, maxdepth_sav, numdepth
          , cross_foot, sz = HHASH_SIZ * (unsigned)sizeof(int);
       int depths[HHASH_SIZ];

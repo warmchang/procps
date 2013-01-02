@@ -573,7 +573,7 @@ typedef struct WIN_t {
    { P_UEN, DEF_WINFLGS, 0, \
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
-   }, 0 }
+   }, 0, SK_Kb, SK_Kb, 0 }
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
