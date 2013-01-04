@@ -298,6 +298,9 @@ typedef struct CPU_t {
         // these flag(s) have no command as such - they're for internal use
 #define INFINDS_xxx  0x010000     // build rows for find_string, not display
 #define EQUWINS_xxx  0x000001     // rebalance all wins & tasks (off i,n,u/U)
+#ifndef USE_X_COLHDR
+#define NOHICOL_xxx  0x100000     // must restrict Show_HICOLS temporarily
+#endif
 
         // Default flags if there's no rcfile to provide user customizations
 #define DEF_WINFLGS ( View_LOADAV | View_STATES | View_CPUSUM | View_MEMORY \

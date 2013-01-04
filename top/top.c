@@ -3123,6 +3123,9 @@ static void configs_read (void) {
                   goto default_or_error;
                break;
          }
+#ifndef USE_X_COLHDR
+         OFFw(w, NOHICOL_xxx);
+#endif
       } // end: for (GROUPSMAX)
 
       // any new addition(s) last, for older rcfiles compatibility...
@@ -3766,6 +3769,10 @@ static void find_string (int ch) {
       snprintf(Curwin->findstr, FNDBUFSIZ, "%s", linein(N_txt(GET_find_str_txt)));
       Curwin->findlen = strlen(Curwin->findstr);
       found = 0;
+#ifndef USE_X_COLHDR
+      if (Curwin->findstr[0]) SETw(Curwin, NOHICOL_xxx);
+      else OFFw(Curwin, NOHICOL_xxx);
+#endif
    }
    if (Curwin->findstr[0]) {
       SETw(Curwin, INFINDS_xxx);
@@ -4626,7 +4633,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          case X_XON:
          case X_XOF:
             cp = NULL;
-            if (!CHKw(q, INFINDS_xxx)) {
+            if (!CHKw(q, INFINDS_xxx | NOHICOL_xxx)) {
                /* treat running tasks specially - entire row may get highlighted
                   so we needn't turn it on and we MUST NOT turn it off */
                if (!('R' == p->state && CHKw(q, Show_HIROWS)))

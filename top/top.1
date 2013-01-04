@@ -90,7 +90,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "November 2012" "procps-ng" "User Commands"
+.TH TOP 1 "January 2013" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -1662,6 +1662,10 @@ available in \*(AM if the \*(CW's \*(TD has been toggled \*F.
 filtering \*F to ensure that every task is encountered.
 \*(XC 'i' and 'u/U' \*(CIs for additional information on how displayed tasks
 might be filtered.
+Additionally, \*(We will turn column highlighting \*F to prevent false
+matches on internal non-display escape sequences.
+Such highlighting will be restored when a window's search string is empty.
+\*(XC 'x' \*(CI for additional information on sort column highlighting.
 
 .\" ----------------------------------------------------------------------
 .SH 6. FILES
