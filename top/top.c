@@ -2645,7 +2645,8 @@ static inline void insp_make_row (int col, int row) {
  #define mkUNP { if ((to += 4) <= Screen_cols) \
     PUTT("%s<%02X>", (!hicap) ? Curwin->capclr_msg : "", uch); hicap = 1; }
 #endif
- #define mkSTD { capNO; if (++to <= Screen_cols) putchar(uch); }
+ #define mkSTD { capNO; if (++to <= Screen_cols) { static char _str[2]; \
+    _str[0] = uch; putp(_str); } }
    char tline[SCREENMAX];
    int fr, to, ofs;
    int hicap = 0;
