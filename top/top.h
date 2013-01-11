@@ -137,20 +137,20 @@ char *strcasestr(const char *haystack, const char *needle);
 #define COLPLUSCH   '+'
 
    // support for keyboard stuff (cursor motion keystrokes, mostly)
-#define kbd_ENTER  '\n'
 #define kbd_ESC    '\033'
 #define kbd_SPACE  ' '
-#define kbd_UP     '\x81'
-#define kbd_DOWN   '\x82'
-#define kbd_RIGHT  '\x83'
-#define kbd_LEFT   '\x84'
-#define kbd_PGUP   '\x85'
-#define kbd_PGDN   '\x86'
-#define kbd_END    '\x87'
-#define kbd_HOME   '\x88'
-#define kbd_BKSP   '\x89'
-#define kbd_INS    '\x8a'
-#define kbd_DEL    '\x8b'
+#define kbd_UP     0x01
+#define kbd_DOWN   0x02
+#define kbd_RIGHT  0x03
+#define kbd_LEFT   0x04
+#define kbd_PGUP   0x05
+#define kbd_PGDN   0x06
+#define kbd_END    0x07
+#define kbd_HOME   0x08
+#define kbd_BKSP   0x09
+#define kbd_ENTER  0x0a      // this is also the real ^J
+#define kbd_INS    0x0b
+#define kbd_DEL    0x0c
 
         /* Special value in Pseudo_row to force an additional procs refresh
            -- used at startup and for task/thread mode transitions */
@@ -518,7 +518,7 @@ typedef struct WIN_t {
 
         /* Orderly end, with any sort of message - see fmtmk */
 #define debug_END(s) { \
-           static void error_exit (const char *); \
+           void error_exit (const char *); \
            fputs(Cap_clr_scr, stdout); \
            error_exit(s); \
         }
@@ -686,7 +686,7 @@ typedef struct WIN_t {
 //atic void          whack_terminal (void);
 /*------  Windows/Field Groups support  ----------------------------------*/
 //atic void          win_names (WIN_t *q, const char *name);
-//atic WIN_t        *win_select (char ch);
+//atic WIN_t        *win_select (int ch);
 //atic int           win_warn (int what);
 //atic void          wins_clrhlp (WIN_t *q, int save);
 //atic void          wins_colors (void);

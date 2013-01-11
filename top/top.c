@@ -503,10 +503,10 @@ static void error_exit (const char *str) NORETURN;
 static void error_exit (const char *str) {
    static char buf[MEDBUFSIZ];
 
-   /* we'll use our own buffer so callers can still use fmtmk() and, yes the
-      leading tab is not the standard convention, but the standard is wrong
-      -- OUR msg won't get lost in screen clutter, like so many others! */
-   snprintf(buf, sizeof(buf), "\t%s: %s\n", Myname, str);
+   /* we'll use our own buffer so callers can still use fmtmk() and, after
+      twelve long years, 2013 was the year we finally eliminated the leading
+      tab character -- now our message can get lost in screen clutter too! */
+   snprintf(buf, sizeof(buf), "%s: %s\n", Myname, str);
    bye_bye(buf);
 } // end: error_exit
 
@@ -1062,7 +1062,8 @@ static char *linein (const char *prompt) {
       }
       putp(fmtmk("%s%s%s", tg2(beg, Msg_row), Cap_clr_eol, buf));
       putp(tg2(beg+pos, Msg_row));
-   } while (key && kbd_ENTER != key && kbd_ESC != key);
+      fflush(stdout);
+   } while (key && key != kbd_ENTER && key != kbd_ESC);
 
    return buf;
  #undef sqzSTR
@@ -1941,7 +1942,7 @@ static void fields_utility (void) {
          default:                 // keep gcc happy
             break;
       }
-   } while (key && 'q' != key && kbd_ESC != key);
+   } while (key && key != 'q' && key != kbd_ESC);
  #undef unSCRL
  #undef swapEM
  #undef spewFI
@@ -2750,10 +2751,13 @@ static int insp_view_choice (proc_t *obj) {
          lest repeated <Enter> keys produce immediate re-selection in caller */
       tcflush(STDIN_FILENO, TCIFLUSH);
 
-      switch (key = keyin(0)) {
+      key = keyin(0);
+      switch (key) {
          case kbd_ENTER:          // must force new keyin()
             key = -1;             // fall through !
-         case kbd_ESC: case 'q': case 0:
+         case kbd_ESC:
+         case 'q':
+         case 0:
             putp(Cap_clr_scr);
             return key;
          case kbd_LEFT:
@@ -2768,20 +2772,27 @@ static int insp_view_choice (proc_t *obj) {
          case kbd_DOWN:
             ++curlin;
             break;
-         case kbd_PGUP: case 'b':
+         case kbd_PGUP:
+         case 'b':
             curlin -= maxLN -1;   // keep 1 line for reference
             break;
-         case kbd_PGDN: case kbd_SPACE:
+         case kbd_PGDN:
+         case kbd_SPACE:
             curlin += maxLN -1;   // ditto
             break;
-         case kbd_HOME: case 'g':
+         case kbd_HOME:
+         case 'g':
             curcol = curlin = 0;
             break;
-         case kbd_END: case 'G':
+         case kbd_END:
+         case 'G':
             curcol = 0;
             curlin = Insp_nl - maxLN;
             break;
-         case 'L': case '&': case '/': case 'n':
+         case 'L':
+         case '&':
+         case '/':
+         case 'n':
             putp(Cap_curs_norm);
             insp_find_str(key, &curcol, &curlin);
             break;
@@ -2870,7 +2881,7 @@ static void inspection_utility (int pid) {
             key = -1;
             break;
       }
-   } while (key && 'q' != key && kbd_ESC != key);
+   } while (key && key != 'q' && key != kbd_ESC);
 
  #undef mkSEL
 } // end: inspection_utility
@@ -3453,14 +3464,14 @@ static void win_names (WIN_t *q, const char *name) {
 
         /*
          * Display a window/field group (ie. make it "current"). */
-static WIN_t *win_select (char ch) {
+static WIN_t *win_select (int ch) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
 
    /* if there's no ch, it means we're supporting the external interface,
       so we must try to get our own darn ch by begging the user... */
    if (!ch) {
       show_pmt(N_txt(CHOOSE_group_txt));
-      if (1 > chin(0, (char *)&ch, 1)) return w;
+      if (1 > (ch = keyin(0))) return w;
    }
    switch (ch) {
       case 'a':                         // we don't carry 'a' / 'w' in our
@@ -3523,7 +3534,8 @@ static void wins_colors (void) {
  #define kbdAPPLY  kbd_ENTER
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    int clr = w->rc.taskclr, *pclr = &w->rc.taskclr;
-   char ch, tgt = 'T';
+   char tgt = 'T';
+   int key;
 
    if (0 >= max_colors) {
       show_msg(N_txt(COLORS_nomap_txt));
@@ -3542,31 +3554,32 @@ static void wins_colors (void) {
          , CHKw(w, Show_COLORS) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
          , CHKw(w, Show_HIBOLD) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
          , tgt, clr, w->grpname));
-      if (1 > chin(0, &ch, 1)) break;
-      switch (ch) {
+
+      key = keyin(0);
+      switch (key) {
          case 'S':
             pclr = &w->rc.summclr;
             clr = *pclr;
-            tgt = ch;
+            tgt = key;
             break;
          case 'M':
             pclr = &w->rc.msgsclr;
             clr = *pclr;
-            tgt = ch;
+            tgt = key;
             break;
          case 'H':
             pclr = &w->rc.headclr;
             clr = *pclr;
-            tgt = ch;
+            tgt = key;
             break;
          case 'T':
             pclr = &w->rc.taskclr;
             clr = *pclr;
-            tgt = ch;
+            tgt = key;
             break;
          case '0': case '1': case '2': case '3':
          case '4': case '5': case '6': case '7':
-            clr = ch - '0';
+            clr = key - '0';
             *pclr = clr;
             break;
          case 'B':
@@ -3580,7 +3593,7 @@ static void wins_colors (void) {
             break;
          case 'a':
          case 'w':
-            wins_clrhlp((w = win_select(ch)), 1);
+            wins_clrhlp((w = win_select(key)), 1);
             clr = w->rc.taskclr, pclr = &w->rc.taskclr;
             tgt = 'T';
             break;
@@ -3588,9 +3601,10 @@ static void wins_colors (void) {
             break;
       }
       capsmk(w);
-   } while (kbdAPPLY != ch && kbdABORT != ch);
+   } while (key && key != kbdAPPLY && key != kbdABORT);
 
-   if (kbdABORT == ch) wins_clrhlp(w, 0);
+   if (key == kbdABORT) wins_clrhlp(w, 0);
+
    putp(Cap_curs_norm);
  #undef kbdABORT
  #undef kbdAPPLY
@@ -3793,7 +3807,7 @@ static void find_string (int ch) {
 
 static void help_view (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
-   char ch;
+   int ch;
 
    putp(Cap_clr_scr);
    putp(Cap_curs_huge);
@@ -3806,17 +3820,16 @@ static void help_view (void) {
       , Secure_mode ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
       , Secure_mode ? "" : N_unq(KEYS_helpext_fmt)));
 
-   if (0 < chin(0, &ch, 1)
-   && ('?' == ch || 'h' == ch || 'H' == ch)) {
+   ch = keyin(0);
+   if (ch == '?' || ch == 'h' || ch == 'H') {
       do {
          putp(Cap_clr_scr);
          show_special(1, fmtmk(N_unq(WINDOWS_help_fmt)
             , w->grpname
             , Winstk[0].rc.winname, Winstk[1].rc.winname
             , Winstk[2].rc.winname, Winstk[3].rc.winname));
-         if (1 > chin(0, &ch, 1)) break;
-         w = win_select(ch);
-      } while (kbd_ENTER != ch && kbd_ESC != ch);
+         if (0 < (ch = keyin(0))) w = win_select(ch);
+      } while (ch && ch != kbd_ENTER && ch != kbd_ESC);
    }
 
    putp(Cap_curs_norm);
@@ -3824,7 +3837,6 @@ static void help_view (void) {
 
 
 static void keys_global (int ch) {
-   // standardized error message(s)
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
 
    switch (ch) {
