@@ -175,10 +175,43 @@ key and quit ('q') key.
 Alternatively, you could simply use the traditional interrupt key ('^C')
 when you're done.
 
-Some of \*(We's screens or functions require the use of cursor motion
-keys like the standard \*(KAs plus the Home, End, PgUp and PgDn keys.
+When started for the first time, you'll be presented with these traditional
+elements on the main \*(We screen: 1) Summary Area; 2) Fields/Columns Header;
+3) Task Area.
+Each of these will be explored in the sections that follow.
+There is also an Input/Message line between the Summary Area and Columns
+Header which needs no further explanation.
+
+The main \*(We screen is \fIgenerally\fR quite adaptive to changes in
+terminal dimensions under X-Windows.
+Other \*(We screens may be less so, especially those with static text.
+It ultimately depends, however, on your particular window manager and
+terminal emulator.
+There may be occasions when their view of terminal size and current contents
+differs from \*(We's view, which is always based on operating system calls.
+
+Following any re-size operation, if a \*(We screen is corrupted, appears
+incomplete or disordered, simply typing something innocuous like a
+punctuation character or cursor motion key will usually restore it.
+In extreme cases, the following sequence almost certainly will:
+.Bd -literal -compact
+       \fIkey/cmd  objective \fR
+       ^Z       \fBsuspend\fR \*(We
+       fg       \fBresume\fR \*(We
+       <Left>   force a screen \fBredraw\fR (if necessary)
+.Ed
+
+But if the display is still corrupted, there is one more step you could try.
+Insert this command after \*(We has been suspended but before resuming it.
+.Bd -literal -compact
+       \fIkey/cmd  objective \fR
+       reset    restore your \fBterminal settings\fR
+.Ed
+
+Lastly, some of \*(We's screens or functions require the use of cursor
+motion keys like the standard \*(KAs plus the Home, End, PgUp and PgDn keys.
 If your terminal or emulator does not provide those keys, the following
-keys are accepted as alternatives:
+combinations are accepted as alternatives:
 .Bd -literal -compact
       \fI key      equivalent-key-combinations \fR
        Up       alt +\fB \\\fR      or  alt +\fB k \fR
@@ -190,13 +223,6 @@ keys are accepted as alternatives:
        Home     alt +\fB Left\fR   or  alt + ctrl +\fB h \fR
        End      alt +\fB Right\fR  or  alt + ctrl +\fB l \fR
 .Ed
-
-When you start \*(We for the first time, you'll be presented with these
-traditional screen elements: 1) Summary Area; 2) Fields/Columns Header;
-3) Task Area.
-These areas will be explored in the sections that follow.
-There is also an Input/Message line between the Summary Area and Columns
-Header which needs no further explanation.
 
 \*(NT the width of \*(We's display will be limited to \*(WX positions.
 Displaying all fields requires \*(WF characters.
