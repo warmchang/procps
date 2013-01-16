@@ -20,6 +20,7 @@
 
 #include <sys/ioctl.h>
 #include <sys/resource.h>
+#include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
 
@@ -69,6 +70,9 @@ static int Ttychanged = 0;
 
         /* Program name used in error messages and local 'rc' file name */
 static char *Myname;
+
+        /* Our constant sigset, so we need initialize it but once */
+static sigset_t Sigwinch_set;
 
         /* The 'local' config file support */
 static char  Rc_name [OURPATHSZ];
@@ -164,7 +168,6 @@ static WIN_t *Curwin;
            [ or are used in response to async signals received ! ] */
 static volatile int Frames_resize;     // time to rebuild all column headers
 static          int Frames_libflags;   // PROC_FILLxxx flags
-
 static int          Frame_maxtask;     // last known number of active tasks
                                        // ie. current 'size' of proc table
 static float        Frame_etscale;     // so we can '*' vs. '/' WHEN 'pcpu'
@@ -874,16 +877,16 @@ static void *alloc_r (void *ptr, size_t num) {
          * unsolicited keyboard input that's susceptible to SIGWINCH
          * interrupts (or any other signal).  He also supports timout
          * in the absence of user keystrokes or some signal interrupt. */
-static inline int ioa (struct timeval *tv) {
+static inline int ioa (struct timespec *ts) {
    fd_set fs;
    int rc;
 
    FD_ZERO(&fs);
    FD_SET(STDIN_FILENO, &fs);
 
-   // hold here until we've got keyboard input, a signal interrupt
-   // or (optionally) we timeout with microsecond granularity
-   rc = select(STDIN_FILENO + 1, &fs, NULL, NULL, tv);
+   // hold here until we've got keyboard input, any signal except SIGWINCH
+   // or (optionally) we timeout with nanosecond granularity
+   rc = pselect(STDIN_FILENO + 1, &fs, NULL, NULL, ts, &Sigwinch_set);
 
    if (rc < 0) rc = 0;
    return rc;
@@ -1913,6 +1916,7 @@ signify_that:
       display_fields(i, (p != NULL));
       fflush(stdout);
 
+      if (Frames_resize) goto signify_that;
       key = iokey(0);
       if (key < 1) goto signify_that;
 
@@ -2772,6 +2776,7 @@ signify_that:
          lest repeated <Enter> keys produce immediate re-selection in caller */
       tcflush(STDIN_FILENO, TCIFLUSH);
 
+      if (Frames_resize) goto signify_that;
       key = iokey(0);
       if (key < 1) goto signify_that;
 
@@ -2876,6 +2881,7 @@ signify_that:
          , pid, p->cmd, p->euser, sels));
       INSP_MKSL(0, " ");
 
+      if (Frames_resize) goto signify_that;
       if (key == INT_MAX) key = iokey(0);
       if (key < 1) goto signify_that;
 
@@ -3584,6 +3590,7 @@ signify_that:
       putp(Cap_clr_eos);
       fflush(stdout);
 
+      if (Frames_resize) goto signify_that;
       key = iokey(0);
       if (key < 1) goto signify_that;
 
@@ -3713,7 +3720,9 @@ static void wins_stage_1 (void) {
 
         /*
          * This guy just completes the field group windows after the
-         * rcfiles have been read and command line arguments parsed */
+         * rcfiles have been read and command line arguments parsed.
+         * And since he's the cabose of startup, he'll also tidy up
+         * a few final things... */
 static void wins_stage_2 (void) {
    int i;
 
@@ -3729,6 +3738,10 @@ static void wins_stage_2 (void) {
    }
    // fill in missing Fieldstab members and build each window's columnhdr
    zap_fieldstab();
+
+   // lastly, initialize a signal set used to throttle one troublesome signal
+   sigemptyset(&Sigwinch_set);
+   sigaddset(&Sigwinch_set, SIGWINCH);
 } // end: wins_stage_2
 
 /*######  Interactive Input support (do_key helpers)  ####################*/
@@ -3856,6 +3869,7 @@ signify_that:
    putp(Cap_clr_eos);
    fflush(stdout);
 
+   if (Frames_resize) goto signify_that;
    key = iokey(0);
    if (key < 1) goto signify_that;
 
@@ -3871,8 +3885,8 @@ signify_that:
                , Winstk[2].rc.winname, Winstk[3].rc.winname));
             putp(Cap_clr_eos);
             fflush(stdout);
-            key = iokey(0);
-            if (key < 1) adj_geometry();
+            if (Frames_resize || (key = iokey(0)) < 1)
+               adj_geometry();
             else w = win_select(key);
          } while (key != kbd_ENTER && key != kbd_ESC);
          break;
@@ -5067,20 +5081,20 @@ int main (int dont_care_argc, char **argv) {
                                         //                 +-------------+
 
    for (;;) {
-      struct timeval tv;
+      struct timespec ts;
 
       frame_make();
 
       if (0 < Loops) --Loops;
       if (!Loops) bye_bye(NULL);
 
-      tv.tv_sec = Rc.delay_time;
-      tv.tv_usec = (Rc.delay_time - (int)Rc.delay_time) * 1000000;
+      ts.tv_sec = Rc.delay_time;
+      ts.tv_nsec = (Rc.delay_time - (int)Rc.delay_time) * 1000000000;
 
       if (Batch)
-         select(0, NULL, NULL, NULL, &tv);
+         pselect(0, NULL, NULL, NULL, &ts, NULL);
       else {
-         if (ioa(&tv))
+         if (ioa(&ts))
             do_key(iokey(0));
       }
          /* note:  the above ioa() routine exists to consolidate all logic
