@@ -884,7 +884,11 @@ static inline int ioa (struct timespec *ts) {
    FD_ZERO(&fs);
    FD_SET(STDIN_FILENO, &fs);
 
+#ifdef OFF_SIGWINCH // conditional comments are silly, but help in documenting
+   // hold here until we've got keyboard input, any signal (including SIGWINCH)
+#else
    // hold here until we've got keyboard input, any signal except SIGWINCH
+#endif
    // or (optionally) we timeout with nanosecond granularity
    rc = pselect(STDIN_FILENO + 1, &fs, NULL, NULL, ts, &Sigwinch_set);
 
@@ -3741,7 +3745,9 @@ static void wins_stage_2 (void) {
 
    // lastly, initialize a signal set used to throttle one troublesome signal
    sigemptyset(&Sigwinch_set);
+#ifndef OFF_SIGWINCH
    sigaddset(&Sigwinch_set, SIGWINCH);
+#endif
 } // end: wins_stage_2
 
 /*######  Interactive Input support (do_key helpers)  ####################*/

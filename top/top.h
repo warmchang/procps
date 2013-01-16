@@ -39,6 +39,7 @@
 //#define NOBOOST_MEMS            /* disable extra precision for mem fields  */
 //#define NOBOOST_PCNT            /* disable extra precision for % fields    */
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
+//#define OFF_SIGWINCH            /* favor response over reduced signal load */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
