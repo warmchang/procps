@@ -870,10 +870,30 @@ static void *alloc_r (void *ptr, size_t num) {
 
 
         /*
+         * This function is used in connection with raw single byte
+         * unsolicited keyboard input that's susceptible to SIGWINCH
+         * interrupts (or any other signal).  He also supports timout
+         * in the absence of user keystrokes or some signal interrupt. */
+static inline int ioa (struct timeval *tv) {
+   fd_set fs;
+   int rc;
+
+   FD_ZERO(&fs);
+   FD_SET(STDIN_FILENO, &fs);
+
+   // hold here until we've got keyboard input, a signal interrupt
+   // or (optionally) we timeout with microsecond granularity
+   rc = select(STDIN_FILENO + 1, &fs, NULL, NULL, tv);
+
+   if (rc < 0) rc = 0;
+   return rc;
+} // end: ioa
+
+
+        /*
          * This routine isolates ALL user INPUT and ensures that we
          * wont be mixing I/O from stdio and low-level read() requests */
-static int chin (int ech, char *buf, unsigned cnt) {
-   fd_set fs;
+static int ioch (int ech, char *buf, unsigned cnt) {
    int rc = -1;
 
 #ifndef TERMIO_PROXY
@@ -882,16 +902,12 @@ static int chin (int ech, char *buf, unsigned cnt) {
       rc = read(STDIN_FILENO, buf, cnt);
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_raw);
    } else {
-      FD_ZERO(&fs);
-      FD_SET(STDIN_FILENO, &fs);
-      if (0 < select(STDIN_FILENO + 1, &fs, NULL, NULL, NULL))
+      if (ioa(NULL))
          rc = read(STDIN_FILENO, buf, cnt);
    }
 #else
    (void)ech;
-   FD_ZERO(&fs);
-   FD_SET(STDIN_FILENO, &fs);
-   if (0 < select(STDIN_FILENO + 1, &fs, NULL, NULL, NULL))
+   if (ioa(NULL))
       rc = read(STDIN_FILENO, buf, cnt);
 #endif
 
@@ -903,14 +919,14 @@ static int chin (int ech, char *buf, unsigned cnt) {
 
    // note: we do NOT produce a vaid 'string'
    return rc;
-} // end: chin
+} // end: ioch
 
 
         /*
          * Support for single keystroke input AND escaped cursor motion keys
          * note: we support more keys than we currently need, in case
          *       we attract new consumers in the future */
-static int keyin (int init) {
+static int iokey (int init) {
    static char buf12[CAPBUFSIZ], buf13[CAPBUFSIZ]
       , buf14[CAPBUFSIZ], buf15[CAPBUFSIZ];
    static struct {
@@ -961,7 +977,7 @@ static int keyin (int init) {
    }
 
    memset(buf, '\0', sizeof(buf));
-   if (1 > chin(0, buf, sizeof(buf)-1)) return 0;
+   if (1 > ioch(0, buf, sizeof(buf)-1)) return 0;
 
    /* some emulators implement 'key repeat' too well and we get duplicate
       key sequences -- so we'll focus on the last escaped sequence, while
@@ -976,27 +992,27 @@ static int keyin (int init) {
    // no match, so we'll return single non-escaped keystrokes only
    if (buf[0] == '\033' && buf[1]) return 0;
    return buf[0];
-} // end: keyin
+} // end: iokey
 
 
 #ifndef TERMIO_PROXY
         /*
          * Get line oriented interactive input from the user,
          * using native tty support */
-static char *linein (const char *prompt) {
+static char *ioline (const char *prompt) {
    static const char ws[] = "\b\f\n\r\t\v\x1b\x9b";  // 0x1b + 0x9b are escape
    static char buf[MEDBUFSIZ];
    char *p;
 
    show_pmt(prompt);
    memset(buf, '\0', sizeof(buf));
-   chin(1, buf, sizeof(buf)-1);
+   ioch(1, buf, sizeof(buf)-1);
    putp(Cap_curs_norm);
 
    if ((p = strpbrk(buf, ws))) *p = '\0';
    // note: we DO produce a vaid 'string'
    return buf;
-} // end: linein
+} // end: ioline
 
 #else
         /*
@@ -1008,7 +1024,7 @@ static char *linein (const char *prompt) {
          * . immediate signal response without the need to wait for '\n'
          * However, the user will lose the ability to paste keystrokes
          * when this function is chosen over the smaller alternative above! */
-static char *linein (const char *prompt) {
+static char *ioline (const char *prompt) {
     // thank goodness memmove allows the two strings to overlap
  #define sqzSTR  { memmove(&buf[pos], &buf[pos+1], bufMAX-pos); \
        buf[sizeof(buf)-1] = '\0'; }
@@ -1026,7 +1042,7 @@ static char *linein (const char *prompt) {
    memset(buf, '\0', sizeof(buf));
    do {
       len = strlen(buf);
-      key = keyin(0);
+      key = iokey(0);
       switch (key) {
          case kbd_ESC:
             buf[0] = '\0';             // fall through !
@@ -1071,7 +1087,7 @@ static char *linein (const char *prompt) {
  #undef logCOL
  #undef phyCOL
  #undef bufMAX
-} // end: linein
+} // end: ioline
 #endif
 
 
@@ -1113,7 +1129,7 @@ static float get_float (const char *prompt) {
    char *line;
    float f;
 
-   if (!(*(line = linein(prompt)))) return -1.0;
+   if (!(*(line = ioline(prompt)))) return -1.0;
    // note: we're not allowing negative floats
    if (strcspn(line, "+,.0123456789")) {
       show_msg(N_txt(BAD_numfloat_txt));
@@ -1133,7 +1149,7 @@ static int get_int (const char *prompt) {
    char *line;
    int n;
 
-   if (!(*(line = linein(prompt)))) return GET_INTNONE;
+   if (!(*(line = ioline(prompt)))) return GET_INTNONE;
    // note: we've got to allow negative ints (renice)
    if (strcspn(line, "-+0123456789")) {
       show_msg(N_txt(BAD_integers_txt));
@@ -1897,7 +1913,7 @@ signify_that:
       display_fields(i, (p != NULL));
       fflush(stdout);
 
-      key = keyin(0);
+      key = iokey(0);
       if (key < 1) goto signify_that;
 
       switch (key) {
@@ -2590,7 +2606,7 @@ static void insp_find_str (int ch, int *col, int *row) {
       return;
    }
    if (ch == 'L' || ch == '/') {
-      snprintf(Insp_sel->fstr, FNDBUFSIZ, "%s", linein(N_txt(GET_find_str_txt)));
+      snprintf(Insp_sel->fstr, FNDBUFSIZ, "%s", ioline(N_txt(GET_find_str_txt)));
       Insp_sel->flen = strlen(Insp_sel->fstr);
       found = 0;
    }
@@ -2756,11 +2772,11 @@ signify_that:
          lest repeated <Enter> keys produce immediate re-selection in caller */
       tcflush(STDIN_FILENO, TCIFLUSH);
 
-      key = keyin(0);
+      key = iokey(0);
       if (key < 1) goto signify_that;
 
       switch (key) {
-         case kbd_ENTER:          // must force new keyin()
+         case kbd_ENTER:          // must force new iokey()
             key = INT_MAX;        // fall through !
          case kbd_ESC:
          case 'q':
@@ -2805,7 +2821,7 @@ signify_that:
          case '=':
             snprintf(buf, sizeof(buf), "%s: %s", Insp_sel->type, Insp_sel->fmts);
             INSP_MKSL(1, buf);    // show an extended SL
-            if (keyin(0) < 1)
+            if (iokey(0) < 1)
                goto signify_that;
             break;
          default:                 // keep gcc happy
@@ -2860,7 +2876,7 @@ signify_that:
          , pid, p->cmd, p->euser, sels));
       INSP_MKSL(0, " ");
 
-      if (key == INT_MAX) key = keyin(0);
+      if (key == INT_MAX) key = iokey(0);
       if (key < 1) goto signify_that;
 
       switch (key) {
@@ -3453,8 +3469,8 @@ static void whack_terminal (void) {
    // thanks anyway stdio, but we'll manage buffering at the frame level...
    setbuffer(stdout, Stdout_buf, sizeof(Stdout_buf));
 #endif
-   // and don't forget to ask keyin to initialize his tinfo_tab
-   keyin(1);
+   // and don't forget to ask iokey to initialize his tinfo_tab
+   iokey(1);
 } // end: whack_terminal
 
 /*######  Windows/Field Groups support  #################################*/
@@ -3479,7 +3495,7 @@ static WIN_t *win_select (int ch) {
       so we must try to get our own darn ch by begging the user... */
    if (!ch) {
       show_pmt(N_txt(CHOOSE_group_txt));
-      if (1 > (ch = keyin(0))) return w;
+      if (1 > (ch = iokey(0))) return w;
    }
    switch (ch) {
       case 'a':                         // we don't carry 'a' / 'w' in our
@@ -3568,7 +3584,7 @@ signify_that:
       putp(Cap_clr_eos);
       fflush(stdout);
 
-      key = keyin(0);
+      key = iokey(0);
       if (key < 1) goto signify_that;
 
       switch (key) {
@@ -3727,7 +3743,7 @@ static void file_writerc (void) {
 
    if (Rc_questions) {
       show_pmt(N_txt(XTRA_warncfg_txt));
-      if ('y' != tolower(keyin(0)))
+      if ('y' != tolower(iokey(0)))
          return;
       Rc_questions = 0;
    }
@@ -3797,7 +3813,7 @@ static void find_string (int ch) {
       return;
    }
    if ('L' == ch) {
-      snprintf(Curwin->findstr, FNDBUFSIZ, "%s", linein(N_txt(GET_find_str_txt)));
+      snprintf(Curwin->findstr, FNDBUFSIZ, "%s", ioline(N_txt(GET_find_str_txt)));
       Curwin->findlen = strlen(Curwin->findstr);
       found = 0;
 #ifndef USE_X_COLHDR
@@ -3840,7 +3856,7 @@ signify_that:
    putp(Cap_clr_eos);
    fflush(stdout);
 
-   key = keyin(0);
+   key = iokey(0);
    if (key < 1) goto signify_that;
 
    switch (key) {
@@ -3855,7 +3871,7 @@ signify_that:
                , Winstk[2].rc.winname, Winstk[3].rc.winname));
             putp(Cap_clr_eos);
             fflush(stdout);
-            key = keyin(0);
+            key = iokey(0);
             if (key < 1) adj_geometry();
             else w = win_select(key);
          } while (key != kbd_ENTER && key != kbd_ESC);
@@ -3928,7 +3944,7 @@ static void keys_global (int ch) {
             if (GET_INT_BAD < (pid = get_int(fmtmk(N_txt(GET_pid2kill_fmt), def)))) {
                char *str;
                if (0 > pid) pid = def;
-               str = linein(fmtmk(N_fmt(GET_sigs_num_fmt), pid, SIGTERM));
+               str = ioline(fmtmk(N_fmt(GET_sigs_num_fmt), pid, SIGTERM));
                if (*str) sig = signal_name_to_number(str);
                if (0 < sig && kill(pid, sig))
                   show_msg(fmtmk(N_fmt(FAIL_signals_fmt)
@@ -3961,7 +3977,7 @@ static void keys_global (int ch) {
          break;
       case 'Y':
          if (!Inspect.total)
-            linein(N_txt(YINSP_noents_txt));
+            ioline(N_txt(YINSP_noents_txt));
          else {
             int pid, def = w->ppt[w->begtask]->tid;
             if (GET_INT_BAD < (pid = get_int(fmtmk(N_fmt(YINSP_pidsee_fmt), def)))) {
@@ -4114,7 +4130,7 @@ static void keys_task (int ch) {
       case 'u':
          if (VIZCHKw(w)) {
             const char *errmsg;
-            if ((errmsg = user_certify(w, linein(N_txt(GET_user_ids_txt)), ch)))
+            if ((errmsg = user_certify(w, ioline(N_txt(GET_user_ids_txt)), ch)))
                show_msg(errmsg);
          }
          break;
@@ -4202,7 +4218,7 @@ static void keys_window (int ch) {
       case 'G':
          if (ALTCHKw) {
             char tmp[SMLBUFSIZ];
-            STRLCPY(tmp, linein(fmtmk(N_fmt(NAME_windows_fmt), w->rc.winname)));
+            STRLCPY(tmp, ioline(fmtmk(N_fmt(NAME_windows_fmt), w->rc.winname)));
             if (tmp[0]) win_names(w, tmp);
          }
          break;
@@ -5064,18 +5080,15 @@ int main (int dont_care_argc, char **argv) {
       if (Batch)
          select(0, NULL, NULL, NULL, &tv);
       else {
-         fd_set fs;
-
-         FD_ZERO(&fs);
-         FD_SET(STDIN_FILENO, &fs);
-         if (0 < select(STDIN_FILENO + 1, &fs, NULL, NULL, &tv))
-            do_key(keyin(0));
-         /* note:  above select might have been interrupted by some signal
-                   in which case the return code would have been -1 and an
-                   integer (volatile) switch set.  that in turn will cause
-                   frame_make() to deal with it if we survived the handler
-         */
+         if (ioa(&tv))
+            do_key(iokey(0));
       }
+         /* note:  the above ioa() routine exists to consolidate all logic
+                   which is susceptible to signal interrupts and must then
+                   produce a screen refresh.  in this main loop frame_make
+                   assumes responsibility for such refreshes.  other logic
+                   interacting with users must deal more directly with it.
+          */
    }
    return 0;
 } // end: main

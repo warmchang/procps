@@ -126,7 +126,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define ROWMAXSIZ  ( SCREENMAX + 16 * (CAPBUFSIZ + CLRBUFSIZ) )
    // minimum size guarantee for dynamically acquired 'readfile' buffer
 #define READMINSZ  2048
-   // size of preallocated search string buffers, same as linein()
+   // size of preallocated search string buffers, same as ioline()
 #define FNDBUFSIZ  MEDBUFSIZ
 
 
@@ -630,9 +630,10 @@ typedef struct WIN_t {
 /*------  Low Level Memory/Keyboard/File I/O support  --------------------*/
 //atic void         *alloc_c (size_t num);
 //atic void         *alloc_r (void *ptr, size_t num);
-//atic int           chin (int ech, char *buf, unsigned cnt);
-//atic int           keyin (int init);
-//atic char         *linein (const char *prompt);
+//atic inline int    ioa (struct timeval *tv);
+//atic int           ioch (int ech, char *buf, unsigned cnt);
+//atic int           iokey (int init);
+//atic char         *ioline (const char *prompt);
 //atic int           readfile (FILE *fp, char **baddr, size_t *bsize, size_t *bread);
 /*------  Small Utility routines  ----------------------------------------*/
 //atic float         get_float (const char *prompt);
