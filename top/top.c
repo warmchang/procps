@@ -123,6 +123,7 @@ static char  Cap_clr_eol    [CAPBUFSIZ] = "",    // global and/or static vars
              Cap_curs_norm  [CAPBUFSIZ] = "",    // cost nothing but DO serve
              Cap_curs_huge  [CAPBUFSIZ] = "",    // to remind people of those
              Cap_curs_hide  [CAPBUFSIZ] = "",    // batch requirements!
+             Cap_clr_eos    [CAPBUFSIZ] = "",
              Cap_home       [CAPBUFSIZ] = "",
              Cap_norm       [CAPBUFSIZ] = "",
              Cap_reverse    [CAPBUFSIZ] = "",
@@ -161,9 +162,6 @@ static WIN_t *Curwin;
            and/or that are simply more efficiently handled as globals
            [ 'Frames_...' (plural) stuff persists beyond 1 frame ]
            [ or are used in response to async signals received ! ] */
-   // Frames_paused set by sig_paused(), unset by pause_pgm()
-static volatile int Frames_paused;     // become a paused background job
-   // Frames_resize set by do_key() & sig_resize(), unset by calibrate_fields()
 static volatile int Frames_resize;     // time to rebuild all column headers
 static          int Frames_libflags;   // PROC_FILLxxx flags
 
@@ -324,8 +322,8 @@ static const char *tg2 (int x, int y) {
          * Reset the tty, if necessary */
 static void at_eoj (void) {
    if (Ttychanged) {
-      if (keypad_local) putp(keypad_local);
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_original);
+      if (keypad_local) putp(keypad_local);
       putp(tg2(0, Screen_rows));
       putp(Cap_curs_norm);
 #ifndef RMAN_IGNORED
@@ -335,7 +333,7 @@ static void at_eoj (void) {
       Ttychanged = 0;
    }
    fflush(stdout);
-} // end:
+} // end: at_eoj
 
 
         /*
@@ -527,31 +525,11 @@ static void library_err (const char *fmts, ...) {
 
 
         /*
-         * Called in response to Frames_paused (tku: sig_paused) */
-static void pause_pgm (void) {
-   Frames_paused = 0;
-   // reset terminal (maybe)
-   if (Ttychanged) tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_original);
-   putp(tg2(0, Screen_rows));
-   putp(Cap_curs_norm);
-#ifndef RMAN_IGNORED
-   putp(Cap_smam);
-#endif
-   fflush(stdout);
-   raise(SIGSTOP);
-   // later, after SIGCONT...
-   if (Ttychanged) tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_raw);
-#ifndef RMAN_IGNORED
-   putp(Cap_rmam);
-#endif
-} // end: pause_pgm
-
-
-        /*
          * Catches all remaining signals not otherwise handled */
 static void sig_abexit (int sig) {
    sigset_t ss;
 
+// POSIX.1-2004 async-signal-safe: sigfillset, sigprocmask, signal, raise
    sigfillset(&ss);
    sigprocmask(SIG_BLOCK, &ss, NULL);
    at_eoj();                 // restore tty in preparation for exit
@@ -570,6 +548,7 @@ static void sig_endpgm (int dont_care_sig) NORETURN;
 static void sig_endpgm (int dont_care_sig) {
    sigset_t ss;
 
+// POSIX.1-2004 async-signal-safe: sigfillset, sigprocmask
    sigfillset(&ss);
    sigprocmask(SIG_BLOCK, &ss, NULL);
    bye_bye(NULL);
@@ -581,8 +560,26 @@ static void sig_endpgm (int dont_care_sig) {
          * Catches:
          *    SIGTSTP, SIGTTIN and SIGTTOU */
 static void sig_paused (int dont_care_sig) {
+// POSIX.1-2004 async-signal-safe: tcsetattr, tcdrain, raise
+   if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_original))
+      error_exit(fmtmk(N_fmt(FAIL_tty_set_fmt), strerror(errno)));
+   if (keypad_local) putp(keypad_local);
+   putp(tg2(0, Screen_rows));
+   putp(Cap_curs_norm);
+#ifndef RMAN_IGNORED
+   putp(Cap_smam);
+#endif
+   tcdrain(STDOUT_FILENO);
+   raise(SIGSTOP);
+   // later, after SIGCONT...
+   if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_raw))
+      error_exit(fmtmk(N_fmt(FAIL_tty_set_fmt), strerror(errno)));
+#ifndef RMAN_IGNORED
+   putp(Cap_rmam);
+#endif
+   if (keypad_xmit) putp(keypad_xmit);
+   Frames_resize = RESIZ_sig;
    (void)dont_care_sig;
-   Frames_paused = 1;
 } // end: sig_paused
 
 
@@ -590,8 +587,10 @@ static void sig_paused (int dont_care_sig) {
          * Catches:
          *    SIGCONT and SIGWINCH */
 static void sig_resize (int dont_care_sig) {
+// POSIX.1-2004 async-signal-safe: tcdrain
+   tcdrain(STDOUT_FILENO);
+   Frames_resize = RESIZ_sig;
    (void)dont_care_sig;
-   Frames_resize = 2;
 } // end: sig_resize
 
 /*######  Misc Color/Display support  ####################################*/
@@ -612,6 +611,7 @@ static void capsmk (WIN_t *q) {
    // these are the unchangeable puppies, so we only do 'em once
    if (!capsdone) {
       STRLCPY(Cap_clr_eol, tIF(clr_eol))
+      STRLCPY(Cap_clr_eos, tIF(clr_eos))
       STRLCPY(Cap_clr_scr, tIF(clear_screen))
       // due to the leading newline, the following must be used with care
       snprintf(Cap_nl_clreos, sizeof(Cap_nl_clreos), "\n%s", tIF(clr_eos));
@@ -876,7 +876,6 @@ static int chin (int ech, char *buf, unsigned cnt) {
    fd_set fs;
    int rc = -1;
 
-   fflush(stdout);
 #ifndef TERMIO_PROXY
    if (ech) {
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_tweaked);
@@ -956,7 +955,7 @@ static int keyin (int init) {
       STRLCPY(buf15, fmtmk("\033%s", tOk(key_right)));
       // next is critical so returned results match bound terminfo keys
       putp(tOk(keypad_xmit));
-      // ( see the converse keypad_local at program end, just in case )
+      // ( converse keypad_local issued at pause/pgm end, just in case )
       return 0;
     #undef tOk
    }
@@ -1027,7 +1026,8 @@ static char *linein (const char *prompt) {
    memset(buf, '\0', sizeof(buf));
    do {
       len = strlen(buf);
-      switch (key = keyin(0)) {
+      key = keyin(0);
+      switch (key) {
          case kbd_ESC:
             buf[0] = '\0';             // fall through !
          case kbd_ENTER:
@@ -1063,7 +1063,7 @@ static char *linein (const char *prompt) {
       putp(fmtmk("%s%s%s", tg2(beg, Msg_row), Cap_clr_eol, buf));
       putp(tg2(beg+pos, Msg_row));
       fflush(stdout);
-   } while (key && key != kbd_ENTER && key != kbd_ESC);
+   } while (key != kbd_ENTER && key != kbd_ESC);
 
    return buf;
  #undef sqzSTR
@@ -1590,9 +1590,11 @@ static void adj_geometry (void) {
       pseudo_max = Pseudo_size;
       Pseudo_screen = alloc_r(Pseudo_screen, pseudo_max);
    }
-   // ensure each row is repainted and, if SIGWINCH, clear the screen
+   // ensure each row is repainted (just in case)
    PSU_CLREOS(0);
-   if (Frames_resize > 1) putp(Cap_clr_scr);
+
+   fflush(stdout);
+   Frames_resize = RESIZ_clr;
 } // end: adj_geometry
 
 
@@ -1689,18 +1691,11 @@ static void build_headers (void) {
          * of each visible window's columns headers and the library flags
          * required for the openproc interface. */
 static void calibrate_fields (void) {
-   sigset_t newss, oldss;
    FLG_t f;
    char *s;
    const char *h;
    WIN_t *w = Curwin;
    int i, varcolcnt, len;
-
-   // block SIGWINCH signals while we do our thing...
-   sigemptyset(&newss);
-   sigaddset(&newss, SIGWINCH);
-   if (-1 == sigprocmask(SIG_BLOCK, &newss, &oldss))
-      error_exit(fmtmk(N_fmt(FAIL_sigstop_fmt), strerror(errno)));
 
    adj_geometry();
 
@@ -1779,10 +1774,6 @@ static void calibrate_fields (void) {
    build_headers();
    if (CHKw(Curwin, View_SCROLL))
       updt_scroll_msg();
-
-   Frames_resize = 0;
-   if (-1 == sigprocmask(SIG_SETMASK, &oldss, NULL))
-      error_exit(fmtmk(N_fmt(FAIL_sigmask_fmt), strerror(errno)));
 } // end: calibrate_fields
 
 
@@ -1828,7 +1819,6 @@ static void display_fields (int focus, int extend) {
    int cmax = Screen_cols;             // total data column width
    int rmax = Screen_rows - yRSVD;     // total useable rows
 
-   fflush(stdout);
    i = (P_MAXPFLGS % mxCOL) ? 1 : 0;
    if (rmax < i + (P_MAXPFLGS / mxCOL)) error_exit("++rows");      // nls_maybe
    i = P_MAXPFLGS / rmax;
@@ -1839,16 +1829,16 @@ static void display_fields (int focus, int extend) {
    if (smax < 0) error_exit("++cols");                             // nls_maybe
 
    for (i = 0; i < P_MAXPFLGS; ++i) {
-      char sbuf[xSUFX+1];
-      int b = FLDviz(w, i);
-      FLG_t f = FLDget(w, i);
+      int b = FLDviz(w, i), x = (i / rmax) * cmax, y = (i % rmax) + yRSVD;
       const char *e = (i == focus && extend) ? w->capclr_hdr : "";
+      FLG_t f = FLDget(w, i);
+      char sbuf[xSUFX+1];
 
       // prep sacrificial suffix
       snprintf(sbuf, sizeof(sbuf), "= %s", N_fld(f));
 
-      PUTT("%s%c%s%s %s%-7.7s%s%s%s %-*.*s%s"
-         , tg2((i / rmax) * cmax, (i % rmax) + yRSVD)
+      PUTT("%s%c%s%s %s%-7.7s%s%s%s %-*.*s%s%s"
+         , tg2(x, y)
          , b ? '*' : ' '
          , b ? w->cap_bold : Cap_norm
          , e
@@ -1859,7 +1849,8 @@ static void display_fields (int focus, int extend) {
          , e
          , smax, smax
          , sbuf
-         , Cap_norm);
+         , Cap_norm
+         , !x ? Cap_clr_eol : "");
    }
 
    putp(Caps_off);
@@ -1890,17 +1881,26 @@ static void fields_utility (void) {
    int i, key;
    FLG_t f;
 
-   putp(Cap_clr_scr);
    spewFI
+signify_that:
+   putp(Cap_clr_scr);
+   putp(Cap_curs_hide);
+   adj_geometry();
 
    do {
       if (!h) h = N_col(f);
-      display_fields(i, (p != NULL));
       putp(Cap_home);
       show_special(1, fmtmk(N_unq(FIELD_header_fmt)
          , w->grpname, CHKw(w, Show_FOREST) ? N_txt(FOREST_views_txt) : h));
+      putp(Cap_nl_clreos);
+      fflush(stdout);
+      display_fields(i, (p != NULL));
+      fflush(stdout);
 
-      switch (key = keyin(0)) {
+      key = keyin(0);
+      if (key < 1) goto signify_that;
+
+      switch (key) {
          case kbd_UP:
             if (i > 0) { --i; if (p) swapEM }
             break;
@@ -1942,7 +1942,7 @@ static void fields_utility (void) {
          default:                 // keep gcc happy
             break;
       }
-   } while (key && key != 'q' && key != kbd_ESC);
+   } while (key != 'q' && key != kbd_ESC);
  #undef unSCRL
  #undef swapEM
  #undef spewFI
@@ -2445,14 +2445,13 @@ static struct I_ent *Insp_sel;    // currently selected Inspect entry
    putp(tg2(0, (Msg_row = 3))); \
    PUTT("%s%.*s", Curwin->capclr_hdr, Screen_cols -1 \
       , fmtmk("%-*.*s%s", _sz, _sz, txt, Cap_clr_eol)); \
-   putp(Caps_off); }
+   putp(Caps_off); fflush(stdout); }
 
         // Our 'row length' macro, equivalent to a strlen() call
 #define INSP_RLEN(idx) (int)(Insp_p[idx +1] - Insp_p[idx] -1)
 
         // Our 'busy' (wait please) macro
-#define INSP_BUSY  { INSP_MKSL(0, N_txt(YINSP_workin_txt)); \
-   fflush(stdout); }
+#define INSP_BUSY  { INSP_MKSL(0, N_txt(YINSP_workin_txt)); }
 
 
         /*
@@ -2731,9 +2730,14 @@ static int insp_view_choice (proc_t *obj) {
        snprintf(dst, sizeof(dst), "%s", Insp_sel->fstr); \
     else snprintf(dst, sizeof(dst), "%.19s...", Insp_sel->fstr); }
    char buf[SMLBUFSIZ];
-   int key, curlin, curcol;
+   int key, curlin = 0, curcol = 0;
 
-   for (curlin = curcol = 0;;) {
+signify_that:
+   putp(Cap_clr_scr);
+   putp(Cap_curs_hide);
+   adj_geometry();
+
+   for (;;) {
       char pid[6], cmd[9], usr[9];
 
       if (curcol < 0) curcol = 0;
@@ -2747,17 +2751,19 @@ static int insp_view_choice (proc_t *obj) {
       show_special(1, fmtmk(N_unq(INSP_hdrview_fmt)
          , pid, cmd, usr, (Insp_sel->fstr[0]) ? buf : " N/A "));   // nls_maybe
       insp_show_pgs(curcol, curlin, maxLN);
+      fflush(stdout);
       /* fflush(stdin) didn't do the trick, so we'll just dip a little deeper
          lest repeated <Enter> keys produce immediate re-selection in caller */
       tcflush(STDIN_FILENO, TCIFLUSH);
 
       key = keyin(0);
+      if (key < 1) goto signify_that;
+
       switch (key) {
          case kbd_ENTER:          // must force new keyin()
-            key = -1;             // fall through !
+            key = INT_MAX;        // fall through !
          case kbd_ESC:
          case 'q':
-         case 0:
             putp(Cap_clr_scr);
             return key;
          case kbd_LEFT:
@@ -2799,8 +2805,8 @@ static int insp_view_choice (proc_t *obj) {
          case '=':
             snprintf(buf, sizeof(buf), "%s: %s", Insp_sel->type, Insp_sel->fmts);
             INSP_MKSL(1, buf);    // show an extended SL
-            key = keyin(0);
-            if (!key) return key; // oops, we got signaled
+            if (keyin(0) < 1)
+               goto signify_that;
             break;
          default:                 // keep gcc happy
             break;
@@ -2840,9 +2846,12 @@ static void inspection_utility (int pid) {
       show_msg(fmtmk(N_fmt(YINSP_pidbad_fmt), pid));
       return;
    }
+signify_that:
    putp(Cap_clr_scr);
-   key = -1;
+   putp(Cap_curs_hide);
+   adj_geometry();
 
+   key = INT_MAX;
    do {
       mkSEL(sels);
       putp(Cap_home);
@@ -2851,9 +2860,10 @@ static void inspection_utility (int pid) {
          , pid, p->cmd, p->euser, sels));
       INSP_MKSL(0, " ");
 
-      if (-1 == key) key = keyin(0);
+      if (key == INT_MAX) key = keyin(0);
+      if (key < 1) goto signify_that;
+
       switch (key) {
-         case 0:
          case 'q':
          case kbd_ESC:
             break;
@@ -2861,13 +2871,13 @@ static void inspection_utility (int pid) {
             sel = 0;              // fall through !
          case kbd_LEFT:
             if (--sel < 0) sel = Inspect.total -1;
-            key = -1;
+            key = INT_MAX;
             break;
          case kbd_HOME:
             sel = Inspect.total;  // fall through !
          case kbd_RIGHT:
             if (++sel >= Inspect.total) sel = 0;
-            key = -1;
+            key = INT_MAX;
             break;
          case kbd_ENTER:
             INSP_BUSY;
@@ -2877,11 +2887,10 @@ static void inspection_utility (int pid) {
             free(Insp_buf);
             free(Insp_p);
             break;
-         default:                 // keep gcc happy
-            key = -1;
-            break;
+         default:
+            goto signify_that;
       }
-   } while (key && key != 'q' && key != kbd_ESC);
+   } while (key != 'q' && key != kbd_ESC);
 
  #undef mkSEL
 } // end: inspection_utility
@@ -2941,7 +2950,8 @@ static void before (char *me) {
 #endif
    // lastly, establish a robust signals environment
    sigemptyset(&sa.sa_mask);
-   sa.sa_flags = SA_RESTART;
+   // with user position perserved through SIGWINCH, we must avoid SA_RESTART
+   sa.sa_flags = 0;
    for (i = SIGRTMAX; i; i--) {
       switch (i) {
          case SIGALRM: case SIGHUP:  case SIGINT:
@@ -3145,7 +3155,6 @@ static void configs_read (void) {
          , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress);
 
 try_inspect_entries:
-
       // we'll start off Inspect stuff with 1 'potential' blank line
       // ( only realized if we end up with Inspect.total > 0 )
       for (i = 0, Inspect.raw = strdup("\n");;) {
@@ -3429,7 +3438,7 @@ static void whack_terminal (void) {
       tmptty.c_cc[VERASE] = *key_backspace;
 #ifndef TERMIO_PROXY
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &tmptty))
-      error_exit(fmtmk(N_fmt(FAIL_tty_mod_fmt), strerror(errno)));
+      error_exit(fmtmk(N_fmt(FAIL_tty_set_fmt), strerror(errno)));
    tcgetattr(STDIN_FILENO, &Tty_tweaked);
 #endif
    // lastly, a nearly raw mode for unsolicited single keystrokes
@@ -3437,14 +3446,13 @@ static void whack_terminal (void) {
    tmptty.c_cc[VMIN] = 1;
    tmptty.c_cc[VTIME] = 0;
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &tmptty))
-      error_exit(fmtmk(N_fmt(FAIL_tty_raw_fmt), strerror(errno)));
+      error_exit(fmtmk(N_fmt(FAIL_tty_set_fmt), strerror(errno)));
    tcgetattr(STDIN_FILENO, &Tty_raw);
 
 #ifndef OFF_STDIOLBF
    // thanks anyway stdio, but we'll manage buffering at the frame level...
    setbuffer(stdout, Stdout_buf, sizeof(Stdout_buf));
 #endif
-
    // and don't forget to ask keyin to initialize his tinfo_tab
    keyin(1);
 } // end: whack_terminal
@@ -3542,11 +3550,14 @@ static void wins_colors (void) {
       return;
    }
    wins_clrhlp(w, 1);
+signify_that:
    putp(Cap_clr_scr);
-   putp(Cap_curs_huge);
+   putp(Cap_curs_hide);
+   adj_geometry();
 
    do {
       putp(Cap_home);
+      putp(Cap_curs_hide);
       // this string is well above ISO C89's minimum requirements!
       show_special(1, fmtmk(N_unq(COLOR_custom_fmt)
          , procps_version, w->grpname
@@ -3554,8 +3565,12 @@ static void wins_colors (void) {
          , CHKw(w, Show_COLORS) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
          , CHKw(w, Show_HIBOLD) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
          , tgt, clr, w->grpname));
+      putp(Cap_clr_eos);
+      fflush(stdout);
 
       key = keyin(0);
+      if (key < 1) goto signify_that;
+
       switch (key) {
          case 'S':
             pclr = &w->rc.summclr;
@@ -3597,15 +3612,16 @@ static void wins_colors (void) {
             clr = w->rc.taskclr, pclr = &w->rc.taskclr;
             tgt = 'T';
             break;
-         default:                 // keep gcc happy
-            break;
+         default:
+            break;                // keep gcc happy
       }
       capsmk(w);
-   } while (key && key != kbdAPPLY && key != kbdABORT);
+   } while (key != kbdAPPLY && key != kbdABORT);
 
    if (key == kbdABORT) wins_clrhlp(w, 0);
 
    putp(Cap_curs_norm);
+   putp(Cap_clr_scr);
  #undef kbdABORT
  #undef kbdAPPLY
 } // end: wins_colors
@@ -3807,10 +3823,12 @@ static void find_string (int ch) {
 
 static void help_view (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
-   int ch;
+   char key = 1;
 
+signify_that:
    putp(Cap_clr_scr);
-   putp(Cap_curs_huge);
+   putp(Cap_curs_hide);
+   adj_geometry();
 
    show_special(1, fmtmk(N_unq(KEYS_helpbas_fmt)
       , procps_version
@@ -3819,20 +3837,35 @@ static void help_view (void) {
       , Rc.delay_time
       , Secure_mode ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
       , Secure_mode ? "" : N_unq(KEYS_helpext_fmt)));
+   putp(Cap_clr_eos);
+   fflush(stdout);
 
-   ch = keyin(0);
-   if (ch == '?' || ch == 'h' || ch == 'H') {
-      do {
-         putp(Cap_clr_scr);
-         show_special(1, fmtmk(N_unq(WINDOWS_help_fmt)
-            , w->grpname
-            , Winstk[0].rc.winname, Winstk[1].rc.winname
-            , Winstk[2].rc.winname, Winstk[3].rc.winname));
-         if (0 < (ch = keyin(0))) w = win_select(ch);
-      } while (ch && ch != kbd_ENTER && ch != kbd_ESC);
+   key = keyin(0);
+   if (key < 1) goto signify_that;
+
+   switch (key) {
+      case kbd_ESC: case 'q':
+         break;
+      case '?': case 'h': case 'H':
+         do {
+            putp(Cap_home);
+            show_special(1, fmtmk(N_unq(WINDOWS_help_fmt)
+               , w->grpname
+               , Winstk[0].rc.winname, Winstk[1].rc.winname
+               , Winstk[2].rc.winname, Winstk[3].rc.winname));
+            putp(Cap_clr_eos);
+            fflush(stdout);
+            key = keyin(0);
+            if (key < 1) adj_geometry();
+            else w = win_select(key);
+         } while (key != kbd_ENTER && key != kbd_ESC);
+         break;
+      default:
+         goto signify_that;
    }
 
    putp(Cap_curs_norm);
+   putp(Cap_clr_scr);
 } // end: help_view
 
 
@@ -4435,7 +4468,7 @@ static void do_key (int ch) {
          for (i = 0; i < MAXTBL(key_tab); ++i)
             if (strchr(key_tab[i].keys, ch)) {
                key_tab[i].func(ch);
-               Frames_resize = 1;
+               Frames_resize = RESIZ_kbd;
                return;
             }
    };
@@ -4944,10 +4977,12 @@ static void frame_make (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    int i, scrlins;
 
-   // deal with potential signals since the last time around...
-   if (Frames_paused) pause_pgm();
-   if (Frames_resize) zap_fieldstab();
-
+   // deal with potential signal(s) since the last time around...
+   if (Frames_resize) {
+      if (Frames_resize > RESIZ_kbd)
+         putp(Cap_clr_scr);
+      zap_fieldstab();
+   }
    // whoa either first time or thread/task mode change, (re)prime the pump...
    if (Pseudo_row == PROC_XTRA) {
       procs_refresh();

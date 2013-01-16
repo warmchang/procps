@@ -303,8 +303,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[FAIL_statget_txt] = _("failed /proc/stat read");
    Norm_nlstab[FOREST_modes_fmt] = _("Forest mode %s");
    Norm_nlstab[FAIL_tty_get_txt] = _("failed tty get");
-   Norm_nlstab[FAIL_tty_mod_fmt] = _("failed Tty_tweaked set: %s");
-   Norm_nlstab[FAIL_tty_raw_fmt] = _("failed Tty_raw set: %s");
+   Norm_nlstab[FAIL_tty_set_fmt] = _("failed tty set: %s");
    Norm_nlstab[CHOOSE_group_txt] = _("Choose field group (1 - 4)");
    Norm_nlstab[DISABLED_cmd_txt] = _("Command disabled, 'A' mode required");
    Norm_nlstab[DISABLED_win_fmt] = _("Command disabled, activate %s with '-' or '_'");
@@ -333,8 +332,6 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[FAIL_alloc_r_txt] = _("failed memory re-allocate");
    Norm_nlstab[BAD_numfloat_txt] = _("Unacceptable floating point");
    Norm_nlstab[BAD_username_txt] = _("Invalid user");
-   Norm_nlstab[FAIL_sigstop_fmt] = _("failed sigprocmask, SIG_BLOCK: %s");
-   Norm_nlstab[FAIL_sigmask_fmt] = _("failed sigprocmask, SIG_SETMASK: %s");
    Norm_nlstab[FOREST_views_txt] = _("forest view");
    Norm_nlstab[FAIL_widepid_txt] = _("failed pid maximum size test");
    Norm_nlstab[FAIL_widecpu_txt] = _("failed number of cpus test");
@@ -483,7 +480,7 @@ static void build_uniq_nlstab (void) {
       "  q         Quit\n"
       "          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
       "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
-      "any other key to continue ");
+      "Type 'q' or <Esc> to continue ");
 
 /* Translation Hint: As is true for the text above, the "keys" shown to the left and
    .                 also imbedded in the translatable text (along with escape seqs)
@@ -557,16 +554,16 @@ static void build_uniq_nlstab (void) {
       "   available toggles: ~1B~2 =disable bold globally (~1%s~2),\n"
       "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks \"bold\"/reverse (~1%s~2)\n"
       "\n"
-      "Select ~1target~2 as upper case letter:\n"
+      "1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c ~4:\n"
       "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n"
       "   H~2 = Column Heads,~1  T~2 = Task Information\n"
-      "Select ~1color~2 as number:\n"
+      "2) Select a ~1color~2 as a number, ~1current color~2 is ~1 %d ~4:\n"
       "   0~2 = black,~1  1~2 = red,    ~1  2~2 = green,~1  3~2 = yellow,\n"
       "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan, ~1  7~2 = white\n"
       "\n"
-      "Selected: ~1target~2 ~1 %c ~4; ~1color~2 ~1 %d ~4\n"
-      "   press 'q' to abort changes to window '~1%s~2'\n"
-      "   press 'a' or 'w' to commit & change another, <Enter> to commit and end ");
+      "3) Then use these keys when finished:\n"
+      "   'q' to abort changes to window '~1%s~2'\n"
+      "   'a' or 'w' to commit & change another, <Enter> to commit and end ");
 
    Uniq_nlstab[FIELD_header_fmt] = _(""
       "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"

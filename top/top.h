@@ -96,8 +96,8 @@ char *strcasestr(const char *haystack, const char *needle);
 
         /* Length of time a message is displayed and the duration
            of a 'priming' wait during library startup (in microseconds) */
-#define MSG_USLEEP  (useconds_t)1250000
-#define LIB_USLEEP  (useconds_t)150000
+#define MSG_USLEEP  1250000
+#define LIB_USLEEP  150000
 
         /* Specific process id monitoring support (command line only) */
 #define MONPIDMAX  20
@@ -195,6 +195,11 @@ enum pflag {
         /* The scaling 'target' used with memory fields */
 enum scale_enum {
    SK_Kb, SK_Mb, SK_Gb, SK_Tb, SK_Pb, SK_Eb, SK_SENTINEL
+};
+
+        /* Used to manipulate (and document) the Frames_resize states */
+enum resize_states {
+   RESIZ_clr, RESIZ_kbd, RESIZ_sig
 };
 
         /* This typedef just ensures consistent 'process flags' handling */
@@ -611,7 +616,6 @@ typedef struct WIN_t {
 //atic void          bye_bye (const char *str);
 //atic void          error_exit (const char *str);
 //atic void          library_err (const char *fmts, ...);
-//atic void          pause_pgm (void);
 //atic void          sig_abexit (int sig);
 //atic void          sig_endpgm (int dont_care_sig);
 //atic void          sig_paused (int dont_care_sig);
