@@ -172,6 +172,8 @@ static char *mapping_name(proc_t * p, unsigned KLONG addr,
 #define DETL "31"		/* for format strings */
 #define NUM_LENGTH 21		/* python says: len(str(2**64)) == 20 */
 #define NUML "20"		/* for format strings */
+#define VMFLAGS_LENGTH 81 /* There are 27 posible 2 character vmflags 
+								as of this patch */
 
 struct listnode {
 	char description[DETAIL_LENGTH];
@@ -204,12 +206,14 @@ static void print_extended_maps (FILE *f)
 	     detail_desc[DETAIL_LENGTH], value_str[NUM_LENGTH],
 	     start[NUM_LENGTH], end[NUM_LENGTH],
 	     offset[NUM_LENGTH], inode[NUM_LENGTH],
-	     dev[64], fmt_str[64];
-	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0;
+	     dev[64], fmt_str[64],
+		 vmflags[VMFLAGS_LENGTH];
+	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0, maxwv=0;
 	int nfields, firstmapping, footer_gap, i;
 	unsigned KLONG value;
 	char *ret;
 	char c;
+	char has_vmflags = 0;
 
 	ret = fgets(mapbuf, sizeof mapbuf, f);
 	firstmapping = 1;
@@ -284,6 +288,15 @@ loop_end:
 			nfields = sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
 					 detail_desc, value_str, &c);
 		}
+
+		/* === GET VMFLAGS === */
+		nfields = sscanf(mapbuf, "VmFlags: %[a-z ]", vmflags);
+		if (nfields == 1) {
+			if (! has_vmflags) has_vmflags = 1;
+			ret = fgets(mapbuf, sizeof mapbuf, f);
+			if (strlen(vmflags) > maxwv) maxwv = strlen(vmflags);
+		}
+
 		/* === PRINT THIS MAPPING === */
 		/* Print header */
 		if (firstmapping && !q_option) {
@@ -292,6 +305,7 @@ loop_end:
 			if (strlen("Offset") > maxw3) 	maxw3 = strlen("Offset");
 			if (strlen("Device") > maxw4) 	maxw4 = strlen("Device");
 			if (strlen("Inode") > maxw5) 	maxw5 = strlen("Inode");
+			if (has_vmflags && strlen("VmFlags") > maxwv)	maxwv = strlen("VmFlags");
 			sprintf(fmt_str, "%%%ds %%%ds %%%ds %%%ds %%%ds",
 				maxw1, maxw2, maxw3, maxw4, maxw5);
 			printf(fmt_str, "Address", "Flags", "Offset", "Device", "Inode");
@@ -301,6 +315,12 @@ loop_end:
 				sprintf(fmt_str, " %%%ds", listnode->max_width);
 				printf(fmt_str, listnode->description);
 			}
+
+			if (has_vmflags) {
+				sprintf(fmt_str, " %%%ds", maxwv);
+				printf(fmt_str, "VmFlags");
+			}
+
 			printf(" %s\n", "Description");
 		}
 		/* Print data */
@@ -313,6 +333,12 @@ loop_end:
 			sprintf(fmt_str, " %%%ds", listnode->max_width);
 			printf(fmt_str, listnode->value_str);
 		}
+
+		if (has_vmflags) {
+			sprintf(fmt_str, " %%%ds", maxwv);
+			printf(fmt_str, vmflags);
+		}
+
 		printf(" %s\n", map_desc);
 
 		firstmapping = 0;
