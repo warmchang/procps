@@ -95,10 +95,14 @@ static const char *parse_uid(char *str, sel_union *ret){
   num = strtoul(str, &endp, 0);
   if(*endp != '\0'){  /* hmmm, try as login name */
     passwd_data = getpwnam(str);
-    if(!passwd_data)    return _("user name does not exist");
-    num = passwd_data->pw_uid;
+    if(!passwd_data){
+      if(!negate_selection) return _("user name does not exist");
+      num = -1;
+    }
+    else
+      num = passwd_data->pw_uid;
   }
-  if(num > 0xfffffffeUL) return _("user ID out of range");
+  if(!negate_selection && (num > 0xfffffffeUL)) return _("user ID out of range");
   ret->uid = num;
   return 0;
 }
@@ -110,10 +114,14 @@ static const char *parse_gid(char *str, sel_union *ret){
   num = strtoul(str, &endp, 0);
   if(*endp != '\0'){  /* hmmm, try as login name */
     group_data = getgrnam(str);
-    if(!group_data)    return _("group name does not exist");
-    num = group_data->gr_gid;
+    if(!group_data){
+      if(!negate_selection) return _("group name does not exist");
+      num = -1;
+    }
+    else
+      num = group_data->gr_gid;
   }
-  if(num > 0xfffffffeUL) return _("group ID out of range");
+  if(!negate_selection && (num > 0xfffffffeUL)) return _("group ID out of range");
   ret->gid = num;
   return 0;
 }
