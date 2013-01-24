@@ -538,9 +538,11 @@ static int one_proc(proc_t * p)
 				printf
 				    ("-------- ------- ------- ------- -------\n");
 				printf
-				    (_("total kB %7ld       -       -       -\n"),
+				    (_("total kB %7ld %7llu %7llu -\n"),
 				     (total_shared + total_private_writeable +
-				      total_private_readonly) >> 10);
+				      total_private_readonly) >> 10,
+					 total_rss, (total_shared_dirty+total_private_dirty));
+
 			}
 		}
 		if (d_option) {
