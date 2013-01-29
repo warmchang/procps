@@ -68,6 +68,9 @@ static struct termios Tty_original,    // our inherited terminal definition
                       Tty_raw;         // for unsolicited input
 static int Ttychanged = 0;
 
+        /* Last established cursor state/shape */
+static const char *Cursor_state = "";
+
         /* Program name used in error messages and local 'rc' file name */
 static char *Myname;
 
@@ -581,6 +584,7 @@ static void sig_paused (int dont_care_sig) {
    putp(Cap_rmam);
 #endif
    if (keypad_xmit) putp(keypad_xmit);
+   putp(Cursor_state);
    Frames_resize = RESIZ_sig;
    (void)dont_care_sig;
 } // end: sig_paused
@@ -680,11 +684,12 @@ static void capsmk (WIN_t *q) {
         /*
          * Show an error message (caller may include '\a' for sound) */
 static void show_msg (const char *str) {
-   PUTT("%s%s %.*s %s%s"
+   PUTT("%s%s %.*s %s%s%s"
       , tg2(0, Msg_row)
       , Curwin->capclr_msg
       , Screen_cols - 2
       , str
+      , Cap_curs_hide
       , Caps_off
       , Cap_clr_eol);
    fflush(stdout);
@@ -1014,7 +1019,6 @@ static char *ioline (const char *prompt) {
    show_pmt(prompt);
    memset(buf, '\0', sizeof(buf));
    ioch(1, buf, sizeof(buf)-1);
-   putp(Cap_curs_norm);
 
    if ((p = strpbrk(buf, ws))) *p = '\0';
    // note: we DO produce a vaid 'string'
@@ -1916,7 +1920,6 @@ static void fields_utility (void) {
    spewFI
 signify_that:
    putp(Cap_clr_scr);
-   putp(Cap_curs_hide);
    adj_geometry();
 
    do {
@@ -2765,7 +2768,6 @@ static int insp_view_choice (proc_t *obj) {
 
 signify_that:
    putp(Cap_clr_scr);
-   putp(Cap_curs_hide);
    adj_geometry();
 
    for (;;) {
@@ -2775,10 +2777,9 @@ signify_that:
       if (curlin >= Insp_nl) curlin = Insp_nl -1;
       if (curlin < 0) curlin = 0;
 
-      putp(Cap_home);
-      putp(Cap_curs_hide);
       makFS(buf)
       makHD(pid,cmd,usr)
+      putp(Cap_home);
       show_special(1, fmtmk(N_unq(INSP_hdrview_fmt)
          , pid, cmd, usr, (Insp_sel->fstr[0]) ? buf : " N/A "));   // nls_maybe
       insp_show_pgs(curcol, curlin, maxLN);
@@ -2831,7 +2832,6 @@ signify_that:
          case '&':
          case '/':
          case 'n':
-            putp(Cap_curs_norm);
             insp_find_str(key, &curcol, &curlin);
             break;
          case '=':
@@ -2878,16 +2878,16 @@ static void inspection_utility (int pid) {
       show_msg(fmtmk(N_fmt(YINSP_pidbad_fmt), pid));
       return;
    }
+   // must re-hide cursor since the prompt for a pid made it huge
+   putp((Cursor_state = Cap_curs_hide));
 signify_that:
    putp(Cap_clr_scr);
-   putp(Cap_curs_hide);
    adj_geometry();
 
    key = INT_MAX;
    do {
       mkSEL(sels);
       putp(Cap_home);
-      putp(Cap_curs_hide);
       show_special(1, fmtmk(N_unq(INSP_hdrsels_fmt)
          , pid, p->cmd, p->euser, sels));
       INSP_MKSL(0, " ");
@@ -3583,14 +3583,13 @@ static void wins_colors (void) {
       return;
    }
    wins_clrhlp(w, 1);
+   putp((Cursor_state = Cap_curs_huge));
 signify_that:
    putp(Cap_clr_scr);
-   putp(Cap_curs_hide);
    adj_geometry();
 
    do {
       putp(Cap_home);
-      putp(Cap_curs_hide);
       // this string is well above ISO C89's minimum requirements!
       show_special(1, fmtmk(N_unq(COLOR_custom_fmt)
          , procps_version, w->grpname
@@ -3654,8 +3653,6 @@ signify_that:
 
    if (key == kbdABORT) wins_clrhlp(w, 0);
 
-   putp(Cap_curs_norm);
-   putp(Cap_clr_scr);
  #undef kbdABORT
  #undef kbdAPPLY
 } // end: wins_colors
@@ -3743,7 +3740,9 @@ static void wins_stage_2 (void) {
       Winstk[i].findstr = alloc_c(FNDBUFSIZ);
       Winstk[i].findlen = 0;
    }
-   if (Batch) {
+   if (!Batch)
+      putp((Cursor_state = Cap_curs_hide));
+   else {
       OFFw(Curwin, View_SCROLL);
       signal(SIGHUP, SIG_IGN);    // allow running under nohup
    }
@@ -3867,9 +3866,9 @@ static void help_view (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    char key = 1;
 
+   putp((Cursor_state = Cap_curs_huge));
 signify_that:
    putp(Cap_clr_scr);
-   putp(Cap_curs_hide);
    adj_geometry();
 
    show_special(1, fmtmk(N_unq(KEYS_helpbas_fmt)
@@ -3898,17 +3897,15 @@ signify_that:
                , Winstk[2].rc.winname, Winstk[3].rc.winname));
             putp(Cap_clr_eos);
             fflush(stdout);
-            if (Frames_resize || (key = iokey(0)) < 1)
+            if (Frames_resize || (key = iokey(0)) < 1) {
                adj_geometry();
-            else w = win_select(key);
+               putp(Cap_clr_scr);
+            } else w = win_select(key);
          } while (key != kbd_ENTER && key != kbd_ESC);
          break;
       default:
          goto signify_that;
    }
-
-   putp(Cap_curs_norm);
-   putp(Cap_clr_scr);
 } // end: help_view
 
 
@@ -4498,6 +4495,7 @@ static void do_key (int ch) {
    };
    int i;
 
+   putp((Cursor_state = Cap_curs_hide));
    switch (ch) {
       case 0:                // ignored (always)
       case kbd_ESC:          // ignored (sometimes)
@@ -4512,6 +4510,7 @@ static void do_key (int ch) {
             if (strchr(key_tab[i].keys, ch)) {
                key_tab[i].func(ch);
                Frames_resize = RESIZ_kbd;
+               putp((Cursor_state = Cap_curs_hide));
                return;
             }
    };
@@ -5021,11 +5020,9 @@ static void frame_make (void) {
    int i, scrlins;
 
    // deal with potential signal(s) since the last time around...
-   if (Frames_resize) {
-      if (Frames_resize > RESIZ_kbd)
-         putp(Cap_clr_scr);
+   if (Frames_resize)
       zap_fieldstab();
-   }
+
    // whoa either first time or thread/task mode change, (re)prime the pump...
    if (Pseudo_row == PROC_XTRA) {
       procs_refresh();
@@ -5034,7 +5031,6 @@ static void frame_make (void) {
    } else
       putp(Batch ? "\n\n" : Cap_home);
 
-   putp(Cap_curs_hide);
    procs_refresh();
    sysinfo_refresh(0);
 
@@ -5067,7 +5063,6 @@ static void frame_make (void) {
    }
    if (VIZISw(w) && CHKw(w, View_SCROLL)) show_scroll();
    else PUTT("%s%s", tg2(0, Msg_row), Cap_clr_eol);
-   putp(Cap_curs_norm);
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable
