@@ -568,7 +568,7 @@ static void build_uniq_nlstab (void) {
    Uniq_nlstab[FIELD_header_fmt] = _(""
       "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
       "   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n"
-      "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end! ");
+      "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!\n");
 
    Uniq_nlstab[STATE_line_1_fmt] = _("%s:~3"
       " %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n");

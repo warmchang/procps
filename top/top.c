@@ -1841,6 +1841,7 @@ static void display_fields (int focus, int extend) {
    int xadd = 0;                       // spacing between data columns
    int cmax = Screen_cols;             // total data column width
    int rmax = Screen_rows - yRSVD;     // total useable rows
+   static int col_sav, row_sav;
 
    i = (P_MAXPFLGS % mxCOL) ? 1 : 0;
    if (rmax < i + (P_MAXPFLGS / mxCOL)) error_exit("++rows");      // nls_maybe
@@ -1851,6 +1852,15 @@ static void display_fields (int focus, int extend) {
    smax = cmax - xPRFX;
    if (smax < 0) error_exit("++cols");                             // nls_maybe
 
+   /* we'll go the extra distance to avoid any potential screen flicker
+      which occurs under some terminal emulators (but it was our fault) */
+   if (col_sav != Screen_cols || row_sav != Screen_rows) {
+      col_sav = Screen_cols;
+      row_sav = Screen_rows;
+      putp(Cap_clr_eos);
+   }
+   fflush(stdout);
+
    for (i = 0; i < P_MAXPFLGS; ++i) {
       int b = FLDviz(w, i), x = (i / rmax) * cmax, y = (i % rmax) + yRSVD;
       const char *e = (i == focus && extend) ? w->capclr_hdr : "";
@@ -1860,7 +1870,7 @@ static void display_fields (int focus, int extend) {
       // prep sacrificial suffix
       snprintf(sbuf, sizeof(sbuf), "= %s", N_fld(f));
 
-      PUTT("%s%c%s%s %s%-7.7s%s%s%s %-*.*s%s%s"
+      PUTT("%s%c%s%s %s%-7.7s%s%s%s %-*.*s%s"
          , tg2(x, y)
          , b ? '*' : ' '
          , b ? w->cap_bold : Cap_norm
@@ -1872,8 +1882,7 @@ static void display_fields (int focus, int extend) {
          , e
          , smax, smax
          , sbuf
-         , Cap_norm
-         , !x ? Cap_clr_eol : "");
+         , Cap_norm);
    }
 
    putp(Caps_off);
@@ -1915,8 +1924,6 @@ signify_that:
       putp(Cap_home);
       show_special(1, fmtmk(N_unq(FIELD_header_fmt)
          , w->grpname, CHKw(w, Show_FOREST) ? N_txt(FOREST_views_txt) : h));
-      putp(Cap_nl_clreos);
-      fflush(stdout);
       display_fields(i, (p != NULL));
       fflush(stdout);
 
