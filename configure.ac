@@ -201,6 +201,14 @@ if test "x$enable_oomem" = xyes; then
   AC_DEFINE(OOMEM_ENABLE, 1, [add out-of-memory fields to the library and top])
 fi
 
+AC_ARG_ENABLE([sigwinch],
+  AS_HELP_STRING([--enable-sigwinch], [reduce impact of x-windows resize operations on top]),
+  [], enable_sigwinch=no
+)
+if test "x$enable_sigwinch" = xyes; then
+  AC_DEFINE(SIGNALS_LESS, 1, [reduce impact of x-windows resize operations on top])
+fi
+
 AC_ARG_ENABLE([w-from],
   AS_HELP_STRING([--enable-w-from], [enable w from field by default]),
   [], enable_w_from=no
