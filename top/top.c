@@ -884,7 +884,7 @@ static inline int ioa (struct timespec *ts) {
    FD_ZERO(&fs);
    FD_SET(STDIN_FILENO, &fs);
 
-#ifdef OFF_SIGWINCH // conditional comments are silly, but help in documenting
+#ifndef SIGNALS_LESS // conditional comments are silly, but help in documenting
    // hold here until we've got keyboard input, any signal (including SIGWINCH)
 #else
    // hold here until we've got keyboard input, any signal except SIGWINCH
@@ -3745,7 +3745,7 @@ static void wins_stage_2 (void) {
 
    // lastly, initialize a signal set used to throttle one troublesome signal
    sigemptyset(&Sigwinch_set);
-#ifndef OFF_SIGWINCH
+#ifdef SIGNALS_LESS
    sigaddset(&Sigwinch_set, SIGWINCH);
 #endif
 } // end: wins_stage_2
@@ -5103,12 +5103,16 @@ int main (int dont_care_argc, char **argv) {
          if (ioa(&ts))
             do_key(iokey(0));
       }
-         /* note:  the above ioa() routine exists to consolidate all logic
-                   which is susceptible to signal interrupts and must then
-                   produce a screen refresh.  in this main loop frame_make
-                   assumes responsibility for such refreshes.  other logic
-                   interacting with users must deal more directly with it.
-          */
+           /* note: that above ioa routine exists to consolidate all logic
+                    which is susceptible to signal interrupt and must then
+                    produce a screen refresh. in this main loop frame_make
+                    assumes responsibility for such refreshes. other logic
+                    in contact with users must deal more obliquely with an
+                    interrupt/refresh (hint: Frames_resize + return code)!
+
+                    (everything is perfectly justified plus right margins)
+                    (are completely filled, but of course it must be luck)
+            */
    }
    return 0;
 } // end: main
