@@ -376,6 +376,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[XTRA_fixwide_fmt] = _("width incr is %d, change to (0 default, -1 auto)");
    Norm_nlstab[XTRA_warncfg_txt] = _("Overwrite existing obsolete/corrupted rcfile?");
    Norm_nlstab[XTRA_sortopt_fmt] = _("unrecognized field name '%s'");
+   Norm_nlstab[XTRA_winsize_txt] = _("even using field names only, window is now too small");
 #ifndef INSP_OFFDEMO
    Norm_nlstab[YINSP_demo01_txt] = _("Open Files");
    Norm_nlstab[YINSP_demo02_txt] = _("NUMA Info");

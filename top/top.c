@@ -1831,9 +1831,9 @@ static void calibrate_fields (void) {
          *       24     66     full xPRFX + xSUFX
          *       11     66     xPRFX only          ( w/ room for +2 )
          *       11    198     full xPRFX + xSUFX  ( w/ room for +2 )
-         *    ( if not, the user deserves our most cryptic messages )
          */
 static void display_fields (int focus, int extend) {
+ #define mkERR { putp("\n"); putp(N_txt(XTRA_winsize_txt)); return; }
  #define mxCOL  6
  #define yRSVD  4
  #define xSUFX  22
@@ -1848,13 +1848,13 @@ static void display_fields (int focus, int extend) {
    static int col_sav, row_sav;
 
    i = (P_MAXPFLGS % mxCOL) ? 1 : 0;
-   if (rmax < i + (P_MAXPFLGS / mxCOL)) error_exit("++rows");      // nls_maybe
+   if (rmax < i + (P_MAXPFLGS / mxCOL)) mkERR;
    i = P_MAXPFLGS / rmax;
    if (P_MAXPFLGS % rmax) ++i;
    if (i > 1) { cmax /= i; xadd = 1; }
    if (cmax > xTOTL) cmax = xTOTL;
    smax = cmax - xPRFX;
-   if (smax < 0) error_exit("++cols");                             // nls_maybe
+   if (smax < 0) mkERR;
 
    /* we'll go the extra distance to avoid any potential screen flicker
       which occurs under some terminal emulators (but it was our fault) */
@@ -1890,6 +1890,7 @@ static void display_fields (int focus, int extend) {
    }
 
    putp(Caps_off);
+ #undef mkERR
  #undef mxCOL
  #undef yRSVD
  #undef xSUFX

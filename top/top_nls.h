@@ -80,7 +80,7 @@ enum norm_nls {
    THREADS_show_fmt, TIME_accumed_fmt, UNKNOWN_cmds_txt, UNKNOWN_opts_fmt,
    USAGE_abbrev_txt, WORD_allcpus_txt, WORD_another_txt, WORD_eachcpu_fmt,
    WORD_process_txt, WORD_threads_txt, WRITE_rcfile_fmt, WRONG_switch_fmt,
-   XTRA_fixwide_fmt, XTRA_sortopt_fmt, XTRA_warncfg_txt,
+   XTRA_fixwide_fmt, XTRA_sortopt_fmt, XTRA_warncfg_txt, XTRA_winsize_txt,
 #ifndef INSP_OFFDEMO
    YINSP_demo01_txt, YINSP_demo02_txt, YINSP_demo03_txt, YINSP_deqfmt_txt,
    YINSP_deqtyp_txt, YINSP_dstory_txt,
