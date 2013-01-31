@@ -330,12 +330,19 @@ static void at_eoj (void) {
    if (Ttychanged) {
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_original);
       if (keypad_local) putp(keypad_local);
-      putp(tg2(0, Screen_rows));
+      if (exit_ca_mode)
+         // this next will also replace top's most recent screen with the
+         // original display contents that were visible at our invocation
+         putp(exit_ca_mode);
+      else {
+         // but if we can't, we'll simply do it as old top always used to
+         putp(tg2(0, Screen_rows));
+         putp("\n");
+      }
       putp(Cap_curs_norm);
 #ifndef RMAN_IGNORED
       putp(Cap_smam);
 #endif
-      putp("\n");
       Ttychanged = 0;
    }
    fflush(stdout);
@@ -564,7 +571,11 @@ static void sig_endpgm (int dont_care_sig) {
 
         /*
          * Catches:
-         *    SIGTSTP, SIGTTIN and SIGTTOU */
+         *    SIGTSTP, SIGTTIN and SIGTTOU
+         * note:
+         *    we don't fiddle with with those enter/exit_ca_mode strings
+         *    because we want to retain most of the last screen contents
+         *    as a visual reminder this program is suspended, not ended! */
 static void sig_paused (int dont_care_sig) {
 // POSIX.1-2004 async-signal-safe: tcsetattr, tcdrain, raise
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_original))
@@ -575,7 +586,10 @@ static void sig_paused (int dont_care_sig) {
 #ifndef RMAN_IGNORED
    putp(Cap_smam);
 #endif
-   tcdrain(STDOUT_FILENO);
+   // tcdrain(STDOUT_FILENO) was not reliable prior to ncurses-5.9.20121017,
+   // so we'll risk POSIX's wrath with good ol' fflush, lest 'Stopped' gets
+   // co-mingled with our most recent output...
+   fflush(stdout);
    raise(SIGSTOP);
    // later, after SIGCONT...
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_raw))
@@ -3487,6 +3501,8 @@ static void whack_terminal (void) {
    // thanks anyway stdio, but we'll manage buffering at the frame level...
    setbuffer(stdout, Stdout_buf, sizeof(Stdout_buf));
 #endif
+   // this has the effect of disabling any troublesome scrollback buffer...
+   if (enter_ca_mode) putp(enter_ca_mode);
    // and don't forget to ask iokey to initialize his tinfo_tab
    iokey(1);
 } // end: whack_terminal
