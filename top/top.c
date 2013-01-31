@@ -1835,20 +1835,21 @@ static void calibrate_fields (void) {
          *      xPRFX ----------______________________ xSUFX
          *    ( xPRFX has pos 2 & 10 for 'extending' when at minimums )
          *
-         * The first 4 screen rows are reserved for explanatory text, the
-         * maximum number of columns is currently 6 and a space is needed
-         * between columns.  Thus, for example, with 40 fields a tty will
+         * The first 4 screen rows are reserved for explanatory text, and
+         * the maximum number of columns is Screen_cols / xPRFX + 1 space
+         * between columns.  Thus, for example, with 42 fields a tty will
          * still remain useable under these extremes:
-         *       rows   cols   displayed
-         *       ----   ----   ------------------
-         *       24     22     xPRFX only
-         *       24     66     full xPRFX + xSUFX
-         *       11     66     xPRFX only          ( w/ room for +2 )
-         *       11    198     full xPRFX + xSUFX  ( w/ room for +2 )
+         *       rows       columns     what's
+         *       tty  top   tty  top    displayed
+         *       ---  ---   ---  ---    ------------------
+         *        46   42    10    1    xPRFX only
+         *        46   42    32    1    full xPRFX + xSUFX
+         *         6    2   231   21    xPRFX only
+         *        10    6   231    7    full xPRFX + xSUFX
          */
 static void display_fields (int focus, int extend) {
  #define mkERR { putp("\n"); putp(N_txt(XTRA_winsize_txt)); return; }
- #define mxCOL  6
+ #define mxCOL ( (Screen_cols / 11) > 0 ? (Screen_cols / 11) : 1 )
  #define yRSVD  4
  #define xSUFX  22
  #define xPRFX (10 + xadd)
