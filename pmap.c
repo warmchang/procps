@@ -621,7 +621,7 @@ static void range_arguments(char *optarg)
 
 int main(int argc, char **argv)
 {
-	unsigned long *pidlist;
+	pid_t *pidlist;
 	unsigned count = 0;
 	PROCTAB *PT;
 	proc_t p;
@@ -689,7 +689,7 @@ int main(int argc, char **argv)
 	    x_option && (d_option || X_option))
 		xerrx(EXIT_FAILURE, _("options -d, -x, -X are mutually exclusive"));
 
-	pidlist = xmalloc(sizeof(unsigned long) * argc);
+	pidlist = xmalloc(sizeof(pid_t) * argc);
 
 	while (*argv) {
 		char *walk = *argv++;
