@@ -343,7 +343,6 @@ static void at_eoj (void) {
 #ifndef RMAN_IGNORED
       putp(Cap_smam);
 #endif
-      Ttychanged = 0;
    }
    fflush(stdout);
 } // end: at_eoj
@@ -356,7 +355,7 @@ static void bye_bye (const char *str) {
    at_eoj();                 // restore tty in preparation for exit
 #ifdef ATEOJ_RPTSTD
 {  proc_t *p;
-   if (!str) { fprintf(stderr,
+   if (!str && Ttychanged) { fprintf(stderr,
       "\n%s's Summary report:"
       "\n\tProgram"
       "\n\t   Linux version = %u.%u.%u, %s"
@@ -426,7 +425,7 @@ static void bye_bye (const char *str) {
 
 #ifndef OFF_HST_HASH
 #ifdef ATEOJ_RPTHSH
-   if (!str) {
+   if (!str && Ttychanged) {
       int i, j, pop, total_occupied, maxdepth, maxdepth_sav, numdepth
          , cross_foot, sz = HHASH_SIZ * (unsigned)sizeof(int);
       int depths[HHASH_SIZ];
