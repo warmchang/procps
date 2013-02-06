@@ -184,7 +184,7 @@ struct listnode {
 	struct listnode *next;
 };
 
-static struct listnode *listhead=NULL, *listtail=NULL;
+static struct listnode *listhead=NULL, *listtail=NULL, *listnode;
 
 
 static int is_unimportant (char *s)
@@ -201,7 +201,6 @@ static int is_unimportant (char *s)
 
 static void print_extended_maps (FILE *f)
 {
-	struct listnode *listnode;
 	char flags[DETAIL_LENGTH], map_desc[128],
 	     detail_desc[DETAIL_LENGTH], value_str[NUM_LENGTH],
 	     start[NUM_LENGTH], end[NUM_LENGTH],
@@ -216,7 +215,7 @@ static void print_extended_maps (FILE *f)
 	char has_vmflags = 0;
 
 	ret = fgets(mapbuf, sizeof mapbuf, f);
-	firstmapping = 1;
+	firstmapping = 2;
 	while (ret != NULL) {
 		/* === READ MAPPING === */
 		map_desc[0] = '\0';
@@ -254,7 +253,7 @@ static void print_extended_maps (FILE *f)
 				goto loop_end;
 			/* === CREATE LIST AND FILL description FIELD === */
 			if (listnode == NULL) {
-				assert(firstmapping == 1);
+				assert(firstmapping == 2);
 				listnode = calloc(1, sizeof *listnode);
 				if (listhead == NULL) {
 					assert(listtail == NULL);
@@ -271,15 +270,14 @@ static void print_extended_maps (FILE *f)
 					listnode->max_width = 7;
 			} else {
 			/* === LIST EXISTS  === */
-				if ((listnode == NULL) ||
-				    (strcmp(listnode->description, detail_desc) != 0))
+				if (strcmp(listnode->description, detail_desc) != 0)
 					xerrx(EXIT_FAILURE, "ERROR: %s %s",
 					      _("inconsistent detail field in smaps file, line:\n"),
 					      mapbuf);
 			}
 			strcpy(listnode->value_str, value_str);
 			sscanf(value_str, "%"KLF"u", &listnode->value);
-			listnode->total += listnode->value;
+			if (firstmapping == 2) listnode->total += listnode->value;
 			if (strlen(value_str) > listnode->max_width)
 				listnode->max_width = strlen(value_str);
 			listnode = listnode->next;
@@ -297,51 +295,60 @@ loop_end:
 			if (strlen(vmflags) > maxwv) maxwv = strlen(vmflags);
 		}
 
-		/* === PRINT THIS MAPPING === */
-		/* Print header */
-		if (firstmapping && !q_option) {
-			if (strlen("Address") > maxw1) 	maxw1 = strlen("Address");
-			if (strlen("Flags") > maxw2) 	maxw2 = strlen("Flags");
-			if (strlen("Offset") > maxw3) 	maxw3 = strlen("Offset");
-			if (strlen("Device") > maxw4) 	maxw4 = strlen("Device");
-			if (strlen("Inode") > maxw5) 	maxw5 = strlen("Inode");
-			if (has_vmflags && strlen("VmFlags") > maxwv)	maxwv = strlen("VmFlags");
+		if (firstmapping == 2) { /* width measurement stage, do not print anything yet */
+			if (ret == NULL) {	/* once the end of file is reached ...*/
+				firstmapping = 1;  /* ... we reset the file position to the beginning of the file */
+				fseek(f, 0, SEEK_SET);  /* ... and repeat the process with printing enabled */
+				ret = fgets(mapbuf, sizeof mapbuf, f); /* this is not ideal and needs to be redesigned one day */
+			}
+		} else {		 /* the maximum widths have been measured, we've already reached the printing stage */
+			/* === PRINT THIS MAPPING === */
+			/* Print header */
+			if (firstmapping && !q_option) {
+				if (strlen("Address") > maxw1) 	maxw1 = strlen("Address");
+				if (strlen("Flags") > maxw2) 	maxw2 = strlen("Flags");
+				if (strlen("Offset") > maxw3) 	maxw3 = strlen("Offset");
+				if (strlen("Device") > maxw4) 	maxw4 = strlen("Device");
+				if (strlen("Inode") > maxw5) 	maxw5 = strlen("Inode");
+				if (has_vmflags && strlen("VmFlags") > maxwv)	maxwv = strlen("VmFlags");
+				sprintf(fmt_str, "%%%ds %%%ds %%%ds %%%ds %%%ds",
+					maxw1, maxw2, maxw3, maxw4, maxw5);
+				printf(fmt_str, "Address", "Flags", "Offset", "Device", "Inode");
+
+				for (listnode=listhead; listnode=listnode->next;
+				     listnode!=NULL) {
+					sprintf(fmt_str, " %%%ds", listnode->max_width);
+					printf(fmt_str, listnode->description);
+				}
+
+				if (has_vmflags) {
+					sprintf(fmt_str, " %%%ds", maxwv);
+					printf(fmt_str, "VmFlags");
+				}
+
+				printf(" %s\n", "Description");
+			}
+			/* Print data */
 			sprintf(fmt_str, "%%%ds %%%ds %%%ds %%%ds %%%ds",
 				maxw1, maxw2, maxw3, maxw4, maxw5);
-			printf(fmt_str, "Address", "Flags", "Offset", "Device", "Inode");
+			printf(fmt_str, start, flags, offset, dev, inode);
 
 			for (listnode=listhead; listnode=listnode->next;
 			     listnode!=NULL) {
 				sprintf(fmt_str, " %%%ds", listnode->max_width);
-				printf(fmt_str, listnode->description);
+				printf(fmt_str, listnode->value_str);
 			}
 
 			if (has_vmflags) {
 				sprintf(fmt_str, " %%%ds", maxwv);
-				printf(fmt_str, "VmFlags");
+				printf(fmt_str, vmflags);
 			}
 
-			printf(" %s\n", "Description");
+			printf(" %s\n", map_desc);
+
+			firstmapping = 0;
+
 		}
-		/* Print data */
-		sprintf(fmt_str, "%%%ds %%%ds %%%ds %%%ds %%%ds",
-			maxw1, maxw2, maxw3, maxw4, maxw5);
-		printf(fmt_str, start, flags, offset, dev, inode);
-
-		for (listnode=listhead; listnode=listnode->next;
-		     listnode!=NULL) {
-			sprintf(fmt_str, " %%%ds", listnode->max_width);
-			printf(fmt_str, listnode->value_str);
-		}
-
-		if (has_vmflags) {
-			sprintf(fmt_str, " %%%ds", maxwv);
-			printf(fmt_str, vmflags);
-		}
-
-		printf(" %s\n", map_desc);
-
-		firstmapping = 0;
 	}
 	/* === PRINT TOTALS === */
 	if (!q_option && listhead!=NULL) {
@@ -721,6 +728,13 @@ int main(int argc, char **argv)
 	}
 	closeproc(PT);
 	free(pidlist);
+
+	/* cleaning the list used for the -X/-XX modes */
+	for (listnode = listhead; listnode != NULL ; ) {
+		listnode = listnode -> next;
+		free(listhead);
+		listhead = listnode;
+	}
 
 	if (count)
 		/* didn't find all processes asked for */
