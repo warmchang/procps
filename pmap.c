@@ -39,6 +39,21 @@
 #include "proc/readproc.h"
 #include "proc/version.h"
 
+
+static int integer_width(unsigned KLONG number)
+{
+	int result;
+
+	result = !(number > 0);
+	while (number) {
+		result++;
+		number /= 10;
+	}
+
+	return result;
+}
+
+
 static void __attribute__ ((__noreturn__))
     usage(FILE * out)
 {
@@ -208,7 +223,7 @@ static void print_extended_maps (FILE *f)
 	     dev[64], fmt_str[64],
 		 vmflags[VMFLAGS_LENGTH];
 	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0, maxwv=0;
-	int nfields, firstmapping, footer_gap, i;
+	int nfields, firstmapping, footer_gap, i, width_of_total;
 	unsigned KLONG value;
 	char *ret;
 	char c;
@@ -240,8 +255,6 @@ static void print_extended_maps (FILE *f)
 		if (strlen(dev) > maxw4) 	maxw4 = strlen(dev);
 		if (strlen(inode) > maxw5) 	maxw5 = strlen(inode);
 
-		if (7 > maxw5) 	maxw5 = 7;
-
 		ret = fgets(mapbuf, sizeof mapbuf, f);
 		nfields = sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
 				 detail_desc, value_str, &c);
@@ -264,10 +277,7 @@ static void print_extended_maps (FILE *f)
 				listtail = listnode;
 				/* listnode was calloc()ed so all fields are already NULL! */
 				strcpy(listnode->description, detail_desc);
-				if (strlen(detail_desc) > 7)
-					listnode->max_width = strlen(detail_desc);
-				else
-					listnode->max_width = 7;
+				listnode->max_width = strlen(detail_desc);
 			} else {
 			/* === LIST EXISTS  === */
 				if (strcmp(listnode->description, detail_desc) != 0)
@@ -277,9 +287,12 @@ static void print_extended_maps (FILE *f)
 			}
 			strcpy(listnode->value_str, value_str);
 			sscanf(value_str, "%"KLF"u", &listnode->value);
-			if (firstmapping == 2) listnode->total += listnode->value;
-			if (strlen(value_str) > listnode->max_width)
-				listnode->max_width = strlen(value_str);
+			if (firstmapping == 2) {
+				listnode->total += listnode->value;
+				width_of_total = integer_width(listnode->total);
+				if (width_of_total > listnode->max_width)
+					listnode->max_width = width_of_total;
+			}
 			listnode = listnode->next;
 loop_end:
 			ret = fgets(mapbuf, sizeof mapbuf, f);
