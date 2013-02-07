@@ -2756,6 +2756,7 @@ static inline void insp_show_pgs (int col, int row, int max) {
       insp_make_row(col, row);
       --max;
    }
+
    if (max)
       putp(Cap_nl_clreos);
 } // end: insp_show_pgs
@@ -2848,6 +2849,7 @@ signify_that:
          case '/':
          case 'n':
             insp_find_str(key, &curcol, &curlin);
+            putp((Cursor_state = Cap_curs_hide));
             break;
          case '=':
             snprintf(buf, sizeof(buf), "%s: %s", Insp_sel->type, Insp_sel->fmts);
