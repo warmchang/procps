@@ -631,6 +631,7 @@ typedef struct WIN_t {
 /*------  Low Level Memory/Keyboard/File I/O support  --------------------*/
 //atic void         *alloc_c (size_t num);
 //atic void         *alloc_r (void *ptr, size_t num);
+//atic char         *alloc_s (const char *str);
 //atic inline int    ioa (struct timespec *ts);
 //atic int           ioch (int ech, char *buf, unsigned cnt);
 //atic int           iokey (int init);

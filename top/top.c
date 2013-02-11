@@ -890,6 +890,12 @@ static void *alloc_r (void *ptr, size_t num) {
 } // end: alloc_r
 
 
+static char *alloc_s (const char *str) MALLOC;
+static char *alloc_s (const char *str) {
+   return strcpy(alloc_c(strlen(str) +1), str);
+} // end: alloc_s
+
+
         /*
          * This function is used in connection with raw single byte
          * unsolicited keyboard input that's susceptible to SIGWINCH
@@ -3207,7 +3213,7 @@ static void configs_read (void) {
 try_inspect_entries:
       // we'll start off Inspect stuff with 1 'potential' blank line
       // ( only realized if we end up with Inspect.total > 0 )
-      for (i = 0, Inspect.raw = strdup("\n");;) {
+      for (i = 0, Inspect.raw = alloc_s("\n");;) {
        #define iT(element) Inspect.tab[i].element
          size_t lraw = strlen(Inspect.raw) +1;
          char *s;
@@ -3222,11 +3228,11 @@ try_inspect_entries:
          p = fmtmk(N_fmt(YINSP_rcfile_fmt), i +1);
 
          if (!(s = strtok(fbuf, "\t\n"))) { Rc_questions = 1; continue; }
-         iT(type) = strdup(s);
+         iT(type) = alloc_s(s);
          if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; continue; }
-         iT(name) = strdup(s);
+         iT(name) = alloc_s(s);
          if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; continue; }
-         iT(fmts) = strdup(s);
+         iT(fmts) = alloc_s(s);
 
          switch (toupper(fbuf[0])) {
             case 'F':
@@ -3257,10 +3263,10 @@ try_inspect_entries:
          Inspect.total = Inspect.demo = MAXTBL(sels);
          Inspect.tab = alloc_c(sizeof(struct I_ent) * Inspect.total);
          for (i = 0; i < Inspect.total; i++) {
-            Inspect.tab[i].type = strdup(N_txt(YINSP_deqtyp_txt));
-            Inspect.tab[i].name = strdup(sels[i]);
+            Inspect.tab[i].type = alloc_s(N_txt(YINSP_deqtyp_txt));
+            Inspect.tab[i].name = alloc_s(sels[i]);
             Inspect.tab[i].func = insp_do_demo;
-            Inspect.tab[i].fmts = strdup(N_txt(YINSP_deqfmt_txt));
+            Inspect.tab[i].fmts = alloc_s(N_txt(YINSP_deqfmt_txt));
             Inspect.tab[i].fstr = alloc_c(FNDBUFSIZ);
          }
        #undef mkS
