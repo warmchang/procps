@@ -381,6 +381,9 @@ Display only processes with a user id or user name matching that given.
 The '\-u' option matches on \fI effective\fR user whereas the '\-U' option
 matches on\fI any\fR user (real, effective, saved, or filesystem).
 
+Prepending an exclamation point ('!') to the user id or name instucts top to
+display only processes with users not matching the one provided.
+
 The 'p', 'u' and 'U' \*(COs are mutually exclusive.
 
 .TP 5
@@ -1296,8 +1299,10 @@ matches on\fB any\fR user (real, effective, saved, or filesystem).
 
 Thereafter, in that \*(TW only matching users will be shown, or possibly
 no processes will be shown.
-Different \*(TWs can can be used to filter different users.
+Prepending an exclamation point ('!') to the user id or name instucts top
+to display only processes with users not matching the one provided.
 
+Different \*(TWs can can be used to filter different users.
 Later, if you wish to monitor all tasks again in the \*(CW, re-issue this
 command but just press <Enter> at the prompt.
 

@@ -371,6 +371,7 @@ typedef struct WIN_t {
           varcolsz,        // max length of variable width column(s)
           usrseluid,       // validated uid for 'u/U' user selection
           usrseltyp,       // the basis for matching above uid
+          usrselflg,       // flag denoting include/exclude matches
           hdrcaplen;       // column header xtra caps len, if any
    char   capclr_sum [CLRBUFSIZ],      // terminfo strings built from
           capclr_msg [CLRBUFSIZ],      //   RCW_t colors (& rebuilt too),

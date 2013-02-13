@@ -1218,8 +1218,10 @@ static const char *user_certify (WIN_t *q, const char *str, char typ) {
    uid_t num;
 
    q->usrseltyp = 0;
+   q->usrselflg = 1;
    Monpidsidx = 0;
    if (*str) {
+      if ('!' == *str) { ++str; q->usrselflg = 0; }
       num = (uid_t)strtoul(str, &endp, 0);
       if ('\0' == *endp) {
          pwd = getpwuid(num);
@@ -1247,19 +1249,19 @@ static const char *user_certify (WIN_t *q, const char *str, char typ) {
 static inline int user_matched (WIN_t *q, const proc_t *p) {
    switch(q->usrseltyp) {
       case 0:                                    // uid selection inactive
-         return 1;
+         return q->usrselflg;
       case 'U':                                  // match any uid
-         if (p->ruid == q->usrseluid) return 1;
-         if (p->suid == q->usrseluid) return 1;
-         if (p->fuid == q->usrseluid) return 1;
+         if (p->ruid == q->usrseluid) return q->usrselflg;
+         if (p->suid == q->usrseluid) return q->usrselflg;
+         if (p->fuid == q->usrseluid) return q->usrselflg;
       // fall through...
       case 'u':                                  // match effective uid
-         if (p->euid == q->usrseluid) return 1;
+         if (p->euid == q->usrseluid) return q->usrselflg;
       // fall through...
-      default:                                   // no match, don't display
+      default:                                   // no match...
          ;
    }
-   return 0;
+   return !q->usrselflg;
 } // end: user_matched
 
 /*######  Basic Formatting support  ######################################*/
