@@ -110,12 +110,12 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 		" -G, --group <gid,...>     match real group IDs\n"
 		" -n, --newest              select most recently started\n"
 		" -o, --oldest              select least recently started\n"
-		" -P, --parent <ppid,...>   match only childs of given parent\n"
+		" -P, --parent <ppid,...>   match only child processes of the given parent\n"
 		" -s, --session <sid,...>   match session IDs\n"
 		" -t, --terminal <tty,...>  match by controlling terminal\n"
 		" -u, --euid <id,...>       match by effective IDs\n"
 		" -U, --uid <id,...>        match by real IDs\n"
-		" -x, --exact               match exectly with command name\n"
+		" -x, --exact               match exactly with the command name\n"
 		" -F, --pidfile <file>      read PIDs from file\n"
 		" -L, --logpidfile          fail if PID file is not locked\n"), fp);
 	fputs(USAGE_SEPARATOR, fp);

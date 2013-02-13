@@ -14,7 +14,7 @@ pgrep, pkill \- look up or signal processes based on name and other attributes
 .SH DESCRIPTION
 .B pgrep
 looks through the currently running processes and lists the process IDs which
-matches the selection criteria to stdout.  All the criteria have to match.
+match the selection criteria to stdout.  All the criteria have to match.
 For example,
 .IP
 $ pgrep \-u root sshd
@@ -116,12 +116,14 @@ Only match processes whose real user ID is listed.  Either the numerical or
 symbolical value may be used.
 .TP
 \fB\-v\fR, \fB\-\-inverse\fR\fR
-Negates the matching.  This option usually used in pgrep context.  In
-.B pkill
+Negates the matching.  This option is usually used in 
+.BR pgrep 's 
+context.  In
+.BR pkill 's
 context the short option is disabled to avoid accidental usage of the option.
 .TP
 \fB\-x\fR, \fB\-\-exact\fR\fR
-Only match processes whose name (or command line if \-f is specified)
+Only match processes whose names (or command line if \-f is specified)
 .B exactly
 match the
 .IR pattern .
