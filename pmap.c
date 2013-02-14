@@ -334,7 +334,7 @@ loop_end:
 					printf(fmt_str, listnode->description);
 				}
 
-				if (has_vmflags) {
+				if (has_vmflags && X_option > 1) {
 					sprintf(fmt_str, " %%%ds", maxwv);
 					printf(fmt_str, "VmFlags");
 				}
@@ -352,7 +352,7 @@ loop_end:
 				printf(fmt_str, listnode->value_str);
 			}
 
-			if (has_vmflags) {
+			if (has_vmflags && X_option > 1) {
 				sprintf(fmt_str, " %%%ds", maxwv);
 				printf(fmt_str, vmflags);
 			}
@@ -709,7 +709,7 @@ int main(int argc, char **argv)
 	    x_option && (d_option || X_option))
 		xerrx(EXIT_FAILURE, _("options -d, -x, -X are mutually exclusive"));
 
-	pidlist = xmalloc(sizeof(pid_t) * argc);
+	pidlist = xmalloc(sizeof(pid_t) * (argc+1));
 
 	while (*argv) {
 		char *walk = *argv++;
