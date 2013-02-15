@@ -90,7 +90,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "January 2013" "procps-ng" "User Commands"
+.TH TOP 1 "February 2013" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -208,6 +208,15 @@ Insert this command after \*(We has been suspended but before resuming it.
        reset    restore your \fBterminal settings\fR
 .Ed
 
+\*(NT the width of \*(We's display will be limited to \*(WX positions.
+Displaying all fields requires \*(WF characters.
+Remaining screen width is usually allocated to any variable width columns
+currently visible.
+The variable width columns, such as COMMAND, are noted in topic
+3a. DESCRIPTIONS of Fields.
+Actual output width may also be influenced by the \-w switch, which is
+discussed in topic 1. COMMAND\-LINE Options.
+
 Lastly, some of \*(We's screens or functions require the use of cursor
 motion keys like the standard \*(KAs plus the Home, End, PgUp and PgDn keys.
 If your terminal or emulator does not provide those keys, the following
@@ -224,14 +233,20 @@ combinations are accepted as alternatives:
        End      alt +\fB Right\fR  or  alt + ctrl +\fB l \fR
 .Ed
 
-\*(NT the width of \*(We's display will be limited to \*(WX positions.
-Displaying all fields requires \*(WF characters.
-Remaining screen width is usually allocated to any variable width columns
-currently visible.
-The variable width columns, such as COMMAND, are noted in topic
-3a. DESCRIPTIONS of Fields.
-Actual output width may also be influenced by the \-w switch, which is
-discussed in topic 1. COMMAND\-LINE Options.
+The \fBUp\fR and \fBDown\fR \*(KAs have special significance when prompted
+for line input terminated with the <Enter> key.
+Those keys, or their aliases, can be used to retrieve previous input lines
+which can then be edited and re-input.
+And there are four additional keys available with line oriented input.
+.Bd -literal -compact
+      \fI key      special-significance \fR
+       Up       recall \fBolder\fR strings for re-editing
+       Down     recall \fBnewer\fR strings or \fBerase\fR entire line
+       Insert   toggle between \fBinsert\fR and \fBovertype\fR modes
+       Delete   character \fBremoved\fR at cursor, moving others left
+       Home     jump to \fBbeginning\fR of input line
+       End      jump to \fBend\fR of input line
+.Ed
 
 .\" ......................................................................
 .SS Startup Defaults

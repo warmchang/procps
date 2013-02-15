@@ -1073,8 +1073,10 @@ static char *ioline (const char *prompt) {
          * Get line oriented interactive input from the user,
          * going way beyond native tty support by providing:
          * . true line editing, not just destructive backspace
-         * . an input limit sensitive to current screen dimensions */
+         * . an input limit sensitive to current screen dimensions
+         * . ability to recall prior strings for re-input/re-editing */
 static char *ioline (const char *prompt) {
+ #define savMAX  50
     // thank goodness memmove allows the two strings to overlap
  #define sqzSTR  { memmove(&buf[pos], &buf[pos+1], bufMAX-pos); \
        buf[sizeof(buf)-1] = '\0'; }
@@ -1084,8 +1086,19 @@ static char *ioline (const char *prompt) {
  #define phyCOL  (beg+pos+1)
  #define bufMAX  ((int)sizeof(buf)-2)  // -1 for '\0' string delimeter
    static char buf[MEDBUFSIZ+1];       // +1 for '\0' string delimeter
-   int beg, pos, len, key, ovt;
+   int beg, pos, len, key, ovt, i;
+   struct lin_s {
+      struct lin_s *bkw;               // ptr to older saved strs
+      struct lin_s *fwd;               // ptr to newer saved strs
+      char *str;                       // the saved string
+   };
+   static struct lin_s *anchor, *plin;
 
+   if (!anchor) {
+      anchor = alloc_c(sizeof(struct lin_s));
+      anchor->str = alloc_s("");       // top-of-stack == empty str
+   }
+   plin = anchor;
    pos = ovt = 0;
    beg = show_pmt(prompt);
    memset(buf, '\0', sizeof(buf));
@@ -1122,6 +1135,18 @@ static char *ioline (const char *prompt) {
          case kbd_END:
             pos = len;
             break;
+         case kbd_UP:
+            if (plin->bkw) {
+               plin = plin->bkw;
+               memset(buf, '\0', sizeof(buf));
+               pos = snprintf(buf, sizeof(buf), "%s", plin->str);
+            }
+            break;
+         case kbd_DOWN:
+            memset(buf, '\0', sizeof(buf));
+            if (plin->fwd) plin = plin->fwd;
+            pos = snprintf(buf, sizeof(buf), "%s", plin->str);
+            break;
          default:                      // what we REALLY wanted (maybe)
             if (isprint(key) && logCOL < bufMAX && phyCOL < Screen_cols) {
                if (!ovt) expSTR
@@ -1133,7 +1158,27 @@ static char *ioline (const char *prompt) {
       putp(tg2(beg+pos, Msg_row));
    } while (key != kbd_ENTER && key != kbd_ESC);
 
-   return buf;
+   // weed out duplicates, including empty strings (top-of-stack)...
+   for (i = 0, plin = anchor; ; i++) {
+      if (!STRCMP(plin->str, buf)) return buf;
+      if (!plin->bkw) break;           // let i equal total stacked strings
+      plin = plin->bkw;                // ( with plin representing bottom )
+   }
+   if (i < savMAX)
+      plin = alloc_c(sizeof(struct lin_s));
+   else {                              // when a new string causes overflow
+      plin->fwd->bkw = NULL;           // make next-to-last string new last
+      free(plin->str);                 // and toss copy but keep the struct
+   }
+   plin->str = alloc_s(buf);           // copy user's new unique input line
+   plin->bkw = anchor->bkw;            // keep empty string as top-of-stack
+   if (plin->bkw)                      // did we have some already stacked?
+      plin->bkw->fwd = plin;           // yep, so point prior to new string
+   plin->fwd = anchor;                 // and prepare to be a second banana
+   anchor->bkw = plin;                 // by sliding it in as new number 2!
+
+   return buf;                         // protect our copy, return original
+ #undef savMAX
  #undef sqzSTR
  #undef expSTR
  #undef logCOL

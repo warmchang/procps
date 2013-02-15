@@ -600,6 +600,9 @@ typedef struct WIN_t {
 #if (LRGBUFSIZ < SCREENMAX)
 # error 'LRGBUFSIZ' must NOT be less than 'SCREENMAX'
 #endif
+#if defined(TERMIOS_ONLY)
+# warning 'TERMIOS_ONLY' disables input recall and makes man doc incorrect
+#endif
 
 
 /*######  Some Prototypes (ha!)  #########################################*/
