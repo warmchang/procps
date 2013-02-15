@@ -62,7 +62,7 @@
         /* The original and new terminal definitions
            (only set when not in 'Batch' mode) */
 static struct termios Tty_original,    // our inherited terminal definition
-#ifndef TERMIO_PROXY
+#ifdef TERMIOS_ONLY
                       Tty_tweaked,     // for interactive 'line' input
 #endif
                       Tty_raw;         // for unsolicited input
@@ -718,14 +718,14 @@ static int show_pmt (const char *str) {
    PUTT("%s%s%.*s %s%s%s"
       , tg2(0, Msg_row)
       , Curwin->capclr_pmt
-      , Screen_cols - 3
+      , Screen_cols - 2
       , str
       , Cap_curs_huge
       , Caps_off
       , Cap_clr_eol);
    fflush(stdout);
-   // +2 for the ': ' chars we added or -1 for the cursor...
-   return ((rc = (int)strlen(str)+2) < Screen_cols) ? rc : Screen_cols-1;
+   // +1 for the space we added or -1 for the cursor...
+   return ((rc = (int)strlen(str)+1) < Screen_cols) ? rc : Screen_cols-1;
 } // end: show_pmt
 
 
@@ -927,7 +927,7 @@ static inline int ioa (struct timespec *ts) {
 static int ioch (int ech, char *buf, unsigned cnt) {
    int rc = -1;
 
-#ifndef TERMIO_PROXY
+#ifdef TERMIOS_ONLY
    if (ech) {
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_tweaked);
       rc = read(STDIN_FILENO, buf, cnt);
@@ -954,10 +954,11 @@ static int ioch (int ech, char *buf, unsigned cnt) {
 
 
         /*
-         * Support for single keystroke input AND escaped cursor motion keys
+         * Support for single or multiple keystroke input AND
+         * escaped cursor motion keys.
          * note: we support more keys than we currently need, in case
          *       we attract new consumers in the future */
-static int iokey (int init) {
+static int iokey (int action) {
    static char buf12[CAPBUFSIZ], buf13[CAPBUFSIZ]
       , buf14[CAPBUFSIZ], buf15[CAPBUFSIZ];
    static struct {
@@ -980,10 +981,16 @@ static int iokey (int init) {
       { "\033\013", kbd_PGUP  }, { "\033\012", kbd_PGDN  }, /* ctrl+meta+ k,j */
       { "\033\010", kbd_HOME  }, { "\033\014", kbd_END   }  /* ctrl+meta+ h,l */
    };
+#ifdef TERMIOS_ONLY
    char buf[SMLBUFSIZ], *pb;
+#else
+   static char buf[SMLBUFSIZ];
+   static int pos, len;
+   char *pb;
+#endif
    int i;
 
-   if (init) {
+   if (action == 0) {
     #define tOk(s)  s ? s : ""
       tinfo_tab[1].str  = tOk(key_up);
       tinfo_tab[2].str  = tOk(key_down);
@@ -1007,8 +1014,25 @@ static int iokey (int init) {
     #undef tOk
    }
 
-   memset(buf, '\0', sizeof(buf));
-   if (1 > ioch(0, buf, sizeof(buf)-1)) return 0;
+   if (action == 1) {
+      memset(buf, '\0', sizeof(buf));
+      if (1 > ioch(0, buf, sizeof(buf)-1)) return 0;
+   }
+
+#ifndef TERMIOS_ONLY
+   if (action == 2) {
+      if (pos < len)
+         return buf[pos++];            // exhaust prior keystrokes
+      pos = len = 0;
+      memset(buf, '\0', sizeof(buf));
+      if (1 > ioch(0, buf, sizeof(buf)-1)) return 0;
+      if (isprint(buf[0])) {           // no need for translation
+         len = strlen(buf);
+         pos = 1;
+         return buf[0];
+      }
+   }
+#endif
 
    /* some emulators implement 'key repeat' too well and we get duplicate
       key sequences -- so we'll focus on the last escaped sequence, while
@@ -1026,7 +1050,7 @@ static int iokey (int init) {
 } // end: iokey
 
 
-#ifndef TERMIO_PROXY
+#ifdef TERMIOS_ONLY
         /*
          * Get line oriented interactive input from the user,
          * using native tty support */
@@ -1047,13 +1071,9 @@ static char *ioline (const char *prompt) {
 #else
         /*
          * Get line oriented interactive input from the user,
-         * going way beyond native tty support !
-         * Unlike native tty input support, this function provides:
+         * going way beyond native tty support by providing:
          * . true line editing, not just destructive backspace
-         * . an input limit that's sensitive to current screen dimensions
-         * . immediate signal response without the need to wait for '\n'
-         * However, the user will lose the ability to paste keystrokes
-         * when this function is chosen over the smaller alternative above! */
+         * . an input limit sensitive to current screen dimensions */
 static char *ioline (const char *prompt) {
     // thank goodness memmove allows the two strings to overlap
  #define sqzSTR  { memmove(&buf[pos], &buf[pos+1], bufMAX-pos); \
@@ -1064,30 +1084,31 @@ static char *ioline (const char *prompt) {
  #define phyCOL  (beg+pos+1)
  #define bufMAX  ((int)sizeof(buf)-2)  // -1 for '\0' string delimeter
    static char buf[MEDBUFSIZ+1];       // +1 for '\0' string delimeter
-   int beg, pos, len;
-   int key;
+   int beg, pos, len, key, ovt;
 
-   pos = 0;
+   pos = ovt = 0;
    beg = show_pmt(prompt);
    memset(buf, '\0', sizeof(buf));
+   putp(Cap_curs_norm);
+
    do {
+      fflush(stdout);
       len = strlen(buf);
-      key = iokey(0);
+      key = iokey(2);
       switch (key) {
          case kbd_ESC:
             buf[0] = '\0';             // fall through !
          case kbd_ENTER:
             break;
+         case kbd_INS:
+            ovt = !ovt;
+            putp(ovt ? Cap_curs_huge : Cap_curs_norm);
+            break;
          case kbd_DEL:
-         case kbd_DOWN:
             sqzSTR
             break;
          case kbd_BKSP :
             if (0 < pos) { --pos; sqzSTR }
-            break;
-         case kbd_INS:
-         case kbd_UP:
-            expSTR
             break;
          case kbd_LEFT:
             if (0 < pos) --pos;
@@ -1102,13 +1123,14 @@ static char *ioline (const char *prompt) {
             pos = len;
             break;
          default:                      // what we REALLY wanted (maybe)
-            if (isprint(key) && logCOL < bufMAX && phyCOL < Screen_cols)
+            if (isprint(key) && logCOL < bufMAX && phyCOL < Screen_cols) {
+               if (!ovt) expSTR
                buf[pos++] = key;
+            }
             break;
       }
       putp(fmtmk("%s%s%s", tg2(beg, Msg_row), Cap_clr_eol, buf));
       putp(tg2(beg+pos, Msg_row));
-      fflush(stdout);
    } while (key != kbd_ENTER && key != kbd_ESC);
 
    return buf;
@@ -1954,7 +1976,7 @@ signify_that:
       fflush(stdout);
 
       if (Frames_resize) goto signify_that;
-      key = iokey(0);
+      key = iokey(1);
       if (key < 1) goto signify_that;
 
       switch (key) {
@@ -2813,7 +2835,7 @@ signify_that:
       tcflush(STDIN_FILENO, TCIFLUSH);
 
       if (Frames_resize) goto signify_that;
-      key = iokey(0);
+      key = iokey(1);
       if (key < 1) goto signify_that;
 
       switch (key) {
@@ -2862,7 +2884,7 @@ signify_that:
          case '=':
             snprintf(buf, sizeof(buf), "%s: %s", Insp_sel->type, Insp_sel->fmts);
             INSP_MKSL(1, buf);    // show an extended SL
-            if (iokey(0) < 1)
+            if (iokey(1) < 1)
                goto signify_that;
             break;
          default:                 // keep gcc happy
@@ -2918,7 +2940,7 @@ signify_that:
       INSP_MKSL(0, " ");
 
       if (Frames_resize) goto signify_that;
-      if (key == INT_MAX) key = iokey(0);
+      if (key == INT_MAX) key = iokey(1);
       if (key < 1) goto signify_that;
 
       switch (key) {
@@ -3494,7 +3516,7 @@ static void whack_terminal (void) {
    tmptty.c_iflag &= ~IGNBRK;
    if (key_backspace && 1 == strlen(key_backspace))
       tmptty.c_cc[VERASE] = *key_backspace;
-#ifndef TERMIO_PROXY
+#ifdef TERMIOS_ONLY
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &tmptty))
       error_exit(fmtmk(N_fmt(FAIL_tty_set_fmt), strerror(errno)));
    tcgetattr(STDIN_FILENO, &Tty_tweaked);
@@ -3514,7 +3536,7 @@ static void whack_terminal (void) {
    // this has the effect of disabling any troublesome scrollback buffer...
    if (enter_ca_mode) putp(enter_ca_mode);
    // and don't forget to ask iokey to initialize his tinfo_tab
-   iokey(1);
+   iokey(0);
 } // end: whack_terminal
 
 /*######  Windows/Field Groups support  #################################*/
@@ -3539,7 +3561,7 @@ static WIN_t *win_select (int ch) {
       so we must try to get our own darn ch by begging the user... */
    if (!ch) {
       show_pmt(N_txt(CHOOSE_group_txt));
-      if (1 > (ch = iokey(0))) return w;
+      if (1 > (ch = iokey(1))) return w;
    }
    switch (ch) {
       case 'a':                         // we don't carry 'a' / 'w' in our
@@ -3628,7 +3650,7 @@ signify_that:
       fflush(stdout);
 
       if (Frames_resize) goto signify_that;
-      key = iokey(0);
+      key = iokey(1);
       if (key < 1) goto signify_that;
 
       switch (key) {
@@ -3795,7 +3817,7 @@ static void file_writerc (void) {
 
    if (Rc_questions) {
       show_pmt(N_txt(XTRA_warncfg_txt));
-      if ('y' != tolower(iokey(0)))
+      if ('y' != tolower(iokey(1)))
          return;
       Rc_questions = 0;
    }
@@ -3909,7 +3931,7 @@ signify_that:
    fflush(stdout);
 
    if (Frames_resize) goto signify_that;
-   key = iokey(0);
+   key = iokey(1);
    if (key < 1) goto signify_that;
 
    switch (key) {
@@ -3924,7 +3946,7 @@ signify_that:
                , Winstk[2].rc.winname, Winstk[3].rc.winname));
             putp(Cap_clr_eos);
             fflush(stdout);
-            if (Frames_resize || (key = iokey(0)) < 1) {
+            if (Frames_resize || (key = iokey(1)) < 1) {
                adj_geometry();
                putp(Cap_clr_scr);
             } else w = win_select(key);
@@ -5130,7 +5152,7 @@ int main (int dont_care_argc, char **argv) {
          pselect(0, NULL, NULL, NULL, &ts, NULL);
       else {
          if (ioa(&ts))
-            do_key(iokey(0));
+            do_key(iokey(1));
       }
            /* note: that above ioa routine exists to consolidate all logic
                     which is susceptible to signal interrupt and must then

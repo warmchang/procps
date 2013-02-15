@@ -48,7 +48,7 @@
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
 //#define SCROLLVAR_NO            /* disable intra-column horizontal scroll  */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
-//#define TERMIO_PROXY            /* true line editing, beyond native input  */
+//#define TERMIOS_ONLY            /* just limp along with native input only  */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 //#define VALIDATE_NLS            /* validate the integrity of all nls tbls  */
@@ -140,18 +140,18 @@ char *strcasestr(const char *haystack, const char *needle);
    // support for keyboard stuff (cursor motion keystrokes, mostly)
 #define kbd_ESC    '\033'
 #define kbd_SPACE  ' '
-#define kbd_UP     0x01
-#define kbd_DOWN   0x02
-#define kbd_RIGHT  0x03
-#define kbd_LEFT   0x04
-#define kbd_PGUP   0x05
-#define kbd_PGDN   0x06
-#define kbd_END    0x07
-#define kbd_HOME   0x08
-#define kbd_BKSP   0x09
-#define kbd_ENTER  0x0a      // this is also the real ^J
-#define kbd_INS    0x0b
-#define kbd_DEL    0x0c
+#define kbd_ENTER  128
+#define kbd_UP     129
+#define kbd_DOWN   130
+#define kbd_LEFT   131
+#define kbd_RIGHT  132
+#define kbd_PGUP   133
+#define kbd_PGDN   134
+#define kbd_HOME   135
+#define kbd_END    136
+#define kbd_BKSP   137
+#define kbd_INS    138
+#define kbd_DEL    139
 
         /* Special value in Pseudo_row to force an additional procs refresh
            -- used at startup and for task/thread mode transitions */
@@ -635,7 +635,7 @@ typedef struct WIN_t {
 //atic char         *alloc_s (const char *str);
 //atic inline int    ioa (struct timespec *ts);
 //atic int           ioch (int ech, char *buf, unsigned cnt);
-//atic int           iokey (int init);
+//atic int           iokey (int action);
 //atic char         *ioline (const char *prompt);
 //atic int           readfile (FILE *fp, char **baddr, size_t *bsize, size_t *bread);
 /*------  Small Utility routines  ----------------------------------------*/
