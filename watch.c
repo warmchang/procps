@@ -590,7 +590,9 @@ int main(int argc, char *argv[])
 		{0, 0, 0, 0}
 	};
 
+#ifdef HAVE_PROGRAM_INVOCATION_NAME
 	program_invocation_name = program_invocation_short_name;
+#endif
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);

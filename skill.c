@@ -629,7 +629,9 @@ static void skillsnice_parse(int argc,
 /* main body */
 int main(int argc, char ** argv)
 {
-    program_invocation_name = program_invocation_short_name;
+#ifdef HAVE_PROGRAM_INVOCATION_NAME
+	program_invocation_name = program_invocation_short_name;
+#endif
 	struct run_time_conf_t run_time;
 	memset(&run_time, 0, sizeof(struct run_time_conf_t));
 	my_pid = getpid();

@@ -832,7 +832,9 @@ int main (int argc, char **argv)
 	struct el *procs;
 	int num;
 
+#ifdef HAVE_PROGRAM_INVOCATION_NAME
 	program_invocation_name = program_invocation_short_name;
+#endif
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
