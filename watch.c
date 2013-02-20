@@ -31,7 +31,6 @@
 #include "config.h"
 #include "fileutils.h"
 #include "nls.h"
-#include "proc/procps.h"
 #include "strutils.h"
 #include "xalloc.h"
 #include <ctype.h>
