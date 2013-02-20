@@ -1,5 +1,7 @@
 #include <errno.h>
-#include <error.h>
+#ifdef HAVE_ERROR_H
+# include <error.h>
+#endif
 #ifdef HAVE_STDIO_EXT_H
 # include <stdio_ext.h>
 #else
@@ -12,6 +14,9 @@
 
 #include "nls.h"
 #include "fileutils.h"
+#ifndef HAVE_ERROR_H
+# include "c.h" /* for error() emulation */
+#endif
 
 int close_stream(FILE * stream)
 {

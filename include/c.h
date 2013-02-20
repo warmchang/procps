@@ -16,7 +16,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#ifdef HAVE_ERROR_H
 #include <error.h>
+#else
+#include <stdarg.h>
+#endif
 
 /*
  * Compiler specific stuff
@@ -103,6 +107,23 @@ static inline char *prog_inv_sh_nm_from_file(char *f, char stripext)
 /*
  * Error printing.
  */
+#ifndef HAVE_ERROR_H
+/* Emulate the error() function from glibc */
+__attribute__((__format__(__printf__, 3, 4)))
+static void error(int status, int errnum, const char *format, ...)
+{
+        va_list argp;
+        fprintf(stderr, "%s: ", program_invocation_short_name);
+        va_start(argp, format);
+        vfprintf(stderr, format, argp);
+        va_end(argp);
+        if (errnum != 0)
+                fprintf(stderr, ": error code %d", errnum);
+        fprintf(stderr, "\n");
+        if (status != 0)
+                exit(status);
+}
+#endif
 #define xwarn(...) error(0, errno, __VA_ARGS__)
 #define xwarnx(...) error(0, 0, __VA_ARGS__)
 #define xerr(STATUS, ...) error(STATUS, errno, __VA_ARGS__)
