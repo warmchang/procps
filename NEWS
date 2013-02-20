@@ -1,3 +1,14 @@
+procps-ng-3.3.7
+---------------
+
+  * top preserves user input for later recall and edit
+  * top provides true input editing vs. just backspace
+  * top user filtering with exclusion - Debian #682086
+  * top field management resize errors no longer fatal
+  * top is more responsive to window resize (SIGWINCH)
+  * top will now preserve user's context when signaled
+
+
 procps-ng-3.3.6
 ---------------
 
