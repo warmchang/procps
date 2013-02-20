@@ -1,6 +1,12 @@
 #include <errno.h>
 #include <error.h>
-#include <stdio_ext.h>
+#ifdef HAVE_STDIO_EXT_H
+# include <stdio_ext.h>
+#else
+/* FIXME: use a more portable definition of __fpending() (from gnulib?) */
+# include <stdio.h>
+# define __fpending(fp) ((fp)->_p - (fp)->_bf._base)
+#endif
 #include <stdlib.h>
 #include <unistd.h>
 
