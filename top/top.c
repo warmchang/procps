@@ -1316,7 +1316,7 @@ static const char *user_certify (WIN_t *q, const char *str, char typ) {
 static inline int user_matched (WIN_t *q, const proc_t *p) {
    switch(q->usrseltyp) {
       case 0:                                    // uid selection inactive
-         return q->usrselflg;
+         return 1;
       case 'U':                                  // match any uid
          if (p->ruid == q->usrseluid) return q->usrselflg;
          if (p->suid == q->usrseluid) return q->usrselflg;
