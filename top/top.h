@@ -45,6 +45,7 @@
 //#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
+//#define RECALL_FIXED            /* don't reorder saved strings if recalled */
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
 //#define SCROLLVAR_NO            /* disable intra-column horizontal scroll  */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
@@ -596,6 +597,9 @@ typedef struct WIN_t {
         /* just sanity check(s)... */
 #if defined(ATEOJ_RPTHSH) && defined(OFF_HST_HASH)
 # error 'ATEOJ_RPTHSH' conflicts with 'OFF_HST_HASH'
+#endif
+#if defined(RECALL_FIXED) && defined(TERMIOS_ONLY)
+# error 'RECALL_FIXED' conflicts with 'TERMIOS_ONLY'
 #endif
 #if (LRGBUFSIZ < SCREENMAX)
 # error 'LRGBUFSIZ' must NOT be less than 'SCREENMAX'

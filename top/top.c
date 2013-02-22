@@ -1161,7 +1161,23 @@ static char *ioline (const char *prompt) {
 
    // weed out duplicates, including empty strings (top-of-stack)...
    for (i = 0, plin = anchor; ; i++) {
-      if (!STRCMP(plin->str, buf)) return buf;
+#ifdef RECALL_FIXED
+      if (!STRCMP(plin->str, buf))     // if matched, retain original order
+         return buf;
+#else
+      if (!STRCMP(plin->str, buf)) {   // if matched, rearrange stack order
+         if (i > 1) {                  // but not null str or if already #2
+            if (plin->bkw)             // splice around this matched string
+               plin->bkw->fwd = plin->fwd; // if older exists link to newer
+            plin->fwd->bkw = plin->bkw;    // newer linked to older or NULL
+            anchor->bkw->fwd = plin;   // stick matched on top of former #2
+            plin->bkw = anchor->bkw;   // keep empty string at top-of-stack
+            plin->fwd = anchor;        // then prepare to be the 2nd banana
+            anchor->bkw = plin;        // by sliding us in below the anchor
+         }
+         return buf;
+      }
+#endif
       if (!plin->bkw) break;           // let i equal total stacked strings
       plin = plin->bkw;                // ( with plin representing bottom )
    }
