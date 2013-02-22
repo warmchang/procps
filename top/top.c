@@ -1109,6 +1109,7 @@ static char *ioline (const char *prompt) {
       len = strlen(buf);
       key = iokey(2);
       switch (key) {
+         case 0:
          case kbd_ESC:
             buf[0] = '\0';             // fall through !
          case kbd_ENTER:
@@ -1156,7 +1157,7 @@ static char *ioline (const char *prompt) {
       }
       putp(fmtmk("%s%s%s", tg2(beg, Msg_row), Cap_clr_eol, buf));
       putp(tg2(beg+pos, Msg_row));
-   } while (key != kbd_ENTER && key != kbd_ESC);
+   } while (key && key != kbd_ENTER && key != kbd_ESC);
 
    // weed out duplicates, including empty strings (top-of-stack)...
    for (i = 0, plin = anchor; ; i++) {
