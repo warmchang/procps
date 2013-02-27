@@ -1086,7 +1086,8 @@ static char *ioline (const char *prompt) {
  #define phyCOL  (beg+pos+1)
  #define bufMAX  ((int)sizeof(buf)-2)  // -1 for '\0' string delimeter
    static char buf[MEDBUFSIZ+1];       // +1 for '\0' string delimeter
-   int beg, pos, len, key, ovt, i;
+   static int ovt;
+   int beg, pos, len, key, i;
    struct lin_s {
       struct lin_s *bkw;               // ptr to older saved strs
       struct lin_s *fwd;               // ptr to newer saved strs
@@ -1099,10 +1100,10 @@ static char *ioline (const char *prompt) {
       anchor->str = alloc_s("");       // top-of-stack == empty str
    }
    plin = anchor;
-   pos = ovt = 0;
+   pos = 0;
    beg = show_pmt(prompt);
    memset(buf, '\0', sizeof(buf));
-   putp(Cap_curs_norm);
+   putp(ovt ? Cap_curs_huge : Cap_curs_norm);
 
    do {
       fflush(stdout);
