@@ -4170,7 +4170,7 @@ static void keys_task (int ch) {
       case 'n':
          if (VIZCHKw(w)) {
             int num = get_int(fmtmk(N_fmt(GET_max_task_fmt), w->rc.maxtasks));
-            if (INT_MIN < num) {
+            if (GET_INTNONE < num) {
                if (-1 < num ) w->rc.maxtasks = num;
                else show_msg(N_txt(BAD_max_task_txt));
             }
