@@ -701,6 +701,7 @@ typedef struct WIN_t {
 //atic void          whack_terminal (void);
 /*------  Windows/Field Groups support  ----------------------------------*/
 //atic void          win_names (WIN_t *q, const char *name);
+//atic void          win_reset (WIN_t *q);
 //atic WIN_t        *win_select (int ch);
 //atic int           win_warn (int what);
 //atic void          wins_clrhlp (WIN_t *q, int save);

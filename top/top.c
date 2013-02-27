@@ -3616,6 +3616,20 @@ static void win_names (WIN_t *q, const char *name) {
 
 
         /*
+         * This guy just resets (normalizes) a single window
+         * and he ensures pid monitoring is no longer active. */
+static void win_reset (WIN_t *q) {
+         SETw(q, Show_IDLEPS | Show_TASKON);
+#ifndef SCROLLVAR_NO
+         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->varcolbeg = 0;
+#else
+         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = 0;
+#endif
+         Monpidsidx = 0;
+} // end: win_reset
+
+
+        /*
          * Display a window/field group (ie. make it "current"). */
 static WIN_t *win_select (int ch) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
@@ -3791,15 +3805,9 @@ static void wins_reflag (int what, int flg) {
       }
          /* a flag with special significance -- user wants to rebalance
             display so we gotta' off some stuff then force on two flags... */
-      if (EQUWINS_xxx == flg) {
-#ifndef SCROLLVAR_NO
-         w->rc.maxtasks = w->usrseltyp = w->begpflg = w->begtask = w->varcolbeg = 0;
-#else
-         w->rc.maxtasks = w->usrseltyp = w->begpflg = w->begtask = 0;
-#endif
-         Monpidsidx = 0;
-         SETw(w, Show_IDLEPS | Show_TASKON);
-      }
+      if (EQUWINS_xxx == flg)
+         win_reset(w);
+
       w = w->next;
    } while (w != Curwin);
 } // end: wins_reflag
@@ -4325,13 +4333,7 @@ static void keys_window (int ch) {
          if (ALTCHKw) TOGw(w, Show_TASKON);
          break;
       case '=':
-         SETw(w, Show_IDLEPS | Show_TASKON);
-#ifndef SCROLLVAR_NO
-         w->rc.maxtasks = w->usrseltyp = w->begpflg = w->begtask = w->varcolbeg = 0;
-#else
-         w->rc.maxtasks = w->usrseltyp = w->begpflg = w->begtask = 0;
-#endif
-         Monpidsidx = 0;
+         win_reset(w);
          break;
       case '_':
          if (ALTCHKw) wins_reflag(Flags_TOG, Show_TASKON);
