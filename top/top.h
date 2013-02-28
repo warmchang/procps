@@ -185,6 +185,7 @@ enum pflag {
 #endif
    P_ENV,
    P_FV1, P_FV2,
+   P_USE,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
    P_MAXPFLGS
@@ -461,6 +462,11 @@ typedef struct WIN_t {
    static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
       if ( (*P)->n < (*Q)->n ) return SORT_lt; \
       if ( (*P)->n > (*Q)->n ) return SORT_gt; \
+      return SORT_eq; }
+#define SCB_NUM2(f,n1,n2) \
+   static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
+      if ( ((*P)->n1+(*P)->n2) < ((*Q)->n1+(*Q)->n2) ) return SORT_lt; \
+      if ( ((*P)->n1+(*P)->n2) > ((*Q)->n1+(*Q)->n2) ) return SORT_gt; \
       return SORT_eq; }
 #define SCB_NUMx(f,n) \
    static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \

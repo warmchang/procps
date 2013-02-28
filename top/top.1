@@ -785,17 +785,22 @@ you'll see '?' displayed.
 The\fI effective\fR user ID of the task's owner.
 
 .TP 4
-34.\fB USER \*(Em User Name \fR
+34.\fB USED \*(Em Memory in Use (KiB) \fR
+This field represents the non-swapped \*(MP a task has used (RES) plus
+the non-resident portion of its address space (SWAP).
+
+.TP 4
+35.\fB USER \*(Em User Name \fR
 The\fI effective\fR user name of the task's owner.
 
 .TP 4
-35.\fB VIRT \*(Em Virtual Memory Size (KiB) \fR
+36.\fB VIRT \*(Em Virtual Memory Size (KiB) \fR
 The total amount of \*(MV used by the task.
 It includes all code, data and shared libraries plus pages that have been
 swapped out and pages that have been mapped but not used.
 
 .TP 4
-36.\fB WCHAN \*(Em Sleeping in Function \fR
+37.\fB WCHAN \*(Em Sleeping in Function \fR
 Depending on the availability of the kernel link map ('System.map'), this
 field will show the name or the address of the kernel function in which the
 task is currently sleeping.
@@ -807,14 +812,14 @@ Should that occur, your only means of reducing that overhead will be to stop
 and restart \*(We.
 
 .TP 4
-37.\fB nDRT \*(Em Dirty Pages Count \fR
+38.\fB nDRT \*(Em Dirty Pages Count \fR
 The number of pages that have been modified since they were last
 written to \*(AS.
 Dirty pages must be written to \*(AS before the corresponding physical
 memory location can be used for some other virtual page.
 
 .TP 4
-38.\fB nMaj \*(Em Major Page Fault Count \fR
+39.\fB nMaj \*(Em Major Page Fault Count \fR
 The number of\fB major\fR page faults that have occurred for a task.
 A page fault occurs when a process attempts to read from or write to a
 virtual page that is not currently present in its address space.
@@ -822,7 +827,7 @@ A major page fault is when \*(AS access is involved in making that
 page available.
 
 .TP 4
-39.\fB nMin \*(Em Minor Page Fault count \fR
+40.\fB nMin \*(Em Minor Page Fault count \fR
 The number of\fB minor\fR page faults that have occurred for a task.
 A page fault occurs when a process attempts to read from or write to a
 virtual page that is not currently present in its address space.
@@ -830,16 +835,16 @@ A minor page fault does not involve \*(AS access in making that
 page available.
 
 .TP 4
-40.\fB nTH \*(Em Number of Threads \fR
+41.\fB nTH \*(Em Number of Threads \fR
 The number of threads associated with a process.
 
 .TP 4
-41.\fB vMj \*(Em Major Page Fault Count Delta\fR
+42.\fB vMj \*(Em Major Page Fault Count Delta\fR
 The number of\fB major\fR page faults that have occurred since the
 last update (see nMaj).
 
 .TP 4
-42.\fB vMn \*(Em Minor Page Fault Count Delta\fR
+43.\fB vMn \*(Em Minor Page Fault Count Delta\fR
 The number of\fB minor\fR page faults that have occurred since the
 last update (see nMin).
 

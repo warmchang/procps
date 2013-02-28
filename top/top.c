@@ -275,6 +275,7 @@ SCB_STRS(UEN, euser)
 SCB_NUMx(URD, ruid)
 SCB_STRS(URN, ruser)
 SCB_NUMx(USD, suid)
+SCB_NUM2(USE, resident, vm_swap)
 SCB_STRS(USN, suser)
 SCB_NUM1(VRT, size)
 SCB_NUM1(WCH, wchan)
@@ -1557,6 +1558,7 @@ end_justifies:
 #define L_OUSER    PROC_FILLSTATUS | PROC_FILLUSR
 #define L_EGROUP   PROC_FILLSTATUS | PROC_FILLGRP
 #define L_SUPGRP   PROC_FILLSTATUS | PROC_FILLSUPGRP
+#define L_USED     PROC_FILLSTATUS | PROC_FILLMEM
    // make 'none' non-zero (used to be important to Frames_libflags)
 #define L_NONE     PROC_SPARE_1
    // from either 'stat' or 'status' (preferred), via bits not otherwise used
@@ -1645,7 +1647,12 @@ static FLD_t Fieldstab[] = {
 #endif
    {    -1,     -1,  A_left,   SF(ENV),  L_ENVIRON },
    {     3,     -1,  A_right,  SF(FV1),  L_stat    },
-   {     3,     -1,  A_right,  SF(FV2),  L_stat    }
+   {     3,     -1,  A_right,  SF(FV2),  L_stat    },
+#ifndef NOBOOST_MEMS
+   {     6,  SK_Kb,  A_right,  SF(USE),  L_USED    }
+#else
+   {     4,  SK_Kb,  A_right,  SF(USE),  L_USED    }
+#endif
  #undef SF
  #undef A_left
  #undef A_right
@@ -2183,7 +2190,7 @@ static void zap_fieldstab (void) {
    Fieldstab[P_VRT].scale = Fieldstab[P_SWP].scale
       = Fieldstab[P_RES].scale = Fieldstab[P_COD].scale
       = Fieldstab[P_DAT].scale = Fieldstab[P_SHR].scale
-      = Rc.task_mscale;
+      = Fieldstab[P_USE].scale = Rc.task_mscale;
 
    // lastly, ensure we've got proper column headers...
    calibrate_fields();
@@ -4980,6 +4987,9 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             break;
          case P_USD:
             cp = make_num(p->suid, W, Jn, P_USD);
+            break;
+         case P_USE:
+            cp = scale_mem(S, (p->vm_swap + pages2K(p->resident)), W, Jn);
             break;
          case P_USN:
             cp = make_str(p->suser, W, Js, P_USN);

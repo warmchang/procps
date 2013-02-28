@@ -254,6 +254,9 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'vMn' = 3 */
    Head_nlstab[P_FV2] = _("vMn");
    Desc_nlstab[P_FV2] = _("Minor Faults delta");
+/* Translation Hint: maximum 'USED' = 4 */
+   Head_nlstab[P_USE] = _("USED");
+   Desc_nlstab[P_USE] = _("Res+Swap Size (KiB)");
 }
 
 
