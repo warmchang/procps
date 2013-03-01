@@ -966,7 +966,7 @@ static int iokey (int action) {
       const char *str;
       int key;
    } tinfo_tab[] = {
-      { "\n", kbd_ENTER    }, { NULL, kbd_UP       }, { NULL, kbd_DOWN     },
+      { "\033\n",kbd_ENTER }, { NULL, kbd_UP       }, { NULL, kbd_DOWN     },
       { NULL, kbd_LEFT     }, { NULL, kbd_RIGHT    }, { NULL, kbd_PGUP     },
       { NULL, kbd_PGDN     }, { NULL, kbd_HOME     }, { NULL, kbd_END      },
       { NULL, kbd_BKSP     }, { NULL, kbd_INS      }, { NULL, kbd_DEL      },
@@ -1115,7 +1115,7 @@ static char *ioline (const char *prompt) {
          case kbd_ESC:
             buf[0] = '\0';             // fall through !
          case kbd_ENTER:
-            break;
+            continue;
          case kbd_INS:
             ovt = !ovt;
             putp(ovt ? Cap_curs_huge : Cap_curs_norm);
@@ -1245,7 +1245,8 @@ static float get_float (const char *prompt) {
    char *line;
    float f;
 
-   if (!(*(line = ioline(prompt)))) return -1.0;
+   line = ioline(prompt);
+   if (!line[0] || Frames_resize) return -1.0;
    // note: we're not allowing negative floats
    if (strcspn(line, "+,.0123456789")) {
       show_msg(N_txt(BAD_numfloat_txt));
@@ -1265,7 +1266,9 @@ static int get_int (const char *prompt) {
    char *line;
    int n;
 
-   if (!(*(line = ioline(prompt)))) return GET_INTNONE;
+   line = ioline(prompt);
+   if (Frames_resize) return GET_INT_BAD;
+   if (!line[0]) return GET_INTNONE;
    // note: we've got to allow negative ints (renice)
    if (strcspn(line, "-+0123456789")) {
       show_msg(N_txt(BAD_integers_txt));
@@ -4097,6 +4100,7 @@ static void keys_global (int ch) {
                if (0 > pid) pid = def;
                str = ioline(fmtmk(N_fmt(GET_sigs_num_fmt), pid, SIGTERM));
                if (*str) sig = signal_name_to_number(str);
+               if (Frames_resize) break;
                if (0 < sig && kill(pid, sig))
                   show_msg(fmtmk(N_fmt(FAIL_signals_fmt)
                      , pid, sig, strerror(errno)));

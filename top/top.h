@@ -141,7 +141,7 @@ char *strcasestr(const char *haystack, const char *needle);
    // support for keyboard stuff (cursor motion keystrokes, mostly)
 #define kbd_ESC    '\033'
 #define kbd_SPACE  ' '
-#define kbd_ENTER  128
+#define kbd_ENTER  '\n'
 #define kbd_UP     129
 #define kbd_DOWN   130
 #define kbd_LEFT   131
