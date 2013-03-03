@@ -1335,7 +1335,7 @@ static const char *user_certify (WIN_t *q, const char *str, char typ) {
          * Determine if this proc_t matches the 'u/U' selection criteria
          * for a given window -- it's called from only one place, and
          * likely inlined even without the directive */
-static inline int user_matched (WIN_t *q, const proc_t *p) {
+static inline int user_matched (const WIN_t *q, const proc_t *p) {
    switch(q->usrseltyp) {
       case 0:                                    // uid selection inactive
          return 1;
@@ -3299,7 +3299,7 @@ static void configs_read (void) {
                break;
          }
 #ifndef USE_X_COLHDR
-         OFFw(w, NOHICOL_xxx);
+         OFFw(w, NOHIFND_xxx);
 #endif
       } // end: for (GROUPSMAX)
 
@@ -3886,56 +3886,12 @@ static void wins_stage_2 (void) {
 #endif
 } // end: wins_stage_2
 
-/*######  Interactive Input support (do_key helpers)  ####################*/
+/*######  Interactive Input Tertiary support  ############################*/
 
-        /*
-         * These routines exist just to keep the do_key() function
-         * a reasonably modest size.  */
-
-static void file_writerc (void) {
-   FILE *fp;
-   int i;
-
-   if (Rc_questions) {
-      show_pmt(N_txt(XTRA_warncfg_txt));
-      if ('y' != tolower(iokey(1)))
-         return;
-      Rc_questions = 0;
-   }
-   if (!(fp = fopen(Rc_name, "w"))) {
-      show_msg(fmtmk(N_fmt(FAIL_rc_open_fmt), Rc_name, strerror(errno)));
-      return;
-   }
-   fprintf(fp, "%s's " RCF_EYECATCHER, Myname);
-   fprintf(fp, "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%d.%d, Curwin=%d\n"
-      , RCF_VERSION_ID
-      , Rc.mode_altscr, Rc.mode_irixps
-        // this may be ugly, but it keeps us locale independent...
-      , (int)Rc.delay_time, (int)((Rc.delay_time - (int)Rc.delay_time) * 1000)
-      , (int)(Curwin - Winstk));
-
-   for (i = 0 ; i < GROUPSMAX; i++) {
-      fprintf(fp, "%s\tfieldscur=%s\n"
-         , Winstk[i].rc.winname, Winstk[i].rc.fieldscur);
-      fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-         , Winstk[i].rc.winflags, Winstk[i].rc.sortindx
-         , Winstk[i].rc.maxtasks);
-      fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
-         , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
-         , Winstk[i].rc.headclr, Winstk[i].rc.taskclr);
-   }
-
-   // any new addition(s) last, for older rcfiles compatibility...
-   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
-      , Rc.fixed_widest, Rc.summ_mscale, Rc.task_mscale, Rc.zero_suppress);
-
-   if (Inspect.raw)
-      fputs(Inspect.raw, fp);
-
-   fclose(fp);
-   show_msg(fmtmk(N_fmt(WRITE_rcfile_fmt), Rc_name));
-} // end: file_writerc
-
+  /*
+   * This section exists so as to offer some function naming freedom
+   * while also maintaining the strict alphabetical order protocol
+   * within each section. */
 
         /*
          * This guy is a *Helper* function serving the following two masters:
@@ -3972,8 +3928,8 @@ static void find_string (int ch) {
       Curwin->findlen = strlen(Curwin->findstr);
       found = 0;
 #ifndef USE_X_COLHDR
-      if (Curwin->findstr[0]) SETw(Curwin, NOHICOL_xxx);
-      else OFFw(Curwin, NOHICOL_xxx);
+      if (Curwin->findstr[0]) SETw(Curwin, NOHIFND_xxx);
+      else OFFw(Curwin, NOHIFND_xxx);
 #endif
    }
    if (Curwin->findstr[0]) {
@@ -4038,6 +3994,56 @@ signify_that:
    }
 } // end: help_view
 
+
+static void write_rcfile (void) {
+   FILE *fp;
+   int i;
+
+   if (Rc_questions) {
+      show_pmt(N_txt(XTRA_warncfg_txt));
+      if ('y' != tolower(iokey(1)))
+         return;
+      Rc_questions = 0;
+   }
+   if (!(fp = fopen(Rc_name, "w"))) {
+      show_msg(fmtmk(N_fmt(FAIL_rc_open_fmt), Rc_name, strerror(errno)));
+      return;
+   }
+   fprintf(fp, "%s's " RCF_EYECATCHER, Myname);
+   fprintf(fp, "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%d.%d, Curwin=%d\n"
+      , RCF_VERSION_ID
+      , Rc.mode_altscr, Rc.mode_irixps
+        // this may be ugly, but it keeps us locale independent...
+      , (int)Rc.delay_time, (int)((Rc.delay_time - (int)Rc.delay_time) * 1000)
+      , (int)(Curwin - Winstk));
+
+   for (i = 0 ; i < GROUPSMAX; i++) {
+      fprintf(fp, "%s\tfieldscur=%s\n"
+         , Winstk[i].rc.winname, Winstk[i].rc.fieldscur);
+      fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
+         , Winstk[i].rc.winflags, Winstk[i].rc.sortindx
+         , Winstk[i].rc.maxtasks);
+      fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
+         , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
+         , Winstk[i].rc.headclr, Winstk[i].rc.taskclr);
+   }
+
+   // any new addition(s) last, for older rcfiles compatibility...
+   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
+      , Rc.fixed_widest, Rc.summ_mscale, Rc.task_mscale, Rc.zero_suppress);
+
+   if (Inspect.raw)
+      fputs(Inspect.raw, fp);
+
+   fclose(fp);
+   show_msg(fmtmk(N_fmt(WRITE_rcfile_fmt), Rc_name));
+} // end: write_rcfile
+
+/*######  Interactive Input Secondary support (do_key helpers)  ##########*/
+
+  /*
+   *  These routines exist just to keep the do_key() function
+   *  a reasonably modest size. */
 
 static void keys_global (int ch) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
@@ -4628,7 +4634,7 @@ static void do_key (int ch) {
       case 'q':              // no return from this guy
          bye_bye(NULL);
       case 'W':              // no need for rebuilds
-         file_writerc();
+         write_rcfile();
          return;
       default:               // and now, the real work...
          for (i = 0; i < MAXTBL(key_tab); ++i)
@@ -4846,7 +4852,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          case X_XON:
          case X_XOF:
             cp = NULL;
-            if (!CHKw(q, INFINDS_xxx | NOHICOL_xxx)) {
+            if (!CHKw(q, INFINDS_xxx | NOHIFND_xxx)) {
                /* treat running tasks specially - entire row may get highlighted
                   so we needn't turn it on and we MUST NOT turn it off */
                if (!('R' == p->state && CHKw(q, Show_HIROWS)))

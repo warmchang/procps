@@ -307,7 +307,7 @@ typedef struct CPU_t {
 #define INFINDS_xxx  0x010000     // build rows for find_string, not display
 #define EQUWINS_xxx  0x000001     // rebalance all wins & tasks (off i,n,u/U)
 #ifndef USE_X_COLHDR
-#define NOHICOL_xxx  0x100000     // must restrict Show_HICOLS temporarily
+#define NOHIFND_xxx  0x100000     // must restrict Show_HICOLS temporarily
 #endif
 
         // Default flags if there's no rcfile to provide user customizations
@@ -656,7 +656,7 @@ typedef struct WIN_t {
 //atic int           get_int (const char *prompt);
 //atic inline const char *hex_make (KLONG num, int noz);
 //atic const char   *user_certify (WIN_t *q, const char *str, char typ);
-//atic inline int    user_matched (WIN_t *q, const proc_t *p);
+//atic inline int    user_matched (const WIN_t *q, const proc_t *p);
 /*------  Basic Formatting support  --------------------------------------*/
 //atic inline const char *justify_pad (const char *str, int width, int justr);
 //atic inline const char *make_chr (const char ch, int width, int justr);
@@ -715,11 +715,12 @@ typedef struct WIN_t {
 //atic void          wins_reflag (int what, int flg);
 //atic void          wins_stage_1 (void);
 //atic void          wins_stage_2 (void);
-/*------  Interactive Input support (do_key helpers)  --------------------*/
-//atic void          file_writerc (void);
+/*------  Interactive Input Tertiary support  ----------------------------*/
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);
 //atic void          help_view (void);
+//atic void          write_rcfile (void);
+/*------  Interactive Input Secondary support (do_key helpers)  ----------*/
 //atic void          keys_global (int ch);
 //atic void          keys_summary (int ch);
 //atic void          keys_task (int ch);
