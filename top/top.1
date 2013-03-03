@@ -90,7 +90,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "February 2013" "procps-ng" "User Commands"
+.TH TOP 1 "March 2013" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -155,6 +155,7 @@ The remaining Table of Contents
        b. COMMANDS for Windows
        c. SCROLLING a Window
        d. SEARCHING in a Window
+       e. FILTERING in a Window
     6. FILES
        a. SYSTEM Configuration File
        b. PERSONAL Configuration File
@@ -914,7 +915,7 @@ depending on the context in which they are issued.
         C, l, t, 1, m
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, J, j, x, y, z
-        Content:     c, f, F, S, u, U, V
+        Content:     c, f, F, o, O, S, u, U, V
         Size:        #, i, n
         Sorting:     <, >, f, F, R
   4d.\fI Color-Mapping \fR
@@ -961,9 +962,10 @@ those \*(CIs applicable to \*(AM.
 Removes restrictions on which tasks are shown.
 This command will reverse any 'i' (idle tasks) and 'n' (max tasks)
 commands that might be active.
-It also provides for an 'exit' from pid monitoring\fI and\fR user filtering.
-See the '\-p' \*(CO for a discussion of PID monitoring and the 'U' or 'u'
-\*(CIs regarding user filtering.
+It also provides for an exit from pid monitoring, 'user' filtering and
+'other' filtering.
+See the '\-p' \*(CO for a discussion of PID monitoring, the 'U' or 'u'
+\*(CIs for user filtering and the 'O' or 'o' \*(CIs for 'other' filtering.
 
 Additionally, any window that has been scrolled will be reset with
 this command.
@@ -1296,6 +1298,16 @@ For additional information on these \*(CIs
 \*(Xt 3b. MANAGING Fields.
 
 .TP 7
+\ \ \'\fBo\fR' | '\fBO\fR' :\fIOther-Filtering \fR
+You will be prompted for the selection criteria which then determines
+which tasks will be shown in the \*(CW.
+Your criteria can be made case sensitive or case can be ignored.
+And you determine if \*(We should include or exclude matching tasks.
+
+\*(XT 5e. FILTERING in a window for details on these and additional
+related \*(CIs.
+
+.TP 7
 \ \ \'\fBS\fR\' :\fICumulative-Time-Mode\fR toggle \fR
 When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
 time that it and its dead children have used.
@@ -1323,7 +1335,7 @@ Prepending an exclamation point ('!') to the user id or name instucts top
 to display only processes with users not matching the one provided.
 
 Different \*(TWs can can be used to filter different users.
-Later, if you wish to monitor all tasks again in the \*(CW, re-issue this
+Later, if you wish to monitor all users again in the \*(CW, re-issue this
 command but just press <Enter> at the prompt.
 
 .TP 7
@@ -1509,10 +1521,10 @@ If all 4 \*(TDs are currently visible, this \*(CI will leave the \*(SA
 as the only display element.
 
 .TP 7
-*\ \'\fB=\fR\' | \'\fB+\fR\' :\fIEqualize-(re-balance)-Window(s) \fR
+*\ \'\fB=\fR\' | \'\fB+\fR\' :\fIEqualize-(reinitialize)-Window(s) \fR
 The '=' key forces the \*(CW's \*(TD to be visible.
-It also reverses any 'i' (idle tasks), 'n' (max tasks) and 'u'/'U'
-(user filter) commands that might be active.
+It also reverses any 'i' (idle tasks), 'n' (max tasks), 'u'/'U' (user filter)
+and 'o'/'O' (other filter) commands that might be active.
 Also, if the window had been scrolled, it will be reset with this command.
 \*(XT 5c. SCROLLING a Window for additional information regarding vertical
 and horizontal scrolling.
@@ -1520,8 +1532,8 @@ and horizontal scrolling.
 The '+' key does the same for all windows.
 The four \*(TDs will reappear, evenly balanced.
 They will also have retained any customizations you had previously applied,
-except for the 'i' (idle tasks), 'n' (max tasks), 'u'/'U' (user filter)
-and scrolling \*(CIs.
+except for the 'i' (idle tasks), 'n' (max tasks), 'u'/'U' (user filter),
+'o'/'O' (other filter) and scrolling \*(CIs.
 
 .TP 7
 *\ \'\fBA\fR\' :\fIAlternate-Display-Mode\fR toggle \fR
@@ -1654,6 +1666,10 @@ established with the '\fBf\fR' \*(CI.
 The above \*(CIs are\fB always\fR available in \*(FM but\fB never\fR
 available in \*(AM if the \*(CW's \*(TD has been toggled \*F.
 
+\*(NT When any form of filtering is active, you can expect some slight
+abberations when scrolling since not all tasks will be visible.
+This is paticularly apparent when using the Up/Down \*(KAs.
+
 .\" ......................................................................
 .SS 5d. SEARCHING in a Window
 .\" ----------------------------------------------------------------------
@@ -1709,13 +1725,112 @@ could yet produce a successful '&' search.
 The above \*(CIs are\fB always\fR available in \*(FM but\fB never\fR
 available in \*(AM if the \*(CW's \*(TD has been toggled \*F.
 
-\*(NT Whenever a search key is typed, \*(We forces idle tasks \*O and user
-filtering \*F to ensure that every task is encountered.
-\*(XC 'i' and 'u/U' \*(CIs for additional information on how displayed tasks
-might be filtered.
-Additionally, \*(We will turn column highlighting \*F to prevent false
-matches on internal non-display escape sequences.
+\*(NT Whenever a search key is typed, \*(We will turn column highlighting
+\*F to prevent false matches on internal non-display escape sequences.
 Such highlighting will be restored when a window's search string is empty.
+\*(XC 'x' \*(CI for additional information on sort column highlighting.
+
+.\" ......................................................................
+.SS 5e. FILTERING in a Window
+.\" ----------------------------------------------------------------------
+You can use the 'Other Filter' feature to establish selection criteria which
+will then determine which tasks are shown in the \*(CW.
+
+Establishing a filter requires: 1) a field name; 2) the ':' delimiter; and
+3) a selection value, as a minimum.
+This is the most complex of \*(We's user input requirements so, when you make
+a mistake, command recall will be your friend.
+Remember the Up/Down \*(KAs or their aliases when prompted for input.
+
+.B Filter Basics
+.IP "  .  " 5
+field names are case sensitive and spelled as in the header
+.IP "  .  " 5
+selection values need not comprise the full displayed field
+.IP "  .  " 5
+a selection is either case insensitive or sensitive to case
+.IP "  .  " 5
+the default is inclusion, prepending '!' denotes exclusions
+.IP "  .  " 5
+multiple selection criteria can be applied to a \*(TW
+.IP "  .  " 5
+inclusion and exclusion criteria can be used simultaneously
+.IP "  .  " 5
+separate unique filters are maintained for each \*(TW
+.RE
+
+If a field is not turned on or is not currently in view, then your selection
+criteria will not affect the display.
+Later, should a filtered field become visible, the selection criteria will
+then be applied.
+
+.B Keyboard Summary
+.TP 5
+\ '\fBo\fR' :\fIOther-Filter\fR (lower case)
+You will be prompted to establish a filter that \fBignores case\fR when matching.
+
+.TP 5
+\ '\fBO\fR' :\fIOther-Filter\fR (upper case)
+You will be prompted to establish a \fBcase sensitive\fR filter.
+
+.TP 5
+\ \fB^O\fR\ \ :\fIShow-Active-Filters\fR (Ctrl key + 'o')
+This can serve as a reminder of which filters are active in the \*(CW.
+A summary will be shown on the message line until you press the <Enter> key.
+
+.TP 5
+\ '\fB=\fR' :\fIReset-Filtering\fR in current window
+This clears all of your selection criteria in the \*(CW.
+It also has additional impact so please \*(Xt 4a. GLOBAL Commands.
+
+.TP 5
+\ '\fB+\fR' :\fIReset-Filtering\fR in all windows
+This clears the selection criteria in all windows, assuming you are in \*(AM.
+As with the '=' \*(CI, it too has additional consequences so you might wish to
+\*(Xt 5b. COMMANDS for Windows.
+.RE
+
+When prompted for selection criteria, the data you provide must take one
+of two forms.
+There are 3 required pieces of information, with a 4th as optional.
+These examples use spaces for clarity but your input generally would not.
+.Bd -literal
+        #1          #2 #3                ( required )
+        Field\-Name  :  include\-if\-value
+     \fB!\fR  Field\-Name  :  \fBexclude\fR\-if\-value
+     #4                                  ( optional )
+.Ed
+
+Here are examples of actual valid filters intended to limit tasks to only
+those in the group 'root'.
+They might produce the exact same results or the last example might not
+display anything at all, just a blank \*(TW.
+.Bd -literal
+     GROUP:root        ( only the same results when )
+     GROUP:ROOT        ( invoked via lower case 'o' )
+
+.Ed
+
+The two final examples illustrate how 'Other Filtering' can be creatively
+applied to achieve almost any desired result.
+They also remind us that a trailing space is part of every displayed field.
+Single quotes are shown to delimit the spaces which are part of the filters.
+But if you used them in real life, no matches would be found.
+
+Assuming field 'nTH' is displayed, the first filter will result in only
+multi-threaded processes being shown.
+Assuming Forest View mode is in effect and the COMMAND column is in view,
+the second filter effectively collapses all child processes beyond
+the second level.
+.Bd -literal
+     !nTH:' 1 '                ( ' for clarity only )
+     !COMMAND:'       `- '     ( ' for clarity only )
+.Ed
+
+\*(NT When 'Other Filtering' is active, \*(We turns column highlighting
+\*F to prevent false matches on internal non-display escape sequences.
+Such highlighting will be restored when a window is no longer subject
+to filtering.
 \*(XC 'x' \*(CI for additional information on sort column highlighting.
 
 .\" ----------------------------------------------------------------------

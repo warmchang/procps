@@ -1,6 +1,9 @@
 procps-ng-3.3.7
 ---------------
 
+  * top adds a powerful new filter feature wherein any
+    window can include or exlude selected fields which
+    contain specific values - Debian #682082 & #682083
   * top preserves user input for later recall and edit
   * top provides true input editing vs. just backspace
   * top user filtering with exclusion - Debian #682086
