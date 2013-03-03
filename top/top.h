@@ -80,9 +80,10 @@
 #define linux_version_code LINUX_VERSION(2,5,43)
 #endif
 
-#ifdef STRINGCASENO
    // pretend as if #define _GNU_SOURCE
 char *strcasestr(const char *haystack, const char *needle);
+
+#ifdef STRINGCASENO
 #define STRSTR  strcasestr
 #define STRCMP  strcasecmp
 #else
@@ -153,6 +154,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_BKSP   137
 #define kbd_INS    138
 #define kbd_DEL    139
+#define kbd_CtrlO  '\017'
 
         /* Special value in Pseudo_row to force an additional procs refresh
            -- used at startup and for task/thread mode transitions */
@@ -307,7 +309,8 @@ typedef struct CPU_t {
 #define INFINDS_xxx  0x010000     // build rows for find_string, not display
 #define EQUWINS_xxx  0x000001     // rebalance all wins & tasks (off i,n,u/U)
 #ifndef USE_X_COLHDR
-#define NOHIFND_xxx  0x100000     // must restrict Show_HICOLS temporarily
+#define NOHISEL_xxx  0x200000     // restrict Show_HICOLS for osel temporarily
+#define NOHIFND_xxx  0x100000     // restrict Show_HICOLS for find temporarily
 #endif
 
         // Default flags if there's no rcfile to provide user customizations
@@ -389,6 +392,9 @@ typedef struct WIN_t {
           columnhdr [SCREENMAX],       // column headings for procflgs
 #endif
          *captab [CAPTABMAX];          // captab needed by show_special()
+   struct osel_s *osel_1st;            // other selection criteria anchor
+   int    osel_tot;                    // total of other selection criteria
+   char  *osel_prt;                    // other stuff printable as status line
    char  *findstr;                     // window's current/active search string
    int    findlen;                     // above's strlen, without call overhead
    proc_t **ppt;                       // this window's proc_t ptr array
@@ -655,6 +661,8 @@ typedef struct WIN_t {
 //atic float         get_float (const char *prompt);
 //atic int           get_int (const char *prompt);
 //atic inline const char *hex_make (KLONG num, int noz);
+//atic void          osel_clear (WIN_t *q);
+//atic inline int    osel_matched (const WIN_t *q, FLG_t enu, const char *str);
 //atic const char   *user_certify (WIN_t *q, const char *str, char typ);
 //atic inline int    user_matched (const WIN_t *q, const proc_t *p);
 /*------  Basic Formatting support  --------------------------------------*/
@@ -719,6 +727,7 @@ typedef struct WIN_t {
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);
 //atic void          help_view (void);
+//atic void          other_selection (int ch);
 //atic void          write_rcfile (void);
 /*------  Interactive Input Secondary support (do_key helpers)  ----------*/
 //atic void          keys_global (int ch);

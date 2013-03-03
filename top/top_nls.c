@@ -379,7 +379,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[FIND_no_find_fmt] = _("%s\"%s\" not found");
    Norm_nlstab[XTRA_fixwide_fmt] = _("width incr is %d, change to (0 default, -1 auto)");
    Norm_nlstab[XTRA_warncfg_txt] = _("Overwrite existing obsolete/corrupted rcfile?");
-   Norm_nlstab[XTRA_sortopt_fmt] = _("unrecognized field name '%s'");
+   Norm_nlstab[XTRA_badflds_fmt] = _("unrecognized field name '%s'");
    Norm_nlstab[XTRA_winsize_txt] = _("even using field names only, window is now too small");
 #ifndef INSP_OFFDEMO
    Norm_nlstab[YINSP_demo01_txt] = _("Open Files");
@@ -429,6 +429,18 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[YINSP_rcfile_fmt] = _("could not parse rcfile inspect entry %d");
    Norm_nlstab[YINSP_status_fmt] = _("%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read");
    Norm_nlstab[YINSP_workin_txt] = _("patience please, working...");
+/* Translation Hint: Below are 2 abbreviations which can be as long as needed:
+   .                 FLD = FIELD, VAL = VALUE */
+   Norm_nlstab[OSEL_prompts_fmt] = _("add filter #%d (%s) as: [!]FLD:VAL");
+   Norm_nlstab[OSEL_casenot_txt] = _("ignoring case");
+   Norm_nlstab[OSEL_caseyes_txt] = _("case sensitive");
+   Norm_nlstab[OSEL_errdups_txt] = _("duplicate filter was ignored");
+   Norm_nlstab[OSEL_errdelm_fmt] = _("'%s' filter delimiter is missing");
+   Norm_nlstab[OSEL_errvalu_fmt] = _("'%s' filter value is missing");
+   Norm_nlstab[WORD_include_txt] = _("include");
+   Norm_nlstab[WORD_exclude_txt] = _("exclude");
+   Norm_nlstab[OSEL_statlin_fmt] = _("<Enter> to resume, filters = %s");
+   Norm_nlstab[WORD_noneone_txt] = _("none");
 }
 
 
@@ -476,8 +488,8 @@ static void build_uniq_nlstab (void) {
       "  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; '~1j~2' Str justify\n"
       "  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
       "  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
-      "  u,U     . Filter by: '~1u~2' effective user; '~1U~2' effective/file/real/saved user\n"
-      "  n or #  . Set maximum tasks displayed\n"
+      "  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' other criteria\n"
+      "  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' other filter(s)\n"
       "  C,...   . Toggle scroll coordinates msg for: ~1up~2,~1down~2,~1left~2,~1right~2,~1home~2,~1end~2\n"
       "\n"
       "%s"

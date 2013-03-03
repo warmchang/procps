@@ -1299,6 +1299,59 @@ static inline const char *hex_make (KLONG num, int noz) {
 
 
         /*
+         * The sructure hung from a WIN_t when 'other' filtering is active. */
+struct osel_s {
+   int   flg;                                  // include == 1, exclude == 0
+   FLG_t enu;                                  // field (procflag) to filter
+   char *val;                                  // value included or excluded
+   char *(*cmp)(const char *, const char *);   // string comparison function
+   char *raw;                                  // raw user input (dup check)
+   struct osel_s *nxt;                         // the next criteria or NULL.
+};
+
+
+        /*
+         * A function to turn off any 'other' filtering in the given window */
+static void osel_clear (WIN_t *q) {
+   struct osel_s *osel = q->osel_1st;
+
+   while (osel) {
+      struct osel_s *nxt = osel->nxt;
+      free(osel->val);
+      free(osel->raw);
+      free(osel);
+      osel = nxt;
+   }
+   q->osel_tot = 0;
+   q->osel_1st = NULL;
+   free (q->osel_prt);
+   q->osel_prt = NULL;
+#ifndef USE_X_COLHDR
+   OFFw(Curwin, NOHISEL_xxx);
+#endif
+} // end: osel_clear
+
+
+        /*
+         * Determine if there's a matching value among the 'other' criteria
+         * in a given window -- it's called from only one place, and likely
+         * inlined even without the directive */
+static inline int osel_matched (const WIN_t *q, FLG_t enu, const char *str) {
+   struct osel_s *osel = q->osel_1st;
+
+   while (osel) {
+      if (osel->enu == enu) {
+         char *p = osel->cmp(str, osel->val);
+         if (p && !osel->flg) return 0;
+         if (!p && osel->flg) return 0;
+      }
+      osel = osel->nxt;
+   }
+   return 1;
+} // end: osel_matched
+
+
+        /*
          * Validate the passed string as a user name or number,
          * and/or update the window's 'u/U' selection stuff. */
 static const char *user_certify (WIN_t *q, const char *str, char typ) {
@@ -3299,7 +3352,7 @@ static void configs_read (void) {
                break;
          }
 #ifndef USE_X_COLHDR
-         OFFw(w, NOHIFND_xxx);
+         OFFw(w, NOHIFND_xxx | NOHISEL_xxx);
 #endif
       } // end: for (GROUPSMAX)
 
@@ -3475,7 +3528,7 @@ static void parse_args (char **args) {
                for (i = 0; i < P_MAXPFLGS; i++)
                   if (!STRCMP(cp, N_col(i))) break;
                if (i == P_MAXPFLGS)
-                  error_exit(fmtmk(N_fmt(XTRA_sortopt_fmt), cp));
+                  error_exit(fmtmk(N_fmt(XTRA_badflds_fmt), cp));
                OFFw(Curwin, Show_FOREST);
                Curwin->rc.sortindx = i;
                cp += strlen(cp);
@@ -3636,6 +3689,7 @@ static void win_reset (WIN_t *q) {
          q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = 0;
 #endif
          Monpidsidx = 0;
+         osel_clear(q);
 } // end: win_reset
 
 
@@ -3935,7 +3989,8 @@ static void find_string (int ch) {
    if (Curwin->findstr[0]) {
       SETw(Curwin, INFINDS_xxx);
       for (i = Curwin->begtask; i < Frame_maxtask; i++) {
-         if (-1 < find_ofs(Curwin, task_show(Curwin, Curwin->ppt[i]))) {
+         const char *row = task_show(Curwin, Curwin->ppt[i]);
+         if (*row && -1 < find_ofs(Curwin, row)) {
             found = 1;
             if (i == Curwin->begtask) continue;
             Curwin->begtask = i;
@@ -3993,6 +4048,66 @@ signify_that:
          goto signify_that;
    }
 } // end: help_view
+
+
+static void other_selection (int ch) {
+   char *(*cmp)(const char *, const char *);
+   char raw[MEDBUFSIZ], *glob, *pval;
+   struct osel_s *osel;
+   const char *typ;
+   int flg, enu;
+
+   if (ch == 'o') {
+      typ   = N_txt(OSEL_casenot_txt);
+      cmp   = strcasestr;
+   } else {
+      typ   = N_txt(OSEL_caseyes_txt);
+      cmp   = strstr;
+   }
+   glob = ioline(fmtmk(N_fmt(OSEL_prompts_fmt), Curwin->osel_tot + 1, typ));
+   if (!snprintf(raw, sizeof(raw), "%s", glob)) return;
+   for (osel = Curwin->osel_1st; osel; ) {
+      if (!strcmp(osel->raw, glob)) {          // #1: is criteria duplicate?
+         show_msg(N_txt(OSEL_errdups_txt));
+         return;
+      }
+      osel = osel->nxt;
+   }
+   if (*glob != '!') flg = 1;                  // #2: is it include/exclude?
+   else { ++glob; flg = 0; }
+   if (!(pval = strchr(glob, ':'))) {          // #3: do we see a delimiter?
+      show_msg(fmtmk(N_fmt(OSEL_errdelm_fmt)
+         , flg ? N_txt(WORD_include_txt) : N_txt(WORD_exclude_txt)));
+      return;
+   }
+   *(pval++) = '\0';
+   for (enu = 0; enu < P_MAXPFLGS; enu++)      // #4: is this a valid field?
+      if (!STRCMP(N_col(enu), glob)) break;
+   if (enu == P_MAXPFLGS) {
+      show_msg(fmtmk(N_fmt(XTRA_badflds_fmt), glob));
+      return;
+   }
+   if (!(*pval)) {                             // #5: did we get some value?
+      show_msg(fmtmk(N_fmt(OSEL_errvalu_fmt)
+         , flg ? N_txt(WORD_include_txt) : N_txt(WORD_exclude_txt)));
+      return;
+   }
+   osel = alloc_c(sizeof(struct osel_s));
+   osel->flg = flg;
+   osel->enu = enu;
+   osel->val = alloc_s(pval);
+   osel->cmp = cmp;
+   osel->raw = alloc_s(raw);
+   osel->nxt = Curwin->osel_1st;
+   Curwin->osel_1st = osel;
+   Curwin->osel_tot += 1;
+   if (!Curwin->osel_prt) Curwin->osel_prt = alloc_c(strlen(raw) + 3);
+   else Curwin->osel_prt = alloc_r(Curwin->osel_prt, strlen(Curwin->osel_prt) + strlen(raw) + 6);
+   strcat(Curwin->osel_prt, fmtmk("%s'%s'", (Curwin->osel_tot > 1) ? " + " : "", raw));
+#ifndef USE_X_COLHDR
+   SETw(Curwin, NOHISEL_xxx);
+#endif
+} // end: other_selection
 
 
 static void write_rcfile (void) {
@@ -4287,6 +4402,10 @@ static void keys_task (int ch) {
                ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
          }
          break;
+      case 'O':
+      case 'o':
+         if (VIZCHKw(w)) other_selection(ch);
+         break;
       case 'U':
       case 'u':
          if (VIZCHKw(w)) {
@@ -4333,6 +4452,11 @@ static void keys_task (int ch) {
             capsmk(w);
          }
          break;
+      case kbd_CtrlO:
+         if (VIZCHKw(w))
+            ioline(fmtmk(N_fmt(OSEL_statlin_fmt)
+               , w->osel_prt ? w->osel_prt : N_txt(WORD_noneone_txt)));
+         break;
       default:                    // keep gcc happy
          break;
    }
@@ -4357,11 +4481,7 @@ static void keys_window (int ch) {
          break;
       case '&':
       case 'L':
-         if (VIZCHKw(w)) {             // ( next 2 are strictly for the UI )
-            SETw(w, Show_IDLEPS);      // make sure we're showing idle tasks
-            w->usrseltyp = 0;          // make sure we're not user filtering
-            find_string(ch);           // ( we'll search entire ppt anyway )
-         }
+         if (VIZCHKw(w)) find_string(ch);
          break;
       case 'A':
          Rc.mode_altscr = !Rc.mode_altscr;
@@ -4615,8 +4735,9 @@ static void do_key (int ch) {
       { keys_summary,
          { '1', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,
-         { '#', '<', '>', 'b', 'c', 'i', 'J', 'j', 'n', 'R', 'S'
-         , 'U', 'u', 'V', 'x', 'y', 'z', '\0' } },
+         { '#', '<', '>', 'b', 'c', 'i', 'J', 'j', 'n', 'O', 'o'
+         , 'R', 'S', 'U', 'u', 'V', 'x', 'y', 'z'
+         , kbd_CtrlO, '\0' } },
       { keys_window,
          { '+', '-', '=', '_', '&', 'A', 'a', 'G', 'L', 'w'
          , kbd_UP, kbd_DOWN, kbd_LEFT, kbd_RIGHT, kbd_PGUP, kbd_PGDN
@@ -4852,7 +4973,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          case X_XON:
          case X_XOF:
             cp = NULL;
-            if (!CHKw(q, INFINDS_xxx | NOHIFND_xxx)) {
+            if (!CHKw(q, INFINDS_xxx | NOHIFND_xxx | NOHISEL_xxx)) {
                /* treat running tasks specially - entire row may get highlighted
                   so we needn't turn it on and we MUST NOT turn it off */
                if (!('R' == p->state && CHKw(q, Show_HIROWS)))
@@ -5021,9 +5142,10 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
 
       } // end: switch 'procflag'
 
-      if (cp)
+      if (cp) {
+         if (q->osel_tot && !osel_matched(q, i, cp)) return "";
          rp = scat(rp, cp);
-
+      }
       #undef S
       #undef W
       #undef Js
@@ -5090,16 +5212,15 @@ static int window_show (WIN_t *q, int wmax) {
       checking some stuff with each iteration and check it just once... */
    if (CHKw(q, Show_IDLEPS) && !q->usrseltyp)
       while (i < Frame_maxtask && lwin < wmax) {
-         task_show(q, q->ppt[i++]);
-         ++lwin;
+         if (*task_show(q, q->ppt[i++]))
+            ++lwin;
       }
    else
       while (i < Frame_maxtask && lwin < wmax) {
          if ((CHKw(q, Show_IDLEPS) || isBUSY(q->ppt[i]))
-         && user_matched(q, q->ppt[i])) {
-            task_show(q, q->ppt[i]);
+         && user_matched(q, q->ppt[i])
+         && *task_show(q, q->ppt[i++]))
             ++lwin;
-         }
          ++i;
       }
 
