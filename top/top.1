@@ -1736,7 +1736,7 @@ Such highlighting will be restored when a window's search string is empty.
 You can use the 'Other Filter' feature to establish selection criteria which
 will then determine which tasks are shown in the \*(CW.
 
-Establishing a filter requires: 1) a field name; 2) the ':' delimiter; and
+Establishing a filter requires: 1) a field name; 2) an operator; and
 3) a selection value, as a minimum.
 This is the most complex of \*(We's user input requirements so, when you make
 a mistake, command recall will be your friend.
@@ -1756,6 +1756,8 @@ multiple selection criteria can be applied to a \*(TW
 .IP "  .  " 5
 inclusion and exclusion criteria can be used simultaneously
 .IP "  .  " 5
+the 1 equality and 2 relational filters can be freely mixed
+.IP "  .  " 5
 separate unique filters are maintained for each \*(TW
 .RE
 
@@ -1767,7 +1769,8 @@ then be applied.
 .B Keyboard Summary
 .TP 5
 \ '\fBo\fR' :\fIOther-Filter\fR (lower case)
-You will be prompted to establish a filter that \fBignores case\fR when matching.
+You will be prompted to establish a filter that \fBignores case\fR when
+matching.
 
 .TP 5
 \ '\fBO\fR' :\fIOther-Filter\fR (upper case)
@@ -1795,37 +1798,84 @@ of two forms.
 There are 3 required pieces of information, with a 4th as optional.
 These examples use spaces for clarity but your input generally would not.
 .Bd -literal
-        #1          #2 #3                ( required )
-        Field\-Name  :  include\-if\-value
-     \fB!\fR  Field\-Name  :  \fBexclude\fR\-if\-value
+        #1           \fB#2\fR  #3              ( required )
+        Field\-Name   ?   include\-if\-value
+     \fB!\fR  Field\-Name   ?   \fBexclude\fR\-if\-value
      #4                                  ( optional )
 .Ed
 
-Here are examples of actual valid filters intended to limit tasks to only
-those in the group 'root'.
-They might produce the exact same results or the last example might not
-display anything at all, just a blank \*(TW.
-.Bd -literal
-     GROUP:root        ( only the same results when )
-     GROUP:ROOT        ( invoked via lower case 'o' )
+Items #1, #3 and #4 should be self\-explanatory.
+Item \fB#2\fR represents both a required \fIdelimiter\fR and the \fIoperator\fR
+which must be one of either equality ('=') or relation ('<' or '>').
 
+The '=' equality operator requires only a partial match and that
+can reduce your 'if\-value' input requirements.
+The '>' or '<' relational operators always employ string comparisons,
+even with numeric fields.
+They are designed to work with a field's default \fIjustification\fR and
+with homogeneous data.
+When some field's numeric amounts have been subjected to \fIscaling\fR
+while others have not, that data is no longer homogeneous.
+
+If you establish a relational filter and you \fBhave\fR changed the default
+'Numeric' or 'Character' \fIjustification\fR, that filter is likely to fail.
+When a relational filter is applied to a memory field and you \fBhave not\fR
+changed the \fIscaling\fR, it may produce misleading results.
+This happens, for example, because '100.0m' (MiB) would appear greater than
+'1.000g' (GiB) when compared as strings.
+
+If your filtered results appear suspect, simply altering justification or
+scaling may yet achieve the desired objective.
+See the 'j', 'J' and 'e' \*(CIs for additional information.
+
+Here are some examples of actual valid filters.
+The second \fBGROUP\fR filter might not display anything at all,
+just a blank \*(TW.
+.Bd -literal
+     GROUP=root        ( only the same results when )
+     GROUP=ROOT        ( invoked via lower case 'o' )
 .Ed
 
-The two final examples illustrate how 'Other Filtering' can be creatively
+Either of these \fBRES\fR filters might yield inconsistent and/or
+misleading results, depending on the current memory scaling factor.
+     RES>9999          ( only the same results when )
+     !RES<10000        ( memory scaling is at 'KiB' )
+.Ed
+
+And the \fBnMin\fR filters help illustrate a problem unique to scalable fields.
+This particular field can display a maximum of 4 digits, beyond which
+vaules are automatically scaled to KiB or above.
+So while amounts greater than 9999 exist, they will appear as 2.6m, 197k, etc.
+Then by exploiting the trailing space, the second series of filters could
+achieve the original objective, but is offered for emphasis only.
+.Bd -literal
+     nMin>9999         ( always a blank \*(TW )
+     '!nMin=0 ' + '!nMin=1 ' + '!nMin=2 ' + '!nMin=3 ' ...
+.Ed
+
+The final examples illustrate how 'Other Filtering' can be creatively
 applied to achieve almost any desired result.
-They also remind us that a trailing space is part of every displayed field.
-Single quotes are shown to delimit the spaces which are part of the filters.
+The first one also reminds us that a trailing space is part of every
+displayed field.
+Single quotes are shown to delimit spaces which are part of
+the filters or to represent a request for status (^O) accurately.
 But if you used them in real life, no matches would be found.
 
-Assuming field 'nTH' is displayed, the first filter will result in only
-multi-threaded processes being shown.
-Assuming Forest View mode is in effect and the COMMAND column is in view,
-the second filter effectively collapses all child processes beyond
-the second level.
+Assuming field \fBnTH\fR is displayed, the first filter will result in
+only multi-threaded processes being shown.
+The second filter achieves the exact same results with less typing.
+With Forest View mode active and the \fBCOMMAND\fR column in view, the
+third filter effectively collapses child processes so that just 3 levels
+are shown.
+The final example shows the 2 concurrent filters necessary to display
+tasks with priorities of 20 or more, since some might be negative.
 .Bd -literal
-     !nTH:' 1 '                ( ' for clarity only )
-     !COMMAND:'       `- '     ( ' for clarity only )
+     !nTH=' 1 '                ( ' for clarity only )
+     nTH>1                     ( same with less i/p )
+     !COMMAND='       `- '     ( ' for clarity only )
+     'PR>20' + '!PR=-'         ( 2 for right result )
 .Ed
+
 
 \*(NT When 'Other Filtering' is active, \*(We turns column highlighting
 \*F to prevent false matches on internal non-display escape sequences.
