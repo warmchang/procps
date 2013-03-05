@@ -1299,19 +1299,21 @@ static inline const char *hex_make (KLONG num, int noz) {
 
 
         /*
-         * The sructure hung from a WIN_t when 'other' filtering is active. */
+         * This sructure is hung from a WIN_t when other filtering is active */
 struct osel_s {
-   int   flg;                                  // include == 1, exclude == 0
-   FLG_t enu;                                  // field (procflag) to filter
-   char *val;                                  // value included or excluded
-   char *(*cmp)(const char *, const char *);   // string comparison function
-   char *raw;                                  // raw user input (dup check)
    struct osel_s *nxt;                         // the next criteria or NULL.
+   int (*rel)(const char *, const char *);     // relational strings compare
+   char *(*sel)(const char *, const char *);   // for selection str compares
+   char *raw;                                  // raw user input (dup check)
+   char *val;                                  // value included or excluded
+   int   ops;                                  // filter delimiter/operation
+   int   flg;                                  // include == 1, exclude == 0
+   int   enu;                                  // field (procflag) to filter
 };
 
 
         /*
-         * A function to turn off any 'other' filtering in the given window */
+         * A function to turn off entire other filtering in the given window */
 static void osel_clear (WIN_t *q) {
    struct osel_s *osel = q->osel_1st;
 
@@ -1333,17 +1335,30 @@ static void osel_clear (WIN_t *q) {
 
 
         /*
-         * Determine if there's a matching value among the 'other' criteria
-         * in a given window -- it's called from only one place, and likely
-         * inlined even without the directive */
+         * Determine if there is a matching value or releationship among the
+         * other criteria in the passed  window -- it's called from only one
+         * place, and likely inlined even without the directive */
 static inline int osel_matched (const WIN_t *q, FLG_t enu, const char *str) {
    struct osel_s *osel = q->osel_1st;
 
    while (osel) {
       if (osel->enu == enu) {
-         char *p = osel->cmp(str, osel->val);
-         if (p && !osel->flg) return 0;
-         if (!p && osel->flg) return 0;
+         int r;
+         switch (osel->ops) {
+            case '<':                          // '<' needs the r < 0 unless
+               r = osel->rel(str, osel->val);  // '!' which needs an inverse
+               if ((0 <= r && osel->flg) || (0 >= r && !osel->flg)) return 0;
+               break;
+            case '>':                          // '>' needs the r > 0 unless
+               r = osel->rel(str, osel->val);  // '!' which needs an inverse
+               if ((0 >= r && osel->flg) || (0 <= r && !osel->flg)) return 0;
+               break;
+            default:
+            {  char *p = osel->sel(str, osel->val);
+               if ((!p && osel->flg) || (p && !osel->flg)) return 0;
+            }
+               break;
+         }
       }
       osel = osel->nxt;
    }
@@ -4051,18 +4066,21 @@ signify_that:
 
 
 static void other_selection (int ch) {
-   char *(*cmp)(const char *, const char *);
-   char raw[MEDBUFSIZ], *glob, *pval;
+   int (*rel)(const char *, const char *);
+   char *(*sel)(const char *, const char *);
+   char raw[MEDBUFSIZ], ops, *glob, *pval;
    struct osel_s *osel;
    const char *typ;
    int flg, enu;
 
    if (ch == 'o') {
       typ   = N_txt(OSEL_casenot_txt);
-      cmp   = strcasestr;
+      rel   = strcasecmp;
+      sel   = strcasestr;
    } else {
       typ   = N_txt(OSEL_caseyes_txt);
-      cmp   = strstr;
+      rel   = strcmp;
+      sel   = strstr;
    }
    glob = ioline(fmtmk(N_fmt(OSEL_prompts_fmt), Curwin->osel_tot + 1, typ));
    if (!snprintf(raw, sizeof(raw), "%s", glob)) return;
@@ -4075,11 +4093,12 @@ static void other_selection (int ch) {
    }
    if (*glob != '!') flg = 1;                  // #2: is it include/exclude?
    else { ++glob; flg = 0; }
-   if (!(pval = strchr(glob, ':'))) {          // #3: do we see a delimiter?
+   if (!(pval = strpbrk(glob, "<=>"))) {       // #3: do we see a delimiter?
       show_msg(fmtmk(N_fmt(OSEL_errdelm_fmt)
          , flg ? N_txt(WORD_include_txt) : N_txt(WORD_exclude_txt)));
       return;
    }
+   ops = *(pval);
    *(pval++) = '\0';
    for (enu = 0; enu < P_MAXPFLGS; enu++)      // #4: is this a valid field?
       if (!STRCMP(N_col(enu), glob)) break;
@@ -4095,8 +4114,11 @@ static void other_selection (int ch) {
    osel = alloc_c(sizeof(struct osel_s));
    osel->flg = flg;
    osel->enu = enu;
-   osel->val = alloc_s(pval);
-   osel->cmp = cmp;
+   osel->ops = ops;
+   if (ops == '=') osel->val = alloc_s(pval);
+   else osel->val = alloc_s(justify_pad(pval, Fieldstab[enu].width, Fieldstab[enu].align));
+   osel->rel = rel;
+   osel->sel = sel;
    osel->raw = alloc_s(raw);
    osel->nxt = Curwin->osel_1st;
    Curwin->osel_1st = osel;

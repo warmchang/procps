@@ -431,7 +431,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[YINSP_workin_txt] = _("patience please, working...");
 /* Translation Hint: Below are 2 abbreviations which can be as long as needed:
    .                 FLD = FIELD, VAL = VALUE */
-   Norm_nlstab[OSEL_prompts_fmt] = _("add filter #%d (%s) as: [!]FLD:VAL");
+   Norm_nlstab[OSEL_prompts_fmt] = _("add filter #%d (%s) as: [!]FLD?VAL");
    Norm_nlstab[OSEL_casenot_txt] = _("ignoring case");
    Norm_nlstab[OSEL_caseyes_txt] = _("case sensitive");
    Norm_nlstab[OSEL_errdups_txt] = _("duplicate filter was ignored");
@@ -439,7 +439,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[OSEL_errvalu_fmt] = _("'%s' filter value is missing");
    Norm_nlstab[WORD_include_txt] = _("include");
    Norm_nlstab[WORD_exclude_txt] = _("exclude");
-   Norm_nlstab[OSEL_statlin_fmt] = _("<Enter> to resume, filters = %s");
+   Norm_nlstab[OSEL_statlin_fmt] = _("<Enter> to resume, filters: %s");
    Norm_nlstab[WORD_noneone_txt] = _("none");
 }
 
