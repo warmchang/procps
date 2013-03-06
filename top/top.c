@@ -1347,11 +1347,11 @@ static inline int osel_matched (const WIN_t *q, FLG_t enu, const char *str) {
          switch (osel->ops) {
             case '<':                          // '<' needs the r < 0 unless
                r = osel->rel(str, osel->val);  // '!' which needs an inverse
-               if ((0 <= r && osel->flg) || (0 >= r && !osel->flg)) return 0;
+               if ((r >= 0 && osel->flg) || (r < 0 && !osel->flg)) return 0;
                break;
             case '>':                          // '>' needs the r > 0 unless
                r = osel->rel(str, osel->val);  // '!' which needs an inverse
-               if ((0 >= r && osel->flg) || (0 <= r && !osel->flg)) return 0;
+               if ((r <= 0 && osel->flg) || (r > 0 && !osel->flg)) return 0;
                break;
             default:
             {  char *p = osel->sel(str, osel->val);
