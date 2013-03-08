@@ -302,7 +302,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[ON_word_only_txt] = _("On");
    Norm_nlstab[OFF_one_word_txt] = _("Off");
 /* Translation Hint: Only the following words should be translated
-   .                 delay, limit, user, cols (abbreviation for columns)*/
+   .                 secs (seconds), max (maximum), user, cols (columns)*/
    Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]");
    Norm_nlstab[FAIL_statget_txt] = _("failed /proc/stat read");
    Norm_nlstab[FOREST_modes_fmt] = _("Forest mode %s");
