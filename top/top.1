@@ -1743,21 +1743,21 @@ a mistake, command recall will be your friend.
 Remember the Up/Down \*(KAs or their aliases when prompted for input.
 
 .B Filter Basics
-.IP "  .  " 5
+.IP "   .  " 6
 field names are case sensitive and spelled as in the header
-.IP "  .  " 5
+.IP "   .  " 6
 selection values need not comprise the full displayed field
-.IP "  .  " 5
+.IP "   .  " 6
 a selection is either case insensitive or sensitive to case
-.IP "  .  " 5
+.IP "   .  " 6
 the default is inclusion, prepending '!' denotes exclusions
-.IP "  .  " 5
+.IP "   .  " 6
 multiple selection criteria can be applied to a \*(TW
-.IP "  .  " 5
+.IP "   .  " 6
 inclusion and exclusion criteria can be used simultaneously
-.IP "  .  " 5
+.IP "   .  " 6
 the 1 equality and 2 relational filters can be freely mixed
-.IP "  .  " 5
+.IP "   .  " 6
 separate unique filters are maintained for each \*(TW
 .RE
 
@@ -1767,32 +1767,35 @@ Later, should a filtered field become visible, the selection criteria will
 then be applied.
 
 .B Keyboard Summary
-.TP 5
-\ '\fBo\fR' :\fIOther-Filter\fR (lower case)
+.TP 6
+\ \ '\fBo\fR' :\fIOther-Filter\fR (lower case)
 You will be prompted to establish a filter that \fBignores case\fR when
 matching.
 
-.TP 5
-\ '\fBO\fR' :\fIOther-Filter\fR (upper case)
+.TP 6
+\ \ '\fBO\fR' :\fIOther-Filter\fR (upper case)
 You will be prompted to establish a \fBcase sensitive\fR filter.
 
-.TP 5
-\ \fB^O\fR\ \ :\fIShow-Active-Filters\fR (Ctrl key + 'o')
+.TP 6
+\ \ \fB^O\fR\ \ :\fIShow-Active-Filters\fR (Ctrl key + 'o')
 This can serve as a reminder of which filters are active in the \*(CW.
 A summary will be shown on the message line until you press the <Enter> key.
 
-.TP 5
-\ '\fB=\fR' :\fIReset-Filtering\fR in current window
+.TP 6
+\ \ '\fB=\fR' :\fIReset-Filtering\fR in current window
 This clears all of your selection criteria in the \*(CW.
 It also has additional impact so please \*(Xt 4a. GLOBAL Commands.
 
-.TP 5
-\ '\fB+\fR' :\fIReset-Filtering\fR in all windows
+.TP 6
+\ \ '\fB+\fR' :\fIReset-Filtering\fR in all windows
 This clears the selection criteria in all windows, assuming you are in \*(AM.
 As with the '=' \*(CI, it too has additional consequences so you might wish to
 \*(Xt 5b. COMMANDS for Windows.
 .RE
 
+.B Input Requirements
+.RS +3
+.P
 When prompted for selection criteria, the data you provide must take one
 of two forms.
 There are 3 required pieces of information, with a 4th as optional.
@@ -1827,10 +1830,13 @@ This happens, for example, because '100.0m' (MiB) would appear greater than
 If your filtered results appear suspect, simply altering justification or
 scaling may yet achieve the desired objective.
 See the 'j', 'J' and 'e' \*(CIs for additional information.
+.RE
 
-Here are some examples of actual valid filters.
-The second \fBGROUP\fR filter might not display anything at all,
-just a blank \*(TW.
+.B Potential Problems
+.RS +3
+.P
+These \fBGROUP\fR filters could produce the exact same results or the
+second one might not display anything at all, just a blank \*(TW.
 .Bd -literal
      GROUP=root        ( only the same results when )
      GROUP=ROOT        ( invoked via lower case 'o' )
@@ -1838,44 +1844,55 @@ just a blank \*(TW.
 
 Either of these \fBRES\fR filters might yield inconsistent and/or
 misleading results, depending on the current memory scaling factor.
+Or both filters could produce the exact same results.
      RES>9999          ( only the same results when )
      !RES<10000        ( memory scaling is at 'KiB' )
 .Ed
 
-And the \fBnMin\fR filters help illustrate a problem unique to scalable fields.
-This particular field can display a maximum of 4 digits, beyond which
-vaules are automatically scaled to KiB or above.
+This \fBnMin\fR filter illustrates a problem unique to scalable fields.
+This particular field can display a maximum of 4 digits, beyond which values
+are automatically scaled to KiB or above.
 So while amounts greater than 9999 exist, they will appear as 2.6m, 197k, etc.
-Then by exploiting the trailing space, the second series of filters could
-achieve the original objective, but is offered for emphasis only.
 .Bd -literal
      nMin>9999         ( always a blank \*(TW )
-     '!nMin=0 ' + '!nMin=1 ' + '!nMin=2 ' + '!nMin=3 ' ...
 .Ed
+.RE
 
-The final examples illustrate how 'Other Filtering' can be creatively
+.B Potential Solutions
+.RS +3
+.P
+These examples illustrate how 'Other Filtering' can be creatively
 applied to achieve almost any desired result.
-The first one also reminds us that a trailing space is part of every
-displayed field.
-Single quotes are shown to delimit spaces which are part of
-the filters or to represent a request for status (^O) accurately.
-But if you used them in real life, no matches would be found.
+Single quotes are sometimes shown to delimit the spaces which are part of
+a filter or to represent a request for status (^O) accurately.
+But if you used them with if-values in real life, no matches would be found.
 
 Assuming field \fBnTH\fR is displayed, the first filter will result in
 only multi-threaded processes being shown.
+It also reminds us that a trailing space is part of every displayed field.
 The second filter achieves the exact same results with less typing.
-With Forest View mode active and the \fBCOMMAND\fR column in view, the
-third filter effectively collapses child processes so that just 3 levels
-are shown.
-The final example shows the 2 concurrent filters necessary to display
-tasks with priorities of 20 or more, since some might be negative.
 .Bd -literal
      !nTH=' 1 '                ( ' for clarity only )
      nTH>1                     ( same with less i/p )
-     !COMMAND='       `- '     ( ' for clarity only )
-     'PR>20' + '!PR=-'         ( 2 for right result )
 .Ed
 
+With Forest View mode active and the \fBCOMMAND\fR column in view, this
+filter effectively collapses child processes so that just 3 levels are shown.
+.Bd -literal
+     !COMMAND='       `- '     ( ' for clarity only )
+.Ed
+
+The final two filters appear as in response to the status request key (^O).
+In reality, each filter would have required separate input.
+The \fBPR\fR example shows the two concurrent filters necessary to display
+tasks with priorities of 20 or more, since some might be negative.
+Then by exploiting trailing spaces, the \fBnMin\fR series of filters could
+achieve the failed '9999' objective discussed above.
+.Bd -literal
+     'PR>20' + '!PR=-'         ( 2 for right result )
+     '!nMin=0 ' + '!nMin=1 ' + '!nMin=2 ' + '!nMin=3 ' ...
+.Ed
+.RE
 
 \*(NT When 'Other Filtering' is active, \*(We turns column highlighting
 \*F to prevent false matches on internal non-display escape sequences.
