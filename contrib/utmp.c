@@ -1,17 +1,17 @@
 /*
  * utmp.c - utmp printing command
  * Copyright (C) Albert Cahalan
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -65,7 +65,7 @@ int main (int argc, char **argv) {
     exit(1);
   }
 
-  
+ 
   if (list) {
     ut = fopen(UTMP_FILE, "r");
     while (fread(&uts, sizeof(uts), 1, ut))
@@ -90,7 +90,7 @@ int main (int argc, char **argv) {
 
   if (fix) {
     ut = fopen(UTMP_FILE, "r");
-    while (fread(&uts, sizeof(uts), 1, ut)) 
+    while (fread(&uts, sizeof(uts), 1, ut))
       if (((uts.ut_type == USER_PROCESS) && (uts.ut_name[0] != '\000'))
 	  || print_all) {
 	/* Display entry in utmp */
@@ -106,7 +106,7 @@ int main (int argc, char **argv) {
 	printf("ut_user: %s\n", user);
 	printf("ut_host: %s\n", host);
 	printf("ut_addr: %d\n\n", uts.ut_addr);
-      
+ 
 	printf("Modify this record? (y/N): "); fflush(stdout);
 	/* Ask if to delete or no */
 	if ((ch = getchar()) == 'y' || ch == 'Y') {

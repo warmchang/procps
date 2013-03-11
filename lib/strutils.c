@@ -1,4 +1,4 @@
-/* 
+/*
  * strutils.c - various string routines shared by commands
  * This file was copied from util-linux at fall 2011.
  *

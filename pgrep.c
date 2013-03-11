@@ -547,7 +547,7 @@ static struct el * select_procs (int *num)
 				xerrx(EXIT_FAILURE, _("internal error"));
 			}
 		}
-		
+	
 		memset (&task, 0, sizeof (task));
 	}
 	closeproc (ptp);
@@ -622,7 +622,7 @@ static void parse_opts (int argc, char **argv)
 		/* These options are for pgrep only */
 		strcat (opts, "lad:v");
 	}
-			
+	
 	strcat (opts, "LF:cfnoxP:g:s:u:U:G:t:?Vh");
 	
 	while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
@@ -810,7 +810,7 @@ int main (int argc, char **argv)
 				continue;
 			xwarn(_("killing pid %ld failed"), procs[i].num);
 		}
-		if (opt_count) 
+		if (opt_count)
 			fprintf(stdout, "%d\n", num);
 	} else {
 		if (opt_count) {

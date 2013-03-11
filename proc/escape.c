@@ -37,26 +37,26 @@ static int escape_str_utf8(char *restrict dst, const char *restrict src, int buf
   int my_cells = 0;
   int my_bytes = 0;
   mbstate_t s;
-  
+ 
   memset(&s, 0, sizeof (s));
-  
+ 
   for(;;) {
     wchar_t wc;
     int len = 0;
-	  
-    if(my_cells >= *maxcells || my_bytes+1 >= bufsize) 
+	
+    if(my_cells >= *maxcells || my_bytes+1 >= bufsize)
       break;
-    
+ 
     if (!(len = mbrtowc (&wc, src, MB_CUR_MAX, &s)))
       /* 'str' contains \0 */
       break;
-    
+ 
     if (len < 0) {
       /* invalid multibyte sequence -- zeroize state */
       memset (&s, 0, sizeof (s));
       *(dst++) = '?';
       src++;
-      my_cells++; 
+      my_cells++;
       my_bytes++;
 
     } else if (!iswprint(wc)) {
@@ -64,14 +64,14 @@ static int escape_str_utf8(char *restrict dst, const char *restrict src, int buf
       *(dst++) = '?';
       src+=len;
       my_cells++;
-      my_bytes++; 
-    
+      my_bytes++;
+ 
     } else {
-      /* multibyte - printable */	
+      /* multibyte - printable */
       int wlen = wcwidth(wc);
 
       if (wlen==0) {
-	// invisible multibyte -- we don't ignore it, because some terminal 
+	// invisible multibyte -- we don't ignore it, because some terminal
 	// interpret it wrong and more safe is replace it with '?'
 	*(dst++) = '?';
 	src+=len;
@@ -103,7 +103,7 @@ static int escape_str_utf8(char *restrict dst, const char *restrict src, int buf
   *dst = '\0';
 
   // fprintf(stderr, "maxcells: %d, my_cells; %d\n", *maxcells, my_cells);
-  
+ 
   *maxcells -= my_cells;
   return my_bytes;        // bytes of text, excluding the NUL
 }
@@ -124,10 +124,10 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
   "????????????????????????????????"
   "????????????????????????????????"
   "????????????????????????????????";
-  
+ 
 #if (__GNU_LIBRARY__ >= 6) && (!defined(__UCLIBC__) || defined(__UCLIBC_HAS_WCHAR__))
   static int utf_init=0;
-  
+ 
   if(utf_init==0){
      /* first call -- check if UTF stuff is usable */
      char *enc = nl_langinfo(CODESET);
@@ -138,11 +138,11 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
      return escape_str_utf8(dst, src, bufsize, maxcells);
   }
 #endif
-		  
+	
   if(bufsize > *maxcells+1) bufsize=*maxcells+1; // FIXME: assumes 8-bit locale
 
   for(;;){
-    if(my_cells >= *maxcells || my_bytes+1 >= bufsize) 
+    if(my_cells >= *maxcells || my_bytes+1 >= bufsize)
       break;
     c = (unsigned char) *(src++);
     if(!c) break;
@@ -152,7 +152,7 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
     *(dst++) = c;
   }
   *dst = '\0';
-  
+ 
   *maxcells -= my_cells;
   return my_bytes;        // bytes of text, excluding the NUL
 }

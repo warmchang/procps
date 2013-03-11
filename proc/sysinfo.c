@@ -269,7 +269,7 @@ static void init_libproc(void){
   cpuinfo();
 
 #ifdef __linux__
-  if(linux_version_code > LINUX_VERSION(2, 4, 0)){ 
+  if(linux_version_code > LINUX_VERSION(2, 4, 0)){
     Hertz = find_elf_note(AT_CLKTCK);
     if(Hertz!=NOTE_NOT_FOUND) return;
     fputs("2.4+ kernel w/o ELF notes? -- report this\n", stderr);
@@ -360,7 +360,7 @@ void eight_cpu_numbers(double *restrict uret, double *restrict nret, double *res
 void loadavg(double *restrict av1, double *restrict av5, double *restrict av15) {
     double avg_1=0, avg_5=0, avg_15=0;
     char *savelocale;
-    
+ 
     FILE_TO_BUF(LOADAVG_FILE,loadavg_fd);
     savelocale = strdup(setlocale(LC_NUMERIC, NULL));
     setlocale(LC_NUMERIC, "C");
@@ -447,7 +447,7 @@ void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff
     if(fd == -1) crash("/proc/stat");
   }
   read(fd,buff,BUFFSIZE-1);
-  *intr = 0; 
+  *intr = 0;
   *ciow = 0;  /* not separated out until the 2.5.41 kernel */
   *cxxx = 0;  /* not separated out until the 2.6.0-test4 kernel */
   *cyyy = 0;  /* not separated out until the 2.6.0-test4 kernel */
@@ -719,21 +719,21 @@ unsigned long vm_pageoutrun;  // times kswapd ran page reclaim
 unsigned long vm_allocstall; // times a page allocator ran direct reclaim
 unsigned long vm_pgrotated; // pages rotated to the tail of the LRU for immediate reclaim
 // seen on a 2.6.8-rc1 kernel, apparently replacing old fields
-static unsigned long vm_pgalloc_dma;          // 
-static unsigned long vm_pgalloc_high;         // 
-static unsigned long vm_pgalloc_normal;       // 
-static unsigned long vm_pgrefill_dma;         // 
-static unsigned long vm_pgrefill_high;        // 
-static unsigned long vm_pgrefill_normal;      // 
-static unsigned long vm_pgscan_direct_dma;    // 
-static unsigned long vm_pgscan_direct_high;   // 
-static unsigned long vm_pgscan_direct_normal; // 
-static unsigned long vm_pgscan_kswapd_dma;    // 
-static unsigned long vm_pgscan_kswapd_high;   // 
-static unsigned long vm_pgscan_kswapd_normal; // 
-static unsigned long vm_pgsteal_dma;          // 
-static unsigned long vm_pgsteal_high;         // 
-static unsigned long vm_pgsteal_normal;       // 
+static unsigned long vm_pgalloc_dma;          //
+static unsigned long vm_pgalloc_high;         //
+static unsigned long vm_pgalloc_normal;       //
+static unsigned long vm_pgrefill_dma;         //
+static unsigned long vm_pgrefill_high;        //
+static unsigned long vm_pgrefill_normal;      //
+static unsigned long vm_pgscan_direct_dma;    //
+static unsigned long vm_pgscan_direct_high;   //
+static unsigned long vm_pgscan_direct_normal; //
+static unsigned long vm_pgscan_kswapd_dma;    //
+static unsigned long vm_pgscan_kswapd_high;   //
+static unsigned long vm_pgscan_kswapd_normal; //
+static unsigned long vm_pgsteal_dma;          //
+static unsigned long vm_pgsteal_high;         //
+static unsigned long vm_pgsteal_normal;       //
 // seen on a 2.6.8-rc1 kernel
 static unsigned long vm_kswapd_inodesteal;    //
 static unsigned long vm_nr_unstable;          //
@@ -887,7 +887,7 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
 
   *disks = NULL;
   *partitions = NULL;
-  buff[BUFFSIZE-1] = 0; 
+  buff[BUFFSIZE-1] = 0;
   fd = fopen("/proc/diskstats", "rb");
   if(!fd) crash("/proc/diskstats");
 
@@ -932,7 +932,7 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
         &(*partitions)[cPartition].requested_writes
       );
       (*partitions)[cPartition++].parent_disk = cDisk-1;
-      (*disks)[cDisk-1].partitions++;	
+      (*disks)[cDisk-1].partitions++;
     }
   }
 
@@ -945,7 +945,7 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
 unsigned int getslabinfo (struct slab_cache **slab){
   FILE* fd;
   int cSlab = 0;
-  buff[BUFFSIZE-1] = 0; 
+  buff[BUFFSIZE-1] = 0;
   *slab = NULL;
   fd = fopen("/proc/slabinfo", "rb");
   if(!fd) crash("/proc/slabinfo");

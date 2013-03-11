@@ -9,7 +9,7 @@ buildroot git clone.
 
 Once the apply merge is done you need to run 'make menuconfig',
 choose Package Selection for the target --->, [*] Show packages that
-are also provided by busybox && System tools ---> [*] procps-ng. 
+are also provided by busybox && System tools ---> [*] procps-ng.
 If you do not want to configure anything else save, exit and make.
 
 Notice that you almost certainly want to PROCPS_NG_VERSION
@@ -80,6 +80,6 @@ index 0000000..0249b07
 +
 +$(eval $(call AUTOTARGETS))
 +$(eval $(call AUTOTARGETS,host))
--- 
+--
 1.7.10
 

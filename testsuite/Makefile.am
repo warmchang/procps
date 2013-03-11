@@ -50,4 +50,4 @@ EXTRA_DIST = \
     sysctl.test/sysctl_read.exp \
     uptime.test/uptime.exp \
     vmstat.test/vmstat.exp \
-    w.test/w.exp 
+    w.test/w.exp

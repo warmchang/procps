@@ -142,12 +142,12 @@ static void print_display_or_interface(const char *restrict host, int len, int r
 				fputc('-', stdout);
 			}
 		} else { /* multiple colons found - it's an IPv6 address */
-			
+	
 			/* search for % (interface separator in case of IPv6 link address) */
 			while ( (tmp < (host + len)) && (*tmp != '%') && isprint(*tmp) ) tmp++;
 
 			if (*tmp == '%') { /* interface separator found */
-				
+	
 				/* number of chars till the end of the input field */
 				len -= (tmp - host);
 

@@ -1,4 +1,4 @@
-/* 
+/*
  * This header was copied from util-linux at fall 2011.
  */
 

@@ -441,7 +441,7 @@ char *argv[];
 		    }
 		    else
 		    {
-			/* 
+			/*
 			 * Check out the next process
 			 * If we can't open it, use info from this process,
 			 * so we have to check out cmdline first.
@@ -665,7 +665,7 @@ char *tty;
 	if (idle >= (60 * 60 * 48))	/* more than two days */
 	    sprintf (give, "%2ludays", idle / (60 * 60 * 24));
 	else
-	    sprintf (give, " %2lu:%02u", idle / (60 * 60), 
+	    sprintf (give, " %2lu:%02u", idle / (60 * 60),
 	      (unsigned) ((idle / 60) % 60));
     }
     else

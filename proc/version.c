@@ -45,7 +45,7 @@ void init_Linux_version(void) {
 
 #ifdef __linux__
     static struct utsname uts;
-    
+ 
     if (uname(&uts) == -1)	/* failure implies impending death */
 	exit(1);
 
