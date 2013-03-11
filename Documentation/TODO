@@ -29,7 +29,7 @@ Supply data for the ADDR and JOBC fields.
 Support & supply data for SL and RE.
 
 Add a /proc/*/tty symlink to eliminate guessing when /proc/*/fd is
-not accessable.
+not accessible.
 
 Add /proc/*/.bindata files to avoid string parsing. It should be an array
 of 64-bit values on all machines. New entries go on the end and obsolete

@@ -198,7 +198,7 @@ static void print_from(const utmp_t *restrict const u, const int ip_addresses, c
 			if (!inet_ntop(AF_INET6, &ut_addr_v6, buf_ipv6, sizeof(buf_ipv6))) {
 				strcpy(buf, ""); /* invalid address, clean the buffer */
 			} else {
-				strncpy(buf, buf_ipv6, fromlen); /* adress valid, copy to buffer */
+				strncpy(buf, buf_ipv6, fromlen); /* address valid, copy to buffer */
 			}
 		} else {
 			/* IPv4 */

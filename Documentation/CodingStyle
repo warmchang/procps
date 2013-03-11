@@ -4,7 +4,7 @@ with others.
 
 http://git.kernel.org/?p=linux/kernel/git/torvalds/linux.git;a=blob_plain;f=Documentation/CodingStyle
 
-In addtion to Linux coding style this project has few additional
+In addition to Linux coding style this project has few additional
 wishes to contributors.
 
 * Many small patches are favoured over one big. Break down is done on

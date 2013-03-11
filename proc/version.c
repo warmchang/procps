@@ -1,7 +1,7 @@
 /*
  * Suite version information for procps-ng utilities
  * Copyright (c) 1995 Martin Schulze <joey@infodrom.north.de>
- * Ammended by cblake to only export the function symbol.
+ * Amended by cblake to only export the function symbol.
  *
  * Modified by Albert Cahalan, ????-2003
  *
