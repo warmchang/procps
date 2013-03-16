@@ -43,7 +43,7 @@ const char *nls_Address,
 	   *nls_Offset,
 	   *nls_Device,
 	   *nls_Mapping,
-	   *nls_Flags,
+	   *nls_Perm,
 	   *nls_Inode,
 	   *nls_Kbytes,
 	   *nls_Mode,
@@ -65,7 +65,7 @@ static void nls_initialize(void)
 
 	/* these headings are used only by the -X/-XX options,
 	   and are not derived literally from /proc/#/smaps */
-	nls_Flags   = _("Flags");
+	nls_Perm    = _("Perm");
 	nls_Inode   = _("Inode");
 
 	/* these are potentially used for options other than -X/-XX, */
@@ -167,14 +167,14 @@ static void discover_shm_minor(void)
 		goto out_destroy;
 
 	while (fgets(mapbuf_b, sizeof mapbuf_b, stdin)) {
-		char flags[32];
+		char perms[32];
 		/* to clean up unprintables */
 		char *tmp;
 		unsigned KLONG start, end;
 		unsigned long long file_offset, inode;
 		unsigned dev_major, dev_minor;
 		sscanf(mapbuf_b, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
-		       &end, flags, &file_offset, &dev_major, &dev_minor,
+		       &end, perms, &file_offset, &dev_major, &dev_minor,
 		       &inode);
 		tmp = strchr(mapbuf_b, '\n');
 		if (tmp)
@@ -189,7 +189,7 @@ static void discover_shm_minor(void)
 			continue;
 		if (dev_major)
 			continue;
-		if (flags[3] != 's')
+		if (perms[3] != 's')
 			continue;
 		if (strstr(mapbuf_b, "/SYSV")) {
 			shm_minor = dev_minor;
@@ -300,7 +300,7 @@ static int is_enabled (const char *s)
 
 static void print_extended_maps (FILE *f)
 {
-	char flags[DETAIL_LENGTH], map_desc[128],
+	char perms[DETAIL_LENGTH], map_desc[128],
 	     detail_desc[DETAIL_LENGTH], value_str[NUM_LENGTH],
 	     start[NUM_LENGTH], end[NUM_LENGTH],
 	     offset[NUM_LENGTH], inode[NUM_LENGTH],
@@ -319,7 +319,7 @@ static void print_extended_maps (FILE *f)
 				 "%"NUML"[0-9a-f]-%"NUML"[0-9a-f] "
 				 "%"DETL"s %"NUML"[0-9a-f] "
 				 "%63[0-9a-f:] %"NUML"s %127[^\n]%c",
-				 start, end, flags, offset,
+				 start, end, perms, offset,
 				 dev, inode, map_desc, &c);
 		/* Must read at least up to inode, else something has changed! */
 		if (nfields < 6)
@@ -332,7 +332,7 @@ static void print_extended_maps (FILE *f)
 
 		/* Store maximum widths for printing nice later */
 		if (strlen(start ) > maxw1)	maxw1 = strlen(start);
-		if (strlen(flags ) > maxw2)	maxw2 = strlen(flags);
+		if (strlen(perms ) > maxw2)	maxw2 = strlen(perms);
 		if (strlen(offset) > maxw3)	maxw3 = strlen(offset);
 		if (strlen(dev   ) > maxw4)	maxw4 = strlen(dev);
 		if (strlen(inode ) > maxw5)	maxw5 = strlen(inode);
@@ -409,8 +409,8 @@ loop_end:
 
 				maxw1 = justify_print(nls_Address, maxw1, 1);
 
-				if (is_enabled(nls_Flags))
-					maxw2 = justify_print(nls_Flags, maxw2, 1);
+				if (is_enabled(nls_Perm))
+					maxw2 = justify_print(nls_Perm, maxw2, 1);
 
 				if (is_enabled(nls_Offset))
 					maxw3 = justify_print(nls_Offset, maxw3, 1);
@@ -436,8 +436,8 @@ loop_end:
 			/* Print data */
 			printf("%*s", maxw1, start);    /* Address field is always enabled */
 
-			if (is_enabled(nls_Flags))
-				printf(" %*s", maxw2, flags);
+			if (is_enabled(nls_Perm))
+				printf(" %*s", maxw2, perms);
 
 			if (is_enabled(nls_Offset))
 				printf(" %*s", maxw3, offset);
@@ -454,7 +454,7 @@ loop_end:
 			if (has_vmflags && is_enabled("VmFlags"))
 				printf(" %*s", maxwv, vmflags);
 
-			if (is_enabled("Mapping")) {
+			if (is_enabled(nls_Mapping)) {
 				if (map_desc_showpath) {
 					printf(" %s", map_desc);
 				} else {
@@ -478,7 +478,7 @@ loop_end:
 	if (!q_option && listhead!=NULL) { /* footer enabled and non-empty */
 
 		                            footer_gap  = maxw1 + 1; /* Address field is always enabled */
-		if (is_enabled(nls_Flags )) footer_gap += maxw2 + 1;
+		if (is_enabled(nls_Perm  )) footer_gap += maxw2 + 1;
 		if (is_enabled(nls_Offset)) footer_gap += maxw3 + 1;
 		if (is_enabled(nls_Device)) footer_gap += maxw4 + 1;
 		if (is_enabled(nls_Inode )) footer_gap += maxw5 + 1;
@@ -577,7 +577,7 @@ static int one_proc(proc_t * p)
 	}
 
 	while (fgets(mapbuf, sizeof mapbuf, fp)) {
-		char flags[32];
+		char perms[32];
 		/* to clean up unprintables */
 		char *tmp;
 		unsigned KLONG start, end;
@@ -614,7 +614,7 @@ static int one_proc(proc_t * p)
 					       maxw2, (unsigned long)(diff >> 10),
 					       maxw3, rss,
 					       maxw4, (private_dirty + shared_dirty),
-					       maxw5, flags,
+					       maxw5, perms,
 					       cp2);
 					/* reset some counters */
 					rss = shared_dirty = private_dirty = 0ull;
@@ -626,7 +626,7 @@ static int one_proc(proc_t * p)
 			}
 		}
 		sscanf(mapbuf, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
-		       &end, flags, &file_offset, &dev_major, &dev_minor,
+		       &end, perms, &file_offset, &dev_major, &dev_minor,
 		       &inode);
 
 		if (end - 1 < range_low)
@@ -645,11 +645,11 @@ static int one_proc(proc_t * p)
 		}
 
 		diff = end - start;
-		if (flags[3] == 's')
+		if (perms[3] == 's')
 			total_shared += diff;
-		if (flags[3] == 'p') {
-			flags[3] = '-';
-			if (flags[1] == 'w')
+		if (perms[3] == 'p') {
+			perms[3] = '-';
+			if (perms[1] == 'w')
 				total_private_writeable += diff;
 			else
 				total_private_readonly += diff;
@@ -658,8 +658,8 @@ static int one_proc(proc_t * p)
 		 * if swap not reserved (MAP_NORESERVE, SysV ISM
 		 * shared mem, etc.)
 		 */
-		flags[4] = '-';
-		flags[5] = '\0';
+		perms[4] = '-';
+		perms[5] = '\0';
 
 		if (x_option) {
 			cp2 =
@@ -675,7 +675,7 @@ static int one_proc(proc_t * p)
 			printf("%0*" KLF "x %*lu %*s %0*llx %*.*s%03x:%05x %s\n",
 			       maxw1, start,
 			       maxw2, (unsigned long)(diff >> 10),
-			       maxw3, flags,
+			       maxw3, perms,
 			       maxw4, file_offset,
 			       (maxw5-9), (maxw5-9), " ", dev_major, dev_minor,
 			       cp);
@@ -687,7 +687,7 @@ static int one_proc(proc_t * p)
 			printf((sizeof(KLONG) == 8)
 			       ? "%016" KLF "x %6luK %s %s\n"
 			       : "%08lx %6luK %s %s\n",
-			       start, (unsigned long)(diff >> 10), flags, cp);
+			       start, (unsigned long)(diff >> 10), perms, cp);
 		}
 
 	}
@@ -920,7 +920,7 @@ static int config_create (char *rc_filename)
 	fprintf(f,"\n");
 	fprintf(f,"# To enable a field uncomment its entry\n");
 	fprintf(f,"\n");
-	fprintf(f,"#%s\n", nls_Flags);
+	fprintf(f,"#%s\n", nls_Perm);
 	fprintf(f,"#%s\n", nls_Offset);
 	fprintf(f,"#%s\n", nls_Device);
 	fprintf(f,"#%s\n", nls_Inode);
