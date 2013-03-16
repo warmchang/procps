@@ -55,7 +55,7 @@ static int integer_width(unsigned KLONG number)
 
 
 static void __attribute__ ((__noreturn__))
-    usage(FILE * out)
+usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
@@ -153,7 +153,7 @@ static void discover_shm_minor(void)
 	if (shmdt(addr))
 		perror(_("shared memory detach"));
 
- out_destroy:
+out_destroy:
 	if (shmctl(shmid, IPC_RMID, NULL))
 		perror(_("shared memory remove"));
 
@@ -261,10 +261,7 @@ static void print_extended_maps (FILE *f)
 	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0, maxwv=0;
 	int nfields, firstmapping, footer_gap, i, width_of_total;
 	unsigned KLONG value;
-	char *ret;
-	char *map_basename;
-	char c;
-	char has_vmflags = 0;
+	char *ret, *map_basename, c, has_vmflags = 0;
 
 	/* initial widths */
 	maxw1 = strlen("Address");
@@ -499,7 +496,6 @@ static int one_proc(proc_t * p)
 	unsigned long total_private_readonly = 0ul;
 	unsigned long total_private_writeable = 0ul;
 	KLONG diff = 0;
-
 	const char *cp2 = NULL;
 	unsigned long long rss = 0ull;
 	unsigned long long private_dirty = 0ull;
@@ -596,9 +592,8 @@ static int one_proc(proc_t * p)
 					       (private_dirty + shared_dirty),
 					       flags, cp2);
 					/* reset some counters */
-					rss = shared_dirty = private_dirty =
-					    0ull;
-                    diff = 0;
+					rss = shared_dirty = private_dirty = 0ull;
+					diff = 0;
 					continue;
 				}
 				/* Other keys */
@@ -670,7 +665,7 @@ static int one_proc(proc_t * p)
 		}
 
 	}
-    fclose(fp);
+	fclose(fp);
 	if (!q_option) {
 		if (x_option) {
 			if (sizeof(KLONG) == 8) {
