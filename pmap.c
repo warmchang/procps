@@ -39,6 +39,53 @@
 #include "proc/readproc.h"
 #include "proc/version.h"
 
+const char *nls_Address,
+	   *nls_Offset,
+	   *nls_Device,
+	   *nls_Mapping,
+	   *nls_Flags,
+	   *nls_Inode,
+	   *nls_Kbytes,
+	   *nls_Mode,
+	   *nls_RSS,
+	   *nls_Dirty;
+
+static void nls_initialize(void)
+{
+	setlocale (LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
+	/* these are the headings shared across all options,
+	   though their widths when output might differ */
+	nls_Address = _("Address");
+	nls_Offset  = _("Offset");
+	nls_Device  = _("Device");
+	nls_Mapping = _("Mapping");
+
+	/* these headings are used only by the -X/-XX options,
+	   and are not derived literally from /proc/#/smaps */
+	nls_Flags   = _("Flags");
+	nls_Inode   = _("Inode");
+
+	/* these are potentially used for options other than -X/-XX, */
+	nls_Kbytes  = _("Kbytes");
+	nls_Mode    = _("Mode");
+	nls_RSS     = _("RSS");
+	nls_Dirty   = _("Dirty");
+}
+
+static int justify_print(const char *str, int width, int right)
+{
+	if (width < 1)
+		puts(str);
+	else {
+		int len = strlen(str);
+		if (width < len) width = len;
+		printf(right ? "%*.*s " : "%-*.*s ", width, width, str);
+	}
+	return width;
+}
 
 static int integer_width(unsigned KLONG number)
 {
@@ -220,7 +267,7 @@ struct cnf_listnode {
 
 static struct cnf_listnode *cnf_listhead=NULL, *cnf_listnode;
 
-static int is_unimportant (char *s)
+static int is_unimportant (const char *s)
 {
 	if (strcmp(s, "AnonHugePages") == 0) return 1;
 	if (strcmp(s, "KernelPageSize") == 0) return 1;
@@ -234,7 +281,7 @@ static int is_unimportant (char *s)
 }
 
 /* check, whether we want to display the field or not */
-static int is_enabled (char *s)
+static int is_enabled (const char *s)
 {
 	if (X_option == 1) return !is_unimportant(s);
 
@@ -262,14 +309,6 @@ static void print_extended_maps (FILE *f)
 	int nfields, firstmapping, footer_gap, i, width_of_total;
 	unsigned KLONG value;
 	char *ret, *map_basename, c, has_vmflags = 0;
-
-	/* initial widths */
-	maxw1 = strlen("Address");
-	maxw2 = strlen("Flags"  );
-	maxw3 = strlen("Offset" );
-	maxw4 = strlen("Device" );
-	maxw5 = strlen("Inode"  );
-	maxwv = strlen("VmFlags");
 
 	ret = fgets(mapbuf, sizeof mapbuf, f);
 	firstmapping = 2;
@@ -368,45 +407,45 @@ loop_end:
 			/* Print header */
 			if (firstmapping && !q_option) {
 
-				printf("%*s", maxw1, "Address");   /* Address field always enabled */
+				maxw1 = justify_print(nls_Address, maxw1, 1);
 
-				if (is_enabled("Flags"))
-					printf(" %*s", maxw2, "Flags");
+				if (is_enabled(nls_Flags))
+					maxw2 = justify_print(nls_Flags, maxw2, 1);
 
-				if (is_enabled("Offset"))
-					printf(" %*s", maxw3, "Offset");
+				if (is_enabled(nls_Offset))
+					maxw3 = justify_print(nls_Offset, maxw3, 1);
 
-				if (is_enabled("Device"))
-					printf(" %*s", maxw4, "Device");
+				if (is_enabled(nls_Device))
+					maxw4 = justify_print(nls_Device, maxw4, 1);
 
-				if (is_enabled("Inode"))
-					printf(" %*s", maxw5, "Inode");
+				if (is_enabled(nls_Inode))
+					maxw5 = justify_print(nls_Inode, maxw5, 1);
 
 				for (listnode=listhead; listnode!=NULL; listnode=listnode->next)
-					printf(" %*s", listnode->max_width, listnode->description);
+					justify_print(listnode->description, listnode->max_width, 1);
 
 				if (has_vmflags && is_enabled("VmFlags"))
 					printf(" %*s", maxwv, "VmFlags");
 
-				if (is_enabled("Mapping"))
-					printf(" %s", "Mapping");
-
-				printf("\n");
+				if (is_enabled(nls_Mapping))
+					justify_print(nls_Mapping, 0, 0);
+				else
+					printf("\n");
 			}
 
 			/* Print data */
 			printf("%*s", maxw1, start);    /* Address field is always enabled */
 
-			if (is_enabled("Flags"))
+			if (is_enabled(nls_Flags))
 				printf(" %*s", maxw2, flags);
 
-			if (is_enabled("Offset"))
+			if (is_enabled(nls_Offset))
 				printf(" %*s", maxw3, offset);
 
-			if (is_enabled("Device"))
+			if (is_enabled(nls_Device))
 				printf(" %*s", maxw4, dev);
 
-			if (is_enabled("Inode"))
+			if (is_enabled(nls_Inode))
 				printf(" %*s", maxw5, inode);
 
 			for (listnode=listhead; listnode!=NULL; listnode=listnode->next)
@@ -438,11 +477,11 @@ loop_end:
 	/* === PRINT TOTALS === */
 	if (!q_option && listhead!=NULL) { /* footer enabled and non-empty */
 
-					   footer_gap  = maxw1 + 1; /* Address field is always enabled */
-		if (is_enabled("Flags" ))  footer_gap += maxw2 + 1;
-		if (is_enabled("Offset"))  footer_gap += maxw3 + 1;
-		if (is_enabled("Device"))  footer_gap += maxw4 + 1;
-		if (is_enabled("Inode" ))  footer_gap += maxw5 + 1;
+		                            footer_gap  = maxw1 + 1; /* Address field is always enabled */
+		if (is_enabled(nls_Flags )) footer_gap += maxw2 + 1;
+		if (is_enabled(nls_Offset)) footer_gap += maxw3 + 1;
+		if (is_enabled(nls_Device)) footer_gap += maxw4 + 1;
+		if (is_enabled(nls_Inode )) footer_gap += maxw5 + 1;
 
 		for (i=0; i<footer_gap; i++) putc(' ', stdout);
 
@@ -479,6 +518,7 @@ static int one_proc(proc_t * p)
 	unsigned long long total_rss = 0ull;
 	unsigned long long total_private_dirty = 0ull;
 	unsigned long long total_shared_dirty = 0ull;
+	int maxw1, maxw2, maxw3, maxw4, maxw5;
 
 	/* Overkill, but who knows what is proper? The "w" prog uses
 	 * the tty width to determine this.
@@ -504,25 +544,35 @@ static int one_proc(proc_t * p)
 		return 0;
 	}
 
-	if (!q_option && (x_option | d_option)) {
-		if (x_option) {
-			if (sizeof(KLONG) == 4)
-				/* Translation Hint: Please keep
-				 * alignment of the following four
-				 * headers intact. */
-				printf
-				    (_("Address   Kbytes     RSS   Dirty Mode   Mapping\n"));
-			else
-				printf
-				    (_("Address           Kbytes     RSS   Dirty Mode   Mapping\n"));
+	if (x_option) {
+		maxw1 = 16;
+		if (sizeof(KLONG) == 4) maxw1 = 8;
+		maxw2 = maxw3 = maxw4 = 7;
+		maxw5 = 5;
+		if (!q_option) {
+			maxw1 = justify_print(nls_Address, maxw1, 0);
+			maxw2 = justify_print(nls_Kbytes, maxw2, 1);
+			maxw3 = justify_print(nls_RSS, maxw3, 1);
+			maxw4 = justify_print(nls_Dirty, maxw4, 1);
+			maxw5 = justify_print(nls_Mode, maxw5, 0);
+			justify_print(nls_Mapping, 0, 0);
 		}
-		if (d_option) {
-			if (sizeof(KLONG) == 4)
-				printf
-				    (_("Address   Kbytes Mode  Offset           Device    Mapping\n"));
-			else
-				printf
-				    (_("Address           Kbytes Mode  Offset           Device    Mapping\n"));
+	}
+
+	if (d_option) {
+		maxw1 = 16;
+		if (sizeof(KLONG) == 4) maxw1 = 8;
+		maxw2 = 7;
+		maxw3 = 5;
+		maxw4 = 16;
+		maxw5 = 9;
+		if (!q_option) {
+			maxw1 = justify_print(nls_Address, maxw1, 0);
+			maxw2 = justify_print(nls_Kbytes, maxw2, 1);
+			maxw3 = justify_print(nls_Mode, maxw3, 0);
+			maxw4 = justify_print(nls_Offset, maxw4, 0);
+			maxw5 = justify_print(nls_Device, maxw5, 0);
+			justify_print(nls_Mapping, 0, 0);
 		}
 	}
 
@@ -559,14 +609,13 @@ static int one_proc(proc_t * p)
 				}
 				if (strncmp("Swap", smap_key, 4) == 0) {
 					/*doesnt matter as long as last */
-					printf((sizeof(KLONG) == 8)
-					       ? "%016" KLF
-					       "x %7lu %7llu %7llu %s  %s\n" :
-					       "%08lx %7lu %7llu %7llu %s  %s\n",
-					       start,
-					       (unsigned long)(diff >> 10), rss,
-					       (private_dirty + shared_dirty),
-					       flags, cp2);
+					printf("%0*" KLF "x %*lu %*llu %*llu %*s %s\n",
+					       maxw1, start,
+					       maxw2, (unsigned long)(diff >> 10),
+					       maxw3, rss,
+					       maxw4, (private_dirty + shared_dirty),
+					       maxw5, flags,
+					       cp2);
 					/* reset some counters */
 					rss = shared_dirty = private_dirty = 0ull;
 					diff = 0;
@@ -623,20 +672,21 @@ static int one_proc(proc_t * p)
 			const char *cp =
 			    mapping_name(p, start, diff, mapbuf, map_desc_showpath, dev_major,
 					 dev_minor, inode);
-			printf((sizeof(KLONG) == 8)
-			       ? "%016" KLF "x %7lu %s %016llx %03x:%05x %s\n"
-			       : "%08lx %7lu %s %016llx %03x:%05x %s\n",
-			       start,
-			       (unsigned long)(diff >> 10),
-			       flags, file_offset, dev_major, dev_minor, cp);
+			printf("%0*" KLF "x %*lu %*s %0*llx %*.*s%03x:%05x %s\n",
+			       maxw1, start,
+			       maxw2, (unsigned long)(diff >> 10),
+			       maxw3, flags,
+			       maxw4, file_offset,
+			       (maxw5-9), (maxw5-9), " ", dev_major, dev_minor,
+			       cp);
 		}
 		if (!x_option && !d_option) {
 			const char *cp =
 			    mapping_name(p, start, diff, mapbuf, map_desc_showpath, dev_major,
 					 dev_minor, inode);
 			printf((sizeof(KLONG) == 8)
-			       ? "%016" KLF "x %6luK %s  %s\n"
-			       : "%08lx %6luK %s  %s\n",
+			       ? "%016" KLF "x %6luK %s %s\n"
+			       : "%08lx %6luK %s %s\n",
 			       start, (unsigned long)(diff >> 10), flags, cp);
 		}
 
@@ -644,27 +694,23 @@ static int one_proc(proc_t * p)
 	fclose(fp);
 	if (!q_option) {
 		if (x_option) {
-			if (sizeof(KLONG) == 8) {
-				printf
-				    ("----------------  ------  ------  ------\n");
-				printf(_("total kB %15ld %7llu %7llu\n"),
-				       (total_shared + total_private_writeable +
+			if (sizeof(KLONG) == 4)
+				justify_print("--------", maxw1, 0);
+			else
+				justify_print("----------------", maxw1, 0);
+			justify_print("-------", maxw2, 1);
+			justify_print("-------", maxw3, 1);
+			justify_print("-------", maxw4, 1);
+			printf("\n");
+
+			printf("%-*s ", maxw1, _("total kB"));
+			printf("%*ld %*llu %*llu\n",
+				maxw2, (total_shared +
+					total_private_writeable +
 					total_private_readonly) >> 10,
-				       total_rss,
-				       (total_shared_dirty +
-					total_private_dirty)
-
-				    );
-			} else {
-				printf
-				    ("-------- ------- ------- ------- -------\n");
-				printf
-				    (_("total kB %7ld %7llu %7llu -\n"),
-				     (total_shared + total_private_writeable +
-				      total_private_readonly) >> 10,
-					 total_rss, (total_shared_dirty+total_private_dirty));
-
-			}
+				maxw3, total_rss,
+				maxw4, (total_shared_dirty +
+					total_private_dirty));
 		}
 		if (d_option) {
 			printf
@@ -874,10 +920,10 @@ static int config_create (char *rc_filename)
 	fprintf(f,"\n");
 	fprintf(f,"# To enable a field uncomment its entry\n");
 	fprintf(f,"\n");
-	fprintf(f,"#Flags\n");
-	fprintf(f,"#Offset\n");
-	fprintf(f,"#Device\n");
-	fprintf(f,"#Inode\n");
+	fprintf(f,"#%s\n", nls_Flags);
+	fprintf(f,"#%s\n", nls_Offset);
+	fprintf(f,"#%s\n", nls_Device);
+	fprintf(f,"#%s\n", nls_Inode);
 	fprintf(f,"#Size\n");
 	fprintf(f,"#Rss\n");
 	fprintf(f,"#Pss\n");
@@ -893,7 +939,7 @@ static int config_create (char *rc_filename)
 	fprintf(f,"#MMUPageSize\n");
 	fprintf(f,"#Locked\n");
 	fprintf(f,"#VmFlags\n");
-	fprintf(f,"#Mapping\n");
+	fprintf(f,"#%s\n", nls_Mapping);
 	fprintf(f,"\n");
 	fprintf(f,"\n");
 	fprintf(f,"[Mapping]\n");
@@ -960,9 +1006,7 @@ int main(int argc, char **argv)
 	};
 
 	program_invocation_name = program_invocation_short_name;
-	setlocale (LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
+	nls_initialize();
 	atexit(close_stdout);
 
 	if (argc < 2)
