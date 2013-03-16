@@ -21,8 +21,8 @@ set pmap_ext_footer "\[ -\]+\\s+total kB\\s+\\d+(\\s+\[\\d-\]+){2,3}\\s*\$"
 
 set test "pmap with no arguments"
 spawn $pmap
-expect_pass "$test" "^\(lt-\)\?pmap: argument missing"
-#expect_pass "$test" "^Usage: pmap \\\[-x | -d\\\] \\\[-q\\\] \\\[-A low,high\\\] pid\\.\\.\\.\\s+-x\\s+show details\\s+-d\\s+show offset and device number\\s+-q\\s+quiet; less header/footer info\\s+-V\\s+show the version number\\s+-A\\s+limit results to the given range\\s*"
+#expect_pass "$test" "^\(lt-\)\?pmap: argument missing"
+expect_pass "$test" "Usage:\\s+\(lt-\)?pmap \\\[options\\\] pid \\\[pid \.\.\.\\\]"
 
 set test "pmap standard output"
 spawn $pmap $mypid

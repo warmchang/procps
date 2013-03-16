@@ -994,6 +994,9 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
+	if (argc < 2)
+		usage(stderr);
+
 	while ((c = getopt_long(argc, argv, "xXrdqA:hVcC:nN:p", longopts, NULL)) != -1)
 		switch (c) {
 		case 'x':
