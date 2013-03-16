@@ -257,7 +257,7 @@ static void print_extended_maps (FILE *f)
 	     detail_desc[DETAIL_LENGTH], value_str[NUM_LENGTH],
 	     start[NUM_LENGTH], end[NUM_LENGTH],
 	     offset[NUM_LENGTH], inode[NUM_LENGTH],
-	     dev[64], fmt_str[64], vmflags[VMFLAGS_LENGTH];
+	     dev[64], vmflags[VMFLAGS_LENGTH];
 	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0, maxwv=0;
 	int nfields, firstmapping, footer_gap, i, width_of_total;
 	unsigned KLONG value;
@@ -368,74 +368,52 @@ loop_end:
 			/* Print header */
 			if (firstmapping && !q_option) {
 
-				sprintf(fmt_str, "%%%ds", maxw1); /* Address field always enabled */
-				printf(fmt_str, "Address");
+				printf("%*s", maxw1, "Address");   /* Address field always enabled */
 
-				if (is_enabled("Flags")) {
-					sprintf(fmt_str, " %%%ds", maxw2);
-					printf(fmt_str, "Flags");
-				}
-				if (is_enabled("Offset")) {
-					sprintf(fmt_str, " %%%ds", maxw3);
-					printf(fmt_str, "Offset");
-				}
-				if (is_enabled("Device")) {
-					sprintf(fmt_str, " %%%ds", maxw4);
-					printf(fmt_str, "Device");
-				}
-				if (is_enabled("Inode")) {
-					sprintf(fmt_str, " %%%ds", maxw5);
-					printf(fmt_str, "Inode");
-				}
+				if (is_enabled("Flags"))
+					printf(" %*s", maxw2, "Flags");
 
-				for (listnode=listhead; listnode!=NULL; listnode=listnode->next) {
-					sprintf(fmt_str, " %%%ds", listnode->max_width);
-					printf(fmt_str, listnode->description);
-				}
+				if (is_enabled("Offset"))
+					printf(" %*s", maxw3, "Offset");
 
-				if (has_vmflags && is_enabled("VmFlags")) {
-					sprintf(fmt_str, " %%%ds", maxwv);
-					printf(fmt_str, "VmFlags");
-				}
+				if (is_enabled("Device"))
+					printf(" %*s", maxw4, "Device");
 
-				if (is_enabled("Mapping")) printf(" %s", "Mapping");
+				if (is_enabled("Inode"))
+					printf(" %*s", maxw5, "Inode");
+
+				for (listnode=listhead; listnode!=NULL; listnode=listnode->next)
+					printf(" %*s", listnode->max_width, listnode->description);
+
+				if (has_vmflags && is_enabled("VmFlags"))
+					printf(" %*s", maxwv, "VmFlags");
+
+				if (is_enabled("Mapping"))
+					printf(" %s", "Mapping");
 
 				printf("\n");
 			}
 
 			/* Print data */
-			sprintf(fmt_str, "%%%ds", maxw1); /* Address field is always enabled */
-			printf(fmt_str, start);
+			printf("%*s", maxw1, start);    /* Address field is always enabled */
 
-			if (is_enabled("Flags")) {
-				sprintf(fmt_str, " %%%ds", maxw2);
-				printf(fmt_str, flags);
-			}
+			if (is_enabled("Flags"))
+				printf(" %*s", maxw2, flags);
 
-			if (is_enabled("Offset")) {
-				sprintf(fmt_str, " %%%ds", maxw3);
-				printf(fmt_str, offset);
-			}
+			if (is_enabled("Offset"))
+				printf(" %*s", maxw3, offset);
 
-			if (is_enabled("Device")) {
-				sprintf(fmt_str, " %%%ds", maxw4);
-				printf(fmt_str, dev);
-			}
+			if (is_enabled("Device"))
+				printf(" %*s", maxw4, dev);
 
-			if (is_enabled("Inode")) {
-				sprintf(fmt_str, " %%%ds", maxw5);
-				printf(fmt_str, inode);
-			}
+			if (is_enabled("Inode"))
+				printf(" %*s", maxw5, inode);
 
-			for (listnode=listhead; listnode!=NULL; listnode=listnode->next) {
-				sprintf(fmt_str, " %%%ds", listnode->max_width);
-				printf(fmt_str, listnode->value_str);
-			}
+			for (listnode=listhead; listnode!=NULL; listnode=listnode->next)
+				printf(" %*s", listnode->max_width, listnode->value_str);
 
-			if (has_vmflags && is_enabled("VmFlags")) {
-				sprintf(fmt_str, " %%%ds", maxwv);
-				printf(fmt_str, vmflags);
-			}
+			if (has_vmflags && is_enabled("VmFlags"))
+				printf(" %*s", maxwv, vmflags);
 
 			if (is_enabled("Mapping")) {
 				if (map_desc_showpath) {
@@ -478,10 +456,8 @@ loop_end:
 
 		for (i=0; i<footer_gap; i++) putc(' ', stdout);
 
-		for (listnode=listhead; listnode!=NULL; listnode=listnode->next) {
-			sprintf(fmt_str, "%%%dd ", listnode->max_width);
-			printf(fmt_str, listnode->total);
-		}
+		for (listnode=listhead; listnode!=NULL; listnode=listnode->next)
+			printf("%*lu ", listnode->max_width, listnode->total);
 
 		fputs("KB \n", stdout);
 	}
