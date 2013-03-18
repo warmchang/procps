@@ -306,7 +306,7 @@ static void print_extended_maps (FILE *f)
 	     offset[NUM_LENGTH], inode[NUM_LENGTH],
 	     dev[64], vmflags[VMFLAGS_LENGTH];
 	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0, maxwv=0;
-	int nfields, firstmapping, footer_gap, i, width_of_total;
+	int nfields, firstmapping, footer_gap, i, maxw_;
 	unsigned KLONG value;
 	char *ret, *map_basename, c, has_vmflags = 0;
 
@@ -359,7 +359,8 @@ static void print_extended_maps (FILE *f)
 				listtail = listnode;
 				/* listnode was calloc()ed so all fields are already NULL! */
 				strcpy(listnode->description, detail_desc);
-				listnode->max_width = strlen(detail_desc);
+				if (!q_option) listnode->max_width = strlen(detail_desc);
+				else listnode->max_width = 0;
 			} else {
 			/* === LIST EXISTS  === */
 				if (strcmp(listnode->description, detail_desc) != 0)
@@ -371,6 +372,11 @@ static void print_extended_maps (FILE *f)
 			sscanf(value_str, "%"KLF"u", &listnode->value);
 			if (firstmapping == 2) {
 				listnode->total += listnode->value;
+				if (q_option) {
+					maxw_ = strlen(listnode->value_str);
+					if (maxw_ > listnode->max_width)
+						listnode->max_width = maxw_;
+				}
 			}
 			listnode = listnode->next;
 loop_end:
@@ -393,11 +399,13 @@ loop_end:
 				fseek(f, 0, SEEK_SET);  /* ... and repeat the process with printing enabled */
 				ret = fgets(mapbuf, sizeof mapbuf, f); /* this is not ideal and needs to be redesigned one day */
 
-				/* calculate width of totals */
-				for (listnode=listhead; listnode!=NULL; listnode=listnode->next) {
-					width_of_total = integer_width(listnode->total);
-					if (width_of_total > listnode->max_width)
-						listnode->max_width = width_of_total;
+				if (!q_option) {
+					/* calculate width of totals */
+					for (listnode=listhead; listnode!=NULL; listnode=listnode->next) {
+						maxw_ = integer_width(listnode->total);
+						if (maxw_ > listnode->max_width)
+							listnode->max_width = maxw_;
+					}
 				}
 
 			}
