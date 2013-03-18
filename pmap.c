@@ -61,13 +61,19 @@ static void __attribute__ ((__noreturn__))
 	fprintf(out,
 		_(" %s [options] pid [pid ...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_("  -x, --extended              show details\n"
-		"  -X                          show even more details\n"
+	fputs(_(" -x, --extended              show details\n"
+		" -X                          show even more details\n"
 		"            WARNING: format changes according to /proc/PID/smaps\n"
-		"  -XX                         show everything the kernel provides\n"
-		"  -d, --device                show the device format\n"
-		"  -q, --quiet                 do not display header and footer\n"
-		"  -A, --range=<low>[,<high>]  limit results to the given range\n"), out);
+		" -XX                         show everything the kernel provides\n"
+		" -c, --read-rc               read the default rc\n"
+		" -C, --read-rc-from=<file>   read the rc from file\n"
+		" -n, --create-rc             create new default rc\n"
+		" -N, --create-rc-to=<file>   create new rc to file\n"
+		"            NOTE: pid arguments are not allowed with -n, -N\n"
+		" -d, --device                show the device format\n"
+		" -q, --quiet                 do not display header and footer\n"
+		" -p, --show-path             show path in the mapping\n"
+		" -A, --range=<low>[,<high>]  limit results to the given range\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -81,10 +87,16 @@ static char cmdbuf[512];
 static unsigned KLONG range_low;
 static unsigned KLONG range_high = ~0ull;
 
+static int c_option;
+static int C_option;
 static int d_option;
+static int n_option;
+static int N_option;
 static int q_option;
 static int x_option;
 static int X_option;
+
+static int map_desc_showpath;
 
 static unsigned shm_minor = ~0u;
 
@@ -187,8 +199,7 @@ static char *mapping_name(proc_t * p, unsigned KLONG addr,
 #define DETL "31"		/* for format strings */
 #define NUM_LENGTH 21		/* python says: len(str(2**64)) == 20 */
 #define NUML "20"		/* for format strings */
-#define VMFLAGS_LENGTH 81 /* There are 27 posible 2 character vmflags 
-								as of this patch */
+#define VMFLAGS_LENGTH 81 /* There are 27 posible 2 character vmflags as of this patch */
 
 struct listnode {
 	char description[DETAIL_LENGTH];
@@ -202,6 +213,13 @@ struct listnode {
 static struct listnode *listhead=NULL, *listtail=NULL, *listnode;
 
 
+struct cnf_listnode {
+	char description[DETAIL_LENGTH];
+	struct cnf_listnode *next;
+};
+
+static struct cnf_listnode *cnf_listhead=NULL, *cnf_listnode;
+
 static int is_unimportant (char *s)
 {
 	if (strcmp(s, "AnonHugePages") == 0) return 1;
@@ -211,8 +229,27 @@ static int is_unimportant (char *s)
 	if (strcmp(s, "Private_Dirty") == 0) return 1;
 	if (strcmp(s, "Shared_Clean") == 0) return 1;
 	if (strcmp(s, "Private_Clean") == 0) return 1;
+	if (strcmp(s, "VmFlags") == 0) return 1;
 	return 0;
 }
+
+/* check, whether we want to display the field or not */
+static int is_enabled (char *s)
+{
+	if (X_option == 1) return !is_unimportant(s);
+
+	if (c_option) {  /* taking the list of disabled fields from the rc file */
+
+		for (cnf_listnode = cnf_listhead; cnf_listnode; cnf_listnode = cnf_listnode -> next) {
+			if (!strcmp(s, cnf_listnode -> description)) return 1;
+		}
+		return 0;
+
+	}
+
+	return 1;
+}
+
 
 static void print_extended_maps (FILE *f)
 {
@@ -220,14 +257,22 @@ static void print_extended_maps (FILE *f)
 	     detail_desc[DETAIL_LENGTH], value_str[NUM_LENGTH],
 	     start[NUM_LENGTH], end[NUM_LENGTH],
 	     offset[NUM_LENGTH], inode[NUM_LENGTH],
-	     dev[64], fmt_str[64],
-		 vmflags[VMFLAGS_LENGTH];
+	     dev[64], fmt_str[64], vmflags[VMFLAGS_LENGTH];
 	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0, maxwv=0;
 	int nfields, firstmapping, footer_gap, i, width_of_total;
 	unsigned KLONG value;
 	char *ret;
+	char *map_basename;
 	char c;
 	char has_vmflags = 0;
+
+	/* initial widths */
+	maxw1 = strlen("Address");
+	maxw2 = strlen("Flags"  );
+	maxw3 = strlen("Offset" );
+	maxw4 = strlen("Device" );
+	maxw5 = strlen("Inode"  );
+	maxwv = strlen("VmFlags");
 
 	ret = fgets(mapbuf, sizeof mapbuf, f);
 	firstmapping = 2;
@@ -248,12 +293,13 @@ static void print_extended_maps (FILE *f)
 			ret = fgets(mapbuf, sizeof mapbuf, f);
 			c = mapbuf[strlen(mapbuf) - 1];
 		}
+
 		/* Store maximum widths for printing nice later */
-		if (strlen(start) > maxw1) 	maxw1 = strlen(start);
-		if (strlen(flags) > maxw2) 	maxw2 = strlen(flags);
-		if (strlen(offset) > maxw3) 	maxw3 = strlen(offset);
-		if (strlen(dev) > maxw4) 	maxw4 = strlen(dev);
-		if (strlen(inode) > maxw5) 	maxw5 = strlen(inode);
+		if (strlen(start ) > maxw1)	maxw1 = strlen(start);
+		if (strlen(flags ) > maxw2)	maxw2 = strlen(flags);
+		if (strlen(offset) > maxw3)	maxw3 = strlen(offset);
+		if (strlen(dev   ) > maxw4)	maxw4 = strlen(dev);
+		if (strlen(inode ) > maxw5)	maxw5 = strlen(inode);
 
 		ret = fgets(mapbuf, sizeof mapbuf, f);
 		nfields = sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
@@ -262,8 +308,8 @@ static void print_extended_maps (FILE *f)
 		/* === READ MAPPING DETAILS === */
 		while (ret != NULL && nfields == 2) {
 
-			if (X_option < 2 && is_unimportant(detail_desc))
-				goto loop_end;
+			if (!is_enabled(detail_desc)) goto loop_end;
+
 			/* === CREATE LIST AND FILL description FIELD === */
 			if (listnode == NULL) {
 				assert(firstmapping == 2);
@@ -289,9 +335,6 @@ static void print_extended_maps (FILE *f)
 			sscanf(value_str, "%"KLF"u", &listnode->value);
 			if (firstmapping == 2) {
 				listnode->total += listnode->value;
-				width_of_total = integer_width(listnode->total);
-				if (width_of_total > listnode->max_width)
-					listnode->max_width = width_of_total;
 			}
 			listnode = listnode->next;
 loop_end:
@@ -313,75 +356,136 @@ loop_end:
 				firstmapping = 1;  /* ... we reset the file position to the beginning of the file */
 				fseek(f, 0, SEEK_SET);  /* ... and repeat the process with printing enabled */
 				ret = fgets(mapbuf, sizeof mapbuf, f); /* this is not ideal and needs to be redesigned one day */
+
+				/* calculate width of totals */
+				for (listnode=listhead; listnode!=NULL; listnode=listnode->next) {
+					width_of_total = integer_width(listnode->total);
+					if (width_of_total > listnode->max_width)
+						listnode->max_width = width_of_total;
+				}
+
 			}
 		} else {		 /* the maximum widths have been measured, we've already reached the printing stage */
 			/* === PRINT THIS MAPPING === */
+
 			/* Print header */
 			if (firstmapping && !q_option) {
-				if (strlen("Address") > maxw1) 	maxw1 = strlen("Address");
-				if (strlen("Flags") > maxw2) 	maxw2 = strlen("Flags");
-				if (strlen("Offset") > maxw3) 	maxw3 = strlen("Offset");
-				if (strlen("Device") > maxw4) 	maxw4 = strlen("Device");
-				if (strlen("Inode") > maxw5) 	maxw5 = strlen("Inode");
-				if (has_vmflags && strlen("VmFlags") > maxwv)	maxwv = strlen("VmFlags");
-				sprintf(fmt_str, "%%%ds %%%ds %%%ds %%%ds %%%ds",
-					maxw1, maxw2, maxw3, maxw4, maxw5);
-				printf(fmt_str, "Address", "Flags", "Offset", "Device", "Inode");
 
-				for (listnode=listhead; listnode=listnode->next;
-				     listnode!=NULL) {
+				sprintf(fmt_str, "%%%ds", maxw1); /* Address field always enabled */
+				printf(fmt_str, "Address");
+
+				if (is_enabled("Flags")) {
+					sprintf(fmt_str, " %%%ds", maxw2);
+					printf(fmt_str, "Flags");
+				}
+				if (is_enabled("Offset")) {
+					sprintf(fmt_str, " %%%ds", maxw3);
+					printf(fmt_str, "Offset");
+				}
+				if (is_enabled("Device")) {
+					sprintf(fmt_str, " %%%ds", maxw4);
+					printf(fmt_str, "Device");
+				}
+				if (is_enabled("Inode")) {
+					sprintf(fmt_str, " %%%ds", maxw5);
+					printf(fmt_str, "Inode");
+				}
+
+				for (listnode=listhead; listnode!=NULL; listnode=listnode->next) {
 					sprintf(fmt_str, " %%%ds", listnode->max_width);
 					printf(fmt_str, listnode->description);
 				}
 
-				if (has_vmflags && X_option > 1) {
+				if (has_vmflags && is_enabled("VmFlags")) {
 					sprintf(fmt_str, " %%%ds", maxwv);
 					printf(fmt_str, "VmFlags");
 				}
 
-				printf(" %s\n", "Description");
-			}
-			/* Print data */
-			sprintf(fmt_str, "%%%ds %%%ds %%%ds %%%ds %%%ds",
-				maxw1, maxw2, maxw3, maxw4, maxw5);
-			printf(fmt_str, start, flags, offset, dev, inode);
+				if (is_enabled("Mapping")) printf(" %s", "Mapping");
 
-			for (listnode=listhead; listnode=listnode->next;
-			     listnode!=NULL) {
+				printf("\n");
+			}
+
+			/* Print data */
+			sprintf(fmt_str, "%%%ds", maxw1); /* Address field is always enabled */
+			printf(fmt_str, start);
+
+			if (is_enabled("Flags")) {
+				sprintf(fmt_str, " %%%ds", maxw2);
+				printf(fmt_str, flags);
+			}
+
+			if (is_enabled("Offset")) {
+				sprintf(fmt_str, " %%%ds", maxw3);
+				printf(fmt_str, offset);
+			}
+
+			if (is_enabled("Device")) {
+				sprintf(fmt_str, " %%%ds", maxw4);
+				printf(fmt_str, dev);
+			}
+
+			if (is_enabled("Inode")) {
+				sprintf(fmt_str, " %%%ds", maxw5);
+				printf(fmt_str, inode);
+			}
+
+			for (listnode=listhead; listnode!=NULL; listnode=listnode->next) {
 				sprintf(fmt_str, " %%%ds", listnode->max_width);
 				printf(fmt_str, listnode->value_str);
 			}
 
-			if (has_vmflags && X_option > 1) {
+			if (has_vmflags && is_enabled("VmFlags")) {
 				sprintf(fmt_str, " %%%ds", maxwv);
 				printf(fmt_str, vmflags);
 			}
 
-			printf(" %s\n", map_desc);
+			if (is_enabled("Mapping")) {
+				if (map_desc_showpath) {
+					printf(" %s", map_desc);
+				} else {
+					map_basename = strrchr(map_desc, '/');
+					if (!map_basename) {
+						printf(" %s", map_desc);
+					} else {
+						printf(" %s", map_basename + 1);
+					}
+
+				}
+			}
+
+			printf("\n");
 
 			firstmapping = 0;
 
 		}
 	}
 	/* === PRINT TOTALS === */
-	if (!q_option && listhead!=NULL) {
-		footer_gap = maxw1+maxw2+maxw3+maxw4+maxw5+5;
-		for (i=0; i<footer_gap; i++)
-			putc(' ', stdout);
-		for (listnode=listhead; listnode=listnode->next;
-		     listnode!=NULL) {
+	if (!q_option && listhead!=NULL) { /* footer enabled and non-empty */
+
+					   footer_gap  = maxw1 + 1; /* Address field is always enabled */
+		if (is_enabled("Flags" ))  footer_gap += maxw2 + 1;
+		if (is_enabled("Offset"))  footer_gap += maxw3 + 1;
+		if (is_enabled("Device"))  footer_gap += maxw4 + 1;
+		if (is_enabled("Inode" ))  footer_gap += maxw5 + 1;
+
+		for (i=0; i<footer_gap; i++) putc(' ', stdout);
+
+		for (listnode=listhead; listnode!=NULL; listnode=listnode->next) {
 			for (i=0; i<listnode->max_width; i++)
 				putc('=', stdout);
 			putc(' ', stdout);
 		}
+
 		putc('\n', stdout);
-		for (i=0; i<footer_gap; i++)
-			putc(' ', stdout);
-		for (listnode=listhead; listnode=listnode->next;
-		     listnode!=NULL) {
+
+		for (i=0; i<footer_gap; i++) putc(' ', stdout);
+
+		for (listnode=listhead; listnode!=NULL; listnode=listnode->next) {
 			sprintf(fmt_str, "%%%dd ", listnode->max_width);
 			printf(fmt_str, listnode->total);
 		}
+
 		fputs("KB \n", stdout);
 	}
 	/* We don't free() the list, it's used for all PIDs passed as arguments */
@@ -394,7 +498,7 @@ static int one_proc(proc_t * p)
 	unsigned long total_shared = 0ul;
 	unsigned long total_private_readonly = 0ul;
 	unsigned long total_private_writeable = 0ul;
-    KLONG diff = 0;
+	KLONG diff = 0;
 
 	const char *cp2 = NULL;
 	unsigned long long rss = 0ull;
@@ -409,7 +513,7 @@ static int one_proc(proc_t * p)
 	 */
 	int maxcmd = 0xfffff;
 
-	if (x_option || X_option) {
+	if (x_option || X_option || c_option) {
 		sprintf(buf, "/proc/%u/smaps", p->tgid);
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
@@ -423,7 +527,7 @@ static int one_proc(proc_t * p)
 		       ESC_ARGS | ESC_BRACKETS);
 	printf("%u:   %s\n", p->tgid, cmdbuf);
 
-	if (X_option) {
+	if (X_option || c_option) {
 		print_extended_maps(fp);
 		return 0;
 	}
@@ -539,14 +643,14 @@ static int one_proc(proc_t * p)
 
 		if (x_option) {
 			cp2 =
-			    mapping_name(p, start, diff, mapbuf, 0, dev_major,
+			    mapping_name(p, start, diff, mapbuf, map_desc_showpath, dev_major,
 					 dev_minor, inode);
 			/* printed with the keys */
 			continue;
 		}
 		if (d_option) {
 			const char *cp =
-			    mapping_name(p, start, diff, mapbuf, 0, dev_major,
+			    mapping_name(p, start, diff, mapbuf, map_desc_showpath, dev_major,
 					 dev_minor, inode);
 			printf((sizeof(KLONG) == 8)
 			       ? "%016" KLF "x %7lu %s %016llx %03x:%05x %s\n"
@@ -557,7 +661,7 @@ static int one_proc(proc_t * p)
 		}
 		if (!x_option && !d_option) {
 			const char *cp =
-			    mapping_name(p, start, diff, mapbuf, 1, dev_major,
+			    mapping_name(p, start, diff, mapbuf, map_desc_showpath, dev_major,
 					 dev_minor, inode);
 			printf((sizeof(KLONG) == 8)
 			       ? "%016" KLF "x %6luK %s  %s\n"
@@ -639,13 +743,235 @@ static void range_arguments(char *optarg)
 		      optarg);
 }
 
+
+#define MAX_CNF_LINE_LEN		1024
+
+#define SECTION_ID_NONE			0
+#define SECTION_ID_UNSUPPORTED		1
+
+#define SECTION_STR_FIELDS_DISPLAY	"[Fields Display]"
+#define SECTION_STR_FIELDS_DISPLAY_LEN	(sizeof(SECTION_STR_FIELDS_DISPLAY) - 1)
+#define SECTION_ID_FIELDS_DISPLAY	2
+
+#define SECTION_STR_MAPPING		"[Mapping]"
+#define SECTION_STR_MAPPING_LEN		(sizeof(SECTION_STR_MAPPING) - 1)
+#define SECTION_ID_MAPPING		3
+
+static int config_read (char *rc_filename)
+{
+	FILE *f;
+	char line_buf[MAX_CNF_LINE_LEN + 1];
+	char tmp_buf [MAX_CNF_LINE_LEN + 1];
+	char *trimmed;
+	int length;
+	char *section, *tail, *token;
+	int line_cnt, section_id;
+
+	f = fopen(rc_filename, "r");
+
+	if (!f) return 0; /* can't open the file for reading */
+
+	line_cnt = 0;
+	section_id = SECTION_ID_NONE;
+
+	while (fgets (line_buf, MAX_CNF_LINE_LEN + 1, f)) {
+
+		line_cnt++;
+
+		/* get rid of the LF char */
+		length = strlen(line_buf);
+		if (length > 0 && line_buf[length - 1] == '\n') {
+			line_buf[length - 1] = '\0';
+		} else if (length == MAX_CNF_LINE_LEN) { /* no LF char -> line too long */
+			xwarnx(_("config line too long - line %d"), line_cnt);
+			/* ignoring the tail */
+			while (fgets (tmp_buf, MAX_CNF_LINE_LEN + 1, f) &&
+				(length = strlen(tmp_buf))>0 &&
+				 tmp_buf[length - 1] != '\n') ;
+		}
+
+		/* trim leading whitespaces */
+		trimmed = line_buf;
+		while (*trimmed == ' ' || *trimmed == '\t') trimmed++;
+
+		/* skip comments and empty lines */
+		if (*trimmed == '#' || *trimmed == '\0') continue;
+
+		if (*trimmed == '[') { /* section */
+			if        (!strncmp(trimmed, SECTION_STR_FIELDS_DISPLAY, SECTION_STR_FIELDS_DISPLAY_LEN)) {
+				trimmed += SECTION_STR_FIELDS_DISPLAY_LEN;
+				section_id = SECTION_ID_FIELDS_DISPLAY;
+			} else if (!strncmp(trimmed, SECTION_STR_MAPPING, SECTION_STR_MAPPING_LEN)) {
+				trimmed += SECTION_STR_MAPPING_LEN;
+				section_id = SECTION_ID_MAPPING;
+			} else {
+				while (*trimmed != ']' || *trimmed == '\0') trimmed++;
+				if (*trimmed == ']') {
+					section_id = SECTION_ID_UNSUPPORTED;
+					xwarnx(_("unsupported section found in the config - line %d"), line_cnt);
+					trimmed++;
+				} else {
+					xwarnx(_("syntax error found in the config - line %d"), line_cnt);
+				}
+			}
+
+			/* trim trailing whitespaces */
+			while (*trimmed == ' ' || *trimmed == '\t') trimmed++;
+
+			/* skip comments and empty tails */
+			if (*trimmed == '#' || *trimmed == '\0') continue;
+
+			/* anything else found on the section line ??? */
+			xwarnx(_("syntax error found in the config - line %d"), line_cnt);
+		}
+
+		switch (section_id) {
+			case SECTION_ID_FIELDS_DISPLAY:
+				token = strtok (trimmed, " \t");
+
+				if (token) {
+					tail = strtok (NULL, " \t");
+
+					if (tail && *tail != '#') {
+						xwarnx(_("syntax error found in the config - line %d"), line_cnt);
+					}
+
+					/* add the field in the list */
+					cnf_listnode = calloc(1, sizeof *cnf_listnode);
+					snprintf(cnf_listnode -> description, sizeof(cnf_listnode -> description), "%s", token);
+					cnf_listnode -> next = cnf_listhead;
+					cnf_listhead = cnf_listnode;
+				}
+
+				break;
+
+			case SECTION_ID_MAPPING:
+				token = strtok (trimmed, " \t");
+
+				if (token) {
+					tail = strtok (NULL, " \t");
+
+					if (tail && *tail != '#') {
+						xwarnx(_("syntax error found in the config - line %d"), line_cnt);
+					}
+
+					if (!strcmp(token,"ShowPath")) map_desc_showpath = !map_desc_showpath;
+				}
+
+				break;
+
+			case SECTION_ID_UNSUPPORTED:
+				break; /* ignore the content */
+
+			default:
+				xwarnx(_("syntax error found in the config - line %d"), line_cnt);
+		}
+        }
+
+	fclose(f);
+
+	return 1;
+}
+
+
+static int config_create (char *rc_filename)
+{
+	FILE *f;
+
+	/* check if rc exists */
+	f = fopen(rc_filename, "r");
+
+	if (f) {  /* file exists ... let user to delete/remove it first */
+		fclose(f);
+		xwarnx(_("the file already exists - delete or rename it first"));
+		return 0;
+	}
+
+	/* file doesn't exist */
+
+	f = fopen(rc_filename, "w");
+
+	if (!f) return 0; /* can't open the file for writing */
+
+	/* current rc template, might change in the future */
+	fprintf(f,"# pmap's Config File\n");
+	fprintf(f,"\n");
+	fprintf(f,"# All the entries are case sensitive.\n");
+	fprintf(f,"# Unsupported entries are ignored!\n");
+	fprintf(f,"\n");
+	fprintf(f,"[Fields Display]\n");
+	fprintf(f,"\n");
+	fprintf(f,"# To enable a field uncomment its entry\n");
+	fprintf(f,"\n");
+	fprintf(f,"#Flags\n");
+	fprintf(f,"#Offset\n");
+	fprintf(f,"#Device\n");
+	fprintf(f,"#Inode\n");
+	fprintf(f,"#Size\n");
+	fprintf(f,"#Rss\n");
+	fprintf(f,"#Pss\n");
+	fprintf(f,"#Shared_Clean\n");
+	fprintf(f,"#Shared_Dirty\n");
+	fprintf(f,"#Private_Clean\n");
+	fprintf(f,"#Private_Dirty\n");
+	fprintf(f,"#Referenced\n");
+	fprintf(f,"#Anonymous\n");
+	fprintf(f,"#AnonHugePages\n");
+	fprintf(f,"#Swap\n");
+	fprintf(f,"#KernelPageSize\n");
+	fprintf(f,"#MMUPageSize\n");
+	fprintf(f,"#Locked\n");
+	fprintf(f,"#VmFlags\n");
+	fprintf(f,"#Mapping\n");
+	fprintf(f,"\n");
+	fprintf(f,"\n");
+	fprintf(f,"[Mapping]\n");
+	fprintf(f,"\n");
+	fprintf(f,"# to show paths in the mapping column uncomment the following line\n");
+	fprintf(f,"#ShowPath\n");
+	fprintf(f,"\n");
+
+	fclose(f);
+
+	return 1;
+}
+
+
+/* returns rc filename based on the program_invocation_short_name */
+static char *get_default_rc_filename(void)
+{
+	char *rc_filename;
+	int ret, rc_filename_len;
+	const char *homedir;
+
+	homedir = getenv("HOME");
+	if (!homedir) {
+		xwarnx(_("HOME variable undefined"));
+		return NULL;
+	}
+
+	rc_filename_len = snprintf(NULL, 0, "%s/.%src", homedir, program_invocation_short_name);
+
+	rc_filename = (char *) calloc (1, rc_filename_len + 1);
+	if (!rc_filename) {
+		xwarnx(_("memory allocation failed"));
+		return NULL;
+	}
+
+	snprintf(rc_filename, rc_filename_len + 1, "%s/.%src", homedir, program_invocation_short_name);
+
+	return rc_filename;
+}
+
+
 int main(int argc, char **argv)
 {
 	pid_t *pidlist;
 	unsigned count = 0;
 	PROCTAB *PT;
 	proc_t p;
-	int ret = 0, c;
+	int ret = 0, c, conf_ret;
+	char *default_rc_filename = NULL, *rc_filename = NULL;
 
 	static const struct option longopts[] = {
 		{"extended", no_argument, NULL, 'x'},
@@ -654,18 +980,21 @@ int main(int argc, char **argv)
 		{"range", required_argument, NULL, 'A'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
+		{"read-rc", no_argument, NULL, 'c'},
+		{"read-rc-from", required_argument, NULL, 'C'},
+		{"create-rc", no_argument, NULL, 'n'},
+		{"create-rc-to", required_argument, NULL, 'N'},
+		{"show-path", no_argument, NULL, 'p'},
 		{NULL, 0, NULL, 0}
 	};
 
-    program_invocation_name = program_invocation_short_name;
+	program_invocation_name = program_invocation_short_name;
 	setlocale (LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	x_option = d_option = q_option = 0;
-
-	while ((c = getopt_long(argc, argv, "xXrdqA:hV", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "xXrdqA:hVcC:nN:p", longopts, NULL)) != -1)
 		switch (c) {
 		case 'x':
 			x_option = 1;
@@ -690,6 +1019,23 @@ int main(int argc, char **argv)
 		case 'V':
 			printf(PROCPS_NG_VERSION);
 			return EXIT_SUCCESS;
+		case 'c':
+			c_option = 1;
+			break;
+		case 'C':
+			C_option = 1;
+			rc_filename = optarg;
+			break;
+		case 'n':
+			n_option = 1;
+			break;
+		case 'N':
+			N_option = 1;
+			rc_filename = optarg;
+			break;
+		case 'p':
+			map_desc_showpath = 1;
+			break;
 		case 'a':	/* Sun prints anon/swap reservations */
 		case 'F':	/* Sun forces hostile ptrace-like grab */
 		case 'l':	/* Sun shows unresolved dynamic names */
@@ -703,11 +1049,63 @@ int main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
+	if (c_option + C_option + d_option + n_option + N_option + x_option + !!X_option > 1)
+		xerrx(EXIT_FAILURE, _("options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"));
+
+	if (n_option + N_option + q_option + map_desc_showpath > 1)
+		xerrx(EXIT_FAILURE, _("options -p, -q are mutually exclusive with -n, -N"));
+
+	if ((n_option || N_option) && argc > 0)
+		xerrx(EXIT_FAILURE, _("too many arguments"));
+
+	if (N_option) {
+		if (config_create(rc_filename)) {
+			xwarnx(_("rc file successfully created, feel free to edit the content"));
+			return (EXIT_SUCCESS);
+		} else {
+			xerrx(EXIT_FAILURE, _("couldn't create the rc file"));
+		}
+	}
+
+	if (n_option) {
+		rc_filename = get_default_rc_filename();
+
+		if (!rc_filename) return(EXIT_FAILURE);
+
+		conf_ret = config_create(rc_filename); free(rc_filename);
+
+		if (conf_ret) {
+			xwarnx(_("~/.%src file successfully created, feel free to edit the content"), program_invocation_short_name);
+			return (EXIT_SUCCESS);
+		} else {
+			xerrx(EXIT_FAILURE, _("couldn't create ~/.%src"), program_invocation_short_name);
+		}
+	}
+
 	if (argc < 1)
 		xerrx(EXIT_FAILURE, _("argument missing"));
-	if (d_option && (x_option || X_option) ||
-	    x_option && (d_option || X_option))
-		xerrx(EXIT_FAILURE, _("options -d, -x, -X are mutually exclusive"));
+
+	if (C_option) c_option = 1;
+
+	if (c_option) {
+
+		if (!C_option) rc_filename = get_default_rc_filename();
+
+		if (!rc_filename) return(EXIT_FAILURE);
+
+		conf_ret = config_read(rc_filename);
+
+		if (!conf_ret) {
+			if (C_option) {
+				xerrx(EXIT_FAILURE, _("couldn't read the rc file"));
+			} else {
+				xwarnx(_("couldn't read ~/.%src"), program_invocation_short_name);
+				free(rc_filename);
+				return(EXIT_FAILURE);
+			}
+		}
+
+	}
 
 	pidlist = xmalloc(sizeof(pid_t) * (argc+1));
 
@@ -742,11 +1140,18 @@ int main(int argc, char **argv)
 	closeproc(PT);
 	free(pidlist);
 
-	/* cleaning the list used for the -X/-XX modes */
+	/* cleaning the list used for the -c/-X/-XX modes */
 	for (listnode = listhead; listnode != NULL ; ) {
 		listnode = listnode -> next;
 		free(listhead);
 		listhead = listnode;
+	}
+
+	/* cleaning the list used for the -c mode */
+	for (cnf_listnode = cnf_listhead; cnf_listnode != NULL ; ) {
+		cnf_listnode = cnf_listnode -> next;
+		free(cnf_listhead);
+		cnf_listhead = cnf_listnode;
 	}
 
 	if (count)
