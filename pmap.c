@@ -1078,7 +1078,7 @@ int main(int argc, char **argv)
 	if (c_option + C_option + d_option + n_option + N_option + x_option + !!X_option > 1)
 		xerrx(EXIT_FAILURE, _("options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"));
 
-	if (n_option + N_option + q_option + map_desc_showpath > 1)
+	if ((n_option || N_option) && (q_option || map_desc_showpath))
 		xerrx(EXIT_FAILURE, _("options -p, -q are mutually exclusive with -n, -N"));
 
 	if ((n_option || N_option) && argc > 0)
