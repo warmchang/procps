@@ -3,6 +3,7 @@
  *
  * Copyright 2000 Kjetil Torgrim Homme <kjetilho@ifi.uio.no>
  * Changes by Albert Cahalan, 2002,2006.
+ * Changes by Roberto Polli <rpolli@babel.it>, 2012.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -74,6 +75,7 @@ static int opt_signal = SIGTERM;
 static int opt_lock = 0;
 static int opt_case = 0;
 static int opt_echo = 0;
+static int opt_threads = 0;
 
 static const char *opt_delim = "\n";
 static struct el *opt_pgrp = NULL;
@@ -98,7 +100,9 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	if (i_am_pkill == 0) {
 		fputs(_(" -d, --delimiter <string>  specify output delimiter\n"
 			" -l, --list-name           list PID and process name\n"
-			" -v, --inverse             negates the matching\n"), fp);
+			" -v, --inverse             negates the matching\n"
+			" -w, --lightweight         list all TID\n"
+		), fp);
 	}
 	if (i_am_pkill == 1) {
 		fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"
@@ -546,8 +550,44 @@ static struct el * select_procs (int *num)
 			} else {
 				xerrx(EXIT_FAILURE, _("internal error"));
 			}
+
+			// pkill does not need subtasks!
+			// this control is still done at
+			// argparse time, but a further
+			// control is free
+			if (opt_threads && !i_am_pkill) {
+				proc_t subtask;
+				memset(&subtask, 0, sizeof (subtask));
+				while (readtask(ptp, &task, &subtask)){
+					// don't add redundand tasks
+					if (task.XXXID == subtask.XXXID)
+						continue;
+
+					// eventually grow output buffer
+					if (matches == size) {
+						size = size * 5 / 4 + 4;
+						list = realloc(list, size * sizeof *list);
+						if (list == NULL)
+							exit (EXIT_FATAL);
+					}
+					if (opt_long) {
+						list[matches].str = xstrdup (cmdoutput);
+						list[matches++].num = subtask.XXXID;
+					} else {
+						list[matches++].num = subtask.XXXID;
+					}
+					memset(&subtask, 0, sizeof (subtask));
+				}
+			}
+
+
+
 		}
 	
+
+
+
+
 		memset (&task, 0, sizeof (task));
 	}
 	closeproc (ptp);
@@ -601,6 +641,7 @@ static void parse_opts (int argc, char **argv)
 		{"euid", required_argument, NULL, 'u'},
 		{"uid", required_argument, NULL, 'U'},
 		{"inverse", no_argument, NULL, 'v'},
+		{"lightweight", no_argument, NULL, 'w'},
 		{"exact", no_argument, NULL, 'x'},
 		{"pidfile", required_argument, NULL, 'F'},
 		{"logpidfile", no_argument, NULL, 'L'},
@@ -620,7 +661,7 @@ static void parse_opts (int argc, char **argv)
 		strcat (opts, "e");
 	} else {
 		/* These options are for pgrep only */
-		strcat (opts, "lad:v");
+		strcat (opts, "lad:vw");
 	}
 	
 	strcat (opts, "LF:cfnoxP:g:s:u:U:G:t:?Vh");
@@ -741,6 +782,9 @@ static void parse_opts (int argc, char **argv)
 			if (opt_oldest|opt_negate|opt_newest)
 				usage (opt);
 			opt_negate = 1;
+			break;
+		case 'w':   // Linux: show threads (lightweight process) too
+			opt_threads = 1;
 			break;
 		/* OpenBSD -x, being broken, does a plain string */
 		case 'x':   /* Solaris: use ^(regexp)$ in place of regexp (FreeBSD too) */
