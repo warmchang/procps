@@ -1223,15 +1223,13 @@ static int readfile (FILE *fp, char **baddr, size_t *bsize, size_t *bread) {
    *bsize = READMINSZ;
    *baddr = alloc_c(READMINSZ);
    if (fp) {
-      while (0 < (num = fread(chunk, 1, sizeof(chunk) -1, fp))) {
-         if (feof(fp) && chunk[num -1]) chunk[num++] = '\0';
+      while (0 < (num = fread(chunk, 1, sizeof(chunk), fp))) {
          *baddr = alloc_r(*baddr, num + *bsize);
          memcpy(*baddr + *bread, chunk, num);
          *bread += num;
          *bsize += num;
       };
-      // adjust for the null terminator, which was counted above
-      if (*bread) --(*bread);
+      *(*baddr + *bread) = '\0';
       return ferror(fp);
    }
    return ENOENT;
@@ -2888,6 +2886,7 @@ static inline void insp_make_row (int col, int row) {
       } else {              mkFND      // a big show (he,he)
          ofs = 0;
       }
+      if (col + fr >= INSP_RLEN(row)) break;
    }
    capNO;
    putp(Cap_clr_eol);
