@@ -13,10 +13,13 @@ if LINUX
 # temporarily disabled on other than linux systems, see commit
 # 3d807ae853b8b4264da156065b34f1447658a8ba
 DEJATOOL += \
-	kill \
 	pmap \
 	slabtop \
 	sysctl
+
+if BUILD_KILL
+DEJATOOL += kill
+endif
 
 DEJATOOL += \
 	free \
