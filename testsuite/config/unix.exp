@@ -80,7 +80,7 @@ proc expect_table_dsc { test match_header match_item } {
     }
 
     set do_loop 1
-    set last_value 99999999
+    set last_value &9
     set found_item 0
     while { $do_loop ==1 } {
     expect {
