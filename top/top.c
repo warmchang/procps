@@ -5192,6 +5192,8 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             ofs = find_ofs(q, row);
          } while (-1 < ofs);
          PUTT("%s%s", row, Caps_endline);
+         // with a corrupted rbuf, ensure row is 'counted' by window_show
+         rbuf[0] = '!';
       } else
          PUFF("\n%s%s%s", cap, row, Caps_endline);
    }
