@@ -493,7 +493,7 @@ ENTER(0x160);
        "%ld "
        "%lu %"KLF"u %"KLF"u %"KLF"u %"KLF"u %"KLF"u "
        "%*s %*s %*s %*s " /* discard, no RT signals & Linux 2.1 used hex */
-       "%"KLF"u %*lu %*lu "
+       "%"KLF"u %*u %*u "
        "%d %d "
        "%lu %lu",
        &P->state,
