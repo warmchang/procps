@@ -307,7 +307,6 @@ static void print_extended_maps (FILE *f)
 	     dev[64], vmflags[VMFLAGS_LENGTH];
 	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0, maxwv=0;
 	int nfields, firstmapping, footer_gap, i, maxw_;
-	unsigned KLONG value;
 	char *ret, *map_basename, c, has_vmflags = 0;
 
 	ret = fgets(mapbuf, sizeof mapbuf, f);
@@ -789,7 +788,7 @@ static int config_read (char *rc_filename)
 	char tmp_buf [MAX_CNF_LINE_LEN + 1];
 	char *trimmed;
 	int length;
-	char *section, *tail, *token;
+	char *tail, *token;
 	int line_cnt, section_id;
 
 	f = fopen(rc_filename, "r");
@@ -966,7 +965,7 @@ static int config_create (char *rc_filename)
 static char *get_default_rc_filename(void)
 {
 	char *rc_filename;
-	int ret, rc_filename_len;
+	int rc_filename_len;
 	const char *homedir;
 
 	homedir = getenv("HOME");
@@ -996,7 +995,7 @@ int main(int argc, char **argv)
 	PROCTAB *PT;
 	proc_t p;
 	int ret = 0, c, conf_ret;
-	char *default_rc_filename = NULL, *rc_filename = NULL;
+	char *rc_filename = NULL;
 
 	static const struct option longopts[] = {
 		{"extended", no_argument, NULL, 'x'},
