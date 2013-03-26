@@ -525,7 +525,7 @@ static int one_proc(proc_t * p)
 	unsigned long long total_rss = 0ull;
 	unsigned long long total_private_dirty = 0ull;
 	unsigned long long total_shared_dirty = 0ull;
-	int maxw1, maxw2, maxw3, maxw4, maxw5;
+	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0;
 
 	/* Overkill, but who knows what is proper? The "w" prog uses
 	 * the tty width to determine this.
