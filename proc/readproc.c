@@ -534,28 +534,31 @@ static void statm2proc(const char* s, proc_t *restrict P) {
 
 static int file2str(const char *directory, const char *what, struct utlbuf_s *ub) {
  #define readMAX  4096
- #define buffMIN (tot_read + num + 1)  // +1 for the '\0' delimiter
+ #define buffMIN (tot_read + num + 1)       // +1 for the '\0' delimiter
+ #define buffGRW (30 + (buffMIN * 5) / 4)   // grow by more than 25%
     char path[PROCPATHLEN], chunk[readMAX];
-    int fd, num, tot_read = 0;
+    int fd, num, eof = 0, tot_read = 0;
 
     /* on first use we preallocate a buffer of minimum size to emulate
        former 'local static' behavior -- even if this read fails, that
-       buffer will likely soon be used for another sudirectory anyway */
+       buffer will likely soon be used for another subdirectory anyway */
     if (ub->buf) ub->buf[0] = '\0';
     else ub->buf = xcalloc((ub->siz = readMAX));
     sprintf(path, "%s/%s", directory, what);
     if (-1 == (fd = open(path, O_RDONLY, 0))) return -1;
-    while (0 < (num = read(fd, chunk, readMAX))) {
+    while (!eof && 0 < (num = read(fd, chunk, readMAX))) {
         if (ub->siz < buffMIN)
-            ub->buf = xrealloc(ub->buf, (ub->siz = buffMIN));
+            ub->buf = xrealloc(ub->buf, (ub->siz = buffGRW));
         memcpy(ub->buf + tot_read, chunk, num);
         tot_read += num;
+        eof = (num < readMAX);
     };
     ub->buf[tot_read] = '\0';
     close(fd);
     return tot_read;
  #undef readMAX
  #undef buffMIN
+ #undef buffGRW
 }
 
 static char** file2strvec(const char* directory, const char* what) {
