@@ -555,6 +555,7 @@ static int file2str(const char *directory, const char *what, struct utlbuf_s *ub
     };
     ub->buf[tot_read] = '\0';
     close(fd);
+    if (unlikely(tot_read < 1)) return -1;
     return tot_read;
  #undef readMAX
  #undef buffMIN
