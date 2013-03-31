@@ -65,7 +65,7 @@ int main (int argc, char **argv) {
     exit(1);
   }
 
- 
+
   if (list) {
     ut = fopen(UTMP_FILE, "r");
     while (fread(&uts, sizeof(uts), 1, ut))
@@ -106,7 +106,7 @@ int main (int argc, char **argv) {
 	printf("ut_user: %s\n", user);
 	printf("ut_host: %s\n", host);
 	printf("ut_addr: %d\n\n", uts.ut_addr);
- 
+
 	printf("Modify this record? (y/N): "); fflush(stdout);
 	/* Ask if to delete or no */
 	if ((ch = getchar()) == 'y' || ch == 'Y') {

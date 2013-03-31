@@ -45,7 +45,7 @@ void init_Linux_version(void) {
 
 #ifdef __linux__
     static struct utsname uts;
- 
+
     if (uname(&uts) == -1)	/* failure implies impending death */
 	exit(1);
 
@@ -66,7 +66,7 @@ void init_Linux_version(void) {
     fclose(fp);
     version_string_depth = sscanf(buf, "Linux version %d.%d.%d", &x, &y, &z);
 #endif /* __linux__ */
-	
+
     if ((version_string_depth < 2) ||		 /* Non-standard for all known kernels */
        ((version_string_depth < 3) && (x < 3))) /* Non-standard for 2.x.x kernels */
 #ifdef __linux__

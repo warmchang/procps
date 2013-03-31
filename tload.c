@@ -113,7 +113,6 @@ int main(int argc, char **argv)
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
 	};
- 
 #ifdef HAVE_PROGRAM_INVOCATION_NAME
 	program_invocation_name = program_invocation_short_name;
 #endif

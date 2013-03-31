@@ -145,9 +145,9 @@ Error: OVERRUN_STATIC:
 	Thus it (39th element) cannot be used in referencing Fieldstab.
 	However, two enums of higher value (X_XON=40 and X_XOF=41) *can* appear in those arrays.
 	But the test against the fencepost ensures that those two enums are *never* used in referencing Fieldstab.
-	
+
 	When the analyzer sees the conditional using '<' and not '<=' it reports a false positive.
-	
+
 	i'm tired of explaining this so the program was changed to accommodate the tool's deficiency
 	my_category: unavoidable_false_positive_but_patched_anyway
 top.c:1417: overrun-local: Overrunning static array "Fieldstab", with 39 elements, at position 39 with index variable "f".

@@ -90,7 +90,7 @@ static struct slab_info *slabsort(struct slab_info *list)
 		list = list->next;
 		b = b->next->next;
 	}
-	
+
 	b = list->next;
 	list->next = NULL;
 

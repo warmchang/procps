@@ -146,7 +146,7 @@ static int parse_slabinfo20(struct slab_info **list, struct slab_stat *stats,
 
 		if (buffer[0] == '#')
 			continue;
-	
+
 		curr = get_slabnode();
 		if (!curr)
 			break;

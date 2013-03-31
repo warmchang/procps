@@ -312,7 +312,7 @@ void eight_cpu_numbers(double *restrict uret, double *restrict nret, double *res
     new_y = 0;
     tmp_z = 0.0;
     new_z = 0;
- 
+
     FILE_TO_BUF(STAT_FILE,stat_fd);
     sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &new_u, &new_n, &new_s, &new_i, &new_w, &new_x, &new_y, &new_z);
     ticks_past = (new_u+new_n+new_s+new_i+new_w+new_x+new_y+new_z)-(old_u+old_n+old_s+old_i+old_w+old_x+old_y+old_z);
@@ -360,7 +360,7 @@ void eight_cpu_numbers(double *restrict uret, double *restrict nret, double *res
 void loadavg(double *restrict av1, double *restrict av5, double *restrict av15) {
     double avg_1=0, avg_5=0, avg_15=0;
     char *savelocale;
- 
+
     FILE_TO_BUF(LOADAVG_FILE,loadavg_fd);
     savelocale = strdup(setlocale(LC_NUMERIC, NULL));
     setlocale(LC_NUMERIC, "C");
