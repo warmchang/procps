@@ -764,15 +764,15 @@ int main(int argc, char *argv[])
 		int ret = EXIT_SUCCESS, i;
 		if (!preloadfile) {
 			if (!argc) {
-				ret != Preload(DEFAULT_PRELOAD);
+				ret |= Preload(DEFAULT_PRELOAD);
 			}
 		} else {
 			/* This happens when -pfile option is
 			 * used without space. */
-			Preload(preloadfile);
+			ret |= Preload(preloadfile);
 		}
 		for (i = 0; i < argc; i++)
-			Preload(argv[i]);
+			ret |= Preload(argv[i]);
 		return ret;
 	}
 
