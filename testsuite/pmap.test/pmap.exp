@@ -52,11 +52,11 @@ expect_table $test $pmap_ext_header $pmap_ext_items $pmap_ext_footer
 # -X and -XX have no real format as its dependent on smaps
 set test "pmap extra extended output"
 spawn $pmap -X $mypid
-expect_table $test $pmap_generic_header ".+" "\[= \]+"
+expect_table $test $pmap_generic_header "\[^=\]+" "\[= \]+"
 
 set test "pmap double extra extended output"
 spawn $pmap -XX $mypid
-expect_table $test $pmap_generic_header ".+" "\[= \]+"
+expect_table $test $pmap_generic_header "\[^=\]+" "\[= \]+"
 
 set test "pmap X with unreachable process"
 spawn $pmap -X 1
