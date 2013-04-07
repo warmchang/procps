@@ -137,6 +137,18 @@ dnl else
 dnl	ALL_LINGUAS="af am ar as be bg bn_IN bn ca cs cy da de el en_GB es et eu_ES fa fi fr gl gu he hi hr hu hy id is it ja ka kn ko ku lo lt lv mk ml mr ms my nb nl nn no nso or pa pl pt_BR pt ro ru si sk sl sq sr@Latn sr sv ta te th tr uk ur vi zh_CN zh_TW zu"
 dnl fi
 
+AC_CHECK_HEADERS(error.h, [], [], AC_INCLUDES_DEFAULT)
+
+AC_CHECK_HEADERS(stdio_ext.h, [], [], AC_INCLUDES_DEFAULT)
+
+AC_MSG_CHECKING(whether program_invocation_name is defined)
+AC_TRY_COMPILE([#include <errno.h>],
+		[program_invocation_name = "test";],
+		AC_DEFINE(HAVE_PROGRAM_INVOCATION_NAME, 1,
+			[Define if program_invocation_name is defined])
+		AC_MSG_RESULT(yes),
+		AC_MSG_RESULT(no))
+
 AC_MSG_CHECKING(whether program_invocation_short_name is defined)
 AC_TRY_COMPILE([#include <errno.h>],
 		[program_invocation_short_name = "test";],
