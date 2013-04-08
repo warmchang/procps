@@ -4,6 +4,7 @@ AM_CPPFLAGS = \
 	-DLOCALEDIR=\"$(localedir)\"
 
 AM_LDFLAGS = ../proc/libprocps.la
+AM_LDFLAGS += $(NUMA_LIB)
 
 if WITH_NCURSES
 usrbin_exec_PROGRAMS = \

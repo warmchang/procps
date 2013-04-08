@@ -221,6 +221,25 @@ if test "x$enable_sigwinch" = xyes; then
   AC_DEFINE(SIGNALS_LESS, 1, [reduce impact of x-windows resize operations on top])
 fi
 
+NUMA_LIB=
+AC_SEARCH_LIBS([numa_node_of_cpu], [numa],
+  if test x"$ac_cv_search_numa_node_of_cpu" != x"no"; then
+    NUMA_LIB="$ac_cv_search_numa_node_of_cpu";
+  fi)
+AC_SUBST([NUMA_LIB])
+AC_CHECK_HEADERS([numa.h])
+AC_ARG_ENABLE([numa],
+  AS_HELP_STRING([--disable-numa], [if otherwise available, disable NUMA support in top]),
+  [], [disable_numa=no]
+)
+if test "x$disable_numa" = x"no"; then
+  if test x"$ac_cv_header_numa_h" = x"yes"; then
+    if test x"$ac_cv_search_numa_node_of_cpu" != x"no"; then
+      AC_DEFINE([NUMA_ENABLED], [1], [enable NUMA/Node support in top])
+    fi
+  fi
+fi
+
 AC_ARG_ENABLE([w-from],
   AS_HELP_STRING([--enable-w-from], [enable w from field by default]),
   [], enable_w_from=no
