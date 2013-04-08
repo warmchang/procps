@@ -1299,6 +1299,10 @@ format is displayed.  (alias
 .BR sig_ignore , \ sigignore ).
 T}
 
+ipcns	IPCNS	T{
+Unique inode number describing the namespace the process belongs to. See namespaces(7).
+T}
+
 label	LABEL	T{
 security label, most commonly used for SELinux context data.  This is for
 the
@@ -1325,6 +1329,14 @@ T}
 
 min_flt	MINFLT	T{
 The number of minor page faults that have occurred with this process.
+T}
+
+mntns	MNTNS	T{
+Unique inode number describing the namespace the process belongs to. See namespaces(7).
+T}
+
+netns	NETNS	T{
+Unique inode number describing the namespace the process belongs to. See namespaces(7).
 T}
 
 ni	NI	T{
@@ -1389,6 +1401,10 @@ T}
 pid	PID	T{
 a number representing the process ID (alias
 .BR tgid ).
+T}
+
+pidns	PIDNS	T{
+Unique inode number describing the namespace the process belongs to. See namespaces(7).
 T}
 
 pmem	%MEM	T{
@@ -1713,6 +1729,14 @@ see
 .BR euser .
 (alias
 .BR euser , \ uname ).
+T}
+
+userns	USERNS	T{
+Unique inode number describing the namespace the process belongs to. See namespaces(7).
+T}
+
+utsns	UTSNS	T{
+Unique inode number describing the namespace the process belongs to. See namespaces(7).
 T}
 
 vsize	VSZ	T{
