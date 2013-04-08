@@ -229,15 +229,17 @@ AC_SEARCH_LIBS([numa_node_of_cpu], [numa],
 AC_SUBST([NUMA_LIB])
 AC_CHECK_HEADERS([numa.h])
 AC_ARG_ENABLE([numa],
-  AS_HELP_STRING([--disable-numa], [if otherwise available, disable NUMA support in top]),
-  [], [disable_numa=no]
+  AS_HELP_STRING([--enable-numa], [enable NUMA/Node support in top]),
+  [enable_numa=yes], []
 )
-if test "x$disable_numa" = x"no"; then
-  if test x"$ac_cv_header_numa_h" = x"yes"; then
-    if test x"$ac_cv_search_numa_node_of_cpu" != x"no"; then
-      AC_DEFINE([NUMA_ENABLED], [1], [enable NUMA/Node support in top])
-    fi
+if test "x$enable_numa" = x"yes"; then
+  if test x"$ac_cv_header_numa_h" = x"no"; then
+    AC_MSG_ERROR([top numa support requires header 'numa.h'])
   fi
+  if test x"$ac_cv_search_numa_node_of_cpu" = x"no"; then
+    AC_MSG_ERROR([top numa support requires library 'libnuma'])
+  fi
+  AC_DEFINE([NUMA_ENABLED], [1], [enable NUMA/Node support in top])
 fi
 
 AC_ARG_ENABLE([w-from],
