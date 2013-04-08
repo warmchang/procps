@@ -57,6 +57,15 @@
 #include "top.h"
 #include "top_nls.h"
 
+#ifdef NUMA_ENABLED
+#ifdef PRETEND_NUMA
+static int numa_max_node(void) { return 2; }
+static int numa_node_of_cpu(int num) { return (num % 3); }
+#else
+#include <numa.h>
+#endif
+#endif
+
 /*######  Miscellaneous global stuff  ####################################*/
 
         /* The original and new terminal definitions
@@ -209,6 +218,10 @@ static int Autox_array [P_MAXPFLGS],
 #else                                                              // nls_maybe
    static char Scaled_sfxtab[] =  { 'k', 'm', 'g', 't', 'p', 'e', 0 };
 #endif
+
+        /* Support for NUMA Node display & expansion (targeting) */
+static int Numa_node_tot;
+static int Numa_node_sel = -1;
 
 /*######  Sort callbacks  ################################################*/
 
@@ -2272,16 +2285,25 @@ static void zap_fieldstab (void) {
          * we preserve all cpu data in our CPU_t array which is organized
          * as follows:
          *    cpus[0] thru cpus[n] == tics for each separate cpu
-         *    cpus[Cpu_faux_tot]   == tics from the 1st /proc/stat line */
+         *    cpus[sumSLOT]        == tics from the 1st /proc/stat line
+         *  [ and beyond sumSLOT   == tics for each cpu NUMA node ] */
 static CPU_t *cpus_refresh (CPU_t *cpus) {
    static FILE *fp = NULL;
-   static int sav_cpus = -1;
+   static int sav_slot = -1;
    char buf[MEDBUFSIZ]; // enough for /proc/stat CPU line (not the intr line)
+#ifdef NUMA_ENABLED
+ #define sumSLOT ( smp_num_cpus )
+ #define totSLOT ( 1 + smp_num_cpus + Numa_node_tot)
+   int i, node;
+#else
+ #define sumSLOT ( Cpu_faux_tot )
+ #define totSLOT ( 1 + Cpu_faux_tot )
    int i;
+#endif
 
    /*** hotplug_acclimated ***/
-   if (sav_cpus != Cpu_faux_tot) {
-      sav_cpus = Cpu_faux_tot;
+   if (sav_slot != sumSLOT) {
+      sav_slot = sumSLOT;
       zap_fieldstab();
       if (fp) { fclose(fp); fp = NULL; }
       if (cpus) { free(cpus); cpus = NULL; }
@@ -2292,36 +2314,55 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    if (!fp) {
       if (!(fp = fopen("/proc/stat", "r")))
          error_exit(fmtmk(N_fmt(FAIL_statopn_fmt), strerror(errno)));
-      /* note: we allocate one more CPU_t than Cpu_faux_tot so the last
-               slot can hold tics representing the /proc/stat cpu summary
-               (the 1st line) -- that slot supports our View_CPUSUM toggle */
-      cpus = alloc_c((1 + Cpu_faux_tot) * sizeof(CPU_t));
+      /* note: we allocate one more CPU_t via totSLOT than 'cpus' so that a
+               slot can hold tics representing the /proc/stat cpu summary */
+      cpus = alloc_c(totSLOT * sizeof(CPU_t));
    }
    rewind(fp);
    fflush(fp);
 
    // remember from last time around
-   memcpy(&cpus[Cpu_faux_tot].sav, &cpus[Cpu_faux_tot].cur, sizeof(CT_t));
+   memcpy(&cpus[sumSLOT].sav, &cpus[sumSLOT].cur, sizeof(CT_t));
    // then value the last slot with the cpu summary line
    if (!fgets(buf, sizeof(buf), fp)) error_exit(N_txt(FAIL_statget_txt));
-   memset(&cpus[Cpu_faux_tot].cur, 0, sizeof(CT_t));
+   memset(&cpus[sumSLOT].cur, 0, sizeof(CT_t));
    if (4 > sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
-      , &cpus[Cpu_faux_tot].cur.u, &cpus[Cpu_faux_tot].cur.n, &cpus[Cpu_faux_tot].cur.s
-      , &cpus[Cpu_faux_tot].cur.i, &cpus[Cpu_faux_tot].cur.w, &cpus[Cpu_faux_tot].cur.x
-      , &cpus[Cpu_faux_tot].cur.y, &cpus[Cpu_faux_tot].cur.z))
+      , &cpus[sumSLOT].cur.u, &cpus[sumSLOT].cur.n, &cpus[sumSLOT].cur.s
+      , &cpus[sumSLOT].cur.i, &cpus[sumSLOT].cur.w, &cpus[sumSLOT].cur.x
+      , &cpus[sumSLOT].cur.y, &cpus[sumSLOT].cur.z))
          error_exit(N_txt(FAIL_statget_txt));
 #ifndef CPU_ZEROTICS
-   cpus[Cpu_faux_tot].cur.tot = cpus[Cpu_faux_tot].cur.u + cpus[Cpu_faux_tot].cur.s
-      + cpus[Cpu_faux_tot].cur.n + cpus[Cpu_faux_tot].cur.i + cpus[Cpu_faux_tot].cur.w
-      + cpus[Cpu_faux_tot].cur.x + cpus[Cpu_faux_tot].cur.y + cpus[Cpu_faux_tot].cur.z;
+   cpus[sumSLOT].cur.tot = cpus[sumSLOT].cur.u + cpus[sumSLOT].cur.s
+      + cpus[sumSLOT].cur.n + cpus[sumSLOT].cur.i + cpus[sumSLOT].cur.w
+      + cpus[sumSLOT].cur.x + cpus[sumSLOT].cur.y + cpus[sumSLOT].cur.z;
    /* if a cpu has registered substantially fewer tics than those expected,
       we'll force it to be treated as 'idle' so as not to present misleading
       percentages. */
-   cpus[Cpu_faux_tot].edge =
-      ((cpus[Cpu_faux_tot].cur.tot - cpus[Cpu_faux_tot].sav.tot) / smp_num_cpus) / (100 / TICS_EDGE);
+   cpus[sumSLOT].edge =
+      ((cpus[sumSLOT].cur.tot - cpus[sumSLOT].sav.tot) / smp_num_cpus) / (100 / TICS_EDGE);
 #endif
-   // now value each separate cpu's tics, maybe
-   for (i = 0; i < Cpu_faux_tot && i < Screen_rows; i++) {
+
+#ifdef NUMA_ENABLED
+   for (i = 0; i < Numa_node_tot; i++) {
+      node = sumSLOT + 1 + i;
+      // remember from last time around
+      memcpy(&cpus[node].sav, &cpus[node].cur, sizeof(CT_t));
+      // initialize current node statistics
+      memset(&cpus[node].cur, 0, sizeof(CT_t));
+#ifndef CPU_ZEROTICS
+      cpus[node].edge = cpus[sumSLOT].edge;
+      // this is for symmetry only, it's not currently required
+      cpus[node].cur.tot = cpus[sumSLOT].cur.tot;
+#endif
+   }
+#endif
+
+   // now value each separate cpu's tics...
+#ifdef NUMA_ENABLED
+   for (i = 0; i < sumSLOT; i++) {
+#else
+   for (i = 0; i < sumSLOT && i < Screen_rows; i++) {
+#endif
 #ifdef PRETEND4CPUS
       rewind(fp);
       fgets(buf, sizeof(buf), fp);
@@ -2334,21 +2375,38 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
          , &cpus[i].cur.u, &cpus[i].cur.n, &cpus[i].cur.s
          , &cpus[i].cur.i, &cpus[i].cur.w, &cpus[i].cur.x
          , &cpus[i].cur.y, &cpus[i].cur.z)) {
-            memmove(&cpus[i], &cpus[Cpu_faux_tot], sizeof(CPU_t));
+            memmove(&cpus[i], &cpus[sumSLOT], sizeof(CPU_t));
             break;        // tolerate cpus taken offline
       }
+
 #ifndef CPU_ZEROTICS
-      cpus[i].edge = cpus[Cpu_faux_tot].edge;
+      cpus[i].edge = cpus[sumSLOT].edge;
       // this is for symmetry only, it's not currently required
-      cpus[i].cur.tot = cpus[Cpu_faux_tot].cur.tot;
+      cpus[i].cur.tot = cpus[sumSLOT].cur.tot;
 #endif
 #ifdef PRETEND4CPUS
       cpus[i].id = i;
 #endif
+#ifdef NUMA_ENABLED
+      if (-1 < (node = numa_node_of_cpu(cpus[i].id))) {
+         node += (sumSLOT + 1);
+         cpus[node].cur.u += cpus[i].cur.u;
+         cpus[node].cur.n += cpus[i].cur.n;
+         cpus[node].cur.s += cpus[i].cur.s;
+         cpus[node].cur.i += cpus[i].cur.i;
+         cpus[node].cur.w += cpus[i].cur.w;
+         cpus[node].cur.x += cpus[i].cur.x;
+         cpus[node].cur.y += cpus[i].cur.y;
+         cpus[node].cur.z += cpus[i].cur.z;
+      }
+#endif
    }
+
    Cpu_faux_tot = i;      // tolerate cpus taken offline
 
    return cpus;
+ #undef sumSLOT
+ #undef totSLOT
 } // end: cpus_refresh
 
 
@@ -2579,6 +2637,9 @@ static void sysinfo_refresh (int forced) {
       cpuinfo();
       Cpu_faux_tot = smp_num_cpus;
       cpu_secs = cur_secs;
+#ifdef NUMA_ENABLED
+      Numa_node_tot = numa_max_node() + 1;
+#endif
    }
 #endif
 } // end: sysinfo_refresh
@@ -3163,6 +3224,10 @@ static void before (char *me) {
    for (i = 0; i < HHASH_SIZ; i++) HHash_nul[i] = -1;
    memcpy(HHash_one, HHash_nul, sizeof(HHash_nul));
    memcpy(HHash_two, HHash_nul, sizeof(HHash_nul));
+#endif
+
+#ifdef NUMA_ENABLED
+   Numa_node_tot = numa_max_node() + 1;
 #endif
 
 #ifndef SIGRTMAX       // not available on hurd, maybe others too
@@ -4304,7 +4369,34 @@ static void keys_summary (int ch) {
 
    switch (ch) {
       case '1':
-         TOGw(w, View_CPUSUM);
+         if (CHKw(w, View_CPUNOD)) OFFw(w, View_CPUSUM);
+         else TOGw(w, View_CPUSUM);
+         OFFw(w, View_CPUNOD);
+         Numa_node_sel = -1;
+         break;
+      case '2':
+         if (!Numa_node_tot)
+            show_msg(N_txt(NUMA_nodenot_txt));
+         else {
+            if (Numa_node_sel < 0) TOGw(w, View_CPUNOD);
+            if (!CHKw(w, View_CPUNOD)) SETw(w, View_CPUSUM);
+            Numa_node_sel = -1;
+         }
+         break;
+      case '3':
+         if (!Numa_node_tot)
+            show_msg(N_txt(NUMA_nodenot_txt));
+         else {
+            int num = get_int(fmtmk(N_fmt(NUMA_nodeget_fmt), Numa_node_tot -1));
+            if (GET_INTNONE < num) {
+               if (num >= 0 && num < Numa_node_tot) {
+                  Numa_node_sel = num;
+                  SETw(w, View_CPUNOD);
+                  OFFw(w, View_CPUSUM);
+               } else
+                  show_msg(N_txt(NUMA_nodebad_txt));
+            }
+         }
          break;
       case 'C':
          VIZTOGw(w, View_SCROLL);
@@ -4754,7 +4846,7 @@ static void do_key (int ch) {
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
-         { '1', 'C', 'l', 'm', 't', '\0' } },
+         { '1', '2', '3', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,
          { '#', '<', '>', 'b', 'c', 'i', 'J', 'j', 'n', 'O', 'o'
          , 'R', 'S', 'U', 'u', 'V', 'x', 'y', 'z'
@@ -4868,6 +4960,8 @@ static void summary_show (void) {
  #define anyFLG 0xffffff
    static CPU_t *smpcpu = NULL;
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
+   char tmp[MEDBUFSIZ];
+   int i;
 
    // Display Uptime and Loadavg
    if (isROOM(View_LOADAV, 1)) {
@@ -4877,7 +4971,7 @@ static void summary_show (void) {
          show_special(0, fmtmk(CHKw(w, Show_TASKON)? LOADAV_line_alt : LOADAV_line
             , w->grpname, sprint_uptime()));
       Msg_row += 1;
-   }
+   } // end: View_LOADAV
 
    // Display Task and Cpu(s) States
    if (isROOM(View_STATES, 2)) {
@@ -4889,13 +4983,41 @@ static void summary_show (void) {
 
       smpcpu = cpus_refresh(smpcpu);
 
+#ifdef NUMA_ENABLED
+      if (CHKw(w, View_CPUNOD)) {
+         if (Numa_node_sel < 0) {
+            // display the 1st /proc/stat line, then the nodes (if room)
+            summary_hlp(&smpcpu[smp_num_cpus], N_txt(WORD_allcpus_txt));
+            Msg_row += 1;
+            // display each cpu node's states
+            for (i = 0; i < Numa_node_tot; i++) {
+               if (!isROOM(anyFLG, 1)) break;
+               snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), i);
+               summary_hlp(&smpcpu[1 + smp_num_cpus + i], tmp);
+               Msg_row += 1;
+            }
+         } else {
+            // display the node summary, then the associated cpus (if room)
+            snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
+            summary_hlp(&smpcpu[1 + smp_num_cpus + Numa_node_sel], tmp);
+            Msg_row += 1;
+            for (i = 0; i < Cpu_faux_tot; i++) {
+               if (Numa_node_sel == numa_node_of_cpu(smpcpu[i].id)) {
+                  if (!isROOM(anyFLG, 1)) break;
+                  snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), smpcpu[i].id);
+                  summary_hlp(&smpcpu[i], tmp);
+                  Msg_row += 1;
+               }
+            }
+         }
+      } else
+#endif
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
          summary_hlp(&smpcpu[Cpu_faux_tot], N_txt(WORD_allcpus_txt));
          Msg_row += 1;
+
       } else {
-         int i;
-         char tmp[MEDBUFSIZ];
          // display each cpu's states separately, screen height permitting...
          for (i = 0; i < Cpu_faux_tot; i++) {
             snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), smpcpu[i].id);
@@ -4904,7 +5026,7 @@ static void summary_show (void) {
             if (!isROOM(anyFLG, 1)) break;
          }
       }
-   }
+   } // end: View_STATES
 
    // Display Memory and Swap stats
    if (isROOM(View_MEMORY, 2)) {
@@ -4953,7 +5075,7 @@ static void summary_show (void) {
     #undef mkM
     #undef mkS
     #undef prT
-   }
+   } // end: View_MEMORY
 
  #undef isROOM
  #undef anyFLG
