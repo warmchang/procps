@@ -912,7 +912,7 @@ depending on the context in which they are issued.
         <Ent/Sp> ?, =, 0,
         A, B, d, E, e, g, h, H, I, k, q, r, s, W, X, Y, Z
   4b.\fI Summary-Area-Commands \fR
-        C, l, t, 1, m
+        C, l, t, m, 1, 2, 3
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, J, j, x, y, z
         Content:     c, f, F, o, O, S, u, U, V
@@ -1184,6 +1184,12 @@ These commands always impact just the \*(CG.
 \*(CWs and \*(FGs.
 
 .TP 7
+\ \ \'\fBC\fR' :\fIShow-scroll-coordinates\fR toggle \fR
+Toggle an informational message which is displayed whenever the message
+line is not otherwise being used.
+For additional information \*(Xt 5c. SCROLLING a Window.
+
+.TP 7
 \ \ \'\fBl\fR\' :\fILoad-Average/Uptime\fR toggle \fR
 This is also the line containing the program name (possibly an alias)
 when operating in \*(FM or the \*(CW name when operating in \*(AM.
@@ -1191,10 +1197,16 @@ when operating in \*(FM or the \*(CW name when operating in \*(AM.
 .TP 7
 \ \ \'\fBt\fR\' :\fITask/Cpu-States\fR toggle \fR
 This command affects from 2 to many \*(SA lines, depending on the state
-of the '1' toggle and whether or not \*(We is running under true SMP.
+of the '1', '2' or '3' \*(CTs and whether or not \*(We is running under
+true SMP.
 
 This portion of the \*(SA is also influenced by the 'H' \*(CI toggle,
 as reflected in the total label which shows either 'Tasks' or 'Threads'.
+
+.TP 7
+\ \ \'\fBm\fR\' :\fIMemory/Swap-Usage\fR toggle \fR
+This command affects the two \*(SA lines dealing with physical
+and virtual memory.
 
 .TP 7
 \ \ \'\fB1\fR\' :\fISingle/Separate-Cpu-States\fR toggle \fR
@@ -1208,9 +1220,17 @@ Otherwise, each \*(Pu is displayed separately as: '%Cpu0, %Cpu1, ...'
 up to available screen height.
 
 .TP 7
-\ \ \'\fBm\fR\' :\fIMemory/Swap-Usage\fR toggle \fR
-This command affects the two \*(SA lines dealing with physical
-and virtual memory.
+\ \ \'\fB2\fR\' :\fINUMA-Nodes/Cpu-Summary\fR toggle \fR
+This command toggles between the '1' command cpu summary display (only)
+or a summary display plus the cpu usage statistics for each NUMA Node.
+It is only available if a system has the requisite NUMA support.
+
+.TP 7
+\ \ \'\fB3\fR\' :\fIExpand-NUMA-Node \fR
+You will be invited to enter a number representing a NUMA Node.
+Thereafter, a node summary plus the statistics for each cpu in that
+node will be shown until either the '1' or '2' \*(CT is pressed.
+This \*(CI is only available if a system has the requisite NUMA support.
 
 .PP
 \*(NT If the entire \*(SA has been toggled \*F for any window, you would

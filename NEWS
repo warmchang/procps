@@ -1,3 +1,8 @@
+procps-ng-3.3.8
+---------------
+  * top adds extensions for linux NUMA/Node capability
+
+
 procps-ng-3.3.7
 ---------------
 
