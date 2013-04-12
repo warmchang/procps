@@ -89,8 +89,8 @@ else
 endif
 
 free_SOURCES = free.c $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
-pgrep_SOURCES = pgrep.c $(top_srcdir)/lib/fileutils.c
-pkill_SOURCES = pgrep.c $(top_srcdir)/lib/fileutils.c
+pgrep_SOURCES = pgrep.c $(top_srcdir)/lib/fileutils.c $(top_srcdir)/lib/nsutils.c
+pkill_SOURCES = pgrep.c $(top_srcdir)/lib/fileutils.c $(top_srcdir)/lib/nsutils.c
 pmap_SOURCES = pmap.c $(top_srcdir)/lib/fileutils.c
 pwdx_SOURCES = pwdx.c $(top_srcdir)/lib/fileutils.c
 sysctl_SOURCES = sysctl.c $(top_srcdir)/lib/fileutils.c

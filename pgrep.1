@@ -146,6 +146,15 @@ than
 \fB\-L\fR, \fB\-\-logpidfile\fR
 Fail if pidfile (see -F) not locked.
 .TP
+\fB\-\-ns \fIpid\fP
+Match processes that belong to the same namespaces. Required to run as
+root to match processes from other users. See \-\-nslist for how to limit
+which namespaces to match.
+.TP
+\fB\-\-nslist \fIname\fP,...
+Match only the provided namespaces. Available namespaces:
+ipc, mnt, net, pid, user,uts.
+.TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
 .TP

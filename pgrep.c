@@ -46,6 +46,7 @@
 
 #include "c.h"
 #include "fileutils.h"
+#include "nsutils.h"
 #include "nls.h"
 #include "xalloc.h"
 #include "proc/readproc.h"
@@ -76,6 +77,7 @@ static int opt_lock = 0;
 static int opt_case = 0;
 static int opt_echo = 0;
 static int opt_threads = 0;
+static pid_t opt_ns_pid = 0;
 
 static const char *opt_delim = "\n";
 static struct el *opt_pgrp = NULL;
@@ -86,8 +88,12 @@ static struct el *opt_sid = NULL;
 static struct el *opt_term = NULL;
 static struct el *opt_euid = NULL;
 static struct el *opt_ruid = NULL;
+static struct el *opt_nslist = NULL;
 static char *opt_pattern = NULL;
 static char *opt_pidfile = NULL;
+
+/* by default, all namespaces will be checked */
+static int ns_flags = 0x3f;
 
 static int __attribute__ ((__noreturn__)) usage(int opt)
 {
@@ -121,7 +127,12 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 		" -U, --uid <id,...>        match by real IDs\n"
 		" -x, --exact               match exactly with the command name\n"
 		" -F, --pidfile <file>      read PIDs from file\n"
-		" -L, --logpidfile          fail if PID file is not locked\n"), fp);
+		" -L, --logpidfile          fail if PID file is not locked\n"
+		" --ns <pid>                match the processes that belong to the same\n"
+		"                           namespace as <pid>\n"
+		" --nslist <ns,...>         list which namespaces will be considered for\n"
+		"                           the --ns option.\n"
+		"                           Available namespaces: ipc, mnt, net, pid, user, uts\n"), fp);
 	fputs(USAGE_SEPARATOR, fp);
 	fputs(USAGE_HELP, fp);
 	fputs(USAGE_VERSION, fp);
@@ -320,6 +331,20 @@ static int conv_str (const char *restrict name, struct el *restrict e)
 }
 
 
+static int conv_ns (const char *restrict name, struct el *restrict e)
+{
+	int rc = conv_str(name, e);
+	int id;
+
+	ns_flags = 0;
+	id = get_ns_id(name);
+	if (id == -1)
+		return 0;
+	ns_flags |= (1 << id);
+
+	return rc;
+}
+
 static int match_numlist (long value, const struct el *restrict list)
 {
 	int found = 0;
@@ -347,6 +372,21 @@ static int match_strlist (const char *restrict value, const struct el *restrict 
 				found = 1;
 		}
 	}
+	return found;
+}
+
+static int match_ns (const proc_t *task, const proc_t *ns_task)
+{
+	int found = 1;
+	int i;
+
+	for (i = 0; i < NUM_NS; i++) {
+		if (ns_flags & (1 << i)) {
+			if (task->ns[i] != ns_task->ns[i])
+				found = 0;
+		}
+	}
+
 	return found;
 }
 
@@ -386,6 +426,8 @@ static PROCTAB *do_openproc (void)
 		flags |= PROC_FILLSTAT;
 	if (!(flags & PROC_FILLSTAT))
 		flags |= PROC_FILLSTATUS;  /* FIXME: need one, and PROC_FILLANY broken */
+	if (opt_ns_pid)
+		flags |= PROC_FILLNS;
 	if (opt_euid && !opt_negate) {
 		int num = opt_euid[0].num;
 		int i = num;
@@ -442,6 +484,7 @@ static struct el * select_procs (int *num)
 	char cmdline[CMDSTRSIZE];
 	char cmdsearch[CMDSTRSIZE];
 	char cmdoutput[CMDSTRSIZE];
+	proc_t ns_task;
 
 	ptp = do_openproc();
 	preg = do_regcomp();
@@ -451,6 +494,11 @@ static struct el * select_procs (int *num)
 
 	if (opt_newest) saved_pid = 0;
 	if (opt_oldest) saved_pid = INT_MAX;
+	if (opt_ns_pid && ns_read(opt_ns_pid, &ns_task)) {
+		fputs(_("Error reading reference namespace information\n"),
+		      stderr);
+		exit (EXIT_FATAL);
+	}
 	
 	memset(&task, 0, sizeof (task));
 	while(readproc(ptp, &task)) {
@@ -475,6 +523,8 @@ static struct el * select_procs (int *num)
 		else if (opt_rgid && ! match_numlist (task.rgid, opt_rgid))
 			match = 0;
 		else if (opt_sid && ! match_numlist (task.session, opt_sid))
+			match = 0;
+		else if (opt_ns_pid && ! match_ns (&task, &ns_task))
 			match = 0;
 		else if (opt_term) {
 			if (task.tty == 0) {
@@ -622,7 +672,9 @@ static void parse_opts (int argc, char **argv)
 	int criteria_count = 0;
 
 	enum {
-		SIGNAL_OPTION = CHAR_MAX + 1
+		SIGNAL_OPTION = CHAR_MAX + 1,
+		NS_OPTION,
+		NSLIST_OPTION,
 	};
 	static const struct option longopts[] = {
 		{"signal", required_argument, NULL, SIGNAL_OPTION},
@@ -646,6 +698,8 @@ static void parse_opts (int argc, char **argv)
 		{"pidfile", required_argument, NULL, 'F'},
 		{"logpidfile", no_argument, NULL, 'L'},
 		{"echo", no_argument, NULL, 'e'},
+		{"ns", required_argument, NULL, NS_OPTION},
+		{"nslist", required_argument, NULL, NSLIST_OPTION},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -792,6 +846,17 @@ static void parse_opts (int argc, char **argv)
 			break;
 /*		case 'z':   / * Solaris: match by zone ID * /
  *			break; */
+		case NS_OPTION:
+			opt_ns_pid = atoi(optarg);
+			if (opt_ns_pid == 0)
+				usage (opt);
+			++criteria_count;
+			break;
+		case NSLIST_OPTION:
+			opt_nslist = split_list (optarg, conv_ns);
+			if (opt_nslist == NULL)
+				usage (opt);
+			break;
 		case 'h':
 			usage (opt);
 			break;
