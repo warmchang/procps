@@ -2289,8 +2289,8 @@ static void zap_fieldstab (void) {
          *  [ and beyond sumSLOT   == tics for each cpu NUMA node ] */
 static CPU_t *cpus_refresh (CPU_t *cpus) {
    static FILE *fp = NULL;
-   static int sav_slot = -1;
-   char buf[MEDBUFSIZ]; // enough for /proc/stat CPU line (not the intr line)
+   static int siz, sav_slot = -1;
+   static char *buf;
 #ifdef NUMA_ENABLED
  #define sumSLOT ( smp_num_cpus )
  #define totSLOT ( 1 + smp_num_cpus + Numa_node_tot)
@@ -2300,6 +2300,8 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
  #define totSLOT ( 1 + Cpu_faux_tot )
    int i;
 #endif
+   int num, tot_read;
+   char *bp;
 
    /*** hotplug_acclimated ***/
    if (sav_slot != sumSLOT) {
@@ -2321,12 +2323,27 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    rewind(fp);
    fflush(fp);
 
+ #define buffGRW 1024
+   /* we slurp in the entire directory thus avoiding repeated calls to fgets,
+      especially in a massively parallel environment.  additionally, each cpu
+      line is then frozen in time rather than changing until we get around to
+      accessing it.  this helps to minimize (not eliminate) most distortions. */
+   tot_read = 0;
+   if (buf) buf[0] = '\0';
+   else buf = alloc_c((siz = buffGRW));
+   while (0 < (num = fread(buf + tot_read, 1, (siz - tot_read), fp))) {
+      tot_read += num;
+      if (tot_read < siz) break;
+      buf = alloc_r(buf, (siz += buffGRW));
+   };
+   buf[tot_read] = '\0';
+   bp = buf;
+ #undef buffGRW
+
    // remember from last time around
    memcpy(&cpus[sumSLOT].sav, &cpus[sumSLOT].cur, sizeof(CT_t));
    // then value the last slot with the cpu summary line
-   if (!fgets(buf, sizeof(buf), fp)) error_exit(N_txt(FAIL_statget_txt));
-   memset(&cpus[sumSLOT].cur, 0, sizeof(CT_t));
-   if (4 > sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
+   if (4 > sscanf(bp, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
       , &cpus[sumSLOT].cur.u, &cpus[sumSLOT].cur.n, &cpus[sumSLOT].cur.s
       , &cpus[sumSLOT].cur.i, &cpus[sumSLOT].cur.w, &cpus[sumSLOT].cur.x
       , &cpus[sumSLOT].cur.y, &cpus[sumSLOT].cur.z))
@@ -2364,14 +2381,12 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    for (i = 0; i < sumSLOT && i < Screen_rows; i++) {
 #endif
 #ifdef PRETEND8CPUS
-      rewind(fp);
-      fgets(buf, sizeof(buf), fp);
+      bp = buf;
 #endif
+      bp = 1 + strchr(bp, '\n');
       // remember from last time around
       memcpy(&cpus[i].sav, &cpus[i].cur, sizeof(CT_t));
-      if (!fgets(buf, sizeof(buf), fp)) error_exit(N_txt(FAIL_statget_txt));
-      memset(&cpus[i].cur, 0, sizeof(CT_t));
-      if (4 > sscanf(buf, "cpu%d %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &cpus[i].id
+      if (4 > sscanf(bp, "cpu%d %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &cpus[i].id
          , &cpus[i].cur.u, &cpus[i].cur.n, &cpus[i].cur.s
          , &cpus[i].cur.i, &cpus[i].cur.w, &cpus[i].cur.x
          , &cpus[i].cur.y, &cpus[i].cur.z)) {
