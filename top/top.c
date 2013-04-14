@@ -2363,7 +2363,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
 #else
    for (i = 0; i < sumSLOT && i < Screen_rows; i++) {
 #endif
-#ifdef PRETEND4CPUS
+#ifdef PRETEND8CPUS
       rewind(fp);
       fgets(buf, sizeof(buf), fp);
 #endif
@@ -2384,7 +2384,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       // this is for symmetry only, it's not currently required
       cpus[i].cur.tot = cpus[sumSLOT].cur.tot;
 #endif
-#ifdef PRETEND4CPUS
+#ifdef PRETEND8CPUS
       cpus[i].id = i;
 #endif
 #ifdef NUMA_ENABLED
@@ -2631,7 +2631,7 @@ static void sysinfo_refresh (int forced) {
       meminfo();
       mem_secs = cur_secs;
    }
-#ifndef PRETEND4CPUS
+#ifndef PRETEND8CPUS
    /*** hotplug_acclimated ***/
    if (300 <= cur_secs - cpu_secs) {
       cpuinfo();
@@ -3202,8 +3202,8 @@ static void before (char *me) {
    initialize_nls();
 
    // establish cpu particulars
-#ifdef PRETEND4CPUS
-   smp_num_cpus = 4;
+#ifdef PRETEND8CPUS
+   smp_num_cpus = 8;
 #endif
    Cpu_faux_tot = smp_num_cpus;
    Cpu_States_fmts = N_unq(STATE_lin2x4_fmt);

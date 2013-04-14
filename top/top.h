@@ -43,7 +43,7 @@
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
-//#define PRETEND4CPUS            /* pretend we're smp with 4 ticsers (sic)  */
+//#define PRETEND8CPUS            /* pretend we're smp with 8 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define PRETEND_NUMA            /* pretend we've got some linux NUMA Nodes */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
