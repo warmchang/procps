@@ -1191,6 +1191,25 @@ fail:
   outbuf[1] = '\0';
   return 1;
 }
+
+static int pr_sd_session(char *restrict const outbuf, const proc_t *restrict const pp){
+  int r;
+  size_t len;
+  char *session;
+
+  r = sd_pid_get_session(pp->tgid, &session);
+  if(r<0) goto fail;
+  len = snprintf(outbuf, COLWID, "%s", session);
+  free(session);
+  return len;
+
+fail:
+  outbuf[0] = '-';
+  outbuf[1] = '\0';
+  return 1;
+}
+
+
 #endif
 /****************** FLASK & seLinux security stuff **********************/
 // move the bulk of this to libproc sometime
@@ -1519,6 +1538,7 @@ static const format_struct format_array[] = {
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, AN|RIGHT},  /* man page misspelling of scount? */
 {"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, AN|RIGHT},  /* scnt==scount, DEC claims both */
 #ifdef WITH_SYSTEMD
+{"sd_session","SESSION", pr_sd_session, sr_nop,  11,   0,    LNX, ET|LEFT},
 {"sd_unit",   "UNIT",    pr_sd_unit,  sr_nop,    31,   0,    LNX, ET|LEFT},
 #endif
 {"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT},
