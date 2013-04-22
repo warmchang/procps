@@ -1224,7 +1224,22 @@ fail:
   return 1;
 }
 
+static int pr_sd_machine(char *restrict const outbuf, const proc_t *restrict const pp){
+  int r;
+  size_t len;
+  char *machine;
 
+  r = sd_pid_get_machine_name(pp->tgid, &machine);
+  if(r<0) goto fail;
+  len = snprintf(outbuf, COLWID, "%s", machine);
+  free(machine);
+  return len;
+
+fail:
+  outbuf[0] = '-';
+  outbuf[1] = '\0';
+  return 1;
+}
 #endif
 /****************** FLASK & seLinux security stuff **********************/
 // move the bulk of this to libproc sometime
@@ -1553,6 +1568,7 @@ static const format_struct format_array[] = {
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, AN|RIGHT},  /* man page misspelling of scount? */
 {"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, AN|RIGHT},  /* scnt==scount, DEC claims both */
 #ifdef WITH_SYSTEMD
+{"sd_machine","MACHINE", pr_sd_machine, sr_nop,  31,   0,    LNX, ET|LEFT},
 {"sd_ouid",   "OWNER",   pr_sd_ouid,  sr_nop,     5,   0,    LNX, ET|LEFT},
 {"sd_session","SESSION", pr_sd_session, sr_nop,  11,   0,    LNX, ET|LEFT},
 {"sd_unit",   "UNIT",    pr_sd_unit,  sr_nop,    31,   0,    LNX, ET|LEFT},
