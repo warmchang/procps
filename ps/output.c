@@ -1240,6 +1240,24 @@ fail:
   outbuf[1] = '\0';
   return 1;
 }
+
+static int pr_sd_uunit(char *restrict const outbuf, const proc_t *restrict const pp){
+  int r;
+  size_t len;
+  char *unit;
+
+  r = sd_pid_get_user_unit(pp->tgid, &unit);
+  if(r<0) goto fail;
+  len = snprintf(outbuf, COLWID, "%s", unit);
+  free(unit);
+  return len;
+
+fail:
+  outbuf[0] = '-';
+  outbuf[1] = '\0';
+  return 1;
+}
+
 #endif
 /****************** FLASK & seLinux security stuff **********************/
 // move the bulk of this to libproc sometime
@@ -1572,6 +1590,7 @@ static const format_struct format_array[] = {
 {"sd_ouid",   "OWNER",   pr_sd_ouid,  sr_nop,     5,   0,    LNX, ET|LEFT},
 {"sd_session","SESSION", pr_sd_session, sr_nop,  11,   0,    LNX, ET|LEFT},
 {"sd_unit",   "UNIT",    pr_sd_unit,  sr_nop,    31,   0,    LNX, ET|LEFT},
+{"sd_uunit",   "UUNIT",  pr_sd_uunit, sr_nop,    31,   0,    LNX, ET|LEFT},
 #endif
 {"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT},
 {"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, PO|PIDMAX|RIGHT},
