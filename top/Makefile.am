@@ -3,8 +3,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-DLOCALEDIR=\"$(localedir)\"
 
-AM_LDFLAGS = ../proc/libprocps.la
-AM_LDFLAGS += $(NUMA_LIB)
+AM_LDFLAGS = ../proc/libprocps.la -ldl
 
 if WITH_NCURSES
 usrbin_exec_PROGRAMS = \

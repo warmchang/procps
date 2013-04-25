@@ -49,6 +49,7 @@ fi
 # Checks for header files.
 AC_HEADER_MAJOR
 AC_CHECK_HEADERS([\
+	dlfcn.h \
 	fcntl.h \
 	langinfo.h \
 	libintl.h \
@@ -221,25 +222,14 @@ if test "x$enable_sigwinch" = xyes; then
   AC_DEFINE(SIGNALS_LESS, 1, [reduce impact of x-windows resize operations on top])
 fi
 
-NUMA_LIB=
-AC_SEARCH_LIBS([numa_node_of_cpu], [numa],
-  if test x"$ac_cv_search_numa_node_of_cpu" != x"no"; then
-    NUMA_LIB="$ac_cv_search_numa_node_of_cpu";
-  fi)
-AC_SUBST([NUMA_LIB])
-AC_CHECK_HEADERS([numa.h])
 AC_ARG_ENABLE([numa],
-  AS_HELP_STRING([--enable-numa], [enable NUMA/Node support in top]),
-  [enable_numa=yes], []
-)
-if test "x$enable_numa" = x"yes"; then
-  if test x"$ac_cv_header_numa_h" = x"no"; then
-    AC_MSG_ERROR([top numa support requires header 'numa.h'])
-  fi
-  if test x"$ac_cv_search_numa_node_of_cpu" = x"no"; then
-    AC_MSG_ERROR([top numa support requires library 'libnuma'])
-  fi
-  AC_DEFINE([NUMA_ENABLED], [1], [enable NUMA/Node support in top])
+  AS_HELP_STRING([--disable-numa], [disable NUMA/Node support in top]),
+  [disable_numa=yes], [])
+if test "x$disable_numa" = x"yes"; then
+  AC_DEFINE([NUMA_DISABLE], [1], [disable NUMA/Node support in top])
+else
+  AC_SEARCH_LIBS([dlopen], [dl], [],
+    [AC_MSG_ERROR([dynamic linking unavailable, circumvent with --disable-numa])])
 fi
 
 AC_ARG_ENABLE([w-from],
