@@ -5,6 +5,10 @@ AM_CPPFLAGS = \
 
 AM_LDFLAGS = ../proc/libprocps.la
 
+if WITH_SYSTEMD
+AM_LDFLAGS += @SYSTEMD_LIBS@
+endif
+
 dist_man_MANS = ps.1
 
 # Use `ginstall' in the definition of PROGRAMS and in dependencies to avoid

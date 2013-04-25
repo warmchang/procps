@@ -264,6 +264,24 @@ then
 fi
 AC_SUBST(DEJAGNU)
 
+AC_ARG_WITH([systemd],
+  [AS_HELP_STRING([--with-systemd], [enable systemd support])],
+  [], [with_systemd=no])
+
+if test "x$with_systemd" != xno; then
+  PKG_CHECK_MODULES([SYSTEMD], [libsystemd-login >= 202], [], [
+    AC_CHECK_LIB(systemd-login, sd_pid_get_machine_name, [have_systemd=yes], [have_systemd=no])
+    if test "x$have_systemd" = xno; then
+      AC_MSG_ERROR([systemd support missing/incomplete])
+    fi
+    SYSTEMD_LIBS="-lsystemd-login"
+  ])
+  AM_CONDITIONAL(WITH_SYSTEMD, true)
+  AC_DEFINE(WITH_SYSTEMD, 1, [enable systemd support])
+else
+  AM_CONDITIONAL(WITH_SYSTEMD, false)
+fi
+
 AC_CONFIG_FILES([
 	Makefile
 	include/Makefile

@@ -71,6 +71,10 @@
 
 #include "common.h"
 
+#ifdef WITH_SYSTEMD
+#include <systemd/sd-login.h>
+#endif
+
 /* TODO:
  * Stop assuming system time is local time.
  */
@@ -1169,7 +1173,112 @@ static int pr_sgi_p(char *restrict const outbuf, const proc_t *restrict const pp
   return snprintf(outbuf, COLWID, "*");
 }
 
+#ifdef WITH_SYSTEMD
+/************************* Systemd stuff ********************************/
+static int pr_sd_unit(char *restrict const outbuf, const proc_t *restrict const pp){
+  int r;
+  size_t len;
+  char *unit;
 
+  r = sd_pid_get_unit(pp->tgid, &unit);
+  if(r<0) goto fail;
+  len = snprintf(outbuf, COLWID, "%s", unit);
+  free(unit);
+  return len;
+
+fail:
+  outbuf[0] = '-';
+  outbuf[1] = '\0';
+  return 1;
+}
+
+static int pr_sd_session(char *restrict const outbuf, const proc_t *restrict const pp){
+  int r;
+  size_t len;
+  char *session;
+
+  r = sd_pid_get_session(pp->tgid, &session);
+  if(r<0) goto fail;
+  len = snprintf(outbuf, COLWID, "%s", session);
+  free(session);
+  return len;
+
+fail:
+  outbuf[0] = '-';
+  outbuf[1] = '\0';
+  return 1;
+}
+
+static int pr_sd_ouid(char *restrict const outbuf, const proc_t *restrict const pp){
+  int r;
+  size_t len;
+  uid_t ouid;
+
+  r = sd_pid_get_owner_uid(pp->tgid, &ouid);
+  if(r<0) goto fail;
+  return snprintf(outbuf, COLWID, "%d", ouid);
+
+fail:
+  outbuf[0] = '-';
+  outbuf[1] = '\0';
+  return 1;
+}
+
+static int pr_sd_machine(char *restrict const outbuf, const proc_t *restrict const pp){
+  int r;
+  size_t len;
+  char *machine;
+
+  r = sd_pid_get_machine_name(pp->tgid, &machine);
+  if(r<0) goto fail;
+  len = snprintf(outbuf, COLWID, "%s", machine);
+  free(machine);
+  return len;
+
+fail:
+  outbuf[0] = '-';
+  outbuf[1] = '\0';
+  return 1;
+}
+
+static int pr_sd_uunit(char *restrict const outbuf, const proc_t *restrict const pp){
+  int r;
+  size_t len;
+  char *unit;
+
+  r = sd_pid_get_user_unit(pp->tgid, &unit);
+  if(r<0) goto fail;
+  len = snprintf(outbuf, COLWID, "%s", unit);
+  free(unit);
+  return len;
+
+fail:
+  outbuf[0] = '-';
+  outbuf[1] = '\0';
+  return 1;
+}
+
+static int pr_sd_seat(char *restrict const outbuf, const proc_t *restrict const pp){
+  int r;
+  size_t len;
+  char *session;
+  char *seat;
+  r = sd_pid_get_session(pp->tgid, &session);
+  if(r<0) goto fail;
+  r = sd_session_get_seat(session, &seat);
+  free(session);
+  if(r<0) goto fail;
+  len = snprintf(outbuf, COLWID, "%s", seat);
+  free(seat);
+  return len;
+
+fail:
+  outbuf[0] = '-';
+  outbuf[1] = '\0';
+  return 1;
+}
+
+#endif
 /****************** FLASK & seLinux security stuff **********************/
 // move the bulk of this to libproc sometime
 
@@ -1496,6 +1605,14 @@ static const format_struct format_array[] = {
 {"sched",     "SCH",     pr_sched,    sr_sched,   3,   0,    AIX, TO|RIGHT},
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, AN|RIGHT},  /* man page misspelling of scount? */
 {"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, AN|RIGHT},  /* scnt==scount, DEC claims both */
+#ifdef WITH_SYSTEMD
+{"sd_machine","MACHINE", pr_sd_machine, sr_nop,  31,   0,    LNX, ET|LEFT},
+{"sd_ouid",   "OWNER",   pr_sd_ouid,  sr_nop,     5,   0,    LNX, ET|LEFT},
+{"sd_seat",   "SEAT",    pr_sd_seat,  sr_nop,    11,   0,    LNX, ET|LEFT},
+{"sd_session","SESSION", pr_sd_session, sr_nop,  11,   0,    LNX, ET|LEFT},
+{"sd_unit",   "UNIT",    pr_sd_unit,  sr_nop,    31,   0,    LNX, ET|LEFT},
+{"sd_uunit",   "UUNIT",  pr_sd_uunit, sr_nop,    31,   0,    LNX, ET|LEFT},
+#endif
 {"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT},
 {"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, PO|PIDMAX|RIGHT},
 {"sgi_p",     "P",       pr_sgi_p,    sr_nop,     1,   0,    LNX, TO|RIGHT}, /* "cpu" number */
