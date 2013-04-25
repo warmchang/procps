@@ -23,7 +23,7 @@
 #include "../proc/readproc.h"
 
         /* Defines represented in configure.ac ----------------------------- */
-//#define NUMA_ENABLED            /* enable summary area NUMA/Node extension */
+//#define NUMA_DISABLE            /* disable summary area NUMA/Nodes display */
 //#define OOMEM_ENABLE            /* enable the SuSE out-of-memory additions */
 //#define SIGNALS_LESS            /* favor reduced signal load over response */
 
@@ -619,8 +619,8 @@ typedef struct WIN_t {
 #if defined(RECALL_FIXED) && defined(TERMIOS_ONLY)
 # error 'RECALL_FIXED' conflicts with 'TERMIOS_ONLY'
 #endif
-#if defined(PRETEND_NUMA) && !defined(NUMA_ENABLED)
-# error 'PRETEND_NUMA' also requires 'NUMA_ENABLED'
+#if defined(PRETEND_NUMA) && defined(NUMA_DISABLE)
+# error 'PRETEND_NUMA' confilcts with 'NUMA_DISABLE'
 #endif
 #if (LRGBUFSIZ < SCREENMAX)
 # error 'LRGBUFSIZ' must NOT be less than 'SCREENMAX'

@@ -26,6 +26,9 @@
 
 #include <ctype.h>
 #include <curses.h>
+#ifndef NUMA_DISABLE
+#include <dlfcn.h>
+#endif
 #include <errno.h>
 #include <fcntl.h>
 #include <pwd.h>
@@ -57,14 +60,6 @@
 #include "top.h"
 #include "top_nls.h"
 
-#ifdef NUMA_ENABLED
-#ifdef PRETEND_NUMA
-static int numa_max_node(void) { return 2; }
-static int numa_node_of_cpu(int num) { return (num % 3); }
-#else
-#include <numa.h>
-#endif
-#endif
 
 /*######  Miscellaneous global stuff  ####################################*/
 
@@ -219,9 +214,20 @@ static int Autox_array [P_MAXPFLGS],
    static char Scaled_sfxtab[] =  { 'k', 'm', 'g', 't', 'p', 'e', 0 };
 #endif
 
-        /* Support for NUMA Node display & expansion (targeting) */
+        /* Support for NUMA Node display, node expansion/targeting and
+           run-time dynamic linking with libnuma.so treated as a plugin */
 static int Numa_node_tot;
 static int Numa_node_sel = -1;
+#ifndef NUMA_DISABLE
+static void *Libnuma_handle;
+#if defined(PRETEND_NUMA) || defined(PRETEND8CPUS)
+static int Numa_max_node(void) { return 3; }
+static int Numa_node_of_cpu(int num) { return (num % 4); }
+#else
+static int (*Numa_max_node)(void);
+static int (*Numa_node_of_cpu)(int num);
+#endif
+#endif
 
 /*######  Sort callbacks  ################################################*/
 
@@ -513,6 +519,9 @@ static void bye_bye (const char *str) {
 #endif // end: ATEOJ_RPTHSH
 #endif // end: OFF_HST_HASH
 
+#ifndef NUMA_DISABLE
+  if (Libnuma_handle) dlclose(Libnuma_handle);
+#endif
    if (str) {
       fputs(str, stderr);
       exit(EXIT_FAILURE);
@@ -2288,19 +2297,15 @@ static void zap_fieldstab (void) {
          *    cpus[sumSLOT]        == tics from the 1st /proc/stat line
          *  [ and beyond sumSLOT   == tics for each cpu NUMA node ] */
 static CPU_t *cpus_refresh (CPU_t *cpus) {
+ #define sumSLOT ( smp_num_cpus )
+ #define totSLOT ( 1 + smp_num_cpus + Numa_node_tot)
    static FILE *fp = NULL;
    static int siz, sav_slot = -1;
    static char *buf;
-#ifdef NUMA_ENABLED
- #define sumSLOT ( smp_num_cpus )
- #define totSLOT ( 1 + smp_num_cpus + Numa_node_tot)
-   int i, node;
-#else
- #define sumSLOT ( Cpu_faux_tot )
- #define totSLOT ( 1 + Cpu_faux_tot )
-   int i;
+   int i, num, tot_read;
+#ifndef NUMA_DISABLE
+   int node;
 #endif
-   int num, tot_read;
    char *bp;
 
    /*** hotplug_acclimated ***/
@@ -2359,7 +2364,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       ((cpus[sumSLOT].cur.tot - cpus[sumSLOT].sav.tot) / smp_num_cpus) / (100 / TICS_EDGE);
 #endif
 
-#ifdef NUMA_ENABLED
+#ifndef NUMA_DISABLE
    for (i = 0; i < Numa_node_tot; i++) {
       node = sumSLOT + 1 + i;
       // remember from last time around
@@ -2375,11 +2380,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
 #endif
 
    // now value each separate cpu's tics...
-#ifdef NUMA_ENABLED
    for (i = 0; i < sumSLOT; i++) {
-#else
-   for (i = 0; i < sumSLOT && i < Screen_rows; i++) {
-#endif
 #ifdef PRETEND8CPUS
       bp = buf;
 #endif
@@ -2402,8 +2403,9 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
 #ifdef PRETEND8CPUS
       cpus[i].id = i;
 #endif
-#ifdef NUMA_ENABLED
-      if (-1 < (node = numa_node_of_cpu(cpus[i].id))) {
+#ifndef NUMA_DISABLE
+      if (Numa_node_tot
+      && -1 < (node = Numa_node_of_cpu(cpus[i].id))) {
          node += (sumSLOT + 1);
          cpus[node].cur.u += cpus[i].cur.u;
          cpus[node].cur.n += cpus[i].cur.n;
@@ -2652,8 +2654,9 @@ static void sysinfo_refresh (int forced) {
       cpuinfo();
       Cpu_faux_tot = smp_num_cpus;
       cpu_secs = cur_secs;
-#ifdef NUMA_ENABLED
-      Numa_node_tot = numa_max_node() + 1;
+#ifndef NUMA_DISABLE
+      if (Libnuma_handle)
+         Numa_node_tot = Numa_max_node() + 1;
 #endif
    }
 #endif
@@ -3241,8 +3244,22 @@ static void before (char *me) {
    memcpy(HHash_two, HHash_nul, sizeof(HHash_nul));
 #endif
 
-#ifdef NUMA_ENABLED
-   Numa_node_tot = numa_max_node() + 1;
+#ifndef NUMA_DISABLE
+#if defined(PRETEND_NUMA) || defined(PRETEND8CPUS)
+   Numa_node_tot = Numa_max_node() + 1;
+#else
+   Libnuma_handle = dlopen("libnuma.so", RTLD_LAZY);
+   if (Libnuma_handle) {
+      Numa_max_node = dlsym(Libnuma_handle, "numa_max_node");
+      Numa_node_of_cpu = dlsym(Libnuma_handle, "numa_node_of_cpu");
+      if (Numa_max_node && Numa_node_of_cpu)
+         Numa_node_tot = Numa_max_node() + 1;
+      else {
+         dlclose(Libnuma_handle);
+         Libnuma_handle = NULL;
+      }
+   }
+#endif
 #endif
 
 #ifndef SIGRTMAX       // not available on hurd, maybe others too
@@ -4387,7 +4404,7 @@ static void keys_summary (int ch) {
          if (CHKw(w, View_CPUNOD)) OFFw(w, View_CPUSUM);
          else TOGw(w, View_CPUSUM);
          OFFw(w, View_CPUNOD);
-         Numa_node_sel = -1;
+         SETw(w, View_STATES);
          break;
       case '2':
          if (!Numa_node_tot)
@@ -4395,6 +4412,7 @@ static void keys_summary (int ch) {
          else {
             if (Numa_node_sel < 0) TOGw(w, View_CPUNOD);
             if (!CHKw(w, View_CPUNOD)) SETw(w, View_CPUSUM);
+            SETw(w, View_STATES);
             Numa_node_sel = -1;
          }
          break;
@@ -4406,7 +4424,7 @@ static void keys_summary (int ch) {
             if (GET_INTNONE < num) {
                if (num >= 0 && num < Numa_node_tot) {
                   Numa_node_sel = num;
-                  SETw(w, View_CPUNOD);
+                  SETw(w, View_CPUNOD | View_STATES);
                   OFFw(w, View_CPUSUM);
                } else
                   show_msg(N_txt(NUMA_nodebad_txt));
@@ -4998,7 +5016,9 @@ static void summary_show (void) {
 
       smpcpu = cpus_refresh(smpcpu);
 
-#ifdef NUMA_ENABLED
+#ifndef NUMA_DISABLE
+      if (!Numa_node_tot) goto numa_nope;
+
       if (CHKw(w, View_CPUNOD)) {
          if (Numa_node_sel < 0) {
             // display the 1st /proc/stat line, then the nodes (if room)
@@ -5017,7 +5037,7 @@ static void summary_show (void) {
             summary_hlp(&smpcpu[1 + smp_num_cpus + Numa_node_sel], tmp);
             Msg_row += 1;
             for (i = 0; i < Cpu_faux_tot; i++) {
-               if (Numa_node_sel == numa_node_of_cpu(smpcpu[i].id)) {
+               if (Numa_node_sel == Numa_node_of_cpu(smpcpu[i].id)) {
                   if (!isROOM(anyFLG, 1)) break;
                   snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), smpcpu[i].id);
                   summary_hlp(&smpcpu[i], tmp);
@@ -5026,6 +5046,7 @@ static void summary_show (void) {
             }
          }
       } else
+numa_nope:
 #endif
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
