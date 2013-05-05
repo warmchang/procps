@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.64])
+AC_PREREQ([2.69])
 AC_CONFIG_MACRO_DIR([m4])
 AC_INIT([procps-ng],
 	m4_esyscmd([misc/git-version-gen .tarball-version]),
@@ -11,7 +11,9 @@ AC_CONFIG_SRCDIR([free.c])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
-AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS(_GNU_SOURCE)
+AC_PROG_CXX
+AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_CC_STDC
 if test "$cross_compiling" = no; then
@@ -33,53 +35,27 @@ if test "$cross_compiling" = no; then
   fi
 fi
 AM_PROG_CC_C_O
+AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 PKG_PROG_PKG_CONFIG
-
-AC_SUBST([WITH_WATCH8BIT])
-AC_ARG_ENABLE([watch8bit],
-              AS_HELP_STRING([--enable-watch8bit], [enable watch to be 8bit clean (requires ncursesw)]),
-              [enable_watch8bit=$enableval],
-              [enable_watch8bit="no"])
-if test "$enable_watch8bit" = "yes"; then
-  AC_DEFINE([WITH_WATCH8BIT], [1], [Enable 8 bit clean watch])
-fi
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
 
 # Checks for header files.
 AC_HEADER_MAJOR
-AC_CHECK_HEADERS([\
-	dlfcn.h \
-	fcntl.h \
-	langinfo.h \
-	libintl.h \
-	limits.h \
-	locale.h \
-	netinet/in.h \
-	stdint.h \
-	stdlib.h \
-	string.h \
-	sys/file.h \
-	sys/ioctl.h \
-	sys/param.h \
-	sys/time.h \
-	termios.h \
-	unistd.h \
-	utmp.h \
-	values.h \
-	wchar.h \
-	wctype.h
-])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h langinfo.h libintl.h limits.h locale.h netinet/in.h stdint.h stdio_ext.h stdlib.h string.h sys/file.h sys/ioctl.h sys/param.h sys/time.h termios.h unistd.h utmp.h values.h wchar.h wctype.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_HEADER_STDBOOL
-AC_CHECK_MEMBERS([struct stat.st_rdev])
+AC_CHECK_HEADER_STDBOOL
+AC_TYPE_UID_T
 AC_C_INLINE
-AC_C_RESTRICT
+AC_TYPE_INT32_T
 AC_TYPE_PID_T
+AC_C_RESTRICT
 AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
-AC_TYPE_UID_T
+AC_CHECK_MEMBERS([struct stat.st_rdev])
 
 dnl libtool
 LT_INIT
@@ -92,39 +68,6 @@ AC_FUNC_MBRTOWC
 AC_FUNC_MMAP
 AC_FUNC_REALLOC
 AC_FUNC_STRTOD
-AC_CHECK_FUNCS([\
-	alarm \
-	getline \
-	getpagesize \
-	gettimeofday \
-	iswprint \
-	memchr \
-	memmove \
-	memset \
-	munmap \
-	nl_langinfo \
-	putenv \
-	regcomp \
-	rpmatch \
-	select \
-	setlocale \
-	strcasecmp \
-	strchr \
-	strcspn \
-	strdup \
-	strerror \
-	strncasecmp \
-	strpbrk \
-	strrchr \
-	strspn \
-	strstr \
-	strtol \
-	strtoul \
-	strverscmp \
-	uname \
-	utmpname \
-	wcwidth
-])
 
 usrbin_execdir='${exec_prefix}/usr/bin'
 AC_SUBST([usrbin_execdir])
@@ -158,6 +101,17 @@ AC_TRY_COMPILE([#include <errno.h>],
 		AC_MSG_RESULT(yes),
 		AC_MSG_RESULT(no))
 
+dnl watch8bit must be before the AC_ARG_WITH set as it sets up ncurses
+AC_SUBST([WITH_WATCH8BIT])
+AC_ARG_ENABLE([watch8bit],
+              AS_HELP_STRING([--enable-watch8bit], [enable watch to be 8bit clean (requires ncursesw)]),
+              [enable_watch8bit=$enableval],
+              [enable_watch8bit="no"])
+if test "$enable_watch8bit" = "yes"; then
+  AC_DEFINE([WITH_WATCH8BIT], [1], [Enable 8 bit clean watch])
+fi
+
+# Optional packages - AC_ARG_WITH
 AC_ARG_WITH([ncurses],
   AS_HELP_STRING([--without-ncurses], [build only applications not needing ncurses]),
   [with_ncurses=$withval], [with_ncurses=yes]
@@ -187,6 +141,25 @@ fi
 AC_SUBST([NCURSES_LIBS])
 AC_SUBST([WATCH_NCURSES_LIBS])
 
+AC_ARG_WITH([systemd],
+  [AS_HELP_STRING([--with-systemd], [enable systemd support])],
+  [], [with_systemd=no])
+
+if test "x$with_systemd" != xno; then
+  PKG_CHECK_MODULES([SYSTEMD], [libsystemd-login >= 202], [], [
+    AC_CHECK_LIB(systemd-login, sd_pid_get_machine_name, [have_systemd=yes], [have_systemd=no])
+    if test "x$have_systemd" = xno; then
+      AC_MSG_ERROR([systemd support missing/incomplete])
+    fi
+    SYSTEMD_LIBS="-lsystemd-login"
+  ])
+  AM_CONDITIONAL(WITH_SYSTEMD, true)
+  AC_DEFINE(WITH_SYSTEMD, 1, [enable systemd support])
+else
+  AM_CONDITIONAL(WITH_SYSTEMD, false)
+fi
+
+# AC_ARG_ENABLEs
 AC_ARG_ENABLE([kill],
   AS_HELP_STRING([--disable-kill], [do not build kill]),
   [], enable_kill=yes
@@ -254,34 +227,15 @@ then
 fi
 AC_SUBST(DEJAGNU)
 
-AC_ARG_WITH([systemd],
-  [AS_HELP_STRING([--with-systemd], [enable systemd support])],
-  [], [with_systemd=no])
+AC_CHECK_FUNCS([__fpending alarm atexit dup2 getpagesize gettimeofday iswprint memchr memmove memset munmap nl_langinfo putenv regcomp rpmatch select setlocale strcasecmp strchr strcspn strdup strerror strncasecmp strpbrk strrchr strspn strstr strtol strtoul strtoull strverscmp uname utmpname wcwidth])
 
-if test "x$with_systemd" != xno; then
-  PKG_CHECK_MODULES([SYSTEMD], [libsystemd-login >= 202], [], [
-    AC_CHECK_LIB(systemd-login, sd_pid_get_machine_name, [have_systemd=yes], [have_systemd=no])
-    if test "x$have_systemd" = xno; then
-      AC_MSG_ERROR([systemd support missing/incomplete])
-    fi
-    SYSTEMD_LIBS="-lsystemd-login"
-  ])
-  AM_CONDITIONAL(WITH_SYSTEMD, true)
-  AC_DEFINE(WITH_SYSTEMD, 1, [enable systemd support])
-else
-  AM_CONDITIONAL(WITH_SYSTEMD, false)
-fi
-
-AC_CONFIG_FILES([
-	Makefile
-	include/Makefile
-	lib/Makefile
-	po/Makefile.in
-	proc/Makefile
-	proc/libprocps.pc
-	ps/Makefile
-	testsuite/Makefile
-	top/Makefile
-])
-
+AC_CONFIG_FILES([Makefile
+                 include/Makefile
+                 lib/Makefile
+		 po/Makefile.in
+                 proc/Makefile
+                 proc/libprocps.pc
+                 ps/Makefile
+                 testsuite/Makefile
+                 top/Makefile])
 AC_OUTPUT
