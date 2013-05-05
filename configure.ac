@@ -195,6 +195,7 @@ if test "x$enable_sigwinch" = xyes; then
   AC_DEFINE(SIGNALS_LESS, 1, [reduce impact of x-windows resize operations on top])
 fi
 
+DL_LIB=
 AC_ARG_ENABLE([numa],
   AS_HELP_STRING([--disable-numa], [disable NUMA/Node support in top]),
   [disable_numa=yes], [])
@@ -203,7 +204,9 @@ if test "x$disable_numa" = x"yes"; then
 else
   AC_SEARCH_LIBS([dlopen], [dl], [],
     [AC_MSG_ERROR([dynamic linking unavailable, circumvent with --disable-numa])])
+  DL_LIB="$ac_cv_search_dlopen"
 fi
+AC_SUBST([DL_LIB])
 
 AC_ARG_ENABLE([w-from],
   AS_HELP_STRING([--enable-w-from], [enable w from field by default]),
