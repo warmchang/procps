@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -105,6 +106,7 @@ int uptime(double *restrict uptime_secs, double *restrict idle_secs) {
 
 unsigned long getbtime(void) {
     static unsigned long btime = 0;
+    bool found_btime = false;
     FILE *f;
 
     if (btime)
@@ -119,12 +121,14 @@ unsigned long getbtime(void) {
     }
 
     while ((fgets(buf, sizeof buf, f))) {
-        if (sscanf(buf, "btime %lu", &btime) == 1)
+        if (sscanf(buf, "btime %lu", &btime) == 1) {
+            found_btime = true;
             break;
+        }
     }
     fclose(f);
 
-    if (!btime) {
+    if (!found_btime) {
 	fputs("missing btime in " STAT_FILE "\n", stderr);
 	exit(1);
     }
