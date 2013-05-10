@@ -1311,12 +1311,20 @@ time the command started.  See also
 .BR bsdstart , \ start , \ start_time ", and" \ stime .
 T}
 
+lsession	SESSION	T{
+displays login session identifier of a process.
+T}
+
 lwp	LWP	T{
 light weight process (thread) ID of the dispatchable entity (alias
 .BR spid , \ tid ).
 See
 .B tid
 for additional information.
+T}
+
+machine	MACHINE	T{
+displays machine name for processes assigned to VM or container.
 T}
 
 maj_flt	MAJFLT	T{
@@ -1351,6 +1359,10 @@ address of the kernel function where the process is sleeping (use
 .B wchan
 if you want the kernel function name).  Running tasks will display a dash
 ('\-') in this column.
+T}
+
+ouid	OWNER	T{
+displays the Unix user identifier of the owner of the session of a process.
 T}
 
 pcpu	%CPU	T{
@@ -1489,28 +1501,8 @@ SCHED_FIFO, SCHED_RR, SCHED_BATCH, SCHED_ISO, and SCHED_IDLE are respectively
 displayed as 0, 1, 2, 3, 4, and 5.
 T}
 
-sd_machine	MACHINE	T{
-displays machine name for processes assigned to VM or container.
-T}
-
-sd_ouid	OWNER	T{
-displays the Unix user identifier of the owner of the session of a process.
-T}
-
-sd_seat	SEAT	T{
+seat	SEAT	T{
 displays login session identifier of a process.
-T}
-
-sd_session	SESSION	T{
-displays login session identifier of a process.
-T}
-
-sd_unit	UNIT	T{
-displays systemd unit which a process belongs to.
-T}
-
-sd_uunit	UUNIT	T{
-displays systemd user unit which a process belongs to.
 T}
 
 sess	SESS	T{
@@ -1732,11 +1724,19 @@ see
 .BR euser , \ user ).
 T}
 
+unit	UNIT	T{
+displays systemd unit which a process belongs to.
+T}
+
 user	USER	T{
 see
 .BR euser .
 (alias
 .BR euser , \ uname ).
+T}
+
+uunit	UUNIT	T{
+displays systemd user unit which a process belongs to.
 T}
 
 vsize	VSZ	T{
