@@ -276,6 +276,9 @@ typedef struct CPU_t {
    SIC_t edge;                    // tics adjustment threshold boundary
 #endif
    int id;                        // the cpu id number (0 - nn)
+#ifndef NUMA_DISABLE
+   int node;                      // the numa node it belongs to
+#endif
 } CPU_t;
 
         /* /////////////////////////////////////////////////////////////// */

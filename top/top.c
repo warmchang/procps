@@ -2406,6 +2406,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
 #ifndef NUMA_DISABLE
       if (Numa_node_tot
       && -1 < (node = Numa_node_of_cpu(cpus[i].id))) {
+         cpus[i].node = node;
          node += (sumSLOT + 1);
          cpus[node].cur.u += cpus[i].cur.u;
          cpus[node].cur.n += cpus[i].cur.n;
@@ -5037,7 +5038,7 @@ static void summary_show (void) {
             summary_hlp(&smpcpu[1 + smp_num_cpus + Numa_node_sel], tmp);
             Msg_row += 1;
             for (i = 0; i < Cpu_faux_tot; i++) {
-               if (Numa_node_sel == Numa_node_of_cpu(smpcpu[i].id)) {
+               if (Numa_node_sel == smpcpu[i].node) {
                   if (!isROOM(anyFLG, 1)) break;
                   snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), smpcpu[i].id);
                   summary_hlp(&smpcpu[i], tmp);
