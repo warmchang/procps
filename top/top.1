@@ -297,25 +297,25 @@ The typically mandatory switches ('\-') and even whitespace are completely
 optional.
 
 .TP 5
-\-\fBh\fR | \-\fBv\fR :\fI Help/Version \fR
+\-\fBh\fR | \-\fBv\fR\ \ :\fIHelp/Version \fR
 Show library version and the usage prompt, then quit.
 
 .TP 5
-\-\fBb\fR :\fI Batch-mode\fR operation \fR
+\-\fBb\fR\ \ :\fIBatch-mode\fR operation \fR
 Starts \*(We in 'Batch' mode, which could be useful for sending output
 from \*(We to other programs or to a file.
 In this mode, \*(We will not accept input and runs until the iterations
 limit you've set with the '\-n' \*(CO or until killed.
 
 .TP 5
-\-\fBc\fR :\fI Command-line/Program-name\fR toggle \fR
+\-\fBc\fR\ \ :\fICommand-line/Program-name\fR toggle \fR
 Starts \*(We with the last remembered 'c' state reversed.
 Thus, if \*(We was displaying command lines, now that field will show program
 names, and visa versa.
 \*(XC 'c' \*(CI for additional information.
 
 .TP 5
-\-\fBd\fR :\fI Delay-time\fR interval as:\ \ \fB-d ss.t\fR (\fIsecs\fR.\fItenths\fR) \fR
+\-\fBd\fR\ \ :\fIDelay-time\fR interval as:\ \ \fB-d ss.t\fR (\fIsecs\fR.\fItenths\fR) \fR
 Specifies the delay between screen updates, and overrides the corresponding
 value in one's personal \*(CF or the startup default.
 Later this can be changed with the 'd' or 's' \*(CIs.
@@ -326,13 +326,13 @@ in 'Secure mode', except for root (unless the 's' \*(CO was used).
 For additional information on 'Secure mode' \*(Xt 6a. SYSTEM Configuration File.
 
 .TP 5
-\-\fBH\fR :\fI Threads-mode\fR operation \fR
+\-\fBH\fR\ \ :\fIThreads-mode\fR operation \fR
 Instructs \*(We to display individual threads.
 Without this \*(CO a summation of all threads in each process is shown.
 Later this can be changed with the 'H' \*(CI.
 
 .TP 5
-\-\fBi\fR :\fI Idle-process\fR toggle \fR
+\-\fBi\fR\ \ :\fIIdle-process\fR toggle \fR
 Starts \*(We with the last remembered 'i' state reversed.
 When this toggle is \*F, tasks that have not used any \*(PU since the
 last update will not be displayed.
@@ -340,12 +340,12 @@ For additional information regarding this toggle
 \*(Xt 4c. TASK AREA Commands, SIZE.
 
 .TP 5
-\-\fBn\fR :\fI Number-of-iterations\fR limit as:\fB\ \ \-n number \fR
+\-\fBn\fR\ \ :\fINumber-of-iterations\fR limit as:\fB\ \ \-n number \fR
 Specifies the maximum number of iterations, or frames, \*(We should
 produce before ending.
 
 .TP 5
-\-\fBo\fR :\fI Override-sort-field\fR as:\fB\ \ \-o fieldname \fR
+\-\fBo\fR\ \ :\fIOverride-sort-field\fR as:\fB\ \ \-o fieldname \fR
 Specifies the name of the field on which tasks will be sorted, independent
 of what is reflected in the configuration file.
 You can prepend a '+' or '\-' to the field name to also override the sort direction.
@@ -356,14 +356,14 @@ This option exists primarily to support automated/scripted batch mode
 operation.
 
 .TP 5
-\-\fBO\fR :\fI Output-field-names \fR
+\-\fBO\fR\ \ :\fIOutput-field-names \fR
 This option acts as a form of help for the above \-o option.
 It will cause \*(We to print each of the available field names on a
 separate line, then quit.
 Such names are subject to nls translation.
 
 .TP 5
-\-\fBp\fR :\fI Monitor-PIDs\fR mode as:\fB\ \ \-pN1 -pN2 ...\fR\ \ or\fB\ \ \-pN1,N2,N3 ... \fR
+\-\fBp\fR\ \ :\fIMonitor-PIDs\fR mode as:\fB\ \ \-pN1 -pN2 ...\fR\ \ or\fB\ \ \-pN1,N2,N3 ... \fR
 Monitor only processes with specified process IDs.
 This option can be given up to \*(WP times, or you can provide a comma delimited
 list with up to \*(WP pids.
@@ -379,20 +379,20 @@ of these \*(CIs: '=', 'u' or 'U'.
 The 'p', 'u' and 'U' \*(COs are mutually exclusive.
 
 .TP 5
-\-\fBs\fR :\fI Secure-mode\fR operation \fR
+\-\fBs\fR\ \ :\fISecure-mode\fR operation \fR
 Starts \*(We with secure mode forced, even for root.
 This mode is far better controlled through the system \*(CF
 (\*(Xt 6. FILES).
 
 .TP 5
-\-\fBS\fR :\fI Cumulative-time\fR toggle \fR
+\-\fBS\fR\ \ :\fICumulative-time\fR toggle \fR
 Starts \*(We with the last remembered 'S' state reversed.
 When 'Cumulative time' mode is \*O, each process is listed with the \*(Pu
 time that it and its dead children have used.
 \*(XC 'S' \*(CI for additional information regarding this mode.
 
 .TP 5
-\-\fBu\fR | \-\fBU\fR :\fI User-filter-mode\fR as:\ \ \fB-u\fR | \fB-U number\fR or\fB name \fR
+\-\fBu\fR | \-\fBU\fR\ \ :\fIUser-filter-mode\fR as:\ \ \fB-u\fR | \fB-U number\fR or\fB name \fR
 Display only processes with a user id or user name matching that given.
 The '\-u' option matches on \fI effective\fR user whereas the '\-U' option
 matches on\fI any\fR user (real, effective, saved, or filesystem).
@@ -403,7 +403,7 @@ display only processes with users not matching the one provided.
 The 'p', 'u' and 'U' \*(COs are mutually exclusive.
 
 .TP 5
-\-\fBw\fR :\fI Output-width-override\fR as:\ \ \fB-w\fR [\fB number\fR ] \fR
+\-\fBw\fR\ \ :\fIOutput-width-override\fR as:\ \ \fB-w\fR [\fB number\fR ] \fR
 In 'Batch' mode, when used without an argument \*(We will format
 output using the COLUMNS= and LINES= environment variables, if set.
 Otherwise, width will be fixed at the maximum \*(WX columns.
@@ -682,11 +682,11 @@ The\fI real\fR user name.
 .TP 4
 20.\fB S \*(Em Process Status \fR
 The status of the task which can be one of:
-    '\fBD\fR' = uninterruptible sleep
-    '\fBR\fR' = running
-    '\fBS\fR' = sleeping
-    '\fBT\fR' = traced or stopped
-    '\fBZ\fR' = zombie
+    \fBD\fR = uninterruptible sleep
+    \fBR\fR = running
+    \fBS\fR = sleeping
+    \fBT\fR = traced or stopped
+    \fBZ\fR = zombie
 
 Tasks shown as running should be more properly thought of as 'ready to run'
 \*(Em their task_struct is simply represented on the Linux run-queue.
@@ -940,7 +940,7 @@ secured, simply ask for help and view the system summary on the second
 line.
 
 .TP 7
-\ \ <\fBEnter\fR> or <\fBSpace\fR> :\fIRefresh-Display \fR
+\ \ <\fBEnter\fR> or <\fBSpace\fR>\ \ :\fIRefresh-Display \fR
 These commands awaken \*(We and following receipt of any input
 the entire display will be repainted.
 They also force an update of any hotplugged \*(Pu or \*(MP changes.
@@ -949,7 +949,7 @@ Use either of these keys if you have a large delay interval and wish
 to see current status,
 
 .TP 7
-\ \ \'\fB?\fR\' | \'\fBh\fR\' :\fIHelp \fR
+\ \ \ \fB?\fR | \fBh\fR\ \ :\fIHelp \fR
 There are two help levels available.
 The first will provide a reminder of all the basic \*(CIs.
 If \*(We is\fI secured\fR, that screen will be abbreviated.
@@ -958,7 +958,7 @@ Typing 'h' or '?' on that help screen will take you to help for
 those \*(CIs applicable to \*(AM.
 
 .TP 7
-\ \ \'\fB=\fR\' :\fIExit-Task-Limits \fR
+\ \ \ \fB=\fR\ \ :\fIExit-Task-Limits \fR
 Removes restrictions on which tasks are shown.
 This command will reverse any 'i' (idle tasks) and 'n' (max tasks)
 commands that might be active.
@@ -975,19 +975,19 @@ vertical and horizontal scrolling.
 When operating in \*(AM this command has a broader meaning.
 
 .TP 7
-\ \ \'\fB0\fR\' :\fIZero-Suppress\fR toggle \fR
+\ \ \ \fB0\fR\ \ :\fIZero-Suppress\fR toggle \fR
 This command determines whether zeros are shown or suppressed for many
 of the fields in a \*(TW.
 Fields like UID, GID, NI, PR or P are not affected by this toggle.
 
 .TP 7
-\ \ \'\fBA\fR\' :\fIAlternate-Display-Mode\fR toggle \fR
+\ \ \ \fBA\fR\ \ :\fIAlternate-Display-Mode\fR toggle \fR
 This command will switch between \*(FM and \*(AM.
 \*(XT 5. ALTERNATE\-DISPLAY Provisions and the 'g' \*(CI for insight
 into \*(CWs and \*(FGs.
 
 .TP 7
-\ \ \'\fBB\fR\' :\fIBold-Disable/Enable\fR toggle \fR
+\ \ \ \fBB\fR\ \ :\fIBold-Disable/Enable\fR toggle \fR
 This command will influence use of the 'bold' terminfo capability and
 alters\fB both\fR the \*(SA and \*(TA for the \*(CW.
 While it is intended primarily for use with dumb terminals, it can be
@@ -999,7 +999,7 @@ Thus, unless the 'x' and/or 'y' toggles are using reverse for emphasis,
 there will be no visual confirmation that they are even on.
 
 .TP 7
-*\ \'\fBd\fR\' | \'\fBs\fR\' :\fIChange-Delay-Time-interval \fR
+*\ \ \fBd\fR | \fBs\fR\ \ :\fIChange-Delay-Time-interval \fR
 You will be prompted to enter the delay time, in seconds, between
 display updates.
 
@@ -1013,7 +1013,7 @@ If at any time you wish to know the current delay time, simply ask for
 help and view the system summary on the second line.
 
 .TP 7
-\ \ \'\fBE\fR\' :\fIExtend-Memory-Scale\fR in Summary Area
+\ \ \ \fBE\fR\ \ :\fIExtend-Memory-Scale\fR in Summary Area
 With this command you can cycle through the available \*(SA memory scaling
 which ranges from KiB (kibibytes or 1,024 bytes) through EiB (exbibytes or
 1,152,921,504,606,846,976 bytes).
@@ -1023,7 +1023,7 @@ means that \*(We was forced to truncate some portion of that number.
 By raising the scaling factor, such truncation can be avoided.
 
 .TP 7
-\ \ \'\fBe\fR\' :\fIExtend-Memory-Scale\fR in Task Windows
+\ \ \ \fBe\fR\ \ :\fIExtend-Memory-Scale\fR in Task Windows
 With this command you can cycle through the available \*(TW memory scaling
 which ranges from KiB (kibibytes or 1,024 bytes) through PiB (pebibytes or
 1,125,899,906,842,624 bytes).
@@ -1036,26 +1036,26 @@ Raising it too high, however, is likely to produce an all zero result
 which cannot be suppressed with the '0' \*(CI.
 
 .TP 7
-\ \ \'\fBg\fR\' :\fIChoose-Another-Window/Field-Group \fR
+\ \ \ \fBg\fR\ \ :\fIChoose-Another-Window/Field-Group \fR
 You will be prompted to enter a number between 1 and 4 designating the
 \*(FG which should be made the \*(CW.
 You will soon grow comfortable with these 4 windows, especially after
 experimenting with \*(AM.
 
 .TP 7
-\ \ \'\fBH\fR\' :\fIThreads-mode\fR toggle \fR
+\ \ \ \fBH\fR\ \ :\fIThreads-mode\fR toggle \fR
 When this toggle is \*O, individual threads will be displayed for all
 processes in all visible \*(TWs.
 Otherwise, \*(We displays a summation of all threads in each process.
 
 .TP 7
-\ \ \'\fBI\fR\' :\fIIrix/Solaris-Mode\fR toggle \fR
+\ \ \ \fBI\fR\ \ :\fIIrix/Solaris-Mode\fR toggle \fR
 When operating in 'Solaris mode' ('I' toggled \*F), a task's \*(Pu usage
 will be divided by the total number of \*(PUs.
 After issuing this command, you'll be told the new state of this toggle.
 
 .TP 7
-*\ \'\fBk\fR\' :\fIKill-a-task \fR
+*\ \ \fBk\fR\ \ :\fIKill-a-task \fR
 You will be prompted for a PID and then the signal to send.
 
 Entering no PID or a negative number will be interpreted as
@@ -1073,10 +1073,10 @@ depending on your progress:
 .Ed
 
 .TP 7
-\ \ \'\fBq\fR\' :\fIQuit \fR
+\ \ \ \fBq\fR\ \ :\fIQuit \fR
 
 .TP 7
-*\ \'\fBr\fR\' :\fIRenice-a-Task \fR
+*\ \ \fBr\fR\ \ :\fIRenice-a-Task \fR
 You will be prompted for a PID and then the value to nice it to.
 
 Entering no PID or a negative number will be interpreted as
@@ -1097,14 +1097,14 @@ depending on your progress:
 .Ed
 
 .TP 7
-\ \ \'\fBW\fR\' :\fIWrite-the-Configuration-File \fR
+\ \ \ \fBW\fR\ \ :\fIWrite-the-Configuration-File \fR
 This will save all of your options and toggles plus the current
 display mode and delay time.
 By issuing this command just before quitting \*(We, you will be able
 restart later in exactly that same state.
 
 .TP 7
-\ \ \'\fBX\fR\' :\fIExtra-Fixed-Width \fR
+\ \ \ \fBX\fR\ \ :\fIExtra-Fixed-Width \fR
 Some fields are fixed width and not scalable.
 As such, they are subject to truncation which would be indicated
 by a '+' in the last position.
@@ -1134,7 +1134,7 @@ these fields are never decreased by \*(We.
 To narrow them you must specify a smaller number or restore the defaults.
 
 .TP 7
-\ \ \'\fBY\fR\' :\fIInspect-Other-Output \fR
+\ \ \ \fBY\fR\ \ :\fIInspect-Other-Output \fR
 After issuing the 'Y' \*(CI, you will be prompted for a target PID.
 Typing a value or accepting the default results in a separate screen.
 That screen can be used to view a variety of files or piped command output
@@ -1163,7 +1163,7 @@ summarized here for future reference.
 .Ed
 
 .TP 7
-\ \ \'\fBZ\fR\' :\fIChange-Color-Mapping \fR
+\ \ \ \fBZ\fR\ \ :\fIChange-Color-Mapping \fR
 This key will take you to a separate screen where you can change the
 colors for the \*(CW, or for all windows.
 For details regarding this \*(CI \*(Xt 4d. COLOR Mapping.
@@ -1184,18 +1184,18 @@ These commands always impact just the \*(CG.
 \*(CWs and \*(FGs.
 
 .TP 7
-\ \ \'\fBC\fR' :\fIShow-scroll-coordinates\fR toggle \fR
+\ \ \ \fBC\fR\ \ :\fIShow-scroll-coordinates\fR toggle \fR
 Toggle an informational message which is displayed whenever the message
 line is not otherwise being used.
 For additional information \*(Xt 5c. SCROLLING a Window.
 
 .TP 7
-\ \ \'\fBl\fR\' :\fILoad-Average/Uptime\fR toggle \fR
+\ \ \ \fBl\fR\ \ :\fILoad-Average/Uptime\fR toggle \fR
 This is also the line containing the program name (possibly an alias)
 when operating in \*(FM or the \*(CW name when operating in \*(AM.
 
 .TP 7
-\ \ \'\fBt\fR\' :\fITask/Cpu-States\fR toggle \fR
+\ \ \ \fBt\fR\ \ :\fITask/Cpu-States\fR toggle \fR
 This command affects from 2 to many \*(SA lines, depending on the state
 of the '1', '2' or '3' \*(CTs and whether or not \*(We is running under
 true SMP.
@@ -1204,12 +1204,12 @@ This portion of the \*(SA is also influenced by the 'H' \*(CI toggle,
 as reflected in the total label which shows either 'Tasks' or 'Threads'.
 
 .TP 7
-\ \ \'\fBm\fR\' :\fIMemory/Swap-Usage\fR toggle \fR
+\ \ \ \fBm\fR\ \ :\fIMemory/Swap-Usage\fR toggle \fR
 This command affects the two \*(SA lines dealing with physical
 and virtual memory.
 
 .TP 7
-\ \ \'\fB1\fR\' :\fISingle/Separate-Cpu-States\fR toggle \fR
+\ \ \ \fB1\fR\ \ :\fISingle/Separate-Cpu-States\fR toggle \fR
 This command affects how the 't' command's Cpu States portion is shown.
 Although this toggle exists primarily to serve massively-parallel SMP
 machines, it is not restricted to solely SMP environments.
@@ -1220,13 +1220,13 @@ Otherwise, each \*(Pu is displayed separately as: '%Cpu0, %Cpu1, ...'
 up to available screen height.
 
 .TP 7
-\ \ \'\fB2\fR\' :\fINUMA-Nodes/Cpu-Summary\fR toggle \fR
+\ \ \ \fB2\fR\ \ :\fINUMA-Nodes/Cpu-Summary\fR toggle \fR
 This command toggles between the '1' command cpu summary display (only)
 or a summary display plus the cpu usage statistics for each NUMA Node.
 It is only available if a system has the requisite NUMA support.
 
 .TP 7
-\ \ \'\fB3\fR\' :\fIExpand-NUMA-Node \fR
+\ \ \ \fB3\fR\ \ :\fIExpand-NUMA-Node \fR
 You will be invited to enter a number representing a NUMA Node.
 Thereafter, a node summary plus the statistics for each cpu in that
 node will be shown until either the '1' or '2' \*(CT is pressed.
@@ -1251,14 +1251,14 @@ The \*(TA \*(CIs are\fB never available\fR in \*(AM\fI if\fR the \*(CW's
 .B APPEARANCE\fR of \*(TW
 .PD 0
 .TP 7
-\ \ \'\fBJ\fR\' :\fIJustify-Numeric-Columns\fR toggle \fR
+\ \ \ \fBJ\fR\ \ :\fIJustify-Numeric-Columns\fR toggle \fR
 Alternates between right-justified (the default) and
 left-justified numeric data.
 If the numeric data completely fills the available column, this
 \*(CT may impact the column header only.
 
 .TP 7
-\ \ \'\fBj\fR\' :\fIJustify-Character-Columns\fR toggle \fR
+\ \ \ \fBj\fR\ \ :\fIJustify-Character-Columns\fR toggle \fR
 Alternates between left-justified (the default) and
 right-justified character data.
 If the character data completely fills the available column, this
@@ -1271,12 +1271,12 @@ global 'B' (bold enable) toggle.
 .RS -2
 
 .TP 7
-\ \ \'\fBb\fR\' :\fIBold/Reverse\fR toggle \fR
+\ \ \ \fBb\fR\ \ :\fIBold/Reverse\fR toggle \fR
 This command will impact how the 'x' and 'y' toggles are displayed.
 Further, it will only be available when at least one of those toggles is \*O.
 
 .TP 7
-\ \ \'\fBx\fR\' :\fIColumn-Highlight\fR toggle \fR
+\ \ \ \fBx\fR\ \ :\fIColumn-Highlight\fR toggle \fR
 Changes highlighting for the current sort field.
 If you forget which field is being sorted this command can serve as a quick
 visual reminder, providing the sort field is being displayed.
@@ -1285,7 +1285,7 @@ The sort field might\fI not\fR be visible because:
     2) the 'f' \*(CI turned it \*F
 
 .TP 7
-\ \ \'\fBy\fR\' :\fIRow-Highlight\fR toggle \fR
+\ \ \ \fBy\fR\ \ :\fIRow-Highlight\fR toggle \fR
 Changes highlighting for "running" tasks.
 For additional insight into this task state,
 \*(Xt 3a. DESCRIPTIONS of Fields, the 'S' field (Process Status).
@@ -1294,7 +1294,7 @@ Use of this provision provides important insight into your system's health.
 The only costs will be a few additional tty escape sequences.
 
 .TP 7
-\ \ \'\fBz\fR\' :\fIColor/Monochrome\fR toggle \fR
+\ \ \ \fBz\fR\ \ :\fIColor/Monochrome\fR toggle \fR
 Switches the \*(CW between your last used color scheme and the older form
 of black-on-white or white-on-black.
 This command will alter\fB both\fR the \*(SA and \*(TA but does not affect
@@ -1305,20 +1305,20 @@ the state of the 'x', 'y' or 'b' toggles.
 .B CONTENT\fR of \*(TW
 .PD 0
 .TP 7
-\ \ \'\fBc\fR\' :\fICommand-Line/Program-Name\fR toggle \fR
+\ \ \ \fBc\fR\ \ :\fICommand-Line/Program-Name\fR toggle \fR
 This command will be honored whether or not the 'COMMAND' column
 is currently visible.
 Later, should that field come into view, the change you applied will be seen.
 
 .TP 7
-\ \ \'\fBf\fR\' | \'\fBF\fR\' :\fIFields-Management \fR
+\ \ \ \fBf\fR | \fBF\fR\ \ :\fIFields-Management \fR
 These keys display a separate screen where you can change which fields are
 displayed, their order and also designate the sort field.
 For additional information on these \*(CIs
 \*(Xt 3b. MANAGING Fields.
 
 .TP 7
-\ \ \'\fBo\fR' | '\fBO\fR' :\fIOther-Filtering \fR
+\ \ \ \fBo\fR | \fBO\fR\ \ :\fIOther-Filtering \fR
 You will be prompted for the selection criteria which then determines
 which tasks will be shown in the \*(CW.
 Your criteria can be made case sensitive or case can be ignored.
@@ -1328,7 +1328,7 @@ And you determine if \*(We should include or exclude matching tasks.
 related \*(CIs.
 
 .TP 7
-\ \ \'\fBS\fR\' :\fICumulative-Time-Mode\fR toggle \fR
+\ \ \ \fBS\fR\ \ :\fICumulative-Time-Mode\fR toggle \fR
 When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
 time that it and its dead children have used.
 
@@ -1344,7 +1344,7 @@ If you wish to know in advance whether or not 'Cumulative mode' is in
 effect, simply ask for help and view the window summary on the second line.
 
 .TP 7
-\ \ \'\fBu\fR' | '\fBU\fR' :\fIShow-Specific-User-Only \fR
+\ \ \ \fBu\fR | \fBU\fR\ \ :\fIShow-Specific-User-Only \fR
 You will be prompted for the\fB uid\fR or\fB name\fR of the user to display.
 The '\-u' option matches on \fB effective\fR user whereas the '\-U' option
 matches on\fB any\fR user (real, effective, saved, or filesystem).
@@ -1359,7 +1359,7 @@ Later, if you wish to monitor all users again in the \*(CW, re-issue this
 command but just press <Enter> at the prompt.
 
 .TP 7
-\ \ \'\fBV\fR' :\fIForest-View-Mode\fR toggle \fR
+\ \ \ \fBV\fR\ \ :\fIForest-View-Mode\fR toggle \fR
 In this mode, processes are reordered according to their parents and
 the layout of the COMMAND column resembles that of a tree.
 In forest view mode it is still possible to toggle between program
@@ -1375,7 +1375,7 @@ mode in the \*(CW.
 .B SIZE\fR of \*(TW
 .PD 0
 .TP 7
-\ \ \'\fBi\fR\' :\fIIdle-Process\fR toggle \fR
+\ \ \ \fBi\fR\ \ :\fIIdle-Process\fR toggle \fR
 Displays all tasks or just active tasks.
 When this toggle is \*F, tasks that have not used any \*(PU since the
 last update will not be displayed.
@@ -1387,7 +1387,7 @@ If this command is applied to the last \*(TD when in \*(AM, then it will not
 affect the window's size, as all prior \*(TDs will have already been painted.
 
 .TP 7
-\ \ \'\fBn\fR\' | \'\fB#\fR\' :\fISet-Maximum-Tasks \fR
+\ \ \ \fBn\fR | \fB#\fR\ \ :\fISet-Maximum-Tasks \fR
 You will be prompted to enter the number of tasks to display.
 The lessor of your number and available screen rows will be used.
 
@@ -1425,12 +1425,12 @@ The sort field might\fI not\fR be visible because:
      2) the 'f' \*(CI turned it \*F
 
 .TP 7
-\ \ \'\fB<\fR\' :\fIMove-Sort-Field-Left \fR
+\ \ \ \fB<\fR\ \ :\fIMove-Sort-Field-Left \fR
 Moves the sort column to the left unless the current sort field is
 the first field being displayed.
 
 .TP 7
-\ \ \'\fB>\fR\' :\fIMove-Sort-Field-Right \fR
+\ \ \ \fB>\fR\ \ :\fIMove-Sort-Field-Right \fR
 Moves the sort column to the right unless the current sort field is
 the last field being displayed.
 
@@ -1441,14 +1441,14 @@ the current sort field is visible.
 .in
 
 .TP 7
-\ \ \'\fBf\fR\' | \'\fBF\fR\' :\fIFields-Management \fR
+\ \ \ \fBf\fR | \fBF\fR\ \ :\fIFields-Management \fR
 These keys display a separate screen where you can change which field
 is used as the sort column, among other functions.
 This can be a convenient way to simply verify the current sort field,
 when running \*(We with column highlighting turned \*F.
 
 .TP 7
-\ \ \'\fBR\fR\' :\fIReverse/Normal-Sort-Field\fR toggle \fR
+\ \ \ \fBR\fR\ \ :\fIReverse/Normal-Sort-Field\fR toggle \fR
 Using this \*(CI you can alternate between high-to-low and low-to-high sorts.
 
 .PP
@@ -1527,7 +1527,7 @@ know what window is the \*(CW.
 .SS 5b. COMMANDS for Windows
 .\" ----------------------------------------------------------------------
 .TP 7
-\ \ \'\fB-\fR\' | \'\fB_\fR\' :\fIShow/Hide-Window(s)\fR toggles \fR
+\ \ \ \fB-\fR | \fB_\fR\ \ :\fIShow/Hide-Window(s)\fR toggles \fR
 The '\-' key turns the \*(CW's \*(TD \*O and \*F.
 When \*O, that \*(TA will show a minimum of the columns header you've
 established with the 'f' \*(CI.
@@ -1541,7 +1541,7 @@ If all 4 \*(TDs are currently visible, this \*(CI will leave the \*(SA
 as the only display element.
 
 .TP 7
-*\ \'\fB=\fR\' | \'\fB+\fR\' :\fIEqualize-(reinitialize)-Window(s) \fR
+*\ \ \fB=\fR | \fB+\fR\ \ :\fIEqualize-(reinitialize)-Window(s) \fR
 The '=' key forces the \*(CW's \*(TD to be visible.
 It also reverses any 'i' (idle tasks), 'n' (max tasks), 'u'/'U' (user filter)
 and 'o'/'O' (other filter) commands that might be active.
@@ -1556,7 +1556,7 @@ except for the 'i' (idle tasks), 'n' (max tasks), 'u'/'U' (user filter),
 'o'/'O' (other filter) and scrolling \*(CIs.
 
 .TP 7
-*\ \'\fBA\fR\' :\fIAlternate-Display-Mode\fR toggle \fR
+*\ \ \fBA\fR\ \ :\fIAlternate-Display-Mode\fR toggle \fR
 This command will switch between \*(FM and \*(AM.
 
 The first time you issue this command, all four \*(TDs will be shown.
@@ -1564,7 +1564,7 @@ Thereafter when you switch modes, you will see only the \*(TD(s) you've
 chosen to make visible.
 
 .TP 7
-*\ \'\fBa\fR\' | \'\fBw\fR\' :\fINext-Window-Forward/Backward \fR
+*\ \ \fBa\fR | \fBw\fR\ \ :\fINext-Window-Forward/Backward \fR
 This will change the \*(CW, which in turn changes the window to which
 commands are directed.
 These keys act in a circular fashion so you can reach any desired \*(CW
@@ -1575,7 +1575,7 @@ whenever the \*(CW name loses its emphasis/color, that's a reminder
 the \*(TD is \*F and many commands will be restricted.
 
 .TP 7
-*\ \'\fBg\fR\' :\fIChoose-Another-Window/Field-Group \fR
+*\ \ \fBg\fR\ \ :\fIChoose-Another-Window/Field-Group \fR
 You will be prompted to enter a number between 1 and 4 designating the
 \*(FG which should be made the \*(CW.
 
@@ -1584,7 +1584,7 @@ In \*(AM, it is simply a less convenient alternative to the 'a' and 'w'
 commands.
 
 .TP 7
-\ \ \'\fBG\fR\' :\fIChange-Window/Field-Group-Name \fR
+\ \ \ \fBG\fR\ \ :\fIChange-Window/Field-Group-Name \fR
 You will be prompted for a new name to be applied to the \*(CW.
 It does not require that the window name be visible
 (the 'l' toggle to be \*O).
@@ -1606,21 +1606,21 @@ With these \*(KSs, you can move that view vertically or horizontally to
 reveal any desired task or column.
 
 .TP 4
-\fBUp\fR,\fBPgUp\fR :\fIScroll-Tasks \fR
+\fBUp\fR,\fBPgUp\fR\ \ :\fIScroll-Tasks \fR
 Move the view up toward the first task row, until the first task is
 displayed at the top of the \*(CW.
 The \fIUp\fR \*(KA moves a single line while \fIPgUp\fR scrolls the
 entire window.
 
 .TP 4
-\fBDown\fR,\fBPgDn\fR :\fIScroll-Tasks \fR
+\fBDown\fR,\fBPgDn\fR\ \ :\fIScroll-Tasks \fR
 Move the view down toward the last task row, until the last task is
 the only task displayed at the top of the \*(CW.
 The \fIDown\fR \*(KA moves a single line while \fIPgDn\fR scrolls the
 entire window.
 
 .TP 4
-\fBLeft\fR,\fBRight\fR :\fIScroll-Columns \fR
+\fBLeft\fR,\fBRight\fR\ \ :\fIScroll-Columns \fR
 Move the view of displayable fields horizontally one column at a time.
 
 \*(NT As a reminder, some fields/columns are not fixed-width but
@@ -1635,11 +1635,11 @@ column shown, you can continue scrolling horizontally within such a field.
 \*(XC 'C' \*(CI below for additional information.
 
 .TP 4
-\fBHome\fR :\fIJump-to-Home-Position \fR
+\fBHome\fR\ \ :\fIJump-to-Home-Position \fR
 Reposition the display to the un-scrolled coordinates.
 
 .TP 4
-\fBEnd\fR :\fIJump-to-End-Position \fR
+\fBEnd\fR\ \ :\fIJump-to-End-Position \fR
 Reposition the display so that the rightmost column reflects the last
 displayable field and the bottom task row represents the last task.
 
@@ -1649,7 +1649,7 @@ This is true until a single column and a single task is left as the only
 display element.
 
 .TP 4
-'\fBC\fR' :\fIShow-scroll-coordinates\fR toggle \fR
+\fBC\fR\ \ :\fIShow-scroll-coordinates\fR toggle \fR
 Toggle an informational message which is displayed whenever the message
 line is not otherwise being used.
 That message will take one of two forms depending on whether or not a
@@ -1696,7 +1696,7 @@ This is paticularly apparent when using the Up/Down \*(KAs.
 You can use these \*(CIs to locate a task row containing a particular value.
 
 .TP 4
-'\fBL\fR\' :\fILocate-a-string\fR
+\fBL\fR\ \ :\fILocate-a-string\fR
 You will be prompted for the case-sensitive string to locate starting from
 the current window coordinates.
 There are no restrictions on search string content.
@@ -1709,7 +1709,7 @@ Keying <Enter> with no input will effectively disable the '&' key until
 a new search string is entered.
 
 .TP 4
-'\fB&\fR\' :\fILocate-next\fR
+\fB&\fR\ \ :\fILocate-next\fR
 Assuming a search string has been established, \*(We will attempt to locate
 the next occurrence.
 
@@ -1788,26 +1788,26 @@ then be applied.
 
 .B Keyboard Summary
 .TP 6
-\ \ '\fBo\fR' :\fIOther-Filter\fR (lower case)
+\ \ \fBo\fR\ \ :\fIOther-Filter\fR (lower case)
 You will be prompted to establish a filter that \fBignores case\fR when
 matching.
 
 .TP 6
-\ \ '\fBO\fR' :\fIOther-Filter\fR (upper case)
+\ \ \fBO\fR\ \ :\fIOther-Filter\fR (upper case)
 You will be prompted to establish a \fBcase sensitive\fR filter.
 
 .TP 6
-\ \ \fB^O\fR\ \ :\fIShow-Active-Filters\fR (Ctrl key + 'o')
+\ \fB^O\fR\ \ :\fIShow-Active-Filters\fR (Ctrl key + 'o')
 This can serve as a reminder of which filters are active in the \*(CW.
 A summary will be shown on the message line until you press the <Enter> key.
 
 .TP 6
-\ \ '\fB=\fR' :\fIReset-Filtering\fR in current window
+\ \ \fB=\fR\ \ :\fIReset-Filtering\fR in current window
 This clears all of your selection criteria in the \*(CW.
 It also has additional impact so please \*(Xt 4a. GLOBAL Commands.
 
 .TP 6
-\ \ '\fB+\fR' :\fIReset-Filtering\fR in all windows
+\ \ \fB+\fR\ \ :\fIReset-Filtering\fR in all windows
 This clears the selection criteria in all windows, assuming you are in \*(AM.
 As with the '=' \*(CI, it too has additional consequences so you might wish to
 \*(Xt 5b. COMMANDS for Windows.
@@ -2007,8 +2007,8 @@ Entries specifying '\fBpipe\fR' will employ popen, their '.fmts' element
 could contain many pipelined commands and, none can be interactive.
 
 If the file or pipeline represented in your '.fmts' deals with the specific PID
-input or accepted when prompted, then the format string must also contain the
-'\fB%d\fR' specifier, as these examples illustrate.
+input or accepted when prompted, then the format string must also contain
+the '\fB%d\fR' specifier, as these examples illustrate.
 
 .Bd -literal -compact
   .fmts=  /proc/\fI%d\fR/numa_maps
