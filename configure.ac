@@ -195,6 +195,14 @@ if test "x$enable_sigwinch" = xyes; then
   AC_DEFINE(SIGNALS_LESS, 1, [reduce impact of x-windows resize operations on top])
 fi
 
+AC_ARG_ENABLE([wide-percent],
+  AS_HELP_STRING([--enable-wide-percent], [provide extra precision under %CPU and %MEM for top]),
+  [enable_wide_percent=yes], []
+)
+if test "x$enable_wide_percent" = xyes; then
+  AC_DEFINE(BOOST_PERCNT, 1, [provide extra precision under %CPU and %MEM for top])
+fi
+
 DL_LIB=
 AC_ARG_ENABLE([numa],
   AS_HELP_STRING([--disable-numa], [disable NUMA/Node support in top]),

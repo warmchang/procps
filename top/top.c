@@ -1564,7 +1564,7 @@ static const char *scale_pcnt (float num, int width, int justr) {
    buf[0] = '\0';
    if (Rc.zero_suppress && 0 >= num)
       goto end_justifies;
-#ifndef NOBOOST_PCNT
+#ifdef BOOST_PERCNT
    if (width >= snprintf(buf, sizeof(buf), "%#.3f", num))
       goto end_justifies;
    if (width >= snprintf(buf, sizeof(buf), "%#.2f", num))
@@ -1699,7 +1699,7 @@ static FLD_t Fieldstab[] = {
    {     0,     -1,  A_right,  SF(CPU),  L_stat    },
    {     6,     -1,  A_right,  SF(TME),  L_stat    },
    {     9,     -1,  A_right,  SF(TME),  L_stat    }, // P_TM2 slot
-#ifndef NOBOOST_PCNT
+#ifdef BOOST_PERCNT
    {     5,     -1,  A_right,  SF(RES),  L_statm   }, // P_MEM slot
 #else
    {     4,     -1,  A_right,  SF(RES),  L_statm   }, // P_MEM slot
@@ -2238,7 +2238,7 @@ static void zap_fieldstab (void) {
       Fieldstab[P_CPN].width = digits;
    }
 
-#ifndef NOBOOST_PCNT
+#ifdef BOOST_PERCNT
    Cpu_pmax = 99.9;
    Fieldstab[P_CPU].width = 5;
    if (Rc.mode_irixps && smp_num_cpus > 1 && !Thread_mode) {
