@@ -24,6 +24,7 @@
 
         /* Defines represented in configure.ac ----------------------------- */
 //#define BOOST_PERCNT            /* enable extra precision for two % fields */
+//#define NOBOOST_MEMS            /* disable extra precision for mem fields  */
 //#define NUMA_DISABLE            /* disable summary area NUMA/Nodes display */
 //#define OOMEM_ENABLE            /* enable the SuSE out-of-memory additions */
 //#define SIGNALS_LESS            /* favor reduced signal load over response */
@@ -39,7 +40,6 @@
 //#define INSP_OFFDEMO            /* disable demo screens, issue msg instead */
 //#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents in a file  */
 //#define INSP_SLIDE_1            /* when scrolling left/right don't move 8  */
-//#define NOBOOST_MEMS            /* disable extra precision for mem fields  */
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */

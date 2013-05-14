@@ -203,6 +203,14 @@ if test "x$enable_wide_percent" = xyes; then
   AC_DEFINE(BOOST_PERCNT, 1, [provide extra precision under %CPU and %MEM for top])
 fi
 
+AC_ARG_ENABLE([wide-memory],
+  AS_HELP_STRING([--disable-wide-memory], [disable extra precision under memory fields for top]),
+  [disable_wide_memory=yes], []
+)
+if test "x$disable_wide_memory" = xyes; then
+  AC_DEFINE(NOBOOST_MEMS, 1, [disable extra precision under memory fields for top])
+fi
+
 DL_LIB=
 AC_ARG_ENABLE([numa],
   AS_HELP_STRING([--disable-numa], [disable NUMA/Node support in top]),
