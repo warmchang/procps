@@ -1,6 +1,11 @@
 procps-ng-3.3.8
 ---------------
   * top adds extensions for linux NUMA/Node capability
+  * top has reverted to former %CPU and %MEM precision
+    but also provides a '--enable-wide-percent' option
+    Debian #707648
+  * eliminate the potential library segmentation fault
+    Debian #706259, RedHat #951391
 
 
 procps-ng-3.3.7
