@@ -591,7 +591,7 @@ static int one_proc(proc_t * p)
 		unsigned long long file_offset, inode;
 		unsigned dev_major, dev_minor;
 		unsigned long long smap_value;
-		char smap_key[20];
+		char smap_key[21];
 
 		/* hex values are lower case or numeric, keys are upper */
 		if (mapbuf[0] >= 'A' && mapbuf[0] <= 'Z') {
