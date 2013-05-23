@@ -117,7 +117,7 @@ proc make_testproc { } {
     set sleep_time 300
 
     set testproc_path [ exec mktemp -u ]
-    set sleep_path [ exec which sleep ]
+    set sleep_path [ exec sh -c "command -v sleep" ]
     exec ln -s $sleep_path $testproc_path
     set testproc_comm [ exec basename $testproc_path ]
 
