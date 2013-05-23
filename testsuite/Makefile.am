@@ -35,7 +35,6 @@ endif
 
 EXTRA_DIST = \
 	config/unix.exp \
-	global-conf.exp \
     free.test/free.exp \
     kill.test/kill.exp \
     lib.test/fileutils.exp \
