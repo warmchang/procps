@@ -350,16 +350,14 @@ static void at_eoj (void) {
    if (Ttychanged) {
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_original);
       if (keypad_local) putp(keypad_local);
-      if (exit_ca_mode)
+      putp("\n");
+      if (exit_ca_mode) {
          // this next will also replace top's most recent screen with the
          // original display contents that were visible at our invocation
          putp(exit_ca_mode);
-      else {
-         // but if we can't, we'll simply do it as old top always used to
-         putp(tg2(0, Screen_rows));
-         putp("\n");
       }
       putp(Cap_curs_norm);
+      putp(Cap_clr_eol);
 #ifndef RMAN_IGNORED
       putp(Cap_smam);
 #endif
@@ -756,7 +754,6 @@ static int show_pmt (const char *str) {
          * Show a special coordinate message, in support of scrolling */
 static inline void show_scroll (void) {
    PUTT(Scroll_fmts, tg2(0, Msg_row), Frame_maxtask);
-   putp(tg2(0, Msg_row));
 } // end: show_scroll
 
 
@@ -5445,7 +5442,7 @@ static void frame_hlp (int wix, int max) {
          * (*subordinate* functions invoked know WHEN the user's had)
          * (ENOUGH already.  And at Frame End, it SHOULD be apparent)
          * (WE am d'MAN -- clearing UNUSED screen LINES and ensuring)
-         * (the CURSOR is STUCK in just the RIGHT place, know what I)
+         * (that those auto-sized columns are addressed, know what I)
          * (mean?  Huh, "doesn't DO MUCH"!  Never, EVER think or say)
          * (THAT about THIS function again, Ok?  Good that's better.)
          *
@@ -5474,7 +5471,10 @@ static void frame_make (void) {
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();
    Max_lines = (Screen_rows - Msg_row) - 1;
-   OFFw(Curwin, INFINDS_xxx);
+   OFFw(w, INFINDS_xxx);
+
+   if (VIZISw(w) && CHKw(w, View_SCROLL)) show_scroll();
+   else PUTT("%s%s", tg2(0, Msg_row), Cap_clr_eol);
 
    if (!Rc.mode_altscr) {
       // only 1 window to show so, piece o' cake
@@ -5498,8 +5498,6 @@ static void frame_make (void) {
       putp(Cap_nl_clreos);
       PSU_CLREOS(Pseudo_row);
    }
-   if (VIZISw(w) && CHKw(w, View_SCROLL)) show_scroll();
-   else PUTT("%s%s", tg2(0, Msg_row), Cap_clr_eol);
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable

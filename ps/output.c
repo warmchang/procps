@@ -1533,6 +1533,9 @@ static const format_struct format_array[] = {
 {"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, AN|LEFT}, /*logname*/   /* double check */
 {"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, AN|LEFT}, /*login*/
 {"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
+#ifdef WITH_SYSTEMD
+{"lsession",   "SESSION", pr_sd_session, sr_nop,  11,   0,    LNX, ET|LEFT},
+#endif
 {"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, ET|RIGHT},
 {"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, ET|RIGHT}, /* login ID */
 {"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, ET|USER}, /* login USER */
@@ -1545,6 +1548,9 @@ static const format_struct format_array[] = {
 {"m_size",    "SIZE",    pr_size,     sr_size,    5, MEM,    LNX, PO|RIGHT},
 {"m_swap",    "SWAP",    pr_nop,      sr_nop,     5,   0,    LNx, PO|RIGHT},
 {"m_trs",     "TRS",     pr_trs,      sr_trs,     5, MEM,    LNx, PO|RIGHT},
+#ifdef WITH_SYSTEMD
+{"machine",   "MACHINE", pr_sd_machine, sr_nop,  31,   0,    LNX, ET|LEFT},
+#endif
 {"maj_flt",   "MAJFL",   pr_majflt,   sr_maj_flt, 6,   0,    LNX, AN|RIGHT},
 {"majflt",    "MAJFLT",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
 {"min_flt",   "MINFL",   pr_minflt,   sr_min_flt, 6,   0,    LNX, AN|RIGHT},
@@ -1565,6 +1571,9 @@ static const format_struct format_array[] = {
 {"osz",       "SZ",      pr_nop,      sr_nop,     2,   0,    SUN, PO|RIGHT},
 {"oublk",     "OUBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*oublock*/
 {"oublock",   "OUBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*oublk*/
+#ifdef WITH_SYSTEMD
+{"ouid",      "OWNER",   pr_sd_ouid,  sr_nop,     5,   0,    LNX, ET|LEFT},
+#endif
 {"p_ru",      "P_RU",    pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
 {"paddr",     "PADDR",   pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
 {"pagein",    "PAGEIN",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
@@ -1606,12 +1615,7 @@ static const format_struct format_array[] = {
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, AN|RIGHT},  /* man page misspelling of scount? */
 {"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, AN|RIGHT},  /* scnt==scount, DEC claims both */
 #ifdef WITH_SYSTEMD
-{"sd_machine","MACHINE", pr_sd_machine, sr_nop,  31,   0,    LNX, ET|LEFT},
-{"sd_ouid",   "OWNER",   pr_sd_ouid,  sr_nop,     5,   0,    LNX, ET|LEFT},
-{"sd_seat",   "SEAT",    pr_sd_seat,  sr_nop,    11,   0,    LNX, ET|LEFT},
-{"sd_session","SESSION", pr_sd_session, sr_nop,  11,   0,    LNX, ET|LEFT},
-{"sd_unit",   "UNIT",    pr_sd_unit,  sr_nop,    31,   0,    LNX, ET|LEFT},
-{"sd_uunit",   "UUNIT",  pr_sd_uunit, sr_nop,    31,   0,    LNX, ET|LEFT},
+{"seat",      "SEAT",    pr_sd_seat,  sr_nop,    11,   0,    LNX, ET|LEFT},
 #endif
 {"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT},
 {"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, PO|PIDMAX|RIGHT},
@@ -1679,6 +1683,9 @@ static const format_struct format_array[] = {
 {"uid_hack",  "UID",     pr_euser,    sr_euser,   8, USR,    XXX, ET|USER},
 {"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT},
 {"uname",     "USER",    pr_euser,    sr_euser,   8, USR,    DEC, ET|USER}, /* man page misspelling of user? */
+#ifdef WITH_SYSTEMD
+{"unit",      "UNIT",    pr_sd_unit,  sr_nop,    31,   0,    LNX, ET|LEFT},
+#endif
 {"upr",       "UPR",     pr_nop,      sr_nop,     3,   0,    BSD, TO|RIGHT}, /*usrpri*/
 {"uprocp",    "UPROCP",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
 {"user",      "USER",    pr_euser,    sr_euser,   8, USR,    U98, ET|USER}, /* BSD n forces this to UID */
@@ -1686,6 +1693,9 @@ static const format_struct format_array[] = {
 {"usrpri",    "UPR",     pr_nop,      sr_nop,     3,   0,    DEC, TO|RIGHT}, /*upr*/
 {"util",      "C",       pr_c,        sr_pcpu,    2,   0,    SGI, ET|RIGHT}, // not sure about "C"
 {"utime",     "UTIME",   pr_nop,      sr_utime,   6,   0,    LNx, ET|RIGHT},
+#ifdef WITH_SYSTEMD
+{"uunit",     "UUNIT",   pr_sd_uunit, sr_nop,    31,   0,    LNX, ET|LEFT},
+#endif
 {"vm_data",   "DATA",    pr_nop,      sr_vm_data, 5,   0,    LNx, PO|RIGHT},
 {"vm_exe",    "EXE",     pr_nop,      sr_vm_exe,  5,   0,    LNx, PO|RIGHT},
 {"vm_lib",    "LIB",     pr_nop,      sr_vm_lib,  5,   0,    LNx, PO|RIGHT},
