@@ -8,6 +8,7 @@ procps-ng-3.3.8
     Debian #706259, RedHat #951391
   * top now accomodates a window manager like 'screen'
     RedHat #962022
+  * ps shows systemd unit and user unit for a process
 
 
 procps-ng-3.3.7
