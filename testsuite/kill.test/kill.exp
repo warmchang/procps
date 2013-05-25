@@ -3,6 +3,11 @@
 #
 set kill ${topdir}kill
 
+if { ![ file exists $kill ] } {
+    untested { skipping (not build)}
+    return
+}
+
 set test "kill with no arguments"
 spawn $kill
 expect_pass "$test" "Usage:\\s+\(lt-\)?kill \\\[options\\\] <pid> \\\[...\\\]\\s+Options:\\s+<pid> \\\[...\\\]\\s+send signal to every <pid> listed\\s+-<signal>, -s, --signal <signal>\\s+specify the <signal> to be sent\\s+-l, --list=\\\[<signal>\\\]\\s+list all signal names, or convert one to a name\\\s+-L, --table\\s+list all signal names in a nice table$usage_help$usage_version$usage_man"
