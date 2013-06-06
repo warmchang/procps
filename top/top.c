@@ -3246,7 +3246,7 @@ static void before (char *me) {
 #if defined(PRETEND_NUMA) || defined(PRETEND8CPUS)
    Numa_node_tot = Numa_max_node() + 1;
 #else
-   Libnuma_handle = dlopen("libnuma.so", RTLD_LAZY);
+   Libnuma_handle = dlopen("libnuma.so.1", RTLD_LAZY);
    if (Libnuma_handle) {
       Numa_max_node = dlsym(Libnuma_handle, "numa_max_node");
       Numa_node_of_cpu = dlsym(Libnuma_handle, "numa_node_of_cpu");
