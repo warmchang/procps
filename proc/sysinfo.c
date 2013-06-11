@@ -494,7 +494,8 @@ void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff
     getrunners(running, blocked);
   }
 
-  (*running)--;   // exclude vmstat itself
+  if(*running)
+    (*running)--;   // exclude vmstat itself
 
   if(need_vmstat_file){  /* Linux 2.5.40-bk4 and above */
     vminfo();
