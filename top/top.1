@@ -118,7 +118,7 @@ display and used when reading and writing a \*(CF.
 .\" ----------------------------------------------------------------------
 The remaining Table of Contents
 
-.Bd -literal
+.nf
     1. COMMAND\-LINE Options
     2. SUMMARY Display
        a. UPTIME and LOAD Averages
@@ -152,7 +152,7 @@ The remaining Table of Contents
        c. The Big Bird Window
        d. The Ol' Switcheroo
     8. BUGS, 9. HISTORY Former top, 10. AUTHOR, 11. SEE Also
-.Ed
+.fi
 
 .\" ......................................................................
 .SS Operation
@@ -181,19 +181,19 @@ Following any re-size operation, if a \*(We screen is corrupted, appears
 incomplete or disordered, simply typing something innocuous like a
 punctuation character or cursor motion key will usually restore it.
 In extreme cases, the following sequence almost certainly will:
-.Bd -literal -compact
+.nf
        \fIkey/cmd  objective \fR
        ^Z       \fBsuspend\fR \*(We
        fg       \fBresume\fR \*(We
        <Left>   force a screen \fBredraw\fR (if necessary)
-.Ed
+.fi
 
 But if the display is still corrupted, there is one more step you could try.
 Insert this command after \*(We has been suspended but before resuming it.
-.Bd -literal -compact
+.nf
        \fIkey/cmd  objective \fR
        reset    restore your \fBterminal settings\fR
-.Ed
+.fi
 
 \*(NT the width of \*(We's display will be limited to \*(WX positions.
 Displaying all fields requires \*(WF characters.
@@ -208,7 +208,7 @@ Lastly, some of \*(We's screens or functions require the use of cursor
 motion keys like the standard \*(KAs plus the Home, End, PgUp and PgDn keys.
 If your terminal or emulator does not provide those keys, the following
 combinations are accepted as alternatives:
-.Bd -literal -compact
+.nf
       \fI key      equivalent-key-combinations \fR
        Up       alt +\fB \\\fR      or  alt +\fB k \fR
        Down     alt +\fB /\fR      or  alt +\fB j \fR
@@ -218,14 +218,14 @@ combinations are accepted as alternatives:
        PgDn     alt +\fB Down\fR   or  alt + ctrl +\fB j \fR
        Home     alt +\fB Left\fR   or  alt + ctrl +\fB h \fR
        End      alt +\fB Right\fR  or  alt + ctrl +\fB l \fR
-.Ed
+.fi
 
 The \fBUp\fR and \fBDown\fR \*(KAs have special significance when prompted
 for line input terminated with the <Enter> key.
 Those keys, or their aliases, can be used to retrieve previous input lines
 which can then be edited and re-input.
 And there are four additional keys available with line oriented input.
-.Bd -literal -compact
+.nf
       \fI key      special-significance \fR
        Up       recall \fBolder\fR strings for re-editing
        Down     recall \fBnewer\fR strings or \fBerase\fR entire line
@@ -233,7 +233,7 @@ And there are four additional keys available with line oriented input.
        Delete   character \fBremoved\fR at cursor, moving others left
        Home     jump to \fBbeginning\fR of input line
        End      jump to \fBend\fR of input line
-.Ed
+.fi
 
 .\" ......................................................................
 .SS Startup Defaults
@@ -243,7 +243,7 @@ Even so, items shown with an \*(AK could be overridden through the
 command-line.
 All are explained in detail in the sections that follow.
 
-.Bd -literal
+.nf
     \fIGlobal-defaults\fR
        'A' - Alt display      Off (full-screen)
      * 'd' - Delay time       3.0 seconds
@@ -270,7 +270,7 @@ All are explained in detail in the sections that follow.
        'x' - Column hilite    Off (no, sort field)
        'y' - Row hilite       On\ \ (yes, running tasks)
        'z' - color/mono       Off (no, colors)
-.Ed
+.fi
 
 .\" ----------------------------------------------------------------------
 .SH 1. COMMAND-LINE Options
@@ -417,12 +417,12 @@ these provisions.
 .SS 2a. UPTIME and LOAD Averages
 .\" ----------------------------------------------------------------------
 This portion consists of a single line containing:
-.Bd -literal -compact
+.nf
     \fBprogram\fR or\fB window\fR name, depending on display mode
     current time and length of time since last boot
     total number of users
     system load avg over the last 1, 5 and 15 minutes
-.Ed
+.fi
 
 .\" ......................................................................
 .SS 2b. TASK and CPU States
@@ -434,14 +434,14 @@ state percentages.
 Line 1 shows total\fB tasks\fR or\fB threads\fR, depending on the state
 of the Threads-mode toggle.
 That total is further classified as:
-.Bd -literal -compact
+.nf
     running; sleeping; stopped; zombie
-.Ed
+.fi
 
 Line 2 shows \*(PU state percentages based on the interval since the
 last refresh.  Where two labels are shown below, those for more recent
 kernel versions are shown first.
-.Bd -literal -compact
+.nf
     \fBus\fR,\fB user\fR    : time running un-niced user processes
     \fBsy\fR,\fB system\fR  : time running kernel processes
     \fBni\fR,\fB nice\fR    : time running niced user processes
@@ -449,7 +449,7 @@ kernel versions are shown first.
     \fBhi\fR : time spent servicing hardware interrupts
     \fBsi\fR : time spent servicing software interrupts
     \fBst\fR : time stolen from this vm by the hypervisor
-.Ed
+.fi
 
 .\" ......................................................................
 .SS 2c. MEMORY Usage
@@ -459,24 +459,24 @@ through exbibytes (EiB) depending on the scaling factor enforced
 with the 'E' \*(CI.
 
 Line 1 reflects \*(MP, classified as:
-.Bd -literal -compact
+.nf
     total, used, free and buffers
-.Ed
+.fi
 
 Line 2 reflects mostly \*(MV, classified as:
-.Bd -literal -compact
+.nf
     total, used, free and cached (which is \*(MP)
-.Ed
+.fi
 
 This table may help in interpreting the scaled values displayed:
-.Bd -literal -compact
+.nf
     KiB = kibibyte = 1024 bytes
     MiB = mebibyte = 1024 KiB = 1,048,576 bytes
     GiB = gibibyte = 1024 MiB = 1,073,741,824 bytes
     TiB = tebibyte = 1024 GiB = 1,099,511,627,776 bytes
     PiB = pebibyte = 1024 TiB = 1,125,899,906,842,624 bytes
     EiB = exbibyte = 1024 PiB = 1,152,921,504,606,846,976 bytes
-.Ed
+.fi
 
 .\" ----------------------------------------------------------------------
 .SH 3. FIELDS / Columns
@@ -893,7 +893,7 @@ Listed below is a brief index of commands within categories.
 Some commands appear more than once \*(Em their meaning or scope may vary
 depending on the context in which they are issued.
 
-.Bd -literal
+.nf
   4a.\fI Global-Commands \fR
         <Ent/Sp> ?, =, 0,
         A, B, d, E, e, g, h, H, I, k, q, r, s, W, X, Y, Z
@@ -912,7 +912,7 @@ depending on the context in which they are issued.
         C, Up, Dn, Left, Right, PgUp, PgDn, Home, End
   5d.\fI Searching-in-a-Window \fR
         L, &
-.Ed
+.fi
 
 .\" ......................................................................
 .SS 4a. GLOBAL Commands
@@ -1053,10 +1053,10 @@ However, you can send any signal, via number or name.
 
 If you wish to abort the kill process, do one of the following
 depending on your progress:
-.Bd -literal
+.nf
     1) at the pid prompt, type an invalid number
     2) at the signal prompt, type 0 (or any invalid signal)
-.Ed
+.fi
 
 .TP 7
 \ \ \ \fBq\fR\ \ :\fIQuit \fR
@@ -1077,10 +1077,10 @@ and are prevented from lowering it.
 
 If you wish to abort the renice process, do one of the following
 depending on your progress:
-.Bd -literal
+.nf
     1) at the pid prompt, type an invalid number
     2) at the nice prompt, type <Enter> with no input
-.Ed
+.fi
 
 .TP 7
 \ \ \ \fBW\fR\ \ :\fIWrite-the-Configuration-File \fR
@@ -1097,14 +1097,14 @@ by a '+' in the last position.
 
 This \*(CI can be used to alter the widths of the following fields:
 
-.Bd -literal
+.nf
    \fI field  default    field  default    field  default \fR
     GID       5       GROUP     8       WCHAN    10
     RUID      5       RUSER     8
     SUID      5       SUSER     8
     UID       5       USER      8
                       TTY       8
-.Ed
+.fi
 
 You will be prompted for the amount to be added to the default
 widths shown above.
@@ -1137,7 +1137,7 @@ particular file or command.
 They are familiar to anyone who has used the pager 'less' and are
 summarized here for future reference.
 
-.Bd -literal
+.nf
    \fI key      function \fR
     '='      alternate status\-line, file or pipeline
     '/'      find, equivalent to 'L' locate
@@ -1146,7 +1146,7 @@ summarized here for future reference.
     'b'      scroll up, equivalent to <PgUp>
     'g'      first line, equivalent to <Home>
     'G'      last line, equivalent to <End>
-.Ed
+.fi
 
 .TP 7
 \ \ \ \fBZ\fR\ \ :\fIChange-Color-Mapping \fR
@@ -1391,14 +1391,14 @@ simply decrease the size of the \*(TD(s) above it.
 For compatibility, this \*(We supports most of the former \*(We sort keys.
 Since this is primarily a service to former \*(We users, these commands do
 not appear on any help screen.
-.Bd -literal -compact
+.nf
   \fI command   sorted-field                  supported \fR
      A         start time (non-display)     \fB No \fR
      M         %MEM                          Yes
      N         PID                           Yes
      P         %CPU                          Yes
      T         TIME+                         Yes
-.Ed
+.fi
 
 Before using any of the following sort provisions, \*(We suggests that you
 temporarily turn on column highlighting using the 'x' \*(CI.
@@ -1452,7 +1452,7 @@ in all four windows before returning to the \*(We display.
 
 .P
 The following \*(CIs are available.
-.Bd -literal -compact
+.nf
     \fB4\fR upper case letters to select a\fB target \fR
     \fB8\fR numbers to select a\fB color \fR
     normal toggles available \fR
@@ -1463,7 +1463,7 @@ The following \*(CIs are available.
         'a'/'w'   :apply, then go to next/prior
         <Enter>   :apply and exit
         'q'       :abandon current changes and exit
-.Ed
+.fi
 
 If you use 'a' or 'w' to cycle the targeted window, you will
 have applied the color scheme that was displayed when you left that window.
@@ -1577,11 +1577,11 @@ It does not require that the window name be visible
 
 .IP "*" 3
 The \*(CIs shown with an \*(AK have use beyond \*(AM.
-.Bd -literal -compact
+.nf
     \'=', 'A', 'g'  are always available
     \'a', 'w'       act the same with color mapping
     \               and fields management
-.Ed
+.fi
 
 .\" ......................................................................
 .SS 5c. SCROLLING a Window
@@ -1641,10 +1641,10 @@ line is not otherwise being used.
 That message will take one of two forms depending on whether or not a
 variable width column has also been scrolled.
 
-.Bd -literal
+.nf
   \fBscroll coordinates: y = n/n (tasks), x = n/n (fields)\fR
   \fRscroll coordinates: y = n/n (tasks), x = n/n (fields)\fB + nn\fR
-.Ed
+.fi
 
 The coordinates shown as \fBn\fR/\fBn\fR are relative to the upper left
 corner of the \*(CW.
@@ -1806,12 +1806,12 @@ When prompted for selection criteria, the data you provide must take one
 of two forms.
 There are 3 required pieces of information, with a 4th as optional.
 These examples use spaces for clarity but your input generally would not.
-.Bd -literal
+.nf
         #1           \fB#2\fR  #3              ( required )
         Field\-Name   ?   include\-if\-value
      \fB!\fR  Field\-Name   ?   \fBexclude\fR\-if\-value
      #4                                  ( optional )
-.Ed
+.fi
 
 Items #1, #3 and #4 should be self\-explanatory.
 Item \fB#2\fR represents both a required \fIdelimiter\fR and the \fIoperator\fR
@@ -1843,25 +1843,26 @@ See the 'j', 'J' and 'e' \*(CIs for additional information.
 .P
 These \fBGROUP\fR filters could produce the exact same results or the
 second one might not display anything at all, just a blank \*(TW.
-.Bd -literal
+.nf
      GROUP=root        ( only the same results when )
      GROUP=ROOT        ( invoked via lower case 'o' )
-.Ed
+.fi
 
 Either of these \fBRES\fR filters might yield inconsistent and/or
 misleading results, depending on the current memory scaling factor.
 Or both filters could produce the exact same results.
+.nf
      RES>9999          ( only the same results when )
      !RES<10000        ( memory scaling is at 'KiB' )
-.Ed
+.fi
 
 This \fBnMin\fR filter illustrates a problem unique to scalable fields.
 This particular field can display a maximum of 4 digits, beyond which values
 are automatically scaled to KiB or above.
 So while amounts greater than 9999 exist, they will appear as 2.6m, 197k, etc.
-.Bd -literal
+.nf
      nMin>9999         ( always a blank \*(TW )
-.Ed
+.fi
 .RE
 
 .B Potential Solutions
@@ -1877,16 +1878,16 @@ Assuming field \fBnTH\fR is displayed, the first filter will result in
 only multi-threaded processes being shown.
 It also reminds us that a trailing space is part of every displayed field.
 The second filter achieves the exact same results with less typing.
-.Bd -literal
+.nf
      !nTH=' 1 '                ( ' for clarity only )
      nTH>1                     ( same with less i/p )
-.Ed
+.fi
 
 With Forest View mode active and the \fBCOMMAND\fR column in view, this
 filter effectively collapses child processes so that just 3 levels are shown.
-.Bd -literal
+.nf
      !COMMAND='       `- '     ( ' for clarity only )
-.Ed
+.fi
 
 The final two filters appear as in response to the status request key (^O).
 In reality, each filter would have required separate input.
@@ -1894,10 +1895,10 @@ The \fBPR\fR example shows the two concurrent filters necessary to display
 tasks with priorities of 20 or more, since some might be negative.
 Then by exploiting trailing spaces, the \fBnMin\fR series of filters could
 achieve the failed '9999' objective discussed above.
-.Bd -literal
+.nf
      'PR>20' + '!PR=-'         ( 2 for right result )
      '!nMin=0 ' + '!nMin=1 ' + '!nMin=2 ' + '!nMin=3 ' ...
-.Ed
+.fi
 .RE
 
 \*(NT When 'Other Filtering' is active, \*(We turns column highlighting
@@ -1917,11 +1918,11 @@ is shown to an ordinary user.
 More importantly, it will limit what ordinary users are allowed
 to do when \*(We is running.
 They will not be able to issue the following commands.
-.Bd -literal -compact
+.nf
     k        Kill a task
     r        Renice a task
     d or s   Change delay/sleep interval
-.Ed
+.fi
 
 The system \*(CF is\fB not\fR created by \*(We.
 Rather, you create this file manually and place it in the \fI/etc \fR
@@ -1930,10 +1931,10 @@ Its name must be 'toprc' and must have no leading '.' (period).
 It must have only two lines.
 
 Here is an example of the contents of\fI /etc/toprc\fR:
-.Bd -literal -compact
+.nf
     s        # line 1: 'secure' mode switch
     5.0      # line 2: 'delay'\ \ interval in seconds
-.Ed
+.fi
 
 .\" ......................................................................
 .SS 6b. PERSONAL Configuration File
@@ -1942,7 +1943,7 @@ This file is written as '$HOME/.your\-name\-4\-\*(We' + 'rc'.
 Use the 'W' \*(CI to create it or update it.
 
 Here is the general layout:
-.Bd -literal -compact
+.nf
     global   # line  1: the program name/alias notation
       "      # line  2: id,altscr,irixps,delay,curwin
     per ea   # line  a: winname,fieldscur
@@ -1952,7 +1953,7 @@ Here is the general layout:
       "      # any remaining lines are devoted to the
       "      # generalized 'inspect' provisions
       "      # discussed below
-.Ed
+.fi
 
 If the $HOME variable is not present, \*(We will try to write the
 personal \*(CF to the current directory, subject to permissions.
@@ -1980,11 +1981,11 @@ of content.
 Otherwise they consist of the following 3 elements, each of which\fI must\fR
 be separated by a tab character (thus 2 '\\t' total):
 
-.Bd -literal -compact
+.nf
   .type:  literal 'file' or 'pipe'
   .name:  selection shown on the Inspect screen
   .fmts:  string representing a path or command
-.Ed
+.fi
 
 The two types of Inspect entries are\fI not\fR interchangeable.
 Those designated '\fBfile\fR' will be accessed using fopen and
@@ -1996,31 +1997,31 @@ If the file or pipeline represented in your '.fmts' deals with the specific PID
 input or accepted when prompted, then the format string must also contain
 the '\fB%d\fR' specifier, as these examples illustrate.
 
-.Bd -literal -compact
+.nf
   .fmts=  /proc/\fI%d\fR/numa_maps
   .fmts=  lsof -P -p\fI %d\fR
-.Ed
+.fi
 
 For '\fBpipe\fR' type entries only, you may also wish to redirect stderr to
 stdout for a more comprehensive result.
 Thus the format string becomes:
 
-.Bd -literal -compact
+.nf
   .fmts=  pmap -x %d\fI 2>&1\fR
-.Ed
+.fi
 
 Here are examples of both types of Inspect entries as they might appear
 in the rcfile.
 The first entry will be ignored due to the initial '#' character.
 For clarity, the pseudo tab depictions (^I) are surrounded by an
 extra space but the actual tabs would not be.
-.Bd -literal -compact
+.nf
 
   # pipe ^I Sockets ^I lsof -n -P -i 2>&1
   pipe ^I Open Files ^I lsof -P -p %d 2>&1
   file ^I NUMA Info ^I /proc/%d/numa_maps
   pipe ^I Log ^I tail -n100 /var/log/syslog | sort -Mr
-.Ed
+.fi
 
 Except for the commented entry above, these next examples show what could
 be echoed to achieve similar results, assuming the rcfile name was '.toprc'.
@@ -2028,11 +2029,11 @@ However, due to the embedded tab characters, each of these lines should be
 preceded by '\fB/bin/echo \-e\fR', not just a simple an 'echo', to
 enable backslash interpretation regardless of which shell you use.
 
-.Bd -literal -compact
+.nf
   "pipe\\tOpen Files\\tlsof -P -p %d 2>&1" >> ~/.toprc
   "file\\tNUMA Info\\t/proc/%d/numa_maps" >> ~/.toprc
   "pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr" >> ~/.toprc
-.Ed
+.fi
 
 \fBCaution\fR:
 If any inspect entry you create produces output with unprintable characters
@@ -2041,12 +2042,12 @@ depending on their value.
 This applies to tab characters as well, which will show as '^I'.
 If you want a truer representation, any embedded tabs should be expanded.
 
-.Bd -literal -compact
+.nf
   # next would have contained '\\t' ...
   # file ^I <your_name> ^I /proc/%d/status
   # but this will eliminate embedded '\\t' ...
   pipe ^I <your_name> ^I cat /proc/%d/status | expand -
-.Ed
+.fi
 
 The above example takes what could have been a 'file' entry but employs
 a 'pipe' instead so as to expand the embedded tabs.
@@ -2063,11 +2064,11 @@ That does not affect operation other than to make some selections invisible.
 However, if some choices are lost to truncation but you want to see more options,
 there is an easy solution hinted at below.
 
-.Bd -literal -compact
+.nf
   Inspection Pause at pid ...
   Use:  left/right then <Enter> ...
   Options:  help  1  2  3  4  5  6  7  8  9  10  11 ...
-.Ed
+.fi
 
 The entries in the \*(We rcfile would have a number for the '.name' element and
 the 'help' entry would identify a shell script you've written explaining what
@@ -2099,7 +2100,7 @@ seconds or less.
 
 For this experiment, under x-windows open an xterm and maximize it.
 Then do the following:
-.Bd -literal -compact
+.nf
   . provide a scheduling boost and tiny delay via:
       nice -n -10 \*(We -d.09
   . keep sorted column highlighting \*F so as to
@@ -2108,7 +2109,7 @@ Then do the following:
   . try various sort columns (TIME/MEM work well),
     and normal or reverse sorts to bring the most
     active processes into view
-.Ed
+.fi
 
 What you'll see is a very busy Linux doing what he's always done for you,
 but there was no program available to illustrate this.
