@@ -24,7 +24,7 @@ int close_stream(FILE * stream)
 	const int prev_fail = (ferror(stream) != 0);
 	const int fclose_fail = (fclose(stream) != 0);
 	if (prev_fail || (fclose_fail && (some_pending || errno != EBADF))) {
-		if (!fclose_fail)
+		if (!fclose_fail && errno != EPIPE)
 			errno = 0;
 		return EOF;
 	}
