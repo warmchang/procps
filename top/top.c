@@ -72,8 +72,9 @@ static struct termios Tty_original,    // our inherited terminal definition
                       Tty_raw;         // for unsolicited input
 static int Ttychanged = 0;
 
-        /* Last established cursor state/shape */
+        /* Last established cursor state/shape, and is re-position needed */
 static const char *Cursor_state = "";
+static int         Cursor_repos;
 
         /* Program name used in error messages and local 'rc' file name */
 static char *Myname;
@@ -350,12 +351,15 @@ static void at_eoj (void) {
    if (Ttychanged) {
       tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_original);
       if (keypad_local) putp(keypad_local);
+      if (Cursor_repos) putp(tg2(0, Screen_rows));
       putp("\n");
+#ifdef OFF_SCROLLBK
       if (exit_ca_mode) {
          // this next will also replace top's most recent screen with the
          // original display contents that were visible at our invocation
          putp(exit_ca_mode);
       }
+#endif
       putp(Cap_curs_norm);
       putp(Cap_clr_eol);
 #ifndef RMAN_IGNORED
@@ -591,17 +595,13 @@ static void sig_endpgm (int dont_care_sig) {
 
         /*
          * Catches:
-         *    SIGTSTP, SIGTTIN and SIGTTOU
-         * note:
-         *    we don't fiddle with with those enter/exit_ca_mode strings
-         *    because we want to retain most of the last screen contents
-         *    as a visual reminder this program is suspended, not ended! */
+         *    SIGTSTP, SIGTTIN and SIGTTOU */
 static void sig_paused (int dont_care_sig) {
 // POSIX.1-2004 async-signal-safe: tcsetattr, tcdrain, raise
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_original))
       error_exit(fmtmk(N_fmt(FAIL_tty_set_fmt), strerror(errno)));
    if (keypad_local) putp(keypad_local);
-   putp(tg2(0, Screen_rows));
+   if (Cursor_repos) putp(tg2(0, Screen_rows));
    putp(Cap_curs_norm);
 #ifndef RMAN_IGNORED
    putp(Cap_smam);
@@ -2120,6 +2120,7 @@ static void fields_utility (void) {
    int i, key;
    FLG_t f;
 
+   Cursor_repos = 1;
    spewFI
 signify_that:
    putp(Cap_clr_scr);
@@ -2180,6 +2181,7 @@ signify_that:
             break;
       }
    } while (key != 'q' && key != kbd_ESC);
+   Cursor_repos = 0;
  #undef unSCRL
  #undef swapEM
  #undef spewFI
@@ -3768,8 +3770,10 @@ static void whack_terminal (void) {
    // thanks anyway stdio, but we'll manage buffering at the frame level...
    setbuffer(stdout, Stdout_buf, sizeof(Stdout_buf));
 #endif
+#ifdef OFF_SCROLLBK
    // this has the effect of disabling any troublesome scrollback buffer...
    if (enter_ca_mode) putp(enter_ca_mode);
+#endif
    // and don't forget to ask iokey to initialize his tinfo_tab
    iokey(0);
 } // end: whack_terminal
