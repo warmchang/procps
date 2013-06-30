@@ -208,9 +208,9 @@ enum scale_enum {
    SK_Kb, SK_Mb, SK_Gb, SK_Tb, SK_Pb, SK_Eb, SK_SENTINEL
 };
 
-        /* Used to manipulate (and document) the Frames_resize states */
+        /* Used to manipulate (and document) the Frames_signal states */
 enum resize_states {
-   RESIZ_clr, RESIZ_kbd, RESIZ_sig
+   BREAK_off = 0, BREAK_kbd, BREAK_sig
 };
 
         /* This typedef just ensures consistent 'process flags' handling */
