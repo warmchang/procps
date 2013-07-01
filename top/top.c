@@ -1081,12 +1081,14 @@ static char *ioline (const char *prompt) {
    static char buf[MEDBUFSIZ];
    char *p;
 
+   Cursor_repos = 1;
    show_pmt(prompt);
    memset(buf, '\0', sizeof(buf));
    ioch(1, buf, sizeof(buf)-1);
 
    if ((p = strpbrk(buf, ws))) *p = '\0';
    // note: we DO produce a vaid 'string'
+   Cursor_repos = 0;
    return buf;
 } // end: ioline
 
@@ -1117,6 +1119,7 @@ static char *ioline (const char *prompt) {
    };
    static struct lin_s *anchor, *plin;
 
+   Cursor_repos = 1;
    if (!anchor) {
       anchor = alloc_c(sizeof(struct lin_s));
       anchor->str = alloc_s("");       // top-of-stack == empty str
@@ -1182,6 +1185,7 @@ static char *ioline (const char *prompt) {
       putp(tg2(beg+pos, Msg_row));
    } while (key && key != kbd_ENTER && key != kbd_ESC);
 
+   Cursor_repos = 0;
    // weed out duplicates, including empty strings (top-of-stack)...
    for (i = 0, plin = anchor; ; i++) {
 #ifdef RECALL_FIXED
