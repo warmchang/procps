@@ -2794,7 +2794,7 @@ static void insp_cnt_nl (void) {
    Insp_p[0] = Insp_buf;
    Insp_p[Insp_nl++] = cur;
    Insp_p[Insp_nl] = end;
-   if ((end - cur) == 1)          // if there's a eof null delimiter,
+   if ((end - cur) == 1)          // if there's an eof null delimiter,
       --Insp_nl;                  // don't count it as a new line
 } // end: insp_cnt_nl
 
@@ -3824,12 +3824,12 @@ static WIN_t *win_select (int ch) {
       if (1 > (ch = iokey(1))) return w;
    }
    switch (ch) {
-      case 'a':                         // we don't carry 'a' / 'w' in our
-         w = w->next;                   // pmt - they're here for a good
-         break;                         // friend of ours -- wins_colors.
-      case 'w':                         // (however those letters work via
-         w = w->prev;                   // the pmt too but gee, end-loser
-         break;                         // should just press the darn key)
+      case 'a':                   // we don't carry 'a' / 'w' in our
+         w = w->next;             // pmt - they're here for a good
+         break;                   // friend of ours -- wins_colors.
+      case 'w':                   // (however those letters work via
+         w = w->prev;             // the pmt too but gee, end-loser
+         break;                   // should just press the darn key)
       case '1': case '2' : case '3': case '4':
          w = &Winstk[ch - '1'];
          break;
@@ -5483,6 +5483,7 @@ static void frame_make (void) {
    Max_lines = (Screen_rows - Msg_row) - 1;
    OFFw(w, INFINDS_xxx);
 
+   // one way or another, rid us of any prior frame's msg
    if (VIZISw(w) && CHKw(w, View_SCROLL)) show_scroll();
    else PUTT("%s%s", tg2(0, Msg_row), Cap_clr_eol);
 
@@ -5501,8 +5502,7 @@ static void frame_make (void) {
       }
    }
 
-   /* clear to end-of-screen (critical if last window is 'idleps off'),
-      then put the cursor in-its-place, and rid us of any prior frame's msg
+   /* clear to end-of-screen - critical if last window is 'idleps off'
       (main loop must iterate such that we're always called before sleep) */
    if (scrlins < Max_lines) {
       putp(Cap_nl_clreos);
