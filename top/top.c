@@ -3104,6 +3104,7 @@ signify_that:
          case '/':
          case 'n':
             insp_find_str(key, &curcol, &curlin);
+            // must re-hide cursor in case a prompt for a string makes it huge
             putp((Cursor_state = Cap_curs_hide));
             break;
          case '=':
@@ -4901,23 +4902,21 @@ static void do_key (int ch) {
    };
    int i;
 
-   putp((Cursor_state = Cap_curs_hide));
    switch (ch) {
       case 0:                // ignored (always)
       case kbd_ESC:          // ignored (sometimes)
-         return;
+         goto all_done;
       case 'q':              // no return from this guy
          bye_bye(NULL);
       case 'W':              // no need for rebuilds
          write_rcfile();
-         return;
+         goto all_done;
       default:               // and now, the real work...
          for (i = 0; i < MAXTBL(key_tab); ++i)
             if (strchr(key_tab[i].keys, ch)) {
                key_tab[i].func(ch);
                Frames_signal = BREAK_kbd;
-               putp((Cursor_state = Cap_curs_hide));
-               return;
+               goto all_done;
             }
    };
    /* Frames_signal above will force a rebuild of all column headers and
@@ -4943,6 +4942,8 @@ static void do_key (int ch) {
     */
 
    show_msg(N_txt(UNKNOWN_cmds_txt));
+all_done:
+   putp((Cursor_state = Cap_curs_hide));
 } // end: do_key
 
 
