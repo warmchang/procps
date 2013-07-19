@@ -475,9 +475,10 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{"no-header", no_argument, NULL, 'h'},
 		{"no-current", no_argument, NULL, 'u'},
-		{"sort", no_argument, NULL, 's'},
+		{"short", no_argument, NULL, 's'},
 		{"from", no_argument, NULL, 'f'},
 		{"old-style", no_argument, NULL, 'o'},
+		{"ip-addr", no_argument, NULL, 'i'},
 		{"help", no_argument, NULL, HELP_OPTION},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
