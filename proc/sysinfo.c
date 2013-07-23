@@ -548,6 +548,7 @@ static int compare_mem_table_structs(const void *a, const void *b){
  * Dirty:               0 kB    2.5.41+
  * Writeback:           0 kB    2.5.41+
  * Mapped:           9792 kB    2.5.41+
+ * Shmem:              28 kB    2.6.32+
  * Slab:             4564 kB    2.5.41+
  * Committed_AS:     8440 kB    2.5.41+
  * PageTables:        304 kB    2.5.41+
@@ -558,7 +559,7 @@ static int compare_mem_table_structs(const void *a, const void *b){
  * Hugepagesize:     4096 kB    2.5.??+
  */
 
-/* obsolete */
+/* obsolete since 2.6.x, but reused for shmem in 2.6.32+ */
 unsigned long kb_main_shared;
 /* old but still kicking -- the important stuff */
 unsigned long kb_main_buffers;
@@ -629,13 +630,14 @@ void meminfo(void){
   {"LowTotal",     &kb_low_total},
   {"Mapped",       &kb_mapped},       // kB version of vmstat nr_mapped
   {"MemFree",      &kb_main_free},    // important
-  {"MemShared",    &kb_main_shared},  // important, but now gone!
+  {"MemShared",    &kb_main_shared},  // obsolete since kernel 2.6! (sharing the variable with Shmem replacement)
   {"MemTotal",     &kb_main_total},   // important
   {"NFS_Unstable", &kb_nfs_unstable},
   {"PageTables",   &kb_pagetables},   // kB version of vmstat nr_page_table_pages
   {"ReverseMaps",  &nr_reversemaps},  // same as vmstat nr_page_table_pages
   {"SReclaimable", &kb_swap_reclaimable}, // "swap reclaimable" (dentry and inode structures)
   {"SUnreclaim",   &kb_swap_unreclaimable},
+  {"Shmem",        &kb_main_shared},  // kernel 2.6 and later (sharing the output variable with obsolete MemShared)
   {"Slab",         &kb_slab},         // kB version of vmstat nr_slab
   {"SwapCached",   &kb_swap_cached},
   {"SwapFree",     &kb_swap_free},    // important
