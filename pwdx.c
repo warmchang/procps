@@ -52,6 +52,7 @@ int check_pid_argument(char *input)
 
 	if (!strncmp("/proc/", input, 6))
 		skip = 6;
+	errno = 0;
 	pid = strtol(input + skip, &end, 10);
 
 	if (errno || input + skip == end || (end && *end))
