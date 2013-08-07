@@ -1339,6 +1339,7 @@ static int pr_context(char *restrict const outbuf, const proc_t *restrict const 
     len = strlen(context);
     if(len > max_len) len = max_len;
     memcpy(outbuf, context, len);
+    if (outbuf[len-1] == '\n') --len;
     outbuf[len] = '\0';
     free(context);
   }else{
