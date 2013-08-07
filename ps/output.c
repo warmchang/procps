@@ -1282,6 +1282,8 @@ fail:
 /****************** FLASK & seLinux security stuff **********************/
 // move the bulk of this to libproc sometime
 
+#if !ENABLE_LIBSELINUX
+
 static int pr_context(char *restrict const outbuf, const proc_t *restrict const pp){
   char filename[48];
   size_t len;
@@ -1310,7 +1312,8 @@ fail:
   return 1;
 }
 
-#if 0
+#else
+
 // This needs more study, considering:
 // 1. the static linking option (maybe disable this in that case)
 // 2. the -z and -Z option issue
@@ -1345,6 +1348,7 @@ static int pr_context(char *restrict const outbuf, const proc_t *restrict const 
   }
   return len;
 }
+
 #endif
 
 

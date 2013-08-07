@@ -111,6 +111,14 @@ if test "$enable_watch8bit" = "yes"; then
   AC_DEFINE([WITH_WATCH8BIT], [1], [Enable 8 bit clean watch])
 fi
 
+AC_ARG_ENABLE([libselinux],
+              AS_HELP_STRING([--enable-libselinux], [enable libselinux]),
+              [enable_libselinux=$enableval],
+              [enable_libselinux="no"])
+if test "$enable_libselinux" = "yes"; then
+  AC_DEFINE([ENABLE_LIBSELINUX], [1], [Enable libselinux])
+fi
+
 # Optional packages - AC_ARG_WITH
 AC_ARG_WITH([ncurses],
   AS_HELP_STRING([--without-ncurses], [build only applications not needing ncurses]),
