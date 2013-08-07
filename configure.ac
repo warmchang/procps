@@ -154,8 +154,8 @@ AC_ARG_WITH([systemd],
   [], [with_systemd=no]
 )
 if test "x$with_systemd" != xno; then
-  PKG_CHECK_MODULES([SYSTEMD], [libsystemd-login >= 202], [], [
-    AC_CHECK_LIB(systemd-login, sd_pid_get_machine_name, [have_systemd=yes], [have_systemd=no])
+  PKG_CHECK_MODULES([SYSTEMD], [libsystemd-login >= 206], [], [
+    AC_CHECK_LIB(systemd-login, sd_pid_get_slice, [have_systemd=yes], [have_systemd=no])
     if test "x$have_systemd" = xno; then
       AC_MSG_ERROR([systemd support missing/incomplete])
     fi

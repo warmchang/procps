@@ -1292,6 +1292,23 @@ fail:
   return 1;
 }
 
+static int pr_sd_slice(char *restrict const outbuf, const proc_t *restrict const pp){
+  int r;
+  size_t len;
+  char *slice;
+
+  r = sd_pid_get_slice(pp->tgid, &slice);
+  if(r<0) goto fail;
+  len = snprintf(outbuf, COLWID, "%s", slice);
+  free(slice);
+  return len;
+
+fail:
+  outbuf[0] = '-';
+  outbuf[1] = '\0';
+  return 1;
+}
+
 #endif
 /************************ Linux namespaces ******************************/
 
@@ -1675,6 +1692,9 @@ static const format_struct format_array[] = {
 {"sigmask",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*blocked*/
 {"size",      "SIZE",    pr_swapable, sr_swapable, 5,  0,    SCO, PO|RIGHT},
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, AN|RIGHT},
+#ifdef WITH_SYSTEMD
+{"slice",      "SLICE",  pr_sd_slice, sr_nop,    31,   0,    LNX, ET|LEFT},
+#endif
 {"spid",      "SPID",    pr_tasks,    sr_tasks,   5,   0,    SGI, TO|PIDMAX|RIGHT},
 {"stackp",    "STACKP",  pr_stackp,   sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*start_stack*/
 {"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, ET|RIGHT},
