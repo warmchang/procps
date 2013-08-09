@@ -618,7 +618,7 @@ static void build_uniq_nlstab (void) {
    .                 words:         total, used, free, buffers, cached */
    Uniq_nlstab[MEMORY_lines_fmt] = _(""
       "%s Mem: ~3 %9.9s~2total,~3 %9.9s~2used,~3 %9.9s~2free,~3 %9.9s~2buffers~3\n"
-      "%s Swap:~3 %9.9s~2total,~3 %9.9s~2used,~3 %9.9s~2free,~3 %9.9s~2cached~3\n");
+      "%s Swap:~3 %9.9s~2total,~3 %9.9s~2used,~3 %9.9s~2free.~3 %9.9s~2cached Mem~3\n");
 
    Uniq_nlstab[INSP_hdrsels_fmt] = _(""
       "Inspection~2 Pause at: pid ~1%d~6 running ~1%s~6 as user ~1%s~6\n"
