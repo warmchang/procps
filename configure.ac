@@ -104,17 +104,17 @@ AC_TRY_COMPILE([#include <errno.h>],
 dnl watch8bit must be before the AC_ARG_WITH set as it sets up ncurses
 AC_SUBST([WITH_WATCH8BIT])
 AC_ARG_ENABLE([watch8bit],
-              AS_HELP_STRING([--enable-watch8bit], [enable watch to be 8bit clean (requires ncursesw)]),
-              [enable_watch8bit=$enableval],
-              [enable_watch8bit="no"])
+  AS_HELP_STRING([--enable-watch8bit], [enable watch to be 8bit clean (requires ncursesw)]),
+  [], [enable_watch8bit=no]
+)
 if test "$enable_watch8bit" = "yes"; then
   AC_DEFINE([WITH_WATCH8BIT], [1], [Enable 8 bit clean watch])
 fi
 
 AC_ARG_ENABLE([libselinux],
-              AS_HELP_STRING([--enable-libselinux], [enable libselinux]),
-              [enable_libselinux=$enableval],
-              [enable_libselinux="no"])
+  AS_HELP_STRING([--enable-libselinux], [enable libselinux]),
+  [], [enable_libselinux=no]
+)
 if test "$enable_libselinux" = "yes"; then
   AC_DEFINE([ENABLE_LIBSELINUX], [1], [Enable libselinux])
 fi
@@ -122,9 +122,8 @@ fi
 # Optional packages - AC_ARG_WITH
 AC_ARG_WITH([ncurses],
   AS_HELP_STRING([--without-ncurses], [build only applications not needing ncurses]),
-  [with_ncurses=$withval], [with_ncurses=yes]
+  [], [with_ncurses=yes]
 )
-
 if test "x$with_ncurses" = xno; then
   AM_CONDITIONAL(WITH_NCURSES, false)
 else
@@ -151,8 +150,8 @@ AC_SUBST([WATCH_NCURSES_LIBS])
 
 AC_ARG_WITH([systemd],
   [AS_HELP_STRING([--with-systemd], [enable systemd support])],
-  [], [with_systemd=no])
-
+  [], [with_systemd=no]
+)
 if test "x$with_systemd" != xno; then
   PKG_CHECK_MODULES([SYSTEMD], [libsystemd-login >= 202], [], [
     AC_CHECK_LIB(systemd-login, sd_pid_get_machine_name, [have_systemd=yes], [have_systemd=no])
@@ -170,26 +169,26 @@ fi
 # AC_ARG_ENABLEs
 AC_ARG_ENABLE([kill],
   AS_HELP_STRING([--disable-kill], [do not build kill]),
-  [], enable_kill=yes
+  [], [enable_kill=yes]
 )
 AM_CONDITIONAL(BUILD_KILL, test "x$enable_kill" = xyes)
 AM_CONDITIONAL(LINUX, test "x$host_os" = xlinux-gnu)
 
 AC_ARG_ENABLE([skill],
   AS_HELP_STRING([--enable-skill], [build skill and snice]),
-  [], enable_skill=no
+  [], [enable_skill=no]
 )
 AM_CONDITIONAL(BUILD_SKILL, test "x$enable_skill" = xyes)
 
 AC_ARG_ENABLE([examples],
   AS_HELP_STRING([--enable-examples], [add example files to installation]),
-  [], enable_examples=no
+  [], [enable_examples=no]
 )
 AM_CONDITIONAL(EXAMPLE_FILES, test "x$enable_examples" = xyes)
 
 AC_ARG_ENABLE([oomem],
   AS_HELP_STRING([--enable-oomem], [add out-of-memory fields to the library and top]),
-  [], enable_oomem=no
+  [], [enable_oomem=no]
 )
 if test "x$enable_oomem" = xyes; then
   AC_DEFINE(OOMEM_ENABLE, 1, [add out-of-memory fields to the library and top])
@@ -197,7 +196,7 @@ fi
 
 AC_ARG_ENABLE([sigwinch],
   AS_HELP_STRING([--enable-sigwinch], [reduce impact of x-windows resize operations on top]),
-  [], enable_sigwinch=no
+  [], [enable_sigwinch=no]
 )
 if test "x$enable_sigwinch" = xyes; then
   AC_DEFINE(SIGNALS_LESS, 1, [reduce impact of x-windows resize operations on top])
@@ -205,7 +204,7 @@ fi
 
 AC_ARG_ENABLE([wide-percent],
   AS_HELP_STRING([--enable-wide-percent], [provide extra precision under %CPU and %MEM for top]),
-  [enable_wide_percent=yes], []
+  [], [enable_wide_percent=no]
 )
 if test "x$enable_wide_percent" = xyes; then
   AC_DEFINE(BOOST_PERCNT, 1, [provide extra precision under %CPU and %MEM for top])
@@ -213,17 +212,18 @@ fi
 
 AC_ARG_ENABLE([wide-memory],
   AS_HELP_STRING([--disable-wide-memory], [disable extra precision under memory fields for top]),
-  [disable_wide_memory=yes], []
+  [], [enable_wide_memory=yes]
 )
-if test "x$disable_wide_memory" = xyes; then
+if test "x$enable_wide_memory" = xyes; then
   AC_DEFINE(NOBOOST_MEMS, 1, [disable extra precision under memory fields for top])
 fi
 
 DL_LIB=
 AC_ARG_ENABLE([numa],
   AS_HELP_STRING([--disable-numa], [disable NUMA/Node support in top]),
-  [disable_numa=yes], [])
-if test "x$disable_numa" = x"yes"; then
+  [], [enable_numa=yes]
+)
+if test "x$enable_numa" = xno; then
   AC_DEFINE([NUMA_DISABLE], [1], [disable NUMA/Node support in top])
 else
   AC_SEARCH_LIBS([dlopen], [dl], [],
@@ -234,7 +234,7 @@ AC_SUBST([DL_LIB])
 
 AC_ARG_ENABLE([w-from],
   AS_HELP_STRING([--enable-w-from], [enable w from field by default]),
-  [], enable_w_from=no
+  [], [enable_w_from=no]
 )
 if test "x$enable_w_from" = xyes; then
   AC_DEFINE(W_SHOWFROM, 1, [enable w from field by default])
@@ -242,7 +242,7 @@ fi
 
 AC_ARG_ENABLE([whining],
   AS_HELP_STRING([--disable-whining], [do not print unnecessary warnings (slackware-ism)]),
-  [], enable_whining=yes
+  [], [enable_whining=yes]
 )
 if test "x$enable_whining" = xyes; then
   AC_DEFINE(BUILD_WITH_WHINE, 1, [should extra warnings be printed (slackware-ism)])
