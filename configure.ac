@@ -214,7 +214,7 @@ AC_ARG_ENABLE([wide-memory],
   AS_HELP_STRING([--disable-wide-memory], [disable extra precision under memory fields for top]),
   [], [enable_wide_memory=yes]
 )
-if test "x$enable_wide_memory" = xyes; then
+if test "x$enable_wide_memory" = xno; then
   AC_DEFINE(NOBOOST_MEMS, 1, [disable extra precision under memory fields for top])
 fi
 
