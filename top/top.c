@@ -751,13 +751,6 @@ static int show_pmt (const char *str) {
 
 
         /*
-         * Show a special coordinate message, in support of scrolling */
-static inline void show_scroll (void) {
-   PUTT(Scroll_fmts, tg2(0, Msg_row), Frame_maxtask);
-} // end: show_scroll
-
-
-        /*
          * Show lines with specially formatted elements, but only output
          * what will fit within the current screen width.
          *    Our special formatting consists of:
@@ -857,7 +850,7 @@ static void show_special (int interact, const char *glob) {
 
         /*
          * Create a nearly complete scroll coordinates message, but still
-         * a format string since we'll be missing a tgoto and total tasks. */
+         * a format string since we'll be missing the current total tasks. */
 static void updt_scroll_msg (void) {
    char tmp1[SMLBUFSIZ], tmp2[SMLBUFSIZ];
    int totpflgs = Curwin->totpflgs;
@@ -878,8 +871,10 @@ static void updt_scroll_msg (void) {
    if (Curwin->varcolbeg)
       snprintf(tmp2, sizeof(tmp2), "%s + %d", tmp1, Curwin->varcolbeg);
 #endif
+   // this Scroll_fmts string no longer provides for termcap tgoto so that
+   // the usage timing is critical -- see frame_make() for additional info
    snprintf(Scroll_fmts, sizeof(Scroll_fmts)
-      , "%%s%s  %.*s%s", Caps_off, Screen_cols - 3, tmp2, Cap_clr_eol);
+      , "%s  %.*s%s", Caps_off, Screen_cols - 3, tmp2, Cap_clr_eol);
 } // end: updt_scroll_msg
 
 /*######  Low Level Memory/Keyboard/File I/O support  ####################*/
@@ -5477,9 +5472,12 @@ static void frame_make (void) {
    Max_lines = (Screen_rows - Msg_row) - 1;
    OFFw(w, INFINDS_xxx);
 
-   // one way or another, rid us of any prior frame's msg
-   if (VIZISw(w) && CHKw(w, View_SCROLL)) show_scroll();
-   else PUTT("%s%s", tg2(0, Msg_row), Cap_clr_eol);
+   /* one way or another, rid us of any prior frame's msg
+      [ now that this is positioned after the call to summary_show(), ]
+      [ we no longer need or employ tg2(0, Msg_row) since all summary ]
+      [ lines end with a newline, and header lines begin with newline ] */
+   if (VIZISw(w) && CHKw(w, View_SCROLL)) PUTT(Scroll_fmts, Frame_maxtask);
+   else putp(Cap_clr_eol);
 
    if (!Rc.mode_altscr) {
       // only 1 window to show so, piece o' cake

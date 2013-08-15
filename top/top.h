@@ -658,7 +658,6 @@ typedef struct WIN_t {
 //atic void          capsmk (WIN_t *q);
 //atic void          show_msg (const char *str);
 //atic int           show_pmt (const char *str);
-//atic inline void   show_scroll (void);
 //atic void          show_special (int interact, const char *glob);
 //atic void          updt_scroll_msg (void);
 /*------  Low Level Memory/Keyboard/File I/O support  --------------------*/
