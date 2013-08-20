@@ -3394,26 +3394,25 @@ static void configs_read (void) {
 
    fp = fopen(SYS_RCFILESPEC, "r");
    if (fp) {
-      fbuf[0] = '\0';
-      fgets(fbuf, sizeof(fbuf), fp);             // sys rc file, line 1
-      if (strchr(fbuf, 's')) Secure_mode = 1;
-      fbuf[0] = '\0';
-      fgets(fbuf, sizeof(fbuf), fp);             // sys rc file, line 2
-      sscanf(fbuf, "%f", &Rc.delay_time);
+      if (fgets(fbuf, sizeof(fbuf), fp)) {     // sys rc file, line 1
+         Secure_mode = 1;
+         if (fgets(fbuf, sizeof(fbuf), fp))    // sys rc file, line 2
+            sscanf(fbuf, "%f", &Rc.delay_time);
+      }
       fclose(fp);
    }
 
    fp = fopen(Rc_name, "r");
    if (fp) {
       int tmp_whole, tmp_fract;
-      fbuf[0] = '\0';
-      fgets(fbuf, sizeof(fbuf), fp);             // ignore eyecatcher
+      if (fgets(fbuf, sizeof(fbuf), fp))       // ignore eyecatcher
+         ;                                     // avoid -Wunused-result
       if (6 != fscanf(fp
          , "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%d.%d, Curwin=%d\n"
          , &Rc.id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_whole, &tmp_fract, &i)) {
             p = fmtmk(N_fmt(RC_bad_files_fmt), Rc_name);
             Rc_questions = -1;
-            goto try_inspect_entries;            // maybe a faulty 'inspect' echo
+            goto try_inspect_entries;          // maybe a faulty 'inspect' echo
       }
       // you saw that, right?  (fscanf stickin' it to 'i')
       Curwin = &Winstk[i];
@@ -3442,19 +3441,19 @@ static void configs_read (void) {
                goto default_or_error;
 
          switch (Rc.id) {
-            case 'f':                  // 3.3.0 thru 3.3.3 (procps-ng)
-               SETw(w, Show_JRNUMS);   //    fall through !
-            case 'g':                  // current RCF_VERSION_ID
-            default:                   // and future versions?
+            case 'a':                          // 3.2.8 (former procps)
+               if (config_cvt(w))
+                  goto default_or_error;
+               break;
+            case 'f':                          // 3.3.0 thru 3.3.3 (procps-ng)
+               SETw(w, Show_JRNUMS);           //    fall through !
+            case 'g':                          // current RCF_VERSION_ID
+            default:                           // and future versions?
                if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
                   goto default_or_error;
                for (x = 0; x < P_MAXPFLGS; ++x)
                   if (P_MAXPFLGS <= FLDget(w, x))
                      goto default_or_error;
-               break;
-            case 'a':                  // 3.2.8 (former procps)
-               if (config_cvt(w))
-                  goto default_or_error;
                break;
          }
 #ifndef USE_X_COLHDR
@@ -3463,8 +3462,9 @@ static void configs_read (void) {
       } // end: for (GROUPSMAX)
 
       // any new addition(s) last, for older rcfiles compatibility...
-      fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
-         , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress);
+      if (fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
+         , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress))
+            ;                                  // avoid -Wunused-result
 
 try_inspect_entries:
       // we'll start off Inspect stuff with 1 'potential' blank line
