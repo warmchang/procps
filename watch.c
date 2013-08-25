@@ -35,10 +35,9 @@
 #include "xalloc.h"
 #include <ctype.h>
 #include <errno.h>
-#include <errno.h>
 #include <getopt.h>
 #include <locale.h>
-#include <locale.h>
+#include <limits.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,7 +45,6 @@
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include <sys/wait.h>
-#include <termios.h>
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
@@ -628,8 +626,8 @@ int main(int argc, char *argv[])
 			interval = strtod_or_err(optarg, _("failed to parse argument"));
 			if (interval < 0.1)
 				interval = 0.1;
-			if (interval > ~0u / 1000000)
-				interval = ~0u / 1000000;
+			if (interval > UINT_MAX)
+				interval = UINT_MAX;
 			break;
 		case 'p':
 			precise_timekeeping = 1;
@@ -738,7 +736,10 @@ int main(int argc, char *argv[])
 			if (cur_time < next_loop)
 				usleep(next_loop - cur_time);
 		} else
-			usleep(interval * 1000000);
+			if (interval < UINT_MAX / USECS_PER_SEC)
+				usleep(interval * USECS_PER_SEC);
+			else
+				sleep(interval);
 	}
 
 	endwin();
