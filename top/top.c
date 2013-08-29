@@ -1792,6 +1792,7 @@ static void adj_geometry (void) {
          if (w_cols && w_cols < W_MIN_COL) w_cols = W_MIN_COL;
          if (w_rows && w_rows < W_MIN_ROW) w_rows = W_MIN_ROW;
       }
+      if (w_cols > SCREENMAX) w_cols = SCREENMAX;
       w_set = 1;
    }
 
