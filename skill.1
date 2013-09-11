@@ -77,6 +77,13 @@ The next expression is a process ID number.
 .TP
 \fB\-c\fR, \fB\-\-command\fR \fIcommand\fR
 The next expression is a command name.
+.TP
+\fB\-\-ns \fIpid\fR
+Match the processes that belong to the same namespace as pid.
+.TP
+\fB\-\-nslist \fIns,...\fR
+list which namespaces will be considered for the --ns option.
+Available namespaces: ipc, mnt, net, pid, user, uts.
 .PD
 .SH SIGNALS
 The behavior of signals is explained in

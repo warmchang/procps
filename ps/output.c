@@ -139,6 +139,13 @@ static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
     return 0; \
 }
 
+#define CMP_NS(NAME, ID) \
+static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
+    if (P->ns[ID] < Q->ns[ID]) return -1; \
+    if (P->ns[ID] > Q->ns[ID]) return  1; \
+    return 0; \
+}
+
 CMP_INT(rtprio)
 CMP_SMALL(sched)
 CMP_INT(cutime)
@@ -215,6 +222,13 @@ CMP_SMALL(state)
 
 CMP_COOKED_TIME(time)
 CMP_COOKED_TIME(etime)
+
+CMP_NS(ipcns, IPCNS);
+CMP_NS(mntns, MNTNS);
+CMP_NS(netns, NETNS);
+CMP_NS(pidns, PIDNS);
+CMP_NS(userns, USERNS);
+CMP_NS(utsns, UTSNS);
 
 /* approximation to: kB of address space that could end up in swap */
 static int sr_swapable(const proc_t* P, const proc_t* Q) {
@@ -1279,6 +1293,22 @@ fail:
 }
 
 #endif
+/************************ Linux namespaces ******************************/
+
+#define _pr_ns(NAME, ID)\
+static int pr_##NAME(char *restrict const outbuf, const proc_t *restrict const pp) {\
+  if (pp->ns[ID])\
+    return snprintf(outbuf, COLWID, "%li", pp->ns[ID]);\
+  else\
+    return snprintf(outbuf, COLWID, "-");\
+}
+_pr_ns(ipcns, IPCNS);
+_pr_ns(mntns, MNTNS);
+_pr_ns(netns, NETNS);
+_pr_ns(pidns, PIDNS);
+_pr_ns(userns, USERNS);
+_pr_ns(utsns, UTSNS);
+
 /****************** FLASK & seLinux security stuff **********************/
 // move the bulk of this to libproc sometime
 
@@ -1440,6 +1470,7 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 #define USR PROC_FILLUSR     /* uid_t -> user names */
 #define GRP PROC_FILLGRP     /* gid_t -> group names */
 #define WCH PROC_FILLWCHAN   /* do WCHAN lookup */
+#define NS  PROC_FILLNS      /* read namespace information */
 
 #define SGRP PROC_FILLSTATUS | PROC_FILLSUPGRP  /* supgid -> supgrp (names) */
 #define CGRP PROC_FILLCGROUP | PROC_EDITCGRPCVT /* read cgroup */
@@ -1528,6 +1559,7 @@ static const format_struct format_array[] = {
 {"inblk",     "INBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*inblock*/
 {"inblock",   "INBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*inblk*/
 {"intpri",    "PRI",     pr_opri,     sr_priority, 3,  0,    HPU, TO|RIGHT},
+{"ipcns",     "IPCNS",   pr_ipcns,    sr_ipcns,  10,  NS,    LNX, ET|RIGHT},
 {"jid",       "JID",     pr_nop,      sr_nop,     1,   0,    SGI, PO|RIGHT},
 {"jobc",      "JOBC",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
 {"ktrace",    "KTRACE",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
@@ -1560,9 +1592,11 @@ static const format_struct format_array[] = {
 {"majflt",    "MAJFLT",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
 {"min_flt",   "MINFL",   pr_minflt,   sr_min_flt, 6,   0,    LNX, AN|RIGHT},
 {"minflt",    "MINFLT",  pr_minflt,   sr_min_flt, 6,   0,    XXX, AN|RIGHT},
+{"mntns",     "MNTNS",   pr_mntns,    sr_mntns,  10,  NS,    LNX, ET|RIGHT},
 {"msgrcv",    "MSGRCV",  pr_nop,      sr_nop,     6,   0,    XXX, AN|RIGHT},
 {"msgsnd",    "MSGSND",  pr_nop,      sr_nop,     6,   0,    XXX, AN|RIGHT},
 {"mwchan",    "MWCHAN",  pr_nop,      sr_nop,     6, WCH,    BSD, TO|WCHAN}, /* mutex (FreeBSD) */
+{"netns",     "NETNS",   pr_netns,    sr_netns,  10,  NS,    LNX, ET|RIGHT},
 {"ni",        "NI",      pr_nice,     sr_nice,    3,   0,    BSD, TO|RIGHT}, /*nice*/
 {"nice",      "NI",      pr_nice,     sr_nice,    3,   0,    U98, TO|RIGHT}, /*ni*/
 {"nivcsw",    "IVCSW",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
@@ -1587,6 +1621,7 @@ static const format_struct format_array[] = {
 {"pgid",      "PGID",    pr_pgid,     sr_pgrp,    5,   0,    U98, PO|PIDMAX|RIGHT},
 {"pgrp",      "PGRP",    pr_pgid,     sr_pgrp,    5,   0,    LNX, PO|PIDMAX|RIGHT},
 {"pid",       "PID",     pr_procs,    sr_procs,   5,   0,    U98, PO|PIDMAX|RIGHT},
+{"pidns",     "PIDNS",   pr_pidns,    sr_pidns,  10,  NS,    LNX, ET|RIGHT},
 {"pmem",      "%MEM",    pr_pmem,     sr_rss,     4,   0,    XXX, PO|RIGHT}, /*%mem*/
 {"poip",      "-",       pr_nop,      sr_nop,     1,   0,    BSD, AN|RIGHT},
 {"policy",    "POL",     pr_class,    sr_sched,   3,   0,    DEC, TO|LEFT},
@@ -1694,10 +1729,12 @@ static const format_struct format_array[] = {
 {"upr",       "UPR",     pr_nop,      sr_nop,     3,   0,    BSD, TO|RIGHT}, /*usrpri*/
 {"uprocp",    "UPROCP",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
 {"user",      "USER",    pr_euser,    sr_euser,   8, USR,    U98, ET|USER}, /* BSD n forces this to UID */
+{"userns",    "USERNS",  pr_userns,   sr_userns, 10,  NS,    LNX, ET|RIGHT},
 {"usertime",  "USER",    pr_nop,      sr_nop,     4,   0,    DEC, ET|RIGHT},
 {"usrpri",    "UPR",     pr_nop,      sr_nop,     3,   0,    DEC, TO|RIGHT}, /*upr*/
 {"util",      "C",       pr_c,        sr_pcpu,    2,   0,    SGI, ET|RIGHT}, // not sure about "C"
 {"utime",     "UTIME",   pr_nop,      sr_utime,   6,   0,    LNx, ET|RIGHT},
+{"utsns",     "UTSNS",   pr_utsns,    sr_utsns,  10,  NS,    LNX, ET|RIGHT},
 #ifdef WITH_SYSTEMD
 {"uunit",     "UUNIT",   pr_sd_uunit, sr_nop,    31,   0,    LNX, ET|LEFT},
 #endif
