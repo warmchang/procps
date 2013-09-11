@@ -575,7 +575,7 @@ int main(int argc, char **argv)
 
 	if (header) {
 		/* print uptime and headers */
-		print_uptime();
+		print_uptime(0);
 		/* Translation Hint: Following five uppercase messages are
 		 * headers. Try to keep alignment intact.  */
 		printf(_("%-*s TTY      "), userlen, _("USER"));

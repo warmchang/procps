@@ -58,6 +58,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -p, --pretty   show uptime in pretty format\n"), out);
 	fputs(USAGE_HELP, out);
 	fputs(_(" -s, --since    system up since\n"), out);
 	fputs(USAGE_VERSION, out);
@@ -68,9 +69,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 int main(int argc, char **argv)
 {
-	int c;
+	int c, p = 0;
 
 	static const struct option longopts[] = {
+		{"pretty", no_argument, NULL, 'p'},
 		{"help", no_argument, NULL, 'h'},
 		{"since", no_argument, NULL, 's'},
 		{"version", no_argument, NULL, 'V'},
@@ -85,8 +87,11 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "hsV", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "phsV", longopts, NULL)) != -1)
 		switch (c) {
+		case 'p':
+			p = 1;
+			break;
 		case 'h':
 			usage(stdout);
 		case 's':
@@ -99,6 +104,6 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 
-	print_uptime();
+	print_uptime(p);
 	return EXIT_SUCCESS;
 }
