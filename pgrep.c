@@ -499,7 +499,7 @@ static struct el * select_procs (int *num)
 		      stderr);
 		exit (EXIT_FATAL);
 	}
-	
+
 	memset(&task, 0, sizeof (task));
 	while(readproc(ptp, &task)) {
 		int match = 1;

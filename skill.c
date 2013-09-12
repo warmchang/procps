@@ -640,14 +640,14 @@ static void skillsnice_parse(int argc,
 		case NS_OPTION:
 			ns_pid = atoi(optarg);
 			if (ns_pid == 0) {
-				xwarnx(_("invalid pid number %i"), optarg);
+				xwarnx(_("invalid pid number %s"), optarg);
 				kill_usage(stderr);
 			}
 			if (ns_read(ns_pid, &ns_task)) {
 				xwarnx(_("error reading reference namespace "
 					 "information"));
 				kill_usage(stderr);
-			}	
+			}
 
 			break;
 		case NSLIST_OPTION:
