@@ -578,6 +578,8 @@ static int PreloadSystem(void)
 	};
 	struct pair **cfgs = NULL;
 	unsigned ncfgs = 0;
+	int rc = 0;
+	struct stat ts;
 	enum { nprealloc = 16 };
 
 	for (di = 0; di < sizeof(dirs) / sizeof(dirs[0]); ++di) {
@@ -634,12 +636,16 @@ static int PreloadSystem(void)
 	for (i = 0; i < ncfgs; ++i) {
 		if (!Quiet)
 			printf(_("* Applying %s ...\n"), cfgs[i]->value);
-		Preload(cfgs[i]->value);
+		rc |= Preload(cfgs[i]->value);
 	}
 
-	if (!Quiet)
-		printf(_("* Applying %s ...\n"), DEFAULT_PRELOAD);
-	return Preload(DEFAULT_PRELOAD);
+
+	if (stat(DEFAULT_PRELOAD, &ts) < 0 && S_ISREG(ts.st_mode)) {
+		if (!Quiet)
+			printf(_("* Applying %s ...\n"), DEFAULT_PRELOAD);
+		rc |= Preload(DEFAULT_PRELOAD);
+	}
+	return rc;
 }
 
 /*
