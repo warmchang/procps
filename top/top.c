@@ -5399,7 +5399,7 @@ static int window_show (WIN_t *q, int wmax) {
       while (i < Frame_maxtask && lwin < wmax) {
          if ((CHKw(q, Show_IDLEPS) || isBUSY(q->ppt[i]))
          && user_matched(q, q->ppt[i])
-         && *task_show(q, q->ppt[i++]))
+         && *task_show(q, q->ppt[i]))
             ++lwin;
          ++i;
       }
