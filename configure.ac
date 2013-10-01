@@ -243,7 +243,9 @@ if test "x$enable_numa" = xno; then
 else
   AC_SEARCH_LIBS([dlopen], [dl], [],
     [AC_MSG_ERROR([dynamic linking unavailable, circumvent with --disable-numa])])
-  DL_LIB="$ac_cv_search_dlopen"
+  if test "x$ac_cv_search_dlopen" != "xnone required"; then
+    DL_LIB="$ac_cv_search_dlopen"
+  fi
 fi
 AC_SUBST([DL_LIB])
 
