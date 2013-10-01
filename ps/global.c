@@ -25,7 +25,6 @@
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
-#include <error.h>
 
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -36,6 +35,7 @@
 #include "../proc/version.h"
 #include "../proc/sysinfo.h"
 
+#include "../include/c.h"
 #include "common.h"
 
 #ifndef __GNU_LIBRARY__

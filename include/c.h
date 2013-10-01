@@ -123,6 +123,24 @@ static void error(int status, int errnum, const char *format, ...)
         if (status != 0)
                 exit(status);
 }
+
+/* Emulate the error_at_line() function from glibc */
+__attribute__((__format__(__printf__, 5, 6)))
+static void error_at_line(int status, int errnum, const char *filename,
+                          unsigned int linenum, const char *format, ...)
+{
+        va_list argp;
+        fprintf(stderr, "%s:%s:%u: ", program_invocation_short_name,
+                filename, linenum);
+        va_start(argp, format);
+        vfprintf(stderr, format, argp);
+        va_end(argp);
+        if (errnum != 0)
+                fprintf(stderr, ": error code %d", errnum);
+        fprintf(stderr, "\n");
+        if (status != 0)
+                exit(status);
+}
 #endif
 #define xwarn(...) error(0, errno, __VA_ARGS__)
 #define xwarnx(...) error(0, 0, __VA_ARGS__)

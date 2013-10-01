@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <error.h>
 
 #include <sys/sysmacros.h>
 #include <sys/types.h>
@@ -38,6 +37,7 @@
 #include "../proc/wchan.h"
 
 #include "../include/fileutils.h"
+#include "../include/c.h"
 #include "common.h"
 
 #ifndef SIGCHLD
