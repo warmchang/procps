@@ -502,7 +502,15 @@ static int Preload(const char *restrict const filename)
 	int globerr;
 	int j;
 
+#ifdef GLOB_TILDE
 	globerr = glob(filename, GLOB_NOCHECK | GLOB_TILDE | GLOB_BRACE, NULL, &globbuf);
+#else
+	if (filename[0] == '~')
+		xwarnx(_("GLOB_TILDE is not supported on your platform, "
+			 "the tilde in \"%s\" won't be expanded."), filename);
+	globerr = glob(filename, GLOB_NOCHECK, NULL, &globbuf);
+#endif
+
 	if (globerr != 0 && globerr != GLOB_NOMATCH)
 		xerr(EXIT_FAILURE, _("glob failed"));
 
