@@ -168,6 +168,12 @@ else
 fi
 
 # AC_ARG_ENABLEs
+AC_ARG_ENABLE([pidof],
+  AS_HELP_STRING([--disable-pidof], [do not build pidof]),
+  [], [enable_pidof=yes]
+)
+AM_CONDITIONAL(BUILD_PIDOF, test "x$enable_pidof" = xyes)
+
 AC_ARG_ENABLE([kill],
   AS_HELP_STRING([--disable-kill], [do not build kill]),
   [], [enable_kill=yes]
