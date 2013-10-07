@@ -26,9 +26,6 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "proc/readproc.h"
-#include "proc/sig.h"
-#include "proc/devname.h"
-#include "proc/sysinfo.h"
 #include "proc/version.h" /* procps_version */
 
 
@@ -284,6 +281,7 @@ int main (int argc, char **argv)
 	const char *opts = "scnxmo:?Vh";
 
 	static const struct option longopts[] = {
+		{"check-root", no_argument, NULL, 'c'},
 		{"single-shot", no_argument, NULL, 's'},
 		{"omit-pid", required_argument, NULL, 'o'},
 		{"help", no_argument, NULL, 'h'},
