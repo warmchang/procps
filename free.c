@@ -73,20 +73,20 @@ static void __attribute__ ((__noreturn__))
 	fprintf(out,
 	      _(" %s [options]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -b, --bytes         show output in bytes\n"
-		" -k, --kilo          show output in kilobytes\n"
-		" -m, --mega          show output in megabytes\n"
-		" -g, --giga          show output in gigabytes\n"
-		"     --tera          show output in terabytes\n"
-		" -h, --human         show human readable output\n"
-		"     --si            use powers of 1000 not 1024\n"
-		" -l, --lohi          show detailed low and high memory statistics\n"
-		" -o, --old           use old format (no -/+buffers/cache line)\n"
-		" -t, --total         show total for RAM + swap\n"
-		" -s N, --seconds N   repeat printing every N seconds\n"
-		" -c N, --count N     repeat printing N times\n"), out);
+	fputs(_(" -b, --bytes         show output in bytes\n"), out);
+	fputs(_(" -k, --kilo          show output in kilobytes\n"), out);
+	fputs(_(" -m, --mega          show output in megabytes\n"), out);
+	fputs(_(" -g, --giga          show output in gigabytes\n"), out);
+	fputs(_("     --tera          show output in terabytes\n"), out);
+	fputs(_(" -h, --human         show human-readable output\n"), out);
+	fputs(_("     --si            use powers of 1000 not 1024\n"), out);
+	fputs(_(" -l, --lohi          show detailed low and high memory statistics\n"), out);
+	fputs(_(" -o, --old           use old format (without -/+buffers/cache line)\n"), out);
+	fputs(_(" -t, --total         show total for RAM + swap\n"), out);
+	fputs(_(" -s N, --seconds N   repeat printing every N seconds\n"), out);
+	fputs(_(" -c N, --count N     repeat printing N times, then exit\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("      --help    display this help text\n"), out);
+	fputs(_("     --help     display this help and exit\n"), out);
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("free(1)"));
 
