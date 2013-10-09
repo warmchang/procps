@@ -12,14 +12,20 @@ set ps "${topdir}ps/pscommand"
 set raw_tty [ exec tty ]
 regexp "/dev/(.+)" $raw_tty > tty
 
+set test "pkill with no arguments"
+spawn $pkill
+expect_pass "$test" "^\(lt-\)\?pkill: no matching criteria specified\\s*"
+
+# Tests that don't need the test process go above here
+if { [ catch { exec sh -c "command -v kill" } kill_path] } {
+  untested { kill path not found }
+  return
+}
+
 make_testproc
 set testproc_len [ string length $testproc_comm ]
 set testproc_trim [ string range $testproc_comm 0 [ expr { $testproc_len - 2 } ] ]
 set testproc1_sid [ exec $ps --no-headers -o sid $testproc1_pid ]
-
-set test "pkill with no arguments"
-spawn $pkill
-expect_pass "$test" "^\(lt-\)\?pkill: no matching criteria specified\\s*"
 
 set test "pkill find both test pids"
 spawn $pkill -0 -e $testproc_comm
@@ -126,6 +132,6 @@ untested "$test"
 
 
 # Cleanup
-exec kill $testproc1_pid
-exec kill $testproc2_pid
+eval exec "$kill_path $testproc1_pid"
+eval exec "$kill_path $testproc2_pid"
 exec rm $testproc_path
