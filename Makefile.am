@@ -52,6 +52,14 @@ EXTRA_DIST = \
 	Documentation/TODO \
 	sysctl.conf
 
+if BUILD_PIDOF
+usrbin_exec_PROGRAMS += pidof
+dist_man_MANS += pidof.1
+pidof_SOURCES = pidof.c $(top_srcdir)/lib/fileutils.c
+else
+  EXTRA_DIST += pidof.1
+endif
+
 if BUILD_KILL
 bin_PROGRAMS = kill
 dist_man_MANS += kill.1
