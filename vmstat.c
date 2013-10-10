@@ -87,15 +87,15 @@ static void __attribute__ ((__noreturn__))
 	      _(" %s [options] [delay [count]]\n"),
 		program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --active           active/inactive memory\n"
-		" -f, --forks            number of forks since boot\n"
-		" -m, --slabs            slabinfo\n"
-		" -n, --one-header       do not redisplay header\n"
-		" -s, --stats            event counter statistics\n"
-		" -d, --disk             disk statistics\n"
-		" -D, --disk-sum         summarize disk statistics\n"
-		" -p, --partition <dev>  partition specific statistics\n"
-		" -S, --unit <char>      define display unit\n"), out);
+	fputs(_(" -a, --active           active/inactive memory\n"), out);
+	fputs(_(" -f, --forks            number of forks since boot\n"), out);
+	fputs(_(" -m, --slabs            slabinfo\n"), out);
+	fputs(_(" -n, --one-header       do not redisplay header\n"), out);
+	fputs(_(" -s, --stats            event counter statistics\n"), out);
+	fputs(_(" -d, --disk             disk statistics\n"), out);
+	fputs(_(" -D, --disk-sum         summarize disk statistics\n"), out);
+	fputs(_(" -p, --partition <dev>  partition specific statistics\n"), out);
+	fputs(_(" -S, --unit <char>      define display unit\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);

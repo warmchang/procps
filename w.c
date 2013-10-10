@@ -236,10 +236,12 @@ static void print_time_ival7(time_t t, int centi_sec, FILE * fout)
 			fprintf(fout, _(" %2ludays"), t / (24 * 60 * 60));
 		else if (t >= 60 * 60)
 			/* > 1 hour */
+		        /* Translation Hint: Hours:Minutes */
 			fprintf(fout, " %2lu:%02u ", t / (60 * 60),
 				(unsigned)((t / 60) % 60));
 		else if (t > 60)
 			/* > 1 minute */
+		        /* Translation Hint: Minutes:Seconds */
 			fprintf(fout, _(" %2lu:%02um"), t / 60, (unsigned)t % 60);
 		else
 			fprintf(fout, "       ");
@@ -249,12 +251,15 @@ static void print_time_ival7(time_t t, int centi_sec, FILE * fout)
 			fprintf(fout, _(" %2ludays"), t / (24 * 60 * 60));
 		else if (t >= 60 * 60)
 			/* 1 hour or more */
+		        /* Translation Hint: Hours:Minutes */
 			fprintf(fout, _(" %2lu:%02um"), t / (60 * 60),
 				(unsigned)((t / 60) % 60));
 		else if (t > 60)
 			/* 1 minute or more */
+		        /* Translation Hint: Minutes:Seconds */
 			fprintf(fout, " %2lu:%02u ", t / 60, (unsigned)t % 60);
 		else
+		        /* Translation Hint: Seconds:Centiseconds */
 			fprintf(fout, _(" %2lu.%02us"), t, centi_sec);
 	}
 }
@@ -437,12 +442,12 @@ static void __attribute__ ((__noreturn__))
 	fprintf(out,
               _(" %s [options]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -h, --no-header     do not print header\n"
-		" -u, --no-current    ignore current process username\n"
-		" -s, --short         short format\n"
-		" -f, --from          show remote hostname field\n"
-		" -o, --old-style     old style output\n"
-		" -i, --ip-addr       display IP address instead of hostname (if possible)\n"), out);
+	fputs(_(" -h, --no-header     do not print header\n"),out);
+	fputs(_(" -u, --no-current    ignore current process username\n"),out);
+	fputs(_(" -s, --short         short format\n"),out);
+	fputs(_(" -f, --from          show remote hostname field\n"),out);
+	fputs(_(" -o, --old-style     old style output\n"),out);
+	fputs(_(" -i, --ip-addr       display IP address instead of hostname (if possible)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("     --help     display this help and exit\n"), out);
 	fputs(USAGE_VERSION, out);

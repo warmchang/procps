@@ -104,33 +104,32 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fprintf(fp, _(" %s [options] <pattern>\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, fp);
 	if (i_am_pkill == 0) {
-		fputs(_(" -d, --delimiter <string>  specify output delimiter\n"
-			" -l, --list-name           list PID and process name\n"
-			" -v, --inverse             negates the matching\n"
-			" -w, --lightweight         list all TID\n"
-		), fp);
+		fputs(_(" -d, --delimiter <string>  specify output delimiter\n"),fp);
+		fputs(_(" -l, --list-name           list PID and process name\n"),fp);
+		fputs(_(" -v, --inverse             negates the matching\n"),fp);
+		fputs(_(" -w, --lightweight         list all TID\n"), fp);
 	}
 	if (i_am_pkill == 1) {
-		fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"
-			" -e, --echo                display what is killed\n"), fp);
+		fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"), fp);
+		fputs(_(" -e, --echo                display what is killed\n"), fp);
 	}
-	fputs(_(" -c, --count               count of matching processes\n"
-		" -f, --full                use full process name to match\n"
-		" -g, --pgroup <id,...>     match listed process group IDs\n"
-		" -G, --group <gid,...>     match real group IDs\n"
-		" -n, --newest              select most recently started\n"
-		" -o, --oldest              select least recently started\n"
-		" -P, --parent <ppid,...>   match only child processes of the given parent\n"
-		" -s, --session <sid,...>   match session IDs\n"
-		" -t, --terminal <tty,...>  match by controlling terminal\n"
-		" -u, --euid <id,...>       match by effective IDs\n"
-		" -U, --uid <id,...>        match by real IDs\n"
-		" -x, --exact               match exactly with the command name\n"
-		" -F, --pidfile <file>      read PIDs from file\n"
-		" -L, --logpidfile          fail if PID file is not locked\n"
-		" --ns <pid>                match the processes that belong to the same\n"
-		"                           namespace as <pid>\n"
-		" --nslist <ns,...>         list which namespaces will be considered for\n"
+	fputs(_(" -c, --count               count of matching processes\n"), fp);
+	fputs(_(" -f, --full                use full process name to match\n"), fp);
+	fputs(_(" -g, --pgroup <id,...>     match listed process group IDs\n"), fp);
+	fputs(_(" -G, --group <gid,...>     match real group IDs\n"), fp);
+	fputs(_(" -n, --newest              select most recently started\n"), fp);
+	fputs(_(" -o, --oldest              select least recently started\n"), fp);
+	fputs(_(" -P, --parent <ppid,...>   match only child processes of the given parent\n"), fp);
+	fputs(_(" -s, --session <sid,...>   match session IDs\n"), fp);
+	fputs(_(" -t, --terminal <tty,...>  match by controlling terminal\n"), fp);
+	fputs(_(" -u, --euid <id,...>       match by effective IDs\n"), fp);
+	fputs(_(" -U, --uid <id,...>        match by real IDs\n"), fp);
+	fputs(_(" -x, --exact               match exactly with the command name\n"), fp);
+	fputs(_(" -F, --pidfile <file>      read PIDs from file\n"), fp);
+	fputs(_(" -L, --logpidfile          fail if PID file is not locked\n"), fp);
+	fputs(_(" --ns <pid>                match the processes that belong to the same\n"
+		"                           namespace as <pid>\n"), fp);
+	fputs(_(" --nslist <ns,...>         list which namespaces will be considered for\n"
 		"                           the --ns option.\n"
 		"                           Available namespaces: ipc, mnt, net, pid, user, uts\n"), fp);
 	fputs(USAGE_SEPARATOR, fp);
