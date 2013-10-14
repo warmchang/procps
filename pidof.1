@@ -44,7 +44,9 @@ the current root directory of processes they do not own.
 Scripts too - this causes the program to also return process id's of
 shells running the named scripts.
 .IP "-o \fIomitpid\fP"
-Tells \fIpidof\fP to omit processes with that process id.
+Tells \fIpidof\fP to omit processes with that process id. The special
+pid \fB%PPID\fP can be used to name the parent process of the \fIpidof\fP
+program, in other words the calling shell or shell script.
 .SH "EXIT STATUS"
 .TP
 .B 0

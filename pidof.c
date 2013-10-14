@@ -246,10 +246,15 @@ static void add_to_omit_list (char *input_arg)
 	pid_t omit_pid;
 
 	omit_str = NULL;
-	omit_str = strtok(input_arg, ",");
+	omit_str = strtok(input_arg, ",;:");
 	while (omit_str) {
 
-		omit_pid = strtoul(omit_str, &endptr, 10);
+		if (!strcmp(omit_str,"%PPID")) {  /* keeping this %PPID garbage for backward compatibility only */
+			omit_pid = getppid();     /* ... as it can be replaced with $$ in common shells */
+			endptr = omit_str + sizeof("%PPID") - 1;
+		} else {
+			omit_pid = strtoul(omit_str, &endptr, 10);
+		}
 
 		if (*endptr == '\0') {
 			if (omit_count == omit_size) {
@@ -265,7 +270,7 @@ static void add_to_omit_list (char *input_arg)
 			xwarnx(_("illegal omit pid value (%s)!\n"), omit_str);
 		}
 
-		omit_str = strtok(NULL, ",");
+		omit_str = strtok(NULL, ",;:");
 	}
 }
 
