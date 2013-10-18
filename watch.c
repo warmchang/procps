@@ -138,9 +138,9 @@ static void set_ansi_attribute(const int attrib)
 
 static void process_ansi(FILE * fp)
 {
-	int i, c, num1, num2;
+	int i, c;
 	char buf[MAX_ANSIBUF];
-	char *nextnum;
+	char *numstart, *endptr;
 
 	c = getc(fp);
 	if (c != '[') {
@@ -161,13 +161,15 @@ static void process_ansi(FILE * fp)
 		}
 		buf[i] = (char)c;
 	}
-	num1 = strtol(buf, &nextnum, 10);
-	if (nextnum != buf && nextnum[0] != '\0')
-		num2 = strtol(nextnum + 1, NULL, 10);
-	else
-		num2 = -1;
-	set_ansi_attribute(num1);
-	set_ansi_attribute(num2);
+	/*
+	 * buf now contains a semicolon-separated list of decimal integers,
+	 * each indicating an attribute to apply.
+	 * For example, buf might contain "0;1;31", derived from the color
+	 * escape sequence "<ESC>[0;1;31m". There can be 1 or more
+	 * attributes to apply, but typically there are between 1 and 3.
+	 */
+	for (numstart = buf; *endptr != '\0'; numstart = endptr + 1)
+		set_ansi_attribute(strtol(numstart, &endptr, 10));
 }
 
 static void __attribute__ ((__noreturn__)) do_exit(int status)
