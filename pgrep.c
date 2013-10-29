@@ -142,12 +142,18 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 
 static struct el *split_list (const char *restrict str, int (*convert)(const char *, struct el *))
 {
-	char *copy = xstrdup (str);
-	char *ptr = copy;
+	char *copy;
+	char *ptr;
 	char *sep_pos;
 	int i = 0;
 	int size = 0;
 	struct el *list = NULL;
+
+	if (str[0] == '\0')
+		return NULL;
+
+	copy = xstrdup (str);
+	ptr = copy;
 
 	do {
 		if (i == size) {
