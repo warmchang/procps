@@ -30,6 +30,7 @@ Makefile.in
 missing
 mkinstalldirs
 pgrep
+pidof
 pkill
 pmap
 procps-ng-*.tar.xz
