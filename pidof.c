@@ -133,7 +133,7 @@ static void select_procs (void)
 {
 	PROCTAB *ptp;
 	proc_t task;
-	int match, root_check_ok;
+	int match;
 	static int size = 0;
 	char *cmd_arg0, *cmd_arg0base;
 	char *cmd_arg1, *cmd_arg1base;
@@ -351,9 +351,9 @@ int main (int argc, char **argv)
 			for (i = proc_count - 1; i >= 0; i--) {	/* and display their PIDs */
 				if (first_pid) {
 					first_pid = 0;
-					printf ("%ld", procs[i].pid);
+					printf ("%ld", (long) procs[i].pid);
 				} else {
-					printf (" %ld", procs[i].pid);
+					printf (" %ld", (long) procs[i].pid);
 				}
 				if (opt_single_shot) break;
 			}
