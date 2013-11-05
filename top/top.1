@@ -383,8 +383,8 @@ Display only processes with a user id or user name matching that given.
 The '\-u' option matches on \fI effective\fR user whereas the '\-U' option
 matches on\fI any\fR user (real, effective, saved, or filesystem).
 
-Prepending an exclamation point ('!') to the user id or name instucts top to
-display only processes with users not matching the one provided.
+Prepending an exclamation point ('!') to the user id or name instructs top
+to display only processes with users not matching the one provided.
 
 The 'p', 'u' and 'U' \*(COs are mutually exclusive.
 
@@ -650,8 +650,8 @@ If you see 'rt' in this field, it means the task is running under
 'real time' scheduling priority.
 
 Under linux, real time priority is somewhat misleading since traditionally
-the operating itself was not preemptable.
-And while the 2.6 kernel can be made mostly preemptable, it is not always so.
+the operating itself was not preemptible.
+And while the 2.6 kernel can be made mostly preemptible, it is not always so.
 
 .TP 4
 17.\fB RES \*(Em Resident Memory Size (KiB) \fR
@@ -1337,7 +1337,7 @@ matches on\fB any\fR user (real, effective, saved, or filesystem).
 
 Thereafter, in that \*(TW only matching users will be shown, or possibly
 no processes will be shown.
-Prepending an exclamation point ('!') to the user id or name instucts top
+Prepending an exclamation point ('!') to the user id or name instructs top
 to display only processes with users not matching the one provided.
 
 Different \*(TWs can be used to filter different users.
@@ -1349,7 +1349,7 @@ command but just press <Enter> at the prompt.
 In this mode, processes are reordered according to their parents and
 the layout of the COMMAND column resembles that of a tree.
 In forest view mode it is still possible to toggle between program
-name and commamd line (\*(Xc 'c' \*(CI) or between processes and
+name and command line (\*(Xc 'c' \*(CI) or between processes and
 threads (\*(Xc 'H' \*(CI).
 
 \*(NT Typing any key affecting the sort order will exit forest view
@@ -1673,8 +1673,8 @@ The above \*(CIs are\fB always\fR available in \*(FM but\fB never\fR
 available in \*(AM if the \*(CW's \*(TD has been toggled \*F.
 
 \*(NT When any form of filtering is active, you can expect some slight
-abberations when scrolling since not all tasks will be visible.
-This is paticularly apparent when using the Up/Down \*(KAs.
+aberrations when scrolling since not all tasks will be visible.
+This is particularly apparent when using the Up/Down \*(KAs.
 
 .\" ......................................................................
 .SS 5d. SEARCHING in a Window
@@ -2037,7 +2037,7 @@ enable backslash interpretation regardless of which shell you use.
 
 \fBCaution\fR:
 If any inspect entry you create produces output with unprintable characters
-they will be displayed in either the ^C notation or hexidecimal <FF> form,
+they will be displayed in either the ^C notation or hexadecimal <FF> form,
 depending on their value.
 This applies to tab characters as well, which will show as '^I'.
 If you want a truer representation, any embedded tabs should be expanded.
