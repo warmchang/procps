@@ -3246,8 +3246,9 @@ static void before (char *me) {
 #if defined(PRETEND_NUMA) || defined(PRETEND8CPUS)
    Numa_node_tot = Numa_max_node() + 1;
 #else
-   Libnuma_handle = dlopen("libnuma.so.1", RTLD_LAZY);
-   if (Libnuma_handle) {
+   // we'll try for the most recent version, then a version we know works...
+   if ((Libnuma_handle = dlopen("libnuma.so", RTLD_LAZY))
+    || (Libnuma_handle = dlopen("libnuma.so.1", RTLD_LAZY))) {
       Numa_max_node = dlsym(Libnuma_handle, "numa_max_node");
       Numa_node_of_cpu = dlsym(Libnuma_handle, "numa_node_of_cpu");
       if (Numa_max_node && Numa_node_of_cpu)
@@ -3265,7 +3266,7 @@ static void before (char *me) {
 #endif
    // lastly, establish a robust signals environment
    sigemptyset(&sa.sa_mask);
-   // with user position perserved through SIGWINCH, we must avoid SA_RESTART
+   // with user position preserved through SIGWINCH, we must avoid SA_RESTART
    sa.sa_flags = 0;
    for (i = SIGRTMAX; i; i--) {
       switch (i) {
