@@ -2361,18 +2361,9 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
 #endif
 
 #ifndef NUMA_DISABLE
-   for (i = 0; i < Numa_node_tot; i++) {
-      node = sumSLOT + 1 + i;
-      // remember from last time around
-      memcpy(&cpus[node].sav, &cpus[node].cur, sizeof(CT_t));
-      // initialize current node statistics
-      memset(&cpus[node].cur, 0, sizeof(CT_t));
-#ifndef CPU_ZEROTICS
-      cpus[node].edge = cpus[sumSLOT].edge;
-      // this is for symmetry only, it's not currently required
-      cpus[node].cur.tot = cpus[sumSLOT].cur.tot;
-#endif
-   }
+   // forget all of the prior node statistics (maybe)
+   if (CHKw(Curwin, View_CPUNOD))
+      memset(&cpus[sumSLOT + 1], 0, Numa_node_tot * sizeof(CPU_t));
 #endif
 
    // now value each separate cpu's tics...
@@ -2400,21 +2391,30 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       cpus[i].id = i;
 #endif
 #ifndef NUMA_DISABLE
-      if (Numa_node_tot
+      /* henceforth, with just a little more arithmetic we can avoid
+         maintaining *any* node stats unless they're actually needed */
+      if (CHKw(Curwin, View_CPUNOD)
+      && Numa_node_tot
       && -1 < (node = Numa_node_of_cpu(cpus[i].id))) {
+         // use our own pointer to avoid gcc subscript bloat
+         CPU_t *nod_ptr = &cpus[sumSLOT + 1 + node];
+         nod_ptr->cur.u += cpus[i].cur.u; nod_ptr->sav.u += cpus[i].sav.u;
+         nod_ptr->cur.n += cpus[i].cur.n; nod_ptr->sav.n += cpus[i].sav.n;
+         nod_ptr->cur.s += cpus[i].cur.s; nod_ptr->sav.s += cpus[i].sav.s;
+         nod_ptr->cur.i += cpus[i].cur.i; nod_ptr->sav.i += cpus[i].sav.i;
+         nod_ptr->cur.w += cpus[i].cur.w; nod_ptr->sav.w += cpus[i].sav.w;
+         nod_ptr->cur.x += cpus[i].cur.x; nod_ptr->sav.x += cpus[i].sav.x;
+         nod_ptr->cur.y += cpus[i].cur.y; nod_ptr->sav.y += cpus[i].sav.y;
+         nod_ptr->cur.z += cpus[i].cur.z; nod_ptr->sav.z += cpus[i].sav.z;
+#ifndef CPU_ZEROTICS
+         /* yep, we re-value this repeatedly for each cpu encountered, but we
+            can then avoid a prior loop to selectively initialize each node */
+         nod_ptr->edge = cpus[sumSLOT].edge;
+#endif
          cpus[i].node = node;
-         node += (sumSLOT + 1);
-         cpus[node].cur.u += cpus[i].cur.u;
-         cpus[node].cur.n += cpus[i].cur.n;
-         cpus[node].cur.s += cpus[i].cur.s;
-         cpus[node].cur.i += cpus[i].cur.i;
-         cpus[node].cur.w += cpus[i].cur.w;
-         cpus[node].cur.x += cpus[i].cur.x;
-         cpus[node].cur.y += cpus[i].cur.y;
-         cpus[node].cur.z += cpus[i].cur.z;
       }
 #endif
-   }
+   } // end: for each cpu
 
    Cpu_faux_tot = i;      // tolerate cpus taken offline
 
