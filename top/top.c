@@ -2298,6 +2298,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    static FILE *fp = NULL;
    static int siz, sav_slot = -1;
    static char *buf;
+   CPU_t *sum_ptr;                               // avoid gcc subscript bloat
    int i, num, tot_read;
 #ifndef NUMA_DISABLE
    int node;
@@ -2342,76 +2343,76 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
  #undef buffGRW
 
    // remember from last time around
-   memcpy(&cpus[sumSLOT].sav, &cpus[sumSLOT].cur, sizeof(CT_t));
+   sum_ptr = &cpus[sumSLOT];
+   memcpy(&sum_ptr->sav, &sum_ptr->cur, sizeof(CT_t));
    // then value the last slot with the cpu summary line
    if (4 > sscanf(bp, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
-      , &cpus[sumSLOT].cur.u, &cpus[sumSLOT].cur.n, &cpus[sumSLOT].cur.s
-      , &cpus[sumSLOT].cur.i, &cpus[sumSLOT].cur.w, &cpus[sumSLOT].cur.x
-      , &cpus[sumSLOT].cur.y, &cpus[sumSLOT].cur.z))
+      , &sum_ptr->cur.u, &sum_ptr->cur.n, &sum_ptr->cur.s
+      , &sum_ptr->cur.i, &sum_ptr->cur.w, &sum_ptr->cur.x
+      , &sum_ptr->cur.y, &sum_ptr->cur.z))
          error_exit(N_txt(FAIL_statget_txt));
 #ifndef CPU_ZEROTICS
-   cpus[sumSLOT].cur.tot = cpus[sumSLOT].cur.u + cpus[sumSLOT].cur.s
-      + cpus[sumSLOT].cur.n + cpus[sumSLOT].cur.i + cpus[sumSLOT].cur.w
-      + cpus[sumSLOT].cur.x + cpus[sumSLOT].cur.y + cpus[sumSLOT].cur.z;
+   sum_ptr->cur.tot = sum_ptr->cur.u + sum_ptr->cur.s
+      + sum_ptr->cur.n + sum_ptr->cur.i + sum_ptr->cur.w
+      + sum_ptr->cur.x + sum_ptr->cur.y + sum_ptr->cur.z;
    /* if a cpu has registered substantially fewer tics than those expected,
       we'll force it to be treated as 'idle' so as not to present misleading
       percentages. */
-   cpus[sumSLOT].edge =
-      ((cpus[sumSLOT].cur.tot - cpus[sumSLOT].sav.tot) / smp_num_cpus) / (100 / TICS_EDGE);
+   sum_ptr->edge =
+      ((sum_ptr->cur.tot - sum_ptr->sav.tot) / smp_num_cpus) / (100 / TICS_EDGE);
 #endif
 
 #ifndef NUMA_DISABLE
    // forget all of the prior node statistics (maybe)
    if (CHKw(Curwin, View_CPUNOD))
-      memset(&cpus[sumSLOT + 1], 0, Numa_node_tot * sizeof(CPU_t));
+      memset(sum_ptr + 1, 0, Numa_node_tot * sizeof(CPU_t));
 #endif
 
    // now value each separate cpu's tics...
    for (i = 0; i < sumSLOT; i++) {
+      CPU_t *cpu_ptr = &cpus[i];               // avoid gcc subscript bloat
 #ifdef PRETEND8CPUS
       bp = buf;
 #endif
       bp = 1 + strchr(bp, '\n');
       // remember from last time around
-      memcpy(&cpus[i].sav, &cpus[i].cur, sizeof(CT_t));
-      if (4 > sscanf(bp, "cpu%d %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &cpus[i].id
-         , &cpus[i].cur.u, &cpus[i].cur.n, &cpus[i].cur.s
-         , &cpus[i].cur.i, &cpus[i].cur.w, &cpus[i].cur.x
-         , &cpus[i].cur.y, &cpus[i].cur.z)) {
-            memmove(&cpus[i], &cpus[sumSLOT], sizeof(CPU_t));
+      memcpy(&cpu_ptr->sav, &cpu_ptr->cur, sizeof(CT_t));
+      if (4 > sscanf(bp, "cpu%d %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &cpu_ptr->id
+         , &cpu_ptr->cur.u, &cpu_ptr->cur.n, &cpu_ptr->cur.s
+         , &cpu_ptr->cur.i, &cpu_ptr->cur.w, &cpu_ptr->cur.x
+         , &cpu_ptr->cur.y, &cpu_ptr->cur.z)) {
+            memmove(cpu_ptr, sum_ptr, sizeof(CPU_t));
             break;        // tolerate cpus taken offline
       }
 
 #ifndef CPU_ZEROTICS
-      cpus[i].edge = cpus[sumSLOT].edge;
-      // this is for symmetry only, it's not currently required
-      cpus[i].cur.tot = cpus[sumSLOT].cur.tot;
+      cpu_ptr->edge = sum_ptr->edge;
 #endif
 #ifdef PRETEND8CPUS
-      cpus[i].id = i;
+      cpu_ptr->id = i;
 #endif
 #ifndef NUMA_DISABLE
       /* henceforth, with just a little more arithmetic we can avoid
          maintaining *any* node stats unless they're actually needed */
       if (CHKw(Curwin, View_CPUNOD)
       && Numa_node_tot
-      && -1 < (node = Numa_node_of_cpu(cpus[i].id))) {
+      && -1 < (node = Numa_node_of_cpu(cpu_ptr->id))) {
          // use our own pointer to avoid gcc subscript bloat
-         CPU_t *nod_ptr = &cpus[sumSLOT + 1 + node];
-         nod_ptr->cur.u += cpus[i].cur.u; nod_ptr->sav.u += cpus[i].sav.u;
-         nod_ptr->cur.n += cpus[i].cur.n; nod_ptr->sav.n += cpus[i].sav.n;
-         nod_ptr->cur.s += cpus[i].cur.s; nod_ptr->sav.s += cpus[i].sav.s;
-         nod_ptr->cur.i += cpus[i].cur.i; nod_ptr->sav.i += cpus[i].sav.i;
-         nod_ptr->cur.w += cpus[i].cur.w; nod_ptr->sav.w += cpus[i].sav.w;
-         nod_ptr->cur.x += cpus[i].cur.x; nod_ptr->sav.x += cpus[i].sav.x;
-         nod_ptr->cur.y += cpus[i].cur.y; nod_ptr->sav.y += cpus[i].sav.y;
-         nod_ptr->cur.z += cpus[i].cur.z; nod_ptr->sav.z += cpus[i].sav.z;
+         CPU_t *nod_ptr = sum_ptr + 1 + node;
+         nod_ptr->cur.u += cpu_ptr->cur.u; nod_ptr->sav.u += cpu_ptr->sav.u;
+         nod_ptr->cur.n += cpu_ptr->cur.n; nod_ptr->sav.n += cpu_ptr->sav.n;
+         nod_ptr->cur.s += cpu_ptr->cur.s; nod_ptr->sav.s += cpu_ptr->sav.s;
+         nod_ptr->cur.i += cpu_ptr->cur.i; nod_ptr->sav.i += cpu_ptr->sav.i;
+         nod_ptr->cur.w += cpu_ptr->cur.w; nod_ptr->sav.w += cpu_ptr->sav.w;
+         nod_ptr->cur.x += cpu_ptr->cur.x; nod_ptr->sav.x += cpu_ptr->sav.x;
+         nod_ptr->cur.y += cpu_ptr->cur.y; nod_ptr->sav.y += cpu_ptr->sav.y;
+         nod_ptr->cur.z += cpu_ptr->cur.z; nod_ptr->sav.z += cpu_ptr->sav.z;
 #ifndef CPU_ZEROTICS
          /* yep, we re-value this repeatedly for each cpu encountered, but we
             can then avoid a prior loop to selectively initialize each node */
-         nod_ptr->edge = cpus[sumSLOT].edge;
+         nod_ptr->edge = sum_ptr->edge;
 #endif
-         cpus[i].node = node;
+         cpu_ptr->node = node;
       }
 #endif
    } // end: for each cpu
