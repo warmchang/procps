@@ -457,19 +457,6 @@ static void oomadj2proc(const char* S, proc_t *restrict P)
 #endif
 ///////////////////////////////////////////////////////////////////////
 
-static ino_t _ns2proc(unsigned pid, const char *ns)
-{
-    struct stat s;
-    char filename[40];
-
-    snprintf(filename, sizeof(filename), "/proc/%i/ns/%s", pid, ns);
-
-    if (stat(filename, &s) == -1)
-        return 0;
-
-    return s.st_ino;
-}
-
 static const char *ns_names[] = {
     [IPCNS] = "ipc",
     [MNTNS] = "mnt",
@@ -494,11 +481,20 @@ int get_ns_id(const char *name) {
     return -1;
 }
 
-static void ns2proc(proc_t *restrict P) {
+static void ns2proc(const char *directory, proc_t *restrict p) {
+    char path[PROCPATHLEN];
+    struct stat sb;
     int i;
 
-    for (i = 0; i < NUM_NS; i++)
-        P->ns[i] = _ns2proc(P->tgid, ns_names[i]);
+    for (i = 0; i < NUM_NS; i++) {
+        snprintf(path, sizeof(path), "%s/ns/%s", directory, ns_names[i]);
+        if (0 == stat(path, &sb))
+            p->ns[i] = (long)sb.st_ino;
+#if 0
+        else                           // this allows a caller to distinguish
+            p->ns[i] = -errno;         // between the ENOENT or EACCES errors
+#endif
+    }
 }
 ///////////////////////////////////////////////////////////////////////
 
@@ -802,7 +798,6 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     static struct stat sb;     // stat() buffer
     char *restrict const path = PT->path;
     unsigned flags = PT->flags;
-    int i;
 
     if (unlikely(stat(path, &sb) == -1))        /* no such dirent (anymore) */
         goto next_proc;
@@ -890,11 +885,8 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     }
 #endif
 
-    if (unlikely(flags & PROC_FILLNS))		// read /proc/#/ns/*
-        ns2proc(p);
-    else
-        for (i = 0; i < NUM_NS; i++)
-             p->ns[i] = 0;
+    if (unlikely(flags & PROC_FILLNS))          // read /proc/#/ns/*
+        ns2proc(path, p);
 
     return p;
 next_proc:
@@ -914,7 +906,6 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     static struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status
     static struct stat sb;     // stat() buffer
     unsigned flags = PT->flags;
-    int i;
 
     if (unlikely(stat(path, &sb) == -1))        /* no such dirent (anymore) */
         goto next_task;
@@ -1027,11 +1018,9 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
             oomadj2proc(ub.buf, t);
     }
 #endif
-    if (unlikely(flags & PROC_FILLNS))
-        ns2proc(t);
-    else
-        for (i = 0; i < NUM_NS; i++)
-            t->ns[i] = 0;
+
+    if (unlikely(flags & PROC_FILLNS))                  // read /proc/#/task/#/ns/*
+        ns2proc(path, t);
 
     return t;
 next_task:

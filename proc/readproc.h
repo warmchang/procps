@@ -31,14 +31,14 @@ EXTERN_C_BEGIN
 // neither tgid nor tid seemed correct. (in other words, FIXME)
 #define XXXID tid
 
-#define NUM_NS 6
 enum ns_type {
     IPCNS = 0,
     MNTNS,
     NETNS,
     PIDNS,
     USERNS,
-    UTSNS
+    UTSNS,
+    NUM_NS         // total namespaces (fencepost)
 };
 extern const char *get_ns_name(int id);
 extern int get_ns_id(const char *name);
@@ -169,8 +169,8 @@ typedef struct proc_t {
         oom_score,      // oom_score       (badness for OOM killer)
         oom_adj;        // oom_adj         (adjustment to OOM score)
 #endif
-    ino_t
-        ns[NUM_NS];     // ns/*            inode number of /proc/<pid>/ns/*
+    long
+        ns[NUM_NS];     // (ns subdir)     inode number of namespaces
 } proc_t;
 
 // PROCTAB: data structure holding the persistent information readproc needs
