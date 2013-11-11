@@ -194,6 +194,7 @@ enum pflag {
    P_ENV,
    P_FV1, P_FV2,
    P_USE,
+   P_NS1, P_NS2, P_NS3, P_NS4, P_NS5, P_NS6,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
    P_MAXPFLGS

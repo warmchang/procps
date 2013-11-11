@@ -259,6 +259,24 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'USED' = 4 */
    Head_nlstab[P_USE] = _("USED");
    Desc_nlstab[P_USE] = _("Res+Swap Size (KiB)");
+/* Translation Hint: maximum 'nsIPC' = 10 */
+   Head_nlstab[P_NS1] = _("nsIPC");
+   Desc_nlstab[P_NS1] = _("IPC namespace Inode");
+/* Translation Hint: maximum 'nsMNT' = 10 */
+   Head_nlstab[P_NS2] = _("nsMNT");
+   Desc_nlstab[P_NS2] = _("MNT namespace Inode");
+/* Translation Hint: maximum 'nsNET' = 10 */
+   Head_nlstab[P_NS3] = _("nsNET");
+   Desc_nlstab[P_NS3] = _("NET namespace Inode");
+/* Translation Hint: maximum 'nsPID' = 10 */
+   Head_nlstab[P_NS4] = _("nsPID");
+   Desc_nlstab[P_NS4] = _("PID namespace Inode");
+/* Translation Hint: maximum 'nsUSER' = 10 */
+   Head_nlstab[P_NS5] = _("nsUSER");
+   Desc_nlstab[P_NS5] = _("USER namespace Inode");
+/* Translation Hint: maximum 'nsUTS' = 10 */
+   Head_nlstab[P_NS6] = _("nsUTS");
+   Desc_nlstab[P_NS6] = _("UTS namespace Inode");
 }
 
 

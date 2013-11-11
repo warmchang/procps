@@ -254,6 +254,12 @@ SCB_NUM1(FV2, min_delta)
 SCB_NUMx(GID, egid)
 SCB_STRS(GRP, egroup)
 SCB_NUMx(NCE, nice)
+SCB_NUM1(NS1, ns[IPCNS])
+SCB_NUM1(NS2, ns[MNTNS])
+SCB_NUM1(NS3, ns[NETNS])
+SCB_NUM1(NS4, ns[PIDNS])
+SCB_NUM1(NS5, ns[USERNS])
+SCB_NUM1(NS6, ns[UTSNS])
 #ifdef OOMEM_ENABLE
 SCB_NUM1(OOA, oom_adj)
 SCB_NUM1(OOM, oom_score)
@@ -1645,6 +1651,7 @@ end_justifies:
 #define L_EGROUP   PROC_FILLSTATUS | PROC_FILLGRP
 #define L_SUPGRP   PROC_FILLSTATUS | PROC_FILLSUPGRP
 #define L_USED     PROC_FILLSTATUS | PROC_FILLMEM
+#define L_NS       PROC_FILLNS
    // make 'none' non-zero (used to be important to Frames_libflags)
 #define L_NONE     PROC_SPARE_1
    // from either 'stat' or 'status' (preferred), via bits not otherwise used
@@ -1735,10 +1742,16 @@ static FLD_t Fieldstab[] = {
    {     3,     -1,  A_right,  SF(FV1),  L_stat    },
    {     3,     -1,  A_right,  SF(FV2),  L_stat    },
 #ifndef NOBOOST_MEMS
-   {     6,  SK_Kb,  A_right,  SF(USE),  L_USED    }
+   {     6,  SK_Kb,  A_right,  SF(USE),  L_USED    },
 #else
-   {     4,  SK_Kb,  A_right,  SF(USE),  L_USED    }
+   {     4,  SK_Kb,  A_right,  SF(USE),  L_USED    },
 #endif
+   {    10,     -1,  A_right,  SF(NS1),  L_NS      }, // IPCNS
+   {    10,     -1,  A_right,  SF(NS2),  L_NS      }, // MNTNS
+   {    10,     -1,  A_right,  SF(NS3),  L_NS      }, // NETNS
+   {    10,     -1,  A_right,  SF(NS4),  L_NS      }, // PIDNS
+   {    10,     -1,  A_right,  SF(NS5),  L_NS      }, // USERNS
+   {    10,     -1,  A_right,  SF(NS6),  L_NS      }  // UTSNS
  #undef SF
  #undef A_left
  #undef A_right
@@ -2261,6 +2274,7 @@ static void zap_fieldstab (void) {
 
    /* and accommodate optional wider non-scalable columns (maybe) */
    if (!AUTOX_MODE) {
+      int i;
       Fieldstab[P_UED].width = Fieldstab[P_URD].width
          = Fieldstab[P_USD].width = Fieldstab[P_GID].width
          = Rc.fixed_widest ? 5 + Rc.fixed_widest : 5;
@@ -2271,6 +2285,9 @@ static void zap_fieldstab (void) {
          = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
       Fieldstab[P_WCH].width
          = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
+      for (i = P_NS1; i < P_NS1 + NUM_NS; i++)
+         Fieldstab[i].width
+            = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
    }
 
    /* plus user selectable scaling */
@@ -5226,6 +5243,17 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             break;
          case P_MEM:
             cp = scale_pcnt((float)pages2K(p->resident) * 100 / kb_main_total, W, Jn);
+            break;
+         case P_NS1:   // IPCNS
+         case P_NS2:   // MNTNS
+         case P_NS3:   // NETNS
+         case P_NS4:   // PIDNS
+         case P_NS5:   // USERNS
+         case P_NS6:   // UTSNS
+         {  long ino = p->ns[i - P_NS1];
+            if (ino > 0) cp = make_num(ino, W, Jn, i);
+            else cp = make_str("-", W, Js, i);
+         }
             break;
          case P_NCE:
             cp = make_num(p->nice, W, Jn, AUTOX_NO);
