@@ -76,7 +76,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "March 2013" "procps-ng" "User Commands"
+.TH TOP 1 "November 2013" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -826,12 +826,46 @@ page available.
 The number of threads associated with a process.
 
 .TP 4
-42.\fB vMj \*(Em Major Page Fault Count Delta\fR
+42.\fB nsIPC \*(Em IPC namespace \fR
+The Inode of the namespace used to isolate interprocess communication (IPC)
+resources such as System V IPC objects and POSIX message queues.
+
+.TP 4
+43.\fB nsMNT \*(Em MNT namespace \fR
+The Inode of the namespace used to isolate filesystem mount points thus
+offering different views of the filesystem hierarchy.
+
+.TP 4
+44.\fB nsNET \*(Em NET namespace \fR
+The Inode of the namespace used to isolate resources such as network devices,
+IP addresses, IP routing, port numbers, etc.
+
+.TP 4
+45.\fB nsPID \*(Em PID namespace \fR
+The Inode of the namespace used to isolate process ID numbers
+meaning they need not remain unique.
+Thus, each such namespace could have its own 'init' (PID #1) to
+manage various initialization tasks and reap orphaned child processes.
+
+.TP 4
+46.\fB nsUSER \*(Em USER namespace \fR
+The Inode of the namespace used to isolate the user and group ID numbers.
+Thus, a process could have a normal unprivileged user ID outside a user
+namespace while having a user ID of 0, with full root privileges, inside
+that namespace.
+
+.TP 4
+47.\fB nsUTS \*(Em UTS namespace \fR
+The Inode of the namespace used to isolate hostname and NIS domain name.
+UTS simply means "UNIX Time-sharing System".
+
+.TP 4
+48.\fB vMj \*(Em Major Page Fault Count Delta\fR
 The number of\fB major\fR page faults that have occurred since the
 last update (see nMaj).
 
 .TP 4
-43.\fB vMn \*(Em Minor Page Fault Count Delta\fR
+49.\fB vMn \*(Em Minor Page Fault Count Delta\fR
 The number of\fB minor\fR page faults that have occurred since the
 last update (see nMin).
 
@@ -1100,10 +1134,12 @@ This \*(CI can be used to alter the widths of the following fields:
 .nf
    \fI field  default    field  default    field  default \fR
     GID       5       GROUP     8       WCHAN    10
-    RUID      5       RUSER     8
-    SUID      5       SUSER     8
-    UID       5       USER      8
-                      TTY       8
+    RUID      5       RUSER     8       nsIPC    10
+    SUID      5       SUSER     8       nsMNT    10
+    UID       5       USER      8       nsNET    10
+                      TTY       8       nsPID    10
+                                        nsUSR    10
+                                        nsUTS    10
 .fi
 
 You will be prompted for the amount to be added to the default
