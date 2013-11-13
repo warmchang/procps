@@ -123,7 +123,7 @@ char *strcasestr(const char *haystack, const char *needle);
       -- so SCREENMAX provides for all fields plus a 250+ byte command line */
 #define CAPBUFSIZ    32
 #define CLRBUFSIZ    64
-#define PFLAGSSIZ    64
+#define PFLAGSSIZ    80
 #define SMLBUFSIZ   128
 #define MEDBUFSIZ   256
 #define LRGBUFSIZ   512
@@ -565,22 +565,23 @@ typedef struct WIN_t {
         /* Configuration files support */
 #define SYS_RCFILESPEC  "/etc/toprc"
 #define RCF_EYECATCHER  "Config File (Linux processes with windows)\n"
-#define RCF_VERSION_ID  'g'
+#define RCF_VERSION_ID  'h'
+#define RCF_PLUS_H      "\\]^_`abcdefghij"
 
         /* The default fields displayed and their order, if nothing is
            specified by the loser, oops user.
            note: any *contiguous* ascii sequence can serve as fieldscur
                  characters as long as the initial value is coordinated
                  with that specified for FLD_OFFSET
-           ( we're providing for up to 55 fields initially, )
-           ( with values chosen to avoid the need to escape ) */
+           ( we're providing for up to 70 fields currently, )
+           ( with just one escaped value, the '\' character ) */
 #define FLD_OFFSET  '%'
-   //   seq_fields  "%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ["
-#define DEF_FIELDS  "¥¨³´»½ÀÄ·º¹Å&')*+,-./012568<>?ABCFGHIJKLMNOPQRSTUVWXYZ["
+   //   seq_fields  "%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghij"
+#define DEF_FIELDS  "¥¨³´»½ÀÄ·º¹Å&')*+,-./012568<>?ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H
         /* Pre-configured windows/field groups */
-#define JOB_FIELDS  "¥¦¹·º³´Ä»¼½§Å()*+,-./012568>?@ABCFGHIJKLMNOPQRSTUVWXYZ["
-#define MEM_FIELDS  "¥º»¼½¾¿ÀÁÃÄ³´·Å&'()*+,-./0125689BFGHIJKLMNOPQRSTUVWXYZ["
-#define USR_FIELDS  "¥¦§¨ª°¹·ºÄÅ)+,-./1234568;<=>?@ABCFGHIJKLMNOPQRSTUVWXYZ["
+#define JOB_FIELDS  "¥¦¹·º³´Ä»¼½§Å()*+,-./012568>?@ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H
+#define MEM_FIELDS  "¥º»¼½¾¿ÀÁÃÄ³´·Å&'()*+,-./0125689BFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H
+#define USR_FIELDS  "¥¦§¨ª°¹·ºÄÅ)+,-./1234568;<=>?@ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H
 #ifdef OOMEM_ENABLE
         // the suse old top fields ( 'a'-'z' + '{|' ) in positions 0-27
         // ( the extra chars above represent the 'off' state )

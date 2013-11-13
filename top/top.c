@@ -3351,7 +3351,6 @@ static int config_cvt (WIN_t *q) {
       }
    }
    q->rc.winflags |= x;
-   SETw(q, Show_JRNUMS);
 
    // now let's convert old top's more limited fields...
    j = strlen(q->rc.fieldscur);
@@ -3447,10 +3446,10 @@ static void configs_read (void) {
          p = fmtmk(N_fmt(RC_bad_entry_fmt), i+1, Rc_name);
 
          // note: "fieldscur=%__s" on next line should equal PFLAGSSIZ !
-         if (2 != fscanf(fp, "%3s\tfieldscur=%64s\n"
+         if (2 != fscanf(fp, "%3s\tfieldscur=%80s\n"
             , w->rc.winname, w->rc.fieldscur))
                goto default_or_error;
-#if PFLAGSSIZ > 64
+#if PFLAGSSIZ > 80
  // too bad fscanf is not as flexible with his format string as snprintf
  # error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 #endif
@@ -3465,11 +3464,12 @@ static void configs_read (void) {
          switch (Rc.id) {
             case 'a':                          // 3.2.8 (former procps)
                if (config_cvt(w))
-                  goto default_or_error;
-               break;
+                  goto default_or_error;          // fall through !
             case 'f':                          // 3.3.0 thru 3.3.3 (procps-ng)
-               SETw(w, Show_JRNUMS);           //    fall through !
-            case 'g':                          // current RCF_VERSION_ID
+               SETw(w, Show_JRNUMS);              // fall through !
+            case 'g':                          // 3.3.4 thru 3.3.8
+               scat(w->rc.fieldscur, RCF_PLUS_H); // fall through !
+            case 'h':                          // current RCF_VERSION_ID
             default:                           // and future versions?
                if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
                   goto default_or_error;
