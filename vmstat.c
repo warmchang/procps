@@ -72,6 +72,9 @@ static int statMode = VMSTAT;
 /* "-a" means "show active/inactive" */
 static int a_option;
 
+/* "-w" means "wide output" */
+static int w_option;
+
 static unsigned sleep_time = 1;
 static int infinite_updates = 0;
 static unsigned long num_updates;
@@ -96,6 +99,7 @@ static void __attribute__ ((__noreturn__))
 	fputs(_(" -D, --disk-sum         summarize disk statistics\n"), out);
 	fputs(_(" -p, --partition <dev>  partition specific statistics\n"), out);
 	fputs(_(" -S, --unit <char>      define display unit\n"), out);
+	fputs(_(" -w, --wide             wide output\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -179,9 +183,20 @@ static void new_header(void)
 	/* Translation Hint: Translating folloging header & fields
 	 * that follow (marked with max x chars) might not work,
 	 * unless manual page is translated as well.  */
-	printf(_("procs -----------memory---------- ---swap-- -----io---- -system-- ----cpu----\n"));
-	printf
-	    ("%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s\n",
+
+	const char header[] =
+	    "procs -----------memory---------- ---swap-- -----io---- -system-- ----cpu----\n";
+	const char wide_header[] =
+	    "procs ---------------memory-------------- ---swap-- -----io---- -system-- ----cpu----\n";
+
+	const char format[] =
+	    "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s\n";
+	const char wide_format[] =
+	    "%2s %2s %8s %8s %8s %8s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s\n";
+
+	printf(w_option ? _(wide_header) : _(header));
+	printf(
+	    w_option ? wide_format : format,
 	    /* Translation Hint: max 2 chars */
 	     _("r"),
 	    /* Translation Hint: max 2 chars */
@@ -231,6 +246,9 @@ static void new_format(void)
 {
 	const char format[] =
 	    "%2u %2u %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u\n";
+	const char wide_format[] =
+	    "%2u %2u %8lu %8lu %8lu %8lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u\n";
+
 	unsigned int tog = 0;	/* toggle switch for cleaner code */
 	unsigned int i;
 	unsigned int hz = Hertz;
@@ -260,7 +278,7 @@ static void new_format(void)
 	Div = duse + dsys + didl + diow + dstl;
 	if (!Div) Div = 1, didl = 1;
 	divo2 = Div / 2UL;
-	printf(format,
+	printf(w_option ? wide_format : format,
 	       running, blocked,
 	       unitConvert(kb_swap_used), unitConvert(kb_main_free),
 	       unitConvert(a_option?kb_inactive:kb_main_buffers),
@@ -315,7 +333,7 @@ static void new_format(void)
 		Div = duse + dsys + didl + diow + dstl;
 		if (!Div) Div = 1, didl = 1;
 		divo2 = Div / 2UL;
-		printf(format,
+		printf(w_option ? wide_format : format,
 		       running,
 		       blocked,
 		       unitConvert(kb_swap_used),unitConvert(kb_main_free),
@@ -719,6 +737,7 @@ int main(int argc, char *argv[])
 		{"disk-sum", no_argument, NULL, 'D'},
 		{"partition", required_argument, NULL, 'p'},
 		{"unit", required_argument, NULL, 'S'},
+		{"wide", no_argument, NULL, 'w'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -733,7 +752,7 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	while ((c =
-		getopt_long(argc, argv, "afmnsdDp:S:hV", longopts,
+		getopt_long(argc, argv, "afmnsdDp:S:whV", longopts,
 			    NULL)) != EOF)
 		switch (c) {
 		case 'V':
@@ -795,6 +814,9 @@ int main(int argc, char *argv[])
 			break;
 		case 's':
 			statMode |= VMSUMSTAT;
+			break;
+		case 'w':
+			w_option = 1;
 			break;
 		default:
 			/* no other aguments defined yet. */
