@@ -185,14 +185,14 @@ static void new_header(void)
 	 * unless manual page is translated as well.  */
 
 	const char header[] =
-	    "procs -----------memory---------- ---swap-- -----io---- -system-- ----cpu----\n";
+	    "procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----\n";
 	const char wide_header[] =
-	    "procs ---------------memory-------------- ---swap-- -----io---- -system-- ----cpu----\n";
+	    "procs ---------------memory-------------- ---swap-- -----io---- -system-- ------cpu-----\n";
 
 	const char format[] =
-	    "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s\n";
+	    "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s %2s\n";
 	const char wide_format[] =
-	    "%2s %2s %8s %8s %8s %8s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s\n";
+	    "%2s %2s %8s %8s %8s %8s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s %2s\n";
 
 	printf(w_option ? _(wide_header) : _(header));
 	printf(
@@ -232,7 +232,9 @@ static void new_header(void)
 	    /* Translation Hint: max 2 chars */
 	     _("id"),
 	    /* Translation Hint: max 2 chars */
-	     _("wa"));
+	     _("wa"),
+	    /* Translation Hint: max 2 chars */
+	     _("st"));
 }
 
 static unsigned long unitConvert(unsigned long size)
@@ -245,9 +247,9 @@ static unsigned long unitConvert(unsigned long size)
 static void new_format(void)
 {
 	const char format[] =
-	    "%2u %2u %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u\n";
+	    "%2u %2u %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u\n";
 	const char wide_format[] =
-	    "%2u %2u %8lu %8lu %8lu %8lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u\n";
+	    "%2u %2u %8lu %8lu %8lu %8lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u\n";
 
 	unsigned int tog = 0;	/* toggle switch for cleaner code */
 	unsigned int i;
@@ -292,8 +294,8 @@ static void new_format(void)
 	       (unsigned)( (100*duse			+ divo2) / Div ),
 	       (unsigned)( (100*dsys			+ divo2) / Div ),
 	       (unsigned)( (100*didl			+ divo2) / Div ),
-	       (unsigned)( (100*diow			+ divo2) / Div )/*,
-	       (unsigned)( (100*dstl			+ divo2) / Div ) */
+	       (unsigned)( (100*diow			+ divo2) / Div ),
+	       (unsigned)( (100*dstl			+ divo2) / Div )
 	);
 
 	/* main loop */
@@ -358,9 +360,9 @@ static void new_format(void)
 		       /* id */
 		       (unsigned)( (100*didl+divo2)/Div ),
 		       /* wa */
-		       (unsigned)( (100*diow+divo2)/Div )/*,
-		       / * st  * /
-		       (unsigned)( (100*dstl+divo2)/Div ) */
+		       (unsigned)( (100*diow+divo2)/Div ),
+		       /* st */
+		       (unsigned)( (100*dstl+divo2)/Div )
 		);
 	}
 }
