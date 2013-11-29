@@ -246,9 +246,9 @@ SCB_NUM1(CPU, pcpu)
 SCB_NUM1(DAT, drs)
 SCB_NUM1(DRT, dt)
 SCB_STRS(ENV, environ[0])
-SCB_NUM1(FLG, flags)
 SCB_NUM1(FL1, maj_flt)
 SCB_NUM1(FL2, min_flt)
+SCB_NUM1(FLG, flags)
 SCB_NUM1(FV1, maj_delta)
 SCB_NUM1(FV2, min_delta)
 SCB_NUMx(GID, egid)
@@ -5220,14 +5220,14 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          case P_ENV:
             makeVAR(p->environ[0]);
             break;
-         case P_FLG:
-            cp = make_str(hex_make(p->flags, 1), W, Js, AUTOX_NO);
-            break;
          case P_FL1:
             cp = scale_num(p->maj_flt, W, Jn);
             break;
          case P_FL2:
             cp = scale_num(p->min_flt, W, Jn);
+            break;
+         case P_FLG:
+            cp = make_str(hex_make(p->flags, 1), W, Js, AUTOX_NO);
             break;
          case P_FV1:
             cp = scale_num(p->maj_delta, W, Jn);
@@ -5244,6 +5244,9 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          case P_MEM:
             cp = scale_pcnt((float)pages2K(p->resident) * 100 / kb_main_total, W, Jn);
             break;
+         case P_NCE:
+            cp = make_num(p->nice, W, Jn, AUTOX_NO);
+            break;
          case P_NS1:   // IPCNS
          case P_NS2:   // MNTNS
          case P_NS3:   // NETNS
@@ -5254,9 +5257,6 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             if (ino > 0) cp = make_num(ino, W, Jn, i);
             else cp = make_str("-", W, Js, i);
          }
-            break;
-         case P_NCE:
-            cp = make_num(p->nice, W, Jn, AUTOX_NO);
             break;
 #ifdef OOMEM_ENABLE
          case P_OOA:
@@ -5308,8 +5308,8 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          case P_THD:
             cp = make_num(p->nlwp, W, Jn, AUTOX_NO);
             break;
-         case P_TME:
          case P_TM2:
+         case P_TME:
          {  TIC_t t = p->utime + p->stime;
             if (CHKw(q, Show_CTIMES)) t += (p->cutime + p->cstime);
             cp = scale_tics(t, W, Jn);
