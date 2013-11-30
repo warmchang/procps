@@ -220,7 +220,7 @@ static int Numa_node_tot;
 static int Numa_node_sel = -1;
 #ifndef NUMA_DISABLE
 static void *Libnuma_handle;
-static int stderr_save = -1;
+static int Stderr_save = -1;
 #if defined(PRETEND_NUMA) || defined(PRETEND8CPUS)
 static int Numa_max_node(void) { return 3; }
 static int Numa_node_of_cpu(int num) { return (num % 4); }
@@ -4069,8 +4069,8 @@ static void wins_stage_2 (void) {
       Yes, he provides some overridable 'weak' functions to change such
       behavior but we can't exploit that since we don't follow a normal
       ld route to symbol resolution (we use that dlopen() guy instead)! */
-   stderr_save = dup(fileno(stderr));
-   if (-1 < stderr_save && freopen("/dev/null", "w", stderr))
+   Stderr_save = dup(fileno(stderr));
+   if (-1 < Stderr_save && freopen("/dev/null", "w", stderr))
       ;                           // avoid -Wunused-result
 #endif
 
@@ -5553,10 +5553,10 @@ static void frame_make (void) {
 #ifndef NUMA_DISABLE
    /* we gotta reverse the stderr redirect which was employed in wins_stage_2
       and needed because the two libnuma 'weak' functions were useless to us! */
-   if (-1 < stderr_save) {
-      dup2(stderr_save, fileno(stderr));
-      close(stderr_save);
-      stderr_save = -1;
+   if (-1 < Stderr_save) {
+      dup2(Stderr_save, fileno(stderr));
+      close(Stderr_save);
+      Stderr_save = -1;
    }
 #endif
 
