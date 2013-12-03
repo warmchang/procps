@@ -3445,8 +3445,8 @@ static void configs_read (void) {
          WIN_t *w = &Winstk[i];
          p = fmtmk(N_fmt(RC_bad_entry_fmt), i+1, Rc_name);
 
-         // note: "fieldscur=%__s" on next line should equal PFLAGSSIZ !
-         if (2 != fscanf(fp, "%3s\tfieldscur=%80s\n"
+         // note: "fieldscur=%__s" on next line should equal (PFLAGSSIZ -1) !
+         if (2 != fscanf(fp, "%3s\tfieldscur=%79s\n"
             , w->rc.winname, w->rc.fieldscur))
                goto default_or_error;
 #if PFLAGSSIZ > 80
