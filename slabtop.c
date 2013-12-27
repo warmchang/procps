@@ -188,24 +188,24 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -d, --delay <secs>  delay updates\n"
-		" -o, --once          only display once, then exit\n"
-		" -s, --sort <char>   specify sort criteria by character (see below)\n"), out);
+	fputs(_(" -d, --delay <secs>  delay updates\n"), out);
+	fputs(_(" -o, --once          only display once, then exit\n"), out);
+	fputs(_(" -s, --sort <char>   specify sort criteria by character (see below)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 
-	fputs(_("\nThe following are valid sort criteria:\n"
-		" a: sort by number of active objects\n"
-		" b: sort by objects per slab\n"
-		" c: sort by cache size\n"
-		" l: sort by number of slabs\n"
-		" v: sort by number of active slabs\n"
-		" n: sort by name\n"
-		" o: sort by number of objects (the default)\n"
-		" p: sort by pages per slab\n"
-		" s: sort by object size\n"
-		" u: sort by cache utilization\n"), out);
+	fputs(_("\nThe following are valid sort criteria:\n"), out);
+	fputs(_(" a: sort by number of active objects\n"), out);
+	fputs(_(" b: sort by objects per slab\n"), out);
+	fputs(_(" c: sort by cache size\n"), out);
+	fputs(_(" l: sort by number of slabs\n"), out);
+	fputs(_(" v: sort by number of active slabs\n"), out);
+	fputs(_(" n: sort by name\n"), out);
+	fputs(_(" o: sort by number of objects (the default)\n"), out);
+	fputs(_(" p: sort by pages per slab\n"), out);
+	fputs(_(" s: sort by object size\n"), out);
+	fputs(_(" u: sort by cache utilization\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("slabtop(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);

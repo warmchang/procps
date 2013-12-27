@@ -60,10 +60,10 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(USAGE_HEADER, fp);
 	fprintf(fp, _(" %s [options] [program [...]]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, fp);
-	fputs(_(" -s, --single-shot         return one PID only\n"
-		" -c, --check-root          omit processes with different root\n"
-		" -x                        scripts too\n"
-		" -o, --omit-pid <PID,...>  omit processes with PID\n"), fp);
+	fputs(_(" -s, --single-shot         return one PID only\n"), fp);
+	fputs(_(" -c, --check-root          omit processes with different root\n"), fp);
+	fputs(_(" -x                        scripts too\n"), fp);
+	fputs(_(" -o, --omit-pid <PID,...>  omit processes with PID\n"), fp);
 	fputs(USAGE_SEPARATOR, fp);
 	fputs(USAGE_HELP, fp);
 	fputs(USAGE_VERSION, fp);

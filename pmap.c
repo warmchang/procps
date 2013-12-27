@@ -108,19 +108,19 @@ usage(FILE * out)
 	fprintf(out,
 		_(" %s [options] pid [pid ...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -x, --extended              show details\n"
-		" -X                          show even more details\n"
-		"            WARNING: format changes according to /proc/PID/smaps\n"
-		" -XX                         show everything the kernel provides\n"
-		" -c, --read-rc               read the default rc\n"
-		" -C, --read-rc-from=<file>   read the rc from file\n"
-		" -n, --create-rc             create new default rc\n"
-		" -N, --create-rc-to=<file>   create new rc to file\n"
-		"            NOTE: pid arguments are not allowed with -n, -N\n"
-		" -d, --device                show the device format\n"
-		" -q, --quiet                 do not display header and footer\n"
-		" -p, --show-path             show path in the mapping\n"
-		" -A, --range=<low>[,<high>]  limit results to the given range\n"), out);
+	fputs(_(" -x, --extended              show details\n"), out);
+	fputs(_(" -X                          show even more details\n"), out);
+	fputs(_("            WARNING: format changes according to /proc/PID/smaps\n"), out);
+	fputs(_(" -XX                         show everything the kernel provides\n"), out);
+	fputs(_(" -c, --read-rc               read the default rc\n"), out);
+	fputs(_(" -C, --read-rc-from=<file>   read the rc from file\n"), out);
+	fputs(_(" -n, --create-rc             create new default rc\n"), out);
+	fputs(_(" -N, --create-rc-to=<file>   create new rc to file\n"), out);
+	fputs(_("            NOTE: pid arguments are not allowed with -n, -N\n"), out);
+	fputs(_(" -d, --device                show the device format\n"), out);
+	fputs(_(" -q, --quiet                 do not display header and footer\n"), out);
+	fputs(_(" -p, --show-path             show path in the mapping\n"), out);
+	fputs(_(" -A, --range=<low>[,<high>]  limit results to the given range\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);

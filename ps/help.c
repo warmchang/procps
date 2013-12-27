@@ -96,85 +96,80 @@ void do_help (const char *opt, int rc) {
     " %s [options]\n"), myname);
 
   if (section == HELP_SMP || section == HELP_ALL) {
-    fprintf(out, _("\n"
-      "Basic options:\n"
-      " -A, -e               all processes\n"
-      " -a                   all with tty, except session leaders\n"
-      "  a                   all with tty, including other users\n"
-      " -d                   all except session leaders\n"
-      " -N, --deselect       negate selection\n"
-      "  r                   only running processes\n"
-      "  T                   all processes on this terminal\n"
-      "  x                   processes without controlling ttys\n"));
+    fputs(_("\nBasic options:\n"), out);
+    fputs(_(" -A, -e               all processes\n"), out);
+    fputs(_(" -a                   all with tty, except session leaders\n"), out);
+    fputs(_("  a                   all with tty, including other users\n"), out);
+    fputs(_(" -d                   all except session leaders\n"), out);
+    fputs(_(" -N, --deselect       negate selection\n"), out);
+    fputs(_("  r                   only running processes\n"), out);
+    fputs(_("  T                   all processes on this terminal\n"), out);
+    fputs(_("  x                   processes without controlling ttys\n"), out);
   }
   if (section == HELP_LST || section == HELP_ALL) {
-    fprintf(out, _("\n"
-      "Selection by list:\n"
-      " -C <command>         command name\n"
-      " -G, --Group <gid>    real group id or name\n"
-      " -g, --group <group>  session or effective group name\n"
-      " -p, --pid <pid>      process id\n"
-      "     --ppid <pid>     select by parent process id\n"
-      " -s, --sid <session>  session id\n"
-      " -t, t, --tty <tty>   terminal\n"
-      " -u, U, --user <uid>  effective user id or name\n"
-      " -U, --User <uid>     real user id or name\n"
-      "\n"
+    fputs(_("\nSelection by list:\n"), out);
+    fputs(_(" -C <command>         command name\n"), out);
+    fputs(_(" -G, --Group <gid>    real group id or name\n"), out);
+    fputs(_(" -g, --group <group>  session or effective group name\n"), out);
+    fputs(_(" -p, --pid <pid>      process id\n"), out);
+    fputs(_("     --ppid <pid>     select by parent process id\n"), out);
+    fputs(_(" -s, --sid <session>  session id\n"), out);
+    fputs(_(" -t, t, --tty <tty>   terminal\n"), out);
+    fputs(_(" -u, U, --user <uid>  effective user id or name\n"), out);
+    fputs(_(" -U, --User <uid>     real user id or name\n"), out);
+    fputs(_("\n"
       "  selection <arguments> take either:\n"
       "    comma-separated list e.g. '-u root,nobody' or\n"
-      "    blank-separated list e.g. '-p 123 4567'\n"));
+      "    blank-separated list e.g. '-p 123 4567'\n"), out);
   }
   if (section == HELP_OUT || section == HELP_ALL) {
-    fprintf(out, _("\n"
-      "Output formats:\n"
-      " -F                   extra full\n"
-      " -f                   full-format, including command lines\n"
-      "  f, --forest         ascii art process tree\n"
-      " -H                   show process hierarchy\n"
-      " -j                   jobs format\n"
-      "  j                   BSD job control format\n"
-      " -l                   long format\n"
-      "  l                   BSD long format\n"
-      " -M, Z                add security data (for SELinux)\n"
-      " -O <format>          preloaded with default columns\n"
-      "  O <format>          as -O, with BSD personality\n"
-      " -o, o, --format <format>\n"
-      "                      user defined format\n"
-      "  s                   signal format\n"
-      "  u                   user-oriented format\n"
-      "  v                   virtual memory format\n"
-      "  X                   register format\n"
-      " -y                   do not show flags, show rrs vs. addr (used with -l)\n"
-      "     --context        display security context (for SELinux)\n"
-      "     --headers        repeat header lines, one per page\n"
-      "     --no-headers     do not print header at all\n"
-      "     --cols, --columns, --width <num>\n"
-      "                      set screen width\n"
-      "     --rows, --lines <num>\n"
-      "                      set screen height\n"));
+    fputs(_("\nOutput formats:\n"), out);
+    fputs(_(" -F                   extra full\n"), out);
+    fputs(_(" -f                   full-format, including command lines\n"), out);
+    fputs(_("  f, --forest         ascii art process tree\n"), out);
+    fputs(_(" -H                   show process hierarchy\n"), out);
+    fputs(_(" -j                   jobs format\n"), out);
+    fputs(_("  j                   BSD job control format\n"), out);
+    fputs(_(" -l                   long format\n"), out);
+    fputs(_("  l                   BSD long format\n"), out);
+    fputs(_(" -M, Z                add security data (for SELinux)\n"), out);
+    fputs(_(" -O <format>          preloaded with default columns\n"), out);
+    fputs(_("  O <format>          as -O, with BSD personality\n"), out);
+    fputs(_(" -o, o, --format <format>\n"
+      "                      user defined format\n"), out);
+    fputs(_("  s                   signal format\n"), out);
+    fputs(_("  u                   user-oriented format\n"), out);
+    fputs(_("  v                   virtual memory format\n"), out);
+    fputs(_("  X                   register format\n"), out);
+    fputs(_(" -y                   do not show flags, show rrs vs. addr (used with -l)\n"), out);
+    fputs(_("     --context        display security context (for SELinux)\n"), out);
+    fputs(_("     --headers        repeat header lines, one per page\n"), out);
+    fputs(_("     --no-headers     do not print header at all\n"), out);
+    fputs(_("     --cols, --columns, --width <num>\n"
+      "                      set screen width\n"), out);
+    fputs(_("     --rows, --lines <num>\n"
+      "                      set screen height\n"), out);
   }
   if (section == HELP_THD || section == HELP_ALL) {
-    fprintf(out, _("\n"
-      "Show threads:\n"
-      "  H                   as if they where processes\n"
-      " -L                   possibly with LWP and NLWP columns\n"
-      " -m, m                after processes\n"
-      " -T                   possibly with SPID column\n"));
+    fputs(_("\nShow threads:\n"), out);
+    fputs(_("  H                   as if they where processes\n"), out);
+    fputs(_(" -L                   possibly with LWP and NLWP columns\n"), out);
+    fputs(_(" -m, m                after processes\n"), out);
+    fputs(_(" -T                   possibly with SPID column\n"), out);
   }
   if (section == HELP_MSC || section == HELP_ALL) {
+    fputs(_("\nMiscellaneous options:\n"), out);
+    fputs(_(" -c                   show scheduling class with -l option\n"), out);
+    fputs(_("  c                   show true command name\n"), out);
+    fputs(_("  e                   show the environment after command\n"), out);
+    fputs(_("  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"), out);
+    fputs(_("  L                   list format specifiers\n"), out);
+    fputs(_("  n                   display numeric uid and wchan\n"), out);
+    fputs(_("  S,    --cumulative  include some dead child process data\n"), out);
+    fputs(_(" -y                   do not show flags, show rss (only with -l)\n"), out);
+    fputs(_(" -V, V, --version     display version information and exit\n"), out);
+    fputs(_(" -w, w                unlimited output width\n"), out);
     fprintf(out, _("\n"
-      "Miscellaneous options:\n"
-      " -c                   show scheduling class with -l option\n"
-      "  c                   show true command name\n"
-      "  e                   show the environment after command\n"
-      "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
-      "  L                   list format specifiers\n"
-      "  n                   display numeric uid and wchan\n"
-      "  S,    --cumulative  include some dead child process data\n"
-      " -y                   do not show flags, show rss (only with -l)\n"
-      " -V, V, --version     display version information and exit\n"
-      " -w, w                unlimited output width\n"
-      "\n"
       "        --%s <%s|%s|%s|%s|%s|%s>\n"
       "                      display help and exit\n")
         , the_word_help
