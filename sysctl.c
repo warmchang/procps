@@ -640,7 +640,7 @@ static int PreloadSystem(void)
 	}
 
 
-	if (stat(DEFAULT_PRELOAD, &ts) < 0 && S_ISREG(ts.st_mode)) {
+	if (stat(DEFAULT_PRELOAD, &ts) < 0 || S_ISREG(ts.st_mode)) {
 		if (!Quiet)
 			printf(_("* Applying %s ...\n"), DEFAULT_PRELOAD);
 		rc |= Preload(DEFAULT_PRELOAD);
