@@ -58,6 +58,8 @@ char *sprint_uptime(int human_readable) {
     realtime = localtime(&realseconds);
     pos = sprintf(buf, " %02d:%02d:%02d ",
       realtime->tm_hour, realtime->tm_min, realtime->tm_sec);
+  } else {
+    pos = 0;
   }
 
 /* read and calculate the amount of uptime */
