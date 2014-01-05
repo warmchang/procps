@@ -41,12 +41,13 @@
 //#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents in a file  */
 //#define INSP_SLIDE_1            /* when scrolling left/right don't move 8  */
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
+//#define OFF_NUMASKIP            /* do NOT skip numa nodes if discontinuous */
 //#define OFF_SCROLLBK            /* disable tty emulators scrollback buffer */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND8CPUS            /* pretend we're smp with 8 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
-//#define PRETEND_NUMA            /* pretend we've got some linux NUMA Nodes */
+//#define PRETEND_NUMA            /* pretend 4 (or 3 w/o OFF_NUMASKIP) Nodes */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
 //#define RECALL_FIXED            /* don't reorder saved strings if recalled */
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
@@ -277,7 +278,7 @@ typedef struct CPU_t {
 #ifndef CPU_ZEROTICS
    SIC_t edge;                    // tics adjustment threshold boundary
 #endif
-   int id;                        // the cpu id number (0 - nn)
+   int id;                        // cpu number (0 - nn), or numa active flag
 #ifndef NUMA_DISABLE
    int node;                      // the numa node it belongs to
 #endif
@@ -627,6 +628,9 @@ typedef struct WIN_t {
 #endif
 #if defined(PRETEND_NUMA) && defined(NUMA_DISABLE)
 # error 'PRETEND_NUMA' confilcts with 'NUMA_DISABLE'
+#endif
+#if defined(OFF_NUMASKIP) && defined(NUMA_DISABLE)
+# error 'OFF_NUMASKIP' confilcts with 'NUMA_DISABLE'
 #endif
 #if (LRGBUFSIZ < SCREENMAX)
 # error 'LRGBUFSIZ' must NOT be less than 'SCREENMAX'

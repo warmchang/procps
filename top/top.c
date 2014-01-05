@@ -223,7 +223,11 @@ static void *Libnuma_handle;
 static int Stderr_save = -1;
 #if defined(PRETEND_NUMA) || defined(PRETEND8CPUS)
 static int Numa_max_node(void) { return 3; }
+#ifndef OFF_NUMASKIP
+static int Numa_node_of_cpu(int num) { return (1 == (num % 4)) ? 0 : (num % 4); }
+#else
 static int Numa_node_of_cpu(int num) { return (num % 4); }
+#endif
 #else
 static int (*Numa_max_node)(void);
 static int (*Numa_node_of_cpu)(int num);
@@ -2430,6 +2434,9 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
          nod_ptr->edge = sum_ptr->edge;
 #endif
          cpu_ptr->node = node;
+#ifndef OFF_NUMASKIP
+         nod_ptr->id = -1;
+#endif
       }
 #endif
    } // end: for each cpu
@@ -5056,10 +5063,17 @@ static void summary_show (void) {
             Msg_row += 1;
             // display each cpu node's states
             for (i = 0; i < Numa_node_tot; i++) {
+               CPU_t *nod_ptr = &smpcpu[1 + smp_num_cpus + i];
                if (!isROOM(anyFLG, 1)) break;
+#ifndef OFF_NUMASKIP
+               if (nod_ptr->id) {
+#endif
                snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), i);
-               summary_hlp(&smpcpu[1 + smp_num_cpus + i], tmp);
+               summary_hlp(nod_ptr, tmp);
                Msg_row += 1;
+#ifndef OFF_NUMASKIP
+               }
+#endif
             }
          } else {
             // display the node summary, then the associated cpus (if room)
