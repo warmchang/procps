@@ -563,6 +563,7 @@ int main(int argc, char *argv[]){
     default:
       sigaction(i,&sa,NULL);
     case 0:
+    case SIGCONT:
     case SIGINT:   /* ^C */
     case SIGTSTP:  /* ^Z */
     case SIGTTOU:  /* see stty(1) man page */

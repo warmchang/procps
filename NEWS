@@ -1,6 +1,7 @@
 procps-ng-3.3.10
 ----------------
   * sysctl --system loads default config file - Debian #732920
+  * ps doesn't exit on SIGCONT
 
 procps-ng-3.3.9
 ---------------
