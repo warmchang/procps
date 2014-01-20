@@ -187,12 +187,12 @@ static void new_header(void)
 	const char header[] =
 	    "procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----\n";
 	const char wide_header[] =
-	    "procs ---------------memory-------------- ---swap-- -----io---- -system-- ------cpu-----\n";
+	    "procs -----------------------memory---------------------- ---swap-- -----io---- -system-- --------cpu--------\n";
 
 	const char format[] =
 	    "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s %2s\n";
 	const char wide_format[] =
-	    "%2s %2s %8s %8s %8s %8s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s %2s\n";
+	    "%2s %2s %12s %12s %12s %12s %4s %4s %5s %5s %4s %4s %3s %3s %3s %3s %3s\n";
 
 	printf(w_option ? _(wide_header) : _(header));
 	printf(
@@ -249,7 +249,7 @@ static void new_format(void)
 	const char format[] =
 	    "%2u %2u %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u\n";
 	const char wide_format[] =
-	    "%2u %2u %8lu %8lu %8lu %8lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u\n";
+	    "%2u %2u %12lu %12lu %12lu %12lu %4u %4u %5u %5u %4u %4u %3u %3u %3u %3u %3u\n";
 
 	unsigned int tog = 0;	/* toggle switch for cleaner code */
 	unsigned int i;
