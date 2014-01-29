@@ -26,15 +26,23 @@ expect_pass "$test" "^Cache\\s+Num\\s+Total\\s+Size\\s+Pages\\s+\(\[\(\)A-Za-z0-
 }
 
 set test "vmstat disk information (-d option)"
-spawn $vmstat -d
-expect_pass "$test" "^disk\[ -\]+reads\[ -\]+writes\[ -\]+IO\[ -\]+\\s+total\\s+merged\\s+sectors\\s+ms\\s+total\\s+merged\\s+sectors\\s+ms\\s+cur\\s+sec\\s+"
+if { [ file readable "/sys/block" ] == 0 }  {
+    unsupported "$test /sys/block not readable"
+} else {
+    spawn $vmstat -d
+    expect_pass "$test" "^disk\[ -\]+reads\[ -\]+writes\[ -\]+IO\[ -\]+\\s+total\\s+merged\\s+sectors\\s+ms\\s+total\\s+merged\\s+sectors\\s+ms\\s+cur\\s+sec\\s+"
+}
 
 # Need a partition
 set diskstats [ exec cat /proc/diskstats ]
-if [ regexp "\\s+\\d+\\s+\\d+\\s+\(\[a-z\]+\\d+\)\\s+\[0-9\]\[0-9\]+" $diskstats line partition == 1 ] {
-    set test "vmstat partition (using $partition)"
-    spawn $vmstat -p $partition
-    expect_pass "$test" "^${partition}\\s+reads"
+if { [ file readable "/sys/block" ] == 0 }  {
+    unsupported "vmstat partition /sys/block not readable"
 } else {
-    unsupported "vmstat partition (cannot find partition)"
+  if [ regexp "\\s+\\d+\\s+\\d+\\s+\(\[a-z\]+\\d+\)\\s+\[0-9\]\[0-9\]+" $diskstats line partition == 1 ] {
+      set test "vmstat partition (using $partition)"
+      spawn $vmstat -p $partition
+      expect_pass "$test" "^${partition}\\s+reads"
+  } else {
+      unsupported "vmstat partition (cannot find partition)"
+  }
 }

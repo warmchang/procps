@@ -938,8 +938,11 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
         &(*partitions)[cPartition].writes,
         &(*partitions)[cPartition].requested_writes
       );
-      (*partitions)[cPartition++].parent_disk = cDisk-1;
-      (*disks)[cDisk-1].partitions++;
+
+      if (cDisk > 0) {
+        (*partitions)[cPartition++].parent_disk = cDisk-1;
+        (*disks)[cDisk-1].partitions++;
+      }
     }
   }
 
