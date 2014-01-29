@@ -195,7 +195,8 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 		if (i == -1)
 			goto closure;
 	}
-	read(fd, buf, 128);
+	if (read(fd, buf, 128) <= 0)
+	    goto closure;
 	buf[127] = '\0';
 	tmp = strrchr(buf, ')');
 	*tmp++ = '\0';
@@ -477,15 +478,16 @@ static void __attribute__ ((__noreturn__))
 			display_kill_version();
 			exit(EXIT_SUCCESS);
 		case '?':
-			/* Special case is -1 which means all except init */
-			if (optopt == '1') {
-			    if (kill(-1, signo) != 0)
-				exitvalue = EXIT_FAILURE;
-			    exit(exitvalue);
-			}
 			if (!isdigit(optopt)) {
 				xwarnx(_("invalid argument %c"), optopt);
 				kill_usage(stderr);
+			} else {
+			    /* Special case for signal digit negative
+			     * PIDs */
+			    pid = (long)('0' - optopt);
+			    if (kill((pid_t)pid, signo) != 0)
+				exitvalue = EXIT_FAILURE;
+			    exit(exitvalue);
 			}
 			loop=0;
 			break;
