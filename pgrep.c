@@ -417,7 +417,7 @@ static PROCTAB *do_openproc (void)
 	PROCTAB *ptp;
 	int flags = 0;
 
-	if (opt_pattern || opt_full)
+	if (opt_pattern || opt_full || opt_longlong)
 		flags |= PROC_FILLCOM;
 	if (opt_ruid || opt_rgid)
 		flags |= PROC_FILLSTATUS;
@@ -538,7 +538,7 @@ static struct el * select_procs (int *num)
 				match = match_strlist (tty, opt_term);
 			}
 		}
-		if (task.cmdline && (opt_longlong || opt_full) && match && opt_pattern) {
+		if (task.cmdline && (opt_longlong || opt_full) ) {
 			int i = 0;
 			int bytes = sizeof (cmdline) - 1;
 
