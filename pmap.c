@@ -106,7 +106,7 @@ usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		_(" %s [options] pid [pid ...]\n"), program_invocation_short_name);
+		_(" %s [options] PID [PID ...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -x, --extended              show details\n"), out);
 	fputs(_(" -X                          show even more details\n"), out);

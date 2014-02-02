@@ -109,18 +109,18 @@ void do_help (const char *opt, int rc) {
   if (section == HELP_LST || section == HELP_ALL) {
     fputs(_("\nSelection by list:\n"), out);
     fputs(_(" -C <command>         command name\n"), out);
-    fputs(_(" -G, --Group <gid>    real group id or name\n"), out);
+    fputs(_(" -G, --Group <GID>    real group id or name\n"), out);
     fputs(_(" -g, --group <group>  session or effective group name\n"), out);
-    fputs(_(" -p, --pid <pid>      process id\n"), out);
-    fputs(_("     --ppid <pid>     select by parent process id\n"), out);
+    fputs(_(" -p, --pid <PID>      process id\n"), out);
+    fputs(_("     --ppid <PID>     select by parent process id\n"), out);
     fputs(_(" -s, --sid <session>  session id\n"), out);
     fputs(_(" -t, t, --tty <tty>   terminal\n"), out);
-    fputs(_(" -u, U, --user <uid>  effective user id or name\n"), out);
-    fputs(_(" -U, --User <uid>     real user id or name\n"), out);
+    fputs(_(" -u, U, --user <UID>  effective user id or name\n"), out);
+    fputs(_(" -U, --User <UID>     real user id or name\n"), out);
     fputs(_("\n"
-      "  selection <arguments> take either:\n"
-      "    comma-separated list e.g. '-u root,nobody' or\n"
-      "    blank-separated list e.g. '-p 123 4567'\n"), out);
+      "  The selection options take as their argument either:\n"
+      "    a comma-separated list e.g. '-u root,nobody' or\n"
+      "    or a blank-separated list e.g. '-p 123 4567'\n"), out);
   }
   if (section == HELP_OUT || section == HELP_ALL) {
     fputs(_("\nOutput formats:\n"), out);
@@ -136,7 +136,7 @@ void do_help (const char *opt, int rc) {
     fputs(_(" -O <format>          preloaded with default columns\n"), out);
     fputs(_("  O <format>          as -O, with BSD personality\n"), out);
     fputs(_(" -o, o, --format <format>\n"
-      "                      user defined format\n"), out);
+            "                      user-defined format\n"), out);
     fputs(_("  s                   signal format\n"), out);
     fputs(_("  u                   user-oriented format\n"), out);
     fputs(_("  v                   virtual memory format\n"), out);
@@ -152,7 +152,7 @@ void do_help (const char *opt, int rc) {
   }
   if (section == HELP_THD || section == HELP_ALL) {
     fputs(_("\nShow threads:\n"), out);
-    fputs(_("  H                   as if they where processes\n"), out);
+    fputs(_("  H                   as if they were processes\n"), out);
     fputs(_(" -L                   possibly with LWP and NLWP columns\n"), out);
     fputs(_(" -m, m                after processes\n"), out);
     fputs(_(" -T                   possibly with SPID column\n"), out);
@@ -163,7 +163,7 @@ void do_help (const char *opt, int rc) {
     fputs(_("  c                   show true command name\n"), out);
     fputs(_("  e                   show the environment after command\n"), out);
     fputs(_("  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"), out);
-    fputs(_("  L                   list format specifiers\n"), out);
+    fputs(_("  L                   show format specifiers\n"), out);
     fputs(_("  n                   display numeric uid and wchan\n"), out);
     fputs(_("  S,    --cumulative  include some dead child process data\n"), out);
     fputs(_(" -y                   do not show flags, show rss (only with -l)\n"), out);

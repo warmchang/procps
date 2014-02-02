@@ -22,7 +22,7 @@ set pmap_ext_footer "\[ -\]+\\s+total kB\\s+\\d+(\\s+\[\\d-\]+){2,3}\\s*\$"
 set test "pmap with no arguments"
 spawn $pmap
 #expect_pass "$test" "^\(lt-\)\?pmap: argument missing"
-expect_pass "$test" "Usage:\\s+\(lt-\)?pmap \\\[options\\\] pid \\\[pid \.\.\.\\\]"
+expect_pass "$test" "Usage:\\s+\(lt-\)?pmap \\\[options\\\] PID \\\[PID \.\.\.\\\]"
 
 set test "pmap standard output"
 spawn $pmap $mypid

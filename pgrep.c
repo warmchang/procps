@@ -115,19 +115,19 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	}
 	fputs(_(" -c, --count               count of matching processes\n"), fp);
 	fputs(_(" -f, --full                use full process name to match\n"), fp);
-	fputs(_(" -g, --pgroup <id,...>     match listed process group IDs\n"), fp);
-	fputs(_(" -G, --group <gid,...>     match real group IDs\n"), fp);
+	fputs(_(" -g, --pgroup <PGID,...>   match listed process group IDs\n"), fp);
+	fputs(_(" -G, --group <GID,...>     match real group IDs\n"), fp);
 	fputs(_(" -n, --newest              select most recently started\n"), fp);
 	fputs(_(" -o, --oldest              select least recently started\n"), fp);
-	fputs(_(" -P, --parent <ppid,...>   match only child processes of the given parent\n"), fp);
-	fputs(_(" -s, --session <sid,...>   match session IDs\n"), fp);
+	fputs(_(" -P, --parent <PPID,...>   match only child processes of the given parent\n"), fp);
+	fputs(_(" -s, --session <SID,...>   match session IDs\n"), fp);
 	fputs(_(" -t, --terminal <tty,...>  match by controlling terminal\n"), fp);
-	fputs(_(" -u, --euid <id,...>       match by effective IDs\n"), fp);
-	fputs(_(" -U, --uid <id,...>        match by real IDs\n"), fp);
+	fputs(_(" -u, --euid <ID,...>       match by effective IDs\n"), fp);
+	fputs(_(" -U, --uid <ID,...>        match by real IDs\n"), fp);
 	fputs(_(" -x, --exact               match exactly with the command name\n"), fp);
 	fputs(_(" -F, --pidfile <file>      read PIDs from file\n"), fp);
 	fputs(_(" -L, --logpidfile          fail if PID file is not locked\n"), fp);
-	fputs(_(" --ns <pid>                match the processes that belong to the same\n"
+	fputs(_(" --ns <PID>                match the processes that belong to the same\n"
 		"                           namespace as <pid>\n"), fp);
 	fputs(_(" --nslist <ns,...>         list which namespaces will be considered for\n"
 		"                           the --ns option.\n"

@@ -62,7 +62,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(USAGE_OPTIONS, fp);
 	fputs(_(" -s, --single-shot         return one PID only\n"), fp);
 	fputs(_(" -c, --check-root          omit processes with different root\n"), fp);
-	fputs(_(" -x                        scripts too\n"), fp);
+	fputs(_(" -x                        also find shells running the named scripts\n"), fp);
 	fputs(_(" -o, --omit-pid <PID,...>  omit processes with PID\n"), fp);
 	fputs(USAGE_SEPARATOR, fp);
 	fputs(USAGE_HELP, fp);
