@@ -387,6 +387,7 @@ static int run_command(char *restrict command, char **restrict command_argv)
 		if (dup2(pipefd[1], 1) < 0) {	/* replace stdout with write side of pipe */
 			xerr(3, _("dup2 failed"));
 		}
+		close(pipefd[1]);		/* once duped, the write fd isn't needed */
 		dup2(1, 2);			/* stderr should default to stdout */
 
 		if (flags & WATCH_EXEC) {	/* pass command to exec instead of system */
