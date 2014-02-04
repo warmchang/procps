@@ -43,6 +43,7 @@
 #include <sys/types.h>
 #include <termios.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "c.h"
 #include "fileutils.h"
@@ -75,6 +76,9 @@ static int a_option;
 /* "-w" means "wide output" */
 static int w_option;
 
+/* "-t" means "show timestamp" */
+static int t_option;
+
 static unsigned sleep_time = 1;
 static int infinite_updates = 0;
 static unsigned long num_updates;
@@ -100,6 +104,7 @@ static void __attribute__ ((__noreturn__))
 	fputs(_(" -p, --partition <dev>  partition specific statistics\n"), out);
 	fputs(_(" -S, --unit <char>      define display unit\n"), out);
 	fputs(_(" -w, --wide             wide output\n"), out);
+	fputs(_(" -t, --timestamp        show timestamp\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -180,21 +185,33 @@ static int format_1000(unsigned long long val64, char *restrict dst)
 
 static void new_header(void)
 {
+	struct tm *tm_ptr;
+	time_t the_time;
+	char timebuf[32];
+
 	/* Translation Hint: Translating folloging header & fields
 	 * that follow (marked with max x chars) might not work,
 	 * unless manual page is translated as well.  */
-
-	const char header[] =
-	    "procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----\n";
-	const char wide_header[] =
-	    "procs -----------------------memory---------------------- ---swap-- -----io---- -system-- --------cpu--------\n";
+	const char *header =
+	    _("procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----");
+	const char *wide_header =
+	    _("procs -----------------------memory---------------------- ---swap-- -----io---- -system-- --------cpu--------");
+	const char *timestamp_header = _(" -----timestamp-----");
 
 	const char format[] =
-	    "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s %2s\n";
+	    "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s %2s";
 	const char wide_format[] =
-	    "%2s %2s %12s %12s %12s %12s %4s %4s %5s %5s %4s %4s %3s %3s %3s %3s %3s\n";
+	    "%2s %2s %12s %12s %12s %12s %4s %4s %5s %5s %4s %4s %3s %3s %3s %3s %3s";
 
-	printf(w_option ? _(wide_header) : _(header));
+
+	printf(w_option ? wide_header : header);
+
+	if (t_option) {
+		printf(timestamp_header);
+	}
+
+	printf("\n");
+
 	printf(
 	    w_option ? wide_format : format,
 	    /* Translation Hint: max 2 chars */
@@ -235,6 +252,19 @@ static void new_header(void)
 	     _("wa"),
 	    /* Translation Hint: max 2 chars */
 	     _("st"));
+
+	if (t_option) {
+		(void) time( &the_time );
+		tm_ptr = localtime( &the_time );
+		if (strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
+			timebuf[strlen(timestamp_header) - 1] = '\0';
+		} else {
+			timebuf[0] = '\0';
+		}
+		printf(" %*s", (int)(strlen(timestamp_header) - 1), timebuf);
+	}
+
+	printf("\n");
 }
 
 static unsigned long unitConvert(unsigned long size)
@@ -247,9 +277,9 @@ static unsigned long unitConvert(unsigned long size)
 static void new_format(void)
 {
 	const char format[] =
-	    "%2u %2u %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u\n";
+	    "%2u %2u %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u";
 	const char wide_format[] =
-	    "%2u %2u %12lu %12lu %12lu %12lu %4u %4u %5u %5u %4u %4u %3u %3u %3u %3u %3u\n";
+	    "%2u %2u %12lu %12lu %12lu %12lu %4u %4u %5u %5u %4u %4u %3u %3u %3u %3u %3u";
 
 	unsigned int tog = 0;	/* toggle switch for cleaner code */
 	unsigned int i;
@@ -263,6 +293,9 @@ static void new_format(void)
 	unsigned int sleep_half;
 	unsigned long kb_per_page = sysconf(_SC_PAGESIZE) / 1024ul;
 	int debt = 0;		/* handle idle ticks running backwards */
+	struct tm *tm_ptr;
+	time_t the_time;
+	char timebuf[32];
 
 	sleep_half = (sleep_time / 2);
 	new_header();
@@ -271,6 +304,12 @@ static void new_format(void)
 	getstat(cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow, cpu_xxx, cpu_yyy,
 		cpu_zzz, pgpgin, pgpgout, pswpin, pswpout, intr, ctxt, &running,
 		&blocked, &dummy_1, &dummy_2);
+
+	if (t_option) {
+		(void) time( &the_time );
+		tm_ptr = localtime( &the_time );
+		strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+	}
 
 	duse = *cpu_use + *cpu_nic;
 	dsys = *cpu_sys + *cpu_xxx + *cpu_yyy;
@@ -298,6 +337,12 @@ static void new_format(void)
 	       (unsigned)( (100*dstl			+ divo2) / Div )
 	);
 
+	if (t_option) {
+		printf(" %s", timebuf);
+	}
+
+	printf("\n");
+
 	/* main loop */
 	for (i = 1; infinite_updates || i < num_updates; i++) {
 		sleep(sleep_time);
@@ -312,6 +357,12 @@ static void new_format(void)
 			cpu_yyy + tog, cpu_zzz + tog, pgpgin + tog,
 			pgpgout + tog, pswpin + tog, pswpout + tog, intr + tog,
 			ctxt + tog, &running, &blocked, &dummy_1, &dummy_2);
+
+		if (t_option) {
+			(void) time( &the_time );
+			tm_ptr = localtime( &the_time );
+			strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+		}
 
 		duse =
 		    cpu_use[tog] - cpu_use[!tog] + cpu_nic[tog] - cpu_nic[!tog];
@@ -364,6 +415,12 @@ static void new_format(void)
 		       /* st */
 		       (unsigned)( (100*dstl+divo2)/Div )
 		);
+
+		if (t_option) {
+			printf(" %s", timebuf);
+		}
+
+		printf("\n");
 	}
 }
 
@@ -453,11 +510,33 @@ static int diskpartition_format(const char *partition_name)
 
 static void diskheader(void)
 {
+	struct tm *tm_ptr;
+	time_t the_time;
+	char timebuf[32];
+
 	/* Translation Hint: Translating folloging header & fields
 	 * that follow (marked with max x chars) might not work,
 	 * unless manual page is translated as well.  */
-	printf(_("disk- ------------reads------------ ------------writes----------- -----IO------\n"));
-	printf("%5s %6s %6s %7s %7s %6s %6s %7s %7s %6s %6s\n",
+	const char *header =
+	    _("disk- ------------reads------------ ------------writes----------- -----IO------");
+	const char *wide_header =
+	    _("disk- -------------------reads------------------- -------------------writes------------------ ------IO-------");
+	const char *timestamp_header = _(" -----timestamp-----");
+
+	const char format[] =
+	    "%5s %6s %6s %7s %7s %6s %6s %7s %7s %6s %6s";
+	const char wide_format[] =
+	    "%5s %9s %9s %11s %11s %9s %9s %11s %11s %7s %7s";
+
+	printf(w_option ? wide_header : header);
+
+	if (t_option) {
+		printf(timestamp_header);
+	}
+
+	printf("\n");
+
+	printf(w_option ? wide_format : format,
 	       " ",
 	       /* Translation Hint: max 6 chars */
 	       _("total"),
@@ -479,25 +558,53 @@ static void diskheader(void)
 	       _("cur"),
 	       /* Translation Hint: max 6 chars */
 	       _("sec"));
+
+	if (t_option) {
+		(void) time( &the_time );
+		tm_ptr = localtime( &the_time );
+		if (strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
+			timebuf[strlen(timestamp_header) - 1] = '\0';
+		} else {
+			timebuf[0] = '\0';
+		}
+		printf(" %*s", (int)(strlen(timestamp_header) - 1), timebuf);
+	}
+
+	printf("\n");
 }
 
 static void diskformat(void)
 {
+	const char format[] =
+	    "%-5s %6u %6u %7llu %7u %6u %6u %7llu %7u %6u %6u";
+	const char wide_format[] =
+	    "%-5s %9u %9u %11llu %11u %9u %9u %11llu %11u %7u %7u";
+
 	FILE *fDiskstat;
 	struct disk_stat *disks;
 	struct partition_stat *partitions;
 	unsigned long ndisks, i, j, k;
-	const char format[] = "%-5s %6u %6u %7llu %7u %6u %6u %7llu %7u %6u %6u\n";
+	struct tm *tm_ptr;
+	time_t the_time;
+	char timebuf[32];
+
 
 	if ((fDiskstat = fopen("/proc/diskstats", "rb"))) {
 		fclose(fDiskstat);
 		ndisks = getdiskstat(&disks, &partitions);
+
+		if (t_option) {
+			(void) time( &the_time );
+			tm_ptr = localtime( &the_time );
+			strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+		}
+
 		if (!moreheaders)
 			diskheader();
 		for (k = 0; k < ndisks; k++) {
 			if (moreheaders && ((k % height) == 0))
 				diskheader();
-			printf(format,
+			printf(w_option ? wide_format : format,
 			       disks[k].disk_name,
 			       disks[k].reads,
 			       disks[k].merged_reads,
@@ -510,31 +617,51 @@ static void diskformat(void)
 			       disks[k].inprogress_IO ? disks[k].inprogress_IO / 1000 : 0,
 			       disks[k].milli_spent_IO ? disks[k].
 			       milli_spent_IO / 1000 : 0);
+
+			if (t_option) {
+				printf(" %s", timebuf);
+			}
+
+			printf("\n");
 			fflush(stdout);
 		}
 		free(disks);
 		free(partitions);
+
 		for (j = 1; infinite_updates || j < num_updates; j++) {
 			sleep(sleep_time);
 			ndisks = getdiskstat(&disks, &partitions);
-		for (i = 0; i < ndisks; i++, k++) {
-			if (moreheaders && ((k % height) == 0))
-				diskheader();
-			printf(format,
-			       disks[i].disk_name,
-			       disks[i].reads,
-			       disks[i].merged_reads,
-			       disks[i].reads_sectors,
-			       disks[i].milli_reading,
-			       disks[i].writes,
-			       disks[i].merged_writes,
-			       disks[i].written_sectors,
-			       disks[i].milli_writing,
-			       disks[i].inprogress_IO ? disks[i].inprogress_IO / 1000 : 0,
-			       disks[i].milli_spent_IO ? disks[i].
-			       milli_spent_IO / 1000 : 0);
-			fflush(stdout);
-		}
+
+			if (t_option) {
+				(void) time( &the_time );
+				tm_ptr = localtime( &the_time );
+				strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+			}
+
+			for (i = 0; i < ndisks; i++, k++) {
+				if (moreheaders && ((k % height) == 0))
+					diskheader();
+				printf(w_option ? wide_format : format,
+				       disks[i].disk_name,
+				       disks[i].reads,
+				       disks[i].merged_reads,
+				       disks[i].reads_sectors,
+				       disks[i].milli_reading,
+				       disks[i].writes,
+				       disks[i].merged_writes,
+				       disks[i].written_sectors,
+				       disks[i].milli_writing,
+				       disks[i].inprogress_IO ? disks[i].inprogress_IO / 1000 : 0,
+				       disks[i].milli_spent_IO ? disks[i].
+				       milli_spent_IO / 1000 : 0);
+
+				if (t_option) {
+					printf(" %s", timebuf);
+				}
+
+				printf("\n");
+				fflush(stdout);
+			}
 			free(disks);
 			free(partitions);
 		}
@@ -740,6 +867,7 @@ int main(int argc, char *argv[])
 		{"partition", required_argument, NULL, 'p'},
 		{"unit", required_argument, NULL, 'S'},
 		{"wide", no_argument, NULL, 'w'},
+		{"timestamp", no_argument, NULL, 't'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -754,7 +882,7 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	while ((c =
-		getopt_long(argc, argv, "afmnsdDp:S:whV", longopts,
+		getopt_long(argc, argv, "afmnsdDp:S:wthV", longopts,
 			    NULL)) != EOF)
 		switch (c) {
 		case 'V':
@@ -819,6 +947,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'w':
 			w_option = 1;
+			break;
+		case 't':
+			t_option = 1;
 			break;
 		default:
 			/* no other aguments defined yet. */
