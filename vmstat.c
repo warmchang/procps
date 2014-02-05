@@ -204,10 +204,10 @@ static void new_header(void)
 	    "%2s %2s %12s %12s %12s %12s %4s %4s %5s %5s %4s %4s %3s %3s %3s %3s %3s";
 
 
-	printf(w_option ? wide_header : header);
+	printf("%s", w_option ? wide_header : header);
 
 	if (t_option) {
-		printf(timestamp_header);
+		printf("%s", timestamp_header);
 	}
 
 	printf("\n");
@@ -528,10 +528,10 @@ static void diskheader(void)
 	const char wide_format[] =
 	    "%5s %9s %9s %11s %11s %9s %9s %11s %11s %7s %7s";
 
-	printf(w_option ? wide_header : header);
+	printf("%s", w_option ? wide_header : header);
 
 	if (t_option) {
-		printf(timestamp_header);
+		printf("%s", timestamp_header);
 	}
 
 	printf("\n");
