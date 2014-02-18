@@ -20,8 +20,7 @@ extern int        uptime (double *uptime_secs, double *idle_secs);
 extern unsigned long getbtime(void);
 extern void       loadavg(double *av1, double *av5, double *av15);
 
-
-/* obsolete */
+/* Shmem in 2.6.32+ */
 extern unsigned long kb_main_shared;
 /* old but still kicking -- the important stuff */
 extern unsigned long kb_main_buffers;
