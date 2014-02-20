@@ -43,6 +43,7 @@
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_NUMASKIP            /* do NOT skip numa nodes if discontinuous */
 //#define OFF_SCROLLBK            /* disable tty emulators scrollback buffer */
+//#define OFF_STDERROR            /* disable our stderr buffering (redirect) */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND8CPUS            /* pretend we're smp with 8 ticsers (sic)  */

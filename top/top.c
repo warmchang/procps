@@ -216,11 +216,13 @@ static int Autox_array [P_MAXPFLGS],
 
         /* Support for NUMA Node display, node expansion/targeting and
            run-time dynamic linking with libnuma.so treated as a plugin */
+#ifndef OFF_STDERROR
+static int Stderr_save = -1;
+#endif
 static int Numa_node_tot;
 static int Numa_node_sel = -1;
 #ifndef NUMA_DISABLE
 static void *Libnuma_handle;
-static int Stderr_save = -1;
 #if defined(PRETEND_NUMA) || defined(PRETEND8CPUS)
 static int Numa_max_node(void) { return 3; }
 #ifndef OFF_NUMASKIP
@@ -377,6 +379,15 @@ static void at_eoj (void) {
 #endif
    }
    fflush(stdout);
+#ifndef OFF_STDERROR
+   /* we gotta reverse the stderr redirect which was employed during start up
+      and needed because the two libnuma 'weak' functions were useless to us! */
+   if (-1 < Stderr_save) {
+      dup2(Stderr_save, fileno(stderr));
+      close(Stderr_save);
+      Stderr_save = -1;      // we'll be ending soon anyway but what the heck
+   }
+#endif
 } // end: at_eoj
 
 
@@ -4070,7 +4081,7 @@ static void wins_stage_2 (void) {
    // fill in missing Fieldstab members and build each window's columnhdr
    zap_fieldstab();
 
-#ifndef NUMA_DISABLE
+#ifndef OFF_STDERROR
    /* there's a chance that damn libnuma may spew to stderr so we gotta
       make sure he does not corrupt poor ol' top's first output screen!
       Yes, he provides some overridable 'weak' functions to change such
@@ -5563,16 +5574,6 @@ static void frame_make (void) {
    /* we'll deem any terminal not supporting tgoto as dumb and disable
       the normal non-interactive output optimization... */
    if (!Cap_can_goto) PSU_CLREOS(0);
-
-#ifndef NUMA_DISABLE
-   /* we gotta reverse the stderr redirect which was employed in wins_stage_2
-      and needed because the two libnuma 'weak' functions were useless to us! */
-   if (-1 < Stderr_save) {
-      dup2(Stderr_save, fileno(stderr));
-      close(Stderr_save);
-      Stderr_save = -1;
-   }
-#endif
 
    /* lastly, check auto-sized width needs for the next iteration */
    if (AUTOX_MODE && Autox_found)
