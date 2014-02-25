@@ -18,12 +18,6 @@
  *    Sami Kerola, <kerolasa@iki.fi>
  */
 
-#include <sys/ioctl.h>
-#include <sys/resource.h>
-#include <sys/select.h>
-#include <sys/time.h>
-#include <sys/types.h>
-
 #include <ctype.h>
 #include <curses.h>
 #ifndef NUMA_DISABLE
@@ -37,13 +31,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <term.h>       // foul sob, defines all sorts of stuff...
+#include <term.h>            // foul sob, defines all sorts of stuff...
 #undef    tab
 #undef    TTY
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
 #include <values.h>
+
+#include <sys/ioctl.h>
+#include <sys/resource.h>
+#include <sys/select.h>      // also available via <sys/types.h>
+#include <sys/time.h>
+#include <sys/types.h>       // also available via <stdlib.h>
 
 #include "../include/fileutils.h"
 #include "../include/nls.h"
@@ -201,10 +201,10 @@ static int   *PHash_sav = HHash_one,   // alternating 'old/new' hash tables
 
         /* Support for automatically sized fixed-width column expansions.
          * (hopefully, the macros help clarify/document our new 'feature') */
-static int Autox_array [P_MAXPFLGS],
+static int Autox_array [EU_MAXPFLGS],
            Autox_found;
-#define AUTOX_NO      P_MAXPFLGS
-#define AUTOX_COL(f)  if (P_MAXPFLGS > f) Autox_array[f] = Autox_found = 1
+#define AUTOX_NO      EU_MAXPFLGS
+#define AUTOX_COL(f)  if (EU_MAXPFLGS > f) Autox_array[f] = Autox_found = 1
 #define AUTOX_MODE   (0 > Rc.fixed_widest)
 
         /* Support for scale_mem and scale_num (to avoid duplication. */
@@ -1688,9 +1688,9 @@ static FLD_t Fieldstab[] = {
         a -1 width represents variable width columns
         a  0 width represents columns set once at startup (see zap_fieldstab)
    .lflg anomalies:
-        P_UED, L_NONE  - natural outgrowth of 'stat()' in readproc        (euid)
-        P_CPU, L_stat  - never filled by libproc, but requires times      (pcpu)
-        P_CMD, L_stat  - may yet require L_CMDLINE in calibrate_fields    (cmd/cmdline)
+        EU_UED, L_NONE - natural outgrowth of 'stat()' in readproc        (euid)
+        EU_CPU, L_stat - never filled by libproc, but requires times      (pcpu)
+        EU_CMD, L_stat - may yet require L_CMDLINE in calibrate_fields    (cmd/cmdline)
         L_EITHER       - must L_status, else L_stat == 64-bit math (__udivdi3) on 32-bit !
 
      .width  .scale  .align    .sort     .lflg
@@ -1715,11 +1715,11 @@ static FLD_t Fieldstab[] = {
    {     0,     -1,  A_right,  SF(CPN),  L_stat    },
    {     0,     -1,  A_right,  SF(CPU),  L_stat    },
    {     6,     -1,  A_right,  SF(TME),  L_stat    },
-   {     9,     -1,  A_right,  SF(TME),  L_stat    }, // P_TM2 slot
+   {     9,     -1,  A_right,  SF(TME),  L_stat    }, // EU_TM2 slot
 #ifdef BOOST_PERCNT
-   {     5,     -1,  A_right,  SF(RES),  L_statm   }, // P_MEM slot
+   {     5,     -1,  A_right,  SF(RES),  L_statm   }, // EU_MEM slot
 #else
-   {     4,     -1,  A_right,  SF(RES),  L_statm   }, // P_MEM slot
+   {     4,     -1,  A_right,  SF(RES),  L_statm   }, // EU_MEM slot
 #endif
 #ifndef NOBOOST_MEMS
    {     7,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
@@ -1879,10 +1879,10 @@ static void build_headers (void) {
                w->hdrcaplen += strlen(Caps_off) + strlen(w->capclr_msg);
             }
 #else
-            if (P_MAXPFLGS <= f) continue;
+            if (EU_MAXPFLGS <= f) continue;
 #endif
-            if (P_WCH == f) needpsdb = 1;
-            if (P_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
+            if (EU_WCH == f) needpsdb = 1;
+            if (EU_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
             Frames_libflags |= Fieldstab[w->procflgs[i]].lflg;
             s = scat(s, justify_pad(N_col(f)
                , VARcol(f) ? w->varcolsz : Fieldstab[f].width
@@ -1905,7 +1905,7 @@ static void build_headers (void) {
          // we must also accommodate an out of view sort field...
          f = w->rc.sortindx;
          Frames_libflags |= Fieldstab[f].lflg;
-         if (P_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
+         if (EU_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
       } // end: VIZISw(w)
 
       if (Rc.mode_altscr) w = w->next;
@@ -1958,16 +1958,16 @@ static void calibrate_fields (void) {
       if (VIZISw(w)) {
          w->hdrcaplen = 0;   // really only used with USE_X_COLHDR
          // build window's pflgsall array, establish upper bounds for maxpflgs
-         for (i = 0, w->totpflgs = 0; i < P_MAXPFLGS; i++) {
+         for (i = 0, w->totpflgs = 0; i < EU_MAXPFLGS; i++) {
             if (FLDviz(w, i)) {
                f = FLDget(w, i);
 #ifdef USE_X_COLHDR
                w->pflgsall[w->totpflgs++] = f;
 #else
                if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx) {
-                  w->pflgsall[w->totpflgs++] = X_XON;
+                  w->pflgsall[w->totpflgs++] = EU_XON;
                   w->pflgsall[w->totpflgs++] = f;
-                  w->pflgsall[w->totpflgs++] = X_XOF;
+                  w->pflgsall[w->totpflgs++] = EU_XOF;
                } else
                   w->pflgsall[w->totpflgs++] = f;
 #endif
@@ -1983,7 +1983,7 @@ static void calibrate_fields (void) {
             f = w->pflgsall[i + w->begpflg];
             w->procflgs[i] = f;
 #ifndef USE_X_COLHDR
-            if (P_MAXPFLGS <= f) continue;
+            if (EU_MAXPFLGS <= f) continue;
 #endif
             h = N_col(f);
             len = (VARcol(f) ? (int)strlen(h) : Fieldstab[f].width) + COLPADSIZ;
@@ -1993,7 +1993,7 @@ static void calibrate_fields (void) {
             s = scat(s, fmtmk("%*.*s", len, len, h));
          }
 #ifndef USE_X_COLHDR
-         if (X_XON == w->procflgs[i - 1]) --i;
+         if (EU_XON == w->procflgs[i - 1]) --i;
 #endif
 
          /* establish the final maxpflgs and prepare to grow the variable column
@@ -2010,7 +2010,7 @@ static void calibrate_fields (void) {
          for (i = w->totpflgs - 1; -1 < i; i--) {
             f = w->pflgsall[i];
 #ifndef USE_X_COLHDR
-            if (P_MAXPFLGS <= f) { w->endpflg = i; continue; }
+            if (EU_MAXPFLGS <= f) { w->endpflg = i; continue; }
 #endif
             h = N_col(f);
             len = (VARcol(f) ? (int)strlen(h) : Fieldstab[f].width) + COLPADSIZ;
@@ -2019,7 +2019,7 @@ static void calibrate_fields (void) {
             w->endpflg = i;
          }
 #ifndef USE_X_COLHDR
-         if (X_XOF == w->pflgsall[w->endpflg]) ++w->endpflg;
+         if (EU_XOF == w->pflgsall[w->endpflg]) ++w->endpflg;
 #endif
       } // end: if (VIZISw(w))
 
@@ -2076,10 +2076,10 @@ static void display_fields (int focus, int extend) {
    int rmax = Screen_rows - yRSVD;     // total useable rows
    static int col_sav, row_sav;
 
-   i = (P_MAXPFLGS % mxCOL) ? 1 : 0;
-   if (rmax < i + (P_MAXPFLGS / mxCOL)) mkERR;
-   i = P_MAXPFLGS / rmax;
-   if (P_MAXPFLGS % rmax) ++i;
+   i = (EU_MAXPFLGS % mxCOL) ? 1 : 0;
+   if (rmax < i + (EU_MAXPFLGS / mxCOL)) mkERR;
+   i = EU_MAXPFLGS / rmax;
+   if (EU_MAXPFLGS % rmax) ++i;
    if (i > 1) { cmax /= i; xadd = 1; }
    if (cmax > xTOTL) cmax = xTOTL;
    smax = cmax - xPRFX;
@@ -2094,7 +2094,7 @@ static void display_fields (int focus, int extend) {
    }
    fflush(stdout);
 
-   for (i = 0; i < P_MAXPFLGS; ++i) {
+   for (i = 0; i < EU_MAXPFLGS; ++i) {
       int b = FLDviz(w, i), x = (i / rmax) * cmax, y = (i % rmax) + yRSVD;
       const char *e = (i == focus && extend) ? w->capclr_hdr : "";
       FLG_t f = FLDget(w, i);
@@ -2169,7 +2169,7 @@ signify_that:
             if (i > 0) { --i; if (p) swapEM }
             break;
          case kbd_DOWN:
-            if (i + 1 < P_MAXPFLGS) { ++i; if (p) swapEM }
+            if (i + 1 < EU_MAXPFLGS) { ++i; if (p) swapEM }
             break;
          case kbd_LEFT:
          case kbd_ENTER:
@@ -2184,7 +2184,7 @@ signify_that:
             break;
          case kbd_END:
          case kbd_PGDN:
-            if (!p) i = P_MAXPFLGS - 1;
+            if (!p) i = EU_MAXPFLGS - 1;
             break;
          case kbd_SPACE:
          case 'd':
@@ -2222,7 +2222,7 @@ static inline void widths_resize (void) {
 
    // next var may also be set by the guys that actually truncate stuff
    Autox_found = 0;
-   for (i = 0; i < P_MAXPFLGS; i++) {
+   for (i = 0; i < EU_MAXPFLGS; i++) {
       if (Autox_array[i]) {
          Fieldstab[i].width++;
          Autox_array[i] = 0;
@@ -2242,29 +2242,29 @@ static void zap_fieldstab (void) {
    char buf[8];
 
    if (!once) {
-      Fieldstab[P_PID].width = Fieldstab[P_PPD].width
-         = Fieldstab[P_PGD].width = Fieldstab[P_SID].width
-         = Fieldstab[P_TGD].width = Fieldstab[P_TPG].width = 5;
+      Fieldstab[EU_PID].width = Fieldstab[EU_PPD].width
+         = Fieldstab[EU_PGD].width = Fieldstab[EU_SID].width
+         = Fieldstab[EU_TGD].width = Fieldstab[EU_TPG].width = 5;
       if (5 < (digits = get_pid_digits())) {
          if (10 < digits) error_exit(N_txt(FAIL_widepid_txt));
-         Fieldstab[P_PID].width = Fieldstab[P_PPD].width
-            = Fieldstab[P_PGD].width = Fieldstab[P_SID].width
-            = Fieldstab[P_TGD].width = Fieldstab[P_TPG].width = digits;
+         Fieldstab[EU_PID].width = Fieldstab[EU_PPD].width
+            = Fieldstab[EU_PGD].width = Fieldstab[EU_SID].width
+            = Fieldstab[EU_TGD].width = Fieldstab[EU_TPG].width = digits;
       }
       once = 1;
    }
 
    /*** hotplug_acclimated ***/
 
-   Fieldstab[P_CPN].width = 1;
+   Fieldstab[EU_CPN].width = 1;
    if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)smp_num_cpus))) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
-      Fieldstab[P_CPN].width = digits;
+      Fieldstab[EU_CPN].width = digits;
    }
 
 #ifdef BOOST_PERCNT
    Cpu_pmax = 99.9;
-   Fieldstab[P_CPU].width = 5;
+   Fieldstab[EU_CPU].width = 5;
    if (Rc.mode_irixps && smp_num_cpus > 1 && !Thread_mode) {
       Cpu_pmax = 100.0 * smp_num_cpus;
       if (smp_num_cpus > 10) {
@@ -2275,7 +2275,7 @@ static void zap_fieldstab (void) {
    }
 #else
    Cpu_pmax = 99.9;
-   Fieldstab[P_CPU].width = 4;
+   Fieldstab[EU_CPU].width = 4;
    if (Rc.mode_irixps && smp_num_cpus > 1 && !Thread_mode) {
       Cpu_pmax = 100.0 * smp_num_cpus;
       if (smp_num_cpus > 10) {
@@ -2283,33 +2283,33 @@ static void zap_fieldstab (void) {
       } else {
          if (Cpu_pmax > 999.9) Cpu_pmax = 999.9;
       }
-      Fieldstab[P_CPU].width = 5;
+      Fieldstab[EU_CPU].width = 5;
    }
 #endif
 
    /* and accommodate optional wider non-scalable columns (maybe) */
    if (!AUTOX_MODE) {
       int i;
-      Fieldstab[P_UED].width = Fieldstab[P_URD].width
-         = Fieldstab[P_USD].width = Fieldstab[P_GID].width
+      Fieldstab[EU_UED].width = Fieldstab[EU_URD].width
+         = Fieldstab[EU_USD].width = Fieldstab[EU_GID].width
          = Rc.fixed_widest ? 5 + Rc.fixed_widest : 5;
-      Fieldstab[P_UEN].width = Fieldstab[P_URN].width
-         = Fieldstab[P_USN].width = Fieldstab[P_GRP].width
+      Fieldstab[EU_UEN].width = Fieldstab[EU_URN].width
+         = Fieldstab[EU_USN].width = Fieldstab[EU_GRP].width
          = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
-      Fieldstab[P_TTY].width
+      Fieldstab[EU_TTY].width
          = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
-      Fieldstab[P_WCH].width
+      Fieldstab[EU_WCH].width
          = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
-      for (i = P_NS1; i < P_NS1 + NUM_NS; i++)
+      for (i = EU_NS1; i < EU_NS1 + NUM_NS; i++)
          Fieldstab[i].width
             = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
    }
 
    /* plus user selectable scaling */
-   Fieldstab[P_VRT].scale = Fieldstab[P_SWP].scale
-      = Fieldstab[P_RES].scale = Fieldstab[P_COD].scale
-      = Fieldstab[P_DAT].scale = Fieldstab[P_SHR].scale
-      = Fieldstab[P_USE].scale = Rc.task_mscale;
+   Fieldstab[EU_VRT].scale = Fieldstab[EU_SWP].scale
+      = Fieldstab[EU_RES].scale = Fieldstab[EU_COD].scale
+      = Fieldstab[EU_DAT].scale = Fieldstab[EU_SHR].scale
+      = Fieldstab[EU_USE].scale = Rc.task_mscale;
 
    // lastly, ensure we've got proper column headers...
    calibrate_fields();
@@ -3491,8 +3491,8 @@ static void configs_read (void) {
             default:                           // and future versions?
                if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
                   goto default_or_error;
-               for (x = 0; x < P_MAXPFLGS; ++x)
-                  if (P_MAXPFLGS <= FLDget(w, x))
+               for (x = 0; x < EU_MAXPFLGS; ++x)
+                  if (EU_MAXPFLGS <= FLDget(w, x))
                      goto default_or_error;
                break;
          }
@@ -3671,16 +3671,16 @@ static void parse_args (char **args) {
                else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
                if (*cp == '+') { SETw(Curwin, Qsrt_NORMAL); ++cp; }
                else if (*cp == '-') { OFFw(Curwin, Qsrt_NORMAL); ++cp; }
-               for (i = 0; i < P_MAXPFLGS; i++)
+               for (i = 0; i < EU_MAXPFLGS; i++)
                   if (!STRCMP(cp, N_col(i))) break;
-               if (i == P_MAXPFLGS)
+               if (i == EU_MAXPFLGS)
                   error_exit(fmtmk(N_fmt(XTRA_badflds_fmt), cp));
                OFFw(Curwin, Show_FOREST);
                Curwin->rc.sortindx = i;
                cp += strlen(cp);
                break;
             case 'O':
-               for (i = 0; i < P_MAXPFLGS; i++)
+               for (i = 0; i < EU_MAXPFLGS; i++)
                   puts(N_col(i));
                bye_bye(NULL);
             case 'p':
@@ -4244,9 +4244,9 @@ static void other_selection (int ch) {
    }
    ops = *(pval);
    *(pval++) = '\0';
-   for (enu = 0; enu < P_MAXPFLGS; enu++)      // #4: is this a valid field?
+   for (enu = 0; enu < EU_MAXPFLGS; enu++)     // #4: is this a valid field?
       if (!STRCMP(N_col(enu), glob)) break;
-   if (enu == P_MAXPFLGS) {
+   if (enu == EU_MAXPFLGS) {
       show_msg(fmtmk(N_fmt(XTRA_badflds_fmt), glob));
       return;
    }
@@ -4521,7 +4521,7 @@ static void keys_task (int ch) {
             if (*p == w->rc.sortindx) {
                --p;
 #ifndef USE_X_COLHDR
-               if (P_MAXPFLGS < *p) --p;
+               if (EU_MAXPFLGS < *p) --p;
 #endif
                if (p >= w->procflgs) {
                   w->rc.sortindx = *p;
@@ -4542,7 +4542,7 @@ static void keys_task (int ch) {
             if (*p == w->rc.sortindx) {
                ++p;
 #ifndef USE_X_COLHDR
-               if (P_MAXPFLGS < *p) ++p;
+               if (EU_MAXPFLGS < *p) ++p;
 #endif
                if (p < w->procflgs + w->maxpflgs) {
                   w->rc.sortindx = *p;
@@ -4611,7 +4611,7 @@ static void keys_task (int ch) {
       case 'V':
          if (VIZCHKw(w)) {
             TOGw(w, Show_FOREST);
-            if (!ENUviz(w, P_CMD))
+            if (!ENUviz(w, EU_CMD))
                show_msg(fmtmk(N_fmt(FOREST_modes_fmt) , CHKw(w, Show_FOREST)
                   ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
          }
@@ -4731,13 +4731,13 @@ static void keys_window (int ch) {
                w->varcolbeg -= SCROLLAMT;
             else if (0 < w->begpflg) {
                w->begpflg -= 1;
-               if (P_MAXPFLGS < w->pflgsall[w->begpflg]) w->begpflg -= 2;
+               if (EU_MAXPFLGS < w->pflgsall[w->begpflg]) w->begpflg -= 2;
             }
          }
 #else
          if (VIZCHKw(w)) if (0 < w->begpflg) {
             w->begpflg -= 1;
-            if (P_MAXPFLGS < w->pflgsall[w->begpflg]) w->begpflg -= 2;
+            if (EU_MAXPFLGS < w->pflgsall[w->begpflg]) w->begpflg -= 2;
          }
 #endif
          break;
@@ -4748,14 +4748,14 @@ static void keys_window (int ch) {
                w->varcolbeg += SCROLLAMT;
                if (0 > w->varcolbeg) w->varcolbeg = 0;
             } else if (w->begpflg + 1 < w->totpflgs) {
-               if (P_MAXPFLGS < w->pflgsall[w->begpflg])
+               if (EU_MAXPFLGS < w->pflgsall[w->begpflg])
                   w->begpflg += (w->begpflg + 3 < w->totpflgs) ? 3 : 0;
                else w->begpflg += 1;
             }
          }
 #else
          if (VIZCHKw(w)) if (w->begpflg + 1 < w->totpflgs) {
-            if (P_MAXPFLGS < w->pflgsall[w->begpflg])
+            if (EU_MAXPFLGS < w->pflgsall[w->begpflg])
                w->begpflg += (w->begpflg + 3 < w->totpflgs) ? 3 : 0;
             else w->begpflg += 1;
          }
@@ -4812,19 +4812,19 @@ static void keys_xtra (int ch) {
       we would just whack do_key's key_tab entry and this function... */
    switch (ch) {
       case 'M':
-         w->rc.sortindx = P_MEM;
+         w->rc.sortindx = EU_MEM;
 //       xmsg = "Memory";
          break;
       case 'N':
-         w->rc.sortindx = P_PID;
+         w->rc.sortindx = EU_PID;
 //       xmsg = "Numerical";
          break;
       case 'P':
-         w->rc.sortindx = P_CPU;
+         w->rc.sortindx = EU_CPU;
 //       xmsg = "CPU";
          break;
       case 'T':
-         w->rc.sortindx = P_TM2;
+         w->rc.sortindx = EU_TM2;
 //       xmsg = "Time";
          break;
       default:                    // keep gcc happy
@@ -5204,30 +5204,30 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
       switch (i) {
 #ifndef USE_X_COLHDR
          // these 2 aren't real procflgs, they're used in column highlighting!
-         case X_XON:
-         case X_XOF:
+         case EU_XON:
+         case EU_XOF:
             cp = NULL;
             if (!CHKw(q, INFINDS_xxx | NOHIFND_xxx | NOHISEL_xxx)) {
                /* treat running tasks specially - entire row may get highlighted
                   so we needn't turn it on and we MUST NOT turn it off */
                if (!('R' == p->state && CHKw(q, Show_HIROWS)))
-                  cp = (X_XON == i ? q->capclr_rowhigh : q->capclr_rownorm);
+                  cp = (EU_XON == i ? q->capclr_rowhigh : q->capclr_rownorm);
             }
             break;
 #endif
-         case P_CGR:
+         case EU_CGR:
             makeVAR(p->cgroup[0]);
             break;
-         case P_CMD:
+         case EU_CMD:
             makeVAR(forest_display(q, p));
             break;
-         case P_COD:
+         case EU_COD:
             cp = scale_mem(S, pages2K(p->trs), W, Jn);
             break;
-         case P_CPN:
+         case EU_CPN:
             cp = make_num(p->processor, W, Jn, AUTOX_NO);
             break;
-         case P_CPU:
+         case EU_CPU:
          {  float u = (float)p->pcpu * Frame_etscale;
             /* process can't use more %cpu than number of threads it has
              ( thanks Jaromir Capik <jcapik@redhat.com> ) */
@@ -5236,150 +5236,150 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = scale_pcnt(u, W, Jn);
          }
             break;
-         case P_DAT:
+         case EU_DAT:
             cp = scale_mem(S, pages2K(p->drs), W, Jn);
             break;
-         case P_DRT:
+         case EU_DRT:
             cp = scale_num(p->dt, W, Jn);
             break;
-         case P_ENV:
+         case EU_ENV:
             makeVAR(p->environ[0]);
             break;
-         case P_FL1:
+         case EU_FL1:
             cp = scale_num(p->maj_flt, W, Jn);
             break;
-         case P_FL2:
+         case EU_FL2:
             cp = scale_num(p->min_flt, W, Jn);
             break;
-         case P_FLG:
+         case EU_FLG:
             cp = make_str(hex_make(p->flags, 1), W, Js, AUTOX_NO);
             break;
-         case P_FV1:
+         case EU_FV1:
             cp = scale_num(p->maj_delta, W, Jn);
             break;
-         case P_FV2:
+         case EU_FV2:
             cp = scale_num(p->min_delta, W, Jn);
             break;
-         case P_GID:
-            cp = make_num(p->egid, W, Jn, P_GID);
+         case EU_GID:
+            cp = make_num(p->egid, W, Jn, EU_GID);
             break;
-         case P_GRP:
-            cp = make_str(p->egroup, W, Js, P_GRP);
+         case EU_GRP:
+            cp = make_str(p->egroup, W, Js, EU_GRP);
             break;
-         case P_MEM:
+         case EU_MEM:
             cp = scale_pcnt((float)pages2K(p->resident) * 100 / kb_main_total, W, Jn);
             break;
-         case P_NCE:
+         case EU_NCE:
             cp = make_num(p->nice, W, Jn, AUTOX_NO);
             break;
-         case P_NS1:   // IPCNS
-         case P_NS2:   // MNTNS
-         case P_NS3:   // NETNS
-         case P_NS4:   // PIDNS
-         case P_NS5:   // USERNS
-         case P_NS6:   // UTSNS
-         {  long ino = p->ns[i - P_NS1];
+         case EU_NS1:  // IPCNS
+         case EU_NS2:  // MNTNS
+         case EU_NS3:  // NETNS
+         case EU_NS4:  // PIDNS
+         case EU_NS5:  // USERNS
+         case EU_NS6:  // UTSNS
+         {  long ino = p->ns[i - EU_NS1];
             if (ino > 0) cp = make_num(ino, W, Jn, i);
             else cp = make_str("-", W, Js, i);
          }
             break;
 #ifdef OOMEM_ENABLE
-         case P_OOA:
+         case EU_OOA:
             cp = make_num(p->oom_adj, W, Jn, AUTOX_NO);
             break;
-         case P_OOM:
+         case EU_OOM:
             cp = make_num(p->oom_score, W, Jn, AUTOX_NO);
             break;
 #endif
-         case P_PGD:
+         case EU_PGD:
             cp = make_num(p->pgrp, W, Jn, AUTOX_NO);
             break;
-         case P_PID:
+         case EU_PID:
             cp = make_num(p->tid, W, Jn, AUTOX_NO);
             break;
-         case P_PPD:
+         case EU_PPD:
             cp = make_num(p->ppid, W, Jn, AUTOX_NO);
             break;
-         case P_PRI:
+         case EU_PRI:
             if (-99 > p->priority || 999 < p->priority) {
                cp = make_str("rt", W, Jn, AUTOX_NO);
             } else
                cp = make_num(p->priority, W, Jn, AUTOX_NO);
             break;
-         case P_RES:
+         case EU_RES:
             cp = scale_mem(S, pages2K(p->resident), W, Jn);
             break;
-         case P_SGD:
+         case EU_SGD:
             makeVAR(p->supgid);
             break;
-         case P_SGN:
+         case EU_SGN:
             makeVAR(p->supgrp);
             break;
-         case P_SHR:
+         case EU_SHR:
             cp = scale_mem(S, pages2K(p->share), W, Jn);
             break;
-         case P_SID:
+         case EU_SID:
             cp = make_num(p->session, W, Jn, AUTOX_NO);
             break;
-         case P_STA:
+         case EU_STA:
             cp = make_chr(p->state, W, Js);
             break;
-         case P_SWP:
+         case EU_SWP:
             cp = scale_mem(S, p->vm_swap, W, Jn);
             break;
-         case P_TGD:
+         case EU_TGD:
             cp = make_num(p->tgid, W, Jn, AUTOX_NO);
             break;
-         case P_THD:
+         case EU_THD:
             cp = make_num(p->nlwp, W, Jn, AUTOX_NO);
             break;
-         case P_TM2:
-         case P_TME:
+         case EU_TM2:
+         case EU_TME:
          {  TIC_t t = p->utime + p->stime;
             if (CHKw(q, Show_CTIMES)) t += (p->cutime + p->cstime);
             cp = scale_tics(t, W, Jn);
          }
             break;
-         case P_TPG:
+         case EU_TPG:
             cp = make_num(p->tpgid, W, Jn, AUTOX_NO);
             break;
-         case P_TTY:
+         case EU_TTY:
          {  char tmp[SMLBUFSIZ];
             dev_to_tty(tmp, W, p->tty, p->tid, ABBREV_DEV);
-            cp = make_str(tmp, W, Js, P_TTY);
+            cp = make_str(tmp, W, Js, EU_TTY);
          }
             break;
-         case P_UED:
-            cp = make_num(p->euid, W, Jn, P_UED);
+         case EU_UED:
+            cp = make_num(p->euid, W, Jn, EU_UED);
             break;
-         case P_UEN:
-            cp = make_str(p->euser, W, Js, P_UEN);
+         case EU_UEN:
+            cp = make_str(p->euser, W, Js, EU_UEN);
             break;
-         case P_URD:
-            cp = make_num(p->ruid, W, Jn, P_URD);
+         case EU_URD:
+            cp = make_num(p->ruid, W, Jn, EU_URD);
             break;
-         case P_URN:
-            cp = make_str(p->ruser, W, Js, P_URN);
+         case EU_URN:
+            cp = make_str(p->ruser, W, Js, EU_URN);
             break;
-         case P_USD:
-            cp = make_num(p->suid, W, Jn, P_USD);
+         case EU_USD:
+            cp = make_num(p->suid, W, Jn, EU_USD);
             break;
-         case P_USE:
+         case EU_USE:
             cp = scale_mem(S, (p->vm_swap + pages2K(p->resident)), W, Jn);
             break;
-         case P_USN:
-            cp = make_str(p->suser, W, Js, P_USN);
+         case EU_USN:
+            cp = make_str(p->suser, W, Js, EU_USN);
             break;
-         case P_VRT:
+         case EU_VRT:
             cp = scale_mem(S, pages2K(p->size), W, Jn);
             break;
-         case P_WCH:
+         case EU_WCH:
          {  const char *u;
             if (No_ksyms)
                u = hex_make(p->wchan, 0);
             else
                u = lookup_wchan(p->wchan, p->tid);
-            cp = make_str(u, W, Js, P_WCH);
+            cp = make_str(u, W, Js, EU_WCH);
          }
             break;
          default:                 // keep gcc happy

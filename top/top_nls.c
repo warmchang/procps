@@ -94,8 +94,8 @@
          *    +  none of the important translator only comments will
          *       clutter and obscure the main program
          */
-const char *Head_nlstab[P_MAXPFLGS];
-const char *Desc_nlstab[P_MAXPFLGS];
+const char *Head_nlstab[EU_MAXPFLGS];
+const char *Desc_nlstab[EU_MAXPFLGS];
 const char *Norm_nlstab[norm_MAX];
 const char *Uniq_nlstab[uniq_MAX];
 
@@ -121,162 +121,162 @@ static void build_two_nlstabs (void) {
    . */
 
 /* Translation Hint: maximum 'PID' = 5 */
-   Head_nlstab[P_PID] = _("PID");
-   Desc_nlstab[P_PID] = _("Process Id");
+   Head_nlstab[EU_PID] = _("PID");
+   Desc_nlstab[EU_PID] = _("Process Id");
 /* Translation Hint: maximum 'PPID' = 5 */
-   Head_nlstab[P_PPD] = _("PPID");
-   Desc_nlstab[P_PPD] = _("Parent Process pid");
+   Head_nlstab[EU_PPD] = _("PPID");
+   Desc_nlstab[EU_PPD] = _("Parent Process pid");
 /* Translation Hint: maximum 'UID' = 5 */
-   Head_nlstab[P_UED] = _("UID");
-   Desc_nlstab[P_UED] = _("Effective User Id");
+   Head_nlstab[EU_UED] = _("UID");
+   Desc_nlstab[EU_UED] = _("Effective User Id");
 /* Translation Hint: maximum 'USER' = 8 */
-   Head_nlstab[P_UEN] = _("USER");
-   Desc_nlstab[P_UEN] = _("Effective User Name");
+   Head_nlstab[EU_UEN] = _("USER");
+   Desc_nlstab[EU_UEN] = _("Effective User Name");
 /* Translation Hint: maximum 'RUID' = 5 */
-   Head_nlstab[P_URD] = _("RUID");
-   Desc_nlstab[P_URD] = _("Real User Id");
+   Head_nlstab[EU_URD] = _("RUID");
+   Desc_nlstab[EU_URD] = _("Real User Id");
 /* Translation Hint: maximum 'RUSER' = 8 */
-   Head_nlstab[P_URN] = _("RUSER");
-   Desc_nlstab[P_URN] = _("Real User Name");
+   Head_nlstab[EU_URN] = _("RUSER");
+   Desc_nlstab[EU_URN] = _("Real User Name");
 /* Translation Hint: maximum 'SUID' = 5 */
-   Head_nlstab[P_USD] = _("SUID");
-   Desc_nlstab[P_USD] = _("Saved User Id");
+   Head_nlstab[EU_USD] = _("SUID");
+   Desc_nlstab[EU_USD] = _("Saved User Id");
 /* Translation Hint: maximum 'SUSER' = 8 */
-   Head_nlstab[P_USN] = _("SUSER");
-   Desc_nlstab[P_USN] = _("Saved User Name");
+   Head_nlstab[EU_USN] = _("SUSER");
+   Desc_nlstab[EU_USN] = _("Saved User Name");
 /* Translation Hint: maximum 'GID' = 5 */
-   Head_nlstab[P_GID] = _("GID");
-   Desc_nlstab[P_GID] = _("Group Id");
+   Head_nlstab[EU_GID] = _("GID");
+   Desc_nlstab[EU_GID] = _("Group Id");
 /* Translation Hint: maximum 'GROUP' = 8 */
-   Head_nlstab[P_GRP] = _("GROUP");
-   Desc_nlstab[P_GRP] = _("Group Name");
+   Head_nlstab[EU_GRP] = _("GROUP");
+   Desc_nlstab[EU_GRP] = _("Group Name");
 /* Translation Hint: maximum 'PGRP' = 5 */
-   Head_nlstab[P_PGD] = _("PGRP");
-   Desc_nlstab[P_PGD] = _("Process Group Id");
+   Head_nlstab[EU_PGD] = _("PGRP");
+   Desc_nlstab[EU_PGD] = _("Process Group Id");
 /* Translation Hint: maximum 'TTY' = 8 */
-   Head_nlstab[P_TTY] = _("TTY");
-   Desc_nlstab[P_TTY] = _("Controlling Tty");
+   Head_nlstab[EU_TTY] = _("TTY");
+   Desc_nlstab[EU_TTY] = _("Controlling Tty");
 /* Translation Hint: maximum 'TPGID' = 5 */
-   Head_nlstab[P_TPG] = _("TPGID");
-   Desc_nlstab[P_TPG] = _("Tty Process Grp Id");
+   Head_nlstab[EU_TPG] = _("TPGID");
+   Desc_nlstab[EU_TPG] = _("Tty Process Grp Id");
 /* Translation Hint: maximum 'SID' = 5 */
-   Head_nlstab[P_SID] = _("SID");
-   Desc_nlstab[P_SID] = _("Session Id");
+   Head_nlstab[EU_SID] = _("SID");
+   Desc_nlstab[EU_SID] = _("Session Id");
 /* Translation Hint: maximum 'PR' = 3 */
-   Head_nlstab[P_PRI] = _("PR");
-   Desc_nlstab[P_PRI] = _("Priority");
+   Head_nlstab[EU_PRI] = _("PR");
+   Desc_nlstab[EU_PRI] = _("Priority");
 /* Translation Hint: maximum 'NI' = 3 */
-   Head_nlstab[P_NCE] = _("NI");
-   Desc_nlstab[P_NCE] = _("Nice Value");
+   Head_nlstab[EU_NCE] = _("NI");
+   Desc_nlstab[EU_NCE] = _("Nice Value");
 /* Translation Hint: maximum 'nTH' = 3 */
-   Head_nlstab[P_THD] = _("nTH");
-   Desc_nlstab[P_THD] = _("Number of Threads");
+   Head_nlstab[EU_THD] = _("nTH");
+   Desc_nlstab[EU_THD] = _("Number of Threads");
 /* Translation Hint: maximum 'P' = 1 */
-   Head_nlstab[P_CPN] = _("P");
-   Desc_nlstab[P_CPN] = _("Last Used Cpu (SMP)");
+   Head_nlstab[EU_CPN] = _("P");
+   Desc_nlstab[EU_CPN] = _("Last Used Cpu (SMP)");
 /* Translation Hint: maximum '%CPU' = 4 */
-   Head_nlstab[P_CPU] = _("%CPU");
-   Desc_nlstab[P_CPU] = _("CPU Usage");
+   Head_nlstab[EU_CPU] = _("%CPU");
+   Desc_nlstab[EU_CPU] = _("CPU Usage");
 /* Translation Hint: maximum '' = 6 */
-   Head_nlstab[P_TME] = _("TIME");
-   Desc_nlstab[P_TME] = _("CPU Time");
+   Head_nlstab[EU_TME] = _("TIME");
+   Desc_nlstab[EU_TME] = _("CPU Time");
 /* Translation Hint: maximum 'TIME+' = 9 */
-   Head_nlstab[P_TM2] = _("TIME+");
-   Desc_nlstab[P_TM2] = _("CPU Time, hundredths");
+   Head_nlstab[EU_TM2] = _("TIME+");
+   Desc_nlstab[EU_TM2] = _("CPU Time, hundredths");
 /* Translation Hint: maximum '%MEM' = 4 */
-   Head_nlstab[P_MEM] = _("%MEM");
-   Desc_nlstab[P_MEM] = _("Memory Usage (RES)");
+   Head_nlstab[EU_MEM] = _("%MEM");
+   Desc_nlstab[EU_MEM] = _("Memory Usage (RES)");
 /* Translation Hint: maximum 'VIRT' = 5 */
-   Head_nlstab[P_VRT] = _("VIRT");
-   Desc_nlstab[P_VRT] = _("Virtual Image (KiB)");
+   Head_nlstab[EU_VRT] = _("VIRT");
+   Desc_nlstab[EU_VRT] = _("Virtual Image (KiB)");
 /* Translation Hint: maximum 'SWAP' = 4 */
-   Head_nlstab[P_SWP] = _("SWAP");
-   Desc_nlstab[P_SWP] = _("Swapped Size (KiB)");
+   Head_nlstab[EU_SWP] = _("SWAP");
+   Desc_nlstab[EU_SWP] = _("Swapped Size (KiB)");
 /* Translation Hint: maximum 'RES' = 4 */
-   Head_nlstab[P_RES] = _("RES");
-   Desc_nlstab[P_RES] = _("Resident Size (KiB)");
+   Head_nlstab[EU_RES] = _("RES");
+   Desc_nlstab[EU_RES] = _("Resident Size (KiB)");
 /* Translation Hint: maximum 'CODE' = 4 */
-   Head_nlstab[P_COD] = _("CODE");
-   Desc_nlstab[P_COD] = _("Code Size (KiB)");
+   Head_nlstab[EU_COD] = _("CODE");
+   Desc_nlstab[EU_COD] = _("Code Size (KiB)");
 /* Translation Hint: maximum 'DATA' = 4 */
-   Head_nlstab[P_DAT] = _("DATA");
-   Desc_nlstab[P_DAT] = _("Data+Stack (KiB)");
+   Head_nlstab[EU_DAT] = _("DATA");
+   Desc_nlstab[EU_DAT] = _("Data+Stack (KiB)");
 /* Translation Hint: maximum 'SHR' = 4 */
-   Head_nlstab[P_SHR] = _("SHR");
-   Desc_nlstab[P_SHR] = _("Shared Memory (KiB)");
+   Head_nlstab[EU_SHR] = _("SHR");
+   Desc_nlstab[EU_SHR] = _("Shared Memory (KiB)");
 /* Translation Hint: maximum 'nMaj' = 4 */
-   Head_nlstab[P_FL1] = _("nMaj");
-   Desc_nlstab[P_FL1] = _("Major Page Faults");
+   Head_nlstab[EU_FL1] = _("nMaj");
+   Desc_nlstab[EU_FL1] = _("Major Page Faults");
 /* Translation Hint: maximum 'nMin' = 4 */
-   Head_nlstab[P_FL2] = _("nMin");
-   Desc_nlstab[P_FL2] = _("Minor Page Faults");
+   Head_nlstab[EU_FL2] = _("nMin");
+   Desc_nlstab[EU_FL2] = _("Minor Page Faults");
 /* Translation Hint: maximum 'nDRT' = 4 */
-   Head_nlstab[P_DRT] = _("nDRT");
-   Desc_nlstab[P_DRT] = _("Dirty Pages Count");
+   Head_nlstab[EU_DRT] = _("nDRT");
+   Desc_nlstab[EU_DRT] = _("Dirty Pages Count");
 /* Translation Hint: maximum 'S' = 1 */
-   Head_nlstab[P_STA] = _("S");
-   Desc_nlstab[P_STA] = _("Process Status");
+   Head_nlstab[EU_STA] = _("S");
+   Desc_nlstab[EU_STA] = _("Process Status");
 /* Translation Hint: maximum 'COMMAND' = 7 */
-   Head_nlstab[P_CMD] = _("COMMAND");
-   Desc_nlstab[P_CMD] = _("Command Name/Line");
+   Head_nlstab[EU_CMD] = _("COMMAND");
+   Desc_nlstab[EU_CMD] = _("Command Name/Line");
 /* Translation Hint: maximum 'WCHAN' = 7 */
-   Head_nlstab[P_WCH] = _("WCHAN");
-   Desc_nlstab[P_WCH] = _("Sleeping in Function");
+   Head_nlstab[EU_WCH] = _("WCHAN");
+   Desc_nlstab[EU_WCH] = _("Sleeping in Function");
 /* Translation Hint: maximum 'Flags' = 8 */
-   Head_nlstab[P_FLG] = _("Flags");
-   Desc_nlstab[P_FLG] = _("Task Flags <sched.h>");
+   Head_nlstab[EU_FLG] = _("Flags");
+   Desc_nlstab[EU_FLG] = _("Task Flags <sched.h>");
 /* Translation Hint: maximum 'CGROUPS' = 7 */
-   Head_nlstab[P_CGR] = _("CGROUPS");
-   Desc_nlstab[P_CGR] = _("Control Groups");
+   Head_nlstab[EU_CGR] = _("CGROUPS");
+   Desc_nlstab[EU_CGR] = _("Control Groups");
 /* Translation Hint: maximum 'SUPGIDS' = 7 */
-   Head_nlstab[P_SGD] = _("SUPGIDS");
-   Desc_nlstab[P_SGD] = _("Supp Groups IDs");
+   Head_nlstab[EU_SGD] = _("SUPGIDS");
+   Desc_nlstab[EU_SGD] = _("Supp Groups IDs");
 /* Translation Hint: maximum 'SUPGRPS' = 7 */
-   Head_nlstab[P_SGN] = _("SUPGRPS");
-   Desc_nlstab[P_SGN] = _("Supp Groups Names");
+   Head_nlstab[EU_SGN] = _("SUPGRPS");
+   Desc_nlstab[EU_SGN] = _("Supp Groups Names");
 /* Translation Hint: maximum 'TGID' = 5 */
-   Head_nlstab[P_TGD] = _("TGID");
-   Desc_nlstab[P_TGD] = _("Thread Group Id");
+   Head_nlstab[EU_TGD] = _("TGID");
+   Desc_nlstab[EU_TGD] = _("Thread Group Id");
 #ifdef OOMEM_ENABLE
 /* Translation Hint: maximum 'Adj' = 3 */
-   Head_nlstab[P_OOA] = _("Adj");
-   Desc_nlstab[P_OOA] = _("oom_adjustment (2^X)");
+   Head_nlstab[EU_OOA] = _("Adj");
+   Desc_nlstab[EU_OOA] = _("oom_adjustment (2^X)");
 /* Translation Hint: maximum 'Badness' = 8 */
-   Head_nlstab[P_OOM] = _("Badness");
-   Desc_nlstab[P_OOM] = _("oom_score (badness)");
+   Head_nlstab[EU_OOM] = _("Badness");
+   Desc_nlstab[EU_OOM] = _("oom_score (badness)");
 #endif
 /* Translation Hint: maximum 'ENVIRON' = 7 */
-   Head_nlstab[P_ENV] = _("ENVIRON");
+   Head_nlstab[EU_ENV] = _("ENVIRON");
 /* Translation Hint: the abbreviation 'vars' below is shorthand for
                      'variables' */
-   Desc_nlstab[P_ENV] = _("Environment vars");
+   Desc_nlstab[EU_ENV] = _("Environment vars");
 /* Translation Hint: maximum 'vMj' = 3 */
-   Head_nlstab[P_FV1] = _("vMj");
-   Desc_nlstab[P_FV1] = _("Major Faults delta");
+   Head_nlstab[EU_FV1] = _("vMj");
+   Desc_nlstab[EU_FV1] = _("Major Faults delta");
 /* Translation Hint: maximum 'vMn' = 3 */
-   Head_nlstab[P_FV2] = _("vMn");
-   Desc_nlstab[P_FV2] = _("Minor Faults delta");
+   Head_nlstab[EU_FV2] = _("vMn");
+   Desc_nlstab[EU_FV2] = _("Minor Faults delta");
 /* Translation Hint: maximum 'USED' = 4 */
-   Head_nlstab[P_USE] = _("USED");
-   Desc_nlstab[P_USE] = _("Res+Swap Size (KiB)");
+   Head_nlstab[EU_USE] = _("USED");
+   Desc_nlstab[EU_USE] = _("Res+Swap Size (KiB)");
 /* Translation Hint: maximum 'nsIPC' = 10 */
-   Head_nlstab[P_NS1] = _("nsIPC");
-   Desc_nlstab[P_NS1] = _("IPC namespace Inode");
+   Head_nlstab[EU_NS1] = _("nsIPC");
+   Desc_nlstab[EU_NS1] = _("IPC namespace Inode");
 /* Translation Hint: maximum 'nsMNT' = 10 */
-   Head_nlstab[P_NS2] = _("nsMNT");
-   Desc_nlstab[P_NS2] = _("MNT namespace Inode");
+   Head_nlstab[EU_NS2] = _("nsMNT");
+   Desc_nlstab[EU_NS2] = _("MNT namespace Inode");
 /* Translation Hint: maximum 'nsNET' = 10 */
-   Head_nlstab[P_NS3] = _("nsNET");
-   Desc_nlstab[P_NS3] = _("NET namespace Inode");
+   Head_nlstab[EU_NS3] = _("nsNET");
+   Desc_nlstab[EU_NS3] = _("NET namespace Inode");
 /* Translation Hint: maximum 'nsPID' = 10 */
-   Head_nlstab[P_NS4] = _("nsPID");
-   Desc_nlstab[P_NS4] = _("PID namespace Inode");
+   Head_nlstab[EU_NS4] = _("nsPID");
+   Desc_nlstab[EU_NS4] = _("PID namespace Inode");
 /* Translation Hint: maximum 'nsUSER' = 10 */
-   Head_nlstab[P_NS5] = _("nsUSER");
-   Desc_nlstab[P_NS5] = _("USER namespace Inode");
+   Head_nlstab[EU_NS5] = _("nsUSER");
+   Desc_nlstab[EU_NS5] = _("USER namespace Inode");
 /* Translation Hint: maximum 'nsUTS' = 10 */
-   Head_nlstab[P_NS6] = _("nsUTS");
-   Desc_nlstab[P_NS6] = _("UTS namespace Inode");
+   Head_nlstab[EU_NS6] = _("nsUTS");
+   Desc_nlstab[EU_NS6] = _("UTS namespace Inode");
 }
 
 
@@ -681,7 +681,7 @@ void initialize_nls (void) {
    memset(Head_nlstab, 0, sizeof(Head_nlstab));
    memset(Desc_nlstab, 0, sizeof(Desc_nlstab));
    build_two_nlstabs();
-   for (i = 0; i < P_MAXPFLGS; i++) {
+   for (i = 0; i < EU_MAXPFLGS; i++) {
       if (!Head_nlstab[i]) {
          fprintf(stderr, nls_err, "Head", i);
          exit(1);

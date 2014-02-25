@@ -181,28 +181,28 @@ char *strcasestr(const char *haystack, const char *needle);
         /* Flags for each possible field (and then some) --
            these MUST be kept in sync with the FLD_t Fieldstab[] array !! */
 enum pflag {
-   P_PID = 0, P_PPD,
-   P_UED, P_UEN, P_URD, P_URN, P_USD, P_USN,
-   P_GID, P_GRP, P_PGD, P_TTY, P_TPG, P_SID,
-   P_PRI, P_NCE, P_THD,
-   P_CPN, P_CPU, P_TME, P_TM2,
-   P_MEM, P_VRT, P_SWP, P_RES, P_COD, P_DAT, P_SHR,
-   P_FL1, P_FL2, P_DRT,
-   P_STA, P_CMD, P_WCH, P_FLG, P_CGR,
-   P_SGD, P_SGN, P_TGD,
+   EU_PID = 0, EU_PPD,
+   EU_UED, EU_UEN, EU_URD, EU_URN, EU_USD, EU_USN,
+   EU_GID, EU_GRP, EU_PGD, EU_TTY, EU_TPG, EU_SID,
+   EU_PRI, EU_NCE, EU_THD,
+   EU_CPN, EU_CPU, EU_TME, EU_TM2,
+   EU_MEM, EU_VRT, EU_SWP, EU_RES, EU_COD, EU_DAT, EU_SHR,
+   EU_FL1, EU_FL2, EU_DRT,
+   EU_STA, EU_CMD, EU_WCH, EU_FLG, EU_CGR,
+   EU_SGD, EU_SGN, EU_TGD,
 #ifdef OOMEM_ENABLE
-   P_OOA, P_OOM,
+   EU_OOA, EU_OOM,
 #endif
-   P_ENV,
-   P_FV1, P_FV2,
-   P_USE,
-   P_NS1, P_NS2, P_NS3, P_NS4, P_NS5, P_NS6,
+   EU_ENV,
+   EU_FV1, EU_FV2,
+   EU_USE,
+   EU_NS1, EU_NS2, EU_NS3, EU_NS4, EU_NS5, EU_NS6,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
-   P_MAXPFLGS
+   EU_MAXPFLGS
 #else
    // not really pflags, used with tbl indexing & col highlighting
-   P_MAXPFLGS, X_XON, X_XOF
+   EU_MAXPFLGS, EU_XON, EU_XOF
 #endif
 };
 
@@ -446,7 +446,7 @@ typedef struct WIN_t {
 #define VARright(w)  (1 == w->maxpflgs && VARcol(w->procflgs[0]))
 #else
 #define VARright(w) ((1 == w->maxpflgs && VARcol(w->procflgs[0])) || \
-                     (3 == w->maxpflgs && X_XON == w->procflgs[0] && VARcol(w->procflgs[1])))
+                     (3 == w->maxpflgs && EU_XON == w->procflgs[0] && VARcol(w->procflgs[1])))
 #endif
 #define VARleft(w)   (w->varcolbeg && VARright(w))
 #define SCROLLAMT    8
@@ -476,7 +476,7 @@ typedef struct WIN_t {
         /* Used to create *most* of the sort callback functions
            note: some of the callbacks are NOT your father's callbacks, they're
                  highly optimized to save them ol' precious cycles! */
-#define SCB_NAME(f) sort_P_ ## f
+#define SCB_NAME(f) sort_EU_ ## f
 #define SCB_NUM1(f,n) \
    static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
       if ( (*P)->n < (*Q)->n ) return SORT_lt; \
@@ -598,16 +598,16 @@ typedef struct WIN_t {
         /* The default values for the local config file */
 #define DEF_RCFILE { \
    RCF_VERSION_ID, 0, 1, DEF_DELAY, 0, { \
-   { P_CPU, DEF_WINFLGS, 0, \
+   { EU_CPU, DEF_WINFLGS, 0, \
       COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED, \
       "Def", DEF_FIELDS }, \
-   { P_PID, DEF_WINFLGS, 0, \
+   { EU_PID, DEF_WINFLGS, 0, \
       COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, COLOR_CYAN, \
       "Job", JOB_FIELDS }, \
-   { P_MEM, DEF_WINFLGS, 0, \
+   { EU_MEM, DEF_WINFLGS, 0, \
       COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA, \
       "Mem", MEM_FIELDS }, \
-   { P_UEN, DEF_WINFLGS, 0, \
+   { EU_UEN, DEF_WINFLGS, 0, \
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
    }, 0, SK_Kb, SK_Kb, 0 }
@@ -647,7 +647,7 @@ typedef struct WIN_t {
    /* ( see the find_string function for the one true required protoype ) */
 /*------  Sort callbacks  ------------------------------------------------*/
 /*        for each possible field, in the form of:                        */
-/*atic int           sort_P_XXX (const proc_t **P, const proc_t **Q);     */
+/*atic int           sort_EU_XXX (const proc_t **P, const proc_t **Q);    */
 /*------  Tiny useful routine(s)  ----------------------------------------*/
 //atic const char   *fmtmk (const char *fmts, ...);
 //atic inline char  *scat (char *dst, const char *src);
