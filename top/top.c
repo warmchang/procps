@@ -779,7 +779,7 @@ static int show_pmt (const char *str) {
          *    Our special formatting consists of:
          *       "some text <_delimiter_> some more text <_delimiter_>...\n"
          *    Where <_delimiter_> is a two byte combination consisting of a
-         *    tilde followed by an ascii digit in the the range of 1 - 8.
+         *    tilde followed by an ascii digit in the range of 1 - 8.
          *       examples: ~1,  ~5,  ~8, etc.
          *    The tilde is effectively stripped and the next digit
          *    converted to an index which is then used to select an

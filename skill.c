@@ -751,7 +751,7 @@ int main(int argc, char ** argv)
 		kill_main(argc, argv);
 		break;
 	default:
-		fprintf(stderr, _("skill: \"%s\" is not support\n"),
+		fprintf(stderr, _("skill: \"%s\" is not supported\n"),
 			program_invocation_short_name);
 		fprintf(stderr, USAGE_MAN_TAIL("skill(1)"));
 		return EXIT_FAILURE;

@@ -120,7 +120,7 @@ void do_help (const char *opt, int rc) {
     fputs(_("\n"
       "  The selection options take as their argument either:\n"
       "    a comma-separated list e.g. '-u root,nobody' or\n"
-      "    or a blank-separated list e.g. '-p 123 4567'\n"), out);
+      "    a blank-separated list e.g. '-p 123 4567'\n"), out);
   }
   if (section == HELP_OUT || section == HELP_ALL) {
     fputs(_("\nOutput formats:\n"), out);
@@ -141,7 +141,7 @@ void do_help (const char *opt, int rc) {
     fputs(_("  u                   user-oriented format\n"), out);
     fputs(_("  v                   virtual memory format\n"), out);
     fputs(_("  X                   register format\n"), out);
-    fputs(_(" -y                   do not show flags, show rrs vs. addr (used with -l)\n"), out);
+    fputs(_(" -y                   do not show flags, show rss vs. addr (used with -l)\n"), out);
     fputs(_("     --context        display security context (for SELinux)\n"), out);
     fputs(_("     --headers        repeat header lines, one per page\n"), out);
     fputs(_("     --no-headers     do not print header at all\n"), out);

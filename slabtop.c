@@ -376,15 +376,19 @@ int main(int argc, char *argv[])
 		       " %-35s: %.2fK / %.2fK / %.2fK\n\n",
 		       /* Translation Hint: Next five strings must not
 			* exceed 35 length in characters.  */
+		       /* xgettext:no-c-format */
 		       _("Active / Total Objects (% used)"),
 		       stats.nr_active_objs, stats.nr_objs,
 		       100.0 * stats.nr_active_objs / stats.nr_objs,
+	               /* xgettext:no-c-format */
 		       _("Active / Total Slabs (% used)"),
 		       stats.nr_active_slabs, stats.nr_slabs,
 		       100.0 * stats.nr_active_slabs / stats.nr_slabs,
+	               /* xgettext:no-c-format */
 		       _("Active / Total Caches (% used)"),
 		       stats.nr_active_caches, stats.nr_caches,
 		       100.0 * stats.nr_active_caches / stats.nr_caches,
+	               /* xgettext:no-c-format */
 		       _("Active / Total Size (% used)"),
 		       stats.active_size / 1024.0, stats.total_size / 1024.0,
 		       100.0 * stats.active_size / stats.total_size,
