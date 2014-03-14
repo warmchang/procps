@@ -483,14 +483,16 @@ static int pattern_match(const char *string, const char *pat)
 	return (1);
 }
 
+#define LINELEN 4096
+
 /*
  * Preload the sysctl's from the conf file.  We parse the file and then
  * reform it (strip out whitespace).
  */
 static int Preload(const char *restrict const filename)
 {
-	char oneline[256];
-	char buffer[256];
+	char oneline[LINELEN];
+	char buffer[LINELEN];
 	FILE *fp;
 	char *t;
 	int n = 0;
