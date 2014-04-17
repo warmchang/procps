@@ -124,4 +124,4 @@ dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
 
 get-trans:
-	rsync -Lrtvz  translationproject.org::tp/latest/procps/  po
+	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng/  po
