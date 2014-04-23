@@ -149,9 +149,9 @@ The remaining Table of Contents
 .\" ......................................................................
 .SS Operation
 .\" ----------------------------------------------------------------------
-When operating \*(We, the two most important keys are the help ('h' or '?')
+When operating \*(We, the two most important keys are the help (h or ?)
 key and quit ('q') key.
-Alternatively, you could simply use the traditional interrupt key ('^C')
+Alternatively, you could simply use the traditional interrupt key (^C)
 when you're done.
 
 When started for the first time, you'll be presented with these traditional
@@ -237,31 +237,31 @@ All are explained in detail in the sections that follow.
 
 .nf
     \fIGlobal-defaults\fR
-       'A' - Alt display      Off (full-screen)
-     * 'd' - Delay time       3.0 seconds
-     * 'H' - Threads mode     Off (summarize as tasks)
-       'I' - Irix mode        On\ \ (no, 'solaris' smp)
-     * 'p' - PID monitoring   Off (show all processes)
-     * 's' - Secure mode      Off (unsecured)
-       'B' - Bold enable      On\ \ (yes, bold globally)
+       A \- Alt display      Off (full-screen)
+     * d \- Delay time       3.0 seconds
+     * H \- Threads mode     Off (summarize as tasks)
+       I \- Irix mode        On  (no, 'solaris' smp)
+     * p \- PID monitoring   Off (show all processes)
+     * s \- Secure mode      Off (unsecured)
+       B \- Bold enable      On  (yes, bold globally)
     \fISummary-Area-defaults\fR
-       'l' - Load Avg/Uptime  On\ \ (thus program name)
-       't' - Task/Cpu states  On\ \ (1+1 lines, see '1')
-       'm' - Mem/Swap usage   On\ \ (2 lines worth)
-       '1' - Single Cpu       On\ \ (thus 1 line if smp)
+       l \- Load Avg/Uptime  On  (thus program name)
+       t \- Task/Cpu states  On  (1+1 lines, see '1')
+       m \- Mem/Swap usage   On  (2 lines worth)
+       1 \- Single Cpu       On  (thus 1 line if smp)
     \fITask-Area-defaults\fR
-       'b' - Bold hilite      On\ \ (not 'reverse')
-     * 'c' - Command line     Off (name, not cmdline)
-     * 'i' - Idle tasks       On\ \ (show all tasks)
-       'J' - Num align right  On\ \ (not left justify)
-       'j' - Str align right  Off (not right justify)
-       'R' - Reverse sort     On\ \ (pids high-to-low)
-     * 'S' - Cumulative time  Off (no, dead children)
-     * 'u' - User filter      Off (show euid only)
-     * 'U' - User filter      Off (show any uid)
-       'x' - Column hilite    Off (no, sort field)
-       'y' - Row hilite       On\ \ (yes, running tasks)
-       'z' - color/mono       Off (no, colors)
+       b \- Bold hilite      On  (not 'reverse')
+     * c \- Command line     Off (name, not cmdline)
+     * i \- Idle tasks       On  (show all tasks)
+       J \- Num align right  On  (not left justify)
+       j \- Str align right  Off (not right justify)
+       R \- Reverse sort     On  (pids high-to-low)
+     * S \- Cumulative time  Off (no, dead children)
+     * u \- User filter      Off (show euid only)
+     * U \- User filter      Off (show any uid)
+       x \- Column hilite    Off (no, sort field)
+       y \- Row hilite       On  (yes, running tasks)
+       z \- color/mono       Off (no, colors)
 .fi
 
 .\" ----------------------------------------------------------------------
@@ -271,7 +271,7 @@ The command-line syntax for \*(We consists of:
 
   \*(CL
 
-The typically mandatory switches ('\-') and even whitespace are completely
+The typically mandatory switch ('\-') and even whitespace are completely
 optional.
 
 .TP 5
@@ -280,7 +280,7 @@ Show library version and the usage prompt, then quit.
 
 .TP 5
 \-\fBb\fR\ \ :\fIBatch-mode\fR operation \fR
-Starts \*(We in 'Batch' mode, which could be useful for sending output
+Starts \*(We in Batch mode, which could be useful for sending output
 from \*(We to other programs or to a file.
 In this mode, \*(We will not accept input and runs until the iterations
 limit you've set with the '\-n' \*(CO or until killed.
@@ -300,8 +300,8 @@ Later this can be changed with the 'd' or 's' \*(CIs.
 
 Fractional seconds are honored, but a negative number is not allowed.
 In all cases, however, such changes are prohibited if \*(We is running
-in 'Secure mode', except for root (unless the 's' \*(CO was used).
-For additional information on 'Secure mode' \*(Xt 6a. SYSTEM Configuration File.
+in Secure mode, except for root (unless the 's' \*(CO was used).
+For additional information on Secure mode \*(Xt 6a. SYSTEM Configuration File.
 
 .TP 5
 \-\fBH\fR\ \ :\fIThreads-mode\fR operation \fR
@@ -365,7 +365,7 @@ This mode is far better controlled through the system \*(CF
 .TP 5
 \-\fBS\fR\ \ :\fICumulative-time\fR toggle \fR
 Starts \*(We with the last remembered 'S' state reversed.
-When 'Cumulative time' mode is \*O, each process is listed with the \*(Pu
+When Cumulative time mode is \*O, each process is listed with the \*(Pu
 time that it and its dead children have used.
 \*(XC 'S' \*(CI for additional information regarding this mode.
 
@@ -382,7 +382,7 @@ The 'p', 'u' and 'U' \*(COs are mutually exclusive.
 
 .TP 5
 \-\fBw\fR\ \ :\fIOutput-width-override\fR as:\ \ \fB-w\fR [\fB number\fR ] \fR
-In 'Batch' mode, when used without an argument \*(We will format
+In Batch mode, when used without an argument \*(We will format
 output using the COLUMNS= and LINES= environment variables, if set.
 Otherwise, width will be fixed at the maximum \*(WX columns.
 With an argument, output width can be decreased or increased (up to \*(WX)
@@ -392,10 +392,10 @@ In normal display mode, when used without an argument \*(We will\fI attempt\fR
 to format output using the COLUMNS= and LINES= environment variables, if set.
 With an argument, output width can only be decreased, not increased.
 Whether using environment variables or an argument with \-w, when\fI not\fR
-in 'Batch' mode actual terminal dimensions can never be exceeded.
+in Batch mode actual terminal dimensions can never be exceeded.
 
 \*(NT Without the use of this \*(CO, output width is always based on the
-terminal at which \*(We was invoked whether or not in 'Batch' mode.
+terminal at which \*(We was invoked whether or not in Batch mode.
 
 .\" ----------------------------------------------------------------------
 .SH 2. SUMMARY Display
@@ -500,10 +500,10 @@ In a true SMP environment, if a process is multi-threaded and \*(We is
 reported.
 You toggle Threads mode with the 'H' \*(CI.
 
-Also for multi-processor environments, if 'Irix mode' is \*F, \*(We
-will operate in 'Solaris mode' where a task's \*(Pu usage will be
+Also for multi-processor environments, if Irix mode is \*F, \*(We
+will operate in Solaris mode where a task's \*(Pu usage will be
 divided by the total number of \*(PUs.
-You toggle 'Irix/Solaris' modes with the 'I' \*(CI.
+You toggle Irix/Solaris modes with the 'I' \*(CI.
 
 .TP 4
  2.\fB %MEM \*(Em Memory Usage (RES) \fR
@@ -523,7 +523,7 @@ Many different hierarchies of cgroups can exist simultaneously on a system
 and each hierarchy is attached to one or more subsystems.
 A subsystem represents a single resource.
 
-\*(NT The 'CGROUPS' field, unlike most columns, is not fixed-width.
+\*(NT The CGROUPS field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
 Even so, such variable width fields could still suffer truncation.
@@ -533,7 +533,7 @@ any truncated data.
 .TP 4
  4.\fB CODE \*(Em Code Size (KiB) \fR
 The amount of \*(MP devoted to executable code, also known as
-the 'text resident set' size or TRS.
+the Text Resident Set size or TRS.
 
 .TP 4
  5.\fB COMMAND \*(Em Command\fB Name\fR or Command\fB Line \fR
@@ -547,10 +547,10 @@ line (like kernel threads) will be shown with only the program name in
 brackets, as in this example:
     \fR[kthreadd]
 
-This field may also be impacted by the 'forest view' display mode.
+This field may also be impacted by the forest view display mode.
 \*(XC 'V' \*(CI for additional information regarding that mode.
 
-\*(NT The 'COMMAND' field, unlike most columns, is not fixed-width.
+\*(NT The COMMAND field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
 Even so, such variable width fields could still suffer truncation.
@@ -562,7 +562,7 @@ any truncated data.
 .TP 4
  6.\fB DATA \*(Em Data + Stack Size (KiB) \fR
 The amount of \*(MP devoted to other than executable code, also known as
-the 'data resident set' size or DRS.
+the Data Resident Set size or DRS.
 
 .TP 4
  7.\fB ENVIRON \*(Em Environment variables \fR
@@ -571,7 +571,7 @@ respective processes.
 These variables will be displayed in their raw native order, not the
 sorted order you are accustomed to seeing with an unqualified 'set'.
 
-\*(NT The 'ENVIRON' field, unlike most columns, is not fixed-width.
+\*(NT The ENVIRON field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
 Even so, such variable width fields could still suffer truncation.
@@ -624,7 +624,7 @@ member of a process group, called the process group leader.
 14.\fB PID \*(Em Process Id \fR
 The task's unique process ID, which periodically wraps, though never
 restarting at zero.
-In kernel terms, it is a dispatchable entity defined by a 'task_struct'.
+In kernel terms, it is a dispatchable entity defined by a task_struct.
 
 This value may also be used as: a process group ID (\*(Xa PGRP);
 a session ID for the session leader (\*(Xa SID);
@@ -639,7 +639,7 @@ The process ID (pid) of a task's parent.
 16.\fB PR \*(Em Priority \fR
 The scheduling priority of the task.
 If you see 'rt' in this field, it means the task is running
-under 'real time' scheduling priority.
+under real time scheduling priority.
 
 Under linux, real time priority is somewhat misleading since traditionally
 the operating itself was not preemptible.
@@ -666,7 +666,7 @@ The status of the task which can be one of:
     \fBT\fR = traced or stopped
     \fBZ\fR = zombie
 
-Tasks shown as running should be more properly thought of as 'ready to run'
+Tasks shown as running should be more properly thought of as ready to run
 \*(Em their task_struct is simply represented on the Linux run-queue.
 Even without a true SMP machine, you may see numerous tasks in this state
 depending on \*(We's delay interval and nice value.
@@ -697,7 +697,7 @@ The IDs of any supplementary group(s) established at login or
 inherited from a task's parent.
 They are displayed in a comma delimited list.
 
-\*(NT The 'SUPGIDS' field, unlike most columns, is not fixed-width.
+\*(NT The SUPGIDS field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
 Even so, such variable width fields could still suffer truncation.
@@ -710,7 +710,7 @@ The names of any supplementary group(s) established at login or
 inherited from a task's parent.
 They are displayed in a comma delimited list.
 
-\*(NT The 'SUPGRPS' field, unlike most columns, is not fixed-width.
+\*(NT The SUPGRPS field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
 Even so, such variable width fields could still suffer truncation.
@@ -729,19 +729,19 @@ The non-resident portion of a task's address space.
 28.\fB TGID \*(Em Thread Group Id \fR
 The ID of the thread group to which a task belongs.
 It is the PID of the thread group leader.
-In kernel terms, it represents those tasks that share an 'mm_struct'.
+In kernel terms, it represents those tasks that share an mm_struct.
 
 .TP 4
 29.\fB TIME \*(Em \*(PU Time \fR
 Total \*(PU time the task has used since it started.
-When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
+When Cumulative mode is \*O, each process is listed with the \*(Pu
 time that it and its dead children have used.
-You toggle 'Cumulative mode' with 'S', which is both a \*(CO and an \*(CI.
+You toggle Cumulative mode with 'S', which is both a \*(CO and an \*(CI.
 \*(XC 'S' \*(CI for additional information regarding this mode.
 
 .TP 4
 30.\fB TIME+ \*(Em \*(PU Time, hundredths \fR
-The same as 'TIME', but reflecting more granularity through hundredths
+The same as TIME, but reflecting more granularity through hundredths
 of a second.
 
 .TP 4
@@ -780,7 +780,7 @@ swapped out and pages that have been mapped but not used.
 
 .TP 4
 37.\fB WCHAN \*(Em Sleeping in Function \fR
-Depending on the availability of the kernel link map ('System.map'), this
+Depending on the availability of the kernel link map (System.map), this
 field will show the name or the address of the kernel function in which the
 task is currently sleeping.
 Running tasks will display a dash ('\-') in this column.
@@ -931,9 +931,9 @@ depending on the context in which they are issued.
         Size:        #, i, n
         Sorting:     <, >, f, F, R
   4d.\fI Color-Mapping \fR
-        <Ret>, a, B, b, H, M, q, S, T, w, z, 0 - 7
+        <Ret>, a, B, b, H, M, q, S, T, w, z, 0 \- 7
   5b.\fI Commands-for-Windows \fR
-        -, _, =, +, A, a, g, G, w
+        \-, _, =, +, A, a, g, G, w
   5c.\fI Scrolling-a-Window \fR
         C, Up, Dn, Left, Right, PgUp, PgDn, Home, End
   5d.\fI Searching-in-a-Window \fR
@@ -945,7 +945,7 @@ depending on the context in which they are issued.
 .\" ----------------------------------------------------------------------
 The global \*(CIs are\fB always\fR available\fR in both \*(FM and \*(AM.
 However, some of these \*(CIs are\fB not available\fR when running
-in 'Secure mode'.
+in Secure mode.
 
 If you wish to know in advance whether or not your \*(We has been
 secured, simply ask for help and view the system summary on the second
@@ -974,10 +974,10 @@ those \*(CIs applicable to \*(AM.
 Removes restrictions on which tasks are shown.
 This command will reverse any 'i' (idle tasks) and 'n' (max tasks)
 commands that might be active.
-It also provides for an exit from pid monitoring, 'user' filtering
-and 'other' filtering.
+It also provides for an exit from PID monitoring, User filtering
+and Other filtering.
 See the '\-p' \*(CO for a discussion of PID monitoring, the 'U' or 'u'
-\*(CIs for user filtering and the 'O' or 'o' \*(CIs for 'other' filtering.
+\*(CIs for User filtering and the 'O' or 'o' \*(CIs for Other filtering.
 
 Additionally, any window that has been scrolled will be reset with
 this command.
@@ -1000,7 +1000,7 @@ into \*(CWs and \*(FGs.
 
 .TP 7
 \ \ \ \fBB\fR\ \ :\fIBold-Disable/Enable\fR toggle \fR
-This command will influence use of the 'bold' terminfo capability and
+This command will influence use of the bold terminfo capability and
 alters\fB both\fR the \*(SA and \*(TA for the \*(CW.
 While it is intended primarily for use with dumb terminals, it can be
 applied anytime.
@@ -1062,7 +1062,7 @@ Otherwise, \*(We displays a summation of all threads in each process.
 
 .TP 7
 \ \ \ \fBI\fR\ \ :\fIIrix/Solaris-Mode\fR toggle \fR
-When operating in 'Solaris mode' ('I' toggled \*F), a task's \*(Pu usage
+When operating in Solaris mode ('I' toggled \*F), a task's \*(Pu usage
 will be divided by the total number of \*(PUs.
 After issuing this command, you'll be told the new state of this toggle.
 
@@ -1167,13 +1167,13 @@ summarized here for future reference.
 
 .nf
    \fI key      function \fR
-    '='      alternate status\-line, file or pipeline
-    '/'      find, equivalent to 'L' locate
-    'n'      find next, equivalent to '&' locate next
+    =        alternate status\-line, file or pipeline
+    /        find, equivalent to 'L' locate
+    n        find next, equivalent to '&' locate next
     <Space>  scroll down, equivalent to <PgDn>
-    'b'      scroll up, equivalent to <PgUp>
-    'g'      first line, equivalent to <Home>
-    'G'      last line, equivalent to <End>
+    b        scroll up, equivalent to <PgUp>
+    g        first line, equivalent to <Home>
+    G        last line, equivalent to <End>
 .fi
 
 .TP 7
@@ -1183,7 +1183,7 @@ colors for the \*(CW, or for all windows.
 For details regarding this \*(CI \*(Xt 4d. COLOR Mapping.
 
 .IP "*" 3
-The commands shown with an \*(AK are not available in 'Secure mode',
+The commands shown with an \*(AK are not available in Secure mode,
 nor will they be shown on the level-1 help screen.
 
 .\" ......................................................................
@@ -1215,7 +1215,7 @@ of the '1', '2' or '3' \*(CTs and whether or not \*(We is running under
 true SMP.
 
 This portion of the \*(SA is also influenced by the 'H' \*(CI toggle,
-as reflected in the total label which shows either 'Tasks' or 'Threads'.
+as reflected in the total label which shows either Tasks or Threads.
 
 .TP 7
 \ \ \ \fBm\fR\ \ :\fIMemory/Swap-Usage\fR toggle \fR
@@ -1298,7 +1298,7 @@ The sort field might\fI not\fR be visible because:
     1) there is insufficient\fI Screen Width \fR
     2) the 'f' \*(CI turned it \*F
 
-\*(NT Whenever 'Searching' and/or 'Other Filtering' is active in a window,
+\*(NT Whenever Searching and/or Other Filtering is active in a window,
 column highlighting is temporarily disabled.
 \*(XC notes at the end of topics 5d. SEARCHING and 5e. FILTERING for an
 explanation why.
@@ -1325,7 +1325,7 @@ the state of the 'x', 'y' or 'b' toggles.
 
 .TP 7
 \ \ \ \fBc\fR\ \ :\fICommand-Line/Program-Name\fR toggle \fR
-This command will be honored whether or not the 'COMMAND' column
+This command will be honored whether or not the COMMAND column
 is currently visible.
 Later, should that field come into view, the change you applied will be seen.
 
@@ -1348,7 +1348,7 @@ related \*(CIs.
 
 .TP 7
 \ \ \ \fBS\fR\ \ :\fICumulative-Time-Mode\fR toggle \fR
-When 'Cumulative mode' is \*O, each process is listed with the \*(Pu
+When Cumulative mode is \*O, each process is listed with the \*(Pu
 time that it and its dead children have used.
 
 When \*F, programs that fork into many separate tasks will appear
@@ -1359,13 +1359,13 @@ Experiment with two \*(TWs sharing the same sort field but with different 'S'
 states and see which representation you prefer.
 
 After issuing this command, you'll be informed of the new state of this toggle.
-If you wish to know in advance whether or not 'Cumulative mode' is in
+If you wish to know in advance whether or not Cumulative mode is in
 effect, simply ask for help and view the window summary on the second line.
 
 .TP 7
 \ \ \ \fBu\fR | \fBU\fR\ \ :\fIShow-Specific-User-Only \fR
 You will be prompted for the\fB uid\fR or\fB name\fR of the user to display.
-The '\-u' option matches on \fB effective\fR user whereas the '\-U' option
+The \-u option matches on \fB effective\fR user whereas the \-U option
 matches on\fB any\fR user (real, effective, saved, or filesystem).
 
 Thereafter, in that \*(TW only matching users will be shown, or possibly
@@ -1427,12 +1427,12 @@ For compatibility, this \*(We supports most of the former \*(We sort keys.
 Since this is primarily a service to former \*(We users, these commands do
 not appear on any help screen.
 .nf
-  \fI command   sorted-field                  supported \fR
-     A         start time (non-display)     \fB No \fR
-     M         %MEM                          Yes
-     N         PID                           Yes
-     P         %CPU                          Yes
-     T         TIME+                         Yes
+     \fI command   sorted-field                  supported \fR
+      A         start time (non-display)     \fB No \fR
+      M         %MEM                          Yes
+      N         PID                           Yes
+      P         %CPU                          Yes
+      T         TIME+                         Yes
 .fi
 
 Before using any of the following sort provisions, \*(We suggests that you
@@ -1442,8 +1442,8 @@ That will help ensure that the actual sort environment matches your intent.
 The following \*(CIs will\fB only\fR be honored when the current sort field
 is\fB visible\fR.
 The sort field might\fI not\fR be visible because:
-     1) there is insufficient\fI Screen Width \fR
-     2) the 'f' \*(CI turned it \*F
+      1) there is insufficient\fI Screen Width \fR
+      2) the 'f' \*(CI turned it \*F
 
 .TP 7
 \ \ \ \fB<\fR\ \ :\fIMove-Sort-Field-Left \fR
@@ -1488,13 +1488,13 @@ The following \*(CIs are available.
     \fB4\fR upper case letters to select a\fB target \fR
     \fB8\fR numbers to select a\fB color \fR
     normal toggles available \fR
-        'B'       :bold disable/enable
-        'b'       :running tasks "bold"/reverse
-        'z'       :color/mono
+        B         :bold disable/enable
+        b         :running tasks "bold"/reverse
+        z         :color/mono
     other commands available \fR
-        'a'/'w'   :apply, then go to next/prior
+        a/w       :apply, then go to next/prior
         <Enter>   :apply and exit
-        'q'       :abandon current changes and exit
+        q         :abandon current changes and exit
 .fi
 
 If you use 'a' or 'w' to cycle the targeted window, you will
@@ -1563,8 +1563,8 @@ as the only display element.
 .TP 7
 *\ \ \fB=\fR | \fB+\fR\ \ :\fIEqualize-(reinitialize)-Window(s) \fR
 The '=' key forces the \*(CW's \*(TD to be visible.
-It also reverses any 'i' (idle tasks), 'n' (max tasks), 'u'/'U' (user filter)
-and 'o'/'O' (other filter) commands that might be active.
+It also reverses any 'i' (idle tasks), 'n' (max tasks), 'u/U' (user filter)
+and 'o/O' (other filter) commands that might be active.
 Also, if the window had been scrolled, it will be reset with this command.
 \*(XT 5c. SCROLLING a Window for additional information regarding vertical
 and horizontal scrolling.
@@ -1572,8 +1572,8 @@ and horizontal scrolling.
 The '+' key does the same for all windows.
 The four \*(TDs will reappear, evenly balanced.
 They will also have retained any customizations you had previously
-applied, except for the 'i' (idle tasks), 'n' (max tasks), 'u'/'U'
-(user filter), 'o'/'O' (other filter) and scrolling \*(CIs.
+applied, except for the 'i' (idle tasks), 'n' (max tasks), 'u/U'
+(user filter), 'o/O' (other filter) and scrolling \*(CIs.
 
 .TP 7
 *\ \ \fBA\fR\ \ :\fIAlternate-Display-Mode\fR toggle \fR
@@ -1587,7 +1587,7 @@ chosen to make visible.
 *\ \ \fBa\fR | \fBw\fR\ \ :\fINext-Window-Forward/Backward \fR
 This will change the \*(CW, which in turn changes the window to which
 commands are directed.
-These keys act in a circular fashion so you can reach any desired \*(CW
+These keys act in a circular fashion so you can reach any desired window
 using either key.
 
 Assuming the window name is visible (you have not toggled 'l' \*F),
@@ -1612,9 +1612,9 @@ It does not require that the window name be visible
 .IP "*" 3
 The \*(CIs shown with an \*(AK have use beyond \*(AM.
 .nf
-    '=', 'A', 'g'  are always available
-    'a', 'w'       act the same with color mapping
-                   and fields management
+    =, A, g    are always available
+    a, w       act the same with color mapping
+               and fields management
 .fi
 
 .\" ......................................................................
@@ -1765,15 +1765,16 @@ could yet produce a successful '&' search.
 The above \*(CIs are\fB always\fR available in \*(FM but\fB never\fR
 available in \*(AM if the \*(CW's \*(TD has been toggled \*F.
 
-\*(NT Whenever a search key is typed, \*(We will turn column highlighting
-\*F to prevent false matches on internal non-display escape sequences.
+\*(NT Whenever a Search is active in a window, \*(We will turn
+column highlighting \*F to prevent false matches on internal non-display
+escape sequences.
 Such highlighting will be restored when a window's search string is empty.
 \*(XC 'x' \*(CI for additional information on sort column highlighting.
 
 .\" ......................................................................
 .SS 5e. FILTERING in a Window
 .\" ----------------------------------------------------------------------
-You can use the 'Other Filter' feature to establish selection criteria which
+You can use this Other Filter feature to establish selection criteria which
 will then determine which tasks are shown in the \*(CW.
 
 Establishing a filter requires: 1) a field name; 2) an operator; and
@@ -1865,7 +1866,7 @@ When some field's numeric amounts have been subjected to \fIscaling\fR
 while others have not, that data is no longer homogeneous.
 
 If you establish a relational filter and you \fBhave\fR changed the
-default 'Numeric' or 'Character' \fIjustification\fR, that filter is likely to fail.
+default Numeric or Character \fIjustification\fR, that filter is likely to fail.
 When a relational filter is applied to a memory field and you \fBhave not\fR
 changed the \fIscaling\fR, it may produce misleading results.
 This happens, for example, because '100.0m' (MiB) would appear greater
@@ -1908,7 +1909,7 @@ So while amounts greater than 9999 exist, they will appear as 2.6m, 197k, etc.
 .B Potential Solutions
 .RS +3
 .P
-These examples illustrate how 'Other Filtering' can be creatively
+These examples illustrate how Other Filtering can be creatively
 applied to achieve almost any desired result.
 Single quotes are sometimes shown to delimit the spaces which are part of
 a filter or to represent a request for status (^O) accurately.
@@ -1941,8 +1942,9 @@ achieve the failed '9999' objective discussed above.
 .fi
 .RS -3
 
-\*(NT When 'Other Filtering' is active, \*(We turns column highlighting
-\*F to prevent false matches on internal non-display escape sequences.
+\*(NT Whenever Other Filtering is active in a window, \*(We will turn
+column highlighting \*F to prevent false matches on internal non-display
+escape sequences.
 Such highlighting will be restored when a window is no longer subject
 to filtering.
 \*(XC 'x' \*(CI for additional information on sort column highlighting.
@@ -1954,7 +1956,7 @@ to filtering.
 .\" ......................................................................
 .SS 6a. SYSTEM Configuration File
 .\" ----------------------------------------------------------------------
-The presence of this file will influence which version of the 'help' screen
+The presence of this file will influence which version of the help screen
 is shown to an ordinary user.
 More importantly, it will limit what ordinary users are allowed
 to do when \*(We is running.
@@ -1973,8 +1975,8 @@ It must have only two lines.
 
 Here is an example of the contents of\fI /etc/toprc\fR:
 .nf
-    s        # line 1: 'secure' mode switch
-    5.0      # line 2: 'delay'\ \ interval in seconds
+    s        # line 1: secure mode switch
+    5.0      # line 2: delay interval in seconds
 .fi
 
 .\" ......................................................................
@@ -1992,7 +1994,7 @@ Here is the general layout:
       "      # line  c: summclr,msgsclr,headclr,taskclr
     global   # line 15: width, memory scaling & zeroes overrides
       "      # any remaining lines are devoted to the
-      "      # generalized 'inspect' provisions
+      "      # generalized inspect provisions
       "      # discussed below
 .fi
 
@@ -2087,7 +2089,7 @@ If you want a truer representation, any embedded tabs should be expanded.
   # next would have contained '\\t' ...
   # file ^I <your_name> ^I /proc/%d/status
   # but this will eliminate embedded '\\t' ...
-  pipe ^I <your_name> ^I cat /proc/%d/status | expand -
+  pipe ^I <your_name> ^I cat /proc/%d/status | expand \-
 .fi
 
 The above example takes what could have been a 'file' entry but employs
@@ -2121,7 +2123,7 @@ In that way, many more choices can be made visible.
 .\" ----------------------------------------------------------------------
 .SH 7. STUPID TRICKS Sampler
 .\" ----------------------------------------------------------------------
-Many of these 'tricks' work best when you give \*(We a scheduling boost.
+Many of these tricks work best when you give \*(We a scheduling boost.
 So plan on starting him with a nice value of \-10, assuming you've got
 the authority.
 
