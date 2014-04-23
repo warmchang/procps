@@ -1,7 +1,7 @@
 .ig
 . manual page for NEW and IMPROVED linux top
 .
-. Copyright (c) 2002-2013, by: James C. Warner
+. Copyright (c) 2002-2014, by: James C. Warner
 .    All rights reserved.      8921 Hilloway Road
 .                              Eden Prairie, Minnesota 55347 USA
 .
@@ -12,14 +12,6 @@
 .nr half_xtra 4
 .
 .ll +(\n[half_xtra] + \n[half_xtra])
-.
-\#  ** we use single quote char (') a lot, so change the no-break ctrl char
-.c2 `
-.
-\#                      Our own Bullet style(s) --------------------------
-.de jBu
-.IP "o" 3
-..
 .
 \#                      Commonly used strings (for consistency) ----------
 \#                           - our em-dashes
@@ -32,11 +24,11 @@
 .ds F \fIOff\fR
 .ds O \fIOn\fR
 .
-.ds AK asterisk (\'*\')
+.ds AK asterisk (`*')
 .ds AM alternate\-display mode
 .ds AS auxiliary storage
 .ds CF configuration file
-.ds CG \'current\' window/field group
+.ds CG `current' window/field group
 .ds CI interactive command
 \#                           - Note: our 'Command Line' used in 2 places
 \#                           ( and managed to fit in an 80x24 terminal )
@@ -44,7 +36,7 @@
 \-\fBu\fR|\fBU\fR user \-\fBp\fR pid \-\fBo\fR fld \-\fBw\fR [cols] \fR
 .ds CO command\-line option
 .ds CT command toggle
-.ds CW \'current\' window
+.ds CW `current' window
 .ds FG field group
 .ds FM full\-screen mode
 .ds KA arrow key
@@ -76,7 +68,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "November 2013" "procps-ng" "User Commands"
+.TH TOP 1 "April 2014" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -646,8 +638,8 @@ The process ID (pid) of a task's parent.
 .TP 4
 16.\fB PR \*(Em Priority \fR
 The scheduling priority of the task.
-If you see 'rt' in this field, it means the task is running under
-'real time' scheduling priority.
+If you see 'rt' in this field, it means the task is running
+under 'real time' scheduling priority.
 
 Under linux, real time priority is somewhat misleading since traditionally
 the operating itself was not preemptible.
@@ -880,27 +872,27 @@ Entries marked with an asterisk are the currently displayed fields,
 screen width permitting.
 
 .RS +4
-.jBu
+.IP \(bu 3
 As the on screen instructions indicate, you navigate among the fields with
 the\fB Up\fR and\fB Down\fR \*(KAs.
 The PgUp, PgDn, Home and End keys can also be used to quickly reach the
 first or last available field.
 
-.jBu
+.IP \(bu 3
 The\fB Right\fR \*(KA selects a field for repositioning and
 the\fB Left\fR \*(KA or the <\fBEnter\fR> key commits that field's
 placement.
 
-.jBu
+.IP \(bu 3
 The '\fBd\fR' key or the <\fBSpace\fR> bar toggles a field's display
 status, and thus the presence or absence of the asterisk.
 
-.jBu
+.IP \(bu 3
 The '\fBs\fR' key designates a field as the sort field.
 \*(XT 4c. TASK AREA Commands, SORTING for additional information regarding
 your selection of a sort field.
 
-.jBu
+.IP \(bu 3
 The '\fBa\fR' and '\fBw\fR' keys can be used to cycle through all available
 windows and the '\fBq\fR' or <\fBEsc\fR> keys exit Fields Management.
 .RS -4
@@ -982,8 +974,8 @@ those \*(CIs applicable to \*(AM.
 Removes restrictions on which tasks are shown.
 This command will reverse any 'i' (idle tasks) and 'n' (max tasks)
 commands that might be active.
-It also provides for an exit from pid monitoring, 'user' filtering and
-'other' filtering.
+It also provides for an exit from pid monitoring, 'user' filtering
+and 'other' filtering.
 See the '\-p' \*(CO for a discussion of PID monitoring, the 'U' or 'u'
 \*(CIs for user filtering and the 'O' or 'o' \*(CIs for 'other' filtering.
 
@@ -1138,7 +1130,7 @@ This \*(CI can be used to alter the widths of the following fields:
     SUID      5       SUSER     8       nsMNT    10
     UID       5       USER      8       nsNET    10
                       TTY       8       nsPID    10
-                                        nsUSR    10
+                                        nsUSER   10
                                         nsUTS    10
 .fi
 
@@ -1268,10 +1260,10 @@ The \*(TA \*(CIs are\fB always\fR available in \*(FM.
 The \*(TA \*(CIs are\fB never available\fR in \*(AM\fI if\fR the \*(CW's
 \*(TD has been toggled \*F (\*(Xt 5. ALTERNATE\-DISPLAY Provisions).
 
-.TP 2
+.PP
 .\" ..................................................
 .B APPEARANCE\fR of \*(TW
-.PD 0
+
 .TP 7
 \ \ \ \fBJ\fR\ \ :\fIJustify-Numeric-Columns\fR toggle \fR
 Alternates between right-justified (the default) and
@@ -1330,7 +1322,7 @@ the state of the 'x', 'y' or 'b' toggles.
 .PP
 .\" ..................................................
 .B CONTENT\fR of \*(TW
-.PD 0
+
 .TP 7
 \ \ \ \fBc\fR\ \ :\fICommand-Line/Program-Name\fR toggle \fR
 This command will be honored whether or not the 'COMMAND' column
@@ -1400,7 +1392,7 @@ mode in the \*(CW.
 .PP
 .\" ..................................................
 .B SIZE\fR of \*(TW
-.PD 0
+
 .TP 7
 \ \ \ \fBi\fR\ \ :\fIIdle-Process\fR toggle \fR
 Displays all tasks or just active tasks.
@@ -1425,10 +1417,12 @@ already been painted.
 
 \*(NT If you wish to increase the size of the last visible \*(TD when in \*(AM,
 simply decrease the size of the \*(TD(s) above it.
+.PP
 
-.TP 2
 .\" ..................................................
 .B SORTING\fR of \*(TW
+.PP
+.RS +3
 For compatibility, this \*(We supports most of the former \*(We sort keys.
 Since this is primarily a service to former \*(We users, these commands do
 not appear on any help screen.
@@ -1462,10 +1456,8 @@ Moves the sort column to the right unless the current sort field is
 the last field being displayed.
 
 .PP
-.in +2
 The following \*(CIs will\fB always\fR be honored whether or not
 the current sort field is visible.
-.in
 
 .TP 7
 \ \ \ \fBf\fR | \fBF\fR\ \ :\fIFields-Management \fR
@@ -1479,10 +1471,9 @@ when running \*(We with column highlighting turned \*F.
 Using this \*(CI you can alternate between high-to-low and low-to-high sorts.
 
 .PP
-.in +2
 \*(NT Field sorting uses internal values, not those in column display.
 Thus, the TTY and WCHAN fields will violate strict ASCII collating sequence.
-.in
+.RE
 
 .\" ......................................................................
 .SS 4d. COLOR Mapping
@@ -1515,6 +1506,7 @@ The Color Mapping screen can also be used to change the \*(CG in
 either \*(FM or \*(AM.
 Whatever was targeted when 'q' or <Enter> was pressed will be made current
 as you return to the \*(We display.
+.PP
 
 .\" ----------------------------------------------------------------------
 .SH 5. ALTERNATE\-DISPLAY Provisions
@@ -1537,6 +1529,7 @@ The \*(SA will always exist, even if it's only the message line.
 At any given time only\fI one\fR \*(SA can be displayed.
 However, depending on your commands, there could be from\fI zero \fR
 to\fI four\fR separate \*(TDs currently showing on the screen.
+.PP
 
 .TP 3
 .B Current Window\fR:
@@ -1578,9 +1571,9 @@ and horizontal scrolling.
 
 The '+' key does the same for all windows.
 The four \*(TDs will reappear, evenly balanced.
-They will also have retained any customizations you had previously applied,
-except for the 'i' (idle tasks), 'n' (max tasks), 'u'/'U' (user filter),
-'o'/'O' (other filter) and scrolling \*(CIs.
+They will also have retained any customizations you had previously
+applied, except for the 'i' (idle tasks), 'n' (max tasks), 'u'/'U'
+(user filter), 'o'/'O' (other filter) and scrolling \*(CIs.
 
 .TP 7
 *\ \ \fBA\fR\ \ :\fIAlternate-Display-Mode\fR toggle \fR
@@ -1619,9 +1612,9 @@ It does not require that the window name be visible
 .IP "*" 3
 The \*(CIs shown with an \*(AK have use beyond \*(AM.
 .nf
-    \'=', 'A', 'g'  are always available
-    \'a', 'w'       act the same with color mapping
-    \               and fields management
+    '=', 'A', 'g'  are always available
+    'a', 'w'       act the same with color mapping
+                   and fields management
 .fi
 
 .\" ......................................................................
@@ -1790,28 +1783,31 @@ a mistake, command recall will be your friend.
 Remember the Up/Down \*(KAs or their aliases when prompted for input.
 
 .B Filter Basics
-.IP "   .  " 6
-field names are case sensitive and spelled as in the header
-.IP "   .  " 6
-selection values need not comprise the full displayed field
-.IP "   .  " 6
-a selection is either case insensitive or sensitive to case
-.IP "   .  " 6
-the default is inclusion, prepending '!' denotes exclusions
-.IP "   .  " 6
-multiple selection criteria can be applied to a \*(TW
-.IP "   .  " 6
-inclusion and exclusion criteria can be used simultaneously
-.IP "   .  " 6
-the 1 equality and 2 relational filters can be freely mixed
-.IP "   .  " 6
-separate unique filters are maintained for each \*(TW
-.RE
+.RS +3
+.TP 3
+1. field names are case sensitive and spelled as in the header
+.TP 3
+2. selection values need not comprise the full displayed field
+.TP 3
+3. a selection is either case insensitive or sensitive to case
+.TP 3
+4. the default is inclusion, prepending '!' denotes exclusions
+.TP 3
+5. multiple selection criteria can be applied to a \*(TW
+.TP 3
+6. inclusion and exclusion criteria can be used simultaneously
+.TP 3
+7. the 1 equality and 2 relational filters can be freely mixed
+.TP 3
+8. separate unique filters are maintained for each \*(TW
+.PP
 
 If a field is not turned on or is not currently in view, then your selection
 criteria will not affect the display.
 Later, should a filtered field become visible, the selection criteria will
 then be applied.
+.PP
+.RE
 
 .B Keyboard Summary
 .TP 6
@@ -1838,6 +1834,7 @@ It also has additional impact so please \*(Xt 4a. GLOBAL Commands.
 This clears the selection criteria in all windows, assuming you are in \*(AM.
 As with the '=' \*(CI, it too has additional consequences so you might wish to
 \*(Xt 5b. COMMANDS for Windows.
+.PP
 .RE
 
 .B Input Requirements
@@ -1867,16 +1864,17 @@ with homogeneous data.
 When some field's numeric amounts have been subjected to \fIscaling\fR
 while others have not, that data is no longer homogeneous.
 
-If you establish a relational filter and you \fBhave\fR changed the default
-'Numeric' or 'Character' \fIjustification\fR, that filter is likely to fail.
+If you establish a relational filter and you \fBhave\fR changed the
+default 'Numeric' or 'Character' \fIjustification\fR, that filter is likely to fail.
 When a relational filter is applied to a memory field and you \fBhave not\fR
 changed the \fIscaling\fR, it may produce misleading results.
-This happens, for example, because '100.0m' (MiB) would appear greater than
-'1.000g' (GiB) when compared as strings.
+This happens, for example, because '100.0m' (MiB) would appear greater
+than '1.000g' (GiB) when compared as strings.
 
 If your filtered results appear suspect, simply altering justification or
 scaling may yet achieve the desired objective.
 See the 'j', 'J' and 'e' \*(CIs for additional information.
+.PP
 .RE
 
 .B Potential Problems
@@ -1904,6 +1902,7 @@ So while amounts greater than 9999 exist, they will appear as 2.6m, 197k, etc.
 .nf
      nMin>9999         ( always a blank \*(TW )
 .fi
+.PP
 .RE
 
 .B Potential Solutions
@@ -1940,13 +1939,14 @@ achieve the failed '9999' objective discussed above.
      'PR>20' + '!PR=-'         ( 2 for right result )
      '!nMin=0 ' + '!nMin=1 ' + '!nMin=2 ' + '!nMin=3 ' ...
 .fi
-.RE
+.RS -3
 
 \*(NT When 'Other Filtering' is active, \*(We turns column highlighting
 \*F to prevent false matches on internal non-display escape sequences.
 Such highlighting will be restored when a window is no longer subject
 to filtering.
 \*(XC 'x' \*(CI for additional information on sort column highlighting.
+.RE
 
 .\" ----------------------------------------------------------------------
 .SH 6. FILES
@@ -1990,7 +1990,7 @@ Here is the general layout:
     per ea   # line  a: winname,fieldscur
     window   # line  b: winflags,sortindx,maxtasks
       "      # line  c: summclr,msgsclr,headclr,taskclr
-    global   # line 15: fixed-width incr
+    global   # line 15: width, memory scaling & zeroes overrides
       "      # any remaining lines are devoted to the
       "      # generalized 'inspect' provisions
       "      # discussed below
@@ -2132,7 +2132,7 @@ the authority.
 For these stupid tricks, \*(We needs \*(FM.
 .\" ( apparently AM static was a potential concern )
 
-.jBu
+.IP \(bu 3
 The user interface, through prompts and help, intentionally implies
 that the delay interval is limited to tenths of a second.
 However, you're free to set any desired delay.
@@ -2155,7 +2155,7 @@ Then do the following:
 What you'll see is a very busy Linux doing what he's always done for you,
 but there was no program available to illustrate this.
 
-.jBu
+.IP \(bu 3
 Under an xterm using 'white-on-black' colors, on \*(We's Color Mapping screen
 set the task color to black and be sure that task highlighting is set to bold,
 not reverse.
@@ -2164,7 +2164,7 @@ Then set the delay interval to around .3 seconds.
 After bringing the most active processes into view, what you'll see are
 the ghostly images of just the currently running tasks.
 
-.jBu
+.IP \(bu 3
 Delete the existing rcfile, or create a new symlink.
 Start this new version then type 'T' (a secret key,
 \*(Xt 4c. Task Area Commands, SORTING) followed by 'W' and 'q'.
@@ -2180,19 +2180,19 @@ on whether or not \*(We will ever reach the \*(We.
 .\" ----------------------------------------------------------------------
 For these stupid tricks, \*(We needs \*(AM.
 
-.jBu
+.IP \(bu 3
 With 3 or 4 \*(TDs visible, pick any window other than the last
 and turn idle processes \*F using the 'i' \*(CT.
 Depending on where you applied 'i', sometimes several \*(TDs are bouncing and
 sometimes it's like an accordion, as \*(We tries his best to allocate space.
 
-.jBu
+.IP \(bu 3
 Set each window's summary lines differently: one with no memory ('m'); another
 with no states ('t'); maybe one with nothing at all, just the message line.
 Then hold down 'a' or 'w' and watch a variation on bouncing windows \*(Em
 hopping windows.
 
-.jBu
+.IP \(bu 3
 Display all 4 windows and for each, in turn, set idle processes to \*F using
 the 'i' \*(CT.
 You've just entered the "extreme bounce" zone.
@@ -2202,7 +2202,7 @@ You've just entered the "extreme bounce" zone.
 .\" ----------------------------------------------------------------------
 This stupid trick also requires \*(AM.
 
-.jBu
+.IP \(bu 3
 Display all 4 windows and make sure that 1:Def is the \*(CW.
 Then, keep increasing window size with the 'n' \*(CI until all the other
 \*(TDs are "pushed out of the nest".
@@ -2219,7 +2219,7 @@ Then ponder this:
 This stupid trick works best without \*(AM, since justification is active
 on a per window basis.
 
-.jBu
+.IP \(bu 3
 Start \*(We and make COMMAND the last (rightmost) column displayed.
 If necessary, use the 'c' \*(CT to display command lines and ensure
 that forest view mode is active with the 'V' \*(CT.
