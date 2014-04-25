@@ -2518,17 +2518,14 @@ static void procs_hlp (proc_t *this) {
    HST_t *h;
 
    if (!this) {
-      static struct timeval oldtimev;
-      struct timeval timev;
-      struct timezone timez;
+      static double uptime_sav;
+      double uptime_cur;
       float et;
       void *v;
 
-      gettimeofday(&timev, &timez);
-      et = (timev.tv_sec - oldtimev.tv_sec)
-         + (float)(timev.tv_usec - oldtimev.tv_usec) / 1000000.0;
-      oldtimev.tv_sec = timev.tv_sec;
-      oldtimev.tv_usec = timev.tv_usec;
+      uptime(&uptime_cur, NULL);
+      et = uptime_cur - uptime_sav;
+      uptime_sav = uptime_cur;
 
       // if in Solaris mode, adjust our scaling for all cpus
       Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : smp_num_cpus));
