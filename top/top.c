@@ -1,6 +1,6 @@
 /* top.c - Source file:         show Linux processes */
 /*
- * Copyright (c) 2002-2013, by: James C. Warner
+ * Copyright (c) 2002-2014, by: James C. Warner
  *    All rights reserved.      8921 Hilloway Road
  *                              Eden Prairie, Minnesota 55347 USA
  *
@@ -3464,7 +3464,7 @@ static void configs_read (void) {
          if (2 != fscanf(fp, "%3s\tfieldscur=%79s\n"
             , w->rc.winname, w->rc.fieldscur))
                goto default_or_error;
-#if PFLAGSSIZ > 80
+#if PFLAGSSIZ != 80
  // too bad fscanf is not as flexible with his format string as snprintf
  # error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 #endif
