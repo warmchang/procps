@@ -2525,6 +2525,7 @@ static void procs_hlp (proc_t *this) {
 
       uptime(&uptime_cur, NULL);
       et = uptime_cur - uptime_sav;
+      if (et < 0.01) et = 0.005;
       uptime_sav = uptime_cur;
 
       // if in Solaris mode, adjust our scaling for all cpus
