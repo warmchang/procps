@@ -1150,8 +1150,11 @@ static char *ioline (const char *prompt) {
       key = iokey(2);
       switch (key) {
          case 0:
+            buf[0] = '\0';
+            return buf;
          case kbd_ESC:
-            buf[0] = '\0';             // fall through !
+            buf[0] = kbd_ESC;
+            return buf;
          case kbd_ENTER:
             continue;
          case kbd_INS:
@@ -1197,7 +1200,7 @@ static char *ioline (const char *prompt) {
       }
       putp(fmtmk("%s%s%s", tg2(beg, Msg_row), Cap_clr_eol, buf));
       putp(tg2(beg+pos, Msg_row));
-   } while (key && key != kbd_ENTER && key != kbd_ESC);
+   } while (key != kbd_ENTER);
 
    // weed out duplicates, including empty strings (top-of-stack)...
    for (i = 0, plin = anchor; ; i++) {
@@ -1275,6 +1278,10 @@ static int readfile (FILE *fp, char **baddr, size_t *bsize, size_t *bread) {
 
 /*######  Small Utility routines  ########################################*/
 
+#define GET_NUM_BAD  INT_MIN
+#define GET_NUM_ESC (INT_MIN + 1)
+#define GET_NUM_NOT (INT_MIN + 2)
+
         /*
          * Get a float from the user */
 static float get_float (const char *prompt) {
@@ -1282,19 +1289,17 @@ static float get_float (const char *prompt) {
    float f;
 
    line = ioline(prompt);
-   if (!line[0] || Frames_signal) return -1.0;
+   if (line[0] == kbd_ESC || Frames_signal) return GET_NUM_ESC;
+   if (!line[0]) return GET_NUM_NOT;
    // note: we're not allowing negative floats
    if (strcspn(line, "+,.0123456789")) {
       show_msg(N_txt(BAD_numfloat_txt));
-      return -1.0;
+      return GET_NUM_BAD;
    }
    sscanf(line, "%f", &f);
    return f;
 } // end: get_float
 
-
-#define GET_INT_BAD  INT_MIN
-#define GET_INTNONE (INT_MIN + 1)
 
         /*
          * Get an integer from the user, returning INT_MIN for error */
@@ -1303,12 +1308,12 @@ static int get_int (const char *prompt) {
    int n;
 
    line = ioline(prompt);
-   if (Frames_signal) return GET_INT_BAD;
-   if (!line[0]) return GET_INTNONE;
+   if (line[0] == kbd_ESC || Frames_signal) return GET_NUM_ESC;
+   if (!line[0]) return GET_NUM_NOT;
    // note: we've got to allow negative ints (renice)
    if (strcspn(line, "-+0123456789")) {
       show_msg(N_txt(BAD_integers_txt));
-      return GET_INT_BAD;
+      return GET_NUM_BAD;
    }
    sscanf(line, "%d", &n);
    return n;
@@ -2918,7 +2923,9 @@ static void insp_find_str (int ch, int *col, int *row) {
       return;
    }
    if (ch == 'L' || ch == '/') {
-      snprintf(Insp_sel->fstr, FNDBUFSIZ, "%s", ioline(N_txt(GET_find_str_txt)));
+      char *str = ioline(N_txt(GET_find_str_txt));
+      if (*str == kbd_ESC) return;
+      snprintf(Insp_sel->fstr, FNDBUFSIZ, "%s", str);
       Insp_sel->flen = strlen(Insp_sel->fstr);
       found = 0;
    }
@@ -4135,7 +4142,9 @@ static void find_string (int ch) {
       return;
    }
    if ('L' == ch) {
-      snprintf(Curwin->findstr, FNDBUFSIZ, "%s", ioline(N_txt(GET_find_str_txt)));
+      char *str = ioline(N_txt(GET_find_str_txt));
+      if (*str == kbd_ESC) return;
+      snprintf(Curwin->findstr, FNDBUFSIZ, "%s", str);
       Curwin->findlen = strlen(Curwin->findstr);
       found = 0;
 #ifndef USE_X_COLHDR
@@ -4225,7 +4234,9 @@ static void other_selection (int ch) {
       sel   = strstr;
    }
    glob = ioline(fmtmk(N_fmt(OSEL_prompts_fmt), Curwin->osel_tot + 1, typ));
-   if (!snprintf(raw, sizeof(raw), "%s", glob)) return;
+   if (*glob == kbd_ESC
+   || !snprintf(raw, sizeof(raw), "%s", glob))
+      return;
    for (osel = Curwin->osel_1st; osel; ) {
       if (!strcmp(osel->raw, glob)) {          // #1: is criteria duplicate?
          show_msg(N_txt(OSEL_errdups_txt));
@@ -4343,7 +4354,7 @@ static void keys_global (int ch) {
          else {
             float tmp =
                get_float(fmtmk(N_fmt(DELAY_change_fmt), Rc.delay_time));
-            if (-1 < tmp) Rc.delay_time = tmp;
+            if (tmp > -1) Rc.delay_time = tmp;
          }
          break;
       case 'E':
@@ -4379,17 +4390,21 @@ static void keys_global (int ch) {
          if (Secure_mode) {
             show_msg(N_txt(NOT_onsecure_txt));
          } else {
-            int pid, sig = SIGTERM, def = w->ppt[w->begtask]->tid;
-            if (GET_INT_BAD < (pid = get_int(fmtmk(N_txt(GET_pid2kill_fmt), def)))) {
+            int sig = SIGTERM,
+                def = w->ppt[w->begtask]->tid,
+                pid = get_int(fmtmk(N_txt(GET_pid2kill_fmt), def));
+            if (pid > GET_NUM_ESC) {
                char *str;
-               if (0 > pid) pid = def;
+               if (pid == GET_NUM_NOT) pid = def;
                str = ioline(fmtmk(N_fmt(GET_sigs_num_fmt), pid, SIGTERM));
-               if (*str) sig = signal_name_to_number(str);
-               if (Frames_signal) break;
-               if (0 < sig && kill(pid, sig))
-                  show_msg(fmtmk(N_fmt(FAIL_signals_fmt)
-                     , pid, sig, strerror(errno)));
-               else if (0 > sig) show_msg(N_txt(BAD_signalid_txt));
+               if (*str != kbd_ESC) {
+                  if (*str) sig = signal_name_to_number(str);
+                  if (Frames_signal) break;
+                  if (0 < sig && kill(pid, sig))
+                     show_msg(fmtmk(N_fmt(FAIL_signals_fmt)
+                        , pid, sig, strerror(errno)));
+                  else if (0 > sig) show_msg(N_txt(BAD_signalid_txt));
+               }
             }
          }
          break;
@@ -4397,21 +4412,24 @@ static void keys_global (int ch) {
          if (Secure_mode)
             show_msg(N_txt(NOT_onsecure_txt));
          else {
-            int val, pid, def = w->ppt[w->begtask]->tid;
-            if (GET_INT_BAD < (pid = get_int(fmtmk(N_txt(GET_pid2nice_fmt), def)))) {
-               if (0 > pid) pid = def;
-               if (GET_INTNONE < (val = get_int(fmtmk(N_fmt(GET_nice_num_fmt), pid))))
-                  if (setpriority(PRIO_PROCESS, (unsigned)pid, val))
-                     show_msg(fmtmk(N_fmt(FAIL_re_nice_fmt)
-                        , pid, val, strerror(errno)));
+            int val,
+                def = w->ppt[w->begtask]->tid,
+                pid = get_int(fmtmk(N_txt(GET_pid2nice_fmt), def));
+            if (pid > GET_NUM_ESC) {
+               if (pid == GET_NUM_NOT) pid = def;
+               val = get_int(fmtmk(N_fmt(GET_nice_num_fmt), pid));
+               if (val > GET_NUM_NOT
+               && setpriority(PRIO_PROCESS, (unsigned)pid, val))
+                  show_msg(fmtmk(N_fmt(FAIL_re_nice_fmt)
+                     , pid, val, strerror(errno)));
             }
          }
          break;
       case 'X':
       {  int wide = get_int(fmtmk(N_fmt(XTRA_fixwide_fmt), Rc.fixed_widest));
-         if (GET_INTNONE < wide) {
-            if (-1 < wide) Rc.fixed_widest = wide;
-            else if (INT_MIN < wide) Rc.fixed_widest = -1;
+         if (wide > GET_NUM_NOT) {
+            if (wide > -1) Rc.fixed_widest = wide;
+            else Rc.fixed_widest = -1;
          }
       }
          break;
@@ -4419,9 +4437,10 @@ static void keys_global (int ch) {
          if (!Inspect.total)
             ioline(N_txt(YINSP_noents_txt));
          else {
-            int pid, def = w->ppt[w->begtask]->tid;
-            if (GET_INT_BAD < (pid = get_int(fmtmk(N_fmt(YINSP_pidsee_fmt), def)))) {
-               if (0 > pid) pid = def;
+            int def = w->ppt[w->begtask]->tid,
+                pid = get_int(fmtmk(N_fmt(YINSP_pidsee_fmt), def));
+            if (pid > GET_NUM_ESC) {
+               if (pid == GET_NUM_NOT) pid = def;
                if (pid) inspection_utility(pid);
             }
          }
@@ -4467,7 +4486,7 @@ static void keys_summary (int ch) {
             show_msg(N_txt(NUMA_nodenot_txt));
          else {
             int num = get_int(fmtmk(N_fmt(NUMA_nodeget_fmt), Numa_node_tot -1));
-            if (GET_INTNONE < num) {
+            if (num > GET_NUM_NOT) {
                if (num >= 0 && num < Numa_node_tot) {
                   Numa_node_sel = num;
                   SETw(w, View_CPUNOD | View_STATES);
@@ -4503,7 +4522,7 @@ static void keys_task (int ch) {
       case 'n':
          if (VIZCHKw(w)) {
             int num = get_int(fmtmk(N_fmt(GET_max_task_fmt), w->rc.maxtasks));
-            if (GET_INTNONE < num) {
+            if (num > GET_NUM_NOT) {
                if (-1 < num ) w->rc.maxtasks = num;
                else show_msg(N_txt(BAD_max_task_txt));
             }
@@ -4601,9 +4620,11 @@ static void keys_task (int ch) {
       case 'U':
       case 'u':
          if (VIZCHKw(w)) {
-            const char *errmsg;
-            if ((errmsg = user_certify(w, ioline(N_txt(GET_user_ids_txt)), ch)))
-               show_msg(errmsg);
+            const char *errmsg, *str = ioline(N_txt(GET_user_ids_txt));
+            if (*str != kbd_ESC
+            && (errmsg = user_certify(w, str, ch)))
+                show_msg(errmsg);
+
          }
          break;
       case 'V':
@@ -4686,7 +4707,7 @@ static void keys_window (int ch) {
          if (ALTCHKw) {
             char tmp[SMLBUFSIZ];
             STRLCPY(tmp, ioline(fmtmk(N_fmt(NAME_windows_fmt), w->rc.winname)));
-            if (tmp[0]) win_names(w, tmp);
+            if (tmp[0] && tmp[0] != kbd_ESC) win_names(w, tmp);
          }
          break;
       case kbd_UP:
