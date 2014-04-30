@@ -314,6 +314,7 @@ static void print_extended_maps (FILE *f)
 	while (ret != NULL) {
 		/* === READ MAPPING === */
 		map_desc[0] = '\0';
+		c = '\n';
 		nfields = sscanf(mapbuf,
 				 "%"NUML"[0-9a-f]-%"NUML"[0-9a-f] "
 				 "%"DETL"s %"NUML"[0-9a-f] "
