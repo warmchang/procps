@@ -1183,13 +1183,13 @@ static char *ioline (const char *prompt) {
             if (plin->bkw) {
                plin = plin->bkw;
                memset(buf, '\0', sizeof(buf));
-               pos = snprintf(buf, sizeof(buf), "%s", plin->str);
+               pos = snprintf(buf, sizeof(buf), "%.*s", Screen_cols - beg - 1, plin->str);
             }
             break;
          case kbd_DOWN:
             memset(buf, '\0', sizeof(buf));
             if (plin->fwd) plin = plin->fwd;
-            pos = snprintf(buf, sizeof(buf), "%s", plin->str);
+            pos = snprintf(buf, sizeof(buf), "%.*s", Screen_cols - beg - 1, plin->str);
             break;
          default:                      // what we REALLY wanted (maybe)
             if (isprint(key) && logCOL < bufMAX && phyCOL < Screen_cols) {
@@ -4624,7 +4624,6 @@ static void keys_task (int ch) {
             if (*str != kbd_ESC
             && (errmsg = user_certify(w, str, ch)))
                 show_msg(errmsg);
-
          }
          break;
       case 'V':
