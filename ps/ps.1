@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS 1 "December 2011" "procps-ng" "User Commands"
+.TH PS 1 "May 2014" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -254,7 +254,7 @@ Select by session OR by effective group name.  Selection by session is
 specified by many standards, but selection by effective group is the logical
 behavior that several other operating systems use.  This
 .B ps
-will select by session when the list is completely numeric (as\ sessions\
+will select by session when the list is completely numeric (as sessions
 are).  Group ID numbers will work only when some group names are also
 specified.  See the
 .B \-s
@@ -1188,6 +1188,11 @@ cumulative CPU time, "[DD\-]hh:mm:ss" format.  (alias
 .BR time ).
 T}
 
+drs	DRS	T{
+data resident set size, the amount of physical memory devoted to other than
+executable code.
+T}
+
 egid	EGID	T{
 effective group ID number of the process as a decimal integer.  (alias
 .BR gid ).
@@ -1470,7 +1475,7 @@ and the field width permits, or a decimal representation otherwise.
 T}
 
 rss	RSS	T{
-resident set size, the non\-swapped physical memory that a task has used (in\
+resident set size, the non\-swapped physical memory that a task has used (in
 kiloBytes).  (alias
 .BR rssize , \ rsz ).
 T}
@@ -1704,6 +1709,10 @@ T}
 tpgid	TPGID	T{
 ID of the foreground process group on the tty (terminal) that the process is
 connected to, or \-1 if the process is not connected to a tty.
+T}
+
+trs	TRS	T{
+text resident set size, the amount of physical memory devoted to executable code.
 T}
 
 tt	TT	T{
