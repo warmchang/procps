@@ -2668,9 +2668,7 @@ static void procs_refresh (void) {
         /*
          * This serves as our interface to the memory & cpu count (sysinfo)
          * portion of libproc.  In support of those hotpluggable resources,
-         * the sampling frequencies are reduced so as to minimize overhead.
-         * We'll strive to verify the number of cpus every 5 minutes and the
-         * memory availability/usage every 3 seconds. */
+         * the sampling frequencies are reduced so as to minimize overhead. */
 static void sysinfo_refresh (int forced) {
    static time_t mem_secs, cpu_secs;
    time_t cur_secs;
@@ -2686,7 +2684,7 @@ static void sysinfo_refresh (int forced) {
    }
 #ifndef PRETEND8CPUS
    /*** hotplug_acclimated ***/
-   if (300 <= cur_secs - cpu_secs) {
+   if (60 <= cur_secs - cpu_secs) {
       cpuinfo();
       Cpu_faux_tot = smp_num_cpus;
       cpu_secs = cur_secs;
@@ -4451,10 +4449,9 @@ static void keys_global (int ch) {
       case '0':
          Rc.zero_suppress = !Rc.zero_suppress;
          break;
-      case kbd_ENTER:        // these two have the effect of waking us
-      case kbd_SPACE:        // from 'select()', updating hotplugged
-         sysinfo_refresh(1); // resources and refreshing the display
-         break;
+      case kbd_ENTER:             // these two have the effect of waking us
+      case kbd_SPACE:             // from 'pselect', refreshing the display
+         break;                   // and updating any hot-plugged resources
       default:                    // keep gcc happy
          break;
    }
@@ -5000,6 +4997,7 @@ static void do_key (int ch) {
 
    show_msg(N_txt(UNKNOWN_cmds_txt));
 all_done:
+   sysinfo_refresh(1);       // let's be more responsive to hot-pluggin'
    putp((Cursor_state = Cap_curs_hide));
 } // end: do_key
 
@@ -5551,8 +5549,8 @@ static void frame_make (void) {
    } else
       putp(Batch ? "\n\n" : Cap_home);
 
-   procs_refresh();
    sysinfo_refresh(0);
+   procs_refresh();
 
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();
