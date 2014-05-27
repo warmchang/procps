@@ -1,6 +1,6 @@
 /* top_nls.c - provide the basis for future nls translations */
 /*
- * Copyright (c) 2011-2013,     by: James C. Warner
+ * Copyright (c) 2011-2014, by: James C. Warner
  *    All rights reserved.      8921 Hilloway Road
  *                              Eden Prairie, Minnesota 55347 USA
  *
@@ -129,31 +129,31 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'UID' = 5 */
    Head_nlstab[EU_UED] = _("UID");
    Desc_nlstab[EU_UED] = _("Effective User Id");
-/* Translation Hint: maximum 'USER' = 8 */
+/* Translation Hint: maximum 'USER' = 7 */
    Head_nlstab[EU_UEN] = _("USER");
    Desc_nlstab[EU_UEN] = _("Effective User Name");
 /* Translation Hint: maximum 'RUID' = 5 */
    Head_nlstab[EU_URD] = _("RUID");
    Desc_nlstab[EU_URD] = _("Real User Id");
-/* Translation Hint: maximum 'RUSER' = 8 */
+/* Translation Hint: maximum 'RUSER' = 7 */
    Head_nlstab[EU_URN] = _("RUSER");
    Desc_nlstab[EU_URN] = _("Real User Name");
 /* Translation Hint: maximum 'SUID' = 5 */
    Head_nlstab[EU_USD] = _("SUID");
    Desc_nlstab[EU_USD] = _("Saved User Id");
-/* Translation Hint: maximum 'SUSER' = 8 */
+/* Translation Hint: maximum 'SUSER' = 7 */
    Head_nlstab[EU_USN] = _("SUSER");
    Desc_nlstab[EU_USN] = _("Saved User Name");
 /* Translation Hint: maximum 'GID' = 5 */
    Head_nlstab[EU_GID] = _("GID");
    Desc_nlstab[EU_GID] = _("Group Id");
-/* Translation Hint: maximum 'GROUP' = 8 */
+/* Translation Hint: maximum 'GROUP' = 7 */
    Head_nlstab[EU_GRP] = _("GROUP");
    Desc_nlstab[EU_GRP] = _("Group Name");
 /* Translation Hint: maximum 'PGRP' = 5 */
    Head_nlstab[EU_PGD] = _("PGRP");
    Desc_nlstab[EU_PGD] = _("Process Group Id");
-/* Translation Hint: maximum 'TTY' = 8 */
+/* Translation Hint: maximum 'TTY' = 7 */
    Head_nlstab[EU_TTY] = _("TTY");
    Desc_nlstab[EU_TTY] = _("Controlling Tty");
 /* Translation Hint: maximum 'TPGID' = 5 */
@@ -180,7 +180,7 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum '' = 6 */
    Head_nlstab[EU_TME] = _("TIME");
    Desc_nlstab[EU_TME] = _("CPU Time");
-/* Translation Hint: maximum 'TIME+' = 9 */
+/* Translation Hint: maximum 'TIME+' = 7 */
    Head_nlstab[EU_TM2] = _("TIME+");
    Desc_nlstab[EU_TM2] = _("CPU Time, hundredths");
 /* Translation Hint: maximum '%MEM' = 4 */
@@ -222,7 +222,7 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'WCHAN' = 7 */
    Head_nlstab[EU_WCH] = _("WCHAN");
    Desc_nlstab[EU_WCH] = _("Sleeping in Function");
-/* Translation Hint: maximum 'Flags' = 8 */
+/* Translation Hint: maximum 'Flags' = 7 */
    Head_nlstab[EU_FLG] = _("Flags");
    Desc_nlstab[EU_FLG] = _("Task Flags <sched.h>");
 /* Translation Hint: maximum 'CGROUPS' = 7 */
@@ -241,7 +241,7 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'Adj' = 3 */
    Head_nlstab[EU_OOA] = _("Adj");
    Desc_nlstab[EU_OOA] = _("oom_adjustment (2^X)");
-/* Translation Hint: maximum 'Badness' = 8 */
+/* Translation Hint: maximum 'Badness' = 7 */
    Head_nlstab[EU_OOM] = _("Badness");
    Desc_nlstab[EU_OOM] = _("oom_score (badness)");
 #endif
@@ -259,22 +259,22 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'USED' = 4 */
    Head_nlstab[EU_USE] = _("USED");
    Desc_nlstab[EU_USE] = _("Res+Swap Size (KiB)");
-/* Translation Hint: maximum 'nsIPC' = 10 */
+/* Translation Hint: maximum 'nsIPC' = 7 */
    Head_nlstab[EU_NS1] = _("nsIPC");
    Desc_nlstab[EU_NS1] = _("IPC namespace Inode");
-/* Translation Hint: maximum 'nsMNT' = 10 */
+/* Translation Hint: maximum 'nsMNT' = 7 */
    Head_nlstab[EU_NS2] = _("nsMNT");
    Desc_nlstab[EU_NS2] = _("MNT namespace Inode");
-/* Translation Hint: maximum 'nsNET' = 10 */
+/* Translation Hint: maximum 'nsNET' = 7 */
    Head_nlstab[EU_NS3] = _("nsNET");
    Desc_nlstab[EU_NS3] = _("NET namespace Inode");
-/* Translation Hint: maximum 'nsPID' = 10 */
+/* Translation Hint: maximum 'nsPID' = 7 */
    Head_nlstab[EU_NS4] = _("nsPID");
    Desc_nlstab[EU_NS4] = _("PID namespace Inode");
-/* Translation Hint: maximum 'nsUSER' = 10 */
+/* Translation Hint: maximum 'nsUSER' = 7 */
    Head_nlstab[EU_NS5] = _("nsUSER");
    Desc_nlstab[EU_NS5] = _("USER namespace Inode");
-/* Translation Hint: maximum 'nsUTS' = 10 */
+/* Translation Hint: maximum 'nsUTS' = 7 */
    Head_nlstab[EU_NS6] = _("nsUTS");
    Desc_nlstab[EU_NS6] = _("UTS namespace Inode");
 }
