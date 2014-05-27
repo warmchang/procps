@@ -38,7 +38,7 @@ set diskstats [ exec cat /proc/diskstats ]
 if { [ file readable "/sys/block" ] == 0 }  {
     unsupported "vmstat partition /sys/block not readable"
 } else {
-  if [ regexp "\\s+\\d+\\s+\\d+\\s+\(\[a-z\]+\\d+\)\\s+\[0-9\]\[0-9\]+" $diskstats line partition == 1 ] {
+  if [ regexp "\\s+\\d+\\s+\\d+\\s+\((?:hd|sd|vd)\[a-z\]\\d+\)\\s+\[0-9\]\[0-9\]+" $diskstats line partition == 1 ] {
       set test "vmstat partition (using $partition)"
       spawn $vmstat -p $partition
       expect_pass "$test" "^${partition}\\s+reads"
