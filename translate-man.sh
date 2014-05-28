@@ -44,6 +44,10 @@ for lang in *.po
     po4a-translate -f man -m ../vmstat.8 -p ${lang} -l ${lang%.*}/man8/vmstat.8
     po4a-translate -f man -m ../w.1 -p ${lang} -l ${lang%.*}/man1/w.1
     po4a-translate -f man -m ../watch.1 -p ${lang} -l ${lang%.*}/man1/watch.1
-    po4a-translate -f man -m ../ps/ps.1 -p ps/${lang} -l ${lang%.*}/man1/ps.1
-    po4a-translate -f man -m ../top/top.1 -p top/${lang} -l ${lang%.*}/man1/top.1
+    if [ -f ps/${lang} ] ; then
+	po4a-translate -f man -m ../ps/ps.1 -p ps/${lang} -l ${lang%.*}/man1/ps.1
+    fi
+    if [ -f top/${lang} ] ; then
+	po4a-translate -f man -m ../top/top.1 -p top/${lang} -l ${lang%.*}/man1/top.1
+    fi
 done
