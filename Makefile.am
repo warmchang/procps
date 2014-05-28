@@ -122,6 +122,12 @@ $(top_srcdir)/.version:
 	echo $(VERSION) > $@-t && mv $@-t $@
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
+	./create-man-pot.sh
+	./translate-man.sh
 
 get-trans:
+	echo "Getting the latest translations from translationproject.org..."
 	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng/  po
+	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man/  man-po
+	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man-ps/  man-po/ps
+	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man-top/  man-po/top
