@@ -169,7 +169,7 @@ int main(int argc, char **argv)
 
 		loadavg(&av[0], &av[1], &av[2]);
 
-		while (1) {
+		do {
 			lines = av[0] * scale_fact;
 			row = nrows - 1;
 
@@ -180,9 +180,7 @@ int main(int argc, char **argv)
 					break;
 				}
 			}
-			if (0 < row)
-				break;
-		}
+		} while (0 <= lines);
 
 		while (row >= 0)
 			*(screen + row-- * ncols + col) = ' ';
