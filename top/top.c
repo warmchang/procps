@@ -5159,6 +5159,7 @@ numa_nope:
       // and prT macro might replace space at buf[8] with:   ------> +
          char buf[10]; // MEMORY_lines_fmt provides for 8+1 bytes
       } buftab[8];
+      unsigned long kb_main_my_used;
 
       if (!scaletab[0].label) {
          scaletab[0].label = N_txt(AMT_kilobyte_txt);
@@ -5168,14 +5169,17 @@ numa_nope:
          scaletab[4].label = N_txt(AMT_petabyte_txt);
          scaletab[5].label = N_txt(AMT_exxabyte_txt);
       }
-      prT(bfT(0), mkM(total)); prT(bfT(1), mkM(used));
-      prT(bfT(2), mkM(free));  prT(bfT(3), mkM(buffers));
-      prT(bfT(4), mkS(total)); prT(bfT(5), mkS(used));
-      prT(bfT(6), mkS(free));  prT(bfT(7), mkM(cached));
+      kb_main_my_used = kb_main_used - kb_main_buffers - kb_main_cached;
+
+      prT(bfT(0), mkM(total));   prT(bfT(1), mkM(free));
+      prT(bfT(2), mkM(my_used)); prT(bfT(3), mkM(buffers));
+      prT(bfT(4), mkS(total));   prT(bfT(5), mkS(free));
+      prT(bfT(6), mkS(used));    prT(bfT(7), mkM(cached));
 
       show_special(0, fmtmk(N_unq(MEMORY_lines_fmt)
-         , scT(label), bfT(0), bfT(1), bfT(2), bfT(3)
-         , scT(label), bfT(4), bfT(5), bfT(6), bfT(7)));
+         , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3)
+         , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
+         , N_txt(WORD_abv_mem_txt)));
       Msg_row += 2;
     #undef bfT
     #undef scT

@@ -464,6 +464,12 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[NUMA_nodeget_fmt] = _("expand which node (0-%d)");
    Norm_nlstab[NUMA_nodebad_txt] = _("invalid node");
    Norm_nlstab[NUMA_nodenot_txt] = _("sorry, NUMA extensions unavailable");
+/* Translation Hint: 'Mem ' is an abbreviation for physical memory/ram
+   '                 'Swap' represents the linux swap file --
+   '                 please make both translations the same length,
+   '                 using extra spaces as necessary */
+   Norm_nlstab[WORD_abv_mem_txt] = _("Mem ");
+   Norm_nlstab[WORD_abv_swp_txt] = _("Swap");
 }
 
 
@@ -631,12 +637,9 @@ static void build_uniq_nlstab (void) {
    Uniq_nlstab[STATE_lin2x7_fmt] = _("%%%s~3"
       "%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n");
 
-/* Translation Hint: Only the following need be translated
-   .                 abbreviations: Mem = physical memory/ram, Swap = the linux swap file
-   .                 words:         total, used, free, buffers, cached */
    Uniq_nlstab[MEMORY_lines_fmt] = _(""
-      "%s Mem: ~3 %9.9s~2total,~3 %9.9s~2used,~3 %9.9s~2free,~3 %9.9s~2buffers~3\n"
-      "%s Swap:~3 %9.9s~2total,~3 %9.9s~2used,~3 %9.9s~2free.~3 %9.9s~2cached Mem~3\n");
+      "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buffers~3\n"
+      "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2cached %s~3\n");
 
    Uniq_nlstab[INSP_hdrsels_fmt] = _(""
       "Inspection~2 Pause at: pid ~1%d~6 running ~1%s~6 as user ~1%s~6\n"
