@@ -431,8 +431,11 @@ That total is further classified as:
 .fi
 
 Line 2 shows \*(PU state percentages based on the interval since the
-last refresh.  Where two labels are shown below, those for more recent
-kernel versions are shown first.
+last refresh.
+
+As a default, percentages for these individual categories are displayed.
+Where two labels are shown below, those for more recent kernel versions
+are shown first.
 .nf
     \fBus\fR,\fB user\fR    : time running un-niced user processes
     \fBsy\fR,\fB system\fR  : time running kernel processes
@@ -444,6 +447,12 @@ kernel versions are shown first.
     \fBst\fR : time stolen from this vm by the hypervisor
 .fi
 
+In the alternate cpu states display modes, an abbreviated summary is shown
+consisting of \fBUser\fR (`us' and `ni' above) / \fBSystem\fR (`sy' above)
+percentages followed by a visual graph of those representations.
+\*(XT 4b. SUMMARY AREA Commands and the `t' command for additional information
+on that special 4-way toggle.
+
 .\" ......................................................................
 .SS 2c. MEMORY Usage
 .\" ----------------------------------------------------------------------
@@ -451,7 +460,7 @@ This portion consists of two lines which may express values in kibibytes (KiB)
 through exbibytes (EiB) depending on the scaling factor enforced
 with the `E' \*(CI.
 
-Line 1 reflects \*(MP, classified as:
+As a default, Line 1 reflects \*(MP, classified as:
 .nf
     total, used, free and buffers
 .fi
@@ -460,6 +469,15 @@ Line 2 reflects mostly \*(MV, classified as:
 .nf
     total, used, free and cached (which is \*(MP)
 .fi
+
+In the alternate memory display modes, two abbreviated summary lines
+are shown consisting of percentage used and total available followed
+by a visual graph.
+In the case of \*(MP, the percentage includes the sum of `used', `buffers'
+and `cached' memory noted above.
+The graph itself is divided between `used' then `buffers' and `cached' combined.
+\*(XT 4b. SUMMARY AREA Commands and the `m' command for additional information
+on that special 4-way toggle.
 
 This table may help in interpreting the scaled values displayed:
 .nf
@@ -1220,10 +1238,26 @@ true SMP.
 This portion of the \*(SA is also influenced by the `H' \*(CI toggle,
 as reflected in the total label which shows either Tasks or Threads.
 
+This command serves as a 4-way toggle, cycling through these modes:
+.nf
+    1. detailed percentages by category (default)
+    2. abbreviated user/system percentages + bar graph
+    3. abbreviated user/system percentages + block graph
+    4. turn off task and cpu states display
+.fi
+
 .TP 7
 \ \ \ \fBm\fR\ \ :\fIMemory/Swap-Usage\fR toggle \fR
 This command affects the two \*(SA lines dealing with physical
 and virtual memory.
+
+This command serves as a 4-way toggle, cycling through these modes:
+.nf
+    1. detailed percentages by memory type (default)
+    2. abbreviated % used/total available + bar graph
+    3. abbreviated % used/total available + block graph
+    4. turn off memory display
+.fi
 
 .TP 7
 \ \ \ \fB1\fR\ \ :\fISingle/Separate-Cpu-States\fR toggle \fR
@@ -1995,7 +2029,7 @@ Here is the general layout:
     per ea   # line  a: winname,fieldscur
     window   # line  b: winflags,sortindx,maxtasks
       "      # line  c: summclr,msgsclr,headclr,taskclr
-    global   # line 15: width, memory scaling & zeroes overrides
+    global   # line 15: additional miscellaneous settings
       "      # any remaining lines are devoted to the
       "      # generalized inspect provisions
       "      # discussed below
