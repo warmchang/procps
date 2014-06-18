@@ -235,6 +235,11 @@ static int (*Numa_max_node)(void);
 static int (*Numa_node_of_cpu)(int num);
 #endif
 #endif
+
+        /* Support for Graphing of the View_STATES ('t') and View_MEMORY ('m')
+           commands -- which are now both 4-way toggles */
+static const char Graph_blks[] = "                                                                                                    ";
+static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
 
 /*######  Sort callbacks  ################################################*/
 
@@ -3423,7 +3428,8 @@ static int config_cvt (WIN_t *q) {
          *     line a: contains w->winname, fieldscur
          *     line b: contains w->winflags, sortindx, maxtasks
          *     line c: contains w->summclr, msgsclr, headclr, taskclr
-         *   line 15 : Fixed_widest, Summ_mscale, Task_mscale, Zero_suppress */
+         *   line 15 : miscellaneous additional global settings
+         *   Any remaining lines are devoted to the 'Inspect Other' feature */
 static void configs_read (void) {
    float tmp_delay = DEF_DELAY;
    char fbuf[LRGBUFSIZ];
@@ -3505,8 +3511,9 @@ static void configs_read (void) {
       } // end: for (GROUPSMAX)
 
       // any new addition(s) last, for older rcfiles compatibility...
-      if (fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
-         , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress))
+      if (fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d, Graph_cpus=%d, Graph_mems=%d\n"
+         , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress
+         , &Rc.graph_cpus, &Rc.graph_mems))
             ;                                  // avoid -Wunused-result
 
 try_inspect_entries:
@@ -4317,8 +4324,9 @@ static void write_rcfile (void) {
    }
 
    // any new addition(s) last, for older rcfiles compatibility...
-   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
-      , Rc.fixed_widest, Rc.summ_mscale, Rc.task_mscale, Rc.zero_suppress);
+   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d, Graph_cpus=%d, Graph_mems=%d\n"
+      , Rc.fixed_widest, Rc.summ_mscale, Rc.task_mscale, Rc.zero_suppress
+      , Rc.graph_cpus, Rc.graph_mems);
 
    if (Inspect.raw)
       fputs(Inspect.raw, fp);
@@ -4500,10 +4508,20 @@ static void keys_summary (int ch) {
          TOGw(w, View_LOADAV);
          break;
       case 'm':
-         TOGw(w, View_MEMORY);
+         if (!CHKw(w, View_MEMORY))
+            SETw(w, View_MEMORY);
+         else if (++Rc.graph_mems > 2) {
+            Rc.graph_mems = 0;;
+            OFFw(w, View_MEMORY);
+         }
          break;
       case 't':
-         TOGw(w, View_STATES);
+         if (!CHKw(w, View_STATES))
+            SETw(w, View_STATES);
+         else if (++Rc.graph_cpus > 2) {
+            Rc.graph_cpus = 0;;
+            OFFw(w, View_STATES);
+         }
          break;
       default:                    // keep gcc happy
          break;
@@ -5038,11 +5056,33 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
 
    /* display some kinda' cpu state percentages
       (who or what is explained by the passed prefix) */
-   show_special(0, fmtmk(Cpu_States_fmts, pfx
-      , (float)u_frme * scale, (float)s_frme * scale
-      , (float)n_frme * scale, (float)i_frme * scale
-      , (float)w_frme * scale, (float)x_frme * scale
-      , (float)y_frme * scale, (float)z_frme * scale));
+   if (Rc.graph_cpus) {
+      static struct {
+         const char *user; const char *syst; const char *type;
+      } gtab[] = {
+         { "%-.*s~7", "%-.*s~8", Graph_bars },
+         { "%-.*s~4", "%-.*s~6", Graph_blks }
+      };
+      char graph_user[SMLBUFSIZ], graph_syst[SMLBUFSIZ], graph_dual[MEDBUFSIZ];
+      int ix = Rc.graph_cpus - 1;
+      float percent_user = (float)(u_frme + n_frme) * scale,
+            percent_syst = (float)s_frme * scale;
+      snprintf(graph_user, sizeof(graph_user), gtab[ix].user, (int)(percent_user + .5), gtab[ix].type);
+      snprintf(graph_syst, sizeof(graph_syst), gtab[ix].syst, (int)(percent_syst + .5), gtab[ix].type);
+      snprintf(graph_dual, sizeof(graph_dual), "%s%s", graph_user, graph_syst);
+#ifdef GRAPHS_ALIGN
+      show_special(0, fmtmk("%%%s ~3%#5.1f~2/%-#8.1f~3 [~1%-104.104s]~1\n"
+#else
+      show_special(0, fmtmk("%%%s ~3%#5.1f~2/%-#5.1f~3 [~1%-104.104s]~1\n"
+#endif
+         , pfx, percent_user, percent_syst, graph_dual));
+   } else {
+      show_special(0, fmtmk(Cpu_States_fmts, pfx
+         , (float)u_frme * scale, (float)s_frme * scale
+         , (float)n_frme * scale, (float)i_frme * scale
+         , (float)w_frme * scale, (float)x_frme * scale
+         , (float)y_frme * scale, (float)z_frme * scale));
+   }
  #undef TRIMz
 } // end: summary_hlp
 
@@ -5147,7 +5187,7 @@ numa_nope:
          const char *fmts;
          const char *label;
       } scaletab[] = {
-         { 1, "%8.0f ", NULL },                            // kibibytes
+         { 1, "%1.0f ", NULL },                            // kibibytes
          { 1024.0, "%#4.3f ", NULL },                      // mebibytes
          { 1024.0*1024, "%#4.3f ", NULL },                 // gibibytes
          { 1024.0*1024*1024, "%#4.3f ", NULL },            // tebibytes
@@ -5171,15 +5211,43 @@ numa_nope:
       }
       kb_main_my_used = kb_main_used - kb_main_buffers - kb_main_cached;
 
-      prT(bfT(0), mkM(total));   prT(bfT(1), mkM(free));
-      prT(bfT(2), mkM(my_used)); prT(bfT(3), mkM(buffers));
-      prT(bfT(4), mkS(total));   prT(bfT(5), mkS(free));
-      prT(bfT(6), mkS(used));    prT(bfT(7), mkM(cached));
-
-      show_special(0, fmtmk(N_unq(MEMORY_lines_fmt)
-         , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3)
-         , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
-         , N_txt(WORD_abv_mem_txt)));
+      if (Rc.graph_mems) {
+         static struct {
+            const char *used; const char *misc; const char *swap; const char *type;
+         } gtab[] = {
+            { "%-.*s~7", "%-.*s~8", "%-.*s~8", Graph_bars },
+            { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
+         };
+         char graph_used[SMLBUFSIZ], graph_util[SMLBUFSIZ], graph_dual[MEDBUFSIZ];
+         int ix = Rc.graph_mems - 1;
+         float percent_used = (float)kb_main_my_used * (100.0 / (float)kb_main_total),
+               percent_misc = (float)(kb_main_buffers + kb_main_cached) * (100.0 / (float)kb_main_total),
+               percent_swap = (float)kb_swap_used * (100.0 / (float)kb_swap_total);
+         snprintf(graph_used, sizeof(graph_used), gtab[ix].used, (int)(percent_used + .5), gtab[ix].type);
+         snprintf(graph_util, sizeof(graph_util), gtab[ix].misc, (int)(percent_misc + .5), gtab[ix].type);
+         snprintf(graph_dual, sizeof(graph_dual), "%s%s", graph_used, graph_util);
+         snprintf(graph_util, sizeof(graph_util), gtab[ix].swap, (int)(percent_swap + .5), gtab[ix].type);
+         prT(bfT(0), mkM(total)); prT(bfT(1), mkS(total));
+         show_special(0, fmtmk(
+#ifdef GRAPHS_ALIGN
+         /* note: without this define, cpu and memory graphs can usually be aligned via scaling
+                  (the 'E' command) and without any waisted space preceeding the cpu graphs */
+            "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-104.104s]~1\n%s %s:~3%#5.1f~2/%-9.9s~3[~1%-102.102s]~1\n"
+#else
+            "%s %s:~3%#5.1f~2/%-.9s~3[~1%-104.104s]~1\n%s %s:~3%#5.1f~2/%-.9s~3[~1%-102.102s]~1\n"
+#endif
+            , scT(label), N_txt(WORD_abv_mem_txt), percent_used + percent_misc, bfT(0), graph_dual
+            , scT(label), N_txt(WORD_abv_swp_txt), percent_swap, bfT(1), graph_util));
+      } else {
+         prT(bfT(0), mkM(total));   prT(bfT(1), mkM(free));
+         prT(bfT(2), mkM(my_used)); prT(bfT(3), mkM(buffers));
+         prT(bfT(4), mkS(total));   prT(bfT(5), mkS(free));
+         prT(bfT(6), mkS(used));    prT(bfT(7), mkM(cached));
+         show_special(0, fmtmk(N_unq(MEMORY_lines_fmt)
+            , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3)
+            , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
+            , N_txt(WORD_abv_mem_txt)));
+      }
       Msg_row += 2;
     #undef bfT
     #undef scT

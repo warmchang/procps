@@ -36,6 +36,7 @@
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define CPU_ZEROTICS            /* tolerate few tics when cpu off vs. idle */
 //#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
+//#define GRAPHS_ALIGN            /* force cpu & memory graphs to be aligned */
 //#define INSP_JUSTNOT            /* don't smooth unprintable right margins  */
 //#define INSP_OFFDEMO            /* disable demo screens, issue msg instead */
 //#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents in a file  */
@@ -208,7 +209,7 @@ enum pflag {
 
         /* The scaling 'target' used with memory fields */
 enum scale_enum {
-   SK_Kb, SK_Mb, SK_Gb, SK_Tb, SK_Pb, SK_Eb, SK_SENTINEL
+   SK_Kb, SK_Mb, SK_Gb, SK_Tb, SK_Pb, SK_Eb
 };
 
         /* Used to manipulate (and document) the Frames_signal states */
@@ -366,6 +367,8 @@ typedef struct RCF_t {
    int    summ_mscale;          // 'E' - scaling of summary memory values
    int    task_mscale;          // 'e' - scaling of process memory values
    int    zero_suppress;        // '0' - suppress scaled zeros toggle
+   int    graph_cpus;           // 't' - View_STATES supplementary values
+   int    graph_mems;           // 'm' - View_MEMORY supplememtary values
 } RCF_t;
 
         /* This structure stores configurable information for each window.
@@ -610,7 +613,7 @@ typedef struct WIN_t {
    { EU_UEN, DEF_WINFLGS, 0, \
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
-   }, 0, SK_Kb, SK_Kb, 0 }
+   }, 0, SK_Kb, SK_Kb, 0, 0, 0 }
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
