@@ -2,6 +2,17 @@ procps-ng-3.3.10
 ----------------
   * sysctl --system loads default config file - Debian #732920
   * ps doesn't exit on SIGCONT
+  * top better accommodates discontinuous NUMA nodes
+  * ps cmdline trailing spaces suppressed under zsh, redhat #1057600
+  * kill restores the '-HUP -1' functionality
+  * vmstat -d / -p segfault eliminated when /sys is not mounted
+  * pgrep properly shows full command line when -au are combined
+  * vmstat supports timestamps with -t/--timestamp option
+  * top is now immune to distortions when system time is reset
+  * top standardized the <Esc> key support with prompted input
+  * top missing summary area info added to man document, ubuntu #574624
+  * top provides alternate graph modes for cpu states and memory usage
+
 
 procps-ng-3.3.9
 ---------------
