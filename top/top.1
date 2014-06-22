@@ -447,9 +447,15 @@ are shown first.
     \fBst\fR : time stolen from this vm by the hypervisor
 .fi
 
-In the alternate cpu states display modes, an abbreviated summary is shown
-consisting of \fBUser\fR (`us' and `ni' above) / \fBSystem\fR (`sy' above)
-percentages followed by a visual graph of those representations.
+In the alternate cpu states display modes, beyond the first tasks/threads line,
+an abbreviated summary is shown consisting of these elements:
+.nf
+             \fR a  \fR  b    \fR c \fR   d
+    Cpu(s):  \fB75.0\fR/25.0  \fB100\fR[ ...
+.fi
+
+Where: a) is the combined \fBus\fR and \fBni\fR percentage; b) is the \fBsy\fR percentage; c) is the total;
+and d) is one of two visual graphs of those representations.
 \*(XT 4b. SUMMARY AREA Commands and the `t' command for additional information
 on that special 4-way toggle.
 
@@ -471,11 +477,19 @@ Line 2 reflects mostly \*(MV, classified as:
 .fi
 
 In the alternate memory display modes, two abbreviated summary lines
-are shown consisting of percentage used and total available followed
-by a visual graph.
-In the case of \*(MP, the percentage includes the sum of `used', `buffers'
-and `cached' memory noted above.
-The graph itself is divided between `used' then `buffers' and `cached' combined.
+are shown consisting of these elements:
+.nf
+              \fR a  \fR  b          c
+    GiB Mem : \fB18.7\fR/15.738   [ ...
+    GiB Swap: \fB 0.0\fR/7.999    [ ...
+.fi
+
+Where: a) is the percentage used; b) is the total available; and c) is one of two
+visual graphs of those representations.
+
+In the case of \*(MP, the percentage includes the sum of \fBused\fR, \fBbuffers\fR
+and \fBcached\fR memory noted above.
+The `Mem' graph itself is divided between \fBused\fR then \fBbuffers\fR and \fBcached\fR combined.
 \*(XT 4b. SUMMARY AREA Commands and the `m' command for additional information
 on that special 4-way toggle.
 
@@ -1241,10 +1255,14 @@ as reflected in the total label which shows either Tasks or Threads.
 This command serves as a 4-way toggle, cycling through these modes:
 .nf
     1. detailed percentages by category (default)
-    2. abbreviated user/system percentages + bar graph
-    3. abbreviated user/system percentages + block graph
+    2. abbreviated user/system and total % + bar graph
+    3. abbreviated user/system and total % + block graph
     4. turn off task and cpu states display
 .fi
+
+When operating in either of the graphic modes, the display becomes much
+more meaningful when individual CPUs or NUMA nodes are also displayed.
+\*(XC the `1', `2' and `3' commands below for additional information.
 
 .TP 7
 \ \ \ \fBm\fR\ \ :\fIMemory/Swap-Usage\fR toggle \fR
