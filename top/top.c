@@ -5058,24 +5058,24 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
       (who or what is explained by the passed prefix) */
    if (Rc.graph_cpus) {
       static struct {
-         const char *user; const char *syst; const char *type;
+         const char *user, *syst, *type;
       } gtab[] = {
          { "%-.*s~7", "%-.*s~8", Graph_bars },
          { "%-.*s~4", "%-.*s~6", Graph_blks }
       };
-      char graph_user[SMLBUFSIZ], graph_syst[SMLBUFSIZ], graph_dual[MEDBUFSIZ];
+      char user[SMLBUFSIZ], syst[SMLBUFSIZ], dual[MEDBUFSIZ];
       int ix = Rc.graph_cpus - 1;
-      float percent_user = (float)(u_frme + n_frme) * scale,
-            percent_syst = (float)s_frme * scale;
-      snprintf(graph_user, sizeof(graph_user), gtab[ix].user, (int)(percent_user + .5), gtab[ix].type);
-      snprintf(graph_syst, sizeof(graph_syst), gtab[ix].syst, (int)(percent_syst + .5), gtab[ix].type);
-      snprintf(graph_dual, sizeof(graph_dual), "%s%s", graph_user, graph_syst);
+      float pct_user = (float)(u_frme + n_frme) * scale,
+            pct_syst = (float)s_frme * scale;
+      snprintf(user, sizeof(user), gtab[ix].user, (int)(pct_user + .5), gtab[ix].type);
+      snprintf(syst, sizeof(syst), gtab[ix].syst, (int)(pct_syst + .5), gtab[ix].type);
+      snprintf(dual, sizeof(dual), "%s%s", user, syst);
 #ifdef GRAPHS_ALIGN
       show_special(0, fmtmk("%%%s ~3%#5.1f~2/%-#8.1f~3 [~1%-104.104s]~1\n"
 #else
       show_special(0, fmtmk("%%%s ~3%#5.1f~2/%-#5.1f~3 [~1%-104.104s]~1\n"
 #endif
-         , pfx, percent_user, percent_syst, graph_dual));
+         , pfx, pct_user, pct_syst, dual));
    } else {
       show_special(0, fmtmk(Cpu_States_fmts, pfx
          , (float)u_frme * scale, (float)s_frme * scale
@@ -5213,20 +5213,20 @@ numa_nope:
 
       if (Rc.graph_mems) {
          static struct {
-            const char *used; const char *misc; const char *swap; const char *type;
+            const char *used, *misc, *swap, *type;
          } gtab[] = {
             { "%-.*s~7", "%-.*s~8", "%-.*s~8", Graph_bars },
             { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
          };
-         char graph_used[SMLBUFSIZ], graph_util[SMLBUFSIZ], graph_dual[MEDBUFSIZ];
+         char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ];
          int ix = Rc.graph_mems - 1;
-         float percent_used = (float)kb_main_my_used * (100.0 / (float)kb_main_total),
-               percent_misc = (float)(kb_main_buffers + kb_main_cached) * (100.0 / (float)kb_main_total),
-               percent_swap = (float)kb_swap_used * (100.0 / (float)kb_swap_total);
-         snprintf(graph_used, sizeof(graph_used), gtab[ix].used, (int)(percent_used + .5), gtab[ix].type);
-         snprintf(graph_util, sizeof(graph_util), gtab[ix].misc, (int)(percent_misc + .5), gtab[ix].type);
-         snprintf(graph_dual, sizeof(graph_dual), "%s%s", graph_used, graph_util);
-         snprintf(graph_util, sizeof(graph_util), gtab[ix].swap, (int)(percent_swap + .5), gtab[ix].type);
+         float pct_used = (float)kb_main_my_used * (100.0 / (float)kb_main_total),
+               pct_misc = (float)(kb_main_buffers + kb_main_cached) * (100.0 / (float)kb_main_total),
+               pct_swap = (float)kb_swap_used * (100.0 / (float)kb_swap_total);
+         snprintf(used, sizeof(used), gtab[ix].used, (int)(pct_used + .5), gtab[ix].type);
+         snprintf(util, sizeof(util), gtab[ix].misc, (int)(pct_misc + .5), gtab[ix].type);
+         snprintf(dual, sizeof(dual), "%s%s", used, util);
+         snprintf(util, sizeof(util), gtab[ix].swap, (int)(pct_swap + .5), gtab[ix].type);
          prT(bfT(0), mkM(total)); prT(bfT(1), mkS(total));
          show_special(0, fmtmk(
 #ifdef GRAPHS_ALIGN
@@ -5236,8 +5236,8 @@ numa_nope:
 #else
             "%s %s:~3%#5.1f~2/%-.9s~3[~1%-104.104s]~1\n%s %s:~3%#5.1f~2/%-.9s~3[~1%-102.102s]~1\n"
 #endif
-            , scT(label), N_txt(WORD_abv_mem_txt), percent_used + percent_misc, bfT(0), graph_dual
-            , scT(label), N_txt(WORD_abv_swp_txt), percent_swap, bfT(1), graph_util));
+            , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), dual
+            , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), util));
       } else {
          prT(bfT(0), mkM(total));   prT(bfT(1), mkM(free));
          prT(bfT(2), mkM(my_used)); prT(bfT(3), mkM(buffers));
