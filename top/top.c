@@ -5070,12 +5070,8 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
       snprintf(user, sizeof(user), gtab[ix].user, (int)(pct_user + .5), gtab[ix].type);
       snprintf(syst, sizeof(syst), gtab[ix].syst, (int)(pct_syst + .5), gtab[ix].type);
       snprintf(dual, sizeof(dual), "%s%s", user, syst);
-#ifdef GRAPHS_ALIGN
-      show_special(0, fmtmk("%%%s ~3%#5.1f~2/%-#8.1f~3 [~1%-104.104s]~1\n"
-#else
-      show_special(0, fmtmk("%%%s ~3%#5.1f~2/%-#5.1f~3 [~1%-104.104s]~1\n"
-#endif
-         , pfx, pct_user, pct_syst, dual));
+      show_special(0, fmtmk("%%%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-104.104s]~1\n"
+         , pfx, pct_user, pct_syst, pct_user + pct_syst, dual));
    } else {
       show_special(0, fmtmk(Cpu_States_fmts, pfx
          , (float)u_frme * scale, (float)s_frme * scale
@@ -5229,13 +5225,7 @@ numa_nope:
          snprintf(util, sizeof(util), gtab[ix].swap, (int)(pct_swap + .5), gtab[ix].type);
          prT(bfT(0), mkM(total)); prT(bfT(1), mkS(total));
          show_special(0, fmtmk(
-#ifdef GRAPHS_ALIGN
-         /* note: without this define, cpu and memory graphs can usually be aligned via scaling
-                  (the 'E' command) and without any waisted space preceeding the cpu graphs */
             "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-104.104s]~1\n%s %s:~3%#5.1f~2/%-9.9s~3[~1%-102.102s]~1\n"
-#else
-            "%s %s:~3%#5.1f~2/%-.9s~3[~1%-104.104s]~1\n%s %s:~3%#5.1f~2/%-.9s~3[~1%-102.102s]~1\n"
-#endif
             , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), dual
             , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), util));
       } else {

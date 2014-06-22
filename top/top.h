@@ -36,7 +36,6 @@
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define CPU_ZEROTICS            /* tolerate few tics when cpu off vs. idle */
 //#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
-//#define GRAPHS_ALIGN            /* force cpu & memory graphs to be aligned */
 //#define INSP_JUSTNOT            /* don't smooth unprintable right margins  */
 //#define INSP_OFFDEMO            /* disable demo screens, issue msg instead */
 //#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents in a file  */
