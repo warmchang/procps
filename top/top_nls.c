@@ -347,7 +347,6 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[TIME_accumed_fmt] = _("Cumulative time %s");
    Norm_nlstab[GET_max_task_fmt] = _("Maximum tasks = %d, change to (0 is unlimited)");
    Norm_nlstab[BAD_max_task_txt] = _("Invalid maximum");
-   Norm_nlstab[HILIGHT_cant_txt] = _("Nothing to highlight!");
    Norm_nlstab[GET_user_ids_txt] = _("Which user (blank for all)");
    Norm_nlstab[UNKNOWN_cmds_txt] = _("Unknown command - try 'h' for help");
    Norm_nlstab[SCROLL_coord_fmt] = _("scroll coordinates: y = %d/%%d (tasks), x = %d/%d (fields)");

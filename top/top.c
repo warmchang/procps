@@ -4586,18 +4586,8 @@ static void keys_task (int ch) {
          }
          break;
       case 'b':
-         if (VIZCHKw(w)) {
-#ifdef USE_X_COLHDR
-            if (!CHKw(w, Show_HIROWS))
-#else
-            if (!CHKw(w, Show_HICOLS | Show_HIROWS))
-#endif
-               show_msg(N_txt(HILIGHT_cant_txt));
-            else {
-               TOGw(w, Show_HIBOLD);
-               capsmk(w);
-            }
-         }
+         TOGw(w, Show_HIBOLD);
+         capsmk(w);
          break;
       case 'c':
          VIZTOGw(w, Show_CMDLIN);
