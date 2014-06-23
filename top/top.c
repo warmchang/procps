@@ -238,6 +238,11 @@ static int (*Numa_node_of_cpu)(int num);
 
         /* Support for Graphing of the View_STATES ('t') and View_MEMORY ('m')
            commands -- which are now both 4-way toggles */
+#define GRAPH_prefix  25     // beginning text + opening '['
+#define GRAPH_actual  100    // the actual bars or blocks
+#define GRAPH_suffix  2      // ending ']' + trailing space
+static float Graph_adj;      // bars/blocks scaling factor
+static int   Graph_len;      // scaled length (<= GRAPH_actual)
 static const char Graph_blks[] = "                                                                                                    ";
 static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
 
@@ -1857,6 +1862,15 @@ static void adj_geometry (void) {
    }
    // ensure each row is repainted (just in case)
    PSU_CLREOS(0);
+
+   // prepare to customize potential cpu/memory graphs
+   Graph_adj = ((float)Screen_cols - GRAPH_prefix - GRAPH_suffix) / 100.0;
+   if (Graph_adj > 1.0) Graph_adj = 1.0;
+   else if (Screen_cols < 80) Graph_adj = (80.0 - GRAPH_prefix - GRAPH_suffix) / 100.0;
+   Graph_len = Screen_cols - GRAPH_prefix - GRAPH_actual - GRAPH_suffix;
+   if (Graph_len >= 0) Graph_len = GRAPH_actual;
+   else if (Screen_cols > 80) Graph_len = Screen_cols - GRAPH_prefix - GRAPH_suffix;
+   else Graph_len = 80 - GRAPH_prefix - GRAPH_suffix;
 
    fflush(stdout);
    Frames_signal = BREAK_off;
@@ -5057,11 +5071,11 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
       int ix = Rc.graph_cpus - 1;
       float pct_user = (float)(u_frme + n_frme) * scale,
             pct_syst = (float)s_frme * scale;
-      snprintf(user, sizeof(user), gtab[ix].user, (int)(pct_user + .5), gtab[ix].type);
-      snprintf(syst, sizeof(syst), gtab[ix].syst, (int)(pct_syst + .5), gtab[ix].type);
+      snprintf(user, sizeof(user), gtab[ix].user, (int)((pct_user * Graph_adj) + .5), gtab[ix].type);
+      snprintf(syst, sizeof(syst), gtab[ix].syst, (int)((pct_syst * Graph_adj) + .5), gtab[ix].type);
       snprintf(dual, sizeof(dual), "%s%s", user, syst);
-      show_special(0, fmtmk("%%%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-104.104s]~1\n"
-         , pfx, pct_user, pct_syst, pct_user + pct_syst, dual));
+      show_special(0, fmtmk("%%%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*.*s]~1\n"
+         , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, Graph_len +4, dual));
    } else {
       show_special(0, fmtmk(Cpu_States_fmts, pfx
          , (float)u_frme * scale, (float)s_frme * scale
@@ -5209,15 +5223,15 @@ numa_nope:
          float pct_used = (float)kb_main_my_used * (100.0 / (float)kb_main_total),
                pct_misc = (float)(kb_main_buffers + kb_main_cached) * (100.0 / (float)kb_main_total),
                pct_swap = (float)kb_swap_used * (100.0 / (float)kb_swap_total);
-         snprintf(used, sizeof(used), gtab[ix].used, (int)(pct_used + .5), gtab[ix].type);
-         snprintf(util, sizeof(util), gtab[ix].misc, (int)(pct_misc + .5), gtab[ix].type);
+         snprintf(used, sizeof(used), gtab[ix].used, (int)((pct_used * Graph_adj) + .5), gtab[ix].type);
+         snprintf(util, sizeof(util), gtab[ix].misc, (int)((pct_misc * Graph_adj) + .5), gtab[ix].type);
          snprintf(dual, sizeof(dual), "%s%s", used, util);
-         snprintf(util, sizeof(util), gtab[ix].swap, (int)(pct_swap + .5), gtab[ix].type);
+         snprintf(util, sizeof(util), gtab[ix].swap, (int)((pct_swap * Graph_adj) + .5), gtab[ix].type);
          prT(bfT(0), mkM(total)); prT(bfT(1), mkS(total));
          show_special(0, fmtmk(
-            "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-104.104s]~1\n%s %s:~3%#5.1f~2/%-9.9s~3[~1%-102.102s]~1\n"
-            , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), dual
-            , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), util));
+            "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*.*s]~1\n%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*.*s]~1\n"
+            , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, Graph_len +4, dual
+            , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, Graph_len +2, util));
       } else {
          prT(bfT(0), mkM(total));   prT(bfT(1), mkM(free));
          prT(bfT(2), mkM(my_used)); prT(bfT(3), mkM(buffers));
