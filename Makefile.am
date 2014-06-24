@@ -1,3 +1,5 @@
+#AUTOMAKE_OPTIONS = subdir-objects
+
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I$(top_srcdir)/include \
@@ -45,6 +47,8 @@ dist_man_MANS = \
 
 EXTRA_DIST = \
 	autogen.sh \
+	create-man-pot.sh \
+	translate-man.sh \
 	contrib \
 	COPYING.LIB \
 	misc/git-version-gen \
@@ -117,13 +121,19 @@ dist_procpsng_DATA = \
 	Documentation/FAQ
 
 BUILT_SOURCES = $(top_srcdir)/.version
+
+clean-local:
+	-rm man-po/template-man-ps.pot
+	-rm man-po/template-man-top.pot
+	-rm man-po/template-man.pot
+
 $(top_srcdir)/.version:
 	touch $(top_srcdir)/.version
 	echo $(VERSION) > $@-t && mv $@-t $@
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
-	./create-man-pot.sh
-	./translate-man.sh
+	$(srcdir)/create-man-pot.sh
+	$(srcdir)/translate-man.sh
 
 get-trans:
 	echo "Getting the latest translations from translationproject.org..."

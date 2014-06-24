@@ -2,35 +2,38 @@
 #
 # Run this command in the top level directory to create the translation template:
 
+SRCDIR=$(dirname ${0})
+test -z "${SRCDIR}" && SRCDIR=.
+
 if [ -d man-po ] ; then
   echo "man-po: directory exists, will be reused"
   else
     mkdir -p man-po
 fi
 
-po4a-updatepo -f man -m free.1 \
-                     -m kill.1 \
-                     -m pgrep.1 \
-                     -m pidof.1 \
-                     -m pkill.1 \
-                     -m pmap.1 \
-                     -m pwdx.1 \
-                     -m skill.1 \
-                     -m slabtop.1 \
-                     -m snice.1 \
-                     -m sysctl.8 \
-                     -m sysctl.conf.5 \
-                     -m tload.1 \
-                     -m uptime.1 \
-                     -m vmstat.8 \
-                     -m w.1 \
-                     -m watch.1 \
+po4a-updatepo -f man -m ${SRCDIR}/free.1 \
+                     -m ${SRCDIR}/kill.1 \
+                     -m ${SRCDIR}/pgrep.1 \
+                     -m ${SRCDIR}/pidof.1 \
+                     -m ${SRCDIR}/pkill.1 \
+                     -m ${SRCDIR}/pmap.1 \
+                     -m ${SRCDIR}/pwdx.1 \
+                     -m ${SRCDIR}/skill.1 \
+                     -m ${SRCDIR}/slabtop.1 \
+                     -m ${SRCDIR}/snice.1 \
+                     -m ${SRCDIR}/sysctl.8 \
+                     -m ${SRCDIR}/sysctl.conf.5 \
+                     -m ${SRCDIR}/tload.1 \
+                     -m ${SRCDIR}/uptime.1 \
+                     -m ${SRCDIR}/vmstat.8 \
+                     -m ${SRCDIR}/w.1 \
+                     -m ${SRCDIR}/watch.1 \
                      -p man-po/template-man.pot
                      
-po4a-updatepo -f man -m ps/ps.1 \
+po4a-updatepo -f man -m ${SRCDIR}/ps/ps.1 \
                      -p man-po/template-man-ps.pot
 
-po4a-updatepo -f man -m top/top.1 \
+po4a-updatepo -f man -m ${SRCDIR}/top/top.1 \
                      -p man-po/template-man-top.pot
 
 # Rename the file according to the version of your (pre-release) tarball.                     
