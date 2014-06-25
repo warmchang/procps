@@ -312,7 +312,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[LIMIT_exceed_fmt] = _("pid limit (%d) exceeded");
    Norm_nlstab[BAD_mon_pids_fmt] = _("bad pid '%s'");
    Norm_nlstab[MISSING_args_fmt] = _("-%c requires argument");
-   Norm_nlstab[BAD_widtharg_fmt] = _("bad width arg '%s', must > %d");
+   Norm_nlstab[BAD_widtharg_fmt] = _("bad width arg '%s'");
    Norm_nlstab[UNKNOWN_opts_fmt] = _(""
       "unknown option '%c'\n"
       "Usage:\n  %s%s");

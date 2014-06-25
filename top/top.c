@@ -1350,6 +1350,21 @@ static inline const char *hex_make (KLONG num, int noz) {
 
 
         /*
+         * Make locale aware float (but maybe restrict to whole numbers). */
+static int mkfloat (const char *str, float *num, int whole) {
+   char *ep;
+
+   if (whole)
+      *num = (float)strtol(str, &ep, 0);
+   else
+      *num = strtof(str, &ep);
+   if (ep != str && *ep == '\0' && *num < MAXINT)
+      return 1;
+   return 0;
+} // end: mkfloat
+
+
+        /*
          * This sructure is hung from a WIN_t when other filtering is active */
 struct osel_s {
    struct osel_s *nxt;                         // the next criteria or NULL.
@@ -3640,7 +3655,6 @@ static void parse_args (char **args) {
       .  we tolerate NO whitespace and NO switches -- maybe too tolerant? */
    static const char numbs_str[] = "+,-.0123456789";
    float tmp_delay = MAXFLOAT;
-   char *p;
    int i;
 
    while (*args) {
@@ -3648,6 +3662,8 @@ static void parse_args (char **args) {
 
       while (*cp) {
          char ch;
+         float tmp;
+
          switch ((ch = *cp)) {
             case '\0':
                break;
@@ -3668,9 +3684,10 @@ static void parse_args (char **args) {
                if (cp[1]) ++cp;
                else if (*args) cp = *args++;
                else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
-                  /* a negative delay will be dealt with shortly... */
-               if (1 != sscanf(cp, "%f", &tmp_delay))
+               if (!mkfloat(cp, &tmp_delay, 0))
                   error_exit(fmtmk(N_fmt(BAD_delayint_fmt), cp));
+               if (0 > tmp_delay)
+                  error_exit(N_txt(DELAY_badarg_txt));
                break;
             case 'H':
                Thread_mode = 1;
@@ -3688,8 +3705,9 @@ static void parse_args (char **args) {
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
                else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
-               if (1 != sscanf(cp, "%d", &Loops) || 1 > Loops)
+               if (!mkfloat(cp, &tmp, 1) || 1.0 > tmp)
                   error_exit(fmtmk(N_fmt(BAD_niterate_fmt), cp));
+               Loops = (int)tmp;
                break;
             case 'o':
                if (cp[1]) cp++;
@@ -3709,15 +3727,18 @@ static void parse_args (char **args) {
                for (i = 0; i < EU_MAXPFLGS; i++)
                   puts(N_col(i));
                bye_bye(NULL);
-            case 'p':
+            case 'p': {
+               int pid; char *p;
                if (Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
-               do { int pid;
+               do {
                   if (cp[1]) cp++;
                   else if (*args) cp = *args++;
                   else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
                   if (Monpidsidx >= MONPIDMAX)
                      error_exit(fmtmk(N_fmt(LIMIT_exceed_fmt), MONPIDMAX));
-                  if (1 != sscanf(cp, "%d", &pid) || 0 > pid)
+                  if (1 != sscanf(cp, "%d", &pid)
+                  || strpbrk(cp, "+-.")
+                  || 0 > pid)
                      error_exit(fmtmk(N_fmt(BAD_mon_pids_fmt), cp));
                   if (!pid) pid = getpid();
                   for (i = 0; i < Monpidsidx; i++)
@@ -3727,7 +3748,7 @@ static void parse_args (char **args) {
                   if (!(p = strchr(cp, ','))) break;
                   cp = p;
                } while (*cp);
-               break;
+            }  break;
             case 's':
                Secure_mode = 1;
                break;
@@ -3751,15 +3772,14 @@ static void parse_args (char **args) {
                Width_mode = -1;
                if (cp[1]) pn = &cp[1];
                else if (*args) { pn = *args; ai = 1; }
-               if (pn && !(ci = strspn(pn, "0123456789"))) { ai = 0; pn = NULL; }
-               if (pn && (1 != sscanf(pn, "%d", &Width_mode)
-               || Width_mode < W_MIN_COL))
-                  error_exit(fmtmk(N_fmt(BAD_widtharg_fmt), pn, W_MIN_COL-1));
+               if (pn && !(ci = strspn(pn, numbs_str))) { ai = 0; pn = NULL; }
+               if (pn && (!mkfloat(pn, &tmp, 1) || tmp < W_MIN_COL))
+                  error_exit(fmtmk(N_fmt(BAD_widtharg_fmt), pn));
+               Width_mode = (int)tmp;
                cp++;
                args += ai;
                if (pn) cp = pn + ci;
-               continue;
-            }
+            }  continue;
             default :
                error_exit(fmtmk(N_fmt(UNKNOWN_opts_fmt)
                   , *cp, Myname, N_txt(USAGE_abbrev_txt)));
@@ -3776,8 +3796,6 @@ static void parse_args (char **args) {
    if (MAXFLOAT > tmp_delay) {
       if (Secure_mode)
          error_exit(N_txt(DELAY_secure_txt));
-      if (0 > tmp_delay)
-         error_exit(N_txt(DELAY_badarg_txt));
       Rc.delay_time = tmp_delay;
    }
 } // end: parse_args
