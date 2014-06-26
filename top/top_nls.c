@@ -465,8 +465,8 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[NUMA_nodenot_txt] = _("sorry, NUMA extensions unavailable");
 /* Translation Hint: 'Mem ' is an abbreviation for physical memory/ram
    '                 'Swap' represents the linux swap file --
-   '                 please make both translations the same length,
-   '                 using extra spaces as necessary */
+   '                 please make both translations exactly 4 characters,
+   '                 padding with extra spaces as necessary */
    Norm_nlstab[WORD_abv_mem_txt] = _("Mem ");
    Norm_nlstab[WORD_abv_swp_txt] = _("Swap");
 }
