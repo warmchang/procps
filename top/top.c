@@ -3457,7 +3457,7 @@ static int config_cvt (WIN_t *q) {
          *   line 2  : an id, Mode_altcsr, Mode_irixps, Delay_time, Curwin.
          *   For each of the 4 windows:
          *     line a: contains w->winname, fieldscur
-         *     line b: contains w->winflags, sortindx, maxtasks
+         *     line b: contains w->winflags, sortindx, maxtasks, graph modes
          *     line c: contains w->summclr, msgsclr, headclr, taskclr
          *   line 15 : miscellaneous additional global settings
          *   Any remaining lines are devoted to the 'Inspect Other' feature */
@@ -3511,8 +3511,9 @@ static void configs_read (void) {
  // too bad fscanf is not as flexible with his format string as snprintf
  # error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 #endif
-         if (3 != fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-            , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks))
+         // be tolerant of missing release 3.3.10 graph modes additions
+         if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d\n"
+            , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks, &w->rc.graph_cpus, &w->rc.graph_mems))
                goto default_or_error;
          if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
             , &w->rc.summclr, &w->rc.msgsclr
@@ -3522,13 +3523,16 @@ static void configs_read (void) {
          switch (Rc.id) {
             case 'a':                          // 3.2.8 (former procps)
                if (config_cvt(w))
-                  goto default_or_error;          // fall through !
-            case 'f':                          // 3.3.0 thru 3.3.3 (procps-ng)
-               SETw(w, Show_JRNUMS);              // fall through !
-            case 'g':                          // 3.3.4 thru 3.3.8
-               scat(w->rc.fieldscur, RCF_PLUS_H); // fall through !
-            case 'h':                          // current RCF_VERSION_ID
-            default:                           // and future versions?
+                  goto default_or_error;
+            case 'f':                          // 3.3.0 thru 3.3.3 (ng)
+               SETw(w, Show_JRNUMS);
+            case 'g':                          // from 3.3.4 thru 3.3.8
+               scat(w->rc.fieldscur, RCF_PLUS_H);
+            case 'h':                          // this is release 3.3.9
+            /* w->rc.graph_cpus = 0; */// for documentation only, since
+            /* w->rc.graph_mems = 0; */// DEF_RCFILE zeroes them for us
+            case 'i':                          // actual RCF_VERSION_ID
+            default:                           // and a future version?
                if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
                   goto default_or_error;
                for (x = 0; x < EU_MAXPFLGS; ++x)
@@ -3542,9 +3546,8 @@ static void configs_read (void) {
       } // end: for (GROUPSMAX)
 
       // any new addition(s) last, for older rcfiles compatibility...
-      if (fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d, Graph_cpus=%d, Graph_mems=%d\n"
-         , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress
-         , &Rc.graph_cpus, &Rc.graph_mems))
+      if (fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
+         , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress))
             ;                                  // avoid -Wunused-result
 
 try_inspect_entries:
@@ -4349,18 +4352,17 @@ static void write_rcfile (void) {
    for (i = 0 ; i < GROUPSMAX; i++) {
       fprintf(fp, "%s\tfieldscur=%s\n"
          , Winstk[i].rc.winname, Winstk[i].rc.fieldscur);
-      fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d\n"
-         , Winstk[i].rc.winflags, Winstk[i].rc.sortindx
-         , Winstk[i].rc.maxtasks);
+      fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d\n"
+         , Winstk[i].rc.winflags, Winstk[i].rc.sortindx, Winstk[i].rc.maxtasks
+         , Winstk[i].rc.graph_cpus,  Winstk[i].rc.graph_mems);
       fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
          , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
          , Winstk[i].rc.headclr, Winstk[i].rc.taskclr);
    }
 
    // any new addition(s) last, for older rcfiles compatibility...
-   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d, Graph_cpus=%d, Graph_mems=%d\n"
-      , Rc.fixed_widest, Rc.summ_mscale, Rc.task_mscale, Rc.zero_suppress
-      , Rc.graph_cpus, Rc.graph_mems);
+   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
+      , Rc.fixed_widest, Rc.summ_mscale, Rc.task_mscale, Rc.zero_suppress);
 
    if (Inspect.raw)
       fputs(Inspect.raw, fp);
@@ -4544,16 +4546,16 @@ static void keys_summary (int ch) {
       case 'm':
          if (!CHKw(w, View_MEMORY))
             SETw(w, View_MEMORY);
-         else if (++Rc.graph_mems > 2) {
-            Rc.graph_mems = 0;;
+         else if (++w->rc.graph_mems > 2) {
+            w->rc.graph_mems = 0;;
             OFFw(w, View_MEMORY);
          }
          break;
       case 't':
          if (!CHKw(w, View_STATES))
             SETw(w, View_STATES);
-         else if (++Rc.graph_cpus > 2) {
-            Rc.graph_cpus = 0;;
+         else if (++w->rc.graph_cpus > 2) {
+            w->rc.graph_cpus = 0;;
             OFFw(w, View_STATES);
          }
          break;
@@ -5080,7 +5082,7 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
 
    /* display some kinda' cpu state percentages
       (who or what is explained by the passed prefix) */
-   if (Rc.graph_cpus) {
+   if (Curwin->rc.graph_cpus) {
       static struct {
          const char *user, *syst, *type;
       } gtab[] = {
@@ -5088,7 +5090,7 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
          { "%-.*s~4", "%-.*s~6", Graph_blks }
       };
       char user[SMLBUFSIZ], syst[SMLBUFSIZ], dual[MEDBUFSIZ];
-      int ix = Rc.graph_cpus - 1;
+      int ix = Curwin->rc.graph_cpus - 1;
       float pct_user = (float)(u_frme + n_frme) * scale,
             pct_syst = (float)s_frme * scale;
       snprintf(user, sizeof(user), gtab[ix].user, (int)((pct_user * Graph_adj) + .5), gtab[ix].type);
@@ -5231,7 +5233,7 @@ numa_nope:
       }
       kb_main_my_used = kb_main_used - kb_main_buffers - kb_main_cached;
 
-      if (Rc.graph_mems) {
+      if (w->rc.graph_mems) {
          static struct {
             const char *used, *misc, *swap, *type;
          } gtab[] = {
@@ -5239,7 +5241,7 @@ numa_nope:
             { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
          };
          char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ];
-         int ix = Rc.graph_mems - 1;
+         int ix = w->rc.graph_mems - 1;
          float pct_used = (float)kb_main_my_used * (100.0 / (float)kb_main_total),
                pct_misc = (float)(kb_main_buffers + kb_main_cached) * (100.0 / (float)kb_main_total),
                pct_swap = (float)kb_swap_used * (100.0 / (float)kb_swap_total);

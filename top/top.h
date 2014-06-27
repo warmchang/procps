@@ -343,15 +343,17 @@ enum warn_enum {
 
         /* This type helps support both a window AND the rcfile */
 typedef struct RCW_t {  // the 'window' portion of an rcfile
-   int    sortindx,             // sort field, represented as a procflag
-          winflags,             // 'view', 'show' and 'sort' mode flags
-          maxtasks,             // user requested maximum, 0 equals all
-          summclr,                      // color num used in summ info
-          msgsclr,                      //        "       in msgs/pmts
-          headclr,                      //        "       in cols head
-          taskclr;                      //        "       in task rows
-   char   winname [WINNAMSIZ],          // window name, user changeable
-          fieldscur [PFLAGSSIZ];        // fields displayed and ordered
+   int    sortindx,               // sort field (represented as procflag)
+          winflags,               // 'view', 'show' and 'sort' mode flags
+          maxtasks,               // user requested maximum, 0 equals all
+          graph_cpus,             // 't' - View_STATES supplementary vals
+          graph_mems,             // 'm' - View_MEMORY supplememtary vals
+          summclr,                // a colors 'number' used for summ info
+          msgsclr,                //             "           in msgs/pmts
+          headclr,                //             "           in cols head
+          taskclr;                //             "           in task rows
+   char   winname [WINNAMSIZ],    // name for the window, user changeable
+          fieldscur [PFLAGSSIZ];  // the fields for display & their order
 } RCW_t;
 
         /* This represents the complete rcfile */
@@ -366,8 +368,6 @@ typedef struct RCF_t {
    int    summ_mscale;          // 'E' - scaling of summary memory values
    int    task_mscale;          // 'e' - scaling of process memory values
    int    zero_suppress;        // '0' - suppress scaled zeros toggle
-   int    graph_cpus;           // 't' - View_STATES supplementary values
-   int    graph_mems;           // 'm' - View_MEMORY supplememtary values
 } RCF_t;
 
         /* This structure stores configurable information for each window.
@@ -569,7 +569,7 @@ typedef struct WIN_t {
         /* Configuration files support */
 #define SYS_RCFILESPEC  "/etc/toprc"
 #define RCF_EYECATCHER  "Config File (Linux processes with windows)\n"
-#define RCF_VERSION_ID  'h'
+#define RCF_VERSION_ID  'i'
 #define RCF_PLUS_H      "\\]^_`abcdefghij"
 
         /* The default fields displayed and their order, if nothing is
@@ -600,19 +600,19 @@ typedef struct WIN_t {
         /* The default values for the local config file */
 #define DEF_RCFILE { \
    RCF_VERSION_ID, 0, 1, DEF_DELAY, 0, { \
-   { EU_CPU, DEF_WINFLGS, 0, \
+   { EU_CPU, DEF_WINFLGS, 0, 0, 0, \
       COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED, \
       "Def", DEF_FIELDS }, \
-   { EU_PID, DEF_WINFLGS, 0, \
+   { EU_PID, DEF_WINFLGS, 0, 0, 0, \
       COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, COLOR_CYAN, \
       "Job", JOB_FIELDS }, \
-   { EU_MEM, DEF_WINFLGS, 0, \
+   { EU_MEM, DEF_WINFLGS, 0, 0, 0, \
       COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA, \
       "Mem", MEM_FIELDS }, \
-   { EU_UEN, DEF_WINFLGS, 0, \
+   { EU_UEN, DEF_WINFLGS, 0, 0, 0, \
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
-   }, 0, SK_Kb, SK_Kb, 0, 0, 0 }
+   }, 0, SK_Kb, SK_Kb, 0 }
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
