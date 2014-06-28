@@ -677,12 +677,12 @@ typedef struct WIN_t {
 //atic int           ioch (int ech, char *buf, unsigned cnt);
 //atic int           iokey (int action);
 //atic char         *ioline (const char *prompt);
+//atic int           mkfloat (const char *str, float *num, int whole);
 //atic int           readfile (FILE *fp, char **baddr, size_t *bsize, size_t *bread);
 /*------  Small Utility routines  ----------------------------------------*/
 //atic float         get_float (const char *prompt);
 //atic int           get_int (const char *prompt);
 //atic inline const char *hex_make (KLONG num, int noz);
-//atic int           mkfloat (const char *str, float *num, int whole);
 //atic void          osel_clear (WIN_t *q);
 //atic inline int    osel_matched (const WIN_t *q, FLG_t enu, const char *str);
 //atic const char   *user_certify (WIN_t *q, const char *str, char typ);

@@ -1259,6 +1259,21 @@ static char *ioline (const char *prompt) {
 
 
         /*
+         * Make locale aware float (but maybe restrict to whole numbers). */
+static int mkfloat (const char *str, float *num, int whole) {
+   char *ep;
+
+   if (whole)
+      *num = (float)strtol(str, &ep, 0);
+   else
+      *num = strtof(str, &ep);
+   if (ep != str && *ep == '\0' && *num < MAXINT)
+      return 1;
+   return 0;
+} // end: mkfloat
+
+
+        /*
          * This routine provides the i/o in support of files whose size
          * cannot be determined in advance.  Given a stream pointer, he'll
          * try to slurp in the whole thing and return a dynamically acquired
@@ -1302,11 +1317,10 @@ static float get_float (const char *prompt) {
    if (line[0] == kbd_ESC || Frames_signal) return GET_NUM_ESC;
    if (!line[0]) return GET_NUM_NOT;
    // note: we're not allowing negative floats
-   if (strcspn(line, "+,.0123456789")) {
+   if (!mkfloat(line, &f, 0) || f < 0) {
       show_msg(N_txt(BAD_numfloat_txt));
       return GET_NUM_BAD;
    }
-   sscanf(line, "%f", &f);
    return f;
 } // end: get_float
 
@@ -1315,18 +1329,17 @@ static float get_float (const char *prompt) {
          * Get an integer from the user, returning INT_MIN for error */
 static int get_int (const char *prompt) {
    char *line;
-   int n;
+   float f;
 
    line = ioline(prompt);
    if (line[0] == kbd_ESC || Frames_signal) return GET_NUM_ESC;
    if (!line[0]) return GET_NUM_NOT;
    // note: we've got to allow negative ints (renice)
-   if (strcspn(line, "-+0123456789")) {
+   if (!mkfloat(line, &f, 1)) {
       show_msg(N_txt(BAD_integers_txt));
       return GET_NUM_BAD;
    }
-   sscanf(line, "%d", &n);
-   return n;
+   return (int)f;
 } // end: get_int
 
 
@@ -1347,21 +1360,6 @@ static inline const char *hex_make (KLONG num, int noz) {
             buf[i] = '.';
    return buf;
 } // end: hex_make
-
-
-        /*
-         * Make locale aware float (but maybe restrict to whole numbers). */
-static int mkfloat (const char *str, float *num, int whole) {
-   char *ep;
-
-   if (whole)
-      *num = (float)strtol(str, &ep, 0);
-   else
-      *num = strtof(str, &ep);
-   if (ep != str && *ep == '\0' && *num < MAXINT)
-      return 1;
-   return 0;
-} // end: mkfloat
 
 
         /*

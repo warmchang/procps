@@ -11,6 +11,7 @@ procps-ng-3.3.10
   * top is now immune to distortions when system time is reset
   * top standardized the <Esc> key support with prompted input
   * top missing summary area info added to man document, ubuntu #574624
+  * top properly responds to the current locale LC_NUMERIC setting
   * top provides alternate graph modes for cpu states and memory usage
 
 
