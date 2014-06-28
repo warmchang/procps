@@ -266,6 +266,7 @@ AC_CHECK_FUNCS([__fpending alarm atexit dup2 getpagesize gettimeofday iswprint m
 AC_CONFIG_FILES([Makefile
                  include/Makefile
                  lib/Makefile
+		 man-po/Makefile
 		 po/Makefile.in
                  proc/Makefile
                  proc/libprocps.pc

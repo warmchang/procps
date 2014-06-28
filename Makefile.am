@@ -9,6 +9,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = \
 	include \
 	lib \
+	man-po \
 	po \
 	proc \
 	ps \
@@ -47,8 +48,6 @@ dist_man_MANS = \
 
 EXTRA_DIST = \
 	autogen.sh \
-	create-man-pot.sh \
-	translate-man.sh \
 	contrib \
 	COPYING.LIB \
 	misc/git-version-gen \
@@ -128,31 +127,6 @@ $(top_srcdir)/.version:
 	echo $(VERSION) > $@-t && mv $@-t $@
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
-# $(srcdir)/create-man-pot.sh
-	$(srcdir)/translate-man.sh
-
-MAN_PS_POT = man-po/template-man-ps.pot
-MAN_PS_POT_FILES = $(srcdir)/ps/ps.1
-MAN_TOP_POT = man-po/template-man-top.pot
-MAN_TOP_POT_FILES = $(srcdir)/top/top.1
-MAN_POT = man-po/template-man.pot
-MAN_POT_FILES = $(srcdir)/free.1 $(srcdir)/kill.1 $(srcdir)/pgrep.1 \
-		  $(srcdir)/pidof.1 $(srcdir)/pkill.1 $(srcdir)/pmap.1 \
-		  $(srcdir)/pwdx.1 $(srcdir)/skill.1 $(srcdir)/slabtop.1 \
-		  $(srcdir)/snice.1 $(srcdir)/sysctl.8 $(srcdir)/uptime.1 \
-		  $(srcdir)/sysctl.conf.5 $(srcdir)/tload.1 \
-		  $(srcdir)/vmstat.8 $(srcdir)/w.1 $(srcdir)/watch.1
-DIST_MAN_POTS = $(MAN_PS_POT) $(MAN_TOP_POT) $(MAN_POT)
-CLEANFILES = $(DIST_MAN_POTS)
-
-$(MAN_PS_POT): $(MAN_PS_POT_FILES)
-	po4a-updatepo -f man -m $< -p $@
-
-$(MAN_TOP_POT): $(MAN_TOP_POT_FILES)
-	po4a-updatepo -f man -m $< -p $@
-
-$(MAN_POT): $(MAN_POT_FILES)
-	po4a-updatepo -f man -m $< -p $@
 
 get-trans:
 	echo "Getting the latest translations from translationproject.org..."
