@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS 1 "May 2014" "procps-ng" "User Commands"
+.TH PS 1 "July 2014" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -1349,7 +1349,8 @@ time the command started.  See also
 T}
 
 lsession	SESSION	T{
-displays login session identifier of a process.
+displays the login session identifier of a process,
+if systemd support has been included.
 T}
 
 lwp	LWP	T{
@@ -1361,7 +1362,8 @@ for additional information.
 T}
 
 machine	MACHINE	T{
-displays machine name for processes assigned to VM or container.
+displays the machine name for processes assigned to VM or container,
+if systemd support has been included.
 T}
 
 maj_flt	MAJFLT	T{
@@ -1407,7 +1409,8 @@ if you want the kernel function name).  Running tasks will display a dash
 T}
 
 ouid	OWNER	T{
-displays the Unix user identifier of the owner of the session of a process.
+displays the Unix user identifier of the owner of the session of a process,
+if systemd support has been included.
 T}
 
 pcpu	%CPU	T{
@@ -1551,7 +1554,9 @@ displayed as 0, 1, 2, 3, 4, and 5.
 T}
 
 seat	SEAT	T{
-displays login session identifier of a process.
+displays the identifier associated with all hardware devices assigned
+to a specific workplace,
+if systemd support has been included.
 T}
 
 sess	SESS	T{
@@ -1616,7 +1621,8 @@ rough!
 T}
 
 slice	SLICE	T{
-displays slice unit which a process belongs to.
+displays the slice unit which a process belongs to,
+if systemd support has been included.
 T}
 
 spid	SPID	T{
@@ -1782,7 +1788,8 @@ see
 T}
 
 unit	UNIT	T{
-displays systemd unit which a process belongs to.
+displays unit which a process belongs to,
+if systemd support has been included.
 T}
 
 user	USER	T{
@@ -1801,7 +1808,8 @@ Unique inode number describing the namespace the process belongs to. See namespa
 T}
 
 uunit	UUNIT	T{
-displays systemd user unit which a process belongs to.
+displays user unit which a process belongs to,
+if systemd support has been included.
 T}
 
 vsize	VSZ	T{
