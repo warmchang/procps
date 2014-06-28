@@ -171,6 +171,16 @@ typedef struct proc_t {
 #endif
     long
         ns[NUM_NS];     // (ns subdir)     inode number of namespaces
+#ifdef WITH_SYSTEMD
+    char
+        *sd_mach,       // n/a             systemd vm/container name
+        *sd_ouid,       // n/a             systemd session owner uid
+        *sd_seat,       // n/a             systemd login session seat
+        *sd_sess,       // n/a             systemd login session id
+        *sd_slice,      // n/a             systemd slice unit
+        *sd_unit,       // n/a             systemd system unit id
+        *sd_uunit;      // n/a             systemd user unit id
+#endif
 } proc_t;
 
 // PROCTAB: data structure holding the persistent information readproc needs
@@ -281,6 +291,7 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 #define PROC_FILLSUPGRP      0x0400 // resolve supplementary group id -> group name
 #define PROC_FILLOOM         0x0800 // fill in proc_t oom_score and oom_adj
 #define PROC_FILLNS          0x8000 // fill in proc_t namespace information
+#define PROC_FILLSYSTEMD    0x80000 // fill in proc_t systemd information
 
 #define PROC_LOOSE_TASKS     0x2000 // treat threads as if they were processes
 

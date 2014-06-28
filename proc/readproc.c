@@ -37,6 +37,9 @@
 #include <sys/dir.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef WITH_SYSTEMD
+#include <systemd/sd-login.h>
+#endif
 
 // sometimes it's easier to do this manually, w/o gcc helping
 #ifdef PROF
@@ -87,11 +90,20 @@ static inline void free_acquired (proc_t *p, int reuse) {
 #ifdef QUICK_THREADS
     if (!IS_THREAD(p)) {
 #endif
-        if (p->environ) free((void*)*p->environ);
-        if (p->cmdline) free((void*)*p->cmdline);
-        if (p->cgroup)  free((void*)*p->cgroup);
-        if (p->supgid)  free(p->supgid);
-        if (p->supgrp)  free(p->supgrp);
+        if (p->environ)  free((void*)*p->environ);
+        if (p->cmdline)  free((void*)*p->cmdline);
+        if (p->cgroup)   free((void*)*p->cgroup);
+        if (p->supgid)   free(p->supgid);
+        if (p->supgrp)   free(p->supgrp);
+#ifdef WITH_SYSTEMD
+        if (p->sd_mach)  free(p->sd_mach);
+        if (p->sd_ouid)  free(p->sd_ouid);
+        if (p->sd_seat)  free(p->sd_seat);
+        if (p->sd_sess)  free(p->sd_sess);
+        if (p->sd_slice) free(p->sd_slice);
+        if (p->sd_unit)  free(p->sd_unit);
+        if (p->sd_uunit) free(p->sd_uunit);
+#endif
 #ifdef QUICK_THREADS
     }
 #endif
@@ -496,6 +508,40 @@ static void ns2proc(const char *directory, proc_t *restrict p) {
 #endif
     }
 }
+
+#ifdef WITH_SYSTEMD
+static void sd2proc(proc_t *restrict p) {
+    char buf[64];
+    uid_t uid;
+
+    if (0 > sd_pid_get_machine_name(p->tid, &p->sd_mach))
+        p->sd_mach = strdup("-");
+
+    if (0 > sd_pid_get_owner_uid(p->tid, &uid))
+        p->sd_ouid = strdup("-");
+    else {
+        snprintf(buf, sizeof(buf), "%d", (int)uid);
+        p->sd_ouid = strdup(buf);
+    }
+
+    if (0 > sd_pid_get_session(p->tid, &p->sd_sess)) {
+        p->sd_sess = strdup("-");
+        p->sd_seat = strdup("-");
+    } else {
+        if (0 > sd_session_get_seat(p->sd_sess, &p->sd_seat))
+            p->sd_seat = strdup("-");
+    }
+
+    if (0 > sd_pid_get_slice(p->tid, &p->sd_slice))
+        p->sd_slice = strdup("-");
+
+    if (0 > sd_pid_get_unit(p->tid, &p->sd_unit))
+        p->sd_unit = strdup("-");
+
+    if (0 > sd_pid_get_user_unit(p->tid, &p->sd_uunit))
+        p->sd_uunit = strdup("-");
+}
+#endif
 ///////////////////////////////////////////////////////////////////////
 
 
@@ -889,6 +935,10 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (unlikely(flags & PROC_FILLNS))          // read /proc/#/ns/*
         ns2proc(path, p);
 
+#ifdef WITH_SYSTEMD
+    if (unlikely(flags & PROC_FILLSYSTEMD))     // get sd-login.h stuff
+        sd2proc(p);
+#endif
     return p;
 next_proc:
     return NULL;
@@ -992,6 +1042,11 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         } else
             t->cgroup = NULL;
 
+#ifdef WITH_SYSTEMD
+        if (unlikely(flags & PROC_FILLSYSTEMD))         // get sd-login.h stuff
+            sd2proc(t);
+#endif
+
 #ifdef QUICK_THREADS
     } else {
         t->size     = p->size;
@@ -1007,6 +1062,15 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         if (t->supgid) free(t->supgid);
         t->supgid   = p->supgid;
         t->supgrp   = p->supgrp;
+#ifdef WITH_SYSTEMD
+        t->sd_mach  = p->sd_mach;
+        t->sd_ouid  = p->sd_ouid;
+        t->sd_seat  = p->sd_seat;
+        t->sd_sess  = p->sd_sess;
+        t->sd_slice = p->sd_slice;
+        t->sd_unit  = p->sd_unit;
+        t->sd_uunit = p->sd_uunit;
+#endif
         MK_THREAD(t);
     }
 #endif

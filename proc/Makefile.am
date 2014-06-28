@@ -12,6 +12,10 @@ LIBprocps_AGE=0
 
 lib_LTLIBRARIES = libprocps.la
 
+if WITH_SYSTEMD
+AM_LDFLAGS = @SYSTEMD_LIBS@
+endif
+
 libprocps_ladir = $(ladir)
 libprocps_la_LIBADD = $(LIB_KPARTS)
 libprocps_la_LDFLAGS = \
