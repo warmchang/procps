@@ -71,10 +71,6 @@
 
 #include "common.h"
 
-#ifdef WITH_SYSTEMD
-#include <systemd/sd-login.h>
-#endif
-
 /* TODO:
  * Stop assuming system time is local time.
  */
@@ -1190,125 +1186,32 @@ static int pr_sgi_p(char *restrict const outbuf, const proc_t *restrict const pp
 #ifdef WITH_SYSTEMD
 /************************* Systemd stuff ********************************/
 static int pr_sd_unit(char *restrict const outbuf, const proc_t *restrict const pp){
-  int r;
-  size_t len;
-  char *unit;
-
-  r = sd_pid_get_unit(pp->tgid, &unit);
-  if(r<0) goto fail;
-  len = snprintf(outbuf, COLWID, "%s", unit);
-  free(unit);
-  return len;
-
-fail:
-  outbuf[0] = '-';
-  outbuf[1] = '\0';
-  return 1;
+  return snprintf(outbuf, COLWID, "%s", pp->sd_unit);
 }
 
 static int pr_sd_session(char *restrict const outbuf, const proc_t *restrict const pp){
-  int r;
-  size_t len;
-  char *session;
-
-  r = sd_pid_get_session(pp->tgid, &session);
-  if(r<0) goto fail;
-  len = snprintf(outbuf, COLWID, "%s", session);
-  free(session);
-  return len;
-
-fail:
-  outbuf[0] = '-';
-  outbuf[1] = '\0';
-  return 1;
+  return snprintf(outbuf, COLWID, "%s", pp->sd_sess);
 }
 
 static int pr_sd_ouid(char *restrict const outbuf, const proc_t *restrict const pp){
-  int r;
-  size_t len;
-  uid_t ouid;
-
-  r = sd_pid_get_owner_uid(pp->tgid, &ouid);
-  if(r<0) goto fail;
-  return snprintf(outbuf, COLWID, "%d", ouid);
-
-fail:
-  outbuf[0] = '-';
-  outbuf[1] = '\0';
-  return 1;
+  return snprintf(outbuf, COLWID, "%s", pp->sd_ouid);
 }
 
 static int pr_sd_machine(char *restrict const outbuf, const proc_t *restrict const pp){
-  int r;
-  size_t len;
-  char *machine;
-
-  r = sd_pid_get_machine_name(pp->tgid, &machine);
-  if(r<0) goto fail;
-  len = snprintf(outbuf, COLWID, "%s", machine);
-  free(machine);
-  return len;
-
-fail:
-  outbuf[0] = '-';
-  outbuf[1] = '\0';
-  return 1;
+  return snprintf(outbuf, COLWID, "%s", pp->sd_mach);
 }
 
 static int pr_sd_uunit(char *restrict const outbuf, const proc_t *restrict const pp){
-  int r;
-  size_t len;
-  char *unit;
-
-  r = sd_pid_get_user_unit(pp->tgid, &unit);
-  if(r<0) goto fail;
-  len = snprintf(outbuf, COLWID, "%s", unit);
-  free(unit);
-  return len;
-
-fail:
-  outbuf[0] = '-';
-  outbuf[1] = '\0';
-  return 1;
+  return snprintf(outbuf, COLWID, "%s", pp->sd_uunit);
 }
 
 static int pr_sd_seat(char *restrict const outbuf, const proc_t *restrict const pp){
-  int r;
-  size_t len;
-  char *session;
-  char *seat;
-  r = sd_pid_get_session(pp->tgid, &session);
-  if(r<0) goto fail;
-  r = sd_session_get_seat(session, &seat);
-  free(session);
-  if(r<0) goto fail;
-  len = snprintf(outbuf, COLWID, "%s", seat);
-  free(seat);
-  return len;
-
-fail:
-  outbuf[0] = '-';
-  outbuf[1] = '\0';
-  return 1;
+  return snprintf(outbuf, COLWID, "%s", pp->sd_seat);
 }
 
 static int pr_sd_slice(char *restrict const outbuf, const proc_t *restrict const pp){
-  int r;
-  size_t len;
-  char *slice;
-
-  r = sd_pid_get_slice(pp->tgid, &slice);
-  if(r<0) goto fail;
-  len = snprintf(outbuf, COLWID, "%s", slice);
-  free(slice);
-  return len;
-
-fail:
-  outbuf[0] = '-';
-  outbuf[1] = '\0';
-  return 1;
+  return snprintf(outbuf, COLWID, "%s", pp->sd_slice);
 }
-
 #endif
 /************************ Linux namespaces ******************************/
 
@@ -1488,7 +1391,9 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 #define GRP PROC_FILLGRP     /* gid_t -> group names */
 #define WCH PROC_FILLWCHAN   /* do WCHAN lookup */
 #define NS  PROC_FILLNS      /* read namespace information */
-
+#ifdef WITH_SYSTEMD
+#define SD  PROC_FILLSYSTEMD /* retrieve systemd stuff */
+#endif
 #define SGRP PROC_FILLSTATUS | PROC_FILLSUPGRP  /* supgid -> supgrp (names) */
 #define CGRP PROC_FILLCGROUP | PROC_EDITCGRPCVT /* read cgroup */
 
@@ -1588,7 +1493,7 @@ static const format_struct format_array[] = {
 {"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, AN|LEFT}, /*login*/
 {"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
 #ifdef WITH_SYSTEMD
-{"lsession",   "SESSION", pr_sd_session, sr_nop,  11,   0,    LNX, ET|LEFT},
+{"lsession",  "SESSION", pr_sd_session, sr_nop,  11,  SD,    LNX, ET|LEFT},
 #endif
 {"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, ET|RIGHT},
 {"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, ET|RIGHT}, /* login ID */
@@ -1603,7 +1508,7 @@ static const format_struct format_array[] = {
 {"m_swap",    "SWAP",    pr_nop,      sr_nop,     5,   0,    LNx, PO|RIGHT},
 {"m_trs",     "TRS",     pr_trs,      sr_trs,     5, MEM,    LNx, PO|RIGHT},
 #ifdef WITH_SYSTEMD
-{"machine",   "MACHINE", pr_sd_machine, sr_nop,  31,   0,    LNX, ET|LEFT},
+{"machine",   "MACHINE", pr_sd_machine, sr_nop,  31,  SD,    LNX, ET|LEFT},
 #endif
 {"maj_flt",   "MAJFL",   pr_majflt,   sr_maj_flt, 6,   0,    LNX, AN|RIGHT},
 {"majflt",    "MAJFLT",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
@@ -1628,7 +1533,7 @@ static const format_struct format_array[] = {
 {"oublk",     "OUBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*oublock*/
 {"oublock",   "OUBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*oublk*/
 #ifdef WITH_SYSTEMD
-{"ouid",      "OWNER",   pr_sd_ouid,  sr_nop,     5,   0,    LNX, ET|LEFT},
+{"ouid",      "OWNER",   pr_sd_ouid,  sr_nop,     5,  SD,    LNX, ET|LEFT},
 #endif
 {"p_ru",      "P_RU",    pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
 {"paddr",     "PADDR",   pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
@@ -1672,7 +1577,7 @@ static const format_struct format_array[] = {
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, AN|RIGHT},  /* man page misspelling of scount? */
 {"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, AN|RIGHT},  /* scnt==scount, DEC claims both */
 #ifdef WITH_SYSTEMD
-{"seat",      "SEAT",    pr_sd_seat,  sr_nop,    11,   0,    LNX, ET|LEFT},
+{"seat",      "SEAT",    pr_sd_seat,  sr_nop,    11,  SD,    LNX, ET|LEFT},
 #endif
 {"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT},
 {"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, PO|PIDMAX|RIGHT},
@@ -1693,7 +1598,7 @@ static const format_struct format_array[] = {
 {"size",      "SIZE",    pr_swapable, sr_swapable, 5,  0,    SCO, PO|RIGHT},
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, AN|RIGHT},
 #ifdef WITH_SYSTEMD
-{"slice",      "SLICE",  pr_sd_slice, sr_nop,    31,   0,    LNX, ET|LEFT},
+{"slice",      "SLICE",  pr_sd_slice, sr_nop,    31,  SD,    LNX, ET|LEFT},
 #endif
 {"spid",      "SPID",    pr_tasks,    sr_tasks,   5,   0,    SGI, TO|PIDMAX|RIGHT},
 {"stackp",    "STACKP",  pr_stackp,   sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*start_stack*/
@@ -1744,7 +1649,7 @@ static const format_struct format_array[] = {
 {"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT},
 {"uname",     "USER",    pr_euser,    sr_euser,   8, USR,    DEC, ET|USER}, /* man page misspelling of user? */
 #ifdef WITH_SYSTEMD
-{"unit",      "UNIT",    pr_sd_unit,  sr_nop,    31,   0,    LNX, ET|LEFT},
+{"unit",      "UNIT",    pr_sd_unit,  sr_nop,    31,  SD,    LNX, ET|LEFT},
 #endif
 {"upr",       "UPR",     pr_nop,      sr_nop,     3,   0,    BSD, TO|RIGHT}, /*usrpri*/
 {"uprocp",    "UPROCP",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
@@ -1756,7 +1661,7 @@ static const format_struct format_array[] = {
 {"utime",     "UTIME",   pr_nop,      sr_utime,   6,   0,    LNx, ET|RIGHT},
 {"utsns",     "UTSNS",   pr_utsns,    sr_utsns,  10,  NS,    LNX, ET|RIGHT},
 #ifdef WITH_SYSTEMD
-{"uunit",     "UUNIT",   pr_sd_uunit, sr_nop,    31,   0,    LNX, ET|LEFT},
+{"uunit",     "UUNIT",   pr_sd_uunit, sr_nop,    31,  SD,    LNX, ET|LEFT},
 #endif
 {"vm_data",   "DATA",    pr_nop,      sr_vm_data, 5,   0,    LNx, PO|RIGHT},
 {"vm_exe",    "EXE",     pr_nop,      sr_vm_exe,  5,   0,    LNx, PO|RIGHT},
