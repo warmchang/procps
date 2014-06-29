@@ -27,6 +27,7 @@
 //#define NOBOOST_MEMS            /* disable extra precision for mem fields  */
 //#define NUMA_DISABLE            /* disable summary area NUMA/Nodes display */
 //#define OOMEM_ENABLE            /* enable the SuSE out-of-memory additions */
+//#define ORIG_TOPDEFS            /* with no rcfile retain original defaults */
 //#define SIGNALS_LESS            /* favor reduced signal load over response */
 
         /* Development/Debugging defines ----------------------------------- */
@@ -103,7 +104,11 @@ char *strcasestr(const char *haystack, const char *needle);
 /*######  Some Miscellaneous constants  ##################################*/
 
         /* The default delay twix updates */
+#ifdef ORIG_TOPDEFS
 #define DEF_DELAY  3.0
+#else
+#define DEF_DELAY  1.5
+#endif
 
         /* Length of time a message is displayed and the duration
            of a 'priming' wait during library startup (in microseconds) */
@@ -327,9 +332,23 @@ typedef struct CPU_t {
 #endif
 
         // Default flags if there's no rcfile to provide user customizations
+#ifdef ORIG_TOPDEFS
 #define DEF_WINFLGS ( View_LOADAV | View_STATES | View_CPUSUM | View_MEMORY \
    | Show_HIBOLD | Show_HIROWS | Show_IDLEPS | Show_TASKON | Show_JRNUMS \
    | Qsrt_NORMAL )
+#define DEF_GRAPHS2  0, 0
+#define DEF_SCALES2  SK_Kb, SK_Kb
+#define ALT_WINFLGS  DEF_WINFLGS
+#define ALT_GRAPHS2  0, 0
+#else
+#define DEF_WINFLGS ( View_LOADAV | View_STATES | View_MEMORY \
+   | Show_COLORS | Show_FOREST | Show_HIROWS | Show_IDLEPS | Show_JRNUMS | Show_TASKON \
+   | Qsrt_NORMAL )
+#define DEF_GRAPHS2  1, 2
+#define DEF_SCALES2  SK_Gb, SK_Mb
+#define ALT_WINFLGS (DEF_WINFLGS | Show_HIBOLD) & ~Show_FOREST
+#define ALT_GRAPHS2  2, 0
+#endif
 
         /* These are used to direct wins_reflag */
 enum reflag_enum {
@@ -581,10 +600,14 @@ typedef struct WIN_t {
            ( with just one escaped value, the '\' character ) */
 #define FLD_OFFSET  '%'
    //   seq_fields  "%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghij"
+#ifdef ORIG_TOPDEFS
 #define DEF_FIELDS  "¥¨³´»½ÀÄ·º¹Å&')*+,-./012568<>?ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H
+#else
+#define DEF_FIELDS  "¥&K¨³´»½@·º¹56ÄFÅ')*+,-./0128<>?ABCGHIJLMNOPQRSTUVWXYZ[" RCF_PLUS_H
+#endif
         /* Pre-configured windows/field groups */
-#define JOB_FIELDS  "¥¦¹·º³´Ä»¼½§Å()*+,-./012568>?@ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H
-#define MEM_FIELDS  "¥º»¼½¾¿ÀÁÃÄ³´·Å&'()*+,-./0125689BFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H
+#define JOB_FIELDS  "¥¦¹·º(³´Ä»½@<§Å)*+,-./012568>?ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H
+#define MEM_FIELDS  "¥º»<½¾¿ÀÁMBNÃD34·Å&'()*+,-./0125689FGHIJKLOPQRSTUVWXYZ[" RCF_PLUS_H
 #define USR_FIELDS  "¥¦§¨ª°¹·ºÄÅ)+,-./1234568;<=>?@ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H
 #ifdef OOMEM_ENABLE
         // the suse old top fields ( 'a'-'z' + '{|' ) in positions 0-27
@@ -600,19 +623,19 @@ typedef struct WIN_t {
         /* The default values for the local config file */
 #define DEF_RCFILE { \
    RCF_VERSION_ID, 0, 1, DEF_DELAY, 0, { \
-   { EU_CPU, DEF_WINFLGS, 0, 0, 0, \
+   { EU_CPU, DEF_WINFLGS, 0, DEF_GRAPHS2, \
       COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED, \
       "Def", DEF_FIELDS }, \
-   { EU_PID, DEF_WINFLGS, 0, 0, 0, \
+   { EU_PID, ALT_WINFLGS, 0, ALT_GRAPHS2, \
       COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, COLOR_CYAN, \
       "Job", JOB_FIELDS }, \
-   { EU_MEM, DEF_WINFLGS, 0, 0, 0, \
+   { EU_MEM, ALT_WINFLGS, 0, ALT_GRAPHS2, \
       COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA, \
       "Mem", MEM_FIELDS }, \
-   { EU_UEN, DEF_WINFLGS, 0, 0, 0, \
+   { EU_UEN, ALT_WINFLGS, 0, ALT_GRAPHS2, \
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
-   }, 0, SK_Kb, SK_Kb, 0 }
+   }, 0, DEF_SCALES2, 0 }
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */

@@ -225,6 +225,14 @@ if test "x$enable_wide_memory" = xno; then
   AC_DEFINE(NOBOOST_MEMS, 1, [disable extra precision under memory fields for top])
 fi
 
+AC_ARG_ENABLE([modern-top],
+  AS_HELP_STRING([--disable-modern-top], [disable new startup defaults, return to original top]),
+  [], [enable_modern_top=yes]
+)
+if test "x$enable_modern_top" = xno; then
+  AC_DEFINE(ORIG_TOPDEFS, 1, [disable new startup defaults, return to original top])
+fi
+
 DL_LIB=
 AC_ARG_ENABLE([numa],
   AS_HELP_STRING([--disable-numa], [disable NUMA/Node support in top]),

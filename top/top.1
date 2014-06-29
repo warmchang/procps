@@ -238,7 +238,7 @@ All are explained in detail in the sections that follow.
 .nf
     \fIGlobal-defaults\fR
        A \- Alt display      Off (full-screen)
-     * d \- Delay time       3.0 seconds
+     * d \- Delay time       1.5 seconds
      * H \- Threads mode     Off (summarize as tasks)
        I \- Irix mode        On  (no, `solaris' smp)
      * p \- PID monitoring   Off (show all processes)
@@ -248,9 +248,9 @@ All are explained in detail in the sections that follow.
        l \- Load Avg/Uptime  On  (thus program name)
        t \- Task/Cpu states  On  (1+1 lines, see `1')
        m \- Mem/Swap usage   On  (2 lines worth)
-       1 \- Single Cpu       On  (thus 1 line if smp)
+       1 \- Single Cpu       Off (thus multiple cpus)
     \fITask-Area-defaults\fR
-       b \- Bold hilite      On  (not `reverse')
+       b \- Bold hilite      Off (use `reverse')
      * c \- Command line     Off (name, not cmdline)
      * i \- Idle tasks       On  (show all tasks)
        J \- Num align right  On  (not left justify)
@@ -259,9 +259,10 @@ All are explained in detail in the sections that follow.
      * S \- Cumulative time  Off (no, dead children)
      * u \- User filter      Off (show euid only)
      * U \- User filter      Off (show any uid)
+       V \- Forest view      On  (show as branches)
        x \- Column hilite    Off (no, sort field)
        y \- Row hilite       On  (yes, running tasks)
-       z \- color/mono       Off (no, colors)
+       z \- color/mono       On  (show colors)
 .fi
 
 .\" ----------------------------------------------------------------------

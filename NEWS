@@ -13,6 +13,7 @@ procps-ng-3.3.10
   * top missing summary area info added to man document, ubuntu #574624
   * top properly responds to the current locale LC_NUMERIC setting
   * top provides alternate graph modes for cpu states and memory usage
+  * top offers new startup defaults, plus ./configure --disable-modern-top
 
 
 procps-ng-3.3.9
