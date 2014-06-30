@@ -3563,7 +3563,6 @@ try_inspect_entries:
 
          if (fbuf[0] == '#' || fbuf[0] == '\n') continue;
          Inspect.tab = alloc_r(Inspect.tab, sizeof(struct I_ent) * (i + 1));
-         p = fmtmk(N_fmt(YINSP_rcfile_fmt), i +1);
 
          if (!(s = strtok(fbuf, "\t\n"))) { Rc_questions = 1; continue; }
          iT(type) = alloc_s(s);

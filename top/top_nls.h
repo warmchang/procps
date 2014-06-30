@@ -90,7 +90,7 @@ enum norm_nls {
    YINSP_deqtyp_txt, YINSP_dstory_txt,
 #endif
    YINSP_failed_fmt, YINSP_noents_txt, YINSP_pidbad_fmt, YINSP_pidsee_fmt,
-   YINSP_rcfile_fmt, YINSP_status_fmt, YINSP_workin_txt,
+   YINSP_status_fmt, YINSP_workin_txt,
       norm_MAX
 };
 

@@ -451,12 +451,6 @@ typedef struct WIN_t {
 #define FLDget(q,i)  ((FLG_t)((q)->rc.fieldscur[i] & 0x7f) - FLD_OFFSET)
 #define FLDtog(q,i)  ((q)->rc.fieldscur[i] ^= 0x80)
 #define FLDviz(q,i)  ((q)->rc.fieldscur[i] &  0x80)
-#define ENUchk(w,E)  (NULL != strchr((w)->rc.fieldscur, (E + FLD_OFFSET) | 0x80))
-#define ENUset(w,E)  do { char *t; \
-      if ((t = strchr((w)->rc.fieldscur, E + FLD_OFFSET))) \
-         *t = (E + FLD_OFFSET) | 0x80; \
-   /* else fieldscur char already has high bit on! */ \
-   } while (0)
 #define ENUviz(w,E)  (NULL != memchr((w)->procflgs, E, (w)->maxpflgs))
 #define ENUpos(w,E)  ((int)((FLG_t*)memchr((w)->pflgsall, E, (w)->totpflgs) - (w)->pflgsall))
 

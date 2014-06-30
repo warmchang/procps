@@ -444,7 +444,6 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[YINSP_failed_fmt] = _("Selection failed with: %s\n");
    Norm_nlstab[YINSP_pidbad_fmt] = _("unable to inspect, pid %d not found");
    Norm_nlstab[YINSP_pidsee_fmt] = _("inspect at PID [default pid = %d]");
-   Norm_nlstab[YINSP_rcfile_fmt] = _("could not parse rcfile inspect entry %d");
    Norm_nlstab[YINSP_status_fmt] = _("%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read");
    Norm_nlstab[YINSP_workin_txt] = _("patience please, working...");
 /* Translation Hint: Below are 2 abbreviations which can be as long as needed:
