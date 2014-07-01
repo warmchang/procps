@@ -7,6 +7,13 @@ set usage_help "\\s*-h, --help\\s+display this help and exit\\s+"
 set usage_version "\\s*-V, --version\\s+output version information and exit\\s+"
 set usage_man "\\s*For more details see \\S+\\."
 
+proc kill_process pid {
+    set cmdline "kill $pid"
+    if { [catch { exec /bin/sh -c $cmdline } msg]} {
+        warning "Could not kill process: $msg\n"
+    }
+}
+
 proc procps_v_version { tool } {
   global topdir
   set toolpath ${topdir}${tool}
@@ -130,4 +137,12 @@ proc make_testproc { } {
 
     set testproc1_pid [ exec $testproc_path $sleep_time & ]
     set testproc2_pid [ exec $testproc_path $sleep_time & ]
+}
+
+proc kill_testproc { } {
+    global testproc_path testproc1_pid testproc2_pid
+
+    kill_process $testproc1_pid
+    kill_process $testproc2_pid
+    file delete $testproc_path
 }

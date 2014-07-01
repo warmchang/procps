@@ -16,12 +16,6 @@ set test "pgprep with no arguments"
 spawn $pgrep
 expect_pass "$test" "^\(lt-\)\?pgrep: no matching criteria specified\\s*"
 
-# Tests that don't need the test process go above here
-if { [ catch { exec sh -c "command -v kill" } kill_path] } {
-  untested { kill path not found }
-  return
-}
-  
 make_testproc
 
 set testproc_len [ string length $testproc_comm ]
@@ -123,6 +117,4 @@ expect_blank $test
 
 
 # Cleanup
-eval exec "$kill_path $testproc1_pid"
-eval exec "$kill_path $testproc2_pid"
-file delete $testproc_path
+kill_testproc
