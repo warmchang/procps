@@ -68,7 +68,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "May 2014" "procps-ng" "User Commands"
+.TH TOP 1 "July 2014" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -451,8 +451,9 @@ are shown first.
 In the alternate cpu states display modes, beyond the first tasks/threads line,
 an abbreviated summary is shown consisting of these elements:
 .nf
-             \fR a  \fR  b    \fR c \fR   d
-    Cpu(s):  \fB75.0\fR/25.0  \fB100\fR[ ...
+              \fR a  \fR  b    \fR c \fR   d
+    %Cpu(s):  \fB75.0\fR/25.0  \fB100\fR[ ...
+
 .fi
 
 Where: a) is the combined \fBus\fR and \fBni\fR percentage; b) is the \fBsy\fR percentage; c) is the total;
@@ -520,9 +521,11 @@ are sorted high-to-low or low-to-high.
 For additional information on sort provisions
 \*(Xt 4c. TASK AREA Commands, SORTING.
 
-The fields related to \*(MP or \*(MV reference `(KiB)' as the default,
+The fields related to \*(MP or \*(MV reference `(KiB)' which is the
 unsuffixed display mode.
-Such fields can, however, be scaled differently via the `e' \*(CI.
+Such fields may, however, be scaled from KiB through PiB.
+That scaling is influenced via the `e' \*(CI or established for startup
+through a build option.
 
 .TP 4
  1.\fB %CPU \*(Em \*(PU Usage \fR
