@@ -137,7 +137,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(USAGE_VERSION, fp);
 	fprintf(fp, USAGE_MAN_TAIL("pgrep(1)"));
 
-	exit(fp == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(fp == stderr ? EXIT_USAGE : EXIT_SUCCESS);
 }
 
 static struct el *split_list (const char *restrict str, int (*convert)(const char *, struct el *))
@@ -747,7 +747,7 @@ static void parse_opts (int argc, char **argv)
 		case 'G':   /* Solaris: match rgid/rgroup */
 			opt_rgid = split_list (optarg, conv_gid);
 			if (opt_rgid == NULL)
-				usage (opt);
+				usage ('?');
 			++criteria_count;
 			break;
 /*		case 'I':   / * FreeBSD: require confirmation before killing * /
@@ -764,7 +764,7 @@ static void parse_opts (int argc, char **argv)
 		case 'P':   /* Solaris: match by PPID */
 			opt_ppid = split_list (optarg, conv_num);
 			if (opt_ppid == NULL)
-				usage (opt);
+				usage ('?');
 			++criteria_count;
 			break;
 /*		case 'S':   / * FreeBSD: don't ignore the built-in kernel tasks * /
@@ -774,7 +774,7 @@ static void parse_opts (int argc, char **argv)
 		case 'U':   /* Solaris: match by ruid/rgroup */
 			opt_ruid = split_list (optarg, conv_uid);
 			if (opt_ruid == NULL)
-				usage (opt);
+				usage ('?');
 			++criteria_count;
 			break;
 		case 'V':
@@ -794,7 +794,7 @@ static void parse_opts (int argc, char **argv)
 		case 'g':   /* Solaris: match pgrp */
 			opt_pgrp = split_list (optarg, conv_pgrp);
 			if (opt_pgrp == NULL)
-				usage (opt);
+				usage ('?');
 			++criteria_count;
 			break;
 /*		case 'i':   / * FreeBSD: ignore case. OpenBSD: withdrawn. See -I. This sucks. * /
@@ -812,37 +812,37 @@ static void parse_opts (int argc, char **argv)
 			break;
 		case 'n':   /* Solaris: match only the newest */
 			if (opt_oldest|opt_negate|opt_newest)
-				usage (opt);
+				usage ('?');
 			opt_newest = 1;
 			++criteria_count;
 			break;
 		case 'o':   /* Solaris: match only the oldest */
 			if (opt_oldest|opt_negate|opt_newest)
-				usage (opt);
+				usage ('?');
 			opt_oldest = 1;
 			++criteria_count;
 			break;
 		case 's':   /* Solaris: match by session ID -- zero means self */
 			opt_sid = split_list (optarg, conv_sid);
 			if (opt_sid == NULL)
-				usage (opt);
+				usage ('?');
 			++criteria_count;
 			break;
 		case 't':   /* Solaris: match by tty */
 			opt_term = split_list (optarg, conv_str);
 			if (opt_term == NULL)
-				usage (opt);
+				usage ('?');
 			++criteria_count;
 			break;
 		case 'u':   /* Solaris: match by euid/egroup */
 			opt_euid = split_list (optarg, conv_uid);
 			if (opt_euid == NULL)
-				usage (opt);
+				usage ('?');
 			++criteria_count;
 			break;
 		case 'v':   /* Solaris: as in grep, invert the matching (uh... applied after selection I think) */
 			if (opt_oldest|opt_negate|opt_newest)
-				usage (opt);
+				usage ('?');
 			opt_negate = 1;
 			break;
 		case 'w':   // Linux: show threads (lightweight process) too
@@ -857,25 +857,23 @@ static void parse_opts (int argc, char **argv)
 		case NS_OPTION:
 			opt_ns_pid = atoi(optarg);
 			if (opt_ns_pid == 0)
-				usage (opt);
+				usage ('?');
 			++criteria_count;
 			break;
 		case NSLIST_OPTION:
 			opt_nslist = split_list (optarg, conv_ns);
 			if (opt_nslist == NULL)
-				usage (opt);
+				usage ('?');
 			break;
 		case 'h':
-			usage (opt);
-			break;
 		case '?':
-			usage (optopt ? optopt : opt);
+			usage (opt);
 			break;
 		}
 	}
 
 	if(opt_lock && !opt_pidfile)
-		xerrx(EXIT_FAILURE, _("-L without -F makes no sense\n"
+		xerrx(EXIT_USAGE, _("-L without -F makes no sense\n"
 				     "Try `%s --help' for more information."),
 				     program_invocation_short_name);
 
@@ -890,11 +888,11 @@ static void parse_opts (int argc, char **argv)
 	if (argc - optind == 1)
 		opt_pattern = argv[optind];
 	else if (argc - optind > 1)
-		xerrx(EXIT_FAILURE, _("only one pattern can be provided\n"
+		xerrx(EXIT_USAGE, _("only one pattern can be provided\n"
 				     "Try `%s --help' for more information."),
 				     program_invocation_short_name);
 	else if (criteria_count == 0)
-		xerrx(EXIT_FAILURE, _("no matching criteria specified\n"
+		xerrx(EXIT_USAGE, _("no matching criteria specified\n"
 				     "Try `%s --help' for more information."),
 				     program_invocation_short_name);
 }
