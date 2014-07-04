@@ -5241,14 +5241,13 @@ numa_nope:
          int ix = w->rc.graph_mems - 1;
          float pct_used = (float)kb_main_my_used * (100.0 / (float)kb_main_total),
                pct_misc = (float)(kb_main_buffers + kb_main_cached) * (100.0 / (float)kb_main_total),
-               pct_swap = (float)kb_swap_used * (100.0 / (float)kb_swap_total);
+               pct_swap = kb_swap_total ? (float)kb_swap_used * (100.0 / (float)kb_swap_total) : 0;
          snprintf(used, sizeof(used), gtab[ix].used, (int)((pct_used * Graph_adj) + .5), gtab[ix].type);
          snprintf(util, sizeof(util), gtab[ix].misc, (int)((pct_misc * Graph_adj) + .5), gtab[ix].type);
          snprintf(dual, sizeof(dual), "%s%s", used, util);
          snprintf(util, sizeof(util), gtab[ix].swap, (int)((pct_swap * Graph_adj) + .5), gtab[ix].type);
          prT(bfT(0), mkM(total)); prT(bfT(1), mkS(total));
-         show_special(0, fmtmk(
-            "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*.*s]~1\n%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*.*s]~1\n"
+         show_special(0, fmtmk( "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*.*s]~1\n%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*.*s]~1\n"
             , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, Graph_len +4, dual
             , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, Graph_len +2, util));
       } else {
