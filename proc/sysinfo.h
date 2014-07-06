@@ -1,7 +1,7 @@
 #ifndef PROC_SYSINFO_H
 #define PROC_SYSINFO_H
 #include <sys/types.h>
-#include <sys/dir.h>
+#include <dirent.h>
 #include "procps.h"
 
 EXTERN_C_BEGIN

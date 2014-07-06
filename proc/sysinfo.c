@@ -399,7 +399,7 @@ static void crash(const char *filename) {
 /***********************************************************************/
 
 static void getrunners(unsigned int *restrict running, unsigned int *restrict blocked) {
-  struct direct *ent;
+  struct dirent *ent;
   DIR *proc;
 
   *running=0;

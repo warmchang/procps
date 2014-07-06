@@ -34,7 +34,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <fcntl.h>
-#include <sys/dir.h>
+#include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef WITH_SYSTEMD
@@ -1099,7 +1099,7 @@ next_task:
 // This finds processes in /proc in the traditional way.
 // Return non-zero on success.
 static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
-  static struct direct *ent;		/* dirent handle */
+  static struct dirent *ent;		/* dirent handle */
   char *restrict const path = PT->path;
   for (;;) {
     ent = readdir(PT->procfs);
@@ -1117,7 +1117,7 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
 // This finds tasks in /proc/*/task/ in the traditional way.
 // Return non-zero on success.
 static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict const t, char *restrict const path) {
-  static struct direct *ent;		/* dirent handle */
+  static struct dirent *ent;		/* dirent handle */
   if(PT->taskdir_user != p->tgid){
     if(PT->taskdir){
       closedir(PT->taskdir);
