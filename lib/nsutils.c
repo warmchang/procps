@@ -1,6 +1,4 @@
 #include <errno.h>
-#include <error.h>
-#include <stdio_ext.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
