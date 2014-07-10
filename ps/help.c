@@ -111,8 +111,10 @@ void do_help (const char *opt, int rc) {
     fputs(_(" -C <command>         command name\n"), out);
     fputs(_(" -G, --Group <GID>    real group id or name\n"), out);
     fputs(_(" -g, --group <group>  session or effective group name\n"), out);
-    fputs(_(" -p, --pid <PID>      process id\n"), out);
-    fputs(_("     --ppid <PID>     select by parent process id\n"), out);
+    fputs(_(" -p, p, --pid <PID>   process id\n"), out);
+    fputs(_("        --ppid <PID>  parent process id\n"), out);
+    fputs(_(" -q, q, --quick-pid <PID>\n"
+            "                      process id (quick mode)\n"), out);
     fputs(_(" -s, --sid <session>  session id\n"), out);
     fputs(_(" -t, t, --tty <tty>   terminal\n"), out);
     fputs(_(" -u, U, --user <UID>  effective user id or name\n"), out);

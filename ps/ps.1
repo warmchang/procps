@@ -143,7 +143,7 @@ Print only the process IDs of syslogd:
 .B ps\ \-C\ syslogd\ \-o\ pid=
 .TP
 Print only the name of PID 42:
-.B ps\ \-p\ 42\ \-o\ comm=
+.B ps\ \-q\ 42\ \-o\ comm=
 .PP
 .PP
 .\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -304,6 +304,31 @@ process\ ID in
 .IR pidlist .
 That is, it selects processes that are children of those listed in
 .IR pidlist .
+.TP
+.BI q \ pidlist
+Select by process ID (quick mode).  Identical to
+.B \-q
+and
+.BR \-\-quick\-pid .
+.TP
+.BI \-q \ pidlist
+Select by PID (quick mode).  This selects the processes whose process ID numbers appear in
+.IR pidlist .
+With this option \fBps\fR reads the necessary info only
+for the pids listed in the \fIpidlist\fR and doesn't apply
+additional filtering rules. The order of pids is unsorted
+and preserved. No additional selection options, sorting
+and forest type listings are allowed in this mode.
+Identical to
+.B q
+and
+.BR \-\-quick\-pid .
+.TP
+.BI  \-\-quick\-pid \ pidlist
+Select by process\ ID (quick mode).  Identical to
+.B \-q
+and
+.BR q .
 .TP
 .BI \-s \ sesslist
 Select by session ID.  This selects the processes with a session ID specified

@@ -164,6 +164,7 @@ static void arg_show(void){
     case SEL_FGID: show_gid("FGID", walk->n, walk->u); break;
     case SEL_PGRP: show_pid("PGRP", walk->n, walk->u); break;
     case SEL_PID : show_pid("PID ", walk->n, walk->u); break;
+    case SEL_PID_QUICK : show_pid("PID_QUICK ", walk->n, walk->u); break;
     case SEL_PPID: show_pid("PPID", walk->n, walk->u); break;
     case SEL_TTY : show_tty("TTY ", walk->n, walk->u); break;
     case SEL_SESS: show_pid("SESS", walk->n, walk->u); break;
@@ -343,8 +344,29 @@ static int want_this_proc_pcpu(proc_t *buf){
 static void simple_spew(void){
   static proc_t buf, buf2;       // static avoids memset
   PROCTAB* ptp;
+  pid_t* pidlist;
+  int flags;
+  int i;
 
-  ptp = openproc(needs_for_format | needs_for_sort | needs_for_select | needs_for_threads);
+  pidlist = NULL;
+  flags = needs_for_format | needs_for_sort | needs_for_select | needs_for_threads;
+
+  // -q option (only single SEL_PID_QUICK typecode entry expected in the list, if present)
+  if (selection_list && selection_list->typecode == SEL_PID_QUICK) {
+    flags |= PROC_PID;
+
+    pidlist = (pid_t*) malloc(selection_list->n * sizeof(pid_t));
+    if (!pidlist) {
+      fprintf(stderr, _("error: not enough memory\n"));
+      exit(1);
+    }
+
+    for (i = 0; i < selection_list->n; i++) {
+      pidlist[i] = selection_list->u[selection_list->n-i-1].pid;
+    }
+  }
+
+  ptp = openproc(flags, pidlist);
   if(!ptp) {
     fprintf(stderr, _("error: can not access /proc\n"));
     exit(1);
@@ -385,6 +407,8 @@ static void simple_spew(void){
     break;
   }
   closeproc(ptp);
+
+  if (pidlist) free(pidlist);
 }
 
 /***** forest output requires sorting by ppid; add start_time by default */
@@ -539,6 +563,52 @@ static void fancy_spew(void){
   closeproc(ptp);
 }
 
+static void arg_check_conflicts(void)
+{
+  int selection_list_len;
+  int has_quick_pid;
+
+  selection_node *walk = selection_list;
+  has_quick_pid = 0;
+  selection_list_len = 0;
+
+  while (walk) {
+    if (walk->typecode == SEL_PID_QUICK) has_quick_pid++;
+    walk = walk->next;
+    selection_list_len++;
+  }
+
+  /* -q doesn't allow multiple occurences */
+  if (has_quick_pid > 1) {
+    fprintf(stderr, "q/-q/--quick-pid can only be used once.\n");
+    exit(1);
+  }
+
+  /* -q doesn't allow combinations with other selection switches */
+  if (has_quick_pid && selection_list_len > has_quick_pid) {
+    fprintf(stderr, "q/-q/--quick-pid cannot be combined with other selection options.\n");
+    exit(1);
+  }
+
+  /* -q cannot be used with forest type listings */
+  if (has_quick_pid && forest_type) {
+    fprintf(stderr, "q/-q/--quick-pid cannot be used together with forest type listings.\n");
+    exit(1);
+  }
+
+  /* -q cannot be used with sort */
+  if (has_quick_pid && sort_list) {
+    fprintf(stderr, "q/-q,--quick-pid cannot be used together with sort options.\n");
+    exit(1);
+  }
+
+  /* -q cannot be used with -N */
+  if (has_quick_pid && negate_selection) {
+    fprintf(stderr, "q/-q/--quick-pid cannot be used together with negation switches.\n");
+    exit(1);
+  }
+
+}
 
 /***** no comment */
 int main(int argc, char *argv[]){
@@ -579,6 +649,9 @@ int main(int argc, char *argv[]){
 
   reset_global();  /* must be before parser */
   arg_parse(argc,argv);
+
+  /* check for invalid combination of arguments */
+  arg_check_conflicts();
 
 /*  arg_show(); */
   trace("screen is %ux%u\n",screen_cols,screen_rows);

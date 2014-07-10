@@ -426,6 +426,14 @@ static const char *parse_sysv_option(void){
       if(err) return err;
       selection_list->typecode = SEL_PID;
       return NULL; /* can't have any more options */
+    case 'q': /* end */
+      trace("-q quick select by PID.\n");
+      arg=get_opt_arg();
+      if(!arg) return "List of process IDs must follow -q.";
+      err=parse_list(arg, parse_pid);
+      if(err) return err;
+      selection_list->typecode = SEL_PID_QUICK;
+      return NULL; /* can't have any more options */
 #if 0
     case 'r':
       trace("-r some Digital Unix thing about warnings...\n");
@@ -696,6 +704,14 @@ static const char *parse_bsd_option(void){
       if(err) return err;
       selection_list->typecode = SEL_PID;
       return NULL; /* can't have any more options */
+    case 'q': /* end */
+      trace("q Quick select by process ID\n");
+      arg=get_opt_arg();
+      if(!arg) return "List of process IDs must follow q.";
+      err=parse_list(arg, parse_pid);
+      if(err) return err;
+      selection_list->typecode = SEL_PID_QUICK;
+      return NULL; /* can't have any more options */
     case 'r':
       trace("r select running processes\n");
       running_only = 1;
@@ -820,6 +836,7 @@ static const char *parse_gnu_option(void){
   {"noheadings",    &&case_noheadings},
   {"pid",           &&case_pid},
   {"ppid",          &&case_ppid},
+  {"quick-pid",     &&case_pid_quick},
   {"rows",          &&case_rows},
   {"sid",           &&case_sid},
   {"sort",          &&case_sort},
@@ -948,6 +965,14 @@ static const char *parse_gnu_option(void){
     err=parse_list(arg, parse_pid);
     if(err) return err;
     selection_list->typecode = SEL_PID;
+    return NULL;
+  case_pid_quick:
+    trace("--quick-pid\n");
+    arg = grab_gnu_arg();
+    if(!arg) return "List of process IDs must follow --quick-pid.";
+    err=parse_list(arg, parse_pid);
+    if(err) return err;
+    selection_list->typecode = SEL_PID_QUICK;
     return NULL;
   case_ppid:
     trace("--ppid\n");
