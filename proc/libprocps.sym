@@ -26,6 +26,7 @@ global:
 	kb_inactive;
 	kb_low_free;
 	kb_low_total;
+	kb_main_available;
 	kb_main_buffers;
 	kb_main_cached;
 	kb_main_free;

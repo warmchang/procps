@@ -573,6 +573,7 @@ unsigned long kb_high_free;
 unsigned long kb_high_total;
 unsigned long kb_low_free;
 unsigned long kb_low_total;
+unsigned long kb_main_available;
 /* 2.4.xx era */
 unsigned long kb_active;
 unsigned long kb_inact_laundry;
@@ -629,6 +630,7 @@ void meminfo(void){
   {"LowFree",      &kb_low_free},
   {"LowTotal",     &kb_low_total},
   {"Mapped",       &kb_mapped},       // kB version of vmstat nr_mapped
+  {"MemAvailable", &kb_main_available}, // important
   {"MemFree",      &kb_main_free},    // important
   {"MemTotal",     &kb_main_total},   // important
   {"NFS_Unstable", &kb_nfs_unstable},

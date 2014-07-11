@@ -33,6 +33,14 @@ Memory used by kernel buffers (Buffers in /proc/meminfo)
 .TP
 \fBcached\fR
 Memory used by the page cache (Cached in /proc/meminfo)
+.TP
+\fBavailable\fR
+Estimation of how much memory is available for starting
+new applications, without swapping. Unlike the data
+provided by the \fBcached\fR or \fBfree\fR fields,
+this field takes into account page cache and also that
+not all reclaimable memory slabs will be reclaimed
+due to items being in use (MemAvailable in /proc/meminfo)
 .SH OPTIONS
 .TP
 \fB\-b\fR, \fB\-\-bytes\fR
@@ -64,6 +72,10 @@ display the units of print out.  Following units are used.
 .sp
 If unit is missing, and you have petabyte of RAM or swap, the number is in
 terabytes and columns might not be aligned with header.
+.TP
+\fB\-a\fR, \fB\-\-available\fR
+Display the estimation of memory available for starting new applications,
+without swapping. This switch makes the output wider than 80 characters.
 .TP
 \fB\-c\fR, \fB\-\-count\fR \fIcount\fR
 Display the result

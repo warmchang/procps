@@ -34,6 +34,7 @@ extern unsigned long kb_high_free;
 extern unsigned long kb_high_total;
 extern unsigned long kb_low_free;
 extern unsigned long kb_low_total;
+extern unsigned long kb_main_available;
 /* 2.4.xx era */
 extern unsigned long kb_active;
 extern unsigned long kb_inact_laundry;  // grrr...
