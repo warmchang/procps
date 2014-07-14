@@ -57,7 +57,8 @@ static int vminfo_fd = -1;
 
 // As of 2.6.24 /proc/meminfo seems to need 888 on 64-bit,
 // and would need 1258 if the obsolete fields were there.
-static char buf[2048];
+// As of 3.13 /proc/vmstat needs 2623 on 64-bit.
+static char buf[8192];
 
 /* This macro opens filename only if necessary and seeks to 0 so
  * that successive calls to the functions are more efficient.
@@ -748,7 +749,7 @@ static unsigned long vm_pginodesteal;         //
 static unsigned long vm_slabs_scanned;        //
 
 void vminfo(void){
-  char namebuf[16]; /* big enough to hold any row name */
+  char namebuf[32]; /* big enough to hold any row name */
   vm_table_struct findme = { namebuf, NULL};
   vm_table_struct *found;
   char *head;
