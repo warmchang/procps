@@ -57,7 +57,8 @@ static int vminfo_fd = -1;
 
 // As of 2.6.24 /proc/meminfo seems to need 888 on 64-bit,
 // and would need 1258 if the obsolete fields were there.
-// As of 3.13 /proc/vmstat needs 2623 on 64-bit.
+// As of 3.13 /proc/vmstat needs 2623,
+// and /proc/stat needs 3076.
 static char buf[8192];
 
 /* This macro opens filename only if necessary and seeks to 0 so
