@@ -284,7 +284,7 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 
 #define PROC_LOOSE_TASKS     0x2000 // treat threads as if they were processes
 
-// Obsolete, consider only processes with one of the passed:
+// consider only processes with one of the passed:
 #define PROC_PID             0x1000  // process id numbers ( 0   terminated)
 #define PROC_UID             0x4000  // user id numbers    ( length needed )
 
