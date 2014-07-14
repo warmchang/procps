@@ -21,6 +21,11 @@ libprocps_la_LDFLAGS = \
 	-no-undefined \
 	-Wl,--version-script=$(top_srcdir)/proc/libprocps.sym
 
+dist_man_MANS = \
+	openproc.3 \
+	readproc.3 \
+	readproctab.3
+
 EXTRA_DIST = libprocps.sym
 
 pkgconfigdir = $(libdir)/pkgconfig
