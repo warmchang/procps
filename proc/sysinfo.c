@@ -54,6 +54,8 @@ static int loadavg_fd = -1;
 static int meminfo_fd = -1;
 #define VMINFO_FILE "/proc/vmstat"
 static int vminfo_fd = -1;
+#define VM_MIN_FREE_FILE "/proc/sys/vm/min_free_kbytes"
+static int vm_min_free_fd = -1;
 
 // As of 2.6.24 /proc/meminfo seems to need 888 on 64-bit,
 // and would need 1258 if the obsolete fields were there.
@@ -84,6 +86,8 @@ static char buf[8192];
 /* evals 'x' twice */
 #define SET_IF_DESIRED(x,y) do{  if(x) *(x) = (y); }while(0)
 
+/* return minimum of two values */
+#define MIN(x,y) ((x) < (y) ? (x) : (y))
 
 /***********************************************************************/
 int uptime(double *restrict uptime_secs, double *restrict idle_secs) {
@@ -651,6 +655,8 @@ void meminfo(void){
   {"Writeback",    &kb_writeback},    // kB version of vmstat nr_writeback
   };
   const int mem_table_count = sizeof(mem_table)/sizeof(mem_table_struct);
+  unsigned long watermark_low;
+  signed long mem_available;
 
   FILE_TO_BUF(MEMINFO_FILE,meminfo_fd);
 
@@ -686,6 +692,20 @@ nextline:
   }
   kb_swap_used = kb_swap_total - kb_swap_free;
   kb_main_used = kb_main_total - kb_main_free;
+
+  /* zero? might need fallback for 2.6.27 <= kernel <? 3.14 */
+  if (!kb_main_available && linux_version_code >= 20627) {
+    vminfo();
+    watermark_low = vm_min_free * 5 / 4; /* should be equal to sum of all 'low' fields in /proc/zoneinfo */
+
+    mem_available = (signed long)vm_nr_free_pages + vm_nr_inactive_file + vm_nr_active_file
+    - MIN((vm_nr_inactive_file + vm_nr_active_file) / 2, watermark_low)
+    + vm_nr_slab_reclaimable - MIN(vm_nr_slab_reclaimable / 2, watermark_low)
+    - watermark_low;
+
+    if (mem_available < 0) mem_available = 0;
+    kb_main_available = (unsigned long)((unsigned long long)mem_available * sysconf(_SC_PAGESIZE) / 1024ull);
+  }
 }
 
 /*****************************************************************/
@@ -709,6 +729,12 @@ unsigned long vm_nr_page_table_pages;// pages used for pagetables
 unsigned long vm_nr_reverse_maps;    // includes PageDirect
 unsigned long vm_nr_mapped;          // mapped into pagetables
 unsigned long vm_nr_slab;            // in slab
+unsigned long vm_nr_slab_reclaimable;  // 2.6.19+ kernels
+unsigned long vm_nr_slab_unreclaimable;// 2.6.19+ kernels
+unsigned long vm_nr_active_file;       // 2.6.27+ kernels
+unsigned long vm_nr_inactive_file;     // 2.6.27+ kernels
+unsigned long vm_nr_free_pages;        // 2.6.21+ kernels
+unsigned long vm_min_free;             // calculated from /proc/sys/vm/min_free_kbytes
 unsigned long vm_pgpgin;             // kB disk reads  (same as 1st num on /proc/stat page line)
 unsigned long vm_pgpgout;            // kB disk writes (same as 2nd num on /proc/stat page line)
 unsigned long vm_pswpin;             // swap reads     (same as 1st num on /proc/stat swap line)
@@ -759,12 +785,17 @@ void vminfo(void){
   {"allocstall",          &vm_allocstall},
   {"kswapd_inodesteal",   &vm_kswapd_inodesteal},
   {"kswapd_steal",        &vm_kswapd_steal},
+  {"nr_active_file",      &vm_nr_active_file},     // 2.6.27+ kernels
   {"nr_dirty",            &vm_nr_dirty},           // page version of meminfo Dirty
+  {"nr_free_pages",       &vm_nr_free_pages},      // 2.6.21+ kernels
+  {"nr_inactive_file",    &vm_nr_inactive_file},   // 2.6.27+ kernels
   {"nr_mapped",           &vm_nr_mapped},          // page version of meminfo Mapped
   {"nr_page_table_pages", &vm_nr_page_table_pages},// same as meminfo PageTables
   {"nr_pagecache",        &vm_nr_pagecache},       // gone in 2.5.66+ kernels
   {"nr_reverse_maps",     &vm_nr_reverse_maps},    // page version of meminfo ReverseMaps GONE
-  {"nr_slab",             &vm_nr_slab},            // page version of meminfo Slab
+  {"nr_slab",             &vm_nr_slab},            // page version of meminfo Slab (gone in 2.6.19+)
+  {"nr_slab_reclaimable", &vm_nr_slab_reclaimable},// 2.6.19+ kernels
+ {"nr_slab_unreclaimable",&vm_nr_slab_unreclaimable},// 2.6.19+ kernels
   {"nr_unstable",         &vm_nr_unstable},
   {"nr_writeback",        &vm_nr_writeback},       // page version of meminfo Writeback
   {"pageoutrun",          &vm_pageoutrun},
@@ -855,6 +886,9 @@ nextline:
                 + vm_pgscan_kswapd_dma + vm_pgscan_kswapd_high + vm_pgscan_kswapd_normal;
   if(!vm_pgsteal)
     vm_pgsteal  = vm_pgsteal_dma + vm_pgsteal_high + vm_pgsteal_normal;
+
+  FILE_TO_BUF(VM_MIN_FREE_FILE, vm_min_free_fd);
+  vm_min_free = (unsigned long) (strtoull(buf,&tail,10) * 1024ull / sysconf(_SC_PAGESIZE));
 }
 
 ///////////////////////////////////////////////////////////////////////
