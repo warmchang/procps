@@ -502,7 +502,7 @@ static int Preload(const char *restrict const filename)
 	int globerr;
 	int j;
 
-	globerr = glob(filename, GLOB_NOCHECK | GLOB_TILDE, NULL, &globbuf);
+	globerr = glob(filename, GLOB_NOCHECK | GLOB_TILDE | GLOB_BRACE, NULL, &globbuf);
 	if (globerr != 0 && globerr != GLOB_NOMATCH)
 		xerr(EXIT_FAILURE, _("glob failed"));
 
