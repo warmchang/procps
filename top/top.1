@@ -470,13 +470,20 @@ with the `E' \*(CI.
 
 As a default, Line 1 reflects \*(MP, classified as:
 .nf
-    total, used, free and buffers
+    total, free, used and buff/cache
 .fi
 
 Line 2 reflects mostly \*(MV, classified as:
 .nf
-    total, used, free and cached (which is \*(MP)
+    total, free, used and avail (which is \*(MP)
 .fi
+
+The \fBavail\fR number on line 2 is an estimation of \*(MP available for
+starting new applications, without swapping.
+Unlike the \fBfree\fR field, it attempts to account for readily reclaimable
+page cache and memory slabs.
+It is available on kernels 3.14, emulated on kernels 2.6.27+ and displayed
+as zero otherwise.
 
 In the alternate memory display modes, two abbreviated summary lines
 are shown consisting of these elements:
@@ -489,9 +496,10 @@ are shown consisting of these elements:
 Where: a) is the percentage used; b) is the total available; and c) is one of two
 visual graphs of those representations.
 
-In the case of \*(MP, the percentage includes the sum of \fBused\fR, \fBbuffers\fR
-and \fBcached\fR memory noted above.
-The `Mem' graph itself is divided between \fBused\fR then \fBbuffers\fR and \fBcached\fR combined.
+In the case of \*(MP, the percentage represents the \fBtotal\fR minus the estimated
+\fBavail\fR noted above.
+The `Mem' graph itself is divided between \fBused\fR the any remaining memory not
+otherwise accounted for by \fBavail\fR.
 \*(XT 4b. SUMMARY AREA Commands and the `m' command for additional information
 on that special 4-way toggle.
 

@@ -41,6 +41,7 @@
 //#define INSP_OFFDEMO            /* disable demo screens, issue msg instead */
 //#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents in a file  */
 //#define INSP_SLIDE_1            /* when scrolling left/right don't move 8  */
+//#define MEMGRAPH_OLD            /* don't use 'available' when graphing Mem */
 //#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_NUMASKIP            /* do NOT skip numa nodes if discontinuous */
 //#define OFF_SCROLLBK            /* disable tty emulators scrollback buffer */
@@ -657,6 +658,9 @@ typedef struct WIN_t {
 #endif
 #if defined(TERMIOS_ONLY)
 # warning 'TERMIOS_ONLY' disables input recall and makes man doc incorrect
+#endif
+#if defined(MEMGRAPH_OLD)
+# warning 'MEMGRAPH_OLD' will make the man document Section 2c. misleading
 #endif
 
 
