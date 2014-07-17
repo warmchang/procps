@@ -19,7 +19,7 @@ MAN_PAGES = free.1 kill.1 pgrep.1 pidof.1 pkill.1 pmap.1 pwdx.1 skill.1 slabtop.
 	    sysctl.8 vmstat.8
 man1_pages := $(foreach man,$(filter %.1, $(MAN_PAGES)), man1/$(man))
 man5_pages := $(foreach man,$(filter %.5, $(MAN_PAGES)), man5/$(man))
-man8_pages := $(foreach man,$(filter %.8, $(MAN_PAGES)), man8/$(man)) 
+man8_pages := $(foreach man,$(filter %.8, $(MAN_PAGES)), man8/$(man))
 
 man_pages = $(man1_pages) $(man8_pages)
 

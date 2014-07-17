@@ -40,7 +40,7 @@ closes all files opened by
 .B openproc
 and deallocates the memory allocated by
 .B openproc.
- 
+
 The PROCTAB structure is defined in
 .I <proc/readproc.h>
 .RE
@@ -119,6 +119,9 @@ fill in proc_t oom_score and oom_adj
 .TP 0.5i
 .B "PROC_FILLNS"
 fill in proc_t namespace information
+.TP 0.5i
+.B "PROC_FILLSYSTEMD"
+fill in proc_t systemd information
 .TP 0.5i
 .B "PROC_LOOSE_TASKS"
 threat threads as if they were processes

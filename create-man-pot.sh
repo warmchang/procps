@@ -29,13 +29,13 @@ po4a-updatepo -f man -m ${SRCDIR}/free.1 \
                      -m ${SRCDIR}/w.1 \
                      -m ${SRCDIR}/watch.1 \
                      -p man-po/template-man.pot
-                     
+
 po4a-updatepo -f man -m ${SRCDIR}/ps/ps.1 \
                      -p man-po/template-man-ps.pot
 
 po4a-updatepo -f man -m ${SRCDIR}/top/top.1 \
                      -p man-po/template-man-top.pot
 
-# Rename the file according to the version of your (pre-release) tarball.                     
+# Rename the file according to the version of your (pre-release) tarball.
 # Send the new file together with a link to the tarball to the TP coordinators:
 # <coordinator@translationproject.org>
