@@ -87,7 +87,6 @@ static RCF_t Rc = DEF_RCFILE;
 static int   Rc_questions;
 
         /* The run-time acquired page stuff */
-static unsigned Page_size;
 static unsigned Pg2K_shft = 0;
 
         /* SMP, Irix/Solaris mode, Linux 2.5.xx support */
@@ -413,8 +412,8 @@ static void bye_bye (const char *str) {
       "\n\tProgram"
       "\n\t   Linux version = %u.%u.%u, %s"
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
-      "\n\t   Page_size = %d, Cpu_faux_tot = %d, smp_num_cpus = %d"
-      "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%u HST_t's/Page), HHist_siz = %u"
+      "\n\t   page_bytes = %d, Cpu_faux_tot = %d, smp_num_cpus = %d"
+      "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%d HST_t's/Page), HHist_siz = %u"
       "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t*) = %u"
       "\n\t   Frames_libflags = %08lX"
       "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
@@ -446,8 +445,8 @@ static void bye_bye (const char *str) {
       , LINUX_VERSION_PATCH(linux_version_code)
       , procps_version
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
-      , Page_size, Cpu_faux_tot, (int)smp_num_cpus, (unsigned)sizeof(CPU_t)
-      , (unsigned)sizeof(HST_t), Page_size / (unsigned)sizeof(HST_t), HHist_siz
+      , (int)page_bytes, Cpu_faux_tot, (int)smp_num_cpus, (unsigned)sizeof(CPU_t)
+      , (unsigned)sizeof(HST_t), ((int)page_bytes / (int)sizeof(HST_t)), HHist_siz
       , (unsigned)sizeof(proc_t), (unsigned)sizeof(p->cmd), (unsigned)sizeof(proc_t*)
       , (long)Frames_libflags
       , (unsigned)SCREENMAX, (unsigned)ROWMINSIZ, (unsigned)ROWMAXSIZ
@@ -3302,8 +3301,7 @@ static void before (char *me) {
       Cpu_States_fmts = N_unq(STATE_lin2x7_fmt);
 
    // get virtual page stuff
-   Page_size = getpagesize();
-   i = Page_size;
+   i = page_bytes; // from sysinfo.c, at lib init
    while(i > 1024) { i >>= 1; Pg2K_shft++; }
 
 #ifndef OFF_HST_HASH
