@@ -37,6 +37,7 @@
 #endif
 
 long smp_num_cpus;     /* number of CPUs */
+long page_bytes;       /* this architecture's page size */
 
 #define BAD_OPEN_MESSAGE					\
 "Error: /proc must be mounted\n"				\
@@ -277,6 +278,7 @@ static void init_libproc(void){
   init_Linux_version(); /* Must be called before we check code */
 
   cpuinfo();
+  page_bytes = sysconf(_SC_PAGESIZE);
 
 #ifdef __linux__
   if(linux_version_code > LINUX_VERSION(2, 4, 0)){
@@ -661,6 +663,7 @@ void meminfo(void){
   FILE_TO_BUF(MEMINFO_FILE,meminfo_fd);
 
   kb_inactive = ~0UL;
+  kb_low_total = kb_main_available = 0;
 
   head = buf;
   for(;;){
@@ -704,7 +707,7 @@ nextline:
     - watermark_low;
 
     if (mem_available < 0) mem_available = 0;
-    kb_main_available = (unsigned long)((unsigned long long)mem_available * sysconf(_SC_PAGESIZE) / 1024ull);
+    kb_main_available = (unsigned long)((unsigned long long)mem_available * page_bytes / 1024ull);
   }
 }
 
@@ -888,7 +891,7 @@ nextline:
     vm_pgsteal  = vm_pgsteal_dma + vm_pgsteal_high + vm_pgsteal_normal;
 
   FILE_TO_BUF(VM_MIN_FREE_FILE, vm_min_free_fd);
-  vm_min_free = (unsigned long) (strtoull(buf,&tail,10) * 1024ull / sysconf(_SC_PAGESIZE));
+  vm_min_free = (unsigned long) (strtoull(buf,&tail,10) * 1024ull / page_bytes);
 }
 
 ///////////////////////////////////////////////////////////////////////

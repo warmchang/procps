@@ -44,6 +44,7 @@ global:
 	open_psdb;
 	open_psdb_message;
 	openproc;
+	page_bytes;
 	pretty_print_signals;
 	print_uptime;
 	procps_version;
