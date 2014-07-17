@@ -40,7 +40,8 @@ new applications, without swapping. Unlike the data
 provided by the \fBcached\fR or \fBfree\fR fields,
 this field takes into account page cache and also that
 not all reclaimable memory slabs will be reclaimed
-due to items being in use (MemAvailable in /proc/meminfo)
+due to items being in use (MemAvailable in /proc/meminfo, available on
+kernels 3.14, emulated on kernels 2.6.27+, displayed as zero if not available)
 .SH OPTIONS
 .TP
 \fB\-b\fR, \fB\-\-bytes\fR
