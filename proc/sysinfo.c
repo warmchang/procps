@@ -697,17 +697,21 @@ nextline:
   kb_main_used = kb_main_total - kb_main_free;
 
   /* zero? might need fallback for 2.6.27 <= kernel <? 3.14 */
-  if (!kb_main_available && linux_version_code >= 20627) {
-    vminfo();
-    watermark_low = vm_min_free * 5 / 4; /* should be equal to sum of all 'low' fields in /proc/zoneinfo */
+  if (!kb_main_available) {
+    if (linux_version_code < 20627)
+      kb_main_available = kb_main_free;
+    else {
+      vminfo();
+      watermark_low = vm_min_free * 5 / 4; /* should be equal to sum of all 'low' fields in /proc/zoneinfo */
 
-    mem_available = (signed long)vm_nr_free_pages + vm_nr_inactive_file + vm_nr_active_file
-    - MIN((vm_nr_inactive_file + vm_nr_active_file) / 2, watermark_low)
-    + vm_nr_slab_reclaimable - MIN(vm_nr_slab_reclaimable / 2, watermark_low)
-    - watermark_low;
+      mem_available = (signed long)vm_nr_free_pages + vm_nr_inactive_file + vm_nr_active_file
+      - MIN((vm_nr_inactive_file + vm_nr_active_file) / 2, watermark_low)
+      + vm_nr_slab_reclaimable - MIN(vm_nr_slab_reclaimable / 2, watermark_low)
+      - watermark_low;
 
-    if (mem_available < 0) mem_available = 0;
-    kb_main_available = (unsigned long)((unsigned long long)mem_available * page_bytes / 1024ull);
+      if (mem_available < 0) mem_available = 0;
+      kb_main_available = (unsigned long)((unsigned long long)mem_available * page_bytes / 1024ull);
+    }
   }
 }
 
