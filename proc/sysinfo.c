@@ -610,8 +610,8 @@ static unsigned long kb_anon_pages;
 static unsigned long kb_bounce;
 static unsigned long kb_commit_limit;
 static unsigned long kb_nfs_unstable;
-static unsigned long kb_swap_reclaimable;
-static unsigned long kb_swap_unreclaimable;
+unsigned long kb_slab_reclaimable;
+unsigned long kb_slab_unreclaimable;
 
 void meminfo(void){
   char namebuf[16]; /* big enough to hold any row name */
@@ -644,8 +644,8 @@ void meminfo(void){
   {"NFS_Unstable", &kb_nfs_unstable},
   {"PageTables",   &kb_pagetables},   // kB version of vmstat nr_page_table_pages
   {"ReverseMaps",  &nr_reversemaps},  // same as vmstat nr_page_table_pages
-  {"SReclaimable", &kb_swap_reclaimable}, // "swap reclaimable" (dentry and inode structures)
-  {"SUnreclaim",   &kb_swap_unreclaimable},
+  {"SReclaimable", &kb_slab_reclaimable}, // "slab reclaimable" (dentry and inode structures)
+  {"SUnreclaim",   &kb_slab_unreclaimable},
   {"Shmem",        &kb_main_shared},  // kernel 2.6.32 and later
   {"Slab",         &kb_slab},         // kB version of vmstat nr_slab
   {"SwapCached",   &kb_swap_cached},
