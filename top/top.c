@@ -5226,7 +5226,11 @@ numa_nope:
          scaletab[4].label = N_txt(AMT_petabyte_txt);
          scaletab[5].label = N_txt(AMT_exxabyte_txt);
       }
+#ifdef MEMGRAPH_OLD
       kb_main_my_misc = kb_main_buffers + kb_main_cached;
+#else
+      kb_main_my_misc = kb_main_buffers + kb_main_cached + kb_slab_reclaimable;
+#endif
       kb_main_my_used = kb_main_used - kb_main_my_misc;
 
       if (w->rc.graph_mems) {
