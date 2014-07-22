@@ -698,7 +698,7 @@ nextline:
 
   /* zero? might need fallback for 2.6.27 <= kernel <? 3.14 */
   if (!kb_main_available) {
-    if (linux_version_code < 20627)
+    if (linux_version_code < LINUX_VERSION(2, 6, 27))
       kb_main_available = kb_main_free;
     else {
       vminfo();
