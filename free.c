@@ -54,7 +54,7 @@
 #define FREE_SI			(1 << 5)
 #define FREE_REPEAT		(1 << 6)
 #define FREE_REPEATCOUNT	(1 << 7)
-#define FREE_AVAILABLE		(1 << 8)
+#define FREE_WIDE		(1 << 8)
 
 struct commandline_arguments {
 	int exponent;		/* demanded in kilos, magas... */
@@ -86,7 +86,7 @@ static void __attribute__ ((__noreturn__))
 	fputs(_(" -t, --total         show total for RAM + swap\n"), out);
 	fputs(_(" -s N, --seconds N   repeat printing every N seconds\n"), out);
 	fputs(_(" -c N, --count N     repeat printing N times, then exit\n"), out);
-	fputs(_(" -a, --available     show available memory\n"), out);
+	fputs(_(" -w, --wide          wide output\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("     --help     display this help and exit\n"), out);
 	fputs(USAGE_VERSION, out);
@@ -215,7 +215,7 @@ int main(int argc, char **argv)
 		{  "total",	no_argument,	    NULL,  't'		},
 		{  "seconds",	required_argument,  NULL,  's'		},
 		{  "count",	required_argument,  NULL,  'c'		},
-		{  "available",	no_argument,	    NULL,  'a'		},
+		{  "wide",	no_argument,	    NULL,  'w'		},
 		{  "help",	no_argument,	    NULL,  HELP_OPTION	},
 		{  "version",	no_argument,	    NULL,  'V'		},
 		{  NULL,	0,		    NULL,  0		}
@@ -234,7 +234,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "bkmghlotc:as:V", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "bkmghlotc:ws:V", longopts, NULL)) != -1)
 		switch (c) {
 		case 'b':
 			args.exponent = 1;
@@ -284,8 +284,8 @@ int main(int argc, char **argv)
 			  error(EXIT_FAILURE, ERANGE,
 				  _("failed to parse count argument: '%s'"), optarg);
 			break;
-		case 'a':
-			flags |= FREE_AVAILABLE;
+		case 'w':
+			flags |= FREE_WIDE;
 			break;
 		case HELP_OPTION:
 			usage(stdout);
@@ -302,17 +302,24 @@ int main(int argc, char **argv)
 		/* Translation Hint: You can use 9 character words in
 		 * the header, and the words need to be right align to
 		 * beginning of a number. */
-		printf(_("             total       used       free     shared    buffers     cached"));
-		if (flags & FREE_AVAILABLE) printf(_("  available"));
+		if (flags & FREE_WIDE) {
+			printf(_("             total       used       free     shared    buffers    cache      available"));
+		} else {
+			printf(_("             total       used       free     shared    buff/cache available"));
+		}
 		printf("\n");
 		printf("%-7s", _("Mem:"));
 		printf(" %10s", scale_size(kb_main_total, flags, args));
 		printf(" %10s", scale_size(kb_main_used, flags, args));
 		printf(" %10s", scale_size(kb_main_free, flags, args));
 		printf(" %10s", scale_size(kb_main_shared, flags, args));
-		printf(" %10s", scale_size(kb_main_buffers, flags, args));
-		printf(" %10s", scale_size(kb_main_cached, flags, args));
-		if (flags & FREE_AVAILABLE) printf(" %10s", scale_size(kb_main_available, flags, args));
+		if (flags & FREE_WIDE) {
+			printf(" %10s", scale_size(kb_main_buffers, flags, args));
+			printf(" %10s", scale_size(kb_main_cached, flags, args));
+		} else {
+			printf(" %10s", scale_size(kb_main_buffers+kb_main_cached, flags, args));
+		}
+		printf(" %10s", scale_size(kb_main_available, flags, args));
 		printf("\n");
 		/*
 		 * Print low vs. high information, if the user requested it.
