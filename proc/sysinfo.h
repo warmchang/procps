@@ -55,9 +55,6 @@ extern unsigned long kb_dirty;
 extern unsigned long kb_inactive;
 extern unsigned long kb_mapped;
 extern unsigned long kb_pagetables;
-// seen on 2.6.24-rc6-git12
-extern unsigned long kb_slab_reclaimable;
-extern unsigned long kb_slab_unreclaimable;
 
 #define BUFFSIZE (64*1024)
 typedef unsigned long long jiff;
@@ -82,7 +79,6 @@ extern unsigned long vm_nr_slab_unreclaimable;
 extern unsigned long vm_nr_active_file;
 extern unsigned long vm_nr_inactive_file;
 extern unsigned long vm_nr_free_pages;
-extern unsigned long vm_min_free;
 extern unsigned long vm_pgpgin;
 extern unsigned long vm_pgpgout;
 extern unsigned long vm_pswpin;

@@ -33,8 +33,6 @@ global:
 	kb_main_shared;
 	kb_main_total;
 	kb_main_used;
-	kb_slab_reclaimable;
-	kb_slab_unreclaimable;
 	kb_swap_free;
 	kb_swap_total;
 	kb_swap_used;

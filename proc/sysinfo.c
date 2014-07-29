@@ -610,8 +610,15 @@ static unsigned long kb_anon_pages;
 static unsigned long kb_bounce;
 static unsigned long kb_commit_limit;
 static unsigned long kb_nfs_unstable;
-unsigned long kb_slab_reclaimable;
-unsigned long kb_slab_unreclaimable;
+// seen on 2.6.18
+static unsigned long kb_min_free;
+// 2.6.19+
+static unsigned long kb_slab_reclaimable;
+static unsigned long kb_slab_unreclaimable;
+// 2.6.27+
+static unsigned long kb_active_file;
+static unsigned long kb_inactive_file;
+
 
 void meminfo(void){
   char namebuf[16]; /* big enough to hold any row name */
@@ -621,6 +628,7 @@ void meminfo(void){
   char *tail;
   static const mem_table_struct mem_table[] = {
   {"Active",       &kb_active},       // important
+  {"Active(file)", &kb_active_file},
   {"AnonPages",    &kb_anon_pages},
   {"Bounce",       &kb_bounce},
   {"Buffers",      &kb_main_buffers}, // important
@@ -635,6 +643,7 @@ void meminfo(void){
   {"Inact_laundry",&kb_inact_laundry},
   {"Inact_target", &kb_inact_target},
   {"Inactive",     &kb_inactive},     // important
+  {"Inactive(file)",&kb_inactive_file},
   {"LowFree",      &kb_low_free},
   {"LowTotal",     &kb_low_total},
   {"Mapped",       &kb_mapped},       // kB version of vmstat nr_mapped
@@ -701,16 +710,17 @@ nextline:
     if (linux_version_code < LINUX_VERSION(2, 6, 27))
       kb_main_available = kb_main_free;
     else {
-      vminfo();
-      watermark_low = vm_min_free * 5 / 4; /* should be equal to sum of all 'low' fields in /proc/zoneinfo */
+      FILE_TO_BUF(VM_MIN_FREE_FILE, vm_min_free_fd);
+      kb_min_free = (unsigned long) strtoull(buf,&tail,10);
 
-      mem_available = (signed long)vm_nr_free_pages + vm_nr_inactive_file + vm_nr_active_file
-      - MIN((vm_nr_inactive_file + vm_nr_active_file) / 2, watermark_low)
-      + vm_nr_slab_reclaimable - MIN(vm_nr_slab_reclaimable / 2, watermark_low)
-      - watermark_low;
+      watermark_low = kb_min_free * 5 / 4; /* should be equal to sum of all 'low' fields in /proc/zoneinfo */
+
+      mem_available = (signed long)kb_main_free - watermark_low
+      + kb_inactive_file + kb_active_file - MIN((kb_inactive_file + kb_active_file) / 2, watermark_low)
+      + kb_slab_reclaimable - MIN(kb_slab_reclaimable / 2, watermark_low);
 
       if (mem_available < 0) mem_available = 0;
-      kb_main_available = (unsigned long)((unsigned long long)mem_available * page_bytes / 1024ull);
+      kb_main_available = (unsigned long)mem_available;
     }
   }
 }
@@ -741,7 +751,6 @@ unsigned long vm_nr_slab_unreclaimable;// 2.6.19+ kernels
 unsigned long vm_nr_active_file;       // 2.6.27+ kernels
 unsigned long vm_nr_inactive_file;     // 2.6.27+ kernels
 unsigned long vm_nr_free_pages;        // 2.6.21+ kernels
-unsigned long vm_min_free;             // calculated from /proc/sys/vm/min_free_kbytes
 unsigned long vm_pgpgin;             // kB disk reads  (same as 1st num on /proc/stat page line)
 unsigned long vm_pgpgout;            // kB disk writes (same as 2nd num on /proc/stat page line)
 unsigned long vm_pswpin;             // swap reads     (same as 1st num on /proc/stat swap line)
@@ -893,9 +902,6 @@ nextline:
                 + vm_pgscan_kswapd_dma + vm_pgscan_kswapd_high + vm_pgscan_kswapd_normal;
   if(!vm_pgsteal)
     vm_pgsteal  = vm_pgsteal_dma + vm_pgsteal_high + vm_pgsteal_normal;
-
-  FILE_TO_BUF(VM_MIN_FREE_FILE, vm_min_free_fd);
-  vm_min_free = (unsigned long) (strtoull(buf,&tail,10) * 1024ull / page_bytes);
 }
 
 ///////////////////////////////////////////////////////////////////////
