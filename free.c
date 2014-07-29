@@ -49,12 +49,11 @@
 
 #define FREE_HUMANREADABLE	(1 << 1)
 #define FREE_LOHI		(1 << 2)
-#define FREE_OLDFMT		(1 << 3)
+#define FREE_WIDE		(1 << 3)
 #define FREE_TOTAL		(1 << 4)
 #define FREE_SI			(1 << 5)
 #define FREE_REPEAT		(1 << 6)
 #define FREE_REPEATCOUNT	(1 << 7)
-#define FREE_WIDE		(1 << 8)
 
 struct commandline_arguments {
 	int exponent;		/* demanded in kilos, magas... */
@@ -82,7 +81,6 @@ static void __attribute__ ((__noreturn__))
 	fputs(_(" -h, --human         show human-readable output\n"), out);
 	fputs(_("     --si            use powers of 1000 not 1024\n"), out);
 	fputs(_(" -l, --lohi          show detailed low and high memory statistics\n"), out);
-	fputs(_(" -o, --old           use old format (without -/+buffers/cache line)\n"), out);
 	fputs(_(" -t, --total         show total for RAM + swap\n"), out);
 	fputs(_(" -s N, --seconds N   repeat printing every N seconds\n"), out);
 	fputs(_(" -c N, --count N     repeat printing N times, then exit\n"), out);
@@ -211,7 +209,6 @@ int main(int argc, char **argv)
 		{  "human",	no_argument,	    NULL,  'h'		},
 		{  "si",	no_argument,	    NULL,  SI_OPTION	},
 		{  "lohi",	no_argument,	    NULL,  'l'		},
-		{  "old",	no_argument,	    NULL,  'o'		},
 		{  "total",	no_argument,	    NULL,  't'		},
 		{  "seconds",	required_argument,  NULL,  's'		},
 		{  "count",	required_argument,  NULL,  'c'		},
@@ -221,7 +218,7 @@ int main(int argc, char **argv)
 		{  NULL,	0,		    NULL,  0		}
 	};
 
-	/* defaults to old format */
+	/* defaults */
 	args.exponent = 0;
 	args.repeat_interval = 1000000;
 	args.repeat_counter = 0;
@@ -234,7 +231,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "bkmghlotc:ws:V", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "bkmghltc:ws:V", longopts, NULL)) != -1)
 		switch (c) {
 		case 'b':
 			args.exponent = 1;
@@ -259,9 +256,6 @@ int main(int argc, char **argv)
 			break;
 		case 'l':
 			flags |= FREE_LOHI;
-			break;
-		case 'o':
-			flags |= FREE_OLDFMT;
 			break;
 		case 't':
 			flags |= FREE_TOTAL;
@@ -341,15 +335,6 @@ int main(int argc, char **argv)
 			printf("\n");
 		}
 
-		if (!(flags & FREE_OLDFMT)) {
-			unsigned KLONG buffers_plus_cached = kb_main_buffers + kb_main_cached;
-			printf(_("-/+ buffers/cache:"));
-			printf(" %10s",
-			       scale_size(kb_main_used - buffers_plus_cached, flags, args));
-			printf(" %10s",
-			       scale_size(kb_main_free + buffers_plus_cached, flags, args));
-			printf("\n");
-		}
 		printf("%-7s", _("Swap:"));
 		printf(" %10s", scale_size(kb_swap_total, flags, args));
 		printf(" %10s", scale_size(kb_swap_used, flags, args));
