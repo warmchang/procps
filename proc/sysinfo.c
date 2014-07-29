@@ -570,8 +570,8 @@ static int compare_mem_table_structs(const void *a, const void *b){
 /* Shmem in 2.6.32+ */
 unsigned long kb_main_shared;
 /* old but still kicking -- the important stuff */
+static unsigned long kb_page_cache;
 unsigned long kb_main_buffers;
-unsigned long kb_main_cached;
 unsigned long kb_main_free;
 unsigned long kb_main_total;
 unsigned long kb_swap_free;
@@ -590,6 +590,7 @@ unsigned long kb_inact_clean;
 unsigned long kb_inact_target;
 unsigned long kb_swap_cached;  /* late 2.4 and 2.6+ only */
 /* derived values */
+unsigned long kb_main_cached;
 unsigned long kb_swap_used;
 unsigned long kb_main_used;
 /* 2.5.41+ */
@@ -632,7 +633,7 @@ void meminfo(void){
   {"AnonPages",    &kb_anon_pages},
   {"Bounce",       &kb_bounce},
   {"Buffers",      &kb_main_buffers}, // important
-  {"Cached",       &kb_main_cached},  // important
+  {"Cached",       &kb_page_cache},  // important
   {"CommitLimit",  &kb_commit_limit},
   {"Committed_AS", &kb_committed_as},
   {"Dirty",        &kb_dirty},        // kB version of vmstat nr_dirty
@@ -702,8 +703,9 @@ nextline:
   if(kb_inactive==~0UL){
     kb_inactive = kb_inact_dirty + kb_inact_clean + kb_inact_laundry;
   }
+  kb_main_cached = kb_page_cache + kb_slab;
   kb_swap_used = kb_swap_total - kb_swap_free;
-  kb_main_used = kb_main_total - kb_main_free;
+  kb_main_used = kb_main_total - kb_main_free - kb_main_cached - kb_main_buffers;
 
   /* zero? might need fallback for 2.6.27 <= kernel <? 3.14 */
   if (!kb_main_available) {
