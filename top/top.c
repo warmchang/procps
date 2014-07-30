@@ -5216,7 +5216,6 @@ numa_nope:
       // and prT macro might replace space at buf[8] with:   ------> +
          char buf[10]; // MEMORY_lines_fmt provides for 8+1 bytes
       } buftab[8];
-      unsigned long kb_main_my_used, kb_main_my_misc;
 
       if (!scaletab[0].label) {
          scaletab[0].label = N_txt(AMT_kilobyte_txt);
@@ -5226,12 +5225,6 @@ numa_nope:
          scaletab[4].label = N_txt(AMT_petabyte_txt);
          scaletab[5].label = N_txt(AMT_exxabyte_txt);
       }
-#ifdef MEMGRAPH_OLD
-      kb_main_my_misc = kb_main_buffers + kb_main_cached;
-#else
-      kb_main_my_misc = kb_main_buffers + kb_main_cached + kb_slab_reclaimable;
-#endif
-      kb_main_my_used = kb_main_used - kb_main_my_misc;
 
       if (w->rc.graph_mems) {
          static struct {
@@ -5242,11 +5235,11 @@ numa_nope:
          };
          char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ];
          int ix = w->rc.graph_mems - 1;
-         float pct_used = (float)kb_main_my_used * (100.0 / (float)kb_main_total),
+         float pct_used = (float)kb_main_used * (100.0 / (float)kb_main_total),
 #ifdef MEMGRAPH_OLD
-               pct_misc = (float)kb_main_my_misc * (100.0 / (float)kb_main_total),
+               pct_misc = (float)(kb_main_buffers + kb_main_cached) * (100.0 / (float)kb_main_total),
 #else
-               pct_misc = (float)(kb_main_total - kb_main_available - kb_main_my_used) * (100.0 / (float)kb_main_total),
+               pct_misc = (float)(kb_main_total - kb_main_available - kb_main_used) * (100.0 / (float)kb_main_total),
 #endif
                pct_swap = kb_swap_total ? (float)kb_swap_used * (100.0 / (float)kb_swap_total) : 0;
          snprintf(used, sizeof(used), gtab[ix].used, (int)((pct_used * Graph_adj) + .5), gtab[ix].type);
@@ -5258,10 +5251,11 @@ numa_nope:
             , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, Graph_len +4, dual
             , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, Graph_len +2, util));
       } else {
-         prT(bfT(0), mkM(total));   prT(bfT(1), mkM(free));
-         prT(bfT(2), mkM(my_used)); prT(bfT(3), mkM(my_misc));
-         prT(bfT(4), mkS(total));   prT(bfT(5), mkS(free));
-         prT(bfT(6), mkS(used));    prT(bfT(7), mkM(available));
+         unsigned long kb_main_my_misc = kb_main_buffers + kb_main_cached;
+         prT(bfT(0), mkM(total)); prT(bfT(1), mkM(free));
+         prT(bfT(2), mkM(used));  prT(bfT(3), mkM(my_misc));
+         prT(bfT(4), mkS(total)); prT(bfT(5), mkS(free));
+         prT(bfT(6), mkS(used));  prT(bfT(7), mkM(available));
          show_special(0, fmtmk(N_unq(MEMORY_lines_fmt)
             , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3)
             , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
