@@ -2,7 +2,7 @@
 .\"  This page Copyright (C) 1993 Matt Welsh, mdw@sunsite.unc.edu.
 .\"  Long options where added at April 15th, 2011.
 .\"  Freely distributable under the terms of the GPL
-.TH FREE 1 "September 2011" "procps-ng" "User Commands"
+.TH FREE 1 "July 2014" "procps-ng" "User Commands"
 .SH NAME
 free \- Display amount of free and used memory in the system
 .SH SYNOPSIS
@@ -19,7 +19,7 @@ columns are:
 Total installed memory (MemTotal and SwapTotal in /proc/meminfo)
 .TP
 \fBused\fR
-Used memory (calculated as total - free)
+Used memory (calculated as \fBtotal\fR - \fBfree\fR - \fBbuffers\fR - \fBcache\fR)
 .TP
 \fBfree\fR
 Unused memory (MemFree and SwapFree in /proc/meminfo)
@@ -31,13 +31,16 @@ kernels 2.6.32, displayed as zero if not available)
 \fBbuffers\fR
 Memory used by kernel buffers (Buffers in /proc/meminfo)
 .TP
-\fBcached\fR
-Memory used by the page cache (Cached in /proc/meminfo)
+\fBcache\fR
+Memory used by the page cache and slabs (Cached and Slab in /proc/meminfo)
+.TP
+\fBbuff/cache\fR
+Sum of \fBbuffers\fR and \fBcache\fR
 .TP
 \fBavailable\fR
 Estimation of how much memory is available for starting
 new applications, without swapping. Unlike the data
-provided by the \fBcached\fR or \fBfree\fR fields,
+provided by the \fBcache\fR or \fBfree\fR fields,
 this field takes into account page cache and also that
 not all reclaimable memory slabs will be reclaimed
 due to items being in use (MemAvailable in /proc/meminfo, available on
@@ -74,9 +77,10 @@ display the units of print out.  Following units are used.
 If unit is missing, and you have petabyte of RAM or swap, the number is in
 terabytes and columns might not be aligned with header.
 .TP
-\fB\-a\fR, \fB\-\-available\fR
-Display the estimation of memory available for starting new applications,
-without swapping. This switch makes the output wider than 80 characters.
+\fB\-w\fR, \fB\-\-wide\fR
+Switch to the wide mode. The wide mode produces lines longer
+than 80 characters. In this mode \fBbuffers\fR and \fBcache\fR
+are reported in two separate columns.
 .TP
 \fB\-c\fR, \fB\-\-count\fR \fIcount\fR
 Display the result
@@ -87,10 +91,6 @@ option.
 .TP
 \fB\-l\fR, \fB\-\-lohi\fR
 Show detailed low and high memory statistics.
-.TP
-\fB\-o\fR, \fB\-\-old\fR
-Display the output in old format, the only difference being this option
-will disable the display of the "buffer adjusted" line.
 .TP
 \fB\-s\fR, \fB\-\-seconds\fR \fIseconds\fR
 Continuously display the result delay
