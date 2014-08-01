@@ -25,6 +25,8 @@
 #endif
 #include <errno.h>
 #include <fcntl.h>
+#include <float.h>
+#include <limits.h>
 #include <pwd.h>
 #include <signal.h>
 #include <stdarg.h>
@@ -37,7 +39,6 @@
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
-#include <values.h>
 
 #include <sys/ioctl.h>
 #include <sys/resource.h>
@@ -1266,7 +1267,7 @@ static int mkfloat (const char *str, float *num, int whole) {
       *num = (float)strtol(str, &ep, 0);
    else
       *num = strtof(str, &ep);
-   if (ep != str && *ep == '\0' && *num < MAXINT)
+   if (ep != str && *ep == '\0' && *num < INT_MAX)
       return 1;
    return 0;
 } // end: mkfloat
@@ -1860,7 +1861,7 @@ static void adj_geometry (void) {
             between us and the great-beyond... */
    if (Batch) {
       if (w_cols) Screen_cols = w_cols;
-      Screen_rows = w_rows ? w_rows : MAXINT;
+      Screen_rows = w_rows ? w_rows : INT_MAX;
       Pseudo_size = (sizeof(*Pseudo_screen) * ROWMAXSIZ);
    } else {
       if (w_cols && w_cols < Screen_cols) Screen_cols = w_cols;
@@ -3652,7 +3653,7 @@ static void parse_args (char **args) {
       .  bunched args are actually handled properly and none are ignored
       .  we tolerate NO whitespace and NO switches -- maybe too tolerant? */
    static const char numbs_str[] = "+,-.0123456789";
-   float tmp_delay = MAXFLOAT;
+   float tmp_delay = FLT_MAX;
    int i;
 
    while (*args) {
@@ -3791,7 +3792,7 @@ static void parse_args (char **args) {
    } // end: while (*args)
 
    // fixup delay time, maybe...
-   if (MAXFLOAT > tmp_delay) {
+   if (FLT_MAX > tmp_delay) {
       if (Secure_mode)
          error_exit(N_txt(DELAY_secure_txt));
       Rc.delay_time = tmp_delay;
