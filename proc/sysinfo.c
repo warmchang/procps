@@ -622,7 +622,7 @@ static unsigned long kb_inactive_file;
 
 
 void meminfo(void){
-  char namebuf[16]; /* big enough to hold any row name */
+  char namebuf[32]; /* big enough to hold any row name */
   mem_table_struct findme = { namebuf, NULL};
   mem_table_struct *found;
   char *head;
