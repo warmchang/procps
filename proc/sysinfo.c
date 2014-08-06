@@ -148,7 +148,7 @@ unsigned long getbtime(void) {
  * is the kernel clock tick rate. One of these units is called a jiffy.
  * The HZ value used in the kernel may vary according to hacker desire.
  * According to Linus Torvalds, this is not true. He considers the values
- * in /proc as being in architecture-dependant units that have no relation
+ * in /proc as being in architecture-dependent units that have no relation
  * to the kernel clock tick rate. Examination of the kernel source code
  * reveals that opinion as wishful thinking.
  *

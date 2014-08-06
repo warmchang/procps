@@ -615,7 +615,7 @@ static int one_proc(proc_t * p)
 					continue;
 				}
 				if (strncmp("Swap", smap_key, 4) == 0) {
-					/*doesnt matter as long as last */
+					/*doesn't matter as long as last */
 					printf("%0*" KLF "x %*lu %*llu %*llu %*s %s\n",
 					       maxw1, start,
 					       maxw2, (unsigned long)(diff >> 10),

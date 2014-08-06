@@ -578,7 +578,7 @@ static void arg_check_conflicts(void)
     selection_list_len++;
   }
 
-  /* -q doesn't allow multiple occurences */
+  /* -q doesn't allow multiple occurrences */
   if (has_quick_pid > 1) {
     fprintf(stderr, "q/-q/--quick-pid can only be used once.\n");
     exit(1);
