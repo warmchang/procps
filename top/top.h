@@ -51,6 +51,7 @@
 //#define PRETEND8CPUS            /* pretend we're smp with 8 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define PRETEND_NUMA            /* pretend 4 (or 3 w/o OFF_NUMASKIP) Nodes */
+//#define QUICK_GRAPHS            /* use fast algorithim, accept +2% distort */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
 //#define RECALL_FIXED            /* don't reorder saved strings if recalled */
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */

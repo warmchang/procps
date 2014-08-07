@@ -1877,13 +1877,11 @@ static void adj_geometry (void) {
    PSU_CLREOS(0);
 
    // prepare to customize potential cpu/memory graphs
-   Graph_adj = ((float)Screen_cols - GRAPH_prefix - GRAPH_suffix) / 100.0;
-   if (Graph_adj > 1.0) Graph_adj = 1.0;
-   else if (Screen_cols < 80) Graph_adj = (80.0 - GRAPH_prefix - GRAPH_suffix) / 100.0;
    Graph_len = Screen_cols - GRAPH_prefix - GRAPH_actual - GRAPH_suffix;
    if (Graph_len >= 0) Graph_len = GRAPH_actual;
    else if (Screen_cols > 80) Graph_len = Screen_cols - GRAPH_prefix - GRAPH_suffix;
    else Graph_len = 80 - GRAPH_prefix - GRAPH_suffix;
+   Graph_adj = (float)Graph_len / 100.0;
 
    fflush(stdout);
    Frames_signal = BREAK_off;
@@ -5089,11 +5087,19 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
       int ix = Curwin->rc.graph_cpus - 1;
       float pct_user = (float)(u_frme + n_frme) * scale,
             pct_syst = (float)s_frme * scale;
-      snprintf(user, sizeof(user), gtab[ix].user, (int)((pct_user * Graph_adj) + .5), gtab[ix].type);
-      snprintf(syst, sizeof(syst), gtab[ix].syst, (int)((pct_syst * Graph_adj) + .5), gtab[ix].type);
+#ifndef QUICK_GRAPHS
+      int num_user = (int)((pct_user * Graph_adj) + .5),
+          num_syst = (int)((pct_syst * Graph_adj) + .5);
+      if (num_user + num_syst > Graph_len) --num_syst;
+      snprintf(user, sizeof(user), gtab[ix].user, num_user, gtab[ix].type);
+      snprintf(syst, sizeof(syst), gtab[ix].syst, num_syst, gtab[ix].type);
+#else
+      snprintf(user, sizeof(user), gtab[ix].user, (int)((pct_user * Graph_adj) + .6), gtab[ix].type);
+      snprintf(syst, sizeof(syst), gtab[ix].syst, (int)((pct_syst * Graph_adj) + .4), gtab[ix].type);
+#endif
       snprintf(dual, sizeof(dual), "%s%s", user, syst);
-      show_special(0, fmtmk("%%%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*.*s]~1\n"
-         , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, Graph_len +4, dual));
+      show_special(0, fmtmk("%%%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1\n"
+         , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, dual));
    } else {
       show_special(0, fmtmk(Cpu_States_fmts, pfx
          , (float)u_frme * scale, (float)s_frme * scale
@@ -5243,14 +5249,22 @@ numa_nope:
                pct_misc = (float)(kb_main_total - kb_main_available - kb_main_used) * (100.0 / (float)kb_main_total),
 #endif
                pct_swap = kb_swap_total ? (float)kb_swap_used * (100.0 / (float)kb_swap_total) : 0;
-         snprintf(used, sizeof(used), gtab[ix].used, (int)((pct_used * Graph_adj) + .5), gtab[ix].type);
-         snprintf(util, sizeof(util), gtab[ix].misc, (int)((pct_misc * Graph_adj) + .5), gtab[ix].type);
+#ifndef QUICK_GRAPHS
+         int num_used = (int)((pct_used * Graph_adj) + .5),
+             num_misc = (int)((pct_misc * Graph_adj) + .5);
+         if (num_used + num_misc > Graph_len) --num_misc;
+         snprintf(used, sizeof(used), gtab[ix].used, num_used, gtab[ix].type);
+         snprintf(util, sizeof(util), gtab[ix].misc, num_misc, gtab[ix].type);
+#else
+         snprintf(used, sizeof(used), gtab[ix].used, (int)((pct_used * Graph_adj) + .6), gtab[ix].type);
+         snprintf(util, sizeof(util), gtab[ix].misc, (int)((pct_misc * Graph_adj) + .4), gtab[ix].type);
+#endif
          snprintf(dual, sizeof(dual), "%s%s", used, util);
          snprintf(util, sizeof(util), gtab[ix].swap, (int)((pct_swap * Graph_adj) + .5), gtab[ix].type);
          prT(bfT(0), mkM(total)); prT(bfT(1), mkS(total));
-         show_special(0, fmtmk( "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*.*s]~1\n%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*.*s]~1\n"
-            , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, Graph_len +4, dual
-            , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, Graph_len +2, util));
+         show_special(0, fmtmk( "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1\n%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1\n"
+            , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, dual
+            , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, util));
       } else {
          unsigned long kb_main_my_misc = kb_main_buffers + kb_main_cached;
          prT(bfT(0), mkM(total)); prT(bfT(1), mkM(free));
