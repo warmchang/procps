@@ -5094,7 +5094,7 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
       snprintf(user, sizeof(user), gtab[ix].user, num_user, gtab[ix].type);
       snprintf(syst, sizeof(syst), gtab[ix].syst, num_syst, gtab[ix].type);
 #else
-      snprintf(user, sizeof(user), gtab[ix].user, (int)((pct_user * Graph_adj) + .6), gtab[ix].type);
+      snprintf(user, sizeof(user), gtab[ix].user, (int)((pct_user * Graph_adj) + .5), gtab[ix].type);
       snprintf(syst, sizeof(syst), gtab[ix].syst, (int)((pct_syst * Graph_adj) + .4), gtab[ix].type);
 #endif
       snprintf(dual, sizeof(dual), "%s%s", user, syst);
@@ -5256,7 +5256,7 @@ numa_nope:
          snprintf(used, sizeof(used), gtab[ix].used, num_used, gtab[ix].type);
          snprintf(util, sizeof(util), gtab[ix].misc, num_misc, gtab[ix].type);
 #else
-         snprintf(used, sizeof(used), gtab[ix].used, (int)((pct_used * Graph_adj) + .6), gtab[ix].type);
+         snprintf(used, sizeof(used), gtab[ix].used, (int)((pct_used * Graph_adj) + .5), gtab[ix].type);
          snprintf(util, sizeof(util), gtab[ix].misc, (int)((pct_misc * Graph_adj) + .4), gtab[ix].type);
 #endif
          snprintf(dual, sizeof(dual), "%s%s", used, util);
