@@ -106,6 +106,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	if (i_am_pkill == 0) {
 		fputs(_(" -d, --delimiter <string>  specify output delimiter\n"),fp);
 		fputs(_(" -l, --list-name           list PID and process name\n"),fp);
+		fputs(_(" -a, --list-full           list PID and full command line\n"),fp);
 		fputs(_(" -v, --inverse             negates the matching\n"),fp);
 		fputs(_(" -w, --lightweight         list all TID\n"), fp);
 	}
