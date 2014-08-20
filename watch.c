@@ -79,7 +79,7 @@ static int show_title = 2;	/* number of lines used, 2 or 0 */
 static int precise_timekeeping = 0;
 
 #define min(x,y) ((x) > (y) ? (y) : (x))
-#define MAX_ANSIBUF 10
+#define MAX_ANSIBUF 100
 
 static void __attribute__ ((__noreturn__))
     usage(FILE * out)
@@ -168,7 +168,7 @@ static void process_ansi(FILE * fp)
 	 * escape sequence "<ESC>[0;1;31m". There can be 1 or more
 	 * attributes to apply, but typically there are between 1 and 3.
 	 */
-	for (numstart = buf; *endptr != '\0'; numstart = endptr + 1)
+	for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1)
 		set_ansi_attribute(strtol(numstart, &endptr, 10));
 }
 
