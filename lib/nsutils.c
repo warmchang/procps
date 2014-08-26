@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -36,7 +37,6 @@ int ns_read(pid_t pid, proc_t *ns_task)
 }
 
 #ifdef TEST_PROGRAM
-#include <stdio.h>
 int main(int argc, char *argv[])
 {
 	printf("Hello, World!\n");
