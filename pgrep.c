@@ -629,7 +629,7 @@ static struct el * select_procs (int *num)
 						if (list == NULL)
 							exit (EXIT_FATAL);
 					}
-					if (opt_long) {
+					if (opt_long || opt_longlong) {
 						list[matches].str = xstrdup (cmdoutput);
 						list[matches++].num = subtask.XXXID;
 					} else {
