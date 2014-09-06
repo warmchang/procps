@@ -169,7 +169,7 @@ static void set_ansi_attribute(const int attrib)
 		break;
 #ifdef A_ITALIC
 	case 23:	/* unset italic */
-		attributes &= A_ITALIC;
+		attributes &= ~A_ITALIC;
 		break;
 #endif
 	case 24:	/* unset underline */
