@@ -474,7 +474,8 @@ static int run_command(char *restrict command, char **restrict command_argv)
 	reset_ansi();
 	for (y = show_title; y < height; y++) {
 		int eolseen = 0, tabpending = 0, tabwaspending = 0;
-		set_ansi_attribute(-1);
+		if (flags & WATCH_COLOR)
+			set_ansi_attribute(-1);
 #ifdef WITH_WATCH8BIT
 		wint_t carry = WEOF;
 #endif
