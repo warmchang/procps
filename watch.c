@@ -111,11 +111,19 @@ static int attributes;
 static int fg_col;
 static int bg_col;
 
+
+static void reset_ansi(void)
+{
+	attributes = A_NORMAL;
+	fg_col = 0;
+	bg_col = 0;
+}
+
 static void init_ansi_colors(void)
 {
 	short ncurses_colors[] = {
-		COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW, COLOR_BLUE,
-		COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE
+		-1, COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW,
+		COLOR_BLUE, COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE
 	};
 
 	nr_of_colors = sizeof(ncurses_colors) / sizeof(short);
@@ -123,11 +131,7 @@ static void init_ansi_colors(void)
 	for (bg_col = 0; bg_col < nr_of_colors; bg_col++)
 		for (fg_col = 0; fg_col < nr_of_colors; fg_col++)
 			init_pair(bg_col * nr_of_colors + fg_col + 1, ncurses_colors[fg_col], ncurses_colors[bg_col]);
-
-	/* default settings */
-	attributes = A_NORMAL;
-	fg_col = COLOR_WHITE;
-	bg_col = COLOR_BLACK;
+	reset_ansi();
 }
 
 
@@ -137,9 +141,7 @@ static void set_ansi_attribute(const int attrib)
 	case -1:	/* restore last settings */
 		break;
 	case 0:		/* restore default settings */
-		attributes = A_NORMAL;
-		fg_col = COLOR_WHITE;
-		bg_col = COLOR_BLACK;
+		reset_ansi();
 		break;
 	case 1:		/* set bold / increased intensity */
 		attributes |= A_BOLD;
@@ -183,9 +185,9 @@ static void set_ansi_attribute(const int attrib)
 		break;
 	default:
 		if (attrib >= 30 && attrib <= 37) {	/* set foreground color */
-			fg_col = attrib - 30;
+			fg_col = attrib - 30 + 1;
 		} else if (attrib >= 40 && attrib <= 47) { /* set background color */
-			bg_col = attrib - 40;
+			bg_col = attrib - 40 + 1;
 		}
 	}
 
@@ -469,6 +471,7 @@ static int run_command(char *restrict command, char **restrict command_argv)
 	if ((p = fdopen(pipefd[0], "r")) == NULL)
 		xerr(5, _("fdopen"));
 
+	reset_ansi();
 	for (y = show_title; y < height; y++) {
 		int eolseen = 0, tabpending = 0, tabwaspending;
 		set_ansi_attribute(-1);
