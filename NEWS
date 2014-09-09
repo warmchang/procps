@@ -19,7 +19,7 @@ procps-ng-3.3.10
   * usernames up to 32 characters now accommodated (up from 19), redhat #1112734
   * free exploits MemAvailable field and offers improved memory statistics
   * free considers slabs in displayed totals, debian #565518, ubuntu #126329
-
+  * watch supports new ANSI styles and background colors
 
 procps-ng-3.3.9
 ---------------
