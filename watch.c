@@ -89,7 +89,7 @@ static void __attribute__ ((__noreturn__))
               _(" %s [options] command\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_("  -b, --beep             beep if command has a non-zero exit\n"), out);
-	fputs(_("  -c, --color            interpret ANSI color sequences\n"), out);
+	fputs(_("  -c, --color            interpret ANSI color and style sequences\n"), out);
 	fputs(_("  -d, --differences[=<permanent>]\n"
                 "                         highlight changes between updates\n"), out);
 	fputs(_("  -e, --errexit          exit if command has a non-zero exit\n"), out);
@@ -106,34 +106,92 @@ static void __attribute__ ((__noreturn__))
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+static int nr_of_colors;
+static int attributes;
+static int fg_col;
+static int bg_col;
+
+
+static void reset_ansi(void)
+{
+	attributes = A_NORMAL;
+	fg_col = 0;
+	bg_col = 0;
+}
+
 static void init_ansi_colors(void)
 {
-	int i;
 	short ncurses_colors[] = {
-		COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW, COLOR_BLUE,
-		COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE
+		-1, COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW,
+		COLOR_BLUE, COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE
 	};
 
-	for (i = 0; i < 8; i++)
-		init_pair(i + 1, ncurses_colors[i], -1);
+	nr_of_colors = sizeof(ncurses_colors) / sizeof(short);
+
+	for (bg_col = 0; bg_col < nr_of_colors; bg_col++)
+		for (fg_col = 0; fg_col < nr_of_colors; fg_col++)
+			init_pair(bg_col * nr_of_colors + fg_col + 1, ncurses_colors[fg_col], ncurses_colors[bg_col]);
+	reset_ansi();
 }
+
 
 static void set_ansi_attribute(const int attrib)
 {
 	switch (attrib) {
-	case -1:
-		return;
-	case 0:
-		standend();
-		return;
-	case 1:
-		attrset(A_BOLD);
-		return;
+	case -1:	/* restore last settings */
+		break;
+	case 0:		/* restore default settings */
+		reset_ansi();
+		break;
+	case 1:		/* set bold / increased intensity */
+		attributes |= A_BOLD;
+		break;
+	case 2:		/* set decreased intensity (if supported) */
+		attributes |= A_DIM;
+		break;
+#ifdef A_ITALIC
+	case 3:		/* set italic (if supported) */
+		attributes |= A_ITALIC;
+		break;
+#endif
+	case 4:		/* set underline */
+		attributes |= A_UNDERLINE;
+		break;
+	case 5:		/* set blinking */
+		attributes |= A_BLINK;
+		break;
+	case 7:		/* set inversed */
+		attributes |= A_REVERSE;
+		break;
+	case 21:	/* unset bold / increased intensity */
+		attributes &= ~A_BOLD;
+		break;
+	case 22:	/* unset bold / any intensity modifier */
+		attributes &= ~(A_BOLD | A_DIM);
+		break;
+#ifdef A_ITALIC
+	case 23:	/* unset italic */
+		attributes &= ~A_ITALIC;
+		break;
+#endif
+	case 24:	/* unset underline */
+		attributes &= ~A_UNDERLINE;
+		break;
+	case 25:	/* unset blinking */
+		attributes &= ~A_BLINK;
+		break;
+	case 27:	/* unset inversed */
+		attributes &= ~A_REVERSE;
+		break;
+	default:
+		if (attrib >= 30 && attrib <= 37) {	/* set foreground color */
+			fg_col = attrib - 30 + 1;
+		} else if (attrib >= 40 && attrib <= 47) { /* set background color */
+			bg_col = attrib - 40 + 1;
+		}
 	}
-	if (attrib >= 30 && attrib <= 37) {
-		color_set(attrib - 29, NULL);
-		return;
-	}
+
+	attrset(attributes | COLOR_PAIR(bg_col * nr_of_colors + fg_col + 1));
 }
 
 static void process_ansi(FILE * fp)
@@ -413,8 +471,11 @@ static int run_command(char *restrict command, char **restrict command_argv)
 	if ((p = fdopen(pipefd[0], "r")) == NULL)
 		xerr(5, _("fdopen"));
 
+	reset_ansi();
 	for (y = show_title; y < height; y++) {
-		int eolseen = 0, tabpending = 0;
+		int eolseen = 0, tabpending = 0, tabwaspending = 0;
+		if (flags & WATCH_COLOR)
+			set_ansi_attribute(-1);
 #ifdef WITH_WATCH8BIT
 		wint_t carry = WEOF;
 #endif
@@ -425,6 +486,10 @@ static int run_command(char *restrict command, char **restrict command_argv)
 			int c = ' ';
 #endif
 			int attr = 0;
+
+			if (tabwaspending && (flags & WATCH_COLOR))
+				set_ansi_attribute(-1);
+			tabwaspending = 0;
 
 			if (!eolseen) {
 				/* if there is a tab pending, just
@@ -475,16 +540,25 @@ static int run_command(char *restrict command, char **restrict command_argv)
 					carry = c;	/* character on the next line */
 					continue;	/* because it won't fit here */
 				}
-				if (c == WEOF || c == L'\n' || c == L'\t')
+				if (c == WEOF || c == L'\n' || c == L'\t') {
 					c = L' ';
+					if (flags & WATCH_COLOR)
+						attrset(A_NORMAL);
+				}
 #else
-				if (c == EOF || c == '\n' || c == '\t')
+				if (c == EOF || c == '\n' || c == '\t') {
 					c = ' ';
+					if (flags & WATCH_COLOR)
+						attrset(A_NORMAL);
+				}
 #endif
-				if (tabpending && (((x + 1) % 8) == 0))
+				if (tabpending && (((x + 1) % 8) == 0)) {
 					tabpending = 0;
+					tabwaspending = 1;
+				}
 			}
 			move(y, x);
+
 			if (!first_screen && !exit_early && (flags & WATCH_CHGEXIT)) {
 #ifdef WITH_WATCH8BIT
 				cchar_t oldc;
@@ -537,6 +611,7 @@ static int run_command(char *restrict command, char **restrict command_argv)
 	}
 
 	fclose(p);
+
 
 	/* harvest child process and get status, propagated from command */
 	if (waitpid(child, &status, 0) < 0)
@@ -733,6 +808,8 @@ int main(int argc, char *argv[])
 
 		if (run_command(command, command_argv))
 			break;
+
+
 		if (precise_timekeeping) {
 			watch_usec_t cur_time = get_time_usec();
 			next_loop += USECS_PER_SEC * interval;
