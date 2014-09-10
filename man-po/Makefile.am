@@ -1,5 +1,6 @@
 
 translate-templates: $(DIST_MAN_POTS)
+EXTRA_DIST = $(DIST_MAN_POTS)
 
 get-trans:
 	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man/  .
