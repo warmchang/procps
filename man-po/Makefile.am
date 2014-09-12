@@ -1,6 +1,6 @@
 
 translate-templates: $(DIST_MAN_POTS)
-EXTRA_DIST = $(DIST_MAN_POTS)
+EXTRA_DIST = $(DIST_MAN_POTS) $(DIST_MAN_POS) $(DIST_translated_MANS)
 
 get-trans:
 	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man/  .
@@ -9,10 +9,12 @@ get-trans:
 
 translate-mans: dist-man-paths $(translated_MANS)
 
-base_langs := $(patsubst %.po,%,$(wildcard *.po))
-top_langs := $(patsubst %.po,%,$(notdir $(wildcard top/*.po)))
-ps_langs := $(patsubst %.po,%,$(notdir $(wildcard ps/*.po)))
+base_langs = $(patsubst %.po,%,$(wildcard *.po))
+top_langs = $(patsubst %.po,%,$(notdir $(wildcard top/*.po)))
+ps_langs = $(patsubst %.po,%,$(notdir $(wildcard ps/*.po)))
 all_langs = $(base_langs) $(top_langs) $(ps_langs)
+DIST_MAN_POS = $(wildcard *.po) $(wildcard top/*.po) $(wildcard ps/*.po)
+DIST_translated_MANS = 	$(shell find . -name '*.[1-9]')
 MAN_SECTIONS = 1 5 8
 MAN_PAGES = free.1 kill.1 pgrep.1 pidof.1 pkill.1 pmap.1 pwdx.1 skill.1 slabtop.1 \
 	    tload.1 uptime.1 w.1 watch.1 \
@@ -35,7 +37,7 @@ PO4A_UPDATEPO = po4a-updatepo
 PO4A_TRANSLATE = po4a-translate
 translate_manpage = $(PO4A_TRANSLATE) -f man -m $< -p $*.po -l $@
 
-CLEANFILES = $(DIST_MAN_POTS)
+CLEANFILES = $(DIST_MAN_POTS) $(translated_MANS)
 maintainer-clean-local:
 	-rm -rf $(all_langs)
 
