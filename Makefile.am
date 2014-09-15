@@ -44,8 +44,7 @@ dist_man_MANS = \
 	tload.1 \
 	uptime.1 \
 	vmstat.8 \
-	w.1 \
-	$(translated_MANS)
+	w.1
 
 EXTRA_DIST = \
 	autogen.sh \
