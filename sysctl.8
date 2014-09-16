@@ -143,8 +143,8 @@ The
 .B base_reachable_time
 and
 .B retrans_time
-are deprecated.  The sysctl command does not allow changing values of there
-parameters.  Users who insist to use deprecated kernel interfaces should values
+are deprecated.  The sysctl command does not allow changing values of these
+parameters.  Users who insist to use deprecated kernel interfaces should push values
 to /proc file system by other means.  For example:
 .PP
 echo 256 > /proc/sys/net/ipv6/neigh/eth0/base_reachable_time
