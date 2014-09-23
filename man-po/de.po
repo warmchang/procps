@@ -7,9 +7,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-man-3.3.10-rc1\n"
-"POT-Creation-Date: 2014-09-09 18:32+0300\n"
-"PO-Revision-Date: 2014-09-11 20:48+0100\n"
+"Project-Id-Version: procps-ng-man-3.3.10-rc3\n"
+"POT-Creation-Date: 2014-09-16 19:45+0300\n"
+"PO-Revision-Date: 2014-09-16 21:23+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -1639,7 +1639,7 @@ msgstr "B<slabtop> [I<Optionen>]"
 #. type: Plain text
 #: slabtop.1:16
 msgid "B<slabtop> displays detailed kernel slab cache information in real time.  It displays a listing of the top caches sorted by one of the listed sort criteria.  It also displays a statistics header filled with slab layer information."
-msgstr ""
+msgstr "B<slabtop> zeigt detaillierte Informationen zum Slab-Cache des Kernels in Echtzeit an. Es zeigt eine Liste der Top-Caches, nach einem oder mehreren Kriterien sortiert. Außerdem werden Statistik-Kopfzeilen mit Slab-Layer-Informationen angezeigt."
 
 #. type: Plain text
 #: slabtop.1:21
@@ -1693,7 +1693,7 @@ msgstr "SORTIERKRITERIEN"
 #. type: Plain text
 #: slabtop.1:45
 msgid "The following are valid sort criteria used to sort the individual slab caches and thereby determine what are the \"top\" slab caches to display.  The default sort criteria is to sort by the number of objects (\"o\")."
-msgstr ""
+msgstr "Folgende Kriterien sind für die Sortierung der einzelnen Slab-Caches zulässig und bestimmen, welche die »Top«-Caches für die Anzeige sind. Die Voreinstellung ist die Sortierung nach der Anzahl der Objekte (»o«)."
 
 #. type: Plain text
 #: slabtop.1:48
@@ -1827,7 +1827,7 @@ msgstr "Gegenwärtig benötigt B<slabtop> einen Kernel der Version 2.4 oder neue
 
 #. type: Plain text
 #: slabtop.1:95
-msgid "The slabtop statistic header is tracking how many bytes of slabs are being used and it not a measure of physical memory.  The 'Slab' field in the /proc/meminfo file is tracking information about used slab physical memory."
+msgid "The slabtop statistic header is tracking how many bytes of slabs are being used and is not a measure of physical memory.  The 'Slab' field in the /proc/meminfo file is tracking information about used slab physical memory."
 msgstr "Die Statistik-Kopfzeile von slabtop verfolgt die Byte-Anzahl der genutzten Slabs, bezieht sich aber nicht auf den tatsächlichen physischen Speicher. Das »Slab«-Feld in der Datei /proc/meminfo enthält Informationen über den physischen Slab-Speicher."
 
 #. type: Plain text
@@ -1963,7 +1963,7 @@ msgstr "B<-p>[I<DATEI>], B<--load>[=I<DATEI>]"
 
 #. type: Plain text
 #: sysctl.8:68
-msgid "Load in sysctl settings from the file specified or /etc/sysctl.conf if none given.  Specifying - as filename means reading data from standard input.  Using this option will mean arguments to B<sysctl> are files, which are read in the order they are specified.  The file argument may be specified as reqular expression."
+msgid "Load in sysctl settings from the file specified or /etc/sysctl.conf if none given.  Specifying - as filename means reading data from standard input.  Using this option will mean arguments to B<sysctl> are files, which are read in the order they are specified.  The file argument may be specified as regular expression."
 msgstr "lädt die sysctl-Einstellungen aus der angegebenen Datei oder /etc/sysctl.conf, falls keine angegeben ist. Bei Angabe von »-« als Dateiname wird aus der Standardeingabe gelesen. Die in dieser Option an B<sysctl> übergebenen Argumente werden als Dateien aufgefasst und in der angegebenen Reihenfolge gelesen. Das Dateiargument kann als regulärer Ausdruck angegeben werden."
 
 #. type: TP
@@ -2155,7 +2155,7 @@ msgstr "VERALTETE PARAMETER"
 
 #. type: Plain text
 #: sysctl.8:149
-msgid "The B<base_reachable_time> and B<retrans_time> are deprecated.  The sysctl command does not allow changing values of there parameters.  Users who insist to use deprecated kernel interfaces should values to /proc file system by other means.  For example:"
+msgid "The B<base_reachable_time> and B<retrans_time> are deprecated.  The sysctl command does not allow changing values of these parameters.  Users who insist to use deprecated kernel interfaces should push values to /proc file system by other means.  For example:"
 msgstr "Die Parameter B<base_reachable_time> und B<retrans_time> sind veraltet. Der sysctl-Befehl erlaubt die Änderung der Werte dieser Parameter nicht. Benutzer, die immer noch veraltete Kernelschnittstellen benutzen, sollten Werte im /proc-Dateisystem auf andere Weise behandeln, zum Beispiel:"
 
 #. type: Plain text
@@ -2256,7 +2256,7 @@ msgstr ""
 
 #. type: Plain text
 #: sysctl.conf.5:63
-msgid "The paths where sysctl preload files usually exit.  See also sysctl option I<--system>."
+msgid "The paths where sysctl preload files usually exist.  See also sysctl option I<--system>."
 msgstr "sind die Pfade, in denen die Dateien üblicherweise zu finden sind, aus denen sysctl liest. Weitere Informationen finden Sie in der Option I<--system> von sysctl."
 
 #. type: Plain text
@@ -2393,8 +2393,8 @@ msgstr "B<-s>, B<--since>"
 
 #. type: Plain text
 #: uptime.1:36
-msgid "system up since, in yyyy-mm-dd MM:HH:SS format"
-msgstr "System ist in Betrieb seit, im Format »jjjj-mm-tt MM:HH:SS«"
+msgid "system up since, in yyyy-mm-dd HH:MM:SS format"
+msgstr "System ist ununterbrochen in Betrieb seit, im Format »yyyy-mm-dd MM:HH:SS«"
 
 #. type: Plain text
 #: uptime.1:39
@@ -2507,7 +2507,7 @@ msgstr "B<-f>, B<--forks>"
 #. type: Plain text
 #: vmstat.8:45
 msgid "The B<-f> switch displays the number of forks since boot.  This includes the fork, vfork, and clone system calls, and is equivalent to the total number of tasks created.  Each process is represented by one or more tasks, depending on thread usage.  This display does not repeat."
-msgstr ""
+msgstr "Der Schalter B<-f> zeigt die Anzahl der Forks seit dem Systemstart an. Dies bezieht die Systemaufrufe »fork«, »vfork« und »clone« und entspricht der Gesamtzahl der erzeugten Tasks. Jeder Prozess wird durch ein oder mehrere Tasks repräsentiert, abhängig von der Thread-Nutzung. Diese Anzeige wird nicht wiederholt."
 
 #. type: TP
 #: vmstat.8:45
@@ -2653,6 +2653,8 @@ msgid ""
 "si: Amount of memory swapped in from disk (/s).\n"
 "so: Amount of memory swapped to disk (/s).\n"
 msgstr ""
+"si: Speichermenge aus dem Auslagerungsspeicher geholt (/s).\n"
+"so: Speichermenge in den Auslagerungsspeicher geschrieben (/s).\n"
 
 #. type: SS
 #: vmstat.8:117 vmstat.8:161
@@ -2683,6 +2685,8 @@ msgid ""
 "in: The number of interrupts per second, including the clock.\n"
 "cs: The number of context switches per second.\n"
 msgstr ""
+"in: Anzahl der Interrupts pro Sekunde, einschließlich der Uhr.\n"
+"cs: Anzahl der Kontext-Switches pro Sekunde.\n"
 
 #. type: SS
 #: vmstat.8:131
@@ -2727,6 +2731,10 @@ msgid ""
 "sectors: Sectors read successfully\n"
 "ms: milliseconds spent reading\n"
 msgstr ""
+"total: Gesamtzahl erfolgreich abgeschlossener Lesevorgänge\n"
+"merged: gruppierte Lesevorgänge (resultierend in einem E/A-Vorgang)\n"
+"sectors: Erfolgreich gelesene Sektoren\n"
+"ms: Zeit für Lesevorgänge in Millisekunden\n"
 
 #. type: SS
 #: vmstat.8:152
@@ -2751,6 +2759,8 @@ msgid ""
 "cur: I/O in progress\n"
 "s: seconds spent for I/O\n"
 msgstr ""
+"cur: E/A in Verarbeitung\n"
+"s: für E/A verbrauchte Sekunden\n"
 
 #. type: SH
 #: vmstat.8:168
@@ -2767,6 +2777,11 @@ msgid ""
 "writes : Total number of writes issued to this partition\n"
 "requested writes: Total number of write requests made for partition\n"
 msgstr ""
+"reads: Gesamtzahl der Lesevorgänge auf dieser Partition\n"
+"read sectors: Insgesamt gelesene Sektoren auf dieser Partition\n"
+"writes : Gesamtzahl der Schreibvorgänge auf dieser Partition\n"
+"requested writes: Gesamtzahl der für diese Partition\n"
+"                  angeforderten Schreibvorgänge\n"
 
 #. type: SH
 #: vmstat.8:176
@@ -2784,6 +2799,11 @@ msgid ""
 "size: Size of each object\n"
 "pages: Number of pages with at least one active object\n"
 msgstr ""
+"cache: Cache-Name\n"
+"num: Anzahl der gegenwärtig aktiven Objekte\n"
+"total: Gesamtzahl der verfügbaren Objekte\n"
+"size: Größe jedes Objekts\n"
+"pages: Anzahl der Seiten mit mindestens einem aktiven Objekt\n"
 
 #. type: Plain text
 #: vmstat.8:187
@@ -3244,8 +3264,9 @@ msgstr "Leere Zeilen direkt nach einer Zeile, die in der letzten Spalte endet, w
 
 #. type: Plain text
 #: watch.1:151
+#, fuzzy
 msgid "I<--precise> mode doesn't yet have advanced temporal distortion technology to compensate for a I<command> that takes more than I<interval> seconds to execute.  B<watch> also can get into a state where it rapid-fires as many executions of I<command> as it can to catch up from a previous executions running longer than I<interval> (for example, B<netstat> taking ages on a DNS lookup)."
-msgstr ""
+msgstr "Der Modus I<--precise> verfügt noch nicht über Timer-Funktionen, um das Verhalten eines I<Befehls> zu kompensieren, der mehr als I<Intervall> Sekunden zur Ausführung benötigt."
 
 #. type: Plain text
 #: watch.1:161
@@ -3293,7 +3314,7 @@ msgstr "B<5>"
 
 #. type: Plain text
 #: watch.1:173
-msgid "Closign child process write pipe failed."
+msgid "Closing child process write pipe failed."
 msgstr ""
 
 #. type: TP
@@ -3322,14 +3343,14 @@ msgstr "Das Ermitteln des Rückgabewertes des Kindprozesses mit B<waitpid>(2) is
 #: watch.1:181
 #, no-wrap
 msgid "B<other>"
-msgstr ""
+msgstr "B<andere>"
 
 #. type: Plain text
 #: watch.1:184
 msgid "The watch will propagate command exit status as child exit status."
-msgstr ""
+msgstr "Die Überwachung propagiert den Exit-Status des Befehls als Exit-Status des Kindprozesses."
 
 #. type: Plain text
 #: watch.1:209
 msgid "The original B<watch> was written by E<.UR rembo@\\:unisoft.\\:com> Tony Rems E<.UE> in 1991, with mods and corrections by Francois Pinard.  It was reworked and new features added by E<.UR mkc@\\:acm.\\:org> Mike Coleman E<.UE> in 1999. The beep, exec, and error handling features were added by E<.UR morty@\\:frakir.\\:org> Morty Abzug E<.UE> in 2008.  On a not so dark and stormy morning in March of 2003, E<.UR asd@\\:suespammers.\\:org> Anthony DeRobertis E<.UE> got sick of his watches that should update every minute eventually updating many seconds after the minute started, and added microsecond precision.  Unicode support was added in 2009 by E<.UR procps@\\:rrod.\\:net> Jarrod Lowe E<.UE>"
-msgstr ""
+msgstr "Das originale B<watch> wurde von E<.UR rembo@\\:unisoft.\\:com> Tony Rems E<.UE> im Jahre 1991 geschrieben, mit Modifizierungen und Korrekturen von Francois Pinard. Es wurde im Jahre 1999 von E<.UR mkc@\\:acm.\\:org> Mike Coleman E<.UE> überarbeitet, wobei auch neue Funktionen hinzugefügt wurden. Die beep- und exec-Funktionen sowie jene zur Fehlerbehandlung wurden von E<.UR morty@\\:frakir.\\:org> Morty Abzug E<.UE> im Jahre 2008 hinzugefügt. An einem nicht gar so dunklen und stürmischen Morgen im Jahre 2003 war E<.UR asd@\\:suespammers.\\:org> Anthony DeRobertis E<.UE> ganz krank von seinen Überwachungen, die nur in Minutenabständen aktualisierten, und baute die Mikrosekunden-Präzision ein. Unterstützung für Unicode wurde 2009 von E<.UR procps@\\:rrod.\\:net> Jarrod Lowe E<.UE> hinzugefügt."
