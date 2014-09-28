@@ -3524,8 +3524,9 @@ static void configs_read (void) {
             case 'g':                          // from 3.3.4 thru 3.3.8
                scat(w->rc.fieldscur, RCF_PLUS_H);
             case 'h':                          // this is release 3.3.9
-            /* w->rc.graph_cpus = 0; */// for documentation only, since
-            /* w->rc.graph_mems = 0; */// DEF_RCFILE zeroes them for us
+               w->rc.graph_cpus = w->rc.graph_mems = 0;
+               // these next 2 are really global, but best documented here
+               Rc.summ_mscale = Rc.task_mscale = SK_Kb;
             case 'i':                          // actual RCF_VERSION_ID
             default:                           // and a future version?
                if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
