@@ -4895,22 +4895,24 @@ static void keys_xtra (int ch) {
          * ( plus, maintain alphabetical order with carefully chosen )
          * ( function names: forest_a, forest_b, forest_c & forest_d )
          * ( each with exactly one letter more than its predecessor! ) */
-static proc_t **Seed_ppt;                   // temporary window ppt ptr
-static proc_t **Tree_ppt;                   // resized by forest_create
-static int      Tree_idx;                   // frame_make initializes
+static proc_t **Seed_ppt;                   // temporary win ppt pointer
+static proc_t **Tree_ppt;                   // forest_create will resize
+static int      Tree_idx;                   // frame_make resets to zero
 
         /*
          * This little recursive guy is the real forest view workhorse.
          * He fills in the Tree_ppt array and also sets the child indent
          * level which is stored in an unused proc_t padding byte. */
-static void forest_adds (const int self, const int level) {
+static void forest_adds (const int self, int level) {
    int i;
 
+   if (level > 100) level = 101;            // our arbitrary nests limit
    Tree_ppt[Tree_idx] = Seed_ppt[self];     // add this as root or child
    Tree_ppt[Tree_idx++]->pad_3 = level;     // borrow 1 byte, 127 levels
    for (i = self + 1; i < Frame_maxtask; i++) {
-      if (Seed_ppt[self]->tid == Seed_ppt[i]->tgid
+      if ((Seed_ppt[self]->tid == Seed_ppt[i]->tgid
       || (Seed_ppt[self]->tid == Seed_ppt[i]->ppid && Seed_ppt[i]->tid == Seed_ppt[i]->tgid))
+      && Tree_idx < Frame_maxtask)          // shouldn't happen, but has
          forest_adds(i, level + 1);         // got one child any others?
    }
 } // end: forest_adds
@@ -4963,7 +4965,8 @@ static inline const char *forest_display (const WIN_t *q, const proc_t *p) {
    const char *which = (CHKw(q, Show_CMDLIN)) ? *p->cmdline : p->cmd;
 
    if (!CHKw(q, Show_FOREST) || 1 == p->pad_3) return which;
-   snprintf(buf, sizeof(buf), "%*s%s", 4 * (p->pad_3 - 1), " `- ", which);
+   if (p->pad_3 > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
+   else snprintf(buf, sizeof(buf), "%*s%s", 4 * (p->pad_3 - 1), " `- ", which);
    return buf;
 } // end: forest_display
 
