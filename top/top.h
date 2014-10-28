@@ -59,6 +59,7 @@
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
+//#define TREE_SCANALL            /* rescan array w/ forest view, avoid sort */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 //#define VALIDATE_NLS            /* validate the integrity of all nls tbls  */
 
@@ -781,7 +782,9 @@ typedef struct WIN_t {
 //atic void          keys_xtra (int ch);
 /*------  Forest View support  -------------------------------------------*/
 //atic void          forest_adds (const int self, int level);
+#ifndef TREE_SCANALL
 //atic int           forest_based (const proc_t **x, const proc_t **y);
+#endif
 //atic void          forest_create (WIN_t *q);
 //atic inline const char *forest_display (const WIN_t *q, const proc_t *p);
 /*------  Main Screen routines  ------------------------------------------*/

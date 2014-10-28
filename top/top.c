@@ -4906,18 +4906,25 @@ static int      Tree_idx;                   // frame_make resets to zero
 static void forest_adds (const int self, int level) {
    int i;
 
-   if (level > 100) level = 101;            // our arbitrary nests limit
-   Tree_ppt[Tree_idx] = Seed_ppt[self];     // add this as root or child
-   Tree_ppt[Tree_idx++]->pad_3 = level;     // borrow 1 byte, 127 levels
-   for (i = self + 1; i < Frame_maxtask; i++) {
-      if ((Seed_ppt[self]->tid == Seed_ppt[i]->tgid
-      || (Seed_ppt[self]->tid == Seed_ppt[i]->ppid && Seed_ppt[i]->tid == Seed_ppt[i]->tgid))
-      && Tree_idx < Frame_maxtask)          // shouldn't happen, but has
-         forest_adds(i, level + 1);         // got one child any others?
+   if (Tree_idx < Frame_maxtask) {          // immunize against insanity
+      if (level > 100) level = 101;         // our arbitrary nests limit
+      Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child
+      Tree_ppt[Tree_idx++]->pad_3 = level;  // borrow 1 byte, 127 levels
+#ifdef TREE_SCANALL
+      for (i = 0; i < Frame_maxtask; i++) {
+         if (i == self) continue;
+#else
+      for (i = self + 1; i < Frame_maxtask; i++) {
+#endif
+         if (Seed_ppt[self]->tid == Seed_ppt[i]->tgid
+         || (Seed_ppt[self]->tid == Seed_ppt[i]->ppid && Seed_ppt[i]->tid == Seed_ppt[i]->tgid))
+            forest_adds(i, level + 1);      // got one child any others?
+      }
    }
 } // end: forest_adds
 
 
+#ifndef TREE_SCANALL
         /*
          * Our qsort callback to order a ppt by the non-display start_time
          * which will make us immune from any pid, ppid or tgid anomalies
@@ -4927,6 +4934,7 @@ static int forest_based (const proc_t **x, const proc_t **y) {
    if ( (*x)->start_time < (*y)->start_time ) return -1;
    return 0;
 } // end: forest_based
+#endif
 
 
         /*
@@ -4944,7 +4952,9 @@ static void forest_create (WIN_t *q) {
          hwmsav = Frame_maxtask;
          Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
       }
+#ifndef TREE_SCANALL
       qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), (QFP_t)forest_based);
+#endif
       for (i = 0; i < Frame_maxtask; i++)   // avoid any hidepid distortions
          if (!Seed_ppt[i]->pad_3)           // identify real or pretend trees
             forest_adds(i, 1);              // add as parent plus its children
