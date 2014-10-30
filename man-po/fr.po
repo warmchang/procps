@@ -16,9 +16,9 @@
 # David Prévot <david@tilapin.org>, 2010-2014.
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-man 3.3.10-rc2\n"
-"POT-Creation-Date: 2014-09-15 16:25+0300\n"
-"PO-Revision-Date: 2014-09-15 18:14-0400\n"
+"Project-Id-Version: procps-ng-man 3.3.10-rc3\n"
+"POT-Creation-Date: 2014-09-16 19:45+0300\n"
+"PO-Revision-Date: 2014-09-25 11:12-0400\n"
 "Last-Translator: David Prévot <david@tilapin.org>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "Language: fr\n"
@@ -1838,8 +1838,8 @@ msgstr "Actuellement, B<slabtop> requiert un noyau\\ 2.4 ou supérieur (en parti
 
 #. type: Plain text
 #: slabtop.1:95
-msgid "The slabtop statistic header is tracking how many bytes of slabs are being used and it not a measure of physical memory.  The 'Slab' field in the /proc/meminfo file is tracking information about used slab physical memory."
-msgstr "L'en-tête des statistiques de slabtop quantifie le nombre d'octets utilisés par slab et ce n'est pas une mesure de la mémoire physique. Le champ «\\ Slab\\ » du fichier I</proc/meminfo> affiche les informations à propos de l'utilisation de la mémoire physique par slab."
+msgid "The slabtop statistic header is tracking how many bytes of slabs are being used and is not a measure of physical memory.  The 'Slab' field in the /proc/meminfo file is tracking information about used slab physical memory."
+msgstr "L'en-tête des statistiques de slabtop quantifie le nombre d'octets utilisés par slab et ce n'est pas une mesure de la mémoire physique. Le champ « Slab » du fichier I</proc/meminfo> affiche les informations à propos de l'utilisation de la mémoire physique par slab."
 
 #. type: Plain text
 #: slabtop.1:97
@@ -2167,7 +2167,7 @@ msgstr "PARAMÈTRES OBSOLÈTES"
 
 #. type: Plain text
 #: sysctl.8:149
-msgid "The B<base_reachable_time> and B<retrans_time> are deprecated.  The sysctl command does not allow changing values of there parameters.  Users who insist to use deprecated kernel interfaces should values to /proc file system by other means.  For example:"
+msgid "The B<base_reachable_time> and B<retrans_time> are deprecated.  The sysctl command does not allow changing values of these parameters.  Users who insist to use deprecated kernel interfaces should push values to /proc file system by other means.  For example:"
 msgstr "B<base_reachable_time> et B<retrans_time> sont obsolètes. La commande B<sysctl> ne permet pas de modifier les valeurs de ces paramètres. Les utilisateurs qui désirent vraiment utiliser les interfaces obsolètes du noyau devraient insérer autrement les valeurs dans le système de fichiers I</proc>. Par exemple :"
 
 #. type: Plain text
@@ -2405,10 +2405,9 @@ msgstr "Afficher l'aide"
 msgid "B<-s>, B<--since>"
 msgstr "B<-s>, B<--since>"
 
-# NOTE: s/MM:HH/HH:MM/
 #. type: Plain text
 #: uptime.1:36
-msgid "system up since, in yyyy-mm-dd MM:HH:SS format"
+msgid "system up since, in yyyy-mm-dd HH:MM:SS format"
 msgstr "Date depuis laquelle le système est en route, au format aaaa-mm-jj HH:MM:SS"
 
 #. type: Plain text
