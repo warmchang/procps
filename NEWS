@@ -1,3 +1,7 @@
+procps-ng-NEXT
+----------------
+  * pgrep: don't crash with -a -w flags. Merge 33, Debian #768190
+
 procps-ng-3.3.10
 ----------------
   * sysctl --system loads default config file - Debian #732920
