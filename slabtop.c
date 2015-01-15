@@ -286,7 +286,7 @@ static void parse_input(char c)
 #define print_line(fmt, ...) if (run_once) printf(fmt, __VA_ARGS__); else printw(fmt, __VA_ARGS__)
 int main(int argc, char *argv[])
 {
-	int o;
+	int is_tty, o;
 	unsigned short old_rows;
 	struct slab_info *slab_list = NULL;
 	int run_once = 0, retval = EXIT_SUCCESS;
@@ -337,7 +337,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (tcgetattr(STDIN_FILENO, &saved_tty) == -1)
+	is_tty = isatty(STDIN_FILENO);
+	if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
 		xwarn(_("terminal setting retrieval"));
 
 	old_rows = rows;
@@ -429,7 +430,8 @@ int main(int argc, char *argv[])
 		}
 	} while (delay);
 
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
+	if (is_tty)
+		tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
 	free_slabinfo(slab_list);
 	if (!run_once)
 		endwin();
