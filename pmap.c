@@ -533,6 +533,10 @@ static int one_proc(proc_t * p)
 	 */
 	int maxcmd = 0xfffff;
 
+	escape_command(cmdbuf, p, sizeof cmdbuf, &maxcmd,
+		       ESC_ARGS | ESC_BRACKETS);
+	printf("%u:   %s\n", p->tgid, cmdbuf);
+
 	if (x_option || X_option || c_option) {
 		sprintf(buf, "/proc/%u/smaps", p->tgid);
 		if ((fp = fopen(buf, "r")) == NULL)
@@ -542,10 +546,6 @@ static int one_proc(proc_t * p)
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	}
-
-	escape_command(cmdbuf, p, sizeof cmdbuf, &maxcmd,
-		       ESC_ARGS | ESC_BRACKETS);
-	printf("%u:   %s\n", p->tgid, cmdbuf);
 
 	if (X_option || c_option) {
 		print_extended_maps(fp);
