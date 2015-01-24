@@ -588,8 +588,10 @@ static void skillsnice_parse(int argc,
 		prino = snice_prio_option(&argc, argv);
 	else if (program == PROG_SKILL) {
 		signo = skill_sig_option(&argc, argv);
-		if (-1 < signo)
+		if (-1 < signo) {
 			sig_or_pri = signo;
+			argc -= 1;
+		}
 	}
 
 	pid_count = 0;

@@ -1,6 +1,7 @@
 procps-ng-NEXT
 ----------------
   * pgrep: don't crash with -a -w flags. Merge 33, Debian #768190
+  * skill: command line with signal number interpreted correctly
 
 procps-ng-3.3.10
 ----------------
