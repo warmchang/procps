@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.10-rc3\n"
 "POT-Creation-Date: 2014-09-16 19:45+0300\n"
-"PO-Revision-Date: 2014-09-20 09:30+0200\n"
+"PO-Revision-Date: 2014-11-08 10:51+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -52,7 +52,7 @@ msgstr "NAZWA"
 #. type: Plain text
 #: free.1:8
 msgid "free - Display amount of free and used memory in the system"
-msgstr ""
+msgstr "free - wyświetlanie ilości wolnej i użytej pamięci w systemie"
 
 #. type: SH
 #: free.1:8 kill.1:11 pgrep.1:8 pidof.1:21 pmap.1:11 pwdx.1:9 skill.1:12
@@ -77,95 +77,95 @@ msgstr "OPIS"
 #. type: Plain text
 #: free.1:17
 msgid "B<free> displays the total amount of free and used physical and swap memory in the system, as well as the buffers and caches used by the kernel. The information is gathered by parsing /proc/meminfo. The displayed columns are:"
-msgstr ""
+msgstr "B<free> wyświetla całkowitą ilość wolnej i użytej pamięci fizycznej oraz pamięci wymiany w systemie, a także rozmiary buforów i pamięci podręcznych używanych przez jądro. Informacje są zbierane poprzez analizę /proc/meminfo. Wyświetlane kolumny to:"
 
 #. type: TP
 #: free.1:17
 #, no-wrap
 msgid "B<total>"
-msgstr ""
+msgstr "B<razem>"
 
 #. type: Plain text
 #: free.1:20
 msgid "Total installed memory (MemTotal and SwapTotal in /proc/meminfo)"
-msgstr ""
+msgstr "Całkowita zainstalowana pamięć (MemTotal oraz SwapTotal w /proc/meminfo)"
 
 #. type: TP
 #: free.1:20
 #, no-wrap
 msgid "B<used>"
-msgstr ""
+msgstr "B<użyte>"
 
 #. type: Plain text
 #: free.1:23
 msgid "Used memory (calculated as B<total> - B<free> - B<buffers> - B<cache>)"
-msgstr ""
+msgstr "Pamięć użyta (liczona jako B<razem> - B<wolne> - B<bufory> -B<w cache>)"
 
 #. type: TP
 #: free.1:23
 #, no-wrap
 msgid "B<free>"
-msgstr ""
+msgstr "B<wolne>"
 
 #. type: Plain text
 #: free.1:26
 msgid "Unused memory (MemFree and SwapFree in /proc/meminfo)"
-msgstr ""
+msgstr "Pamięć nie używana (MemFree oraz SwapFree w /proc/meminfo)"
 
 #. type: TP
 #: free.1:26
 #, no-wrap
 msgid "B<shared>"
-msgstr ""
+msgstr "B<dzielone>"
 
 #. type: Plain text
 #: free.1:30
 msgid "Memory used (mostly) by tmpfs (Shmem in /proc/meminfo, available on kernels 2.6.32, displayed as zero if not available)"
-msgstr ""
+msgstr "Pamięć używana (głównie) przez tmpfs (Shmem w /proc/meminfo, dostępne w jądrach 2.6.32, wyświetlana jako zero, jeśli wartość nie jest dostępna)"
 
 #. type: TP
 #: free.1:30
 #, no-wrap
 msgid "B<buffers>"
-msgstr ""
+msgstr "B<bufory>"
 
 #. type: Plain text
 #: free.1:33
 msgid "Memory used by kernel buffers (Buffers in /proc/meminfo)"
-msgstr ""
+msgstr "Pamięć używana przez bufory jądra (Buffers w /proc/meminfo)"
 
 #. type: TP
 #: free.1:33
 #, no-wrap
 msgid "B<cache>"
-msgstr ""
+msgstr "B<w cache>"
 
 #. type: Plain text
 #: free.1:36
 msgid "Memory used by the page cache and slabs (Cached and Slab in /proc/meminfo)"
-msgstr ""
+msgstr "Pamięć używana przez cache stron oraz płyty (Cached i Slab w /proc/meminfo)"
 
 #. type: TP
 #: free.1:36
 #, no-wrap
 msgid "B<buff/cache>"
-msgstr ""
+msgstr "B<buf/cache>"
 
 #. type: Plain text
 #: free.1:39
 msgid "Sum of B<buffers> and B<cache>"
-msgstr ""
+msgstr "Suma B<buforów> i B<w cache>"
 
 #. type: TP
 #: free.1:39
 #, no-wrap
 msgid "B<available>"
-msgstr ""
+msgstr "B<dostępne>"
 
 #. type: Plain text
 #: free.1:48
 msgid "Estimation of how much memory is available for starting new applications, without swapping. Unlike the data provided by the B<cache> or B<free> fields, this field takes into account page cache and also that not all reclaimable memory slabs will be reclaimed due to items being in use (MemAvailable in /proc/meminfo, available on kernels 3.14, emulated on kernels 2.6.27+, otherwise the same as B<free>)"
-msgstr ""
+msgstr "Przybliżenie, jak dużo pamięci jest dostępne do uruchamiania nowych aplikacji bez swapowania. W przeciwieństwie do danych udostępnianych w polach B<w cache> czy B<wolne>, to pole bierze pod uwagę cache stron oraz to, że nie wszystkie płyty pamięci podlegające reklamacji zostaną zwrócone (MemAvailable w /proc/meminfo, dostępne w jądrach 3.14, emulowane w jądrach 2.6.27+, w innych przypadkach - to samo, co B<wolne>)"
 
 #. type: SH
 #: free.1:48 kill.1:30 pgrep.1:39 pidof.1:36 pmap.1:16 pwdx.1:12 skill.1:35
@@ -183,7 +183,7 @@ msgstr "B<-b>, B<--bytes>"
 #. type: Plain text
 #: free.1:52
 msgid "Display the amount of memory in bytes."
-msgstr ""
+msgstr "Wyświetlanie ilości pamięci w bajtach."
 
 #. type: TP
 #: free.1:52
@@ -194,7 +194,7 @@ msgstr "B<-k>, B<--kilo>"
 #. type: Plain text
 #: free.1:55
 msgid "Display the amount of memory in kilobytes.  This is the default."
-msgstr ""
+msgstr "Wyświetlanie ilości pamięci w kilobajtach (zachowanie domyślne)."
 
 #. type: TP
 #: free.1:55
@@ -205,7 +205,7 @@ msgstr "B<-m>, B<--mega>"
 #. type: Plain text
 #: free.1:58
 msgid "Display the amount of memory in megabytes."
-msgstr ""
+msgstr "Wyświetlanie ilości pamięci w megabajtach."
 
 #. type: TP
 #: free.1:58
@@ -216,7 +216,7 @@ msgstr "B<-g>, B<--giga>"
 #. type: Plain text
 #: free.1:61
 msgid "Display the amount of memory in gigabytes."
-msgstr ""
+msgstr "Wyświetlanie ilości pamięci w gigabajtach."
 
 #. type: TP
 #: free.1:61
@@ -227,7 +227,7 @@ msgstr "B<--tera>"
 #. type: Plain text
 #: free.1:64
 msgid "Display the amount of memory in terabytes."
-msgstr ""
+msgstr "Wyświetlanie ilości pamięci w terabajtach."
 
 #. type: TP
 #: free.1:64
@@ -238,7 +238,7 @@ msgstr "B<-h>, B<--human>"
 #. type: Plain text
 #: free.1:68
 msgid "Show all output fields automatically scaled to shortest three digit unit and display the units of print out.  Following units are used."
-msgstr ""
+msgstr "Wyświetlanie wszystkich pól wyjściowych automatycznie przeskalowanych do najkrótszej trzycyfrowej jednostki wraz z użytą jednostką. Używane są następujące jednostki:"
 
 #. type: Plain text
 #: free.1:75
@@ -259,7 +259,7 @@ msgstr ""
 #. type: Plain text
 #: free.1:79
 msgid "If unit is missing, and you have petabyte of RAM or swap, the number is in terabytes and columns might not be aligned with header."
-msgstr ""
+msgstr "Jeśli brak jednostki, a w systemie jest petabajt RAM-u lub obszaru wymiany, liczba będzie w terabajtach, a kolumny mogą nie być wyrównane z nagłówkiem."
 
 #. type: TP
 #: free.1:79 vmstat.8:79
@@ -270,18 +270,18 @@ msgstr "B<-w>, B<--wide>"
 #. type: Plain text
 #: free.1:84
 msgid "Switch to the wide mode. The wide mode produces lines longer than 80 characters. In this mode B<buffers> and B<cache> are reported in two separate columns."
-msgstr ""
+msgstr "Przełączenie w tryb szeroki, z liniami przekraczającymi 80 znaków. W tym trybie B<bufory> oraz B<w cache> są wypisywane w dwóch osobnych kolumnach."
 
 #. type: TP
 #: free.1:84
 #, no-wrap
 msgid "B<-c>, B<--count> I<count>"
-msgstr ""
+msgstr "B<-c>, B<--count> I<liczba>"
 
 #. type: Plain text
 #: free.1:91
 msgid "Display the result I<count> times.  Requires the B<-s> option."
-msgstr ""
+msgstr "Wyświetlenie wyniku podaną I<liczbę> razy. Wymaga opcji B<-s>."
 
 #. type: TP
 #: free.1:91
@@ -292,18 +292,18 @@ msgstr "B<-l>, B<--lohi>"
 #. type: Plain text
 #: free.1:94
 msgid "Show detailed low and high memory statistics."
-msgstr ""
+msgstr "Wyświetlanie szczegółowych statystyk niskiej i wysokiej pamięci."
 
 #. type: TP
 #: free.1:94
 #, no-wrap
 msgid "B<-s>, B<--seconds> I<seconds>"
-msgstr ""
+msgstr "B<-s>, B<--seconds> I<sekundy>"
 
 #. type: Plain text
 #: free.1:102
 msgid "Continuously display the result delay I<seconds> apart.  You may actually specify any floating point number for I<delay>, B<usleep>(3)  is used for microsecond resolution delay times."
-msgstr ""
+msgstr "Stałe wyświetlanie wyników co podaną liczbę I<sekund>. Można podać dowolną liczbę zmiennoprzecinkową, obsługiwane są opóźnienia z dokładnością do mikrosekundy dzięki użyciu funkcji B<usleep>(3)."
 
 #. type: TP
 #: free.1:102
@@ -314,7 +314,7 @@ msgstr "B<--si>"
 #. type: Plain text
 #: free.1:105
 msgid "Use power of 1000 not 1024."
-msgstr ""
+msgstr "Użycie potęg liczby 1000 zamiast 1024."
 
 #. type: TP
 #: free.1:105
@@ -325,7 +325,7 @@ msgstr "B<-t>, B<--total>"
 #. type: Plain text
 #: free.1:108
 msgid "Display a line showing the column totals."
-msgstr ""
+msgstr "Wyświetlanie linii pokazującej podsumowanie kolumn."
 
 #. type: TP
 #: free.1:108 w.1:48
@@ -336,7 +336,7 @@ msgstr "B<--help>"
 #. type: Plain text
 #: free.1:111
 msgid "Print help."
-msgstr ""
+msgstr "Wyświetlenie opisu."
 
 #. type: TP
 #: free.1:111 pgrep.1:157 pmap.1:59 pwdx.1:13 skill.1:61 slabtop.1:35
@@ -348,7 +348,7 @@ msgstr "B<-V>, B<--version>"
 #. type: Plain text
 #: free.1:114 skill.1:64 w.1:57
 msgid "Display version information."
-msgstr ""
+msgstr "Wyświetlenie informacji o wersji."
 
 #. type: SH
 #: free.1:115 slabtop.1:76 sysctl.8:151 sysctl.conf.5:44 tload.1:32
@@ -366,7 +366,7 @@ msgstr "/proc/meminfo"
 #. type: Plain text
 #: free.1:119
 msgid "memory information"
-msgstr ""
+msgstr "informacje dotyczące pamięci"
 
 #. type: SH
 #: free.1:120 kill.1:72 pgrep.1:231 pidof.1:58 pmap.1:77 pwdx.1:19 skill.1:102
@@ -391,7 +391,7 @@ msgstr "AUTORZY"
 #. type: Plain text
 #: free.1:127
 msgid "Written by Brian Edmonds."
-msgstr ""
+msgstr "Program napisał Brian Edmonds."
 
 #. type: SH
 #: free.1:127 kill.1:90 pgrep.1:248 pmap.1:82 pwdx.1:29 skill.1:118
@@ -405,7 +405,7 @@ msgstr "ZGŁASZANIE BŁĘDÓW"
 #: kill.1:8 pgrep.1:5 pidof.1:18 pwdx.1:6 skill.1:9 slabtop.1:5 snice.1:1
 #: sysctl.conf.5:9 tload.1:4 uptime.1:3 vmstat.8:3 w.1:3 watch.1:1
 msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>"
-msgstr ""
+msgstr "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<.UE>"
 
 #. type: TH
 #: kill.1:8
@@ -422,51 +422,51 @@ msgstr "październik 2011"
 #. type: Plain text
 #: kill.1:11
 msgid "kill - send a signal to a process"
-msgstr ""
+msgstr "kill - wysłanie sygnału do procesu"
 
 #. type: Plain text
 #: kill.1:14
 msgid "B<kill> [options] E<lt>pidE<gt> [...]"
-msgstr ""
+msgstr "B<kill> [opcje] E<lt>pidE<gt> [...]"
 
 #. type: Plain text
 #: kill.1:30
 msgid "The default signal for kill is TERM.  Use B<-l> or B<-L> to list available signals.  Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.  Alternate signals may be specified in three ways: B<-9>, B<-SIGKILL> or B<-KILL>.  Negative PID values may be used to choose whole process groups; see the PGID column in ps command output.  A PID of B<-1> is special; it indicates all processes except the kill process itself and init."
-msgstr ""
+msgstr "Domyślny sygnał to TERM. Aby uzyskać listę sygnałów, można użyć opcji B<-l> lub B<-L>. Przydatne sygnały to w szczególności HUP, INT, KILL, STOP, CONT oraz 0. Alternatywny sygnał można podać na trzy sposoby: B<-9>, B<-SIGKILL> oraz B<-KILL>. Ujemne wartości PID pozwalają wybrać całe grupy procesów - p. kolumna PGID w wyjściu polecenia ps. PID B<-1> jest specjalny - oznacza wszystkie procesy z wyjątkiem samego procesu kill oraz inita."
 
 #. type: TP
 #: kill.1:31
 #, no-wrap
 msgid "B<E<lt>pidE<gt> [...]>"
-msgstr ""
+msgstr "B<E<lt>pidE<gt> [...]>"
 
 #. type: Plain text
 #: kill.1:34
 msgid "Send signal to every E<lt>pidE<gt> listed."
-msgstr ""
+msgstr "Wysłanie sygnału to każdego podanego E<lt>piduE<gt>."
 
 #. type: TP
 #: kill.1:34
 #, no-wrap
 msgid "B<-E<lt>signalE<gt>>"
-msgstr ""
+msgstr "B<-E<lt>sygnałE<gt>>"
 
 #. type: TQ
 #: kill.1:36
 #, no-wrap
 msgid "B<-s E<lt>signalE<gt>>"
-msgstr ""
+msgstr "B<-s E<lt>sygnałE<gt>>"
 
 #. type: TQ
 #: kill.1:38
 #, no-wrap
 msgid "B<--signal E<lt>signalE<gt>>"
-msgstr ""
+msgstr "B<--signal E<lt>sygnałE<gt>>"
 
 #. type: Plain text
 #: kill.1:46
 msgid "Specify the B<signal> to be sent.  The signal can be specified by using name or number.  The behavior of signals is explained in B<signal>(7)  manual page."
-msgstr ""
+msgstr "Podanie B<sygnału> do wysłania. Sygnał można określić przy użyciu nazwy lub numeru. Zachowanie sygnałów jest wyjaśnione na stronie podręcznika B<signal>(7)."
 
 #. type: TP
 #: kill.1:46
@@ -477,7 +477,7 @@ msgstr "B<-l>, B<--list> [I<sygnał>]"
 #. type: Plain text
 #: kill.1:50
 msgid "List signal names.  This option has optional argument, which will convert signal number to signal name, or other way round."
-msgstr ""
+msgstr "Lista nazw sygnałów. Ta opcja ma opcjonalny argument, który pozwala zamienić numer sygnału na jego nazwę lub odwrotnie."
 
 #. type: TP
 #: kill.1:50 skill.1:45
@@ -488,7 +488,7 @@ msgstr "B<-L>,B<\\ --table>"
 #. type: Plain text
 #: kill.1:53
 msgid "List signal names in a nice table."
-msgstr ""
+msgstr "Lista nazw sygnałów w ładnej tabelce."
 
 #. type: SH
 #: kill.1:55 pgrep.1:208 slabtop.1:85 vmstat.8:184
@@ -499,7 +499,7 @@ msgstr "UWAGI"
 #. type: Plain text
 #: kill.1:59
 msgid "Your shell (command line interpreter) may have a built-in kill command.  You may need to run the command described here as /bin/kill to solve the conflict."
-msgstr ""
+msgstr "Powłoka (interpreter linii poleceń) może mieć wbudowane polecenie kill. Aby uniknąć konfliktu, może zaistnieć potrzeba uruchomienia niniejszego polecenia jako /bin/kill."
 
 #. type: SH
 #: kill.1:59 pgrep.1:169 skill.1:92 sysctl.8:125 watch.1:79
@@ -516,7 +516,7 @@ msgstr "B<kill -9 -1>"
 #. type: Plain text
 #: kill.1:63
 msgid "Kill all processes you can kill."
-msgstr ""
+msgstr "Zabicie wszystkich procesów, do których mamy uprawnienia."
 
 #. type: TP
 #: kill.1:63
@@ -527,7 +527,7 @@ msgstr "B<kill -l 11>"
 #. type: Plain text
 #: kill.1:66
 msgid "Translate number 11 into a signal name."
-msgstr ""
+msgstr "Zamiana numeru 11 na nazwę sygnału."
 
 #. type: TP
 #: kill.1:66
@@ -538,7 +538,7 @@ msgstr "B<kill -L>"
 #. type: Plain text
 #: kill.1:69
 msgid "List the available signal choices in a nice table."
-msgstr ""
+msgstr "Lista dostępnych sygnałów w ładnej tabelce."
 
 #. type: TP
 #: kill.1:69
@@ -549,7 +549,7 @@ msgstr "B<kill 123 543 2341 3453>"
 #. type: Plain text
 #: kill.1:72
 msgid "Send the default signal, SIGTERM, to all those processes."
-msgstr ""
+msgstr "Wysłanie domyślnego sygnału (SIGTERM) do wszystkich podanych procesów."
 
 #. type: Plain text
 #: kill.1:80
@@ -565,7 +565,7 @@ msgstr "STANDARDY"
 #. type: Plain text
 #: kill.1:84
 msgid "This command meets appropriate standards. The B<-L> flag is Linux-specific."
-msgstr ""
+msgstr "To polecenie jest zgodne z odpowiednimi standardami. Flaga B<-L> jest specyficzna dla Linuksa."
 
 #. type: SH
 #: kill.1:84 pgrep.1:244 pidof.1:61 pwdx.1:24 skill.1:112 sysctl.8:158
@@ -577,7 +577,7 @@ msgstr "AUTOR"
 #. type: Plain text
 #: kill.1:90
 msgid "E<.UR albert@users.sf.net> Albert Cahalan E<.UE> wrote kill in 1999 to replace a bsdutils one that was not standards compliant.  The util-linux one might also work correctly."
-msgstr ""
+msgstr "E<.UR albert@users.sf.net> Albert Cahalan E<.UE> napisał program kill w roku 1999, aby zastąpić  narzędzie z pakietu bsdutils, które nie było zgodne ze standardami. Narzędzie z pakietu util-linux także może działać poprawnie."
 
 #. type: TH
 #: pgrep.1:5
@@ -594,22 +594,22 @@ msgstr "październik 2012"
 #. type: Plain text
 #: pgrep.1:8
 msgid "pgrep, pkill - look up or signal processes based on name and other attributes"
-msgstr ""
+msgstr "pgrep, pkill - wyszukiwanie lub wysyłanie sygnałów do procesów na podstawie nazwy i innych atrybutów"
 
 #. type: Plain text
 #: pgrep.1:11
 msgid "B<pgrep> [options] pattern"
-msgstr ""
+msgstr "B<pgrep> [opcje] wzorzec"
 
 #. type: Plain text
 #: pgrep.1:14
 msgid "B<pkill> [options] pattern"
-msgstr ""
+msgstr "B<pkill> [opcje] wzorzec"
 
 #. type: Plain text
 #: pgrep.1:19
 msgid "B<pgrep> looks through the currently running processes and lists the process IDs which match the selection criteria to stdout.  All the criteria have to match.  For example,"
-msgstr ""
+msgstr "B<pgrep> przeszukuje aktualnie działające procesy i wypisuje na standardowym wyjściu identyfikatory procesów, które pasują do wybranych kryteriów. Wszystkie kryteria muszą pasować. Na przykład:"
 
 #. type: Plain text
 #: pgrep.1:21
@@ -619,7 +619,7 @@ msgstr "$ pgrep -u root sshd"
 #. type: Plain text
 #: pgrep.1:27
 msgid "will only list the processes called B<sshd> AND owned by B<root>.  On the other hand,"
-msgstr ""
+msgstr "wypisze tylko listę procesów o nazwie B<sshd> ORAZ będących własnością B<roota>. Z drugiej strony:"
 
 #. type: Plain text
 #: pgrep.1:29
@@ -629,12 +629,12 @@ msgstr "$ pgrep -u root,daemon"
 #. type: Plain text
 #: pgrep.1:34
 msgid "will list the processes owned by B<root> OR B<daemon>."
-msgstr ""
+msgstr "wypisze procesy, których właścicielem jest B<root> LUB B<daemon>."
 
 #. type: Plain text
 #: pgrep.1:39
 msgid "B<pkill> will send the specified signal (by default B<SIGTERM>)  to each process instead of listing them on stdout."
-msgstr ""
+msgstr "B<pkill> zamiast wypisywania procesów wyśle do każdego podany sygnał (domyślnie B<SIGTERM>)."
 
 #. type: TP
 #: pgrep.1:40
@@ -651,7 +651,7 @@ msgstr "B<--signal> I<sygnał>"
 #. type: Plain text
 #: pgrep.1:48
 msgid "Defines the signal to send to each matched process.  Either the numeric or the symbolic signal name can be used.  (B<pkill> only.)"
-msgstr ""
+msgstr "Określenie sygnału, jaki ma być wysłany do wszystkich pasujących procesów. Może być numerem lub nazwą sygnału. (tylko B<pkill>)"
 
 #. type: TP
 #: pgrep.1:48
