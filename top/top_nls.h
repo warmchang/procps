@@ -1,6 +1,6 @@
 /* top_nls.h - provide the basis for future nls translations */
 /*
- * Copyright (c) 2011-2014, by: James C. Warner
+ * Copyright (c) 2011-2015, by: James C. Warner
  *    All rights reserved.      8921 Hilloway Road
  *                              Eden Prairie, Minnesota 55347 USA
  *
@@ -97,8 +97,8 @@ enum norm_nls {
 enum uniq_nls {
    KEYS_helpbas_fmt, KEYS_helpext_fmt, WINDOWS_help_fmt, COLOR_custom_fmt,
    FIELD_header_fmt, MEMORY_lines_fmt, STATE_line_1_fmt, STATE_lin2x4_fmt,
-   STATE_lin2x5_fmt, STATE_lin2x6_fmt, STATE_lin2x7_fmt, INSP_hdrsels_fmt,
-   INSP_hdrview_fmt,
+   STATE_lin2x5_fmt, STATE_lin2x6_fmt, STATE_lin2x7_fmt, YINSP_hdsels_fmt,
+   YINSP_hdview_fmt,
       uniq_MAX
 };
 

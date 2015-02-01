@@ -1,6 +1,6 @@
 /* top_nls.c - provide the basis for future nls translations */
 /*
- * Copyright (c) 2011-2014, by: James C. Warner
+ * Copyright (c) 2011-2015, by: James C. Warner
  *    All rights reserved.      8921 Hilloway Road
  *                              Eden Prairie, Minnesota 55347 USA
  *
@@ -640,12 +640,12 @@ static void build_uniq_nlstab (void) {
       "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3\n"
       "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3\n");
 
-   Uniq_nlstab[INSP_hdrsels_fmt] = _(""
+   Uniq_nlstab[YINSP_hdsels_fmt] = _(""
       "Inspection~2 Pause at: pid ~1%d~6 running ~1%s~6 as user ~1%s~6\n"
       "Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to ~1end~5 !\n"
       "Options~2: ~1%s\n");
 
-   Uniq_nlstab[INSP_hdrview_fmt] = _(""
+   Uniq_nlstab[YINSP_hdview_fmt] = _(""
       "Inspection~2 View at: ~1%s~3, ~1%s~3, ~1%s~3.  Locating: ~1%s~6\n"
       "Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to ~1locate~5/~1next~5.\n"
       "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n");

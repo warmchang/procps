@@ -1,6 +1,6 @@
 /* top.c - Source file:         show Linux processes */
 /*
- * Copyright (c) 2002-2014, by: James C. Warner
+ * Copyright (c) 2002-2015, by: James C. Warner
  *    All rights reserved.      8921 Hilloway Road
  *                              Eden Prairie, Minnesota 55347 USA
  *
@@ -3111,7 +3111,7 @@ signify_that:
       makFS(buf)
       makHD(pid,cmd,usr)
       putp(Cap_home);
-      show_special(1, fmtmk(N_unq(INSP_hdrview_fmt)
+      show_special(1, fmtmk(N_unq(YINSP_hdview_fmt)
          , pid, cmd, usr, (Insp_sel->fstr[0]) ? buf : " N/A "));   // nls_maybe
       insp_show_pgs(curcol, curlin, maxLN);
       fflush(stdout);
@@ -3221,7 +3221,7 @@ signify_that:
    do {
       mkSEL(sels);
       putp(Cap_home);
-      show_special(1, fmtmk(N_unq(INSP_hdrsels_fmt)
+      show_special(1, fmtmk(N_unq(YINSP_hdsels_fmt)
          , pid, p->cmd, p->euser, sels));
       INSP_MKSL(0, " ");
 
@@ -3767,7 +3767,7 @@ static void parse_args (char **args) {
             case 'w':
             {  const char *pn = NULL;
                int ai = 0, ci = 0;
-               Width_mode = -1;
+               tmp = -1;
                if (cp[1]) pn = &cp[1];
                else if (*args) { pn = *args; ai = 1; }
                if (pn && !(ci = strspn(pn, numbs_str))) { ai = 0; pn = NULL; }
