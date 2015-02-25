@@ -226,6 +226,9 @@ static void process_ansi(FILE * fp)
 	 * escape sequence "<ESC>[0;1;31m". There can be 1 or more
 	 * attributes to apply, but typically there are between 1 and 3.
 	 */
+
+	if (*endptr == '\0') set_ansi_attribute(0); /* [m treated as [0m */
+
 	for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1)
 		set_ansi_attribute(strtol(numstart, &endptr, 10));
 }
