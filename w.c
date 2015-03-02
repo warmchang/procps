@@ -100,6 +100,10 @@ static void print_host(const char *restrict host, int len, const int fromlen)
 	 * space-fill, and a '-' too if needed to ensure the
 	 * column exists
 	 */
+	if (!width) {
+		fputc('-', stdout);
+		++width;
+	}
 	while (width++ < fromlen)
 		fputc(' ', stdout);
 }
