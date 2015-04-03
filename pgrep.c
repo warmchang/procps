@@ -160,7 +160,7 @@ static struct el *split_list (const char *restrict str, int (*convert)(const cha
 		if (i == size) {
 			size = size * 5 / 4 + 4;
 			/* add 1 because slot zero is a count */
-			list = xrealloc (list, 1 + size * sizeof *list);
+			list = xrealloc (list, (1 + size) * sizeof *list);
 		}
 		sep_pos = strchr (ptr, ',');
 		if (sep_pos)
