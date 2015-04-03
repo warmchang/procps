@@ -74,10 +74,16 @@ static void __attribute__ ((__noreturn__))
 	      _(" %s [options]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -b, --bytes         show output in bytes\n"), out);
-	fputs(_(" -k, --kilo          show output in kilobytes\n"), out);
-	fputs(_(" -m, --mega          show output in megabytes\n"), out);
-	fputs(_(" -g, --giga          show output in gigabytes\n"), out);
+	fputs(_("     --kilo          show output in kilobytes\n"), out);
+	fputs(_("     --mega          show output in megabytes\n"), out);
+	fputs(_("     --giga          show output in gigabytes\n"), out);
 	fputs(_("     --tera          show output in terabytes\n"), out);
+	fputs(_("     --peta          show output in petabytes\n"), out);
+	fputs(_(" -k, --kibi          show output in kibibytes\n"), out);
+	fputs(_(" -m, --mebi          show output in mebibytes\n"), out);
+	fputs(_(" -g, --gibi          show output in gibibytes\n"), out);
+	fputs(_("     --tebi          show output in tebibytes\n"), out);
+	fputs(_("     --pebi          show output in pebibytes\n"), out);
 	fputs(_(" -h, --human         show human-readable output\n"), out);
 	fputs(_("     --si            use powers of 1000 not 1024\n"), out);
 	fputs(_(" -l, --lohi          show detailed low and high memory statistics\n"), out);
@@ -101,7 +107,7 @@ double power(unsigned int base, unsigned int expo)
 /* idea of this function is copied from top size scaling */
 static const char *scale_size(unsigned long size, int flags, struct commandline_arguments args)
 {
-	static char nextup[] = { 'B', 'K', 'M', 'G', 'T', 0 };
+	static char nextup[] = { 'B', 'K', 'M', 'G', 'T', 'P', 0 };
 	static char buf[BUFSIZ];
 	int i;
 	char *up;
@@ -163,6 +169,7 @@ static const char *scale_size(unsigned long size, int flags, struct commandline_
 		case 3:
 		case 4:
 		case 5:
+		case 6:
 			if (4 >=
 			    snprintf(buf, sizeof(buf), "%.1f%c",
 				     (float)(size / power(base, i - 2)), *up))
@@ -172,21 +179,29 @@ static const char *scale_size(unsigned long size, int flags, struct commandline_
 				     (long)(size / power(base, i - 2)), *up))
 				return buf;
 			break;
-		case 6:
+		case 7:
 			break;
 		}
 	}
 	/*
-	 * On system where there is more than petabyte of memory or swap the
+	 * On system where there is more than exbibyte of memory or swap the
 	 * output does not fit to column. For incoming few years this should
-	 * not be a big problem (wrote at Apr, 2011).
+	 * not be a big problem (wrote at Apr, 2015).
 	 */
 	return buf;
 }
 
+static void check_unit_set(int *unit_set)
+{
+    if (*unit_set)
+	xerrx(EXIT_FAILURE,
+		_("Multiple unit options doesn't make sense."));
+    *unit_set = 1;
+}
+
 int main(int argc, char **argv)
 {
-	int c, flags = 0;
+	int c, flags = 0, unit_set = 0;
 	char *endptr;
 	struct commandline_arguments args;
 
@@ -196,16 +211,28 @@ int main(int argc, char **argv)
 	 */
 	enum {
 		SI_OPTION = CHAR_MAX + 1,
+		KILO_OPTION,
+		MEGA_OPTION,
+		GIGA_OPTION,
 		TERA_OPTION,
+		PETA_OPTION,
+		TEBI_OPTION,
+		PEBI_OPTION,
 		HELP_OPTION
 	};
 
 	static const struct option longopts[] = {
 		{  "bytes",	no_argument,	    NULL,  'b'		},
-		{  "kilo",	no_argument,	    NULL,  'k'		},
-		{  "mega",	no_argument,	    NULL,  'm'		},
-		{  "giga",	no_argument,	    NULL,  'g'		},
+		{  "kilo",	no_argument,	    NULL,  KILO_OPTION	},
+		{  "mega",	no_argument,	    NULL,  MEGA_OPTION	},
+		{  "giga",	no_argument,	    NULL,  GIGA_OPTION	},
 		{  "tera",	no_argument,	    NULL,  TERA_OPTION	},
+		{  "peta",	no_argument,	    NULL,  PETA_OPTION	},
+		{  "kibi",	no_argument,	    NULL,  'k'		},
+		{  "mebi",	no_argument,	    NULL,  'm'		},
+		{  "gibi",	no_argument,	    NULL,  'g'		},
+		{  "tebi",	no_argument,	    NULL,  TEBI_OPTION	},
+		{  "pebi",	no_argument,	    NULL,  PEBI_OPTION	},
 		{  "human",	no_argument,	    NULL,  'h'		},
 		{  "si",	no_argument,	    NULL,  SI_OPTION	},
 		{  "lohi",	no_argument,	    NULL,  'l'		},
@@ -234,19 +261,53 @@ int main(int argc, char **argv)
 	while ((c = getopt_long(argc, argv, "bkmghltc:ws:V", longopts, NULL)) != -1)
 		switch (c) {
 		case 'b':
+		        check_unit_set(&unit_set);
 			args.exponent = 1;
 			break;
 		case 'k':
+		        check_unit_set(&unit_set);
 			args.exponent = 2;
 			break;
 		case 'm':
+		        check_unit_set(&unit_set);
 			args.exponent = 3;
 			break;
 		case 'g':
+		        check_unit_set(&unit_set);
 			args.exponent = 4;
 			break;
-		case TERA_OPTION:
+		case TEBI_OPTION:
+		        check_unit_set(&unit_set);
 			args.exponent = 5;
+			break;
+		case PEBI_OPTION:
+		        check_unit_set(&unit_set);
+			args.exponent = 6;
+			break;
+		case KILO_OPTION:
+		        check_unit_set(&unit_set);
+			args.exponent = 2;
+			flags |= FREE_SI;
+			break;
+		case MEGA_OPTION:
+		        check_unit_set(&unit_set);
+			args.exponent = 3;
+			flags |= FREE_SI;
+			break;
+		case GIGA_OPTION:
+		        check_unit_set(&unit_set);
+			args.exponent = 4;
+			flags |= FREE_SI;
+			break;
+		case TERA_OPTION:
+		        check_unit_set(&unit_set);
+			args.exponent = 5;
+			flags |= FREE_SI;
+			break;
+		case PETA_OPTION:
+		        check_unit_set(&unit_set);
+			args.exponent = 6;
+			flags |= FREE_SI;
 			break;
 		case 'h':
 			flags |= FREE_HUMANREADABLE;

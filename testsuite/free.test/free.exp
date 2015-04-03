@@ -19,7 +19,7 @@ set swaptotal [ expr { $swaptotal_kb * 1024 } ]
 spawn $free -b
 expect_pass "$test" "^${free_header}Mem:\\s+${memtotal}\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*Swap:\\s+${swaptotal}\\s+\\d+\\s+\\d+\\s*"
 
-foreach {arg divisor } {-k 1 -m 1024 -g 1048576 } {
+foreach {arg divisor } {-k 1 -m 1024 -g 1048576 --mega 1000 --giga 1000000 } {
     set test "free with $arg argument"
     set memtotal [ expr { $memtotal_kb / $divisor } ]
     set swaptotal [ expr { $swaptotal_kb / $divisor } ]

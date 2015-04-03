@@ -2,7 +2,7 @@
 .\"  This page Copyright (C) 1993 Matt Welsh, mdw@sunsite.unc.edu.
 .\"  Long options where added at April 15th, 2011.
 .\"  Freely distributable under the terms of the GPL
-.TH FREE 1 "July 2014" "procps-ng" "User Commands"
+.TH FREE 1 "Apr 2015" "procps-ng" "User Commands"
 .SH NAME
 free \- Display amount of free and used memory in the system
 .SH SYNOPSIS
@@ -50,17 +50,35 @@ kernels 3.14, emulated on kernels 2.6.27+, otherwise the same as \fBfree\fR)
 \fB\-b\fR, \fB\-\-bytes\fR
 Display the amount of memory in bytes.
 .TP
-\fB\-k\fR, \fB\-\-kilo\fR
-Display the amount of memory in kilobytes.  This is the default.
+\fB\-k\fR, \fB\-\-kibi\fR
+Display the amount of memory in kibibytes.  This is the default.
 .TP
-\fB\-m\fR, \fB\-\-mega\fR
-Display the amount of memory in megabytes.
+\fB\-m\fR, \fB\-\-mebi\fR
+Display the amount of memory in mebibytes.
 .TP
-\fB\-g\fR, \fB\-\-giga\fR
-Display the amount of memory in gigabytes.
+\fB\-g\fR, \fB\-\-gibi\fR
+Display the amount of memory in gibibytes.
+.TP
+\fB\-\-tebi\fR
+Display the amount of memory in tebibytes.
+.TP
+\fB\-\-pebi\fR
+Display the amount of memory in pebibytes.
+.TP
+\fB\-\-kilo\fR
+Display the amount of memory in kilobytes. Implies --si.
+.TP
+\fB\-\-mega\fR
+Display the amount of memory in megabytes. Implies --si.
+.TP
+\fB\-\-giga\fR
+Display the amount of memory in gigabytes. Implies --si.
 .TP
 \fB\-\-tera\fR
-Display the amount of memory in terabytes.
+Display the amount of memory in terabytes. Implies --si.
+.TP
+\fB\-\-peta\fR
+Display the amount of memory in petabytes. Implies --si.
 .TP
 \fB\-h\fR, \fB\-\-human\fP
 Show all output fields automatically scaled to shortest three digit unit and
@@ -68,14 +86,15 @@ display the units of print out.  Following units are used.
 .sp
 .nf
   B = bytes
-  K = kilos
-  M = megas
-  G = gigas
-  T = teras
+  K = kibibyte
+  M = mebibyte
+  G = gibibyte
+  T = tebibyte
+  P = pebibyte
 .fi
 .sp
-If unit is missing, and you have petabyte of RAM or swap, the number is in
-terabytes and columns might not be aligned with header.
+If unit is missing, and you have exbibyte of RAM or swap, the number is in
+tebibytes and columns might not be aligned with header.
 .TP
 \fB\-w\fR, \fB\-\-wide\fR
 Switch to the wide mode. The wide mode produces lines longer
@@ -101,7 +120,8 @@ apart.  You may actually specify any floating point number for
 is used for microsecond resolution delay times.
 .TP
 \fB\-\-si\fR
-Use power of 1000 not 1024.
+Use kilo, mega, giga etc (power of 1000) instead of kibi, mebi, gibi (power 
+of 1024).
 .TP
 \fB\-t\fR, \fB\-\-total\fR
 Display a line showing the column totals.
