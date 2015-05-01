@@ -6,7 +6,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_INIT([procps-ng],
 	m4_esyscmd([misc/git-version-gen .tarball-version]),
 	[procps@freelists.org],,[http://gitorious.org/procps])
-AM_INIT_AUTOMAKE([foreign 1.11 -Wall -Wno-portability tar-pax no-dist-gzip dist-xz])
+AM_INIT_AUTOMAKE([foreign 1.11 subdir-objects -Wall -Wno-portability tar-pax no-dist-gzip dist-xz])
 AM_SILENT_RULES([yes])
 AC_CONFIG_SRCDIR([free.c])
 AC_CONFIG_HEADERS([config.h])

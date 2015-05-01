@@ -1,5 +1,3 @@
-#AUTOMAKE_OPTIONS = subdir-objects
-
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I$(top_srcdir) \
