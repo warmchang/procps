@@ -5,6 +5,7 @@
 .deps
 .libs
 .version
+.dirstamp
 ABOUT-NLS
 aclocal.m4
 autom4te.cache
