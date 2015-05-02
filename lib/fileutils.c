@@ -43,13 +43,3 @@ void close_stdout(void)
 	if (close_stream(stderr) != 0)
 		_exit(EXIT_FAILURE);
 }
-
-#ifdef TEST_PROGRAM
-#include <stdio.h>
-int main(int argc, char *argv[])
-{
-	atexit(close_stdout);
-	printf("Hello, World!\n");
-	return EXIT_SUCCESS;
-}
-#endif				/* TEST_PROGRAM */
