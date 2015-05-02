@@ -19,15 +19,7 @@ AM_LDFLAGS = ./proc/libprocps.la
 transform = s/pscommand/ps/; $(program_transform_name)
 
 bin_PROGRAMS = \
-	ps/pscommand
-
-sbin_PROGRAMS = \
-	sysctl
-
-lib_LTLIBRARIES = \
-	proc/libprocps.la
-
-usrbin_exec_PROGRAMS = \
+	ps/pscommand \
 	free \
 	pgrep \
 	pkill \
@@ -37,6 +29,12 @@ usrbin_exec_PROGRAMS = \
 	uptime \
 	vmstat \
 	w
+
+sbin_PROGRAMS = \
+	sysctl
+
+lib_LTLIBRARIES = \
+	proc/libprocps.la
 
 dist_man_MANS = \
 	free.1 \
@@ -70,7 +68,7 @@ dist_procpsng_DATA = \
 	Documentation/FAQ
 
 if BUILD_PIDOF
-usrbin_exec_PROGRAMS += pidof
+bin_PROGRAMS += pidof
 dist_man_MANS += pidof.1
 pidof_SOURCES = pidof.c lib/fileutils.c
 else
@@ -86,7 +84,7 @@ else
 endif
 
 if WITH_NCURSES
-usrbin_exec_PROGRAMS += \
+bin_PROGRAMS += \
 	slabtop \
 	watch \
 	top/top
@@ -110,7 +108,7 @@ dist_procpsng_DATA += \
 endif
 
 if BUILD_SKILL
-usrbin_exec_PROGRAMS += \
+bin_PROGRAMS += \
 	skill \
 	snice
 skill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/nsutils.c

@@ -69,9 +69,6 @@ AC_FUNC_MMAP
 AC_FUNC_REALLOC
 AC_FUNC_STRTOD
 
-usrbin_execdir='${exec_prefix}/usr/bin'
-AC_SUBST([usrbin_execdir])
-
 AM_GNU_GETTEXT_VERSION([0.14.1])
 AM_GNU_GETTEXT([external])
 if test -d "$srcdir/po"
