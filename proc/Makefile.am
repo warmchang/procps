@@ -1,6 +1,7 @@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
+	-I$(top_srcdir) \
 	-I$(top_srcdir)/include \
 	-DLOCALEDIR=\"$(localedir)\"
 
