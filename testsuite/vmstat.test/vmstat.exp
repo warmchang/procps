@@ -22,7 +22,7 @@ if { [ file readable "/proc/slabinfo" ] == 0 } {
 } else {
 set test "vmstat slabinfo (-m option)"
 spawn $vmstat -m
-expect_pass "$test" "^Cache\\s+Num\\s+Total\\s+Size\\s+Pages\\s+\(\[\(\)A-Za-z0-9_-\]+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*\){1,}"
+expect_pass "$test" "^Cache\\s+Num\\s+Total\\s+Size\\s+Pages\\s+\(\\S+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*\){1,}"
 }
 
 set test "vmstat disk information (-d option)"
