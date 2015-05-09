@@ -9,8 +9,7 @@ set not_uid [ expr { $uid + 1 } ]
 set gid [ exec id -g ]
 set not_gid [ expr { $gid + 1 } ] 
 set ps "${topdir}ps/pscommand"
-set raw_tty [ exec tty ]
-regexp "/dev/(.+)" $raw_tty > tty
+set tty [ get_tty ]
 
 set test "pgprep with no arguments"
 spawn $pgrep
@@ -80,8 +79,12 @@ spawn $pgrep -s 1 $testproc_comm
 expect_blank "$test"
 
 set test "pgrep matches on tty"
-spawn $pgrep -t $tty $testproc_comm
-expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
+if { $tty == "" } {
+  untested "$test"
+} else {
+    spawn $pgrep -t $tty $testproc_comm
+    expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
+}
 
 set test "pgrep doesn't match with bogus tty"
 spawn $pgrep -t glass $testproc_comm

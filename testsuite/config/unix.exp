@@ -146,3 +146,12 @@ proc kill_testproc { } {
     kill_process $testproc2_pid
     file delete $testproc_path
 }
+
+proc get_tty {} {
+    if { [catch { set raw_tty [ exec tty ] } msg]} {
+        warning "No TTY found"
+        return ""
+    }
+    regexp "/dev/(.+)" $raw_tty > tty
+    return $tty
+}

@@ -9,8 +9,6 @@ set uid [ exec id -u ]
 set not_uid [ expr { $uid + 1 } ] 
 set gid [ exec id -g ]
 set not_gid [ expr { $gid + 1 } ] 
-set raw_tty [ exec tty ]
-regexp "/dev/(.+)" $raw_tty > tty
 
 # All the fields
 # Cannot do args,cmd,comm
