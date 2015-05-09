@@ -75,7 +75,7 @@ spawn $pgrep -s $testproc1_sid $testproc_comm
 expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 
 set test "pgrep doesn't match with bogus sid"
-spawn $pgrep -s 1 $testproc_comm
+spawn $pgrep -s -1 $testproc_comm
 expect_blank "$test"
 
 set test "pgrep matches on tty"
