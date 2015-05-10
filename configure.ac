@@ -6,7 +6,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_INIT([procps-ng],
 	m4_esyscmd([misc/git-version-gen .tarball-version]),
 	[procps@freelists.org],,[https://gitlab.com/procps-ng/procps])
-AM_INIT_AUTOMAKE([foreign 1.11 -Wall -Wno-portability tar-pax no-dist-gzip dist-xz])
+AM_INIT_AUTOMAKE([foreign 1.11 subdir-objects -Wall -Wno-portability tar-pax no-dist-gzip dist-xz])
 AM_SILENT_RULES([yes])
 AC_CONFIG_SRCDIR([free.c])
 AC_CONFIG_HEADERS([config.h])
@@ -41,7 +41,6 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 PKG_PROG_PKG_CONFIG
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
 
 # Checks for header files.
 AC_HEADER_MAJOR
@@ -69,9 +68,6 @@ AC_FUNC_MBRTOWC
 AC_FUNC_MMAP
 AC_FUNC_REALLOC
 AC_FUNC_STRTOD
-
-usrbin_execdir='${exec_prefix}/usr/bin'
-AC_SUBST([usrbin_execdir])
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
 AM_GNU_GETTEXT([external])
@@ -275,12 +271,8 @@ AC_CHECK_FUNCS([__fpending alarm atexit dup2 getpagesize gettimeofday iswprint m
 
 AC_CONFIG_FILES([Makefile
                  include/Makefile
-                 lib/Makefile
-		 man-po/Makefile
-		 po/Makefile.in
-                 proc/Makefile
+                 man-po/Makefile
+                 po/Makefile.in
                  proc/libprocps.pc
-                 ps/Makefile
-                 testsuite/Makefile
-                 top/Makefile])
+                 testsuite/Makefile])
 AC_OUTPUT

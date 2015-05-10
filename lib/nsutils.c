@@ -8,13 +8,6 @@
 #include "proc/readproc.h"
 #include "nsutils.h"
 
-#ifdef TEST_PROGRAM
-const char *get_ns_name(int id)
-{
-	return NULL;
-}
-#endif		/* TEST_PROGRAM */
-
 /* we need to fill in only namespace information */
 int ns_read(pid_t pid, proc_t *ns_task)
 {
@@ -35,11 +28,3 @@ int ns_read(pid_t pid, proc_t *ns_task)
 	}
 	return rc;
 }
-
-#ifdef TEST_PROGRAM
-int main(int argc, char *argv[])
-{
-	printf("Hello, World!\n");
-	return EXIT_SUCCESS;
-}
-#endif			    /* TEST_PROGRAM */
