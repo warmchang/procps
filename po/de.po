@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-3.3.10-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2015-05-09 16:51+1000\n"
+"POT-Creation-Date: 2015-05-10 17:47+1000\n"
 "PO-Revision-Date: 2014-09-10 20:18+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -227,50 +227,54 @@ msgid " -G, --group <GID,...>     match real group IDs\n"
 msgstr " -G, --group <GID, …>      reale Gruppenkennungen suchen\n"
 
 #: pgrep.c:121
+msgid " -i, --ignore-case         match case insensitively\n"
+msgstr ""
+
+#: pgrep.c:122
 msgid " -n, --newest              select most recently started\n"
 msgstr " -n, --newest              zuletzt gestartete auswählen\n"
 
-#: pgrep.c:122
+#: pgrep.c:123
 msgid " -o, --oldest              select least recently started\n"
 msgstr " -o, --oldest              zuerst gestartete auswählen\n"
 
-#: pgrep.c:123
+#: pgrep.c:124
 msgid ""
 " -P, --parent <PPID,...>   match only child processes of the given parent\n"
 msgstr ""
 " -P, --parent <PPID,...>   nur Kindprozesse des angegebenen\n"
 "                           Elternprozesses berücksichtigen\n"
 
-#: pgrep.c:124
+#: pgrep.c:125
 msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID, …>    Sitzungskennungen suchen\n"
 
-#: pgrep.c:125
+#: pgrep.c:126
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
 msgstr " -t, --terminal <tty, …>   nach steuerndem Terminal suchen\n"
 
-#: pgrep.c:126
+#: pgrep.c:127
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
 msgstr " -u, --euid <ID, …>       nach effektiven IDs suchen\n"
 
-#: pgrep.c:127
+#: pgrep.c:128
 msgid " -U, --uid <ID,...>        match by real IDs\n"
 msgstr " -U, --uid <ID, …>         nach realen IDs suchen\n"
 
-#: pgrep.c:128
+#: pgrep.c:129
 msgid " -x, --exact               match exactly with the command name\n"
 msgstr " -x, --exact               exakte Übereinstimmung des Befehlsnamens\n"
 
-#: pgrep.c:129
+#: pgrep.c:130
 msgid " -F, --pidfile <file>      read PIDs from file\n"
 msgstr " -F, --pidfile <Datei>     PIDs aus einer Datei lesen\n"
 
-#: pgrep.c:130
+#: pgrep.c:131
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
 msgstr ""
 " -L, --logpidfile          Fehlschlag, wenn PID-Datei nicht gesperrt ist\n"
 
-#: pgrep.c:131
+#: pgrep.c:132
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
@@ -278,7 +282,7 @@ msgstr ""
 " --ns <PID>                nach Prozessen suchen, die zum gleichen\n"
 "                           Namensraum wie <PID> gehören\n"
 
-#: pgrep.c:133
+#: pgrep.c:134
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
@@ -290,40 +294,40 @@ msgstr ""
 "                           Verfügbare Namensräume: ipc, mnt, net, pid, user, "
 "uts\n"
 
-#: pgrep.c:274
+#: pgrep.c:275
 #, c-format
 msgid "invalid user name: %s"
 msgstr "Ungültiger Benutzername: %s"
 
-#: pgrep.c:291
+#: pgrep.c:292
 #, c-format
 msgid "invalid group name: %s"
 msgstr "Ungültiger Gruppenname: %s"
 
-#: pgrep.c:302
+#: pgrep.c:303
 #, c-format
 msgid "invalid process group: %s"
 msgstr "Ungültige Prozessgruppe: %s"
 
-#: pgrep.c:314
+#: pgrep.c:315
 #, c-format
 msgid "invalid session id: %s"
 msgstr "Ungültige Sitzungs-ID: %s"
 
-#: pgrep.c:326
+#: pgrep.c:327
 #, c-format
 msgid "not a number: %s"
 msgstr "Keine Zahl: %s"
 
-#: pgrep.c:507
+#: pgrep.c:508
 msgid "Error reading reference namespace information\n"
 msgstr "Fehler beim Lesen der Informationen für den Referenz-Namensraum\n"
 
-#: pgrep.c:610 pidof.c:226 pidof.c:267 sysctl.c:643
+#: pgrep.c:611 pidof.c:226 pidof.c:267 sysctl.c:643
 msgid "internal error"
 msgstr "Interner Fehler"
 
-#: pgrep.c:877
+#: pgrep.c:879
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
@@ -332,7 +336,7 @@ msgstr ""
 "-L ohne -F ergibt keinen Sinn.\n"
 "Rufen Sie »%s --help« auf für weitere Informationen."
 
-#: pgrep.c:884
+#: pgrep.c:886
 #, c-format
 msgid ""
 "pidfile not valid\n"
@@ -341,7 +345,7 @@ msgstr ""
 "pidfile ist ungültig\n"
 "Rufen Sie »%s --help« auf für weitere Informationen."
 
-#: pgrep.c:892
+#: pgrep.c:894
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
@@ -350,7 +354,7 @@ msgstr ""
 "nur ein Muster kann angegeben werden\n"
 "Rufen Sie »%s --help« auf für weitere Informationen."
 
-#: pgrep.c:896
+#: pgrep.c:898
 #, c-format
 msgid ""
 "no matching criteria specified\n"
@@ -359,12 +363,12 @@ msgstr ""
 "keine Übereinstimmungskriterien angegeben\n"
 "Rufen Sie »%s --help« auf für weitere Informationen."
 
-#: pgrep.c:923
+#: pgrep.c:925
 #, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "%s abgewürgt (PID %lu)\n"
 
-#: pgrep.c:929
+#: pgrep.c:931
 #, c-format
 msgid "killing pid %ld failed"
 msgstr "Abwürgen von Prozess-ID %ld fehlgeschlagen"

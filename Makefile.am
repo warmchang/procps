@@ -55,7 +55,7 @@ EXTRA_DIST = \
 	contrib \
 	COPYING.LIB \
 	misc/git-version-gen \
-	Documentation/CodingStyle \
+	Documentation/CodingStyle.md \
 	Documentation/TODO \
 	sysctl.conf \
 	ps/HACKING \
@@ -64,7 +64,7 @@ EXTRA_DIST = \
 
 procpsngdir = $(docdir)
 dist_procpsng_DATA = \
-	Documentation/BUGS \
+	Documentation/bugs.md \
 	Documentation/FAQ
 
 if BUILD_PIDOF
