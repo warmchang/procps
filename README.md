@@ -1,4 +1,5 @@
-#procps
+procps
+======
 
 procps is a set of command line and full-screen utilities that provide
 information out of the pseudo-filesystem most commonly located at /proc. 
@@ -38,6 +39,10 @@ bugs here.
 The problem with this method is bug reports often get lost and cannot be
 tracked. This is especially a big problem when its something that will take
 time to resolve.
+
+If you need to report bugs, there is more details on the
+[Bug Reporting](https://gitlab.com/procps-ng/procps/blob/master/Documentation/bugs.md)
+page.
 
 ## Email List
 The email list for the developers and users of procps is found at
