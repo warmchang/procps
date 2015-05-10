@@ -1,7 +1,7 @@
 This file is no longer maintained.  Please see git log for the most
 up to date list about contributions.
 
-$ git clone git://gitorious.org/procps/procps.git
+$ git clone git@gitlab.com:procps-ng/procps.git
 # cd procps
 $ git shortlog --no-merges -sne
 
