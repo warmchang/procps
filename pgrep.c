@@ -118,6 +118,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(_(" -f, --full                use full process name to match\n"), fp);
 	fputs(_(" -g, --pgroup <PGID,...>   match listed process group IDs\n"), fp);
 	fputs(_(" -G, --group <GID,...>     match real group IDs\n"), fp);
+	fputs(_(" -i, --ignore-case         match case insensitively\n"), fp);
 	fputs(_(" -n, --newest              select most recently started\n"), fp);
 	fputs(_(" -o, --oldest              select least recently started\n"), fp);
 	fputs(_(" -P, --parent <PPID,...>   match only child processes of the given parent\n"), fp);
@@ -694,6 +695,7 @@ static void parse_opts (int argc, char **argv)
 		{"full", no_argument, NULL, 'f'},
 		{"pgroup", required_argument, NULL, 'g'},
 		{"group", required_argument, NULL, 'G'},
+		{"ignore-case", no_argument, NULL, 'i'},
 		{"newest", no_argument, NULL, 'n'},
 		{"oldest", no_argument, NULL, 'o'},
 		{"parent", required_argument, NULL, 'P'},
@@ -727,7 +729,7 @@ static void parse_opts (int argc, char **argv)
 		strcat (opts, "lad:vw");
 	}
 
-	strcat (opts, "LF:cfnoxP:g:s:u:U:G:t:?Vh");
+	strcat (opts, "LF:cfinoxP:g:s:u:U:G:t:?Vh");
 
 	while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
 		switch (opt) {
@@ -798,11 +800,11 @@ static void parse_opts (int argc, char **argv)
 				usage ('?');
 			++criteria_count;
 			break;
-/*		case 'i':   / * FreeBSD: ignore case. OpenBSD: withdrawn. See -I. This sucks. * /
- *			if (opt_case)
- *				usage (opt);
- *			opt_case = REG_ICASE;
- *			break; */
+		case 'i':   /* FreeBSD: ignore case. OpenBSD: withdrawn. See -I. This sucks. */
+			if (opt_case)
+				usage (opt);
+			opt_case = REG_ICASE;
+			break;
 /*		case 'j':   / * FreeBSD: restricted to the given jail ID * /
  *			break; */
 		case 'l':   /* Solaris: long output format (pgrep only) Should require -f for beyond argv[0] maybe? */
