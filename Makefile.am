@@ -14,7 +14,7 @@ SUBDIRS = \
 	testsuite
 
 AM_CFLAGS = -Iproc
-AM_LDFLAGS = ./proc/libprocps.la
+LDADD = ./proc/libprocps.la
 
 transform = s/pscommand/ps/; $(program_transform_name)
 
@@ -93,16 +93,16 @@ dist_man_MANS += \
 	watch.1 \
 	top/top.1
 slabtop_SOURCES = slabtop.c lib/strutils.c lib/fileutils.c
-slabtop_LDADD = @NCURSES_LIBS@
+slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
 watch_SOURCES = watch.c lib/strutils.c lib/fileutils.c
-watch_LDADD = @WATCH_NCURSES_LIBS@
+watch_LDADD = $(LDADD) @WATCH_NCURSES_LIBS@
 top_top_SOURCES = \
 	top/top.h \
 	top/top.c \
 	top/top_nls.h \
 	top/top_nls.c \
 	lib/fileutils.c
-top_top_LDADD = @NCURSES_LIBS@ $(DL_LIB)
+top_top_LDADD = $(LDADD) @NCURSES_LIBS@ $(DL_LIB)
 dist_procpsng_DATA += \
 	top/README.top
 endif
@@ -220,8 +220,11 @@ ps_pscommand_SOURCES =  \
 noinst_PROGRAMS = lib/test_strutils lib/test_fileutils lib/test_nsutils
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
+lib_test_strutils_LDADD =
 lib_test_fileutils_SOURCES = lib/test_fileutils.c lib/fileutils.c
+lib_test_fileutils_LDADD =
 lib_test_nsutils_SOURCES = lib/test_nsutils.c lib/nsutils.c
+lib_test_nsutils_LDADD =
 
 if EXAMPLE_FILES
 sysconf_DATA = sysctl.conf
