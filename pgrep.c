@@ -677,7 +677,7 @@ static int signal_option(int *argc, char **argv)
 
 static void parse_opts (int argc, char **argv)
 {
-	char opts[32] = "";
+	char opts[64] = "";
 	int opt;
 	int criteria_count = 0;
 
