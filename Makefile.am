@@ -103,8 +103,6 @@ top_top_SOURCES = \
 	top/top_nls.c \
 	lib/fileutils.c
 top_top_LDADD = $(LDADD) @NCURSES_LIBS@ $(DL_LIB)
-dist_procpsng_DATA += \
-	top/README.top
 endif
 
 if BUILD_SKILL
