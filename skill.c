@@ -398,17 +398,15 @@ static void __attribute__ ((__noreturn__)) skillsnice_usage(FILE * out)
 
 static int skill_sig_option(int *argc, char **argv)
 {
-	int i, nargs = *argc;
+	int i;
 	int signo = -1;
-	for (i = 1; i < nargs; i++) {
+	for (i = 1; i < *argc; i++) {
 		if (argv[i][0] == '-') {
 			signo = signal_name_to_number(argv[i] + 1);
 			if (-1 < signo) {
-				if (nargs - i) {
-					nargs--;
-					memmove(argv + i, argv + i + 1,
-						sizeof(char *) * (nargs - i));
-				}
+				memmove(argv + i, argv + i + 1,
+					sizeof(char *) * (*argc - i));
+				(*argc)--;
 				return signo;
 			}
 		}
@@ -421,7 +419,6 @@ static void __attribute__ ((__noreturn__))
     kill_main(int argc, char **argv)
 {
 	int signo, i;
-	int sigopt = 0;
 	int loop = 1;
 	long pid;
 	int exitvalue = EXIT_SUCCESS;
@@ -446,8 +443,6 @@ static void __attribute__ ((__noreturn__))
 	signo = skill_sig_option(&argc, argv);
 	if (signo < 0)
 		signo = SIGTERM;
-	else
-		sigopt++;
 
 	opterr=0; /* suppress errors on -123 */
 	while (loop == 1 && (i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
@@ -495,7 +490,7 @@ static void __attribute__ ((__noreturn__))
 			kill_usage(stderr);
 		}
 
-	argc -= optind + sigopt;
+	argc -= optind;
 	argv += optind;
 
 	for (i = 0; i < argc; i++) {
@@ -588,10 +583,8 @@ static void skillsnice_parse(int argc,
 		prino = snice_prio_option(&argc, argv);
 	else if (program == PROG_SKILL) {
 		signo = skill_sig_option(&argc, argv);
-		if (-1 < signo) {
+		if (-1 < signo)
 			sig_or_pri = signo;
-			argc -= 1;
-		}
 	}
 
 	pid_count = 0;
