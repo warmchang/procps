@@ -493,6 +493,9 @@ static void __attribute__ ((__noreturn__))
 	argc -= optind;
 	argv += optind;
 
+	if (argc < 1)
+		kill_usage(stderr);
+
 	for (i = 0; i < argc; i++) {
 		pid = strtol_or_err(argv[i], _("failed to parse argument"));
 		if (!kill((pid_t) pid, signo))
