@@ -661,8 +661,6 @@ static int signal_option(int *argc, char **argv)
 	for (i = 1; i < *argc; i++) {
 		if (argv[i][0] == '-') {
 			sig = signal_name_to_number(argv[i] + 1);
-			if (sig == -1 && isdigit(argv[i][1]))
-				sig = atoi(argv[i] + 1);
 			if (-1 < sig) {
 				memmove(argv + i, argv + i + 1,
 					sizeof(char *) * (*argc - i));
