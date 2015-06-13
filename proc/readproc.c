@@ -816,6 +816,64 @@ int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid) {
 }
 
 
+    // Provide the means to value proc_t.lxcname (perhaps only with "-") while
+    // tracking all names already seen thus avoiding the overhead of repeating
+    // malloc() and free() calls.
+static const char *lxc_containers (const char *path) {
+    static struct utlbuf_s ub = { NULL, 0 };   // util buffer for whole cgroup
+    static char lxc_none[] = "-";
+    /*
+       try to locate the lxc delimiter eyecatcher somewhere in a task's cgroup
+       directory -- the following are from nested privileged plus unprivileged
+       containers, where the '/lxc/' delimiter precedes the container name ...
+           10:cpuset:/lxc/lxc-P/lxc/lxc-P-nested
+           10:cpuset:/user.slice/user-1000.slice/session-c2.scope/lxc/lxc-U/lxc/lxc-U-nested
+
+       ... some minor complications are the potential addition of more cgroups
+       for a controller displacing the lxc name (normally last on a line), and
+       environments with unexpected /proc/##/cgroup ordering/contents as with:
+           10:cpuset:/lxc/lxc-P/lxc/lxc-P-nested/MY-NEW-CGROUP
+       or
+           2:name=systemd:/
+           1:cpuset,cpu,cpuacct,devices,freezer,net_cls,blkio,perf_event,net_prio:/lxc/lxc-P
+    */
+    if (file2str(path, "cgroup", &ub) > 0) {
+        static const char lxc_delm[] = "/lxc/";
+        char *p1;
+
+        if ((p1 = strstr(ub.buf, lxc_delm))) {
+            static struct lxc_ele {
+                struct lxc_ele *next;
+                const char *name;
+            } *anchor = NULL;
+            struct lxc_ele *ele = anchor;
+            char *p2;
+
+            if ((p2 = strchr(p1, '\n')))       // isolate a controller's line
+                *p2 = '\0';
+            do {                               // deal with nested containers
+                p2 = p1 + (sizeof(lxc_delm)-1);
+                p1 = strstr(p2, lxc_delm);
+            } while (p1);
+            if ((p1 = strchr(p2, '/')))        // isolate name only substring
+                *p1 = '\0';
+            while (ele) {                      // have we already seen a name
+                if (!strcmp(ele->name, p2))
+                    return ele->name;          // return just a recycled name
+                ele = ele->next;
+            }
+            ele = (struct lxc_ele *)xmalloc(sizeof(struct lxc_ele));
+            ele->name = xstrdup(p2);
+            ele->next = anchor;                // push the new container name
+            anchor = ele;
+            return ele->name;                  // return a new container name
+        }
+    }
+    return lxc_none;
+}
+///////////////////////////////////////////////////////////////////////
+
+
 /* These are some nice GNU C expression subscope "inline" functions.
  * The can be used with arbitrary types and evaluate their arguments
  * exactly once.
@@ -939,6 +997,10 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (unlikely(flags & PROC_FILLSYSTEMD))     // get sd-login.h stuff
         sd2proc(p);
 #endif
+
+    if (unlikely(flags & PROC_FILL_LXC))        // value the lxc name
+        p->lxcname = lxc_containers(path);
+
     return p;
 next_proc:
     return NULL;
@@ -1047,6 +1109,9 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
             sd2proc(t);
 #endif
 
+        if (unlikely(flags & PROC_FILL_LXC))            // value the lxc name
+            t->lxcname = lxc_containers(path);
+
 #ifdef QUICK_THREADS
     } else {
         t->size     = p->size;
@@ -1071,6 +1136,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         t->sd_unit  = p->sd_unit;
         t->sd_uunit = p->sd_uunit;
 #endif
+        t->lxcname = p->lxcname;
         MK_THREAD(t);
     }
 #endif

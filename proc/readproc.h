@@ -181,6 +181,8 @@ typedef struct proc_t {
         *sd_unit,       // n/a             systemd system unit id
         *sd_uunit;      // n/a             systemd user unit id
 #endif
+    const char
+        *lxcname;       // n/a             lxc container name
 } proc_t;
 
 // PROCTAB: data structure holding the persistent information readproc needs
@@ -292,6 +294,7 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 #define PROC_FILLOOM         0x0800 // fill in proc_t oom_score and oom_adj
 #define PROC_FILLNS          0x8000 // fill in proc_t namespace information
 #define PROC_FILLSYSTEMD    0x80000 // fill in proc_t systemd information
+#define PROC_FILL_LXC      0x800000 // fill in proc_t lxcname, if possible
 
 #define PROC_LOOSE_TASKS     0x2000 // treat threads as if they were processes
 
