@@ -68,7 +68,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "Feb 2015" "procps-ng" "User Commands"
+.TH TOP 1 "June 2015" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -150,7 +150,7 @@ The remaining Table of Contents
 .SS Operation
 .\" ----------------------------------------------------------------------
 When operating \*(We, the two most important keys are the help (h or ?)
-key and quit ('q') key.
+key and quit (`q') key.
 Alternatively, you could simply use the traditional interrupt key (^C)
 when you're done.
 
@@ -272,7 +272,7 @@ The command-line syntax for \*(We consists of:
 
   \*(CL
 
-The typically mandatory switch ('\-') and even whitespace are completely
+The typically mandatory switch (`\-') and even whitespace are completely
 optional.
 
 .TP 5
@@ -376,7 +376,7 @@ Display only processes with a user id or user name matching that given.
 The `\-u' option matches on \fI effective\fR user whereas the `\-U' option
 matches on\fI any\fR user (real, effective, saved, or filesystem).
 
-Prepending an exclamation point ('!') to the user id or name instructs top
+Prepending an exclamation point (`!') to the user id or name instructs top
 to display only processes with users not matching the one provided.
 
 The `p', `u' and `U' \*(COs are mutually exclusive.
@@ -635,11 +635,16 @@ These flags are officially documented in <linux/sched.h>.
 The\fI effective\fR group ID.
 
 .TP 4
-10.\fB GROUP \*(Em Group Name \fR
+10.\fB LXC \*(Em Lxc Container Name \fR
+The name of the lxc container within which a task is running.
+If a process is not running inside a container, a dash (`\-') will be shown.
+
+.TP 4
+11.\fB GROUP \*(Em Group Name \fR
 The\fI effective\fR group name.
 
 .TP 4
-11.\fB NI \*(Em Nice Value \fR
+12.\fB NI \*(Em Nice Value \fR
 The nice value of the task.
 A negative nice value means higher priority, whereas a positive nice value
 means lower priority.
@@ -647,7 +652,7 @@ Zero in this field simply means priority will not be adjusted in determining
 a task's dispatch-ability.
 
 .TP 4
-12.\fB P \*(Em Last used \*(PU (SMP) \fR
+13.\fB P \*(Em Last used \*(PU (SMP) \fR
 A number representing the last used processor.
 In a true SMP environment this will likely change frequently since the kernel
 intentionally uses weak affinity.
@@ -656,7 +661,7 @@ processes to change \*(PUs more often (because of the extra demand for
 \*(Pu time).
 
 .TP 4
-13.\fB PGRP \*(Em Process Group Id \fR
+14.\fB PGRP \*(Em Process Group Id \fR
 Every process is member of a unique process group which is used for
 distribution of signals and by terminals to arbitrate requests for their
 input and output.
@@ -666,7 +671,7 @@ By convention, this value equals the process ID (\*(Xa PID) of the first
 member of a process group, called the process group leader.
 
 .TP 4
-14.\fB PID \*(Em Process Id \fR
+15.\fB PID \*(Em Process Id \fR
 The task's unique process ID, which periodically wraps, though never
 restarting at zero.
 In kernel terms, it is a dispatchable entity defined by a task_struct.
@@ -677,11 +682,11 @@ a thread group ID for the thread group leader (\*(Xa TGID);
 and a TTY process group ID for the process group leader (\*(Xa TPGID).
 
 .TP 4
-15.\fB PPID \*(Em Parent Process Id \fR
+16.\fB PPID \*(Em Parent Process Id \fR
 The process ID (pid) of a task's parent.
 
 .TP 4
-16.\fB PR \*(Em Priority \fR
+17.\fB PR \*(Em Priority \fR
 The scheduling priority of the task.
 If you see `rt' in this field, it means the task is running
 under real time scheduling priority.
@@ -691,19 +696,19 @@ the operating itself was not preemptible.
 And while the 2.6 kernel can be made mostly preemptible, it is not always so.
 
 .TP 4
-17.\fB RES \*(Em Resident Memory Size (KiB) \fR
+18.\fB RES \*(Em Resident Memory Size (KiB) \fR
 The non-swapped \*(MP a task is using.
 
 .TP 4
-18.\fB RUID \*(Em Real User Id \fR
+19.\fB RUID \*(Em Real User Id \fR
 The\fI real\fR user ID.
 
 .TP 4
-19.\fB RUSER \*(Em Real User Name \fR
+20.\fB RUSER \*(Em Real User Name \fR
 The\fI real\fR user name.
 
 .TP 4
-20.\fB S \*(Em Process Status \fR
+21.\fB S \*(Em Process Status \fR
 The status of the task which can be one of:
     \fBD\fR = uninterruptible sleep
     \fBR\fR = running
@@ -718,14 +723,14 @@ Even without a true SMP machine, you may see numerous tasks in this state
 depending on \*(We's delay interval and nice value.
 
 .TP 4
-21.\fB SHR \*(Em Shared Memory Size (KiB) \fR
+22.\fB SHR \*(Em Shared Memory Size (KiB) \fR
 The amount of \*(MS available to a task, not all of which is
 typically resident.
 It simply reflects memory that could be potentially shared with
 other processes.
 
 .TP 4
-22.\fB SID \*(Em Session Id \fR
+23.\fB SID \*(Em Session Id \fR
 A session is a collection of process groups (\*(Xa PGRP),
 usually established by the login shell.
 A newly forked process joins the session of its creator.
@@ -734,11 +739,11 @@ member of the session, called the session leader, which is usually the
 login shell.
 
 .TP 4
-23.\fB SUID \*(Em Saved User Id \fR
+24.\fB SUID \*(Em Saved User Id \fR
 The\fI saved\fR user ID.
 
 .TP 4
-24.\fB SUPGIDS \*(Em Supplementary Group IDs \fR
+25.\fB SUPGIDS \*(Em Supplementary Group IDs \fR
 The IDs of any supplementary group(s) established at login or
 inherited from a task's parent.
 They are displayed in a comma delimited list.
@@ -751,7 +756,7 @@ Even so, such variable width fields could still suffer truncation.
 any truncated data.
 
 .TP 4
-25.\fB SUPGRPS \*(Em Supplementary Group Names \fR
+26.\fB SUPGRPS \*(Em Supplementary Group Names \fR
 The names of any supplementary group(s) established at login or
 inherited from a task's parent.
 They are displayed in a comma delimited list.
@@ -764,21 +769,21 @@ Even so, such variable width fields could still suffer truncation.
 any truncated data.
 
 .TP 4
-26.\fB SUSER \*(Em Saved User Name \fR
+27.\fB SUSER \*(Em Saved User Name \fR
 The\fI saved\fR user name.
 
 .TP 4
-27.\fB SWAP \*(Em Swapped Size (KiB) \fR
+28.\fB SWAP \*(Em Swapped Size (KiB) \fR
 The non-resident portion of a task's address space.
 
 .TP 4
-28.\fB TGID \*(Em Thread Group Id \fR
+29.\fB TGID \*(Em Thread Group Id \fR
 The ID of the thread group to which a task belongs.
 It is the PID of the thread group leader.
 In kernel terms, it represents those tasks that share an mm_struct.
 
 .TP 4
-29.\fB TIME \*(Em \*(PU Time \fR
+30.\fB TIME \*(Em \*(PU Time \fR
 Total \*(PU time the task has used since it started.
 When Cumulative mode is \*O, each process is listed with the \*(Pu
 time that it and its dead children have used.
@@ -786,19 +791,19 @@ You toggle Cumulative mode with `S', which is both a \*(CO and an \*(CI.
 \*(XC `S' \*(CI for additional information regarding this mode.
 
 .TP 4
-30.\fB TIME+ \*(Em \*(PU Time, hundredths \fR
+31.\fB TIME+ \*(Em \*(PU Time, hundredths \fR
 The same as TIME, but reflecting more granularity through hundredths
 of a second.
 
 .TP 4
-31.\fB TPGID \*(Em Tty Process Group Id \fR
+32.\fB TPGID \*(Em Tty Process Group Id \fR
 The process group ID of the foreground process for the connected tty,
 or \-1 if a process is not connected to a terminal.
 By convention, this value equals the process ID (\*(Xa PID) of the
 process group leader (\*(Xa PGRP).
 
 .TP 4
-32.\fB TTY \*(Em Controlling Tty \fR
+33.\fB TTY \*(Em Controlling Tty \fR
 The name of the controlling terminal.
 This is usually the device (serial port, pty, etc.) from which the
 process was started, and which it uses for input or output.
@@ -806,30 +811,30 @@ However, a task need not be associated with a terminal, in which case
 you'll see `?' displayed.
 
 .TP 4
-33.\fB UID \*(Em User Id \fR
+34.\fB UID \*(Em User Id \fR
 The\fI effective\fR user ID of the task's owner.
 
 .TP 4
-34.\fB USED \*(Em Memory in Use (KiB) \fR
+35.\fB USED \*(Em Memory in Use (KiB) \fR
 This field represents the non-swapped \*(MP a task has used (RES) plus
 the non-resident portion of its address space (SWAP).
 
 .TP 4
-35.\fB USER \*(Em User Name \fR
+36.\fB USER \*(Em User Name \fR
 The\fI effective\fR user name of the task's owner.
 
 .TP 4
-36.\fB VIRT \*(Em Virtual Memory Size (KiB) \fR
+37.\fB VIRT \*(Em Virtual Memory Size (KiB) \fR
 The total amount of \*(MV used by the task.
 It includes all code, data and shared libraries plus pages that have been
 swapped out and pages that have been mapped but not used.
 
 .TP 4
-37.\fB WCHAN \*(Em Sleeping in Function \fR
+38.\fB WCHAN \*(Em Sleeping in Function \fR
 Depending on the availability of the kernel link map (System.map), this
 field will show the name or the address of the kernel function in which the
 task is currently sleeping.
-Running tasks will display a dash ('\-') in this column.
+Running tasks will display a dash (`\-') in this column.
 
 By displaying this field, \*(We's own working set could be increased by over
 700Kb, depending on the kernel version.
@@ -837,14 +842,14 @@ Should that occur, your only means of reducing that overhead will be to stop
 and restart \*(We.
 
 .TP 4
-38.\fB nDRT \*(Em Dirty Pages Count \fR
+39.\fB nDRT \*(Em Dirty Pages Count \fR
 The number of pages that have been modified since they were last
 written to \*(AS.
 Dirty pages must be written to \*(AS before the corresponding physical
 memory location can be used for some other virtual page.
 
 .TP 4
-39.\fB nMaj \*(Em Major Page Fault Count \fR
+40.\fB nMaj \*(Em Major Page Fault Count \fR
 The number of\fB major\fR page faults that have occurred for a task.
 A page fault occurs when a process attempts to read from or write to a
 virtual page that is not currently present in its address space.
@@ -852,7 +857,7 @@ A major page fault is when \*(AS access is involved in making that
 page available.
 
 .TP 4
-40.\fB nMin \*(Em Minor Page Fault count \fR
+41.\fB nMin \*(Em Minor Page Fault count \fR
 The number of\fB minor\fR page faults that have occurred for a task.
 A page fault occurs when a process attempts to read from or write to a
 virtual page that is not currently present in its address space.
@@ -860,50 +865,50 @@ A minor page fault does not involve \*(AS access in making that
 page available.
 
 .TP 4
-41.\fB nTH \*(Em Number of Threads \fR
+42.\fB nTH \*(Em Number of Threads \fR
 The number of threads associated with a process.
 
 .TP 4
-42.\fB nsIPC \*(Em IPC namespace \fR
+43.\fB nsIPC \*(Em IPC namespace \fR
 The Inode of the namespace used to isolate interprocess communication (IPC)
 resources such as System V IPC objects and POSIX message queues.
 
 .TP 4
-43.\fB nsMNT \*(Em MNT namespace \fR
+44.\fB nsMNT \*(Em MNT namespace \fR
 The Inode of the namespace used to isolate filesystem mount points thus
 offering different views of the filesystem hierarchy.
 
 .TP 4
-44.\fB nsNET \*(Em NET namespace \fR
+45.\fB nsNET \*(Em NET namespace \fR
 The Inode of the namespace used to isolate resources such as network devices,
 IP addresses, IP routing, port numbers, etc.
 
 .TP 4
-45.\fB nsPID \*(Em PID namespace \fR
+46.\fB nsPID \*(Em PID namespace \fR
 The Inode of the namespace used to isolate process ID numbers
 meaning they need not remain unique.
-Thus, each such namespace could have its own `init' (PID #1) to
+Thus, each such namespace could have its own `init/systemd' (PID #1) to
 manage various initialization tasks and reap orphaned child processes.
 
 .TP 4
-46.\fB nsUSER \*(Em USER namespace \fR
+47.\fB nsUSER \*(Em USER namespace \fR
 The Inode of the namespace used to isolate the user and group ID numbers.
 Thus, a process could have a normal unprivileged user ID outside a user
 namespace while having a user ID of 0, with full root privileges, inside
 that namespace.
 
 .TP 4
-47.\fB nsUTS \*(Em UTS namespace \fR
+48.\fB nsUTS \*(Em UTS namespace \fR
 The Inode of the namespace used to isolate hostname and NIS domain name.
 UTS simply means "UNIX Time-sharing System".
 
 .TP 4
-48.\fB vMj \*(Em Major Page Fault Count Delta\fR
+49.\fB vMj \*(Em Major Page Fault Count Delta\fR
 The number of\fB major\fR page faults that have occurred since the
 last update (see nMaj).
 
 .TP 4
-49.\fB vMn \*(Em Minor Page Fault Count Delta\fR
+50.\fB vMn \*(Em Minor Page Fault Count Delta\fR
 The number of\fB minor\fR page faults that have occurred since the
 last update (see nMin).
 
@@ -1174,11 +1179,11 @@ This \*(CI can be used to alter the widths of the following fields:
 .nf
    \fI field  default    field  default    field  default \fR
     GID       5       GROUP     8       WCHAN    10
-    RUID      5       RUSER     8       nsIPC    10
-    SUID      5       SUSER     8       nsMNT    10
-    UID       5       USER      8       nsNET    10
+    RUID      5       LXC       8       nsIPC    10
+    SUID      5       RUSER     8       nsMNT    10
+    UID       5       SUSER     8       nsNET    10
                       TTY       8       nsPID    10
-                                        nsUSER   10
+                      USER      8       nsUSER   10
                                         nsUTS    10
 .fi
 
@@ -1356,7 +1361,7 @@ global `B' (bold enable) toggle.
 \ \ \ \fBb\fR\ \ :\fIBold/Reverse\fR toggle \fR
 This command will impact how the `x' and `y' toggles are displayed.
 It may also impact the \*(SA when a bar graph has been selected for \*(Pu
-states or memory usage via the 't' or 'm' toggles.
+states or memory usage via the `t' or `m' toggles.
 
 .TP 7
 \ \ \ \fBx\fR\ \ :\fIColumn-Highlight\fR toggle \fR
@@ -1439,7 +1444,7 @@ matches on\fB any\fR user (real, effective, saved, or filesystem).
 
 Thereafter, in that \*(TW only matching users will be shown, or possibly
 no processes will be shown.
-Prepending an exclamation point ('!') to the user id or name instructs top
+Prepending an exclamation point (`!') to the user id or name instructs top
 to display only processes with users not matching the one provided.
 
 Different \*(TWs can be used to filter different users.
@@ -2258,8 +2263,8 @@ Depending on where you applied `i', sometimes several \*(TDs are bouncing and
 sometimes it's like an accordion, as \*(We tries his best to allocate space.
 
 .IP \(bu 3
-Set each window's summary lines differently: one with no memory ('m'); another
-with no states ('t'); maybe one with nothing at all, just the message line.
+Set each window's summary lines differently: one with no memory (`m'); another
+with no states (`t'); maybe one with nothing at all, just the message line.
 Then hold down `a' or `w' and watch a variation on bouncing windows \*(Em
 hopping windows.
 
