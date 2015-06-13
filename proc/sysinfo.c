@@ -668,7 +668,7 @@ void meminfo(void){
   };
   const int mem_table_count = sizeof(mem_table)/sizeof(mem_table_struct);
   unsigned long watermark_low;
-  signed long mem_available;
+  signed long mem_available, mem_used;
 
   FILE_TO_BUF(MEMINFO_FILE,meminfo_fd);
 
@@ -705,7 +705,16 @@ nextline:
   }
   kb_main_cached = kb_page_cache + kb_slab;
   kb_swap_used = kb_swap_total - kb_swap_free;
-  kb_main_used = kb_main_total - kb_main_free - kb_main_cached - kb_main_buffers;
+
+  /* if kb_main_available is greater than kb_main_total or our calculation of
+     mem_used overflows, that's symptomatic of running within a lxc container
+     where such values will be dramatically distorted over those of the host. */
+  if (kb_main_available > kb_main_total)
+    kb_main_available = kb_main_free;
+  mem_used = kb_main_total - kb_main_free - kb_main_cached - kb_main_buffers;
+  if (mem_used < 0)
+    mem_used = kb_main_total - kb_main_free;
+  kb_main_used = (unsigned long)mem_used;
 
   /* zero? might need fallback for 2.6.27 <= kernel <? 3.14 */
   if (!kb_main_available) {
