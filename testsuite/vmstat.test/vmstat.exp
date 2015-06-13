@@ -4,18 +4,24 @@
 
 set vmstat "${topdir}vmstat"
 
-# Run vmstat with no arguments
-set test "vmstat with no arguments"
-spawn $vmstat
-expect_pass "$test" "^procs\[ -\]+memory\[ -\]+swap\[ -\]+io\[ -\]+system\[ -\]+cpu\[ -\]+\\s*r\\s+b\\s+swpd\\s+free\\s+buff\\s+cache\\s+si\\s+so\\s+bi\\s+bo\\s+in\\s+cs us sy id wa st\\s*\(\\s+\\d+\){17}\\s*$"
+# Tests that need to see /proc/vmstat
+if { [ file readable "/proc/vmstat" ] == 0 } {
+    unsupported "vmstat with no arguments - /proc/vmstat is unreadable"
+    unsupported "vmstat with -a flag - /proc/vmstat is unreadable"
+    unsupported "vmstat fork option - /proc/vmstat is unreadable"
+} else {
+    set test "vmstat with no arguments"
+    spawn $vmstat
+    expect_pass "$test" "^procs\[ -\]+memory\[ -\]+swap\[ -\]+io\[ -\]+system\[ -\]+cpu\[ -\]+\\s*r\\s+b\\s+swpd\\s+free\\s+buff\\s+cache\\s+si\\s+so\\s+bi\\s+bo\\s+in\\s+cs us sy id wa st\\s*\(\\s+\\d+\){17}\\s*$"
 
-set test "vmstat with -a flag"
-spawn $vmstat -a
-expect_pass "$test" "^procs\[ -\]+memory\[ -\]+swap\[ -\]+io\[ -\]+system\[ -\]+cpu\[ -\]+\\s*r\\s+b\\s+swpd\\s+free\\s+inact\\s+active\\s+si\\s+so\\s+bi\\s+bo\\s+in\\s+cs us sy id wa st\\s*\(\\s+\\d+\){17}\\s*$"
+    set test "vmstat with -a flag"
+    spawn $vmstat -a
+    expect_pass "$test" "^procs\[ -\]+memory\[ -\]+swap\[ -\]+io\[ -\]+system\[ -\]+cpu\[ -\]+\\s*r\\s+b\\s+swpd\\s+free\\s+inact\\s+active\\s+si\\s+so\\s+bi\\s+bo\\s+in\\s+cs us sy id wa st\\s*\(\\s+\\d+\){17}\\s*$"
 
-set test "vmstat fork option"
-spawn $vmstat -f
-expect_pass "$test" "^\\s+\\d+ forks\\s*$"
+    set test "vmstat fork option"
+    spawn $vmstat -f
+    expect_pass "$test" "^\\s+\\d+ forks\\s*$"
+}
 
 if { [ file readable "/proc/slabinfo" ] == 0 } {
     unsupported "slabinfo (-m option) test disabled as /proc/slabinfo is unreadable"
