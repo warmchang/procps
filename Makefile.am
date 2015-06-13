@@ -229,6 +229,8 @@ lib_test_fileutils_SOURCES = lib/test_fileutils.c lib/fileutils.c
 lib_test_fileutils_LDADD =
 lib_test_nsutils_SOURCES = lib/test_nsutils.c lib/nsutils.c
 lib_test_nsutils_LDADD =
+lib_test_process_SOURCES = lib/test_process.c
+lib_test_process_LDADD =
 
 if EXAMPLE_FILES
 sysconf_DATA = sysctl.conf

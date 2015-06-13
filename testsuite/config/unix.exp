@@ -120,7 +120,7 @@ proc expect_table_dsc { test match_header match_item } {
 proc make_testproc { } {
     global testproc_path testproc_comm testproc1_pid testproc2_pid topdir
 
-    set testproc_realpath "${topdir}/lib/.libs/test_process"
+    set testproc_realpath "${topdir}/lib/test_process"
     set testproc_comm "spcorp"
 
     set testproc_path [ exec mktemp -u ]
