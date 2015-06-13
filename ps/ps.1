@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS 1 "July 2014" "procps-ng" "User Commands"
+.TH PS 1 "June 2015" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -826,8 +826,9 @@ will be destroyed by
 .IR init (8)
 if the parent process exits.
 .PP
-If the length of the username is greater than the length of the display
-column, the numeric user ID is displayed instead.
+If the length of the username is greater than the length of the display 
+column, the username will be truncated. See the -o and -O formatting 
+options to customize length.
 .PP
 Commands options such as
 .B ps \-aux
