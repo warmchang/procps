@@ -226,6 +226,8 @@ CMP_NS(pidns, PIDNS);
 CMP_NS(userns, USERNS);
 CMP_NS(utsns, UTSNS);
 
+CMP_STR(lxcname)
+
 /* approximation to: kB of address space that could end up in swap */
 static int sr_swapable(const proc_t* P, const proc_t* Q) {
   unsigned long p_swapable = P->vm_data + P->vm_stack;
@@ -1229,6 +1231,11 @@ _pr_ns(pidns, PIDNS);
 _pr_ns(userns, USERNS);
 _pr_ns(utsns, UTSNS);
 
+/************************ Linux containers ******************************/
+static int pr_lxcname(char *restrict const outbuf, const proc_t *restrict const pp){
+  return snprintf(outbuf, COLWID, "%s", pp->lxcname);
+}
+
 /****************** FLASK & seLinux security stuff **********************/
 // move the bulk of this to libproc sometime
 
@@ -1391,6 +1398,7 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 #define GRP PROC_FILLGRP     /* gid_t -> group names */
 #define WCH PROC_FILLWCHAN   /* do WCHAN lookup */
 #define NS  PROC_FILLNS      /* read namespace information */
+#define LXC PROC_FILL_LXC    /* value the lxc name field */
 #ifdef WITH_SYSTEMD
 #define SD  PROC_FILLSYSTEMD /* retrieve systemd stuff */
 #endif
@@ -1499,6 +1507,7 @@ static const format_struct format_array[] = {
 {"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, ET|RIGHT}, /* login ID */
 {"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, ET|USER}, /* login USER */
 {"lwp",       "LWP",     pr_tasks,    sr_tasks,   5,   0,    SUN, TO|PIDMAX|RIGHT},
+{"lxc",       "LXC",     pr_lxcname,  sr_lxcname, 8, LXC,    LNX, ET|LEFT},
 {"m_drs",     "DRS",     pr_drs,      sr_drs,     5, MEM,    LNx, PO|RIGHT},
 {"m_dt",      "DT",      pr_nop,      sr_dt,      4, MEM,    LNx, PO|RIGHT},
 {"m_lrs",     "LRS",     pr_nop,      sr_lrs,     5, MEM,    LNx, PO|RIGHT},
