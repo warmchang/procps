@@ -269,6 +269,7 @@ SCB_NUM1(FV1, maj_delta)
 SCB_NUM1(FV2, min_delta)
 SCB_NUMx(GID, egid)
 SCB_STRS(GRP, egroup)
+SCB_STRS(LXC, lxcname)
 SCB_NUMx(NCE, nice)
 SCB_NUM1(NS1, ns[IPCNS])
 SCB_NUM1(NS2, ns[MNTNS])
@@ -1399,7 +1400,7 @@ static void osel_clear (WIN_t *q) {
 
 
         /*
-         * Determine if there is a matching value or releationship among the
+         * Determine if there are matching values or relationships among the
          * other criteria in this passed window -- it's called from only one
          * place, and likely inlined even without the directive */
 static inline int osel_matched (const WIN_t *q, FLG_t enu, const char *str) {
@@ -1695,6 +1696,7 @@ end_justifies:
 #define L_SUPGRP   PROC_FILLSTATUS | PROC_FILLSUPGRP
 #define L_USED     PROC_FILLSTATUS | PROC_FILLMEM
 #define L_NS       PROC_FILLNS
+#define L_LXC      PROC_FILL_LXC
    // make 'none' non-zero (used to be important to Frames_libflags)
 #define L_NONE     PROC_SPARE_1
    // from either 'stat' or 'status' (preferred), via bits not otherwise used
@@ -1794,7 +1796,8 @@ static FLD_t Fieldstab[] = {
    {    10,     -1,  A_right,  SF(NS3),  L_NS      }, // NETNS
    {    10,     -1,  A_right,  SF(NS4),  L_NS      }, // PIDNS
    {    10,     -1,  A_right,  SF(NS5),  L_NS      }, // USERNS
-   {    10,     -1,  A_right,  SF(NS6),  L_NS      }  // UTSNS
+   {    10,     -1,  A_right,  SF(NS6),  L_NS      }, // UTSNS
+   {     8,     -1,  A_left,   SF(LXC),  L_LXC     }
  #undef SF
  #undef A_left
  #undef A_right
@@ -2331,7 +2334,7 @@ static void zap_fieldstab (void) {
       Fieldstab[EU_UEN].width = Fieldstab[EU_URN].width
          = Fieldstab[EU_USN].width = Fieldstab[EU_GRP].width
          = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
-      Fieldstab[EU_TTY].width
+      Fieldstab[EU_TTY].width = Fieldstab[EU_LXC].width
          = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
       Fieldstab[EU_WCH].width
          = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
@@ -5395,6 +5398,9 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             break;
          case EU_GRP:
             cp = make_str(p->egroup, W, Js, EU_GRP);
+            break;
+         case EU_LXC:
+            cp = make_str(p->lxcname, W, Js, EU_LXC);
             break;
          case EU_MEM:
             cp = scale_pcnt((float)pages2K(p->resident) * 100 / kb_main_total, W, Jn);

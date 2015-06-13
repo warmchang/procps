@@ -277,6 +277,9 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'nsUTS' = 7 */
    Head_nlstab[EU_NS6] = _("nsUTS");
    Desc_nlstab[EU_NS6] = _("UTS namespace Inode");
+/* Translation Hint: maximum 'LXC' = 7 */
+   Head_nlstab[EU_LXC] = _("LXC");
+   Desc_nlstab[EU_LXC] = _("LXC container name");
 }
 
 
