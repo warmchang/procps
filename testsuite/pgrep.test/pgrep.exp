@@ -26,9 +26,9 @@ spawn $pgrep $testproc_comm
 expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 
 # In Debian only
-#set test "pgrep counts 2 test pids"
-#spawn $pgrep -c $testproc_comm
-#expect_pass "$test" "^2\\s*"
+set test "pgrep counts 2 test pids"
+spawn $pgrep -c $testproc_comm
+expect_pass "$test" "^2\\s*"
 
 set test "pgrep with : delimiter"
 spawn $pgrep -d : $testproc_comm
@@ -52,7 +52,7 @@ expect_pass "$test" "^$testproc1_pid\\s+$testproc_comm\\s+$testproc2_pid\\s+$tes
 
 set test "pgrep with full command line"
 spawn $pgrep -a $testproc_comm
-expect_pass "$test" "^$testproc1_pid\\s+$testproc_path\\s+$sleep_time\\s+$testproc2_pid\\s+$testproc_path\\s+$sleep_time\\s*$"
+expect_pass "$test" "^$testproc1_pid\\s+$testproc_path\\s+$testproc2_pid\\s+$testproc_path\\s*$"
 
 set test "pgrep find newest test pid"
 spawn $pgrep -n $testproc_comm

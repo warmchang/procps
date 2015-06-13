@@ -118,25 +118,24 @@ proc expect_table_dsc { test match_header match_item } {
 }
 
 proc make_testproc { } {
-    global testproc_path testproc_comm testproc1_pid testproc2_pid sleep_time
+    global testproc_path testproc_comm testproc1_pid testproc2_pid topdir
 
-    # Time to run the whole job
-    set sleep_time 300
+    set testproc_realpath "${topdir}/lib/.libs/test_process"
+    set testproc_comm "spcorp"
 
     set testproc_path [ exec mktemp -u ]
-    set sleep_path [ exec sh -c "command -v sleep" ]
-    exec ln -s $sleep_path $testproc_path
-    set testproc_comm [ exec basename $testproc_path ]
+    exec ln -s $testproc_realpath $testproc_path
 
     spawn readlink $testproc_path
     expect {
-        -re "^$sleep_path\\s*$" { }
-        timeout { perror "test proc does not link to sleep 1" }
-        eof { perror "test proc does not link to sleep 1" }
+        -re "^$testproc_realpath\\s*$" { }
+        timeout { perror "test proc does not link to test process" }
+        eof { perror "test proc does not link to test process" }
     }
 
-    set testproc1_pid [ exec $testproc_path $sleep_time & ]
-    set testproc2_pid [ exec $testproc_path $sleep_time & ]
+
+    set testproc1_pid [ exec $testproc_path & ]
+    set testproc2_pid [ exec $testproc_path & ]
 }
 
 proc kill_testproc { } {

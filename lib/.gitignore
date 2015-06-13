@@ -1,4 +1,5 @@
 .dirstamp
 test_fileutils
+test_process
 test_strutils
 test_nsutils
