@@ -646,40 +646,8 @@ Examples:
 .BI \-\-lines \ n
 Set screen height.
 .TP
-.BI \-n \ namelist
-Set namelist file.  Identical to
-.BR N .
-The namelist file is needed for a proper WCHAN display, and must match the
-current Linux kernel exactly for correct output.  Without this option, the
-default search path for the namelist is:
-.RS 8
-.IP
-$PS_SYSMAP
-.br
-$PS_SYSTEM_MAP
-.br
-/proc/*/wchan
-.br
-/boot/System.map\-$(uname\ \-r)
-.br
-/boot/System.map
-.br
-/lib/modules/$(uname\ \-r)/System.map
-.br
-/usr/src/linux/System.map
-.br
-/System.map
-.RE
-.TP
 .B n
 Numeric output for WCHAN and USER (including all types of UID and GID).
-.TP
-.BI N \ namelist
-Specify namelist file.  Identical to
-.BR \-n ,
-see
-.B \-n
-above.
 .TP
 .B \-\-no\-headers
 Print no header line at all.
@@ -804,10 +772,6 @@ this
 .B ps
 any special permissions.
 .PP
-This
-.B ps
-needs access to namelist data for proper WCHAN display.  For kernels prior to
-2.6, the System.map file must be installed.
 .PP
 CPU usage is currently expressed as the percentage of time spent running
 during the entire lifetime of a process.  This is not ideal, and\ it does not
@@ -826,8 +790,8 @@ will be destroyed by
 .IR init (8)
 if the parent process exits.
 .PP
-If the length of the username is greater than the length of the display 
-column, the username will be truncated. See the -o and -O formatting 
+If the length of the username is greater than the length of the display
+column, the username will be truncated. See the -o and -O formatting
 options to customize length.
 .PP
 Commands options such as
@@ -1881,12 +1845,6 @@ The
 and
 .B DefBSD
 values are particularly useful.
-.TP
-.B PS_SYSMAP
-Default namelist (System.map) location.
-.TP
-.B PS_SYSTEM_MAP
-Default namelist (System.map) location.
 .TP
 .B POSIXLY_CORRECT
 Don't find excuses to ignore bad "features".

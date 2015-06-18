@@ -831,15 +831,9 @@ swapped out and pages that have been mapped but not used.
 
 .TP 4
 38.\fB WCHAN \*(Em Sleeping in Function \fR
-Depending on the availability of the kernel link map (System.map), this
-field will show the name or the address of the kernel function in which the
-task is currently sleeping.
+This field will show the name of the kernel function in which the task
+is currently sleeping.
 Running tasks will display a dash (`\-') in this column.
-
-By displaying this field, \*(We's own working set could be increased by over
-700Kb, depending on the kernel version.
-Should that occur, your only means of reducing that overhead will be to stop
-and restart \*(We.
 
 .TP 4
 39.\fB nDRT \*(Em Dirty Pages Count \fR
