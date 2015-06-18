@@ -116,9 +116,7 @@ static int Msg_row;
 static char Scroll_fmts [SMLBUFSIZ];
 
         /* Global/Non-windows mode stuff that is NOT persistent */
-static int No_ksyms = -1,       // set to '0' if ksym avail, '1' otherwise
-           PSDBopen = 0,        // set to '1' if psdb opened (now postponed)
-           Batch = 0,           // batch mode, collect no input, dumb output
+static int Batch = 0,           // batch mode, collect no input, dumb output
            Loops = -1,          // number of iterations, -1 loops forever
            Secure_mode = 0,     // set if some functionality restricted
            Thread_mode = 0,     // set w/ 'H' - show threads via readeither()
@@ -1901,7 +1899,7 @@ static void build_headers (void) {
 #ifdef EQUCOLHDRYES
    int x, hdrmax = 0;
 #endif
-   int i, needpsdb = 0;
+   int i;
 
    Frames_libflags = 0;
 
@@ -1919,7 +1917,6 @@ static void build_headers (void) {
 #else
             if (EU_MAXPFLGS <= f) continue;
 #endif
-            if (EU_WCH == f) needpsdb = 1;
             if (EU_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
             Frames_libflags |= Fieldstab[w->procflgs[i]].lflg;
             s = scat(s, justify_pad(N_col(f)
@@ -1961,16 +1958,6 @@ static void build_headers (void) {
       }
 #endif
 
-   // do we need the kernel symbol table (and is it already open?)
-   if (needpsdb) {
-      if (-1 == No_ksyms) {
-         No_ksyms = 0;
-         if (open_psdb_message(NULL, library_err))
-            No_ksyms = 1;
-         else
-            PSDBopen = 1;
-      }
-   }
    // finalize/touchup the libproc PROC_FILLxxx flags for current config...
    if ((Frames_libflags & L_EITHER) && !(Frames_libflags & L_stat))
       Frames_libflags |= L_status;
@@ -5510,13 +5497,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = scale_mem(S, pages2K(p->size), W, Jn);
             break;
          case EU_WCH:
-         {  const char *u;
-            if (No_ksyms)
-               u = hex_make(p->wchan, 0);
-            else
-               u = lookup_wchan(p->wchan, p->tid);
-            cp = make_str(u, W, Js, EU_WCH);
-         }
+            cp = make_str(lookup_wchan(p->tid), W, Js, EU_WCH);
             break;
          default:                 // keep gcc happy
             continue;
