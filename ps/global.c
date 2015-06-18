@@ -70,7 +70,6 @@ int             header_gap = -1;
 int             header_type = -1;
 int             include_dead_children = -1;
 int             lines_to_next_header = -1;
-const char     *namelist_file = (const char *)0xdeadbeef;
 int             negate_selection = -1;
 int             running_only = -1;
 int             page_size = -1;  // "int" for math reasons?
@@ -388,7 +387,6 @@ void reset_global(void){
   header_type           = HEAD_SINGLE;
   include_dead_children = 0;
   lines_to_next_header  = 1;
-  namelist_file         = NULL;
   negate_selection      = 0;
   page_size             = getpagesize();
   running_only          = 0;
@@ -512,9 +510,6 @@ void self_info(void){
   );
 
   fprintf(stderr, "archdefs:%s\n", archdefs);
-
-  open_psdb(namelist_file);
-  fprintf(stderr,"namelist_file=\"%s\"\n",namelist_file?namelist_file:"<no System.map file>");
 }
 
 void __attribute__ ((__noreturn__))

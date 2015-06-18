@@ -720,7 +720,7 @@ static int pr_wchan(char *restrict const outbuf, const proc_t *restrict const pp
   size_t len;
   if(!(pp->wchan & 0xffffff)) return memcpy(outbuf,"-",2),1;
   if(wchan_is_number) return snprintf(outbuf, COLWID, "%x", (unsigned)(pp->wchan) & 0xffffffu);
-  w = lookup_wchan(pp->wchan, pp->XXXID);
+  w = lookup_wchan(pp->XXXID);
   len = strlen(w);
   if(len>max_rightward) len=max_rightward;
   memcpy(outbuf, w, len);
@@ -741,7 +741,7 @@ static int pr_wname(char *restrict const outbuf, const proc_t *restrict const pp
   const char *w;
   size_t len;
   if(!(pp->wchan & 0xffffff)) return memcpy(outbuf,"-",2),1;
-  w = lookup_wchan(pp->wchan, pp->XXXID);
+  w = lookup_wchan(pp->XXXID);
   len = strlen(w);
   if(len>max_rightward) len=max_rightward;
   memcpy(outbuf, w, len);
@@ -1396,7 +1396,6 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 #define ENV PROC_FILLENV     /* read environ */
 #define USR PROC_FILLUSR     /* uid_t -> user names */
 #define GRP PROC_FILLGRP     /* gid_t -> group names */
-#define WCH PROC_FILLWCHAN   /* do WCHAN lookup */
 #define NS  PROC_FILLNS      /* read namespace information */
 #define LXC PROC_FILL_LXC    /* value the lxc name field */
 #ifdef WITH_SYSTEMD
@@ -1526,7 +1525,7 @@ static const format_struct format_array[] = {
 {"mntns",     "MNTNS",   pr_mntns,    sr_mntns,  10,  NS,    LNX, ET|RIGHT},
 {"msgrcv",    "MSGRCV",  pr_nop,      sr_nop,     6,   0,    XXX, AN|RIGHT},
 {"msgsnd",    "MSGSND",  pr_nop,      sr_nop,     6,   0,    XXX, AN|RIGHT},
-{"mwchan",    "MWCHAN",  pr_nop,      sr_nop,     6, WCH,    BSD, TO|WCHAN}, /* mutex (FreeBSD) */
+{"mwchan",    "MWCHAN",  pr_nop,      sr_nop,     6,   0,    BSD, TO|WCHAN}, /* mutex (FreeBSD) */
 {"netns",     "NETNS",   pr_netns,    sr_netns,  10,  NS,    LNX, ET|RIGHT},
 {"ni",        "NI",      pr_nice,     sr_nice,    3,   0,    BSD, TO|RIGHT}, /*nice*/
 {"nice",      "NI",      pr_nice,     sr_nice,    3,   0,    U98, TO|RIGHT}, /*ni*/
@@ -1679,8 +1678,8 @@ static const format_struct format_array[] = {
 {"vm_stack",  "STACK",   pr_nop,      sr_vm_stack, 5,  0,    LNx, PO|RIGHT},
 {"vsize",     "VSZ",     pr_vsz,      sr_vsize,   6,   0,    DEC, PO|RIGHT}, /*vsz*/
 {"vsz",       "VSZ",     pr_vsz,      sr_vm_size, 6,   0,    U98, PO|RIGHT}, /*vsize*/
-{"wchan",     "WCHAN",   pr_wchan,    sr_wchan,   6, WCH,    XXX, TO|WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
-{"wname",     "WCHAN",   pr_wname,    sr_nop,     6, WCH,    SGI, TO|WCHAN}, /* opposite of nwchan */
+{"wchan",     "WCHAN",   pr_wchan,    sr_wchan,   6,   0,    XXX, TO|WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
+{"wname",     "WCHAN",   pr_wname,    sr_nop,     6,   0,    SGI, TO|WCHAN}, /* opposite of nwchan */
 {"xstat",     "XSTAT",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT},
 {"zone",      "ZONE",    pr_context,  sr_nop,    31,   0,    SUN, ET|LEFT}, // Solaris zone == Linux context?
 {"zoneid",    "ZONEID",  pr_nop,      sr_nop,    31,   0,    SUN, ET|RIGHT},// Linux only offers context names

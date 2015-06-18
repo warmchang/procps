@@ -311,10 +311,6 @@ static void lists_and_needs(void){
     if(proc_format_needs&PROC_FILLCOM) proc_format_needs |= PROC_FILLENV;
   }
 
-  /* FIXME  broken filthy hack -- got to unify some stuff here */
-  if( ( (proc_format_needs|task_format_needs|needs_for_sort) & PROC_FILLWCHAN) && !wchan_is_number)
-    if (open_psdb(namelist_file)) wchan_is_number = 1;
-
   if(thread_flags&TF_loose_tasks) needs_for_threads |= PROC_LOOSE_TASKS;
 }
 

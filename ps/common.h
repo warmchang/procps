@@ -294,7 +294,6 @@ extern int             header_type; /* none, single, multi... */
 extern int             include_dead_children;
 extern int             lines_to_next_header;
 extern int             max_line_width;
-extern const char     *namelist_file;
 extern int             negate_selection;
 extern int             page_size;  // "int" for math reasons?
 extern unsigned        personality;

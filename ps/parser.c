@@ -406,12 +406,6 @@ static const char *parse_sysv_option(void){
       /* note that AIX shows 2 lines for a normal process */
       thread_flags |= TF_U_m;
       break;
-    case 'n': /* end */
-      trace("-n sets namelist file\n");
-      arg=get_opt_arg();
-      if(!arg) return _("alternate System.map file must follow -n");
-      namelist_file = arg;
-      return NULL; /* can't have any more options */
     case 'o': /* end */
       /* Unix98 has gross behavior regarding this. From the following: */
       /*            ps -o pid,nice=NICE,tty=TERMINAL,comm              */
@@ -573,12 +567,6 @@ static const char *parse_bsd_option(void){
       trace("M MacOS X thread display, like AIX/Tru64\n");
       thread_flags |= TF_B_m;
       break;
-    case 'N': /* end */
-      trace("N specify namelist file\n");
-      arg=get_opt_arg();
-      if(!arg) return _("alternate System.map file must follow N");
-      namelist_file = arg;
-      return NULL; /* can't have any more options */
     case 'O': /* end */
       trace("O like o + defaults, add new columns after PID, also sort\n");
       arg=get_opt_arg();
