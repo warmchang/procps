@@ -445,7 +445,7 @@ static void bye_bye (const char *str) {
       , LINUX_VERSION_MAJOR(linux_version_code)
       , LINUX_VERSION_MINOR(linux_version_code)
       , LINUX_VERSION_PATCH(linux_version_code)
-      , procps_version
+      , PACKAGE_STRING
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
       , (int)page_bytes, Cpu_faux_tot, (int)smp_num_cpus, (unsigned)sizeof(CPU_t)
       , (unsigned)sizeof(HST_t), ((int)page_bytes / (int)sizeof(HST_t)), HHist_siz
@@ -3696,7 +3696,7 @@ static void parse_args (char **args) {
             case 'h':
             case 'v':
                puts(fmtmk(N_fmt(HELP_cmdline_fmt)
-                  , procps_version, Myname, N_txt(USAGE_abbrev_txt)));
+                  , PACKAGE_STRING, Myname, N_txt(USAGE_abbrev_txt)));
                bye_bye(NULL);
             case 'i':
                TOGw(Curwin, Show_IDLEPS);
@@ -3975,7 +3975,7 @@ signify_that:
       putp(Cap_home);
       // this string is well above ISO C89's minimum requirements!
       show_special(1, fmtmk(N_unq(COLOR_custom_fmt)
-         , procps_version, w->grpname
+         , PACKAGE_STRING, w->grpname
          , CHKw(w, View_NOBOLD) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
          , CHKw(w, Show_COLORS) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
          , CHKw(w, Show_HIBOLD) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
@@ -4219,7 +4219,7 @@ signify_that:
    adj_geometry();
 
    show_special(1, fmtmk(N_unq(KEYS_helpbas_fmt)
-      , procps_version
+      , PACKAGE_STRING
       , w->grpname
       , CHKw(w, Show_CTIMES) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
       , Rc.delay_time

@@ -4,7 +4,6 @@ global:
 	closeproc;
 	cpuinfo;
 	dev_to_tty;
-	display_version;
 	escape_command;
 	escape_str;
 	escape_strlist;
@@ -47,7 +46,6 @@ global:
 	page_bytes;
 	pretty_print_signals;
 	print_uptime;
-	procps_version;
 	put_slabinfo;
 	readeither;
 	readproc;

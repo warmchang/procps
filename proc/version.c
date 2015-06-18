@@ -24,12 +24,6 @@
 #include <stdlib.h>
 #include "version.h"
 
-const char procps_version[] = PACKAGE_NAME " version " PACKAGE_VERSION;
-
-void display_version(void) {
-    fprintf(stdout, "%s\n", procps_version);
-}
-
 /* Linux kernel version information for procps-ng utilities
  * Copyright (c) 1996 Charles Blake <cblake@bbn.com>
  */

@@ -55,7 +55,7 @@ static void signal_handler(int signo){
     signo,
     signal_number_to_name(signo),
     myname,
-    procps_version
+    PACKAGE_VERSION
   );
   switch (signo) {
     case SIGHUP:

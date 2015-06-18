@@ -479,7 +479,7 @@ void self_info(void){
     sysv_l_format  ? sysv_l_format  : "(none)"
   );
 
-  display_version();
+  fprintf(stderr, "%s version %s\n", PACKAGE_NAME, PACKAGE_VERSION);
   fprintf(stderr, "Linux version %d.%d.%d\n",
     LINUX_VERSION_MAJOR(linux_version_code),
     LINUX_VERSION_MINOR(linux_version_code),

@@ -32,9 +32,9 @@
 #include <sys/types.h>
 
 #include "../proc/alloc.h"
-#include "../proc/version.h"
 
 #include "common.h"
+#include "c.h"
 
 #define ARG_GNU  0
 #define ARG_END  1
@@ -58,6 +58,11 @@ static int force_bsd = 0;  /* set when normal parsing fails */
   return _("the option is exclusive: " x)
 
 /********** utility functions **********/
+static void display_ps_version(void)
+{
+    fprintf(stdout, PROCPS_NG_VERSION);
+}
+
 
 /*
  * Both "-Oppid" and "-O ppid" should be legal, though Unix98
@@ -341,7 +346,7 @@ static const char *parse_sysv_option(void){
     case 'V': /* single */
       trace("-V prints version\n");
       exclusive("-V");
-      display_version();
+      display_ps_version();
       exit(0);
     // This must be verified against SVR4-MP. (UnixWare or Powermax)
     // Leave it undocumented until that problem is solved.
@@ -610,7 +615,7 @@ static const char *parse_bsd_option(void){
     case 'V': /* single */
       trace("V show version info\n");
       exclusive("V");
-      display_version();
+      display_ps_version();
       exit(0);
     case 'W':
       trace("W N/A get swap info from ... not /dev/drum.\n");
@@ -1029,7 +1034,7 @@ static const char *parse_gnu_option(void){
   case_version:
     trace("--version\n");
     exclusive("--version");
-    display_version();
+    display_ps_version();
     exit(0);
     return NULL;
   case_context:

@@ -15,8 +15,6 @@
 EXTERN_C_BEGIN
 
 void init_Linux_version(void);    /* Get Linux version */
-extern void display_version(void);	/* display suite version */
-extern const char procps_version[];		/* global buf for suite version */
 
 extern int linux_version_code;		/* runtime version of LINUX_VERSION_CODE
 					   in /usr/include/linux/version.h */

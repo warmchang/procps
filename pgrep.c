@@ -53,7 +53,6 @@
 #include "proc/sig.h"
 #include "proc/devname.h"
 #include "proc/sysinfo.h"
-#include "proc/version.h" /* procps_version */
 
 static int i_am_pkill = 0;
 
