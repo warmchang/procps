@@ -156,7 +156,6 @@ proc_libprocps_la_SOURCES = \
 	proc/devname.h \
 	proc/escape.c \
 	proc/escape.h \
-	proc/ksym.c \
 	proc/procps.h \
 	proc/pwcache.c \
 	proc/pwcache.h \
@@ -170,6 +169,7 @@ proc_libprocps_la_SOURCES = \
 	proc/sysinfo.h \
 	proc/version.c \
 	proc/version.h \
+	proc/wchan.c \
 	proc/wchan.h \
 	proc/whattime.c \
 	proc/whattime.h

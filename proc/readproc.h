@@ -287,7 +287,6 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 #define PROC_FILLGRP         0x0010 // resolve group id number -> group name
 #define PROC_FILLSTATUS      0x0020 // read status
 #define PROC_FILLSTAT        0x0040 // read stat
-#define PROC_FILLWCHAN       0x0080 // look up WCHAN name
 #define PROC_FILLARG         0x0100 // alloc and fill in `cmdline'
 #define PROC_FILLCGROUP      0x0200 // alloc and fill in `cgroup`
 #define PROC_FILLSUPGRP      0x0400 // resolve supplementary group id -> group name

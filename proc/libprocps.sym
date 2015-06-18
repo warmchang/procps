@@ -40,8 +40,6 @@ global:
 	look_up_our_self;
 	lookup_wchan;
 	meminfo;
-	open_psdb;
-	open_psdb_message;
 	openproc;
 	page_bytes;
 	pretty_print_signals;
