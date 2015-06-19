@@ -29,8 +29,8 @@
 
 /*
  * procps_linux_version
- * 
- * Return the current running Linux version release as shown in 
+ *
+ * Return the current running Linux version release as shown in
  * the procps filesystem.
  *
  * There are three ways you can get OS release:

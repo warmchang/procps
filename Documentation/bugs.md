@@ -13,7 +13,7 @@ you may find its a known bug already.
 
 Where to send
 -------------
-You can raise issues on the GitLab issues tracker which is 
+You can raise issues on the GitLab issues tracker which is
 located at https://gitlab.com/procps-ng/procps/issues You
 will need a GitLab login to do so.
 
@@ -40,7 +40,7 @@ Merge Requests
 Merge requests are fine to use and give a central place for
 everyone involved to have a look. Merge requests are found
 on GitLab at https://gitlab.com/procps-ng/procps/merge_requests
-It is best to follow up your merge request with an email to 
+It is best to follow up your merge request with an email to
 the list saying what you have done.
 
 Patches
