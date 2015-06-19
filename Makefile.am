@@ -156,6 +156,7 @@ proc_libprocps_la_SOURCES = \
 	proc/devname.h \
 	proc/escape.c \
 	proc/escape.h \
+	proc/procps-private.h \
 	proc/procps.h \
 	proc/pwcache.c \
 	proc/pwcache.h \
