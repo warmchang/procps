@@ -275,7 +275,7 @@ static int check_for_privs(void){
 static void init_libproc(void) __attribute__((constructor));
 static void init_libproc(void){
   have_privs = check_for_privs();
-  init_Linux_version(); /* Must be called before we check code */
+  int linux_version_code = procps_linux_version();
 
   cpuinfo();
   page_bytes = sysconf(_SC_PAGESIZE);
@@ -623,6 +623,7 @@ static unsigned long kb_inactive_file;
 
 void meminfo(void){
   char namebuf[32]; /* big enough to hold any row name */
+  int linux_version_code = procps_linux_version();
   mem_table_struct findme = { namebuf, NULL};
   mem_table_struct *found;
   char *head;

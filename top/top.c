@@ -407,6 +407,7 @@ static void bye_bye (const char *str) {
    at_eoj();                 // restore tty in preparation for exit
 #ifdef ATEOJ_RPTSTD
 {  proc_t *p;
+   int linux_version_code = procps_linux_version();
    if (!str && !Frames_signal && Ttychanged) { fprintf(stderr,
       "\n%s's Summary report:"
       "\n\tProgram"
@@ -3263,6 +3264,7 @@ static void before (char *me) {
    struct sigaction sa;
    proc_t p;
    int i;
+   int linux_version_code = procps_linux_version();
 
    atexit(close_stdout);
 

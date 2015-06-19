@@ -35,7 +35,6 @@ global:
 	kb_swap_free;
 	kb_swap_total;
 	kb_swap_used;
-	linux_version_code;
 	loadavg;
 	look_up_our_self;
 	lookup_wchan;
@@ -60,6 +59,7 @@ global:
 	unix_print_signals;
 	uptime;
 	user_from_uid;
+	procps_linux_version;
 local:
 	*;
 };

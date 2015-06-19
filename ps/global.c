@@ -455,6 +455,7 @@ static const char archdefs[] =
 
 /*********** spew variables ***********/
 void self_info(void){
+  int linux_version_code = procps_linux_version();
   fprintf(stderr,
     "BSD j    %s\n"
     "BSD l    %s\n"
