@@ -50,6 +50,8 @@
 #include "strutils.h"
 #include "proc/sysinfo.h"
 #include "proc/version.h"
+#include <proc/vmstat.h>
+#include <proc/readstat.h>
 
 #define UNIT_B        1
 #define UNIT_k        1000
@@ -285,7 +287,7 @@ static void new_format(void)
 	unsigned int hz = Hertz;
 	unsigned int running, blocked, dummy_1, dummy_2;
 	jiff cpu_use[2], cpu_nic[2], cpu_sys[2], cpu_idl[2], cpu_iow[2],
-	    cpu_xxx[2], cpu_yyy[2], cpu_zzz[2];
+	    cpu_xxx[2], cpu_yyy[2], cpu_sto[2];
 	jiff duse, dsys, didl, diow, dstl, Div, divo2;
 	unsigned long pgpgin[2], pgpgout[2], pswpin[2], pswpout[2];
 	unsigned int intr[2], ctxt[2];
@@ -295,14 +297,25 @@ static void new_format(void)
 	struct tm *tm_ptr;
 	time_t the_time;
 	char timebuf[32];
+	struct vmstat_info *vm_info;
+	struct procps_stat_info *sys_info;
 
 	sleep_half = (sleep_time / 2);
 	new_header();
 	meminfo();
 
-	getstat(cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow, cpu_xxx, cpu_yyy,
-		cpu_zzz, pgpgin, pgpgout, pswpin, pswpout, intr, ctxt, &running,
-		&blocked, &dummy_1, &dummy_2);
+	if (procps_vmstat_new(&vm_info) < 0)
+	    xerrx(EXIT_FAILURE,
+		    _("Unable to create vmstat structure"));
+	if (procps_vmstat_read(vm_info) < 0)
+	    xerrx(EXIT_FAILURE,
+		    _("Unable to read vmstat information"));
+	if (procps_stat_new(&sys_info) < 0)
+	    xerrx(EXIT_FAILURE,
+		    _("Unable to create system stat structure"));
+	if (procps_stat_read(sys_info, 0) < 0)
+	    xerrx(EXIT_FAILURE,
+		    _("Unable to read system stat information"));
 
 	if (t_option) {
 		(void) time( &the_time );
@@ -310,11 +323,14 @@ static void new_format(void)
 		strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
 	}
 
-	duse = *cpu_use + *cpu_nic;
-	dsys = *cpu_sys + *cpu_xxx + *cpu_yyy;
-	didl = *cpu_idl;
-	diow = *cpu_iow;
-	dstl = *cpu_zzz;
+	duse = procps_stat_get_cpu(sys_info, PROCPS_CPU_USER) +
+	    procps_stat_get_cpu(sys_info, PROCPS_CPU_NICE);
+	dsys = procps_stat_get_cpu(sys_info, PROCPS_CPU_SYSTEM) +
+	    procps_stat_get_cpu(sys_info, PROCPS_CPU_IRQ) +
+	    procps_stat_get_cpu(sys_info, PROCPS_CPU_SIRQ);
+	didl = procps_stat_get_cpu(sys_info, PROCPS_CPU_IDLE);
+	diow = procps_stat_get_cpu(sys_info, PROCPS_CPU_IOWAIT);
+	dstl = procps_stat_get_cpu(sys_info, PROCPS_CPU_STOLEN);
 	Div = duse + dsys + didl + diow + dstl;
 	if (!Div) Div = 1, didl = 1;
 	divo2 = Div / 2UL;
@@ -323,12 +339,12 @@ static void new_format(void)
 	       unitConvert(kb_swap_used), unitConvert(kb_main_free),
 	       unitConvert(a_option?kb_inactive:kb_main_buffers),
 	       unitConvert(a_option?kb_active:kb_main_cached),
-	       (unsigned)( (unitConvert(*pswpin  * kb_per_page) * hz + divo2) / Div ),
-	       (unsigned)( (unitConvert(*pswpout * kb_per_page) * hz + divo2) / Div ),
-	       (unsigned)( (*pgpgin		   * hz + divo2) / Div ),
-	       (unsigned)( (*pgpgout		   * hz + divo2) / Div ),
-	       (unsigned)( (*intr		   * hz + divo2) / Div ),
-	       (unsigned)( (*ctxt		   * hz + divo2) / Div ),
+	       (unsigned)( (unitConvert(procps_vmstat_get(vm_info, VMSTAT_INFO_PSWPIN)  * kb_per_page) * hz + divo2) / Div ),
+	       (unsigned)( (unitConvert(procps_vmstat_get(vm_info, VMSTAT_INFO_PSWPOUT)  * kb_per_page) * hz + divo2) / Div ),
+	       (unsigned)( (procps_vmstat_get(vm_info, VMSTAT_INFO_PGPGIN) * hz + divo2) / Div ),
+	       (unsigned)( (procps_vmstat_get(vm_info, VMSTAT_INFO_PGPGOUT) * hz + divo2) / Div ),
+	       (unsigned)( (procps_stat_get(sys_info, PROCPS_STAT_INTERRUPTS) * hz + divo2) / Div ),
+	       (unsigned)( (procps_stat_get(sys_info, PROCPS_STAT_CONTEXT) * hz + divo2) / Div ),
 	       (unsigned)( (100*duse			+ divo2) / Div ),
 	       (unsigned)( (100*dsys			+ divo2) / Div ),
 	       (unsigned)( (100*didl			+ divo2) / Div ),
@@ -351,11 +367,26 @@ static void new_format(void)
 
 		meminfo();
 
-		getstat(cpu_use + tog, cpu_nic + tog, cpu_sys + tog,
-			cpu_idl + tog, cpu_iow + tog, cpu_xxx + tog,
-			cpu_yyy + tog, cpu_zzz + tog, pgpgin + tog,
-			pgpgout + tog, pswpin + tog, pswpout + tog, intr + tog,
-			ctxt + tog, &running, &blocked, &dummy_1, &dummy_2);
+		if (procps_stat_read(sys_info,0) < 0)
+		    xerrx(EXIT_FAILURE,
+			    _("Unable to read system stat information"));
+		cpu_use[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_USER);
+		cpu_nic[tog] =  procps_stat_get_cpu(sys_info, PROCPS_CPU_NICE);
+		cpu_sys[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_SYSTEM);
+		    procps_stat_get_cpu(sys_info, PROCPS_CPU_IRQ) +
+		    procps_stat_get_cpu(sys_info, PROCPS_CPU_SIRQ);
+		cpu_idl[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_IDLE);
+		cpu_iow[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_IOWAIT);
+		cpu_sto[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_STOLEN);
+
+		if (procps_vmstat_read(vm_info) < 0)
+		    xerrx(EXIT_FAILURE,
+			    _("Unable to read vmstat information"));
+		pgpgin[tog] = procps_vmstat_get(vm_info, VMSTAT_INFO_PGPGIN);
+		pgpgout[tog] = procps_vmstat_get(vm_info, VMSTAT_INFO_PGPGOUT);
+		pswpin[tog] = procps_vmstat_get(vm_info, VMSTAT_INFO_PSWPIN);
+		pswpout[tog] = procps_vmstat_get(vm_info, VMSTAT_INFO_PSWPOUT);
+
 
 		if (t_option) {
 			(void) time( &the_time );
@@ -370,7 +401,7 @@ static void new_format(void)
 		    cpu_xxx[!tog] + cpu_yyy[tog] - cpu_yyy[!tog];
 		didl = cpu_idl[tog] - cpu_idl[!tog];
 		diow = cpu_iow[tog] - cpu_iow[!tog];
-		dstl = cpu_zzz[tog] - cpu_zzz[!tog];
+		dstl = cpu_sto[tog] - cpu_sto[!tog];
 
 		/* idle can run backwards for a moment -- kernel "feature" */
 		if (debt) {
@@ -783,17 +814,23 @@ static void disksum_format(void)
 
 static void sum_format(void)
 {
-	unsigned int running, blocked, btime, processes;
-	jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow, cpu_xxx, cpu_yyy, cpu_zzz;
-	unsigned long pgpgin, pgpgout, pswpin, pswpout;
-	unsigned int intr, ctxt;
+	struct procps_stat_info *sys_info;
+	struct vmstat_info *vm_info;
 
 	meminfo();
 
-	getstat(&cpu_use, &cpu_nic, &cpu_sys, &cpu_idl,
-		&cpu_iow, &cpu_xxx, &cpu_yyy, &cpu_zzz,
-		&pgpgin, &pgpgout, &pswpin, &pswpout,
-		&intr, &ctxt, &running, &blocked, &btime, &processes);
+	if (procps_stat_new(&sys_info) < 0)
+	    xerrx(EXIT_FAILURE,
+		_("Unable to create system stat structure"));
+	if (procps_stat_read(sys_info,0) < 0)
+	    xerrx(EXIT_FAILURE,
+		_("Unable to read system stat information"));
+	if (procps_vmstat_new(&vm_info) < 0)
+	    xerrx(EXIT_FAILURE,
+		_("Unable to create vmstat structure"));
+	if (procps_vmstat_read(vm_info) < 0)
+	    xerrx(EXIT_FAILURE,
+		_("Unable to read vmstat information"));
 
 	printf(_("%13lu %s total memory\n"), unitConvert(kb_main_total), szDataUnit);
 	printf(_("%13lu %s used memory\n"), unitConvert(kb_main_used), szDataUnit);
@@ -805,37 +842,38 @@ static void sum_format(void)
 	printf(_("%13lu %s total swap\n"), unitConvert(kb_swap_total), szDataUnit);
 	printf(_("%13lu %s used swap\n"), unitConvert(kb_swap_used), szDataUnit);
 	printf(_("%13lu %s free swap\n"), unitConvert(kb_swap_free), szDataUnit);
-	printf(_("%13lld non-nice user cpu ticks\n"), cpu_use);
-	printf(_("%13lld nice user cpu ticks\n"), cpu_nic);
-	printf(_("%13lld system cpu ticks\n"), cpu_sys);
-	printf(_("%13lld idle cpu ticks\n"), cpu_idl);
-	printf(_("%13lld IO-wait cpu ticks\n"), cpu_iow);
-	printf(_("%13lld IRQ cpu ticks\n"), cpu_xxx);
-	printf(_("%13lld softirq cpu ticks\n"), cpu_yyy);
-	printf(_("%13lld stolen cpu ticks\n"), cpu_zzz);
-	printf(_("%13lu pages paged in\n"), pgpgin);
-	printf(_("%13lu pages paged out\n"), pgpgout);
-	printf(_("%13lu pages swapped in\n"), pswpin);
-	printf(_("%13lu pages swapped out\n"), pswpout);
-	printf(_("%13u interrupts\n"), intr);
-	printf(_("%13u CPU context switches\n"), ctxt);
-	printf(_("%13u boot time\n"), btime);
-	printf(_("%13u forks\n"), processes);
+	printf(_("%13lld non-nice user cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_USER));
+	printf(_("%13lld nice user cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_NICE));
+	printf(_("%13lld system cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_SYSTEM));
+	printf(_("%13lld idle cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_IDLE));
+	printf(_("%13lld IO-wait cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_IOWAIT));
+	printf(_("%13lld IRQ cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_IRQ));
+	printf(_("%13lld softirq cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_SIRQ));
+	printf(_("%13lld stolen cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_STOLEN));
+	printf(_("%13lld non-nice guest cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_GUEST));
+	printf(_("%13lld nice guest cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_GNICE));
+	printf(_("%13lu pages paged in\n"), procps_vmstat_get(vm_info, VMSTAT_INFO_PGPGIN));
+	printf(_("%13lu pages paged out\n"), procps_vmstat_get(vm_info, VMSTAT_INFO_PGPGOUT));
+	printf(_("%13lu pages swapped in\n"), procps_vmstat_get(vm_info, VMSTAT_INFO_PSWPIN));
+	printf(_("%13lu pages swapped out\n"), procps_vmstat_get(vm_info, VMSTAT_INFO_PSWPOUT));
+	printf(_("%13u interrupts\n"), procps_stat_get(sys_info, PROCPS_STAT_INTERRUPTS));
+	printf(_("%13u CPU context switches\n"), procps_stat_get(sys_info, PROCPS_STAT_CONTEXT));
+	printf(_("%13u boot time\n"), procps_stat_get(sys_info, PROCPS_STAT_BTIME));
+	printf(_("%13u forks\n"), procps_stat_get(sys_info, PROCPS_STAT_PROCS));
 }
 
 static void fork_format(void)
 {
-	unsigned int running, blocked, btime, processes;
-	jiff cpu_use, cpu_nic, cpu_sys, cpu_idl, cpu_iow, cpu_xxx, cpu_yyy, cpu_zzz;
-	unsigned long pgpgin, pgpgout, pswpin, pswpout;
-	unsigned int intr, ctxt;
+    struct procps_stat_info *sys_info;
 
-	getstat(&cpu_use, &cpu_nic, &cpu_sys, &cpu_idl,
-		&cpu_iow, &cpu_xxx, &cpu_yyy, &cpu_zzz,
-		&pgpgin, &pgpgout, &pswpin, &pswpout,
-		&intr, &ctxt, &running, &blocked, &btime, &processes);
-
-	printf(_("%13u forks\n"), processes);
+    if (procps_stat_new(&sys_info) < 0)
+	xerrx(EXIT_FAILURE,
+		_("Unable to create system stat structure"));
+    if (procps_stat_read(sys_info,0) < 0)
+	xerrx(EXIT_FAILURE,
+		_("Unable to read system stat information"));
+    
+    printf(_("%13u forks\n"), procps_stat_get(sys_info, PROCPS_STAT_PROCS));
 }
 
 static int winhi(void)

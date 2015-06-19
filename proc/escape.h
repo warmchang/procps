@@ -1,12 +1,10 @@
 #ifndef PROCPS_PROC_ESCAPE_H
 #define PROCPS_PROC_ESCAPE_H
 
-//#include <stdio.h>
-#include <sys/types.h>
-#include "procps.h"
-#include "readproc.h"
+#include <proc/procps.h>
+#include <proc/readproc.h>
 
-EXTERN_C_BEGIN
+__BEGIN_DECLS
 
 #define ESC_STRETCH 1  // since we mangle to '?' this is 1 (would be 4 for octal escapes)
 
@@ -19,5 +17,5 @@ extern int escape_str(char *__restrict dst, const char *__restrict src, int bufs
 extern int escape_command(char *__restrict const outbuf, const proc_t *__restrict const pp, int bytes, int *cells, unsigned flags);
 extern int escaped_copy(char *__restrict dst, const char *__restrict src, int bufsize, int *maxroom);
 
-EXTERN_C_END
+__END_DECLS
 #endif

@@ -2,20 +2,14 @@
 #define PROC_SYSINFO_H
 #include <sys/types.h>
 #include <dirent.h>
-#include "procps.h"
+#include <proc/procps.h>
 
-EXTERN_C_BEGIN
+__BEGIN_DECLS
 
 extern unsigned long long Hertz;   /* clock tick frequency */
 extern long smp_num_cpus;          /* number of CPUs */
 extern int have_privs;             /* boolean, true if setuid or similar */
 extern long page_bytes;            /* this architecture's bytes per page */
-
-#if 0
-#define JT double
-extern void eight_cpu_numbers(JT *uret, JT *nret, JT *sret, JT *iret, JT *wret, JT *xret, JT *yret, JT *zret);
-#undef JT
-#endif
 
 extern int        uptime (double *uptime_secs, double *idle_secs);
 extern unsigned long getbtime(void);
@@ -140,5 +134,5 @@ extern unsigned get_pid_digits(void) FUNCTION;
 
 extern void cpuinfo (void);
 
-EXTERN_C_END
+__END_DECLS
 #endif /* SYSINFO_H */

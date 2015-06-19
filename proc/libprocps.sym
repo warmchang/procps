@@ -60,6 +60,17 @@ global:
 	uptime;
 	user_from_uid;
 	procps_linux_version;
+	procps_stat_new;
+	procps_stat_read;
+	procps_stat_ref;
+	procps_stat_unref;
+	procps_stat_get_cpu;
+	procps_stat_get;
+	procps_vmstat_new;
+	procps_vmstat_read;
+	procps_vmstat_ref;
+	procps_vmstat_unref;
+	procps_vmstat_get;
 local:
 	*;
 };

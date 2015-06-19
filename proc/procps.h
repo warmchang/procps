@@ -1,13 +1,7 @@
 #ifndef PROCPS_PROC_PROCPS_H
 #define PROCPS_PROC_PROCPS_H
 
-#ifdef  __cplusplus
-#define EXTERN_C_BEGIN extern "C" {
-#define EXTERN_C_END }
-#else
-#define EXTERN_C_BEGIN
-#define EXTERN_C_END
-#endif
+#include <features.h>
 
 // Some ports make the mistake of running a 32-bit userspace
 // on a 64-bit kernel. Shame on them. It's not at all OK to

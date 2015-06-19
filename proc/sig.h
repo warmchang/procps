@@ -11,9 +11,9 @@
  * GNU Library General Public License for more details.
  */
 
-#include "procps.h"
+#include <proc/procps.h>
 
-EXTERN_C_BEGIN
+__BEGIN_DECLS
 
 /* return -1 on failure */
 extern int signal_name_to_number(const char *__restrict name);
@@ -28,5 +28,5 @@ extern void pretty_print_signals(void);
 
 extern void unix_print_signals(void);
 
-EXTERN_C_END
+__END_DECLS
 #endif

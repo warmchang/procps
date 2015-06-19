@@ -10,13 +10,13 @@
 // in the file COPYING
 
 
-#include "procps.h"
-#include "pwcache.h"
+#include <proc/procps.h>
+#include <proc/pwcache.h>
 
 #define SIGNAL_STRING
 #define QUICK_THREADS        /* copy (vs. read) some thread info from parent proc_t */
 
-EXTERN_C_BEGIN
+__BEGIN_DECLS
 
 // ld	cutime, cstime, priority, nice, timeout, alarm, rss,
 // c	state,
@@ -311,5 +311,5 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 #define PROC_SPARE_3     0x04000000
 #define PROC_SPARE_4     0x08000000
 
-EXTERN_C_END
+__END_DECLS
 #endif

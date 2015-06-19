@@ -163,6 +163,8 @@ proc_libprocps_la_SOURCES = \
 	proc/pwcache.h \
 	proc/readproc.c \
 	proc/readproc.h \
+	proc/readstat.c \
+	proc/readstat.h \
 	proc/sig.c \
 	proc/sig.h \
 	proc/slab.c \
@@ -171,6 +173,8 @@ proc_libprocps_la_SOURCES = \
 	proc/sysinfo.h \
 	proc/version.c \
 	proc/version.h \
+	proc/vmstat.c \
+	proc/vmstat.h \
 	proc/wchan.c \
 	proc/wchan.h \
 	proc/whattime.c \

@@ -1,12 +1,12 @@
 #ifndef PROCPS_PROC_WCHAN_H
 #define PROCPS_PROC_WCHAN_H
 
-#include "procps.h"
+#include <proc/procps.h>
 
-EXTERN_C_BEGIN
+__BEGIN_DECLS
 
 extern const char * lookup_wchan (int pid);
 
-EXTERN_C_END
+__END_DECLS
 
 #endif

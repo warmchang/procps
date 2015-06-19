@@ -1,13 +1,13 @@
 #ifndef PROC_WHATTIME_H
 #define PROC_WHATTIME_H
 
-#include "procps.h"
+#include <proc/procps.h>
 
-EXTERN_C_BEGIN
+__BEGIN_DECLS
 
 extern void print_uptime(int human_readable);
 extern char *sprint_uptime(int human_readable);
 
-EXTERN_C_END
+__END_DECLS
 
 #endif
