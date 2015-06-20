@@ -10,7 +10,6 @@ Makefile.in.in~
 Makevars.template
 POTFILES
 POTFILES.in
-procps-ng.pot
 quot.sed
 remove-potcdate.sed
 remove-potcdate.sin
