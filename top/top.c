@@ -407,11 +407,10 @@ static void bye_bye (const char *str) {
    at_eoj();                 // restore tty in preparation for exit
 #ifdef ATEOJ_RPTSTD
 {  proc_t *p;
-   int linux_version_code = procps_linux_version();
    if (!str && !Frames_signal && Ttychanged) { fprintf(stderr,
       "\n%s's Summary report:"
       "\n\tProgram"
-      "\n\t   Linux version = %u.%u.%u, %s"
+      "\n\t   %s"
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
       "\n\t   page_bytes = %d, Cpu_faux_tot = %d, smp_num_cpus = %d"
       "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%d HST_t's/Page), HHist_siz = %u"
@@ -441,9 +440,6 @@ static void bye_bye (const char *str) {
       "\n\t   strlen(columnhdr) = %d"
       "\n"
       , __func__
-      , LINUX_VERSION_MAJOR(linux_version_code)
-      , LINUX_VERSION_MINOR(linux_version_code)
-      , LINUX_VERSION_PATCH(linux_version_code)
       , PACKAGE_STRING
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
       , (int)page_bytes, Cpu_faux_tot, (int)smp_num_cpus, (unsigned)sizeof(CPU_t)
