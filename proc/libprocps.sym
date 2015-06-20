@@ -60,6 +60,11 @@ global:
 	uptime;
 	user_from_uid;
 	procps_linux_version;
+	procps_meminfo_new;
+	procps_meminfo_read;
+	procps_meminfo_ref;
+	procps_meminfo_unref;
+	procps_meminfo_get;
 	procps_stat_new;
 	procps_stat_read;
 	procps_stat_ref;
