@@ -57,8 +57,10 @@ global:
 	strtosig;
 	tty_to_dev;
 	unix_print_signals;
-	uptime;
 	user_from_uid;
+	uptime;
+	sprint_uptime;
+	sprint_uptime_short;
 	procps_linux_version;
 	procps_meminfo_new;
 	procps_meminfo_read;

@@ -47,8 +47,6 @@ long page_bytes;       /* this architecture's page size */
 
 #define STAT_FILE    "/proc/stat"
 static int stat_fd = -1;
-#define UPTIME_FILE  "/proc/uptime"
-static int uptime_fd = -1;
 #define LOADAVG_FILE "/proc/loadavg"
 static int loadavg_fd = -1;
 #define MEMINFO_FILE "/proc/meminfo"
@@ -91,25 +89,6 @@ static char buf[8192];
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 
 /***********************************************************************/
-int uptime(double *restrict uptime_secs, double *restrict idle_secs) {
-    double up=0, idle=0;
-    char *savelocale;
-
-    FILE_TO_BUF(UPTIME_FILE,uptime_fd);
-    savelocale = strdup(setlocale(LC_NUMERIC, NULL));
-    setlocale(LC_NUMERIC,"C");
-    if (sscanf(buf, "%lf %lf", &up, &idle) < 2) {
-        setlocale(LC_NUMERIC,savelocale);
-        free(savelocale);
-        fputs("bad data in " UPTIME_FILE "\n", stderr);
-	    return 0;
-    }
-    setlocale(LC_NUMERIC,savelocale);
-    free(savelocale);
-    SET_IF_DESIRED(uptime_secs, up);
-    SET_IF_DESIRED(idle_secs, idle);
-    return up;	/* assume never be zero seconds in practice */
-}
 
 unsigned long getbtime(void) {
     static unsigned long btime = 0;
@@ -176,6 +155,7 @@ unsigned long getbtime(void) {
 
 unsigned long long Hertz;
 
+#if 0
 static void old_Hertz_hack(void){
   unsigned long long user_j, nice_j, sys_j, other_j, wait_j, hirq_j, sirq_j, stol_j;  /* jiffies (clock ticks) */
   double up_1, up_2, seconds;
@@ -235,7 +215,7 @@ static void old_Hertz_hack(void){
     fprintf(stderr, "Unknown HZ value! (%d) Assume %Ld.\n", h, Hertz);
   }
 }
-
+#endif
 // same as:   euid != uid || egid != gid
 #ifndef AT_SECURE
 #define AT_SECURE      23     // secure mode boolean (true if setuid, etc.)
@@ -287,15 +267,8 @@ static void init_libproc(void){
 //  fputs("2.4+ kernel w/o ELF notes? -- report this\n", stderr);
   }
 #endif /* __linux __ */
-#if defined(__FreeBSD_kernel__) || defined(__FreeBSD__)
-  /* On FreeBSD the Hertz hack is unrelaible, there is no ELF note and
-   * Hertz isn't defined in asm/params.h
-   * See Debian Bug #460331
-   */
   Hertz = 100;
   return;
-#endif /* __FreeBSD__ */
-  old_Hertz_hack();
 }
 
 #if 0

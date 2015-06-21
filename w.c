@@ -32,7 +32,7 @@
 #include "proc/readproc.h"
 #include "proc/sysinfo.h"
 #include "proc/version.h"
-#include "proc/whattime.h"
+#include <proc/uptime.h>
 
 #include <ctype.h>
 #include <errno.h>
@@ -584,7 +584,7 @@ int main(int argc, char **argv)
 
 	if (header) {
 		/* print uptime and headers */
-		print_uptime(0);
+		printf("%s\n", sprint_uptime());
 		/* Translation Hint: Following five uppercase messages are
 		 * headers. Try to keep alignment intact.  */
 		printf(_("%-*s TTY      "), userlen, _("USER"));

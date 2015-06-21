@@ -28,7 +28,7 @@
 #include "fileutils.h"
 #include "nls.h"
 #include "proc/sysinfo.h"
-#include "proc/whattime.h"
+#include <proc/uptime.h>
 #include "proc/version.h"
 
 static void print_uptime_since()
@@ -104,6 +104,9 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 
-	print_uptime(p);
+	if (p)
+	    printf("%s\n", sprint_uptime());
+	else
+	    printf("%s\n", sprint_uptime_short());
 	return EXIT_SUCCESS;
 }
