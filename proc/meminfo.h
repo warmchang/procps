@@ -1,6 +1,9 @@
 /*
- * libprocps - Library to read proc filesystem
- * meminfo - Parse /proc/meminfo
+ * meminfo - Memory statistics part of procps
+ *
+ * Copyright (C) 1992-1998 by Michael K. Johnson <johnsonm@redhat.com>
+ * Copyright (C) 1998-2003 Albert Cahalan
+ * Copyright (C) 2015 Craig Small <csmall@enc.com.au>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

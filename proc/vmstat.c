@@ -25,7 +25,7 @@ struct mem_table_struct {
     unsigned long *slot;
 };
 
-struct vmstat_info {
+struct procps_vmstat {
     int refcount;
     int vmstat_fd;
     struct vmstat_data data;
@@ -39,12 +39,12 @@ struct vmstat_info {
  * The initial refcount is 1, and needs to be decremented
  * to release the resources of the structure.
  *
- * Returns: a new vmstat info container
+ * Returns: a new procps_vmstat container
  */
-PROCPS_EXPORT int procps_vmstat_new(struct vmstat_info **info)
+PROCPS_EXPORT int procps_vmstat_new(struct procps_vmstat **info)
 {
-    struct vmstat_info *v;
-    v = calloc(1, sizeof(struct vmstat_info));
+    struct procps_vmstat *v;
+    v = calloc(1, sizeof(struct procps_vmstat));
     if (!v)
 	return -ENOMEM;
 
@@ -59,8 +59,10 @@ PROCPS_EXPORT int procps_vmstat_new(struct vmstat_info **info)
  *
  * Read the data out of /proc/vmstat putting the information
  * into the supplied info structure
+ *
+ * Returns: 0 on success, negative on error
  */
-PROCPS_EXPORT int procps_vmstat_read(struct vmstat_info *info)
+PROCPS_EXPORT int procps_vmstat_read(struct procps_vmstat *info)
 {
     char buf[8192];
     char *head, *tail;
@@ -114,7 +116,7 @@ PROCPS_EXPORT int procps_vmstat_read(struct vmstat_info *info)
     return 0;
 }
 
-PROCPS_EXPORT struct vmstat_info *procps_vmstat_ref(struct vmstat_info *info)
+PROCPS_EXPORT struct procps_vmstat *procps_vmstat_ref(struct procps_vmstat *info)
 {
     if (info == NULL)
 	return NULL;
@@ -122,7 +124,7 @@ PROCPS_EXPORT struct vmstat_info *procps_vmstat_ref(struct vmstat_info *info)
     return info;
 }
 
-PROCPS_EXPORT struct vmstat_info *procps_vmstat_unref(struct vmstat_info *info)
+PROCPS_EXPORT struct procps_vmstat *procps_vmstat_unref(struct procps_vmstat *info)
 {
     if (info == NULL)
 	return NULL;
@@ -135,17 +137,17 @@ PROCPS_EXPORT struct vmstat_info *procps_vmstat_unref(struct vmstat_info *info)
 
 /* Accessor functions */
 PROCPS_EXPORT unsigned long procps_vmstat_get(
-	struct vmstat_info *info,
+	struct procps_vmstat *info,
 	enum vmstat_item item)
 {
     switch(item) {
-	case VMSTAT_INFO_PGPGIN:
+	case PROCPS_VMSTAT_PGPGIN:
 	    return info->data.pgpgin;
-	case VMSTAT_INFO_PGPGOUT:
+	case PROCPS_VMSTAT_PGPGOUT:
 	    return info->data.pgpgout;
-	case VMSTAT_INFO_PSWPIN:
+	case PROCPS_VMSTAT_PSWPIN:
 	    return info->data.pswpin;
-	case VMSTAT_INFO_PSWPOUT:
+	case PROCPS_VMSTAT_PSWPOUT:
 	    return info->data.pswpout;
     }
     return 0;

@@ -27,18 +27,19 @@
 
 __BEGIN_DECLS
 
-struct vmstat_info;
-int procps_vmstat_new(struct vmstat_info **info);
-int procps_vmstat_read(struct vmstat_info *info);
-struct vmstat_info *procps_vmstat_ref(struct vmstat_info *info);
-struct vmstat_info *procps_vmstat_unref(struct vmstat_info *info);
+struct procps_vmstat;
+int procps_vmstat_new(struct procps_vmstat **info);
+int procps_vmstat_read(struct procps_vmstat *info);
+struct procps_vmstat *procps_vmstat_ref(struct procps_vmstat *info);
+struct procps_vmstat *procps_vmstat_unref(struct procps_vmstat *info);
+
 enum vmstat_item {
-    VMSTAT_INFO_PGPGIN,
-    VMSTAT_INFO_PGPGOUT,
-    VMSTAT_INFO_PSWPIN,
-    VMSTAT_INFO_PSWPOUT
+    PROCPS_VMSTAT_PGPGIN,
+    PROCPS_VMSTAT_PGPGOUT,
+    PROCPS_VMSTAT_PSWPIN,
+    PROCPS_VMSTAT_PSWPOUT
 };
-unsigned long procps_vmstat_get(struct vmstat_info *info, enum vmstat_item item);
+unsigned long procps_vmstat_get(struct procps_vmstat *info, enum vmstat_item item);
 
 __END_DECLS
 #endif

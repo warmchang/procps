@@ -297,7 +297,7 @@ static void new_format(void)
 	struct tm *tm_ptr;
 	time_t the_time;
 	char timebuf[32];
-	struct vmstat_info *vm_info;
+	struct procps_vmstat *vm_info;
 	struct procps_stat_info *sys_info;
 
 	sleep_half = (sleep_time / 2);
@@ -339,10 +339,10 @@ static void new_format(void)
 	       unitConvert(kb_swap_used), unitConvert(kb_main_free),
 	       unitConvert(a_option?kb_inactive:kb_main_buffers),
 	       unitConvert(a_option?kb_active:kb_main_cached),
-	       (unsigned)( (unitConvert(procps_vmstat_get(vm_info, VMSTAT_INFO_PSWPIN)  * kb_per_page) * hz + divo2) / Div ),
-	       (unsigned)( (unitConvert(procps_vmstat_get(vm_info, VMSTAT_INFO_PSWPOUT)  * kb_per_page) * hz + divo2) / Div ),
-	       (unsigned)( (procps_vmstat_get(vm_info, VMSTAT_INFO_PGPGIN) * hz + divo2) / Div ),
-	       (unsigned)( (procps_vmstat_get(vm_info, VMSTAT_INFO_PGPGOUT) * hz + divo2) / Div ),
+	       (unsigned)( (unitConvert(procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN)  * kb_per_page) * hz + divo2) / Div ),
+	       (unsigned)( (unitConvert(procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT)  * kb_per_page) * hz + divo2) / Div ),
+	       (unsigned)( (procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN) * hz + divo2) / Div ),
+	       (unsigned)( (procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT) * hz + divo2) / Div ),
 	       (unsigned)( (procps_stat_get(sys_info, PROCPS_STAT_INTERRUPTS) * hz + divo2) / Div ),
 	       (unsigned)( (procps_stat_get(sys_info, PROCPS_STAT_CONTEXT) * hz + divo2) / Div ),
 	       (unsigned)( (100*duse			+ divo2) / Div ),
@@ -382,10 +382,10 @@ static void new_format(void)
 		if (procps_vmstat_read(vm_info) < 0)
 		    xerrx(EXIT_FAILURE,
 			    _("Unable to read vmstat information"));
-		pgpgin[tog] = procps_vmstat_get(vm_info, VMSTAT_INFO_PGPGIN);
-		pgpgout[tog] = procps_vmstat_get(vm_info, VMSTAT_INFO_PGPGOUT);
-		pswpin[tog] = procps_vmstat_get(vm_info, VMSTAT_INFO_PSWPIN);
-		pswpout[tog] = procps_vmstat_get(vm_info, VMSTAT_INFO_PSWPOUT);
+		pgpgin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN);
+		pgpgout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT);
+		pswpin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN);
+		pswpout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT);
 
 
 		if (t_option) {
@@ -815,7 +815,7 @@ static void disksum_format(void)
 static void sum_format(void)
 {
 	struct procps_stat_info *sys_info;
-	struct vmstat_info *vm_info;
+	struct procps_vmstat *vm_info;
 
 	meminfo();
 
@@ -852,10 +852,10 @@ static void sum_format(void)
 	printf(_("%13lld stolen cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_STOLEN));
 	printf(_("%13lld non-nice guest cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_GUEST));
 	printf(_("%13lld nice guest cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_GNICE));
-	printf(_("%13lu pages paged in\n"), procps_vmstat_get(vm_info, VMSTAT_INFO_PGPGIN));
-	printf(_("%13lu pages paged out\n"), procps_vmstat_get(vm_info, VMSTAT_INFO_PGPGOUT));
-	printf(_("%13lu pages swapped in\n"), procps_vmstat_get(vm_info, VMSTAT_INFO_PSWPIN));
-	printf(_("%13lu pages swapped out\n"), procps_vmstat_get(vm_info, VMSTAT_INFO_PSWPOUT));
+	printf(_("%13lu pages paged in\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN));
+	printf(_("%13lu pages paged out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT));
+	printf(_("%13lu pages swapped in\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN));
+	printf(_("%13lu pages swapped out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT));
 	printf(_("%13u interrupts\n"), procps_stat_get(sys_info, PROCPS_STAT_INTERRUPTS));
 	printf(_("%13u CPU context switches\n"), procps_stat_get(sys_info, PROCPS_STAT_CONTEXT));
 	printf(_("%13u boot time\n"), procps_stat_get(sys_info, PROCPS_STAT_BTIME));

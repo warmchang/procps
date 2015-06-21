@@ -179,8 +179,8 @@ proc_libprocps_la_SOURCES = \
 	proc/vmstat.h \
 	proc/wchan.c \
 	proc/wchan.h \
-	proc/whattime.c \
-	proc/whattime.h
+	proc/uptime.c \
+	proc/uptime.h
 
 proc_libprocps_la_includedir = $(includedir)/proc/
 proc_libprocps_la_include_HEADERS = \
