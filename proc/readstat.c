@@ -188,9 +188,9 @@ PROCPS_EXPORT jiff procps_stat_get_cpu(struct procps_stat_info *info, enum procp
 PROCPS_EXPORT unsigned int procps_stat_get(struct procps_stat_info *info, enum procps_stat_item item)
 {
     switch(item) {
-	case PROCPS_STAT_INTERRUPTS:
+	case PROCPS_STAT_INTR:
 	    return info->data.intr;
-	case PROCPS_STAT_CONTEXT:
+	case PROCPS_STAT_CTXT:
 	    return info->data.ctxt;
 	case PROCPS_STAT_BTIME:
 	    return info->data.btime;

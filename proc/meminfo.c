@@ -38,13 +38,13 @@ struct meminfo_data {
     unsigned long high_total;
     unsigned long low_free;
     unsigned long low_total;
-    unsigned long main_available;
-    unsigned long main_buffers;
-    unsigned long main_cached;
-    unsigned long main_free;
-    unsigned long main_shared;
-    unsigned long main_total;
-    unsigned long main_used;
+    unsigned long available;
+    unsigned long buffers;
+    unsigned long cached;
+    unsigned long free;
+    unsigned long shared;
+    unsigned long total;
+    unsigned long used;
     unsigned long swap_free;
     unsigned long swap_total;
     unsigned long swap_used;
@@ -131,23 +131,23 @@ PROCPS_EXPORT int procps_meminfo_read(struct procps_meminfo *info)
 	} else if (0 == strcmp(head, "LowTotal:")) {
 	    valptr = &(info->data.low_total);
 	} else if (0 == strcmp(head, "MemAvailable:")) {
-	    valptr = &(info->data.main_available);
+	    valptr = &(info->data.available);
 	} else if (0 == strcmp(head, "Buffers:")) {
-	    valptr = &(info->data.main_buffers);
+	    valptr = &(info->data.buffers);
 	} else if (0 == strcmp(head, "Cached:")) {
-	    valptr = &(info->data.main_cached);
+	    valptr = &(info->data.cached);
 	} else if (0 == strcmp(head, "MemFree:")) {
-	    valptr = &(info->data.main_free);
+	    valptr = &(info->data.free);
 	} else if (0 == strcmp(head, "Shmem:")) {
-	    valptr = &(info->data.main_shared);
+	    valptr = &(info->data.shared);
 	} else if (0 == strcmp(head, "MemTotal:")) {
-	    valptr = &(info->data.main_total);
+	    valptr = &(info->data.total);
 	} else if (0 == strcmp(head, "SwapFree:")) {
 	    valptr = &(info->data.swap_free);
 	} else if (0 == strcmp(head, "SwapTotal:")) {
 	    valptr = &(info->data.swap_total);
 	}
-	head - tail+1;
+	head = tail+1;
 	if (valptr) {
 	    *valptr = strtoul(head, &tail, 10);
 	}
@@ -186,9 +186,45 @@ PROCPS_EXPORT unsigned long procps_meminfo_get(
 	enum meminfo_item item)
 {
     switch(item) {
-	case PROCPS_MEMINFO_ACTIVE:
+	case PROCPS_MEM_ACTIVE:
 	    return info->data.active;
-	case PROCPS_MEMINFO_SWAP_USED:
+	case PROCPS_MEM_INACTIVE:
+	    return info->data.inactive;
+	case PROCPS_MEMHI_FREE:
+	    return info->data.high_free;
+	case PROCPS_MEMHI_TOTAL:
+	    return info->data.high_total;
+	case PROCPS_MEMHI_USED:
+	    if (info->data.high_free > info->data.high_total)
+		return 0;
+	    return info->data.high_total - info->data.high_free;
+	case PROCPS_MEMLO_FREE:
+	    return info->data.low_free;
+	case PROCPS_MEMLO_TOTAL:
+	    return info->data.low_total;
+	case PROCPS_MEMLO_USED:
+	    if (info->data.low_free > info->data.low_total)
+		return 0;
+	    return info->data.low_total - info->data.low_free;
+	case PROCPS_MEM_AVAILABLE:
+	    return info->data.available;
+	case PROCPS_MEM_BUFFERS:
+	    return info->data.buffers;
+	case PROCPS_MEM_CACHED:
+	    return info->data.cached;
+	case PROCPS_MEM_FREE:
+	    return info->data.free;
+	case PROCPS_MEM_SHARED:
+	    return info->data.shared;
+	case PROCPS_MEM_TOTAL:
+	    return info->data.total;
+	case PROCPS_MEM_USED:
+	    return info->data.used;
+	case PROCPS_SWAP_FREE:
+	    return info->data.swap_free;
+	case PROCPS_SWAP_TOTAL:
+	    return info->data.swap_total;
+	case PROCPS_SWAP_USED:
 	    if (info->data.swap_free > info->data.swap_total)
 		return 0;
 	    return info->data.swap_total - info->data.swap_free;

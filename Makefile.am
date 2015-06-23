@@ -193,9 +193,10 @@ proc_libprocps_la_include_HEADERS = \
 	proc/sig.h \
 	proc/slab.h \
 	proc/sysinfo.h \
+	proc/uptime.h \
 	proc/version.h \
-	proc/wchan.h \
-	proc/whattime.h
+	proc/vmstat.h \
+	proc/wchan.h 
 
 dist_man_MANS += \
 	proc/openproc.3 \

@@ -36,8 +36,8 @@ enum procps_cpu_item {
 };
 
 enum procps_stat_item {
-    PROCPS_STAT_INTERRUPTS,
-    PROCPS_STAT_CONTEXT,
+    PROCPS_STAT_INTR,
+    PROCPS_STAT_CTXT,
     PROCPS_STAT_BTIME,
     PROCPS_STAT_PROCS,
     PROCPS_STAT_PROCS_BLK,

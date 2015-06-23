@@ -107,13 +107,14 @@ PROCPS_EXPORT char *sprint_uptime(void)
     double uptime_secs, idle_secs;
     double av1, av5, av15;
 
+    upbuf[0] = '\0';
     if (time(&realseconds) < 0)
-	return NULL;
+	return upbuf;
     realtime = localtime(&realseconds);
     pos = sprintf(upbuf, " %02d:%02d:%02d ",
 	    realtime->tm_hour, realtime->tm_min, realtime->tm_sec);
     if (uptime(&uptime_secs, &idle_secs) < 0)
-	return NULL;
+	return upbuf;
 
     updays  =   ((int) uptime_secs / (60*60*24));
     uphours =   ((int) uptime_secs / (60*24)) % 24;
@@ -134,7 +135,7 @@ PROCPS_EXPORT char *sprint_uptime(void)
 	    users, users == 1 ? "" : "s",
 	    av1, av5, av15);
 
-
+    return upbuf;
 }
 
 PROCPS_EXPORT char *sprint_uptime_short(void)
@@ -146,8 +147,9 @@ PROCPS_EXPORT char *sprint_uptime_short(void)
     struct tm *realtime;
     double uptime_secs, idle_secs;
 
+    shortbuf[0] = '\0';
     if (uptime(&uptime_secs, &idle_secs) < 0)
-	return NULL;
+	return shortbuf;
 
     updecades =  (int) uptime_secs / (60*60*24*365*10);
     upyears =   ((int) uptime_secs / (60*60*24*365)) % 10;
