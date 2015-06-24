@@ -26,7 +26,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "proc/version.h"
 #include "c.h"
 #include "nls.h"
 #include "xalloc.h"
