@@ -26,9 +26,11 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <pwd.h>
+#include <grp.h>
+
 #include "alloc.h"
 #include "pwcache.h"
-#include <grp.h>
+#include "procps-private.h"
 
 // might as well fill cache lines... else we waste memory anyway
 
@@ -41,7 +43,7 @@ static struct pwbuf {
     char name[P_G_SZ];
 } *pwhash[HASHSIZE];
 
-char *user_from_uid(uid_t uid) {
+PROCPS_EXPORT char *user_from_uid(uid_t uid) {
     struct pwbuf **p;
     struct passwd *pw;
 
@@ -69,7 +71,7 @@ static struct grpbuf {
     char name[P_G_SZ];
 } *grphash[HASHSIZE];
 
-char *group_from_gid(gid_t gid) {
+PROCPS_EXPORT char *group_from_gid(gid_t gid) {
     struct grpbuf **g;
     struct group *gr;
 
