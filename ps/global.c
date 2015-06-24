@@ -455,7 +455,6 @@ static const char archdefs[] =
 
 /*********** spew variables ***********/
 void self_info(void){
-  int linux_version_code = procps_linux_version();
   fprintf(stderr,
     "BSD j    %s\n"
     "BSD l    %s\n"
@@ -479,11 +478,6 @@ void self_info(void){
   );
 
   fprintf(stderr, "%s version %s\n", PACKAGE_NAME, PACKAGE_VERSION);
-  fprintf(stderr, "Linux version %d.%d.%d\n",
-    LINUX_VERSION_MAJOR(linux_version_code),
-    LINUX_VERSION_MINOR(linux_version_code),
-    LINUX_VERSION_PATCH(linux_version_code)
-  );
   /* __libc_print_version(); */  /* how can we get the run-time version? */
   fprintf(stderr, "Compiled with: glibc %d.%d, gcc %d.%d\n\n",
     __GLIBC__, __GLIBC_MINOR__, __GNUC__, __GNUC_MINOR__
@@ -499,9 +493,9 @@ void self_info(void){
 
   fprintf(stderr,
     "personality=0x%08x (from \"%s\")\n"
-    "EUID=%d TTY=%d,%d Hertz=%lld page_size=%d\n",
+    "EUID=%d TTY=%d,%d page_size=%d\n",
     personality, saved_personality_text,
-    cached_euid, (int)major(cached_tty), (int)minor(cached_tty), Hertz,
+    cached_euid, (int)major(cached_tty), (int)minor(cached_tty),
     (int)(page_size)
   );
 

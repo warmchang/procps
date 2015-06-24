@@ -285,7 +285,7 @@ static void new_format(void)
 
 	unsigned int tog = 0;	/* toggle switch for cleaner code */
 	unsigned int i;
-	unsigned int hz = Hertz;
+	long hz;
 	jiff cpu_use[2], cpu_nic[2], cpu_sys[2], cpu_idl[2], cpu_iow[2],
 	    cpu_xxx[2], cpu_yyy[2], cpu_sto[2];
 	jiff duse, dsys, didl, diow, dstl, Div, divo2;
@@ -302,6 +302,7 @@ static void new_format(void)
 	struct procps_meminfo *mem_info;
 
 	sleep_half = (sleep_time / 2);
+	hz = procps_hertz_get();
 	new_header();
 
 	if (procps_vmstat_new(&vm_info) < 0)

@@ -61,13 +61,16 @@
 #include <sys/mman.h>
 #include <sys/resource.h>
 #include <sys/types.h>
-
+  
+#include "c.h"
 #include "../proc/readproc.h"
 #include "../proc/sysinfo.h"
 #include "../proc/wchan.h"
 #include "../proc/procps.h"
 #include "../proc/devname.h"
 #include "../proc/escape.h"
+#include <proc/readstat.h>
+#include <proc/meminfo.h>
 
 #include "common.h"
 
@@ -87,6 +90,37 @@ static int wide_signals;  /* true if we have room */
 static time_t seconds_since_1970;
 static unsigned long page_shift;
 
+static unsigned int boot_time;
+static unsigned long memory_total;
+
+extern long Hertz;
+
+
+static void get_boot_time(void)
+{
+    struct procps_stat_info *sys_info;
+    if (procps_stat_new(&sys_info) < 0) 
+	xerrx(EXIT_FAILURE,
+		_("Unable to create system stat structure"));
+    if (procps_stat_read(sys_info,0) < 0)
+	xerrx(EXIT_FAILURE,
+		_("Unable to read system stat information"));
+    boot_time = procps_stat_get(sys_info, PROCPS_STAT_BTIME);
+    procps_stat_unref(sys_info);
+}
+
+static void get_memory_total()
+{
+    struct procps_meminfo *mem_info;
+    if (procps_meminfo_new(&mem_info) < 0)
+	xerrx(EXIT_FAILURE,
+		_("Unable to create meminfo structure"));
+    if (procps_meminfo_read(mem_info) < 0)
+	xerrx(EXIT_FAILURE,
+		_("Unable to read meminfo information"));
+    memory_total = procps_meminfo_get(mem_info, PROCPS_MEM_TOTAL);
+    procps_meminfo_unref(mem_info);
+}
 
 /*************************************************************************/
 /************ Lots of sort functions, starting with the NOP **************/
@@ -857,7 +891,7 @@ static int pr_bsdtime(char *restrict const outbuf, const proc_t *restrict const 
 static int pr_bsdstart(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t start;
   time_t seconds_ago;
-  start = getbtime() + pp->start_time / Hertz;
+  start = boot_time + pp->start_time / Hertz;
   seconds_ago = seconds_since_1970 - start;
   if(seconds_ago < 0) seconds_ago=0;
   if(seconds_ago > 3600*24)  strcpy(outbuf, ctime(&start)+4);
@@ -964,14 +998,14 @@ static int pr_rss(char *restrict const outbuf, const proc_t *restrict const pp){
 /* pp->vm_rss * 1000 would overflow on 32-bit systems with 64 GB memory */
 static int pr_pmem(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long pmem = 0;
-  pmem = pp->vm_rss * 1000ULL / kb_main_total;
+  pmem = pp->vm_rss * 1000ULL / memory_total;
   if (pmem > 999) pmem = 999;
   return snprintf(outbuf, COLWID, "%2u.%u", (unsigned)(pmem/10), (unsigned)(pmem%10));
 }
 
 static int pr_lstart(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t t;
-  t = getbtime() + pp->start_time / Hertz;
+  t = boot_time + pp->start_time / Hertz;
   return snprintf(outbuf, COLWID, "%24.24s", ctime(&t));
 }
 
@@ -994,7 +1028,7 @@ static int pr_stime(char *restrict const outbuf, const proc_t *restrict const pp
   our_time = localtime(&seconds_since_1970);   /* not reentrant */
   tm_year = our_time->tm_year;
   tm_yday = our_time->tm_yday;
-  t = getbtime() + pp->start_time / Hertz;
+  t = boot_time + pp->start_time / Hertz;
   proc_time = localtime(&t); /* not reentrant, this corrupts our_time */
   fmt = "%H:%M";                                   /* 03:02 23:59 */
   if(tm_yday != proc_time->tm_yday) fmt = "%b%d";  /* Jun06 Aug27 */
@@ -1005,7 +1039,7 @@ static int pr_stime(char *restrict const outbuf, const proc_t *restrict const pp
 static int pr_start(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t t;
   char *str;
-  t = getbtime() + pp->start_time / Hertz;
+  t = boot_time + pp->start_time / Hertz;
   str = ctime(&t);
   if(str[8]==' ')  str[8]='0';
   if(str[11]==' ') str[11]='0';
@@ -2096,40 +2130,40 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
 }
 
 
-void init_output(void){
-  int outbuf_pages;
-  char *outbuf;
+void init_output(void)
+{
+    int outbuf_pages;
+    char *outbuf;
 
-  switch(page_size){
-  case 65536: page_shift = 16; break;
-  case 32768: page_shift = 15; break;
-  case 16384: page_shift = 14; break;
-  case  8192: page_shift = 13; break;
-  default: fprintf(stderr, _("unknown page size (assume 4096)\n"));
-  case  4096: page_shift = 12; break;
-  case  2048: page_shift = 11; break;
-  case  1024: page_shift = 10; break;
-  }
+    switch(page_size) {
+	case 65536: page_shift = 16; break;
+	case 32768: page_shift = 15; break;
+	case 16384: page_shift = 14; break;
+	case  8192: page_shift = 13; break;
+	default: /* Assume 4096 */
+	case  4096: page_shift = 12; break;
+	case  2048: page_shift = 11; break;
+	case  1024: page_shift = 10; break;
+    }
 
-  // add page_size-1 to round up
-  outbuf_pages = (OUTBUF_SIZE+SPACE_AMOUNT+page_size-1)/page_size;
-  outbuf = mmap(
-    0,
-    page_size * (outbuf_pages+1), // 1 more, for guard page at high addresses
-    PROT_READ | PROT_WRITE,
-    MAP_PRIVATE | MAP_ANONYMOUS,
-    -1,
-    0
-  );
-  memset(outbuf, ' ', SPACE_AMOUNT);
-  if(SPACE_AMOUNT==page_size) mprotect(outbuf, page_size, PROT_READ);
-  mprotect(outbuf + page_size*outbuf_pages, page_size, PROT_NONE); // guard page
-  saved_outbuf = outbuf + SPACE_AMOUNT;
-  // available space:  page_size*outbuf_pages-SPACE_AMOUNT
+    // add page_size-1 to round up
+    outbuf_pages = (OUTBUF_SIZE+SPACE_AMOUNT+page_size-1)/page_size;
+    outbuf = mmap(
+	    0,
+	    page_size * (outbuf_pages+1), // 1 more, for guard page at high addresses
+	    PROT_READ | PROT_WRITE,
+	    MAP_PRIVATE | MAP_ANONYMOUS,
+	    -1,
+	    0);
+    memset(outbuf, ' ', SPACE_AMOUNT);
+    if(SPACE_AMOUNT==page_size)
+	mprotect(outbuf, page_size, PROT_READ);
+    mprotect(outbuf + page_size*outbuf_pages, page_size, PROT_NONE); // guard page
+    saved_outbuf = outbuf + SPACE_AMOUNT;
+    // available space:  page_size*outbuf_pages-SPACE_AMOUNT
+    seconds_since_1970 = time(NULL);
 
-  seconds_since_1970 = time(NULL);
-
-  meminfo();
-
-  check_header_width();
+    get_boot_time();
+    get_memory_total();
+    check_header_width();
 }

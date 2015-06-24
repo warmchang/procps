@@ -64,6 +64,7 @@
 
 /*######  Miscellaneous global stuff  ####################################*/
 
+static long Hertz;
         /* The original and new terminal definitions
            (only set when not in 'Batch' mode) */
 static struct termios Tty_original,    // our inherited terminal definition
@@ -3274,6 +3275,7 @@ static void before (char *me) {
    // accommodate nls/gettext potential translations
    initialize_nls();
 
+   Hertz = procps_hertz_get();
    // establish cpu particulars
 #ifdef PRETEND8CPUS
    smp_num_cpus = 8;

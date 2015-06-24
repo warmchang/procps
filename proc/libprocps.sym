@@ -1,6 +1,5 @@
 LIBPROCPS_0 {
 global:
-	Hertz;
 	closeproc;
 	cpuinfo;
 	dev_to_tty;
@@ -61,6 +60,7 @@ global:
 	uptime;
 	sprint_uptime;
 	sprint_uptime_short;
+	procps_hertz_get;
 	procps_linux_version;
 	procps_meminfo_new;
 	procps_meminfo_read;

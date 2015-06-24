@@ -6,14 +6,14 @@
 
 __BEGIN_DECLS
 
-extern unsigned long long Hertz;   /* clock tick frequency */
 extern long smp_num_cpus;          /* number of CPUs */
 extern int have_privs;             /* boolean, true if setuid or similar */
 extern long page_bytes;            /* this architecture's bytes per page */
 
 extern int        uptime (double *uptime_secs, double *idle_secs);
 extern unsigned long getbtime(void);
-extern void       loadavg(double *av1, double *av5, double *av15);
+int loadavg(double *av1, double *av5, double *av15);
+long procps_hertz_get(void);
 
 /* Shmem in 2.6.32+ */
 extern unsigned long kb_main_shared;

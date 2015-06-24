@@ -25,16 +25,15 @@
 #include <string.h>
 #include <ctype.h>
 #include <locale.h>
+#include <errno.h>
 
 #include <unistd.h>
 #include <fcntl.h>
 #include "alloc.h"
 #include "version.h"
 #include "sysinfo.h" /* include self to verify prototypes */
+#include "procps-private.h"
 
-#ifndef HZ
-#include <netinet/in.h>  /* htons */
-#endif
 
 long smp_num_cpus;     /* number of CPUs */
 long page_bytes;       /* this architecture's page size */
@@ -122,243 +121,68 @@ unsigned long getbtime(void) {
     return btime;
 }
 
-/***********************************************************************
+/* 
+ * procps_hertz_get:
+ *
+ *
  * Some values in /proc are expressed in units of 1/HZ seconds, where HZ
  * is the kernel clock tick rate. One of these units is called a jiffy.
  * The HZ value used in the kernel may vary according to hacker desire.
- * According to Linus Torvalds, this is not true. He considers the values
- * in /proc as being in architecture-dependent units that have no relation
- * to the kernel clock tick rate. Examination of the kernel source code
- * reveals that opinion as wishful thinking.
  *
- * In any case, we need the HZ constant as used in /proc. (the real HZ value
- * may differ, but we don't care) There are several ways we could get HZ:
+ * On some architectures, the kernel provides an ELF note to indicate
+ * HZ.
  *
- * 1. Include the kernel header file. If it changes, recompile this library.
- * 2. Use the sysconf() function. When HZ changes, recompile the C library!
- * 3. Ask the kernel. This is obviously correct...
- *
- * Linus Torvalds won't let us ask the kernel, because he thinks we should
- * not know the HZ value. Oh well, we don't have to listen to him.
- * Someone smuggled out the HZ value. :-)
- *
- * This code should work fine, even if Linus fixes the kernel to match his
- * stated behavior. The code only fails in case of a partial conversion.
- *
- * Recent update: on some architectures, the 2.4 kernel provides an
- * ELF note to indicate HZ. This may be for ARM or user-mode Linux
- * support. This ought to be investigated. Note that sysconf() is still
- * unreliable, because it doesn't return an error code when it is
- * used with a kernel that doesn't support the ELF note. On some other
- * architectures there may be a system call or sysctl() that will work.
+ * Returns:
+ *  The discovered or assumed hertz value
  */
-
-unsigned long long Hertz;
-
-#if 0
-static void old_Hertz_hack(void){
-  unsigned long long user_j, nice_j, sys_j, other_j, wait_j, hirq_j, sirq_j, stol_j;  /* jiffies (clock ticks) */
-  double up_1, up_2, seconds;
-  unsigned long long jiffies;
-  unsigned h;
-  char *savelocale;
-  long hz;
+PROCPS_EXPORT long procps_hertz_get(void)
+{
+    long hz;
 
 #ifdef _SC_CLK_TCK
-  if((hz = sysconf(_SC_CLK_TCK)) > 0){
-    Hertz = hz;
-    return;
-  }
+    if ((hz = sysconf(_SC_CLK_TCK)) > 0)
+	return hz;
 #endif
-
-  wait_j = hirq_j = sirq_j = stol_j = 0;
-  savelocale = strdup(setlocale(LC_NUMERIC, NULL));
-  setlocale(LC_NUMERIC, "C");
-  do{
-    FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_1);
-    /* uptime(&up_1, NULL); */
-    FILE_TO_BUF(STAT_FILE,stat_fd);
-    sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &user_j, &nice_j, &sys_j, &other_j, &wait_j, &hirq_j, &sirq_j, &stol_j);
-    FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_2);
-    /* uptime(&up_2, NULL); */
-  } while((long long)( (up_2-up_1)*1000.0/up_1 )); /* want under 0.1% error */
-  setlocale(LC_NUMERIC, savelocale);
-  free(savelocale);
-  jiffies = user_j + nice_j + sys_j + other_j + wait_j + hirq_j + sirq_j + stol_j ;
-  seconds = (up_1 + up_2) / 2;
-  h = (unsigned)( (double)jiffies/seconds/smp_num_cpus );
-  /* actual values used by 2.4 kernels: 32 64 100 128 1000 1024 1200 */
-  switch(h){
-  case    9 ...   11 :  Hertz =   10; break; /* S/390 (sometimes) */
-  case   18 ...   22 :  Hertz =   20; break; /* user-mode Linux */
-  case   30 ...   34 :  Hertz =   32; break; /* ia64 emulator */
-  case   48 ...   52 :  Hertz =   50; break;
-  case   58 ...   61 :  Hertz =   60; break;
-  case   62 ...   65 :  Hertz =   64; break; /* StrongARM /Shark */
-  case   95 ...  105 :  Hertz =  100; break; /* normal Linux */
-  case  124 ...  132 :  Hertz =  128; break; /* MIPS, ARM */
-  case  195 ...  204 :  Hertz =  200; break; /* normal << 1 */
-  case  247 ...  252 :  Hertz =  250; break;
-  case  253 ...  260 :  Hertz =  256; break;
-  case  393 ...  408 :  Hertz =  400; break; /* normal << 2 */
-  case  790 ...  808 :  Hertz =  800; break; /* normal << 3 */
-  case  990 ... 1010 :  Hertz = 1000; break; /* ARM */
-  case 1015 ... 1035 :  Hertz = 1024; break; /* Alpha, ia64 */
-  case 1180 ... 1220 :  Hertz = 1200; break; /* Alpha */
-  default:
 #ifdef HZ
-    Hertz = (unsigned long long)HZ;    /* <asm/param.h> */
-#else
-    /* If 32-bit or big-endian (not Alpha or ia64), assume HZ is 100. */
-    Hertz = (sizeof(long)==sizeof(int) || htons(999)==999) ? 100UL : 1024UL;
+    return(HZ);
 #endif
-    fprintf(stderr, "Unknown HZ value! (%d) Assume %Ld.\n", h, Hertz);
-  }
+    /* Last resort, assume 100 */
+    return 100;
 }
-#endif
+
 // same as:   euid != uid || egid != gid
 #ifndef AT_SECURE
 #define AT_SECURE      23     // secure mode boolean (true if setuid, etc.)
 #endif
 
-#ifndef AT_CLKTCK
-#define AT_CLKTCK       17    // frequency of times()
-#endif
-
-#define NOTE_NOT_FOUND 42
-
-extern char** environ;
-
-/* for ELF executables, notes are pushed before environment and args */
-static unsigned long find_elf_note(unsigned long findme){
-  unsigned long *ep = (unsigned long *)environ;
-  while(*ep++);
-  while(*ep){
-    if(ep[0]==findme) return ep[1];
-    ep+=2;
-  }
-  return NOTE_NOT_FOUND;
-}
-
-int have_privs;
-
-static int check_for_privs(void){
-  unsigned long rc = find_elf_note(AT_SECURE);
-  if(rc==NOTE_NOT_FOUND){
-    // not valid to run this code after UID or GID change!
-    // (if needed, may use AT_UID and friends instead)
-    rc = geteuid() != getuid() || getegid() != getgid();
-  }
-  return !!rc;
-}
 
 static void init_libproc(void) __attribute__((constructor));
 static void init_libproc(void){
-  have_privs = check_for_privs();
-  int linux_version_code = procps_linux_version();
 
   cpuinfo();
   page_bytes = sysconf(_SC_PAGESIZE);
-
-#ifdef __linux__
-  if(linux_version_code > LINUX_VERSION(2, 4, 0)){
-    Hertz = find_elf_note(AT_CLKTCK);
-    if(Hertz!=NOTE_NOT_FOUND) return;
-//  fputs("2.4+ kernel w/o ELF notes? -- report this\n", stderr);
-  }
-#endif /* __linux __ */
-  Hertz = 100;
-  return;
 }
 
-#if 0
-/***********************************************************************
- * The /proc filesystem calculates idle=jiffies-(user+nice+sys) and we
- * recover jiffies by adding up the 4 or 5 numbers we are given. SMP kernels
- * (as of pre-2.4 era) can report idle time going backwards, perhaps due
- * to non-atomic reads and updates. There is no locking for these values.
- */
-#ifndef NAN
-#define NAN (-0.0)
-#endif
-#define JT unsigned long long
-void eight_cpu_numbers(double *restrict uret, double *restrict nret, double *restrict sret, double *restrict iret, double *restrict wret, double *restrict xret, double *restrict yret, double *restrict zret){
-    double tmp_u, tmp_n, tmp_s, tmp_i, tmp_w, tmp_x, tmp_y, tmp_z;
-    double scale;  /* scale values to % */
-    static JT old_u, old_n, old_s, old_i, old_w, old_x, old_y, old_z;
-    JT new_u, new_n, new_s, new_i, new_w, new_x, new_y, new_z;
-    JT ticks_past; /* avoid div-by-0 by not calling too often :-( */
-
-    tmp_w = 0.0;
-    new_w = 0;
-    tmp_x = 0.0;
-    new_x = 0;
-    tmp_y = 0.0;
-    new_y = 0;
-    tmp_z = 0.0;
-    new_z = 0;
-
-    FILE_TO_BUF(STAT_FILE,stat_fd);
-    sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &new_u, &new_n, &new_s, &new_i, &new_w, &new_x, &new_y, &new_z);
-    ticks_past = (new_u+new_n+new_s+new_i+new_w+new_x+new_y+new_z)-(old_u+old_n+old_s+old_i+old_w+old_x+old_y+old_z);
-    if(ticks_past){
-      scale = 100.0 / (double)ticks_past;
-      tmp_u = ( (double)new_u - (double)old_u ) * scale;
-      tmp_n = ( (double)new_n - (double)old_n ) * scale;
-      tmp_s = ( (double)new_s - (double)old_s ) * scale;
-      tmp_i = ( (double)new_i - (double)old_i ) * scale;
-      tmp_w = ( (double)new_w - (double)old_w ) * scale;
-      tmp_x = ( (double)new_x - (double)old_x ) * scale;
-      tmp_y = ( (double)new_y - (double)old_y ) * scale;
-      tmp_z = ( (double)new_z - (double)old_z ) * scale;
-    }else{
-      tmp_u = NAN;
-      tmp_n = NAN;
-      tmp_s = NAN;
-      tmp_i = NAN;
-      tmp_w = NAN;
-      tmp_x = NAN;
-      tmp_y = NAN;
-      tmp_z = NAN;
-    }
-    SET_IF_DESIRED(uret, tmp_u);
-    SET_IF_DESIRED(nret, tmp_n);
-    SET_IF_DESIRED(sret, tmp_s);
-    SET_IF_DESIRED(iret, tmp_i);
-    SET_IF_DESIRED(wret, tmp_w);
-    SET_IF_DESIRED(xret, tmp_x);
-    SET_IF_DESIRED(yret, tmp_y);
-    SET_IF_DESIRED(zret, tmp_z);
-    old_u=new_u;
-    old_n=new_n;
-    old_s=new_s;
-    old_i=new_i;
-    old_w=new_w;
-    old_x=new_x;
-    old_y=new_y;
-    old_z=new_z;
-}
-#undef JT
-#endif
 
 /***********************************************************************/
-void loadavg(double *restrict av1, double *restrict av5, double *restrict av15) {
+PROCPS_EXPORT int loadavg(double *restrict av1, double *restrict av5, double *restrict av15)
+{
     double avg_1=0, avg_5=0, avg_15=0;
     char *savelocale;
+    int retval=0;
 
     FILE_TO_BUF(LOADAVG_FILE,loadavg_fd);
     savelocale = strdup(setlocale(LC_NUMERIC, NULL));
     setlocale(LC_NUMERIC, "C");
     if (sscanf(buf, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3) {
-	fputs("bad data in " LOADAVG_FILE "\n", stderr);
-	free(savelocale);
-	exit(1);
+	retval = -ERANGE;
     }
     setlocale(LC_NUMERIC, savelocale);
     free(savelocale);
     SET_IF_DESIRED(av1,  avg_1);
     SET_IF_DESIRED(av5,  avg_5);
     SET_IF_DESIRED(av15, avg_15);
+    return retval;
 }
 
   static char buff[BUFFSIZE]; /* used in the procedures */

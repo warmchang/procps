@@ -45,6 +45,7 @@
 #endif
 
 char *myname;
+long Hertz;
 
 /* just reports a crash */
 static void signal_handler(int signo){
@@ -322,6 +323,7 @@ static int want_this_proc_pcpu(proc_t *buf){
   unsigned long long used_jiffies;
   unsigned long pcpu = 0;
   unsigned long long seconds;
+
 
   if(!want_this_proc(buf)) return 0;
 
@@ -611,6 +613,7 @@ int main(int argc, char *argv[]){
   atexit(close_stdout);
   myname = strrchr(*argv, '/');
   if (myname) ++myname; else myname = *argv;
+  Hertz = procps_hertz_get();
 
   setlocale (LC_ALL, "");
   bindtextdomain(PACKAGE, LOCALEDIR);

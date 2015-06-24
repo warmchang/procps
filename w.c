@@ -376,7 +376,9 @@ static void showinfo(utmp_t * u, int formtype, int maxcmd, int from,
 	unsigned i;
 	char uname[UT_NAMESIZE + 1] = "", tty[5 + UT_LINESIZE + 1] = "/dev/";
 	const proc_t *best;
+	long hertz;
 
+	hertz = procps_hertz_get();	
 	for (i = 0; i < UT_LINESIZE; i++)
 		/* clean up tty if garbled */
 		if (isalnum(u->ut_line[i]) || (u->ut_line[i] == '/'))
@@ -408,12 +410,12 @@ static void showinfo(utmp_t * u, int formtype, int maxcmd, int from,
 			printf(" ?xdm? ");
 		else
 			print_time_ival7(idletime(tty), 0, stdout);
-		print_time_ival7(jcpu / Hertz, (jcpu % Hertz) * (100. / Hertz),
+		print_time_ival7(jcpu / hertz, (jcpu % hertz) * (100. / hertz),
 				 stdout);
 		if (best) {
 			unsigned long long pcpu = best->utime + best->stime;
-			print_time_ival7(pcpu / Hertz,
-					 (pcpu % Hertz) * (100. / Hertz),
+			print_time_ival7(pcpu / hertz,
+					 (pcpu % hertz) * (100. / hertz),
 					 stdout);
 		} else
 			printf("   ?   ");

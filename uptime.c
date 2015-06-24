@@ -105,8 +105,8 @@ int main(int argc, char **argv)
 		}
 
 	if (p)
-	    printf("%s\n", sprint_uptime());
-	else
 	    printf("%s\n", sprint_uptime_short());
+	else
+	    printf("%s\n", sprint_uptime());
 	return EXIT_SUCCESS;
 }

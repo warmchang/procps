@@ -111,16 +111,14 @@ PROCPS_EXPORT char *sprint_uptime(void)
     if (time(&realseconds) < 0)
 	return upbuf;
     realtime = localtime(&realseconds);
-    pos = sprintf(upbuf, " %02d:%02d:%02d ",
-	    realtime->tm_hour, realtime->tm_min, realtime->tm_sec);
     if (uptime(&uptime_secs, &idle_secs) < 0)
 	return upbuf;
 
     updays  =   ((int) uptime_secs / (60*60*24));
-    uphours =   ((int) uptime_secs / (60*24)) % 24;
+    uphours =   ((int) uptime_secs / (60*60)) % 24;
     upminutes = ((int) uptime_secs / (60)) % 60;
 
-    pos = sprintf(upbuf, "%02d:%02d:%02d up %d %s, ",
+    pos = sprintf(upbuf, " %02d:%02d:%02d up %d %s, ",
 	    realtime->tm_hour, realtime->tm_min, realtime->tm_sec,
 	    updays, (updays != 1) ? "days" : "day");
     if (uphours)
