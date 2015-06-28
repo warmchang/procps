@@ -308,7 +308,6 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[HELP_cmdline_fmt] = _(""
       "  %s\n"
       "Usage:\n  %s%s");
-   Norm_nlstab[FAIL_statopn_fmt] = _("failed /proc/stat open: %s");
    Norm_nlstab[FAIL_openlib_fmt] = _("failed openproc: %s");
    Norm_nlstab[BAD_delayint_fmt] = _("bad delay interval '%s'");
    Norm_nlstab[BAD_niterate_fmt] = _("bad iterations argument '%s'");
@@ -326,7 +325,6 @@ static void build_norm_nlstab (void) {
 /* Translation Hint: Only the following words should be translated
    .                 secs (seconds), max (maximum), user, field, cols (columns)*/
    Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]");
-   Norm_nlstab[FAIL_statget_txt] = _("failed /proc/stat read");
    Norm_nlstab[FOREST_modes_fmt] = _("Forest mode %s");
    Norm_nlstab[FAIL_tty_get_txt] = _("failed tty get");
    Norm_nlstab[FAIL_tty_set_fmt] = _("failed tty set: %s");
@@ -473,6 +471,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[WORD_abv_mem_txt] = _("Mem ");
    Norm_nlstab[WORD_abv_swp_txt] = _("Swap");
    Norm_nlstab[LIB_errormem_txt] = _("library failed memory stats");
+   Norm_nlstab[LIB_errorsys_txt] = _("library failed system stats");
 }
 
 

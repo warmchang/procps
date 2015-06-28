@@ -35,7 +35,6 @@
 //#define ATEOJ_RPTSTD            /* report on misc stuff, at end-of-job     */
 //#define CASEUP_HEXES            /* show any hex values in upper case       */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
-//#define CPU_ZEROTICS            /* tolerate few tics when cpu off vs. idle */
 //#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
 //#define INSP_JUSTNOT            /* don't smooth unprintable right margins  */
 //#define INSP_OFFDEMO            /* disable demo screens, issue msg instead */
@@ -80,10 +79,6 @@
         /* There are still some short strings that may yet be candidates
            for nls support inclusion.  They're identified with:
               // nls_maybe */
-
-        /* For initiating the topic of potential % CPU distortions due to
-           to kernel and/or cpu anomalies (see CPU_ZEROTICS), thanks to:
-              Jaromir Capik, <jcapik@redhat.com> - February, 2012 */
 
         /* For the impetus and NUMA/Node prototype design, thanks to:
               Lance Shelton <LShelton@fusionio.com> - April, 2013 */
@@ -176,13 +171,6 @@ char *strcasestr(const char *haystack, const char *needle);
            -- used at startup and for task/thread mode transitions */
 #define PROC_XTRA  -1
 
-#ifndef CPU_ZEROTICS
-        /* This is the % used in establishing the tics threshold below
-           which a cpu is treated as 'idle' rather than displaying
-           misleading state percentages */
-#define TICS_EDGE  20
-#endif
-
 
 /* #####  Enum's and Typedef's  ############################################ */
 
@@ -267,32 +255,6 @@ typedef struct HST_t {
    int lnk;                     // next on hash chain
 } HST_t;
 #endif
-
-        /* These 2 structures store a frame's cpu tics used in history
-           calculations.  They exist primarily for SMP support but serve
-           all environments. */
-typedef struct CT_t {
-   /* other kernels: u == user/us, n == nice/ni, s == system/sy, i == idle/id
-      2.5.41 kernel: w == IO-wait/wa (io wait time)
-      2.6.0  kernel: x == hi (hardware irq time), y == si (software irq time)
-      2.6.11 kernel: z == st (virtual steal time) */
-   TIC_t u, n, s, i, w, x, y, z;  // as represented in /proc/stat
-#ifndef CPU_ZEROTICS
-   SIC_t tot;                     // total from /proc/stat line 1
-#endif
-} CT_t;
-
-typedef struct CPU_t {
-   CT_t cur;                      // current frame's cpu tics
-   CT_t sav;                      // prior frame's cpu tics
-#ifndef CPU_ZEROTICS
-   SIC_t edge;                    // tics adjustment threshold boundary
-#endif
-   int id;                        // cpu number (0 - nn), or numa active flag
-#ifndef NUMA_DISABLE
-   int node;                      // the numa node it belongs to
-#endif
-} CPU_t;
 
         /* /////////////////////////////////////////////////////////////// */
         /* Special Section: multiple windows/field groups  --------------- */
@@ -730,7 +692,7 @@ typedef struct WIN_t {
 //atic inline void   widths_resize (void);
 //atic void          zap_fieldstab (void);
 /*------  Library Interface  ---------------------------------------------*/
-//atic CPU_t        *cpus_refresh (CPU_t *cpus);
+//atic void          cpus_refresh (void);
 #ifdef OFF_HST_HASH
 //atic inline HST_t *hstbsrch (HST_t *hst, int max, int pid);
 #else
