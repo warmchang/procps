@@ -193,6 +193,54 @@ PROCPS_EXPORT jiff procps_stat_get_cpu (
     return 0;
 }
 
+PROCPS_EXPORT int procps_get_cpu_chain (
+        struct procps_statinfo *info,
+        struct procps_cpu_result *item)
+{
+    if (item == NULL)
+        return -EINVAL;
+
+    do {
+        switch (item->item) {
+            case PROCPS_CPU_USER:
+                item->result = info->data.cpu_user;
+                break;
+            case PROCPS_CPU_NICE:
+                item->result = info->data.cpu_nice;
+                break;
+            case PROCPS_CPU_SYSTEM:
+                item->result = info->data.cpu_sys;
+                break;
+            case PROCPS_CPU_IDLE:
+                item->result = info->data.cpu_idle;
+                break;
+            case PROCPS_CPU_IOWAIT:
+                item->result = info->data.cpu_iowait;
+                break;
+            case PROCPS_CPU_IRQ:
+                item->result = info->data.cpu_irq;
+                break;
+            case PROCPS_CPU_SIRQ:
+                item->result = info->data.cpu_sirq;
+                break;
+            case PROCPS_CPU_STOLEN:
+                item->result = info->data.cpu_stol;
+                break;
+            case PROCPS_CPU_GUEST:
+                item->result = info->data.cpu_guest;
+                break;
+            case PROCPS_CPU_GNICE:
+                item->result = info->data.cpu_gnice;
+                break;
+            default:
+                return -EINVAL;
+        }
+        item = item->next;
+    } while (item);
+
+    return 0;
+}
+
 PROCPS_EXPORT unsigned int procps_stat_get_sys (
         struct procps_statinfo *info,
         enum procps_stat_item item)
@@ -211,5 +259,41 @@ PROCPS_EXPORT unsigned int procps_stat_get_sys (
         case PROCPS_STAT_PROCS_RUN:
             return info->data.procs_running;
     }
+    return 0;
+}
+
+PROCPS_EXPORT int procps_stat_get_sys_chain (
+        struct procps_statinfo *info,
+        struct procps_sys_result *item)
+{
+    if (item == NULL)
+        return -EINVAL;
+
+    do {
+        switch (item->item) {
+            case PROCPS_STAT_INTR:
+                item->result = info->data.intr;
+                break;
+            case PROCPS_STAT_CTXT:
+                item->result = info->data.ctxt;
+                break;
+            case PROCPS_STAT_BTIME:
+                item->result = info->data.btime;
+                break;
+            case PROCPS_STAT_PROCS:
+                item->result = info->data.procs;
+                break;
+            case PROCPS_STAT_PROCS_BLK:
+                item->result = info->data.procs_blocked;
+                break;
+            case PROCPS_STAT_PROCS_RUN:
+                item->result = info->data.procs_running;
+                break;
+            default:
+                return -EINVAL;
+        }
+        item = item->next;
+    } while (item);
+
     return 0;
 }

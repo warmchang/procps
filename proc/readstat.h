@@ -46,6 +46,18 @@ enum procps_stat_item {
 
 typedef unsigned long long jiff;
 
+struct procps_cpu_result {
+    enum procps_cpu_item item;
+    jiff result;
+    struct procps_cpu_result *next;
+};
+
+struct procps_sys_result {
+    enum procps_stat_item item;
+    int result;
+    struct procps_sys_result *next;
+};
+
 struct procps_statinfo;
 
 int procps_stat_new (struct procps_statinfo **info);
@@ -55,7 +67,10 @@ struct procps_statinfo *procps_stat_ref (struct procps_statinfo *info);
 struct procps_statinfo *procps_stat_unref (struct procps_statinfo *info);
 
 jiff procps_stat_get_cpu (struct procps_statinfo *info, enum procps_cpu_item item);
+int procps_stat_get_cpu_chain (struct procps_statinfo *info, struct procps_cpu_result *item);
+
 unsigned int procps_stat_get_sys (struct procps_statinfo *info, enum procps_stat_item item);
+int procps_stat_get_sys_chain (struct procps_statinfo *info, struct procps_sys_result *item);
 
 __END_DECLS
 #endif

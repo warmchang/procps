@@ -73,7 +73,9 @@ global:
 	procps_stat_ref;
 	procps_stat_unref;
 	procps_stat_get_cpu;
+	procps_stat_get_cpu_chain;
 	procps_stat_get_sys;
+	procps_stat_get_sys_chain;
 	procps_vmstat_new;
 	procps_vmstat_read;
 	procps_vmstat_ref;
