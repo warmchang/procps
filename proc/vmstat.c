@@ -83,9 +83,16 @@ PROCPS_EXPORT int procps_vmstat_read (
     if (lseek(info->vmstat_fd, 0L, SEEK_SET) == -1) {
         return -errno;
     }
-    if ((size = read(info->vmstat_fd, buf, sizeof(buf)-1)) < 0) {
-        return -1;
+    for (;;) {
+        if ((size = read(info->vmstat_fd, buf, sizeof(buf)-1)) < 0) {
+            if (errno == EINTR || errno == EAGAIN)
+                continue;
+            return -errno;
+        }
+        break;
     }
+    if (size == 0)
+        return 0;
     buf[size] = '\0';
 
     /* Scan the file */
@@ -130,11 +137,11 @@ PROCPS_EXPORT struct procps_vmstat *procps_vmstat_ref (
 PROCPS_EXPORT struct procps_vmstat *procps_vmstat_unref (
         struct procps_vmstat *info)
 {
-    if (info == NULL)
+    if (info == NULL || info->refcount == 0)
         return NULL;
     info->refcount--;
     if (info->refcount > 0)
-        return NULL;
+        return info;
     free(info);
     return NULL;
 }
