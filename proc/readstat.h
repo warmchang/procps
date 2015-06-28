@@ -45,12 +45,17 @@ enum procps_stat_item {
 };
 
 typedef unsigned long long jiff;
-struct procps_stat_info;
-int procps_stat_new(struct procps_stat_info **info);
-int procps_stat_read(struct procps_stat_info *info, const int cpu_only);
-struct procps_stat_info *procps_stat_ref(struct procps_stat_info *info);
-struct procps_stat_info *procps_stat_unref(struct procps_stat_info *info);
-jiff procps_stat_get_cpu(struct procps_stat_info *info, enum procps_cpu_item item);
-unsigned int procps_stat_get(struct procps_stat_info *info, enum procps_stat_item item);
+
+struct procps_statinfo;
+
+int procps_stat_new (struct procps_statinfo **info);
+int procps_stat_read (struct procps_statinfo *info, const int cpu_only);
+
+struct procps_statinfo *procps_stat_ref (struct procps_statinfo *info);
+struct procps_statinfo *procps_stat_unref (struct procps_statinfo *info);
+
+jiff procps_stat_get_cpu (struct procps_statinfo *info, enum procps_cpu_item item);
+unsigned int procps_stat_get_sys (struct procps_statinfo *info, enum procps_stat_item item);
+
 __END_DECLS
 #endif

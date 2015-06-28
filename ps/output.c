@@ -61,7 +61,7 @@
 #include <sys/mman.h>
 #include <sys/resource.h>
 #include <sys/types.h>
-  
+
 #include "c.h"
 #include "../proc/readproc.h"
 #include "../proc/sysinfo.h"
@@ -98,14 +98,14 @@ extern long Hertz;
 
 static void get_boot_time(void)
 {
-    struct procps_stat_info *sys_info;
-    if (procps_stat_new(&sys_info) < 0) 
+    struct procps_statinfo *sys_info;
+    if (procps_stat_new(&sys_info) < 0)
 	xerrx(EXIT_FAILURE,
 		_("Unable to create system stat structure"));
     if (procps_stat_read(sys_info,0) < 0)
 	xerrx(EXIT_FAILURE,
 		_("Unable to read system stat information"));
-    boot_time = procps_stat_get(sys_info, PROCPS_STAT_BTIME);
+    boot_time = procps_stat_get_sys(sys_info, PROCPS_STAT_BTIME);
     procps_stat_unref(sys_info);
 }
 

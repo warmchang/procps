@@ -298,7 +298,7 @@ static void new_format(void)
 	time_t the_time;
 	char timebuf[32];
 	struct procps_vmstat *vm_info;
-	struct procps_stat_info *sys_info;
+	struct procps_statinfo *sys_info;
 	struct procps_meminfo *mem_info;
 
 	sleep_half = (sleep_time / 2);
@@ -329,8 +329,8 @@ static void new_format(void)
 		tm_ptr = localtime( &the_time );
 		strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
 	}
-	/* Do the intial fill */
-	cpu_use[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_USER) + 
+	/* Do the initial fill */
+	cpu_use[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_USER) +
 	    procps_stat_get_cpu(sys_info, PROCPS_CPU_NICE);
 	cpu_sys[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_SYSTEM);
 	    procps_stat_get_cpu(sys_info, PROCPS_CPU_IRQ) +
@@ -338,8 +338,8 @@ static void new_format(void)
 	cpu_idl[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_IDLE);
 	cpu_iow[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_IOWAIT);
 	cpu_sto[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_STOLEN);
-	intr[tog] = procps_stat_get(sys_info, PROCPS_STAT_INTR);
-	ctxt[tog] = procps_stat_get(sys_info, PROCPS_STAT_CTXT);
+	intr[tog] = procps_stat_get_sys(sys_info, PROCPS_STAT_INTR);
+	ctxt[tog] = procps_stat_get_sys(sys_info, PROCPS_STAT_CTXT);
 	pgpgin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN);
 	pgpgout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT);
 	pswpin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN);
@@ -353,8 +353,8 @@ static void new_format(void)
 	divo2 = Div / 2UL;
 
 	printf(w_option ? wide_format : format,
-		procps_stat_get(sys_info, PROCPS_STAT_PROCS_RUN),
-		procps_stat_get(sys_info, PROCPS_STAT_PROCS_BLK),
+		procps_stat_get_sys(sys_info, PROCPS_STAT_PROCS_RUN),
+		procps_stat_get_sys(sys_info, PROCPS_STAT_PROCS_BLK),
 		unitConvert(procps_meminfo_get(mem_info, PROCPS_SWAP_USED)),
 		unitConvert(procps_meminfo_get(mem_info, PROCPS_MEM_FREE)),
 		unitConvert(procps_meminfo_get(mem_info, (a_option?PROCPS_MEM_INACTIVE:PROCPS_MEM_BUFFERS))),
@@ -400,8 +400,8 @@ static void new_format(void)
 		cpu_idl[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_IDLE);
 		cpu_iow[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_IOWAIT);
 		cpu_sto[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_STOLEN);
-		intr[tog] = procps_stat_get(sys_info, PROCPS_STAT_INTR);
-		ctxt[tog] = procps_stat_get(sys_info, PROCPS_STAT_CTXT);
+		intr[tog] = procps_stat_get_sys(sys_info, PROCPS_STAT_INTR);
+		ctxt[tog] = procps_stat_get_sys(sys_info, PROCPS_STAT_CTXT);
 		pgpgin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN);
 		pgpgout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT);
 		pswpin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN);
@@ -437,8 +437,8 @@ static void new_format(void)
 		if (!Div) Div = 1, didl = 1;
 		divo2 = Div / 2UL;
 		printf(w_option ? wide_format : format,
-		       procps_stat_get(sys_info, PROCPS_STAT_PROCS_RUN),
-		       procps_stat_get(sys_info, PROCPS_STAT_PROCS_BLK),
+		       procps_stat_get_sys(sys_info, PROCPS_STAT_PROCS_RUN),
+		       procps_stat_get_sys(sys_info, PROCPS_STAT_PROCS_BLK),
 		       unitConvert(procps_meminfo_get(mem_info, PROCPS_SWAP_USED)),
 		       unitConvert(procps_meminfo_get(mem_info, PROCPS_MEM_FREE)),
 		       unitConvert(procps_meminfo_get(mem_info,
@@ -837,7 +837,7 @@ static void disksum_format(void)
 
 static void sum_format(void)
 {
-	struct procps_stat_info *sys_info;
+	struct procps_statinfo *sys_info;
 	struct procps_vmstat *vm_info;
 	struct procps_meminfo *mem_info;
 
@@ -888,15 +888,15 @@ static void sum_format(void)
 	printf(_("%13lu pages paged out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT));
 	printf(_("%13lu pages swapped in\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN));
 	printf(_("%13lu pages swapped out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT));
-	printf(_("%13u interrupts\n"), procps_stat_get(sys_info, PROCPS_STAT_INTR));
-	printf(_("%13u CPU context switches\n"), procps_stat_get(sys_info, PROCPS_STAT_CTXT));
-	printf(_("%13u boot time\n"), procps_stat_get(sys_info, PROCPS_STAT_BTIME));
-	printf(_("%13u forks\n"), procps_stat_get(sys_info, PROCPS_STAT_PROCS));
+	printf(_("%13u interrupts\n"), procps_stat_get_sys(sys_info, PROCPS_STAT_INTR));
+	printf(_("%13u CPU context switches\n"), procps_stat_get_sys(sys_info, PROCPS_STAT_CTXT));
+	printf(_("%13u boot time\n"), procps_stat_get_sys(sys_info, PROCPS_STAT_BTIME));
+	printf(_("%13u forks\n"), procps_stat_get_sys(sys_info, PROCPS_STAT_PROCS));
 }
 
 static void fork_format(void)
 {
-    struct procps_stat_info *sys_info;
+    struct procps_statinfo *sys_info;
 
     if (procps_stat_new(&sys_info) < 0)
 	xerrx(EXIT_FAILURE,
@@ -904,8 +904,8 @@ static void fork_format(void)
     if (procps_stat_read(sys_info,0) < 0)
 	xerrx(EXIT_FAILURE,
 		_("Unable to read system stat information"));
-    
-    printf(_("%13u forks\n"), procps_stat_get(sys_info, PROCPS_STAT_PROCS));
+
+    printf(_("%13u forks\n"), procps_stat_get_sys(sys_info, PROCPS_STAT_PROCS));
 }
 
 static int winhi(void)
