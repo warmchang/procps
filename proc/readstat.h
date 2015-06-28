@@ -52,6 +52,16 @@ struct procps_cpu_result {
     struct procps_cpu_result *next;
 };
 
+struct procps_jiffs {
+    jiff user, nice, system, idle, iowait, irq, sirq, stolen, guest, gnice;
+};
+
+struct procps_jiffs_hist {
+    struct procps_jiffs new;
+    struct procps_jiffs old;
+    int id;
+};
+
 struct procps_sys_result {
     enum procps_stat_item item;
     int result;
@@ -62,12 +72,17 @@ struct procps_statinfo;
 
 int procps_stat_new (struct procps_statinfo **info);
 int procps_stat_read (struct procps_statinfo *info, const int cpu_only);
+int procps_stat_read_jiffs (struct procps_statinfo *info);
 
 struct procps_statinfo *procps_stat_ref (struct procps_statinfo *info);
 struct procps_statinfo *procps_stat_unref (struct procps_statinfo *info);
 
 jiff procps_stat_get_cpu (struct procps_statinfo *info, enum procps_cpu_item item);
 int procps_stat_get_cpu_chain (struct procps_statinfo *info, struct procps_cpu_result *item);
+int procps_stat_get_jiffs (struct procps_statinfo *info, struct procps_jiffs *item, int which);
+int procps_stat_get_jiffs_all (struct procps_statinfo *info, struct procps_jiffs *item, int numitems);
+int procps_stat_get_jiffs_hist (struct procps_statinfo *info, struct procps_jiffs_hist *item, int which);
+int procps_stat_get_jiffs_hist_all (struct procps_statinfo *info, struct procps_jiffs_hist *item, int numitems);
 
 unsigned int procps_stat_get_sys (struct procps_statinfo *info, enum procps_stat_item item);
 int procps_stat_get_sys_chain (struct procps_statinfo *info, struct procps_sys_result *item);
