@@ -26,33 +26,36 @@
 
 __BEGIN_DECLS
 
-struct procps_meminfo;
-int procps_meminfo_new(struct procps_meminfo **info);
-int procps_meminfo_read(struct procps_meminfo *info);
-struct procps_meminfo *procps_meminfo_ref(struct procps_meminfo *info);
-struct procps_meminfo *procps_meminfo_unref(struct procps_meminfo *info);
-
 enum meminfo_item {
-    PROCPS_MEM_ACTIVE,
-    PROCPS_MEM_INACTIVE,
     PROCPS_MEMHI_FREE,
     PROCPS_MEMHI_TOTAL,
     PROCPS_MEMHI_USED,
     PROCPS_MEMLO_FREE,
     PROCPS_MEMLO_TOTAL,
     PROCPS_MEMLO_USED,
+    PROCPS_MEM_ACTIVE,
     PROCPS_MEM_AVAILABLE,
     PROCPS_MEM_BUFFERS,
     PROCPS_MEM_CACHED,
     PROCPS_MEM_FREE,
+    PROCPS_MEM_INACTIVE,
     PROCPS_MEM_SHARED,
     PROCPS_MEM_TOTAL,
     PROCPS_MEM_USED,
     PROCPS_SWAP_FREE,
     PROCPS_SWAP_TOTAL,
-    PROCPS_SWAP_USED,
+    PROCPS_SWAP_USED
 };
-unsigned long procps_meminfo_get(struct procps_meminfo *info, enum meminfo_item item);
+
+struct procps_meminfo;
+
+int procps_meminfo_new (struct procps_meminfo **info);
+int procps_meminfo_read (struct procps_meminfo *info);
+
+struct procps_meminfo *procps_meminfo_ref (struct procps_meminfo *info);
+struct procps_meminfo *procps_meminfo_unref (struct procps_meminfo *info);
+
+unsigned long procps_meminfo_get (struct procps_meminfo *info, enum meminfo_item item);
 
 __END_DECLS
 #endif

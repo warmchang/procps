@@ -27,19 +27,22 @@
 
 __BEGIN_DECLS
 
-struct procps_vmstat;
-int procps_vmstat_new(struct procps_vmstat **info);
-int procps_vmstat_read(struct procps_vmstat *info);
-struct procps_vmstat *procps_vmstat_ref(struct procps_vmstat *info);
-struct procps_vmstat *procps_vmstat_unref(struct procps_vmstat *info);
-
 enum vmstat_item {
     PROCPS_VMSTAT_PGPGIN,
     PROCPS_VMSTAT_PGPGOUT,
     PROCPS_VMSTAT_PSWPIN,
     PROCPS_VMSTAT_PSWPOUT
 };
-unsigned long procps_vmstat_get(struct procps_vmstat *info, enum vmstat_item item);
+
+struct procps_vmstat;
+
+int procps_vmstat_new (struct procps_vmstat **info);
+int procps_vmstat_read (struct procps_vmstat *info);
+
+struct procps_vmstat *procps_vmstat_ref (struct procps_vmstat *info);
+struct procps_vmstat *procps_vmstat_unref (struct procps_vmstat *info);
+
+unsigned long procps_vmstat_get (struct procps_vmstat *info, enum vmstat_item item);
 
 __END_DECLS
 #endif
