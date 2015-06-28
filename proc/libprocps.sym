@@ -67,6 +67,7 @@ global:
 	procps_meminfo_ref;
 	procps_meminfo_unref;
 	procps_meminfo_get;
+	procps_meminfo_get_chain;
 	procps_stat_new;
 	procps_stat_read;
 	procps_stat_ref;
@@ -78,6 +79,7 @@ global:
 	procps_vmstat_ref;
 	procps_vmstat_unref;
 	procps_vmstat_get;
+	procps_vmstat_get_chain;
 local:
 	*;
 };

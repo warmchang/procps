@@ -157,3 +157,32 @@ PROCPS_EXPORT unsigned long procps_vmstat_get (
     return 0;
 }
 
+PROCPS_EXPORT int procps_vmstat_get_chain (
+        struct procps_vmstat *info,
+        struct vmstat_result *item)
+{
+    if (item == NULL)
+        return -EINVAL;
+
+    do {
+        switch (item->item) {
+            case PROCPS_VMSTAT_PGPGIN:
+                item->result = info->data.pgpgin;
+                break;
+            case PROCPS_VMSTAT_PGPGOUT:
+                item->result = info->data.pgpgout;
+                break;
+            case PROCPS_VMSTAT_PSWPIN:
+                item->result = info->data.pswpin;
+                break;
+            case PROCPS_VMSTAT_PSWPOUT:
+                item->result = info->data.pswpout;
+                break;
+            default:
+                return -EINVAL;
+        }
+        item = item->next;
+    } while (item);
+
+    return 0;
+}

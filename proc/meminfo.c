@@ -279,3 +279,85 @@ PROCPS_EXPORT unsigned long procps_meminfo_get (
     }
     return 0;
 }
+
+PROCPS_EXPORT int procps_meminfo_get_chain (
+        struct procps_meminfo *info,
+        struct meminfo_result *item)
+{
+
+    if (item == NULL)
+        return -EINVAL;
+
+    do {
+        switch (item->item) {
+            case PROCPS_MEM_ACTIVE:
+                item->result = info->data.active;
+                break;
+            case PROCPS_MEM_INACTIVE:
+                item->result = info->data.inactive;
+                break;
+            case PROCPS_MEMHI_FREE:
+                item->result = info->data.high_free;
+                break;
+            case PROCPS_MEMHI_TOTAL:
+                item->result = info->data.high_total;
+                break;
+            case PROCPS_MEMHI_USED:
+                if (info->data.high_free > info->data.high_total)
+                    item->result = 0;
+                else
+                    item->result = info->data.high_total - info->data.high_free;
+                break;
+            case PROCPS_MEMLO_FREE:
+                item->result = info->data.low_free;
+                break;
+            case PROCPS_MEMLO_TOTAL:
+                item->result = info->data.low_total;
+                break;
+            case PROCPS_MEMLO_USED:
+                if (info->data.low_free > info->data.low_total)
+                    item->result = 0;
+                else
+                    item->result = info->data.low_total - info->data.low_free;
+                break;
+            case PROCPS_MEM_AVAILABLE:
+                item->result = info->data.available;
+                break;
+            case PROCPS_MEM_BUFFERS:
+                item->result = info->data.buffers;
+                break;
+            case PROCPS_MEM_CACHED:
+                item->result = info->data.cached;
+                break;
+            case PROCPS_MEM_FREE:
+                item->result = info->data.free;
+                break;
+            case PROCPS_MEM_SHARED:
+                item->result = info->data.shared;
+                break;
+            case PROCPS_MEM_TOTAL:
+                item->result = info->data.total;
+                break;
+            case PROCPS_MEM_USED:
+                item->result = info->data.used;
+                break;
+            case PROCPS_SWAP_FREE:
+                item->result = info->data.swap_free;
+                break;
+            case PROCPS_SWAP_TOTAL:
+                item->result = info->data.swap_total;
+                break;
+            case PROCPS_SWAP_USED:
+                if (info->data.swap_free > info->data.swap_total)
+                    item->result = 0;
+                else
+                    item->result = info->data.swap_total - info->data.swap_free;
+                break;
+            default:
+                return -EINVAL;
+        }
+        item = item->next;
+    } while (item);
+
+    return 0;
+}

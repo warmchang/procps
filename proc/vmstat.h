@@ -34,6 +34,12 @@ enum vmstat_item {
     PROCPS_VMSTAT_PSWPOUT
 };
 
+struct vmstat_result {
+    enum vmstat_item item;
+    unsigned long result;
+    struct vmstat_result *next;
+};
+
 struct procps_vmstat;
 
 int procps_vmstat_new (struct procps_vmstat **info);
@@ -43,6 +49,7 @@ struct procps_vmstat *procps_vmstat_ref (struct procps_vmstat *info);
 struct procps_vmstat *procps_vmstat_unref (struct procps_vmstat *info);
 
 unsigned long procps_vmstat_get (struct procps_vmstat *info, enum vmstat_item item);
+int procps_vmstat_get_chain (struct procps_vmstat *info, struct vmstat_result *item);
 
 __END_DECLS
 #endif
