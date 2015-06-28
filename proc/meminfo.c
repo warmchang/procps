@@ -46,6 +46,7 @@ struct meminfo_data {
     unsigned long shared;
     unsigned long total;
     unsigned long used;
+    unsigned long slab;
     unsigned long swap_free;
     unsigned long swap_total;
     unsigned long swap_used;
@@ -95,6 +96,7 @@ PROCPS_EXPORT int procps_meminfo_read (
     char *head, *tail;
     int size;
     unsigned long *valptr;
+    signed long mem_used;
 
     if (info == NULL)
         return -1;
@@ -121,45 +123,86 @@ PROCPS_EXPORT int procps_meminfo_read (
             break;
         *tail = '\0';
         valptr = NULL;
-        if (0 == strcmp(head, "Active:")) {
-            valptr = &(info->data.active);
-        } else if (0 == strcmp(head, "Inactive:")) {
-            valptr = &(info->data.inactive);
-        } else if (0 == strcmp(head, "HighFree:")) {
-            valptr = &(info->data.high_free);
-        } else if (0 == strcmp(head, "HighTotal:")) {
-            valptr = &(info->data.high_total);
-        } else if (0 == strcmp(head, "LowFree:")) {
-            valptr = &(info->data.low_free);
-        } else if (0 == strcmp(head, "LowTotal:")) {
-            valptr = &(info->data.low_total);
-        } else if (0 == strcmp(head, "MemAvailable:")) {
-            valptr = &(info->data.available);
-        } else if (0 == strcmp(head, "Buffers:")) {
-            valptr = &(info->data.buffers);
-        } else if (0 == strcmp(head, "Cached:")) {
-            valptr = &(info->data.cached);
-        } else if (0 == strcmp(head, "MemFree:")) {
-            valptr = &(info->data.free);
-        } else if (0 == strcmp(head, "Shmem:")) {
-            valptr = &(info->data.shared);
-        } else if (0 == strcmp(head, "MemTotal:")) {
-            valptr = &(info->data.total);
-        } else if (0 == strcmp(head, "SwapFree:")) {
-            valptr = &(info->data.swap_free);
-        } else if (0 == strcmp(head, "SwapTotal:")) {
-            valptr = &(info->data.swap_total);
+        switch (*head) {
+            case 'A':
+                if (0 == strcmp(head, "Active:"))
+                    valptr = &(info->data.active);
+                break;
+            case 'B':
+                if (0 == strcmp(head, "Buffers:"))
+                    valptr = &(info->data.buffers);
+                break;
+            case 'C':
+                if (0 == strcmp(head, "Cached:"))
+                    valptr = &(info->data.cached);
+                break;
+            case 'H':
+                if (0 == strcmp(head, "HighFree:"))
+                    valptr = &(info->data.high_free);
+                else if (0 == strcmp(head, "HighTotal:"))
+                    valptr = &(info->data.high_total);
+                break;
+            case 'I':
+                if (0 == strcmp(head, "Inactive:"))
+                    valptr = &(info->data.inactive);
+                break;
+            case 'L':
+                if (0 == strcmp(head, "LowFree:"))
+                    valptr = &(info->data.low_free);
+                else if (0 == strcmp(head, "LowTotal:"))
+                    valptr = &(info->data.low_total);
+                break;
+            case 'M':
+                if (0 == strcmp(head, "MemAvailable:"))
+                    valptr = &(info->data.available);
+                else if (0 == strcmp(head, "MemFree:"))
+                    valptr = &(info->data.free);
+                else if (0 == strcmp(head, "MemTotal:"))
+                    valptr = &(info->data.total);
+                break;
+            case 'S':
+                if (0 == strcmp(head, "Slab:"))
+                    valptr = &(info->data.slab);
+                else if (0 == strcmp(head, "SwapFree:"))
+                    valptr = &(info->data.swap_free);
+                else if (0 == strcmp(head, "SwapTotal:"))
+                    valptr = &(info->data.swap_total);
+                else if (0 == strcmp(head, "Shmem:"))
+                    valptr = &(info->data.shared);
+                break;
+            default:
+                break;
         }
         head = tail+1;
         if (valptr) {
             *valptr = strtoul(head, &tail, 10);
         }
-
         tail = strchr(head, '\n');
         if (!tail)
             break;
         head = tail + 1;
     } while(tail);
+
+    if (0 == info->data.low_total) {
+        info->data.low_total = info->data.total;
+        info->data.low_free  = info->data.free;
+    }
+    if (0 == info->data.available) {
+        info->data.available = info->data.free;
+    }
+    info->data.cached += info->data.slab;
+    info->data.swap_used = info->data.swap_total - info->data.swap_free;
+
+    /* if 'available' is greater than 'total' or our calculation of mem_used
+       overflows, that's symptomatic of running within a lxc container where
+       such values will be dramatically distorted over those of the host. */
+    if (info->data.available > info->data.total)
+        info->data.available = info->data.free;
+    mem_used = info->data.total - info->data.free - info->data.cached - info->data.buffers;
+    if (mem_used < 0)
+        mem_used = info->data.total - info->data.free;
+    info->data.used = (unsigned long)mem_used;
+
     return 0;
 }
 
