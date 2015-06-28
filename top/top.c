@@ -50,6 +50,7 @@
 #include "../include/nls.h"
 
 #include "../proc/devname.h"
+#include "../proc/meminfo.h"
 #include "../proc/procps.h"
 #include "../proc/readproc.h"
 #include "../proc/sig.h"
@@ -244,6 +245,26 @@ static float Graph_adj;      // bars/blocks scaling factor
 static int   Graph_len;      // scaled length (<= GRAPH_actual)
 static const char Graph_blks[] = "                                                                                                    ";
 static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
+
+        /* Support for the new library API -- acquired (if necessary)
+           at program startup and referenced throughout our lifetime */
+static struct procps_meminfo *mem_info;
+static struct meminfo_result mem_chain[] = {
+   { PROCPS_MEM_FREE,      0, &mem_chain[1] },
+   { PROCPS_MEM_USED,      0, &mem_chain[2] },
+   { PROCPS_MEM_TOTAL,     0, &mem_chain[3] },
+   { PROCPS_MEM_CACHED,    0, &mem_chain[4] },
+   { PROCPS_MEM_BUFFERS,   0, &mem_chain[5] },
+   { PROCPS_MEM_AVAILABLE, 0, &mem_chain[6] },
+   { PROCPS_SWAP_TOTAL,    0, &mem_chain[7] },
+   { PROCPS_SWAP_FREE,     0, &mem_chain[8] },
+   { PROCPS_SWAP_USED,     0, NULL          }
+};
+enum mem_enums {
+   mem_FREE,  mem_USED,  mem_TOTAL, mem_CACHE, mem_BUFFS,
+   mem_AVAIL, swp_TOTAL, swp_FREE,  swp_USED
+};
+#define MEM_VAL(e) mem_chain[e].result
 
 /*######  Sort callbacks  ################################################*/
 
@@ -2697,7 +2718,9 @@ static void sysinfo_refresh (int forced) {
 
    /*** hotplug_acclimated ***/
    if (3 <= cur_secs - mem_secs) {
-      meminfo();
+      if (procps_meminfo_read(mem_info) < 0)
+         error_exit(N_txt(LIB_errormem_txt));
+      procps_meminfo_get_chain(mem_info, mem_chain);
       mem_secs = cur_secs;
    }
 #ifndef PRETEND8CPUS
@@ -3292,6 +3315,10 @@ static void before (char *me) {
    // get virtual page stuff
    i = page_bytes; // from sysinfo.c, at lib init
    while(i > 1024) { i >>= 1; Pg2K_shft++; }
+
+   // prepare for new library API ...
+   if (procps_meminfo_new(&mem_info) < 0)
+      error_exit(N_txt(LIB_errormem_txt));
 
 #ifndef OFF_HST_HASH
    // prep for HST_t's put/get hashing optimizations
@@ -5207,8 +5234,7 @@ numa_nope:
    if (isROOM(View_MEMORY, 2)) {
     #define bfT(n)  buftab[n].buf
     #define scT(e)  scaletab[Rc.summ_mscale]. e
-    #define mkM(x) (float)kb_main_ ## x / scT(div)
-    #define mkS(x) (float)kb_swap_ ## x / scT(div)
+    #define mkM(x) (float) x / scT(div)
     #define prT(b,z) { if (9 < snprintf(b, 10, scT(fmts), z)) b[8] = '+'; }
       static struct {
          float div;
@@ -5246,13 +5272,13 @@ numa_nope:
          };
          char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ];
          int ix = w->rc.graph_mems - 1;
-         float pct_used = (float)kb_main_used * (100.0 / (float)kb_main_total),
+         float pct_used = (float)MEM_VAL(mem_USED) * (100.0 / (float)MEM_VAL(mem_TOTAL)),
 #ifdef MEMGRAPH_OLD
-               pct_misc = (float)(kb_main_buffers + kb_main_cached) * (100.0 / (float)kb_main_total),
+               pct_misc = (float)(MEM_VAL(mem_BUFFS) + MEM_VAL(mem_CACHE)) * (100.0 / (float)MEM_VAL(mem_TOTAL)),
 #else
-               pct_misc = (float)(kb_main_total - kb_main_available - kb_main_used) * (100.0 / (float)kb_main_total),
+               pct_misc = (float)(MEM_VAL(mem_TOTAL) - MEM_VAL(mem_AVAIL) - MEM_VAL(mem_USED)) * (100.0 / (float)MEM_VAL(mem_TOTAL)),
 #endif
-               pct_swap = kb_swap_total ? (float)kb_swap_used * (100.0 / (float)kb_swap_total) : 0;
+               pct_swap = MEM_VAL(swp_TOTAL) ? (float)MEM_VAL(swp_USED) * (100.0 / (float)MEM_VAL(swp_TOTAL)) : 0;
 #ifndef QUICK_GRAPHS
          int num_used = (int)((pct_used * Graph_adj) + .5),
              num_misc = (int)((pct_misc * Graph_adj) + .5);
@@ -5265,16 +5291,16 @@ numa_nope:
 #endif
          snprintf(dual, sizeof(dual), "%s%s", used, util);
          snprintf(util, sizeof(util), gtab[ix].swap, (int)((pct_swap * Graph_adj) + .5), gtab[ix].type);
-         prT(bfT(0), mkM(total)); prT(bfT(1), mkS(total));
+         prT(bfT(0), mkM(MEM_VAL(mem_TOTAL))); prT(bfT(1), mkM(MEM_VAL(swp_TOTAL)));
          show_special(0, fmtmk( "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1\n%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1\n"
             , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, dual
             , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, util));
       } else {
-         unsigned long kb_main_my_misc = kb_main_buffers + kb_main_cached;
-         prT(bfT(0), mkM(total)); prT(bfT(1), mkM(free));
-         prT(bfT(2), mkM(used));  prT(bfT(3), mkM(my_misc));
-         prT(bfT(4), mkS(total)); prT(bfT(5), mkS(free));
-         prT(bfT(6), mkS(used));  prT(bfT(7), mkM(available));
+         unsigned long my_misc = MEM_VAL(mem_BUFFS) + MEM_VAL(mem_CACHE);
+         prT(bfT(0), mkM(MEM_VAL(mem_TOTAL))); prT(bfT(1), mkM(MEM_VAL(mem_FREE)));
+         prT(bfT(2), mkM(MEM_VAL(mem_USED)));  prT(bfT(3), mkM(my_misc));
+         prT(bfT(4), mkM(MEM_VAL(swp_TOTAL))); prT(bfT(5), mkM(MEM_VAL(swp_FREE)));
+         prT(bfT(6), mkM(MEM_VAL(swp_USED)));  prT(bfT(7), mkM(MEM_VAL(mem_AVAIL)));
          show_special(0, fmtmk(N_unq(MEMORY_lines_fmt)
             , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3)
             , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
@@ -5284,7 +5310,6 @@ numa_nope:
     #undef bfT
     #undef scT
     #undef mkM
-    #undef mkS
     #undef prT
    } // end: View_MEMORY
 
@@ -5390,7 +5415,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = make_str(p->lxcname, W, Js, EU_LXC);
             break;
          case EU_MEM:
-            cp = scale_pcnt((float)pages2K(p->resident) * 100 / kb_main_total, W, Jn);
+            cp = scale_pcnt((float)pages2K(p->resident) * 100 / MEM_VAL(mem_TOTAL), W, Jn);
             break;
          case EU_NCE:
             cp = make_num(p->nice, W, Jn, AUTOX_NO);
