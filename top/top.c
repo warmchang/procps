@@ -68,7 +68,6 @@
 
 static long Hertz;
 
-static long smp_num_cpus;
         /* The original and new terminal definitions
            (only set when not in 'Batch' mode) */
 static struct termios Tty_original,    // our inherited terminal definition
@@ -96,7 +95,8 @@ static int   Rc_questions;
 static unsigned Pg2K_shft = 0;
 
         /* SMP, Irix/Solaris mode, Linux 2.5.xx support */
-static int         Cpu_faux_tot;
+static int         Cpu_cnt;
+static int         Cpu_faux_cnt;
 static float       Cpu_pmax;
 static const char *Cpu_States_fmts;
 
@@ -440,7 +440,7 @@ static void bye_bye (const char *str) {
       "\n\tProgram"
       "\n\t   %s"
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
-      "\n\t   page_bytes = %d, Cpu_faux_tot = %d, smp_num_cpus = %d"
+      "\n\t   page_bytes = %d, Cpu_faux_cnt = %d, Cpu_cnt = %d"
       "\n\t   sizeof(HST_t) = %u (%d HST_t's/Page), HHist_siz = %u"
       "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t*) = %u"
       "\n\t   sizeof(procps_jiffs) = %u, sizeof(procps_jiffs_hist) = %u, sizeof(procps_sys_result) = %u"
@@ -471,7 +471,7 @@ static void bye_bye (const char *str) {
       , __func__
       , PACKAGE_STRING
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
-      , (int)page_bytes, Cpu_faux_tot, (int)smp_num_cpus
+      , (int)page_bytes, Cpu_faux_cnt, (int)Cpu_cnt
       , (unsigned)sizeof(HST_t), ((int)page_bytes / (int)sizeof(HST_t)), HHist_siz
       , (unsigned)sizeof(proc_t), (unsigned)sizeof(p->cmd), (unsigned)sizeof(proc_t*)
       , (unsigned)sizeof(struct procps_jiffs), (unsigned)sizeof(struct procps_jiffs_hist), (unsigned)sizeof(struct procps_sys_result)
@@ -2311,7 +2311,7 @@ static void zap_fieldstab (void) {
    /*** hotplug_acclimated ***/
 
    Fieldstab[EU_CPN].width = 1;
-   if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)smp_num_cpus))) {
+   if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_cnt))) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
       Fieldstab[EU_CPN].width = digits;
    }
@@ -2319,9 +2319,9 @@ static void zap_fieldstab (void) {
 #ifdef BOOST_PERCNT
    Cpu_pmax = 99.9;
    Fieldstab[EU_CPU].width = 5;
-   if (Rc.mode_irixps && smp_num_cpus > 1 && !Thread_mode) {
-      Cpu_pmax = 100.0 * smp_num_cpus;
-      if (smp_num_cpus > 10) {
+   if (Rc.mode_irixps && Cpu_cnt > 1 && !Thread_mode) {
+      Cpu_pmax = 100.0 * Cpu_cnt;
+      if (Cpu_cnt > 10) {
          if (Cpu_pmax > 99999.0) Cpu_pmax = 99999.0;
       } else {
          if (Cpu_pmax > 999.9) Cpu_pmax = 999.9;
@@ -2330,9 +2330,9 @@ static void zap_fieldstab (void) {
 #else
    Cpu_pmax = 99.9;
    Fieldstab[EU_CPU].width = 4;
-   if (Rc.mode_irixps && smp_num_cpus > 1 && !Thread_mode) {
-      Cpu_pmax = 100.0 * smp_num_cpus;
-      if (smp_num_cpus > 10) {
+   if (Rc.mode_irixps && Cpu_cnt > 1 && !Thread_mode) {
+      Cpu_pmax = 100.0 * Cpu_cnt;
+      if (Cpu_cnt > 10) {
          if (Cpu_pmax > 99999.0) Cpu_pmax = 99999.0;
       } else {
          if (Cpu_pmax > 999.9) Cpu_pmax = 999.9;
@@ -2378,8 +2378,8 @@ static void zap_fieldstab (void) {
          *    Cpu_jiffs[sumSLOT]          == tics from /proc/stat line #1
          *  [ and beyond sumSLOT          == tics for each cpu NUMA node ] */
 static void cpus_refresh (void) {
- #define sumSLOT ( smp_num_cpus )
- #define totSLOT ( 1 + smp_num_cpus + Numa_node_tot )
+ #define sumSLOT ( Cpu_cnt )
+ #define totSLOT ( 1 + Cpu_cnt + Numa_node_tot )
    static int sav_slot = -1;
    int i;
 #ifndef NUMA_DISABLE
@@ -2406,8 +2406,8 @@ static void cpus_refresh (void) {
    if (procps_stat_get_jiffs_hist(sys_info, &Cpu_jiffs[sumSLOT], -1) < 0)
       error_exit(N_txt(LIB_errorsys_txt));
    // then retrieve all of the actual cpu jiffs
-   Cpu_faux_tot = procps_stat_get_jiffs_hist_all(sys_info, Cpu_jiffs, sumSLOT);
-   if (Cpu_faux_tot < 0)
+   Cpu_faux_cnt = procps_stat_get_jiffs_hist_all(sys_info, Cpu_jiffs, sumSLOT);
+   if (Cpu_faux_cnt < 0)
       error_exit(N_txt(LIB_errorsys_txt));
 
 #ifndef NUMA_DISABLE
@@ -2524,7 +2524,7 @@ static void procs_hlp (proc_t *this) {
       uptime_sav = uptime_cur;
 
       // if in Solaris mode, adjust our scaling for all cpus
-      Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : smp_num_cpus));
+      Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
 #ifdef OFF_HST_HASH
       maxt_sav = Frame_maxtask;
 #endif
@@ -2677,8 +2677,7 @@ static void sysinfo_refresh (int forced) {
 #ifndef PRETEND8CPUS
    /*** hotplug_acclimated ***/
    if (60 <= cur_secs - cpu_secs) {
-      smp_num_cpus = procps_cpu_count();
-      Cpu_faux_tot = smp_num_cpus;
+      Cpu_cnt = Cpu_faux_cnt = procps_cpu_count();
       cpu_secs = cur_secs;
 #ifndef NUMA_DISABLE
       if (Libnuma_handle)
@@ -3249,13 +3248,13 @@ static void before (char *me) {
    // accommodate nls/gettext potential translations
    initialize_nls();
 
-   Hertz = procps_hertz_get();
-   smp_num_cpus = procps_cpu_count();
    // establish cpu particulars
+   Hertz = procps_hertz_get();
+   Cpu_cnt = procps_cpu_count();
 #ifdef PRETEND8CPUS
-   smp_num_cpus = 8;
+   Cpu_cnt = 8;
 #endif
-   Cpu_faux_tot = smp_num_cpus;
+   Cpu_faux_cnt = Cpu_cnt;
    Cpu_States_fmts = N_unq(STATE_lin2x4_fmt);
    if (linux_version_code > LINUX_VERSION(2, 5, 41))
       Cpu_States_fmts = N_unq(STATE_lin2x5_fmt);
@@ -4387,7 +4386,7 @@ static void keys_global (int ch) {
          Pseudo_row = PROC_XTRA;
          break;
       case 'I':
-         if (Cpu_faux_tot > 1) {
+         if (Cpu_faux_cnt > 1) {
             Rc.mode_irixps = !Rc.mode_irixps;
             show_msg(fmtmk(N_fmt(IRIX_curmode_fmt)
                , Rc.mode_irixps ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
@@ -5128,11 +5127,11 @@ static void summary_show (void) {
       if (CHKw(w, View_CPUNOD)) {
          if (Numa_node_sel < 0) {
             // display the 1st /proc/stat line, then the nodes (if room)
-            summary_hlp(&Cpu_jiffs[smp_num_cpus], N_txt(WORD_allcpus_txt));
+            summary_hlp(&Cpu_jiffs[Cpu_cnt], N_txt(WORD_allcpus_txt));
             Msg_row += 1;
             // display each cpu node's states
             for (i = 0; i < Numa_node_tot; i++) {
-               struct procps_jiffs_hist *nod_ptr = &Cpu_jiffs[1 + smp_num_cpus + i];
+               struct procps_jiffs_hist *nod_ptr = &Cpu_jiffs[1 + Cpu_cnt + i];
                if (!isROOM(anyFLG, 1)) break;
 #ifndef OFF_NUMASKIP
                if (nod_ptr->id) {
@@ -5147,9 +5146,9 @@ static void summary_show (void) {
          } else {
             // display the node summary, then the associated cpus (if room)
             snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
-            summary_hlp(&Cpu_jiffs[1 + smp_num_cpus + Numa_node_sel], tmp);
+            summary_hlp(&Cpu_jiffs[1 + Cpu_cnt + Numa_node_sel], tmp);
             Msg_row += 1;
-            for (i = 0; i < Cpu_faux_tot; i++) {
+            for (i = 0; i < Cpu_faux_cnt; i++) {
                if (Numa_node_sel == Numa_node_of_cpu(Cpu_jiffs[i].id)) {
                   if (!isROOM(anyFLG, 1)) break;
                   snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_jiffs[i].id);
@@ -5163,12 +5162,12 @@ numa_nope:
 #endif
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
-         summary_hlp(&Cpu_jiffs[Cpu_faux_tot], N_txt(WORD_allcpus_txt));
+         summary_hlp(&Cpu_jiffs[Cpu_faux_cnt], N_txt(WORD_allcpus_txt));
          Msg_row += 1;
 
       } else {
          // display each cpu's states separately, screen height permitting...
-         for (i = 0; i < Cpu_faux_tot; i++) {
+         for (i = 0; i < Cpu_faux_cnt; i++) {
             snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_jiffs[i].id);
             summary_hlp(&Cpu_jiffs[i], tmp);
             Msg_row += 1;
