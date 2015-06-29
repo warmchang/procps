@@ -6,7 +6,6 @@
 
 __BEGIN_DECLS
 
-extern long smp_num_cpus;          /* number of CPUs */
 extern int have_privs;             /* boolean, true if setuid or similar */
 extern long page_bytes;            /* this architecture's bytes per page */
 
@@ -14,6 +13,7 @@ extern int        uptime (double *uptime_secs, double *idle_secs);
 extern unsigned long getbtime(void);
 int loadavg(double *av1, double *av5, double *av15);
 long procps_hertz_get(void);
+long procps_cpu_count(void);
 
 /* Shmem in 2.6.32+ */
 extern unsigned long kb_main_shared;
@@ -131,8 +131,6 @@ typedef struct slab_cache{
 extern unsigned int getslabinfo (struct slab_cache**);
 
 extern unsigned get_pid_digits(void) FUNCTION;
-
-extern void cpuinfo (void);
 
 __END_DECLS
 #endif /* SYSINFO_H */

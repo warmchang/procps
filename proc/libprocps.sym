@@ -47,9 +47,9 @@ global:
 	readproctab3;
 	readproctab;
 	readtask;
-	smp_num_cpus;
 	tty_to_dev;
 	user_from_uid;
+	procps_cpu_count;
 	procps_hertz_get;
 	procps_linux_version;
 	procps_meminfo_new;

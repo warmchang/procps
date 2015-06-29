@@ -35,7 +35,6 @@
 #include "procps-private.h"
 
 
-long smp_num_cpus;     /* number of CPUs */
 long page_bytes;       /* this architecture's page size */
 
 #define BAD_OPEN_MESSAGE					\
@@ -121,6 +120,7 @@ unsigned long getbtime(void) {
     return btime;
 }
 
+
 /* 
  * procps_hertz_get:
  *
@@ -159,7 +159,6 @@ PROCPS_EXPORT long procps_hertz_get(void)
 static void init_libproc(void) __attribute__((constructor));
 static void init_libproc(void){
 
-  cpuinfo();
   page_bytes = sysconf(_SC_PAGESIZE);
 }
 
@@ -866,19 +865,18 @@ out:
 
 ///////////////////////////////////////////////////////////////////////////
 
-void cpuinfo (void) {
-  // ought to count CPUs in /proc/stat instead of relying
-  // on glibc, which foolishly tries to parse /proc/cpuinfo
-  // note: that may have been the case but now /proc/stat
-  //       is the default source.  parsing of /proc/cpuinfo
-  //       only occurs if the open on /proc/stat fails
-  //
-  // SourceForge has an old Alpha running Linux 2.2.20 that
-  // appears to have a non-SMP kernel on a 2-way SMP box.
-  // _SC_NPROCESSORS_CONF returns 2, resulting in HZ=512
-  // _SC_NPROCESSORS_ONLN returns 1, which should work OK
+/* procps_cpu_count:
+ *
+ * Returns the number of CPUs that are currently online.
+ *
+ */
+long procps_cpu_count(void)
+{
+    long cpus=1;
 
-  smp_num_cpus = sysconf(_SC_NPROCESSORS_ONLN);
-  if (smp_num_cpus<1)        /* SPARC glibc is buggy */
-    smp_num_cpus=1;
+    cpus = sysconf(_SC_NPROCESSORS_ONLN);
+    if (cpus < 1)
+        return 1;
+    return cpus;
 }
+

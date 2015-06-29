@@ -67,6 +67,8 @@
 /*######  Miscellaneous global stuff  ####################################*/
 
 static long Hertz;
+
+static long smp_num_cpus;
         /* The original and new terminal definitions
            (only set when not in 'Batch' mode) */
 static struct termios Tty_original,    // our inherited terminal definition
@@ -2675,7 +2677,7 @@ static void sysinfo_refresh (int forced) {
 #ifndef PRETEND8CPUS
    /*** hotplug_acclimated ***/
    if (60 <= cur_secs - cpu_secs) {
-      cpuinfo();
+      smp_num_cpus = procps_cpu_count();
       Cpu_faux_tot = smp_num_cpus;
       cpu_secs = cur_secs;
 #ifndef NUMA_DISABLE
@@ -3248,6 +3250,7 @@ static void before (char *me) {
    initialize_nls();
 
    Hertz = procps_hertz_get();
+   smp_num_cpus = procps_cpu_count();
    // establish cpu particulars
 #ifdef PRETEND8CPUS
    smp_num_cpus = 8;
