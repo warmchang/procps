@@ -34,6 +34,7 @@
 #include "../proc/wchan.h"
 #include "../proc/version.h"
 #include "../proc/sysinfo.h"
+#include <proc/uptime.h>
 
 #include "../include/c.h"
 #include "common.h"
@@ -390,7 +391,7 @@ void reset_global(void){
   negate_selection      = 0;
   page_size             = getpagesize();
   running_only          = 0;
-  seconds_since_boot    = uptime(0,0);
+  seconds_since_boot    = procps_uptime(0,0);
   selection_list        = NULL;
   simple_select         = 0;
   sort_list             = NULL;

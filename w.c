@@ -586,7 +586,7 @@ int main(int argc, char **argv)
 
 	if (header) {
 		/* print uptime and headers */
-		printf("%s\n", sprint_uptime());
+		printf("%s\n", procps_uptime_sprint());
 		/* Translation Hint: Following five uppercase messages are
 		 * headers. Try to keep alignment intact.  */
 		printf(_("%-*s TTY      "), userlen, _("USER"));

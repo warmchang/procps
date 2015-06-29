@@ -47,13 +47,14 @@ static int count_users(void)
 
     setutent();
     while ((ut = getutent())) {
-	if ((ut->ut_type == USER_PROCESS) && (ut->ut_name[0] != '\0'))
-	    numuser++;
+    if ((ut->ut_type == USER_PROCESS) && (ut->ut_name[0] != '\0'))
+        numuser++;
     }
     endutent();
 
     return numuser;
 }
+
 /*
  * uptime:
  *
@@ -64,7 +65,9 @@ static int count_users(void)
  *
  * Returns: uptime_secs on success and <0 on failure
  */
-PROCPS_EXPORT int uptime(double *restrict uptime_secs, double *restrict idle_secs)
+PROCPS_EXPORT int procps_uptime(
+        double *restrict uptime_secs,
+        double *restrict idle_secs)
 {
     double up=0, idle=0;
     char *savelocale;
@@ -72,33 +75,34 @@ PROCPS_EXPORT int uptime(double *restrict uptime_secs, double *restrict idle_sec
     FILE *fp;
 
     if ((fp = fopen(UPTIME_FILE, "r")) == NULL)
-	return -errno;
+        return -errno;
+
     savelocale = strdup(setlocale(LC_NUMERIC, NULL));
     setlocale(LC_NUMERIC, "C");
     if (fscanf(fp, "%lf %lf", &up, &idle) < 2) {
-	setlocale(LC_NUMERIC, savelocale);
-	free(savelocale);
-	fclose(fp);
-	return -ERANGE;
+        setlocale(LC_NUMERIC, savelocale);
+        free(savelocale);
+        fclose(fp);
+        return -ERANGE;
     }
     fclose(fp);
     setlocale(LC_NUMERIC, savelocale);
     free(savelocale);
     if (uptime_secs)
-	*uptime_secs = up;
+        *uptime_secs = up;
     if (idle_secs)
-	*idle_secs = idle;
+        *idle_secs = idle;
     return up;
 }
 
 /*
- * sprint_uptime: 
+ * procps_uptime_sprint: 
  *
  * Print current time in nice format
  *
  * Returns a statically allocated upbuf or NULL on error
  */
-PROCPS_EXPORT char *sprint_uptime(void)
+PROCPS_EXPORT char *procps_uptime_sprint(void)
 {
     int upminutes, uphours, updays, users;
     int pos;
@@ -109,34 +113,41 @@ PROCPS_EXPORT char *sprint_uptime(void)
 
     upbuf[0] = '\0';
     if (time(&realseconds) < 0)
-	return upbuf;
+        return upbuf;
     realtime = localtime(&realseconds);
-    if (uptime(&uptime_secs, &idle_secs) < 0)
-	return upbuf;
+    if (procps_uptime(&uptime_secs, &idle_secs) < 0)
+        return upbuf;
 
     updays  =   ((int) uptime_secs / (60*60*24));
     uphours =   ((int) uptime_secs / (60*60)) % 24;
     upminutes = ((int) uptime_secs / (60)) % 60;
 
     pos = sprintf(upbuf, " %02d:%02d:%02d up %d %s, ",
-	    realtime->tm_hour, realtime->tm_min, realtime->tm_sec,
-	    updays, (updays != 1) ? "days" : "day");
+        realtime->tm_hour, realtime->tm_min, realtime->tm_sec,
+        updays, (updays != 1) ? "days" : "day");
     if (uphours)
-	pos += sprintf(upbuf + pos, "%2d:%02d, ", uphours, upminutes);
+        pos += sprintf(upbuf + pos, "%2d:%02d, ", uphours, upminutes);
     else
-	pos += sprintf(upbuf + pos, "%d min, ", uphours, upminutes);
+        pos += sprintf(upbuf + pos, "%d min, ", uphours, upminutes);
 
     users = count_users();
     loadavg(&av1, &av5, &av15);
 
     pos += sprintf(upbuf + pos, "%2d user%s, load average: %.2f, %.2f, %.2f",
-	    users, users == 1 ? "" : "s",
-	    av1, av5, av15);
+        users, users == 1 ? "" : "s",
+        av1, av5, av15);
 
     return upbuf;
 }
 
-PROCPS_EXPORT char *sprint_uptime_short(void)
+/*
+ * procps_uptime_sprint_short: 
+ *
+ * Print current time in nice format
+ *
+ * Returns a statically allocated buffer or NULL on error
+ */
+PROCPS_EXPORT char *procps_uptime_sprint_short(void)
 {
     int updecades, upyears, upweeks, updays, uphours, upminutes;
     int pos = 3;
@@ -146,8 +157,8 @@ PROCPS_EXPORT char *sprint_uptime_short(void)
     double uptime_secs, idle_secs;
 
     shortbuf[0] = '\0';
-    if (uptime(&uptime_secs, &idle_secs) < 0)
-	return shortbuf;
+    if (procps_uptime(&uptime_secs, &idle_secs) < 0)
+        return shortbuf;
 
     updecades =  (int) uptime_secs / (60*60*24*365*10);
     upyears =   ((int) uptime_secs / (60*60*24*365)) % 10;
@@ -159,44 +170,44 @@ PROCPS_EXPORT char *sprint_uptime_short(void)
     strcat(shortbuf, "up ");
 
     if (updecades) {
-	pos += sprintf(shortbuf + pos, "%d %s",
-		updecades, updecades > 1 ? "decades" : "decade");
-	comma +1;
+        pos += sprintf(shortbuf + pos, "%d %s",
+                       updecades, updecades > 1 ? "decades" : "decade");
+        comma +1;
     }
 
     if (upyears) {
-	pos += sprintf(shortbuf + pos, "%s%d %s",
-		comma > 0 ? ", " : "", upyears,
-		upyears > 1 ? "years" : "year");
-	comma += 1;
+        pos += sprintf(shortbuf + pos, "%s%d %s",
+                       comma > 0 ? ", " : "", upyears,
+                       upyears > 1 ? "years" : "year");
+        comma += 1;
     }
 
     if (upweeks) {
-	pos += sprintf(shortbuf + pos, "%s%d %s",
-		comma  > 0 ? ", " : "", upweeks,
-		upweeks > 1 ? "weeks" : "week");
-	comma += 1;
+        pos += sprintf(shortbuf + pos, "%s%d %s",
+                       comma  > 0 ? ", " : "", upweeks,
+                       upweeks > 1 ? "weeks" : "week");
+        comma += 1;
     }
 
     if (updays) {
-	pos += sprintf(shortbuf + pos, "%s%d %s",
-		comma  > 0 ? ", " : "", updays,
-		updays > 1 ? "days" : "day");
-	comma += 1;
+        pos += sprintf(shortbuf + pos, "%s%d %s",
+                       comma  > 0 ? ", " : "", updays,
+                       updays > 1 ? "days" : "day");
+        comma += 1;
     }
 
     if (uphours) {
-	pos += sprintf(shortbuf + pos, "%s%d %s",
-		comma  > 0 ? ", " : "", uphours,
-		uphours > 1 ? "hours" : "hour");
-	comma += 1;
+        pos += sprintf(shortbuf + pos, "%s%d %s",
+                       comma  > 0 ? ", " : "", uphours,
+                       uphours > 1 ? "hours" : "hour");
+        comma += 1;
     }
 
     if (upminutes) {
-	pos += sprintf(shortbuf + pos, "%s%d %s",
-		comma  > 0 ? ", " : "", upminutes,
-		upminutes > 1 ? "minutes" : "minute");
-	comma += 1;
+        pos += sprintf(shortbuf + pos, "%s%d %s",
+                       comma  > 0 ? ", " : "", upminutes,
+                       upminutes > 1 ? "minutes" : "minute");
+        comma += 1;
     }
     return shortbuf;
 }

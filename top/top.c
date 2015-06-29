@@ -2516,7 +2516,7 @@ static void procs_hlp (proc_t *this) {
       float et;
       void *v;
 
-      uptime(&uptime_cur, NULL);
+      procps_uptime(&uptime_cur, NULL);
       et = uptime_cur - uptime_sav;
       if (et < 0.01) et = 0.005;
       uptime_sav = uptime_cur;
@@ -5102,10 +5102,10 @@ static void summary_show (void) {
    // Display Uptime and Loadavg
    if (isROOM(View_LOADAV, 1)) {
       if (!Rc.mode_altscr)
-         show_special(0, fmtmk(LOADAV_line, Myname, sprint_uptime()));
+         show_special(0, fmtmk(LOADAV_line, Myname, procps_uptime_sprint()));
       else
          show_special(0, fmtmk(CHKw(w, Show_TASKON)? LOADAV_line_alt : LOADAV_line
-            , w->grpname, sprint_uptime()));
+            , w->grpname, procps_uptime_sprint()));
       Msg_row += 1;
    } // end: View_LOADAV
 

@@ -101,7 +101,7 @@ top_top_SOURCES = \
 	top/top.c \
 	top/top_nls.h \
 	top/top_nls.c \
-	lib/fileutils.c
+	lib/fileutils.c \
 	lib/signals.c
 top_top_LDADD = $(LDADD) @NCURSES_LIBS@ $(DL_LIB)
 endif

@@ -40,7 +40,6 @@ global:
 	meminfo;
 	openproc;
 	page_bytes;
-	print_uptime;
 	put_slabinfo;
 	readeither;
 	readproc;
@@ -49,12 +48,8 @@ global:
 	readproctab;
 	readtask;
 	smp_num_cpus;
-	sprint_uptime;
 	tty_to_dev;
 	user_from_uid;
-	uptime;
-	sprint_uptime;
-	sprint_uptime_short;
 	procps_hertz_get;
 	procps_linux_version;
 	procps_meminfo_new;
@@ -76,6 +71,9 @@ global:
 	procps_stat_get_jiffs_hist_all;
 	procps_stat_get_sys;
 	procps_stat_get_sys_chain;
+	procps_uptime;
+	procps_uptime_sprint;
+	procps_uptime_sprint_short;
 	procps_vmstat_new;
 	procps_vmstat_read;
 	procps_vmstat_ref;

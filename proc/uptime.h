@@ -29,9 +29,9 @@
 
 __BEGIN_DECLS
 
-int uptime(double *uptime_secs, double *idle_secs);
-char *sprint_uptime(void);
-char *sprint_uptime_short(void);
+int procps_uptime(double *uptime_secs, double *idle_secs);
+char *procps_uptime_sprint(void);
+char *procps_uptime_sprint_short(void);
 
 __END_DECLS
 
