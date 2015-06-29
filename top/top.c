@@ -47,6 +47,7 @@
 #include <sys/types.h>       // also available via <stdlib.h>
 
 #include "../include/fileutils.h"
+#include "../include/signals.h"
 #include "../include/nls.h"
 
 #include "../proc/devname.h"
@@ -54,7 +55,6 @@
 #include "../proc/procps.h"
 #include "../proc/readproc.h"
 #include "../proc/readstat.h"
-#include "../proc/sig.h"
 #include "../proc/sysinfo.h"
 #include "../proc/version.h"
 #include "../proc/wchan.h"

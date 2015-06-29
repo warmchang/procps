@@ -78,7 +78,7 @@ endif
 if BUILD_KILL
 bin_PROGRAMS += kill
 dist_man_MANS += kill.1
-kill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/nsutils.c
+kill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/nsutils.c lib/signals.c
 else
   EXTRA_DIST += kill.1
 endif
@@ -102,6 +102,7 @@ top_top_SOURCES = \
 	top/top_nls.h \
 	top/top_nls.c \
 	lib/fileutils.c
+	lib/signals.c
 top_top_LDADD = $(LDADD) @NCURSES_LIBS@ $(DL_LIB)
 endif
 
@@ -109,8 +110,8 @@ if BUILD_SKILL
 bin_PROGRAMS += \
 	skill \
 	snice
-skill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/nsutils.c
-snice_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/nsutils.c
+skill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/nsutils.c lib/signals.c
+snice_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/nsutils.c lib/signals.c
 dist_man_MANS += \
 	skill.1 \
 	snice.1
@@ -121,8 +122,8 @@ else
 endif
 
 free_SOURCES = free.c lib/strutils.c lib/fileutils.c
-pgrep_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c
-pkill_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c
+pgrep_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c lib/signals.c
+pkill_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c lib/signals.c
 pmap_SOURCES = pmap.c lib/fileutils.c
 pwdx_SOURCES = pwdx.c lib/fileutils.c
 pwdx_LDADD=
@@ -167,8 +168,6 @@ proc_libprocps_la_SOURCES = \
 	proc/readproc.h \
 	proc/readstat.c \
 	proc/readstat.h \
-	proc/sig.c \
-	proc/sig.h \
 	proc/slab.c \
 	proc/slab.h \
 	proc/sysinfo.c \
@@ -190,7 +189,6 @@ proc_libprocps_la_include_HEADERS = \
 	proc/procps.h \
 	proc/pwcache.h \
 	proc/readproc.h \
-	proc/sig.h \
 	proc/slab.h \
 	proc/sysinfo.h \
 	proc/uptime.h \
@@ -221,7 +219,8 @@ ps_pscommand_SOURCES =  \
 	ps/select.c \
 	ps/sortformat.c \
 	ps/stacktrace.c \
-	lib/fileutils.c
+	lib/fileutils.c \
+	lib/signals.c
 
 # lib/test_* binaries
 noinst_PROGRAMS = \

@@ -4,5 +4,6 @@ dist_noinst_HEADERS = \
 	nls.h \
 	nsutils.h \
 	rpmatch.h \
+	signals.h \
 	strutils.h \
 	xalloc.h

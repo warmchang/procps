@@ -31,13 +31,13 @@
 
 #include "../proc/alloc.h"
 #include "../proc/readproc.h"
-#include "../proc/sig.h"
 #include "../proc/sysinfo.h"
 #include "../proc/version.h"
 #include "../proc/wchan.h"
 
 #include "../include/fileutils.h"
 #include "../include/c.h"
+#include "../include/signals.h"
 #include "common.h"
 
 #ifndef SIGCHLD

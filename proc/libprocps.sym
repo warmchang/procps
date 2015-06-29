@@ -40,7 +40,6 @@ global:
 	meminfo;
 	openproc;
 	page_bytes;
-	pretty_print_signals;
 	print_uptime;
 	put_slabinfo;
 	readeither;
@@ -49,13 +48,9 @@ global:
 	readproctab3;
 	readproctab;
 	readtask;
-	signal_name_to_number;
-	signal_number_to_name;
 	smp_num_cpus;
 	sprint_uptime;
-	strtosig;
 	tty_to_dev;
-	unix_print_signals;
 	user_from_uid;
 	uptime;
 	sprint_uptime;
