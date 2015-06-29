@@ -96,7 +96,7 @@ PROCPS_EXPORT int procps_uptime(
 }
 
 /*
- * procps_uptime_sprint: 
+ * procps_uptime_sprint:
  *
  * Print current time in nice format
  *
@@ -141,7 +141,7 @@ PROCPS_EXPORT char *procps_uptime_sprint(void)
 }
 
 /*
- * procps_uptime_sprint_short: 
+ * procps_uptime_sprint_short:
  *
  * Print current time in nice format
  *

@@ -121,7 +121,7 @@ unsigned long getbtime(void) {
 }
 
 
-/* 
+/*
  * procps_hertz_get:
  *
  *

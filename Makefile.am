@@ -194,7 +194,7 @@ proc_libprocps_la_include_HEADERS = \
 	proc/uptime.h \
 	proc/version.h \
 	proc/vmstat.h \
-	proc/wchan.h 
+	proc/wchan.h
 
 dist_man_MANS += \
 	proc/openproc.3 \

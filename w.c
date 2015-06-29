@@ -378,7 +378,7 @@ static void showinfo(utmp_t * u, int formtype, int maxcmd, int from,
 	const proc_t *best;
 	long hertz;
 
-	hertz = procps_hertz_get();	
+	hertz = procps_hertz_get();
 	for (i = 0; i < UT_LINESIZE; i++)
 		/* clean up tty if garbled */
 		if (isalnum(u->ut_line[i]) || (u->ut_line[i] == '/'))
