@@ -125,25 +125,27 @@ PROCPS_EXPORT int procps_vmstat_read (
     return 0;
 }
 
-PROCPS_EXPORT struct procps_vmstat *procps_vmstat_ref (
+PROCPS_EXPORT int procps_vmstat_ref (
         struct procps_vmstat *info)
 {
     if (info == NULL)
-        return NULL;
+        return -EINVAL;
     info->refcount++;
-    return info;
+    return info->refcount;
 }
 
-PROCPS_EXPORT struct procps_vmstat *procps_vmstat_unref (
-        struct procps_vmstat *info)
+PROCPS_EXPORT int procps_vmstat_unref (
+        struct procps_vmstat **info)
 {
-    if (info == NULL || info->refcount == 0)
-        return NULL;
-    info->refcount--;
-    if (info->refcount > 0)
-        return info;
-    free(info);
-    return NULL;
+    if (info == NULL || *info == NULL)
+        return -EINVAL;
+    (*info)->refcount--;
+    if ((*info)->refcount == 0) {
+        free(*info);
+        *info = NULL;
+        return 0;
+    }
+    return (*info)->refcount;
 }
 
 /* Accessor functions */

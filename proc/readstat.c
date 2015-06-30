@@ -152,27 +152,29 @@ PROCPS_EXPORT int procps_stat_read (
     return 0;
 }
 
-PROCPS_EXPORT struct procps_statinfo *procps_stat_ref (
+PROCPS_EXPORT int procps_stat_ref (
         struct procps_statinfo *info)
 {
     if (info == NULL)
-        return NULL;
+        return -EINVAL;
     info->refcount++;
-    return info;
+    return info->refcount;
 }
 
-PROCPS_EXPORT struct procps_statinfo *procps_stat_unref (
-        struct procps_statinfo *info)
+PROCPS_EXPORT int procps_stat_unref (
+        struct procps_statinfo **info)
 {
-    if (info == NULL || info->refcount == 0)
-        return NULL;
-    info->refcount--;
-    if (info->refcount > 0)
-        return info;
-    if (info->jiff_hists)
-        free(info->jiff_hists);
-    free(info);
-    return NULL;
+    if (info == NULL || *info == NULL)
+        return -EINVAL;
+    (*info)->refcount--;
+    if ((*info)->refcount == 0) {
+        if ((*info)->jiff_hists != NULL)
+            free((*info)->jiff_hists);
+        free(*info);
+        *info = NULL;
+        return 0;
+    }
+    return (*info)->refcount;
 }
 
 PROCPS_EXPORT jiff procps_stat_get_cpu (

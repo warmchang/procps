@@ -106,7 +106,7 @@ static void get_boot_time(void)
 	xerrx(EXIT_FAILURE,
 		_("Unable to read system stat information"));
     boot_time = procps_stat_get_sys(sys_info, PROCPS_STAT_BTIME);
-    procps_stat_unref(sys_info);
+    procps_stat_unref(&sys_info);
 }
 
 static void get_memory_total()
@@ -119,7 +119,7 @@ static void get_memory_total()
 	xerrx(EXIT_FAILURE,
 		_("Unable to read meminfo information"));
     memory_total = procps_meminfo_get(mem_info, PROCPS_MEM_TOTAL);
-    procps_meminfo_unref(mem_info);
+    procps_meminfo_unref(&mem_info);
 }
 
 /*************************************************************************/

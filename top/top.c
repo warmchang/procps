@@ -578,8 +578,8 @@ static void bye_bye (const char *str) {
 #endif // end: ATEOJ_RPTHSH
 #endif // end: OFF_HST_HASH
 
-   procps_stat_unref(sys_info);
-   procps_meminfo_unref(mem_info);
+   procps_stat_unref(&sys_info);
+   procps_meminfo_unref(&mem_info);
 #ifndef NUMA_DISABLE
   if (Libnuma_handle) dlclose(Libnuma_handle);
 #endif

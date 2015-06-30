@@ -214,25 +214,27 @@ PROCPS_EXPORT int procps_meminfo_read (
 }
 
 
-PROCPS_EXPORT struct procps_meminfo *procps_meminfo_ref (
+PROCPS_EXPORT int procps_meminfo_ref (
         struct procps_meminfo *info)
 {
     if (info == NULL)
-        return NULL;
+        return -EINVAL;
     info->refcount++;
-    return info;
+    return info->refcount;
 }
 
-PROCPS_EXPORT struct procps_meminfo *procps_meminfo_unref (
-        struct procps_meminfo *info)
+PROCPS_EXPORT int procps_meminfo_unref (
+        struct procps_meminfo **info)
 {
-    if (info == NULL || info->refcount == 0)
-        return NULL;
-    info->refcount--;
-    if (info->refcount > 0)
-        return info;
-    free(info);
-    return NULL;
+    if (info == NULL || *info == NULL)
+        return -EINVAL;
+    (*info)->refcount--;
+    if ((*info)->refcount == 0) {
+        free(*info);
+        *info = NULL;
+        return 0;
+    }
+    return (*info)->refcount;
 }
 
 /* Accessor functions */

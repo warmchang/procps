@@ -58,8 +58,8 @@ struct procps_meminfo;
 int procps_meminfo_new (struct procps_meminfo **info);
 int procps_meminfo_read (struct procps_meminfo *info);
 
-struct procps_meminfo *procps_meminfo_ref (struct procps_meminfo *info);
-struct procps_meminfo *procps_meminfo_unref (struct procps_meminfo *info);
+int procps_meminfo_ref (struct procps_meminfo *info);
+int procps_meminfo_unref (struct procps_meminfo **info);
 
 unsigned long procps_meminfo_get (struct procps_meminfo *info, enum meminfo_item item);
 int procps_meminfo_get_chain (struct procps_meminfo *info, struct meminfo_result *item);

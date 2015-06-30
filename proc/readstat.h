@@ -74,8 +74,8 @@ int procps_stat_new (struct procps_statinfo **info);
 int procps_stat_read (struct procps_statinfo *info, const int cpu_only);
 int procps_stat_read_jiffs (struct procps_statinfo *info);
 
-struct procps_statinfo *procps_stat_ref (struct procps_statinfo *info);
-struct procps_statinfo *procps_stat_unref (struct procps_statinfo *info);
+int procps_stat_ref (struct procps_statinfo *info);
+int procps_stat_unref (struct procps_statinfo **info);
 
 jiff procps_stat_get_cpu (struct procps_statinfo *info, enum procps_cpu_item item);
 int procps_stat_get_cpu_chain (struct procps_statinfo *info, struct procps_cpu_result *item);
