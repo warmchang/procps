@@ -73,7 +73,7 @@ enum norm_nls {
    FAIL_widepid_txt, FIND_no_find_fmt, FIND_no_next_txt, FOREST_modes_fmt,
    FOREST_views_txt, GET_find_str_txt, GET_max_task_fmt, GET_nice_num_fmt,
    GET_pid2kill_fmt, GET_pid2nice_fmt, GET_sigs_num_fmt, GET_user_ids_txt,
-   HELP_cmdline_fmt, IRIX_curmode_fmt, LIB_errormem_txt, LIB_errorsys_txt,
+   HELP_cmdline_fmt, IRIX_curmode_fmt, LIB_errorcpu_txt, LIB_errormem_txt,
    LIMIT_exceed_fmt, MISSING_args_fmt, NAME_windows_fmt, NOT_onsecure_txt,
    NOT_smp_cpus_txt, NUMA_nodebad_txt, NUMA_nodeget_fmt, NUMA_nodenam_fmt,
    NUMA_nodenot_txt, OFF_one_word_txt, ON_word_only_txt, OSEL_casenot_txt,

@@ -51,14 +51,14 @@
 #include "../include/nls.h"
 
 #include "../proc/devname.h"
-#include "../proc/meminfo.h"
+#include <proc/meminfo.h>
 #include "../proc/procps.h"
 #include "../proc/readproc.h"
-#include "../proc/readstat.h"
+#include <proc/readstat.h>
 #include "../proc/sysinfo.h"
-#include "../proc/version.h"
+#include <proc/version.h>
 #include "../proc/wchan.h"
-#include "../proc/uptime.h"
+#include <proc/uptime.h>
 
 #include "top.h"
 #include "top_nls.h"
@@ -251,25 +251,25 @@ static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||
 
         /* Support for the new library API -- acquired (if necessary)
            at program startup and referenced throughout our lifetime */
-static struct procps_meminfo *mem_info;
-static struct meminfo_result mem_chain[] = {
-   { PROCPS_MEM_FREE,      0, &mem_chain[1] },
-   { PROCPS_MEM_USED,      0, &mem_chain[2] },
-   { PROCPS_MEM_TOTAL,     0, &mem_chain[3] },
-   { PROCPS_MEM_CACHED,    0, &mem_chain[4] },
-   { PROCPS_MEM_BUFFERS,   0, &mem_chain[5] },
-   { PROCPS_MEM_AVAILABLE, 0, &mem_chain[6] },
-   { PROCPS_SWAP_TOTAL,    0, &mem_chain[7] },
-   { PROCPS_SWAP_FREE,     0, &mem_chain[8] },
+static struct procps_meminfo *Mem_context;
+static struct meminfo_result Mem_chain[] = {
+   { PROCPS_MEM_FREE,      0, &Mem_chain[1] },
+   { PROCPS_MEM_USED,      0, &Mem_chain[2] },
+   { PROCPS_MEM_TOTAL,     0, &Mem_chain[3] },
+   { PROCPS_MEM_CACHED,    0, &Mem_chain[4] },
+   { PROCPS_MEM_BUFFERS,   0, &Mem_chain[5] },
+   { PROCPS_MEM_AVAILABLE, 0, &Mem_chain[6] },
+   { PROCPS_SWAP_TOTAL,    0, &Mem_chain[7] },
+   { PROCPS_SWAP_FREE,     0, &Mem_chain[8] },
    { PROCPS_SWAP_USED,     0, NULL          }
 };
 enum mem_enums {
    mem_FREE,  mem_USED,  mem_TOTAL, mem_CACHE, mem_BUFFS,
    mem_AVAIL, swp_TOTAL, swp_FREE,  swp_USED
 };
-#define MEM_VAL(e) mem_chain[e].result
+#define MEM_VAL(e) Mem_chain[e].result
 
-static struct procps_stat *sys_info;
+static struct procps_stat *Cpu_context;
 static struct procps_jiffs_hist *Cpu_jiffs;
 
 /*######  Sort callbacks  ################################################*/
@@ -578,8 +578,8 @@ static void bye_bye (const char *str) {
 #endif // end: ATEOJ_RPTHSH
 #endif // end: OFF_HST_HASH
 
-   procps_stat_unref(&sys_info);
-   procps_meminfo_unref(&mem_info);
+   procps_stat_unref(&Cpu_context);
+   procps_meminfo_unref(&Mem_context);
 #ifndef NUMA_DISABLE
   if (Libnuma_handle) dlclose(Libnuma_handle);
 #endif
@@ -2399,16 +2399,16 @@ static void cpus_refresh (void) {
       Cpu_jiffs = alloc_c(totSLOT * sizeof(struct procps_jiffs_hist));
    }
 
-   // first. snapshot the proc/stat cpu jiffs
-   if (procps_stat_read_jiffs(sys_info) < 0)
-      error_exit(N_txt(LIB_errorsys_txt));
-   // second, retrieve just the cpu summary jiffs
-   if (procps_stat_get_jiffs_hist(sys_info, &Cpu_jiffs[sumSLOT], -1) < 0)
-      error_exit(N_txt(LIB_errorsys_txt));
-   // then retrieve all of the actual cpu jiffs
-   Cpu_faux_cnt = procps_stat_get_jiffs_hist_all(sys_info, Cpu_jiffs, sumSLOT);
+   // 1st, snapshot the proc/stat cpu jiffs
+   if (procps_stat_read_jiffs(Cpu_context) < 0)
+      error_exit(N_txt(LIB_errorcpu_txt));
+   // 2nd, retrieve just the cpu summary jiffs
+   if (procps_stat_get_jiffs_hist(Cpu_context, &Cpu_jiffs[sumSLOT], -1) < 0)
+      error_exit(N_txt(LIB_errorcpu_txt));
+   // 3rd, retrieve all of the actual cpu jiffs
+   Cpu_faux_cnt = procps_stat_get_jiffs_hist_all(Cpu_context, Cpu_jiffs, sumSLOT);
    if (Cpu_faux_cnt < 0)
-      error_exit(N_txt(LIB_errorsys_txt));
+      error_exit(N_txt(LIB_errorcpu_txt));
 
 #ifndef NUMA_DISABLE
    /* henceforth, with just a little more arithmetic we can avoid
@@ -2669,9 +2669,10 @@ static void sysinfo_refresh (int forced) {
 
    /*** hotplug_acclimated ***/
    if (3 <= cur_secs - mem_secs) {
-      if (procps_meminfo_read(mem_info) < 0)
-         error_exit(N_txt(LIB_errormem_txt));
-      procps_meminfo_get_chain(mem_info, mem_chain);
+      if ((procps_meminfo_read(Mem_context) < 0)
+         || (procps_meminfo_get_chain(Mem_context, Mem_chain) < 0))
+            error_exit(N_txt(LIB_errormem_txt));
+      procps_meminfo_get_chain(Mem_context, Mem_chain);
       mem_secs = cur_secs;
    }
 #ifndef PRETEND8CPUS
@@ -3265,13 +3266,13 @@ static void before (char *me) {
 
    // get virtual page stuff
    i = page_bytes; // from sysinfo.c, at lib init
-   while(i > 1024) { i >>= 1; Pg2K_shft++; }
+   while (i > 1024) { i >>= 1; Pg2K_shft++; }
 
    // prepare for new library API ...
-   if (procps_meminfo_new(&mem_info) < 0)
+   if (procps_meminfo_new(&Mem_context) < 0)
       error_exit(N_txt(LIB_errormem_txt));
-   if (procps_stat_new(&sys_info) < 0)
-      error_exit(N_txt(LIB_errorsys_txt));
+   if (procps_stat_new(&Cpu_context) < 0)
+      error_exit(N_txt(LIB_errorcpu_txt));
 
 #ifndef OFF_HST_HASH
    // prep for HST_t's put/get hashing optimizations
