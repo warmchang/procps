@@ -98,7 +98,7 @@ extern long Hertz;
 
 static void get_boot_time(void)
 {
-    struct procps_statinfo *sys_info;
+    struct procps_stat *sys_info;
     if (procps_stat_new(&sys_info) < 0)
 	xerrx(EXIT_FAILURE,
 		_("Unable to create system stat structure"));

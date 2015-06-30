@@ -298,7 +298,7 @@ static void new_format(void)
 	time_t the_time;
 	char timebuf[32];
 	struct procps_vmstat *vm_info;
-	struct procps_statinfo *sys_info;
+	struct procps_stat *sys_info;
 	struct procps_meminfo *mem_info;
 
 	sleep_half = (sleep_time / 2);
@@ -837,7 +837,7 @@ static void disksum_format(void)
 
 static void sum_format(void)
 {
-	struct procps_statinfo *sys_info;
+	struct procps_stat *sys_info;
 	struct procps_vmstat *vm_info;
 	struct procps_meminfo *mem_info;
 
@@ -896,7 +896,7 @@ static void sum_format(void)
 
 static void fork_format(void)
 {
-    struct procps_statinfo *sys_info;
+    struct procps_stat *sys_info;
 
     if (procps_stat_new(&sys_info) < 0)
 	xerrx(EXIT_FAILURE,

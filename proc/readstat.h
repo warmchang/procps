@@ -68,24 +68,24 @@ struct procps_sys_result {
     struct procps_sys_result *next;
 };
 
-struct procps_statinfo;
+struct procps_stat;
 
-int procps_stat_new (struct procps_statinfo **info);
-int procps_stat_read (struct procps_statinfo *info, const int cpu_only);
-int procps_stat_read_jiffs (struct procps_statinfo *info);
+int procps_stat_new (struct procps_stat **info);
+int procps_stat_read (struct procps_stat *info, const int cpu_only);
+int procps_stat_read_jiffs (struct procps_stat *info);
 
-int procps_stat_ref (struct procps_statinfo *info);
-int procps_stat_unref (struct procps_statinfo **info);
+int procps_stat_ref (struct procps_stat *info);
+int procps_stat_unref (struct procps_stat **info);
 
-jiff procps_stat_get_cpu (struct procps_statinfo *info, enum procps_cpu_item item);
-int procps_stat_get_cpu_chain (struct procps_statinfo *info, struct procps_cpu_result *item);
-int procps_stat_get_jiffs (struct procps_statinfo *info, struct procps_jiffs *item, int which);
-int procps_stat_get_jiffs_all (struct procps_statinfo *info, struct procps_jiffs *item, int numitems);
-int procps_stat_get_jiffs_hist (struct procps_statinfo *info, struct procps_jiffs_hist *item, int which);
-int procps_stat_get_jiffs_hist_all (struct procps_statinfo *info, struct procps_jiffs_hist *item, int numitems);
+jiff procps_stat_get_cpu (struct procps_stat *info, enum procps_cpu_item item);
+int procps_stat_get_cpu_chain (struct procps_stat *info, struct procps_cpu_result *item);
+int procps_stat_get_jiffs (struct procps_stat *info, struct procps_jiffs *item, int which);
+int procps_stat_get_jiffs_all (struct procps_stat *info, struct procps_jiffs *item, int numitems);
+int procps_stat_get_jiffs_hist (struct procps_stat *info, struct procps_jiffs_hist *item, int which);
+int procps_stat_get_jiffs_hist_all (struct procps_stat *info, struct procps_jiffs_hist *item, int numitems);
 
-unsigned int procps_stat_get_sys (struct procps_statinfo *info, enum procps_stat_item item);
-int procps_stat_get_sys_chain (struct procps_statinfo *info, struct procps_sys_result *item);
+unsigned int procps_stat_get_sys (struct procps_stat *info, enum procps_stat_item item);
+int procps_stat_get_sys_chain (struct procps_stat *info, struct procps_sys_result *item);
 
 __END_DECLS
 #endif

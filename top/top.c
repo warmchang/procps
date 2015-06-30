@@ -269,7 +269,7 @@ enum mem_enums {
 };
 #define MEM_VAL(e) mem_chain[e].result
 
-static struct procps_statinfo *sys_info;
+static struct procps_stat *sys_info;
 static struct procps_jiffs_hist *Cpu_jiffs;
 
 /*######  Sort callbacks  ################################################*/

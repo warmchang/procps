@@ -27,7 +27,7 @@ struct procps_jiffs_private {
     // future additions go here, please
 };
 
-struct procps_statinfo {
+struct procps_stat {
     int refcount;
     int stat_fd;
     struct stat_data data;
@@ -49,10 +49,10 @@ struct procps_statinfo {
  * Returns: a new stat info container
  */
 PROCPS_EXPORT int procps_stat_new (
-        struct procps_statinfo **info)
+        struct procps_stat **info)
 {
-    struct procps_statinfo *v;
-    v = calloc(1, sizeof(struct procps_statinfo));
+    struct procps_stat *v;
+    v = calloc(1, sizeof(struct procps_stat));
     if (!v)
         return -ENOMEM;
 
@@ -73,7 +73,7 @@ PROCPS_EXPORT int procps_stat_new (
  * If CPU stats only needed, set cpu_only to non-zero
  */
 PROCPS_EXPORT int procps_stat_read (
-        struct procps_statinfo *info,
+        struct procps_stat *info,
         const int cpu_only)
 {
     char buf[8192];
@@ -153,7 +153,7 @@ PROCPS_EXPORT int procps_stat_read (
 }
 
 PROCPS_EXPORT int procps_stat_ref (
-        struct procps_statinfo *info)
+        struct procps_stat *info)
 {
     if (info == NULL)
         return -EINVAL;
@@ -162,7 +162,7 @@ PROCPS_EXPORT int procps_stat_ref (
 }
 
 PROCPS_EXPORT int procps_stat_unref (
-        struct procps_statinfo **info)
+        struct procps_stat **info)
 {
     if (info == NULL || *info == NULL)
         return -EINVAL;
@@ -178,7 +178,7 @@ PROCPS_EXPORT int procps_stat_unref (
 }
 
 PROCPS_EXPORT jiff procps_stat_get_cpu (
-        struct procps_statinfo *info,
+        struct procps_stat *info,
         enum procps_cpu_item item)
 {
     switch (item) {
@@ -207,7 +207,7 @@ PROCPS_EXPORT jiff procps_stat_get_cpu (
 }
 
 PROCPS_EXPORT int procps_get_cpu_chain (
-        struct procps_statinfo *info,
+        struct procps_stat *info,
         struct procps_cpu_result *item)
 {
     if (item == NULL)
@@ -255,7 +255,7 @@ PROCPS_EXPORT int procps_get_cpu_chain (
 }
 
 PROCPS_EXPORT unsigned int procps_stat_get_sys (
-        struct procps_statinfo *info,
+        struct procps_stat *info,
         enum procps_stat_item item)
 {
     switch (item) {
@@ -276,7 +276,7 @@ PROCPS_EXPORT unsigned int procps_stat_get_sys (
 }
 
 PROCPS_EXPORT int procps_stat_get_sys_chain (
-        struct procps_statinfo *info,
+        struct procps_stat *info,
         struct procps_sys_result *item)
 {
     if (item == NULL)
@@ -324,7 +324,7 @@ PROCPS_EXPORT int procps_stat_get_sys_chain (
  * supplied structures upon request.
  */
 PROCPS_EXPORT int procps_stat_read_jiffs (
-        struct procps_statinfo *info)
+        struct procps_stat *info)
 {
   #define ALLOCincr 32
     struct procps_jiffs_private *sum_ptr, *cpu_ptr;
@@ -413,7 +413,7 @@ reap_em_again:
  * This function deals only with the 'current' jiffs counts.
  */
 PROCPS_EXPORT int procps_stat_get_jiffs (
-        struct procps_statinfo *info,
+        struct procps_stat *info,
         struct procps_jiffs *item,
         int which)
 {
@@ -451,7 +451,7 @@ PROCPS_EXPORT int procps_stat_get_jiffs (
  * This function deals only with the 'current' jiffs counts.
  */
 PROCPS_EXPORT int procps_stat_get_jiffs_all (
-        struct procps_statinfo *info,
+        struct procps_stat *info,
         struct procps_jiffs *item,
         int numitems)
 {
@@ -477,7 +477,7 @@ PROCPS_EXPORT int procps_stat_get_jiffs_all (
  * This function provides both 'new' and 'old' jiffs counts.
  */
 PROCPS_EXPORT int procps_stat_get_jiffs_hist (
-        struct procps_statinfo *info,
+        struct procps_stat *info,
         struct procps_jiffs_hist *item,
         int which)
 {
@@ -513,7 +513,7 @@ PROCPS_EXPORT int procps_stat_get_jiffs_hist (
  * This function provides both 'new' and 'old' jiffs counts.
  */
 PROCPS_EXPORT int procps_stat_get_jiffs_hist_all (
-        struct procps_statinfo *info,
+        struct procps_stat *info,
         struct procps_jiffs_hist *item,
         int numitems)
 {
