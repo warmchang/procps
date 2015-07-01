@@ -67,6 +67,7 @@
 /*######  Miscellaneous global stuff  ####################################*/
 
 static long Hertz;
+static long Page_size;
 
         /* The original and new terminal definitions
            (only set when not in 'Batch' mode) */
@@ -471,8 +472,8 @@ static void bye_bye (const char *str) {
       , __func__
       , PACKAGE_STRING
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
-      , (int)page_bytes, Cpu_faux_cnt, (int)Cpu_cnt
-      , (unsigned)sizeof(HST_t), ((int)page_bytes / (int)sizeof(HST_t)), HHist_siz
+      , (int)Page_size, Cpu_faux_cnt, (int)Cpu_cnt
+      , (unsigned)sizeof(HST_t), ((int)Page_size / (int)sizeof(HST_t)), HHist_siz
       , (unsigned)sizeof(proc_t), (unsigned)sizeof(p->cmd), (unsigned)sizeof(proc_t*)
       , (unsigned)sizeof(struct procps_jiffs), (unsigned)sizeof(struct procps_jiffs_hist), (unsigned)sizeof(struct procps_sys_result)
       , (long)Frames_libflags
@@ -3252,6 +3253,7 @@ static void before (char *me) {
    // establish cpu particulars
    Hertz = procps_hertz_get();
    Cpu_cnt = procps_cpu_count();
+   Page_size = procps_pagesize_get();
 #ifdef PRETEND8CPUS
    Cpu_cnt = 8;
 #endif
@@ -3265,7 +3267,7 @@ static void before (char *me) {
       Cpu_States_fmts = N_unq(STATE_lin2x7_fmt);
 
    // get virtual page stuff
-   i = page_bytes; // from sysinfo.c, at lib init
+   i = Page_size;
    while (i > 1024) { i >>= 1; Pg2K_shft++; }
 
    // prepare for new library API ...
