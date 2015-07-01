@@ -11,7 +11,7 @@ extern long page_bytes;            /* this architecture's bytes per page */
 
 extern int        uptime (double *uptime_secs, double *idle_secs);
 extern unsigned long getbtime(void);
-int loadavg(double *av1, double *av5, double *av15);
+int procps_loadavg(double *av1, double *av5, double *av15);
 long procps_hertz_get(void);
 long procps_cpu_count(void);
 

@@ -162,9 +162,20 @@ static void init_libproc(void){
   page_bytes = sysconf(_SC_PAGESIZE);
 }
 
-
-/***********************************************************************/
-PROCPS_EXPORT int loadavg(double *restrict av1, double *restrict av5, double *restrict av15)
+/*
+ * procps_loadavg:
+ * @av1: location to store 1 minute load average
+ * @av5: location to store 5 minute load average
+ * @av15: location to store 15 minute load average
+ *
+ * Find the 1,5 and 15 minute load average of the system
+ *
+ * Returns: 0 on success <0 on error
+ */
+PROCPS_EXPORT int procps_loadavg(
+        double *restrict av1,
+        double *restrict av5,
+        double *restrict av15)
 {
     double avg_1=0, avg_5=0, avg_15=0;
     char *savelocale;
@@ -174,7 +185,7 @@ PROCPS_EXPORT int loadavg(double *restrict av1, double *restrict av5, double *re
     savelocale = strdup(setlocale(LC_NUMERIC, NULL));
     setlocale(LC_NUMERIC, "C");
     if (sscanf(buf, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3) {
-	retval = -ERANGE;
+        retval = -ERANGE;
     }
     setlocale(LC_NUMERIC, savelocale);
     free(savelocale);

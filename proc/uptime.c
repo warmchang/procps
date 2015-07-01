@@ -131,7 +131,7 @@ PROCPS_EXPORT char *procps_uptime_sprint(void)
         pos += sprintf(upbuf + pos, "%d min, ", uphours, upminutes);
 
     users = count_users();
-    loadavg(&av1, &av5, &av15);
+    procps_loadavg(&av1, &av5, &av15);
 
     pos += sprintf(upbuf + pos, "%2d user%s, load average: %.2f, %.2f, %.2f",
         users, users == 1 ? "" : "s",

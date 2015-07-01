@@ -1,7 +1,6 @@
 LIBPROCPS_0 {
 global:
 	closeproc;
-	cpuinfo;
 	dev_to_tty;
 	escape_command;
 	escape_str;
@@ -34,7 +33,6 @@ global:
 	kb_swap_free;
 	kb_swap_total;
 	kb_swap_used;
-	loadavg;
 	look_up_our_self;
 	lookup_wchan;
 	meminfo;
@@ -52,6 +50,7 @@ global:
 	procps_cpu_count;
 	procps_hertz_get;
 	procps_linux_version;
+	procps_loadavg;
 	procps_meminfo_new;
 	procps_meminfo_read;
 	procps_meminfo_ref;

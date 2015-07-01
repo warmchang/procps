@@ -24,8 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "proc/version.h"
-#include "proc/sysinfo.h"
+#include <proc/sysinfo.h>
 #include "c.h"
 #include "fileutils.h"
 #include "nls.h"
@@ -167,7 +166,7 @@ int main(int argc, char **argv)
 		if (scale_fact < max_scale)
 			scale_fact *= 2.0;	/* help it drift back up. */
 
-		loadavg(&av[0], &av[1], &av[2]);
+		procps_loadavg(&av[0], &av[1], &av[2]);
 
 		do {
 			lines = av[0] * scale_fact;
