@@ -171,21 +171,6 @@ static void crash(const char *filename) {
 }
 
 
-///////////////////////////////////////////////////////////////////////
-// based on Fabian Frederick's /proc/diskstats parser
-
-
-unsigned int getpartitions_num(struct disk_stat *disks, int ndisks){
-  int i=0;
-  int partitions=0;
-
-  for (i=0;i<ndisks;i++){
-	partitions+=disks[i].partitions;
-  }
-  return partitions;
-
-}
-
 /////////////////////////////////////////////////////////////////////////////
 static int is_disk(char *dev)
 {

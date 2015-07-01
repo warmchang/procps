@@ -12,9 +12,7 @@ global:
 	get_ns_name;
 	get_pid_digits;
 	get_slabinfo;
-	getbtime;
 	getdiskstat;
-	getpartitions_num;
 	getslabinfo;
 	look_up_our_self;
 	lookup_wchan;

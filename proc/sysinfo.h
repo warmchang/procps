@@ -41,7 +41,6 @@ typedef struct partition_stat{
 	unsigned long long requested_writes;
 }partition_stat;
 
-extern unsigned int getpartitions_num(struct disk_stat *disks, int ndisks);
 extern unsigned int getdiskstat (struct disk_stat**,struct partition_stat**);
 
 typedef struct slab_cache{

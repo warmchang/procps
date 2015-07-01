@@ -115,76 +115,6 @@ static void __attribute__ ((__noreturn__))
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-#if 0
-/* produce: "  6  ", "123  ", "123k ", etc. */
-static int format_1024(unsigned long long val64, char *restrict dst)
-{
-	unsigned oldval;
-	const char suffix[] = " kmgtpe";
-	unsigned level = 0;
-	unsigned val32;
-
-	if (val64 < 1000) {
-		/* special case to avoid "6.0  " when plain "  6  " would do */
-		val32 = val64;
-		return sprintf(dst, "%3u  ", val32);
-	}
-
-	while (val64 > 0xffffffffull) {
-		level++;
-		val64 /= 1024;
-	}
-
-	val32 = val64;
-
-	while (val32 > 999) {
-		level++;
-		oldval = val32;
-		val32 /= 1024;
-	}
-
-	if (val32 < 10) {
-		unsigned fract = (oldval % 1024) * 10 / 1024;
-		return sprintf(dst, "%u.%u%c ", val32, fract, suffix[level]);
-	}
-	return sprintf(dst, "%3u%c ", val32, suffix[level]);
-}
-
-/* produce: "  6  ", "123  ", "123k ", etc. */
-static int format_1000(unsigned long long val64, char *restrict dst)
-{
-	unsigned oldval;
-	const char suffix[] = " kmgtpe";
-	unsigned level = 0;
-	unsigned val32;
-
-	if (val64 < 1000) {
-		/* special case to avoid "6.0  " when plain "  6  " would do */
-		val32 = val64;
-		return sprintf(dst, "%3u  ", val32);
-	}
-
-	while (val64 > 0xffffffffull) {
-		level++;
-		val64 /= 1000;
-	}
-
-	val32 = val64;
-
-	while (val32 > 999) {
-		level++;
-		oldval = val32;
-		val32 /= 1000;
-	}
-
-	if (val32 < 10) {
-		unsigned fract = (oldval % 1000) / 100;
-		return sprintf(dst, "%u.%u%c ", val32, fract, suffix[level]);
-	}
-	return sprintf(dst, "%3u%c ", val32, suffix[level]);
-}
-#endif
-
 static void new_header(void)
 {
 	struct tm *tm_ptr;
@@ -267,6 +197,20 @@ static void new_header(void)
 	}
 
 	printf("\n");
+}
+
+///////////////////////////////////////////////////////////////////////
+// based on Fabian Frederick's /proc/diskstats parser
+
+static unsigned int getpartitions_num(struct disk_stat *disks, int ndisks)
+{
+    unsigned int i;
+    int partitions=0;
+
+    for (i=0; i<ndisks; i++) {
+        partitions+=disks[i].partitions;
+    }
+    return partitions;
 }
 
 static unsigned long unitConvert(unsigned long size)
