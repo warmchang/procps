@@ -11,7 +11,6 @@ extern int have_privs;             /* boolean, true if setuid or similar */
 long procps_cpu_count(void);
 long procps_hertz_get(void);
 int procps_loadavg(double *av1, double *av5, double *av15);
-long procps_pagesize_get(void);
 
 #define BUFFSIZE (64*1024)
 typedef unsigned long long jiff;

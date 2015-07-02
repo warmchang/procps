@@ -114,22 +114,6 @@ PROCPS_EXPORT long procps_hertz_get(void)
 }
 
 /*
- * procps_pagesize_get:
- *
- * Return the size of pages in bytes
- *
- * Returns: size of pages in bytes
- */
-PROCPS_EXPORT long procps_pagesize_get(void)
-{
-    long psiz;
-
-    if ((psiz = sysconf(_SC_PAGESIZE)) > 0)
-        return psiz;
-    return 1;
-}
-
-/*
  * procps_loadavg:
  * @av1: location to store 1 minute load average
  * @av5: location to store 5 minute load average

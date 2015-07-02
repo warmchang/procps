@@ -3253,7 +3253,7 @@ static void before (char *me) {
    // establish cpu particulars
    Hertz = procps_hertz_get();
    Cpu_cnt = procps_cpu_count();
-   Page_size = procps_pagesize_get();
+   Page_size = getpagesize();
 #ifdef PRETEND8CPUS
    Cpu_cnt = 8;
 #endif
