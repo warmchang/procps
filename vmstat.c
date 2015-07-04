@@ -53,6 +53,7 @@
 #include <proc/vmstat.h>
 #include <proc/readstat.h>
 #include <proc/meminfo.h>
+#include <proc/slab.h>
 #include <proc/diskstat.h>
 
 #define UNIT_B        1
@@ -613,45 +614,52 @@ static void slabheader(void)
 
 static void slabformat(void)
 {
-	FILE *fSlab;
-	struct slab_cache *slabs;
-	unsigned long nSlab, i, j, k;
-	const char format[] = "%-24s %6u %6u %6u %6u\n";
+    struct procps_slabinfo *slab_info;
+    int i, nodeid, nr_slabs;
+    const char format[] = "%-24s %6u %6u %6u %6u\n";
+    char *slab_name;
+    struct procps_slabnode_result result[] = {
+        { PROCPS_SLABNODE_AOBJS,         0, &result[1] },
+        { PROCPS_SLABNODE_OBJS,          0, &result[2] },
+        { PROCPS_SLABNODE_OBJ_SIZE,      0, &result[3] },
+        { PROCPS_SLABNODE_OBJS_PER_SLAB, 0, NULL }};
+    enum result_enums {
+        stat_AOBJS, stat_OBJS, stat_OSIZE, stat_OPS};
+#define SLAB_VAL(e) result[e].result
 
-	fSlab = fopen("/proc/slabinfo", "rb");
-	if (!fSlab) {
-		xwarnx(_("your kernel does not support slabinfo or your permissions are insufficient"));
-		return;
-	}
 
-	if (!moreheaders)
-		slabheader();
-	nSlab = getslabinfo(&slabs);
-	for (k = 0; k < nSlab; k++) {
-		if (moreheaders && ((k % height) == 0))
-			slabheader();
-		printf(format,
-		       slabs[k].name,
-		       slabs[k].active_objs,
-		       slabs[k].num_objs,
-		       slabs[k].objsize, slabs[k].objperslab);
-	}
-	free(slabs);
-	for (j = 1, k = 1; infinite_updates || j < num_updates; j++) {
-		sleep(sleep_time);
-		nSlab = getslabinfo(&slabs);
-		for (i = 0; i < nSlab; i++, k++) {
-			if (moreheaders && ((k % height) == 0))
-				slabheader();
-			printf(format,
-			       slabs[i].name,
-			       slabs[i].active_objs,
-			       slabs[i].num_objs,
-			       slabs[i].objsize, slabs[i].objperslab);
-		}
-		free(slabs);
-	}
-	fclose(fSlab);
+    if (procps_slabinfo_new(&slab_info) < 0)
+        xerrx(EXIT_FAILURE,
+              _("Unable to create slabinfo structure"));
+
+
+    if (!moreheaders)
+        slabheader();
+
+    for (i = 0; infinite_updates || i < num_updates; i++) {
+        if (procps_slabinfo_read(slab_info) < 0)
+            xerrx(EXIT_FAILURE,
+                _("Unable to read slabinfo structure"));
+        if ((nr_slabs = procps_slabinfo_node_count(slab_info)) < 0)
+            xerrx(EXIT_FAILURE,
+                  _("Unable to count number of slabinfo nodes"));
+
+        for (nodeid = 0; nodeid < nr_slabs; nodeid++) {
+            if (moreheaders && ((nodeid % height) == 0))
+                slabheader();
+            if (procps_slabinfo_node_getchain(slab_info, result, nodeid) < 0)
+                xerrx(EXIT_FAILURE,
+                      _("Error getting slabinfo results"));
+            slab_name = procps_slabinfo_node_getname(slab_info, nodeid);
+
+            printf(format,
+                   slab_name?slab_name:"(unknown)",
+                   SLAB_VAL(stat_AOBJS), SLAB_VAL(stat_OBJS),
+                   SLAB_VAL(stat_OSIZE), SLAB_VAL(stat_OPS));
+        }
+        if (infinite_updates || i+1 < num_updates)
+            sleep(sleep_time);
+    }
 }
 
 static void disksum_format(void)
@@ -914,6 +922,7 @@ int main(int argc, char *argv[])
 		sleep_time = tmp;
 		infinite_updates = 1;
 	}
+    num_updates = 1;
 	if (optind < argc) {
 		num_updates = strtol_or_err(argv[optind++], _("failed to parse argument"));
 		infinite_updates = 0;
