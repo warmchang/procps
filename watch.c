@@ -49,6 +49,7 @@
 #include <time.h>
 #include <unistd.h>
 #ifdef WITH_WATCH8BIT
+# define _XOPEN_SOURCE_EXTENDED 1
 # include <wchar.h>
 # include <wctype.h>
 # include <ncursesw/ncurses.h>
