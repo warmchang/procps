@@ -53,6 +53,7 @@
 #include <proc/vmstat.h>
 #include <proc/readstat.h>
 #include <proc/meminfo.h>
+#include <proc/diskstat.h>
 
 #define UNIT_B        1
 #define UNIT_k        1000
@@ -83,7 +84,7 @@ static int t_option;
 
 static unsigned sleep_time = 1;
 static int infinite_updates = 0;
-static unsigned long num_updates;
+static unsigned long num_updates =1;
 /* window height */
 static unsigned int height;
 static unsigned int moreheaders = TRUE;
@@ -199,19 +200,6 @@ static void new_header(void)
 	printf("\n");
 }
 
-///////////////////////////////////////////////////////////////////////
-// based on Fabian Frederick's /proc/diskstats parser
-
-static unsigned int getpartitions_num(struct disk_stat *disks, int ndisks)
-{
-    unsigned int i;
-    int partitions=0;
-
-    for (i=0; i<ndisks; i++) {
-        partitions+=disks[i].partitions;
-    }
-    return partitions;
-}
 
 static unsigned long unitConvert(unsigned long size)
 {
@@ -444,227 +432,165 @@ static void diskpartition_header(const char *partition_name)
 
 static int diskpartition_format(const char *partition_name)
 {
-	FILE *fDiskstat;
-	struct disk_stat *disks;
-	struct partition_stat *partitions, *current_partition = NULL;
-	unsigned long ndisks, j, k, npartitions;
-	const char format[] = "%20u %10llu %10u %10llu\n";
+#define PARTGET(x) procps_diskstat_dev_get(disk_stat, (x), partid)
+    struct procps_diskstat *disk_stat;
+    const char format[] = "%20u %10llu %10u %10llu\n";
+    int i, partid;
 
-	fDiskstat = fopen("/proc/diskstats", "rb");
-	if (!fDiskstat)
-		xerrx(EXIT_FAILURE,
-		     _("your kernel does not support diskstat. (2.5.70 or above required)"));
+    if (procps_diskstat_new(&disk_stat) < 0)
+        xerr(EXIT_FAILURE,
+             _("Unable to create diskstat structure"));
 
-	fclose(fDiskstat);
-	ndisks = getdiskstat(&disks, &partitions);
-	npartitions = getpartitions_num(disks, ndisks);
-	for (k = 0; k < npartitions; k++) {
-		if (!strcmp(partition_name, partitions[k].partition_name)) {
-			current_partition = &(partitions[k]);
-		}
-	}
-	if (!current_partition) {
-		free(disks);
-		free(partitions);
-		return -1;
-	}
-	diskpartition_header(partition_name);
-	printf(format,
-	       current_partition->reads, current_partition->reads_sectors,
-	       current_partition->writes, current_partition->requested_writes);
-	fflush(stdout);
-	free(disks);
-	free(partitions);
-	for (j = 1; infinite_updates || j < num_updates; j++) {
-		if (moreheaders && ((j % height) == 0))
-			diskpartition_header(partition_name);
-		sleep(sleep_time);
-		ndisks = getdiskstat(&disks, &partitions);
-		npartitions = getpartitions_num(disks, ndisks);
-		current_partition = NULL;
-		for (k = 0; k < npartitions; k++) {
-			if (!strcmp
-			    (partition_name, partitions[k].partition_name)) {
-				current_partition = &(partitions[k]);
-			}
-		}
-		if (!current_partition) {
-			free(disks);
-			free(partitions);
-			return -1;
-		}
-		printf(format,
-		       current_partition->reads,
-		       current_partition->reads_sectors,
-		       current_partition->writes,
-		       current_partition->requested_writes);
-		fflush(stdout);
-		free(disks);
-		free(partitions);
-	}
-	return 0;
+    if (procps_diskstat_read(disk_stat) < 0)
+        xerr(EXIT_FAILURE,
+             _("Unable to read diskstat"));
+    if ((partid = procps_diskstat_dev_getbyname(disk_stat, partition_name))
+        < 0)
+        xerrx(EXIT_FAILURE, _("Partition %s not found"), partition_name);
+
+    diskpartition_header(partition_name);
+    for (i=0; infinite_updates || i < num_updates ; i++) {
+        if (procps_diskstat_read(disk_stat) < 0)
+            xerr(EXIT_FAILURE,
+                 _("Unable to read diskstat"));
+        if ((partid = procps_diskstat_dev_getbyname(disk_stat, partition_name))
+            < 0)
+            xerrx(EXIT_FAILURE,
+                  _("Partition %s not found"), partition_name);
+
+        printf(format,
+               PARTGET(PROCPS_DISKSTAT_READS),
+               PARTGET(PROCPS_DISKSTAT_READ_SECTORS),
+               PARTGET(PROCPS_DISKSTAT_WRITES),
+               PARTGET(PROCPS_DISKSTAT_WRITE_SECTORS)
+              );
+
+        if (infinite_updates || i+1 < num_updates)
+            sleep(sleep_time);
+    }
+    return 0;
 }
 
 static void diskheader(void)
 {
-	struct tm *tm_ptr;
-	time_t the_time;
-	char timebuf[32];
+    struct tm *tm_ptr;
+    time_t the_time;
+    char timebuf[32];
 
-	/* Translation Hint: Translating folloging header & fields
-	 * that follow (marked with max x chars) might not work,
-	 * unless manual page is translated as well.  */
-	const char *header =
-	    _("disk- ------------reads------------ ------------writes----------- -----IO------");
-	const char *wide_header =
-	    _("disk- -------------------reads------------------- -------------------writes------------------ ------IO-------");
-	const char *timestamp_header = _(" -----timestamp-----");
+    /* Translation Hint: Translating folloging header & fields
+     * that follow (marked with max x chars) might not work,
+     * unless manual page is translated as well.  */
+    const char *header =
+        _("disk- ------------reads------------ ------------writes----------- -----IO------");
+    const char *wide_header =
+        _("disk- -------------------reads------------------- -------------------writes------------------ ------IO-------");
+    const char *timestamp_header = _(" -----timestamp-----");
 
-	const char format[] =
-	    "%5s %6s %6s %7s %7s %6s %6s %7s %7s %6s %6s";
-	const char wide_format[] =
-	    "%5s %9s %9s %11s %11s %9s %9s %11s %11s %7s %7s";
+    const char format[] =
+        "%5s %6s %6s %7s %7s %6s %6s %7s %7s %6s %6s";
+    const char wide_format[] =
+        "%5s %9s %9s %11s %11s %9s %9s %11s %11s %7s %7s";
 
-	printf("%s", w_option ? wide_header : header);
+    printf("%s", w_option ? wide_header : header);
 
-	if (t_option) {
-		printf("%s", timestamp_header);
-	}
+    if (t_option) {
+        printf("%s", timestamp_header);
+    }
 
-	printf("\n");
+    printf("\n");
 
-	printf(w_option ? wide_format : format,
-	       " ",
-	       /* Translation Hint: max 6 chars */
-	       _("total"),
-	       /* Translation Hint: max 6 chars */
-	       _("merged"),
-	       /* Translation Hint: max 7 chars */
-	       _("sectors"),
-	       /* Translation Hint: max 7 chars */
-	       _("ms"),
-	       /* Translation Hint: max 6 chars */
-	       _("total"),
-	       /* Translation Hint: max 6 chars */
-	       _("merged"),
-	       /* Translation Hint: max 7 chars */
-	       _("sectors"),
-	       /* Translation Hint: max 7 chars */
-	       _("ms"),
-	       /* Translation Hint: max 6 chars */
-	       _("cur"),
-	       /* Translation Hint: max 6 chars */
-	       _("sec"));
+    printf(w_option ? wide_format : format,
+           " ",
+           /* Translation Hint: max 6 chars */
+           _("total"),
+           /* Translation Hint: max 6 chars */
+           _("merged"),
+           /* Translation Hint: max 7 chars */
+           _("sectors"),
+           /* Translation Hint: max 7 chars */
+           _("ms"),
+           /* Translation Hint: max 6 chars */
+           _("total"),
+           /* Translation Hint: max 6 chars */
+           _("merged"),
+           /* Translation Hint: max 7 chars */
+           _("sectors"),
+           /* Translation Hint: max 7 chars */
+           _("ms"),
+           /* Translation Hint: max 6 chars */
+           _("cur"),
+           /* Translation Hint: max 6 chars */
+           _("sec"));
 
-	if (t_option) {
-		(void) time( &the_time );
-		tm_ptr = localtime( &the_time );
-		if (strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
-			timebuf[strlen(timestamp_header) - 1] = '\0';
-		} else {
-			timebuf[0] = '\0';
-		}
-		printf(" %*s", (int)(strlen(timestamp_header) - 1), timebuf);
-	}
+    if (t_option) {
+        (void) time( &the_time );
+        tm_ptr = localtime( &the_time );
+        if (strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
+            timebuf[strlen(timestamp_header) - 1] = '\0';
+        } else {
+            timebuf[0] = '\0';
+        }
+        printf(" %*s", (int)(strlen(timestamp_header) - 1), timebuf);
+    }
 
-	printf("\n");
+    printf("\n");
 }
 
 static void diskformat(void)
 {
-	const char format[] =
-	    "%-5s %6u %6u %7llu %7u %6u %6u %7llu %7u %6u %6u";
-	const char wide_format[] =
-	    "%-5s %9u %9u %11llu %11u %9u %9u %11llu %11u %7u %7u";
+#define DSTAT(x) procps_diskstat_dev_get(disk_stat, (x), diskid)
+    struct procps_diskstat *disk_stat;
+    int i,diskid, disk_count;
+    time_t the_time;
+    struct tm *tm_ptr;
+    char timebuf[32];
+    const char format[] = "%-5s %6u %6u %7llu %7u %6u %6u %7llu %7u %6u %6u";
+    const char wide_format[] = "%-5s %9u %9u %11llu %11u %9u %9u %11llu %11u %7u %7u";
 
-	FILE *fDiskstat;
-	struct disk_stat *disks;
-	struct partition_stat *partitions;
-	unsigned long ndisks, i, j, k;
-	struct tm *tm_ptr;
-	time_t the_time;
-	char timebuf[32];
+    if (procps_diskstat_new(&disk_stat) < 0)
+        xerr(EXIT_FAILURE,
+             _("Unable to create diskstat structure"));
 
+    if (!moreheaders)
+        diskheader();
+    for (i=0; infinite_updates || i < num_updates ; i++) {
+        if (procps_diskstat_read(disk_stat) < 0)
+            xerr(EXIT_FAILURE,
+                 _("Unable to read diskstat data"));
 
-	if ((fDiskstat = fopen("/proc/diskstats", "rb"))) {
-		fclose(fDiskstat);
-		ndisks = getdiskstat(&disks, &partitions);
-
-		if (t_option) {
-			(void) time( &the_time );
-			tm_ptr = localtime( &the_time );
-			strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
-		}
-
-		if (!moreheaders)
-			diskheader();
-		for (k = 0; k < ndisks; k++) {
-			if (moreheaders && ((k % height) == 0))
-				diskheader();
-			printf(w_option ? wide_format : format,
-			       disks[k].disk_name,
-			       disks[k].reads,
-			       disks[k].merged_reads,
-			       disks[k].reads_sectors,
-			       disks[k].milli_reading,
-			       disks[k].writes,
-			       disks[k].merged_writes,
-			       disks[k].written_sectors,
-			       disks[k].milli_writing,
-			       disks[k].inprogress_IO ? disks[k].inprogress_IO / 1000 : 0,
-			       disks[k].milli_spent_IO ? disks[k].
-			       milli_spent_IO / 1000 : 0);
-
-			if (t_option) {
-				printf(" %s", timebuf);
-			}
-
-			printf("\n");
-			fflush(stdout);
-		}
-		free(disks);
-		free(partitions);
-
-		for (j = 1; infinite_updates || j < num_updates; j++) {
-			sleep(sleep_time);
-			ndisks = getdiskstat(&disks, &partitions);
-
-			if (t_option) {
-				(void) time( &the_time );
-				tm_ptr = localtime( &the_time );
-				strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
-			}
-
-			for (i = 0; i < ndisks; i++, k++) {
-				if (moreheaders && ((k % height) == 0))
-					diskheader();
-				printf(w_option ? wide_format : format,
-				       disks[i].disk_name,
-				       disks[i].reads,
-				       disks[i].merged_reads,
-				       disks[i].reads_sectors,
-				       disks[i].milli_reading,
-				       disks[i].writes,
-				       disks[i].merged_writes,
-				       disks[i].written_sectors,
-				       disks[i].milli_writing,
-				       disks[i].inprogress_IO ? disks[i].inprogress_IO / 1000 : 0,
-				       disks[i].milli_spent_IO ? disks[i].
-				       milli_spent_IO / 1000 : 0);
-
-				if (t_option) {
-					printf(" %s", timebuf);
-				}
-
-				printf("\n");
-				fflush(stdout);
-			}
-			free(disks);
-			free(partitions);
-		}
-	} else
-		xerrx(EXIT_FAILURE,
-		     _("your kernel does not support diskstat (2.5.70 or above required)"));
+        if (t_option) {
+            (void) time( &the_time );
+            tm_ptr = localtime( &the_time );
+            strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+        }
+        disk_count = procps_diskstat_dev_count(disk_stat);
+        for (diskid = 0; diskid < disk_count; diskid++) {
+            if (procps_diskstat_dev_isdisk(disk_stat, diskid) != 1)
+                continue; /* not a disk */
+            if (moreheaders && ((diskid % height) == 0))
+                diskheader();
+            printf(w_option ? wide_format : format,
+                   procps_diskstat_dev_getname(disk_stat, diskid),
+                   DSTAT(PROCPS_DISKSTAT_READS),
+                   DSTAT(PROCPS_DISKSTAT_READS_MERGED),
+                   DSTAT(PROCPS_DISKSTAT_READ_SECTORS),
+                   DSTAT(PROCPS_DISKSTAT_READ_TIME),
+                   DSTAT(PROCPS_DISKSTAT_WRITES),
+                   DSTAT(PROCPS_DISKSTAT_WRITES_MERGED),
+                   DSTAT(PROCPS_DISKSTAT_WRITE_SECTORS),
+                   DSTAT(PROCPS_DISKSTAT_WRITE_TIME),
+                   DSTAT(PROCPS_DISKSTAT_IO_INPROGRESS) / 1000,
+                   DSTAT(PROCPS_DISKSTAT_IO_TIME) / 1000);
+            if (t_option)
+                printf(" %s\n", timebuf);
+            else
+                printf("\n");
+            fflush(stdout);
+        }
+        if (infinite_updates || i+1 < num_updates)
+            sleep(sleep_time);
+    }
+#undef DSTAT
 }
 
 static void slabheader(void)
@@ -730,53 +656,63 @@ static void slabformat(void)
 
 static void disksum_format(void)
 {
+#define DSTAT(x) procps_diskstat_dev_get(disk_stat, (x), devid)
+    struct procps_diskstat *disk_stat;
 
-	FILE *fDiskstat;
-	struct disk_stat *disks;
-	struct partition_stat *partitions;
-	int ndisks, i;
-	unsigned long reads, merged_reads, read_sectors, milli_reading, writes,
-	    merged_writes, written_sectors, milli_writing, inprogress_IO,
-	    milli_spent_IO, weighted_milli_spent_IO;
+    if (procps_diskstat_new(&disk_stat) < 0)
+        xerr(EXIT_FAILURE,
+             _("Unable to create diskstat structure"));
 
-	reads = merged_reads = read_sectors = milli_reading = writes =
-	    merged_writes = written_sectors = milli_writing = inprogress_IO =
-	    milli_spent_IO = weighted_milli_spent_IO = 0;
+    if (procps_diskstat_read(disk_stat) < 0)
+        xerr(EXIT_FAILURE,
+             _("Unable to read diskstat"));
 
-	if ((fDiskstat = fopen("/proc/diskstats", "rb"))) {
-		fclose(fDiskstat);
-		ndisks = getdiskstat(&disks, &partitions);
-		printf(_("%13d disks \n"), ndisks);
-		printf(_("%13d partitions \n"),
-		       getpartitions_num(disks, ndisks));
+    int devid, dev_count, disk_count, part_count ;
+    unsigned long reads, merged_reads, read_sectors, milli_reading, writes,
+                  merged_writes, written_sectors, milli_writing, inprogress_IO,
+                  milli_spent_IO, weighted_milli_spent_IO;
 
-		for (i = 0; i < ndisks; i++) {
-			reads		+= disks[i].reads;
-			merged_reads	+= disks[i].merged_reads;
-			read_sectors	+= disks[i].reads_sectors;
-			milli_reading	+= disks[i].milli_reading;
-			writes		+= disks[i].writes;
-			merged_writes	+= disks[i].merged_writes;
-			written_sectors	+= disks[i].written_sectors;
-			milli_writing	+= disks[i].milli_writing;
-			inprogress_IO	+= disks[i].inprogress_IO ? disks[i].inprogress_IO / 1000 : 0;
-			milli_spent_IO	+= disks[i].milli_spent_IO ? disks[i].milli_spent_IO / 1000 : 0;
-		}
+    reads = merged_reads = read_sectors = milli_reading = writes =
+        merged_writes = written_sectors = milli_writing = inprogress_IO =
+        milli_spent_IO = weighted_milli_spent_IO = 0;
+    disk_count = part_count = 0;
 
-		printf(_("%13lu total reads\n"), reads);
-		printf(_("%13lu merged reads\n"), merged_reads);
-		printf(_("%13lu read sectors\n"), read_sectors);
-		printf(_("%13lu milli reading\n"), milli_reading);
-		printf(_("%13lu writes\n"), writes);
-		printf(_("%13lu merged writes\n"), merged_writes);
-		printf(_("%13lu written sectors\n"), written_sectors);
-		printf(_("%13lu milli writing\n"), milli_writing);
-		printf(_("%13lu inprogress IO\n"), inprogress_IO);
-		printf(_("%13lu milli spent IO\n"), milli_spent_IO);
+    if ((dev_count = procps_diskstat_dev_count(disk_stat)) < 0)
+        xerr(EXIT_FAILURE,
+             _("Unable to count diskstat devices"));
 
-		free(disks);
-		free(partitions);
-	}
+    for (devid=0; devid < dev_count; devid++) {
+        if (procps_diskstat_dev_isdisk(disk_stat, devid) != 1) {
+            part_count++;
+            continue; /* not a disk */
+        }
+        disk_count++;
+        reads += DSTAT(PROCPS_DISKSTAT_READS);
+        merged_reads += DSTAT(PROCPS_DISKSTAT_READS_MERGED);
+        read_sectors += DSTAT(PROCPS_DISKSTAT_READ_SECTORS);
+        milli_reading += DSTAT(PROCPS_DISKSTAT_READ_TIME);
+        writes += DSTAT(PROCPS_DISKSTAT_WRITES);
+        merged_writes += DSTAT(PROCPS_DISKSTAT_WRITES_MERGED);
+        written_sectors += DSTAT(PROCPS_DISKSTAT_WRITE_SECTORS);
+        milli_writing += DSTAT(PROCPS_DISKSTAT_WRITE_TIME);
+        inprogress_IO += DSTAT(PROCPS_DISKSTAT_IO_INPROGRESS) / 1000;
+        milli_spent_IO += DSTAT(PROCPS_DISKSTAT_IO_TIME) / 1000;
+        weighted_milli_spent_IO += DSTAT(PROCPS_DISKSTAT_IO_TIME) / 1000;
+    }
+    printf(_("%13d disks\n"), disk_count);
+    printf(_("%13d partitions\n"), part_count);
+    printf(_("%13lu reads\n"), reads);
+    printf(_("%13lu merged reads\n"), merged_reads);
+    printf(_("%13lu read sectors\n"), read_sectors);
+    printf(_("%13lu milli reading\n"), milli_reading);
+    printf(_("%13lu writes\n"), writes);
+    printf(_("%13lu merged writes\n"), merged_writes);
+    printf(_("%13lu written sectors\n"), written_sectors);
+    printf(_("%13lu milli writing\n"), milli_writing);
+    printf(_("%13lu inprogress IO\n"), inprogress_IO);
+    printf(_("%13lu milli spent IO\n"), milli_spent_IO);
+    printf(_("%13lu milli weighted IO\n"), weighted_milli_spent_IO);
+#undef DSTAT
 }
 
 static void sum_format(void)

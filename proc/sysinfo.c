@@ -2,7 +2,7 @@
  * File for parsing top-level /proc entities.
  * Copyright (C) 1992-1998 by Michael K. Johnson, johnsonm@redhat.com
  * Copyright 1998-2003 Albert Cahalan
- * June 2003, Fabian Frederick, disk and slab info
+ * June 2003, Fabian Frederick, slab info
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -152,86 +152,6 @@ PROCPS_EXPORT int procps_loadavg(
 static void crash(const char *filename) {
     perror(filename);
     exit(EXIT_FAILURE);
-}
-
-
-/////////////////////////////////////////////////////////////////////////////
-static int is_disk(char *dev)
-{
-  char syspath[32];
-  char *slash;
-
-  while ((slash = strchr(dev, '/')))
-    *slash = '!';
-  snprintf(syspath, sizeof(syspath), "/sys/block/%s", dev);
-  return !(access(syspath, F_OK));
-}
-
-/////////////////////////////////////////////////////////////////////////////
-
-unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **partitions){
-  FILE* fd;
-  int cDisk = 0;
-  int cPartition = 0;
-  int fields;
-  unsigned dummy;
-  char devname[32];
-
-  *disks = NULL;
-  *partitions = NULL;
-  buff[BUFFSIZE-1] = 0;
-  fd = fopen("/proc/diskstats", "rb");
-  if(!fd) crash("/proc/diskstats");
-
-  for (;;) {
-    if (!fgets(buff,BUFFSIZE-1,fd)){
-      fclose(fd);
-      break;
-    }
-    fields = sscanf(buff, " %*d %*d %15s %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %u", devname, &dummy);
-    if (fields == 2 && is_disk(devname)){
-      (*disks) = xrealloc(*disks, (cDisk+1)*sizeof(struct disk_stat));
-      sscanf(buff,  "   %*d    %*d %15s %u %u %llu %u %u %u %llu %u %u %u %u",
-        //&disk_major,
-        //&disk_minor,
-        (*disks)[cDisk].disk_name,
-        &(*disks)[cDisk].reads,
-        &(*disks)[cDisk].merged_reads,
-        &(*disks)[cDisk].reads_sectors,
-        &(*disks)[cDisk].milli_reading,
-        &(*disks)[cDisk].writes,
-        &(*disks)[cDisk].merged_writes,
-        &(*disks)[cDisk].written_sectors,
-        &(*disks)[cDisk].milli_writing,
-        &(*disks)[cDisk].inprogress_IO,
-        &(*disks)[cDisk].milli_spent_IO,
-        &(*disks)[cDisk].weighted_milli_spent_IO
-      );
-        (*disks)[cDisk].partitions=0;
-      cDisk++;
-    }else{
-      (*partitions) = xrealloc(*partitions, (cPartition+1)*sizeof(struct partition_stat));
-      fflush(stdout);
-      sscanf(buff,  (fields == 2)
-          ? "   %*d    %*d %15s %u %*u %llu %*u %u %*u %llu %*u %*u %*u %*u"
-          : "   %*d    %*d %15s %u %llu %u %llu",
-        //&part_major,
-        //&part_minor,
-        (*partitions)[cPartition].partition_name,
-        &(*partitions)[cPartition].reads,
-        &(*partitions)[cPartition].reads_sectors,
-        &(*partitions)[cPartition].writes,
-        &(*partitions)[cPartition].requested_writes
-      );
-
-      if (cDisk > 0) {
-        (*partitions)[cPartition++].parent_disk = cDisk-1;
-        (*disks)[cDisk-1].partitions++;
-      }
-    }
-  }
-
-  return cDisk;
 }
 
 /////////////////////////////////////////////////////////////////////////////

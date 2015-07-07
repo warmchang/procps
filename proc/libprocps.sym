@@ -12,7 +12,6 @@ global:
 	get_ns_name;
 	get_pid_digits;
 	get_slabinfo;
-	getdiskstat;
 	getslabinfo;
 	look_up_our_self;
 	lookup_wchan;
@@ -27,6 +26,15 @@ global:
 	tty_to_dev;
 	user_from_uid;
 	procps_cpu_count;
+	procps_diskstat_dev_count;
+	procps_diskstat_dev_get;
+	procps_diskstat_dev_getbyname;
+	procps_diskstat_dev_getname;
+	procps_diskstat_dev_isdisk;
+	procps_diskstat_new;
+	procps_diskstat_read;
+	procps_diskstat_ref;
+	procps_diskstat_unref;
 	procps_hertz_get;
 	procps_linux_version;
 	procps_loadavg;

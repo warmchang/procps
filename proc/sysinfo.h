@@ -15,33 +15,6 @@ int procps_loadavg(double *av1, double *av5, double *av15);
 #define BUFFSIZE (64*1024)
 typedef unsigned long long jiff;
 
-typedef struct disk_stat{
-	unsigned long long reads_sectors;
-	unsigned long long written_sectors;
-	char               disk_name [16];
-	unsigned           inprogress_IO;
-	unsigned           merged_reads;
-	unsigned           merged_writes;
-	unsigned           milli_reading;
-	unsigned           milli_spent_IO;
-	unsigned           milli_writing;
-	unsigned           partitions;
-	unsigned           reads;
-	unsigned           weighted_milli_spent_IO;
-	unsigned           writes;
-}disk_stat;
-
-typedef struct partition_stat{
-	char partition_name [16];
-	unsigned long long reads_sectors;
-	unsigned           parent_disk;  // index into a struct disk_stat array
-	unsigned           reads;
-	unsigned           writes;
-	unsigned long long requested_writes;
-}partition_stat;
-
-extern unsigned int getdiskstat (struct disk_stat**,struct partition_stat**);
-
 typedef struct slab_cache{
 	char name[48];
 	unsigned active_objs;
