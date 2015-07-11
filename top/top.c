@@ -66,9 +66,6 @@
 
 /*######  Miscellaneous global stuff  ####################################*/
 
-static long Hertz;
-static long Page_size;
-
         /* The original and new terminal definitions
            (only set when not in 'Batch' mode) */
 static struct termios Tty_original,    // our inherited terminal definition
@@ -93,9 +90,11 @@ static RCF_t Rc = DEF_RCFILE;
 static int   Rc_questions;
 
         /* The run-time acquired page stuff */
+static long     Page_size;
 static unsigned Pg2K_shft = 0;
 
-        /* SMP, Irix/Solaris mode, Linux 2.5.xx support */
+        /* SMP, Irix/Solaris mode, Linux 2.5.xx support (and beyond) */
+static long        Hertz;
 static int         Cpu_cnt;
 static int         Cpu_faux_cnt;
 static float       Cpu_pmax;
@@ -252,25 +251,19 @@ static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||
 
         /* Support for the new library API -- acquired (if necessary)
            at program startup and referenced throughout our lifetime */
-static struct procps_meminfo *Mem_context;
-static struct meminfo_result Mem_chain[] = {
-   { PROCPS_MEM_FREE,      0, &Mem_chain[1] },
-   { PROCPS_MEM_USED,      0, &Mem_chain[2] },
-   { PROCPS_MEM_TOTAL,     0, &Mem_chain[3] },
-   { PROCPS_MEM_CACHED,    0, &Mem_chain[4] },
-   { PROCPS_MEM_BUFFERS,   0, &Mem_chain[5] },
-   { PROCPS_MEM_AVAILABLE, 0, &Mem_chain[6] },
-   { PROCPS_SWAP_TOTAL,    0, &Mem_chain[7] },
-   { PROCPS_SWAP_FREE,     0, &Mem_chain[8] },
-   { PROCPS_SWAP_USED,     0, NULL          }
-};
-enum mem_enums {
+static struct procps_meminfo *Mem_ctx;
+static struct meminfo_chain *Mem_chain;
+static enum meminfo_item Mem_items[] = {
+   PROCPS_MEM_FREE,   PROCPS_MEM_USED,    PROCPS_MEM_TOTAL,
+   PROCPS_MEM_CACHED, PROCPS_MEM_BUFFERS, PROCPS_MEM_AVAILABLE,
+   PROCPS_SWAP_TOTAL, PROCPS_SWAP_FREE,   PROCPS_SWAP_USED };
+enum Rel_items {
    mem_FREE,  mem_USED,  mem_TOTAL, mem_CACHE, mem_BUFFS,
    mem_AVAIL, swp_TOTAL, swp_FREE,  swp_USED
 };
-#define MEM_VAL(e) Mem_chain[e].result
+#define MEM_VAL(e) Mem_chain->head[e].result
 
-static struct procps_stat *Cpu_context;
+static struct procps_stat *Cpu_ctx;
 static struct procps_jiffs_hist *Cpu_jiffs;
 
 /*######  Sort callbacks  ################################################*/
@@ -579,8 +572,8 @@ static void bye_bye (const char *str) {
 #endif // end: ATEOJ_RPTHSH
 #endif // end: OFF_HST_HASH
 
-   procps_stat_unref(&Cpu_context);
-   procps_meminfo_unref(&Mem_context);
+   procps_stat_unref(&Cpu_ctx);
+   procps_meminfo_unref(&Mem_ctx);
 #ifndef NUMA_DISABLE
   if (Libnuma_handle) dlclose(Libnuma_handle);
 #endif
@@ -2401,13 +2394,13 @@ static void cpus_refresh (void) {
    }
 
    // 1st, snapshot the proc/stat cpu jiffs
-   if (procps_stat_read_jiffs(Cpu_context) < 0)
+   if (procps_stat_read_jiffs(Cpu_ctx) < 0)
       error_exit(N_txt(LIB_errorcpu_txt));
    // 2nd, retrieve just the cpu summary jiffs
-   if (procps_stat_get_jiffs_hist(Cpu_context, &Cpu_jiffs[sumSLOT], -1) < 0)
+   if (procps_stat_get_jiffs_hist(Cpu_ctx, &Cpu_jiffs[sumSLOT], -1) < 0)
       error_exit(N_txt(LIB_errorcpu_txt));
    // 3rd, retrieve all of the actual cpu jiffs
-   Cpu_faux_cnt = procps_stat_get_jiffs_hist_all(Cpu_context, Cpu_jiffs, sumSLOT);
+   Cpu_faux_cnt = procps_stat_get_jiffs_hist_all(Cpu_ctx, Cpu_jiffs, sumSLOT);
    if (Cpu_faux_cnt < 0)
       error_exit(N_txt(LIB_errorcpu_txt));
 
@@ -2670,10 +2663,9 @@ static void sysinfo_refresh (int forced) {
 
    /*** hotplug_acclimated ***/
    if (3 <= cur_secs - mem_secs) {
-      if ((procps_meminfo_read(Mem_context) < 0)
-         || (procps_meminfo_get_chain(Mem_context, Mem_chain) < 0))
-            error_exit(N_txt(LIB_errormem_txt));
-      procps_meminfo_get_chain(Mem_context, Mem_chain);
+      // 'chain_fill' also implies 'read', saving us one more call
+      if ((procps_meminfo_chain_fill(Mem_ctx, Mem_chain) < 0))
+         error_exit(N_txt(LIB_errormem_txt));
       mem_secs = cur_secs;
    }
 #ifndef PRETEND8CPUS
@@ -3271,9 +3263,11 @@ static void before (char *me) {
    while (i > 1024) { i >>= 1; Pg2K_shft++; }
 
    // prepare for new library API ...
-   if (procps_meminfo_new(&Mem_context) < 0)
+   if (procps_meminfo_new(&Mem_ctx) < 0)
       error_exit(N_txt(LIB_errormem_txt));
-   if (procps_stat_new(&Cpu_context) < 0)
+   if (!(Mem_chain = procps_meminfo_chain_alloc(Mem_ctx, MAXTBL(Mem_items), Mem_items)))
+      error_exit(N_txt(LIB_errormem_txt));
+   if (procps_stat_new(&Cpu_ctx) < 0)
       error_exit(N_txt(LIB_errorcpu_txt));
 
 #ifndef OFF_HST_HASH
