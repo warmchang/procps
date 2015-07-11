@@ -49,12 +49,11 @@
 #include "nls.h"
 #include "strutils.h"
 #include "proc/sysinfo.h"
-#include "proc/version.h"
 #include <proc/vmstat.h>
 #include <proc/readstat.h>
 #include <proc/meminfo.h>
-#include <proc/slab.h>
 #include <proc/diskstat.h>
+#include <proc/slab.h>
 
 #define UNIT_B        1
 #define UNIT_k        1000
@@ -219,8 +218,7 @@ static void new_format(void)
 	unsigned int tog = 0;	/* toggle switch for cleaner code */
 	unsigned int i;
 	long hz;
-	jiff cpu_use[2], cpu_nic[2], cpu_sys[2], cpu_idl[2], cpu_iow[2],
-	    cpu_xxx[2], cpu_yyy[2], cpu_sto[2];
+	jiff cpu_use[2], cpu_sys[2], cpu_idl[2], cpu_iow[2], cpu_sto[2];
 	jiff duse, dsys, didl, diow, dstl, Div, divo2;
 	unsigned long pgpgin[2], pgpgout[2], pswpin[2] = {0,0}, pswpout[2];
 	unsigned int intr[2], ctxt[2];
@@ -251,11 +249,9 @@ static void new_format(void)
 	    xerrx(EXIT_FAILURE,
 		    _("Unable to read system stat information"));
 	if (procps_meminfo_new(&mem_info) < 0)
-	    xerrx(EXIT_FAILURE,
-		    _("Unable to create meminfo structure"));
+	    xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
 	if (procps_meminfo_read(mem_info) < 0)
-	    xerrx(EXIT_FAILURE,
-		    _("Unable to read meminfo information"));
+	    xerrx(EXIT_FAILURE, _("Unable to read meminfo information"));
 
 	if (t_option) {
 		(void) time( &the_time );
@@ -435,7 +431,7 @@ static int diskpartition_format(const char *partition_name)
 {
 #define PARTGET(x) procps_diskstat_dev_get(disk_stat, (x), partid)
     struct procps_diskstat *disk_stat;
-    const char format[] = "%20u %10llu %10u %10llu\n";
+    const char format[] = "%20lu %10lu %10lu %10lu\n";
     int i, partid;
 
     if (procps_diskstat_new(&disk_stat) < 0)
@@ -545,8 +541,8 @@ static void diskformat(void)
     time_t the_time;
     struct tm *tm_ptr;
     char timebuf[32];
-    const char format[] = "%-5s %6u %6u %7llu %7u %6u %6u %7llu %7u %6u %6u";
-    const char wide_format[] = "%-5s %9u %9u %11llu %11u %9u %9u %11llu %11u %7u %7u";
+    const char format[] = "%-5s %6lu %6lu %7lu %7lu %6lu %6lu %7lu %7lu %6lu %6lu";
+    const char wide_format[] = "%-5s %9lu %9lu %lu %1u %9lu %9lu %lu %1u %7lu %7lu";
 
     if (procps_diskstat_new(&disk_stat) < 0)
         xerr(EXIT_FAILURE,
@@ -612,54 +608,54 @@ static void slabheader(void)
 	       _("Pages"));
 }
 
-static void slabformat(void)
+static void slabformat (void)
 {
+ #define CHAINS_ALLOC  150
+ #define MAX_ITEMS (int)(sizeof(node_items) / sizeof(node_items[0]))
+ #define SLAB_NUM(c,e) (unsigned)c->head[e].result.num
+ #define SLAB_STR(c,e) c->head[e].result.str
     struct procps_slabinfo *slab_info;
-    int i, nodeid, nr_slabs;
-    const char format[] = "%-24s %6u %6u %6u %6u\n";
-    char *slab_name;
-    struct procps_slabnode_result result[] = {
-        { PROCPS_SLABNODE_AOBJS,         0, &result[1] },
-        { PROCPS_SLABNODE_OBJS,          0, &result[2] },
-        { PROCPS_SLABNODE_OBJ_SIZE,      0, &result[3] },
-        { PROCPS_SLABNODE_OBJS_PER_SLAB, 0, NULL }};
-    enum result_enums {
-        stat_AOBJS, stat_OBJS, stat_OSIZE, stat_OPS};
-#define SLAB_VAL(e) result[e].result
-
+    struct slabnode_chain **v;
+    int i, j, nr_slabs;
+    const char format[] = "%-24.24s %6u %6u %6u %6u\n";
+    enum slabnode_item node_items[] = {
+        PROCPS_SLABNODE_AOBJS,    PROCPS_SLABNODE_OBJS,
+        PROCPS_SLABNODE_OBJ_SIZE, PROCPS_SLABNODE_OBJS_PER_SLAB,
+        PROCPS_SLABNODE_NAME };
+    enum rel_enums {
+        slab_AOBJS, slab_OBJS, slab_OSIZE, slab_OPS, slab_NAME };
 
     if (procps_slabinfo_new(&slab_info) < 0)
-        xerrx(EXIT_FAILURE,
-              _("Unable to create slabinfo structure"));
-
+        xerrx(EXIT_FAILURE, _("Unable to create slabinfo structure"));
+    if (!(v = procps_slabnode_chains_alloc(slab_info, CHAINS_ALLOC, 0, MAX_ITEMS, node_items)))
+        xerrx(EXIT_FAILURE, _("Unable to allocate slabinfo nodes"));
 
     if (!moreheaders)
         slabheader();
 
     for (i = 0; infinite_updates || i < num_updates; i++) {
-        if (procps_slabinfo_read(slab_info) < 0)
-            xerrx(EXIT_FAILURE,
-                _("Unable to read slabinfo structure"));
-        if ((nr_slabs = procps_slabinfo_node_count(slab_info)) < 0)
-            xerrx(EXIT_FAILURE,
-                  _("Unable to count number of slabinfo nodes"));
+        // this next guy also performs the procps_slabnode_read() call
+        if ((nr_slabs = procps_slabnode_chains_fill(slab_info, v, CHAINS_ALLOC)) < 0)
+            xerrx(EXIT_FAILURE, _("Unable to get slabinfo node data, requires root permission"));
+        if (!(v = procps_slabnode_chains_sort(slab_info, v, nr_slabs, PROCPS_SLABNODE_NAME)))
+            xerrx(EXIT_FAILURE, _("Unable to sort slab nodes"));
 
-        for (nodeid = 0; nodeid < nr_slabs; nodeid++) {
-            if (moreheaders && ((nodeid % height) == 0))
+        for (j = 0; j < nr_slabs; j++) {
+            if (moreheaders && ((j % height) == 0))
                 slabheader();
-            if (procps_slabinfo_node_getchain(slab_info, result, nodeid) < 0)
-                xerrx(EXIT_FAILURE,
-                      _("Error getting slabinfo results"));
-            slab_name = procps_slabinfo_node_getname(slab_info, nodeid);
-
             printf(format,
-                   slab_name?slab_name:"(unknown)",
-                   SLAB_VAL(stat_AOBJS), SLAB_VAL(stat_OBJS),
-                   SLAB_VAL(stat_OSIZE), SLAB_VAL(stat_OPS));
+                   SLAB_STR(v[j], slab_NAME),
+                   SLAB_NUM(v[j], slab_AOBJS), SLAB_NUM(v[j], slab_OBJS),
+                   SLAB_NUM(v[j], slab_OSIZE), SLAB_NUM(v[j], slab_OPS));
         }
         if (infinite_updates || i+1 < num_updates)
             sleep(sleep_time);
     }
+    procps_slabinfo_unref(&slab_info);
+ #undef CHAINS_ALLOC
+ #undef MAX_ITEMS
+ #undef SLAB_NUM
+ #undef SLAB_STR
 }
 
 static void disksum_format(void)
@@ -741,6 +737,11 @@ static void sum_format(void)
 	if (procps_vmstat_read(vm_info) < 0)
 	    xerrx(EXIT_FAILURE,
 		_("Unable to read vmstat information"));
+
+	if (procps_meminfo_new(&mem_info) < 0)
+	    xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
+	if (procps_meminfo_read(mem_info) < 0)
+	    xerrx(EXIT_FAILURE, _("Unable to read meminfo information"));
 
 	printf(_("%13lu %s total memory\n"), unitConvert(procps_meminfo_get(
 			mem_info, PROCPS_MEM_TOTAL)), szDataUnit);
