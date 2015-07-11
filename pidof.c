@@ -103,20 +103,18 @@ static char *pid_link (pid_t pid, const char *base_name)
 {
 	char link [PROCPATHLEN];
 	char *result;
-	int path_alloc_size;
-	int len;
+	ssize_t path_alloc_size;
+	ssize_t len;
 
 	snprintf(link, sizeof(link), "/proc/%d/%s", pid, base_name);
 
 	len = path_alloc_size = 0;
 	result = NULL;
 	do {
-		if (len == path_alloc_size) {
-			grow_size (path_alloc_size);
-			result = (char *) xrealloc (result, path_alloc_size);
-		}
+		grow_size(path_alloc_size);
+		result = xrealloc(result, path_alloc_size);
 
-		if ((len = readlink(link, result, path_alloc_size - 1)) < 0) {
+		if ((len = readlink(link, result, path_alloc_size)) < 0) {
 			len = 0;
 			break;
 		}
