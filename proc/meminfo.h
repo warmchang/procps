@@ -19,6 +19,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 #ifndef PROC_MEMINFO_H
 #define PROC_MEMINFO_H
 
@@ -44,8 +45,11 @@ enum meminfo_item {
     PROCPS_MEM_USED,
     PROCPS_SWAP_FREE,
     PROCPS_SWAP_TOTAL,
-    PROCPS_SWAP_USED
+    PROCPS_SWAP_USED,
+    PROCPS_MEM_noop
 };
+
+struct procps_meminfo;
 
 struct meminfo_result {
     enum meminfo_item item;
@@ -53,7 +57,10 @@ struct meminfo_result {
     struct meminfo_result *next;
 };
 
-struct procps_meminfo;
+struct meminfo_chain {
+    struct meminfo_result *head;
+};
+
 
 int procps_meminfo_new (struct procps_meminfo **info);
 int procps_meminfo_read (struct procps_meminfo *info);
@@ -61,9 +68,22 @@ int procps_meminfo_read (struct procps_meminfo *info);
 int procps_meminfo_ref (struct procps_meminfo *info);
 int procps_meminfo_unref (struct procps_meminfo **info);
 
-unsigned long procps_meminfo_get (struct procps_meminfo *info, enum meminfo_item item);
-int procps_meminfo_get_chain (struct procps_meminfo *info, struct meminfo_result *item);
+unsigned long procps_meminfo_get (
+    struct procps_meminfo *info,
+    enum meminfo_item item);
+
+int procps_meminfo_getchain (
+    struct procps_meminfo *info,
+    struct meminfo_result *these);
+
+int procps_meminfo_chain_fill (
+    struct procps_meminfo *info,
+    struct meminfo_chain *chain);
+
+struct meminfo_chain *procps_meminfo_chain_alloc (
+    struct procps_meminfo *info,
+    int maxitems,
+    enum meminfo_item *items);
 
 __END_DECLS
 #endif
-

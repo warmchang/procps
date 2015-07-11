@@ -56,11 +56,25 @@ struct procps_meminfo {
     int refcount;
     int meminfo_fd;
     struct meminfo_data data;
+    struct chains_anchor *chained;
+};
+
+struct chain_vectors {
+    struct chains_anchor *owner;
+    struct meminfo_chain **heads;
+};
+
+struct chains_anchor {
+    int depth;
+    int header_size;
+    struct chain_vectors *vectors;
+    struct chains_anchor *self;
+    struct chains_anchor *next;
 };
 
 
 /*
- * procps_meminfo_new:
+ * procps_meminfo_new():
  *
  * Create a new container to hold the meminfo information
  *
@@ -84,7 +98,7 @@ PROCPS_EXPORT int procps_meminfo_new (
 }
 
 /*
- * procps_meminfo_read:
+ * procps_meminfo_read():
  *
  * Read the data out of /proc/meminfo putting the information
  * into the supplied info structure
@@ -213,7 +227,6 @@ PROCPS_EXPORT int procps_meminfo_read (
     return 0;
 }
 
-
 PROCPS_EXPORT int procps_meminfo_ref (
         struct procps_meminfo *info)
 {
@@ -230,6 +243,13 @@ PROCPS_EXPORT int procps_meminfo_unref (
         return -EINVAL;
     (*info)->refcount--;
     if ((*info)->refcount == 0) {
+        if ((*info)->chained) {
+            do {
+                struct chains_anchor *p = (*info)->chained;
+                (*info)->chained = (*info)->chained->next;
+                free(p);
+            } while((*info)->chained);
+        }
         free(*info);
         *info = NULL;
         return 0;
@@ -237,7 +257,9 @@ PROCPS_EXPORT int procps_meminfo_unref (
     return (*info)->refcount;
 }
 
-/* Accessor functions */
+/*
+ * Accessor functions
+ */
 PROCPS_EXPORT unsigned long procps_meminfo_get (
         struct procps_meminfo *info,
         enum meminfo_item item)
@@ -285,88 +307,249 @@ PROCPS_EXPORT unsigned long procps_meminfo_get (
             if (info->data.swap_free > info->data.swap_total)
                 return 0;
             return info->data.swap_total - info->data.swap_free;
+        case PROCPS_MEM_noop:
+            return 0;
     }
     return 0;
 }
 
-PROCPS_EXPORT int procps_meminfo_get_chain (
+PROCPS_EXPORT int procps_meminfo_getchain (
         struct procps_meminfo *info,
-        struct meminfo_result *item)
+        struct meminfo_result *these)
 {
-
-    if (item == NULL)
+    if (info == NULL || these == NULL)
         return -EINVAL;
 
     do {
-        switch (item->item) {
+        switch (these->item) {
             case PROCPS_MEM_ACTIVE:
-                item->result = info->data.active;
+                these->result = info->data.active;
                 break;
             case PROCPS_MEM_INACTIVE:
-                item->result = info->data.inactive;
+                these->result = info->data.inactive;
                 break;
             case PROCPS_MEMHI_FREE:
-                item->result = info->data.high_free;
+                these->result = info->data.high_free;
                 break;
             case PROCPS_MEMHI_TOTAL:
-                item->result = info->data.high_total;
+                these->result = info->data.high_total;
                 break;
             case PROCPS_MEMHI_USED:
                 if (info->data.high_free > info->data.high_total)
-                    item->result = 0;
+                    these->result = 0;
                 else
-                    item->result = info->data.high_total - info->data.high_free;
+                    these->result = info->data.high_total - info->data.high_free;
                 break;
             case PROCPS_MEMLO_FREE:
-                item->result = info->data.low_free;
+                these->result = info->data.low_free;
                 break;
             case PROCPS_MEMLO_TOTAL:
-                item->result = info->data.low_total;
+                these->result = info->data.low_total;
                 break;
             case PROCPS_MEMLO_USED:
                 if (info->data.low_free > info->data.low_total)
-                    item->result = 0;
+                    these->result = 0;
                 else
-                    item->result = info->data.low_total - info->data.low_free;
+                    these->result = info->data.low_total - info->data.low_free;
                 break;
             case PROCPS_MEM_AVAILABLE:
-                item->result = info->data.available;
+                these->result = info->data.available;
                 break;
             case PROCPS_MEM_BUFFERS:
-                item->result = info->data.buffers;
+                these->result = info->data.buffers;
                 break;
             case PROCPS_MEM_CACHED:
-                item->result = info->data.cached;
+                these->result = info->data.cached;
                 break;
             case PROCPS_MEM_FREE:
-                item->result = info->data.free;
+                these->result = info->data.free;
                 break;
             case PROCPS_MEM_SHARED:
-                item->result = info->data.shared;
+                these->result = info->data.shared;
                 break;
             case PROCPS_MEM_TOTAL:
-                item->result = info->data.total;
+                these->result = info->data.total;
                 break;
             case PROCPS_MEM_USED:
-                item->result = info->data.used;
+                these->result = info->data.used;
                 break;
             case PROCPS_SWAP_FREE:
-                item->result = info->data.swap_free;
+                these->result = info->data.swap_free;
                 break;
             case PROCPS_SWAP_TOTAL:
-                item->result = info->data.swap_total;
+                these->result = info->data.swap_total;
                 break;
             case PROCPS_SWAP_USED:
                 if (info->data.swap_free > info->data.swap_total)
-                    item->result = 0;
+                    these->result = 0;
                 else
-                    item->result = info->data.swap_total - info->data.swap_free;
+                    these->result = info->data.swap_total - info->data.swap_free;
+                break;
+            case PROCPS_MEM_noop:
                 break;
             default:
                 return -EINVAL;
         }
-        item = item->next;
-    } while (item);
+        these = these->next;
+    } while (these);
 
     return 0;
+}
+
+PROCPS_EXPORT int procps_meminfo_chain_fill (
+        struct procps_meminfo *info,
+        struct meminfo_chain *chain)
+{
+    struct meminfo_result *these = chain->head;
+    int rc;
+
+    if (info == NULL || chain == NULL || these == NULL)
+        return -EINVAL;
+
+    if ((rc == procps_meminfo_read(info)) < 0)
+        return rc;
+
+    return procps_meminfo_getchain(info, these);
+}
+
+static void chains_validate (struct meminfo_chain **v, const char *who)
+{
+#if 0
+    #include <stdio.h>
+    int i, x, n = 0;
+    struct chain_vectors *p = (struct chain_vectors *)v - 1;
+
+    fprintf(stderr, "%s: called by '%s'\n", __func__, who);
+    fprintf(stderr, "%s: owned by %p (whose self = %p)\n", __func__, p->owner, p->owner->self);
+    for (x = 0; v[x]; x++) {
+        struct meminfo_chain *h = v[x];
+        struct meminfo_result *r = h->head;
+        fprintf(stderr, "%s:   vector[%02d] = %p", __func__, x, h);
+        i = 0;
+        do {
+            i++;
+            r = r->next;
+        } while (r);
+        fprintf(stderr, ", chain %d found %d elements\n", n, i);
+        ++n;
+    }
+    fprintf(stderr, "%s: found %d chain(s)\n", __func__, x);
+    fprintf(stderr, "%s: this header size = %2d\n", __func__, (int)p->owner->header_size);
+    fprintf(stderr, "%s: sizeof(struct meminfo_chain)  = %2d\n", __func__, (int)sizeof(struct meminfo_chain));
+    fprintf(stderr, "%s: sizeof(struct meminfo_result) = %2d\n", __func__, (int)sizeof(struct meminfo_result));
+    fputc('\n', stderr);
+    return;
+#endif
+}
+
+static struct meminfo_result *chain_make (
+        struct meminfo_result *p,
+        int maxitems,
+        enum meminfo_item *items)
+{
+    struct meminfo_result *p_sav = p;
+    int i;
+
+    for (i = 0; i < maxitems; i++) {
+        if (i > PROCPS_MEM_noop)
+            p->item = PROCPS_MEM_noop;
+        else
+            p->item = items[i];
+        p->result = 0;
+        p->next = p + 1;
+        ++p;
+    }
+    (--p)->next = NULL;
+
+    return p_sav;
+}
+
+/*
+ * procps_meminfo_chains_alloc():
+ *
+ * A local copy of code borrowed from slab.c to support the public version
+ * representing a single chain.  Currently there is no conceivable need
+ * for multiple chains in the 'memory' arena.
+ */
+static struct meminfo_chain **procps_meminfo_chains_alloc (
+        struct procps_meminfo *info,
+        int maxchains,
+        int chain_extra,
+        int maxitems,
+        enum meminfo_item *items)
+{
+    struct chains_anchor *p_blob;
+    struct chain_vectors *p_vect;
+    struct meminfo_chain *p_head;
+    size_t vect_size, head_size, list_size, blob_size;
+    void *v_head, *v_list;
+    int i;
+
+    if (info == NULL || items == NULL)
+        return NULL;
+    if (maxchains < 1 || maxitems < 1)
+        return NULL;
+
+    vect_size  = sizeof(struct chain_vectors);                 // address vector struct
+    vect_size += sizeof(void *) * maxchains;                   // plus vectors themselves
+    vect_size += sizeof(void *);                               // plus NULL delimiter
+    head_size  = sizeof(struct meminfo_chain) + chain_extra;   // a head struct + user stuff
+    list_size  = sizeof(struct meminfo_result) * maxitems;     // a results chain
+    blob_size  = sizeof(struct chains_anchor);                 // the anchor itself
+    blob_size += vect_size;                                    // all vectors + delims
+    blob_size += head_size * maxchains;                        // all head structs + user stuff
+    blob_size += list_size * maxchains;                        // all results chains
+
+    /* note: all memory is allocated in a single blob, facilitating a later free().
+       as a minimum, it's important that the result structures themselves always be
+       contiguous for any given chain (just as they are when defined statically). */
+    if (NULL == (p_blob = calloc(1, blob_size)))
+        return NULL;
+
+    p_blob->next = info->chained;
+    info->chained = p_blob;
+    p_blob->self  = p_blob;
+    p_blob->header_size = head_size;
+    p_blob->vectors = (void *)p_blob + sizeof(struct chains_anchor);
+    p_vect = p_blob->vectors;
+    p_vect->owner = p_blob->self;
+    p_vect->heads = (void *)p_vect + sizeof(struct chain_vectors);
+    v_head = (void *)p_vect + vect_size;
+    v_list = v_head + (head_size * maxchains);
+
+    for (i = 0; i < maxchains; i++) {
+        p_head = (struct meminfo_chain *)v_head;
+        p_head->head = chain_make((struct meminfo_result *)v_list, maxitems, items);
+        p_blob->vectors->heads[i] = p_head;
+        v_list += list_size;
+        v_head += head_size;
+    }
+    p_blob->depth = maxchains;
+    chains_validate(p_blob->vectors->heads, __func__);
+    return p_blob->vectors->heads;
+}
+
+/*
+ * procps_meminfo_chain_alloc():
+ *
+ * Allocate and initialize a single result chain under a simplified interface.
+ *
+ * Such a chain will will have its result structures properly primed with
+ * 'items' and 'next' pointers, while the result itself is set to zero.
+ *
+ */
+PROCPS_EXPORT struct meminfo_chain *procps_meminfo_chain_alloc (
+        struct procps_meminfo *info,
+        int maxitems,
+        enum meminfo_item *items)
+{
+    struct meminfo_chain **v;
+
+    if (info == NULL || items == NULL || maxitems < 1)
+        return NULL;
+    v = procps_meminfo_chains_alloc(info, 1, 0, maxitems, items);
+    if (!v)
+        return NULL;
+    chains_validate(v, __func__);
+    return v[0];
 }
