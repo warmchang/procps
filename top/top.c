@@ -4590,6 +4590,12 @@ static void keys_task (int ch) {
          VIZTOGw(w, Show_CMDLIN);
          break;
       case 'i':
+      {  static WIN_t *w_sav;
+         static int beg_sav;
+         if (w_sav != w) { beg_sav = 0; w_sav = w; }
+         if (CHKw(w, Show_IDLEPS)) { beg_sav = w->begtask; w->begtask = 0; }
+         else { w->begtask = beg_sav; beg_sav = 0; }
+      }
          VIZTOGw(w, Show_IDLEPS);
          break;
       case 'J':
