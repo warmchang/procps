@@ -392,7 +392,9 @@ PROCPS_EXPORT unsigned long procps_slabs_get (
         case PROCPS_SLABS_SIZE_ACTIVE:
             return info->stats.active_size;
         case PROCPS_SLABS_noop:
-            break;
+            return 0;
+        default:
+            return -EINVAL;
     }
     return 0;
 }
@@ -441,6 +443,9 @@ PROCPS_EXPORT int procps_slabs_getchain (
                 break;
             case PROCPS_SLABS_SIZE_ACTIVE:
                 these->result = info->stats.active_size;
+                break;
+            case PROCPS_SLABS_noop:
+                these->result = 0;
                 break;
             default:
                 return -EINVAL;
@@ -498,9 +503,9 @@ PROCPS_EXPORT unsigned long procps_slabnode_get (
             return info->nodes[nodeid].nr_active_slabs;
         case PROCPS_SLABNODE_USE:
             return info->nodes[nodeid].use;
-        case PROCPS_SLABNODE_NAME:
         case PROCPS_SLABNODE_noop:
             return 0;
+        //   PROCPS_SLABNODE_NAME also invalid in this context
         default:
             return -EINVAL;
     }
@@ -550,6 +555,7 @@ PROCPS_EXPORT int procps_slabnode_getchain (
                 these->result.str = info->nodes[nodeid].name;
                 break;
             case PROCPS_SLABNODE_noop:
+                these->result.num = 0;
                 break;
             default:
                 return -EINVAL;
@@ -805,7 +811,7 @@ PROCPS_EXPORT struct slabnode_chain **procps_slabnode_chains_sort (
 
     if (info == NULL || chains == NULL)
         return NULL;
-    if (sort < 0  || sort >= PROCPS_SLABNODE_noop)
+    if (sort < 0  || sort > PROCPS_SLABNODE_noop)
         return NULL;
     if (numchained > info->chained->depth)
         return NULL;
