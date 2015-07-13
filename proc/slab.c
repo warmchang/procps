@@ -565,8 +565,13 @@ PROCPS_EXPORT int procps_slabnode_chain_fill (
     struct slabnode_chain *chain,
     int nodeid)
 {
+    int rc;
+
     if (info == NULL || chain == NULL || chain->head == NULL)
         return -EINVAL;
+
+    if ((rc = procps_slabinfo_read(info)) < 0)
+        return rc;
 
     return procps_slabnode_getchain(info, chain->head, nodeid);
 }
@@ -609,7 +614,7 @@ PROCPS_EXPORT int procps_slabnode_chains_fill (
     for (i = 0; i < maxchains; i++) {
         if (chains[i] == NULL)
             break;
-        if ((rc = procps_slabnode_chain_fill(info, chains[i], i) < 0))
+        if ((rc = procps_slabnode_getchain(info, chains[i]->head, i) < 0))
             return rc;
     }
 
