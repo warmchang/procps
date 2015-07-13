@@ -565,12 +565,10 @@ PROCPS_EXPORT int procps_slabnode_chain_fill (
     struct slabnode_chain *chain,
     int nodeid)
 {
-    struct slabnode_result *these = chain->head;
-
-    if (info == NULL || these == NULL)
+    if (info == NULL || chain == NULL || chain->head == NULL)
         return -EINVAL;
 
-    return procps_slabnode_getchain(info, these, nodeid);
+    return procps_slabnode_getchain(info, chain->head, nodeid);
 }
 
 /*
@@ -746,7 +744,7 @@ PROCPS_EXPORT struct slabnode_chain **procps_slabnode_chains_alloc (
  * Allocate and initialize a single result chain under a simplified interface.
  *
  * Such a chain will will have its result structures properly primed with
- * 'items' and 'next' pointers, while the result itself is set to zero.
+ * 'items' and 'next' pointers, while the result itself will be zeroed.
  *
  */
 PROCPS_EXPORT struct slabnode_chain *procps_slabnode_chain_alloc (
@@ -772,7 +770,7 @@ static int chains_sort (
 {
     const struct slabnode_result *a = (*A)->head + *offset;
     const struct slabnode_result *b = (*B)->head + *offset;
-    // note: strings are sorted normally, but numbers will be high-to-low
+    // note: everything will be sorted high-to-low
     if (a->item == PROCPS_SLABNODE_NAME)
         return strcoll(a->result.str, b->result.str);
     if ( a->result.num > b->result.num ) return -1;
@@ -786,7 +784,7 @@ static int chains_sort (
  * Sort chains anchored as 'heads' in the passed slabnode_chain pointers
  * array based on the designated sort enumerator.
  *
- * Returns the same structure with those pointers sorted.
+ * Returns those same addresses sorted.
  *
  * Note: all of the chains must be homogeneous (of equal length and content).
  */

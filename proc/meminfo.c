@@ -400,16 +400,14 @@ PROCPS_EXPORT int procps_meminfo_chain_fill (
         struct procps_meminfo *info,
         struct meminfo_chain *chain)
 {
-    struct meminfo_result *these = chain->head;
     int rc;
 
-    if (info == NULL || chain == NULL || these == NULL)
+    if (info == NULL || chain == NULL || chain->head == NULL)
         return -EINVAL;
-
     if ((rc == procps_meminfo_read(info)) < 0)
         return rc;
 
-    return procps_meminfo_getchain(info, these);
+    return procps_meminfo_getchain(info, chain->head);
 }
 
 static void chains_validate (struct meminfo_chain **v, const char *who)
@@ -535,7 +533,7 @@ static struct meminfo_chain **procps_meminfo_chains_alloc (
  * Allocate and initialize a single result chain under a simplified interface.
  *
  * Such a chain will will have its result structures properly primed with
- * 'items' and 'next' pointers, while the result itself is set to zero.
+ * 'items' and 'next' pointers, while the result itself will be zeroed.
  *
  */
 PROCPS_EXPORT struct meminfo_chain *procps_meminfo_chain_alloc (
