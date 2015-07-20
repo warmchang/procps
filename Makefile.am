@@ -230,7 +230,8 @@ noinst_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
 	lib/test_nsutils \
-	lib/test_process
+	lib/test_process \
+	proc/test_sysinfo
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
 lib_test_strutils_LDADD =
@@ -241,11 +242,15 @@ lib_test_nsutils_LDADD =
 lib_test_process_SOURCES = lib/test_process.c
 lib_test_process_LDADD =
 
+proc_test_sysinfo_SOURCES = proc/test_sysinfo.c
+proc_test_sysinfo_LDADD = proc/libprocps.la
 if EXAMPLE_FILES
 sysconf_DATA = sysctl.conf
 endif
 
 BUILT_SOURCES = $(top_srcdir)/.version
+
+TESTS = proc/test_sysinfo
 
 $(top_srcdir)/.version:
 	touch $(top_srcdir)/.version
