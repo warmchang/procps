@@ -28,36 +28,38 @@
 __BEGIN_DECLS
 
 enum meminfo_item {
-    PROCPS_MEMHI_FREE,
-    PROCPS_MEMHI_TOTAL,
-    PROCPS_MEMHI_USED,
-    PROCPS_MEMLO_FREE,
-    PROCPS_MEMLO_TOTAL,
-    PROCPS_MEMLO_USED,
-    PROCPS_MEM_ACTIVE,
-    PROCPS_MEM_AVAILABLE,
-    PROCPS_MEM_BUFFERS,
-    PROCPS_MEM_CACHED,
-    PROCPS_MEM_FREE,
-    PROCPS_MEM_INACTIVE,
-    PROCPS_MEM_SHARED,
-    PROCPS_MEM_TOTAL,
-    PROCPS_MEM_USED,
-    PROCPS_SWAP_FREE,
-    PROCPS_SWAP_TOTAL,
-    PROCPS_SWAP_USED,
-    PROCPS_MEM_noop
+    PROCPS_MEMHI_FREE,         // ul_int
+    PROCPS_MEMHI_TOTAL,        // ul_int
+    PROCPS_MEMHI_USED,         // ul_int
+    PROCPS_MEMLO_FREE,         // ul_int
+    PROCPS_MEMLO_TOTAL,        // ul_int
+    PROCPS_MEMLO_USED,         // ul_int
+    PROCPS_MEM_ACTIVE,         // ul_int
+    PROCPS_MEM_AVAILABLE,      // ul_int
+    PROCPS_MEM_BUFFERS,        // ul_int
+    PROCPS_MEM_CACHED,         // ul_int
+    PROCPS_MEM_FREE,           // ul_int
+    PROCPS_MEM_INACTIVE,       // ul_int
+    PROCPS_MEM_SHARED,         // ul_int
+    PROCPS_MEM_TOTAL,          // ul_int
+    PROCPS_MEM_USED,           // ul_int
+    PROCPS_SWAP_FREE,          // ul_int
+    PROCPS_SWAP_TOTAL,         // ul_int
+    PROCPS_SWAP_USED,          // ul_int
+    PROCPS_MEM_noop,           // n/a
+    PROCPS_MEM_stack_end       // n/a
 };
 
 struct procps_meminfo;
 
 struct meminfo_result {
     enum meminfo_item item;
-    unsigned long result;
-    struct meminfo_result *next;
+    union {
+        unsigned long ul_int;
+    } result;
 };
 
-struct meminfo_chain {
+struct meminfo_stack {
     struct meminfo_result *head;
 };
 
@@ -72,15 +74,15 @@ unsigned long procps_meminfo_get (
     struct procps_meminfo *info,
     enum meminfo_item item);
 
-int procps_meminfo_getchain (
+int procps_meminfo_getstack (
     struct procps_meminfo *info,
     struct meminfo_result *these);
 
-int procps_meminfo_chain_fill (
+int procps_meminfo_stack_fill (
     struct procps_meminfo *info,
-    struct meminfo_chain *chain);
+    struct meminfo_stack *stack);
 
-struct meminfo_chain *procps_meminfo_chain_alloc (
+struct meminfo_stack *procps_meminfo_stack_alloc (
     struct procps_meminfo *info,
     int maxitems,
     enum meminfo_item *items);

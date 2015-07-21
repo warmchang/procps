@@ -252,16 +252,17 @@ static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||
         /* Support for the new library API -- acquired (if necessary)
            at program startup and referenced throughout our lifetime */
 static struct procps_meminfo *Mem_ctx;
-static struct meminfo_chain *Mem_chain;
+static struct meminfo_stack *Mem_stack;
 static enum meminfo_item Mem_items[] = {
    PROCPS_MEM_FREE,   PROCPS_MEM_USED,    PROCPS_MEM_TOTAL,
    PROCPS_MEM_CACHED, PROCPS_MEM_BUFFERS, PROCPS_MEM_AVAILABLE,
-   PROCPS_SWAP_TOTAL, PROCPS_SWAP_FREE,   PROCPS_SWAP_USED };
+   PROCPS_SWAP_TOTAL, PROCPS_SWAP_FREE,   PROCPS_SWAP_USED,
+   PROCPS_MEM_stack_end };
 enum Rel_items {
    mem_FREE,  mem_USED,  mem_TOTAL, mem_CACHE, mem_BUFFS,
    mem_AVAIL, swp_TOTAL, swp_FREE,  swp_USED
 };
-#define MEM_VAL(e) Mem_chain->head[e].result
+#define MEM_VAL(e) Mem_stack->head[e].result.ul_int
 
 static struct procps_stat *Cpu_ctx;
 static struct procps_jiffs_hist *Cpu_jiffs;
@@ -2663,8 +2664,8 @@ static void sysinfo_refresh (int forced) {
 
    /*** hotplug_acclimated ***/
    if (3 <= cur_secs - mem_secs) {
-      // 'chain_fill' also implies 'read', saving us one more call
-      if ((procps_meminfo_chain_fill(Mem_ctx, Mem_chain) < 0))
+      // 'stack_fill' also implies 'read', saving us one more call
+      if ((procps_meminfo_stack_fill(Mem_ctx, Mem_stack) < 0))
          error_exit(N_txt(LIB_errormem_txt));
       mem_secs = cur_secs;
    }
@@ -3265,7 +3266,7 @@ static void before (char *me) {
    // prepare for new library API ...
    if (procps_meminfo_new(&Mem_ctx) < 0)
       error_exit(N_txt(LIB_errormem_txt));
-   if (!(Mem_chain = procps_meminfo_chain_alloc(Mem_ctx, MAXTBL(Mem_items), Mem_items)))
+   if (!(Mem_stack = procps_meminfo_stack_alloc(Mem_ctx, MAXTBL(Mem_items), Mem_items)))
       error_exit(N_txt(LIB_errormem_txt));
    if (procps_stat_new(&Cpu_ctx) < 0)
       error_exit(N_txt(LIB_errorcpu_txt));

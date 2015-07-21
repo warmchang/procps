@@ -19,13 +19,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 #include <errno.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/types.h>
+
 #include <sys/stat.h>
-#include <fcntl.h>
+#include <sys/types.h>
 
 #include <proc/meminfo.h>
 #include "procps-private.h"
@@ -56,20 +58,20 @@ struct procps_meminfo {
     int refcount;
     int meminfo_fd;
     struct meminfo_data data;
-    struct chains_anchor *chained;
+    struct stacks_anchor *stacked;
 };
 
-struct chain_vectors {
-    struct chains_anchor *owner;
-    struct meminfo_chain **heads;
+struct stack_vectors {
+    struct stacks_anchor *owner;
+    struct meminfo_stack **heads;
 };
 
-struct chains_anchor {
+struct stacks_anchor {
     int depth;
     int header_size;
-    struct chain_vectors *vectors;
-    struct chains_anchor *self;
-    struct chains_anchor *next;
+    struct stack_vectors *vectors;
+    struct stacks_anchor *self;
+    struct stacks_anchor *next;
 };
 
 
@@ -243,12 +245,12 @@ PROCPS_EXPORT int procps_meminfo_unref (
         return -EINVAL;
     (*info)->refcount--;
     if ((*info)->refcount == 0) {
-        if ((*info)->chained) {
+        if ((*info)->stacked) {
             do {
-                struct chains_anchor *p = (*info)->chained;
-                (*info)->chained = (*info)->chained->next;
+                struct stacks_anchor *p = (*info)->stacked;
+                (*info)->stacked = (*info)->stacked->next;
                 free(p);
-            } while((*info)->chained);
+            } while((*info)->stacked);
         }
         free(*info);
         *info = NULL;
@@ -307,140 +309,139 @@ PROCPS_EXPORT unsigned long procps_meminfo_get (
             if (info->data.swap_free > info->data.swap_total)
                 return 0;
             return info->data.swap_total - info->data.swap_free;
-        case PROCPS_MEM_noop:
+        default:
             return 0;
     }
-    return 0;
 }
 
-PROCPS_EXPORT int procps_meminfo_getchain (
+PROCPS_EXPORT int procps_meminfo_getstack (
         struct procps_meminfo *info,
         struct meminfo_result *these)
 {
     if (info == NULL || these == NULL)
         return -EINVAL;
 
-    do {
+    for (;;) {
         switch (these->item) {
             case PROCPS_MEM_ACTIVE:
-                these->result = info->data.active;
+                these->result.ul_int = info->data.active;
                 break;
             case PROCPS_MEM_INACTIVE:
-                these->result = info->data.inactive;
+                these->result.ul_int = info->data.inactive;
                 break;
             case PROCPS_MEMHI_FREE:
-                these->result = info->data.high_free;
+                these->result.ul_int = info->data.high_free;
                 break;
             case PROCPS_MEMHI_TOTAL:
-                these->result = info->data.high_total;
+                these->result.ul_int = info->data.high_total;
                 break;
             case PROCPS_MEMHI_USED:
                 if (info->data.high_free > info->data.high_total)
-                    these->result = 0;
+                    these->result.ul_int = 0;
                 else
-                    these->result = info->data.high_total - info->data.high_free;
+                    these->result.ul_int = info->data.high_total - info->data.high_free;
                 break;
             case PROCPS_MEMLO_FREE:
-                these->result = info->data.low_free;
+                these->result.ul_int = info->data.low_free;
                 break;
             case PROCPS_MEMLO_TOTAL:
-                these->result = info->data.low_total;
+                these->result.ul_int = info->data.low_total;
                 break;
             case PROCPS_MEMLO_USED:
                 if (info->data.low_free > info->data.low_total)
-                    these->result = 0;
+                    these->result.ul_int = 0;
                 else
-                    these->result = info->data.low_total - info->data.low_free;
+                    these->result.ul_int = info->data.low_total - info->data.low_free;
                 break;
             case PROCPS_MEM_AVAILABLE:
-                these->result = info->data.available;
+                these->result.ul_int = info->data.available;
                 break;
             case PROCPS_MEM_BUFFERS:
-                these->result = info->data.buffers;
+                these->result.ul_int = info->data.buffers;
                 break;
             case PROCPS_MEM_CACHED:
-                these->result = info->data.cached;
+                these->result.ul_int = info->data.cached;
                 break;
             case PROCPS_MEM_FREE:
-                these->result = info->data.free;
+                these->result.ul_int = info->data.free;
                 break;
             case PROCPS_MEM_SHARED:
-                these->result = info->data.shared;
+                these->result.ul_int = info->data.shared;
                 break;
             case PROCPS_MEM_TOTAL:
-                these->result = info->data.total;
+                these->result.ul_int = info->data.total;
                 break;
             case PROCPS_MEM_USED:
-                these->result = info->data.used;
+                these->result.ul_int = info->data.used;
                 break;
             case PROCPS_SWAP_FREE:
-                these->result = info->data.swap_free;
+                these->result.ul_int = info->data.swap_free;
                 break;
             case PROCPS_SWAP_TOTAL:
-                these->result = info->data.swap_total;
+                these->result.ul_int = info->data.swap_total;
                 break;
             case PROCPS_SWAP_USED:
                 if (info->data.swap_free > info->data.swap_total)
-                    these->result = 0;
+                    these->result.ul_int = 0;
                 else
-                    these->result = info->data.swap_total - info->data.swap_free;
+                    these->result.ul_int = info->data.swap_total - info->data.swap_free;
                 break;
             case PROCPS_MEM_noop:
+                // don't disturb potential user data in the result struct
                 break;
+            case PROCPS_MEM_stack_end:
+                return 0;
             default:
                 return -EINVAL;
         }
-        these = these->next;
-    } while (these);
-
-    return 0;
+        ++these;
+    }
 }
 
-PROCPS_EXPORT int procps_meminfo_chain_fill (
+PROCPS_EXPORT int procps_meminfo_stack_fill (
         struct procps_meminfo *info,
-        struct meminfo_chain *chain)
+        struct meminfo_stack *stack)
 {
     int rc;
 
-    if (info == NULL || chain == NULL || chain->head == NULL)
+    if (info == NULL || stack == NULL || stack->head == NULL)
         return -EINVAL;
     if ((rc == procps_meminfo_read(info)) < 0)
         return rc;
 
-    return procps_meminfo_getchain(info, chain->head);
+    return procps_meminfo_getstack(info, stack->head);
 }
 
-static void chains_validate (struct meminfo_chain **v, const char *who)
+static void stacks_validate (struct meminfo_stack **v, const char *who)
 {
 #if 0
     #include <stdio.h>
-    int i, x, n = 0;
-    struct chain_vectors *p = (struct chain_vectors *)v - 1;
+    int i, t, x, n = 0;
+    struct stack_vectors *p = (struct stack_vectors *)v - 1;
 
     fprintf(stderr, "%s: called by '%s'\n", __func__, who);
     fprintf(stderr, "%s: owned by %p (whose self = %p)\n", __func__, p->owner, p->owner->self);
     for (x = 0; v[x]; x++) {
-        struct meminfo_chain *h = v[x];
+        struct meminfo_stack *h = v[x];
         struct meminfo_result *r = h->head;
         fprintf(stderr, "%s:   vector[%02d] = %p", __func__, x, h);
         i = 0;
-        do {
-            i++;
-            r = r->next;
-        } while (r);
-        fprintf(stderr, ", chain %d found %d elements\n", n, i);
+        for (i = 0; r->item < PROCPS_MEM_stack_end; i++, r++)
+            ;
+        t = i + 1;
+        fprintf(stderr, ", stack %d found %d elements\n", n, i);
         ++n;
     }
-    fprintf(stderr, "%s: found %d chain(s)\n", __func__, x);
+    fprintf(stderr, "%s: found %d stack(s), each %d bytes (including eos)\n", __func__, x, (int)sizeof(struct meminfo_result) * t);
     fprintf(stderr, "%s: this header size = %2d\n", __func__, (int)p->owner->header_size);
-    fprintf(stderr, "%s: sizeof(struct meminfo_chain)  = %2d\n", __func__, (int)sizeof(struct meminfo_chain));
+    fprintf(stderr, "%s: sizeof(struct meminfo_stack)  = %2d\n", __func__, (int)sizeof(struct meminfo_stack));
     fprintf(stderr, "%s: sizeof(struct meminfo_result) = %2d\n", __func__, (int)sizeof(struct meminfo_result));
     fputc('\n', stderr);
     return;
 #endif
 }
 
-static struct meminfo_result *chain_make (
+static struct meminfo_result *stack_make (
         struct meminfo_result *p,
         int maxitems,
         enum meminfo_item *items)
@@ -449,105 +450,118 @@ static struct meminfo_result *chain_make (
     int i;
 
     for (i = 0; i < maxitems; i++) {
-        if (i > PROCPS_MEM_noop)
-            p->item = PROCPS_MEM_noop;
-        else
-            p->item = items[i];
-        p->result = 0;
-        p->next = p + 1;
+        p->item = items[i];
+        // note: we rely on calloc to initialize actual result
         ++p;
     }
-    (--p)->next = NULL;
 
     return p_sav;
 }
 
-/*
- * procps_meminfo_chains_alloc():
- *
- * A local copy of code borrowed from slab.c to support the public version
- * representing a single chain.  Currently there is no conceivable need
- * for multiple chains in the 'memory' arena.
- */
-static struct meminfo_chain **procps_meminfo_chains_alloc (
-        struct procps_meminfo *info,
-        int maxchains,
-        int chain_extra,
+static int stack_items_valid (
         int maxitems,
         enum meminfo_item *items)
 {
-    struct chains_anchor *p_blob;
-    struct chain_vectors *p_vect;
-    struct meminfo_chain *p_head;
+    int i;
+
+    for (i = 0; i < maxitems; i++) {
+        if (items[i] < PROCPS_MEMHI_FREE)
+            return 0;
+        if (items[i] > PROCPS_MEM_stack_end)
+            return 0;
+    }
+    if (items[maxitems -1] != PROCPS_MEM_stack_end)
+        return 0;
+    return 1;
+}
+
+
+/*
+ * procps_meminfo_stacks_alloc():
+ *
+ * A local copy of code borrowed from slab.c to support the public version
+ * representing a single stack.  Currently there is no conceivable need
+ * for multiple stacks in the 'memory' arena.
+ */
+static struct meminfo_stack **procps_meminfo_stacks_alloc (
+        struct procps_meminfo *info,
+        int maxstacks,
+        int stack_extra,
+        int maxitems,
+        enum meminfo_item *items)
+{
+    struct stacks_anchor *p_blob;
+    struct stack_vectors *p_vect;
+    struct meminfo_stack *p_head;
     size_t vect_size, head_size, list_size, blob_size;
     void *v_head, *v_list;
     int i;
 
     if (info == NULL || items == NULL)
         return NULL;
-    if (maxchains < 1 || maxitems < 1)
+    if (maxstacks < 1 || maxitems < 1)
+        return NULL;
+    if (!stack_items_valid(maxitems, items))
         return NULL;
 
-    vect_size  = sizeof(struct chain_vectors);                 // address vector struct
-    vect_size += sizeof(void *) * maxchains;                   // plus vectors themselves
+    vect_size  = sizeof(struct stack_vectors);                 // address vector struct
+    vect_size += sizeof(void *) * maxstacks;                   // plus vectors themselves
     vect_size += sizeof(void *);                               // plus NULL delimiter
-    head_size  = sizeof(struct meminfo_chain) + chain_extra;   // a head struct + user stuff
-    list_size  = sizeof(struct meminfo_result) * maxitems;     // a results chain
-    blob_size  = sizeof(struct chains_anchor);                 // the anchor itself
+    head_size  = sizeof(struct meminfo_stack) + stack_extra;   // a head struct + user stuff
+    list_size  = sizeof(struct meminfo_result) * maxitems;     // a results stack
+    blob_size  = sizeof(struct stacks_anchor);                 // the anchor itself
     blob_size += vect_size;                                    // all vectors + delims
-    blob_size += head_size * maxchains;                        // all head structs + user stuff
-    blob_size += list_size * maxchains;                        // all results chains
+    blob_size += head_size * maxstacks;                        // all head structs + user stuff
+    blob_size += list_size * maxstacks;                        // all results stacks
 
     /* note: all memory is allocated in a single blob, facilitating a later free().
        as a minimum, it's important that the result structures themselves always be
-       contiguous for any given chain (just as they are when defined statically). */
+       contiguous for any given stack (just as they are when defined statically). */
     if (NULL == (p_blob = calloc(1, blob_size)))
         return NULL;
 
-    p_blob->next = info->chained;
-    info->chained = p_blob;
+    p_blob->next = info->stacked;
+    info->stacked = p_blob;
     p_blob->self  = p_blob;
     p_blob->header_size = head_size;
-    p_blob->vectors = (void *)p_blob + sizeof(struct chains_anchor);
+    p_blob->vectors = (void *)p_blob + sizeof(struct stacks_anchor);
     p_vect = p_blob->vectors;
     p_vect->owner = p_blob->self;
-    p_vect->heads = (void *)p_vect + sizeof(struct chain_vectors);
+    p_vect->heads = (void *)p_vect + sizeof(struct stack_vectors);
     v_head = (void *)p_vect + vect_size;
-    v_list = v_head + (head_size * maxchains);
+    v_list = v_head + (head_size * maxstacks);
 
-    for (i = 0; i < maxchains; i++) {
-        p_head = (struct meminfo_chain *)v_head;
-        p_head->head = chain_make((struct meminfo_result *)v_list, maxitems, items);
+    for (i = 0; i < maxstacks; i++) {
+        p_head = (struct meminfo_stack *)v_head;
+        p_head->head = stack_make((struct meminfo_result *)v_list, maxitems, items);
         p_blob->vectors->heads[i] = p_head;
         v_list += list_size;
         v_head += head_size;
     }
-    p_blob->depth = maxchains;
-    chains_validate(p_blob->vectors->heads, __func__);
+    p_blob->depth = maxstacks;
+    stacks_validate(p_blob->vectors->heads, __func__);
     return p_blob->vectors->heads;
 }
 
 /*
- * procps_meminfo_chain_alloc():
+ * procps_meminfo_stack_alloc():
  *
- * Allocate and initialize a single result chain under a simplified interface.
+ * Allocate and initialize a single result stack under a simplified interface.
  *
- * Such a chain will will have its result structures properly primed with
- * 'items' and 'next' pointers, while the result itself will be zeroed.
+ * Such a stack will will have its result structures properly primed with
+ * 'items', while the result itself will be zeroed.
  *
  */
-PROCPS_EXPORT struct meminfo_chain *procps_meminfo_chain_alloc (
+PROCPS_EXPORT struct meminfo_stack *procps_meminfo_stack_alloc (
         struct procps_meminfo *info,
         int maxitems,
         enum meminfo_item *items)
 {
-    struct meminfo_chain **v;
+    struct meminfo_stack **v;
 
-    if (info == NULL || items == NULL || maxitems < 1)
-        return NULL;
-    v = procps_meminfo_chains_alloc(info, 1, 0, maxitems, items);
+    v = procps_meminfo_stacks_alloc(info, 1, 0, maxitems, items);
     if (!v)
         return NULL;
-    chains_validate(v, __func__);
+    stacks_validate(v, __func__);
     return v[0];
 }

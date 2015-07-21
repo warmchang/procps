@@ -39,9 +39,9 @@ global:
 	procps_meminfo_ref;
 	procps_meminfo_unref;
 	procps_meminfo_get;
-	procps_meminfo_getchain;
-	procps_meminfo_chain_fill;
-	procps_meminfo_chain_alloc;
+	procps_meminfo_getstack;
+	procps_meminfo_stack_fill;
+	procps_meminfo_stack_alloc;
 	procps_slabinfo_new;
 	procps_slabinfo_read;
 	procps_slabinfo_ref;
