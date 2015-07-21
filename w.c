@@ -347,7 +347,8 @@ static const proc_t *getproc(const utmp_t * restrict const u,
 		const proc_t *restrict const tmp = *pptr;
 		if (unlikely(tmp->tgid == u->ut_pid)) {
 			*found_utpid = 1;
-			best = tmp;
+            if (!best)
+                best = tmp;
 		}
 		if (tmp->tty != line)
 			continue;
