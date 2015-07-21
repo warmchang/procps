@@ -65,6 +65,7 @@ typedef struct utmp utmp_t;
 #endif
 
 #define MAX_CMD_WIDTH	512
+#define MIN_CMD_WIDTH   7
 
 /*
  * This routine is careful since some programs leave utmp strings
@@ -621,16 +622,11 @@ int main(int argc, char **argv)
 		maxcmd = atoi(p);
 	else
 		maxcmd = MAX_CMD_WIDTH;
-	if (maxcmd < 71)
-		xerrx(EXIT_FAILURE, _("%d column window is too narrow"), maxcmd);
-	if (MAX_CMD_WIDTH < maxcmd) {
-		xwarnx(_("%d column width exceeds command buffer size, truncating to %d"),
-		       maxcmd, MAX_CMD_WIDTH);
+	if (MAX_CMD_WIDTH < maxcmd)
 		maxcmd = MAX_CMD_WIDTH;
-	}
 	maxcmd -= 21 + userlen + (from ? fromlen : 0) + (longform ? 20 : 0);
-	if (maxcmd < 3)
-		xwarnx(_("warning: screen width %d suboptimal"), win.ws_col);
+	if (maxcmd < MIN_CMD_WIDTH)
+        maxcmd = MIN_CMD_WIDTH;
 
 
 	if (header) {
