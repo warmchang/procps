@@ -1,11 +1,29 @@
+/*
+ * libprocps - Library to read proc filesystem
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #include <errno.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 
 #include <proc/vmstat.h>
 #include "procps-private.h"
@@ -162,36 +180,40 @@ PROCPS_EXPORT unsigned long procps_vmstat_get (
             return info->data.pswpin;
         case PROCPS_VMSTAT_PSWPOUT:
             return info->data.pswpout;
+        default:
+            return 0;
     }
-    return 0;
 }
 
-PROCPS_EXPORT int procps_vmstat_get_chain (
+PROCPS_EXPORT int procps_vmstat_getstack (
         struct procps_vmstat *info,
-        struct vmstat_result *item)
+        struct vmstat_result *these)
 {
-    if (item == NULL)
+    if (these == NULL)
         return -EINVAL;
 
-    do {
-        switch (item->item) {
+    for (;;) {
+        switch (these->item) {
             case PROCPS_VMSTAT_PGPGIN:
-                item->result = info->data.pgpgin;
+                these->result.ul_int = info->data.pgpgin;
                 break;
             case PROCPS_VMSTAT_PGPGOUT:
-                item->result = info->data.pgpgout;
+                these->result.ul_int = info->data.pgpgout;
                 break;
             case PROCPS_VMSTAT_PSWPIN:
-                item->result = info->data.pswpin;
+                these->result.ul_int = info->data.pswpin;
                 break;
             case PROCPS_VMSTAT_PSWPOUT:
-                item->result = info->data.pswpout;
+                these->result.ul_int = info->data.pswpout;
                 break;
+            case PROCPS_VMSTAT_noop:
+                // don't disturb potential user data in the result struct
+                break;
+            case PROCPS_VMSTAT_stack_end:
+                return 0;
             default:
                 return -EINVAL;
         }
-        item = item->next;
-    } while (item);
-
-    return 0;
+        ++these;
+    }
 }

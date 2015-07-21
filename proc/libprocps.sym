@@ -78,7 +78,7 @@ global:
 	procps_vmstat_ref;
 	procps_vmstat_unref;
 	procps_vmstat_get;
-	procps_vmstat_get_chain;
+	procps_vmstat_getstack;
 local:
 	*;
 };
