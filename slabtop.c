@@ -60,10 +60,10 @@ enum slabnode_item Node_items[] = {
     PROCPS_SLABNODE_OBJS,     PROCPS_SLABNODE_AOBJS, PROCPS_SLABNODE_USE,
     PROCPS_SLABNODE_OBJ_SIZE, PROCPS_SLABNODE_SLABS, PROCPS_SLABNODE_OBJS_PER_SLAB,
     PROCPS_SLABNODE_SIZE,     PROCPS_SLABNODE_NAME,
-    /* last 2 are sortable but are not displayable,
+    /* next 2 are sortable but are not displayable,
        thus they need not be represented in the Relative_enums */
-    PROCPS_SLABNODE_PAGES_PER_SLAB,
-    PROCPS_SLABNODE_ASLABS };
+    PROCPS_SLABNODE_PAGES_PER_SLAB, PROCPS_SLABNODE_ASLABS,
+    PROCPS_SLABNODE_stack_end };
 
 enum Relative_enums {
     my_OBJS,  my_AOBJS, my_USE,  my_OSIZE,
@@ -195,61 +195,60 @@ static void parse_opts (int argc, char **argv)
 
 static void print_summary (void)
 {
- #define STAT_VAL(e) (int)stats[e].result
     enum slabs_enums {
         stat_AOBJS,   stat_OBJS,   stat_ASLABS, stat_SLABS,
         stat_ACACHES, stat_CACHES, stat_ACTIVE, stat_TOTAL,
-        stat_MIN,     stat_AVG,    stat_MAX,
+        stat_MIN,     stat_AVG,    stat_MAX
     };
-    static struct slabs_result stats[] = {
-        { PROCPS_SLABS_AOBJS,        0, &stats[1] },
-        { PROCPS_SLABS_OBJS,         0, &stats[2] },
-        { PROCPS_SLABS_ASLABS,       0, &stats[3] },
-        { PROCPS_SLABS_SLABS,        0, &stats[4] },
-        { PROCPS_SLABS_ACACHES,      0, &stats[5] },
-        { PROCPS_SLABS_CACHES,       0, &stats[6] },
-        { PROCPS_SLABS_SIZE_ACTIVE,  0, &stats[7] },
-        { PROCPS_SLABS_SIZE_TOTAL,   0, &stats[8] },
-        { PROCPS_SLABS_SIZE_MIN,     0, &stats[9] },
-        { PROCPS_SLABS_SIZE_AVG,     0, &stats[10] },
-        { PROCPS_SLABS_SIZE_MAX,     0, NULL },
+    static struct slab_result stats[] = {
+        { PROCPS_SLABS_AOBJS,       0 },
+        { PROCPS_SLABS_OBJS,        0 },
+        { PROCPS_SLABS_ASLABS,      0 },
+        { PROCPS_SLABS_SLABS,       0 },
+        { PROCPS_SLABS_ACACHES,     0 },
+        { PROCPS_SLABS_CACHES,      0 },
+        { PROCPS_SLABS_SIZE_ACTIVE, 0 },
+        { PROCPS_SLABS_SIZE_TOTAL,  0 },
+        { PROCPS_SLABS_SIZE_MIN,    0 },
+        { PROCPS_SLABS_SIZE_AVG,    0 },
+        { PROCPS_SLABS_SIZE_MAX,    0 },
+        { PROCPS_SLABS_stack_end,   0 }
     };
 
-    if (procps_slabs_getchain(Slab_info, stats) < 0) \
+    if (procps_slabs_getstack(Slab_info, stats) < 0) \
         xerrx(EXIT_FAILURE, _("Error getting slab summary results"));
 
-    PRINT_line(" %-35s: %d / %d (%.1f%%)\n"
+    PRINT_line(" %-35s: %u / %u (%.1f%%)\n"
                , /* Translation Hint: Next five strings must not
                   * exceed a length of 35 characters.  */
                  /* xgettext:no-c-format */
                  _("Active / Total Objects (% used)")
-               , STAT_VAL(stat_AOBJS)
-               , STAT_VAL(stat_OBJS)
-               , 100.0 * STAT_VAL(stat_AOBJS) / STAT_VAL(stat_OBJS));
-    PRINT_line(" %-35s: %d / %d (%.1f%%)\n"
+               , stats[stat_AOBJS].result.u_int
+               , stats[stat_OBJS ].result.u_int
+               , 100.0 * stats[stat_AOBJS].result.u_int / stats[stat_OBJS].result.u_int);
+    PRINT_line(" %-35s: %u / %u (%.1f%%)\n"
                , /* xgettext:no-c-format */
                  _("Active / Total Slabs (% used)")
-               , STAT_VAL(stat_ASLABS)
-               , STAT_VAL(stat_SLABS)
-               , 100.0 * STAT_VAL(stat_ASLABS) / STAT_VAL(stat_SLABS));
-    PRINT_line(" %-35s: %d / %d (%.1f%%)\n"
+               , stats[stat_ASLABS].result.u_int
+               , stats[stat_SLABS  ].result.u_int
+               , 100.0 * stats[stat_ASLABS].result.u_int / stats[stat_SLABS].result.u_int);
+    PRINT_line(" %-35s: %u / %u (%.1f%%)\n"
                , /* xgettext:no-c-format */
                  _("Active / Total Caches (% used)")
-               , STAT_VAL(stat_ACACHES)
-               , STAT_VAL(stat_CACHES)
-               , 100.0 * STAT_VAL(stat_ACACHES) / STAT_VAL(stat_CACHES));
+               , stats[stat_ACACHES].result.u_int
+               , stats[stat_CACHES ].result.u_int
+               , 100.0 * stats[stat_ACACHES].result.u_int / stats[stat_CACHES].result.u_int);
     PRINT_line(" %-35s: %.2fK / %.2fK (%.1f%%)\n"
                , /* xgettext:no-c-format */
                  _("Active / Total Size (% used)")
-               , STAT_VAL(stat_ACTIVE) / 1024.0
-               , STAT_VAL(stat_TOTAL) / 1024.0
-               , 100.0 * STAT_VAL(stat_ACTIVE) / STAT_VAL(stat_TOTAL));
+               , stats[stat_ACTIVE].result.ul_int / 1024.0
+               , stats[stat_TOTAL ].result.ul_int / 1024.0
+               , 100.0 * stats[stat_ACTIVE].result.ul_int / stats[stat_TOTAL].result.ul_int);
     PRINT_line(" %-35s: %.2fK / %.2fK / %.2fK\n\n"
                , _("Minimum / Average / Maximum Object")
-               , STAT_VAL(stat_MIN) / 1024.0
-               , STAT_VAL(stat_AVG) / 1024.0
-               , STAT_VAL(stat_MAX) / 1024.0);
- #undef STAT_VAL
+               , stats[stat_MIN].result.u_int / 1024.0
+               , stats[stat_AVG].result.u_int / 1024.0
+               , stats[stat_MAX].result.u_int / 1024.0);
 }
 
 static void print_headings (void)
@@ -259,21 +258,19 @@ static void print_headings (void)
     PRINT_line("%-78s\n", _("  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"));
 }
 
-static void print_details (struct slabnode_chain *chain)
+static void print_details (struct slabnode_stack *stack)
 {
- #define my_NUM(c,e) (unsigned)c->head[e].result.num
- #define my_STR(c,e) c->head[e].result.str
-
-    PRINT_line("%6u %6u %3u%% %7.2fK %6u %8u %9uK %-23s\n"
-        , my_NUM(chain, my_OBJS),  my_NUM(chain, my_AOBJS)
-        , my_NUM(chain, my_USE),   my_NUM(chain, my_OSIZE) / 1024.0
-        , my_NUM(chain, my_SLABS), my_NUM(chain, my_OPS)
-        , my_NUM(chain, my_SIZE) / 1024
-        , my_STR(chain, my_NAME));
+    PRINT_line("%6u %6u %3u%% %7.2fK %6u %8u %9luK %-23s\n"
+        , stack->head[my_OBJS ].result.u_int
+        , stack->head[my_AOBJS].result.u_int
+        , stack->head[my_USE  ].result.u_int
+        , stack->head[my_OSIZE].result.u_int / 1024.0
+        , stack->head[my_SLABS].result.u_int
+        , stack->head[my_OPS  ].result.u_int
+        , stack->head[my_SIZE ].result.ul_int / 1024
+        , stack->head[my_NAME ].result.str);
 
     return;
- #undef my_NUM
- #undef my_STR
 }
 
 
@@ -281,7 +278,7 @@ int main(int argc, char *argv[])
 {
     int is_tty, nr_slabs, rc = EXIT_SUCCESS;
     unsigned short old_rows;
-    struct slabnode_chain **v;
+    struct slabnode_stack **v;
 
 #ifdef HAVE_PROGRAM_INVOCATION_NAME
     program_invocation_name = program_invocation_short_name;
@@ -296,7 +293,7 @@ int main(int argc, char *argv[])
     if (procps_slabinfo_new(&Slab_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create slabinfo structure"));
 
-    if (!(v = procps_slabnode_chains_alloc(Slab_info, CHAINS_ALLOC, 0, MAX_ITEMS, Node_items)))
+    if (!(v = procps_slabnode_stacks_alloc(Slab_info, CHAINS_ALLOC, 0, MAX_ITEMS, Node_items)))
         xerrx(EXIT_FAILURE, _("Unable to allocate slabinfo nodes"));
 
     if (!Run_once) {
@@ -317,12 +314,12 @@ int main(int argc, char *argv[])
         int i;
 
         // this next guy also performs the procps_slabnode_read() call
-        if ((nr_slabs = procps_slabnode_chains_fill(Slab_info, v, CHAINS_ALLOC)) < 0) {
+        if ((nr_slabs = procps_slabnode_stacks_fill(Slab_info, v, CHAINS_ALLOC)) < 0) {
             xwarn(_("Unable to get slabinfo node data"));
             rc = EXIT_FAILURE;
             break;
         }
-        if (!(v = procps_slabnode_chains_sort(Slab_info, v, nr_slabs, Sort_item))) {
+        if (!(v = procps_slabnode_stacks_sort(Slab_info, v, nr_slabs, Sort_item))) {
             xwarn(_("Unable to sort slab nodes"));
             rc = EXIT_FAILURE;
             break;

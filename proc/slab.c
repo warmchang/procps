@@ -23,16 +23,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <limits.h>
 #include <ctype.h>
 #include <errno.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include <proc/slab.h>
 #include "procps-private.h"
@@ -41,32 +42,32 @@
 #define SLABINFO_LINE_LEN    2048
 #define SLAB_INFO_NAME_LEN   128
 
-struct slabinfo_node {
-    char name[SLAB_INFO_NAME_LEN];  /* name of this cache */
-    unsigned long cache_size;       /* size of entire cache */
-    unsigned nr_objs;               /* number of objects in this cache */
-    unsigned nr_active_objs;        /* number of active objects */
-    unsigned obj_size;              /* size of each object */
-    unsigned objs_per_slab;         /* number of objects per slab */
-    unsigned pages_per_slab;        /* number of pages per slab */
-    unsigned nr_slabs;              /* number of slabs in this cache */
-    unsigned nr_active_slabs;       /* number of active slabs */
-    unsigned use;                   /* percent full: total / active */
-};
-
 struct slabinfo_stats {
     unsigned long total_size;       /* size of all objects */
     unsigned long active_size;      /* size of all active objects */
-    unsigned nr_objs;               /* number of objects, among all caches */
-    unsigned nr_active_objs;        /* number of active objects, among all caches */
-    unsigned nr_pages;              /* number of pages consumed by all objects */
-    unsigned nr_slabs;              /* number of slabs, among all caches */
-    unsigned nr_active_slabs;       /* number of active slabs, among all caches */
-    unsigned nr_caches;             /* number of caches */
-    unsigned nr_active_caches;      /* number of active caches */
-    unsigned avg_obj_size;          /* average object size */
-    unsigned min_obj_size;          /* size of smallest object */
-    unsigned max_obj_size;          /* size of largest object */
+    unsigned int  nr_objs;          /* number of objects, among all caches */
+    unsigned int  nr_active_objs;   /* number of active objects, among all caches */
+    unsigned int  nr_pages;         /* number of pages consumed by all objects */
+    unsigned int  nr_slabs;         /* number of slabs, among all caches */
+    unsigned int  nr_active_slabs;  /* number of active slabs, among all caches */
+    unsigned int  nr_caches;        /* number of caches */
+    unsigned int  nr_active_caches; /* number of active caches */
+    unsigned int  avg_obj_size;     /* average object size */
+    unsigned int  min_obj_size;     /* size of smallest object */
+    unsigned int  max_obj_size;     /* size of largest object */
+};
+
+struct slabinfo_node {
+    char name[SLAB_INFO_NAME_LEN];  /* name of this cache */
+    unsigned long cache_size;       /* size of entire cache */
+    unsigned int  nr_objs;          /* number of objects in this cache */
+    unsigned int  nr_active_objs;   /* number of active objects */
+    unsigned int  obj_size;         /* size of each object */
+    unsigned int  objs_per_slab;    /* number of objects per slab */
+    unsigned int  pages_per_slab;   /* number of pages per slab */
+    unsigned int  nr_slabs;         /* number of slabs in this cache */
+    unsigned int  nr_active_slabs;  /* number of active slabs */
+    unsigned int  use;              /* percent full: total / active */
 };
 
 struct procps_slabinfo {
@@ -76,21 +77,21 @@ struct procps_slabinfo {
     struct slabinfo_node *nodes;    /* first slabnode of this list */
     int nodes_alloc;                /* nodes alloc()ed */
     int nodes_used;                 /* nodes using alloced memory */
-    struct chains_anchor *chained;
+    struct stacks_anchor *stacked;
 };
 
-struct chain_vectors {
-    struct chains_anchor *owner;
-    struct slabnode_chain **heads;
+struct stack_vectors {
+    struct stacks_anchor *owner;
+    struct slabnode_stack **heads;
 };
 
-struct chains_anchor {
+struct stacks_anchor {
     int depth;
     int inuse;
     int header_size;
-    struct chain_vectors *vectors;
-    struct chains_anchor *self;
-    struct chains_anchor *next;
+    struct stack_vectors *vectors;
+    struct stacks_anchor *self;
+    struct stacks_anchor *next;
 };
 
 
@@ -207,9 +208,9 @@ static int parse_slabinfo20 (
             return retval;
 
         if (sscanf(buffer,
-                   "%" STRINGIFY(SLAB_INFO_NAME_LEN)
-                   "s %d %d %d %d %d : tunables %*d %*d %*d : \
-                   slabdata %d %d %*d", node->name,
+                   "%" STRINGIFY(SLAB_INFO_NAME_LEN) "s" \
+                   "%u %u %u %u %u : tunables %*u %*u %*u : slabdata %u %u %*u",
+                   node->name,
                    &node->nr_active_objs, &node->nr_objs,
                    &node->obj_size, &node->objs_per_slab,
                    &node->pages_per_slab, &node->nr_active_slabs,
@@ -231,7 +232,7 @@ static int parse_slabinfo20 (
             * page_size;
 
         if (node->nr_objs) {
-            node->use = 100 * node->nr_active_objs / node->nr_objs;
+            node->use = (unsigned int)100 * node->nr_active_objs / node->nr_objs;
             stats->nr_active_caches++;
         } else
             node->use = 0;
@@ -283,7 +284,7 @@ PROCPS_EXPORT int procps_slabinfo_new (
 /* procps_slabinfo_read():
  *
  * Read the data out of /proc/slabinfo putting the information
- * into the supplie info container
+ * into the supplied info container
  *
  * Returns: 0 on success, negative on error
  */
@@ -329,6 +330,7 @@ PROCPS_EXPORT int procps_slabinfo_ref (
 {
     if (info == NULL)
         return -EINVAL;
+
     info->refcount++;
     return info->refcount;
 }
@@ -338,18 +340,19 @@ PROCPS_EXPORT int procps_slabinfo_unref (
 {
     if (info == NULL || *info == NULL)
         return -EINVAL;
+
     (*info)->refcount--;
     if ((*info)->refcount == 0) {
         if ((*info)->slabinfo_fp) {
             fclose((*info)->slabinfo_fp);
             (*info)->slabinfo_fp = NULL;
         }
-        if ((*info)->chained) {
+        if ((*info)->stacked) {
             do {
-                struct chains_anchor *p = (*info)->chained;
-                (*info)->chained = (*info)->chained->next;
+                struct stacks_anchor *p = (*info)->stacked;
+                (*info)->stacked = (*info)->stacked->next;
                 free(p);
-            } while((*info)->chained);
+            } while((*info)->stacked);
         }
         free((*info)->nodes);
         free(*info);
@@ -363,6 +366,9 @@ PROCPS_EXPORT unsigned long procps_slabs_get (
         struct procps_slabinfo *info,
         enum slabs_item item)
 {
+    /* note: most of the results we might return are actually just
+       unsigned int, but we must accommodate the largest potential
+       result and so return an unsigned long */
     if (info == NULL)
         return -EINVAL;
 
@@ -391,68 +397,66 @@ PROCPS_EXPORT unsigned long procps_slabs_get (
             return info->stats.total_size;
         case PROCPS_SLABS_SIZE_ACTIVE:
             return info->stats.active_size;
-        case PROCPS_SLABS_noop:
-            return 0;
         default:
-            return -EINVAL;
+            return 0;
     }
-    return 0;
 }
 
-PROCPS_EXPORT int procps_slabs_getchain (
+PROCPS_EXPORT int procps_slabs_getstack (
         struct procps_slabinfo *info,
-        struct slabs_result *these)
+        struct slab_result *these)
 {
     if (info == NULL || these == NULL)
         return -EINVAL;
 
-    do {
+    for (;;) {
         switch (these->item) {
             case PROCPS_SLABS_OBJS:
-                these->result = info->stats.nr_objs;
+                these->result.u_int = info->stats.nr_objs;
                 break;
             case PROCPS_SLABS_AOBJS:
-                these->result = info->stats.nr_active_objs;
+                these->result.u_int = info->stats.nr_active_objs;
                 break;
             case PROCPS_SLABS_PAGES:
-                these->result = info->stats.nr_pages;
+                these->result.u_int = info->stats.nr_pages;
                 break;
             case PROCPS_SLABS_SLABS:
-                these->result = info->stats.nr_slabs;
+                these->result.u_int = info->stats.nr_slabs;
                 break;
             case PROCPS_SLABS_ASLABS:
-                these->result = info->stats.nr_active_slabs;
+                these->result.u_int = info->stats.nr_active_slabs;
                 break;
             case PROCPS_SLABS_CACHES:
-                these->result = info->stats.nr_caches;
+                these->result.u_int = info->stats.nr_caches;
                 break;
             case PROCPS_SLABS_ACACHES:
-                these->result = info->stats.nr_active_caches;
+                these->result.u_int = info->stats.nr_active_caches;
                 break;
             case PROCPS_SLABS_SIZE_AVG:
-                these->result = info->stats.avg_obj_size;
+                these->result.u_int = info->stats.avg_obj_size;
                 break;
             case PROCPS_SLABS_SIZE_MIN:
-                these->result = info->stats.min_obj_size;
+                these->result.u_int = info->stats.min_obj_size;
                 break;
             case PROCPS_SLABS_SIZE_MAX:
-                these->result = info->stats.max_obj_size;
+                these->result.u_int = info->stats.max_obj_size;
                 break;
             case PROCPS_SLABS_SIZE_TOTAL:
-                these->result = info->stats.total_size;
+                these->result.ul_int = info->stats.total_size;
                 break;
             case PROCPS_SLABS_SIZE_ACTIVE:
-                these->result = info->stats.active_size;
+                these->result.ul_int = info->stats.active_size;
                 break;
             case PROCPS_SLABS_noop:
-                these->result = 0;
+                // don't disturb potential user data in the result struct
                 break;
+            case PROCPS_SLABS_stack_end:
+                return 0;
             default:
                 return -EINVAL;
         }
-        these = these->next;
-    } while(these);
-    return 0;
+        ++these;
+    }
 }
 
 /*
@@ -481,6 +485,9 @@ PROCPS_EXPORT unsigned long procps_slabnode_get (
         enum slabnode_item item,
         int nodeid)
 {
+    /* note: most of the results we might return are actually just
+       unsigned int, but we must accommodate the largest potential
+       result and so return an unsigned long */
     if (info == NULL)
         return -EINVAL;
 
@@ -503,18 +510,14 @@ PROCPS_EXPORT unsigned long procps_slabnode_get (
             return info->nodes[nodeid].nr_active_slabs;
         case PROCPS_SLABNODE_USE:
             return info->nodes[nodeid].use;
-        case PROCPS_SLABNODE_noop:
-            return 0;
-        //   PROCPS_SLABNODE_NAME also invalid in this context
         default:
-            return -EINVAL;
+            return 0;
     }
-    return 0;
 }
 
-PROCPS_EXPORT int procps_slabnode_getchain (
+PROCPS_EXPORT int procps_slabnode_getstack (
         struct procps_slabinfo *info,
-        struct slabnode_result *these,
+        struct slab_result *these,
         int nodeid)
 {
     if (info == NULL || these == NULL)
@@ -522,64 +525,65 @@ PROCPS_EXPORT int procps_slabnode_getchain (
     if (nodeid > info->nodes_used)
         return -EINVAL;
 
-    do {
+    for (;;) {
         switch (these->item) {
             case PROCPS_SLABNODE_SIZE:
-                these->result.num = info->nodes[nodeid].cache_size;
+                these->result.ul_int = info->nodes[nodeid].cache_size;
                 break;
             case PROCPS_SLABNODE_OBJS:
-                these->result.num = info->nodes[nodeid].nr_objs;
+                these->result.u_int = info->nodes[nodeid].nr_objs;
                 break;
             case PROCPS_SLABNODE_AOBJS:
-                these->result.num = info->nodes[nodeid].nr_active_objs;
+                these->result.u_int = info->nodes[nodeid].nr_active_objs;
                 break;
             case PROCPS_SLABNODE_OBJ_SIZE:
-                these->result.num = info->nodes[nodeid].obj_size;
+                these->result.u_int = info->nodes[nodeid].obj_size;
                 break;
             case PROCPS_SLABNODE_OBJS_PER_SLAB:
-                these->result.num = info->nodes[nodeid].objs_per_slab;
+                these->result.u_int = info->nodes[nodeid].objs_per_slab;
                 break;
             case PROCPS_SLABNODE_PAGES_PER_SLAB:
-                these->result.num = info->nodes[nodeid].pages_per_slab;
+                these->result.u_int = info->nodes[nodeid].pages_per_slab;
                 break;
             case PROCPS_SLABNODE_SLABS:
-                these->result.num = info->nodes[nodeid].nr_slabs;
+                these->result.u_int = info->nodes[nodeid].nr_slabs;
                 break;
             case PROCPS_SLABNODE_ASLABS:
-                these->result.num = info->nodes[nodeid].nr_active_slabs;
+                these->result.u_int = info->nodes[nodeid].nr_active_slabs;
                 break;
             case PROCPS_SLABNODE_USE:
-                these->result.num = info->nodes[nodeid].use;
+                these->result.u_int = info->nodes[nodeid].use;
                 break;
             case PROCPS_SLABNODE_NAME:
                 these->result.str = info->nodes[nodeid].name;
                 break;
             case PROCPS_SLABNODE_noop:
-                these->result.num = 0;
+                // don't disturb potential user data in the result struct
                 break;
+            case PROCPS_SLABNODE_stack_end:
+                return 0;
             default:
                 return -EINVAL;
         }
-        these = these->next;
-    } while(these);
-    return 0;
+        ++these;
+    }
 }
 
 
-PROCPS_EXPORT int procps_slabnode_chain_fill (
+PROCPS_EXPORT int procps_slabnode_stack_fill (
     struct procps_slabinfo *info,
-    struct slabnode_chain *chain,
+    struct slabnode_stack *stack,
     int nodeid)
 {
     int rc;
 
-    if (info == NULL || chain == NULL || chain->head == NULL)
+    if (info == NULL || stack == NULL || stack->head == NULL)
         return -EINVAL;
 
     if ((rc = procps_slabinfo_read(info)) < 0)
         return rc;
 
-    return procps_slabnode_getchain(info, chain->head, nodeid);
+    return procps_slabnode_getstack(info, stack->head, nodeid);
 }
 
 /*
@@ -590,245 +594,276 @@ PROCPS_EXPORT int procps_slabnode_chain_fill (
  * Returns: number of nodes in @info or <0 on error
  */
 PROCPS_EXPORT int procps_slabnode_count (
-        const struct procps_slabinfo *info)
+        struct procps_slabinfo *info)
 {
+    int rc = 0;
+
     if (!info)
         return -EINVAL;
+    if (!info->nodes_used)
+        rc = procps_slabinfo_read(info);
+    if (rc < 0)
+        return rc;
     return info->nodes_used;
 }
 
-PROCPS_EXPORT int procps_slabnode_chains_fill (
+PROCPS_EXPORT int procps_slabnode_stacks_fill (
     struct procps_slabinfo *info,
-    struct slabnode_chain **chains,
-    int maxchains)
+    struct slabnode_stack **stacks,
+    int maxstacks)
 {
     int i, rc;
 
-    if (info == NULL || *chains == NULL)
+    if (info == NULL || *stacks == NULL)
         return -EINVAL;
-    if (maxchains < 1)
+    if (maxstacks < 1)
         return -EINVAL;
 
     if ((rc = procps_slabinfo_read(info)) < 0)
         return rc;
 
-    if (maxchains > info->chained->depth)
-        maxchains = info->chained->depth;
-    if (maxchains > info->nodes_used)
-        maxchains = info->nodes_used;
+    if (maxstacks > info->stacked->depth)
+        maxstacks = info->stacked->depth;
+    if (maxstacks > info->nodes_used)
+        maxstacks = info->nodes_used;
 
-    for (i = 0; i < maxchains; i++) {
-        if (chains[i] == NULL)
+    for (i = 0; i < maxstacks; i++) {
+        if (stacks[i] == NULL)
             break;
-        if ((rc = procps_slabnode_getchain(info, chains[i]->head, i) < 0))
+        if ((rc = procps_slabnode_getstack(info, stacks[i]->head, i) < 0))
             return rc;
     }
 
-    info->chained->inuse = i;
-    return info->chained->inuse;
+    info->stacked->inuse = i;
+    return info->stacked->inuse;
 }
 
-static void chains_validate (struct slabnode_chain **v, const char *who)
+static void stacks_validate (struct slabnode_stack **v, const char *who)
 {
 #if 0
     #include <stdio.h>
-    int i, x, n = 0;
-    struct chain_vectors *p = (struct chain_vectors *)v - 1;
+    int i, t, x, n = 0;
+    struct stack_vectors *p = (struct stack_vectors *)v - 1;
 
     fprintf(stderr, "%s: called by '%s'\n", __func__, who);
     fprintf(stderr, "%s: owned by %p (whose self = %p)\n", __func__, p->owner, p->owner->self);
     for (x = 0; v[x]; x++) {
-        struct slabnode_chain *h = v[x];
-        struct slabnode_result *r = h->head;
+        struct slabnode_stack *h = v[x];
+        struct slab_result *r = h->head;
         fprintf(stderr, "%s:   vector[%02d] = %p", __func__, x, h);
-        i = 0;
-        do {
-            i++;
-            r = r->next;
-        } while (r);
-        fprintf(stderr, ", chain %d found %d elements\n", n, i);
+        for (i = 0; r->item < PROCPS_SLABNODE_stack_end; i++, r++)
+            ;
+        t = i + 1;
+        fprintf(stderr, ", stack %d found %d elements\n", n, i);
         ++n;
     }
-    fprintf(stderr, "%s: found %d chain(s)\n", __func__, x);
+    fprintf(stderr, "%s: found %d stack(s), each %d bytes (including eos)\n", __func__, x, (int)sizeof(struct slab_result) * t);
+    fprintf(stderr, "%s: found %d stack(s)\n", __func__, x);
     fprintf(stderr, "%s: this header size = %2d\n", __func__, (int)p->owner->header_size);
-    fprintf(stderr, "%s: sizeof(struct slabnode_chain)  = %2d\n", __func__, (int)sizeof(struct slabnode_chain));
-    fprintf(stderr, "%s: sizeof(struct slabnode_result) = %2d\n", __func__, (int)sizeof(struct slabnode_result));
+    fprintf(stderr, "%s: sizeof(struct slabnode_stack)  = %2d\n", __func__, (int)sizeof(struct slabnode_stack));
+    fprintf(stderr, "%s: sizeof(struct slab_result) = %2d\n", __func__, (int)sizeof(struct slab_result));
     fputc('\n', stderr);
     return;
 #endif
 }
 
-static struct slabnode_result *chain_make (
-        struct slabnode_result *p,
+static struct slab_result *stack_make (
+        struct slab_result *p,
         int maxitems,
         enum slabnode_item *items)
 {
-    struct slabnode_result *p_sav = p;
+    struct slab_result *p_sav = p;
     int i;
 
     for (i = 0; i < maxitems; i++) {
-        if (i > PROCPS_SLABNODE_noop)
-            p->item = PROCPS_SLABNODE_noop;
-        else
-            p->item = items[i];
-        p->result.num = 0;
-        p->next = p + 1;
+        p->item = items[i];
+        // note: we rely on calloc to initialize actual result
         ++p;
     }
-    (--p)->next = NULL;
 
     return p_sav;
 }
 
-/*
- * procps_slabnode_chains_alloc():
- *
- * Allocate and initialize one or more chains each of which is anchored in an
- * associated meminfo_chain structure (which may include extra user space).
- *
- * All such chains will will have their result structures properly primed with
- * 'items' and 'next' pointers, while the result itself will be zeroed.
- *
- * Returns an array of pointers representing the 'heads' of each new chain.
- */
-PROCPS_EXPORT struct slabnode_chain **procps_slabnode_chains_alloc (
-        struct procps_slabinfo *info,
-        int maxchains,
-        int chain_extra,
+static int stack_items_valid (
         int maxitems,
         enum slabnode_item *items)
 {
-    struct chains_anchor *p_blob;
-    struct chain_vectors *p_vect;
-    struct slabnode_chain *p_head;
+    int i;
+
+    for (i = 0; i < maxitems; i++) {
+        if (items[i] < PROCPS_SLABNODE_SIZE)
+            return 0;
+        if (items[i] > PROCPS_SLABNODE_stack_end)
+            return 0;
+    }
+    if (items[maxitems -1] != PROCPS_SLABNODE_stack_end)
+        return 0;
+    return 1;
+}
+
+/*
+ * procps_slabnode_stacks_alloc():
+ *
+ * Allocate and initialize one or more stacks each of which is anchored in an
+ * associated slabnode_stack structure (which may include extra user space).
+ *
+ * All such stacks will will have their result structures properly primed with
+ * 'items', while the result itself will be zeroed.
+ *
+ * Returns an array of pointers representing the 'heads' of each new stack.
+ */
+PROCPS_EXPORT struct slabnode_stack **procps_slabnode_stacks_alloc (
+        struct procps_slabinfo *info,
+        int maxstacks,
+        int stack_extra,
+        int maxitems,
+        enum slabnode_item *items)
+{
+    struct stacks_anchor *p_blob;
+    struct stack_vectors *p_vect;
+    struct slabnode_stack *p_head;
     size_t vect_size, head_size, list_size, blob_size;
     void *v_head, *v_list;
     int i;
 
     if (info == NULL || items == NULL)
         return NULL;
-    if (maxchains < 1 || maxitems < 1)
+    if (maxstacks < 1 || maxitems < 1)
+        return NULL;
+    if (!stack_items_valid(maxitems, items))
         return NULL;
 
-    vect_size  = sizeof(struct chain_vectors);                 // address vector struct
-    vect_size += sizeof(void *) * maxchains;                   // plus vectors themselves
+    vect_size  = sizeof(struct stack_vectors);                 // address vector struct
+    vect_size += sizeof(void *) * maxstacks;                   // plus vectors themselves
     vect_size += sizeof(void *);                               // plus NULL delimiter
-    head_size  = sizeof(struct slabnode_chain) + chain_extra;  // a head struct + user stuff
-    list_size  = sizeof(struct slabnode_result) * maxitems;    // a results chain
-    blob_size  = sizeof(struct chains_anchor);                 // the anchor itself
+    head_size  = sizeof(struct slabnode_stack) + stack_extra;  // a head struct + user stuff
+    list_size  = sizeof(struct slab_result) * maxitems;        // a results stack
+    blob_size  = sizeof(struct stacks_anchor);                 // the anchor itself
     blob_size += vect_size;                                    // all vectors + delims
-    blob_size += head_size * maxchains;                        // all head structs + user stuff
-    blob_size += list_size * maxchains;                        // all results chains
+    blob_size += head_size * maxstacks;                        // all head structs + user stuff
+    blob_size += list_size * maxstacks;                        // all results stacks
 
     /* note: all memory is allocated in a single blob, facilitating a later free().
        as a minimum, it's important that the result structures themselves always be
-       contiguous for any given chain (just as they are when defined statically). */
+       contiguous for any given stack (just as they are when defined statically). */
     if (NULL == (p_blob = calloc(1, blob_size)))
         return NULL;
 
-    p_blob->next = info->chained;
-    info->chained = p_blob;
+    p_blob->next = info->stacked;
+    info->stacked = p_blob;
     p_blob->self  = p_blob;
     p_blob->header_size = head_size;
-    p_blob->vectors = (void *)p_blob + sizeof(struct chains_anchor);
+    p_blob->vectors = (void *)p_blob + sizeof(struct stacks_anchor);
     p_vect = p_blob->vectors;
     p_vect->owner = p_blob->self;
-    p_vect->heads = (void *)p_vect + sizeof(struct chain_vectors);
+    p_vect->heads = (void *)p_vect + sizeof(struct stack_vectors);
     v_head = (void *)p_vect + vect_size;
-    v_list = v_head + (head_size * maxchains);
+    v_list = v_head + (head_size * maxstacks);
 
-    for (i = 0; i < maxchains; i++) {
-        p_head = (struct slabnode_chain *)v_head;
-        p_head->head = chain_make((struct slabnode_result *)v_list, maxitems, items);
+    for (i = 0; i < maxstacks; i++) {
+        p_head = (struct slabnode_stack *)v_head;
+        p_head->head = stack_make((struct slab_result *)v_list, maxitems, items);
         p_blob->vectors->heads[i] = p_head;
         v_list += list_size;
         v_head += head_size;
     }
-    p_blob->depth = maxchains;
-    chains_validate(p_blob->vectors->heads, __func__);
+    p_blob->depth = maxstacks;
+    stacks_validate(p_blob->vectors->heads, __func__);
     return p_blob->vectors->heads;
 }
 
 /*
- * procps_slabnode_chain_alloc():
+ * procps_slabnode_stack_alloc():
  *
- * Allocate and initialize a single result chain under a simplified interface.
+ * Allocate and initialize a single result stack under a simplified interface.
  *
- * Such a chain will will have its result structures properly primed with
- * 'items' and 'next' pointers, while the result itself will be zeroed.
+ * Such a stack will will have its result structures properly primed with
+ * 'items', while the result itself will be zeroed.
  *
  */
-PROCPS_EXPORT struct slabnode_chain *procps_slabnode_chain_alloc (
+PROCPS_EXPORT struct slabnode_stack *procps_slabnode_stack_alloc (
         struct procps_slabinfo *info,
         int maxitems,
         enum slabnode_item *items)
 {
-    struct slabnode_chain **v;
+    struct slabnode_stack **v;
 
     if (info == NULL || items == NULL || maxitems < 1)
         return NULL;
-    v = procps_slabnode_chains_alloc(info, 1, 0, maxitems, items);
+    v = procps_slabnode_stacks_alloc(info, 1, 0, maxitems, items);
     if (!v)
         return NULL;
-    chains_validate(v, __func__);
+    stacks_validate(v, __func__);
     return v[0];
 }
 
-static int chains_sort (
-        const struct slabnode_chain **A,
-        const struct slabnode_chain **B,
+static int stacks_sort (
+        const struct slabnode_stack **A,
+        const struct slabnode_stack **B,
         enum slabnode_item *offset)
 {
-    const struct slabnode_result *a = (*A)->head + *offset;
-    const struct slabnode_result *b = (*B)->head + *offset;
+    const struct slab_result *a = (*A)->head + *offset;
+    const struct slab_result *b = (*B)->head + *offset;
     // note: everything will be sorted high-to-low
-    if (a->item == PROCPS_SLABNODE_NAME)
-        return strcoll(a->result.str, b->result.str);
-    if ( a->result.num > b->result.num ) return -1;
-    if ( a->result.num < b->result.num ) return +1;
+    switch (a->item) {
+        case PROCPS_SLABNODE_noop:
+        case PROCPS_SLABNODE_stack_end:
+            break;
+        case PROCPS_SLABNODE_NAME:
+            return strcoll(a->result.str, b->result.str);
+        case PROCPS_SLABNODE_SIZE:
+            if ( a->result.ul_int > b->result.ul_int ) return -1;
+            if ( a->result.ul_int < b->result.ul_int ) return +1;
+            break;
+        default:
+            if ( a->result.u_int > b->result.u_int ) return -1;
+            if ( a->result.u_int < b->result.u_int ) return +1;
+            break;
+    }
     return 0;
 }
 
 /*
- * procps_slabnode_chains_sort():
+ * procps_slabnode_stacks_sort():
  *
- * Sort chains anchored as 'heads' in the passed slabnode_chain pointers
+ * Sort stacks anchored as 'heads' in the passed slabnode_stack pointers
  * array based on the designated sort enumerator.
  *
  * Returns those same addresses sorted.
  *
- * Note: all of the chains must be homogeneous (of equal length and content).
+ * Note: all of the stacks must be homogeneous (of equal length and content).
  */
-PROCPS_EXPORT struct slabnode_chain **procps_slabnode_chains_sort (
+PROCPS_EXPORT struct slabnode_stack **procps_slabnode_stacks_sort (
         struct procps_slabinfo *info,
-        struct slabnode_chain **chains,
-        int numchained,
+        struct slabnode_stack **stacks,
+        int numstacked,
         enum slabnode_item sort)
 {
  #define QSORT_r  int (*)(const void *, const void *, void *)
-    struct slabnode_result *p = chains[0]->head;
+    struct slab_result *p = stacks[0]->head;
     int offset = 0;;
 
-    if (info == NULL || chains == NULL)
+    if (info == NULL || stacks == NULL)
         return NULL;
     if (sort < 0  || sort > PROCPS_SLABNODE_noop)
         return NULL;
-    if (numchained > info->chained->depth)
+    if (numstacked > info->stacked->depth)
         return NULL;
-    if (numchained < 2)
-        return chains;
+    if (numstacked < 2)
+        return stacks;
 
-    if (numchained > info->chained->inuse)
-        numchained = info->chained->inuse;
+    if (numstacked > info->stacked->inuse)
+        numstacked = info->stacked->inuse;
 
     for (;;) {
         if (p->item == sort)
             break;
         ++offset;
-        if (!(p = p->next))
+        if (p->item == PROCPS_SLABNODE_stack_end)
             return NULL;
+        ++p;
     }
-    qsort_r(chains, numchained, sizeof(void *), (QSORT_r)chains_sort, &offset);
-    return chains;
+    qsort_r(stacks, numstacked, sizeof(void *), (QSORT_r)stacks_sort, &offset);
+    return stacks;
  #undef QSORT_r
 }

@@ -612,22 +612,19 @@ static void slabformat (void)
 {
  #define CHAINS_ALLOC  150
  #define MAX_ITEMS (int)(sizeof(node_items) / sizeof(node_items[0]))
- #define SLAB_NUM(c,e) (unsigned)c->head[e].result.num
- #define SLAB_STR(c,e) c->head[e].result.str
     struct procps_slabinfo *slab_info;
-    struct slabnode_chain **v;
+    struct slabnode_stack **v, *p;
     int i, j, nr_slabs;
-    const char format[] = "%-24.24s %6u %6u %6u %6u\n";
     enum slabnode_item node_items[] = {
         PROCPS_SLABNODE_AOBJS,    PROCPS_SLABNODE_OBJS,
         PROCPS_SLABNODE_OBJ_SIZE, PROCPS_SLABNODE_OBJS_PER_SLAB,
-        PROCPS_SLABNODE_NAME };
+        PROCPS_SLABNODE_NAME,     PROCPS_SLABNODE_stack_end };
     enum rel_enums {
         slab_AOBJS, slab_OBJS, slab_OSIZE, slab_OPS, slab_NAME };
 
     if (procps_slabinfo_new(&slab_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create slabinfo structure"));
-    if (!(v = procps_slabnode_chains_alloc(slab_info, CHAINS_ALLOC, 0, MAX_ITEMS, node_items)))
+    if (!(v = procps_slabnode_stacks_alloc(slab_info, CHAINS_ALLOC, 0, MAX_ITEMS, node_items)))
         xerrx(EXIT_FAILURE, _("Unable to allocate slabinfo nodes"));
 
     if (!moreheaders)
@@ -635,18 +632,21 @@ static void slabformat (void)
 
     for (i = 0; infinite_updates || i < num_updates; i++) {
         // this next guy also performs the procps_slabnode_read() call
-        if ((nr_slabs = procps_slabnode_chains_fill(slab_info, v, CHAINS_ALLOC)) < 0)
+        if ((nr_slabs = procps_slabnode_stacks_fill(slab_info, v, CHAINS_ALLOC)) < 0)
             xerrx(EXIT_FAILURE, _("Unable to get slabinfo node data, requires root permission"));
-        if (!(v = procps_slabnode_chains_sort(slab_info, v, nr_slabs, PROCPS_SLABNODE_NAME)))
+        if (!(v = procps_slabnode_stacks_sort(slab_info, v, nr_slabs, PROCPS_SLABNODE_NAME)))
             xerrx(EXIT_FAILURE, _("Unable to sort slab nodes"));
 
         for (j = 0; j < nr_slabs; j++) {
+            p = v[j];
             if (moreheaders && ((j % height) == 0))
                 slabheader();
-            printf(format,
-                   SLAB_STR(v[j], slab_NAME),
-                   SLAB_NUM(v[j], slab_AOBJS), SLAB_NUM(v[j], slab_OBJS),
-                   SLAB_NUM(v[j], slab_OSIZE), SLAB_NUM(v[j], slab_OPS));
+            printf("%-24.24s %6u %6u %6u %6u\n",
+                p->head[slab_NAME ].result.str,
+                p->head[slab_AOBJS].result.u_int,
+                p->head[slab_OBJS ].result.u_int,
+                p->head[slab_OSIZE].result.u_int,
+                p->head[slab_OPS  ].result.u_int);
         }
         if (infinite_updates || i+1 < num_updates)
             sleep(sleep_time);
@@ -654,8 +654,6 @@ static void slabformat (void)
     procps_slabinfo_unref(&slab_info);
  #undef CHAINS_ALLOC
  #undef MAX_ITEMS
- #undef SLAB_NUM
- #undef SLAB_STR
 }
 
 static void disksum_format(void)

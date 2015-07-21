@@ -25,54 +25,50 @@
 __BEGIN_DECLS
 
 enum slabs_item {
-    PROCPS_SLABS_OBJS,
-    PROCPS_SLABS_AOBJS,
-    PROCPS_SLABS_PAGES,
-    PROCPS_SLABS_SLABS,
-    PROCPS_SLABS_ASLABS,
-    PROCPS_SLABS_CACHES,
-    PROCPS_SLABS_ACACHES,
-    PROCPS_SLABS_SIZE_AVG,
-    PROCPS_SLABS_SIZE_MIN,
-    PROCPS_SLABS_SIZE_MAX,
-    PROCPS_SLABS_SIZE_TOTAL,
-    PROCPS_SLABS_SIZE_ACTIVE,
-    PROCPS_SLABS_noop
+    PROCPS_SLABS_OBJS,                 // u_int
+    PROCPS_SLABS_AOBJS,                // u_int
+    PROCPS_SLABS_PAGES,                // u_int
+    PROCPS_SLABS_SLABS,                // u_int
+    PROCPS_SLABS_ASLABS,               // u_int
+    PROCPS_SLABS_CACHES,               // u_int
+    PROCPS_SLABS_ACACHES,              // u_int
+    PROCPS_SLABS_SIZE_AVG,             // u_int
+    PROCPS_SLABS_SIZE_MIN,             // u_int
+    PROCPS_SLABS_SIZE_MAX,             // u_int
+    PROCPS_SLABS_SIZE_TOTAL,           // ul_int
+    PROCPS_SLABS_SIZE_ACTIVE,          // ul_int
+    PROCPS_SLABS_noop,                 // n/a
+    PROCPS_SLABS_stack_end             // n/a
 };
 
 enum slabnode_item {
-    PROCPS_SLABNODE_SIZE,
-    PROCPS_SLABNODE_OBJS,
-    PROCPS_SLABNODE_AOBJS,
-    PROCPS_SLABNODE_OBJ_SIZE,
-    PROCPS_SLABNODE_OBJS_PER_SLAB,
-    PROCPS_SLABNODE_PAGES_PER_SLAB,
-    PROCPS_SLABNODE_SLABS,
-    PROCPS_SLABNODE_ASLABS,
-    PROCPS_SLABNODE_USE,
-    PROCPS_SLABNODE_NAME,
-    PROCPS_SLABNODE_noop
+    PROCPS_SLABNODE_SIZE,              // ul_int
+    PROCPS_SLABNODE_OBJS,              // u_int
+    PROCPS_SLABNODE_AOBJS,             // u_int
+    PROCPS_SLABNODE_OBJ_SIZE,          // u_int
+    PROCPS_SLABNODE_OBJS_PER_SLAB,     // u_int
+    PROCPS_SLABNODE_PAGES_PER_SLAB,    // u_int
+    PROCPS_SLABNODE_SLABS,             // u_int
+    PROCPS_SLABNODE_ASLABS,            // u_int
+    PROCPS_SLABNODE_USE,               // u_int
+    PROCPS_SLABNODE_NAME,              // str
+    PROCPS_SLABNODE_noop,              // n/a
+    PROCPS_SLABNODE_stack_end          // n/a
 };
 
 struct procps_slabinfo;
 
-struct slabs_result {
-    enum slabs_item item;
-    unsigned long result;
-    struct slabs_result *next;
+struct slabnode_stack {
+    struct slab_result *head;
 };
 
-struct slabnode_chain {
-    struct slabnode_result *head;
-};
-
-struct slabnode_result {
-    enum slabnode_item item;
+struct slab_result {
+    int item;
     union {
-        unsigned long num;
+        unsigned int u_int;
+        unsigned long ul_int;
         char *str;
     } result;
-    struct slabnode_result *next;
 };
 
 int procps_slabinfo_new (struct procps_slabinfo **info);
@@ -85,11 +81,11 @@ unsigned long procps_slabs_get (
     struct procps_slabinfo *info,
     enum slabs_item item);
 
-int procps_slabs_getchain (
+int procps_slabs_getstack (
     struct procps_slabinfo *info,
-    struct slabs_result *these);
+    struct slab_result *these);
 
-int procps_slabnode_count (const struct procps_slabinfo *info);
+int procps_slabnode_count (struct procps_slabinfo *info);
 
 const char *procps_slabnode_getname (
     struct procps_slabinfo *info,
@@ -100,37 +96,37 @@ unsigned long procps_slabnode_get (
     enum slabnode_item item,
     int nodeid);
 
-int procps_slabnode_getchain (
+int procps_slabnode_getstack (
     struct procps_slabinfo *info,
-    struct slabnode_result *these,
+    struct slab_result *these,
     int nodeid);
 
-int procps_slabnode_chain_fill (
+int procps_slabnode_stack_fill (
     struct procps_slabinfo *info,
-    struct slabnode_chain *chain,
+    struct slabnode_stack *stack,
     int nodeid);
 
-int procps_slabnode_chains_fill (
+int procps_slabnode_stacks_fill (
     struct procps_slabinfo *info,
-    struct slabnode_chain **chains,
-    int maxchains);
+    struct slabnode_stack **stacks,
+    int maxstacks);
 
-struct slabnode_chain *procps_slabnode_chain_alloc (
+struct slabnode_stack *procps_slabnode_stack_alloc (
     struct procps_slabinfo *info,
     int maxitems,
     enum slabnode_item *items);
 
-struct slabnode_chain **procps_slabnode_chains_alloc (
+struct slabnode_stack **procps_slabnode_stacks_alloc (
     struct procps_slabinfo *info,
-    int maxchains,
-    int chain_extra,
+    int maxstacks,
+    int stack_extra,
     int maxitems,
     enum slabnode_item *items);
 
-struct slabnode_chain **procps_slabnode_chains_sort (
+struct slabnode_stack **procps_slabnode_stacks_sort (
     struct procps_slabinfo *info,
-    struct slabnode_chain **chains,
-    int numchained,
+    struct slabnode_stack **stacks,
+    int numstacked,
     enum slabnode_item sort);
 
 __END_DECLS
