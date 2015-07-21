@@ -259,16 +259,16 @@ static void new_format(void)
 		strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
 	}
 	/* Do the initial fill */
-	cpu_use[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_USER) +
-	    procps_stat_get_cpu(sys_info, PROCPS_CPU_NICE);
-	cpu_sys[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_SYSTEM);
-	    procps_stat_get_cpu(sys_info, PROCPS_CPU_IRQ) +
-	    procps_stat_get_cpu(sys_info, PROCPS_CPU_SIRQ);
-	cpu_idl[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_IDLE);
-	cpu_iow[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_IOWAIT);
-	cpu_sto[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_STOLEN);
-	intr[tog] = procps_stat_get_sys(sys_info, PROCPS_STAT_INTR);
-	ctxt[tog] = procps_stat_get_sys(sys_info, PROCPS_STAT_CTXT);
+	cpu_use[tog] = procps_stat_cpu_get(sys_info, PROCPS_CPU_USER) +
+	    procps_stat_cpu_get(sys_info, PROCPS_CPU_NICE);
+	cpu_sys[tog] = procps_stat_cpu_get(sys_info, PROCPS_CPU_SYSTEM);
+	    procps_stat_cpu_get(sys_info, PROCPS_CPU_IRQ) +
+	    procps_stat_cpu_get(sys_info, PROCPS_CPU_SIRQ);
+	cpu_idl[tog] = procps_stat_cpu_get(sys_info, PROCPS_CPU_IDLE);
+	cpu_iow[tog] = procps_stat_cpu_get(sys_info, PROCPS_CPU_IOWAIT);
+	cpu_sto[tog] = procps_stat_cpu_get(sys_info, PROCPS_CPU_STOLEN);
+	intr[tog] = procps_stat_sys_get(sys_info, PROCPS_STAT_INTR);
+	ctxt[tog] = procps_stat_sys_get(sys_info, PROCPS_STAT_CTXT);
 	pgpgin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN);
 	pgpgout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT);
 	pswpin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN);
@@ -282,8 +282,8 @@ static void new_format(void)
 	divo2 = Div / 2UL;
 
 	printf(w_option ? wide_format : format,
-		procps_stat_get_sys(sys_info, PROCPS_STAT_PROCS_RUN),
-		procps_stat_get_sys(sys_info, PROCPS_STAT_PROCS_BLK),
+		procps_stat_sys_get(sys_info, PROCPS_STAT_PROCS_RUN),
+		procps_stat_sys_get(sys_info, PROCPS_STAT_PROCS_BLK),
 		unitConvert(procps_meminfo_get(mem_info, PROCPS_SWAP_USED)),
 		unitConvert(procps_meminfo_get(mem_info, PROCPS_MEM_FREE)),
 		unitConvert(procps_meminfo_get(mem_info, (a_option?PROCPS_MEM_INACTIVE:PROCPS_MEM_BUFFERS))),
@@ -321,16 +321,16 @@ static void new_format(void)
 		    xerrx(EXIT_FAILURE,
 			    _("Unable to read vmstat information"));
 
-		cpu_use[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_USER) +
-		    procps_stat_get_cpu(sys_info, PROCPS_CPU_NICE);
-		cpu_sys[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_SYSTEM);
-		    procps_stat_get_cpu(sys_info, PROCPS_CPU_IRQ) +
-		    procps_stat_get_cpu(sys_info, PROCPS_CPU_SIRQ);
-		cpu_idl[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_IDLE);
-		cpu_iow[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_IOWAIT);
-		cpu_sto[tog] = procps_stat_get_cpu(sys_info, PROCPS_CPU_STOLEN);
-		intr[tog] = procps_stat_get_sys(sys_info, PROCPS_STAT_INTR);
-		ctxt[tog] = procps_stat_get_sys(sys_info, PROCPS_STAT_CTXT);
+		cpu_use[tog] = procps_stat_cpu_get(sys_info, PROCPS_CPU_USER) +
+		    procps_stat_cpu_get(sys_info, PROCPS_CPU_NICE);
+		cpu_sys[tog] = procps_stat_cpu_get(sys_info, PROCPS_CPU_SYSTEM);
+		    procps_stat_cpu_get(sys_info, PROCPS_CPU_IRQ) +
+		    procps_stat_cpu_get(sys_info, PROCPS_CPU_SIRQ);
+		cpu_idl[tog] = procps_stat_cpu_get(sys_info, PROCPS_CPU_IDLE);
+		cpu_iow[tog] = procps_stat_cpu_get(sys_info, PROCPS_CPU_IOWAIT);
+		cpu_sto[tog] = procps_stat_cpu_get(sys_info, PROCPS_CPU_STOLEN);
+		intr[tog] = procps_stat_sys_get(sys_info, PROCPS_STAT_INTR);
+		ctxt[tog] = procps_stat_sys_get(sys_info, PROCPS_STAT_CTXT);
 		pgpgin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN);
 		pgpgout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT);
 		pswpin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN);
@@ -366,8 +366,8 @@ static void new_format(void)
 		if (!Div) Div = 1, didl = 1;
 		divo2 = Div / 2UL;
 		printf(w_option ? wide_format : format,
-		       procps_stat_get_sys(sys_info, PROCPS_STAT_PROCS_RUN),
-		       procps_stat_get_sys(sys_info, PROCPS_STAT_PROCS_BLK),
+		       procps_stat_sys_get(sys_info, PROCPS_STAT_PROCS_RUN),
+		       procps_stat_sys_get(sys_info, PROCPS_STAT_PROCS_BLK),
 		       unitConvert(procps_meminfo_get(mem_info, PROCPS_SWAP_USED)),
 		       unitConvert(procps_meminfo_get(mem_info, PROCPS_MEM_FREE)),
 		       unitConvert(procps_meminfo_get(mem_info,
@@ -761,24 +761,24 @@ static void sum_format(void)
 			mem_info, PROCPS_SWAP_USED)), szDataUnit);
 	printf(_("%13lu %s free swap\n"), unitConvert(procps_meminfo_get(
 			mem_info, PROCPS_SWAP_FREE)), szDataUnit);
-	printf(_("%13lld non-nice user cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_USER));
-	printf(_("%13lld nice user cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_NICE));
-	printf(_("%13lld system cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_SYSTEM));
-	printf(_("%13lld idle cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_IDLE));
-	printf(_("%13lld IO-wait cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_IOWAIT));
-	printf(_("%13lld IRQ cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_IRQ));
-	printf(_("%13lld softirq cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_SIRQ));
-	printf(_("%13lld stolen cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_STOLEN));
-	printf(_("%13lld non-nice guest cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_GUEST));
-	printf(_("%13lld nice guest cpu ticks\n"), procps_stat_get_cpu(sys_info, PROCPS_CPU_GNICE));
+	printf(_("%13lld non-nice user cpu ticks\n"), procps_stat_cpu_get(sys_info, PROCPS_CPU_USER));
+	printf(_("%13lld nice user cpu ticks\n"), procps_stat_cpu_get(sys_info, PROCPS_CPU_NICE));
+	printf(_("%13lld system cpu ticks\n"), procps_stat_cpu_get(sys_info, PROCPS_CPU_SYSTEM));
+	printf(_("%13lld idle cpu ticks\n"), procps_stat_cpu_get(sys_info, PROCPS_CPU_IDLE));
+	printf(_("%13lld IO-wait cpu ticks\n"), procps_stat_cpu_get(sys_info, PROCPS_CPU_IOWAIT));
+	printf(_("%13lld IRQ cpu ticks\n"), procps_stat_cpu_get(sys_info, PROCPS_CPU_IRQ));
+	printf(_("%13lld softirq cpu ticks\n"), procps_stat_cpu_get(sys_info, PROCPS_CPU_SIRQ));
+	printf(_("%13lld stolen cpu ticks\n"), procps_stat_cpu_get(sys_info, PROCPS_CPU_STOLEN));
+	printf(_("%13lld non-nice guest cpu ticks\n"), procps_stat_cpu_get(sys_info, PROCPS_CPU_GUEST));
+	printf(_("%13lld nice guest cpu ticks\n"), procps_stat_cpu_get(sys_info, PROCPS_CPU_GNICE));
 	printf(_("%13lu pages paged in\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN));
 	printf(_("%13lu pages paged out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT));
 	printf(_("%13lu pages swapped in\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN));
 	printf(_("%13lu pages swapped out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT));
-	printf(_("%13u interrupts\n"), procps_stat_get_sys(sys_info, PROCPS_STAT_INTR));
-	printf(_("%13u CPU context switches\n"), procps_stat_get_sys(sys_info, PROCPS_STAT_CTXT));
-	printf(_("%13u boot time\n"), procps_stat_get_sys(sys_info, PROCPS_STAT_BTIME));
-	printf(_("%13u forks\n"), procps_stat_get_sys(sys_info, PROCPS_STAT_PROCS));
+	printf(_("%13u interrupts\n"), procps_stat_sys_get(sys_info, PROCPS_STAT_INTR));
+	printf(_("%13u CPU context switches\n"), procps_stat_sys_get(sys_info, PROCPS_STAT_CTXT));
+	printf(_("%13u boot time\n"), procps_stat_sys_get(sys_info, PROCPS_STAT_BTIME));
+	printf(_("%13u forks\n"), procps_stat_sys_get(sys_info, PROCPS_STAT_PROCS));
 }
 
 static void fork_format(void)
@@ -792,7 +792,7 @@ static void fork_format(void)
 	xerrx(EXIT_FAILURE,
 		_("Unable to read system stat information"));
 
-    printf(_("%13u forks\n"), procps_stat_get_sys(sys_info, PROCPS_STAT_PROCS));
+    printf(_("%13u forks\n"), procps_stat_sys_get(sys_info, PROCPS_STAT_PROCS));
 }
 
 static int winhi(void)

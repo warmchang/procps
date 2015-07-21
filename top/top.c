@@ -2394,15 +2394,13 @@ static void cpus_refresh (void) {
       Cpu_jiffs = alloc_c(totSLOT * sizeof(struct procps_jiffs_hist));
    }
 
-   // 1st, snapshot the proc/stat cpu jiffs
-   if (procps_stat_read_jiffs(Cpu_ctx) < 0)
+   // 1st, retrieve all of the actual cpu jiffs
+   // 'hist_fill' also implies 'read', saving us one more call
+   Cpu_faux_cnt = procps_stat_jiffs_hist_fill(Cpu_ctx, Cpu_jiffs, sumSLOT);
+   if (Cpu_faux_cnt < 0)
       error_exit(N_txt(LIB_errorcpu_txt));
    // 2nd, retrieve just the cpu summary jiffs
-   if (procps_stat_get_jiffs_hist(Cpu_ctx, &Cpu_jiffs[sumSLOT], -1) < 0)
-      error_exit(N_txt(LIB_errorcpu_txt));
-   // 3rd, retrieve all of the actual cpu jiffs
-   Cpu_faux_cnt = procps_stat_get_jiffs_hist_all(Cpu_ctx, Cpu_jiffs, sumSLOT);
-   if (Cpu_faux_cnt < 0)
+   if (procps_stat_jiffs_hist_get(Cpu_ctx, &Cpu_jiffs[sumSLOT], -1) < 0)
       error_exit(N_txt(LIB_errorcpu_txt));
 
 #ifndef NUMA_DISABLE

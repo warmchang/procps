@@ -1,12 +1,31 @@
+/*
+ * libprocps - Library to read proc filesystem
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
-#include <unistd.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include <errno.h>
-#include <sys/types.h>
+#include <unistd.h>
+
 #include <sys/stat.h>
-#include <fcntl.h>
+#include <sys/types.h>
+
 #include <proc/readstat.h>
 #include "procps-private.h"
 
@@ -33,8 +52,8 @@ struct procps_stat {
     struct stat_data data;
     int jiff_hists_alloc;
     int jiff_hists_inuse;
-    struct procps_jiffs_private *jiff_hists;
     struct procps_jiffs_private cpu_summary;
+    struct procps_jiffs_private *jiff_hists;
 };
 
 
@@ -58,8 +77,8 @@ PROCPS_EXPORT int procps_stat_new (
 
     v->refcount = 1;
     v->stat_fd = -1;
-/*  v->jiff_hists_alloc = 0;   unecessary with calloc  */
-/*  v->jiff_hists_inuse = 0;   but serves as reminder  */
+/*  v->jiff_hists_alloc = 0;   unnecessary with calloc,  */
+/*  v->jiff_hists_inuse = 0;   but serves as a reminder  */
     *info = v;
     return 0;
 }
@@ -177,7 +196,7 @@ PROCPS_EXPORT int procps_stat_unref (
     return (*info)->refcount;
 }
 
-PROCPS_EXPORT jiff procps_stat_get_cpu (
+PROCPS_EXPORT jiff procps_stat_cpu_get (
         struct procps_stat *info,
         enum procps_cpu_item item)
 {
@@ -202,59 +221,63 @@ PROCPS_EXPORT jiff procps_stat_get_cpu (
             return info->data.cpu.guest;
         case PROCPS_CPU_GNICE:
             return info->data.cpu.gnice;
+        default:
+            return 0;
     }
-    return 0;
 }
 
-PROCPS_EXPORT int procps_get_cpu_chain (
+PROCPS_EXPORT int procps_stat_cpu_getstack (
         struct procps_stat *info,
-        struct procps_cpu_result *item)
+        struct stat_result *these)
 {
-    if (item == NULL)
+    if (these == NULL)
         return -EINVAL;
 
-    do {
-        switch (item->item) {
+    for (;;) {
+        switch (these->item) {
             case PROCPS_CPU_USER:
-                item->result = info->data.cpu.user;
+                these->result.jiff = info->data.cpu.user;
                 break;
             case PROCPS_CPU_NICE:
-                item->result = info->data.cpu.nice;
+                these->result.jiff = info->data.cpu.nice;
                 break;
             case PROCPS_CPU_SYSTEM:
-                item->result = info->data.cpu.system;
+                these->result.jiff = info->data.cpu.system;
                 break;
             case PROCPS_CPU_IDLE:
-                item->result = info->data.cpu.idle;
+                these->result.jiff = info->data.cpu.idle;
                 break;
             case PROCPS_CPU_IOWAIT:
-                item->result = info->data.cpu.iowait;
+                these->result.jiff = info->data.cpu.iowait;
                 break;
             case PROCPS_CPU_IRQ:
-                item->result = info->data.cpu.irq;
+                these->result.jiff = info->data.cpu.irq;
                 break;
             case PROCPS_CPU_SIRQ:
-                item->result = info->data.cpu.sirq;
+                these->result.jiff = info->data.cpu.sirq;
                 break;
             case PROCPS_CPU_STOLEN:
-                item->result = info->data.cpu.stolen;
+                these->result.jiff = info->data.cpu.stolen;
                 break;
             case PROCPS_CPU_GUEST:
-                item->result = info->data.cpu.guest;
+                these->result.jiff = info->data.cpu.guest;
                 break;
             case PROCPS_CPU_GNICE:
-                item->result = info->data.cpu.gnice;
+                these->result.jiff = info->data.cpu.gnice;
                 break;
+            case PROCPS_CPU_noop:
+                // don't disturb potential user data in the result struct
+                break;
+            case PROCPS_CPU_stack_end:
+                return 0;
             default:
                 return -EINVAL;
         }
-        item = item->next;
-    } while (item);
-
-    return 0;
+        ++these;
+    }
 }
 
-PROCPS_EXPORT unsigned int procps_stat_get_sys (
+PROCPS_EXPORT unsigned int procps_stat_sys_get (
         struct procps_stat *info,
         enum procps_stat_item item)
 {
@@ -271,44 +294,48 @@ PROCPS_EXPORT unsigned int procps_stat_get_sys (
             return info->data.procs_blocked;
         case PROCPS_STAT_PROCS_RUN:
             return info->data.procs_running;
+        default:
+            return 0;
     }
-    return 0;
 }
 
-PROCPS_EXPORT int procps_stat_get_sys_chain (
+PROCPS_EXPORT int procps_stat_sys_getstack (
         struct procps_stat *info,
-        struct procps_sys_result *item)
+        struct stat_result *these)
 {
-    if (item == NULL)
+    if (these == NULL)
         return -EINVAL;
 
-    do {
-        switch (item->item) {
+    for (;;) {
+        switch (these->item) {
             case PROCPS_STAT_INTR:
-                item->result = info->data.intr;
+                these->result.u_int = info->data.intr;
                 break;
             case PROCPS_STAT_CTXT:
-                item->result = info->data.ctxt;
+                these->result.u_int = info->data.ctxt;
                 break;
             case PROCPS_STAT_BTIME:
-                item->result = info->data.btime;
+                these->result.u_int = info->data.btime;
                 break;
             case PROCPS_STAT_PROCS:
-                item->result = info->data.procs;
+                these->result.u_int = info->data.procs;
                 break;
             case PROCPS_STAT_PROCS_BLK:
-                item->result = info->data.procs_blocked;
+                these->result.u_int = info->data.procs_blocked;
                 break;
             case PROCPS_STAT_PROCS_RUN:
-                item->result = info->data.procs_running;
+                these->result.u_int = info->data.procs_running;
                 break;
+            case PROCPS_STAT_noop:
+                // don't disturb potential user data in the result struct
+                break;
+            case PROCPS_STAT_stack_end:
+                return 0;
             default:
                 return -EINVAL;
         }
-        item = item->next;
-    } while (item);
-
-    return 0;
+        ++these;
+    }
 }
 
 /*
@@ -405,14 +432,14 @@ reap_em_again:
 }
 
 /*
- * procps_stat_get_jiffs:
+ * procps_stat_jiffs_get:
  *
  * Return the designated cpu data in the caller supplied structure.
  * A negative 'which' denotes the cpu_summary, not a real cpu.
  *
  * This function deals only with the 'current' jiffs counts.
  */
-PROCPS_EXPORT int procps_stat_get_jiffs (
+PROCPS_EXPORT int procps_stat_jiffs_get (
         struct procps_stat *info,
         struct procps_jiffs *item,
         int which)
@@ -440,27 +467,30 @@ PROCPS_EXPORT int procps_stat_get_jiffs (
 }
 
 /*
- * procps_stat_get_jiffs_all:
+ * procps_stat_jiffs_fill:
  *
- * Return all available cpu data in the caller supplied structures,
- * up to the lesser of numitems or total available.
+ * Refresh available cpu data, then return all cpu data in the caller
+ * supplied structures, up to the lesser of numitems or total available.
  *
  * We tolerate a numitems greater than the total available, and
  * the caller had better tolerate fewer returned than requested.
  *
  * This function deals only with the 'current' jiffs counts.
  */
-PROCPS_EXPORT int procps_stat_get_jiffs_all (
+PROCPS_EXPORT int procps_stat_jiffs_fill (
         struct procps_stat *info,
         struct procps_jiffs *item,
         int numitems)
 {
-    int i;
+    int i, rc;
 
     if (info == NULL || item == NULL)
         return -EINVAL;
+    if ((rc = procps_stat_read_jiffs(info)) < 0)
+        return rc;
     if (!info->jiff_hists_inuse)
         return -1;
+
     for (i = 0; i < info->jiff_hists_inuse && i < numitems; i++) {
         // note, we're just copying the 'new' portion of our procps_jiffs_private
         memcpy(item + i, info->jiff_hists + i, sizeof(struct procps_jiffs));
@@ -469,14 +499,14 @@ PROCPS_EXPORT int procps_stat_get_jiffs_all (
 }
 
 /*
- * procps_stat_get_jiffs_hist:
+ * procps_stat_jiffs_hist_get:
  *
  * Return the designated cpu data in the caller supplied structure.
  * A negative 'which' denotes the cpu_summary, not a real cpu.
  *
  * This function provides both 'new' and 'old' jiffs counts.
  */
-PROCPS_EXPORT int procps_stat_get_jiffs_hist (
+PROCPS_EXPORT int procps_stat_jiffs_hist_get (
         struct procps_stat *info,
         struct procps_jiffs_hist *item,
         int which)
@@ -502,27 +532,30 @@ PROCPS_EXPORT int procps_stat_get_jiffs_hist (
 }
 
 /*
- * procps_stat_get_jiffs_hist_all:
+ * procps_stat_jiffs_hist_fill:
  *
- * Return all available cpu data in the caller supplied structures,
- * up to the lesser of numitems or total available.
+ * Refresh available cpu data, then return all cpu data in the caller
+ * supplied structures, up to the lesser of numitems or total available.
  *
  * We tolerate a numitems greater than the total available, and
  * the caller had better tolerate fewer returned than requested.
  *
  * This function provides both 'new' and 'old' jiffs counts.
  */
-PROCPS_EXPORT int procps_stat_get_jiffs_hist_all (
+PROCPS_EXPORT int procps_stat_jiffs_hist_fill (
         struct procps_stat *info,
         struct procps_jiffs_hist *item,
         int numitems)
 {
-    int i;
+    int i, rc;
 
     if (info == NULL || item == NULL)
         return -EINVAL;
+    if ((rc = procps_stat_read_jiffs(info)) < 0)
+        return rc;
     if (!info->jiff_hists_inuse)
         return -1;
+
     for (i = 0; i < info->jiff_hists_inuse && i < numitems; i++) {
         memcpy(item + i, info->jiff_hists + i, sizeof(struct procps_jiffs_hist));
     }
