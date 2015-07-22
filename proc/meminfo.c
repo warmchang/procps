@@ -68,7 +68,6 @@ struct stack_vectors {
 
 struct stacks_anchor {
     int depth;
-    int header_size;
     struct stack_vectors *vectors;
     struct stacks_anchor *self;
     struct stacks_anchor *next;
@@ -433,7 +432,6 @@ static void stacks_validate (struct meminfo_stack **v, const char *who)
         ++n;
     }
     fprintf(stderr, "%s: found %d stack(s), each %d bytes (including eos)\n", __func__, x, (int)sizeof(struct meminfo_result) * t);
-    fprintf(stderr, "%s: this header size = %2d\n", __func__, (int)p->owner->header_size);
     fprintf(stderr, "%s: sizeof(struct meminfo_stack)  = %2d\n", __func__, (int)sizeof(struct meminfo_stack));
     fprintf(stderr, "%s: sizeof(struct meminfo_result) = %2d\n", __func__, (int)sizeof(struct meminfo_result));
     fputc('\n', stderr);
@@ -486,7 +484,6 @@ static int stack_items_valid (
 static struct meminfo_stack **procps_meminfo_stacks_alloc (
         struct procps_meminfo *info,
         int maxstacks,
-        int stack_extra,
         int maxitems,
         enum meminfo_item *items)
 {
@@ -507,7 +504,7 @@ static struct meminfo_stack **procps_meminfo_stacks_alloc (
     vect_size  = sizeof(struct stack_vectors);                 // address vector struct
     vect_size += sizeof(void *) * maxstacks;                   // plus vectors themselves
     vect_size += sizeof(void *);                               // plus NULL delimiter
-    head_size  = sizeof(struct meminfo_stack) + stack_extra;   // a head struct + user stuff
+    head_size  = sizeof(struct meminfo_stack);                 // a head struct
     list_size  = sizeof(struct meminfo_result) * maxitems;     // a results stack
     blob_size  = sizeof(struct stacks_anchor);                 // the anchor itself
     blob_size += vect_size;                                    // all vectors + delims
@@ -523,7 +520,6 @@ static struct meminfo_stack **procps_meminfo_stacks_alloc (
     p_blob->next = info->stacked;
     info->stacked = p_blob;
     p_blob->self  = p_blob;
-    p_blob->header_size = head_size;
     p_blob->vectors = (void *)p_blob + sizeof(struct stacks_anchor);
     p_vect = p_blob->vectors;
     p_vect->owner = p_blob->self;
@@ -559,7 +555,7 @@ PROCPS_EXPORT struct meminfo_stack *procps_meminfo_stack_alloc (
 {
     struct meminfo_stack **v;
 
-    v = procps_meminfo_stacks_alloc(info, 1, 0, maxitems, items);
+    v = procps_meminfo_stacks_alloc(info, 1, maxitems, items);
     if (!v)
         return NULL;
     stacks_validate(v, __func__);

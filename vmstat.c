@@ -624,7 +624,7 @@ static void slabformat (void)
 
     if (procps_slabinfo_new(&slab_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create slabinfo structure"));
-    if (!(v = procps_slabnode_stacks_alloc(slab_info, CHAINS_ALLOC, 0, MAX_ITEMS, node_items)))
+    if (!(v = procps_slabnode_stacks_alloc(slab_info, CHAINS_ALLOC, MAX_ITEMS, node_items)))
         xerrx(EXIT_FAILURE, _("Unable to allocate slabinfo nodes"));
 
     if (!moreheaders)

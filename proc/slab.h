@@ -119,7 +119,6 @@ struct slabnode_stack *procps_slabnode_stack_alloc (
 struct slabnode_stack **procps_slabnode_stacks_alloc (
     struct procps_slabinfo *info,
     int maxstacks,
-    int stack_extra,
     int maxitems,
     enum slabnode_item *items);
 

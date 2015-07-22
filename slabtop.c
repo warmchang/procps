@@ -293,7 +293,7 @@ int main(int argc, char *argv[])
     if (procps_slabinfo_new(&Slab_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create slabinfo structure"));
 
-    if (!(v = procps_slabnode_stacks_alloc(Slab_info, CHAINS_ALLOC, 0, MAX_ITEMS, Node_items)))
+    if (!(v = procps_slabnode_stacks_alloc(Slab_info, CHAINS_ALLOC, MAX_ITEMS, Node_items)))
         xerrx(EXIT_FAILURE, _("Unable to allocate slabinfo nodes"));
 
     if (!Run_once) {

@@ -88,7 +88,6 @@ struct stack_vectors {
 struct stacks_anchor {
     int depth;
     int inuse;
-    int header_size;
     struct stack_vectors *vectors;
     struct stacks_anchor *self;
     struct stacks_anchor *next;
@@ -659,9 +658,8 @@ static void stacks_validate (struct slabnode_stack **v, const char *who)
     }
     fprintf(stderr, "%s: found %d stack(s), each %d bytes (including eos)\n", __func__, x, (int)sizeof(struct slab_result) * t);
     fprintf(stderr, "%s: found %d stack(s)\n", __func__, x);
-    fprintf(stderr, "%s: this header size = %2d\n", __func__, (int)p->owner->header_size);
     fprintf(stderr, "%s: sizeof(struct slabnode_stack)  = %2d\n", __func__, (int)sizeof(struct slabnode_stack));
-    fprintf(stderr, "%s: sizeof(struct slab_result) = %2d\n", __func__, (int)sizeof(struct slab_result));
+    fprintf(stderr, "%s: sizeof(struct slab_result)     = %2d\n", __func__, (int)sizeof(struct slab_result));
     fputc('\n', stderr);
     return;
 #endif
@@ -715,7 +713,6 @@ static int stack_items_valid (
 PROCPS_EXPORT struct slabnode_stack **procps_slabnode_stacks_alloc (
         struct procps_slabinfo *info,
         int maxstacks,
-        int stack_extra,
         int maxitems,
         enum slabnode_item *items)
 {
@@ -736,7 +733,7 @@ PROCPS_EXPORT struct slabnode_stack **procps_slabnode_stacks_alloc (
     vect_size  = sizeof(struct stack_vectors);                 // address vector struct
     vect_size += sizeof(void *) * maxstacks;                   // plus vectors themselves
     vect_size += sizeof(void *);                               // plus NULL delimiter
-    head_size  = sizeof(struct slabnode_stack) + stack_extra;  // a head struct + user stuff
+    head_size  = sizeof(struct slabnode_stack);                // a head struct
     list_size  = sizeof(struct slab_result) * maxitems;        // a results stack
     blob_size  = sizeof(struct stacks_anchor);                 // the anchor itself
     blob_size += vect_size;                                    // all vectors + delims
@@ -752,7 +749,6 @@ PROCPS_EXPORT struct slabnode_stack **procps_slabnode_stacks_alloc (
     p_blob->next = info->stacked;
     info->stacked = p_blob;
     p_blob->self  = p_blob;
-    p_blob->header_size = head_size;
     p_blob->vectors = (void *)p_blob + sizeof(struct stacks_anchor);
     p_vect = p_blob->vectors;
     p_vect->owner = p_blob->self;
@@ -790,7 +786,7 @@ PROCPS_EXPORT struct slabnode_stack *procps_slabnode_stack_alloc (
 
     if (info == NULL || items == NULL || maxitems < 1)
         return NULL;
-    v = procps_slabnode_stacks_alloc(info, 1, 0, maxitems, items);
+    v = procps_slabnode_stacks_alloc(info, 1, maxitems, items);
     if (!v)
         return NULL;
     stacks_validate(v, __func__);
