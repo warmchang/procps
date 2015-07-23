@@ -463,7 +463,7 @@ static int stack_items_valid (
     int i;
 
     for (i = 0; i < maxitems; i++) {
-        if (items[i] < PROCPS_MEMHI_FREE)
+        if (items[i] < 0)
             return 0;
         if (items[i] > PROCPS_MEM_stack_end)
             return 0;
@@ -508,7 +508,7 @@ static struct meminfo_stack **procps_meminfo_stacks_alloc (
     list_size  = sizeof(struct meminfo_result) * maxitems;     // a results stack
     blob_size  = sizeof(struct stacks_anchor);                 // the anchor itself
     blob_size += vect_size;                                    // all vectors + delims
-    blob_size += head_size * maxstacks;                        // all head structs + user stuff
+    blob_size += head_size * maxstacks;                        // all head structs
     blob_size += list_size * maxstacks;                        // all results stacks
 
     /* note: all memory is allocated in a single blob, facilitating a later free().

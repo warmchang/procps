@@ -66,7 +66,6 @@ struct stat_result {
         unsigned int u_int;
         jiff jiff;
     } result;
-    struct stat_result *next;
 };
 
 struct procps_stat;
@@ -84,27 +83,27 @@ jiff procps_stat_cpu_get (
 
 int procps_stat_cpu_getstack (
     struct procps_stat *info,
-    struct stat_result *item);
+    struct stat_result *these);
 
 int procps_stat_jiffs_get (
     struct procps_stat *info,
-    struct procps_jiffs *item,
+    struct procps_jiffs *dest,
     int which);
 
 int procps_stat_jiffs_hist_get (
     struct procps_stat *info,
-    struct procps_jiffs_hist *item,
+    struct procps_jiffs_hist *dest,
     int which);
 
 int procps_stat_jiffs_fill (
     struct procps_stat *info,
-    struct procps_jiffs *item,
-    int numitems);
+    struct procps_jiffs *dests,
+    int maxdests);
 
 int procps_stat_jiffs_hist_fill (
     struct procps_stat *info,
-    struct procps_jiffs_hist *item,
-    int numitems);
+    struct procps_jiffs_hist *dests,
+    int maxdests);
 
 unsigned int procps_stat_sys_get (
     struct procps_stat *info,
@@ -112,7 +111,7 @@ unsigned int procps_stat_sys_get (
 
 int procps_stat_sys_getstack (
     struct procps_stat *info,
-    struct stat_result *item);
+    struct stat_result *these);
 
 __END_DECLS
 #endif

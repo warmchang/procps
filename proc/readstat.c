@@ -441,24 +441,24 @@ reap_em_again:
  */
 PROCPS_EXPORT int procps_stat_jiffs_get (
         struct procps_stat *info,
-        struct procps_jiffs *item,
+        struct procps_jiffs *dest,
         int which)
 {
     struct procps_jiffs_private *p;
     int i;
 
-    if (info == NULL || item == NULL)
+    if (info == NULL || dest == NULL)
         return -EINVAL;
     if (which < 0) {
         // note, we're just copying the 'new' portion of our procps_jiffs_private
-        memcpy(item, &info->cpu_summary, sizeof(struct procps_jiffs));
+        memcpy(dest, &info->cpu_summary, sizeof(struct procps_jiffs));
         return 0;
     }
     p = info->jiff_hists;
     for (i = 0; i < info->jiff_hists_inuse; i++) {
         if (p->cpu.id == which) {
             // note, we're just copying the 'new' portion of our procps_jiffs_private
-            memcpy(item, p, sizeof(struct procps_jiffs));
+            memcpy(dest, p, sizeof(struct procps_jiffs));
             return 0;
         }
         ++p;
@@ -470,30 +470,30 @@ PROCPS_EXPORT int procps_stat_jiffs_get (
  * procps_stat_jiffs_fill:
  *
  * Refresh available cpu data, then return all cpu data in the caller
- * supplied structures, up to the lesser of numitems or total available.
+ * supplied structures, up to the lesser of maxdests or total available.
  *
- * We tolerate a numitems greater than the total available, and
+ * We tolerate a maxdests greater than the total available, and
  * the caller had better tolerate fewer returned than requested.
  *
  * This function deals only with the 'current' jiffs counts.
  */
 PROCPS_EXPORT int procps_stat_jiffs_fill (
         struct procps_stat *info,
-        struct procps_jiffs *item,
-        int numitems)
+        struct procps_jiffs *dests,
+        int maxdests)
 {
     int i, rc;
 
-    if (info == NULL || item == NULL)
+    if (info == NULL || dests == NULL)
         return -EINVAL;
     if ((rc = procps_stat_read_jiffs(info)) < 0)
         return rc;
     if (!info->jiff_hists_inuse)
         return -1;
 
-    for (i = 0; i < info->jiff_hists_inuse && i < numitems; i++) {
+    for (i = 0; i < info->jiff_hists_inuse && i < maxdests; i++) {
         // note, we're just copying the 'new' portion of our procps_jiffs_private
-        memcpy(item + i, info->jiff_hists + i, sizeof(struct procps_jiffs));
+        memcpy(dests + i, info->jiff_hists + i, sizeof(struct procps_jiffs));
     }
     return i;
 }
@@ -508,22 +508,22 @@ PROCPS_EXPORT int procps_stat_jiffs_fill (
  */
 PROCPS_EXPORT int procps_stat_jiffs_hist_get (
         struct procps_stat *info,
-        struct procps_jiffs_hist *item,
+        struct procps_jiffs_hist *dest,
         int which)
 {
     struct procps_jiffs_private *p;
     int i;
 
-    if (info == NULL || item == NULL)
+    if (info == NULL || dest == NULL)
         return -EINVAL;
     if (which < 0) {
-        memcpy(item, &info->cpu_summary, sizeof(struct procps_jiffs_hist));
+        memcpy(dest, &info->cpu_summary, sizeof(struct procps_jiffs_hist));
         return 0;
     }
     p = info->jiff_hists;
     for (i = 0; i < info->jiff_hists_inuse; i++) {
         if (p->cpu.id == which) {
-            memcpy(item, p, sizeof(struct procps_jiffs_hist));
+            memcpy(dest, p, sizeof(struct procps_jiffs_hist));
             return 0;
         }
         ++p;
@@ -535,29 +535,29 @@ PROCPS_EXPORT int procps_stat_jiffs_hist_get (
  * procps_stat_jiffs_hist_fill:
  *
  * Refresh available cpu data, then return all cpu data in the caller
- * supplied structures, up to the lesser of numitems or total available.
+ * supplied structures, up to the lesser of maxdests or total available.
  *
- * We tolerate a numitems greater than the total available, and
+ * We tolerate a maxdests greater than the total available, and
  * the caller had better tolerate fewer returned than requested.
  *
  * This function provides both 'new' and 'old' jiffs counts.
  */
 PROCPS_EXPORT int procps_stat_jiffs_hist_fill (
         struct procps_stat *info,
-        struct procps_jiffs_hist *item,
-        int numitems)
+        struct procps_jiffs_hist *dests,
+        int maxdests)
 {
     int i, rc;
 
-    if (info == NULL || item == NULL)
+    if (info == NULL || dests == NULL)
         return -EINVAL;
     if ((rc = procps_stat_read_jiffs(info)) < 0)
         return rc;
     if (!info->jiff_hists_inuse)
         return -1;
 
-    for (i = 0; i < info->jiff_hists_inuse && i < numitems; i++) {
-        memcpy(item + i, info->jiff_hists + i, sizeof(struct procps_jiffs_hist));
+    for (i = 0; i < info->jiff_hists_inuse && i < maxdests; i++) {
+        memcpy(dests + i, info->jiff_hists + i, sizeof(struct procps_jiffs_hist));
     }
     return i;
 }
