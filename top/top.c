@@ -1915,7 +1915,7 @@ static void build_headers (void) {
             if (EU_MAXPFLGS <= f) continue;
 #endif
             if (EU_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
-            Frames_libflags |= Fieldstab[w->procflgs[i]].lflg;
+            Frames_libflags |= Fieldstab[f].lflg;
             s = scat(s, justify_pad(N_col(f)
                , VARcol(f) ? w->varcolsz : Fieldstab[f].width
                , CHKw(w, Fieldstab[f].align)));
