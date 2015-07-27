@@ -243,11 +243,11 @@ typedef struct HST_t {
    int pid;                     // record 'key'
 } HST_t;
 #else
-        /* This structure supports 'history' processing and records the
-           bare minimum of needed information from one frame to the next --
-           we don't calc and save data that goes unused like the old top nor
-           do we incure the overhead of sorting to support a binary search
-           (or worse, a friggin' for loop) when retrieval is necessary! */
+        /* This structure supports 'history' processing and records the bare
+           minimum of needed information from one frame to the next -- we do
+           not calc and save data that goes unused like the old top nor will
+           we incur the additional overhead of sort to support binary search
+           (or worse, a friggin' for loop) when retrievals become necessary! */
 typedef struct HST_t {
    TIC_t tics;                  // last frame's tics count
    unsigned long maj, min;      // last frame's maj/min_flt counts
