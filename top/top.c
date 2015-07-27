@@ -3074,10 +3074,9 @@ static int insp_view_choice (proc_t *obj) {
  #define hzAMT  8
 #endif
  #define maxLN (Screen_rows - (Msg_row +1))
- #define makHD(b1,b2,b3) { \
-    snprintf(b1, sizeof(b1), "%s", make_num(obj->tid,   5, 1, AUTOX_NO)); \
-    snprintf(b2, sizeof(b2), "%s", make_str(obj->cmd,   8, 1, AUTOX_NO)); \
-    snprintf(b3, sizeof(b3), "%s", make_str(obj->euser, 8, 1, AUTOX_NO)); }
+ #define makHD(b1,b2) { \
+    snprintf(b1, sizeof(b1), "%d", obj->tid); \
+    snprintf(b2, sizeof(b2), "%s", obj->cmd); }
  #define makFS(dst) { if (Insp_sel->flen < 22) \
        snprintf(dst, sizeof(dst), "%s", Insp_sel->fstr); \
     else snprintf(dst, sizeof(dst), "%.19s...", Insp_sel->fstr); }
@@ -3089,17 +3088,17 @@ signify_that:
    adj_geometry();
 
    for (;;) {
-      char pid[6], cmd[9], usr[9];
+      char pid[6], cmd[16];
 
       if (curcol < 0) curcol = 0;
       if (curlin >= Insp_nl) curlin = Insp_nl -1;
       if (curlin < 0) curlin = 0;
 
       makFS(buf)
-      makHD(pid,cmd,usr)
+      makHD(pid,cmd)
       putp(Cap_home);
       show_special(1, fmtmk(N_unq(YINSP_hdview_fmt)
-         , pid, cmd, usr, (Insp_sel->fstr[0]) ? buf : " N/A "));   // nls_maybe
+         , pid, cmd, (Insp_sel->fstr[0]) ? buf : " N/A "));   // nls_maybe
       insp_show_pgs(curcol, curlin, maxLN);
       fflush(stdout);
       /* fflush(stdin) didn't do the trick, so we'll just dip a little deeper
@@ -3209,7 +3208,7 @@ signify_that:
       mkSEL(sels);
       putp(Cap_home);
       show_special(1, fmtmk(N_unq(YINSP_hdsels_fmt)
-         , pid, p->cmd, p->euser, sels));
+         , pid, p->cmd, sels));
       INSP_MKSL(0, " ");
 
       if (Frames_signal) goto signify_that;
