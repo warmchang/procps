@@ -306,7 +306,7 @@ SCB_NUMx(PGD, pgrp)
 SCB_NUMx(PID, tid)
 SCB_NUMx(PPD, ppid)
 SCB_NUMx(PRI, priority)
-SCB_NUM1(RES, resident)                // also serves MEM !
+SCB_NUM1(RES, vm_rss)                  // also serves MEM !
 SCB_STRX(SGD, supgid)
 SCB_STRS(SGN, supgrp)
 SCB_NUM1(SHR, share)
@@ -339,7 +339,7 @@ SCB_STRS(UEN, euser)
 SCB_NUMx(URD, ruid)
 SCB_STRS(URN, ruser)
 SCB_NUMx(USD, suid)
-SCB_NUM2(USE, resident, vm_swap)
+SCB_NUM2(USE, vm_rss, vm_swap)
 SCB_STRS(USN, suser)
 SCB_NUM1(VRT, size)
 SCB_NUM1(WCH, wchan)
@@ -1716,7 +1716,6 @@ end_justifies:
 #define L_OUSER    PROC_FILLSTATUS | PROC_FILLUSR
 #define L_EGROUP   PROC_FILLSTATUS | PROC_FILLGRP
 #define L_SUPGRP   PROC_FILLSTATUS | PROC_FILLSUPGRP
-#define L_USED     PROC_FILLSTATUS | PROC_FILLMEM
 #define L_NS       PROC_FILLNS
 #define L_LXC      PROC_FILL_LXC
    // make 'none' non-zero (used to be important to Frames_libflags)
@@ -1769,21 +1768,21 @@ static FLD_t Fieldstab[] = {
    {     6,     -1,  A_right,  SF(TME),  L_stat    },
    {     9,     -1,  A_right,  SF(TME),  L_stat    }, // EU_TM2 slot
 #ifdef BOOST_PERCNT
-   {     5,     -1,  A_right,  SF(RES),  L_statm   }, // EU_MEM slot
+   {     5,     -1,  A_right,  SF(RES),  L_status  }, // EU_MEM slot
 #else
-   {     4,     -1,  A_right,  SF(RES),  L_statm   }, // EU_MEM slot
+   {     4,     -1,  A_right,  SF(RES),  L_status  }, // EU_MEM slot
 #endif
 #ifndef NOBOOST_MEMS
    {     7,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
    {     6,  SK_Kb,  A_right,  SF(SWP),  L_status  },
-   {     6,  SK_Kb,  A_right,  SF(RES),  L_statm   },
+   {     6,  SK_Kb,  A_right,  SF(RES),  L_status  },
    {     6,  SK_Kb,  A_right,  SF(COD),  L_statm   },
    {     7,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
    {     6,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
 #else
    {     5,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(SWP),  L_status  },
-   {     4,  SK_Kb,  A_right,  SF(RES),  L_statm   },
+   {     4,  SK_Kb,  A_right,  SF(RES),  L_status  },
    {     4,  SK_Kb,  A_right,  SF(COD),  L_statm   },
    {     5,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
@@ -1809,9 +1808,9 @@ static FLD_t Fieldstab[] = {
    {     3,     -1,  A_right,  SF(FV1),  L_stat    },
    {     3,     -1,  A_right,  SF(FV2),  L_stat    },
 #ifndef NOBOOST_MEMS
-   {     6,  SK_Kb,  A_right,  SF(USE),  L_USED    },
+   {     6,  SK_Kb,  A_right,  SF(USE),  L_status  },
 #else
-   {     4,  SK_Kb,  A_right,  SF(USE),  L_USED    },
+   {     4,  SK_Kb,  A_right,  SF(USE),  L_status  },
 #endif
    {    10,     -1,  A_right,  SF(NS1),  L_NS      }, // IPCNS
    {    10,     -1,  A_right,  SF(NS2),  L_NS      }, // MNTNS
@@ -5362,7 +5361,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = make_str(p->lxcname, W, Js, EU_LXC);
             break;
          case EU_MEM:
-            cp = scale_pcnt((float)pages2K(p->resident) * 100 / MEM_VAL(mem_TOTAL), W, Jn);
+            cp = scale_pcnt((float)p->vm_rss * 100 / MEM_VAL(mem_TOTAL), W, Jn);
             break;
          case EU_NCE:
             cp = make_num(p->nice, W, Jn, AUTOX_NO);
@@ -5402,7 +5401,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
                cp = make_num(p->priority, W, Jn, AUTOX_NO);
             break;
          case EU_RES:
-            cp = scale_mem(S, pages2K(p->resident), W, Jn);
+            cp = scale_mem(S, p->vm_rss, W, Jn);
             break;
          case EU_SGD:
             makeVAR(p->supgid);
@@ -5460,7 +5459,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = make_num(p->suid, W, Jn, EU_USD);
             break;
          case EU_USE:
-            cp = scale_mem(S, (p->vm_swap + pages2K(p->resident)), W, Jn);
+            cp = scale_mem(S, (p->vm_swap + p->vm_rss), W, Jn);
             break;
          case EU_USN:
             cp = make_str(p->suser, W, Js, EU_USN);
