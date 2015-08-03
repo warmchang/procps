@@ -1994,6 +1994,7 @@ static void calibrate_fields (void) {
 #endif
             }
          }
+         if (!w->totpflgs) w->pflgsall[w->totpflgs++] = EU_PID;
 
          /* build a preliminary columns header not to exceed screen width
             while accounting for a possible leading window number */
