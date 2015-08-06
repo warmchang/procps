@@ -3,6 +3,7 @@ procps-ng-NEXT
   * pgrep: don't crash with -a -w flags. Merge 33, Debian #768190
   * skill: command line with signal number interpreted correctly
   * pmap: print process name even if smaps is unreadable Debian #775624
+  * ps: sort by etimes column, uses etime Debian #794619
 
 procps-ng-3.3.10
 ----------------
