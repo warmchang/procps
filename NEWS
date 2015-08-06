@@ -6,9 +6,11 @@ procps-ng-NEXT
   * ps: sort by etimes column, uses etime Debian #794619
   * ps, top: Add support for LXC containers. Ubuntu #1174911
   * w: work with smaller window sizes Debian #183394
-  * w: correctly find "best" proc with pid wrap 
+  * w: correctly find "best" proc with pid wrap
   * library: use merged systemd library Debian #731256
   * kill,skill,pkill: fix option parsing
+  * top once again will fully honor a saved rcfile,
+    without requiring --disable-modern-top. Debian #762928, #762947
 
 procps-ng-3.3.10
 ----------------
