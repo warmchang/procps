@@ -11,6 +11,7 @@ procps-ng-NEXT
   * kill,skill,pkill: fix option parsing
   * top once again will fully honor a saved rcfile,
     without requiring --disable-modern-top. Debian #762928, #762947
+  * vmstat: Not crash if partition appears before disk Debian #736628
 
 procps-ng-3.3.10
 ----------------
