@@ -12,6 +12,7 @@ procps-ng-NEXT
   * top once again will fully honor a saved rcfile,
     without requiring --disable-modern-top. Debian #762928, #762947
   * vmstat: Not crash if partition appears before disk Debian #736628
+  * free: -s without -c works Debian #733758
 
 procps-ng-3.3.10
 ----------------

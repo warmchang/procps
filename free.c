@@ -323,6 +323,7 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			flags |= FREE_REPEAT;
+			errno = 0;
 			args.repeat_interval = (1000000 * strtof(optarg, &endptr));
 			if (errno || optarg == endptr || (endptr && *endptr))
 				xerrx(EXIT_FAILURE, _("seconds argument `%s' failed"), optarg);
