@@ -51,6 +51,7 @@ dist_man_MANS = \
 	ps/ps.1
 
 EXTRA_DIST = \
+	.version \
 	autogen.sh \
 	contrib \
 	COPYING.LIB \
