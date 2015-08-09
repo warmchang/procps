@@ -1,4 +1,4 @@
-procps-ng-NEXT
+procps-ng-3.3.11
 ----------------
   * libprocps API 5:0:0
   * pgrep: don't crash with -a -w flags. Merge 33, Debian #768190
