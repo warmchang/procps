@@ -1,0 +1,3367 @@
+# Polish translation of procps-ng man.
+# Copyright (C) 2014 Free Software Foundation, Inc.
+# This file is distributed under the same license as the procps-ng package.
+# Jakub Bogusz <qboosh@pld-linux.org>, 2014-2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: procps-ng-man 3.3.10-rc3\n"
+"POT-Creation-Date: 2014-09-16 19:45+0300\n"
+"PO-Revision-Date: 2015-05-17 21:45+0200\n"
+"Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
+"Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. type: TH
+#: free.1:5
+#, no-wrap
+msgid "FREE"
+msgstr "FREE"
+
+#. type: TH
+#: free.1:5
+#, no-wrap
+msgid "July 2014"
+msgstr "lipiec 2014"
+
+#. type: TH
+#: free.1:5 kill.1:8 pgrep.1:5 pmap.1:8 pwdx.1:6 skill.1:9 slabtop.1:5
+#: sysctl.8:9 sysctl.conf.5:9 tload.1:4 uptime.1:3 vmstat.8:3 w.1:3 watch.1:1
+#, no-wrap
+msgid "procps-ng"
+msgstr "procps-ng"
+
+#. type: TH
+#: free.1:5 kill.1:8 pgrep.1:5 pidof.1:18 pmap.1:8 pwdx.1:6 skill.1:9
+#: slabtop.1:5 tload.1:4 uptime.1:3 w.1:3 watch.1:1
+#, no-wrap
+msgid "User Commands"
+msgstr "Polecenia użytkownika"
+
+#. type: SH
+#: free.1:6 kill.1:9 pgrep.1:6 pidof.1:19 pmap.1:9 pwdx.1:7 skill.1:10
+#: slabtop.1:6 sysctl.8:10 sysctl.conf.5:10 tload.1:5 uptime.1:4 vmstat.8:4
+#: w.1:4 watch.1:2
+#, no-wrap
+msgid "NAME"
+msgstr "NAZWA"
+
+#. type: Plain text
+#: free.1:8
+msgid "free - Display amount of free and used memory in the system"
+msgstr "free - wyświetlanie ilości wolnej i użytej pamięci w systemie"
+
+#. type: SH
+#: free.1:8 kill.1:11 pgrep.1:8 pidof.1:21 pmap.1:11 pwdx.1:9 skill.1:12
+#: slabtop.1:8 sysctl.8:12 tload.1:7 uptime.1:6 vmstat.8:6 w.1:6 watch.1:4
+#, no-wrap
+msgid "SYNOPSIS"
+msgstr "SKŁADNIA"
+
+#. type: Plain text
+#: free.1:11
+msgid "B<free> [I<options>]"
+msgstr "B<free> [I<opcje>]"
+
+#. type: SH
+#: free.1:11 kill.1:14 pgrep.1:14 pidof.1:32 pmap.1:14 skill.1:22 slabtop.1:11
+#: sysctl.8:18 sysctl.conf.5:12 tload.1:10 uptime.1:9 vmstat.8:10 w.1:9
+#: watch.1:7
+#, no-wrap
+msgid "DESCRIPTION"
+msgstr "OPIS"
+
+#. type: Plain text
+#: free.1:17
+msgid "B<free> displays the total amount of free and used physical and swap memory in the system, as well as the buffers and caches used by the kernel. The information is gathered by parsing /proc/meminfo. The displayed columns are:"
+msgstr "B<free> wyświetla całkowitą ilość wolnej i użytej pamięci fizycznej oraz pamięci wymiany w systemie, a także rozmiary buforów i pamięci podręcznych używanych przez jądro. Informacje są zbierane poprzez analizę /proc/meminfo. Wyświetlane kolumny to:"
+
+#. type: TP
+#: free.1:17
+#, no-wrap
+msgid "B<total>"
+msgstr "B<razem>"
+
+#. type: Plain text
+#: free.1:20
+msgid "Total installed memory (MemTotal and SwapTotal in /proc/meminfo)"
+msgstr "Całkowita zainstalowana pamięć (MemTotal oraz SwapTotal w /proc/meminfo)"
+
+#. type: TP
+#: free.1:20
+#, no-wrap
+msgid "B<used>"
+msgstr "B<użyte>"
+
+#. type: Plain text
+#: free.1:23
+msgid "Used memory (calculated as B<total> - B<free> - B<buffers> - B<cache>)"
+msgstr "Pamięć użyta (liczona jako B<razem> - B<wolne> - B<bufory> -B<w cache>)"
+
+#. type: TP
+#: free.1:23
+#, no-wrap
+msgid "B<free>"
+msgstr "B<wolne>"
+
+#. type: Plain text
+#: free.1:26
+msgid "Unused memory (MemFree and SwapFree in /proc/meminfo)"
+msgstr "Pamięć nie używana (MemFree oraz SwapFree w /proc/meminfo)"
+
+#. type: TP
+#: free.1:26
+#, no-wrap
+msgid "B<shared>"
+msgstr "B<dzielone>"
+
+#. type: Plain text
+#: free.1:30
+msgid "Memory used (mostly) by tmpfs (Shmem in /proc/meminfo, available on kernels 2.6.32, displayed as zero if not available)"
+msgstr "Pamięć używana (głównie) przez tmpfs (Shmem w /proc/meminfo, dostępne w jądrach 2.6.32, wyświetlana jako zero, jeśli wartość nie jest dostępna)"
+
+#. type: TP
+#: free.1:30
+#, no-wrap
+msgid "B<buffers>"
+msgstr "B<bufory>"
+
+#. type: Plain text
+#: free.1:33
+msgid "Memory used by kernel buffers (Buffers in /proc/meminfo)"
+msgstr "Pamięć używana przez bufory jądra (Buffers w /proc/meminfo)"
+
+#. type: TP
+#: free.1:33
+#, no-wrap
+msgid "B<cache>"
+msgstr "B<w cache>"
+
+#. type: Plain text
+#: free.1:36
+msgid "Memory used by the page cache and slabs (Cached and Slab in /proc/meminfo)"
+msgstr "Pamięć używana przez cache stron oraz płyty (Cached i Slab w /proc/meminfo)"
+
+#. type: TP
+#: free.1:36
+#, no-wrap
+msgid "B<buff/cache>"
+msgstr "B<buf/cache>"
+
+#. type: Plain text
+#: free.1:39
+msgid "Sum of B<buffers> and B<cache>"
+msgstr "Suma B<buforów> i B<w cache>"
+
+#. type: TP
+#: free.1:39
+#, no-wrap
+msgid "B<available>"
+msgstr "B<dostępne>"
+
+#. type: Plain text
+#: free.1:48
+msgid "Estimation of how much memory is available for starting new applications, without swapping. Unlike the data provided by the B<cache> or B<free> fields, this field takes into account page cache and also that not all reclaimable memory slabs will be reclaimed due to items being in use (MemAvailable in /proc/meminfo, available on kernels 3.14, emulated on kernels 2.6.27+, otherwise the same as B<free>)"
+msgstr "Przybliżenie, jak dużo pamięci jest dostępne do uruchamiania nowych aplikacji bez swapowania. W przeciwieństwie do danych udostępnianych w polach B<w cache> czy B<wolne>, to pole bierze pod uwagę cache stron oraz to, że nie wszystkie płyty pamięci podlegające reklamacji zostaną zwrócone (MemAvailable w /proc/meminfo, dostępne w jądrach 3.14, emulowane w jądrach 2.6.27+, w innych przypadkach - to samo, co B<wolne>)"
+
+#. type: SH
+#: free.1:48 kill.1:30 pgrep.1:39 pidof.1:36 pmap.1:16 pwdx.1:12 skill.1:35
+#: slabtop.1:16 tload.1:15 uptime.1:26 vmstat.8:19 watch.1:17
+#, no-wrap
+msgid "OPTIONS"
+msgstr "OPCJE"
+
+#. type: TP
+#: free.1:49
+#, no-wrap
+msgid "B<-b>, B<--bytes>"
+msgstr "B<-b>, B<--bytes>"
+
+#. type: Plain text
+#: free.1:52
+msgid "Display the amount of memory in bytes."
+msgstr "Wyświetlanie ilości pamięci w bajtach."
+
+#. type: TP
+#: free.1:52
+#, no-wrap
+msgid "B<-k>, B<--kilo>"
+msgstr "B<-k>, B<--kilo>"
+
+#. type: Plain text
+#: free.1:55
+msgid "Display the amount of memory in kilobytes.  This is the default."
+msgstr "Wyświetlanie ilości pamięci w kilobajtach (zachowanie domyślne)."
+
+#. type: TP
+#: free.1:55
+#, no-wrap
+msgid "B<-m>, B<--mega>"
+msgstr "B<-m>, B<--mega>"
+
+#. type: Plain text
+#: free.1:58
+msgid "Display the amount of memory in megabytes."
+msgstr "Wyświetlanie ilości pamięci w megabajtach."
+
+#. type: TP
+#: free.1:58
+#, no-wrap
+msgid "B<-g>, B<--giga>"
+msgstr "B<-g>, B<--giga>"
+
+#. type: Plain text
+#: free.1:61
+msgid "Display the amount of memory in gigabytes."
+msgstr "Wyświetlanie ilości pamięci w gigabajtach."
+
+#. type: TP
+#: free.1:61
+#, no-wrap
+msgid "B<--tera>"
+msgstr "B<--tera>"
+
+#. type: Plain text
+#: free.1:64
+msgid "Display the amount of memory in terabytes."
+msgstr "Wyświetlanie ilości pamięci w terabajtach."
+
+#. type: TP
+#: free.1:64
+#, no-wrap
+msgid "B<-h>, B<--human>"
+msgstr "B<-h>, B<--human>"
+
+#. type: Plain text
+#: free.1:68
+msgid "Show all output fields automatically scaled to shortest three digit unit and display the units of print out.  Following units are used."
+msgstr "Wyświetlanie wszystkich pól wyjściowych automatycznie przeskalowanych do najkrótszej trzycyfrowej jednostki wraz z użytą jednostką. Używane są następujące jednostki:"
+
+#. type: Plain text
+#: free.1:75
+#, no-wrap
+msgid ""
+"  B = bytes\n"
+"  K = kilos\n"
+"  M = megas\n"
+"  G = gigas\n"
+"  T = teras\n"
+msgstr ""
+"  B = bajty\n"
+"  K = kilobajty\n"
+"  M = megabajty\n"
+"  G = gigabajty\n"
+"  T = terabajty\n"
+
+#. type: Plain text
+#: free.1:79
+msgid "If unit is missing, and you have petabyte of RAM or swap, the number is in terabytes and columns might not be aligned with header."
+msgstr "Jeśli brak jednostki, a w systemie jest petabajt RAM-u lub obszaru wymiany, liczba będzie w terabajtach, a kolumny mogą nie być wyrównane z nagłówkiem."
+
+#. type: TP
+#: free.1:79 vmstat.8:79
+#, no-wrap
+msgid "B<-w>, B<--wide>"
+msgstr "B<-w>, B<--wide>"
+
+#. type: Plain text
+#: free.1:84
+msgid "Switch to the wide mode. The wide mode produces lines longer than 80 characters. In this mode B<buffers> and B<cache> are reported in two separate columns."
+msgstr "Przełączenie w tryb szeroki, z liniami przekraczającymi 80 znaków. W tym trybie B<bufory> oraz B<w cache> są wypisywane w dwóch osobnych kolumnach."
+
+#. type: TP
+#: free.1:84
+#, no-wrap
+msgid "B<-c>, B<--count> I<count>"
+msgstr "B<-c>, B<--count> I<liczba>"
+
+#. type: Plain text
+#: free.1:91
+msgid "Display the result I<count> times.  Requires the B<-s> option."
+msgstr "Wyświetlenie wyniku podaną I<liczbę> razy. Wymaga opcji B<-s>."
+
+#. type: TP
+#: free.1:91
+#, no-wrap
+msgid "B<-l>, B<--lohi>"
+msgstr "B<-l>, B<--lohi>"
+
+#. type: Plain text
+#: free.1:94
+msgid "Show detailed low and high memory statistics."
+msgstr "Wyświetlanie szczegółowych statystyk niskiej i wysokiej pamięci."
+
+#. type: TP
+#: free.1:94
+#, no-wrap
+msgid "B<-s>, B<--seconds> I<seconds>"
+msgstr "B<-s>, B<--seconds> I<sekundy>"
+
+#. type: Plain text
+#: free.1:102
+msgid "Continuously display the result delay I<seconds> apart.  You may actually specify any floating point number for I<delay>, B<usleep>(3)  is used for microsecond resolution delay times."
+msgstr "Stałe wyświetlanie wyników co podaną liczbę I<sekund>. Można podać dowolną liczbę zmiennoprzecinkową, obsługiwane są opóźnienia z dokładnością do mikrosekundy dzięki użyciu funkcji B<usleep>(3)."
+
+#. type: TP
+#: free.1:102
+#, no-wrap
+msgid "B<--si>"
+msgstr "B<--si>"
+
+#. type: Plain text
+#: free.1:105
+msgid "Use power of 1000 not 1024."
+msgstr "Użycie potęg liczby 1000 zamiast 1024."
+
+#. type: TP
+#: free.1:105
+#, no-wrap
+msgid "B<-t>, B<--total>"
+msgstr "B<-t>, B<--total>"
+
+#. type: Plain text
+#: free.1:108
+msgid "Display a line showing the column totals."
+msgstr "Wyświetlanie linii pokazującej podsumowanie kolumn."
+
+#. type: TP
+#: free.1:108 w.1:48
+#, no-wrap
+msgid "B<--help>"
+msgstr "B<--help>"
+
+#. type: Plain text
+#: free.1:111
+msgid "Print help."
+msgstr "Wyświetlenie opisu."
+
+#. type: TP
+#: free.1:111 pgrep.1:157 pmap.1:59 pwdx.1:13 skill.1:61 slabtop.1:35
+#: sysctl.8:122 tload.1:28 uptime.1:36 vmstat.8:84 w.1:54
+#, no-wrap
+msgid "B<-V>, B<--version>"
+msgstr "B<-V>, B<--version>"
+
+#. type: Plain text
+#: free.1:114 skill.1:64 w.1:57
+msgid "Display version information."
+msgstr "Wyświetlenie informacji o wersji."
+
+#. type: SH
+#: free.1:115 slabtop.1:76 sysctl.8:151 sysctl.conf.5:44 tload.1:32
+#: uptime.1:39 vmstat.8:199 w.1:70
+#, no-wrap
+msgid "FILES"
+msgstr "PLIKI"
+
+#. type: TP
+#: free.1:116
+#, no-wrap
+msgid "/proc/meminfo"
+msgstr "/proc/meminfo"
+
+#. type: Plain text
+#: free.1:119
+msgid "memory information"
+msgstr "informacje dotyczące pamięci"
+
+#. type: SH
+#: free.1:120 kill.1:72 pgrep.1:231 pidof.1:58 pmap.1:77 pwdx.1:19 skill.1:102
+#: slabtop.1:80 sysctl.8:155 sysctl.conf.5:63 tload.1:35 uptime.1:56
+#: vmstat.8:206 w.1:77
+#, no-wrap
+msgid "SEE ALSO"
+msgstr "ZOBACZ TAKŻE"
+
+#. type: Plain text
+#: free.1:125
+msgid "B<ps>(1), B<slabtop>(1), B<top>(1), B<vmstat>(8)."
+msgstr "B<ps>(1), B<slabtop>(1), B<top>(1), B<vmstat>(8)."
+
+#. type: SH
+#: free.1:125 slabtop.1:95 tload.1:48 uptime.1:46 vmstat.8:216 w.1:84
+#: watch.1:184
+#, no-wrap
+msgid "AUTHORS"
+msgstr "AUTORZY"
+
+#. type: Plain text
+#: free.1:127
+msgid "Written by Brian Edmonds."
+msgstr "Program napisał Brian Edmonds."
+
+#. type: SH
+#: free.1:127 kill.1:90 pgrep.1:248 pmap.1:82 pwdx.1:29 skill.1:118
+#: slabtop.1:101 sysctl.8:162 sysctl.conf.5:69 tload.1:56 uptime.1:61
+#: vmstat.8:226 w.1:94
+#, no-wrap
+msgid "REPORTING BUGS"
+msgstr "ZGŁASZANIE BŁĘDÓW"
+
+#. type: Plain text
+#: kill.1:8 pgrep.1:5 pidof.1:18 pwdx.1:6 skill.1:9 slabtop.1:5 snice.1:1
+#: sysctl.conf.5:9 tload.1:4 uptime.1:3 vmstat.8:3 w.1:3 watch.1:1
+msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>"
+msgstr "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<.UE>"
+
+#. type: TH
+#: kill.1:8
+#, no-wrap
+msgid "KILL"
+msgstr "KILL"
+
+#. type: TH
+#: kill.1:8 skill.1:9
+#, no-wrap
+msgid "October 2011"
+msgstr "październik 2011"
+
+#. type: Plain text
+#: kill.1:11
+msgid "kill - send a signal to a process"
+msgstr "kill - wysłanie sygnału do procesu"
+
+#. type: Plain text
+#: kill.1:14
+msgid "B<kill> [options] E<lt>pidE<gt> [...]"
+msgstr "B<kill> [opcje] E<lt>pidE<gt> [...]"
+
+#. type: Plain text
+#: kill.1:30
+msgid "The default signal for kill is TERM.  Use B<-l> or B<-L> to list available signals.  Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.  Alternate signals may be specified in three ways: B<-9>, B<-SIGKILL> or B<-KILL>.  Negative PID values may be used to choose whole process groups; see the PGID column in ps command output.  A PID of B<-1> is special; it indicates all processes except the kill process itself and init."
+msgstr "Domyślny sygnał to TERM. Aby uzyskać listę sygnałów, można użyć opcji B<-l> lub B<-L>. Przydatne sygnały to w szczególności HUP, INT, KILL, STOP, CONT oraz 0. Alternatywny sygnał można podać na trzy sposoby: B<-9>, B<-SIGKILL> oraz B<-KILL>. Ujemne wartości PID pozwalają wybrać całe grupy procesów - p. kolumna PGID w wyjściu polecenia ps. PID B<-1> jest specjalny - oznacza wszystkie procesy z wyjątkiem samego procesu kill oraz inita."
+
+#. type: TP
+#: kill.1:31
+#, no-wrap
+msgid "B<E<lt>pidE<gt> [...]>"
+msgstr "B<E<lt>pidE<gt> [...]>"
+
+#. type: Plain text
+#: kill.1:34
+msgid "Send signal to every E<lt>pidE<gt> listed."
+msgstr "Wysłanie sygnału to każdego podanego E<lt>piduE<gt>."
+
+#. type: TP
+#: kill.1:34
+#, no-wrap
+msgid "B<-E<lt>signalE<gt>>"
+msgstr "B<-E<lt>sygnałE<gt>>"
+
+#. type: TQ
+#: kill.1:36
+#, no-wrap
+msgid "B<-s E<lt>signalE<gt>>"
+msgstr "B<-s E<lt>sygnałE<gt>>"
+
+#. type: TQ
+#: kill.1:38
+#, no-wrap
+msgid "B<--signal E<lt>signalE<gt>>"
+msgstr "B<--signal E<lt>sygnałE<gt>>"
+
+#. type: Plain text
+#: kill.1:46
+msgid "Specify the B<signal> to be sent.  The signal can be specified by using name or number.  The behavior of signals is explained in B<signal>(7)  manual page."
+msgstr "Podanie B<sygnału> do wysłania. Sygnał można określić przy użyciu nazwy lub numeru. Zachowanie sygnałów jest wyjaśnione na stronie podręcznika B<signal>(7)."
+
+#. type: TP
+#: kill.1:46
+#, no-wrap
+msgid "B<-l>, B<--list> [I<signal>]"
+msgstr "B<-l>, B<--list> [I<sygnał>]"
+
+#. type: Plain text
+#: kill.1:50
+msgid "List signal names.  This option has optional argument, which will convert signal number to signal name, or other way round."
+msgstr "Lista nazw sygnałów. Ta opcja ma opcjonalny argument, który pozwala zamienić numer sygnału na jego nazwę lub odwrotnie."
+
+#. type: TP
+#: kill.1:50 skill.1:45
+#, no-wrap
+msgid "B<-L>,B<\\ --table>"
+msgstr "B<-L>,B<\\ --table>"
+
+#. type: Plain text
+#: kill.1:53
+msgid "List signal names in a nice table."
+msgstr "Lista nazw sygnałów w ładnej tabelce."
+
+#. type: SH
+#: kill.1:55 pgrep.1:208 slabtop.1:85 vmstat.8:184
+#, no-wrap
+msgid "NOTES"
+msgstr "UWAGI"
+
+#. type: Plain text
+#: kill.1:59
+msgid "Your shell (command line interpreter) may have a built-in kill command.  You may need to run the command described here as /bin/kill to solve the conflict."
+msgstr "Powłoka (interpreter linii poleceń) może mieć wbudowane polecenie kill. Aby uniknąć konfliktu, może zaistnieć potrzeba uruchomienia niniejszego polecenia jako /bin/kill."
+
+#. type: SH
+#: kill.1:59 pgrep.1:169 skill.1:92 sysctl.8:125 watch.1:79
+#, no-wrap
+msgid "EXAMPLES"
+msgstr "PRZYKŁADY"
+
+#. type: TP
+#: kill.1:60
+#, no-wrap
+msgid "B<kill -9 -1>"
+msgstr "B<kill -9 -1>"
+
+#. type: Plain text
+#: kill.1:63
+msgid "Kill all processes you can kill."
+msgstr "Zabicie wszystkich procesów, do których mamy uprawnienia."
+
+#. type: TP
+#: kill.1:63
+#, no-wrap
+msgid "B<kill -l 11>"
+msgstr "B<kill -l 11>"
+
+#. type: Plain text
+#: kill.1:66
+msgid "Translate number 11 into a signal name."
+msgstr "Zamiana numeru 11 na nazwę sygnału."
+
+#. type: TP
+#: kill.1:66
+#, no-wrap
+msgid "B<kill -L>"
+msgstr "B<kill -L>"
+
+#. type: Plain text
+#: kill.1:69
+msgid "List the available signal choices in a nice table."
+msgstr "Lista dostępnych sygnałów w ładnej tabelce."
+
+#. type: TP
+#: kill.1:69
+#, no-wrap
+msgid "B<kill 123 543 2341 3453>"
+msgstr "B<kill 123 543 2341 3453>"
+
+#. type: Plain text
+#: kill.1:72
+msgid "Send the default signal, SIGTERM, to all those processes."
+msgstr "Wysłanie domyślnego sygnału (SIGTERM) do wszystkich podanych procesów."
+
+#. type: Plain text
+#: kill.1:80
+msgid "B<kill>(2), B<killall>(1), B<nice>(1), B<pkill>(1), B<renice>(1), B<signal>(7), B<skill>(1)"
+msgstr "B<kill>(2), B<killall>(1), B<nice>(1), B<pkill>(1), B<renice>(1), B<signal>(7), B<skill>(1)"
+
+#. type: SH
+#: kill.1:80 pgrep.1:239 pmap.1:80 pwdx.1:22 skill.1:110
+#, no-wrap
+msgid "STANDARDS"
+msgstr "STANDARDY"
+
+#. type: Plain text
+#: kill.1:84
+msgid "This command meets appropriate standards. The B<-L> flag is Linux-specific."
+msgstr "To polecenie jest zgodne z odpowiednimi standardami. Flaga B<-L> jest specyficzna dla Linuksa."
+
+#. type: SH
+#: kill.1:84 pgrep.1:244 pidof.1:61 pwdx.1:24 skill.1:112 sysctl.8:158
+#: sysctl.conf.5:65
+#, no-wrap
+msgid "AUTHOR"
+msgstr "AUTOR"
+
+#. type: Plain text
+#: kill.1:90
+msgid "E<.UR albert@users.sf.net> Albert Cahalan E<.UE> wrote kill in 1999 to replace a bsdutils one that was not standards compliant.  The util-linux one might also work correctly."
+msgstr "E<.UR albert@users.sf.net> Albert Cahalan E<.UE> napisał program kill w roku 1999, aby zastąpić  narzędzie z pakietu bsdutils, które nie było zgodne ze standardami. Narzędzie z pakietu util-linux także może działać poprawnie."
+
+#. type: TH
+#: pgrep.1:5
+#, no-wrap
+msgid "PGREP"
+msgstr "PGREP"
+
+#. type: TH
+#: pgrep.1:5
+#, no-wrap
+msgid "October 2012"
+msgstr "październik 2012"
+
+#. type: Plain text
+#: pgrep.1:8
+msgid "pgrep, pkill - look up or signal processes based on name and other attributes"
+msgstr "pgrep, pkill - wyszukiwanie lub wysyłanie sygnałów do procesów na podstawie nazwy i innych atrybutów"
+
+#. type: Plain text
+#: pgrep.1:11
+msgid "B<pgrep> [options] pattern"
+msgstr "B<pgrep> [opcje] wzorzec"
+
+#. type: Plain text
+#: pgrep.1:14
+msgid "B<pkill> [options] pattern"
+msgstr "B<pkill> [opcje] wzorzec"
+
+#. type: Plain text
+#: pgrep.1:19
+msgid "B<pgrep> looks through the currently running processes and lists the process IDs which match the selection criteria to stdout.  All the criteria have to match.  For example,"
+msgstr "B<pgrep> przeszukuje aktualnie działające procesy i wypisuje na standardowym wyjściu identyfikatory procesów, które pasują do wybranych kryteriów. Wszystkie kryteria muszą pasować. Na przykład:"
+
+#. type: Plain text
+#: pgrep.1:21
+msgid "$ pgrep -u root sshd"
+msgstr "$ pgrep -u root sshd"
+
+#. type: Plain text
+#: pgrep.1:27
+msgid "will only list the processes called B<sshd> AND owned by B<root>.  On the other hand,"
+msgstr "wypisze tylko listę procesów o nazwie B<sshd> ORAZ będących własnością B<roota>. Z drugiej strony:"
+
+#. type: Plain text
+#: pgrep.1:29
+msgid "$ pgrep -u root,daemon"
+msgstr "$ pgrep -u root,daemon"
+
+#. type: Plain text
+#: pgrep.1:34
+msgid "will list the processes owned by B<root> OR B<daemon>."
+msgstr "wypisze procesy, których właścicielem jest B<root> LUB B<daemon>."
+
+#. type: Plain text
+#: pgrep.1:39
+msgid "B<pkill> will send the specified signal (by default B<SIGTERM>)  to each process instead of listing them on stdout."
+msgstr "B<pkill> zamiast wypisywania procesów wyśle do każdego podany sygnał (domyślnie B<SIGTERM>)."
+
+#. type: TP
+#: pgrep.1:40
+#, no-wrap
+msgid "B<->I<signal>"
+msgstr "B<->I<sygnał>"
+
+#. type: TQ
+#: pgrep.1:42
+#, no-wrap
+msgid "B<--signal> I<signal>"
+msgstr "B<--signal> I<sygnał>"
+
+#. type: Plain text
+#: pgrep.1:48
+msgid "Defines the signal to send to each matched process.  Either the numeric or the symbolic signal name can be used.  (B<pkill> only.)"
+msgstr "Określenie sygnału, jaki ma być wysłany do wszystkich pasujących procesów. Może być numerem lub nazwą sygnału. (tylko B<pkill>)"
+
+#. type: TP
+#: pgrep.1:48
+#, no-wrap
+msgid "B<-c>, B<--count>"
+msgstr "B<-c>, B<--count>"
+
+#. type: Plain text
+#: pgrep.1:53
+msgid "Suppress normal output; instead print a count of matching processes.  When count does not match anything, e.g. returns zero, the command will return non-zero value."
+msgstr "Pominięcie zwykłego wyjścia; zamiast niego wypisanie liczby pasujących procesów. Jeśli nic nie zostanie policzone (np. liczba będzie zerem), polecenie zwróci wartość niezerową."
+
+#. type: TP
+#: pgrep.1:53
+#, no-wrap
+msgid "B<-d>, B<--delimiter> I<delimiter>"
+msgstr "B<-d>, B<--delimiter> I<separator>"
+
+#. type: Plain text
+#: pgrep.1:59
+msgid "Sets the string used to delimit each process ID in the output (by default a newline).  (B<pgrep> only.)"
+msgstr "Ustawienie łańcucha oddzielającego identyfikatory procesów na wyjściu (domyślnie nowa linia). (tylko B<pgrep>)"
+
+#. type: TP
+#: pgrep.1:59
+#, no-wrap
+msgid "B<-f>, B<--full>"
+msgstr "B<-f>, B<--full>"
+
+#. type: Plain text
+#: pgrep.1:66
+msgid "The I<pattern> is normally only matched against the process name.  When B<-f> is set, the full command line is used."
+msgstr "I<wzorzec> normalnie jest dopasowywany tylko do nazwy procesu. Z ustawioną opcją B<-f>, wykorzystywana jest cała linia poleceń."
+
+#. type: TP
+#: pgrep.1:66
+#, no-wrap
+msgid "B<-g>, B<--pgroup> I<pgrp>,..."
+msgstr "B<-g>, B<--pgroup> I<pgrp>,..."
+
+#. type: Plain text
+#: pgrep.1:74
+msgid "Only match processes in the process group IDs listed.  Process group 0 is translated into B<pgrep>'s or B<pkill>'s own process group."
+msgstr "Dopasowanie tylko do procesów z grup o podanych identyfikatorach. Grupa procesów 0 jest tłumaczona na własną grupę procesów polecenia B<pgrep> lub B<pkill>."
+
+#. type: TP
+#: pgrep.1:74
+#, no-wrap
+msgid "B<-G>, B<--group> I<gid>,..."
+msgstr "B<-G>, B<--group> I<gid>,..."
+
+#. type: Plain text
+#: pgrep.1:78
+msgid "Only match processes whose real group ID is listed.  Either the numerical or symbolical value may be used."
+msgstr "Dopasowanie tylko do procesów o podanych identyfikatorach grup rzeczywistych. Można użyć wartości liczbowych lub symbolicznych."
+
+#. type: TP
+#: pgrep.1:78
+#, no-wrap
+msgid "B<-l>, B<--list-name>"
+msgstr "B<-l>, B<--list-name>"
+
+#. type: Plain text
+#: pgrep.1:83
+msgid "List the process name as well as the process ID.  (B<pgrep> only.)"
+msgstr "Wypisanie nazw oraz identyfikatorów procesów. (tylko B<pgrep>)"
+
+#. type: TP
+#: pgrep.1:83
+#, no-wrap
+msgid "B<-a>, B<--list-full>"
+msgstr "B<-a>, B<--list-full>"
+
+#. type: Plain text
+#: pgrep.1:88
+msgid "List the full command line as well as the process ID.  (B<pgrep> only.)"
+msgstr "Wypisanie pełnych linii poleceń oraz identyfikatorów procesów. (tylko B<pgrep>)"
+
+#. type: TP
+#: pgrep.1:88
+#, no-wrap
+msgid "B<-n>, B<--newest>"
+msgstr "B<-n>, B<--newest>"
+
+#. type: Plain text
+#: pgrep.1:91
+msgid "Select only the newest (most recently started) of the matching processes."
+msgstr "Wybór tylko najnowszych (najpóźniej uruchomionych) spośród pasujących procesów."
+
+#. type: TP
+#: pgrep.1:91
+#, no-wrap
+msgid "B<-o>, B<--oldest>"
+msgstr "B<-o>, B<--oldest>"
+
+#. type: Plain text
+#: pgrep.1:94
+msgid "Select only the oldest (least recently started) of the matching processes."
+msgstr "Wybór tylko najstarszych (najwcześniej uruchomionych) spośród pasujących procesów."
+
+#. type: TP
+#: pgrep.1:94
+#, no-wrap
+msgid "B<-P>, B<--parent> I<ppid>,..."
+msgstr "B<-P>, B<--parent> I<ppid>,..."
+
+#. type: Plain text
+#: pgrep.1:97
+msgid "Only match processes whose parent process ID is listed."
+msgstr "Dopasowanie tylko do procesów o wymienionych identyfikatorach procesów rodziców."
+
+#. type: TP
+#: pgrep.1:97
+#, no-wrap
+msgid "B<-s>, B<--session> I<sid>,..."
+msgstr "B<-s>, B<--session> I<sid>,..."
+
+#. type: Plain text
+#: pgrep.1:105
+msgid "Only match processes whose process session ID is listed.  Session ID 0 is translated into B<pgrep>'s or B<pkill>'s own session ID."
+msgstr "Dopasowanie tylko do procesów o wymienionych identyfikatorach sesji procesów. Identyfikator sesji 0 jest tłumaczony na własny procesu B<pgrep> lub B<pkill>."
+
+#. type: TP
+#: pgrep.1:105
+#, no-wrap
+msgid "B<-t>, B<--terminal> I<term>,..."
+msgstr "B<-t>, B<--terminal> I<term>,..."
+
+#. type: Plain text
+#: pgrep.1:109
+msgid "Only match processes whose controlling terminal is listed.  The terminal name should be specified without the \"/dev/\" prefix."
+msgstr "Dopasowanie tylko do procesów o wymienionych terminalach sterujących. Nazwa terminala powinna być podana bez przedrostka \"/dev/\"."
+
+#. type: TP
+#: pgrep.1:109
+#, no-wrap
+msgid "B<-u>, B<--euid> I<euid>,..."
+msgstr "B<-u>, B<--euid> I<euid>,..."
+
+#. type: Plain text
+#: pgrep.1:113
+msgid "Only match processes whose effective user ID is listed.  Either the numerical or symbolical value may be used."
+msgstr "Dopasowanie tylko do procesów o wymienionych identyfikatorach użytkowników efektywnych. Można użyć wartości liczbowych lub symbolicznych."
+
+#. type: TP
+#: pgrep.1:113
+#, no-wrap
+msgid "B<-U>, B<--uid> I<uid>,..."
+msgstr "B<-U>, B<--uid> I<uid>,..."
+
+#. type: Plain text
+#: pgrep.1:117
+msgid "Only match processes whose real user ID is listed.  Either the numerical or symbolical value may be used."
+msgstr "Dopasowanie tylko do procesów o wymienionych identyfikatorach użytkowników rzeczywistych. Można użyć wartości liczbowych lub symbolicznych."
+
+#. type: TP
+#: pgrep.1:117
+#, no-wrap
+msgid "B<-v>, B<--inverse>"
+msgstr "B<-v>, B<--inverse>"
+
+#. type: Plain text
+#: pgrep.1:124
+msgid "Negates the matching.  This option is usually used in B<pgrep>'s context.  In B<pkill>'s context the short option is disabled to avoid accidental usage of the option."
+msgstr "Negacja dopasowania. Zwykle używana w kontekście programu B<pgrep>. W kontekście B<pkill> krótka opcja jest wyłączona, aby zapobiec przypadkowemu użyciu."
+
+#. type: TP
+#: pgrep.1:124
+#, no-wrap
+msgid "B<-w>, B<--lightweight>"
+msgstr "B<-w>, B<--lightweight>"
+
+#. type: Plain text
+#: pgrep.1:131
+msgid "Shows all thread ids instead of pids in B<pgrep>'s context.  In B<pkill>'s context this option is disabled."
+msgstr "Wyświetlenie wszystkich identyfikatorów wątków zamiast pidów w kontekście programu B<pgrep>. W kontekście B<pkill> ta opcja jest wyłączona."
+
+#. type: TP
+#: pgrep.1:131
+#, no-wrap
+msgid "B<-x>, B<--exact>"
+msgstr "B<-x>, B<--exact>"
+
+#. type: Plain text
+#: pgrep.1:137
+msgid "Only match processes whose names (or command line if -f is specified)  B<exactly> match the I<pattern>."
+msgstr "Dopasowanie tylko do procesów, których nazwy (lub linie poleceń, jeśli podano opcję -f) pasują B<dokładnie> do I<wzorca>."
+
+#. type: TP
+#: pgrep.1:137
+#, no-wrap
+msgid "B<-F>, B<--pidfile> I<file>"
+msgstr "B<-F>, B<--pidfile> I<plik>"
+
+#. type: Plain text
+#: pgrep.1:145
+msgid "Read I<PID>'s from file.  This option is perhaps more useful for B<pkill> than B<pgrep>."
+msgstr "Odczyt I<PID>ów z pliku. Ta opcja jest zwykle bardziej przydatna dla programu B<pkill> niż B<pgrep>."
+
+#. type: TP
+#: pgrep.1:145
+#, no-wrap
+msgid "B<-L>, B<--logpidfile>"
+msgstr "B<-L>, B<--logpidfile>"
+
+#. type: Plain text
+#: pgrep.1:148
+msgid "Fail if pidfile (see -F) not locked."
+msgstr "Niepowodzenie, jeśli plik PID (p. opcja -F) nie jest zablokowany."
+
+#. type: TP
+#: pgrep.1:148 skill.1:80
+#, no-wrap
+msgid "B<--ns >I<pid>"
+msgstr "B<--ns >I<pid>"
+
+#. type: Plain text
+#: pgrep.1:153
+msgid "Match processes that belong to the same namespaces. Required to run as root to match processes from other users. See --nslist for how to limit which namespaces to match."
+msgstr "Dopasowanie do procesów należących do tych samych przestrzeni nazw. Wymagane w przypadku uruchamiania przez roota, aby dopasować do procesów innych użytkowników. Więcej o ograniczaniu dopasowywanych przestrzeni nazw przy opcji --nslist."
+
+#. type: TP
+#: pgrep.1:153
+#, no-wrap
+msgid "B<--nslist >I<name>B<,...>"
+msgstr "B<--nslist >I<nazwa>B<,...>"
+
+#. type: Plain text
+#: pgrep.1:157
+msgid "Match only the provided namespaces. Available namespaces: ipc, mnt, net, pid, user,uts."
+msgstr "Dopasowanie tylko do podanych przestrzeni nazw. Dostępne przestrzenie: ipc, mnt, net, pid, user, uts."
+
+#. type: Plain text
+#: pgrep.1:160 pmap.1:62 slabtop.1:38 sysctl.8:125 tload.1:31 vmstat.8:87
+#: watch.1:72
+msgid "Display version information and exit."
+msgstr "Wyświetlenie informacji o wersji i zakończenie."
+
+#. type: TP
+#: pgrep.1:160 pmap.1:56 pwdx.1:16 skill.1:58 slabtop.1:38 sysctl.8:119
+#: tload.1:25 uptime.1:30 vmstat.8:87 watch.1:66
+#, no-wrap
+msgid "B<-h>, B<--help>"
+msgstr "B<-h>, B<--help>"
+
+#. type: Plain text
+#: pgrep.1:163 vmstat.8:90
+msgid "Display help and exit."
+msgstr "Wyświetlenie opisu i zakończenie."
+
+#. type: SH
+#: pgrep.1:164
+#, no-wrap
+msgid "OPERANDS"
+msgstr "ARGUMENTY"
+
+#. type: TP
+#: pgrep.1:165
+#, no-wrap
+msgid "I<pattern>"
+msgstr "I<wzorzec>"
+
+#. type: Plain text
+#: pgrep.1:169
+msgid "Specifies an Extended Regular Expression for matching against the process names or command lines."
+msgstr "Określenie rozszerzonego wyrażenia regularnego do dopasowania nazwy procesu lub linii poleceń."
+
+#. type: Plain text
+#: pgrep.1:173
+msgid "Example 1: Find the process ID of the B<named> daemon:"
+msgstr "Przykład 1: znalezienie identyfikatora procesu demona B<named>:"
+
+#. type: Plain text
+#: pgrep.1:175
+msgid "$ pgrep -u root named"
+msgstr "$ pgrep -u root named"
+
+#. type: Plain text
+#: pgrep.1:179
+msgid "Example 2: Make B<syslog> reread its configuration file:"
+msgstr "Przykład 2: wymuszenie ponownego odczytu pliku konfiguracyjnego przez program B<syslog>:"
+
+#. type: Plain text
+#: pgrep.1:181
+msgid "$ pkill -HUP syslogd"
+msgstr "$ pkill -HUP syslogd"
+
+#. type: Plain text
+#: pgrep.1:185
+msgid "Example 3: Give detailed information on all B<xterm> processes:"
+msgstr "Przykład 3: podanie szczegółowych informacji o wszystkich procesach B<xterm>:"
+
+#. type: Plain text
+#: pgrep.1:187
+msgid "$ ps -fp $(pgrep -d, -x xterm)"
+msgstr "$ ps -fp $(pgrep -d, -x xterm)"
+
+#. type: Plain text
+#: pgrep.1:191
+msgid "Example 4: Make all B<netscape> processes run nicer:"
+msgstr "Przykład 4: zwiększenie nice wszystkich procesów B<netscape>:"
+
+#. type: Plain text
+#: pgrep.1:193
+msgid "$ renice +4 $(pgrep netscape)"
+msgstr "$ renice +4 $(pgrep netscape)"
+
+#. type: SH
+#: pgrep.1:193 pidof.1:50 pmap.1:62 watch.1:151
+#, no-wrap
+msgid "EXIT STATUS"
+msgstr "KOD WYJŚCIA"
+
+#. type: TP
+#: pgrep.1:195
+#, no-wrap
+msgid "0"
+msgstr "0"
+
+#. type: Plain text
+#: pgrep.1:198
+msgid "One or more processes matched the criteria."
+msgstr "Dopasowano jeden lub więcej procesów."
+
+#. type: TP
+#: pgrep.1:198
+#, no-wrap
+msgid "1"
+msgstr "1"
+
+#. type: Plain text
+#: pgrep.1:201
+msgid "No processes matched."
+msgstr "Nie dopasowano żadnego procesu."
+
+#. type: TP
+#: pgrep.1:201
+#, no-wrap
+msgid "2"
+msgstr "2"
+
+#. type: Plain text
+#: pgrep.1:204
+msgid "Syntax error in the command line."
+msgstr "Błąd składni w linii poleceń."
+
+#. type: TP
+#: pgrep.1:204
+#, no-wrap
+msgid "3"
+msgstr "3"
+
+#. type: Plain text
+#: pgrep.1:207
+msgid "Fatal error: out of memory etc."
+msgstr "Błąd krytyczny: brak pamięci itp."
+
+#. type: Plain text
+#: pgrep.1:212
+msgid "The process name used for matching is limited to the 15 characters present in the output of /proc/I<pid>/stat.  Use the -f option to match against the complete command line, /proc/I<pid>/cmdline."
+msgstr "Nazwa procesu używana przy dopasowaniu jest ograniczona do 15 znaków obecnych w wyjściu /proc/I<pid>/stat. Aby dopasować do pełnej linii poleceń (/proc/I<pid>/cmdline), należy użyć opcji -f."
+
+#. type: Plain text
+#: pgrep.1:219
+msgid "The running B<pgrep> or B<pkill> process will never report itself as a match."
+msgstr "Działający proces B<pgrep> ani B<pkill> nigdy nie zgłosi siebie jako dopasowania."
+
+#. type: SH
+#: pgrep.1:219 tload.1:40 vmstat.8:214 watch.1:116
+#, no-wrap
+msgid "BUGS"
+msgstr "BŁĘDY"
+
+#. type: Plain text
+#: pgrep.1:228
+msgid "The options B<-n> and B<-o> and B<-v> can not be combined.  Let me know if you need to do this."
+msgstr "Opcji B<-n>, B<-o> oraz B<-v> nie można łączyć. Gdyby było to przydatne, proszę zawiadomić autora."
+
+#. type: Plain text
+#: pgrep.1:230
+msgid "Defunct processes are reported."
+msgstr "Zgłoszono procesy nie funkcjonujące."
+
+#. type: Plain text
+#: pgrep.1:239
+msgid "B<ps>(1), B<regex>(7), B<signal>(7), B<killall>(1), B<skill>(1), B<kill>(1), B<kill>(2)"
+msgstr "B<ps>(1), B<regex>(7), B<signal>(7), B<killall>(1), B<skill>(1), B<kill>(1), B<kill>(2)"
+
+#. type: Plain text
+#: pgrep.1:244
+msgid "B<pkill> and B<pgrep> were introduced in Sun's Solaris 7.  This implementation is fully compatible."
+msgstr "B<pkill> oraz B<pgrep> pojawiły się w Solarisie 7 firmy Sun. Ta implementacja jest w pełni zgodna."
+
+#. type: Plain text
+#: pgrep.1:248
+msgid "E<.UR kjetilho@ifi.uio.no> Kjetil Torgrim Homme E<.UE>"
+msgstr "E<.UR kjetilho@ifi.uio.no> Kjetil Torgrim Homme E<.UE>"
+
+#. type: TH
+#: pidof.1:18
+#, no-wrap
+msgid "PIDOF"
+msgstr "PIDOF"
+
+#. type: TH
+#: pidof.1:18
+#, no-wrap
+msgid "24 Jul 2013"
+msgstr "24 lip 2013"
+
+#. type: Plain text
+#: pidof.1:21
+msgid "pidof -- find the process ID of a running program."
+msgstr "pidof - wyszukiwanie identyfikatora procesu działającego programu."
+
+#. type: Plain text
+#: pidof.1:32
+msgid "B<pidof> [B<-s>] [B<-c>] [B<-x>] [B<-o> I<omitpid[,omitpid..]>] [B<-o> I<omitpid[,omitpid..]..>] B<program> [B<program..>]"
+msgstr "B<pidof> [B<-s>] [B<-c>] [B<-x>] [B<-o> I<pid_wykl[,pid_wykl..]>] [B<-o> I<pid_wykl[,pid_wykl..]..>] B<program> [B<program..>]"
+
+#. type: Plain text
+#: pidof.1:36
+msgid "B<Pidof> finds the process id's (pids) of the named programs. It prints those id's on the standard output."
+msgstr "B<Pidof> znajduje identyfikatory procesów (pidy) programów o podanych nazwach i wypisuje je na standardowym wyjściu."
+
+#. type: IP
+#: pidof.1:37
+#, no-wrap
+msgid "-s"
+msgstr "-s"
+
+#. type: Plain text
+#: pidof.1:39
+msgid "Single shot - this instructs the program to only return one I<pid>."
+msgstr "Tryb pojedynczy - program zwróci tylko jeden I<pid>."
+
+#. type: IP
+#: pidof.1:39
+#, no-wrap
+msgid "-c"
+msgstr "-c"
+
+#. type: Plain text
+#: pidof.1:43
+msgid "Only return process ids that are running with the same root directory.  This option is ignored for non-root users, as they will be unable to check the current root directory of processes they do not own."
+msgstr "Zwrócenie tylko identyfikatorów procesów działających z tym samym katalogiem głównym. Ta opcja jest ignorowana dla użytkowników innych niż root, ponieważ wtedy nie można sprawdzić katalogu głównego procesów, których nie jest się właścicielem."
+
+#. type: IP
+#: pidof.1:43
+#, no-wrap
+msgid "-x"
+msgstr "-x"
+
+#. type: Plain text
+#: pidof.1:46
+msgid "Scripts too - this causes the program to also return process id's of shells running the named scripts."
+msgstr "Także skrypty - program zwróci także identyfikatory procesów powłok wykonujących skrypty o podanych nazwach."
+
+#. type: IP
+#: pidof.1:46
+#, no-wrap
+msgid "-o I<omitpid>"
+msgstr "-o I<pid_wykl>"
+
+#. type: Plain text
+#: pidof.1:50
+msgid "Tells I<pidof> to omit processes with that process id. The special pid B<%PPID> can be used to name the parent process of the I<pidof> program, in other words the calling shell or shell script."
+msgstr "Pominięcie procesów o podanym identyfikatorze. Specjalny pid B<%PPID> oznacza rodzica procesu programu I<pidof>, czyli powłokę lub skrypt go uruchamiający."
+
+#. type: TP
+#: pidof.1:51 pmap.1:66 watch.1:155
+#, no-wrap
+msgid "B<0>"
+msgstr "B<0>"
+
+#. type: Plain text
+#: pidof.1:54
+msgid "At least one program was found with the requested name."
+msgstr "Znaleziono przynajmniej jeden program o żądanej nazwie."
+
+#. type: TP
+#: pidof.1:54 pmap.1:69 watch.1:158
+#, no-wrap
+msgid "B<1>"
+msgstr "B<1>"
+
+#. type: Plain text
+#: pidof.1:57
+msgid "No program was found with the requested name."
+msgstr "Nie znaleziono żadnego programu o żądanej nazwie."
+
+#. type: Plain text
+#: pidof.1:61
+msgid "B<pgrep>(1), B<pkill>(1)"
+msgstr "B<pgrep>(1), B<pkill>(1)"
+
+#. type: Plain text
+#: pkill.1:1
+msgid "Jaromir Capik E<lt>jcapik@redhat.comE<gt>"
+msgstr "Jaromir Capik E<lt>jcapik@redhat.comE<gt>"
+
+#. type: TH
+#: pmap.1:8
+#, no-wrap
+msgid "PMAP"
+msgstr "PMAP"
+
+#. type: TH
+#: pmap.1:8
+#, no-wrap
+msgid "September 2012"
+msgstr "wrzesień 2012"
+
+#. type: Plain text
+#: pmap.1:11
+msgid "pmap - report memory map of a process"
+msgstr "pmap - informacje o odwzorowaniu pamięci procesu"
+
+#. type: Plain text
+#: pmap.1:14
+msgid "B<pmap> [I<options>] I<pid> [...]"
+msgstr "B<pmap> [I<opcje>] I<pid> [...]"
+
+#. type: Plain text
+#: pmap.1:16
+msgid "The pmap command reports the memory map of a process or processes."
+msgstr "Polecenie pmap wypisuje mapę pamięci procesu lub procesów."
+
+#. type: TP
+#: pmap.1:17
+#, no-wrap
+msgid "B<-x>, B<--extended>"
+msgstr "B<-x>, B<--extended>"
+
+#. type: Plain text
+#: pmap.1:20
+msgid "Show the extended format."
+msgstr "Wyświetlanie w formacie rozszerzonym."
+
+#. type: TP
+#: pmap.1:20
+#, no-wrap
+msgid "B<-d>, B<--device>"
+msgstr "B<-d>, B<--device>"
+
+#. type: Plain text
+#: pmap.1:23
+msgid "Show the device format."
+msgstr "Wyświetlanie w formacie urządzeń."
+
+#. type: TP
+#: pmap.1:23 sysctl.8:54
+#, no-wrap
+msgid "B<-q>, B<--quiet>"
+msgstr "B<-q>, B<--quiet>"
+
+#. type: Plain text
+#: pmap.1:26
+msgid "Do not display some header or footer lines."
+msgstr "Bez wyświetlania linii nagłówka i stopki."
+
+#. type: TP
+#: pmap.1:26
+#, no-wrap
+msgid "B<-A>, B<--range> I<low>,I<high>"
+msgstr "B<-A>, B<--range> I<dolny>,I<górny>"
+
+#. type: Plain text
+#: pmap.1:34
+msgid "Limit results to the given range to I<low> and I<high> address range.  Notice that the low and high arguments are single string separated with comma."
+msgstr "Ograniczenie wyników do podanego przedziału adresów: I<dolny>,I<górny>. Limity dolny i górny podaje się rozdzielone przecinkiem jako pojedynczy argument."
+
+#. type: TP
+#: pmap.1:34 sysctl.8:110
+#, no-wrap
+msgid "B<-X>"
+msgstr "B<-X>"
+
+#. type: Plain text
+#: pmap.1:38
+msgid "Show even more details than the B<-x> option. WARNING: format changes according to I</proc/PID/smaps>"
+msgstr "Wypisywanie jeszcze więcej szczegółów niż z opcją B<-x>. UWAGA: format zmienia się z I</proc/PID/smaps>"
+
+#. type: TP
+#: pmap.1:38
+#, no-wrap
+msgid "B<-XX>"
+msgstr "B<-XX>"
+
+#. type: Plain text
+#: pmap.1:41
+msgid "Show everything the kernel provides"
+msgstr "Wypisywanie wszystkiego, co udostępnia jądro"
+
+#. type: TP
+#: pmap.1:41
+#, no-wrap
+msgid "B<-p>, B<--show-path>"
+msgstr "B<-p>, B<--show-path>"
+
+#. type: Plain text
+#: pmap.1:44
+msgid "Show full path to files in the mapping column"
+msgstr "Wypisywanie pełnych ścieżek do plików w kolumnie odwzorowań"
+
+#. type: TP
+#: pmap.1:44
+#, no-wrap
+msgid "B<-c>, B<--read-rc>"
+msgstr "B<-c>, B<--read-rc>"
+
+#. type: Plain text
+#: pmap.1:47
+msgid "Read the default configuration"
+msgstr "Odczyt domyślnej konfiguracji"
+
+#. type: TP
+#: pmap.1:47
+#, no-wrap
+msgid "B<-C>, B<--read-rc-from> I<file>"
+msgstr "B<-C>, B<--read-rc-from> I<plik>"
+
+#. type: Plain text
+#: pmap.1:50
+msgid "Read the configuration from I<file>"
+msgstr "Odczyt konfiguracji z I<pliku>"
+
+#. type: TP
+#: pmap.1:50
+#, no-wrap
+msgid "B<-n>, B<--create-rc>"
+msgstr "B<-n>, B<--create-rc>"
+
+#. type: Plain text
+#: pmap.1:53
+msgid "Create new default configuration"
+msgstr "Utworzenie nowej konfiguracji domyślnej"
+
+#. type: TP
+#: pmap.1:53
+#, no-wrap
+msgid "B<-N>, B<--create-rc-to> I<file>"
+msgstr "B<-N>, B<--create-rc-to> I<plik>"
+
+#. type: Plain text
+#: pmap.1:56
+msgid "Create new configuration to I<file>"
+msgstr "Utworzenie nowej konfiguracji w I<pliku>"
+
+#. type: Plain text
+#: pmap.1:59 skill.1:61 sysctl.8:122 w.1:51 watch.1:69
+msgid "Display help text and exit."
+msgstr "Wyświetlenie tekstu pomocy i zakończenie."
+
+#. type: Plain text
+#: pmap.1:69 watch.1:158
+msgid "Success."
+msgstr "Sukces."
+
+#. type: Plain text
+#: pmap.1:72
+msgid "Failure."
+msgstr "Niepowodzenie."
+
+#. type: TP
+#: pmap.1:72
+#, no-wrap
+msgid "B<42>"
+msgstr "B<42>"
+
+#. type: Plain text
+#: pmap.1:75
+msgid "Did not find all processes asked for."
+msgstr "Nie znaleziono wszystkich żądanych procesów."
+
+#. type: Plain text
+#: pmap.1:80 pwdx.1:22
+msgid "B<ps>(1), B<pgrep>(1)"
+msgstr "B<ps>(1), B<pgrep>(1)"
+
+#. type: Plain text
+#: pmap.1:82
+msgid "No standards apply, but pmap looks an awful lot like a SunOS command."
+msgstr "Polecenia pmap nie dotyczą żadne standardy, ale wygląda równie brzydko, co polecenie SunOS."
+
+#. type: TH
+#: pwdx.1:6
+#, no-wrap
+msgid "PWDX"
+msgstr "PWDX"
+
+#. type: TH
+#: pwdx.1:6 slabtop.1:5 tload.1:4 watch.1:1
+#, no-wrap
+msgid "June 2011"
+msgstr "czerwiec 2011"
+
+#. type: Plain text
+#: pwdx.1:9
+msgid "pwdx - report current working directory of a process"
+msgstr "pwdx - informacja o bieżącym katalogu roboczym procesu"
+
+#. type: Plain text
+#: pwdx.1:12
+msgid "B<pwdx> [I<options>] I<pid> [...]"
+msgstr "B<pwdx> [I<opcje>] I<pid> [...]"
+
+#. type: Plain text
+#: pwdx.1:16
+msgid "Output version information and exit."
+msgstr "Wypisanie informacji o wersji i zakończenie."
+
+#. type: Plain text
+#: pwdx.1:19
+msgid "Output help screen and exit."
+msgstr "Wyświetlenie ekranu pomocy i zakończenie."
+
+#. type: Plain text
+#: pwdx.1:24
+msgid "No standards apply, but pwdx looks an awful lot like a SunOS command."
+msgstr "Polecenia pwdx nie dotyczą żadne standardy, ale wygląda równie brzydko, co polecenie SunOS."
+
+#. type: Plain text
+#: pwdx.1:29
+msgid "E<.UR nmiell@gmail.com> Nicholas Miell E<.UE> wrote pwdx in 2004."
+msgstr "E<.UR nmiell@gmail.com> Nicholas Miell E<.UE> napisał pwdx w 2004 roku."
+
+#. type: TH
+#: skill.1:9
+#, no-wrap
+msgid "SKILL"
+msgstr "SKILL"
+
+#. type: Plain text
+#: skill.1:12
+msgid "skill, snice - send a signal or report process status"
+msgstr "skill, snice - wysłanie sygnału lub informacja o stanie procesu"
+
+#. type: Plain text
+#: skill.1:17
+msgid "B<skill> [I<signal>] [I<options>] I<expression>"
+msgstr "B<skill> [I<sygnał>] [I<opcje>] I<wyrażenie>"
+
+#. type: Plain text
+#: skill.1:22
+msgid "B<snice> [I<new priority>] [I<options>] I<expression>"
+msgstr "B<snice> [I<nowy priorytet>] [I<opcje>] I<wyrażenie>"
+
+#. type: Plain text
+#: skill.1:26
+msgid "These tools are obsolete and unportable.  The command syntax is poorly defined.  Consider using the killall, pkill, and pgrep commands instead."
+msgstr "Niniejsze narzędzia są przestarzałe i nieprzenośne. Składnia poleceń jest słabo zdefiniowana. Zamiast nich lepiej używać poleceń killall, pkill oraz pgrep."
+
+#. type: Plain text
+#: skill.1:31
+msgid "The default signal for skill is TERM.  Use -l or -L to list available signals.  Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.  Alternate signals may be specified in three ways: -9 -SIGKILL -KILL."
+msgstr "Domyśli sygnał dla programu skill to TERM. Listę dostępnych sygnałów można uzyskać przy użyciu -l lub -L. Szczególnie przydatne sygnały to HUP, INT, KILL, STOP, CONT oraz 0. Alternatywne sygnały można podać na trzy sposoby: -9 -SIGKILL -KILL."
+
+#. type: Plain text
+#: skill.1:35
+msgid "The default priority for snice is +4.  Priority numbers range from +20 (slowest) to -20 (fastest).  Negative priority numbers are restricted to administrative users."
+msgstr "Domyślny priorytet dla programu snice to +4. Numery priorytetów są z przedziału +20 (najwolniej) do -20 (najszybciej). Numery ujemne są zastrzeżone dla administratorów."
+
+#. type: TP
+#: skill.1:36
+#, no-wrap
+msgid "B<-f>,B<\\ --fast>"
+msgstr "B<-f>,B<\\ --fast>"
+
+#. type: Plain text
+#: skill.1:39
+msgid "Fast mode.  This option has not been implemented."
+msgstr "Tryb szybki. Ta opcja nie została zaimplementowana."
+
+#. type: TP
+#: skill.1:39
+#, no-wrap
+msgid "B<-i>,B<\\ --interactive>"
+msgstr "B<-i>,B<\\ --interactive>"
+
+#. type: Plain text
+#: skill.1:42
+msgid "Interactive use.  You will be asked to approve each action."
+msgstr "Tryb interaktywny. Użytkownik będzie pytany o każdą akcję."
+
+#. type: TP
+#: skill.1:42
+#, no-wrap
+msgid "B<-l>,B<\\ --list>"
+msgstr "B<-l>,B<\\ --list>"
+
+#. type: Plain text
+#: skill.1:45
+msgid "List all signal names."
+msgstr "Lista wszystkich nazw sygnałów."
+
+#. type: Plain text
+#: skill.1:48
+msgid "List all signal names in a nice table."
+msgstr "Lista wszystkich nazw sygnałów w ładnej tabelce."
+
+#. type: TP
+#: skill.1:48
+#, no-wrap
+msgid "B<-n>,B<\\ --no-action>"
+msgstr "B<-n>,B<\\ --no-action>"
+
+#. type: Plain text
+#: skill.1:52
+msgid "No action; perform a simulation of events that would occur but do not actually change the system."
+msgstr "Bez akcji; wykonanie symulacji zdarzeń, które by nastąpiły, ale bez zmian w systemie."
+
+#. type: TP
+#: skill.1:52
+#, no-wrap
+msgid "B<-v>,B<\\ --verbose>"
+msgstr "B<-v>,B<\\ --verbose>"
+
+#. type: Plain text
+#: skill.1:55
+msgid "Verbose; explain what is being done."
+msgstr "Tryb szczegółowy; wyjaśnianie, co jest wykonywane."
+
+#. type: TP
+#: skill.1:55
+#, no-wrap
+msgid "B<-w>,B<\\ --warnings>"
+msgstr "B<-w>,B<\\ --warnings>"
+
+#. type: Plain text
+#: skill.1:58
+msgid "Enable warnings.  This option has not been implemented."
+msgstr "Włączenie ostrzeżeń. Ta opcja nie została zaimplementowana."
+
+#. type: SH
+#: skill.1:65
+#, no-wrap
+msgid "PROCESS SELECTION OPTIONS"
+msgstr "OPCJE WYBORU PROCESÓW"
+
+#. type: Plain text
+#: skill.1:68
+msgid "Selection criteria can be: terminal, user, pid, command.  The options below may be used to ensure correct interpretation."
+msgstr "Kryterium wyboru może być: terminal, użytkownik, pid, polecenie. W celu zapewnienia właściwej interpretacji można użyć poniższych opcji."
+
+#. type: TP
+#: skill.1:68
+#, no-wrap
+msgid "B<-t>, B<--tty> I<tty>"
+msgstr "B<-t>, B<--tty> I<tty>"
+
+#. type: Plain text
+#: skill.1:71
+msgid "The next expression is a terminal (tty or pty)."
+msgstr "Następne wyrażenie jest terminalem (tty lub pty)."
+
+#. type: TP
+#: skill.1:71
+#, no-wrap
+msgid "B<-u>, B<--user> I<user>"
+msgstr "B<-u>, B<--user> I<użytkownik>"
+
+#. type: Plain text
+#: skill.1:74
+msgid "The next expression is a username."
+msgstr "Następne wyrażenie jest nazwą użytkownika."
+
+#. type: TP
+#: skill.1:74
+#, no-wrap
+msgid "B<-p>, B<--pid> I<pid>"
+msgstr "B<-p>, B<--pid> I<pid>"
+
+#. type: Plain text
+#: skill.1:77
+msgid "The next expression is a process ID number."
+msgstr "Następne wyrażenie jest liczbowym identyfikatorem procesu."
+
+#. type: TP
+#: skill.1:77
+#, no-wrap
+msgid "B<-c>, B<--command> I<command>"
+msgstr "B<-c>, B<--command> I<polecenie>"
+
+#. type: Plain text
+#: skill.1:80
+msgid "The next expression is a command name."
+msgstr "następne wyrażenie jest nazwą polecenia."
+
+#. type: Plain text
+#: skill.1:83
+msgid "Match the processes that belong to the same namespace as pid."
+msgstr "Dopasowanie procesów należących do tej samej przestrzeni nazw, co pid."
+
+#. type: TP
+#: skill.1:83
+#, no-wrap
+msgid "B<--nslist >I<ns,...>"
+msgstr "B<--nslist >I<ns,...>"
+
+#. type: Plain text
+#: skill.1:87
+msgid "list which namespaces will be considered for the --ns option.  Available namespaces: ipc, mnt, net, pid, user, uts."
+msgstr "lista przestrzeni nazw uwzględnianych w opcji --ns. Dostępne przestrzenie: ipc, mnt, net, pid, user, uts."
+
+#. type: SH
+#: skill.1:88
+#, no-wrap
+msgid "SIGNALS"
+msgstr "SYGNAŁY"
+
+#. type: Plain text
+#: skill.1:92
+msgid "The behavior of signals is explained in B<signal>(7)  manual page."
+msgstr "Zachowanie sygnałów jest wyjaśnione na stronie podręcznika B<signal>(7)."
+
+#. type: TP
+#: skill.1:93
+#, no-wrap
+msgid "B<snice -c seti -c crack +7>"
+msgstr "B<snice -c seti -c crack +7>"
+
+#. type: Plain text
+#: skill.1:96
+msgid "Slow down seti and crack commands."
+msgstr "Spowolnienie poleceń seti oraz crack."
+
+#. type: TP
+#: skill.1:96
+#, no-wrap
+msgid "B<skill -KILL -t /dev/pts/*>"
+msgstr "B<skill -KILL -t /dev/pts/*>"
+
+#. type: Plain text
+#: skill.1:99
+msgid "Kill users on PTY devices."
+msgstr "Zabicie użytkowników na urządzeniach PTY."
+
+#. type: TP
+#: skill.1:99
+#, no-wrap
+msgid "B<skill -STOP -u viro -u lm -u davem>"
+msgstr "B<skill -STOP -u viro -u lm -u davem>"
+
+#. type: Plain text
+#: skill.1:102
+msgid "Stop three users."
+msgstr "Zatrzymanie trzech użytkowników."
+
+#. type: Plain text
+#: skill.1:110
+msgid "B<kill>(1), B<kill>(2), B<killall>(1), B<nice>(1), B<pkill>(1), B<renice>(1), B<signal>(7)"
+msgstr "B<kill>(1), B<kill>(2), B<killall>(1), B<nice>(1), B<pkill>(1), B<renice>(1), B<signal>(7)"
+
+#. type: Plain text
+#: skill.1:112
+msgid "No standards apply."
+msgstr "Żadne standardy nie dotyczą tych poleceń."
+
+#. type: Plain text
+#: skill.1:118
+msgid "E<.UR albert@users.sf.net> Albert Cahalan E<.UE> wrote skill and snice in 1999 as a replacement for a non-free version."
+msgstr "E<.UR albert@users.sf.net> Albert Cahalan E<.UE> napisał programy skill i snice w roku 1999 jako zamiennik wersji nie będących oprogramowaniem wolnodostępnym."
+
+#. type: TH
+#: slabtop.1:5
+#, no-wrap
+msgid "SLABTOP"
+msgstr "SLABTOP"
+
+#. type: Plain text
+#: slabtop.1:8
+msgid "slabtop - display kernel slab cache information in real time"
+msgstr "slabtop - wyświetlanie informacji o pamięci podręcznej płyt jądra w czasie rzeczywistym"
+
+#. type: Plain text
+#: slabtop.1:11
+msgid "B<slabtop> [I<options>]"
+msgstr "B<slabtop> [I<opcje>]"
+
+#. type: Plain text
+#: slabtop.1:16
+msgid "B<slabtop> displays detailed kernel slab cache information in real time.  It displays a listing of the top caches sorted by one of the listed sort criteria.  It also displays a statistics header filled with slab layer information."
+msgstr "B<slabtop> wyświetla szczegółowe informacje o pamięci podręcznej płyt jądra w czasie rzeczywistym. Wyświetla listę pierwszych bloków posortowanych według jednego z kryteriów. Wyświetla także nagłówek statystyk wypełniony informacjami o warstwie płyt."
+
+#. type: Plain text
+#: slabtop.1:21
+msgid "Normal invocation of B<slabtop> does not require any options.  The behavior, however, can be fine-tuned by specifying one or more of the following flags:"
+msgstr "Zwykłe wywołanie programu B<slabtop> nie wymaga żadnych opcji. Zachowanie może być jednak dostosowane szczegółowo poprzez podanie jednej lub większej liczby z następujących flag:"
+
+#. type: TP
+#: slabtop.1:21
+#, no-wrap
+msgid "B<-d>, B<--delay>=I<N>"
+msgstr "B<-d>, B<--delay>=I<N>"
+
+#. type: Plain text
+#: slabtop.1:29
+msgid "Refresh the display every I<n> in seconds.  By default, B<slabtop> refreshes the display every three seconds.  To exit the program, hit B<q.>"
+msgstr "Odświeżanie ekranu co I<n> sekund. Domyślnie B<slabtop> odświeża ekran co 3 sekundy. Program można zakończyć naciskając klawisz B<q>."
+
+#. type: TP
+#: slabtop.1:29
+#, no-wrap
+msgid "B<-s>, B<--sort>=I<S>"
+msgstr "B<-s>, B<--sort>=I<S>"
+
+#. type: Plain text
+#: slabtop.1:32
+msgid "Sort by I<S>, where I<S> is one of the sort criteria."
+msgstr "Sortowanie według I<S>, gdzie I<S> to jedno z kryteriów sortowania."
+
+#. type: TP
+#: slabtop.1:32
+#, no-wrap
+msgid "B<-o>, B<--once>"
+msgstr "B<-o>, B<--once>"
+
+#. type: Plain text
+#: slabtop.1:35
+msgid "Display the output once and then exit."
+msgstr "Jednorazowe wyświetlenie wyjścia i zakończenie."
+
+#. type: Plain text
+#: slabtop.1:41
+msgid "Display usage information and exit."
+msgstr "Wyświetlenie informacji o składni i zakończenie."
+
+#. type: SH
+#: slabtop.1:41
+#, no-wrap
+msgid "SORT CRITERIA"
+msgstr "KRYTERIA SORTOWANIA"
+
+#. type: Plain text
+#: slabtop.1:45
+msgid "The following are valid sort criteria used to sort the individual slab caches and thereby determine what are the \"top\" slab caches to display.  The default sort criteria is to sort by the number of objects (\"o\")."
+msgstr "Poniżej podane są poprawne kryteria sortowania dla poszczególnych pamięci podręcznych płyt, określające, czym mają być \"pierwsze bloki\" do wyświetlenia. Domyślnym kryterium sortowania jest liczba obiektów (\"o\")."
+
+#. type: Plain text
+#: slabtop.1:48
+msgid "The sort criteria can also be changed while slabtop is running by pressing the associated character."
+msgstr "Kryterium sortowania można zmienić także w trakcie działania slabtopa przez naciśnięcie powiązanego klawisza."
+
+#. type: tbl table
+#: slabtop.1:50
+#, no-wrap
+msgid "B<character\tdescription\theader>\n"
+msgstr "B<znak\topis\tnagłówek>\n"
+
+#. type: tbl table
+#: slabtop.1:51
+#, no-wrap
+msgid "a\tnumber of active objects\tACTIVE\n"
+msgstr "a\tliczba aktywnych obiektów\tAKTYWNE\n"
+
+#. type: tbl table
+#: slabtop.1:52
+#, no-wrap
+msgid "b\tobjects per slab\tOBJ/SLAB\n"
+msgstr "b\tliczba obiektów na płytę\tOB./PŁ.\n"
+
+#. type: tbl table
+#: slabtop.1:53
+#, no-wrap
+msgid "c\tcache size\tCACHE SIZE\n"
+msgstr "c\trozmiar pamięci podręcznej\tROZM.CACHE\n"
+
+#. type: tbl table
+#: slabtop.1:54
+#, no-wrap
+msgid "l\tnumber of slabs\tSLABS\n"
+msgstr "l\tliczba płyt\tPŁYTY\n"
+
+#. type: tbl table
+#: slabtop.1:55
+#, no-wrap
+msgid "v\tnumber of active slabs\tN/A\n"
+msgstr "v\tliczba aktywnych płyt\tN/A\n"
+
+#. type: tbl table
+#: slabtop.1:56
+#, no-wrap
+msgid "n\tname\tNAME\n"
+msgstr "n\tnazwa\tNAZWA\n"
+
+#. type: tbl table
+#: slabtop.1:57
+#, no-wrap
+msgid "o\tnumber of objects\tOBJS\n"
+msgstr "o\tliczba obiektów\tOB.\n"
+
+#. type: tbl table
+#: slabtop.1:58
+#, no-wrap
+msgid "p\tpages per slab\tN/A\n"
+msgstr "p\tliczba stron na płytę\tN/A\n"
+
+#. type: tbl table
+#: slabtop.1:59
+#, no-wrap
+msgid "s\tobject size\tOBJ SIZE\n"
+msgstr "s\trozmiar obiektu\tROZM.OB.\n"
+
+#. type: tbl table
+#: slabtop.1:60
+#, no-wrap
+msgid "u\tcache utilization\tUSE\n"
+msgstr "u\twykorzystanie pamięci podręcznej\tUŻ.\n"
+
+#. type: SH
+#: slabtop.1:62
+#, no-wrap
+msgid "COMMANDS"
+msgstr "POLECENIA"
+
+#. type: Plain text
+#: slabtop.1:66
+msgid "B<slabtop> accepts keyboard commands from the user during use.  The following are supported.  In the case of letters, both cases are accepted."
+msgstr "B<slabtop> w trakcie działania przyjmuje polecenia użytkownika z klawiatury. Poniżej znajduje się lista obsługiwanych; w przypadku liter, akceptowane są obie wielkości."
+
+#. type: Plain text
+#: slabtop.1:70
+msgid "Each of the valid sort characters are also accepted, to change the sort routine. See the section B<SORT CRITERIA>."
+msgstr "Przyjmowany jest każdy poprawny znak kryterium sortowania - zmienia on porządek; więcej w sekcji B<KRYTERIA SORTOWANIA>."
+
+#. type: TP
+#: slabtop.1:70
+#, no-wrap
+msgid "B<E<lt>SPACEBARE<gt>>"
+msgstr "B<E<lt>SPACJAE<gt>>"
+
+#. type: Plain text
+#: slabtop.1:73
+msgid "Refresh the screen."
+msgstr "Odświeżenie ekranu."
+
+#. type: TP
+#: slabtop.1:73
+#, no-wrap
+msgid "B<Q>"
+msgstr "B<Q>"
+
+#. type: Plain text
+#: slabtop.1:76
+msgid "Quit the program."
+msgstr "Zakończenie programu."
+
+#. type: TP
+#: slabtop.1:77
+#, no-wrap
+msgid "I</proc/slabinfo>"
+msgstr "I</proc/slabinfo>"
+
+#. type: Plain text
+#: slabtop.1:80
+msgid "slab information"
+msgstr "informacja o płytach"
+
+#. type: Plain text
+#: slabtop.1:85
+msgid "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
+msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
+
+#. type: Plain text
+#: slabtop.1:91
+msgid "Currently, B<slabtop> requires a 2.4 or later kernel (specifically, a version 1.1 or later I</proc/slabinfo>).  Kernel 2.2 should be supported in the future."
+msgstr "Obecnie B<slabtop> wymaga jądra 2.4 lub późniejszego (w szczególności wersji 1.1 lub nowszej I</proc/slabinfo>). Jądro 2.2 powinno być obsługiwane w przyszłości."
+
+#. type: Plain text
+#: slabtop.1:95
+msgid "The slabtop statistic header is tracking how many bytes of slabs are being used and is not a measure of physical memory.  The 'Slab' field in the /proc/meminfo file is tracking information about used slab physical memory."
+msgstr "Nagłówek statystyk programu slabtop śledzi, jak dużo bajtów płyt jest w użyciu, i nie jest miarę pamięci fizycznej. Pole 'Slab' w pliku /proc/meminfo śledzi informacje o użytej pamięci fizycznej płyt."
+
+#. type: Plain text
+#: slabtop.1:97
+msgid "Written by Chris Rivera and Robert Love."
+msgstr "Autorami są Chris Rivera i Robert Love."
+
+#. type: Plain text
+#: slabtop.1:101
+msgid "B<slabtop> was inspired by Martin Bligh's perl script, B<vmtop>."
+msgstr "B<slabtop> został zainspirowany skryptem perlowym B<vmtop> autorstwa Martina Bligha."
+
+#. type: TH
+#: sysctl.8:9
+#, no-wrap
+msgid "SYSCTL"
+msgstr "SYSCTL"
+
+#. type: TH
+#: sysctl.8:9
+#, no-wrap
+msgid "Jan 2012"
+msgstr "sty 2012"
+
+#. type: TH
+#: sysctl.8:9 vmstat.8:3
+#, no-wrap
+msgid "System Administration"
+msgstr "Administracja systemem"
+
+#. type: Plain text
+#: sysctl.8:12
+msgid "sysctl - configure kernel parameters at runtime"
+msgstr "sysctl - konfiguracja parametrów jądra w czasie działania"
+
+#. type: Plain text
+#: sysctl.8:15
+msgid "B<sysctl> [I<options>] [I<variable>[B<=>I<value>]] [...]"
+msgstr "B<sysctl> [I<opcje>] [I<zmienna>[B<=>I<wartość>]] [...]"
+
+#. type: Plain text
+#: sysctl.8:18
+msgid "B<sysctl -p> [I<file> or I<regexp>] [...]"
+msgstr "B<sysctl -p> [I<plik> lub I<wyrażenie_regularne>] [...]"
+
+#. type: Plain text
+#: sysctl.8:26
+msgid "B<sysctl> is used to modify kernel parameters at runtime.  The parameters available are those listed under /proc/sys/.  Procfs is required for B<sysctl> support in Linux.  You can use B<sysctl> to both read and write sysctl data."
+msgstr "B<sysctl> służy do modyfikowania parametrów jądra w czasie działania. Dostępne parametry to te, które są w /proc/sys/. Do obsługi B<sysctl> pod Linuksem wymagany jest procfs. Program B<sysctl> może być używany do odczytu i zapisu danych sysctl."
+
+#. type: SH
+#: sysctl.8:26
+#, no-wrap
+msgid "PARAMETERS"
+msgstr "PARAMETRY"
+
+#. type: TP
+#: sysctl.8:27
+#, no-wrap
+msgid "I<variable>"
+msgstr "I<zmienna>"
+
+#. type: Plain text
+#: sysctl.8:31
+msgid "The name of a key to read from.  An example is kernel.ostype.  The '/' separator is also accepted in place of a '.'."
+msgstr "Nazwa klucza, z którego mają być odczytane dane, na przykład kernel.ostype. Akceptowany jest także separator '/' zamiast '.'."
+
+#. type: TP
+#: sysctl.8:31
+#, no-wrap
+msgid "I<variable>=I<value>"
+msgstr "I<zmienna>=I<wartość>"
+
+#. type: Plain text
+#: sysctl.8:44
+msgid "To set a key, use the form I<variable>=I<value> where I<variable> is the key and I<value> is the value to set it to.  If the value contains quotes or characters which are parsed by the shell, you may need to enclose the value in double quotes.  This requires the B<-w> parameter to use."
+msgstr "Aby ustawić klucz, należy użyć formy I<zmienna>=I<wartość>, gdzie I<zmienna> to klucz, a I<wartość> wartość, na jaką klucz ma być ustawiony. Jeśli wartość zawiera apostrofy lub znaki, które są przetwarzane przez powłokę, może być potrzeba ujęcia wartości w cudzysłowy. Wymaga to użycia parametru B<-w>."
+
+#. type: TP
+#: sysctl.8:44
+#, no-wrap
+msgid "B<-n>, B<--values>"
+msgstr "B<-n>, B<--values>"
+
+#. type: Plain text
+#: sysctl.8:47
+msgid "Use this option to disable printing of the key name when printing values."
+msgstr "Ta opcja wyłącza wypisywanie nazwy klucza przy wypisywaniu wartości."
+
+#. type: TP
+#: sysctl.8:47
+#, no-wrap
+msgid "B<-e>, B<--ignore>"
+msgstr "B<-e>, B<--ignore>"
+
+#. type: Plain text
+#: sysctl.8:50
+msgid "Use this option to ignore errors about unknown keys."
+msgstr "Ta opcja powoduje ignorowanie błędów przy nieznanych kluczach."
+
+#. type: TP
+#: sysctl.8:50
+#, no-wrap
+msgid "B<-N>, B<--names>"
+msgstr "B<-N>, B<--names>"
+
+#. type: Plain text
+#: sysctl.8:54
+msgid "Use this option to only print the names.  It may be useful with shells that have programmable completion."
+msgstr "Ta opcja powoduje wypisywanie samych nazw. Może być przydatna dla powłok z programowalnym dopełnianiem."
+
+#. type: Plain text
+#: sysctl.8:57
+msgid "Use this option to not display the values set to stdout."
+msgstr "Ta opcja powoduje niewyświetlanie ustawianych wartości na standardowym wyjściu."
+
+#. type: TP
+#: sysctl.8:57
+#, no-wrap
+msgid "B<-w>, B<--write>"
+msgstr "B<-w>, B<--write>"
+
+#. type: Plain text
+#: sysctl.8:60
+msgid "Use this option when you want to change a sysctl setting."
+msgstr "Ta opcja pozwala na zmianę ustawienia sysctl."
+
+#. type: TP
+#: sysctl.8:60
+#, no-wrap
+msgid "B<-p>[I<FILE>], B<--load>[=I<FILE>]"
+msgstr "B<-p>[I<PLIK>], B<--load>[=I<PLIK>]"
+
+#. type: Plain text
+#: sysctl.8:68
+msgid "Load in sysctl settings from the file specified or /etc/sysctl.conf if none given.  Specifying - as filename means reading data from standard input.  Using this option will mean arguments to B<sysctl> are files, which are read in the order they are specified.  The file argument may be specified as regular expression."
+msgstr "Wczytanie ustawień sysctl z podanego pliku lub /etc/sysctl.conf, jeśli nie podano pliku. Podanie - jako nazwy pliku oznacza odczyt danych ze standardowego wejścia. Użycie tej opcji oznacza, że argumenty B<sysctl> są plikami, które będą czytane w kolejności podania. Argument plikowy może być też podany jako wyrażenie regularne."
+
+#. type: TP
+#: sysctl.8:68
+#, no-wrap
+msgid "B<-a>, B<--all>"
+msgstr "B<-a>, B<--all>"
+
+#. type: Plain text
+#: sysctl.8:71
+msgid "Display all values currently available."
+msgstr "Wyświetlenie wszystkie aktualnie dostępnych wartości."
+
+#. type: TP
+#: sysctl.8:71
+#, no-wrap
+msgid "B<--deprecated>"
+msgstr "B<--deprecated>"
+
+#. type: Plain text
+#: sysctl.8:76
+msgid "Include deprecated parameters to B<--all> values listing."
+msgstr "Dołączenie do listy wartości B<--all> parametrów przestarzałych."
+
+#. type: TP
+#: sysctl.8:76
+#, no-wrap
+msgid "B<-b>, B<--binary>"
+msgstr "B<-b>, B<--binary>"
+
+#. type: Plain text
+#: sysctl.8:79
+msgid "Print value without new line."
+msgstr "Wypisanie wartości bez nowej linii."
+
+#. type: TP
+#: sysctl.8:79
+#, no-wrap
+msgid "B<--system>"
+msgstr "B<--system>"
+
+#. type: Plain text
+#: sysctl.8:82
+msgid "Load settings from all system configuration files."
+msgstr "Wczytanie ustawień ze wszystkich systemowych plików konfiguracyjnych."
+
+#. type: TP
+#: sysctl.8:84 sysctl.conf.5:45
+#, no-wrap
+msgid "/run/sysctl.d/*.conf"
+msgstr "/run/sysctl.d/*.conf"
+
+#. type: TQ
+#: sysctl.8:86 sysctl.conf.5:47
+#, no-wrap
+msgid "/etc/sysctl.d/*.conf"
+msgstr "/etc/sysctl.d/*.conf"
+
+#. type: TQ
+#: sysctl.8:88 sysctl.conf.5:49
+#, no-wrap
+msgid "/usr/local/lib/sysctl.d/*.conf"
+msgstr "/usr/local/lib/sysctl.d/*.conf"
+
+#. type: TQ
+#: sysctl.8:90 sysctl.conf.5:51
+#, no-wrap
+msgid "/usr/lib/sysctl.d/*.conf"
+msgstr "/usr/lib/sysctl.d/*.conf"
+
+#. type: TQ
+#: sysctl.8:92 sysctl.conf.5:53
+#, no-wrap
+msgid "/lib/sysctl.d/*.conf"
+msgstr "/lib/sysctl.d/*.conf"
+
+#. type: TQ
+#: sysctl.8:94 sysctl.conf.5:55
+#, no-wrap
+msgid "/etc/sysctl.conf"
+msgstr "/etc/sysctl.conf"
+
+#. type: TP
+#: sysctl.8:94
+#, no-wrap
+msgid "B<-r>, B<--pattern> I<pattern>"
+msgstr "B<-r>, B<--pattern> I<wzorzec>"
+
+#. type: Plain text
+#: sysctl.8:101
+msgid "Only apply settings that match I<pattern>.  The I<pattern> uses extended regular expression syntax."
+msgstr "Naniesienie wyłącznie ustawień pasujących do I<wzorca>. I<wzorzec> wykorzystuje składnię rozszerzonych wyrażeń regularnych."
+
+#. type: TP
+#: sysctl.8:101
+#, no-wrap
+msgid "B<-A>"
+msgstr "B<-A>"
+
+#. type: Plain text
+#: sysctl.8:104 sysctl.8:113
+msgid "Alias of B<-a>"
+msgstr "Alias dla B<-a>"
+
+#. type: TP
+#: sysctl.8:104
+#, no-wrap
+msgid "B<-d>"
+msgstr "B<-d>"
+
+#. type: Plain text
+#: sysctl.8:107
+msgid "Alias of B<-h>"
+msgstr "Alias dla B<-h>"
+
+#. type: TP
+#: sysctl.8:107
+#, no-wrap
+msgid "B<-f>"
+msgstr "B<-f>"
+
+#. type: Plain text
+#: sysctl.8:110
+msgid "Alias of B<-p>"
+msgstr "Alias dla B<-p>"
+
+#. type: TP
+#: sysctl.8:113
+#, no-wrap
+msgid "B<-o>"
+msgstr "B<-o>"
+
+#. type: Plain text
+#: sysctl.8:116 sysctl.8:119
+msgid "Does nothing, exists for BSD compatibility."
+msgstr "Nic nie robi, istnieje dla zgodności z BSD."
+
+#. type: TP
+#: sysctl.8:116
+#, no-wrap
+msgid "B<-x>"
+msgstr "B<-x>"
+
+#. type: Plain text
+#: sysctl.8:127
+msgid "/sbin/sysctl -a"
+msgstr "/sbin/sysctl -a"
+
+#. type: Plain text
+#: sysctl.8:129
+msgid "/sbin/sysctl -n kernel.hostname"
+msgstr "/sbin/sysctl -n kernel.hostname"
+
+#. type: Plain text
+#: sysctl.8:131
+msgid "/sbin/sysctl -w kernel.domainname=\"example.com\""
+msgstr "/sbin/sysctl -w kernel.domainname=\"example.com\""
+
+#. type: Plain text
+#: sysctl.8:133
+msgid "/sbin/sysctl -p/etc/sysctl.conf"
+msgstr "/sbin/sysctl -p/etc/sysctl.conf"
+
+#. type: Plain text
+#: sysctl.8:135
+msgid "/sbin/sysctl -a --pattern forward"
+msgstr "/sbin/sysctl -a --pattern forward"
+
+#. type: Plain text
+#: sysctl.8:137
+msgid "/sbin/sysctl -a --pattern forward$"
+msgstr "/sbin/sysctl -a --pattern forward$"
+
+#. type: Plain text
+#: sysctl.8:139
+msgid "/sbin/sysctl -a --pattern 'net.ipv4.conf.(eth|wlan)0.arp'"
+msgstr "/sbin/sysctl -a --pattern 'net.ipv4.conf.(eth|wlan)0.arp'"
+
+#. type: Plain text
+#: sysctl.8:141
+msgid "/sbin/sysctl --system --pattern '^net.ipv6'"
+msgstr "/sbin/sysctl --system --pattern '^net.ipv6'"
+
+#. type: SH
+#: sysctl.8:141
+#, no-wrap
+msgid "DEPRECATED PARAMETERS"
+msgstr "PARAMETRY PRZESTARZAŁE"
+
+#. type: Plain text
+#: sysctl.8:149
+msgid "The B<base_reachable_time> and B<retrans_time> are deprecated.  The sysctl command does not allow changing values of these parameters.  Users who insist to use deprecated kernel interfaces should push values to /proc file system by other means.  For example:"
+msgstr "Zmienne B<base_reachable_time> oraz B<retrans_time> są przestarzałe. Polecenie sysctl nie pozwala na zmianę wartości tych parametrów. Użytkownicy uporczywie używający przestarzałych interfejsów powinni umieścić wartości w systemie plików /proc w inny sposób, na przykład:"
+
+#. type: Plain text
+#: sysctl.8:151
+msgid "echo 256 E<gt> /proc/sys/net/ipv6/neigh/eth0/base_reachable_time"
+msgstr "echo 256 E<gt> /proc/sys/net/ipv6/neigh/eth0/base_reachable_time"
+
+#. type: Plain text
+#: sysctl.8:153
+msgid "I</proc/sys>"
+msgstr "I</proc/sys>"
+
+#. type: Plain text
+#: sysctl.8:155
+msgid "I</etc/sysctl.conf>"
+msgstr "I</etc/sysctl.conf>"
+
+#. type: Plain text
+#: sysctl.8:158
+msgid "B<sysctl.conf>(5)  B<regex>(7)"
+msgstr "B<sysctl.conf>(5)  B<regex>(7)"
+
+#. type: Plain text
+#: sysctl.8:162 sysctl.conf.5:69
+msgid "E<.UR staikos@0wned.org> George Staikos E<.UE>"
+msgstr "E<.UR staikos@0wned.org> George Staikos E<.UE>"
+
+#. type: TH
+#: sysctl.conf.5:9
+#, no-wrap
+msgid "SYSCTL.CONF"
+msgstr "SYSCTL.CONF"
+
+#. type: TH
+#: sysctl.conf.5:9
+#, no-wrap
+msgid "January 2012"
+msgstr "styczeń 2012"
+
+#. type: TH
+#: sysctl.conf.5:9
+#, no-wrap
+msgid "File Formats"
+msgstr "Formaty plików"
+
+#. type: Plain text
+#: sysctl.conf.5:12
+msgid "sysctl.conf - sysctl preload/configuration file"
+msgstr "sysctl.conf - plik wartości początkowych/konfiguracyjny sysctl"
+
+#. type: Plain text
+#: sysctl.conf.5:17
+msgid "B<sysctl.conf> is a simple file containing sysctl values to be read in and set by B<sysctl>.  The syntax is simply as follows:"
+msgstr "B<sysctl.conf> to prosty plik zawierający wartości sysctl do odczytu i ustawienia przez polecenie B<sysctl>. Składnia jest prosta:"
+
+#. type: Plain text
+#: sysctl.conf.5:23
+#, no-wrap
+msgid ""
+"# comment\n"
+"; comment\n"
+msgstr ""
+"# komentarz\n"
+"; komentarz\n"
+
+#. type: Plain text
+#: sysctl.conf.5:25
+#, no-wrap
+msgid "token = value\n"
+msgstr "token = wartość\n"
+
+#. type: Plain text
+#: sysctl.conf.5:31
+msgid "Note that blank lines are ignored, and whitespace before and after a token or value is ignored, although a value can contain whitespace within.  Lines which begin with a # or ; are considered comments and ignored."
+msgstr "Uwaga: puste linie są ignorowane, także białe znaki przed i po tokenie lub wartości są ignorowane, natomiast sama wartość może zawierać białe znaki. Linie zaczynające się znakiem # lub ; są uznawane za komentarze i ignorowane."
+
+#. type: SH
+#: sysctl.conf.5:31
+#, no-wrap
+msgid "EXAMPLE"
+msgstr "PRZYKŁAD"
+
+#. type: Plain text
+#: sysctl.conf.5:41
+#, no-wrap
+msgid ""
+"# sysctl.conf sample\n"
+"#\n"
+"  kernel.domainname = example.com\n"
+"; this one has a space which will be written to the sysctl!\n"
+"  kernel.modprobe = /sbin/mod probe\n"
+msgstr ""
+"# przykładowy sysctl.conf\n"
+"#\n"
+"  kernel.domainname = example.com\n"
+"; ta wartość zawiera spację, która zostanie zapisana do sysctl!\n"
+"  kernel.modprobe = /sbin/mod probe\n"
+
+#. type: Plain text
+#: sysctl.conf.5:63
+msgid "The paths where sysctl preload files usually exist.  See also sysctl option I<--system>."
+msgstr "Ścieżki, gdzie zwykle istnieją pliki do automatycznego wczytywania sysctl. P. także opcja sysctl I<--system>."
+
+#. type: Plain text
+#: sysctl.conf.5:65
+msgid "B<sysctl>(8)"
+msgstr "B<sysctl>(8)"
+
+#. type: TH
+#: tload.1:4
+#, no-wrap
+msgid "TLOAD"
+msgstr "TLOAD"
+
+#. type: Plain text
+#: tload.1:7
+msgid "tload - graphic representation of system load average"
+msgstr "tload - graficzna reprezentacja średniego obciążenia systemu"
+
+#. type: Plain text
+#: tload.1:10
+msgid "B<tload> [I<options>] [I<tty>]"
+msgstr "B<tload> [I<opcje>] [I<tty>]"
+
+#. type: Plain text
+#: tload.1:15
+msgid "B<tload> prints a graph of the current system load average to the specified I<tty> (or the tty of the tload process if none is specified)."
+msgstr "B<tload> wypisuje wykres bieżącego średniego obciążenia systemu na określony I<tty> (lub terminal procesu tload, jeśli nie podano żadnego)."
+
+#. type: TP
+#: tload.1:16
+#, no-wrap
+msgid "B<-s>, B<--scale> I<number>"
+msgstr "B<-s>, B<--scale> I<liczba>"
+
+#. type: Plain text
+#: tload.1:21
+msgid "The scale option allows a vertical scale to be specified for the display (in characters between graph ticks); thus, a smaller value represents a larger scale, and vice versa."
+msgstr "Opcja scale pozwala na określenie pionowej skali wyświetlania (w znakach między podziałką wykresu); mniejsza wartość określa większą skalę i na odwrót."
+
+#. type: TP
+#: tload.1:21
+#, no-wrap
+msgid "B<-d>, B<--delay> I<seconds>"
+msgstr "B<-d>, B<--delay> I<sekundy>"
+
+#. type: Plain text
+#: tload.1:25
+msgid "The delay sets the delay between graph updates in I<seconds>."
+msgstr "Opcja delay ustawia opóźnienie między odświeżeniami wykresu na podaną liczbę I<sekund>."
+
+#. type: Plain text
+#: tload.1:28
+msgid "Display this help text."
+msgstr "Wyświetlenie tego opisu."
+
+#. type: Plain text
+#: tload.1:35
+msgid "I</proc/loadavg> load average information"
+msgstr "I</proc/loadavg> informacja o średnim obciążeniu"
+
+#. type: Plain text
+#: tload.1:40
+msgid "B<ps>(1), B<top>(1), B<uptime>(1), B<w>(1)"
+msgstr "B<ps>(1), B<top>(1), B<uptime>(1), B<w>(1)"
+
+#. type: Plain text
+#: tload.1:48
+msgid "The B<-d>I< delay> option sets the time argument for an B<alarm>(2); if -d 0 is specified, the alarm is set to 0, which will never send the B<SIGALRM> and update the display."
+msgstr "Opcja B<-d>I< opóźnienie> ustawia czas dla funkcji B<alarm>(2); jeśli podano -d 0, alarm jest ustawiany na 0, co oznacza, że nigdy nie zostanie wysłany B<SIGALRM> ani odświeżony ekran."
+
+#. type: Plain text
+#: tload.1:56
+msgid "Branko Lankester, E<.UR david@\\:ods.\\:com> David Engel E<.UE , and> E<.UR johnsonm@\\:redhat.\\:com> Michael K. Johnson E<.UE .>"
+msgstr "Branko Lankester, E<.UR david@\\:ods.\\:com> David Engel E<.UE , oraz> E<.UR johnsonm@\\:redhat.\\:com> Michael K. Johnson E<.UE .>"
+
+#. type: TH
+#: uptime.1:3
+#, no-wrap
+msgid "UPTIME"
+msgstr "UPTIME"
+
+#. type: TH
+#: uptime.1:3
+#, no-wrap
+msgid "December 2012"
+msgstr "grudzień 2012"
+
+#. type: Plain text
+#: uptime.1:6
+msgid "uptime - Tell how long the system has been running."
+msgstr "uptime - informacja, jak długo działa system."
+
+#. type: Plain text
+#: uptime.1:9
+msgid "B<uptime> [I<options>]"
+msgstr "B<uptime> [I<opcje>]"
+
+#. type: Plain text
+#: uptime.1:14
+msgid "B<uptime> gives a one line display of the following information.  The current time, how long the system has been running, how many users are currently logged on, and the system load averages for the past 1, 5, and 15 minutes."
+msgstr "B<uptime> w pojedynczej linii podaje następujące informacje: bieżący czas; czas, jak długo działa system; liczbę aktualnie zalogowanych użytkowników; średnie obciążenie systemu dla ostatnich 1, 5 i 15 minut."
+
+#. type: Plain text
+#: uptime.1:17
+msgid "This is the same information contained in the header line displayed by B<w>(1)."
+msgstr "Są to te same informacje, które zawiera linia nagłówka wyświetlana przez polecenie B<w>(1)."
+
+#. type: Plain text
+#: uptime.1:26
+msgid "System load averages is the average number of processes that are either in a runnable or uninterruptable state.  A process in a runnable state is either using the CPU or waiting to use the CPU.  A process in uninterruptable state is waiting for some I/O access, eg waiting for disk.  The averages are taken over the three time intervals.  Load averages are not normalized for the number of CPUs in a system, so a load average of 1 means a single CPU system is loaded all the time while on a 4 CPU system it means it was idle 75% of the time."
+msgstr "Średnie obciążenie systemu to średnia liczba procesów w stanie działającym lub nieprzerywalnym. Proces jest w stanie działającym, kiedy używa procesora lub oczekuje na procesor. Proces jest w stanie nieprzerywalnym, kiedy oczekuje na jakiś dostęp we/wy, np. na dysk. Średnie są obliczane dla trzech okresów czasu. Nie są normalizowane pod kątem liczby procesorów w systemie, więc średnie obciążenie 1 oznacza, że system jednoprocesorowy jest obciążony cały czas, podczas gdy system 4-procesorowy jest bezczynny przez 75% czasu."
+
+#. type: TP
+#: uptime.1:27
+#, no-wrap
+msgid "B<-p>, B<--pretty>"
+msgstr "B<-p>, B<--pretty>"
+
+#. type: Plain text
+#: uptime.1:30
+msgid "show uptime in pretty format"
+msgstr "wyświetlenie czasu działania w ładnym formacie"
+
+#. type: Plain text
+#: uptime.1:33
+msgid "display this help text"
+msgstr "wyświetlenie tego opisu"
+
+#. type: TP
+#: uptime.1:33
+#, no-wrap
+msgid "B<-s>, B<--since>"
+msgstr "B<-s>, B<--since>"
+
+#. type: Plain text
+#: uptime.1:36
+msgid "system up since, in yyyy-mm-dd HH:MM:SS format"
+msgstr "początek czasu działania systemu w formacie rrrr-mm-dd GG:MM:SS"
+
+#. type: Plain text
+#: uptime.1:39
+msgid "display version information and exit"
+msgstr "wyświetlenie informacji o wersji i zakończenie"
+
+#. type: TP
+#: uptime.1:40 w.1:71
+#, no-wrap
+msgid "I</var/run/utmp>"
+msgstr "I</var/run/utmp>"
+
+#. type: Plain text
+#: uptime.1:43 w.1:74
+msgid "information about who is currently logged on"
+msgstr "informacja o tym, kto jest obecnie zalogowany"
+
+#. type: TP
+#: uptime.1:43 w.1:74
+#, no-wrap
+msgid "I</proc>"
+msgstr "I</proc>"
+
+#. type: Plain text
+#: uptime.1:46 w.1:77
+msgid "process information"
+msgstr "informacje o procesach"
+
+#. type: Plain text
+#: uptime.1:56
+msgid "B<uptime> was written by E<.UR greenfie@gauss.\\:rutgers.\\:edu> Larry Greenfield E<.UE> and E<.UR johnsonm@sunsite.\\:unc.\\:edu> Michael K. Johnson E<.UE>"
+msgstr "Program B<uptime> napisali E<.UR greenfie@gauss.\\:rutgers.\\:edu> Larry Greenfield E<.UE> oraz E<.UR johnsonm@sunsite.\\:unc.\\:edu> Michael K. Johnson E<.UE>"
+
+#. type: Plain text
+#: uptime.1:61
+msgid "B<ps>(1), B<top>(1), B<utmp>(5), B<w>(1)"
+msgstr "B<ps>(1), B<top>(1), B<utmp>(5), B<w>(1)"
+
+#. type: TH
+#: vmstat.8:3
+#, no-wrap
+msgid "VMSTAT"
+msgstr "VMSTAT"
+
+#. type: TH
+#: vmstat.8:3
+#, no-wrap
+msgid "September 2011"
+msgstr "wrzesień 2011"
+
+#. type: Plain text
+#: vmstat.8:6
+msgid "vmstat - Report virtual memory statistics"
+msgstr "vmstat - statystyki pamięci wirtualnej"
+
+#. type: Plain text
+#: vmstat.8:10
+msgid "B<vmstat> [options] [I<delay> [I<count>]]"
+msgstr "B<vmstat> [opcje] [I<opóźnienie> [I<liczba>]]"
+
+#. type: Plain text
+#: vmstat.8:14
+msgid "B<vmstat> reports information about processes, memory, paging, block IO, traps, disks and cpu activity."
+msgstr "B<vmstat> raportuje informacje o aktywności procesów, pamięci, stronicowania, blokowego we/wy, pułapek, dysków i procesora."
+
+#. type: Plain text
+#: vmstat.8:19
+msgid "The first report produced gives averages since the last reboot.  Additional reports give information on a sampling period of length I<delay>.  The process and memory reports are instantaneous in either case."
+msgstr "Pierwszy tworzony raport podaje średnie wartości od ostatniego restartu systemu. Dodatkowe raporty podają informacje dla okresów próbkowania o długości I<opóźnienia>. Raporty dotyczące procesów i pamięci są w obu przypadkach natychmiastowe."
+
+#. type: TP
+#: vmstat.8:20
+#, no-wrap
+msgid "I<delay>"
+msgstr "I<opóźnienie>"
+
+#. type: Plain text
+#: vmstat.8:27
+msgid "The I<delay> between updates in seconds.  If no I<delay> is specified, only one report is printed with the average values since boot."
+msgstr "I<Opóźnienie> pomiędzy uaktualnieniami w sekundach. Jeśli nie podano I<opóźnienia>, wypisywany jest tylko raport z wartościami średnimi od rozruchu systemu."
+
+#. type: TP
+#: vmstat.8:27
+#, no-wrap
+msgid "I<count>"
+msgstr "I<liczba>"
+
+#. type: Plain text
+#: vmstat.8:34
+msgid "Number of updates.  In absence of I<count>, when I<delay> is defined, default is infinite."
+msgstr "Liczba uaktualnień. W przypadku braku I<liczby>, jeśli podano I<opóźnienie>, domyślna jest nieskończoność."
+
+#. type: TP
+#: vmstat.8:34
+#, no-wrap
+msgid "B<-a>, B<--active>"
+msgstr "B<-a>, B<--active>"
+
+#. type: Plain text
+#: vmstat.8:37
+msgid "Display active and inactive memory, given a 2.5.41 kernel or better."
+msgstr "Wyświetlenie pamięci aktywnej i nieaktywnej, jeśli używane jest jądro 2.5.41 lub nowsze."
+
+#. type: TP
+#: vmstat.8:37
+#, no-wrap
+msgid "B<-f>, B<--forks>"
+msgstr "B<-f>, B<--forks>"
+
+#. type: Plain text
+#: vmstat.8:45
+msgid "The B<-f> switch displays the number of forks since boot.  This includes the fork, vfork, and clone system calls, and is equivalent to the total number of tasks created.  Each process is represented by one or more tasks, depending on thread usage.  This display does not repeat."
+msgstr "Opcja B<-f> wyświetla liczbę rozgałęzień procesów od rozruchu systemu. Liczba ta obejmuje wywołania systemowe fork, vfork oraz clone; jest odpowiednikiem całkowitej liczby utworzonych zadań. Każdy proces jest reprezentowany przez jedno lub więcej zadań, w zależności od wykorzystania wątków. Ten widok się nie powtarza."
+
+#. type: TP
+#: vmstat.8:45
+#, no-wrap
+msgid "B<-m>, B<--slabs>"
+msgstr "B<-m>, B<--slabs>"
+
+#. type: Plain text
+#: vmstat.8:48
+msgid "Displays slabinfo."
+msgstr "Wyświetlenie slabinfo."
+
+#. type: TP
+#: vmstat.8:48
+#, no-wrap
+msgid "B<-n>, B<--one-header>"
+msgstr "B<-n>, B<--one-header>"
+
+#. type: Plain text
+#: vmstat.8:51
+msgid "Display the header only once rather than periodically."
+msgstr "Wyświetlenie nagłówka tylko raz zamiast regularnie."
+
+#. type: TP
+#: vmstat.8:51
+#, no-wrap
+msgid "B<-s>, B<--stats>"
+msgstr "B<-s>, B<--stats>"
+
+#. type: Plain text
+#: vmstat.8:55
+msgid "Displays a table of various event counters and memory statistics.  This display does not repeat."
+msgstr "Wyświetlenie tabeli różnych liczników zdarzeń i statystyk pamięci. Ten widok się nie powtarza."
+
+#. type: TP
+#: vmstat.8:55
+#, no-wrap
+msgid "B<-d>, B<--disk>"
+msgstr "B<-d>, B<--disk>"
+
+#. type: Plain text
+#: vmstat.8:58
+msgid "Report disk statistics (2.5.70 or above required)."
+msgstr "Raport statystyk dysku (wymagane jądro 2.5.70 lub nowsze)."
+
+#. type: TP
+#: vmstat.8:58
+#, no-wrap
+msgid "B<-D>, B<--disk-sum>"
+msgstr "B<-D>, B<--disk-sum>"
+
+#. type: Plain text
+#: vmstat.8:61
+msgid "Report some summary statistics about disk activity."
+msgstr "Raport pewnych statystyk zbiorczych dotyczących aktywności dysku."
+
+#. type: TP
+#: vmstat.8:61
+#, no-wrap
+msgid "B<-p>, B<--partition> I<device>"
+msgstr "B<-p>, B<--partition> I<urządzenie>"
+
+#. type: Plain text
+#: vmstat.8:64
+msgid "Detailed statistics about partition (2.5.70 or above required)."
+msgstr "Szczegółowe statystyki dotyczące partycji (wymagane jądro 2.5.70 lub nowsze)."
+
+#. type: TP
+#: vmstat.8:64
+#, no-wrap
+msgid "B<-S>, B<--unit> I<character>"
+msgstr "B<-S>, B<--unit> I<znak>"
+
+#. type: Plain text
+#: vmstat.8:76
+msgid "Switches outputs between 1000 (I<k>), 1024 (I<K>), 1000000 (I<m>), or 1048576 (I<M>)  bytes.  Note this does not change the swap (si/so) or block (bi/bo)  fields."
+msgstr "Przełączenie wyjścia między jednostkami 1000 (I<k>), 1024 (I<K>),1000000 (I<m>) lub 1048576 (I<M>) bajtów. Opcja nie zmienia pól operacji wymiany (si/so) ani blokowych (bi/bo)."
+
+#. type: TP
+#: vmstat.8:76
+#, no-wrap
+msgid "B<-t>, B<--timestamp>"
+msgstr "B<-t>, B<--timestamp>"
+
+#. type: Plain text
+#: vmstat.8:79
+msgid "Append timestamp to each line"
+msgstr "Dołączenie znacznika czasu do każdej linii"
+
+#. type: Plain text
+#: vmstat.8:84
+msgid "Wide output mode (useful for systems with higher amount of memory, where the default output mode suffers from unwanted column breakage).  The output is wider than 80 characters per line."
+msgstr "Tryb szerokiego wyjścia (przydatny dla systemów z dużą ilością pamięci, gdzie domyślny tryb wyjścia cierpi przez niechciane łamanie kolumn). Wyjście jest szersze niż 80 znaków w linii."
+
+#. type: SH
+#: vmstat.8:91
+#, no-wrap
+msgid "FIELD DESCRIPTION FOR VM MODE"
+msgstr "OPIS PÓL DLA TRYBU VM"
+
+#. type: SS
+#: vmstat.8:92
+#, no-wrap
+msgid "Procs"
+msgstr "Proc."
+
+#. type: Plain text
+#: vmstat.8:97
+#, no-wrap
+msgid ""
+"r: The number of runnable processes (running or waiting for run time).\n"
+"b: The number of processes in uninterruptible sleep.\n"
+msgstr ""
+"r: Liczba procesów działających (działających lub czekających na czas pracy).\n"
+"b: Liczba procesów w nieprzerywalnym śnie.\n"
+
+#. type: SS
+#: vmstat.8:99
+#, no-wrap
+msgid "Memory"
+msgstr "Pamięć"
+
+#. type: Plain text
+#: vmstat.8:108
+#, no-wrap
+msgid ""
+"swpd: the amount of virtual memory used.\n"
+"free: the amount of idle memory.\n"
+"buff: the amount of memory used as buffers.\n"
+"cache: the amount of memory used as cache.\n"
+"inact: the amount of inactive memory.  (-a option)\n"
+"active: the amount of active memory.  (-a option)\n"
+msgstr ""
+"swap:   ilość użytej pamięci wirtualnej.\n"
+"wolna:  ilość pamięci bezczynnej.\n"
+"bufor:  ilość pamięci używanej jako bufory.\n"
+"cache:  ilość pamięci używanej jako podręczna.\n"
+"nieakt: ilość pamięci nieaktywnej (opcja -a).\n"
+"akt:    ilość pamięci aktywnej (opcja -a).\n"
+
+#. type: SS
+#: vmstat.8:110
+#, no-wrap
+msgid "Swap"
+msgstr "Swap"
+
+#. type: Plain text
+#: vmstat.8:115
+#, no-wrap
+msgid ""
+"si: Amount of memory swapped in from disk (/s).\n"
+"so: Amount of memory swapped to disk (/s).\n"
+msgstr ""
+"si: Ilość pamięci wymiany wczytanej z dysku (/s).\n"
+"so: Ilość pamięci wymiany zapisanej na dysk (/s).\n"
+
+#. type: SS
+#: vmstat.8:117 vmstat.8:161
+#, no-wrap
+msgid "IO"
+msgstr "IO"
+
+#. type: Plain text
+#: vmstat.8:122
+#, no-wrap
+msgid ""
+"bi: Blocks received from a block device (blocks/s).\n"
+"bo: Blocks sent to a block device (blocks/s).\n"
+msgstr ""
+"bi: Bloki odebrane z urządzenia blokowego (bloki/s).\n"
+"bo: Bloki wysłane do urządzenia blokowego (bloki/s).\n"
+
+#. type: SS
+#: vmstat.8:124
+#, no-wrap
+msgid "System"
+msgstr "System"
+
+#. type: Plain text
+#: vmstat.8:129
+#, no-wrap
+msgid ""
+"in: The number of interrupts per second, including the clock.\n"
+"cs: The number of context switches per second.\n"
+msgstr ""
+"in: Liczba przerwań na sekundę, włącznie z zegarowym.\n"
+"cs: Liczba przełączeń kontekstu na sekundę.\n"
+
+#. type: SS
+#: vmstat.8:131
+#, no-wrap
+msgid "CPU"
+msgstr "CPU"
+
+#. type: Plain text
+#: vmstat.8:134
+msgid "These are percentages of total CPU time."
+msgstr "Procenty całkowitego czasu procesora."
+
+#. type: Plain text
+#: vmstat.8:140
+#, no-wrap
+msgid ""
+"us: Time spent running non-kernel code.  (user time, including nice time)\n"
+"sy: Time spent running kernel code.  (system time)\n"
+"id: Time spent idle.  Prior to Linux 2.5.41, this includes IO-wait time.\n"
+"wa: Time spent waiting for IO.  Prior to Linux 2.5.41, included in idle.\n"
+"st: Time stolen from a virtual machine.  Prior to Linux 2.6.11, unknown.\n"
+msgstr ""
+"us: Czas spędzony w kodzie poza jądrem (czas użytkownika, w tym nice).\n"
+"sy: Czas spędzony w kodzie jądra (czas systemu)\n"
+"id: Czas spędzony bezczynnie. Przed Linuksem 2.5.41 obejmował czas IO-wait.\n"
+"wa: Czas spędzony na oczekiwaniu na we/wy. Przed 2.5.41 zawarty w bezczynnym.\n"
+"st: Czas skradziony wirtualnej maszynie. Przed Linuksem 2.6.11 nieznany.\n"
+
+#. type: SH
+#: vmstat.8:142
+#, no-wrap
+msgid "FIELD DESCRIPTION FOR DISK MODE"
+msgstr "OPIS PÓL DLA TRYBU DYSKOWEGO"
+
+#. type: SS
+#: vmstat.8:143
+#, no-wrap
+msgid "Reads"
+msgstr "Odczyty"
+
+#. type: Plain text
+#: vmstat.8:150
+#, no-wrap
+msgid ""
+"total: Total reads completed successfully\n"
+"merged: grouped reads (resulting in one I/O)\n"
+"sectors: Sectors read successfully\n"
+"ms: milliseconds spent reading\n"
+msgstr ""
+"total: wszystkie odczyty zakończone poprawnie\n"
+"merged: odczyty zgrupowane (zakończone w jednym we/wy)\n"
+"sectors: sektory odczytane poprawnie\n"
+"ms: milisekundy spędzone na odczycie\n"
+
+#. type: SS
+#: vmstat.8:152
+#, no-wrap
+msgid "Writes"
+msgstr "Zapisy"
+
+#. type: Plain text
+#: vmstat.8:159
+#, no-wrap
+msgid ""
+"total: Total writes completed successfully\n"
+"merged: grouped writes (resulting in one I/O)\n"
+"sectors: Sectors written successfully\n"
+"ms: milliseconds spent writing\n"
+msgstr ""
+"total: wszystkie zapisy zakończone poprawnie\n"
+"merged: zapisy zgrupowane (zakończone w jednym we/wy)\n"
+"sectors: sektory zapisane poprawnie\n"
+"ms: milisekundy spędzone na zapisie\n"
+
+#. type: Plain text
+#: vmstat.8:166
+#, no-wrap
+msgid ""
+"cur: I/O in progress\n"
+"s: seconds spent for I/O\n"
+msgstr ""
+"cur: operacje we/wy w trakcie\n"
+"s: sekundy spędzone na operacjach we/wy\n"
+
+#. type: SH
+#: vmstat.8:168
+#, no-wrap
+msgid "FIELD DESCRIPTION FOR DISK PARTITION MODE"
+msgstr "OPIS PÓL DLA TRYBU PARTYCJI DYSKU"
+
+#. type: Plain text
+#: vmstat.8:174
+#, no-wrap
+msgid ""
+"reads: Total number of reads issued to this partition\n"
+"read sectors: Total read sectors for partition\n"
+"writes : Total number of writes issued to this partition\n"
+"requested writes: Total number of write requests made for partition\n"
+msgstr ""
+"reads: całkowita liczba odczytów zleconych dla tej partycji\n"
+"read sectors: całkowita liczba sektorów odczytanych z partycji\n"
+"writes: całkowita liczba zapisów zleconych dla tej partycji\n"
+"requested writes: całkowita liczba żądań zapisu dla partycji\n"
+
+#. type: SH
+#: vmstat.8:176
+#, no-wrap
+msgid "FIELD DESCRIPTION FOR SLAB MODE"
+msgstr "OPIS PÓL DLA TRYBU PŁYT"
+
+#. type: Plain text
+#: vmstat.8:183
+#, no-wrap
+msgid ""
+"cache: Cache name\n"
+"num: Number of currently active objects\n"
+"total: Total number of available objects\n"
+"size: Size of each object\n"
+"pages: Number of pages with at least one active object\n"
+msgstr ""
+"cache: nazwa pamięci podręcznej\n"
+"num: liczba obecnie aktywnych obiektów\n"
+"total: całkowita liczba dostępnych obiektów\n"
+"size: rozmiar każdego obiektu\n"
+"pages: liczba stron z przynajmniej jednym aktywnym obiektem\n"
+
+#. type: Plain text
+#: vmstat.8:187
+msgid "B<vmstat > does not require special permissions."
+msgstr "B<vmstat > nie wymaga specjalnych uprawnień."
+
+#. type: Plain text
+#: vmstat.8:191
+msgid "These reports are intended to help identify system bottlenecks.  Linux B<vmstat> does not count itself as a running process."
+msgstr "Niniejsze raporty mają na celu pomoc przy identyfikacji wąskich gardeł w systemie. Linuksowy B<vmstat> nie liczy siebie jako działającego procesu."
+
+#. type: Plain text
+#: vmstat.8:194
+msgid "All linux blocks are currently 1024 bytes.  Old kernels may report blocks as 512 bytes, 2048 bytes, or 4096 bytes."
+msgstr "Wszystkie bloki dla Linuksa mają obecnie 1024 bajty. Stare jądra mogły używać bloków 512-, 2048- lub 4096-bajtowych."
+
+#. type: Plain text
+#: vmstat.8:197
+msgid "Since procps 3.1.9, vmstat lets you choose units (k, K, m, M).  Default is K (1024 bytes) in the default mode."
+msgstr "Od wersji procps 3.1.9, vmstat pozwala wybrać jednostki (k, K, m, M). Domyślna to K (1024 bajty) w trybie domyślnym."
+
+#. type: Plain text
+#: vmstat.8:199
+msgid "vmstat uses slabinfo 1.1"
+msgstr "vmstat wykorzystuje slabinfo 1.1"
+
+#. type: Plain text
+#: vmstat.8:205
+#, no-wrap
+msgid ""
+"/proc/meminfo\n"
+"/proc/stat\n"
+"/proc/*/stat\n"
+msgstr ""
+"/proc/meminfo\n"
+"/proc/stat\n"
+"/proc/*/stat\n"
+
+#. type: Plain text
+#: vmstat.8:213
+msgid "B<free>(1), B<iostat>(1), B<mpstat>(1), B<ps>(1), B<sar>(1), B<top>(1)"
+msgstr "B<free>(1), B<iostat>(1), B<mpstat>(1), B<ps>(1), B<sar>(1), B<top>(1)"
+
+#. type: Plain text
+#: vmstat.8:216
+msgid "Does not tabulate the block io per device or count the number of system calls."
+msgstr "Nie raportuje blokowego we/wy per urządzenie ani nie liczy wywołań systemowych."
+
+#. type: Plain text
+#: vmstat.8:221
+msgid "Written by E<.UR al172@yfn.\\:ysu.\\:edu> Henry Ware E<.UE .>"
+msgstr "Autorem jest E<.UR al172@yfn.\\:ysu.\\:edu> Henry Ware E<.UE .>"
+
+#. type: Plain text
+#: vmstat.8:226
+msgid "E<.UR ffrederick@users.\\:sourceforge.\\:net> Fabian Fr\\('ed\\('erick E<.UE> (diskstat, slab, partitions...)"
+msgstr "E<.UR ffrederick@users.\\:sourceforge.\\:net> Fabian Fr\\('ed\\('erick E<.UE> (dyski, płyty, partycje...)"
+
+#. type: TH
+#: w.1:3
+#, no-wrap
+msgid "W"
+msgstr "W"
+
+#. type: TH
+#: w.1:3
+#, no-wrap
+msgid "May 2012"
+msgstr "maj 2012"
+
+#. type: Plain text
+#: w.1:6
+msgid "w - Show who is logged on and what they are doing."
+msgstr "w - wyświetlanie informacji, kto jest zalogowany i co robi."
+
+#. type: Plain text
+#: w.1:9
+msgid "B<w> [I<options>] I<user> [...]"
+msgstr "B<w> [I<opcje>] I<użytkownik> [...]"
+
+#. type: Plain text
+#: w.1:15
+msgid "B<w> displays information about the users currently on the machine, and their processes.  The header shows, in this order, the current time, how long the system has been running, how many users are currently logged on, and the system load averages for the past 1, 5, and 15 minutes."
+msgstr "B<w> wyświetla informacje o użytkownikach obecnych na maszynie oraz ich procesach. Nagłówek pokazuje, w tej kolejności, aktualny czas, jak długo system działa, jak wielu użytkowników jest obecnie zalogowanych oraz średnie obciążenie systemu przez ostatnie 1, 5 oraz 15 minut."
+
+#. type: Plain text
+#: w.1:19
+msgid "The following entries are displayed for each user: login name, the tty name, the remote host, login time, idle time, JCPU, PCPU, and the command line of their current process."
+msgstr "Dla każdego użytkownika wyświetlane są następujące wpisy: nazwa terminala (tty), host zdalny, czas zalogowania, czas bezczynności, JCPU, PCPU oraz linia poleceń bieżącego procesu."
+
+#. type: Plain text
+#: w.1:23
+msgid "The JCPU time is the time used by all processes attached to the tty.  It does not include past background jobs, but does include currently running background jobs."
+msgstr "Czas JCPU to czas wykorzystany przez wszystkie procesy podłączone do terminala. Nie obejmuje wcześniejszych zadań w tle, ale obejmuje procesy obecnie działające w tle."
+
+#. type: Plain text
+#: w.1:26
+msgid "The PCPU time is the time used by the current process, named in the \"what\" field."
+msgstr "Czas PCPU to czas wykorzystany przez bieżący proces, uwidoczniony w polu \"co\"."
+
+#. type: SH
+#: w.1:26
+#, no-wrap
+msgid "COMMAND-LINE OPTIONS"
+msgstr "OPCJE LINII POLECEŃ"
+
+#. type: TP
+#: w.1:27
+#, no-wrap
+msgid "B<-h>, B<--no-header>"
+msgstr "B<-h>, B<--no-header>"
+
+#. type: Plain text
+#: w.1:30
+msgid "Don't print the header."
+msgstr "Bez wypisywania nagłówka."
+
+#. type: TP
+#: w.1:30
+#, no-wrap
+msgid "B<-u>, B<--no-current>"
+msgstr "B<-u>, B<--no-current>"
+
+#. type: Plain text
+#: w.1:35
+msgid "Ignores the username while figuring out the current process and cpu times.  To demonstrate this, do a \"su\" and do a \"w\" and a \"w -u\"."
+msgstr "Ignorowanie nazwy użytkownika przy sprawdzaniu bieżącego procesu i czasów procesora. Różnicę można zobaczyć po wykonaniu \"su\", a następnie \"w\" oraz \"w -u\"."
+
+#. type: TP
+#: w.1:35
+#, no-wrap
+msgid "B<-s>, B<--short>"
+msgstr "B<-s>, B<--short>"
+
+#. type: Plain text
+#: w.1:38
+msgid "Use the short format.  Don't print the login time, JCPU or PCPU times."
+msgstr "Użycie formatu krótkiego - bez wypisywania czasu zalogowania oraz czasów JCPU i PCPU."
+
+#. type: TP
+#: w.1:38
+#, no-wrap
+msgid "B<-f>, B<--from>"
+msgstr "B<-f>, B<--from>"
+
+#. type: Plain text
+#: w.1:48
+msgid "Toggle printing the B<from> (remote hostname) field.  The default as released is for the B<from> field to not be printed, although your system administrator or distribution maintainer may have compiled a version in which the B<from> field is shown by default."
+msgstr "Przełączanie wyświetlania pola B<z> (nazwy hosta zdalnego). Domyślnie w źródłach pole B<z> nie jest wypisywane, ale administrator systemu lub dystrybutor mógł skompilować wersję, która domyślnie pokazuje pole B<z>."
+
+#. type: TP
+#: w.1:51
+#, no-wrap
+msgid "B<-i>, B<--ip-addr>"
+msgstr "B<-i>, B<--ip-addr>"
+
+#. type: Plain text
+#: w.1:54
+msgid "Display IP address instead of hostname for B<from> field."
+msgstr "Wyświetlanie adresu IP zamiast nazwy hosta w polu B<z>."
+
+#. type: TP
+#: w.1:57
+#, no-wrap
+msgid "B<-o>, B<--old-style>"
+msgstr "B<-o>, B<--old-style>"
+
+#. type: Plain text
+#: w.1:60
+msgid "Old style output.  Prints blank space for idle times less than one minute."
+msgstr "Wyjście w starym stylu. Wypisywanie pustego miejsca dla czasów bezczynności poniżej minuty."
+
+#. type: TP
+#: w.1:60
+#, no-wrap
+msgid "B<user >"
+msgstr "B<użytkownik >"
+
+#. type: Plain text
+#: w.1:63
+msgid "Show information about the specified user only."
+msgstr "Wyświetlanie informacji tylko o podanym użytkowniku."
+
+#. type: SH
+#: w.1:63
+#, no-wrap
+msgid "ENVIRONMENT"
+msgstr "ŚRODOWISKO"
+
+#. type: TP
+#: w.1:64
+#, no-wrap
+msgid "PROCPS_USERLEN"
+msgstr "PROCPS_USERLEN"
+
+#. type: Plain text
+#: w.1:67
+msgid "Override the default width of the username column.  Defaults to 8."
+msgstr "Nadpisanie domyślnej szerokości kolumny z nazwą użytkownika. Domyślnie 8."
+
+#. type: TP
+#: w.1:67
+#, no-wrap
+msgid "PROCPS_FROMLEN"
+msgstr "PROCPS_FROMLEN"
+
+#. type: Plain text
+#: w.1:70
+msgid "Override the default width of the from column.  Defaults to 16."
+msgstr "Nadpisanie domyślnej szerokości kolumny B<z>. Domyślnie 16."
+
+#. type: Plain text
+#: w.1:84
+msgid "B<free>(1), B<ps>(1), B<top>(1), B<uptime>(1), B<utmp>(5), B<who>(1)"
+msgstr "B<free>(1), B<ps>(1), B<top>(1), B<uptime>(1), B<utmp>(5), B<who>(1)"
+
+#. type: Plain text
+#: w.1:94
+msgid "B<w> was re-written almost entirely by Charles Blake, based on the version by E<.UR greenfie@\\:gauss.\\:rutgers.\\:edu> Larry Greenfield E<.UE> and E<.UR johnsonm@\\:redhat.\\:com> Michael K. Johnson E<.UE>"
+msgstr "Program B<w> został przepisany prawie w całości przez Charlesa Blake'a w oparciu o wersję, którą napisali E<.UR greenfie@\\:gauss.\\:rutgers.\\:edu> Larry Greenfield E<.UE> oraz E<.UR johnsonm@\\:redhat.\\:com> Michael K. Johnson E<.UE>"
+
+#. type: TH
+#: watch.1:1
+#, no-wrap
+msgid "WATCH"
+msgstr "WATCH"
+
+#. type: Plain text
+#: watch.1:4
+msgid "watch - execute a program periodically, showing output fullscreen"
+msgstr "watch - regularne uruchamianie programu z wyświetlaniem wyjścia na pełnym ekranie"
+
+#. type: Plain text
+#: watch.1:7
+msgid "B<watch> [I<options>] I<command>"
+msgstr "B<watch> [I<opcje>] I<polecenie>"
+
+#. type: Plain text
+#: watch.1:17
+msgid "B<watch> runs I<command> repeatedly, displaying its output and errors (the first screenfull).  This allows you to watch the program output change over time.  By default, the program is run every 2 seconds.  By default, B<watch> will run until interrupted."
+msgstr "B<watch> powtarza uruchamianie I<polecenia>, wyświetlając jego wyjście oraz błędy (przy czym wyjście na pełnym ekranie). Pozwala to obserwować zmianę wyjścia programu w czasie. Domyślnie program jest uruchamiany co 2 sekundy. B<watch> domyślnie działa aż do przerwania."
+
+#. type: TP
+#: watch.1:18
+#, no-wrap
+msgid "B<-d>, B<--differences> [I<permanent>]"
+msgstr "B<-d>, B<--differences> [I<trwale>]"
+
+#. type: Plain text
+#: watch.1:23
+msgid "Highlight the differences between successive updates.  Option will read optional argument that changes highlight to be permanent, allowing to see what has changed at least once since first iteration."
+msgstr "Podświetlanie różnic między kolejnymi uaktualnieniami. Opcja może mieć opcjonalny argument, który zmienia podświetlenie na trwałe, pozwalające zobaczyć, co zmieniło się przynajmniej raz od pierwszej iteracji."
+
+#. type: TP
+#: watch.1:23
+#, no-wrap
+msgid "B<-n>, B<--interval> I<seconds>"
+msgstr "B<-n>, B<--interval> I<sekundy>"
+
+#. type: Plain text
+#: watch.1:27
+msgid "Specify update interval.  The command will not allow quicker than 0.1 second interval, in which the smaller values are converted."
+msgstr "Określenie odstępu między uaktualnieniami. Polecenie nie będzie uruchamiane częściej niż co 0.1 sekundy - na taką wartość są zamieniane krótsze okresy."
+
+#. type: TP
+#: watch.1:27
+#, no-wrap
+msgid "B<-p>, B<--precise>"
+msgstr "B<-p>, B<--precise>"
+
+#. type: Plain text
+#: watch.1:39
+msgid "Make B<watch> attempt to run I<command> every I<interval> seconds. Try it with B<ntptime> and notice how the fractional seconds stays (nearly) the same, as opposed to normal mode where they continuously increase."
+msgstr "Próba uruchamiania I<polecenia> co podaną liczbę I<sekund>. Można wypróbować tę opcję z poleceniem B<ntptime> i obserwować, jak ułamki sekund pozostają (prawie) takie same, w przeciwieństwie do trybu zwykłego, gdzie stale się zwiększają."
+
+#. type: TP
+#: watch.1:39
+#, no-wrap
+msgid "B<-t>, B<--no-title>"
+msgstr "B<-t>, B<--no-title>"
+
+#. type: Plain text
+#: watch.1:43
+msgid "Turn off the header showing the interval, command, and current time at the top of the display, as well as the following blank line."
+msgstr "Wyłączenie nagłówka pokazującego okres, polecenie oraz czas bieżący na górze ekranu, a także następującej po nim pustej linii."
+
+#. type: TP
+#: watch.1:43
+#, no-wrap
+msgid "B<-b>, B<--beep>"
+msgstr "B<-b>, B<--beep>"
+
+#. type: Plain text
+#: watch.1:46
+msgid "Beep if command has a non-zero exit."
+msgstr "Sygnał dźwiękowy w przypadku niezerowego kodu wyjścia polecenia."
+
+#. type: TP
+#: watch.1:46
+#, no-wrap
+msgid "B<-e>, B<--errexit>"
+msgstr "B<-e>, B<--errexit>"
+
+#. type: Plain text
+#: watch.1:49
+msgid "Freeze updates on command error, and exit after a key press."
+msgstr "Zamrożenie uaktualnień po błędzie polecenia, zakończenie pracy po naciśnięciu klawisza."
+
+#. type: TP
+#: watch.1:49
+#, no-wrap
+msgid "B<-g>, B<--chgexit>"
+msgstr "B<-g>, B<--chgexit>"
+
+#. type: Plain text
+#: watch.1:54
+msgid "Exit when the output of I<command> changes."
+msgstr "Zakończenie, gdy wyjście I<polecenia> się zmieni."
+
+#. type: TP
+#: watch.1:54
+#, no-wrap
+msgid "B<-c>, B<--color>"
+msgstr "B<-c>, B<--color>"
+
+#. type: Plain text
+#: watch.1:57
+msgid "Interpret ANSI color and style sequences."
+msgstr "Interpretowanie sekwencji kolorów i stylów ANSI"
+
+#. type: TP
+#: watch.1:57
+#, no-wrap
+msgid "B<-x>, B<--exec>"
+msgstr "B<-x>, B<--exec>"
+
+#. type: Plain text
+#: watch.1:66
+msgid "I<command> is given to B<sh -c> which means that you may need to use extra quoting to get the desired effect.  This with the --exec option, which passes the command to B<exec>(2)  instead."
+msgstr "I<polecenei> jest przekazywane do B<sh -c>, co oznacza, że może być potrzeba użycia dodatkowego cytowania do osiągnięcia pożądanego efektu. Z opcją --exec polecenie jest natomiast przekazywane do funkcji B<exec>(2)."
+
+#. type: TP
+#: watch.1:69
+#, no-wrap
+msgid "B<-v>, B<--version>"
+msgstr "B<-v>, B<--version>"
+
+#. type: SH
+#: watch.1:72
+#, no-wrap
+msgid "NOTE"
+msgstr "UWAGA"
+
+#. type: Plain text
+#: watch.1:79
+msgid "Note that POSIX option processing is used (i.e., option processing stops at the first non-option argument).  This means that flags after I<command> don't get interpreted by B<watch> itself."
+msgstr "Uwaga: używany jest wariant POSIX przetwarzania opcji (tzn. przetwarzanie opcji kończy się na pierwszym argumencie nie będącym opcją). Oznacza to, że flagi podane po I<poleceniu> nie są interpretowane przez program B<watch>."
+
+#. type: Plain text
+#: watch.1:82
+msgid "To watch for mail, you might do"
+msgstr "Aby obserwować pocztę, można wykonać"
+
+#. type: Plain text
+#: watch.1:84
+msgid "watch -n 60 from"
+msgstr "watch -n 60 from"
+
+#. type: Plain text
+#: watch.1:86
+msgid "To watch the contents of a directory change, you could use"
+msgstr "Aby obserwować zmiany zawartości katalogu, można użyć"
+
+#. type: Plain text
+#: watch.1:88
+msgid "watch -d ls -l"
+msgstr "watch -d ls -l"
+
+#. type: Plain text
+#: watch.1:90
+msgid "If you're only interested in files owned by user joe, you might use"
+msgstr "Jeżeli interesujące są tylko pliki, których właścicielem jest użytkownik joe, można użyć"
+
+#. type: Plain text
+#: watch.1:92
+msgid "watch -d 'ls -l | fgrep joe'"
+msgstr "watch -d 'ls -l | fgrep joe'"
+
+#. type: Plain text
+#: watch.1:94
+msgid "To see the effects of quoting, try these out"
+msgstr "Aby zobaczyć efekty cytowania, można wypróbować"
+
+#. type: Plain text
+#: watch.1:96
+msgid "watch echo $$"
+msgstr "watch echo $$"
+
+#. type: Plain text
+#: watch.1:98
+msgid "watch echo '$$'"
+msgstr "watch echo '$$'"
+
+#. type: Plain text
+#: watch.1:100
+msgid "watch echo \"'\"'$$'\"'\""
+msgstr "watch echo \"'\"'$$'\"'\""
+
+#. type: Plain text
+#: watch.1:104
+msgid "To see the effect of precision time keeping, try adding I<-p> to"
+msgstr "Aby zobaczyć efekt precyzyjnej obsługi czasu, można spróbować dodać I<-p> do"
+
+#. type: Plain text
+#: watch.1:106
+msgid "watch -n 10 sleep 1"
+msgstr "watch -n 10 sleep 1"
+
+#. type: Plain text
+#: watch.1:108
+msgid "You can watch for your administrator to install the latest kernel with"
+msgstr "Można obserwować, jak administrator instaluje najnowsze jądro, przy użyciu"
+
+#. type: Plain text
+#: watch.1:110
+msgid "watch uname -r"
+msgstr "watch uname -r"
+
+#. type: Plain text
+#: watch.1:116
+msgid "(Note that I<-p> isn't guaranteed to work across reboots, especially in the face of B<ntpdate> or other bootup time-changing mechanisms)"
+msgstr "(Uwaga: I<-p> nie daje gwarancji działania między restartami systemu, szczególnie w obliczu B<ntpdate> czy innych mechanizmów zmieniających czas w trakcie rozruchu)"
+
+#. type: Plain text
+#: watch.1:121
+msgid "Upon terminal resize, the screen will not be correctly repainted until the next scheduled update.  All B<--differences> highlighting is lost on that update as well."
+msgstr "Przy zmianie rozmiaru terminala ekran nie zostanie poprawnie odrysowany aż do następnego uaktualnienia. Przy tym uaktualnieniu wszystkie podświetlenia B<--differences> zostaną utracone."
+
+#. type: Plain text
+#: watch.1:124
+msgid "Non-printing characters are stripped from program output.  Use \"cat -v\" as part of the command pipeline if you want to see them."
+msgstr "Znaki niedrukowalne są usuwane z wyjścia programu. Aby je zobaczyć, można użyć \"cat -v\" jako części potoku polecenia."
+
+#. type: Plain text
+#: watch.1:128
+msgid "Combining Characters that are supposed to display on the character at the last column on the screen may display one column early, or they may not display at all."
+msgstr "Znaki dołączane, które mają być wyświetlane na znaku w ostatniej kolumnie ekranu, mogą wyświetlać się o jedną kolumnę za wcześnie albo wcale."
+
+#. type: Plain text
+#: watch.1:132
+msgid "Combining Characters never count as different in I<--differences> mode.  Only the base character counts."
+msgstr "Znaki dołączane nigdy nie liczą się jako różne w trybie I<--differences>. Liczy się tylko znak podstawowy."
+
+#. type: Plain text
+#: watch.1:135
+msgid "Blank lines directly after a line which ends in the last column do not display."
+msgstr "Puste wiersze bezpośrednio po wierszu kończącym się w ostatniej kolumnie, nie są wyświetlane."
+
+#. type: Plain text
+#: watch.1:151
+msgid "I<--precise> mode doesn't yet have advanced temporal distortion technology to compensate for a I<command> that takes more than I<interval> seconds to execute.  B<watch> also can get into a state where it rapid-fires as many executions of I<command> as it can to catch up from a previous executions running longer than I<interval> (for example, B<netstat> taking ages on a DNS lookup)."
+msgstr "Tryb I<--precise> nie ma jeszcze zaawansowanej technologii zakrzywienia czasoprzestrzeni w celu skompensowania przypadku wykonywania I<polecenia> dłużej niż I<okres>. B<watch> może też wejść w stan, w którym szybko uruchamia wiele instancji I<polecenia>, aby dogonić poprzednie działające więcej niż I<okres> (np. B<netstat> trwający wieki przez wyszukiwania DNS)."
+
+#. type: Plain text
+#: watch.1:161
+msgid "Various failures."
+msgstr "Różne niepowodzenia."
+
+#. type: TP
+#: watch.1:161
+#, no-wrap
+msgid "B<2>"
+msgstr "B<2>"
+
+#. type: Plain text
+#: watch.1:164
+msgid "Forking the process to watch failed."
+msgstr "Nie udało się odgałęzić procesu do obserwacji."
+
+#. type: TP
+#: watch.1:164
+#, no-wrap
+msgid "B<3>"
+msgstr "B<3>"
+
+#. type: Plain text
+#: watch.1:167
+msgid "Replacing child process stdout with write side pipe failed."
+msgstr "Nie udało się zastąpić standardowego wyjścia procesu potomnego stroną piszącą potoku."
+
+#. type: TP
+#: watch.1:167
+#, no-wrap
+msgid "B<4>"
+msgstr "B<4>"
+
+#. type: Plain text
+#: watch.1:170
+msgid "Command execution failed."
+msgstr "Nie udało się uruchomić polecenia."
+
+#. type: TP
+#: watch.1:170
+#, no-wrap
+msgid "B<5>"
+msgstr "B<5>"
+
+#. type: Plain text
+#: watch.1:173
+msgid "Closing child process write pipe failed."
+msgstr "Nie udało się zamknąć potoku piszącego procesu potomnego."
+
+#. type: TP
+#: watch.1:173
+#, no-wrap
+msgid "B<7>"
+msgstr "B<7>"
+
+#. type: Plain text
+#: watch.1:176
+msgid "IPC pipe creation failed."
+msgstr "Nie udało się utworzyć potoku IPC."
+
+#. type: TP
+#: watch.1:176
+#, no-wrap
+msgid "B<8>"
+msgstr "B<8>"
+
+#. type: Plain text
+#: watch.1:181
+msgid "Getting child process return value with B<waitpid>(2)  failed, or command exited up on error."
+msgstr "Nie udało się uzyskać kodu powrotu procesu potomnego przez B<waitpid>(2) lub polecenie zakończyło się błędem."
+
+#. type: TP
+#: watch.1:181
+#, no-wrap
+msgid "B<other>"
+msgstr "B<inne>"
+
+#. type: Plain text
+#: watch.1:184
+msgid "The watch will propagate command exit status as child exit status."
+msgstr "Program watch propaguje kod wyjścia polecenia jako kod wyjścia potomka."
+
+#. type: Plain text
+#: watch.1:209
+msgid "The original B<watch> was written by E<.UR rembo@\\:unisoft.\\:com> Tony Rems E<.UE> in 1991, with mods and corrections by Francois Pinard.  It was reworked and new features added by E<.UR mkc@\\:acm.\\:org> Mike Coleman E<.UE> in 1999. The beep, exec, and error handling features were added by E<.UR morty@\\:frakir.\\:org> Morty Abzug E<.UE> in 2008.  On a not so dark and stormy morning in March of 2003, E<.UR asd@\\:suespammers.\\:org> Anthony DeRobertis E<.UE> got sick of his watches that should update every minute eventually updating many seconds after the minute started, and added microsecond precision.  Unicode support was added in 2009 by E<.UR procps@\\:rrod.\\:net> Jarrod Lowe E<.UE>"
+msgstr "Oryginalny program B<watch> napisał E<.UR rembo@\\:unisoft.\\:com> Tony Rems E<.UE> w roku 1991, z modyfikacjami i poprawkami autorstwa Francoisa Pinarda. Następnie przepisał go dodając nowe opcje E<.UR mkc@\\:acm.\\:org> Mike Coleman E<.UE> w 1999. Opcje sygnału dźwiękowego, uruchamiania przez exec oraz obsługi błędów dodał E<.UR morty@\\:frakir.\\:org> Morty Abzug E<.UE> w 2008. Pewnego niezbyt ciemnego i burzowego poranka w marcu 2003 E<.UR asd@\\:suespammers.\\:org> Anthony DeRobertis E<.UE> miał dość obserwacji, które powinny uruchamiać się co minutę, uaktualniających się wiele sekund po początkowej minucie, i dodał precyzję mikrosekundową. Obsługę Unicode dodał w 2009 roku E<.UR procps@\\:rrod.\\:net> Jarrod Lowe E<.UE>"
