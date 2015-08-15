@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS 1 "June 2015" "procps-ng" "User Commands"
+.TH PS 1 "August 2015" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -1078,6 +1078,10 @@ mask of the caught signals, see
 According to the width of the field, a 32 or 64 bits mask in hexadecimal
 format is displayed.  (alias
 .BR sig_catch , \ sigcatch ).
+T}
+
+cgname	CGNAME	T{
+display name of control groups to which the process belongs.
 T}
 
 cgroup	CGROUP	T{

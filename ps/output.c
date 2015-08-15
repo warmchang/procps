@@ -98,13 +98,29 @@ static int sr_nop(const proc_t* a, const proc_t* b){
 
 static int sr_cgroup(const proc_t* a, const proc_t* b)
 {
-    int i;
-    int cmpval;
-    for (i=0; a->cgroup[i] != NULL && b->cgroup[i] != NULL; i++) {
-        if ((cmpval = strcmp(a->cgroup[i], b->cgroup[i])) != 0)
-            return cmpval;
-    }
-    return 0;
+    /* This is a "vector" of one */
+    if (*a->cgroup == NULL || *b->cgroup == NULL)
+        return 0;
+    return strcmp(*a->cgroup, *b->cgroup);
+}
+
+static int sr_cgname(const proc_t* a, const proc_t* b)
+{
+    char *aname, *bname;
+    /* This is a "vector" of one */
+    if (*a->cgroup == NULL || *b->cgroup == NULL)
+        return 0;
+  aname = strstr(*a->cgroup, ":name=");
+  bname = strstr(*b->cgroup, ":name=");
+  /* check for missing names, they win */
+  if (aname == NULL || aname[6] == '\0') {
+      if (bname == NULL || bname[6] == '\0')
+          return 0;
+      return -1;
+  } else if (bname == NULL || bname[6] == '\0')
+      return 1;
+  return strcmp(aname+6,bname+6);
+
 }
 
 
@@ -453,6 +469,22 @@ static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp
 
   escaped_copy(outbuf, *pp->cgroup, OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
+}
+
+static int pr_cgname(char *restrict const outbuf,const proc_t *restrict const pp) {
+  int rightward = max_rightward;
+  int i;
+  char *name;
+
+  if ((name = strstr(*pp->cgroup, ":name=")) != NULL) {
+      name += 6;
+      if (name != '\0') {
+          escape_str(outbuf, name, OUTBUF_SIZE, &rightward);
+          return max_rightward - rightward;
+      }
+  }
+  /* fallback: use full cgroup for name */
+  return pr_cgroup(outbuf, pp);
 }
 
 /* Non-standard, from SunOS 5 */
@@ -1451,6 +1483,7 @@ static const format_struct format_array[] = {
 {"bsdtime",   "TIME",    pr_bsdtime,  sr_nop,     6,   0,    LNX, ET|RIGHT},
 {"c",         "C",       pr_c,        sr_pcpu,    2,   0,    SUN, ET|RIGHT},
 {"caught",    "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigcatch*/
+{"cgname",    "CGNAME",  pr_cgname,   sr_cgname, 27,CGRP,    LNX, PO|UNLIMITED},
 {"cgroup",    "CGROUP",  pr_cgroup,   sr_cgroup, 27,CGRP,    LNX, PO|UNLIMITED},
 {"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, TO|LEFT},
 {"cls",       "CLS",     pr_class,    sr_sched,   3,   0,    HPU, TO|RIGHT}, /*says HPUX or RT*/
