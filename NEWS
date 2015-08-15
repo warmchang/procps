@@ -1,5 +1,6 @@
 procps-ng-NEXT
 ----------------
+  * ps: sort by cgroup Debian #692279
 
 procps-ng-3.3.11
 ----------------

@@ -96,6 +96,18 @@ static int sr_nop(const proc_t* a, const proc_t* b){
   return 0;
 }
 
+static int sr_cgroup(const proc_t* a, const proc_t* b)
+{
+    int i;
+    int cmpval;
+    for (i=0; a->cgroup[i] != NULL && b->cgroup[i] != NULL; i++) {
+        if ((cmpval = strcmp(a->cgroup[i], b->cgroup[i])) != 0)
+            return cmpval;
+    }
+    return 0;
+}
+
+
 #define CMP_STR(NAME) \
 static int sr_ ## NAME(const proc_t* P, const proc_t* Q) { \
     return strcmp(P->NAME, Q->NAME); \
@@ -1439,7 +1451,7 @@ static const format_struct format_array[] = {
 {"bsdtime",   "TIME",    pr_bsdtime,  sr_nop,     6,   0,    LNX, ET|RIGHT},
 {"c",         "C",       pr_c,        sr_pcpu,    2,   0,    SUN, ET|RIGHT},
 {"caught",    "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigcatch*/
-{"cgroup",    "CGROUP",  pr_cgroup,   sr_nop,    27,CGRP,    LNX, PO|UNLIMITED},
+{"cgroup",    "CGROUP",  pr_cgroup,   sr_cgroup, 27,CGRP,    LNX, PO|UNLIMITED},
 {"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, TO|LEFT},
 {"cls",       "CLS",     pr_class,    sr_sched,   3,   0,    HPU, TO|RIGHT}, /*says HPUX or RT*/
 {"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, AN|RIGHT},
