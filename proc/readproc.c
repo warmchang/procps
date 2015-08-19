@@ -95,7 +95,7 @@ static inline void free_acquired (proc_t *p, int reuse) {
         if (p->cgroup)   free((void*)*p->cgroup);
         if (p->supgid)   free(p->supgid);
         if (p->supgrp)   free(p->supgrp);
-#ifdef WITH_SYSTEMD
+        if (p->cmd)      free(p->cmd);
         if (p->sd_mach)  free(p->sd_mach);
         if (p->sd_ouid)  free(p->sd_ouid);
         if (p->sd_seat)  free(p->sd_seat);
@@ -103,7 +103,6 @@ static inline void free_acquired (proc_t *p, int reuse) {
         if (p->sd_slice) free(p->sd_slice);
         if (p->sd_unit)  free(p->sd_unit);
         if (p->sd_uunit) free(p->sd_uunit);
-#endif
 #ifdef QUICK_THREADS
     }
 #endif
@@ -264,8 +263,9 @@ ENTER(0x220);
 #endif
 
     case_Name:
-    {   unsigned u = 0;
-        while(u < sizeof P->cmd - 1u){
+    {   char buf[16];
+        unsigned u = 0;
+        while(u < sizeof(buf) - 1u){
             int c = *S++;
             if(unlikely(c=='\n')) break;
             if(unlikely(c=='\0')) break; // should never happen
@@ -275,9 +275,11 @@ ENTER(0x220);
                 if(!c)      break; // should never happen
                 if(c=='n') c='\n'; // else we assume it is '\\'
             }
-            P->cmd[u++] = c;
+            buf[u++] = c;
         }
-        P->cmd[u] = '\0';
+        buf[u] = '\0';
+        if (!P->cmd)
+            P->cmd = strndup(buf, 15);
         S--;   // put back the '\n' or '\0'
         continue;
     }
@@ -562,9 +564,9 @@ ENTER(0x160);
     S = strchr(S, '(') + 1;
     tmp = strrchr(S, ')');
     num = tmp - S;
-    if(unlikely(num >= sizeof P->cmd)) num = sizeof P->cmd - 1;
-    memcpy(P->cmd, S, num);
-    P->cmd[num] = '\0';
+    if(unlikely(num >= 16)) num = 15;
+    if (!P->cmd)
+       P->cmd = strndup(S, num);
     S = tmp + 2;                 // skip ") "
 
     num = sscanf(S,
@@ -938,22 +940,24 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     }
 
     /* some number->text resolving which is time consuming */
+    /* ( names are cached, so memcpy to arrays was silly ) */
     if (flags & PROC_FILLUSR){
-        memcpy(p->euser, user_from_uid(p->euid), sizeof p->euser);
+        p->euser = user_from_uid(p->euid);
         if(flags & PROC_FILLSTATUS) {
-            memcpy(p->ruser, user_from_uid(p->ruid), sizeof p->ruser);
-            memcpy(p->suser, user_from_uid(p->suid), sizeof p->suser);
-            memcpy(p->fuser, user_from_uid(p->fuid), sizeof p->fuser);
+            p->ruser = user_from_uid(p->ruid);
+            p->suser = user_from_uid(p->suid);
+            p->fuser = user_from_uid(p->fuid);
         }
     }
 
     /* some number->text resolving which is time consuming */
+    /* ( names are cached, so memcpy to arrays was silly ) */
     if (flags & PROC_FILLGRP){
-        memcpy(p->egroup, group_from_gid(p->egid), sizeof p->egroup);
+        p->egroup = group_from_gid(p->egid);
         if(flags & PROC_FILLSTATUS) {
-            memcpy(p->rgroup, group_from_gid(p->rgid), sizeof p->rgroup);
-            memcpy(p->sgroup, group_from_gid(p->sgid), sizeof p->sgroup);
-            memcpy(p->fgroup, group_from_gid(p->fgid), sizeof p->fgroup);
+            p->rgroup = group_from_gid(p->rgid);
+            p->sgroup = group_from_gid(p->sgid);
+            p->fgroup = group_from_gid(p->fgid);
         }
     }
 
@@ -1052,22 +1056,24 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     }
 
     /* some number->text resolving which is time consuming */
+    /* ( names are cached, so memcpy to arrays was silly ) */
     if (flags & PROC_FILLUSR){
-        memcpy(t->euser, user_from_uid(t->euid), sizeof t->euser);
+        t->euser = user_from_uid(t->euid);
         if(flags & PROC_FILLSTATUS) {
-            memcpy(t->ruser, user_from_uid(t->ruid), sizeof t->ruser);
-            memcpy(t->suser, user_from_uid(t->suid), sizeof t->suser);
-            memcpy(t->fuser, user_from_uid(t->fuid), sizeof t->fuser);
+            t->ruser = user_from_uid(t->ruid);
+            t->suser = user_from_uid(t->suid);
+            t->fuser = user_from_uid(t->fuid);
         }
     }
 
     /* some number->text resolving which is time consuming */
+    /* ( names are cached, so memcpy to arrays was silly ) */
     if (flags & PROC_FILLGRP){
-        memcpy(t->egroup, group_from_gid(t->egid), sizeof t->egroup);
+        t->egroup = group_from_gid(t->egid);
         if(flags & PROC_FILLSTATUS) {
-            memcpy(t->rgroup, group_from_gid(t->rgid), sizeof t->rgroup);
-            memcpy(t->sgroup, group_from_gid(t->sgid), sizeof t->sgroup);
-            memcpy(t->fgroup, group_from_gid(t->fgid), sizeof t->fgroup);
+            t->rgroup = group_from_gid(t->rgid);
+            t->sgroup = group_from_gid(t->sgid);
+            t->fgroup = group_from_gid(t->fgid);
         }
     }
 
@@ -1124,10 +1130,8 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         t->cmdline  = p->cmdline;  // better not free these until done with all threads!
         t->environ  = p->environ;
         t->cgroup   = p->cgroup;
-        if (t->supgid) free(t->supgid);
         t->supgid   = p->supgid;
         t->supgrp   = p->supgrp;
-#ifdef WITH_SYSTEMD
         t->sd_mach  = p->sd_mach;
         t->sd_ouid  = p->sd_ouid;
         t->sd_seat  = p->sd_seat;
@@ -1135,7 +1139,6 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         t->sd_slice = p->sd_slice;
         t->sd_unit  = p->sd_unit;
         t->sd_uunit = p->sd_uunit;
-#endif
         t->lxcname = p->lxcname;
         MK_THREAD(t);
     }
@@ -1429,7 +1432,9 @@ void look_up_our_self(proc_t *p) {
         fprintf(stderr, "Error, do this: mount -t proc proc /proc\n");
         _exit(47);
     }
+    memset(p, 0, sizeof(*p));
     stat2proc(ub.buf, p);  // parse /proc/self/stat
+    free_acquired(p, 0);
     free(ub.buf);
 }
 

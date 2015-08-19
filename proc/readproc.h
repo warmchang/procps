@@ -14,7 +14,7 @@
 #include <proc/pwcache.h>
 
 #define SIGNAL_STRING
-#define QUICK_THREADS        /* copy (vs. read) some thread info from parent proc_t */
+//#define QUICK_THREADS        /* copy (vs. read) some thread info from parent proc_t */
 
 __BEGIN_DECLS
 
@@ -137,19 +137,15 @@ typedef struct proc_t {
          *supgid,       // status          supplementary gids as comma delimited str
          *supgrp;       // supp grp names as comma delimited str, derived from supgid
     char
-	// Be compatible: Digital allows 16 and NT allows 14 ???
-    	euser[P_G_SZ],	// stat(),status   effective user name
-    	ruser[P_G_SZ],	// status          real user name
-    	suser[P_G_SZ],	// status          saved user name
-    	fuser[P_G_SZ],	// status          filesystem user name
-    	rgroup[P_G_SZ],	// status          real group name
-    	egroup[P_G_SZ],	// status          effective group name
-    	sgroup[P_G_SZ],	// status          saved group name
-    	fgroup[P_G_SZ],	// status          filesystem group name
-    	cmd[16];	// stat,status     basename of executable file in call to exec(2)
-    struct proc_t
-	*ring,		// n/a             thread group ring
-	*next;		// n/a             various library uses
+        *euser,         // stat(),status   effective user name
+        *ruser,         // status          real user name
+        *suser,         // status          saved user name
+        *fuser,         // status          filesystem user name
+        *rgroup,        // status          real group name
+        *egroup,        // status          effective group name
+        *sgroup,        // status          saved group name
+        *fgroup,        // status          filesystem group name
+        *cmd;           // stat,status     basename of executable file in call to exec(2)
     int
 	pgrp,		// stat            process group id
 	session,	// stat            session id
@@ -171,7 +167,6 @@ typedef struct proc_t {
 #endif
     long
         ns[NUM_NS];     // (ns subdir)     inode number of namespaces
-#ifdef WITH_SYSTEMD
     char
         *sd_mach,       // n/a             systemd vm/container name
         *sd_ouid,       // n/a             systemd session owner uid
@@ -180,7 +175,6 @@ typedef struct proc_t {
         *sd_slice,      // n/a             systemd slice unit
         *sd_unit,       // n/a             systemd system unit id
         *sd_uunit;      // n/a             systemd user unit id
-#endif
     const char
         *lxcname;       // n/a             lxc container name
 } proc_t;
