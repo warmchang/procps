@@ -46,7 +46,6 @@
 //#define OFF_SCROLLBK            /* disable tty emulators scrollback buffer */
 //#define OFF_STDERROR            /* disable our stderr buffering (redirect) */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
-//#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND8CPUS            /* pretend we're smp with 8 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define PRETEND_NUMA            /* pretend 4 (or 3 w/o OFF_NUMASKIP) Nodes */
@@ -82,10 +81,6 @@
 
         /* For the impetus and NUMA/Node prototype design, thanks to:
               Lance Shelton <LShelton@fusionio.com> - April, 2013 */
-
-#ifdef PRETEND2_5_X
-#define linux_version_code LINUX_VERSION(2,5,43)
-#endif
 
    // pretend as if #define _GNU_SOURCE
 char *strcasestr(const char *haystack, const char *needle);

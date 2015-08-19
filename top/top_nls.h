@@ -96,9 +96,8 @@ enum norm_nls {
 
 enum uniq_nls {
    KEYS_helpbas_fmt, KEYS_helpext_fmt, WINDOWS_help_fmt, COLOR_custom_fmt,
-   FIELD_header_fmt, MEMORY_lines_fmt, STATE_line_1_fmt, STATE_lin2x4_fmt,
-   STATE_lin2x5_fmt, STATE_lin2x6_fmt, STATE_lin2x7_fmt, YINSP_hdsels_fmt,
-   YINSP_hdview_fmt,
+   FIELD_header_fmt, MEMORY_lines_fmt, STATE_line_1_fmt, STATE_lin2x6_fmt,
+   STATE_lin2x7_fmt, YINSP_hdsels_fmt, YINSP_hdview_fmt,
       uniq_MAX
 };
 

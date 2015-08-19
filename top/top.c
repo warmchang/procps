@@ -2197,8 +2197,8 @@ static void cpus_refresh (void) {
  #define sumSLOT ( Cpu_cnt )
  #define totSLOT ( 1 + Cpu_cnt + Numa_node_tot )
    static int sav_slot = -1;
-   int i;
 #ifndef NUMA_DISABLE
+   int i;
    int node;
 #endif
 
@@ -2919,11 +2919,7 @@ static void before (char *me) {
    Cpu_cnt = 8;
 #endif
    Cpu_faux_cnt = Cpu_cnt;
-   Cpu_States_fmts = N_unq(STATE_lin2x4_fmt);
-   if (linux_version_code > LINUX_VERSION(2, 5, 41))
-      Cpu_States_fmts = N_unq(STATE_lin2x5_fmt);
-   if (linux_version_code >= LINUX_VERSION(2, 6, 0))
-      Cpu_States_fmts = N_unq(STATE_lin2x6_fmt);
+   Cpu_States_fmts = N_unq(STATE_lin2x6_fmt);
    if (linux_version_code >= LINUX_VERSION(2, 6, 11))
       Cpu_States_fmts = N_unq(STATE_lin2x7_fmt);
 

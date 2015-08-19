@@ -622,12 +622,6 @@ static void build_uniq_nlstab (void) {
    Uniq_nlstab[STATE_line_1_fmt] = _("%s:~3"
       " %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n");
 
-   Uniq_nlstab[STATE_lin2x4_fmt] = _("%%%s~3"
-      " %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3\n");
-
-   Uniq_nlstab[STATE_lin2x5_fmt] = _("%%%s~3"
-      " %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,~3 %#5.1f  ~2IO-wait~3\n");
-
 /* Translation Hint: Only the following abbreviations need be translated
    .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
    .                 hi hardware interrupt, si = software interrupt */

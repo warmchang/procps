@@ -435,14 +435,13 @@ Line 2 shows \*(PU state percentages based on the interval since the
 last refresh.
 
 As a default, percentages for these individual categories are displayed.
-Where two labels are shown below, those for more recent kernel versions
-are shown first.
+Depending on your kernel version, the \fBst\fR field may not be shown.
 .nf
-    \fBus\fR,\fB user\fR    : time running un-niced user processes
-    \fBsy\fR,\fB system\fR  : time running kernel processes
-    \fBni\fR,\fB nice\fR    : time running niced user processes
-    \fBid\fR,\fB idle\fR    : time spent in the kernel idle handler
-    \fBwa\fR,\fB IO-wait\fR : time waiting for I/O completion
+    \fBus\fR : time running un-niced user processes
+    \fBsy\fR : time running kernel processes
+    \fBni\fR : time running niced user processes
+    \fBid\fR : time spent in the kernel idle handler
+    \fBwa\fR : time waiting for I/O completion
     \fBhi\fR : time spent servicing hardware interrupts
     \fBsi\fR : time spent servicing software interrupts
     \fBst\fR : time stolen from this vm by the hypervisor
