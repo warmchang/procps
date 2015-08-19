@@ -163,6 +163,8 @@ proc_libprocps_la_SOURCES = \
 	proc/procps-private.h \
 	proc/meminfo.c \
 	proc/meminfo.h \
+	proc/pids.c \
+	proc/pids.h \
 	proc/procps.h \
 	proc/pwcache.c \
 	proc/pwcache.h \
@@ -189,6 +191,7 @@ proc_libprocps_la_include_HEADERS = \
 	proc/devname.h \
 	proc/diskstat.h \
 	proc/escape.h \
+	proc/pids.h \
 	proc/procps.h \
 	proc/pwcache.h \
 	proc/readproc.h \
