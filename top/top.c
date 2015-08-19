@@ -52,6 +52,7 @@
 
 #include "../proc/devname.h"
 #include <proc/meminfo.h>
+#include <proc/pids.h>
 #include "../proc/procps.h"
 #include "../proc/readproc.h"
 #include <proc/readstat.h>
@@ -89,10 +90,6 @@ static char  Rc_name [OURPATHSZ];
 static RCF_t Rc = DEF_RCFILE;
 static int   Rc_questions;
 
-        /* The run-time acquired page stuff */
-static long     Page_size;
-static unsigned Pg2K_shft = 0;
-
         /* SMP, Irix/Solaris mode, Linux 2.5.xx support (and beyond) */
 static long        Hertz;
 static int         Cpu_cnt;
@@ -124,7 +121,7 @@ static char Scroll_fmts [SMLBUFSIZ];
 static int Batch = 0,           // batch mode, collect no input, dumb output
            Loops = -1,          // number of iterations, -1 loops forever
            Secure_mode = 0,     // set if some functionality restricted
-           Thread_mode = 0,     // set w/ 'H' - show threads via readeither()
+           Thread_mode = 0,     // set w/ 'H' - show threads via pids_reap()
            Width_mode = 0;      // set w/ 'w' - potential output override
 
         /* Unchangeable cap's stuff built just once (if at all) and
@@ -177,30 +174,8 @@ static WIN_t *Curwin;
            [ 'Frames_...' (plural) stuff persists beyond 1 frame ]
            [ or are used in response to async signals received ! ] */
 static volatile int Frames_signal;     // time to rebuild all column headers
-static          int Frames_libflags;   // PROC_FILLxxx flags
-static int          Frame_maxtask;     // last known number of active tasks
                                        // ie. current 'size' of proc table
 static float        Frame_etscale;     // so we can '*' vs. '/' WHEN 'pcpu'
-static unsigned     Frame_running,     // state categories for this frame
-                    Frame_sleepin,
-                    Frame_stopped,
-                    Frame_zombied;
-static int          Frame_srtflg,      // the subject window's sort direction
-                    Frame_ctimes,      // the subject window's ctimes flag
-                    Frame_cmdlin;      // the subject window's cmdlin flag
-
-        /* Support for 'history' processing so we can calculate %cpu */
-static int    HHist_siz;               // max number of HST_t structs
-static HST_t *PHist_sav,               // alternating 'old/new' HST_t anchors
-             *PHist_new;
-#ifndef OFF_HST_HASH
-#define       HHASH_SIZ  1024
-static int    HHash_one [HHASH_SIZ],   // actual hash tables ( hereafter known
-              HHash_two [HHASH_SIZ],   // as PHash_sav/PHash_new )
-              HHash_nul [HHASH_SIZ];   // 'empty' hash table image
-static int   *PHash_sav = HHash_one,   // alternating 'old/new' hash tables
-             *PHash_new = HHash_two;
-#endif
 
         /* Support for automatically sized fixed-width column expansions.
          * (hopefully, the macros help clarify/document our new 'feature') */
@@ -251,6 +226,7 @@ static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||
 
         /* Support for the new library API -- acquired (if necessary)
            at program startup and referenced throughout our lifetime */
+        // ---------------------------------------------- <proc/meminfo.h>
 static struct procps_meminfo *Mem_ctx;
 static struct meminfo_stack *Mem_stack;
 static enum meminfo_item Mem_items[] = {
@@ -262,94 +238,24 @@ enum Rel_items {
    mem_FREE,  mem_USED,  mem_TOTAL, mem_CACHE, mem_BUFFS,
    mem_AVAIL, swp_TOTAL, swp_FREE,  swp_USED
 };
+        // mem stack results extractor macro, where e=rel enum
 #define MEM_VAL(e) Mem_stack->head[e].result.ul_int
-
+        // --------------------------------------------- <proc/readstat.h>
 static struct procps_stat *Cpu_ctx;
 static struct procps_jiffs_hist *Cpu_jiffs;
-
-/*######  Sort callbacks  ################################################*/
-
-        /*
-         * These happen to be coded in the enum identifier alphabetic order,
-         * not the order of the enum 'pflgs' value.  Also note that a callback
-         * routine may serve more than one column.
-         */
-
-SCB_STRS(CGR, cgroup[0])
-SCB_STRV(CMD, Frame_cmdlin, cmdline, cmd)
-SCB_NUM1(COD, trs)
-SCB_NUMx(CPN, processor)
-SCB_NUM1(CPU, pcpu)
-SCB_NUM1(DAT, drs)
-SCB_NUM1(DRT, dt)
-SCB_STRS(ENV, environ[0])
-SCB_NUM1(FL1, maj_flt)
-SCB_NUM1(FL2, min_flt)
-SCB_NUM1(FLG, flags)
-SCB_NUM1(FV1, maj_delta)
-SCB_NUM1(FV2, min_delta)
-SCB_NUMx(GID, egid)
-SCB_STRS(GRP, egroup)
-SCB_STRS(LXC, lxcname)
-SCB_NUMx(NCE, nice)
-SCB_NUM1(NS1, ns[IPCNS])
-SCB_NUM1(NS2, ns[MNTNS])
-SCB_NUM1(NS3, ns[NETNS])
-SCB_NUM1(NS4, ns[PIDNS])
-SCB_NUM1(NS5, ns[USERNS])
-SCB_NUM1(NS6, ns[UTSNS])
-#ifdef OOMEM_ENABLE
-SCB_NUM1(OOA, oom_adj)
-SCB_NUM1(OOM, oom_score)
-#endif
-SCB_NUMx(PGD, pgrp)
-SCB_NUMx(PID, tid)
-SCB_NUMx(PPD, ppid)
-SCB_NUMx(PRI, priority)
-SCB_NUM1(RES, vm_rss)                  // also serves MEM !
-SCB_STRX(SGD, supgid)
-SCB_STRS(SGN, supgrp)
-SCB_NUM1(SHR, share)
-SCB_NUM1(SID, session)
-SCB_NUMx(STA, state)
-SCB_NUM1(SWP, vm_swap)
-SCB_NUMx(TGD, tgid)
-SCB_NUMx(THD, nlwp)
-                                       // also serves TM2 !
-static int SCB_NAME(TME) (const proc_t **P, const proc_t **Q) {
-   if (Frame_ctimes) {
-      if (((*P)->cutime + (*P)->cstime + (*P)->utime + (*P)->stime)
-        < ((*Q)->cutime + (*Q)->cstime + (*Q)->utime + (*Q)->stime))
-           return SORT_lt;
-      if (((*P)->cutime + (*P)->cstime + (*P)->utime + (*P)->stime)
-        > ((*Q)->cutime + (*Q)->cstime + (*Q)->utime + (*Q)->stime))
-           return SORT_gt;
-   } else {
-      if (((*P)->utime + (*P)->stime) < ((*Q)->utime + (*Q)->stime))
-         return SORT_lt;
-      if (((*P)->utime + (*P)->stime) > ((*Q)->utime + (*Q)->stime))
-         return SORT_gt;
-   }
-   return SORT_eq;
-}
-SCB_NUM1(TPG, tpgid)
-SCB_NUMx(TTY, tty)
-SCB_NUMx(UED, euid)
-SCB_STRS(UEN, euser)
-SCB_NUMx(URD, ruid)
-SCB_STRS(URN, ruser)
-SCB_NUMx(USD, suid)
-SCB_NUM2(USE, vm_rss, vm_swap)
-SCB_STRS(USN, suser)
-SCB_NUM1(VRT, size)
-SCB_NUM1(WCH, wchan)
-
-#ifdef OFF_HST_HASH
-        /* special sort for procs_hlp() ! ------------------------ */
-static int sort_HST_t (const HST_t *P, const HST_t *Q) {
-   return P->pid - Q->pid;
-}
-#endif
+        // ------------------------------------------------- <proc/pids.h>
+static struct procps_pidsinfo *Pids_ctx;
+static int Pids_itms_cur;                   // 'current' max (<= Fieldstab)
+static enum pids_item *Pids_itms;           // allocated as MAXTBL(Fieldstab)
+static enum pids_reap_type Pids_type[] = {  // indexed via Thread_mode w/ reap
+   PROCPS_REAP_TASKS_ONLY, PROCPS_REAP_THREADS_TOO
+};
+static struct pids_stack **Pids_stks;       // for either reap or monpids
+static struct pids_counts *Pids_cnts;       // for either reap or monpids
+static struct pids_reap   *Pids_reap;       // for reap only
+static struct pids_stacks *Pids_fill;       // for fill only (w/ monpids)
+        // pid stack results extractor macro, where e=rel enum, t=type, s=stack
+#define PID_VAL(e,t,s)  s ->head [Fieldstab[ e ].erel].result. t
 
 /*######  Tiny useful routine(s)  ########################################*/
 
@@ -429,17 +335,15 @@ static void bye_bye (const char *str) NORETURN;
 static void bye_bye (const char *str) {
    at_eoj();                 // restore tty in preparation for exit
 #ifdef ATEOJ_RPTSTD
-{  proc_t *p;
+{  struct pids_stack *p;
    if (!str && !Frames_signal && Ttychanged) { fprintf(stderr,
       "\n%s's Summary report:"
       "\n\tProgram"
       "\n\t   %s"
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
-      "\n\t   page_bytes = %d, Cpu_faux_cnt = %d, Cpu_cnt = %d"
-      "\n\t   sizeof(HST_t) = %u (%d HST_t's/Page), HHist_siz = %u"
-      "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t*) = %u"
-      "\n\t   sizeof(procps_jiffs) = %u, sizeof(procps_jiffs_hist) = %u, sizeof(procps_sys_result) = %u"
-      "\n\t   Frames_libflags = %08lX"
+      "\n\t   Cpu_faux_cnt = %d, Cpu_cnt = %d"
+      "\n\t   sizeof(procps_jiffs) = %u, sizeof(procps_jiffs_hist) = %u"
+      "\n\t   sizeof(struct pids_stack) = %u, Pids_cnts->total = %u,, total overhead = %u"
       "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
       "\n\t   PACKAGE = '%s', LOCALEDIR = '%s'"
       "\n\tTerminal: %s"
@@ -457,20 +361,18 @@ static void bye_bye (const char *str) {
 #ifdef CASEUP_HEXES
       "\n\t   winflags = %08X, maxpflgs = %d"
 #else
-      "\n\t   winflags = %08x, maxpflgs = %d"
+      "\n\t   winflags = x%08x, maxpflgs = %d"
 #endif
-      "\n\t   sortindx = %d, fieldscur = %s"
-      "\n\t   maxtasks = %d, varcolsz = %d, winlines = %d"
+      "\n\t   sortindx = %d, maxtasks = %d"
+      "\n\t   varcolsz = %d, winlines = %d"
       "\n\t   strlen(columnhdr) = %d"
       "\n"
       , __func__
       , PACKAGE_STRING
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
-      , (int)Page_size, Cpu_faux_cnt, (int)Cpu_cnt
-      , (unsigned)sizeof(HST_t), ((int)Page_size / (int)sizeof(HST_t)), HHist_siz
-      , (unsigned)sizeof(proc_t), (unsigned)sizeof(p->cmd), (unsigned)sizeof(proc_t*)
-      , (unsigned)sizeof(struct procps_jiffs), (unsigned)sizeof(struct procps_jiffs_hist), (unsigned)sizeof(struct procps_sys_result)
-      , (long)Frames_libflags
+      , Cpu_faux_cnt, (int)Cpu_cnt
+      , (unsigned)sizeof(struct procps_jiffs), (unsigned)sizeof(struct procps_jiffs_hist)
+      , (unsigned)sizeof(*p), Pids_cnts->total, (unsigned)sizeof(p) * Pids_cnts->total
       , (unsigned)SCREENMAX, (unsigned)ROWMINSIZ, (unsigned)ROWMAXSIZ
       , PACKAGE, LOCALEDIR
 #ifdef PRETENDNOCAP
@@ -489,92 +391,17 @@ static void bye_bye (const char *str) {
       , (unsigned)sizeof(WIN_t), GROUPSMAX
       , Curwin->rc.winname, Curwin->grpname
       , Curwin->rc.winflags, Curwin->maxpflgs
-      , Curwin->rc.sortindx, Curwin->rc.fieldscur
-      , Curwin->rc.maxtasks, Curwin->varcolsz, Curwin->winlines
+      , Curwin->rc.sortindx, Curwin->rc.maxtasks
+      , Curwin->varcolsz, Curwin->winlines
       , (int)strlen(Curwin->columnhdr)
       );
    }
 }
 #endif // end: ATEOJ_RPTSTD
 
-#ifndef OFF_HST_HASH
-#ifdef ATEOJ_RPTHSH
-   if (!str && !Frames_signal && Ttychanged) {
-      int i, j, pop, total_occupied, maxdepth, maxdepth_sav, numdepth
-         , cross_foot, sz = HHASH_SIZ * (unsigned)sizeof(int);
-      int depths[HHASH_SIZ];
-
-      for (i = 0, total_occupied = 0, maxdepth = 0; i < HHASH_SIZ; i++) {
-         int V = PHash_new[i];
-         j = 0;
-         if (-1 < V) {
-            ++total_occupied;
-            while (-1 < V) {
-               V = PHist_new[V].lnk;
-               if (-1 < V) j++;
-            }
-         }
-         depths[i] = j;
-         if (maxdepth < j) maxdepth = j;
-      }
-      maxdepth_sav = maxdepth;
-
-      fprintf(stderr,
-         "\n%s's Supplementary HASH report:"
-         "\n\tTwo Tables providing for %d entries each + 1 extra for 'empty' image"
-         "\n\t%dk (%d bytes) per table, %d total bytes (including 'empty' image)"
-         "\n\tResults from latest hash (PHash_new + PHist_new)..."
-         "\n"
-         "\n\tTotal hashed = %d"
-         "\n\tLevel-0 hash entries = %d (%d%% occupied)"
-         "\n\tMax Depth = %d"
-         "\n\n"
-         , __func__
-         , HHASH_SIZ, sz / 1024, sz, sz * 3
-         , Frame_maxtask
-         , total_occupied, (total_occupied * 100) / HHASH_SIZ
-         , maxdepth + 1);
-
-      if (total_occupied) {
-         for (pop = total_occupied, cross_foot = 0; maxdepth; maxdepth--) {
-            for (i = 0, numdepth = 0; i < HHASH_SIZ; i++)
-               if (depths[i] == maxdepth) ++numdepth;
-            fprintf(stderr,
-               "\t %5d (%3d%%) hash table entries at depth %d\n"
-               , numdepth, (numdepth * 100) / total_occupied, maxdepth + 1);
-            pop -= numdepth;
-            cross_foot += numdepth;
-            if (0 == pop && cross_foot == total_occupied) break;
-         }
-         if (pop) {
-            fprintf(stderr, "\t %5d (%3d%%) unchained hash table entries\n"
-               , pop, (pop * 100) / total_occupied);
-            cross_foot += pop;
-         }
-         fprintf(stderr,
-            "\t -----\n"
-            "\t %5d total entries occupied\n", cross_foot);
-
-         if (maxdepth_sav) {
-            fprintf(stderr, "\nPIDs at max depth: ");
-            for (i = 0; i < HHASH_SIZ; i++)
-               if (depths[i] == maxdepth_sav) {
-                  j = PHash_new[i];
-                  fprintf(stderr, "\n\tpos %4d:  %05d", i, PHist_new[j].pid);
-                  while (-1 < j) {
-                     j = PHist_new[j].lnk;
-                     if (-1 < j) fprintf(stderr, ", %05d", PHist_new[j].pid);
-                  }
-               }
-            fprintf(stderr, "\n");
-         }
-      }
-   }
-#endif // end: ATEOJ_RPTHSH
-#endif // end: OFF_HST_HASH
-
    procps_stat_unref(&Cpu_ctx);
    procps_meminfo_unref(&Mem_ctx);
+   procps_pids_unref(&Pids_ctx);
 #ifndef NUMA_DISABLE
   if (Libnuma_handle) dlclose(Libnuma_handle);
 #endif
@@ -1461,9 +1288,11 @@ static const char *user_certify (WIN_t *q, const char *str, char typ) {
    char *endp;
    uid_t num;
 
+   if (Pids_fill)
+      procps_pids_stacks_dealloc(Pids_ctx, &Pids_fill);
+   Monpidsidx = 0;
    q->usrseltyp = 0;
    q->usrselflg = 1;
-   Monpidsidx = 0;
    if (*str) {
       if ('!' == *str) { ++str; q->usrselflg = 0; }
       num = (uid_t)strtoul(str, &endp, 0);
@@ -1484,29 +1313,6 @@ static const char *user_certify (WIN_t *q, const char *str, char typ) {
    }
    return NULL;
 } // end: user_certify
-
-
-        /*
-         * Determine if this proc_t matches the 'u/U' selection criteria
-         * for a given window -- it's called from only one place, and
-         * likely inlined even without the directive */
-static inline int user_matched (const WIN_t *q, const proc_t *p) {
-   switch(q->usrseltyp) {
-      case 0:                                    // uid selection inactive
-         return 1;
-      case 'U':                                  // match any uid
-         if (p->ruid == q->usrseluid) return q->usrselflg;
-         if (p->suid == q->usrseluid) return q->usrselflg;
-         if (p->fuid == q->usrseluid) return q->usrselflg;
-      // fall through...
-      case 'u':                                  // match effective uid
-         if (p->euid == q->usrseluid) return q->usrselflg;
-      // fall through...
-      default:                                   // no match...
-         ;
-   }
-   return !q->usrselflg;
-} // end: user_matched
 
 /*######  Basic Formatting support  ######################################*/
 
@@ -1704,30 +1510,16 @@ end_justifies:
 
 /*######  Fields Management support  #####################################*/
 
-   /* These are the Fieldstab.lflg values used here and in calibrate_fields.
-      (own identifiers as documentation and protection against changes) */
-#define L_stat     PROC_FILLSTAT
-#define L_statm    PROC_FILLMEM
-#define L_status   PROC_FILLSTATUS
-#define L_CGROUP   PROC_EDITCGRPCVT | PROC_FILLCGROUP
-#define L_CMDLINE  PROC_EDITCMDLCVT | PROC_FILLARG
-#define L_ENVIRON  PROC_EDITENVRCVT | PROC_FILLENV
-#define L_EUSER    PROC_FILLUSR
-#define L_OUSER    PROC_FILLSTATUS | PROC_FILLUSR
-#define L_EGROUP   PROC_FILLSTATUS | PROC_FILLGRP
-#define L_SUPGRP   PROC_FILLSTATUS | PROC_FILLSUPGRP
-#define L_NS       PROC_FILLNS
-#define L_LXC      PROC_FILL_LXC
-   // make 'none' non-zero (used to be important to Frames_libflags)
-#define L_NONE     PROC_SPARE_1
-   // from either 'stat' or 'status' (preferred), via bits not otherwise used
-#define L_EITHER   PROC_SPARE_2
-   // for calibrate_fields and summary_show 1st pass
-#define L_DEFAULT  PROC_FILLSTAT
-
         /* These are our gosh darn 'Fields' !
            They MUST be kept in sync with pflags !! */
-static FLD_t Fieldstab[] = {
+static struct {
+   int           width;         // field width, if applicable
+   int           scale;         // scaled target, if applicable
+   const int     align;         // the default column alignment flag
+   int           esel;          // set when our enum is selected
+   int           erel;          // relative position in dynamic Pids_itms
+   const enum pids_item item;   // the new libproc item enum identifier
+} Fieldstab[] = {
    // a temporary macro, soon to be undef'd...
  #define SF(f) (QFP_t)SCB_NAME(f)
    // these identifiers reflect the default column alignment but they really
@@ -1738,87 +1530,93 @@ static FLD_t Fieldstab[] = {
 /* .width anomalies:
         a -1 width represents variable width columns
         a  0 width represents columns set once at startup (see zap_fieldstab)
-   .lflg anomalies:
-        EU_UED, L_NONE - natural outgrowth of 'stat()' in readproc        (euid)
-        EU_CPU, L_stat - never filled by libproc, but requires times      (pcpu)
-        EU_CMD, L_stat - may yet require L_CMDLINE in calibrate_fields    (cmd/cmdline)
-        L_EITHER       - must L_status, else L_stat == 64-bit math (__udivdi3) on 32-bit !
 
-     .width  .scale  .align    .sort     .lflg
-     ------  ------  --------  --------  --------  */
-   {     0,     -1,  A_right,  SF(PID),  L_NONE    },
-   {     0,     -1,  A_right,  SF(PPD),  L_EITHER  },
-   {     5,     -1,  A_right,  SF(UED),  L_NONE    },
-   {     8,     -1,  A_left,   SF(UEN),  L_EUSER   },
-   {     5,     -1,  A_right,  SF(URD),  L_status  },
-   {     8,     -1,  A_left,   SF(URN),  L_OUSER   },
-   {     5,     -1,  A_right,  SF(USD),  L_status  },
-   {     8,     -1,  A_left,   SF(USN),  L_OUSER   },
-   {     5,     -1,  A_right,  SF(GID),  L_NONE    },
-   {     8,     -1,  A_left,   SF(GRP),  L_EGROUP  },
-   {     0,     -1,  A_right,  SF(PGD),  L_stat    },
-   {     8,     -1,  A_left,   SF(TTY),  L_stat    },
-   {     0,     -1,  A_right,  SF(TPG),  L_stat    },
-   {     0,     -1,  A_right,  SF(SID),  L_stat    },
-   {     3,     -1,  A_right,  SF(PRI),  L_stat    },
-   {     3,     -1,  A_right,  SF(NCE),  L_stat    },
-   {     3,     -1,  A_right,  SF(THD),  L_EITHER  },
-   {     0,     -1,  A_right,  SF(CPN),  L_stat    },
-   {     0,     -1,  A_right,  SF(CPU),  L_stat    },
-   {     6,     -1,  A_right,  SF(TME),  L_stat    },
-   {     9,     -1,  A_right,  SF(TME),  L_stat    }, // EU_TM2 slot
+     .width  .scale  .align    .esel  .erel  .item
+     ------  ------  --------  -----  -----  ------------------------- */
+   {     0,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_PID        },  // s_int    EU_PID
+   {     0,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_PPID       },  // s_int    EU_PPD
+   {     5,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_EUID       },  // u_int    EU_UED
+   {     8,     -1,  A_left,      0,     0,  PROCPS_PIDS_ID_EUSER      },  // str      EU_UEN
+   {     5,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_RUID       },  // u_int    EU_URD
+   {     8,     -1,  A_left,      0,     0,  PROCPS_PIDS_ID_RUSER      },  // str      EU_URN
+   {     5,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_SUID       },  // u_int    EU_USD
+   {     8,     -1,  A_left,      0,     0,  PROCPS_PIDS_ID_SUSER      },  // str      EU_USN
+   {     5,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_EGID       },  // u_int    EU_GID
+   {     8,     -1,  A_left,      0,     0,  PROCPS_PIDS_ID_EGROUP     },  // str      EU_GRP
+   {     0,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_PGRP       },  // s_int    EU_PGD
+   {     8,     -1,  A_left,      0,     0,  PROCPS_PIDS_TTY           },  // s_int    EU_TTY
+   {     0,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_TPGID      },  // s_int    EU_TPG
+   {     0,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_SESSION    },  // s_int    EU_SID
+   {     3,     -1,  A_right,     0,     0,  PROCPS_PIDS_PRIORITY      },  // s_int    EU_PRI
+   {     3,     -1,  A_right,     0,     0,  PROCPS_PIDS_NICE          },  // sl_int   EU_NCE
+   {     3,     -1,  A_right,     0,     0,  PROCPS_PIDS_NLWP          },  // s_int    EU_THD
+   {     0,     -1,  A_right,     0,     0,  PROCPS_PIDS_PROCESSOR     },  // u_int    EU_CPN
+   {     0,     -1,  A_right,     0,     0,  PROCPS_PIDS_TICS_DELTA    },  // u_int    EU_CPU
+   {     6,     -1,  A_right,     0,     0,  PROCPS_PIDS_TICS_ALL      },  // ull_int  EU_TME
+   {     9,     -1,  A_right,     0,     0,  PROCPS_PIDS_TICS_ALL      },  // ull_int  EU_TM2
 #ifdef BOOST_PERCNT
-   {     5,     -1,  A_right,  SF(RES),  L_status  }, // EU_MEM slot
+   {     5,     -1,  A_right,     0,     0,  PROCPS_PIDS_VM_RSS        },  // ul_int   EU_MEM
 #else
-   {     4,     -1,  A_right,  SF(RES),  L_status  }, // EU_MEM slot
+   {     4,     -1,  A_right,     0,     0,  PROCPS_PIDS_VM_RSS        },  // ul_int   EU_MEM,
 #endif
 #ifndef NOBOOST_MEMS
-   {     7,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
-   {     6,  SK_Kb,  A_right,  SF(SWP),  L_status  },
-   {     6,  SK_Kb,  A_right,  SF(RES),  L_status  },
-   {     6,  SK_Kb,  A_right,  SF(COD),  L_statm   },
-   {     7,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
-   {     6,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
+   {     7,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_MEM_VIRT_KIB  },  // sl_int   EU_VRT
+   {     6,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_VM_SWAP       },  // ul_int   EU_SWP
+   {     6,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_VM_RSS        },  // ul_int   EU_RES
+   {     6,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_MEM_CODE_KIB  },  // sl_int   EU_COD
+   {     7,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_MEM_DATA_KIB  },  // sl_int   EU_DAT
+   {     6,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_MEM_SHR_KIB   },  // sl_int   EU_SHR
 #else
-   {     5,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
-   {     4,  SK_Kb,  A_right,  SF(SWP),  L_status  },
-   {     4,  SK_Kb,  A_right,  SF(RES),  L_status  },
-   {     4,  SK_Kb,  A_right,  SF(COD),  L_statm   },
-   {     5,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
-   {     4,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
+   {     5,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_MEM_VIRT_KIB  },  // sl_int   EU_VRT
+   {     4,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_VM_SWAP       },  // ul_int   EU_SWP
+   {     4,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_VM_RSS        },  // ul_int   EU_RES
+   {     4,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_MEM_CODE_KIB  },  // sl_int   EU_COD
+   {     5,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_MEM_DATA_KIB  },  // sl_int   EU_DAT
+   {     4,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_MEM_SHR_KIB   },  // sl_int   EU_SHR
 #endif
-   {     4,     -1,  A_right,  SF(FL1),  L_stat    },
-   {     4,     -1,  A_right,  SF(FL2),  L_stat    },
-   {     4,     -1,  A_right,  SF(DRT),  L_statm   },
-   {     1,     -1,  A_right,  SF(STA),  L_EITHER  },
-   {    -1,     -1,  A_left,   SF(CMD),  L_EITHER  },
-   {    10,     -1,  A_left,   SF(WCH),  L_stat    },
-   {     8,     -1,  A_left,   SF(FLG),  L_stat    },
-   {    -1,     -1,  A_left,   SF(CGR),  L_CGROUP  },
-   {    -1,     -1,  A_left,   SF(SGD),  L_status  },
-   {    -1,     -1,  A_left,   SF(SGN),  L_SUPGRP  },
-   {     0,     -1,  A_right,  SF(TGD),  L_status  },
+   {     4,     -1,  A_right,     0,     0,  PROCPS_PIDS_FLT_MAJ       },  // ul_int   EU_FL1
+   {     4,     -1,  A_right,     0,     0,  PROCPS_PIDS_FLT_MIN       },  // ul_int   EU_FL2
+   {     4,     -1,  A_right,     0,     0,  PROCPS_PIDS_MEM_DT        },  // sl_int   EU_DRT ( always 0 w/ since 2.6 )
+   {     1,     -1,  A_right,     0,     0,  PROCPS_PIDS_STATE         },  // s_ch     EU_STA
+   {    -1,     -1,  A_left,      0,     0,  PROCPS_PIDS_CMD           },  // str      EU_CMD
+   {    10,     -1,  A_left,      0,     0,  PROCPS_PIDS_WCHAN_NAME    },  // str      EU_WCH
+   {     8,     -1,  A_left,      0,     0,  PROCPS_PIDS_FLAGS         },  // ul_int   EU_FLG
+   {    -1,     -1,  A_left,      0,     0,  PROCPS_PIDS_CGROUP        },  // str      EU_CGR
+   {    -1,     -1,  A_left,      0,     0,  PROCPS_PIDS_SUPGIDS       },  // str      EU_SGD
+   {    -1,     -1,  A_left,      0,     0,  PROCPS_PIDS_SUPGROUPS     },  // str      EU_SGN
+   {     0,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_TGID       },  // s_int    EU_TGD
 #ifdef OOMEM_ENABLE
-#define L_oom      PROC_FILLOOM
-   {     3,     -1,  A_right,  SF(OOA),  L_oom     },
-   {     8,     -1,  A_right,  SF(OOM),  L_oom     },
-#undef L_oom
+ #define L_oom      PROC_FILLOOM
+   {     3,     -1,  A_right,     0,     0,  PROCPS_PIDS_OOM_ADJ       },  // s_int    EU_OOA
+   {     8,     -1,  A_right,     0,     0,  PROCPS_PIDS_OOM_SCORE     },  // s_int    EU_OOM
+ #undef L_oom
 #endif
-   {    -1,     -1,  A_left,   SF(ENV),  L_ENVIRON },
-   {     3,     -1,  A_right,  SF(FV1),  L_stat    },
-   {     3,     -1,  A_right,  SF(FV2),  L_stat    },
+   {    -1,     -1,  A_left,      0,     0,  PROCPS_PIDS_ENVIRON       },  // str      EU_ENV
+   {     3,     -1,  A_right,     0,     0,  PROCPS_PIDS_FLT_MAJ_DELTA },  // ul_int   EU_FV1
+   {     3,     -1,  A_right,     0,     0,  PROCPS_PIDS_FLT_MIN_DELTA },  // ul_int   EU_FV2
 #ifndef NOBOOST_MEMS
-   {     6,  SK_Kb,  A_right,  SF(USE),  L_status  },
+   {     6,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_VM_USED       },  // ul_int   EU_USE
 #else
-   {     4,  SK_Kb,  A_right,  SF(USE),  L_status  },
+   {     4,  SK_Kb,  A_right,     0,     0,  PROCPS_PIDS_VM_USED       },  // ul_int   EU_USE
 #endif
-   {    10,     -1,  A_right,  SF(NS1),  L_NS      }, // IPCNS
-   {    10,     -1,  A_right,  SF(NS2),  L_NS      }, // MNTNS
-   {    10,     -1,  A_right,  SF(NS3),  L_NS      }, // NETNS
-   {    10,     -1,  A_right,  SF(NS4),  L_NS      }, // PIDNS
-   {    10,     -1,  A_right,  SF(NS5),  L_NS      }, // USERNS
-   {    10,     -1,  A_right,  SF(NS6),  L_NS      }, // UTSNS
-   {     8,     -1,  A_left,   SF(LXC),  L_LXC     }
+   {    10,     -1,  A_right,     0,     0,  PROCPS_PIDS_NS_IPC        },  // ul_int   EU_NS1
+   {    10,     -1,  A_right,     0,     0,  PROCPS_PIDS_NS_MNT        },  // ul_int   EU_NS2
+   {    10,     -1,  A_right,     0,     0,  PROCPS_PIDS_NS_NET        },  // ul_int   EU_NS3
+   {    10,     -1,  A_right,     0,     0,  PROCPS_PIDS_NS_PID        },  // ul_int   EU_NS4
+   {    10,     -1,  A_right,     0,     0,  PROCPS_PIDS_NS_USER       },  // ul_int   EU_NS5
+   {    10,     -1,  A_right,     0,     0,  PROCPS_PIDS_NS_UTS        },  // ul_int   EU_NS6
+   {     8,     -1,  A_left,      0,     0,  PROCPS_PIDS_LXCNAME       },  // str      EU_LXC ( the last real pflag )
+// xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . .    ------------------------------------------
+#define eu_CMDLINE     EU_LXC +1
+#define eu_TICS_ALL_C  EU_LXC +2
+#define eu_TIME_START  EU_LXC +3
+#define eu_ID_FUID     EU_LXC +4
+#define eu_NOOP        EU_LXC +5
+   {          -1, -1, -1, -1, -1,            PROCPS_PIDS_CMDLINE       },  // str      ( if Show_CMDLIN )
+   {          -1, -1, -1, -1, -1,            PROCPS_PIDS_TICS_ALL_C    },  // ull_int  ( if Show_CTIMES )
+   {          -1, -1, -1, -1, -1,            PROCPS_PIDS_TIME_START    },  // ull_int  ( if Show_FOREST )
+   {          -1, -1, -1, -1, -1,            PROCPS_PIDS_ID_FUID       },  // u_int    ( if a usrseltyp )
+   {          -1, -1, -1, -1, -1,            PROCPS_PIDS_noop          }   // n/a      (    why not?    )
  #undef SF
  #undef A_left
  #undef A_right
@@ -1916,6 +1714,10 @@ static void adj_geometry (void) {
          * A calibrate_fields() *Helper* function to build the
          * actual column headers and required library flags */
 static void build_headers (void) {
+ #define ckITEM(f) do { if (!Fieldstab[f].esel) { Fieldstab[f].erel = Pids_itms_cur; \
+      Pids_itms[Pids_itms_cur++] = Fieldstab[f].item; Fieldstab[f].esel  = 1; } } while (0)
+ #define ckCMDS(w) do { if (CHKw(w, Show_CMDLIN)) ckITEM(eu_CMDLINE); \
+      else ckITEM(EU_CMD); } while (0)
    FLG_t f;
    char *s;
    WIN_t *w = Curwin;
@@ -1924,12 +1726,21 @@ static void build_headers (void) {
 #endif
    int i;
 
-   Frames_libflags = 0;
+   // reset the newlib enum selected indicator
+   Pids_itms_cur = 0;
+   for (i = 0; i < MAXTBL(Fieldstab); i++)
+      Fieldstab[i].esel = Fieldstab[i].erel = 0;
+   ckITEM(EU_PID);      // these 5 fields may not display,
+   ckITEM(EU_STA);      // yet we'll always need the 1st 2
+   ckITEM(EU_CMD);
+   ckITEM(EU_UED);      // plus the last 3 would have been
+   ckITEM(EU_GID);      // guaranteed under old lib scheme
 
    do {
       if (VIZISw(w)) {
          memset((s = w->columnhdr), 0, sizeof(w->columnhdr));
          if (Rc.mode_altscr) s = scat(s, fmtmk("%d", w->winnum));
+
          for (i = 0; i < w->maxpflgs; i++) {
             f = w->procflgs[i];
 #ifdef USE_X_COLHDR
@@ -1940,8 +1751,9 @@ static void build_headers (void) {
 #else
             if (EU_MAXPFLGS <= f) continue;
 #endif
-            if (EU_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
-            Frames_libflags |= Fieldstab[f].lflg;
+            if (EU_CMD == f) ckCMDS(w);
+            else ckITEM(f);
+
             s = scat(s, justify_pad(N_col(f)
                , VARcol(f) ? w->varcolsz : Fieldstab[f].width
                , CHKw(w, Fieldstab[f].align)));
@@ -1956,14 +1768,22 @@ static void build_headers (void) {
          // prepare to even out column header lengths...
          if (hdrmax + w->hdrcaplen < (x = strlen(w->columnhdr))) hdrmax = x - w->hdrcaplen;
 #endif
-         // with forest view mode, we'll need tgid, ppid & start_time...
-         if (CHKw(w, Show_FOREST)) Frames_libflags |= (L_status | L_stat);
-         // for 'busy' only processes, we'll need pcpu (utime & stime)...
-         if (!CHKw(w, Show_IDLEPS)) Frames_libflags |= L_stat;
+         // cpu calculations depend on number of threads
+         if (Fieldstab[EU_CPU].esel) ckITEM(EU_THD);
+         // for 'busy' only processes, we'll need elapsed tics
+         if (!CHKw(w, Show_IDLEPS)) ckITEM(EU_CPU);
+         // with forest view mode, we'll need pid, tgid, ppid & start_time...
+         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); }
+         // for 'cumulative' times, we'll need equivalent of cutime & cstime
+         if (Fieldstab[EU_TME].esel && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
+         if (Fieldstab[EU_TM2].esel && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
+         // for 'u/U' filtering we need these too (old top forgot that, oops)
+         if (w->usrseltyp) { ckITEM(EU_URD); ckITEM(EU_USD); ckITEM(eu_ID_FUID); }
+
          // we must also accommodate an out of view sort field...
          f = w->rc.sortindx;
-         Frames_libflags |= Fieldstab[f].lflg;
-         if (EU_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
+         if (EU_CMD == f) ckCMDS(w);
+         else ckITEM(f);
       } // end: VIZISw(w)
 
       if (Rc.mode_altscr) w = w->next;
@@ -1981,11 +1801,8 @@ static void build_headers (void) {
       }
 #endif
 
-   // finalize/touchup the libproc PROC_FILLxxx flags for current config...
-   if ((Frames_libflags & L_EITHER) && !(Frames_libflags & L_stat))
-      Frames_libflags |= L_status;
-   if (!Frames_libflags) Frames_libflags = L_DEFAULT;
-   if (Monpidsidx) Frames_libflags |= PROC_PID;
+ #undef ckITEM
+ #undef ckCMDS
 } // end: build_headers
 
 
@@ -2076,6 +1893,10 @@ static void calibrate_fields (void) {
    } while (w != Curwin);
 
    build_headers();
+
+   if (procps_pids_reset(Pids_ctx, Pids_itms_cur, Pids_itms))
+      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
+
    if (CHKw(Curwin, View_SCROLL))
       updt_scroll_msg();
 } // end: calibrate_fields
@@ -2398,10 +2219,10 @@ static void cpus_refresh (void) {
    // 'hist_fill' also implies 'read', saving us one more call
    Cpu_faux_cnt = procps_stat_jiffs_hist_fill(Cpu_ctx, Cpu_jiffs, sumSLOT);
    if (Cpu_faux_cnt < 0)
-      error_exit(N_txt(LIB_errorcpu_txt));
+      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__));
    // 2nd, retrieve just the cpu summary jiffs
    if (procps_stat_jiffs_hist_get(Cpu_ctx, &Cpu_jiffs[sumSLOT], -1) < 0)
-      error_exit(N_txt(LIB_errorcpu_txt));
+      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__));
 
 #ifndef NUMA_DISABLE
    /* henceforth, with just a little more arithmetic we can avoid
@@ -2448,203 +2269,54 @@ static void cpus_refresh (void) {
 } // end: cpus_refresh
 
 
-#ifdef OFF_HST_HASH
         /*
-         * Binary Search for HST_t's put/get support */
-
-static inline HST_t *hstbsrch (HST_t *hst, int max, int pid) {
-   int mid, min = 0;
-
-   while (min <= max) {
-      mid = (min + max) / 2;
-      if (pid < hst[mid].pid) max = mid - 1;
-      else if (pid > hst[mid].pid) min = mid + 1;
-      else return &hst[mid];
-   }
-   return NULL;
-} // end: hstbsrch
-
-#else
-        /*
-         * Hashing functions for HST_t's put/get support
-         * (not your normal 'chaining', those damn HST_t's might move!) */
-
-#define _HASH_(K) (K & (HHASH_SIZ - 1))
-
-static inline HST_t *hstget (int pid) {
-   int V = PHash_sav[_HASH_(pid)];
-
-   while (-1 < V) {
-      if (PHist_sav[V].pid == pid) return &PHist_sav[V];
-      V = PHist_sav[V].lnk; }
-   return NULL;
-} // end: hstget
-
-
-static inline void hstput (unsigned idx) {
-   int V = _HASH_(PHist_new[idx].pid);
-
-   PHist_new[idx].lnk = PHash_new[V];
-   PHash_new[V] = idx;
-} // end: hstput
-
-#undef _HASH_
-#endif
-
-        /*
-         * Refresh procs *Helper* function to eliminate yet one more need
-         * to loop through our darn proc_t table.  He's responsible for:
-         *    1) calculating the elapsed time since the previous frame
-         *    2) counting the number of tasks in each state (run, sleep, etc)
-         *    3) maintaining the HST_t's and priming the proc_t pcpu field
-         *    4) establishing the total number tasks for this frame */
-static void procs_hlp (proc_t *this) {
-#ifdef OFF_HST_HASH
-   static unsigned maxt_sav = 0;        // prior frame's max tasks
-#endif
-   TIC_t tics;
-   HST_t *h;
-
-   if (!this) {
-      static double uptime_sav;
-      double uptime_cur;
-      float et;
-      void *v;
-
-      procps_uptime(&uptime_cur, NULL);
-      et = uptime_cur - uptime_sav;
-      if (et < 0.01) et = 0.005;
-      uptime_sav = uptime_cur;
-
-      // if in Solaris mode, adjust our scaling for all cpus
-      Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
-#ifdef OFF_HST_HASH
-      maxt_sav = Frame_maxtask;
-#endif
-      Frame_maxtask = Frame_running = Frame_sleepin = Frame_stopped = Frame_zombied = 0;
-
-      // prep for saving this frame's HST_t's (and reuse mem each time around)
-      v = PHist_sav;
-      PHist_sav = PHist_new;
-      PHist_new = v;
-#ifdef OFF_HST_HASH
-      // prep for binary search by sorting the last frame's HST_t's
-      qsort(PHist_sav, maxt_sav, sizeof(HST_t), (QFP_t)sort_HST_t);
-#else
-      v = PHash_sav;
-      PHash_sav = PHash_new;
-      PHash_new = v;
-      memcpy(PHash_new, HHash_nul, sizeof(HHash_nul));
-#endif
-      return;
-   }
-
-   switch (this->state) {
-      case 'R':
-         Frame_running++;
-         break;
-      case 'S':
-      case 'D':
-         Frame_sleepin++;
-         break;
-      case 'T':
-         Frame_stopped++;
-         break;
-      case 'Z':
-         Frame_zombied++;
-         break;
-      default:                    // keep gcc happy
-         break;
-   }
-
-   if (Frame_maxtask+1 >= HHist_siz) {
-      HHist_siz = HHist_siz * 5 / 4 + 100;
-      PHist_sav = alloc_r(PHist_sav, sizeof(HST_t) * HHist_siz);
-      PHist_new = alloc_r(PHist_new, sizeof(HST_t) * HHist_siz);
-   }
-
-   /* calculate time in this process; the sum of user time (utime) and
-      system time (stime) -- but PLEASE dont waste time and effort on
-      calcs and saves that go unused, like the old top! */
-   PHist_new[Frame_maxtask].pid  = this->tid;
-   PHist_new[Frame_maxtask].tics = tics = (this->utime + this->stime);
-   // finally, save major/minor fault counts in case the deltas are displayable
-   PHist_new[Frame_maxtask].maj = this->maj_flt;
-   PHist_new[Frame_maxtask].min = this->min_flt;
-
-#ifdef OFF_HST_HASH
-   // find matching entry from previous frame and make stuff elapsed
-   if ((h = hstbsrch(PHist_sav, maxt_sav - 1, this->tid))) {
-      tics -= h->tics;
-      this->maj_delta = this->maj_flt - h->maj;
-      this->min_delta = this->min_flt - h->min;
-   }
-#else
-   // hash & save for the next frame
-   hstput(Frame_maxtask);
-   // find matching entry from previous frame and make stuff elapsed
-   if ((h = hstget(this->tid))) {
-      tics -= h->tics;
-      this->maj_delta = this->maj_flt - h->maj;
-      this->min_delta = this->min_flt - h->min;
-   }
-#endif
-
-   /* we're just saving elapsed tics, to be converted into %cpu if
-      this task wins it's displayable screen row lottery... */
-   this->pcpu = tics;
-
-   // shout this to the world with the final call (or us the next time in)
-   Frame_maxtask++;
-} // end: procs_hlp
-
-
-        /*
-         * This guy's modeled on libproc's 'readproctab' function except
-         * we reuse and extend any prior proc_t's.  He's been customized
-         * for our specific needs and to avoid the use of <stdarg.h> */
+         * This guy's responsible for interfacing with the library 'reap' pids
+         * and 'fill' stacks capabilities and refreshing the individual WIN_t
+         * head-of-stacks arrays, growing them as appropirate. */
 static void procs_refresh (void) {
- #define n_used  Frame_maxtask                   // maintained by procs_hlp()
-   static proc_t **private_ppt;                  // our base proc_t ptr table
-   static int n_alloc = 0;                       // size of our private_ppt
-   static int n_saved = 0;                       // last window ppt size
-   proc_t *ptask;
-   PROCTAB* PT;
+ #define nALIGN(n,m) (((n + m - 1) / m) * m)     // unconditionally align
+ #define nALGN2(n,m) ((n + m - 1) & ~(m - 1))    // with power of 2 align
+ #define n_reap  Pids_cnts->total                // maintained by newlib
+   static double uptime_sav;
+   static int n_alloc;                           // size of windows stacks arrays
+   double uptime_cur;
+   float et;
    int i;
-   proc_t*(*read_something)(PROCTAB*, proc_t*);
 
-   procs_hlp(NULL);                              // prep for a new frame
-   if (NULL == (PT = openproc(Frames_libflags, Monpids)))
-      error_exit(fmtmk(N_fmt(FAIL_openlib_fmt), strerror(errno)));
-   read_something = Thread_mode ? readeither : readproc;
+   procps_uptime(&uptime_cur, NULL);
+   et = uptime_cur - uptime_sav;
+   if (et < 0.01) et = 0.005;
+   uptime_sav = uptime_cur;
+   // if in Solaris mode, adjust our scaling for all cpus
+   Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
 
-   for (;;) {
-      if (n_used == n_alloc) {
-         n_alloc = 10 + ((n_alloc * 5) / 4);     // grow by over 25%
-         private_ppt = alloc_r(private_ppt, sizeof(proc_t*) * n_alloc);
-         // ensure NULL pointers for the additional memory just acquired
-         memset(private_ppt + n_used, 0, sizeof(proc_t*) * (n_alloc - n_used));
-      }
-      // on the way to n_alloc, the library will allocate the underlying
-      // proc_t storage whenever our private_ppt[] pointer is NULL...
-      if (!(ptask = read_something(PT, private_ppt[n_used]))) break;
-      procs_hlp((private_ppt[n_used] = ptask));  // tally this proc_t
+   if (Pids_fill) {
+      if (!(Pids_cnts = procps_pids_stacks_fill(Pids_ctx, Pids_fill
+         , Monpidsidx, PROCPS_FILL_PID)))
+            error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
+      Pids_stks = Pids_fill->stacks;
+   } else {
+      if (!(Pids_reap = procps_pids_reap(Pids_ctx, Pids_type[Thread_mode])))
+         error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
+      Pids_stks = Pids_reap->reaped.stacks;
+      Pids_cnts = &Pids_reap->counts;
    }
 
-   closeproc(PT);
-
-   // lastly, refresh each window's proc pointers table...
-   if (n_saved == n_alloc)
-      for (i = 0; i < GROUPSMAX; i++)
-         memcpy(Winstk[i].ppt, private_ppt, sizeof(proc_t*) * n_used);
-   else {
-      n_saved = n_alloc;
+   // now refresh each window's stack heads pointers table...
+   if (n_alloc < n_reap) {
+//    n_alloc = nALIGN(n_reap, 100);
+      n_alloc = nALGN2(n_reap, 128);
       for (i = 0; i < GROUPSMAX; i++) {
-         Winstk[i].ppt = alloc_r(Winstk[i].ppt, sizeof(proc_t*) * n_alloc);
-         memcpy(Winstk[i].ppt, private_ppt, sizeof(proc_t*) * n_used);
+         Winstk[i].ppt = alloc_r(Winstk[i].ppt, sizeof(void*) * n_alloc);
+         memcpy(Winstk[i].ppt, Pids_stks, sizeof(void*) * n_reap);
       }
+   } else {
+      for (i = 0; i < GROUPSMAX; i++)
+         memcpy(Winstk[i].ppt, Pids_stks, sizeof(void*) * n_reap);
    }
- #undef n_used
+ #undef n_reap
+ #undef nALGN2
+ #undef nALIGN
 } // end: procs_refresh
 
 
@@ -2664,7 +2336,7 @@ static void sysinfo_refresh (int forced) {
    if (3 <= cur_secs - mem_secs) {
       // 'stack_fill' also implies 'read', saving us one more call
       if ((procps_meminfo_stack_fill(Mem_ctx, Mem_stack) < 0))
-         error_exit(N_txt(LIB_errormem_txt));
+         error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__));
       mem_secs = cur_secs;
    }
 #ifndef PRETEND8CPUS
@@ -3034,7 +2706,7 @@ static inline void insp_show_pgs (int col, int row, int max) {
         /*
          * This guy is responsible for displaying the Insp_buf contents and
          * managing all scrolling/locate requests until the user gives up. */
-static int insp_view_choice (proc_t *obj) {
+static int insp_view_choice (struct pids_stack *obj) {
 #ifdef INSP_SLIDE_1
  #define hzAMT  1
 #else
@@ -3042,8 +2714,8 @@ static int insp_view_choice (proc_t *obj) {
 #endif
  #define maxLN (Screen_rows - (Msg_row +1))
  #define makHD(b1,b2) { \
-    snprintf(b1, sizeof(b1), "%d", obj->tid); \
-    snprintf(b2, sizeof(b2), "%s", obj->cmd); }
+    snprintf(b1, sizeof(b1), "%d", PID_VAL(EU_PID, s_int, obj)); \
+    snprintf(b2, sizeof(b2), "%s", PID_VAL(EU_CMD, str, obj)); }
  #define makFS(dst) { if (Insp_sel->flen < 22) \
        snprintf(dst, sizeof(dst), "%s", Insp_sel->fstr); \
     else snprintf(dst, sizeof(dst), "%.19s...", Insp_sel->fstr); }
@@ -3153,10 +2825,10 @@ static void inspection_utility (int pid) {
    char sels[MEDBUFSIZ];
    static int sel;
    int i, key;
-   proc_t *p;
+   struct pids_stack *p;
 
-   for (i = 0, p = NULL; i < Frame_maxtask; i++)
-      if (pid == Curwin->ppt[i]->tid) {
+   for (i = 0, p = NULL; i < Pids_cnts->total; i++)
+      if (pid == PID_VAL(EU_PID, s_int, Curwin->ppt[i])) {
          p = Curwin->ppt[i];
          break;
       }
@@ -3175,7 +2847,7 @@ signify_that:
       mkSEL(sels);
       putp(Cap_home);
       show_special(1, fmtmk(N_unq(YINSP_hdsels_fmt)
-         , pid, p->cmd, sels));
+         , pid, PID_VAL(EU_CMD, str, Curwin->ppt[i]), sels));
       INSP_MKSL(0, " ");
 
       if (Frames_signal) goto signify_that;
@@ -3243,7 +2915,6 @@ static void before (char *me) {
    // establish cpu particulars
    Hertz = procps_hertz_get();
    Cpu_cnt = procps_cpu_count();
-   Page_size = getpagesize();
 #ifdef PRETEND8CPUS
    Cpu_cnt = 8;
 #endif
@@ -3256,24 +2927,20 @@ static void before (char *me) {
    if (linux_version_code >= LINUX_VERSION(2, 6, 11))
       Cpu_States_fmts = N_unq(STATE_lin2x7_fmt);
 
-   // get virtual page stuff
-   i = Page_size;
-   while (i > 1024) { i >>= 1; Pg2K_shft++; }
-
    // prepare for new library API ...
    if (procps_meminfo_new(&Mem_ctx) < 0)
-      error_exit(N_txt(LIB_errormem_txt));
+      error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__));
    if (!(Mem_stack = procps_meminfo_stack_alloc(Mem_ctx, MAXTBL(Mem_items), Mem_items)))
-      error_exit(N_txt(LIB_errormem_txt));
+      error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__));
    if (procps_stat_new(&Cpu_ctx) < 0)
-      error_exit(N_txt(LIB_errorcpu_txt));
-
-#ifndef OFF_HST_HASH
-   // prep for HST_t's put/get hashing optimizations
-   for (i = 0; i < HHASH_SIZ; i++) HHash_nul[i] = -1;
-   memcpy(HHash_one, HHash_nul, sizeof(HHash_nul));
-   memcpy(HHash_two, HHash_nul, sizeof(HHash_nul));
-#endif
+      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__));
+   // establish max depth for newlib pids stack (# of result structs)
+   Pids_itms = alloc_c(sizeof(enum pids_item) * MAXTBL(Fieldstab));
+   for (i = 0; i < MAXTBL(Fieldstab); i++)
+      Pids_itms[i] = Fieldstab[i].item;
+   Pids_itms_cur = i;
+   if (procps_pids_new(&Pids_ctx, Pids_itms_cur, Pids_itms))
+      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 
 #ifndef NUMA_DISABLE
 #if defined(PRETEND_NUMA) || defined(PRETEND8CPUS)
@@ -3690,8 +3357,8 @@ static void parse_args (char **args) {
                for (i = 0; i < EU_MAXPFLGS; i++)
                   puts(N_col(i));
                bye_bye(NULL);
-            case 'p': {
-               int pid; char *p;
+            case 'p':
+            {  int pid; char *p;
                if (Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
                do {
                   if (cp[1]) cp++;
@@ -3711,7 +3378,12 @@ static void parse_args (char **args) {
                   if (!(p = strchr(cp, ','))) break;
                   cp = p;
                } while (*cp);
-            }  break;
+            }
+               if (!(Pids_fill = procps_pids_stacks_alloc(Pids_ctx, Monpidsidx)))
+                  error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
+               for (i = 0; i < Monpidsidx; i++)
+                  Pids_fill->stacks[i]->fill_id = Monpids[i];
+               break;
             case 's':
                Secure_mode = 1;
                break;
@@ -3727,8 +3399,8 @@ static void parse_args (char **args) {
                else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
                if ((errmsg = user_certify(Curwin, cp, ch))) error_exit(errmsg);
                cp += strlen(cp);
-               break;
             }
+               break;
             case 'w':
             {  const char *pn = NULL;
                int ai = 0, ci = 0;
@@ -3742,7 +3414,8 @@ static void parse_args (char **args) {
                cp++;
                args += ai;
                if (pn) cp = pn + ci;
-            }  continue;
+            }
+               continue;
             default :
                error_exit(fmtmk(N_fmt(UNKNOWN_opts_fmt)
                   , *cp, Myname, N_txt(USAGE_abbrev_txt)));
@@ -3843,8 +3516,10 @@ static void win_reset (WIN_t *q) {
 #else
          q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = 0;
 #endif
-         Monpidsidx = 0;
          osel_clear(q);
+         if (Pids_fill)
+            procps_pids_stacks_dealloc(Pids_ctx, &Pids_fill);
+         Monpidsidx = 0;
 } // end: win_reset
 
 
@@ -4105,6 +3780,32 @@ static void wins_stage_2 (void) {
    sigaddset(&Sigwinch_set, SIGWINCH);
 #endif
 } // end: wins_stage_2
+
+
+        /*
+         * Determine if this task matches the 'u/U' selection criteria
+         * for a given window -- it is called from only one place, and
+         * will likely be inlined even without the following directive */
+static inline int wins_usrselect (const WIN_t *q, struct pids_stack *p) {
+ // our 'results stack value' extractor macro
+ #define rSv(E)  PID_VAL(E, u_int, p)
+   switch(q->usrseltyp) {
+      case 0:                                    // uid selection inactive
+         return 1;
+      case 'U':                                  // match any uid
+         if (rSv(EU_URD)     == q->usrseluid) return q->usrselflg;
+         if (rSv(EU_USD)     == q->usrseluid) return q->usrselflg;
+         if (rSv(eu_ID_FUID) == q->usrseluid) return q->usrselflg;
+      // fall through...
+      case 'u':                                  // match effective uid
+         if (rSv(EU_UED)     == q->usrseluid) return q->usrselflg;
+      // fall through...
+      default:                                   // no match...
+         ;
+   }
+   return !q->usrselflg;
+ #undef rSv
+} // end: wins_usrselect
 
 /*######  Interactive Input Tertiary support  ############################*/
 
@@ -4132,7 +3833,7 @@ static inline int find_ofs (const WIN_t *q, const char *buf) {
    /* This is currently the one true prototype require by top.
       It is placed here, instead of top.h, so as to avoid a compiler
       warning when top_nls.c is compiled. */
-static const char *task_show (const WIN_t *q, const proc_t *p);
+static const char *task_show (const WIN_t *, const int);
 
 static void find_string (int ch) {
  #define reDUX (found) ? N_txt(WORD_another_txt) : ""
@@ -4156,8 +3857,8 @@ static void find_string (int ch) {
    }
    if (Curwin->findstr[0]) {
       SETw(Curwin, INFINDS_xxx);
-      for (i = Curwin->begtask; i < Frame_maxtask; i++) {
-         const char *row = task_show(Curwin, Curwin->ppt[i]);
+      for (i = Curwin->begtask; i < Pids_cnts->total; i++) {
+         const char *row = task_show(Curwin, i);
          if (*row && -1 < find_ofs(Curwin, row)) {
             found = 1;
             if (i == Curwin->begtask) continue;
@@ -4393,7 +4094,7 @@ static void keys_global (int ch) {
             show_msg(N_txt(NOT_onsecure_txt));
          } else {
             int sig = SIGTERM,
-                def = w->ppt[w->begtask]->tid,
+                def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]),
                 pid = get_int(fmtmk(N_txt(GET_pid2kill_fmt), def));
             if (pid > GET_NUM_ESC) {
                char *str;
@@ -4415,7 +4116,7 @@ static void keys_global (int ch) {
             show_msg(N_txt(NOT_onsecure_txt));
          else {
             int val,
-                def = w->ppt[w->begtask]->tid,
+                def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]),
                 pid = get_int(fmtmk(N_txt(GET_pid2nice_fmt), def));
             if (pid > GET_NUM_ESC) {
                if (pid == GET_NUM_NOT) pid = def;
@@ -4439,7 +4140,7 @@ static void keys_global (int ch) {
          if (!Inspect.total)
             ioline(N_txt(YINSP_noents_txt));
          else {
-            int def = w->ppt[w->begtask]->tid,
+            int def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]),
                 pid = get_int(fmtmk(N_fmt(YINSP_pidsee_fmt), def));
             if (pid > GET_NUM_ESC) {
                if (pid == GET_NUM_NOT) pid = def;
@@ -4720,7 +4421,7 @@ static void keys_window (int ch) {
          if (VIZCHKw(w)) if (0 < w->begtask) w->begtask -= 1;
          break;
       case kbd_DOWN:
-         if (VIZCHKw(w)) if (w->begtask < Frame_maxtask - 1) w->begtask += 1;
+         if (VIZCHKw(w)) if (w->begtask < Pids_cnts->total -1) w->begtask += 1;
          break;
 #ifdef USE_X_COLHDR // ------------------------------------
       case kbd_LEFT:
@@ -4794,9 +4495,9 @@ static void keys_window (int ch) {
             }
          break;
       case kbd_PGDN:
-         if (VIZCHKw(w)) if (w->begtask < Frame_maxtask - 1) {
+         if (VIZCHKw(w)) if (w->begtask < Pids_cnts->total -1) {
                w->begtask += (w->winlines - 1);
-               if (w->begtask > Frame_maxtask - 1) w->begtask = Frame_maxtask - 1;
+               if (w->begtask > Pids_cnts->total -1) w->begtask = Pids_cnts->total -1;
                if (0 > w->begtask) w->begtask = 0;
              }
          break;
@@ -4809,7 +4510,7 @@ static void keys_window (int ch) {
          break;
       case kbd_END:
          if (VIZCHKw(w)) {
-            w->begtask = (Frame_maxtask - w->winlines) + 1;
+            w->begtask = (Pids_cnts->total - w->winlines) +1;
             if (0 > w->begtask) w->begtask = 0;
             w->begpflg = w->endpflg;
 #ifndef SCROLLVAR_NO
@@ -4866,89 +4567,92 @@ static void keys_xtra (int ch) {
          * ( plus, maintain alphabetical order with carefully chosen )
          * ( function names: forest_a, forest_b, forest_c & forest_d )
          * ( each with exactly one letter more than its predecessor! ) */
-static proc_t **Seed_ppt;                   // temporary win ppt pointer
-static proc_t **Tree_ppt;                   // forest_create will resize
-static int      Tree_idx;                   // frame_make resets to zero
+static struct pids_stack **Seed_ppt;        // temporary win stacks ptrs
+static struct pids_stack **Tree_ppt;        // forest_create will resize
+static int  Tree_idx;                       // frame_make resets to zero
+static int *Seed_lvl;                       // level array for Seeds ('from')
+static int *Tree_lvl;                       // level array for Trees ('to')
 
         /*
          * This little recursive guy is the real forest view workhorse.
          * He fills in the Tree_ppt array and also sets the child indent
-         * level which is stored in an unused proc_t padding byte. */
+         * level which is stored in the same slot of separate array. */
 static void forest_adds (const int self, int level) {
+ // our 'results stack value' extractor macro
+ #define rSv(E,X)  PID_VAL(E, s_int, Seed_ppt[X])
    int i;
 
-   if (Tree_idx < Frame_maxtask) {          // immunize against insanity
+   if (Tree_idx < Pids_cnts->total) {       // immunize against insanity
       if (level > 100) level = 101;         // our arbitrary nests limit
       Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child
-      Tree_ppt[Tree_idx++]->pad_3 = level;  // borrow 1 byte, 127 levels
+      Tree_lvl[Tree_idx++] = level;         // while recording its level
+      Seed_lvl[self] = level;               // then, note it's been seen
 #ifdef TREE_SCANALL
-      for (i = 0; i < Frame_maxtask; i++) {
+      for (i = 0; i < Pids_cnts->total; i++) {
          if (i == self) continue;
 #else
-      for (i = self + 1; i < Frame_maxtask; i++) {
+      for (i = self + 1; i < Pids_cnts->total; i++) {
 #endif
-         if (Seed_ppt[self]->tid == Seed_ppt[i]->tgid
-         || (Seed_ppt[self]->tid == Seed_ppt[i]->ppid && Seed_ppt[i]->tid == Seed_ppt[i]->tgid))
+         if (rSv(EU_PID, self) == rSv(EU_TGD, i)
+         || (rSv(EU_PID, self) == rSv(EU_PPD, i) && rSv(EU_PID, i) == rSv(EU_TGD, i)))
             forest_adds(i, level + 1);      // got one child any others?
       }
    }
+ #undef rSv
 } // end: forest_adds
 
 
-#ifndef TREE_SCANALL
         /*
-         * Our qsort callback to order a ppt by the non-display start_time
-         * which will make us immune from any pid, ppid or tgid anomalies
-         * if/when pid values are wrapped by the kernel! */
-static int forest_based (const proc_t **x, const proc_t **y) {
-   if ( (*x)->start_time > (*y)->start_time ) return  1;
-   if ( (*x)->start_time < (*y)->start_time ) return -1;
-   return 0;
-} // end: forest_based
-#endif
-
-
-        /*
-         * This routine is responsible for preparing the proc_t's for
+         * This routine is responsible for preparing the stacks array for
          * a forest display in the designated window.  Upon completion,
          * he'll replace the original window ppt with our specially
          * ordered forest version. */
 static void forest_create (WIN_t *q) {
+   static int *lvl_arrays;                     // supports both 'lvl' arrays
    static int hwmsav;
    int i;
 
-   Seed_ppt = q->ppt;                       // avoid passing WIN_t ptrs
-   if (!Tree_idx) {                         // do just once per frame
-      if (hwmsav < Frame_maxtask) {         // grow, but never shrink
-         hwmsav = Frame_maxtask;
-         Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
+   Seed_ppt = q->ppt;                          // avoid passing WIN_t ptrs
+   if (!Tree_idx) {                            // do just once per frame
+      if (hwmsav < Pids_cnts->total) {         // grow, but never shrink
+         hwmsav = Pids_cnts->total;
+         Tree_ppt = alloc_r(Tree_ppt, sizeof(void*) * hwmsav);
+         lvl_arrays = alloc_r(lvl_arrays, sizeof(int) * hwmsav * 2);
       }
+      memset(lvl_arrays, 0, sizeof(int) * Pids_cnts->total * 2);
+      Tree_lvl = lvl_arrays;
+      Seed_lvl = Tree_lvl + Pids_cnts->total;
 #ifndef TREE_SCANALL
-      qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), (QFP_t)forest_based);
+      if (!(procps_pids_stacks_sort(Pids_ctx, Seed_ppt, Pids_cnts->total
+         , PROCPS_PIDS_TIME_START, PROCPS_SORT_ASCEND)))
+            error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 #endif
-      for (i = 0; i < Frame_maxtask; i++)   // avoid any hidepid distortions
-         if (!Seed_ppt[i]->pad_3)           // identify real or pretend trees
-            forest_adds(i, 1);              // add as parent plus its children
+      for (i = 0; i < Pids_cnts->total; i++)   // avoid any hidepid distortions
+         if (!Seed_lvl[i])                     // identify real or pretend trees
+            forest_adds(i, 1);                 // add as parent plus its children
    }
-   memcpy(Seed_ppt, Tree_ppt, sizeof(proc_t*) * Frame_maxtask);
+   memcpy(Seed_ppt, Tree_ppt, sizeof(void*) * Pids_cnts->total);
 } // end: forest_create
 
 
         /*
-         * This guy adds the artwork to either p->cmd or p->cmdline
+         * This guy adds the artwork to either a 'cmd' or 'cmdline'
          * when in forest view mode, otherwise he just returns 'em. */
-static inline const char *forest_display (const WIN_t *q, const proc_t *p) {
+static inline const char *forest_display (const WIN_t *q, const int idx) {
+ // our 'results stack value' extractor macro
+ #define rSv(E)  PID_VAL(E, str, q->ppt[idx])
 #ifndef SCROLLVAR_NO
-   static char buf[1024*64*2]; // the same as readproc's MAX_BUFSZ
+   static char buf[1024*64*2]; // the same as libray's max buffer size
 #else
    static char buf[ROWMINSIZ];
 #endif
-   const char *which = (CHKw(q, Show_CMDLIN)) ? *p->cmdline : p->cmd;
+   const char *which = (CHKw(q, Show_CMDLIN)) ? rSv(eu_CMDLINE) : rSv(EU_CMD);
 
-   if (!CHKw(q, Show_FOREST) || 1 == p->pad_3) return which;
-   if (p->pad_3 > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
-   else snprintf(buf, sizeof(buf), "%*s%s", 4 * (p->pad_3 - 1), " `- ", which);
+   if (!CHKw(q, Show_FOREST) || Tree_lvl[idx] < 2) return which;
+   if (Tree_lvl[idx] > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
+   else snprintf(buf, sizeof(buf), "%*s%s", 4 * (Tree_lvl[idx] - 1), " `- ", which);
    return buf;
+ #undef rSv
 } // end: forest_display
 
 /*######  Main Screen routines  ##########################################*/
@@ -5116,8 +4820,8 @@ static void summary_show (void) {
    if (isROOM(View_STATES, 2)) {
       show_special(0, fmtmk(N_unq(STATE_line_1_fmt)
          , Thread_mode ? N_txt(WORD_threads_txt) : N_txt(WORD_process_txt)
-         , Frame_maxtask, Frame_running, Frame_sleepin
-         , Frame_stopped, Frame_zombied));
+         , Pids_cnts->total, Pids_cnts->running, Pids_cnts->sleeping
+         , Pids_cnts->stopped, Pids_cnts->zombied));
       Msg_row += 1;
 
       cpus_refresh();
@@ -5268,15 +4972,15 @@ numa_nope:
         /*
          * Build the information for a single task row and
          * display the results or return them to the caller. */
-static const char *task_show (const WIN_t *q, const proc_t *p) {
+static const char *task_show (const WIN_t *q, const int idx) {
+ // our 'results stack value' extractor macro
+ #define rSv(E,T)  PID_VAL(E, T, q->ppt[idx])
 #ifndef SCROLLVAR_NO
- #define makeVAR(v)  { const char *pv = v; \
-    if (!q->varcolbeg) cp = make_str(pv, q->varcolsz, Js, AUTOX_NO); \
-    else cp = make_str(q->varcolbeg < (int)strlen(pv) ? pv + q->varcolbeg : "", q->varcolsz, Js, AUTOX_NO); }
+ #define makeVAR(P)  { if (!q->varcolbeg) cp = make_str(P, q->varcolsz, Js, AUTOX_NO); \
+    else cp = make_str(q->varcolbeg < (int)strlen(P) ? P + q->varcolbeg : "", q->varcolsz, Js, AUTOX_NO); }
 #else
- #define makeVAR(v) cp = make_str(v, q->varcolsz, Js, AUTOX_NO)
+ #define makeVAR(P) cp = make_str(P, q->varcolsz, Js, AUTOX_NO)
 #endif
- #define pages2K(n)  (unsigned long)( (n) << Pg2K_shft )
    static char rbuf[ROWMINSIZ];
    char *rp;
    int x;
@@ -5293,187 +4997,145 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
       #define Js  CHKw(q, Show_JRSTRS)      // represent them as #defines
       #define Jn  CHKw(q, Show_JRNUMS)      // and only exec code if used
 
+   /* except for the XOF/XON pseudo flags, the following case labels are gouped
+      by result type according to capacity (small -> large) and then ordered by
+      additional processing requirements (as in plain, scaled, decorated, etc.) */
+
       switch (i) {
 #ifndef USE_X_COLHDR
          // these 2 aren't real procflgs, they're used in column highlighting!
-         case EU_XON:
          case EU_XOF:
+         case EU_XON:
             cp = NULL;
             if (!CHKw(q, INFINDS_xxx | NOHIFND_xxx | NOHISEL_xxx)) {
                /* treat running tasks specially - entire row may get highlighted
                   so we needn't turn it on and we MUST NOT turn it off */
-               if (!('R' == p->state && CHKw(q, Show_HIROWS)))
+               if (!('R' == rSv(EU_STA, s_ch) && CHKw(q, Show_HIROWS)))
                   cp = (EU_XON == i ? q->capclr_rowhigh : q->capclr_rownorm);
             }
             break;
 #endif
-         case EU_CGR:
-            makeVAR(p->cgroup[0]);
+   /* s_ch, make_chr */
+         case EU_STA:
+            cp = make_chr(rSv(EU_STA, s_ch), W, Js);
             break;
-         case EU_CMD:
-            makeVAR(forest_display(q, p));
+   /* s_int, make_num without auto width */
+         case EU_OOA:
+         case EU_OOM:
+         case EU_PGD:
+         case EU_PID:
+         case EU_PPD:
+         case EU_SID:
+         case EU_TGD:
+         case EU_THD:
+         case EU_TPG:
+            cp = make_num(rSv(i, s_int), W, Jn, AUTOX_NO);
             break;
-         case EU_COD:
-            cp = scale_mem(S, pages2K(p->trs), W, Jn);
+   /* s_int, make_num or make_str */
+         case EU_PRI:
+            if (-99 > rSv(EU_PRI, s_int) || 999 < rSv(EU_PRI, s_int)) {
+               cp = make_str("rt", W, Jn, AUTOX_NO);
+            } else
+               cp = make_num(rSv(EU_PRI, s_int), W, Jn, AUTOX_NO);
             break;
+   /* s_int, scale_mem */
+         case EU_RES:
+         case EU_SWP:
+         case EU_USE:
+            cp = scale_mem(S, rSv(i, s_int), W, Jn);
+            break;
+   /* s_int, scale_pcnt */
+         case EU_MEM:
+            cp = scale_pcnt((float)rSv(EU_RES, s_int) * 100 / MEM_VAL(mem_TOTAL), W, Jn);
+            break;
+   /* u_int, make_num without auto width */
          case EU_CPN:
-            cp = make_num(p->processor, W, Jn, AUTOX_NO);
+            cp = make_num(rSv(i, u_int), W, Jn, AUTOX_NO);
             break;
+   /* u_int, make_num with auto width */
+         case EU_GID:
+         case EU_UED:
+         case EU_URD:
+         case EU_USD:
+            cp = make_num(rSv(i, u_int), W, Jn, i);
+            break;
+   /* u_int, scale_pcnt with special handling */
          case EU_CPU:
-         {  float u = (float)p->pcpu * Frame_etscale;
+         {  float u = (float)rSv(EU_CPU, u_int) * Frame_etscale;
+            int n = rSv(EU_THD, s_int);
             /* process can't use more %cpu than number of threads it has
              ( thanks Jaromir Capik <jcapik@redhat.com> ) */
-            if (u > 100.0 * p->nlwp) u = 100.0 * p->nlwp;
+            if (u > 100.0 * n) u = 100.0 * n;
             if (u > Cpu_pmax) u = Cpu_pmax;
             cp = scale_pcnt(u, W, Jn);
          }
             break;
-         case EU_DAT:
-            cp = scale_mem(S, pages2K(p->drs), W, Jn);
-            break;
-         case EU_DRT:
-            cp = scale_num(p->dt, W, Jn);
-            break;
-         case EU_ENV:
-            makeVAR(p->environ[0]);
-            break;
-         case EU_FL1:
-            cp = scale_num(p->maj_flt, W, Jn);
-            break;
-         case EU_FL2:
-            cp = scale_num(p->min_flt, W, Jn);
-            break;
-         case EU_FLG:
-            cp = make_str(hex_make(p->flags, 1), W, Js, AUTOX_NO);
-            break;
-         case EU_FV1:
-            cp = scale_num(p->maj_delta, W, Jn);
-            break;
-         case EU_FV2:
-            cp = scale_num(p->min_delta, W, Jn);
-            break;
-         case EU_GID:
-            cp = make_num(p->egid, W, Jn, EU_GID);
-            break;
-         case EU_GRP:
-            cp = make_str(p->egroup, W, Js, EU_GRP);
-            break;
-         case EU_LXC:
-            cp = make_str(p->lxcname, W, Js, EU_LXC);
-            break;
-         case EU_MEM:
-            cp = scale_pcnt((float)p->vm_rss * 100 / MEM_VAL(mem_TOTAL), W, Jn);
-            break;
+   /* sl_int, make_num */
          case EU_NCE:
-            cp = make_num(p->nice, W, Jn, AUTOX_NO);
+            cp = make_num(rSv(EU_NCE, sl_int), W, Jn, AUTOX_NO);
             break;
-         case EU_NS1:  // IPCNS
-         case EU_NS2:  // MNTNS
-         case EU_NS3:  // NETNS
-         case EU_NS4:  // PIDNS
-         case EU_NS5:  // USERNS
-         case EU_NS6:  // UTSNS
-         {  long ino = p->ns[i - EU_NS1];
+   /* ul_int, scale_mem */
+         case EU_COD:
+         case EU_DAT:
+         case EU_DRT:   // really # pgs & sl_int, but always zero since 2.6
+         case EU_SHR:
+         case EU_VRT:
+            cp = scale_mem(S, rSv(i, ul_int), W, Jn);
+            break;
+   /* ul_int, scale_num */
+         case EU_FL1:
+         case EU_FL2:
+         case EU_FV1:
+         case EU_FV2:
+            cp = scale_num(rSv(i, ul_int), W, Jn);
+            break;
+   /* ul_int, make_str with special handling */
+         case EU_FLG:
+            cp = make_str(hex_make(rSv(EU_FLG, ul_int), 1), W, Js, AUTOX_NO);
+            break;
+   /* ul_int, make_num or make_str */
+         case EU_NS1:
+         case EU_NS2:
+         case EU_NS3:
+         case EU_NS4:
+         case EU_NS5:
+         case EU_NS6:
+         {  long ino = rSv(i, ul_int);
             if (ino > 0) cp = make_num(ino, W, Jn, i);
             else cp = make_str("-", W, Js, i);
          }
             break;
-#ifdef OOMEM_ENABLE
-         case EU_OOA:
-            cp = make_num(p->oom_adj, W, Jn, AUTOX_NO);
-            break;
-         case EU_OOM:
-            cp = make_num(p->oom_score, W, Jn, AUTOX_NO);
-            break;
-#endif
-         case EU_PGD:
-            cp = make_num(p->pgrp, W, Jn, AUTOX_NO);
-            break;
-         case EU_PID:
-            cp = make_num(p->tid, W, Jn, AUTOX_NO);
-            break;
-         case EU_PPD:
-            cp = make_num(p->ppid, W, Jn, AUTOX_NO);
-            break;
-         case EU_PRI:
-            if (-99 > p->priority || 999 < p->priority) {
-               cp = make_str("rt", W, Jn, AUTOX_NO);
-            } else
-               cp = make_num(p->priority, W, Jn, AUTOX_NO);
-            break;
-         case EU_RES:
-            cp = scale_mem(S, p->vm_rss, W, Jn);
-            break;
-         case EU_SGD:
-            makeVAR(p->supgid);
-            break;
-         case EU_SGN:
-            makeVAR(p->supgrp);
-            break;
-         case EU_SHR:
-            cp = scale_mem(S, pages2K(p->share), W, Jn);
-            break;
-         case EU_SID:
-            cp = make_num(p->session, W, Jn, AUTOX_NO);
-            break;
-         case EU_STA:
-            cp = make_chr(p->state, W, Js);
-            break;
-         case EU_SWP:
-            cp = scale_mem(S, p->vm_swap, W, Jn);
-            break;
-         case EU_TGD:
-            cp = make_num(p->tgid, W, Jn, AUTOX_NO);
-            break;
-         case EU_THD:
-            cp = make_num(p->nlwp, W, Jn, AUTOX_NO);
-            break;
+   /* ull_int, scale_tics */
          case EU_TM2:
          case EU_TME:
-         {  TIC_t t = p->utime + p->stime;
-            if (CHKw(q, Show_CTIMES)) t += (p->cutime + p->cstime);
+         {  TIC_t t;
+            if (CHKw(q, Show_CTIMES)) t = rSv(eu_TICS_ALL_C, ull_int);
+            else t = rSv(i, ull_int);
             cp = scale_tics(t, W, Jn);
          }
             break;
-         case EU_TPG:
-            cp = make_num(p->tpgid, W, Jn, AUTOX_NO);
-            break;
-         case EU_TTY:
-         {  char tmp[SMLBUFSIZ];
-            dev_to_tty(tmp, W, p->tty, p->tid, ABBREV_DEV);
-            cp = make_str(tmp, W, Js, EU_TTY);
-         }
-            break;
-         case EU_UED:
-            cp = make_num(p->euid, W, Jn, EU_UED);
-            break;
+   /* str, make_str */
+         case EU_GRP:
+         case EU_LXC:
          case EU_UEN:
-            cp = make_str(p->euser, W, Js, EU_UEN);
-            break;
-         case EU_URD:
-            cp = make_num(p->ruid, W, Jn, EU_URD);
-            break;
          case EU_URN:
-            cp = make_str(p->ruser, W, Js, EU_URN);
-            break;
-         case EU_USD:
-            cp = make_num(p->suid, W, Jn, EU_USD);
-            break;
-         case EU_USE:
-            cp = scale_mem(S, (p->vm_swap + p->vm_rss), W, Jn);
-            break;
          case EU_USN:
-            cp = make_str(p->suser, W, Js, EU_USN);
-            break;
-         case EU_VRT:
-            cp = scale_mem(S, pages2K(p->size), W, Jn);
-            break;
          case EU_WCH:
-            cp = make_str(lookup_wchan(p->tid), W, Js, EU_WCH);
+            cp = make_str(rSv(i, str), W, Js, i);
             break;
-         default:                 // keep gcc happy
+   /* str, make_str with varialbe width */
+         case EU_CGR:
+         case EU_ENV:
+         case EU_SGD:
+         case EU_SGN:
+            makeVAR(rSv(i, str));
+            break;
+   /* str, make_str with varialbe width + additional decoration */
+         case EU_CMD:
+            makeVAR(forest_display(q, idx));
+            break;
+         default:               // keep gcc happy
             continue;
-
       } // end: switch 'procflag'
 
       if (cp) {
@@ -5487,7 +5149,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
    } // end: for 'maxpflgs'
 
    if (!CHKw(q, INFINDS_xxx)) {
-      const char *cap = ((CHKw(q, Show_HIROWS) && 'R' == p->state))
+      const char *cap = ((CHKw(q, Show_HIROWS) && 'R' == rSv(EU_STA, s_ch)))
          ? q->capclr_rowhigh : q->capclr_rownorm;
       char *row = rbuf;
       int ofs;
@@ -5511,19 +5173,17 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          PUFF("\n%s%s%s", cap, row, Caps_endline);
    }
    return rbuf;
+ #undef rSv
  #undef makeVAR
- #undef pages2K
 } // end: task_show
 
 
-        /*
-         * Squeeze as many tasks as we can into a single window,
-         * after sorting the passed proc table. */
 static int window_show (WIN_t *q, int wmax) {
+ #define sORDER  CHKw(q, Qsrt_NORMAL) ? PROCPS_SORT_DESCEND : PROCPS_SORT_ASCEND
  /* the isBUSY macro determines if a task is 'active' --
     it returns true if some cpu was used since the last sample.
     ( actual 'running' tasks will be a subset of those selected ) */
- #define isBUSY(x)   (0 < x->pcpu)
+ #define isBUSY(x)   (0 < PID_VAL(EU_CPU, u_int, x))
  #define winMIN(a,b) ((a < b) ? a : b)
    int i, lwin;
 
@@ -5533,11 +5193,14 @@ static int window_show (WIN_t *q, int wmax) {
    if (CHKw(q, Show_FOREST))
       forest_create(q);
    else {
-      if (CHKw(q, Qsrt_NORMAL)) Frame_srtflg = 1;   // this is always needed!
-      else Frame_srtflg = -1;
-      Frame_ctimes = CHKw(q, Show_CTIMES);          // this & next, only maybe
-      Frame_cmdlin = CHKw(q, Show_CMDLIN);
-      qsort(q->ppt, Frame_maxtask, sizeof(proc_t*), Fieldstab[q->rc.sortindx].sort);
+      enum pids_item item = Fieldstab[q->rc.sortindx].item;
+      if (item == PROCPS_PIDS_CMD && CHKw(q, Show_CMDLIN))
+         item = PROCPS_PIDS_CMDLINE;
+      else if (item == PROCPS_PIDS_TICS_ALL && CHKw(q, Show_CTIMES))
+         item = PROCPS_PIDS_TICS_ALL_C;
+      if (!(procps_pids_stacks_sort(Pids_ctx, q->ppt
+         , Pids_cnts->total, item, sORDER)))
+            error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
    }
 
    i = q->begtask;
@@ -5547,20 +5210,22 @@ static int window_show (WIN_t *q, int wmax) {
    /* the least likely scenario is also the most costly, so we'll try to avoid
       checking some stuff with each iteration and check it just once... */
    if (CHKw(q, Show_IDLEPS) && !q->usrseltyp)
-      while (i < Frame_maxtask && lwin < wmax) {
-         if (*task_show(q, q->ppt[i++]))
+      while (i < Pids_cnts->total && lwin < wmax) {
+         if (*task_show(q, i++))
             ++lwin;
       }
    else
-      while (i < Frame_maxtask && lwin < wmax) {
+      while (i < Pids_cnts->total && lwin < wmax) {
          if ((CHKw(q, Show_IDLEPS) || isBUSY(q->ppt[i]))
-         && user_matched(q, q->ppt[i])
-         && *task_show(q, q->ppt[i]))
+         && wins_usrselect(q, q->ppt[i])
+         && *task_show(q, i))
             ++lwin;
          ++i;
       }
 
    return lwin;
+ #undef sORDER
+ #undef sFIELD
  #undef winMIN
  #undef isBUSY
 } // end: window_show
@@ -5634,7 +5299,7 @@ static void frame_make (void) {
       [ now that this is positioned after the call to summary_show(), ]
       [ we no longer need or employ tg2(0, Msg_row) since all summary ]
       [ lines end with a newline, and header lines begin with newline ] */
-   if (VIZISw(w) && CHKw(w, View_SCROLL)) PUTT(Scroll_fmts, Frame_maxtask);
+   if (VIZISw(w) && CHKw(w, View_SCROLL)) PUTT(Scroll_fmts, Pids_cnts->total);
    else putp(Cap_clr_eol);
 
    if (!Rc.mode_altscr) {

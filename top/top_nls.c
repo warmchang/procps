@@ -470,8 +470,9 @@ static void build_norm_nlstab (void) {
    .                 padding with extra spaces as necessary */
    Norm_nlstab[WORD_abv_mem_txt] = _("Mem ");
    Norm_nlstab[WORD_abv_swp_txt] = _("Swap");
-   Norm_nlstab[LIB_errormem_txt] = _("library failed memory statistics");
-   Norm_nlstab[LIB_errorcpu_txt] = _("library failed cpu statistics");
+   Norm_nlstab[LIB_errormem_fmt] = _("library failed memory statistics, at %d");
+   Norm_nlstab[LIB_errorcpu_fmt] = _("library failed cpu statistics, at %d");
+   Norm_nlstab[LIB_errorpid_fmt] = _("library failed pids statistics, at %d");
 }
 
 

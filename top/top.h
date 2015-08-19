@@ -20,6 +20,8 @@
 #ifndef _Itop
 #define _Itop
 
+#include <proc/pids.h>
+#include <proc/readstat.h>
 #include "../proc/readproc.h"
 
         /* Defines represented in configure.ac ----------------------------- */
@@ -31,7 +33,6 @@
 //#define SIGNALS_LESS            /* favor reduced signal load over response */
 
         /* Development/Debugging defines ----------------------------------- */
-//#define ATEOJ_RPTHSH            /* report on hash specifics, at end-of-job */
 //#define ATEOJ_RPTSTD            /* report on misc stuff, at end-of-job     */
 //#define CASEUP_HEXES            /* show any hex values in upper case       */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
@@ -41,7 +42,6 @@
 //#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents in a file  */
 //#define INSP_SLIDE_1            /* when scrolling left/right don't move 8  */
 //#define MEMGRAPH_OLD            /* don't use 'available' when graphing Mem */
-//#define OFF_HST_HASH            /* use BOTH qsort+bsrch vs. hashing scheme */
 //#define OFF_NUMASKIP            /* do NOT skip numa nodes if discontinuous */
 //#define OFF_SCROLLBK            /* disable tty emulators scrollback buffer */
 //#define OFF_STDERROR            /* disable our stderr buffering (redirect) */
@@ -223,39 +223,6 @@ typedef          long long SIC_t;
         /* Sort support, callback function signature */
 typedef int (*QFP_t)(const void *, const void *);
 
-        /* This structure consolidates the information that's used
-           in a variety of display roles. */
-typedef struct FLD_t {
-   int           width;         // field width, if applicable
-   int           scale;         // scaled target, if applicable
-   const int     align;         // the default column alignment flag
-   const QFP_t   sort;          // sort function
-   const int     lflg;          // PROC_FILLxxx flag(s) needed by this field
-} FLD_t;
-
-#ifdef OFF_HST_HASH
-        /* This structure supports 'history' processing and records the
-           bare minimum of needed information from one frame to the next --
-           we don't calc and save data that goes unused like the old top. */
-typedef struct HST_t {
-   TIC_t tics;                  // last frame's tics count
-   unsigned long maj, min;      // last frame's maj/min_flt counts
-   int pid;                     // record 'key'
-} HST_t;
-#else
-        /* This structure supports 'history' processing and records the bare
-           minimum of needed information from one frame to the next -- we do
-           not calc and save data that goes unused like the old top nor will
-           we incur the additional overhead of sort to support binary search
-           (or worse, a friggin' for loop) when retrievals become necessary! */
-typedef struct HST_t {
-   TIC_t tics;                  // last frame's tics count
-   unsigned long maj, min;      // last frame's maj/min_flt counts
-   int pid;                     // record 'key'
-   int lnk;                     // next on hash chain
-} HST_t;
-#endif
-
         /* /////////////////////////////////////////////////////////////// */
         /* Special Section: multiple windows/field groups  --------------- */
         /* ( kind of a header within a header: constants, types & macros ) */
@@ -397,7 +364,7 @@ typedef struct WIN_t {
    char  *osel_prt;                    // other stuff printable as status line
    char  *findstr;                     // window's current/active search string
    int    findlen;                     // above's strlen, without call overhead
-   proc_t **ppt;                       // this window's proc_t ptr array
+   struct pids_stack **ppt;            // this window's stacks ptr array
    struct WIN_t *next,                 // next window in window stack
                 *prev;                 // prior window in window stack
 } WIN_t;
@@ -606,9 +573,6 @@ typedef struct WIN_t {
 /*######  For Piece of mind  #############################################*/
 
         /* just sanity check(s)... */
-#if defined(ATEOJ_RPTHSH) && defined(OFF_HST_HASH)
-# error 'ATEOJ_RPTHSH' conflicts with 'OFF_HST_HASH'
-#endif
 #if defined(RECALL_FIXED) && defined(TERMIOS_ONLY)
 # error 'RECALL_FIXED' conflicts with 'TERMIOS_ONLY'
 #endif
@@ -633,9 +597,6 @@ typedef struct WIN_t {
 
    /* These 'prototypes' are here exclusively for documentation purposes. */
    /* ( see the find_string function for the one true required protoype ) */
-/*------  Sort callbacks  ------------------------------------------------*/
-/*        for each possible field, in the form of:                        */
-/*atic int           sort_EU_XXX (const proc_t **P, const proc_t **Q);    */
 /*------  Tiny useful routine(s)  ----------------------------------------*/
 //atic const char   *fmtmk (const char *fmts, ...);
 //atic inline char  *scat (char *dst, const char *src);
@@ -672,7 +633,6 @@ typedef struct WIN_t {
 //atic void          osel_clear (WIN_t *q);
 //atic inline int    osel_matched (const WIN_t *q, FLG_t enu, const char *str);
 //atic const char   *user_certify (WIN_t *q, const char *str, char typ);
-//atic inline int    user_matched (const WIN_t *q, const proc_t *p);
 /*------  Basic Formatting support  --------------------------------------*/
 //atic inline const char *justify_pad (const char *str, int width, int justr);
 //atic inline const char *make_chr (const char ch, int width, int justr);
@@ -693,13 +653,6 @@ typedef struct WIN_t {
 //atic void          zap_fieldstab (void);
 /*------  Library Interface  ---------------------------------------------*/
 //atic void          cpus_refresh (void);
-#ifdef OFF_HST_HASH
-//atic inline HST_t *hstbsrch (HST_t *hst, int max, int pid);
-#else
-//atic inline HST_t *hstget (int pid);
-//atic inline void   hstput (unsigned idx);
-#endif
-//atic void          procs_hlp (proc_t *p);
 //atic void          procs_refresh (void);
 //atic void          sysinfo_refresh (int forced);
 /*------  Inspect Other Output  ------------------------------------------*/
@@ -713,7 +666,7 @@ typedef struct WIN_t {
 //atic void          insp_find_str (int ch, int *col, int *row);
 //atic inline void   insp_make_row (int col, int row);
 //atic void          insp_show_pgs (int col, int row, int max);
-//atic int           insp_view_choice (proc_t *obj);
+//atic int           insp_view_choice (struct pids_stack *obj);
 //atic void          inspection_utility (int pid);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
@@ -731,6 +684,7 @@ typedef struct WIN_t {
 //atic void          wins_reflag (int what, int flg);
 //atic void          wins_stage_1 (void);
 //atic void          wins_stage_2 (void);
+//atic inline int    wins_usrselect (const WIN_t *q, struct pids_stack *p);
 /*------  Interactive Input Tertiary support  ----------------------------*/
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);
@@ -745,16 +699,13 @@ typedef struct WIN_t {
 //atic void          keys_xtra (int ch);
 /*------  Forest View support  -------------------------------------------*/
 //atic void          forest_adds (const int self, int level);
-#ifndef TREE_SCANALL
-//atic int           forest_based (const proc_t **x, const proc_t **y);
-#endif
 //atic void          forest_create (WIN_t *q);
-//atic inline const char *forest_display (const WIN_t *q, const proc_t *p);
+//atic inline const char *forest_display (const WIN_t *q, const int idx);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void          do_key (int ch);
-//atic void          summary_hlp (CPU_t *cpu, const char *pfx);
+//atic void          summary_hlp (struct procps_jiffs_hist *cpu, const char *pfx);
 //atic void          summary_show (void);
-//atic const char   *task_show (const WIN_t *q, const proc_t *p);
+//atic const char   *task_show (const WIN_t *q, const int idx);
 //atic int           window_show (WIN_t *q, int wmax);
 /*------  Entry point plus two  ------------------------------------------*/
 //atic void          frame_hlp (int wix, int max);
