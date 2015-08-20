@@ -181,7 +181,7 @@ struct pids_counts {
 };
 
 struct pids_reap {
-    struct pids_stacks reaped;
+    struct pids_stack **stacks;
     struct pids_counts counts;
 };
 
@@ -219,7 +219,7 @@ struct pids_counts *procps_pids_stacks_fill (
 
 struct pids_stack **procps_pids_stacks_sort (
     struct procps_pidsinfo *info,
-    struct pids_stack **stacks,
+    struct pids_stack *stacks[],
     int numstacked,
     enum pids_item sort,
     enum pids_sort_order order);

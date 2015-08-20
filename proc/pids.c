@@ -21,8 +21,6 @@
  */
 
 //efine _GNU_SOURCE             // for qsort_r
-#define OOMEM_ENABLE            // we will not disturb the api
-#define WITH_SYSTEMD            // with optional functionality
 
 #include <ctype.h>
 #include <errno.h>
@@ -44,8 +42,10 @@
 #include "wchan.h"                     // support (temporary include)
 
 //#define UNREF_RPTHASH                // report on hashing, at uref time
+//#define FPRINT_STACKS                // enable validate_stacks output
 
 #define FILL_ID_MAX  255               // upper limit for pid/uid fills
+#define MEMORY_INCR  128               // amt by which allocations grow
 
 enum pids_item PROCPS_PIDS_logical_end  = PROCPS_PIDS_noop + 1;
 enum pids_item PROCPS_PIDS_physical_end = PROCPS_PIDS_noop + 2;
@@ -74,7 +74,7 @@ struct procps_pidsinfo {
     unsigned flags;                    // the old library PROC_FILL flagss
     PROCTAB *PT;                       // the old library essential interface
     struct pids_counts counts;         // counts for 'procps_pids_stacks_fill'
-    struct pids_reap reap;             // counts + stacks for 'procps_pids_reap'
+    struct pids_reap reaped;           // counts + stacks for 'procps_pids_reap'
 };
 
 
@@ -311,11 +311,11 @@ typedef int  (*QSR_t)(const void *, const void *, void *);
 static struct {
     SET_t    function;            // the actual result setting routine
     unsigned oldflags;            // PROC_FILLxxxx flags for this item
-    int      mustfree;            // free is needed for string storage
+    int      needfree;            // free is needed for string storage
     QSR_t    callback;            // sort cmp func for a specific type
-    int      makehist;            // a result requires history support
+    int      needhist;            // a result requires history support
 } Item_table[] = {
-/*    function               oldflags    mustfree  callback      makehist
+/*    function               oldflags    needfree  callback      needhist
       ---------------------  ----------  --------  ------------  -------- */
     { RS(ADDR_END_CODE),     f_stat,     0,        QS(addr),     0       },
     { RS(ADDR_KSTK_EIP),     f_stat,     0,        QS(addr),     0       },
@@ -528,23 +528,23 @@ static int make_hist (
         struct procps_pidsinfo *info,
         proc_t *p)
 {
- #define slot info->hist->num_tasks
+ #define nSLOT info->hist->num_tasks
     TIC_t tics;
     HST_t *h;
 
-    if (slot + 1 >= Hr(HHist_siz)) {
-        Hr(HHist_siz) = Hr(HHist_siz) * 5 / 4 + 100;
+    if (nSLOT + 1 >= Hr(HHist_siz)) {
+        Hr(HHist_siz) += MEMORY_INCR;
         Hr(PHist_sav) = realloc(Hr(PHist_sav), sizeof(HST_t) * Hr(HHist_siz));
         Hr(PHist_new) = realloc(Hr(PHist_new), sizeof(HST_t) * Hr(HHist_siz));
         if (!Hr(PHist_sav || !Hr(PHist_new)))
             return -ENOMEM;
     }
-    Hr(PHist_new[slot].pid)  = p->tid;
-    Hr(PHist_new[slot].tics) = tics = (p->utime + p->stime);
-    Hr(PHist_new[slot].maj)  = p->maj_flt;
-    Hr(PHist_new[slot].min)  = p->min_flt;
+    Hr(PHist_new[nSLOT].pid)  = p->tid;
+    Hr(PHist_new[nSLOT].tics) = tics = (p->utime + p->stime);
+    Hr(PHist_new[nSLOT].maj)  = p->maj_flt;
+    Hr(PHist_new[nSLOT].min)  = p->min_flt;
 
-    histput(info, slot);
+    histput(info, nSLOT);
 
     if ((h = histget(info, p->tid))) {
         tics -= h->tics;
@@ -553,9 +553,9 @@ static int make_hist (
     }
     p->pcpu = tics;
 
-    slot++;
+    nSLOT++;
     return 0;
- #undef slot
+ #undef nSLOT
 } // end: make_hist
 
 
@@ -582,7 +582,8 @@ static void unref_rpthash (
         struct procps_pidsinfo *info)
 {
     int i, j, pop, total_occupied, maxdepth, maxdepth_sav, numdepth
-        , cross_foot, sz = HHASH_SIZE * (unsigned)sizeof(int);
+        , cross_foot, sz = HHASH_SIZE * (int)sizeof(int)
+        , hsz = (int)sizeof(HST_t) * Hr(HHist_siz);
     int depths[HHASH_SIZE];
 
     for (i = 0, total_occupied = 0, maxdepth = 0; i < HHASH_SIZE; i++) {
@@ -601,19 +602,28 @@ static void unref_rpthash (
     maxdepth_sav = maxdepth;
 
     fprintf(stderr,
-        "\n    Supplementary HASH report:"
-        "\n\tTwo Tables providing for %d entries each + 1 extra for 'empty' image"
-        "\n\t%dk (%d bytes) per table, %d total bytes (including 'empty' image)"
-        "\n\tResults from latest hash (PHash_new + PHist_new)..."
+        "\n    History Memory Costs:"
+        "\n\tHST_t size = %d, total allocated = %d,"
+        "\n\tthus PHist_new & PHist_sav consumed %dk (%d) total bytes."
         "\n"
+        "\n\tTwo hash tables provide for %d entries each + 1 extra 'empty' image,"
+        "\n\tthus %dk (%d) bytes per table for %dk (%d) total bytes."
+        "\n"
+        "\n\tGrand total = %dk (%d) bytes."
+        "\n"
+        "\n    Hash Results Report:"
         "\n\tTotal hashed = %d"
         "\n\tLevel-0 hash entries = %d (%d%% occupied)"
         "\n\tMax Depth = %d"
         "\n\n"
-        , HHASH_SIZE, sz / 1024, sz, sz * 3
+        , (int)sizeof(HST_t),  Hr(HHist_siz)
+        , hsz / 1024, hsz
+        , HHASH_SIZE
+        , sz / 1024, sz, (sz * 3) / 1024, sz * 3
+        , (hsz + (sz * 3)) / 1024, hsz + (sz * 3)
         , info->hist->num_tasks
         , total_occupied, (total_occupied * 100) / HHASH_SIZE
-        , maxdepth + 1);
+        , maxdepth);
 
     if (total_occupied) {
         for (pop = total_occupied, cross_foot = 0; maxdepth; maxdepth--) {
@@ -621,13 +631,13 @@ static void unref_rpthash (
                 if (depths[i] == maxdepth) ++numdepth;
             fprintf(stderr,
                 "\t %5d (%3d%%) hash table entries at depth %d\n"
-                , numdepth, (numdepth * 100) / total_occupied, maxdepth + 1);
+                , numdepth, (numdepth * 100) / total_occupied, maxdepth);
             pop -= numdepth;
             cross_foot += numdepth;
             if (0 == pop && cross_foot == total_occupied) break;
         }
         if (pop) {
-            fprintf(stderr, "\t %5d (%3d%%) unchained hash table entries\n"
+            fprintf(stderr, "\t %5d (%3d%%) unchained entries (at depth 0)\n"
                 , pop, (pop * 100) / total_occupied);
             cross_foot += pop;
         }
@@ -635,7 +645,7 @@ static void unref_rpthash (
             "\t -----\n"
             "\t %5d total entries occupied\n", cross_foot);
 
-        if (maxdepth_sav) {
+        if (maxdepth_sav > 1) {
             fprintf(stderr, "\n    PIDs at max depth: ");
             for (i = 0; i < HHASH_SIZE; i++)
                 if (depths[i] == maxdepth_sav) {
@@ -683,7 +693,7 @@ static inline void cleanup_stack (
 
     for (i = 0; i < depth; i++) {
         if (p->item < PROCPS_PIDS_noop) {
-            if (Item_table[p->item].mustfree && p->result.str)
+            if (Item_table[p->item].needfree && p->result.str)
                 free((void*)p->result.str);
             if (p->item < PROCPS_PIDS_noop)
                 p->result.ull_int = 0;
@@ -733,7 +743,7 @@ static int free_extent (
 } // end: free_extent
 
 
-static int items_check_failed (
+static inline int items_check_failed (
         int maxitems,
         enum pids_item *items)
 {
@@ -758,7 +768,7 @@ static inline void libflags_set (
     info->flags = info->history_yes = 0;
     for (i = 0; i < info->curitems; i++) {
         info->flags |= Item_table[info->items[i]].oldflags;
-        info->history_yes |= Item_table[info->items[i]].makehist;
+        info->history_yes |= Item_table[info->items[i]].needhist;
     }
     if (info->flags & f_either) {
         if (!(info->flags & f_stat))
@@ -845,11 +855,11 @@ static inline int tally_proc (
 } // end: tally_proc
 
 
+#ifdef FPRINT_STACKS
 static void validate_stacks (
         void *stacks,
         const char *who)
 {
-#if 0
     #include <stdio.h>
     static int once = 0;
     struct stacks_extent *ext = (struct stacks_extent *)stacks;
@@ -877,8 +887,8 @@ static void validate_stacks (
     }
     fputc('\n', stderr);
     return;
-#endif
 } // end: validate_stacks
+#endif
 
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -943,7 +953,6 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
         struct procps_pidsinfo *info,
         enum pids_reap_type which)
 {
- #define amtGROW  256
  #define n_alloc  info->alloc_total
  #define n_inuse  info->inuse_total
     static proc_t task;    // static for initial zeroes + later dynamic free(s)
@@ -952,52 +961,46 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
     int n_save = n_alloc;
 
     if (!info->anchor) {
-        if (!(info->anchor = calloc(sizeof(void*), amtGROW)))
+        if ((!(info->anchor = calloc(sizeof(void *), MEMORY_INCR)))
+        || (!(info->reaped.stacks = calloc(sizeof(void *), MEMORY_INCR)))
+        || (!(ext = procps_pids_stacks_alloc(info, MEMORY_INCR))))
             return NULL;
-        if (!(ext = procps_pids_stacks_alloc(info, amtGROW)))
-            return NULL;
-        memcpy(info->anchor, ext->stacks, sizeof(void*) * amtGROW);
-        if (!(info->reap.reaped.stacks = calloc(sizeof(void*), amtGROW)))
-            return NULL;
-        n_save = info->alloc_total = amtGROW;
+        memcpy(info->anchor, ext->stacks, sizeof(void *) * MEMORY_INCR);
+        n_save = info->alloc_total = MEMORY_INCR;
     }
 
     if (info->dirty_stacks)
         cleanup_stacks_all(info);
-
-    memset(&info->reap.counts, 0, sizeof(struct pids_counts));
-    read_something = which ? readeither : readproc;
-
+    memset(&info->reaped.counts, 0, sizeof(struct pids_counts));
     if (!oldproc_open(info, 0))
         return NULL;
     toggle_history(info);
+    read_something = which ? readeither : readproc;
 
     for (n_inuse = 0; ; n_inuse++) {
         if (n_inuse == n_alloc) {
-            n_alloc += amtGROW;
-            if (!(info->anchor = realloc(info->anchor, sizeof(void*) * n_alloc)))
+            n_alloc += MEMORY_INCR;
+            if ((!(info->anchor = realloc(info->anchor, sizeof(void *) * n_alloc)))
+            || (!(ext = procps_pids_stacks_alloc(info, MEMORY_INCR))))
                 return NULL;
-           if (!(ext = procps_pids_stacks_alloc(info, amtGROW)))
-                return NULL;
-            memcpy(info->anchor + n_inuse, ext->stacks, sizeof(void*) * amtGROW);
+            memcpy(info->anchor + n_inuse, ext->stacks, sizeof(void *) * MEMORY_INCR);
         }
         if (NULL == read_something(info->PT, &task))
             break;
-        if (!tally_proc(info, &info->reap.counts, &task))
+        if (!tally_proc(info, &info->reaped.counts, &task))
             return NULL;
         assign_results(info, info->anchor[n_inuse], &task);
     }
 
     oldproc_close(info);
     if (n_save != n_alloc
-    && !(info->reap.reaped.stacks = realloc(info->reap.reaped.stacks, sizeof(void*) * n_alloc)))
+    && !(info->reaped.stacks = realloc(info->reaped.stacks, sizeof(void *) * n_alloc)))
         return NULL;
-    memcpy(info->reap.reaped.stacks, info->anchor, sizeof(void*) * n_alloc);
+    memcpy(info->reaped.stacks, info->anchor, sizeof(void *) * n_alloc);
     info->dirty_stacks = 1;
-    return &info->reap;
+    return &info->reaped;
  #undef n_alloc
  #undef n_inuse
- #undef amtGROW
 } // end: procps_pids_reap
 
 
@@ -1029,12 +1032,8 @@ PROCPS_EXPORT int procps_pids_reset (
     if (items_check_failed(newmaxitems, newitems))
         return -EINVAL;
 
-    /* shame on this caller, they didn't change anything - but they might have
-       shortened their stacks. yet we cannot reposition their logical_end enum
-       lest we overlay some string result that would never be freed, let alone
-       all those strings that could follow it. so here's the deal, this caller
-       will just have to suffer the additional overhead of retrieving unneeded
-       results until they offer us a real, properly formatted 'reset' request! */
+    /* shame on this caller, they didn't change anything. and unless they have
+       altered the depth of the stacks we're not gonna change anything either! */
     if (info->curitems == newmaxitems + 1
     && !memcmp(info->items, newitems, sizeof(enum pids_item) * newmaxitems))
         return 0;
@@ -1051,7 +1050,9 @@ PROCPS_EXPORT int procps_pids_reset (
     while (ext) {
         for (i = 0; ext->stacks[i]; i++)
             stack_itemize(ext->stacks[i]->head, info->curitems, info->items);
+#ifdef FPRINT_STACKS
             validate_stacks(ext, __func__);
+#endif
         ext = ext->next;
     };
 
@@ -1118,7 +1119,9 @@ PROCPS_EXPORT struct pids_stacks *procps_pids_stacks_alloc (
     }
     p_blob->ext_numitems = info->maxitems;
     p_blob->ext_numstacks = maxstacks;
+#ifdef FPRINT_STACKS
     validate_stacks(p_blob, __func__);
+#endif
     return (struct pids_stacks *)p_blob;
 } // end: procps_pids_stacks_alloc
 
@@ -1189,7 +1192,9 @@ PROCPS_EXPORT struct pids_counts *procps_pids_stacks_fill (
 
     oldproc_close(info);
     info->dirty_stacks = 1;
+#ifdef FPRINT_STACKS
     validate_stacks(these, __func__);
+#endif
     return &info->counts;
 } // end: procps_pids_stacks_fill
 
@@ -1206,7 +1211,7 @@ PROCPS_EXPORT struct pids_counts *procps_pids_stacks_fill (
  */
 PROCPS_EXPORT struct pids_stack **procps_pids_stacks_sort (
         struct procps_pidsinfo *info,
-        struct pids_stack **stacks,
+        struct pids_stack *stacks[],
         int numstacked,
         enum pids_item sort,
         enum pids_sort_order order)
@@ -1236,7 +1241,6 @@ PROCPS_EXPORT struct pids_stack **procps_pids_stacks_sort (
             return NULL;
         ++p;
     }
-
     parms.offset = offset;
     parms.order = order;
 
@@ -1264,8 +1268,8 @@ PROCPS_EXPORT int procps_pids_unref (
                 free(p);
             } while ((*info)->extents);
         }
-        if ((*info)->reap.reaped.stacks)
-            free((*info)->reap.reaped.stacks);
+        if ((*info)->reaped.stacks)
+            free((*info)->reaped.stacks);
         if ((*info)->anchor)
             free((*info)->anchor);
         if ((*info)->items)
