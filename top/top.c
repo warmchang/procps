@@ -121,8 +121,9 @@ static char Scroll_fmts [SMLBUFSIZ];
 static int Batch = 0,           // batch mode, collect no input, dumb output
            Loops = -1,          // number of iterations, -1 loops forever
            Secure_mode = 0,     // set if some functionality restricted
-           Thread_mode = 0,     // set w/ 'H' - show threads via pids_reap()
            Width_mode = 0;      // set w/ 'w' - potential output override
+enum pids_reap_type
+           Thread_mode = 0;     // set w/ 'H' - show threads vs. tasks
 
         /* Unchangeable cap's stuff built just once (if at all) and
            thus NOT saved in a WIN_t's RCW_t.  To accommodate 'Batch'
@@ -247,9 +248,6 @@ static struct procps_jiffs_hist *Cpu_jiffs;
 static struct procps_pidsinfo *Pids_ctx;
 static int Pids_itms_cur;                   // 'current' max (<= Fieldstab)
 static enum pids_item *Pids_itms;           // allocated as MAXTBL(Fieldstab)
-static enum pids_reap_type Pids_type[] = {  // indexed via Thread_mode w/ reap
-   PROCPS_REAP_TASKS_ONLY, PROCPS_REAP_THREADS_TOO
-};
 static struct pids_stack **Pids_stks;       // for either reap or monpids
 static struct pids_counts *Pids_cnts;       // for either reap or monpids
 static struct pids_reap   *Pids_reap;       // for reap only
@@ -2296,9 +2294,9 @@ static void procs_refresh (void) {
             error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
       Pids_stks = Pids_fill->stacks;
    } else {
-      if (!(Pids_reap = procps_pids_reap(Pids_ctx, Pids_type[Thread_mode])))
+      if (!(Pids_reap = procps_pids_reap(Pids_ctx, Thread_mode)))
          error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
-      Pids_stks = Pids_reap->reaped.stacks;
+      Pids_stks = Pids_reap->stacks;
       Pids_cnts = &Pids_reap->counts;
    }
 
@@ -4562,6 +4560,7 @@ static void keys_xtra (int ch) {
          * We try to keep most existing code unaware of our activities
          * ( plus, maintain alphabetical order with carefully chosen )
          * ( function names: forest_a, forest_b, forest_c & forest_d )
+         * ( function names like such: forest_b, forest_c & forest_d )
          * ( each with exactly one letter more than its predecessor! ) */
 static struct pids_stack **Seed_ppt;        // temporary win stacks ptrs
 static struct pids_stack **Tree_ppt;        // forest_create will resize
@@ -4573,7 +4572,7 @@ static int *Tree_lvl;                       // level array for Trees ('to')
          * This little recursive guy is the real forest view workhorse.
          * He fills in the Tree_ppt array and also sets the child indent
          * level which is stored in the same slot of separate array. */
-static void forest_adds (const int self, int level) {
+static void forest_begin (const int self, int level) {
  // our 'results stack value' extractor macro
  #define rSv(E,X)  PID_VAL(E, s_int, Seed_ppt[X])
    int i;
@@ -4591,11 +4590,11 @@ static void forest_adds (const int self, int level) {
 #endif
          if (rSv(EU_PID, self) == rSv(EU_TGD, i)
          || (rSv(EU_PID, self) == rSv(EU_PPD, i) && rSv(EU_PID, i) == rSv(EU_TGD, i)))
-            forest_adds(i, level + 1);      // got one child any others?
+            forest_begin(i, level + 1);     // got one child any others?
       }
    }
  #undef rSv
-} // end: forest_adds
+} // end: forest_begin
 
 
         /*
@@ -4625,7 +4624,7 @@ static void forest_create (WIN_t *q) {
 #endif
       for (i = 0; i < Pids_cnts->total; i++)   // avoid any hidepid distortions
          if (!Seed_lvl[i])                     // identify real or pretend trees
-            forest_adds(i, 1);                 // add as parent plus its children
+            forest_begin(i, 1);                // add as parent plus its children
    }
    memcpy(Seed_ppt, Tree_ppt, sizeof(void*) * Pids_cnts->total);
 } // end: forest_create
