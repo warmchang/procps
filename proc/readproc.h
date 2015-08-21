@@ -160,11 +160,9 @@ typedef struct proc_t {
 	tpgid,		// stat            terminal process group id
 	exit_signal,	// stat            might not be SIGCHLD
 	processor;      // stat            current (or most recent?) CPU
-#ifdef OOMEM_ENABLE
     int
         oom_score,      // oom_score       (badness for OOM killer)
         oom_adj;        // oom_adj         (adjustment to OOM score)
-#endif
     long
         ns[NUM_NS];     // (ns subdir)     inode number of namespaces
     char

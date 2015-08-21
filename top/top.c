@@ -1583,12 +1583,8 @@ static struct {
    {    -1,     -1,  A_left,      0,     0,  PROCPS_PIDS_SUPGIDS       },  // str      EU_SGD
    {    -1,     -1,  A_left,      0,     0,  PROCPS_PIDS_SUPGROUPS     },  // str      EU_SGN
    {     0,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_TGID       },  // s_int    EU_TGD
-#ifdef OOMEM_ENABLE
- #define L_oom      PROC_FILLOOM
    {     3,     -1,  A_right,     0,     0,  PROCPS_PIDS_OOM_ADJ       },  // s_int    EU_OOA
    {     8,     -1,  A_right,     0,     0,  PROCPS_PIDS_OOM_SCORE     },  // s_int    EU_OOM
- #undef L_oom
-#endif
    {    -1,     -1,  A_left,      0,     0,  PROCPS_PIDS_ENVIRON       },  // str      EU_ENV
    {     3,     -1,  A_right,     0,     0,  PROCPS_PIDS_FLT_MAJ_DELTA },  // ul_int   EU_FV1
    {     3,     -1,  A_right,     0,     0,  PROCPS_PIDS_FLT_MIN_DELTA },  // ul_int   EU_FV2
@@ -3012,11 +3008,7 @@ static int config_cvt (WIN_t *q) {
     #undef old_Show_THREAD
    };
    static const char fields_src[] = CVT_FIELDS;
-#ifdef OOMEM_ENABLE
    char fields_dst[PFLAGSSIZ], *p1, *p2;
-#else
-   char fields_dst[PFLAGSSIZ];
-#endif
    int i, j, x;
 
    // first we'll touch up this window's winflags...
@@ -3035,14 +3027,12 @@ static int config_cvt (WIN_t *q) {
    if (j > CVT_FLDMAX)
       return 1;
    strcpy(fields_dst, fields_src);
-#ifdef OOMEM_ENABLE
    /* all other fields represent the 'on' state with a capitalized version
       of a particular qwerty key.  for the 2 additional suse out-of-memory
       fields it makes perfect sense to do the exact opposite, doesn't it?
       in any case, we must turn them 'off' temporarily... */
    if ((p1 = strchr(q->rc.fieldscur, '[')))  *p1 = '{';
    if ((p2 = strchr(q->rc.fieldscur, '\\'))) *p2 = '|';
-#endif
    for (i = 0; i < j; i++) {
       int c = q->rc.fieldscur[i];
       x = tolower(c) - 'a';
@@ -3052,11 +3042,9 @@ static int config_cvt (WIN_t *q) {
       if (isupper(c))
          FLDon(fields_dst[i]);
    }
-#ifdef OOMEM_ENABLE
    // if we turned any suse only fields off, turn 'em back on OUR way...
    if (p1) FLDon(fields_dst[p1 - q->rc.fieldscur]);
    if (p2) FLDon(fields_dst[p2 - q->rc.fieldscur]);
-#endif
    strcpy(q->rc.fieldscur, fields_dst);
 
    // lastly, we must adjust the old sort field enum...

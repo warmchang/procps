@@ -189,14 +189,6 @@ AC_ARG_ENABLE([examples],
 )
 AM_CONDITIONAL(EXAMPLE_FILES, test "x$enable_examples" = xyes)
 
-AC_ARG_ENABLE([oomem],
-  AS_HELP_STRING([--enable-oomem], [add out-of-memory fields to the library and top]),
-  [], [enable_oomem=no]
-)
-if test "x$enable_oomem" = xyes; then
-  AC_DEFINE(OOMEM_ENABLE, 1, [add out-of-memory fields to the library and top])
-fi
-
 AC_ARG_ENABLE([sigwinch],
   AS_HELP_STRING([--enable-sigwinch], [reduce impact of x-windows resize operations on top]),
   [], [enable_sigwinch=no]

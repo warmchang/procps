@@ -458,7 +458,6 @@ static void supgrps_from_supgids (proc_t *p) {
 }
 
 ///////////////////////////////////////////////////////////////////////
-#ifdef OOMEM_ENABLE
 static void oomscore2proc(const char* S, proc_t *restrict P)
 {
     sscanf(S, "%d", &P->oom_score);
@@ -468,7 +467,6 @@ static void oomadj2proc(const char* S, proc_t *restrict P)
 {
     sscanf(S, "%d", &P->oom_adj);
 }
-#endif
 ///////////////////////////////////////////////////////////////////////
 
 static const char *ns_names[] = {
@@ -985,14 +983,12 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     } else
         p->cgroup = NULL;
 
-#ifdef OOMEM_ENABLE
     if (unlikely(flags & PROC_FILLOOM)) {
         if (likely(file2str(path, "oom_score", &ub) != -1))
             oomscore2proc(ub.buf, p);
         if (likely(file2str(path, "oom_adj", &ub) != -1))
             oomadj2proc(ub.buf, p);
     }
-#endif
 
     if (unlikely(flags & PROC_FILLNS))          // read /proc/#/ns/*
         ns2proc(path, p);
@@ -1144,14 +1140,12 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     }
 #endif
 
-#ifdef OOMEM_ENABLE
     if (unlikely(flags & PROC_FILLOOM)) {
         if (likely(file2str(path, "oom_score", &ub) != -1))
             oomscore2proc(ub.buf, t);
         if (likely(file2str(path, "oom_adj", &ub) != -1))
             oomadj2proc(ub.buf, t);
     }
-#endif
 
     if (unlikely(flags & PROC_FILLNS))                  // read /proc/#/task/#/ns/*
         ns2proc(path, t);
