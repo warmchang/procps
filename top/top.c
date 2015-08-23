@@ -2889,8 +2889,8 @@ signify_that:
          * No matter what *they* say, we handle the really really BIG and
          * IMPORTANT stuff upon which all those lessor functions depend! */
 static void before (char *me) {
+   static proc_t p;
    struct sigaction sa;
-   proc_t p;
    int i;
    int linux_version_code = procps_linux_version();
 
