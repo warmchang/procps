@@ -1426,9 +1426,7 @@ void look_up_our_self(proc_t *p) {
         fprintf(stderr, "Error, do this: mount -t proc proc /proc\n");
         _exit(47);
     }
-    memset(p, 0, sizeof(*p));
     stat2proc(ub.buf, p);  // parse /proc/self/stat
-    free_acquired(p, 0);
     free(ub.buf);
 }
 
