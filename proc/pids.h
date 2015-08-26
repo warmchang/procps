@@ -190,6 +190,10 @@ struct pids_reap {
 };
 
 
+#define PROCPS_PIDS_VAL(rel_enum,type,stack) \
+    stack -> head [ rel_enum ] . result . type
+
+
 int procps_pids_new (
     struct procps_pidsinfo **info,
     int maxitems,
