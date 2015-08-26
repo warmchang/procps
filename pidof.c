@@ -26,6 +26,7 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "proc/readproc.h"
+#include <proc/pids.h>
 #include "proc/version.h" /* procps_version */
 
 
@@ -131,8 +132,10 @@ static char *pid_link (pid_t pid, const char *base_name)
 
 static void select_procs (void)
 {
-	PROCTAB *ptp;
-	proc_t task;
+	enum pids_item items[] = { PROCPS_PIDS_ID_PID, PROCPS_PIDS_CMD, PROCPS_PIDS_CMDLINE_V };
+	enum rel_items { rel_pid, rel_cmd, rel_cmdline };
+	struct procps_pidsinfo *info = NULL;
+	struct pids_stack *stack;
 	int match;
 	static int size = 0;
 	char *cmd_arg0, *cmd_arg0base;
@@ -146,27 +149,29 @@ static void select_procs (void)
 	/* get the input base name */
 	program_base = get_basename(program);
 
-	ptp = openproc (PROC_FILLCOM | PROC_FILLSTAT);
+	procps_pids_new(&info, 3, items);
+	procps_pids_read_open(info, PROCPS_REAP_TASKS_ONLY);
 
 	exe_link = root_link = NULL;
-	memset(&task, 0, sizeof (task));
-	while(readproc(ptp, &task)) {
+	while ((stack = procps_pids_read_next(info))) {
+		char  *p_cmd     = PROCPS_PIDS_VAL(rel_cmd,     str,   stack),
+		     **p_cmdline = PROCPS_PIDS_VAL(rel_cmdline, strv,  stack);
+		int    tid       = PROCPS_PIDS_VAL(rel_pid,     s_int, stack);
 
 		if (opt_rootdir_check) {
 			/* get the /proc/<pid>/root symlink value */
-			root_link = pid_link(task.XXXID, "root");
+			root_link = pid_link(tid, "root");
 			match = !strcmp(pidof_root, root_link);
 			safe_free(root_link);
 
 			if (!match) {  /* root check failed */
-				memset (&task, 0, sizeof (task));
 				continue;
 			}
 		}
 
-		if (!is_omitted(task.XXXID) && task.cmdline) {
+		if (!is_omitted(tid) && p_cmdline) {
 
-			cmd_arg0 = *task.cmdline;
+			cmd_arg0 = *p_cmdline;
 
 			/* processes starting with '-' are login shells */
 			if (*cmd_arg0 == '-') {
@@ -177,7 +182,7 @@ static void select_procs (void)
 			cmd_arg0base = get_basename(cmd_arg0);
 
 			/* get the /proc/<pid>/exe symlink value */
-			exe_link = pid_link(task.XXXID, "exe");
+			exe_link = pid_link(tid, "exe");
 
 			/* get the exe_link base name */
 			exe_link_base = get_basename(exe_link);
@@ -193,18 +198,18 @@ static void select_procs (void)
 			{
 				match = 1;
 
-			} else if (opt_scripts_too && *(task.cmdline+1)) {
+			} else if (opt_scripts_too && *(p_cmdline+1)) {
 
-				pos = cmd_arg1base = cmd_arg1 = *(task.cmdline+1);
+				pos = cmd_arg1base = cmd_arg1 = *(p_cmdline+1);
 
 				/* get the arg1 base name */
 				while (*pos != '\0') {
 					if (*(pos++) == '/') cmd_arg1base = pos;
 				}
 
-				/* if script, then task.cmd = argv1, otherwise task.cmd = argv0 */
-				if (task.cmd &&
-				    !strncmp(task.cmd, cmd_arg1base, strlen(task.cmd)) &&
+				/* if script, then cmd = argv1, otherwise cmd = argv0 */
+				if (p_cmd &&
+				    !strncmp(p_cmd, cmd_arg1base, strlen(p_cmd)) &&
 				    (!strcmp(program, cmd_arg1base) ||
 				    !strcmp(program_base, cmd_arg1) ||
 				    !strcmp(program, cmd_arg1)))
@@ -221,7 +226,7 @@ static void select_procs (void)
 					procs = xrealloc(procs, size * (sizeof *procs));
 				}
 				if (procs) {
-					procs[proc_count++].pid = task.XXXID;
+					procs[proc_count++].pid = tid;
 				} else {
 					xerrx(EXIT_FAILURE, _("internal error"));
 				}
@@ -229,10 +234,10 @@ static void select_procs (void)
 
 		}
 
-		memset (&task, 0, sizeof (task));
 	}
 
-	closeproc (ptp);
+	procps_pids_read_shut(info);
+	procps_pids_unref(&info);
 }
 
 
