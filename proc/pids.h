@@ -191,6 +191,16 @@ int procps_pids_new (
     int maxitems,
     enum pids_item *items);
 
+struct pids_stack *procps_pids_read_next (
+    struct procps_pidsinfo *info);
+
+int procps_pids_read_open (
+    struct procps_pidsinfo *info,
+    enum pids_reap_type which);
+
+int procps_pids_read_shut (
+    struct procps_pidsinfo *info);
+
 struct pids_reap *procps_pids_reap (
     struct procps_pidsinfo *info,
     enum pids_reap_type which);

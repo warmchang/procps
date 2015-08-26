@@ -47,6 +47,8 @@
 #define FILL_ID_MAX  255               // upper limit for pid/uid fills
 #define MEMORY_INCR  128               // amt by which allocations grow
 
+#define READS_BEGUN (info->read)       // a read is in progress
+
 enum pids_item PROCPS_PIDS_logical_end  = PROCPS_PIDS_noop + 1;
 enum pids_item PROCPS_PIDS_physical_end = PROCPS_PIDS_noop + 2;
 
@@ -70,6 +72,8 @@ struct procps_pidsinfo {
     int history_yes;                   // need historical data
     struct history_info *hist;         // pointer to historical support data
     int dirty_stacks;                  // extents need dynamic storage clean
+    struct stacks_extent *read;        // an extent used for active reads
+    proc_t*(*read_something)(PROCTAB*, proc_t*); // readproc/readeither via which
     unsigned pgs2k_shift;              // to convert some proc vaules
     unsigned flags;                    // the old library PROC_FILL flagss
     PROCTAB *PT;                       // the old library essential interface
@@ -942,6 +946,58 @@ PROCPS_EXPORT int procps_pids_new (
 } // end: procps_pids_new
 
 
+PROCPS_EXPORT struct pids_stack *procps_pids_read_next (
+        struct procps_pidsinfo *info)
+{
+    static proc_t task;    // static for initial zeroes + later dynamic free(s)
+
+    if (info == NULL || ! READS_BEGUN)
+        return NULL;
+    if (info->dirty_stacks) {
+        cleanup_stack(info->read->stacks[0]->head, info->maxitems);
+        info->dirty_stacks = 0;
+    }
+    if (NULL == info->read_something(info->PT, &task))
+        return NULL;
+    assign_results(info, info->read->stacks[0], &task);
+    return info->read->stacks[0];
+} // end: procps_pids_read_next
+
+
+PROCPS_EXPORT int procps_pids_read_open (
+        struct procps_pidsinfo *info,
+        enum pids_reap_type which)
+{
+    if (info == NULL || READS_BEGUN)
+        return -EINVAL;
+    if (!info->maxitems && !info->curitems)
+        return -EINVAL;
+    if (which != PROCPS_REAP_TASKS_ONLY && which != PROCPS_REAP_THREADS_TOO)
+        return -EINVAL;
+
+    if (!(info->read = (struct stacks_extent *)procps_pids_stacks_alloc(info, 1)))
+        return -ENOMEM;
+    if (!oldproc_open(info, 0))
+        return -1;
+    info->read_something = which ? readeither : readproc;
+    return 0;
+} // end: procps_pids_read_open
+
+
+PROCPS_EXPORT int procps_pids_read_shut (
+        struct procps_pidsinfo *info)
+{
+    int rc;
+
+    if (info == NULL || ! READS_BEGUN)
+        return -EINVAL;
+    oldproc_close(info);
+    rc = free_extent(info, info->read);
+    info->read = NULL;
+    return rc;
+} // end: procps_pids_read_shut
+
+
 /* procps_pids_reap():
  *
  * Harvest all the available tasks/threads and provide the result
@@ -960,7 +1016,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
     struct pids_stacks *ext;
     int n_save = n_alloc;
 
-    if (info == NULL)
+    if (info == NULL || READS_BEGUN)
         return NULL;
     if (!info->maxitems && !info->curitems)
         return NULL;
@@ -1162,7 +1218,7 @@ PROCPS_EXPORT struct pids_counts *procps_pids_stacks_fill (
     unsigned ids[FILL_ID_MAX + 1];
     int i;
 
-    if (info == NULL || these == NULL)
+    if (info == NULL || these == NULL || READS_BEGUN)
         return NULL;
     if (these->stacks == NULL || these->stacks[0] == NULL)
         return NULL;

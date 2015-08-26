@@ -43,6 +43,9 @@ global:
 	procps_meminfo_stack_fill;
 	procps_meminfo_stack_alloc;
 	procps_pids_new;
+	procps_pids_read_next;
+	procps_pids_read_open;
+	procps_pids_read_shut;
 	procps_pids_reap;
 	procps_pids_ref;
 	procps_pids_reset;
