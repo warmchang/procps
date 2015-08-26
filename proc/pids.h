@@ -33,9 +33,12 @@ enum pids_item {
     PROCPS_PIDS_ADDR_START_STACK,      // addr
     PROCPS_PIDS_ALARM,                 // sl_int
     PROCPS_PIDS_CGROUP,                // str
+    PROCPS_PIDS_CGROUP_V,              // strv
     PROCPS_PIDS_CMD,                   // str
     PROCPS_PIDS_CMDLINE,               // str
+    PROCPS_PIDS_CMDLINE_V,             // strv
     PROCPS_PIDS_ENVIRON,               // str
+    PROCPS_PIDS_ENVIRON_V,             // strv
     PROCPS_PIDS_EXIT_SIGNAL,           // s_int
     PROCPS_PIDS_FLAGS,                 // ul_int
     PROCPS_PIDS_FLT_MAJ,               // ul_int
@@ -162,7 +165,8 @@ struct pids_result {
         unsigned long        ul_int;
         unsigned long long   ull_int;
         void               * addr;
-        const char         * str;
+        char               * str;
+        char              ** strv;
     } result;
 };
 
