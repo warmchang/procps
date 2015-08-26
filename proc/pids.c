@@ -956,9 +956,16 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
  #define n_alloc  info->alloc_total
  #define n_inuse  info->inuse_total
     static proc_t task;    // static for initial zeroes + later dynamic free(s)
-    proc_t*(*read_something)(PROCTAB*, proc_t*);
+    proc_t*(*reap_something)(PROCTAB*, proc_t*);
     struct pids_stacks *ext;
     int n_save = n_alloc;
+
+    if (info == NULL)
+        return NULL;
+    if (!info->maxitems && !info->curitems)
+        return NULL;
+    if (which != PROCPS_REAP_TASKS_ONLY && which != PROCPS_REAP_THREADS_TOO)
+        return NULL;
 
     if (!info->anchor) {
         if ((!(info->anchor = calloc(sizeof(void *), MEMORY_INCR)))
@@ -975,7 +982,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
     if (!oldproc_open(info, 0))
         return NULL;
     toggle_history(info);
-    read_something = which ? readeither : readproc;
+    reap_something = which ? readeither : readproc;
 
     for (n_inuse = 0; ; n_inuse++) {
         if (n_inuse == n_alloc) {
@@ -985,7 +992,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
                 return NULL;
             memcpy(info->anchor + n_inuse, ext->stacks, sizeof(void *) * MEMORY_INCR);
         }
-        if (NULL == read_something(info->PT, &task))
+        if (NULL == reap_something(info->PT, &task))
             break;
         if (!tally_proc(info, &info->reaped.counts, &task))
             return NULL;
@@ -1131,6 +1138,7 @@ PROCPS_EXPORT int procps_pids_stacks_dealloc (
         struct pids_stacks **these)
 {
     struct stacks_extent *ext;
+    int rc;
 
     if (info == NULL || these == NULL)
         return -EINVAL;
@@ -1138,7 +1146,7 @@ PROCPS_EXPORT int procps_pids_stacks_dealloc (
         return -EINVAL;
 
     ext = (struct stacks_extent *)(*these);
-    int rc = free_extent(info, ext);
+    rc = free_extent(info, ext);
     *these = NULL;
     return rc;
 } // end: procps_pids_stacks_dealloc
