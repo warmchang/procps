@@ -319,10 +319,11 @@ static int srtNAME(noop) (
 #define f_status   PROC_FILLSTATUS
 #define f_systemd  PROC_FILLSYSTEMD
 #define f_usr      PROC_FILLUSR
+   // these next three will yield true verctorized strings
 #define v_arg      PROC_FILLARG
 #define v_cgroup   PROC_FILLCGROUP
 #define v_env      PROC_FILLENV
-   // remaining are compound flags, yielding single string
+   // remaining are compound flags, yielding a single string (maybe vectorized)
 #define x_cgroup   PROC_EDITCGRPCVT | PROC_FILLCGROUP           // just 1 str
 #define x_cmdline  PROC_EDITCMDLCVT | PROC_FILLARG              // just 1 str
 #define x_environ  PROC_EDITENVRCVT | PROC_FILLENV              // just 1 str
@@ -577,7 +578,7 @@ static int make_hist (
         Hr(HHist_siz) += MEMORY_INCR;
         Hr(PHist_sav) = realloc(Hr(PHist_sav), sizeof(HST_t) * Hr(HHist_siz));
         Hr(PHist_new) = realloc(Hr(PHist_new), sizeof(HST_t) * Hr(HHist_siz));
-        if (!Hr(PHist_sav || !Hr(PHist_new)))
+        if (!Hr(PHist_sav) || !Hr(PHist_new))
             return -ENOMEM;
     }
     Hr(PHist_new[nSLOT].pid)  = p->tid;
@@ -589,10 +590,10 @@ static int make_hist (
 
     if ((h = histget(info, p->tid))) {
         tics -= h->tics;
+        p->pcpu = tics;
         p->maj_delta = p->maj_flt - h->maj;
         p->min_delta = p->min_flt - h->min;
     }
-    p->pcpu = tics;
 
     nSLOT++;
     return 0;
@@ -703,6 +704,7 @@ static void unref_rpthash (
 } // end: unref_rpthash
 #endif // UNREF_RPTHASH
 
+#undef Hr
 #undef HHASH_SIZE
 
 
@@ -792,6 +794,7 @@ static inline int items_check_failed (
     int i;
 
     for (i = 0; i < maxitems; i++) {
+        // a pids_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
             return -1;
         if (items[i] > PROCPS_PIDS_noop) {
@@ -1052,7 +1055,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
     static proc_t task;    // static for initial zeroes + later dynamic free(s)
     proc_t*(*reap_something)(PROCTAB*, proc_t*);
     struct pids_stacks *ext;
-    int n_save = n_alloc;
+    int n_save;
 
     if (info == NULL || READS_BEGUN)
         return NULL;
@@ -1060,6 +1063,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
         return NULL;
     if (which != PROCPS_REAP_TASKS_ONLY && which != PROCPS_REAP_THREADS_TOO)
         return NULL;
+    n_save = n_alloc;
 
     if (!info->anchor) {
         if ((!(info->anchor = calloc(sizeof(void *), MEMORY_INCR)))
@@ -1088,8 +1092,10 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
         }
         if (NULL == reap_something(info->PT, &task))
             break;
-        if (!tally_proc(info, &info->reaped.counts, &task))
+        if (!tally_proc(info, &info->reaped.counts, &task)) {
+            oldproc_close(info);
             return NULL;
+        }
         assign_results(info, info->anchor[n_inuse], &task);
     }
 
@@ -1322,6 +1328,7 @@ PROCPS_EXPORT struct pids_stack **procps_pids_stacks_sort (
 
     if (info == NULL || stacks == NULL)
         return NULL;
+    // a pids_item is currently unsigned, but we'll protect our future
     if (sort < 0  || sort > PROCPS_PIDS_noop)
         return NULL;
     if (order < -1  || order > +1)
