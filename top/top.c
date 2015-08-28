@@ -226,7 +226,8 @@ static const char Graph_blks[] = "                                              
 static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
 
         /* Support for the new library API -- acquired (if necessary)
-           at program startup and referenced throughout our lifetime */
+           at program startup and referenced throughout our lifetime.
+           ( appearing in order of newlib development availability. )*/
         // ---------------------------------------------- <proc/meminfo.h>
 static struct procps_meminfo *Mem_ctx;
 static struct meminfo_stack *Mem_stack;
@@ -252,8 +253,9 @@ static struct pids_stack **Pids_stks;       // for either reap or monpids
 static struct pids_counts *Pids_cnts;       // for either reap or monpids
 static struct pids_reap   *Pids_reap;       // for reap only
 static struct pids_stacks *Pids_fill;       // for fill only (w/ monpids)
-        // pid stack results extractor macro, where e=rel enum, t=type, s=stack
-#define PID_VAL(e,t,s)  s ->head [Fieldstab[ e ].erel].result. t
+        // pid stack results extractor macro, where e=our EU enum, t=type, s=stack
+        // ( we'll exploit the <proc/pids.h> provided macro as much as we can )
+#define PID_VAL(e,t,s)  PROCPS_PIDS_VAL(Fieldstab[ e ].erel, t, s)
 
 /*######  Tiny useful routine(s)  ########################################*/
 
@@ -1518,8 +1520,6 @@ static struct {
    int           erel;          // relative position in dynamic Pids_itms
    const enum pids_item item;   // the new libproc item enum identifier
 } Fieldstab[] = {
-   // a temporary macro, soon to be undef'd...
- #define SF(f) (QFP_t)SCB_NAME(f)
    // these identifiers reflect the default column alignment but they really
    // contain the WIN_t flag used to check/change justification at run-time!
  #define A_right Show_JRNUMS       /* toggled with upper case 'J' */
@@ -1611,7 +1611,6 @@ static struct {
    {          -1, -1, -1, -1, -1,            PROCPS_PIDS_TIME_START    },  // ull_int  ( if Show_FOREST )
    {          -1, -1, -1, -1, -1,            PROCPS_PIDS_ID_FUID       },  // u_int    ( if a usrseltyp )
    {          -1, -1, -1, -1, -1,            PROCPS_PIDS_noop          }   // n/a      (    why not?    )
- #undef SF
  #undef A_left
  #undef A_right
 };
@@ -3769,7 +3768,7 @@ static void wins_stage_2 (void) {
          * for a given window -- it is called from only one place, and
          * will likely be inlined even without the following directive */
 static inline int wins_usrselect (const WIN_t *q, struct pids_stack *p) {
- // our 'results stack value' extractor macro
+ // a tailored 'results stack value' extractor macro
  #define rSv(E)  PID_VAL(E, u_int, p)
    switch(q->usrseltyp) {
       case 0:                                    // uid selection inactive
@@ -4561,7 +4560,7 @@ static int *Tree_lvl;                       // level array for Trees ('to')
          * He fills in the Tree_ppt array and also sets the child indent
          * level which is stored in the same slot of separate array. */
 static void forest_begin (const int self, int level) {
- // our 'results stack value' extractor macro
+ // a tailored 'results stack value' extractor macro
  #define rSv(E,X)  PID_VAL(E, s_int, Seed_ppt[X])
    int i;
 
@@ -4622,7 +4621,7 @@ static void forest_create (WIN_t *q) {
          * This guy adds the artwork to either a 'cmd' or 'cmdline'
          * when in forest view mode, otherwise he just returns 'em. */
 static inline const char *forest_display (const WIN_t *q, const int idx) {
- // our 'results stack value' extractor macro
+ // a tailored 'results stack value' extractor macro
  #define rSv(E)  PID_VAL(E, str, q->ppt[idx])
 #ifndef SCROLLVAR_NO
    static char buf[1024*64*2]; // the same as libray's max buffer size
@@ -4956,7 +4955,7 @@ numa_nope:
          * Build the information for a single task row and
          * display the results or return them to the caller. */
 static const char *task_show (const WIN_t *q, const int idx) {
- // our 'results stack value' extractor macro
+ // a tailored 'results stack value' extractor macro
  #define rSv(E,T)  PID_VAL(E, T, q->ppt[idx])
 #ifndef SCROLLVAR_NO
  #define makeVAR(P)  { if (!q->varcolbeg) cp = make_str(P, q->varcolsz, Js, AUTOX_NO); \

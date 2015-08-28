@@ -212,8 +212,6 @@ typedef unsigned char FLG_t;
 typedef unsigned long long TIC_t;
 typedef          long long SIC_t;
 
-        /* Sort support, callback function signature */
-typedef int (*QFP_t)(const void *, const void *);
 
         /* /////////////////////////////////////////////////////////////// */
         /* Special Section: multiple windows/field groups  --------------- */
