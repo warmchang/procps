@@ -588,7 +588,7 @@ static int one_proc(proc_t * p)
 		char perms[32];
 		/* to clean up unprintables */
 		char *tmp;
-		unsigned KLONG start, end;
+		unsigned KLONG end, start = 0;;
 		unsigned long long file_offset, inode;
 		unsigned dev_major, dev_minor;
 		unsigned long long smap_value;
