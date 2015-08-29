@@ -34,10 +34,14 @@
 #include "c.h"
 #include "fileutils.h"
 #include "nls.h"
-#include "proc/escape.h"
 #include "xalloc.h"
-#include "proc/readproc.h"
 #include "proc/version.h"
+#include <proc/pids.h>
+
+enum pids_item Pid_items[] = {
+    PROCPS_PIDS_ID_PID,  PROCPS_PIDS_ID_TGID,
+    PROCPS_PIDS_CMDLINE, PROCPS_PIDS_ADDR_START_STACK };
+enum rel_items { pid, tgid, cmdline, start_stack };
 
 const char *nls_Address,
 	   *nls_Offset,
@@ -129,7 +133,6 @@ usage(FILE * out)
 }
 
 static char mapbuf[1024];
-static char cmdbuf[512];
 
 static unsigned KLONG range_low;
 static unsigned KLONG range_high = ~0ull;
@@ -207,7 +210,7 @@ out_destroy:
 	return;
 }
 
-static char *mapping_name(proc_t * p, unsigned KLONG addr,
+static char *mapping_name(struct pids_stack *p, unsigned KLONG addr,
 				unsigned KLONG len, const char *mapbuf_b,
 				unsigned showpath, unsigned dev_major,
 				unsigned dev_minor, unsigned long long inode)
@@ -236,7 +239,8 @@ static char *mapping_name(proc_t * p, unsigned KLONG addr,
 	}
 
 	cp = _("  [ anon ]");
-	if ((p->start_stack >= addr) && (p->start_stack <= addr + len))
+	if (PROCPS_PIDS_VAL(start_stack, addr, p) >= (void*)addr
+	&& (PROCPS_PIDS_VAL(start_stack, addr, p) <= (void*)addr + len))
 		cp = _("  [ stack ]");
 	return cp;
 }
@@ -511,7 +515,7 @@ loop_end:
 	/* We don't free() the list, it's used for all PIDs passed as arguments */
 }
 
-static int one_proc(proc_t * p)
+static int one_proc (struct pids_stack *p)
 {
 	char buf[32];
 	FILE *fp;
@@ -528,21 +532,14 @@ static int one_proc(proc_t * p)
 	unsigned long long total_shared_dirty = 0ull;
 	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0;
 
-	/* Overkill, but who knows what is proper? The "w" prog uses
-	 * the tty width to determine this.
-	 */
-	int maxcmd = 0xfffff;
-
-	escape_command(cmdbuf, p, sizeof cmdbuf, &maxcmd,
-		       ESC_ARGS | ESC_BRACKETS);
-	printf("%u:   %s\n", p->tgid, cmdbuf);
+	printf("%u:   %s\n", PROCPS_PIDS_VAL(tgid, s_int, p), PROCPS_PIDS_VAL(cmdline, str, p));
 
 	if (x_option || X_option || c_option) {
-		sprintf(buf, "/proc/%u/smaps", p->tgid);
+		sprintf(buf, "/proc/%u/smaps", PROCPS_PIDS_VAL(tgid, s_int, p));
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	} else {
-		sprintf(buf, "/proc/%u/maps", p->tgid);
+		sprintf(buf, "/proc/%u/maps", PROCPS_PIDS_VAL(tgid, s_int, p));
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	}
@@ -991,10 +988,10 @@ static char *get_default_rc_filename(void)
 
 int main(int argc, char **argv)
 {
-	pid_t *pidlist;
-	unsigned count = 0;
-	PROCTAB *PT;
-	proc_t p;
+	struct procps_pidsinfo *info = NULL;
+	struct pids_counts *pids_cnts;
+	struct pids_stacks *pidlist;
+	int fill_count, user_count;
 	int ret = 0, c, conf_ret;
 	char *rc_filename = NULL;
 
@@ -1116,7 +1113,6 @@ int main(int argc, char **argv)
 	if (C_option) c_option = 1;
 
 	if (c_option) {
-
 		if (!C_option) rc_filename = get_default_rc_filename();
 
 		if (!rc_filename) return(EXIT_FAILURE);
@@ -1132,11 +1128,13 @@ int main(int argc, char **argv)
 				return(EXIT_FAILURE);
 			}
 		}
-
 	}
 
-	pidlist = xmalloc(sizeof(pid_t) * (argc+1));
+	if (procps_pids_new(&info, 4, Pid_items)
+	|| !(pidlist = procps_pids_stacks_alloc(info, argc)))
+		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
 
+	user_count = 0;
 	while (*argv) {
 		char *walk = *argv++;
 		char *endp;
@@ -1152,21 +1150,20 @@ int main(int argc, char **argv)
 		pid = strtoul(walk, &endp, 0);
 		if (pid < 1ul || pid > 0x7ffffffful || *endp)
 			usage(stderr);
-		pidlist[count++] = pid;
+		pidlist->stacks[user_count++]->fill_id = pid;
 	}
 
 	discover_shm_minor();
 
-	memset(&p, '\0', sizeof(p));
-	/* old libproc interface is zero-terminated */
-	pidlist[count] = 0;
-	PT = openproc(PROC_FILLSTAT | PROC_FILLARG | PROC_PID, pidlist);
-	while (readproc(PT, &p)) {
-		ret |= one_proc(&p);
-		count--;
+	if (!(pids_cnts = procps_pids_stacks_fill(info, pidlist, user_count, PROCPS_FILL_PID)))
+		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
+
+	for (fill_count = 0; fill_count < pids_cnts->total; fill_count++) {
+		ret |= one_proc(pidlist->stacks[fill_count]);
 	}
-	closeproc(PT);
-	free(pidlist);
+
+	procps_pids_stacks_dealloc(info, &pidlist);
+	procps_pids_unref(&info);
 
 	/* cleaning the list used for the -c/-X/-XX modes */
 	for (listnode = listhead; listnode != NULL ; ) {
@@ -1182,7 +1179,7 @@ int main(int argc, char **argv)
 		cnf_listhead = cnf_listnode;
 	}
 
-	if (count)
+	if (fill_count < user_count)
 		/* didn't find all processes asked for */
 		ret |= 42;
 	return ret;
