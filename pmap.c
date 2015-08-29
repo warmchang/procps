@@ -433,7 +433,7 @@ loop_end:
 					justify_print(listnode->description, listnode->max_width, 1);
 
 				if (has_vmflags && is_enabled("VmFlags"))
-					printf(" %*s", maxwv, "VmFlags");
+					printf(" %*s", maxwv, "VmFlags  ");
 
 				if (is_enabled(nls_Mapping))
 					justify_print(nls_Mapping, 0, 0);
