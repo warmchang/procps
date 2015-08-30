@@ -793,6 +793,17 @@ static inline int items_check_failed (
 {
     int i;
 
+    /* if an enum is passed instead of an address of one or more enums, ol' gcc
+     * will silently convert it to an address (possibly NULL).  only clang will
+     * offer any sort of warning like the following:
+     *
+     * warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'enum pids_item *'
+     * if (procps_pids_new(&info, 3, PROCPS_PIDS_noop) < 0)
+     *                               ^~~~~~~~~~~~~~~~
+     */
+    if (maxitems < 1
+    || (void *)items < (void *)PROCPS_PIDS_physical_end)
+        return -1;
     for (i = 0; i < maxitems; i++) {
         // a pids_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
