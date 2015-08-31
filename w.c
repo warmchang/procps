@@ -26,13 +26,9 @@
 #include "c.h"
 #include "fileutils.h"
 #include "nls.h"
-#include "proc/devname.h"
-#include "proc/escape.h"
-#include "proc/procps.h"
-#include "proc/readproc.h"
-#include "proc/sysinfo.h"
-#include "proc/version.h"
+#include <proc/sysinfo.h>
 #include <proc/uptime.h>
+#include <proc/pids.h>
 
 #include <ctype.h>
 #include <errno.h>
@@ -59,7 +55,6 @@
 
 static int ignoreuser = 0;	/* for '-u' */
 static int oldstyle = 0;	/* for '-o' */
-static proc_t **procs;		/* our snapshot of the process table */
 
 typedef struct utmp utmp_t;
 
@@ -311,134 +306,189 @@ static void print_logintime(time_t logt, FILE * fout)
 }
 
 /*
+ * Get the Device ID of the given TTY
+ */
+static int get_tty_device(const char *restrict const name)
+{
+    struct stat st;
+    static char buf[32];
+    char *dev_paths[] = { "/dev/%s", "/dev/tty%s", "/dev/pts/%s", NULL};
+    int i;
+
+    if (name[0] == '/' && stat(name, &st) == 0)
+        return st.st_rdev;
+
+    for (i=0; dev_paths[i] != NULL; i++) {
+        snprintf(buf, 32, dev_paths[i], name);
+        if (stat(buf, &st) == 0)
+            return st.st_rdev;
+    }
+    return -1;
+}
+
+/*
  * This function scans the process table accumulating total cpu
  * times for any processes "associated" with this login session.
  * It also searches for the "best" process to report as "(w)hat"
  * the user for that login session is doing currently. This the
  * essential core of 'w'.
  */
-static const proc_t *getproc(const utmp_t * restrict const u,
-			     const char *restrict const tty,
-			     unsigned long long *restrict const jcpu,
-			     int *restrict const found_utpid)
+static int find_best_proc(
+        const utmp_t * restrict const u,
+        const char *restrict const tty,
+        unsigned long long *restrict const jcpu,
+        unsigned long long *restrict const pcpu,
+        char *cmdline)
 {
-	int line;
-	proc_t **pptr = procs;
-	const proc_t *best = NULL;
-	const proc_t *secondbest = NULL;
-	unsigned uid = ~0U;
+#define PIDS_GETINT(e) PROCPS_PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
+#define PIDS_GETULL(e) PROCPS_PIDS_VAL(EU_ ## e, ull_int, reap->stacks[i])
+#define PIDS_GETSTR(e) PROCPS_PIDS_VAL(EU_ ## e, str, reap->stacks[i])
+    unsigned uid = ~0U;
+    int found_utpid = 0;
+    int i, total_procs, line;
+    unsigned long long best_time = 0;
+    unsigned long long secondbest_time = 0;
 
-	*found_utpid = 0;
-	if (!ignoreuser) {
-		char buf[UT_NAMESIZE + 1];
-		/* pointer to static data */
-		struct passwd *passwd_data;
-		strncpy(buf, u->ut_user, UT_NAMESIZE);
-		buf[UT_NAMESIZE] = '\0';
-		passwd_data = getpwnam(buf);
-		if (!passwd_data)
-			return NULL;
-		uid = passwd_data->pw_uid;
-		/* OK to have passwd_data go out of scope here */
-	}
-	line = tty_to_dev(tty);
-	*jcpu = 0;
-	for (; *pptr; pptr++) {
-		const proc_t *restrict const tmp = *pptr;
-		if (unlikely(tmp->tgid == u->ut_pid)) {
-			*found_utpid = 1;
-			best = tmp;
-		}
-		if (tmp->tty != line)
-			continue;
-		(*jcpu) += tmp->utime + tmp->stime;
-		secondbest = tmp;
-		/* same time-logic here as for "best" below */
-		if (!(secondbest && tmp->start_time <= secondbest->start_time)) {
-			secondbest = tmp;
-		}
-		if (!ignoreuser && uid != tmp->euid && uid != tmp->ruid)
-			continue;
-		if (tmp->pgrp != tmp->tpgid)
-			continue;
-		if (best && tmp->start_time <= best->start_time)
-			continue;
-		best = tmp;
-	}
-	return best ? best : secondbest;
+    struct procps_pidsinfo *info=NULL;
+    struct pids_reap *reap;
+    enum pids_item items[] = {
+        PROCPS_PIDS_ID_TGID,
+        PROCPS_PIDS_TIME_START,
+        PROCPS_PIDS_ID_EUID,
+        PROCPS_PIDS_ID_RUID,
+        PROCPS_PIDS_ID_TPGID,
+        PROCPS_PIDS_ID_PGRP,
+        PROCPS_PIDS_TTY,
+        PROCPS_PIDS_TICS_ALL,
+        PROCPS_PIDS_CMDLINE};
+    enum rel_items {
+        EU_TGID, EU_START, EU_EUID, EU_RUID, EU_TPGID, EU_PGRP, EU_TTY,
+        EU_TICS_ALL, EU_CMDLINE};
+
+    *jcpu = 0;
+    *pcpu = 0;
+    if (!ignoreuser) {
+        char buf[UT_NAMESIZE + 1];
+        struct passwd *passwd_data;
+        strncpy(buf, u->ut_user, UT_NAMESIZE);
+        buf[UT_NAMESIZE] = '\0';
+        if ((passwd_data = getpwnam(buf)) == NULL)
+            return 0;
+        uid = passwd_data->pw_uid;
+        /* OK to have passwd_data go out of scope here */
+    }
+
+    line = get_tty_device(tty);
+
+    if (procps_pids_new(&info, 9, items) < 0)
+        xerrx(EXIT_FAILURE,
+              _("Unable to create pid info structure"));
+    if ((reap = procps_pids_reap(info, PROCPS_REAP_TASKS_ONLY)) == NULL)
+        xerrx(EXIT_FAILURE,
+              _("Unable to load process information"));
+    total_procs = reap->counts.total;
+
+    for (i=0; i < total_procs; i++) {
+        /* is this the login process? */
+        if (PIDS_GETINT(TGID) == u->ut_pid) {
+            found_utpid = 1;
+            if (!best_time) {
+                best_time = PIDS_GETULL(START);
+                strncpy(cmdline, PIDS_GETSTR(CMDLINE), MAX_CMD_WIDTH);
+                *pcpu = PIDS_GETULL(TICS_ALL);
+            }
+
+        }
+        if (PIDS_GETINT(TTY) != line)
+            continue;
+        (*jcpu) += PROCPS_PIDS_VAL(EU_TICS_ALL, ull_int, reap->stacks[i]);
+        if (!(secondbest_time && PIDS_GETULL(START) <= secondbest_time)) {
+            secondbest_time = PIDS_GETULL(START);
+            if (cmdline[0] == '-' && cmdline[1] == '\0') {
+                strncpy(cmdline, PIDS_GETSTR(CMDLINE), MAX_CMD_WIDTH);
+                *pcpu = PIDS_GETULL(TICS_ALL);
+            }
+        }
+        if (
+            (!ignoreuser && uid != PIDS_GETINT(EUID)
+             && uid != PIDS_GETINT(RUID))
+            || (PIDS_GETINT(PGRP) != PIDS_GETINT(TPGID))
+            || (PIDS_GETULL(START) <= best_time)
+           )
+            continue;
+        best_time = PIDS_GETULL(START);
+        strncpy(cmdline, PIDS_GETSTR(CMDLINE), MAX_CMD_WIDTH);
+        *pcpu = PIDS_GETULL(TICS_ALL);
+    }
+    procps_pids_unref(&info);
+    return found_utpid;
+#undef PIDS_GETINT
+#undef PIDS_GETULL
+#undef PIDS_GETSTR
 }
 
-static void showinfo(utmp_t * u, int formtype, int maxcmd, int from,
-		     const int userlen, const int fromlen, const int ip_addresses)
+static void showinfo(
+            utmp_t * u, int formtype, int maxcmd, int from,
+            const int userlen, const int fromlen, const int ip_addresses)
 {
-	unsigned long long jcpu;
-	int ut_pid_found;
-	unsigned i;
-	char uname[UT_NAMESIZE + 1] = "", tty[5 + UT_LINESIZE + 1] = "/dev/";
-	const proc_t *best;
-	long hertz;
+    unsigned long long jcpu, pcpu;
+    unsigned i;
+    char uname[UT_NAMESIZE + 1] = "", tty[5 + UT_LINESIZE + 1] = "/dev/";
+    long hertz;
+    char cmdline[MAX_CMD_WIDTH + 1];
 
-	hertz = procps_hertz_get();
-	for (i = 0; i < UT_LINESIZE; i++)
-		/* clean up tty if garbled */
-		if (isalnum(u->ut_line[i]) || (u->ut_line[i] == '/'))
-			tty[i + 5] = u->ut_line[i];
-		else
-			tty[i + 5] = '\0';
+    strcpy(cmdline, "-");
 
-	best = getproc(u, tty + 5, &jcpu, &ut_pid_found);
+    hertz = procps_hertz_get();
+    for (i = 0; i < UT_LINESIZE; i++)
+        /* clean up tty if garbled */
+        if (isalnum(u->ut_line[i]) || (u->ut_line[i] == '/'))
+            tty[i + 5] = u->ut_line[i];
+        else
+            tty[i + 5] = '\0';
 
-	/*
-	 * just skip if stale utmp entry (i.e. login proc doesn't
-	 * exist). If there is a desire a cmdline flag could be
-	 * added to optionally show it with a prefix of (stale)
-	 * in front of cmd or something like that.
-	 */
-	if (!ut_pid_found)
-		return;
+    if (find_best_proc(u, tty + 5, &jcpu, &pcpu, cmdline) == 0)
+    /*
+     * just skip if stale utmp entry (i.e. login proc doesn't
+     * exist). If there is a desire a cmdline flag could be
+     * added to optionally show it with a prefix of (stale)
+     * in front of cmd or something like that.
+     */
+        return;
 
-	/* force NUL term for printf */
-	strncpy(uname, u->ut_user, UT_NAMESIZE);
+    /* force NUL term for printf */
+    strncpy(uname, u->ut_user, UT_NAMESIZE);
 
-	if (formtype) {
-		printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, u->ut_line);
-		if (from)
-			print_from(u, ip_addresses, fromlen);
-		print_logintime(u->ut_time, stdout);
-		if (*u->ut_line == ':')
-			/* idle unknown for xdm logins */
-			printf(" ?xdm? ");
-		else
-			print_time_ival7(idletime(tty), 0, stdout);
-		print_time_ival7(jcpu / hertz, (jcpu % hertz) * (100. / hertz),
-				 stdout);
-		if (best) {
-			unsigned long long pcpu = best->utime + best->stime;
-			print_time_ival7(pcpu / hertz,
-					 (pcpu % hertz) * (100. / hertz),
-					 stdout);
-		} else
-			printf("   ?   ");
-	} else {
-		printf("%-*.*s%-9.8s", userlen + 1, userlen, u->ut_user,
-		       u->ut_line);
-		if (from)
-			print_from(u, ip_addresses, fromlen);
-		if (*u->ut_line == ':')
-			/* idle unknown for xdm logins */
-			printf(" ?xdm? ");
-		else
-			print_time_ival7(idletime(tty), 0, stdout);
-	}
-	fputs(" ", stdout);
-	if (likely(best)) {
-		char cmdbuf[MAX_CMD_WIDTH];
-		escape_command(cmdbuf, best, sizeof cmdbuf, &maxcmd, ESC_ARGS);
-		fputs(cmdbuf, stdout);
-	} else {
-		printf("-");
-	}
-	fputc('\n', stdout);
+    if (formtype) {
+        printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, u->ut_line);
+        if (from)
+            print_from(u, ip_addresses, fromlen);
+        print_logintime(u->ut_time, stdout);
+        if (*u->ut_line == ':')
+            /* idle unknown for xdm logins */
+            printf(" ?xdm? ");
+        else
+            print_time_ival7(idletime(tty), 0, stdout);
+        print_time_ival7(jcpu / hertz, (jcpu % hertz) * (100. / hertz),
+                 stdout);
+        if (pcpu > 0)
+            print_time_ival7(pcpu / hertz,
+                             (pcpu % hertz) * (100. / hertz),
+                             stdout);
+        else
+            printf("   ?   ");
+    } else {
+        printf("%-*.*s%-9.8s", userlen + 1, userlen, u->ut_user,
+               u->ut_line);
+        if (from)
+            print_from(u, ip_addresses, fromlen);
+        if (*u->ut_line == ':')
+            /* idle unknown for xdm logins */
+            printf(" ?xdm? ");
+        else
+            print_time_ival7(idletime(tty), 0, stdout);
+    }
+    printf(" %-*.*s\n", maxcmd, maxcmd, cmdline);
 }
 
 static void __attribute__ ((__noreturn__))
@@ -582,7 +632,6 @@ int main(int argc, char **argv)
 	if (maxcmd < 3)
 		xwarnx(_("warning: screen width %d suboptimal"), win.ws_col);
 
-	procs = readproctab(PROC_FILLCOM | PROC_FILLUSR | PROC_FILLSTAT);
 
 	if (header) {
 		/* print uptime and headers */
