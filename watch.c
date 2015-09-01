@@ -228,10 +228,12 @@ static void process_ansi(FILE * fp)
 	 * attributes to apply, but typically there are between 1 and 3.
 	 */
 
-	if (*endptr == '\0') set_ansi_attribute(0); /* [m treated as [0m */
 
-	for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1)
+	for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
 		set_ansi_attribute(strtol(numstart, &endptr, 10));
+        if (numstart == endptr)
+            set_ansi_attribute(0); /* [m treated as [0m */
+    }
 }
 
 static void __attribute__ ((__noreturn__)) do_exit(int status)

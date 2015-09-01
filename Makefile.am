@@ -96,7 +96,7 @@ dist_man_MANS += \
 slabtop_SOURCES = slabtop.c lib/strutils.c lib/fileutils.c
 slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
 watch_SOURCES = watch.c lib/strutils.c lib/fileutils.c
-watch_LDADD = $(LDADD) @WATCH_NCURSES_LIBS@
+watch_LDADD = @WATCH_NCURSES_LIBS@
 top_top_SOURCES = \
 	top/top.h \
 	top/top.c \
