@@ -19,7 +19,6 @@ global:
 	readproctab3;
 	readproctab;
 	readtask;
-	tty_to_dev;
 	user_from_uid;
 	procps_cpu_count;
 	procps_diskstat_dev_count;

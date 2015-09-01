@@ -11,7 +11,5 @@ __BEGIN_DECLS
 
 extern unsigned dev_to_tty(char *__restrict ret, unsigned chop, dev_t dev_t_dev, int pid, unsigned int flags);
 
-extern int tty_to_dev(const char *__restrict const name);
-
 __END_DECLS
 #endif

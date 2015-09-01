@@ -36,7 +36,6 @@
 
 /* Who uses what:
  *
- * tty_to_dev   w (there is a fancy version in ps)
  * dev_to_tty   top, ps
  */
 
@@ -318,18 +317,4 @@ abbrev:
   }
   *ret = '\0';
   return i;
-}
-
-/* name --> number */
-int tty_to_dev(const char *restrict const name) {
-  struct stat sbuf;
-  static char buf[32];
-  if(name[0]=='/' && stat(name, &sbuf) >= 0) return sbuf.st_rdev;
-  snprintf(buf,32,"/dev/%s",name);
-  if(stat(buf, &sbuf) >= 0) return sbuf.st_rdev;
-  snprintf(buf,32,"/dev/tty%s",name);
-  if(stat(buf, &sbuf) >= 0) return sbuf.st_rdev;
-  snprintf(buf,32,"/dev/pts/%s",name);
-  if(stat(buf, &sbuf) >= 0) return sbuf.st_rdev;
-  return -1;
 }
