@@ -128,6 +128,7 @@ pmap_SOURCES = pmap.c lib/fileutils.c
 pwdx_SOURCES = pwdx.c lib/fileutils.c
 pwdx_LDADD=
 sysctl_SOURCES = sysctl.c lib/fileutils.c
+sysctl_LDADD=
 tload_SOURCES = tload.c lib/strutils.c lib/fileutils.c
 uptime_SOURCES = uptime.c lib/fileutils.c
 vmstat_SOURCES = vmstat.c lib/strutils.c lib/fileutils.c
