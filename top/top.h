@@ -590,7 +590,6 @@ typedef struct WIN_t {
 //atic void          at_eoj (void);
 //atic void          bye_bye (const char *str);
 //atic void          error_exit (const char *str);
-//atic void          library_err (const char *fmts, ...);
 //atic void          sig_abexit (int sig);
 //atic void          sig_endpgm (int dont_care_sig);
 //atic void          sig_paused (int dont_care_sig);

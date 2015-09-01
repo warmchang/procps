@@ -429,21 +429,6 @@ static void error_exit (const char *str) {
 
 
         /*
-         * Handle library errors ourselves rather than accept a default
-         * fprintf to stderr (since we've mucked with the termios struct) */
-static void library_err (const char *fmts, ...) NORETURN;
-static void library_err (const char *fmts, ...) {
-   static char tmp[MEDBUFSIZ];
-   va_list va;
-
-   va_start(va, fmts);
-   vsnprintf(tmp, sizeof(tmp), fmts, va);
-   va_end(va);
-   error_exit(tmp);
-} // end: library_err
-
-
-        /*
          * Catches all remaining signals not otherwise handled */
 static void sig_abexit (int sig) {
    sigset_t ss;
@@ -2926,8 +2911,9 @@ static void before (char *me) {
    // establish max depth for newlib pids stack (# of result structs)
    Pids_itms = alloc_c(sizeof(enum pids_item) * MAXTBL(Fieldstab));
    for (i = 0; i < MAXTBL(Fieldstab); i++)
-      Pids_itms[i] = Fieldstab[i].item;
+      Pids_itms[i] = PROCPS_PIDS_noop;
    Pids_itms_cur = i;
+   // we will identify specific items in the build_headers() function
    if (procps_pids_new(&Pids_ctx, Pids_itms_cur, Pids_itms))
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 
