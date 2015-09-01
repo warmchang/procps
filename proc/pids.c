@@ -739,8 +739,7 @@ static inline void cleanup_stack (
         if (p->item < PROCPS_PIDS_noop) {
             if (Item_table[p->item].freefunc)
                 Item_table[p->item].freefunc(p);
-            if (p->item < PROCPS_PIDS_noop)
-                p->result.ull_int = 0;
+            p->result.ull_int = 0;
         }
         ++p;
     }
@@ -802,7 +801,7 @@ static inline int items_check_failed (
      *                               ^~~~~~~~~~~~~~~~
      */
     if (maxitems < 1
-    || (void *)items < (void *)PROCPS_PIDS_physical_end)
+    || (void *)items < (void *)0x8000)      // twice as big as our largest enum
         return -1;
     for (i = 0; i < maxitems; i++) {
         // a pids_item is currently unsigned, but we'll protect our future
