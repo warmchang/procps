@@ -171,8 +171,8 @@ static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
 
 #define CMP_NS(NAME, ID) \
 static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
-    if (P->ns[ID] < Q->ns[ID]) return -1; \
-    if (P->ns[ID] > Q->ns[ID]) return  1; \
+    if (P->ns.ns[ID] < Q->ns.ns[ID]) return -1; \
+    if (P->ns.ns[ID] > Q->ns.ns[ID]) return  1; \
     return 0; \
 }
 
@@ -1253,8 +1253,8 @@ static int pr_sd_slice(char *restrict const outbuf, const proc_t *restrict const
 
 #define _pr_ns(NAME, ID)\
 static int pr_##NAME(char *restrict const outbuf, const proc_t *restrict const pp) {\
-  if (pp->ns[ID])\
-    return snprintf(outbuf, COLWID, "%li", pp->ns[ID]);\
+  if (pp->ns.ns[ID])\
+    return snprintf(outbuf, COLWID, "%li", pp->ns.ns[ID]);\
   else\
     return snprintf(outbuf, COLWID, "-");\
 }

@@ -78,7 +78,7 @@ endif
 if BUILD_KILL
 bin_PROGRAMS += kill
 dist_man_MANS += kill.1
-kill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/nsutils.c lib/signals.c
+kill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/signals.c
 else
   EXTRA_DIST += kill.1
 endif
@@ -110,8 +110,8 @@ if BUILD_SKILL
 bin_PROGRAMS += \
 	skill \
 	snice
-skill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/nsutils.c lib/signals.c
-snice_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/nsutils.c lib/signals.c
+skill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/signals.c
+snice_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/signals.c
 dist_man_MANS += \
 	skill.1 \
 	snice.1
@@ -122,8 +122,8 @@ else
 endif
 
 free_SOURCES = free.c lib/strutils.c lib/fileutils.c
-pgrep_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c lib/signals.c
-pkill_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c lib/signals.c
+pgrep_SOURCES = pgrep.c lib/fileutils.c lib/signals.c
+pkill_SOURCES = pgrep.c lib/fileutils.c lib/signals.c
 pmap_SOURCES = pmap.c lib/fileutils.c
 pwdx_SOURCES = pwdx.c lib/fileutils.c
 pwdx_LDADD=
@@ -164,6 +164,8 @@ proc_libprocps_la_SOURCES = \
 	proc/procps-private.h \
 	proc/meminfo.c \
 	proc/meminfo.h \
+	proc/namespace.c \
+	proc/namespace.h \
 	proc/pids.c \
 	proc/pids.h \
 	proc/procps.h \
@@ -233,28 +235,29 @@ ps_pscommand_SOURCES =  \
 noinst_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
-	lib/test_nsutils \
 	lib/test_process \
-	proc/test_sysinfo
+	proc/test_sysinfo \
+	proc/test_namespace
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
 lib_test_strutils_LDADD =
 lib_test_fileutils_SOURCES = lib/test_fileutils.c lib/fileutils.c
 lib_test_fileutils_LDADD =
-lib_test_nsutils_SOURCES = lib/test_nsutils.c lib/nsutils.c
-lib_test_nsutils_LDADD =
 lib_test_process_SOURCES = lib/test_process.c
 lib_test_process_LDADD =
 
 proc_test_sysinfo_SOURCES = proc/test_sysinfo.c
 proc_test_sysinfo_LDADD = proc/libprocps.la
+proc_test_namespace_SOURCES = proc/test_namespace.c
+proc_test_namespace_LDADD = proc/libprocps.la
 if EXAMPLE_FILES
 sysconf_DATA = sysctl.conf
 endif
 
 BUILT_SOURCES = $(top_srcdir)/.version
 
-TESTS = proc/test_sysinfo
+TESTS = proc/test_sysinfo \
+	proc/test_namespace
 
 $(top_srcdir)/.version:
 	touch $(top_srcdir)/.version

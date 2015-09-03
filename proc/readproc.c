@@ -40,6 +40,7 @@
 #ifdef WITH_SYSTEMD
 #include <systemd/sd-login.h>
 #endif
+#include <proc/namespace.h>
 
 // sometimes it's easier to do this manually, w/o gcc helping
 #ifdef PROF
@@ -468,46 +469,6 @@ static void oomadj2proc(const char* S, proc_t *restrict P)
     sscanf(S, "%d", &P->oom_adj);
 }
 ///////////////////////////////////////////////////////////////////////
-
-static const char *ns_names[] = {
-    [IPCNS] = "ipc",
-    [MNTNS] = "mnt",
-    [NETNS] = "net",
-    [PIDNS] = "pid",
-    [USERNS] = "user",
-    [UTSNS] = "uts",
-};
-
-const char *get_ns_name(int id) {
-    if (id >= NUM_NS)
-        return NULL;
-    return ns_names[id];
-}
-
-int get_ns_id(const char *name) {
-    int i;
-
-    for (i = 0; i < NUM_NS; i++)
-        if (!strcmp(ns_names[i], name))
-            return i;
-    return -1;
-}
-
-static void ns2proc(const char *directory, proc_t *restrict p) {
-    char path[PROCPATHLEN];
-    struct stat sb;
-    int i;
-
-    for (i = 0; i < NUM_NS; i++) {
-        snprintf(path, sizeof(path), "%s/ns/%s", directory, ns_names[i]);
-        if (0 == stat(path, &sb))
-            p->ns[i] = (long)sb.st_ino;
-#if 0
-        else                           // this allows a caller to distinguish
-            p->ns[i] = -errno;         // between the ENOENT or EACCES errors
-#endif
-    }
-}
 
 #ifdef WITH_SYSTEMD
 static void sd2proc(proc_t *restrict p) {
@@ -991,7 +952,8 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     }
 
     if (unlikely(flags & PROC_FILLNS))          // read /proc/#/ns/*
-        ns2proc(path, p);
+        procps_ns_read_pid(p->tid, &(p->ns));
+
 
 #ifdef WITH_SYSTEMD
     if (unlikely(flags & PROC_FILLSYSTEMD))     // get sd-login.h stuff
@@ -1148,7 +1110,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     }
 
     if (unlikely(flags & PROC_FILLNS))                  // read /proc/#/task/#/ns/*
-        ns2proc(path, t);
+        procps_ns_read_pid(t->tid, &(t->ns));
 
     return t;
 next_task:

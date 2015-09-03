@@ -36,13 +36,13 @@
 
 #include "c.h"
 #include "fileutils.h"
-#include "nsutils.h"
 #include "signals.h"
 #include "strutils.h"
 #include "nls.h"
 #include "xalloc.h"
 #include "proc/pwcache.h"
 #include "proc/devname.h"
+#include <proc/namespace.h>
 #include "rpmatch.h"
 
 #define DEFAULT_NICE 4
@@ -62,7 +62,7 @@ static const char **cmds;
 static int *pids;
 static char **namespaces;
 static int ns_pid;
-static proc_t ns_task;
+static struct procps_namespaces ns;
 
 #define ENLIST(thing,addme) do{ \
 if(!thing##s) thing##s = xmalloc(sizeof(*thing##s)*saved_argc); \
@@ -103,7 +103,7 @@ static int parse_namespaces(char *optarg)
             tmp = strndup(ptr, len);
         }
 
-        id = get_ns_id(tmp);
+        id = procps_ns_get_id(tmp);
         if (id == -1) {
             fprintf(stderr, "%s is not a valid namespace\n", tmp);
             free(tmp);
@@ -238,7 +238,7 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 {
     char buf[128];
     struct stat statbuf;
-    proc_t task;
+    struct procps_namespaces pid_ns;
     char *tmp;
     int tty;
     int fd;
@@ -293,11 +293,11 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
             goto closure;
     }
     if (ns_pid) {
-        if (ns_read(pid, &task))
+        if (procps_ns_read_pid(pid, &pid_ns) < 0)
             goto closure;
-        for (i = 0; i < NUM_NS; i++) {
+        for (i = 0; i < PROCPS_NS_COUNT; i++) {
             if (ns_flags & (1 << i)) {
-                if (task.ns[i] != ns_task.ns[i])
+                if (pid_ns.ns[i] != ns.ns[i])
                     goto closure;
             }
         }
@@ -722,7 +722,7 @@ static void skillsnice_parse(int argc,
                 xwarnx(_("invalid pid number %s"), optarg);
                 kill_usage(stderr);
             }
-            if (ns_read(ns_pid, &ns_task)) {
+            if (procps_ns_read_pid(ns_pid, &ns) < 0) {
                 xwarnx(_("error reading reference namespace "
                      "information"));
                 kill_usage(stderr);

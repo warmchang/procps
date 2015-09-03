@@ -12,6 +12,7 @@
 
 #include <proc/procps.h>
 #include <proc/pwcache.h>
+#include <proc/namespace.h>
 
 #define SIGNAL_STRING
 //#define QUICK_THREADS        /* copy (vs. read) some thread info from parent proc_t */
@@ -163,8 +164,7 @@ typedef struct proc_t {
     int
         oom_score,      // oom_score       (badness for OOM killer)
         oom_adj;        // oom_adj         (adjustment to OOM score)
-    long
-        ns[NUM_NS];     // (ns subdir)     inode number of namespaces
+    struct procps_namespaces ns; // (ns subdir)     inode number of namespaces
     char
         *sd_mach,       // n/a             systemd vm/container name
         *sd_ouid,       // n/a             systemd session owner uid

@@ -46,13 +46,13 @@
 
 #include "c.h"
 #include "fileutils.h"
-#include "nsutils.h"
 #include "nls.h"
 #include "signals.h"
 #include "xalloc.h"
 #include "proc/readproc.h"
 #include "proc/devname.h"
 #include "proc/sysinfo.h"
+#include <proc/namespace.h>
 
 static int i_am_pkill = 0;
 
@@ -343,7 +343,7 @@ static int conv_ns (const char *restrict name, struct el *restrict e)
     int id;
 
     ns_flags = 0;
-    id = get_ns_id(name);
+    id = procps_ns_get_id(name);
     if (id == -1)
         return 0;
     ns_flags |= (1 << id);
@@ -381,14 +381,15 @@ static int match_strlist (const char *restrict value, const struct el *restrict 
     return found;
 }
 
-static int match_ns (const proc_t *task, const proc_t *ns_task)
+static int match_ns (const proc_t *task,
+                     const struct procps_namespaces *namespaces)
 {
     int found = 1;
     int i;
 
     for (i = 0; i < NUM_NS; i++) {
         if (ns_flags & (1 << i)) {
-            if (task->ns[i] != ns_task->ns[i])
+            if (task->ns.ns[i] != namespaces->ns[i])
                 found = 0;
         }
     }
@@ -493,7 +494,7 @@ static struct el * select_procs (int *num)
     char cmdline[CMDSTRSIZE];
     char cmdsearch[CMDSTRSIZE];
     char cmdoutput[CMDSTRSIZE];
-    proc_t ns_task;
+    struct procps_namespaces namespaces;
 
     ptp = do_openproc();
     preg = do_regcomp();
@@ -503,7 +504,7 @@ static struct el * select_procs (int *num)
 
     if (opt_newest) saved_pid = 0;
     if (opt_oldest) saved_pid = INT_MAX;
-    if (opt_ns_pid && ns_read(opt_ns_pid, &ns_task)) {
+    if (opt_ns_pid && procps_ns_read_pid(opt_ns_pid, &namespaces) < 0) {
         fputs(_("Error reading reference namespace information\n"),
               stderr);
         exit (EXIT_FATAL);
@@ -533,7 +534,7 @@ static struct el * select_procs (int *num)
             match = 0;
         else if (opt_sid && ! match_numlist (task.session, opt_sid))
             match = 0;
-        else if (opt_ns_pid && ! match_ns (&task, &ns_task))
+        else if (opt_ns_pid && ! match_ns (&task, &namespaces))
             match = 0;
         else if (opt_term) {
             if (task.tty == 0) {

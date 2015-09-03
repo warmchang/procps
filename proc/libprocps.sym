@@ -7,8 +7,6 @@ global:
 	escape_strlist;
 	escaped_copy;
 	freeproc;
-	get_ns_id;
-	get_ns_name;
 	get_pid_digits;
 	look_up_our_self;
 	lookup_wchan;
@@ -41,6 +39,9 @@ global:
 	procps_meminfo_getstack;
 	procps_meminfo_stack_fill;
 	procps_meminfo_stack_alloc;
+	procps_ns_get_name;
+	procps_ns_get_id;
+	procps_ns_read_pid;
 	procps_pids_new;
 	procps_pids_read_next;
 	procps_pids_read_open;
