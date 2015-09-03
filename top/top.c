@@ -5069,8 +5069,8 @@ static const char *task_show (const WIN_t *q, const int idx) {
          case EU_NS5:
          case EU_NS6:
          {  long ino = rSv(i, ul_int);
-            if (ino > 0) cp = make_num(ino, W, Jn, i);
-            else cp = make_str("-", W, Js, i);
+            if (Rc.zero_suppress && 0 >= ino) cp = make_str("", W, Js, i);
+            else cp = make_num(ino, W, Jn, i);
          }
             break;
    /* ull_int, scale_tics */
