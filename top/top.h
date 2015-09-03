@@ -684,12 +684,12 @@ typedef struct WIN_t {
 /*------  Forest View support  -------------------------------------------*/
 //atic void          forest_begin (const int self, int level);
 //atic void          forest_create (WIN_t *q);
-//atic inline const char *forest_display (const WIN_t *q, const int idx);
+//atic inline const char *forest_display (const WIN_t *q, struct pids_stack *p);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void          do_key (int ch);
 //atic void          summary_hlp (struct procps_jiffs_hist *cpu, const char *pfx);
 //atic void          summary_show (void);
-//atic const char   *task_show (const WIN_t *q, const int idx);
+//atic const char   *task_show (const WIN_t *q, struct pids_stack *p);
 //atic int           window_show (WIN_t *q, int wmax);
 /*------  Entry point plus two  ------------------------------------------*/
 //atic void          frame_hlp (int wix, int max);

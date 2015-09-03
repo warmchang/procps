@@ -1590,12 +1590,12 @@ static struct {
 #define eu_TICS_ALL_C  EU_LXC +2
 #define eu_TIME_START  EU_LXC +3
 #define eu_ID_FUID     EU_LXC +4
-#define eu_NOOP        EU_LXC +5
+#define eu_XTRA        EU_LXC +5
    {          -1, -1, -1, -1, -1,            PROCPS_PIDS_CMDLINE       },  // str      ( if Show_CMDLIN )
    {          -1, -1, -1, -1, -1,            PROCPS_PIDS_TICS_ALL_C    },  // ull_int  ( if Show_CTIMES )
    {          -1, -1, -1, -1, -1,            PROCPS_PIDS_TIME_START    },  // ull_int  ( if Show_FOREST )
    {          -1, -1, -1, -1, -1,            PROCPS_PIDS_ID_FUID       },  // u_int    ( if a usrseltyp )
-   {          -1, -1, -1, -1, -1,            PROCPS_PIDS_noop          }   // n/a      (    why not?    )
+   {          -1, -1, -1, -1, -1,            PROCPS_PIDS_extra         }   // u_int    ( if Show_FOREST )
  #undef A_left
  #undef A_right
 };
@@ -1751,7 +1751,7 @@ static void build_headers (void) {
          // for 'busy' only processes, we'll need elapsed tics
          if (!CHKw(w, Show_IDLEPS)) ckITEM(EU_CPU);
          // with forest view mode, we'll need pid, tgid, ppid & start_time...
-         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); }
+         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_XTRA); }
          // for 'cumulative' times, we'll need equivalent of cutime & cstime
          if (Fieldstab[EU_TME].esel && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
          if (Fieldstab[EU_TM2].esel && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
@@ -3800,7 +3800,7 @@ static inline int find_ofs (const WIN_t *q, const char *buf) {
    /* This is currently the one true prototype require by top.
       It is placed here, instead of top.h, so as to avoid a compiler
       warning when top_nls.c is compiled. */
-static const char *task_show (const WIN_t *, const int);
+static const char *task_show (const WIN_t *q, struct pids_stack *p);
 
 static void find_string (int ch) {
  #define reDUX (found) ? N_txt(WORD_another_txt) : ""
@@ -3825,7 +3825,7 @@ static void find_string (int ch) {
    if (Curwin->findstr[0]) {
       SETw(Curwin, INFINDS_xxx);
       for (i = Curwin->begtask; i < Pids_cnts->total; i++) {
-         const char *row = task_show(Curwin, i);
+         const char *row = task_show(Curwin, Curwin->ppt[i]);
          if (*row && -1 < find_ofs(Curwin, row)) {
             found = 1;
             if (i == Curwin->begtask) continue;
@@ -4532,29 +4532,27 @@ static void keys_xtra (int ch) {
         /*
          * We try to keep most existing code unaware of our activities
          * ( plus, maintain alphabetical order with carefully chosen )
-         * ( function names: forest_a, forest_b, forest_c & forest_d )
          * ( function names like such: forest_b, forest_c & forest_d )
          * ( each with exactly one letter more than its predecessor! ) */
-static struct pids_stack **Seed_ppt;        // temporary win stacks ptrs
+static struct pids_stack **Seed_ppt;        // temporary win ppt pointer
 static struct pids_stack **Tree_ppt;        // forest_create will resize
-static int  Tree_idx;                       // frame_make resets to zero
-static int *Seed_lvl;                       // level array for Seeds ('from')
-static int *Tree_lvl;                       // level array for Trees ('to')
+static int Tree_idx;                        // frame_make resets to zero
 
         /*
          * This little recursive guy is the real forest view workhorse.
          * He fills in the Tree_ppt array and also sets the child indent
-         * level which is stored in the same slot of separate array. */
+         * level which is stored in an 'extra' result struct as a u_int. */
 static void forest_begin (const int self, int level) {
- // a tailored 'results stack value' extractor macro
+ // tailored 'results stack value' extractor macros
  #define rSv(E,X)  PID_VAL(E, s_int, Seed_ppt[X])
+ #define rLevel    PID_VAL(eu_XTRA, u_int, Tree_ppt[Tree_idx])
    int i;
 
    if (Tree_idx < Pids_cnts->total) {       // immunize against insanity
       if (level > 100) level = 101;         // our arbitrary nests limit
       Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child
-      Tree_lvl[Tree_idx++] = level;         // while recording its level
-      Seed_lvl[self] = level;               // then, note it's been seen
+      rLevel = level;                       // while recording its level
+      ++Tree_idx;
 #ifdef TREE_SCANALL
       for (i = 0; i < Pids_cnts->total; i++) {
          if (i == self) continue;
@@ -4567,6 +4565,7 @@ static void forest_begin (const int self, int level) {
       }
    }
  #undef rSv
+ #undef rLevel
 } // end: forest_begin
 
 
@@ -4576,7 +4575,8 @@ static void forest_begin (const int self, int level) {
          * he'll replace the original window ppt with our specially
          * ordered forest version. */
 static void forest_create (WIN_t *q) {
-   static int *lvl_arrays;                     // supports both 'lvl' arrays
+ // tailored 'results stack value' extractor macro
+ #define rLevel  PID_VAL(eu_XTRA, u_int, Seed_ppt[i])
    static int hwmsav;
    int i;
 
@@ -4585,30 +4585,28 @@ static void forest_create (WIN_t *q) {
       if (hwmsav < Pids_cnts->total) {         // grow, but never shrink
          hwmsav = Pids_cnts->total;
          Tree_ppt = alloc_r(Tree_ppt, sizeof(void*) * hwmsav);
-         lvl_arrays = alloc_r(lvl_arrays, sizeof(int) * hwmsav * 2);
       }
-      memset(lvl_arrays, 0, sizeof(int) * Pids_cnts->total * 2);
-      Tree_lvl = lvl_arrays;
-      Seed_lvl = Tree_lvl + Pids_cnts->total;
 #ifndef TREE_SCANALL
       if (!(procps_pids_stacks_sort(Pids_ctx, Seed_ppt, Pids_cnts->total
          , PROCPS_PIDS_TIME_START, PROCPS_SORT_ASCEND)))
             error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 #endif
       for (i = 0; i < Pids_cnts->total; i++)   // avoid any hidepid distortions
-         if (!Seed_lvl[i])                     // identify real or pretend trees
+         if (!rLevel)                          // identify real or pretend trees
             forest_begin(i, 1);                // add as parent plus its children
    }
    memcpy(Seed_ppt, Tree_ppt, sizeof(void*) * Pids_cnts->total);
+ #undef rLevel
 } // end: forest_create
 
 
         /*
          * This guy adds the artwork to either a 'cmd' or 'cmdline'
          * when in forest view mode, otherwise he just returns 'em. */
-static inline const char *forest_display (const WIN_t *q, const int idx) {
- // a tailored 'results stack value' extractor macro
- #define rSv(E)  PID_VAL(E, str, q->ppt[idx])
+static inline const char *forest_display (const WIN_t *q, struct pids_stack *p) {
+ // tailored 'results stack value' extractor macros
+ #define rSv(E)  PID_VAL(E, str, p)
+ #define rLevel  PID_VAL(eu_XTRA, u_int, p)
 #ifndef SCROLLVAR_NO
    static char buf[1024*64*2]; // the same as libray's max buffer size
 #else
@@ -4616,11 +4614,12 @@ static inline const char *forest_display (const WIN_t *q, const int idx) {
 #endif
    const char *which = (CHKw(q, Show_CMDLIN)) ? rSv(eu_CMDLINE) : rSv(EU_CMD);
 
-   if (!CHKw(q, Show_FOREST) || Tree_lvl[idx] < 2) return which;
-   if (Tree_lvl[idx] > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
-   else snprintf(buf, sizeof(buf), "%*s%s", 4 * (Tree_lvl[idx] - 1), " `- ", which);
+   if (!CHKw(q, Show_FOREST) || 1 == rLevel) return which;
+   if (rLevel > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
+   else snprintf(buf, sizeof(buf), "%*s%s", 4 * (rLevel - 1), " `- ", which);
    return buf;
  #undef rSv
+ #undef rLevel
 } // end: forest_display
 
 /*######  Main Screen routines  ##########################################*/
@@ -4940,14 +4939,14 @@ numa_nope:
         /*
          * Build the information for a single task row and
          * display the results or return them to the caller. */
-static const char *task_show (const WIN_t *q, const int idx) {
+static const char *task_show (const WIN_t *q, struct pids_stack *p) {
  // a tailored 'results stack value' extractor macro
- #define rSv(E,T)  PID_VAL(E, T, q->ppt[idx])
+ #define rSv(E,T)  PID_VAL(E, T, p)
 #ifndef SCROLLVAR_NO
- #define makeVAR(P)  { if (!q->varcolbeg) cp = make_str(P, q->varcolsz, Js, AUTOX_NO); \
-    else cp = make_str(q->varcolbeg < (int)strlen(P) ? P + q->varcolbeg : "", q->varcolsz, Js, AUTOX_NO); }
+ #define makeVAR(S)  { if (!q->varcolbeg) cp = make_str(S, q->varcolsz, Js, AUTOX_NO); \
+    else cp = make_str(q->varcolbeg < (int)strlen(S) ? S + q->varcolbeg : "", q->varcolsz, Js, AUTOX_NO); }
 #else
- #define makeVAR(P) cp = make_str(P, q->varcolsz, Js, AUTOX_NO)
+ #define makeVAR(S) cp = make_str(S, q->varcolsz, Js, AUTOX_NO)
 #endif
    static char rbuf[ROWMINSIZ];
    char *rp;
@@ -5100,7 +5099,7 @@ static const char *task_show (const WIN_t *q, const int idx) {
             break;
    /* str, make_str with varialbe width + additional decoration */
          case EU_CMD:
-            makeVAR(forest_display(q, idx));
+            makeVAR(forest_display(q, p));
             break;
          default:               // keep gcc happy
             continue;
@@ -5179,14 +5178,14 @@ static int window_show (WIN_t *q, int wmax) {
       checking some stuff with each iteration and check it just once... */
    if (CHKw(q, Show_IDLEPS) && !q->usrseltyp)
       while (i < Pids_cnts->total && lwin < wmax) {
-         if (*task_show(q, i++))
+         if (*task_show(q, q->ppt[i++]))
             ++lwin;
       }
    else
       while (i < Pids_cnts->total && lwin < wmax) {
          if ((CHKw(q, Show_IDLEPS) || isBUSY(q->ppt[i]))
          && wins_usrselect(q, q->ppt[i])
-         && *task_show(q, i))
+         && *task_show(q, q->ppt[i]))
             ++lwin;
          ++i;
       }
