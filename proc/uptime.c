@@ -71,7 +71,6 @@ PROCPS_EXPORT int procps_uptime(
 {
     double up=0, idle=0;
     char *savelocale;
-    char buf[256];
     FILE *fp;
 
     if ((fp = fopen(UPTIME_FILE, "r")) == NULL)
@@ -122,19 +121,22 @@ PROCPS_EXPORT char *procps_uptime_sprint(void)
     uphours =   ((int) uptime_secs / (60*60)) % 24;
     upminutes = ((int) uptime_secs / (60)) % 60;
 
-    pos = sprintf(upbuf, " %02d:%02d:%02d up %d %s, ",
-        realtime->tm_hour, realtime->tm_min, realtime->tm_sec,
-        updays, (updays != 1) ? "days" : "day");
+    pos = sprintf(upbuf, " %02d:%02d:%02d up ",
+        realtime->tm_hour, realtime->tm_min, realtime->tm_sec);
+
+    if (updays)
+        pos += sprintf(upbuf + pos, "%d %s", updays, (updays > 1) ? "days" : "day");
+
     if (uphours)
         pos += sprintf(upbuf + pos, "%2d:%02d, ", uphours, upminutes);
     else
-        pos += sprintf(upbuf + pos, "%d min, ", uphours, upminutes);
+        pos += sprintf(upbuf + pos, "%d min, ", upminutes);
 
     users = count_users();
     procps_loadavg(&av1, &av5, &av15);
 
-    pos += sprintf(upbuf + pos, "%2d user%s, load average: %.2f, %.2f, %.2f",
-        users, users == 1 ? "" : "s",
+    pos += sprintf(upbuf + pos, "%2d %s,  load average: %.2f, %.2f, %.2f",
+        users, users > 1 ? "users" : "user",
         av1, av5, av15);
 
     return upbuf;
@@ -164,7 +166,7 @@ PROCPS_EXPORT char *procps_uptime_sprint_short(void)
     upyears =   ((int) uptime_secs / (60*60*24*365)) % 10;
     upweeks =   ((int) uptime_secs / (60*60*24*7)) % 52;
     updays  =   ((int) uptime_secs / (60*60*24)) % 7;
-    uphours =   ((int) uptime_secs / (60*24)) % 24;
+    uphours =   ((int) uptime_secs / (60*60)) % 24;
     upminutes = ((int) uptime_secs / (60)) % 60;
 
     strcat(shortbuf, "up ");
@@ -172,7 +174,7 @@ PROCPS_EXPORT char *procps_uptime_sprint_short(void)
     if (updecades) {
         pos += sprintf(shortbuf + pos, "%d %s",
                        updecades, updecades > 1 ? "decades" : "decade");
-        comma +1;
+        comma += 1;
     }
 
     if (upyears) {
