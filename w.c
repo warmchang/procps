@@ -488,7 +488,7 @@ static void showinfo(
         else
             print_time_ival7(idletime(tty), 0, stdout);
     }
-    printf(" %-*.*s\n", maxcmd, maxcmd, cmdline);
+    printf(" %.*s\n", maxcmd, cmdline);
 }
 
 static void __attribute__ ((__noreturn__))
