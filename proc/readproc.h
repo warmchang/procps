@@ -210,7 +210,7 @@ typedef struct PROCTAB {
 } PROCTAB;
 
 // Initialize a PROCTAB structure holding needed call-to-call persistent data
-extern PROCTAB* openproc(int flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
+extern PROCTAB* openproc(unsigned flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
 
 typedef struct proc_data_t {  // valued by: (else zero)
     proc_t **tab;             //     readproctab2, readproctab3
@@ -228,7 +228,7 @@ extern proc_data_t *readproctab3(int(*want_task)(proc_t *buf), PROCTAB *__restri
 // table subset satisfying the constraints of flags and the optional PID list.
 // Free allocated memory with exit().  Access via tab[N]->member.  The pointer
 // list is NULL terminated.
-extern proc_t** readproctab(int flags, ... /* same as openproc */ );
+extern proc_t** readproctab(unsigned flags, ... /* same as openproc */ );
 
 // Clean-up open files, etc from the openproc()
 extern void closeproc(PROCTAB* PT);

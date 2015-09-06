@@ -848,7 +848,7 @@ static inline void oldproc_close (
 
 static inline int oldproc_open (
         struct procps_pidsinfo *info,
-        int supp_flgs,
+        unsigned supp_flgs,
         ...)
 {
     va_list vl;

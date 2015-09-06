@@ -1319,7 +1319,7 @@ end_procs:
 //////////////////////////////////////////////////////////////////////////////////
 
 // initiate a process table scan
-PROCTAB* openproc(int flags, ...) {
+PROCTAB* openproc(unsigned flags, ...) {
     va_list ap;
     struct stat sbuf;
     static int did_stat;
@@ -1401,7 +1401,7 @@ HIDDEN_ALIAS(readeither);
  * Free allocated memory with exit().  Access via tab[N]->member.  The pointer
  * list is NULL terminated.
  */
-proc_t** readproctab(int flags, ...) {
+proc_t** readproctab(unsigned flags, ...) {
     PROCTAB* PT = NULL;
     proc_t** tab = NULL;
     int n = 0;
