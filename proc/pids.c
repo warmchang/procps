@@ -38,8 +38,9 @@
 #include <proc/pids.h>
 #include "procps-private.h"
 
-#include "readproc.h"                  // and two headers for bridged
-#include "wchan.h"                     // support (temporary include)
+#include "devname.h"                   // and a few headers for our
+#include "readproc.h"                  // bridged libprocps support
+#include "wchan.h"                     // ( maybe just temporary? )
 
 //#define UNREF_RPTHASH                // report on hashing, at uref time
 //#define FPRINT_STACKS                // enable validate_stacks output
@@ -210,6 +211,7 @@ REG_set(TICS_USER,        ull_int, utime)
 REG_set(TICS_USER_C,      ull_int, cutime)
 REG_set(TIME_START,       ull_int, start_time)
 REG_set(TTY,              s_int,   tty)
+setDECL(TTY_NAME)     { char buf[64]; (void)I; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); R->result.str = strdup(buf); }
 REG_set(VM_DATA,          ul_int,  vm_data)
 REG_set(VM_EXE,           ul_int,  vm_exe)
 REG_set(VM_LIB,           ul_int,  vm_lib)
@@ -295,6 +297,13 @@ static int srtNAME(strv) (
     const struct pids_result *b = (*B)->head + P->offset;
     if (!a->result.strv || !b->result.strv) return 0;
     return P->order * strcoll((*b->result.strv), (*a->result.strv));
+}
+
+static int srtNAME(strvers) (
+  const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) {
+    const struct pids_result *a = (*A)->head + P->offset;
+    const struct pids_result *b = (*B)->head + P->offset;
+    return P->order * strverscmp(b->result.str, a->result.str);
 }
 
 static int srtNAME(noop) (
@@ -450,6 +459,7 @@ static struct {
     { RS(TICS_USER_C),       f_stat,     NULL,      QS(ull_int),  0       },
     { RS(TIME_START),        f_stat,     NULL,      QS(ull_int),  0       },
     { RS(TTY),               f_stat,     NULL,      QS(s_int),    0       },
+    { RS(TTY_NAME),          f_stat,     FF(str),   QS(strvers),  0       },
     { RS(VM_DATA),           f_status,   NULL,      QS(ul_int),   0       },
     { RS(VM_EXE),            f_status,   NULL,      QS(ul_int),   0       },
     { RS(VM_LIB),            f_status,   NULL,      QS(ul_int),   0       },
