@@ -61,7 +61,7 @@ PROCPS_EXPORT const char *procps_ns_get_name(const int id)
  *
  * @name: the name of the required namespace
  *
- * Returns: ID of found name 
+ * Returns: ID of found name
  *   < 0 means error
  */
 PROCPS_EXPORT int procps_ns_get_id(const char *name)

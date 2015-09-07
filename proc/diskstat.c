@@ -63,7 +63,7 @@ struct procps_diskstat {
 };
 
 /*
- * scan_for_disks: 
+ * scan_for_disks:
  *
  * All disks start off as partitions. This function
  * scans /sys/block and changes all devices found there
