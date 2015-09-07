@@ -125,7 +125,7 @@ PROCPS_EXPORT char *procps_uptime_sprint(void)
         realtime->tm_hour, realtime->tm_min, realtime->tm_sec);
 
     if (updays)
-        pos += sprintf(upbuf + pos, "%d %s", updays, (updays > 1) ? "days" : "day");
+        pos += sprintf(upbuf + pos, "%d %s, ", updays, (updays > 1) ? "days" : "day");
 
     if (uphours)
         pos += sprintf(upbuf + pos, "%2d:%02d, ", uphours, upminutes);
