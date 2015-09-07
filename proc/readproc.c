@@ -1128,7 +1128,7 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
   char *restrict const path = PT->path;
   for (;;) {
     ent = readdir(PT->procfs);
-    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return 0;
+    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name[0]))) return 0;
     if(likely(likely(*ent->d_name > '0') && likely(*ent->d_name <= '9'))) break;
   }
   p->tgid = strtoul(ent->d_name, NULL, 10);
@@ -1155,7 +1155,7 @@ static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict con
   }
   for (;;) {
     ent = readdir(PT->taskdir);
-    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return 0;
+    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name[0]))) return 0;
     if(likely(likely(*ent->d_name > '0') && likely(*ent->d_name <= '9'))) break;
   }
   t->tid = strtoul(ent->d_name, NULL, 10);

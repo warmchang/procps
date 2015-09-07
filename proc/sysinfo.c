@@ -41,16 +41,8 @@
 "      proc   /proc   proc    defaults\n"			\
 "  In the meantime, run \"mount proc /proc -t proc\"\n"
 
-#define STAT_FILE    "/proc/stat"
-static int stat_fd = -1;
 #define LOADAVG_FILE "/proc/loadavg"
 static int loadavg_fd = -1;
-#define MEMINFO_FILE "/proc/meminfo"
-static int meminfo_fd = -1;
-#define VMINFO_FILE "/proc/vmstat"
-static int vminfo_fd = -1;
-#define VM_MIN_FREE_FILE "/proc/sys/vm/min_free_kbytes"
-static int vm_min_free_fd = -1;
 
 // As of 2.6.24 /proc/meminfo seems to need 888 on 64-bit,
 // and would need 1258 if the obsolete fields were there.

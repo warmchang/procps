@@ -198,7 +198,7 @@ static void process_ansi(FILE * fp)
 {
 	int i, c;
 	char buf[MAX_ANSIBUF];
-	char *numstart, *endptr;
+	char *numstart, *endptr = buf;
 
 	c = getc(fp);
 	if (c != '[') {

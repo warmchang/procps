@@ -107,4 +107,5 @@ PROCPS_EXPORT int procps_ns_read_pid(
         else
             nsp->ns[i] = 0;
     }
+    return 0;
 }

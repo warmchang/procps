@@ -183,7 +183,7 @@ PROCPS_EXPORT int procps_diskstat_new (
 PROCPS_EXPORT int procps_diskstat_read (
         struct procps_diskstat *info)
 {
-    int retval, is_disk;
+    int retval;
     char buf[DISKSTAT_LINE_LEN];
     char devname[DISKSTAT_NAME_LEN];
     struct procps_diskstat_dev *disk;
