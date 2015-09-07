@@ -1527,7 +1527,7 @@ static struct {
    {     5,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_EGID       },  // u_int    EU_GID
    {     8,     -1,  A_left,      0,     0,  PROCPS_PIDS_ID_EGROUP     },  // str      EU_GRP
    {     0,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_PGRP       },  // s_int    EU_PGD
-   {     8,     -1,  A_left,      0,     0,  PROCPS_PIDS_TTY           },  // s_int    EU_TTY
+   {     8,     -1,  A_left,      0,     0,  PROCPS_PIDS_TTY_NAME      },  // str      EU_TTY
    {     0,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_TPGID      },  // s_int    EU_TPG
    {     0,     -1,  A_right,     0,     0,  PROCPS_PIDS_ID_SESSION    },  // s_int    EU_SID
    {     3,     -1,  A_right,     0,     0,  PROCPS_PIDS_PRIORITY      },  // s_int    EU_PRI
@@ -5081,9 +5081,10 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             cp = scale_tics(t, W, Jn);
          }
             break;
-   /* str, make_str */
+   /* str, make_str (all AUTOX yes) */
          case EU_GRP:
          case EU_LXC:
+         case EU_TTY:
          case EU_UEN:
          case EU_URN:
          case EU_USN:
