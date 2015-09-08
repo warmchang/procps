@@ -405,7 +405,7 @@ PROCPS_EXPORT int procps_meminfo_stack_fill (
 
     if (info == NULL || stack == NULL || stack->head == NULL)
         return -EINVAL;
-    if ((rc == procps_meminfo_read(info)) < 0)
+    if ((rc = procps_meminfo_read(info)) < 0)
         return rc;
 
     return procps_meminfo_getstack(info, stack->head);
