@@ -3,37 +3,9 @@
 
 #include <features.h>
 
-// Some ports make the mistake of running a 32-bit userspace
-// on a 64-bit kernel. Shame on them. It's not at all OK to
-// make everything "long long", since that causes unneeded
-// slowness on 32-bit hardware.
-//
-// SPARC: The 32-bit kernel was looking like an ex-penguin,
-// but it lives! ("I'm not dead yet.") So, 64-bit users will
-// just have to compile for 64-bit. Aw, the suffering.
-//
-// MIPS: Used 32-bit for embedded systems and obsolete hardware.
-// The 64-bit systems use an n32 format executable, defining
-// _ABIN32 to indicate this. Since n32 doesn't currently run on
-// any 32-bit system, nobody get hurt if it's bloated. Not that
-// this is sane of course, but it won't hurt the 32-bit users.
-// __mips_eabi means eabi, which comes in both sizes, but isn't used.
-//
-// PowerPC: Big ugly problem! 32-bit Macs are still popular. :-/
-//
-// x86-64: So far, nobody has been dumb enough to go 32-bit.
-//
-// Unknown: PA-RISC and zSeries
-//
-#if defined(k64test) || (defined(_ABIN32) && _MIPS_SIM == _ABIN32)
-#define KLONG long long    // not typedef; want "unsigned KLONG" to work
-#define KLF "ll"
-#define STRTOUKL strtoull
-#else
 #define KLONG long
 #define KLF "l"
 #define STRTOUKL strtoul
-#endif
 
 // since gcc-2.5
 #define NORETURN __attribute__((__noreturn__))
