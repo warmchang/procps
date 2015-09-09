@@ -93,9 +93,6 @@ struct procps_pidsinfo {
 #define setDECL(e) static void setNAME(e) \
     (struct procps_pidsinfo *I, struct pids_result *R, proc_t *P)
 
-        // value the addr member
-#define ADR_set(e,t,x) setDECL(e) { \
-    (void)I; R->result. t = (void *)P-> x; }
         // convert pages to kib
 #define CVT_set(e,t,x) setDECL(e) { \
     R->result. t = (unsigned long)(P-> x) << I -> pgs2k_shift; }
@@ -115,11 +112,11 @@ struct procps_pidsinfo {
 #define VEC_set(e,x) setDECL(e) { \
     (void)I; R->result.strv = P-> x; P-> x = NULL; }
 
-ADR_set(ADDR_END_CODE,    addr,    end_code)
-ADR_set(ADDR_KSTK_EIP,    addr,    kstk_eip)
-ADR_set(ADDR_KSTK_ESP,    addr,    kstk_esp)
-ADR_set(ADDR_START_CODE,  addr,    start_code)
-ADR_set(ADDR_START_STACK, addr,    start_stack)
+REG_set(ADDR_END_CODE,    ul_int,  end_code)
+REG_set(ADDR_KSTK_EIP,    ul_int,  kstk_eip)
+REG_set(ADDR_KSTK_ESP,    ul_int,  kstk_esp)
+REG_set(ADDR_START_CODE,  ul_int,  start_code)
+REG_set(ADDR_START_STACK, ul_int,  start_stack)
 REG_set(ALARM,            sl_int,  alarm)
 STV_set(CGROUP,                    cgroup)
 VEC_set(CGROUP_V,                  cgroup)
@@ -222,7 +219,7 @@ REG_set(VM_STACK,         ul_int,  vm_stack)
 REG_set(VM_SWAP,          ul_int,  vm_swap)
 setDECL(VM_USED)      { (void)I; R->result.ul_int = P->vm_swap + P->vm_rss; }
 REG_set(VSIZE_PGS,        ul_int,  vsize)
-ADR_set(WCHAN_ADDR,       addr,    wchan)
+REG_set(WCHAN_ADDR,       ul_int,  wchan)
 setDECL(WCHAN_NAME)   { (void)I; R->result.str = strdup(lookup_wchan(P->tid)); }
 setDECL(xtra)         { (void)I; (void)R; (void)P; return; }
 setDECL(noop)         { (void)I; (void)R; (void)P; return; }
@@ -230,7 +227,6 @@ setDECL(logical_end)  { (void)I; (void)R; (void)P; return; }
 setDECL(physical_end) { (void)I; (void)R; (void)P; return; }
 
 #undef setDECL
-#undef ADR_set
 #undef CVT_set
 #undef DUP_set
 #undef REG_set
@@ -282,7 +278,6 @@ NUM_srt(sl_int)
 REG_srt(u_int)
 REG_srt(ul_int)
 REG_srt(ull_int)
-REG_srt(addr)
 
 static int srtNAME(str) (
   const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) {
@@ -363,11 +358,11 @@ static struct {
 } Item_table[] = {
 /*    setsfunc               oldflags    freefunc   sortfunc      needhist
       ---------------------  ----------  ---------  ------------  -------- */
-    { RS(ADDR_END_CODE),     f_stat,     NULL,      QS(addr),     0       },
-    { RS(ADDR_KSTK_EIP),     f_stat,     NULL,      QS(addr),     0       },
-    { RS(ADDR_KSTK_ESP),     f_stat,     NULL,      QS(addr),     0       },
-    { RS(ADDR_START_CODE),   f_stat,     NULL,      QS(addr),     0       },
-    { RS(ADDR_START_STACK),  f_stat,     NULL,      QS(addr),     0       },
+    { RS(ADDR_END_CODE),     f_stat,     NULL,      QS(ul_int),   0       },
+    { RS(ADDR_KSTK_EIP),     f_stat,     NULL,      QS(ul_int),   0       },
+    { RS(ADDR_KSTK_ESP),     f_stat,     NULL,      QS(ul_int),   0       },
+    { RS(ADDR_START_CODE),   f_stat,     NULL,      QS(ul_int),   0       },
+    { RS(ADDR_START_STACK),  f_stat,     NULL,      QS(ul_int),   0       },
     { RS(ALARM),             f_stat,     NULL,      QS(sl_int),   0       },
     { RS(CGROUP),            x_cgroup,   FF(str),   QS(str),      0       },
     { RS(CGROUP_V),          v_cgroup,   FF(strv),  QS(strv),     0       },
@@ -470,7 +465,7 @@ static struct {
     { RS(VM_SWAP),           f_status,   NULL,      QS(ul_int),   0       },
     { RS(VM_USED),           f_status,   NULL,      QS(ul_int),   0       },
     { RS(VSIZE_PGS),         f_stat,     NULL,      QS(ul_int),   0       },
-    { RS(WCHAN_ADDR),        f_stat,     NULL,      QS(addr),     0       },
+    { RS(WCHAN_ADDR),        f_stat,     NULL,      QS(ul_int),   0       },
     { RS(WCHAN_NAME),        0,          FF(str),   QS(str),      0       },
     { RS(xtra),              0,          NULL,      QS(noop),     0       },
     { RS(noop),              0,          NULL,      QS(noop),     0       },

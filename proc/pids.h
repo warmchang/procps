@@ -26,11 +26,11 @@
 __BEGIN_DECLS
 
 enum pids_item {
-    PROCPS_PIDS_ADDR_END_CODE,         // addr
-    PROCPS_PIDS_ADDR_KSTK_EIP,         // addr
-    PROCPS_PIDS_ADDR_KSTK_ESP,         // addr
-    PROCPS_PIDS_ADDR_START_CODE,       // addr
-    PROCPS_PIDS_ADDR_START_STACK,      // addr
+    PROCPS_PIDS_ADDR_END_CODE,         // ul_int
+    PROCPS_PIDS_ADDR_KSTK_EIP,         // ul_int
+    PROCPS_PIDS_ADDR_KSTK_ESP,         // ul_int
+    PROCPS_PIDS_ADDR_START_CODE,       // ul_int
+    PROCPS_PIDS_ADDR_START_STACK,      // ul_int
     PROCPS_PIDS_ALARM,                 // sl_int
     PROCPS_PIDS_CGROUP,                // str
     PROCPS_PIDS_CGROUP_V,              // strv
@@ -133,7 +133,7 @@ enum pids_item {
     PROCPS_PIDS_VM_SWAP,               // ul_int
     PROCPS_PIDS_VM_USED,               // ul_int
     PROCPS_PIDS_VSIZE_PGS,             // ul_int
-    PROCPS_PIDS_WCHAN_ADDR,            // addr
+    PROCPS_PIDS_WCHAN_ADDR,            // ul_int
     PROCPS_PIDS_WCHAN_NAME,            // str
     PROCPS_PIDS_extra,                 //         ( reset to zero )
     PROCPS_PIDS_noop                   //         ( never altered )
@@ -166,7 +166,6 @@ struct pids_result {
         long                 sl_int;
         unsigned long        ul_int;
         unsigned long long   ull_int;
-        void               * addr;
         char               * str;
         char              ** strv;
     } result;
