@@ -91,7 +91,7 @@ static int justify_print(const char *str, int width, int right)
 	return width;
 }
 
-static int integer_width(unsigned KLONG number)
+static int integer_width(unsigned long number)
 {
 	int result;
 
@@ -134,8 +134,8 @@ usage(FILE * out)
 
 static char mapbuf[1024];
 
-static unsigned KLONG range_low;
-static unsigned KLONG range_high = ~0ull;
+static unsigned long range_low;
+static unsigned long range_high = ~0ul;
 
 static int c_option;
 static int C_option;
@@ -173,7 +173,7 @@ static void discover_shm_minor(void)
 		char perms[32];
 		/* to clean up unprintables */
 		char *tmp;
-		unsigned KLONG start, end;
+		unsigned long start, end;
 		unsigned long long file_offset, inode;
 		unsigned dev_major, dev_minor;
 		sscanf(mapbuf_b, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
@@ -210,8 +210,8 @@ out_destroy:
 	return;
 }
 
-static char *mapping_name(struct pids_stack *p, unsigned KLONG addr,
-				unsigned KLONG len, const char *mapbuf_b,
+static char *mapping_name(struct pids_stack *p, unsigned long addr,
+				unsigned long len, const char *mapbuf_b,
 				unsigned showpath, unsigned dev_major,
 				unsigned dev_minor, unsigned long long inode)
 {
@@ -239,8 +239,8 @@ static char *mapping_name(struct pids_stack *p, unsigned KLONG addr,
 	}
 
 	cp = _("  [ anon ]");
-	if (PROCPS_PIDS_VAL(start_stack, addr, p) >= (void*)addr
-	&& (PROCPS_PIDS_VAL(start_stack, addr, p) <= (void*)addr + len))
+	if (PROCPS_PIDS_VAL(start_stack, ul_int, p) >= addr
+	&& (PROCPS_PIDS_VAL(start_stack, ul_int, p) <= addr + len))
 		cp = _("  [ stack ]");
 	return cp;
 }
@@ -255,8 +255,8 @@ static char *mapping_name(struct pids_stack *p, unsigned KLONG addr,
 struct listnode {
 	char description[DETAIL_LENGTH];
 	char value_str[NUM_LENGTH];
-	unsigned KLONG value;
-	unsigned KLONG total;
+	unsigned long value;
+	unsigned long total;
 	int max_width;
 	struct listnode *next;
 };
@@ -522,7 +522,7 @@ static int one_proc (struct pids_stack *p)
 	unsigned long total_shared = 0ul;
 	unsigned long total_private_readonly = 0ul;
 	unsigned long total_private_writeable = 0ul;
-	unsigned KLONG diff = 0;
+	unsigned long diff = 0;
 	const char *cp2 = NULL;
 	unsigned long long rss = 0ull;
 	unsigned long long private_dirty = 0ull;
@@ -551,7 +551,7 @@ static int one_proc (struct pids_stack *p)
 
 	if (x_option) {
 		maxw1 = 16;
-		if (sizeof(KLONG) == 4) maxw1 = 8;
+		if (sizeof(long) == 4) maxw1 = 8;
 		maxw2 = maxw3 = maxw4 = 7;
 		maxw5 = 5;
 		if (!q_option) {
@@ -566,7 +566,7 @@ static int one_proc (struct pids_stack *p)
 
 	if (d_option) {
 		maxw1 = 16;
-		if (sizeof(KLONG) == 4) maxw1 = 8;
+		if (sizeof(long) == 4) maxw1 = 8;
 		maxw2 = 7;
 		maxw3 = 5;
 		maxw4 = 16;
@@ -585,7 +585,7 @@ static int one_proc (struct pids_stack *p)
 		char perms[32];
 		/* to clean up unprintables */
 		char *tmp;
-		unsigned KLONG end, start = 0;;
+		unsigned long end, start = 0;;
 		unsigned long long file_offset, inode;
 		unsigned dev_major, dev_minor;
 		unsigned long long smap_value;
@@ -689,7 +689,7 @@ static int one_proc (struct pids_stack *p)
 			const char *cp =
 			    mapping_name(p, start, diff, mapbuf, map_desc_showpath, dev_major,
 					 dev_minor, inode);
-			printf((sizeof(KLONG) == 8)
+			printf((sizeof(long) == 8)
 			       ? "%016" KLF "x %6luK %s %s\n"
 			       : "%08lx %6luK %s %s\n",
 			       start, (unsigned long)(diff >> 10), perms, cp);
@@ -699,7 +699,7 @@ static int one_proc (struct pids_stack *p)
 	fclose(fp);
 	if (!q_option) {
 		if (x_option) {
-			if (sizeof(KLONG) == 4)
+			if (sizeof(long) == 4)
 				justify_print("--------", maxw1, 0);
 			else
 				justify_print("----------------", maxw1, 0);
@@ -725,7 +725,7 @@ static int one_proc (struct pids_stack *p)
 			     total_private_writeable >> 10, total_shared >> 10);
 		}
 		if (!x_option && !d_option) {
-			if (sizeof(KLONG) == 8)
+			if (sizeof(long) == 8)
 				/* Translation Hint: keep total string length
 				 * as 24 characters. Adjust %16 if needed*/
 				printf(_(" total %16ldK\n"),
