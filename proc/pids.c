@@ -69,7 +69,7 @@ struct procps_pidsinfo {
     struct pids_stack **anchor;        // reapable stacks (consolidated extents)
     int alloc_total;                   // number of above pointers allocated
     int inuse_total;                   // number of above pointers occupied
-    struct stacks_extent *extents;     // anchor for all allocated extents
+    struct stacks_extent *extents;     // anchor for all resettable extents
     int history_yes;                   // need historical data
     struct history_info *hist;         // pointer to historical support data
     int dirty_stacks;                  // extents need dynamic storage clean
@@ -768,7 +768,11 @@ static inline void cleanup_stacks_all (
 } // end: cleanup_stacks_all
 
 
-static int free_extent (
+        /*
+         * This routine exists in case we ever want to offer something like
+         * 'static' or 'invarient' results stacks.  By unsplicing an extent
+         * from the info anchor it will be isolated from future reset/free. */
+static struct stacks_extent *extent_cut (
         struct procps_pidsinfo *info,
         struct stacks_extent *ext)
 {
@@ -777,20 +781,30 @@ static int free_extent (
     if (ext) {
         if (ext == p) {
             info->extents = p->next;
-            free(ext);
-            return 0;
+            return ext;
         }
         do {
             if (ext == p->next) {
                 p->next = p->next->next;
-                free(ext);
-                return 0;
+                return ext;
             }
             p = p->next;
         } while (p);
     }
+    return NULL;
+} // end: extent_cut
+
+
+static int extent_free (
+        struct procps_pidsinfo *info,
+        struct stacks_extent *ext)
+{
+    if (extent_cut(info, ext)) {
+        free(ext);
+        return 0;
+    }
     return -1;
-} // end: free_extent
+} // end: extent_free
 
 
 static inline int items_check_failed (
@@ -1050,7 +1064,7 @@ PROCPS_EXPORT int procps_pids_read_shut (
     if (info == NULL || ! READS_BEGUN)
         return -EINVAL;
     oldproc_close(info);
-    rc = free_extent(info, info->read);
+    rc = extent_free(info, info->read);
     info->read = NULL;
     return rc;
 } // end: procps_pids_read_shut
@@ -1262,7 +1276,7 @@ PROCPS_EXPORT int procps_pids_stacks_dealloc (
         return -EINVAL;
 
     ext = (struct stacks_extent *)(*these);
-    rc = free_extent(info, ext);
+    rc = extent_free(info, ext);
     *these = NULL;
     return rc;
 } // end: procps_pids_stacks_dealloc
