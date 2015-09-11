@@ -6,6 +6,7 @@ global:
 	escape_str;
 	escape_strlist;
 	escaped_copy;
+	fatal_proc_unmounted;
 	freeproc;
 	get_pid_digits;
 	look_up_our_self;

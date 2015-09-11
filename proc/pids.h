@@ -195,6 +195,10 @@ struct pids_reap {
     stack -> head [ rel_enum ] . result . type
 
 
+struct pids_stack *fatal_proc_unmounted (
+    struct procps_pidsinfo *info,
+    int return_self);
+
 int procps_pids_new (
     struct procps_pidsinfo **info,
     int maxitems,

@@ -70,6 +70,7 @@ struct procps_pidsinfo {
     int alloc_total;                   // number of above pointers allocated
     int inuse_total;                   // number of above pointers occupied
     struct stacks_extent *extents;     // anchor for all resettable extents
+    struct stacks_extent *otherexts;   // anchor for single stack invariant extents
     int history_yes;                   // need historical data
     struct history_info *hist;         // pointer to historical support data
     int dirty_stacks;                  // extents need dynamic storage clean
@@ -969,6 +970,32 @@ static void validate_stacks (
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
+PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
+        struct procps_pidsinfo *info,
+        int return_self)
+{
+    static proc_t self;
+    struct stacks_extent *ext;
+
+    // this is very likely the *only* newlib function where the
+    // context (procps_pidsinfo) of NULL will ever be permitted
+    look_up_our_self(&self);
+    if (!return_self)
+        return NULL;
+
+    if (info == NULL
+    || !(ext = (struct stacks_extent *)procps_pids_stacks_alloc(info, 1))
+    || !extent_cut(info, ext))
+        return NULL;
+
+    ext->next = info->otherexts;
+    info->otherexts = ext;
+    assign_results(info, ext->stacks[0], &self);
+
+    return ext->stacks[0];
+} // end: fatal_proc_unmounted
+
+
 /*
  * procps_pids_new():
  *
@@ -1405,6 +1432,15 @@ PROCPS_EXPORT int procps_pids_unref (
                 (*info)->extents = (*info)->extents->next;
                 free(p);
             } while ((*info)->extents);
+        }
+        if ((*info)->otherexts) {
+            struct stacks_extent *nextext, *ext = (*info)->otherexts;
+            while (ext) {
+                nextext = ext->next;
+                cleanup_stack(ext->stacks[0]->head, ext->ext_numitems);
+                free(ext);
+                ext = nextext;
+            };
         }
         if ((*info)->reaped.stacks)
             free((*info)->reaped.stacks);
