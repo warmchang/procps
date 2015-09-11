@@ -50,15 +50,11 @@
 #include "../include/signals.h"
 #include "../include/nls.h"
 
-#include "../proc/devname.h"
 #include <proc/meminfo.h>
 #include <proc/pids.h>
-#include "../proc/procps.h"
-#include "../proc/readproc.h"
 #include <proc/readstat.h>
-#include "../proc/sysinfo.h"
+#include <proc/sysinfo.h>
 #include <proc/version.h>
-#include "../proc/wchan.h"
 #include <proc/uptime.h>
 
 #include "top.h"
@@ -2873,7 +2869,6 @@ signify_that:
          * No matter what *they* say, we handle the really really BIG and
          * IMPORTANT stuff upon which all those lessor functions depend! */
 static void before (char *me) {
-   static proc_t p;
    struct sigaction sa;
    int i;
    int linux_version_code = procps_linux_version();
@@ -2881,7 +2876,7 @@ static void before (char *me) {
    atexit(close_stdout);
 
    // is /proc mounted?
-   look_up_our_self(&p);
+   fatal_proc_unmounted(NULL, 0);
 
    // setup our program name
    Myname = strrchr(me, '/');
