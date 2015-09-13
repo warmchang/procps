@@ -262,14 +262,14 @@ struct sort_parms {
   const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) { \
     const struct pids_result *a = (*A)->head + P->offset; \
     const struct pids_result *b = (*B)->head + P->offset; \
-    return P->order * (b->result. T - a->result. T); }
+    return P->order * (a->result. T - b->result. T); }
 
 #define REG_srt(T) static int srtNAME(T) ( \
   const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) { \
     const struct pids_result *a = (*A)->head + P->offset; \
     const struct pids_result *b = (*B)->head + P->offset; \
-    if ( a->result. T > b->result. T ) return P->order > 0 ? -1 :  1; \
-    if ( a->result. T < b->result. T ) return P->order > 0 ?  1 : -1; \
+    if ( a->result. T > b->result. T ) return P->order > 0 ?  1 : -1; \
+    if ( a->result. T < b->result. T ) return P->order > 0 ? -1 :  1; \
     return 0; }
 
 NUM_srt(s_ch)
@@ -284,7 +284,7 @@ static int srtNAME(str) (
   const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) {
     const struct pids_result *a = (*A)->head + P->offset;
     const struct pids_result *b = (*B)->head + P->offset;
-    return P->order * strcoll(b->result.str, a->result.str);
+    return P->order * strcoll(a->result.str, b->result.str);
 }
 
 static int srtNAME(strv) (
@@ -292,14 +292,14 @@ static int srtNAME(strv) (
     const struct pids_result *a = (*A)->head + P->offset;
     const struct pids_result *b = (*B)->head + P->offset;
     if (!a->result.strv || !b->result.strv) return 0;
-    return P->order * strcoll((*b->result.strv), (*a->result.strv));
+    return P->order * strcoll((*a->result.strv), (*b->result.strv));
 }
 
 static int srtNAME(strvers) (
   const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) {
     const struct pids_result *a = (*A)->head + P->offset;
     const struct pids_result *b = (*B)->head + P->offset;
-    return P->order * strverscmp(b->result.str, a->result.str);
+    return P->order * strverscmp(a->result.str, b->result.str);
 }
 
 static int srtNAME(noop) (

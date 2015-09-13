@@ -150,8 +150,8 @@ enum pids_reap_type {
 };
 
 enum pids_sort_order {
-    PROCPS_SORT_ASCEND   = -1,
-    PROCPS_SORT_DESCEND  = +1
+    PROCPS_SORT_ASCEND   = +1,
+    PROCPS_SORT_DESCEND  = -1
 };
 
 
