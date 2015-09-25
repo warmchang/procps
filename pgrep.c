@@ -49,11 +49,27 @@
 #include "nls.h"
 #include "signals.h"
 #include "xalloc.h"
-#include "proc/readproc.h"
-#include "proc/devname.h"
-#include "proc/sysinfo.h"
+#include <proc/pids.h>
 #include <proc/namespace.h>
+#include <proc/devname.h>
 
+enum pids_item Items[] = {
+    PROCPS_PIDS_ID_PID,
+    PROCPS_PIDS_ID_PPID,
+    PROCPS_PIDS_ID_PGRP,
+    PROCPS_PIDS_ID_EUID,
+    PROCPS_PIDS_ID_RUID,
+    PROCPS_PIDS_ID_RGID,
+    PROCPS_PIDS_ID_SESSION,
+    PROCPS_PIDS_TIME_START,
+    PROCPS_PIDS_TTY,
+    PROCPS_PIDS_CMD,
+    PROCPS_PIDS_CMDLINE,
+};
+enum rel_items {
+    EU_TGID, EU_PPID, EU_PGRP, EU_EUID, EU_RUID, EU_RGID, EU_SESSION,
+    EU_STARTTIME, EU_TTY, EU_CMD, EU_CMDLINE
+};
 static int i_am_pkill = 0;
 
 struct el {
@@ -381,15 +397,19 @@ static int match_strlist (const char *restrict value, const struct el *restrict 
     return found;
 }
 
-static int match_ns (const proc_t *task,
-                     const struct procps_namespaces *namespaces)
+static int match_ns (const int pid,
+                     const struct procps_namespaces *match_ns)
 {
+    struct procps_namespaces proc_ns;
     int found = 1;
     int i;
 
-    for (i = 0; i < NUM_NS; i++) {
+    if (procps_ns_read_pid(pid, &proc_ns) < 0)
+        xerrx(EXIT_FATAL,
+              _("Unable to read process namespace information"));
+    for (i = 0; i < PROCPS_NS_COUNT; i++) {
         if (ns_flags & (1 << i)) {
-            if (task->ns.ns[i] != namespaces->ns[i])
+            if (proc_ns.ns[i] != match_ns->ns[i])
                 found = 0;
         }
     }
@@ -418,36 +438,6 @@ static void output_strlist (const struct el *restrict list, int num)
             delim = "\n";
         printf ("%lu %s%s", list[i].num, list[i].str, delim);
     }
-}
-
-static PROCTAB *do_openproc (void)
-{
-    PROCTAB *ptp;
-    int flags = 0;
-
-    if (opt_pattern || opt_full || opt_longlong)
-        flags |= PROC_FILLCOM;
-    if (opt_ruid || opt_rgid)
-        flags |= PROC_FILLSTATUS;
-    if (opt_oldest || opt_newest || opt_pgrp || opt_sid || opt_term)
-        flags |= PROC_FILLSTAT;
-    if (!(flags & PROC_FILLSTAT))
-        flags |= PROC_FILLSTATUS;  /* FIXME: need one, and PROC_FILLANY broken */
-    if (opt_ns_pid)
-        flags |= PROC_FILLNS;
-    if (opt_euid && !opt_negate) {
-        int num = opt_euid[0].num;
-        int i = num;
-        uid_t *uids = xmalloc (num * sizeof (uid_t));
-        while (i-- > 0) {
-            uids[i] = opt_euid[i+1].num;
-        }
-        flags |= PROC_UID;
-        ptp = openproc (flags, uids, num);
-    } else {
-        ptp = openproc (flags);
-    }
-    return ptp;
 }
 
 static regex_t * do_regcomp (void)
@@ -482,8 +472,13 @@ static regex_t * do_regcomp (void)
 
 static struct el * select_procs (int *num)
 {
-    PROCTAB *ptp;
-    proc_t task;
+#define PIDS_GETINT(e) PROCPS_PIDS_VAL(EU_ ## e, s_int, stack)
+#define PIDS_GETULL(e) PROCPS_PIDS_VAL(EU_ ## e, ull_int, stack)
+#define PIDS_GETSTR(e) PROCPS_PIDS_VAL(EU_ ## e, str, stack)
+    struct procps_pidsinfo *info=NULL;
+    struct procps_namespaces nsp;
+    struct pids_stack *stack;
+
     unsigned long long saved_start_time;      /* for new/old support */
     pid_t saved_pid = 0;                      /* for new/old support */
     int matches = 0;
@@ -491,12 +486,10 @@ static struct el * select_procs (int *num)
     regex_t *preg;
     pid_t myself = getpid();
     struct el *list = NULL;
-    char cmdline[CMDSTRSIZE];
     char cmdsearch[CMDSTRSIZE];
     char cmdoutput[CMDSTRSIZE];
-    struct procps_namespaces namespaces;
+    char *task_cmdline;
 
-    ptp = do_openproc();
     preg = do_regcomp();
 
     if (opt_newest) saved_start_time =  0ULL;
@@ -504,49 +497,59 @@ static struct el * select_procs (int *num)
 
     if (opt_newest) saved_pid = 0;
     if (opt_oldest) saved_pid = INT_MAX;
-    if (opt_ns_pid && procps_ns_read_pid(opt_ns_pid, &namespaces) < 0) {
-        fputs(_("Error reading reference namespace information\n"),
-              stderr);
-        exit (EXIT_FATAL);
+    if (opt_ns_pid && procps_ns_read_pid(opt_ns_pid, &nsp) < 0) {
+        xerrx(EXIT_FATAL,
+              _("Error reading reference namespace information\n"));
     }
 
-    memset(&task, 0, sizeof (task));
-    while(readproc(ptp, &task)) {
+    if (procps_pids_new(&info, 11, Items) < 0)
+        xerrx(EXIT_FATAL,
+              _("Unable to create pid info structure"));
+    if (procps_pids_read_open(info,
+                              ((opt_threads && !i_am_pkill)?
+                               PROCPS_REAP_THREADS_TOO:PROCPS_REAP_TASKS_ONLY)) < 0)
+        xerrx(EXIT_FATAL,
+              _("Unable to open pids information"));
+
+    while ((stack = procps_pids_read_next(info))) {
         int match = 1;
 
-        if (task.XXXID == myself)
+        if (PIDS_GETINT(TGID) == myself)
             continue;
-        else if (opt_newest && task.start_time < saved_start_time)
+        else if (opt_newest && PIDS_GETULL(STARTTIME) < saved_start_time)
             match = 0;
-        else if (opt_oldest && task.start_time > saved_start_time)
+        else if (opt_oldest && PIDS_GETULL(STARTTIME) > saved_start_time)
             match = 0;
-        else if (opt_ppid && ! match_numlist (task.ppid, opt_ppid))
+        else if (opt_ppid && ! match_numlist(PIDS_GETINT(PPID), opt_ppid))
             match = 0;
-        else if (opt_pid && ! match_numlist (task.tgid, opt_pid))
+        else if (opt_pid && ! match_numlist (PIDS_GETINT(TGID), opt_pid))
             match = 0;
-        else if (opt_pgrp && ! match_numlist (task.pgrp, opt_pgrp))
+        else if (opt_pgrp && ! match_numlist (PIDS_GETINT(PGRP), opt_pgrp))
             match = 0;
-        else if (opt_euid && ! match_numlist (task.euid, opt_euid))
+        else if (opt_euid && ! match_numlist (PIDS_GETINT(EUID), opt_euid))
             match = 0;
-        else if (opt_ruid && ! match_numlist (task.ruid, opt_ruid))
+        else if (opt_ruid && ! match_numlist (PIDS_GETINT(RUID), opt_ruid))
             match = 0;
-        else if (opt_rgid && ! match_numlist (task.rgid, opt_rgid))
+        else if (opt_rgid && ! match_numlist (PIDS_GETINT(RGID), opt_rgid))
             match = 0;
-        else if (opt_sid && ! match_numlist (task.session, opt_sid))
+        else if (opt_sid && ! match_numlist (PIDS_GETINT(SESSION), opt_sid))
             match = 0;
-        else if (opt_ns_pid && ! match_ns (&task, &namespaces))
+        else if (opt_ns_pid && ! match_ns (PIDS_GETINT(TGID), &nsp))
             match = 0;
         else if (opt_term) {
-            if (task.tty == 0) {
+            int task_tty = PIDS_GETINT(TTY);
+            if (task_tty == 0) {
                 match = 0;
             } else {
                 char tty[256];
                 dev_to_tty (tty, sizeof(tty) - 1,
-                        task.tty, task.XXXID, ABBREV_DEV);
+                        task_tty, PIDS_GETINT(TGID), ABBREV_DEV);
                 match = match_strlist (tty, opt_term);
             }
         }
-        if (task.cmdline && (opt_longlong || opt_full) ) {
+        task_cmdline = PIDS_GETSTR(CMDLINE);
+#if 0 // FIXME cmdline stuff
+        if (pid_cmdline && (opt_longlong || opt_full) ) {
             int i = 0;
             int bytes = sizeof (cmdline) - 1;
 
@@ -555,7 +558,7 @@ static struct el * select_procs (int *num)
             /* make room for SPC in loop below */
             --bytes;
 
-            strncpy (cmdline, task.cmdline[i], bytes);
+            strncpy (cmdline, pid_cmdline[i], bytes);
             bytes -= strlen (task.cmdline[i++]);
             while (task.cmdline[i] && bytes > 0) {
                 strncat (cmdline, " ", bytes);
@@ -563,19 +566,20 @@ static struct el * select_procs (int *num)
                 bytes -= strlen (task.cmdline[i++]) + 1;
             }
         }
+#endif
 
         if (opt_long || opt_longlong || (match && opt_pattern)) {
-            if (opt_longlong && task.cmdline)
-                strncpy (cmdoutput, cmdline, CMDSTRSIZE);
+            if (opt_longlong && task_cmdline)
+                strncpy (cmdoutput, task_cmdline, CMDSTRSIZE);
             else
-                strncpy (cmdoutput, task.cmd, CMDSTRSIZE);
+                strncpy (cmdoutput, PIDS_GETSTR(CMD), CMDSTRSIZE);
         }
 
         if (match && opt_pattern) {
-            if (opt_full && task.cmdline)
-                strncpy (cmdsearch, cmdline, CMDSTRSIZE);
+            if (opt_full && task_cmdline)
+                strncpy (cmdsearch, task_cmdline, CMDSTRSIZE);
             else
-                strncpy (cmdsearch, task.cmd, CMDSTRSIZE);
+                strncpy (cmdsearch, PIDS_GETSTR(CMD), CMDSTRSIZE);
 
             if (regexec (preg, cmdsearch, 0, NULL, 0) != 0)
                 match = 0;
@@ -583,19 +587,19 @@ static struct el * select_procs (int *num)
 
         if (match ^ opt_negate) {    /* Exclusive OR is neat */
             if (opt_newest) {
-                if (saved_start_time == task.start_time &&
-                    saved_pid > task.XXXID)
+                if (saved_start_time == PIDS_GETULL(STARTTIME) &&
+                    saved_pid > PIDS_GETINT(TGID))
                     continue;
-                saved_start_time = task.start_time;
-                saved_pid = task.XXXID;
+                saved_start_time = PIDS_GETULL(STARTTIME);
+                saved_pid = PIDS_GETINT(TGID);
                 matches = 0;
             }
             if (opt_oldest) {
-                if (saved_start_time == task.start_time &&
-                    saved_pid < task.XXXID)
+                if (saved_start_time == PIDS_GETULL(STARTTIME) &&
+                    saved_pid < PIDS_GETINT(TGID))
                     continue;
-                saved_start_time = task.start_time;
-                saved_pid = task.XXXID;
+                saved_start_time = PIDS_GETULL(STARTTIME);
+                saved_pid = PIDS_GETINT(TGID);
                 matches = 0;
             }
             if (matches == size) {
@@ -603,14 +607,14 @@ static struct el * select_procs (int *num)
                 list = xrealloc(list, size * sizeof *list);
             }
             if (list && (opt_long || opt_longlong || opt_echo)) {
-                list[matches].num = task.XXXID;
+                list[matches].num = PIDS_GETINT(TGID);
                 list[matches++].str = xstrdup (cmdoutput);
             } else if (list) {
-                list[matches++].num = task.XXXID;
+                list[matches++].num = PIDS_GETINT(TGID);
             } else {
-                xerrx(EXIT_FAILURE, _("internal error"));
+                xerrx(EXIT_FATAL, _("internal error"));
             }
-
+#if 0
             // pkill does not need subtasks!
             // this control is still done at
             // argparse time, but a further
@@ -640,17 +644,11 @@ static struct el * select_procs (int *num)
                 }
             }
 
-
+#endif
 
         }
-
-
-
-
-
-        memset (&task, 0, sizeof (task));
     }
-    closeproc (ptp);
+
     *num = matches;
     return list;
 }
@@ -673,6 +671,9 @@ static int signal_option(int *argc, char **argv)
         }
     }
     return -1;
+#undef PIDS_GETINT
+#undef PIDS_GETULL
+#undef PIDS_GETSTR
 }
 
 static void parse_opts (int argc, char **argv)
