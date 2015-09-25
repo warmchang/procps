@@ -62,13 +62,13 @@ enum pids_item Items[] = {
     PROCPS_PIDS_ID_RGID,
     PROCPS_PIDS_ID_SESSION,
     PROCPS_PIDS_TIME_START,
-    PROCPS_PIDS_TTY,
+    PROCPS_PIDS_TTY_NAME,
     PROCPS_PIDS_CMD,
     PROCPS_PIDS_CMDLINE,
 };
 enum rel_items {
     EU_TGID, EU_PPID, EU_PGRP, EU_EUID, EU_RUID, EU_RGID, EU_SESSION,
-    EU_STARTTIME, EU_TTY, EU_CMD, EU_CMDLINE
+    EU_STARTTIME, EU_TTY_NAME, EU_CMD, EU_CMDLINE
 };
 static int i_am_pkill = 0;
 
@@ -536,17 +536,9 @@ static struct el * select_procs (int *num)
             match = 0;
         else if (opt_ns_pid && ! match_ns (PIDS_GETINT(TGID), &nsp))
             match = 0;
-        else if (opt_term) {
-            int task_tty = PIDS_GETINT(TTY);
-            if (task_tty == 0) {
-                match = 0;
-            } else {
-                char tty[256];
-                dev_to_tty (tty, sizeof(tty) - 1,
-                        task_tty, PIDS_GETINT(TGID), ABBREV_DEV);
-                match = match_strlist (tty, opt_term);
-            }
-        }
+        else if (opt_term)
+            match = match_strlist(PIDS_GETSTR(TTY_NAME), opt_term);
+        
         task_cmdline = PIDS_GETSTR(CMDLINE);
 #if 0 // FIXME cmdline stuff
         if (pid_cmdline && (opt_longlong || opt_full) ) {
