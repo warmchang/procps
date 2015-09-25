@@ -24,5 +24,13 @@ extern int signal_name_to_number(const char *__restrict name);
 
 extern const char *signal_number_to_name(int signo);
 
+extern int skill_sig_option(int *argc, char **argv);
+
+extern char *strtosig(const char *restrict s);
+
+extern void pretty_print_signals(void);
+
+extern void unix_print_signals(void);
+
 __END_DECLS
 #endif

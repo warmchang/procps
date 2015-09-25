@@ -198,3 +198,96 @@ const char *signal_number_to_name(int signo)
     return buf;
 }
 
+int skill_sig_option(int *argc, char **argv)
+{
+    int i, nargs = *argc;
+    int signo = -1;
+    for (i = 1; i < nargs; i++) {
+        if (argv[i][0] == '-') {
+            signo = signal_name_to_number(argv[i] + 1);
+            if (-1 < signo) {
+                if (nargs - i) {
+                    nargs--;
+                    memmove(argv + i, argv + i + 1,
+                        sizeof(char *) * (nargs - i));
+                }
+                return signo;
+            }
+        }
+    }
+    return signo;
+}
+
+
+/* strtosig is similar to print_given_signals() with exception, that
+ * this function takes a string, and converts it to a signal name or
+ * a number string depending on which way a round conversion is
+ * queried.  Non-existing signals return NULL.  Notice that the
+ * returned string should be freed after use.
+ */
+char *strtosig(const char *restrict s)
+{
+    char *converted = NULL, *copy, *p, *endp;
+    int i, numsignal = 0;
+
+    copy = strdup(s);
+    if (!copy)
+        xerrx(EXIT_FAILURE, "cannot duplicate string");
+    for (p = copy; *p != '\0'; p++)
+        *p = toupper(*p);
+    p = copy;
+    if (p[0] == 'S' && p[1] == 'I' && p[2] == 'G')
+        p += 3;
+    if (isdigit(*p)){
+        numsignal = strtol(s,&endp,10);
+        if(*endp || endp==s)
+            return NULL; /* not valid */
+    }
+    if (numsignal){
+        for (i = 0; i < number_of_signals; i++){
+            if (numsignal == get_sigtable_num(i)){
+                converted = strdup(get_sigtable_name(i));
+                break;
+            }
+        }
+    } else {
+        for (i = 0; i < number_of_signals; i++){
+            if (strcmp(p, get_sigtable_name(i)) == 0){
+                converted = malloc(sizeof(char) * 8);
+                if (converted)
+                    snprintf(converted,
+                         sizeof(converted) - 1,
+                         "%d", get_sigtable_num(i));
+                break;
+            }
+        }
+    }
+    free(p);
+    return converted;
+}
+
+void unix_print_signals(void)
+{
+   int pos = 0;
+    int i = 0;
+    while(++i <= number_of_signals){
+        if(i-1) printf("%c", (pos>73)?(pos=0,'\n'):(pos++,' ') );
+        pos += printf("%s", signal_number_to_name(i));
+    }
+    printf("\n");
+}
+
+void pretty_print_signals(void)
+{
+    int i = 0;
+    while(++i <= number_of_signals){
+        int n;
+        n = printf("%2d %s", i, signal_number_to_name(i));
+        if(n>0 && i%7)
+            printf("%s", "           \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0" + n);
+        else
+            printf("\n");
+    }
+    if((i-1)%7) printf("\n");
+}
+

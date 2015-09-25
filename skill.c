@@ -76,16 +76,10 @@ static int sig_or_pri;
 
 enum {
     PROG_UNKNOWN,
-    PROG_KILL,
     PROG_SKILL,
     PROG_SNICE
 };
 static int program = PROG_UNKNOWN;
-
-static void display_kill_version(void)
-{
-    fprintf(stdout, PROCPS_NG_VERSION);
-}
 
 static int ns_flags = 0x3f;
 static int parse_namespaces(char *optarg)
@@ -118,78 +112,6 @@ static int parse_namespaces(char *optarg)
         ptr+= len + 1;
     }
     return 0;
-}
-
-static void unix_print_signals(void)
-{
-   int pos = 0;
-    int i = 0;
-    while(++i <= number_of_signals){
-        if(i-1) printf("%c", (pos>73)?(pos=0,'\n'):(pos++,' ') );
-        pos += printf("%s", signal_number_to_name(i));
-    }
-    printf("\n");
-}
-
-static void pretty_print_signals(void)
-{
-    int i = 0;
-    while(++i <= number_of_signals){
-        int n;
-        n = printf("%2d %s", i, signal_number_to_name(i));
-        if(n>0 && i%7)
-            printf("%s", "           \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0" + n);
-        else
-            printf("\n");
-    }
-    if((i-1)%7) printf("\n");
-}
-
-/* strtosig is similar to print_given_signals() with exception, that
- * this function takes a string, and converts it to a signal name or
- * a number string depending on which way a round conversion is
- * queried.  Non-existing signals return NULL.  Notice that the
- * returned string should be freed after use.
- */
-static char *strtosig(const char *restrict s)
-{
-    char *converted = NULL, *copy, *p, *endp;
-    int i, numsignal = 0;
-
-    copy = strdup(s);
-    if (!copy)
-        xerrx(EXIT_FAILURE, "cannot duplicate string");
-    for (p = copy; *p != '\0'; p++)
-        *p = toupper(*p);
-    p = copy;
-    if (p[0] == 'S' && p[1] == 'I' && p[2] == 'G')
-        p += 3;
-    if (isdigit(*p)){
-        numsignal = strtol(s,&endp,10);
-        if(*endp || endp==s)
-            return NULL; /* not valid */
-    }
-    if (numsignal){
-        for (i = 0; i < number_of_signals; i++){
-            if (numsignal == get_sigtable_num(i)){
-                converted = strdup(get_sigtable_name(i));
-                break;
-            }
-        }
-    } else {
-        for (i = 0; i < number_of_signals; i++){
-            if (strcmp(p, get_sigtable_name(i)) == 0){
-                converted = malloc(sizeof(char) * 8);
-                if (converted)
-                    snprintf(converted,
-                         sizeof(converted) - 1,
-                         "%d", get_sigtable_num(i));
-                break;
-            }
-        }
-    }
-    free(p);
-    return converted;
 }
 
 /* kill or nice a process */
@@ -387,25 +309,6 @@ static void iterate(struct run_time_conf_t *run_time)
     closedir(d);
 }
 
-/* kill help */
-static void __attribute__ ((__noreturn__)) kill_usage(FILE * out)
-{
-    fputs(USAGE_HEADER, out);
-    fprintf(out,
-              _(" %s [options] <pid> [...]\n"), program_invocation_short_name);
-    fputs(USAGE_OPTIONS, out);
-    fputs(_(" <pid> [...]            send signal to every <pid> listed\n"), out);
-    fputs(_(" -<signal>, -s, --signal <signal>\n"
-        "                        specify the <signal> to be sent\n"), out);
-    fputs(_(" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"), out);
-    fputs(_(" -L, --table            list all signal names in a nice table\n"), out);
-    fputs(USAGE_SEPARATOR, out);
-    fputs(USAGE_HELP, out);
-    fputs(USAGE_VERSION, out);
-    fprintf(out, USAGE_MAN_TAIL("kill(1)"));
-    exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
-}
-
 /* skill and snice help */
 static void __attribute__ ((__noreturn__)) skillsnice_usage(FILE * out)
 {
@@ -465,132 +368,6 @@ static void __attribute__ ((__noreturn__)) skillsnice_usage(FILE * out)
     exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static int skill_sig_option(int *argc, char **argv)
-{
-    int i, nargs = *argc;
-    int signo = -1;
-    for (i = 1; i < nargs; i++) {
-        if (argv[i][0] == '-') {
-            signo = signal_name_to_number(argv[i] + 1);
-            if (-1 < signo) {
-                if (nargs - i) {
-                    nargs--;
-                    memmove(argv + i, argv + i + 1,
-                        sizeof(char *) * (nargs - i));
-                }
-                return signo;
-            }
-        }
-    }
-    return signo;
-}
-
-/* kill */
-static void __attribute__ ((__noreturn__))
-    kill_main(int argc, char **argv)
-{
-    int signo, i;
-    int sigopt = 0;
-    int loop = 1;
-    long pid;
-    int exitvalue = EXIT_SUCCESS;
-
-    static const struct option longopts[] = {
-        {"list", optional_argument, NULL, 'l'},
-        {"table", no_argument, NULL, 'L'},
-        {"signal", required_argument, NULL, 's'},
-        {"help", no_argument, NULL, 'h'},
-        {"version", no_argument, NULL, 'V'},
-        {NULL, 0, NULL, 0}
-    };
-
-    setlocale (LC_ALL, "");
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    textdomain(PACKAGE);
-    atexit(close_stdout);
-
-    if (argc < 2)
-        kill_usage(stderr);
-
-    signo = skill_sig_option(&argc, argv);
-    if (signo < 0)
-        signo = SIGTERM;
-    else
-        sigopt++;
-
-    opterr=0; /* suppress errors on -123 */
-    while (loop == 1 && (i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
-        switch (i) {
-        case 'l':
-            if (optarg) {
-                char *s;
-                s = strtosig(optarg);
-                if (s)
-                    printf("%s\n", s);
-                else
-                    xwarnx(_("unknown signal name %s"),
-                          optarg);
-                free(s);
-            } else {
-                unix_print_signals();
-            }
-            exit(EXIT_SUCCESS);
-        case 'L':
-            pretty_print_signals();
-            exit(EXIT_SUCCESS);
-        case 's':
-            signo = signal_name_to_number(optarg);
-            break;
-        case 'h':
-            kill_usage(stdout);
-        case 'V':
-            display_kill_version();
-            exit(EXIT_SUCCESS);
-        case '?':
-            if (!isdigit(optopt)) {
-                xwarnx(_("invalid argument %c"), optopt);
-                kill_usage(stderr);
-            } else {
-                /* Special case for signal digit negative
-                 * PIDs */
-                pid = (long)('0' - optopt);
-                if (kill((pid_t)pid, signo) != 0)
-                exitvalue = EXIT_FAILURE;
-                exit(exitvalue);
-            }
-            loop=0;
-            break;
-        default:
-            kill_usage(stderr);
-        }
-
-    argc -= optind + sigopt;
-    argv += optind;
-
-    for (i = 0; i < argc; i++) {
-        pid = strtol_or_err(argv[i], _("failed to parse argument"));
-        if (!kill((pid_t) pid, signo))
-            continue;
-        exitvalue = EXIT_FAILURE;
-        continue;
-    }
-
-    exit(exitvalue);
-}
-
-#if 0
-static void _skillsnice_usage(int line)
-{
-    fprintf(stderr, _("something at line %d\n"), line);
-    skillsnice_usage(stderr);
-}
-
-#define skillsnice_usage() _skillsnice_usage(__LINE__)
-#endif
-
-#define NEXTARG (argc?( argc--, ((argptr=*++argv)) ):NULL)
-
-/* common skill/snice argument parsing code */
 
 static int snice_prio_option(int *argc, char **argv)
 {
@@ -720,19 +497,19 @@ static void skillsnice_parse(int argc,
             ns_pid = atoi(optarg);
             if (ns_pid == 0) {
                 xwarnx(_("invalid pid number %s"), optarg);
-                kill_usage(stderr);
+                skillsnice_usage(stderr);
             }
             if (procps_ns_read_pid(ns_pid, &ns) < 0) {
                 xwarnx(_("error reading reference namespace "
                      "information"));
-                kill_usage(stderr);
+                skillsnice_usage(stderr);
             }
 
             break;
         case NSLIST_OPTION:
             if (parse_namespaces(optarg)) {
                 xwarnx(_("invalid namespace list"));
-                kill_usage(stderr);
+                skillsnice_usage(stderr);
             }
             break;
         case 'v':
@@ -744,7 +521,7 @@ static void skillsnice_parse(int argc,
         case 'h':
             skillsnice_usage(stdout);
         case 'V':
-            display_kill_version();
+            fprintf(stdout, PROCPS_NG_VERSION);
             exit(EXIT_SUCCESS);
         default:
             skillsnice_usage(stderr);
@@ -799,10 +576,7 @@ int main(int argc, char ** argv)
     memset(&run_time, 0, sizeof(struct run_time_conf_t));
     my_pid = getpid();
 
-    if (strcmp(program_invocation_short_name, "kill") == 0 ||
-        strcmp(program_invocation_short_name, "lt-kill") == 0)
-        program = PROG_KILL;
-    else if (strcmp(program_invocation_short_name, "skill") == 0 ||
+    if (strcmp(program_invocation_short_name, "skill") == 0 ||
          strcmp(program_invocation_short_name, "lt-skill") == 0)
         program = PROG_SKILL;
     else if (strcmp(program_invocation_short_name, "snice") == 0 ||
@@ -817,9 +591,6 @@ int main(int argc, char ** argv)
         if (run_time.debugging)
             show_lists();
         iterate(&run_time);
-        break;
-    case PROG_KILL:
-        kill_main(argc, argv);
         break;
     default:
         fprintf(stderr, _("skill: \"%s\" is not supported\n"),

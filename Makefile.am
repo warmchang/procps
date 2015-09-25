@@ -78,7 +78,7 @@ endif
 if BUILD_KILL
 bin_PROGRAMS += kill
 dist_man_MANS += kill.1
-kill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/signals.c
+kill_SOURCES = kill.c lib/strutils.c lib/fileutils.c lib/signals.c
 else
   EXTRA_DIST += kill.1
 endif
