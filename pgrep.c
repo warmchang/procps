@@ -489,6 +489,7 @@ static struct el * select_procs (int *num)
     char cmdsearch[CMDSTRSIZE];
     char cmdoutput[CMDSTRSIZE];
     char *task_cmdline;
+    enum pids_reap_type which;
 
     preg = do_regcomp();
 
@@ -505,9 +506,11 @@ static struct el * select_procs (int *num)
     if (procps_pids_new(&info, 11, Items) < 0)
         xerrx(EXIT_FATAL,
               _("Unable to create pid info structure"));
-    if (procps_pids_read_open(info,
-                              ((opt_threads && !i_am_pkill)?
-                               PROCPS_REAP_THREADS_TOO:PROCPS_REAP_TASKS_ONLY)) < 0)
+    if (opt_threads && !i_am_pkill)
+        which = PROCPS_REAP_THREADS_TOO;
+    else
+        which = PROCPS_REAP_TASKS_ONLY;
+    if (procps_pids_read_open(info, which) < 0)
         xerrx(EXIT_FATAL,
               _("Unable to open pids information"));
 
