@@ -306,7 +306,6 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[HELP_cmdline_fmt] = _(""
       "  %s\n"
       "Usage:\n  %s%s");
-   Norm_nlstab[FAIL_openlib_fmt] = _("failed openproc: %s");
    Norm_nlstab[BAD_delayint_fmt] = _("bad delay interval '%s'");
    Norm_nlstab[BAD_niterate_fmt] = _("bad iterations argument '%s'");
    Norm_nlstab[LIMIT_exceed_fmt] = _("pid limit (%d) exceeded");
