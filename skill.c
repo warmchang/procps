@@ -34,15 +34,15 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <proc/namespace.h>
+#include <proc/pids.h>
+
 #include "c.h"
 #include "fileutils.h"
 #include "signals.h"
 #include "strutils.h"
 #include "nls.h"
 #include "xalloc.h"
-#include "proc/pwcache.h"
-#include "proc/devname.h"
-#include <proc/namespace.h>
 #include "rpmatch.h"
 
 #define DEFAULT_NICE 4
@@ -62,12 +62,23 @@ static const char **cmds;
 static int *pids;
 static char **namespaces;
 static int ns_pid;
-static struct procps_namespaces ns;
+static struct procps_namespaces match_namespaces;
+static int ns_flags = 0x3f;
 
 #define ENLIST(thing,addme) do{ \
 if(!thing##s) thing##s = xmalloc(sizeof(*thing##s)*saved_argc); \
 thing##s[thing##_count++] = addme; \
 }while(0)
+
+enum pids_item items[] = {
+    PROCPS_PIDS_ID_PID,
+    PROCPS_PIDS_ID_EUID,
+    PROCPS_PIDS_ID_EUSER,
+    PROCPS_PIDS_TTY,
+    PROCPS_PIDS_TTY_NAME,
+    PROCPS_PIDS_CMD};
+enum rel_items {
+    EU_PID, EU_EUID, EU_EUSER, EU_TTY, EU_TTYNAME, EU_CMD};
 
 static int my_pid;
 static int saved_argc;
@@ -81,7 +92,6 @@ enum {
 };
 static int program = PROG_UNKNOWN;
 
-static int ns_flags = 0x3f;
 static int parse_namespaces(char *optarg)
 {
     char *ptr = optarg, *tmp;
@@ -114,126 +124,100 @@ static int parse_namespaces(char *optarg)
     return 0;
 }
 
-/* kill or nice a process */
-static void hurt_proc(int tty, int uid, int pid, const char *restrict const cmd,
-              struct run_time_conf_t *run_time)
+static int match_intlist(const int value, const int len, int *list)
+{
+    int i;
+
+    for(i=0; i<len; i++)
+        if (list[i] == value)
+            return 1;
+    return 0;
+}
+
+static int match_strlist(const char *value, const int len, const char **list)
+{
+    int i;
+
+    for(i=0; i<len; i++)
+        if (strcmp(list[i], value) == 0)
+            return 1;
+    return 0;
+}
+
+static int match_ns(const int pid)
+{
+    struct procps_namespaces proc_ns;
+    int found = 1;
+    int i;
+
+    if (procps_ns_read_pid(pid, &proc_ns) < 0)
+        xerrx(EXIT_FAILURE,
+              _("Unable to read process namespace information"));
+    for (i = 0; i < PROCPS_NS_COUNT; i++) {
+        if (ns_flags & (1 << i)) {
+            if (proc_ns.ns[i] != match_namespaces.ns[i])
+                found = 0;
+        }
+    }
+
+    return found;
+}
+
+static int ask_user(struct pids_stack *stack)
+{
+#define PIDS_GETINT(e) PROCPS_PIDS_VAL(EU_ ## e, s_int, stack)
+#define PIDS_GETSTR(e) PROCPS_PIDS_VAL(EU_ ## e, str, stack)
+    char *buf=NULL;
+    size_t len=0;
+
+    fprintf(stderr, "%-8s %-8s %5d %-16.16s   ? ",
+            PIDS_GETSTR(TTYNAME),
+            PIDS_GETSTR(EUSER),
+            PIDS_GETINT(PID),
+            PIDS_GETSTR(CMD));
+    fflush(stdout);
+    if (getline(&buf, &len, stdin) == -1)
+        return 0;
+    if (rpmatch(buf) < 1) {
+        free(buf);
+        return 0;
+    }
+    free(buf);
+    return 1;
+}
+
+static void nice_or_kill(struct pids_stack *stack,
+                         struct run_time_conf_t *run_time)
 {
     int failed;
-    char dn_buf[1000];
-    dev_to_tty(dn_buf, 999, tty, pid, ABBREV_DEV);
-    if (run_time->interactive) {
-        char *buf;
-        size_t len = 0;
-        fprintf(stderr, "%-8s %-8s %5d %-16.16s   ? ",
-            (char *)dn_buf, user_from_uid(uid), pid, cmd);
-        fflush (stdout);
-        if (getline(&buf, &len, stdin) == -1)
-            return;
-        if (rpmatch(buf) < 1) {
-            free(buf);
-            return;
-        }
-        free(buf);
-    }
+
+    if (run_time->interactive && !ask_user(stack))
+        return;
+
     /* do the actual work */
     errno = 0;
     if (program == PROG_SKILL)
-        failed = kill(pid, sig_or_pri);
+        failed = kill(PIDS_GETINT(PID), sig_or_pri);
     else
-        failed = setpriority(PRIO_PROCESS, pid, sig_or_pri);
+        failed = setpriority(PRIO_PROCESS, PIDS_GETINT(PID), sig_or_pri);
     if ((run_time->warnings && failed) || run_time->debugging || run_time->verbose) {
         fprintf(stderr, "%-8s %-8s %5d %-16.16s   ",
-            (char *)dn_buf, user_from_uid(uid), pid, cmd);
+            PIDS_GETSTR(TTYNAME),
+            PIDS_GETSTR(EUSER),
+            PIDS_GETINT(PID),
+            PIDS_GETSTR(CMD));
         perror("");
         return;
     }
     if (run_time->interactive)
         return;
     if (run_time->noaction) {
-        printf("%d\n", pid);
+        printf("%d\n", PIDS_GETINT(PID));
         return;
     }
 }
-
-/* check one process */
-static void check_proc(int pid, struct run_time_conf_t *run_time)
-{
-    char buf[128];
-    struct stat statbuf;
-    struct procps_namespaces pid_ns;
-    char *tmp;
-    int tty;
-    int fd;
-    int i;
-    if (pid == my_pid || pid == 0)
-        return;
-    /* pid (cmd) state ppid pgrp session tty */
-    sprintf(buf, "/proc/%d/stat", pid);
-    fd = open(buf, O_RDONLY);
-    if (fd == -1) {
-        /* process exited maybe */
-        if (run_time->warnings)
-            xwarn(_("cannot open file %s"), buf);
-        return;
-    }
-    fstat(fd, &statbuf);
-    if (uids) {
-        /* check the EUID */
-        i = uid_count;
-        while (i--)
-            if (uids[i] == statbuf.st_uid)
-                break;
-        if (i == -1)
-            goto closure;
-    }
-    if (read(fd, buf, 128) <= 0)
-        goto closure;
-    buf[127] = '\0';
-    tmp = strrchr(buf, ')');
-    *tmp++ = '\0';
-    i = 5;
-    while (i--)
-        while (*tmp++ != ' ')
-            /* scan to find tty */ ;
-    tty = atoi(tmp);
-    if (ttys) {
-        i = tty_count;
-        while (i--)
-            if (ttys[i] == tty)
-                break;
-        if (i == -1)
-            goto closure;
-    }
-    tmp = strchr(buf, '(') + 1;
-    if (cmds) {
-        i = cmd_count;
-        /* fast comparison trick -- useful? */
-        while (i--)
-            if (cmds[i][0] == *tmp && !strcmp(cmds[i], tmp))
-                break;
-        if (i == -1)
-            goto closure;
-    }
-    if (ns_pid) {
-        if (procps_ns_read_pid(pid, &pid_ns) < 0)
-            goto closure;
-        for (i = 0; i < PROCPS_NS_COUNT; i++) {
-            if (ns_flags & (1 << i)) {
-                if (pid_ns.ns[i] != ns.ns[i])
-                    goto closure;
-            }
-        }
-    }
-    /* This is where we kill/nice something. */
-    /* for debugging purposes?
-    fprintf(stderr, "PID %d, UID %d, TTY %d,%d, COMM %s\n",
-        pid, statbuf.st_uid, tty >> 8, tty & 0xf, tmp);
-    */
-    hurt_proc(tty, statbuf.st_uid, pid, tmp, run_time);
- closure:
-    /* kill/nice _first_ to avoid PID reuse */
-    close(fd);
-}
+#undef PIDS_GETINT
+#undef PIDS_GETSTR
 
 /* debug function */
 static void show_lists(void)
@@ -277,36 +261,36 @@ static void show_lists(void)
         fprintf(stderr, "\n");
 }
 
-/* iterate over all PIDs */
-static void iterate(struct run_time_conf_t *run_time)
+static void scan_procs(struct run_time_conf_t *run_time)
 {
-    int pid;
-    DIR *d;
-    struct dirent *de;
-    if (pids) {
-        pid = pid_count;
-        while (pid--)
-            check_proc(pids[pid], run_time);
-        return;
-    }
-#if 0
-    /* could setuid() and kill -1 to have the kernel wipe out a user */
-    if (!ttys && !cmds && !pids && !run_time->interactive) {
-    }
-#endif
-    d = opendir("/proc");
-    if (!d)
-        xerr(EXIT_FAILURE, "/proc");
-    while ((de = readdir(d))) {
-        if (de->d_name[0] > '9')
+#define PIDS_GETINT(e) PROCPS_PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
+#define PIDS_GETSTR(e) PROCPS_PIDS_VAL(EU_ ## e, str, reap->stacks[i])
+    struct procps_pidsinfo *info=NULL;
+    struct pids_reap *reap;
+    int i, total_procs;
+
+    if (procps_pids_new(&info, 6, items) < 0)
+        xerrx(EXIT_FAILURE,
+              _("Unable to create pid info structure"));
+    if ((reap = procps_pids_reap(info, PROCPS_REAP_TASKS_ONLY)) == NULL)
+        xerrx(EXIT_FAILURE,
+              _("Unable to load process information"));
+
+    total_procs = reap->counts.total;
+    for (i=0; i < total_procs; i++) {
+        if (PIDS_GETINT(PID) == my_pid || PIDS_GETINT(PID) == 0)
             continue;
-        if (de->d_name[0] < '1')
+        if (uids && !match_intlist(PIDS_GETINT(EUID), uid_count, uids))
             continue;
-        pid = atoi(de->d_name);
-        if (pid)
-            check_proc(pid, run_time);
+        if (ttys && !match_intlist(PIDS_GETINT(TTY), tty_count, ttys))
+            continue;
+        if (cmds && !match_strlist(PIDS_GETSTR(CMD), cmd_count, cmds))
+            continue;
+        if (namespaces && !match_ns(PIDS_GETINT(PID)))
+            continue;
+        nice_or_kill(reap->stacks[i], run_time);
     }
-    closedir(d);
+
 }
 
 /* skill and snice help */
@@ -393,7 +377,7 @@ static int snice_prio_option(int *argc, char **argv)
     return (int)prio;
 }
 
-static void skillsnice_parse(int argc,
+static void parse_options(int argc,
                  char **argv, struct run_time_conf_t *run_time)
 {
     int signo = -1;
@@ -499,7 +483,7 @@ static void skillsnice_parse(int argc,
                 xwarnx(_("invalid pid number %s"), optarg);
                 skillsnice_usage(stderr);
             }
-            if (procps_ns_read_pid(ns_pid, &ns) < 0) {
+            if (procps_ns_read_pid(ns_pid, &match_namespaces) < 0) {
                 xwarnx(_("error reading reference namespace "
                      "information"));
                 skillsnice_usage(stderr);
@@ -587,10 +571,10 @@ int main(int argc, char ** argv)
     case PROG_SNICE:
     case PROG_SKILL:
         setpriority(PRIO_PROCESS, my_pid, -20);
-        skillsnice_parse(argc, argv, &run_time);
+        parse_options(argc, argv, &run_time);
         if (run_time.debugging)
             show_lists();
-        iterate(&run_time);
+        scan_procs(&run_time);
         break;
     default:
         fprintf(stderr, _("skill: \"%s\" is not supported\n"),
