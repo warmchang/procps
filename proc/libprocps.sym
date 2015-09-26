@@ -7,18 +7,15 @@ global:
 	escape_strlist;
 	escaped_copy;
 	fatal_proc_unmounted;
-	freeproc;
 	get_pid_digits;
 	look_up_our_self;
 	lookup_wchan;
 	openproc;
-	readeither;
 	readproc;
 	readproctab2;
 	readproctab3;
 	readproctab;
 	readtask;
-	user_from_uid;
 	procps_cpu_count;
 	procps_diskstat_dev_count;
 	procps_diskstat_dev_get;
