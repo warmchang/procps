@@ -19,13 +19,15 @@
  */
 
 #include <stdio.h>
+#include <unistd.h>
 #include <getopt.h>
+#include <sys/types.h>
 
 #include "c.h"
 #include "fileutils.h"
 #include "nls.h"
 #include "xalloc.h"
-#include "proc/readproc.h"
+//#include "proc/readproc.h"
 #include <proc/pids.h>
 #include "proc/version.h" /* procps_version */
 
@@ -102,7 +104,7 @@ static char *get_basename (char *filename)
 
 static char *pid_link (pid_t pid, const char *base_name)
 {
-	char link [PROCPATHLEN];
+	char link [1000];
 	char *result;
 	int path_alloc_size;
 	int len;
