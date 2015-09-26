@@ -538,28 +538,8 @@ static struct el * select_procs (int *num)
             match = 0;
         else if (opt_term)
             match = match_strlist(PIDS_GETSTR(TTY_NAME), opt_term);
-        
+
         task_cmdline = PIDS_GETSTR(CMDLINE);
-#if 0 // FIXME cmdline stuff
-        if (pid_cmdline && (opt_longlong || opt_full) ) {
-            int i = 0;
-            int bytes = sizeof (cmdline) - 1;
-
-            /* make sure it is always NUL-terminated */
-            cmdline[bytes] = 0;
-            /* make room for SPC in loop below */
-            --bytes;
-
-            strncpy (cmdline, pid_cmdline[i], bytes);
-            bytes -= strlen (task.cmdline[i++]);
-            while (task.cmdline[i] && bytes > 0) {
-                strncat (cmdline, " ", bytes);
-                strncat (cmdline, task.cmdline[i], bytes);
-                bytes -= strlen (task.cmdline[i++]) + 1;
-            }
-        }
-#endif
-
         if (opt_long || opt_longlong || (match && opt_pattern)) {
             if (opt_longlong && task_cmdline)
                 strncpy (cmdoutput, task_cmdline, CMDSTRSIZE);
@@ -606,38 +586,6 @@ static struct el * select_procs (int *num)
             } else {
                 xerrx(EXIT_FATAL, _("internal error"));
             }
-#if 0
-            // pkill does not need subtasks!
-            // this control is still done at
-            // argparse time, but a further
-            // control is free
-            if (opt_threads && !i_am_pkill) {
-                proc_t subtask;
-                memset(&subtask, 0, sizeof (subtask));
-                while (readtask(ptp, &task, &subtask)){
-                    // don't add redundand tasks
-                    if (task.XXXID == subtask.XXXID)
-                        continue;
-
-                    // eventually grow output buffer
-                    if (matches == size) {
-                        size = size * 5 / 4 + 4;
-                        list = realloc(list, size * sizeof *list);
-                        if (list == NULL)
-                            exit (EXIT_FATAL);
-                    }
-                    if (opt_long || opt_longlong) {
-                        list[matches].str = xstrdup (cmdoutput);
-                        list[matches++].num = subtask.XXXID;
-                    } else {
-                        list[matches++].num = subtask.XXXID;
-                    }
-                    memset(&subtask, 0, sizeof (subtask));
-                }
-            }
-
-#endif
-
         }
     }
 
