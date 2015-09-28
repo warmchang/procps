@@ -1389,7 +1389,7 @@ PROCPS_EXPORT struct pids_stack **procps_pids_stacks_sort (
     // a pids_item is currently unsigned, but we'll protect our future
     if (sort < 0  || sort > PROCPS_PIDS_noop)
         return NULL;
-    if (order < -1  || order > +1)
+    if (order != PROCPS_SORT_ASCEND && order != PROCPS_SORT_DESCEND)
         return NULL;
     if (numstacked < 2)
         return stacks;
