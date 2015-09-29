@@ -222,7 +222,7 @@ setDECL(VM_USED)      { (void)I; R->result.ul_int = P->vm_swap + P->vm_rss; }
 REG_set(VSIZE_PGS,        ul_int,  vsize)
 REG_set(WCHAN_ADDR,       ul_int,  wchan)
 setDECL(WCHAN_NAME)   { (void)I; R->result.str = strdup(lookup_wchan(P->tid)); }
-setDECL(xtra)         { (void)I; (void)R; (void)P; return; }
+setDECL(extra)        { (void)I; (void)R; (void)P; return; }
 setDECL(noop)         { (void)I; (void)R; (void)P; return; }
 setDECL(logical_end)  { (void)I; (void)R; (void)P; return; }
 setDECL(physical_end) { (void)I; (void)R; (void)P; return; }
@@ -468,7 +468,7 @@ static struct {
     { RS(VSIZE_PGS),         f_stat,     NULL,      QS(ul_int),   0       },
     { RS(WCHAN_ADDR),        f_stat,     NULL,      QS(ul_int),   0       },
     { RS(WCHAN_NAME),        0,          FF(str),   QS(str),      0       },
-    { RS(xtra),              0,          NULL,      QS(noop),     0       },
+    { RS(extra),             0,          NULL,      QS(ull_int),  0       },
     { RS(noop),              0,          NULL,      QS(noop),     0       },
     { RS(logical_end),       0,          NULL,      QS(noop),     0       },
     { RS(physical_end),      0,          NULL,      QS(noop),     0       }
