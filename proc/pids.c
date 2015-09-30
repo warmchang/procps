@@ -36,6 +36,8 @@
 #include <sys/types.h>
 
 #include <proc/pids.h>
+#include <proc/sysinfo.h>
+#include <proc/uptime.h>
 #include "procps-private.h"
 
 #include "devname.h"                   // and a few headers for our
@@ -81,6 +83,8 @@ struct procps_pidsinfo {
     PROCTAB *PT;                       // the old library essential interface
     struct pids_counts counts;         // counts for 'procps_pids_stacks_fill'
     struct pids_reap reaped;           // counts + stacks for 'procps_pids_reap'
+    unsigned long hertz;               // for TIME_ALL & TIME_ELAPSED calculations
+    unsigned long long boot_seconds;   // for TIME_ELAPSED calculation
 };
 
 
@@ -207,6 +211,9 @@ REG_set(TICS_SYSTEM,      ull_int, stime)
 REG_set(TICS_SYSTEM_C,    ull_int, cstime)
 REG_set(TICS_USER,        ull_int, utime)
 REG_set(TICS_USER_C,      ull_int, cutime)
+setDECL(TIME_ALL)     { R->result.ull_int = (P->utime + P->stime) / I->hertz; }
+setDECL(TIME_ELAPSED) { R->result.ull_int = (I->boot_seconds >= (P->start_time / I->hertz)) ? I->boot_seconds - (P->start_time / I->hertz) : 0; }
+
 REG_set(TIME_START,       ull_int, start_time)
 REG_set(TTY,              s_int,   tty)
 setDECL(TTY_NAME)     { char buf[64]; (void)I; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); R->result.str = strdup(buf); }
@@ -454,6 +461,8 @@ static struct {
     { RS(TICS_SYSTEM_C),     f_stat,     NULL,      QS(ull_int),  0       },
     { RS(TICS_USER),         f_stat,     NULL,      QS(ull_int),  0       },
     { RS(TICS_USER_C),       f_stat,     NULL,      QS(ull_int),  0       },
+    { RS(TIME_ALL),          f_stat,     NULL,      QS(ull_int),  0       },
+    { RS(TIME_ELAPSED),      f_stat,     NULL,      QS(ull_int),  0       },
     { RS(TIME_START),        f_stat,     NULL,      QS(ull_int),  0       },
     { RS(TTY),               f_stat,     NULL,      QS(s_int),    0       },
     { RS(TTY_NAME),          f_stat,     FF(str),   QS(strvers),  0       },
@@ -1011,6 +1020,7 @@ PROCPS_EXPORT int procps_pids_new (
         enum pids_item *items)
 {
     struct procps_pidsinfo *p;
+    double uptime_secs;
     int pgsz;
 
     if (info == NULL || *info != NULL)
@@ -1040,6 +1050,10 @@ PROCPS_EXPORT int procps_pids_new (
     while (pgsz > 1024) { pgsz >>= 1; p->pgs2k_shift++; }
 
     config_history(p);
+
+    p->hertz = procps_hertz_get();
+    procps_uptime(&uptime_secs, NULL);
+    p->boot_seconds = (unsigned long)uptime_secs;
 
     p->refcount = 1;
     *info = p;

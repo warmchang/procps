@@ -120,6 +120,8 @@ enum pids_item {
     PROCPS_PIDS_TICS_SYSTEM_C,         // ull_int
     PROCPS_PIDS_TICS_USER,             // ull_int
     PROCPS_PIDS_TICS_USER_C,           // ull_int
+    PROCPS_PIDS_TIME_ALL,              // ull_int
+    PROCPS_PIDS_TIME_ELAPSED,          // ull_int
     PROCPS_PIDS_TIME_START,            // ull_int
     PROCPS_PIDS_TTY,                   // s_int
     PROCPS_PIDS_TTY_NAME,              // str
