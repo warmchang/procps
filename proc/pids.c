@@ -210,6 +210,7 @@ REG_set(TICS_USER_C,      ull_int, cutime)
 REG_set(TIME_START,       ull_int, start_time)
 REG_set(TTY,              s_int,   tty)
 setDECL(TTY_NAME)     { char buf[64]; (void)I; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); R->result.str = strdup(buf); }
+setDECL(TTY_NUMBER)   { char buf[64]; (void)I; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS); R->result.str = strdup(buf); }
 REG_set(VM_DATA,          ul_int,  vm_data)
 REG_set(VM_EXE,           ul_int,  vm_exe)
 REG_set(VM_LIB,           ul_int,  vm_lib)
@@ -456,6 +457,7 @@ static struct {
     { RS(TIME_START),        f_stat,     NULL,      QS(ull_int),  0       },
     { RS(TTY),               f_stat,     NULL,      QS(s_int),    0       },
     { RS(TTY_NAME),          f_stat,     FF(str),   QS(strvers),  0       },
+    { RS(TTY_NUMBER),        f_stat,     FF(str),   QS(strvers),  0       },
     { RS(VM_DATA),           f_status,   NULL,      QS(ul_int),   0       },
     { RS(VM_EXE),            f_status,   NULL,      QS(ul_int),   0       },
     { RS(VM_LIB),            f_status,   NULL,      QS(ul_int),   0       },

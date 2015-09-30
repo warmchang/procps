@@ -123,6 +123,7 @@ enum pids_item {
     PROCPS_PIDS_TIME_START,            // ull_int
     PROCPS_PIDS_TTY,                   // s_int
     PROCPS_PIDS_TTY_NAME,              // str
+    PROCPS_PIDS_TTY_NUMBER,            // str
     PROCPS_PIDS_VM_DATA,               // ul_int
     PROCPS_PIDS_VM_EXE,                // ul_int
     PROCPS_PIDS_VM_LIB,                // ul_int
