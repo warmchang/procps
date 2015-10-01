@@ -178,10 +178,6 @@ struct pids_stack {
     struct pids_result *head;
 };
 
-struct pids_stacks {
-    struct pids_stack **stacks;
-};
-
 struct pids_counts {
     int total;
     int running, sleeping, stopped, zombied;
@@ -233,14 +229,6 @@ struct pids_reap *procps_pids_select (
     unsigned *these,
     int maxthese,
     enum pids_fill_type which);
-
-struct pids_stacks *procps_pids_stacks_alloc (
-    struct procps_pidsinfo *info,
-    int maxstacks);
-
-int procps_pids_stacks_dealloc (
-    struct procps_pidsinfo *info,
-    struct pids_stacks **these);
 
 struct pids_stack **procps_pids_stacks_sort (
     struct procps_pidsinfo *info,

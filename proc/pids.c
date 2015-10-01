@@ -56,7 +56,7 @@ enum pids_item PROCPS_PIDS_logical_end  = PROCPS_PIDS_noop + 1;
 enum pids_item PROCPS_PIDS_physical_end = PROCPS_PIDS_noop + 2;
 
 
-struct stacks_extent {                 // callers see a pids_stacks struct
+struct stacks_extent {
     struct pids_stack **stacks;
     int ext_numitems;                  // includes 'physical_end' delimiter
     int ext_numstacks;
@@ -82,7 +82,7 @@ struct procps_pidsinfo {
     unsigned flags;                    // the old library PROC_FILL flagss
     PROCTAB *PT;                       // the old library essential interface
     int select_maxthese;               // largest last known user maxthese
-    struct pids_stacks *select;        // anchor for 'procps_pids_select' extent
+    struct stacks_extent *select;      // select anchor, subset of 'extents' above
     struct pids_reap filled;           // counts + stacks for 'procps_pids_select'
     struct pids_reap reaped;           // counts + stacks for 'procps_pids_reap'
     unsigned long hertz;               // for TIME_ALL & TIME_ELAPSED calculations
@@ -981,6 +981,92 @@ static void validate_stacks (
 #endif
 
 
+// ___ Former Public Functions ||||||||||||||||||||||||||||||||||||||||||||||||
+
+/*
+ * alloc_stacks():
+ *
+ * Allocate and initialize one or more stacks each of which is anchored in an
+ * associated pids_stack structure (which may include extra user space).
+ *
+ * All such stacks will will have their result structures properly primed with
+ * 'items', while the result itself will be zeroed.
+ *
+ * Returns an array of pointers representing the 'heads' of each new stack.
+ */
+static struct stacks_extent *alloc_stacks (
+        struct procps_pidsinfo *info,
+        int maxstacks)
+{
+    struct stacks_extent *p_blob;
+    struct pids_stack **p_vect;
+    struct pids_stack *p_head;
+    size_t vect_size, head_size, list_size, blob_size;
+    void *v_head, *v_list;
+    int i;
+
+    if (info == NULL || info->items == NULL)
+        return NULL;
+    if (maxstacks < 1)
+        return NULL;
+
+    vect_size  = sizeof(void *) * maxstacks;                   // address vectors themselves
+    vect_size += sizeof(void *);                               // plus NULL delimiter
+    head_size  = sizeof(struct pids_stack);                    // a head struct
+    list_size  = sizeof(struct pids_result) * info->maxitems;  // a results stack
+    blob_size  = sizeof(struct stacks_extent);                 // the extent anchor itself
+    blob_size += vect_size;                                    // all vectors + delim
+    blob_size += head_size * maxstacks;                        // all head structs
+    blob_size += list_size * maxstacks;                        // all results stacks
+
+    /* note: all memory is allocated in a single blob, facilitating a later free().
+       as a minimum, it's important that the result structures themselves always be
+       contiguous for any given stack (just as they are when defined statically). */
+    if (NULL == (p_blob = calloc(1, blob_size)))
+        return NULL;
+
+    p_blob->next = info->extents;
+    info->extents = p_blob;
+    p_blob->stacks = (void *)p_blob + sizeof(struct stacks_extent);
+    p_vect = p_blob->stacks;
+    v_head = (void *)p_vect + vect_size;
+    v_list = v_head + (head_size * maxstacks);
+
+    for (i = 0; i < maxstacks; i++) {
+        p_head = (struct pids_stack *)v_head;
+        p_head->head = stack_itemize((struct pids_result *)v_list, info->curitems, info->items);
+        p_blob->stacks[i] = p_head;
+        v_list += list_size;
+        v_head += head_size;
+    }
+    p_blob->ext_numitems = info->maxitems;
+    p_blob->ext_numstacks = maxstacks;
+#ifdef FPRINT_STACKS
+    validate_stacks(p_blob, __func__);
+#endif
+    return p_blob;
+} // end: alloc_stacks
+
+
+static int dealloc_stacks (
+        struct procps_pidsinfo *info,
+        struct stacks_extent **these)
+{
+    struct stacks_extent *ext;
+    int rc;
+
+    if (info == NULL || these == NULL)
+        return -EINVAL;
+    if ((*these)->stacks == NULL || (*these)->stacks[0] == NULL)
+        return -EINVAL;
+
+    ext = (struct stacks_extent *)(*these);
+    rc = extent_free(info, ext);
+    *these = NULL;
+    return rc;
+} // end: dealloc_stacks
+
+
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
@@ -997,7 +1083,7 @@ PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
         return NULL;
 
     if (info == NULL
-    || !(ext = (struct stacks_extent *)procps_pids_stacks_alloc(info, 1))
+    || !(ext = alloc_stacks(info, 1))
     || !extent_cut(info, ext))
         return NULL;
 
@@ -1092,7 +1178,7 @@ PROCPS_EXPORT int procps_pids_read_open (
     if (which != PROCPS_REAP_TASKS_ONLY && which != PROCPS_REAP_THREADS_TOO)
         return -EINVAL;
 
-    if (!(info->read = (struct stacks_extent *)procps_pids_stacks_alloc(info, 1)))
+    if (!(info->read = alloc_stacks(info, 1)))
         return -ENOMEM;
     if (!oldproc_open(info, 0))
         return -1;
@@ -1130,7 +1216,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
  #define n_inuse  info->inuse_total
     static proc_t task;    // static for initial zeroes + later dynamic free(s)
     proc_t*(*reap_something)(PROCTAB*, proc_t*);
-    struct pids_stacks *ext;
+    struct stacks_extent *ext;
     int n_save;
 
     if (info == NULL || READS_BEGUN)
@@ -1144,7 +1230,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
     if (!info->anchor) {
         if ((!(info->anchor = calloc(sizeof(void *), MEMORY_INCR)))
         || (!(info->reaped.stacks = calloc(sizeof(void *), MEMORY_INCR)))
-        || (!(ext = procps_pids_stacks_alloc(info, MEMORY_INCR))))
+        || (!(ext = alloc_stacks(info, MEMORY_INCR))))
             return NULL;
         memcpy(info->anchor, ext->stacks, sizeof(void *) * MEMORY_INCR);
         n_save = info->alloc_total = MEMORY_INCR;
@@ -1162,7 +1248,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
         if (n_inuse == n_alloc) {
             n_alloc += MEMORY_INCR;
             if ((!(info->anchor = realloc(info->anchor, sizeof(void *) * n_alloc)))
-            || (!(ext = procps_pids_stacks_alloc(info, MEMORY_INCR))))
+            || (!(ext = alloc_stacks(info, MEMORY_INCR))))
                 return NULL;
             memcpy(info->anchor + n_inuse, ext->stacks, sizeof(void *) * MEMORY_INCR);
         }
@@ -1264,9 +1350,9 @@ PROCPS_EXPORT struct pids_reap *procps_pids_select (
         cleanup_stacks_all(info);
 
     if (maxthese > info->select_maxthese && info->select)
-        procps_pids_stacks_dealloc(info, &info->select);
+        dealloc_stacks(info, &info->select);
     if(!info->select) {
-        if (!(info->select = procps_pids_stacks_alloc(info, maxthese)))
+        if (!(info->select = alloc_stacks(info, maxthese)))
             return NULL;
         info->select_maxthese = maxthese;
     }
@@ -1277,7 +1363,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_select (
     ids[maxthese] = 0;
 
     if (!oldproc_open(info, which, ids, maxthese)) {
-        procps_pids_stacks_dealloc(info, &info->select);
+        dealloc_stacks(info, &info->select);
         return NULL;
     }
     toggle_history(info);
@@ -1289,7 +1375,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_select (
             break;
         if (!tally_proc(info, &info->filled.counts, &task)) {
             oldproc_close(info);
-            procps_pids_stacks_dealloc(info, &info->select);
+            dealloc_stacks(info, &info->select);
             return NULL;
         }
         assign_results(info, info->select->stacks[i], &task);
@@ -1302,90 +1388,6 @@ PROCPS_EXPORT struct pids_reap *procps_pids_select (
     info->filled.stacks = info->select->stacks;
     return &info->filled;
 } // end: procps_pids_select
-
-
-/*
- * procps_pids_stacks_alloc():
- *
- * Allocate and initialize one or more stacks each of which is anchored in an
- * associated pids_stack structure (which may include extra user space).
- *
- * All such stacks will will have their result structures properly primed with
- * 'items', while the result itself will be zeroed.
- *
- * Returns an array of pointers representing the 'heads' of each new stack.
- */
-PROCPS_EXPORT struct pids_stacks *procps_pids_stacks_alloc (
-        struct procps_pidsinfo *info,
-        int maxstacks)
-{
-    struct stacks_extent *p_blob;
-    struct pids_stack **p_vect;
-    struct pids_stack *p_head;
-    size_t vect_size, head_size, list_size, blob_size;
-    void *v_head, *v_list;
-    int i;
-
-    if (info == NULL || info->items == NULL)
-        return NULL;
-    if (maxstacks < 1)
-        return NULL;
-
-    vect_size  = sizeof(void *) * maxstacks;                   // address vectors themselves
-    vect_size += sizeof(void *);                               // plus NULL delimiter
-    head_size  = sizeof(struct pids_stack);                    // a head struct
-    list_size  = sizeof(struct pids_result) * info->maxitems;  // a results stack
-    blob_size  = sizeof(struct stacks_extent);                 // the extent anchor itself
-    blob_size += vect_size;                                    // all vectors + delim
-    blob_size += head_size * maxstacks;                        // all head structs
-    blob_size += list_size * maxstacks;                        // all results stacks
-
-    /* note: all memory is allocated in a single blob, facilitating a later free().
-       as a minimum, it's important that the result structures themselves always be
-       contiguous for any given stack (just as they are when defined statically). */
-    if (NULL == (p_blob = calloc(1, blob_size)))
-        return NULL;
-
-    p_blob->next = info->extents;
-    info->extents = p_blob;
-    p_blob->stacks = (void *)p_blob + sizeof(struct stacks_extent);
-    p_vect = p_blob->stacks;
-    v_head = (void *)p_vect + vect_size;
-    v_list = v_head + (head_size * maxstacks);
-
-    for (i = 0; i < maxstacks; i++) {
-        p_head = (struct pids_stack *)v_head;
-        p_head->head = stack_itemize((struct pids_result *)v_list, info->curitems, info->items);
-        p_blob->stacks[i] = p_head;
-        v_list += list_size;
-        v_head += head_size;
-    }
-    p_blob->ext_numitems = info->maxitems;
-    p_blob->ext_numstacks = maxstacks;
-#ifdef FPRINT_STACKS
-    validate_stacks(p_blob, __func__);
-#endif
-    return (struct pids_stacks *)p_blob;
-} // end: procps_pids_stacks_alloc
-
-
-PROCPS_EXPORT int procps_pids_stacks_dealloc (
-        struct procps_pidsinfo *info,
-        struct pids_stacks **these)
-{
-    struct stacks_extent *ext;
-    int rc;
-
-    if (info == NULL || these == NULL)
-        return -EINVAL;
-    if ((*these)->stacks == NULL || (*these)->stacks[0] == NULL)
-        return -EINVAL;
-
-    ext = (struct stacks_extent *)(*these);
-    rc = extent_free(info, ext);
-    *these = NULL;
-    return rc;
-} // end: procps_pids_stacks_dealloc
 
 
 /*
