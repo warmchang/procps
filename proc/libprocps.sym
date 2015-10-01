@@ -47,9 +47,9 @@ global:
 	procps_pids_reap;
 	procps_pids_ref;
 	procps_pids_reset;
+	procps_pids_select;
 	procps_pids_stacks_alloc;
 	procps_pids_stacks_dealloc;
-	procps_pids_stacks_fill;
 	procps_pids_stacks_sort;
 	procps_pids_unref;
 	procps_slabinfo_new;

@@ -176,7 +176,6 @@ struct pids_result {
 
 struct pids_stack {
     struct pids_result *head;
-    unsigned fill_id;
 };
 
 struct pids_stacks {
@@ -229,6 +228,12 @@ int procps_pids_reset (
     int newmaxitems,
     enum pids_item *newitems);
 
+struct pids_reap *procps_pids_select (
+    struct procps_pidsinfo *info,
+    unsigned *these,
+    int maxthese,
+    enum pids_fill_type which);
+
 struct pids_stacks *procps_pids_stacks_alloc (
     struct procps_pidsinfo *info,
     int maxstacks);
@@ -236,12 +241,6 @@ struct pids_stacks *procps_pids_stacks_alloc (
 int procps_pids_stacks_dealloc (
     struct procps_pidsinfo *info,
     struct pids_stacks **these);
-
-struct pids_counts *procps_pids_stacks_fill (
-    struct procps_pidsinfo *info,
-    struct pids_stacks *these,
-    int maxstacks,
-    enum pids_fill_type which);
 
 struct pids_stack **procps_pids_stacks_sort (
     struct procps_pidsinfo *info,

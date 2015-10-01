@@ -81,7 +81,9 @@ struct procps_pidsinfo {
     unsigned pgs2k_shift;              // to convert some proc vaules
     unsigned flags;                    // the old library PROC_FILL flagss
     PROCTAB *PT;                       // the old library essential interface
-    struct pids_counts counts;         // counts for 'procps_pids_stacks_fill'
+    int select_maxthese;               // largest last known user maxthese
+    struct pids_stacks *select;        // anchor for 'procps_pids_select' extent
+    struct pids_reap filled;           // counts + stacks for 'procps_pids_select'
     struct pids_reap reaped;           // counts + stacks for 'procps_pids_reap'
     unsigned long hertz;               // for TIME_ALL & TIME_ELAPSED calculations
     unsigned long long boot_seconds;   // for TIME_ELAPSED calculation
@@ -959,7 +961,7 @@ static void validate_stacks (
     for (x = 0; NULL != ext->stacks[x]; x++) {
         struct pids_stack *h = ext->stacks[x];
         struct pids_result *r = h->head;
-        fprintf(stderr, "  %s:   v[%03d] = %p, h = %p, fill_id #%-5u", __func__, x, h, r, (unsigned)h->fill_id);
+        fprintf(stderr, "  %s:   v[%03d] = %p, h = %p", __func__, x, h, r);
         for (i = 0; r->item < PROCPS_PIDS_logical_end; i++, r++)
             ;
         t = i + 1;
@@ -1241,6 +1243,67 @@ PROCPS_EXPORT int procps_pids_reset (
 } // end: procps_pids_reset
 
 
+PROCPS_EXPORT struct pids_reap *procps_pids_select (
+        struct procps_pidsinfo *info,
+        unsigned *these,
+        int maxthese,
+        enum pids_fill_type which)
+{
+    static proc_t task;    // static for initial zeroes + later dynamic free(s)
+    unsigned ids[FILL_ID_MAX + 1];
+    int i;
+
+    if (info == NULL || these == NULL || READS_BEGUN)
+        return NULL;
+    if (maxthese < 1 || maxthese > FILL_ID_MAX)
+        return NULL;
+    if (which != PROCPS_FILL_PID && which != PROCPS_FILL_UID)
+        return NULL;
+
+    if (info->dirty_stacks)
+        cleanup_stacks_all(info);
+
+    if (maxthese > info->select_maxthese && info->select)
+        procps_pids_stacks_dealloc(info, &info->select);
+    if(!info->select) {
+        if (!(info->select = procps_pids_stacks_alloc(info, maxthese)))
+            return NULL;
+        info->select_maxthese = maxthese;
+    }
+    memset(&info->filled, 0, sizeof(struct pids_reap));
+
+    // this zero delimiter is really only needed with PROCPS_FILL_PID
+    memcpy(ids, these, sizeof(unsigned) * maxthese);
+    ids[maxthese] = 0;
+
+    if (!oldproc_open(info, which, ids, maxthese)) {
+        procps_pids_stacks_dealloc(info, &info->select);
+        return NULL;
+    }
+    toggle_history(info);
+
+    for (i = 0; i < maxthese; i++) {
+        if (info->select->stacks[i] == NULL)
+            break;
+        if (!readproc(info->PT, &task))
+            break;
+        if (!tally_proc(info, &info->filled.counts, &task)) {
+            oldproc_close(info);
+            procps_pids_stacks_dealloc(info, &info->select);
+            return NULL;
+        }
+        assign_results(info, info->select->stacks[i], &task);
+    }
+
+    oldproc_close(info);
+#ifdef FPRINT_STACKS
+    validate_stacks(info->select, __func__);
+#endif
+    info->filled.stacks = info->select->stacks;
+    return &info->filled;
+} // end: procps_pids_select
+
+
 /*
  * procps_pids_stacks_alloc():
  *
@@ -1323,60 +1386,6 @@ PROCPS_EXPORT int procps_pids_stacks_dealloc (
     *these = NULL;
     return rc;
 } // end: procps_pids_stacks_dealloc
-
-
-PROCPS_EXPORT struct pids_counts *procps_pids_stacks_fill (
-        struct procps_pidsinfo *info,
-        struct pids_stacks *these,
-        int maxstacks,
-        enum pids_fill_type which)
-{
-    static proc_t task;    // static for initial zeroes + later dynamic free(s)
-    unsigned ids[FILL_ID_MAX + 1];
-    int i;
-
-    if (info == NULL || these == NULL || READS_BEGUN)
-        return NULL;
-    if (these->stacks == NULL || these->stacks[0] == NULL)
-        return NULL;
-    if (which != PROCPS_FILL_PID && which != PROCPS_FILL_UID)
-        return NULL;
-    if (maxstacks < 1 || maxstacks > FILL_ID_MAX)
-        return NULL;
-
-    for (i = 0; i < maxstacks; i++) {
-        if (these->stacks[i] == NULL)
-            break;
-        ids[i] = these->stacks[i]->fill_id;
-    }
-    ids[i] = 0;
-
-    if (info->dirty_stacks)
-        cleanup_stacks_all(info);
-    memset(&info->counts, 0, sizeof(struct pids_counts));
-
-    if (!oldproc_open(info, which, ids, i))
-        return NULL;
-    toggle_history(info);
-
-    for (i = 0; i < maxstacks; i++) {
-        if (these->stacks[i] == NULL)
-            break;
-        if (!readproc(info->PT, &task))
-            break;
-        if (!tally_proc(info, &info->counts, &task)) {
-            oldproc_close(info);
-            return NULL;
-        }
-        assign_results(info, these->stacks[i], &task);
-    }
-
-    oldproc_close(info);
-#ifdef FPRINT_STACKS
-    validate_stacks(these, __func__);
-#endif
-    return &info->counts;
-} // end: procps_pids_stacks_fill
 
 
 /*
