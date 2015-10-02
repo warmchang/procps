@@ -989,9 +989,9 @@ static char *get_default_rc_filename(void)
 int main(int argc, char **argv)
 {
 	struct procps_pidsinfo *info = NULL;
-	struct pids_counts *pids_cnts;
-	struct pids_stacks *pidlist;
-	int fill_count, user_count;
+	struct pids_reap *pids_reap;
+	unsigned *pidlist;
+	int reap_count, user_count;
 	int ret = 0, c, conf_ret;
 	char *rc_filename = NULL;
 
@@ -1129,10 +1129,9 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-
-	if (procps_pids_new(&info, 4, Pid_items)
-	|| !(pidlist = procps_pids_stacks_alloc(info, argc)))
+	if (procps_pids_new(&info, 4, Pid_items))
 		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
+	pidlist = xmalloc(sizeof(pid_t) * argc);
 
 	user_count = 0;
 	while (*argv) {
@@ -1150,19 +1149,19 @@ int main(int argc, char **argv)
 		pid = strtoul(walk, &endp, 0);
 		if (pid < 1ul || pid > 0x7ffffffful || *endp)
 			usage(stderr);
-		pidlist->stacks[user_count++]->fill_id = pid;
+		pidlist[user_count++] = pid;
 	}
 
 	discover_shm_minor();
 
-	if (!(pids_cnts = procps_pids_stacks_fill(info, pidlist, user_count, PROCPS_FILL_PID)))
+	if (!(pids_reap = procps_pids_select(info, pidlist, user_count, PROCPS_FILL_PID)))
 		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
 
-	for (fill_count = 0; fill_count < pids_cnts->total; fill_count++) {
-		ret |= one_proc(pidlist->stacks[fill_count]);
+	for (reap_count = 0; reap_count < pids_reap->counts.total; reap_count++) {
+		ret |= one_proc(pids_reap->stacks[reap_count]);
 	}
 
-	procps_pids_stacks_dealloc(info, &pidlist);
+	free(pidlist);
 	procps_pids_unref(&info);
 
 	/* cleaning the list used for the -c/-X/-XX modes */
@@ -1179,7 +1178,7 @@ int main(int argc, char **argv)
 		cnf_listhead = cnf_listnode;
 	}
 
-	if (fill_count < user_count)
+	if (reap_count < user_count)
 		/* didn't find all processes asked for */
 		ret |= 42;
 	return ret;
