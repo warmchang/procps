@@ -94,8 +94,8 @@ static float       Cpu_pmax;
 static const char *Cpu_States_fmts;
 
         /* Specific process id monitoring support */
-static pid_t Monpids [MONPIDMAX] = { 0 };
-static int   Monpidsidx = 0;
+static unsigned Monpids [MONPIDMAX] = { 0 };
+static int      Monpidsidx = 0;
 
         /* Current screen dimensions.
            note: the number of processes displayed is tracked on a per window
@@ -245,13 +245,12 @@ static struct procps_jiffs_hist *Cpu_jiffs;
 static struct procps_pidsinfo *Pids_ctx;
 static int Pids_itms_cur;                   // 'current' max (<= Fieldstab)
 static enum pids_item *Pids_itms;           // allocated as MAXTBL(Fieldstab)
-static struct pids_stack **Pids_stks;       // for either reap or monpids
-static struct pids_counts *Pids_cnts;       // for either reap or monpids
-static struct pids_reap   *Pids_reap;       // for reap only
-static struct pids_stacks *Pids_fill;       // for fill only (w/ monpids)
+static struct pids_reap *Pids_reap;         // for reap or select
+#define PIDSmaxt Pids_reap->counts.total    // just a little less wordy
         // pid stack results extractor macro, where e=our EU enum, t=type, s=stack
-        // ( we'll exploit the <proc/pids.h> provided macro as much as we can )
-#define PID_VAL(e,t,s)  PROCPS_PIDS_VAL(Fieldstab[ e ].erel, t, s)
+        // ( we'll exploit that <proc/pids.h> provided macro as much as possible )
+        // ( but many functions use their own unique tailored version for access )
+#define PID_VAL(e,t,s) PROCPS_PIDS_VAL(Fieldstab[ e ].erel, t, s)
 
 /*######  Tiny useful routine(s)  ########################################*/
 
@@ -339,7 +338,7 @@ static void bye_bye (const char *str) {
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
       "\n\t   Cpu_faux_cnt = %d, Cpu_cnt = %d"
       "\n\t   sizeof(procps_jiffs) = %u, sizeof(procps_jiffs_hist) = %u"
-      "\n\t   sizeof(struct pids_stack) = %u, Pids_cnts->total = %u,, total overhead = %u"
+      "\n\t   sizeof(struct pids_result) = %u, sizeof(struct pids_stack) = %u"
       "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
       "\n\t   PACKAGE = '%s', LOCALEDIR = '%s'"
       "\n\tTerminal: %s"
@@ -368,7 +367,7 @@ static void bye_bye (const char *str) {
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
       , Cpu_faux_cnt, (int)Cpu_cnt
       , (unsigned)sizeof(struct procps_jiffs), (unsigned)sizeof(struct procps_jiffs_hist)
-      , (unsigned)sizeof(*p), Pids_cnts->total, (unsigned)sizeof(p) * Pids_cnts->total
+      , (unsigned)sizeof(struct pids_result), (unsigned)sizeof(*p)
       , (unsigned)SCREENMAX, (unsigned)ROWMINSIZ, (unsigned)ROWMAXSIZ
       , PACKAGE, LOCALEDIR
 #ifdef PRETENDNOCAP
@@ -1269,8 +1268,6 @@ static const char *user_certify (WIN_t *q, const char *str, char typ) {
    char *endp;
    uid_t num;
 
-   if (Pids_fill)
-      procps_pids_stacks_dealloc(Pids_ctx, &Pids_fill);
    Monpidsidx = 0;
    q->usrseltyp = 0;
    q->usrselflg = 1;
@@ -2249,7 +2246,7 @@ static void cpus_refresh (void) {
 static void procs_refresh (void) {
  #define nALIGN(n,m) (((n + m - 1) / m) * m)     // unconditionally align
  #define nALGN2(n,m) ((n + m - 1) & ~(m - 1))    // with power of 2 align
- #define n_reap  Pids_cnts->total                // maintained by newlib
+ #define n_reap  Pids_reap->counts.total         // maintained by newlib
    static double uptime_sav;
    static int n_alloc;                           // size of windows stacks arrays
    double uptime_cur;
@@ -2263,17 +2260,10 @@ static void procs_refresh (void) {
    // if in Solaris mode, adjust our scaling for all cpus
    Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
 
-   if (Pids_fill) {
-      if (!(Pids_cnts = procps_pids_stacks_fill(Pids_ctx, Pids_fill
-         , Monpidsidx, PROCPS_FILL_PID)))
-            error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
-      Pids_stks = Pids_fill->stacks;
-   } else {
-      if (!(Pids_reap = procps_pids_reap(Pids_ctx, Thread_mode)))
-         error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
-      Pids_stks = Pids_reap->stacks;
-      Pids_cnts = &Pids_reap->counts;
-   }
+   if (!Monpidsidx) Pids_reap = procps_pids_reap(Pids_ctx, Thread_mode);
+   else Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, PROCPS_FILL_PID);
+   if (!Pids_reap)
+      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 
    // now refresh each window's stack heads pointers table...
    if (n_alloc < n_reap) {
@@ -2281,11 +2271,11 @@ static void procs_refresh (void) {
       n_alloc = nALGN2(n_reap, 128);
       for (i = 0; i < GROUPSMAX; i++) {
          Winstk[i].ppt = alloc_r(Winstk[i].ppt, sizeof(void*) * n_alloc);
-         memcpy(Winstk[i].ppt, Pids_stks, sizeof(void*) * n_reap);
+         memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void*) * PIDSmaxt);
       }
    } else {
       for (i = 0; i < GROUPSMAX; i++)
-         memcpy(Winstk[i].ppt, Pids_stks, sizeof(void*) * n_reap);
+         memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void*) * PIDSmaxt);
    }
  #undef n_reap
  #undef nALGN2
@@ -2800,7 +2790,7 @@ static void inspection_utility (int pid) {
    int i, key;
    struct pids_stack *p;
 
-   for (i = 0, p = NULL; i < Pids_cnts->total; i++)
+   for (i = 0, p = NULL; i < PIDSmaxt; i++)
       if (pid == PID_VAL(EU_PID, s_int, Curwin->ppt[i])) {
          p = Curwin->ppt[i];
          break;
@@ -3319,7 +3309,7 @@ static void parse_args (char **args) {
                   puts(N_col(i));
                bye_bye(NULL);
             case 'p':
-            {  int pid; char *p;
+            {  unsigned pid; char *p;
                if (Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
                do {
                   if (cp[1]) cp++;
@@ -3328,8 +3318,7 @@ static void parse_args (char **args) {
                   if (Monpidsidx >= MONPIDMAX)
                      error_exit(fmtmk(N_fmt(LIMIT_exceed_fmt), MONPIDMAX));
                   if (1 != sscanf(cp, "%d", &pid)
-                  || strpbrk(cp, "+-.")
-                  || 0 > pid)
+                  || strpbrk(cp, "+-."))
                      error_exit(fmtmk(N_fmt(BAD_mon_pids_fmt), cp));
                   if (!pid) pid = getpid();
                   for (i = 0; i < Monpidsidx; i++)
@@ -3340,10 +3329,6 @@ static void parse_args (char **args) {
                   cp = p;
                } while (*cp);
             }
-               if (!(Pids_fill = procps_pids_stacks_alloc(Pids_ctx, Monpidsidx)))
-                  error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
-               for (i = 0; i < Monpidsidx; i++)
-                  Pids_fill->stacks[i]->fill_id = Monpids[i];
                break;
             case 's':
                Secure_mode = 1;
@@ -3478,8 +3463,6 @@ static void win_reset (WIN_t *q) {
          q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = 0;
 #endif
          osel_clear(q);
-         if (Pids_fill)
-            procps_pids_stacks_dealloc(Pids_ctx, &Pids_fill);
          Monpidsidx = 0;
 } // end: win_reset
 
@@ -3818,7 +3801,7 @@ static void find_string (int ch) {
    }
    if (Curwin->findstr[0]) {
       SETw(Curwin, INFINDS_xxx);
-      for (i = Curwin->begtask; i < Pids_cnts->total; i++) {
+      for (i = Curwin->begtask; i < PIDSmaxt; i++) {
          const char *row = task_show(Curwin, Curwin->ppt[i]);
          if (*row && -1 < find_ofs(Curwin, row)) {
             found = 1;
@@ -4382,7 +4365,7 @@ static void keys_window (int ch) {
          if (VIZCHKw(w)) if (0 < w->begtask) w->begtask -= 1;
          break;
       case kbd_DOWN:
-         if (VIZCHKw(w)) if (w->begtask < Pids_cnts->total -1) w->begtask += 1;
+         if (VIZCHKw(w)) if (w->begtask < PIDSmaxt -1) w->begtask += 1;
          break;
 #ifdef USE_X_COLHDR // ------------------------------------
       case kbd_LEFT:
@@ -4456,9 +4439,9 @@ static void keys_window (int ch) {
             }
          break;
       case kbd_PGDN:
-         if (VIZCHKw(w)) if (w->begtask < Pids_cnts->total -1) {
+         if (VIZCHKw(w)) if (w->begtask < PIDSmaxt -1) {
                w->begtask += (w->winlines - 1);
-               if (w->begtask > Pids_cnts->total -1) w->begtask = Pids_cnts->total -1;
+               if (w->begtask > PIDSmaxt -1) w->begtask = PIDSmaxt -1;
                if (0 > w->begtask) w->begtask = 0;
              }
          break;
@@ -4471,7 +4454,7 @@ static void keys_window (int ch) {
          break;
       case kbd_END:
          if (VIZCHKw(w)) {
-            w->begtask = (Pids_cnts->total - w->winlines) +1;
+            w->begtask = (PIDSmaxt - w->winlines) +1;
             if (0 > w->begtask) w->begtask = 0;
             w->begpflg = w->endpflg;
 #ifndef SCROLLVAR_NO
@@ -4542,16 +4525,16 @@ static void forest_begin (const int self, int level) {
  #define rLevel    PID_VAL(eu_XTRA, u_int, Tree_ppt[Tree_idx])
    int i;
 
-   if (Tree_idx < Pids_cnts->total) {       // immunize against insanity
+   if (Tree_idx < PIDSmaxt) {               // immunize against insanity
       if (level > 100) level = 101;         // our arbitrary nests limit
       Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child
       rLevel = level;                       // while recording its level
       ++Tree_idx;
 #ifdef TREE_SCANALL
-      for (i = 0; i < Pids_cnts->total; i++) {
+      for (i = 0; i < PIDSmaxt; i++) {
          if (i == self) continue;
 #else
-      for (i = self + 1; i < Pids_cnts->total; i++) {
+      for (i = self + 1; i < PIDSmaxt; i++) {
 #endif
          if (rSv(EU_PID, self) == rSv(EU_TGD, i)
          || (rSv(EU_PID, self) == rSv(EU_PPD, i) && rSv(EU_PID, i) == rSv(EU_TGD, i)))
@@ -4574,22 +4557,22 @@ static void forest_create (WIN_t *q) {
    static int hwmsav;
    int i;
 
-   Seed_ppt = q->ppt;                          // avoid passing WIN_t ptrs
+   Seed_ppt = q->ppt;                          // avoid passing pointers
    if (!Tree_idx) {                            // do just once per frame
-      if (hwmsav < Pids_cnts->total) {         // grow, but never shrink
-         hwmsav = Pids_cnts->total;
+      if (hwmsav < PIDSmaxt) {                 // grow, but never shrink
+         hwmsav = PIDSmaxt;
          Tree_ppt = alloc_r(Tree_ppt, sizeof(void*) * hwmsav);
       }
 #ifndef TREE_SCANALL
-      if (!(procps_pids_stacks_sort(Pids_ctx, Seed_ppt, Pids_cnts->total
+      if (!(procps_pids_stacks_sort(Pids_ctx, Seed_ppt, PIDSmaxt
          , PROCPS_PIDS_TIME_START, PROCPS_SORT_ASCEND)))
             error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 #endif
-      for (i = 0; i < Pids_cnts->total; i++)   // avoid any hidepid distortions
+      for (i = 0; i < PIDSmaxt; i++)           // avoid any hidepid distortions
          if (!rLevel)                          // identify real or pretend trees
             forest_begin(i, 1);                // add as parent plus its children
    }
-   memcpy(Seed_ppt, Tree_ppt, sizeof(void*) * Pids_cnts->total);
+   memcpy(Seed_ppt, Tree_ppt, sizeof(void*) * PIDSmaxt);
  #undef rLevel
 } // end: forest_create
 
@@ -4781,8 +4764,8 @@ static void summary_show (void) {
    if (isROOM(View_STATES, 2)) {
       show_special(0, fmtmk(N_unq(STATE_line_1_fmt)
          , Thread_mode ? N_txt(WORD_threads_txt) : N_txt(WORD_process_txt)
-         , Pids_cnts->total, Pids_cnts->running, Pids_cnts->sleeping
-         , Pids_cnts->stopped, Pids_cnts->zombied));
+         , PIDSmaxt, Pids_reap->counts.running, Pids_reap->counts.sleeping
+         , Pids_reap->counts.stopped, Pids_reap->counts.zombied));
       Msg_row += 1;
 
       cpus_refresh();
@@ -5160,9 +5143,8 @@ static int window_show (WIN_t *q, int wmax) {
          item = PROCPS_PIDS_CMDLINE;
       else if (item == PROCPS_PIDS_TICS_ALL && CHKw(q, Show_CTIMES))
          item = PROCPS_PIDS_TICS_ALL_C;
-      if (!(procps_pids_stacks_sort(Pids_ctx, q->ppt
-         , Pids_cnts->total, item, sORDER)))
-            error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
+      if (!(procps_pids_stacks_sort(Pids_ctx, q->ppt , PIDSmaxt, item, sORDER)))
+         error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
    }
 
    i = q->begtask;
@@ -5172,12 +5154,12 @@ static int window_show (WIN_t *q, int wmax) {
    /* the least likely scenario is also the most costly, so we'll try to avoid
       checking some stuff with each iteration and check it just once... */
    if (CHKw(q, Show_IDLEPS) && !q->usrseltyp)
-      while (i < Pids_cnts->total && lwin < wmax) {
+      while (i < PIDSmaxt && lwin < wmax) {
          if (*task_show(q, q->ppt[i++]))
             ++lwin;
       }
    else
-      while (i < Pids_cnts->total && lwin < wmax) {
+      while (i < PIDSmaxt && lwin < wmax) {
          if ((CHKw(q, Show_IDLEPS) || isBUSY(q->ppt[i]))
          && wins_usrselect(q, q->ppt[i])
          && *task_show(q, q->ppt[i]))
@@ -5261,7 +5243,7 @@ static void frame_make (void) {
       [ now that this is positioned after the call to summary_show(), ]
       [ we no longer need or employ tg2(0, Msg_row) since all summary ]
       [ lines end with a newline, and header lines begin with newline ] */
-   if (VIZISw(w) && CHKw(w, View_SCROLL)) PUTT(Scroll_fmts, Pids_cnts->total);
+   if (VIZISw(w) && CHKw(w, View_SCROLL)) PUTT(Scroll_fmts, PIDSmaxt);
    else putp(Cap_clr_eol);
 
    if (!Rc.mode_altscr) {
