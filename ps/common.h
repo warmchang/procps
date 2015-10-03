@@ -13,9 +13,147 @@
 #define PROCPS_PS_H
 
 #include "../include/nls.h"
-#include "../proc/procps.h"
 #include "../proc/escape.h"
-#include "../proc/readproc.h"
+
+// --- <pids> interface begin |||||\||||||||||||||||||||||||||||||||||||||
+// -----------------------------------------------------------------------
+#include <proc/pids.h>
+
+// hack to minimize code impact
+#undef  proc_t
+#define proc_t  struct pids_stack
+
+/* this is for allocation of the Pids_items and represents a compromise.
+   we can't predict how many fields will actually be requested yet there
+   are numerous duplicate format_array entries. here are the statistics:
+       252  entries in the format_array
+        82  of those entries are unique
+        60  equals a former proc_t size
+   in reality, only a small portion of the stack depth will be occupied,
+   and the excess represents storage cost only, not a run-time cpu cost! */
+#define PIDSITEMS  70
+
+/* a 'results stack value' extractor macro
+   where: E=rel enum, T=data type, S=stack */
+#define rSv(E,T,S) PROCPS_PIDS_VAL(rel_ ## E, T, S)
+
+#define namREL(e) rel_ ## e
+#define makEXT(e) extern int namREL(e);
+#define makREL(e) int namREL(e) = -1;
+#define chkREL(e) if (namREL(e) < 0) { \
+      Pids_items[Pids_index] = PROCPS_PIDS_ ## e; \
+      namREL(e) = (Pids_index < PIDSITEMS) ? Pids_index++ : rel_noop; }
+
+#define setREL1(e) { \
+  if (!outbuf) { \
+    chkREL(e) \
+    return 0; \
+  } }
+#define setREL2(e1,e2) { \
+  if (!outbuf) { \
+    chkREL(e1) chkREL(e2) \
+    return 0; \
+  } }
+#define setREL3(e1,e2,e3) { \
+  if (!outbuf) { \
+    chkREL(e1) chkREL(e2) chkREL(e3) \
+    return 0; \
+  } }
+
+extern struct procps_pidsinfo *Pids_info;
+extern enum pids_item         *Pids_items;
+extern int                     Pids_index;
+
+// most of these need not be extern, they're unique to output.c
+// (but for future flexibility the easiest path has been taken)
+makEXT(ADDR_END_CODE)
+makEXT(ADDR_KSTK_EIP)
+makEXT(ADDR_KSTK_ESP)
+makEXT(ADDR_START_CODE)
+makEXT(ADDR_START_STACK)
+makEXT(ALARM)
+makEXT(CGROUP)
+makEXT(CMD)
+makEXT(CMDLINE)
+makEXT(ENVIRON)
+makEXT(FLAGS)
+makEXT(FLT_MAJ)
+makEXT(FLT_MAJ_C)
+makEXT(FLT_MIN)
+makEXT(FLT_MIN_C)
+makEXT(ID_EGID)
+makEXT(ID_EGROUP)
+makEXT(ID_EUID)
+makEXT(ID_EUSER)
+makEXT(ID_FGID)
+makEXT(ID_FGROUP)
+makEXT(ID_FUID)
+makEXT(ID_FUSER)
+makEXT(ID_PGRP)
+makEXT(ID_PID)
+makEXT(ID_PPID)
+makEXT(ID_RGID)
+makEXT(ID_RGROUP)
+makEXT(ID_RUID)
+makEXT(ID_RUSER)
+makEXT(ID_SESSION)
+makEXT(ID_SGID)
+makEXT(ID_SGROUP)
+makEXT(ID_SUID)
+makEXT(ID_SUSER)
+makEXT(ID_TGID)
+makEXT(ID_TPGID)
+makEXT(LXCNAME)
+makEXT(NICE)
+makEXT(NLWP)
+makEXT(NS_IPC)
+makEXT(NS_MNT)
+makEXT(NS_NET)
+makEXT(NS_PID)
+makEXT(NS_USER)
+makEXT(NS_UTS)
+makEXT(PRIORITY)
+makEXT(PROCESSOR)
+makEXT(RSS)
+makEXT(RSS_RLIM)
+makEXT(RTPRIO)
+makEXT(SCHED_CLASS)
+makEXT(SD_MACH)
+makEXT(SD_OUID)
+makEXT(SD_SEAT)
+makEXT(SD_SESS)
+makEXT(SD_SLICE)
+makEXT(SD_UNIT)
+makEXT(SD_UUNIT)
+makEXT(SIGBLOCKED)
+makEXT(SIGCATCH)
+makEXT(SIGIGNORE)
+makEXT(SIGNALS)
+makEXT(SIGPENDING)
+makEXT(STATE)
+makEXT(SUPGIDS)
+makEXT(SUPGROUPS)
+makEXT(TICS_ALL)
+makEXT(TICS_ALL_C)
+makEXT(TIME_ALL)
+makEXT(TIME_ELAPSED)
+makEXT(TIME_START)
+makEXT(TTY)
+makEXT(TTY_NAME)
+makEXT(TTY_NUMBER)
+makEXT(VM_DATA)
+makEXT(VM_LOCK)
+makEXT(VM_RSS)
+makEXT(VM_SIZE)
+makEXT(VM_STACK)
+makEXT(VSIZE_PGS)
+makEXT(WCHAN_ADDR)
+makEXT(WCHAN_NAME)
+makEXT(extra)
+makEXT(noop)
+// -----------------------------------------------------------------------
+// --- <pids> interface end ||||||||||||||||||||||||||||||||||||||||||||||
+
 
 #if 0
 #define trace(...) printf(## __VA_ARGS__)
@@ -93,8 +231,6 @@
 #define CF_PRINT_EVERY_TIME   0x40000000
 #define CF_PRINT_AS_NEEDED    0x80000000 // means we have no clue, so assume EVERY TIME
 #define CF_PRINT_MASK         0xf0000000
-
-#define needs_for_select (PROC_FILLSTAT | PROC_FILLSTATUS)
 
 /* thread_flags */
 #define TF_B_H         0x0001
@@ -201,19 +337,17 @@ typedef struct selection_node {
 
 typedef struct sort_node {
   struct sort_node *next;
-  int (*sr)(const proc_t* P, const proc_t* Q); /* sort function */
-  int reverse;   /* can sort backwards */
+  enum pids_item sr;
+  int (*xe)(char *, proc_t *);            // special format_node 'pr' guy
+  enum pids_sort_order reverse;
   int typecode;
-  int need;
 } sort_node;
 
 typedef struct format_node {
   struct format_node *next;
   char *name;                             /* user can override default name */
   int (*pr)(char *restrict const outbuf, const proc_t *restrict const pp); // print function
-/*  int (* const sr)(const proc_t* P, const proc_t* Q); */ /* sort function */
   int width;
-  int need;
   int vendor;                             /* Vendor that invented this */
   int flags;
   int typecode;
@@ -223,9 +357,8 @@ typedef struct format_struct {
   const char *spec; /* format specifier */
   const char *head; /* default header in the POSIX locale */
   int (* const pr)(char *restrict const outbuf, const proc_t *restrict const pp); // print function
-  int (* const sr)(const proc_t* P, const proc_t* Q); /* sort function */
+  enum pids_item sr;
   const int width;
-  const int need;       /* data we will need (files to read, etc.) */
   const int vendor; /* Where does this come from? */
   const int flags;
 } format_struct;
@@ -283,7 +416,7 @@ extern const char     *bsd_v_format;
 extern int             bsd_c_option;
 extern int             bsd_e_option;
 extern uid_t           cached_euid;
-extern dev_t           cached_tty;
+extern int             cached_tty;
 extern char            forest_prefix[4 * 32*1024 + 100];
 extern int             forest_type;
 extern unsigned        format_flags;     /* -l -f l u s -j... */
@@ -330,7 +463,7 @@ extern int want_this_proc(proc_t *buf);
 extern const char *select_bits_setup(void);
 
 /* help.c */
-extern void do_help(const char *opt, int rc) NORETURN;
+extern void __attribute__ ((__noreturn__)) do_help(const char *opt, int rc);
 
 /* global.c */
 extern void self_info(void);

@@ -25,8 +25,8 @@
 
 #include <sys/types.h>
 
-#include "../proc/readproc.h"
 #include "../proc/sysinfo.h"
+#include "../include/xalloc.h"
 
 #include "common.h"
 
@@ -46,7 +46,7 @@ static format_node *do_one_spec(const char *spec, const char *override){
   if(fs){
     int w1, w2;
     format_node *thisnode;
-    thisnode = malloc(sizeof(format_node));
+    thisnode = xmalloc(sizeof(format_node));
     if(fs->flags & CF_PIDMAX){
       w1 = (int)get_pid_digits();
       w2 = strlen(fs->head);
@@ -63,7 +63,6 @@ static format_node *do_one_spec(const char *spec, const char *override){
       thisnode->name = strdup(fs->head);
     }
     thisnode->pr = fs->pr;
-    thisnode->need = fs->need;
     thisnode->vendor = fs->vendor;
     thisnode->flags = fs->flags;
     thisnode->next = NULL;
@@ -183,11 +182,10 @@ double_percent:
       }
       buf[len] = '\0';
       walk += len;
-      fnode = malloc(sizeof(format_node));
+      fnode = xmalloc(sizeof(format_node));
       fnode->width = len;
       fnode->name = strdup(buf);
       fnode->pr = NULL;     /* checked for */
-      fnode->need = 0;
       fnode->vendor = AIX;
       fnode->flags = CF_PRINT_EVERY_TIME;
       fnode->next = NULL;
@@ -324,9 +322,9 @@ out:
 /****************  Parse single sort specifier *******************/
 static sort_node *do_one_sort_spec(const char *spec){
   const format_struct *fs;
-  int reverse = 0;
+  enum pids_sort_order reverse = PROCPS_SORT_ASCEND;
   if(*spec == '-'){
-    reverse = 1;
+    reverse = PROCPS_SORT_DESCEND;
     spec++;
   } else if(*spec == '+'){
     spec++;
@@ -334,9 +332,10 @@ static sort_node *do_one_sort_spec(const char *spec){
   fs = search_format_array(spec);
   if(fs){
     sort_node *thisnode;
-    thisnode = malloc(sizeof(sort_node));
+    thisnode = xmalloc(sizeof(sort_node));
     thisnode->sr = fs->sr;
-    thisnode->need = fs->need;
+    // next is a special pointer, called to help with rel enums
+    thisnode->xe = (int(*)(char*,proc_t*))fs->pr;
     thisnode->reverse = reverse;
     thisnode->next = NULL;
     return thisnode;
@@ -458,7 +457,7 @@ static const char *verify_short_sort(const char *arg){
 
 /************ parse short sorting option *************/
 static const char *short_sort_parse(sf_node *sfn){
-  int direction = 0;
+  enum pids_sort_order direction = PROCPS_SORT_ASCEND;
   const char *walk;
   int tmp;
   sort_node *snode;
@@ -472,10 +471,10 @@ static const char *short_sort_parse(sf_node *sfn){
       already_parsed_sort = 1;
       return NULL;
     case '+':
-      direction = 0;
+      direction = PROCPS_SORT_ASCEND;
       break;
     case '-':
-      direction = 1;
+      direction = PROCPS_SORT_DESCEND;
       break;
     default:
       ss = search_shortsort_array(tmp);
@@ -562,7 +561,7 @@ int defer_sf_option(const char *arg, int source){
   const format_struct *fs;
   int need_item = 1;
 
-  sfn = malloc(sizeof(sf_node));
+  sfn = xmalloc(sizeof(sf_node));
   sfn->sf = strdup(arg);
   sfn->sf_code = source;
   sfn->s_cooked = NULL;
@@ -686,11 +685,10 @@ static const char *generate_sysv_list(void){
   if( (format_flags & FF_Ul) && !(format_modifiers & FM_y) ){
     if(personality & PER_IRIX_l){ /* add "rss" then ':' here */
       PUSH("sgi_rss");
-      fn = malloc(sizeof(format_node));
+      fn = xmalloc(sizeof(format_node));
       fn->width = 1;
       fn->name = strdup(":");
       fn->pr = NULL;     /* checked for */
-      fn->need = 0;
       fn->vendor = AIX;   /* yes, for SGI weirdness */
       fn->flags = CF_PRINT_EVERY_TIME;
       fn->next = format_list;
@@ -786,12 +784,11 @@ const char *process_sf_options(int localbroken){
     sort_node *srt_walk;
     srt_walk = sf_walk->s_cooked;
     sf_walk->s_cooked = NULL;
-    while(srt_walk){   /* put any nodes onto sort_list in opposite way */
-      sort_node *travler;
-      travler = srt_walk;
-      srt_walk = srt_walk->next;
+    if (srt_walk) {
+      sort_node *travler = srt_walk;
+      while (travler->next) travler = travler->next;
       travler->next = sort_list;
-      sort_list = travler;
+      sort_list = srt_walk;
     }
     sf_walk = sf_walk->next;
   }

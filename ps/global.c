@@ -31,12 +31,11 @@
 #include <sys/sysmacros.h>
 #include <sys/types.h>
 
-#include "../proc/wchan.h"
-#include "../proc/version.h"
-#include "../proc/sysinfo.h"
 #include <proc/uptime.h>
 
 #include "../include/c.h"
+#include "../include/xalloc.h"
+
 #include "common.h"
 
 #ifndef __GNU_LIBRARY__
@@ -49,6 +48,102 @@
 #define __GLIBC_MINOR__ -1
 #endif
 
+// --- <pids> interface begin |||||\||||||||||||||||||||||||||||||||||||||
+// -----------------------------------------------------------------------
+struct procps_pidsinfo *Pids_info = NULL;   // our required <pids> context
+enum pids_item *Pids_items;                 // allocated as PIDSITEMS
+int Pids_index;                             // actual number of active enums
+
+// most of these could be defined as static in the output.c module
+// (but for future flexibility, the easiest route has been chosen)
+makREL(ADDR_END_CODE)
+makREL(ADDR_KSTK_EIP)
+makREL(ADDR_KSTK_ESP)
+makREL(ADDR_START_CODE)
+makREL(ADDR_START_STACK)
+makREL(ALARM)
+makREL(CGROUP)
+makREL(CMD)
+makREL(CMDLINE)
+makREL(ENVIRON)
+makREL(FLAGS)
+makREL(FLT_MAJ)
+makREL(FLT_MAJ_C)
+makREL(FLT_MIN)
+makREL(FLT_MIN_C)
+makREL(ID_EGID)
+makREL(ID_EGROUP)
+makREL(ID_EUID)
+makREL(ID_EUSER)
+makREL(ID_FGID)
+makREL(ID_FGROUP)
+makREL(ID_FUID)
+makREL(ID_FUSER)
+makREL(ID_PGRP)
+makREL(ID_PID)
+makREL(ID_PPID)
+makREL(ID_RGID)
+makREL(ID_RGROUP)
+makREL(ID_RUID)
+makREL(ID_RUSER)
+makREL(ID_SESSION)
+makREL(ID_SGID)
+makREL(ID_SGROUP)
+makREL(ID_SUID)
+makREL(ID_SUSER)
+makREL(ID_TGID)
+makREL(ID_TPGID)
+makREL(LXCNAME)
+makREL(NICE)
+makREL(NLWP)
+makREL(NS_IPC)
+makREL(NS_MNT)
+makREL(NS_NET)
+makREL(NS_PID)
+makREL(NS_USER)
+makREL(NS_UTS)
+makREL(PRIORITY)
+makREL(PROCESSOR)
+makREL(RSS)
+makREL(RSS_RLIM)
+makREL(RTPRIO)
+makREL(SCHED_CLASS)
+makREL(SD_MACH)
+makREL(SD_OUID)
+makREL(SD_SEAT)
+makREL(SD_SESS)
+makREL(SD_SLICE)
+makREL(SD_UNIT)
+makREL(SD_UUNIT)
+makREL(SIGBLOCKED)
+makREL(SIGCATCH)
+makREL(SIGIGNORE)
+makREL(SIGNALS)
+makREL(SIGPENDING)
+makREL(STATE)
+makREL(SUPGIDS)
+makREL(SUPGROUPS)
+makREL(TICS_ALL)
+makREL(TICS_ALL_C)
+makREL(TIME_ALL)
+makREL(TIME_ELAPSED)
+makREL(TIME_START)
+makREL(TTY)
+makREL(TTY_NAME)
+makREL(TTY_NUMBER)
+makREL(VM_DATA)
+makREL(VM_LOCK)
+makREL(VM_RSS)
+makREL(VM_SIZE)
+makREL(VM_STACK)
+makREL(VSIZE_PGS)
+makREL(WCHAN_ADDR)
+makREL(WCHAN_NAME)
+makREL(extra)
+makREL(noop)
+// -----------------------------------------------------------------------
+// --- <pids> interface end |||||||\||||||||||||||||||||||||||||||||||||||
+
 
 static const char * saved_personality_text = "You found a bug!";
 
@@ -60,8 +155,8 @@ const char     *bsd_u_format = (const char *)0xdeadbeef;
 const char     *bsd_v_format = (const char *)0xdeadbeef;
 int             bsd_c_option = -1;
 int             bsd_e_option = -1;
-uid_t           cached_euid = -1;
-dev_t           cached_tty = -1;
+unsigned        cached_euid = 0xffffffff;
+int             cached_tty = -1;
 char            forest_prefix[4 * 32*1024 + 100];     // FIXME
 int             forest_type = -1;
 unsigned        format_flags = 0xffffffff;   /* -l -f l u s -j... */
@@ -368,9 +463,33 @@ static const char *set_personality(void){
 
 /************ Call this to reinitialize everything ***************/
 void reset_global(void){
-  static proc_t p;
+  proc_t *p;
+  int i;
+
   reset_selection_list();
-  look_up_our_self(&p);
+
+// --- <pids> interface --------------------------------------------------
+  if (!Pids_items)
+    Pids_items = xcalloc(PIDSITEMS, sizeof(enum pids_item));
+
+  for (i = 0; i < PIDSITEMS; i++)
+    Pids_items[i] = PROCPS_PIDS_noop;
+
+  if (!Pids_info) {
+    if (procps_pids_new(&Pids_info, i, Pids_items)) {
+      fprintf(stderr, _("fatal library error, context\n"));
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  Pids_items[0] = PROCPS_PIDS_TTY;
+  procps_pids_reset(Pids_info, 1, Pids_items);
+  if (!(p = fatal_proc_unmounted(Pids_info, 1))) {
+    fprintf(stderr, _("fatal library error, lookup self\n"));
+    exit(EXIT_FAILURE);
+  }
+// --- <pids> interface --------------------------------------------------
+
   set_screen_size();
   set_personality();
 
@@ -378,7 +497,7 @@ void reset_global(void){
   bsd_c_option          = 0;
   bsd_e_option          = 0;
   cached_euid           = geteuid();
-  cached_tty            = p.tty;
+  cached_tty            = PROCPS_PIDS_VAL(0, s_int, p);
 /* forest_prefix must be all zero because of POSIX */
   forest_type           = 0;
   format_flags          = 0;   /* -l -f l u s -j... */

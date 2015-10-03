@@ -62,15 +62,11 @@
 #include <sys/resource.h>
 #include <sys/types.h>
 
-#include "c.h"
-#include "../proc/readproc.h"
-#include "../proc/sysinfo.h"
-#include "../proc/wchan.h"
-#include "../proc/procps.h"
-#include "../proc/devname.h"
-#include "../proc/escape.h"
-#include <proc/readstat.h>
 #include <proc/meminfo.h>
+#include <proc/readstat.h>
+
+#include "../include/c.h"
+#include "../proc/escape.h"
 
 #include "common.h"
 
@@ -122,161 +118,13 @@ static void get_memory_total()
     procps_meminfo_unref(&mem_info);
 }
 
-/*************************************************************************/
-/************ Lots of sort functions, starting with the NOP **************/
-
-static int sr_nop(const proc_t* a, const proc_t* b){
-  (void)a;(void)b; /* shut up gcc */
-  return 0;
-}
-
-#define CMP_STR(NAME) \
-static int sr_ ## NAME(const proc_t* P, const proc_t* Q) { \
-    return strcmp(P->NAME, Q->NAME); \
-}
-
-#define CMP_INT(NAME) \
-static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
-    if (P->NAME < Q->NAME) return -1; \
-    if (P->NAME > Q->NAME) return  1; \
-    return 0; \
-}
-
-/* fast versions, for values which either:
- * a. differ by no more than 0x7fffffff
- * b. only need to be grouped same w/ same
- */
-#define CMP_SMALL(NAME) \
-static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
-    return (int)(P->NAME) - (int)(Q->NAME); \
-}
-#define CMP_SMALL2(NAME,WHAT) \
-static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
-    return (int)(P->WHAT) - (int)(Q->WHAT); \
-}
-
-#define cook_time(P) (P->utime + P->stime) / Hertz
-
-#define cook_etime(P) (((unsigned long long)seconds_since_boot >= (P->start_time / Hertz)) ? ((unsigned long long)seconds_since_boot - (P->start_time / Hertz)) : 0)
-
-#define CMP_COOKED_TIME(NAME) \
-static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
-    unsigned long p_time,q_time; \
-    p_time=cook_ ##NAME (P); \
-    q_time=cook_ ##NAME (Q); \
-    if (p_time < q_time) return -1; \
-    if (p_time > q_time) return 1; \
-    return 0; \
-}
-
-#define CMP_NS(NAME, ID) \
-static int sr_ ## NAME (const proc_t* P, const proc_t* Q) { \
-    if (P->ns.ns[ID] < Q->ns.ns[ID]) return -1; \
-    if (P->ns.ns[ID] > Q->ns.ns[ID]) return  1; \
-    return 0; \
-}
-
-CMP_INT(rtprio)
-CMP_SMALL(sched)
-CMP_INT(cutime)
-CMP_SMALL(priority)                                             /* nice */
-CMP_SMALL(nlwp)
-CMP_SMALL(nice)                                                 /* priority */
-CMP_INT(rss)      /* resident set size from stat file */ /* vm_rss, resident */
-CMP_INT(alarm)
-CMP_INT(size)      /* total pages */                     /* vm_size, vsize */
-CMP_INT(resident)  /* resident pages */                     /* vm_rss, rss */
-CMP_INT(share)     /* shared pages */
-CMP_INT(trs)       /* executable pages */
-CMP_INT(lrs)       /* obsolete "library" pages above 0x60000000 */
-CMP_INT(drs)       /* other pages (assumed data?) */
-CMP_INT(dt)        /* dirty pages */
-
-CMP_INT(vm_size)    /* kB VM */                             /* size, vsize */
-CMP_INT(vm_lock)    /* kB locked */
-CMP_INT(vm_rss)     /* kB rss */                          /* rss, resident */
-CMP_INT(vm_data)    /* kB "data" == data-stack */
-CMP_INT(vm_stack)   /* kB stack */
-CMP_INT(vm_exe)     /* kB "exec" == exec-lib */
-CMP_INT(vm_lib)     /* kB "libraries" */
-CMP_INT(vsize)      /* pages VM */                        /* size, vm_size */
-CMP_INT(rss_rlim)
-CMP_SMALL(flags)
-CMP_INT(min_flt)
-CMP_INT(maj_flt)
-CMP_INT(cmin_flt)
-CMP_INT(cmaj_flt)
-CMP_INT(utime)
-CMP_INT(stime)    /* Old: sort by systime. New: show start time. Uh oh. */
-CMP_INT(start_code)
-CMP_INT(end_code)
-CMP_INT(start_stack)
-CMP_INT(kstk_esp)
-CMP_INT(kstk_eip)
-CMP_INT(start_time)
-CMP_INT(wchan)
-
-/* CMP_STR(*environ) */
-/* CMP_STR(*cmdline) */
-
-CMP_STR(ruser)
-CMP_STR(euser)
-CMP_STR(suser)
-CMP_STR(fuser)
-CMP_STR(rgroup)
-CMP_STR(egroup)
-CMP_STR(sgroup)
-CMP_STR(fgroup)
-CMP_STR(cmd)
-/* CMP_STR(ttyc) */    /* FIXME -- use strncmp with 8 max */
-
-CMP_INT(ruid)
-CMP_INT(rgid)
-CMP_INT(euid)
-CMP_INT(egid)
-CMP_INT(suid)
-CMP_INT(sgid)
-CMP_INT(fuid)
-CMP_INT(fgid)
-CMP_SMALL2(procs,tgid)
-CMP_SMALL2(tasks,tid)
-CMP_SMALL(ppid)
-CMP_SMALL(pgrp)
-CMP_SMALL(session)
-CMP_INT(tty)
-CMP_SMALL(tpgid)
-
-CMP_SMALL(pcpu)
-
-CMP_SMALL(state)
-
-CMP_COOKED_TIME(time)
-CMP_COOKED_TIME(etime)
-
-CMP_NS(ipcns, IPCNS);
-CMP_NS(mntns, MNTNS);
-CMP_NS(netns, NETNS);
-CMP_NS(pidns, PIDNS);
-CMP_NS(userns, USERNS);
-CMP_NS(utsns, UTSNS);
-
-CMP_STR(lxcname)
-
-/* approximation to: kB of address space that could end up in swap */
-static int sr_swapable(const proc_t* P, const proc_t* Q) {
-  unsigned long p_swapable = P->vm_data + P->vm_stack;
-  unsigned long q_swapable = Q->vm_data + Q->vm_stack;
-  if (p_swapable < q_swapable) return -1;
-  if (p_swapable > q_swapable) return  1;
-  return 0;
-}
-
 
 /***************************************************************************/
 /************ Lots of format functions, starting with the NOP **************/
 
 // so popular it can't be "static"
 int pr_nop(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(noop)
   (void)pp;
   return snprintf(outbuf, COLWID, "%c", '-');
 }
@@ -424,20 +272,16 @@ static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp)
   char *endp = outbuf;
   int rightward = max_rightward;
   int fh = forest_helper(outbuf);
-
+setREL2(CMDLINE,ENVIRON)
   endp += fh;
   rightward -= fh;
-
-  if(pp->cmdline && !bsd_c_option)
-    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE, &rightward);
-  else
-    endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, ESC_DEFUNCT);
-
+  endp += escaped_copy(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE, &rightward);
   if(bsd_e_option && rightward>1) {
-    if(pp->environ && *pp->environ) {
+    char *e = rSv(ENVIRON, str, pp);
+    if(*e != '-' || *(e+1) != '\0') {
       *endp++ = ' ';
       rightward--;
-      endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE, &rightward);
+      escaped_copy(endp, e, OUTBUF_SIZE, &rightward);
     }
   }
   return max_rightward-rightward;
@@ -451,20 +295,19 @@ static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp)
   char *endp = outbuf;
   int rightward = max_rightward;
   int fh = forest_helper(outbuf);
-
+setREL3(CMD,CMDLINE,ENVIRON)
   endp += fh;
   rightward -= fh;
-
-  if(pp->cmdline && unix_f_option)
-    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE, &rightward);
+  if(unix_f_option)
+    endp += escaped_copy(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE, &rightward);
   else
-    endp += escape_command(endp, pp, OUTBUF_SIZE, &rightward, ESC_DEFUNCT);
-
+    endp += escaped_copy(endp, rSv(CMD, str, pp), OUTBUF_SIZE, &rightward);
   if(bsd_e_option && rightward>1) {
-    if(pp->environ && *pp->environ) {
+    char *e = rSv(ENVIRON, str, pp);
+    if(*e != '-' || *(e+1) != '\0') {
       *endp++ = ' ';
       rightward--;
-      endp += escape_strlist(endp, pp->environ, OUTBUF_SIZE, &rightward);
+      escaped_copy(endp, e, OUTBUF_SIZE, &rightward);
     }
   }
   return max_rightward-rightward;
@@ -472,8 +315,8 @@ static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp)
 
 static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp) {
   int rightward = max_rightward;
-
-  escaped_copy(outbuf, *pp->cgroup, OUTBUF_SIZE, &rightward);
+setREL1(CGROUP)
+  escaped_copy(outbuf, rSv(CGROUP, str, pp), OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
@@ -482,14 +325,12 @@ static int pr_fname(char *restrict const outbuf, const proc_t *restrict const pp
   char *endp = outbuf;
   int rightward = max_rightward;
   int fh = forest_helper(outbuf);
-
+setREL1(CMD)
   endp += fh;
   rightward -= fh;
-
   if (rightward>8)  /* 8=default, but forest maybe feeds more */
     rightward = 8;
-
-  endp += escape_str(endp, pp->cmd, OUTBUF_SIZE, &rightward);
+  endp += escape_str(endp, rSv(CMD, str, pp), OUTBUF_SIZE, &rightward);
   //return endp - outbuf;
   return max_rightward-rightward;
 }
@@ -499,7 +340,8 @@ static int pr_etime(char *restrict const outbuf, const proc_t *restrict const pp
   unsigned long t;
   unsigned dd,hh,mm,ss;
   char *cp = outbuf;
-  t = cook_etime(pp);
+setREL1(TIME_ELAPSED)
+  t = rSv(TIME_ELAPSED, ull_int, pp);
   ss = t%60;
   t /= 60;
   mm = t%60;
@@ -515,7 +357,9 @@ static int pr_etime(char *restrict const outbuf, const proc_t *restrict const pp
 
 /* elapsed wall clock time in seconds */
 static int pr_etimes(char *restrict const outbuf, const proc_t *restrict const pp){
-  unsigned t = cook_etime(pp);
+  unsigned t;
+setREL1(TIME_ELAPSED)
+  t = rSv(TIME_ELAPSED, ull_int, pp);
   return snprintf(outbuf, COLWID, "%u", t);
 }
 
@@ -524,21 +368,24 @@ static int pr_c(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long total_time;   /* jiffies used by this process */
   unsigned pcpu = 0;               /* scaled %cpu, 99 means 99% */
   unsigned long long seconds;      /* seconds of process life */
-  total_time = pp->utime + pp->stime;
-  if(include_dead_children) total_time += (pp->cutime + pp->cstime);
-  seconds = cook_etime(pp);
+setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
+  if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
+  else total_time = rSv(TICS_ALL, ull_int, pp);
+  seconds = rSv(TIME_ELAPSED, ull_int, pp);
   if(seconds) pcpu = (total_time * 100ULL / Hertz) / seconds;
   if (pcpu > 99U) pcpu = 99U;
   return snprintf(outbuf, COLWID, "%2u", pcpu);
 }
+
 /* normal %CPU in ##.# format. */
 static int pr_pcpu(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long total_time;   /* jiffies used by this process */
   unsigned pcpu = 0;               /* scaled %cpu, 999 means 99.9% */
   unsigned long long seconds;      /* seconds of process life */
-  total_time = pp->utime + pp->stime;
-  if(include_dead_children) total_time += (pp->cutime + pp->cstime);
-  seconds = cook_etime(pp);
+setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
+  if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
+  else total_time = rSv(TICS_ALL, ull_int, pp);
+  seconds = rSv(TIME_ELAPSED, ull_int, pp);
   if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
   if (pcpu > 999U)
     return snprintf(outbuf, COLWID, "%u", pcpu/10U);
@@ -549,28 +396,31 @@ static int pr_cp(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long total_time;   /* jiffies used by this process */
   unsigned pcpu = 0;               /* scaled %cpu, 999 means 99.9% */
   unsigned long long seconds;      /* seconds of process life */
-  total_time = pp->utime + pp->stime;
-  if(include_dead_children) total_time += (pp->cutime + pp->cstime);
-  seconds = cook_etime(pp);
+setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
+  if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
+  else total_time = rSv(TICS_ALL, ull_int, pp);
+  seconds = rSv(TIME_ELAPSED, ull_int, pp);
   if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
   if (pcpu > 999U) pcpu = 999U;
   return snprintf(outbuf, COLWID, "%3u", pcpu);
 }
 
 static int pr_pgid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%u", pp->pgrp);
+setREL1(ID_PGRP)
+  return snprintf(outbuf, COLWID, "%u", rSv(ID_PGRP, s_int, pp));
 }
 static int pr_ppid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%u", pp->ppid);
+setREL1(ID_PPID)
+  return snprintf(outbuf, COLWID, "%u", rSv(ID_PPID, s_int, pp));
 }
-
 
 /* cumulative CPU time, [dd-]hh:mm:ss format (not same as "etime") */
 static int pr_time(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long t;
   unsigned dd,hh,mm,ss;
   int c;
-  t = cook_time(pp);
+setREL1(TIME_ALL)
+  t = rSv(TIME_ALL, ull_int, pp);
   ss = t%60;
   t /= 60;
   mm = t%60;
@@ -592,7 +442,8 @@ static int pr_time(char *restrict const outbuf, const proc_t *restrict const pp)
  * TODO: add flag for "1.23M" behavior, on this and other columns.
  */
 static int pr_vsz(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%lu", pp->vm_size);
+setREL1(VM_SIZE)
+  return snprintf(outbuf, COLWID, "%lu", rSv(VM_SIZE, ul_int, pp));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -642,44 +493,51 @@ static int pr_vsz(char *restrict const outbuf, const proc_t *restrict const pp){
 // legal as UNIX "PRI"
 // "priority"         (was -20..20, now -100..39)
 static int pr_priority(char *restrict const outbuf, const proc_t *restrict const pp){    /* -20..20 */
-    return snprintf(outbuf, COLWID, "%ld", pp->priority);
+setREL1(PRIORITY)
+    return snprintf(outbuf, COLWID, "%d", rSv(PRIORITY, s_int, pp));
 }
 
 // legal as UNIX "PRI"
 // "intpri" and "opri" (was 39..79, now  -40..99)
 static int pr_opri(char *restrict const outbuf, const proc_t *restrict const pp){        /* 39..79 */
-    return snprintf(outbuf, COLWID, "%ld", 60 + pp->priority);
+setREL1(PRIORITY)
+    return snprintf(outbuf, COLWID, "%d", 60 + rSv(PRIORITY, s_int, pp));
 }
 
 // legal as UNIX "PRI"
 // "pri_foo"   --  match up w/ nice values of sleeping processes (-120..19)
 static int pr_pri_foo(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%ld", pp->priority - 20);
+setREL1(PRIORITY)
+    return snprintf(outbuf, COLWID, "%d", rSv(PRIORITY, s_int, pp) - 20);
 }
 
 // legal as UNIX "PRI"
 // "pri_bar"   --  makes RT pri show as negative       (-99..40)
 static int pr_pri_bar(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%ld", pp->priority + 1);
+setREL1(PRIORITY)
+    return snprintf(outbuf, COLWID, "%d", rSv(PRIORITY, s_int, pp) + 1);
 }
 
 // legal as UNIX "PRI"
 // "pri_baz"   --  the kernel's ->prio value, as of Linux 2.6.8     (1..140)
 static int pr_pri_baz(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%ld", pp->priority + 100);
+setREL1(PRIORITY)
+    return snprintf(outbuf, COLWID, "%d", rSv(PRIORITY, s_int, pp) + 100);
 }
 
 
 // not legal as UNIX "PRI"
 // "pri"               (was 20..60, now    0..139)
 static int pr_pri(char *restrict const outbuf, const proc_t *restrict const pp){         /* 20..60 */
-    return snprintf(outbuf, COLWID, "%ld", 39 - pp->priority);
+setREL1(PRIORITY)
+    return snprintf(outbuf, COLWID, "%d", 39 - rSv(PRIORITY, s_int, pp));
 }
 
 // not legal as UNIX "PRI"
 // "pri_api"   --  match up w/ RT API    (-40..99)
 static int pr_pri_api(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%ld", -1 - pp->priority);
+setREL1(PRIORITY)
+    return snprintf(outbuf, COLWID, "%d", -1 - rSv(PRIORITY, s_int, pp));
 }
 
 // Linux applies nice value in the scheduling policies (classes)
@@ -687,8 +545,9 @@ static int pr_pri_api(char *restrict const outbuf, const proc_t *restrict const 
 // Also print nice value for old kernels which didn't use scheduling
 // policies (-1).
 static int pr_nice(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(pp->sched!=0 && pp->sched!=3 && pp->sched!=-1) return snprintf(outbuf, COLWID, "-");
-  return snprintf(outbuf, COLWID, "%ld", pp->nice);
+setREL2(NICE,SCHED_CLASS)
+  if(rSv(SCHED_CLASS, ul_int, pp)!=0 && rSv(SCHED_CLASS, ul_int, pp)!=3 && rSv(SCHED_CLASS, ul_int, pp)!=-1) return snprintf(outbuf, COLWID, "-");
+  return snprintf(outbuf, COLWID, "%ld", rSv(NICE, sl_int, pp));
 }
 
 // HP-UX   "cls": RT RR RR2 ???? HPUX FIFO KERN
@@ -702,7 +561,8 @@ static int pr_nice(char *restrict const outbuf, const proc_t *restrict const pp)
 //                  WL=weightless; GN=gang-scheduled
 //                  see miser(1) for this; PRI has some letter codes too
 static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp){
-  switch(pp->sched){
+setREL1(SCHED_CLASS)
+  switch(rSv(SCHED_CLASS, ul_int, pp)){
   case -1: return snprintf(outbuf, COLWID, "-");   // not reported
   case  0: return snprintf(outbuf, COLWID, "TS");  // SCHED_OTHER SCHED_NORMAL
   case  1: return snprintf(outbuf, COLWID, "FF");  // SCHED_FIFO
@@ -724,12 +584,14 @@ static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp
 //    default   "%u:%u", type, prio
 // We just print the priority, and have other keywords for type.
 static int pr_rtprio(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(pp->sched==0 || pp->sched==(unsigned long)-1) return snprintf(outbuf, COLWID, "-");
-  return snprintf(outbuf, COLWID, "%ld", pp->rtprio);
+setREL2(SCHED_CLASS,RTPRIO)
+  if(rSv(SCHED_CLASS, ul_int, pp)==0 || rSv(SCHED_CLASS, ul_int, pp)==(unsigned long)-1) return snprintf(outbuf, COLWID, "-");
+  return snprintf(outbuf, COLWID, "%ld", rSv(RTPRIO, ul_int, pp));
 }
 static int pr_sched(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(pp->sched==(unsigned long)-1) return snprintf(outbuf, COLWID, "-");
-  return snprintf(outbuf, COLWID, "%ld", pp->sched);
+setREL1(SCHED_CLASS)
+  if(rSv(SCHED_CLASS, ul_int, pp)==(unsigned long)-1) return snprintf(outbuf, COLWID, "-");
+  return snprintf(outbuf, COLWID, "%ld", rSv(SCHED_CLASS, ul_int, pp));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -752,9 +614,8 @@ static int pr_wchan(char *restrict const outbuf, const proc_t *restrict const pp
  */
   const char *w;
   size_t len;
-  if(!(pp->wchan & 0xffffff)) return memcpy(outbuf,"-",2),1;
-  if(wchan_is_number) return snprintf(outbuf, COLWID, "%x", (unsigned)(pp->wchan) & 0xffffffu);
-  w = lookup_wchan(pp->XXXID);
+setREL1(WCHAN_NAME)
+  w = rSv(WCHAN_NAME, str, pp);
   len = strlen(w);
   if(len>max_rightward) len=max_rightward;
   memcpy(outbuf, w, len);
@@ -774,8 +635,8 @@ static int pr_wname(char *restrict const outbuf, const proc_t *restrict const pp
  */
   const char *w;
   size_t len;
-  if(!(pp->wchan & 0xffffff)) return memcpy(outbuf,"-",2),1;
-  w = lookup_wchan(pp->XXXID);
+setREL1(WCHAN_NAME)
+  w = rSv(WCHAN_NAME, str, pp);
   len = strlen(w);
   if(len>max_rightward) len=max_rightward;
   memcpy(outbuf, w, len);
@@ -784,21 +645,21 @@ static int pr_wname(char *restrict const outbuf, const proc_t *restrict const pp
 }
 
 static int pr_nwchan(char *restrict const outbuf, const proc_t *restrict const pp){
-  if(!(pp->wchan & 0xffffff)) return memcpy(outbuf,"-",2),1;
-  return snprintf(outbuf, COLWID, "%x", (unsigned)(pp->wchan) & 0xffffffu);
+setREL1(WCHAN_NAME)
+  return snprintf(outbuf, COLWID, "%x", (unsigned)rSv(WCHAN_NAME, str, pp));
 }
 
 /* Terrible trunctuation, like BSD crap uses: I999 J999 K999 */
 /* FIXME: disambiguate /dev/tty69 and /dev/pts/69. */
 static int pr_tty4(char *restrict const outbuf, const proc_t *restrict const pp){
-/* snprintf(outbuf, COLWID, "%02x:%02x", pp->tty>>8, pp->tty&0xff); */
-  return dev_to_tty(outbuf, 4, pp->tty, pp->XXXID, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS);
+setREL1(TTY_NUMBER)
+  return snprintf(outbuf, COLWID, "%s", rSv(TTY_NUMBER, str, pp));
 }
 
 /* Unix98: format is unspecified, but must match that used by who(1). */
 static int pr_tty8(char *restrict const outbuf, const proc_t *restrict const pp){
-/* snprintf(outbuf, COLWID, "%02x:%02x", pp->tty>>8, pp->tty&0xff); */
-  return dev_to_tty(outbuf, COLWID, pp->tty, pp->XXXID, ABBREV_DEV);
+setREL1(TTY_NAME)
+  return snprintf(outbuf, COLWID, "%s", rSv(TTY_NAME, str, pp));
 }
 
 #if 0
@@ -811,35 +672,48 @@ static int pr_oldstate(char *restrict const outbuf, const proc_t *restrict const
 // This state display is Unix98 compliant and has lots of info like BSD.
 static int pr_stat(char *restrict const outbuf, const proc_t *restrict const pp){
     int end = 0;
-    outbuf[end++] = pp->state;
-//  if(pp->rss==0 && pp->state!='Z')  outbuf[end++] = 'W'; // useless "swapped out"
-    if(pp->nice < 0)                  outbuf[end++] = '<';
-    if(pp->nice > 0)                  outbuf[end++] = 'N';
+    if (!outbuf) {
+       chkREL(STATE)
+       chkREL(NICE)
+       chkREL(VM_LOCK)
+       chkREL(ID_SESSION)
+       chkREL(ID_TGID)
+       chkREL(NLWP)
+       chkREL(ID_PGRP)
+       chkREL(ID_TPGID)
+       return 0;
+    }
+    outbuf[end++] = rSv(STATE, s_ch, pp);
+//  if(rSv(RSS, sl_int, pp)==0 && rSv(STATE, s_ch, pp)!='Z') outbuf[end++] = 'W'; // useless "swapped out"
+    if(rSv(NICE, sl_int, pp) < 0) outbuf[end++] = '<';
+    if(rSv(NICE, sl_int, pp) > 0) outbuf[end++] = 'N';
 // In this order, NetBSD would add:
 //     traced   'X'
 //     systrace 'x'
 //     exiting  'E' (not printed for zombies)
 //     vforked  'V'
 //     system   'K' (and do not print 'L' too)
-    if(pp->vm_lock)                   outbuf[end++] = 'L';
-    if(pp->session == pp->tgid)       outbuf[end++] = 's'; // session leader
-    if(pp->nlwp > 1)                  outbuf[end++] = 'l'; // multi-threaded
-    if(pp->pgrp == pp->tpgid)         outbuf[end++] = '+'; // in foreground process group
+    if(rSv(VM_LOCK, ul_int, pp))                              outbuf[end++] = 'L';
+    if(rSv(ID_SESSION, s_int, pp) == rSv(ID_TGID, s_int, pp)) outbuf[end++] = 's'; // session leader
+    if(rSv(NLWP, s_int, pp) > 1)                              outbuf[end++] = 'l'; // multi-threaded
+    if(rSv(ID_PGRP, s_int, pp) == rSv(ID_TPGID, s_int, pp))   outbuf[end++] = '+'; // in foreground process group
     outbuf[end] = '\0';
     return end;
 }
 
 /* This minimal state display is Unix98 compliant, like SCO and SunOS 5 */
 static int pr_s(char *restrict const outbuf, const proc_t *restrict const pp){
-    outbuf[0] = pp->state;
+setREL1(STATE)
+    outbuf[0] = rSv(STATE, s_ch, pp);
     outbuf[1] = '\0';
     return 1;
 }
 
 static int pr_flag(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(FLAGS)
     /* Unix98 requires octal flags */
     /* this user-hostile and volatile junk gets 1 character */
-    return snprintf(outbuf, COLWID, "%o", (unsigned)(pp->flags>>6U)&0x7U);
+    return snprintf(outbuf, COLWID, "%o", (unsigned)(rSv(FLAGS, ul_int, pp)>>6U)&0x7U);
 }
 
 // plus these: euid,ruid,egroup,rgroup (elsewhere in this file)
@@ -859,15 +733,18 @@ tsiz	text size (in Kbytes)
 ***/
 
 static int pr_stackp(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%08x", (unsigned)(pp->start_stack));
+setREL1(ADDR_START_STACK)
+    return snprintf(outbuf, COLWID, "%08x", (unsigned)(rSv(ADDR_START_STACK, ul_int, pp)));
 }
 
 static int pr_esp(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%08x", (unsigned)(pp->kstk_esp));
+setREL1(ADDR_KSTK_ESP)
+    return snprintf(outbuf, COLWID, "%08x", (unsigned)(rSv(ADDR_KSTK_ESP, ul_int, pp)));
 }
 
 static int pr_eip(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%08x", (unsigned)(pp->kstk_eip));
+setREL1(ADDR_KSTK_EIP)
+    return snprintf(outbuf, COLWID, "%08x", (unsigned)(rSv(ADDR_KSTK_EIP, ul_int, pp)));
 }
 
 /* This function helps print old-style time formats */
@@ -882,8 +759,9 @@ static int old_time_helper(char *dst, unsigned long long t, unsigned long long r
 static int pr_bsdtime(char *restrict const outbuf, const proc_t *restrict const pp){
     unsigned long long t;
     unsigned u;
-    t = pp->utime + pp->stime;
-    if(include_dead_children) t += (pp->cutime + pp->cstime);
+setREL2(TICS_ALL,TICS_ALL_C)
+    if(include_dead_children) t = rSv(TICS_ALL_C, ull_int, pp);
+    else t = rSv(TICS_ALL, ull_int, pp);
     u = t / Hertz;
     return snprintf(outbuf, COLWID, "%3u:%02u", u/60U, u%60U);
 }
@@ -891,7 +769,8 @@ static int pr_bsdtime(char *restrict const outbuf, const proc_t *restrict const 
 static int pr_bsdstart(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t start;
   time_t seconds_ago;
-  start = boot_time + pp->start_time / Hertz;
+setREL1(TIME_START)
+  start = boot_time + rSv(TIME_START, ull_int, pp) / Hertz;
   seconds_ago = seconds_since_1970 - start;
   if(seconds_ago < 0) seconds_ago=0;
   if(seconds_ago > 3600*24)  strcpy(outbuf, ctime(&start)+4);
@@ -901,12 +780,14 @@ static int pr_bsdstart(char *restrict const outbuf, const proc_t *restrict const
 }
 
 static int pr_alarm(char *restrict const outbuf, const proc_t *restrict const pp){
-    return old_time_helper(outbuf, pp->alarm, 0ULL);
+setREL1(ALARM)
+    return old_time_helper(outbuf, rSv(ALARM, sl_int, pp), 0ULL);
 }
 
 /* HP-UX puts this in pages and uses "vsz" for kB */
 static int pr_sz(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%lu", (pp->vm_size)/(page_size/1024));
+setREL1(VM_SIZE)
+  return snprintf(outbuf, COLWID, "%lu", rSv(VM_SIZE, ul_int, pp)/(page_size/1024));
 }
 
 
@@ -928,84 +809,96 @@ static int pr_sz(char *restrict const outbuf, const proc_t *restrict const pp){
 /* kB data size. See drs, tsiz & trs. */
 static int pr_dsiz(char *restrict const outbuf, const proc_t *restrict const pp){
     long dsiz = 0;
-    if(pp->vsize) dsiz += (pp->vsize - pp->end_code + pp->start_code) >> 10;
+setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
+    if(rSv(VSIZE_PGS, ul_int, pp)) dsiz += (rSv(VSIZE_PGS, ul_int, pp) - rSv(ADDR_END_CODE, ul_int, pp) + rSv(ADDR_START_CODE, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", dsiz);
 }
 
 /* kB text (code) size. See trs, dsiz & drs. */
 static int pr_tsiz(char *restrict const outbuf, const proc_t *restrict const pp){
     long tsiz = 0;
-    if(pp->vsize) tsiz += (pp->end_code - pp->start_code) >> 10;
+setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
+    if(rSv(VSIZE_PGS, ul_int, pp)) tsiz += (rSv(ADDR_END_CODE, ul_int, pp) - rSv(ADDR_START_CODE, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", tsiz);
 }
 
 /* kB _resident_ data size. See dsiz, tsiz & trs. */
 static int pr_drs(char *restrict const outbuf, const proc_t *restrict const pp){
     long drs = 0;
-    if(pp->vsize) drs += (pp->vsize - pp->end_code + pp->start_code) >> 10;
+setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
+    if(rSv(VSIZE_PGS, ul_int, pp)) drs += (rSv(VSIZE_PGS, ul_int, pp) - rSv(ADDR_END_CODE, ul_int, pp) + rSv(ADDR_START_CODE, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", drs);
 }
 
 /* kB text _resident_ (code) size. See tsiz, dsiz & drs. */
 static int pr_trs(char *restrict const outbuf, const proc_t *restrict const pp){
     long trs = 0;
-    if(pp->vsize) trs += (pp->end_code - pp->start_code) >> 10;
+setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
+    if(rSv(VSIZE_PGS, ul_int, pp)) trs += (rSv(ADDR_END_CODE, ul_int, pp) - rSv(ADDR_START_CODE, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", trs);
 }
 
-/* approximation to: kB of address space that could end up in swap */
 static int pr_swapable(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%ld", pp->vm_data + pp->vm_stack);
+setREL3(VM_DATA,VM_STACK,VSIZE_PGS)    // that last enum will approximate sort needs
+  return snprintf(outbuf, COLWID, "%ld", rSv(VM_DATA, ul_int, pp) + rSv(VM_STACK, ul_int, pp));
 }
 
 /* nasty old Debian thing */
 static int pr_size(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%ld", pp->size);
+setREL1(VSIZE_PGS)
+  return snprintf(outbuf, COLWID, "%ld", rSv(VSIZE_PGS, ul_int, pp));
 }
 
 
 static int pr_minflt(char *restrict const outbuf, const proc_t *restrict const pp){
-    long flt = pp->min_flt;
-    if(include_dead_children) flt += pp->cmin_flt;
+setREL2(FLT_MIN,FLT_MIN_C)
+    long flt = rSv(FLT_MIN, ul_int, pp);
+    if(include_dead_children) flt = rSv(FLT_MIN_C, ul_int, pp);
     return snprintf(outbuf, COLWID, "%ld", flt);
 }
 
 static int pr_majflt(char *restrict const outbuf, const proc_t *restrict const pp){
-    long flt = pp->maj_flt;
-    if(include_dead_children) flt += pp->cmaj_flt;
+setREL2(FLT_MAJ,FLT_MAJ_C)
+    long flt = rSv(FLT_MAJ, ul_int, pp);
+    if(include_dead_children) flt = rSv(FLT_MAJ_C, ul_int, pp);
     return snprintf(outbuf, COLWID, "%ld", flt);
 }
 
 static int pr_lim(char *restrict const outbuf, const proc_t *restrict const pp){
-    if(pp->rss_rlim == RLIM_INFINITY){
+setREL1(RSS_RLIM)
+    if(rSv(RSS_RLIM, ul_int, pp) == RLIM_INFINITY){
       outbuf[0] = 'x';
       outbuf[1] = 'x';
       outbuf[2] = '\0';
       return 2;
     }
-    return snprintf(outbuf, COLWID, "%5ld", pp->rss_rlim >> 10);
+    return snprintf(outbuf, COLWID, "%5ld", rSv(RSS_RLIM, ul_int, pp) >> 10L);
 }
 
 /* should print leading tilde ('~') if process is bound to the CPU */
 static int pr_psr(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%d", pp->processor);
+setREL1(PROCESSOR)
+  return snprintf(outbuf, COLWID, "%d", rSv(PROCESSOR, u_int, pp));
 }
 
 static int pr_rss(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%lu", pp->vm_rss);
+setREL1(VM_RSS)
+  return snprintf(outbuf, COLWID, "%lu", rSv(VM_RSS, ul_int, pp));
 }
 
 /* pp->vm_rss * 1000 would overflow on 32-bit systems with 64 GB memory */
 static int pr_pmem(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long pmem = 0;
-  pmem = pp->vm_rss * 1000ULL / memory_total;
+setREL1(VM_RSS)
+  pmem = rSv(VM_RSS, ul_int, pp) * 1000ULL / memory_total;
   if (pmem > 999) pmem = 999;
   return snprintf(outbuf, COLWID, "%2u.%u", (unsigned)(pmem/10), (unsigned)(pmem%10));
 }
 
 static int pr_lstart(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t t;
-  t = boot_time + pp->start_time / Hertz;
+setREL1(TIME_START)
+  t = boot_time + rSv(TIME_START, ull_int, pp) / Hertz;
   return snprintf(outbuf, COLWID, "%24.24s", ctime(&t));
 }
 
@@ -1025,10 +918,11 @@ static int pr_stime(char *restrict const outbuf, const proc_t *restrict const pp
   const char *fmt;
   int tm_year;
   int tm_yday;
+setREL1(TIME_START)
   our_time = localtime(&seconds_since_1970);   /* not reentrant */
   tm_year = our_time->tm_year;
   tm_yday = our_time->tm_yday;
-  t = boot_time + pp->start_time / Hertz;
+  t = boot_time + rSv(TIME_START, ull_int, pp) / Hertz;
   proc_time = localtime(&t); /* not reentrant, this corrupts our_time */
   fmt = "%H:%M";                                   /* 03:02 23:59 */
   if(tm_yday != proc_time->tm_yday) fmt = "%b%d";  /* Jun06 Aug27 */
@@ -1039,7 +933,8 @@ static int pr_stime(char *restrict const outbuf, const proc_t *restrict const pp
 static int pr_start(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t t;
   char *str;
-  t = boot_time + pp->start_time / Hertz;
+setREL1(TIME_START)
+  t = boot_time + rSv(TIME_START, ull_int, pp) / Hertz;
   str = ctime(&t);
   if(str[8]==' ')  str[8]='0';
   if(str[11]==' ') str[11]='0';
@@ -1071,21 +966,26 @@ static int help_pr_sig(unsigned long long sig){
 
 // This one is always thread-specific pending. (from Dragonfly BSD)
 static int pr_tsig(char *restrict const outbuf, const proc_t *restrict const pp){
-  return help_pr_sig(outbuf, pp->_sigpnd);
+setREL1(SIGPENDING)
+  return help_pr_sig(outbuf, rSv(SIGPENDING, str, pp));
 }
 // This one is (wrongly?) thread-specific when printing thread lines,
 // but process-pending otherwise.
 static int pr_sig(char *restrict const outbuf, const proc_t *restrict const pp){
-  return help_pr_sig(outbuf, pp->signal);
+setREL1(SIGNALS)
+  return help_pr_sig(outbuf, rSv(SIGNALS, str, pp));
 }
 static int pr_sigmask(char *restrict const outbuf, const proc_t *restrict const pp){
-  return help_pr_sig(outbuf, pp->blocked);
+setREL1(SIGBLOCKED)
+  return help_pr_sig(outbuf, rSv(SIGBLOCKED, str, pp));
 }
 static int pr_sigignore(char *restrict const outbuf, const proc_t *restrict const pp){
-  return help_pr_sig(outbuf, pp->sigignore);
+setREL1(SIGIGNORE)
+  return help_pr_sig(outbuf, rSv(SIGIGNORE, str, pp));
 }
 static int pr_sigcatch(char *restrict const outbuf, const proc_t *restrict const pp){
-  return help_pr_sig(outbuf, pp->sigcatch);
+setREL1(SIGCATCH)
+  return help_pr_sig(outbuf, rSv(SIGCATCH, str, pp));
 }
 
 
@@ -1098,29 +998,37 @@ static int pr_sigcatch(char *restrict const outbuf, const proc_t *restrict const
  */
 
 static int pr_egid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%d", pp->egid);
+setREL1(ID_EGID)
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_EGID, u_int, pp));
 }
 static int pr_rgid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%d", pp->rgid);
+setREL1(ID_RGID)
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_RGID, u_int, pp));
 }
 static int pr_sgid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%d", pp->sgid);
+setREL1(ID_SGID)
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_SGID, u_int, pp));
 }
 static int pr_fgid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%d", pp->fgid);
+setREL1(ID_FGID)
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_FGID, u_int, pp));
 }
 
 static int pr_euid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%d", pp->euid);
+setREL1(ID_EUID)
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_EUID, u_int, pp));
 }
 static int pr_ruid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%d", pp->ruid);
+setREL1(ID_RUID)
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_RUID, u_int, pp));
 }
 static int pr_suid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%d", pp->suid);
+setREL1(ID_SUID)
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_SUID, u_int, pp));
 }
 static int pr_fuid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%d", pp->fuid);
+setREL1(ID_FUID)
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_FUID, u_int, pp));
 }
 
 // The Open Group Base Specifications Issue 6 (IEEE Std 1003.1, 2004 Edition)
@@ -1154,120 +1062,144 @@ static int do_pr_name(char *restrict const outbuf, const char *restrict const na
 }
 
 static int pr_ruser(char *restrict const outbuf, const proc_t *restrict const pp){
-  return do_pr_name(outbuf, pp->ruser, pp->ruid);
+setREL2(ID_RUSER,ID_RUID)
+  return do_pr_name(outbuf, rSv(ID_RUSER, str, pp), rSv(ID_RUID, u_int, pp));
 }
 static int pr_euser(char *restrict const outbuf, const proc_t *restrict const pp){
-  return do_pr_name(outbuf, pp->euser, pp->euid);
+setREL2(ID_EUSER,ID_EUID)
+  return do_pr_name(outbuf, rSv(ID_EUSER, str, pp), rSv(ID_EUID, u_int, pp));
 }
 static int pr_fuser(char *restrict const outbuf, const proc_t *restrict const pp){
-  return do_pr_name(outbuf, pp->fuser, pp->fuid);
+setREL2(ID_FUSER,ID_FUID)
+  return do_pr_name(outbuf, rSv(ID_FUSER, str, pp), rSv(ID_FUID, u_int, pp));
 }
 static int pr_suser(char *restrict const outbuf, const proc_t *restrict const pp){
-  return do_pr_name(outbuf, pp->suser, pp->suid);
+setREL2(ID_SUSER,ID_SUID)
+  return do_pr_name(outbuf, rSv(ID_SUSER, str, pp), rSv(ID_SUID, u_int, pp));
 }
 static int pr_egroup(char *restrict const outbuf, const proc_t *restrict const pp){
-  return do_pr_name(outbuf, pp->egroup, pp->egid);
+setREL2(ID_EGROUP,ID_EGID)
+  return do_pr_name(outbuf, rSv(ID_EGROUP, str, pp), rSv(ID_EGID, u_int, pp));
 }
 static int pr_rgroup(char *restrict const outbuf, const proc_t *restrict const pp){
-  return do_pr_name(outbuf, pp->rgroup, pp->rgid);
+setREL2(ID_RGROUP,ID_RGID)
+  return do_pr_name(outbuf, rSv(ID_RGROUP, str, pp), rSv(ID_RGID, u_int, pp));
 }
 static int pr_fgroup(char *restrict const outbuf, const proc_t *restrict const pp){
-  return do_pr_name(outbuf, pp->fgroup, pp->fgid);
+setREL2(ID_FGROUP,ID_FGID)
+  return do_pr_name(outbuf, rSv(ID_FGROUP, str, pp), rSv(ID_FGID, u_int, pp));
 }
 static int pr_sgroup(char *restrict const outbuf, const proc_t *restrict const pp){
-  return do_pr_name(outbuf, pp->sgroup, pp->sgid);
+setREL2(ID_SGROUP,ID_SGID)
+  return do_pr_name(outbuf, rSv(ID_SGROUP, str, pp), rSv(ID_SGID, u_int, pp));
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 
 // PID pid, TGID tgid
 static int pr_procs(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%u", pp->tgid);
+setREL1(ID_TGID)
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_TGID, s_int, pp));
 }
 // LWP lwp, SPID spid, TID tid
 static int pr_tasks(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%u", pp->tid);
+setREL1(ID_PID)
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_PID, s_int, pp));
 }
 // thcount THCNT
 static int pr_nlwp(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%d", pp->nlwp);
+setREL1(NLWP)
+    return snprintf(outbuf, COLWID, "%d", rSv(NLWP, s_int, pp));
 }
 
 static int pr_sess(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%u", pp->session);
+setREL1(ID_SESSION)
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_SESSION, s_int, pp));
 }
 
 static int pr_supgid(char *restrict const outbuf, const proc_t *restrict const pp){
   int rightward = max_rightward;
-  escaped_copy(outbuf, pp->supgid, OUTBUF_SIZE, &rightward);
+setREL1(SUPGIDS)
+  escaped_copy(outbuf, rSv(SUPGIDS, str, pp), OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
 static int pr_supgrp(char *restrict const outbuf, const proc_t *restrict const pp){
   int rightward = max_rightward;
-  escaped_copy(outbuf, pp->supgrp, OUTBUF_SIZE, &rightward);
+setREL1(SUPGROUPS)
+  escaped_copy(outbuf, rSv(SUPGROUPS, str, pp), OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
 static int pr_tpgid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%d", pp->tpgid);
+setREL1(ID_TPGID)
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_TPGID, s_int, pp));
 }
 
 /* SGI uses "cpu" to print the processor ID with header "P" */
 static int pr_sgi_p(char *restrict const outbuf, const proc_t *restrict const pp){          /* FIXME */
-  if(pp->state == 'R') return snprintf(outbuf, COLWID, "%d", pp->processor);
+setREL2(STATE,PROCESSOR)
+  if(rSv(STATE, s_ch, pp) == 'R') return snprintf(outbuf, COLWID, "%u", rSv(PROCESSOR, u_int, pp));
   return snprintf(outbuf, COLWID, "*");
 }
 
-#ifdef WITH_SYSTEMD
 /************************* Systemd stuff ********************************/
 static int pr_sd_unit(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%s", pp->sd_unit);
+setREL1(SD_UNIT)
+  return snprintf(outbuf, COLWID, "%s", rSv(SD_UNIT, str, pp));
 }
 
 static int pr_sd_session(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%s", pp->sd_sess);
+setREL1(SD_SESS)
+  return snprintf(outbuf, COLWID, "%s", rSv(SD_SESS, str, pp));
 }
 
 static int pr_sd_ouid(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%s", pp->sd_ouid);
+setREL1(SD_OUID)
+  return snprintf(outbuf, COLWID, "%s", rSv(SD_OUID, str, pp));
 }
 
 static int pr_sd_machine(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%s", pp->sd_mach);
+setREL1(SD_MACH)
+  return snprintf(outbuf, COLWID, "%s", rSv(SD_MACH, str, pp));
 }
 
 static int pr_sd_uunit(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%s", pp->sd_uunit);
+setREL1(SD_UUNIT)
+  return snprintf(outbuf, COLWID, "%s", rSv(SD_UUNIT, str, pp));
 }
 
 static int pr_sd_seat(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%s", pp->sd_seat);
+setREL1(SD_SEAT)
+  return snprintf(outbuf, COLWID, "%s", rSv(SD_SEAT, str, pp));
 }
 
 static int pr_sd_slice(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%s", pp->sd_slice);
+setREL1(SD_SLICE)
+  return snprintf(outbuf, COLWID, "%s", rSv(SD_SLICE, str, pp));
 }
-#endif
 /************************ Linux namespaces ******************************/
 
 #define _pr_ns(NAME, ID)\
 static int pr_##NAME(char *restrict const outbuf, const proc_t *restrict const pp) {\
-  if (pp->ns.ns[ID])\
-    return snprintf(outbuf, COLWID, "%li", pp->ns.ns[ID]);\
-  else\
-    return snprintf(outbuf, COLWID, "-");\
+  setREL1(NS_ ## ID) \
+  if (rSv(NS_ ## ID, ul_int, pp)) \
+    return snprintf(outbuf, COLWID, "%lu", rSv(NS_ ## ID, ul_int, pp)); \
+  else \
+    return snprintf(outbuf, COLWID, "-"); \
 }
-_pr_ns(ipcns, IPCNS);
-_pr_ns(mntns, MNTNS);
-_pr_ns(netns, NETNS);
-_pr_ns(pidns, PIDNS);
-_pr_ns(userns, USERNS);
-_pr_ns(utsns, UTSNS);
+_pr_ns(ipcns, IPC);
+_pr_ns(mntns, MNT);
+_pr_ns(netns, NET);
+_pr_ns(pidns, PID);
+_pr_ns(userns, USER);
+_pr_ns(utsns, UTS);
+#undef _pr_ns
 
 /************************ Linux containers ******************************/
 static int pr_lxcname(char *restrict const outbuf, const proc_t *restrict const pp){
-  return snprintf(outbuf, COLWID, "%s", pp->lxcname);
+setREL1(LXCNAME)
+  return snprintf(outbuf, COLWID, "%s", rSv(LXCNAME, str, pp));
 }
 
 /****************** FLASK & seLinux security stuff **********************/
@@ -1280,11 +1212,8 @@ static int pr_context(char *restrict const outbuf, const proc_t *restrict const 
   size_t len;
   ssize_t num_read;
   int fd;
-
-// wchan file is suitable for testing
-//snprintf(filename, sizeof filename, "/proc/%d/wchan", pp->tgid);
-snprintf(filename, sizeof filename, "/proc/%d/attr/current", pp->tgid);
-
+setREL1(ID_TGID)
+  snprintf(filename, sizeof filename, "/proc/%d/attr/current", rSv(ID_TGID, s_int, pp));
   fd = open(filename, O_RDONLY, 0);
   if(likely(fd==-1)) goto fail;
   num_read = read(fd, outbuf, 666);
@@ -1296,7 +1225,6 @@ snprintf(filename, sizeof filename, "/proc/%d/attr/current", pp->tgid);
   while(outbuf[len]>' ' && outbuf[len]<='~') len++;
   outbuf[len] = '\0';
   if(len) return len;
-
 fail:
   outbuf[0] = '-';
   outbuf[1] = '\0';
@@ -1314,7 +1242,7 @@ static int pr_context(char *restrict const outbuf, const proc_t *restrict const 
   static int tried_load = 0;
   size_t len;
   char *context;
-
+setREL1(ID_TGID)
   if(!ps_getpidcon && !tried_load){
     void *handle = dlopen("libselinux.so.1", RTLD_NOW);
     if(handle){
@@ -1325,7 +1253,7 @@ static int pr_context(char *restrict const outbuf, const proc_t *restrict const 
     }
     tried_load++;
   }
-  if(ps_getpidcon && !ps_getpidcon(pp->tgid, &context)){
+  if(ps_getpidcon && !ps_getpidcon(rSv(ID_TGID, s_int, pp), &context)){
     size_t max_len = OUTBUF_SIZE-1;
     len = strlen(context);
     if(len > max_len) len = max_len;
@@ -1423,20 +1351,6 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 #define ET        CF_PRINT_EVERY_TIME
 #define AN        CF_PRINT_AS_NEEDED // no idea
 
-/* short names to save space */
-#define MEM PROC_FILLMEM     /* read statm  */
-#define ARG PROC_FILLARG     /* read cmdline (cleared if c option) */
-#define COM PROC_FILLCOM     /* read cmdline (cleared if not -f option) */
-#define ENV PROC_FILLENV     /* read environ */
-#define USR PROC_FILLUSR     /* uid_t -> user names */
-#define GRP PROC_FILLGRP     /* gid_t -> group names */
-#define NS  PROC_FILLNS      /* read namespace information */
-#define LXC PROC_FILL_LXC    /* value the lxc name field */
-#ifdef WITH_SYSTEMD
-#define SD  PROC_FILLSYSTEMD /* retrieve systemd stuff */
-#endif
-#define SGRP PROC_FILLSTATUS | PROC_FILLSUPGRP  /* supgid -> supgrp (names) */
-#define CGRP PROC_FILLCGROUP | PROC_EDITCGRPCVT /* read cgroup */
 
 /* TODO
  *      pull out annoying BSD aliases into another table (to macro table?)
@@ -1446,278 +1360,267 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 /* temporary hack -- mark new stuff grabbed from Debian ps */
 #define LNx LNX
 
+/* Note: upon conversion to the <pids> API the numerous former sort provisions
+         for otherwise non-printable fields (pr_nop) have been retained. And,
+         since the new library can sort on any item, many previously printable
+         but unsortable fields have now been made sortable. */
 /* there are about 211 listed */
-
 /* Many of these are placeholders for unsupported options. */
-static const format_struct format_array[] = {
-/* code       header     print()      sort()    width need vendor flags  */
-{"%cpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    BSD, ET|RIGHT}, /*pcpu*/
-{"%mem",      "%MEM",    pr_pmem,     sr_rss,     4,   0,    BSD, PO|RIGHT}, /*pmem*/
-{"_left",     "LLLLLLLL", pr_t_left,  sr_nop,     8,   0,    TST, ET|LEFT},
-{"_left2",    "L2L2L2L2", pr_t_left2, sr_nop,     8,   0,    TST, ET|LEFT},
-{"_right",    "RRRRRRRRRRR", pr_t_right, sr_nop, 11,   0,    TST, ET|RIGHT},
-{"_right2",   "R2R2R2R2R2R", pr_t_right2, sr_nop, 11,  0,    TST, ET|RIGHT},
-{"_unlimited","U",   pr_t_unlimited,  sr_nop,    16,   0,    TST, ET|UNLIMITED},
-{"_unlimited2","U2", pr_t_unlimited2, sr_nop,    16,   0,    TST, ET|UNLIMITED},
-{"acflag",    "ACFLG",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT}, /*acflg*/
-{"acflg",     "ACFLG",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*acflag*/
-{"addr",      "ADDR",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
-{"addr_1",    "ADDR",    pr_nop,      sr_nop,     1,   0,    LNX, AN|LEFT},
-{"alarm",     "ALARM",   pr_alarm,    sr_alarm,   5,   0,    LNX, AN|RIGHT},
-{"argc",      "ARGC",    pr_nop,      sr_nop,     4,   0,    LNX, PO|RIGHT},
-{"args",      "COMMAND", pr_args,     sr_cmd,    27, ARG,    U98, PO|UNLIMITED}, /*command*/
-{"atime",     "TIME",    pr_time,     sr_time,    8,   0,    SOE, ET|RIGHT}, /*cputime*/ /* was 6 wide */
-{"blocked",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigmask*/
-{"bnd",       "BND",     pr_nop,      sr_nop,     1,   0,    AIX, TO|RIGHT},
-{"bsdstart",  "START",   pr_bsdstart, sr_nop,     6,   0,    LNX, ET|RIGHT},
-{"bsdtime",   "TIME",    pr_bsdtime,  sr_nop,     6,   0,    LNX, ET|RIGHT},
-{"c",         "C",       pr_c,        sr_pcpu,    2,   0,    SUN, ET|RIGHT},
-{"caught",    "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigcatch*/
-{"cgroup",    "CGROUP",  pr_cgroup,   sr_nop,    27,CGRP,    LNX, PO|UNLIMITED},
-{"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, TO|LEFT},
-{"cls",       "CLS",     pr_class,    sr_sched,   3,   0,    HPU, TO|RIGHT}, /*says HPUX or RT*/
-{"cmaj_flt",  "-",       pr_nop,      sr_cmaj_flt, 1,  0,    LNX, AN|RIGHT},
-{"cmd",       "CMD",     pr_args,     sr_cmd,    27, ARG,    DEC, PO|UNLIMITED}, /*ucomm*/
-{"cmin_flt",  "-",       pr_nop,      sr_cmin_flt, 1,  0,    LNX, AN|RIGHT},
-{"cnswap",    "-",       pr_nop,      sr_nop,     1,   0,    LNX, AN|RIGHT},
-{"comm",      "COMMAND", pr_comm,     sr_cmd,    15, COM,    U98, PO|UNLIMITED}, /*ucomm*/
-{"command",   "COMMAND", pr_args,     sr_cmd,    27, ARG,    XXX, PO|UNLIMITED}, /*args*/
-{"context",   "CONTEXT", pr_context,  sr_nop,    31,   0,    LNX, ET|LEFT},
-{"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, ET|RIGHT}, /*cpu*/
-{"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
-{"cpuid",     "CPUID",   pr_psr,      sr_nop,     5,   0,    BSD, TO|RIGHT}, // OpenBSD: 8 wide!
-{"cputime",   "TIME",    pr_time,     sr_time,    8,   0,    DEC, ET|RIGHT}, /*time*/
-{"ctid",      "CTID",    pr_nop,      sr_nop,     5,   0,    SUN, ET|RIGHT}, // resource contracts?
-{"cursig",    "CURSIG",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
-{"cutime",    "-",       pr_nop,      sr_cutime,  1,   0,    LNX, AN|RIGHT},
-{"cwd",       "CWD",     pr_nop,      sr_nop,     3,   0,    LNX, AN|LEFT},
-{"drs",       "DRS",     pr_drs,      sr_drs,     5, MEM,    LNX, PO|RIGHT},
-{"dsiz",      "DSIZ",    pr_dsiz,     sr_nop,     4,   0,    LNX, PO|RIGHT},
-{"egid",      "EGID",    pr_egid,     sr_egid,    5,   0,    LNX, ET|RIGHT},
-{"egroup",    "EGROUP",  pr_egroup,   sr_egroup,  8, GRP,    LNX, ET|USER},
-{"eip",       "EIP",     pr_eip,      sr_kstk_eip, 8,  0,    LNX, TO|RIGHT},
-{"emul",      "EMUL",    pr_nop,      sr_nop,    13,   0,    BSD, PO|LEFT}, /* "FreeBSD ELF32" and such */
-{"end_code",  "E_CODE",  pr_nop,      sr_end_code, 8,  0,    LNx, PO|RIGHT},
-{"environ","ENVIRONMENT",pr_nop,      sr_nop,    11, ENV,    LNx, PO|UNLIMITED},
-{"esp",       "ESP",     pr_esp,      sr_kstk_esp, 8,  0,    LNX, TO|RIGHT},
-{"etime",     "ELAPSED", pr_etime,    sr_etime,  11,   0,    U98, ET|RIGHT}, /* was 7 wide */
-{"etimes",    "ELAPSED", pr_etimes,   sr_nop,     7,   0,    BSD, ET|RIGHT}, /* FreeBSD */
-{"euid",      "EUID",    pr_euid,     sr_euid,    5,   0,    LNX, ET|RIGHT},
-{"euser",     "EUSER",   pr_euser,    sr_euser,   8, USR,    LNX, ET|USER},
-{"f",         "F",       pr_flag,     sr_flags,   1,   0,    XXX, ET|RIGHT}, /*flags*/
-{"fgid",      "FGID",    pr_fgid,     sr_fgid,    5,   0,    LNX, ET|RIGHT},
-{"fgroup",    "FGROUP",  pr_fgroup,   sr_fgroup,  8, GRP,    LNX, ET|USER},
-{"flag",      "F",       pr_flag,     sr_flags,   1,   0,    DEC, ET|RIGHT},
-{"flags",     "F",       pr_flag,     sr_flags,   1,   0,    BSD, ET|RIGHT}, /*f*/ /* was FLAGS, 8 wide */
-{"fname",     "COMMAND", pr_fname,    sr_nop,     8,   0,    SUN, PO|LEFT},
-{"fsgid",     "FSGID",   pr_fgid,     sr_fgid,    5,   0,    LNX, ET|RIGHT},
-{"fsgroup",   "FSGROUP", pr_fgroup,   sr_fgroup,  8, GRP,    LNX, ET|USER},
-{"fsuid",     "FSUID",   pr_fuid,     sr_fuid,    5,   0,    LNX, ET|RIGHT},
-{"fsuser",    "FSUSER",  pr_fuser,    sr_fuser,   8, USR,    LNX, ET|USER},
-{"fuid",      "FUID",    pr_fuid,     sr_fuid,    5,   0,    LNX, ET|RIGHT},
-{"fuser",     "FUSER",   pr_fuser,    sr_fuser,   8, USR,    LNX, ET|USER},
-{"gid",       "GID",     pr_egid,     sr_egid,    5,   0,    SUN, ET|RIGHT},
-{"group",     "GROUP",   pr_egroup,   sr_egroup,  8, GRP,    U98, ET|USER},
-{"ignored",   "IGNORED", pr_sigignore,sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigignore*/
-{"inblk",     "INBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*inblock*/
-{"inblock",   "INBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*inblk*/
-{"intpri",    "PRI",     pr_opri,     sr_priority, 3,  0,    HPU, TO|RIGHT},
-{"ipcns",     "IPCNS",   pr_ipcns,    sr_ipcns,  10,  NS,    LNX, ET|RIGHT},
-{"jid",       "JID",     pr_nop,      sr_nop,     1,   0,    SGI, PO|RIGHT},
-{"jobc",      "JOBC",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
-{"ktrace",    "KTRACE",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
-{"ktracep",   "KTRACEP", pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
-{"label",     "LABEL",   pr_context,  sr_nop,    31,  0,     SGI, ET|LEFT},
-{"lastcpu",   "C",       pr_psr,      sr_nop,     3,   0,    BSD, TO|RIGHT}, // DragonFly
-{"lim",       "LIM",     pr_lim,      sr_rss_rlim, 5,  0,    BSD, AN|RIGHT},
-{"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, AN|LEFT}, /*logname*/   /* double check */
-{"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, AN|LEFT}, /*login*/
-{"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
-#ifdef WITH_SYSTEMD
-{"lsession",  "SESSION", pr_sd_session, sr_nop,  11,  SD,    LNX, ET|LEFT},
-#endif
-{"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, ET|RIGHT},
-{"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, ET|RIGHT}, /* login ID */
-{"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, ET|USER}, /* login USER */
-{"lwp",       "LWP",     pr_tasks,    sr_tasks,   5,   0,    SUN, TO|PIDMAX|RIGHT},
-{"lxc",       "LXC",     pr_lxcname,  sr_lxcname, 8, LXC,    LNX, ET|LEFT},
-{"m_drs",     "DRS",     pr_drs,      sr_drs,     5, MEM,    LNx, PO|RIGHT},
-{"m_dt",      "DT",      pr_nop,      sr_dt,      4, MEM,    LNx, PO|RIGHT},
-{"m_lrs",     "LRS",     pr_nop,      sr_lrs,     5, MEM,    LNx, PO|RIGHT},
-{"m_resident", "RES",    pr_nop,      sr_resident, 5,MEM,    LNx, PO|RIGHT},
-{"m_share",   "SHRD",    pr_nop,      sr_share,   5, MEM,    LNx, PO|RIGHT},
-{"m_size",    "SIZE",    pr_size,     sr_size,    5, MEM,    LNX, PO|RIGHT},
-{"m_swap",    "SWAP",    pr_nop,      sr_nop,     5,   0,    LNx, PO|RIGHT},
-{"m_trs",     "TRS",     pr_trs,      sr_trs,     5, MEM,    LNx, PO|RIGHT},
-#ifdef WITH_SYSTEMD
-{"machine",   "MACHINE", pr_sd_machine, sr_nop,  31,  SD,    LNX, ET|LEFT},
-#endif
-{"maj_flt",   "MAJFL",   pr_majflt,   sr_maj_flt, 6,   0,    LNX, AN|RIGHT},
-{"majflt",    "MAJFLT",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
-{"min_flt",   "MINFL",   pr_minflt,   sr_min_flt, 6,   0,    LNX, AN|RIGHT},
-{"minflt",    "MINFLT",  pr_minflt,   sr_min_flt, 6,   0,    XXX, AN|RIGHT},
-{"mntns",     "MNTNS",   pr_mntns,    sr_mntns,  10,  NS,    LNX, ET|RIGHT},
-{"msgrcv",    "MSGRCV",  pr_nop,      sr_nop,     6,   0,    XXX, AN|RIGHT},
-{"msgsnd",    "MSGSND",  pr_nop,      sr_nop,     6,   0,    XXX, AN|RIGHT},
-{"mwchan",    "MWCHAN",  pr_nop,      sr_nop,     6,   0,    BSD, TO|WCHAN}, /* mutex (FreeBSD) */
-{"netns",     "NETNS",   pr_netns,    sr_netns,  10,  NS,    LNX, ET|RIGHT},
-{"ni",        "NI",      pr_nice,     sr_nice,    3,   0,    BSD, TO|RIGHT}, /*nice*/
-{"nice",      "NI",      pr_nice,     sr_nice,    3,   0,    U98, TO|RIGHT}, /*ni*/
-{"nivcsw",    "IVCSW",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
-{"nlwp",      "NLWP",    pr_nlwp,     sr_nlwp,    4,   0,    SUN, PO|RIGHT},
-{"nsignals",  "NSIGS",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*nsigs*/
-{"nsigs",     "NSIGS",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*nsignals*/
-{"nswap",     "NSWAP",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
-{"nvcsw",     "VCSW",    pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
-{"nwchan",    "WCHAN",   pr_nwchan,   sr_nop,     6,   0,    XXX, TO|RIGHT},
-{"opri",      "PRI",     pr_opri,     sr_priority, 3,  0,    SUN, TO|RIGHT},
-{"osz",       "SZ",      pr_nop,      sr_nop,     2,   0,    SUN, PO|RIGHT},
-{"oublk",     "OUBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*oublock*/
-{"oublock",   "OUBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*oublk*/
-#ifdef WITH_SYSTEMD
-{"ouid",      "OWNER",   pr_sd_ouid,  sr_nop,     5,  SD,    LNX, ET|LEFT},
-#endif
-{"p_ru",      "P_RU",    pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
-{"paddr",     "PADDR",   pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
-{"pagein",    "PAGEIN",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
-{"pcpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    U98, ET|RIGHT}, /*%cpu*/
-{"pending",   "PENDING", pr_sig,      sr_nop,     9,   0,    BSD, ET|SIGNAL}, /*sig*/
-{"pgid",      "PGID",    pr_pgid,     sr_pgrp,    5,   0,    U98, PO|PIDMAX|RIGHT},
-{"pgrp",      "PGRP",    pr_pgid,     sr_pgrp,    5,   0,    LNX, PO|PIDMAX|RIGHT},
-{"pid",       "PID",     pr_procs,    sr_procs,   5,   0,    U98, PO|PIDMAX|RIGHT},
-{"pidns",     "PIDNS",   pr_pidns,    sr_pidns,  10,  NS,    LNX, ET|RIGHT},
-{"pmem",      "%MEM",    pr_pmem,     sr_rss,     4,   0,    XXX, PO|RIGHT}, /*%mem*/
-{"poip",      "-",       pr_nop,      sr_nop,     1,   0,    BSD, AN|RIGHT},
-{"policy",    "POL",     pr_class,    sr_sched,   3,   0,    DEC, TO|LEFT},
-{"ppid",      "PPID",    pr_ppid,     sr_ppid,    5,   0,    U98, PO|PIDMAX|RIGHT},
-{"pri",       "PRI",     pr_pri,      sr_nop,     3,   0,    XXX, TO|RIGHT},
-{"pri_api",   "API",     pr_pri_api,  sr_nop,     3,   0,    LNX, TO|RIGHT},
-{"pri_bar",   "BAR",     pr_pri_bar,  sr_nop,     3,   0,    LNX, TO|RIGHT},
-{"pri_baz",   "BAZ",     pr_pri_baz,  sr_nop,     3,   0,    LNX, TO|RIGHT},
-{"pri_foo",   "FOO",     pr_pri_foo,  sr_nop,     3,   0,    LNX, TO|RIGHT},
-{"priority",  "PRI",     pr_priority, sr_priority, 3,  0,    LNX, TO|RIGHT},
-{"prmgrp",    "PRMGRP",  pr_nop,      sr_nop,    12,   0,    HPU, PO|RIGHT},
-{"prmid",     "PRMID",   pr_nop,      sr_nop,    12,   0,    HPU, PO|RIGHT},
-{"project",   "PROJECT", pr_nop,      sr_nop,    12,   0,    SUN, PO|LEFT}, // see prm* andctid
-{"projid",    "PROJID",  pr_nop,      sr_nop,     5,   0,    SUN, PO|RIGHT},
-{"pset",      "PSET",    pr_nop,      sr_nop,     4,   0,    DEC, TO|RIGHT},
-{"psr",       "PSR",     pr_psr,      sr_nop,     3,   0,    DEC, TO|RIGHT},
-{"psxpri",    "PPR",     pr_nop,      sr_nop,     3,   0,    DEC, TO|RIGHT},
-{"re",        "RE",      pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT},
-{"resident",  "RES",     pr_nop,      sr_resident, 5,MEM,    LNX, PO|RIGHT},
-{"rgid",      "RGID",    pr_rgid,     sr_rgid,    5,   0,    XXX, ET|RIGHT},
-{"rgroup",    "RGROUP",  pr_rgroup,   sr_rgroup,  8, GRP,    U98, ET|USER}, /* was 8 wide */
-{"rlink",     "RLINK",   pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
-{"rss",       "RSS",     pr_rss,      sr_rss,     5,   0,    XXX, PO|RIGHT}, /* was 5 wide */
-{"rssize",    "RSS",     pr_rss,      sr_vm_rss,  5,   0,    DEC, PO|RIGHT}, /*rsz*/
-{"rsz",       "RSZ",     pr_rss,      sr_vm_rss,  5,   0,    BSD, PO|RIGHT}, /*rssize*/
-{"rtprio",    "RTPRIO",  pr_rtprio,   sr_rtprio,  6,   0,    BSD, TO|RIGHT},
-{"ruid",      "RUID",    pr_ruid,     sr_ruid,    5,   0,    XXX, ET|RIGHT},
-{"ruser",     "RUSER",   pr_ruser,    sr_ruser,   8, USR,    U98, ET|USER},
-{"s",         "S",       pr_s,        sr_state,   1,   0,    SUN, TO|LEFT}, /*stat,state*/
-{"sched",     "SCH",     pr_sched,    sr_sched,   3,   0,    AIX, TO|RIGHT},
-{"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, AN|RIGHT},  /* man page misspelling of scount? */
-{"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, AN|RIGHT},  /* scnt==scount, DEC claims both */
-#ifdef WITH_SYSTEMD
-{"seat",      "SEAT",    pr_sd_seat,  sr_nop,    11,  SD,    LNX, ET|LEFT},
-#endif
-{"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT},
-{"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, PO|PIDMAX|RIGHT},
-{"sgi_p",     "P",       pr_sgi_p,    sr_nop,     1,   0,    LNX, TO|RIGHT}, /* "cpu" number */
-{"sgi_rss",   "RSS",     pr_rss,      sr_nop,     4,   0,    LNX, PO|LEFT}, /* SZ:RSS */
-{"sgid",      "SGID",    pr_sgid,     sr_sgid,    5,   0,    LNX, ET|RIGHT},
-{"sgroup",    "SGROUP",  pr_sgroup,   sr_sgroup,  8, GRP,    LNX, ET|USER},
-{"share",     "-",       pr_nop,      sr_share,   1, MEM,    LNX, PO|RIGHT},
-{"sid",       "SID",     pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT}, /* Sun & HP */
-{"sig",       "PENDING", pr_sig,      sr_nop,     9,   0,    XXX, ET|SIGNAL}, /*pending -- Dragonfly uses this for whole-proc and "tsig" for thread */
-{"sig_block", "BLOCKED",  pr_sigmask, sr_nop,     9,   0,    LNX, TO|SIGNAL},
-{"sig_catch", "CATCHED", pr_sigcatch, sr_nop,     9,   0,    LNX, TO|SIGNAL},
-{"sig_ignore", "IGNORED",pr_sigignore, sr_nop,    9,   0,    LNX, TO|SIGNAL},
-{"sig_pend",  "SIGNAL",   pr_sig,     sr_nop,     9,   0,    LNX, ET|SIGNAL},
-{"sigcatch",  "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*caught*/
-{"sigignore", "IGNORED", pr_sigignore,sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*ignored*/
-{"sigmask",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*blocked*/
-{"size",      "SIZE",    pr_swapable, sr_swapable, 5,  0,    SCO, PO|RIGHT},
-{"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, AN|RIGHT},
-#ifdef WITH_SYSTEMD
-{"slice",      "SLICE",  pr_sd_slice, sr_nop,    31,  SD,    LNX, ET|LEFT},
-#endif
-{"spid",      "SPID",    pr_tasks,    sr_tasks,   5,   0,    SGI, TO|PIDMAX|RIGHT},
-{"stackp",    "STACKP",  pr_stackp,   sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*start_stack*/
-{"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, ET|RIGHT},
-{"start_code", "S_CODE",  pr_nop,     sr_start_code, 8, 0,   LNx, PO|RIGHT},
-{"start_stack", "STACKP", pr_stackp,  sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*stackp*/
-{"start_time", "START",  pr_stime,    sr_start_time, 5, 0,   LNx, ET|RIGHT},
-{"stat",      "STAT",    pr_stat,     sr_state,   4,   0,    BSD, TO|LEFT}, /*state,s*/
-{"state",     "S",       pr_s,        sr_state,   1,   0,    XXX, TO|LEFT}, /*stat,s*/ /* was STAT */
-{"status",    "STATUS",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
-{"stime",     "STIME",   pr_stime,    sr_stime,   5,   0,    XXX, ET|RIGHT}, /* was 6 wide */
-{"suid",      "SUID",    pr_suid,     sr_suid,    5,   0,    LNx, ET|RIGHT},
-{"supgid",    "SUPGID",  pr_supgid,   sr_nop,    20,   0,    LNX, PO|UNLIMITED},
-{"supgrp",    "SUPGRP",  pr_supgrp,   sr_nop,    40,SGRP,    LNX, PO|UNLIMITED},
-{"suser",     "SUSER",   pr_suser,    sr_suser,   8, USR,    LNx, ET|USER},
-{"svgid",     "SVGID",   pr_sgid,     sr_sgid,    5,   0,    XXX, ET|RIGHT},
-{"svgroup",   "SVGROUP", pr_sgroup,   sr_sgroup,  8, GRP,    LNX, ET|USER},
-{"svuid",     "SVUID",   pr_suid,     sr_suid,    5,   0,    XXX, ET|RIGHT},
-{"svuser",    "SVUSER",  pr_suser,    sr_suser,   8, USR,    LNX, ET|USER},
-{"systime",   "SYSTEM",  pr_nop,      sr_nop,     6,   0,    DEC, ET|RIGHT},
-{"sz",        "SZ",      pr_sz,       sr_nop,     5,   0,    HPU, PO|RIGHT},
-{"taskid",    "TASKID",  pr_nop,      sr_nop,     5,   0,    SUN, TO|PIDMAX|RIGHT}, // is this a thread ID?
-{"tdev",      "TDEV",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
-{"thcount",   "THCNT",   pr_nlwp,     sr_nlwp,    5,   0,    AIX, PO|RIGHT},
-{"tgid",      "TGID",    pr_procs,    sr_procs,   5,   0,    LNX, PO|PIDMAX|RIGHT},
-{"tid",       "TID",     pr_tasks,    sr_tasks,   5,   0,    AIX, TO|PIDMAX|RIGHT},
-{"time",      "TIME",    pr_time,     sr_time,    8,   0,    U98, ET|RIGHT}, /*cputime*/ /* was 6 wide */
-{"timeout",   "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
-{"tmout",     "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
-{"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
-{"tpgid",     "TPGID",   pr_tpgid,    sr_tpgid,   5,   0,    XXX, PO|PIDMAX|RIGHT},
-{"trs",       "TRS",     pr_trs,      sr_trs,     4, MEM,    AIX, PO|RIGHT},
-{"trss",      "TRSS",    pr_trs,      sr_trs,     4, MEM,    BSD, PO|RIGHT}, /* 4.3BSD NET/2 */
-{"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, PO|PIDMAX|RIGHT},
-{"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, PO|PIDMAX|RIGHT},
-{"tsid",      "TSID",    pr_nop,      sr_nop,     5,   0,    BSD, PO|PIDMAX|RIGHT},
-{"tsig",      "PENDING", pr_tsig,     sr_nop,     9,   0,    BSD, ET|SIGNAL}, /* Dragonfly used this for thread-specific, and "sig" for whole-proc */
-{"tsiz",      "TSIZ",    pr_tsiz,     sr_nop,     4,   0,    BSD, PO|RIGHT},
-{"tt",        "TT",      pr_tty8,     sr_tty,     8,   0,    BSD, PO|LEFT},
-{"tty",       "TT",      pr_tty8,     sr_tty,     8,   0,    U98, PO|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */
-{"tty4",      "TTY",     pr_tty4,     sr_tty,     4,   0,    LNX, PO|LEFT},
-{"tty8",      "TTY",     pr_tty8,     sr_tty,     8,   0,    LNX, PO|LEFT},
-{"u_procp",   "UPROCP",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
-{"ucmd",      "CMD",     pr_comm,     sr_cmd,    15, COM,    DEC, PO|UNLIMITED}, /*ucomm*/
-{"ucomm",     "COMMAND", pr_comm,     sr_cmd,    15, COM,    XXX, PO|UNLIMITED}, /*comm*/
-{"uid",       "UID",     pr_euid,     sr_euid,    5,   0,    XXX, ET|RIGHT},
-{"uid_hack",  "UID",     pr_euser,    sr_euser,   8, USR,    XXX, ET|USER},
-{"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT},
-{"uname",     "USER",    pr_euser,    sr_euser,   8, USR,    DEC, ET|USER}, /* man page misspelling of user? */
-#ifdef WITH_SYSTEMD
-{"unit",      "UNIT",    pr_sd_unit,  sr_nop,    31,  SD,    LNX, ET|LEFT},
-#endif
-{"upr",       "UPR",     pr_nop,      sr_nop,     3,   0,    BSD, TO|RIGHT}, /*usrpri*/
-{"uprocp",    "UPROCP",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
-{"user",      "USER",    pr_euser,    sr_euser,   8, USR,    U98, ET|USER}, /* BSD n forces this to UID */
-{"userns",    "USERNS",  pr_userns,   sr_userns, 10,  NS,    LNX, ET|RIGHT},
-{"usertime",  "USER",    pr_nop,      sr_nop,     4,   0,    DEC, ET|RIGHT},
-{"usrpri",    "UPR",     pr_nop,      sr_nop,     3,   0,    DEC, TO|RIGHT}, /*upr*/
-{"util",      "C",       pr_c,        sr_pcpu,    2,   0,    SGI, ET|RIGHT}, // not sure about "C"
-{"utime",     "UTIME",   pr_nop,      sr_utime,   6,   0,    LNx, ET|RIGHT},
-{"utsns",     "UTSNS",   pr_utsns,    sr_utsns,  10,  NS,    LNX, ET|RIGHT},
-#ifdef WITH_SYSTEMD
-{"uunit",     "UUNIT",   pr_sd_uunit, sr_nop,    31,  SD,    LNX, ET|LEFT},
-#endif
-{"vm_data",   "DATA",    pr_nop,      sr_vm_data, 5,   0,    LNx, PO|RIGHT},
-{"vm_exe",    "EXE",     pr_nop,      sr_vm_exe,  5,   0,    LNx, PO|RIGHT},
-{"vm_lib",    "LIB",     pr_nop,      sr_vm_lib,  5,   0,    LNx, PO|RIGHT},
-{"vm_lock",   "LCK",     pr_nop,      sr_vm_lock, 3,   0,    LNx, PO|RIGHT},
-{"vm_stack",  "STACK",   pr_nop,      sr_vm_stack, 5,  0,    LNx, PO|RIGHT},
-{"vsize",     "VSZ",     pr_vsz,      sr_vsize,   6,   0,    DEC, PO|RIGHT}, /*vsz*/
-{"vsz",       "VSZ",     pr_vsz,      sr_vm_size, 6,   0,    U98, PO|RIGHT}, /*vsize*/
-{"wchan",     "WCHAN",   pr_wchan,    sr_wchan,   6,   0,    XXX, TO|WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
-{"wname",     "WCHAN",   pr_wname,    sr_nop,     6,   0,    SGI, TO|WCHAN}, /* opposite of nwchan */
-{"xstat",     "XSTAT",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT},
-{"zone",      "ZONE",    pr_context,  sr_nop,    31,   0,    SUN, ET|LEFT}, // Solaris zone == Linux context?
-{"zoneid",    "ZONEID",  pr_nop,      sr_nop,    31,   0,    SUN, ET|RIGHT},// Linux only offers context names
-{"~",         "-",       pr_nop,      sr_nop,     1,   0,    LNX, AN|RIGHT}  /* NULL would ruin alphabetical order */
+static const format_struct format_array[] = { /*
+ .spec        .head      .pr               .sr                           width .vendor .flags  */
+{"%cpu",      "%CPU",    pr_pcpu,          PROCPS_PIDS_extra,               4,    BSD,  ET|RIGHT}, /*pcpu*/
+{"%mem",      "%MEM",    pr_pmem,          PROCPS_PIDS_VM_RSS,              4,    BSD,  PO|RIGHT}, /*pmem*/
+{"_left",     "LLLLLLLL", pr_t_left,       PROCPS_PIDS_noop,                8,    TST,  ET|LEFT},
+{"_left2",    "L2L2L2L2", pr_t_left2,      PROCPS_PIDS_noop,                8,    TST,  ET|LEFT},
+{"_right",    "RRRRRRRRRRR", pr_t_right,   PROCPS_PIDS_noop,                11,   TST,  ET|RIGHT},
+{"_right2",   "R2R2R2R2R2R", pr_t_right2,  PROCPS_PIDS_noop,                11,   TST,  ET|RIGHT},
+{"_unlimited","U",   pr_t_unlimited,       PROCPS_PIDS_noop,                16,   TST,  ET|UNLIMITED},
+{"_unlimited2","U2", pr_t_unlimited2,      PROCPS_PIDS_noop,                16,   TST,  ET|UNLIMITED},
+{"acflag",    "ACFLG",   pr_nop,           PROCPS_PIDS_noop,                5,    XXX,  AN|RIGHT}, /*acflg*/
+{"acflg",     "ACFLG",   pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  AN|RIGHT}, /*acflag*/
+{"addr",      "ADDR",    pr_nop,           PROCPS_PIDS_noop,                4,    XXX,  AN|RIGHT},
+{"addr_1",    "ADDR",    pr_nop,           PROCPS_PIDS_noop,                1,    LNX,  AN|LEFT},
+{"alarm",     "ALARM",   pr_alarm,         PROCPS_PIDS_ALARM,               5,    LNX,  AN|RIGHT},
+{"argc",      "ARGC",    pr_nop,           PROCPS_PIDS_noop,                4,    LNX,  PO|RIGHT},
+{"args",      "COMMAND", pr_args,          PROCPS_PIDS_CMDLINE,             27,   U98,  PO|UNLIMITED}, /*command*/
+{"atime",     "TIME",    pr_time,          PROCPS_PIDS_TIME_ALL,            8,    SOE,  ET|RIGHT}, /*cputime*/ /* was 6 wide */
+{"blocked",   "BLOCKED", pr_sigmask,       PROCPS_PIDS_SIGBLOCKED,          9,    BSD,  TO|SIGNAL},/*sigmask*/
+{"bnd",       "BND",     pr_nop,           PROCPS_PIDS_noop,                1,    AIX,  TO|RIGHT},
+{"bsdstart",  "START",   pr_bsdstart,      PROCPS_PIDS_TIME_START,          6,    LNX,  ET|RIGHT},
+{"bsdtime",   "TIME",    pr_bsdtime,       PROCPS_PIDS_TICS_ALL,            6,    LNX,  ET|RIGHT},
+{"c",         "C",       pr_c,             PROCPS_PIDS_extra,               2,    SUN,  ET|RIGHT},
+{"caught",    "CAUGHT",  pr_sigcatch,      PROCPS_PIDS_SIGCATCH,            9,    BSD,  TO|SIGNAL}, /*sigcatch*/
+{"cgroup",    "CGROUP",  pr_cgroup,        PROCPS_PIDS_CGROUP,             27,    LNX,  PO|UNLIMITED},
+{"class",     "CLS",     pr_class,         PROCPS_PIDS_SCHED_CLASS,         3,    XXX,  TO|LEFT},
+{"cls",       "CLS",     pr_class,         PROCPS_PIDS_SCHED_CLASS,         3,    HPU,  TO|RIGHT}, /*says HPUX or RT*/
+{"cmaj_flt",  "-",       pr_nop,           PROCPS_PIDS_noop,                1,    LNX,  AN|RIGHT},
+{"cmd",       "CMD",     pr_args,          PROCPS_PIDS_CMDLINE,            27,    DEC,  PO|UNLIMITED}, /*ucomm*/
+{"cmin_flt",  "-",       pr_nop,           PROCPS_PIDS_noop,                1,    LNX,  AN|RIGHT},
+{"cnswap",    "-",       pr_nop,           PROCPS_PIDS_noop,                1,    LNX,  AN|RIGHT},
+{"comm",      "COMMAND", pr_comm,          PROCPS_PIDS_CMD,                15,    U98,  PO|UNLIMITED}, /*ucomm*/
+{"command",   "COMMAND", pr_args,          PROCPS_PIDS_CMDLINE,            27,    XXX,  PO|UNLIMITED}, /*args*/
+{"context",   "CONTEXT", pr_context,       PROCPS_PIDS_ID_TGID,            31,    LNX,  ET|LEFT},
+{"cp",        "CP",      pr_cp,            PROCPS_PIDS_extra,               3,    DEC,  ET|RIGHT}, /*cpu*/
+{"cpu",       "CPU",     pr_nop,           PROCPS_PIDS_noop,                3,    BSD,  AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
+{"cpuid",     "CPUID",   pr_psr,           PROCPS_PIDS_PROCESSOR,           5,    BSD,  TO|RIGHT}, // OpenBSD: 8 wide!
+{"cputime",   "TIME",    pr_time,          PROCPS_PIDS_TIME_ALL,            8,    DEC,  ET|RIGHT}, /*time*/
+{"ctid",      "CTID",    pr_nop,           PROCPS_PIDS_noop,                5,    SUN,  ET|RIGHT}, // resource contracts?
+{"cursig",    "CURSIG",  pr_nop,           PROCPS_PIDS_noop,                6,    DEC,  AN|RIGHT},
+{"cutime",    "-",       pr_nop,           PROCPS_PIDS_TICS_USER_C,         1,    LNX,  AN|RIGHT},
+{"cwd",       "CWD",     pr_nop,           PROCPS_PIDS_noop,                3,    LNX,  AN|LEFT},
+{"drs",       "DRS",     pr_drs,           PROCPS_PIDS_VSIZE_PGS,           5,    LNX,  PO|RIGHT},
+{"dsiz",      "DSIZ",    pr_dsiz,          PROCPS_PIDS_VSIZE_PGS,           4,    LNX,  PO|RIGHT},
+{"egid",      "EGID",    pr_egid,          PROCPS_PIDS_ID_EGID,             5,    LNX,  ET|RIGHT},
+{"egroup",    "EGROUP",  pr_egroup,        PROCPS_PIDS_ID_EGROUP,           8,    LNX,  ET|USER},
+{"eip",       "EIP",     pr_eip,           PROCPS_PIDS_ADDR_KSTK_EIP,       8,    LNX,  TO|RIGHT},
+{"emul",      "EMUL",    pr_nop,           PROCPS_PIDS_noop,               13,    BSD,  PO|LEFT},  /* "FreeBSD ELF32" and such */
+{"end_code",  "E_CODE",  pr_nop,           PROCPS_PIDS_ADDR_END_CODE,       8,    LNx,  PO|RIGHT},
+{"environ","ENVIRONMENT",pr_nop,           PROCPS_PIDS_noop,               11,    LNx,  PO|UNLIMITED},
+{"esp",       "ESP",     pr_esp,           PROCPS_PIDS_ADDR_KSTK_ESP,       8,    LNX,  TO|RIGHT},
+{"etime",     "ELAPSED", pr_etime,         PROCPS_PIDS_TIME_ELAPSED,       11,    U98,  ET|RIGHT}, /* was 7 wide */
+{"etimes",    "ELAPSED", pr_etimes,        PROCPS_PIDS_TIME_ELAPSED,        7,    BSD,  ET|RIGHT}, /* FreeBSD */
+{"euid",      "EUID",    pr_euid,          PROCPS_PIDS_ID_EUID,             5,    LNX,  ET|RIGHT},
+{"euser",     "EUSER",   pr_euser,         PROCPS_PIDS_ID_EUSER,            8,    LNX,  ET|USER},
+{"f",         "F",       pr_flag,          PROCPS_PIDS_FLAGS,               1,    XXX,  ET|RIGHT}, /*flags*/
+{"fgid",      "FGID",    pr_fgid,          PROCPS_PIDS_FLAGS,               5,    LNX,  ET|RIGHT},
+{"fgroup",    "FGROUP",  pr_fgroup,        PROCPS_PIDS_ID_FGROUP,           8,    LNX,  ET|USER},
+{"flag",      "F",       pr_flag,          PROCPS_PIDS_FLAGS,               1,    DEC,  ET|RIGHT},
+{"flags",     "F",       pr_flag,          PROCPS_PIDS_FLAGS,               1,    BSD,  ET|RIGHT}, /*f*/ /* was FLAGS, 8 wide */
+{"fname",     "COMMAND", pr_fname,         PROCPS_PIDS_CMD,                 8,    SUN,  PO|LEFT},
+{"fsgid",     "FSGID",   pr_fgid,          PROCPS_PIDS_ID_FGID,             5,    LNX,  ET|RIGHT},
+{"fsgroup",   "FSGROUP", pr_fgroup,        PROCPS_PIDS_ID_FGROUP,           8,    LNX,  ET|USER},
+{"fsuid",     "FSUID",   pr_fuid,          PROCPS_PIDS_ID_FUID,             5,    LNX,  ET|RIGHT},
+{"fsuser",    "FSUSER",  pr_fuser,         PROCPS_PIDS_ID_FUSER,            8,    LNX,  ET|USER},
+{"fuid",      "FUID",    pr_fuid,          PROCPS_PIDS_ID_FUID,             5,    LNX,  ET|RIGHT},
+{"fuser",     "FUSER",   pr_fuser,         PROCPS_PIDS_ID_FUSER,            8,    LNX,  ET|USER},
+{"gid",       "GID",     pr_egid,          PROCPS_PIDS_ID_EGID,             5,    SUN,  ET|RIGHT},
+{"group",     "GROUP",   pr_egroup,        PROCPS_PIDS_ID_EGROUP,           8,    U98,  ET|USER},
+{"ignored",   "IGNORED", pr_sigignore,     PROCPS_PIDS_SIGIGNORE,           9,    BSD,  TO|SIGNAL},/*sigignore*/
+{"inblk",     "INBLK",   pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  AN|RIGHT}, /*inblock*/
+{"inblock",   "INBLK",   pr_nop,           PROCPS_PIDS_noop,                5,    DEC,  AN|RIGHT}, /*inblk*/
+{"intpri",    "PRI",     pr_opri,          PROCPS_PIDS_PRIORITY,            3,    HPU,  TO|RIGHT},
+{"ipcns",     "IPCNS",   pr_ipcns,         PROCPS_PIDS_NS_IPC,             10,    LNX,  ET|RIGHT},
+{"jid",       "JID",     pr_nop,           PROCPS_PIDS_noop,                1,    SGI,  PO|RIGHT},
+{"jobc",      "JOBC",    pr_nop,           PROCPS_PIDS_noop,                4,    XXX,  AN|RIGHT},
+{"ktrace",    "KTRACE",  pr_nop,           PROCPS_PIDS_noop,                8,    BSD,  AN|RIGHT},
+{"ktracep",   "KTRACEP", pr_nop,           PROCPS_PIDS_noop,                8,    BSD,  AN|RIGHT},
+{"label",     "LABEL",   pr_context,       PROCPS_PIDS_ID_TGID,            31,    SGI,  ET|LEFT},
+{"lastcpu",   "C",       pr_psr,           PROCPS_PIDS_PROCESSOR,           3,    BSD,  TO|RIGHT}, // DragonFly
+{"lim",       "LIM",     pr_lim,           PROCPS_PIDS_RSS_RLIM,            5,    BSD,  AN|RIGHT},
+{"login",     "LOGNAME", pr_nop,           PROCPS_PIDS_noop,                8,    BSD,  AN|LEFT},  /*logname*/   /* double check */
+{"logname",   "LOGNAME", pr_nop,           PROCPS_PIDS_noop,                8,    XXX,  AN|LEFT},  /*login*/
+{"longtname", "TTY",     pr_tty8,          PROCPS_PIDS_TTY_NAME,            8,    DEC,  PO|LEFT},
+{"lsession",  "SESSION", pr_sd_session,    PROCPS_PIDS_SD_SESS,            11,    LNX,  ET|LEFT},
+{"lstart",    "STARTED", pr_lstart,        PROCPS_PIDS_TIME_START,         24,    XXX,  ET|RIGHT},
+{"luid",      "LUID",    pr_nop,           PROCPS_PIDS_noop,                5,    LNX,  ET|RIGHT}, /* login ID */
+{"luser",     "LUSER",   pr_nop,           PROCPS_PIDS_noop,                8,    LNX,  ET|USER},  /* login USER */
+{"lwp",       "LWP",     pr_tasks,         PROCPS_PIDS_ID_PID,              5,    SUN,  TO|PIDMAX|RIGHT},
+{"lxc",       "LXC",     pr_lxcname,       PROCPS_PIDS_LXCNAME,             8,    LNX,  ET|LEFT},
+{"m_drs",     "DRS",     pr_drs,           PROCPS_PIDS_VSIZE_PGS,           5,    LNx,  PO|RIGHT},
+{"m_dt",      "DT",      pr_nop,           PROCPS_PIDS_MEM_DT,              4,    LNx,  PO|RIGHT},
+{"m_lrs",     "LRS",     pr_nop,           PROCPS_PIDS_MEM_LRS,             5,    LNx,  PO|RIGHT},
+{"m_resident", "RES",    pr_nop,           PROCPS_PIDS_MEM_RES,             5,    LNx,  PO|RIGHT},
+{"m_share",   "SHRD",    pr_nop,           PROCPS_PIDS_MEM_SHR,             5,    LNx,  PO|RIGHT},
+{"m_size",    "SIZE",    pr_size,          PROCPS_PIDS_VSIZE_PGS,           5,    LNX,  PO|RIGHT},
+{"m_swap",    "SWAP",    pr_nop,           PROCPS_PIDS_noop,                5,    LNx,  PO|RIGHT},
+{"m_trs",     "TRS",     pr_trs,           PROCPS_PIDS_VSIZE_PGS,           5,    LNx,  PO|RIGHT},
+{"machine",   "MACHINE", pr_sd_machine,    PROCPS_PIDS_SD_MACH,            31,    LNX,  ET|LEFT},
+{"maj_flt",   "MAJFL",   pr_majflt,        PROCPS_PIDS_FLT_MAJ,             6,    LNX,  AN|RIGHT},
+{"majflt",    "MAJFLT",  pr_majflt,        PROCPS_PIDS_FLT_MAJ,             6,    XXX,  AN|RIGHT},
+{"min_flt",   "MINFL",   pr_minflt,        PROCPS_PIDS_FLT_MIN,             6,    LNX,  AN|RIGHT},
+{"minflt",    "MINFLT",  pr_minflt,        PROCPS_PIDS_FLT_MIN,             6,    XXX,  AN|RIGHT},
+{"mntns",     "MNTNS",   pr_mntns,         PROCPS_PIDS_NS_MNT,             10,    LNX,  ET|RIGHT},
+{"msgrcv",    "MSGRCV",  pr_nop,           PROCPS_PIDS_noop,                6,    XXX,  AN|RIGHT},
+{"msgsnd",    "MSGSND",  pr_nop,           PROCPS_PIDS_noop,                6,    XXX,  AN|RIGHT},
+{"mwchan",    "MWCHAN",  pr_nop,           PROCPS_PIDS_noop,                6,    BSD,  TO|WCHAN}, /* mutex (FreeBSD) */
+{"netns",     "NETNS",   pr_netns,         PROCPS_PIDS_NS_NET,             10,    LNX,  ET|RIGHT},
+{"ni",        "NI",      pr_nice,          PROCPS_PIDS_NICE,                3,    BSD,  TO|RIGHT}, /*nice*/
+{"nice",      "NI",      pr_nice,          PROCPS_PIDS_NICE,                3,    U98,  TO|RIGHT}, /*ni*/
+{"nivcsw",    "IVCSW",   pr_nop,           PROCPS_PIDS_noop,                5,    XXX,  AN|RIGHT},
+{"nlwp",      "NLWP",    pr_nlwp,          PROCPS_PIDS_NLWP,                4,    SUN,  PO|RIGHT},
+{"nsignals",  "NSIGS",   pr_nop,           PROCPS_PIDS_noop,                5,    DEC,  AN|RIGHT}, /*nsigs*/
+{"nsigs",     "NSIGS",   pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  AN|RIGHT}, /*nsignals*/
+{"nswap",     "NSWAP",   pr_nop,           PROCPS_PIDS_noop,                5,    XXX,  AN|RIGHT},
+{"nvcsw",     "VCSW",    pr_nop,           PROCPS_PIDS_noop,                5,    XXX,  AN|RIGHT},
+{"nwchan",    "WCHAN",   pr_nwchan,        PROCPS_PIDS_WCHAN_NAME,          6,    XXX,  TO|RIGHT},
+{"opri",      "PRI",     pr_opri,          PROCPS_PIDS_PRIORITY,            3,    SUN,  TO|RIGHT},
+{"osz",       "SZ",      pr_nop,           PROCPS_PIDS_noop,                2,    SUN,  PO|RIGHT},
+{"oublk",     "OUBLK",   pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  AN|RIGHT}, /*oublock*/
+{"oublock",   "OUBLK",   pr_nop,           PROCPS_PIDS_noop,                5,    DEC,  AN|RIGHT}, /*oublk*/
+{"ouid",      "OWNER",   pr_sd_ouid,       PROCPS_PIDS_SD_OUID,             5,    LNX,  ET|LEFT},
+{"p_ru",      "P_RU",    pr_nop,           PROCPS_PIDS_noop,                6,    BSD,  AN|RIGHT},
+{"paddr",     "PADDR",   pr_nop,           PROCPS_PIDS_noop,                6,    BSD,  AN|RIGHT},
+{"pagein",    "PAGEIN",  pr_majflt,        PROCPS_PIDS_FLT_MAJ,             6,    XXX,  AN|RIGHT},
+{"pcpu",      "%CPU",    pr_pcpu,          PROCPS_PIDS_extra,               4,    U98,  ET|RIGHT}, /*%cpu*/
+{"pending",   "PENDING", pr_sig,           PROCPS_PIDS_SIGNALS,             9,    BSD,  ET|SIGNAL}, /*sig*/
+{"pgid",      "PGID",    pr_pgid,          PROCPS_PIDS_ID_PGRP,             5,    U98,  PO|PIDMAX|RIGHT},
+{"pgrp",      "PGRP",    pr_pgid,          PROCPS_PIDS_ID_PGRP,             5,    LNX,  PO|PIDMAX|RIGHT},
+{"pid",       "PID",     pr_procs,         PROCPS_PIDS_ID_TGID,             5,    U98,  PO|PIDMAX|RIGHT},
+{"pidns",     "PIDNS",   pr_pidns,         PROCPS_PIDS_NS_PID,             10,    LNX,  ET|RIGHT},
+{"pmem",      "%MEM",    pr_pmem,          PROCPS_PIDS_VM_RSS,              4,    XXX,  PO|RIGHT}, /* %mem */
+{"poip",      "-",       pr_nop,           PROCPS_PIDS_noop,                1,    BSD,  AN|RIGHT},
+{"policy",    "POL",     pr_class,         PROCPS_PIDS_SCHED_CLASS,         3,    DEC,  TO|LEFT},
+{"ppid",      "PPID",    pr_ppid,          PROCPS_PIDS_ID_PPID,             5,    U98,  PO|PIDMAX|RIGHT},
+{"pri",       "PRI",     pr_pri,           PROCPS_PIDS_PRIORITY,            3,    XXX,  TO|RIGHT},
+{"pri_api",   "API",     pr_pri_api,       PROCPS_PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
+{"pri_bar",   "BAR",     pr_pri_bar,       PROCPS_PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
+{"pri_baz",   "BAZ",     pr_pri_baz,       PROCPS_PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
+{"pri_foo",   "FOO",     pr_pri_foo,       PROCPS_PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
+{"priority",  "PRI",     pr_priority,      PROCPS_PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
+{"prmgrp",    "PRMGRP",  pr_nop,           PROCPS_PIDS_noop,               12,    HPU,  PO|RIGHT},
+{"prmid",     "PRMID",   pr_nop,           PROCPS_PIDS_noop,               12,    HPU,  PO|RIGHT},
+{"project",   "PROJECT", pr_nop,           PROCPS_PIDS_noop,               12,    SUN,  PO|LEFT},  // see prm* andctid
+{"projid",    "PROJID",  pr_nop,           PROCPS_PIDS_noop,                5,    SUN,  PO|RIGHT},
+{"pset",      "PSET",    pr_nop,           PROCPS_PIDS_noop,                4,    DEC,  TO|RIGHT},
+{"psr",       "PSR",     pr_psr,           PROCPS_PIDS_PROCESSOR,           3,    DEC,  TO|RIGHT},
+{"psxpri",    "PPR",     pr_nop,           PROCPS_PIDS_noop,                3,    DEC,  TO|RIGHT},
+{"re",        "RE",      pr_nop,           PROCPS_PIDS_noop,                3,    BSD,  AN|RIGHT},
+{"resident",  "RES",     pr_nop,           PROCPS_PIDS_MEM_RES,             5,    LNX,  PO|RIGHT},
+{"rgid",      "RGID",    pr_rgid,          PROCPS_PIDS_ID_RGID,             5,    XXX,  ET|RIGHT},
+{"rgroup",    "RGROUP",  pr_rgroup,        PROCPS_PIDS_ID_RGROUP,           8,    U98,  ET|USER},  /* was 8 wide */
+{"rlink",     "RLINK",   pr_nop,           PROCPS_PIDS_noop,                8,    BSD,  AN|RIGHT},
+{"rss",       "RSS",     pr_rss,           PROCPS_PIDS_VM_RSS,              5,    XXX,  PO|RIGHT}, /* was 5 wide */
+{"rssize",    "RSS",     pr_rss,           PROCPS_PIDS_VM_RSS,              5,    DEC,  PO|RIGHT}, /*rsz*/
+{"rsz",       "RSZ",     pr_rss,           PROCPS_PIDS_VM_RSS,              5,    BSD,  PO|RIGHT}, /*rssize*/
+{"rtprio",    "RTPRIO",  pr_rtprio,        PROCPS_PIDS_RTPRIO,              6,    BSD,  TO|RIGHT},
+{"ruid",      "RUID",    pr_ruid,          PROCPS_PIDS_ID_RUID,             5,    XXX,  ET|RIGHT},
+{"ruser",     "RUSER",   pr_ruser,         PROCPS_PIDS_ID_RUSER,            8,    U98,  ET|USER},
+{"s",         "S",       pr_s,             PROCPS_PIDS_STATE,               1,    SUN,  TO|LEFT},  /*stat,state*/
+{"sched",     "SCH",     pr_sched,         PROCPS_PIDS_SCHED_CLASS,         3,    AIX,  TO|RIGHT},
+{"scnt",      "SCNT",    pr_nop,           PROCPS_PIDS_noop,                4,    DEC,  AN|RIGHT}, /* man page misspelling of scount? */
+{"scount",    "SC",      pr_nop,           PROCPS_PIDS_noop,                4,    AIX,  AN|RIGHT}, /* scnt==scount, DEC claims both */
+{"seat",      "SEAT",    pr_sd_seat,       PROCPS_PIDS_SD_SEAT,            11,    LNX,  ET|LEFT},
+{"sess",      "SESS",    pr_sess,          PROCPS_PIDS_ID_SESSION,          5,    XXX,  PO|PIDMAX|RIGHT},
+{"session",   "SESS",    pr_sess,          PROCPS_PIDS_ID_SESSION,          5,    LNX,  PO|PIDMAX|RIGHT},
+{"sgi_p",     "P",       pr_sgi_p,         PROCPS_PIDS_STATE,               1,    LNX,  TO|RIGHT}, /* "cpu" number */
+{"sgi_rss",   "RSS",     pr_rss,           PROCPS_PIDS_VM_RSS,              4,    LNX,  PO|LEFT},  /* SZ:RSS */
+{"sgid",      "SGID",    pr_sgid,          PROCPS_PIDS_ID_SGID,             5,    LNX,  ET|RIGHT},
+{"sgroup",    "SGROUP",  pr_sgroup,        PROCPS_PIDS_ID_SGROUP,           8,    LNX,  ET|USER},
+{"share",     "-",       pr_nop,           PROCPS_PIDS_noop,                1,    LNX,  PO|RIGHT},
+{"sid",       "SID",     pr_sess,          PROCPS_PIDS_ID_SESSION,          5,    XXX,  PO|PIDMAX|RIGHT}, /* Sun & HP */
+{"sig",       "PENDING", pr_sig,           PROCPS_PIDS_SIGNALS,             9,    XXX,  ET|SIGNAL}, /*pending -- Dragonfly uses this for whole-proc and "tsig" for thread */
+{"sig_block", "BLOCKED",  pr_sigmask,      PROCPS_PIDS_SIGBLOCKED,          9,    LNX,  TO|SIGNAL},
+{"sig_catch", "CATCHED", pr_sigcatch,      PROCPS_PIDS_SIGCATCH,            9,    LNX,  TO|SIGNAL},
+{"sig_ignore", "IGNORED",pr_sigignore,     PROCPS_PIDS_SIGIGNORE,           9,    LNX,  TO|SIGNAL},
+{"sig_pend",  "SIGNAL",  pr_sig,           PROCPS_PIDS_SIGNALS,             9,    LNX,  ET|SIGNAL},
+{"sigcatch",  "CAUGHT",  pr_sigcatch,      PROCPS_PIDS_SIGCATCH,            9,    XXX,  TO|SIGNAL}, /*caught*/
+{"sigignore", "IGNORED", pr_sigignore,     PROCPS_PIDS_SIGIGNORE,           9,    XXX,  TO|SIGNAL}, /*ignored*/
+{"sigmask",   "BLOCKED", pr_sigmask,       PROCPS_PIDS_SIGBLOCKED,          9,    XXX,  TO|SIGNAL}, /*blocked*/
+{"size",      "SIZE",    pr_swapable,      PROCPS_PIDS_VSIZE_PGS,           5,    SCO,  PO|RIGHT},
+{"sl",        "SL",      pr_nop,           PROCPS_PIDS_noop,                3,    XXX,  AN|RIGHT},
+{"slice",      "SLICE",  pr_sd_slice,      PROCPS_PIDS_SD_SLICE,           31,    LNX,  ET|LEFT},
+{"spid",      "SPID",    pr_tasks,         PROCPS_PIDS_ID_PID,              5,    SGI,  TO|PIDMAX|RIGHT},
+{"stackp",    "STACKP",  pr_stackp,        PROCPS_PIDS_ADDR_START_STACK,    8,    LNX,  PO|RIGHT}, /*start_stack*/
+{"start",     "STARTED", pr_start,         PROCPS_PIDS_TIME_START,          8,    XXX,  ET|RIGHT},
+{"start_code", "S_CODE",  pr_nop,          PROCPS_PIDS_noop,                8,    LNx,  PO|RIGHT},
+{"start_stack", "STACKP", pr_stackp,       PROCPS_PIDS_ADDR_START_STACK,    8,    LNX,  PO|RIGHT}, /*stackp*/
+{"start_time", "START",  pr_stime,         PROCPS_PIDS_TIME_START,          5,    LNx,  ET|RIGHT},
+{"stat",      "STAT",    pr_stat,          PROCPS_PIDS_STATE,               4,    BSD,  TO|LEFT},  /*state,s*/
+{"state",     "S",       pr_s,             PROCPS_PIDS_STATE,               1,    XXX,  TO|LEFT},  /*stat,s*/ /* was STAT */
+{"status",    "STATUS",  pr_nop,           PROCPS_PIDS_noop,                6,    DEC,  AN|RIGHT},
+{"stime",     "STIME",   pr_stime,         PROCPS_PIDS_TIME_START,          5,    XXX,  ET|RIGHT}, /* was 6 wide */
+{"suid",      "SUID",    pr_suid,          PROCPS_PIDS_ID_SUID,             5,    LNx,  ET|RIGHT},
+{"supgid",    "SUPGID",  pr_supgid,        PROCPS_PIDS_SUPGIDS,            20,    LNX,  PO|UNLIMITED},
+{"supgrp",    "SUPGRP",  pr_supgrp,        PROCPS_PIDS_SUPGROUPS,          40,    LNX,  PO|UNLIMITED},
+{"suser",     "SUSER",   pr_suser,         PROCPS_PIDS_ID_SUSER,            8,    LNx,  ET|USER},
+{"svgid",     "SVGID",   pr_sgid,          PROCPS_PIDS_ID_SGID,             5,    XXX,  ET|RIGHT},
+{"svgroup",   "SVGROUP", pr_sgroup,        PROCPS_PIDS_ID_SGROUP,           8,    LNX,  ET|USER},
+{"svuid",     "SVUID",   pr_suid,          PROCPS_PIDS_ID_SUID,             5,    XXX,  ET|RIGHT},
+{"svuser",    "SVUSER",  pr_suser,         PROCPS_PIDS_ID_SUSER,            8,    LNX,  ET|USER},
+{"systime",   "SYSTEM",  pr_nop,           PROCPS_PIDS_noop,                6,    DEC,  ET|RIGHT},
+{"sz",        "SZ",      pr_sz,            PROCPS_PIDS_VM_SIZE,             5,    HPU,  PO|RIGHT},
+{"taskid",    "TASKID",  pr_nop,           PROCPS_PIDS_noop,                5,    SUN,  TO|PIDMAX|RIGHT}, // is this a thread ID?
+{"tdev",      "TDEV",    pr_nop,           PROCPS_PIDS_noop,                4,    XXX,  AN|RIGHT},
+{"tgid",      "TGID",    pr_procs,         PROCPS_PIDS_ID_TGID,             5,    LNX,  PO|PIDMAX|RIGHT},
+{"thcount",   "THCNT",   pr_nlwp,          PROCPS_PIDS_NLWP,                5,    AIX,  PO|RIGHT},
+{"tid",       "TID",     pr_tasks,         PROCPS_PIDS_ID_PID,              5,    AIX,  TO|PIDMAX|RIGHT},
+{"time",      "TIME",    pr_time,          PROCPS_PIDS_TIME_ALL,            8,    U98,  ET|RIGHT}, /*cputime*/ /* was 6 wide */
+{"timeout",   "TMOUT",   pr_nop,           PROCPS_PIDS_noop,                5,    LNX,  AN|RIGHT}, // 2.0.xx era
+{"tmout",     "TMOUT",   pr_nop,           PROCPS_PIDS_noop,                5,    LNX,  AN|RIGHT}, // 2.0.xx era
+{"tname",     "TTY",     pr_tty8,          PROCPS_PIDS_TTY_NAME,            8,    DEC,  PO|LEFT},
+{"tpgid",     "TPGID",   pr_tpgid,         PROCPS_PIDS_ID_TPGID,            5,    XXX,  PO|PIDMAX|RIGHT},
+{"trs",       "TRS",     pr_trs,           PROCPS_PIDS_VSIZE_PGS,           4,    AIX,  PO|RIGHT},
+{"trss",      "TRSS",    pr_trs,           PROCPS_PIDS_VSIZE_PGS,           4,    BSD,  PO|RIGHT}, /* 4.3BSD NET/2 */
+{"tsess",     "TSESS",   pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  PO|PIDMAX|RIGHT},
+{"tsession",  "TSESS",   pr_nop,           PROCPS_PIDS_noop,                5,    DEC,  PO|PIDMAX|RIGHT},
+{"tsid",      "TSID",    pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  PO|PIDMAX|RIGHT},
+{"tsig",      "PENDING", pr_tsig,          PROCPS_PIDS_SIGPENDING,          9,    BSD,  ET|SIGNAL}, /* Dragonfly used this for thread-specific, and "sig" for whole-proc */
+{"tsiz",      "TSIZ",    pr_tsiz,          PROCPS_PIDS_VSIZE_PGS,           4,    BSD,  PO|RIGHT},
+{"tt",        "TT",      pr_tty8,          PROCPS_PIDS_TTY_NAME,            8,    BSD,  PO|LEFT},
+{"tty",       "TT",      pr_tty8,          PROCPS_PIDS_TTY_NAME,            8,    U98,  PO|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */
+{"tty4",      "TTY",     pr_tty4,          PROCPS_PIDS_TTY_NAME,            4,    LNX,  PO|LEFT},
+{"tty8",      "TTY",     pr_tty8,          PROCPS_PIDS_TTY_NAME,            8,    LNX,  PO|LEFT},
+{"u_procp",   "UPROCP",  pr_nop,           PROCPS_PIDS_noop,                6,    DEC,  AN|RIGHT},
+{"ucmd",      "CMD",     pr_comm,          PROCPS_PIDS_CMD,                15,    DEC,  PO|UNLIMITED}, /*ucomm*/
+{"ucomm",     "COMMAND", pr_comm,          PROCPS_PIDS_CMD,                15,    XXX,  PO|UNLIMITED}, /*comm*/
+{"uid",       "UID",     pr_euid,          PROCPS_PIDS_ID_EUID,             5,    XXX,  ET|RIGHT},
+{"uid_hack",  "UID",     pr_euser,         PROCPS_PIDS_ID_EUSER,            8,    XXX,  ET|USER},
+{"umask",     "UMASK",   pr_nop,           PROCPS_PIDS_noop,                5,    DEC,  AN|RIGHT},
+{"uname",     "USER",    pr_euser,         PROCPS_PIDS_ID_EUSER,            8,    DEC,  ET|USER}, /* man page misspelling of user? */
+{"unit",      "UNIT",    pr_sd_unit,       PROCPS_PIDS_SD_UNIT,            31,    LNX,  ET|LEFT},
+{"upr",       "UPR",     pr_nop,           PROCPS_PIDS_noop,                3,    BSD,  TO|RIGHT}, /*usrpri*/
+{"uprocp",    "UPROCP",  pr_nop,           PROCPS_PIDS_noop,                8,    BSD,  AN|RIGHT},
+{"user",      "USER",    pr_euser,         PROCPS_PIDS_ID_EUSER,            8,    U98,  ET|USER},  /* BSD n forces this to UID */
+{"userns",    "USERNS",  pr_userns,        PROCPS_PIDS_NS_USER,            10,    LNX,  ET|RIGHT},
+{"usertime",  "USER",    pr_nop,           PROCPS_PIDS_noop,                4,    DEC,  ET|RIGHT},
+{"usrpri",    "UPR",     pr_nop,           PROCPS_PIDS_noop,                3,    DEC,  TO|RIGHT}, /*upr*/
+{"util",      "C",       pr_c,             PROCPS_PIDS_extra,               2,    SGI,  ET|RIGHT}, // not sure about "C"
+{"utime",     "UTIME",   pr_nop,           PROCPS_PIDS_TICS_USER,           6,    LNx,  ET|RIGHT},
+{"utsns",     "UTSNS",   pr_utsns,         PROCPS_PIDS_NS_UTS,             10,    LNX,  ET|RIGHT},
+{"uunit",     "UUNIT",   pr_sd_uunit,      PROCPS_PIDS_SD_UUNIT,           31,    LNX,  ET|LEFT},
+{"vm_data",   "DATA",    pr_nop,           PROCPS_PIDS_VM_DATA,             5,    LNx,  PO|RIGHT},
+{"vm_exe",    "EXE",     pr_nop,           PROCPS_PIDS_VM_EXE,              5,    LNx,  PO|RIGHT},
+{"vm_lib",    "LIB",     pr_nop,           PROCPS_PIDS_VM_LIB,              5,    LNx,  PO|RIGHT},
+{"vm_lock",   "LCK",     pr_nop,           PROCPS_PIDS_VM_LOCK,             3,    LNx,  PO|RIGHT},
+{"vm_stack",  "STACK",   pr_nop,           PROCPS_PIDS_VM_STACK,            5,    LNx,  PO|RIGHT},
+{"vsize",     "VSZ",     pr_vsz,           PROCPS_PIDS_VSIZE_PGS,           6,    DEC,  PO|RIGHT}, /*vsz*/
+{"vsz",       "VSZ",     pr_vsz,           PROCPS_PIDS_VM_SIZE,             6,    U98,  PO|RIGHT}, /*vsize*/
+{"wchan",     "WCHAN",   pr_wchan,         PROCPS_PIDS_WCHAN_ADDR,          6,    XXX,  TO|WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
+{"wname",     "WCHAN",   pr_wname,         PROCPS_PIDS_WCHAN_NAME,          6,    SGI,  TO|WCHAN}, /* opposite of nwchan */
+{"xstat",     "XSTAT",   pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  AN|RIGHT},
+{"zone",      "ZONE",    pr_context,       PROCPS_PIDS_ID_TGID,            31,    SUN,  ET|LEFT},  // Solaris zone == Linux context?
+{"zoneid",    "ZONEID",  pr_nop,           PROCPS_PIDS_noop,               31,    SUN,  ET|RIGHT}, // Linux only offers context names
+{"~",         "-",       pr_nop,           PROCPS_PIDS_noop,                1,    LNX,  AN|RIGHT}  /* NULL would ruin alphabetical order */
 };
 
 #undef USER
@@ -1826,7 +1729,6 @@ static const aix_struct aix_array[] = {
 {'z', "vsz",    "VSZ"},
 {'~', "~",      "~"} /* NULL would ruin alphabetical order */
 };
-static const int aix_array_count = sizeof(aix_array)/sizeof(aix_struct);
 
 
 /********************* sorting ***************************/
@@ -1860,7 +1762,6 @@ static const shortsort_struct shortsort_array[] = {
 {'y', "priority"   }, /* nice */
 {'~', "~"          } /* NULL would ruin alphabetical order */
 };
-static const int shortsort_array_count = sizeof(shortsort_array)/sizeof(shortsort_struct);
 
 
 /*********** print format_array **********/

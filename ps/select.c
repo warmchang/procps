@@ -21,18 +21,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../proc/procps.h"
-#include "../proc/readproc.h"
-
 #include "common.h"
 
-//#define process_group_leader(p) ((p)->pgid    == (p)->tgid)
-//#define some_other_user(p)      ((p)->euid    != cached_euid)
-#define has_our_euid(p)         ((unsigned)(p)->euid    == (unsigned)cached_euid)
-#define on_our_tty(p)           ((unsigned)(p)->tty == (unsigned)cached_tty)
-#define running(p)              (((p)->state=='R')||((p)->state=='D'))
-#define session_leader(p)       ((p)->session == (p)->tgid)
-#define without_a_tty(p)        (!(p)->tty)
+//#define process_group_leader(p) (rSv(ID_PID, s_int, p) == rSv(ID_TGID, s_int, p))
+//#define some_other_user(p)      (rSv(ID_EUID, u_int, p) != cached_euid)
+#define has_our_euid(p)         (rSv(ID_EUID, u_int, p) == cached_euid)
+#define on_our_tty(p)           (rSv(TTY, s_int, p) == cached_tty)
+#define running(p)              (rSv(STATE, s_ch, p) == 'R' || rSv(STATE, s_ch, p) == 'D')
+#define session_leader(p)       (rSv(ID_SESSION, s_int, p) == rSv(ID_TGID, s_int, p))
+#define without_a_tty(p)        (!rSv(TTY, s_int, p))
 
 static unsigned long select_bits = 0;
 
@@ -96,30 +93,28 @@ static int proc_was_listed(proc_t *buf){
 
 #define return_if_match(foo,bar) \
         i=sn->n; while(i--) \
-        if((unsigned)(buf->foo) == (unsigned)(*(sn->u+i)).bar) \
+        if((unsigned)foo == (unsigned)(*(sn->u+i)).bar) \
         return 1
 
-    break; case SEL_RUID: return_if_match(ruid,uid);
-    break; case SEL_EUID: return_if_match(euid,uid);
-    break; case SEL_SUID: return_if_match(suid,uid);
-    break; case SEL_FUID: return_if_match(fuid,uid);
+    break; case SEL_RUID: return_if_match(rSv(ID_RUID, u_int, buf),uid);
+    break; case SEL_EUID: return_if_match(rSv(ID_EUID, u_int, buf),uid);
+    break; case SEL_SUID: return_if_match(rSv(ID_SUID, u_int, buf),uid);
+    break; case SEL_FUID: return_if_match(rSv(ID_FUID, u_int, buf),uid);
 
-    break; case SEL_RGID: return_if_match(rgid,gid);
-    break; case SEL_EGID: return_if_match(egid,gid);
-    break; case SEL_SGID: return_if_match(sgid,gid);
-    break; case SEL_FGID: return_if_match(fgid,gid);
+    break; case SEL_RGID: return_if_match(rSv(ID_RGID, u_int, buf),gid);
+    break; case SEL_EGID: return_if_match(rSv(ID_EGID, u_int, buf),gid);
+    break; case SEL_SGID: return_if_match(rSv(ID_SGID, u_int, buf),gid);
+    break; case SEL_FGID: return_if_match(rSv(ID_FGID, u_int, buf),gid);
 
-    break; case SEL_PGRP: return_if_match(pgrp,pid);
-    break; case SEL_PID : return_if_match(tgid,pid);
-    break; case SEL_PID_QUICK : return_if_match(tgid,pid);
-    break; case SEL_PPID: return_if_match(ppid,ppid);
-    break; case SEL_TTY : return_if_match(tty,tty);
-    break; case SEL_SESS: return_if_match(session,pid);
+    break; case SEL_PGRP: return_if_match(rSv(ID_PGRP, s_int, buf),pid);
+    break; case SEL_PID : return_if_match(rSv(ID_TGID, s_int, buf),pid);
+    break; case SEL_PID_QUICK : return_if_match(rSv(ID_TGID, s_int, buf),pid);
+    break; case SEL_PPID: return_if_match(rSv(ID_PPID, s_int, buf),ppid);
+    break; case SEL_TTY : return_if_match(rSv(TTY, s_int, buf),tty);
+    break; case SEL_SESS: return_if_match(rSv(ID_SESSION, s_int, buf),pid);
 
     break; case SEL_COMM: i=sn->n; while(i--)
-    if(!strncmp( buf->cmd, (*(sn->u+i)).cmd, 15 )) return 1;
-
-
+    if(!strncmp( rSv(CMD, str, buf), (*(sn->u+i)).cmd, 15 )) return 1;
 
 #undef return_if_match
 
