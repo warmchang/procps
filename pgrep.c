@@ -61,14 +61,15 @@ enum pids_item Items[] = {
     PROCPS_PIDS_ID_RUID,
     PROCPS_PIDS_ID_RGID,
     PROCPS_PIDS_ID_SESSION,
+    PROCPS_PIDS_ID_TGID,
     PROCPS_PIDS_TIME_START,
     PROCPS_PIDS_TTY_NAME,
     PROCPS_PIDS_CMD,
-    PROCPS_PIDS_CMDLINE,
+    PROCPS_PIDS_CMDLINE
 };
 enum rel_items {
-    EU_TGID, EU_PPID, EU_PGRP, EU_EUID, EU_RUID, EU_RGID, EU_SESSION,
-    EU_STARTTIME, EU_TTY_NAME, EU_CMD, EU_CMDLINE
+    EU_PID, EU_PPID, EU_PGRP, EU_EUID, EU_RUID, EU_RGID, EU_SESSION,
+    EU_TGID, EU_STARTTIME, EU_TTYNAME, EU_CMD, EU_CMDLINE
 };
 static int i_am_pkill = 0;
 
@@ -478,9 +479,8 @@ static struct el * select_procs (int *num)
     struct procps_pidsinfo *info=NULL;
     struct procps_namespaces nsp;
     struct pids_stack *stack;
-
     unsigned long long saved_start_time;      /* for new/old support */
-    pid_t saved_pid = 0;                      /* for new/old support */
+    int saved_pid = 0;                        /* for new/old support */
     int matches = 0;
     int size = 0;
     regex_t *preg;
@@ -503,7 +503,7 @@ static struct el * select_procs (int *num)
               _("Error reading reference namespace information\n"));
     }
 
-    if (procps_pids_new(&info, 11, Items) < 0)
+    if (procps_pids_new(&info, 12, Items) < 0)
         xerrx(EXIT_FATAL,
               _("Unable to create pid info structure"));
     if (opt_threads && !i_am_pkill)
@@ -517,7 +517,7 @@ static struct el * select_procs (int *num)
     while ((stack = procps_pids_read_next(info))) {
         int match = 1;
 
-        if (PIDS_GETINT(TGID) == myself)
+        if (PIDS_GETINT(PID) == myself)
             continue;
         else if (opt_newest && PIDS_GETULL(STARTTIME) < saved_start_time)
             match = 0;
@@ -537,21 +537,23 @@ static struct el * select_procs (int *num)
             match = 0;
         else if (opt_sid && ! match_numlist (PIDS_GETINT(SESSION), opt_sid))
             match = 0;
-        else if (opt_ns_pid && ! match_ns (PIDS_GETINT(TGID), &nsp))
+        else if (opt_ns_pid && ! match_ns (PIDS_GETINT(PID), &nsp))
             match = 0;
         else if (opt_term)
-            match = match_strlist(PIDS_GETSTR(TTY_NAME), opt_term);
+            match = match_strlist(PIDS_GETSTR(TTYNAME), opt_term);
 
         task_cmdline = PIDS_GETSTR(CMDLINE);
+        task_cmdline[CMDSTRSIZE -1] = '\0';
+
         if (opt_long || opt_longlong || (match && opt_pattern)) {
-            if (opt_longlong && task_cmdline)
+            if (opt_longlong)
                 strncpy (cmdoutput, task_cmdline, CMDSTRSIZE);
             else
                 strncpy (cmdoutput, PIDS_GETSTR(CMD), CMDSTRSIZE);
         }
 
         if (match && opt_pattern) {
-            if (opt_full && task_cmdline)
+            if (opt_full)
                 strncpy (cmdsearch, task_cmdline, CMDSTRSIZE);
             else
                 strncpy (cmdsearch, PIDS_GETSTR(CMD), CMDSTRSIZE);
@@ -563,18 +565,18 @@ static struct el * select_procs (int *num)
         if (match ^ opt_negate) {    /* Exclusive OR is neat */
             if (opt_newest) {
                 if (saved_start_time == PIDS_GETULL(STARTTIME) &&
-                    saved_pid > PIDS_GETINT(TGID))
+                    saved_pid > PIDS_GETINT(PID))
                     continue;
                 saved_start_time = PIDS_GETULL(STARTTIME);
-                saved_pid = PIDS_GETINT(TGID);
+                saved_pid = PIDS_GETINT(PID);
                 matches = 0;
             }
             if (opt_oldest) {
                 if (saved_start_time == PIDS_GETULL(STARTTIME) &&
-                    saved_pid < PIDS_GETINT(TGID))
+                    saved_pid < PIDS_GETINT(PID))
                     continue;
                 saved_start_time = PIDS_GETULL(STARTTIME);
-                saved_pid = PIDS_GETINT(TGID);
+                saved_pid = PIDS_GETINT(PID);
                 matches = 0;
             }
             if (matches == size) {
@@ -582,18 +584,22 @@ static struct el * select_procs (int *num)
                 list = xrealloc(list, size * sizeof *list);
             }
             if (list && (opt_long || opt_longlong || opt_echo)) {
-                list[matches].num = PIDS_GETINT(TGID);
+                list[matches].num = PIDS_GETINT(PID);
                 list[matches++].str = xstrdup (cmdoutput);
             } else if (list) {
-                list[matches++].num = PIDS_GETINT(TGID);
+                list[matches++].num = PIDS_GETINT(PID);
             } else {
                 xerrx(EXIT_FATAL, _("internal error"));
             }
         }
     }
+    procps_pids_read_shut(info);
 
     *num = matches;
     return list;
+#undef PIDS_GETINT
+#undef PIDS_GETULL
+#undef PIDS_GETSTR
 }
 
 static int signal_option(int *argc, char **argv)
@@ -614,9 +620,6 @@ static int signal_option(int *argc, char **argv)
         }
     }
     return -1;
-#undef PIDS_GETINT
-#undef PIDS_GETULL
-#undef PIDS_GETSTR
 }
 
 static void parse_opts (int argc, char **argv)
