@@ -1367,7 +1367,7 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 /* there are about 211 listed */
 /* Many of these are placeholders for unsupported options. */
 static const format_struct format_array[] = { /*
- .spec        .head      .pr               .sr                           width .vendor .flags  */
+ .spec        .head      .pr               .sr                          .width .vendor .flags  */
 {"%cpu",      "%CPU",    pr_pcpu,          PROCPS_PIDS_extra,               4,    BSD,  ET|RIGHT}, /*pcpu*/
 {"%mem",      "%MEM",    pr_pmem,          PROCPS_PIDS_VM_RSS,              4,    BSD,  PO|RIGHT}, /*pmem*/
 {"_left",     "LLLLLLLL", pr_t_left,       PROCPS_PIDS_noop,                8,    TST,  ET|LEFT},

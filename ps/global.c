@@ -48,7 +48,7 @@
 #define __GLIBC_MINOR__ -1
 #endif
 
-// --- <pids> interface begin |||||\||||||||||||||||||||||||||||||||||||||
+// --- <pids> interface begin ||||||||||||||||||||||||||||||||||||||||||||
 // -----------------------------------------------------------------------
 struct procps_pidsinfo *Pids_info = NULL;   // our required <pids> context
 enum pids_item *Pids_items;                 // allocated as PIDSITEMS
@@ -142,7 +142,7 @@ makREL(WCHAN_NAME)
 makREL(extra)
 makREL(noop)
 // -----------------------------------------------------------------------
-// --- <pids> interface end |||||||\||||||||||||||||||||||||||||||||||||||
+// --- <pids> interface end ||||||||||||||||||||||||||||||||||||||||||||||
 
 
 static const char * saved_personality_text = "You found a bug!";
