@@ -94,7 +94,7 @@ struct procps_pidsinfo {
 
         /* note: the vast majority of these 'set' functions have no need for
                  the procps_pidsinfo structure, but it's being passed to all
-                 bacause of the CVT_set requirement & for future flexibility */
+                 because of the CVT_set requirement & for future flexibility */
 
 #define setNAME(e) set_results_ ## e
 #define setDECL(e) static void setNAME(e) \
@@ -251,11 +251,11 @@ setDECL(physical_end) { (void)I; (void)R; (void)P; return; }
 #define freNAME(e) free_results_ ## e
 
 static void freNAME(str) (struct pids_result *R) {
-    if (R->result.str) free((void *)R->result.str);
+    if (R->result.str) free(R->result.str);
 }
 
 static void freNAME(strv) (struct pids_result *R) {
-    if (R->result.str && *R->result.strv) free((void *)*R->result.strv);
+    if (R->result.str && *R->result.strv) free(*R->result.strv);
 }
 
 
@@ -390,16 +390,16 @@ static struct {
     { RS(FLT_MIN),           f_stat,     NULL,      QS(ul_int),   0       },
     { RS(FLT_MIN_C),         f_stat,     NULL,      QS(ul_int),   0       },
     { RS(FLT_MIN_DELTA),     f_stat,     NULL,      QS(ul_int),   +1      },
-    { RS(ID_EGID),           0,          NULL,      QS(u_int),    0       },
+    { RS(ID_EGID),           0,          NULL,      QS(u_int),    0       }, // free w/ simple_read...
     { RS(ID_EGROUP),         f_grp,      NULL,      QS(str),      0       },
-    { RS(ID_EUID),           0,          NULL,      QS(u_int),    0       },
+    { RS(ID_EUID),           0,          NULL,      QS(u_int),    0       }, // free w/ simple_read...
     { RS(ID_EUSER),          f_usr,      NULL,      QS(str),      0       },
     { RS(ID_FGID),           f_status,   NULL,      QS(u_int),    0       },
     { RS(ID_FGROUP),         x_ogroup,   NULL,      QS(str),      0       },
     { RS(ID_FUID),           f_status,   NULL,      QS(u_int),    0       },
     { RS(ID_FUSER),          x_ouser,    NULL,      QS(str),      0       },
     { RS(ID_PGRP),           f_stat,     NULL,      QS(s_int),    0       },
-    { RS(ID_PID),            0,          NULL,      QS(s_int),    0       },
+    { RS(ID_PID),            0,          NULL,      QS(s_int),    0       }, // free w/ simple_nextpid
     { RS(ID_PPID),           f_either,   NULL,      QS(s_int),    0       },
     { RS(ID_RGID),           f_status,   NULL,      QS(u_int),    0       },
     { RS(ID_RGROUP),         x_ogroup,   NULL,      QS(str),      0       },
@@ -410,7 +410,7 @@ static struct {
     { RS(ID_SGROUP),         x_ogroup,   NULL,      QS(str),      0       },
     { RS(ID_SUID),           f_status,   NULL,      QS(u_int),    0       },
     { RS(ID_SUSER),          x_ouser,    NULL,      QS(str),      0       },
-    { RS(ID_TGID),           f_status,   NULL,      QS(s_int),    0       },
+    { RS(ID_TGID),           0,          NULL,      QS(s_int),    0       }, // free w/ simple_nextpid
     { RS(ID_TPGID),          f_stat,     NULL,      QS(s_int),    0       },
     { RS(LXCNAME),           f_lxc,      NULL,      QS(str),      0       },
     { RS(MEM_CODE),          f_statm,    NULL,      QS(sl_int),   0       },
@@ -480,7 +480,7 @@ static struct {
     { RS(VM_USED),           f_status,   NULL,      QS(ul_int),   0       },
     { RS(VSIZE_PGS),         f_stat,     NULL,      QS(ul_int),   0       },
     { RS(WCHAN_ADDR),        f_stat,     NULL,      QS(ul_int),   0       },
-    { RS(WCHAN_NAME),        0,          FF(str),   QS(str),      0       },
+    { RS(WCHAN_NAME),        0,          FF(str),   QS(str),      0       }, // tid already free
     { RS(extra),             0,          NULL,      QS(ull_int),  0       },
     { RS(noop),              0,          NULL,      QS(noop),     0       },
     { RS(logical_end),       0,          NULL,      QS(noop),     0       },
@@ -952,7 +952,7 @@ static void validate_stacks (
 {
     #include <stdio.h>
     static int once = 0;
-    struct stacks_extent *ext = (struct stacks_extent *)stacks;
+    struct stacks_extent *ext = stacks;
     int i, t, x, n = 0;
 
     fprintf(stderr, "  %s: called by '%s'\n", __func__, who);
@@ -1060,7 +1060,7 @@ static int dealloc_stacks (
     if ((*these)->stacks == NULL || (*these)->stacks[0] == NULL)
         return -EINVAL;
 
-    ext = (struct stacks_extent *)(*these);
+    ext = *these;
     rc = extent_free(info, ext);
     *these = NULL;
     return rc;
@@ -1141,7 +1141,7 @@ PROCPS_EXPORT int procps_pids_new (
 
     p->hertz = procps_hertz_get();
     procps_uptime(&uptime_secs, NULL);
-    p->boot_seconds = (unsigned long)uptime_secs;
+    p->boot_seconds = uptime_secs;
 
     p->refcount = 1;
     *info = p;
