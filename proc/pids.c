@@ -63,16 +63,23 @@ struct stacks_extent {
     struct stacks_extent *next;
 };
 
+struct fetch_support {
+    struct pids_stack **anchor;        // reapable/fillable (consolidated extents)
+    int n_alloc;                       // number of above pointers allocated
+    int n_inuse;                       // number of above pointers occupied
+    int n_alloc_save;                  // last known summary.stacks allocation
+    struct pids_reap summary;          // counts + stacks for return to caller
+};
+
 struct procps_pidsinfo {
     int refcount;
     int maxitems;                      // includes 'physical_end' delimiter
     int curitems;                      // includes 'logical_end' delimiter
     enum pids_item *items;             // includes 'phy/log_end' delimiters
-    struct pids_stack **anchor;        // reapable stacks (consolidated extents)
-    int alloc_total;                   // number of above pointers allocated
-    int inuse_total;                   // number of above pointers occupied
     struct stacks_extent *extents;     // anchor for all resettable extents
     struct stacks_extent *otherexts;   // anchor for single stack invariant extents
+    struct fetch_support reap;         // support for procps_pids_reap
+    struct fetch_support select;       // support for procps_pids_select
     int history_yes;                   // need historical data
     struct history_info *hist;         // pointer to historical support data
     int dirty_stacks;                  // extents need dynamic storage clean
@@ -81,10 +88,6 @@ struct procps_pidsinfo {
     unsigned pgs2k_shift;              // to convert some proc vaules
     unsigned flags;                    // the old library PROC_FILL flagss
     PROCTAB *PT;                       // the old library essential interface
-    int select_maxthese;               // largest last known user maxthese
-    struct stacks_extent *select;      // select anchor, subset of 'extents' above
-    struct pids_reap filled;           // counts + stacks for 'procps_pids_select'
-    struct pids_reap reaped;           // counts + stacks for 'procps_pids_reap'
     unsigned long hertz;               // for TIME_ALL & TIME_ELAPSED calculations
     unsigned long long boot_seconds;   // for TIME_ELAPSED calculation
 };
@@ -884,16 +887,20 @@ static inline int oldproc_open (
         unsigned supp_flgs,
         ...)
 {
+
     va_list vl;
     int *ids;
+    int num = 0;
 
     if (info->PT == NULL) {
         va_start(vl, supp_flgs);
         ids = va_arg(vl, int*);
+        if (info->flags | PROC_UID) num = va_arg(vl, int);
         va_end(vl);
-        if (NULL == (info->PT = openproc(info->flags | supp_flgs, ids)))
+        if (NULL == (info->PT = openproc(info->flags | supp_flgs, ids, num)))
             return 0;
     }
+
     return 1;
 } // end: oldproc_open
 
@@ -981,7 +988,9 @@ static void validate_stacks (
 #endif
 
 
-// ___ Former Public Functions ||||||||||||||||||||||||||||||||||||||||||||||||
+// ___ Special Temporary Section  |||||||||||||||||||||||||||||||||||||||||||||
+// [ contains former public functions and other dependent routine(s) while we ]
+// [ resist using forward declarations yet still maintain an alphabetic order ]
 
 /*
  * alloc_stacks():
@@ -1048,6 +1057,7 @@ static struct stacks_extent *alloc_stacks (
 } // end: alloc_stacks
 
 
+#if 0 // --------------------------- not (currently) needed
 static int dealloc_stacks (
         struct procps_pidsinfo *info,
         struct stacks_extent **these)
@@ -1065,6 +1075,60 @@ static int dealloc_stacks (
     *these = NULL;
     return rc;
 } // end: dealloc_stacks
+#endif // -------------------------- not (currently) needed
+
+
+static int fetch_helper (
+        struct procps_pidsinfo *info,
+        struct fetch_support *this)
+{
+ #define n_alloc  this->n_alloc
+ #define n_inuse  this->n_inuse
+    static proc_t task;    // static for initial zeroes + later dynamic free(s)
+    struct stacks_extent *ext;
+
+    if (info == NULL || this == NULL)
+        return -1;
+
+    // initialize stuff -----------------------------------
+    if (!this->anchor) {
+        if ((!(this->anchor = calloc(sizeof(void *), MEMORY_INCR)))
+        || (!(this->summary.stacks = calloc(sizeof(void *), MEMORY_INCR)))
+        || (!(ext = alloc_stacks(info, MEMORY_INCR))))
+            return -1;
+        memcpy(this->anchor, ext->stacks, sizeof(void *) * MEMORY_INCR);
+        n_alloc = MEMORY_INCR;
+    }
+    if (info->dirty_stacks)
+        cleanup_stacks_all(info);
+    toggle_history(info);
+    memset(&this->summary.counts, 0, sizeof(struct pids_counts));
+
+    // iterate stuff --------------------------------------
+    n_inuse = 0;
+    while (info->read_something(info->PT, &task)) {
+        if (!(n_inuse < n_alloc)) {
+            n_alloc += MEMORY_INCR;
+            if ((!(this->anchor = realloc(this->anchor, sizeof(void *) * n_alloc)))
+            || (!(ext = alloc_stacks(info, MEMORY_INCR))))
+                return -1;
+            memcpy(this->anchor + n_inuse, ext->stacks, sizeof(void *) * MEMORY_INCR);
+        }
+        if (!tally_proc(info, &this->summary.counts, &task))
+            return -1;
+        assign_results(info, this->anchor[n_inuse++], &task);
+    }
+
+    // finalize stuff -------------------------------------
+    if (this->n_alloc_save != n_alloc
+    && !(this->summary.stacks = realloc(this->summary.stacks, sizeof(void *) * n_alloc)))
+        return -1;
+    memcpy(this->summary.stacks, this->anchor, sizeof(void *) * n_alloc);
+    this->n_alloc_save = n_alloc;
+    return n_inuse;     // callers beware, this might be zero !
+ #undef n_alloc
+ #undef n_inuse
+} // end: fetch_helper
 
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -1212,12 +1276,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
         struct procps_pidsinfo *info,
         enum pids_reap_type which)
 {
- #define n_alloc  info->alloc_total
- #define n_inuse  info->inuse_total
-    static proc_t task;    // static for initial zeroes + later dynamic free(s)
-    proc_t*(*reap_something)(PROCTAB*, proc_t*);
-    struct stacks_extent *ext;
-    int n_save;
+    int rc;
 
     if (info == NULL || READS_BEGUN)
         return NULL;
@@ -1225,50 +1284,16 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
         return NULL;
     if (which != PROCPS_REAP_TASKS_ONLY && which != PROCPS_REAP_THREADS_TOO)
         return NULL;
-    n_save = n_alloc;
 
-    if (!info->anchor) {
-        if ((!(info->anchor = calloc(sizeof(void *), MEMORY_INCR)))
-        || (!(info->reaped.stacks = calloc(sizeof(void *), MEMORY_INCR)))
-        || (!(ext = alloc_stacks(info, MEMORY_INCR))))
-            return NULL;
-        memcpy(info->anchor, ext->stacks, sizeof(void *) * MEMORY_INCR);
-        n_save = info->alloc_total = MEMORY_INCR;
-    }
-
-    if (info->dirty_stacks)
-        cleanup_stacks_all(info);
-    memset(&info->reaped.counts, 0, sizeof(struct pids_counts));
     if (!oldproc_open(info, 0))
         return NULL;
-    toggle_history(info);
-    reap_something = which ? readeither : readproc;
+    info->read_something = which ? readeither : readproc;
 
-    for (n_inuse = 0; ; n_inuse++) {
-        if (n_inuse == n_alloc) {
-            n_alloc += MEMORY_INCR;
-            if ((!(info->anchor = realloc(info->anchor, sizeof(void *) * n_alloc)))
-            || (!(ext = alloc_stacks(info, MEMORY_INCR))))
-                return NULL;
-            memcpy(info->anchor + n_inuse, ext->stacks, sizeof(void *) * MEMORY_INCR);
-        }
-        if (NULL == reap_something(info->PT, &task))
-            break;
-        if (!tally_proc(info, &info->reaped.counts, &task)) {
-            oldproc_close(info);
-            return NULL;
-        }
-        assign_results(info, info->anchor[n_inuse], &task);
-    }
+    rc = fetch_helper(info, &info->reap);
 
     oldproc_close(info);
-    if (n_save != n_alloc
-    && !(info->reaped.stacks = realloc(info->reaped.stacks, sizeof(void *) * n_alloc)))
-        return NULL;
-    memcpy(info->reaped.stacks, info->anchor, sizeof(void *) * n_alloc);
-    return &info->reaped;
- #undef n_alloc
- #undef n_inuse
+    // we better have found at least 1 pid
+    return (rc > 0) ? &info->reap.summary : NULL;
 } // end: procps_pids_reap
 
 
@@ -1329,15 +1354,21 @@ PROCPS_EXPORT int procps_pids_reset (
 } // end: procps_pids_reset
 
 
+/* procps_pids_select():
+ *
+ * Harvest any processes matching the specified PID or UID and provide the
+ * result stacks along with a summary of the information gathered.
+ *
+ * Returns: pointer to a pids_reap struct on success, NULL on error.
+ */
 PROCPS_EXPORT struct pids_reap *procps_pids_select (
         struct procps_pidsinfo *info,
         unsigned *these,
         int maxthese,
         enum pids_fill_type which)
 {
-    static proc_t task;    // static for initial zeroes + later dynamic free(s)
     unsigned ids[FILL_ID_MAX + 1];
-    int i;
+    int rc;
 
     if (info == NULL || these == NULL || READS_BEGUN)
         return NULL;
@@ -1346,47 +1377,19 @@ PROCPS_EXPORT struct pids_reap *procps_pids_select (
     if (which != PROCPS_FILL_PID && which != PROCPS_FILL_UID)
         return NULL;
 
-    if (info->dirty_stacks)
-        cleanup_stacks_all(info);
-
-    if (maxthese > info->select_maxthese && info->select)
-        dealloc_stacks(info, &info->select);
-    if(!info->select) {
-        if (!(info->select = alloc_stacks(info, maxthese)))
-            return NULL;
-        info->select_maxthese = maxthese;
-    }
-    memset(&info->filled, 0, sizeof(struct pids_reap));
-
     // this zero delimiter is really only needed with PROCPS_FILL_PID
     memcpy(ids, these, sizeof(unsigned) * maxthese);
     ids[maxthese] = 0;
 
-    if (!oldproc_open(info, which, ids, maxthese)) {
-        dealloc_stacks(info, &info->select);
+    if (!oldproc_open(info, which, ids, maxthese))
         return NULL;
-    }
-    toggle_history(info);
+    info->read_something = readproc;
 
-    for (i = 0; i < maxthese; i++) {
-        if (info->select->stacks[i] == NULL)
-            break;
-        if (!readproc(info->PT, &task))
-            break;
-        if (!tally_proc(info, &info->filled.counts, &task)) {
-            oldproc_close(info);
-            dealloc_stacks(info, &info->select);
-            return NULL;
-        }
-        assign_results(info, info->select->stacks[i], &task);
-    }
+    rc = fetch_helper(info, &info->select);
 
     oldproc_close(info);
-#ifdef FPRINT_STACKS
-    validate_stacks(info->select, __func__);
-#endif
-    info->filled.stacks = info->select->stacks;
-    return &info->filled;
+    // no guarantee any pids/uids were found
+    return (rc > -1) ? &info->select.summary : NULL;
 } // end: procps_pids_select
 
 
@@ -1469,10 +1472,14 @@ PROCPS_EXPORT int procps_pids_unref (
                 ext = nextext;
             };
         }
-        if ((*info)->reaped.stacks)
-            free((*info)->reaped.stacks);
-        if ((*info)->anchor)
-            free((*info)->anchor);
+        if ((*info)->reap.anchor)
+            free((*info)->reap.anchor);
+        if ((*info)->reap.summary.stacks)
+            free((*info)->reap.summary.stacks);
+        if ((*info)->select.anchor)
+            free((*info)->select.anchor);
+        if ((*info)->select.summary.stacks)
+            free((*info)->select.summary.stacks);
         if ((*info)->items)
             free((*info)->items);
         if ((*info)->hist) {
