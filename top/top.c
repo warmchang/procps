@@ -2248,7 +2248,7 @@ static void procs_refresh (void) {
  #define nALGN2(n,m) ((n + m - 1) & ~(m - 1))    // with power of 2 align
  #define n_reap  Pids_reap->counts.total         // maintained by newlib
    static double uptime_sav;
-   static int n_alloc;                           // size of windows stacks arrays
+   static int n_alloc = -1;                      // size of windows stacks arrays
    double uptime_cur;
    float et;
    int i;
