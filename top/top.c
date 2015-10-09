@@ -3462,8 +3462,13 @@ static void win_reset (WIN_t *q) {
 #else
          q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = 0;
 #endif
-         osel_clear(q);
          Monpidsidx = 0;
+         osel_clear(q);
+         q->findstr[0] = '\0';
+#ifndef USE_X_COLHDR
+         // NOHISEL_xxx is redundant (already turned off by osel_clear)
+         OFFw(q, NOHIFND_xxx | NOHISEL_xxx);
+#endif
 } // end: win_reset
 
 
@@ -4292,7 +4297,8 @@ static void keys_task (int ch) {
             TOGw(w, Show_HICOLS);
             capsmk(w);
 #else
-            if (ENUviz(w, w->rc.sortindx)) {
+            if (ENUviz(w, w->rc.sortindx)
+            && !CHKw(w, NOHIFND_xxx | NOHISEL_xxx)) {
                TOGw(w, Show_HICOLS);
                if (ENUpos(w, w->rc.sortindx) < w->begpflg) {
                   if (CHKw(w, Show_HICOLS)) w->begpflg += 2;
