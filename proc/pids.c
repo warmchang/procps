@@ -1057,7 +1057,6 @@ static struct stacks_extent *alloc_stacks (
 } // end: alloc_stacks
 
 
-#if 0 // --------------------------- not (currently) needed
 static int dealloc_stacks (
         struct procps_pidsinfo *info,
         struct stacks_extent **these)
@@ -1075,7 +1074,6 @@ static int dealloc_stacks (
     *these = NULL;
     return rc;
 } // end: dealloc_stacks
-#endif // -------------------------- not (currently) needed
 
 
 static int fetch_helper (
@@ -1254,14 +1252,10 @@ PROCPS_EXPORT int procps_pids_read_open (
 PROCPS_EXPORT int procps_pids_read_shut (
         struct procps_pidsinfo *info)
 {
-    int rc;
-
     if (info == NULL || ! READS_BEGUN)
         return -EINVAL;
     oldproc_close(info);
-    rc = extent_free(info, info->read);
-    info->read = NULL;
-    return rc;
+    return dealloc_stacks(info, &info->read);
 } // end: procps_pids_read_shut
 
 
