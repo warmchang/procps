@@ -230,7 +230,7 @@ struct pids_reap *procps_pids_select (
     int maxthese,
     enum pids_fill_type which);
 
-struct pids_stack **procps_pids_stacks_sort (
+struct pids_stack **procps_pids_sort (
     struct procps_pidsinfo *info,
     struct pids_stack *stacks[],
     int numstacked,

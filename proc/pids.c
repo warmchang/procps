@@ -1388,7 +1388,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_select (
 
 
 /*
- * procps_pids_stacks_sort():
+ * procps_pids_sort():
  *
  * Sort stacks anchored in the passed pids_stack pointers array
  * based on the designated sort enumerator and specified order.
@@ -1397,7 +1397,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_select (
  *
  * Note: all of the stacks must be homogeneous (of equal length and content).
  */
-PROCPS_EXPORT struct pids_stack **procps_pids_stacks_sort (
+PROCPS_EXPORT struct pids_stack **procps_pids_sort (
         struct procps_pidsinfo *info,
         struct pids_stack *stacks[],
         int numstacked,
@@ -1435,7 +1435,7 @@ PROCPS_EXPORT struct pids_stack **procps_pids_stacks_sort (
 
     qsort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms);
     return stacks;
-} // end: procps_pids_stacks_sort
+} // end: procps_pids_sort
 
 
 PROCPS_EXPORT int procps_pids_unref (
