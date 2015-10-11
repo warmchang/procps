@@ -315,9 +315,9 @@ static void simple_spew(void){
       }
       break;
     case TF_show_proc|TF_show_task:      // m and -m options
-      procps_pids_stacks_sort(Pids_info, pidreap->stacks
+      procps_pids_sort(Pids_info, pidreap->stacks
         , pidreap->counts.total, PROCPS_PIDS_TIME_START, PROCPS_SORT_ASCEND);
-      procps_pids_stacks_sort(Pids_info, pidreap->stacks
+      procps_pids_sort(Pids_info, pidreap->stacks
         , pidreap->counts.total, PROCPS_PIDS_ID_TGID, PROCPS_SORT_ASCEND);
       for (i = 0; i < pidreap->counts.total; i++) {
         buf = pidreap->stacks[i];
@@ -465,7 +465,7 @@ static void fancy_spew(void){
   if (n) {
     if(forest_type) prep_forest_sort();
     while(sort_list) {
-      procps_pids_stacks_sort(Pids_info, processes, n, sort_list->sr, sort_list->reverse);
+      procps_pids_sort(Pids_info, processes, n, sort_list->sr, sort_list->reverse);
       sort_list = sort_list->next;
     }
     if(forest_type) show_forest(n);

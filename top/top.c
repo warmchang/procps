@@ -4570,7 +4570,7 @@ static void forest_create (WIN_t *q) {
          Tree_ppt = alloc_r(Tree_ppt, sizeof(void*) * hwmsav);
       }
 #ifndef TREE_SCANALL
-      if (!(procps_pids_stacks_sort(Pids_ctx, Seed_ppt, PIDSmaxt
+      if (!(procps_pids_sort(Pids_ctx, Seed_ppt, PIDSmaxt
          , PROCPS_PIDS_TIME_START, PROCPS_SORT_ASCEND)))
             error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 #endif
@@ -5149,7 +5149,7 @@ static int window_show (WIN_t *q, int wmax) {
          item = PROCPS_PIDS_CMDLINE;
       else if (item == PROCPS_PIDS_TICS_ALL && CHKw(q, Show_CTIMES))
          item = PROCPS_PIDS_TICS_ALL_C;
-      if (!(procps_pids_stacks_sort(Pids_ctx, q->ppt , PIDSmaxt, item, sORDER)))
+      if (!(procps_pids_sort(Pids_ctx, q->ppt , PIDSmaxt, item, sORDER)))
          error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
    }
 
