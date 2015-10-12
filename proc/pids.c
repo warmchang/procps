@@ -128,6 +128,7 @@ REG_set(ADDR_KSTK_ESP,    ul_int,  kstk_esp)
 REG_set(ADDR_START_CODE,  ul_int,  start_code)
 REG_set(ADDR_START_STACK, ul_int,  start_stack)
 REG_set(ALARM,            sl_int,  alarm)
+setDECL(CGNAME)       { char *name = strstr(*P->cgroup, ":name="); if (name && *(name+6)) name += 6; else name = *P->cgroup; R->result.str = strdup(name); }
 STV_set(CGROUP,                    cgroup)
 VEC_set(CGROUP_V,                  cgroup)
 STR_set(CMD,                       cmd)
@@ -378,6 +379,7 @@ static struct {
     { RS(ADDR_START_CODE),   f_stat,     NULL,      QS(ul_int),   0       },
     { RS(ADDR_START_STACK),  f_stat,     NULL,      QS(ul_int),   0       },
     { RS(ALARM),             f_stat,     NULL,      QS(sl_int),   0       },
+    { RS(CGNAME),            x_cgroup,   FF(str),   QS(str),      0       },
     { RS(CGROUP),            x_cgroup,   FF(str),   QS(str),      0       },
     { RS(CGROUP_V),          v_cgroup,   FF(strv),  QS(strv),     0       },
     { RS(CMD),               f_either,   FF(str),   QS(str),      0       },

@@ -32,6 +32,7 @@ enum pids_item {
     PROCPS_PIDS_ADDR_START_CODE,       // ul_int
     PROCPS_PIDS_ADDR_START_STACK,      // ul_int
     PROCPS_PIDS_ALARM,                 // sl_int
+    PROCPS_PIDS_CGNAME,                // str
     PROCPS_PIDS_CGROUP,                // str
     PROCPS_PIDS_CGROUP_V,              // strv
     PROCPS_PIDS_CMD,                   // str
