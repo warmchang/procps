@@ -185,7 +185,7 @@ enum pflag {
    EU_FV1, EU_FV2,
    EU_USE,
    EU_NS1, EU_NS2, EU_NS3, EU_NS4, EU_NS5, EU_NS6,
-   EU_LXC,
+   EU_LXC, EU_CGN,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
    EU_MAXPFLGS

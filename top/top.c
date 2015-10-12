@@ -1576,13 +1576,15 @@ static struct {
    {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_PID        },  // ul_int   EU_NS4
    {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_USER       },  // ul_int   EU_NS5
    {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_UTS        },  // ul_int   EU_NS6
-   {     8,     -1,  A_left,     -1,  PROCPS_PIDS_LXCNAME       },  // str      EU_LXC ( the last real pflag )
-// xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . .    ------------------------------------------
-#define eu_CMDLINE     EU_LXC +1
-#define eu_TICS_ALL_C  EU_LXC +2
-#define eu_TIME_START  EU_LXC +3
-#define eu_ID_FUID     EU_LXC +4
-#define eu_XTRA        EU_LXC +5
+   {     8,     -1,  A_left,     -1,  PROCPS_PIDS_LXCNAME       },  // str      EU_LXC
+   {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_CGNAME        },  // str      EU_CGN
+#define eu_LAST        EU_CGN                                       //  ( the last real pflag, currently )
+// xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . ----------------------------------
+#define eu_CMDLINE     eu_LAST +1
+#define eu_TICS_ALL_C  eu_LAST +2
+#define eu_TIME_START  eu_LAST +3
+#define eu_ID_FUID     eu_LAST +4
+#define eu_XTRA        eu_LAST +5
    {          -1, -1, -1, -1,         PROCPS_PIDS_CMDLINE       },  // str      ( if Show_CMDLIN )
    {          -1, -1, -1, -1,         PROCPS_PIDS_TICS_ALL_C    },  // ull_int  ( if Show_CTIMES )
    {          -1, -1, -1, -1,         PROCPS_PIDS_TIME_START    },  // ull_int  ( if Show_FOREST )
@@ -5075,6 +5077,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             cp = make_str(rSv(i, str), W, Js, i);
             break;
    /* str, make_str with varialbe width */
+         case EU_CGN:
          case EU_CGR:
          case EU_ENV:
          case EU_SGD:
