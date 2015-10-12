@@ -314,28 +314,18 @@ setREL3(CMD,CMDLINE,ENVIRON)
 }
 
 
+static int pr_cgname(char *restrict const outbuf,const proc_t *restrict const pp) {
+  int rightward = max_rightward;
+setREL1(CGNAME)
+  escaped_copy(outbuf, rSv(CGNAME, str, pp), OUTBUF_SIZE, &rightward);
+  return max_rightward-rightward;
+}
+
 static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp) {
   int rightward = max_rightward;
 setREL1(CGROUP)
   escaped_copy(outbuf, rSv(CGROUP, str, pp), OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
-}
-
-static int pr_cgname(char *restrict const outbuf,const proc_t *restrict const pp) {
-  int rightward = max_rightward;
-  int i;
-  char *name;
-setREL1(CGROUP)
-
-  if ((name = strstr(rSv(CGROUP, str, pp), ":name=")) != NULL) {
-      name += 6;
-      if (name != '\0') {
-          escape_str(outbuf, name, OUTBUF_SIZE, &rightward);
-          return max_rightward - rightward;
-      }
-  }
-  /* fallback: use full cgroup for name */
-  return pr_cgroup(outbuf, pp);
 }
 
 /* Non-standard, from SunOS 5 */
@@ -1408,7 +1398,7 @@ static const format_struct format_array[] = { /*
 {"bsdtime",   "TIME",    pr_bsdtime,       PROCPS_PIDS_TICS_ALL,            6,    LNX,  ET|RIGHT},
 {"c",         "C",       pr_c,             PROCPS_PIDS_extra,               2,    SUN,  ET|RIGHT},
 {"caught",    "CAUGHT",  pr_sigcatch,      PROCPS_PIDS_SIGCATCH,            9,    BSD,  TO|SIGNAL}, /*sigcatch*/
-{"cgname",    "CGNAME",  pr_cgname,        PROCPS_PIDS_CGROUP,             27,    LNX,  PO|UNLIMITED},
+{"cgname",    "CGNAME",  pr_cgname,        PROCPS_PIDS_CGNAME,             27,    LNX,  PO|UNLIMITED},
 {"cgroup",    "CGROUP",  pr_cgroup,        PROCPS_PIDS_CGROUP,             27,    LNX,  PO|UNLIMITED},
 {"class",     "CLS",     pr_class,         PROCPS_PIDS_SCHED_CLASS,         3,    XXX,  TO|LEFT},
 {"cls",       "CLS",     pr_class,         PROCPS_PIDS_SCHED_CLASS,         3,    HPU,  TO|RIGHT}, /*says HPUX or RT*/
