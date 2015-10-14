@@ -28,5 +28,9 @@ set test "pkill signal option order"
 spawn $pkill -e $testproc_comm -0
 expect_pass "$test" "^$testproc_comm killed \\(pid $testproc1_pid\\)\\s+$testproc_comm killed \\(pid $testproc2_pid\\)\\s*$"
 
+set test "pkill with trailing garbage on int signal"
+spawn $pkill -0garbage $testproc_comm
+expect_pass "$test" "invalid option -- '0'"
+
 # Cleanup
 kill_testproc
