@@ -575,21 +575,6 @@ static void error_exit (const char *str) {
 
 
         /*
-         * Handle library errors ourselves rather than accept a default
-         * fprintf to stderr (since we've mucked with the termios struct) */
-static void library_err (const char *fmts, ...) NORETURN;
-static void library_err (const char *fmts, ...) {
-   static char tmp[MEDBUFSIZ];
-   va_list va;
-
-   va_start(va, fmts);
-   vsnprintf(tmp, sizeof(tmp), fmts, va);
-   va_end(va);
-   error_exit(tmp);
-} // end: library_err
-
-
-        /*
          * Catches all remaining signals not otherwise handled */
 static void sig_abexit (int sig) {
    sigset_t ss;
