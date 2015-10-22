@@ -5390,8 +5390,8 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          case EU_NS5:  // USERNS
          case EU_NS6:  // UTSNS
          {  long ino = p->ns[i - EU_NS1];
-            if (ino > 0) cp = make_num(ino, W, Jn, i);
-            else cp = make_str("-", W, Js, i);
+            if (Rc.zero_suppress && 0 >= ino) cp = make_str("", W, Js, i);
+            else cp = make_num(ino, W, Jn, i);
          }
             break;
 #ifdef OOMEM_ENABLE
