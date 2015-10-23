@@ -530,7 +530,7 @@ static void bye_bye (const char *str) {
             "\t -----\n"
             "\t %5d total entries occupied\n", cross_foot);
 
-         if (maxdepth_sav) {
+         if (maxdepth_sav > 1) {
             fprintf(stderr, "\nPIDs at max depth: ");
             for (i = 0; i < HHASH_SIZ; i++)
                if (depths[i] == maxdepth_sav) {
