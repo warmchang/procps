@@ -49,6 +49,7 @@ struct meminfo_data {
     unsigned long total;
     unsigned long used;
     unsigned long slab;
+    unsigned long slab_reclaimable;
     unsigned long swap_free;
     unsigned long swap_total;
     unsigned long swap_used;
@@ -185,6 +186,8 @@ PROCPS_EXPORT int procps_meminfo_read (
             case 'S':
                 if (0 == strcmp(head, "Slab:"))
                     valptr = &(info->data.slab);
+                if (0 == strcmp(head, "SReclaimable:"))
+                    valptr = &(info->data.slab_reclaimable);
                 else if (0 == strcmp(head, "SwapFree:"))
                     valptr = &(info->data.swap_free);
                 else if (0 == strcmp(head, "SwapTotal:"))
@@ -212,7 +215,7 @@ PROCPS_EXPORT int procps_meminfo_read (
     if (0 == info->data.available) {
         info->data.available = info->data.free;
     }
-    info->data.cached += info->data.slab;
+    info->data.cached += info->data.slab_reclaimable;
     info->data.swap_used = info->data.swap_total - info->data.swap_free;
 
     /* if 'available' is greater than 'total' or our calculation of mem_used
