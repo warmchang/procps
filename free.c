@@ -148,7 +148,7 @@ static const char *scale_size(unsigned long size, int flags, struct commandline_
 
 	/* human readable output */
 	up = nextup;
-	for (i = 1; up[0] != '0'; i++, up++) {
+	for (i = 1; up[0] != 0; i++, up++) {
 		switch (i) {
 		case 1:
 			if (4 >= snprintf(buf, sizeof(buf), "%ld%c", (long)size * 1024, *up))
