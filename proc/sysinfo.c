@@ -704,7 +704,7 @@ nextline:
   if(kb_inactive==~0UL){
     kb_inactive = kb_inact_dirty + kb_inact_clean + kb_inact_laundry;
   }
-  kb_main_cached = kb_page_cache + kb_slab;
+  kb_main_cached = kb_page_cache + kb_slab_reclaimable;
   kb_swap_used = kb_swap_total - kb_swap_free;
 
   /* if kb_main_available is greater than kb_main_total or our calculation of
