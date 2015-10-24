@@ -1,5 +1,3 @@
-[![build status](https://ci.gitlab.com/projects/2142/status.png?ref=master)](https://ci.gitlab.com/projects/2142?ref=master)
-
 procps
 ======
 
