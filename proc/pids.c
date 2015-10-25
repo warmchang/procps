@@ -275,7 +275,7 @@ static void freNAME(str) (struct pids_result *R) {
 }
 
 static void freNAME(strv) (struct pids_result *R) {
-    if (R->result.str && *R->result.strv) free(*R->result.strv);
+    if (R->result.strv && *R->result.strv) free(*R->result.strv);
 }
 
 
