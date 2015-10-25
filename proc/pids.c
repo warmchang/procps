@@ -58,10 +58,9 @@ enum pids_item PROCPS_PIDS_physical_end = PROCPS_PIDS_noop + 2;
     // these represent the proc_t fields whose storage cannot be managed
     // optimally if they are ever referenced more than once in any stack
 enum rel_ref {
-    ref_CGROUP,    ref_CGROUP_V, ref_CMD,       ref_CMDLINE,
-    ref_CMDLINE_V, ref_ENVIRON,  ref_ENVIRON_V, ref_SD_MACH,
-    ref_SD_OUID,   ref_SD_SEAT,  ref_SD_SESS,   ref_SD_SLICE,
-    ref_SD_UNIT,   ref_SD_UUNIT, ref_SUPGIDS,   ref_SUPGROUPS,
+    ref_CGROUP,   ref_CMD,     ref_CMDLINE,   ref_ENVIRON,  ref_SD_MACH,
+    ref_SD_OUID,  ref_SD_SEAT, ref_SD_SESS,   ref_SD_SLICE, ref_SD_UNIT,
+    ref_SD_UUNIT, ref_SUPGIDS, ref_SUPGROUPS,
     MAXIMUM_ref
 };
 
@@ -105,13 +104,6 @@ struct procps_pidsinfo {
 
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
-static char **dupstrvecs (char **pvec) {
-    /* maybe someday we'll actually duplicate these string vectors but,
-       for now, let's just gently tell the user 'thanks, but no thanks'
-       ( remember, that user was already provided with one valid copy ) */
-    return NULL;
-}
-
 #define setNAME(e) set_results_ ## e
 #define setDECL(e) static void setNAME(e) \
     (struct procps_pidsinfo *I, struct pids_result *R, proc_t *P)
@@ -133,9 +125,15 @@ static char **dupstrvecs (char **pvec) {
 #define STV_set(e,x) setDECL(e) { \
     if (I->ref_counts[ref_ ## e] > 1) R->result.str = strdup(*P-> x); \
     else { R->result.str = *P-> x; P-> x = NULL; } }
-// take ownership of true vectorized strings if possible, else return NULL
-#define VEC_set(e,x) setDECL(e) { \
-    if (I->ref_counts[ref_ ## e] > 1) R->result.strv = dupstrvecs(P-> x); \
+/*
+   take ownership of true vectorized strings if possible, else return NULL
+   [ if there's a source field ref_count, then those true string vectors ]
+   [ have already been converted into a single string so we return NULL. ]
+   [ otherwise, the first result struct now gets ownership of those true ]
+   [ string vectors and any duplicate structures will then receive NULL. ]
+*/
+#define VEC_set(e1,e2,x) setDECL(e1) { \
+    if (I->ref_counts[ref_ ## e2]) R->result.strv = NULL; \
     else { R->result.strv = P-> x; P-> x = NULL; } }
 
 REG_set(ADDR_END_CODE,    ul_int,  end_code)
@@ -146,12 +144,12 @@ REG_set(ADDR_START_STACK, ul_int,  start_stack)
 REG_set(ALARM,            sl_int,  alarm)
 setDECL(CGNAME)       { char *name = strstr(*P->cgroup, ":name="); if (name && *(name+6)) name += 6; else name = *P->cgroup; R->result.str = strdup(name); }
 STV_set(CGROUP,                    cgroup)
-VEC_set(CGROUP_V,                  cgroup)
+VEC_set(CGROUP_V,     CGROUP,      cgroup)
 STR_set(CMD,                       cmd)
 STV_set(CMDLINE,                   cmdline)
-VEC_set(CMDLINE_V,                 cmdline)
+VEC_set(CMDLINE_V,    CMDLINE,     cmdline)
 STV_set(ENVIRON,                   environ)
-VEC_set(ENVIRON_V,                 environ)
+VEC_set(ENVIRON_V,    ENVIRON,     environ)
 REG_set(EXIT_SIGNAL,      s_int,   exit_signal)
 REG_set(FLAGS,            ul_int,  flags)
 REG_set(FLT_MAJ,          ul_int,  maj_flt)
@@ -398,12 +396,12 @@ static struct {
     { RS(ALARM),             f_stat,     NULL,      QS(sl_int),   0,        -1            },
     { RS(CGNAME),            x_cgroup,   FF(str),   QS(str),      0,        ref_CGROUP    }, // refcount: diff result, same source
     { RS(CGROUP),            x_cgroup,   FF(str),   QS(str),      0,        ref_CGROUP    }, // refcount: diff result, same source
-    { RS(CGROUP_V),          v_cgroup,   FF(strv),  QS(strv),     0,        ref_CGROUP_V  },
+    { RS(CGROUP_V),          v_cgroup,   FF(strv),  QS(strv),     0,        -1            },
     { RS(CMD),               f_either,   FF(str),   QS(str),      0,        ref_CMD       },
     { RS(CMDLINE),           x_cmdline,  FF(str),   QS(str),      0,        ref_CMDLINE   },
-    { RS(CMDLINE_V),         v_arg,      FF(strv),  QS(strv),     0,        ref_CMDLINE_V },
+    { RS(CMDLINE_V),         v_arg,      FF(strv),  QS(strv),     0,        -1            },
     { RS(ENVIRON),           x_environ,  FF(str),   QS(str),      0,        ref_ENVIRON   },
-    { RS(ENVIRON_V),         v_env,      FF(strv),  QS(strv),     0,        ref_ENVIRON_V },
+    { RS(ENVIRON_V),         v_env,      FF(strv),  QS(strv),     0,        -1            },
     { RS(EXIT_SIGNAL),       f_stat,     NULL,      QS(s_int),    0,        -1            },
     { RS(FLAGS),             f_stat,     NULL,      QS(ul_int),   0,        -1            },
     { RS(FLT_MAJ),           f_stat,     NULL,      QS(ul_int),   0,        -1            },
