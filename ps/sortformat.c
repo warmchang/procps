@@ -31,7 +31,6 @@
 #include "common.h"
 
 static sf_node *sf_list = NULL;         /* deferred sorting and formatting */
-static int broken;                      /* use gross Unix98 parsing? */
 static int have_gnu_sort = 0;           /* if true, "O" must be format */
 static int already_parsed_sort = 0;     /* redundantly set in & out of fn */
 static int already_parsed_format = 0;
@@ -205,7 +204,6 @@ double_percent:
 /***************************************************************
  * Used to parse option O lists. Option O is shared between
  * sorting and formatting. Users may expect one or the other.
- * The "broken" flag enables a really bad Unix98 misfeature.
  * Put each completed format_node onto the list starting at ->f_cooked
  */
 static const char *format_parse(sf_node *sfn){
@@ -235,9 +233,6 @@ static const char *format_parse(sf_node *sfn){
       }
       need_item=1;
       break;
-    case '=':
-      if(broken) goto out;
-      /* fall through */
     default:
       if(need_item) items++;
       need_item=0;
@@ -499,7 +494,6 @@ static const char *short_sort_parse(sf_node *sfn){
 /*
  * Used to parse option O lists. Option O is shared between
  * sorting and formatting. Users may expect one or the other.
- * The "broken" flag enables a really bad Unix98 misfeature.
  * Recursion is to preserve original order.
  */
 static const char *parse_O_option(sf_node *sfn){
@@ -750,12 +744,9 @@ static const char *generate_sysv_list(void){
  * sorting and formatting. Users may expect one or the other.
  * The "broken" flag enables a really bad Unix98 misfeature.
  */
-const char *process_sf_options(int localbroken){
+const char *process_sf_options(void){
   sf_node *sf_walk;
 
-  if(personality & PER_BROKEN_o) localbroken = 1;
-  if(personality & PER_GOOD_o)   localbroken = 0;
-  broken = localbroken;
   if(sf_list){
     const char *err;
     err = parse_O_option(sf_list);
