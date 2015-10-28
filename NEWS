@@ -1,8 +1,24 @@
 procps-ng-NEXT
 ----------------
+  * ps: sort by cgroup Debian #692279
+  * ps: display control group name with -o cgname
+
+procps-ng-3.3.11
+----------------
+  * libprocps API 5:0:0
   * pgrep: don't crash with -a -w flags. Merge 33, Debian #768190
   * skill: command line with signal number interpreted correctly
   * pmap: print process name even if smaps is unreadable Debian #775624
+  * ps: sort by etimes column, uses etime Debian #794619
+  * ps, top: Add support for LXC containers. Ubuntu #1174911
+  * w: work with smaller window sizes Debian #183394
+  * w: correctly find "best" proc with pid wrap
+  * library: use merged systemd library Debian #731256
+  * kill,skill,pkill: fix option parsing
+  * top once again will fully honor a saved rcfile,
+    without requiring --disable-modern-top. Debian #762928, #762947
+  * vmstat: Not crash if partition appears before disk Debian #736628
+  * free: -s without -c works Debian #733758
 
 procps-ng-3.3.10
 ----------------

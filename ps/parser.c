@@ -51,7 +51,6 @@ static int ps_argc;    /* global argc */
 static char **ps_argv; /* global argv */
 static int thisarg;    /* index into ps_argv */
 static char *flagptr;  /* current location in ps_argv[thisarg] */
-static int not_pure_unix = 0;  /* set by BSD and GNU options */
 static int force_bsd = 0;  /* set when normal parsing fails */
 
 #define exclusive(x) if((ps_argc != 2) || strcmp(ps_argv[1],x)) \
@@ -71,7 +70,6 @@ static void display_ps_version(void)
  */
 static const char *get_opt_arg(void){
   if(*(flagptr+1)){     /* argument is part of ps_argv[thisarg] */
-    not_pure_unix = 1;
     return flagptr+1;
   }
   if(thisarg+2 > ps_argc) return NULL;   /* there is nothing left */
@@ -233,18 +231,6 @@ static const char *parse_sysv_option(void){
 
   flagptr = ps_argv[thisarg];
   while(*++flagptr){
-    // Find any excuse to ignore stupid Unix98 misfeatures.
-    //
-    // This list of options is ONLY for those defined by the
-    // "IEEE Std 1003.1, 2004 Edition", "ISO/IEC 9945:2003",
-    // or "Version 2 of the Single Unix Specification".
-    //
-    // It may be time to re-think the existence of this list.
-    // In the meantime, please do not add to it. The list is
-    // intended to ONLY contain flags defined by the POSIX and UNIX
-    // standards published by The Open Group, IEEE, and ISO.
-    if(!strchr("aAdefgGlnoptuU", *flagptr)) not_pure_unix = 1;  // dude, -Z ain't in POSIX
-
     switch(*flagptr){
     case 'A':
       trace("-A selects all processes\n");
@@ -415,7 +401,7 @@ static const char *parse_sysv_option(void){
       trace("-o user-defined format\n");
       arg=get_opt_arg();
       if(!arg) return _("format specification must follow -o");
-      not_pure_unix |= defer_sf_option(arg, SF_U_o);
+      defer_sf_option(arg, SF_U_o);
       return NULL; /* can't have any more options */
     case 'p': /* end */
       trace("-p select by PID\n");
@@ -1121,7 +1107,6 @@ static const char *parse_all_options(void){
   trace("parse_all_options calling arg_type for \"%s\"\n", ps_argv[thisarg]);
     at = arg_type(ps_argv[thisarg]);
     trace("ps_argv[thisarg] is %s\n", ps_argv[thisarg]);
-    if(at != ARG_SYSV) not_pure_unix = 1;
     switch(at){
     case ARG_GNU:
       err = parse_gnu_option();
@@ -1212,7 +1197,7 @@ int arg_parse(int argc, char *argv[]){
   if(err) goto try_bsd;
   err = thread_option_check();
   if(err) goto try_bsd;
-  err = process_sf_options(!not_pure_unix);
+  err = process_sf_options();
   if(err) goto try_bsd;
   err = select_bits_setup();
   if(err) goto try_bsd;
@@ -1231,7 +1216,6 @@ try_bsd:
   ps_argv = argv;
   thisarg = 0;
   /* no need to reset flagptr */
-  not_pure_unix=1;
   force_bsd=1;
   prefer_bsd_defaults=1;
   if(!( (PER_OLD_m|PER_BSD_m) & personality )) /* if default m setting... */
@@ -1242,7 +1226,7 @@ try_bsd:
   if(err2) goto total_failure;
   err2 = thread_option_check();
   if(err2) goto total_failure;
-  err2 = process_sf_options(!not_pure_unix);
+  err2 = process_sf_options();
   if(err2) goto total_failure;
   err2 = select_bits_setup();
   if(err2) goto total_failure;

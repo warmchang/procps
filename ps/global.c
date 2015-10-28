@@ -382,14 +382,7 @@ static const char *set_personality(void){
     return NULL;
 
   case_default: /* use defaults for ps, ignoring other environment variables */
-    return NULL;
-
   case_unknown: /* defaults, but also check inferior environment variables */
-    if(
-      getenv("UNIX95")     /* Irix */
-      || getenv("POSIXLY_CORRECT")  /* most gnu stuff */
-      || (getenv("POSIX2") && !strcmp(getenv("POSIX2"), "on")) /* Unixware 7 */
-    ) personality = PER_BROKEN_o;
     return NULL;
 
   case_aix:
@@ -431,8 +424,9 @@ static const char *set_personality(void){
   case_irix:
   case_sgi:
     s = getenv("_XPG");
-    if(s && s[0]>'0' && s[0]<='9') personality = PER_BROKEN_o;
-    else personality = PER_IRIX_l;
+    if(s && s[0]>'0' && s[0]<='9')
+        return NULL;
+    personality = PER_IRIX_l;
     return NULL;
 
   case_os390:  /* IBM's OS/390 OpenEdition on the S/390 mainframe */
@@ -443,13 +437,13 @@ static const char *set_personality(void){
 
   case_hp:
   case_hpux:
-    personality = PER_BROKEN_o | PER_HPUX_x;
+    personality = PER_HPUX_x;
     return NULL;
 
   case_svr4:
   case_sysv:
   case_sco:
-    personality = PER_BROKEN_o | PER_SVR4_x;
+    personality = PER_SVR4_x;
     return NULL;
 
   case_posix:
@@ -457,7 +451,6 @@ static const char *set_personality(void){
   case_unix95:
   case_unix98:
   case_unix:
-    personality = PER_BROKEN_o;
     return NULL;
 }
 

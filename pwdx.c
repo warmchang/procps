@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 {
 	int ch;
 	int retval = 0, i;
-	int alloclen = 128;
+	ssize_t alloclen = 128;
 	char *pathbuf;
 
 	static const struct option longopts[] = {
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 	if (argc == 0)
 		usage(stderr);
 
-	pathbuf = malloc(alloclen);
+	pathbuf = xmalloc(alloclen);
 
 	for (i = 0; i < argc; i++) {
 		char *s;
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 		 */
 		while ((len = readlink(buf, pathbuf, alloclen)) == alloclen) {
 			alloclen *= 2;
-			pathbuf = realloc(pathbuf, alloclen);
+			pathbuf = xrealloc(pathbuf, alloclen);
 		}
 		free(buf);
 

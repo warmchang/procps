@@ -456,7 +456,7 @@ extern char *myname;
 
 /* sortformat.c */
 extern int defer_sf_option(const char *arg, int source);
-extern const char *process_sf_options(int localbroken);
+extern const char *process_sf_options();
 extern void reset_sortformat(void);
 
 /* select.c */
