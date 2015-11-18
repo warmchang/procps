@@ -228,6 +228,9 @@ static void process_ansi(FILE * fp)
 	 * attributes to apply, but typically there are between 1 and 3.
 	 */
 
+    /* Special case of <ESC>[m */
+    if (buf[0] == '\0')
+        set_ansi_attribute(0);
 
 	for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
 		set_ansi_attribute(strtol(numstart, &endptr, 10));
