@@ -233,7 +233,6 @@ REG_set(TICS_USER,        ull_int, utime)
 REG_set(TICS_USER_C,      ull_int, cutime)
 setDECL(TIME_ALL)     { R->result.ull_int = (P->utime + P->stime) / I->hertz; }
 setDECL(TIME_ELAPSED) { R->result.ull_int = (I->boot_seconds >= (P->start_time / I->hertz)) ? I->boot_seconds - (P->start_time / I->hertz) : 0; }
-
 REG_set(TIME_START,       ull_int, start_time)
 REG_set(TTY,              s_int,   tty)
 setDECL(TTY_NAME)     { char buf[64]; (void)I; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); R->result.str = strdup(buf); }
