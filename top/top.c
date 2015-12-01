@@ -171,7 +171,6 @@ static WIN_t *Curwin;
            [ 'Frames_...' (plural) stuff persists beyond 1 frame ]
            [ or are used in response to async signals received ! ] */
 static volatile int Frames_signal;     // time to rebuild all column headers
-                                       // ie. current 'size' of proc table
 static float        Frame_etscale;     // so we can '*' vs. '/' WHEN 'pcpu'
 
         /* Support for automatically sized fixed-width column expansions.
@@ -2142,7 +2141,7 @@ static void zap_fieldstab (void) {
          = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
       Fieldstab[EU_WCH].width
          = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
-      for (i = EU_NS1; i < EU_NS1 + NUM_NS; i++)
+      for (i = EU_NS1; i <= EU_NS6; i++)
          Fieldstab[i].width
             = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
    }

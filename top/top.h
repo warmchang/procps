@@ -22,7 +22,6 @@
 
 #include <proc/pids.h>
 #include <proc/readstat.h>
-#include "../proc/readproc.h"
 
         /* Defines represented in configure.ac ----------------------------- */
 //#define BOOST_PERCNT            /* enable extra precision for two % fields */
@@ -326,7 +325,7 @@ typedef struct WIN_t {
           totpflgs,        // total of displayable procflgs in pflgsall array
           begpflg,         // scrolled beginning pos into pflgsall array
           endpflg,         // scrolled ending pos into pflgsall array
-          begtask,         // scrolled beginning pos into Frame_maxtask
+          begtask,         // scrolled beginning pos into total tasks
 #ifndef SCROLLVAR_NO
           varcolbeg,       // scrolled position within variable width col
 #endif
@@ -405,44 +404,6 @@ typedef struct WIN_t {
 
         /* Used to clear all or part of our Pseudo_screen */
 #define PSU_CLREOS(y) memset(&Pseudo_screen[ROWMAXSIZ*y], '\0', Pseudo_size-(ROWMAXSIZ*y))
-
-        /* Used as return arguments in *some* of the sort callbacks */
-#define SORT_lt  ( Frame_srtflg > 0 ?  1 : -1 )
-#define SORT_gt  ( Frame_srtflg > 0 ? -1 :  1 )
-#define SORT_eq  0
-
-        /* Used to create *most* of the sort callback functions
-           note: some of the callbacks are NOT your father's callbacks, they're
-                 highly optimized to save them ol' precious cycles! */
-#define SCB_NAME(f) sort_EU_ ## f
-#define SCB_NUM1(f,n) \
-   static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
-      if ( (*P)->n < (*Q)->n ) return SORT_lt; \
-      if ( (*P)->n > (*Q)->n ) return SORT_gt; \
-      return SORT_eq; }
-#define SCB_NUM2(f,n1,n2) \
-   static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
-      if ( ((*P)->n1+(*P)->n2) < ((*Q)->n1+(*Q)->n2) ) return SORT_lt; \
-      if ( ((*P)->n1+(*P)->n2) > ((*Q)->n1+(*Q)->n2) ) return SORT_gt; \
-      return SORT_eq; }
-#define SCB_NUMx(f,n) \
-   static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
-      return Frame_srtflg * ( (*Q)->n - (*P)->n ); }
-#define SCB_STRS(f,s) \
-   static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
-      if (!(*P)->s || !(*Q)->s) return SORT_eq; \
-      return Frame_srtflg * STRCMP((*Q)->s, (*P)->s); }
-#define SCB_STRV(f,b,v,s) \
-   static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
-      if (b) { \
-         if (!(*P)->v || !(*Q)->v) return SORT_eq; \
-         return Frame_srtflg * STRCMP((*Q)->v[0], (*P)->v[0]); } \
-      return Frame_srtflg * STRCMP((*Q)->s, (*P)->s); }
-#define SCB_STRX(f,s) \
-   int strverscmp(const char *s1, const char *s2); \
-   static int SCB_NAME(f) (const proc_t **P, const proc_t **Q) { \
-      if (!(*P)->s || !(*Q)->s) return SORT_eq; \
-      return Frame_srtflg * strverscmp((*Q)->s, (*P)->s); }
 
 /*
  * The following three macros are used to 'inline' those portions of the
