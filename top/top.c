@@ -1535,19 +1535,19 @@ static struct {
    {     4,     -1,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // ul_int   EU_MEM,
 #endif
 #ifndef NOBOOST_MEMS
-   {     7,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_VIRT_KIB  },  // sl_int   EU_VRT
+   {     7,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_VIRT_KIB  },  // ul_int   EU_VRT
    {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_SWAP       },  // ul_int   EU_SWP
    {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // ul_int   EU_RES
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_CODE_KIB  },  // sl_int   EU_COD
-   {     7,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_DATA_KIB  },  // sl_int   EU_DAT
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_SHR_KIB   },  // sl_int   EU_SHR
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_CODE_KIB  },  // ul_int   EU_COD
+   {     7,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_DATA_KIB  },  // ul_int   EU_DAT
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_SHR_KIB   },  // ul_int   EU_SHR
 #else
-   {     5,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_VIRT_KIB  },  // sl_int   EU_VRT
+   {     5,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_VIRT_KIB  },  // ul_int   EU_VRT
    {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_SWAP       },  // ul_int   EU_SWP
    {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // ul_int   EU_RES
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_CODE_KIB  },  // sl_int   EU_COD
-   {     5,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_DATA_KIB  },  // sl_int   EU_DAT
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_SHR_KIB   },  // sl_int   EU_SHR
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_CODE_KIB  },  // ul_int   EU_COD
+   {     5,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_DATA_KIB  },  // ul_int   EU_DAT
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_SHR_KIB   },  // ul_int   EU_SHR
 #endif
    {     4,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MAJ       },  // ul_int   EU_FL1
    {     4,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MIN       },  // ul_int   EU_FL2
@@ -4990,16 +4990,6 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             } else
                cp = make_num(rSv(EU_PRI, s_int), W, Jn, AUTOX_NO);
             break;
-   /* s_int, scale_mem */
-         case EU_RES:
-         case EU_SWP:
-         case EU_USE:
-            cp = scale_mem(S, rSv(i, s_int), W, Jn);
-            break;
-   /* s_int, scale_pcnt */
-         case EU_MEM:
-            cp = scale_pcnt((float)rSv(EU_RES, s_int) * 100 / MEM_VAL(mem_TOTAL), W, Jn);
-            break;
    /* u_int, make_num without auto width */
          case EU_CPN:
             cp = make_num(rSv(i, u_int), W, Jn, AUTOX_NO);
@@ -5030,7 +5020,10 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          case EU_COD:
          case EU_DAT:
          case EU_DRT:   // really # pgs & sl_int, but always zero since 2.6
+         case EU_RES:
          case EU_SHR:
+         case EU_SWP:
+         case EU_USE:
          case EU_VRT:
             cp = scale_mem(S, rSv(i, ul_int), W, Jn);
             break;
@@ -5040,6 +5033,10 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          case EU_FV1:
          case EU_FV2:
             cp = scale_num(rSv(i, ul_int), W, Jn);
+            break;
+   /* ul_int, scale_pcnt */
+         case EU_MEM:
+            cp = scale_pcnt((float)rSv(EU_RES, ul_int) * 100 / MEM_VAL(mem_TOTAL), W, Jn);
             break;
    /* ul_int, make_str with special handling */
          case EU_FLG:
