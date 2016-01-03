@@ -14,11 +14,11 @@ expect_pass "$test" "Usage:\\s+\(lt-\)?kill \\\[options\\\] <pid> \\\[...\\\]\\s
 
 set test "kill list signal names"
 spawn $kill -l
-expect_pass "$test" "^\(\[A-Z12\]\\s*\)+$"
+expect_pass "$test" "^\(\[A-Z12+-\]\\s*\)+$"
 
 set test "kill list signal names in table"
 spawn $kill -L
-expect_pass "$test" "^\(\\s+\\d+ \[A-Z12\]+\)+\\s*$"
+expect_pass "$test" "^\(\\s+\\d+ \[A-Z12+-\]+\)+\\s*$"
 
 set test "kill convert signal name to number"
 spawn  $kill -lHUP
