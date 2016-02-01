@@ -4730,10 +4730,10 @@ static void keys_window (int ch) {
          }
          break;
       case kbd_UP:
-         if (VIZCHKw(w)) if (0 < w->begtask) w->begtask -= 1;
+         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS) && 0 < w->begtask) w->begtask -= 1;
          break;
       case kbd_DOWN:
-         if (VIZCHKw(w)) if (w->begtask < Frame_maxtask - 1) w->begtask += 1;
+         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS) && (w->begtask < Frame_maxtask - 1)) w->begtask += 1;
          break;
 #ifdef USE_X_COLHDR // ------------------------------------
       case kbd_LEFT:
