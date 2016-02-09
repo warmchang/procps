@@ -318,17 +318,17 @@ static void print_extended_maps (FILE *f)
 	while (ret != NULL) {
 		/* === READ MAPPING === */
 		map_desc[0] = '\0';
-		c = '\n';
 		nfields = sscanf(mapbuf,
 				 "%"NUML"[0-9a-f]-%"NUML"[0-9a-f] "
 				 "%"DETL"s %"NUML"[0-9a-f] "
-				 "%63[0-9a-f:] %"NUML"s %127[^\n]%c",
+				 "%63[0-9a-f:] %"NUML"s %127[^\n]",
 				 start, end, perms, offset,
-				 dev, inode, map_desc, &c);
+				 dev, inode, map_desc);
 		/* Must read at least up to inode, else something has changed! */
 		if (nfields < 6)
 			xerrx(EXIT_FAILURE, _("Unknown format in smaps file!"));
 		/* If line too long we dump everything else. */
+		c = mapbuf[strlen(mapbuf) - 1];
 		while (c != '\n') {
 			ret = fgets(mapbuf, sizeof mapbuf, f);
 			c = mapbuf[strlen(mapbuf) - 1];
