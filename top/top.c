@@ -2385,7 +2385,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    sum_ptr = &cpus[sumSLOT];
    memcpy(&sum_ptr->sav, &sum_ptr->cur, sizeof(CT_t));
    // then value the last slot with the cpu summary line
-   if (4 > sscanf(bp, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
+   if (4 > sscanf(bp, "cpu %llu %llu %llu %llu %llu %llu %llu %llu"
       , &sum_ptr->cur.u, &sum_ptr->cur.n, &sum_ptr->cur.s
       , &sum_ptr->cur.i, &sum_ptr->cur.w, &sum_ptr->cur.x
       , &sum_ptr->cur.y, &sum_ptr->cur.z))
@@ -2416,7 +2416,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       bp = 1 + strchr(bp, '\n');
       // remember from last time around
       memcpy(&cpu_ptr->sav, &cpu_ptr->cur, sizeof(CT_t));
-      if (4 > sscanf(bp, "cpu%d %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &cpu_ptr->id
+      if (4 > sscanf(bp, "cpu%d %llu %llu %llu %llu %llu %llu %llu %llu", &cpu_ptr->id
          , &cpu_ptr->cur.u, &cpu_ptr->cur.n, &cpu_ptr->cur.s
          , &cpu_ptr->cur.i, &cpu_ptr->cur.w, &cpu_ptr->cur.x
          , &cpu_ptr->cur.y, &cpu_ptr->cur.z)) {

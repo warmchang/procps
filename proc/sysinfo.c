@@ -198,7 +198,7 @@ static void old_Hertz_hack(void){
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_1);
     /* uptime(&up_1, NULL); */
     FILE_TO_BUF(STAT_FILE,stat_fd);
-    sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &user_j, &nice_j, &sys_j, &other_j, &wait_j, &hirq_j, &sirq_j, &stol_j);
+    sscanf(buf, "cpu %llu %llu %llu %llu %llu %llu %llu %llu", &user_j, &nice_j, &sys_j, &other_j, &wait_j, &hirq_j, &sirq_j, &stol_j);
     FILE_TO_BUF(UPTIME_FILE,uptime_fd);  sscanf(buf, "%lf", &up_2);
     /* uptime(&up_2, NULL); */
   } while((long long)( (up_2-up_1)*1000.0/up_1 )); /* want under 0.1% error */
@@ -326,7 +326,7 @@ void eight_cpu_numbers(double *restrict uret, double *restrict nret, double *res
     new_z = 0;
 
     FILE_TO_BUF(STAT_FILE,stat_fd);
-    sscanf(buf, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", &new_u, &new_n, &new_s, &new_i, &new_w, &new_x, &new_y, &new_z);
+    sscanf(buf, "cpu %llu %llu %llu %llu %llu %llu %llu %llu", &new_u, &new_n, &new_s, &new_i, &new_w, &new_x, &new_y, &new_z);
     ticks_past = (new_u+new_n+new_s+new_i+new_w+new_x+new_y+new_z)-(old_u+old_n+old_s+old_i+old_w+old_x+old_y+old_z);
     if(ticks_past){
       scale = 100.0 / (double)ticks_past;
@@ -466,7 +466,7 @@ void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff
   *czzz = 0;  /* not separated out until the 2.6.11 kernel */
 
   b = strstr(buff, "cpu ");
-  if(b) sscanf(b,  "cpu  %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu", cuse, cice, csys, cide, ciow, cxxx, cyyy, czzz);
+  if(b) sscanf(b,  "cpu  %llu %llu %llu %llu %llu %llu %llu %llu", cuse, cice, csys, cide, ciow, cxxx, cyyy, czzz);
 
   b = strstr(buff, "page ");
   if(b) sscanf(b,  "page %lu %lu", pin, pout);
@@ -477,11 +477,11 @@ void getstat(jiff *restrict cuse, jiff *restrict cice, jiff *restrict csys, jiff
   else need_vmstat_file = 1;
 
   b = strstr(buff, "intr ");
-  if(b) sscanf(b,  "intr %Lu", &llbuf);
+  if(b) sscanf(b,  "intr %llu", &llbuf);
   *intr = llbuf;
 
   b = strstr(buff, "ctxt ");
-  if(b) sscanf(b,  "ctxt %Lu", &llbuf);
+  if(b) sscanf(b,  "ctxt %llu", &llbuf);
   *ctxt = llbuf;
 
   b = strstr(buff, "btime ");
