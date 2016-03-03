@@ -233,13 +233,16 @@ ps_pscommand_SOURCES =  \
 	lib/fileutils.c \
 	lib/signals.c
 
+TESTS = lib/test_strtod_nol
+
 # lib/test_* binaries
 noinst_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
 	lib/test_process \
 	proc/test_sysinfo \
-	proc/test_namespace
+	proc/test_namespace \
+	$(TESTS)
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
 lib_test_strutils_LDADD =
@@ -252,6 +255,9 @@ proc_test_sysinfo_SOURCES = proc/test_sysinfo.c
 proc_test_sysinfo_LDADD = proc/libprocps.la
 proc_test_namespace_SOURCES = proc/test_namespace.c
 proc_test_namespace_LDADD = proc/libprocps.la
+lib_test_strtod_nol_SOURCES = lib/test_strtod_nol.c lib/strutils.c
+lib_test_strtod_nol_LDADD =
+
 if EXAMPLE_FILES
 sysconf_DATA = sysctl.conf
 endif
