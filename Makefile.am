@@ -217,12 +217,15 @@ ps_pscommand_SOURCES =  \
 	ps/stacktrace.c \
 	lib/fileutils.c
 
+TESTS = lib/test_strtod_nol
+
 # lib/test_* binaries
 noinst_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
 	lib/test_nsutils \
-	lib/test_process
+	lib/test_process \
+	$(TESTS)
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
 lib_test_strutils_LDADD =
@@ -232,6 +235,9 @@ lib_test_nsutils_SOURCES = lib/test_nsutils.c lib/nsutils.c
 lib_test_nsutils_LDADD =
 lib_test_process_SOURCES = lib/test_process.c
 lib_test_process_LDADD =
+
+lib_test_strtod_nol_SOURCES = lib/test_strtod_nol.c lib/strutils.c
+lib_test_strtod_nol_LDADD =
 
 if EXAMPLE_FILES
 sysconf_DATA = sysctl.conf

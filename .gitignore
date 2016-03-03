@@ -50,6 +50,7 @@ slabtop
 snice
 stamp-h1
 sysctl
+test-driver
 tload
 top/Makefile
 top/Makefile.in
