@@ -220,12 +220,11 @@ ps_pscommand_SOURCES =  \
 TESTS = lib/test_strtod_nol
 
 # lib/test_* binaries
-noinst_PROGRAMS = \
+check_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
 	lib/test_nsutils \
-	lib/test_process \
-	$(TESTS)
+	lib/test_process
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
 lib_test_strutils_LDADD =
