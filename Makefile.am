@@ -233,16 +233,16 @@ ps_pscommand_SOURCES =  \
 	lib/fileutils.c \
 	lib/signals.c
 
-TESTS = lib/test_strtod_nol
 
 # lib/test_* binaries
-noinst_PROGRAMS = \
+check_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
 	lib/test_process \
 	proc/test_sysinfo \
 	proc/test_namespace \
-	$(TESTS)
+	lib/test_process \
+	lib/test_strtod_nol
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
 lib_test_strutils_LDADD =
@@ -265,7 +265,8 @@ endif
 BUILT_SOURCES = $(top_srcdir)/.version
 
 TESTS = proc/test_sysinfo \
-	proc/test_namespace
+	proc/test_namespace \
+	lib/test_strtod_nol
 
 $(top_srcdir)/.version:
 	touch $(top_srcdir)/.version
