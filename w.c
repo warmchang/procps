@@ -182,6 +182,7 @@ static void print_from(const utmp_t *restrict const u, const int ip_addresses, c
 	char buf[fromlen + 1];
 	char buf_ipv6[INET6_ADDRSTRLEN];
 	int len;
+#ifndef __CYGWIN__
 	int32_t ut_addr_v6[4];      /* IP address of the remote host */
 
 	if (ip_addresses) { /* -i switch used */
@@ -219,6 +220,9 @@ static void print_from(const utmp_t *restrict const u, const int ip_addresses, c
 	} else {  /* -i switch NOT used */
 		print_host(u->ut_host, UT_HOSTSIZE, fromlen);
 	}
+#else
+	print_host(u->ut_host, UT_HOSTSIZE, fromlen);
+#endif
 }
 
 

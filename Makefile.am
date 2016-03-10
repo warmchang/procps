@@ -1,3 +1,8 @@
+CYGWINFLAGS =
+if CYGWIN
+  CYGWINFLAGS += -lintl
+endif
+
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I$(top_srcdir) \
@@ -14,7 +19,7 @@ SUBDIRS = \
 	testsuite
 
 AM_CFLAGS = -Iproc
-LDADD = ./proc/libprocps.la
+LDADD = ./proc/libprocps.la $(CYGWINFLAGS)
 
 transform = s/pscommand/ps/; $(program_transform_name)
 
@@ -97,7 +102,7 @@ dist_man_MANS += \
 slabtop_SOURCES = slabtop.c lib/strutils.c lib/fileutils.c
 slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
 watch_SOURCES = watch.c lib/strutils.c lib/fileutils.c
-watch_LDADD = @WATCH_NCURSES_LIBS@
+watch_LDADD = @WATCH_NCURSES_LIBS@ $(CYGWINFLAGS)
 top_top_SOURCES = \
 	top/top.h \
 	top/top.c \
@@ -105,6 +110,10 @@ top_top_SOURCES = \
 	top/top_nls.c \
 	lib/fileutils.c \
 	lib/signals.c
+if CYGWIN
+  top_top_SOURCES += lib/strverscmp.c
+endif
+
 top_top_LDADD = $(LDADD) @NCURSES_LIBS@ $(DL_LIB)
 endif
 
@@ -128,7 +137,7 @@ pgrep_SOURCES = pgrep.c lib/fileutils.c lib/signals.c
 pkill_SOURCES = pgrep.c lib/fileutils.c lib/signals.c
 pmap_SOURCES = pmap.c lib/fileutils.c
 pwdx_SOURCES = pwdx.c lib/fileutils.c
-pwdx_LDADD=
+pwdx_LDADD= $(CYGWINFLAGS)
 sysctl_SOURCES = sysctl.c lib/fileutils.c
 sysctl_LDADD=
 tload_SOURCES = tload.c lib/strutils.c lib/fileutils.c
@@ -245,18 +254,20 @@ check_PROGRAMS = \
 	lib/test_strtod_nol
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
-lib_test_strutils_LDADD =
+lib_test_strutils_LDADD = $(CYGWINFLAGS)
 lib_test_fileutils_SOURCES = lib/test_fileutils.c lib/fileutils.c
-lib_test_fileutils_LDADD =
+lib_test_fileutils_LDADD = $(CYGWINFLAGS)
+lib_test_nsutils_SOURCES = lib/test_nsutils.c lib/nsutils.c
+lib_test_nsutils_LDADD = $(CYGWINFLAGS)
 lib_test_process_SOURCES = lib/test_process.c
-lib_test_process_LDADD =
+lib_test_process_LDADD = $(CYGWINFLAGS)
 
 proc_test_sysinfo_SOURCES = proc/test_sysinfo.c
 proc_test_sysinfo_LDADD = proc/libprocps.la
 proc_test_namespace_SOURCES = proc/test_namespace.c
 proc_test_namespace_LDADD = proc/libprocps.la
 lib_test_strtod_nol_SOURCES = lib/test_strtod_nol.c lib/strutils.c
-lib_test_strtod_nol_LDADD =
+lib_test_strtod_nol_LDADD = $(CYGWINFLAGS)
 
 if EXAMPLE_FILES
 sysconf_DATA = sysctl.conf
