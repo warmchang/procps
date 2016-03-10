@@ -233,7 +233,8 @@ check_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
 	lib/test_nsutils \
-	lib/test_process
+	lib/test_process \
+	$(TESTS)
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
 lib_test_strutils_LDADD = $(CYGWINFLAGS)
