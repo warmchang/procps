@@ -21,7 +21,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
+#ifndef __CYGWIN__
 #include <sys/prctl.h>
+#endif
 #include "c.h"
 
 #define DEFAULT_SLEEPTIME 300
@@ -78,8 +80,10 @@ int main(int argc, char *argv[])
     sigaction(SIGUSR1, &signal_action, NULL);
     sigaction(SIGUSR2, &signal_action, NULL);
 
+#ifndef __CYGWIN__
     /* set process name */
     prctl(PR_SET_NAME, MY_NAME, NULL, NULL, NULL);
+#endif
 
     while (sleep_time > 0) {
 	sleep_time = sleep(sleep_time);
