@@ -1,3 +1,8 @@
+CYGWINFLAGS =
+if CYGWIN
+  CYGWINFLAGS += -lintl
+endif
+
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I$(top_srcdir) \
@@ -14,7 +19,7 @@ SUBDIRS = \
 	testsuite
 
 AM_CFLAGS = -Iproc
-LDADD = ./proc/libprocps.la
+LDADD = ./proc/libprocps.la $(CYGWINFLAGS)
 
 transform = s/pscommand/ps/; $(program_transform_name)
 
@@ -96,13 +101,17 @@ dist_man_MANS += \
 slabtop_SOURCES = slabtop.c lib/strutils.c lib/fileutils.c
 slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
 watch_SOURCES = watch.c lib/strutils.c lib/fileutils.c
-watch_LDADD = @WATCH_NCURSES_LIBS@
+watch_LDADD = @WATCH_NCURSES_LIBS@ $(CYGWINFLAGS)
 top_top_SOURCES = \
 	top/top.h \
 	top/top.c \
 	top/top_nls.h \
 	top/top_nls.c \
 	lib/fileutils.c
+if CYGWIN
+  top_top_SOURCES += lib/strverscmp.c
+endif
+
 top_top_LDADD = $(LDADD) @NCURSES_LIBS@ $(DL_LIB)
 endif
 
@@ -126,7 +135,7 @@ pgrep_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c
 pkill_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c
 pmap_SOURCES = pmap.c lib/fileutils.c
 pwdx_SOURCES = pwdx.c lib/fileutils.c
-pwdx_LDADD=
+pwdx_LDADD= $(CYGWINFLAGS)
 sysctl_SOURCES = sysctl.c lib/fileutils.c
 tload_SOURCES = tload.c lib/strutils.c lib/fileutils.c
 uptime_SOURCES = uptime.c lib/fileutils.c
@@ -224,19 +233,20 @@ check_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
 	lib/test_nsutils \
-	lib/test_process
+	lib/test_process \
+	$(TESTS)
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
-lib_test_strutils_LDADD =
+lib_test_strutils_LDADD = $(CYGWINFLAGS)
 lib_test_fileutils_SOURCES = lib/test_fileutils.c lib/fileutils.c
-lib_test_fileutils_LDADD =
+lib_test_fileutils_LDADD = $(CYGWINFLAGS)
 lib_test_nsutils_SOURCES = lib/test_nsutils.c lib/nsutils.c
-lib_test_nsutils_LDADD =
+lib_test_nsutils_LDADD = $(CYGWINFLAGS)
 lib_test_process_SOURCES = lib/test_process.c
-lib_test_process_LDADD =
+lib_test_process_LDADD = $(CYGWINFLAGS)
 
 lib_test_strtod_nol_SOURCES = lib/test_strtod_nol.c lib/strutils.c
-lib_test_strtod_nol_LDADD =
+lib_test_strtod_nol_LDADD = $(CYGWINFLAGS)
 
 if EXAMPLE_FILES
 sysconf_DATA = sysctl.conf

@@ -168,6 +168,7 @@ AC_ARG_ENABLE([kill],
 )
 AM_CONDITIONAL(BUILD_KILL, test "x$enable_kill" = xyes)
 AM_CONDITIONAL(LINUX, test "x$host_os" = xlinux-gnu)
+AM_CONDITIONAL(CYGWIN, test "x$host_os" = xcygwin)
 
 AC_ARG_ENABLE([skill],
   AS_HELP_STRING([--enable-skill], [build skill and snice]),
