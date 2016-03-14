@@ -42,7 +42,6 @@
 .ds KA arrow key
 .ds KS scrolling key
 .ds MP physical memory
-.ds MS shared memory
 .ds MV virtual memory
 .ds NT \fBNote\fR:
 .ds PU CPU
@@ -613,8 +612,10 @@ any truncated data.
 
 .TP 4
  7.\fB DATA \*(Em Data + Stack Size (KiB) \fR
-The amount of \*(MP devoted to other than executable code, also known as
-the Data Resident Set size or DRS.
+The amount of private anonymous memory \fIreserved\fR by a process.
+It is also known as the Data Resident Set or DRS.
+Such memory may not yet be mapped to \*(MP (RES) but will always be
+included in the \*(MV (VIRT) amount.
 
 .TP 4
  8.\fB ENVIRON \*(Em Environment variables \fR
@@ -704,7 +705,15 @@ And while the 2.6 kernel can be made mostly preemptible, it is not always so.
 
 .TP 4
 19.\fB RES \*(Em Resident Memory Size (KiB) \fR
-The non-swapped \*(MP a task is using.
+A subset of the virtual address space (VIRT) representing the non-swapped
+\*(MP a task is currently using.
+
+It can include private anonymous pages, private pages mapped to files
+(including program images and shared libraries) plus shared anonymous pages.
+All such memory is backed by the swap file represented separately under SWAP.
+
+Lastly, this field may also include shared file-backed pages which, when
+modified, act as a dedicated swap file and thus will never impact SWAP.
 
 .TP 4
 20.\fB RUID \*(Em Real User Id \fR
@@ -731,10 +740,11 @@ depending on \*(We's delay interval and nice value.
 
 .TP 4
 23.\fB SHR \*(Em Shared Memory Size (KiB) \fR
-The amount of \*(MS available to a task, not all of which is
-typically resident.
-It simply reflects memory that could be potentially shared with
-other processes.
+A subset of resident memory (RES) that may be used by other processes.
+
+It will include shared anonymous pages and shared file-backed pages.
+It also includes \fIprivate\fR pages mapped to files representing
+program images and shared libraries.
 
 .TP 4
 24.\fB SID \*(Em Session Id \fR
