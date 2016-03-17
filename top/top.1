@@ -42,6 +42,7 @@
 .ds KA arrow key
 .ds KS scrolling key
 .ds MP physical memory
+.ds MS swap file
 .ds MV virtual memory
 .ds NT \fBNote\fR:
 .ds PU CPU
@@ -64,6 +65,7 @@
 .ds Xc see the
 .ds XT See topic
 .ds Xt see topic
+.ds XX See `OVERVIEW, Linux Memory Types' for additional details
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
@@ -109,6 +111,10 @@ display and used when reading and writing a \*(CF.
 The remaining Table of Contents
 
 .nf
+    OVERVIEW
+       Operation
+       Startup Defaults
+       Linux Memory Types
     1. COMMAND\-LINE Options
     2. SUMMARY Display
        a. UPTIME and LOAD Averages
@@ -262,6 +268,68 @@ All are explained in detail in the sections that follow.
        y \- Row hilite       On  (yes, running tasks)
        z \- color/mono       On  (show colors)
 .fi
+
+.\" ......................................................................
+.SS Linux Memory Types
+.\" ----------------------------------------------------------------------
+For our purposes there are three types of memory, and one is optional.
+First is \*(MP, a limited resource where code and data must
+reside when executed or referenced.
+Next is the optional \*(MS, where modified (dirty) memory can be saved
+and later retrieved if too many demands are made on \*(MP.
+Lastly we have \*(MV, a nearly unlimited resource serving the
+following goals:
+
+.nf
+   1. abstraction, free from physical memory addresses/limits
+   2. isolation, every process in a separate address space
+   3. sharing, a single mapping can serve multiple needs
+   4. flexibility, assign a virtual address to a file
+.fi
+
+Regardless of which of these forms memory may take, all are managed as
+pages (typically 4096 bytes) but expressed by default in \*(We as
+KiB (kibibyte).
+The memory discussed under topic `2c. MEMORY Usage' deals with \*(MP
+and the \*(MS for the system as a whole.
+The memory reviewed in topic `3. FIELDS / Columns Display'
+embraces all three memory types, but for individual processes.
+
+For each such process, every memory page is restricted to a single
+quadrant from the table below.
+Both \*(MP and \*(MV can include any of the four, while the \*(MS only
+includes #1 through #3.
+The memory in quadrant #4, when modified, acts as its own dedicated \*(MS.
+
+.nf
+                              \fBPrivate\fR | \fBShared\fR
+                          \fB1\fR           |          \fB2\fR
+     \fBAnonymous\fR  . stack               |
+                . malloc()            |
+                . brk()/sbrk()        |
+                . mmap(PRIVATE, ANON) | . mmap(SHARED, ANON)
+               -----------------------+----------------------
+                . mmap(PRIVATE, fd)   | . mmap(SHARED, fd)
+   \fBFile-backed\fR  . pgms/shared libs    |
+                          \fB3\fR           |          \fB4\fR
+.fi
+
+The following may help in interpreting process level memory values displayed
+as columns and discussed in topic `3a. DESCRIPTIONS of Fields'.
+.nf
+   %MEM \- simply RES divided by total \*(MP
+   CODE \- the `pgms' portion of quadrant \fB3\fR
+   DATA \- the quadrant \fB1\fR portion of VIRT
+   RES  \- anything occupying \*(MP (all quadrants)
+   SHR  \- subset of RES (excludes \fB1\fR, includes all \fB2\fR & \fB4\fR, some \fB3\fR)
+   SWAP \- excludes quadrant \fB4\fR
+   USED \- simply the sum of RES and SWAP
+   VIRT \- everything in-use and/or reserved (all quadrants)
+.fi
+
+\*(NT Even though program images and shared libraries are considered
+\fIprivate\fR to a process, they will be accounted for as \fIshared\fR
+(SHR) by the kernel.
 
 .\" ----------------------------------------------------------------------
 .SH 1. COMMAND-LINE Options
@@ -549,7 +617,9 @@ You toggle Irix/Solaris modes with the `I' \*(CI.
 
 .TP 4
  2.\fB %MEM \*(Em Memory Usage (RES) \fR
-A task's currently used share of available \*(MP.
+A task's currently resident share of available \*(MP.
+
+\*(XX.
 
 .TP 4
  3.\fB CGNAME \*(Em Control Group Name \fR
@@ -583,8 +653,10 @@ any truncated data.
 
 .TP 4
  5.\fB CODE \*(Em Code Size (KiB) \fR
-The amount of \*(MP devoted to executable code, also known as
-the Text Resident Set size or TRS.
+The amount of \*(MP currently devoted to executable code, also known
+as the Text Resident Set size or TRS.
+
+\*(XX.
 
 .TP 4
  6.\fB COMMAND \*(Em Command\fB Name\fR or Command\fB Line \fR
@@ -616,6 +688,8 @@ The amount of private anonymous memory \fIreserved\fR by a process.
 It is also known as the Data Resident Set or DRS.
 Such memory may not yet be mapped to \*(MP (RES) but will always be
 included in the \*(MV (VIRT) amount.
+
+\*(XX.
 
 .TP 4
  8.\fB ENVIRON \*(Em Environment variables \fR
@@ -707,13 +781,14 @@ And while the 2.6 kernel can be made mostly preemptible, it is not always so.
 19.\fB RES \*(Em Resident Memory Size (KiB) \fR
 A subset of the virtual address space (VIRT) representing the non-swapped
 \*(MP a task is currently using.
-
 It can include private anonymous pages, private pages mapped to files
 (including program images and shared libraries) plus shared anonymous pages.
-All such memory is backed by the swap file represented separately under SWAP.
+All such memory is backed by the \*(MS represented separately under SWAP.
 
 Lastly, this field may also include shared file-backed pages which, when
-modified, act as a dedicated swap file and thus will never impact SWAP.
+modified, act as a dedicated \*(MS and thus will never impact SWAP.
+
+\*(XX.
 
 .TP 4
 20.\fB RUID \*(Em Real User Id \fR
@@ -741,10 +816,11 @@ depending on \*(We's delay interval and nice value.
 .TP 4
 23.\fB SHR \*(Em Shared Memory Size (KiB) \fR
 A subset of resident memory (RES) that may be used by other processes.
-
 It will include shared anonymous pages and shared file-backed pages.
 It also includes \fIprivate\fR pages mapped to files representing
 program images and shared libraries.
+
+\*(XX.
 
 .TP 4
 24.\fB SID \*(Em Session Id \fR
@@ -791,7 +867,10 @@ The\fI saved\fR user name.
 
 .TP 4
 29.\fB SWAP \*(Em Swapped Size (KiB) \fR
-The non-resident portion of a task's address space.
+The formerly resident portion of a task's address space written
+to the \*(MS when \*(MP becomes over committed.
+
+\*(XX.
 
 .TP 4
 30.\fB TGID \*(Em Thread Group Id \fR
@@ -833,8 +912,10 @@ The\fI effective\fR user ID of the task's owner.
 
 .TP 4
 36.\fB USED \*(Em Memory in Use (KiB) \fR
-This field represents the non-swapped \*(MP a task has used (RES) plus
-the non-resident portion of its address space (SWAP).
+This field represents the non-swapped \*(MP a task is using (RES) plus
+the swapped out portion of its address space (SWAP).
+
+\*(XX.
 
 .TP 4
 37.\fB USER \*(Em User Name \fR
@@ -845,6 +926,8 @@ The\fI effective\fR user name of the task's owner.
 The total amount of \*(MV used by the task.
 It includes all code, data and shared libraries plus pages that have been
 swapped out and pages that have been mapped but not used.
+
+\*(XX.
 
 .TP 4
 39.\fB WCHAN \*(Em Sleeping in Function \fR
