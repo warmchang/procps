@@ -200,17 +200,15 @@ const char *signal_number_to_name(int signo)
 
 int skill_sig_option(int *argc, char **argv)
 {
-    int i, nargs = *argc;
+    int i;
     int signo = -1;
-    for (i = 1; i < nargs; i++) {
+    for (i = 1; i < *argc; i++) {
         if (argv[i][0] == '-') {
             signo = signal_name_to_number(argv[i] + 1);
             if (-1 < signo) {
-                if (nargs - i) {
-                    nargs--;
-                    memmove(argv + i, argv + i + 1,
-                        sizeof(char *) * (nargs - i));
-                }
+                memmove(argv + i, argv + i + 1,
+                        sizeof(char *) * (*argc - i));
+                (*argc)--;
                 return signo;
             }
         }

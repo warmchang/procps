@@ -50,7 +50,7 @@ static void __attribute__ ((__noreturn__)) print_usage(FILE * out)
 
 int main(int argc, char **argv)
 {
-    int signo, i, sigopt=0, loop=1;
+    int signo, i, loop=1;
     long pid;
     int exitvalue = EXIT_SUCCESS;
 
@@ -75,8 +75,6 @@ int main(int argc, char **argv)
     signo = skill_sig_option(&argc, argv);
     if (signo < 0)
         signo = SIGTERM;
-    else
-        sigopt++;
 
     opterr=0; /* suppress errors on -123 */
     while (loop == 1 && (i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
@@ -124,7 +122,7 @@ int main(int argc, char **argv)
             print_usage(stderr);
         }
 
-    argc -= optind + sigopt;
+    argc -= optind;
     argv += optind;
 
     for (i = 0; i < argc; i++) {
