@@ -125,6 +125,9 @@ int main(int argc, char **argv)
     argc -= optind;
     argv += optind;
 
+    if (argc < 1)
+        print_usage(stderr);
+
     for (i = 0; i < argc; i++) {
         pid = strtol_or_err(argv[i], _("failed to parse argument"));
         if (!kill((pid_t) pid, signo))
