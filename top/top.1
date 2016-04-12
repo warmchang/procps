@@ -69,7 +69,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "October 2015" "procps-ng" "User Commands"
+.TH TOP 1 "April 2016" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -307,7 +307,7 @@ The memory in quadrant #4, when modified, acts as its own dedicated \*(MS.
                           \fB1\fR           |          \fB2\fR
      \fBAnonymous\fR  . stack               |
                 . malloc()            |
-                . brk()/sbrk()        |
+                . brk()/sbrk()        | . POSIX shm*
                 . mmap(PRIVATE, ANON) | . mmap(SHARED, ANON)
                -----------------------+----------------------
                 . mmap(PRIVATE, fd)   | . mmap(SHARED, fd)
@@ -317,13 +317,15 @@ The memory in quadrant #4, when modified, acts as its own dedicated \*(MS.
 
 The following may help in interpreting process level memory values displayed
 as columns and discussed in topic `3a. DESCRIPTIONS of Fields'.
+
 .nf
    %MEM \- simply RES divided by total \*(MP
    CODE \- the `pgms' portion of quadrant \fB3\fR
-   DATA \- the quadrant \fB1\fR portion of VIRT
+   DATA \- the entire quadrant \fB1\fR portion of VIRT plus all
+          explicit mmap file-backed pages of quadrant \fB3\fR
    RES  \- anything occupying \*(MP (all quadrants)
    SHR  \- subset of RES (excludes \fB1\fR, includes all \fB2\fR & \fB4\fR, some \fB3\fR)
-   SWAP \- excludes quadrant \fB4\fR
+   SWAP \- potentially any quadrant except \fB4\fR
    USED \- simply the sum of RES and SWAP
    VIRT \- everything in-use and/or reserved (all quadrants)
 .fi
@@ -677,7 +679,7 @@ any truncated data.
 
 .TP 4
  6.\fB DATA \*(Em Data + Stack Size (KiB) \fR
-The amount of private anonymous memory \fIreserved\fR by a process.
+The amount of private memory \fIreserved\fR by a process.
 It is also known as the Data Resident Set or DRS.
 Such memory may not yet be mapped to \*(MP (RES) but will always be
 included in the \*(MV (VIRT) amount.
