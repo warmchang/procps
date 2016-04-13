@@ -132,6 +132,10 @@ enum pids_item {
     PROCPS_PIDS_VM_LIB,                // ul_int
     PROCPS_PIDS_VM_LOCK,               // ul_int
     PROCPS_PIDS_VM_RSS,                // ul_int
+    PROCPS_PIDS_VM_RSS_ANON,           // ul_int
+    PROCPS_PIDS_VM_RSS_FILE,           // ul_int
+    PROCPS_PIDS_VM_RSS_LOCKED,         // ul_int
+    PROCPS_PIDS_VM_RSS_SHARED,         // ul_int
     PROCPS_PIDS_VM_SIZE,               // ul_int
     PROCPS_PIDS_VM_STACK,              // ul_int
     PROCPS_PIDS_VM_SWAP,               // ul_int

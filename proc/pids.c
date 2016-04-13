@@ -242,6 +242,10 @@ REG_set(VM_EXE,           ul_int,  vm_exe)
 REG_set(VM_LIB,           ul_int,  vm_lib)
 REG_set(VM_LOCK,          ul_int,  vm_lock)
 REG_set(VM_RSS,           ul_int,  vm_rss)
+REG_set(VM_RSS_ANON,      ul_int,  vm_rss_anon)
+REG_set(VM_RSS_FILE,      ul_int,  vm_rss_file)
+REG_set(VM_RSS_LOCKED,    ul_int,  vm_lock)
+REG_set(VM_RSS_SHARED,    ul_int,  vm_rss_shared)
 REG_set(VM_SIZE,          ul_int,  vm_size)
 REG_set(VM_STACK,         ul_int,  vm_stack)
 REG_set(VM_SWAP,          ul_int,  vm_swap)
@@ -493,6 +497,10 @@ static struct {
     { RS(VM_LIB),            f_status,   NULL,      QS(ul_int),   0,        -1            },
     { RS(VM_LOCK),           f_status,   NULL,      QS(ul_int),   0,        -1            },
     { RS(VM_RSS),            f_status,   NULL,      QS(ul_int),   0,        -1            },
+    { RS(VM_RSS_ANON),       f_status,   NULL,      QS(ul_int),   0,        -1            },
+    { RS(VM_RSS_FILE),       f_status,   NULL,      QS(ul_int),   0,        -1            },
+    { RS(VM_RSS_LOCKED),     f_status,   NULL,      QS(ul_int),   0,        -1            },
+    { RS(VM_RSS_SHARED),     f_status,   NULL,      QS(ul_int),   0,        -1            },
     { RS(VM_SIZE),           f_status,   NULL,      QS(ul_int),   0,        -1            },
     { RS(VM_STACK),          f_status,   NULL,      QS(ul_int),   0,        -1            },
     { RS(VM_SWAP),           f_status,   NULL,      QS(ul_int),   0,        -1            },
