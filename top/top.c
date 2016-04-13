@@ -284,6 +284,10 @@ SCB_NUMx(PID, tid)
 SCB_NUMx(PPD, ppid)
 SCB_NUMx(PRI, priority)
 SCB_NUM1(RES, vm_rss)                  // also serves MEM !
+SCB_NUM1(RZA, vm_rss_anon)
+SCB_NUM1(RZF, vm_rss_file)
+SCB_NUM1(RZL, vm_lock)
+SCB_NUM1(RZS, vm_rss_shared)
 SCB_STRX(SGD, supgid)
 SCB_STRS(SGN, supgrp)
 SCB_NUM1(SHR, share)
@@ -1776,7 +1780,18 @@ static FLD_t Fieldstab[] = {
    {    10,     -1,  A_right,  SF(NS4),  L_NS      }, // PIDNS
    {    10,     -1,  A_right,  SF(NS5),  L_NS      }, // USERNS
    {    10,     -1,  A_right,  SF(NS6),  L_NS      }, // UTSNS
-   {     8,     -1,  A_left,   SF(LXC),  L_LXC     }
+   {     8,     -1,  A_left,   SF(LXC),  L_LXC     },
+#ifndef NOBOOST_MEMS
+   {     6,  SK_Kb,  A_right,  SF(RZA),  L_status  },
+   {     6,  SK_Kb,  A_right,  SF(RZF),  L_status  },
+   {     6,  SK_Kb,  A_right,  SF(RZL),  L_status  },
+   {     6,  SK_Kb,  A_right,  SF(RZS),  L_status  }
+#else
+   {     4,  SK_Kb,  A_right,  SF(RZA),  L_status  },
+   {     4,  SK_Kb,  A_right,  SF(RZF),  L_status  },
+   {     4,  SK_Kb,  A_right,  SF(RZL),  L_status  },
+   {     4,  SK_Kb,  A_right,  SF(RZS),  L_status  }
+#endif
  #undef SF
  #undef A_left
  #undef A_right
@@ -2316,7 +2331,9 @@ static void zap_fieldstab (void) {
    Fieldstab[EU_VRT].scale = Fieldstab[EU_SWP].scale
       = Fieldstab[EU_RES].scale = Fieldstab[EU_COD].scale
       = Fieldstab[EU_DAT].scale = Fieldstab[EU_SHR].scale
-      = Fieldstab[EU_USE].scale = Rc.task_mscale;
+      = Fieldstab[EU_USE].scale = Fieldstab[EU_RZA].scale
+      = Fieldstab[EU_RZF].scale = Fieldstab[EU_RZL].scale
+      = Fieldstab[EU_RZS].scale = Rc.task_mscale;
 
    // lastly, ensure we've got proper column headers...
    calibrate_fields();
@@ -5425,6 +5442,18 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             break;
          case EU_RES:
             cp = scale_mem(S, p->vm_rss, W, Jn);
+            break;
+         case EU_RZA:
+            cp = scale_mem(S, p->vm_rss_anon, W, Jn);
+            break;
+         case EU_RZF:
+            cp = scale_mem(S, p->vm_rss_file, W, Jn);
+            break;
+         case EU_RZL:
+            cp = scale_mem(S, p->vm_lock, W, Jn);
+            break;
+         case EU_RZS:
+            cp = scale_mem(S, p->vm_rss_shared, W, Jn);
             break;
          case EU_SGD:
             makeVAR(p->supgid);
