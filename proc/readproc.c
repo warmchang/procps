@@ -113,7 +113,7 @@ static inline void free_acquired (proc_t *p, int reuse) {
 ///////////////////////////////////////////////////////////////////////////
 
 typedef struct status_table_struct {
-    unsigned char name[7];        // /proc/*/status field name
+    unsigned char name[8];        // /proc/*/status field name
     unsigned char len;            // name length
 #ifdef LABEL_OFFSET
     long offset;                  // jump address offset
@@ -129,8 +129,11 @@ typedef struct status_table_struct {
 #endif
 #define NUL  {"", 0, 0},
 
+#define GPERF_TABLE_SIZE 128
+
 // Derived from:
 // gperf -7 --language=ANSI-C --key-positions=1,3,4 -C -n -c <if-not-piped>
+// ( --key-positions verified by omission & reported "Computed positions" )
 //
 // Suggested method:
 // Grep this file for "case_", then strip those down to the name.
@@ -144,8 +147,8 @@ typedef struct status_table_struct {
 // the F macro and replacing empty strings with the NUL define.
 //
 // In the status_table_struct watch out for name size (grrr, expanding)
-// and the number of entries (we mask with 63 for now). The table
-// must be padded out to 64 entries, maybe 128 in the future.
+// and the number of entries. Currently, the table is padded to 128
+// entries and we therefore mask with 127.
 
 static void status2proc(char *S, proc_t *restrict P, int is_proc){
     long Threads = 0;
@@ -155,78 +158,76 @@ static void status2proc(char *S, proc_t *restrict P, int is_proc){
   // 128 entries because we trust the kernel to use ASCII names
   static const unsigned char asso[] =
     {
-      64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-      64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-      64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-      64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-      64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-      64, 64, 64, 64, 64, 64, 64, 64, 28, 64,
-      64, 64, 64, 64, 64, 64,  8, 25, 23, 25,
-       6, 25,  0,  3, 64, 64,  3, 64, 25, 64,
-      20,  1,  1,  5,  0, 30,  0,  0, 64, 64,
-      64, 64, 64, 64, 64, 64, 64,  3, 64,  0,
-       0, 18, 64, 10, 64, 10, 64, 64, 64, 20,
-      64, 20,  0, 64, 25, 64,  3, 15, 64,  0,
-      30, 64, 64, 64, 64, 64, 64, 64
+      101, 101, 101, 101, 101, 101, 101, 101, 101, 101,
+      101, 101, 101, 101, 101, 101, 101, 101, 101, 101,
+      101, 101, 101, 101, 101, 101, 101, 101, 101, 101,
+      101, 101, 101, 101, 101, 101, 101, 101, 101, 101,
+      101, 101, 101, 101, 101, 101, 101, 101, 101, 101,
+      101, 101, 101, 101, 101, 101, 101, 101,   6, 101,
+      101, 101, 101, 101, 101,  45,  55,  25,  31,  50,
+       50,  10,   0,  35, 101, 101,  21, 101,  30, 101,
+       20,  36,   0,   5,   0,  40,   0,   0, 101, 101,
+      101, 101, 101, 101, 101, 101, 101,  30, 101,  15,
+        0,   1, 101,  10, 101,  10, 101, 101, 101,  25,
+      101,  40,   0, 101,   0,  50,   6,  40, 101,   1,
+       35, 101, 101, 101, 101, 101, 101, 101
     };
 
-    static const status_table_struct table[] = {
+    static const status_table_struct table[GPERF_TABLE_SIZE] = {
       F(VmHWM)
-      NUL NUL
-      F(VmLck)
-      NUL
-      F(VmSwap)
-      F(VmRSS)
-      NUL
-      F(VmStk)
-      NUL
-      F(Tgid)
-      F(State)
-      NUL
-      F(VmLib)
-      NUL
-      F(VmSize)
-      F(SigQ)
-      NUL
-      F(SigIgn)
-      NUL
-      F(VmPTE)
-      F(FDSize)
-      NUL
-      F(SigBlk)
-      NUL
-      F(ShdPnd)
-      F(VmData)
-      NUL
-      F(CapInh)
-      NUL
-      F(PPid)
-      NUL NUL
-      F(CapBnd)
-      NUL
-      F(SigPnd)
-      NUL NUL
-      F(VmPeak)
-      NUL
-      F(SigCgt)
-      NUL NUL
       F(Threads)
-      NUL
-      F(CapPrm)
-      NUL NUL
-      F(Pid)
-      NUL
-      F(CapEff)
-      NUL NUL
+      NUL NUL NUL
+      F(VmRSS)
+      F(VmSwap)
+      NUL NUL NUL
+      F(Tgid)
+      F(VmStk)
+      NUL NUL NUL
+      F(VmSize)
       F(Gid)
-      NUL
-      F(VmExe)
-      NUL NUL
+      NUL NUL NUL
+      F(VmPTE)
+      F(VmPeak)
+      NUL NUL NUL
+      F(ShdPnd)
+      F(Pid)
+      NUL NUL NUL
+      F(PPid)
+      F(VmLib)
+      NUL NUL NUL
+      F(SigPnd)
+      F(VmLck)
+      NUL NUL NUL
+      F(SigCgt)
+      F(State)
+      NUL NUL NUL
+      F(CapPrm)
       F(Uid)
-      NUL
-      F(Groups)
-      NUL NUL
+      NUL NUL NUL
+      F(SigIgn)
+      F(SigQ)
+      NUL NUL NUL
+      F(RssShmem)
       F(Name)
+      NUL NUL NUL
+      F(CapInh)
+      F(VmData)
+      NUL NUL NUL
+      F(FDSize)
+      NUL NUL NUL NUL
+      F(SigBlk)
+      NUL NUL NUL NUL
+      F(CapEff)
+      NUL NUL NUL NUL
+      F(CapBnd)
+      NUL NUL NUL NUL
+      F(VmExe)
+      NUL NUL NUL NUL
+      F(Groups)
+      NUL NUL NUL NUL
+      F(RssAnon)
+      NUL NUL NUL NUL
+      F(RssFile)
     };
 
 #undef F
@@ -248,7 +249,7 @@ ENTER(0x220);
         // examine a field name (hash and compare)
     base:
         if(unlikely(!*S)) break;
-        entry = table[63 & (asso[(int)S[3]] + asso[(int)S[2]] + asso[(int)S[0]])];
+        entry = table[(GPERF_TABLE_SIZE -1) & (asso[(int)S[3]] + asso[(int)S[2]] + asso[(int)S[0]])];
         colon = strchr(S, ':');
         if(unlikely(!colon)) break;
         if(unlikely(colon[1]!='\t')) break;
@@ -361,6 +362,15 @@ ENTER(0x220);
     case_VmRSS:
         P->vm_rss = strtol(S,&S,10);
         continue;
+    case_RssAnon:       // subset of VmRSS, linux-4.5
+        P->vm_rss_anon = strtol(S,&S,10);
+        continue;
+    case_RssFile:       // subset of VmRSS, linux-4.5
+        P->vm_rss_file = strtol(S,&S,10);
+        continue;
+    case_RssShmem:      // subset of VmRSS, linux-4.5
+        P->vm_rss_shared = strtol(S,&S,10);
+        continue;
     case_VmSize:
         P->vm_size = strtol(S,&S,10);
         continue;
@@ -436,6 +446,7 @@ ENTER(0x220);
 
 LEAVE(0x220);
 }
+#undef GPERF_TABLE_SIZE
 
 static void supgrps_from_supgids (proc_t *p) {
     char *g, *s;
