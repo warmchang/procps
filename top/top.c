@@ -1577,7 +1577,18 @@ static struct {
    {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_UTS        },  // ul_int   EU_NS6
    {     8,     -1,  A_left,     -1,  PROCPS_PIDS_LXCNAME       },  // str      EU_LXC
    {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_CGNAME        },  // str      EU_CGN
-#define eu_LAST        EU_CGN                                       //  ( the last real pflag, currently )
+#ifndef NOBOOST_MEMS
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_ANON   },  // ul_int   EU_RZA
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_FILE   },  // ul_int   EU_RZF
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_LOCKED },  // ul_int   EU_RZL
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_SHARED },  // ul_int   EU_RZS
+#else
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_ANON   },  // ul_int   EU_RZA
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_FILE   },  // ul_int   EU_RZF
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_LOCKED },  // ul_int   EU_RZL
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_SHARED },  // ul_int   EU_RZS
+#endif
+#define eu_LAST        EU_RZS                                       //  ( the last real pflag, currently )
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . ----------------------------------
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -2150,7 +2161,9 @@ static void zap_fieldstab (void) {
    Fieldstab[EU_VRT].scale = Fieldstab[EU_SWP].scale
       = Fieldstab[EU_RES].scale = Fieldstab[EU_COD].scale
       = Fieldstab[EU_DAT].scale = Fieldstab[EU_SHR].scale
-      = Fieldstab[EU_USE].scale = Rc.task_mscale;
+      = Fieldstab[EU_USE].scale = Fieldstab[EU_RZA].scale
+      = Fieldstab[EU_RZF].scale = Fieldstab[EU_RZL].scale
+      = Fieldstab[EU_RZS].scale = Rc.task_mscale;
 
    // lastly, ensure we've got proper column headers...
    calibrate_fields();
@@ -5020,6 +5033,10 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          case EU_DAT:
          case EU_DRT:   // really # pgs & sl_int, but always zero since 2.6
          case EU_RES:
+         case EU_RZA:
+         case EU_RZF:
+         case EU_RZL:
+         case EU_RZS:
          case EU_SHR:
          case EU_SWP:
          case EU_USE:

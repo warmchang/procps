@@ -281,6 +281,18 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'CGNAME' = 7 */
    Head_nlstab[EU_CGN] = _("CGNAME");
    Desc_nlstab[EU_CGN] = _("Control Group name");
+/* Translation Hint: maximum 'RSan' = 4 */
+   Head_nlstab[EU_RZA] = _("RSan");
+   Desc_nlstab[EU_RZA] = _("RES Anonymous (KiB)");
+/* Translation Hint: maximum 'RSfd' = 4 */
+   Head_nlstab[EU_RZF] = _("RSfd");
+   Desc_nlstab[EU_RZF] = _("RES File-based (KiB)");
+/* Translation Hint: maximum 'RSlk' = 4 */
+   Head_nlstab[EU_RZL] = _("RSlk");
+   Desc_nlstab[EU_RZL] = _("RES Locked (KiB)");
+/* Translation Hint: maximum 'RSsh' = 4 */
+   Head_nlstab[EU_RZS] = _("RSsh");
+   Desc_nlstab[EU_RZS] = _("RES Shared (KiB)");
 }
 
 
