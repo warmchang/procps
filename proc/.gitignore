@@ -1,2 +1,3 @@
-test_sysinfo
 test_namespace
+test_version
+test_sysinfo

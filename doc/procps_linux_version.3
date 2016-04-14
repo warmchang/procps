@@ -1,0 +1,63 @@
+.\"
+.\" (C) Copyright 2016 Craig Small <csmall@enc.com.au>
+.\"
+.TH PROCPS_LINUX_VERSION 3 2016-04-14
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.SH NAME
+procps_linux_version \-
+provide current version of Linux as an integer
+.SH SYNOPSIS
+.B #include <proc/procps.h>
+.sp
+.B int procps_linux_version(void);
+.sp
+Link with \fI\-lprocps\fP.
+.SH DESCRIPTION
+The function
+.BR procps_linux_version ()
+returns the current Linux version as an integer. On systems that have an emulated proc filesystem this function returns the
+version of the Linux emulation instead.
+
+The Linux version consists of a triple of positive integers representing the major, minor and patch versions of the kernel. 
+The library provides 3 macros for separating out the components.
+.RS 4
+.TP 1.2i
+.BR LINUX_VERSION_MAJOR (ver)
+Extract the major component from the given version integer.
+.TP
+.BR LINUX_VERSION_MINOR (ver)
+Extract the minor component from the given version integer.
+.TP
+.BR LINUX_VERSION_PATCH (ver)
+Extract the patch component from the given version integer.
+.RE
+.PP
+To encode a given Linux version, such as using it to compare against the current 
+version, use the following macro:
+.TP
+.BI LINUX_VERSION( major , minor , patch )
+
+.SH RETURN VALUE
+On success,
+.BR procps_linux_version ()
+return a positive integer which is the encoded Linux kernel version;
+on error, it returns a negative integer.
+
+.SH ERRORS
+On error, 
+.BR procps_linux_version ()
+may return the following values as errors:
+.TP
+.B -EIO
+The procps library was unable to read the osrelease file.
+.TP
+.B -ERANGE
+Unable to parse the osrelease file.
+.PP
+.BR procps_linux_version ()
+may also return any (negated) value that \fBfopen\fR() may return.
+
+.SH SEE ALSO
+.BR fopen (3),
+.BR proc (5).

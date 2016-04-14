@@ -53,7 +53,8 @@ dist_man_MANS = \
 	uptime.1 \
 	vmstat.8 \
 	w.1 \
-	ps/ps.1
+	ps/ps.1 \
+	doc/procps_linux_version.3
 
 EXTRA_DIST = \
 	.version \
@@ -248,10 +249,7 @@ check_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
 	lib/test_process \
-	proc/test_sysinfo \
-	proc/test_namespace \
-	lib/test_process \
-	lib/test_strtod_nol
+	$(TESTS)
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
 lib_test_strutils_LDADD = $(CYGWINFLAGS)
@@ -266,6 +264,8 @@ proc_test_sysinfo_SOURCES = proc/test_sysinfo.c
 proc_test_sysinfo_LDADD = proc/libprocps.la
 proc_test_namespace_SOURCES = proc/test_namespace.c
 proc_test_namespace_LDADD = proc/libprocps.la
+proc_test_version_SOURCES = include/tests.h proc/test_version.c
+proc_test_version_LDADD = proc/libprocps.la
 lib_test_strtod_nol_SOURCES = lib/test_strtod_nol.c lib/strutils.c
 lib_test_strtod_nol_LDADD = $(CYGWINFLAGS)
 
@@ -277,6 +277,7 @@ BUILT_SOURCES = $(top_srcdir)/.version
 
 TESTS = proc/test_sysinfo \
 	proc/test_namespace \
+	proc/test_version \
 	lib/test_strtod_nol
 
 $(top_srcdir)/.version:
