@@ -543,11 +543,11 @@ ENTER(0x160);
        "%c "
        "%d %d %d %d %d "
        "%lu %lu %lu %lu %lu "
-       "%Lu %Lu %Lu %Lu "  /* utime stime cutime cstime */
+       "%llu %llu %llu %llu "  /* utime stime cutime cstime */
        "%ld %ld "
        "%d "
        "%ld "
-       "%Lu "  /* start_time */
+       "%llu "  /* start_time */
        "%lu "
        "%ld "
        "%lu %"KLF"u %"KLF"u %"KLF"u %"KLF"u %"KLF"u "

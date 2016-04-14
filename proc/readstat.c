@@ -131,7 +131,7 @@ PROCPS_EXPORT int procps_stat_read (
             break;
         *tail = '\0';
         if (0 == strcmp(head, "cpu")) {
-            if (sscanf(tail+1, "%Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu",
+            if (sscanf(tail+1, "%llu %llu %llu %llu %llu %llu %llu %llu %llu %llu",
                 &(info->data.cpu.user),
                 &(info->data.cpu.nice),
                 &(info->data.cpu.system),
@@ -390,7 +390,7 @@ PROCPS_EXPORT int procps_stat_read_jiffs (
     // remember from last time around
     memcpy(&sum_ptr->cpu.old, &sum_ptr->cpu.new, sizeof(struct procps_jiffs));
     // then value the summary line
-    if (8 > sscanf(bp, "cpu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
+    if (8 > sscanf(bp, "cpu %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu"
         , &sum_ptr->cpu.new.user,  &sum_ptr->cpu.new.nice,   &sum_ptr->cpu.new.system
         , &sum_ptr->cpu.new.idle,  &sum_ptr->cpu.new.iowait, &sum_ptr->cpu.new.irq
         , &sum_ptr->cpu.new.sirq,  &sum_ptr->cpu.new.stolen
@@ -405,7 +405,7 @@ reap_em_again:
         bp = 1 + strchr(bp, '\n');
         // remember from last time around
         memcpy(&cpu_ptr->cpu.old, &cpu_ptr->cpu.new, sizeof(struct procps_jiffs));
-        if (8 > (rc = sscanf(bp, "cpu%d %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu %Lu"
+        if (8 > (rc = sscanf(bp, "cpu%d %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu"
             , &cpu_ptr->cpu.id
             , &cpu_ptr->cpu.new.user,  &cpu_ptr->cpu.new.nice,   &cpu_ptr->cpu.new.system
             , &cpu_ptr->cpu.new.idle,  &cpu_ptr->cpu.new.iowait, &cpu_ptr->cpu.new.irq
