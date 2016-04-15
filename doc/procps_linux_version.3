@@ -1,7 +1,22 @@
-.\"
 .\" (C) Copyright 2016 Craig Small <csmall@enc.com.au>
 .\"
-.TH PROCPS_LINUX_VERSION 3 2016-04-14
+.\" %%%LICENSE_START(LGPL_2.1+)
+.\" This manual is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2.1 of the License, or (at your option) any later version.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+.\" %%%LICENSE_END
+.\"
+.TH PROCPS_LINUX_VERSION 3 2016-04-14 "libproc-2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .SH NAME
@@ -16,10 +31,12 @@ Link with \fI\-lprocps\fP.
 .SH DESCRIPTION
 The function
 .BR procps_linux_version ()
-returns the current Linux version as an integer. On systems that have an emulated proc filesystem this function returns the
-version of the Linux emulation instead.
-
-The Linux version consists of a triple of positive integers representing the major, minor and patch versions of the kernel. 
+returns the current Linux version as an integer. On non-Linux systems that
+have an emulated proc filesystem this function returns the version of the
+Linux emulation instead.
+The Linux version consists of a triple of positive integers representing
+the major, minor and patch versions of the kernel. 
+.PP
 The library provides 3 macros for separating out the components.
 .RS 4
 .TP 1.2i
@@ -39,15 +56,10 @@ version, use the following macro:
 .BI LINUX_VERSION( major , minor , patch )
 
 .SH RETURN VALUE
-On success,
+The
 .BR procps_linux_version ()
-return a positive integer which is the encoded Linux kernel version;
-on error, it returns a negative integer.
-
-.SH ERRORS
-On error, 
-.BR procps_linux_version ()
-may return the following values as errors:
+returns a positive integer encoding the Linux version if successful. Otherwise
+returns a negative integer to one of the values defined below.
 .TP
 .B -EIO
 The procps library was unable to read the osrelease file.
@@ -56,7 +68,16 @@ The procps library was unable to read the osrelease file.
 Unable to parse the osrelease file.
 .PP
 .BR procps_linux_version ()
-may also return any (negated) value that \fBfopen\fR() may return.
+may also return any (negated) value that \fBfopen\fR() may set errno to.
+
+.SH FILES
+.TP
+.I /proc/sys/kernel/osrelease
+Contains the release version of the Linux kernel or proc filesystem.
+
+.SH VERSIONS
+.B procps_linux_version()
+first appeared in libproc-2 version 0.0.
 
 .SH SEE ALSO
 .BR fopen (3),
