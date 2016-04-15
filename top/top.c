@@ -1556,8 +1556,8 @@ static struct {
    {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_SUPGIDS       },  // str      EU_SGD
    {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_SUPGROUPS     },  // str      EU_SGN
    {     0,     -1,  A_right,    -1,  PROCPS_PIDS_ID_TGID       },  // s_int    EU_TGD
-   {     3,     -1,  A_right,    -1,  PROCPS_PIDS_OOM_ADJ       },  // s_int    EU_OOA
-   {     8,     -1,  A_right,    -1,  PROCPS_PIDS_OOM_SCORE     },  // s_int    EU_OOM
+   {     5,     -1,  A_right,    -1,  PROCPS_PIDS_OOM_ADJ       },  // s_int    EU_OOA
+   {     4,     -1,  A_right,    -1,  PROCPS_PIDS_OOM_SCORE     },  // s_int    EU_OOM
    {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_ENVIRON       },  // str      EU_ENV
    {     3,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MAJ_DELTA },  // ul_int   EU_FV1
    {     3,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MIN_DELTA },  // ul_int   EU_FV2

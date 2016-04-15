@@ -237,12 +237,12 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'TGID' = 5 */
    Head_nlstab[EU_TGD] = _("TGID");
    Desc_nlstab[EU_TGD] = _("Thread Group Id");
-/* Translation Hint: maximum 'Adj' = 3 */
-   Head_nlstab[EU_OOA] = _("Adj");
-   Desc_nlstab[EU_OOA] = _("oom_adjustment (2^X)");
-/* Translation Hint: maximum 'Badness' = 7 */
-   Head_nlstab[EU_OOM] = _("Badness");
-   Desc_nlstab[EU_OOM] = _("oom_score (badness)");
+/* Translation Hint: maximum 'OOMa' = 5 */
+   Head_nlstab[EU_OOA] = _("OOMa");
+   Desc_nlstab[EU_OOA] = _("OOMEM Adjustment");
+/* Translation Hint: maximum 'OOMs' = 4 */
+   Head_nlstab[EU_OOM] = _("OOMs");
+   Desc_nlstab[EU_OOM] = _("OOMEM Score current");
 /* Translation Hint: maximum 'ENVIRON' = 7 */
    Head_nlstab[EU_ENV] = _("ENVIRON");
 /* Translation Hint: the abbreviation 'vars' below is shorthand for
