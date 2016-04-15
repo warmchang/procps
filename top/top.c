@@ -1496,13 +1496,18 @@ static inline const char *make_chr (const char ch, int width, int justr) {
         /*
          * Make and then justify an integer NOT subject to scaling,
          * and include a visual clue should tuncation be necessary. */
-static inline const char *make_num (long num, int width, int justr, int col) {
+static inline const char *make_num (long num, int width, int justr, int col, int noz) {
    static char buf[SMLBUFSIZ];
+
+   buf[0] = '\0';
+   if (noz && Rc.zero_suppress && 0 == num)
+      goto end_justifies;
 
    if (width < snprintf(buf, sizeof(buf), "%ld", num)) {
       buf[width-1] = COLPLUSCH;
       AUTOX_COL(col);
    }
+end_justifies:
    return justify_pad(buf, width, justr);
 } // end: make_num
 
@@ -5356,7 +5361,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = scale_mem(S, pages2K(p->trs), W, Jn);
             break;
          case EU_CPN:
-            cp = make_num(p->processor, W, Jn, AUTOX_NO);
+            cp = make_num(p->processor, W, Jn, AUTOX_NO, 0);
             break;
          case EU_CPU:
          {  float u = (float)p->pcpu * Frame_etscale;
@@ -5392,7 +5397,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = scale_num(p->min_delta, W, Jn);
             break;
          case EU_GID:
-            cp = make_num(p->egid, W, Jn, EU_GID);
+            cp = make_num(p->egid, W, Jn, EU_GID, 0);
             break;
          case EU_GRP:
             cp = make_str(p->egroup, W, Js, EU_GRP);
@@ -5404,7 +5409,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = scale_pcnt((float)p->vm_rss * 100 / kb_main_total, W, Jn);
             break;
          case EU_NCE:
-            cp = make_num(p->nice, W, Jn, AUTOX_NO);
+            cp = make_num(p->nice, W, Jn, AUTOX_NO, 1);
             break;
          case EU_NS1:  // IPCNS
          case EU_NS2:  // MNTNS
@@ -5413,32 +5418,31 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          case EU_NS5:  // USERNS
          case EU_NS6:  // UTSNS
          {  long ino = p->ns[i - EU_NS1];
-            if (Rc.zero_suppress && 0 >= ino) cp = make_str("", W, Js, i);
-            else cp = make_num(ino, W, Jn, i);
+            cp = make_num(ino, W, Jn, i, 1);
          }
             break;
 #ifdef OOMEM_ENABLE
          case EU_OOA:
-            cp = make_num(p->oom_adj, W, Jn, AUTOX_NO);
+            cp = make_num(p->oom_adj, W, Jn, AUTOX_NO, 1);
             break;
          case EU_OOM:
-            cp = make_num(p->oom_score, W, Jn, AUTOX_NO);
+            cp = make_num(p->oom_score, W, Jn, AUTOX_NO, 1);
             break;
 #endif
          case EU_PGD:
-            cp = make_num(p->pgrp, W, Jn, AUTOX_NO);
+            cp = make_num(p->pgrp, W, Jn, AUTOX_NO, 0);
             break;
          case EU_PID:
-            cp = make_num(p->tid, W, Jn, AUTOX_NO);
+            cp = make_num(p->tid, W, Jn, AUTOX_NO, 0);
             break;
          case EU_PPD:
-            cp = make_num(p->ppid, W, Jn, AUTOX_NO);
+            cp = make_num(p->ppid, W, Jn, AUTOX_NO, 0);
             break;
          case EU_PRI:
             if (-99 > p->priority || 999 < p->priority) {
                cp = make_str("rt", W, Jn, AUTOX_NO);
             } else
-               cp = make_num(p->priority, W, Jn, AUTOX_NO);
+               cp = make_num(p->priority, W, Jn, AUTOX_NO, 0);
             break;
          case EU_RES:
             cp = scale_mem(S, p->vm_rss, W, Jn);
@@ -5465,7 +5469,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = scale_mem(S, pages2K(p->share), W, Jn);
             break;
          case EU_SID:
-            cp = make_num(p->session, W, Jn, AUTOX_NO);
+            cp = make_num(p->session, W, Jn, AUTOX_NO, 0);
             break;
          case EU_STA:
             cp = make_chr(p->state, W, Js);
@@ -5474,10 +5478,10 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = scale_mem(S, p->vm_swap, W, Jn);
             break;
          case EU_TGD:
-            cp = make_num(p->tgid, W, Jn, AUTOX_NO);
+            cp = make_num(p->tgid, W, Jn, AUTOX_NO, 0);
             break;
          case EU_THD:
-            cp = make_num(p->nlwp, W, Jn, AUTOX_NO);
+            cp = make_num(p->nlwp, W, Jn, AUTOX_NO, 0);
             break;
          case EU_TM2:
          case EU_TME:
@@ -5487,7 +5491,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          }
             break;
          case EU_TPG:
-            cp = make_num(p->tpgid, W, Jn, AUTOX_NO);
+            cp = make_num(p->tpgid, W, Jn, AUTOX_NO, 0);
             break;
          case EU_TTY:
          {  char tmp[SMLBUFSIZ];
@@ -5496,19 +5500,19 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          }
             break;
          case EU_UED:
-            cp = make_num(p->euid, W, Jn, EU_UED);
+            cp = make_num(p->euid, W, Jn, EU_UED, 0);
             break;
          case EU_UEN:
             cp = make_str(p->euser, W, Js, EU_UEN);
             break;
          case EU_URD:
-            cp = make_num(p->ruid, W, Jn, EU_URD);
+            cp = make_num(p->ruid, W, Jn, EU_URD, 0);
             break;
          case EU_URN:
             cp = make_str(p->ruser, W, Js, EU_URN);
             break;
          case EU_USD:
-            cp = make_num(p->suid, W, Jn, EU_USD);
+            cp = make_num(p->suid, W, Jn, EU_USD, 0);
             break;
          case EU_USE:
             cp = scale_mem(S, (p->vm_swap + p->vm_rss), W, Jn);
