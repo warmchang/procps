@@ -1314,13 +1314,18 @@ static inline const char *make_chr (const char ch, int width, int justr) {
         /*
          * Make and then justify an integer NOT subject to scaling,
          * and include a visual clue should tuncation be necessary. */
-static inline const char *make_num (long num, int width, int justr, int col) {
+static inline const char *make_num (long num, int width, int justr, int col, int noz) {
    static char buf[SMLBUFSIZ];
+
+   buf[0] = '\0';
+   if (noz && Rc.zero_suppress && 0 == num)
+      goto end_justifies;
 
    if (width < snprintf(buf, sizeof(buf), "%ld", num)) {
       buf[width-1] = COLPLUSCH;
       AUTOX_COL(col);
    }
+end_justifies:
    return justify_pad(buf, width, justr);
 } // end: make_num
 
@@ -4981,8 +4986,6 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             cp = make_chr(rSv(EU_STA, s_ch), W, Js);
             break;
    /* s_int, make_num without auto width */
-         case EU_OOA:
-         case EU_OOM:
          case EU_PGD:
          case EU_PID:
          case EU_PPD:
@@ -4990,25 +4993,30 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          case EU_TGD:
          case EU_THD:
          case EU_TPG:
-            cp = make_num(rSv(i, s_int), W, Jn, AUTOX_NO);
+            cp = make_num(rSv(i, s_int), W, Jn, AUTOX_NO, 0);
+            break;
+   /* s_int, make_num without auto width, but with zero supression */
+         case EU_OOA:
+         case EU_OOM:
+            cp = make_num(rSv(i, s_int), W, Jn, AUTOX_NO, 1);
             break;
    /* s_int, make_num or make_str */
          case EU_PRI:
             if (-99 > rSv(EU_PRI, s_int) || 999 < rSv(EU_PRI, s_int)) {
                cp = make_str("rt", W, Jn, AUTOX_NO);
             } else
-               cp = make_num(rSv(EU_PRI, s_int), W, Jn, AUTOX_NO);
+               cp = make_num(rSv(EU_PRI, s_int), W, Jn, AUTOX_NO, 0);
             break;
    /* u_int, make_num without auto width */
          case EU_CPN:
-            cp = make_num(rSv(i, u_int), W, Jn, AUTOX_NO);
+            cp = make_num(rSv(i, u_int), W, Jn, AUTOX_NO, 0);
             break;
    /* u_int, make_num with auto width */
          case EU_GID:
          case EU_UED:
          case EU_URD:
          case EU_USD:
-            cp = make_num(rSv(i, u_int), W, Jn, i);
+            cp = make_num(rSv(i, u_int), W, Jn, i, 0);
             break;
    /* u_int, scale_pcnt with special handling */
          case EU_CPU:
@@ -5021,9 +5029,18 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             cp = scale_pcnt(u, W, Jn);
          }
             break;
-   /* sl_int, make_num */
+   /* sl_int, make_num without auto width, but with zero supression */
          case EU_NCE:
-            cp = make_num(rSv(EU_NCE, sl_int), W, Jn, AUTOX_NO);
+            cp = make_num(rSv(EU_NCE, sl_int), W, Jn, AUTOX_NO, 1);
+            break;
+   /* ul_int, make_num with auto width and zero supression */
+         case EU_NS1:
+         case EU_NS2:
+         case EU_NS3:
+         case EU_NS4:
+         case EU_NS5:
+         case EU_NS6:
+            cp = make_num(rSv(i, ul_int), W, Jn, i, 1);
             break;
    /* ul_int, scale_mem */
          case EU_COD:
@@ -5054,18 +5071,6 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
    /* ul_int, make_str with special handling */
          case EU_FLG:
             cp = make_str(hex_make(rSv(EU_FLG, ul_int), 1), W, Js, AUTOX_NO);
-            break;
-   /* ul_int, make_num or make_str */
-         case EU_NS1:
-         case EU_NS2:
-         case EU_NS3:
-         case EU_NS4:
-         case EU_NS5:
-         case EU_NS6:
-         {  long ino = rSv(i, ul_int);
-            if (Rc.zero_suppress && 0 >= ino) cp = make_str("", W, Js, i);
-            else cp = make_num(ino, W, Jn, i);
-         }
             break;
    /* ull_int, scale_tics */
          case EU_TM2:
