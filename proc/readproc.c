@@ -474,12 +474,12 @@ static void supgrps_from_supgids (proc_t *p) {
 }
 
 ///////////////////////////////////////////////////////////////////////
-static void oomscore2proc(const char* S, proc_t *restrict P)
+static inline void oomscore2proc(const char* S, proc_t *restrict P)
 {
     sscanf(S, "%d", &P->oom_score);
 }
 
-static void oomadj2proc(const char* S, proc_t *restrict P)
+static inline void oomadj2proc(const char* S, proc_t *restrict P)
 {
     sscanf(S, "%d", &P->oom_adj);
 }
@@ -962,7 +962,7 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (unlikely(flags & PROC_FILLOOM)) {
         if (likely(file2str(path, "oom_score", &ub) != -1))
             oomscore2proc(ub.buf, p);
-        if (likely(file2str(path, "oom_adj", &ub) != -1))
+        if (likely(file2str(path, "oom_score_adj", &ub) != -1))
             oomadj2proc(ub.buf, p);
     }
 
@@ -1120,7 +1120,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     if (unlikely(flags & PROC_FILLOOM)) {
         if (likely(file2str(path, "oom_score", &ub) != -1))
             oomscore2proc(ub.buf, t);
-        if (likely(file2str(path, "oom_adj", &ub) != -1))
+        if (likely(file2str(path, "oom_score_adj", &ub) != -1))
             oomadj2proc(ub.buf, t);
     }
 
