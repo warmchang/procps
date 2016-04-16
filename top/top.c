@@ -55,7 +55,6 @@
 #include "top.h"
 #include "top_nls.h"
 
-#define NORETURN __attribute__((__noreturn__))
 
 /*######  Miscellaneous global stuff  ####################################*/
 
@@ -321,7 +320,7 @@ static void at_eoj (void) {
 
         /*
          * The real program end */
-static void bye_bye (const char *str) NORETURN;
+static void bye_bye (const char *str) __attribute__((__noreturn__));
 static void bye_bye (const char *str) {
    at_eoj();                 // restore tty in preparation for exit
 #ifdef ATEOJ_RPTSTD
@@ -406,7 +405,7 @@ static void bye_bye (const char *str) {
 
         /*
          * Standard error handler to normalize the look of all err output */
-static void error_exit (const char *str) NORETURN;
+static void error_exit (const char *str) __attribute__((__noreturn__));
 static void error_exit (const char *str) {
    static char buf[MEDBUFSIZ];
 
@@ -438,7 +437,7 @@ static void sig_abexit (int sig) {
          * Catches:
          *    SIGALRM, SIGHUP, SIGINT, SIGPIPE, SIGQUIT, SIGTERM,
          *    SIGUSR1 and SIGUSR2 */
-static void sig_endpgm (int dont_care_sig) NORETURN;
+static void sig_endpgm (int dont_care_sig) __attribute__((__noreturn__));
 static void sig_endpgm (int dont_care_sig) {
    sigset_t ss;
 
@@ -740,9 +739,7 @@ static void updt_scroll_msg (void) {
         /*
          * Handle our own memory stuff without the risk of leaving the
          * user's terminal in an ugly state should things go sour. */
-#define MALLOC __attribute__ ((__malloc__))
 
-static void *alloc_c (size_t num) MALLOC;
 static void *alloc_c (size_t num) {
    void *pv;
 
@@ -753,7 +750,6 @@ static void *alloc_c (size_t num) {
 } // end: alloc_c
 
 
-static void *alloc_r (void *ptr, size_t num) MALLOC;
 static void *alloc_r (void *ptr, size_t num) {
    void *pv;
 
@@ -764,7 +760,6 @@ static void *alloc_r (void *ptr, size_t num) {
 } // end: alloc_r
 
 
-static char *alloc_s (const char *str) MALLOC;
 static char *alloc_s (const char *str) {
    return strcpy(alloc_c(strlen(str) +1), str);
 } // end: alloc_s
