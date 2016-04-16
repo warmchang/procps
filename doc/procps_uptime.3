@@ -1,0 +1,58 @@
+.\" (C) Copyright 2016 Craig Small <csmall@enc.com.au>
+.\"
+.\" %%%LICENSE_START(LGPL_2.1+)
+.\" This manual is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2.1 of the License, or (at your option) any later version.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+.\" %%%LICENSE_END
+.\"
+.TH PROCPS_UPTIME 3 2016-04-16 "libproc-2"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.SH NAME
+procps_uptime \-
+provide the uptime and idle time in seconds
+.SH SYNOPSIS
+.B #include <proc/procps.h>
+.sp
+.BI "int procps_uptime(double * " uptime_secs ", double * " idle_secs ");"
+.sp
+Link with \fI\-lprocps\fP.
+.SH DESCRIPTION
+The function
+.BR procps_uptime ()
+fills the location of the two double points with the current sytem uptime
+and idle time.
+.SH RETURN VALUE
+.BR procps_uptime ()
+returns a positive integer which is the uptime on success. On failure, it
+returns a negative integer to one of the values defined below.
+.TP
+.B -ERANGE
+Unable to parse the uptime file.
+.PP
+.BR procps_uptime ()
+may also return any (negated) value that \fBfopen\fR() may set errno to.
+
+.SH FILES
+.TP
+.I /proc/uptime
+The raw values for uptime and idle time.
+
+.SH VERSIONS
+.B procps_uptime()
+first appeared in libproc-2 version 0.0.
+
+.SH SEE ALSO
+.BR fopen (3),
+.BR proc (5).

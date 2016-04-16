@@ -264,6 +264,8 @@ proc_test_sysinfo_SOURCES = proc/test_sysinfo.c
 proc_test_sysinfo_LDADD = proc/libprocps.la
 proc_test_namespace_SOURCES = proc/test_namespace.c
 proc_test_namespace_LDADD = proc/libprocps.la
+proc_test_uptime_SOURCES = include/tests.h proc/test_uptime.c
+proc_test_uptime_LDADD = proc/libprocps.la
 proc_test_version_SOURCES = include/tests.h proc/test_version.c
 proc_test_version_LDADD = proc/libprocps.la
 lib_test_strtod_nol_SOURCES = lib/test_strtod_nol.c lib/strutils.c
@@ -277,6 +279,7 @@ BUILT_SOURCES = $(top_srcdir)/.version
 
 TESTS = proc/test_sysinfo \
 	proc/test_namespace \
+	proc/test_uptime \
 	proc/test_version \
 	lib/test_strtod_nol
 
