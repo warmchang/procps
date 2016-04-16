@@ -1,8 +1,8 @@
 #ifndef PROCPS_PROC_ESCAPE_H
 #define PROCPS_PROC_ESCAPE_H
 
-#include <proc/procps.h>
 #include <proc/readproc.h>
+#include <features.h>
 
 __BEGIN_DECLS
 

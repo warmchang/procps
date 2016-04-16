@@ -25,6 +25,10 @@
 
 #include "alloc.h"
 
+typedef void (*message_fn)(const char *__restrict, ...) __attribute__((format(printf,1,2)));
+ /* change xalloc_err_handler to override the default fprintf(stderr... */
+extern message_fn xalloc_err_handler;
+
 static void xdefault_error(const char *restrict fmts, ...) __attribute__((format(printf,1,2)));
 static void xdefault_error(const char *restrict fmts, ...) {
     va_list va;

@@ -34,8 +34,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <proc/namespace.h>
-#include <proc/pids.h>
+#include <proc/procps.h>
 
 #include "c.h"
 #include "fileutils.h"

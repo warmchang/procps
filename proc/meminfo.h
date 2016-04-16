@@ -23,7 +23,7 @@
 #ifndef PROC_MEMINFO_H
 #define PROC_MEMINFO_H
 
-#include <proc/procps.h>
+#include <features.h>
 
 __BEGIN_DECLS
 

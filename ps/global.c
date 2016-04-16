@@ -31,8 +31,6 @@
 #include <sys/sysmacros.h>
 #include <sys/types.h>
 
-#include <proc/uptime.h>
-
 #include "../include/c.h"
 #include "../include/xalloc.h"
 
@@ -614,8 +612,8 @@ void self_info(void){
   );
 
   fprintf(stderr,
-    "sizeof(proc_t)=%d sizeof(long)=%d sizeof(KLONG)=%d\n",
-    (int)sizeof(proc_t), (int)sizeof(long), (int)sizeof(KLONG)
+    "sizeof(proc_t)=%d sizeof(long)=%d sizeof(long)=%d\n",
+    (int)sizeof(proc_t), (int)sizeof(long), (int)sizeof(long)
   );
 
   fprintf(stderr, "archdefs:%s\n", archdefs);

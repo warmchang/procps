@@ -86,7 +86,7 @@ static int parse_help_opt (const char *opt) {
 }
 
 
-void do_help (const char *opt, int rc) NORETURN;
+void do_help (const char *opt, int rc);
 void do_help (const char *opt, int rc) {
   FILE *out = (rc == EXIT_SUCCESS) ? stdout : stderr;
   int section = parse_help_opt(opt);

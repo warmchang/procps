@@ -13,11 +13,10 @@
 #define PROCPS_PS_H
 
 #include "../include/nls.h"
-#include "../proc/escape.h"
+#include <proc/procps.h>
 
 // --- <pids> interface begin ||||||||||||||||||||||||||||||||||||||||||||
 // -----------------------------------------------------------------------
-#include <proc/pids.h>
 
 // hack to minimize code impact
 #undef  proc_t

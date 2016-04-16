@@ -41,9 +41,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <proc/sysinfo.h>
-#include <proc/version.h>
-#include <proc/meminfo.h>
+#include <proc/procps.h>
 
 #ifndef SIZE_MAX
 #define SIZE_MAX		32

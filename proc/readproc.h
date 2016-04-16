@@ -10,8 +10,7 @@
 // in the file COPYING
 
 
-#include <proc/procps.h>
-#include <proc/pwcache.h>
+// #include <proc/pwcache.h>
 #include <proc/namespace.h>
 
 #define SIGNAL_STRING
@@ -93,7 +92,7 @@ typedef struct proc_t {
 	sigcatch,	// status          mask of caught  signals
 	_sigpnd;	// status          mask of PER TASK pending signals
 #endif
-    unsigned KLONG
+    unsigned long
 	start_code,	// stat            address of beginning of code segment
 	end_code,	// stat            address of end of code segment
 	start_stack,	// stat            address of the bottom of stack for the process

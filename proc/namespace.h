@@ -23,8 +23,6 @@
 #ifndef PROC_NAMESPACE_H
 #define PROC_NAMESPACE_H
 
-#include <proc/procps.h>
-
 __BEGIN_DECLS
 
 enum namespace_type {

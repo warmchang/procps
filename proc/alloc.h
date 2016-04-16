@@ -1,12 +1,11 @@
 #ifndef PROCPS_PROC_ALLOC_H
 #define PROCPS_PROC_ALLOC_H
 
-#include <proc/procps.h>
+#include <features.h>
 
 __BEGIN_DECLS
 
- /* change xalloc_err_handler to override the default fprintf(stderr... */
-extern message_fn xalloc_err_handler;
+#define MALLOC __attribute__ ((__malloc__))
 
 extern void *xcalloc(unsigned int size) MALLOC;
 extern void *xmalloc(size_t size) MALLOC;

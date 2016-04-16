@@ -35,8 +35,7 @@
 #include "fileutils.h"
 #include "nls.h"
 #include "xalloc.h"
-#include "proc/version.h"
-#include <proc/pids.h>
+#include <proc/procps.h>
 
 enum pids_item Pid_items[] = {
     PROCPS_PIDS_ID_PID,  PROCPS_PIDS_ID_TGID,
@@ -176,7 +175,7 @@ static void discover_shm_minor(void)
 		unsigned long start, end;
 		unsigned long long file_offset, inode;
 		unsigned dev_major, dev_minor;
-		sscanf(mapbuf_b, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
+		sscanf(mapbuf_b, "%lx-%lx %31s %llx %x:%x %llu", &start,
 		       &end, perms, &file_offset, &dev_major, &dev_minor,
 		       &inode);
 		tmp = strchr(mapbuf_b, '\n');
@@ -373,7 +372,7 @@ static void print_extended_maps (FILE *f)
 					      mapbuf);
 			}
 			strcpy(listnode->value_str, value_str);
-			sscanf(value_str, "%"KLF"u", &listnode->value);
+			sscanf(value_str, "%lu", &listnode->value);
 			if (firstmapping == 2) {
 				listnode->total += listnode->value;
 				if (q_option) {
@@ -614,7 +613,7 @@ static int one_proc (struct pids_stack *p)
 				}
 				if (strncmp("Swap", smap_key, 4) == 0) {
 					/*doesn't matter as long as last */
-					printf("%0*" KLF "x %*lu %*llu %*llu %*s %s\n",
+					printf("%0*lx %*lu %*llu %*llu %*s %s\n",
 					       maxw1, start,
 					       maxw2, (unsigned long)(diff >> 10),
 					       maxw3, rss,
@@ -630,7 +629,7 @@ static int one_proc (struct pids_stack *p)
 				continue;
 			}
 		}
-		sscanf(mapbuf, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
+		sscanf(mapbuf, "%lx-%lx %31s %llx %x:%x %llu", &start,
 		       &end, perms, &file_offset, &dev_major, &dev_minor,
 		       &inode);
 
@@ -677,7 +676,7 @@ static int one_proc (struct pids_stack *p)
 			const char *cp =
 			    mapping_name(p, start, diff, mapbuf, map_desc_showpath, dev_major,
 					 dev_minor, inode);
-			printf("%0*" KLF "x %*lu %*s %0*llx %*.*s%03x:%05x %s\n",
+			printf("%0*lx %*lu %*s %0*llx %*.*s%03x:%05x %s\n",
 			       maxw1, start,
 			       maxw2, (unsigned long)(diff >> 10),
 			       maxw3, perms,
@@ -690,7 +689,7 @@ static int one_proc (struct pids_stack *p)
 			    mapping_name(p, start, diff, mapbuf, map_desc_showpath, dev_major,
 					 dev_minor, inode);
 			printf((sizeof(long) == 8)
-			       ? "%016" KLF "x %6luK %s %s\n"
+			       ? "%016lx %6luK %s %s\n"
 			       : "%08lx %6luK %s %s\n",
 			       start, (unsigned long)(diff >> 10), perms, cp);
 		}
@@ -757,9 +756,9 @@ static void range_arguments(char *optarg)
 	else
 		arg2 = arg1;
 	if (arg1 && *arg1)
-		range_low = STRTOUKL(arg1, &arg1, 16);
+		range_low = strtoul(arg1, &arg1, 16);
 	if (*arg2)
-		range_high = STRTOUKL(arg2, &arg2, 16);
+		range_high = strtoul(arg2, &arg2, 16);
 	if (arg1 && (*arg1 || *arg2))
 		xerrx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"),
 		      optarg);

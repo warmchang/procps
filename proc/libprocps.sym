@@ -7,7 +7,6 @@ global:
 	escape_strlist;
 	escaped_copy;
 	fatal_proc_unmounted;
-	get_pid_digits;
 	look_up_our_self;
 	lookup_wchan;
 	openproc;
@@ -40,6 +39,7 @@ global:
 	procps_ns_get_name;
 	procps_ns_get_id;
 	procps_ns_read_pid;
+	procps_pid_length;
 	procps_pids_new;
 	procps_pids_read_next;
 	procps_pids_read_open;

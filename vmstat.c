@@ -48,12 +48,7 @@
 #include "fileutils.h"
 #include "nls.h"
 #include "strutils.h"
-#include "proc/sysinfo.h"
-#include <proc/vmstat.h>
-#include <proc/readstat.h>
-#include <proc/meminfo.h>
-#include <proc/diskstat.h>
-#include <proc/slab.h>
+#include <proc/procps.h>
 
 #define UNIT_B        1
 #define UNIT_k        1000

@@ -50,16 +50,12 @@
 #include "../include/signals.h"
 #include "../include/nls.h"
 
-#include <proc/meminfo.h>
-#include <proc/pids.h>
-#include <proc/readstat.h>
-#include <proc/sysinfo.h>
-#include <proc/version.h>
-#include <proc/uptime.h>
+#include <proc/procps.h>
 
 #include "top.h"
 #include "top_nls.h"
 
+#define NORETURN __attribute__((__noreturn__))
 
 /*######  Miscellaneous global stuff  ####################################*/
 
@@ -744,6 +740,7 @@ static void updt_scroll_msg (void) {
         /*
          * Handle our own memory stuff without the risk of leaving the
          * user's terminal in an ugly state should things go sour. */
+#define MALLOC __attribute__ ((__malloc__))
 
 static void *alloc_c (size_t num) MALLOC;
 static void *alloc_c (size_t num) {
@@ -1174,14 +1171,14 @@ static int get_int (const char *prompt) {
 
         /*
          * Make a hex value, and maybe suppress zeroes. */
-static inline const char *hex_make (KLONG num, int noz) {
+static inline const char *hex_make (long num, int noz) {
    static char buf[SMLBUFSIZ];
    int i;
 
 #ifdef CASEUP_HEXES
-   snprintf(buf, sizeof(buf), "%08" KLF "X", num);
+   snprintf(buf, sizeof(buf), "%08lX", num);
 #else
-   snprintf(buf, sizeof(buf), "%08" KLF "x", num);
+   snprintf(buf, sizeof(buf), "%08lx", num);
 #endif
    if (noz)
       for (i = 0; buf[i]; i++)
@@ -2097,7 +2094,7 @@ static void zap_fieldstab (void) {
       Fieldstab[EU_PID].width = Fieldstab[EU_PPD].width
          = Fieldstab[EU_PGD].width = Fieldstab[EU_SID].width
          = Fieldstab[EU_TGD].width = Fieldstab[EU_TPG].width = 5;
-      if (5 < (digits = get_pid_digits())) {
+      if (5 < (digits = procps_pid_length())) {
          if (10 < digits) error_exit(N_txt(FAIL_widepid_txt));
          Fieldstab[EU_PID].width = Fieldstab[EU_PPD].width
             = Fieldstab[EU_PGD].width = Fieldstab[EU_SID].width

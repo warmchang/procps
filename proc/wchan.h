@@ -1,7 +1,7 @@
 #ifndef PROCPS_PROC_WCHAN_H
 #define PROCPS_PROC_WCHAN_H
 
-#include <proc/procps.h>
+#include <features.h>
 
 __BEGIN_DECLS
 

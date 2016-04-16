@@ -27,9 +27,7 @@
 #include "fileutils.h"
 #include "nls.h"
 #include "xalloc.h"
-//#include "proc/readproc.h"
-#include <proc/pids.h>
-#include "proc/version.h" /* procps_version */
+#include <proc/procps.h>
 
 
 #define grow_size(x)	(x = x * 5 / 4 + 1024)

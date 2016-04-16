@@ -62,11 +62,8 @@
 #include <sys/resource.h>
 #include <sys/types.h>
 
-#include <proc/meminfo.h>
-#include <proc/readstat.h>
 
 #include "../include/c.h"
-#include "../proc/escape.h"
 
 #include "common.h"
 
@@ -1896,7 +1893,7 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
   char *restrict const outbuf = saved_outbuf;
   static int did_stuff = 0;  /* have we ever printed anything? */
 
-  if(unlikely(-1==(long)p)){    /* true only once, at the end */
+  if(-1==(long)p){    /* true only once, at the end */
     if(did_stuff) return;
     /* have _never_ printed anything, but might need a header */
     if(!--lines_to_next_header){
@@ -1906,14 +1903,14 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
     /* fprintf(stderr, "No processes available.\n"); */  /* legal? */
     exit(1);
   }
-  if(likely(p)){  /* not header, maybe we should call ourselves for it */
-    if(unlikely(!--lines_to_next_header)){
+  if(p){  /* not header, maybe we should call ourselves for it */
+    if(!--lines_to_next_header){
       lines_to_next_header = header_gap;
       show_one_proc(NULL,fmt);
     }
   }
   did_stuff = 1;
-  if(unlikely(active_cols>(int)OUTBUF_SIZE)) fprintf(stderr,_("fix bigness error\n"));
+  if(active_cols>(int)OUTBUF_SIZE) fprintf(stderr,_("fix bigness error\n"));
 
   /* print row start sequence */
   for(;;){
@@ -1922,7 +1919,7 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
 //    if(likely(fmt->next)) max_rightward = fmt->width;
 //    else max_rightward = active_cols-((correct>actual) ? correct : actual);
 
-    if(likely(fmt->next)){
+    if(fmt->next){
       max_rightward = fmt->width;
       tmpspace = 0;
     }else{
@@ -1940,7 +1937,7 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
 //		    active_cols, max_rightward, max_leftward, actual, correct);
 
     /* prepare data and calculate leftpad */
-    if(likely(p) && likely(fmt->pr)) amount = (*fmt->pr)(outbuf,p);
+    if(p && fmt->pr) amount = (*fmt->pr)(outbuf,p);
     else amount = strlen(strcpy(outbuf, fmt->name)); /* AIX or headers */
 
     switch((fmt->flags) & CF_JUST_MASK){
@@ -2003,13 +2000,13 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
      */
     space = correct - actual + leftpad;
     if(space<1) space=dospace;
-    if(unlikely(space>SPACE_AMOUNT)) space=SPACE_AMOUNT;  // only so much available
+    if(space>SPACE_AMOUNT) space=SPACE_AMOUNT;  // only so much available
 
     /* real size -- don't forget in 'amount' is number of cells */
     sz = strlen(outbuf);
 
     /* print data, set x position stuff */
-    if(unlikely(!fmt->next)){
+    if(!fmt->next){
       /* Last column. Write padding + data + newline all together. */
       outbuf[sz] = '\n';
       fwrite(outbuf-space, space+sz+1, 1, stdout);

@@ -22,6 +22,8 @@
 #ifndef _PROC_SLAB_H
 #define _PROC_SLAB_H
 
+#include <features.h>
+
 __BEGIN_DECLS
 
 enum slabs_item {

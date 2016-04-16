@@ -23,8 +23,7 @@
 #ifndef PROC_VERSION_H
 #define PROC_VERSION_H
 
-#include <proc/procps.h>
-
+#include <features.h>
 __BEGIN_DECLS
 
 int procps_linux_version(void);

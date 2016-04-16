@@ -173,34 +173,36 @@ unsigned int getslabinfo (struct slab_cache **slab){
   return cSlab;
 }
 
-///////////////////////////////////////////////////////////////////////////
+#define PROCFS_PID_MAX "/proc/sys/kernel/pid_max"
+#define DEFAULT_PID_LENGTH 5
 
-unsigned get_pid_digits(void){
-  char pidbuf[24];
-  char *endp;
-  long rc;
-  int fd;
-  static unsigned ret;
+/*
+ * procps_pid_length
+ *
+ * Return the length of the maximum possible pid.
+ *
+ * Returns either the strlen of PROCFS_PID_MAX or the
+ * best-guess DEFAULT_PID_LENGTH
+ */
+PROCPS_EXPORT unsigned int procps_pid_length(void)
+{
+    FILE *fp;
+    char pidbuf[24];
+    char *endp;
+    unsigned long int max_pid;
+    static int pid_length=0;
 
-  if(ret) goto out;
-  ret = 5;
-  fd = open("/proc/sys/kernel/pid_max", O_RDONLY);
-  if(fd==-1) goto out;
-  rc = read(fd, pidbuf, sizeof pidbuf);
-  close(fd);
-  if(rc<3) goto out;
-  pidbuf[rc] = '\0';
-  rc = strtol(pidbuf,&endp,10);
-  if(rc<42) goto out;
-  if(*endp && *endp!='\n') goto out;
-  rc--;  // the pid_max value is really the max PID plus 1
-  ret = 0;
-  while(rc){
-    rc /= 10;
-    ret++;
-  }
-out:
-  return ret;
+    if (pid_length)
+        return pid_length;
+
+    pid_length = DEFAULT_PID_LENGTH;
+    if ((fp = fopen(PROCFS_PID_MAX, "r")) != NULL) {
+        if (fgets(buf, 24, fp) != NULL) {
+            pid_length = strlen(buf);
+        }
+        fclose(fp);
+    }
+    return pid_length;
 }
 
 ///////////////////////////////////////////////////////////////////////////

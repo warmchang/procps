@@ -42,6 +42,10 @@
 #endif
 #include <proc/namespace.h>
 
+#define likely(x)       __builtin_expect(!!(x),1)
+#define unlikely(x)     __builtin_expect(!!(x),0)
+#define expected(x,y)   __builtin_expect((x),(y))
+
 // sometimes it's easier to do this manually, w/o gcc helping
 #ifdef PROF
 extern void __cyg_profile_func_enter(void*,void*);
@@ -550,9 +554,9 @@ ENTER(0x160);
        "%llu "  /* start_time */
        "%lu "
        "%ld "
-       "%lu %"KLF"u %"KLF"u %"KLF"u %"KLF"u %"KLF"u "
+       "%lu %lu %lu %lu %lu %lu "
        "%*s %*s %*s %*s " /* discard, no RT signals & Linux 2.1 used hex */
-       "%"KLF"u %*u %*u "
+       "%lu %*u %*u "
        "%d %d "
        "%lu %lu",
        &P->state,
@@ -906,7 +910,7 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
 
     // if multithreaded, some values are crap
     if(p->nlwp > 1){
-      p->wchan = (KLONG)~0ull;
+      p->wchan = ~0ul;
     }
 
     /* some number->text resolving which is time consuming */
@@ -1403,9 +1407,6 @@ void look_up_our_self(proc_t *p) {
     free(ub.buf);
 }
 
-HIDDEN_ALIAS(readproc);
-HIDDEN_ALIAS(readtask);
-HIDDEN_ALIAS(readeither);
 
 /* Convenient wrapper around openproc and readproc to slurp in the whole process
  * table subset satisfying the constraints of flags and the optional PID list.
@@ -1439,7 +1440,7 @@ proc_t** readproctab(unsigned flags, ...) {
       return 0;
     do {					/* read table: */
 	tab = xrealloc(tab, (n+1)*sizeof(proc_t*));/* realloc as we go, using */
-	tab[n] = readproc_direct(PT, NULL);     /* final null to terminate */
+	tab[n] = readproc(PT, NULL);     /* final null to terminate */
     } while (tab[n++]);				  /* stop when NULL reached */
     closeproc(PT);
     return tab;
@@ -1473,7 +1474,7 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
           n_proc_alloc = n_proc_alloc*5/4+30;  // grow by over 25%
           ptab = xrealloc(ptab,sizeof(proc_t*)*n_proc_alloc);
         }
-        tmp = readproc_direct(PT, data+n_used);
+        tmp = readproc(PT, data+n_used);
         if(!tmp) break;
         if(!want_proc(tmp)) continue;
         ptab[n_proc++] = (proc_t*)(n_used++);
@@ -1493,7 +1494,7 @@ proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *
             n_task_alloc = n_task_alloc*5/4+1;  // grow by over 25%
             ttab = xrealloc(ttab,sizeof(proc_t*)*n_task_alloc);
           }
-          t = readtask_direct(PT, tmp, data+n_used);
+          t = readtask(PT, tmp, data+n_used);
           if(!t) break;
           if(!want_task(t)) continue;
           ttab[n_task++] = (proc_t*)(n_used++);
@@ -1533,7 +1534,7 @@ proc_data_t *readproctab3 (int(*want_task)(proc_t *buf), PROCTAB *restrict const
         }
         // let this next guy allocate the necessary proc_t storage
         // (or recycle it) since he can't tolerate realloc relocations
-        if (!(p = readeither_direct(PT,p))) break;
+        if (!(p = readeither(PT,p))) break;
         if (want_task(p)) {
             tab[n_used++] = p;
             p = NULL;

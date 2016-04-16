@@ -23,7 +23,7 @@
 #ifndef PROC_VMSTAT_H
 #define PROC_VMSTAT_H
 
-#include <proc/procps.h>
+#include <features.h>
 
 __BEGIN_DECLS
 

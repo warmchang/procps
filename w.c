@@ -26,9 +26,7 @@
 #include "c.h"
 #include "fileutils.h"
 #include "nls.h"
-#include <proc/sysinfo.h>
-#include <proc/uptime.h>
-#include <proc/pids.h>
+#include <proc/procps.h>
 
 #include <ctype.h>
 #include <errno.h>
@@ -652,7 +650,7 @@ int main(int argc, char **argv)
 	if (user) {
 		for (;;) {
 			u = getutent();
-			if (unlikely(!u))
+			if (!u)
 				break;
 			if (u->ut_type != USER_PROCESS)
 				continue;
@@ -663,7 +661,7 @@ int main(int argc, char **argv)
 	} else {
 		for (;;) {
 			u = getutent();
-			if (unlikely(!u))
+			if (!u)
 				break;
 			if (u->ut_type != USER_PROCESS)
 				continue;

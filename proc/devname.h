@@ -1,7 +1,7 @@
 #ifndef PROC_DEVNAME_H
 #define PROC_DEVNAME_H
 
-#include <proc/procps.h>
+#include <features.h>
 
 __BEGIN_DECLS
 

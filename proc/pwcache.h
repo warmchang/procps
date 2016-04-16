@@ -1,8 +1,8 @@
 #ifndef PROCPS_PROC_PWCACHE_H
 #define PROCPS_PROC_PWCACHE_H
 
+#include <features.h>
 #include <sys/types.h>
-#include <proc/procps.h>
 
 __BEGIN_DECLS
 

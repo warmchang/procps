@@ -23,6 +23,7 @@
 #ifndef _PROC_PIDS_H
 #define _PROC_PIDS_H
 
+#include <features.h>
 __BEGIN_DECLS
 
 enum pids_item {

@@ -28,9 +28,6 @@
 #include <sys/sysmacros.h>
 #include <sys/types.h>
 
-#include <proc/pids.h>
-#include "../proc/sysinfo.h"
-
 #include "../include/c.h"
 #include "../include/fileutils.h"
 #include "../include/signals.h"

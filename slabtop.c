@@ -42,7 +42,7 @@
 #include "fileutils.h"
 #include "nls.h"
 #include "strutils.h"
-#include <proc/slab.h>
+#include <proc/procps.h>
 
 #define DEFAULT_SORT  PROCPS_SLABNODE_OBJS
 #define CHAINS_ALLOC  150

@@ -22,7 +22,7 @@
 #ifndef PROC_DISKSTAT_H
 #define PROC_DISKSTAT_H
 
-#include <proc/procps.h>
+#include <features.h>
 
 __BEGIN_DECLS
 

@@ -47,7 +47,7 @@ static format_node *do_one_spec(const char *spec, const char *override){
     format_node *thisnode;
     thisnode = xmalloc(sizeof(format_node));
     if(fs->flags & CF_PIDMAX){
-      w1 = (int)get_pid_digits();
+      w1 = (int)procps_pid_length();
       w2 = strlen(fs->head);
       if(w2>w1) w1=w2; // FIXME w/ separate header/body column sizing
     }else{

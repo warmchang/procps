@@ -25,8 +25,7 @@
 #ifndef PROC_UPTIME_H
 #define PROC_UPTIME_H
 
-#include <proc/procps.h>
-
+#include <features.h>
 __BEGIN_DECLS
 
 int procps_uptime(double *uptime_secs, double *idle_secs);
