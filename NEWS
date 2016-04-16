@@ -3,6 +3,7 @@ procps-ng-NEXT
   * ps: sort by cgroup Debian #692279
   * ps: display control group name with -o cgname
   * ps: Fallback to attr/current for context Debian #786956
+  * tests: Conditionally add prctl Debian #816237
 
 procps-ng-3.3.11
 ----------------

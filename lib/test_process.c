@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
-#ifndef __CYGWIN__
+#ifdef __linux__
 #include <sys/prctl.h>
 #endif
 #include "c.h"
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     sigaction(SIGUSR1, &signal_action, NULL);
     sigaction(SIGUSR2, &signal_action, NULL);
 
-#ifndef __CYGWIN__
+#ifdef __linux__
     /* set process name */
     prctl(PR_SET_NAME, MY_NAME, NULL, NULL, NULL);
 #endif
