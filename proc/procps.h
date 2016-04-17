@@ -20,7 +20,6 @@
 
 /* includes that show public exports go here */
 #include <proc/diskstat.h>
-#include <proc/escape.h>
 #include <proc/meminfo.h>
 #include <proc/namespace.h>
 #include <proc/pids.h>
@@ -30,5 +29,9 @@
 #include <proc/version.h>
 #include <proc/vmstat.h>
 #include <proc/uptime.h>
+
+// FIXME: only public function in escape.c
+#define ESC_STRETCH 1  // since we mangle to '?' this is 1 (would be 4 for octal escapes)
+int escape_str(char *__restrict dst, const char *__restrict src, int bufsize, int *maxcells);
 
 #endif

@@ -20,7 +20,8 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <string.h>
-#include "procps.h"
+#include <proc/procps.h>
+
 #include "escape.h"
 #include "readproc.h"
 
@@ -162,7 +163,7 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
 // escape an argv or environment string array
 //
 // bytes arg means sizeof(buf)
-int escape_strlist(char *restrict dst, char *restrict const *restrict src, size_t bytes, int *cells){
+static int escape_strlist(char *restrict dst, char *restrict const *restrict src, size_t bytes, int *cells){
   size_t i = 0;
 
   for(;;){
@@ -218,15 +219,3 @@ int escape_command(char *restrict const outbuf, const proc_t *restrict const pp,
   return end;  // bytes, not including the NUL
 }
 
-/////////////////////////////////////////////////
-
-// copy an already 'escaped' string,
-// using the traditional escape.h calling conventions
-int escaped_copy(char *restrict dst, const char *restrict src, int bufsize, int *maxroom){
-  int n;
-  if (bufsize > *maxroom+1) bufsize = *maxroom+1;
-  n = snprintf(dst, bufsize, "%s", src);
-  if (n >= bufsize) n = bufsize-1;
-  *maxroom -= n;
-  return n;
-}

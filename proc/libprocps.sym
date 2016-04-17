@@ -1,9 +1,6 @@
 LIBPROCPS_0 {
 global:
-	escape_command;
 	escape_str;
-	escape_strlist;
-	escaped_copy;
 	fatal_proc_unmounted;
 	procps_cpu_count;
 	procps_diskstat_dev_count;

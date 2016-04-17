@@ -115,6 +115,17 @@ static void get_memory_total()
     procps_meminfo_unref(&mem_info);
 }
 
+// copy an already 'escaped' string,
+static int escaped_copy(char *restrict dst, const char *restrict src, int bufsize, int *maxroom){
+    int n;
+    if (bufsize > *maxroom+1)
+        bufsize = *maxroom+1;
+    n = snprintf(dst, bufsize, "%s", src);
+    if (n >= bufsize)
+        n = bufsize-1;
+    *maxroom -= n;
+    return n;
+}
 
 /***************************************************************************/
 /************ Lots of format functions, starting with the NOP **************/
@@ -949,7 +960,6 @@ setREL1(TIME_START)
 }
 
 
-#ifdef SIGNAL_STRING
 static int help_pr_sig(char *restrict const outbuf, const char *restrict const sig){
   long len = 0;
   len = strlen(sig);
@@ -961,13 +971,6 @@ static int help_pr_sig(char *restrict const outbuf, const char *restrict const s
     return snprintf(outbuf, COLWID, "<%s", sig+len-8);
   return snprintf(outbuf, COLWID,  "%s", sig+len-8);
 }
-#else
-static int help_pr_sig(unsigned long long sig){
-  if(wide_signals) return snprintf(outbuf, COLWID, "%016Lx", sig);
-  if(sig>>32)      return snprintf(outbuf, COLWID, "<%08Lx", sig&0xffffffffLL);
-  return                  snprintf(outbuf, COLWID,  "%08Lx", sig&0xffffffffLL);
-}
-#endif
 
 // This one is always thread-specific pending. (from Dragonfly BSD)
 static int pr_tsig(char *restrict const outbuf, const proc_t *restrict const pp){
