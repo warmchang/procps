@@ -42,10 +42,6 @@
 #endif
 #include <proc/namespace.h>
 
-#define likely(x)       __builtin_expect(!!(x),1)
-#define unlikely(x)     __builtin_expect(!!(x),0)
-#define expected(x,y)   __builtin_expect((x),(y))
-
 // sometimes it's easier to do this manually, w/o gcc helping
 #ifdef PROF
 extern void __cyg_profile_func_enter(void*,void*);
@@ -80,7 +76,7 @@ static unsigned long long unhex(const char *restrict cp){
     unsigned long long ull = 0;
     for(;;){
         char c = *cp++;
-        if(unlikely(c<0x30)) break;
+        if(c<0x30) break;
         ull = (ull<<4) | (c - (c>0x57) ? 0x57 : 0x30) ;
     }
     return ull;
@@ -247,18 +243,18 @@ ENTER(0x220);
 
         // advance to next line
         S = strchr(S, '\n');
-        if(unlikely(!S)) break;  // if no newline
+        if(!S) break;            // if no newline
         S++;
 
         // examine a field name (hash and compare)
     base:
-        if(unlikely(!*S)) break;
+        if(!*S) break;
         entry = table[(GPERF_TABLE_SIZE -1) & (asso[(int)S[3]] + asso[(int)S[2]] + asso[(int)S[0]])];
         colon = strchr(S, ':');
-        if(unlikely(!colon)) break;
-        if(unlikely(colon[1]!='\t')) break;
-        if(unlikely(colon-S != entry.len)) continue;
-        if(unlikely(memcmp(entry.name,S,colon-S))) continue;
+        if(!colon) break;
+        if(colon[1]!='\t') break;
+        if(colon-S != entry.len) continue;
+        if(memcmp(entry.name,S,colon-S)) continue;
 
         S = colon+2; // past the '\t'
 
@@ -273,9 +269,9 @@ ENTER(0x220);
         unsigned u = 0;
         while(u < sizeof(buf) - 1u){
             int c = *S++;
-            if(unlikely(c=='\n')) break;
-            if(unlikely(c=='\0')) break; // should never happen
-            if(unlikely(c=='\\')){
+            if(c=='\n') break;
+            if(c=='\0') break;     // should never happen
+            if(c=='\\'){
                 c = *S++;
                 if(c=='\n') break; // should never happen
                 if(!c)      break; // should never happen
@@ -394,7 +390,7 @@ ENTER(0x220);
         if (j) {
             P->supgid = xmalloc(j+1);       // +1 in case space disappears
             memcpy(P->supgid, S, j);
-            if (unlikely(' ' != P->supgid[--j])) ++j;
+            if (' ' != P->supgid[--j]) ++j;
             P->supgid[j] = '\0';            // whack the space or the newline
             for ( ; j; j--)
                 if (' '  == P->supgid[j])
@@ -538,7 +534,7 @@ ENTER(0x160);
     S = strchr(S, '(') + 1;
     tmp = strrchr(S, ')');
     num = tmp - S;
-    if(unlikely(num >= 16)) num = 15;
+    if(num >= 16) num = 15;
     if (!P->cmd)
        P->cmd = strndup(S, num);
     S = tmp + 2;                 // skip ") "
@@ -615,7 +611,7 @@ static int file2str(const char *directory, const char *what, struct utlbuf_s *ub
     };
     ub->buf[tot_read] = '\0';
     close(fd);
-    if (unlikely(tot_read < 1)) return -1;
+    if (tot_read < 1) return -1;
     return tot_read;
  #undef buffGRW
 }
@@ -873,7 +869,7 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     char *restrict const path = PT->path;
     unsigned flags = PT->flags;
 
-    if (unlikely(stat(path, &sb) == -1))        /* no such dirent (anymore) */
+    if (stat(path, &sb) == -1)                  /* no such dirent (anymore) */
         goto next_proc;
 
     if ((flags & PROC_UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
@@ -883,18 +879,18 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     p->egid = sb.st_gid;                        /* need a way to get real gid */
 
     if (flags & PROC_FILLSTAT) {                // read /proc/#/stat
-        if (unlikely(file2str(path, "stat", &ub) == -1))
+        if (file2str(path, "stat", &ub) == -1)
             goto next_proc;
         stat2proc(ub.buf, p);
     }
 
     if (flags & PROC_FILLMEM) {                 // read /proc/#/statm
-        if (likely(file2str(path, "statm", &ub) != -1))
+        if (file2str(path, "statm", &ub) != -1)
             statm2proc(ub.buf, p);
     }
 
     if (flags & PROC_FILLSTATUS) {              // read /proc/#/status
-        if (likely(file2str(path, "status", &ub) != -1)){
+        if (file2str(path, "status", &ub) != -1){
             status2proc(ub.buf, p, 1);
             if (flags & PROC_FILLSUPGRP)
                 supgrps_from_supgids(p);
@@ -928,7 +924,7 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
         }
     }
 
-    if (unlikely(flags & PROC_FILLENV)) {       // read /proc/#/environ
+    if (flags & PROC_FILLENV) {                 // read /proc/#/environ
         if (flags & PROC_EDITENVRCVT)
             fill_environ_cvt(path, p);
         else
@@ -952,23 +948,23 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     } else
         p->cgroup = NULL;
 
-    if (unlikely(flags & PROC_FILLOOM)) {
-        if (likely(file2str(path, "oom_score", &ub) != -1))
+    if (flags & PROC_FILLOOM) {
+        if (file2str(path, "oom_score", &ub) != -1)
             oomscore2proc(ub.buf, p);
-        if (likely(file2str(path, "oom_score_adj", &ub) != -1))
+        if (file2str(path, "oom_score_adj", &ub) != -1)
             oomadj2proc(ub.buf, p);
     }
 
-    if (unlikely(flags & PROC_FILLNS))          // read /proc/#/ns/*
+    if (flags & PROC_FILLNS)                    // read /proc/#/ns/*
         procps_ns_read_pid(p->tid, &(p->ns));
 
 
 #ifdef WITH_SYSTEMD
-    if (unlikely(flags & PROC_FILLSYSTEMD))     // get sd-login.h stuff
+    if (flags & PROC_FILLSYSTEMD)               // get sd-login.h stuff
         sd2proc(p);
 #endif
 
-    if (unlikely(flags & PROC_FILL_LXC))        // value the lxc name
+    if (flags & PROC_FILL_LXC)                  // value the lxc name
         p->lxcname = lxc_containers(path);
 
     return p;
@@ -990,7 +986,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     static struct stat sb;     // stat() buffer
     unsigned flags = PT->flags;
 
-    if (unlikely(stat(path, &sb) == -1))        /* no such dirent (anymore) */
+    if (stat(path, &sb) == -1)                  /* no such dirent (anymore) */
         goto next_task;
 
 //  if ((flags & PROC_UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
@@ -1000,19 +996,19 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     t->egid = sb.st_gid;                        /* need a way to get real gid */
 
     if (flags & PROC_FILLSTAT) {                        // read /proc/#/task/#/stat
-        if (unlikely(file2str(path, "stat", &ub) == -1))
+        if (file2str(path, "stat", &ub) == -1)
             goto next_task;
         stat2proc(ub.buf, t);
     }
 
 #ifndef QUICK_THREADS
     if (flags & PROC_FILLMEM)                           // read /proc/#/task/#statm
-        if (likely(file2str(path, "statm", &ub) != -1))
+        if (file2str(path, "statm", &ub) != -1)
             statm2proc(ub.buf, t);
 #endif
 
     if (flags & PROC_FILLSTATUS) {                      // read /proc/#/task/#/status
-        if (likely(file2str(path, "status", &ub) != -1)) {
+        if (file2str(path, "status", &ub) != -1) {
             status2proc(ub.buf, t, 0);
 #ifndef QUICK_THREADS
             if (flags & PROC_FILLSUPGRP)
@@ -1046,13 +1042,13 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
 #ifdef QUICK_THREADS
     if (!p) {
         if (flags & PROC_FILLMEM)
-            if (likely(file2str(path, "statm", &ub) != -1))
+            if (file2str(path, "statm", &ub) != -1)
                 statm2proc(ub.buf, t);
 
         if (flags & PROC_FILLSUPGRP)
             supgrps_from_supgids(t);
 #endif
-        if (unlikely(flags & PROC_FILLENV)) {           // read /proc/#/task/#/environ
+        if (flags & PROC_FILLENV) {                     // read /proc/#/task/#/environ
             if (flags & PROC_EDITENVRCVT)
                 fill_environ_cvt(path, t);
             else
@@ -1077,11 +1073,11 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
             t->cgroup = NULL;
 
 #ifdef WITH_SYSTEMD
-        if (unlikely(flags & PROC_FILLSYSTEMD))         // get sd-login.h stuff
+        if (flags & PROC_FILLSYSTEMD)                   // get sd-login.h stuff
             sd2proc(t);
 #endif
 
-        if (unlikely(flags & PROC_FILL_LXC))            // value the lxc name
+        if (flags & PROC_FILL_LXC)                      // value the lxc name
             t->lxcname = lxc_containers(path);
 
 #ifdef QUICK_THREADS
@@ -1110,14 +1106,14 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     }
 #endif
 
-    if (unlikely(flags & PROC_FILLOOM)) {
-        if (likely(file2str(path, "oom_score", &ub) != -1))
+    if (flags & PROC_FILLOOM) {
+        if (file2str(path, "oom_score", &ub) != -1)
             oomscore2proc(ub.buf, t);
-        if (likely(file2str(path, "oom_score_adj", &ub) != -1))
+        if (file2str(path, "oom_score_adj", &ub) != -1)
             oomadj2proc(ub.buf, t);
     }
 
-    if (unlikely(flags & PROC_FILLNS))                  // read /proc/#/task/#/ns/*
+    if (flags & PROC_FILLNS)                            // read /proc/#/task/#/ns/*
         procps_ns_read_pid(t->tid, &(t->ns));
 
     return t;
@@ -1136,8 +1132,8 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
   char *restrict const path = PT->path;
   for (;;) {
     ent = readdir(PT->procfs);
-    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name[0]))) return 0;
-    if(likely(likely(*ent->d_name > '0') && likely(*ent->d_name <= '9'))) break;
+    if(!ent || !ent->d_name[0]) return 0;
+    if(*ent->d_name > '0' && *ent->d_name <= '9') break;
   }
   p->tgid = strtoul(ent->d_name, NULL, 10);
   p->tid = p->tgid;
@@ -1163,8 +1159,8 @@ static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict con
   }
   for (;;) {
     ent = readdir(PT->taskdir);
-    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name[0]))) return 0;
-    if(likely(likely(*ent->d_name > '0') && likely(*ent->d_name <= '9'))) break;
+    if(!ent || !ent->d_name[0]) return 0;
+    if(*ent->d_name > '0' && *ent->d_name <= '9') break;
   }
   t->tid = strtoul(ent->d_name, NULL, 10);
   t->tgid = p->tgid;
@@ -1179,7 +1175,7 @@ static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict con
 static int listed_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
   char *restrict const path = PT->path;
   pid_t tgid = *(PT->pids)++;
-  if(likely(tgid)){
+  if(tgid){
     snprintf(path, PROCPATHLEN, "/proc/%d", tgid);
     p->tgid = tgid;
     p->tid = tgid;  // they match for leaders
@@ -1215,7 +1211,7 @@ proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
 
   for(;;){
     // fills in the path, plus p->tid and p->tgid
-    if (unlikely(!PT->finder(PT,p))) goto out;
+    if (!PT->finder(PT,p)) goto out;
 
     // go read the process data
     ret = PT->reader(PT,p);
