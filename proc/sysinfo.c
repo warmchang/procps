@@ -197,8 +197,10 @@ PROCPS_EXPORT unsigned int procps_pid_length(void)
 
     pid_length = DEFAULT_PID_LENGTH;
     if ((fp = fopen(PROCFS_PID_MAX, "r")) != NULL) {
-        if (fgets(buf, 24, fp) != NULL) {
-            pid_length = strlen(buf);
+        if (fgets(pidbuf, sizeof(pidbuf), fp) != NULL) {
+            pid_length = strlen(pidbuf);
+            if (pidbuf[pid_length-1] == '\n')
+                --pid_length;
         }
         fclose(fp);
     }
