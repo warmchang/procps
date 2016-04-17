@@ -1,20 +1,10 @@
 LIBPROCPS_0 {
 global:
-	closeproc;
-	dev_to_tty;
 	escape_command;
 	escape_str;
 	escape_strlist;
 	escaped_copy;
 	fatal_proc_unmounted;
-	look_up_our_self;
-	lookup_wchan;
-	openproc;
-	readproc;
-	readproctab2;
-	readproctab3;
-	readproctab;
-	readtask;
 	procps_cpu_count;
 	procps_diskstat_dev_count;
 	procps_diskstat_dev_get;

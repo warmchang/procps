@@ -784,13 +784,6 @@ static void fill_environ_cvt (const char* directory, proc_t *restrict p) {
     p->environ = vectorize_this_str(dst_buffer[0] ? dst_buffer : "-");
 }
 
-// warning: interface may change
-int read_cmdline(char *restrict const dst, unsigned sz, unsigned pid) {
-    char path[PROCPATHLEN];
-    snprintf(path, sizeof(path), "/proc/%u", pid);
-    return read_unvectored(dst, sz, path, "cmdline", ' ');
-}
-
 
     // Provide the means to value proc_t.lxcname (perhaps only with "-") while
     // tracking all names already seen thus avoiding the overhead of repeating
@@ -1235,61 +1228,6 @@ out:
   return NULL;
 }
 
-//////////////////////////////////////////////////////////////////////////////////
-// readtask: return a pointer to a proc_t filled with requested info about the
-// next task available.  If no more such tasks are available, return a null
-// pointer (boolean false).  Use the passed buffer instead of allocating
-// space if it is non-NULL.
-proc_t* readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict t) {
-  char path[PROCPATHLEN];    // must hold /proc/2000222000/task/2000222000/cmdline
-  proc_t *ret;
-  proc_t *saved_t;
-
-  saved_t = t;
-  if(!t) t = xcalloc(sizeof *t);
-  else free_acquired(t, 1);
-
-  // 1. got to fake a thread for old kernels
-#ifdef QUICK_THREADS
-  // 2. for single-threaded processes, this is faster (but must patch up stuff that differs!)
-  if(task_dir_missing || p->nlwp < 2){
-#else
-  if(task_dir_missing){
-#endif
-    if(PT->did_fake) goto out;
-    PT->did_fake=1;
-    memcpy(t,p,sizeof(proc_t));
-    // use the per-task pending, not per-tgid pending
-#ifdef SIGNAL_STRING
-    memcpy(&t->signal, &t->_sigpnd, sizeof t->signal);
-#else
-    t->signal = t->_sigpnd;
-#endif
-#ifdef QUICK_THREADS
-    MK_THREAD(t);
-#else
-    t->environ = NULL;
-    t->cmdline = vectorize_this_str("n/a");
-    t->cgroup  = NULL;
-    t->supgid  = NULL;
-    t->supgrp  = NULL;
-#endif
-    return t;
-  }
-
-  for(;;){
-    // fills in the path, plus t->tid and t->tgid
-    if (unlikely(!PT->taskfinder(PT,p,t,path))) goto out;  // simple_nexttid
-
-    // go read the task data
-    ret = PT->taskreader(PT,p,t,path);          // simple_readtask
-    if(ret) return ret;
-  }
-
-out:
-  if(!saved_t) free(t);
-  return NULL;
-}
 
 //////////////////////////////////////////////////////////////////////////////////
 // readeither: return a pointer to a proc_t filled with requested info about
@@ -1386,14 +1324,6 @@ void closeproc(PROCTAB* PT) {
     }
 }
 
-// deallocate space allocated by readproc
-void freeproc(proc_t* p) {
-    if (p) {
-        free_acquired(p, 0);
-        free(p);
-    }
-}
-
 
 //////////////////////////////////////////////////////////////////////////////////
 void look_up_our_self(proc_t *p) {
@@ -1405,173 +1335,6 @@ void look_up_our_self(proc_t *p) {
     }
     stat2proc(ub.buf, p);  // parse /proc/self/stat
     free(ub.buf);
-}
-
-
-/* Convenient wrapper around openproc and readproc to slurp in the whole process
- * table subset satisfying the constraints of flags and the optional PID list.
- * Free allocated memory with exit().  Access via tab[N]->member.  The pointer
- * list is NULL terminated.
- */
-proc_t** readproctab(unsigned flags, ...) {
-    PROCTAB* PT = NULL;
-    proc_t** tab = NULL;
-    int n = 0;
-    va_list ap;
-
-    va_start(ap, flags);		/* pass through args to openproc */
-    if (flags & PROC_UID) {
-	/* temporary variables to ensure that va_arg() instances
-	 * are called in the right order
-	 */
-	uid_t* u;
-	int i;
-
-	u = va_arg(ap, uid_t*);
-	i = va_arg(ap, int);
-	PT = openproc(flags, u, i);
-    }
-    else if (flags & PROC_PID)
-	PT = openproc(flags, va_arg(ap, void*)); /* assume ptr sizes same */
-    else
-	PT = openproc(flags);
-    va_end(ap);
-    if (!PT)
-      return 0;
-    do {					/* read table: */
-	tab = xrealloc(tab, (n+1)*sizeof(proc_t*));/* realloc as we go, using */
-	tab[n] = readproc(PT, NULL);     /* final null to terminate */
-    } while (tab[n++]);				  /* stop when NULL reached */
-    closeproc(PT);
-    return tab;
-}
-
-// Try again, this time with threads and selection.
-proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), PROCTAB *restrict const PT) {
-    static proc_data_t pd;
-    proc_t** ptab = NULL;
-    unsigned n_proc_alloc = 0;
-    unsigned n_proc = 0;
-
-    proc_t** ttab = NULL;
-    unsigned n_task_alloc = 0;
-    unsigned n_task = 0;
-
-    proc_t*  data = NULL;
-    unsigned n_alloc = 0;
-    unsigned long n_used = 0;
-
-    for(;;){
-        proc_t *tmp;
-        if(n_alloc == n_used){
-          //proc_t *old = data;
-          n_alloc = n_alloc*5/4+30;  // grow by over 25%
-          data = xrealloc(data,sizeof(proc_t)*n_alloc);
-          memset(data+n_used, 0, sizeof(proc_t)*(n_alloc-n_used));
-        }
-        if(n_proc_alloc == n_proc){
-          //proc_t **old = ptab;
-          n_proc_alloc = n_proc_alloc*5/4+30;  // grow by over 25%
-          ptab = xrealloc(ptab,sizeof(proc_t*)*n_proc_alloc);
-        }
-        tmp = readproc(PT, data+n_used);
-        if(!tmp) break;
-        if(!want_proc(tmp)) continue;
-        ptab[n_proc++] = (proc_t*)(n_used++);
-        if(!(  PT->flags & PROC_LOOSE_TASKS  )) continue;
-        for(;;){
-          proc_t *t;
-          if(n_alloc == n_used){
-            proc_t *old = data;
-            n_alloc = n_alloc*5/4+30;  // grow by over 25%
-            data = xrealloc(data,sizeof(proc_t)*n_alloc);
-            // have to move tmp too
-            tmp = data+(tmp-old);
-            memset(data+n_used+1, 0, sizeof(proc_t)*(n_alloc-(n_used+1)));
-          }
-          if(n_task_alloc == n_task){
-            //proc_t **old = ttab;
-            n_task_alloc = n_task_alloc*5/4+1;  // grow by over 25%
-            ttab = xrealloc(ttab,sizeof(proc_t*)*n_task_alloc);
-          }
-          t = readtask(PT, tmp, data+n_used);
-          if(!t) break;
-          if(!want_task(t)) continue;
-          ttab[n_task++] = (proc_t*)(n_used++);
-        }
-    }
-
-    pd.proc  = ptab;
-    pd.task  = ttab;
-    pd.nproc = n_proc;
-    pd.ntask = n_task;
-    if(PT->flags & PROC_LOOSE_TASKS){
-      pd.tab = ttab;
-      pd.n   = n_task;
-    }else{
-      pd.tab = ptab;
-      pd.n   = n_proc;
-    }
-    // change array indexes to pointers
-    while(n_proc--) ptab[n_proc] = data+(long)(ptab[n_proc]);
-    while(n_task--) ttab[n_task] = data+(long)(ttab[n_task]);
-
-    return &pd;
-}
-
-// Try try yet again, this time treating processes and threads the same...
-proc_data_t *readproctab3 (int(*want_task)(proc_t *buf), PROCTAB *restrict const PT) {
-    static proc_data_t pd;
-    proc_t **tab = NULL;
-    unsigned n_alloc = 0;
-    unsigned n_used = 0;
-    proc_t *p = NULL;
-
-    for (;;) {
-        if (n_alloc == n_used) {
-            n_alloc = n_alloc*5/4+30;  // grow by over 25%
-            tab = xrealloc(tab,sizeof(proc_t*)*n_alloc);
-        }
-        // let this next guy allocate the necessary proc_t storage
-        // (or recycle it) since he can't tolerate realloc relocations
-        if (!(p = readeither(PT,p))) break;
-        if (want_task(p)) {
-            tab[n_used++] = p;
-            p = NULL;
-        }
-    }
-
-    pd.tab = tab;
-    pd.n = n_used;
-    return &pd;
-}
-
-/*
- * get_proc_stats - lookup a single tasks information and fill out a proc_t
- *
- * On failure, returns NULL.  On success, returns 'p' and 'p' is a valid
- * and filled out proc_t structure.
- */
-proc_t * get_proc_stats(pid_t pid, proc_t *p) {
-    struct utlbuf_s ub = { NULL, 0 };
-    static char path[32];
-    struct stat statbuf;
-
-    sprintf(path, "/proc/%d", pid);
-    if (stat(path, &statbuf)) {
-        perror("stat");
-        return NULL;
-    }
-
-    if (file2str(path, "stat", &ub) >= 0)
-        stat2proc(ub.buf, p);
-    if (file2str(path, "statm", &ub) >= 0)
-        statm2proc(ub.buf, p);
-    if (file2str(path, "status", &ub) >= 0)
-        status2proc(ub.buf, p, 0);
-
-    free(ub.buf);
-    return p;
 }
 
 #undef MK_THREAD

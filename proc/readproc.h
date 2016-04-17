@@ -10,7 +10,9 @@
 // in the file COPYING
 
 
-// #include <proc/pwcache.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <unistd.h>
 #include <proc/namespace.h>
 
 #define SIGNAL_STRING
@@ -30,18 +32,6 @@ __BEGIN_DECLS
 // by the introduction of thread support. It is used in cases where
 // neither tgid nor tid seemed correct. (in other words, FIXME)
 #define XXXID tid
-
-enum ns_type {
-    IPCNS = 0,
-    MNTNS,
-    NETNS,
-    PIDNS,
-    USERNS,
-    UTSNS,
-    NUM_NS         // total namespaces (fencepost)
-};
-extern const char *get_ns_name(int id);
-extern int get_ns_id(const char *name);
 
 // Basic data structure which holds all information we can get about a process.
 // (unless otherwise specified, fields are read from /proc/#/stat)
@@ -183,10 +173,6 @@ typedef struct proc_t {
 // from openproc().  The setup is intentionally similar to the dirent interface
 // and other system table interfaces (utmp+wtmp come to mind).
 
-#include <sys/types.h>
-#include <dirent.h>
-#include <unistd.h>
-
 #define PROCPATHLEN 64  // must hold /proc/2000222000/task/2000222000/cmdline
 
 typedef struct PROCTAB {
@@ -211,54 +197,6 @@ typedef struct PROCTAB {
     unsigned pathlen;        // length of string in the above (w/o '\0')
 } PROCTAB;
 
-// Initialize a PROCTAB structure holding needed call-to-call persistent data
-extern PROCTAB* openproc(unsigned flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
-
-typedef struct proc_data_t {  // valued by: (else zero)
-    proc_t **tab;             //     readproctab2, readproctab3
-    proc_t **proc;            //     readproctab2
-    proc_t **task;            //  *  readproctab2
-    int n;                    //     readproctab2, readproctab3
-    int nproc;                //     readproctab2
-    int ntask;                //  *  readproctab2
-} proc_data_t;                //  *  when PROC_LOOSE_TASKS set
-
-extern proc_data_t *readproctab2(int(*want_proc)(proc_t *buf), int(*want_task)(proc_t *buf), PROCTAB *__restrict const PT);
-extern proc_data_t *readproctab3(int(*want_task)(proc_t *buf), PROCTAB *__restrict const PT);
-
-// Convenient wrapper around openproc and readproc to slurp in the whole process
-// table subset satisfying the constraints of flags and the optional PID list.
-// Free allocated memory with exit().  Access via tab[N]->member.  The pointer
-// list is NULL terminated.
-extern proc_t** readproctab(unsigned flags, ... /* same as openproc */ );
-
-// Clean-up open files, etc from the openproc()
-extern void closeproc(PROCTAB* PT);
-
-// Retrieve the next process or task matching the criteria set by the openproc().
-//
-// Note: When NULL is used as the readproc 'p', readtask 't' or readeither 'x'
-//       parameter, the library will allocate the necessary proc_t storage.
-//
-//       Alternatively, you may provide your own reuseable buffer address
-//       in which case that buffer *MUST* be initialized to zero one time
-//       only before first use.  Thereafter, the library will manage such
-//       a passed proc_t, freeing any additional acquired memory associated
-//       with the previous process or thread.
-extern proc_t* readproc(PROCTAB *__restrict const PT, proc_t *__restrict p);
-extern proc_t* readtask(PROCTAB *__restrict const PT, const proc_t *__restrict const p, proc_t *__restrict t);
-extern proc_t* readeither(PROCTAB *__restrict const PT, proc_t *__restrict x);
-
-// warning: interface may change
-extern int read_cmdline(char *__restrict const dst, unsigned sz, unsigned pid);
-
-extern void look_up_our_self(proc_t *p);
-
-// Deallocate space allocated by readproc
-extern void freeproc(proc_t* p);
-
-// Fill out a proc_t for a single task
-extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 
 // openproc/readproctab:
 //
@@ -304,6 +242,24 @@ extern proc_t * get_proc_stats(pid_t pid, proc_t *p);
 #define PROC_SPARE_2     0x02000000
 #define PROC_SPARE_3     0x04000000
 #define PROC_SPARE_4     0x08000000
+
+// Function definitions
+// Initialize a PROCTAB structure holding needed call-to-call persistent data
+PROCTAB* openproc(unsigned flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
+// Retrieve the next process or task matching the criteria set by the openproc().
+//
+// Note: When NULL is used as the readproc 'p' or readeither 'x'
+//       parameter, the library will allocate the necessary proc_t storage.
+//
+//       Alternatively, you may provide your own reuseable buffer address
+//       in which case that buffer *MUST* be initialized to zero one time
+//       only before first use.  Thereafter, the library will manage such
+//       a passed proc_t, freeing any additional acquired memory associated
+//       with the previous process or thread.
+proc_t* readproc(PROCTAB *__restrict const PT, proc_t *__restrict p);
+proc_t* readeither(PROCTAB *__restrict const PT, proc_t *__restrict x);
+void look_up_our_self(proc_t *p);
+void closeproc(PROCTAB* PT);
 
 __END_DECLS
 #endif
