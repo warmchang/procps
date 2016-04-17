@@ -210,6 +210,12 @@ static void select_procs (void)
 					match = 1;
 				}
 			}
+            /* If there is a space in arg0 then process probably has
+             * setproctitle so use the cmdline
+             */
+            if (!match && strchr(cmd_arg0, ' ')) {
+                match = (strcmp(program, task.cmd)==0);
+            }
 
 			safe_free(exe_link);
 
