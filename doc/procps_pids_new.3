@@ -1,0 +1,72 @@
+.\" (C) Copyright 2016 Craig Small <csmall@enc.com.au>
+.\"
+.\" %%%LICENSE_START(LGPL_2.1+)
+.\" This manual is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2.1 of the License, or (at your option) any later version.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+.\" %%%LICENSE_END
+.\"
+.TH PROCPS_PIDS_NEW 3 2016-04-18 "libproc-2"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.SH NAME
+procps_pids_new \-
+Create a PID information structure
+.SH SYNOPSIS
+.B #include <proc/procps.h>
+.sp
+.BI "int procps_pids_new(struct procps_pidsinfo **" info ", int " maxitems ", enum pids_item *" items ");"
+.sp
+Link with \fI\-lprocps\fP.
+
+.SH DESCRIPTION
+.BR procps_pids_new ()
+creates a new PID information structure that be used in subsequent calls to
+.BR procps_pids_read_open (3),
+.BR procps_pids_reset (3),
+.BR procps_pids_sort (3).
+functions. The pointer to \fIinfo\fR will have memory allocated and a structure
+created.
+
+\fIitems\fR is an array of enums up to \fImaxitems\fR long that selects what
+information about the processed will be stored. \fImaxitems\fR is used to
+allocate memory and must be at least the length of \fIitems\fR but can be more.
+For information about what \fIitems\fR can contain, see the \fBPID ITEMS\fR
+section in
+.BR libproc (3).
+
+Once the structure is no longer required,
+.BR procps_pids_unref (3)
+should be used to free it.
+
+.SH RETURN VALUE
+The function returns 0 on success and one of negative values below
+on failure.
+.TP
+.B -EINVAL
+One of the given parameters is incorrect.
+.TP
+.B -ENOMEM
+Unable to allocate memory for the structure.
+
+.SH VERSIONS
+.B procps_pids_new()
+first appeared in libproc-2 version 0.0.
+
+.SH SEE ALSO
+.BR libproc (3),
+.BR procps_pids_read_open (3),
+.BR procps_pids_reset (3),
+.BR procps_pids_sort (3),
+.BR procps_pids_unref (3),
+.BR proc (5).

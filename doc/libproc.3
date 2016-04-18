@@ -1,0 +1,323 @@
+.\" (C) Copyright 2016 Craig Small <csmall@enc.com.au>
+.\"
+.\" %%%LICENSE_START(LGPL_2.1+)
+.\" This manual is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2.1 of the License, or (at your option) any later version.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+.\" %%%LICENSE_END
+.\"
+.TH LIBPROC 3 2016-04-18 "libproc-2"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.SH NAME
+libproc \-
+Miscelleanous information about libproc
+
+.SH SYNOPSIS
+.B #include <proc/procps.h>
+
+Link with \fI\-lprocps\fR.
+
+.SH DESCRIPTION
+This manual describes some of the anciallary information about the
+libproc library.
+
+.SS PID ITEMS
+The enum \fIpids_item\fR is used by the functions
+.BR procps_pids_new (3),
+.BR procps_pids_reset "(3) and"
+.BR procps_pids_sort (3).
+The following items can be fetched for a process:
+.TP
+.B PROCPS_PIDS_ADDR_END_CODE
+?
+.TP
+.B PROCPS_PIDS_ADDR_KSTK_EIP
+Instruction pointer.
+.TP
+.B PROCPS_PIDS_ADDR_KSTK_ESP
+Stack pointer.
+.TP
+.B PROCPS_PIDS_ADDR_START_CODE
+?
+.TP
+.B PROCPS_PIDS_ADDR_START_STACK
+Address of the start (bottom) of the stack.
+.TP
+.B PROCPS_PIDS_ALARM
+?
+.TP
+.B PROCPS_PIDS_CGNAME
+The name of the control group for the process.
+.TP
+.B PROCPS_PIDS_CGROUP, PROCPS_PIDS_CGROUP_V
+List of control groups the process belongs to as a string or string vector.
+.TP
+.B PROCPS_PIDS_CMD
+Command name (only the executable name).
+.TP
+.B PROCPS_PIDS_CMDLINE, PROCPS_PIDS_CMDLINE_V
+Full command line as a string or string vector.
+.TP
+.B PROCPS_PIDS_ENVIRON, PROCPS_PIDS_ENVIRON_V
+The processes environment as a string or string vector.
+.TP
+.B PROCPS_PIDS_EXIT_SIGNAL
+?
+.TP
+.B PROCPS_PIDS_FLAGS
+Process flags.
+.TP
+.B PROCPS_PIDS_FLT_MAJ
+Number of major page faults.
+.TP
+.B PROCPS_PIDS_FLT_MAJ_C
+Cumulative major page faults.
+.TP
+.B PROCPS_PIDS_FLT_MAJ_DELTA
+Number of major page faults since last fetch.
+.TP
+.B PROCPS_PIDS_FLT_MIN
+Number of minor page faults.
+.TP
+.B PROCPS_PIDS_FLT_MIN_C
+Culmative minor page faults.
+.TP
+.B PROCPS_PIDS_FLT_MIN_DELTA
+Number of minor page faults since last fetch.
+.TP
+.B PROCPS_PIDS_ID_EGID, PROCPS_PIDS_ID_EGROUP
+Effective group as a ID number or name.
+.TP
+.B PROCPS_PIDS_ID_EUID, PROCPS_PIDS_ID_EUSER
+Effective user ID number or name.
+.TP
+.B PROCPS_PIDS_ID_FGID, PROCPS_PIDS_ID_FGROUP
+File system access group ID number or name.
+.TP
+.B PROCPS_PIDS_ID_FUID, PROCPS_PIDS_ID_FUSER
+File sytem access user ID number or name.
+.TP
+.B PROCPS_PIDS_ID_PGRP
+Process group ID, or process ID of group leader.
+.TP
+.B PROCPS_PIDS_ID_PID
+Proccess ID number.
+.TP
+.B PROCPS_PIDS_ID_PPID
+Process ID number of parent.
+.TP
+.B PROCPS_PIDS_ID_RGID, PROCPS_PIDS_ID_RGROUP
+Real group ID number or name.
+.TP
+.B PROCPS_PIDS_ID_RUID, PROCPS_PIDS_ID_RUSER
+Real user ID number or name.
+.TP
+.B PROCPS_PIDS_ID_SESSION
+Session ID number, or process ID of session leader.
+.TP
+.B PROCPS_PIDS_ID_SGID, PROCPS_PIDS_ID_SGROUP
+Saved group ID number or name.
+.TP
+.B PROCPS_PIDS_ID_SUID, PROCPS_PIDS_ID_SUSER
+Saved user ID number or name.
+.TP
+.B PROCPS_PIDS_ID_TGID
+Thread group ID number, or process ID of thread group leader.
+.TP
+.B PROCPS_PIDS_ID_TPGID
+Process ID of foreground process group on the tty.
+.TP
+.B PROCPS_PIDS_LXCNAME
+Linux container name.
+.TP
+.B PROCPS_PIDS_MEM_CODE
+?
+.TP
+.B PROCPS_PIDS_MEM_CODE_KIB
+?
+.TP
+.B PROCPS_PIDS_MEM_DATA
+?
+.TP
+.B PROCPS_PIDS_MEM_DATA_KIB
+?
+.TP
+.B PROCPS_PIDS_MEM_DT
+?
+.TP
+.B PROCPS_PIDS_MEM_LRS
+?
+.TP
+.B PROCPS_PIDS_MEM_RES
+Resident set size
+.TP
+.B PROCPS_PIDS_MEM_RES_KIB
+Resident set size
+.TP
+.B PROCPS_PIDS_MEM_SHR
+Shared memory
+.TP
+.B PROCPS_PIDS_MEM_SHR_KIB
+Shared memory
+.TP
+.B PROCPS_PIDS_MEM_VIRT
+Virtual memory.
+.TP
+.B PROCPS_PIDS_MEM_VIRT_KIB
+Virtual memory.
+.TP
+.B PROCPS_PIDS_NICE
+Nice value.
+.TP
+.B PROCPS_PIDS_NLWP
+Number of lwps (threads) in the process.
+.TP
+.B PROCPS_PIDS_NS_IPC, PROCPS_PIDS_NS_MNT, PROCPS_PIDS_NS_NET, PROCPS_PIDS_NS_PID, PROCPS_PIDS_NS_USER, PROCPS_PIDS_NS_UTS
+IDs of the current namespaces for IPC, mount, network, PID, user or UTS.
+See 
+.B user_namespaces (7)
+for further information on these items.
+.TP
+.B PROCPS_PIDS_OOM_ADJ
+?
+.TP
+.B PROCPS_PIDS_OOM_SCORE
+?
+.TP
+.B PROCPS_PIDS_PRIORITY
+Kernel scheduling priority.
+.TP
+.B PROCPS_PIDS_PROCESSOR
+Current CPU the process is running on.
+.TP
+.B PROCPS_PIDS_RSS
+Resident set size.
+.TP
+.B PROCPS_PIDS_RSS_RLIM
+?
+.TP
+.B PROCPS_PIDS_RTPRIO
+Realtime priority.
+.TP
+.B PROCPS_PIDS_SCHED_CLASS
+Scheduling class, see
+.BR sched (7).
+.TP
+.B PROCPS_PIDS_SD_MACH, PROCPS_PIDS_SD_OUID, PROCPS_PIDS_SD_SEAT, PROCPS_PIDS_SD_SESS, PROCPS_PIDS_SD_SLICE, PROCPS_PIDS_SD_UNIT, PROCPS_PIDS_SD_UUNIT
+The systemd machine name, owner user ID, seat, session, slice, unit or user unit; see
+.BR sd_pid_get_session (3).
+.TP
+.B PROCPS_PIDS_SIGBLOCKED
+?
+.TP
+.B PROCPS_PIDS_SIGCATCH
+?
+.TP
+.B PROCPS_PIDS_SIGIGNORE
+?
+.TP
+.B PROCPS_PIDS_SIGNALS
+?
+.TP
+.B PROCPS_PIDS_SIGPENDING
+?
+.TP
+.B PROCPS_PIDS_STATE
+Process state codes.
+.TP
+.B PROCPS_PIDS_SUPGIDS, PROCPS_PIDS_SUPGROUPS
+IDs or names of the supplementary groups.
+.TP
+.B PROCPS_PIDS_TICS_ALL
+Sum of user and system time.
+.TP
+.B PROCPS_PIDS_TICS_ALL_C
+Cumulative sum of user and system time.
+.TP
+.B PROCPS_PIDS_TICS_DELTA
+Difference of sum of user and system time since last fetch.
+.TP
+.B PROCPS_PIDS_TICS_SYSTEM
+?
+.TP
+.B PROCPS_PIDS_TICS_SYSTEM_C
+?
+.TP
+.B PROCPS_PIDS_TICS_USER
+?
+.TP
+.B PROCPS_PIDS_TICS_USER_C
+?
+.TP
+.B PROCPS_PIDS_TIME_ALL
+?
+.TP
+.B PROCPS_PIDS_TIME_ELAPSED
+Total seconds since process started.
+.TP
+.B PROCPS_PIDS_TIME_START
+Time the process started.
+.TP
+.B PROCPS_PIDS_TTY, PROCPS_PIDS_TTY_NAME, PROCPS_PIDS_TTY_NUMBER
+Controlling terminal as a ID, name or number
+.TP
+.B PROCPS_PIDS_VM_DATA
+?
+.TP
+.B PROCPS_PIDS_VM_EXE
+?
+.TP
+.B PROCPS_PIDS_VM_LIB
+?
+.TP
+.B PROCPS_PIDS_VM_LOCK
+?
+.TP
+.B PROCPS_PIDS_VM_RSS
+?
+.TP
+.B PROCPS_PIDS_VM_RSS_ANON
+?
+.TP
+.B PROCPS_PIDS_VM_RSS_FILE
+?
+.TP
+.B PROCPS_PIDS_VM_RSS_LOCKED
+?
+.TP
+.B PROCPS_PIDS_VM_RSS_SHARED
+?
+.TP
+.B PROCPS_PIDS_VM_SIZE
+?
+.TP
+.B PROCPS_PIDS_VM_STACK
+?
+.TP
+.B PROCPS_PIDS_VM_SWAP
+?
+.TP
+.B PROCPS_PIDS_VM_USED
+?
+.TP
+.B PROCPS_PIDS_VSIZE_PGS
+?
+.TP
+.B PROCPS_PIDS_WCHAN_ADDR, PROCPS_PIDS_WCHAN_NAME
+Address or name of the kernel function in which the process is sleeping.
+
+.SH SEE ALSO
+.BR proc (5),
+.BR sched (7),
+.BR user_namespaces (7).

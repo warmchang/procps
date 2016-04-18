@@ -54,7 +54,9 @@ dist_man_MANS = \
 	vmstat.8 \
 	w.1 \
 	ps/ps.1 \
+	doc/libproc.3 \
 	doc/procps_linux_version.3 \
+	doc/procps_pids_new.3 \
 	doc/procps_uptime.3 \
 	doc/procps_uptime_sprint.3 \
 	doc/procps_uptime_sprint_short.3
