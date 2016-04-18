@@ -27,6 +27,8 @@
 __BEGIN_DECLS
 
 enum pids_item {
+    PROCPS_PIDS_noop,                  //         ( never altered )
+    PROCPS_PIDS_extra,                 //         ( reset to zero )
     PROCPS_PIDS_ADDR_END_CODE,         // ul_int
     PROCPS_PIDS_ADDR_KSTK_EIP,         // ul_int
     PROCPS_PIDS_ADDR_KSTK_ESP,         // ul_int
@@ -144,8 +146,6 @@ enum pids_item {
     PROCPS_PIDS_VSIZE_PGS,             // ul_int
     PROCPS_PIDS_WCHAN_ADDR,            // ul_int
     PROCPS_PIDS_WCHAN_NAME,            // str
-    PROCPS_PIDS_extra,                 //         ( reset to zero )
-    PROCPS_PIDS_noop                   //         ( never altered )
 };
 
 enum pids_fill_type {

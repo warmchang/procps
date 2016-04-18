@@ -52,8 +52,9 @@
 
 #define READS_BEGUN (info->read)       // a read is in progress
 
-enum pids_item PROCPS_PIDS_logical_end  = PROCPS_PIDS_noop + 1;
-enum pids_item PROCPS_PIDS_physical_end = PROCPS_PIDS_noop + 2;
+   // next 2 MUST be kept in sync with highest value enum
+enum pids_item PROCPS_PIDS_logical_end  = PROCPS_PIDS_WCHAN_NAME + 1;
+enum pids_item PROCPS_PIDS_physical_end = PROCPS_PIDS_WCHAN_NAME + 2;
 
     // these represent the proc_t fields whose storage cannot be managed
     // optimally if they are ever referenced more than once in any stack
@@ -136,6 +137,8 @@ struct procps_pidsinfo {
     if (I->ref_counts[ref_ ## e2]) R->result.strv = NULL; \
     else { R->result.strv = P-> x; P-> x = NULL; } }
 
+setDECL(noop)         { (void)I; (void)R; (void)P; return; }
+setDECL(extra)        { (void)I; (void)R; (void)P; return; }
 REG_set(ADDR_END_CODE,    ul_int,  end_code)
 REG_set(ADDR_KSTK_EIP,    ul_int,  kstk_eip)
 REG_set(ADDR_KSTK_ESP,    ul_int,  kstk_esp)
@@ -253,10 +256,6 @@ setDECL(VM_USED)      { (void)I; R->result.ul_int = P->vm_swap + P->vm_rss; }
 REG_set(VSIZE_PGS,        ul_int,  vsize)
 REG_set(WCHAN_ADDR,       ul_int,  wchan)
 setDECL(WCHAN_NAME)   { (void)I; R->result.str = strdup(lookup_wchan(P->tid)); }
-setDECL(extra)        { (void)I; (void)R; (void)P; return; }
-setDECL(noop)         { (void)I; (void)R; (void)P; return; }
-setDECL(logical_end)  { (void)I; (void)R; (void)P; return; }
-setDECL(physical_end) { (void)I; (void)R; (void)P; return; }
 
 #undef setDECL
 #undef CVT_set
@@ -391,6 +390,8 @@ static struct {
 } Item_table[] = {
 /*    setsfunc               oldflags    freefunc   sortfunc      needhist  refcount
       ---------------------  ----------  ---------  ------------  --------  ------------- */
+    { RS(noop),              0,          NULL,      QS(noop),     0,        -1            }, // user only, never altered
+    { RS(extra),             0,          NULL,      QS(ull_int),  0,        -1            }, // user only, reset to zero
     { RS(ADDR_END_CODE),     f_stat,     NULL,      QS(ul_int),   0,        -1            },
     { RS(ADDR_KSTK_EIP),     f_stat,     NULL,      QS(ul_int),   0,        -1            },
     { RS(ADDR_KSTK_ESP),     f_stat,     NULL,      QS(ul_int),   0,        -1            },
@@ -508,10 +509,8 @@ static struct {
     { RS(VSIZE_PGS),         f_stat,     NULL,      QS(ul_int),   0,        -1            },
     { RS(WCHAN_ADDR),        f_stat,     NULL,      QS(ul_int),   0,        -1            },
     { RS(WCHAN_NAME),        0,          FF(str),   QS(str),      0,        -1            }, // oldflags: tid already free
-    { RS(extra),             0,          NULL,      QS(ull_int),  0,        -1            },
-    { RS(noop),              0,          NULL,      QS(noop),     0,        -1            },
-    { RS(logical_end),       0,          NULL,      QS(noop),     0,        -1            },
-    { RS(physical_end),      0,          NULL,      QS(noop),     0,        -1            }
+   // dummy entry never referenced ( makes future additions 'comma' worry free )...
+    { NULL,                  0,          NULL,      NULL,         0,        -1            }
 };
 
 #undef RS
@@ -784,11 +783,12 @@ static inline void cleanup_stack (
     int i;
 
     for (i = 0; i < depth; i++) {
-        if (p->item < PROCPS_PIDS_noop) {
-            if (Item_table[p->item].freefunc)
-                Item_table[p->item].freefunc(p);
+        if (p->item >= PROCPS_PIDS_logical_end)
+            break;
+        if (Item_table[p->item].freefunc)
+            Item_table[p->item].freefunc(p);
+        if (p->item > PROCPS_PIDS_noop)
             p->result.ull_int = 0;
-        }
         ++p;
     }
 } // end: cleanup_stack
@@ -869,7 +869,7 @@ static inline int items_check_failed (
         // a pids_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
             return -1;
-        if (items[i] > PROCPS_PIDS_noop) {
+        if (items[i] >= PROCPS_PIDS_logical_end) {
             return -1;
         }
     }
@@ -1023,7 +1023,7 @@ static void validate_stacks (
  * alloc_stacks():
  *
  * Allocate and initialize one or more stacks each of which is anchored in an
- * associated pids_stack structure (which may include extra user space).
+ * associated pids_stack structure.
  *
  * All such stacks will will have their result structures properly primed with
  * 'items', while the result itself will be zeroed.
@@ -1438,7 +1438,7 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
     if (info == NULL || stacks == NULL)
         return NULL;
     // a pids_item is currently unsigned, but we'll protect our future
-    if (sort < 0  || sort > PROCPS_PIDS_noop)
+    if (sort < 0  || sort >= PROCPS_PIDS_logical_end)
         return NULL;
     if (order != PROCPS_SORT_ASCEND && order != PROCPS_SORT_DESCEND)
         return NULL;
@@ -1453,7 +1453,7 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
         ++offset;
         if (offset >= info->curitems)
             return NULL;
-        if (p->item > PROCPS_PIDS_noop)
+        if (p->item >= PROCPS_PIDS_logical_end)
             return NULL;
         ++p;
     }
