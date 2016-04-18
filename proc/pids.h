@@ -148,9 +148,9 @@ enum pids_item {
     PROCPS_PIDS_WCHAN_NAME,            // str
 };
 
-enum pids_fill_type {
-    PROCPS_FILL_PID  = 0x1000,
-    PROCPS_FILL_UID  = 0x4000
+enum pids_select_type {
+    PROCPS_SELECT_PID  = 0x1000,
+    PROCPS_SELECT_UID  = 0x4000
 };
 
 enum pids_reap_type {
@@ -234,7 +234,7 @@ struct pids_reap *procps_pids_select (
     struct procps_pidsinfo *info,
     unsigned *these,
     int maxthese,
-    enum pids_fill_type which);
+    enum pids_select_type which);
 
 struct pids_stack **procps_pids_sort (
     struct procps_pidsinfo *info,

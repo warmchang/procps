@@ -1386,7 +1386,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_select (
         struct procps_pidsinfo *info,
         unsigned *these,
         int maxthese,
-        enum pids_fill_type which)
+        enum pids_select_type which)
 {
     unsigned ids[FILL_ID_MAX + 1];
     int rc;
@@ -1395,10 +1395,10 @@ PROCPS_EXPORT struct pids_reap *procps_pids_select (
         return NULL;
     if (maxthese < 1 || maxthese > FILL_ID_MAX)
         return NULL;
-    if (which != PROCPS_FILL_PID && which != PROCPS_FILL_UID)
+    if (which != PROCPS_SELECT_PID && which != PROCPS_SELECT_UID)
         return NULL;
 
-    // this zero delimiter is really only needed with PROCPS_FILL_PID
+    // this zero delimiter is really only needed with PROCPS_SELECT_PID
     memcpy(ids, these, sizeof(unsigned) * maxthese);
     ids[maxthese] = 0;
 
