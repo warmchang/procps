@@ -2272,7 +2272,7 @@ static void procs_refresh (void) {
    Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
 
    if (!Monpidsidx) Pids_reap = procps_pids_reap(Pids_ctx, Thread_mode);
-   else Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, PROCPS_FILL_PID);
+   else Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, PROCPS_SELECT_PID);
    if (!Pids_reap)
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 

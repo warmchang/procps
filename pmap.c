@@ -1153,7 +1153,7 @@ int main(int argc, char **argv)
 
 	discover_shm_minor();
 
-	if (!(pids_reap = procps_pids_select(info, pidlist, user_count, PROCPS_FILL_PID)))
+	if (!(pids_reap = procps_pids_select(info, pidlist, user_count, PROCPS_SELECT_PID)))
 		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
 
 	for (reap_count = 0; reap_count < pids_reap->counts.total; reap_count++) {

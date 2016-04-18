@@ -282,7 +282,7 @@ static void simple_spew(void){
     unsigned *pidlist = xcalloc(selection_list->n, sizeof(unsigned));
     for (i = 0; i < selection_list->n; i++)
       pidlist[i] = selection_list->u[selection_list->n-i-1].pid;
-    pidreap = procps_pids_select(Pids_info, pidlist, selection_list->n, PROCPS_FILL_PID);
+    pidreap = procps_pids_select(Pids_info, pidlist, selection_list->n, PROCPS_SELECT_PID);
     free(pidlist);
   } else {
     enum pids_reap_type which;
