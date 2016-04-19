@@ -1,4 +1,5 @@
 test_namespace
+test_pids
 test_sysinfo
 test_uptime
 test_version

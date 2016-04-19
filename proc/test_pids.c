@@ -1,6 +1,6 @@
 /*
  * libprocps - Library to read proc filesystem
- * Tests for sysinfo library calls
+ * Tests for pids library calls
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,43 +18,37 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 
-#include <proc/sysinfo.h>
+#include <proc/procps.h>
 #include "tests.h"
 
-int check_hertz(void *data)
+int check_pids_new_nullinfo(void *data)
 {
-    long hz;
-    testname = "procps_hertz_get()";
-
-    hz =  procps_hertz_get();
-    return (hz > 0);
+    testname = "procps_pids_new() info=NULL returns -EINVAL";
+    return (procps_pids_new(NULL, 0, NULL) == -EINVAL);
 }
 
-int check_loadavg(void *data)
+int check_pids_new_enum(void *data)
 {
-    double a,b,c;
-    testname = "procps_loadavg()";
-
-    if (procps_loadavg(&a, &b, &c) == 0)
-        return 1;
-    return (a>0 && b>0 && c>0);
+    testname = "procps_pids_new() items=enum returns -EINVAL";
+    struct procps_pidsinfo *info;
+    return (procps_pids_new(&info, 3, PROCPS_PIDS_noop) == -EINVAL);
 }
 
-int check_loadavg_null(void *data)
+int check_pids_new_toomany(void *data)
 {
-    testname = "procps_loadavg() with NULLs";
-    if (procps_loadavg(NULL, NULL, NULL) == 0)
-        return 1;
-    return 0;
+    struct procps_pidsinfo *info;
+    enum pids_item items[] = { PROCPS_PIDS_ID_PID, PROCPS_PIDS_ID_PID };
+    testname = "procps_pids_new() too many items returns -EINVAL";
+    return (procps_pids_new(&info, 1, items) == -EINVAL);
 }
 
 TestFunction test_funcs[] = {
-    check_hertz,
-    check_loadavg,
-    check_loadavg_null,
-    NULL,
-};
+    check_pids_new_nullinfo,
+    check_pids_new_enum,
+    check_pids_new_toomany,
+    NULL };
 
 int main(int argc, char *argv[])
 {

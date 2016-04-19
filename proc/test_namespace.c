@@ -20,68 +20,57 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <proc/namespace.h>
-
-struct test_func {
-    int (*func)(void *data);
-    char *name;
-};
+#include <proc/procps.h>
+#include "tests.h"
 
 int check_name_minus(void *data)
 {
+    testname = "procps_ns_get_name() negative id";
     return (procps_ns_get_name(-1) == NULL);
 }
 
 int check_name_over(void *data)
 {
+    testname = "procps_ns_get_name() id over limit";
     return (procps_ns_get_name(999) == NULL);
 }
 
 int check_name_ipc(void *data)
 {
+    testname = "procps_ns_get_name() ipc";
     return (strcmp(procps_ns_get_name(PROCPS_NS_IPC),"ipc")==0);
 }
 
 int check_id_null(void *data)
 {
+    testname = "procps_ns_get_id(NULL)";
     return (procps_ns_get_id(NULL) < 0);
 }
 
 int check_id_unfound(void *data)
 {
+    testname = "procps_ns_get_id(unknown)";
     return (procps_ns_get_id("foobar") < 0);
 }
 
 int check_id_mnt(void *data)
 {
+    testname = "procps_ns_get_id(mnt)";
     return (procps_ns_get_id("mnt") == PROCPS_NS_MNT);
 }
 
-struct test_func tests[] = {
-    { check_name_minus, "procps_ns_get_name() negative id"},
-    { check_name_over, "procps_ns_get_name() id over limit"},
-    { check_name_ipc, "procps_ns_get_name() ipc"},
-    { check_id_null, "procps_ns_get_id(NULL)"},
-    { check_id_unfound, "procps_ns_get_id(unknown)"},
-    { check_id_mnt, "procps_ns_get_id(mnt)"},
-    { NULL, NULL}
+TestFunction test_funcs[] = {
+    check_name_minus,
+    check_name_over,
+    check_name_ipc,
+    check_id_null,
+    check_id_unfound,
+    check_id_mnt,
+    NULL
 };
 
 int main(int argc, char *argv[])
 {
-    int i;
-    struct test_func *current;
-
-    for(i=0; tests[i].func != NULL; i++) {
-        current = &tests[i];
-        if (!current->func(NULL)) {
-            fprintf(stderr, "FAIL: %s\n", current->name);
-            return EXIT_FAILURE;
-        } else {
-            fprintf(stderr, "PASS: %s\n", current->name);
-        }
-    }
-    return EXIT_SUCCESS;
+    return run_tests(test_funcs, NULL);
 }
-
 

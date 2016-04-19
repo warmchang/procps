@@ -26,29 +26,18 @@
 
 int check_linux_version(void *data)
 {
+    testname = "procps_linux_version()";
     return (procps_linux_version() > 0);
 }
 
-struct test_func tests[] = {
-    { check_linux_version, "procps_linux_version()"},
-    { NULL, NULL}
+TestFunction test_funcs[] = {
+    check_linux_version,
+    NULL
 };
 
 int main(int argc, char *argv[])
 {
-    int i;
-    struct test_func *current;
-
-    for(i=0; tests[i].func != NULL; i++) {
-        current = &tests[i];
-        if (!current->func(NULL)) {
-            fprintf(stderr, "FAIL: %s\n", current->name);
-            return EXIT_FAILURE;
-        } else {
-            fprintf(stderr, "PASS: %s\n", current->name);
-        }
-    }
-    return EXIT_SUCCESS;
+    return run_tests(test_funcs, NULL);
 }
 
 
