@@ -7,7 +7,10 @@ AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/include \
-	-DLOCALEDIR=\"$(localedir)\"
+	-DLOCALEDIR=\"$(localedir)\" \
+	@HARDEN_CFLAGS@
+
+AM_LDFLAGS = @HARDEN_LDFLAGS@
 
 PACKAGE_VERSION = @PACKAGE_VERSION@
 

@@ -116,6 +116,29 @@ if test "$enable_libselinux" = "yes"; then
   AC_DEFINE([ENABLE_LIBSELINUX], [1], [Enable libselinux])
 fi
 
+# Enable hardened compile and link flags
+AC_ARG_ENABLE([harden_flags],
+  [AS_HELP_STRING([--enable-harden-flags], [enable hardened compilier and linker flags])],
+  [enable_harden_flags=$enableval],
+  [enable_harden_flags="no"])
+
+# Check that harden CFLAGS and LDFLAGS will compile
+AS_IF([test "$enable_harden_flags" = "yes"],
+  HARDEN_CFLAGS="-g -O2 -fPIE -fstack-protector-strong -Wformat -Werror=format-security"
+  [HARDEN_LDFLAGS="-fPIE -pie -Wl,-z,relro -Wl,-z,now"]
+  [ AC_MSG_CHECKING([compiler supports harden flags])
+  save_harden_cflags="$CFLAGS"
+  CFLAGS="$CFLAGS $HARDEN_CFLAGS"
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,,)],
+      [AC_MSG_RESULT([yes])],
+     [AC_MSG_RESULT([no]); HARDEN_CFLAGS='']
+    )
+  CFLAGS="$save_harden_cflags"],
+  [HARDEN_CFLAGS=""
+   HARDEN_LDFLAGS=""])
+AC_SUBST([HARDEN_CFLAGS])
+AC_SUBST([HARDEN_LDFLAGS])
+
 # Optional packages - AC_ARG_WITH
 AC_ARG_WITH([ncurses],
   AS_HELP_STRING([--without-ncurses], [build only applications not needing ncurses]),
