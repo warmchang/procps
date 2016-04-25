@@ -231,7 +231,7 @@ static int parse_slabinfo20 (
             * page_size;
 
         if (node->nr_objs) {
-            node->use = (unsigned int)100 * node->nr_active_objs / node->nr_objs;
+            node->use = (unsigned int)100 * (node->nr_active_objs / node->nr_objs);
             stats->nr_active_caches++;
         } else
             node->use = 0;
