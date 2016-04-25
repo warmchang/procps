@@ -193,10 +193,10 @@ proc_libprocps_la_SOURCES = \
 	proc/pwcache.h \
 	proc/readproc.c \
 	proc/readproc.h \
-	proc/readstat.c \
-	proc/readstat.h \
 	proc/slab.c \
 	proc/slab.h \
+	proc/stat.c \
+	proc/stat.h \
 	proc/sysinfo.c \
 	proc/sysinfo.h \
 	proc/version.c \

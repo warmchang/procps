@@ -23,8 +23,8 @@
 #include <proc/meminfo.h>
 #include <proc/namespace.h>
 #include <proc/pids.h>
-#include <proc/readstat.h>
 #include <proc/slab.h>
+#include <proc/stat.h>
 #include <proc/sysinfo.h>
 #include <proc/version.h>
 #include <proc/vmstat.h>

@@ -26,7 +26,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <proc/readstat.h>
+#include <proc/stat.h>
 #include "procps-private.h"
 
 #define STAT_FILE "/proc/stat"

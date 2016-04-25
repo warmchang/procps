@@ -15,8 +15,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef PROC_READ_STAT_H
-#define PROC_READ_STAT_H
+#ifndef PROC_STAT_H
+#define PROC_STAT_H
 
 #include <proc/procps.h>
 
