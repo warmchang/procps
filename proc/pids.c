@@ -52,9 +52,8 @@
 
 #define READS_BEGUN (info->read)       // a read is in progress
 
-   // next 2 MUST be kept in sync with highest value enum
+   // next MUST be kept in sync with highest value enum
 enum pids_item PROCPS_PIDS_logical_end  = PROCPS_PIDS_WCHAN_NAME + 1;
-enum pids_item PROCPS_PIDS_physical_end = PROCPS_PIDS_WCHAN_NAME + 2;
 
     // these represent the proc_t fields whose storage cannot be managed
     // optimally if they are ever referenced more than once in any stack
@@ -67,7 +66,7 @@ enum rel_ref {
 
 struct stacks_extent {
     struct pids_stack **stacks;
-    int ext_numitems;                  // includes 'physical_end' delimiter
+    int ext_numitems;                  // includes 'logical_end' delimiter
     int ext_numstacks;
     struct stacks_extent *next;
 };
@@ -82,9 +81,9 @@ struct fetch_support {
 
 struct procps_pidsinfo {
     int refcount;
-    int maxitems;                      // includes 'physical_end' delimiter
+    int maxitems;                      // includes 'logical_end' delimiter
     int curitems;                      // includes 'logical_end' delimiter
-    enum pids_item *items;             // includes 'phy/log_end' delimiters
+    enum pids_item *items;             // includes 'logical_end' delimiter
     struct stacks_extent *extents;     // anchor for all resettable extents
     struct stacks_extent *otherexts;   // anchor for single stack invariant extents
     struct fetch_support reap;         // support for procps_pids_reap
@@ -509,7 +508,7 @@ static struct {
     { RS(VSIZE_PGS),         f_stat,     NULL,      QS(ul_int),   0,        -1            },
     { RS(WCHAN_ADDR),        f_stat,     NULL,      QS(ul_int),   0,        -1            },
     { RS(WCHAN_NAME),        0,          FF(str),   QS(str),      0,        -1            }, // oldflags: tid already free
-   // dummy entry never referenced ( makes future additions 'comma' worry free )...
+   // dummy entry corresponding to PROCPS_PIDS_logical_end ...
     { NULL,                  0,          NULL,      NULL,         0,        -1            }
 };
 
@@ -933,14 +932,17 @@ static inline int items_check_failed (
 static inline void libflags_set (
         struct procps_pidsinfo *info)
 {
+    enum pids_item e;
     int i, n;
 
     memset (info->ref_counts, 0, sizeof(info->ref_counts));
     info->flags = info->history_yes = 0;
     for (i = 0; i < info->curitems; i++) {
-        info->flags |= Item_table[info->items[i]].oldflags;
-        info->history_yes |= Item_table[info->items[i]].needhist;
-        n = Item_table[info->items[i]].refcount;
+        if (((e = info->items[i])) >= PROCPS_PIDS_logical_end)
+            break;
+        info->flags |= Item_table[e].oldflags;
+        info->history_yes |= Item_table[e].needhist;
+        n = Item_table[e].refcount;
         if (n > -1) ++info->ref_counts[n];
     }
     if (info->flags & f_either) {
@@ -1203,7 +1205,7 @@ PROCPS_EXPORT int procps_pids_new (
 
     if (!(p = calloc(1, sizeof(struct procps_pidsinfo))))
         return -ENOMEM;
-    // allow for our PROCPS_PIDS_physical_end
+    // allow for our PROCPS_PIDS_logical_end
     if (!(p->items = calloc((maxitems + 1), sizeof(enum pids_item)))) {
         free(p);
         return -ENOMEM;
@@ -1215,7 +1217,7 @@ PROCPS_EXPORT int procps_pids_new (
     }
 
     memcpy(p->items, items, sizeof(enum pids_item) * maxitems);
-    p->items[maxitems] = PROCPS_PIDS_physical_end;
+    p->items[maxitems] = PROCPS_PIDS_logical_end;
     p->curitems = p->maxitems = maxitems + 1;
     libflags_set(p);
 
