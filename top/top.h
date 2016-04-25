@@ -20,8 +20,7 @@
 #ifndef _Itop
 #define _Itop
 
-#include <proc/pids.h>
-#include <proc/readstat.h>
+#include <proc/procps.h>
 
         /* Defines represented in configure.ac ----------------------------- */
 //#define BOOST_PERCNT            /* enable extra precision for two % fields */

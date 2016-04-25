@@ -232,7 +232,7 @@ enum Rel_items {
 };
         // mem stack results extractor macro, where e=rel enum
 #define MEM_VAL(e) Mem_stack->head[e].result.ul_int
-        // --------------------------------------------- <proc/readstat.h>
+        // ------------------------------------------------- <proc/stat.h>
 static struct procps_stat *Cpu_ctx;
 static struct procps_jiffs_hist *Cpu_jiffs;
         // ------------------------------------------------- <proc/pids.h>
