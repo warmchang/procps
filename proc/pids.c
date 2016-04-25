@@ -45,7 +45,7 @@
 #include "wchan.h"                     // ( maybe just temporary? )
 
 //#define UNREF_RPTHASH                // report on hashing, at uref time
-//#define FPRINT_STACKS                // enable validate_stacks output
+//#define FPRINT_STACKS                // enable fprint_stacks output
 
 #define FILL_ID_MAX  255               // upper limit for pid/uid fills
 #define MEMORY_INCR  128               // amt by which allocations grow
@@ -848,6 +848,59 @@ static int extent_free (
 } // end: extent_free
 
 
+#ifdef FPRINT_STACKS
+static void fprint_stacks (
+        void *stacks,
+        const char *who)
+{
+    #include <stdio.h>
+    static int once = 0;
+    struct stacks_extent *ext = stacks;
+    int i, t, x, n = 0;
+
+    fprintf(stderr, "  %s: called by '%s'\n", __func__, who);
+    fprintf(stderr, "  %s: ext_numitems = %d, ext_numstacks = %d, extents = %p, next = %p\n", __func__, ext->ext_numitems, ext->ext_numstacks, ext, ext->next);
+    fprintf(stderr, "  %s: stacks_extent results excluding the end-of-stack element ...\n", __func__);
+    for (x = 0; NULL != ext->stacks[x]; x++) {
+        struct pids_stack *h = ext->stacks[x];
+        struct pids_result *r = h->head;
+        fprintf(stderr, "  %s:   v[%03d] = %p, h = %p", __func__, x, h, r);
+        for (i = 0; r->item < PROCPS_PIDS_logical_end; i++, r++)
+            ;
+        t = i + 1;
+        fprintf(stderr, " - found %d elements for stack %d\n", i, n);
+        ++n;
+    }
+    if (!once) {
+        fprintf(stderr, "  %s: found %d total stack(s), each %d bytes (including eos)\n", __func__, x, (int)(sizeof(struct pids_stack) + (sizeof(struct pids_result) * t)));
+        fprintf(stderr, "  %s: sizeof(struct pids_stack)    = %d\n", __func__, (int)sizeof(struct pids_stack));
+        fprintf(stderr, "  %s: sizeof(struct pids_result)   = %d\n", __func__, (int)sizeof(struct pids_result));
+        fprintf(stderr, "  %s: sizeof(struct stacks_extent) = %d\n", __func__, (int)sizeof(struct stacks_extent));
+        once = 1;
+    }
+    fputc('\n', stderr);
+    return;
+} // end: fprint_stacks
+#endif
+
+
+static inline struct pids_result *itemize_stack (
+        struct pids_result *p,
+        int depth,
+        enum pids_item *items)
+{
+    struct pids_result *p_sav = p;
+    int i;
+
+    for (i = 0; i < depth; i++) {
+        p->item = items[i];
+        p->result.ull_int = 0;
+        ++p;
+    }
+    return p_sav;
+} // end: itemize_stack
+
+
 static inline int items_check_failed (
         int maxitems,
         enum pids_item *items)
@@ -932,24 +985,7 @@ static inline int oldproc_open (
 } // end: oldproc_open
 
 
-static inline struct pids_result *stack_itemize (
-        struct pids_result *p,
-        int depth,
-        enum pids_item *items)
-{
-    struct pids_result *p_sav = p;
-    int i;
-
-    for (i = 0; i < depth; i++) {
-        p->item = items[i];
-        p->result.ull_int = 0;
-        ++p;
-    }
-    return p_sav;
-} // end: stack_itemize
-
-
-static inline int tally_proc (
+static inline int proc_tally (
         struct procps_pidsinfo *info,
         struct pids_counts *counts,
         proc_t *p)
@@ -976,51 +1012,11 @@ static inline int tally_proc (
     if (info->history_yes)
         return !make_hist(info, p);
     return 1;
-} // end: tally_proc
+} // end: proc_tally
 
-
-#ifdef FPRINT_STACKS
-static void validate_stacks (
-        void *stacks,
-        const char *who)
-{
-    #include <stdio.h>
-    static int once = 0;
-    struct stacks_extent *ext = stacks;
-    int i, t, x, n = 0;
-
-    fprintf(stderr, "  %s: called by '%s'\n", __func__, who);
-    fprintf(stderr, "  %s: ext_numitems = %d, ext_numstacks = %d, extents = %p, next = %p\n", __func__, ext->ext_numitems, ext->ext_numstacks, ext, ext->next);
-    fprintf(stderr, "  %s: stacks_extent results excluding the end-of-stack element ...\n", __func__);
-    for (x = 0; NULL != ext->stacks[x]; x++) {
-        struct pids_stack *h = ext->stacks[x];
-        struct pids_result *r = h->head;
-        fprintf(stderr, "  %s:   v[%03d] = %p, h = %p", __func__, x, h, r);
-        for (i = 0; r->item < PROCPS_PIDS_logical_end; i++, r++)
-            ;
-        t = i + 1;
-        fprintf(stderr, " - found %d elements for stack %d\n", i, n);
-        ++n;
-    }
-    if (!once) {
-        fprintf(stderr, "  %s: found %d total stack(s), each %d bytes (including eos)\n", __func__, x, (int)(sizeof(struct pids_stack) + (sizeof(struct pids_result) * t)));
-        fprintf(stderr, "  %s: sizeof(struct pids_stack)    = %d\n", __func__, (int)sizeof(struct pids_stack));
-        fprintf(stderr, "  %s: sizeof(struct pids_result)   = %d\n", __func__, (int)sizeof(struct pids_result));
-        fprintf(stderr, "  %s: sizeof(struct stacks_extent) = %d\n", __func__, (int)sizeof(struct stacks_extent));
-        once = 1;
-    }
-    fputc('\n', stderr);
-    return;
-} // end: validate_stacks
-#endif
-
-
-// ___ Special Temporary Section  |||||||||||||||||||||||||||||||||||||||||||||
-// [ contains former public functions and other dependent routine(s) while we ]
-// [ resist using forward declarations yet still maintain an alphabetic order ]
 
 /*
- * alloc_stacks():
+ * stacks_alloc():
  *
  * Allocate and initialize one or more stacks each of which is anchored in an
  * associated pids_stack structure.
@@ -1030,7 +1026,7 @@ static void validate_stacks (
  *
  * Returns an array of pointers representing the 'heads' of each new stack.
  */
-static struct stacks_extent *alloc_stacks (
+static struct stacks_extent *stacks_alloc (
         struct procps_pidsinfo *info,
         int maxstacks)
 {
@@ -1057,7 +1053,7 @@ static struct stacks_extent *alloc_stacks (
 
     /* note: all memory is allocated in a single blob, facilitating a later free().
        as a minimum, it's important that the result structures themselves always be
-       contiguous for any given stack (just as they are when defined statically). */
+       contiguous for each stack since they're accessed through relative position). */
     if (NULL == (p_blob = calloc(1, blob_size)))
         return NULL;
 
@@ -1070,7 +1066,7 @@ static struct stacks_extent *alloc_stacks (
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct pids_stack *)v_head;
-        p_head->head = stack_itemize((struct pids_result *)v_list, info->curitems, info->items);
+        p_head->head = itemize_stack((struct pids_result *)v_list, info->curitems, info->items);
         p_blob->stacks[i] = p_head;
         v_list += list_size;
         v_head += head_size;
@@ -1078,13 +1074,13 @@ static struct stacks_extent *alloc_stacks (
     p_blob->ext_numitems = info->maxitems;
     p_blob->ext_numstacks = maxstacks;
 #ifdef FPRINT_STACKS
-    validate_stacks(p_blob, __func__);
+    fprint_stacks(p_blob, __func__);
 #endif
     return p_blob;
-} // end: alloc_stacks
+} // end: stacks_alloc
 
 
-static int dealloc_stacks (
+static int stacks_dealloc (
         struct procps_pidsinfo *info,
         struct stacks_extent **these)
 {
@@ -1100,10 +1096,10 @@ static int dealloc_stacks (
     rc = extent_free(info, ext);
     *these = NULL;
     return rc;
-} // end: dealloc_stacks
+} // end: stacks_dealloc
 
 
-static int fetch_helper (
+static int stacks_fetch (
         struct procps_pidsinfo *info,
         struct fetch_support *this)
 {
@@ -1119,7 +1115,7 @@ static int fetch_helper (
     if (!this->anchor) {
         if ((!(this->anchor = calloc(sizeof(void *), MEMORY_INCR)))
         || (!(this->summary.stacks = calloc(sizeof(void *), MEMORY_INCR)))
-        || (!(ext = alloc_stacks(info, MEMORY_INCR))))
+        || (!(ext = stacks_alloc(info, MEMORY_INCR))))
             return -1;
         memcpy(this->anchor, ext->stacks, sizeof(void *) * MEMORY_INCR);
         n_alloc = MEMORY_INCR;
@@ -1135,11 +1131,11 @@ static int fetch_helper (
         if (!(n_inuse < n_alloc)) {
             n_alloc += MEMORY_INCR;
             if ((!(this->anchor = realloc(this->anchor, sizeof(void *) * n_alloc)))
-            || (!(ext = alloc_stacks(info, MEMORY_INCR))))
+            || (!(ext = stacks_alloc(info, MEMORY_INCR))))
                 return -1;
             memcpy(this->anchor + n_inuse, ext->stacks, sizeof(void *) * MEMORY_INCR);
         }
-        if (!tally_proc(info, &this->summary.counts, &task))
+        if (!proc_tally(info, &this->summary.counts, &task))
             return -1;
         assign_results(info, this->anchor[n_inuse++], &task);
     }
@@ -1153,7 +1149,7 @@ static int fetch_helper (
     return n_inuse;     // callers beware, this might be zero !
  #undef n_alloc
  #undef n_inuse
-} // end: fetch_helper
+} // end: stacks_fetch
 
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -1172,7 +1168,7 @@ PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
         return NULL;
 
     if (info == NULL
-    || !(ext = alloc_stacks(info, 1))
+    || !(ext = stacks_alloc(info, 1))
     || !extent_cut(info, ext))
         return NULL;
 
@@ -1267,7 +1263,7 @@ PROCPS_EXPORT int procps_pids_read_open (
     if (which != PROCPS_REAP_TASKS_ONLY && which != PROCPS_REAP_THREADS_TOO)
         return -EINVAL;
 
-    if (!(info->read = alloc_stacks(info, 1)))
+    if (!(info->read = stacks_alloc(info, 1)))
         return -ENOMEM;
     if (!oldproc_open(info, 0))
         return -1;
@@ -1282,7 +1278,7 @@ PROCPS_EXPORT int procps_pids_read_shut (
     if (info == NULL || ! READS_BEGUN)
         return -EINVAL;
     oldproc_close(info);
-    return dealloc_stacks(info, &info->read);
+    return stacks_dealloc(info, &info->read);
 } // end: procps_pids_read_shut
 
 
@@ -1310,7 +1306,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_reap (
         return NULL;
     info->read_something = which ? readeither : readproc;
 
-    rc = fetch_helper(info, &info->reap);
+    rc = stacks_fetch(info, &info->reap);
 
     oldproc_close(info);
     // we better have found at least 1 pid
@@ -1363,9 +1359,9 @@ PROCPS_EXPORT int procps_pids_reset (
     ext = info->extents;
     while (ext) {
         for (i = 0; ext->stacks[i]; i++)
-            stack_itemize(ext->stacks[i]->head, info->curitems, info->items);
+            itemize_stack(ext->stacks[i]->head, info->curitems, info->items);
 #ifdef FPRINT_STACKS
-            validate_stacks(ext, __func__);
+            fprint_stacks(ext, __func__);
 #endif
         ext = ext->next;
     };
@@ -1406,7 +1402,7 @@ PROCPS_EXPORT struct pids_reap *procps_pids_select (
         return NULL;
     info->read_something = readproc;
 
-    rc = fetch_helper(info, &info->select);
+    rc = stacks_fetch(info, &info->select);
 
     oldproc_close(info);
     // no guarantee any pids/uids were found
