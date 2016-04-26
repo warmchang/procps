@@ -982,7 +982,7 @@ static int ioch (int ech, char *buf, unsigned cnt) {
    // it may have been the beginning of a lengthy escape sequence
    tcflush(STDIN_FILENO, TCIFLUSH);
 
-   // note: we do NOT produce a vaid 'string'
+   // note: we do NOT produce a valid 'string'
    return rc;
 } // end: ioch
 
@@ -2699,7 +2699,7 @@ static void sysinfo_refresh (int forced) {
 
    if (forced)
       mem_secs = cpu_secs = 0;
-   time(&cur_secs);
+   cur_secs = time(NULL);
 
    /*** hotplug_acclimated ***/
    if (3 <= cur_secs - mem_secs) {
@@ -3008,7 +3008,6 @@ static inline void insp_make_row (int col, int row) {
    int fr, to, ofs;
    int hicap = 0;
 
-   capNO;
    if (col < INSP_RLEN(row))
       memcpy(tline, Insp_p[row] + col, sizeof(tline));
    else tline[0] = '\n';
