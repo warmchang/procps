@@ -264,7 +264,7 @@ static struct el *read_pidfile(void)
     if (n<1)
         goto out;
     pid = strtoul(buf+1,&endp,10);
-    if(endp<=buf+1 || pid<1 || pid>0x7fffffff)
+    if(endp<=buf+1 || pid<1 )
         goto out;
     if(*endp && !isspace(*endp))
         goto out;
@@ -359,7 +359,7 @@ static int conv_ns (const char *restrict name, struct el *restrict e)
 
     ns_flags = 0;
     id = procps_ns_get_id(name);
-    if (id == -1)
+    if (id < 0)
         return 0;
     ns_flags |= (1 << id);
 
@@ -545,16 +545,16 @@ static struct el * select_procs (int *num)
 
         if (opt_long || opt_longlong || (match && opt_pattern)) {
             if (opt_longlong)
-                strncpy (cmdoutput, task_cmdline, CMDSTRSIZE);
+                strncpy (cmdoutput, task_cmdline, CMDSTRSIZE-1);
             else
-                strncpy (cmdoutput, PIDS_GETSTR(CMD), CMDSTRSIZE);
+                strncpy (cmdoutput, PIDS_GETSTR(CMD), CMDSTRSIZE-1);
         }
 
         if (match && opt_pattern) {
             if (opt_full)
-                strncpy (cmdsearch, task_cmdline, CMDSTRSIZE);
+                strncpy (cmdsearch, task_cmdline, CMDSTRSIZE-1);
             else
-                strncpy (cmdsearch, PIDS_GETSTR(CMD), CMDSTRSIZE);
+                strncpy (cmdsearch, PIDS_GETSTR(CMD), CMDSTRSIZE-1);
 
             if (regexec (preg, cmdsearch, 0, NULL, 0) != 0)
                 match = 0;

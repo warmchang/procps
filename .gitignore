@@ -20,6 +20,7 @@ config.rpath
 config.status
 config.sub
 configure
+cov-int
 depcomp
 free
 INSTALL
