@@ -203,7 +203,7 @@ static void discover_shm_minor(void)
 		perror(_("shared memory detach"));
 
 out_destroy:
-	if (shmctl(shmid, IPC_RMID, NULL))
+	if (shmctl(shmid, IPC_RMID, NULL) && errno != EINVAL)
 		perror(_("shared memory remove"));
 
 	return;
