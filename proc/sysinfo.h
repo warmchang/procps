@@ -14,7 +14,6 @@ int procps_loadavg(double *av1, double *av5, double *av15);
 unsigned int procps_pid_length(void);
 
 #define BUFFSIZE (64*1024)
-typedef unsigned long long jiff;
 
 typedef struct slab_cache{
 	char name[48];
