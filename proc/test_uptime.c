@@ -30,7 +30,7 @@ int check_uptime(void *data)
     double up=0, idle=0;
     int rc;
     rc = procps_uptime(&up, &idle);
-    return (rc > 0 && up > 0 && idle > 0);
+    return (rc == 0 && up > 0 && idle > 0);
 }
 
 int check_uptime_nullup(void *data)
@@ -39,7 +39,7 @@ int check_uptime_nullup(void *data)
     int rc;
     testname = "procps_uptime() (up=NULL)";
     rc = procps_uptime(NULL, &idle);
-    return (rc > 0 && idle > 0);
+    return (rc == 0 && idle > 0);
 }
 
 int check_uptime_nullidle(void *data)
@@ -48,7 +48,7 @@ int check_uptime_nullidle(void *data)
     int rc;
     testname = "procps_uptime() (idle=NULL)";
     rc = procps_uptime(&up, NULL);
-    return (rc > 0 && up > 0);
+    return (rc == 0 && up > 0);
 }
 
 int check_uptime_nullall(void *data)
@@ -56,7 +56,7 @@ int check_uptime_nullall(void *data)
     int rc;
     testname = "procps_uptime() (up,idle=NULL)";
     rc = procps_uptime(NULL, NULL);
-    return (rc > 0);
+    return (rc == 0);
 }
 
 int check_uptime_sprint(void *data)

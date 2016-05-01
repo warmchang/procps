@@ -434,7 +434,6 @@ extern int             prefer_bsd_defaults;
 extern int             running_only;
 extern int             screen_cols;
 extern int             screen_rows;
-extern time_t          seconds_since_boot;
 extern selection_node *selection_list;
 extern unsigned        simple_select;
 extern sort_node      *sort_list;

@@ -16,7 +16,7 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS_UPTIME 3 2016-04-16 "libproc-2"
+.TH PROCPS_UPTIME 3 2016-05-01 "libproc-2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .SH NAME
@@ -35,7 +35,7 @@ fills the location of the two double points with the current sytem uptime
 and idle time.
 .SH RETURN VALUE
 .BR procps_uptime ()
-returns a positive integer which is the uptime on success. On failure, it
+returns 0 on success. On failure, it
 returns a negative integer to one of the values defined below.
 .TP
 .B -ERANGE

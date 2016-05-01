@@ -63,7 +63,7 @@ static int count_users(void)
  * Unlike other procps functions this closes the file each time
  * Either uptime_secs or idle_secs can be null
  *
- * Returns: uptime_secs on success and <0 on failure
+ * Returns: 0 on success and <0 on failure
  */
 PROCPS_EXPORT int procps_uptime(
         double *restrict uptime_secs,
@@ -91,7 +91,7 @@ PROCPS_EXPORT int procps_uptime(
         *uptime_secs = up;
     if (idle_secs)
         *idle_secs = idle;
-    return up;
+    return 0;
 }
 
 /*

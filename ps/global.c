@@ -172,7 +172,6 @@ unsigned        personality = 0xffffffff;
 int             prefer_bsd_defaults = -1;
 int             screen_cols = -1;
 int             screen_rows = -1;
-time_t          seconds_since_boot = -1;
 selection_node *selection_list = (selection_node *)0xdeadbeef;
 unsigned        simple_select = 0xffffffff;
 sort_node      *sort_list = (sort_node *)0xdeadbeef; /* ready-to-use sort list */
@@ -502,7 +501,6 @@ void reset_global(void){
   negate_selection      = 0;
   page_size             = getpagesize();
   running_only          = 0;
-  seconds_since_boot    = procps_uptime(0,0);
   selection_list        = NULL;
   simple_select         = 0;
   sort_list             = NULL;
