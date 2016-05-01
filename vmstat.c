@@ -399,6 +399,10 @@ static void new_format(void)
 
 		printf("\n");
 	}
+    /* Cleanup */
+    procps_stat_unref(&sys_info);
+    procps_vmstat_unref(&vm_info);
+    procps_meminfo_unref(&mem_info);
 }
 
 static void diskpartition_header(const char *partition_name)
@@ -461,6 +465,7 @@ static int diskpartition_format(const char *partition_name)
             sleep(sleep_time);
     }
     return 0;
+    procps_diskstat_unref(&disk_stat);
 }
 
 static void diskheader(void)
@@ -583,6 +588,7 @@ static void diskformat(void)
             sleep(sleep_time);
     }
 #undef DSTAT
+    procps_diskstat_unref(&disk_stat);
 }
 
 static void slabheader(void)
@@ -710,6 +716,7 @@ static void disksum_format(void)
     printf(_("%13lu milli spent IO\n"), milli_spent_IO);
     printf(_("%13lu milli weighted IO\n"), weighted_milli_spent_IO);
 #undef DSTAT
+    procps_diskstat_unref(&disk_stat);
 }
 
 static void sum_format(void)
@@ -774,6 +781,11 @@ static void sum_format(void)
 	printf(_("%13u CPU context switches\n"), procps_stat_sys_get(sys_info, PROCPS_STAT_CTXT));
 	printf(_("%13u boot time\n"), procps_stat_sys_get(sys_info, PROCPS_STAT_BTIME));
 	printf(_("%13u forks\n"), procps_stat_sys_get(sys_info, PROCPS_STAT_PROCS));
+
+    /* Cleanup */
+    procps_stat_unref(&sys_info);
+    procps_vmstat_unref(&vm_info);
+    procps_meminfo_unref(&mem_info);
 }
 
 static void fork_format(void)
@@ -788,6 +800,8 @@ static void fork_format(void)
 		_("Unable to read system stat information"));
 
     printf(_("%13u forks\n"), procps_stat_sys_get(sys_info, PROCPS_STAT_PROCS));
+    /* Cleanup */
+    procps_stat_unref(&sys_info);
 }
 
 static int winhi(void)
