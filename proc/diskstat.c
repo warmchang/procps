@@ -226,6 +226,29 @@ PROCPS_EXPORT int procps_diskstat_read (
     return 0;
 }
 
+PROCPS_EXPORT int procps_diskstat_ref (
+        struct procps_diskstat *info)
+{
+    if (info == NULL)
+        return -EINVAL;
+    info->refcount++;
+    return info->refcount;
+}
+
+PROCPS_EXPORT int procps_diskstat_unref (
+        struct procps_diskstat **info)
+{
+    if (info == NULL || *info == NULL)
+        return -EINVAL;
+    (*info)->refcount--;
+    if ((*info)->refcount == 0) {
+        free(*info);
+        *info = NULL;
+        return 0;
+    }
+    return (*info)->refcount;
+}
+
 /*
  * procps_diskstat_dev_count:
  *
