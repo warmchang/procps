@@ -16,7 +16,7 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS_LINUX_VERSION 3 2016-04-14 "libproc-2"
+.TH PROCPS_LINUX_VERSION 3 2016-05-01 "libproc-2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .SH NAME
@@ -78,6 +78,15 @@ Contains the release version of the Linux kernel or proc filesystem.
 .SH VERSIONS
 .B procps_linux_version()
 first appeared in libproc-2 version 0.0.
+
+.SH BUGS
+Due to the way the three numbers are encoded into a single integer,
+.BR procps_linux_version ()
+and the associated macros assume 255 for the maximum value for the
+minor and patch level and 32767 (hex 0x7fff) for the maximum value
+for the major version. In other words, when Linux v 32768.0.0 comes
+out, this function will break.
+.\" Maj/6yr - In 7452 we'll think of something
 
 .SH SEE ALSO
 .BR fopen (3),
