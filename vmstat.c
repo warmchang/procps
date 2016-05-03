@@ -464,8 +464,8 @@ static int diskpartition_format(const char *partition_name)
         if (infinite_updates || i+1 < num_updates)
             sleep(sleep_time);
     }
-    return 0;
     procps_diskstat_unref(&disk_stat);
+    return 0;
 }
 
 static void diskheader(void)
