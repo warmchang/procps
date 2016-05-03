@@ -239,6 +239,7 @@ char *strtosig(const char *restrict s)
     if (isdigit(*p)){
         numsignal = strtol(s,&endp,10);
         if(*endp || endp==s)
+            free(p);
             return NULL; /* not valid */
     }
     if (numsignal){

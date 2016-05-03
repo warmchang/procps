@@ -93,6 +93,7 @@ static int scan_for_disks(struct procps_diskstat *info)
                 break;
             }
     }
+    closedir(dirp);
     return 0;
 }
 
