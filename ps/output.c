@@ -91,15 +91,11 @@ extern long Hertz;
 
 static void get_boot_time(void)
 {
-    struct procps_stat *sys_info;
-    if (procps_stat_new(&sys_info) < 0)
-	xerrx(EXIT_FAILURE,
-		_("Unable to create system stat structure"));
-    if (procps_stat_read(sys_info,0) < 0)
-	xerrx(EXIT_FAILURE,
-		_("Unable to read system stat information"));
-    boot_time = procps_stat_sys_get(sys_info, PROCPS_STAT_BTIME);
-    procps_stat_unref(&sys_info);
+    struct procps_statinfo *stat_info = NULL;
+    if (procps_stat_new(&stat_info) < 0)
+        xerrx(EXIT_FAILURE, _("Unable to create NEW ystem stat structure"));
+    boot_time = procps_stat_get(stat_info, PROCPS_STAT_SYS_TIME_OF_BOOT);
+    procps_stat_unref(&stat_info);
 }
 
 static void get_memory_total()
