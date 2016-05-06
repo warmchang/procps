@@ -20,9 +20,6 @@
 
 #include <ctype.h>
 #include <curses.h>
-#ifndef NUMA_DISABLE
-#include <dlfcn.h>
-#endif
 #include <errno.h>
 #include <fcntl.h>
 #include <float.h>
@@ -84,7 +81,6 @@ static int   Rc_questions;
         /* SMP, Irix/Solaris mode, Linux 2.5.xx support (and beyond) */
 static long        Hertz;
 static int         Cpu_cnt;
-static int         Cpu_faux_cnt;
 static float       Cpu_pmax;
 static const char *Cpu_States_fmts;
 
@@ -183,27 +179,12 @@ static int Autox_array [EU_MAXPFLGS],
    static char Scaled_sfxtab[] =  { 'k', 'm', 'g', 't', 'p', 'e', 0 };
 #endif
 
-        /* Support for NUMA Node display, node expansion/targeting and
-           run-time dynamic linking with libnuma.so treated as a plugin */
+        /* Support for NUMA Node display plus node expansion and targeting */
 #ifndef OFF_STDERROR
 static int Stderr_save = -1;
 #endif
 static int Numa_node_tot;
 static int Numa_node_sel = -1;
-#ifndef NUMA_DISABLE
-static void *Libnuma_handle;
-#if defined(PRETEND_NUMA) || defined(PRETEND8CPUS)
-static int Numa_max_node(void) { return 3; }
-#ifndef OFF_NUMASKIP
-static int Numa_node_of_cpu(int num) { return (1 == (num % 4)) ? 0 : (num % 4); }
-#else
-static int Numa_node_of_cpu(int num) { return (num % 4); }
-#endif
-#else
-static int (*Numa_max_node)(void);
-static int (*Numa_node_of_cpu)(int num);
-#endif
-#endif
 
         /* Support for Graphing of the View_STATES ('t') and View_MEMORY ('m')
            commands -- which are now both 4-way toggles */
@@ -216,9 +197,8 @@ static const char Graph_blks[] = "                                              
 static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
 
         /* Support for the new library API -- acquired (if necessary)
-           at program startup and referenced throughout our lifetime.
-           ( appearing in order of newlib development availability. )*/
-        // ---------------------------------------------- <proc/meminfo.h>
+           at program startup and referenced throughout our lifetime. */
+        // --- <proc/meminfo.h> -----------------------------------------------
 static struct procps_meminfo *Mem_ctx;
 static struct meminfo_stack *Mem_stack;
 static enum meminfo_item Mem_items[] = {
@@ -226,16 +206,12 @@ static enum meminfo_item Mem_items[] = {
    PROCPS_MEM_CACHED, PROCPS_MEM_BUFFERS, PROCPS_MEM_AVAILABLE,
    PROCPS_SWAP_TOTAL, PROCPS_SWAP_FREE,   PROCPS_SWAP_USED,
    PROCPS_MEM_stack_end };
-enum Rel_items {
+enum Rel_memitems {
    mem_FREE,  mem_USED,  mem_TOTAL, mem_CACHE, mem_BUFFS,
-   mem_AVAIL, swp_TOTAL, swp_FREE,  swp_USED
-};
+   mem_AVAIL, swp_TOTAL, swp_FREE,  swp_USED };
         // mem stack results extractor macro, where e=rel enum
 #define MEM_VAL(e) Mem_stack->head[e].result.ul_int
-        // ------------------------------------------------- <proc/stat.h>
-static struct procps_stat *Cpu_ctx;
-static struct procps_jiffs_hist *Cpu_jiffs;
-        // ------------------------------------------------- <proc/pids.h>
+        // --- <proc/pids.h> --------------------------------------------------
 static struct procps_pidsinfo *Pids_ctx;
 static int Pids_itms_cur;                   // 'current' max (<= Fieldstab)
 static enum pids_item *Pids_itms;           // allocated as MAXTBL(Fieldstab)
@@ -245,6 +221,22 @@ static struct pids_reap *Pids_reap;         // for reap or select
         // ( we'll exploit that <proc/pids.h> provided macro as much as possible )
         // ( but many functions use their own unique tailored version for access )
 #define PID_VAL(e,t,s) PROCPS_PIDS_VAL(Fieldstab[ e ].erel, t, s)
+        // --- <proc/stat.h> --------------------------------------------------
+static struct procps_statinfo *Stat_ctx;
+static struct stat_reaped *Stat_reap;
+static enum stat_item Stat_items[] = {
+   PROCPS_STAT_TIC_ID,            PROCPS_STAT_TIC_NUMA_NODE,
+   PROCPS_STAT_TIC_DELTA_USER,    PROCPS_STAT_TIC_DELTA_SYSTEM,
+   PROCPS_STAT_TIC_DELTA_NICE,    PROCPS_STAT_TIC_DELTA_IDLE,
+   PROCPS_STAT_TIC_DELTA_IOWAIT,  PROCPS_STAT_TIC_DELTA_IRQ,
+   PROCPS_STAT_TIC_DELTA_SOFTIRQ, PROCPS_STAT_TIC_DELTA_STOLEN };
+enum Rel_statitems {
+   stat_ID, stat_NU, stat_US, stat_SY, stat_NI,
+   stat_IL, stat_IO, stat_IR, stat_SI, stat_ST };
+        // cpu/node stack results extractor macro, where e=rel enum, t=type, x=index
+#define SUM_VAL(e,t)   PROCPS_STAT_VAL(e, t, Stat_reap->summary)
+#define CPU_VAL(e,t,x) PROCPS_STAT_VAL(e, t, Stat_reap->cpus->stacks[x])
+#define NOD_VAL(e,t,x) PROCPS_STAT_VAL(e, t, Stat_reap->nodes->stacks[x])
 
 /*######  Tiny useful routine(s)  ########################################*/
 
@@ -330,8 +322,7 @@ static void bye_bye (const char *str) {
       "\n\tProgram"
       "\n\t   %s"
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
-      "\n\t   Cpu_faux_cnt = %d, Cpu_cnt = %d"
-      "\n\t   sizeof(procps_jiffs) = %u, sizeof(procps_jiffs_hist) = %u"
+      "\n\t   Stat_reap->cpus->total = %d, Stat_reap->nodes->total = %d"
       "\n\t   sizeof(struct pids_result) = %u, sizeof(struct pids_stack) = %u"
       "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
       "\n\t   PACKAGE = '%s', LOCALEDIR = '%s'"
@@ -359,8 +350,7 @@ static void bye_bye (const char *str) {
       , __func__
       , PACKAGE_STRING
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
-      , Cpu_faux_cnt, (int)Cpu_cnt
-      , (unsigned)sizeof(struct procps_jiffs), (unsigned)sizeof(struct procps_jiffs_hist)
+      , Stat_reap->cpus->total, Stat_reap->nodes->total
       , (unsigned)sizeof(struct pids_result), (unsigned)sizeof(*p)
       , (unsigned)SCREENMAX, (unsigned)ROWMINSIZ, (unsigned)ROWMAXSIZ
       , PACKAGE, LOCALEDIR
@@ -388,12 +378,10 @@ static void bye_bye (const char *str) {
 }
 #endif // end: ATEOJ_RPTSTD
 
-   procps_stat_unref(&Cpu_ctx);
    procps_meminfo_unref(&Mem_ctx);
    procps_pids_unref(&Pids_ctx);
-#ifndef NUMA_DISABLE
-  if (Libnuma_handle) dlclose(Libnuma_handle);
-#endif
+   procps_stat_unref(&Stat_ctx);
+
    if (str) {
       fputs(str, stderr);
       exit(EXIT_FAILURE);
@@ -2169,84 +2157,28 @@ static void zap_fieldstab (void) {
 /*######  Library Interface  #############################################*/
 
         /*
-         * We'll track all cpu data in the jiffs array which is organized
-         * as follows:
-         *    Cpu_jiffs[0] - Cpu_jiffs[n] == tics for each separate cpu
-         *    Cpu_jiffs[sumSLOT]          == tics from /proc/stat line #1
-         *  [ and beyond sumSLOT          == tics for each cpu NUMA node ] */
+         * This guy's responsible for interfacing with the library <stat> API
+         * and reaping all cpu or numa node tics.
+         * ( his task is now embarassingly small under the new api ) */
 static void cpus_refresh (void) {
- #define sumSLOT ( Cpu_cnt )
- #define totSLOT ( 1 + Cpu_cnt + Numa_node_tot )
-   static int sav_slot = -1;
+   enum stat_reap_type which;
+
+   which = STAT_REAP_CPUS_ONLY;
 #ifndef NUMA_DISABLE
-   int i;
-   int node;
+   if (CHKw(Curwin, View_CPUNOD))
+      which = STAT_REAP_CPUS_AND_NODES;
 #endif
-
-   /*** hotplug_acclimated ***/
-   if (sav_slot != sumSLOT) {
-      sav_slot = sumSLOT;
-      zap_fieldstab();
-      if (Cpu_jiffs) { free(Cpu_jiffs); Cpu_jiffs = NULL; }
-   }
-
-   if (!Cpu_jiffs) {
-      /* note: we allocate one more CPU_t via totSLOT than 'cpus' so that a
-               slot can hold tics representing the /proc/stat cpu summary */
-      Cpu_jiffs = alloc_c(totSLOT * sizeof(struct procps_jiffs_hist));
-   }
-
-   // 1st, retrieve all of the actual cpu jiffs
-   // 'hist_fill' also implies 'read', saving us one more call
-   Cpu_faux_cnt = procps_stat_jiffs_hist_fill(Cpu_ctx, Cpu_jiffs, sumSLOT);
-   if (Cpu_faux_cnt < 0)
+   Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items));
+   if (!Stat_reap)
       error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__));
-   // 2nd, retrieve just the cpu summary jiffs
-   if (procps_stat_jiffs_hist_get(Cpu_ctx, &Cpu_jiffs[sumSLOT], -1) < 0)
-      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__));
-
-#ifndef NUMA_DISABLE
-   /* henceforth, with just a little more arithmetic we can avoid
-      maintaining *any* node stats unless they're actually needed */
-   if (CHKw(Curwin, View_CPUNOD)) {
-      struct procps_jiffs_hist *sum_ptr = &Cpu_jiffs[sumSLOT];
-      // forget all of the prior node statistics
-      memset(sum_ptr + 1, 0, Numa_node_tot * sizeof(struct procps_jiffs_hist));
-      // spin thru each cpu and value the jiffs for it's numa node
-      for (i = 0; i < sumSLOT; i++) {
-         struct procps_jiffs_hist *cpu_ptr = &Cpu_jiffs[i];
-         if (CHKw(Curwin, View_CPUNOD)
-         && Numa_node_tot
-         && -1 < (node = Numa_node_of_cpu(cpu_ptr->id))) {
-            struct procps_jiffs_hist *nod_ptr = sum_ptr + 1 + node;
-            nod_ptr->new.user   += cpu_ptr->new.user;   nod_ptr->old.user   += cpu_ptr->old.user;
-            nod_ptr->new.nice   += cpu_ptr->new.nice;   nod_ptr->old.nice   += cpu_ptr->old.nice;
-            nod_ptr->new.system += cpu_ptr->new.system; nod_ptr->old.system += cpu_ptr->old.system;
-            nod_ptr->new.idle   += cpu_ptr->new.idle;   nod_ptr->old.idle   += cpu_ptr->old.idle;
-            nod_ptr->new.iowait += cpu_ptr->new.iowait; nod_ptr->old.iowait += cpu_ptr->old.iowait;
-            nod_ptr->new.irq    += cpu_ptr->new.irq;    nod_ptr->old.irq    += cpu_ptr->old.irq;
-            nod_ptr->new.sirq   += cpu_ptr->new.sirq;   nod_ptr->old.sirq   += cpu_ptr->old.sirq;
-            nod_ptr->new.stolen += cpu_ptr->new.stolen; nod_ptr->old.stolen += cpu_ptr->old.stolen;
-#ifndef OFF_NUMASKIP
-            nod_ptr->id = -1;
-#endif
-            /* note: the above call to Numa_node_of_cpu will produce a modest
-             *       memory leak summarized as:
-             *          ==1234== LEAK SUMMARY:
-             *          ==1234==    definitely lost: 512 bytes in 1 blocks
-             *          ==1234==    indirectly lost: 48 bytes in 2 blocks
-             *          ==1234==    ...
-             *       it does *not* happen when PRETEND_NUMA has been defined
-             * [ thanks very much libnuma, for all the pain you've caused us ]
-             */
-         }
-      }
+   // adapt to changes in total numa nodes (assuming it's even possible)
+   if (Stat_reap->nodes->total && Stat_reap->nodes->total != Numa_node_tot) {
+      Numa_node_tot = Stat_reap->nodes->total;
+      Numa_node_sel = -1;
    }
-#endif
-
+   if (Stat_reap->cpus->total && Stat_reap->cpus->total != Cpu_cnt)
+      Cpu_cnt = Stat_reap->cpus->total;
    return;
- #undef sumSLOT
- #undef totSLOT
 } // end: cpus_refresh
 
 
@@ -2257,7 +2189,7 @@ static void cpus_refresh (void) {
 static void procs_refresh (void) {
  #define nALIGN(n,m) (((n + m - 1) / m) * m)     // unconditionally align
  #define nALGN2(n,m) ((n + m - 1) & ~(m - 1))    // with power of 2 align
- #define n_reap  Pids_reap->counts.total         // maintained by newlib
+ #define n_reap  Pids_reap->counts.total
    static double uptime_sav;
    static int n_alloc = -1;                      // size of windows stacks arrays
    double uptime_cur;
@@ -2313,17 +2245,6 @@ static void sysinfo_refresh (int forced) {
          error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__));
       mem_secs = cur_secs;
    }
-#ifndef PRETEND8CPUS
-   /*** hotplug_acclimated ***/
-   if (60 <= cur_secs - cpu_secs) {
-      Cpu_cnt = Cpu_faux_cnt = procps_cpu_count();
-      cpu_secs = cur_secs;
-#ifndef NUMA_DISABLE
-      if (Libnuma_handle)
-         Numa_node_tot = Numa_max_node() + 1;
-#endif
-   }
-#endif
 } // end: sysinfo_refresh
 
 /*######  Inspect Other Output  ##########################################*/
@@ -2868,6 +2789,7 @@ signify_that:
          * No matter what *they* say, we handle the really really BIG and
          * IMPORTANT stuff upon which all those lessor functions depend! */
 static void before (char *me) {
+   enum stat_reap_type which;
    struct sigaction sa;
    int i;
    int linux_version_code = procps_linux_version();
@@ -2884,24 +2806,29 @@ static void before (char *me) {
    // accommodate nls/gettext potential translations
    initialize_nls();
 
-   // establish cpu particulars
+   // establish some cpu particulars
    Hertz = procps_hertz_get();
-   Cpu_cnt = procps_cpu_count();
-#ifdef PRETEND8CPUS
-   Cpu_cnt = 8;
-#endif
-   Cpu_faux_cnt = Cpu_cnt;
    Cpu_States_fmts = N_unq(STATE_lin2x6_fmt);
    if (linux_version_code >= LINUX_VERSION(2, 6, 11))
       Cpu_States_fmts = N_unq(STATE_lin2x7_fmt);
 
-   // prepare for new library API ...
+   // get the total cpus (and, if possible, max numa node number)
+   which = STAT_REAP_CPUS_ONLY;
+#ifndef NUMA_DISABLE
+   which = STAT_REAP_CPUS_AND_NODES;
+#endif
+   if (procps_stat_new(&Stat_ctx) < 0
+   || !(Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items))))
+      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__));
+   Numa_node_tot = Stat_reap->nodes->total;
+   Cpu_cnt = Stat_reap->cpus->total;
+
+   // prepare for memory stats from new library API ...
    if (procps_meminfo_new(&Mem_ctx) < 0)
       error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__));
    if (!(Mem_stack = procps_meminfo_stack_alloc(Mem_ctx, MAXTBL(Mem_items), Mem_items)))
       error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__));
-   if (procps_stat_new(&Cpu_ctx) < 0)
-      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__));
+
    // establish max depth for newlib pids stack (# of result structs)
    Pids_itms = alloc_c(sizeof(enum pids_item) * MAXTBL(Fieldstab));
    for (i = 0; i < MAXTBL(Fieldstab); i++)
@@ -2910,25 +2837,6 @@ static void before (char *me) {
    // we will identify specific items in the build_headers() function
    if (procps_pids_new(&Pids_ctx, Pids_itms_cur, Pids_itms))
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
-
-#ifndef NUMA_DISABLE
-#if defined(PRETEND_NUMA) || defined(PRETEND8CPUS)
-   Numa_node_tot = Numa_max_node() + 1;
-#else
-   // we'll try for the most recent version, then a version we know works...
-   if ((Libnuma_handle = dlopen("libnuma.so", RTLD_LAZY))
-    || (Libnuma_handle = dlopen("libnuma.so.1", RTLD_LAZY))) {
-      Numa_max_node = dlsym(Libnuma_handle, "numa_max_node");
-      Numa_node_of_cpu = dlsym(Libnuma_handle, "numa_node_of_cpu");
-      if (Numa_max_node && Numa_node_of_cpu)
-         Numa_node_tot = Numa_max_node() + 1;
-      else {
-         dlclose(Libnuma_handle);
-         Libnuma_handle = NULL;
-      }
-   }
-#endif
-#endif
 
 #ifndef SIGRTMAX       // not available on hurd, maybe others too
 #define SIGRTMAX 32
@@ -4041,7 +3949,7 @@ static void keys_global (int ch) {
          Pseudo_row = PROC_XTRA;
          break;
       case 'I':
-         if (Cpu_faux_cnt > 1) {
+         if (Cpu_cnt > 1) {
             Rc.mode_irixps = !Rc.mode_irixps;
             show_msg(fmtmk(N_fmt(IRIX_curmode_fmt)
                , Rc.mode_irixps ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
@@ -4697,22 +4605,16 @@ all_done:
          *    2) modest smp boxes with room for each cpu's percentages
          *    3) massive smp guys leaving little or no room for process
          *       display and thus requiring the cpu summary toggle */
-static void summary_hlp (struct procps_jiffs_hist *cpu, const char *pfx) {
-   /* we'll trim to zero if we get negative time ticks,
-      which has happened with some SMP kernels (pre-2.4?)
-      and when cpus are dynamically added or removed */
- #define TRIMz(x)  ((tz = (SIC_t)(x)) < 0 ? 0 : tz)
-   SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, z_frme, tot_frme, tz;
+static void summary_hlp (struct stat_stack *this, const char *pfx) {
+ // a tailored 'results stack value' extractor macro
+ #define rSv(E)  PROCPS_STAT_VAL(E, sl_int, this)
+   SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, z_frme, tot_frme;
    float scale;
 
-   u_frme = TRIMz(cpu->new.user   - cpu->old.user);
-   s_frme = TRIMz(cpu->new.system - cpu->old.system);
-   n_frme = TRIMz(cpu->new.nice   - cpu->old.nice);
-   i_frme = TRIMz(cpu->new.idle   - cpu->old.idle);
-   w_frme = TRIMz(cpu->new.iowait - cpu->old.iowait);
-   x_frme = TRIMz(cpu->new.irq    - cpu->old.irq);
-   y_frme = TRIMz(cpu->new.sirq   - cpu->old.sirq);
-   z_frme = TRIMz(cpu->new.stolen - cpu->old.stolen);
+   u_frme = rSv(stat_US); s_frme = rSv(stat_SY); n_frme = rSv(stat_NI);
+   i_frme = rSv(stat_IL); w_frme = rSv(stat_IO); x_frme = rSv(stat_IR);
+   y_frme = rSv(stat_SI); z_frme = rSv(stat_ST);
+
    tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme + x_frme + y_frme + z_frme;
    if (1 > tot_frme) i_frme = tot_frme = 1;
    scale = 100.0 / (float)tot_frme;
@@ -4750,7 +4652,7 @@ static void summary_hlp (struct procps_jiffs_hist *cpu, const char *pfx) {
          , (float)w_frme * scale, (float)x_frme * scale
          , (float)y_frme * scale, (float)z_frme * scale));
    }
- #undef TRIMz
+ #undef rSv
 } // end: summary_hlp
 
 
@@ -4791,33 +4693,32 @@ static void summary_show (void) {
 
       if (CHKw(w, View_CPUNOD)) {
          if (Numa_node_sel < 0) {
+numa_oops:
             // display the 1st /proc/stat line, then the nodes (if room)
-            summary_hlp(&Cpu_jiffs[Cpu_cnt], N_txt(WORD_allcpus_txt));
+            summary_hlp(Stat_reap->summary, N_txt(WORD_allcpus_txt));
             Msg_row += 1;
             // display each cpu node's states
             for (i = 0; i < Numa_node_tot; i++) {
-               struct procps_jiffs_hist *nod_ptr = &Cpu_jiffs[1 + Cpu_cnt + i];
+               struct stat_stack *nod_ptr = Stat_reap->nodes->stacks[i];
+               if (NOD_VAL(stat_ID, s_int, i) == PROCPS_STAT_NODE_INVALID) continue;
                if (!isROOM(anyFLG, 1)) break;
-#ifndef OFF_NUMASKIP
-               if (nod_ptr->id) {
-#endif
-               snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), i);
+               snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), NOD_VAL(stat_ID, s_int, i));
                summary_hlp(nod_ptr, tmp);
                Msg_row += 1;
-#ifndef OFF_NUMASKIP
-               }
-#endif
             }
          } else {
             // display the node summary, then the associated cpus (if room)
+            for (i = 0; i < Numa_node_tot; i++)
+               if (Numa_node_sel == NOD_VAL(stat_ID, s_int, i)) break;
+            if (i == Numa_node_tot) goto numa_oops;
             snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
-            summary_hlp(&Cpu_jiffs[1 + Cpu_cnt + Numa_node_sel], tmp);
+            summary_hlp(Stat_reap->nodes->stacks[Numa_node_sel], tmp);
             Msg_row += 1;
-            for (i = 0; i < Cpu_faux_cnt; i++) {
-               if (Numa_node_sel == Numa_node_of_cpu(Cpu_jiffs[i].id)) {
+            for (i = 0; i < Cpu_cnt; i++) {
+               if (Numa_node_sel == CPU_VAL(stat_NU, s_int, i)) {
                   if (!isROOM(anyFLG, 1)) break;
-                  snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_jiffs[i].id);
-                  summary_hlp(&Cpu_jiffs[i], tmp);
+                  snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, s_int, i));
+                  summary_hlp(Stat_reap->nodes->stacks[i], tmp);
                   Msg_row += 1;
                }
             }
@@ -4827,14 +4728,14 @@ numa_nope:
 #endif
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
-         summary_hlp(&Cpu_jiffs[Cpu_faux_cnt], N_txt(WORD_allcpus_txt));
+         summary_hlp(Stat_reap->summary, N_txt(WORD_allcpus_txt));
          Msg_row += 1;
 
       } else {
          // display each cpu's states separately, screen height permitting...
-         for (i = 0; i < Cpu_faux_cnt; i++) {
-            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_jiffs[i].id);
-            summary_hlp(&Cpu_jiffs[i], tmp);
+         for (i = 0; i < Cpu_cnt; i++) {
+            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, s_int, i));
+            summary_hlp(Stat_reap->cpus->stacks[i], tmp);
             Msg_row += 1;
             if (!isROOM(anyFLG, 1)) break;
          }

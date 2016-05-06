@@ -39,13 +39,10 @@
 //#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents in a file  */
 //#define INSP_SLIDE_1            /* when scrolling left/right don't move 8  */
 //#define MEMGRAPH_OLD            /* don't use 'available' when graphing Mem */
-//#define OFF_NUMASKIP            /* do NOT skip numa nodes if discontinuous */
 //#define OFF_SCROLLBK            /* disable tty emulators scrollback buffer */
 //#define OFF_STDERROR            /* disable our stderr buffering (redirect) */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
-//#define PRETEND8CPUS            /* pretend we're smp with 8 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
-//#define PRETEND_NUMA            /* pretend 4 (or 3 w/o OFF_NUMASKIP) Nodes */
 //#define QUICK_GRAPHS            /* use fast algorithm, accept +2% distort  */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
 //#define RECALL_FIXED            /* don't reorder saved strings if recalled */
@@ -522,12 +519,6 @@ typedef struct WIN_t {
 #if defined(RECALL_FIXED) && defined(TERMIOS_ONLY)
 # error 'RECALL_FIXED' conflicts with 'TERMIOS_ONLY'
 #endif
-#if defined(PRETEND_NUMA) && defined(NUMA_DISABLE)
-# error 'PRETEND_NUMA' confilcts with 'NUMA_DISABLE'
-#endif
-#if defined(OFF_NUMASKIP) && defined(NUMA_DISABLE)
-# error 'OFF_NUMASKIP' confilcts with 'NUMA_DISABLE'
-#endif
 #if (LRGBUFSIZ < SCREENMAX)
 # error 'LRGBUFSIZ' must NOT be less than 'SCREENMAX'
 #endif
@@ -574,7 +565,7 @@ typedef struct WIN_t {
 /*------  Small Utility routines  ----------------------------------------*/
 //atic float         get_float (const char *prompt);
 //atic int           get_int (const char *prompt);
-//atic inline const char *hex_make (KLONG num, int noz);
+//atic inline const char *hex_make (long num, int noz);
 //atic void          osel_clear (WIN_t *q);
 //atic inline int    osel_matched (const WIN_t *q, FLG_t enu, const char *str);
 //atic const char   *user_certify (WIN_t *q, const char *str, char typ);
@@ -648,7 +639,7 @@ typedef struct WIN_t {
 //atic inline const char *forest_display (const WIN_t *q, struct pids_stack *p);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void          do_key (int ch);
-//atic void          summary_hlp (struct procps_jiffs_hist *cpu, const char *pfx);
+//atic void          summary_hlp (struct stat_stack *this, const char *pfx);
 //atic void          summary_show (void);
 //atic const char   *task_show (const WIN_t *q, struct pids_stack *p);
 //atic int           window_show (WIN_t *q, int wmax);
