@@ -835,6 +835,8 @@ PROCPS_EXPORT signed long long procps_stat_get (
         struct procps_statinfo *info,
         enum stat_item item)
 {
+ #define vTIC(X) ( info->cpu_hist.new. X - info->cpu_hist.old. X )
+ #define vSYS(X) ( info->sys_hist.new. X - info->sys_hist.old. X )
     static time_t sav_secs;
     time_t cur_secs;
     int rc;
@@ -852,6 +854,7 @@ PROCPS_EXPORT signed long long procps_stat_get (
             return info->cpu_hist.id;
         case PROCPS_STAT_TIC_NUMA_NODE:
             return info->cpu_hist.numa_node;
+
         case PROCPS_STAT_TIC_USER:
             return info->cpu_hist.new.user;
         case PROCPS_STAT_TIC_NICE:
@@ -872,6 +875,28 @@ PROCPS_EXPORT signed long long procps_stat_get (
             return info->cpu_hist.new.guest;
         case PROCPS_STAT_TIC_GUEST_NICE:
             return info->cpu_hist.new.gnice;
+
+        case PROCPS_STAT_TIC_DELTA_USER:
+            return vTIC(user);
+        case PROCPS_STAT_TIC_DELTA_NICE:
+            return vTIC(nice);
+        case PROCPS_STAT_TIC_DELTA_SYSTEM:
+            return vTIC(system);
+        case PROCPS_STAT_TIC_DELTA_IDLE:
+            return vTIC(idle);
+        case PROCPS_STAT_TIC_DELTA_IOWAIT:
+            return vTIC(iowait);
+        case PROCPS_STAT_TIC_DELTA_IRQ:
+            return vTIC(irq);
+        case PROCPS_STAT_TIC_DELTA_SOFTIRQ:
+            return vTIC(sirq);
+        case PROCPS_STAT_TIC_DELTA_STOLEN:
+            return vTIC(stolen);
+        case PROCPS_STAT_TIC_DELTA_GUEST:
+            return vTIC(guest);
+        case PROCPS_STAT_TIC_DELTA_GUEST_NICE:
+            return vTIC(gnice);
+
         case PROCPS_STAT_SYS_CTX_SWITCHES:
             return info->sys_hist.new.ctxt;
         case PROCPS_STAT_SYS_INTERRUPTS:
@@ -884,11 +909,26 @@ PROCPS_EXPORT signed long long procps_stat_get (
             return info->sys_hist.new.procs_running;
         case PROCPS_STAT_SYS_TIME_OF_BOOT:
             return info->sys_hist.new.btime;
+
+        case PROCPS_STAT_SYS_DELTA_CTX_SWITCHES:
+            return vSYS(ctxt);
+        case PROCPS_STAT_SYS_DELTA_INTERRUPTS:
+            return vSYS(intr);
+        case PROCPS_STAT_SYS_DELTA_PROC_BLOCKED:
+            return vSYS(procs_blocked);
+        case PROCPS_STAT_SYS_DELTA_PROC_CREATED:
+            return vSYS(procs_created);
+        case PROCPS_STAT_SYS_DELTA_PROC_RUNNING:
+            return vSYS(procs_running);
+
+        case PROCPS_STAT_noop:
+        case PROCPS_STAT_extra:
+            return 0;
         default:
-            /* the other enumerators make no sense in this context
-               ( TIC_DELTA_, _noop, _extra ) */
             return -EINVAL;
     }
+ #undef vTIC
+ #undef vSYS
 } // end: procps_stat_get
 
 
