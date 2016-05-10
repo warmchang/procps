@@ -15,10 +15,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 #ifndef PROC_STAT_H
 #define PROC_STAT_H
-
-#include <proc/procps.h>
 
 __BEGIN_DECLS
 
@@ -26,8 +25,8 @@ enum stat_item {
     PROCPS_STAT_noop,                    //         ( never altered )
     PROCPS_STAT_extra,                   //         ( reset to zero )
 
-    PROCPS_STAT_TIC_ID,                  // s_int
-    PROCPS_STAT_TIC_NUMA_NODE,           // s_int
+    PROCPS_STAT_TIC_ID,                  //   s_int
+    PROCPS_STAT_TIC_NUMA_NODE,           //   s_int
     PROCPS_STAT_TIC_USER,                // ull_int
     PROCPS_STAT_TIC_NICE,                // ull_int
     PROCPS_STAT_TIC_SYSTEM,              // ull_int
@@ -38,28 +37,28 @@ enum stat_item {
     PROCPS_STAT_TIC_STOLEN,              // ull_int
     PROCPS_STAT_TIC_GUEST,               // ull_int
     PROCPS_STAT_TIC_GUEST_NICE,          // ull_int
-    PROCPS_STAT_TIC_DELTA_USER,          // sl_int
-    PROCPS_STAT_TIC_DELTA_NICE,          // sl_int
-    PROCPS_STAT_TIC_DELTA_SYSTEM,        // sl_int
-    PROCPS_STAT_TIC_DELTA_IDLE,          // sl_int
-    PROCPS_STAT_TIC_DELTA_IOWAIT,        // sl_int
-    PROCPS_STAT_TIC_DELTA_IRQ,           // sl_int
-    PROCPS_STAT_TIC_DELTA_SOFTIRQ,       // sl_int
-    PROCPS_STAT_TIC_DELTA_STOLEN,        // sl_int
-    PROCPS_STAT_TIC_DELTA_GUEST,         // sl_int
-    PROCPS_STAT_TIC_DELTA_GUEST_NICE,    // sl_int
+    PROCPS_STAT_TIC_DELTA_USER,          //  sl_int
+    PROCPS_STAT_TIC_DELTA_NICE,          //  sl_int
+    PROCPS_STAT_TIC_DELTA_SYSTEM,        //  sl_int
+    PROCPS_STAT_TIC_DELTA_IDLE,          //  sl_int
+    PROCPS_STAT_TIC_DELTA_IOWAIT,        //  sl_int
+    PROCPS_STAT_TIC_DELTA_IRQ,           //  sl_int
+    PROCPS_STAT_TIC_DELTA_SOFTIRQ,       //  sl_int
+    PROCPS_STAT_TIC_DELTA_STOLEN,        //  sl_int
+    PROCPS_STAT_TIC_DELTA_GUEST,         //  sl_int
+    PROCPS_STAT_TIC_DELTA_GUEST_NICE,    //  sl_int
 
-    PROCPS_STAT_SYS_CTX_SWITCHES,        // ul_int
-    PROCPS_STAT_SYS_INTERRUPTS,          // ul_int
-    PROCPS_STAT_SYS_PROC_BLOCKED,        // ul_int
-    PROCPS_STAT_SYS_PROC_CREATED,        // ul_int
-    PROCPS_STAT_SYS_PROC_RUNNING,        // ul_int
-    PROCPS_STAT_SYS_TIME_OF_BOOT,        // ul_int
-    PROCPS_STAT_SYS_DELTA_CTX_SWITCHES,  // s_int
-    PROCPS_STAT_SYS_DELTA_INTERRUPTS,    // s_int
-    PROCPS_STAT_SYS_DELTA_PROC_BLOCKED,  // s_int
-    PROCPS_STAT_SYS_DELTA_PROC_CREATED,  // s_int
-    PROCPS_STAT_SYS_DELTA_PROC_RUNNING,  // s_int
+    PROCPS_STAT_SYS_CTX_SWITCHES,        //  ul_int
+    PROCPS_STAT_SYS_INTERRUPTS,          //  ul_int
+    PROCPS_STAT_SYS_PROC_BLOCKED,        //  ul_int
+    PROCPS_STAT_SYS_PROC_CREATED,        //  ul_int
+    PROCPS_STAT_SYS_PROC_RUNNING,        //  ul_int
+    PROCPS_STAT_SYS_TIME_OF_BOOT,        //  ul_int
+    PROCPS_STAT_SYS_DELTA_CTX_SWITCHES,  //   s_int
+    PROCPS_STAT_SYS_DELTA_INTERRUPTS,    //   s_int
+    PROCPS_STAT_SYS_DELTA_PROC_BLOCKED,  //   s_int
+    PROCPS_STAT_SYS_DELTA_PROC_CREATED,  //   s_int
+    PROCPS_STAT_SYS_DELTA_PROC_RUNNING,  //   s_int
 };
 
 enum stat_reap_type {
@@ -70,10 +69,10 @@ enum stat_reap_type {
 struct stat_result {
     enum stat_item item;
     union {
-        int                s_int;
-        long               sl_int;
-        unsigned long      ul_int;
-        unsigned long long ull_int;
+        signed int            s_int;
+        signed long          sl_int;
+        unsigned long        ul_int;
+        unsigned long long  ull_int;
     } result;
 };
 
@@ -102,8 +101,8 @@ struct stat_reaped {
 
 struct procps_statinfo;
 
-int procps_stat_new (struct procps_statinfo **info);
-int procps_stat_ref (struct procps_statinfo *info);
+int procps_stat_new   (struct procps_statinfo **info);
+int procps_stat_ref   (struct procps_statinfo  *info);
 int procps_stat_unref (struct procps_statinfo **info);
 
 signed long long procps_stat_get (

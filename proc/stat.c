@@ -71,10 +71,9 @@ struct hist_tic {
 };
 
 struct stacks_extent {
-    struct stat_stack **stacks;
-    int ext_numitems;                  // includes 'logical_end' delimiter
     int ext_numstacks;
     struct stacks_extent *next;
+    struct stat_stack **stacks;
 };
 
 struct fetch_support {
@@ -176,11 +175,10 @@ SYS_hst(SYS_DELTA_PROC_CREATED,  s_int,    procs_created)
 SYS_hst(SYS_DELTA_PROC_RUNNING,  s_int,    procs_running)
 
 
+// ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
 typedef void (*SET_t)(struct stat_result *, struct hist_sys *, struct hist_tic *);
 #define RS(e) (SET_t)setNAME(e)
-
-
-// ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
         /*
          * Need it be said?
@@ -190,7 +188,6 @@ static struct {
     SET_t setsfunc;              // the actual result setting routine
 } Item_table[] = {
 /*  setsfunc
-
     ---------------------------  */
   { RS(noop),                    },
   { RS(extra),                   },
@@ -269,17 +266,14 @@ static inline void assign_results (
 
 
 static inline void cleanup_stack (
-        struct stat_result *p,
-        int depth)
+        struct stat_result *this)
 {
-    int i;
-
-    for (i = 0; i < depth; i++) {
-        if (p->item >= PROCPS_STAT_logical_end)
+    for (;;) {
+        if (this->item >= PROCPS_STAT_logical_end)
             break;
-        if (p->item > PROCPS_STAT_noop)
-            p->result.ull_int = 0;
-        ++p;
+        if (this->item > PROCPS_STAT_noop)
+            this->result.ull_int = 0;
+        ++this;
     }
 } // end: cleanup_stack
 
@@ -292,7 +286,7 @@ static inline void cleanup_stacks_all (
 
     while (ext) {
         for (i = 0; ext->stacks[i]; i++)
-            cleanup_stack(ext->stacks[i]->head, this->numitems);
+            cleanup_stack(ext->stacks[i]->head);
         ext = ext->next;
     };
     this->dirty_stacks = 0;
@@ -587,27 +581,27 @@ static struct stacks_extent *stacks_alloc (
     if (maxstacks < 1)
         return NULL;
 
-    vect_size  = sizeof(void *) * maxstacks;                   // address vectors themselves
-    vect_size += sizeof(void *);                               // plus NULL delimiter
-    head_size  = sizeof(struct stat_stack);                    // a head struct
-    list_size  = sizeof(struct stat_result) * this->numitems;  // a results stack
-    blob_size  = sizeof(struct stacks_extent);                 // the extent anchor itself
-    blob_size += vect_size;                                    // all vectors + delim
-    blob_size += head_size * maxstacks;                        // all head structs
-    blob_size += list_size * maxstacks;                        // all results stacks
+    vect_size  = sizeof(void *) * maxstacks;                   // size of the addr vectors |
+    vect_size += sizeof(void *);                               // plus NULL addr delimiter |
+    head_size  = sizeof(struct stat_stack);                    // size of that head struct |
+    list_size  = sizeof(struct stat_result) * this->numitems;  // any single results stack |
+    blob_size  = sizeof(struct stacks_extent);                 // the extent anchor itself |
+    blob_size += vect_size;                                    // plus room for addr vects |
+    blob_size += head_size * maxstacks;                        // plus room for head thing |
+    blob_size += list_size * maxstacks;                        // plus room for our stacks |
 
-    /* note: all memory is allocated in a single blob, facilitating a later free().
-       as a minimum, it's important that the result structures themselves always be
-       contiguous for each stack since they're accessed through relative position). */
+    /* note: all of our memory is allocated in a single blob, facilitating a later free(). |
+             as a minimum, it is important that the result structures themselves always be |
+             contiguous for every stack since they are accessed through relative position. | */
     if (NULL == (p_blob = calloc(1, blob_size)))
         return NULL;
 
-    p_blob->next = this->extents;
-    this->extents = p_blob;
-    p_blob->stacks = (void *)p_blob + sizeof(struct stacks_extent);
-    p_vect = p_blob->stacks;
-    v_head = (void *)p_vect + vect_size;
-    v_list = v_head + (head_size * maxstacks);
+    p_blob->next = this->extents;                              // push this extent onto... |
+    this->extents = p_blob;                                    // ...some existing extents |
+    p_vect = (void *)p_blob + sizeof(struct stacks_extent);    // prime our vector pointer |
+    p_blob->stacks = p_vect;                                   // set actual vectors start |
+    v_head = (void *)p_vect + vect_size;                       // prime head pointer start |
+    v_list = v_head + (head_size * maxstacks);                 // prime our stacks pointer |
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct stat_stack *)v_head;
@@ -616,7 +610,6 @@ static struct stacks_extent *stacks_alloc (
         v_list += list_size;
         v_head += head_size;
     }
-    p_blob->ext_numitems = this->numitems;
     p_blob->ext_numstacks = maxstacks;
     return p_blob;
 } // end: stacks_alloc
@@ -849,7 +842,7 @@ PROCPS_EXPORT signed long long procps_stat_get (
     /* no sense reading the stat with every call from a program like vmstat
        who chooses not to use the much more efficient 'select' function ... */
     cur_secs = time(NULL);
-    if (!info->stat_was_read || 1 <= cur_secs - sav_secs) {
+    if (1 <= cur_secs - sav_secs) {
         if ((rc = read_stat_failed(info)))
             return rc;
         sav_secs = cur_secs;
