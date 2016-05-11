@@ -124,8 +124,7 @@ struct procps_meminfo {
 // regular assignment
 #define MEM_set(e,t,x) setDECL(e) { R->result. t = H->new . x; }
 // delta assignment
-#define HST_set(e,t,x) setDECL(e) { R->result. t = ( H->new . x - H->old. x ); \
-    if (R->result. t < 0) R->result. t = 0; }
+#define HST_set(e,t,x) setDECL(e) { R->result. t = ( H->new . x - H->old. x ); }
 
 setDECL(noop)                { (void)R; (void)H; }
 setDECL(extra)               { (void)R; (void)H; }
@@ -233,8 +232,7 @@ MEM_set(SWAP_USED,              ul_int,  derived_swap_used)
 // regular get
 #define MEM_get(e,x) getDECL(e) { return I->mem_hist.new. x; }
 // delta get
-#define HST_get(e,x) getDECL(e) { int n = I->mem_hist.new. x - I->mem_hist.old. x; \
-    return ( n < 0 ? 0 : n ); }
+#define HST_get(e,x) getDECL(e) { return ( I->mem_hist.new. x - I->mem_hist.old. x ); }
 
 getDECL(noop)                { (void)I; return 0; }
 getDECL(extra)               { (void)I; return 0; }
