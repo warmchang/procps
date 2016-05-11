@@ -136,11 +136,11 @@ struct procps_statinfo {
     (void)T; R->result. t = ( S->new . x - S->old. x ); \
     if (R->result. t < 0) R->result. t = 0; }
 
-setDECL(noop)                  { (void)R; (void)S; (void)T; }
-setDECL(extra)                 { (void)R; (void)S; (void)T; }
+setDECL(noop)                    { (void)R; (void)S; (void)T; }
+setDECL(extra)                   { (void)R; (void)S; (void)T; }
 
-setDECL(TIC_ID)                { (void)S; R->result.s_int = T->id;  }
-setDECL(TIC_NUMA_NODE)         { (void)S; R->result.s_int = T->numa_node; }
+setDECL(TIC_ID)                  { (void)S; R->result.s_int = T->id;  }
+setDECL(TIC_NUMA_NODE)           { (void)S; R->result.s_int = T->numa_node; }
 TIC_set(TIC_USER,                ull_int,  user)
 TIC_set(TIC_NICE,                ull_int,  nice)
 TIC_set(TIC_SYSTEM,              ull_int,  system)
@@ -170,9 +170,9 @@ SYS_set(SYS_PROC_RUNNING,        ul_int,   procs_running)
 SYS_set(SYS_TIME_OF_BOOT,        ul_int,   btime)
 SYS_hst(SYS_DELTA_CTX_SWITCHES,  s_int,    ctxt)
 SYS_hst(SYS_DELTA_INTERRUPTS,    s_int,    intr)
-SYS_hst(SYS_DELTA_PROC_BLOCKED,  s_int,    procs_blocked)
+setDECL(SYS_DELTA_PROC_BLOCKED)  { (void)T; R->result.s_int = S->new.procs_blocked - S->old.procs_blocked; }
 SYS_hst(SYS_DELTA_PROC_CREATED,  s_int,    procs_created)
-SYS_hst(SYS_DELTA_PROC_RUNNING,  s_int,    procs_running)
+setDECL(SYS_DELTA_PROC_RUNNING)  { (void)T; R->result.s_int = S->new.procs_running - S->old.procs_running; }
 
 
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
