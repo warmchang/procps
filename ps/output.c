@@ -100,7 +100,7 @@ static void get_boot_time(void)
 
 static void get_memory_total()
 {
-    struct procps_meminfo *mem_info;
+    struct procps_meminfo *mem_info = NULL;
     if (procps_meminfo_new(&mem_info) < 0)
 	xerrx(EXIT_FAILURE,
 		_("Unable to create meminfo structure"));
