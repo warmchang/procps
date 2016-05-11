@@ -991,7 +991,7 @@ PROCPS_EXPORT struct meminfo_stack *procps_meminfo_select (
     || memcmp(info->items, items, sizeof(enum meminfo_item) * numitems)) {
         // allow for our PROCPS_MEMINFO_logical_end
         if (!(info->items = realloc(info->items, sizeof(enum meminfo_item) * (numitems + 1))))
-            return -ENOMEM;
+            return NULL;
         memcpy(info->items, items, sizeof(enum meminfo_item) * numitems);
         info->items[numitems] = PROCPS_MEMINFO_logical_end;
         info->numitems = numitems + 1;
