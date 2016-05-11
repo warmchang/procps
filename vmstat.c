@@ -242,8 +242,6 @@ static void new_format(void)
 		    _("Unable to create system stat structure"));
 	if (procps_meminfo_new(&mem_info) < 0)
 	    xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
-	if (procps_meminfo_read(mem_info) < 0)
-	    xerrx(EXIT_FAILURE, _("Unable to read meminfo information"));
 
 	if (t_option) {
 		(void) time( &the_time );
@@ -276,10 +274,10 @@ static void new_format(void)
 	printf(w_option ? wide_format : format,
 		procps_stat_get(sys_info, PROCPS_STAT_SYS_PROC_RUNNING),
 		procps_stat_get(sys_info, PROCPS_STAT_SYS_PROC_BLOCKED),
-		unitConvert(procps_meminfo_get(mem_info, PROCPS_SWAP_USED)),
-		unitConvert(procps_meminfo_get(mem_info, PROCPS_MEM_FREE)),
-		unitConvert(procps_meminfo_get(mem_info, (a_option?PROCPS_MEM_INACTIVE:PROCPS_MEM_BUFFERS))),
-		unitConvert(procps_meminfo_get(mem_info, a_option?PROCPS_MEM_ACTIVE:PROCPS_MEM_CACHED)),
+		unitConvert(procps_meminfo_get(mem_info, PROCPS_MEMINFO_SWAP_USED)),
+		unitConvert(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_FREE)),
+		unitConvert(procps_meminfo_get(mem_info, (a_option?PROCPS_MEMINFO_MEM_INACTIVE:PROCPS_MEMINFO_MEM_BUFFERS))),
+		unitConvert(procps_meminfo_get(mem_info, a_option?PROCPS_MEMINFO_MEM_ACTIVE:PROCPS_MEMINFO_MEM_CACHED)),
 	       (unsigned)( (unitConvert(procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN)  * kb_per_page) * hz + divo2) / Div ),
 	       (unsigned)( (unitConvert(procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT)  * kb_per_page) * hz + divo2) / Div ),
 	       (unsigned)( (procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN) * hz + divo2) / Div ),
@@ -325,10 +323,6 @@ static void new_format(void)
 		pswpin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN);
 		pswpout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT);
 
-		if (procps_meminfo_read(mem_info) < 0)
-		    xerrx(EXIT_FAILURE,
-			    _("Unable to read memory information"));
-
 		if (t_option) {
 			(void) time( &the_time );
 			tm_ptr = localtime( &the_time );
@@ -357,12 +351,12 @@ static void new_format(void)
 		printf(w_option ? wide_format : format,
 		       procps_stat_get(sys_info, PROCPS_STAT_SYS_PROC_RUNNING),
 		       procps_stat_get(sys_info, PROCPS_STAT_SYS_PROC_BLOCKED),
-		       unitConvert(procps_meminfo_get(mem_info, PROCPS_SWAP_USED)),
-		       unitConvert(procps_meminfo_get(mem_info, PROCPS_MEM_FREE)),
+		       unitConvert(procps_meminfo_get(mem_info, PROCPS_MEMINFO_SWAP_USED)),
+		       unitConvert(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_FREE)),
 		       unitConvert(procps_meminfo_get(mem_info,
-			       (a_option?PROCPS_MEM_INACTIVE:PROCPS_MEM_BUFFERS))),
+			       (a_option?PROCPS_MEMINFO_MEM_INACTIVE:PROCPS_MEMINFO_MEM_BUFFERS))),
 		       unitConvert(procps_meminfo_get(mem_info,
-			       (a_option?PROCPS_MEM_ACTIVE:PROCPS_MEM_CACHED))),
+			       (a_option?PROCPS_MEMINFO_MEM_ACTIVE:PROCPS_MEMINFO_MEM_CACHED))),
 		       /*si */
 		       (unsigned)( ( unitConvert((pswpin [tog] - pswpin [!tog])*kb_per_page)+sleep_half )/sleep_time ),
 		       /* so */
@@ -731,29 +725,27 @@ static void sum_format(void)
 
 	if (procps_meminfo_new(&mem_info) < 0)
 	    xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
-	if (procps_meminfo_read(mem_info) < 0)
-	    xerrx(EXIT_FAILURE, _("Unable to read meminfo information"));
 
 	printf(_("%13lu %s total memory\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEM_TOTAL)), szDataUnit);
+			mem_info, PROCPS_MEMINFO_MEM_TOTAL)), szDataUnit);
 	printf(_("%13lu %s used memory\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEM_USED)), szDataUnit);
+			mem_info, PROCPS_MEMINFO_MEM_USED)), szDataUnit);
 	printf(_("%13lu %s active memory\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEM_ACTIVE)), szDataUnit);
+			mem_info, PROCPS_MEMINFO_MEM_ACTIVE)), szDataUnit);
 	printf(_("%13lu %s inactive memory\n"), unitConvert(
-		    procps_meminfo_get(mem_info, PROCPS_MEM_INACTIVE)), szDataUnit);
+		    procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_INACTIVE)), szDataUnit);
 	printf(_("%13lu %s free memory\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEM_FREE)), szDataUnit);
+			mem_info, PROCPS_MEMINFO_MEM_FREE)), szDataUnit);
 	printf(_("%13lu %s buffer memory\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEM_BUFFERS)), szDataUnit);
+			mem_info, PROCPS_MEMINFO_MEM_BUFFERS)), szDataUnit);
 	printf(_("%13lu %s swap cache\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEM_CACHED)), szDataUnit);
+			mem_info, PROCPS_MEMINFO_MEM_CACHED)), szDataUnit);
 	printf(_("%13lu %s total swap\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_SWAP_TOTAL)), szDataUnit);
+			mem_info, PROCPS_MEMINFO_SWAP_TOTAL)), szDataUnit);
 	printf(_("%13lu %s used swap\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_SWAP_USED)), szDataUnit);
+			mem_info, PROCPS_MEMINFO_SWAP_USED)), szDataUnit);
 	printf(_("%13lu %s free swap\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_SWAP_FREE)), szDataUnit);
+			mem_info, PROCPS_MEMINFO_SWAP_FREE)), szDataUnit);
 	printf(_("%13lld non-nice user cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_USER));
 	printf(_("%13lld nice user cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_NICE));
 	printf(_("%13lld system cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_SYSTEM));
