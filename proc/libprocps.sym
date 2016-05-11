@@ -16,13 +16,10 @@ global:
 	procps_linux_version;
 	procps_loadavg;
 	procps_meminfo_new;
-	procps_meminfo_read;
 	procps_meminfo_ref;
 	procps_meminfo_unref;
 	procps_meminfo_get;
-	procps_meminfo_getstack;
-	procps_meminfo_stack_fill;
-	procps_meminfo_stack_alloc;
+	procps_meminfo_select;
 	procps_ns_get_name;
 	procps_ns_get_id;
 	procps_ns_read_pid;
