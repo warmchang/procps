@@ -204,7 +204,7 @@ int main(int argc, char **argv)
 	int c, flags = 0, unit_set = 0;
 	char *endptr;
 	struct commandline_arguments args;
-	struct procps_meminfo *mem_info;
+	struct procps_meminfo *mem_info = NULL;
 
 	/*
 	 * For long options that have no equivalent short option, use a
@@ -357,10 +357,6 @@ int main(int argc, char **argv)
 	    xerrx(EXIT_FAILURE,
 		    _("Unable to create meminfo structure"));
 	do {
-		if (procps_meminfo_read(mem_info) < 0)
-			xerrx(EXIT_FAILURE,
-				_("Unable to read meminfo information"));
-
 		/* Translation Hint: You can use 9 character words in
 		 * the header, and the words need to be right align to
 		 * beginning of a number. */
@@ -371,20 +367,20 @@ int main(int argc, char **argv)
 		}
 		printf("\n");
 		printf("%-7s", _("Mem:"));
-		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEM_TOTAL), flags, args));
-		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEM_USED), flags, args));
-		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEM_FREE), flags, args));
-		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEM_SHARED), flags, args));
+		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_TOTAL), flags, args));
+		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_USED), flags, args));
+		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_FREE), flags, args));
+		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_SHARED), flags, args));
 		if (flags & FREE_WIDE) {
-			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEM_BUFFERS),
+			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_BUFFERS),
 				    flags, args));
-			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEM_CACHED)
+			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_CACHED)
 				    , flags, args));
 		} else {
-			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEM_BUFFERS)+
-				    procps_meminfo_get(mem_info, PROCPS_MEM_CACHED), flags, args));
+			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_BUFFERS)+
+				    procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_CACHED), flags, args));
 		}
-		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEM_AVAILABLE), flags, args));
+		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_AVAILABLE), flags, args));
 		printf("\n");
 		/*
 		 * Print low vs. high information, if the user requested it.
@@ -394,35 +390,35 @@ int main(int argc, char **argv)
 		 */
 		if (flags & FREE_LOHI) {
 			printf("%-7s", _("Low:"));
-			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMLO_TOTAL), flags, args));
-			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMLO_USED), flags, args));
-			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMLO_FREE), flags, args));
+			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEMLO_TOTAL), flags, args));
+			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEMLO_USED), flags, args));
+			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEMLO_FREE), flags, args));
 			printf("\n");
 
 			printf("%-7s", _("High:"));
-			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMHI_TOTAL), flags, args));
-			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMHI_USED), flags, args));
-			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMHI_FREE), flags, args));
+			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEMHI_TOTAL), flags, args));
+			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEMHI_USED), flags, args));
+			printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEMHI_FREE), flags, args));
 			printf("\n");
 		}
 
 		printf("%-7s", _("Swap:"));
-		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_SWAP_TOTAL), flags, args));
-		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_SWAP_USED), flags, args));
-		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_SWAP_FREE), flags, args));
+		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_SWAP_TOTAL), flags, args));
+		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_SWAP_USED), flags, args));
+		printf(" %11s", scale_size(procps_meminfo_get(mem_info, PROCPS_MEMINFO_SWAP_FREE), flags, args));
 		printf("\n");
 
 		if (flags & FREE_TOTAL) {
 			printf("%-7s", _("Total:"));
 			printf(" %11s", scale_size(
-				    procps_meminfo_get(mem_info, PROCPS_MEM_TOTAL)+
-				    procps_meminfo_get(mem_info, PROCPS_SWAP_TOTAL), flags, args));
+				    procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_TOTAL)+
+				    procps_meminfo_get(mem_info, PROCPS_MEMINFO_SWAP_TOTAL), flags, args));
 			printf(" %11s", scale_size(
-				    procps_meminfo_get(mem_info, PROCPS_MEM_USED)+
-				    procps_meminfo_get(mem_info, PROCPS_SWAP_USED), flags, args));
+				    procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_USED)+
+				    procps_meminfo_get(mem_info, PROCPS_MEMINFO_SWAP_USED), flags, args));
 			printf(" %11s", scale_size(
-				    procps_meminfo_get(mem_info, PROCPS_MEM_FREE)+
-				    procps_meminfo_get(mem_info, PROCPS_SWAP_FREE), flags, args));
+				    procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_FREE)+
+				    procps_meminfo_get(mem_info, PROCPS_MEMINFO_SWAP_FREE), flags, args));
 			printf("\n");
 		}
 		fflush(stdout);

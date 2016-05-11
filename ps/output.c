@@ -104,10 +104,7 @@ static void get_memory_total()
     if (procps_meminfo_new(&mem_info) < 0)
 	xerrx(EXIT_FAILURE,
 		_("Unable to create meminfo structure"));
-    if (procps_meminfo_read(mem_info) < 0)
-	xerrx(EXIT_FAILURE,
-		_("Unable to read meminfo information"));
-    memory_total = procps_meminfo_get(mem_info, PROCPS_MEM_TOTAL);
+    memory_total = procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_TOTAL);
     procps_meminfo_unref(&mem_info);
 }
 

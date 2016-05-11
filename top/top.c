@@ -202,13 +202,12 @@ static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||
 static struct procps_meminfo *Mem_ctx;
 static struct meminfo_stack *Mem_stack;
 static enum meminfo_item Mem_items[] = {
-   PROCPS_MEM_FREE,   PROCPS_MEM_USED,    PROCPS_MEM_TOTAL,
-   PROCPS_MEM_CACHED, PROCPS_MEM_BUFFERS, PROCPS_MEM_AVAILABLE,
-   PROCPS_SWAP_TOTAL, PROCPS_SWAP_FREE,   PROCPS_SWAP_USED,
-   PROCPS_MEM_stack_end };
+   PROCPS_MEMINFO_MEM_FREE,   PROCPS_MEMINFO_MEM_USED,    PROCPS_MEMINFO_MEM_TOTAL,
+   PROCPS_MEMINFO_MEM_CACHED, PROCPS_MEMINFO_MEM_BUFFERS, PROCPS_MEMINFO_MEM_AVAILABLE,
+   PROCPS_MEMINFO_SWAP_TOTAL, PROCPS_MEMINFO_SWAP_FREE,   PROCPS_MEMINFO_SWAP_USED };
 enum Rel_memitems {
-   mem_FREE,  mem_USED,  mem_TOTAL, mem_CACHE, mem_BUFFS,
-   mem_AVAIL, swp_TOTAL, swp_FREE,  swp_USED };
+   mem_FRE, mem_USE, mem_TOT, mem_QUE, mem_BUF, mem_AVL,
+   swp_TOT, swp_FRE, swp_USE };
         // mem stack results extractor macro, where e=rel enum
 #define MEM_VAL(e) Mem_stack->head[e].result.ul_int
         // --- <proc/pids.h> --------------------------------------------------
@@ -2240,8 +2239,7 @@ static void sysinfo_refresh (int forced) {
 
    /*** hotplug_acclimated ***/
    if (3 <= cur_secs - mem_secs) {
-      // 'stack_fill' also implies 'read', saving us one more call
-      if ((procps_meminfo_stack_fill(Mem_ctx, Mem_stack) < 0))
+      if (!(Mem_stack = procps_meminfo_select(Mem_ctx, Mem_items, MAXTBL(Mem_items))))
          error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__));
       mem_secs = cur_secs;
    }
@@ -2825,8 +2823,6 @@ static void before (char *me) {
 
    // prepare for memory stats from new library API ...
    if (procps_meminfo_new(&Mem_ctx) < 0)
-      error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__));
-   if (!(Mem_stack = procps_meminfo_stack_alloc(Mem_ctx, MAXTBL(Mem_items), Mem_items)))
       error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__));
 
    // establish max depth for newlib pids stack (# of result structs)
@@ -4784,13 +4780,13 @@ numa_nope:
          };
          char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ];
          int ix = w->rc.graph_mems - 1;
-         float pct_used = (float)MEM_VAL(mem_USED) * (100.0 / (float)MEM_VAL(mem_TOTAL)),
+         float pct_used = (float)MEM_VAL(mem_USE) * (100.0 / (float)MEM_VAL(mem_TOT)),
 #ifdef MEMGRAPH_OLD
-               pct_misc = (float)(MEM_VAL(mem_BUFFS) + MEM_VAL(mem_CACHE)) * (100.0 / (float)MEM_VAL(mem_TOTAL)),
+               pct_misc = (float)(MEM_VAL(mem_BUF) + MEM_VAL(mem_QUE)) * (100.0 / (float)MEM_VAL(mem_TOT)),
 #else
-               pct_misc = (float)(MEM_VAL(mem_TOTAL) - MEM_VAL(mem_AVAIL) - MEM_VAL(mem_USED)) * (100.0 / (float)MEM_VAL(mem_TOTAL)),
+               pct_misc = (float)(MEM_VAL(mem_TOT) - MEM_VAL(mem_AVL) - MEM_VAL(mem_USE)) * (100.0 / (float)MEM_VAL(mem_TOT)),
 #endif
-               pct_swap = MEM_VAL(swp_TOTAL) ? (float)MEM_VAL(swp_USED) * (100.0 / (float)MEM_VAL(swp_TOTAL)) : 0;
+               pct_swap = MEM_VAL(swp_TOT) ? (float)MEM_VAL(swp_USE) * (100.0 / (float)MEM_VAL(swp_TOT)) : 0;
 #ifndef QUICK_GRAPHS
          int num_used = (int)((pct_used * Graph_adj) + .5),
              num_misc = (int)((pct_misc * Graph_adj) + .5);
@@ -4803,16 +4799,16 @@ numa_nope:
 #endif
          snprintf(dual, sizeof(dual), "%s%s", used, util);
          snprintf(util, sizeof(util), gtab[ix].swap, (int)((pct_swap * Graph_adj) + .5), gtab[ix].type);
-         prT(bfT(0), mkM(MEM_VAL(mem_TOTAL))); prT(bfT(1), mkM(MEM_VAL(swp_TOTAL)));
+         prT(bfT(0), mkM(MEM_VAL(mem_TOT))); prT(bfT(1), mkM(MEM_VAL(swp_TOT)));
          show_special(0, fmtmk( "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1\n%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1\n"
             , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, dual
             , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, util));
       } else {
-         unsigned long my_misc = MEM_VAL(mem_BUFFS) + MEM_VAL(mem_CACHE);
-         prT(bfT(0), mkM(MEM_VAL(mem_TOTAL))); prT(bfT(1), mkM(MEM_VAL(mem_FREE)));
-         prT(bfT(2), mkM(MEM_VAL(mem_USED)));  prT(bfT(3), mkM(my_misc));
-         prT(bfT(4), mkM(MEM_VAL(swp_TOTAL))); prT(bfT(5), mkM(MEM_VAL(swp_FREE)));
-         prT(bfT(6), mkM(MEM_VAL(swp_USED)));  prT(bfT(7), mkM(MEM_VAL(mem_AVAIL)));
+         unsigned long my_misc = MEM_VAL(mem_BUF) + MEM_VAL(mem_QUE);
+         prT(bfT(0), mkM(MEM_VAL(mem_TOT)));  prT(bfT(1), mkM(MEM_VAL(mem_FRE)));
+         prT(bfT(2), mkM(MEM_VAL(mem_USE)));  prT(bfT(3), mkM(my_misc));
+         prT(bfT(4), mkM(MEM_VAL(swp_TOT)));  prT(bfT(5), mkM(MEM_VAL(swp_FRE)));
+         prT(bfT(6), mkM(MEM_VAL(swp_USE)));  prT(bfT(7), mkM(MEM_VAL(mem_AVL)));
          show_special(0, fmtmk(N_unq(MEMORY_lines_fmt)
             , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3)
             , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
@@ -4961,7 +4957,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             break;
    /* ul_int, scale_pcnt */
          case EU_MEM:
-            cp = scale_pcnt((float)rSv(EU_RES, ul_int) * 100 / MEM_VAL(mem_TOTAL), W, Jn);
+            cp = scale_pcnt((float)rSv(EU_RES, ul_int) * 100 / MEM_VAL(mem_TOT), W, Jn);
             break;
    /* ul_int, make_str with special handling */
          case EU_FLG:
