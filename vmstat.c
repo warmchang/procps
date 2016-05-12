@@ -203,190 +203,242 @@ static unsigned long unitConvert(unsigned long size)
 	return ((unsigned long)cvSize);
 }
 
+static enum stat_item First_stat_items[] = {
+    PROCPS_STAT_SYS_DELTA_PROC_RUNNING,
+    PROCPS_STAT_SYS_DELTA_PROC_BLOCKED,
+    PROCPS_STAT_SYS_DELTA_INTERRUPTS,
+    PROCPS_STAT_SYS_DELTA_CTX_SWITCHES,
+    PROCPS_STAT_TIC_USER,
+    PROCPS_STAT_TIC_NICE,
+    PROCPS_STAT_TIC_SYSTEM,
+    PROCPS_STAT_TIC_IRQ,
+    PROCPS_STAT_TIC_SOFTIRQ,
+    PROCPS_STAT_TIC_IDLE,
+    PROCPS_STAT_TIC_IOWAIT,
+    PROCPS_STAT_TIC_STOLEN
+};
+
+static enum stat_item Loop_stat_items[] = {
+    PROCPS_STAT_SYS_PROC_RUNNING,
+    PROCPS_STAT_SYS_PROC_BLOCKED,
+    PROCPS_STAT_SYS_DELTA_INTERRUPTS,
+    PROCPS_STAT_SYS_DELTA_CTX_SWITCHES,
+    PROCPS_STAT_TIC_DELTA_USER,
+    PROCPS_STAT_TIC_DELTA_NICE,
+    PROCPS_STAT_TIC_DELTA_SYSTEM,
+    PROCPS_STAT_TIC_DELTA_IRQ,
+    PROCPS_STAT_TIC_DELTA_SOFTIRQ,
+    PROCPS_STAT_TIC_DELTA_IDLE,
+    PROCPS_STAT_TIC_DELTA_IOWAIT,
+    PROCPS_STAT_TIC_DELTA_STOLEN
+};
+
+enum Rel_statitems {
+    stat_PRU, stat_PBL,
+    stat_INT, stat_CTX,
+    stat_USR, stat_NIC, stat_SYS, stat_IRQ, stat_SRQ,
+    stat_IDL, stat_IOW, stat_STO};
+
+static enum meminfo_item Mem_items[] = {
+    PROCPS_MEMINFO_SWAP_USED,
+    PROCPS_MEMINFO_MEM_FREE,
+    PROCPS_MEMINFO_MEM_ACTIVE,
+    PROCPS_MEMINFO_MEM_INACTIVE,
+    PROCPS_MEMINFO_MEM_BUFFERS,
+    PROCPS_MEMINFO_MEM_CACHED
+};
+
+enum Rel_memitems {
+    mem_SUS, mem_FREE,
+    mem_ACT, mem_INA,
+    mem_BUF, mem_CAC
+};
+
 static void new_format(void)
 {
-	const char format[] =
-	    "%2lld %2lld %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u";
-	const char wide_format[] =
-	    "%2lld %2lld %12lu %12lu %12lu %12lu %4u %4u %5u %5u %4u %4u %3u %3u %3u %3u %3u";
+#define TICv(E) PROCPS_STAT_VAL(E, ull_int, stat_stack)
+#define DTICv(E) PROCPS_STAT_VAL(E, sl_int, stat_stack)
+#define SYSv(E) PROCPS_STAT_VAL(E, ul_int, stat_stack)
+#define MEMv(E) PROCPS_STAT_VAL(E, ul_int, mem_stack)
+#define DSYSv(E) PROCPS_STAT_VAL(E, s_int, stat_stack)
+    const char format[] =
+        "%2lu %2lu %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u";
+    const char wide_format[] =
+        "%2lu %2lu %12lu %12lu %12lu %12lu %4u %4u %5u %5u %4u %4u %3u %3u %3u %3u %3u";
 
-	unsigned int tog = 0;	/* toggle switch for cleaner code */
-	unsigned int i;
-	long hz;
-	long long cpu_use[2], cpu_sys[2], cpu_idl[2], cpu_iow[2], cpu_sto[2];
-	long long duse, dsys, didl, diow, dstl, Div, divo2;
-	unsigned long pgpgin[2], pgpgout[2], pswpin[2] = {0,0}, pswpout[2];
-	unsigned int intr[2], ctxt[2];
-	unsigned int sleep_half;
-	unsigned long kb_per_page = sysconf(_SC_PAGESIZE) / 1024ul;
-	int debt = 0;		/* handle idle ticks running backwards */
-	struct tm *tm_ptr;
-	time_t the_time;
-	char timebuf[32];
-	struct procps_vmstat *vm_info = NULL;
-	struct procps_statinfo *sys_info = NULL;
-	struct procps_meminfo *mem_info = NULL;
+    unsigned int tog = 0;    /* toggle switch for cleaner code */
+    unsigned int i;
+    long hz;
+    long long cpu_use, cpu_sys, cpu_idl, cpu_iow, cpu_sto;
+    long long Div, divo2;
+    unsigned long pgpgin[2], pgpgout[2], pswpin[2] = {0,0}, pswpout[2];
+    unsigned int sleep_half;
+    unsigned long kb_per_page = sysconf(_SC_PAGESIZE) / 1024ul;
+    int debt = 0;        /* handle idle ticks running backwards */
+    struct tm *tm_ptr;
+    time_t the_time;
+    char timebuf[32];
+    struct procps_vmstat *vm_info = NULL;
+    struct procps_statinfo *sys_info = NULL;
+    struct stat_stack *stat_stack;
+    struct procps_meminfo *mem_info = NULL;
+    struct meminfo_stack *mem_stack;
 
-	sleep_half = (sleep_time / 2);
-	hz = procps_hertz_get();
-	new_header();
+    sleep_half = (sleep_time / 2);
+    hz = procps_hertz_get();
+    new_header();
 
-	if (procps_vmstat_new(&vm_info) < 0)
-	    xerrx(EXIT_FAILURE,
-		    _("Unable to create vmstat structure"));
-	if (procps_vmstat_read(vm_info) < 0)
-	    xerrx(EXIT_FAILURE,
-		    _("Unable to read vmstat information"));
-	if (procps_stat_new(&sys_info) < 0)
-	    xerrx(EXIT_FAILURE,
-		    _("Unable to create system stat structure"));
-	if (procps_meminfo_new(&mem_info) < 0)
-	    xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
+    if (procps_vmstat_new(&vm_info) < 0)
+        xerrx(EXIT_FAILURE,
+            _("Unable to create vmstat structure"));
+    if (procps_vmstat_read(vm_info) < 0)
+        xerrx(EXIT_FAILURE,
+            _("Unable to read vmstat information"));
+    if (procps_stat_new(&sys_info) < 0)
+        xerrx(EXIT_FAILURE,
+            _("Unable to create system stat structure"));
+    if (procps_meminfo_new(&mem_info) < 0)
+        xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
 
-	if (t_option) {
-		(void) time( &the_time );
-		tm_ptr = localtime( &the_time );
-		strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
-	}
-	/* Do the initial fill */
-	cpu_use[tog] = procps_stat_get(sys_info, PROCPS_STAT_TIC_USER) +
-	    procps_stat_get(sys_info, PROCPS_STAT_TIC_NICE);
-	cpu_sys[tog] = procps_stat_get(sys_info, PROCPS_STAT_TIC_SYSTEM) +
-	    procps_stat_get(sys_info, PROCPS_STAT_TIC_IRQ) +
-	    procps_stat_get(sys_info, PROCPS_STAT_TIC_SOFTIRQ);
-	cpu_idl[tog] = procps_stat_get(sys_info, PROCPS_STAT_TIC_IDLE);
-	cpu_iow[tog] = procps_stat_get(sys_info, PROCPS_STAT_TIC_IOWAIT);
-	cpu_sto[tog] = procps_stat_get(sys_info, PROCPS_STAT_TIC_STOLEN);
-	intr[tog] = procps_stat_get(sys_info, PROCPS_STAT_SYS_INTERRUPTS);
-	ctxt[tog] = procps_stat_get(sys_info, PROCPS_STAT_SYS_CTX_SWITCHES);
-	pgpgin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN);
-	pgpgout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT);
-	pswpin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN);
-	pswpout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT);
+    if (t_option) {
+        (void) time( &the_time );
+        tm_ptr = localtime( &the_time );
+        strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+    }
+    /* Do the initial fill */
+    if ((stat_stack = procps_stat_select(sys_info, First_stat_items, 12)) ==
+        NULL)
+        xerrx(EXIT_FAILURE,
+              _("Unable to select stat information"));
+    cpu_use = TICv(stat_USR) + TICv(stat_NIC);
+    cpu_sys = TICv(stat_SYS) + TICv(stat_IRQ) + TICv(stat_SRQ);
+    cpu_idl = TICv(stat_IDL);
+    cpu_iow = TICv(stat_IOW);
+    cpu_sto = TICv(stat_STO);
 
-	Div = cpu_use[tog] + cpu_sys[tog] + cpu_idl[tog] + cpu_iow[tog] + cpu_sto[tog];
-	if (!Div) {
-	    Div = 1;
-	    cpu_idl[tog] = 1;
-	}
-	divo2 = Div / 2UL;
+    pgpgin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN);
+    pgpgout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT);
+    pswpin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN);
+    pswpout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT);
 
-	printf(w_option ? wide_format : format,
-		procps_stat_get(sys_info, PROCPS_STAT_SYS_PROC_RUNNING),
-		procps_stat_get(sys_info, PROCPS_STAT_SYS_PROC_BLOCKED),
-		unitConvert(procps_meminfo_get(mem_info, PROCPS_MEMINFO_SWAP_USED)),
-		unitConvert(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_FREE)),
-		unitConvert(procps_meminfo_get(mem_info, (a_option?PROCPS_MEMINFO_MEM_INACTIVE:PROCPS_MEMINFO_MEM_BUFFERS))),
-		unitConvert(procps_meminfo_get(mem_info, a_option?PROCPS_MEMINFO_MEM_ACTIVE:PROCPS_MEMINFO_MEM_CACHED)),
-	       (unsigned)( (unitConvert(procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN)  * kb_per_page) * hz + divo2) / Div ),
-	       (unsigned)( (unitConvert(procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT)  * kb_per_page) * hz + divo2) / Div ),
-	       (unsigned)( (procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN) * hz + divo2) / Div ),
-	       (unsigned)( (procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT) * hz + divo2) / Div ),
-	       (unsigned)( (intr[tog]		   * hz + divo2) / Div ),
-	       (unsigned)( (ctxt[tog]		   * hz + divo2) / Div ),
-	       (unsigned)( (100*cpu_use[tog]		+ divo2) / Div ),
-	       (unsigned)( (100*cpu_sys[tog]		+ divo2) / Div ),
-	       (unsigned)( (100*cpu_idl[tog]		+ divo2) / Div ),
-	       (unsigned)( (100*cpu_iow[tog]		+ divo2) / Div ),
-	       (unsigned)( (100*cpu_sto[tog]		+ divo2) / Div )
-	);
+    if ((mem_stack = procps_meminfo_select(mem_info, Mem_items, 6)) ==
+        NULL)
+        xerrx(EXIT_FAILURE,
+              _("Unable to select memory information"));
 
-	if (t_option) {
-		printf(" %s", timebuf);
-	}
+    Div = cpu_use + cpu_sys + cpu_idl + cpu_iow + cpu_sto;
+    if (!Div) {
+        Div = 1;
+        cpu_idl = 1;
+    }
+    divo2 = Div / 2UL;
 
-	printf("\n");
+    printf(w_option ? wide_format : format,
+           SYSv(stat_PRU),
+           SYSv(stat_PBL),
+           unitConvert(MEMv(mem_SUS)),
+           unitConvert(MEMv(mem_FREE)),
+           unitConvert((a_option?MEMv(mem_INA):MEMv(mem_BUF))),
+           unitConvert((a_option?MEMv(mem_ACT):MEMv(mem_CAC))),
+           (unsigned)( (unitConvert(procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN)  * kb_per_page) * hz + divo2) / Div ),
+           (unsigned)( (unitConvert(procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT)  * kb_per_page) * hz + divo2) / Div ),
+           (unsigned)( (procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN) * hz + divo2) / Div ),
+           (unsigned)( (procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT) * hz + divo2) / Div ),
+           (unsigned)( (SYSv(stat_INT)           * hz + divo2) / Div ),
+           (unsigned)( (SYSv(stat_CTX)           * hz + divo2) / Div ),
+           (unsigned)( (100*cpu_use        + divo2) / Div ),
+           (unsigned)( (100*cpu_sys        + divo2) / Div ),
+           (unsigned)( (100*cpu_idl        + divo2) / Div ),
+           (unsigned)( (100*cpu_iow        + divo2) / Div ),
+           (unsigned)( (100*cpu_sto        + divo2) / Div )
+    );
 
-	/* main loop */
-	for (i = 1; infinite_updates || i < num_updates; i++) {
-		sleep(sleep_time);
-		if (moreheaders && ((i % height) == 0))
-			new_header();
-		tog = !tog;
+    if (t_option) {
+        printf(" %s", timebuf);
+    }
 
-		if (procps_vmstat_read(vm_info) < 0)
-		    xerrx(EXIT_FAILURE,
-			    _("Unable to read vmstat information"));
+    printf("\n");
 
-		cpu_use[tog] = procps_stat_get(sys_info, PROCPS_STAT_TIC_USER) +
-		    procps_stat_get(sys_info, PROCPS_STAT_TIC_NICE);
-		cpu_sys[tog] = procps_stat_get(sys_info, PROCPS_STAT_TIC_SYSTEM) +
-		    procps_stat_get(sys_info, PROCPS_STAT_TIC_IRQ) +
-		    procps_stat_get(sys_info, PROCPS_STAT_TIC_SOFTIRQ);
-		cpu_idl[tog] = procps_stat_get(sys_info, PROCPS_STAT_TIC_IDLE);
-		cpu_iow[tog] = procps_stat_get(sys_info, PROCPS_STAT_TIC_IOWAIT);
-		cpu_sto[tog] = procps_stat_get(sys_info, PROCPS_STAT_TIC_STOLEN);
-		intr[tog] = procps_stat_get(sys_info, PROCPS_STAT_SYS_INTERRUPTS);
-		ctxt[tog] = procps_stat_get(sys_info, PROCPS_STAT_SYS_CTX_SWITCHES);
-		pgpgin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN);
-		pgpgout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT);
-		pswpin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN);
-		pswpout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT);
+    /* main loop */
+    for (i = 1; infinite_updates || i < num_updates; i++) {
+        sleep(sleep_time);
+        if (moreheaders && ((i % height) == 0))
+            new_header();
+        tog = !tog;
 
-		if (t_option) {
-			(void) time( &the_time );
-			tm_ptr = localtime( &the_time );
-			strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
-		}
+        if (procps_vmstat_read(vm_info) < 0)
+            xerrx(EXIT_FAILURE,
+                _("Unable to read vmstat information"));
+        if ((stat_stack = procps_stat_select(sys_info, Loop_stat_items, 12)) == NULL)
+            xerrx(EXIT_FAILURE,
+                  _("Unable to select stat information"));
 
-		duse = cpu_use[tog] - cpu_use[!tog];
-		dsys = cpu_sys[tog] - cpu_sys[!tog];
-		didl = cpu_idl[tog] - cpu_idl[!tog];
-		diow = cpu_iow[tog] - cpu_iow[!tog];
-		dstl = cpu_sto[tog] - cpu_sto[!tog];
+        cpu_use = DTICv(stat_USR) + DTICv(stat_NIC);
+        cpu_sys = DTICv(stat_SYS) + DTICv(stat_IRQ) + DTICv(stat_SRQ);
+        cpu_idl = DTICv(stat_IDL);
+        cpu_iow = DTICv(stat_IOW);
+        cpu_sto = DTICv(stat_STO);
+        pgpgin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN);
+        pgpgout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT);
+        pswpin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN);
+        pswpout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT);
 
-		/* idle can run backwards for a moment -- kernel "feature" */
-		if (debt) {
-			didl = (int)didl + debt;
-			debt = 0;
-		}
-		if ((int)didl < 0) {
-			debt = (int)didl;
-			didl = 0;
-		}
+        if (t_option) {
+            (void) time( &the_time );
+            tm_ptr = localtime( &the_time );
+            strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
+        }
 
-		Div = duse + dsys + didl + diow + dstl;
-		if (!Div) Div = 1, didl = 1;
-		divo2 = Div / 2UL;
-		printf(w_option ? wide_format : format,
-		       procps_stat_get(sys_info, PROCPS_STAT_SYS_PROC_RUNNING),
-		       procps_stat_get(sys_info, PROCPS_STAT_SYS_PROC_BLOCKED),
-		       unitConvert(procps_meminfo_get(mem_info, PROCPS_MEMINFO_SWAP_USED)),
-		       unitConvert(procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_FREE)),
-		       unitConvert(procps_meminfo_get(mem_info,
-			       (a_option?PROCPS_MEMINFO_MEM_INACTIVE:PROCPS_MEMINFO_MEM_BUFFERS))),
-		       unitConvert(procps_meminfo_get(mem_info,
-			       (a_option?PROCPS_MEMINFO_MEM_ACTIVE:PROCPS_MEMINFO_MEM_CACHED))),
-		       /*si */
-		       (unsigned)( ( unitConvert((pswpin [tog] - pswpin [!tog])*kb_per_page)+sleep_half )/sleep_time ),
-		       /* so */
-		       (unsigned)( ( unitConvert((pswpout[tog] - pswpout[!tog])*kb_per_page)+sleep_half )/sleep_time ),
-		       /* bi */
-		       (unsigned)( (  pgpgin [tog] - pgpgin [!tog]	       +sleep_half )/sleep_time ),
-		       /* bo */
-		       (unsigned)( (  pgpgout[tog] - pgpgout[!tog]	       +sleep_half )/sleep_time ),
-		       /* in */
-		       (unsigned)( (  intr   [tog] - intr   [!tog]	       +sleep_half )/sleep_time ),
-		       /* cs */
-		       (unsigned)( (  ctxt   [tog] - ctxt   [!tog]	       +sleep_half )/sleep_time ),
-		       /* us */
-		       (unsigned)( (100*duse+divo2)/Div ),
-		       /* sy */
-		       (unsigned)( (100*dsys+divo2)/Div ),
-		       /* id */
-		       (unsigned)( (100*didl+divo2)/Div ),
-		       /* wa */
-		       (unsigned)( (100*diow+divo2)/Div ),
-		       /* st */
-		       (unsigned)( (100*dstl+divo2)/Div )
-		);
+        /* idle can run backwards for a moment -- kernel "feature" */
+        if (debt) {
+            cpu_idl = (int)cpu_idl + debt;
+            debt = 0;
+        }
+        if ((int)cpu_idl < 0) {
+            debt = (int)cpu_idl;
+            cpu_idl = 0;
+        }
 
-		if (t_option) {
-			printf(" %s", timebuf);
-		}
+        Div = cpu_use + cpu_sys + cpu_idl + cpu_iow + cpu_sto;
+        if (!Div) Div = 1, cpu_idl = 1;
+        divo2 = Div / 2UL;
+        printf(w_option ? wide_format : format,
+               SYSv(stat_PRU),
+               SYSv(stat_PBL),
+               unitConvert(MEMv(mem_SUS)),
+               unitConvert(MEMv(mem_FREE)),
+               unitConvert((a_option?MEMv(mem_INA):MEMv(mem_BUF))),
+               unitConvert((a_option?MEMv(mem_ACT):MEMv(mem_CAC))),
+               /*si */
+               (unsigned)( ( unitConvert((pswpin [tog] - pswpin [!tog])*kb_per_page)+sleep_half )/sleep_time ),
+               /* so */
+               (unsigned)( ( unitConvert((pswpout[tog] - pswpout[!tog])*kb_per_page)+sleep_half )/sleep_time ),
+               /* bi */
+               (unsigned)( (  pgpgin [tog] - pgpgin [!tog]           +sleep_half )/sleep_time ),
+               /* bo */
+               (unsigned)( (  pgpgout[tog] - pgpgout[!tog]           +sleep_half )/sleep_time ),
+               /* in */
+               (unsigned)( (  DSYSv(stat_INT)           +sleep_half )/sleep_time ),
+               /* cs */
+               (unsigned)( (  DSYSv(stat_CTX)           +sleep_half )/sleep_time ),
+               /* us */
+               (unsigned)( (100*cpu_use+divo2)/Div ),
+               /* sy */
+               (unsigned)( (100*cpu_sys+divo2)/Div ),
+               /* id */
+               (unsigned)( (100*cpu_idl+divo2)/Div ),
+               /* wa */
+               (unsigned)( (100*cpu_iow+divo2)/Div ),
+               /* st */
+               (unsigned)( (100*cpu_sto+divo2)/Div )
+        );
 
-		printf("\n");
-	}
+        if (t_option) {
+            printf(" %s", timebuf);
+        }
+
+        printf("\n");
+    }
     /* Cleanup */
     procps_stat_unref(&sys_info);
     procps_vmstat_unref(&vm_info);
