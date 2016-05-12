@@ -654,8 +654,12 @@ setREL1(WCHAN_NAME)
 }
 
 static int pr_nwchan(char *restrict const outbuf, const proc_t *restrict const pp){
-setREL1(WCHAN_NAME)
-  return snprintf(outbuf, COLWID, "%x", (unsigned)rSv(WCHAN_NAME, str, pp));
+setREL1(WCHAN_ADDR)
+  if (!(rSv(WCHAN_ADDR, ul_int, pp) & 0xffffff)) {
+    memcpy(outbuf, "-",2);
+    return 1;
+  }
+  return snprintf(outbuf, COLWID, "%x", (unsigned)rSv(WCHAN_ADDR, ul_int, pp));
 }
 
 /* Terrible trunctuation, like BSD crap uses: I999 J999 K999 */
