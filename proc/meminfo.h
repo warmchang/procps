@@ -62,7 +62,7 @@ enum meminfo_item {
     PROCPS_MEMINFO_MEM_UNEVICTABLE,       //  ul_int
     PROCPS_MEMINFO_MEM_USED,              //  ul_int
     PROCPS_MEMINFO_MEM_VM_ALLOC_CHUNK,    //  ul_int
-    PROCPS_MEMINFO_MEM_VM_ALLOC_TOTAL,    // ull_int
+    PROCPS_MEMINFO_MEM_VM_ALLOC_TOTAL,    //  ul_int
     PROCPS_MEMINFO_MEM_VM_ALLOC_USED,     //  ul_int
     PROCPS_MEMINFO_MEM_WRITEBACK,         //  ul_int
     PROCPS_MEMINFO_MEM_WRITEBACK_TMP,     //  ul_int
@@ -102,7 +102,7 @@ enum meminfo_item {
     PROCPS_MEMINFO_DELTA_UNEVICTABLE,     //   s_int
     PROCPS_MEMINFO_DELTA_USED,            //   s_int
     PROCPS_MEMINFO_DELTA_VM_ALLOC_CHUNK,  //   s_int
-    PROCPS_MEMINFO_DELTA_VM_ALLOC_TOTAL,  //  sl_int
+    PROCPS_MEMINFO_DELTA_VM_ALLOC_TOTAL,  //   s_int
     PROCPS_MEMINFO_DELTA_VM_ALLOC_USED,   //   s_int
     PROCPS_MEMINFO_DELTA_WRITEBACK,       //   s_int
     PROCPS_MEMINFO_DELTA_WRITEBACK_TMP,   //   s_int
@@ -126,10 +126,8 @@ struct procps_meminfo;
 struct meminfo_result {
     enum meminfo_item item;
     union {
-        signed int            s_int;
-        signed long          sl_int;
-        unsigned long        ul_int;
-        unsigned long long  ull_int;
+        signed int      s_int;
+        unsigned long  ul_int;
     } result;
 };
 

@@ -164,7 +164,7 @@ MEM_set(MEM_TOTAL,              ul_int,  MemTotal)
 MEM_set(MEM_UNEVICTABLE,        ul_int,  Unevictable)
 MEM_set(MEM_USED,               ul_int,  derived_mem_used)
 MEM_set(MEM_VM_ALLOC_CHUNK,     ul_int,  VmallocChunk)
-MEM_set(MEM_VM_ALLOC_TOTAL,    ull_int,  VmallocTotal)
+MEM_set(MEM_VM_ALLOC_TOTAL,     ul_int,  VmallocTotal)
 MEM_set(MEM_VM_ALLOC_USED,      ul_int,  VmallocUsed)
 MEM_set(MEM_WRITEBACK,          ul_int,  Writeback)
 MEM_set(MEM_WRITEBACK_TMP,      ul_int,  WritebackTmp)
@@ -204,7 +204,7 @@ HST_set(DELTA_TOTAL,             s_int,  MemTotal)
 HST_set(DELTA_UNEVICTABLE,       s_int,  Unevictable)
 HST_set(DELTA_USED,              s_int,  derived_mem_used)
 HST_set(DELTA_VM_ALLOC_CHUNK,    s_int,  VmallocChunk)
-HST_set(DELTA_VM_ALLOC_TOTAL,   sl_int,  VmallocTotal)
+HST_set(DELTA_VM_ALLOC_TOTAL,    s_int,  VmallocTotal)
 HST_set(DELTA_VM_ALLOC_USED,     s_int,  VmallocUsed)
 HST_set(DELTA_WRITEBACK,         s_int,  Writeback)
 HST_set(DELTA_WRITEBACK_TMP,     s_int,  WritebackTmp)
@@ -487,7 +487,7 @@ static inline void cleanup_stack (
         if (this->item >= PROCPS_MEMINFO_logical_end)
             break;
         if (this->item > PROCPS_MEMINFO_noop)
-            this->result.ull_int = 0;
+            this->result.ul_int = 0;
         ++this;
     }
 } // end: cleanup_stack
