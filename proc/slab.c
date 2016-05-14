@@ -836,11 +836,12 @@ PROCPS_EXPORT struct slabnode_stack **procps_slabnode_stacks_sort (
         enum slabnode_item sort)
 {
  #define QSORT_r  int (*)(const void *, const void *, void *)
-    struct slab_result *p = stacks[0]->head;
+    struct slab_result *p;
     int offset = 0;;
 
     if (info == NULL || stacks == NULL)
         return NULL;
+
     if (sort < 0  || sort > PROCPS_SLABNODE_noop)
         return NULL;
     if (numstacked > info->stacked->depth)
@@ -851,6 +852,7 @@ PROCPS_EXPORT struct slabnode_stack **procps_slabnode_stacks_sort (
     if (numstacked > info->stacked->inuse)
         numstacked = info->stacked->inuse;
 
+    p = stacks[0]->head;
     for (;;) {
         if (p->item == sort)
             break;
