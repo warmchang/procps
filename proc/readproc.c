@@ -624,42 +624,38 @@ static char** file2strvec(const char* directory, const char* what) {
 
     sprintf(buf, "%s/%s", directory, what);
     fd = open(buf, O_RDONLY, 0);
-    if(fd==-1) return NULL;
+    if(fd==-1)
+        return NULL;
 
     /* read whole file into a memory buffer, allocating as we go */
     while ((n = read(fd, buf, sizeof buf - 1)) >= 0) {
-	if (n < (int)(sizeof buf - 1))
-	    end_of_file = 1;
-	if (n == 0 && rbuf == 0) {
-	    close(fd);
-	    return NULL;	/* process died between our open and read */
-	}
-	if (n < 0) {
-	    if (rbuf)
-		free(rbuf);
-	    close(fd);
-	    return NULL;	/* read error */
-	}
-	if (end_of_file && (n == 0 || buf[n-1]))/* last read char not null */
-	    buf[n++] = '\0';			/* so append null-terminator */
-	rbuf = xrealloc(rbuf, tot + n);		/* allocate more memory */
-	memcpy(rbuf + tot, buf, n);		/* copy buffer into it */
-	tot += n;				/* increment total byte ctr */
-	if (end_of_file)
-	    break;
+        if (n < (int)(sizeof buf - 1))
+            end_of_file = 1;
+        if (n == 0 && rbuf == 0) {
+            close(fd);
+            return NULL;	/* process died between our open and read */
+        }
+        if (end_of_file && (n == 0 || buf[n-1]))/* last read char not null */
+            buf[n++] = '\0';			/* so append null-terminator */
+        rbuf = xrealloc(rbuf, tot + n);		/* allocate more memory */
+        memcpy(rbuf + tot, buf, n);		/* copy buffer into it */
+        tot += n;				/* increment total byte ctr */
+        if (end_of_file)
+            break;
     }
     close(fd);
     if (n <= 0 && !end_of_file) {
-	if (rbuf) free(rbuf);
-	return NULL;		/* read error */
+        if (rbuf)
+            free(rbuf);
+        return NULL;		/* read error */
     }
     endbuf = rbuf + tot;			/* count space for pointers */
     align = (sizeof(char*)-1) - ((tot + sizeof(char*)-1) & (sizeof(char*)-1));
     for (c = 0, p = rbuf; p < endbuf; p++) {
-	if (!*p || *p == '\n')
-	    c += sizeof(char*);
-	if (*p == '\n')
-	    *p = 0;
+        if (!*p || *p == '\n')
+            c += sizeof(char*);
+        if (*p == '\n')
+            *p = 0;
     }
     c += sizeof(char*);				/* one extra for NULL term */
 
@@ -669,8 +665,8 @@ static char** file2strvec(const char* directory, const char* what) {
     *q++ = p = rbuf;				/* point ptrs to the strings */
     endbuf--;					/* do not traverse final NUL */
     while (++p < endbuf)
-    	if (!*p)				/* NUL char implies that */
-	    *q++ = p+1;				/* next string -> next char */
+        if (!*p)				/* NUL char implies that */
+            *q++ = p+1;				/* next string -> next char */
 
     *q = 0;					/* null ptr list terminator */
     return ret;
