@@ -688,7 +688,7 @@ static int pr_stat(char *restrict const outbuf, const proc_t *restrict const pp)
     if (!outbuf) {
        chkREL(STATE)
        chkREL(NICE)
-       chkREL(VM_LOCK)
+       chkREL(VM_RSS_LOCKED)
        chkREL(ID_SESSION)
        chkREL(ID_TGID)
        chkREL(NLWP)
@@ -706,7 +706,7 @@ static int pr_stat(char *restrict const outbuf, const proc_t *restrict const pp)
 //     exiting  'E' (not printed for zombies)
 //     vforked  'V'
 //     system   'K' (and do not print 'L' too)
-    if(rSv(VM_LOCK, ul_int, pp))                              outbuf[end++] = 'L';
+    if(rSv(VM_RSS_LOCKED, sl_int, pp))                        outbuf[end++] = 'L';
     if(rSv(ID_SESSION, s_int, pp) == rSv(ID_TGID, s_int, pp)) outbuf[end++] = 's'; // session leader
     if(rSv(NLWP, s_int, pp) > 1)                              outbuf[end++] = 'l'; // multi-threaded
     if(rSv(ID_PGRP, s_int, pp) == rSv(ID_TPGID, s_int, pp))   outbuf[end++] = '+'; // in foreground process group
@@ -1618,7 +1618,7 @@ static const format_struct format_array[] = { /*
 {"vm_data",   "DATA",    pr_nop,           PROCPS_PIDS_VM_DATA,             5,    LNx,  PO|RIGHT},
 {"vm_exe",    "EXE",     pr_nop,           PROCPS_PIDS_VM_EXE,              5,    LNx,  PO|RIGHT},
 {"vm_lib",    "LIB",     pr_nop,           PROCPS_PIDS_VM_LIB,              5,    LNx,  PO|RIGHT},
-{"vm_lock",   "LCK",     pr_nop,           PROCPS_PIDS_VM_LOCK,             3,    LNx,  PO|RIGHT},
+{"vm_lock",   "LCK",     pr_nop,           PROCPS_PIDS_VM_RSS_LOCKED,       3,    LNx,  PO|RIGHT},
 {"vm_stack",  "STACK",   pr_nop,           PROCPS_PIDS_VM_STACK,            5,    LNx,  PO|RIGHT},
 {"vsize",     "VSZ",     pr_vsz,           PROCPS_PIDS_VSIZE_PGS,           6,    DEC,  PO|RIGHT}, /*vsz*/
 {"vsz",       "VSZ",     pr_vsz,           PROCPS_PIDS_VM_SIZE,             6,    U98,  PO|RIGHT}, /*vsize*/

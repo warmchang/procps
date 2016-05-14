@@ -988,7 +988,7 @@ static char *get_default_rc_filename(void)
 int main(int argc, char **argv)
 {
 	struct procps_pidsinfo *info = NULL;
-	struct pids_reap *pids_reap;
+	struct pids_fetch *pids_fetch;
 	unsigned *pidlist;
 	int reap_count, user_count;
 	int ret = 0, c, conf_ret;
@@ -1128,7 +1128,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	if (procps_pids_new(&info, 4, Pid_items))
+	if (procps_pids_new(&info, Pid_items, 4))
 		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
 	pidlist = xmalloc(sizeof(pid_t) * argc);
 
@@ -1153,11 +1153,11 @@ int main(int argc, char **argv)
 
 	discover_shm_minor();
 
-	if (!(pids_reap = procps_pids_select(info, pidlist, user_count, PROCPS_SELECT_PID)))
+	if (!(pids_fetch = procps_pids_select(info, pidlist, user_count, PROCPS_SELECT_PID)))
 		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
 
-	for (reap_count = 0; reap_count < pids_reap->counts.total; reap_count++) {
-		ret |= one_proc(pids_reap->stacks[reap_count]);
+	for (reap_count = 0; reap_count < pids_fetch->counts.total; reap_count++) {
+		ret |= one_proc(pids_fetch->stacks[reap_count]);
 	}
 
 	free(pidlist);

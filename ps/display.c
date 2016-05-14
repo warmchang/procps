@@ -273,7 +273,7 @@ static void value_this_proc_pcpu(proc_t *buf){
 
 /***** just display */
 static void simple_spew(void){
-  struct pids_reap *pidreap;
+  struct pids_fetch *pidread;
   proc_t *buf;
   int i;
 
@@ -282,48 +282,48 @@ static void simple_spew(void){
     unsigned *pidlist = xcalloc(selection_list->n, sizeof(unsigned));
     for (i = 0; i < selection_list->n; i++)
       pidlist[i] = selection_list->u[selection_list->n-i-1].pid;
-    pidreap = procps_pids_select(Pids_info, pidlist, selection_list->n, PROCPS_SELECT_PID);
+    pidread = procps_pids_select(Pids_info, pidlist, selection_list->n, PROCPS_SELECT_PID);
     free(pidlist);
   } else {
-    enum pids_reap_type which;
+    enum pids_fetch_type which;
     which = (thread_flags & (TF_loose_tasks|TF_show_task))
-      ? PROCPS_REAP_THREADS_TOO : PROCPS_REAP_TASKS_ONLY;
-    pidreap = procps_pids_reap(Pids_info, which);
+      ? PROCPS_FETCH_THREADS_TOO : PROCPS_FETCH_TASKS_ONLY;
+    pidread = procps_pids_reap(Pids_info, which);
   }
-  if (!pidreap) {
+  if (!pidread) {
     fprintf(stderr, _("fatal library error, reap\n"));
     exit(EXIT_FAILURE);
   }
 
   switch(thread_flags & (TF_show_proc|TF_loose_tasks|TF_show_task)){
     case TF_show_proc:                   // normal non-thread output
-      for (i = 0; i < pidreap->counts.total; i++) {
-        buf = pidreap->stacks[i];
+      for (i = 0; i < pidread->counts.total; i++) {
+        buf = pidread->stacks[i];
         if (want_this_proc(buf))
           show_one_proc(buf, proc_format_list);
       }
       break;
     case TF_show_task:                   // -L and -T options
     case TF_show_proc|TF_loose_tasks:    // H option
-      for (i = 0; i < pidreap->counts.total; i++) {
-        buf = pidreap->stacks[i];
+      for (i = 0; i < pidread->counts.total; i++) {
+        buf = pidread->stacks[i];
         if (want_this_proc(buf))
           show_one_proc(buf, task_format_list);
       }
       break;
     case TF_show_proc|TF_show_task:      // m and -m options
-      procps_pids_sort(Pids_info, pidreap->stacks
-        , pidreap->counts.total, PROCPS_PIDS_TIME_START, PROCPS_SORT_ASCEND);
-      procps_pids_sort(Pids_info, pidreap->stacks
-        , pidreap->counts.total, PROCPS_PIDS_ID_TGID, PROCPS_SORT_ASCEND);
-      for (i = 0; i < pidreap->counts.total; i++) {
-        buf = pidreap->stacks[i];
+      procps_pids_sort(Pids_info, pidread->stacks
+        , pidread->counts.total, PROCPS_PIDS_TIME_START, PROCPS_SORT_ASCEND);
+      procps_pids_sort(Pids_info, pidread->stacks
+        , pidread->counts.total, PROCPS_PIDS_ID_TGID, PROCPS_SORT_ASCEND);
+      for (i = 0; i < pidread->counts.total; i++) {
+        buf = pidread->stacks[i];
 next_proc:
         if (want_this_proc(buf)) {
           int self = rSv(ID_PID, s_int, buf);
           show_one_proc(buf, proc_format_list);
-          for (; i < pidreap->counts.total; i++) {
-            buf = pidreap->stacks[i];
+          for (; i < pidread->counts.total; i++) {
+            buf = pidread->stacks[i];
             if (rSv(ID_TGID, s_int, buf) != self) goto next_proc;
             show_one_proc(buf, task_format_list);
           }
@@ -439,22 +439,22 @@ static int want_this_proc_nop(proc_t *dummy){
 
 /***** sorted or forest */
 static void fancy_spew(void){
-  struct pids_reap *pidreap;
-  enum pids_reap_type which;
+  struct pids_fetch *pidread;
+  enum pids_fetch_type which;
   proc_t *buf;
   int i, n = 0;
 
   which = (thread_flags & TF_loose_tasks)
-    ? PROCPS_REAP_THREADS_TOO : PROCPS_REAP_TASKS_ONLY;
+    ? PROCPS_FETCH_THREADS_TOO : PROCPS_FETCH_TASKS_ONLY;
 
-  pidreap = procps_pids_reap(Pids_info, which);
-  if (!pidreap || !pidreap->counts.total) {
+  pidread = procps_pids_reap(Pids_info, which);
+  if (!pidread || !pidread->counts.total) {
     fprintf(stderr, _("fatal library error, reap\n"));
     exit(EXIT_FAILURE);
   }
-  processes = xcalloc(pidreap->counts.total, sizeof(void*));
-  for (i = 0; i < pidreap->counts.total; i++) {
-    buf = pidreap->stacks[i];
+  processes = xcalloc(pidread->counts.total, sizeof(void*));
+  for (i = 0; i < pidread->counts.total; i++) {
+    buf = pidread->stacks[i];
     value_this_proc_pcpu(buf);
     if (want_this_proc(buf))
       processes[n++] = buf;
@@ -553,7 +553,7 @@ static void finalize_stacks (void)
   chkREL(NICE)
   chkREL(NLWP)
   chkREL(RSS)
-  chkREL(VM_LOCK)
+  chkREL(VM_RSS_LOCKED)
   // needed with 's' switch, previously assured
   chkREL(SIGBLOCKED)
   chkREL(SIGCATCH)
@@ -579,7 +579,7 @@ static void finalize_stacks (void)
     s_node = s_node->next;
   }
 
-  procps_pids_reset(Pids_info, Pids_index, Pids_items);
+  procps_pids_reset(Pids_info, Pids_items, Pids_index);
 }
 
 /***** no comment */

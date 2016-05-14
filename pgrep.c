@@ -487,7 +487,7 @@ static struct el * select_procs (int *num)
     char cmdsearch[CMDSTRSIZE];
     char cmdoutput[CMDSTRSIZE];
     char *task_cmdline;
-    enum pids_reap_type which;
+    enum pids_fetch_type which;
 
     preg = do_regcomp();
 
@@ -501,18 +501,14 @@ static struct el * select_procs (int *num)
               _("Error reading reference namespace information\n"));
     }
 
-    if (procps_pids_new(&info, 12, Items) < 0)
+    if (procps_pids_new(&info, Items, 12) < 0)
         xerrx(EXIT_FATAL,
               _("Unable to create pid info structure"));
+    which = PROCPS_FETCH_TASKS_ONLY;
     if (opt_threads && !i_am_pkill)
-        which = PROCPS_REAP_THREADS_TOO;
-    else
-        which = PROCPS_REAP_TASKS_ONLY;
-    if (procps_pids_read_open(info, which) < 0)
-        xerrx(EXIT_FATAL,
-              _("Unable to open pids information"));
+        which = PROCPS_FETCH_THREADS_TOO;
 
-    while ((stack = procps_pids_read_next(info))) {
+    while ((stack = procps_pids_get(info, which))) {
         int match = 1;
 
         if (PIDS_GETINT(PID) == myself)
@@ -591,7 +587,7 @@ static struct el * select_procs (int *num)
             }
         }
     }
-    procps_pids_read_shut(info);
+    procps_pids_unref(&info);
 
     *num = matches;
     return list;

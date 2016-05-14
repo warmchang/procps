@@ -108,8 +108,7 @@ static char Scroll_fmts [SMLBUFSIZ];
 static int Batch = 0,           // batch mode, collect no input, dumb output
            Loops = -1,          // number of iterations, -1 loops forever
            Secure_mode = 0,     // set if some functionality restricted
-           Width_mode = 0;      // set w/ 'w' - potential output override
-enum pids_reap_type
+           Width_mode = 0,      // set w/ 'w' - potential output override
            Thread_mode = 0;     // set w/ 'H' - show threads vs. tasks
 
         /* Unchangeable cap's stuff built just once (if at all) and
@@ -214,8 +213,8 @@ enum Rel_memitems {
 static struct procps_pidsinfo *Pids_ctx;
 static int Pids_itms_cur;                   // 'current' max (<= Fieldstab)
 static enum pids_item *Pids_itms;           // allocated as MAXTBL(Fieldstab)
-static struct pids_reap *Pids_reap;         // for reap or select
-#define PIDSmaxt Pids_reap->counts.total    // just a little less wordy
+static struct pids_fetch *Pids_read;        // for reap or select
+#define PIDSmaxt Pids_read->counts.total    // just a little less wordy
         // pid stack results extractor macro, where e=our EU enum, t=type, s=stack
         // ( we'll exploit that <proc/pids.h> provided macro as much as possible )
         // ( but many functions use their own unique tailored version for access )
@@ -1860,7 +1859,7 @@ static void calibrate_fields (void) {
 
    build_headers();
 
-   if (procps_pids_reset(Pids_ctx, Pids_itms_cur, Pids_itms))
+   if (procps_pids_reset(Pids_ctx, Pids_itms, Pids_itms_cur))
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 
    if (CHKw(Curwin, View_SCROLL))
@@ -2188,7 +2187,7 @@ static void cpus_refresh (void) {
 static void procs_refresh (void) {
  #define nALIGN(n,m) (((n + m - 1) / m) * m)     // unconditionally align
  #define nALGN2(n,m) ((n + m - 1) & ~(m - 1))    // with power of 2 align
- #define n_reap  Pids_reap->counts.total
+ #define n_reap  Pids_read->counts.total
    static double uptime_sav;
    static int n_alloc = -1;                      // size of windows stacks arrays
    double uptime_cur;
@@ -2202,9 +2201,9 @@ static void procs_refresh (void) {
    // if in Solaris mode, adjust our scaling for all cpus
    Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
 
-   if (!Monpidsidx) Pids_reap = procps_pids_reap(Pids_ctx, Thread_mode);
-   else Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, PROCPS_SELECT_PID);
-   if (!Pids_reap)
+   if (Monpidsidx) Pids_read = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, PROCPS_SELECT_PID);
+   else Pids_read = procps_pids_reap(Pids_ctx, Thread_mode ? PROCPS_FETCH_THREADS_TOO : PROCPS_FETCH_TASKS_ONLY);
+   if (!Pids_read)
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 
    // now refresh each window's stack heads pointers table...
@@ -2213,11 +2212,11 @@ static void procs_refresh (void) {
       n_alloc = nALGN2(n_reap, 128);
       for (i = 0; i < GROUPSMAX; i++) {
          Winstk[i].ppt = alloc_r(Winstk[i].ppt, sizeof(void*) * n_alloc);
-         memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void*) * PIDSmaxt);
+         memcpy(Winstk[i].ppt, Pids_read->stacks, sizeof(void*) * PIDSmaxt);
       }
    } else {
       for (i = 0; i < GROUPSMAX; i++)
-         memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void*) * PIDSmaxt);
+         memcpy(Winstk[i].ppt, Pids_read->stacks, sizeof(void*) * PIDSmaxt);
    }
  #undef n_reap
  #undef nALGN2
@@ -2831,7 +2830,7 @@ static void before (char *me) {
       Pids_itms[i] = PROCPS_PIDS_noop;
    Pids_itms_cur = i;
    // we will identify specific items in the build_headers() function
-   if (procps_pids_new(&Pids_ctx, Pids_itms_cur, Pids_itms))
+   if (procps_pids_new(&Pids_ctx, Pids_itms, Pids_itms_cur))
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 
 #ifndef SIGRTMAX       // not available on hurd, maybe others too
@@ -4678,8 +4677,8 @@ static void summary_show (void) {
    if (isROOM(View_STATES, 2)) {
       show_special(0, fmtmk(N_unq(STATE_line_1_fmt)
          , Thread_mode ? N_txt(WORD_threads_txt) : N_txt(WORD_process_txt)
-         , PIDSmaxt, Pids_reap->counts.running, Pids_reap->counts.sleeping
-         , Pids_reap->counts.stopped, Pids_reap->counts.zombied));
+         , PIDSmaxt, Pids_read->counts.running, Pids_read->counts.sleeping
+         , Pids_read->counts.stopped, Pids_read->counts.zombied));
       Msg_row += 1;
 
       cpus_refresh();

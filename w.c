@@ -353,7 +353,7 @@ static int find_best_proc(
     unsigned long long secondbest_time = 0;
 
     struct procps_pidsinfo *info=NULL;
-    struct pids_reap *reap;
+    struct pids_fetch *reap;
     enum pids_item items[] = {
         PROCPS_PIDS_ID_TGID,
         PROCPS_PIDS_TIME_START,
@@ -383,10 +383,10 @@ static int find_best_proc(
 
     line = get_tty_device(tty);
 
-    if (procps_pids_new(&info, 9, items) < 0)
+    if (procps_pids_new(&info, items, 9) < 0)
         xerrx(EXIT_FAILURE,
               _("Unable to create pid info structure"));
-    if ((reap = procps_pids_reap(info, PROCPS_REAP_TASKS_ONLY)) == NULL)
+    if ((reap = procps_pids_reap(info, PROCPS_FETCH_TASKS_ONLY)) == NULL)
         xerrx(EXIT_FAILURE,
               _("Unable to load process information"));
     total_procs = reap->counts.total;

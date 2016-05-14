@@ -147,11 +147,10 @@ static void select_procs (void)
 	/* get the input base name */
 	program_base = get_basename(program);
 
-	procps_pids_new(&info, 3, items);
-	procps_pids_read_open(info, PROCPS_REAP_TASKS_ONLY);
+	procps_pids_new(&info, items, 3);
 
 	exe_link = root_link = NULL;
-	while ((stack = procps_pids_read_next(info))) {
+	while ((stack = procps_pids_get(info, PROCPS_FETCH_TASKS_ONLY))) {
 		char  *p_cmd     = PROCPS_PIDS_VAL(rel_cmd,     str,   stack),
 		     **p_cmdline = PROCPS_PIDS_VAL(rel_cmdline, strv,  stack);
 		int    tid       = PROCPS_PIDS_VAL(rel_pid,     s_int, stack);
@@ -240,7 +239,6 @@ static void select_procs (void)
 
 	}
 
-	procps_pids_read_shut(info);
 	procps_pids_unref(&info);
 }
 

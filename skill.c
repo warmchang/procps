@@ -271,7 +271,7 @@ static void scan_procs(struct run_time_conf_t *run_time)
     if (procps_pids_new(&info, 6, items) < 0)
         xerrx(EXIT_FAILURE,
               _("Unable to create pid info structure"));
-    if ((reap = procps_pids_reap(info, PROCPS_REAP_TASKS_ONLY)) == NULL)
+    if ((reap = procps_pids_reap(info, PROCPS_FETCH_TASKS_ONLY)) == NULL)
         xerrx(EXIT_FAILURE,
               _("Unable to load process information"));
 

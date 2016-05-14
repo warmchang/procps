@@ -131,7 +131,7 @@ makREL(TTY)
 makREL(TTY_NAME)
 makREL(TTY_NUMBER)
 makREL(VM_DATA)
-makREL(VM_LOCK)
+makREL(VM_RSS_LOCKED)
 makREL(VM_RSS)
 makREL(VM_SIZE)
 makREL(VM_STACK)
@@ -467,14 +467,14 @@ void reset_global(void){
     Pids_items[i] = PROCPS_PIDS_noop;
 
   if (!Pids_info) {
-    if (procps_pids_new(&Pids_info, i, Pids_items)) {
+    if (procps_pids_new(&Pids_info, Pids_items, i)) {
       fprintf(stderr, _("fatal library error, context\n"));
       exit(EXIT_FAILURE);
     }
   }
 
   Pids_items[0] = PROCPS_PIDS_TTY;
-  procps_pids_reset(Pids_info, 1, Pids_items);
+  procps_pids_reset(Pids_info, Pids_items, 1);
   if (!(p = fatal_proc_unmounted(Pids_info, 1))) {
     fprintf(stderr, _("fatal library error, lookup self\n"));
     exit(EXIT_FAILURE);
