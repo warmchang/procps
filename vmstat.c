@@ -443,6 +443,11 @@ static void new_format(void)
     procps_stat_unref(&sys_info);
     procps_vmstat_unref(&vm_info);
     procps_meminfo_unref(&mem_info);
+#undef TICv
+#undef DTICv
+#undef SYSv
+#undef DSYSv
+#undef MEMv
 }
 
 static void diskpartition_header(const char *partition_name)
@@ -759,68 +764,119 @@ static void disksum_format(void)
     procps_diskstat_unref(&disk_stat);
 }
 
+static enum stat_item Sum_stat_items[] = {
+    PROCPS_STAT_TIC_USER,
+    PROCPS_STAT_TIC_NICE,
+    PROCPS_STAT_TIC_SYSTEM,
+    PROCPS_STAT_TIC_IDLE,
+    PROCPS_STAT_TIC_IOWAIT,
+    PROCPS_STAT_TIC_IRQ,
+    PROCPS_STAT_TIC_SOFTIRQ,
+    PROCPS_STAT_TIC_STOLEN,
+    PROCPS_STAT_TIC_GUEST,
+    PROCPS_STAT_TIC_GUEST_NICE,
+    PROCPS_STAT_SYS_CTX_SWITCHES,
+    PROCPS_STAT_SYS_INTERRUPTS,
+    PROCPS_STAT_SYS_TIME_OF_BOOT,
+    PROCPS_STAT_SYS_PROC_CREATED
+};
+
+enum Rel_sumstatitems {
+    sstat_USR, sstat_NIC, sstat_SYS, sstat_IDL,
+    sstat_IOW, sstat_IRQ, sstat_SRQ, sstat_STO,
+    sstat_GST, sstat_GNI,
+    sstat_CTX, sstat_INT, sstat_TOB,
+    sstat_PCR
+};
+
+static enum meminfo_item Sum_mem_items[] = {
+    PROCPS_MEMINFO_MEM_TOTAL,
+    PROCPS_MEMINFO_MEM_USED,
+    PROCPS_MEMINFO_MEM_ACTIVE,
+    PROCPS_MEMINFO_MEM_INACTIVE,
+    PROCPS_MEMINFO_MEM_FREE,
+    PROCPS_MEMINFO_MEM_BUFFERS,
+    PROCPS_MEMINFO_MEM_CACHED,
+    PROCPS_MEMINFO_SWAP_TOTAL,
+    PROCPS_MEMINFO_SWAP_USED,
+    PROCPS_MEMINFO_SWAP_FREE,
+};
+
+enum Rel_summemitems {
+    smem_MTOT, smem_MUSE, smem_MACT, smem_MIAC, smem_MFRE,
+    smem_MBUF, smem_MCAC,
+    smem_STOT, smem_SUSE, smem_SFRE
+};
+
 static void sum_format(void)
 {
-	struct procps_statinfo *sys_info = NULL;
-	struct procps_vmstat *vm_info = NULL;
-	struct procps_meminfo *mem_info = NULL;
+#define TICv(E) PROCPS_STAT_VAL(E, ull_int, stat_stack)
+#define SYSv(E) PROCPS_STAT_VAL(E, ul_int, stat_stack)
+#define MEMv(E) unitConvert(PROCPS_STAT_VAL(E, ul_int, mem_stack))
+    struct procps_statinfo *sys_info = NULL;
+    struct procps_vmstat *vm_info = NULL;
+    struct procps_meminfo *mem_info = NULL;
+    struct stat_stack *stat_stack;
+    struct meminfo_stack *mem_stack;
 
-	if (procps_stat_new(&sys_info) < 0)
-	    xerrx(EXIT_FAILURE,
-		_("Unable to create system stat structure"));
-	if (procps_vmstat_new(&vm_info) < 0)
-	    xerrx(EXIT_FAILURE,
-		_("Unable to create vmstat structure"));
-	if (procps_vmstat_read(vm_info) < 0)
-	    xerrx(EXIT_FAILURE,
-		_("Unable to read vmstat information"));
+    if (procps_stat_new(&sys_info) < 0)
+        xerrx(EXIT_FAILURE,
+        _("Unable to create system stat structure"));
+    if ((stat_stack = procps_stat_select(sys_info, Sum_stat_items, 14)) ==
+        NULL)
+        xerrx(EXIT_FAILURE,
+              _("Unable to select stat information"));
 
-	if (procps_meminfo_new(&mem_info) < 0)
-	    xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
+    if (procps_vmstat_new(&vm_info) < 0)
+        xerrx(EXIT_FAILURE,
+        _("Unable to create vmstat structure"));
+    if (procps_vmstat_read(vm_info) < 0)
+        xerrx(EXIT_FAILURE,
+        _("Unable to read vmstat information"));
 
-	printf(_("%13lu %s total memory\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEMINFO_MEM_TOTAL)), szDataUnit);
-	printf(_("%13lu %s used memory\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEMINFO_MEM_USED)), szDataUnit);
-	printf(_("%13lu %s active memory\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEMINFO_MEM_ACTIVE)), szDataUnit);
-	printf(_("%13lu %s inactive memory\n"), unitConvert(
-		    procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_INACTIVE)), szDataUnit);
-	printf(_("%13lu %s free memory\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEMINFO_MEM_FREE)), szDataUnit);
-	printf(_("%13lu %s buffer memory\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEMINFO_MEM_BUFFERS)), szDataUnit);
-	printf(_("%13lu %s swap cache\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEMINFO_MEM_CACHED)), szDataUnit);
-	printf(_("%13lu %s total swap\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEMINFO_SWAP_TOTAL)), szDataUnit);
-	printf(_("%13lu %s used swap\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEMINFO_SWAP_USED)), szDataUnit);
-	printf(_("%13lu %s free swap\n"), unitConvert(procps_meminfo_get(
-			mem_info, PROCPS_MEMINFO_SWAP_FREE)), szDataUnit);
-	printf(_("%13lld non-nice user cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_USER));
-	printf(_("%13lld nice user cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_NICE));
-	printf(_("%13lld system cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_SYSTEM));
-	printf(_("%13lld idle cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_IDLE));
-	printf(_("%13lld IO-wait cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_IOWAIT));
-	printf(_("%13lld IRQ cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_IRQ));
-	printf(_("%13lld softirq cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_SOFTIRQ));
-	printf(_("%13lld stolen cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_STOLEN));
-	printf(_("%13lld non-nice guest cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_GUEST));
-	printf(_("%13lld nice guest cpu ticks\n"), procps_stat_get(sys_info, PROCPS_STAT_TIC_GUEST_NICE));
-	printf(_("%13lu pages paged in\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN));
-	printf(_("%13lu pages paged out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT));
-	printf(_("%13lu pages swapped in\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN));
-	printf(_("%13lu pages swapped out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT));
-	printf(_("%13lld interrupts\n"), procps_stat_get(sys_info, PROCPS_STAT_SYS_INTERRUPTS));
-	printf(_("%13lld CPU context switches\n"), procps_stat_get(sys_info, PROCPS_STAT_SYS_CTX_SWITCHES));
-	printf(_("%13lld boot time\n"), procps_stat_get(sys_info, PROCPS_STAT_SYS_TIME_OF_BOOT));
-	printf(_("%13lld forks\n"), procps_stat_get(sys_info, PROCPS_STAT_SYS_PROC_CREATED));
+    if (procps_meminfo_new(&mem_info) < 0)
+        xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
+    if ((mem_stack = procps_meminfo_select(mem_info, Sum_mem_items, 10)) ==
+        NULL)
+        xerrx(EXIT_FAILURE,
+              _("Unable to select memory information"));
+
+    printf(_("%13lu %s total memory\n"), MEMv(smem_MTOT), szDataUnit);
+    printf(_("%13lu %s used memory\n"), MEMv(smem_MUSE), szDataUnit);
+    printf(_("%13lu %s active memory\n"), MEMv(smem_MACT), szDataUnit);
+    printf(_("%13lu %s inactive memory\n"), MEMv(smem_MIAC), szDataUnit);
+    printf(_("%13lu %s free memory\n"), MEMv(smem_MFRE), szDataUnit);
+    printf(_("%13lu %s buffer memory\n"), MEMv(smem_MBUF), szDataUnit);
+    printf(_("%13lu %s swap cache\n"), MEMv(smem_MCAC), szDataUnit);
+    printf(_("%13lu %s total swap\n"), MEMv(smem_STOT), szDataUnit);
+    printf(_("%13lu %s used swap\n"), MEMv(smem_SUSE), szDataUnit);
+    printf(_("%13lu %s free swap\n"), MEMv(smem_SFRE), szDataUnit);
+    printf(_("%13lld non-nice user cpu ticks\n"), TICv(sstat_USR));
+    printf(_("%13lld nice user cpu ticks\n"), TICv(sstat_NIC));
+    printf(_("%13lld system cpu ticks\n"), TICv(sstat_SYS));
+    printf(_("%13lld idle cpu ticks\n"), TICv(sstat_IDL));
+    printf(_("%13lld IO-wait cpu ticks\n"), TICv(sstat_IOW));
+    printf(_("%13lld IRQ cpu ticks\n"), TICv(sstat_IRQ));
+    printf(_("%13lld softirq cpu ticks\n"), TICv(sstat_SRQ));
+    printf(_("%13lld stolen cpu ticks\n"), TICv(sstat_STO));
+    printf(_("%13lld non-nice guest cpu ticks\n"), TICv(sstat_GST));
+    printf(_("%13lld nice guest cpu ticks\n"), TICv(sstat_GNI));
+    printf(_("%13lu pages paged in\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN));
+    printf(_("%13lu pages paged out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT));
+    printf(_("%13lu pages swapped in\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN));
+    printf(_("%13lu pages swapped out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT));
+    printf(_("%13lld interrupts\n"), SYSv(sstat_INT));
+    printf(_("%13lld CPU context switches\n"), SYSv(sstat_CTX));
+    printf(_("%13lld boot time\n"), SYSv(sstat_TOB));
+    printf(_("%13lld forks\n"), SYSv(sstat_PCR));
 
     /* Cleanup */
     procps_stat_unref(&sys_info);
     procps_vmstat_unref(&vm_info);
     procps_meminfo_unref(&mem_info);
+#undef TICv
+#undef SYSv
+#undef MEMv
 }
 
 static void fork_format(void)
