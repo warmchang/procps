@@ -133,7 +133,6 @@ enum pids_item {
     PROCPS_PIDS_VM_DATA,               // ul_int
     PROCPS_PIDS_VM_EXE,                // ul_int
     PROCPS_PIDS_VM_LIB,                // ul_int
-    PROCPS_PIDS_VM_LOCK,               // ul_int
     PROCPS_PIDS_VM_RSS,                // ul_int
     PROCPS_PIDS_VM_RSS_ANON,           // ul_int
     PROCPS_PIDS_VM_RSS_FILE,           // ul_int
@@ -148,14 +147,14 @@ enum pids_item {
     PROCPS_PIDS_WCHAN_NAME,            // str
 };
 
+enum pids_fetch_type {
+    PROCPS_FETCH_TASKS_ONLY,
+    PROCPS_FETCH_THREADS_TOO
+};
+
 enum pids_select_type {
     PROCPS_SELECT_PID  = 0x1000,
     PROCPS_SELECT_UID  = 0x4000
-};
-
-enum pids_reap_type {
-    PROCPS_REAP_TASKS_ONLY   = 0,
-    PROCPS_REAP_THREADS_TOO  = 1
 };
 
 enum pids_sort_order {
@@ -189,7 +188,7 @@ struct pids_counts {
     int running, sleeping, stopped, zombied;
 };
 
-struct pids_reap {
+struct pids_fetch {
     struct pids_stack **stacks;
     struct pids_counts counts;
 };
@@ -199,52 +198,40 @@ struct pids_reap {
     stack -> head [ rel_enum ] . result . type
 
 
+int procps_pids_new   (struct procps_pidsinfo **info, enum pids_item *items, int numitems);
+int procps_pids_ref   (struct procps_pidsinfo  *info);
+int procps_pids_unref (struct procps_pidsinfo **info);
+
 struct pids_stack *fatal_proc_unmounted (
     struct procps_pidsinfo *info,
     int return_self);
 
-int procps_pids_new (
-    struct procps_pidsinfo **info,
-    int maxitems,
-    enum pids_item *items);
-
-struct pids_stack *procps_pids_read_next (
-    struct procps_pidsinfo *info);
-
-int procps_pids_read_open (
+struct pids_stack *procps_pids_get (
     struct procps_pidsinfo *info,
-    enum pids_reap_type which);
+    enum pids_fetch_type which);
 
-int procps_pids_read_shut (
-    struct procps_pidsinfo *info);
-
-struct pids_reap *procps_pids_reap (
+struct pids_fetch *procps_pids_reap (
     struct procps_pidsinfo *info,
-    enum pids_reap_type which);
-
-int procps_pids_ref (
-    struct procps_pidsinfo *info);
+    enum pids_fetch_type which);
 
 int procps_pids_reset (
     struct procps_pidsinfo *info,
-    int newmaxitems,
-    enum pids_item *newitems);
+    enum pids_item *newitems,
+    int newnumitems);
 
-struct pids_reap *procps_pids_select (
+struct pids_fetch *procps_pids_select (
     struct procps_pidsinfo *info,
     unsigned *these,
-    int maxthese,
+    int numthese,
     enum pids_select_type which);
 
 struct pids_stack **procps_pids_sort (
     struct procps_pidsinfo *info,
     struct pids_stack *stacks[],
     int numstacked,
-    enum pids_item sort,
+    enum pids_item sortitem,
     enum pids_sort_order order);
 
-int procps_pids_unref (
-    struct procps_pidsinfo **info);
 
 __END_DECLS
 

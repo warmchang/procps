@@ -25,15 +25,13 @@ global:
 	procps_ns_read_pid;
 	procps_pid_length;
 	procps_pids_new;
-	procps_pids_read_next;
-	procps_pids_read_open;
-	procps_pids_read_shut;
-	procps_pids_reap;
 	procps_pids_ref;
+	procps_pids_unref;
+	procps_pids_get;
+	procps_pids_reap;
 	procps_pids_reset;
 	procps_pids_select;
 	procps_pids_sort;
-	procps_pids_unref;
 	procps_slabinfo_new;
 	procps_slabinfo_read;
 	procps_slabinfo_ref;

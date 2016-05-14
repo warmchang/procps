@@ -45,15 +45,9 @@
 #include "wchan.h"                     // ( maybe just temporary? )
 
 //#define UNREF_RPTHASH                // report on hashing, at uref time
-//#define FPRINT_STACKS                // enable fprint_stacks output
 
 #define FILL_ID_MAX  255               // upper limit for pid/uid fills
 #define MEMORY_INCR  128               // amt by which allocations grow
-
-#define READS_BEGUN (info->read)       // a read is in progress
-
-   // next MUST be kept in sync with highest value enum
-enum pids_item PROCPS_PIDS_logical_end  = PROCPS_PIDS_WCHAN_NAME + 1;
 
     // these represent the proc_t fields whose storage cannot be managed
     // optimally if they are ever referenced more than once in any stack
@@ -66,17 +60,16 @@ enum rel_ref {
 
 struct stacks_extent {
     struct pids_stack **stacks;
-    int ext_numitems;                  // includes 'logical_end' delimiter
     int ext_numstacks;
     struct stacks_extent *next;
 };
 
 struct fetch_support {
-    struct pids_stack **anchor;        // reapable/fillable (consolidated extents)
+    struct pids_stack **anchor;        // reap/select consolidated extents
     int n_alloc;                       // number of above pointers allocated
     int n_inuse;                       // number of above pointers occupied
     int n_alloc_save;                  // last known summary.stacks allocation
-    struct pids_reap summary;          // counts + stacks for return to caller
+    struct pids_fetch summary;         // counts + stacks for return to caller
 };
 
 struct procps_pidsinfo {
@@ -86,19 +79,20 @@ struct procps_pidsinfo {
     enum pids_item *items;             // includes 'logical_end' delimiter
     struct stacks_extent *extents;     // anchor for all resettable extents
     struct stacks_extent *otherexts;   // anchor for single stack invariant extents
-    struct fetch_support reap;         // support for procps_pids_reap
-    struct fetch_support select;       // support for procps_pids_select
+    struct fetch_support fetch;        // support for procps_pids_reap & select
     int history_yes;                   // need historical data
     struct history_info *hist;         // pointer to historical support data
     int dirty_stacks;                  // extents need dynamic storage clean
-    struct stacks_extent *read;        // an extent used for active reads
     proc_t*(*read_something)(PROCTAB*, proc_t*); // readproc/readeither via which
     unsigned pgs2k_shift;              // to convert some proc vaules
-    unsigned flags;                    // the old library PROC_FILL flagss
+    unsigned oldflags;                    // the old library PROC_FILL flagss
     PROCTAB *PT;                       // the old library essential interface
     unsigned long hertz;               // for TIME_ALL & TIME_ELAPSED calculations
     unsigned long long boot_seconds;   // for TIME_ELAPSED calculation
     int ref_counts[MAXIMUM_ref];       // ref counts for special string fields
+    PROCTAB *get_PT;                   // old library interface for active 'get'
+    struct stacks_extent *get_ext;     // an extent used for active 'get'
+    enum pids_fetch_type get_type;     // last known type of 'get' request
 };
 
 
@@ -242,7 +236,6 @@ setDECL(TTY_NUMBER)   { char buf[64]; (void)I; dev_to_tty(buf, sizeof(buf), P->t
 REG_set(VM_DATA,          ul_int,  vm_data)
 REG_set(VM_EXE,           ul_int,  vm_exe)
 REG_set(VM_LIB,           ul_int,  vm_lib)
-REG_set(VM_LOCK,          ul_int,  vm_lock)
 REG_set(VM_RSS,           ul_int,  vm_rss)
 REG_set(VM_RSS_ANON,      ul_int,  vm_rss_anon)
 REG_set(VM_RSS_FILE,      ul_int,  vm_rss_file)
@@ -495,7 +488,6 @@ static struct {
     { RS(VM_DATA),           f_status,   NULL,      QS(ul_int),   0,        -1            },
     { RS(VM_EXE),            f_status,   NULL,      QS(ul_int),   0,        -1            },
     { RS(VM_LIB),            f_status,   NULL,      QS(ul_int),   0,        -1            },
-    { RS(VM_LOCK),           f_status,   NULL,      QS(ul_int),   0,        -1            },
     { RS(VM_RSS),            f_status,   NULL,      QS(ul_int),   0,        -1            },
     { RS(VM_RSS_ANON),       f_status,   NULL,      QS(ul_int),   0,        -1            },
     { RS(VM_RSS_FILE),       f_status,   NULL,      QS(ul_int),   0,        -1            },
@@ -511,6 +503,9 @@ static struct {
    // dummy entry corresponding to PROCPS_PIDS_logical_end ...
     { NULL,                  0,          NULL,      NULL,         0,        -1            }
 };
+
+   // next MUST be kept in sync with highest value enum
+enum pids_item PROCPS_PIDS_logical_end  = PROCPS_PIDS_WCHAN_NAME + 1;
 
 #undef RS
 #undef FF
@@ -776,19 +771,17 @@ static inline void assign_results (
 
 
 static inline void cleanup_stack (
-        struct pids_result *p,
-        int depth)
+        struct pids_result *this)
 {
-    int i;
-
-    for (i = 0; i < depth; i++) {
-        if (p->item >= PROCPS_PIDS_logical_end)
+    for (;;) {
+        enum pids_item item = this->item;
+        if (item >= PROCPS_PIDS_logical_end)
             break;
-        if (Item_table[p->item].freefunc)
-            Item_table[p->item].freefunc(p);
-        if (p->item > PROCPS_PIDS_noop)
-            p->result.ull_int = 0;
-        ++p;
+        if (Item_table[item].freefunc)
+            Item_table[item].freefunc(this);
+        if (item > PROCPS_PIDS_noop)
+            this->result.ull_int = 0;
+        ++this;
     }
 } // end: cleanup_stack
 
@@ -801,7 +794,7 @@ static inline void cleanup_stacks_all (
 
     while (ext) {
         for (i = 0; ext->stacks[i]; i++)
-            cleanup_stack(ext->stacks[i]->head, info->maxitems);
+            cleanup_stack(ext->stacks[i]->head);
         ext = ext->next;
     };
     info->dirty_stacks = 0;
@@ -835,52 +828,18 @@ static struct stacks_extent *extent_cut (
 } // end: extent_cut
 
 
-static int extent_free (
-        struct procps_pidsinfo *info,
-        struct stacks_extent *ext)
+static void extents_free_all (
+        struct procps_pidsinfo *info)
 {
-    if (extent_cut(info, ext)) {
+    struct stacks_extent *ext = info->extents;
+
+    while (ext) {
+        info->extents = ext->next;
         free(ext);
-        return 0;
-    }
-    return -1;
-} // end: extent_free
-
-
-#ifdef FPRINT_STACKS
-static void fprint_stacks (
-        void *stacks,
-        const char *who)
-{
-    #include <stdio.h>
-    static int once = 0;
-    struct stacks_extent *ext = stacks;
-    int i, t, x, n = 0;
-
-    fprintf(stderr, "  %s: called by '%s'\n", __func__, who);
-    fprintf(stderr, "  %s: ext_numitems = %d, ext_numstacks = %d, extents = %p, next = %p\n", __func__, ext->ext_numitems, ext->ext_numstacks, ext, ext->next);
-    fprintf(stderr, "  %s: stacks_extent results excluding the end-of-stack element ...\n", __func__);
-    for (x = 0; NULL != ext->stacks[x]; x++) {
-        struct pids_stack *h = ext->stacks[x];
-        struct pids_result *r = h->head;
-        fprintf(stderr, "  %s:   v[%03d] = %p, h = %p", __func__, x, h, r);
-        for (i = 0; r->item < PROCPS_PIDS_logical_end; i++, r++)
-            ;
-        t = i + 1;
-        fprintf(stderr, " - found %d elements for stack %d\n", i, n);
-        ++n;
-    }
-    if (!once) {
-        fprintf(stderr, "  %s: found %d total stack(s), each %d bytes (including eos)\n", __func__, x, (int)(sizeof(struct pids_stack) + (sizeof(struct pids_result) * t)));
-        fprintf(stderr, "  %s: sizeof(struct pids_stack)    = %d\n", __func__, (int)sizeof(struct pids_stack));
-        fprintf(stderr, "  %s: sizeof(struct pids_result)   = %d\n", __func__, (int)sizeof(struct pids_result));
-        fprintf(stderr, "  %s: sizeof(struct stacks_extent) = %d\n", __func__, (int)sizeof(struct stacks_extent));
-        once = 1;
-    }
-    fputc('\n', stderr);
-    return;
-} // end: fprint_stacks
-#endif
+        ext = info->extents;
+    };
+    info->dirty_stacks = 0;
+} // end: extents_free_all
 
 
 static inline struct pids_result *itemize_stack (
@@ -900,8 +859,23 @@ static inline struct pids_result *itemize_stack (
 } // end: itemize_stack
 
 
+static void itemize_stacks_all (
+        struct procps_pidsinfo *info)
+{
+    struct stacks_extent *ext = info->extents;
+
+    while (ext) {
+        int i;
+        for (i = 0; ext->stacks[i]; i++)
+            itemize_stack(ext->stacks[i]->head, info->curitems, info->items);
+        ext = ext->next;
+    };
+    info->dirty_stacks = 0;
+}
+
+
 static inline int items_check_failed (
-        int maxitems,
+        int numitems,
         enum pids_item *items)
 {
     int i;
@@ -914,10 +888,10 @@ static inline int items_check_failed (
      * if (procps_pids_new(&info, 3, PROCPS_PIDS_noop) < 0)
      *                               ^~~~~~~~~~~~~~~~
      */
-    if (maxitems < 1
+    if (numitems < 1
     || (void *)items < (void *)0x8000)      // twice as big as our largest enum
         return -1;
-    for (i = 0; i < maxitems; i++) {
+    for (i = 0; i < numitems; i++) {
         // a pids_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
             return -1;
@@ -936,37 +910,36 @@ static inline void libflags_set (
     int i, n;
 
     memset (info->ref_counts, 0, sizeof(info->ref_counts));
-    info->flags = info->history_yes = 0;
+    info->oldflags = info->history_yes = 0;
     for (i = 0; i < info->curitems; i++) {
         if (((e = info->items[i])) >= PROCPS_PIDS_logical_end)
             break;
-        info->flags |= Item_table[e].oldflags;
+        info->oldflags |= Item_table[e].oldflags;
         info->history_yes |= Item_table[e].needhist;
         n = Item_table[e].refcount;
         if (n > -1) ++info->ref_counts[n];
     }
-    if (info->flags & f_either) {
-        if (!(info->flags & f_stat))
-            info->flags |= f_status;
+    if (info->oldflags & f_either) {
+        if (!(info->oldflags & f_stat))
+            info->oldflags |= f_status;
     }
     return;
 } // end: libflags_set
 
 
 static inline void oldproc_close (
-        struct procps_pidsinfo *info)
+        PROCTAB **this)
 {
-    if (info->PT != NULL) {
-        closeproc(info->PT);
-        info->PT = NULL;
+    if (*this != NULL) {
+        closeproc(*this);
+        *this = NULL;
     }
-    return;
 } // end: oldproc_close
 
 
 static inline int oldproc_open (
-        struct procps_pidsinfo *info,
-        unsigned supp_flgs,
+        PROCTAB **this,
+        unsigned flags,
         ...)
 {
 
@@ -974,12 +947,12 @@ static inline int oldproc_open (
     int *ids;
     int num = 0;
 
-    if (info->PT == NULL) {
-        va_start(vl, supp_flgs);
+    if (*this == NULL) {
+        va_start(vl, flags);
         ids = va_arg(vl, int*);
-        if (info->flags & PROC_UID) num = va_arg(vl, int);
+        if (flags & PROC_UID) num = va_arg(vl, int);
         va_end(vl);
-        if (NULL == (info->PT = openproc(info->flags | supp_flgs, ids, num)))
+        if (NULL == (*this = openproc(flags, ids, num)))
             return 0;
     }
 
@@ -1044,27 +1017,27 @@ static struct stacks_extent *stacks_alloc (
     if (maxstacks < 1)
         return NULL;
 
-    vect_size  = sizeof(void *) * maxstacks;                   // address vectors themselves
-    vect_size += sizeof(void *);                               // plus NULL delimiter
-    head_size  = sizeof(struct pids_stack);                    // a head struct
-    list_size  = sizeof(struct pids_result) * info->maxitems;  // a results stack
-    blob_size  = sizeof(struct stacks_extent);                 // the extent anchor itself
-    blob_size += vect_size;                                    // all vectors + delim
-    blob_size += head_size * maxstacks;                        // all head structs
-    blob_size += list_size * maxstacks;                        // all results stacks
+    vect_size  = sizeof(void *) * maxstacks;                   // size of the addr vectors |
+    vect_size += sizeof(void *);                               // plus NULL addr delimiter |
+    head_size  = sizeof(struct pids_stack);                    // size of that head struct |
+    list_size  = sizeof(struct pids_result) * info->maxitems;  // any single results stack |
+    blob_size  = sizeof(struct stacks_extent);                 // the extent anchor itself |
+    blob_size += vect_size;                                    // plus room for addr vects |
+    blob_size += head_size * maxstacks;                        // plus room for head thing |
+    blob_size += list_size * maxstacks;                        // plus room for our stacks |
 
-    /* note: all memory is allocated in a single blob, facilitating a later free().
-       as a minimum, it's important that the result structures themselves always be
-       contiguous for each stack since they're accessed through relative position). */
+    /* note: all of our memory is allocated in a single blob, facilitating a later free(). |
+             as a minimum, it is important that the result structures themselves always be |
+             contiguous for every stack since they are accessed through relative position. | */
     if (NULL == (p_blob = calloc(1, blob_size)))
         return NULL;
 
-    p_blob->next = info->extents;
-    info->extents = p_blob;
-    p_blob->stacks = (void *)p_blob + sizeof(struct stacks_extent);
-    p_vect = p_blob->stacks;
-    v_head = (void *)p_vect + vect_size;
-    v_list = v_head + (head_size * maxstacks);
+    p_blob->next = info->extents;                              // push this extent onto... |
+    info->extents = p_blob;                                    // ...some existing extents |
+    p_vect = (void *)p_blob + sizeof(struct stacks_extent);    // prime our vector pointer |
+    p_blob->stacks = p_vect;                                   // set actual vectors start |
+    v_head = (void *)p_vect + vect_size;                       // prime head pointer start |
+    v_list = v_head + (head_size * maxstacks);                 // prime our stacks pointer |
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct pids_stack *)v_head;
@@ -1073,88 +1046,186 @@ static struct stacks_extent *stacks_alloc (
         v_list += list_size;
         v_head += head_size;
     }
-    p_blob->ext_numitems = info->maxitems;
     p_blob->ext_numstacks = maxstacks;
-#ifdef FPRINT_STACKS
-    fprint_stacks(p_blob, __func__);
-#endif
     return p_blob;
 } // end: stacks_alloc
 
 
-static int stacks_dealloc (
-        struct procps_pidsinfo *info,
-        struct stacks_extent **these)
-{
-    struct stacks_extent *ext;
-    int rc;
-
-    if (info == NULL || these == NULL)
-        return -EINVAL;
-    if ((*these)->stacks == NULL || (*these)->stacks[0] == NULL)
-        return -EINVAL;
-
-    ext = *these;
-    rc = extent_free(info, ext);
-    *these = NULL;
-    return rc;
-} // end: stacks_dealloc
-
-
 static int stacks_fetch (
-        struct procps_pidsinfo *info,
-        struct fetch_support *this)
+        struct procps_pidsinfo *info)
 {
- #define n_alloc  this->n_alloc
- #define n_inuse  this->n_inuse
+ #define n_alloc  info->fetch.n_alloc
+ #define n_inuse  info->fetch.n_inuse
+ #define n_saved  info->fetch.n_alloc_save
     static proc_t task;    // static for initial zeroes + later dynamic free(s)
     struct stacks_extent *ext;
 
-    if (info == NULL || this == NULL)
-        return -1;
-
     // initialize stuff -----------------------------------
-    if (!this->anchor) {
-        if ((!(this->anchor = calloc(sizeof(void *), MEMORY_INCR)))
-        || (!(this->summary.stacks = calloc(sizeof(void *), MEMORY_INCR)))
-        || (!(ext = stacks_alloc(info, MEMORY_INCR))))
-            return -1;
-        memcpy(this->anchor, ext->stacks, sizeof(void *) * MEMORY_INCR);
+    if (!info->fetch.anchor) {
+        if (!(info->fetch.anchor = calloc(sizeof(void *), MEMORY_INCR)))
+            return -ENOMEM;
         n_alloc = MEMORY_INCR;
     }
-    if (info->dirty_stacks)
-        cleanup_stacks_all(info);
+    if (!info->extents) {
+        if (!(ext = stacks_alloc(info, n_alloc)))
+            return -ENOMEM;
+        memset(info->fetch.anchor, 0, sizeof(void *) * n_alloc);
+        memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
+        itemize_stacks_all(info);
+    }
+    cleanup_stacks_all(info);
     toggle_history(info);
-    memset(&this->summary.counts, 0, sizeof(struct pids_counts));
+    memset(&info->fetch.summary.counts, 0, sizeof(struct pids_counts));
 
     // iterate stuff --------------------------------------
     n_inuse = 0;
     while (info->read_something(info->PT, &task)) {
         if (!(n_inuse < n_alloc)) {
             n_alloc += MEMORY_INCR;
-            if ((!(this->anchor = realloc(this->anchor, sizeof(void *) * n_alloc)))
+            if ((!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc)))
             || (!(ext = stacks_alloc(info, MEMORY_INCR))))
                 return -1;
-            memcpy(this->anchor + n_inuse, ext->stacks, sizeof(void *) * MEMORY_INCR);
+            memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * MEMORY_INCR);
         }
-        if (!proc_tally(info, &this->summary.counts, &task))
+        if (!proc_tally(info, &info->fetch.summary.counts, &task))
             return -1;
-        assign_results(info, this->anchor[n_inuse++], &task);
+        assign_results(info, info->fetch.anchor[n_inuse++], &task);
     }
 
     // finalize stuff -------------------------------------
-    if (this->n_alloc_save != n_alloc
-    && !(this->summary.stacks = realloc(this->summary.stacks, sizeof(void *) * n_alloc)))
-        return -1;
-    memcpy(this->summary.stacks, this->anchor, sizeof(void *) * n_alloc);
-    this->n_alloc_save = n_alloc;
+    if (n_saved < n_alloc + 1) {
+        n_saved = n_alloc + 1;
+        if (!(info->fetch.summary.stacks = realloc(info->fetch.summary.stacks, sizeof(void *) * n_saved)))
+            return -1;
+    }
+    memcpy(info->fetch.summary.stacks, info->fetch.anchor, sizeof(void *) * n_inuse);
+    info->fetch.summary.stacks[n_inuse] = NULL;
     return n_inuse;     // callers beware, this might be zero !
  #undef n_alloc
  #undef n_inuse
+ #undef n_saved
 } // end: stacks_fetch
 
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+// --- standard required functions --------------------------------------------
+
+/*
+ * procps_pids_new():
+ *
+ * @info: location of returned new structure
+ *
+ * Returns: 0 on success <0 on failure
+ */
+PROCPS_EXPORT int procps_pids_new (
+        struct procps_pidsinfo **info,
+        enum pids_item *items,
+        int numitems)
+{
+    struct procps_pidsinfo *p;
+    double uptime_secs;
+    int pgsz;
+
+    if (info == NULL || *info != NULL)
+        return -EINVAL;
+
+    if (!(p = calloc(1, sizeof(struct procps_pidsinfo))))
+        return -ENOMEM;
+
+    /* if we're without items or numitems, a later call to
+       procps_pids_reset() will become mandatory */
+    if (items && numitems) {
+        if (items_check_failed(numitems, items))
+            return -EINVAL;
+        // allow for our PROCPS_PIDS_logical_end
+        p->maxitems = numitems + 1;
+        if (!(p->items = calloc(p->maxitems, sizeof(enum pids_item))))
+            return -ENOMEM;
+        memcpy(p->items, items, sizeof(enum pids_item) * numitems);
+        p->items[numitems] = PROCPS_PIDS_logical_end;
+        p->curitems = p->maxitems;
+        libflags_set(p);
+    }
+
+    if (!(p->hist = calloc(MEMORY_INCR, sizeof(struct history_info))))
+        return -ENOMEM;
+    config_history(p);
+
+    pgsz = getpagesize();
+    while (pgsz > 1024) { pgsz >>= 1; p->pgs2k_shift++; }
+
+    p->hertz = procps_hertz_get();
+    procps_uptime(&uptime_secs, NULL);
+    p->boot_seconds = uptime_secs;
+
+    p->refcount = 1;
+    *info = p;
+    return 0;
+} // end: procps_pids_new
+
+
+PROCPS_EXPORT int procps_pids_ref (
+        struct procps_pidsinfo *info)
+{
+    if (info == NULL)
+        return -EINVAL;
+
+    info->refcount++;
+    return info->refcount;
+} // end: procps_pids_ref
+
+
+PROCPS_EXPORT int procps_pids_unref (
+        struct procps_pidsinfo **info)
+{
+    if (info == NULL || *info == NULL)
+        return -EINVAL;
+
+    (*info)->refcount--;
+    if ((*info)->refcount == 0) {
+#ifdef UNREF_RPTHASH
+        unref_rpthash(*info);
+#endif
+        if ((*info)->extents) {
+            cleanup_stacks_all(*info);
+            do {
+                struct stacks_extent *p = (*info)->extents;
+                (*info)->extents = (*info)->extents->next;
+                free(p);
+            } while ((*info)->extents);
+        }
+        if ((*info)->otherexts) {
+            struct stacks_extent *nextext, *ext = (*info)->otherexts;
+            while (ext) {
+                nextext = ext->next;
+                cleanup_stack(ext->stacks[0]->head);
+                free(ext);
+                ext = nextext;
+            };
+        }
+        if ((*info)->fetch.anchor)
+            free((*info)->fetch.anchor);
+        if ((*info)->fetch.summary.stacks)
+            free((*info)->fetch.summary.stacks);
+
+        if ((*info)->items)
+            free((*info)->items);
+        if ((*info)->hist) {
+            free((*info)->hist->PHist_sav);
+            free((*info)->hist->PHist_new);
+            free((*info)->hist);
+        }
+
+        free(*info);
+        *info = NULL;
+        return 0;
+    }
+    return (*info)->refcount;
+} // end: procps_pids_unref
+
+
+// --- variable interface functions -------------------------------------------
 
 PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
         struct procps_pidsinfo *info,
@@ -1182,106 +1253,46 @@ PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
 } // end: fatal_proc_unmounted
 
 
-/*
- * procps_pids_new():
- *
- * @info: location of returned new structure
- *
- * Returns: 0 on success <0 on failure
- */
-PROCPS_EXPORT int procps_pids_new (
-        struct procps_pidsinfo **info,
-        int maxitems,
-        enum pids_item *items)
-{
-    struct procps_pidsinfo *p;
-    double uptime_secs;
-    int pgsz;
-
-    if (info == NULL || *info != NULL)
-        return -EINVAL;
-    if (items_check_failed(maxitems, items))
-        return -EINVAL;
-
-    if (!(p = calloc(1, sizeof(struct procps_pidsinfo))))
-        return -ENOMEM;
-    // allow for our PROCPS_PIDS_logical_end
-    if (!(p->items = calloc((maxitems + 1), sizeof(enum pids_item)))) {
-        free(p);
-        return -ENOMEM;
-    }
-    if (!(p->hist = calloc((maxitems + 1), sizeof(struct history_info)))) {
-        free(p->items);
-        free(p);
-        return -ENOMEM;
-    }
-
-    memcpy(p->items, items, sizeof(enum pids_item) * maxitems);
-    p->items[maxitems] = PROCPS_PIDS_logical_end;
-    p->curitems = p->maxitems = maxitems + 1;
-    libflags_set(p);
-
-    pgsz = getpagesize();
-    while (pgsz > 1024) { pgsz >>= 1; p->pgs2k_shift++; }
-
-    config_history(p);
-
-    p->hertz = procps_hertz_get();
-    procps_uptime(&uptime_secs, NULL);
-    p->boot_seconds = uptime_secs;
-
-    p->refcount = 1;
-    *info = p;
-    return 0;
-} // end: procps_pids_new
-
-
-PROCPS_EXPORT struct pids_stack *procps_pids_read_next (
-        struct procps_pidsinfo *info)
+PROCPS_EXPORT struct pids_stack *procps_pids_get (
+        struct procps_pidsinfo *info,
+        enum pids_fetch_type which)
 {
     static proc_t task;    // static for initial zeroes + later dynamic free(s)
 
-    if (info == NULL || ! READS_BEGUN)
+    if (info == NULL)
         return NULL;
-    if (info->dirty_stacks) {
-        cleanup_stack(info->read->stacks[0]->head, info->maxitems);
-        info->dirty_stacks = 0;
+    if (!info->curitems)
+        return NULL;
+    if (which != PROCPS_FETCH_TASKS_ONLY && which != PROCPS_FETCH_THREADS_TOO)
+        return NULL;
+
+fresh_start:
+    if (!info->get_ext) {
+        if (!(info->get_ext = stacks_alloc(info, 1)))
+            return NULL;
+        if (!oldproc_open(&info->get_PT, info->oldflags))
+            return NULL;
+        info->get_type = which;
+        info->read_something = which ? readeither : readproc;
     }
-    if (NULL == info->read_something(info->PT, &task))
+
+    if (info->get_type != which) {
+        oldproc_close(&info->get_PT);
+        cleanup_stack(info->get_ext->stacks[0]->head);
+        if (extent_cut(info, info->get_ext))
+            free(info->get_ext);
+        info->get_ext = NULL;
+        goto fresh_start;
+    }
+
+    cleanup_stack(info->get_ext->stacks[0]->head);
+
+    if (NULL == info->read_something(info->get_PT, &task))
         return NULL;
-    assign_results(info, info->read->stacks[0], &task);
-    return info->read->stacks[0];
-} // end: procps_pids_read_next
+    assign_results(info, info->get_ext->stacks[0], &task);
 
-
-PROCPS_EXPORT int procps_pids_read_open (
-        struct procps_pidsinfo *info,
-        enum pids_reap_type which)
-{
-    if (info == NULL || READS_BEGUN)
-        return -EINVAL;
-    if (!info->maxitems && !info->curitems)
-        return -EINVAL;
-    if (which != PROCPS_REAP_TASKS_ONLY && which != PROCPS_REAP_THREADS_TOO)
-        return -EINVAL;
-
-    if (!(info->read = stacks_alloc(info, 1)))
-        return -ENOMEM;
-    if (!oldproc_open(info, 0))
-        return -1;
-    info->read_something = which ? readeither : readproc;
-    return 0;
-} // end: procps_pids_read_open
-
-
-PROCPS_EXPORT int procps_pids_read_shut (
-        struct procps_pidsinfo *info)
-{
-    if (info == NULL || ! READS_BEGUN)
-        return -EINVAL;
-    oldproc_close(info);
-    return stacks_dealloc(info, &info->read);
-} // end: procps_pids_read_shut
+    return info->get_ext->stacks[0];
+} // end: procps_pids_get
 
 
 /* procps_pids_reap():
@@ -1289,86 +1300,70 @@ PROCPS_EXPORT int procps_pids_read_shut (
  * Harvest all the available tasks/threads and provide the result
  * stacks along with a summary of the information gathered.
  *
- * Returns: pointer to a pids_reap struct on success, NULL on error.
+ * Returns: pointer to a pids_fetch struct on success, NULL on error.
  */
-PROCPS_EXPORT struct pids_reap *procps_pids_reap (
+PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
         struct procps_pidsinfo *info,
-        enum pids_reap_type which)
+        enum pids_fetch_type which)
 {
     int rc;
 
-    if (info == NULL || READS_BEGUN)
+    if (info == NULL)
         return NULL;
-    if (!info->maxitems && !info->curitems)
+    if (!info->curitems)
         return NULL;
-    if (which != PROCPS_REAP_TASKS_ONLY && which != PROCPS_REAP_THREADS_TOO)
+    if (which != PROCPS_FETCH_TASKS_ONLY && which != PROCPS_FETCH_THREADS_TOO)
         return NULL;
 
-    if (!oldproc_open(info, 0))
+    if (!oldproc_open(&info->PT, info->oldflags))
         return NULL;
     info->read_something = which ? readeither : readproc;
 
-    rc = stacks_fetch(info, &info->reap);
+    rc = stacks_fetch(info);
 
-    oldproc_close(info);
+    oldproc_close(&info->PT);
     // we better have found at least 1 pid
-    return (rc > 0) ? &info->reap.summary : NULL;
+    return (rc > 0) ? &info->fetch.summary : NULL;
 } // end: procps_pids_reap
-
-
-PROCPS_EXPORT int procps_pids_ref (
-        struct procps_pidsinfo *info)
-{
-    if (info == NULL)
-        return -EINVAL;
-
-    info->refcount++;
-    return info->refcount;
-} // end: procps_pids_ref
 
 
 PROCPS_EXPORT int procps_pids_reset (
         struct procps_pidsinfo *info,
-        int newmaxitems,
-        enum pids_item *newitems)
+        enum pids_item *newitems,
+        int newnumitems)
 {
-    struct stacks_extent *ext;
-    int i;
-
-    if (info == NULL)
+    if (info == NULL || newitems == NULL)
         return -EINVAL;
-    /* disallow (for now?) absolute increases in stacks size
-       ( users must 'unref' and then 'new' to achieve that ) */
-    if (newmaxitems + 1 > info->maxitems)
-        return -EINVAL;
-    if (items_check_failed(newmaxitems, newitems))
+    if (items_check_failed(newnumitems, newitems))
         return -EINVAL;
 
     /* shame on this caller, they didn't change anything. and unless they have
        altered the depth of the stacks we're not gonna change anything either! */
-    if (info->curitems == newmaxitems + 1
-    && !memcmp(info->items, newitems, sizeof(enum pids_item) * newmaxitems))
+    if (info->curitems == newnumitems + 1
+    && !memcmp(info->items, newitems, sizeof(enum pids_item) * newnumitems))
         return 0;
+
+    if (info->maxitems < newnumitems + 1) {
+        if (info->dirty_stacks)
+            cleanup_stacks_all(info);
+        // allow for our PROCPS_PIDS_logical_end
+        info->maxitems = newnumitems + 1;
+        if (!(info->items = realloc(info->items, sizeof(enum pids_item) * info->maxitems)))
+            return -ENOMEM;
+        extents_free_all(info);
+    }
 
     if (info->dirty_stacks)
         cleanup_stacks_all(info);
 
-    memcpy(info->items, newitems, sizeof(enum pids_item) * newmaxitems);
-    info->items[newmaxitems] = PROCPS_PIDS_logical_end;
+    memcpy(info->items, newitems, sizeof(enum pids_item) * newnumitems);
+    info->items[newnumitems] = PROCPS_PIDS_logical_end;
     // account for above PROCPS_PIDS_logical_end
-    info->curitems = newmaxitems + 1;
+    info->curitems = newnumitems + 1;
 
-    ext = info->extents;
-    while (ext) {
-        for (i = 0; ext->stacks[i]; i++)
-            itemize_stack(ext->stacks[i]->head, info->curitems, info->items);
-#ifdef FPRINT_STACKS
-            fprint_stacks(ext, __func__);
-#endif
-        ext = ext->next;
-    };
-
+    itemize_stacks_all(info);
     libflags_set(info);
+
     return 0;
 } // end: procps_pids_reset
 
@@ -1378,37 +1373,37 @@ PROCPS_EXPORT int procps_pids_reset (
  * Harvest any processes matching the specified PID or UID and provide the
  * result stacks along with a summary of the information gathered.
  *
- * Returns: pointer to a pids_reap struct on success, NULL on error.
+ * Returns: pointer to a pids_fetch struct on success, NULL on error.
  */
-PROCPS_EXPORT struct pids_reap *procps_pids_select (
+PROCPS_EXPORT struct pids_fetch *procps_pids_select (
         struct procps_pidsinfo *info,
         unsigned *these,
-        int maxthese,
+        int numthese,
         enum pids_select_type which)
 {
     unsigned ids[FILL_ID_MAX + 1];
     int rc;
 
-    if (info == NULL || these == NULL || READS_BEGUN)
+    if (info == NULL || these == NULL)
         return NULL;
-    if (maxthese < 1 || maxthese > FILL_ID_MAX)
+    if (numthese < 1 || numthese > FILL_ID_MAX)
         return NULL;
     if (which != PROCPS_SELECT_PID && which != PROCPS_SELECT_UID)
         return NULL;
 
     // this zero delimiter is really only needed with PROCPS_SELECT_PID
-    memcpy(ids, these, sizeof(unsigned) * maxthese);
-    ids[maxthese] = 0;
+    memcpy(ids, these, sizeof(unsigned) * numthese);
+    ids[numthese] = 0;
 
-    if (!oldproc_open(info, which, ids, maxthese))
+    if (!oldproc_open(&info->PT, (info->oldflags | which), ids, numthese))
         return NULL;
     info->read_something = readproc;
 
-    rc = stacks_fetch(info, &info->select);
+    rc = stacks_fetch(info);
 
-    oldproc_close(info);
+    oldproc_close(&info->PT);
     // no guarantee any pids/uids were found
-    return (rc > -1) ? &info->select.summary : NULL;
+    return (rc > -1) ? &info->fetch.summary : NULL;
 } // end: procps_pids_select
 
 
@@ -1426,7 +1421,7 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
         struct procps_pidsinfo *info,
         struct pids_stack *stacks[],
         int numstacked,
-        enum pids_item sort,
+        enum pids_item sortitem,
         enum pids_sort_order order)
 {
     struct sort_parms parms;
@@ -1436,7 +1431,7 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
     if (info == NULL || stacks == NULL)
         return NULL;
     // a pids_item is currently unsigned, but we'll protect our future
-    if (sort < 0  || sort >= PROCPS_PIDS_logical_end)
+    if (sortitem < 0  || sortitem >= PROCPS_PIDS_logical_end)
         return NULL;
     if (order != PROCPS_SORT_ASCEND && order != PROCPS_SORT_DESCEND)
         return NULL;
@@ -1446,7 +1441,7 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
     offset = 0;
     p = stacks[0]->head;
     for (;;) {
-        if (p->item == sort)
+        if (p->item == sortitem)
             break;
         ++offset;
         if (offset >= info->curitems)
@@ -1461,54 +1456,3 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
     qsort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms);
     return stacks;
 } // end: procps_pids_sort
-
-
-PROCPS_EXPORT int procps_pids_unref (
-        struct procps_pidsinfo **info)
-{
-    if (info == NULL || *info == NULL)
-        return -EINVAL;
-
-    (*info)->refcount--;
-    if ((*info)->refcount == 0) {
-#ifdef UNREF_RPTHASH
-        unref_rpthash(*info);
-#endif
-        if ((*info)->extents) {
-            cleanup_stacks_all(*info);
-            do {
-                struct stacks_extent *p = (*info)->extents;
-                (*info)->extents = (*info)->extents->next;
-                free(p);
-            } while ((*info)->extents);
-        }
-        if ((*info)->otherexts) {
-            struct stacks_extent *nextext, *ext = (*info)->otherexts;
-            while (ext) {
-                nextext = ext->next;
-                cleanup_stack(ext->stacks[0]->head, ext->ext_numitems);
-                free(ext);
-                ext = nextext;
-            };
-        }
-        if ((*info)->reap.anchor)
-            free((*info)->reap.anchor);
-        if ((*info)->reap.summary.stacks)
-            free((*info)->reap.summary.stacks);
-        if ((*info)->select.anchor)
-            free((*info)->select.anchor);
-        if ((*info)->select.summary.stacks)
-            free((*info)->select.summary.stacks);
-        if ((*info)->items)
-            free((*info)->items);
-        if ((*info)->hist) {
-            free((*info)->hist->PHist_sav);
-            free((*info)->hist->PHist_new);
-            free((*info)->hist);
-        }
-        free(*info);
-        *info = NULL;
-        return 0;
-    }
-    return (*info)->refcount;
-} // end: procps_pids_unref
