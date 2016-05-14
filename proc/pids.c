@@ -977,7 +977,7 @@ static inline int oldproc_open (
     if (info->PT == NULL) {
         va_start(vl, supp_flgs);
         ids = va_arg(vl, int*);
-        if (info->flags | PROC_UID) num = va_arg(vl, int);
+        if (info->flags & PROC_UID) num = va_arg(vl, int);
         va_end(vl);
         if (NULL == (info->PT = openproc(info->flags | supp_flgs, ids, num)))
             return 0;
