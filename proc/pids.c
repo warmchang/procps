@@ -104,7 +104,7 @@ struct procps_pidsinfo {
 
 // convert pages to kib
 #define CVT_set(e,t,x) setDECL(e) { \
-    R->result. t = (unsigned long)(P-> x) << I -> pgs2k_shift; }
+    R->result. t = (long)(P-> x) << I -> pgs2k_shift; }
 // strdup of a static char array
 #define DUP_set(e,x) setDECL(e) { \
     (void)I; R->result.str = strdup(P-> x); }
@@ -148,12 +148,12 @@ STV_set(ENVIRON,                   environ)
 VEC_set(ENVIRON_V,    ENVIRON,     environ)
 REG_set(EXIT_SIGNAL,      s_int,   exit_signal)
 REG_set(FLAGS,            ul_int,  flags)
-REG_set(FLT_MAJ,          ul_int,  maj_flt)
-REG_set(FLT_MAJ_C,        ul_int,  cmaj_flt)
-REG_set(FLT_MAJ_DELTA,    ul_int,  maj_delta)
-REG_set(FLT_MIN,          ul_int,  min_flt)
-REG_set(FLT_MIN_C,        ul_int,  cmin_flt)
-REG_set(FLT_MIN_DELTA,    ul_int,  min_delta)
+REG_set(FLT_MAJ,          sl_int,  maj_flt)
+REG_set(FLT_MAJ_C,        sl_int,  cmaj_flt)
+REG_set(FLT_MAJ_DELTA,    sl_int,  maj_delta)
+REG_set(FLT_MIN,          sl_int,  min_flt)
+REG_set(FLT_MIN_C,        sl_int,  cmin_flt)
+REG_set(FLT_MIN_DELTA,    sl_int,  min_delta)
 REG_set(ID_EGID,          u_int,   egid)
 REG_set(ID_EGROUP,        str,     egroup)
 REG_set(ID_EUID,          u_int,   euid)
@@ -178,17 +178,17 @@ REG_set(ID_TGID,          s_int,   tgid)
 REG_set(ID_TPGID,         s_int,   tpgid)
 setDECL(LXCNAME)      { (void)I; R->result.str = (char *)P->lxcname; }
 REG_set(MEM_CODE,         sl_int,  trs)
-CVT_set(MEM_CODE_KIB,     ul_int,  trs)
+CVT_set(MEM_CODE_KIB,     sl_int,  trs)
 REG_set(MEM_DATA,         sl_int,  drs)
-CVT_set(MEM_DATA_KIB,     ul_int,  drs)
+CVT_set(MEM_DATA_KIB,     sl_int,  drs)
 REG_set(MEM_DT,           sl_int,  dt)
 REG_set(MEM_LRS,          sl_int,  lrs)
 REG_set(MEM_RES,          sl_int,  resident)
-CVT_set(MEM_RES_KIB,      ul_int,  resident)
+CVT_set(MEM_RES_KIB,      sl_int,  resident)
 REG_set(MEM_SHR,          sl_int,  share)
 CVT_set(MEM_SHR_KIB,      ul_int,  share)
 REG_set(MEM_VIRT,         sl_int,  size)
-CVT_set(MEM_VIRT_KIB,     ul_int,  size)
+CVT_set(MEM_VIRT_KIB,     sl_int,  size)
 REG_set(NICE,             sl_int,  nice)
 REG_set(NLWP,             s_int,   nlwp)
 REG_set(NS_IPC,           ul_int,  ns.ns[0])
@@ -222,7 +222,7 @@ STR_set(SUPGIDS,                   supgid)
 STR_set(SUPGROUPS,                 supgrp)
 setDECL(TICS_ALL)     { (void)I; R->result.ull_int = P->utime + P->stime; }
 setDECL(TICS_ALL_C)   { (void)I; R->result.ull_int = P->utime + P->stime + P->cutime + P->cstime; }
-REG_set(TICS_DELTA,       u_int,   pcpu)
+REG_set(TICS_DELTA,       sl_int,  pcpu)
 REG_set(TICS_SYSTEM,      ull_int, stime)
 REG_set(TICS_SYSTEM_C,    ull_int, cstime)
 REG_set(TICS_USER,        ull_int, utime)
@@ -233,18 +233,18 @@ REG_set(TIME_START,       ull_int, start_time)
 REG_set(TTY,              s_int,   tty)
 setDECL(TTY_NAME)     { char buf[64]; (void)I; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); R->result.str = strdup(buf); }
 setDECL(TTY_NUMBER)   { char buf[64]; (void)I; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS); R->result.str = strdup(buf); }
-REG_set(VM_DATA,          ul_int,  vm_data)
-REG_set(VM_EXE,           ul_int,  vm_exe)
-REG_set(VM_LIB,           ul_int,  vm_lib)
-REG_set(VM_RSS,           ul_int,  vm_rss)
-REG_set(VM_RSS_ANON,      ul_int,  vm_rss_anon)
-REG_set(VM_RSS_FILE,      ul_int,  vm_rss_file)
-REG_set(VM_RSS_LOCKED,    ul_int,  vm_lock)
-REG_set(VM_RSS_SHARED,    ul_int,  vm_rss_shared)
-REG_set(VM_SIZE,          ul_int,  vm_size)
-REG_set(VM_STACK,         ul_int,  vm_stack)
-REG_set(VM_SWAP,          ul_int,  vm_swap)
-setDECL(VM_USED)      { (void)I; R->result.ul_int = P->vm_swap + P->vm_rss; }
+REG_set(VM_DATA,          sl_int,  vm_data)
+REG_set(VM_EXE,           sl_int,  vm_exe)
+REG_set(VM_LIB,           sl_int,  vm_lib)
+REG_set(VM_RSS,           sl_int,  vm_rss)
+REG_set(VM_RSS_ANON,      sl_int,  vm_rss_anon)
+REG_set(VM_RSS_FILE,      sl_int,  vm_rss_file)
+REG_set(VM_RSS_LOCKED,    sl_int,  vm_lock)
+REG_set(VM_RSS_SHARED,    sl_int,  vm_rss_shared)
+REG_set(VM_SIZE,          sl_int,  vm_size)
+REG_set(VM_STACK,         sl_int,  vm_stack)
+REG_set(VM_SWAP,          sl_int,  vm_swap)
+setDECL(VM_USED)      { (void)I; R->result.sl_int = P->vm_swap + P->vm_rss; }
 REG_set(VSIZE_PGS,        ul_int,  vsize)
 REG_set(WCHAN_ADDR,       ul_int,  wchan)
 setDECL(WCHAN_NAME)   { (void)I; R->result.str = strdup(lookup_wchan(P->tid)); }
@@ -400,12 +400,12 @@ static struct {
     { RS(ENVIRON_V),         v_env,      FF(strv),  QS(strv),     0,        -1            },
     { RS(EXIT_SIGNAL),       f_stat,     NULL,      QS(s_int),    0,        -1            },
     { RS(FLAGS),             f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(FLT_MAJ),           f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(FLT_MAJ_C),         f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(FLT_MAJ_DELTA),     f_stat,     NULL,      QS(ul_int),   +1,       -1            },
-    { RS(FLT_MIN),           f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(FLT_MIN_C),         f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(FLT_MIN_DELTA),     f_stat,     NULL,      QS(ul_int),   +1,       -1            },
+    { RS(FLT_MAJ),           f_stat,     NULL,      QS(sl_int),   0,        -1            },
+    { RS(FLT_MAJ_C),         f_stat,     NULL,      QS(sl_int),   0,        -1            },
+    { RS(FLT_MAJ_DELTA),     f_stat,     NULL,      QS(sl_int),   +1,       -1            },
+    { RS(FLT_MIN),           f_stat,     NULL,      QS(sl_int),   0,        -1            },
+    { RS(FLT_MIN_C),         f_stat,     NULL,      QS(sl_int),   0,        -1            },
+    { RS(FLT_MIN_DELTA),     f_stat,     NULL,      QS(sl_int),   +1,       -1            },
     { RS(ID_EGID),           0,          NULL,      QS(u_int),    0,        -1            }, // oldflags: free w/ simple_read...
     { RS(ID_EGROUP),         f_grp,      NULL,      QS(str),      0,        -1            },
     { RS(ID_EUID),           0,          NULL,      QS(u_int),    0,        -1            }, // oldflags: free w/ simple_read...
@@ -430,17 +430,17 @@ static struct {
     { RS(ID_TPGID),          f_stat,     NULL,      QS(s_int),    0,        -1            },
     { RS(LXCNAME),           f_lxc,      NULL,      QS(str),      0,        -1            },
     { RS(MEM_CODE),          f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_CODE_KIB),      f_statm,    NULL,      QS(ul_int),   0,        -1            },
+    { RS(MEM_CODE_KIB),      f_statm,    NULL,      QS(sl_int),   0,        -1            },
     { RS(MEM_DATA),          f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_DATA_KIB),      f_statm,    NULL,      QS(ul_int),   0,        -1            },
+    { RS(MEM_DATA_KIB),      f_statm,    NULL,      QS(sl_int),   0,        -1            },
     { RS(MEM_DT),            f_statm,    NULL,      QS(sl_int),   0,        -1            },
     { RS(MEM_LRS),           f_statm,    NULL,      QS(sl_int),   0,        -1            },
     { RS(MEM_RES),           f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_RES_KIB),       f_statm,    NULL,      QS(ul_int),   0,        -1            },
+    { RS(MEM_RES_KIB),       f_statm,    NULL,      QS(sl_int),   0,        -1            },
     { RS(MEM_SHR),           f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_SHR_KIB),       f_statm,    NULL,      QS(ul_int),   0,        -1            },
+    { RS(MEM_SHR_KIB),       f_statm,    NULL,      QS(sl_int),   0,        -1            },
     { RS(MEM_VIRT),          f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_VIRT_KIB),      f_statm,    NULL,      QS(ul_int),   0,        -1            },
+    { RS(MEM_VIRT_KIB),      f_statm,    NULL,      QS(sl_int),   0,        -1            },
     { RS(NICE),              f_stat,     NULL,      QS(sl_int),   0,        -1            },
     { RS(NLWP),              f_either,   NULL,      QS(s_int),    0,        -1            },
     { RS(NS_IPC),            f_ns,       NULL,      QS(ul_int),   0,        -1            },
@@ -474,7 +474,7 @@ static struct {
     { RS(SUPGROUPS),         x_supgrp,   FF(str),   QS(str),      0,        ref_SUPGROUPS },
     { RS(TICS_ALL),          f_stat,     NULL,      QS(ull_int),  0,        -1            },
     { RS(TICS_ALL_C),        f_stat,     NULL,      QS(ull_int),  0,        -1            },
-    { RS(TICS_DELTA),        f_stat,     NULL,      QS(u_int),    +1,       -1            },
+    { RS(TICS_DELTA),        f_stat,     NULL,      QS(sl_int),  +1,       -1            },
     { RS(TICS_SYSTEM),       f_stat,     NULL,      QS(ull_int),  0,        -1            },
     { RS(TICS_SYSTEM_C),     f_stat,     NULL,      QS(ull_int),  0,        -1            },
     { RS(TICS_USER),         f_stat,     NULL,      QS(ull_int),  0,        -1            },
@@ -485,18 +485,18 @@ static struct {
     { RS(TTY),               f_stat,     NULL,      QS(s_int),    0,        -1            },
     { RS(TTY_NAME),          f_stat,     FF(str),   QS(strvers),  0,        -1            },
     { RS(TTY_NUMBER),        f_stat,     FF(str),   QS(strvers),  0,        -1            },
-    { RS(VM_DATA),           f_status,   NULL,      QS(ul_int),   0,        -1            },
-    { RS(VM_EXE),            f_status,   NULL,      QS(ul_int),   0,        -1            },
-    { RS(VM_LIB),            f_status,   NULL,      QS(ul_int),   0,        -1            },
-    { RS(VM_RSS),            f_status,   NULL,      QS(ul_int),   0,        -1            },
-    { RS(VM_RSS_ANON),       f_status,   NULL,      QS(ul_int),   0,        -1            },
-    { RS(VM_RSS_FILE),       f_status,   NULL,      QS(ul_int),   0,        -1            },
-    { RS(VM_RSS_LOCKED),     f_status,   NULL,      QS(ul_int),   0,        -1            },
-    { RS(VM_RSS_SHARED),     f_status,   NULL,      QS(ul_int),   0,        -1            },
-    { RS(VM_SIZE),           f_status,   NULL,      QS(ul_int),   0,        -1            },
-    { RS(VM_STACK),          f_status,   NULL,      QS(ul_int),   0,        -1            },
-    { RS(VM_SWAP),           f_status,   NULL,      QS(ul_int),   0,        -1            },
-    { RS(VM_USED),           f_status,   NULL,      QS(ul_int),   0,        -1            },
+    { RS(VM_DATA),           f_status,   NULL,      QS(sl_int),   0,        -1            },
+    { RS(VM_EXE),            f_status,   NULL,      QS(sl_int),   0,        -1            },
+    { RS(VM_LIB),            f_status,   NULL,      QS(sl_int),   0,        -1            },
+    { RS(VM_RSS),            f_status,   NULL,      QS(sl_int),   0,        -1            },
+    { RS(VM_RSS_ANON),       f_status,   NULL,      QS(sl_int),   0,        -1            },
+    { RS(VM_RSS_FILE),       f_status,   NULL,      QS(sl_int),   0,        -1            },
+    { RS(VM_RSS_LOCKED),     f_status,   NULL,      QS(sl_int),   0,        -1            },
+    { RS(VM_RSS_SHARED),     f_status,   NULL,      QS(sl_int),   0,        -1            },
+    { RS(VM_SIZE),           f_status,   NULL,      QS(sl_int),   0,        -1            },
+    { RS(VM_STACK),          f_status,   NULL,      QS(sl_int),   0,        -1            },
+    { RS(VM_SWAP),           f_status,   NULL,      QS(sl_int),   0,        -1            },
+    { RS(VM_USED),           f_status,   NULL,      QS(sl_int),   0,        -1            },
     { RS(VSIZE_PGS),         f_stat,     NULL,      QS(ul_int),   0,        -1            },
     { RS(WCHAN_ADDR),        f_stat,     NULL,      QS(ul_int),   0,        -1            },
     { RS(WCHAN_NAME),        0,          FF(str),   QS(str),      0,        -1            }, // oldflags: tid already free
@@ -547,7 +547,7 @@ typedef unsigned long long TIC_t;
 
 typedef struct HST_t {
     TIC_t tics;                        // last frame's tics count
-    unsigned long maj, min;            // last frame's maj/min_flt counts
+    long maj, min;                     // last frame's maj/min_flt counts
     int pid;                           // record 'key'
     int lnk;                           // next on hash chain
 } HST_t;

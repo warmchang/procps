@@ -45,12 +45,12 @@ enum pids_item {
     PROCPS_PIDS_ENVIRON_V,             // strv
     PROCPS_PIDS_EXIT_SIGNAL,           // s_int
     PROCPS_PIDS_FLAGS,                 // ul_int
-    PROCPS_PIDS_FLT_MAJ,               // ul_int
-    PROCPS_PIDS_FLT_MAJ_C,             // ul_int
-    PROCPS_PIDS_FLT_MAJ_DELTA,         // ul_int
-    PROCPS_PIDS_FLT_MIN,               // ul_int
-    PROCPS_PIDS_FLT_MIN_C,             // ul_int
-    PROCPS_PIDS_FLT_MIN_DELTA,         // ul_int
+    PROCPS_PIDS_FLT_MAJ,               // sl_int
+    PROCPS_PIDS_FLT_MAJ_C,             // sl_int
+    PROCPS_PIDS_FLT_MAJ_DELTA,         // sl_int
+    PROCPS_PIDS_FLT_MIN,               // sl_int
+    PROCPS_PIDS_FLT_MIN_C,             // sl_int
+    PROCPS_PIDS_FLT_MIN_DELTA,         // sl_int
     PROCPS_PIDS_ID_EGID,               // u_int
     PROCPS_PIDS_ID_EGROUP,             // str
     PROCPS_PIDS_ID_EUID,               // u_int
@@ -75,17 +75,17 @@ enum pids_item {
     PROCPS_PIDS_ID_TPGID,              // s_int
     PROCPS_PIDS_LXCNAME,               // str
     PROCPS_PIDS_MEM_CODE,              // sl_int
-    PROCPS_PIDS_MEM_CODE_KIB,          // ul_int
+    PROCPS_PIDS_MEM_CODE_KIB,          // sl_int
     PROCPS_PIDS_MEM_DATA,              // sl_int
-    PROCPS_PIDS_MEM_DATA_KIB,          // ul_int
+    PROCPS_PIDS_MEM_DATA_KIB,          // sl_int
     PROCPS_PIDS_MEM_DT,                // sl_int
     PROCPS_PIDS_MEM_LRS,               // sl_int
     PROCPS_PIDS_MEM_RES,               // sl_int
-    PROCPS_PIDS_MEM_RES_KIB,           // ul_int
+    PROCPS_PIDS_MEM_RES_KIB,           // sl_int
     PROCPS_PIDS_MEM_SHR,               // sl_int
-    PROCPS_PIDS_MEM_SHR_KIB,           // ul_int
+    PROCPS_PIDS_MEM_SHR_KIB,           // sl_int
     PROCPS_PIDS_MEM_VIRT,              // sl_int
-    PROCPS_PIDS_MEM_VIRT_KIB,          // ul_int
+    PROCPS_PIDS_MEM_VIRT_KIB,          // sl_int
     PROCPS_PIDS_NICE,                  // sl_int
     PROCPS_PIDS_NLWP,                  // s_int
     PROCPS_PIDS_NS_IPC,                // ul_int
@@ -119,7 +119,7 @@ enum pids_item {
     PROCPS_PIDS_SUPGROUPS,             // str
     PROCPS_PIDS_TICS_ALL,              // ull_int
     PROCPS_PIDS_TICS_ALL_C,            // ull_int
-    PROCPS_PIDS_TICS_DELTA,            // u_int
+    PROCPS_PIDS_TICS_DELTA,            // sl_int
     PROCPS_PIDS_TICS_SYSTEM,           // ull_int
     PROCPS_PIDS_TICS_SYSTEM_C,         // ull_int
     PROCPS_PIDS_TICS_USER,             // ull_int
@@ -130,18 +130,18 @@ enum pids_item {
     PROCPS_PIDS_TTY,                   // s_int
     PROCPS_PIDS_TTY_NAME,              // str
     PROCPS_PIDS_TTY_NUMBER,            // str
-    PROCPS_PIDS_VM_DATA,               // ul_int
-    PROCPS_PIDS_VM_EXE,                // ul_int
-    PROCPS_PIDS_VM_LIB,                // ul_int
-    PROCPS_PIDS_VM_RSS,                // ul_int
-    PROCPS_PIDS_VM_RSS_ANON,           // ul_int
-    PROCPS_PIDS_VM_RSS_FILE,           // ul_int
-    PROCPS_PIDS_VM_RSS_LOCKED,         // ul_int
-    PROCPS_PIDS_VM_RSS_SHARED,         // ul_int
-    PROCPS_PIDS_VM_SIZE,               // ul_int
-    PROCPS_PIDS_VM_STACK,              // ul_int
-    PROCPS_PIDS_VM_SWAP,               // ul_int
-    PROCPS_PIDS_VM_USED,               // ul_int
+    PROCPS_PIDS_VM_DATA,               // sl_int
+    PROCPS_PIDS_VM_EXE,                // sl_int
+    PROCPS_PIDS_VM_LIB,                // sl_int
+    PROCPS_PIDS_VM_RSS,                // sl_int
+    PROCPS_PIDS_VM_RSS_ANON,           // sl_int
+    PROCPS_PIDS_VM_RSS_FILE,           // sl_int
+    PROCPS_PIDS_VM_RSS_LOCKED,         // sl_int
+    PROCPS_PIDS_VM_RSS_SHARED,         // sl_int
+    PROCPS_PIDS_VM_SIZE,               // sl_int
+    PROCPS_PIDS_VM_STACK,              // sl_int
+    PROCPS_PIDS_VM_SWAP,               // sl_int
+    PROCPS_PIDS_VM_USED,               // sl_int
     PROCPS_PIDS_VSIZE_PGS,             // ul_int
     PROCPS_PIDS_WCHAN_ADDR,            // ul_int
     PROCPS_PIDS_WCHAN_NAME,            // str

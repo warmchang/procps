@@ -43,7 +43,7 @@ typedef struct proc_t {
     int
         tid,		// (special)       task id, the POSIX thread ID (see also: tgid)
     	ppid;		// stat,status     pid of parent process
-    unsigned long       // next 2 fields are NOT filled in by readproc
+    long                // next 2 fields are NOT filled in by readproc
         maj_delta,      // stat (special) major page faults since last update
         min_delta;      // stat (special) minor page faults since last update
     unsigned
@@ -102,7 +102,7 @@ typedef struct proc_t {
 	lrs,		// statm           library resident set (always 0 w/ 2.6)
 	drs,		// statm           data+stack resident set (as # pages)
 	dt;		// statm           dirty pages (always 0 w/ 2.6)
-    unsigned long
+    long
 	vm_size,        // status          equals 'size' (as kb)
 	vm_lock,        // status          locked pages (as kb)
 	vm_rss,         // status          equals 'rss' and/or 'resident' (as kb)

@@ -542,7 +542,7 @@ ENTER(0x160);
     num = sscanf(S,
        "%c "
        "%d %d %d %d %d "
-       "%lu %lu %lu %lu %lu "
+       "%lu %ld %ld %ld %ld "
        "%llu %llu %llu %llu "  /* utime stime cutime cstime */
        "%ld %ld "
        "%d "
