@@ -452,7 +452,7 @@ setREL1(TIME_ALL)
  */
 static int pr_vsz(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(VM_SIZE)
-  return snprintf(outbuf, COLWID, "%lu", rSv(VM_SIZE, ul_int, pp));
+  return snprintf(outbuf, COLWID, "%ld", rSv(VM_SIZE, sl_int, pp));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -800,7 +800,7 @@ setREL1(ALARM)
 /* HP-UX puts this in pages and uses "vsz" for kB */
 static int pr_sz(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(VM_SIZE)
-  return snprintf(outbuf, COLWID, "%lu", rSv(VM_SIZE, ul_int, pp)/(page_size/1024));
+  return snprintf(outbuf, COLWID, "%ld", rSv(VM_SIZE, sl_int, pp)/(page_size/1024));
 }
 
 
@@ -853,7 +853,7 @@ setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
 
 static int pr_swapable(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL3(VM_DATA,VM_STACK,VSIZE_PGS)    // that last enum will approximate sort needs
-  return snprintf(outbuf, COLWID, "%ld", rSv(VM_DATA, ul_int, pp) + rSv(VM_STACK, ul_int, pp));
+  return snprintf(outbuf, COLWID, "%ld", rSv(VM_DATA, sl_int, pp) + rSv(VM_STACK, sl_int, pp));
 }
 
 /* nasty old Debian thing */
@@ -896,14 +896,14 @@ setREL1(PROCESSOR)
 
 static int pr_rss(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(VM_RSS)
-  return snprintf(outbuf, COLWID, "%lu", rSv(VM_RSS, ul_int, pp));
+  return snprintf(outbuf, COLWID, "%ld", rSv(VM_RSS, sl_int, pp));
 }
 
 /* pp->vm_rss * 1000 would overflow on 32-bit systems with 64 GB memory */
 static int pr_pmem(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long pmem = 0;
 setREL1(VM_RSS)
-  pmem = rSv(VM_RSS, ul_int, pp) * 1000ULL / memory_total;
+  pmem = rSv(VM_RSS, sl_int, pp) * 1000ULL / memory_total;
   if (pmem > 999) pmem = 999;
   return snprintf(outbuf, COLWID, "%2u.%u", (unsigned)(pmem/10), (unsigned)(pmem%10));
 }

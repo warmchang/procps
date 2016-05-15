@@ -1329,7 +1329,7 @@ static inline const char *make_str (const char *str, int width, int justr, int c
          * Do some scaling then justify stuff.
          * We'll interpret 'num' as a kibibytes quantity and try to
          * format it to reach 'target' while also fitting 'width'. */
-static const char *scale_mem (int target, unsigned long num, int width, int justr) {
+static const char *scale_mem (int target, long num, int width, int justr) {
 #ifndef NOBOOST_MEMS
    //                               SK_Kb   SK_Mb      SK_Gb      SK_Tb      SK_Pb      SK_Eb
    static const char *fmttab[] =  { "%.0f", "%#.1f%c", "%#.3f%c", "%#.3f%c", "%#.3f%c", NULL };
@@ -1508,31 +1508,31 @@ static struct {
    {     3,     -1,  A_right,    -1,  PROCPS_PIDS_NICE          },  // sl_int   EU_NCE
    {     3,     -1,  A_right,    -1,  PROCPS_PIDS_NLWP          },  // s_int    EU_THD
    {     0,     -1,  A_right,    -1,  PROCPS_PIDS_PROCESSOR     },  // u_int    EU_CPN
-   {     0,     -1,  A_right,    -1,  PROCPS_PIDS_TICS_DELTA    },  // u_int    EU_CPU
+   {     0,     -1,  A_right,    -1,  PROCPS_PIDS_TICS_DELTA    },  // sl_int   EU_CPU
    {     6,     -1,  A_right,    -1,  PROCPS_PIDS_TICS_ALL      },  // ull_int  EU_TME
    {     9,     -1,  A_right,    -1,  PROCPS_PIDS_TICS_ALL      },  // ull_int  EU_TM2
 #ifdef BOOST_PERCNT
-   {     5,     -1,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // ul_int   EU_MEM
+   {     5,     -1,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // sl_int   EU_MEM
 #else
-   {     4,     -1,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // ul_int   EU_MEM,
+   {     4,     -1,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // sl_int   EU_MEM,
 #endif
 #ifndef NOBOOST_MEMS
-   {     7,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_VIRT_KIB  },  // ul_int   EU_VRT
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_SWAP       },  // ul_int   EU_SWP
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // ul_int   EU_RES
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_CODE_KIB  },  // ul_int   EU_COD
-   {     7,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_DATA_KIB  },  // ul_int   EU_DAT
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_SHR_KIB   },  // ul_int   EU_SHR
+   {     7,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_VIRT_KIB  },  // sl_int   EU_VRT
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_SWAP       },  // sl_int   EU_SWP
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // sl_int   EU_RES
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_CODE_KIB  },  // sl_int   EU_COD
+   {     7,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_DATA_KIB  },  // sl_int   EU_DAT
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_SHR_KIB   },  // sl_int   EU_SHR
 #else
-   {     5,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_VIRT_KIB  },  // ul_int   EU_VRT
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_SWAP       },  // ul_int   EU_SWP
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // ul_int   EU_RES
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_CODE_KIB  },  // ul_int   EU_COD
-   {     5,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_DATA_KIB  },  // ul_int   EU_DAT
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_SHR_KIB   },  // ul_int   EU_SHR
+   {     5,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_VIRT_KIB  },  // sl_int   EU_VRT
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_SWAP       },  // sl_int   EU_SWP
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // sl_int   EU_RES
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_CODE_KIB  },  // sl_int   EU_COD
+   {     5,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_DATA_KIB  },  // sl_int   EU_DAT
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_SHR_KIB   },  // sl_int   EU_SHR
 #endif
-   {     4,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MAJ       },  // ul_int   EU_FL1
-   {     4,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MIN       },  // ul_int   EU_FL2
+   {     4,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MAJ       },  // sl_int   EU_FL1
+   {     4,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MIN       },  // sl_int   EU_FL2
    {     4,     -1,  A_right,    -1,  PROCPS_PIDS_MEM_DT        },  // sl_int   EU_DRT ( always 0 w/ since 2.6 )
    {     1,     -1,  A_right,    -1,  PROCPS_PIDS_STATE         },  // s_ch     EU_STA
    {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_CMD           },  // str      EU_CMD
@@ -1545,12 +1545,12 @@ static struct {
    {     5,     -1,  A_right,    -1,  PROCPS_PIDS_OOM_ADJ       },  // s_int    EU_OOA
    {     4,     -1,  A_right,    -1,  PROCPS_PIDS_OOM_SCORE     },  // s_int    EU_OOM
    {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_ENVIRON       },  // str      EU_ENV
-   {     3,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MAJ_DELTA },  // ul_int   EU_FV1
-   {     3,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MIN_DELTA },  // ul_int   EU_FV2
+   {     3,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MAJ_DELTA },  // sl_int   EU_FV1
+   {     3,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MIN_DELTA },  // sl_int   EU_FV2
 #ifndef NOBOOST_MEMS
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_USED       },  // ul_int   EU_USE
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_USED       },  // sl_int   EU_USE
 #else
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_USED       },  // ul_int   EU_USE
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_USED       },  // sl_int   EU_USE
 #endif
    {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_IPC        },  // ul_int   EU_NS1
    {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_MNT        },  // ul_int   EU_NS2
@@ -1561,15 +1561,15 @@ static struct {
    {     8,     -1,  A_left,     -1,  PROCPS_PIDS_LXCNAME       },  // str      EU_LXC
    {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_CGNAME        },  // str      EU_CGN
 #ifndef NOBOOST_MEMS
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_ANON   },  // ul_int   EU_RZA
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_FILE   },  // ul_int   EU_RZF
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_LOCKED },  // ul_int   EU_RZL
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_SHARED },  // ul_int   EU_RZS
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_ANON   },  // sl_int   EU_RZA
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_FILE   },  // sl_int   EU_RZF
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_LOCKED },  // sl_int   EU_RZL
+   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_SHARED },  // sl_int   EU_RZS
 #else
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_ANON   },  // ul_int   EU_RZA
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_FILE   },  // ul_int   EU_RZF
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_LOCKED },  // ul_int   EU_RZL
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_SHARED },  // ul_int   EU_RZS
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_ANON   },  // sl_int   EU_RZA
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_FILE   },  // sl_int   EU_RZF
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_LOCKED },  // sl_int   EU_RZL
+   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_SHARED },  // sl_int   EU_RZS
 #endif
 #define eu_LAST        EU_RZS                                       //  ( the last real pflag, currently )
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . ----------------------------------
@@ -4910,7 +4910,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             break;
    /* u_int, scale_pcnt with special handling */
          case EU_CPU:
-         {  float u = (float)rSv(EU_CPU, u_int) * Frame_etscale;
+         {  float u = (float)rSv(EU_CPU, sl_int) * Frame_etscale;
             int n = rSv(EU_THD, s_int);
             /* process can't use more %cpu than number of threads it has
              ( thanks Jaromir Capik <jcapik@redhat.com> ) */
@@ -4945,18 +4945,18 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          case EU_SWP:
          case EU_USE:
          case EU_VRT:
-            cp = scale_mem(S, rSv(i, ul_int), W, Jn);
+            cp = scale_mem(S, rSv(i, sl_int), W, Jn);
             break;
    /* ul_int, scale_num */
          case EU_FL1:
          case EU_FL2:
          case EU_FV1:
          case EU_FV2:
-            cp = scale_num(rSv(i, ul_int), W, Jn);
+            cp = scale_num(rSv(i, sl_int), W, Jn);
             break;
    /* ul_int, scale_pcnt */
          case EU_MEM:
-            cp = scale_pcnt((float)rSv(EU_RES, ul_int) * 100 / MEM_VAL(mem_TOT), W, Jn);
+            cp = scale_pcnt((float)rSv(EU_RES, sl_int) * 100 / MEM_VAL(mem_TOT), W, Jn);
             break;
    /* ul_int, make_str with special handling */
          case EU_FLG:

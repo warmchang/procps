@@ -574,7 +574,7 @@ typedef struct WIN_t {
 //atic inline const char *make_chr (const char ch, int width, int justr);
 //atic inline const char *make_num (long num, int width, int justr, int col, int noz);
 //atic inline const char *make_str (const char *str, int width, int justr, int col);
-//atic const char   *scale_mem (int target, unsigned long num, int width, int justr);
+//atic const char   *scale_mem (int target, long num, int width, int justr);
 //atic const char   *scale_num (unsigned long num, int width, int justr);
 //atic const char   *scale_pcnt (float num, int width, int justr);
 //atic const char   *scale_tics (TIC_t tics, int width, int justr);
