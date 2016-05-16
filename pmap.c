@@ -514,6 +514,9 @@ loop_end:
 	/* We don't free() the list, it's used for all PIDs passed as arguments */
 }
 
+	// variable placed here to silence compiler 'uninitialized' warning
+static unsigned long start_To_Avoid_Warning;
+
 static int one_proc (struct pids_stack *p)
 {
 	char buf[32];
@@ -584,7 +587,7 @@ static int one_proc (struct pids_stack *p)
 		char perms[32];
 		/* to clean up unprintables */
 		char *tmp;
-		unsigned long end, start = 0;;
+		unsigned long end;
 		unsigned long long file_offset, inode;
 		unsigned dev_major, dev_minor;
 		unsigned long long smap_value;
@@ -614,7 +617,7 @@ static int one_proc (struct pids_stack *p)
 				if (strncmp("Swap", smap_key, 4) == 0) {
 					/*doesn't matter as long as last */
 					printf("%0*lx %*lu %*llu %*llu %*s %s\n",
-					       maxw1, start,
+					       maxw1, start_To_Avoid_Warning,
 					       maxw2, (unsigned long)(diff >> 10),
 					       maxw3, rss,
 					       maxw4, (private_dirty + shared_dirty),
@@ -629,13 +632,14 @@ static int one_proc (struct pids_stack *p)
 				continue;
 			}
 		}
-		sscanf(mapbuf, "%lx-%lx %31s %llx %x:%x %llu", &start,
+		sscanf(mapbuf, "%lx-%lx %31s %llx %x:%x %llu",
+		       &start_To_Avoid_Warning,
 		       &end, perms, &file_offset, &dev_major, &dev_minor,
 		       &inode);
 
 		if (end - 1 < range_low)
 			continue;
-		if (range_high < start)
+		if (range_high < start_To_Avoid_Warning)
 			break;
 
 		tmp = strchr(mapbuf, '\n');
@@ -648,7 +652,7 @@ static int one_proc (struct pids_stack *p)
 			tmp++;
 		}
 
-		diff = end - start;
+		diff = end - start_To_Avoid_Warning;
 		if (perms[3] == 's')
 			total_shared += diff;
 		if (perms[3] == 'p') {
@@ -667,17 +671,17 @@ static int one_proc (struct pids_stack *p)
 
 		if (x_option) {
 			cp2 =
-			    mapping_name(p, start, diff, mapbuf, map_desc_showpath, dev_major,
+			    mapping_name(p, start_To_Avoid_Warning, diff, mapbuf, map_desc_showpath, dev_major,
 					 dev_minor, inode);
 			/* printed with the keys */
 			continue;
 		}
 		if (d_option) {
 			const char *cp =
-			    mapping_name(p, start, diff, mapbuf, map_desc_showpath, dev_major,
+			    mapping_name(p, start_To_Avoid_Warning, diff, mapbuf, map_desc_showpath, dev_major,
 					 dev_minor, inode);
 			printf("%0*lx %*lu %*s %0*llx %*.*s%03x:%05x %s\n",
-			       maxw1, start,
+			       maxw1, start_To_Avoid_Warning,
 			       maxw2, (unsigned long)(diff >> 10),
 			       maxw3, perms,
 			       maxw4, file_offset,
@@ -686,12 +690,12 @@ static int one_proc (struct pids_stack *p)
 		}
 		if (!x_option && !d_option) {
 			const char *cp =
-			    mapping_name(p, start, diff, mapbuf, map_desc_showpath, dev_major,
+			    mapping_name(p, start_To_Avoid_Warning, diff, mapbuf, map_desc_showpath, dev_major,
 					 dev_minor, inode);
 			printf((sizeof(long) == 8)
 			       ? "%016lx %6luK %s %s\n"
 			       : "%08lx %6luK %s %s\n",
-			       start, (unsigned long)(diff >> 10), perms, cp);
+			       start_To_Avoid_Warning, (unsigned long)(diff >> 10), perms, cp);
 		}
 
 	}
