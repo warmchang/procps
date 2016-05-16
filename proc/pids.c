@@ -474,7 +474,7 @@ static struct {
     { RS(SUPGROUPS),         x_supgrp,   FF(str),   QS(str),      0,        ref_SUPGROUPS },
     { RS(TICS_ALL),          f_stat,     NULL,      QS(ull_int),  0,        -1            },
     { RS(TICS_ALL_C),        f_stat,     NULL,      QS(ull_int),  0,        -1            },
-    { RS(TICS_DELTA),        f_stat,     NULL,      QS(sl_int),  +1,       -1            },
+    { RS(TICS_DELTA),        f_stat,     NULL,      QS(sl_int),  +1,        -1            },
     { RS(TICS_SYSTEM),       f_stat,     NULL,      QS(ull_int),  0,        -1            },
     { RS(TICS_SYSTEM_C),     f_stat,     NULL,      QS(ull_int),  0,        -1            },
     { RS(TICS_USER),         f_stat,     NULL,      QS(ull_int),  0,        -1            },
@@ -885,8 +885,8 @@ static inline int items_check_failed (
      * offer any sort of warning like the following:
      *
      * warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'enum pids_item *'
-     * if (procps_pids_new(&info, 3, PROCPS_PIDS_noop) < 0)
-     *                               ^~~~~~~~~~~~~~~~
+     * if (procps_pids_new(&info, PROCPS_PIDS_noop, 3) < 0)
+     *                            ^~~~~~~~~~~~~~~~
      */
     if (numitems < 1
     || (void *)items < (void *)0x8000)      // twice as big as our largest enum
@@ -1136,20 +1136,27 @@ PROCPS_EXPORT int procps_pids_new (
     /* if we're without items or numitems, a later call to
        procps_pids_reset() will become mandatory */
     if (items && numitems) {
-        if (items_check_failed(numitems, items))
+        if (items_check_failed(numitems, items)) {
+            free(p);
             return -EINVAL;
+        }
         // allow for our PROCPS_PIDS_logical_end
         p->maxitems = numitems + 1;
-        if (!(p->items = calloc(p->maxitems, sizeof(enum pids_item))))
+        if (!(p->items = calloc(p->maxitems, sizeof(enum pids_item)))) {
+            free(p);
             return -ENOMEM;
+        }
         memcpy(p->items, items, sizeof(enum pids_item) * numitems);
         p->items[numitems] = PROCPS_PIDS_logical_end;
         p->curitems = p->maxitems;
         libflags_set(p);
     }
 
-    if (!(p->hist = calloc(MEMORY_INCR, sizeof(struct history_info))))
+    if (!(p->hist = calloc(MEMORY_INCR, sizeof(struct history_info)))) {
+        free(p->items);
+        free(p);
         return -ENOMEM;
+    }
     config_history(p);
 
     pgsz = getpagesize();
