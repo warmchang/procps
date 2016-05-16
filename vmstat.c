@@ -865,10 +865,10 @@ static void sum_format(void)
     printf(_("%13lu pages paged out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT));
     printf(_("%13lu pages swapped in\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN));
     printf(_("%13lu pages swapped out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT));
-    printf(_("%13lld interrupts\n"), SYSv(sstat_INT));
-    printf(_("%13lld CPU context switches\n"), SYSv(sstat_CTX));
-    printf(_("%13lld boot time\n"), SYSv(sstat_TOB));
-    printf(_("%13lld forks\n"), SYSv(sstat_PCR));
+    printf(_("%13lu interrupts\n"), SYSv(sstat_INT));
+    printf(_("%13lu CPU context switches\n"), SYSv(sstat_CTX));
+    printf(_("%13lu boot time\n"), SYSv(sstat_TOB));
+    printf(_("%13lu forks\n"), SYSv(sstat_PCR));
 
     /* Cleanup */
     procps_stat_unref(&sys_info);
