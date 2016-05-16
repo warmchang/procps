@@ -481,8 +481,8 @@ static inline void oomadj2proc(const char* S, proc_t *restrict P)
 }
 ///////////////////////////////////////////////////////////////////////
 
-#ifdef WITH_SYSTEMD
 static void sd2proc(proc_t *restrict p) {
+#ifdef WITH_SYSTEMD
     char buf[64];
     uid_t uid;
 
@@ -495,7 +495,6 @@ static void sd2proc(proc_t *restrict p) {
         snprintf(buf, sizeof(buf), "%d", (int)uid);
         p->sd_ouid = strdup(buf);
     }
-
     if (0 > sd_pid_get_session(p->tid, &p->sd_sess)) {
         p->sd_sess = strdup("-");
         p->sd_seat = strdup("-");
@@ -503,17 +502,22 @@ static void sd2proc(proc_t *restrict p) {
         if (0 > sd_session_get_seat(p->sd_sess, &p->sd_seat))
             p->sd_seat = strdup("-");
     }
-
     if (0 > sd_pid_get_slice(p->tid, &p->sd_slice))
         p->sd_slice = strdup("-");
-
     if (0 > sd_pid_get_unit(p->tid, &p->sd_unit))
         p->sd_unit = strdup("-");
-
     if (0 > sd_pid_get_user_unit(p->tid, &p->sd_uunit))
         p->sd_uunit = strdup("-");
-}
+#else
+    p->sd_mach  = strdup("?");
+    p->sd_ouid  = strdup("?");
+    p->sd_seat  = strdup("?");
+    p->sd_sess  = strdup("?");
+    p->sd_slice = strdup("?");
+    p->sd_unit  = strdup("?");
+    p->sd_uunit = strdup("?");
 #endif
+}
 ///////////////////////////////////////////////////////////////////////
 
 
@@ -955,10 +959,8 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
         procps_ns_read_pid(p->tid, &(p->ns));
 
 
-#ifdef WITH_SYSTEMD
     if (flags & PROC_FILLSYSTEMD)               // get sd-login.h stuff
         sd2proc(p);
-#endif
 
     if (flags & PROC_FILL_LXC)                  // value the lxc name
         p->lxcname = lxc_containers(path);
@@ -1068,10 +1070,8 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         } else
             t->cgroup = NULL;
 
-#ifdef WITH_SYSTEMD
         if (flags & PROC_FILLSYSTEMD)                   // get sd-login.h stuff
             sd2proc(t);
-#endif
 
         if (flags & PROC_FILL_LXC)                      // value the lxc name
             t->lxcname = lxc_containers(path);
