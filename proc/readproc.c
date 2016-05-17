@@ -1114,10 +1114,10 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
 
     return t;
 next_task:
-    return NULL;
 #ifndef QUICK_THREADS
     (void)p;
 #endif
+    return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
