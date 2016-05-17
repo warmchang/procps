@@ -136,14 +136,14 @@ static char mapbuf[1024];
 static unsigned long range_low;
 static unsigned long range_high = ~0ul;
 
-static int c_option;
-static int C_option;
-static int d_option;
-static int n_option;
-static int N_option;
-static int q_option;
-static int x_option;
-static int X_option;
+static int c_option = 0;
+static int C_option = 0;
+static int d_option = 0;
+static int n_option = 0;
+static int N_option = 0;
+static int q_option = 0;
+static int x_option = 0;
+static int X_option = 0;
 
 static int map_desc_showpath;
 
@@ -329,7 +329,7 @@ static void print_extended_maps (FILE *f)
 		/* If line too long we dump everything else. */
 		c = mapbuf[strlen(mapbuf) - 1];
 		while (c != '\n') {
-			ret = fgets(mapbuf, sizeof mapbuf, f);
+			fgets(mapbuf, sizeof mapbuf, f);
 			c = mapbuf[strlen(mapbuf) - 1];
 		}
 
@@ -548,6 +548,7 @@ static int one_proc (struct pids_stack *p)
 
 	if (X_option || c_option) {
 		print_extended_maps(fp);
+        fclose(fp);
 		return 0;
 	}
 
@@ -748,10 +749,10 @@ static int one_proc (struct pids_stack *p)
 
 static void range_arguments(char *optarg)
 {
-	char *arg1;
-	char *arg2;
+	char *buf, *arg1, *arg2;
 
-	arg1 = xstrdup(optarg);
+	buf = xstrdup(optarg);
+	arg1 = buf;
 	arg2 = strchr(arg1, ',');
 	if (arg2)
 		*arg2 = '\0';
@@ -759,13 +760,16 @@ static void range_arguments(char *optarg)
 		++arg2;
 	else
 		arg2 = arg1;
-	if (arg1 && *arg1)
+	if (arg1[0] != '\0')
 		range_low = strtoul(arg1, &arg1, 16);
-	if (*arg2)
+	if (arg2[0] != '\0')
 		range_high = strtoul(arg2, &arg2, 16);
-	if (arg1 && (*arg1 || *arg2))
+	if (arg1 && (*arg1 || *arg2)) {
+        free(buf);
 		xerrx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"),
 		      optarg);
+    }
+    free(buf);
 }
 
 
