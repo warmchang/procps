@@ -49,14 +49,6 @@
 #define FILL_ID_MAX  255               // upper limit for pid/uid fills
 #define MEMORY_INCR  128               // amt by which allocations grow
 
-    // these represent the proc_t fields whose storage cannot be managed
-    // optimally if they are ever referenced more than once in any stack
-enum rel_ref {
-    ref_CGROUP,   ref_CMD,     ref_CMDLINE,   ref_ENVIRON,  ref_SD_MACH,
-    ref_SD_OUID,  ref_SD_SEAT, ref_SD_SESS,   ref_SD_SLICE, ref_SD_UNIT,
-    ref_SD_UUNIT, ref_SUPGIDS, ref_SUPGROUPS,
-    MAXIMUM_ref
-};
 
 struct stacks_extent {
     struct pids_stack **stacks;
@@ -89,7 +81,6 @@ struct procps_pidsinfo {
     PROCTAB *PT;                       // the old library essential interface
     unsigned long hertz;               // for TIME_ALL & TIME_ELAPSED calculations
     unsigned long long boot_seconds;   // for TIME_ELAPSED calculation
-    int ref_counts[MAXIMUM_ref];       // ref counts for special string fields
     PROCTAB *get_PT;                   // old library interface for active 'get'
     struct stacks_extent *get_ext;     // an extent used for active 'get'
     enum pids_fetch_type get_type;     // last known type of 'get' request
@@ -98,37 +89,51 @@ struct procps_pidsinfo {
 
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
+static char** vectorize_this (const char* src) {
+ #define pSZ  (sizeof(char*))
+    char *cpy, **vec;
+    int adj, tot;
+
+    tot = strlen(src) + 1;                       // prep for our vectors
+    adj = (pSZ-1) - ((tot + pSZ-1) & (pSZ-1));   // calc alignment bytes
+    cpy = calloc(1, tot + adj + (2 * pSZ));      // get new larger buffer
+    if (!cpy) return NULL;                       // we no longer use xcalloc
+    snprintf(cpy, tot, "%s", src);               // duplicate their string
+    vec = (char**)(cpy + tot + adj);             // prep pointer to pointers
+    *vec = cpy;                                  // point 1st vector to string
+    *(vec+1) = NULL;                             // null ptr 'list' delimit
+    return vec;                                  // ==> free(*vec) to dealloc
+ #undef pSZ
+} // end: vectorize_this
+
+
+#define mkSTR(a) xySTR(a)
+#define xySTR(z) #z
+
 #define setNAME(e) set_results_ ## e
 #define setDECL(e) static void setNAME(e) \
     (struct procps_pidsinfo *I, struct pids_result *R, proc_t *P)
 
-// convert pages to kib
+/* convert pages to kib */
 #define CVT_set(e,t,x) setDECL(e) { \
     R->result. t = (long)(P-> x) << I -> pgs2k_shift; }
-// strdup of a static char array
+/* strdup of a static char array */
 #define DUP_set(e,x) setDECL(e) { \
     (void)I; R->result.str = strdup(P-> x); }
-// regular assignment copy
+/* regular assignment copy */
 #define REG_set(e,t,x) setDECL(e) { \
     (void)I; R->result. t = P-> x; }
-// take ownership of a regular char* string if possible, else duplicate
+/* take ownership of a normal single string if possible, else return
+   some sort of hint that they duplicated this char * item ... */
 #define STR_set(e,x) setDECL(e) { \
-    if (I->ref_counts[ref_ ## e] > 1) R->result.str = strdup(P-> x); \
-    else { R->result.str = P-> x; P-> x = NULL; } }
-// take ownership of a vectorized single string if possible, else duplicate
-#define STV_set(e,x) setDECL(e) { \
-    if (I->ref_counts[ref_ ## e] > 1) R->result.str = strdup(*P-> x); \
-    else { R->result.str = *P-> x; P-> x = NULL; } }
-/*
-   take ownership of true vectorized strings if possible, else return NULL
-   [ if there's a source field ref_count, then those true string vectors ]
-   [ have already been converted into a single string so we return NULL. ]
-   [ otherwise, the first result struct now gets ownership of those true ]
-   [ string vectors and any duplicate structures will then receive NULL. ]
-*/
-#define VEC_set(e1,e2,x) setDECL(e1) { \
-    if (I->ref_counts[ref_ ## e2]) R->result.strv = NULL; \
-    else { R->result.strv = P-> x; P-> x = NULL; } }
+    (void)I; if (NULL != P-> x) { R->result.str = P-> x; P-> x = NULL; } \
+    else R->result.str = strdup("[ duplicate " mkSTR(e) " ]"); }
+/* take ownership of true vectorized strings if possible, else return
+   some sort of hint that they duplicated this char ** item ... */
+#define VEC_set(e,x) setDECL(e) { \
+    (void)I; if (NULL != P-> x) { R->result.strv = P-> x;  P-> x = NULL; } \
+    else R->result.strv = vectorize_this("[ duplicate " mkSTR(e) " ]"); }
+
 
 setDECL(noop)         { (void)I; (void)R; (void)P; return; }
 setDECL(extra)        { (void)I; (void)R; (void)P; return; }
@@ -138,14 +143,14 @@ REG_set(ADDR_KSTK_ESP,    ul_int,  kstk_esp)
 REG_set(ADDR_START_CODE,  ul_int,  start_code)
 REG_set(ADDR_START_STACK, ul_int,  start_stack)
 REG_set(ALARM,            sl_int,  alarm)
-setDECL(CGNAME)       { char *name = strstr(*P->cgroup, ":name="); if (name && *(name+6)) name += 6; else name = *P->cgroup; R->result.str = strdup(name); }
-STV_set(CGROUP,                    cgroup)
-VEC_set(CGROUP_V,     CGROUP,      cgroup)
+STR_set(CGNAME,                    cgname)
+STR_set(CGROUP,                    cgroup)
+VEC_set(CGROUP_V,                  cgroup_v)
 STR_set(CMD,                       cmd)
-STV_set(CMDLINE,                   cmdline)
-VEC_set(CMDLINE_V,    CMDLINE,     cmdline)
-STV_set(ENVIRON,                   environ)
-VEC_set(ENVIRON_V,    ENVIRON,     environ)
+STR_set(CMDLINE,                   cmdline)
+VEC_set(CMDLINE_V,                 cmdline_v)
+STR_set(ENVIRON,                   environ)
+VEC_set(ENVIRON_V,                 environ_v)
 REG_set(EXIT_SIGNAL,      s_int,   exit_signal)
 REG_set(FLAGS,            ul_int,  flags)
 REG_set(FLT_MAJ,          sl_int,  maj_flt)
@@ -249,12 +254,15 @@ REG_set(VSIZE_PGS,        ul_int,  vsize)
 REG_set(WCHAN_ADDR,       ul_int,  wchan)
 setDECL(WCHAN_NAME)   { (void)I; R->result.str = strdup(lookup_wchan(P->tid)); }
 
+
+#undef mkSTR
+#undef xySTR
+
 #undef setDECL
 #undef CVT_set
 #undef DUP_set
 #undef REG_set
 #undef STR_set
-#undef STV_set
 #undef VEC_set
 
 
@@ -347,14 +355,15 @@ static int srtNAME(noop) (
 #define f_status   PROC_FILLSTATUS
 #define f_systemd  PROC_FILLSYSTEMD
 #define f_usr      PROC_FILLUSR
+   // these next three will yield a single string (never vectorized)
+#define x_cgroup   PROC_EDITCGRPCVT
+#define x_cmdline  PROC_EDITCMDLCVT
+#define x_environ  PROC_EDITENVRCVT
    // these next three will yield true verctorized strings
 #define v_arg      PROC_FILLARG
 #define v_cgroup   PROC_FILLCGROUP
 #define v_env      PROC_FILLENV
-   // remaining are compound flags, yielding a single string (maybe vectorized)
-#define x_cgroup   PROC_EDITCGRPCVT | PROC_FILLCGROUP           // just 1 str
-#define x_cmdline  PROC_EDITCMDLCVT | PROC_FILLARG              // just 1 str
-#define x_environ  PROC_EDITENVRCVT | PROC_FILLENV              // just 1 str
+   // remaining are compound flags
 #define x_ogroup   PROC_FILLSTATUS  | PROC_FILLGRP
 #define x_ouser    PROC_FILLSTATUS  | PROC_FILLUSR
 #define x_supgrp   PROC_FILLSTATUS  | PROC_FILLSUPGRP
@@ -378,130 +387,129 @@ static struct {
     FRE_t    freefunc;            // free function for strings storage
     QSR_t    sortfunc;            // sort cmp func for a specific type
     int      needhist;            // a result requires history support
-    int      refcount;            // the result needs reference counts
 } Item_table[] = {
-/*    setsfunc               oldflags    freefunc   sortfunc      needhist  refcount
-      ---------------------  ----------  ---------  ------------  --------  ------------- */
-    { RS(noop),              0,          NULL,      QS(noop),     0,        -1            }, // user only, never altered
-    { RS(extra),             0,          NULL,      QS(ull_int),  0,        -1            }, // user only, reset to zero
-    { RS(ADDR_END_CODE),     f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(ADDR_KSTK_EIP),     f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(ADDR_KSTK_ESP),     f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(ADDR_START_CODE),   f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(ADDR_START_STACK),  f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(ALARM),             f_stat,     NULL,      QS(sl_int),   0,        -1            },
-    { RS(CGNAME),            x_cgroup,   FF(str),   QS(str),      0,        ref_CGROUP    }, // refcount: diff result, same source
-    { RS(CGROUP),            x_cgroup,   FF(str),   QS(str),      0,        ref_CGROUP    }, // refcount: diff result, same source
-    { RS(CGROUP_V),          v_cgroup,   FF(strv),  QS(strv),     0,        -1            },
-    { RS(CMD),               f_either,   FF(str),   QS(str),      0,        ref_CMD       },
-    { RS(CMDLINE),           x_cmdline,  FF(str),   QS(str),      0,        ref_CMDLINE   },
-    { RS(CMDLINE_V),         v_arg,      FF(strv),  QS(strv),     0,        -1            },
-    { RS(ENVIRON),           x_environ,  FF(str),   QS(str),      0,        ref_ENVIRON   },
-    { RS(ENVIRON_V),         v_env,      FF(strv),  QS(strv),     0,        -1            },
-    { RS(EXIT_SIGNAL),       f_stat,     NULL,      QS(s_int),    0,        -1            },
-    { RS(FLAGS),             f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(FLT_MAJ),           f_stat,     NULL,      QS(sl_int),   0,        -1            },
-    { RS(FLT_MAJ_C),         f_stat,     NULL,      QS(sl_int),   0,        -1            },
-    { RS(FLT_MAJ_DELTA),     f_stat,     NULL,      QS(sl_int),   +1,       -1            },
-    { RS(FLT_MIN),           f_stat,     NULL,      QS(sl_int),   0,        -1            },
-    { RS(FLT_MIN_C),         f_stat,     NULL,      QS(sl_int),   0,        -1            },
-    { RS(FLT_MIN_DELTA),     f_stat,     NULL,      QS(sl_int),   +1,       -1            },
-    { RS(ID_EGID),           0,          NULL,      QS(u_int),    0,        -1            }, // oldflags: free w/ simple_read...
-    { RS(ID_EGROUP),         f_grp,      NULL,      QS(str),      0,        -1            },
-    { RS(ID_EUID),           0,          NULL,      QS(u_int),    0,        -1            }, // oldflags: free w/ simple_read...
-    { RS(ID_EUSER),          f_usr,      NULL,      QS(str),      0,        -1            },
-    { RS(ID_FGID),           f_status,   NULL,      QS(u_int),    0,        -1            },
-    { RS(ID_FGROUP),         x_ogroup,   NULL,      QS(str),      0,        -1            },
-    { RS(ID_FUID),           f_status,   NULL,      QS(u_int),    0,        -1            },
-    { RS(ID_FUSER),          x_ouser,    NULL,      QS(str),      0,        -1            },
-    { RS(ID_PGRP),           f_stat,     NULL,      QS(s_int),    0,        -1            },
-    { RS(ID_PID),            0,          NULL,      QS(s_int),    0,        -1            }, // oldflags: free w/ simple_nextpid
-    { RS(ID_PPID),           f_either,   NULL,      QS(s_int),    0,        -1            },
-    { RS(ID_RGID),           f_status,   NULL,      QS(u_int),    0,        -1            },
-    { RS(ID_RGROUP),         x_ogroup,   NULL,      QS(str),      0,        -1            },
-    { RS(ID_RUID),           f_status,   NULL,      QS(u_int),    0,        -1            },
-    { RS(ID_RUSER),          x_ouser,    NULL,      QS(str),      0,        -1            },
-    { RS(ID_SESSION),        f_stat,     NULL,      QS(s_int),    0,        -1            },
-    { RS(ID_SGID),           f_status,   NULL,      QS(u_int),    0,        -1            },
-    { RS(ID_SGROUP),         x_ogroup,   NULL,      QS(str),      0,        -1            },
-    { RS(ID_SUID),           f_status,   NULL,      QS(u_int),    0,        -1            },
-    { RS(ID_SUSER),          x_ouser,    NULL,      QS(str),      0,        -1            },
-    { RS(ID_TGID),           0,          NULL,      QS(s_int),    0,        -1            }, // oldflags: free w/ simple_nextpid
-    { RS(ID_TPGID),          f_stat,     NULL,      QS(s_int),    0,        -1            },
-    { RS(LXCNAME),           f_lxc,      NULL,      QS(str),      0,        -1            },
-    { RS(MEM_CODE),          f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_CODE_KIB),      f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_DATA),          f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_DATA_KIB),      f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_DT),            f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_LRS),           f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_RES),           f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_RES_KIB),       f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_SHR),           f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_SHR_KIB),       f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_VIRT),          f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(MEM_VIRT_KIB),      f_statm,    NULL,      QS(sl_int),   0,        -1            },
-    { RS(NICE),              f_stat,     NULL,      QS(sl_int),   0,        -1            },
-    { RS(NLWP),              f_either,   NULL,      QS(s_int),    0,        -1            },
-    { RS(NS_IPC),            f_ns,       NULL,      QS(ul_int),   0,        -1            },
-    { RS(NS_MNT),            f_ns,       NULL,      QS(ul_int),   0,        -1            },
-    { RS(NS_NET),            f_ns,       NULL,      QS(ul_int),   0,        -1            },
-    { RS(NS_PID),            f_ns,       NULL,      QS(ul_int),   0,        -1            },
-    { RS(NS_USER),           f_ns,       NULL,      QS(ul_int),   0,        -1            },
-    { RS(NS_UTS),            f_ns,       NULL,      QS(ul_int),   0,        -1            },
-    { RS(OOM_ADJ),           f_oom,      NULL,      QS(s_int),    0,        -1            },
-    { RS(OOM_SCORE),         f_oom,      NULL,      QS(s_int),    0,        -1            },
-    { RS(PRIORITY),          f_stat,     NULL,      QS(s_int),    0,        -1            },
-    { RS(PROCESSOR),         f_stat,     NULL,      QS(u_int),    0,        -1            },
-    { RS(RSS),               f_stat,     NULL,      QS(sl_int),   0,        -1            },
-    { RS(RSS_RLIM),          f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(RTPRIO),            f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(SCHED_CLASS),       f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(SD_MACH),           f_systemd,  FF(str),   QS(str),      0,        ref_SD_MACH   },
-    { RS(SD_OUID),           f_systemd,  FF(str),   QS(str),      0,        ref_SD_OUID   },
-    { RS(SD_SEAT),           f_systemd,  FF(str),   QS(str),      0,        ref_SD_SEAT   },
-    { RS(SD_SESS),           f_systemd,  FF(str),   QS(str),      0,        ref_SD_SESS   },
-    { RS(SD_SLICE),          f_systemd,  FF(str),   QS(str),      0,        ref_SD_SLICE  },
-    { RS(SD_UNIT),           f_systemd,  FF(str),   QS(str),      0,        ref_SD_UNIT   },
-    { RS(SD_UUNIT),          f_systemd,  FF(str),   QS(str),      0,        ref_SD_UUNIT  },
-    { RS(SIGBLOCKED),        f_status,   FF(str),   QS(str),      0,        -1            },
-    { RS(SIGCATCH),          f_status,   FF(str),   QS(str),      0,        -1            },
-    { RS(SIGIGNORE),         f_status,   FF(str),   QS(str),      0,        -1            },
-    { RS(SIGNALS),           f_status,   FF(str),   QS(str),      0,        -1            },
-    { RS(SIGPENDING),        f_status,   FF(str),   QS(str),      0,        -1            },
-    { RS(STATE),             f_either,   NULL,      QS(s_ch),     0,        -1            },
-    { RS(SUPGIDS),           f_status,   FF(str),   QS(str),      0,        ref_SUPGIDS   },
-    { RS(SUPGROUPS),         x_supgrp,   FF(str),   QS(str),      0,        ref_SUPGROUPS },
-    { RS(TICS_ALL),          f_stat,     NULL,      QS(ull_int),  0,        -1            },
-    { RS(TICS_ALL_C),        f_stat,     NULL,      QS(ull_int),  0,        -1            },
-    { RS(TICS_DELTA),        f_stat,     NULL,      QS(sl_int),  +1,        -1            },
-    { RS(TICS_SYSTEM),       f_stat,     NULL,      QS(ull_int),  0,        -1            },
-    { RS(TICS_SYSTEM_C),     f_stat,     NULL,      QS(ull_int),  0,        -1            },
-    { RS(TICS_USER),         f_stat,     NULL,      QS(ull_int),  0,        -1            },
-    { RS(TICS_USER_C),       f_stat,     NULL,      QS(ull_int),  0,        -1            },
-    { RS(TIME_ALL),          f_stat,     NULL,      QS(ull_int),  0,        -1            },
-    { RS(TIME_ELAPSED),      f_stat,     NULL,      QS(ull_int),  0,        -1            },
-    { RS(TIME_START),        f_stat,     NULL,      QS(ull_int),  0,        -1            },
-    { RS(TTY),               f_stat,     NULL,      QS(s_int),    0,        -1            },
-    { RS(TTY_NAME),          f_stat,     FF(str),   QS(strvers),  0,        -1            },
-    { RS(TTY_NUMBER),        f_stat,     FF(str),   QS(strvers),  0,        -1            },
-    { RS(VM_DATA),           f_status,   NULL,      QS(sl_int),   0,        -1            },
-    { RS(VM_EXE),            f_status,   NULL,      QS(sl_int),   0,        -1            },
-    { RS(VM_LIB),            f_status,   NULL,      QS(sl_int),   0,        -1            },
-    { RS(VM_RSS),            f_status,   NULL,      QS(sl_int),   0,        -1            },
-    { RS(VM_RSS_ANON),       f_status,   NULL,      QS(sl_int),   0,        -1            },
-    { RS(VM_RSS_FILE),       f_status,   NULL,      QS(sl_int),   0,        -1            },
-    { RS(VM_RSS_LOCKED),     f_status,   NULL,      QS(sl_int),   0,        -1            },
-    { RS(VM_RSS_SHARED),     f_status,   NULL,      QS(sl_int),   0,        -1            },
-    { RS(VM_SIZE),           f_status,   NULL,      QS(sl_int),   0,        -1            },
-    { RS(VM_STACK),          f_status,   NULL,      QS(sl_int),   0,        -1            },
-    { RS(VM_SWAP),           f_status,   NULL,      QS(sl_int),   0,        -1            },
-    { RS(VM_USED),           f_status,   NULL,      QS(sl_int),   0,        -1            },
-    { RS(VSIZE_PGS),         f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(WCHAN_ADDR),        f_stat,     NULL,      QS(ul_int),   0,        -1            },
-    { RS(WCHAN_NAME),        0,          FF(str),   QS(str),      0,        -1            }, // oldflags: tid already free
+/*    setsfunc               oldflags    freefunc   sortfunc       needhist
+      ---------------------  ----------  ---------  -------------  -------- */
+    { RS(noop),              0,          NULL,      QS(noop),      0        }, // user only, never altered
+    { RS(extra),             0,          NULL,      QS(ull_int),   0        }, // user only, reset to zero
+    { RS(ADDR_END_CODE),     f_stat,     NULL,      QS(ul_int),    0        },
+    { RS(ADDR_KSTK_EIP),     f_stat,     NULL,      QS(ul_int),    0        },
+    { RS(ADDR_KSTK_ESP),     f_stat,     NULL,      QS(ul_int),    0        },
+    { RS(ADDR_START_CODE),   f_stat,     NULL,      QS(ul_int),    0        },
+    { RS(ADDR_START_STACK),  f_stat,     NULL,      QS(ul_int),    0        },
+    { RS(ALARM),             f_stat,     NULL,      QS(sl_int),    0        },
+    { RS(CGNAME),            x_cgroup,   FF(str),   QS(str),       0        },
+    { RS(CGROUP),            x_cgroup,   FF(str),   QS(str),       0        },
+    { RS(CGROUP_V),          v_cgroup,   FF(strv),  QS(strv),      0        },
+    { RS(CMD),               f_either,   FF(str),   QS(str),       0        },
+    { RS(CMDLINE),           x_cmdline,  FF(str),   QS(str),       0        },
+    { RS(CMDLINE_V),         v_arg,      FF(strv),  QS(strv),      0        },
+    { RS(ENVIRON),           x_environ,  FF(str),   QS(str),       0        },
+    { RS(ENVIRON_V),         v_env,      FF(strv),  QS(strv),      0        },
+    { RS(EXIT_SIGNAL),       f_stat,     NULL,      QS(s_int),     0        },
+    { RS(FLAGS),             f_stat,     NULL,      QS(ul_int),    0        },
+    { RS(FLT_MAJ),           f_stat,     NULL,      QS(sl_int),    0        },
+    { RS(FLT_MAJ_C),         f_stat,     NULL,      QS(sl_int),    0        },
+    { RS(FLT_MAJ_DELTA),     f_stat,     NULL,      QS(sl_int),    +1       },
+    { RS(FLT_MIN),           f_stat,     NULL,      QS(sl_int),    0        },
+    { RS(FLT_MIN_C),         f_stat,     NULL,      QS(sl_int),    0        },
+    { RS(FLT_MIN_DELTA),     f_stat,     NULL,      QS(sl_int),    +1       },
+    { RS(ID_EGID),           0,          NULL,      QS(u_int),     0        }, // oldflags: free w/ simple_read...
+    { RS(ID_EGROUP),         f_grp,      NULL,      QS(str),       0        },
+    { RS(ID_EUID),           0,          NULL,      QS(u_int),     0        }, // oldflags: free w/ simple_read...
+    { RS(ID_EUSER),          f_usr,      NULL,      QS(str),       0        },
+    { RS(ID_FGID),           f_status,   NULL,      QS(u_int),     0        },
+    { RS(ID_FGROUP),         x_ogroup,   NULL,      QS(str),       0        },
+    { RS(ID_FUID),           f_status,   NULL,      QS(u_int),     0        },
+    { RS(ID_FUSER),          x_ouser,    NULL,      QS(str),       0        },
+    { RS(ID_PGRP),           f_stat,     NULL,      QS(s_int),     0        },
+    { RS(ID_PID),            0,          NULL,      QS(s_int),     0        }, // oldflags: free w/ simple_nextpid
+    { RS(ID_PPID),           f_either,   NULL,      QS(s_int),     0        },
+    { RS(ID_RGID),           f_status,   NULL,      QS(u_int),     0        },
+    { RS(ID_RGROUP),         x_ogroup,   NULL,      QS(str),       0        },
+    { RS(ID_RUID),           f_status,   NULL,      QS(u_int),     0        },
+    { RS(ID_RUSER),          x_ouser,    NULL,      QS(str),       0        },
+    { RS(ID_SESSION),        f_stat,     NULL,      QS(s_int),     0        },
+    { RS(ID_SGID),           f_status,   NULL,      QS(u_int),     0        },
+    { RS(ID_SGROUP),         x_ogroup,   NULL,      QS(str),       0        },
+    { RS(ID_SUID),           f_status,   NULL,      QS(u_int),     0        },
+    { RS(ID_SUSER),          x_ouser,    NULL,      QS(str),       0        },
+    { RS(ID_TGID),           0,          NULL,      QS(s_int),     0        }, // oldflags: free w/ simple_nextpid
+    { RS(ID_TPGID),          f_stat,     NULL,      QS(s_int),     0        },
+    { RS(LXCNAME),           f_lxc,      NULL,      QS(str),       0        },
+    { RS(MEM_CODE),          f_statm,    NULL,      QS(sl_int),    0        },
+    { RS(MEM_CODE_KIB),      f_statm,    NULL,      QS(sl_int),    0        },
+    { RS(MEM_DATA),          f_statm,    NULL,      QS(sl_int),    0        },
+    { RS(MEM_DATA_KIB),      f_statm,    NULL,      QS(sl_int),    0        },
+    { RS(MEM_DT),            f_statm,    NULL,      QS(sl_int),    0        },
+    { RS(MEM_LRS),           f_statm,    NULL,      QS(sl_int),    0        },
+    { RS(MEM_RES),           f_statm,    NULL,      QS(sl_int),    0        },
+    { RS(MEM_RES_KIB),       f_statm,    NULL,      QS(sl_int),    0        },
+    { RS(MEM_SHR),           f_statm,    NULL,      QS(sl_int),    0        },
+    { RS(MEM_SHR_KIB),       f_statm,    NULL,      QS(sl_int),    0        },
+    { RS(MEM_VIRT),          f_statm,    NULL,      QS(sl_int),    0        },
+    { RS(MEM_VIRT_KIB),      f_statm,    NULL,      QS(sl_int),    0        },
+    { RS(NICE),              f_stat,     NULL,      QS(sl_int),    0        },
+    { RS(NLWP),              f_either,   NULL,      QS(s_int),     0        },
+    { RS(NS_IPC),            f_ns,       NULL,      QS(ul_int),    0        },
+    { RS(NS_MNT),            f_ns,       NULL,      QS(ul_int),    0        },
+    { RS(NS_NET),            f_ns,       NULL,      QS(ul_int),    0        },
+    { RS(NS_PID),            f_ns,       NULL,      QS(ul_int),    0        },
+    { RS(NS_USER),           f_ns,       NULL,      QS(ul_int),    0        },
+    { RS(NS_UTS),            f_ns,       NULL,      QS(ul_int),    0        },
+    { RS(OOM_ADJ),           f_oom,      NULL,      QS(s_int),     0        },
+    { RS(OOM_SCORE),         f_oom,      NULL,      QS(s_int),     0        },
+    { RS(PRIORITY),          f_stat,     NULL,      QS(s_int),     0        },
+    { RS(PROCESSOR),         f_stat,     NULL,      QS(u_int),     0        },
+    { RS(RSS),               f_stat,     NULL,      QS(sl_int),    0        },
+    { RS(RSS_RLIM),          f_stat,     NULL,      QS(ul_int),    0        },
+    { RS(RTPRIO),            f_stat,     NULL,      QS(ul_int),    0        },
+    { RS(SCHED_CLASS),       f_stat,     NULL,      QS(ul_int),    0        },
+    { RS(SD_MACH),           f_systemd,  FF(str),   QS(str),       0        },
+    { RS(SD_OUID),           f_systemd,  FF(str),   QS(str),       0        },
+    { RS(SD_SEAT),           f_systemd,  FF(str),   QS(str),       0        },
+    { RS(SD_SESS),           f_systemd,  FF(str),   QS(str),       0        },
+    { RS(SD_SLICE),          f_systemd,  FF(str),   QS(str),       0        },
+    { RS(SD_UNIT),           f_systemd,  FF(str),   QS(str),       0        },
+    { RS(SD_UUNIT),          f_systemd,  FF(str),   QS(str),       0        },
+    { RS(SIGBLOCKED),        f_status,   FF(str),   QS(str),       0        },
+    { RS(SIGCATCH),          f_status,   FF(str),   QS(str),       0        },
+    { RS(SIGIGNORE),         f_status,   FF(str),   QS(str),       0        },
+    { RS(SIGNALS),           f_status,   FF(str),   QS(str),       0        },
+    { RS(SIGPENDING),        f_status,   FF(str),   QS(str),       0        },
+    { RS(STATE),             f_either,   NULL,      QS(s_ch),      0        },
+    { RS(SUPGIDS),           f_status,   FF(str),   QS(str),       0        },
+    { RS(SUPGROUPS),         x_supgrp,   FF(str),   QS(str),       0        },
+    { RS(TICS_ALL),          f_stat,     NULL,      QS(ull_int),   0        },
+    { RS(TICS_ALL_C),        f_stat,     NULL,      QS(ull_int),   0        },
+    { RS(TICS_DELTA),        f_stat,     NULL,      QS(sl_int),    +1       },
+    { RS(TICS_SYSTEM),       f_stat,     NULL,      QS(ull_int),   0        },
+    { RS(TICS_SYSTEM_C),     f_stat,     NULL,      QS(ull_int),   0        },
+    { RS(TICS_USER),         f_stat,     NULL,      QS(ull_int),   0        },
+    { RS(TICS_USER_C),       f_stat,     NULL,      QS(ull_int),   0        },
+    { RS(TIME_ALL),          f_stat,     NULL,      QS(ull_int),   0        },
+    { RS(TIME_ELAPSED),      f_stat,     NULL,      QS(ull_int),   0        },
+    { RS(TIME_START),        f_stat,     NULL,      QS(ull_int),   0        },
+    { RS(TTY),               f_stat,     NULL,      QS(s_int),     0        },
+    { RS(TTY_NAME),          f_stat,     FF(str),   QS(strvers),   0        },
+    { RS(TTY_NUMBER),        f_stat,     FF(str),   QS(strvers),   0        },
+    { RS(VM_DATA),           f_status,   NULL,      QS(sl_int),    0        },
+    { RS(VM_EXE),            f_status,   NULL,      QS(sl_int),    0        },
+    { RS(VM_LIB),            f_status,   NULL,      QS(sl_int),    0        },
+    { RS(VM_RSS),            f_status,   NULL,      QS(sl_int),    0        },
+    { RS(VM_RSS_ANON),       f_status,   NULL,      QS(sl_int),    0        },
+    { RS(VM_RSS_FILE),       f_status,   NULL,      QS(sl_int),    0        },
+    { RS(VM_RSS_LOCKED),     f_status,   NULL,      QS(sl_int),    0        },
+    { RS(VM_RSS_SHARED),     f_status,   NULL,      QS(sl_int),    0        },
+    { RS(VM_SIZE),           f_status,   NULL,      QS(sl_int),    0        },
+    { RS(VM_STACK),          f_status,   NULL,      QS(sl_int),    0        },
+    { RS(VM_SWAP),           f_status,   NULL,      QS(sl_int),    0        },
+    { RS(VM_USED),           f_status,   NULL,      QS(sl_int),    0        },
+    { RS(VSIZE_PGS),         f_stat,     NULL,      QS(ul_int),    0        },
+    { RS(WCHAN_ADDR),        f_stat,     NULL,      QS(ul_int),    0        },
+    { RS(WCHAN_NAME),        0,          FF(str),   QS(str),       0        }, // oldflags: tid already free
    // dummy entry corresponding to PROCPS_PIDS_logical_end ...
-    { NULL,                  0,          NULL,      NULL,         0,        -1            }
+    { NULL,                  0,          NULL,      NULL,          0        }
 };
 
    // next MUST be kept in sync with highest value enum
@@ -907,17 +915,14 @@ static inline void libflags_set (
         struct procps_pidsinfo *info)
 {
     enum pids_item e;
-    int i, n;
+    int i;
 
-    memset (info->ref_counts, 0, sizeof(info->ref_counts));
     info->oldflags = info->history_yes = 0;
     for (i = 0; i < info->curitems; i++) {
         if (((e = info->items[i])) >= PROCPS_PIDS_logical_end)
             break;
         info->oldflags |= Item_table[e].oldflags;
         info->history_yes |= Item_table[e].needhist;
-        n = Item_table[e].refcount;
-        if (n > -1) ++info->ref_counts[n];
     }
     if (info->oldflags & f_either) {
         if (!(info->oldflags & f_stat))

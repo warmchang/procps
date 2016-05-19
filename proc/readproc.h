@@ -124,11 +124,15 @@ typedef struct proc_t {
 	cmin_flt,	// stat            cumulative min_flt of process and child processes
 	cmaj_flt;	// stat            cumulative maj_flt of process and child processes
     char
-        **environ,      // (special)       environment string vector (/proc/#/environ)
-        **cmdline,      // (special)       command line string vector (/proc/#/cmdline)
-        **cgroup,       // (special)       cgroup string vector (/proc/#/cgroup)
-         *supgid,       // status          supplementary gids as comma delimited str
-         *supgrp;       // supp grp names as comma delimited str, derived from supgid
+        *environ,       // (special)       environment as string (/proc/#/environ)
+        *cmdline,       // (special)       command line as string (/proc/#/cmdline)
+        *cgroup,        // (special)       cgroup as string (/proc/#/cgroup)
+        *cgname,        // (special)       name portion of above (if possible)
+        *supgid,        // status          supplementary gids as comma delimited str
+        *supgrp,        // supp grp names as comma delimited str, derived from supgid
+       **environ_v,     // (special)       environment string vectors (/proc/#/environ)
+       **cmdline_v,     // (special)       command line string vectors (/proc/#/cmdline)
+       **cgroup_v;      // (special)       cgroup string vectors (/proc/#/cgroup)
     char
         *euser,         // stat(),status   effective user name
         *ruser,         // status          real user name
@@ -213,14 +217,13 @@ typedef struct PROCTAB {
 // id's since uid_t supports no convenient termination sentinel.)
 
 #define PROC_FILLMEM         0x0001 // read statm
-#define PROC_FILLCOM         0x0002 // alloc and fill in `cmdline'
-#define PROC_FILLENV         0x0004 // alloc and fill in `environ'
+#define PROC_FILLARG         0x0002 // alloc and fill in `cmdline' vectors
+#define PROC_FILLENV         0x0004 // alloc and fill in `environ' vectors
 #define PROC_FILLUSR         0x0008 // resolve user id number -> user name
 #define PROC_FILLGRP         0x0010 // resolve group id number -> group name
 #define PROC_FILLSTATUS      0x0020 // read status
 #define PROC_FILLSTAT        0x0040 // read stat
-#define PROC_FILLARG         0x0100 // alloc and fill in `cmdline'
-#define PROC_FILLCGROUP      0x0200 // alloc and fill in `cgroup`
+#define PROC_FILLCGROUP      0x0200 // alloc and fill in `cgroup` vectors
 #define PROC_FILLSUPGRP      0x0400 // resolve supplementary group id -> group name
 #define PROC_FILLOOM         0x0800 // fill in proc_t oom_score and oom_adj
 #define PROC_FILLNS          0x8000 // fill in proc_t namespace information
@@ -233,9 +236,9 @@ typedef struct PROCTAB {
 #define PROC_PID             0x1000  // process id numbers ( 0   terminated)
 #define PROC_UID             0x4000  // user id numbers    ( length needed )
 
-#define PROC_EDITCGRPCVT    0x10000 // edit `cgroup' as single vector
-#define PROC_EDITCMDLCVT    0x20000 // edit `cmdline' as single vector
-#define PROC_EDITENVRCVT    0x40000 // edit `environ' as single vector
+#define PROC_EDITCGRPCVT    0x10000 // edit `cgroup' as regular string
+#define PROC_EDITCMDLCVT    0x20000 // edit `cmdline' as regular string
+#define PROC_EDITENVRCVT    0x40000 // edit `environ' as regular string
 
 // it helps to give app code a few spare bits
 #define PROC_SPARE_1     0x01000000

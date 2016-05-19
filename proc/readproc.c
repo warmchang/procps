@@ -91,19 +91,23 @@ static inline void free_acquired (proc_t *p, int reuse) {
 #ifdef QUICK_THREADS
     if (!IS_THREAD(p)) {
 #endif
-        if (p->environ)  free((void*)*p->environ);
-        if (p->cmdline)  free((void*)*p->cmdline);
-        if (p->cgroup)   free((void*)*p->cgroup);
-        if (p->supgid)   free(p->supgid);
-        if (p->supgrp)   free(p->supgrp);
-        if (p->cmd)      free(p->cmd);
-        if (p->sd_mach)  free(p->sd_mach);
-        if (p->sd_ouid)  free(p->sd_ouid);
-        if (p->sd_seat)  free(p->sd_seat);
-        if (p->sd_sess)  free(p->sd_sess);
-        if (p->sd_slice) free(p->sd_slice);
-        if (p->sd_unit)  free(p->sd_unit);
-        if (p->sd_uunit) free(p->sd_uunit);
+        if (p->environ)   free((void*)p->environ);
+        if (p->cmdline)   free((void*)p->cmdline);
+        if (p->cgname)    free((void*)p->cgname);
+        if (p->cgroup)    free((void*)p->cgroup);
+        if (p->environ_v) free((void*)*p->environ_v);
+        if (p->cmdline_v) free((void*)*p->cmdline_v);
+        if (p->cgroup_v)  free((void*)*p->cgroup_v);
+        if (p->supgid)    free(p->supgid);
+        if (p->supgrp)    free(p->supgrp);
+        if (p->cmd)       free(p->cmd);
+        if (p->sd_mach)   free(p->sd_mach);
+        if (p->sd_ouid)   free(p->sd_ouid);
+        if (p->sd_seat)   free(p->sd_seat);
+        if (p->sd_sess)   free(p->sd_sess);
+        if (p->sd_slice)  free(p->sd_slice);
+        if (p->sd_unit)   free(p->sd_unit);
+        if (p->sd_uunit)  free(p->sd_uunit);
 #ifdef QUICK_THREADS
     }
 #endif
@@ -713,28 +717,11 @@ static int read_unvectored(char *restrict const dst, unsigned sz, const char* wh
     return n;
 }
 
-static char** vectorize_this_str (const char* src) {
- #define pSZ  (sizeof(char*))
-    char *cpy, **vec;
-    int adj, tot;
-
-    tot = strlen(src) + 1;                       // prep for our vectors
-    adj = (pSZ-1) - ((tot + pSZ-1) & (pSZ-1));   // calc alignment bytes
-    cpy = xcalloc(tot + adj + (2 * pSZ));        // get new larger buffer
-    snprintf(cpy, tot, "%s", src);               // duplicate their string
-    vec = (char**)(cpy + tot + adj);             // prep pointer to pointers
-    *vec = cpy;                                  // point 1st vector to string
-    *(vec+1) = NULL;                             // null ptr 'list' delimit
-    return vec;                                  // ==> free(*vec) to dealloc
- #undef pSZ
-}
-
-    // This routine reads a 'cgroup' for the designated proc_t.
-    // It is similar to file2strvec except we filter and concatenate
-    // the data into a single string represented as a single vector.
+    // This routine reads a 'cgroup' for the designated proc_t and
+    // guarantees the caller a valid proc_t.cgroup pointer.
 static void fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
  #define vMAX ( MAX_BUFSZ - (int)(dst - dst_buffer) )
-    char *src, *dst, *grp, *eob;
+    char *src, *dst, *grp, *eob, *name;
     int tot, x, whackable_int = MAX_BUFSZ;
 
     *(dst = dst_buffer) = '\0';                  // empty destination
@@ -750,13 +737,17 @@ static void fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
         dst += snprintf(dst, vMAX, "%s", (dst > dst_buffer) ? "," : "");
         dst += escape_str(dst, grp, vMAX, &whackable_int);
     }
-    p->cgroup = vectorize_this_str(dst_buffer[0] ? dst_buffer : "-");
+    p->cgroup = strdup(dst_buffer[0] ? dst_buffer : "-");
+
+    name = strstr(p->cgroup, ":name=");
+    if (name && *(name+6)) name += 6; else name = p->cgroup;
+    p->cgname = strdup(name);
  #undef vMAX
 }
 
     // This routine reads a 'cmdline' for the designated proc_t, "escapes"
-    // the result into a single string represented as a single vector
-    // and guarantees the caller a valid proc_t.cmdline pointer.
+    // the result into a single string while guaranteeing the caller a
+    // valid proc_t.cmdline pointer.
 static void fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
  #define uFLG ( ESC_BRACKETS | ESC_DEFUNCT )
     int whackable_int = MAX_BUFSZ;
@@ -765,7 +756,7 @@ static void fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
         escape_str(dst_buffer, src_buffer, MAX_BUFSZ, &whackable_int);
     else
         escape_command(dst_buffer, p, MAX_BUFSZ, &whackable_int, uFLG);
-    p->cmdline = vectorize_this_str(dst_buffer);
+    p->cmdline = strdup(dst_buffer[0] ? dst_buffer : "?");
  #undef uFLG
 }
 
@@ -777,7 +768,7 @@ static void fill_environ_cvt (const char* directory, proc_t *restrict p) {
     dst_buffer[0] = '\0';
     if (read_unvectored(src_buffer, MAX_BUFSZ, directory, "environ", ' '))
         escape_str(dst_buffer, src_buffer, MAX_BUFSZ, &whackable_int);
-    p->environ = vectorize_this_str(dst_buffer[0] ? dst_buffer : "-");
+    p->environ = strdup(dst_buffer[0] ? dst_buffer : "-");
 }
 
 
@@ -924,29 +915,20 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
         }
     }
 
-    if (flags & PROC_FILLENV) {                 // read /proc/#/environ
-        if (flags & PROC_EDITENVRCVT)
-            fill_environ_cvt(path, p);
-        else
-            p->environ = file2strvec(path, "environ");
-    } else
-        p->environ = NULL;
+    if (flags & PROC_FILLENV)                   // read /proc/#/environ
+        p->environ_v = file2strvec(path, "environ");
+    if (flags & PROC_EDITENVRCVT)
+        fill_environ_cvt(path, p);
 
-    if (flags & (PROC_FILLCOM|PROC_FILLARG)) {  // read /proc/#/cmdline
-        if (flags & PROC_EDITCMDLCVT)
-            fill_cmdline_cvt(path, p);
-        else
-            p->cmdline = file2strvec(path, "cmdline");
-    } else
-        p->cmdline = NULL;
+    if (flags & PROC_FILLARG)                   // read /proc/#/cmdline
+        p->cmdline_v = file2strvec(path, "cmdline");
+    if (flags & PROC_EDITCMDLCVT)
+        fill_cmdline_cvt(path, p);
 
-    if ((flags & PROC_FILLCGROUP)) {            // read /proc/#/cgroup
-        if (flags & PROC_EDITCGRPCVT)
-            fill_cgroup_cvt(path, p);
-        else
-            p->cgroup = file2strvec(path, "cgroup");
-    } else
-        p->cgroup = NULL;
+    if ((flags & PROC_FILLCGROUP))              // read /proc/#/cgroup
+        p->cgroup_v = file2strvec(path, "cgroup");
+    if (flags & PROC_EDITCGRPCVT)
+        fill_cgroup_cvt(path, p);
 
     if (flags & PROC_FILLOOM) {
         if (file2str(path, "oom_score", &ub) != -1)
@@ -1046,29 +1028,20 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         if (flags & PROC_FILLSUPGRP)
             supgrps_from_supgids(t);
 #endif
-        if (flags & PROC_FILLENV) {                     // read /proc/#/task/#/environ
-            if (flags & PROC_EDITENVRCVT)
-                fill_environ_cvt(path, t);
-            else
-                t->environ = file2strvec(path, "environ");
-        } else
-            t->environ = NULL;
+        if (flags & PROC_FILLENV)                       // read /proc/#/task/#/environ
+            t->environ_v = file2strvec(path, "environ");
+        if (flags & PROC_EDITENVRCVT)
+            fill_environ_cvt(path, t);
 
-        if (flags & (PROC_FILLCOM|PROC_FILLARG)) {      // read /proc/#/task/#/cmdline
-            if (flags & PROC_EDITCMDLCVT)
-                fill_cmdline_cvt(path, t);
-            else
-                t->cmdline = file2strvec(path, "cmdline");
-        } else
-            t->cmdline = NULL;
+        if (flags & PROC_FILLARG)                       // read /proc/#/task/#/cmdline
+            t->cmdline_v = file2strvec(path, "cmdline");
+        if (flags & PROC_EDITCMDLCVT)
+            fill_cmdline_cvt(path, t);
 
-        if ((flags & PROC_FILLCGROUP)) {                // read /proc/#/task/#/cgroup
-            if (flags & PROC_EDITCGRPCVT)
-                fill_cgroup_cvt(path, t);
-            else
-                t->cgroup = file2strvec(path, "cgroup");
-        } else
-            t->cgroup = NULL;
+        if ((flags & PROC_FILLCGROUP))                  // read /proc/#/task/#/cgroup
+            t->cgroup_v = file2strvec(path, "cgroup");
+        if (flags & PROC_EDITCGRPCVT)
+            fill_cgroup_cvt(path, t);
 
         if (flags & PROC_FILLSYSTEMD)                   // get sd-login.h stuff
             sd2proc(t);
@@ -1078,26 +1051,30 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
 
 #ifdef QUICK_THREADS
     } else {
-        t->size     = p->size;
-        t->resident = p->resident;
-        t->share    = p->share;
-        t->trs      = p->trs;
-        t->lrs      = p->lrs;
-        t->drs      = p->drs;
-        t->dt       = p->dt;
-        t->cmdline  = p->cmdline;  // better not free these until done with all threads!
-        t->environ  = p->environ;
-        t->cgroup   = p->cgroup;
-        t->supgid   = p->supgid;
-        t->supgrp   = p->supgrp;
-        t->sd_mach  = p->sd_mach;
-        t->sd_ouid  = p->sd_ouid;
-        t->sd_seat  = p->sd_seat;
-        t->sd_sess  = p->sd_sess;
-        t->sd_slice = p->sd_slice;
-        t->sd_unit  = p->sd_unit;
-        t->sd_uunit = p->sd_uunit;
-        t->lxcname = p->lxcname;
+        t->size      = p->size;
+        t->resident  = p->resident;
+        t->share     = p->share;
+        t->trs       = p->trs;
+        t->lrs       = p->lrs;
+        t->drs       = p->drs;
+        t->dt        = p->dt;
+        t->cmdline   = p->cmdline;     // better not free these until done with all threads!
+        t->cmdline_v = p->cmdline_v;
+        t->environ   = p->environ;
+        t->environ_v = p->environ_v;
+        t->cgname    = p->cgname;
+        t->cgroup    = p->cgroup;
+        t->cgroup_v  = p->cgroup_v;
+        t->supgid    = p->supgid;
+        t->supgrp    = p->supgrp;
+        t->sd_mach   = p->sd_mach;
+        t->sd_ouid   = p->sd_ouid;
+        t->sd_seat   = p->sd_seat;
+        t->sd_sess   = p->sd_sess;
+        t->sd_slice  = p->sd_slice;
+        t->sd_unit   = p->sd_unit;
+        t->sd_uunit  = p->sd_uunit;
+        t->lxcname   = p->lxcname;
         MK_THREAD(t);
     }
 #endif
