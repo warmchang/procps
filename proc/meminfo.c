@@ -548,7 +548,7 @@ static inline int items_check_failed (
      *
      * warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'enum meminfo_item *'
      * my_stack = procps_meminfo_select(info, PROCPS_MEMINFO_noop, num);
-     *                                     ^~~~~~~~~~~~~~~~
+     *                                        ^~~~~~~~~~~~~~~~
      */
     if (numitems < 1
     || (void *)items < (void *)(unsigned long)(2 * PROCPS_MEMINFO_logical_end))
@@ -950,6 +950,11 @@ PROCPS_EXPORT signed long procps_meminfo_get (
     static time_t sav_secs;
     time_t cur_secs;
     int rc;
+
+    if (info == NULL)
+        return -EINVAL;
+    if (item < 0 || item >= PROCPS_MEMINFO_logical_end)
+        return -EINVAL;
 
     /* we will NOT read the meminfo file with every call - rather, we'll offer
        a granularity of 1 second between reads ... */
