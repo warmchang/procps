@@ -634,9 +634,9 @@ typedef struct WIN_t {
 //atic void          keys_window (int ch);
 //atic void          keys_xtra (int ch);
 /*------  Forest View support  -------------------------------------------*/
-//atic void          forest_begin (const int self, int level);
-//atic void          forest_create (WIN_t *q);
-//atic inline const char *forest_display (const WIN_t *q, struct pids_stack *p);
+//atic void          forest_adds (const int self, int level);
+//atic void          forest_begin (WIN_t *q);
+//atic inline const char *forest_colour (const WIN_t *q, struct pids_stack *p);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void          do_key (int ch);
 //atic void          summary_hlp (struct stat_stack *this, const char *pfx);

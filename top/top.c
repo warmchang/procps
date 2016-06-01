@@ -208,7 +208,7 @@ enum Rel_memitems {
    mem_FRE, mem_USE, mem_TOT, mem_QUE, mem_BUF, mem_AVL,
    swp_TOT, swp_FRE, swp_USE };
         // mem stack results extractor macro, where e=rel enum
-#define MEM_VAL(e) Mem_stack->head[e].result.ul_int
+#define MEM_VAL(e) PROCPS_MEMINFO_VAL(e, ul_int, Mem_stack)
         // --- <proc/pids.h> --------------------------------------------------
 static struct procps_pidsinfo *Pids_ctx;
 static int Pids_itms_cur;                   // 'current' max (<= Fieldstab)
@@ -2776,6 +2776,7 @@ signify_that:
 
  #undef mkSEL
 } // end: inspection_utility
+
 #undef INSP_MKSL
 #undef INSP_RLEN
 #undef INSP_BUSY
@@ -4428,17 +4429,17 @@ static void keys_xtra (int ch) {
         /*
          * We try to keep most existing code unaware of our activities
          * ( plus, maintain alphabetical order with carefully chosen )
-         * ( function names like such: forest_b, forest_c & forest_d )
+         * ( function names like such: forest_a, forest_b & forest_c )
          * ( each with exactly one letter more than its predecessor! ) */
 static struct pids_stack **Seed_ppt;        // temporary win ppt pointer
-static struct pids_stack **Tree_ppt;        // forest_create will resize
+static struct pids_stack **Tree_ppt;        // forest_begin resizes this
 static int Tree_idx;                        // frame_make resets to zero
 
         /*
          * This little recursive guy is the real forest view workhorse.
          * He fills in the Tree_ppt array and also sets the child indent
          * level which is stored in an 'extra' result struct as a u_int. */
-static void forest_begin (const int self, int level) {
+static void forest_adds (const int self, int level) {
  // tailored 'results stack value' extractor macros
  #define rSv(E,X)  PID_VAL(E, s_int, Seed_ppt[X])
  #define rLevel    PID_VAL(eu_XTRA, u_int, Tree_ppt[Tree_idx])
@@ -4457,12 +4458,12 @@ static void forest_begin (const int self, int level) {
 #endif
          if (rSv(EU_PID, self) == rSv(EU_TGD, i)
          || (rSv(EU_PID, self) == rSv(EU_PPD, i) && rSv(EU_PID, i) == rSv(EU_TGD, i)))
-            forest_begin(i, level + 1);     // got one child any others?
+            forest_adds(i, level + 1);      // got one child any others?
       }
    }
  #undef rSv
  #undef rLevel
-} // end: forest_begin
+} // end: forest_adds
 
 
         /*
@@ -4470,7 +4471,7 @@ static void forest_begin (const int self, int level) {
          * a forest display in the designated window.  Upon completion,
          * he'll replace the original window ppt with our specially
          * ordered forest version. */
-static void forest_create (WIN_t *q) {
+static void forest_begin (WIN_t *q) {
  // tailored 'results stack value' extractor macro
  #define rLevel  PID_VAL(eu_XTRA, u_int, Seed_ppt[i])
    static int hwmsav;
@@ -4489,17 +4490,17 @@ static void forest_create (WIN_t *q) {
 #endif
       for (i = 0; i < PIDSmaxt; i++)           // avoid any hidepid distortions
          if (!rLevel)                          // identify real or pretend trees
-            forest_begin(i, 1);                // add as parent plus its children
+            forest_adds(i, 1);                 // add as parent plus its children
    }
    memcpy(Seed_ppt, Tree_ppt, sizeof(void*) * PIDSmaxt);
  #undef rLevel
-} // end: forest_create
+} // end: forest_begin
 
 
         /*
          * This guy adds the artwork to either a 'cmd' or 'cmdline'
          * when in forest view mode, otherwise he just returns 'em. */
-static inline const char *forest_display (const WIN_t *q, struct pids_stack *p) {
+static inline const char *forest_colour (const WIN_t *q, struct pids_stack *p) {
  // tailored 'results stack value' extractor macros
  #define rSv(E)  PID_VAL(E, str, p)
  #define rLevel  PID_VAL(eu_XTRA, u_int, p)
@@ -4516,7 +4517,7 @@ static inline const char *forest_display (const WIN_t *q, struct pids_stack *p) 
    return buf;
  #undef rSv
  #undef rLevel
-} // end: forest_display
+} // end: forest_colour
 
 /*######  Main Screen routines  ##########################################*/
 
@@ -4991,7 +4992,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             break;
    /* str, make_str with varialbe width + additional decoration */
          case EU_CMD:
-            makeVAR(forest_display(q, p));
+            makeVAR(forest_colour(q, p));
             break;
          default:               // keep gcc happy
             continue;
@@ -5050,7 +5051,7 @@ static int window_show (WIN_t *q, int wmax) {
    PUFF("\n%s%s%s", q->capclr_hdr, q->columnhdr, Caps_endline);
 
    if (CHKw(q, Show_FOREST))
-      forest_create(q);
+      forest_begin(q);
    else {
       enum pids_item item = Fieldstab[q->rc.sortindx].item;
       if (item == PROCPS_PIDS_CMD && CHKw(q, Show_CMDLIN))
