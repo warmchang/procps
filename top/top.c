@@ -2694,30 +2694,26 @@ static void procs_refresh (void) {
          * portion of libproc.  In support of those hotpluggable resources,
          * the sampling frequencies are reduced so as to minimize overhead. */
 static void sysinfo_refresh (int forced) {
-   static time_t mem_secs, cpu_secs;
+   static time_t sav_secs;
    time_t cur_secs;
 
    if (forced)
-      mem_secs = cpu_secs = 0;
+      sav_secs = 0;
    cur_secs = time(NULL);
 
    /*** hotplug_acclimated ***/
-   if (3 <= cur_secs - mem_secs) {
+   if (3 <= cur_secs - sav_secs) {
       meminfo();
-      mem_secs = cur_secs;
-   }
 #ifndef PRETEND8CPUS
-   /*** hotplug_acclimated ***/
-   if (60 <= cur_secs - cpu_secs) {
       cpuinfo();
       Cpu_faux_tot = smp_num_cpus;
-      cpu_secs = cur_secs;
 #ifndef NUMA_DISABLE
       if (Libnuma_handle)
          Numa_node_tot = Numa_max_node() + 1;
 #endif
-   }
 #endif
+      sav_secs = cur_secs;
+   }
 } // end: sysinfo_refresh
 
 /*######  Inspect Other Output  ##########################################*/
