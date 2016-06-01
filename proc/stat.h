@@ -37,6 +37,7 @@ enum stat_item {
     PROCPS_STAT_TIC_STOLEN,              // ull_int
     PROCPS_STAT_TIC_GUEST,               // ull_int
     PROCPS_STAT_TIC_GUEST_NICE,          // ull_int
+
     PROCPS_STAT_TIC_DELTA_USER,          //  sl_int
     PROCPS_STAT_TIC_DELTA_NICE,          //  sl_int
     PROCPS_STAT_TIC_DELTA_SYSTEM,        //  sl_int
@@ -54,6 +55,7 @@ enum stat_item {
     PROCPS_STAT_SYS_PROC_CREATED,        //  ul_int
     PROCPS_STAT_SYS_PROC_RUNNING,        //  ul_int
     PROCPS_STAT_SYS_TIME_OF_BOOT,        //  ul_int
+
     PROCPS_STAT_SYS_DELTA_CTX_SWITCHES,  //   s_int
     PROCPS_STAT_SYS_DELTA_INTERRUPTS,    //   s_int
     PROCPS_STAT_SYS_DELTA_PROC_BLOCKED,  //   s_int
