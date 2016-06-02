@@ -275,10 +275,8 @@ SCB_NUM1(NS3, ns[NETNS])
 SCB_NUM1(NS4, ns[PIDNS])
 SCB_NUM1(NS5, ns[USERNS])
 SCB_NUM1(NS6, ns[UTSNS])
-#ifdef OOMEM_ENABLE
 SCB_NUM1(OOA, oom_adj)
 SCB_NUM1(OOM, oom_score)
-#endif
 SCB_NUMx(PGD, pgrp)
 SCB_NUMx(PID, tid)
 SCB_NUMx(PPD, ppid)
@@ -1685,6 +1683,7 @@ end_justifies:
 #define L_SUPGRP   PROC_FILLSTATUS | PROC_FILLSUPGRP
 #define L_NS       PROC_FILLNS
 #define L_LXC      PROC_FILL_LXC
+#define L_OOM      PROC_FILLOOM
    // make 'none' non-zero (used to be important to Frames_libflags)
 #define L_NONE     PROC_SPARE_1
    // from either 'stat' or 'status' (preferred), via bits not otherwise used
@@ -1765,12 +1764,8 @@ static FLD_t Fieldstab[] = {
    {    -1,     -1,  A_left,   SF(SGD),  L_status  },
    {    -1,     -1,  A_left,   SF(SGN),  L_SUPGRP  },
    {     0,     -1,  A_right,  SF(TGD),  L_status  },
-#ifdef OOMEM_ENABLE
-#define L_oom      PROC_FILLOOM
-   {     3,     -1,  A_right,  SF(OOA),  L_oom     },
-   {     8,     -1,  A_right,  SF(OOM),  L_oom     },
-#undef L_oom
-#endif
+   {     5,     -1,  A_right,  SF(OOA),  L_OOM     },
+   {     4,     -1,  A_right,  SF(OOM),  L_OOM     },
    {    -1,     -1,  A_left,   SF(ENV),  L_ENVIRON },
    {     3,     -1,  A_right,  SF(FV1),  L_stat    },
    {     3,     -1,  A_right,  SF(FV2),  L_stat    },
@@ -3375,11 +3370,7 @@ static int config_cvt (WIN_t *q) {
     #undef old_Show_THREAD
    };
    static const char fields_src[] = CVT_FIELDS;
-#ifdef OOMEM_ENABLE
    char fields_dst[PFLAGSSIZ], *p1, *p2;
-#else
-   char fields_dst[PFLAGSSIZ];
-#endif
    int i, j, x;
 
    // first we'll touch up this window's winflags...
@@ -3398,14 +3389,12 @@ static int config_cvt (WIN_t *q) {
    if (j > CVT_FLDMAX)
       return 1;
    strcpy(fields_dst, fields_src);
-#ifdef OOMEM_ENABLE
    /* all other fields represent the 'on' state with a capitalized version
       of a particular qwerty key.  for the 2 additional suse out-of-memory
       fields it makes perfect sense to do the exact opposite, doesn't it?
       in any case, we must turn them 'off' temporarily... */
    if ((p1 = strchr(q->rc.fieldscur, '[')))  *p1 = '{';
    if ((p2 = strchr(q->rc.fieldscur, '\\'))) *p2 = '|';
-#endif
    for (i = 0; i < j; i++) {
       int c = q->rc.fieldscur[i];
       x = tolower(c) - 'a';
@@ -3415,11 +3404,9 @@ static int config_cvt (WIN_t *q) {
       if (isupper(c))
          FLDon(fields_dst[i]);
    }
-#ifdef OOMEM_ENABLE
    // if we turned any suse only fields off, turn 'em back on OUR way...
    if (p1) FLDon(fields_dst[p1 - q->rc.fieldscur]);
    if (p2) FLDon(fields_dst[p2 - q->rc.fieldscur]);
-#endif
    strcpy(q->rc.fieldscur, fields_dst);
 
    // lastly, we must adjust the old sort field enum...
@@ -5416,14 +5403,12 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = make_num(ino, W, Jn, i, 1);
          }
             break;
-#ifdef OOMEM_ENABLE
          case EU_OOA:
             cp = make_num(p->oom_adj, W, Jn, AUTOX_NO, 1);
             break;
          case EU_OOM:
             cp = make_num(p->oom_score, W, Jn, AUTOX_NO, 1);
             break;
-#endif
          case EU_PGD:
             cp = make_num(p->pgrp, W, Jn, AUTOX_NO, 0);
             break;
