@@ -167,14 +167,11 @@ typedef struct proc_t {
 	tpgid,		// stat            terminal process group id
 	exit_signal,	// stat            might not be SIGCHLD
 	processor;      // stat            current (or most recent?) CPU
-#ifdef OOMEM_ENABLE
     int
         oom_score,      // oom_score       (badness for OOM killer)
         oom_adj;        // oom_adj         (adjustment to OOM score)
-#endif
     long
         ns[NUM_NS];     // (ns subdir)     inode number of namespaces
-#ifdef WITH_SYSTEMD
     char
         *sd_mach,       // n/a             systemd vm/container name
         *sd_ouid,       // n/a             systemd session owner uid
@@ -183,7 +180,6 @@ typedef struct proc_t {
         *sd_slice,      // n/a             systemd slice unit
         *sd_unit,       // n/a             systemd system unit id
         *sd_uunit;      // n/a             systemd user unit id
-#endif
     const char
         *lxcname;       // n/a             lxc container name
 } proc_t;
