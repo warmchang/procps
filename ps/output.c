@@ -1229,7 +1229,6 @@ static int pr_sgi_p(char *restrict const outbuf, const proc_t *restrict const pp
   return snprintf(outbuf, COLWID, "*");
 }
 
-#ifdef WITH_SYSTEMD
 /************************* Systemd stuff ********************************/
 static int pr_sd_unit(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%s", pp->sd_unit);
@@ -1258,7 +1257,6 @@ static int pr_sd_seat(char *restrict const outbuf, const proc_t *restrict const 
 static int pr_sd_slice(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%s", pp->sd_slice);
 }
-#endif
 /************************ Linux namespaces ******************************/
 
 #define _pr_ns(NAME, ID)\
@@ -1441,9 +1439,7 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 #define GRP PROC_FILLGRP     /* gid_t -> group names */
 #define NS  PROC_FILLNS      /* read namespace information */
 #define LXC PROC_FILL_LXC    /* value the lxc name field */
-#ifdef WITH_SYSTEMD
 #define SD  PROC_FILLSYSTEMD /* retrieve systemd stuff */
-#endif
 #define SGRP PROC_FILLSTATUS | PROC_FILLSUPGRP  /* supgid -> supgrp (names) */
 #define CGRP PROC_FILLCGROUP | PROC_EDITCGRPCVT /* read cgroup */
 
@@ -1543,9 +1539,7 @@ static const format_struct format_array[] = {
 {"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, AN|LEFT}, /*logname*/   /* double check */
 {"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, AN|LEFT}, /*login*/
 {"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
-#ifdef WITH_SYSTEMD
 {"lsession",  "SESSION", pr_sd_session, sr_nop,  11,  SD,    LNX, ET|LEFT},
-#endif
 {"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, ET|RIGHT},
 {"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, ET|RIGHT}, /* login ID */
 {"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, ET|USER}, /* login USER */
@@ -1559,9 +1553,7 @@ static const format_struct format_array[] = {
 {"m_size",    "SIZE",    pr_size,     sr_size,    5, MEM,    LNX, PO|RIGHT},
 {"m_swap",    "SWAP",    pr_nop,      sr_nop,     5,   0,    LNx, PO|RIGHT},
 {"m_trs",     "TRS",     pr_trs,      sr_trs,     5, MEM,    LNx, PO|RIGHT},
-#ifdef WITH_SYSTEMD
 {"machine",   "MACHINE", pr_sd_machine, sr_nop,  31,  SD,    LNX, ET|LEFT},
-#endif
 {"maj_flt",   "MAJFL",   pr_majflt,   sr_maj_flt, 6,   0,    LNX, AN|RIGHT},
 {"majflt",    "MAJFLT",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
 {"min_flt",   "MINFL",   pr_minflt,   sr_min_flt, 6,   0,    LNX, AN|RIGHT},
@@ -1584,9 +1576,7 @@ static const format_struct format_array[] = {
 {"osz",       "SZ",      pr_nop,      sr_nop,     2,   0,    SUN, PO|RIGHT},
 {"oublk",     "OUBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*oublock*/
 {"oublock",   "OUBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*oublk*/
-#ifdef WITH_SYSTEMD
 {"ouid",      "OWNER",   pr_sd_ouid,  sr_nop,     5,  SD,    LNX, ET|LEFT},
-#endif
 {"p_ru",      "P_RU",    pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
 {"paddr",     "PADDR",   pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
 {"pagein",    "PAGEIN",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
@@ -1628,9 +1618,7 @@ static const format_struct format_array[] = {
 {"sched",     "SCH",     pr_sched,    sr_sched,   3,   0,    AIX, TO|RIGHT},
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, AN|RIGHT},  /* man page misspelling of scount? */
 {"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, AN|RIGHT},  /* scnt==scount, DEC claims both */
-#ifdef WITH_SYSTEMD
 {"seat",      "SEAT",    pr_sd_seat,  sr_nop,    11,  SD,    LNX, ET|LEFT},
-#endif
 {"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT},
 {"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, PO|PIDMAX|RIGHT},
 {"sgi_p",     "P",       pr_sgi_p,    sr_nop,     1,   0,    LNX, TO|RIGHT}, /* "cpu" number */
@@ -1649,9 +1637,7 @@ static const format_struct format_array[] = {
 {"sigmask",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*blocked*/
 {"size",      "SIZE",    pr_swapable, sr_swapable, 5,  0,    SCO, PO|RIGHT},
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, AN|RIGHT},
-#ifdef WITH_SYSTEMD
 {"slice",      "SLICE",  pr_sd_slice, sr_nop,    31,  SD,    LNX, ET|LEFT},
-#endif
 {"spid",      "SPID",    pr_tasks,    sr_tasks,   5,   0,    SGI, TO|PIDMAX|RIGHT},
 {"stackp",    "STACKP",  pr_stackp,   sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*start_stack*/
 {"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, ET|RIGHT},
@@ -1700,9 +1686,7 @@ static const format_struct format_array[] = {
 {"uid_hack",  "UID",     pr_euser,    sr_euser,   8, USR,    XXX, ET|USER},
 {"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT},
 {"uname",     "USER",    pr_euser,    sr_euser,   8, USR,    DEC, ET|USER}, /* man page misspelling of user? */
-#ifdef WITH_SYSTEMD
 {"unit",      "UNIT",    pr_sd_unit,  sr_nop,    31,  SD,    LNX, ET|LEFT},
-#endif
 {"upr",       "UPR",     pr_nop,      sr_nop,     3,   0,    BSD, TO|RIGHT}, /*usrpri*/
 {"uprocp",    "UPROCP",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
 {"user",      "USER",    pr_euser,    sr_euser,   8, USR,    U98, ET|USER}, /* BSD n forces this to UID */
@@ -1712,9 +1696,7 @@ static const format_struct format_array[] = {
 {"util",      "C",       pr_c,        sr_pcpu,    2,   0,    SGI, ET|RIGHT}, // not sure about "C"
 {"utime",     "UTIME",   pr_nop,      sr_utime,   6,   0,    LNx, ET|RIGHT},
 {"utsns",     "UTSNS",   pr_utsns,    sr_utsns,  10,  NS,    LNX, ET|RIGHT},
-#ifdef WITH_SYSTEMD
 {"uunit",     "UUNIT",   pr_sd_uunit, sr_nop,    31,  SD,    LNX, ET|LEFT},
-#endif
 {"vm_data",   "DATA",    pr_nop,      sr_vm_data, 5,   0,    LNx, PO|RIGHT},
 {"vm_exe",    "EXE",     pr_nop,      sr_vm_exe,  5,   0,    LNx, PO|RIGHT},
 {"vm_lib",    "LIB",     pr_nop,      sr_vm_lib,  5,   0,    LNx, PO|RIGHT},
