@@ -291,9 +291,6 @@ static void new_format(void)
     if (procps_vmstat_new(&vm_info) < 0)
         xerrx(EXIT_FAILURE,
             _("Unable to create vmstat structure"));
-    if (procps_vmstat_read(vm_info) < 0)
-        xerrx(EXIT_FAILURE,
-            _("Unable to read vmstat information"));
     if (procps_stat_new(&sys_info) < 0)
         xerrx(EXIT_FAILURE,
             _("Unable to create system stat structure"));
@@ -366,9 +363,6 @@ static void new_format(void)
             new_header();
         tog = !tog;
 
-        if (procps_vmstat_read(vm_info) < 0)
-            xerrx(EXIT_FAILURE,
-                _("Unable to read vmstat information"));
         if ((stat_stack = procps_stat_select(sys_info, Loop_stat_items, 12)) == NULL)
             xerrx(EXIT_FAILURE,
                   _("Unable to select stat information"));
@@ -830,10 +824,6 @@ static void sum_format(void)
     if (procps_vmstat_new(&vm_info) < 0)
         xerrx(EXIT_FAILURE,
         _("Unable to create vmstat structure"));
-    if (procps_vmstat_read(vm_info) < 0)
-        xerrx(EXIT_FAILURE,
-        _("Unable to read vmstat information"));
-
     if (procps_meminfo_new(&mem_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
     if ((mem_stack = procps_meminfo_select(mem_info, Sum_mem_items, 10)) ==
