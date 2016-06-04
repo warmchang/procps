@@ -57,11 +57,10 @@ global:
 	procps_uptime_sprint;
 	procps_uptime_sprint_short;
 	procps_vmstat_new;
-	procps_vmstat_read;
 	procps_vmstat_ref;
 	procps_vmstat_unref;
 	procps_vmstat_get;
-	procps_vmstat_getstack;
+	procps_vmstat_select;
 local:
 	*;
 };
