@@ -3,6 +3,7 @@
  *
  * Copyright (C) 1998-2005 Albert Cahalan
  * Copyright (C) 2015 Craig Small <csmall@enc.com.au>
+ * Copyright (C) 2016 Jim Warnerl <james.warner@comcast.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,110 +27,104 @@
 
 __BEGIN_DECLS
 
-enum slabs_item {
-    PROCPS_SLABS_OBJS,                 // u_int
-    PROCPS_SLABS_AOBJS,                // u_int
-    PROCPS_SLABS_PAGES,                // u_int
-    PROCPS_SLABS_SLABS,                // u_int
-    PROCPS_SLABS_ASLABS,               // u_int
-    PROCPS_SLABS_CACHES,               // u_int
-    PROCPS_SLABS_ACACHES,              // u_int
-    PROCPS_SLABS_SIZE_AVG,             // u_int
-    PROCPS_SLABS_SIZE_MIN,             // u_int
-    PROCPS_SLABS_SIZE_MAX,             // u_int
-    PROCPS_SLABS_SIZE_TOTAL,           // ul_int
-    PROCPS_SLABS_SIZE_ACTIVE,          // ul_int
-    PROCPS_SLABS_noop,                 // n/a
-    PROCPS_SLABS_stack_end             // n/a
+enum slabinfo_item {
+    PROCPS_SLABINFO_noop,            //    n/a
+    PROCPS_SLABINFO_extra,           //    n/a
+
+    PROCPS_SLABS_OBJS,               //  u_int
+    PROCPS_SLABS_AOBJS,              //  u_int
+    PROCPS_SLABS_PAGES,              //  u_int
+    PROCPS_SLABS_SLABS,              //  u_int
+    PROCPS_SLABS_ASLABS,             //  u_int
+    PROCPS_SLABS_CACHES,             //  u_int
+    PROCPS_SLABS_ACACHES,            //  u_int
+    PROCPS_SLABS_SIZE_AVG,           //  u_int
+    PROCPS_SLABS_SIZE_MIN,           //  u_int
+    PROCPS_SLABS_SIZE_MAX,           //  u_int
+    PROCPS_SLABS_SIZE_ACTIVE,        // ul_int
+    PROCPS_SLABS_SIZE_TOTAL,         // ul_int
+
+    PROCPS_SLABS_DELTA_OBJS,         //  s_int
+    PROCPS_SLABS_DELTA_AOBJS,        //  s_int
+    PROCPS_SLABS_DELTA_PAGES,        //  s_int
+    PROCPS_SLABS_DELTA_SLABS,        //  s_int
+    PROCPS_SLABS_DELTA_ASLABS,       //  s_int
+    PROCPS_SLABS_DELTA_CACHES,       //  s_int
+    PROCPS_SLABS_DELTA_ACACHES,      //  s_int
+    PROCPS_SLABS_DELTA_SIZE_AVG,     //  s_int
+    PROCPS_SLABS_DELTA_SIZE_MIN,     //  s_int
+    PROCPS_SLABS_DELTA_SIZE_MAX,     //  s_int
+    PROCPS_SLABS_DELTA_SIZE_ACTIVE,  //  s_int
+    PROCPS_SLABS_DELTA_SIZE_TOTAL,   //  s_int
+
+    PROCPS_SLABNODE_NAME,            //    str
+    PROCPS_SLABNODE_OBJS,            //  u_int
+    PROCPS_SLABNODE_AOBJS,           //  u_int
+    PROCPS_SLABNODE_OBJ_SIZE,        //  u_int
+    PROCPS_SLABNODE_OBJS_PER_SLAB,   //  u_int
+    PROCPS_SLABNODE_PAGES_PER_SLAB,  //  u_int
+    PROCPS_SLABNODE_SLABS,           //  u_int
+    PROCPS_SLABNODE_ASLABS,          //  u_int
+    PROCPS_SLABNODE_USE,             //  u_int
+    PROCPS_SLABNODE_SIZE             // ul_int
 };
 
-enum slabnode_item {
-    PROCPS_SLABNODE_SIZE,              // ul_int
-    PROCPS_SLABNODE_OBJS,              // u_int
-    PROCPS_SLABNODE_AOBJS,             // u_int
-    PROCPS_SLABNODE_OBJ_SIZE,          // u_int
-    PROCPS_SLABNODE_OBJS_PER_SLAB,     // u_int
-    PROCPS_SLABNODE_PAGES_PER_SLAB,    // u_int
-    PROCPS_SLABNODE_SLABS,             // u_int
-    PROCPS_SLABNODE_ASLABS,            // u_int
-    PROCPS_SLABNODE_USE,               // u_int
-    PROCPS_SLABNODE_NAME,              // str
-    PROCPS_SLABNODE_noop,              // n/a
-    PROCPS_SLABNODE_stack_end          // n/a
+enum slabinfo_sort_order {
+    PROCPS_SLABINFO_ASCEND   = +1,
+    PROCPS_SLABINFO_DESCEND  = -1
 };
 
-struct procps_slabinfo;
 
-struct slabnode_stack {
-    struct slab_result *head;
-};
-
-struct slab_result {
-    int item;
+struct slabinfo_result {
+    enum slabinfo_item item;
     union {
-        unsigned int u_int;
-        unsigned long ul_int;
-        char *str;
+        signed int      s_int;
+        unsigned int    u_int;
+        unsigned long   ul_int;
+        char          * str;
     } result;
 };
 
-int procps_slabinfo_new (struct procps_slabinfo **info);
-int procps_slabinfo_read (struct procps_slabinfo *info);
+struct slabinfo_stack {
+    struct slabinfo_result *head;
+};
 
-int procps_slabinfo_ref (struct procps_slabinfo *info);
+struct slabinfo_reap {
+    int total;
+    struct slabinfo_stack **stacks;
+};
+
+
+#define PROCPS_SLABINFO_VAL(rel_enum,type,stack) \
+    stack -> head [ rel_enum ] . result . type
+
+
+struct procps_slabinfo;
+
+int procps_slabinfo_new   (struct procps_slabinfo **info);
+int procps_slabinfo_ref   (struct procps_slabinfo  *info);
 int procps_slabinfo_unref (struct procps_slabinfo **info);
 
-unsigned long procps_slabs_get (
+signed long procps_slabinfo_get (
     struct procps_slabinfo *info,
-    enum slabs_item item);
+    enum slabinfo_item item);
 
-int procps_slabs_getstack (
+struct slabinfo_reap *procps_slabinfo_reap (
     struct procps_slabinfo *info,
-    struct slab_result *these);
+    enum slabinfo_item *items,
+    int numitems);
 
-int procps_slabnode_count (struct procps_slabinfo *info);
-
-const char *procps_slabnode_getname (
+struct slabinfo_stack *procps_slabinfo_select (
     struct procps_slabinfo *info,
-    int nodeid);
+    enum slabinfo_item *items,
+    int numitems);
 
-unsigned long procps_slabnode_get (
+struct slabinfo_stack **procps_slabinfo_sort (
     struct procps_slabinfo *info,
-    enum slabnode_item item,
-    int nodeid);
-
-int procps_slabnode_getstack (
-    struct procps_slabinfo *info,
-    struct slab_result *these,
-    int nodeid);
-
-int procps_slabnode_stack_fill (
-    struct procps_slabinfo *info,
-    struct slabnode_stack *stack,
-    int nodeid);
-
-int procps_slabnode_stacks_fill (
-    struct procps_slabinfo *info,
-    struct slabnode_stack **stacks,
-    int maxstacks);
-
-struct slabnode_stack *procps_slabnode_stack_alloc (
-    struct procps_slabinfo *info,
-    int maxitems,
-    enum slabnode_item *items);
-
-struct slabnode_stack **procps_slabnode_stacks_alloc (
-    struct procps_slabinfo *info,
-    int maxstacks,
-    int maxitems,
-    enum slabnode_item *items);
-
-struct slabnode_stack **procps_slabnode_stacks_sort (
-    struct procps_slabinfo *info,
-    struct slabnode_stack **stacks,
+    struct slabinfo_stack *stacks[],
     int numstacked,
-    enum slabnode_item sort);
+    enum slabinfo_item sortitem,
+    enum slabinfo_sort_order order);
 
 __END_DECLS
-
 #endif /* _PROC_SLAB_H */
