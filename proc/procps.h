@@ -23,7 +23,7 @@
 #include <proc/meminfo.h>
 #include <proc/namespace.h>
 #include <proc/pids.h>
-#include <proc/slab.h>
+#include <proc/slabinfo.h>
 #include <proc/stat.h>
 #include <proc/sysinfo.h>
 #include <proc/version.h>

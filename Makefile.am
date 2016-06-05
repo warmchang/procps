@@ -193,8 +193,8 @@ proc_libprocps_la_SOURCES = \
 	proc/pwcache.h \
 	proc/readproc.c \
 	proc/readproc.h \
-	proc/slab.c \
-	proc/slab.h \
+	proc/slabinfo.c \
+	proc/slabinfo.h \
 	proc/stat.c \
 	proc/stat.h \
 	proc/sysinfo.c \
@@ -218,7 +218,7 @@ proc_libprocps_la_include_HEADERS = \
 	proc/procps.h \
 	proc/pwcache.h \
 	proc/readproc.h \
-	proc/slab.h \
+	proc/slabinfo.h \
 	proc/sysinfo.h \
 	proc/uptime.h \
 	proc/version.h \

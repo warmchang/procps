@@ -1,5 +1,5 @@
 /*
- * slab.h - slab related functions for libproc
+ * slabinfo.h - slab related functions for libproc
  *
  * Copyright (C) 1998-2005 Albert Cahalan
  * Copyright (C) 2015 Craig Small <csmall@enc.com.au>

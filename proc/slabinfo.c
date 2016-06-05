@@ -1,5 +1,5 @@
 /*
- * slab.c - slab related functions for libproc
+ * slabinfo.c - slab related functions for libproc
  *
  * Chris Rivera <cmrivera@ufl.edu>
  * Robert Love <rml@tech9.net>
@@ -35,7 +35,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <proc/slab.h>
+#include <proc/slabinfo.h>
 #include "procps-private.h"
 
 #define SLABINFO_FILE        "/proc/slabinfo"
