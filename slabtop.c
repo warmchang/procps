@@ -46,6 +46,7 @@
 
 #define DEFAULT_SORT  PROCPS_SLABNODE_OBJS
 #define CHAINS_ALLOC  150
+#define MAXTBL(t) (int)( sizeof(t) / sizeof(t[0]) )
 
 static unsigned short Cols, Rows;
 static struct termios Saved_tty;
@@ -54,16 +55,15 @@ static int Run_once = 0;
 
 static struct procps_slabinfo *Slab_info;
 
-enum slabnode_item Sort_item = DEFAULT_SORT;
+enum slabinfo_item Sort_item = DEFAULT_SORT;
 
-enum slabnode_item Node_items[] = {
+enum slabinfo_item Node_items[] = {
     PROCPS_SLABNODE_OBJS,     PROCPS_SLABNODE_AOBJS, PROCPS_SLABNODE_USE,
     PROCPS_SLABNODE_OBJ_SIZE, PROCPS_SLABNODE_SLABS, PROCPS_SLABNODE_OBJS_PER_SLAB,
     PROCPS_SLABNODE_SIZE,     PROCPS_SLABNODE_NAME,
     /* next 2 are sortable but are not displayable,
        thus they need not be represented in the Relative_enums */
-    PROCPS_SLABNODE_PAGES_PER_SLAB, PROCPS_SLABNODE_ASLABS,
-    PROCPS_SLABNODE_stack_end };
+    PROCPS_SLABNODE_PAGES_PER_SLAB, PROCPS_SLABNODE_ASLABS };
 
 enum Relative_enums {
     my_OBJS,  my_AOBJS, my_USE,  my_OSIZE,
@@ -127,7 +127,7 @@ static void __attribute__((__noreturn__)) usage (FILE *out)
  * set_sort_func - return the slab_sort_func that matches the given key.
  * On unrecognizable key, DEFAULT_SORT is returned.
  */
-static enum slabnode_item set_sort_item (
+static enum slabinfo_item set_sort_item (
         const char key)
 {
     switch (tolower(key)) {
@@ -195,28 +195,27 @@ static void parse_opts (int argc, char **argv)
 
 static void print_summary (void)
 {
+    enum slabinfo_item items[] = {
+        PROCPS_SLABS_AOBJS,       PROCPS_SLABS_OBJS,
+        PROCPS_SLABS_ASLABS,      PROCPS_SLABS_SLABS,
+        PROCPS_SLABS_ACACHES,     PROCPS_SLABS_CACHES,
+        PROCPS_SLABS_SIZE_ACTIVE, PROCPS_SLABS_SIZE_TOTAL,
+        PROCPS_SLABS_SIZE_MIN,    PROCPS_SLABS_SIZE_AVG,
+        PROCPS_SLABS_SIZE_MAX
+    };
     enum slabs_enums {
         stat_AOBJS,   stat_OBJS,   stat_ASLABS, stat_SLABS,
         stat_ACACHES, stat_CACHES, stat_ACTIVE, stat_TOTAL,
         stat_MIN,     stat_AVG,    stat_MAX
     };
-    static struct slab_result stats[] = {
-        { PROCPS_SLABS_AOBJS,       0 },
-        { PROCPS_SLABS_OBJS,        0 },
-        { PROCPS_SLABS_ASLABS,      0 },
-        { PROCPS_SLABS_SLABS,       0 },
-        { PROCPS_SLABS_ACACHES,     0 },
-        { PROCPS_SLABS_CACHES,      0 },
-        { PROCPS_SLABS_SIZE_ACTIVE, 0 },
-        { PROCPS_SLABS_SIZE_TOTAL,  0 },
-        { PROCPS_SLABS_SIZE_MIN,    0 },
-        { PROCPS_SLABS_SIZE_AVG,    0 },
-        { PROCPS_SLABS_SIZE_MAX,    0 },
-        { PROCPS_SLABS_stack_end,   0 }
-    };
+    struct slabinfo_stack *p;
+    struct slabinfo_result *stats;
 
-    if (procps_slabs_getstack(Slab_info, stats) < 0) \
+    if (!(p = procps_slabinfo_select(Slab_info, items, MAXTBL(items))))
         xerrx(EXIT_FAILURE, _("Error getting slab summary results"));
+    /* we really should use the provided PROCPS_SLABINFO_VAL macro but,
+       let's do this instead to salvage as much original code as possible ... */
+    stats = p->head;
 
     PRINT_line(" %-35s: %u / %u (%.1f%%)\n"
                , /* Translation Hint: Next five strings must not
@@ -258,7 +257,7 @@ static void print_headings (void)
     PRINT_line("%-78s\n", _("  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"));
 }
 
-static void print_details (struct slabnode_stack *stack)
+static void print_details (struct slabinfo_stack *stack)
 {
     PRINT_line("%6u %6u %3u%% %7.2fK %6u %8u %9luK %-23s\n"
         , stack->head[my_OBJS ].result.u_int
@@ -276,9 +275,8 @@ static void print_details (struct slabnode_stack *stack)
 
 int main(int argc, char *argv[])
 {
-    int is_tty, nr_slabs, rc = EXIT_SUCCESS;
+    int is_tty, rc = EXIT_SUCCESS;
     unsigned short old_rows;
-    struct slabnode_stack **v;
 
 #ifdef HAVE_PROGRAM_INVOCATION_NAME
     program_invocation_name = program_invocation_short_name;
@@ -291,10 +289,7 @@ int main(int argc, char *argv[])
     parse_opts(argc, argv);
 
     if (procps_slabinfo_new(&Slab_info) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create slabinfo structure"));
-
-    if (!(v = procps_slabnode_stacks_alloc(Slab_info, CHAINS_ALLOC, MAX_ITEMS, Node_items)))
-        xerrx(EXIT_FAILURE, _("Unable to allocate slabinfo nodes"));
+        xerr(EXIT_FAILURE, _("Unable to create slabinfo structure"));
 
     if (!Run_once) {
         is_tty = isatty(STDIN_FILENO);
@@ -309,17 +304,18 @@ int main(int argc, char *argv[])
     }
 
     do {
+        struct slabinfo_reap *reaped;
         struct timeval tv;
         fd_set readfds;
         int i;
 
-        // this next guy also performs the procps_slabnode_read() call
-        if ((nr_slabs = procps_slabnode_stacks_fill(Slab_info, v, CHAINS_ALLOC)) < 0) {
+        if (!(reaped = procps_slabinfo_reap(Slab_info, Node_items, MAXTBL(Node_items)))) {
             xwarn(_("Unable to get slabinfo node data"));
             rc = EXIT_FAILURE;
             break;
         }
-        if (!(v = procps_slabnode_stacks_sort(Slab_info, v, nr_slabs, Sort_item))) {
+
+        if (!(procps_slabinfo_sort(Slab_info, reaped->stacks, reaped->total, Sort_item, PROCPS_SLABINFO_DESCEND))) {
             xwarn(_("Unable to sort slab nodes"));
             rc = EXIT_FAILURE;
             break;
@@ -328,8 +324,8 @@ int main(int argc, char *argv[])
         if (Run_once) {
             print_summary();
             print_headings();
-            for (i = 0; i < nr_slabs; i++)
-                print_details(v[i]);
+            for (i = 0; i < reaped->total; i++)
+                print_details(reaped->stacks[i]);
             break;
         }
 
@@ -343,8 +339,8 @@ int main(int argc, char *argv[])
         print_headings();
         attroff(A_REVERSE);
 
-        for (i = 0; i < Rows - 8 && i < nr_slabs; i++)
-            print_details(v[i]);
+        for (i = 0; i < Rows - 8 && i < reaped->total; i++)
+            print_details(reaped->stacks[i]);
 
         refresh();
         FD_ZERO(&readfds);

@@ -650,35 +650,31 @@ static void slabheader(void)
 
 static void slabformat (void)
 {
- #define CHAINS_ALLOC  150
  #define MAX_ITEMS (int)(sizeof(node_items) / sizeof(node_items[0]))
     struct procps_slabinfo *slab_info;
-    struct slabnode_stack **v, *p;
-    int i, j, nr_slabs;
-    enum slabnode_item node_items[] = {
+    struct slabinfo_reap *reaped;
+    int i, j;
+    enum slabinfo_item node_items[] = {
         PROCPS_SLABNODE_AOBJS,    PROCPS_SLABNODE_OBJS,
         PROCPS_SLABNODE_OBJ_SIZE, PROCPS_SLABNODE_OBJS_PER_SLAB,
-        PROCPS_SLABNODE_NAME,     PROCPS_SLABNODE_stack_end };
+        PROCPS_SLABNODE_NAME };
     enum rel_enums {
         slab_AOBJS, slab_OBJS, slab_OSIZE, slab_OPS, slab_NAME };
 
     if (procps_slabinfo_new(&slab_info) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create slabinfo structure"));
-    if (!(v = procps_slabnode_stacks_alloc(slab_info, CHAINS_ALLOC, MAX_ITEMS, node_items)))
-        xerrx(EXIT_FAILURE, _("Unable to allocate slabinfo nodes"));
+        xerr(EXIT_FAILURE, _("Unable to create slabinfo structure"));
 
     if (!moreheaders)
         slabheader();
 
     for (i = 0; infinite_updates || i < num_updates; i++) {
-        // this next guy also performs the procps_slabnode_read() call
-        if ((nr_slabs = procps_slabnode_stacks_fill(slab_info, v, CHAINS_ALLOC)) < 0)
-            xerrx(EXIT_FAILURE, _("Unable to get slabinfo node data, requires root permission"));
-        if (!(v = procps_slabnode_stacks_sort(slab_info, v, nr_slabs, PROCPS_SLABNODE_NAME)))
+        if (!(reaped = procps_slabinfo_reap(slab_info, node_items, MAX_ITEMS)))
+            xerrx(EXIT_FAILURE, _("Unable to get slabinfo node data"));
+        if (!(procps_slabinfo_sort(slab_info, reaped->stacks, reaped->total, PROCPS_SLABNODE_NAME, PROCPS_SLABINFO_ASCEND)))
             xerrx(EXIT_FAILURE, _("Unable to sort slab nodes"));
 
-        for (j = 0; j < nr_slabs; j++) {
-            p = v[j];
+        for (j = 0; j < reaped->total; j++) {
+            struct slabinfo_stack *p = reaped->stacks[j];
             if (moreheaders && ((j % height) == 0))
                 slabheader();
             printf("%-24.24s %6u %6u %6u %6u\n",
@@ -692,7 +688,6 @@ static void slabformat (void)
             sleep(sleep_time);
     }
     procps_slabinfo_unref(&slab_info);
- #undef CHAINS_ALLOC
  #undef MAX_ITEMS
 }
 
