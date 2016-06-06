@@ -60,8 +60,8 @@ struct fetch_support {
     struct pids_stack **anchor;        // reap/select consolidated extents
     int n_alloc;                       // number of above pointers allocated
     int n_inuse;                       // number of above pointers occupied
-    int n_alloc_save;                  // last known summary.stacks allocation
-    struct pids_fetch summary;         // counts + stacks for return to caller
+    int n_alloc_save;                  // last known results.stacks allocation
+    struct pids_fetch results;         // counts + stacks for return to caller
 };
 
 struct procps_pidsinfo {
@@ -77,7 +77,7 @@ struct procps_pidsinfo {
     int dirty_stacks;                  // extents need dynamic storage clean
     proc_t*(*read_something)(PROCTAB*, proc_t*); // readproc/readeither via which
     unsigned pgs2k_shift;              // to convert some proc vaules
-    unsigned oldflags;                    // the old library PROC_FILL flagss
+    unsigned oldflags;                 // the old library PROC_FILL flagss
     PROCTAB *PT;                       // the old library essential interface
     unsigned long hertz;               // for TIME_ALL & TIME_ELAPSED calculations
     unsigned long long boot_seconds;   // for TIME_ELAPSED calculation
@@ -253,7 +253,6 @@ setDECL(VM_USED)      { (void)I; R->result.sl_int = P->vm_swap + P->vm_rss; }
 REG_set(VSIZE_PGS,        ul_int,  vsize)
 REG_set(WCHAN_ADDR,       ul_int,  wchan)
 setDECL(WCHAN_NAME)   { (void)I; R->result.str = strdup(lookup_wchan(P->tid)); }
-
 
 #undef mkSTR
 #undef xySTR
@@ -515,12 +514,18 @@ static struct {
    // next MUST be kept in sync with highest value enum
 enum pids_item PROCPS_PIDS_logical_end  = PROCPS_PIDS_WCHAN_NAME + 1;
 
+#undef setNAME
+#undef setDECL
+#undef CVT_set
+#undef DUP_set
+#undef REG_set
+#undef STR_set
+#undef VEC_set
+#undef freNAME
+#undef srtNAME
 #undef RS
 #undef FF
 #undef QS
-#undef setNAME
-#undef freNAME
-#undef srtNAME
 
 //#undef f_either                 // needed later
 #undef f_grp
@@ -1080,7 +1085,7 @@ static int stacks_fetch (
     }
     cleanup_stacks_all(info);
     toggle_history(info);
-    memset(&info->fetch.summary.counts, 0, sizeof(struct pids_counts));
+    memset(&info->fetch.results.counts, 0, sizeof(struct pids_counts));
 
     // iterate stuff --------------------------------------
     n_inuse = 0;
@@ -1092,7 +1097,7 @@ static int stacks_fetch (
                 return -1;
             memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * MEMORY_INCR);
         }
-        if (!proc_tally(info, &info->fetch.summary.counts, &task))
+        if (!proc_tally(info, &info->fetch.results.counts, &task))
             return -1;
         assign_results(info, info->fetch.anchor[n_inuse++], &task);
     }
@@ -1100,11 +1105,11 @@ static int stacks_fetch (
     // finalize stuff -------------------------------------
     if (n_saved < n_alloc + 1) {
         n_saved = n_alloc + 1;
-        if (!(info->fetch.summary.stacks = realloc(info->fetch.summary.stacks, sizeof(void *) * n_saved)))
+        if (!(info->fetch.results.stacks = realloc(info->fetch.results.stacks, sizeof(void *) * n_saved)))
             return -1;
     }
-    memcpy(info->fetch.summary.stacks, info->fetch.anchor, sizeof(void *) * n_inuse);
-    info->fetch.summary.stacks[n_inuse] = NULL;
+    memcpy(info->fetch.results.stacks, info->fetch.anchor, sizeof(void *) * n_inuse);
+    info->fetch.results.stacks[n_inuse] = NULL;
     return n_inuse;     // callers beware, this might be zero !
  #undef n_alloc
  #undef n_inuse
@@ -1218,8 +1223,8 @@ PROCPS_EXPORT int procps_pids_unref (
         }
         if ((*info)->fetch.anchor)
             free((*info)->fetch.anchor);
-        if ((*info)->fetch.summary.stacks)
-            free((*info)->fetch.summary.stacks);
+        if ((*info)->fetch.results.stacks)
+            free((*info)->fetch.results.stacks);
 
         if ((*info)->items)
             free((*info)->items);
@@ -1335,7 +1340,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
 
     oldproc_close(&info->PT);
     // we better have found at least 1 pid
-    return (rc > 0) ? &info->fetch.summary : NULL;
+    return (rc > 0) ? &info->fetch.results : NULL;
 } // end: procps_pids_reap
 
 
@@ -1415,7 +1420,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
 
     oldproc_close(&info->PT);
     // no guarantee any pids/uids were found
-    return (rc > -1) ? &info->fetch.summary : NULL;
+    return (rc > -1) ? &info->fetch.results : NULL;
 } // end: procps_pids_select
 
 
@@ -1445,7 +1450,7 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
     // a pids_item is currently unsigned, but we'll protect our future
     if (sortitem < 0  || sortitem >= PROCPS_PIDS_logical_end)
         return NULL;
-    if (order != PROCPS_SORT_ASCEND && order != PROCPS_SORT_DESCEND)
+    if (order != PROCPS_PIDS_ASCEND && order != PROCPS_PIDS_DESCEND)
         return NULL;
     if (numstacked < 2)
         return stacks;

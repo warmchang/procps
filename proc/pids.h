@@ -158,8 +158,8 @@ enum pids_select_type {
 };
 
 enum pids_sort_order {
-    PROCPS_SORT_ASCEND   = +1,
-    PROCPS_SORT_DESCEND  = -1
+    PROCPS_PIDS_ASCEND   = +1,
+    PROCPS_PIDS_DESCEND  = -1
 };
 
 
@@ -232,7 +232,5 @@ struct pids_stack **procps_pids_sort (
     enum pids_item sortitem,
     enum pids_sort_order order);
 
-
 __END_DECLS
-
 #endif /* _PROC_PIDS_H */
