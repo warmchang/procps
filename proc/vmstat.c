@@ -952,7 +952,7 @@ static struct {
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum vmstat_item PROCPS_VMSTAT_logical_end = PROCPS_VMSTAT_ZONE_RECLAIM_FAILED + 1;
+enum vmstat_item PROCPS_VMSTAT_logical_end = PROCPS_VMSTAT_DELTA_ZONE_RECLAIM_FAILED + 1;
 
 #undef setNAME
 #undef setDECL
@@ -962,6 +962,8 @@ enum vmstat_item PROCPS_VMSTAT_logical_end = PROCPS_VMSTAT_ZONE_RECLAIM_FAILED +
 #undef getDECL
 #undef REG_get
 #undef HST_get
+#undef RS
+#undef RG
 
 
 // ___ Private Functions ||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -1472,7 +1474,7 @@ PROCPS_EXPORT struct vmstat_stack *procps_vmstat_select (
             extents_free_all(info);
     }
     if (!info->extents
-    && !(info->extents = stacks_alloc(info, 1)))
+    && !(stacks_alloc(info, 1)))
        return NULL;
 
     if (info->dirty_stacks)
