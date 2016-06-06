@@ -313,9 +313,9 @@ static void simple_spew(void){
       break;
     case TF_show_proc|TF_show_task:      // m and -m options
       procps_pids_sort(Pids_info, pidread->stacks
-        , pidread->counts.total, PROCPS_PIDS_TIME_START, PROCPS_SORT_ASCEND);
+        , pidread->counts.total, PROCPS_PIDS_TIME_START, PROCPS_PIDS_ASCEND);
       procps_pids_sort(Pids_info, pidread->stacks
-        , pidread->counts.total, PROCPS_PIDS_ID_TGID, PROCPS_SORT_ASCEND);
+        , pidread->counts.total, PROCPS_PIDS_ID_TGID, PROCPS_PIDS_ASCEND);
       for (i = 0; i < pidread->counts.total; i++) {
         buf = pidread->stacks[i];
 next_proc:
@@ -343,7 +343,7 @@ static void prep_forest_sort(void){
     incoming = search_format_array("ppid");
     if(!incoming) { fprintf(stderr, _("could not find ppid\n")); exit(1); }
     tmp_list = xmalloc(sizeof(sort_node));
-    tmp_list->reverse = PROCPS_SORT_ASCEND;
+    tmp_list->reverse = PROCPS_PIDS_ASCEND;
     tmp_list->typecode = '?'; /* what was this for? */
     tmp_list->sr = incoming->sr;
     tmp_list->next = sort_list;
@@ -353,7 +353,7 @@ static void prep_forest_sort(void){
   incoming = search_format_array("start_time");
   if(!incoming) { fprintf(stderr, _("could not find start_time\n")); exit(1); }
   tmp_list = xmalloc(sizeof(sort_node));
-  tmp_list->reverse = PROCPS_SORT_ASCEND;
+  tmp_list->reverse = PROCPS_PIDS_ASCEND;
   tmp_list->typecode = '?'; /* what was this for? */
   tmp_list->sr = incoming->sr;
   tmp_list->next = sort_list;

@@ -4485,7 +4485,7 @@ static void forest_begin (WIN_t *q) {
       }
 #ifndef TREE_SCANALL
       if (!(procps_pids_sort(Pids_ctx, Seed_ppt, PIDSmaxt
-         , PROCPS_PIDS_TIME_START, PROCPS_SORT_ASCEND)))
+         , PROCPS_PIDS_TIME_START, PROCPS_PIDS_ASCEND)))
             error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 #endif
       for (i = 0; i < PIDSmaxt; i++)           // avoid any hidepid distortions
@@ -5039,7 +5039,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
 
 
 static int window_show (WIN_t *q, int wmax) {
- #define sORDER  CHKw(q, Qsrt_NORMAL) ? PROCPS_SORT_DESCEND : PROCPS_SORT_ASCEND
+ #define sORDER  CHKw(q, Qsrt_NORMAL) ? PROCPS_PIDS_DESCEND : PROCPS_PIDS_ASCEND
  /* the isBUSY macro determines if a task is 'active' --
     it returns true if some cpu was used since the last sample.
     ( actual 'running' tasks will be a subset of those selected ) */
