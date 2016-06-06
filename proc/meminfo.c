@@ -460,6 +460,8 @@ enum meminfo_item PROCPS_MEMINFO_logical_end = PROCPS_MEMINFO_SWAP_USED + 1;
 #undef getDECL
 #undef MEM_get
 #undef HST_get
+#undef RS
+#undef RG
 
 // ___ Private Functions ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -1002,7 +1004,7 @@ PROCPS_EXPORT struct meminfo_stack *procps_meminfo_select (
             extents_free_all(info);
     }
     if (!info->extents
-    && !(info->extents = stacks_alloc(info, 1)))
+    && !(stacks_alloc(info, 1)))
        return NULL;
 
     if (info->dirty_stacks)
