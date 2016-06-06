@@ -76,7 +76,7 @@ struct stacks_extent {
     struct stat_stack **stacks;
 };
 
-struct fetch_support {
+struct ext_support {
     int numitems;                      // includes 'logical_end' delimiter
     enum stat_item *items;             // includes 'logical_end' delimiter
     struct stacks_extent *extents;     // anchor for these extents
@@ -91,7 +91,7 @@ struct tic_support {
 
 struct reap_support {
     int total;                         // independently obtained # of cpus/nodes
-    struct fetch_support fetch;        // extents plus items details
+    struct ext_support fetch;          // extents plus items details
     struct tic_support hist;           // cpu and node jiffies management
     int n_anchor_alloc;                // last known anchor pointers allocation
     struct stat_stack **anchor;        // reapable stacks (consolidated extents)
@@ -106,8 +106,8 @@ struct procps_statinfo {
     struct hist_tic cpu_hist;          // TIC type management for cpu summary
     struct reap_support cpus;          // TIC type management for real cpus
     struct reap_support nodes;         // TIC type management for numa nodes
-    struct fetch_support cpu_summary;  // supports /proc/stat line #1 results
-    struct fetch_support select;       // support for 'procps_stat_select()'
+    struct ext_support cpu_summary;    // supports /proc/stat line #1 results
+    struct ext_support select;         // support for 'procps_stat_select()'
     struct stat_reaped results;        // for return to caller after a reap
 #ifndef NUMA_DISABLE
     void *libnuma_handle;              // if dlopen() for libnuma succeessful
@@ -359,7 +359,7 @@ static inline void cleanup_stack (
 
 
 static inline void cleanup_stacks_all (
-        struct fetch_support *this)
+        struct ext_support *this)
 {
     struct stacks_extent *ext = this->extents;
     int i;
@@ -374,7 +374,7 @@ static inline void cleanup_stacks_all (
 
 
 static void extents_free_all (
-        struct fetch_support *this)
+        struct ext_support *this)
 {
     do {
         struct stacks_extent *p = this->extents;
@@ -646,7 +646,7 @@ reap_em_again:
  * Returns a stack_extent struct anchoring the 'heads' of each new stack.
  */
 static struct stacks_extent *stacks_alloc (
-        struct fetch_support *this,
+        struct ext_support *this,
         int maxstacks)
 {
     struct stacks_extent *p_blob;
@@ -742,7 +742,7 @@ static int stacks_fetch_tics (
 
 
 static int stacks_reconfig_maybe (
-        struct fetch_support *this,
+        struct ext_support *this,
         enum stat_item *items,
         int numitems)
 {
@@ -769,7 +769,7 @@ static int stacks_reconfig_maybe (
 
 static struct stat_stack *update_single_stack (
         struct procps_statinfo *info,
-        struct fetch_support *this,
+        struct ext_support *this,
         enum stat_item *items,
         int numitems)
 {
@@ -777,7 +777,7 @@ static struct stat_stack *update_single_stack (
         return NULL;
 
     if (!this->extents
-    && !(this->extents = stacks_alloc(this, 1)))
+    && !(stacks_alloc(this, 1)))
        return NULL;
 
     if (this->dirty_stacks)
