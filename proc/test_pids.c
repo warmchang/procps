@@ -40,7 +40,7 @@ int check_pids_new_toomany(void *data)
 
 int check_pids_new_and_unref(void *data)
 {
-    struct procps_pidsinfo *info;
+    struct procps_pidsinfo *info = NULL;
     testname = "procps_pids new then unref";
     return ( (procps_pids_new(&info, items, 2) == 0) &&
              (procps_pids_unref(&info) == 0) &&
