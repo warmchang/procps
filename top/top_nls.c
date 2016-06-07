@@ -278,9 +278,6 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'LXC' = 7 */
    Head_nlstab[EU_LXC] = _("LXC");
    Desc_nlstab[EU_LXC] = _("LXC container name");
-/* Translation Hint: maximum 'CGNAME' = 7 */
-   Head_nlstab[EU_CGN] = _("CGNAME");
-   Desc_nlstab[EU_CGN] = _("Control Group name");
 /* Translation Hint: maximum 'RSan' = 4 */
    Head_nlstab[EU_RZA] = _("RSan");
    Desc_nlstab[EU_RZA] = _("RES Anonymous (KiB)");
@@ -293,6 +290,9 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'RSsh' = 4 */
    Head_nlstab[EU_RZS] = _("RSsh");
    Desc_nlstab[EU_RZS] = _("RES Shared (KiB)");
+/* Translation Hint: maximum 'CGNAME' = 7 */
+   Head_nlstab[EU_CGN] = _("CGNAME");
+   Desc_nlstab[EU_CGN] = _("Control Group name");
 }
 
 

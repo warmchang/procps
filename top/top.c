@@ -1559,7 +1559,6 @@ static struct {
    {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_USER       },  // ul_int   EU_NS5
    {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_UTS        },  // ul_int   EU_NS6
    {     8,     -1,  A_left,     -1,  PROCPS_PIDS_LXCNAME       },  // str      EU_LXC
-   {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_CGNAME        },  // str      EU_CGN
 #ifndef NOBOOST_MEMS
    {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_ANON   },  // sl_int   EU_RZA
    {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_FILE   },  // sl_int   EU_RZF
@@ -1571,7 +1570,8 @@ static struct {
    {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_LOCKED },  // sl_int   EU_RZL
    {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_SHARED },  // sl_int   EU_RZS
 #endif
-#define eu_LAST        EU_RZS                                       //  ( the last real pflag, currently )
+   {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_CGNAME        },  // str      EU_CGN
+#define eu_LAST        EU_CGN                                       //  ( the last real pflag, currently )
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . ----------------------------------
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
