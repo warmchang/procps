@@ -22,8 +22,8 @@
 __BEGIN_DECLS
 
 enum stat_item {
-    PROCPS_STAT_noop,                    //         ( never altered )
-    PROCPS_STAT_extra,                   //         ( reset to zero )
+    PROCPS_STAT_noop,                    //        ( never altered )
+    PROCPS_STAT_extra,                   //        ( reset to zero )
 
     PROCPS_STAT_TIC_ID,                  //   s_int
     PROCPS_STAT_TIC_NUMA_NODE,           //   s_int
@@ -111,14 +111,14 @@ signed long long procps_stat_get (
     struct procps_statinfo *info,
     enum stat_item item);
 
-struct stat_stack *procps_stat_select (
-    struct procps_statinfo *info,
-    enum stat_item *items,
-    int numitems);
-
 struct stat_reaped *procps_stat_reap (
     struct procps_statinfo *info,
     enum stat_reap_type what,
+    enum stat_item *items,
+    int numitems);
+
+struct stat_stack *procps_stat_select (
+    struct procps_statinfo *info,
     enum stat_item *items,
     int numitems);
 

@@ -36,8 +36,16 @@
 #include <proc/procps-private.h>
 #include <proc/vmstat.h>
 
+
 #define VMSTAT_FILE "/proc/vmstat"
 
+/*
+ *  Perhaps someday we'll all learn what is in these fields. But |
+ *  that might require available linux documentation progressing |
+ *  beyond a state that was acknowledged in the following thread |
+ *
+ *  http://www.spinics.net/lists/linux-man/msg09096.html
+ */
 struct vmstat_data {
     unsigned long allocstall;
     unsigned long balloon_deflate;
@@ -435,6 +443,11 @@ HST_set(DELTA_WORKINGSET_NODERECLAIM,         workingset_nodereclaim)
 HST_set(DELTA_WORKINGSET_REFAULT,             workingset_refault)
 HST_set(DELTA_ZONE_RECLAIM_FAILED,            zone_reclaim_failed)
 
+#undef setDECL
+#undef REG_set
+#undef HST_set
+
+
 // ___ Results 'Get' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
 #define getNAME(e) get_results_ ## e
@@ -686,6 +699,10 @@ HST_get(DELTA_WORKINGSET_ACTIVATE,            workingset_activate)
 HST_get(DELTA_WORKINGSET_NODERECLAIM,         workingset_nodereclaim)
 HST_get(DELTA_WORKINGSET_REFAULT,             workingset_refault)
 HST_get(DELTA_ZONE_RECLAIM_FAILED,            zone_reclaim_failed)
+
+#undef getDECL
+#undef REG_get
+#undef HST_get
 
 
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -947,6 +964,7 @@ static struct {
   { RS(DELTA_WORKINGSET_REFAULT),            RG(DELTA_WORKINGSET_REFAULT)            },
   { RS(DELTA_ZONE_RECLAIM_FAILED),           RG(DELTA_ZONE_RECLAIM_FAILED)           },
 
+ // dummy entry corresponding to PROCPS_VMSTAT_logical_end ...
   { NULL,                                    NULL                                    }
 };
 
@@ -955,13 +973,7 @@ static struct {
 enum vmstat_item PROCPS_VMSTAT_logical_end = PROCPS_VMSTAT_DELTA_ZONE_RECLAIM_FAILED + 1;
 
 #undef setNAME
-#undef setDECL
-#undef REG_set
-#undef HST_set
 #undef getNAME
-#undef getDECL
-#undef REG_get
-#undef HST_get
 #undef RS
 #undef RG
 
@@ -1074,9 +1086,7 @@ static inline int items_check_failed (
 static int make_hash_failed (
         struct procps_vmstat *info)
 {
- #define mkSTR(a) xySTR(a)
- #define xySTR(z) #z
- #define htVAL(f) e.key  = mkSTR(f); e.data = &info->hist.new. f; \
+ #define htVAL(f) e.key = STRINGIFY(f); e.data = &info->hist.new. f; \
   if (!hsearch_r(e, ENTER, &ep, &info->hashtab)) return -errno;
     ENTRY e, *ep;
     size_t n;
@@ -1205,8 +1215,6 @@ static int make_hash_failed (
     htVAL(zone_reclaim_failed)
 
     return 0;
- #undef mkSTR
- #undef xySTR
  #undef htVAL
 } // end: make_hash_failed
 
@@ -1254,7 +1262,8 @@ static int read_vmstat_failed (
 
     head = buf;
     do {
-        ENTRY e, *ep;
+        static ENTRY e;      // just to keep coverity off our backs (e.data)
+        ENTRY *ep;
 
         tail = strchr(head, ' ');
         if (!tail)

@@ -28,21 +28,29 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <proc/stat.h>
 #include <proc/sysinfo.h>
-#include "procps-private.h"
 
+#include <proc/procps-private.h>
+#include <proc/stat.h>
 
-/* -------------------------------------------------------------------------
-   strictly development define(s), largely for the top program
-   ( next has no affect if ./configure --disable-numa has been specified ) */
-//#define PRETEND_NUMA          // pretend there are 3 'discontiguous' nodes
-// -------------------------------------------------------------------------
 
 #define STAT_FILE "/proc/stat"
 
 #define STACKS_INCR   64               // amount reap stack allocations grow
 #define NEWOLD_INCR   32               // amount jiffs hist allocations grow
+
+/* ------------------------------------------------------------------------- +
+   a strictly development #define, existing specifically for the top program |
+   ( and it has no affect if ./configure --disable-numa has been specified ) | */
+//#define PRETEND_NUMA     // pretend there are 3 'discontiguous' numa nodes |
+// ------------------------------------------------------------------------- +
+
+/* ------------------------------------------------------------------------- +
+   because 'reap' would be forced to duplicate the global SYS stuff in every |
+   TIC type results stack, the following #define can be used to enforce that |
+   only PROCPS_STAT_noop/extra plus those PROCPS_STAT_TIC items were allowed | */
+//#define ENFORCE_LOGICAL  // ensure only logical items are accepted by reap |
+// ------------------------------------------------------------------------- +
 
 
 struct stat_jifs {
@@ -293,13 +301,16 @@ static struct {
   { RS(SYS_DELTA_PROC_CREATED),  RG(SYS_DELTA_PROC_CREATED) },
   { RS(SYS_DELTA_PROC_RUNNING),  RG(SYS_DELTA_PROC_RUNNING) },
 
+ // dummy entry corresponding to PROCPS_STAT_logical_end ...
   { NULL,                        NULL                       }
 };
 
     /* please note,
      * 1st enum MUST be kept in sync with highest TIC type
      * 2nd enum MUST be 1 greater than the highest value of any enum */
+#ifdef ENFORCE_LOGICAL
 enum stat_item PROCPS_STAT_TIC_highest = PROCPS_STAT_TIC_DELTA_GUEST_NICE;
+#endif
 enum stat_item PROCPS_STAT_logical_end = PROCPS_STAT_SYS_DELTA_PROC_RUNNING + 1;
 
 #undef setNAME
@@ -969,7 +980,7 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
         enum stat_item *items,
         int numitems)
 {
-    int i, rc;
+    int rc;
 
     if (info == NULL || items == NULL)
         return NULL;
@@ -981,12 +992,15 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
     if (what != STAT_REAP_CPUS_ONLY && what != STAT_REAP_CPUS_AND_NODES)
         return NULL;
 
+#ifdef ENFORCE_LOGICAL
+{   int i;
     // those PROCPS_STAT_SYS_type enum's make sense only to 'select' ...
     for (i = 0; i < numitems; i++) {
         if (items[i] > PROCPS_STAT_TIC_highest)
             return NULL;
     }
-
+}
+#endif
     if ((rc = stacks_reconfig_maybe(&info->cpu_summary, items, numitems)) < 0)
         return NULL;
     if (rc) {

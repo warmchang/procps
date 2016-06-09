@@ -22,8 +22,8 @@
 __BEGIN_DECLS
 
 enum meminfo_item {
-    PROCPS_MEMINFO_noop,                  // n/a     ( never altered )
-    PROCPS_MEMINFO_extra,                 // n/a     ( reset to zero )
+    PROCPS_MEMINFO_noop,                  //        ( never altered )
+    PROCPS_MEMINFO_extra,                 //        ( reset to zero )
     /*
         note: all of the following values are exressed as KiB
     */

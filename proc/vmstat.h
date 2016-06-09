@@ -29,8 +29,8 @@
 __BEGIN_DECLS
 
 enum vmstat_item {
-    PROCPS_VMSTAT_noop,                                 //    n/a
-    PROCPS_VMSTAT_extra,                                //    n/a
+    PROCPS_VMSTAT_noop,                                 //       ( never altered )
+    PROCPS_VMSTAT_extra,                                //       ( reset to zero )
 
     PROCPS_VMSTAT_ALLOCSTALL,                           // ul_int
     PROCPS_VMSTAT_BALLOON_DEFLATE,                      // ul_int

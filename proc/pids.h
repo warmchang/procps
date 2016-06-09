@@ -27,8 +27,8 @@
 __BEGIN_DECLS
 
 enum pids_item {
-    PROCPS_PIDS_noop,              //         ( never altered )
-    PROCPS_PIDS_extra,             //         ( reset to zero )
+    PROCPS_PIDS_noop,              //        ( never altered )
+    PROCPS_PIDS_extra,             //        ( reset to zero )
     PROCPS_PIDS_ADDR_END_CODE,     //  ul_int
     PROCPS_PIDS_ADDR_KSTK_EIP,     //  ul_int
     PROCPS_PIDS_ADDR_KSTK_ESP,     //  ul_int

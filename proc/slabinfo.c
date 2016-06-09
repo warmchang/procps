@@ -37,25 +37,25 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "procps-private.h"
+#include <proc/procps-private.h>
 #include <proc/slabinfo.h>
+
 
 #define SLABINFO_FILE        "/proc/slabinfo"
 #define SLABINFO_LINE_LEN    2048
 #define SLAB_INFO_NAME_LEN   128
 
-
 /*
-   Because 'select' could, at most, return only node[0] values and since 'reap'
-   would be forced to duplicate global slabs stuff in every node results stack,
-   the following #define can be used to enforce strictly logical return values.
+   Because 'select' could, at most, return only node[0] values and since 'reap' |
+   would be forced to duplicate global slabs stuff in every node results stack, |
+   the following #define can be used to enforce strictly logical return values. |
       select: allow only PROCPS_SLABINFO & PROCPS_SLABS items
       reap:   allow only PROCPS_SLABINFO & PROCPS_SLABNODE items
-   Without the #define, these functions always return something (even if just 0)
+   Without the #define, these functions always return something even if just 0. |
       get:    return only PROCPS_SLABS results, else 0
       select: return only PROCPS_SLABINFO & PROCPS_SLABS results, else zero
       reap:   return any requested, even when duplicated in each node's stack */
-//#define ENFORCE_LOGICAL
+//#define ENFORCE_LOGICAL  // ensure only logical items accepted by select/reap
 
 
 struct slabs_summ {
@@ -112,7 +112,7 @@ struct fetch_support {
     struct slabinfo_stack **anchor; // fetch consolidated extents
     int n_alloc;                    // number of above pointers allocated
     int n_inuse;                    // number of above pointers occupied
-    int n_alloc_save;               // last known reaped.stacks allocation
+    int n_alloc_save;               // last known reap.stacks allocation
     struct slabinfo_reap results;   // count + stacks for return to caller
 };
 
@@ -351,6 +351,7 @@ static struct {
   { RS(SLABNODE_USE),            RG(SLABNODE_USE),            QS(u_int)  },
   { RS(SLABNODE_SIZE),           RG(SLABNODE_SIZE),           QS(ul_int) },
 
+ // dummy entry corresponding to PROCPS_SLABINFO_logical_end ...
   { NULL,                        NULL,                        NULL       }
 };
 
@@ -781,6 +782,9 @@ static int stacks_fetch (
     }
 
     // finalize stuff -------------------------------------
+    /* note: we go to this trouble of maintaining a duplicate of the consolidated |
+             extent stacks addresses represented as our 'anchor' since these ptrs |
+             are exposed to users ( um, not that we don't trust 'em or anything ) | */
     if (n_saved < n_alloc + 1) {
         n_saved = n_alloc + 1;
         if (!(info->fetch.results.stacks = realloc(info->fetch.results.stacks, sizeof(void *) * n_saved)))
@@ -853,9 +857,9 @@ PROCPS_EXPORT int procps_slabinfo_new (
 
     p->refcount = 1;
 
-    /* do a priming read here for the following potential benefits:
-         1) see if the caller's permissions are sufficient (root)
-         2) make delta results potentially useful the first time  */
+    /* do a priming read here for the following potential benefits: |
+         1) see if that caller's permissions were sufficient (root) |
+         2) make delta results potentially useful, even is 1st time | */
     if ((rc = read_slabinfo_failed(p))) {
         procps_slabinfo_unref(&p);
         return rc;
@@ -889,15 +893,15 @@ PROCPS_EXPORT int procps_slabinfo_unref (
             fclose((*info)->slabinfo_fp);
             (*info)->slabinfo_fp = NULL;
         }
-        if ((*info)->fetch.anchor)
-            free((*info)->fetch.anchor);
-        if ((*info)->fetch.results.stacks)
-            free((*info)->fetch.results.stacks);
-
         if ((*info)->select_ext.extents)
             extents_free_all((&(*info)->select_ext));
         if ((*info)->select_ext.items)
             free((*info)->select_ext.items);
+
+        if ((*info)->fetch.anchor)
+            free((*info)->fetch.anchor);
+        if ((*info)->fetch.results.stacks)
+            free((*info)->fetch.results.stacks);
 
         if ((*info)->fetch_ext.extents)
             extents_free_all(&(*info)->fetch_ext);
@@ -943,8 +947,8 @@ PROCPS_EXPORT signed long procps_slabinfo_get (
 
 /* procps_slabinfo_reap():
  *
- * Harvest all the requested SLABNODE information providing the
- * result stacks along with totals via the reap summary.
+ * Harvest all the requested SLABNODE (individual nodes) information
+ * providing the result stacks along with the total number of nodes.
  *
  * Returns: pointer to a slabinfo_reap struct on success, NULL on error.
  */
@@ -973,8 +977,8 @@ PROCPS_EXPORT struct slabinfo_reap *procps_slabinfo_reap (
 
 /* procps_slabinfo_select():
  *
- * Harvest all the requested MEM and/or SWAP information then return
- * it in a results stack.
+ * Obtain all the requested SLABS (global) information then return
+ * it in a single library provided results stack.
  *
  * Returns: pointer to a slabinfo_stack struct on success, NULL on error.
  */

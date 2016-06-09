@@ -33,6 +33,7 @@
 
 #define MEMINFO_FILE "/proc/meminfo"
 
+
 struct meminfo_data {
 /** == man 5 proc shows these as: to be documented, so the hell with 'em */
     unsigned long Active;
@@ -445,6 +446,7 @@ static struct {
   { RS(SWAP_TOTAL),              RG(SWAP_TOTAL)               },
   { RS(SWAP_USED),               RG(SWAP_USED)                },
 
+ // dummy entry corresponding to PROCPS_MEMINFO_logical_end ...
   { NULL,                        NULL                         }
 };
 

@@ -35,14 +35,15 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <proc/pids.h>
+#include <proc/devname.h>
+#include <proc/readproc.h>
 #include <proc/sysinfo.h>
 #include <proc/uptime.h>
-#include "procps-private.h"
+#include <proc/wchan.h>
 
-#include "devname.h"                   // and a few headers for our
-#include "readproc.h"                  // bridged libprocps support
-#include "wchan.h"                     // ( maybe just temporary? )
+#include <proc/procps-private.h>
+#include <proc/pids.h>
+
 
 //#define UNREF_RPTHASH                // report on hashing, at uref time
 
@@ -107,9 +108,6 @@ static char** vectorize_this (const char* src) {
 } // end: vectorize_this
 
 
-#define mkSTR(a) xySTR(a)
-#define xySTR(z) #z
-
 #define setNAME(e) set_results_ ## e
 #define setDECL(e) static void setNAME(e) \
     (struct procps_pidsinfo *I, struct pids_result *R, proc_t *P)
@@ -127,12 +125,12 @@ static char** vectorize_this (const char* src) {
    some sort of hint that they duplicated this char * item ... */
 #define STR_set(e,x) setDECL(e) { \
     (void)I; if (NULL != P-> x) { R->result.str = P-> x; P-> x = NULL; } \
-    else R->result.str = strdup("[ duplicate " mkSTR(e) " ]"); }
+    else R->result.str = strdup("[ duplicate " STRINGIFY(e) " ]"); }
 /* take ownership of true vectorized strings if possible, else return
    some sort of hint that they duplicated this char ** item ... */
 #define VEC_set(e,x) setDECL(e) { \
     (void)I; if (NULL != P-> x) { R->result.strv = P-> x;  P-> x = NULL; } \
-    else R->result.strv = vectorize_this("[ duplicate " mkSTR(e) " ]"); }
+    else R->result.strv = vectorize_this("[ duplicate " STRINGIFY(e) " ]"); }
 
 
 setDECL(noop)         { (void)I; (void)R; (void)P; return; }
@@ -253,9 +251,6 @@ setDECL(VM_USED)      { (void)I; R->result.sl_int = P->vm_swap + P->vm_rss; }
 REG_set(VSIZE_PGS,        ul_int,  vsize)
 REG_set(WCHAN_ADDR,       ul_int,  wchan)
 setDECL(WCHAN_NAME)   { (void)I; R->result.str = strdup(lookup_wchan(P->tid)); }
-
-#undef mkSTR
-#undef xySTR
 
 #undef setDECL
 #undef CVT_set
@@ -388,6 +383,7 @@ static struct {
       ---------------------  ----------  ---------  -------------  -------- */
     { RS(noop),              0,          NULL,      QS(noop),      0        }, // user only, never altered
     { RS(extra),             0,          NULL,      QS(ull_int),   0        }, // user only, reset to zero
+
     { RS(ADDR_END_CODE),     f_stat,     NULL,      QS(ul_int),    0        },
     { RS(ADDR_KSTK_EIP),     f_stat,     NULL,      QS(ul_int),    0        },
     { RS(ADDR_KSTK_ESP),     f_stat,     NULL,      QS(ul_int),    0        },
@@ -504,6 +500,7 @@ static struct {
     { RS(VSIZE_PGS),         f_stat,     NULL,      QS(ul_int),    0        },
     { RS(WCHAN_ADDR),        f_stat,     NULL,      QS(ul_int),    0        },
     { RS(WCHAN_NAME),        0,          FF(str),   QS(str),       0        }, // oldflags: tid already free
+
    // dummy entry corresponding to PROCPS_PIDS_logical_end ...
     { NULL,                  0,          NULL,      NULL,          0        }
 };
@@ -1094,6 +1091,9 @@ static int stacks_fetch (
     }
 
     // finalize stuff -------------------------------------
+    /* note: we go to this trouble of maintaining a duplicate of the consolidated |
+             extent stacks addresses represented as our 'anchor' since these ptrs |
+             are exposed to users ( um, not that we don't trust 'em or anything ) | */
     if (n_saved < n_alloc + 1) {
         n_saved = n_alloc + 1;
         if (!(info->fetch.results.stacks = realloc(info->fetch.results.stacks, sizeof(void *) * n_saved)))
