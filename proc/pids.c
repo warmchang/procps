@@ -285,16 +285,16 @@ struct sort_parms {
     enum pids_sort_order order;
 };
 
-#define srtNAME(e) sort_results_ ## e
+#define srtNAME(t) sort_results_ ## t
+#define srtDECL(t) static int srtNAME(t) \
+    (const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P)
 
-#define NUM_srt(T) static int srtNAME(T) ( \
-  const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) { \
+#define NUM_srt(T) srtDECL(T) { \
     const struct pids_result *a = (*A)->head + P->offset; \
     const struct pids_result *b = (*B)->head + P->offset; \
     return P->order * (a->result. T - b->result. T); }
 
-#define REG_srt(T) static int srtNAME(T) ( \
-  const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) { \
+#define REG_srt(T) srtDECL(T) { \
     const struct pids_result *a = (*A)->head + P->offset; \
     const struct pids_result *b = (*B)->head + P->offset; \
     if ( a->result. T > b->result. T ) return P->order > 0 ?  1 : -1; \
@@ -309,34 +309,31 @@ REG_srt(u_int)
 REG_srt(ul_int)
 REG_srt(ull_int)
 
-static int srtNAME(str) (
-  const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) {
+srtDECL(str) {
     const struct pids_result *a = (*A)->head + P->offset;
     const struct pids_result *b = (*B)->head + P->offset;
     return P->order * strcoll(a->result.str, b->result.str);
 }
 
-static int srtNAME(strv) (
-  const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) {
+srtDECL(strv) {
     const struct pids_result *a = (*A)->head + P->offset;
     const struct pids_result *b = (*B)->head + P->offset;
     if (!a->result.strv || !b->result.strv) return 0;
     return P->order * strcoll((*a->result.strv), (*b->result.strv));
 }
 
-static int srtNAME(strvers) (
-  const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) {
+srtDECL(strvers) {
     const struct pids_result *a = (*A)->head + P->offset;
     const struct pids_result *b = (*B)->head + P->offset;
     return P->order * strverscmp(a->result.str, b->result.str);
 }
 
-static int srtNAME(noop) (
-  const struct pids_stack **A, const struct pids_stack **B, enum pids_item *O) {
-    (void)A; (void)B; (void)O;
+srtDECL(noop) {
+    (void)A; (void)B; (void)P;
     return 0;
 }
 
+#undef srtDECL
 #undef NUM_srt
 #undef REG_srt
 
@@ -515,12 +512,6 @@ static struct {
 enum pids_item PROCPS_PIDS_logical_end  = PROCPS_PIDS_WCHAN_NAME + 1;
 
 #undef setNAME
-#undef setDECL
-#undef CVT_set
-#undef DUP_set
-#undef REG_set
-#undef STR_set
-#undef VEC_set
 #undef freNAME
 #undef srtNAME
 #undef RS
