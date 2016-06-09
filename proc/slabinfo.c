@@ -133,7 +133,6 @@ struct procps_slabinfo {
 
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
-
 #define setNAME(e) set_results_ ## e
 #define setDECL(e) static void setNAME(e) \
     (struct slabinfo_result *R, struct slabs_hist *S, struct slabs_node *N)
@@ -183,6 +182,11 @@ NOD_set(SLABNODE_SLABS,           u_int,  nr_slabs)
 NOD_set(SLABNODE_ASLABS,          u_int,  nr_active_slabs)
 NOD_set(SLABNODE_USE,             u_int,  use)
 NOD_set(SLABNODE_SIZE,           ul_int,  cache_size)
+
+#undef setDECL
+#undef REG_set
+#undef NOD_set
+#undef HST_set
 
 
 // ___ Results 'Get' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -238,6 +242,11 @@ NOT_get(SLABNODE_ASLABS)
 NOT_get(SLABNODE_USE)
 NOT_get(SLABNODE_SIZE)
 
+#undef getDECL
+#undef REG_get
+#undef HST_get
+#undef NOT_get
+
 
 // ___ Sorting Support ||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -246,33 +255,38 @@ struct sort_parms {
     enum slabinfo_sort_order order;
 };
 
-#define srtNAME(e) sort_results_ ## e
+#define srtNAME(t) sort_results_ ## t
+#define srtDECL(t) static int srtNAME(t) \
+    (const struct slabinfo_stack **A, const struct slabinfo_stack **B, struct sort_parms *P)
 
-#define REG_srt(T) static int srtNAME(T) ( \
-  const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) { \
-    const struct pids_result *a = (*A)->head + P->offset; \
-    const struct pids_result *b = (*B)->head + P->offset; \
-    if ( a->result. T > b->result. T ) return P->order > 0 ?  1 : -1; \
-    if ( a->result. T < b->result. T ) return P->order > 0 ? -1 :  1; \
-    return 0; }
-
-REG_srt(u_int)
-REG_srt(ul_int)
-
-static int srtNAME(str) (
-  const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P) {
-    const struct pids_result *a = (*A)->head + P->offset;
-    const struct pids_result *b = (*B)->head + P->offset;
-    return P->order * strcoll(a->result.str, b->result.str);
-}
-
-static int srtNAME(noop) (
-  const struct pids_stack **A, const struct pids_stack **B, enum pids_item *O) {
-    (void)A; (void)B; (void)O;
+srtDECL(u_int) {
+    const struct slabinfo_result *a = (*A)->head + P->offset; \
+    const struct slabinfo_result *b = (*B)->head + P->offset; \
+    if ( a->result.u_int > b->result.u_int ) return P->order > 0 ?  1 : -1; \
+    if ( a->result.u_int < b->result.u_int ) return P->order > 0 ? -1 :  1; \
     return 0;
 }
 
-#undef REG_srt
+srtDECL(ul_int) {
+    const struct slabinfo_result *a = (*A)->head + P->offset; \
+    const struct slabinfo_result *b = (*B)->head + P->offset; \
+    if ( a->result.ul_int > b->result.ul_int ) return P->order > 0 ?  1 : -1; \
+    if ( a->result.ul_int < b->result.ul_int ) return P->order > 0 ? -1 :  1; \
+    return 0;
+}
+
+srtDECL(str) {
+    const struct slabinfo_result *a = (*A)->head + P->offset;
+    const struct slabinfo_result *b = (*B)->head + P->offset;
+    return P->order * strcoll(a->result.str, b->result.str);
+}
+
+srtDECL(noop) { \
+    (void)A; (void)B; (void)P; \
+    return 0;
+}
+
+#undef srtDECL
 
 
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -297,7 +311,7 @@ static struct {
 } Item_table[] = {
 /*  setsfunc                     getsfunc                     sortfunc
     ---------------------------  ---------------------------  ---------  */
-  { RS(noop),                    RG(noop),                    QS(noop)   },
+  { RS(noop),                    RG(noop),                    QS(ul_int) },
   { RS(extra),                   RG(extra),                   QS(noop)   },
 
   { RS(SLABS_OBJS),              RG(SLABS_OBJS),              QS(noop)   },
@@ -345,15 +359,7 @@ static struct {
 enum slabinfo_item PROCPS_SLABINFO_logical_end = PROCPS_SLABNODE_SIZE + 1;
 
 #undef setNAME
-#undef setDECL
-#undef REG_set
-#undef NOD_set
-#undef HST_set
 #undef getNAME
-#undef getDECL
-#undef REG_get
-#undef HST_get
-#undef NOT_get
 #undef srtNAME
 #undef RS
 #undef RG
@@ -940,7 +946,7 @@ PROCPS_EXPORT signed long procps_slabinfo_get (
  * Harvest all the requested SLABNODE information providing the
  * result stacks along with totals via the reap summary.
  *
- * Returns: pointer to a stat_reaped struct on success, NULL on error.
+ * Returns: pointer to a slabinfo_reap struct on success, NULL on error.
  */
 PROCPS_EXPORT struct slabinfo_reap *procps_slabinfo_reap (
         struct procps_slabinfo *info,

@@ -28,8 +28,8 @@
 __BEGIN_DECLS
 
 enum slabinfo_item {
-    PROCPS_SLABINFO_noop,            //    n/a
-    PROCPS_SLABINFO_extra,           //    n/a
+    PROCPS_SLABINFO_noop,            //        ( never altered )
+    PROCPS_SLABINFO_extra,           //        ( reset to zero )
 
     PROCPS_SLABS_OBJS,               //  u_int
     PROCPS_SLABS_AOBJS,              //  u_int
