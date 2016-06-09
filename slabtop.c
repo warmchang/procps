@@ -56,6 +56,7 @@ static int Run_once = 0;
 static struct procps_slabinfo *Slab_info;
 
 enum slabinfo_item Sort_item = DEFAULT_SORT;
+enum slabinfo_sort_order Sort_Order = PROCPS_SLABINFO_DESCEND;
 
 enum slabinfo_item Node_items[] = {
     PROCPS_SLABNODE_OBJS,     PROCPS_SLABNODE_AOBJS, PROCPS_SLABNODE_USE,
@@ -123,36 +124,45 @@ static void __attribute__((__noreturn__)) usage (FILE *out)
     exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-/*
- * set_sort_func - return the slab_sort_func that matches the given key.
- * On unrecognizable key, DEFAULT_SORT is returned.
- */
-static enum slabinfo_item set_sort_item (
-        const char key)
+static void set_sort_stuff (const char key)
 {
+    Sort_item = DEFAULT_SORT;
+    Sort_Order = PROCPS_SLABINFO_DESCEND;
+
     switch (tolower(key)) {
     case 'n':
-        return PROCPS_SLABNODE_NAME;
+        Sort_item = PROCPS_SLABNODE_NAME;
+        Sort_Order = PROCPS_SLABINFO_ASCEND;
+        break;
     case 'o':
-        return PROCPS_SLABNODE_OBJS;
+        Sort_item = PROCPS_SLABNODE_OBJS;
+        break;
     case 'a':
-        return PROCPS_SLABNODE_AOBJS;
+        Sort_item = PROCPS_SLABNODE_AOBJS;
+        break;
     case 's':
-        return PROCPS_SLABNODE_OBJ_SIZE;
+        Sort_item = PROCPS_SLABNODE_OBJ_SIZE;
+        break;
     case 'b':
-        return PROCPS_SLABNODE_OBJS_PER_SLAB;
+        Sort_item = PROCPS_SLABNODE_OBJS_PER_SLAB;
+        break;
     case 'p':
-        return PROCPS_SLABNODE_PAGES_PER_SLAB;
+        Sort_item = PROCPS_SLABNODE_PAGES_PER_SLAB;
+        break;
     case 'l':
-        return PROCPS_SLABNODE_SLABS;
+        Sort_item = PROCPS_SLABNODE_SLABS;
+        break;
     case 'v':
-        return PROCPS_SLABNODE_ASLABS;
+        Sort_item = PROCPS_SLABNODE_ASLABS;
+        break;
     case 'c':
-        return PROCPS_SLABNODE_SIZE;
+        Sort_item = PROCPS_SLABNODE_SIZE;
+        break;
     case 'u':
-        return PROCPS_SLABNODE_USE;
+        Sort_item = PROCPS_SLABNODE_USE;
+        break;
     default:
-        return DEFAULT_SORT;
+        break;
     }
 }
 
@@ -176,7 +186,7 @@ static void parse_opts (int argc, char **argv)
                 xerrx(EXIT_FAILURE, _("delay must be positive integer"));
             break;
         case 's':
-            Sort_item = set_sort_item(optarg[0]);
+            set_sort_stuff(optarg[0]);
             break;
         case 'o':
             Run_once=1;
@@ -315,7 +325,7 @@ int main(int argc, char *argv[])
             break;
         }
 
-        if (!(procps_slabinfo_sort(Slab_info, reaped->stacks, reaped->total, Sort_item, PROCPS_SLABINFO_DESCEND))) {
+        if (!(procps_slabinfo_sort(Slab_info, reaped->stacks, reaped->total, Sort_item, Sort_Order))) {
             xwarn(_("Unable to sort slab nodes"));
             rc = EXIT_FAILURE;
             break;
@@ -352,7 +362,7 @@ int main(int argc, char *argv[])
             if (read(STDIN_FILENO, &c, 1) != 1
             || (c == 'Q' || c == 'q'))
                 break;
-            Sort_item = set_sort_item(c);
+            set_sort_stuff(c);
         }
     // made zero by sigint_handler()
     } while (Delay);
