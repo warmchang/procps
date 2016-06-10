@@ -18,6 +18,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <search.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,22 +36,21 @@
 
 
 struct meminfo_data {
-/** == man 5 proc shows these as: to be documented, so the hell with 'em */
     unsigned long Active;
-    unsigned long Active_anon;         // as: (anon)
-    unsigned long Active_file;         // as: (file)
+    unsigned long Active_anon;         // as: Active(anon):
+    unsigned long Active_file;         // as: Active(file):
     unsigned long AnonHugePages;
     unsigned long AnonPages;
     unsigned long Bounce;
     unsigned long Buffers;
     unsigned long Cached;
-/** unsigned long CmaFree; ----------- */
-/** unsigned long CmaTotal; ---------- */
+    unsigned long CmaFree;             //  man 5 proc: 'to be documented'
+    unsigned long CmaTotal;            //  man 5 proc: 'to be documented'
     unsigned long CommitLimit;
     unsigned long Committed_AS;
-/** unsigned long DirectMap1G; ------- */
-/** unsigned long DirectMap2M; ------- */
-/** unsigned long DirectMap4k; ------- */
+    unsigned long DirectMap1G;         //  man 5 proc: 'to be documented'
+    unsigned long DirectMap2M;         //  man 5 proc: 'to be documented'
+    unsigned long DirectMap4k;         //  man 5 proc: 'to be documented'
     unsigned long Dirty;
     unsigned long HardwareCorrupted;
     unsigned long HighFree;
@@ -61,8 +61,8 @@ struct meminfo_data {
     unsigned long HugePages_Total;
     unsigned long Hugepagesize;
     unsigned long Inactive;
-    unsigned long Inactive_anon;       // as: (anon)
-    unsigned long Inactive_file;       // as: (file)
+    unsigned long Inactive_anon;       // as: Inactive(anon):
+    unsigned long Inactive_file;       // as: Inactive(file):
     unsigned long KernelStack;
     unsigned long LowFree;
     unsigned long LowTotal;
@@ -93,7 +93,7 @@ struct meminfo_data {
     unsigned long derived_swap_used;
 };
 
-struct hist_mem {
+struct mem_hist {
     struct meminfo_data new;
     struct meminfo_data old;
 };
@@ -109,10 +109,11 @@ struct procps_meminfo {
     int meminfo_fd;
     int meminfo_was_read;
     int dirty_stacks;
-    struct hist_mem mem_hist;
+    struct mem_hist hist;
     int numitems;
     enum meminfo_item *items;
     struct stacks_extent *extents;
+    struct hsearch_data hashtab;
 };
 
 
@@ -120,7 +121,7 @@ struct procps_meminfo {
 
 #define setNAME(e) set_results_ ## e
 #define setDECL(e) static void setNAME(e) \
-    (struct meminfo_result *R, struct hist_mem *H)
+    (struct meminfo_result *R, struct mem_hist *H)
 
 // regular assignment
 #define MEM_set(e,t,x) setDECL(e) { R->result. t = H->new . x; }
@@ -231,9 +232,9 @@ MEM_set(SWAP_USED,              ul_int,  derived_swap_used)
     (struct procps_meminfo *I)
 
 // regular get
-#define MEM_get(e,x) getDECL(e) { return I->mem_hist.new. x; }
+#define MEM_get(e,x) getDECL(e) { return I->hist.new. x; }
 // delta get
-#define HST_get(e,x) getDECL(e) { return ( I->mem_hist.new. x - I->mem_hist.old. x ); }
+#define HST_get(e,x) getDECL(e) { return ( I->hist.new. x - I->hist.old. x ); }
 
 getDECL(noop)                { (void)I; return 0; }
 getDECL(extra)               { (void)I; return 0; }
@@ -334,7 +335,7 @@ MEM_get(SWAP_USED,             derived_swap_used)
 
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-typedef void (*SET_t)(struct meminfo_result *, struct hist_mem *);
+typedef void (*SET_t)(struct meminfo_result *, struct mem_hist *);
 #define RS(e) (SET_t)setNAME(e)
 
 typedef long (*GET_t)(struct procps_meminfo *);
@@ -469,7 +470,7 @@ enum meminfo_item PROCPS_MEMINFO_logical_end = PROCPS_MEMINFO_SWAP_USED + 1;
 
 static inline void assign_results (
         struct meminfo_stack *stack,
-        struct hist_mem *mem_hist)
+        struct mem_hist *hist)
 {
     struct meminfo_result *this = stack->head;
 
@@ -477,7 +478,7 @@ static inline void assign_results (
         enum meminfo_item item = this->item;
         if (item >= PROCPS_MEMINFO_logical_end)
             break;
-        Item_table[item].setsfunc(this, mem_hist);
+        Item_table[item].setsfunc(this, hist);
         ++this;
     }
     return;
@@ -570,6 +571,78 @@ static inline int items_check_failed (
 } // end: items_check_failed
 
 
+static int make_hash_failed (
+        struct procps_meminfo *info)
+{
+ #define htVAL(f) e.key = STRINGIFY(f) ":"; e.data = &info->hist.new. f; \
+  if (!hsearch_r(e, ENTER, &ep, &info->hashtab)) return -errno;
+ #define htXTRA(k,f) e.key = STRINGIFY(k) ":"; e.data = &info->hist.new. f; \
+  if (!hsearch_r(e, ENTER, &ep, &info->hashtab)) return -errno;
+    ENTRY e, *ep;
+    size_t n;
+
+    // will also include those 4 derived fields (more is better)
+    n = sizeof(struct meminfo_data) / sizeof(unsigned long);
+    // we'll follow the hsearch recommendation of an extra 25%
+    hcreate_r(n + (n / 4), &info->hashtab);
+
+    htVAL(Active)
+    htXTRA(Active(anon), Active_anon)
+    htXTRA(Active(file), Active_file)
+    htVAL(AnonHugePages)
+    htVAL(AnonPages)
+    htVAL(Bounce)
+    htVAL(Buffers)
+    htVAL(Cached)
+    htVAL(CmaFree)
+    htVAL(CmaTotal)
+    htVAL(CommitLimit)
+    htVAL(Committed_AS)
+    htVAL(DirectMap1G)
+    htVAL(DirectMap2M)
+    htVAL(DirectMap4k)
+    htVAL(Dirty)
+    htVAL(HardwareCorrupted)
+    htVAL(HighFree)
+    htVAL(HighTotal)
+    htVAL(HugePages_Free)
+    htVAL(HugePages_Rsvd)
+    htVAL(HugePages_Surp)
+    htVAL(HugePages_Total)
+    htVAL(Hugepagesize)
+    htVAL(Inactive)
+    htXTRA(Inactive(anon), Inactive_anon)
+    htXTRA(Inactive(file), Inactive_file)
+    htVAL(KernelStack)
+    htVAL(LowFree)
+    htVAL(LowTotal)
+    htVAL(Mapped)
+    htVAL(MemAvailable)
+    htVAL(MemFree)
+    htVAL(MemTotal)
+    htVAL(Mlocked)
+    htVAL(NFS_Unstable)
+    htVAL(PageTables)
+    htVAL(SReclaimable)
+    htVAL(SUnreclaim)
+    htVAL(Shmem)
+    htVAL(Slab)
+    htVAL(SwapCached)
+    htVAL(SwapFree)
+    htVAL(SwapTotal)
+    htVAL(Unevictable)
+    htVAL(VmallocChunk)
+    htVAL(VmallocTotal)
+    htVAL(VmallocUsed)
+    htVAL(Writeback)
+    htVAL(WritebackTmp)
+
+    return 0;
+ #undef htVAL
+ #undef htXTRA
+} // end: make_hash_failed
+
+
 /*
  * read_meminfo_failed():
  *
@@ -581,7 +654,7 @@ PROCPS_EXPORT int read_meminfo_failed (
 {
  /* a 'memory history reference' macro for readability,
     so we can focus the field names ... */
- #define mHr(f) info->mem_hist.new. f
+ #define mHr(f) info->hist.new. f
     char buf[8192];
     char *head, *tail;
     int size;
@@ -592,9 +665,9 @@ PROCPS_EXPORT int read_meminfo_failed (
         return -1;
 
     // remember history from last time around
-    memcpy(&info->mem_hist.old, &info->mem_hist.new, sizeof(struct meminfo_data));
+    memcpy(&info->hist.old, &info->hist.new, sizeof(struct meminfo_data));
     // clear out the soon to be 'current' values
-    memset(&info->mem_hist.new, 0, sizeof(struct meminfo_data));
+    memset(&info->hist.new, 0, sizeof(struct meminfo_data));
 
     if (-1 == info->meminfo_fd
     && (info->meminfo_fd = open(MEMINFO_FILE, O_RDONLY)) == -1)
@@ -615,175 +688,30 @@ PROCPS_EXPORT int read_meminfo_failed (
         return 0;
     buf[size] = '\0';
 
-    /* Scan the file */
     head = buf;
     do {
+        static ENTRY e;      // just to keep coverity off our backs (e.data)
+        ENTRY *ep;
+
         tail = strchr(head, ' ');
         if (!tail)
             break;
         *tail = '\0';
         valptr = NULL;
-        switch (*head) {
-            case 'A':
-                if (0 == strcmp(head, "Active:"))
-                    valptr = &(mHr(Active));
-                else
-                if (0 == strcmp(head, "Active(anon):"))
-                    valptr = &(mHr(Active_anon));
-                else
-                if (0 == strcmp(head, "Active(file):"))
-                    valptr = &(mHr(Active_file));
-                else
-                if (0 == strcmp(head, "AnonHugePages:"))
-                    valptr = &(mHr(AnonHugePages));
-                else
-                if (0 == strcmp(head, "AnonPages:"))
-                    valptr = &(mHr(AnonPages));
-                break;
-            case 'B':
-                if (0 == strcmp(head, "Bounce:"))
-                    valptr = &(mHr(Bounce));
-                else
-                if (0 == strcmp(head, "Buffers:"))
-                    valptr = &(mHr(Buffers));
-                break;
-            case 'C':
-                if (0 == strcmp(head, "Cached:"))
-                    valptr = &(mHr(Cached));
-                else
-                if (0 == strcmp(head, "CommitLimit:"))
-                    valptr = &(mHr(CommitLimit));
-                else
-                if (0 == strcmp(head, "Committed_AS:"))
-                    valptr = &(mHr(Committed_AS));
-                break;
-            case 'D':
-                if (0 == strcmp(head, "Dirty:"))
-                    valptr = &(mHr(Dirty));
-                break;
-            case 'H':
-                if (0 == strcmp(head, "HardwareCorrupted:"))
-                    valptr = &(mHr(HardwareCorrupted));
-                else
-                if (0 == strcmp(head, "HighFree:"))
-                    valptr = &(mHr(HighFree));
-                else
-                if (0 == strcmp(head, "HighTotal:"))
-                    valptr = &(mHr(HighTotal));
-                else
-                if (0 == strcmp(head, "HugePages_Free:"))
-                    valptr = &(mHr(HugePages_Free));
-                else
-                if (0 == strcmp(head, "HugePages_Rsvd:"))
-                    valptr = &(mHr(HugePages_Rsvd));
-                else
-                if (0 == strcmp(head, "HugePages_Surp:"))
-                    valptr = &(mHr(HugePages_Surp));
-                else
-                if (0 == strcmp(head, "HugePages_Total:"))
-                    valptr = &(mHr(HugePages_Total));
-                else
-                if (0 == strcmp(head, "Hugepagesize:"))
-                    valptr = &(mHr(Hugepagesize));
-                break;
-            case 'I':
-                if (0 == strcmp(head, "Inactive:"))
-                    valptr = &(mHr(Inactive));
-                else
-                if (0 == strcmp(head, "Inactive(anon):"))
-                    valptr = &(mHr(Inactive_anon));
-                else
-                if (0 == strcmp(head, "Inactive(file):"))
-                    valptr = &(mHr(Inactive_file));
-                break;
-            case 'K':
-                if (0 == strcmp(head, "KernelStack:"))
-                    valptr = &(mHr(KernelStack));
-                break;
-            case 'L':
-                if (0 == strcmp(head, "LowFree:"))
-                    valptr = &(mHr(LowFree));
-                else
-                if (0 == strcmp(head, "LowTotal:"))
-                    valptr = &(mHr(LowTotal));
-                break;
-            case 'M':
-                if (0 == strcmp(head, "Mapped:"))
-                    valptr = &(mHr(Mapped));
-                else
-                if (0 == strcmp(head, "MemAvailable:"))
-                    valptr = &(mHr(MemAvailable));
-                else
-                if (0 == strcmp(head, "MemFree:"))
-                    valptr = &(mHr(MemFree));
-                else
-                if (0 == strcmp(head, "MemTotal:"))
-                    valptr = &(mHr(MemTotal));
-                else
-                if (0 == strcmp(head, "Mlocked:"))
-                    valptr = &(mHr(Mlocked));
-                break;
-            case 'N':
-                if (0 == strcmp(head, "NFS_Unstable:"))
-                    valptr = &(mHr(NFS_Unstable));
-                break;
-            case 'P':
-                if (0 == strcmp(head, "PageTables:"))
-                    valptr = &(mHr(PageTables));
-                break;
-            case 'S':
-                if (0 == strcmp(head, "SReclaimable:"))
-                    valptr = &(mHr(SReclaimable));
-                else
-                if (0 == strcmp(head, "SUnreclaim:"))
-                    valptr = &(mHr(SUnreclaim));
-                else
-                if (0 == strcmp(head, "Shmem:"))
-                    valptr = &(mHr(Shmem));
-                else
-                if (0 == strcmp(head, "Slab:"))
-                    valptr = &(mHr(Slab));
-                else
-                if (0 == strcmp(head, "SwapCached:"))
-                    valptr = &(mHr(SwapCached));
-                else
-                if (0 == strcmp(head, "SwapFree:"))
-                    valptr = &(mHr(SwapFree));
-                else
-                if (0 == strcmp(head, "SwapTotal:"))
-                    valptr = &(mHr(SwapTotal));
-                break;
-            case 'U':
-                if (0 == strcmp(head, "Unevictable:"))
-                    valptr = &(mHr(Unevictable));
-                break;
-            case 'V':
-                if (0 == strcmp(head, "VmallocChunk:"))
-                    valptr = &(mHr(VmallocChunk));
-                else
-                if (0 == strcmp(head, "VmallocTotal:"))
-                    valptr = &(mHr(VmallocTotal));
-                else
-                if (0 == strcmp(head, "VmallocUsed:"))
-                    valptr = &(mHr(VmallocUsed));
-                break;
-            case 'W':
-                if (0 == strcmp(head, "Writeback:"))
-                    valptr = &(mHr(Writeback));
-                else
-                if (0 == strcmp(head, "WritebackTmp:"))
-                    valptr = &(mHr(WritebackTmp));
-                break;
-            default:
-                break;
-        }
+
+        e.key = head;
+        if (hsearch_r(e, FIND, &ep, &info->hashtab))
+            valptr = ep->data;
+
         head = tail+1;
         if (valptr) {
             *valptr = strtoul(head, &tail, 10);
         }
+
         tail = strchr(head, '\n');
         if (!tail)
             break;
+
         head = tail + 1;
     } while(tail);
 
@@ -817,7 +745,7 @@ PROCPS_EXPORT int read_meminfo_failed (
 
     // let's not distort the deltas the first time thru ...
     if (!info->meminfo_was_read)
-        memcpy(&info->mem_hist.old, &info->mem_hist.new, sizeof(struct meminfo_data));
+        memcpy(&info->hist.old, &info->hist.new, sizeof(struct meminfo_data));
     info->meminfo_was_read = 1;
 
     return 0;
@@ -902,6 +830,7 @@ PROCPS_EXPORT int procps_meminfo_new (
         struct procps_meminfo **info)
 {
     struct procps_meminfo *p;
+    int rc;
 
     if (info == NULL || *info != NULL)
         return -EINVAL;
@@ -910,6 +839,11 @@ PROCPS_EXPORT int procps_meminfo_new (
 
     p->refcount = 1;
     p->meminfo_fd = -1;
+
+    if ((rc = make_hash_failed(p))) {
+        free(p);
+        return rc;
+    }
 
     *info = p;
     return 0;
@@ -939,6 +873,7 @@ PROCPS_EXPORT int procps_meminfo_unref (
             extents_free_all((*info));
         if ((*info)->items)
             free((*info)->items);
+        hdestroy_r(&(*info)->hashtab);
         free(*info);
         *info = NULL;
         return 0;
@@ -1014,7 +949,7 @@ PROCPS_EXPORT struct meminfo_stack *procps_meminfo_select (
 
     if (read_meminfo_failed(info))
         return NULL;
-    assign_results(info->extents->stacks[0], &info->mem_hist);
+    assign_results(info->extents->stacks[0], &info->hist);
     info->dirty_stacks = 1;
 
     return info->extents->stacks[0];
