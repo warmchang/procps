@@ -224,6 +224,10 @@ MEM_set(SWAP_FREE,              ul_int,  SwapFree)
 MEM_set(SWAP_TOTAL,             ul_int,  SwapTotal)
 MEM_set(SWAP_USED,              ul_int,  derived_swap_used)
 
+#undef setDECL
+#undef MEM_set
+#undef HST_set
+
 
 // ___ Results 'Get' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -331,6 +335,10 @@ MEM_get(SWAP_CACHED,           SwapCached)
 MEM_get(SWAP_FREE,             SwapFree)
 MEM_get(SWAP_TOTAL,            SwapTotal)
 MEM_get(SWAP_USED,             derived_swap_used)
+
+#undef getDECL
+#undef MEM_get
+#undef HST_get
 
 
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -456,15 +464,10 @@ static struct {
 enum meminfo_item PROCPS_MEMINFO_logical_end = PROCPS_MEMINFO_SWAP_USED + 1;
 
 #undef setNAME
-#undef setDECL
-#undef MEM_set
-#undef HST_set
 #undef getNAME
-#undef getDECL
-#undef MEM_get
-#undef HST_get
 #undef RS
 #undef RG
+
 
 // ___ Private Functions ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -816,6 +819,8 @@ static struct stacks_extent *stacks_alloc (
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
+// --- standard required functions --------------------------------------------
+
 /*
  * procps_meminfo_new:
  *
@@ -882,6 +887,8 @@ PROCPS_EXPORT int procps_meminfo_unref (
 } // end: procps_meminfo_unref
 
 
+// --- variable interface functions -------------------------------------------
+
 PROCPS_EXPORT signed long procps_meminfo_get (
         struct procps_meminfo *info,
         enum meminfo_item item)
@@ -904,9 +911,7 @@ PROCPS_EXPORT signed long procps_meminfo_get (
         sav_secs = cur_secs;
     }
 
-    if (item < PROCPS_MEMINFO_logical_end)
-        return Item_table[item].getsfunc(info);
-    return -EINVAL;
+    return Item_table[item].getsfunc(info);
 } // end: procps_meminfo_get
 
 

@@ -78,10 +78,10 @@ enum slabinfo_sort_order {
 struct slabinfo_result {
     enum slabinfo_item item;
     union {
-        signed int      s_int;
-        unsigned int    u_int;
-        unsigned long   ul_int;
-        char          * str;
+        signed int     s_int;
+        unsigned int   u_int;
+        unsigned long  ul_int;
+        char          *str;
     } result;
 };
 

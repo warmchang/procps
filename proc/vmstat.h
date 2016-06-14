@@ -275,8 +275,8 @@ enum vmstat_item {
 struct vmstat_result {
     enum vmstat_item item;
     union {
-        signed long   sl_int;
-        unsigned long ul_int;
+        signed long    sl_int;
+        unsigned long  ul_int;
     } result;
 };
 

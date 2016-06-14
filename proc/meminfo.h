@@ -121,12 +121,11 @@ enum meminfo_item {
     PROCPS_MEMINFO_SWAP_USED              //  ul_int
 };
 
-struct procps_meminfo;
 
 struct meminfo_result {
     enum meminfo_item item;
     union {
-        signed int      s_int;
+        signed int     s_int;
         unsigned long  ul_int;
     } result;
 };

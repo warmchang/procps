@@ -185,6 +185,12 @@ setDECL(SYS_DELTA_PROC_BLOCKED) { (void)T; R->result.s_int = S->new.procs_blocke
 SYSsetH(SYS_DELTA_PROC_CREATED,   s_int,    procs_created)
 setDECL(SYS_DELTA_PROC_RUNNING) { (void)T; R->result.s_int = S->new.procs_running - S->old.procs_running; }
 
+#undef setDECL
+#undef TIC_set
+#undef SYS_set
+#undef TICsetH
+#undef SYSsetH
+
 
 // ___ Results 'Get' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -243,6 +249,12 @@ SYSgetH(SYS_DELTA_INTERRUPTS,     intr)
 getDECL(SYS_DELTA_PROC_BLOCKED) { return I->sys_hist.new.procs_blocked - I->sys_hist.old.procs_blocked; }
 SYSgetH(SYS_DELTA_PROC_CREATED,  procs_created)
 getDECL(SYS_DELTA_PROC_RUNNING) { return I->sys_hist.new.procs_running - I->sys_hist.old.procs_running; }
+
+#undef getDECL
+#undef TIC_get
+#undef SYS_get
+#undef TICgetH
+#undef SYSgetH
 
 
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -314,17 +326,7 @@ enum stat_item PROCPS_STAT_TIC_highest = PROCPS_STAT_TIC_DELTA_GUEST_NICE;
 enum stat_item PROCPS_STAT_logical_end = PROCPS_STAT_SYS_DELTA_PROC_RUNNING + 1;
 
 #undef setNAME
-#undef setDECL
-#undef TIC_set
-#undef SYS_set
-#undef TICsetH
-#undef SYSsetH
 #undef getNAME
-#undef getDECL
-#undef TIC_get
-#undef SYS_get
-#undef TICgetH
-#undef SYSgetH
 #undef RS
 #undef RG
 
@@ -458,6 +460,7 @@ static int make_numa_hist (
        ( and be careful, this libnuma call returns the highest node id in use, )
        ( NOT an actual number of nodes - some of those 'slots' might be unused ) */
     info->nodes.total = info->our_max_node() + 1;
+
     if (!info->nodes.hist.n_alloc
     || !(info->nodes.total < info->nodes.hist.n_alloc)) {
         info->nodes.hist.n_alloc = info->nodes.total + NEWOLD_INCR;
@@ -469,7 +472,7 @@ static int make_numa_hist (
     // forget all of the prior node statistics & anticipate unassigned slots
     memset(info->nodes.hist.tics, 0, info->nodes.hist.n_alloc * sizeof(struct hist_tic));
     nod_ptr = info->nodes.hist.tics;
-    for (i = 0; i < info->cpus.hist.n_alloc; i++) {
+    for (i = 0; i < info->nodes.total; i++) {
         nod_ptr->id = nod_ptr->numa_node = PROCPS_STAT_NODE_INVALID;
         ++nod_ptr;
     }
@@ -808,6 +811,8 @@ static struct stat_stack *update_single_stack (
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
+// --- standard required functions --------------------------------------------
+
 /*
  * procps_stat_new:
  *
@@ -922,6 +927,8 @@ PROCPS_EXPORT int procps_stat_unref (
 } // end: procps_stat_unref
 
 
+// --- variable interface functions -------------------------------------------
+
 PROCPS_EXPORT signed long long procps_stat_get (
         struct procps_statinfo *info,
         enum stat_item item)
@@ -929,6 +936,11 @@ PROCPS_EXPORT signed long long procps_stat_get (
     static time_t sav_secs;
     time_t cur_secs;
     int rc;
+
+    if (info == NULL)
+        return -EINVAL;
+    if (item < 0 || item >= PROCPS_STAT_logical_end)
+        return -EINVAL;
 
     /* no sense reading the stat with every call from a program like vmstat
        who chooses not to use the much more efficient 'select' function ... */
@@ -939,9 +951,7 @@ PROCPS_EXPORT signed long long procps_stat_get (
         sav_secs = cur_secs;
     }
 
-    if (item < PROCPS_STAT_logical_end)
-        return Item_table[item].getsfunc(info);
-    return -EINVAL;
+    return Item_table[item].getsfunc(info);
 } // end: procps_stat_get
 
 

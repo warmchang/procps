@@ -829,6 +829,8 @@ static int stacks_reconfig_maybe (
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
+// --- standard required functions --------------------------------------------
+
 /*
  * procps_slabinfo_new():
  *
@@ -859,7 +861,7 @@ PROCPS_EXPORT int procps_slabinfo_new (
 
     /* do a priming read here for the following potential benefits: |
          1) see if that caller's permissions were sufficient (root) |
-         2) make delta results potentially useful, even is 1st time | */
+         2) make delta results potentially useful, even if 1st time | */
     if ((rc = read_slabinfo_failed(p))) {
         procps_slabinfo_unref(&p);
         return rc;
@@ -918,6 +920,8 @@ PROCPS_EXPORT int procps_slabinfo_unref (
     return (*info)->refcount;
 } // end: procps_slabinfo_unref
 
+
+// --- variable interface functions -------------------------------------------
 
 PROCPS_EXPORT signed long procps_slabinfo_get (
         struct procps_slabinfo *info,
@@ -1056,5 +1060,4 @@ PROCPS_EXPORT struct slabinfo_stack **procps_slabinfo_sort (
 
     qsort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms);
     return stacks;
- #undef QSORT_r
 } // end: procps_slabinfo_sort

@@ -144,7 +144,7 @@ enum pids_item {
     PROCPS_PIDS_VM_USED,           //  sl_int
     PROCPS_PIDS_VSIZE_PGS,         //  ul_int
     PROCPS_PIDS_WCHAN_ADDR,        //  ul_int
-    PROCPS_PIDS_WCHAN_NAME,        //     str
+    PROCPS_PIDS_WCHAN_NAME         //     str
 };
 
 enum pids_fetch_type {
@@ -163,19 +163,17 @@ enum pids_sort_order {
 };
 
 
-struct procps_pidsinfo;
-
 struct pids_result {
     enum pids_item item;
     union {
-        char                 s_ch;
-        int                  s_int;
-        unsigned int         u_int;
-        long                 sl_int;
-        unsigned long        ul_int;
-        unsigned long long   ull_int;
-        char               * str;
-        char              ** strv;
+        signed char         s_ch;
+        signed int          s_int;
+        unsigned int        u_int;
+        signed long         sl_int;
+        unsigned long       ul_int;
+        unsigned long long  ull_int;
+        char               *str;
+        char              **strv;
     } result;
 };
 
@@ -197,6 +195,8 @@ struct pids_fetch {
 #define PROCPS_PIDS_VAL(rel_enum,type,stack) \
     stack -> head [ rel_enum ] . result . type
 
+
+struct procps_pidsinfo;
 
 int procps_pids_new   (struct procps_pidsinfo **info, enum pids_item *items, int numitems);
 int procps_pids_ref   (struct procps_pidsinfo  *info);

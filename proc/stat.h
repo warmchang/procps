@@ -60,7 +60,7 @@ enum stat_item {
     PROCPS_STAT_SYS_DELTA_INTERRUPTS,    //   s_int
     PROCPS_STAT_SYS_DELTA_PROC_BLOCKED,  //   s_int
     PROCPS_STAT_SYS_DELTA_PROC_CREATED,  //   s_int
-    PROCPS_STAT_SYS_DELTA_PROC_RUNNING,  //   s_int
+    PROCPS_STAT_SYS_DELTA_PROC_RUNNING   //   s_int
 };
 
 enum stat_reap_type {
@@ -71,9 +71,9 @@ enum stat_reap_type {
 struct stat_result {
     enum stat_item item;
     union {
-        signed int            s_int;
-        signed long          sl_int;
-        unsigned long        ul_int;
+        signed int          s_int;
+        signed long         sl_int;
+        unsigned long       ul_int;
         unsigned long long  ull_int;
     } result;
 };

@@ -1358,6 +1358,8 @@ static struct stacks_extent *stacks_alloc (
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
+// --- standard required functions --------------------------------------------
+
 /*
  * procps_vmstat_new:
  *
@@ -1424,6 +1426,8 @@ PROCPS_EXPORT int procps_vmstat_unref (
 } // end: procps_vmstat_unref
 
 
+// --- variable interface functions -------------------------------------------
+
 PROCPS_EXPORT signed long procps_vmstat_get (
         struct procps_vmstat *info,
         enum vmstat_item item)
@@ -1446,9 +1450,7 @@ PROCPS_EXPORT signed long procps_vmstat_get (
         sav_secs = cur_secs;
     }
 
-    if (item < PROCPS_VMSTAT_logical_end)
-        return Item_table[item].getsfunc(info);
-    return -EINVAL;
+    return Item_table[item].getsfunc(info);
 } // end: procps_vmstat_get
 
 
