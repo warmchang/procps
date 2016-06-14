@@ -4714,7 +4714,7 @@ numa_oops:
                if (Numa_node_sel == CPU_VAL(stat_NU, s_int, i)) {
                   if (!isROOM(anyFLG, 1)) break;
                   snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, s_int, i));
-                  summary_hlp(Stat_reap->nodes->stacks[i], tmp);
+                  summary_hlp(Stat_reap->cpus->stacks[i], tmp);
                   Msg_row += 1;
                }
             }
