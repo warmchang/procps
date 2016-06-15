@@ -876,8 +876,8 @@ static void itemize_stacks_all (
 
 
 static inline int items_check_failed (
-        int numitems,
-        enum pids_item *items)
+        enum pids_item *items,
+        int numitems)
 {
     int i;
 
@@ -1137,7 +1137,7 @@ PROCPS_EXPORT int procps_pids_new (
     /* if we're without items or numitems, a later call to
        procps_pids_reset() will become mandatory */
     if (items && numitems) {
-        if (items_check_failed(numitems, items)) {
+        if (items_check_failed(items, numitems)) {
             free(p);
             return -EINVAL;
         }
@@ -1242,15 +1242,23 @@ PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
     static proc_t self;
     struct stacks_extent *ext;
 
-    // this is very likely the *only* newlib function where the
-    // context (procps_pidsinfo) of NULL will ever be permitted
+    /* this is very likely the *only* newlib function where the
+       context (procps_pidsinfo) of NULL will ever be permitted */
     look_up_our_self(&self);
     if (!return_self)
         return NULL;
 
-    if (info == NULL
-    || !(ext = stacks_alloc(info, 1))
-    || !extent_cut(info, ext))
+    if (info == NULL)
+        return NULL;
+
+    /* with items & numitems technically optional at 'new' time, it's
+       expected 'reset' will have been called -- but just in case ... */
+    if (!info->curitems)
+        return NULL;
+
+    if (!(ext = stacks_alloc(info, 1)))
+        return NULL;
+    if (!extent_cut(info, ext))
         return NULL;
 
     ext->next = info->otherexts;
@@ -1272,6 +1280,10 @@ PROCPS_EXPORT struct pids_stack *procps_pids_get (
     if (!info->curitems)
         return NULL;
     if (which != PROCPS_FETCH_TASKS_ONLY && which != PROCPS_FETCH_THREADS_TOO)
+        return NULL;
+    /* with items & numitems technically optional at 'new' time, it's
+       expected 'reset' will have been called -- but just in case ... */
+    if (!info->curitems)
         return NULL;
 
 fresh_start:
@@ -1318,9 +1330,11 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
 
     if (info == NULL)
         return NULL;
-    if (!info->curitems)
-        return NULL;
     if (which != PROCPS_FETCH_TASKS_ONLY && which != PROCPS_FETCH_THREADS_TOO)
+        return NULL;
+    /* with items & numitems technically optional at 'new' time, it's
+       expected 'reset' will have been called -- but just in case ... */
+    if (!info->curitems)
         return NULL;
 
     if (!oldproc_open(&info->PT, info->oldflags))
@@ -1342,7 +1356,7 @@ PROCPS_EXPORT int procps_pids_reset (
 {
     if (info == NULL || newitems == NULL)
         return -EINVAL;
-    if (items_check_failed(newnumitems, newitems))
+    if (items_check_failed(newitems, newnumitems))
         return -EINVAL;
 
     /* shame on this caller, they didn't change anything. and unless they have
@@ -1397,6 +1411,10 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
     if (numthese < 1 || numthese > FILL_ID_MAX)
         return NULL;
     if (which != PROCPS_SELECT_PID && which != PROCPS_SELECT_UID)
+        return NULL;
+    /* with items & numitems technically optional at 'new' time, it's
+       expected 'reset' will have been called -- but just in case ... */
+    if (!info->curitems)
         return NULL;
 
     // this zero delimiter is really only needed with PROCPS_SELECT_PID
