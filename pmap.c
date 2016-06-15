@@ -629,9 +629,9 @@ static int one_proc (struct pids_stack *p)
 					diff = 0;
 					continue;
 				}
-				/* Other keys */
-				continue;
 			}
+			/* Other keys or not a key-value pair */
+			continue;
 		}
 		sscanf(mapbuf, "%lx-%lx %31s %llx %x:%x %llu",
 		       &start_To_Avoid_Warning,
