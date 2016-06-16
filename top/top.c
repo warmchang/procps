@@ -213,8 +213,8 @@ enum Rel_memitems {
 static struct procps_pidsinfo *Pids_ctx;
 static int Pids_itms_cur;                   // 'current' max (<= Fieldstab)
 static enum pids_item *Pids_itms;           // allocated as MAXTBL(Fieldstab)
-static struct pids_fetch *Pids_read;        // for reap or select
-#define PIDSmaxt Pids_read->counts.total    // just a little less wordy
+static struct pids_fetch *Pids_reap;        // for reap or select
+#define PIDSmaxt Pids_reap->counts.total    // just a little less wordy
         // pid stack results extractor macro, where e=our EU enum, t=type, s=stack
         // ( we'll exploit that <proc/pids.h> provided macro as much as possible )
         // ( but many functions use their own unique tailored version for access )
@@ -231,10 +231,9 @@ static enum stat_item Stat_items[] = {
 enum Rel_statitems {
    stat_ID, stat_NU, stat_US, stat_SY, stat_NI,
    stat_IL, stat_IO, stat_IR, stat_SI, stat_ST };
-        // cpu/node stack results extractor macro, where e=rel enum, t=type, x=index
-#define SUM_VAL(e,t)   PROCPS_STAT_VAL(e, t, Stat_reap->summary)
-#define CPU_VAL(e,t,x) PROCPS_STAT_VAL(e, t, Stat_reap->cpus->stacks[x])
-#define NOD_VAL(e,t,x) PROCPS_STAT_VAL(e, t, Stat_reap->nodes->stacks[x])
+        // cpu/node stack results extractor macros, where e=rel enum, x=index
+#define CPU_VAL(e,x) PROCPS_STAT_VAL(e, s_int, Stat_reap->cpus->stacks[x])
+#define NOD_VAL(e,x) PROCPS_STAT_VAL(e, s_int, Stat_reap->nodes->stacks[x])
 
 /*######  Tiny useful routine(s)  ########################################*/
 
@@ -2191,7 +2190,7 @@ static void cpus_refresh (void) {
 static void procs_refresh (void) {
  #define nALIGN(n,m) (((n + m - 1) / m) * m)     // unconditionally align
  #define nALGN2(n,m) ((n + m - 1) & ~(m - 1))    // with power of 2 align
- #define n_reap  Pids_read->counts.total
+ #define n_reap  Pids_reap->counts.total
    static double uptime_sav;
    static int n_alloc = -1;                      // size of windows stacks arrays
    double uptime_cur;
@@ -2205,9 +2204,9 @@ static void procs_refresh (void) {
    // if in Solaris mode, adjust our scaling for all cpus
    Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
 
-   if (Monpidsidx) Pids_read = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, PROCPS_SELECT_PID);
-   else Pids_read = procps_pids_reap(Pids_ctx, Thread_mode ? PROCPS_FETCH_THREADS_TOO : PROCPS_FETCH_TASKS_ONLY);
-   if (!Pids_read)
+   if (Monpidsidx) Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, PROCPS_SELECT_PID);
+   else Pids_reap = procps_pids_reap(Pids_ctx, Thread_mode ? PROCPS_FETCH_THREADS_TOO : PROCPS_FETCH_TASKS_ONLY);
+   if (!Pids_reap)
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 
    // now refresh each window's stack heads pointers table...
@@ -2216,11 +2215,11 @@ static void procs_refresh (void) {
       n_alloc = nALGN2(n_reap, 128);
       for (i = 0; i < GROUPSMAX; i++) {
          Winstk[i].ppt = alloc_r(Winstk[i].ppt, sizeof(void*) * n_alloc);
-         memcpy(Winstk[i].ppt, Pids_read->stacks, sizeof(void*) * PIDSmaxt);
+         memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void*) * PIDSmaxt);
       }
    } else {
       for (i = 0; i < GROUPSMAX; i++)
-         memcpy(Winstk[i].ppt, Pids_read->stacks, sizeof(void*) * PIDSmaxt);
+         memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void*) * PIDSmaxt);
    }
  #undef n_reap
  #undef nALGN2
@@ -4682,8 +4681,8 @@ static void summary_show (void) {
    if (isROOM(View_STATES, 2)) {
       show_special(0, fmtmk(N_unq(STATE_line_1_fmt)
          , Thread_mode ? N_txt(WORD_threads_txt) : N_txt(WORD_process_txt)
-         , PIDSmaxt, Pids_read->counts.running, Pids_read->counts.sleeping
-         , Pids_read->counts.stopped, Pids_read->counts.zombied));
+         , PIDSmaxt, Pids_reap->counts.running, Pids_reap->counts.sleeping
+         , Pids_reap->counts.stopped, Pids_reap->counts.zombied));
       Msg_row += 1;
 
       cpus_refresh();
@@ -4700,24 +4699,24 @@ numa_oops:
             // display each cpu node's states
             for (i = 0; i < Numa_node_tot; i++) {
                struct stat_stack *nod_ptr = Stat_reap->nodes->stacks[i];
-               if (NOD_VAL(stat_ID, s_int, i) == PROCPS_STAT_NODE_INVALID) continue;
+               if (NOD_VAL(stat_ID, i) == PROCPS_STAT_NODE_INVALID) continue;
                if (!isROOM(anyFLG, 1)) break;
-               snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), NOD_VAL(stat_ID, s_int, i));
+               snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), NOD_VAL(stat_ID, i));
                summary_hlp(nod_ptr, tmp);
                Msg_row += 1;
             }
          } else {
             // display the node summary, then the associated cpus (if room)
             for (i = 0; i < Numa_node_tot; i++)
-               if (Numa_node_sel == NOD_VAL(stat_ID, s_int, i)) break;
+               if (Numa_node_sel == NOD_VAL(stat_ID, i)) break;
             if (i == Numa_node_tot) goto numa_oops;
             snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
             summary_hlp(Stat_reap->nodes->stacks[Numa_node_sel], tmp);
             Msg_row += 1;
             for (i = 0; i < Cpu_cnt; i++) {
-               if (Numa_node_sel == CPU_VAL(stat_NU, s_int, i)) {
+               if (Numa_node_sel == CPU_VAL(stat_NU, i)) {
                   if (!isROOM(anyFLG, 1)) break;
-                  snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, s_int, i));
+                  snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
                   summary_hlp(Stat_reap->cpus->stacks[i], tmp);
                   Msg_row += 1;
                }
@@ -4734,7 +4733,7 @@ numa_nope:
       } else {
          // display each cpu's states separately, screen height permitting...
          for (i = 0; i < Cpu_cnt; i++) {
-            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, s_int, i));
+            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
             summary_hlp(Stat_reap->cpus->stacks[i], tmp);
             Msg_row += 1;
             if (!isROOM(anyFLG, 1)) break;
@@ -4858,7 +4857,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
       #define Js  CHKw(q, Show_JRSTRS)      // represent them as #defines
       #define Jn  CHKw(q, Show_JRNUMS)      // and only exec code if used
 
-   /* except for the XOF/XON pseudo flags, the following case labels are gouped
+   /* except for the XOF/XON pseudo flags the following case labels are grouped
       by result type according to capacity (small -> large) and then ordered by
       additional processing requirements (as in plain, scaled, decorated, etc.) */
 
