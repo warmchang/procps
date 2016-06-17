@@ -467,7 +467,7 @@ static void supgrps_from_supgids (proc_t *p) {
     t = 0;
     do {
         if (',' == *s) ++s;
-        g = group_from_gid((uid_t)strtol(s, &s, 10));
+        g = pwcache_get_group((uid_t)strtol(s, &s, 10));
         p->supgrp = xrealloc(p->supgrp, P_G_SZ+t+2);
         t += snprintf(p->supgrp+t, P_G_SZ+2, "%s%s", t ? "," : "", g);
     } while (*s);
@@ -896,22 +896,22 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     /* some number->text resolving which is time consuming */
     /* ( names are cached, so memcpy to arrays was silly ) */
     if (flags & PROC_FILLUSR){
-        p->euser = user_from_uid(p->euid);
+        p->euser = pwcache_get_user(p->euid);
         if(flags & PROC_FILLSTATUS) {
-            p->ruser = user_from_uid(p->ruid);
-            p->suser = user_from_uid(p->suid);
-            p->fuser = user_from_uid(p->fuid);
+            p->ruser = pwcache_get_user(p->ruid);
+            p->suser = pwcache_get_user(p->suid);
+            p->fuser = pwcache_get_user(p->fuid);
         }
     }
 
     /* some number->text resolving which is time consuming */
     /* ( names are cached, so memcpy to arrays was silly ) */
     if (flags & PROC_FILLGRP){
-        p->egroup = group_from_gid(p->egid);
+        p->egroup = pwcache_get_group(p->egid);
         if(flags & PROC_FILLSTATUS) {
-            p->rgroup = group_from_gid(p->rgid);
-            p->sgroup = group_from_gid(p->sgid);
-            p->fgroup = group_from_gid(p->fgid);
+            p->rgroup = pwcache_get_group(p->rgid);
+            p->sgroup = pwcache_get_group(p->sgid);
+            p->fgroup = pwcache_get_group(p->fgid);
         }
     }
 
@@ -1000,22 +1000,22 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     /* some number->text resolving which is time consuming */
     /* ( names are cached, so memcpy to arrays was silly ) */
     if (flags & PROC_FILLUSR){
-        t->euser = user_from_uid(t->euid);
+        t->euser = pwcache_get_user(t->euid);
         if(flags & PROC_FILLSTATUS) {
-            t->ruser = user_from_uid(t->ruid);
-            t->suser = user_from_uid(t->suid);
-            t->fuser = user_from_uid(t->fuid);
+            t->ruser = pwcache_get_user(t->ruid);
+            t->suser = pwcache_get_user(t->suid);
+            t->fuser = pwcache_get_user(t->fuid);
         }
     }
 
     /* some number->text resolving which is time consuming */
     /* ( names are cached, so memcpy to arrays was silly ) */
     if (flags & PROC_FILLGRP){
-        t->egroup = group_from_gid(t->egid);
+        t->egroup = pwcache_get_group(t->egid);
         if(flags & PROC_FILLSTATUS) {
-            t->rgroup = group_from_gid(t->rgid);
-            t->sgroup = group_from_gid(t->sgid);
-            t->fgroup = group_from_gid(t->fgid);
+            t->rgroup = pwcache_get_group(t->rgid);
+            t->sgroup = pwcache_get_group(t->sgid);
+            t->fgroup = pwcache_get_group(t->fgid);
         }
     }
 
