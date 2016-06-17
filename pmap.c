@@ -629,9 +629,9 @@ static int one_proc(proc_t * p)
 					diff = 0;
 					continue;
 				}
-				/* Other keys */
-				continue;
 			}
+			/* Other keys or not a key-value pair */
+			continue;
 		}
 		sscanf(mapbuf, "%" KLF "x-%" KLF "x %31s %llx %x:%x %llu", &start,
 		       &end, perms, &file_offset, &dev_major, &dev_minor,
