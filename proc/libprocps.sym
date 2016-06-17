@@ -58,7 +58,7 @@ global:
 	tty_to_dev;
 	unix_print_signals;
 	uptime;
-	user_from_uid;
+	pwcache_get_user;
 	procps_linux_version;
 local:
 	*;

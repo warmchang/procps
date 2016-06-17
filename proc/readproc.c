@@ -459,7 +459,7 @@ static void supgrps_from_supgids (proc_t *p) {
     t = 0;
     do {
         if (',' == *s) ++s;
-        g = group_from_gid((uid_t)strtol(s, &s, 10));
+        g = pwcache_get_group((uid_t)strtol(s, &s, 10));
         p->supgrp = xrealloc(p->supgrp, P_G_SZ+t+2);
         t += snprintf(p->supgrp+t, P_G_SZ+2, "%s%s", t ? "," : "", g);
     } while (*s);
@@ -955,21 +955,21 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
 
     /* some number->text resolving which is time consuming */
     if (flags & PROC_FILLUSR){
-        memcpy(p->euser, user_from_uid(p->euid), sizeof p->euser);
+        memcpy(p->euser, pwcache_get_user(p->euid), sizeof p->euser);
         if(flags & PROC_FILLSTATUS) {
-            memcpy(p->ruser, user_from_uid(p->ruid), sizeof p->ruser);
-            memcpy(p->suser, user_from_uid(p->suid), sizeof p->suser);
-            memcpy(p->fuser, user_from_uid(p->fuid), sizeof p->fuser);
+            memcpy(p->ruser, pwcache_get_user(p->ruid), sizeof p->ruser);
+            memcpy(p->suser, pwcache_get_user(p->suid), sizeof p->suser);
+            memcpy(p->fuser, pwcache_get_user(p->fuid), sizeof p->fuser);
         }
     }
 
     /* some number->text resolving which is time consuming */
     if (flags & PROC_FILLGRP){
-        memcpy(p->egroup, group_from_gid(p->egid), sizeof p->egroup);
+        memcpy(p->egroup, pwcache_get_group(p->egid), sizeof p->egroup);
         if(flags & PROC_FILLSTATUS) {
-            memcpy(p->rgroup, group_from_gid(p->rgid), sizeof p->rgroup);
-            memcpy(p->sgroup, group_from_gid(p->sgid), sizeof p->sgroup);
-            memcpy(p->fgroup, group_from_gid(p->fgid), sizeof p->fgroup);
+            memcpy(p->rgroup, pwcache_get_group(p->rgid), sizeof p->rgroup);
+            memcpy(p->sgroup, pwcache_get_group(p->sgid), sizeof p->sgroup);
+            memcpy(p->fgroup, pwcache_get_group(p->fgid), sizeof p->fgroup);
         }
     }
 
@@ -1062,21 +1062,21 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
 
     /* some number->text resolving which is time consuming */
     if (flags & PROC_FILLUSR){
-        memcpy(t->euser, user_from_uid(t->euid), sizeof t->euser);
+        memcpy(t->euser, pwcache_get_user(t->euid), sizeof t->euser);
         if(flags & PROC_FILLSTATUS) {
-            memcpy(t->ruser, user_from_uid(t->ruid), sizeof t->ruser);
-            memcpy(t->suser, user_from_uid(t->suid), sizeof t->suser);
-            memcpy(t->fuser, user_from_uid(t->fuid), sizeof t->fuser);
+            memcpy(t->ruser, pwcache_get_user(t->ruid), sizeof t->ruser);
+            memcpy(t->suser, pwcache_get_user(t->suid), sizeof t->suser);
+            memcpy(t->fuser, pwcache_get_user(t->fuid), sizeof t->fuser);
         }
     }
 
     /* some number->text resolving which is time consuming */
     if (flags & PROC_FILLGRP){
-        memcpy(t->egroup, group_from_gid(t->egid), sizeof t->egroup);
+        memcpy(t->egroup, pwcache_get_group(t->egid), sizeof t->egroup);
         if(flags & PROC_FILLSTATUS) {
-            memcpy(t->rgroup, group_from_gid(t->rgid), sizeof t->rgroup);
-            memcpy(t->sgroup, group_from_gid(t->sgid), sizeof t->sgroup);
-            memcpy(t->fgroup, group_from_gid(t->fgid), sizeof t->fgroup);
+            memcpy(t->rgroup, pwcache_get_group(t->rgid), sizeof t->rgroup);
+            memcpy(t->sgroup, pwcache_get_group(t->sgid), sizeof t->sgroup);
+            memcpy(t->fgroup, pwcache_get_group(t->fgid), sizeof t->fgroup);
         }
     }
 
