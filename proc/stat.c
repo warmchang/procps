@@ -751,6 +751,7 @@ static int stacks_fetch_tics (
     this->result.stacks = this->anchor;
     this->fetch.dirty_stacks = 1;
 
+    // callers beware, this might be zero (maybe no libnuma.so) ...
     return this->result.total;
 } // end: stacks_fetch_tics
 
@@ -1029,12 +1030,14 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
                 return NULL;
             break;
         case STAT_REAP_CPUS_AND_NODES:
-            if (0 > make_numa_hist(info))
-                return NULL;
             if (!stacks_fetch_tics(info, &info->cpus))
                 return NULL;
-            if (!stacks_fetch_tics(info, &info->nodes))
+#ifndef NUMA_DISABLE
+            if (0 > make_numa_hist(info))
                 return NULL;
+            // tolerate an unexpected absence of libnuma.so ...
+            stacks_fetch_tics(info, &info->nodes);
+#endif
             break;
         default:
             return NULL;
