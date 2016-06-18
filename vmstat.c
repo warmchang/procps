@@ -313,10 +313,10 @@ static void new_format(void)
     cpu_iow = TICv(stat_IOW);
     cpu_sto = TICv(stat_STO);
 
-    pgpgin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN);
-    pgpgout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT);
-    pswpin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN);
-    pswpout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT);
+    pgpgin[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGIN, ul_int);
+    pgpgout[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGOUT, ul_int);
+    pswpin[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPIN, ul_int);
+    pswpout[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPOUT, ul_int);
 
     if ((mem_stack = procps_meminfo_select(mem_info, Mem_items, 6)) ==
         NULL)
@@ -337,10 +337,10 @@ static void new_format(void)
            unitConvert(MEMv(mem_FREE)),
            unitConvert((a_option?MEMv(mem_INA):MEMv(mem_BUF))),
            unitConvert((a_option?MEMv(mem_ACT):MEMv(mem_CAC))),
-           (unsigned)( (unitConvert(procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN)  * kb_per_page) * hz + divo2) / Div ),
-           (unsigned)( (unitConvert(procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT)  * kb_per_page) * hz + divo2) / Div ),
-           (unsigned)( (procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN) * hz + divo2) / Div ),
-           (unsigned)( (procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT) * hz + divo2) / Div ),
+           (unsigned)( (unitConvert(PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPIN, ul_int)  * kb_per_page) * hz + divo2) / Div ),
+           (unsigned)( (unitConvert(PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPOUT, ul_int)  * kb_per_page) * hz + divo2) / Div ),
+           (unsigned)( (PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGIN, ul_int) * hz + divo2) / Div ),
+           (unsigned)( (PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGOUT, ul_int) * hz + divo2) / Div ),
            (unsigned)( (SYSv(stat_INT)           * hz + divo2) / Div ),
            (unsigned)( (SYSv(stat_CTX)           * hz + divo2) / Div ),
            (unsigned)( (100*cpu_use        + divo2) / Div ),
@@ -372,10 +372,10 @@ static void new_format(void)
         cpu_idl = DTICv(stat_IDL);
         cpu_iow = DTICv(stat_IOW);
         cpu_sto = DTICv(stat_STO);
-        pgpgin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN);
-        pgpgout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT);
-        pswpin[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN);
-        pswpout[tog] = procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT);
+        pgpgin[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGIN, ul_int);
+        pgpgout[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGOUT, ul_int);
+        pswpin[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPIN, ul_int);
+        pswpout[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPOUT, ul_int);
 
         if (t_option) {
             (void) time( &the_time );
@@ -846,10 +846,10 @@ static void sum_format(void)
     printf(_("%13lld stolen cpu ticks\n"), TICv(sstat_STO));
     printf(_("%13lld non-nice guest cpu ticks\n"), TICv(sstat_GST));
     printf(_("%13lld nice guest cpu ticks\n"), TICv(sstat_GNI));
-    printf(_("%13lu pages paged in\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGIN));
-    printf(_("%13lu pages paged out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PGPGOUT));
-    printf(_("%13lu pages swapped in\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPIN));
-    printf(_("%13lu pages swapped out\n"), procps_vmstat_get(vm_info, PROCPS_VMSTAT_PSWPOUT));
+    printf(_("%13lu pages paged in\n"), PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGIN, ul_int));
+    printf(_("%13lu pages paged out\n"), PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGOUT, ul_int));
+    printf(_("%13lu pages swapped in\n"), PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPIN, ul_int));
+    printf(_("%13lu pages swapped out\n"), PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPOUT, ul_int));
     printf(_("%13lu interrupts\n"), SYSv(sstat_INT));
     printf(_("%13lu CPU context switches\n"), SYSv(sstat_CTX));
     printf(_("%13lu boot time\n"), SYSv(sstat_TOB));
@@ -872,7 +872,7 @@ static void fork_format(void)
 	xerrx(EXIT_FAILURE,
 		_("Unable to create system stat structure"));
 
-    printf(_("%13lld forks\n"), procps_stat_get(sys_info, PROCPS_STAT_SYS_PROC_CREATED));
+    printf(_("%13lu forks\n"), PROCPS_STAT_GET(sys_info, PROCPS_STAT_SYS_PROC_CREATED, ul_int));
     /* Cleanup */
     procps_stat_unref(&sys_info);
 }

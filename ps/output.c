@@ -94,7 +94,7 @@ static void get_boot_time(void)
     struct procps_statinfo *stat_info = NULL;
     if (procps_stat_new(&stat_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create NEW ystem stat structure"));
-    boot_time = procps_stat_get(stat_info, PROCPS_STAT_SYS_TIME_OF_BOOT);
+    boot_time = PROCPS_STAT_GET(stat_info, PROCPS_STAT_SYS_TIME_OF_BOOT, ul_int);
     procps_stat_unref(&stat_info);
 }
 
@@ -104,7 +104,7 @@ static void get_memory_total()
     if (procps_meminfo_new(&mem_info) < 0)
 	xerrx(EXIT_FAILURE,
 		_("Unable to create meminfo structure"));
-    memory_total = procps_meminfo_get(mem_info, PROCPS_MEMINFO_MEM_TOTAL);
+    memory_total = PROCPS_MEMINFO_GET(mem_info, PROCPS_MEMINFO_MEM_TOTAL, ul_int);
     procps_meminfo_unref(&mem_info);
 }
 
