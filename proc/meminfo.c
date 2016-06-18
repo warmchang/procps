@@ -114,6 +114,7 @@ struct procps_meminfo {
     enum meminfo_item *items;
     struct stacks_extent *extents;
     struct hsearch_data hashtab;
+    struct meminfo_result get_this;
 };
 
 
@@ -229,126 +230,10 @@ MEM_set(SWAP_USED,              ul_int,  derived_swap_used)
 #undef HST_set
 
 
-// ___ Results 'Get' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
-
-#define getNAME(e) get_results_ ## e
-#define getDECL(e) static signed long getNAME(e) \
-    (struct procps_meminfo *I)
-
-// regular get
-#define MEM_get(e,x) getDECL(e) { return I->hist.new. x; }
-// delta get
-#define HST_get(e,x) getDECL(e) { return ( I->hist.new. x - I->hist.old. x ); }
-
-getDECL(noop)                { (void)I; return 0; }
-getDECL(extra)               { (void)I; return 0; }
-
-MEM_get(MEM_ACTIVE,            Active)
-MEM_get(MEM_ACTIVE_ANON,       Active_anon)
-MEM_get(MEM_ACTIVE_FILE,       Active_file)
-MEM_get(MEM_ANON,              AnonPages)
-MEM_get(MEM_AVAILABLE,         MemAvailable)
-MEM_get(MEM_BOUNCE,            Bounce)
-MEM_get(MEM_BUFFERS,           Buffers)
-MEM_get(MEM_CACHED,            Cached)
-MEM_get(MEM_COMMIT_LIMIT,      CommitLimit)
-MEM_get(MEM_COMMITTED_AS,      Committed_AS)
-MEM_get(MEM_HARD_CORRUPTED,    HardwareCorrupted)
-MEM_get(MEM_DIRTY,             Dirty)
-MEM_get(MEM_FREE,              MemFree)
-MEM_get(MEM_HUGE_ANON,         AnonHugePages)
-MEM_get(MEM_HUGE_FREE,         HugePages_Free)
-MEM_get(MEM_HUGE_RSVD,         HugePages_Rsvd)
-MEM_get(MEM_HUGE_SIZE,         Hugepagesize)
-MEM_get(MEM_HUGE_SURPLUS,      HugePages_Surp)
-MEM_get(MEM_HUGE_TOTAL,        HugePages_Total)
-MEM_get(MEM_INACTIVE,          Inactive)
-MEM_get(MEM_INACTIVE_ANON,     Inactive_anon)
-MEM_get(MEM_INACTIVE_FILE,     Inactive_file)
-MEM_get(MEM_KERNEL_STACK,      KernelStack)
-MEM_get(MEM_LOCKED,            Mlocked)
-MEM_get(MEM_MAPPED,            Mapped)
-MEM_get(MEM_NFS_UNSTABLE,      NFS_Unstable)
-MEM_get(MEM_PAGE_TABLES,       PageTables)
-MEM_get(MEM_SHARED,            Shmem)
-MEM_get(MEM_SLAB,              Slab)
-MEM_get(MEM_SLAB_RECLAIM,      SReclaimable)
-MEM_get(MEM_SLAB_UNRECLAIM,    SUnreclaim)
-MEM_get(MEM_TOTAL,             MemTotal)
-MEM_get(MEM_UNEVICTABLE,       Unevictable)
-MEM_get(MEM_USED,              derived_mem_used)
-MEM_get(MEM_VM_ALLOC_CHUNK,    VmallocChunk)
-MEM_get(MEM_VM_ALLOC_TOTAL,    VmallocTotal)
-MEM_get(MEM_VM_ALLOC_USED,     VmallocUsed)
-MEM_get(MEM_WRITEBACK,         Writeback)
-MEM_get(MEM_WRITEBACK_TMP,     WritebackTmp)
-
-HST_get(DELTA_ACTIVE,          Active)
-HST_get(DELTA_ACTIVE_ANON,     Active_anon)
-HST_get(DELTA_ACTIVE_FILE,     Active_file)
-HST_get(DELTA_ANON,            AnonPages)
-HST_get(DELTA_AVAILABLE,       MemAvailable)
-HST_get(DELTA_BOUNCE,          Bounce)
-HST_get(DELTA_BUFFERS,         Buffers)
-HST_get(DELTA_CACHED,          Cached)
-HST_get(DELTA_COMMIT_LIMIT,    CommitLimit)
-HST_get(DELTA_COMMITTED_AS,    Committed_AS)
-HST_get(DELTA_HARD_CORRUPTED,  HardwareCorrupted)
-HST_get(DELTA_DIRTY,           Dirty)
-HST_get(DELTA_FREE,            MemFree)
-HST_get(DELTA_HUGE_ANON,       AnonHugePages)
-HST_get(DELTA_HUGE_FREE,       HugePages_Free)
-HST_get(DELTA_HUGE_RSVD,       HugePages_Rsvd)
-HST_get(DELTA_HUGE_SIZE,       Hugepagesize)
-HST_get(DELTA_HUGE_SURPLUS,    HugePages_Surp)
-HST_get(DELTA_HUGE_TOTAL,      HugePages_Total)
-HST_get(DELTA_INACTIVE,        Inactive)
-HST_get(DELTA_INACTIVE_ANON,   Inactive_anon)
-HST_get(DELTA_INACTIVE_FILE,   Inactive_file)
-HST_get(DELTA_KERNEL_STACK,    KernelStack)
-HST_get(DELTA_LOCKED,          Mlocked)
-HST_get(DELTA_MAPPED,          Mapped)
-HST_get(DELTA_NFS_UNSTABLE,    NFS_Unstable)
-HST_get(DELTA_PAGE_TABLES,     PageTables)
-HST_get(DELTA_SHARED,          Shmem)
-HST_get(DELTA_SLAB,            Slab)
-HST_get(DELTA_SLAB_RECLAIM,    SReclaimable)
-HST_get(DELTA_SLAB_UNRECLAIM,  SUnreclaim)
-HST_get(DELTA_TOTAL,           MemTotal)
-HST_get(DELTA_UNEVICTABLE,     Unevictable)
-HST_get(DELTA_USED,            derived_mem_used)
-HST_get(DELTA_VM_ALLOC_CHUNK,  VmallocChunk)
-HST_get(DELTA_VM_ALLOC_TOTAL,  VmallocTotal)
-HST_get(DELTA_VM_ALLOC_USED,   VmallocUsed)
-HST_get(DELTA_WRITEBACK,       Writeback)
-HST_get(DELTA_WRITEBACK_TMP,   WritebackTmp)
-
-MEM_get(MEMHI_FREE,            HighFree)
-MEM_get(MEMHI_TOTAL,           HighTotal)
-MEM_get(MEMHI_USED,            derived_mem_hi_used)
-
-MEM_get(MEMLO_FREE,            LowFree)
-MEM_get(MEMLO_TOTAL,           LowTotal)
-MEM_get(MEMLO_USED,            derived_mem_lo_used)
-
-MEM_get(SWAP_CACHED,           SwapCached)
-MEM_get(SWAP_FREE,             SwapFree)
-MEM_get(SWAP_TOTAL,            SwapTotal)
-MEM_get(SWAP_USED,             derived_swap_used)
-
-#undef getDECL
-#undef MEM_get
-#undef HST_get
-
-
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 typedef void (*SET_t)(struct meminfo_result *, struct mem_hist *);
 #define RS(e) (SET_t)setNAME(e)
-
-typedef long (*GET_t)(struct procps_meminfo *);
-#define RG(e) (GET_t)getNAME(e)
-
 
         /*
          * Need it be said?
@@ -356,107 +241,106 @@ typedef long (*GET_t)(struct procps_meminfo *);
          * those 'enum meminfo_item' guys ! */
 static struct {
     SET_t setsfunc;              // the actual result setting routine
-    GET_t getsfunc;              // a routine to return single result
 } Item_table[] = {
-/*  setsfunc                     getsfunc
-    ---------------------------  ---------------------------  */
-  { RS(noop),                    RG(noop)                     },
-  { RS(extra),                   RG(extra)                    },
+/*  setsfunc
+    -------------------------- */
+  { RS(noop)                 },
+  { RS(extra)                },
 
-  { RS(MEM_ACTIVE),              RG(MEM_ACTIVE)               },
-  { RS(MEM_ACTIVE_ANON),         RG(MEM_ACTIVE_ANON)          },
-  { RS(MEM_ACTIVE_FILE),         RG(MEM_ACTIVE_FILE)          },
-  { RS(MEM_ANON),                RG(MEM_ANON)                 },
-  { RS(MEM_AVAILABLE),           RG(MEM_AVAILABLE)            },
-  { RS(MEM_BOUNCE),              RG(MEM_BOUNCE)               },
-  { RS(MEM_BUFFERS),             RG(MEM_BUFFERS)              },
-  { RS(MEM_CACHED),              RG(MEM_CACHED)               },
-  { RS(MEM_COMMIT_LIMIT),        RG(MEM_COMMIT_LIMIT)         },
-  { RS(MEM_COMMITTED_AS),        RG(MEM_COMMITTED_AS)         },
-  { RS(MEM_HARD_CORRUPTED),      RG(MEM_HARD_CORRUPTED)       },
-  { RS(MEM_DIRTY),               RG(MEM_DIRTY)                },
-  { RS(MEM_FREE),                RG(MEM_FREE)                 },
-  { RS(MEM_HUGE_ANON),           RG(MEM_HUGE_ANON)            },
-  { RS(MEM_HUGE_FREE),           RG(MEM_HUGE_FREE)            },
-  { RS(MEM_HUGE_RSVD),           RG(MEM_HUGE_RSVD)            },
-  { RS(MEM_HUGE_SIZE),           RG(MEM_HUGE_SIZE)            },
-  { RS(MEM_HUGE_SURPLUS),        RG(MEM_HUGE_SURPLUS)         },
-  { RS(MEM_HUGE_TOTAL),          RG(MEM_HUGE_TOTAL)           },
-  { RS(MEM_INACTIVE),            RG(MEM_INACTIVE)             },
-  { RS(MEM_INACTIVE_ANON),       RG(MEM_INACTIVE_ANON)        },
-  { RS(MEM_INACTIVE_FILE),       RG(MEM_INACTIVE_FILE)        },
-  { RS(MEM_KERNEL_STACK),        RG(MEM_KERNEL_STACK)         },
-  { RS(MEM_LOCKED),              RG(MEM_LOCKED)               },
-  { RS(MEM_MAPPED),              RG(MEM_MAPPED)               },
-  { RS(MEM_NFS_UNSTABLE),        RG(MEM_NFS_UNSTABLE)         },
-  { RS(MEM_PAGE_TABLES),         RG(MEM_PAGE_TABLES)          },
-  { RS(MEM_SHARED),              RG(MEM_SHARED)               },
-  { RS(MEM_SLAB),                RG(MEM_SLAB)                 },
-  { RS(MEM_SLAB_RECLAIM),        RG(MEM_SLAB_RECLAIM)         },
-  { RS(MEM_SLAB_UNRECLAIM),      RG(MEM_SLAB_UNRECLAIM)       },
-  { RS(MEM_TOTAL),               RG(MEM_TOTAL)                },
-  { RS(MEM_UNEVICTABLE),         RG(MEM_UNEVICTABLE)          },
-  { RS(MEM_USED),                RG(MEM_USED)                 },
-  { RS(MEM_VM_ALLOC_CHUNK),      RG(MEM_VM_ALLOC_CHUNK)       },
-  { RS(MEM_VM_ALLOC_TOTAL),      RG(MEM_VM_ALLOC_TOTAL)       },
-  { RS(MEM_VM_ALLOC_USED),       RG(MEM_VM_ALLOC_USED)        },
-  { RS(MEM_WRITEBACK),           RG(MEM_WRITEBACK)            },
-  { RS(MEM_WRITEBACK_TMP),       RG(MEM_WRITEBACK_TMP)        },
+  { RS(MEM_ACTIVE)           },
+  { RS(MEM_ACTIVE_ANON)      },
+  { RS(MEM_ACTIVE_FILE)      },
+  { RS(MEM_ANON)             },
+  { RS(MEM_AVAILABLE)        },
+  { RS(MEM_BOUNCE)           },
+  { RS(MEM_BUFFERS)          },
+  { RS(MEM_CACHED)           },
+  { RS(MEM_COMMIT_LIMIT)     },
+  { RS(MEM_COMMITTED_AS)     },
+  { RS(MEM_HARD_CORRUPTED)   },
+  { RS(MEM_DIRTY)            },
+  { RS(MEM_FREE)             },
+  { RS(MEM_HUGE_ANON)        },
+  { RS(MEM_HUGE_FREE)        },
+  { RS(MEM_HUGE_RSVD)        },
+  { RS(MEM_HUGE_SIZE)        },
+  { RS(MEM_HUGE_SURPLUS)     },
+  { RS(MEM_HUGE_TOTAL)       },
+  { RS(MEM_INACTIVE)         },
+  { RS(MEM_INACTIVE_ANON)    },
+  { RS(MEM_INACTIVE_FILE)    },
+  { RS(MEM_KERNEL_STACK)     },
+  { RS(MEM_LOCKED)           },
+  { RS(MEM_MAPPED)           },
+  { RS(MEM_NFS_UNSTABLE)     },
+  { RS(MEM_PAGE_TABLES)      },
+  { RS(MEM_SHARED)           },
+  { RS(MEM_SLAB)             },
+  { RS(MEM_SLAB_RECLAIM)     },
+  { RS(MEM_SLAB_UNRECLAIM)   },
+  { RS(MEM_TOTAL)            },
+  { RS(MEM_UNEVICTABLE)      },
+  { RS(MEM_USED)             },
+  { RS(MEM_VM_ALLOC_CHUNK)   },
+  { RS(MEM_VM_ALLOC_TOTAL)   },
+  { RS(MEM_VM_ALLOC_USED)    },
+  { RS(MEM_WRITEBACK)        },
+  { RS(MEM_WRITEBACK_TMP)    },
 
-  { RS(DELTA_ACTIVE),            RG(DELTA_ACTIVE)             },
-  { RS(DELTA_ACTIVE_ANON),       RG(DELTA_ACTIVE_ANON)        },
-  { RS(DELTA_ACTIVE_FILE),       RG(DELTA_ACTIVE_FILE)        },
-  { RS(DELTA_ANON),              RG(DELTA_ANON)               },
-  { RS(DELTA_AVAILABLE),         RG(DELTA_AVAILABLE)          },
-  { RS(DELTA_BOUNCE),            RG(DELTA_BOUNCE)             },
-  { RS(DELTA_BUFFERS),           RG(DELTA_BUFFERS)            },
-  { RS(DELTA_CACHED),            RG(DELTA_CACHED)             },
-  { RS(DELTA_COMMIT_LIMIT),      RG(DELTA_COMMIT_LIMIT)       },
-  { RS(DELTA_COMMITTED_AS),      RG(DELTA_COMMITTED_AS)       },
-  { RS(DELTA_HARD_CORRUPTED),    RG(DELTA_HARD_CORRUPTED)     },
-  { RS(DELTA_DIRTY),             RG(DELTA_DIRTY)              },
-  { RS(DELTA_FREE),              RG(DELTA_FREE)               },
-  { RS(DELTA_HUGE_ANON),         RG(DELTA_HUGE_ANON)          },
-  { RS(DELTA_HUGE_FREE),         RG(DELTA_HUGE_FREE)          },
-  { RS(DELTA_HUGE_RSVD),         RG(DELTA_HUGE_RSVD)          },
-  { RS(DELTA_HUGE_SIZE),         RG(DELTA_HUGE_SIZE)          },
-  { RS(DELTA_HUGE_SURPLUS),      RG(DELTA_HUGE_SURPLUS)       },
-  { RS(DELTA_HUGE_TOTAL),        RG(DELTA_HUGE_TOTAL)         },
-  { RS(DELTA_INACTIVE),          RG(DELTA_INACTIVE)           },
-  { RS(DELTA_INACTIVE_ANON),     RG(DELTA_INACTIVE_ANON)      },
-  { RS(DELTA_INACTIVE_FILE),     RG(DELTA_INACTIVE_FILE)      },
-  { RS(DELTA_KERNEL_STACK),      RG(DELTA_KERNEL_STACK)       },
-  { RS(DELTA_LOCKED),            RG(DELTA_LOCKED)             },
-  { RS(DELTA_MAPPED),            RG(DELTA_MAPPED)             },
-  { RS(DELTA_NFS_UNSTABLE),      RG(DELTA_NFS_UNSTABLE)       },
-  { RS(DELTA_PAGE_TABLES),       RG(DELTA_PAGE_TABLES)        },
-  { RS(DELTA_SHARED),            RG(DELTA_SHARED)             },
-  { RS(DELTA_SLAB),              RG(DELTA_SLAB)               },
-  { RS(DELTA_SLAB_RECLAIM),      RG(DELTA_SLAB_RECLAIM)       },
-  { RS(DELTA_SLAB_UNRECLAIM),    RG(DELTA_SLAB_UNRECLAIM)     },
-  { RS(DELTA_TOTAL),             RG(DELTA_TOTAL)              },
-  { RS(DELTA_UNEVICTABLE),       RG(DELTA_UNEVICTABLE)        },
-  { RS(DELTA_USED),              RG(DELTA_USED)               },
-  { RS(DELTA_VM_ALLOC_CHUNK),    RG(DELTA_VM_ALLOC_CHUNK)     },
-  { RS(DELTA_VM_ALLOC_TOTAL),    RG(DELTA_VM_ALLOC_TOTAL)     },
-  { RS(DELTA_VM_ALLOC_USED),     RG(DELTA_VM_ALLOC_USED)      },
-  { RS(DELTA_WRITEBACK),         RG(DELTA_WRITEBACK)          },
-  { RS(DELTA_WRITEBACK_TMP),     RG(DELTA_WRITEBACK_TMP)      },
+  { RS(DELTA_ACTIVE)         },
+  { RS(DELTA_ACTIVE_ANON)    },
+  { RS(DELTA_ACTIVE_FILE)    },
+  { RS(DELTA_ANON)           },
+  { RS(DELTA_AVAILABLE)      },
+  { RS(DELTA_BOUNCE)         },
+  { RS(DELTA_BUFFERS)        },
+  { RS(DELTA_CACHED)         },
+  { RS(DELTA_COMMIT_LIMIT)   },
+  { RS(DELTA_COMMITTED_AS)   },
+  { RS(DELTA_HARD_CORRUPTED) },
+  { RS(DELTA_DIRTY)          },
+  { RS(DELTA_FREE)           },
+  { RS(DELTA_HUGE_ANON)      },
+  { RS(DELTA_HUGE_FREE)      },
+  { RS(DELTA_HUGE_RSVD)      },
+  { RS(DELTA_HUGE_SIZE)      },
+  { RS(DELTA_HUGE_SURPLUS)   },
+  { RS(DELTA_HUGE_TOTAL)     },
+  { RS(DELTA_INACTIVE)       },
+  { RS(DELTA_INACTIVE_ANON)  },
+  { RS(DELTA_INACTIVE_FILE)  },
+  { RS(DELTA_KERNEL_STACK)   },
+  { RS(DELTA_LOCKED)         },
+  { RS(DELTA_MAPPED)         },
+  { RS(DELTA_NFS_UNSTABLE)   },
+  { RS(DELTA_PAGE_TABLES)    },
+  { RS(DELTA_SHARED)         },
+  { RS(DELTA_SLAB)           },
+  { RS(DELTA_SLAB_RECLAIM)   },
+  { RS(DELTA_SLAB_UNRECLAIM) },
+  { RS(DELTA_TOTAL)          },
+  { RS(DELTA_UNEVICTABLE)    },
+  { RS(DELTA_USED)           },
+  { RS(DELTA_VM_ALLOC_CHUNK) },
+  { RS(DELTA_VM_ALLOC_TOTAL) },
+  { RS(DELTA_VM_ALLOC_USED)  },
+  { RS(DELTA_WRITEBACK)      },
+  { RS(DELTA_WRITEBACK_TMP)  },
 
-  { RS(MEMHI_FREE),              RG(MEMHI_FREE)               },
-  { RS(MEMHI_TOTAL),             RG(MEMHI_TOTAL)              },
-  { RS(MEMHI_USED),              RG(MEMHI_USED)               },
-  { RS(MEMLO_FREE),              RG(MEMLO_FREE)               },
-  { RS(MEMLO_TOTAL),             RG(MEMLO_TOTAL)              },
-  { RS(MEMLO_USED),              RG(MEMLO_USED)               },
+  { RS(MEMHI_FREE)           },
+  { RS(MEMHI_TOTAL)          },
+  { RS(MEMHI_USED)           },
+  { RS(MEMLO_FREE)           },
+  { RS(MEMLO_TOTAL)          },
+  { RS(MEMLO_USED)           },
 
-  { RS(SWAP_CACHED),             RG(SWAP_CACHED)              },
-  { RS(SWAP_FREE),               RG(SWAP_FREE)                },
-  { RS(SWAP_TOTAL),              RG(SWAP_TOTAL)               },
-  { RS(SWAP_USED),               RG(SWAP_USED)                },
+  { RS(SWAP_CACHED)          },
+  { RS(SWAP_FREE)            },
+  { RS(SWAP_TOTAL)           },
+  { RS(SWAP_USED)            },
 
  // dummy entry corresponding to PROCPS_MEMINFO_logical_end ...
-  { NULL,                        NULL                         }
+  { NULL,                    }
 };
 
     /* please note,
@@ -464,9 +348,7 @@ static struct {
 enum meminfo_item PROCPS_MEMINFO_logical_end = PROCPS_MEMINFO_SWAP_USED + 1;
 
 #undef setNAME
-#undef getNAME
 #undef RS
-#undef RG
 
 
 // ___ Private Functions ||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -889,29 +771,34 @@ PROCPS_EXPORT int procps_meminfo_unref (
 
 // --- variable interface functions -------------------------------------------
 
-PROCPS_EXPORT signed long procps_meminfo_get (
+PROCPS_EXPORT struct meminfo_result *procps_meminfo_get (
         struct procps_meminfo *info,
         enum meminfo_item item)
 {
     static time_t sav_secs;
     time_t cur_secs;
-    int rc;
 
     if (info == NULL)
-        return -EINVAL;
+        return NULL;
     if (item < 0 || item >= PROCPS_MEMINFO_logical_end)
-        return -EINVAL;
+        return NULL;
 
     /* we will NOT read the meminfo file with every call - rather, we'll offer
        a granularity of 1 second between reads ... */
     cur_secs = time(NULL);
     if (1 <= cur_secs - sav_secs) {
-        if ((rc = read_meminfo_failed(info)))
-            return rc;
+        if (read_meminfo_failed(info))
+            return NULL;
         sav_secs = cur_secs;
     }
 
-    return Item_table[item].getsfunc(info);
+    info->get_this.item = item;
+//  with 'get', we must NOT honor the usual 'noop' guarantee
+//  if (item > PROCPS_MEMINFO_noop)
+        info->get_this.result.ul_int = 0;
+    Item_table[item].setsfunc(&info->get_this, &info->hist);
+
+    return &info->get_this;
 } // end: procps_meminfo_get
 
 
