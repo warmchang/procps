@@ -188,6 +188,7 @@ struct procps_vmstat {
     enum vmstat_item *items;
     struct stacks_extent *extents;
     struct hsearch_data hashtab;
+    struct vmstat_result get_this;
 };
 
 
@@ -448,270 +449,10 @@ HST_set(DELTA_ZONE_RECLAIM_FAILED,            zone_reclaim_failed)
 #undef HST_set
 
 
-// ___ Results 'Get' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
-
-#define getNAME(e) get_results_ ## e
-#define getDECL(e) static signed long getNAME(e) \
-    (struct procps_vmstat *I)
-
-// regular get
-#define REG_get(e,x) getDECL(e) { return I->hist.new. x; }
-// delta get
-#define HST_get(e,x) getDECL(e) { return ( I->hist.new. x - I->hist.old. x ); }
-
-getDECL(noop)   { (void)I; return 0; }
-getDECL(extra)  { (void)I; return 0; }
-
-REG_get(ALLOCSTALL,                           allocstall)
-REG_get(BALLOON_DEFLATE,                      balloon_deflate)
-REG_get(BALLOON_INFLATE,                      balloon_inflate)
-REG_get(BALLOON_MIGRATE,                      balloon_migrate)
-REG_get(COMPACT_FAIL,                         compact_fail)
-REG_get(COMPACT_FREE_SCANNED,                 compact_free_scanned)
-REG_get(COMPACT_ISOLATED,                     compact_isolated)
-REG_get(COMPACT_MIGRATE_SCANNED,              compact_migrate_scanned)
-REG_get(COMPACT_STALL,                        compact_stall)
-REG_get(COMPACT_SUCCESS,                      compact_success)
-REG_get(DROP_PAGECACHE,                       drop_pagecache)
-REG_get(DROP_SLAB,                            drop_slab)
-REG_get(HTLB_BUDDY_ALLOC_FAIL,                htlb_buddy_alloc_fail)
-REG_get(HTLB_BUDDY_ALLOC_SUCCESS,             htlb_buddy_alloc_success)
-REG_get(KSWAPD_HIGH_WMARK_HIT_QUICKLY,        kswapd_high_wmark_hit_quickly)
-REG_get(KSWAPD_INODESTEAL,                    kswapd_inodesteal)
-REG_get(KSWAPD_LOW_WMARK_HIT_QUICKLY,         kswapd_low_wmark_hit_quickly)
-REG_get(NR_ACTIVE_ANON,                       nr_active_anon)
-REG_get(NR_ACTIVE_FILE,                       nr_active_file)
-REG_get(NR_ALLOC_BATCH,                       nr_alloc_batch)
-REG_get(NR_ANON_PAGES,                        nr_anon_pages)
-REG_get(NR_ANON_TRANSPARENT_HUGEPAGES,        nr_anon_transparent_hugepages)
-REG_get(NR_BOUNCE,                            nr_bounce)
-REG_get(NR_DIRTIED,                           nr_dirtied)
-REG_get(NR_DIRTY,                             nr_dirty)
-REG_get(NR_DIRTY_BACKGROUND_THRESHOLD,        nr_dirty_background_threshold)
-REG_get(NR_DIRTY_THRESHOLD,                   nr_dirty_threshold)
-REG_get(NR_FILE_PAGES,                        nr_file_pages)
-REG_get(NR_FREE_CMA,                          nr_free_cma)
-REG_get(NR_FREE_PAGES,                        nr_free_pages)
-REG_get(NR_INACTIVE_ANON,                     nr_inactive_anon)
-REG_get(NR_INACTIVE_FILE,                     nr_inactive_file)
-REG_get(NR_ISOLATED_ANON,                     nr_isolated_anon)
-REG_get(NR_ISOLATED_FILE,                     nr_isolated_file)
-REG_get(NR_KERNEL_STACK,                      nr_kernel_stack)
-REG_get(NR_MAPPED,                            nr_mapped)
-REG_get(NR_MLOCK,                             nr_mlock)
-REG_get(NR_PAGES_SCANNED,                     nr_pages_scanned)
-REG_get(NR_PAGE_TABLE_PAGES,                  nr_page_table_pages)
-REG_get(NR_SHMEM,                             nr_shmem)
-REG_get(NR_SLAB_RECLAIMABLE,                  nr_slab_reclaimable)
-REG_get(NR_SLAB_UNRECLAIMABLE,                nr_slab_unreclaimable)
-REG_get(NR_UNEVICTABLE,                       nr_unevictable)
-REG_get(NR_UNSTABLE,                          nr_unstable)
-REG_get(NR_VMSCAN_IMMEDIATE_RECLAIM,          nr_vmscan_immediate_reclaim)
-REG_get(NR_VMSCAN_WRITE,                      nr_vmscan_write)
-REG_get(NR_WRITEBACK,                         nr_writeback)
-REG_get(NR_WRITEBACK_TEMP,                    nr_writeback_temp)
-REG_get(NR_WRITTEN,                           nr_written)
-REG_get(NUMA_FOREIGN,                         numa_foreign)
-REG_get(NUMA_HINT_FAULTS,                     numa_hint_faults)
-REG_get(NUMA_HINT_FAULTS_LOCAL,               numa_hint_faults_local)
-REG_get(NUMA_HIT,                             numa_hit)
-REG_get(NUMA_HUGE_PTE_UPDATES,                numa_huge_pte_updates)
-REG_get(NUMA_INTERLEAVE,                      numa_interleave)
-REG_get(NUMA_LOCAL,                           numa_local)
-REG_get(NUMA_MISS,                            numa_miss)
-REG_get(NUMA_OTHER,                           numa_other)
-REG_get(NUMA_PAGES_MIGRATED,                  numa_pages_migrated)
-REG_get(NUMA_PTE_UPDATES,                     numa_pte_updates)
-REG_get(PAGEOUTRUN,                           pageoutrun)
-REG_get(PGACTIVATE,                           pgactivate)
-REG_get(PGALLOC_DMA,                          pgalloc_dma)
-REG_get(PGALLOC_DMA32,                        pgalloc_dma32)
-REG_get(PGALLOC_MOVABLE,                      pgalloc_movable)
-REG_get(PGALLOC_NORMAL,                       pgalloc_normal)
-REG_get(PGDEACTIVATE,                         pgdeactivate)
-REG_get(PGFAULT,                              pgfault)
-REG_get(PGFREE,                               pgfree)
-REG_get(PGINODESTEAL,                         pginodesteal)
-REG_get(PGMAJFAULT,                           pgmajfault)
-REG_get(PGMIGRATE_FAIL,                       pgmigrate_fail)
-REG_get(PGMIGRATE_SUCCESS,                    pgmigrate_success)
-REG_get(PGPGIN,                               pgpgin)
-REG_get(PGPGOUT,                              pgpgout)
-REG_get(PGREFILL_DMA,                         pgrefill_dma)
-REG_get(PGREFILL_DMA32,                       pgrefill_dma32)
-REG_get(PGREFILL_MOVABLE,                     pgrefill_movable)
-REG_get(PGREFILL_NORMAL,                      pgrefill_normal)
-REG_get(PGROTATED,                            pgrotated)
-REG_get(PGSCAN_DIRECT_DMA,                    pgscan_direct_dma)
-REG_get(PGSCAN_DIRECT_DMA32,                  pgscan_direct_dma32)
-REG_get(PGSCAN_DIRECT_MOVABLE,                pgscan_direct_movable)
-REG_get(PGSCAN_DIRECT_NORMAL,                 pgscan_direct_normal)
-REG_get(PGSCAN_DIRECT_THROTTLE,               pgscan_direct_throttle)
-REG_get(PGSCAN_KSWAPD_DMA,                    pgscan_kswapd_dma)
-REG_get(PGSCAN_KSWAPD_DMA32,                  pgscan_kswapd_dma32)
-REG_get(PGSCAN_KSWAPD_MOVEABLE,               pgscan_kswapd_movable)
-REG_get(PGSCAN_KSWAPD_NORMAL,                 pgscan_kswapd_normal)
-REG_get(PGSTEAL_DIRECT_DMA,                   pgsteal_direct_dma)
-REG_get(PGSTEAL_DIRECT_DMA32,                 pgsteal_direct_dma32)
-REG_get(PGSTEAL_DIRECT_MOVABLE,               pgsteal_direct_movable)
-REG_get(PGSTEAL_DIRECT_NORMAL,                pgsteal_direct_normal)
-REG_get(PGSTEAL_KSWAPD_DMA,                   pgsteal_kswapd_dma)
-REG_get(PGSTEAL_KSWAPD_DMA32,                 pgsteal_kswapd_dma32)
-REG_get(PGSTEAL_KSWAPD_MOVABLE,               pgsteal_kswapd_movable)
-REG_get(PGSTEAL_KSWAPD_NORMAL,                pgsteal_kswapd_normal)
-REG_get(PSWPIN,                               pswpin)
-REG_get(PSWPOUT,                              pswpout)
-REG_get(SLABS_SCANNED,                        slabs_scanned)
-REG_get(THP_COLLAPSE_ALLOC,                   thp_collapse_alloc)
-REG_get(THP_COLLAPSE_ALLOC_FAILED,            thp_collapse_alloc_failed)
-REG_get(THP_FAULT_ALLOC,                      thp_fault_alloc)
-REG_get(THP_FAULT_FALLBACK,                   thp_fault_fallback)
-REG_get(THP_SPLIT,                            thp_split)
-REG_get(THP_ZERO_PAGE_ALLOC,                  thp_zero_page_alloc)
-REG_get(THP_ZERO_PAGE_ALLOC_FAILED,           thp_zero_page_alloc_failed)
-REG_get(UNEVICTABLE_PGS_CLEARED,              unevictable_pgs_cleared)
-REG_get(UNEVICTABLE_PGS_CULLED,               unevictable_pgs_culled)
-REG_get(UNEVICTABLE_PGS_MLOCKED,              unevictable_pgs_mlocked)
-REG_get(UNEVICTABLE_PGS_MUNLOCKED,            unevictable_pgs_munlocked)
-REG_get(UNEVICTABLE_PGS_RESCUED,              unevictable_pgs_rescued)
-REG_get(UNEVICTABLE_PGS_SCANNED,              unevictable_pgs_scanned)
-REG_get(UNEVICTABLE_PGS_STRANDED,             unevictable_pgs_stranded)
-REG_get(WORKINGSET_ACTIVATE,                  workingset_activate)
-REG_get(WORKINGSET_NODERECLAIM,               workingset_nodereclaim)
-REG_get(WORKINGSET_REFAULT,                   workingset_refault)
-REG_get(ZONE_RECLAIM_FAILED,                  zone_reclaim_failed)
-
-HST_get(DELTA_ALLOCSTALL,                     allocstall)
-HST_get(DELTA_BALLOON_DEFLATE,                balloon_deflate)
-HST_get(DELTA_BALLOON_INFLATE,                balloon_inflate)
-HST_get(DELTA_BALLOON_MIGRATE,                balloon_migrate)
-HST_get(DELTA_COMPACT_FAIL,                   compact_fail)
-HST_get(DELTA_COMPACT_FREE_SCANNED,           compact_free_scanned)
-HST_get(DELTA_COMPACT_ISOLATED,               compact_isolated)
-HST_get(DELTA_COMPACT_MIGRATE_SCANNED,        compact_migrate_scanned)
-HST_get(DELTA_COMPACT_STALL,                  compact_stall)
-HST_get(DELTA_COMPACT_SUCCESS,                compact_success)
-HST_get(DELTA_DROP_PAGECACHE,                 drop_pagecache)
-HST_get(DELTA_DROP_SLAB,                      drop_slab)
-HST_get(DELTA_HTLB_BUDDY_ALLOC_FAIL,          htlb_buddy_alloc_fail)
-HST_get(DELTA_HTLB_BUDDY_ALLOC_SUCCESS,       htlb_buddy_alloc_success)
-HST_get(DELTA_KSWAPD_HIGH_WMARK_HIT_QUICKLY,  kswapd_high_wmark_hit_quickly)
-HST_get(DELTA_KSWAPD_INODESTEAL,              kswapd_inodesteal)
-HST_get(DELTA_KSWAPD_LOW_WMARK_HIT_QUICKLY,   kswapd_low_wmark_hit_quickly)
-HST_get(DELTA_NR_ACTIVE_ANON,                 nr_active_anon)
-HST_get(DELTA_NR_ACTIVE_FILE,                 nr_active_file)
-HST_get(DELTA_NR_ALLOC_BATCH,                 nr_alloc_batch)
-HST_get(DELTA_NR_ANON_PAGES,                  nr_anon_pages)
-HST_get(DELTA_NR_ANON_TRANSPARENT_HUGEPAGES,  nr_anon_transparent_hugepages)
-HST_get(DELTA_NR_BOUNCE,                      nr_bounce)
-HST_get(DELTA_NR_DIRTIED,                     nr_dirtied)
-HST_get(DELTA_NR_DIRTY,                       nr_dirty)
-HST_get(DELTA_NR_DIRTY_BACKGROUND_THRESHOLD,  nr_dirty_background_threshold)
-HST_get(DELTA_NR_DIRTY_THRESHOLD,             nr_dirty_threshold)
-HST_get(DELTA_NR_FILE_PAGES,                  nr_file_pages)
-HST_get(DELTA_NR_FREE_CMA,                    nr_free_cma)
-HST_get(DELTA_NR_FREE_PAGES,                  nr_free_pages)
-HST_get(DELTA_NR_INACTIVE_ANON,               nr_inactive_anon)
-HST_get(DELTA_NR_INACTIVE_FILE,               nr_inactive_file)
-HST_get(DELTA_NR_ISOLATED_ANON,               nr_isolated_anon)
-HST_get(DELTA_NR_ISOLATED_FILE,               nr_isolated_file)
-HST_get(DELTA_NR_KERNEL_STACK,                nr_kernel_stack)
-HST_get(DELTA_NR_MAPPED,                      nr_mapped)
-HST_get(DELTA_NR_MLOCK,                       nr_mlock)
-HST_get(DELTA_NR_PAGES_SCANNED,               nr_pages_scanned)
-HST_get(DELTA_NR_PAGE_TABLE_PAGES,            nr_page_table_pages)
-HST_get(DELTA_NR_SHMEM,                       nr_shmem)
-HST_get(DELTA_NR_SLAB_RECLAIMABLE,            nr_slab_reclaimable)
-HST_get(DELTA_NR_SLAB_UNRECLAIMABLE,          nr_slab_unreclaimable)
-HST_get(DELTA_NR_UNEVICTABLE,                 nr_unevictable)
-HST_get(DELTA_NR_UNSTABLE,                    nr_unstable)
-HST_get(DELTA_NR_VMSCAN_IMMEDIATE_RECLAIM,    nr_vmscan_immediate_reclaim)
-HST_get(DELTA_NR_VMSCAN_WRITE,                nr_vmscan_write)
-HST_get(DELTA_NR_WRITEBACK,                   nr_writeback)
-HST_get(DELTA_NR_WRITEBACK_TEMP,              nr_writeback_temp)
-HST_get(DELTA_NR_WRITTEN,                     nr_written)
-HST_get(DELTA_NUMA_FOREIGN,                   numa_foreign)
-HST_get(DELTA_NUMA_HINT_FAULTS,               numa_hint_faults)
-HST_get(DELTA_NUMA_HINT_FAULTS_LOCAL,         numa_hint_faults_local)
-HST_get(DELTA_NUMA_HIT,                       numa_hit)
-HST_get(DELTA_NUMA_HUGE_PTE_UPDATES,          numa_huge_pte_updates)
-HST_get(DELTA_NUMA_INTERLEAVE,                numa_interleave)
-HST_get(DELTA_NUMA_LOCAL,                     numa_local)
-HST_get(DELTA_NUMA_MISS,                      numa_miss)
-HST_get(DELTA_NUMA_OTHER,                     numa_other)
-HST_get(DELTA_NUMA_PAGES_MIGRATED,            numa_pages_migrated)
-HST_get(DELTA_NUMA_PTE_UPDATES,               numa_pte_updates)
-HST_get(DELTA_PAGEOUTRUN,                     pageoutrun)
-HST_get(DELTA_PGACTIVATE,                     pgactivate)
-HST_get(DELTA_PGALLOC_DMA,                    pgalloc_dma)
-HST_get(DELTA_PGALLOC_DMA32,                  pgalloc_dma32)
-HST_get(DELTA_PGALLOC_MOVABLE,                pgalloc_movable)
-HST_get(DELTA_PGALLOC_NORMAL,                 pgalloc_normal)
-HST_get(DELTA_PGDEACTIVATE,                   pgdeactivate)
-HST_get(DELTA_PGFAULT,                        pgfault)
-HST_get(DELTA_PGFREE,                         pgfree)
-HST_get(DELTA_PGINODESTEAL,                   pginodesteal)
-HST_get(DELTA_PGMAJFAULT,                     pgmajfault)
-HST_get(DELTA_PGMIGRATE_FAIL,                 pgmigrate_fail)
-HST_get(DELTA_PGMIGRATE_SUCCESS,              pgmigrate_success)
-HST_get(DELTA_PGPGIN,                         pgpgin)
-HST_get(DELTA_PGPGOUT,                        pgpgout)
-HST_get(DELTA_PGREFILL_DMA,                   pgrefill_dma)
-HST_get(DELTA_PGREFILL_DMA32,                 pgrefill_dma32)
-HST_get(DELTA_PGREFILL_MOVABLE,               pgrefill_movable)
-HST_get(DELTA_PGREFILL_NORMAL,                pgrefill_normal)
-HST_get(DELTA_PGROTATED,                      pgrotated)
-HST_get(DELTA_PGSCAN_DIRECT_DMA,              pgscan_direct_dma)
-HST_get(DELTA_PGSCAN_DIRECT_DMA32,            pgscan_direct_dma32)
-HST_get(DELTA_PGSCAN_DIRECT_MOVABLE,          pgscan_direct_movable)
-HST_get(DELTA_PGSCAN_DIRECT_NORMAL,           pgscan_direct_normal)
-HST_get(DELTA_PGSCAN_DIRECT_THROTTLE,         pgscan_direct_throttle)
-HST_get(DELTA_PGSCAN_KSWAPD_DMA,              pgscan_kswapd_dma)
-HST_get(DELTA_PGSCAN_KSWAPD_DMA32,            pgscan_kswapd_dma32)
-HST_get(DELTA_PGSCAN_KSWAPD_MOVEABLE,         pgscan_kswapd_movable)
-HST_get(DELTA_PGSCAN_KSWAPD_NORMAL,           pgscan_kswapd_normal)
-HST_get(DELTA_PGSTEAL_DIRECT_DMA,             pgsteal_direct_dma)
-HST_get(DELTA_PGSTEAL_DIRECT_DMA32,           pgsteal_direct_dma32)
-HST_get(DELTA_PGSTEAL_DIRECT_MOVABLE,         pgsteal_direct_movable)
-HST_get(DELTA_PGSTEAL_DIRECT_NORMAL,          pgsteal_direct_normal)
-HST_get(DELTA_PGSTEAL_KSWAPD_DMA,             pgsteal_kswapd_dma)
-HST_get(DELTA_PGSTEAL_KSWAPD_DMA32,           pgsteal_kswapd_dma32)
-HST_get(DELTA_PGSTEAL_KSWAPD_MOVABLE,         pgsteal_kswapd_movable)
-HST_get(DELTA_PGSTEAL_KSWAPD_NORMAL,          pgsteal_kswapd_normal)
-HST_get(DELTA_PSWPIN,                         pswpin)
-HST_get(DELTA_PSWPOUT,                        pswpout)
-HST_get(DELTA_SLABS_SCANNED,                  slabs_scanned)
-HST_get(DELTA_THP_COLLAPSE_ALLOC,             thp_collapse_alloc)
-HST_get(DELTA_THP_COLLAPSE_ALLOC_FAILED,      thp_collapse_alloc_failed)
-HST_get(DELTA_THP_FAULT_ALLOC,                thp_fault_alloc)
-HST_get(DELTA_THP_FAULT_FALLBACK,             thp_fault_fallback)
-HST_get(DELTA_THP_SPLIT,                      thp_split)
-HST_get(DELTA_THP_ZERO_PAGE_ALLOC,            thp_zero_page_alloc)
-HST_get(DELTA_THP_ZERO_PAGE_ALLOC_FAILED,     thp_zero_page_alloc_failed)
-HST_get(DELTA_UNEVICTABLE_PGS_CLEARED,        unevictable_pgs_cleared)
-HST_get(DELTA_UNEVICTABLE_PGS_CULLED,         unevictable_pgs_culled)
-HST_get(DELTA_UNEVICTABLE_PGS_MLOCKED,        unevictable_pgs_mlocked)
-HST_get(DELTA_UNEVICTABLE_PGS_MUNLOCKED,      unevictable_pgs_munlocked)
-HST_get(DELTA_UNEVICTABLE_PGS_RESCUED,        unevictable_pgs_rescued)
-HST_get(DELTA_UNEVICTABLE_PGS_SCANNED,        unevictable_pgs_scanned)
-HST_get(DELTA_UNEVICTABLE_PGS_STRANDED,       unevictable_pgs_stranded)
-HST_get(DELTA_WORKINGSET_ACTIVATE,            workingset_activate)
-HST_get(DELTA_WORKINGSET_NODERECLAIM,         workingset_nodereclaim)
-HST_get(DELTA_WORKINGSET_REFAULT,             workingset_refault)
-HST_get(DELTA_ZONE_RECLAIM_FAILED,            zone_reclaim_failed)
-
-#undef getDECL
-#undef REG_get
-#undef HST_get
-
-
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 typedef void (*SET_t)(struct vmstat_result *, struct vmstat_hist *);
 #define RS(e) (SET_t)setNAME(e)
-
-typedef long (*GET_t)(struct procps_vmstat *);
-#define RG(e) (GET_t)getNAME(e)
 
         /*
          * Need it be said?
@@ -719,253 +460,252 @@ typedef long (*GET_t)(struct procps_vmstat *);
          * those 'enum vmstat_item' guys ! */
 static struct {
     SET_t setsfunc;              // the actual result setting routine
-    GET_t getsfunc;              // a routine to return single result
 } Item_table[] = {
-/*  setsfunc                                 getsfunc
-    ---------------------------------------  --------------------------------------  */
-  { RS(noop),                                RG(noop)                                },
-  { RS(extra),                               RG(extra)                               },
+/*  setsfunc
+    --------------------------------------- */
+  { RS(noop)                                },
+  { RS(extra)                               },
 
-  { RS(ALLOCSTALL),                          RG(ALLOCSTALL)                          },
-  { RS(BALLOON_DEFLATE),                     RG(BALLOON_DEFLATE)                     },
-  { RS(BALLOON_INFLATE),                     RG(BALLOON_INFLATE)                     },
-  { RS(BALLOON_MIGRATE),                     RG(BALLOON_MIGRATE)                     },
-  { RS(COMPACT_FAIL),                        RG(COMPACT_FAIL)                        },
-  { RS(COMPACT_FREE_SCANNED),                RG(COMPACT_FREE_SCANNED)                },
-  { RS(COMPACT_ISOLATED),                    RG(COMPACT_ISOLATED)                    },
-  { RS(COMPACT_MIGRATE_SCANNED),             RG(COMPACT_MIGRATE_SCANNED)             },
-  { RS(COMPACT_STALL),                       RG(COMPACT_STALL)                       },
-  { RS(COMPACT_SUCCESS),                     RG(COMPACT_SUCCESS)                     },
-  { RS(DROP_PAGECACHE),                      RG(DROP_PAGECACHE)                      },
-  { RS(DROP_SLAB),                           RG(DROP_SLAB)                           },
-  { RS(HTLB_BUDDY_ALLOC_FAIL),               RG(HTLB_BUDDY_ALLOC_FAIL)               },
-  { RS(HTLB_BUDDY_ALLOC_SUCCESS),            RG(HTLB_BUDDY_ALLOC_SUCCESS)            },
-  { RS(KSWAPD_HIGH_WMARK_HIT_QUICKLY),       RG(KSWAPD_HIGH_WMARK_HIT_QUICKLY)       },
-  { RS(KSWAPD_INODESTEAL),                   RG(KSWAPD_INODESTEAL)                   },
-  { RS(KSWAPD_LOW_WMARK_HIT_QUICKLY),        RG(KSWAPD_LOW_WMARK_HIT_QUICKLY)        },
-  { RS(NR_ACTIVE_ANON),                      RG(NR_ACTIVE_ANON)                      },
-  { RS(NR_ACTIVE_FILE),                      RG(NR_ACTIVE_FILE)                      },
-  { RS(NR_ALLOC_BATCH),                      RG(NR_ALLOC_BATCH)                      },
-  { RS(NR_ANON_PAGES),                       RG(NR_ANON_PAGES)                       },
-  { RS(NR_ANON_TRANSPARENT_HUGEPAGES),       RG(NR_ANON_TRANSPARENT_HUGEPAGES)       },
-  { RS(NR_BOUNCE),                           RG(NR_BOUNCE)                           },
-  { RS(NR_DIRTIED),                          RG(NR_DIRTIED)                          },
-  { RS(NR_DIRTY),                            RG(NR_DIRTY)                            },
-  { RS(NR_DIRTY_BACKGROUND_THRESHOLD),       RG(NR_DIRTY_BACKGROUND_THRESHOLD)       },
-  { RS(NR_DIRTY_THRESHOLD),                  RG(NR_DIRTY_THRESHOLD)                  },
-  { RS(NR_FILE_PAGES),                       RG(NR_FILE_PAGES)                       },
-  { RS(NR_FREE_CMA),                         RG(NR_FREE_CMA)                         },
-  { RS(NR_FREE_PAGES),                       RG(NR_FREE_PAGES)                       },
-  { RS(NR_INACTIVE_ANON),                    RG(NR_INACTIVE_ANON)                    },
-  { RS(NR_INACTIVE_FILE),                    RG(NR_INACTIVE_FILE)                    },
-  { RS(NR_ISOLATED_ANON),                    RG(NR_ISOLATED_ANON)                    },
-  { RS(NR_ISOLATED_FILE),                    RG(NR_ISOLATED_FILE)                    },
-  { RS(NR_KERNEL_STACK),                     RG(NR_KERNEL_STACK)                     },
-  { RS(NR_MAPPED),                           RG(NR_MAPPED)                           },
-  { RS(NR_MLOCK),                            RG(NR_MLOCK)                            },
-  { RS(NR_PAGES_SCANNED),                    RG(NR_PAGES_SCANNED)                    },
-  { RS(NR_PAGE_TABLE_PAGES),                 RG(NR_PAGE_TABLE_PAGES)                 },
-  { RS(NR_SHMEM),                            RG(NR_SHMEM)                            },
-  { RS(NR_SLAB_RECLAIMABLE),                 RG(NR_SLAB_RECLAIMABLE)                 },
-  { RS(NR_SLAB_UNRECLAIMABLE),               RG(NR_SLAB_UNRECLAIMABLE)               },
-  { RS(NR_UNEVICTABLE),                      RG(NR_UNEVICTABLE)                      },
-  { RS(NR_UNSTABLE),                         RG(NR_UNSTABLE)                         },
-  { RS(NR_VMSCAN_IMMEDIATE_RECLAIM),         RG(NR_VMSCAN_IMMEDIATE_RECLAIM)         },
-  { RS(NR_VMSCAN_WRITE),                     RG(NR_VMSCAN_WRITE)                     },
-  { RS(NR_WRITEBACK),                        RG(NR_WRITEBACK)                        },
-  { RS(NR_WRITEBACK_TEMP),                   RG(NR_WRITEBACK_TEMP)                   },
-  { RS(NR_WRITTEN),                          RG(NR_WRITTEN)                          },
-  { RS(NUMA_FOREIGN),                        RG(NUMA_FOREIGN)                        },
-  { RS(NUMA_HINT_FAULTS),                    RG(NUMA_HINT_FAULTS)                    },
-  { RS(NUMA_HINT_FAULTS_LOCAL),              RG(NUMA_HINT_FAULTS_LOCAL)              },
-  { RS(NUMA_HIT),                            RG(NUMA_HIT)                            },
-  { RS(NUMA_HUGE_PTE_UPDATES),               RG(NUMA_HUGE_PTE_UPDATES)               },
-  { RS(NUMA_INTERLEAVE),                     RG(NUMA_INTERLEAVE)                     },
-  { RS(NUMA_LOCAL),                          RG(NUMA_LOCAL)                          },
-  { RS(NUMA_MISS),                           RG(NUMA_MISS)                           },
-  { RS(NUMA_OTHER),                          RG(NUMA_OTHER)                          },
-  { RS(NUMA_PAGES_MIGRATED),                 RG(NUMA_PAGES_MIGRATED)                 },
-  { RS(NUMA_PTE_UPDATES),                    RG(NUMA_PTE_UPDATES)                    },
-  { RS(PAGEOUTRUN),                          RG(PAGEOUTRUN)                          },
-  { RS(PGACTIVATE),                          RG(PGACTIVATE)                          },
-  { RS(PGALLOC_DMA),                         RG(PGALLOC_DMA)                         },
-  { RS(PGALLOC_DMA32),                       RG(PGALLOC_DMA32)                       },
-  { RS(PGALLOC_MOVABLE),                     RG(PGALLOC_MOVABLE)                     },
-  { RS(PGALLOC_NORMAL),                      RG(PGALLOC_NORMAL)                      },
-  { RS(PGDEACTIVATE),                        RG(PGDEACTIVATE)                        },
-  { RS(PGFAULT),                             RG(PGFAULT)                             },
-  { RS(PGFREE),                              RG(PGFREE)                              },
-  { RS(PGINODESTEAL),                        RG(PGINODESTEAL)                        },
-  { RS(PGMAJFAULT),                          RG(PGMAJFAULT)                          },
-  { RS(PGMIGRATE_FAIL),                      RG(PGMIGRATE_FAIL)                      },
-  { RS(PGMIGRATE_SUCCESS),                   RG(PGMIGRATE_SUCCESS)                   },
-  { RS(PGPGIN),                              RG(PGPGIN)                              },
-  { RS(PGPGOUT),                             RG(PGPGOUT)                             },
-  { RS(PGREFILL_DMA),                        RG(PGREFILL_DMA)                        },
-  { RS(PGREFILL_DMA32),                      RG(PGREFILL_DMA32)                      },
-  { RS(PGREFILL_MOVABLE),                    RG(PGREFILL_MOVABLE)                    },
-  { RS(PGREFILL_NORMAL),                     RG(PGREFILL_NORMAL)                     },
-  { RS(PGROTATED),                           RG(PGROTATED)                           },
-  { RS(PGSCAN_DIRECT_DMA),                   RG(PGSCAN_DIRECT_DMA)                   },
-  { RS(PGSCAN_DIRECT_DMA32),                 RG(PGSCAN_DIRECT_DMA32)                 },
-  { RS(PGSCAN_DIRECT_MOVABLE),               RG(PGSCAN_DIRECT_MOVABLE)               },
-  { RS(PGSCAN_DIRECT_NORMAL),                RG(PGSCAN_DIRECT_NORMAL)                },
-  { RS(PGSCAN_DIRECT_THROTTLE),              RG(PGSCAN_DIRECT_THROTTLE)              },
-  { RS(PGSCAN_KSWAPD_DMA),                   RG(PGSCAN_KSWAPD_DMA)                   },
-  { RS(PGSCAN_KSWAPD_DMA32),                 RG(PGSCAN_KSWAPD_DMA32)                 },
-  { RS(PGSCAN_KSWAPD_MOVEABLE),              RG(PGSCAN_KSWAPD_MOVEABLE)              },
-  { RS(PGSCAN_KSWAPD_NORMAL),                RG(PGSCAN_KSWAPD_NORMAL)                },
-  { RS(PGSTEAL_DIRECT_DMA),                  RG(PGSTEAL_DIRECT_DMA)                  },
-  { RS(PGSTEAL_DIRECT_DMA32),                RG(PGSTEAL_DIRECT_DMA32)                },
-  { RS(PGSTEAL_DIRECT_MOVABLE),              RG(PGSTEAL_DIRECT_MOVABLE)              },
-  { RS(PGSTEAL_DIRECT_NORMAL),               RG(PGSTEAL_DIRECT_NORMAL)               },
-  { RS(PGSTEAL_KSWAPD_DMA),                  RG(PGSTEAL_KSWAPD_DMA)                  },
-  { RS(PGSTEAL_KSWAPD_DMA32),                RG(PGSTEAL_KSWAPD_DMA32)                },
-  { RS(PGSTEAL_KSWAPD_MOVABLE),              RG(PGSTEAL_KSWAPD_MOVABLE)              },
-  { RS(PGSTEAL_KSWAPD_NORMAL),               RG(PGSTEAL_KSWAPD_NORMAL)               },
-  { RS(PSWPIN),                              RG(PSWPIN)                              },
-  { RS(PSWPOUT),                             RG(PSWPOUT)                             },
-  { RS(SLABS_SCANNED),                       RG(SLABS_SCANNED)                       },
-  { RS(THP_COLLAPSE_ALLOC),                  RG(THP_COLLAPSE_ALLOC)                  },
-  { RS(THP_COLLAPSE_ALLOC_FAILED),           RG(THP_COLLAPSE_ALLOC_FAILED)           },
-  { RS(THP_FAULT_ALLOC),                     RG(THP_FAULT_ALLOC)                     },
-  { RS(THP_FAULT_FALLBACK),                  RG(THP_FAULT_FALLBACK)                  },
-  { RS(THP_SPLIT),                           RG(THP_SPLIT)                           },
-  { RS(THP_ZERO_PAGE_ALLOC),                 RG(THP_ZERO_PAGE_ALLOC)                 },
-  { RS(THP_ZERO_PAGE_ALLOC_FAILED),          RG(THP_ZERO_PAGE_ALLOC_FAILED)          },
-  { RS(UNEVICTABLE_PGS_CLEARED),             RG(UNEVICTABLE_PGS_CLEARED)             },
-  { RS(UNEVICTABLE_PGS_CULLED),              RG(UNEVICTABLE_PGS_CULLED)              },
-  { RS(UNEVICTABLE_PGS_MLOCKED),             RG(UNEVICTABLE_PGS_MLOCKED)             },
-  { RS(UNEVICTABLE_PGS_MUNLOCKED),           RG(UNEVICTABLE_PGS_MUNLOCKED)           },
-  { RS(UNEVICTABLE_PGS_RESCUED),             RG(UNEVICTABLE_PGS_RESCUED)             },
-  { RS(UNEVICTABLE_PGS_SCANNED),             RG(UNEVICTABLE_PGS_SCANNED)             },
-  { RS(UNEVICTABLE_PGS_STRANDED),            RG(UNEVICTABLE_PGS_STRANDED)            },
-  { RS(WORKINGSET_ACTIVATE),                 RG(WORKINGSET_ACTIVATE)                 },
-  { RS(WORKINGSET_NODERECLAIM),              RG(WORKINGSET_NODERECLAIM)              },
-  { RS(WORKINGSET_REFAULT),                  RG(WORKINGSET_REFAULT)                  },
-  { RS(ZONE_RECLAIM_FAILED),                 RG(ZONE_RECLAIM_FAILED)                 },
+  { RS(ALLOCSTALL)                          },
+  { RS(BALLOON_DEFLATE)                     },
+  { RS(BALLOON_INFLATE)                     },
+  { RS(BALLOON_MIGRATE)                     },
+  { RS(COMPACT_FAIL)                        },
+  { RS(COMPACT_FREE_SCANNED)                },
+  { RS(COMPACT_ISOLATED)                    },
+  { RS(COMPACT_MIGRATE_SCANNED)             },
+  { RS(COMPACT_STALL)                       },
+  { RS(COMPACT_SUCCESS)                     },
+  { RS(DROP_PAGECACHE)                      },
+  { RS(DROP_SLAB)                           },
+  { RS(HTLB_BUDDY_ALLOC_FAIL)               },
+  { RS(HTLB_BUDDY_ALLOC_SUCCESS)            },
+  { RS(KSWAPD_HIGH_WMARK_HIT_QUICKLY)       },
+  { RS(KSWAPD_INODESTEAL)                   },
+  { RS(KSWAPD_LOW_WMARK_HIT_QUICKLY)        },
+  { RS(NR_ACTIVE_ANON)                      },
+  { RS(NR_ACTIVE_FILE)                      },
+  { RS(NR_ALLOC_BATCH)                      },
+  { RS(NR_ANON_PAGES)                       },
+  { RS(NR_ANON_TRANSPARENT_HUGEPAGES)       },
+  { RS(NR_BOUNCE)                           },
+  { RS(NR_DIRTIED)                          },
+  { RS(NR_DIRTY)                            },
+  { RS(NR_DIRTY_BACKGROUND_THRESHOLD)       },
+  { RS(NR_DIRTY_THRESHOLD)                  },
+  { RS(NR_FILE_PAGES)                       },
+  { RS(NR_FREE_CMA)                         },
+  { RS(NR_FREE_PAGES)                       },
+  { RS(NR_INACTIVE_ANON)                    },
+  { RS(NR_INACTIVE_FILE)                    },
+  { RS(NR_ISOLATED_ANON)                    },
+  { RS(NR_ISOLATED_FILE)                    },
+  { RS(NR_KERNEL_STACK)                     },
+  { RS(NR_MAPPED)                           },
+  { RS(NR_MLOCK)                            },
+  { RS(NR_PAGES_SCANNED)                    },
+  { RS(NR_PAGE_TABLE_PAGES)                 },
+  { RS(NR_SHMEM)                            },
+  { RS(NR_SLAB_RECLAIMABLE)                 },
+  { RS(NR_SLAB_UNRECLAIMABLE)               },
+  { RS(NR_UNEVICTABLE)                      },
+  { RS(NR_UNSTABLE)                         },
+  { RS(NR_VMSCAN_IMMEDIATE_RECLAIM)         },
+  { RS(NR_VMSCAN_WRITE)                     },
+  { RS(NR_WRITEBACK)                        },
+  { RS(NR_WRITEBACK_TEMP)                   },
+  { RS(NR_WRITTEN)                          },
+  { RS(NUMA_FOREIGN)                        },
+  { RS(NUMA_HINT_FAULTS)                    },
+  { RS(NUMA_HINT_FAULTS_LOCAL)              },
+  { RS(NUMA_HIT)                            },
+  { RS(NUMA_HUGE_PTE_UPDATES)               },
+  { RS(NUMA_INTERLEAVE)                     },
+  { RS(NUMA_LOCAL)                          },
+  { RS(NUMA_MISS)                           },
+  { RS(NUMA_OTHER)                          },
+  { RS(NUMA_PAGES_MIGRATED)                 },
+  { RS(NUMA_PTE_UPDATES)                    },
+  { RS(PAGEOUTRUN)                          },
+  { RS(PGACTIVATE)                          },
+  { RS(PGALLOC_DMA)                         },
+  { RS(PGALLOC_DMA32)                       },
+  { RS(PGALLOC_MOVABLE)                     },
+  { RS(PGALLOC_NORMAL)                      },
+  { RS(PGDEACTIVATE)                        },
+  { RS(PGFAULT)                             },
+  { RS(PGFREE)                              },
+  { RS(PGINODESTEAL)                        },
+  { RS(PGMAJFAULT)                          },
+  { RS(PGMIGRATE_FAIL)                      },
+  { RS(PGMIGRATE_SUCCESS)                   },
+  { RS(PGPGIN)                              },
+  { RS(PGPGOUT)                             },
+  { RS(PGREFILL_DMA)                        },
+  { RS(PGREFILL_DMA32)                      },
+  { RS(PGREFILL_MOVABLE)                    },
+  { RS(PGREFILL_NORMAL)                     },
+  { RS(PGROTATED)                           },
+  { RS(PGSCAN_DIRECT_DMA)                   },
+  { RS(PGSCAN_DIRECT_DMA32)                 },
+  { RS(PGSCAN_DIRECT_MOVABLE)               },
+  { RS(PGSCAN_DIRECT_NORMAL)                },
+  { RS(PGSCAN_DIRECT_THROTTLE)              },
+  { RS(PGSCAN_KSWAPD_DMA)                   },
+  { RS(PGSCAN_KSWAPD_DMA32)                 },
+  { RS(PGSCAN_KSWAPD_MOVEABLE)              },
+  { RS(PGSCAN_KSWAPD_NORMAL)                },
+  { RS(PGSTEAL_DIRECT_DMA)                  },
+  { RS(PGSTEAL_DIRECT_DMA32)                },
+  { RS(PGSTEAL_DIRECT_MOVABLE)              },
+  { RS(PGSTEAL_DIRECT_NORMAL)               },
+  { RS(PGSTEAL_KSWAPD_DMA)                  },
+  { RS(PGSTEAL_KSWAPD_DMA32)                },
+  { RS(PGSTEAL_KSWAPD_MOVABLE)              },
+  { RS(PGSTEAL_KSWAPD_NORMAL)               },
+  { RS(PSWPIN)                              },
+  { RS(PSWPOUT)                             },
+  { RS(SLABS_SCANNED)                       },
+  { RS(THP_COLLAPSE_ALLOC)                  },
+  { RS(THP_COLLAPSE_ALLOC_FAILED)           },
+  { RS(THP_FAULT_ALLOC)                     },
+  { RS(THP_FAULT_FALLBACK)                  },
+  { RS(THP_SPLIT)                           },
+  { RS(THP_ZERO_PAGE_ALLOC)                 },
+  { RS(THP_ZERO_PAGE_ALLOC_FAILED)          },
+  { RS(UNEVICTABLE_PGS_CLEARED)             },
+  { RS(UNEVICTABLE_PGS_CULLED)              },
+  { RS(UNEVICTABLE_PGS_MLOCKED)             },
+  { RS(UNEVICTABLE_PGS_MUNLOCKED)           },
+  { RS(UNEVICTABLE_PGS_RESCUED)             },
+  { RS(UNEVICTABLE_PGS_SCANNED)             },
+  { RS(UNEVICTABLE_PGS_STRANDED)            },
+  { RS(WORKINGSET_ACTIVATE)                 },
+  { RS(WORKINGSET_NODERECLAIM)              },
+  { RS(WORKINGSET_REFAULT)                  },
+  { RS(ZONE_RECLAIM_FAILED)                 },
 
-  { RS(DELTA_ALLOCSTALL),                    RG(DELTA_ALLOCSTALL)                    },
-  { RS(DELTA_BALLOON_DEFLATE),               RG(DELTA_BALLOON_DEFLATE)               },
-  { RS(DELTA_BALLOON_INFLATE),               RG(DELTA_BALLOON_INFLATE)               },
-  { RS(DELTA_BALLOON_MIGRATE),               RG(DELTA_BALLOON_MIGRATE)               },
-  { RS(DELTA_COMPACT_FAIL),                  RG(DELTA_COMPACT_FAIL)                  },
-  { RS(DELTA_COMPACT_FREE_SCANNED),          RG(DELTA_COMPACT_FREE_SCANNED)          },
-  { RS(DELTA_COMPACT_ISOLATED),              RG(DELTA_COMPACT_ISOLATED)              },
-  { RS(DELTA_COMPACT_MIGRATE_SCANNED),       RG(DELTA_COMPACT_MIGRATE_SCANNED)       },
-  { RS(DELTA_COMPACT_STALL),                 RG(DELTA_COMPACT_STALL)                 },
-  { RS(DELTA_COMPACT_SUCCESS),               RG(DELTA_COMPACT_SUCCESS)               },
-  { RS(DELTA_DROP_PAGECACHE),                RG(DELTA_DROP_PAGECACHE)                },
-  { RS(DELTA_DROP_SLAB),                     RG(DELTA_DROP_SLAB)                     },
-  { RS(DELTA_HTLB_BUDDY_ALLOC_FAIL),         RG(DELTA_HTLB_BUDDY_ALLOC_FAIL)         },
-  { RS(DELTA_HTLB_BUDDY_ALLOC_SUCCESS),      RG(DELTA_HTLB_BUDDY_ALLOC_SUCCESS)      },
-  { RS(DELTA_KSWAPD_HIGH_WMARK_HIT_QUICKLY), RG(DELTA_KSWAPD_HIGH_WMARK_HIT_QUICKLY) },
-  { RS(DELTA_KSWAPD_INODESTEAL),             RG(DELTA_KSWAPD_INODESTEAL)             },
-  { RS(DELTA_KSWAPD_LOW_WMARK_HIT_QUICKLY),  RG(DELTA_KSWAPD_LOW_WMARK_HIT_QUICKLY)  },
-  { RS(DELTA_NR_ACTIVE_ANON),                RG(DELTA_NR_ACTIVE_ANON)                },
-  { RS(DELTA_NR_ACTIVE_FILE),                RG(DELTA_NR_ACTIVE_FILE)                },
-  { RS(DELTA_NR_ALLOC_BATCH),                RG(DELTA_NR_ALLOC_BATCH)                },
-  { RS(DELTA_NR_ANON_PAGES),                 RG(DELTA_NR_ANON_PAGES)                 },
-  { RS(DELTA_NR_ANON_TRANSPARENT_HUGEPAGES), RG(DELTA_NR_ANON_TRANSPARENT_HUGEPAGES) },
-  { RS(DELTA_NR_BOUNCE),                     RG(DELTA_NR_BOUNCE)                     },
-  { RS(DELTA_NR_DIRTIED),                    RG(DELTA_NR_DIRTIED)                    },
-  { RS(DELTA_NR_DIRTY),                      RG(DELTA_NR_DIRTY)                      },
-  { RS(DELTA_NR_DIRTY_BACKGROUND_THRESHOLD), RG(DELTA_NR_DIRTY_BACKGROUND_THRESHOLD) },
-  { RS(DELTA_NR_DIRTY_THRESHOLD),            RG(DELTA_NR_DIRTY_THRESHOLD)            },
-  { RS(DELTA_NR_FILE_PAGES),                 RG(DELTA_NR_FILE_PAGES)                 },
-  { RS(DELTA_NR_FREE_CMA),                   RG(DELTA_NR_FREE_CMA)                   },
-  { RS(DELTA_NR_FREE_PAGES),                 RG(DELTA_NR_FREE_PAGES)                 },
-  { RS(DELTA_NR_INACTIVE_ANON),              RG(DELTA_NR_INACTIVE_ANON)              },
-  { RS(DELTA_NR_INACTIVE_FILE),              RG(DELTA_NR_INACTIVE_FILE)              },
-  { RS(DELTA_NR_ISOLATED_ANON),              RG(DELTA_NR_ISOLATED_ANON)              },
-  { RS(DELTA_NR_ISOLATED_FILE),              RG(DELTA_NR_ISOLATED_FILE)              },
-  { RS(DELTA_NR_KERNEL_STACK),               RG(DELTA_NR_KERNEL_STACK)               },
-  { RS(DELTA_NR_MAPPED),                     RG(DELTA_NR_MAPPED)                     },
-  { RS(DELTA_NR_MLOCK),                      RG(DELTA_NR_MLOCK)                      },
-  { RS(DELTA_NR_PAGES_SCANNED),              RG(DELTA_NR_PAGES_SCANNED)              },
-  { RS(DELTA_NR_PAGE_TABLE_PAGES),           RG(DELTA_NR_PAGE_TABLE_PAGES)           },
-  { RS(DELTA_NR_SHMEM),                      RG(DELTA_NR_SHMEM)                      },
-  { RS(DELTA_NR_SLAB_RECLAIMABLE),           RG(DELTA_NR_SLAB_RECLAIMABLE)           },
-  { RS(DELTA_NR_SLAB_UNRECLAIMABLE),         RG(DELTA_NR_SLAB_UNRECLAIMABLE)         },
-  { RS(DELTA_NR_UNEVICTABLE),                RG(DELTA_NR_UNEVICTABLE)                },
-  { RS(DELTA_NR_UNSTABLE),                   RG(DELTA_NR_UNSTABLE)                   },
-  { RS(DELTA_NR_VMSCAN_IMMEDIATE_RECLAIM),   RG(DELTA_NR_VMSCAN_IMMEDIATE_RECLAIM)   },
-  { RS(DELTA_NR_VMSCAN_WRITE),               RG(DELTA_NR_VMSCAN_WRITE)               },
-  { RS(DELTA_NR_WRITEBACK),                  RG(DELTA_NR_WRITEBACK)                  },
-  { RS(DELTA_NR_WRITEBACK_TEMP),             RG(DELTA_NR_WRITEBACK_TEMP)             },
-  { RS(DELTA_NR_WRITTEN),                    RG(DELTA_NR_WRITTEN)                    },
-  { RS(DELTA_NUMA_FOREIGN),                  RG(DELTA_NUMA_FOREIGN)                  },
-  { RS(DELTA_NUMA_HINT_FAULTS),              RG(DELTA_NUMA_HINT_FAULTS)              },
-  { RS(DELTA_NUMA_HINT_FAULTS_LOCAL),        RG(DELTA_NUMA_HINT_FAULTS_LOCAL)        },
-  { RS(DELTA_NUMA_HIT),                      RG(DELTA_NUMA_HIT)                      },
-  { RS(DELTA_NUMA_HUGE_PTE_UPDATES),         RG(DELTA_NUMA_HUGE_PTE_UPDATES)         },
-  { RS(DELTA_NUMA_INTERLEAVE),               RG(DELTA_NUMA_INTERLEAVE)               },
-  { RS(DELTA_NUMA_LOCAL),                    RG(DELTA_NUMA_LOCAL)                    },
-  { RS(DELTA_NUMA_MISS),                     RG(DELTA_NUMA_MISS)                     },
-  { RS(DELTA_NUMA_OTHER),                    RG(DELTA_NUMA_OTHER)                    },
-  { RS(DELTA_NUMA_PAGES_MIGRATED),           RG(DELTA_NUMA_PAGES_MIGRATED)           },
-  { RS(DELTA_NUMA_PTE_UPDATES),              RG(DELTA_NUMA_PTE_UPDATES)              },
-  { RS(DELTA_PAGEOUTRUN),                    RG(DELTA_PAGEOUTRUN)                    },
-  { RS(DELTA_PGACTIVATE),                    RG(DELTA_PGACTIVATE)                    },
-  { RS(DELTA_PGALLOC_DMA),                   RG(DELTA_PGALLOC_DMA)                   },
-  { RS(DELTA_PGALLOC_DMA32),                 RG(DELTA_PGALLOC_DMA32)                 },
-  { RS(DELTA_PGALLOC_MOVABLE),               RG(DELTA_PGALLOC_MOVABLE)               },
-  { RS(DELTA_PGALLOC_NORMAL),                RG(DELTA_PGALLOC_NORMAL)                },
-  { RS(DELTA_PGDEACTIVATE),                  RG(DELTA_PGDEACTIVATE)                  },
-  { RS(DELTA_PGFAULT),                       RG(DELTA_PGFAULT)                       },
-  { RS(DELTA_PGFREE),                        RG(DELTA_PGFREE)                        },
-  { RS(DELTA_PGINODESTEAL),                  RG(DELTA_PGINODESTEAL)                  },
-  { RS(DELTA_PGMAJFAULT),                    RG(DELTA_PGMAJFAULT)                    },
-  { RS(DELTA_PGMIGRATE_FAIL),                RG(DELTA_PGMIGRATE_FAIL)                },
-  { RS(DELTA_PGMIGRATE_SUCCESS),             RG(DELTA_PGMIGRATE_SUCCESS)             },
-  { RS(DELTA_PGPGIN),                        RG(DELTA_PGPGIN)                        },
-  { RS(DELTA_PGPGOUT),                       RG(DELTA_PGPGOUT)                       },
-  { RS(DELTA_PGREFILL_DMA),                  RG(DELTA_PGREFILL_DMA)                  },
-  { RS(DELTA_PGREFILL_DMA32),                RG(DELTA_PGREFILL_DMA32)                },
-  { RS(DELTA_PGREFILL_MOVABLE),              RG(DELTA_PGREFILL_MOVABLE)              },
-  { RS(DELTA_PGREFILL_NORMAL),               RG(DELTA_PGREFILL_NORMAL)               },
-  { RS(DELTA_PGROTATED),                     RG(DELTA_PGROTATED)                     },
-  { RS(DELTA_PGSCAN_DIRECT_DMA),             RG(DELTA_PGSCAN_DIRECT_DMA)             },
-  { RS(DELTA_PGSCAN_DIRECT_DMA32),           RG(DELTA_PGSCAN_DIRECT_DMA32)           },
-  { RS(DELTA_PGSCAN_DIRECT_MOVABLE),         RG(DELTA_PGSCAN_DIRECT_MOVABLE)         },
-  { RS(DELTA_PGSCAN_DIRECT_NORMAL),          RG(DELTA_PGSCAN_DIRECT_NORMAL)          },
-  { RS(DELTA_PGSCAN_DIRECT_THROTTLE),        RG(DELTA_PGSCAN_DIRECT_THROTTLE)        },
-  { RS(DELTA_PGSCAN_KSWAPD_DMA),             RG(DELTA_PGSCAN_KSWAPD_DMA)             },
-  { RS(DELTA_PGSCAN_KSWAPD_DMA32),           RG(DELTA_PGSCAN_KSWAPD_DMA32)           },
-  { RS(DELTA_PGSCAN_KSWAPD_MOVEABLE),        RG(DELTA_PGSCAN_KSWAPD_MOVEABLE)        },
-  { RS(DELTA_PGSCAN_KSWAPD_NORMAL),          RG(DELTA_PGSCAN_KSWAPD_NORMAL)          },
-  { RS(DELTA_PGSTEAL_DIRECT_DMA),            RG(DELTA_PGSTEAL_DIRECT_DMA)            },
-  { RS(DELTA_PGSTEAL_DIRECT_DMA32),          RG(DELTA_PGSTEAL_DIRECT_DMA32)          },
-  { RS(DELTA_PGSTEAL_DIRECT_MOVABLE),        RG(DELTA_PGSTEAL_DIRECT_MOVABLE)        },
-  { RS(DELTA_PGSTEAL_DIRECT_NORMAL),         RG(DELTA_PGSTEAL_DIRECT_NORMAL)         },
-  { RS(DELTA_PGSTEAL_KSWAPD_DMA),            RG(DELTA_PGSTEAL_KSWAPD_DMA)            },
-  { RS(DELTA_PGSTEAL_KSWAPD_DMA32),          RG(DELTA_PGSTEAL_KSWAPD_DMA32)          },
-  { RS(DELTA_PGSTEAL_KSWAPD_MOVABLE),        RG(DELTA_PGSTEAL_KSWAPD_MOVABLE)        },
-  { RS(DELTA_PGSTEAL_KSWAPD_NORMAL),         RG(DELTA_PGSTEAL_KSWAPD_NORMAL)         },
-  { RS(DELTA_PSWPIN),                        RG(DELTA_PSWPIN)                        },
-  { RS(DELTA_PSWPOUT),                       RG(DELTA_PSWPOUT)                       },
-  { RS(DELTA_SLABS_SCANNED),                 RG(DELTA_SLABS_SCANNED)                 },
-  { RS(DELTA_THP_COLLAPSE_ALLOC),            RG(DELTA_THP_COLLAPSE_ALLOC)            },
-  { RS(DELTA_THP_COLLAPSE_ALLOC_FAILED),     RG(DELTA_THP_COLLAPSE_ALLOC_FAILED)     },
-  { RS(DELTA_THP_FAULT_ALLOC),               RG(DELTA_THP_FAULT_ALLOC)               },
-  { RS(DELTA_THP_FAULT_FALLBACK),            RG(DELTA_THP_FAULT_FALLBACK)            },
-  { RS(DELTA_THP_SPLIT),                     RG(DELTA_THP_SPLIT)                     },
-  { RS(DELTA_THP_ZERO_PAGE_ALLOC),           RG(DELTA_THP_ZERO_PAGE_ALLOC)           },
-  { RS(DELTA_THP_ZERO_PAGE_ALLOC_FAILED),    RG(DELTA_THP_ZERO_PAGE_ALLOC_FAILED)    },
-  { RS(DELTA_UNEVICTABLE_PGS_CLEARED),       RG(DELTA_UNEVICTABLE_PGS_CLEARED)       },
-  { RS(DELTA_UNEVICTABLE_PGS_CULLED),        RG(DELTA_UNEVICTABLE_PGS_CULLED)        },
-  { RS(DELTA_UNEVICTABLE_PGS_MLOCKED),       RG(DELTA_UNEVICTABLE_PGS_MLOCKED)       },
-  { RS(DELTA_UNEVICTABLE_PGS_MUNLOCKED),     RG(DELTA_UNEVICTABLE_PGS_MUNLOCKED)     },
-  { RS(DELTA_UNEVICTABLE_PGS_RESCUED),       RG(DELTA_UNEVICTABLE_PGS_RESCUED)       },
-  { RS(DELTA_UNEVICTABLE_PGS_SCANNED),       RG(DELTA_UNEVICTABLE_PGS_SCANNED)       },
-  { RS(DELTA_UNEVICTABLE_PGS_STRANDED),      RG(DELTA_UNEVICTABLE_PGS_STRANDED)      },
-  { RS(DELTA_WORKINGSET_ACTIVATE),           RG(DELTA_WORKINGSET_ACTIVATE)           },
-  { RS(DELTA_WORKINGSET_NODERECLAIM),        RG(DELTA_WORKINGSET_NODERECLAIM)        },
-  { RS(DELTA_WORKINGSET_REFAULT),            RG(DELTA_WORKINGSET_REFAULT)            },
-  { RS(DELTA_ZONE_RECLAIM_FAILED),           RG(DELTA_ZONE_RECLAIM_FAILED)           },
+  { RS(DELTA_ALLOCSTALL)                    },
+  { RS(DELTA_BALLOON_DEFLATE)               },
+  { RS(DELTA_BALLOON_INFLATE)               },
+  { RS(DELTA_BALLOON_MIGRATE)               },
+  { RS(DELTA_COMPACT_FAIL)                  },
+  { RS(DELTA_COMPACT_FREE_SCANNED)          },
+  { RS(DELTA_COMPACT_ISOLATED)              },
+  { RS(DELTA_COMPACT_MIGRATE_SCANNED)       },
+  { RS(DELTA_COMPACT_STALL)                 },
+  { RS(DELTA_COMPACT_SUCCESS)               },
+  { RS(DELTA_DROP_PAGECACHE)                },
+  { RS(DELTA_DROP_SLAB)                     },
+  { RS(DELTA_HTLB_BUDDY_ALLOC_FAIL)         },
+  { RS(DELTA_HTLB_BUDDY_ALLOC_SUCCESS)      },
+  { RS(DELTA_KSWAPD_HIGH_WMARK_HIT_QUICKLY) },
+  { RS(DELTA_KSWAPD_INODESTEAL)             },
+  { RS(DELTA_KSWAPD_LOW_WMARK_HIT_QUICKLY)  },
+  { RS(DELTA_NR_ACTIVE_ANON)                },
+  { RS(DELTA_NR_ACTIVE_FILE)                },
+  { RS(DELTA_NR_ALLOC_BATCH)                },
+  { RS(DELTA_NR_ANON_PAGES)                 },
+  { RS(DELTA_NR_ANON_TRANSPARENT_HUGEPAGES) },
+  { RS(DELTA_NR_BOUNCE)                     },
+  { RS(DELTA_NR_DIRTIED)                    },
+  { RS(DELTA_NR_DIRTY)                      },
+  { RS(DELTA_NR_DIRTY_BACKGROUND_THRESHOLD) },
+  { RS(DELTA_NR_DIRTY_THRESHOLD)            },
+  { RS(DELTA_NR_FILE_PAGES)                 },
+  { RS(DELTA_NR_FREE_CMA)                   },
+  { RS(DELTA_NR_FREE_PAGES)                 },
+  { RS(DELTA_NR_INACTIVE_ANON)              },
+  { RS(DELTA_NR_INACTIVE_FILE)              },
+  { RS(DELTA_NR_ISOLATED_ANON)              },
+  { RS(DELTA_NR_ISOLATED_FILE)              },
+  { RS(DELTA_NR_KERNEL_STACK)               },
+  { RS(DELTA_NR_MAPPED)                     },
+  { RS(DELTA_NR_MLOCK)                      },
+  { RS(DELTA_NR_PAGES_SCANNED)              },
+  { RS(DELTA_NR_PAGE_TABLE_PAGES)           },
+  { RS(DELTA_NR_SHMEM)                      },
+  { RS(DELTA_NR_SLAB_RECLAIMABLE)           },
+  { RS(DELTA_NR_SLAB_UNRECLAIMABLE)         },
+  { RS(DELTA_NR_UNEVICTABLE)                },
+  { RS(DELTA_NR_UNSTABLE)                   },
+  { RS(DELTA_NR_VMSCAN_IMMEDIATE_RECLAIM)   },
+  { RS(DELTA_NR_VMSCAN_WRITE)               },
+  { RS(DELTA_NR_WRITEBACK)                  },
+  { RS(DELTA_NR_WRITEBACK_TEMP)             },
+  { RS(DELTA_NR_WRITTEN)                    },
+  { RS(DELTA_NUMA_FOREIGN)                  },
+  { RS(DELTA_NUMA_HINT_FAULTS)              },
+  { RS(DELTA_NUMA_HINT_FAULTS_LOCAL)        },
+  { RS(DELTA_NUMA_HIT)                      },
+  { RS(DELTA_NUMA_HUGE_PTE_UPDATES)         },
+  { RS(DELTA_NUMA_INTERLEAVE)               },
+  { RS(DELTA_NUMA_LOCAL)                    },
+  { RS(DELTA_NUMA_MISS)                     },
+  { RS(DELTA_NUMA_OTHER)                    },
+  { RS(DELTA_NUMA_PAGES_MIGRATED)           },
+  { RS(DELTA_NUMA_PTE_UPDATES)              },
+  { RS(DELTA_PAGEOUTRUN)                    },
+  { RS(DELTA_PGACTIVATE)                    },
+  { RS(DELTA_PGALLOC_DMA)                   },
+  { RS(DELTA_PGALLOC_DMA32)                 },
+  { RS(DELTA_PGALLOC_MOVABLE)               },
+  { RS(DELTA_PGALLOC_NORMAL)                },
+  { RS(DELTA_PGDEACTIVATE)                  },
+  { RS(DELTA_PGFAULT)                       },
+  { RS(DELTA_PGFREE)                        },
+  { RS(DELTA_PGINODESTEAL)                  },
+  { RS(DELTA_PGMAJFAULT)                    },
+  { RS(DELTA_PGMIGRATE_FAIL)                },
+  { RS(DELTA_PGMIGRATE_SUCCESS)             },
+  { RS(DELTA_PGPGIN)                        },
+  { RS(DELTA_PGPGOUT)                       },
+  { RS(DELTA_PGREFILL_DMA)                  },
+  { RS(DELTA_PGREFILL_DMA32)                },
+  { RS(DELTA_PGREFILL_MOVABLE)              },
+  { RS(DELTA_PGREFILL_NORMAL)               },
+  { RS(DELTA_PGROTATED)                     },
+  { RS(DELTA_PGSCAN_DIRECT_DMA)             },
+  { RS(DELTA_PGSCAN_DIRECT_DMA32)           },
+  { RS(DELTA_PGSCAN_DIRECT_MOVABLE)         },
+  { RS(DELTA_PGSCAN_DIRECT_NORMAL)          },
+  { RS(DELTA_PGSCAN_DIRECT_THROTTLE)        },
+  { RS(DELTA_PGSCAN_KSWAPD_DMA)             },
+  { RS(DELTA_PGSCAN_KSWAPD_DMA32)           },
+  { RS(DELTA_PGSCAN_KSWAPD_MOVEABLE)        },
+  { RS(DELTA_PGSCAN_KSWAPD_NORMAL)          },
+  { RS(DELTA_PGSTEAL_DIRECT_DMA)            },
+  { RS(DELTA_PGSTEAL_DIRECT_DMA32)          },
+  { RS(DELTA_PGSTEAL_DIRECT_MOVABLE)        },
+  { RS(DELTA_PGSTEAL_DIRECT_NORMAL)         },
+  { RS(DELTA_PGSTEAL_KSWAPD_DMA)            },
+  { RS(DELTA_PGSTEAL_KSWAPD_DMA32)          },
+  { RS(DELTA_PGSTEAL_KSWAPD_MOVABLE)        },
+  { RS(DELTA_PGSTEAL_KSWAPD_NORMAL)         },
+  { RS(DELTA_PSWPIN)                        },
+  { RS(DELTA_PSWPOUT)                       },
+  { RS(DELTA_SLABS_SCANNED)                 },
+  { RS(DELTA_THP_COLLAPSE_ALLOC)            },
+  { RS(DELTA_THP_COLLAPSE_ALLOC_FAILED)     },
+  { RS(DELTA_THP_FAULT_ALLOC)               },
+  { RS(DELTA_THP_FAULT_FALLBACK)            },
+  { RS(DELTA_THP_SPLIT)                     },
+  { RS(DELTA_THP_ZERO_PAGE_ALLOC)           },
+  { RS(DELTA_THP_ZERO_PAGE_ALLOC_FAILED)    },
+  { RS(DELTA_UNEVICTABLE_PGS_CLEARED)       },
+  { RS(DELTA_UNEVICTABLE_PGS_CULLED)        },
+  { RS(DELTA_UNEVICTABLE_PGS_MLOCKED)       },
+  { RS(DELTA_UNEVICTABLE_PGS_MUNLOCKED)     },
+  { RS(DELTA_UNEVICTABLE_PGS_RESCUED)       },
+  { RS(DELTA_UNEVICTABLE_PGS_SCANNED)       },
+  { RS(DELTA_UNEVICTABLE_PGS_STRANDED)      },
+  { RS(DELTA_WORKINGSET_ACTIVATE)           },
+  { RS(DELTA_WORKINGSET_NODERECLAIM)        },
+  { RS(DELTA_WORKINGSET_REFAULT)            },
+  { RS(DELTA_ZONE_RECLAIM_FAILED)           },
 
  // dummy entry corresponding to PROCPS_VMSTAT_logical_end ...
-  { NULL,                                    NULL                                    }
+  { NULL,                                   }
 };
 
     /* please note,
@@ -973,9 +713,7 @@ static struct {
 enum vmstat_item PROCPS_VMSTAT_logical_end = PROCPS_VMSTAT_DELTA_ZONE_RECLAIM_FAILED + 1;
 
 #undef setNAME
-#undef getNAME
 #undef RS
-#undef RG
 
 
 // ___ Private Functions ||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -1428,29 +1166,34 @@ PROCPS_EXPORT int procps_vmstat_unref (
 
 // --- variable interface functions -------------------------------------------
 
-PROCPS_EXPORT signed long procps_vmstat_get (
+PROCPS_EXPORT struct vmstat_result *procps_vmstat_get (
         struct procps_vmstat *info,
         enum vmstat_item item)
 {
     static time_t sav_secs;
     time_t cur_secs;
-    int rc;
 
     if (info == NULL)
-        return -EINVAL;
+        return NULL;
     if (item < 0 || item >= PROCPS_VMSTAT_logical_end)
-        return -EINVAL;
+        return NULL;
 
     /* we will NOT read the vmstat file with every call - rather, we'll offer
        a granularity of 1 second between reads ... */
     cur_secs = time(NULL);
     if (1 <= cur_secs - sav_secs) {
-        if ((rc = read_vmstat_failed(info)))
-            return rc;
+        if (read_vmstat_failed(info))
+            return NULL;
         sav_secs = cur_secs;
     }
 
-    return Item_table[item].getsfunc(info);
+    info->get_this.item = item;
+//  with 'get', we must NOT honor the usual 'noop' guarantee
+//  if (item > PROCPS_VMSTAT_noop)
+        info->get_this.result.ul_int = 0;
+    Item_table[item].setsfunc(&info->get_this, &info->hist);
+
+    return &info->get_this;
 } // end: procps_vmstat_get
 
 
