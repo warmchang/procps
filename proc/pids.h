@@ -192,8 +192,8 @@ struct pids_fetch {
 };
 
 
-#define PROCPS_PIDS_VAL(rel_enum,type,stack) \
-    stack -> head [ rel_enum ] . result . type
+#define PROCPS_PIDS_VAL( relative_enum, type, stack ) \
+    stack -> head [ relative_enum ] . result . type
 
 
 struct procps_pidsinfo;

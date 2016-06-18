@@ -79,10 +79,10 @@ struct procps_pidsinfo {
     proc_t*(*read_something)(PROCTAB*, proc_t*); // readproc/readeither via which
     unsigned pgs2k_shift;              // to convert some proc vaules
     unsigned oldflags;                 // the old library PROC_FILL flagss
-    PROCTAB *PT;                       // the old library essential interface
+    PROCTAB *fetch_PT;                 // oldlib interface for 'select' & 'reap'
     unsigned long hertz;               // for TIME_ALL & TIME_ELAPSED calculations
     unsigned long long boot_seconds;   // for TIME_ELAPSED calculation
-    PROCTAB *get_PT;                   // old library interface for active 'get'
+    PROCTAB *get_PT;                   // oldlib interface for active 'get'
     struct stacks_extent *get_ext;     // an extent used for active 'get'
     enum pids_fetch_type get_type;     // last known type of 'get' request
 };
@@ -1077,7 +1077,7 @@ static int stacks_fetch (
 
     // iterate stuff --------------------------------------
     n_inuse = 0;
-    while (info->read_something(info->PT, &task)) {
+    while (info->read_something(info->fetch_PT, &task)) {
         if (!(n_inuse < n_alloc)) {
             n_alloc += MEMORY_INCR;
             if ((!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc)))
@@ -1337,13 +1337,13 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
     if (!info->curitems)
         return NULL;
 
-    if (!oldproc_open(&info->PT, info->oldflags))
+    if (!oldproc_open(&info->fetch_PT, info->oldflags))
         return NULL;
     info->read_something = which ? readeither : readproc;
 
     rc = stacks_fetch(info);
 
-    oldproc_close(&info->PT);
+    oldproc_close(&info->fetch_PT);
     // we better have found at least 1 pid
     return (rc > 0) ? &info->fetch.results : NULL;
 } // end: procps_pids_reap
@@ -1421,13 +1421,13 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
     memcpy(ids, these, sizeof(unsigned) * numthese);
     ids[numthese] = 0;
 
-    if (!oldproc_open(&info->PT, (info->oldflags | which), ids, numthese))
+    if (!oldproc_open(&info->fetch_PT, (info->oldflags | which), ids, numthese))
         return NULL;
     info->read_something = readproc;
 
     rc = stacks_fetch(info);
 
-    oldproc_close(&info->PT);
+    oldproc_close(&info->fetch_PT);
     // no guarantee any pids/uids were found
     return (rc > -1) ? &info->fetch.results : NULL;
 } // end: procps_pids_select
