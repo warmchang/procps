@@ -120,14 +120,15 @@ struct procps_slabinfo {
     int refcount;
     FILE *slabinfo_fp;
     int slabinfo_was_read;
-    int nodes_alloc;                /* nodes alloc()ed */
-    int nodes_used;                 /* nodes using alloced memory */
-    struct slabs_node *nodes;       /* first slabnode of this list */
-    struct slabs_hist hist;         /* new/old slabs_summ data */
-    struct ext_support select_ext;  /* supports concurrent select/reap */
-    struct ext_support fetch_ext;   /* supports concurrent select/reap */
-    struct fetch_support fetch;     /* support for procps_slabinfo_reap */
-    struct slabs_node nul_node;     /* used by procps_slabinfo_select */
+    int nodes_alloc;                   /* nodes alloc()ed */
+    int nodes_used;                    /* nodes using alloced memory */
+    struct slabs_node *nodes;          /* first slabnode of this list */
+    struct slabs_hist hist;            /* new/old slabs_summ data */
+    struct ext_support select_ext;     /* supports concurrent select/reap */
+    struct ext_support fetch_ext;      /* supports concurrent select/reap */
+    struct fetch_support fetch;        /* support for procps_slabinfo_reap */
+    struct slabs_node nul_node;        /* used by slabinfo_get/select */
+    struct slabinfo_result get_this;   /* used by slabinfo_get */
 };
 
 
@@ -189,65 +190,6 @@ NOD_set(SLABNODE_SIZE,           ul_int,  cache_size)
 #undef HST_set
 
 
-// ___ Results 'Get' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
-
-#define getNAME(e) get_results_ ## e
-#define getDECL(e) static signed long getNAME(e) \
-    (struct procps_slabinfo *I)
-
-// regular get
-#define REG_get(e,t,x) getDECL(e) { return I->hist.new. x; }
-// delta get
-#define HST_get(e,t,x) getDECL(e) { return (signed long)I->hist.new. x - I->hist.old. x; }
-// illogical get
-#define NOT_get(e) getDECL(e)     { (void)I; return 0; }
-
-NOT_get(noop)
-NOT_get(extra)
-
-REG_get(SLABS_OBJS,               u_int,  nr_objs)
-REG_get(SLABS_AOBJS,              u_int,  nr_active_objs)
-REG_get(SLABS_PAGES,              u_int,  nr_pages)
-REG_get(SLABS_SLABS,              u_int,  nr_slabs)
-REG_get(SLABS_ASLABS,             u_int,  nr_active_slabs)
-REG_get(SLABS_CACHES,             u_int,  nr_caches)
-REG_get(SLABS_ACACHES,            u_int,  nr_active_caches)
-REG_get(SLABS_SIZE_AVG,           u_int,  avg_obj_size)
-REG_get(SLABS_SIZE_MIN,           u_int,  min_obj_size)
-REG_get(SLABS_SIZE_MAX,           u_int,  max_obj_size)
-REG_get(SLABS_SIZE_ACTIVE,       ul_int,  active_size)
-REG_get(SLABS_SIZE_TOTAL,        ul_int,  total_size)
-
-HST_get(SLABS_DELTA_OBJS,         s_int,  nr_objs)
-HST_get(SLABS_DELTA_AOBJS,        s_int,  nr_active_objs)
-HST_get(SLABS_DELTA_PAGES,        s_int,  nr_pages)
-HST_get(SLABS_DELTA_SLABS,        s_int,  nr_slabs)
-HST_get(SLABS_DELTA_ASLABS,       s_int,  nr_active_slabs)
-HST_get(SLABS_DELTA_CACHES,       s_int,  nr_caches)
-HST_get(SLABS_DELTA_ACACHES,      s_int,  nr_active_caches)
-HST_get(SLABS_DELTA_SIZE_AVG,     s_int,  avg_obj_size)
-HST_get(SLABS_DELTA_SIZE_MIN,     s_int,  min_obj_size)
-HST_get(SLABS_DELTA_SIZE_MAX,     s_int,  max_obj_size)
-HST_get(SLABS_DELTA_SIZE_ACTIVE,  s_int,  active_size)
-HST_get(SLABS_DELTA_SIZE_TOTAL,   s_int,  total_size)
-
-NOT_get(SLABNODE_NAME)
-NOT_get(SLABNODE_OBJS)
-NOT_get(SLABNODE_AOBJS)
-NOT_get(SLABNODE_OBJ_SIZE)
-NOT_get(SLABNODE_OBJS_PER_SLAB)
-NOT_get(SLABNODE_PAGES_PER_SLAB)
-NOT_get(SLABNODE_SLABS)
-NOT_get(SLABNODE_ASLABS)
-NOT_get(SLABNODE_USE)
-NOT_get(SLABNODE_SIZE)
-
-#undef getDECL
-#undef REG_get
-#undef HST_get
-#undef NOT_get
-
-
 // ___ Sorting Support ||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 struct sort_parms {
@@ -294,9 +236,6 @@ srtDECL(noop) { \
 typedef void (*SET_t)(struct slabinfo_result *, struct slabs_hist *, struct slabs_node *);
 #define RS(e) (SET_t)setNAME(e)
 
-typedef signed long (*GET_t)(struct procps_slabinfo *);
-#define RG(e) (GET_t)getNAME(e)
-
 typedef int  (*QSR_t)(const void *, const void *, void *);
 #define QS(t) (QSR_t)srtNAME(t)
 
@@ -306,53 +245,52 @@ typedef int  (*QSR_t)(const void *, const void *, void *);
          * those *enum slabinfo_item* guys ! */
 static struct {
     SET_t setsfunc;              // the actual result setting routine
-    GET_t getsfunc;              // a routine to return single result
     QSR_t sortfunc;              // sort cmp func for a specific type
 } Item_table[] = {
-/*  setsfunc                     getsfunc                     sortfunc
-    ---------------------------  ---------------------------  ---------  */
-  { RS(noop),                    RG(noop),                    QS(ul_int) },
-  { RS(extra),                   RG(extra),                   QS(noop)   },
+/*  setsfunc                     sortfunc
+    ---------------------------  ---------  */
+  { RS(noop),                    QS(ul_int) },
+  { RS(extra),                   QS(noop)   },
 
-  { RS(SLABS_OBJS),              RG(SLABS_OBJS),              QS(noop)   },
-  { RS(SLABS_AOBJS),             RG(SLABS_AOBJS),             QS(noop)   },
-  { RS(SLABS_PAGES),             RG(SLABS_PAGES),             QS(noop)   },
-  { RS(SLABS_SLABS),             RG(SLABS_SLABS),             QS(noop)   },
-  { RS(SLABS_ASLABS),            RG(SLABS_ASLABS),            QS(noop)   },
-  { RS(SLABS_CACHES),            RG(SLABS_CACHES),            QS(noop)   },
-  { RS(SLABS_ACACHES),           RG(SLABS_ACACHES),           QS(noop)   },
-  { RS(SLABS_SIZE_AVG),          RG(SLABS_SIZE_AVG),          QS(noop)   },
-  { RS(SLABS_SIZE_MIN),          RG(SLABS_SIZE_MIN),          QS(noop)   },
-  { RS(SLABS_SIZE_MAX),          RG(SLABS_SIZE_MAX),          QS(noop)   },
-  { RS(SLABS_SIZE_ACTIVE),       RG(SLABS_SIZE_ACTIVE),       QS(noop)   },
-  { RS(SLABS_SIZE_TOTAL),        RG(SLABS_SIZE_TOTAL),        QS(noop)   },
+  { RS(SLABS_OBJS),              QS(noop)   },
+  { RS(SLABS_AOBJS),             QS(noop)   },
+  { RS(SLABS_PAGES),             QS(noop)   },
+  { RS(SLABS_SLABS),             QS(noop)   },
+  { RS(SLABS_ASLABS),            QS(noop)   },
+  { RS(SLABS_CACHES),            QS(noop)   },
+  { RS(SLABS_ACACHES),           QS(noop)   },
+  { RS(SLABS_SIZE_AVG),          QS(noop)   },
+  { RS(SLABS_SIZE_MIN),          QS(noop)   },
+  { RS(SLABS_SIZE_MAX),          QS(noop)   },
+  { RS(SLABS_SIZE_ACTIVE),       QS(noop)   },
+  { RS(SLABS_SIZE_TOTAL),        QS(noop)   },
 
-  { RS(SLABS_DELTA_OBJS),        RG(SLABS_DELTA_OBJS),        QS(noop)   },
-  { RS(SLABS_DELTA_AOBJS),       RG(SLABS_DELTA_AOBJS),       QS(noop)   },
-  { RS(SLABS_DELTA_PAGES),       RG(SLABS_DELTA_PAGES),       QS(noop)   },
-  { RS(SLABS_DELTA_SLABS),       RG(SLABS_DELTA_SLABS),       QS(noop)   },
-  { RS(SLABS_DELTA_ASLABS),      RG(SLABS_DELTA_ASLABS),      QS(noop)   },
-  { RS(SLABS_DELTA_CACHES),      RG(SLABS_DELTA_CACHES),      QS(noop)   },
-  { RS(SLABS_DELTA_ACACHES),     RG(SLABS_DELTA_ACACHES),     QS(noop)   },
-  { RS(SLABS_DELTA_SIZE_AVG),    RG(SLABS_DELTA_SIZE_AVG),    QS(noop)   },
-  { RS(SLABS_DELTA_SIZE_MIN),    RG(SLABS_DELTA_SIZE_MIN),    QS(noop)   },
-  { RS(SLABS_DELTA_SIZE_MAX),    RG(SLABS_DELTA_SIZE_MAX),    QS(noop)   },
-  { RS(SLABS_DELTA_SIZE_ACTIVE), RG(SLABS_DELTA_SIZE_ACTIVE), QS(noop)   },
-  { RS(SLABS_DELTA_SIZE_TOTAL),  RG(SLABS_DELTA_SIZE_TOTAL),  QS(noop)   },
+  { RS(SLABS_DELTA_OBJS),        QS(noop)   },
+  { RS(SLABS_DELTA_AOBJS),       QS(noop)   },
+  { RS(SLABS_DELTA_PAGES),       QS(noop)   },
+  { RS(SLABS_DELTA_SLABS),       QS(noop)   },
+  { RS(SLABS_DELTA_ASLABS),      QS(noop)   },
+  { RS(SLABS_DELTA_CACHES),      QS(noop)   },
+  { RS(SLABS_DELTA_ACACHES),     QS(noop)   },
+  { RS(SLABS_DELTA_SIZE_AVG),    QS(noop)   },
+  { RS(SLABS_DELTA_SIZE_MIN),    QS(noop)   },
+  { RS(SLABS_DELTA_SIZE_MAX),    QS(noop)   },
+  { RS(SLABS_DELTA_SIZE_ACTIVE), QS(noop)   },
+  { RS(SLABS_DELTA_SIZE_TOTAL),  QS(noop)   },
 
-  { RS(SLABNODE_NAME),           RG(SLABNODE_NAME),           QS(str)    },
-  { RS(SLABNODE_OBJS),           RG(SLABNODE_OBJS),           QS(u_int)  },
-  { RS(SLABNODE_AOBJS),          RG(SLABNODE_AOBJS),          QS(u_int)  },
-  { RS(SLABNODE_OBJ_SIZE),       RG(SLABNODE_OBJ_SIZE),       QS(u_int)  },
-  { RS(SLABNODE_OBJS_PER_SLAB),  RG(SLABNODE_OBJS_PER_SLAB),  QS(u_int)  },
-  { RS(SLABNODE_PAGES_PER_SLAB), RG(SLABNODE_PAGES_PER_SLAB), QS(u_int)  },
-  { RS(SLABNODE_SLABS),          RG(SLABNODE_SLABS),          QS(u_int)  },
-  { RS(SLABNODE_ASLABS),         RG(SLABNODE_ASLABS),         QS(u_int)  },
-  { RS(SLABNODE_USE),            RG(SLABNODE_USE),            QS(u_int)  },
-  { RS(SLABNODE_SIZE),           RG(SLABNODE_SIZE),           QS(ul_int) },
+  { RS(SLABNODE_NAME),           QS(str)    },
+  { RS(SLABNODE_OBJS),           QS(u_int)  },
+  { RS(SLABNODE_AOBJS),          QS(u_int)  },
+  { RS(SLABNODE_OBJ_SIZE),       QS(u_int)  },
+  { RS(SLABNODE_OBJS_PER_SLAB),  QS(u_int)  },
+  { RS(SLABNODE_PAGES_PER_SLAB), QS(u_int)  },
+  { RS(SLABNODE_SLABS),          QS(u_int)  },
+  { RS(SLABNODE_ASLABS),         QS(u_int)  },
+  { RS(SLABNODE_USE),            QS(u_int)  },
+  { RS(SLABNODE_SIZE),           QS(ul_int) },
 
  // dummy entry corresponding to PROCPS_SLABINFO_logical_end ...
-  { NULL,                        NULL,                        NULL       }
+  { NULL,                        NULL       }
 };
 
     /* please note,
@@ -360,10 +298,8 @@ static struct {
 enum slabinfo_item PROCPS_SLABINFO_logical_end = PROCPS_SLABNODE_SIZE + 1;
 
 #undef setNAME
-#undef getNAME
 #undef srtNAME
 #undef RS
-#undef RG
 #undef QS
 
 
@@ -923,29 +859,34 @@ PROCPS_EXPORT int procps_slabinfo_unref (
 
 // --- variable interface functions -------------------------------------------
 
-PROCPS_EXPORT signed long procps_slabinfo_get (
+PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
         struct procps_slabinfo *info,
         enum slabinfo_item item)
 {
     static time_t sav_secs;
     time_t cur_secs;
-    int rc;
 
     if (info == NULL)
-        return -EINVAL;
+        return NULL;
     if (item < 0 || item >= PROCPS_SLABINFO_logical_end)
-        return -EINVAL;
+        return NULL;
 
     /* we will NOT read the slabinfo file with every call - rather, we'll offer
        a granularity of 1 second between reads ... */
     cur_secs = time(NULL);
     if (1 <= cur_secs - sav_secs) {
-        if ((rc = read_slabinfo_failed(info)))
-            return rc;
+        if (read_slabinfo_failed(info))
+            return NULL;
         sav_secs = cur_secs;
     }
 
-    return Item_table[item].getsfunc(info);
+    info->get_this.item = item;
+//  with 'get', we must NOT honor the usual 'noop' guarantee
+//  if (item > PROCPS_SLABINFO_noop)
+        info->get_this.result.ul_int = 0;
+    Item_table[item].setsfunc(&info->get_this, &info->hist, &info->nul_node);
+
+    return &info->get_this;
 } // end: procps_slabinfo_get
 
 

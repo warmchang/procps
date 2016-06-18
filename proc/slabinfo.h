@@ -95,8 +95,11 @@ struct slabinfo_reap {
 };
 
 
-#define PROCPS_SLABINFO_VAL(rel_enum,type,stack) \
-    stack -> head [ rel_enum ] . result . type
+#define PROCPS_SLABINFO_GET( slabinfo, actual_enum, type ) \
+    procps_slabinfo_get( slabinfo, actual_enum ) -> result . type
+
+#define PROCPS_SLABINFO_VAL( relative_enum, type, stack ) \
+    stack -> head [ relative_enum ] . result . type
 
 
 struct procps_slabinfo;
@@ -105,7 +108,7 @@ int procps_slabinfo_new   (struct procps_slabinfo **info);
 int procps_slabinfo_ref   (struct procps_slabinfo  *info);
 int procps_slabinfo_unref (struct procps_slabinfo **info);
 
-signed long procps_slabinfo_get (
+struct slabinfo_result *procps_slabinfo_get (
     struct procps_slabinfo *info,
     enum slabinfo_item item);
 
