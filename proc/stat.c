@@ -122,6 +122,7 @@ struct procps_statinfo {
     int (*our_max_node)(void);         // a libnuma function call via dlsym()
     int (*our_node_of_cpu)(int);       // a libnuma function call via dlsym()
 #endif
+    struct stat_result get_this;       // for return to caller after a get
 };
 
 
@@ -192,78 +193,10 @@ setDECL(SYS_DELTA_PROC_RUNNING) { (void)T; R->result.s_int = S->new.procs_runnin
 #undef SYSsetH
 
 
-// ___ Results 'Get' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
-
-#define getNAME(e) get_results_ ## e
-#define getDECL(e) static signed long getNAME(e) \
-    (struct procps_statinfo *I)
-
-// regular get
-#define TIC_get(e,x) getDECL(e) { return I->cpu_hist.new . x; }
-#define SYS_get(e,x) getDECL(e) { return I->sys_hist.new . x; }
-// delta get
-#define TICgetH(e,x) getDECL(e) { \
-    long long n = I->cpu_hist.new. x - I->cpu_hist.old. x; \
-    return n < 0 ? 0 : n; }
-#define SYSgetH(e,x) getDECL(e) { \
-    long long n = I->sys_hist.new. x - I->sys_hist.old. x; \
-    return n < 0 ? 0 : n; }
-
-getDECL(noop)                   { (void)I; return 0; }
-getDECL(extra)                  { (void)I; return 0; }
-
-getDECL(TIC_ID)                 { return I->cpu_hist.id;  }
-getDECL(TIC_NUMA_NODE)          { return I->cpu_hist.numa_node; }
-
-TIC_get(TIC_USER,                 user)
-TIC_get(TIC_NICE,                 nice)
-TIC_get(TIC_SYSTEM,               system)
-TIC_get(TIC_IDLE,                 idle)
-TIC_get(TIC_IOWAIT,               iowait)
-TIC_get(TIC_IRQ,                  irq)
-TIC_get(TIC_SOFTIRQ,              sirq)
-TIC_get(TIC_STOLEN,               stolen)
-TIC_get(TIC_GUEST,                guest)
-TIC_get(TIC_GUEST_NICE,           gnice)
-
-TICgetH(TIC_DELTA_USER,           user)
-TICgetH(TIC_DELTA_NICE,           nice)
-TICgetH(TIC_DELTA_SYSTEM,         system)
-TICgetH(TIC_DELTA_IDLE,           idle)
-TICgetH(TIC_DELTA_IOWAIT,         iowait)
-TICgetH(TIC_DELTA_IRQ,            irq)
-TICgetH(TIC_DELTA_SOFTIRQ,        sirq)
-TICgetH(TIC_DELTA_STOLEN,         stolen)
-TICgetH(TIC_DELTA_GUEST,          guest)
-TICgetH(TIC_DELTA_GUEST_NICE,     gnice)
-
-SYS_get(SYS_CTX_SWITCHES,         ctxt)
-SYS_get(SYS_INTERRUPTS,           intr)
-SYS_get(SYS_PROC_BLOCKED,         procs_blocked)
-SYS_get(SYS_PROC_CREATED,         procs_created)
-SYS_get(SYS_PROC_RUNNING,         procs_running)
-SYS_get(SYS_TIME_OF_BOOT,         btime)
-
-SYSgetH(SYS_DELTA_CTX_SWITCHES,   ctxt)
-SYSgetH(SYS_DELTA_INTERRUPTS,     intr)
-getDECL(SYS_DELTA_PROC_BLOCKED) { return I->sys_hist.new.procs_blocked - I->sys_hist.old.procs_blocked; }
-SYSgetH(SYS_DELTA_PROC_CREATED,  procs_created)
-getDECL(SYS_DELTA_PROC_RUNNING) { return I->sys_hist.new.procs_running - I->sys_hist.old.procs_running; }
-
-#undef getDECL
-#undef TIC_get
-#undef SYS_get
-#undef TICgetH
-#undef SYSgetH
-
-
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 typedef void (*SET_t)(struct stat_result *, struct hist_sys *, struct hist_tic *);
 #define RS(e) (SET_t)setNAME(e)
-
-typedef long long (*GET_t)(struct procps_statinfo *);
-#define RG(e) (GET_t)getNAME(e)
 
         /*
          * Need it be said?
@@ -271,50 +204,49 @@ typedef long long (*GET_t)(struct procps_statinfo *);
          * those 'enum stat_item' guys ! */
 static struct {
     SET_t setsfunc;              // the actual result setting routine
-    GET_t getsfunc;              // a routine to return single result
 } Item_table[] = {
-/*  setsfunc                     getsfunc
-    ---------------------------  -------------------------  */
-  { RS(noop),                    RG(noop)                   },
-  { RS(extra),                   RG(extra)                  },
+/*  setsfunc
+    -------------------------- */
+  { RS(noop)                   },
+  { RS(extra)                  },
 
-  { RS(TIC_ID),                  RG(TIC_ID)                 },
-  { RS(TIC_NUMA_NODE),           RG(TIC_NUMA_NODE)          },
-  { RS(TIC_USER),                RG(TIC_USER)               },
-  { RS(TIC_NICE),                RG(TIC_NICE)               },
-  { RS(TIC_SYSTEM),              RG(TIC_SYSTEM)             },
-  { RS(TIC_IDLE),                RG(TIC_IDLE)               },
-  { RS(TIC_IOWAIT),              RG(TIC_IOWAIT)             },
-  { RS(TIC_IRQ),                 RG(TIC_IRQ)                },
-  { RS(TIC_SOFTIRQ),             RG(TIC_SOFTIRQ)            },
-  { RS(TIC_STOLEN),              RG(TIC_STOLEN)             },
-  { RS(TIC_GUEST),               RG(TIC_GUEST)              },
-  { RS(TIC_GUEST_NICE),          RG(TIC_GUEST_NICE)         },
-  { RS(TIC_DELTA_USER),          RG(TIC_DELTA_USER)         },
-  { RS(TIC_DELTA_NICE),          RG(TIC_DELTA_NICE)         },
-  { RS(TIC_DELTA_SYSTEM),        RG(TIC_DELTA_SYSTEM)       },
-  { RS(TIC_DELTA_IDLE),          RG(TIC_DELTA_IDLE)         },
-  { RS(TIC_DELTA_IOWAIT),        RG(TIC_DELTA_IOWAIT)       },
-  { RS(TIC_DELTA_IRQ),           RG(TIC_DELTA_IRQ)          },
-  { RS(TIC_DELTA_SOFTIRQ),       RG(TIC_DELTA_SOFTIRQ)      },
-  { RS(TIC_DELTA_STOLEN),        RG(TIC_DELTA_STOLEN)       },
-  { RS(TIC_DELTA_GUEST),         RG(TIC_DELTA_GUEST)        },
-  { RS(TIC_DELTA_GUEST_NICE),    RG(TIC_DELTA_GUEST_NICE)   },
+  { RS(TIC_ID)                 },
+  { RS(TIC_NUMA_NODE)          },
+  { RS(TIC_USER)               },
+  { RS(TIC_NICE)               },
+  { RS(TIC_SYSTEM)             },
+  { RS(TIC_IDLE)               },
+  { RS(TIC_IOWAIT)             },
+  { RS(TIC_IRQ)                },
+  { RS(TIC_SOFTIRQ)            },
+  { RS(TIC_STOLEN)             },
+  { RS(TIC_GUEST)              },
+  { RS(TIC_GUEST_NICE)         },
+  { RS(TIC_DELTA_USER)         },
+  { RS(TIC_DELTA_NICE)         },
+  { RS(TIC_DELTA_SYSTEM)       },
+  { RS(TIC_DELTA_IDLE)         },
+  { RS(TIC_DELTA_IOWAIT)       },
+  { RS(TIC_DELTA_IRQ)          },
+  { RS(TIC_DELTA_SOFTIRQ)      },
+  { RS(TIC_DELTA_STOLEN)       },
+  { RS(TIC_DELTA_GUEST)        },
+  { RS(TIC_DELTA_GUEST_NICE)   },
 
-  { RS(SYS_CTX_SWITCHES),        RG(SYS_CTX_SWITCHES)       },
-  { RS(SYS_INTERRUPTS),          RG(SYS_INTERRUPTS)         },
-  { RS(SYS_PROC_BLOCKED),        RG(SYS_PROC_BLOCKED)       },
-  { RS(SYS_PROC_CREATED),        RG(SYS_PROC_CREATED)       },
-  { RS(SYS_PROC_RUNNING),        RG(SYS_PROC_RUNNING)       },
-  { RS(SYS_TIME_OF_BOOT),        RG(SYS_TIME_OF_BOOT)       },
-  { RS(SYS_DELTA_CTX_SWITCHES),  RG(SYS_DELTA_CTX_SWITCHES) },
-  { RS(SYS_DELTA_INTERRUPTS),    RG(SYS_DELTA_INTERRUPTS)   },
-  { RS(SYS_DELTA_PROC_BLOCKED),  RG(SYS_DELTA_PROC_BLOCKED) },
-  { RS(SYS_DELTA_PROC_CREATED),  RG(SYS_DELTA_PROC_CREATED) },
-  { RS(SYS_DELTA_PROC_RUNNING),  RG(SYS_DELTA_PROC_RUNNING) },
+  { RS(SYS_CTX_SWITCHES)       },
+  { RS(SYS_INTERRUPTS)         },
+  { RS(SYS_PROC_BLOCKED)       },
+  { RS(SYS_PROC_CREATED)       },
+  { RS(SYS_PROC_RUNNING)       },
+  { RS(SYS_TIME_OF_BOOT)       },
+  { RS(SYS_DELTA_CTX_SWITCHES) },
+  { RS(SYS_DELTA_INTERRUPTS)   },
+  { RS(SYS_DELTA_PROC_BLOCKED) },
+  { RS(SYS_DELTA_PROC_CREATED) },
+  { RS(SYS_DELTA_PROC_RUNNING) },
 
  // dummy entry corresponding to PROCPS_STAT_logical_end ...
-  { NULL,                        NULL                       }
+  { NULL,                      }
 };
 
     /* please note,
@@ -326,9 +258,7 @@ enum stat_item PROCPS_STAT_TIC_highest = PROCPS_STAT_TIC_DELTA_GUEST_NICE;
 enum stat_item PROCPS_STAT_logical_end = PROCPS_STAT_SYS_DELTA_PROC_RUNNING + 1;
 
 #undef setNAME
-#undef getNAME
 #undef RS
-#undef RG
 
 // ___ Private Functions ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -930,29 +860,34 @@ PROCPS_EXPORT int procps_stat_unref (
 
 // --- variable interface functions -------------------------------------------
 
-PROCPS_EXPORT signed long long procps_stat_get (
+PROCPS_EXPORT struct stat_result *procps_stat_get (
         struct procps_statinfo *info,
         enum stat_item item)
 {
     static time_t sav_secs;
     time_t cur_secs;
-    int rc;
 
     if (info == NULL)
-        return -EINVAL;
+        return NULL;
     if (item < 0 || item >= PROCPS_STAT_logical_end)
-        return -EINVAL;
+        return NULL;
 
     /* no sense reading the stat with every call from a program like vmstat
        who chooses not to use the much more efficient 'select' function ... */
     cur_secs = time(NULL);
     if (1 <= cur_secs - sav_secs) {
-        if ((rc = read_stat_failed(info)))
-            return rc;
+        if (read_stat_failed(info))
+            return NULL;
         sav_secs = cur_secs;
     }
 
-    return Item_table[item].getsfunc(info);
+    info->get_this.item = item;
+//  with 'get', we must NOT honor the usual 'noop' guarantee
+//  if (item > PROCPS_STAT_noop)
+        info->get_this.result.ull_int = 0;
+    Item_table[item].setsfunc(&info->get_this, &info->sys_hist, &info->cpu_hist);
+
+    return &info->get_this;
 } // end: procps_stat_get
 
 
