@@ -965,14 +965,17 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
                 return NULL;
             break;
         case STAT_REAP_CPUS_AND_NODES:
-            if (!stacks_fetch_tics(info, &info->cpus))
-                return NULL;
 #ifndef NUMA_DISABLE
+            /* note: if we are doing numa at all, we must call make_numa_hist
+               before we build (fetch) the cpu stacks since the read_stat guy
+               will have marked (temporarily) all the cpu node ids as invalid */
             if (0 > make_numa_hist(info))
                 return NULL;
             // tolerate an unexpected absence of libnuma.so ...
             stacks_fetch_tics(info, &info->nodes);
 #endif
+            if (!stacks_fetch_tics(info, &info->cpus))
+                return NULL;
             break;
         default:
             return NULL;
