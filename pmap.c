@@ -1164,7 +1164,7 @@ int main(int argc, char **argv)
 	if (!(pids_fetch = procps_pids_select(info, pidlist, user_count, PROCPS_SELECT_PID)))
 		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
 
-	for (reap_count = 0; reap_count < pids_fetch->counts.total; reap_count++) {
+	for (reap_count = 0; reap_count < pids_fetch->counts->total; reap_count++) {
 		ret |= one_proc(pids_fetch->stacks[reap_count]);
 	}
 

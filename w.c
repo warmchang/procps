@@ -389,7 +389,7 @@ static int find_best_proc(
     if ((reap = procps_pids_reap(info, PROCPS_FETCH_TASKS_ONLY)) == NULL)
         xerrx(EXIT_FAILURE,
               _("Unable to load process information"));
-    total_procs = reap->counts.total;
+    total_procs = reap->counts->total;
 
     for (i=0; i < total_procs; i++) {
         /* is this the login process? */

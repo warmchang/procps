@@ -297,7 +297,7 @@ static void simple_spew(void){
 
   switch(thread_flags & (TF_show_proc|TF_loose_tasks|TF_show_task)){
     case TF_show_proc:                   // normal non-thread output
-      for (i = 0; i < pidread->counts.total; i++) {
+      for (i = 0; i < pidread->counts->total; i++) {
         buf = pidread->stacks[i];
         if (want_this_proc(buf))
           show_one_proc(buf, proc_format_list);
@@ -305,7 +305,7 @@ static void simple_spew(void){
       break;
     case TF_show_task:                   // -L and -T options
     case TF_show_proc|TF_loose_tasks:    // H option
-      for (i = 0; i < pidread->counts.total; i++) {
+      for (i = 0; i < pidread->counts->total; i++) {
         buf = pidread->stacks[i];
         if (want_this_proc(buf))
           show_one_proc(buf, task_format_list);
@@ -313,16 +313,16 @@ static void simple_spew(void){
       break;
     case TF_show_proc|TF_show_task:      // m and -m options
       procps_pids_sort(Pids_info, pidread->stacks
-        , pidread->counts.total, PROCPS_PIDS_TIME_START, PROCPS_PIDS_ASCEND);
+        , pidread->counts->total, PROCPS_PIDS_TIME_START, PROCPS_PIDS_ASCEND);
       procps_pids_sort(Pids_info, pidread->stacks
-        , pidread->counts.total, PROCPS_PIDS_ID_TGID, PROCPS_PIDS_ASCEND);
-      for (i = 0; i < pidread->counts.total; i++) {
+        , pidread->counts->total, PROCPS_PIDS_ID_TGID, PROCPS_PIDS_ASCEND);
+      for (i = 0; i < pidread->counts->total; i++) {
         buf = pidread->stacks[i];
 next_proc:
         if (want_this_proc(buf)) {
           int self = rSv(ID_PID, s_int, buf);
           show_one_proc(buf, proc_format_list);
-          for (; i < pidread->counts.total; i++) {
+          for (; i < pidread->counts->total; i++) {
             buf = pidread->stacks[i];
             if (rSv(ID_TGID, s_int, buf) != self) goto next_proc;
             show_one_proc(buf, task_format_list);
@@ -448,12 +448,12 @@ static void fancy_spew(void){
     ? PROCPS_FETCH_THREADS_TOO : PROCPS_FETCH_TASKS_ONLY;
 
   pidread = procps_pids_reap(Pids_info, which);
-  if (!pidread || !pidread->counts.total) {
+  if (!pidread || !pidread->counts->total) {
     fprintf(stderr, _("fatal library error, reap\n"));
     exit(EXIT_FAILURE);
   }
-  processes = xcalloc(pidread->counts.total, sizeof(void*));
-  for (i = 0; i < pidread->counts.total; i++) {
+  processes = xcalloc(pidread->counts->total, sizeof(void*));
+  for (i = 0; i < pidread->counts->total; i++) {
     buf = pidread->stacks[i];
     value_this_proc_pcpu(buf);
     if (want_this_proc(buf))
