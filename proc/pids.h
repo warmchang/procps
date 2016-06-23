@@ -23,7 +23,6 @@
 #ifndef _PROC_PIDS_H
 #define _PROC_PIDS_H
 
-#include <features.h>
 __BEGIN_DECLS
 
 enum pids_item {
@@ -187,8 +186,8 @@ struct pids_counts {
 };
 
 struct pids_fetch {
+    struct pids_counts *counts;
     struct pids_stack **stacks;
-    struct pids_counts counts;
 };
 
 

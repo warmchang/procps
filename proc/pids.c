@@ -63,6 +63,7 @@ struct fetch_support {
     int n_inuse;                       // number of above pointers occupied
     int n_alloc_save;                  // last known results.stacks allocation
     struct pids_fetch results;         // counts + stacks for return to caller
+    struct pids_counts counts;         // actual counts pointed to by 'results'
 };
 
 struct procps_pidsinfo {
@@ -366,7 +367,6 @@ typedef int  (*QSR_t)(const void *, const void *, void *);
 #define RS(e) (SET_t)setNAME(e)
 #define FF(e) (FRE_t)freNAME(e)
 #define QS(t) (QSR_t)srtNAME(t)
-
 
         /*
          * Need it be said?
@@ -1073,7 +1073,7 @@ static int stacks_fetch (
     }
     cleanup_stacks_all(info);
     toggle_history(info);
-    memset(&info->fetch.results.counts, 0, sizeof(struct pids_counts));
+    memset(&info->fetch.counts, 0, sizeof(struct pids_counts));
 
     // iterate stuff --------------------------------------
     n_inuse = 0;
@@ -1085,7 +1085,7 @@ static int stacks_fetch (
                 return -1;
             memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * MEMORY_INCR);
         }
-        if (!proc_tally(info, &info->fetch.results.counts, &task))
+        if (!proc_tally(info, &info->fetch.counts, &task))
             return -1;
         assign_results(info, info->fetch.anchor[n_inuse++], &task);
     }
@@ -1166,6 +1166,8 @@ PROCPS_EXPORT int procps_pids_new (
     p->hertz = procps_hertz_get();
     procps_uptime(&uptime_secs, NULL);
     p->boot_seconds = uptime_secs;
+
+    p->fetch.results.counts = &p->fetch.counts;
 
     p->refcount = 1;
     *info = p;
