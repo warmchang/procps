@@ -951,7 +951,7 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
   int cPartition = 0;
   int fields;
   unsigned dummy;
-  char devname[32];
+  char devname[35];
 
   *disks = NULL;
   *partitions = NULL;
@@ -964,10 +964,10 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
       fclose(fd);
       break;
     }
-    fields = sscanf(buff, " %*d %*d %15s %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %u", devname, &dummy);
+    fields = sscanf(buff, " %*d %*d %34s %*u %*u %*u %*u %*u %*u %*u %*u %*u %*u %u", devname, &dummy);
     if (fields == 2 && is_disk(devname)){
       (*disks) = xrealloc(*disks, (cDisk+1)*sizeof(struct disk_stat));
-      sscanf(buff,  "   %*d    %*d %15s %u %u %llu %u %u %u %llu %u %u %u %u",
+      sscanf(buff,  "   %*d    %*d %31s %u %u %llu %u %u %u %llu %u %u %u %u",
         //&disk_major,
         //&disk_minor,
         (*disks)[cDisk].disk_name,
@@ -989,8 +989,8 @@ unsigned int getdiskstat(struct disk_stat **disks, struct partition_stat **parti
       (*partitions) = xrealloc(*partitions, (cPartition+1)*sizeof(struct partition_stat));
       fflush(stdout);
       sscanf(buff,  (fields == 2)
-          ? "   %*d    %*d %15s %u %*u %llu %*u %u %*u %llu %*u %*u %*u %*u"
-          : "   %*d    %*d %15s %u %llu %u %llu",
+          ? "   %*d    %*d %34s %u %*u %llu %*u %u %*u %llu %*u %*u %*u %*u"
+          : "   %*d    %*d %34s %u %llu %u %llu",
         //&part_major,
         //&part_minor,
         (*partitions)[cPartition].partition_name,
