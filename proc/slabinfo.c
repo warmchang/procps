@@ -549,11 +549,11 @@ static inline void cleanup_stacks_all (
 static void extents_free_all (
         struct ext_support *this)
 {
-    do {
+    while (this->extents) {
         struct stacks_extent *p = this->extents;
         this->extents = this->extents->next;
         free(p);
-    } while (this->extents);
+    };
 } // end: extents_free_all
 
 

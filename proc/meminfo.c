@@ -401,11 +401,11 @@ static inline void cleanup_stacks_all (
 static void extents_free_all (
         struct procps_meminfo *info)
 {
-    do {
+    while (info->extents) {
         struct stacks_extent *p = info->extents;
         info->extents = info->extents->next;
         free(p);
-    } while (info->extents);
+    };
 } // end: extents_free_all
 
 

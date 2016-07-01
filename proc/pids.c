@@ -832,14 +832,11 @@ static struct stacks_extent *extent_cut (
 static void extents_free_all (
         struct procps_pidsinfo *info)
 {
-    struct stacks_extent *ext = info->extents;
-
-    while (ext) {
-        info->extents = ext->next;
-        free(ext);
-        ext = info->extents;
+    while (info->extents) {
+        struct stacks_extent *p = info->extents;
+        info->extents = info->extents->next;
+        free(p);
     };
-    info->dirty_stacks = 0;
 } // end: extents_free_all
 
 
