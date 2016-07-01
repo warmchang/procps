@@ -775,7 +775,7 @@ static void fill_environ_cvt (const char* directory, proc_t *restrict p) {
     // Provide the means to value proc_t.lxcname (perhaps only with "-") while
     // tracking all names already seen thus avoiding the overhead of repeating
     // malloc() and free() calls.
-static const char *lxc_containers (const char *path) {
+static char *lxc_containers (const char *path) {
     static struct utlbuf_s ub = { NULL, 0 };   // util buffer for whole cgroup
     static char lxc_none[] = "-";
     /*
@@ -800,7 +800,7 @@ static const char *lxc_containers (const char *path) {
         if ((p1 = strstr(ub.buf, lxc_delm))) {
             static struct lxc_ele {
                 struct lxc_ele *next;
-                const char *name;
+                char *name;
             } *anchor = NULL;
             struct lxc_ele *ele = anchor;
             char *p2;

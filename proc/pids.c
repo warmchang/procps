@@ -180,7 +180,7 @@ REG_set(ID_SUID,          u_int,   suid)
 REG_set(ID_SUSER,         str,     suser)
 REG_set(ID_TGID,          s_int,   tgid)
 REG_set(ID_TPGID,         s_int,   tpgid)
-setDECL(LXCNAME)      { (void)I; R->result.str = (char *)P->lxcname; }
+REG_set(LXCNAME,          str,     lxcname)
 REG_set(MEM_CODE,         sl_int,  trs)
 CVT_set(MEM_CODE_KIB,     sl_int,  trs)
 REG_set(MEM_DATA,         sl_int,  drs)
@@ -406,29 +406,29 @@ static struct {
     { RS(FLT_MIN),           f_stat,     NULL,      QS(sl_int),    0        },
     { RS(FLT_MIN_C),         f_stat,     NULL,      QS(sl_int),    0        },
     { RS(FLT_MIN_DELTA),     f_stat,     NULL,      QS(sl_int),    +1       },
-    { RS(ID_EGID),           0,          NULL,      QS(u_int),     0        }, // oldflags: free w/ simple_read...
+    { RS(ID_EGID),           0,          NULL,      QS(u_int),     0        }, // oldflags: free w/ simple_read
     { RS(ID_EGROUP),         f_grp,      NULL,      QS(str),       0        },
-    { RS(ID_EUID),           0,          NULL,      QS(u_int),     0        }, // oldflags: free w/ simple_read...
-    { RS(ID_EUSER),          f_usr,      NULL,      QS(str),       0        },
+    { RS(ID_EUID),           0,          NULL,      QS(u_int),     0        }, // oldflags: free w/ simple_read
+    { RS(ID_EUSER),          f_usr,      NULL,      QS(str),       0        }, // freefunc NULL w/ cached string
     { RS(ID_FGID),           f_status,   NULL,      QS(u_int),     0        },
     { RS(ID_FGROUP),         x_ogroup,   NULL,      QS(str),       0        },
     { RS(ID_FUID),           f_status,   NULL,      QS(u_int),     0        },
-    { RS(ID_FUSER),          x_ouser,    NULL,      QS(str),       0        },
+    { RS(ID_FUSER),          x_ouser,    NULL,      QS(str),       0        }, // freefunc NULL w/ cached string
     { RS(ID_PGRP),           f_stat,     NULL,      QS(s_int),     0        },
     { RS(ID_PID),            0,          NULL,      QS(s_int),     0        }, // oldflags: free w/ simple_nextpid
     { RS(ID_PPID),           f_either,   NULL,      QS(s_int),     0        },
     { RS(ID_RGID),           f_status,   NULL,      QS(u_int),     0        },
     { RS(ID_RGROUP),         x_ogroup,   NULL,      QS(str),       0        },
     { RS(ID_RUID),           f_status,   NULL,      QS(u_int),     0        },
-    { RS(ID_RUSER),          x_ouser,    NULL,      QS(str),       0        },
+    { RS(ID_RUSER),          x_ouser,    NULL,      QS(str),       0        }, // freefunc NULL w/ cached string
     { RS(ID_SESSION),        f_stat,     NULL,      QS(s_int),     0        },
     { RS(ID_SGID),           f_status,   NULL,      QS(u_int),     0        },
     { RS(ID_SGROUP),         x_ogroup,   NULL,      QS(str),       0        },
     { RS(ID_SUID),           f_status,   NULL,      QS(u_int),     0        },
-    { RS(ID_SUSER),          x_ouser,    NULL,      QS(str),       0        },
+    { RS(ID_SUSER),          x_ouser,    NULL,      QS(str),       0        }, // freefunc NULL w/ cached string
     { RS(ID_TGID),           0,          NULL,      QS(s_int),     0        }, // oldflags: free w/ simple_nextpid
     { RS(ID_TPGID),          f_stat,     NULL,      QS(s_int),     0        },
-    { RS(LXCNAME),           f_lxc,      NULL,      QS(str),       0        },
+    { RS(LXCNAME),           f_lxc,      NULL,      QS(str),       0        }, // freefunc NULL w/ cached string
     { RS(MEM_CODE),          f_statm,    NULL,      QS(sl_int),    0        },
     { RS(MEM_CODE_KIB),      f_statm,    NULL,      QS(sl_int),    0        },
     { RS(MEM_DATA),          f_statm,    NULL,      QS(sl_int),    0        },

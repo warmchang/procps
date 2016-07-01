@@ -169,7 +169,7 @@ typedef struct proc_t {
         *sd_slice,      // n/a             systemd slice unit
         *sd_unit,       // n/a             systemd system unit id
         *sd_uunit;      // n/a             systemd user unit id
-    const char
+    char
         *lxcname;       // n/a             lxc container name
 } proc_t;
 
