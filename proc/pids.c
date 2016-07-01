@@ -1090,14 +1090,16 @@ static int stacks_fetch (
     // finalize stuff -------------------------------------
     /* note: we go to this trouble of maintaining a duplicate of the consolidated |
              extent stacks addresses represented as our 'anchor' since these ptrs |
-             are exposed to users ( um, not that we don't trust 'em or anything ) | */
-    if (n_saved < n_alloc + 1) {
-        n_saved = n_alloc + 1;
+             are exposed to a user (um, not that we don't trust 'em or anything). |
+             plus, we can NULL delimit these ptrs which we couldn't do otherwise. | */
+    if (n_saved < n_inuse + 1) {
+        n_saved = n_inuse + 1;
         if (!(info->fetch.results.stacks = realloc(info->fetch.results.stacks, sizeof(void *) * n_saved)))
-            return -1;
+            return -ENOMEM;
     }
     memcpy(info->fetch.results.stacks, info->fetch.anchor, sizeof(void *) * n_inuse);
     info->fetch.results.stacks[n_inuse] = NULL;
+
     return n_inuse;     // callers beware, this might be zero !
  #undef n_alloc
  #undef n_inuse

@@ -105,8 +105,9 @@ struct reap_support {
     int total;                         // independently obtained # of cpus/nodes
     struct ext_support fetch;          // extents plus items details
     struct tic_support hist;           // cpu and node jiffies management
-    int n_anchor_alloc;                // last known anchor pointers allocation
+    int n_alloc;                       // last known anchor pointers allocation
     struct stat_stack **anchor;        // reapable stacks (consolidated extents)
+    int n_alloc_save;                  // last known results.stacks allocation
     struct stat_reap result;           // summary + stacks returned to caller
 };
 
@@ -649,6 +650,9 @@ static int stacks_fetch_tics (
         struct procps_statinfo *info,
         struct reap_support *this)
 {
+ #define n_alloc  this->n_alloc
+ #define n_inuse  this->hist.n_inuse
+ #define n_saved  this->n_alloc_save
     struct stacks_extent *ext;
     int i;
 
@@ -659,21 +663,21 @@ static int stacks_fetch_tics (
     if (!this->anchor) {
         if (!(this->anchor = calloc(sizeof(void *), STACKS_INCR)))
             return -ENOMEM;
-        this->n_anchor_alloc = STACKS_INCR;
+        n_alloc = STACKS_INCR;
     }
     if (!this->fetch.extents) {
-        if (!(ext = stacks_alloc(&this->fetch, this->n_anchor_alloc)))
+        if (!(ext = stacks_alloc(&this->fetch, n_alloc)))
             return -ENOMEM;
-        memcpy(this->anchor, ext->stacks, sizeof(void *) * this->n_anchor_alloc);
+        memcpy(this->anchor, ext->stacks, sizeof(void *) * n_alloc);
     }
     if (this->fetch.dirty_stacks)
         cleanup_stacks_all(&this->fetch);
 
     // iterate stuff --------------------------------------
-    for (i = 0; i < this->hist.n_inuse; i++) {
-        if (!(i < this->n_anchor_alloc)) {
-            this->n_anchor_alloc += STACKS_INCR;
-            if ((!(this->anchor = realloc(this->anchor, sizeof(void *) * this->n_anchor_alloc)))
+    for (i = 0; i < n_inuse; i++) {
+        if (!(i < n_alloc)) {
+            n_alloc += STACKS_INCR;
+            if ((!(this->anchor = realloc(this->anchor, sizeof(void *) * n_alloc)))
             || (!(ext = stacks_alloc(&this->fetch, STACKS_INCR)))) {
                 return -ENOMEM;
             }
@@ -683,12 +687,25 @@ static int stacks_fetch_tics (
     }
 
     // finalize stuff -------------------------------------
+    /* note: we go to this trouble of maintaining a duplicate of the consolidated |
+             extent stacks addresses represented as our 'anchor' since these ptrs |
+             are exposed to a user (um, not that we don't trust 'em or anything). |
+             plus, we can NULL delimit these ptrs which we couldn't do otherwise. | */
+    if (n_saved < i + 1) {
+        n_saved = i + 1;
+        if (!(this->result.stacks = realloc(this->result.stacks, sizeof(void *) * n_saved)))
+            return -ENOMEM;
+    }
+    memcpy(this->result.stacks, this->anchor, sizeof(void *) * i);
+    this->result.stacks[i] = NULL;
     this->result.total = i;
-    this->result.stacks = this->anchor;
     this->fetch.dirty_stacks = 1;
 
     // callers beware, this might be zero (maybe no libnuma.so) ...
     return this->result.total;
+ #undef n_alloc
+ #undef n_inuse
+ #undef n_saved
 } // end: stacks_fetch_tics
 
 
@@ -766,6 +783,7 @@ PROCPS_EXPORT int procps_stat_new (
 
     p->refcount = 1;
     p->stat_fd = -1;
+
     p->results.cpus = &p->cpus.result;
     p->results.nodes = &p->nodes.result;
     p->cpus.total = procps_cpu_count();
@@ -824,6 +842,8 @@ PROCPS_EXPORT int procps_stat_unref (
     if ((*info)->refcount == 0) {
         if ((*info)->cpus.anchor)
             free((*info)->cpus.anchor);
+        if ((*info)->cpus.result.stacks)
+            free((*info)->cpus.result.stacks);
         if ((*info)->cpus.hist.tics)
             free((*info)->cpus.hist.tics);
         if ((*info)->cpus.fetch.extents)
@@ -831,6 +851,8 @@ PROCPS_EXPORT int procps_stat_unref (
 
         if ((*info)->nodes.anchor)
             free((*info)->nodes.anchor);
+        if ((*info)->nodes.result.stacks)
+            free((*info)->nodes.result.stacks);
         if ((*info)->nodes.hist.tics)
             free((*info)->nodes.hist.tics);
         if ((*info)->nodes.fetch.extents)
@@ -911,11 +933,6 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
 
     if (info == NULL || items == NULL)
         return NULL;
-
-    info->results.summary = NULL;
-    info->cpus.result.total = info->nodes.result.total = 0;
-    info->cpus.result.stacks = info->nodes.result.stacks = NULL;
-
     if (what != STAT_REAP_CPUS_ONLY && what != STAT_REAP_CPUS_AND_NODES)
         return NULL;
 
@@ -939,6 +956,15 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
     if (read_stat_failed(info))
         return NULL;
     info->results.summary = update_single_stack(info, &info->cpu_summary);
+
+    /* unlike the other 'reap' functions, <stat> provides for two separate
+       stacks pointer arrays exposed to callers. Thus, to keep our promise
+       of NULL delimit we must ensure a minimal array for the optional one */
+    if (!info->nodes.result.stacks
+    && (!(info->nodes.result.stacks = malloc(sizeof(void *)))))
+        return NULL;
+    info->nodes.result.total = 0;
+    info->nodes.result.stacks[0] = NULL;
 
     switch (what) {
         case STAT_REAP_CPUS_ONLY:

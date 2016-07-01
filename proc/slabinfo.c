@@ -45,6 +45,8 @@
 #define SLABINFO_LINE_LEN    2048
 #define SLAB_INFO_NAME_LEN   128
 
+#define STACKS_INCR          128
+
 /*
    Because 'select' could, at most, return only node[0] values and since 'reap' |
    would be forced to duplicate global slabs stuff in every node results stack, |
@@ -682,7 +684,6 @@ static struct stacks_extent *stacks_alloc (
 static int stacks_fetch (
         struct procps_slabinfo *info)
 {
- #define memINCR  64
  #define n_alloc  info->fetch.n_alloc
  #define n_inuse  info->fetch.n_inuse
  #define n_saved  info->fetch.n_alloc_save
@@ -690,9 +691,9 @@ static int stacks_fetch (
 
     // initialize stuff -----------------------------------
     if (!info->fetch.anchor) {
-        if (!(info->fetch.anchor = calloc(sizeof(void *), memINCR)))
+        if (!(info->fetch.anchor = calloc(sizeof(void *), STACKS_INCR)))
             return -ENOMEM;
-        n_alloc = memINCR;
+        n_alloc = STACKS_INCR;
     }
     if (!info->fetch_ext.extents) {
         if (!(ext = stacks_alloc(&info->fetch_ext, n_alloc)))
@@ -707,11 +708,11 @@ static int stacks_fetch (
     n_inuse = 0;
     while (n_inuse < info->nodes_used) {
         if (!(n_inuse < n_alloc)) {
-            n_alloc += memINCR;
+            n_alloc += STACKS_INCR;
             if ((!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc)))
-            || (!(ext = stacks_alloc(&info->fetch_ext, memINCR))))
+            || (!(ext = stacks_alloc(&info->fetch_ext, STACKS_INCR))))
                 return -1;
-            memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * memINCR);
+            memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * STACKS_INCR);
         }
         assign_results(info->fetch.anchor[n_inuse], &info->hist, &info->nodes[n_inuse]);
         ++n_inuse;
@@ -720,18 +721,18 @@ static int stacks_fetch (
     // finalize stuff -------------------------------------
     /* note: we go to this trouble of maintaining a duplicate of the consolidated |
              extent stacks addresses represented as our 'anchor' since these ptrs |
-             are exposed to users ( um, not that we don't trust 'em or anything ) | */
-    if (n_saved < n_alloc + 1) {
-        n_saved = n_alloc + 1;
+             are exposed to a user (um, not that we don't trust 'em or anything). |
+             plus, we can NULL delimit these ptrs which we couldn't do otherwise. | */
+    if (n_saved < n_inuse + 1) {
+        n_saved = n_inuse + 1;
         if (!(info->fetch.results.stacks = realloc(info->fetch.results.stacks, sizeof(void *) * n_saved)))
-            return -1;
+            return -ENOMEM;
     }
     memcpy(info->fetch.results.stacks, info->fetch.anchor, sizeof(void *) * n_inuse);
     info->fetch.results.stacks[n_inuse] = NULL;
     info->fetch.results.total = n_inuse;
 
     return n_inuse;
- #undef memINCR
  #undef n_alloc
  #undef n_inuse
  #undef n_saved
