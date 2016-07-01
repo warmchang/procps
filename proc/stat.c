@@ -84,9 +84,13 @@ struct stacks_extent {
     struct stat_stack **stacks;
 };
 
+struct item_support {
+    int num;                           // includes 'logical_end' delimiter
+    enum stat_item *enums;             // includes 'logical_end' delimiter
+};
+
 struct ext_support {
-    int numitems;                      // includes 'logical_end' delimiter
-    enum stat_item *items;             // includes 'logical_end' delimiter
+    struct item_support *items;        // how these stacks are configured
     struct stacks_extent *extents;     // anchor for these extents
     int dirty_stacks;
 };
@@ -123,6 +127,8 @@ struct procps_statinfo {
     int (*our_node_of_cpu)(int);       // a libnuma function call via dlsym()
 #endif
     struct stat_result get_this;       // for return to caller after a get
+    struct item_support reap_items;    // items used for reap (shared among 3)
+    struct item_support select_items;  // items unique to select
 };
 
 
@@ -608,7 +614,7 @@ static struct stacks_extent *stacks_alloc (
     vect_size  = sizeof(void *) * maxstacks;                   // size of the addr vectors |
     vect_size += sizeof(void *);                               // plus NULL addr delimiter |
     head_size  = sizeof(struct stat_stack);                    // size of that head struct |
-    list_size  = sizeof(struct stat_result) * this->numitems;  // any single results stack |
+    list_size  = sizeof(struct stat_result) * this->items->num;// any single results stack |
     blob_size  = sizeof(struct stacks_extent);                 // the extent anchor itself |
     blob_size += vect_size;                                    // plus room for addr vects |
     blob_size += head_size * maxstacks;                        // plus room for head thing |
@@ -629,7 +635,7 @@ static struct stacks_extent *stacks_alloc (
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct stat_stack *)v_head;
-        p_head->head = itemize_stack((struct stat_result *)v_list, this->numitems, this->items);
+        p_head->head = itemize_stack((struct stat_result *)v_list, this->items->num, this->items->enums);
         p_blob->stacks[i] = p_head;
         v_list += list_size;
         v_head += head_size;
@@ -696,16 +702,15 @@ static int stacks_reconfig_maybe (
 
     /* is this the first time or have things changed since we were last called?
        if so, gotta' redo all of our stacks stuff ... */
-    if (this->numitems != numitems + 1
-    || memcmp(this->items, items, sizeof(enum stat_item) * numitems)) {
+    if (this->items->num != numitems + 1
+    || memcmp(this->items->enums, items, sizeof(enum stat_item) * numitems)) {
         // allow for our PROCPS_STAT_logical_end
-        if (!(this->items = realloc(this->items, sizeof(enum stat_item) * (numitems + 1))))
+        if (!(this->items->enums = realloc(this->items->enums, sizeof(enum stat_item) * (numitems + 1))))
             return -ENOMEM;
-        memcpy(this->items, items, sizeof(enum stat_item) * numitems);
-        this->items[numitems] = PROCPS_STAT_logical_end;
-        this->numitems = numitems + 1;
-        if (this->extents)
-            extents_free_all(this);
+        memcpy(this->items->enums, items, sizeof(enum stat_item) * numitems);
+        this->items->enums[numitems] = PROCPS_STAT_logical_end;
+        this->items->num = numitems + 1;
+        extents_free_all(this);
         return 1;
     }
     return 0;
@@ -714,13 +719,8 @@ static int stacks_reconfig_maybe (
 
 static struct stat_stack *update_single_stack (
         struct procps_statinfo *info,
-        struct ext_support *this,
-        enum stat_item *items,
-        int numitems)
+        struct ext_support *this)
 {
-    if (0 > stacks_reconfig_maybe(this, items, numitems))
-        return NULL;
-
     if (!this->extents
     && !(stacks_alloc(this, 1)))
        return NULL;
@@ -769,6 +769,12 @@ PROCPS_EXPORT int procps_stat_new (
     p->results.cpus = &p->cpus.result;
     p->results.nodes = &p->nodes.result;
     p->cpus.total = procps_cpu_count();
+
+    // these 3 are for reap, sharing a single set of items
+    p->cpu_summary.items = p->cpus.fetch.items = p->nodes.fetch.items = &p->reap_items;
+
+    // the select guy has its own set of items
+    p->select.items = &p->select_items;
 
 #ifndef NUMA_DISABLE
  #ifndef PRETEND_NUMA
@@ -820,8 +826,6 @@ PROCPS_EXPORT int procps_stat_unref (
             free((*info)->cpus.anchor);
         if ((*info)->cpus.hist.tics)
             free((*info)->cpus.hist.tics);
-        if ((*info)->cpus.fetch.items)
-            free((*info)->cpus.fetch.items);
         if ((*info)->cpus.fetch.extents)
             extents_free_all(&(*info)->cpus.fetch);
 
@@ -829,20 +833,19 @@ PROCPS_EXPORT int procps_stat_unref (
             free((*info)->nodes.anchor);
         if ((*info)->nodes.hist.tics)
             free((*info)->nodes.hist.tics);
-        if ((*info)->nodes.fetch.items)
-            free((*info)->nodes.fetch.items);
         if ((*info)->nodes.fetch.extents)
             extents_free_all(&(*info)->nodes.fetch);
 
-        if ((*info)->cpu_summary.items)
-            free((*info)->cpu_summary.items);
         if ((*info)->cpu_summary.extents)
             extents_free_all(&(*info)->cpu_summary);
 
-        if ((*info)->select.items)
-            free((*info)->select.items);
         if ((*info)->select.extents)
             extents_free_all(&(*info)->select);
+
+        if ((*info)->reap_items.enums)
+            free((*info)->reap_items.enums);
+        if ((*info)->select_items.enums)
+            free((*info)->select_items.enums);
 
 #ifndef NUMA_DISABLE
  #ifndef PRETEND_NUMA
@@ -891,28 +894,6 @@ PROCPS_EXPORT struct stat_result *procps_stat_get (
 } // end: procps_stat_get
 
 
-/* procps_stat_select():
- *
- * Harvest all the requested TIC and/or SYS information then return
- * it in a results stack.
- *
- * Returns: pointer to a stat_stack struct on success, NULL on error.
- */
-PROCPS_EXPORT struct stat_stack *procps_stat_select (
-        struct procps_statinfo *info,
-        enum stat_item *items,
-        int numitems)
-{
-    if (info == NULL || items == NULL)
-        return NULL;
-
-    if (read_stat_failed(info))
-        return NULL;
-
-    return update_single_stack(info, &info->select, items, numitems);
-} // end: procps_stat_select
-
-
 /* procps_stat_reap():
  *
  * Harvest all the requested NUMA NODE and/or CPU information providing the
@@ -947,17 +928,17 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
     }
 }
 #endif
-    if ((rc = stacks_reconfig_maybe(&info->cpu_summary, items, numitems)) < 0)
+
+    if (0 > (rc = stacks_reconfig_maybe(&info->cpu_summary, items, numitems)))
         return NULL;
     if (rc) {
-        if ((rc = stacks_reconfig_maybe(&info->cpus.fetch, items, numitems)) < 0
-        || ((rc = stacks_reconfig_maybe(&info->nodes.fetch, items, numitems)) < 0))
-            return NULL;
+        extents_free_all(&info->cpus.fetch);
+        extents_free_all(&info->nodes.fetch);
     }
 
     if (read_stat_failed(info))
         return NULL;
-    info->results.summary = update_single_stack(info, &info->cpu_summary, items, numitems);
+    info->results.summary = update_single_stack(info, &info->cpu_summary);
 
     switch (what) {
         case STAT_REAP_CPUS_ONLY:
@@ -983,3 +964,28 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
 
     return &info->results;
 } // end: procps_stat_reap
+
+
+/* procps_stat_select():
+ *
+ * Harvest all the requested TIC and/or SYS information then return
+ * it in a results stack.
+ *
+ * Returns: pointer to a stat_stack struct on success, NULL on error.
+ */
+PROCPS_EXPORT struct stat_stack *procps_stat_select (
+        struct procps_statinfo *info,
+        enum stat_item *items,
+        int numitems)
+{
+    if (info == NULL || items == NULL)
+        return NULL;
+
+    if (0 > stacks_reconfig_maybe(&info->select, items, numitems))
+        return NULL;
+
+    if (read_stat_failed(info))
+        return NULL;
+
+    return update_single_stack(info, &info->select);
+} // end: procps_stat_select
