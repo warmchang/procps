@@ -500,7 +500,7 @@ static void __attribute__ ((__noreturn__))
 		pid = strtol_or_err(argv[i], _("failed to parse argument"));
 		if (!kill((pid_t) pid, signo))
 			continue;
-        error(0, errno, "(%d)", pid);
+        error(0, errno, "(%ld)", pid);
 		exitvalue = EXIT_FAILURE;
 		continue;
 	}
