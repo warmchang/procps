@@ -132,6 +132,7 @@ int main(int argc, char **argv)
         pid = strtol_or_err(argv[i], _("failed to parse argument"));
         if (!kill((pid_t) pid, signo))
             continue;
+        error(0, errno, "(%d)", pid);
         exitvalue = EXIT_FAILURE;
         continue;
     }
