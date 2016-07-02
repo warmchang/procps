@@ -101,7 +101,7 @@ extern void vminfo(void);
 typedef struct disk_stat{
 	unsigned long long reads_sectors;
 	unsigned long long written_sectors;
-	char               disk_name [16];
+	char               disk_name [32];
 	unsigned           inprogress_IO;
 	unsigned           merged_reads;
 	unsigned           merged_writes;
@@ -115,7 +115,7 @@ typedef struct disk_stat{
 }disk_stat;
 
 typedef struct partition_stat{
-	char partition_name [16];
+	char partition_name [35];
 	unsigned long long reads_sectors;
 	unsigned           parent_disk;  // index into a struct disk_stat array
 	unsigned           reads;
