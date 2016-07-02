@@ -364,7 +364,7 @@ wint_t my_getwc(FILE * s)
 #endif	/* WITH_WATCH8BIT */
 
 #ifdef WITH_WATCH8BIT
-static void output_header(wchar_t *restrict wcommand, int wcommand_columns, int wcommand_characters, double interval)
+static void output_header(wchar_t *restrict wcommand, int wcommand_characters, double interval)
 #else
 static void output_header(char *restrict command, double interval)
 #endif	/* WITH_WATCH8BIT */
@@ -374,6 +374,7 @@ static void output_header(char *restrict command, double interval)
 	char *header;
 	char *right_header;
 	char hostname[HOST_NAME_MAX + 1];
+	int command_columns = 0;	/* not including final \0 */
 
 	gethostname(hostname, sizeof(hostname));
 
@@ -407,10 +408,11 @@ static void output_header(char *restrict command, double interval)
 				mvaddstr(0, width - rhlen - 4, "... ");
 			} else {
 #ifdef WITH_WATCH8BIT
-				if (width < rhlen + hlen + wcommand_columns) {
+	            command_columns = wcswidth(wcommand, -1);
+				if (width < rhlen + hlen + command_columns) {
 					/* print truncated */
 					int available = width - rhlen - hlen;
-					int in_use = wcommand_columns;
+					int in_use = command_columns;
 					int wcomm_len = wcommand_characters;
 					while (available - 4 < in_use) {
 						wcomm_len--;
@@ -422,7 +424,14 @@ static void output_header(char *restrict command, double interval)
 					mvaddwstr(0, hlen, wcommand);
 				}
 #else
-				mvaddnstr(0, hlen, command, width - rhlen - hlen);
+                command_columns = strlen(command);
+                if (width < rhlen + hlen + command_columns) {
+                    /* print truncated */
+                    mvaddnstr(0, hlen, command, width - rhlen - hlen - 4);
+                    mvaddstr(0, width - rhlen - 4, "... ");
+                } else {
+                    mvaddnstr(0, hlen, command, width - rhlen - hlen);
+                }
 #endif	/* WITH_WATCH8BIT */
 			}
 		}
@@ -661,7 +670,6 @@ int main(int argc, char *argv[])
 				 * keeping only */
 #ifdef WITH_WATCH8BIT
 	wchar_t *wcommand = NULL;
-	int wcommand_columns = 0;	/* not including final \0 */
 	int wcommand_characters = 0;	/* not including final \0 */
 #endif	/* WITH_WATCH8BIT */
 
@@ -773,7 +781,6 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 	mbstowcs(wcommand, command, wcommand_characters + 1);
-	wcommand_columns = wcswidth(wcommand, -1);
 #endif	/* WITH_WATCH8BIT */
 
 	get_terminal_size();
