@@ -34,12 +34,12 @@
 #include "procps-private.h"
 
 #define DISKSTAT_LINE_LEN 1024
-#define DISKSTAT_NAME_LEN 15
+#define DISKSTAT_NAME_LEN 34
 #define DISKSTAT_FILE "/proc/diskstats"
 #define SYSBLOCK_DIR "/sys/block"
 
 struct procps_diskstat_dev {
-    char name[DISKSTAT_NAME_LEN];
+    char name[DISKSTAT_NAME_LEN+1];
     int is_disk;
     unsigned long reads;
     unsigned long reads_merged;
@@ -186,7 +186,7 @@ PROCPS_EXPORT int procps_diskstat_read (
 {
     int retval;
     char buf[DISKSTAT_LINE_LEN];
-    char devname[DISKSTAT_NAME_LEN];
+    char devname[DISKSTAT_NAME_LEN+1];
     struct procps_diskstat_dev *disk;
 
     /* clear/zero structures */
