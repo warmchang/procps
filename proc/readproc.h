@@ -137,6 +137,7 @@ typedef struct proc_t {
         **environ,      // (special)       environment string vector (/proc/#/environ)
         **cmdline,      // (special)       command line string vector (/proc/#/cmdline)
         **cgroup,       // (special)       cgroup string vector (/proc/#/cgroup)
+         *cgname,       // (special)       name portion of above (if possible)
          *supgid,       // status          supplementary gids as comma delimited str
          *supgrp;       // supp grp names as comma delimited str, derived from supgid
     char

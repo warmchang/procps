@@ -93,6 +93,7 @@ static inline void free_acquired (proc_t *p, int reuse) {
         if (p->environ)  free((void*)*p->environ);
         if (p->cmdline)  free((void*)*p->cmdline);
         if (p->cgroup)   free((void*)*p->cgroup);
+        if (p->cgname)   free(p->cgname);
         if (p->supgid)   free(p->supgid);
         if (p->supgrp)   free(p->supgrp);
         if (p->sd_mach)  free(p->sd_mach);
@@ -773,7 +774,7 @@ static char** vectorize_this_str (const char* src) {
     // the data into a single string represented as a single vector.
 static void fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
  #define vMAX ( MAX_BUFSZ - (int)(dst - dst_buffer) )
-    char *src, *dst, *grp, *eob;
+    char *src, *dst, *grp, *eob, *name;
     int tot, x, whackable_int = MAX_BUFSZ;
 
     *(dst = dst_buffer) = '\0';                  // empty destination
@@ -790,6 +791,10 @@ static void fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
         dst += escape_str(dst, grp, vMAX, &whackable_int);
     }
     p->cgroup = vectorize_this_str(dst_buffer[0] ? dst_buffer : "-");
+
+    name = strstr(p->cgroup[0], ":name=");
+    if (name && *(name+6)) name += 6; else name = p->cgroup[0];
+    p->cgname = strdup(name);
  #undef vMAX
 }
 
@@ -973,24 +978,21 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
             fill_environ_cvt(path, p);
         else
             p->environ = file2strvec(path, "environ");
-    } else
-        p->environ = NULL;
+    }
 
     if (flags & (PROC_FILLCOM|PROC_FILLARG)) {  // read /proc/#/cmdline
         if (flags & PROC_EDITCMDLCVT)
             fill_cmdline_cvt(path, p);
         else
             p->cmdline = file2strvec(path, "cmdline");
-    } else
-        p->cmdline = NULL;
+    }
 
     if ((flags & PROC_FILLCGROUP)) {            // read /proc/#/cgroup
         if (flags & PROC_EDITCGRPCVT)
             fill_cgroup_cvt(path, p);
         else
             p->cgroup = file2strvec(path, "cgroup");
-    } else
-        p->cgroup = NULL;
+    }
 
     if (unlikely(flags & PROC_FILLOOM)) {
         if (likely(file2str(path, "oom_score", &ub) != -1))
@@ -1092,24 +1094,21 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
                 fill_environ_cvt(path, t);
             else
                 t->environ = file2strvec(path, "environ");
-        } else
-            t->environ = NULL;
+        }
 
         if (flags & (PROC_FILLCOM|PROC_FILLARG)) {      // read /proc/#/task/#/cmdline
             if (flags & PROC_EDITCMDLCVT)
                 fill_cmdline_cvt(path, t);
             else
                 t->cmdline = file2strvec(path, "cmdline");
-        } else
-            t->cmdline = NULL;
+        }
 
         if ((flags & PROC_FILLCGROUP)) {                // read /proc/#/task/#/cgroup
             if (flags & PROC_EDITCGRPCVT)
                 fill_cgroup_cvt(path, t);
             else
                 t->cgroup = file2strvec(path, "cgroup");
-        } else
-            t->cgroup = NULL;
+        }
 
         if (unlikely(flags & PROC_FILLSYSTEMD))         // get sd-login.h stuff
             sd2proc(t);
@@ -1128,6 +1127,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         t->dt       = p->dt;
         t->cmdline  = p->cmdline;  // better not free these until done with all threads!
         t->environ  = p->environ;
+        t->cgname   = p->cgname;
         t->cgroup   = p->cgroup;
         if (t->supgid) free(t->supgid);
         t->supgid   = p->supgid;
@@ -1170,7 +1170,7 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
   char *restrict const path = PT->path;
   for (;;) {
     ent = readdir(PT->procfs);
-    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return 0;
+    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name[0]))) return 0;
     if(likely(likely(*ent->d_name > '0') && likely(*ent->d_name <= '9'))) break;
   }
   p->tgid = strtoul(ent->d_name, NULL, 10);
@@ -1197,7 +1197,7 @@ static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict con
   }
   for (;;) {
     ent = readdir(PT->taskdir);
-    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name))) return 0;
+    if(unlikely(unlikely(!ent) || unlikely(!ent->d_name[0]))) return 0;
     if(likely(likely(*ent->d_name > '0') && likely(*ent->d_name <= '9'))) break;
   }
   t->tid = strtoul(ent->d_name, NULL, 10);
