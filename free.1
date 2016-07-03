@@ -2,7 +2,7 @@
 .\"  This page Copyright (C) 1993 Matt Welsh, mdw@sunsite.unc.edu.
 .\"  Long options where added at April 15th, 2011.
 .\"  Freely distributable under the terms of the GPL
-.TH FREE 1 "Apr 2015" "procps-ng" "User Commands"
+.TH FREE 1 "Jul 2016" "procps-ng" "User Commands"
 .SH NAME
 free \- Display amount of free and used memory in the system
 .SH SYNOPSIS
@@ -25,8 +25,7 @@ Used memory (calculated as \fBtotal\fR - \fBfree\fR - \fBbuffers\fR - \fBcache\f
 Unused memory (MemFree and SwapFree in /proc/meminfo)
 .TP
 \fBshared\fR
-Memory used (mostly) by tmpfs (Shmem in /proc/meminfo, available on
-kernels 2.6.32, displayed as zero if not available)
+Memory used (mostly) by tmpfs (Shmem in /proc/meminfo)
 .TP
 \fBbuffers\fR
 Memory used by kernel buffers (Buffers in /proc/meminfo)
@@ -137,14 +136,15 @@ Display version information.
 /proc/meminfo
 memory information
 .PD
+.SH BUGS
+The value for the \fBshared\fR column is not available from kernels before
+2.6.32 and is displayed as zero.
+.TP
+Please send bug reports to
+.UR procps@freelists.org
+.UE
 .SH "SEE ALSO"
 .BR ps (1),
 .BR slabtop (1),
 .BR top "(1),
 .BR vmstat (8).
-.SH AUTHORS
-Written by Brian Edmonds.
-.SH "REPORTING BUGS"
-Please send bug reports to
-.UR procps@freelists.org
-.UE
