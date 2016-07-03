@@ -995,11 +995,11 @@ static int read_vmstat_failed (
         break;
     }
     if (size == 0)
-        return 0;
+        return -1;
     buf[size] = '\0';
 
     head = buf;
-    do {
+    for (;;) {
         static ENTRY e;      // just to keep coverity off our backs (e.data)
         ENTRY *ep;
 
@@ -1022,7 +1022,7 @@ static int read_vmstat_failed (
             break;
 
         head = tail + 1;
-    } while(tail);
+    }
 
     // let's not distort the deltas the first time thru ...
     if (!info->vmstat_was_read)

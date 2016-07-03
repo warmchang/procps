@@ -534,7 +534,7 @@ static int make_hash_failed (
  * Read the data out of /proc/meminfo putting the information
  * into the supplied info structure
  */
-PROCPS_EXPORT int read_meminfo_failed (
+static int read_meminfo_failed (
         struct procps_meminfo *info)
 {
  /* a 'memory history reference' macro for readability,
@@ -570,11 +570,11 @@ PROCPS_EXPORT int read_meminfo_failed (
         break;
     }
     if (size == 0)
-        return 0;
+        return -1;
     buf[size] = '\0';
 
     head = buf;
-    do {
+    for (;;) {
         static ENTRY e;      // just to keep coverity off our backs (e.data)
         ENTRY *ep;
 
@@ -589,16 +589,15 @@ PROCPS_EXPORT int read_meminfo_failed (
             valptr = ep->data;
 
         head = tail+1;
-        if (valptr) {
+        if (valptr)
             *valptr = strtoul(head, &tail, 10);
-        }
 
         tail = strchr(head, '\n');
         if (!tail)
             break;
 
         head = tail + 1;
-    } while(tail);
+    }
 
     if (0 == mHr(MemAvailable))
         mHr(MemAvailable) = mHr(MemFree);
