@@ -752,7 +752,11 @@ static void show_msg (const char *str) {
 static int show_pmt (const char *str) {
    int rc;
 
+#ifdef PRETENDNOCAP
+   PUTT("\n%s%s%.*s %s%s%s"
+#else
    PUTT("%s%s%.*s %s%s%s"
+#endif
       , tg2(0, Msg_row)
       , Curwin->capclr_pmt
       , Screen_cols - 2
