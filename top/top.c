@@ -252,6 +252,7 @@ static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||
          * routine may serve more than one column.
          */
 
+SCB_STRS(CGN, cgname)
 SCB_STRS(CGR, cgroup[0])
 SCB_STRV(CMD, Frame_cmdlin, cmdline, cmd)
 SCB_NUM1(COD, trs)
@@ -1789,13 +1790,14 @@ static FLD_t Fieldstab[] = {
    {     6,  SK_Kb,  A_right,  SF(RZA),  L_status  },
    {     6,  SK_Kb,  A_right,  SF(RZF),  L_status  },
    {     6,  SK_Kb,  A_right,  SF(RZL),  L_status  },
-   {     6,  SK_Kb,  A_right,  SF(RZS),  L_status  }
+   {     6,  SK_Kb,  A_right,  SF(RZS),  L_status  },
 #else
    {     4,  SK_Kb,  A_right,  SF(RZA),  L_status  },
    {     4,  SK_Kb,  A_right,  SF(RZF),  L_status  },
    {     4,  SK_Kb,  A_right,  SF(RZL),  L_status  },
-   {     4,  SK_Kb,  A_right,  SF(RZS),  L_status  }
+   {     4,  SK_Kb,  A_right,  SF(RZS),  L_status  },
 #endif
+   {    -1,     -1,  A_left,   SF(CGN),  L_CGROUP  }
  #undef SF
  #undef A_left
  #undef A_right
@@ -5337,6 +5339,9 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             }
             break;
 #endif
+         case EU_CGN:
+            makeVAR(p->cgname);
+            break;
          case EU_CGR:
             makeVAR(p->cgroup[0]);
             break;

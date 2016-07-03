@@ -104,26 +104,6 @@ static int sr_cgroup(const proc_t* a, const proc_t* b)
     return strcmp(*a->cgroup, *b->cgroup);
 }
 
-static int sr_cgname(const proc_t* a, const proc_t* b)
-{
-    char *aname, *bname;
-    /* This is a "vector" of one */
-    if (*a->cgroup == NULL || *b->cgroup == NULL)
-        return 0;
-  aname = strstr(*a->cgroup, ":name=");
-  bname = strstr(*b->cgroup, ":name=");
-  /* check for missing names, they win */
-  if (aname == NULL || aname[6] == '\0') {
-      if (bname == NULL || bname[6] == '\0')
-          return 0;
-      return -1;
-  } else if (bname == NULL || bname[6] == '\0')
-      return 1;
-  return strcmp(aname+6,bname+6);
-
-}
-
-
 #define CMP_STR(NAME) \
 static int sr_ ## NAME(const proc_t* P, const proc_t* Q) { \
     return strcmp(P->NAME, Q->NAME); \
@@ -255,6 +235,7 @@ CMP_NS(userns, USERNS);
 CMP_NS(utsns, UTSNS);
 
 CMP_STR(lxcname)
+CMP_STR(cgname)
 
 /* approximation to: kB of address space that could end up in swap */
 static int sr_swapable(const proc_t* P, const proc_t* Q) {
@@ -464,27 +445,18 @@ static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp)
   return max_rightward-rightward;
 }
 
+static int pr_cgname(char *restrict const outbuf, const proc_t *restrict const pp){
+  int rightward = max_rightward;
+
+  escaped_copy(outbuf, pp->cgname, OUTBUF_SIZE, &rightward);
+  return max_rightward-rightward;
+}
+
 static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp) {
   int rightward = max_rightward;
 
   escaped_copy(outbuf, *pp->cgroup, OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
-}
-
-static int pr_cgname(char *restrict const outbuf,const proc_t *restrict const pp) {
-  int rightward = max_rightward;
-  int i;
-  char *name;
-
-  if ((name = strstr(*pp->cgroup, ":name=")) != NULL) {
-      name += 6;
-      if (name != '\0') {
-          escape_str(outbuf, name, OUTBUF_SIZE, &rightward);
-          return max_rightward - rightward;
-      }
-  }
-  /* fallback: use full cgroup for name */
-  return pr_cgroup(outbuf, pp);
 }
 
 /* Non-standard, from SunOS 5 */
