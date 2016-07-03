@@ -1,4 +1,4 @@
-.TH WATCH "1" "June 2011" "procps-ng" "User Commands"
+.TH WATCH 1 "2016-06-03" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -9,11 +9,8 @@ watch \- execute a program periodically, showing output fullscreen
 runs
 .I command
 repeatedly, displaying its output and errors (the first screenfull).  This
-allows you to watch the program output change over time.  By default, the
-program is run every 2 seconds.
-By default,
-.B watch
-will run until interrupted.
+allows you to watch the program output change over time.  By default,
+\fIcommand\fR is run every 2 seconds and \fBwatch\fR will run until interrupted.
 .SH OPTIONS
 .TP
 \fB\-d\fR, \fB\-\-differences\fR [\fIpermanent\fR]
@@ -23,7 +20,8 @@ has changed at least once since first iteration.
 .TP
 \fB\-n\fR, \fB\-\-interval\fR \fIseconds\fR
 Specify update interval.  The command will not allow quicker than 0.1 second
-interval, in which the smaller values are converted.
+interval, in which the smaller values are converted. Both '.' and ',' work
+for any locales.
 .TP
 \fB\-p\fR, \fB\-\-precise\fR
 Make
@@ -69,13 +67,81 @@ Display help text and exit.
 .TP
 \fB\-v\fR, \fB\-\-version\fR
 Display version information and exit.
-.SH NOTE
-Note that POSIX option processing is used (i.e., option processing stops at
+.SH "EXIT STATUS"
+.PP
+.RS
+.PD 0
+.TP
+.B 0
+Success.
+.TP
+.B 1
+Various failures.
+.TP
+.B 2
+Forking the process to watch failed.
+.TP
+.B 3
+Replacing child process stdout with write side pipe failed.
+.TP
+.B 4
+Command execution failed.
+.TP
+.B 5
+Closing child process write pipe failed.
+.TP
+.B 7
+IPC pipe creation failed.
+.TP
+.B 8
+Getting child process return value with
+.BR waitpid (2)
+failed, or command exited up on error.
+.TP
+.B other
+The watch will propagate command exit status as child exit status.
+.SH NOTES
+POSIX option processing is used (i.e., option processing stops at
 the first non\-option argument).  This means that flags after
 .I command
 don't get interpreted by
 .BR watch
 itself.
+.SH BUGS
+Upon terminal resize, the screen will not be correctly repainted until the
+next scheduled update.  All
+.B \-\-differences
+highlighting is lost on that update as well.
+
+Non-printing characters are stripped from program output.  Use "cat -v" as
+part of the command pipeline if you want to see them.
+
+Combining Characters that are supposed to display on the character at the
+last column on the screen may display one column early, or they may not
+display at all.
+
+Combining Characters never count as different in
+.I \-\-differences
+mode.  Only the base character counts.
+
+Blank lines directly after a line which ends in the last column do not
+display.
+
+.I \-\-precise
+mode doesn't yet have advanced temporal distortion technology to compensate
+for a
+.I command
+that takes more than
+.I interval
+seconds to execute.
+.B watch
+also can get into a state where it rapid-fires as many executions of
+.I command
+as it can to catch up from a previous executions running longer than
+.I interval
+(for example,
+.B netstat
+taking ages on a DNS lookup).
 .SH EXAMPLES
 .PP
 To watch for mail, you might do
@@ -113,97 +179,3 @@ watch uname \-r
 isn't guaranteed to work across reboots, especially in the face of
 .B ntpdate
 or other bootup time-changing mechanisms)
-.SH BUGS
-Upon terminal resize, the screen will not be correctly repainted until the
-next scheduled update.  All
-.B \-\-differences
-highlighting is lost on that update as well.
-.PP
-Non-printing characters are stripped from program output.  Use "cat -v" as
-part of the command pipeline if you want to see them.
-.PP
-Combining Characters that are supposed to display on the character at the
-last column on the screen may display one column early, or they may not
-display at all.
-.PP
-Combining Characters never count as different in
-.I \-\-differences
-mode.  Only the base character counts.
-.PP
-Blank lines directly after a line which ends in the last column do not
-display.
-.PP
-.I \-\-precise
-mode doesn't yet have advanced temporal distortion technology to compensate
-for a
-.I command
-that takes more than
-.I interval
-seconds to execute.
-.B watch
-also can get into a state where it rapid-fires as many executions of
-.I command
-as it can to catch up from a previous executions running longer than
-.I interval
-(for example,
-.B netstat
-taking ages on a DNS lookup).
-.SH "EXIT STATUS"
-.PP
-.RS
-.PD 0
-.TP
-.B 0
-Success.
-.TP
-.B 1
-Various failures.
-.TP
-.B 2
-Forking the process to watch failed.
-.TP
-.B 3
-Replacing child process stdout with write side pipe failed.
-.TP
-.B 4
-Command execution failed.
-.TP
-.B 5
-Closing child process write pipe failed.
-.TP
-.B 7
-IPC pipe creation failed.
-.TP
-.B 8
-Getting child process return value with
-.BR waitpid (2)
-failed, or command exited up on error.
-.TP
-.B other
-The watch will propagate command exit status as child exit status.
-.SH AUTHORS
-The original
-.B watch
-was written by
-.UR rembo@\:unisoft.\:com
-Tony Rems
-.UE
-in 1991, with mods and
-corrections by Francois Pinard.  It was reworked and new features added by
-.UR mkc@\:acm.\:org
-Mike Coleman
-.UE
-in 1999. The beep, exec, and error handling features were added by
-.UR morty@\:frakir.\:org
-Morty Abzug
-.UE
-in 2008.  On a not so dark and stormy morning in March of 2003,
-.UR asd@\:suespammers.\:org
-Anthony DeRobertis
-.UE
-got sick of his watches that should update every minute eventually updating
-many seconds after the minute started, and added microsecond precision.
-Unicode support was added in 2009 by
-.UR procps@\:rrod.\:net
-Jarrod Lowe
-.UE
