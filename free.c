@@ -324,9 +324,7 @@ int main(int argc, char **argv)
 		case 's':
 			flags |= FREE_REPEAT;
 			errno = 0;
-			args.repeat_interval = (1000000 * strtof(optarg, &endptr));
-			if (errno || optarg == endptr || (endptr && *endptr))
-				xerrx(EXIT_FAILURE, _("seconds argument `%s' failed"), optarg);
+            args.repeat_interval = (1000000 * strtod_nol_or_err(optarg, "seconds argument failed"));
 			if (args.repeat_interval < 1)
 				xerrx(EXIT_FAILURE,
 				     _("seconds argument `%s' is not positive number"), optarg);

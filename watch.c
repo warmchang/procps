@@ -724,7 +724,7 @@ int main(int argc, char *argv[])
 			flags |= WATCH_EXEC;
 			break;
 		case 'n':
-			interval = strtod_or_err(optarg, _("failed to parse argument"));
+			interval = strtod_nol_or_err(optarg, _("failed to parse argument"));
 			if (interval < 0.1)
 				interval = 0.1;
 			if (interval > UINT_MAX)
