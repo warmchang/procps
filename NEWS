@@ -5,8 +5,9 @@ procps-ng-NEXT
   * ps: Fallback to attr/current for context Debian #786956
   * tests: Conditionally add prctl Debian #816237
   * pidof: check cmd if space in argv0. GitLab #4
-  * kill: report error if cannot kill process #733172
+  * kill: report error if cannot kill process Debian #733172
   * watch: Add hostname to header
+  * library: Find tty quicker Debian #770215
 
 procps-ng-3.3.11
 ----------------

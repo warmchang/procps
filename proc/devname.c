@@ -133,9 +133,12 @@ static int driver_name(char *restrict const buf, unsigned maj, unsigned min){
   }
   sprintf(buf, "/dev/%s%d", tmn->name, min);  /* like "/dev/ttyZZ255" */
   if(stat(buf, &sbuf) < 0){
-    if(tmn->devfs_type) return 0;
-    sprintf(buf, "/dev/%s", tmn->name);  /* like "/dev/ttyZZ255" */
-    if(stat(buf, &sbuf) < 0) return 0;
+    sprintf(buf, "/dev/%s/%d", tmn->name, min);  /* like "/dev/pts/255" */
+    if(stat(buf, &sbuf) < 0){
+      if(tmn->devfs_type) return 0;
+      sprintf(buf, "/dev/%s", tmn->name);  /* like "/dev/ttyZZ255" */
+      if(stat(buf, &sbuf) < 0) return 0;
+    }
   }
   if(min != MINOR_OF(sbuf.st_rdev)) return 0;
   if(maj != MAJOR_OF(sbuf.st_rdev)) return 0;
