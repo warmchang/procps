@@ -14,7 +14,7 @@
 #include "pwcache.h"
 
 #define SIGNAL_STRING
-#define QUICK_THREADS        /* copy (vs. read) some thread info from parent proc_t */
+//#define QUICK_THREADS        /* copy (vs. read) some thread info from parent proc_t */
 
 EXTERN_C_BEGIN
 
