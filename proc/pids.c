@@ -263,7 +263,7 @@ setDECL(WCHAN_NAME)   { (void)I; R->result.str = strdup(lookup_wchan(P->tid)); }
 
 // ___ Free Storage Support |||||||||||||||||||||||||||||||||||||||||||||||||||
 
-#define freNAME(e) free_results_ ## e
+#define freNAME(t) free_results_ ## t
 
 static void freNAME(str) (struct pids_result *R) {
     if (R->result.str) free(R->result.str);
@@ -365,7 +365,7 @@ typedef void (*FRE_t)(struct pids_result *);
 typedef int  (*QSR_t)(const void *, const void *, void *);
 
 #define RS(e) (SET_t)setNAME(e)
-#define FF(e) (FRE_t)freNAME(e)
+#define FF(t) (FRE_t)freNAME(t)
 #define QS(t) (QSR_t)srtNAME(t)
 
         /*
@@ -505,7 +505,8 @@ static struct {
     { NULL,                  0,          NULL,      NULL,          0        }
 };
 
-   // next MUST be kept in sync with highest value enum
+    /* please note,
+     * this enum MUST be 1 greater than the highest value of any enum */
 enum pids_item PROCPS_PIDS_logical_end  = PROCPS_PIDS_WCHAN_NAME + 1;
 
 #undef setNAME
@@ -590,7 +591,8 @@ static inline HST_t *histget (
     while (-1 < V) {
         if (Hr(PHist_sav[V].pid) == pid)
             return &Hr(PHist_sav[V]);
-        V = Hr(PHist_sav[V].lnk); }
+        V = Hr(PHist_sav[V].lnk);
+    }
     return NULL;
 } // end: histget
 
@@ -869,7 +871,7 @@ static void itemize_stacks_all (
         ext = ext->next;
     };
     info->dirty_stacks = 0;
-}
+} // end: itemize_stacks_all
 
 
 static inline int items_check_failed (
@@ -950,7 +952,6 @@ static inline int oldproc_open (
         if (NULL == (*this = openproc(flags, ids, num)))
             return 0;
     }
-
     return 1;
 } // end: oldproc_open
 
@@ -1437,7 +1438,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
 /*
  * procps_pids_sort():
  *
- * Sort stacks anchored in the passed pids_stack pointers array
+ * Sort stacks anchored in the passed stack pointers array
  * based on the designated sort enumerator and specified order.
  *
  * Returns those same addresses sorted.

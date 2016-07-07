@@ -751,8 +751,8 @@ static inline void cleanup_stack (
 static inline void cleanup_stacks_all (
         struct procps_vmstat *info)
 {
-    int i;
     struct stacks_extent *ext = info->extents;
+    int i;
 
     while (ext) {
         for (i = 0; ext->stacks[i]; i++)

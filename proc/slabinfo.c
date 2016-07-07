@@ -536,8 +536,8 @@ static inline void cleanup_stack (
 static inline void cleanup_stacks_all (
         struct ext_support *this)
 {
-    int i;
     struct stacks_extent *ext = this->extents;
+    int i;
 
     while (ext) {
         for (i = 0; ext->stacks[i]; i++)
@@ -958,8 +958,8 @@ PROCPS_EXPORT struct slabinfo_stack *procps_slabinfo_select (
 /*
  * procps_slabinfo_sort():
  *
- * Sort stacks anchored as 'heads' in the passed slabinfo_stack pointers
- * array based on the designated sort enumerator.
+ * Sort stacks anchored in the passed stack pointers array
+ * based on the designated sort enumerator and specified order.
  *
  * Returns those same addresses sorted.
  *
