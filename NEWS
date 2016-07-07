@@ -1,14 +1,32 @@
-procps-ng-NEXT
+procps-ng-3.3.12
 ----------------
-  * ps: sort by cgroup Debian #692279
+  * build: formerly optional --enable-oomem unconditional
+  * free: man document rewritten for shared                Debian #755233
+  * free: interpret intervals in non-locale way            Debian #692113
+  * kill: report error if cannot kill process              Debian #733172
+  * library: refine calculation of 'cached' memory
+  * library: find tty quicker                              Debian #770215
+  * library: eliminate threads display inconsistencies     Redhat #1284091
+  * pidof: check cmd if space found in argv0
+  * pmap: fixed detail parsing on long mapping lines
+  * pmap: fix occasional incorrect memory usage values     Redhat #1262864
+  * ps: sort by cgroup                                     Debian #692279
   * ps: display control group name with -o cgname
-  * ps: Fallback to attr/current for context Debian #786956
-  * tests: Conditionally add prctl Debian #816237
-  * pidof: check cmd if space in argv0. GitLab #4
-  * kill: report error if cannot kill process Debian #733172
-  * watch: Add hostname to header
-  * library: Find tty quicker Debian #770215
-  * watch,free: use locale-independent float Debian #692113
+  * ps: fallback to attr/current for context               Debian #786956
+  * ps: enabled broken 'thcount' option                    Redhat #1174313
+  * tests: conditionally add prctl                         Debian #816237
+  * top: displays the 3 new linux-4.5 RES memory fields
+  * top: man page memory fields corrected + new narrative
+  * top: added display of CGNAME (control group name)
+  * top: is now more responsive to cpus brought online
+  * top: namespace cols use suppressible zero
+  * top: zero suppress ('0') includes out-of-memory & nice
+  * top: better 'i' toggle management when scrolled
+  * top: the '=' key now includes active locate requests
+  * vmstat: devices exceeding 15 chars now displayed       Redhat #586078
+  * watch: hostname added to header
+  * watch: correctly interprets the esc[m sequence
+  * watch: use locale-independent float                    Debian #692113
 
 procps-ng-3.3.11
 ----------------
