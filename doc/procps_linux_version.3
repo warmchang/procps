@@ -35,7 +35,7 @@ returns the current Linux version as an integer. On non-Linux systems that
 have an emulated proc filesystem this function returns the version of the
 Linux emulation instead.
 The Linux version consists of a triple of positive integers representing
-the major, minor and patch versions of the kernel. 
+the major, minor and patch versions of the kernel.
 .PP
 The library provides 3 macros for separating out the components.
 .RS 4
@@ -50,7 +50,7 @@ Extract the minor component from the given version integer.
 Extract the patch component from the given version integer.
 .RE
 .PP
-To encode a given Linux version, such as using it to compare against the current 
+To encode a given Linux version, such as using it to compare against the current
 version, use the following macro:
 .TP
 .BI LINUX_VERSION( major , minor , patch )
