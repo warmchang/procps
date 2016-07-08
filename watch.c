@@ -217,8 +217,6 @@ static void process_ansi(FILE * fp)
 			break;
 		}
 		if ((c < '0' || c > '9') && c != ';') {
-			while (--i >= 0)
-				ungetc(buf[i], fp);
 			return;
 		}
 		buf[i] = (char)c;
