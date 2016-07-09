@@ -226,18 +226,17 @@ ps_pscommand_SOURCES =  \
 	ps/stacktrace.c \
 	lib/fileutils.c
 
-TESTS = lib/test_strtod_nol
+# Test programs not used by dejagnu but run directly
+TESTS = \
+	lib/test_strtod_nol
+check_PROGRAMS = $(TESTS)
 
-# Note sure why this is needed but it breaks without it
-check: $(check_PROGRAMS)
-
-# lib/test_* binaries
-check_PROGRAMS = \
+# Test programs required for dejagnu
+noinst_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
 	lib/test_nsutils \
-	lib/test_process \
-	$(TESTS)
+	lib/test_process
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
 lib_test_strutils_LDADD = $(CYGWINFLAGS)
