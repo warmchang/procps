@@ -2,18 +2,19 @@
 # Testsuite for lib/fileutils program
 #
 
-set noarg "${topdir}lib/test_fileutils"
+set testprog "${topdir}lib/test_fileutils"
+set scriptdir [file dirname [ info script ]]
 
 set test "without argument"
-spawn $noarg
+spawn $testprog
 expect_pass "$test" "Hello, World!"
 
-set badfd "${topdir}testsuite/lib.test/fileutils_badfd.sh"
+set badfd "${scriptdir}/fileutils_badfd.sh"
 set test "test bad file descriptor"
-spawn $badfd
+spawn $badfd $testprog
 expect_pass "$test" "test_fileutils: write error: Bad file descriptor"
 
-set full "${topdir}testsuite/lib.test/fileutils_full.sh"
+set full "${scriptdir}/fileutils_full.sh"
 set test "test no space left on device"
-spawn $full
+spawn $full $testprog
 expect_pass "$test" "test_fileutils: write error: No space left on device"
