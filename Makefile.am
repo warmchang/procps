@@ -251,10 +251,6 @@ ps_pscommand_SOURCES =  \
 	lib/fileutils.c \
 	lib/signals.c
 
-# Test programs not used by dejagnu but run directly
-TESTS = \
-	lib/test_strtod_nol
-check_PROGRAMS = $(TESTS)
 
 # Test programs required for dejagnu
 noinst_PROGRAMS = \
@@ -266,8 +262,6 @@ lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
 lib_test_strutils_LDADD = $(CYGWINFLAGS)
 lib_test_fileutils_SOURCES = lib/test_fileutils.c lib/fileutils.c
 lib_test_fileutils_LDADD = $(CYGWINFLAGS)
-lib_test_nsutils_SOURCES = lib/test_nsutils.c lib/nsutils.c
-lib_test_nsutils_LDADD = $(CYGWINFLAGS)
 lib_test_process_SOURCES = lib/test_process.c
 lib_test_process_LDADD = $(CYGWINFLAGS)
 
@@ -290,12 +284,14 @@ endif
 
 BUILT_SOURCES = $(top_srcdir)/.version
 
+# Test programs not used by dejagnu but run directly
 TESTS = proc/test_sysinfo \
 	proc/test_pids \
 	proc/test_namespace \
 	proc/test_uptime \
 	proc/test_version \
 	lib/test_strtod_nol
+check_PROGRAMS = $(TESTS)
 
 $(top_srcdir)/.version:
 	touch $(top_srcdir)/.version
