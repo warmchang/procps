@@ -1,5 +1,6 @@
 procps-ng-3.3.12
 ----------------
+  * libprocps API 6:0:0
   * build: formerly optional --enable-oomem unconditional
   * free: man document rewritten for shared                Debian #755233
   * free: interpret intervals in non-locale way            Debian #692113
