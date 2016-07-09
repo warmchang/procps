@@ -193,9 +193,8 @@ static int set_ansi_attribute(const int attrib)
 			return 0; /* Not understood */
 		}
 	}
-    return 1;
-
 	attrset(attributes | COLOR_PAIR(bg_col * nr_of_colors + fg_col + 1));
+    return 1;
 }
 
 static void process_ansi(FILE * fp)
