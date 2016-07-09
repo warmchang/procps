@@ -25,7 +25,7 @@ procps-ng-3.3.12
   * top: the '=' key now includes active locate requests
   * vmstat: devices exceeding 15 chars now displayed       Redhat #586078
   * watch: hostname added to header
-  * watch: correctly interprets the esc[m sequence
+  * watch: better handling ANSI including esc[m            Debian #830313
   * watch: use locale-independent float                    Debian #692113
 
 procps-ng-3.3.11
