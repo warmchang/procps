@@ -252,6 +252,9 @@ ps_pscommand_SOURCES =  \
 	lib/signals.c
 
 
+# Note sure why this is needed but it breaks without it
+check: $(check_PROGRAMS)
+
 # lib/test_* binaries
 check_PROGRAMS = \
 	lib/test_strutils \
