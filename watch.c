@@ -823,7 +823,7 @@ int main(int argc, char *argv[])
 
 		if (show_title)
 #ifdef WITH_WATCH8BIT
-			output_header(wcommand, wcommand_columns, wcommand_characters, interval);
+			output_header(wcommand, wcommand_characters, interval);
 #else
 			output_header(command, interval);
 #endif	/* WITH_WATCH8BIT */
