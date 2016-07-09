@@ -228,6 +228,9 @@ ps_pscommand_SOURCES =  \
 
 TESTS = lib/test_strtod_nol
 
+# Note sure why this is needed but it breaks without it
+check: $(check_PROGRAMS)
+
 # lib/test_* binaries
 check_PROGRAMS = \
 	lib/test_strutils \
