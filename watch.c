@@ -136,7 +136,7 @@ static void init_ansi_colors(void)
 }
 
 
-static void set_ansi_attribute(const int attrib)
+static int set_ansi_attribute(const int attrib)
 {
 	switch (attrib) {
 	case -1:	/* restore last settings */
@@ -189,8 +189,11 @@ static void set_ansi_attribute(const int attrib)
 			fg_col = attrib - 30 + 1;
 		} else if (attrib >= 40 && attrib <= 47) { /* set background color */
 			bg_col = attrib - 40 + 1;
+		} else {
+			return 0; /* Not understood */
 		}
 	}
+    return 1;
 
 	attrset(attributes | COLOR_PAIR(bg_col * nr_of_colors + fg_col + 1));
 }
@@ -233,7 +236,8 @@ static void process_ansi(FILE * fp)
         set_ansi_attribute(0);
 
 	for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
-		set_ansi_attribute(strtol(numstart, &endptr, 10));
+		if (!set_ansi_attribute(strtol(numstart, &endptr, 10)))
+            break;
         if (numstart == endptr)
             set_ansi_attribute(0); /* [m treated as [0m */
     }
