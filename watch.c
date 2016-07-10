@@ -62,6 +62,10 @@
 # define isprint(x) ( (x>=' '&&x<='~') || (x>=0xa0) )
 #endif
 
+#ifndef HOST_NAME_MAX
+#define HOST_NAME_MAX 64
+#endif
+
 /* Boolean command line options */
 static int flags;
 #define WATCH_DIFF	(1 << 1)

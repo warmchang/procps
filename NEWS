@@ -1,3 +1,7 @@
+procps-ng-NEXT
+----------------
+  * watch: define HOST_NAME_MAX where not defined          Debian #830734
+
 procps-ng-3.3.12
 ----------------
   * libprocps API 6:0:0
