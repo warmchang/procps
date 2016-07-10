@@ -16,7 +16,8 @@
 #include <proc/namespace.h>
 
 #define SIGNAL_STRING
-//#define QUICK_THREADS        /* copy (vs. read) some thread info from parent proc_t */
+// the following is development only, forcing display of "[ duplicate ENUM ]" strings
+// #define FALSE_THREADS        /* set most child string fields to NULL */
 
 __BEGIN_DECLS
 
@@ -50,7 +51,7 @@ typedef struct proc_t {
         pcpu;           // stat (special)  %CPU usage (is not filled in by readproc!!!)
     char
     	state,		// stat,status     single-char code for process state (S=sleeping)
-#ifdef QUICK_THREADS
+#ifdef FALSE_THREADS
         pad_1,          // n/a             padding (psst, also used if multi-threaded)
 #else
         pad_1,          // n/a             padding

@@ -52,7 +52,7 @@ extern void __cyg_profile_func_enter(void*,void*);
 #define LEAVE(x)
 #endif
 
-#ifdef QUICK_THREADS
+#ifdef FALSE_THREADS
 // used when multi-threaded and some memory must not be freed
 #define MK_THREAD(q)   q->pad_1 =  '\xee'
 #define IS_THREAD(q) ( q->pad_1 == '\xee' )
@@ -88,29 +88,24 @@ static int task_dir_missing;
 // free any additional dynamically acquired storage associated with a proc_t
 // ( and if it's to be reused, refresh it otherwise destroy it )
 static inline void free_acquired (proc_t *p, int reuse) {
-#ifdef QUICK_THREADS
-    if (!IS_THREAD(p)) {
-#endif
-        if (p->environ)   free((void*)p->environ);
-        if (p->cmdline)   free((void*)p->cmdline);
-        if (p->cgname)    free((void*)p->cgname);
-        if (p->cgroup)    free((void*)p->cgroup);
-        if (p->environ_v) free((void*)*p->environ_v);
-        if (p->cmdline_v) free((void*)*p->cmdline_v);
-        if (p->cgroup_v)  free((void*)*p->cgroup_v);
-        if (p->supgid)    free(p->supgid);
-        if (p->supgrp)    free(p->supgrp);
-        if (p->cmd)       free(p->cmd);
-        if (p->sd_mach)   free(p->sd_mach);
-        if (p->sd_ouid)   free(p->sd_ouid);
-        if (p->sd_seat)   free(p->sd_seat);
-        if (p->sd_sess)   free(p->sd_sess);
-        if (p->sd_slice)  free(p->sd_slice);
-        if (p->sd_unit)   free(p->sd_unit);
-        if (p->sd_uunit)  free(p->sd_uunit);
-#ifdef QUICK_THREADS
-    }
-#endif
+    if (p->environ)   free((void*)p->environ);
+    if (p->cmdline)   free((void*)p->cmdline);
+    if (p->cgname)    free((void*)p->cgname);
+    if (p->cgroup)    free((void*)p->cgroup);
+    if (p->environ_v) free((void*)*p->environ_v);
+    if (p->cmdline_v) free((void*)*p->cmdline_v);
+    if (p->cgroup_v)  free((void*)*p->cgroup_v);
+    if (p->supgid)    free(p->supgid);
+    if (p->supgrp)    free(p->supgrp);
+    if (p->cmd)       free(p->cmd);
+    if (p->sd_mach)   free(p->sd_mach);
+    if (p->sd_ouid)   free(p->sd_ouid);
+    if (p->sd_seat)   free(p->sd_seat);
+    if (p->sd_sess)   free(p->sd_sess);
+    if (p->sd_slice)  free(p->sd_slice);
+    if (p->sd_unit)   free(p->sd_unit);
+    if (p->sd_uunit)  free(p->sd_uunit);
+
     memset(p, reuse ? '\0' : '\xff', sizeof(*p));
 }
 
@@ -391,7 +386,11 @@ ENTER(0x220);
     {   char *nl = strchr(S, '\n');
         int j = nl ? (nl - S) : strlen(S);
 
+#ifdef FALSE_THREADS
+        if (j && !IS_THREAD(P)) {
+#else
         if (j) {
+#endif
             P->supgid = xmalloc(j+1);       // +1 in case space disappears
             memcpy(P->supgid, S, j);
             if (' ' != P->supgid[--j]) ++j;
@@ -448,7 +447,11 @@ ENTER(0x220);
         P->tid  = Pid;
     }
 
+#ifdef FALSE_THREADS
+    if (!P->supgid && !IS_THREAD(P))
+#else
     if (!P->supgid)
+#endif
         P->supgid = xstrdup("-");
 
 LEAVE(0x220);
@@ -954,7 +957,7 @@ next_proc:
 
 //////////////////////////////////////////////////////////////////////////////////
 // This reads /proc/*/task/* data, for one task.
-#ifdef QUICK_THREADS
+#ifdef FALSE_THREADS
 // p is the POSIX process (task group summary) & source for some copies if !NULL
 #else
 // p is the POSIX process (task group summary) (not needed by THIS implementation)
@@ -981,7 +984,12 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         stat2proc(ub.buf, t);
     }
 
-#ifndef QUICK_THREADS
+#ifdef FALSE_THREADS
+    if (p)
+        MK_THREAD(t);
+#endif
+
+#ifndef FALSE_THREADS
     if (flags & PROC_FILLMEM)                           // read /proc/#/task/#statm
         if (file2str(path, "statm", &ub) != -1)
             statm2proc(ub.buf, t);
@@ -990,7 +998,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     if (flags & PROC_FILLSTATUS) {                      // read /proc/#/task/#/status
         if (file2str(path, "status", &ub) != -1) {
             status2proc(ub.buf, t, 0);
-#ifndef QUICK_THREADS
+#ifndef FALSE_THREADS
             if (flags & PROC_FILLSUPGRP)
                 supgrps_from_supgids(t);
 #endif
@@ -1019,7 +1027,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         }
     }
 
-#ifdef QUICK_THREADS
+#ifdef FALSE_THREADS
     if (!p) {
         if (flags & PROC_FILLMEM)
             if (file2str(path, "statm", &ub) != -1)
@@ -1046,36 +1054,33 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         if (flags & PROC_FILLSYSTEMD)                   // get sd-login.h stuff
             sd2proc(t);
 
-        if (flags & PROC_FILL_LXC)                      // value the lxc name
-            t->lxcname = lxc_containers(path);
-
-#ifdef QUICK_THREADS
+#ifdef FALSE_THREADS
     } else {
-        t->size      = p->size;
-        t->resident  = p->resident;
-        t->share     = p->share;
-        t->trs       = p->trs;
-        t->lrs       = p->lrs;
-        t->drs       = p->drs;
-        t->dt        = p->dt;
-        t->cmdline   = p->cmdline;     // better not free these until done with all threads!
-        t->cmdline_v = p->cmdline_v;
-        t->environ   = p->environ;
-        t->environ_v = p->environ_v;
-        t->cgname    = p->cgname;
-        t->cgroup    = p->cgroup;
-        t->cgroup_v  = p->cgroup_v;
-        t->supgid    = p->supgid;
-        t->supgrp    = p->supgrp;
-        t->sd_mach   = p->sd_mach;
-        t->sd_ouid   = p->sd_ouid;
-        t->sd_seat   = p->sd_seat;
-        t->sd_sess   = p->sd_sess;
-        t->sd_slice  = p->sd_slice;
-        t->sd_unit   = p->sd_unit;
-        t->sd_uunit  = p->sd_uunit;
-        t->lxcname   = p->lxcname;
-        MK_THREAD(t);
+        if (t != p) {
+            t->size      = p->size;
+            t->resident  = p->resident;
+            t->share     = p->share;
+            t->trs       = p->trs;
+            t->lrs       = p->lrs;
+            t->drs       = p->drs;
+            t->dt        = p->dt;
+            t->cmdline   = NULL;
+            t->cmdline_v = NULL;
+            t->environ   = NULL;
+            t->environ_v = NULL;
+            t->cgname    = NULL;
+            t->cgroup    = NULL;
+            t->cgroup_v  = NULL;
+            t->supgid    = NULL;
+            t->supgrp    = NULL;
+            t->sd_mach   = NULL;
+            t->sd_ouid   = NULL;
+            t->sd_seat   = NULL;
+            t->sd_sess   = NULL;
+            t->sd_slice  = NULL;
+            t->sd_unit   = NULL;
+            t->sd_uunit  = NULL;
+        }
     }
 #endif
 
@@ -1089,9 +1094,12 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     if (flags & PROC_FILLNS)                            // read /proc/#/task/#/ns/*
         procps_ns_read_pid(t->tid, &(t->ns));
 
+    if (flags & PROC_FILL_LXC)
+        t->lxcname = lxc_containers(path);
+
     return t;
 next_task:
-#ifndef QUICK_THREADS
+#ifndef FALSE_THREADS
     (void)p;
 #endif
     return NULL;
