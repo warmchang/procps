@@ -479,8 +479,8 @@ static int diskpartition_format(const char *partition_name)
     if (procps_diskstat_read(disk_stat) < 0)
         xerr(EXIT_FAILURE,
              _("Unable to read diskstat"));
-    if ((partid = procps_diskstat_dev_getbyname(disk_stat, partition_name))
-        < 0)
+    if ((partid = procps_diskstat_dev_getbyname(disk_stat, partition_name)) < 0
+    || procps_diskstat_dev_isdisk(disk_stat, partid))
         xerrx(EXIT_FAILURE, _("Partition %s not found"), partition_name);
 
     diskpartition_header(partition_name);
