@@ -581,7 +581,7 @@ static void diskformat(void)
     struct tm *tm_ptr;
     char timebuf[32];
     const char format[] = "%-5s %6lu %6lu %7lu %7lu %6lu %6lu %7lu %7lu %6lu %6lu";
-    const char wide_format[] = "%-5s %9lu %9lu %lu %lu %9lu %9lu %lu %lu %7lu %7lu";
+    const char wide_format[] = "%-5s %9lu %9lu %11lu %11lu %9lu %9lu %11lu %11lu %7lu %7lu";
 
     if (procps_diskstat_new(&disk_stat) < 0)
         xerr(EXIT_FAILURE,
