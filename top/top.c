@@ -2184,9 +2184,8 @@ static void cpus_refresh (void) {
 
 
         /*
-         * This guy's responsible for interfacing with the library 'reap' pids
-         * and 'fill' stacks capabilities and refreshing the individual WIN_t
-         * head-of-stacks arrays, growing them as appropirate. */
+         * This guy's responsible for interfacing with the library <pids> API
+         * then refreshing the WIN_t ptr arrays, growing them as appropirate. */
 static void procs_refresh (void) {
  #define nALIGN(n,m) (((n + m - 1) / m) * m)     // unconditionally align
  #define nALGN2(n,m) ((n + m - 1) & ~(m - 1))    // with power of 2 align
@@ -2209,7 +2208,7 @@ static void procs_refresh (void) {
    if (!Pids_reap)
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 
-   // now refresh each window's stack heads pointers table...
+   // now refresh each window's stacks pointer array...
    if (n_alloc < n_reap) {
 //    n_alloc = nALIGN(n_reap, 100);
       n_alloc = nALGN2(n_reap, 128);
@@ -2806,6 +2805,17 @@ static void before (char *me) {
 
    // accommodate nls/gettext potential translations
    initialize_nls();
+
+#ifndef OFF_STDERROR
+   /* there's a chance that damn libnuma may spew to stderr so we gotta
+      make sure he does not corrupt poor ol' top's first output screen!
+      Yes, he provides some overridable 'weak' functions to change such
+      behavior but we can't exploit that since we don't follow a normal
+      ld route to symbol resolution (we use that dlopen() guy instead)! */
+   Stderr_save = dup(fileno(stderr));
+   if (-1 < Stderr_save && freopen("/dev/null", "w", stderr))
+      ;                           // avoid -Wunused-result
+#endif
 
    // establish some cpu particulars
    Hertz = procps_hertz_get();
@@ -3628,17 +3638,6 @@ static void wins_stage_2 (void) {
    }
    // fill in missing Fieldstab members and build each window's columnhdr
    zap_fieldstab();
-
-#ifndef OFF_STDERROR
-   /* there's a chance that damn libnuma may spew to stderr so we gotta
-      make sure he does not corrupt poor ol' top's first output screen!
-      Yes, he provides some overridable 'weak' functions to change such
-      behavior but we can't exploit that since we don't follow a normal
-      ld route to symbol resolution (we use that dlopen() guy instead)! */
-   Stderr_save = dup(fileno(stderr));
-   if (-1 < Stderr_save && freopen("/dev/null", "w", stderr))
-      ;                           // avoid -Wunused-result
-#endif
 
    // lastly, initialize a signal set used to throttle one troublesome signal
    sigemptyset(&Sigwinch_set);
@@ -4470,8 +4469,8 @@ static void forest_adds (const int self, int level) {
 
 
         /*
-         * This routine is responsible for preparing the stacks array for
-         * a forest display in the designated window.  Upon completion,
+         * This routine is responsible for preparing the stacks ptr array
+         * for forest display in the designated window.  Upon completion,
          * he'll replace the original window ppt with our specially
          * ordered forest version. */
 static void forest_begin (WIN_t *q) {
