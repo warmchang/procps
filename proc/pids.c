@@ -1117,7 +1117,8 @@ static int stacks_fetch (
  *
  * @info: location of returned new structure
  *
- * Returns: 0 on success <0 on failure
+ * Returns: < 0 on failure, 0 on success along with
+ *          a pointer to a new context struct
  */
 PROCPS_EXPORT int procps_pids_new (
         struct procps_pidsinfo **info,

@@ -999,6 +999,7 @@ static int read_vmstat_failed (
     buf[size] = '\0';
 
     head = buf;
+
     for (;;) {
         static ENTRY e;      // just to keep coverity off our backs (e.data)
         ENTRY *ep;
@@ -1020,15 +1021,14 @@ static int read_vmstat_failed (
         tail = strchr(head, '\n');
         if (!tail)
             break;
-
         head = tail + 1;
     }
 
     // let's not distort the deltas the first time thru ...
-    if (!info->vmstat_was_read)
+    if (!info->vmstat_was_read) {
         memcpy(&info->hist.old, &info->hist.new, sizeof(struct vmstat_data));
-    info->vmstat_was_read = 1;
-
+        info->vmstat_was_read = 1;
+    }
     return 0;
 } // end: read_vmstat_failed
 
@@ -1106,7 +1106,8 @@ static struct stacks_extent *stacks_alloc (
  * The initial refcount is 1, and needs to be decremented
  * to release the resources of the structure.
  *
- * Returns: a pointer to a new vmstatinfo struct
+ * Returns: < 0 on failure, 0 on success along with
+ *          a pointer to a new context struct
  */
 PROCPS_EXPORT int procps_vmstat_new (
         struct procps_vmstat **info)

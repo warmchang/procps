@@ -577,10 +577,10 @@ reap_em_again:
     info->sys_hist.new.procs_running = llnum;
 
     // let's not distort the deltas the first time thru ...
-    if (!info->stat_was_read)
+    if (!info->stat_was_read) {
         memcpy(&info->sys_hist.old, &info->sys_hist.new, sizeof(struct stat_data));
-
-    info->stat_was_read = 1;
+        info->stat_was_read = 1;
+    }
     return 0;
 } // end: read_stat_failed
 
@@ -769,7 +769,8 @@ static struct stat_stack *update_single_stack (
  * The initial refcount is 1, and needs to be decremented
  * to release the resources of the structure.
  *
- * Returns: a new stat info container
+ * Returns: < 0 on failure, 0 on success along with
+ *          a pointer to a new context struct
  */
 PROCPS_EXPORT int procps_stat_new (
         struct procps_statinfo **info)

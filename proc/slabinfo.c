@@ -491,10 +491,10 @@ static int read_slabinfo_failed (
     else
         return -ERANGE;
 
-    if (!info->slabinfo_was_read)
+    if (!info->slabinfo_was_read) {
         memcpy(&info->hist.old, &info->hist.new, sizeof(struct slabs_summ));
-    info->slabinfo_was_read = 1;
-
+        info->slabinfo_was_read = 1;
+    }
     return retval;
 } // end: read_slabinfo_failed
 
@@ -773,7 +773,8 @@ static int stacks_reconfig_maybe (
  *
  * @info: location of returned new structure
  *
- * Returns: 0 on success <0 on failure
+ * Returns: < 0 on failure, 0 on success along with
+ *          a pointer to a new context struct
  */
 PROCPS_EXPORT int procps_slabinfo_new (
         struct procps_slabinfo **info)

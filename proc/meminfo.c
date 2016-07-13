@@ -574,6 +574,7 @@ static int read_meminfo_failed (
     buf[size] = '\0';
 
     head = buf;
+
     for (;;) {
         static ENTRY e;      // just to keep coverity off our backs (e.data)
         ENTRY *ep;
@@ -595,7 +596,6 @@ static int read_meminfo_failed (
         tail = strchr(head, '\n');
         if (!tail)
             break;
-
         head = tail + 1;
     }
 
@@ -628,10 +628,10 @@ static int read_meminfo_failed (
         mHr(derived_swap_used) = mHr(SwapTotal) - mHr(SwapFree);
 
     // let's not distort the deltas the first time thru ...
-    if (!info->meminfo_was_read)
+    if (!info->meminfo_was_read) {
         memcpy(&info->hist.old, &info->hist.new, sizeof(struct meminfo_data));
-    info->meminfo_was_read = 1;
-
+        info->meminfo_was_read = 1;
+    }
     return 0;
  #undef mHr
 } // end: read_meminfo_failed
@@ -710,7 +710,8 @@ static struct stacks_extent *stacks_alloc (
  * The initial refcount is 1, and needs to be decremented
  * to release the resources of the structure.
  *
- * Returns: a pointer to a new meminfo struct
+ * Returns: < 0 on failure, 0 on success along with
+ *          a pointer to a new context struct
  */
 PROCPS_EXPORT int procps_meminfo_new (
         struct procps_meminfo **info)
