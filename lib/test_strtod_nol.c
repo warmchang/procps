@@ -1,4 +1,5 @@
-
+#include <float.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "strutils.h"
@@ -33,8 +34,8 @@ int main(int argc, char *argv[])
     double val;
 
     for(i=0; tests[i].string != NULL; i++) {
-        if(strtod_nol_or_err(tests[i].string, "Cannot parse number") !=
-           tests[i].result) {
+        val = strtod_nol_or_err(tests[i].string, "Cannot parse number");
+        if(fabs(tests[i].result - val) > DBL_EPSILON) {
             fprintf(stderr, "FAIL: strtod_nol_or_err(\"%s\") != %f\n",
                     tests[i].string, tests[i].result);
             return EXIT_FAILURE;

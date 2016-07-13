@@ -20,6 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <float.h>
+#include <math.h>
 #include <stdlib.h>
 #include <ctype.h>
 
@@ -71,9 +73,9 @@ double strtod_or_err(const char *str, const char *errmesg)
  */
 double strtod_nol_or_err(char *str, const char *errmesg)
 {
-    double num;
+    long double num;
     const char *cp, *radix;
-    double mult;
+    long double mult;
     int negative = 0;
 
     if (str != NULL && *str != '\0') {
@@ -95,29 +97,29 @@ double strtod_nol_or_err(char *str, const char *errmesg)
         mult=0.1;
         while(isdigit(*radix)) {
             radix++;
-            mult *= 10;
+            mult *= 10.0;
         }
         while(isdigit(*cp)) {
-            num += (*cp - '0') * mult;
-            mult /= 10;
+            num += (long double)(*cp - '0') * mult;
+            mult /= 10.0;
             cp++;
         }
         /* got the integers */
         if (*cp == '\0')
-            return (negative?-num:num);
+            return (double)(negative?-num:num);
         if (*cp != '.' && *cp != ',')
             error(EXIT_FAILURE, EINVAL, "%s: '%s'", errmesg, str);
 
         cp++;
         mult = 0.1;
         while(isdigit(*cp)) {
-            num += (*cp - '0') * mult;
-            mult /= 10;
+            num += (long double)(*cp - '0') * mult;
+            mult /= 10.0;
             cp++;
         }
         if (*cp == '\0')
-            return (negative?-num:num);
+            return (double)(negative?-num:num);
     }
     error(EXIT_FAILURE, errno, "%s: '%s'", errmesg, str);
-    return 0;
+    return (double)0;
 }

@@ -7,6 +7,6 @@
 
 extern long strtol_or_err(const char *str, const char *errmesg);
 extern double strtod_or_err(const char *str, const char *errmesg);
-double strtod_nol_or_err(char *str, const char *errmesg);
+extern double strtod_nol_or_err(char *str, const char *errmesg);
 
 #endif

@@ -227,10 +227,9 @@ ps_pscommand_SOURCES =  \
 	lib/fileutils.c
 
 # Test programs not used by dejagnu but run directly
-# Remove strtod tests due to fp inequality
-#TESTS = \
-#	lib/test_strtod_nol
-#check_PROGRAMS = $(TESTS)
+TESTS = \
+	lib/test_strtod_nol
+check_PROGRAMS = $(TESTS)
 
 # Test programs required for dejagnu
 noinst_PROGRAMS = \
