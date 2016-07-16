@@ -486,6 +486,9 @@ static void capsmk (WIN_t *q) {
    /* macro to test if a basic (non-color) capability is valid
          thanks: Floyd Davidson <floyd@ptialaska.net> */
  #define tIF(s)  s ? s : ""
+   /* macro to make compatible with netbsd-curses too
+         thanks: rofl0r <retnyg@gmx.net> */
+ #define tPM(a,b) tparm(a, b, 0, 0, 0, 0, 0, 0, 0, 0)
    static int capsdone = 0;
 
    // we must NOT disturb our 'empty' terminfo strings!
@@ -528,15 +531,15 @@ static void capsmk (WIN_t *q) {
       the job's done until he/she/it has a change-of-heart */
    STRLCPY(q->cap_bold, CHKw(q, View_NOBOLD) ? Cap_norm : tIF(enter_bold_mode))
    if (CHKw(q, Show_COLORS) && max_colors > 0) {
-      STRLCPY(q->capclr_sum, tparm(set_a_foreground, q->rc.summclr))
+      STRLCPY(q->capclr_sum, tPM(set_a_foreground, q->rc.summclr))
       snprintf(q->capclr_msg, sizeof(q->capclr_msg), "%s%s"
-         , tparm(set_a_foreground, q->rc.msgsclr), Cap_reverse);
+         , tPM(set_a_foreground, q->rc.msgsclr), Cap_reverse);
       snprintf(q->capclr_pmt, sizeof(q->capclr_pmt), "%s%s"
-         , tparm(set_a_foreground, q->rc.msgsclr), q->cap_bold);
+         , tPM(set_a_foreground, q->rc.msgsclr), q->cap_bold);
       snprintf(q->capclr_hdr, sizeof(q->capclr_hdr), "%s%s"
-         , tparm(set_a_foreground, q->rc.headclr), Cap_reverse);
+         , tPM(set_a_foreground, q->rc.headclr), Cap_reverse);
       snprintf(q->capclr_rownorm, sizeof(q->capclr_rownorm), "%s%s"
-         , Caps_off, tparm(set_a_foreground, q->rc.taskclr));
+         , Caps_off, tPM(set_a_foreground, q->rc.taskclr));
    } else {
       q->capclr_sum[0] = '\0';
 #ifdef USE_X_COLHDR
@@ -554,6 +557,7 @@ static void capsmk (WIN_t *q) {
    snprintf(q->capclr_rowhigh, sizeof(q->capclr_rowhigh), "%s%s"
       , q->capclr_rownorm, CHKw(q, Show_HIBOLD) ? q->cap_bold : Cap_reverse);
  #undef tIF
+ #undef tPM
 } // end: capsmk
 
 
