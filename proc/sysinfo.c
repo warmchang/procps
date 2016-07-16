@@ -719,6 +719,7 @@ nextline:
 
   /* zero? might need fallback for 2.6.27 <= kernel <? 3.14 */
   if (!kb_main_available) {
+#ifdef __linux__
     if (linux_version_code < LINUX_VERSION(2, 6, 27))
       kb_main_available = kb_main_free;
     else {
@@ -734,6 +735,9 @@ nextline:
       if (mem_available < 0) mem_available = 0;
       kb_main_available = (unsigned long)mem_available;
     }
+#else
+      kb_main_available = kb_main_free;
+#endif /* linux */
   }
 }
 
