@@ -172,6 +172,7 @@ void debug(int method, char *prog_name){
   while(x);  /* wait for debugger? */
 }
 
+#ifdef DEBUG
 /************/
 static void stack_trace_sigsegv(int signum){
   (void)signum;
@@ -179,7 +180,6 @@ static void stack_trace_sigsegv(int signum){
 }
 
 /************/
-#ifdef DEBUG
 void init_stack_trace(char *prog_name){
   stored_prog_name = prog_name;
   signal(SIGSEGV, stack_trace_sigsegv);

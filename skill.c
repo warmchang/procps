@@ -265,21 +265,21 @@ static void scan_procs(struct run_time_conf_t *run_time)
 #define PIDS_GETINT(e) PROCPS_PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
 #define PIDS_GETSTR(e) PROCPS_PIDS_VAL(EU_ ## e, str, reap->stacks[i])
     struct procps_pidsinfo *info=NULL;
-    struct pids_reap *reap;
+    struct pids_fetch *reap;
     int i, total_procs;
 
-    if (procps_pids_new(&info, 6, items) < 0)
+    if (procps_pids_new(&info, items, 6) < 0)
         xerrx(EXIT_FAILURE,
               _("Unable to create pid info structure"));
     if ((reap = procps_pids_reap(info, PROCPS_FETCH_TASKS_ONLY)) == NULL)
         xerrx(EXIT_FAILURE,
               _("Unable to load process information"));
 
-    total_procs = reap->counts.total;
+    total_procs = reap->counts->total;
     for (i=0; i < total_procs; i++) {
         if (PIDS_GETINT(PID) == my_pid || PIDS_GETINT(PID) == 0)
             continue;
-        if (uids && !match_intlist(PIDS_GETINT(EUID), uid_count, uids))
+        if (uids && !match_intlist(PIDS_GETINT(EUID), uid_count, (int *)uids))
             continue;
         if (ttys && !match_intlist(PIDS_GETINT(TTY), tty_count, ttys))
             continue;

@@ -236,7 +236,7 @@ static const char *format_parse(sf_node *sfn){
       need_item=0;
     }
   } while (*++walk);
-out:
+
   if(!items){
     free(buf);
     goto empty;

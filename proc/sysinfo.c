@@ -188,8 +188,6 @@ PROCPS_EXPORT unsigned int procps_pid_length(void)
 {
     FILE *fp;
     char pidbuf[24];
-    char *endp;
-    unsigned long int max_pid;
     static int pid_length=0;
 
     if (pid_length)

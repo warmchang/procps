@@ -1216,8 +1216,10 @@ setREL1(LXCNAME)
 static int pr_context(char *restrict const outbuf, const proc_t *restrict const pp){
   static void (*ps_freecon)(char*) = 0;
   static int (*ps_getpidcon)(pid_t pid, char **context) = 0;
+#if ENABLE_LIBSELINUX
   static int (*ps_is_selinux_enabled)(void) = 0;
   static int tried_load = 0;
+#endif
   static int selinux_enabled = 0;
   size_t len;
   char *context;
