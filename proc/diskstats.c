@@ -30,7 +30,7 @@
 #include <dirent.h>
 #include <errno.h>
 
-#include <proc/diskstat.h>
+#include <proc/diskstats.h>
 #include "procps-private.h"
 
 #define DISKSTAT_LINE_LEN 1024

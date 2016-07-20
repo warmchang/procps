@@ -19,7 +19,7 @@
 #define PROCPS_PROC_PROCPS_H
 
 /* includes that show public exports go here */
-#include <proc/diskstat.h>
+#include <proc/diskstats.h>
 #include <proc/meminfo.h>
 #include <proc/namespace.h>
 #include <proc/pids.h>

@@ -177,8 +177,8 @@ proc_libprocps_la_SOURCES = \
 	proc/alloc.h \
 	proc/devname.c \
 	proc/devname.h \
-	proc/diskstat.c \
-	proc/diskstat.h \
+	proc/diskstats.c \
+	proc/diskstats.h \
 	proc/escape.c \
 	proc/escape.h \
 	proc/procps-private.h \
@@ -212,7 +212,7 @@ proc_libprocps_la_includedir = $(includedir)/proc/
 proc_libprocps_la_include_HEADERS = \
 	proc/alloc.h \
 	proc/devname.h \
-	proc/diskstat.h \
+	proc/diskstats.h \
 	proc/escape.h \
 	proc/pids.h \
 	proc/procps.h \
