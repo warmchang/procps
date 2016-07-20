@@ -3,15 +3,15 @@
  * most code copyright 2002 Albert Cahalan
  *
  * 27/05/2003 (Fabian Frederick) : Add unit conversion + interface
- *				   Export proc/stat access to libproc
- *				   Adapt vmstat helpfile
+ *                                Export proc/stat access to libproc
+ *                                Adapt vmstat helpfile
  * 31/05/2003 (Fabian) : Add diskstat support (/libproc)
  * June 2003 (Fabian)  : -S <x> -s & -s -S <x> patch
  * June 2003 (Fabian)  : Adding diskstat against 3.1.9, slabinfo
- *			 patching 'header' in disk & slab
+ *                      patching 'header' in disk & slab
  * July 2003 (Fabian)  : Adding disk partition output
- *			 Adding disk table
- *			 Syncing help / usage
+ *                      Adding disk table
+ *                      Syncing help / usage
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -84,125 +84,6 @@ static unsigned long num_updates =1;
 static unsigned int height;
 static unsigned int moreheaders = TRUE;
 
-static void __attribute__ ((__noreturn__))
-    usage(FILE * out)
-{
-	fputs(USAGE_HEADER, out);
-	fprintf(out,
-	      _(" %s [options] [delay [count]]\n"),
-		program_invocation_short_name);
-	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --active           active/inactive memory\n"), out);
-	fputs(_(" -f, --forks            number of forks since boot\n"), out);
-	fputs(_(" -m, --slabs            slabinfo\n"), out);
-	fputs(_(" -n, --one-header       do not redisplay header\n"), out);
-	fputs(_(" -s, --stats            event counter statistics\n"), out);
-	fputs(_(" -d, --disk             disk statistics\n"), out);
-	fputs(_(" -D, --disk-sum         summarize disk statistics\n"), out);
-	fputs(_(" -p, --partition <dev>  partition specific statistics\n"), out);
-	fputs(_(" -S, --unit <char>      define display unit\n"), out);
-	fputs(_(" -w, --wide             wide output\n"), out);
-	fputs(_(" -t, --timestamp        show timestamp\n"), out);
-	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
-	fprintf(out, USAGE_MAN_TAIL("vmstat(8)"));
-
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
-}
-
-static void new_header(void)
-{
-	struct tm *tm_ptr;
-	time_t the_time;
-	char timebuf[32];
-
-	/* Translation Hint: Translating folloging header & fields
-	 * that follow (marked with max x chars) might not work,
-	 * unless manual page is translated as well.  */
-	const char *header =
-	    _("procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----");
-	const char *wide_header =
-	    _("procs -----------------------memory---------------------- ---swap-- -----io---- -system-- --------cpu--------");
-	const char *timestamp_header = _(" -----timestamp-----");
-
-	const char format[] =
-	    "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s %2s";
-	const char wide_format[] =
-	    "%2s %2s %12s %12s %12s %12s %4s %4s %5s %5s %4s %4s %3s %3s %3s %3s %3s";
-
-
-	printf("%s", w_option ? wide_header : header);
-
-	if (t_option) {
-		printf("%s", timestamp_header);
-	}
-
-	printf("\n");
-
-	printf(
-	    w_option ? wide_format : format,
-	    /* Translation Hint: max 2 chars */
-	     _("r"),
-	    /* Translation Hint: max 2 chars */
-	     _("b"),
-	    /* Translation Hint: max 6 chars */
-	     _("swpd"),
-	    /* Translation Hint: max 6 chars */
-	     _("free"),
-	    /* Translation Hint: max 6 chars */
-	     a_option ? _("inact") :
-	    /* Translation Hint: max 6 chars */
-			_("buff"),
-	    /* Translation Hint: max 6 chars */
-	     a_option ? _("active") :
-	    /* Translation Hint: max 6 chars */
-			_("cache"),
-	    /* Translation Hint: max 4 chars */
-	     _("si"),
-	    /* Translation Hint: max 4 chars */
-	     _("so"),
-	    /* Translation Hint: max 5 chars */
-	     _("bi"),
-	    /* Translation Hint: max 5 chars */
-	     _("bo"),
-	    /* Translation Hint: max 4 chars */
-	     _("in"),
-	    /* Translation Hint: max 4 chars */
-	     _("cs"),
-	    /* Translation Hint: max 2 chars */
-	     _("us"),
-	    /* Translation Hint: max 2 chars */
-	     _("sy"),
-	    /* Translation Hint: max 2 chars */
-	     _("id"),
-	    /* Translation Hint: max 2 chars */
-	     _("wa"),
-	    /* Translation Hint: max 2 chars */
-	     _("st"));
-
-	if (t_option) {
-		(void) time( &the_time );
-		tm_ptr = localtime( &the_time );
-		if (strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
-			timebuf[strlen(timestamp_header) - 1] = '\0';
-		} else {
-			timebuf[0] = '\0';
-		}
-		printf(" %*s", (int)(strlen(timestamp_header) - 1), timebuf);
-	}
-
-	printf("\n");
-}
-
-
-static unsigned long unitConvert(unsigned long size)
-{
-	float cvSize;
-	cvSize = (float)size / dataUnit * ((statMode == SLABSTAT) ? 1 : 1024);
-	return ((unsigned long)cvSize);
-}
-
 static enum stat_item First_stat_items[] = {
     PROCPS_STAT_SYS_PROC_RUNNING,
     PROCPS_STAT_SYS_PROC_BLOCKED,
@@ -217,7 +98,6 @@ static enum stat_item First_stat_items[] = {
     PROCPS_STAT_TIC_IOWAIT,
     PROCPS_STAT_TIC_STOLEN
 };
-
 static enum stat_item Loop_stat_items[] = {
     PROCPS_STAT_SYS_PROC_RUNNING,
     PROCPS_STAT_SYS_PROC_BLOCKED,
@@ -232,12 +112,11 @@ static enum stat_item Loop_stat_items[] = {
     PROCPS_STAT_TIC_DELTA_IOWAIT,
     PROCPS_STAT_TIC_DELTA_STOLEN
 };
-
 enum Rel_statitems {
-    stat_PRU, stat_PBL,
-    stat_INT, stat_CTX,
+    stat_PRU, stat_PBL, stat_INT, stat_CTX,
     stat_USR, stat_NIC, stat_SYS, stat_IRQ, stat_SRQ,
-    stat_IDL, stat_IOW, stat_STO};
+    stat_IDL, stat_IOW, stat_STO, MAX_stat
+};
 
 static enum meminfo_item Mem_items[] = {
     PROCPS_MEMINFO_SWAP_USED,
@@ -247,12 +126,200 @@ static enum meminfo_item Mem_items[] = {
     PROCPS_MEMINFO_MEM_BUFFERS,
     PROCPS_MEMINFO_MEM_CACHED
 };
-
 enum Rel_memitems {
-    mem_SUS, mem_FREE,
-    mem_ACT, mem_INA,
-    mem_BUF, mem_CAC
+    mem_SUS, mem_FREE, mem_ACT, mem_INA, mem_BUF, mem_CAC,  MAX_mem
 };
+
+static enum diskstats_item Disk_items[] = {
+    PROCPS_DISKSTATS_TYPE,
+    PROCPS_DISKSTATS_NAME,
+    PROCPS_DISKSTATS_READS,
+    PROCPS_DISKSTATS_READS_MERGED,
+    PROCPS_DISKSTATS_READ_SECTORS,
+    PROCPS_DISKSTATS_READ_TIME,
+    PROCPS_DISKSTATS_WRITES,
+    PROCPS_DISKSTATS_WRITES_MERGED,
+    PROCPS_DISKSTATS_WRITE_SECTORS,
+    PROCPS_DISKSTATS_WRITE_TIME,
+    PROCPS_DISKSTATS_IO_INPROGRESS,
+    PROCPS_DISKSTATS_IO_TIME,
+    PROCPS_DISKSTATS_IO_WTIME
+};
+enum Rel_diskitems {
+    disk_TYPE,  disk_NAME,
+    disk_READ,  disk_READ_MERGE,  disk_READ_SECT,  disk_READ_TIME,
+    disk_WRITE, disk_WRITE_MERGE, disk_WRITE_SECT, disk_WRITE_TIME,
+    disk_IO,    disk_IO_TIME,     disk_IO_WTIME,   MAX_disk
+};
+
+static enum diskstats_item Part_items[] = {
+    PROCPS_DISKSTATS_READS,
+    PROCPS_DISKSTATS_READ_SECTORS,
+    PROCPS_DISKSTATS_WRITES,
+    PROCPS_DISKSTATS_WRITE_SECTORS
+};
+enum Rel_partitems {
+    part_READ, part_READ_SECT, part_WRITE, part_WRITE_SECT, MAX_part
+};
+
+static enum stat_item Sum_stat_items[] = {
+    PROCPS_STAT_TIC_USER,
+    PROCPS_STAT_TIC_NICE,
+    PROCPS_STAT_TIC_SYSTEM,
+    PROCPS_STAT_TIC_IDLE,
+    PROCPS_STAT_TIC_IOWAIT,
+    PROCPS_STAT_TIC_IRQ,
+    PROCPS_STAT_TIC_SOFTIRQ,
+    PROCPS_STAT_TIC_STOLEN,
+    PROCPS_STAT_TIC_GUEST,
+    PROCPS_STAT_TIC_GUEST_NICE,
+    PROCPS_STAT_SYS_CTX_SWITCHES,
+    PROCPS_STAT_SYS_INTERRUPTS,
+    PROCPS_STAT_SYS_TIME_OF_BOOT,
+    PROCPS_STAT_SYS_PROC_CREATED
+};
+enum Rel_sumstatitems {
+    sstat_USR, sstat_NIC, sstat_SYS, sstat_IDL, sstat_IOW, sstat_IRQ,
+    sstat_SRQ, sstat_STO, sstat_GST, sstat_GNI, sstat_CTX, sstat_INT,
+    sstat_TOB, sstat_PCR
+};
+
+static enum meminfo_item Sum_mem_items[] = {
+    PROCPS_MEMINFO_MEM_TOTAL,
+    PROCPS_MEMINFO_MEM_USED,
+    PROCPS_MEMINFO_MEM_ACTIVE,
+    PROCPS_MEMINFO_MEM_INACTIVE,
+    PROCPS_MEMINFO_MEM_FREE,
+    PROCPS_MEMINFO_MEM_BUFFERS,
+    PROCPS_MEMINFO_MEM_CACHED,
+    PROCPS_MEMINFO_SWAP_TOTAL,
+    PROCPS_MEMINFO_SWAP_USED,
+    PROCPS_MEMINFO_SWAP_FREE,
+};
+enum Rel_summemitems {
+    smem_MTOT, smem_MUSE, smem_MACT, smem_MIAC, smem_MFRE,
+    smem_MBUF, smem_MCAC, smem_STOT, smem_SUSE, smem_SFRE
+};
+
+
+static void __attribute__ ((__noreturn__))
+    usage(FILE * out)
+{
+    fputs(USAGE_HEADER, out);
+    fprintf(out,
+        _(" %s [options] [delay [count]]\n"),
+            program_invocation_short_name);
+    fputs(USAGE_OPTIONS, out);
+    fputs(_(" -a, --active           active/inactive memory\n"), out);
+    fputs(_(" -f, --forks            number of forks since boot\n"), out);
+    fputs(_(" -m, --slabs            slabinfo\n"), out);
+    fputs(_(" -n, --one-header       do not redisplay header\n"), out);
+    fputs(_(" -s, --stats            event counter statistics\n"), out);
+    fputs(_(" -d, --disk             disk statistics\n"), out);
+    fputs(_(" -D, --disk-sum         summarize disk statistics\n"), out);
+    fputs(_(" -p, --partition <dev>  partition specific statistics\n"), out);
+    fputs(_(" -S, --unit <char>      define display unit\n"), out);
+    fputs(_(" -w, --wide             wide output\n"), out);
+    fputs(_(" -t, --timestamp        show timestamp\n"), out);
+    fputs(USAGE_SEPARATOR, out);
+    fputs(USAGE_HELP, out);
+    fputs(USAGE_VERSION, out);
+    fprintf(out, USAGE_MAN_TAIL("vmstat(8)"));
+
+    exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
+static void new_header(void)
+{
+    struct tm *tm_ptr;
+    time_t the_time;
+    char timebuf[32];
+
+    /* Translation Hint: Translating folloging header & fields
+     * that follow (marked with max x chars) might not work,
+     * unless manual page is translated as well.  */
+    const char *header =
+        _("procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----");
+    const char *wide_header =
+        _("procs -----------------------memory---------------------- ---swap-- -----io---- -system-- --------cpu--------");
+    const char *timestamp_header = _(" -----timestamp-----");
+
+    const char format[] =
+        "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s %2s";
+    const char wide_format[] =
+        "%2s %2s %12s %12s %12s %12s %4s %4s %5s %5s %4s %4s %3s %3s %3s %3s %3s";
+
+
+    printf("%s", w_option ? wide_header : header);
+
+    if (t_option) {
+        printf("%s", timestamp_header);
+    }
+
+    printf("\n");
+
+    printf(
+        w_option ? wide_format : format,
+        /* Translation Hint: max 2 chars */
+         _("r"),
+        /* Translation Hint: max 2 chars */
+         _("b"),
+        /* Translation Hint: max 6 chars */
+         _("swpd"),
+        /* Translation Hint: max 6 chars */
+         _("free"),
+        /* Translation Hint: max 6 chars */
+         a_option ? _("inact") :
+        /* Translation Hint: max 6 chars */
+            _("buff"),
+        /* Translation Hint: max 6 chars */
+         a_option ? _("active") :
+        /* Translation Hint: max 6 chars */
+            _("cache"),
+        /* Translation Hint: max 4 chars */
+         _("si"),
+        /* Translation Hint: max 4 chars */
+         _("so"),
+        /* Translation Hint: max 5 chars */
+         _("bi"),
+        /* Translation Hint: max 5 chars */
+         _("bo"),
+        /* Translation Hint: max 4 chars */
+         _("in"),
+        /* Translation Hint: max 4 chars */
+         _("cs"),
+        /* Translation Hint: max 2 chars */
+         _("us"),
+        /* Translation Hint: max 2 chars */
+         _("sy"),
+        /* Translation Hint: max 2 chars */
+         _("id"),
+        /* Translation Hint: max 2 chars */
+         _("wa"),
+        /* Translation Hint: max 2 chars */
+         _("st"));
+
+    if (t_option) {
+        (void) time( &the_time );
+        tm_ptr = localtime( &the_time );
+        if (strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
+            timebuf[strlen(timestamp_header) - 1] = '\0';
+        } else {
+            timebuf[0] = '\0';
+        }
+        printf(" %*s", (int)(strlen(timestamp_header) - 1), timebuf);
+    }
+
+    printf("\n");
+}
+
+
+static unsigned long unitConvert(unsigned long size)
+{
+    float cvSize;
+    cvSize = (float)size / dataUnit * ((statMode == SLABSTAT) ? 1 : 1024);
+    return ((unsigned long)cvSize);
+}
 
 static void new_format(void)
 {
@@ -289,11 +356,9 @@ static void new_format(void)
     new_header();
 
     if (procps_vmstat_new(&vm_info) < 0)
-        xerrx(EXIT_FAILURE,
-            _("Unable to create vmstat structure"));
+        xerrx(EXIT_FAILURE, _("Unable to create vmstat structure"));
     if (procps_stat_new(&sys_info) < 0)
-        xerrx(EXIT_FAILURE,
-            _("Unable to create system stat structure"));
+        xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));
     if (procps_meminfo_new(&mem_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
 
@@ -303,10 +368,8 @@ static void new_format(void)
         strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
     }
     /* Do the initial fill */
-    if ((stat_stack = procps_stat_select(sys_info, First_stat_items, 12)) ==
-        NULL)
-        xerrx(EXIT_FAILURE,
-              _("Unable to select stat information"));
+    if (!(stat_stack = procps_stat_select(sys_info, First_stat_items, MAX_stat)))
+        xerrx(EXIT_FAILURE, _("Unable to select stat information"));
     cpu_use = TICv(stat_USR) + TICv(stat_NIC);
     cpu_sys = TICv(stat_SYS) + TICv(stat_IRQ) + TICv(stat_SRQ);
     cpu_idl = TICv(stat_IDL);
@@ -318,10 +381,8 @@ static void new_format(void)
     pswpin[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPIN, ul_int);
     pswpout[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPOUT, ul_int);
 
-    if ((mem_stack = procps_meminfo_select(mem_info, Mem_items, 6)) ==
-        NULL)
-        xerrx(EXIT_FAILURE,
-              _("Unable to select memory information"));
+    if (!(mem_stack = procps_meminfo_select(mem_info, Mem_items, MAX_mem)))
+        xerrx(EXIT_FAILURE, _("Unable to select memory information"));
 
     Div = cpu_use + cpu_sys + cpu_idl + cpu_iow + cpu_sto;
     if (!Div) {
@@ -363,9 +424,8 @@ static void new_format(void)
             new_header();
         tog = !tog;
 
-        if ((stat_stack = procps_stat_select(sys_info, Loop_stat_items, 12)) == NULL)
-            xerrx(EXIT_FAILURE,
-                  _("Unable to select stat information"));
+        if (!(stat_stack = procps_stat_select(sys_info, Loop_stat_items, MAX_stat)))
+            xerrx(EXIT_FAILURE, _("Unable to select stat information"));
 
         cpu_use = DTICv(stat_USR) + DTICv(stat_NIC);
         cpu_sys = DTICv(stat_SYS) + DTICv(stat_IRQ) + DTICv(stat_SRQ);
@@ -446,65 +506,57 @@ static void new_format(void)
 
 static void diskpartition_header(const char *partition_name)
 {
-	printf("%-10s %10s %10s %10s %10s\n",
-	       partition_name,
+    printf("%-10s %10s %10s %10s %10s\n",
+        partition_name,
+
        /* Translation Hint: Translating folloging disk partition
-	* header fields that follow (marked with max x chars) might
-	* not work, unless manual page is translated as well. */
-	       /* Translation Hint: max 10 chars. The word is
-	        * expected to be centralized, use spaces at the end
-	        * to do that. */
-	       _("reads  "),
-	       /* Translation Hint: max 10 chars */
-	       _("read sectors"),
-	       /* Translation Hint: max 10 chars. The word is
-	        * expected to be centralized, use spaces at the end
-	        * to do that. */
-	       _("writes   "),
-	       /* Translation Hint: max 10 chars */
-	       _("requested writes"));
+    * header fields that follow (marked with max x chars) might
+    * not work, unless manual page is translated as well. */
+           /* Translation Hint: max 10 chars. The word is
+            * expected to be centralized, use spaces at the end
+            * to do that. */
+           _("reads  "),
+           /* Translation Hint: max 10 chars */
+           _("read sectors"),
+           /* Translation Hint: max 10 chars. The word is
+            * expected to be centralized, use spaces at the end
+            * to do that. */
+           _("writes   "),
+           /* Translation Hint: max 10 chars */
+           _("requested writes"));
 }
 
-static int diskpartition_format(const char *partition_name)
+static void diskpartition_format(const char *partition_name)
 {
-#define PARTGET(x) procps_diskstat_dev_get(disk_stat, (x), partid)
-    struct procps_diskstat *disk_stat;
+ #define partVAL(x) PROCPS_DISKSTATS_VAL(x, ul_int, stack)
+    struct procps_diskstats *disk_stat;
+    struct diskstats_stack *stack;
+    struct diskstats_result *got;
     const char format[] = "%20lu %10lu %10lu %10lu\n";
-    int i, partid;
+    int i;
 
-    if (procps_diskstat_new(&disk_stat) < 0)
+    if (procps_diskstats_new(&disk_stat) < 0)
         xerr(EXIT_FAILURE,
              _("Unable to create diskstat structure"));
 
-    if (procps_diskstat_read(disk_stat) < 0)
-        xerr(EXIT_FAILURE,
-             _("Unable to read diskstat"));
-    if ((partid = procps_diskstat_dev_getbyname(disk_stat, partition_name)) < 0
-    || procps_diskstat_dev_isdisk(disk_stat, partid))
-        xerrx(EXIT_FAILURE, _("Partition %s not found"), partition_name);
+    if (!(got = procps_diskstats_get(disk_stat, partition_name, PROCPS_DISKSTATS_TYPE)))
+        xerrx(EXIT_FAILURE, _("Disk/Partition %s not found"), partition_name);
 
     diskpartition_header(partition_name);
-    for (i=0; infinite_updates || i < num_updates ; i++) {
-        if (procps_diskstat_read(disk_stat) < 0)
-            xerr(EXIT_FAILURE,
-                 _("Unable to read diskstat"));
-        if ((partid = procps_diskstat_dev_getbyname(disk_stat, partition_name))
-            < 0)
-            xerrx(EXIT_FAILURE,
-                  _("Partition %s not found"), partition_name);
 
+    for (i = 0; infinite_updates || i < num_updates ; i++) {
+        if (!(stack = procps_diskstats_select(disk_stat, partition_name, Part_items, MAX_part)))
+            xerrx(EXIT_FAILURE, _("Disk/Partition %s not found"), partition_name);
         printf(format,
-               PARTGET(PROCPS_DISKSTAT_READS),
-               PARTGET(PROCPS_DISKSTAT_READ_SECTORS),
-               PARTGET(PROCPS_DISKSTAT_WRITES),
-               PARTGET(PROCPS_DISKSTAT_WRITE_SECTORS)
-              );
-
+            partVAL(part_READ),
+            partVAL(part_READ_SECT),
+            partVAL(part_WRITE),
+            partVAL(part_WRITE_SECT));
         if (infinite_updates || i+1 < num_updates)
             sleep(sleep_time);
     }
-    procps_diskstat_unref(&disk_stat);
-    return 0;
+    procps_diskstats_unref(&disk_stat);
+ #undef partVAL
 }
 
 static void diskheader(void)
@@ -574,49 +626,49 @@ static void diskheader(void)
 
 static void diskformat(void)
 {
-#define DSTAT(x) procps_diskstat_dev_get(disk_stat, (x), diskid)
-    struct procps_diskstat *disk_stat;
-    int i,diskid, disk_count;
+#define diskVAL(e,t) PROCPS_DISKSTATS_VAL(e, t, reap->stacks[j])
+    struct procps_diskstats *disk_stat;
+    struct diskstats_reap *reap;
+    int i, j;
     time_t the_time;
     struct tm *tm_ptr;
     char timebuf[32];
     const char format[] = "%-5s %6lu %6lu %7lu %7lu %6lu %6lu %7lu %7lu %6lu %6lu";
     const char wide_format[] = "%-5s %9lu %9lu %11lu %11lu %9lu %9lu %11lu %11lu %7lu %7lu";
 
-    if (procps_diskstat_new(&disk_stat) < 0)
+    if (procps_diskstats_new(&disk_stat) < 0)
         xerr(EXIT_FAILURE,
-             _("Unable to create diskstat structure"));
+            _("Unable to create diskstat structure"));
 
     if (!moreheaders)
         diskheader();
-    for (i=0; infinite_updates || i < num_updates ; i++) {
-        if (procps_diskstat_read(disk_stat) < 0)
-            xerr(EXIT_FAILURE,
-                 _("Unable to read diskstat data"));
 
+    for (i=0; infinite_updates || i < num_updates ; i++) {
+        if (!(reap = procps_diskstats_reap(disk_stat, Disk_items, MAX_disk)))
+            xerr(EXIT_FAILURE,
+                _("Unable to retrieve disk statistics"));
         if (t_option) {
             (void) time( &the_time );
             tm_ptr = localtime( &the_time );
             strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
         }
-        disk_count = procps_diskstat_dev_count(disk_stat);
-        for (diskid = 0; diskid < disk_count; diskid++) {
-            if (procps_diskstat_dev_isdisk(disk_stat, diskid) != 1)
+        for (j = 0; j < reap->total; j++) {
+            if (diskVAL(disk_TYPE, s_int) != PROCPS_DISKSTATS_TYPE_DISK)
                 continue; /* not a disk */
-            if (moreheaders && ((diskid % height) == 0))
+            if (moreheaders && ((j % height) == 0))
                 diskheader();
             printf(w_option ? wide_format : format,
-                   procps_diskstat_dev_getname(disk_stat, diskid),
-                   DSTAT(PROCPS_DISKSTAT_READS),
-                   DSTAT(PROCPS_DISKSTAT_READS_MERGED),
-                   DSTAT(PROCPS_DISKSTAT_READ_SECTORS),
-                   DSTAT(PROCPS_DISKSTAT_READ_TIME),
-                   DSTAT(PROCPS_DISKSTAT_WRITES),
-                   DSTAT(PROCPS_DISKSTAT_WRITES_MERGED),
-                   DSTAT(PROCPS_DISKSTAT_WRITE_SECTORS),
-                   DSTAT(PROCPS_DISKSTAT_WRITE_TIME),
-                   DSTAT(PROCPS_DISKSTAT_IO_INPROGRESS) / 1000,
-                   DSTAT(PROCPS_DISKSTAT_IO_TIME) / 1000);
+                diskVAL(disk_NAME, str),
+                diskVAL(disk_READ, ul_int),
+                diskVAL(disk_READ_MERGE, ul_int),
+                diskVAL(disk_READ_SECT, ul_int),
+                diskVAL(disk_READ_TIME, ul_int),
+                diskVAL(disk_WRITE, ul_int),
+                diskVAL(disk_WRITE_MERGE, ul_int),
+                diskVAL(disk_WRITE_SECT, ul_int),
+                diskVAL(disk_WRITE_TIME, ul_int),
+                diskVAL(disk_IO, ul_int) / 1000,
+                diskVAL(disk_IO_TIME, ul_int) / 1000);
             if (t_option)
                 printf(" %s\n", timebuf);
             else
@@ -626,26 +678,26 @@ static void diskformat(void)
         if (infinite_updates || i+1 < num_updates)
             sleep(sleep_time);
     }
-#undef DSTAT
-    procps_diskstat_unref(&disk_stat);
+#undef diskVAL
+    procps_diskstats_unref(&disk_stat);
 }
 
 static void slabheader(void)
 {
-	printf("%-24s %6s %6s %6s %6s\n",
-	/* Translation Hint: Translating folloging slab fields that
-	 * follow (marked with max x chars) might not work, unless
-	 * manual page is translated as well.  */
-	       /* Translation Hint: max 24 chars */
-	       _("Cache"),
-	       /* Translation Hint: max 6 chars */
-	       _("Num"),
-	       /* Translation Hint: max 6 chars */
-	       _("Total"),
-	       /* Translation Hint: max 6 chars */
-	       _("Size"),
-	       /* Translation Hint: max 6 chars */
-	       _("Pages"));
+    printf("%-24s %6s %6s %6s %6s\n",
+    /* Translation Hint: Translating folloging slab fields that
+     * follow (marked with max x chars) might not work, unless
+     * manual page is translated as well.  */
+           /* Translation Hint: max 24 chars */
+           _("Cache"),
+           /* Translation Hint: max 6 chars */
+           _("Num"),
+           /* Translation Hint: max 6 chars */
+           _("Total"),
+           /* Translation Hint: max 6 chars */
+           _("Size"),
+           /* Translation Hint: max 6 chars */
+           _("Pages"));
 }
 
 static void slabformat (void)
@@ -693,18 +745,10 @@ static void slabformat (void)
 
 static void disksum_format(void)
 {
-#define DSTAT(x) procps_diskstat_dev_get(disk_stat, (x), devid)
-    struct procps_diskstat *disk_stat;
-
-    if (procps_diskstat_new(&disk_stat) < 0)
-        xerr(EXIT_FAILURE,
-             _("Unable to create diskstat structure"));
-
-    if (procps_diskstat_read(disk_stat) < 0)
-        xerr(EXIT_FAILURE,
-             _("Unable to read diskstat"));
-
-    int devid, dev_count, disk_count, part_count ;
+#define diskVAL(e,t) PROCPS_DISKSTATS_VAL(e, t, reap->stacks[j])
+    struct procps_diskstats *disk_stat;
+    struct diskstats_reap *reap;
+    int j, disk_count, part_count;
     unsigned long reads, merged_reads, read_sectors, milli_reading, writes,
                   merged_writes, written_sectors, milli_writing, inprogress_IO,
                   milli_spent_IO, weighted_milli_spent_IO;
@@ -714,31 +758,35 @@ static void disksum_format(void)
         milli_spent_IO = weighted_milli_spent_IO = 0;
     disk_count = part_count = 0;
 
-    if ((dev_count = procps_diskstat_dev_count(disk_stat)) < 0)
+    if (procps_diskstats_new(&disk_stat) < 0)
         xerr(EXIT_FAILURE,
-             _("Unable to count diskstat devices"));
+            _("Unable to create diskstat structure"));
+    if (!(reap = procps_diskstats_reap(disk_stat, Disk_items, MAX_disk)))
+        xerr(EXIT_FAILURE,
+            _("Unable to retrieve disk statistics"));
 
-    for (devid=0; devid < dev_count; devid++) {
-        if (procps_diskstat_dev_isdisk(disk_stat, devid) != 1) {
+    for (j = 0; j < reap->total; j++) {
+        if (diskVAL(disk_TYPE, s_int) != PROCPS_DISKSTATS_TYPE_DISK) {
             part_count++;
             continue; /* not a disk */
         }
         disk_count++;
-        reads += DSTAT(PROCPS_DISKSTAT_READS);
-        merged_reads += DSTAT(PROCPS_DISKSTAT_READS_MERGED);
-        read_sectors += DSTAT(PROCPS_DISKSTAT_READ_SECTORS);
-        milli_reading += DSTAT(PROCPS_DISKSTAT_READ_TIME);
-        writes += DSTAT(PROCPS_DISKSTAT_WRITES);
-        merged_writes += DSTAT(PROCPS_DISKSTAT_WRITES_MERGED);
-        written_sectors += DSTAT(PROCPS_DISKSTAT_WRITE_SECTORS);
-        milli_writing += DSTAT(PROCPS_DISKSTAT_WRITE_TIME);
-        inprogress_IO += DSTAT(PROCPS_DISKSTAT_IO_INPROGRESS) / 1000;
-        milli_spent_IO += DSTAT(PROCPS_DISKSTAT_IO_TIME) / 1000;
-        weighted_milli_spent_IO += DSTAT(PROCPS_DISKSTAT_IO_TIME) / 1000;
+
+        reads += diskVAL(disk_READ, ul_int);
+        merged_reads += diskVAL(disk_READ_MERGE, ul_int);
+        read_sectors += diskVAL(disk_READ_SECT, ul_int);
+        milli_reading += diskVAL(disk_READ_TIME, ul_int);
+        writes += diskVAL(disk_WRITE, ul_int);
+        merged_writes += diskVAL(disk_WRITE_MERGE, ul_int);
+        written_sectors += diskVAL(disk_WRITE_SECT, ul_int);
+        milli_writing += diskVAL(disk_WRITE_TIME, ul_int);
+        inprogress_IO += diskVAL(disk_IO, ul_int) / 1000;
+        milli_spent_IO += diskVAL(disk_IO_TIME, ul_int) / 1000;
+        weighted_milli_spent_IO += diskVAL(disk_IO_WTIME, ul_int) / 1000;
     }
-    printf(_("%13d disks\n"), disk_count);
-    printf(_("%13d partitions\n"), part_count);
-    printf(_("%13lu reads\n"), reads);
+    printf(_("%13d disks\n"), disk_count);       // <== old vmstat had a trailing space here
+    printf(_("%13d partitions\n"), part_count);  // <== old vmstat had a trailing space here too
+    printf(_("%13lu total reads\n"), reads);
     printf(_("%13lu merged reads\n"), merged_reads);
     printf(_("%13lu read sectors\n"), read_sectors);
     printf(_("%13lu milli reading\n"), milli_reading);
@@ -749,53 +797,10 @@ static void disksum_format(void)
     printf(_("%13lu inprogress IO\n"), inprogress_IO);
     printf(_("%13lu milli spent IO\n"), milli_spent_IO);
     printf(_("%13lu milli weighted IO\n"), weighted_milli_spent_IO);
-#undef DSTAT
-    procps_diskstat_unref(&disk_stat);
+
+    procps_diskstats_unref(&disk_stat);
+#undef diskVAL
 }
-
-static enum stat_item Sum_stat_items[] = {
-    PROCPS_STAT_TIC_USER,
-    PROCPS_STAT_TIC_NICE,
-    PROCPS_STAT_TIC_SYSTEM,
-    PROCPS_STAT_TIC_IDLE,
-    PROCPS_STAT_TIC_IOWAIT,
-    PROCPS_STAT_TIC_IRQ,
-    PROCPS_STAT_TIC_SOFTIRQ,
-    PROCPS_STAT_TIC_STOLEN,
-    PROCPS_STAT_TIC_GUEST,
-    PROCPS_STAT_TIC_GUEST_NICE,
-    PROCPS_STAT_SYS_CTX_SWITCHES,
-    PROCPS_STAT_SYS_INTERRUPTS,
-    PROCPS_STAT_SYS_TIME_OF_BOOT,
-    PROCPS_STAT_SYS_PROC_CREATED
-};
-
-enum Rel_sumstatitems {
-    sstat_USR, sstat_NIC, sstat_SYS, sstat_IDL,
-    sstat_IOW, sstat_IRQ, sstat_SRQ, sstat_STO,
-    sstat_GST, sstat_GNI,
-    sstat_CTX, sstat_INT, sstat_TOB,
-    sstat_PCR
-};
-
-static enum meminfo_item Sum_mem_items[] = {
-    PROCPS_MEMINFO_MEM_TOTAL,
-    PROCPS_MEMINFO_MEM_USED,
-    PROCPS_MEMINFO_MEM_ACTIVE,
-    PROCPS_MEMINFO_MEM_INACTIVE,
-    PROCPS_MEMINFO_MEM_FREE,
-    PROCPS_MEMINFO_MEM_BUFFERS,
-    PROCPS_MEMINFO_MEM_CACHED,
-    PROCPS_MEMINFO_SWAP_TOTAL,
-    PROCPS_MEMINFO_SWAP_USED,
-    PROCPS_MEMINFO_SWAP_FREE,
-};
-
-enum Rel_summemitems {
-    smem_MTOT, smem_MUSE, smem_MACT, smem_MIAC, smem_MFRE,
-    smem_MBUF, smem_MCAC,
-    smem_STOT, smem_SUSE, smem_SFRE
-};
 
 static void sum_format(void)
 {
@@ -809,22 +814,15 @@ static void sum_format(void)
     struct meminfo_stack *mem_stack;
 
     if (procps_stat_new(&sys_info) < 0)
-        xerrx(EXIT_FAILURE,
-        _("Unable to create system stat structure"));
-    if ((stat_stack = procps_stat_select(sys_info, Sum_stat_items, 14)) ==
-        NULL)
-        xerrx(EXIT_FAILURE,
-              _("Unable to select stat information"));
-
+        xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));
+    if (!(stat_stack = procps_stat_select(sys_info, Sum_stat_items, 14)))
+        xerrx(EXIT_FAILURE, _("Unable to select stat information"));
     if (procps_vmstat_new(&vm_info) < 0)
-        xerrx(EXIT_FAILURE,
-        _("Unable to create vmstat structure"));
+        xerrx(EXIT_FAILURE, _("Unable to create vmstat structure"));
     if (procps_meminfo_new(&mem_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
-    if ((mem_stack = procps_meminfo_select(mem_info, Sum_mem_items, 10)) ==
-        NULL)
-        xerrx(EXIT_FAILURE,
-              _("Unable to select memory information"));
+    if (!(mem_stack = procps_meminfo_select(mem_info, Sum_mem_items, 10)))
+        xerrx(EXIT_FAILURE, _("Unable to select memory information"));
 
     printf(_("%13lu %s total memory\n"), MEMv(smem_MTOT), szDataUnit);
     printf(_("%13lu %s used memory\n"), MEMv(smem_MUSE), szDataUnit);
@@ -869,8 +867,7 @@ static void fork_format(void)
     struct procps_statinfo *sys_info = NULL;
 
     if (procps_stat_new(&sys_info) < 0)
-	xerrx(EXIT_FAILURE,
-		_("Unable to create system stat structure"));
+    xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));
 
     printf(_("%13lu forks\n"), PROCPS_STAT_GET(sys_info, PROCPS_STAT_SYS_PROC_CREATED, ul_int));
     /* Cleanup */
@@ -879,166 +876,163 @@ static void fork_format(void)
 
 static int winhi(void)
 {
-	struct winsize win;
-	int rows = 24;
+    struct winsize win;
+    int rows = 24;
 
-	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) != -1 && 0 < win.ws_row)
-		rows = win.ws_row;
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) != -1 && 0 < win.ws_row)
+        rows = win.ws_row;
 
-	return rows;
+    return rows;
 }
 
 int main(int argc, char *argv[])
 {
-	char *partition = NULL;
-	int c;
-	long tmp;
+    char *partition = NULL;
+    int c;
+    long tmp;
 
-	static const struct option longopts[] = {
-		{"active", no_argument, NULL, 'a'},
-		{"forks", no_argument, NULL, 'f'},
-		{"slabs", no_argument, NULL, 'm'},
-		{"one-header", no_argument, NULL, 'n'},
-		{"stats", no_argument, NULL, 's'},
-		{"disk", no_argument, NULL, 'd'},
-		{"disk-sum", no_argument, NULL, 'D'},
-		{"partition", required_argument, NULL, 'p'},
-		{"unit", required_argument, NULL, 'S'},
-		{"wide", no_argument, NULL, 'w'},
-		{"timestamp", no_argument, NULL, 't'},
-		{"help", no_argument, NULL, 'h'},
-		{"version", no_argument, NULL, 'V'},
-		{NULL, 0, NULL, 0}
-	};
+    static const struct option longopts[] = {
+        {"active", no_argument, NULL, 'a'},
+        {"forks", no_argument, NULL, 'f'},
+        {"slabs", no_argument, NULL, 'm'},
+        {"one-header", no_argument, NULL, 'n'},
+        {"stats", no_argument, NULL, 's'},
+        {"disk", no_argument, NULL, 'd'},
+        {"disk-sum", no_argument, NULL, 'D'},
+        {"partition", required_argument, NULL, 'p'},
+        {"unit", required_argument, NULL, 'S'},
+        {"wide", no_argument, NULL, 'w'},
+        {"timestamp", no_argument, NULL, 't'},
+        {"help", no_argument, NULL, 'h'},
+        {"version", no_argument, NULL, 'V'},
+        {NULL, 0, NULL, 0}
+    };
 
 #ifdef HAVE_PROGRAM_INVOCATION_NAME
-	program_invocation_name = program_invocation_short_name;
+    program_invocation_name = program_invocation_short_name;
 #endif
-	setlocale (LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-	atexit(close_stdout);
+    setlocale (LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
+    atexit(close_stdout);
 
-	while ((c =
-		getopt_long(argc, argv, "afmnsdDp:S:wthV", longopts,
-			    NULL)) != EOF)
-		switch (c) {
-		case 'V':
-			printf(PROCPS_NG_VERSION);
-			return EXIT_SUCCESS;
-		case 'h':
-			usage(stdout);
-		case 'd':
-			statMode |= DISKSTAT;
-			break;
-		case 'a':
-			/* active/inactive mode */
-			a_option = 1;
-			break;
-		case 'f':
-			/* FIXME: check for conflicting args */
-			fork_format();
-			exit(0);
-		case 'm':
-			statMode |= SLABSTAT;
-			break;
-		case 'D':
-			statMode |= DISKSUMSTAT;
-			break;
-		case 'n':
-			/* print only one header */
-			moreheaders = FALSE;
-			break;
-		case 'p':
-			statMode |= PARTITIONSTAT;
-			partition = optarg;
-			if (memcmp(partition, "/dev/", 5) == 0)
-				partition += 5;
-			break;
-		case 'S':
-			switch (optarg[0]) {
-			case 'b':
-			case 'B':
-				dataUnit = UNIT_B;
-				break;
-			case 'k':
-				dataUnit = UNIT_k;
-				break;
-			case 'K':
-				dataUnit = UNIT_K;
-				break;
-			case 'm':
-				dataUnit = UNIT_m;
-				break;
-			case 'M':
-				dataUnit = UNIT_M;
-				break;
-			default:
-				xerrx(EXIT_FAILURE,
-				     /* Translation Hint: do not change argument characters */
-				     _("-S requires k, K, m or M (default is KiB)"));
-			}
-			szDataUnit[0] = optarg[0];
-			break;
-		case 's':
-			statMode |= VMSUMSTAT;
-			break;
-		case 'w':
-			w_option = 1;
-			break;
-		case 't':
-			t_option = 1;
-			break;
-		default:
-			/* no other aguments defined yet. */
-			usage(stderr);
-		}
+    while ((c =
+        getopt_long(argc, argv, "afmnsdDp:S:wthV", longopts, NULL)) != EOF)
+        switch (c) {
+        case 'V':
+            printf(PROCPS_NG_VERSION);
+            return EXIT_SUCCESS;
+        case 'h':
+            usage(stdout);
+        case 'd':
+            statMode |= DISKSTAT;
+            break;
+        case 'a':
+            /* active/inactive mode */
+            a_option = 1;
+            break;
+        case 'f':
+            /* FIXME: check for conflicting args */
+            fork_format();
+            exit(0);
+        case 'm':
+            statMode |= SLABSTAT;
+            break;
+        case 'D':
+            statMode |= DISKSUMSTAT;
+            break;
+        case 'n':
+            /* print only one header */
+            moreheaders = FALSE;
+            break;
+        case 'p':
+            statMode |= PARTITIONSTAT;
+            partition = optarg;
+            if (memcmp(partition, "/dev/", 5) == 0)
+                partition += 5;
+            break;
+        case 'S':
+            switch (optarg[0]) {
+            case 'b':
+            case 'B':
+                dataUnit = UNIT_B;
+                break;
+            case 'k':
+                dataUnit = UNIT_k;
+                break;
+            case 'K':
+                dataUnit = UNIT_K;
+                break;
+            case 'm':
+                dataUnit = UNIT_m;
+                break;
+            case 'M':
+                dataUnit = UNIT_M;
+                break;
+            default:
+                /* Translation Hint: do not change argument characters */
+                xerrx(EXIT_FAILURE, _("-S requires k, K, m or M (default is KiB)"));
+            }
+            szDataUnit[0] = optarg[0];
+            break;
+        case 's':
+            statMode |= VMSUMSTAT;
+            break;
+        case 'w':
+            w_option = 1;
+            break;
+        case 't':
+            t_option = 1;
+            break;
+        default:
+            /* no other aguments defined yet. */
+            usage(stderr);
+        }
 
-	if (optind < argc) {
-		tmp = strtol_or_err(argv[optind++], _("failed to parse argument"));
-		if (tmp < 1)
-			xerrx(EXIT_FAILURE, _("delay must be positive integer"));
-		else if (UINT_MAX < tmp)
-			xerrx(EXIT_FAILURE, _("too large delay value"));
-		sleep_time = tmp;
-		infinite_updates = 1;
-	}
+    if (optind < argc) {
+        tmp = strtol_or_err(argv[optind++], _("failed to parse argument"));
+        if (tmp < 1)
+            xerrx(EXIT_FAILURE, _("delay must be positive integer"));
+        else if (UINT_MAX < tmp)
+            xerrx(EXIT_FAILURE, _("too large delay value"));
+        sleep_time = tmp;
+        infinite_updates = 1;
+    }
     num_updates = 1;
-	if (optind < argc) {
-		num_updates = strtol_or_err(argv[optind++], _("failed to parse argument"));
-		infinite_updates = 0;
-	}
-	if (optind < argc)
-		usage(stderr);
+    if (optind < argc) {
+        num_updates = strtol_or_err(argv[optind++], _("failed to parse argument"));
+        infinite_updates = 0;
+    }
+    if (optind < argc)
+        usage(stderr);
 
-	if (moreheaders) {
-		int wheight = winhi() - 3;
-		height = ((wheight > 0) ? wheight : 22);
-	}
-	setlinebuf(stdout);
-	switch (statMode) {
-	case (VMSTAT):
-		new_format();
-		break;
-	case (VMSUMSTAT):
-		sum_format();
-		break;
-	case (DISKSTAT):
-		diskformat();
-		break;
-	case (PARTITIONSTAT):
-		if (diskpartition_format(partition) == -1)
-			printf(_("partition was not found\n"));
-		break;
-	case (SLABSTAT):
-		slabformat();
-		break;
-	case (DISKSUMSTAT):
-		disksum_format();
-		break;
-	default:
-		usage(stderr);
-		break;
-	}
-	return 0;
+    if (moreheaders) {
+        int wheight = winhi() - 3;
+        height = ((wheight > 0) ? wheight : 22);
+    }
+    setlinebuf(stdout);
+    switch (statMode) {
+    case (VMSTAT):
+        new_format();
+        break;
+    case (VMSUMSTAT):
+        sum_format();
+        break;
+    case (DISKSTAT):
+        diskformat();
+        break;
+    case (PARTITIONSTAT):
+        diskpartition_format(partition);
+        break;
+    case (SLABSTAT):
+        slabformat();
+        break;
+    case (DISKSUMSTAT):
+        disksum_format();
+        break;
+    default:
+        usage(stderr);
+        break;
+    }
+    return 0;
 }
