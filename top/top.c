@@ -198,7 +198,7 @@ static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||
         /* Support for the new library API -- acquired (if necessary)
            at program startup and referenced throughout our lifetime. */
         // --- <proc/meminfo.h> -----------------------------------------------
-static struct procps_meminfo *Mem_ctx;
+static struct meminfo_info *Mem_ctx;
 static struct meminfo_stack *Mem_stack;
 static enum meminfo_item Mem_items[] = {
    PROCPS_MEMINFO_MEM_FREE,   PROCPS_MEMINFO_MEM_USED,    PROCPS_MEMINFO_MEM_TOTAL,
@@ -210,7 +210,7 @@ enum Rel_memitems {
         // mem stack results extractor macro, where e=rel enum
 #define MEM_VAL(e) PROCPS_MEMINFO_VAL(e, ul_int, Mem_stack)
         // --- <proc/pids.h> --------------------------------------------------
-static struct procps_pidsinfo *Pids_ctx;
+static struct pids_info *Pids_ctx;
 static int Pids_itms_cur;                   // 'current' max (<= Fieldstab)
 static enum pids_item *Pids_itms;           // allocated as MAXTBL(Fieldstab)
 static struct pids_fetch *Pids_reap;        // for reap or select
@@ -220,7 +220,7 @@ static struct pids_fetch *Pids_reap;        // for reap or select
         // ( but many functions use their own unique tailored version for access )
 #define PID_VAL(e,t,s) PROCPS_PIDS_VAL(Fieldstab[ e ].erel, t, s)
         // --- <proc/stat.h> --------------------------------------------------
-static struct procps_statinfo *Stat_ctx;
+static struct stat_info *Stat_ctx;
 static struct stat_reaped *Stat_reap;
 static enum stat_item Stat_items[] = {
    PROCPS_STAT_TIC_ID,            PROCPS_STAT_TIC_NUMA_NODE,

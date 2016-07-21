@@ -474,7 +474,7 @@ static struct el * select_procs (int *num)
 #define PIDS_GETINT(e) PROCPS_PIDS_VAL(EU_ ## e, s_int, stack)
 #define PIDS_GETULL(e) PROCPS_PIDS_VAL(EU_ ## e, ull_int, stack)
 #define PIDS_GETSTR(e) PROCPS_PIDS_VAL(EU_ ## e, str, stack)
-    struct procps_pidsinfo *info=NULL;
+    struct pids_info *info=NULL;
     struct procps_namespaces nsp;
     struct pids_stack *stack;
     unsigned long long saved_start_time;      /* for new/old support */

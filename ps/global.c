@@ -48,7 +48,7 @@
 
 // --- <pids> interface begin ||||||||||||||||||||||||||||||||||||||||||||
 // -----------------------------------------------------------------------
-struct procps_pidsinfo *Pids_info = NULL;   // our required <pids> context
+struct pids_info *Pids_info = NULL;   // our required <pids> context
 enum pids_item *Pids_items;                 // allocated as PIDSITEMS
 int Pids_index;                             // actual number of active enums
 

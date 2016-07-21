@@ -53,7 +53,7 @@ static struct termios Saved_tty;
 static long Delay = 3;
 static int Run_once = 0;
 
-static struct procps_slabinfo *Slab_info;
+static struct slabinfo_info *Slab_info;
 
 enum slabinfo_item Sort_item = DEFAULT_SORT;
 enum slabinfo_sort_order Sort_Order = PROCPS_SLABINFO_DESCEND;

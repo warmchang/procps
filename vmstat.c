@@ -345,15 +345,16 @@ static void new_format(void)
     struct tm *tm_ptr;
     time_t the_time;
     char timebuf[32];
-    struct procps_vmstat *vm_info = NULL;
-    struct procps_statinfo *sys_info = NULL;
+    struct vmstat_info *vm_info = NULL;
+    struct stat_info *sys_info = NULL;
     struct stat_stack *stat_stack;
-    struct procps_meminfo *mem_info = NULL;
+    struct meminfo_info *mem_info = NULL;
     struct meminfo_stack *mem_stack;
 
     sleep_half = (sleep_time / 2);
     hz = procps_hertz_get();
     new_header();
+
 
     if (procps_vmstat_new(&vm_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create vmstat structure"));
@@ -529,7 +530,7 @@ static void diskpartition_header(const char *partition_name)
 static void diskpartition_format(const char *partition_name)
 {
  #define partVAL(x) PROCPS_DISKSTATS_VAL(x, ul_int, stack)
-    struct procps_diskstats *disk_stat;
+    struct diskstats_info *disk_stat;
     struct diskstats_stack *stack;
     struct diskstats_result *got;
     const char format[] = "%20lu %10lu %10lu %10lu\n";
@@ -627,7 +628,7 @@ static void diskheader(void)
 static void diskformat(void)
 {
 #define diskVAL(e,t) PROCPS_DISKSTATS_VAL(e, t, reap->stacks[j])
-    struct procps_diskstats *disk_stat;
+    struct diskstats_info *disk_stat;
     struct diskstats_reap *reap;
     int i, j;
     time_t the_time;
@@ -703,7 +704,7 @@ static void slabheader(void)
 static void slabformat (void)
 {
  #define MAX_ITEMS (int)(sizeof(node_items) / sizeof(node_items[0]))
-    struct procps_slabinfo *slab_info;
+    struct slabinfo_info *slab_info;
     struct slabinfo_reap *reaped;
     int i, j;
     enum slabinfo_item node_items[] = {
@@ -746,7 +747,7 @@ static void slabformat (void)
 static void disksum_format(void)
 {
 #define diskVAL(e,t) PROCPS_DISKSTATS_VAL(e, t, reap->stacks[j])
-    struct procps_diskstats *disk_stat;
+    struct diskstats_info *disk_stat;
     struct diskstats_reap *reap;
     int j, disk_count, part_count;
     unsigned long reads, merged_reads, read_sectors, milli_reading, writes,
@@ -807,9 +808,9 @@ static void sum_format(void)
 #define TICv(E) PROCPS_STAT_VAL(E, ull_int, stat_stack)
 #define SYSv(E) PROCPS_STAT_VAL(E, ul_int, stat_stack)
 #define MEMv(E) unitConvert(PROCPS_STAT_VAL(E, ul_int, mem_stack))
-    struct procps_statinfo *sys_info = NULL;
-    struct procps_vmstat *vm_info = NULL;
-    struct procps_meminfo *mem_info = NULL;
+    struct stat_info *sys_info = NULL;
+    struct vmstat_info *vm_info = NULL;
+    struct meminfo_info *mem_info = NULL;
     struct stat_stack *stat_stack;
     struct meminfo_stack *mem_stack;
 
@@ -864,7 +865,7 @@ static void sum_format(void)
 
 static void fork_format(void)
 {
-    struct procps_statinfo *sys_info = NULL;
+    struct stat_info *sys_info = NULL;
 
     if (procps_stat_new(&sys_info) < 0)
     xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));

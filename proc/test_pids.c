@@ -33,14 +33,14 @@ int check_pids_new_nullinfo(void *data)
 
 int check_pids_new_toomany(void *data)
 {
-    struct procps_pidsinfo *info;
+    struct pids_info *info;
     testname = "procps_pids_new() too many items returns -EINVAL";
     return (procps_pids_new(&info, items, 1) == -EINVAL);
 }
 
 int check_pids_new_and_unref(void *data)
 {
-    struct procps_pidsinfo *info = NULL;
+    struct pids_info *info = NULL;
     testname = "procps_pids new then unref";
     return ( (procps_pids_new(&info, items, 2) == 0) &&
              (procps_pids_unref(&info) == 0) &&

@@ -59,9 +59,9 @@
     return 0; \
   } }
 
-extern struct procps_pidsinfo *Pids_info;
-extern enum pids_item         *Pids_items;
-extern int                     Pids_index;
+extern struct pids_info *Pids_info;
+extern enum pids_item   *Pids_items;
+extern int               Pids_index;
 
 // most of these need not be extern, they're unique to output.c
 // (but for future flexibility the easiest path has been taken)

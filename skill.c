@@ -264,7 +264,7 @@ static void scan_procs(struct run_time_conf_t *run_time)
 {
 #define PIDS_GETINT(e) PROCPS_PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
 #define PIDS_GETSTR(e) PROCPS_PIDS_VAL(EU_ ## e, str, reap->stacks[i])
-    struct procps_pidsinfo *info=NULL;
+    struct pids_info *info=NULL;
     struct pids_fetch *reap;
     int i, total_procs;
 

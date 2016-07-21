@@ -995,7 +995,7 @@ static char *get_default_rc_filename(void)
 
 int main(int argc, char **argv)
 {
-	struct procps_pidsinfo *info = NULL;
+	struct pids_info *info = NULL;
 	struct pids_fetch *pids_fetch;
 	unsigned *pidlist;
 	int reap_count, user_count;

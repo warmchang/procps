@@ -352,7 +352,7 @@ static int find_best_proc(
     unsigned long long best_time = 0;
     unsigned long long secondbest_time = 0;
 
-    struct procps_pidsinfo *info=NULL;
+    struct pids_info *info=NULL;
     struct pids_fetch *reap;
     enum pids_item items[] = {
         PROCPS_PIDS_ID_TGID,

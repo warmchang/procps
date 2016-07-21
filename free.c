@@ -203,7 +203,7 @@ int main(int argc, char **argv)
 {
 	int c, flags = 0, unit_set = 0;
 	struct commandline_arguments args;
-	struct procps_meminfo *mem_info = NULL;
+	struct meminfo_info *mem_info = NULL;
 
 	/*
 	 * For long options that have no equivalent short option, use a

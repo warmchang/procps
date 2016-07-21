@@ -132,7 +132,7 @@ static void select_procs (void)
 {
 	enum pids_item items[] = { PROCPS_PIDS_ID_PID, PROCPS_PIDS_CMD, PROCPS_PIDS_CMDLINE_V };
 	enum rel_items { rel_pid, rel_cmd, rel_cmdline };
-	struct procps_pidsinfo *info = NULL;
+	struct pids_info *info = NULL;
 	struct pids_stack *stack;
 	int match;
 	static int size = 0;
