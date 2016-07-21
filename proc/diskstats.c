@@ -96,7 +96,7 @@ struct fetch_support {
     struct diskstats_reap results;     // count + stacks for return to caller
 };
 
-struct procps_diskstats {
+struct diskstats_info {
     int refcount;
     FILE *diskstats_fp;
     time_t old_stamp;                  /* previous read seconds */
@@ -266,7 +266,7 @@ enum diskstats_item PROCPS_DISKSTATS_logical_end = PROCPS_DISKSTATS_DELTA_IO_WTI
 // --- dev_node specific support ----------------------------------------------
 
 static struct dev_node *node_add (
-        struct procps_diskstats *info,
+        struct diskstats_info *info,
         struct dev_node *this)
 {
     struct dev_node *prev, *walk;
@@ -330,7 +330,7 @@ static void node_classify (
 
 
 static struct dev_node *node_cut (
-        struct procps_diskstats *info,
+        struct diskstats_info *info,
         struct dev_node *this)
 {
     struct dev_node *node = info->nodes;
@@ -353,7 +353,7 @@ static struct dev_node *node_cut (
 
 
 static struct dev_node *node_get (
-        struct procps_diskstats *info,
+        struct diskstats_info *info,
         const char *name)
 {
     struct dev_node *node = info->nodes;
@@ -378,7 +378,7 @@ static struct dev_node *node_get (
 
 
 static int node_update (
-        struct procps_diskstats *info,
+        struct diskstats_info *info,
         struct dev_node *source)
 {
     struct dev_node *target = node_get(info, source->name);
@@ -537,7 +537,7 @@ static inline int items_check_failed (
  * Returns: 0 on success, negative on error
  */
 static int read_diskstats_failed (
-        struct procps_diskstats *info)
+        struct diskstats_info *info)
 {
     static const char *fmtstr = "%d %d %" STRINGIFY(DISKSTATS_NAME_LEN) \
         "s %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu %lu";
@@ -640,7 +640,7 @@ static struct stacks_extent *stacks_alloc (
 
 
 static int stacks_fetch (
-        struct procps_diskstats *info)
+        struct diskstats_info *info)
 {
  #define n_alloc  info->fetch.n_alloc
  #define n_inuse  info->fetch.n_inuse
@@ -738,15 +738,15 @@ static int stacks_reconfig_maybe (
  *          a pointer to a new context struct
  */
 PROCPS_EXPORT int procps_diskstats_new (
-        struct procps_diskstats **info)
+        struct diskstats_info **info)
 {
-    struct procps_diskstats *p;
+    struct diskstats_info *p;
     int rc;
 
     if (info == NULL)
         return -EINVAL;
 
-    if (!(p = calloc(1, sizeof(struct procps_diskstats))))
+    if (!(p = calloc(1, sizeof(struct diskstats_info))))
         return -ENOMEM;
 
     p->refcount = 1;
@@ -765,7 +765,7 @@ PROCPS_EXPORT int procps_diskstats_new (
 
 
 PROCPS_EXPORT int procps_diskstats_ref (
-        struct procps_diskstats *info)
+        struct diskstats_info *info)
 {
     if (info == NULL)
         return -EINVAL;
@@ -776,7 +776,7 @@ PROCPS_EXPORT int procps_diskstats_ref (
 
 
 PROCPS_EXPORT int procps_diskstats_unref (
-        struct procps_diskstats **info)
+        struct diskstats_info **info)
 {
     struct dev_node *node;
 
@@ -822,7 +822,7 @@ PROCPS_EXPORT int procps_diskstats_unref (
 // --- variable interface functions -------------------------------------------
 
 PROCPS_EXPORT struct diskstats_result *procps_diskstats_get (
-        struct procps_diskstats *info,
+        struct diskstats_info *info,
         const char *name,
         enum diskstats_item item)
 {
@@ -863,7 +863,7 @@ PROCPS_EXPORT struct diskstats_result *procps_diskstats_get (
  * Returns: pointer to a diskstats_reap struct on success, NULL on error.
  */
 PROCPS_EXPORT struct diskstats_reap *procps_diskstats_reap (
-        struct procps_diskstats *info,
+        struct diskstats_info *info,
         enum diskstats_item *items,
         int numitems)
 {
@@ -893,7 +893,7 @@ PROCPS_EXPORT struct diskstats_reap *procps_diskstats_reap (
  * Returns: pointer to a diskstats_stack struct on success, NULL on error.
  */
 PROCPS_EXPORT struct diskstats_stack *procps_diskstats_select (
-        struct procps_diskstats *info,
+        struct diskstats_info *info,
         const char *name,
         enum diskstats_item *items,
         int numitems)
@@ -936,7 +936,7 @@ PROCPS_EXPORT struct diskstats_stack *procps_diskstats_select (
  * Note: all of the stacks must be homogeneous (of equal length and content).
  */
 PROCPS_EXPORT struct diskstats_stack **procps_diskstats_sort (
-        struct procps_diskstats *info,
+        struct diskstats_info *info,
         struct diskstats_stack *stacks[],
         int numstacked,
         enum diskstats_item sortitem,

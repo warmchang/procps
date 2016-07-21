@@ -97,31 +97,31 @@ struct stat_reaped {
 #define PROCPS_STAT_SUMMARY_ID    -11111
 #define PROCPS_STAT_NODE_INVALID  -22222
 
-#define PROCPS_STAT_GET( statinfo, actual_enum, type ) \
-    procps_stat_get( statinfo, actual_enum ) -> result . type
+#define PROCPS_STAT_GET( info, actual_enum, type ) \
+    procps_stat_get( info, actual_enum ) -> result . type
 
 #define PROCPS_STAT_VAL( relative_enum, type, stack ) \
     stack -> head [ relative_enum ] . result . type
 
 
-struct procps_statinfo;
+struct stat_info;
 
-int procps_stat_new   (struct procps_statinfo **info);
-int procps_stat_ref   (struct procps_statinfo  *info);
-int procps_stat_unref (struct procps_statinfo **info);
+int procps_stat_new   (struct stat_info **info);
+int procps_stat_ref   (struct stat_info  *info);
+int procps_stat_unref (struct stat_info **info);
 
 struct stat_result *procps_stat_get (
-    struct procps_statinfo *info,
+    struct stat_info *info,
     enum stat_item item);
 
 struct stat_reaped *procps_stat_reap (
-    struct procps_statinfo *info,
+    struct stat_info *info,
     enum stat_reap_type what,
     enum stat_item *items,
     int numitems);
 
 struct stat_stack *procps_stat_select (
-    struct procps_statinfo *info,
+    struct stat_info *info,
     enum stat_item *items,
     int numitems);
 

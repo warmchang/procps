@@ -104,7 +104,7 @@ struct stacks_extent {
     struct meminfo_stack **stacks;
 };
 
-struct procps_meminfo {
+struct meminfo_info {
     int refcount;
     int meminfo_fd;
     int meminfo_was_read;
@@ -384,7 +384,7 @@ static inline void cleanup_stack (
 
 
 static inline void cleanup_stacks_all (
-        struct procps_meminfo *info)
+        struct meminfo_info *info)
 {
     struct stacks_extent *ext = info->extents;
     int i;
@@ -399,7 +399,7 @@ static inline void cleanup_stacks_all (
 
 
 static void extents_free_all (
-        struct procps_meminfo *info)
+        struct meminfo_info *info)
 {
     while (info->extents) {
         struct stacks_extent *p = info->extents;
@@ -457,7 +457,7 @@ static inline int items_check_failed (
 
 
 static int make_hash_failed (
-        struct procps_meminfo *info)
+        struct meminfo_info *info)
 {
  #define htVAL(f) e.key = STRINGIFY(f) ":"; e.data = &info->hist.new. f; \
   if (!hsearch_r(e, ENTER, &ep, &info->hashtab)) return -errno;
@@ -535,7 +535,7 @@ static int make_hash_failed (
  * into the supplied info structure
  */
 static int read_meminfo_failed (
-        struct procps_meminfo *info)
+        struct meminfo_info *info)
 {
  /* a 'memory history reference' macro for readability,
     so we can focus the field names ... */
@@ -649,7 +649,7 @@ static int read_meminfo_failed (
  * Returns a stacks_extent struct anchoring the 'heads' of each new stack.
  */
 static struct stacks_extent *stacks_alloc (
-        struct procps_meminfo *info,
+        struct meminfo_info *info,
         int maxstacks)
 {
     struct stacks_extent *p_blob;
@@ -714,14 +714,14 @@ static struct stacks_extent *stacks_alloc (
  *          a pointer to a new context struct
  */
 PROCPS_EXPORT int procps_meminfo_new (
-        struct procps_meminfo **info)
+        struct meminfo_info **info)
 {
-    struct procps_meminfo *p;
+    struct meminfo_info *p;
     int rc;
 
     if (info == NULL || *info != NULL)
         return -EINVAL;
-    if (!(p = calloc(1, sizeof(struct procps_meminfo))))
+    if (!(p = calloc(1, sizeof(struct meminfo_info))))
         return -ENOMEM;
 
     p->refcount = 1;
@@ -738,7 +738,7 @@ PROCPS_EXPORT int procps_meminfo_new (
 
 
 PROCPS_EXPORT int procps_meminfo_ref (
-        struct procps_meminfo *info)
+        struct meminfo_info *info)
 {
     if (info == NULL)
         return -EINVAL;
@@ -749,7 +749,7 @@ PROCPS_EXPORT int procps_meminfo_ref (
 
 
 PROCPS_EXPORT int procps_meminfo_unref (
-        struct procps_meminfo **info)
+        struct meminfo_info **info)
 {
     if (info == NULL || *info == NULL)
         return -EINVAL;
@@ -772,7 +772,7 @@ PROCPS_EXPORT int procps_meminfo_unref (
 // --- variable interface functions -------------------------------------------
 
 PROCPS_EXPORT struct meminfo_result *procps_meminfo_get (
-        struct procps_meminfo *info,
+        struct meminfo_info *info,
         enum meminfo_item item)
 {
     static time_t sav_secs;
@@ -810,7 +810,7 @@ PROCPS_EXPORT struct meminfo_result *procps_meminfo_get (
  * Returns: pointer to a meminfo_stack struct on success, NULL on error.
  */
 PROCPS_EXPORT struct meminfo_stack *procps_meminfo_select (
-        struct procps_meminfo *info,
+        struct meminfo_info *info,
         enum meminfo_item *items,
         int numitems)
 {

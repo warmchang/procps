@@ -285,25 +285,25 @@ struct vmstat_stack {
 };
 
 
-#define PROCPS_VMSTAT_GET( vmstat, actual_enum, type ) \
-    procps_vmstat_get( vmstat, actual_enum ) -> result . type
+#define PROCPS_VMSTAT_GET( info, actual_enum, type ) \
+    procps_vmstat_get( info, actual_enum ) -> result . type
 
 #define PROCPS_VMSTAT_VAL( relative_enum, type, stack ) \
     stack -> head [ relative_enum ] . result . type
 
 
-struct procps_vmstat;
+struct vmstat_info;
 
-int procps_vmstat_new   (struct procps_vmstat **info);
-int procps_vmstat_ref   (struct procps_vmstat  *info);
-int procps_vmstat_unref (struct procps_vmstat **info);
+int procps_vmstat_new   (struct vmstat_info **info);
+int procps_vmstat_ref   (struct vmstat_info  *info);
+int procps_vmstat_unref (struct vmstat_info **info);
 
 struct vmstat_result *procps_vmstat_get (
-    struct procps_vmstat *info,
+    struct vmstat_info *info,
     enum vmstat_item item);
 
 struct vmstat_stack *procps_vmstat_select (
-    struct procps_vmstat *info,
+    struct vmstat_info *info,
     enum vmstat_item *items,
     int numitems);
 

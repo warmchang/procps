@@ -95,35 +95,35 @@ struct slabinfo_reap {
 };
 
 
-#define PROCPS_SLABINFO_GET( slabinfo, actual_enum, type ) \
-    procps_slabinfo_get( slabinfo, actual_enum ) -> result . type
+#define PROCPS_SLABINFO_GET( info, actual_enum, type ) \
+    procps_slabinfo_get( info, actual_enum ) -> result . type
 
 #define PROCPS_SLABINFO_VAL( relative_enum, type, stack ) \
     stack -> head [ relative_enum ] . result . type
 
 
-struct procps_slabinfo;
+struct slabinfo_info;
 
-int procps_slabinfo_new   (struct procps_slabinfo **info);
-int procps_slabinfo_ref   (struct procps_slabinfo  *info);
-int procps_slabinfo_unref (struct procps_slabinfo **info);
+int procps_slabinfo_new   (struct slabinfo_info **info);
+int procps_slabinfo_ref   (struct slabinfo_info  *info);
+int procps_slabinfo_unref (struct slabinfo_info **info);
 
 struct slabinfo_result *procps_slabinfo_get (
-    struct procps_slabinfo *info,
+    struct slabinfo_info *info,
     enum slabinfo_item item);
 
 struct slabinfo_reap *procps_slabinfo_reap (
-    struct procps_slabinfo *info,
+    struct slabinfo_info *info,
     enum slabinfo_item *items,
     int numitems);
 
 struct slabinfo_stack *procps_slabinfo_select (
-    struct procps_slabinfo *info,
+    struct slabinfo_info *info,
     enum slabinfo_item *items,
     int numitems);
 
 struct slabinfo_stack **procps_slabinfo_sort (
-    struct procps_slabinfo *info,
+    struct slabinfo_info *info,
     struct slabinfo_stack *stacks[],
     int numstacked,
     enum slabinfo_item sortitem,

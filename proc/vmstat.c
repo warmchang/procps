@@ -178,7 +178,7 @@ struct stacks_extent {
     struct vmstat_stack **stacks;
 };
 
-struct procps_vmstat {
+struct vmstat_info {
     int refcount;
     int vmstat_fd;
     int vmstat_was_read;
@@ -749,7 +749,7 @@ static inline void cleanup_stack (
 
 
 static inline void cleanup_stacks_all (
-        struct procps_vmstat *info)
+        struct vmstat_info *info)
 {
     struct stacks_extent *ext = info->extents;
     int i;
@@ -764,7 +764,7 @@ static inline void cleanup_stacks_all (
 
 
 static void extents_free_all (
-        struct procps_vmstat *info)
+        struct vmstat_info *info)
 {
     while (info->extents) {
         struct stacks_extent *p = info->extents;
@@ -822,7 +822,7 @@ static inline int items_check_failed (
 
 
 static int make_hash_failed (
-        struct procps_vmstat *info)
+        struct vmstat_info *info)
 {
  #define htVAL(f) e.key = STRINGIFY(f); e.data = &info->hist.new. f; \
   if (!hsearch_r(e, ENTER, &ep, &info->hashtab)) return -errno;
@@ -964,7 +964,7 @@ static int make_hash_failed (
  * into the supplied info structure
  */
 static int read_vmstat_failed (
-        struct procps_vmstat *info)
+        struct vmstat_info *info)
 {
     char buf[8192];
     char *head, *tail;
@@ -1045,7 +1045,7 @@ static int read_vmstat_failed (
  * Returns a stacks_extent struct anchoring the 'heads' of each new stack.
  */
 static struct stacks_extent *stacks_alloc (
-        struct procps_vmstat *info,
+        struct vmstat_info *info,
         int maxstacks)
 {
     struct stacks_extent *p_blob;
@@ -1110,14 +1110,14 @@ static struct stacks_extent *stacks_alloc (
  *          a pointer to a new context struct
  */
 PROCPS_EXPORT int procps_vmstat_new (
-        struct procps_vmstat **info)
+        struct vmstat_info **info)
 {
-    struct procps_vmstat *p;
+    struct vmstat_info *p;
     int rc;
 
     if (info == NULL || *info != NULL)
         return -EINVAL;
-    if (!(p = calloc(1, sizeof(struct procps_vmstat))))
+    if (!(p = calloc(1, sizeof(struct vmstat_info))))
         return -ENOMEM;
 
     p->refcount = 1;
@@ -1134,7 +1134,7 @@ PROCPS_EXPORT int procps_vmstat_new (
 
 
 PROCPS_EXPORT int procps_vmstat_ref (
-        struct procps_vmstat *info)
+        struct vmstat_info *info)
 {
     if (info == NULL)
         return -EINVAL;
@@ -1145,7 +1145,7 @@ PROCPS_EXPORT int procps_vmstat_ref (
 
 
 PROCPS_EXPORT int procps_vmstat_unref (
-        struct procps_vmstat **info)
+        struct vmstat_info **info)
 {
     if (info == NULL || *info == NULL)
         return -EINVAL;
@@ -1168,7 +1168,7 @@ PROCPS_EXPORT int procps_vmstat_unref (
 // --- variable interface functions -------------------------------------------
 
 PROCPS_EXPORT struct vmstat_result *procps_vmstat_get (
-        struct procps_vmstat *info,
+        struct vmstat_info *info,
         enum vmstat_item item)
 {
     static time_t sav_secs;
@@ -1206,7 +1206,7 @@ PROCPS_EXPORT struct vmstat_result *procps_vmstat_get (
  * Returns: pointer to a vmstat_stack struct on success, NULL on error.
  */
 PROCPS_EXPORT struct vmstat_stack *procps_vmstat_select (
-        struct procps_vmstat *info,
+        struct vmstat_info *info,
         enum vmstat_item *items,
         int numitems)
 {

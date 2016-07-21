@@ -66,7 +66,7 @@ struct fetch_support {
     struct pids_counts counts;         // actual counts pointed to by 'results'
 };
 
-struct procps_pidsinfo {
+struct pids_info {
     int refcount;
     int maxitems;                      // includes 'logical_end' delimiter
     int curitems;                      // includes 'logical_end' delimiter
@@ -111,7 +111,7 @@ static char** vectorize_this (const char* src) {
 
 #define setNAME(e) set_results_ ## e
 #define setDECL(e) static void setNAME(e) \
-    (struct procps_pidsinfo *I, struct pids_result *R, proc_t *P)
+    (struct pids_info *I, struct pids_result *R, proc_t *P)
 
 /* convert pages to kib */
 #define CVT_set(e,t,x) setDECL(e) { \
@@ -360,7 +360,7 @@ srtDECL(noop) {
 #define x_ouser    PROC_FILLSTATUS  | PROC_FILLUSR
 #define x_supgrp   PROC_FILLSTATUS  | PROC_FILLSUPGRP
 
-typedef void (*SET_t)(struct procps_pidsinfo *, struct pids_result *, proc_t *);
+typedef void (*SET_t)(struct pids_info *, struct pids_result *, proc_t *);
 typedef void (*FRE_t)(struct pids_result *);
 typedef int  (*QSR_t)(const void *, const void *, void *);
 
@@ -569,7 +569,7 @@ struct history_info {
 
 
 static void config_history (
-        struct procps_pidsinfo *info)
+        struct pids_info *info)
 {
     int i;
 
@@ -583,7 +583,7 @@ static void config_history (
 
 
 static inline HST_t *histget (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         int pid)
 {
     int V = Hr(PHash_sav[_HASH_PID_(pid)]);
@@ -598,7 +598,7 @@ static inline HST_t *histget (
 
 
 static inline void histput (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         unsigned this)
 {
     int V = _HASH_PID_(Hr(PHist_new[this].pid));
@@ -611,7 +611,7 @@ static inline void histput (
 
 
 static int make_hist (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         proc_t *p)
 {
  #define nSLOT info->hist->num_tasks
@@ -646,7 +646,7 @@ static int make_hist (
 
 
 static inline void toggle_history (
-        struct procps_pidsinfo *info)
+        struct pids_info *info)
 {
     void *v;
 
@@ -665,7 +665,7 @@ static inline void toggle_history (
 
 #ifdef UNREF_RPTHASH
 static void unref_rpthash (
-        struct procps_pidsinfo *info)
+        struct pids_info *info)
 {
     int i, j, pop, total_occupied, maxdepth, maxdepth_sav, numdepth
         , cross_foot, sz = HHASH_SIZE * (int)sizeof(int)
@@ -755,7 +755,7 @@ static void unref_rpthash (
 // ___ Standard Private Functions |||||||||||||||||||||||||||||||||||||||||||||
 
 static inline void assign_results (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         struct pids_stack *stack,
         proc_t *p)
 {
@@ -790,7 +790,7 @@ static inline void cleanup_stack (
 
 
 static inline void cleanup_stacks_all (
-        struct procps_pidsinfo *info)
+        struct pids_info *info)
 {
     struct stacks_extent *ext = info->extents;
     int i;
@@ -809,7 +809,7 @@ static inline void cleanup_stacks_all (
          * 'static' or 'invarient' results stacks.  By unsplicing an extent
          * from the info anchor it will be isolated from future reset/free. */
 static struct stacks_extent *extent_cut (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         struct stacks_extent *ext)
 {
     struct stacks_extent *p = info->extents;
@@ -832,7 +832,7 @@ static struct stacks_extent *extent_cut (
 
 
 static void extents_free_all (
-        struct procps_pidsinfo *info)
+        struct pids_info *info)
 {
     while (info->extents) {
         struct stacks_extent *p = info->extents;
@@ -860,7 +860,7 @@ static inline struct pids_result *itemize_stack (
 
 
 static void itemize_stacks_all (
-        struct procps_pidsinfo *info)
+        struct pids_info *info)
 {
     struct stacks_extent *ext = info->extents;
 
@@ -904,7 +904,7 @@ static inline int items_check_failed (
 
 
 static inline void libflags_set (
-        struct procps_pidsinfo *info)
+        struct pids_info *info)
 {
     enum pids_item e;
     int i;
@@ -957,7 +957,7 @@ static inline int oldproc_open (
 
 
 static inline int proc_tally (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         struct pids_counts *counts,
         proc_t *p)
 {
@@ -998,7 +998,7 @@ static inline int proc_tally (
  * Returns an array of pointers representing the 'heads' of each new stack.
  */
 static struct stacks_extent *stacks_alloc (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         int maxstacks)
 {
     struct stacks_extent *p_blob;
@@ -1048,7 +1048,7 @@ static struct stacks_extent *stacks_alloc (
 
 
 static int stacks_fetch (
-        struct procps_pidsinfo *info)
+        struct pids_info *info)
 {
  #define n_alloc  info->fetch.n_alloc
  #define n_inuse  info->fetch.n_inuse
@@ -1121,18 +1121,18 @@ static int stacks_fetch (
  *          a pointer to a new context struct
  */
 PROCPS_EXPORT int procps_pids_new (
-        struct procps_pidsinfo **info,
+        struct pids_info **info,
         enum pids_item *items,
         int numitems)
 {
-    struct procps_pidsinfo *p;
+    struct pids_info *p;
     double uptime_secs;
     int pgsz;
 
     if (info == NULL || *info != NULL)
         return -EINVAL;
 
-    if (!(p = calloc(1, sizeof(struct procps_pidsinfo))))
+    if (!(p = calloc(1, sizeof(struct pids_info))))
         return -ENOMEM;
 
     /* if we're without items or numitems, a later call to
@@ -1177,7 +1177,7 @@ PROCPS_EXPORT int procps_pids_new (
 
 
 PROCPS_EXPORT int procps_pids_ref (
-        struct procps_pidsinfo *info)
+        struct pids_info *info)
 {
     if (info == NULL)
         return -EINVAL;
@@ -1188,7 +1188,7 @@ PROCPS_EXPORT int procps_pids_ref (
 
 
 PROCPS_EXPORT int procps_pids_unref (
-        struct procps_pidsinfo **info)
+        struct pids_info **info)
 {
     if (info == NULL || *info == NULL)
         return -EINVAL;
@@ -1239,14 +1239,14 @@ PROCPS_EXPORT int procps_pids_unref (
 // --- variable interface functions -------------------------------------------
 
 PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         int return_self)
 {
     static proc_t self;
     struct stacks_extent *ext;
 
     /* this is very likely the *only* newlib function where the
-       context (procps_pidsinfo) of NULL will ever be permitted */
+       context (pids_info) of NULL will ever be permitted */
     look_up_our_self(&self);
     if (!return_self)
         return NULL;
@@ -1273,7 +1273,7 @@ PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
 
 
 PROCPS_EXPORT struct pids_stack *procps_pids_get (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         enum pids_fetch_type which)
 {
     static proc_t task;    // static for initial zeroes + later dynamic free(s)
@@ -1326,7 +1326,7 @@ fresh_start:
  * Returns: pointer to a pids_fetch struct on success, NULL on error.
  */
 PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         enum pids_fetch_type which)
 {
     int rc;
@@ -1353,7 +1353,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
 
 
 PROCPS_EXPORT int procps_pids_reset (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         enum pids_item *newitems,
         int newnumitems)
 {
@@ -1401,7 +1401,7 @@ PROCPS_EXPORT int procps_pids_reset (
  * Returns: pointer to a pids_fetch struct on success, NULL on error.
  */
 PROCPS_EXPORT struct pids_fetch *procps_pids_select (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         unsigned *these,
         int numthese,
         enum pids_select_type which)
@@ -1447,7 +1447,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
  * Note: all of the stacks must be homogeneous (of equal length and content).
  */
 PROCPS_EXPORT struct pids_stack **procps_pids_sort (
-        struct procps_pidsinfo *info,
+        struct pids_info *info,
         struct pids_stack *stacks[],
         int numstacked,
         enum pids_item sortitem,

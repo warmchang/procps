@@ -118,7 +118,7 @@ struct fetch_support {
     struct slabinfo_reap results;   // count + stacks for return to caller
 };
 
-struct procps_slabinfo {
+struct slabinfo_info {
     int refcount;
     FILE *slabinfo_fp;
     int slabinfo_was_read;
@@ -311,7 +311,7 @@ enum slabinfo_item PROCPS_SLABINFO_logical_end = PROCPS_SLABNODE_SIZE + 1;
 /* Alloc up more slabnode memory, if required
  */
 static int alloc_slabnodes (
-        struct procps_slabinfo *info)
+        struct slabinfo_info *info)
 {
     struct slabs_node *new_nodes;
     int new_count;
@@ -339,7 +339,7 @@ static int alloc_slabnodes (
  * constant.
  */
 static int get_slabnode (
-        struct procps_slabinfo *info,
+        struct slabinfo_info *info,
         struct slabs_node **node)
 {
     int retval;
@@ -386,7 +386,7 @@ static int get_slabnode (
  *  : cpustat <allochit> <allocmiss> <freehit> <freemiss>
  */
 static int parse_slabinfo20 (
-        struct procps_slabinfo *info)
+        struct slabinfo_info *info)
 {
     struct slabs_node *node;
     char buffer[SLABINFO_LINE_LEN];
@@ -459,7 +459,7 @@ static int parse_slabinfo20 (
  * Returns: 0 on success, negative on error
  */
 static int read_slabinfo_failed (
-        struct procps_slabinfo *info)
+        struct slabinfo_info *info)
 {
     char line[SLABINFO_LINE_LEN];
     int retval, major, minor;
@@ -682,7 +682,7 @@ static struct stacks_extent *stacks_alloc (
 
 
 static int stacks_fetch (
-        struct procps_slabinfo *info)
+        struct slabinfo_info *info)
 {
  #define n_alloc  info->fetch.n_alloc
  #define n_inuse  info->fetch.n_inuse
@@ -777,15 +777,15 @@ static int stacks_reconfig_maybe (
  *          a pointer to a new context struct
  */
 PROCPS_EXPORT int procps_slabinfo_new (
-        struct procps_slabinfo **info)
+        struct slabinfo_info **info)
 {
-    struct procps_slabinfo *p;
+    struct slabinfo_info *p;
     int rc;
 
     if (info == NULL)
         return -EINVAL;
 
-    if (!(p = calloc(1, sizeof(struct procps_slabinfo))))
+    if (!(p = calloc(1, sizeof(struct slabinfo_info))))
         return -ENOMEM;
 
 #ifdef ENFORCE_LOGICAL
@@ -811,7 +811,7 @@ PROCPS_EXPORT int procps_slabinfo_new (
 
 
 PROCPS_EXPORT int procps_slabinfo_ref (
-        struct procps_slabinfo *info)
+        struct slabinfo_info *info)
 {
     if (info == NULL)
         return -EINVAL;
@@ -822,7 +822,7 @@ PROCPS_EXPORT int procps_slabinfo_ref (
 
 
 PROCPS_EXPORT int procps_slabinfo_unref (
-        struct procps_slabinfo **info)
+        struct slabinfo_info **info)
 {
     if (info == NULL || *info == NULL)
         return -EINVAL;
@@ -862,7 +862,7 @@ PROCPS_EXPORT int procps_slabinfo_unref (
 // --- variable interface functions -------------------------------------------
 
 PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
-        struct procps_slabinfo *info,
+        struct slabinfo_info *info,
         enum slabinfo_item item)
 {
     static time_t sav_secs;
@@ -900,7 +900,7 @@ PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
  * Returns: pointer to a slabinfo_reap struct on success, NULL on error.
  */
 PROCPS_EXPORT struct slabinfo_reap *procps_slabinfo_reap (
-        struct procps_slabinfo *info,
+        struct slabinfo_info *info,
         enum slabinfo_item *items,
         int numitems)
 {
@@ -930,7 +930,7 @@ PROCPS_EXPORT struct slabinfo_reap *procps_slabinfo_reap (
  * Returns: pointer to a slabinfo_stack struct on success, NULL on error.
  */
 PROCPS_EXPORT struct slabinfo_stack *procps_slabinfo_select (
-        struct procps_slabinfo *info,
+        struct slabinfo_info *info,
         enum slabinfo_item *items,
         int numitems)
 {
@@ -967,7 +967,7 @@ PROCPS_EXPORT struct slabinfo_stack *procps_slabinfo_select (
  * Note: all of the stacks must be homogeneous (of equal length and content).
  */
 PROCPS_EXPORT struct slabinfo_stack **procps_slabinfo_sort (
-        struct procps_slabinfo *info,
+        struct slabinfo_info *info,
         struct slabinfo_stack *stacks[],
         int numstacked,
         enum slabinfo_item sortitem,

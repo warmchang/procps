@@ -135,25 +135,25 @@ struct meminfo_stack {
 };
 
 
-#define PROCPS_MEMINFO_GET( meminfo, actual_enum, type ) \
-    procps_meminfo_get( meminfo, actual_enum ) -> result . type
+#define PROCPS_MEMINFO_GET( info, actual_enum, type ) \
+    procps_meminfo_get( info, actual_enum ) -> result . type
 
 #define PROCPS_MEMINFO_VAL( relative_enum, type, stack) \
     stack -> head [ relative_enum ] . result . type
 
 
-struct procps_meminfo;
+struct meminfo_info;
 
-int procps_meminfo_new   (struct procps_meminfo **info);
-int procps_meminfo_ref   (struct procps_meminfo  *info);
-int procps_meminfo_unref (struct procps_meminfo **info);
+int procps_meminfo_new   (struct meminfo_info **info);
+int procps_meminfo_ref   (struct meminfo_info  *info);
+int procps_meminfo_unref (struct meminfo_info **info);
 
 struct meminfo_result *procps_meminfo_get (
-    struct procps_meminfo *info,
+    struct meminfo_info *info,
     enum meminfo_item item);
 
 struct meminfo_stack *procps_meminfo_select (
-    struct procps_meminfo *info,
+    struct meminfo_info *info,
     enum meminfo_item *items,
     int numitems);
 

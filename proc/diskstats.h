@@ -89,37 +89,37 @@ struct diskstats_reap {
 #define PROCPS_DISKSTATS_TYPE_DISK       -11111
 #define PROCPS_DISKSTATS_TYPE_PARTITION  -22222
 
-#define PROCPS_DISKSTATS_GET( diskstats, actual_enum, type ) \
-    procps_diskstats_get( diskstats, actual_enum ) -> result . type
+#define PROCPS_DISKSTATS_GET( info, actual_enum, type ) \
+    procps_diskstats_get( info, actual_enum ) -> result . type
 
 #define PROCPS_DISKSTATS_VAL( relative_enum, type, stack) \
     stack -> head [ relative_enum ] . result . type
 
 
-struct procps_diskstats;
+struct diskstats_info;
 
-int procps_diskstats_new   (struct procps_diskstats **info);
-int procps_diskstats_ref   (struct procps_diskstats  *info);
-int procps_diskstats_unref (struct procps_diskstats **info);
+int procps_diskstats_new   (struct diskstats_info **info);
+int procps_diskstats_ref   (struct diskstats_info  *info);
+int procps_diskstats_unref (struct diskstats_info **info);
 
 struct diskstats_result *procps_diskstats_get (
-    struct procps_diskstats *info,
+    struct diskstats_info *info,
     const char *name,
     enum diskstats_item item);
 
 struct diskstats_reap *procps_diskstats_reap (
-    struct procps_diskstats *info,
+    struct diskstats_info *info,
     enum diskstats_item *items,
     int numitems);
 
 struct diskstats_stack *procps_diskstats_select (
-    struct procps_diskstats *info,
+    struct diskstats_info *info,
     const char *name,
     enum diskstats_item *items,
     int numitems);
 
 struct diskstats_stack **procps_diskstats_sort (
-    struct procps_diskstats *info,
+    struct diskstats_info *info,
     struct diskstats_stack *stacks[],
     int numstacked,
     enum diskstats_item sortitem,

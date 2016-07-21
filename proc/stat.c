@@ -111,7 +111,7 @@ struct reap_support {
     struct stat_reap result;           // summary + stacks returned to caller
 };
 
-struct procps_statinfo {
+struct stat_info {
     int refcount;
     int stat_fd;
     int stat_was_read;                 // is stat file history valid?
@@ -382,7 +382,7 @@ static inline int items_check_failed (
 
 
 static int make_numa_hist (
-        struct procps_statinfo *info)
+        struct stat_info *info)
 {
 #ifndef NUMA_DISABLE
     struct hist_tic *cpu_ptr, *nod_ptr;
@@ -449,7 +449,7 @@ static int make_numa_hist (
 
 
 static int read_stat_failed (
-        struct procps_statinfo *info)
+        struct stat_info *info)
 {
     struct hist_tic *sum_ptr, *cpu_ptr;
     char buf[8192], *bp, *b;
@@ -647,7 +647,7 @@ static struct stacks_extent *stacks_alloc (
 
 
 static int stacks_fetch_tics (
-        struct procps_statinfo *info,
+        struct stat_info *info,
         struct reap_support *this)
 {
  #define n_alloc  this->n_alloc
@@ -735,7 +735,7 @@ static int stacks_reconfig_maybe (
 
 
 static struct stat_stack *update_single_stack (
-        struct procps_statinfo *info,
+        struct stat_info *info,
         struct ext_support *this)
 {
     if (!this->extents
@@ -773,13 +773,13 @@ static struct stat_stack *update_single_stack (
  *          a pointer to a new context struct
  */
 PROCPS_EXPORT int procps_stat_new (
-        struct procps_statinfo **info)
+        struct stat_info **info)
 {
-    struct procps_statinfo *p;
+    struct stat_info *p;
 
     if (info == NULL || *info != NULL)
         return -EINVAL;
-    if (!(p = calloc(1, sizeof(struct procps_statinfo))))
+    if (!(p = calloc(1, sizeof(struct stat_info))))
         return -ENOMEM;
 
     p->refcount = 1;
@@ -823,7 +823,7 @@ PROCPS_EXPORT int procps_stat_new (
 
 
 PROCPS_EXPORT int procps_stat_ref (
-        struct procps_statinfo *info)
+        struct stat_info *info)
 {
     if (info == NULL)
         return -EINVAL;
@@ -834,7 +834,7 @@ PROCPS_EXPORT int procps_stat_ref (
 
 
 PROCPS_EXPORT int procps_stat_unref (
-        struct procps_statinfo **info)
+        struct stat_info **info)
 {
     if (info == NULL || *info == NULL)
         return -EINVAL;
@@ -887,7 +887,7 @@ PROCPS_EXPORT int procps_stat_unref (
 // --- variable interface functions -------------------------------------------
 
 PROCPS_EXPORT struct stat_result *procps_stat_get (
-        struct procps_statinfo *info,
+        struct stat_info *info,
         enum stat_item item)
 {
     static time_t sav_secs;
@@ -925,7 +925,7 @@ PROCPS_EXPORT struct stat_result *procps_stat_get (
  * Returns: pointer to a stat_reaped struct on success, NULL on error.
  */
 PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
-        struct procps_statinfo *info,
+        struct stat_info *info,
         enum stat_reap_type what,
         enum stat_item *items,
         int numitems)
@@ -1001,7 +1001,7 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
  * Returns: pointer to a stat_stack struct on success, NULL on error.
  */
 PROCPS_EXPORT struct stat_stack *procps_stat_select (
-        struct procps_statinfo *info,
+        struct stat_info *info,
         enum stat_item *items,
         int numitems)
 {

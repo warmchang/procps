@@ -195,37 +195,37 @@ struct pids_fetch {
     stack -> head [ relative_enum ] . result . type
 
 
-struct procps_pidsinfo;
+struct pids_info;
 
-int procps_pids_new   (struct procps_pidsinfo **info, enum pids_item *items, int numitems);
-int procps_pids_ref   (struct procps_pidsinfo  *info);
-int procps_pids_unref (struct procps_pidsinfo **info);
+int procps_pids_new   (struct pids_info **info, enum pids_item *items, int numitems);
+int procps_pids_ref   (struct pids_info  *info);
+int procps_pids_unref (struct pids_info **info);
 
 struct pids_stack *fatal_proc_unmounted (
-    struct procps_pidsinfo *info,
+    struct pids_info *info,
     int return_self);
 
 struct pids_stack *procps_pids_get (
-    struct procps_pidsinfo *info,
+    struct pids_info *info,
     enum pids_fetch_type which);
 
 struct pids_fetch *procps_pids_reap (
-    struct procps_pidsinfo *info,
+    struct pids_info *info,
     enum pids_fetch_type which);
 
 int procps_pids_reset (
-    struct procps_pidsinfo *info,
+    struct pids_info *info,
     enum pids_item *newitems,
     int newnumitems);
 
 struct pids_fetch *procps_pids_select (
-    struct procps_pidsinfo *info,
+    struct pids_info *info,
     unsigned *these,
     int numthese,
     enum pids_select_type which);
 
 struct pids_stack **procps_pids_sort (
-    struct procps_pidsinfo *info,
+    struct pids_info *info,
     struct pids_stack *stacks[],
     int numstacked,
     enum pids_item sortitem,
