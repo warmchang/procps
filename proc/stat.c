@@ -48,7 +48,7 @@
 /* ------------------------------------------------------------------------- +
    because 'reap' would be forced to duplicate the global SYS stuff in every |
    TIC type results stack, the following #define can be used to enforce that |
-   only PROCPS_STAT_noop/extra plus those PROCPS_STAT_TIC items were allowed | */
+   only STAT_noop and STAT_extra plus all the STAT_TIC items will be allowed | */
 //#define ENFORCE_LOGICAL  // ensure only logical items are accepted by reap |
 // ------------------------------------------------------------------------- +
 
@@ -252,7 +252,7 @@ static struct {
   { RS(SYS_DELTA_PROC_CREATED) },
   { RS(SYS_DELTA_PROC_RUNNING) },
 
- // dummy entry corresponding to PROCPS_STAT_logical_end ...
+ // dummy entry corresponding to STAT_logical_end ...
   { NULL,                      }
 };
 
@@ -260,9 +260,9 @@ static struct {
      * 1st enum MUST be kept in sync with highest TIC type
      * 2nd enum MUST be 1 greater than the highest value of any enum */
 #ifdef ENFORCE_LOGICAL
-enum stat_item PROCPS_STAT_TIC_highest = PROCPS_STAT_TIC_DELTA_GUEST_NICE;
+enum stat_item STAT_TIC_highest = STAT_TIC_DELTA_GUEST_NICE;
 #endif
-enum stat_item PROCPS_STAT_logical_end = PROCPS_STAT_SYS_DELTA_PROC_RUNNING + 1;
+enum stat_item STAT_logical_end = STAT_SYS_DELTA_PROC_RUNNING + 1;
 
 #undef setNAME
 #undef RS
@@ -286,7 +286,7 @@ static inline void assign_results (
 
     for (;;) {
         enum stat_item item = this->item;
-        if (item >= PROCPS_STAT_logical_end)
+        if (item >= STAT_logical_end)
             break;
         Item_table[item].setsfunc(this, sys_hist, tic_hist);
         ++this;
@@ -299,9 +299,9 @@ static inline void cleanup_stack (
         struct stat_result *this)
 {
     for (;;) {
-        if (this->item >= PROCPS_STAT_logical_end)
+        if (this->item >= STAT_logical_end)
             break;
-        if (this->item > PROCPS_STAT_noop)
+        if (this->item > STAT_noop)
             this->result.ull_int = 0;
         ++this;
     }
@@ -362,18 +362,18 @@ static inline int items_check_failed (
      * offer any sort of warning like the following:
      *
      * warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'enum stat_item *'
-     * my_stack = procps_stat_select(info, PROCPS_STAT_noop, num);
+     * my_stack = procps_stat_select(info, STAT_noop, num);
      *                                     ^~~~~~~~~~~~~~~~
      */
     if (numitems < 1
-    || (void *)items < (void *)(unsigned long)(2 * PROCPS_STAT_logical_end))
+    || (void *)items < (void *)(unsigned long)(2 * STAT_logical_end))
         return -1;
 
     for (i = 0; i < numitems; i++) {
         // a stat_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
             return -1;
-        if (items[i] >= PROCPS_STAT_logical_end) {
+        if (items[i] >= STAT_logical_end) {
             return -1;
         }
     }
@@ -410,7 +410,7 @@ static int make_numa_hist (
     memset(info->nodes.hist.tics, 0, info->nodes.hist.n_alloc * sizeof(struct hist_tic));
     nod_ptr = info->nodes.hist.tics;
     for (i = 0; i < info->nodes.total; i++) {
-        nod_ptr->id = nod_ptr->numa_node = PROCPS_STAT_NODE_INVALID;
+        nod_ptr->id = nod_ptr->numa_node = STAT_NODE_INVALID;
         ++nod_ptr;
     }
 
@@ -490,8 +490,8 @@ static int read_stat_failed (
     // remember summary from last time around
     memcpy(&sum_ptr->old, &sum_ptr->new, sizeof(struct stat_jifs));
 
-    sum_ptr->id = PROCPS_STAT_SUMMARY_ID;              // mark as summary
-    sum_ptr->numa_node = PROCPS_STAT_NODE_INVALID;     // mark as invalid
+    sum_ptr->id = STAT_SUMMARY_ID;              // mark as summary
+    sum_ptr->numa_node = STAT_NODE_INVALID;     // mark as invalid
 
     // now value the cpu summary tics from line #1
     if (8 > sscanf(bp, "cpu %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu"
@@ -513,7 +513,7 @@ reap_em_again:
         // remember this cpu from last time around
         memcpy(&cpu_ptr->old, &cpu_ptr->new, sizeof(struct stat_jifs));
         // next can be overridden under 'make_numa_hist'
-        cpu_ptr->numa_node = PROCPS_STAT_NODE_INVALID;
+        cpu_ptr->numa_node = STAT_NODE_INVALID;
 
         if (8 > (rc = sscanf(bp, "cpu%d %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu"
             , &cpu_ptr->id
@@ -721,11 +721,11 @@ static int stacks_reconfig_maybe (
        if so, gotta' redo all of our stacks stuff ... */
     if (this->items->num != numitems + 1
     || memcmp(this->items->enums, items, sizeof(enum stat_item) * numitems)) {
-        // allow for our PROCPS_STAT_logical_end
+        // allow for our STAT_logical_end
         if (!(this->items->enums = realloc(this->items->enums, sizeof(enum stat_item) * (numitems + 1))))
             return -ENOMEM;
         memcpy(this->items->enums, items, sizeof(enum stat_item) * numitems);
-        this->items->enums[numitems] = PROCPS_STAT_logical_end;
+        this->items->enums[numitems] = STAT_logical_end;
         this->items->num = numitems + 1;
         extents_free_all(this);
         return 1;
@@ -895,7 +895,7 @@ PROCPS_EXPORT struct stat_result *procps_stat_get (
 
     if (info == NULL)
         return NULL;
-    if (item < 0 || item >= PROCPS_STAT_logical_end)
+    if (item < 0 || item >= STAT_logical_end)
         return NULL;
 
     /* no sense reading the stat with every call from a program like vmstat
@@ -909,7 +909,7 @@ PROCPS_EXPORT struct stat_result *procps_stat_get (
 
     info->get_this.item = item;
 //  with 'get', we must NOT honor the usual 'noop' guarantee
-//  if (item > PROCPS_STAT_noop)
+//  if (item > STAT_noop)
         info->get_this.result.ull_int = 0;
     Item_table[item].setsfunc(&info->get_this, &info->sys_hist, &info->cpu_hist);
 
@@ -939,9 +939,9 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
 
 #ifdef ENFORCE_LOGICAL
 {   int i;
-    // those PROCPS_STAT_SYS_type enum's make sense only to 'select' ...
+    // those STAT_SYS_type enum's make sense only to 'select' ...
     for (i = 0; i < numitems; i++) {
-        if (items[i] > PROCPS_STAT_TIC_highest)
+        if (items[i] > STAT_TIC_highest)
             return NULL;
     }
 }

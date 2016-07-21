@@ -51,11 +51,11 @@
    Because 'select' could, at most, return only node[0] values and since 'reap' |
    would be forced to duplicate global slabs stuff in every node results stack, |
    the following #define can be used to enforce strictly logical return values. |
-      select: allow only PROCPS_SLABINFO & PROCPS_SLABS items
-      reap:   allow only PROCPS_SLABINFO & PROCPS_SLABNODE items
+      select: allow only SLABINFO & SLABS items
+      reap:   allow only SLABINFO & SLABNODE items
    Without the #define, these functions always return something even if just 0. |
-      get:    return only PROCPS_SLABS results, else 0
-      select: return only PROCPS_SLABINFO & PROCPS_SLABS results, else zero
+      get:    return only SLABS results, else 0
+      select: return only SLABINFO & SLABS results, else zero
       reap:   return any requested, even when duplicated in each node's stack */
 //#define ENFORCE_LOGICAL  // ensure only logical items accepted by select/reap
 
@@ -291,13 +291,13 @@ static struct {
   { RS(SLABNODE_USE),            QS(u_int)  },
   { RS(SLABNODE_SIZE),           QS(ul_int) },
 
- // dummy entry corresponding to PROCPS_SLABINFO_logical_end ...
+ // dummy entry corresponding to SLABINFO_logical_end ...
   { NULL,                        NULL       }
 };
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum slabinfo_item PROCPS_SLABINFO_logical_end = PROCPS_SLABNODE_SIZE + 1;
+enum slabinfo_item SLABINFO_logical_end = SLABNODE_SIZE + 1;
 
 #undef setNAME
 #undef srtNAME
@@ -511,7 +511,7 @@ static inline void assign_results (
 
     for (;;) {
         enum slabinfo_item item = this->item;
-        if (item >= PROCPS_SLABINFO_logical_end)
+        if (item >= SLABINFO_logical_end)
             break;
         Item_table[item].setsfunc(this, summ, node);
         ++this;
@@ -524,9 +524,9 @@ static inline void cleanup_stack (
         struct slabinfo_result *this)
 {
     for (;;) {
-        if (this->item >= PROCPS_SLABINFO_logical_end)
+        if (this->item >= SLABINFO_logical_end)
             break;
-        if (this->item > PROCPS_SLABINFO_noop)
+        if (this->item > SLABINFO_noop)
             this->result.ul_int = 0;
         ++this;
     }
@@ -603,17 +603,17 @@ static inline int items_check_failed (
      * offer any sort of warning like the following:
      *
      * warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'enum slabinfo_item *'
-     * my_stack = procps_slabinfo_select(info, PROCPS_SLABINFO_noop, num);
+     * my_stack = procps_slabinfo_select(info, SLABINFO_noop, num);
      *                                         ^~~~~~~~~~~~~~~~
      */
     if (numitems < 1
-    || (void *)items < (void *)(unsigned long)(2 * PROCPS_SLABINFO_logical_end))
+    || (void *)items < (void *)(unsigned long)(2 * SLABINFO_logical_end))
         return -1;
 
     for (i = 0; i < numitems; i++) {
 #ifdef ENFORCE_LOGICAL
-        if (items[i] == PROCPS_SLABINFO_noop
-        || (items[i] == PROCPS_SLABINFO_extra))
+        if (items[i] == SLABINFO_noop
+        || (items[i] == SLABINFO_extra))
             continue;
         if (items[i] < this->lowest
         || (items[i] > this->highest))
@@ -622,7 +622,7 @@ static inline int items_check_failed (
         // a slabinfo_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
             return -1;
-        if (items[i] >= PROCPS_SLABINFO_logical_end)
+        if (items[i] >= SLABINFO_logical_end)
             return -1;
 #endif
     }
@@ -750,11 +750,11 @@ static int stacks_reconfig_maybe (
        if so, gotta' redo all of our stacks stuff ... */
     if (this->numitems != numitems + 1
     || memcmp(this->items, items, sizeof(enum slabinfo_item) * numitems)) {
-        // allow for our PROCPS_SLABINFO_logical_end
+        // allow for our SLABINFO_logical_end
         if (!(this->items = realloc(this->items, sizeof(enum slabinfo_item) * (numitems + 1))))
             return -ENOMEM;
         memcpy(this->items, items, sizeof(enum slabinfo_item) * numitems);
-        this->items[numitems] = PROCPS_SLABINFO_logical_end;
+        this->items[numitems] = SLABINFO_logical_end;
         this->numitems = numitems + 1;
         if (this->extents)
             extents_free_all(this);
@@ -789,10 +789,10 @@ PROCPS_EXPORT int procps_slabinfo_new (
         return -ENOMEM;
 
 #ifdef ENFORCE_LOGICAL
-    p->select_ext.lowest  = PROCPS_SLABS_OBJS;
-    p->select_ext.highest = PROCPS_SLABS_DELTA_SIZE_TOTAL;
-    p->fetch_ext.lowest   = PROCPS_SLABNODE_NAME;
-    p->fetch_ext.highest  = PROCPS_SLABNODE_SIZE;
+    p->select_ext.lowest  = SLABS_OBJS;
+    p->select_ext.highest = SLABS_DELTA_SIZE_TOTAL;
+    p->fetch_ext.lowest   = SLABNODE_NAME;
+    p->fetch_ext.highest  = SLABNODE_SIZE;
 #endif
 
     p->refcount = 1;
@@ -870,7 +870,7 @@ PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
 
     if (info == NULL)
         return NULL;
-    if (item < 0 || item >= PROCPS_SLABINFO_logical_end)
+    if (item < 0 || item >= SLABINFO_logical_end)
         return NULL;
 
     /* we will NOT read the slabinfo file with every call - rather, we'll offer
@@ -884,7 +884,7 @@ PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
 
     info->get_this.item = item;
 //  with 'get', we must NOT honor the usual 'noop' guarantee
-//  if (item > PROCPS_SLABINFO_noop)
+//  if (item > SLABINFO_noop)
         info->get_this.result.ul_int = 0;
     Item_table[item].setsfunc(&info->get_this, &info->hist, &info->nul_node);
 
@@ -981,9 +981,9 @@ PROCPS_EXPORT struct slabinfo_stack **procps_slabinfo_sort (
         return NULL;
 
     // a slabinfo_item is currently unsigned, but we'll protect our future
-    if (sortitem < 0 || sortitem >= PROCPS_SLABINFO_logical_end)
+    if (sortitem < 0 || sortitem >= SLABINFO_logical_end)
         return NULL;
-    if (order != PROCPS_SLABINFO_ASCEND && order != PROCPS_SLABINFO_DESCEND)
+    if (order != SLABINFO_SORT_ASCEND && order != SLABINFO_SORT_DESCEND)
         return NULL;
     if (numstacked < 2)
         return stacks;
@@ -994,7 +994,7 @@ PROCPS_EXPORT struct slabinfo_stack **procps_slabinfo_sort (
         if (p->item == sortitem)
             break;
         ++offset;
-        if (p->item == PROCPS_SLABINFO_logical_end)
+        if (p->item == SLABINFO_logical_end)
             return NULL;
         ++p;
     }

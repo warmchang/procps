@@ -248,13 +248,13 @@ static struct {
   { RS(DISKSTATS_DELTA_IO_TIME),        QS(s_int)  },
   { RS(DISKSTATS_DELTA_IO_WTIME),       QS(s_int)  },
 
- // dummy entry corresponding to PROCPS_DISKSTATS_logical_end ...
+ // dummy entry corresponding to DISKSTATS_logical_end ...
   { NULL,                               NULL       }
 };
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum diskstats_item PROCPS_DISKSTATS_logical_end = PROCPS_DISKSTATS_DELTA_IO_WTIME + 1;
+enum diskstats_item DISKSTATS_logical_end = DISKSTATS_DELTA_IO_WTIME + 1;
 
 #undef setNAME
 #undef srtNAME
@@ -313,15 +313,15 @@ static void node_classify (
        checks /sys/block and changes a device found there
        into a disk. if /sys/block cannot have the directory
        read, all devices are then treated as disks. */
-    this->type = PROCPS_DISKSTATS_TYPE_PARTITION;
+    this->type = DISKSTATS_TYPE_PARTITION;
 
     if (!(dirp = opendir(SYSBLOCK_DIR))) {
-        this->type = PROCPS_DISKSTATS_TYPE_DISK;
+        this->type = DISKSTATS_TYPE_DISK;
         return;
     }
     while((dent = readdir(dirp))) {
         if (strcmp(this->name, dent->d_name) == 0) {
-            this->type = PROCPS_DISKSTATS_TYPE_DISK;
+            this->type = DISKSTATS_TYPE_DISK;
             break;
         }
     }
@@ -415,7 +415,7 @@ static inline void assign_results (
 
     for (;;) {
         enum diskstats_item item = this->item;
-        if (item >= PROCPS_DISKSTATS_logical_end)
+        if (item >= DISKSTATS_logical_end)
             break;
         Item_table[item].setsfunc(this, node);
         ++this;
@@ -428,9 +428,9 @@ static inline void cleanup_stack (
         struct diskstats_result *this)
 {
     for (;;) {
-        if (this->item >= PROCPS_DISKSTATS_logical_end)
+        if (this->item >= DISKSTATS_logical_end)
             break;
-        if (this->item > PROCPS_DISKSTATS_noop)
+        if (this->item > DISKSTATS_noop)
             this->result.ul_int = 0;
         ++this;
     }
@@ -507,18 +507,18 @@ static inline int items_check_failed (
      * offer any sort of warning like the following:
      *
      * warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'enum diskstats_item *'
-     * my_stack = procps_diskstats_select(info, PROCPS_DISKSTATS_noop, num);
+     * my_stack = procps_diskstats_select(info, DISKSTATS_noop, num);
      *                                          ^~~~~~~~~~~~~~~~
      */
     if (numitems < 1
-    || (void *)items < (void *)(unsigned long)(2 * PROCPS_DISKSTATS_logical_end))
+    || (void *)items < (void *)(unsigned long)(2 * DISKSTATS_logical_end))
         return -1;
 
     for (i = 0; i < numitems; i++) {
         // a diskstats_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
             return -1;
-        if (items[i] >= PROCPS_DISKSTATS_logical_end)
+        if (items[i] >= DISKSTATS_logical_end)
             return -1;
     }
 
@@ -711,11 +711,11 @@ static int stacks_reconfig_maybe (
        if so, gotta' redo all of our stacks stuff ... */
     if (this->numitems != numitems + 1
     || memcmp(this->items, items, sizeof(enum diskstats_item) * numitems)) {
-        // allow for our PROCPS_DISKSTATS_logical_end
+        // allow for our DISKSTATS_logical_end
         if (!(this->items = realloc(this->items, sizeof(enum diskstats_item) * (numitems + 1))))
             return -ENOMEM;
         memcpy(this->items, items, sizeof(enum diskstats_item) * numitems);
-        this->items[numitems] = PROCPS_DISKSTATS_logical_end;
+        this->items[numitems] = DISKSTATS_logical_end;
         this->numitems = numitems + 1;
         if (this->extents)
             extents_free_all(this);
@@ -831,7 +831,7 @@ PROCPS_EXPORT struct diskstats_result *procps_diskstats_get (
 
     if (info == NULL)
         return NULL;
-    if (item < 0 || item >= PROCPS_DISKSTATS_logical_end)
+    if (item < 0 || item >= DISKSTATS_logical_end)
         return NULL;
 
     /* we will NOT read the diskstat file with every call - rather, we'll offer
@@ -844,7 +844,7 @@ PROCPS_EXPORT struct diskstats_result *procps_diskstats_get (
 
     info->get_this.item = item;
 //  with 'get', we must NOT honor the usual 'noop' guarantee
-//  if (item > PROCPS_DISKSTATS_noop)
+//  if (item > DISKSTATS_noop)
         info->get_this.result.ul_int = 0;
 
     if (!(node = node_get(info, name)))
@@ -950,9 +950,9 @@ PROCPS_EXPORT struct diskstats_stack **procps_diskstats_sort (
         return NULL;
 
     // a diskstats_item is currently unsigned, but we'll protect our future
-    if (sortitem < 0 || sortitem >= PROCPS_DISKSTATS_logical_end)
+    if (sortitem < 0 || sortitem >= DISKSTATS_logical_end)
         return NULL;
-    if (order != PROCPS_DISKSTATS_SORT_ASCEND && order != PROCPS_DISKSTATS_SORT_DESCEND)
+    if (order != DISKSTATS_SORT_ASCEND && order != DISKSTATS_SORT_DESCEND)
         return NULL;
     if (numstacked < 2)
         return stacks;
@@ -963,7 +963,7 @@ PROCPS_EXPORT struct diskstats_stack **procps_diskstats_sort (
         if (p->item == sortitem)
             break;
         ++offset;
-        if (p->item == PROCPS_DISKSTATS_logical_end)
+        if (p->item == DISKSTATS_logical_end)
             return NULL;
         ++p;
     }

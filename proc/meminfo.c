@@ -339,13 +339,13 @@ static struct {
   { RS(SWAP_TOTAL)           },
   { RS(SWAP_USED)            },
 
- // dummy entry corresponding to PROCPS_MEMINFO_logical_end ...
+ // dummy entry corresponding to MEMINFO_logical_end ...
   { NULL,                    }
 };
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum meminfo_item PROCPS_MEMINFO_logical_end = PROCPS_MEMINFO_SWAP_USED + 1;
+enum meminfo_item MEMINFO_logical_end = MEMINFO_SWAP_USED + 1;
 
 #undef setNAME
 #undef RS
@@ -361,7 +361,7 @@ static inline void assign_results (
 
     for (;;) {
         enum meminfo_item item = this->item;
-        if (item >= PROCPS_MEMINFO_logical_end)
+        if (item >= MEMINFO_logical_end)
             break;
         Item_table[item].setsfunc(this, hist);
         ++this;
@@ -374,9 +374,9 @@ static inline void cleanup_stack (
         struct meminfo_result *this)
 {
     for (;;) {
-        if (this->item >= PROCPS_MEMINFO_logical_end)
+        if (this->item >= MEMINFO_logical_end)
             break;
-        if (this->item > PROCPS_MEMINFO_noop)
+        if (this->item > MEMINFO_noop)
             this->result.ul_int = 0;
         ++this;
     }
@@ -437,18 +437,18 @@ static inline int items_check_failed (
      * offer any sort of warning like the following:
      *
      * warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'enum meminfo_item *'
-     * my_stack = procps_meminfo_select(info, PROCPS_MEMINFO_noop, num);
+     * my_stack = procps_meminfo_select(info, MEMINFO_noop, num);
      *                                        ^~~~~~~~~~~~~~~~
      */
     if (numitems < 1
-    || (void *)items < (void *)(unsigned long)(2 * PROCPS_MEMINFO_logical_end))
+    || (void *)items < (void *)(unsigned long)(2 * MEMINFO_logical_end))
         return -1;
 
     for (i = 0; i < numitems; i++) {
         // a meminfo_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
             return -1;
-        if (items[i] >= PROCPS_MEMINFO_logical_end)
+        if (items[i] >= MEMINFO_logical_end)
             return -1;
     }
 
@@ -780,7 +780,7 @@ PROCPS_EXPORT struct meminfo_result *procps_meminfo_get (
 
     if (info == NULL)
         return NULL;
-    if (item < 0 || item >= PROCPS_MEMINFO_logical_end)
+    if (item < 0 || item >= MEMINFO_logical_end)
         return NULL;
 
     /* we will NOT read the meminfo file with every call - rather, we'll offer
@@ -794,7 +794,7 @@ PROCPS_EXPORT struct meminfo_result *procps_meminfo_get (
 
     info->get_this.item = item;
 //  with 'get', we must NOT honor the usual 'noop' guarantee
-//  if (item > PROCPS_MEMINFO_noop)
+//  if (item > MEMINFO_noop)
         info->get_this.result.ul_int = 0;
     Item_table[item].setsfunc(&info->get_this, &info->hist);
 
@@ -823,11 +823,11 @@ PROCPS_EXPORT struct meminfo_stack *procps_meminfo_select (
        if so, gotta' redo all of our stacks stuff ... */
     if (info->numitems != numitems + 1
     || memcmp(info->items, items, sizeof(enum meminfo_item) * numitems)) {
-        // allow for our PROCPS_MEMINFO_logical_end
+        // allow for our MEMINFO_logical_end
         if (!(info->items = realloc(info->items, sizeof(enum meminfo_item) * (numitems + 1))))
             return NULL;
         memcpy(info->items, items, sizeof(enum meminfo_item) * numitems);
-        info->items[numitems] = PROCPS_MEMINFO_logical_end;
+        info->items[numitems] = MEMINFO_logical_end;
         info->numitems = numitems + 1;
         if (info->extents)
             extents_free_all(info);

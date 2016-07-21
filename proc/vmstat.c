@@ -704,13 +704,13 @@ static struct {
   { RS(DELTA_WORKINGSET_REFAULT)            },
   { RS(DELTA_ZONE_RECLAIM_FAILED)           },
 
- // dummy entry corresponding to PROCPS_VMSTAT_logical_end ...
+ // dummy entry corresponding to VMSTAT_logical_end ...
   { NULL,                                   }
 };
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum vmstat_item PROCPS_VMSTAT_logical_end = PROCPS_VMSTAT_DELTA_ZONE_RECLAIM_FAILED + 1;
+enum vmstat_item VMSTAT_logical_end = VMSTAT_DELTA_ZONE_RECLAIM_FAILED + 1;
 
 #undef setNAME
 #undef RS
@@ -726,7 +726,7 @@ static inline void assign_results (
 
     for (;;) {
         enum vmstat_item item = this->item;
-        if (item >= PROCPS_VMSTAT_logical_end)
+        if (item >= VMSTAT_logical_end)
             break;
         Item_table[item].setsfunc(this, hist);
         ++this;
@@ -739,9 +739,9 @@ static inline void cleanup_stack (
         struct vmstat_result *this)
 {
     for (;;) {
-        if (this->item >= PROCPS_VMSTAT_logical_end)
+        if (this->item >= VMSTAT_logical_end)
             break;
-        if (this->item > PROCPS_VMSTAT_noop)
+        if (this->item > VMSTAT_noop)
             this->result.ul_int = 0;
         ++this;
     }
@@ -802,18 +802,18 @@ static inline int items_check_failed (
      * offer any sort of warning like the following:
      *
      * warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'enum vmstat_item *'
-     * my_stack = procps_vmstat_select(info, PROCPS_VMSTAT_noop, num);
+     * my_stack = procps_vmstat_select(info, VMSTAT_noop, num);
      *                                       ^~~~~~~~~~~~~~~~
      */
     if (numitems < 1
-    || (void *)items < (void *)(unsigned long)(2 * PROCPS_VMSTAT_logical_end))
+    || (void *)items < (void *)(unsigned long)(2 * VMSTAT_logical_end))
         return -1;
 
     for (i = 0; i < numitems; i++) {
         // a vmstat_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
             return -1;
-        if (items[i] >= PROCPS_VMSTAT_logical_end)
+        if (items[i] >= VMSTAT_logical_end)
             return -1;
     }
 
@@ -1176,7 +1176,7 @@ PROCPS_EXPORT struct vmstat_result *procps_vmstat_get (
 
     if (info == NULL)
         return NULL;
-    if (item < 0 || item >= PROCPS_VMSTAT_logical_end)
+    if (item < 0 || item >= VMSTAT_logical_end)
         return NULL;
 
     /* we will NOT read the vmstat file with every call - rather, we'll offer
@@ -1190,7 +1190,7 @@ PROCPS_EXPORT struct vmstat_result *procps_vmstat_get (
 
     info->get_this.item = item;
 //  with 'get', we must NOT honor the usual 'noop' guarantee
-//  if (item > PROCPS_VMSTAT_noop)
+//  if (item > VMSTAT_noop)
         info->get_this.result.ul_int = 0;
     Item_table[item].setsfunc(&info->get_this, &info->hist);
 
@@ -1219,11 +1219,11 @@ PROCPS_EXPORT struct vmstat_stack *procps_vmstat_select (
        if so, gotta' redo all of our stacks stuff ... */
     if (info->numitems != numitems + 1
     || memcmp(info->items, items, sizeof(enum vmstat_item) * numitems)) {
-        // allow for our PROCPS_VMSTAT_logical_end
+        // allow for our VMSTAT_logical_end
         if (!(info->items = realloc(info->items, sizeof(enum vmstat_item) * (numitems + 1))))
             return NULL;
         memcpy(info->items, items, sizeof(enum vmstat_item) * numitems);
-        info->items[numitems] = PROCPS_VMSTAT_logical_end;
+        info->items[numitems] = VMSTAT_logical_end;
         info->numitems = numitems + 1;
         if (info->extents)
             extents_free_all(info);

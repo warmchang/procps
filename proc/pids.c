@@ -501,13 +501,13 @@ static struct {
     { RS(WCHAN_ADDR),        f_stat,     NULL,      QS(ul_int),    0        },
     { RS(WCHAN_NAME),        0,          FF(str),   QS(str),       0        }, // oldflags: tid already free
 
-   // dummy entry corresponding to PROCPS_PIDS_logical_end ...
+   // dummy entry corresponding to PIDS_logical_end ...
     { NULL,                  0,          NULL,      NULL,          0        }
 };
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum pids_item PROCPS_PIDS_logical_end  = PROCPS_PIDS_WCHAN_NAME + 1;
+enum pids_item PIDS_logical_end  = PIDS_WCHAN_NAME + 1;
 
 #undef setNAME
 #undef freNAME
@@ -763,7 +763,7 @@ static inline void assign_results (
 
     for (;;) {
         enum pids_item item = this->item;
-        if (item >= PROCPS_PIDS_logical_end)
+        if (item >= PIDS_logical_end)
             break;
         Item_table[item].setsfunc(info, this, p);
         info->dirty_stacks |= Item_table[item].freefunc ? 1 : 0;
@@ -778,11 +778,11 @@ static inline void cleanup_stack (
 {
     for (;;) {
         enum pids_item item = this->item;
-        if (item >= PROCPS_PIDS_logical_end)
+        if (item >= PIDS_logical_end)
             break;
         if (Item_table[item].freefunc)
             Item_table[item].freefunc(this);
-        if (item > PROCPS_PIDS_noop)
+        if (item > PIDS_noop)
             this->result.ull_int = 0;
         ++this;
     }
@@ -885,7 +885,7 @@ static inline int items_check_failed (
      * offer any sort of warning like the following:
      *
      * warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'enum pids_item *'
-     * if (procps_pids_new(&info, PROCPS_PIDS_noop, 3) < 0)
+     * if (procps_pids_new(&info, PIDS_noop, 3) < 0)
      *                            ^~~~~~~~~~~~~~~~
      */
     if (numitems < 1
@@ -895,7 +895,7 @@ static inline int items_check_failed (
         // a pids_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
             return -1;
-        if (items[i] >= PROCPS_PIDS_logical_end) {
+        if (items[i] >= PIDS_logical_end) {
             return -1;
         }
     }
@@ -911,7 +911,7 @@ static inline void libflags_set (
 
     info->oldflags = info->history_yes = 0;
     for (i = 0; i < info->curitems; i++) {
-        if (((e = info->items[i])) >= PROCPS_PIDS_logical_end)
+        if (((e = info->items[i])) >= PIDS_logical_end)
             break;
         info->oldflags |= Item_table[e].oldflags;
         info->history_yes |= Item_table[e].needhist;
@@ -1142,14 +1142,14 @@ PROCPS_EXPORT int procps_pids_new (
             free(p);
             return -EINVAL;
         }
-        // allow for our PROCPS_PIDS_logical_end
+        // allow for our PIDS_logical_end
         p->maxitems = numitems + 1;
         if (!(p->items = calloc(p->maxitems, sizeof(enum pids_item)))) {
             free(p);
             return -ENOMEM;
         }
         memcpy(p->items, items, sizeof(enum pids_item) * numitems);
-        p->items[numitems] = PROCPS_PIDS_logical_end;
+        p->items[numitems] = PIDS_logical_end;
         p->curitems = p->maxitems;
         libflags_set(p);
     }
@@ -1282,7 +1282,7 @@ PROCPS_EXPORT struct pids_stack *procps_pids_get (
         return NULL;
     if (!info->curitems)
         return NULL;
-    if (which != PROCPS_FETCH_TASKS_ONLY && which != PROCPS_FETCH_THREADS_TOO)
+    if (which != PIDS_FETCH_TASKS_ONLY && which != PIDS_FETCH_THREADS_TOO)
         return NULL;
     /* with items & numitems technically optional at 'new' time, it's
        expected 'reset' will have been called -- but just in case ... */
@@ -1333,7 +1333,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
 
     if (info == NULL)
         return NULL;
-    if (which != PROCPS_FETCH_TASKS_ONLY && which != PROCPS_FETCH_THREADS_TOO)
+    if (which != PIDS_FETCH_TASKS_ONLY && which != PIDS_FETCH_THREADS_TOO)
         return NULL;
     /* with items & numitems technically optional at 'new' time, it's
        expected 'reset' will have been called -- but just in case ... */
@@ -1371,7 +1371,7 @@ PROCPS_EXPORT int procps_pids_reset (
     if (info->maxitems < newnumitems + 1) {
         if (info->dirty_stacks)
             cleanup_stacks_all(info);
-        // allow for our PROCPS_PIDS_logical_end
+        // allow for our PIDS_logical_end
         info->maxitems = newnumitems + 1;
         if (!(info->items = realloc(info->items, sizeof(enum pids_item) * info->maxitems)))
             return -ENOMEM;
@@ -1382,8 +1382,8 @@ PROCPS_EXPORT int procps_pids_reset (
         cleanup_stacks_all(info);
 
     memcpy(info->items, newitems, sizeof(enum pids_item) * newnumitems);
-    info->items[newnumitems] = PROCPS_PIDS_logical_end;
-    // account for above PROCPS_PIDS_logical_end
+    info->items[newnumitems] = PIDS_logical_end;
+    // account for above PIDS_logical_end
     info->curitems = newnumitems + 1;
 
     itemize_stacks_all(info);
@@ -1413,14 +1413,14 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
         return NULL;
     if (numthese < 1 || numthese > FILL_ID_MAX)
         return NULL;
-    if (which != PROCPS_SELECT_PID && which != PROCPS_SELECT_UID)
+    if (which != PIDS_SELECT_PID && which != PIDS_SELECT_UID)
         return NULL;
     /* with items & numitems technically optional at 'new' time, it's
        expected 'reset' will have been called -- but just in case ... */
     if (!info->curitems)
         return NULL;
 
-    // this zero delimiter is really only needed with PROCPS_SELECT_PID
+    // this zero delimiter is really only needed with PIDS_SELECT_PID
     memcpy(ids, these, sizeof(unsigned) * numthese);
     ids[numthese] = 0;
 
@@ -1460,9 +1460,9 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
     if (info == NULL || stacks == NULL)
         return NULL;
     // a pids_item is currently unsigned, but we'll protect our future
-    if (sortitem < 0  || sortitem >= PROCPS_PIDS_logical_end)
+    if (sortitem < 0  || sortitem >= PIDS_logical_end)
         return NULL;
-    if (order != PROCPS_PIDS_ASCEND && order != PROCPS_PIDS_DESCEND)
+    if (order != PIDS_SORT_ASCEND && order != PIDS_SORT_DESCEND)
         return NULL;
     if (numstacked < 2)
         return stacks;
@@ -1475,7 +1475,7 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
         ++offset;
         if (offset >= info->curitems)
             return NULL;
-        if (p->item >= PROCPS_PIDS_logical_end)
+        if (p->item >= PIDS_logical_end)
             return NULL;
         ++p;
     }

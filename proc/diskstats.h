@@ -1,5 +1,5 @@
 /*
- * diskstats - Disk statistics - part of procps
+ * libprocps - Library to read proc filesystem
  *
  * Copyright (c) 2003 Fabian Frederick
  * Copyright (C) 2003 Albert Cahalan
@@ -28,42 +28,42 @@
 __BEGIN_DECLS
 
 enum diskstats_item {
-    PROCPS_DISKSTATS_noop,                 //        ( never altered )
-    PROCPS_DISKSTATS_extra,                //        ( reset to zero )
+    DISKSTATS_noop,                 //        ( never altered )
+    DISKSTATS_extra,                //        ( reset to zero )
 
-    PROCPS_DISKSTATS_NAME,                 //    str
-    PROCPS_DISKSTATS_TYPE,                 //  s_int
-    PROCPS_DISKSTATS_MAJOR,                //  s_int
-    PROCPS_DISKSTATS_MINOR,                //  s_int
+    DISKSTATS_NAME,                 //    str
+    DISKSTATS_TYPE,                 //  s_int
+    DISKSTATS_MAJOR,                //  s_int
+    DISKSTATS_MINOR,                //  s_int
 
-    PROCPS_DISKSTATS_READS,                // ul_int
-    PROCPS_DISKSTATS_READS_MERGED,         // ul_int
-    PROCPS_DISKSTATS_READ_SECTORS,         // ul_int
-    PROCPS_DISKSTATS_READ_TIME,            // ul_int
-    PROCPS_DISKSTATS_WRITES,               // ul_int
-    PROCPS_DISKSTATS_WRITES_MERGED,        // ul_int
-    PROCPS_DISKSTATS_WRITE_SECTORS,        // ul_int
-    PROCPS_DISKSTATS_WRITE_TIME,           // ul_int
-    PROCPS_DISKSTATS_IO_TIME,              // ul_int
-    PROCPS_DISKSTATS_IO_WTIME,             // ul_int
+    DISKSTATS_READS,                // ul_int
+    DISKSTATS_READS_MERGED,         // ul_int
+    DISKSTATS_READ_SECTORS,         // ul_int
+    DISKSTATS_READ_TIME,            // ul_int
+    DISKSTATS_WRITES,               // ul_int
+    DISKSTATS_WRITES_MERGED,        // ul_int
+    DISKSTATS_WRITE_SECTORS,        // ul_int
+    DISKSTATS_WRITE_TIME,           // ul_int
+    DISKSTATS_IO_TIME,              // ul_int
+    DISKSTATS_IO_WTIME,             // ul_int
 
-    PROCPS_DISKSTATS_IO_INPROGRESS,        //  s_int
+    DISKSTATS_IO_INPROGRESS,        //  s_int
 
-    PROCPS_DISKSTATS_DELTA_READS,          //  s_int
-    PROCPS_DISKSTATS_DELTA_READS_MERGED,   //  s_int
-    PROCPS_DISKSTATS_DELTA_READ_SECTORS,   //  s_int
-    PROCPS_DISKSTATS_DELTA_READ_TIME,      //  s_int
-    PROCPS_DISKSTATS_DELTA_WRITES,         //  s_int
-    PROCPS_DISKSTATS_DELTA_WRITES_MERGED,  //  s_int
-    PROCPS_DISKSTATS_DELTA_WRITE_SECTORS,  //  s_int
-    PROCPS_DISKSTATS_DELTA_WRITE_TIME,     //  s_int
-    PROCPS_DISKSTATS_DELTA_IO_TIME,        //  s_int
-    PROCPS_DISKSTATS_DELTA_IO_WTIME        //  s_int
+    DISKSTATS_DELTA_READS,          //  s_int
+    DISKSTATS_DELTA_READS_MERGED,   //  s_int
+    DISKSTATS_DELTA_READ_SECTORS,   //  s_int
+    DISKSTATS_DELTA_READ_TIME,      //  s_int
+    DISKSTATS_DELTA_WRITES,         //  s_int
+    DISKSTATS_DELTA_WRITES_MERGED,  //  s_int
+    DISKSTATS_DELTA_WRITE_SECTORS,  //  s_int
+    DISKSTATS_DELTA_WRITE_TIME,     //  s_int
+    DISKSTATS_DELTA_IO_TIME,        //  s_int
+    DISKSTATS_DELTA_IO_WTIME        //  s_int
 };
 
 enum diskstats_sort_order {
-    PROCPS_DISKSTATS_SORT_ASCEND   = +1,
-    PROCPS_DISKSTATS_SORT_DESCEND  = -1
+    DISKSTATS_SORT_ASCEND   = +1,
+    DISKSTATS_SORT_DESCEND  = -1
 };
 
 
@@ -86,13 +86,13 @@ struct diskstats_reap {
 };
 
 
-#define PROCPS_DISKSTATS_TYPE_DISK       -11111
-#define PROCPS_DISKSTATS_TYPE_PARTITION  -22222
+#define DISKSTATS_TYPE_DISK       -11111
+#define DISKSTATS_TYPE_PARTITION  -22222
 
-#define PROCPS_DISKSTATS_GET( info, actual_enum, type ) \
+#define DISKSTATS_GET( info, actual_enum, type ) \
     procps_diskstats_get( info, actual_enum ) -> result . type
 
-#define PROCPS_DISKSTATS_VAL( relative_enum, type, stack) \
+#define DISKSTATS_VAL( relative_enum, type, stack) \
     stack -> head [ relative_enum ] . result . type
 
 

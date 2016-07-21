@@ -19,48 +19,50 @@
 #ifndef PROC_STAT_H
 #define PROC_STAT_H
 
+#include <sys/cdefs.h>
+
 __BEGIN_DECLS
 
 enum stat_item {
-    PROCPS_STAT_noop,                    //        ( never altered )
-    PROCPS_STAT_extra,                   //        ( reset to zero )
+    STAT_noop,                    //        ( never altered )
+    STAT_extra,                   //        ( reset to zero )
 
-    PROCPS_STAT_TIC_ID,                  //   s_int
-    PROCPS_STAT_TIC_NUMA_NODE,           //   s_int
-    PROCPS_STAT_TIC_USER,                // ull_int
-    PROCPS_STAT_TIC_NICE,                // ull_int
-    PROCPS_STAT_TIC_SYSTEM,              // ull_int
-    PROCPS_STAT_TIC_IDLE,                // ull_int
-    PROCPS_STAT_TIC_IOWAIT,              // ull_int
-    PROCPS_STAT_TIC_IRQ,                 // ull_int
-    PROCPS_STAT_TIC_SOFTIRQ,             // ull_int
-    PROCPS_STAT_TIC_STOLEN,              // ull_int
-    PROCPS_STAT_TIC_GUEST,               // ull_int
-    PROCPS_STAT_TIC_GUEST_NICE,          // ull_int
+    STAT_TIC_ID,                  //   s_int
+    STAT_TIC_NUMA_NODE,           //   s_int
+    STAT_TIC_USER,                // ull_int
+    STAT_TIC_NICE,                // ull_int
+    STAT_TIC_SYSTEM,              // ull_int
+    STAT_TIC_IDLE,                // ull_int
+    STAT_TIC_IOWAIT,              // ull_int
+    STAT_TIC_IRQ,                 // ull_int
+    STAT_TIC_SOFTIRQ,             // ull_int
+    STAT_TIC_STOLEN,              // ull_int
+    STAT_TIC_GUEST,               // ull_int
+    STAT_TIC_GUEST_NICE,          // ull_int
 
-    PROCPS_STAT_TIC_DELTA_USER,          //  sl_int
-    PROCPS_STAT_TIC_DELTA_NICE,          //  sl_int
-    PROCPS_STAT_TIC_DELTA_SYSTEM,        //  sl_int
-    PROCPS_STAT_TIC_DELTA_IDLE,          //  sl_int
-    PROCPS_STAT_TIC_DELTA_IOWAIT,        //  sl_int
-    PROCPS_STAT_TIC_DELTA_IRQ,           //  sl_int
-    PROCPS_STAT_TIC_DELTA_SOFTIRQ,       //  sl_int
-    PROCPS_STAT_TIC_DELTA_STOLEN,        //  sl_int
-    PROCPS_STAT_TIC_DELTA_GUEST,         //  sl_int
-    PROCPS_STAT_TIC_DELTA_GUEST_NICE,    //  sl_int
+    STAT_TIC_DELTA_USER,          //  sl_int
+    STAT_TIC_DELTA_NICE,          //  sl_int
+    STAT_TIC_DELTA_SYSTEM,        //  sl_int
+    STAT_TIC_DELTA_IDLE,          //  sl_int
+    STAT_TIC_DELTA_IOWAIT,        //  sl_int
+    STAT_TIC_DELTA_IRQ,           //  sl_int
+    STAT_TIC_DELTA_SOFTIRQ,       //  sl_int
+    STAT_TIC_DELTA_STOLEN,        //  sl_int
+    STAT_TIC_DELTA_GUEST,         //  sl_int
+    STAT_TIC_DELTA_GUEST_NICE,    //  sl_int
 
-    PROCPS_STAT_SYS_CTX_SWITCHES,        //  ul_int
-    PROCPS_STAT_SYS_INTERRUPTS,          //  ul_int
-    PROCPS_STAT_SYS_PROC_BLOCKED,        //  ul_int
-    PROCPS_STAT_SYS_PROC_CREATED,        //  ul_int
-    PROCPS_STAT_SYS_PROC_RUNNING,        //  ul_int
-    PROCPS_STAT_SYS_TIME_OF_BOOT,        //  ul_int
+    STAT_SYS_CTX_SWITCHES,        //  ul_int
+    STAT_SYS_INTERRUPTS,          //  ul_int
+    STAT_SYS_PROC_BLOCKED,        //  ul_int
+    STAT_SYS_PROC_CREATED,        //  ul_int
+    STAT_SYS_PROC_RUNNING,        //  ul_int
+    STAT_SYS_TIME_OF_BOOT,        //  ul_int
 
-    PROCPS_STAT_SYS_DELTA_CTX_SWITCHES,  //   s_int
-    PROCPS_STAT_SYS_DELTA_INTERRUPTS,    //   s_int
-    PROCPS_STAT_SYS_DELTA_PROC_BLOCKED,  //   s_int
-    PROCPS_STAT_SYS_DELTA_PROC_CREATED,  //   s_int
-    PROCPS_STAT_SYS_DELTA_PROC_RUNNING   //   s_int
+    STAT_SYS_DELTA_CTX_SWITCHES,  //   s_int
+    STAT_SYS_DELTA_INTERRUPTS,    //   s_int
+    STAT_SYS_DELTA_PROC_BLOCKED,  //   s_int
+    STAT_SYS_DELTA_PROC_CREATED,  //   s_int
+    STAT_SYS_DELTA_PROC_RUNNING   //   s_int
 };
 
 enum stat_reap_type {
@@ -94,13 +96,13 @@ struct stat_reaped {
 };
 
 
-#define PROCPS_STAT_SUMMARY_ID    -11111
-#define PROCPS_STAT_NODE_INVALID  -22222
+#define STAT_SUMMARY_ID    -11111
+#define STAT_NODE_INVALID  -22222
 
-#define PROCPS_STAT_GET( info, actual_enum, type ) \
+#define STAT_GET( info, actual_enum, type ) \
     procps_stat_get( info, actual_enum ) -> result . type
 
-#define PROCPS_STAT_VAL( relative_enum, type, stack ) \
+#define STAT_VAL( relative_enum, type, stack ) \
     stack -> head [ relative_enum ] . result . type
 
 

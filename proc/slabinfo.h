@@ -1,5 +1,5 @@
 /*
- * slabinfo.h - slab related functions for libproc
+ * libprocps - Library to read proc filesystem
  *
  * Copyright (C) 1998-2005 Albert Cahalan
  * Copyright (C) 2015 Craig Small <csmall@enc.com.au>
@@ -20,58 +20,58 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _PROC_SLAB_H
-#define _PROC_SLAB_H
+#ifndef PROC_SLAB_H
+#define PROC_SLAB_H
 
-#include <features.h>
+#include <sys/cdefs.h>
 
 __BEGIN_DECLS
 
 enum slabinfo_item {
-    PROCPS_SLABINFO_noop,            //       ( never altered )
-    PROCPS_SLABINFO_extra,           //       ( reset to zero )
+    SLABINFO_noop,            //       ( never altered )
+    SLABINFO_extra,           //       ( reset to zero )
 
-    PROCPS_SLABS_OBJS,               //  u_int
-    PROCPS_SLABS_AOBJS,              //  u_int
-    PROCPS_SLABS_PAGES,              //  u_int
-    PROCPS_SLABS_SLABS,              //  u_int
-    PROCPS_SLABS_ASLABS,             //  u_int
-    PROCPS_SLABS_CACHES,             //  u_int
-    PROCPS_SLABS_ACACHES,            //  u_int
-    PROCPS_SLABS_SIZE_AVG,           //  u_int
-    PROCPS_SLABS_SIZE_MIN,           //  u_int
-    PROCPS_SLABS_SIZE_MAX,           //  u_int
-    PROCPS_SLABS_SIZE_ACTIVE,        // ul_int
-    PROCPS_SLABS_SIZE_TOTAL,         // ul_int
+    SLABS_OBJS,               //  u_int
+    SLABS_AOBJS,              //  u_int
+    SLABS_PAGES,              //  u_int
+    SLABS_SLABS,              //  u_int
+    SLABS_ASLABS,             //  u_int
+    SLABS_CACHES,             //  u_int
+    SLABS_ACACHES,            //  u_int
+    SLABS_SIZE_AVG,           //  u_int
+    SLABS_SIZE_MIN,           //  u_int
+    SLABS_SIZE_MAX,           //  u_int
+    SLABS_SIZE_ACTIVE,        // ul_int
+    SLABS_SIZE_TOTAL,         // ul_int
 
-    PROCPS_SLABS_DELTA_OBJS,         //  s_int
-    PROCPS_SLABS_DELTA_AOBJS,        //  s_int
-    PROCPS_SLABS_DELTA_PAGES,        //  s_int
-    PROCPS_SLABS_DELTA_SLABS,        //  s_int
-    PROCPS_SLABS_DELTA_ASLABS,       //  s_int
-    PROCPS_SLABS_DELTA_CACHES,       //  s_int
-    PROCPS_SLABS_DELTA_ACACHES,      //  s_int
-    PROCPS_SLABS_DELTA_SIZE_AVG,     //  s_int
-    PROCPS_SLABS_DELTA_SIZE_MIN,     //  s_int
-    PROCPS_SLABS_DELTA_SIZE_MAX,     //  s_int
-    PROCPS_SLABS_DELTA_SIZE_ACTIVE,  //  s_int
-    PROCPS_SLABS_DELTA_SIZE_TOTAL,   //  s_int
+    SLABS_DELTA_OBJS,         //  s_int
+    SLABS_DELTA_AOBJS,        //  s_int
+    SLABS_DELTA_PAGES,        //  s_int
+    SLABS_DELTA_SLABS,        //  s_int
+    SLABS_DELTA_ASLABS,       //  s_int
+    SLABS_DELTA_CACHES,       //  s_int
+    SLABS_DELTA_ACACHES,      //  s_int
+    SLABS_DELTA_SIZE_AVG,     //  s_int
+    SLABS_DELTA_SIZE_MIN,     //  s_int
+    SLABS_DELTA_SIZE_MAX,     //  s_int
+    SLABS_DELTA_SIZE_ACTIVE,  //  s_int
+    SLABS_DELTA_SIZE_TOTAL,   //  s_int
 
-    PROCPS_SLABNODE_NAME,            //    str
-    PROCPS_SLABNODE_OBJS,            //  u_int
-    PROCPS_SLABNODE_AOBJS,           //  u_int
-    PROCPS_SLABNODE_OBJ_SIZE,        //  u_int
-    PROCPS_SLABNODE_OBJS_PER_SLAB,   //  u_int
-    PROCPS_SLABNODE_PAGES_PER_SLAB,  //  u_int
-    PROCPS_SLABNODE_SLABS,           //  u_int
-    PROCPS_SLABNODE_ASLABS,          //  u_int
-    PROCPS_SLABNODE_USE,             //  u_int
-    PROCPS_SLABNODE_SIZE             // ul_int
+    SLABNODE_NAME,            //    str
+    SLABNODE_OBJS,            //  u_int
+    SLABNODE_AOBJS,           //  u_int
+    SLABNODE_OBJ_SIZE,        //  u_int
+    SLABNODE_OBJS_PER_SLAB,   //  u_int
+    SLABNODE_PAGES_PER_SLAB,  //  u_int
+    SLABNODE_SLABS,           //  u_int
+    SLABNODE_ASLABS,          //  u_int
+    SLABNODE_USE,             //  u_int
+    SLABNODE_SIZE             // ul_int
 };
 
 enum slabinfo_sort_order {
-    PROCPS_SLABINFO_ASCEND   = +1,
-    PROCPS_SLABINFO_DESCEND  = -1
+    SLABINFO_SORT_ASCEND   = +1,
+    SLABINFO_SORT_DESCEND  = -1
 };
 
 
@@ -95,10 +95,10 @@ struct slabinfo_reap {
 };
 
 
-#define PROCPS_SLABINFO_GET( info, actual_enum, type ) \
+#define SLABINFO_GET( info, actual_enum, type ) \
     procps_slabinfo_get( info, actual_enum ) -> result . type
 
-#define PROCPS_SLABINFO_VAL( relative_enum, type, stack ) \
+#define SLABINFO_VAL( relative_enum, type, stack ) \
     stack -> head [ relative_enum ] . result . type
 
 
