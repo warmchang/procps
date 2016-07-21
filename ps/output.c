@@ -94,7 +94,7 @@ static void get_boot_time(void)
     struct stat_info *stat_info = NULL;
     if (procps_stat_new(&stat_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create NEW ystem stat structure"));
-    boot_time = PROCPS_STAT_GET(stat_info, PROCPS_STAT_SYS_TIME_OF_BOOT, ul_int);
+    boot_time = STAT_GET(stat_info, STAT_SYS_TIME_OF_BOOT, ul_int);
     procps_stat_unref(&stat_info);
 }
 
@@ -104,7 +104,7 @@ static void get_memory_total()
     if (procps_meminfo_new(&mem_info) < 0)
 	xerrx(EXIT_FAILURE,
 		_("Unable to create meminfo structure"));
-    memory_total = PROCPS_MEMINFO_GET(mem_info, PROCPS_MEMINFO_MEM_TOTAL, ul_int);
+    memory_total = MEMINFO_GET(mem_info, MEMINFO_MEM_TOTAL, ul_int);
     procps_meminfo_unref(&mem_info);
 }
 
@@ -1375,261 +1375,261 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 /* there are about 211 listed */
 /* Many of these are placeholders for unsupported options. */
 static const format_struct format_array[] = { /*
- .spec        .head      .pr               .sr                          .width .vendor .flags  */
-{"%cpu",      "%CPU",    pr_pcpu,          PROCPS_PIDS_extra,               4,    BSD,  ET|RIGHT}, /*pcpu*/
-{"%mem",      "%MEM",    pr_pmem,          PROCPS_PIDS_VM_RSS,              4,    BSD,  PO|RIGHT}, /*pmem*/
-{"_left",     "LLLLLLLL", pr_t_left,       PROCPS_PIDS_noop,                8,    TST,  ET|LEFT},
-{"_left2",    "L2L2L2L2", pr_t_left2,      PROCPS_PIDS_noop,                8,    TST,  ET|LEFT},
-{"_right",    "RRRRRRRRRRR", pr_t_right,   PROCPS_PIDS_noop,                11,   TST,  ET|RIGHT},
-{"_right2",   "R2R2R2R2R2R", pr_t_right2,  PROCPS_PIDS_noop,                11,   TST,  ET|RIGHT},
-{"_unlimited","U",   pr_t_unlimited,       PROCPS_PIDS_noop,                16,   TST,  ET|UNLIMITED},
-{"_unlimited2","U2", pr_t_unlimited2,      PROCPS_PIDS_noop,                16,   TST,  ET|UNLIMITED},
-{"acflag",    "ACFLG",   pr_nop,           PROCPS_PIDS_noop,                5,    XXX,  AN|RIGHT}, /*acflg*/
-{"acflg",     "ACFLG",   pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  AN|RIGHT}, /*acflag*/
-{"addr",      "ADDR",    pr_nop,           PROCPS_PIDS_noop,                4,    XXX,  AN|RIGHT},
-{"addr_1",    "ADDR",    pr_nop,           PROCPS_PIDS_noop,                1,    LNX,  AN|LEFT},
-{"alarm",     "ALARM",   pr_alarm,         PROCPS_PIDS_ALARM,               5,    LNX,  AN|RIGHT},
-{"argc",      "ARGC",    pr_nop,           PROCPS_PIDS_noop,                4,    LNX,  PO|RIGHT},
-{"args",      "COMMAND", pr_args,          PROCPS_PIDS_CMDLINE,             27,   U98,  PO|UNLIMITED}, /*command*/
-{"atime",     "TIME",    pr_time,          PROCPS_PIDS_TIME_ALL,            8,    SOE,  ET|RIGHT}, /*cputime*/ /* was 6 wide */
-{"blocked",   "BLOCKED", pr_sigmask,       PROCPS_PIDS_SIGBLOCKED,          9,    BSD,  TO|SIGNAL},/*sigmask*/
-{"bnd",       "BND",     pr_nop,           PROCPS_PIDS_noop,                1,    AIX,  TO|RIGHT},
-{"bsdstart",  "START",   pr_bsdstart,      PROCPS_PIDS_TIME_START,          6,    LNX,  ET|RIGHT},
-{"bsdtime",   "TIME",    pr_bsdtime,       PROCPS_PIDS_TICS_ALL,            6,    LNX,  ET|RIGHT},
-{"c",         "C",       pr_c,             PROCPS_PIDS_extra,               2,    SUN,  ET|RIGHT},
-{"caught",    "CAUGHT",  pr_sigcatch,      PROCPS_PIDS_SIGCATCH,            9,    BSD,  TO|SIGNAL}, /*sigcatch*/
-{"cgname",    "CGNAME",  pr_cgname,        PROCPS_PIDS_CGNAME,             27,    LNX,  PO|UNLIMITED},
-{"cgroup",    "CGROUP",  pr_cgroup,        PROCPS_PIDS_CGROUP,             27,    LNX,  PO|UNLIMITED},
-{"class",     "CLS",     pr_class,         PROCPS_PIDS_SCHED_CLASS,         3,    XXX,  TO|LEFT},
-{"cls",       "CLS",     pr_class,         PROCPS_PIDS_SCHED_CLASS,         3,    HPU,  TO|RIGHT}, /*says HPUX or RT*/
-{"cmaj_flt",  "-",       pr_nop,           PROCPS_PIDS_noop,                1,    LNX,  AN|RIGHT},
-{"cmd",       "CMD",     pr_args,          PROCPS_PIDS_CMDLINE,            27,    DEC,  PO|UNLIMITED}, /*ucomm*/
-{"cmin_flt",  "-",       pr_nop,           PROCPS_PIDS_noop,                1,    LNX,  AN|RIGHT},
-{"cnswap",    "-",       pr_nop,           PROCPS_PIDS_noop,                1,    LNX,  AN|RIGHT},
-{"comm",      "COMMAND", pr_comm,          PROCPS_PIDS_CMD,                15,    U98,  PO|UNLIMITED}, /*ucomm*/
-{"command",   "COMMAND", pr_args,          PROCPS_PIDS_CMDLINE,            27,    XXX,  PO|UNLIMITED}, /*args*/
-{"context",   "CONTEXT", pr_context,       PROCPS_PIDS_ID_TGID,            31,    LNX,  ET|LEFT},
-{"cp",        "CP",      pr_cp,            PROCPS_PIDS_extra,               3,    DEC,  ET|RIGHT}, /*cpu*/
-{"cpu",       "CPU",     pr_nop,           PROCPS_PIDS_noop,                3,    BSD,  AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
-{"cpuid",     "CPUID",   pr_psr,           PROCPS_PIDS_PROCESSOR,           5,    BSD,  TO|RIGHT}, // OpenBSD: 8 wide!
-{"cputime",   "TIME",    pr_time,          PROCPS_PIDS_TIME_ALL,            8,    DEC,  ET|RIGHT}, /*time*/
-{"ctid",      "CTID",    pr_nop,           PROCPS_PIDS_noop,                5,    SUN,  ET|RIGHT}, // resource contracts?
-{"cursig",    "CURSIG",  pr_nop,           PROCPS_PIDS_noop,                6,    DEC,  AN|RIGHT},
-{"cutime",    "-",       pr_nop,           PROCPS_PIDS_TICS_USER_C,         1,    LNX,  AN|RIGHT},
-{"cwd",       "CWD",     pr_nop,           PROCPS_PIDS_noop,                3,    LNX,  AN|LEFT},
-{"drs",       "DRS",     pr_drs,           PROCPS_PIDS_VSIZE_PGS,           5,    LNX,  PO|RIGHT},
-{"dsiz",      "DSIZ",    pr_dsiz,          PROCPS_PIDS_VSIZE_PGS,           4,    LNX,  PO|RIGHT},
-{"egid",      "EGID",    pr_egid,          PROCPS_PIDS_ID_EGID,             5,    LNX,  ET|RIGHT},
-{"egroup",    "EGROUP",  pr_egroup,        PROCPS_PIDS_ID_EGROUP,           8,    LNX,  ET|USER},
-{"eip",       "EIP",     pr_eip,           PROCPS_PIDS_ADDR_KSTK_EIP,       8,    LNX,  TO|RIGHT},
-{"emul",      "EMUL",    pr_nop,           PROCPS_PIDS_noop,               13,    BSD,  PO|LEFT},  /* "FreeBSD ELF32" and such */
-{"end_code",  "E_CODE",  pr_nop,           PROCPS_PIDS_ADDR_END_CODE,       8,    LNx,  PO|RIGHT},
-{"environ","ENVIRONMENT",pr_nop,           PROCPS_PIDS_noop,               11,    LNx,  PO|UNLIMITED},
-{"esp",       "ESP",     pr_esp,           PROCPS_PIDS_ADDR_KSTK_ESP,       8,    LNX,  TO|RIGHT},
-{"etime",     "ELAPSED", pr_etime,         PROCPS_PIDS_TIME_ELAPSED,       11,    U98,  ET|RIGHT}, /* was 7 wide */
-{"etimes",    "ELAPSED", pr_etimes,        PROCPS_PIDS_TIME_ELAPSED,        7,    BSD,  ET|RIGHT}, /* FreeBSD */
-{"euid",      "EUID",    pr_euid,          PROCPS_PIDS_ID_EUID,             5,    LNX,  ET|RIGHT},
-{"euser",     "EUSER",   pr_euser,         PROCPS_PIDS_ID_EUSER,            8,    LNX,  ET|USER},
-{"f",         "F",       pr_flag,          PROCPS_PIDS_FLAGS,               1,    XXX,  ET|RIGHT}, /*flags*/
-{"fgid",      "FGID",    pr_fgid,          PROCPS_PIDS_FLAGS,               5,    LNX,  ET|RIGHT},
-{"fgroup",    "FGROUP",  pr_fgroup,        PROCPS_PIDS_ID_FGROUP,           8,    LNX,  ET|USER},
-{"flag",      "F",       pr_flag,          PROCPS_PIDS_FLAGS,               1,    DEC,  ET|RIGHT},
-{"flags",     "F",       pr_flag,          PROCPS_PIDS_FLAGS,               1,    BSD,  ET|RIGHT}, /*f*/ /* was FLAGS, 8 wide */
-{"fname",     "COMMAND", pr_fname,         PROCPS_PIDS_CMD,                 8,    SUN,  PO|LEFT},
-{"fsgid",     "FSGID",   pr_fgid,          PROCPS_PIDS_ID_FGID,             5,    LNX,  ET|RIGHT},
-{"fsgroup",   "FSGROUP", pr_fgroup,        PROCPS_PIDS_ID_FGROUP,           8,    LNX,  ET|USER},
-{"fsuid",     "FSUID",   pr_fuid,          PROCPS_PIDS_ID_FUID,             5,    LNX,  ET|RIGHT},
-{"fsuser",    "FSUSER",  pr_fuser,         PROCPS_PIDS_ID_FUSER,            8,    LNX,  ET|USER},
-{"fuid",      "FUID",    pr_fuid,          PROCPS_PIDS_ID_FUID,             5,    LNX,  ET|RIGHT},
-{"fuser",     "FUSER",   pr_fuser,         PROCPS_PIDS_ID_FUSER,            8,    LNX,  ET|USER},
-{"gid",       "GID",     pr_egid,          PROCPS_PIDS_ID_EGID,             5,    SUN,  ET|RIGHT},
-{"group",     "GROUP",   pr_egroup,        PROCPS_PIDS_ID_EGROUP,           8,    U98,  ET|USER},
-{"ignored",   "IGNORED", pr_sigignore,     PROCPS_PIDS_SIGIGNORE,           9,    BSD,  TO|SIGNAL},/*sigignore*/
-{"inblk",     "INBLK",   pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  AN|RIGHT}, /*inblock*/
-{"inblock",   "INBLK",   pr_nop,           PROCPS_PIDS_noop,                5,    DEC,  AN|RIGHT}, /*inblk*/
-{"intpri",    "PRI",     pr_opri,          PROCPS_PIDS_PRIORITY,            3,    HPU,  TO|RIGHT},
-{"ipcns",     "IPCNS",   pr_ipcns,         PROCPS_PIDS_NS_IPC,             10,    LNX,  ET|RIGHT},
-{"jid",       "JID",     pr_nop,           PROCPS_PIDS_noop,                1,    SGI,  PO|RIGHT},
-{"jobc",      "JOBC",    pr_nop,           PROCPS_PIDS_noop,                4,    XXX,  AN|RIGHT},
-{"ktrace",    "KTRACE",  pr_nop,           PROCPS_PIDS_noop,                8,    BSD,  AN|RIGHT},
-{"ktracep",   "KTRACEP", pr_nop,           PROCPS_PIDS_noop,                8,    BSD,  AN|RIGHT},
-{"label",     "LABEL",   pr_context,       PROCPS_PIDS_ID_TGID,            31,    SGI,  ET|LEFT},
-{"lastcpu",   "C",       pr_psr,           PROCPS_PIDS_PROCESSOR,           3,    BSD,  TO|RIGHT}, // DragonFly
-{"lim",       "LIM",     pr_lim,           PROCPS_PIDS_RSS_RLIM,            5,    BSD,  AN|RIGHT},
-{"login",     "LOGNAME", pr_nop,           PROCPS_PIDS_noop,                8,    BSD,  AN|LEFT},  /*logname*/   /* double check */
-{"logname",   "LOGNAME", pr_nop,           PROCPS_PIDS_noop,                8,    XXX,  AN|LEFT},  /*login*/
-{"longtname", "TTY",     pr_tty8,          PROCPS_PIDS_TTY_NAME,            8,    DEC,  PO|LEFT},
-{"lsession",  "SESSION", pr_sd_session,    PROCPS_PIDS_SD_SESS,            11,    LNX,  ET|LEFT},
-{"lstart",    "STARTED", pr_lstart,        PROCPS_PIDS_TIME_START,         24,    XXX,  ET|RIGHT},
-{"luid",      "LUID",    pr_nop,           PROCPS_PIDS_noop,                5,    LNX,  ET|RIGHT}, /* login ID */
-{"luser",     "LUSER",   pr_nop,           PROCPS_PIDS_noop,                8,    LNX,  ET|USER},  /* login USER */
-{"lwp",       "LWP",     pr_tasks,         PROCPS_PIDS_ID_PID,              5,    SUN,  TO|PIDMAX|RIGHT},
-{"lxc",       "LXC",     pr_lxcname,       PROCPS_PIDS_LXCNAME,             8,    LNX,  ET|LEFT},
-{"m_drs",     "DRS",     pr_drs,           PROCPS_PIDS_VSIZE_PGS,           5,    LNx,  PO|RIGHT},
-{"m_dt",      "DT",      pr_nop,           PROCPS_PIDS_MEM_DT,              4,    LNx,  PO|RIGHT},
-{"m_lrs",     "LRS",     pr_nop,           PROCPS_PIDS_MEM_LRS,             5,    LNx,  PO|RIGHT},
-{"m_resident", "RES",    pr_nop,           PROCPS_PIDS_MEM_RES,             5,    LNx,  PO|RIGHT},
-{"m_share",   "SHRD",    pr_nop,           PROCPS_PIDS_MEM_SHR,             5,    LNx,  PO|RIGHT},
-{"m_size",    "SIZE",    pr_size,          PROCPS_PIDS_VSIZE_PGS,           5,    LNX,  PO|RIGHT},
-{"m_swap",    "SWAP",    pr_nop,           PROCPS_PIDS_noop,                5,    LNx,  PO|RIGHT},
-{"m_trs",     "TRS",     pr_trs,           PROCPS_PIDS_VSIZE_PGS,           5,    LNx,  PO|RIGHT},
-{"machine",   "MACHINE", pr_sd_machine,    PROCPS_PIDS_SD_MACH,            31,    LNX,  ET|LEFT},
-{"maj_flt",   "MAJFL",   pr_majflt,        PROCPS_PIDS_FLT_MAJ,             6,    LNX,  AN|RIGHT},
-{"majflt",    "MAJFLT",  pr_majflt,        PROCPS_PIDS_FLT_MAJ,             6,    XXX,  AN|RIGHT},
-{"min_flt",   "MINFL",   pr_minflt,        PROCPS_PIDS_FLT_MIN,             6,    LNX,  AN|RIGHT},
-{"minflt",    "MINFLT",  pr_minflt,        PROCPS_PIDS_FLT_MIN,             6,    XXX,  AN|RIGHT},
-{"mntns",     "MNTNS",   pr_mntns,         PROCPS_PIDS_NS_MNT,             10,    LNX,  ET|RIGHT},
-{"msgrcv",    "MSGRCV",  pr_nop,           PROCPS_PIDS_noop,                6,    XXX,  AN|RIGHT},
-{"msgsnd",    "MSGSND",  pr_nop,           PROCPS_PIDS_noop,                6,    XXX,  AN|RIGHT},
-{"mwchan",    "MWCHAN",  pr_nop,           PROCPS_PIDS_noop,                6,    BSD,  TO|WCHAN}, /* mutex (FreeBSD) */
-{"netns",     "NETNS",   pr_netns,         PROCPS_PIDS_NS_NET,             10,    LNX,  ET|RIGHT},
-{"ni",        "NI",      pr_nice,          PROCPS_PIDS_NICE,                3,    BSD,  TO|RIGHT}, /*nice*/
-{"nice",      "NI",      pr_nice,          PROCPS_PIDS_NICE,                3,    U98,  TO|RIGHT}, /*ni*/
-{"nivcsw",    "IVCSW",   pr_nop,           PROCPS_PIDS_noop,                5,    XXX,  AN|RIGHT},
-{"nlwp",      "NLWP",    pr_nlwp,          PROCPS_PIDS_NLWP,                4,    SUN,  PO|RIGHT},
-{"nsignals",  "NSIGS",   pr_nop,           PROCPS_PIDS_noop,                5,    DEC,  AN|RIGHT}, /*nsigs*/
-{"nsigs",     "NSIGS",   pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  AN|RIGHT}, /*nsignals*/
-{"nswap",     "NSWAP",   pr_nop,           PROCPS_PIDS_noop,                5,    XXX,  AN|RIGHT},
-{"nvcsw",     "VCSW",    pr_nop,           PROCPS_PIDS_noop,                5,    XXX,  AN|RIGHT},
-{"nwchan",    "WCHAN",   pr_nwchan,        PROCPS_PIDS_WCHAN_NAME,          6,    XXX,  TO|RIGHT},
-{"opri",      "PRI",     pr_opri,          PROCPS_PIDS_PRIORITY,            3,    SUN,  TO|RIGHT},
-{"osz",       "SZ",      pr_nop,           PROCPS_PIDS_noop,                2,    SUN,  PO|RIGHT},
-{"oublk",     "OUBLK",   pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  AN|RIGHT}, /*oublock*/
-{"oublock",   "OUBLK",   pr_nop,           PROCPS_PIDS_noop,                5,    DEC,  AN|RIGHT}, /*oublk*/
-{"ouid",      "OWNER",   pr_sd_ouid,       PROCPS_PIDS_SD_OUID,             5,    LNX,  ET|LEFT},
-{"p_ru",      "P_RU",    pr_nop,           PROCPS_PIDS_noop,                6,    BSD,  AN|RIGHT},
-{"paddr",     "PADDR",   pr_nop,           PROCPS_PIDS_noop,                6,    BSD,  AN|RIGHT},
-{"pagein",    "PAGEIN",  pr_majflt,        PROCPS_PIDS_FLT_MAJ,             6,    XXX,  AN|RIGHT},
-{"pcpu",      "%CPU",    pr_pcpu,          PROCPS_PIDS_extra,               4,    U98,  ET|RIGHT}, /*%cpu*/
-{"pending",   "PENDING", pr_sig,           PROCPS_PIDS_SIGNALS,             9,    BSD,  ET|SIGNAL}, /*sig*/
-{"pgid",      "PGID",    pr_pgid,          PROCPS_PIDS_ID_PGRP,             5,    U98,  PO|PIDMAX|RIGHT},
-{"pgrp",      "PGRP",    pr_pgid,          PROCPS_PIDS_ID_PGRP,             5,    LNX,  PO|PIDMAX|RIGHT},
-{"pid",       "PID",     pr_procs,         PROCPS_PIDS_ID_TGID,             5,    U98,  PO|PIDMAX|RIGHT},
-{"pidns",     "PIDNS",   pr_pidns,         PROCPS_PIDS_NS_PID,             10,    LNX,  ET|RIGHT},
-{"pmem",      "%MEM",    pr_pmem,          PROCPS_PIDS_VM_RSS,              4,    XXX,  PO|RIGHT}, /* %mem */
-{"poip",      "-",       pr_nop,           PROCPS_PIDS_noop,                1,    BSD,  AN|RIGHT},
-{"policy",    "POL",     pr_class,         PROCPS_PIDS_SCHED_CLASS,         3,    DEC,  TO|LEFT},
-{"ppid",      "PPID",    pr_ppid,          PROCPS_PIDS_ID_PPID,             5,    U98,  PO|PIDMAX|RIGHT},
-{"pri",       "PRI",     pr_pri,           PROCPS_PIDS_PRIORITY,            3,    XXX,  TO|RIGHT},
-{"pri_api",   "API",     pr_pri_api,       PROCPS_PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
-{"pri_bar",   "BAR",     pr_pri_bar,       PROCPS_PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
-{"pri_baz",   "BAZ",     pr_pri_baz,       PROCPS_PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
-{"pri_foo",   "FOO",     pr_pri_foo,       PROCPS_PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
-{"priority",  "PRI",     pr_priority,      PROCPS_PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
-{"prmgrp",    "PRMGRP",  pr_nop,           PROCPS_PIDS_noop,               12,    HPU,  PO|RIGHT},
-{"prmid",     "PRMID",   pr_nop,           PROCPS_PIDS_noop,               12,    HPU,  PO|RIGHT},
-{"project",   "PROJECT", pr_nop,           PROCPS_PIDS_noop,               12,    SUN,  PO|LEFT},  // see prm* andctid
-{"projid",    "PROJID",  pr_nop,           PROCPS_PIDS_noop,                5,    SUN,  PO|RIGHT},
-{"pset",      "PSET",    pr_nop,           PROCPS_PIDS_noop,                4,    DEC,  TO|RIGHT},
-{"psr",       "PSR",     pr_psr,           PROCPS_PIDS_PROCESSOR,           3,    DEC,  TO|RIGHT},
-{"psxpri",    "PPR",     pr_nop,           PROCPS_PIDS_noop,                3,    DEC,  TO|RIGHT},
-{"re",        "RE",      pr_nop,           PROCPS_PIDS_noop,                3,    BSD,  AN|RIGHT},
-{"resident",  "RES",     pr_nop,           PROCPS_PIDS_MEM_RES,             5,    LNX,  PO|RIGHT},
-{"rgid",      "RGID",    pr_rgid,          PROCPS_PIDS_ID_RGID,             5,    XXX,  ET|RIGHT},
-{"rgroup",    "RGROUP",  pr_rgroup,        PROCPS_PIDS_ID_RGROUP,           8,    U98,  ET|USER},  /* was 8 wide */
-{"rlink",     "RLINK",   pr_nop,           PROCPS_PIDS_noop,                8,    BSD,  AN|RIGHT},
-{"rss",       "RSS",     pr_rss,           PROCPS_PIDS_VM_RSS,              5,    XXX,  PO|RIGHT}, /* was 5 wide */
-{"rssize",    "RSS",     pr_rss,           PROCPS_PIDS_VM_RSS,              5,    DEC,  PO|RIGHT}, /*rsz*/
-{"rsz",       "RSZ",     pr_rss,           PROCPS_PIDS_VM_RSS,              5,    BSD,  PO|RIGHT}, /*rssize*/
-{"rtprio",    "RTPRIO",  pr_rtprio,        PROCPS_PIDS_RTPRIO,              6,    BSD,  TO|RIGHT},
-{"ruid",      "RUID",    pr_ruid,          PROCPS_PIDS_ID_RUID,             5,    XXX,  ET|RIGHT},
-{"ruser",     "RUSER",   pr_ruser,         PROCPS_PIDS_ID_RUSER,            8,    U98,  ET|USER},
-{"s",         "S",       pr_s,             PROCPS_PIDS_STATE,               1,    SUN,  TO|LEFT},  /*stat,state*/
-{"sched",     "SCH",     pr_sched,         PROCPS_PIDS_SCHED_CLASS,         3,    AIX,  TO|RIGHT},
-{"scnt",      "SCNT",    pr_nop,           PROCPS_PIDS_noop,                4,    DEC,  AN|RIGHT}, /* man page misspelling of scount? */
-{"scount",    "SC",      pr_nop,           PROCPS_PIDS_noop,                4,    AIX,  AN|RIGHT}, /* scnt==scount, DEC claims both */
-{"seat",      "SEAT",    pr_sd_seat,       PROCPS_PIDS_SD_SEAT,            11,    LNX,  ET|LEFT},
-{"sess",      "SESS",    pr_sess,          PROCPS_PIDS_ID_SESSION,          5,    XXX,  PO|PIDMAX|RIGHT},
-{"session",   "SESS",    pr_sess,          PROCPS_PIDS_ID_SESSION,          5,    LNX,  PO|PIDMAX|RIGHT},
-{"sgi_p",     "P",       pr_sgi_p,         PROCPS_PIDS_STATE,               1,    LNX,  TO|RIGHT}, /* "cpu" number */
-{"sgi_rss",   "RSS",     pr_rss,           PROCPS_PIDS_VM_RSS,              4,    LNX,  PO|LEFT},  /* SZ:RSS */
-{"sgid",      "SGID",    pr_sgid,          PROCPS_PIDS_ID_SGID,             5,    LNX,  ET|RIGHT},
-{"sgroup",    "SGROUP",  pr_sgroup,        PROCPS_PIDS_ID_SGROUP,           8,    LNX,  ET|USER},
-{"share",     "-",       pr_nop,           PROCPS_PIDS_noop,                1,    LNX,  PO|RIGHT},
-{"sid",       "SID",     pr_sess,          PROCPS_PIDS_ID_SESSION,          5,    XXX,  PO|PIDMAX|RIGHT}, /* Sun & HP */
-{"sig",       "PENDING", pr_sig,           PROCPS_PIDS_SIGNALS,             9,    XXX,  ET|SIGNAL}, /*pending -- Dragonfly uses this for whole-proc and "tsig" for thread */
-{"sig_block", "BLOCKED",  pr_sigmask,      PROCPS_PIDS_SIGBLOCKED,          9,    LNX,  TO|SIGNAL},
-{"sig_catch", "CATCHED", pr_sigcatch,      PROCPS_PIDS_SIGCATCH,            9,    LNX,  TO|SIGNAL},
-{"sig_ignore", "IGNORED",pr_sigignore,     PROCPS_PIDS_SIGIGNORE,           9,    LNX,  TO|SIGNAL},
-{"sig_pend",  "SIGNAL",  pr_sig,           PROCPS_PIDS_SIGNALS,             9,    LNX,  ET|SIGNAL},
-{"sigcatch",  "CAUGHT",  pr_sigcatch,      PROCPS_PIDS_SIGCATCH,            9,    XXX,  TO|SIGNAL}, /*caught*/
-{"sigignore", "IGNORED", pr_sigignore,     PROCPS_PIDS_SIGIGNORE,           9,    XXX,  TO|SIGNAL}, /*ignored*/
-{"sigmask",   "BLOCKED", pr_sigmask,       PROCPS_PIDS_SIGBLOCKED,          9,    XXX,  TO|SIGNAL}, /*blocked*/
-{"size",      "SIZE",    pr_swapable,      PROCPS_PIDS_VSIZE_PGS,           5,    SCO,  PO|RIGHT},
-{"sl",        "SL",      pr_nop,           PROCPS_PIDS_noop,                3,    XXX,  AN|RIGHT},
-{"slice",      "SLICE",  pr_sd_slice,      PROCPS_PIDS_SD_SLICE,           31,    LNX,  ET|LEFT},
-{"spid",      "SPID",    pr_tasks,         PROCPS_PIDS_ID_PID,              5,    SGI,  TO|PIDMAX|RIGHT},
-{"stackp",    "STACKP",  pr_stackp,        PROCPS_PIDS_ADDR_START_STACK,    8,    LNX,  PO|RIGHT}, /*start_stack*/
-{"start",     "STARTED", pr_start,         PROCPS_PIDS_TIME_START,          8,    XXX,  ET|RIGHT},
-{"start_code", "S_CODE",  pr_nop,          PROCPS_PIDS_noop,                8,    LNx,  PO|RIGHT},
-{"start_stack", "STACKP", pr_stackp,       PROCPS_PIDS_ADDR_START_STACK,    8,    LNX,  PO|RIGHT}, /*stackp*/
-{"start_time", "START",  pr_stime,         PROCPS_PIDS_TIME_START,          5,    LNx,  ET|RIGHT},
-{"stat",      "STAT",    pr_stat,          PROCPS_PIDS_STATE,               4,    BSD,  TO|LEFT},  /*state,s*/
-{"state",     "S",       pr_s,             PROCPS_PIDS_STATE,               1,    XXX,  TO|LEFT},  /*stat,s*/ /* was STAT */
-{"status",    "STATUS",  pr_nop,           PROCPS_PIDS_noop,                6,    DEC,  AN|RIGHT},
-{"stime",     "STIME",   pr_stime,         PROCPS_PIDS_TIME_START,          5,    XXX,  ET|RIGHT}, /* was 6 wide */
-{"suid",      "SUID",    pr_suid,          PROCPS_PIDS_ID_SUID,             5,    LNx,  ET|RIGHT},
-{"supgid",    "SUPGID",  pr_supgid,        PROCPS_PIDS_SUPGIDS,            20,    LNX,  PO|UNLIMITED},
-{"supgrp",    "SUPGRP",  pr_supgrp,        PROCPS_PIDS_SUPGROUPS,          40,    LNX,  PO|UNLIMITED},
-{"suser",     "SUSER",   pr_suser,         PROCPS_PIDS_ID_SUSER,            8,    LNx,  ET|USER},
-{"svgid",     "SVGID",   pr_sgid,          PROCPS_PIDS_ID_SGID,             5,    XXX,  ET|RIGHT},
-{"svgroup",   "SVGROUP", pr_sgroup,        PROCPS_PIDS_ID_SGROUP,           8,    LNX,  ET|USER},
-{"svuid",     "SVUID",   pr_suid,          PROCPS_PIDS_ID_SUID,             5,    XXX,  ET|RIGHT},
-{"svuser",    "SVUSER",  pr_suser,         PROCPS_PIDS_ID_SUSER,            8,    LNX,  ET|USER},
-{"systime",   "SYSTEM",  pr_nop,           PROCPS_PIDS_noop,                6,    DEC,  ET|RIGHT},
-{"sz",        "SZ",      pr_sz,            PROCPS_PIDS_VM_SIZE,             5,    HPU,  PO|RIGHT},
-{"taskid",    "TASKID",  pr_nop,           PROCPS_PIDS_noop,                5,    SUN,  TO|PIDMAX|RIGHT}, // is this a thread ID?
-{"tdev",      "TDEV",    pr_nop,           PROCPS_PIDS_noop,                4,    XXX,  AN|RIGHT},
-{"tgid",      "TGID",    pr_procs,         PROCPS_PIDS_ID_TGID,             5,    LNX,  PO|PIDMAX|RIGHT},
-{"thcount",   "THCNT",   pr_nlwp,          PROCPS_PIDS_NLWP,                5,    AIX,  PO|RIGHT},
-{"tid",       "TID",     pr_tasks,         PROCPS_PIDS_ID_PID,              5,    AIX,  TO|PIDMAX|RIGHT},
-{"time",      "TIME",    pr_time,          PROCPS_PIDS_TIME_ALL,            8,    U98,  ET|RIGHT}, /*cputime*/ /* was 6 wide */
-{"timeout",   "TMOUT",   pr_nop,           PROCPS_PIDS_noop,                5,    LNX,  AN|RIGHT}, // 2.0.xx era
-{"tmout",     "TMOUT",   pr_nop,           PROCPS_PIDS_noop,                5,    LNX,  AN|RIGHT}, // 2.0.xx era
-{"tname",     "TTY",     pr_tty8,          PROCPS_PIDS_TTY_NAME,            8,    DEC,  PO|LEFT},
-{"tpgid",     "TPGID",   pr_tpgid,         PROCPS_PIDS_ID_TPGID,            5,    XXX,  PO|PIDMAX|RIGHT},
-{"trs",       "TRS",     pr_trs,           PROCPS_PIDS_VSIZE_PGS,           4,    AIX,  PO|RIGHT},
-{"trss",      "TRSS",    pr_trs,           PROCPS_PIDS_VSIZE_PGS,           4,    BSD,  PO|RIGHT}, /* 4.3BSD NET/2 */
-{"tsess",     "TSESS",   pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  PO|PIDMAX|RIGHT},
-{"tsession",  "TSESS",   pr_nop,           PROCPS_PIDS_noop,                5,    DEC,  PO|PIDMAX|RIGHT},
-{"tsid",      "TSID",    pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  PO|PIDMAX|RIGHT},
-{"tsig",      "PENDING", pr_tsig,          PROCPS_PIDS_SIGPENDING,          9,    BSD,  ET|SIGNAL}, /* Dragonfly used this for thread-specific, and "sig" for whole-proc */
-{"tsiz",      "TSIZ",    pr_tsiz,          PROCPS_PIDS_VSIZE_PGS,           4,    BSD,  PO|RIGHT},
-{"tt",        "TT",      pr_tty8,          PROCPS_PIDS_TTY_NAME,            8,    BSD,  PO|LEFT},
-{"tty",       "TT",      pr_tty8,          PROCPS_PIDS_TTY_NAME,            8,    U98,  PO|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */
-{"tty4",      "TTY",     pr_tty4,          PROCPS_PIDS_TTY_NAME,            4,    LNX,  PO|LEFT},
-{"tty8",      "TTY",     pr_tty8,          PROCPS_PIDS_TTY_NAME,            8,    LNX,  PO|LEFT},
-{"u_procp",   "UPROCP",  pr_nop,           PROCPS_PIDS_noop,                6,    DEC,  AN|RIGHT},
-{"ucmd",      "CMD",     pr_comm,          PROCPS_PIDS_CMD,                15,    DEC,  PO|UNLIMITED}, /*ucomm*/
-{"ucomm",     "COMMAND", pr_comm,          PROCPS_PIDS_CMD,                15,    XXX,  PO|UNLIMITED}, /*comm*/
-{"uid",       "UID",     pr_euid,          PROCPS_PIDS_ID_EUID,             5,    XXX,  ET|RIGHT},
-{"uid_hack",  "UID",     pr_euser,         PROCPS_PIDS_ID_EUSER,            8,    XXX,  ET|USER},
-{"umask",     "UMASK",   pr_nop,           PROCPS_PIDS_noop,                5,    DEC,  AN|RIGHT},
-{"uname",     "USER",    pr_euser,         PROCPS_PIDS_ID_EUSER,            8,    DEC,  ET|USER}, /* man page misspelling of user? */
-{"unit",      "UNIT",    pr_sd_unit,       PROCPS_PIDS_SD_UNIT,            31,    LNX,  ET|LEFT},
-{"upr",       "UPR",     pr_nop,           PROCPS_PIDS_noop,                3,    BSD,  TO|RIGHT}, /*usrpri*/
-{"uprocp",    "UPROCP",  pr_nop,           PROCPS_PIDS_noop,                8,    BSD,  AN|RIGHT},
-{"user",      "USER",    pr_euser,         PROCPS_PIDS_ID_EUSER,            8,    U98,  ET|USER},  /* BSD n forces this to UID */
-{"userns",    "USERNS",  pr_userns,        PROCPS_PIDS_NS_USER,            10,    LNX,  ET|RIGHT},
-{"usertime",  "USER",    pr_nop,           PROCPS_PIDS_noop,                4,    DEC,  ET|RIGHT},
-{"usrpri",    "UPR",     pr_nop,           PROCPS_PIDS_noop,                3,    DEC,  TO|RIGHT}, /*upr*/
-{"util",      "C",       pr_c,             PROCPS_PIDS_extra,               2,    SGI,  ET|RIGHT}, // not sure about "C"
-{"utime",     "UTIME",   pr_nop,           PROCPS_PIDS_TICS_USER,           6,    LNx,  ET|RIGHT},
-{"utsns",     "UTSNS",   pr_utsns,         PROCPS_PIDS_NS_UTS,             10,    LNX,  ET|RIGHT},
-{"uunit",     "UUNIT",   pr_sd_uunit,      PROCPS_PIDS_SD_UUNIT,           31,    LNX,  ET|LEFT},
-{"vm_data",   "DATA",    pr_nop,           PROCPS_PIDS_VM_DATA,             5,    LNx,  PO|RIGHT},
-{"vm_exe",    "EXE",     pr_nop,           PROCPS_PIDS_VM_EXE,              5,    LNx,  PO|RIGHT},
-{"vm_lib",    "LIB",     pr_nop,           PROCPS_PIDS_VM_LIB,              5,    LNx,  PO|RIGHT},
-{"vm_lock",   "LCK",     pr_nop,           PROCPS_PIDS_VM_RSS_LOCKED,       3,    LNx,  PO|RIGHT},
-{"vm_stack",  "STACK",   pr_nop,           PROCPS_PIDS_VM_STACK,            5,    LNx,  PO|RIGHT},
-{"vsize",     "VSZ",     pr_vsz,           PROCPS_PIDS_VSIZE_PGS,           6,    DEC,  PO|RIGHT}, /*vsz*/
-{"vsz",       "VSZ",     pr_vsz,           PROCPS_PIDS_VM_SIZE,             6,    U98,  PO|RIGHT}, /*vsize*/
-{"wchan",     "WCHAN",   pr_wchan,         PROCPS_PIDS_WCHAN_ADDR,          6,    XXX,  TO|WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
-{"wname",     "WCHAN",   pr_wname,         PROCPS_PIDS_WCHAN_NAME,          6,    SGI,  TO|WCHAN}, /* opposite of nwchan */
-{"xstat",     "XSTAT",   pr_nop,           PROCPS_PIDS_noop,                5,    BSD,  AN|RIGHT},
-{"zone",      "ZONE",    pr_context,       PROCPS_PIDS_ID_TGID,            31,    SUN,  ET|LEFT},  // Solaris zone == Linux context?
-{"zoneid",    "ZONEID",  pr_nop,           PROCPS_PIDS_noop,               31,    SUN,  ET|RIGHT}, // Linux only offers context names
-{"~",         "-",       pr_nop,           PROCPS_PIDS_noop,                1,    LNX,  AN|RIGHT}  /* NULL would ruin alphabetical order */
+ .spec        .head      .pr               .sr                   .width .vendor .flags  */
+{"%cpu",      "%CPU",    pr_pcpu,          PIDS_extra,               4,    BSD,  ET|RIGHT}, /*pcpu*/
+{"%mem",      "%MEM",    pr_pmem,          PIDS_VM_RSS,              4,    BSD,  PO|RIGHT}, /*pmem*/
+{"_left",     "LLLLLLLL", pr_t_left,       PIDS_noop,                8,    TST,  ET|LEFT},
+{"_left2",    "L2L2L2L2", pr_t_left2,      PIDS_noop,                8,    TST,  ET|LEFT},
+{"_right",    "RRRRRRRRRRR", pr_t_right,   PIDS_noop,                11,   TST,  ET|RIGHT},
+{"_right2",   "R2R2R2R2R2R", pr_t_right2,  PIDS_noop,                11,   TST,  ET|RIGHT},
+{"_unlimited","U",   pr_t_unlimited,       PIDS_noop,                16,   TST,  ET|UNLIMITED},
+{"_unlimited2","U2", pr_t_unlimited2,      PIDS_noop,                16,   TST,  ET|UNLIMITED},
+{"acflag",    "ACFLG",   pr_nop,           PIDS_noop,                5,    XXX,  AN|RIGHT}, /*acflg*/
+{"acflg",     "ACFLG",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*acflag*/
+{"addr",      "ADDR",    pr_nop,           PIDS_noop,                4,    XXX,  AN|RIGHT},
+{"addr_1",    "ADDR",    pr_nop,           PIDS_noop,                1,    LNX,  AN|LEFT},
+{"alarm",     "ALARM",   pr_alarm,         PIDS_ALARM,               5,    LNX,  AN|RIGHT},
+{"argc",      "ARGC",    pr_nop,           PIDS_noop,                4,    LNX,  PO|RIGHT},
+{"args",      "COMMAND", pr_args,          PIDS_CMDLINE,             27,   U98,  PO|UNLIMITED}, /*command*/
+{"atime",     "TIME",    pr_time,          PIDS_TIME_ALL,            8,    SOE,  ET|RIGHT}, /*cputime*/ /* was 6 wide */
+{"blocked",   "BLOCKED", pr_sigmask,       PIDS_SIGBLOCKED,          9,    BSD,  TO|SIGNAL},/*sigmask*/
+{"bnd",       "BND",     pr_nop,           PIDS_noop,                1,    AIX,  TO|RIGHT},
+{"bsdstart",  "START",   pr_bsdstart,      PIDS_TIME_START,          6,    LNX,  ET|RIGHT},
+{"bsdtime",   "TIME",    pr_bsdtime,       PIDS_TICS_ALL,            6,    LNX,  ET|RIGHT},
+{"c",         "C",       pr_c,             PIDS_extra,               2,    SUN,  ET|RIGHT},
+{"caught",    "CAUGHT",  pr_sigcatch,      PIDS_SIGCATCH,            9,    BSD,  TO|SIGNAL}, /*sigcatch*/
+{"cgname",    "CGNAME",  pr_cgname,        PIDS_CGNAME,             27,    LNX,  PO|UNLIMITED},
+{"cgroup",    "CGROUP",  pr_cgroup,        PIDS_CGROUP,             27,    LNX,  PO|UNLIMITED},
+{"class",     "CLS",     pr_class,         PIDS_SCHED_CLASS,         3,    XXX,  TO|LEFT},
+{"cls",       "CLS",     pr_class,         PIDS_SCHED_CLASS,         3,    HPU,  TO|RIGHT}, /*says HPUX or RT*/
+{"cmaj_flt",  "-",       pr_nop,           PIDS_noop,                1,    LNX,  AN|RIGHT},
+{"cmd",       "CMD",     pr_args,          PIDS_CMDLINE,            27,    DEC,  PO|UNLIMITED}, /*ucomm*/
+{"cmin_flt",  "-",       pr_nop,           PIDS_noop,                1,    LNX,  AN|RIGHT},
+{"cnswap",    "-",       pr_nop,           PIDS_noop,                1,    LNX,  AN|RIGHT},
+{"comm",      "COMMAND", pr_comm,          PIDS_CMD,                15,    U98,  PO|UNLIMITED}, /*ucomm*/
+{"command",   "COMMAND", pr_args,          PIDS_CMDLINE,            27,    XXX,  PO|UNLIMITED}, /*args*/
+{"context",   "CONTEXT", pr_context,       PIDS_ID_TGID,            31,    LNX,  ET|LEFT},
+{"cp",        "CP",      pr_cp,            PIDS_extra,               3,    DEC,  ET|RIGHT}, /*cpu*/
+{"cpu",       "CPU",     pr_nop,           PIDS_noop,                3,    BSD,  AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
+{"cpuid",     "CPUID",   pr_psr,           PIDS_PROCESSOR,           5,    BSD,  TO|RIGHT}, // OpenBSD: 8 wide!
+{"cputime",   "TIME",    pr_time,          PIDS_TIME_ALL,            8,    DEC,  ET|RIGHT}, /*time*/
+{"ctid",      "CTID",    pr_nop,           PIDS_noop,                5,    SUN,  ET|RIGHT}, // resource contracts?
+{"cursig",    "CURSIG",  pr_nop,           PIDS_noop,                6,    DEC,  AN|RIGHT},
+{"cutime",    "-",       pr_nop,           PIDS_TICS_USER_C,         1,    LNX,  AN|RIGHT},
+{"cwd",       "CWD",     pr_nop,           PIDS_noop,                3,    LNX,  AN|LEFT},
+{"drs",       "DRS",     pr_drs,           PIDS_VSIZE_PGS,           5,    LNX,  PO|RIGHT},
+{"dsiz",      "DSIZ",    pr_dsiz,          PIDS_VSIZE_PGS,           4,    LNX,  PO|RIGHT},
+{"egid",      "EGID",    pr_egid,          PIDS_ID_EGID,             5,    LNX,  ET|RIGHT},
+{"egroup",    "EGROUP",  pr_egroup,        PIDS_ID_EGROUP,           8,    LNX,  ET|USER},
+{"eip",       "EIP",     pr_eip,           PIDS_ADDR_KSTK_EIP,       8,    LNX,  TO|RIGHT},
+{"emul",      "EMUL",    pr_nop,           PIDS_noop,               13,    BSD,  PO|LEFT},  /* "FreeBSD ELF32" and such */
+{"end_code",  "E_CODE",  pr_nop,           PIDS_ADDR_END_CODE,       8,    LNx,  PO|RIGHT},
+{"environ","ENVIRONMENT",pr_nop,           PIDS_noop,               11,    LNx,  PO|UNLIMITED},
+{"esp",       "ESP",     pr_esp,           PIDS_ADDR_KSTK_ESP,       8,    LNX,  TO|RIGHT},
+{"etime",     "ELAPSED", pr_etime,         PIDS_TIME_ELAPSED,       11,    U98,  ET|RIGHT}, /* was 7 wide */
+{"etimes",    "ELAPSED", pr_etimes,        PIDS_TIME_ELAPSED,        7,    BSD,  ET|RIGHT}, /* FreeBSD */
+{"euid",      "EUID",    pr_euid,          PIDS_ID_EUID,             5,    LNX,  ET|RIGHT},
+{"euser",     "EUSER",   pr_euser,         PIDS_ID_EUSER,            8,    LNX,  ET|USER},
+{"f",         "F",       pr_flag,          PIDS_FLAGS,               1,    XXX,  ET|RIGHT}, /*flags*/
+{"fgid",      "FGID",    pr_fgid,          PIDS_FLAGS,               5,    LNX,  ET|RIGHT},
+{"fgroup",    "FGROUP",  pr_fgroup,        PIDS_ID_FGROUP,           8,    LNX,  ET|USER},
+{"flag",      "F",       pr_flag,          PIDS_FLAGS,               1,    DEC,  ET|RIGHT},
+{"flags",     "F",       pr_flag,          PIDS_FLAGS,               1,    BSD,  ET|RIGHT}, /*f*/ /* was FLAGS, 8 wide */
+{"fname",     "COMMAND", pr_fname,         PIDS_CMD,                 8,    SUN,  PO|LEFT},
+{"fsgid",     "FSGID",   pr_fgid,          PIDS_ID_FGID,             5,    LNX,  ET|RIGHT},
+{"fsgroup",   "FSGROUP", pr_fgroup,        PIDS_ID_FGROUP,           8,    LNX,  ET|USER},
+{"fsuid",     "FSUID",   pr_fuid,          PIDS_ID_FUID,             5,    LNX,  ET|RIGHT},
+{"fsuser",    "FSUSER",  pr_fuser,         PIDS_ID_FUSER,            8,    LNX,  ET|USER},
+{"fuid",      "FUID",    pr_fuid,          PIDS_ID_FUID,             5,    LNX,  ET|RIGHT},
+{"fuser",     "FUSER",   pr_fuser,         PIDS_ID_FUSER,            8,    LNX,  ET|USER},
+{"gid",       "GID",     pr_egid,          PIDS_ID_EGID,             5,    SUN,  ET|RIGHT},
+{"group",     "GROUP",   pr_egroup,        PIDS_ID_EGROUP,           8,    U98,  ET|USER},
+{"ignored",   "IGNORED", pr_sigignore,     PIDS_SIGIGNORE,           9,    BSD,  TO|SIGNAL},/*sigignore*/
+{"inblk",     "INBLK",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*inblock*/
+{"inblock",   "INBLK",   pr_nop,           PIDS_noop,                5,    DEC,  AN|RIGHT}, /*inblk*/
+{"intpri",    "PRI",     pr_opri,          PIDS_PRIORITY,            3,    HPU,  TO|RIGHT},
+{"ipcns",     "IPCNS",   pr_ipcns,         PIDS_NS_IPC,             10,    LNX,  ET|RIGHT},
+{"jid",       "JID",     pr_nop,           PIDS_noop,                1,    SGI,  PO|RIGHT},
+{"jobc",      "JOBC",    pr_nop,           PIDS_noop,                4,    XXX,  AN|RIGHT},
+{"ktrace",    "KTRACE",  pr_nop,           PIDS_noop,                8,    BSD,  AN|RIGHT},
+{"ktracep",   "KTRACEP", pr_nop,           PIDS_noop,                8,    BSD,  AN|RIGHT},
+{"label",     "LABEL",   pr_context,       PIDS_ID_TGID,            31,    SGI,  ET|LEFT},
+{"lastcpu",   "C",       pr_psr,           PIDS_PROCESSOR,           3,    BSD,  TO|RIGHT}, // DragonFly
+{"lim",       "LIM",     pr_lim,           PIDS_RSS_RLIM,            5,    BSD,  AN|RIGHT},
+{"login",     "LOGNAME", pr_nop,           PIDS_noop,                8,    BSD,  AN|LEFT},  /*logname*/   /* double check */
+{"logname",   "LOGNAME", pr_nop,           PIDS_noop,                8,    XXX,  AN|LEFT},  /*login*/
+{"longtname", "TTY",     pr_tty8,          PIDS_TTY_NAME,            8,    DEC,  PO|LEFT},
+{"lsession",  "SESSION", pr_sd_session,    PIDS_SD_SESS,            11,    LNX,  ET|LEFT},
+{"lstart",    "STARTED", pr_lstart,        PIDS_TIME_START,         24,    XXX,  ET|RIGHT},
+{"luid",      "LUID",    pr_nop,           PIDS_noop,                5,    LNX,  ET|RIGHT}, /* login ID */
+{"luser",     "LUSER",   pr_nop,           PIDS_noop,                8,    LNX,  ET|USER},  /* login USER */
+{"lwp",       "LWP",     pr_tasks,         PIDS_ID_PID,              5,    SUN,  TO|PIDMAX|RIGHT},
+{"lxc",       "LXC",     pr_lxcname,       PIDS_LXCNAME,             8,    LNX,  ET|LEFT},
+{"m_drs",     "DRS",     pr_drs,           PIDS_VSIZE_PGS,           5,    LNx,  PO|RIGHT},
+{"m_dt",      "DT",      pr_nop,           PIDS_MEM_DT,              4,    LNx,  PO|RIGHT},
+{"m_lrs",     "LRS",     pr_nop,           PIDS_MEM_LRS,             5,    LNx,  PO|RIGHT},
+{"m_resident", "RES",    pr_nop,           PIDS_MEM_RES,             5,    LNx,  PO|RIGHT},
+{"m_share",   "SHRD",    pr_nop,           PIDS_MEM_SHR,             5,    LNx,  PO|RIGHT},
+{"m_size",    "SIZE",    pr_size,          PIDS_VSIZE_PGS,           5,    LNX,  PO|RIGHT},
+{"m_swap",    "SWAP",    pr_nop,           PIDS_noop,                5,    LNx,  PO|RIGHT},
+{"m_trs",     "TRS",     pr_trs,           PIDS_VSIZE_PGS,           5,    LNx,  PO|RIGHT},
+{"machine",   "MACHINE", pr_sd_machine,    PIDS_SD_MACH,            31,    LNX,  ET|LEFT},
+{"maj_flt",   "MAJFL",   pr_majflt,        PIDS_FLT_MAJ,             6,    LNX,  AN|RIGHT},
+{"majflt",    "MAJFLT",  pr_majflt,        PIDS_FLT_MAJ,             6,    XXX,  AN|RIGHT},
+{"min_flt",   "MINFL",   pr_minflt,        PIDS_FLT_MIN,             6,    LNX,  AN|RIGHT},
+{"minflt",    "MINFLT",  pr_minflt,        PIDS_FLT_MIN,             6,    XXX,  AN|RIGHT},
+{"mntns",     "MNTNS",   pr_mntns,         PIDS_NS_MNT,             10,    LNX,  ET|RIGHT},
+{"msgrcv",    "MSGRCV",  pr_nop,           PIDS_noop,                6,    XXX,  AN|RIGHT},
+{"msgsnd",    "MSGSND",  pr_nop,           PIDS_noop,                6,    XXX,  AN|RIGHT},
+{"mwchan",    "MWCHAN",  pr_nop,           PIDS_noop,                6,    BSD,  TO|WCHAN}, /* mutex (FreeBSD) */
+{"netns",     "NETNS",   pr_netns,         PIDS_NS_NET,             10,    LNX,  ET|RIGHT},
+{"ni",        "NI",      pr_nice,          PIDS_NICE,                3,    BSD,  TO|RIGHT}, /*nice*/
+{"nice",      "NI",      pr_nice,          PIDS_NICE,                3,    U98,  TO|RIGHT}, /*ni*/
+{"nivcsw",    "IVCSW",   pr_nop,           PIDS_noop,                5,    XXX,  AN|RIGHT},
+{"nlwp",      "NLWP",    pr_nlwp,          PIDS_NLWP,                4,    SUN,  PO|RIGHT},
+{"nsignals",  "NSIGS",   pr_nop,           PIDS_noop,                5,    DEC,  AN|RIGHT}, /*nsigs*/
+{"nsigs",     "NSIGS",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*nsignals*/
+{"nswap",     "NSWAP",   pr_nop,           PIDS_noop,                5,    XXX,  AN|RIGHT},
+{"nvcsw",     "VCSW",    pr_nop,           PIDS_noop,                5,    XXX,  AN|RIGHT},
+{"nwchan",    "WCHAN",   pr_nwchan,        PIDS_WCHAN_NAME,          6,    XXX,  TO|RIGHT},
+{"opri",      "PRI",     pr_opri,          PIDS_PRIORITY,            3,    SUN,  TO|RIGHT},
+{"osz",       "SZ",      pr_nop,           PIDS_noop,                2,    SUN,  PO|RIGHT},
+{"oublk",     "OUBLK",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*oublock*/
+{"oublock",   "OUBLK",   pr_nop,           PIDS_noop,                5,    DEC,  AN|RIGHT}, /*oublk*/
+{"ouid",      "OWNER",   pr_sd_ouid,       PIDS_SD_OUID,             5,    LNX,  ET|LEFT},
+{"p_ru",      "P_RU",    pr_nop,           PIDS_noop,                6,    BSD,  AN|RIGHT},
+{"paddr",     "PADDR",   pr_nop,           PIDS_noop,                6,    BSD,  AN|RIGHT},
+{"pagein",    "PAGEIN",  pr_majflt,        PIDS_FLT_MAJ,             6,    XXX,  AN|RIGHT},
+{"pcpu",      "%CPU",    pr_pcpu,          PIDS_extra,               4,    U98,  ET|RIGHT}, /*%cpu*/
+{"pending",   "PENDING", pr_sig,           PIDS_SIGNALS,             9,    BSD,  ET|SIGNAL}, /*sig*/
+{"pgid",      "PGID",    pr_pgid,          PIDS_ID_PGRP,             5,    U98,  PO|PIDMAX|RIGHT},
+{"pgrp",      "PGRP",    pr_pgid,          PIDS_ID_PGRP,             5,    LNX,  PO|PIDMAX|RIGHT},
+{"pid",       "PID",     pr_procs,         PIDS_ID_TGID,             5,    U98,  PO|PIDMAX|RIGHT},
+{"pidns",     "PIDNS",   pr_pidns,         PIDS_NS_PID,             10,    LNX,  ET|RIGHT},
+{"pmem",      "%MEM",    pr_pmem,          PIDS_VM_RSS,              4,    XXX,  PO|RIGHT}, /* %mem */
+{"poip",      "-",       pr_nop,           PIDS_noop,                1,    BSD,  AN|RIGHT},
+{"policy",    "POL",     pr_class,         PIDS_SCHED_CLASS,         3,    DEC,  TO|LEFT},
+{"ppid",      "PPID",    pr_ppid,          PIDS_ID_PPID,             5,    U98,  PO|PIDMAX|RIGHT},
+{"pri",       "PRI",     pr_pri,           PIDS_PRIORITY,            3,    XXX,  TO|RIGHT},
+{"pri_api",   "API",     pr_pri_api,       PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
+{"pri_bar",   "BAR",     pr_pri_bar,       PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
+{"pri_baz",   "BAZ",     pr_pri_baz,       PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
+{"pri_foo",   "FOO",     pr_pri_foo,       PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
+{"priority",  "PRI",     pr_priority,      PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
+{"prmgrp",    "PRMGRP",  pr_nop,           PIDS_noop,               12,    HPU,  PO|RIGHT},
+{"prmid",     "PRMID",   pr_nop,           PIDS_noop,               12,    HPU,  PO|RIGHT},
+{"project",   "PROJECT", pr_nop,           PIDS_noop,               12,    SUN,  PO|LEFT},  // see prm* andctid
+{"projid",    "PROJID",  pr_nop,           PIDS_noop,                5,    SUN,  PO|RIGHT},
+{"pset",      "PSET",    pr_nop,           PIDS_noop,                4,    DEC,  TO|RIGHT},
+{"psr",       "PSR",     pr_psr,           PIDS_PROCESSOR,           3,    DEC,  TO|RIGHT},
+{"psxpri",    "PPR",     pr_nop,           PIDS_noop,                3,    DEC,  TO|RIGHT},
+{"re",        "RE",      pr_nop,           PIDS_noop,                3,    BSD,  AN|RIGHT},
+{"resident",  "RES",     pr_nop,           PIDS_MEM_RES,             5,    LNX,  PO|RIGHT},
+{"rgid",      "RGID",    pr_rgid,          PIDS_ID_RGID,             5,    XXX,  ET|RIGHT},
+{"rgroup",    "RGROUP",  pr_rgroup,        PIDS_ID_RGROUP,           8,    U98,  ET|USER},  /* was 8 wide */
+{"rlink",     "RLINK",   pr_nop,           PIDS_noop,                8,    BSD,  AN|RIGHT},
+{"rss",       "RSS",     pr_rss,           PIDS_VM_RSS,              5,    XXX,  PO|RIGHT}, /* was 5 wide */
+{"rssize",    "RSS",     pr_rss,           PIDS_VM_RSS,              5,    DEC,  PO|RIGHT}, /*rsz*/
+{"rsz",       "RSZ",     pr_rss,           PIDS_VM_RSS,              5,    BSD,  PO|RIGHT}, /*rssize*/
+{"rtprio",    "RTPRIO",  pr_rtprio,        PIDS_RTPRIO,              6,    BSD,  TO|RIGHT},
+{"ruid",      "RUID",    pr_ruid,          PIDS_ID_RUID,             5,    XXX,  ET|RIGHT},
+{"ruser",     "RUSER",   pr_ruser,         PIDS_ID_RUSER,            8,    U98,  ET|USER},
+{"s",         "S",       pr_s,             PIDS_STATE,               1,    SUN,  TO|LEFT},  /*stat,state*/
+{"sched",     "SCH",     pr_sched,         PIDS_SCHED_CLASS,         3,    AIX,  TO|RIGHT},
+{"scnt",      "SCNT",    pr_nop,           PIDS_noop,                4,    DEC,  AN|RIGHT}, /* man page misspelling of scount? */
+{"scount",    "SC",      pr_nop,           PIDS_noop,                4,    AIX,  AN|RIGHT}, /* scnt==scount, DEC claims both */
+{"seat",      "SEAT",    pr_sd_seat,       PIDS_SD_SEAT,            11,    LNX,  ET|LEFT},
+{"sess",      "SESS",    pr_sess,          PIDS_ID_SESSION,          5,    XXX,  PO|PIDMAX|RIGHT},
+{"session",   "SESS",    pr_sess,          PIDS_ID_SESSION,          5,    LNX,  PO|PIDMAX|RIGHT},
+{"sgi_p",     "P",       pr_sgi_p,         PIDS_STATE,               1,    LNX,  TO|RIGHT}, /* "cpu" number */
+{"sgi_rss",   "RSS",     pr_rss,           PIDS_VM_RSS,              4,    LNX,  PO|LEFT},  /* SZ:RSS */
+{"sgid",      "SGID",    pr_sgid,          PIDS_ID_SGID,             5,    LNX,  ET|RIGHT},
+{"sgroup",    "SGROUP",  pr_sgroup,        PIDS_ID_SGROUP,           8,    LNX,  ET|USER},
+{"share",     "-",       pr_nop,           PIDS_noop,                1,    LNX,  PO|RIGHT},
+{"sid",       "SID",     pr_sess,          PIDS_ID_SESSION,          5,    XXX,  PO|PIDMAX|RIGHT}, /* Sun & HP */
+{"sig",       "PENDING", pr_sig,           PIDS_SIGNALS,             9,    XXX,  ET|SIGNAL}, /*pending -- Dragonfly uses this for whole-proc and "tsig" for thread */
+{"sig_block", "BLOCKED",  pr_sigmask,      PIDS_SIGBLOCKED,          9,    LNX,  TO|SIGNAL},
+{"sig_catch", "CATCHED", pr_sigcatch,      PIDS_SIGCATCH,            9,    LNX,  TO|SIGNAL},
+{"sig_ignore", "IGNORED",pr_sigignore,     PIDS_SIGIGNORE,           9,    LNX,  TO|SIGNAL},
+{"sig_pend",  "SIGNAL",  pr_sig,           PIDS_SIGNALS,             9,    LNX,  ET|SIGNAL},
+{"sigcatch",  "CAUGHT",  pr_sigcatch,      PIDS_SIGCATCH,            9,    XXX,  TO|SIGNAL}, /*caught*/
+{"sigignore", "IGNORED", pr_sigignore,     PIDS_SIGIGNORE,           9,    XXX,  TO|SIGNAL}, /*ignored*/
+{"sigmask",   "BLOCKED", pr_sigmask,       PIDS_SIGBLOCKED,          9,    XXX,  TO|SIGNAL}, /*blocked*/
+{"size",      "SIZE",    pr_swapable,      PIDS_VSIZE_PGS,           5,    SCO,  PO|RIGHT},
+{"sl",        "SL",      pr_nop,           PIDS_noop,                3,    XXX,  AN|RIGHT},
+{"slice",      "SLICE",  pr_sd_slice,      PIDS_SD_SLICE,           31,    LNX,  ET|LEFT},
+{"spid",      "SPID",    pr_tasks,         PIDS_ID_PID,              5,    SGI,  TO|PIDMAX|RIGHT},
+{"stackp",    "STACKP",  pr_stackp,        PIDS_ADDR_START_STACK,    8,    LNX,  PO|RIGHT}, /*start_stack*/
+{"start",     "STARTED", pr_start,         PIDS_TIME_START,          8,    XXX,  ET|RIGHT},
+{"start_code", "S_CODE",  pr_nop,          PIDS_noop,                8,    LNx,  PO|RIGHT},
+{"start_stack", "STACKP", pr_stackp,       PIDS_ADDR_START_STACK,    8,    LNX,  PO|RIGHT}, /*stackp*/
+{"start_time", "START",  pr_stime,         PIDS_TIME_START,          5,    LNx,  ET|RIGHT},
+{"stat",      "STAT",    pr_stat,          PIDS_STATE,               4,    BSD,  TO|LEFT},  /*state,s*/
+{"state",     "S",       pr_s,             PIDS_STATE,               1,    XXX,  TO|LEFT},  /*stat,s*/ /* was STAT */
+{"status",    "STATUS",  pr_nop,           PIDS_noop,                6,    DEC,  AN|RIGHT},
+{"stime",     "STIME",   pr_stime,         PIDS_TIME_START,          5,    XXX,  ET|RIGHT}, /* was 6 wide */
+{"suid",      "SUID",    pr_suid,          PIDS_ID_SUID,             5,    LNx,  ET|RIGHT},
+{"supgid",    "SUPGID",  pr_supgid,        PIDS_SUPGIDS,            20,    LNX,  PO|UNLIMITED},
+{"supgrp",    "SUPGRP",  pr_supgrp,        PIDS_SUPGROUPS,          40,    LNX,  PO|UNLIMITED},
+{"suser",     "SUSER",   pr_suser,         PIDS_ID_SUSER,            8,    LNx,  ET|USER},
+{"svgid",     "SVGID",   pr_sgid,          PIDS_ID_SGID,             5,    XXX,  ET|RIGHT},
+{"svgroup",   "SVGROUP", pr_sgroup,        PIDS_ID_SGROUP,           8,    LNX,  ET|USER},
+{"svuid",     "SVUID",   pr_suid,          PIDS_ID_SUID,             5,    XXX,  ET|RIGHT},
+{"svuser",    "SVUSER",  pr_suser,         PIDS_ID_SUSER,            8,    LNX,  ET|USER},
+{"systime",   "SYSTEM",  pr_nop,           PIDS_noop,                6,    DEC,  ET|RIGHT},
+{"sz",        "SZ",      pr_sz,            PIDS_VM_SIZE,             5,    HPU,  PO|RIGHT},
+{"taskid",    "TASKID",  pr_nop,           PIDS_noop,                5,    SUN,  TO|PIDMAX|RIGHT}, // is this a thread ID?
+{"tdev",      "TDEV",    pr_nop,           PIDS_noop,                4,    XXX,  AN|RIGHT},
+{"tgid",      "TGID",    pr_procs,         PIDS_ID_TGID,             5,    LNX,  PO|PIDMAX|RIGHT},
+{"thcount",   "THCNT",   pr_nlwp,          PIDS_NLWP,                5,    AIX,  PO|RIGHT},
+{"tid",       "TID",     pr_tasks,         PIDS_ID_PID,              5,    AIX,  TO|PIDMAX|RIGHT},
+{"time",      "TIME",    pr_time,          PIDS_TIME_ALL,            8,    U98,  ET|RIGHT}, /*cputime*/ /* was 6 wide */
+{"timeout",   "TMOUT",   pr_nop,           PIDS_noop,                5,    LNX,  AN|RIGHT}, // 2.0.xx era
+{"tmout",     "TMOUT",   pr_nop,           PIDS_noop,                5,    LNX,  AN|RIGHT}, // 2.0.xx era
+{"tname",     "TTY",     pr_tty8,          PIDS_TTY_NAME,            8,    DEC,  PO|LEFT},
+{"tpgid",     "TPGID",   pr_tpgid,         PIDS_ID_TPGID,            5,    XXX,  PO|PIDMAX|RIGHT},
+{"trs",       "TRS",     pr_trs,           PIDS_VSIZE_PGS,           4,    AIX,  PO|RIGHT},
+{"trss",      "TRSS",    pr_trs,           PIDS_VSIZE_PGS,           4,    BSD,  PO|RIGHT}, /* 4.3BSD NET/2 */
+{"tsess",     "TSESS",   pr_nop,           PIDS_noop,                5,    BSD,  PO|PIDMAX|RIGHT},
+{"tsession",  "TSESS",   pr_nop,           PIDS_noop,                5,    DEC,  PO|PIDMAX|RIGHT},
+{"tsid",      "TSID",    pr_nop,           PIDS_noop,                5,    BSD,  PO|PIDMAX|RIGHT},
+{"tsig",      "PENDING", pr_tsig,          PIDS_SIGPENDING,          9,    BSD,  ET|SIGNAL}, /* Dragonfly used this for thread-specific, and "sig" for whole-proc */
+{"tsiz",      "TSIZ",    pr_tsiz,          PIDS_VSIZE_PGS,           4,    BSD,  PO|RIGHT},
+{"tt",        "TT",      pr_tty8,          PIDS_TTY_NAME,            8,    BSD,  PO|LEFT},
+{"tty",       "TT",      pr_tty8,          PIDS_TTY_NAME,            8,    U98,  PO|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */
+{"tty4",      "TTY",     pr_tty4,          PIDS_TTY_NAME,            4,    LNX,  PO|LEFT},
+{"tty8",      "TTY",     pr_tty8,          PIDS_TTY_NAME,            8,    LNX,  PO|LEFT},
+{"u_procp",   "UPROCP",  pr_nop,           PIDS_noop,                6,    DEC,  AN|RIGHT},
+{"ucmd",      "CMD",     pr_comm,          PIDS_CMD,                15,    DEC,  PO|UNLIMITED}, /*ucomm*/
+{"ucomm",     "COMMAND", pr_comm,          PIDS_CMD,                15,    XXX,  PO|UNLIMITED}, /*comm*/
+{"uid",       "UID",     pr_euid,          PIDS_ID_EUID,             5,    XXX,  ET|RIGHT},
+{"uid_hack",  "UID",     pr_euser,         PIDS_ID_EUSER,            8,    XXX,  ET|USER},
+{"umask",     "UMASK",   pr_nop,           PIDS_noop,                5,    DEC,  AN|RIGHT},
+{"uname",     "USER",    pr_euser,         PIDS_ID_EUSER,            8,    DEC,  ET|USER}, /* man page misspelling of user? */
+{"unit",      "UNIT",    pr_sd_unit,       PIDS_SD_UNIT,            31,    LNX,  ET|LEFT},
+{"upr",       "UPR",     pr_nop,           PIDS_noop,                3,    BSD,  TO|RIGHT}, /*usrpri*/
+{"uprocp",    "UPROCP",  pr_nop,           PIDS_noop,                8,    BSD,  AN|RIGHT},
+{"user",      "USER",    pr_euser,         PIDS_ID_EUSER,            8,    U98,  ET|USER},  /* BSD n forces this to UID */
+{"userns",    "USERNS",  pr_userns,        PIDS_NS_USER,            10,    LNX,  ET|RIGHT},
+{"usertime",  "USER",    pr_nop,           PIDS_noop,                4,    DEC,  ET|RIGHT},
+{"usrpri",    "UPR",     pr_nop,           PIDS_noop,                3,    DEC,  TO|RIGHT}, /*upr*/
+{"util",      "C",       pr_c,             PIDS_extra,               2,    SGI,  ET|RIGHT}, // not sure about "C"
+{"utime",     "UTIME",   pr_nop,           PIDS_TICS_USER,           6,    LNx,  ET|RIGHT},
+{"utsns",     "UTSNS",   pr_utsns,         PIDS_NS_UTS,             10,    LNX,  ET|RIGHT},
+{"uunit",     "UUNIT",   pr_sd_uunit,      PIDS_SD_UUNIT,           31,    LNX,  ET|LEFT},
+{"vm_data",   "DATA",    pr_nop,           PIDS_VM_DATA,             5,    LNx,  PO|RIGHT},
+{"vm_exe",    "EXE",     pr_nop,           PIDS_VM_EXE,              5,    LNx,  PO|RIGHT},
+{"vm_lib",    "LIB",     pr_nop,           PIDS_VM_LIB,              5,    LNx,  PO|RIGHT},
+{"vm_lock",   "LCK",     pr_nop,           PIDS_VM_RSS_LOCKED,       3,    LNx,  PO|RIGHT},
+{"vm_stack",  "STACK",   pr_nop,           PIDS_VM_STACK,            5,    LNx,  PO|RIGHT},
+{"vsize",     "VSZ",     pr_vsz,           PIDS_VSIZE_PGS,           6,    DEC,  PO|RIGHT}, /*vsz*/
+{"vsz",       "VSZ",     pr_vsz,           PIDS_VM_SIZE,             6,    U98,  PO|RIGHT}, /*vsize*/
+{"wchan",     "WCHAN",   pr_wchan,         PIDS_WCHAN_ADDR,          6,    XXX,  TO|WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
+{"wname",     "WCHAN",   pr_wname,         PIDS_WCHAN_NAME,          6,    SGI,  TO|WCHAN}, /* opposite of nwchan */
+{"xstat",     "XSTAT",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT},
+{"zone",      "ZONE",    pr_context,       PIDS_ID_TGID,            31,    SUN,  ET|LEFT},  // Solaris zone == Linux context?
+{"zoneid",    "ZONEID",  pr_nop,           PIDS_noop,               31,    SUN,  ET|RIGHT}, // Linux only offers context names
+{"~",         "-",       pr_nop,           PIDS_noop,                1,    LNX,  AN|RIGHT}  /* NULL would ruin alphabetical order */
 };
 
 #undef USER

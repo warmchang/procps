@@ -34,13 +34,13 @@
 
 /* a 'results stack value' extractor macro
    where: E=rel enum, T=data type, S=stack */
-#define rSv(E,T,S) PROCPS_PIDS_VAL(rel_ ## E, T, S)
+#define rSv(E,T,S) PIDS_VAL(rel_ ## E, T, S)
 
 #define namREL(e) rel_ ## e
 #define makEXT(e) extern int namREL(e);
 #define makREL(e) int namREL(e) = -1;
 #define chkREL(e) if (namREL(e) < 0) { \
-      Pids_items[Pids_index] = PROCPS_PIDS_ ## e; \
+      Pids_items[Pids_index] = PIDS_ ## e; \
       namREL(e) = (Pids_index < PIDSITEMS) ? Pids_index++ : rel_noop; }
 
 #define setREL1(e) { \

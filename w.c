@@ -343,9 +343,9 @@ static int find_best_proc(
         unsigned long long *restrict const pcpu,
         char *cmdline)
 {
-#define PIDS_GETINT(e) PROCPS_PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
-#define PIDS_GETULL(e) PROCPS_PIDS_VAL(EU_ ## e, ull_int, reap->stacks[i])
-#define PIDS_GETSTR(e) PROCPS_PIDS_VAL(EU_ ## e, str, reap->stacks[i])
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
+#define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, reap->stacks[i])
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i])
     unsigned uid = ~0U;
     int found_utpid = 0;
     int i, total_procs, line;
@@ -355,15 +355,15 @@ static int find_best_proc(
     struct pids_info *info=NULL;
     struct pids_fetch *reap;
     enum pids_item items[] = {
-        PROCPS_PIDS_ID_TGID,
-        PROCPS_PIDS_TIME_START,
-        PROCPS_PIDS_ID_EUID,
-        PROCPS_PIDS_ID_RUID,
-        PROCPS_PIDS_ID_TPGID,
-        PROCPS_PIDS_ID_PGRP,
-        PROCPS_PIDS_TTY,
-        PROCPS_PIDS_TICS_ALL,
-        PROCPS_PIDS_CMDLINE};
+        PIDS_ID_TGID,
+        PIDS_TIME_START,
+        PIDS_ID_EUID,
+        PIDS_ID_RUID,
+        PIDS_ID_TPGID,
+        PIDS_ID_PGRP,
+        PIDS_TTY,
+        PIDS_TICS_ALL,
+        PIDS_CMDLINE};
     enum rel_items {
         EU_TGID, EU_START, EU_EUID, EU_RUID, EU_TPGID, EU_PGRP, EU_TTY,
         EU_TICS_ALL, EU_CMDLINE};
@@ -386,7 +386,7 @@ static int find_best_proc(
     if (procps_pids_new(&info, items, 9) < 0)
         xerrx(EXIT_FAILURE,
               _("Unable to create pid info structure"));
-    if ((reap = procps_pids_reap(info, PROCPS_FETCH_TASKS_ONLY)) == NULL)
+    if ((reap = procps_pids_reap(info, PIDS_FETCH_TASKS_ONLY)) == NULL)
         xerrx(EXIT_FAILURE,
               _("Unable to load process information"));
     total_procs = reap->counts->total;
@@ -404,7 +404,7 @@ static int find_best_proc(
         }
         if (PIDS_GETINT(TTY) != line)
             continue;
-        (*jcpu) += PROCPS_PIDS_VAL(EU_TICS_ALL, ull_int, reap->stacks[i]);
+        (*jcpu) += PIDS_VAL(EU_TICS_ALL, ull_int, reap->stacks[i]);
         if (!(secondbest_time && PIDS_GETULL(START) <= secondbest_time)) {
             secondbest_time = PIDS_GETULL(START);
             if (cmdline[0] == '-' && cmdline[1] == '\0') {

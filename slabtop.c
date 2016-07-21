@@ -44,7 +44,7 @@
 #include "strutils.h"
 #include <proc/procps.h>
 
-#define DEFAULT_SORT  PROCPS_SLABNODE_OBJS
+#define DEFAULT_SORT  SLABNODE_OBJS
 #define CHAINS_ALLOC  150
 #define MAXTBL(t) (int)( sizeof(t) / sizeof(t[0]) )
 
@@ -56,15 +56,15 @@ static int Run_once = 0;
 static struct slabinfo_info *Slab_info;
 
 enum slabinfo_item Sort_item = DEFAULT_SORT;
-enum slabinfo_sort_order Sort_Order = PROCPS_SLABINFO_DESCEND;
+enum slabinfo_sort_order Sort_Order = SLABINFO_SORT_DESCEND;
 
 enum slabinfo_item Node_items[] = {
-    PROCPS_SLABNODE_OBJS,     PROCPS_SLABNODE_AOBJS, PROCPS_SLABNODE_USE,
-    PROCPS_SLABNODE_OBJ_SIZE, PROCPS_SLABNODE_SLABS, PROCPS_SLABNODE_OBJS_PER_SLAB,
-    PROCPS_SLABNODE_SIZE,     PROCPS_SLABNODE_NAME,
+    SLABNODE_OBJS,     SLABNODE_AOBJS, SLABNODE_USE,
+    SLABNODE_OBJ_SIZE, SLABNODE_SLABS, SLABNODE_OBJS_PER_SLAB,
+    SLABNODE_SIZE,     SLABNODE_NAME,
     /* next 2 are sortable but are not displayable,
        thus they need not be represented in the Relative_enums */
-    PROCPS_SLABNODE_PAGES_PER_SLAB, PROCPS_SLABNODE_ASLABS };
+    SLABNODE_PAGES_PER_SLAB, SLABNODE_ASLABS };
 
 enum Relative_enums {
     my_OBJS,  my_AOBJS, my_USE,  my_OSIZE,
@@ -127,39 +127,39 @@ static void __attribute__((__noreturn__)) usage (FILE *out)
 static void set_sort_stuff (const char key)
 {
     Sort_item = DEFAULT_SORT;
-    Sort_Order = PROCPS_SLABINFO_DESCEND;
+    Sort_Order = SLABINFO_SORT_DESCEND;
 
     switch (tolower(key)) {
     case 'n':
-        Sort_item = PROCPS_SLABNODE_NAME;
-        Sort_Order = PROCPS_SLABINFO_ASCEND;
+        Sort_item = SLABNODE_NAME;
+        Sort_Order = SLABINFO_SORT_ASCEND;
         break;
     case 'o':
-        Sort_item = PROCPS_SLABNODE_OBJS;
+        Sort_item = SLABNODE_OBJS;
         break;
     case 'a':
-        Sort_item = PROCPS_SLABNODE_AOBJS;
+        Sort_item = SLABNODE_AOBJS;
         break;
     case 's':
-        Sort_item = PROCPS_SLABNODE_OBJ_SIZE;
+        Sort_item = SLABNODE_OBJ_SIZE;
         break;
     case 'b':
-        Sort_item = PROCPS_SLABNODE_OBJS_PER_SLAB;
+        Sort_item = SLABNODE_OBJS_PER_SLAB;
         break;
     case 'p':
-        Sort_item = PROCPS_SLABNODE_PAGES_PER_SLAB;
+        Sort_item = SLABNODE_PAGES_PER_SLAB;
         break;
     case 'l':
-        Sort_item = PROCPS_SLABNODE_SLABS;
+        Sort_item = SLABNODE_SLABS;
         break;
     case 'v':
-        Sort_item = PROCPS_SLABNODE_ASLABS;
+        Sort_item = SLABNODE_ASLABS;
         break;
     case 'c':
-        Sort_item = PROCPS_SLABNODE_SIZE;
+        Sort_item = SLABNODE_SIZE;
         break;
     case 'u':
-        Sort_item = PROCPS_SLABNODE_USE;
+        Sort_item = SLABNODE_USE;
         break;
     default:
         break;
@@ -206,12 +206,12 @@ static void parse_opts (int argc, char **argv)
 static void print_summary (void)
 {
     enum slabinfo_item items[] = {
-        PROCPS_SLABS_AOBJS,       PROCPS_SLABS_OBJS,
-        PROCPS_SLABS_ASLABS,      PROCPS_SLABS_SLABS,
-        PROCPS_SLABS_ACACHES,     PROCPS_SLABS_CACHES,
-        PROCPS_SLABS_SIZE_ACTIVE, PROCPS_SLABS_SIZE_TOTAL,
-        PROCPS_SLABS_SIZE_MIN,    PROCPS_SLABS_SIZE_AVG,
-        PROCPS_SLABS_SIZE_MAX
+        SLABS_AOBJS,       SLABS_OBJS,
+        SLABS_ASLABS,      SLABS_SLABS,
+        SLABS_ACACHES,     SLABS_CACHES,
+        SLABS_SIZE_ACTIVE, SLABS_SIZE_TOTAL,
+        SLABS_SIZE_MIN,    SLABS_SIZE_AVG,
+        SLABS_SIZE_MAX
     };
     enum slabs_enums {
         stat_AOBJS,   stat_OBJS,   stat_ASLABS, stat_SLABS,
@@ -223,7 +223,7 @@ static void print_summary (void)
 
     if (!(p = procps_slabinfo_select(Slab_info, items, MAXTBL(items))))
         xerrx(EXIT_FAILURE, _("Error getting slab summary results"));
-    /* we really should use the provided PROCPS_SLABINFO_VAL macro but,
+    /* we really should use the provided SLABINFO_VAL macro but,
        let's do this instead to salvage as much original code as possible ... */
     stats = p->head;
 

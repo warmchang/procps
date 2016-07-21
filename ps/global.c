@@ -49,8 +49,8 @@
 // --- <pids> interface begin ||||||||||||||||||||||||||||||||||||||||||||
 // -----------------------------------------------------------------------
 struct pids_info *Pids_info = NULL;   // our required <pids> context
-enum pids_item *Pids_items;                 // allocated as PIDSITEMS
-int Pids_index;                             // actual number of active enums
+enum pids_item *Pids_items;           // allocated as PIDSITEMS
+int Pids_index;                       // actual number of active enums
 
 // most of these could be defined as static in the output.c module
 // (but for future flexibility, the easiest route has been chosen)
@@ -464,7 +464,7 @@ void reset_global(void){
     Pids_items = xcalloc(PIDSITEMS, sizeof(enum pids_item));
 
   for (i = 0; i < PIDSITEMS; i++)
-    Pids_items[i] = PROCPS_PIDS_noop;
+    Pids_items[i] = PIDS_noop;
 
   if (!Pids_info) {
     if (procps_pids_new(&Pids_info, Pids_items, i)) {
@@ -473,7 +473,7 @@ void reset_global(void){
     }
   }
 
-  Pids_items[0] = PROCPS_PIDS_TTY;
+  Pids_items[0] = PIDS_TTY;
   procps_pids_reset(Pids_info, Pids_items, 1);
   if (!(p = fatal_proc_unmounted(Pids_info, 1))) {
     fprintf(stderr, _("fatal library error, lookup self\n"));
@@ -488,7 +488,7 @@ void reset_global(void){
   bsd_c_option          = 0;
   bsd_e_option          = 0;
   cached_euid           = geteuid();
-  cached_tty            = PROCPS_PIDS_VAL(0, s_int, p);
+  cached_tty            = PIDS_VAL(0, s_int, p);
 /* forest_prefix must be all zero because of POSIX */
   forest_type           = 0;
   format_flags          = 0;   /* -l -f l u s -j... */

@@ -23,7 +23,7 @@
 #include <proc/procps.h>
 #include "tests.h"
 
-enum pids_item items[] = { PROCPS_PIDS_ID_PID, PROCPS_PIDS_ID_PID };
+enum pids_item items[] = { PIDS_ID_PID, PIDS_ID_PID };
 
 int check_pids_new_nullinfo(void *data)
 {

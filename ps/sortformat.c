@@ -317,9 +317,9 @@ static const char *format_parse(sf_node *sfn){
 /****************  Parse single sort specifier *******************/
 static sort_node *do_one_sort_spec(const char *spec){
   const format_struct *fs;
-  enum pids_sort_order reverse = PROCPS_PIDS_ASCEND;
+  enum pids_sort_order reverse = PIDS_SORT_ASCEND;
   if(*spec == '-'){
-    reverse = PROCPS_PIDS_DESCEND;
+    reverse = PIDS_SORT_DESCEND;
     spec++;
   } else if(*spec == '+'){
     spec++;
@@ -452,7 +452,7 @@ static const char *verify_short_sort(const char *arg){
 
 /************ parse short sorting option *************/
 static const char *short_sort_parse(sf_node *sfn){
-  enum pids_sort_order direction = PROCPS_PIDS_ASCEND;
+  enum pids_sort_order direction = PIDS_SORT_ASCEND;
   const char *walk;
   int tmp;
   sort_node *snode;
@@ -466,10 +466,10 @@ static const char *short_sort_parse(sf_node *sfn){
       already_parsed_sort = 1;
       return NULL;
     case '+':
-      direction = PROCPS_PIDS_ASCEND;
+      direction = PIDS_SORT_ASCEND;
       break;
     case '-':
-      direction = PROCPS_PIDS_DESCEND;
+      direction = PIDS_SORT_DESCEND;
       break;
     default:
       ss = search_shortsort_array(tmp);

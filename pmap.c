@@ -38,8 +38,8 @@
 #include <proc/procps.h>
 
 enum pids_item Pid_items[] = {
-    PROCPS_PIDS_ID_PID,  PROCPS_PIDS_ID_TGID,
-    PROCPS_PIDS_CMDLINE, PROCPS_PIDS_ADDR_START_STACK };
+    PIDS_ID_PID,  PIDS_ID_TGID,
+    PIDS_CMDLINE, PIDS_ADDR_START_STACK };
 enum rel_items { pid, tgid, cmdline, start_stack };
 
 const char *nls_Address,
@@ -238,8 +238,8 @@ static char *mapping_name(struct pids_stack *p, unsigned long addr,
 	}
 
 	cp = _("  [ anon ]");
-	if (PROCPS_PIDS_VAL(start_stack, ul_int, p) >= addr
-	&& (PROCPS_PIDS_VAL(start_stack, ul_int, p) <= addr + len))
+	if (PIDS_VAL(start_stack, ul_int, p) >= addr
+	&& (PIDS_VAL(start_stack, ul_int, p) <= addr + len))
 		cp = _("  [ stack ]");
 	return cp;
 }
@@ -534,14 +534,14 @@ static int one_proc (struct pids_stack *p)
 	unsigned long long total_shared_dirty = 0ull;
 	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0;
 
-	printf("%u:   %s\n", PROCPS_PIDS_VAL(tgid, s_int, p), PROCPS_PIDS_VAL(cmdline, str, p));
+	printf("%u:   %s\n", PIDS_VAL(tgid, s_int, p), PIDS_VAL(cmdline, str, p));
 
 	if (x_option || X_option || c_option) {
-		sprintf(buf, "/proc/%u/smaps", PROCPS_PIDS_VAL(tgid, s_int, p));
+		sprintf(buf, "/proc/%u/smaps", PIDS_VAL(tgid, s_int, p));
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	} else {
-		sprintf(buf, "/proc/%u/maps", PROCPS_PIDS_VAL(tgid, s_int, p));
+		sprintf(buf, "/proc/%u/maps", PIDS_VAL(tgid, s_int, p));
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	}
@@ -1161,7 +1161,7 @@ int main(int argc, char **argv)
 
 	discover_shm_minor();
 
-	if (!(pids_fetch = procps_pids_select(info, pidlist, user_count, PROCPS_SELECT_PID)))
+	if (!(pids_fetch = procps_pids_select(info, pidlist, user_count, PIDS_SELECT_PID)))
 		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
 
 	for (reap_count = 0; reap_count < pids_fetch->counts->total; reap_count++) {

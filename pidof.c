@@ -130,7 +130,7 @@ static char *pid_link (pid_t pid, const char *base_name)
 
 static void select_procs (void)
 {
-	enum pids_item items[] = { PROCPS_PIDS_ID_PID, PROCPS_PIDS_CMD, PROCPS_PIDS_CMDLINE_V };
+	enum pids_item items[] = { PIDS_ID_PID, PIDS_CMD, PIDS_CMDLINE_V };
 	enum rel_items { rel_pid, rel_cmd, rel_cmdline };
 	struct pids_info *info = NULL;
 	struct pids_stack *stack;
@@ -150,10 +150,10 @@ static void select_procs (void)
 	procps_pids_new(&info, items, 3);
 
 	exe_link = root_link = NULL;
-	while ((stack = procps_pids_get(info, PROCPS_FETCH_TASKS_ONLY))) {
-		char  *p_cmd     = PROCPS_PIDS_VAL(rel_cmd,     str,   stack),
-		     **p_cmdline = PROCPS_PIDS_VAL(rel_cmdline, strv,  stack);
-		int    tid       = PROCPS_PIDS_VAL(rel_pid,     s_int, stack);
+	while ((stack = procps_pids_get(info, PIDS_FETCH_TASKS_ONLY))) {
+		char  *p_cmd     = PIDS_VAL(rel_cmd,     str,   stack),
+		     **p_cmdline = PIDS_VAL(rel_cmdline, strv,  stack);
+		int    tid       = PIDS_VAL(rel_pid,     s_int, stack);
 
 		if (opt_rootdir_check) {
 			/* get the /proc/<pid>/root symlink value */

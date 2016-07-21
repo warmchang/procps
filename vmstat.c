@@ -85,32 +85,32 @@ static unsigned int height;
 static unsigned int moreheaders = TRUE;
 
 static enum stat_item First_stat_items[] = {
-    PROCPS_STAT_SYS_PROC_RUNNING,
-    PROCPS_STAT_SYS_PROC_BLOCKED,
-    PROCPS_STAT_SYS_INTERRUPTS,
-    PROCPS_STAT_SYS_CTX_SWITCHES,
-    PROCPS_STAT_TIC_USER,
-    PROCPS_STAT_TIC_NICE,
-    PROCPS_STAT_TIC_SYSTEM,
-    PROCPS_STAT_TIC_IRQ,
-    PROCPS_STAT_TIC_SOFTIRQ,
-    PROCPS_STAT_TIC_IDLE,
-    PROCPS_STAT_TIC_IOWAIT,
-    PROCPS_STAT_TIC_STOLEN
+    STAT_SYS_PROC_RUNNING,
+    STAT_SYS_PROC_BLOCKED,
+    STAT_SYS_INTERRUPTS,
+    STAT_SYS_CTX_SWITCHES,
+    STAT_TIC_USER,
+    STAT_TIC_NICE,
+    STAT_TIC_SYSTEM,
+    STAT_TIC_IRQ,
+    STAT_TIC_SOFTIRQ,
+    STAT_TIC_IDLE,
+    STAT_TIC_IOWAIT,
+    STAT_TIC_STOLEN
 };
 static enum stat_item Loop_stat_items[] = {
-    PROCPS_STAT_SYS_PROC_RUNNING,
-    PROCPS_STAT_SYS_PROC_BLOCKED,
-    PROCPS_STAT_SYS_DELTA_INTERRUPTS,
-    PROCPS_STAT_SYS_DELTA_CTX_SWITCHES,
-    PROCPS_STAT_TIC_DELTA_USER,
-    PROCPS_STAT_TIC_DELTA_NICE,
-    PROCPS_STAT_TIC_DELTA_SYSTEM,
-    PROCPS_STAT_TIC_DELTA_IRQ,
-    PROCPS_STAT_TIC_DELTA_SOFTIRQ,
-    PROCPS_STAT_TIC_DELTA_IDLE,
-    PROCPS_STAT_TIC_DELTA_IOWAIT,
-    PROCPS_STAT_TIC_DELTA_STOLEN
+    STAT_SYS_PROC_RUNNING,
+    STAT_SYS_PROC_BLOCKED,
+    STAT_SYS_DELTA_INTERRUPTS,
+    STAT_SYS_DELTA_CTX_SWITCHES,
+    STAT_TIC_DELTA_USER,
+    STAT_TIC_DELTA_NICE,
+    STAT_TIC_DELTA_SYSTEM,
+    STAT_TIC_DELTA_IRQ,
+    STAT_TIC_DELTA_SOFTIRQ,
+    STAT_TIC_DELTA_IDLE,
+    STAT_TIC_DELTA_IOWAIT,
+    STAT_TIC_DELTA_STOLEN
 };
 enum Rel_statitems {
     stat_PRU, stat_PBL, stat_INT, stat_CTX,
@@ -119,31 +119,31 @@ enum Rel_statitems {
 };
 
 static enum meminfo_item Mem_items[] = {
-    PROCPS_MEMINFO_SWAP_USED,
-    PROCPS_MEMINFO_MEM_FREE,
-    PROCPS_MEMINFO_MEM_ACTIVE,
-    PROCPS_MEMINFO_MEM_INACTIVE,
-    PROCPS_MEMINFO_MEM_BUFFERS,
-    PROCPS_MEMINFO_MEM_CACHED
+    MEMINFO_SWAP_USED,
+    MEMINFO_MEM_FREE,
+    MEMINFO_MEM_ACTIVE,
+    MEMINFO_MEM_INACTIVE,
+    MEMINFO_MEM_BUFFERS,
+    MEMINFO_MEM_CACHED
 };
 enum Rel_memitems {
     mem_SUS, mem_FREE, mem_ACT, mem_INA, mem_BUF, mem_CAC,  MAX_mem
 };
 
 static enum diskstats_item Disk_items[] = {
-    PROCPS_DISKSTATS_TYPE,
-    PROCPS_DISKSTATS_NAME,
-    PROCPS_DISKSTATS_READS,
-    PROCPS_DISKSTATS_READS_MERGED,
-    PROCPS_DISKSTATS_READ_SECTORS,
-    PROCPS_DISKSTATS_READ_TIME,
-    PROCPS_DISKSTATS_WRITES,
-    PROCPS_DISKSTATS_WRITES_MERGED,
-    PROCPS_DISKSTATS_WRITE_SECTORS,
-    PROCPS_DISKSTATS_WRITE_TIME,
-    PROCPS_DISKSTATS_IO_INPROGRESS,
-    PROCPS_DISKSTATS_IO_TIME,
-    PROCPS_DISKSTATS_IO_WTIME
+    DISKSTATS_TYPE,
+    DISKSTATS_NAME,
+    DISKSTATS_READS,
+    DISKSTATS_READS_MERGED,
+    DISKSTATS_READ_SECTORS,
+    DISKSTATS_READ_TIME,
+    DISKSTATS_WRITES,
+    DISKSTATS_WRITES_MERGED,
+    DISKSTATS_WRITE_SECTORS,
+    DISKSTATS_WRITE_TIME,
+    DISKSTATS_IO_INPROGRESS,
+    DISKSTATS_IO_TIME,
+    DISKSTATS_IO_WTIME
 };
 enum Rel_diskitems {
     disk_TYPE,  disk_NAME,
@@ -153,30 +153,30 @@ enum Rel_diskitems {
 };
 
 static enum diskstats_item Part_items[] = {
-    PROCPS_DISKSTATS_READS,
-    PROCPS_DISKSTATS_READ_SECTORS,
-    PROCPS_DISKSTATS_WRITES,
-    PROCPS_DISKSTATS_WRITE_SECTORS
+    DISKSTATS_READS,
+    DISKSTATS_READ_SECTORS,
+    DISKSTATS_WRITES,
+    DISKSTATS_WRITE_SECTORS
 };
 enum Rel_partitems {
     part_READ, part_READ_SECT, part_WRITE, part_WRITE_SECT, MAX_part
 };
 
 static enum stat_item Sum_stat_items[] = {
-    PROCPS_STAT_TIC_USER,
-    PROCPS_STAT_TIC_NICE,
-    PROCPS_STAT_TIC_SYSTEM,
-    PROCPS_STAT_TIC_IDLE,
-    PROCPS_STAT_TIC_IOWAIT,
-    PROCPS_STAT_TIC_IRQ,
-    PROCPS_STAT_TIC_SOFTIRQ,
-    PROCPS_STAT_TIC_STOLEN,
-    PROCPS_STAT_TIC_GUEST,
-    PROCPS_STAT_TIC_GUEST_NICE,
-    PROCPS_STAT_SYS_CTX_SWITCHES,
-    PROCPS_STAT_SYS_INTERRUPTS,
-    PROCPS_STAT_SYS_TIME_OF_BOOT,
-    PROCPS_STAT_SYS_PROC_CREATED
+    STAT_TIC_USER,
+    STAT_TIC_NICE,
+    STAT_TIC_SYSTEM,
+    STAT_TIC_IDLE,
+    STAT_TIC_IOWAIT,
+    STAT_TIC_IRQ,
+    STAT_TIC_SOFTIRQ,
+    STAT_TIC_STOLEN,
+    STAT_TIC_GUEST,
+    STAT_TIC_GUEST_NICE,
+    STAT_SYS_CTX_SWITCHES,
+    STAT_SYS_INTERRUPTS,
+    STAT_SYS_TIME_OF_BOOT,
+    STAT_SYS_PROC_CREATED
 };
 enum Rel_sumstatitems {
     sstat_USR, sstat_NIC, sstat_SYS, sstat_IDL, sstat_IOW, sstat_IRQ,
@@ -185,16 +185,16 @@ enum Rel_sumstatitems {
 };
 
 static enum meminfo_item Sum_mem_items[] = {
-    PROCPS_MEMINFO_MEM_TOTAL,
-    PROCPS_MEMINFO_MEM_USED,
-    PROCPS_MEMINFO_MEM_ACTIVE,
-    PROCPS_MEMINFO_MEM_INACTIVE,
-    PROCPS_MEMINFO_MEM_FREE,
-    PROCPS_MEMINFO_MEM_BUFFERS,
-    PROCPS_MEMINFO_MEM_CACHED,
-    PROCPS_MEMINFO_SWAP_TOTAL,
-    PROCPS_MEMINFO_SWAP_USED,
-    PROCPS_MEMINFO_SWAP_FREE,
+    MEMINFO_MEM_TOTAL,
+    MEMINFO_MEM_USED,
+    MEMINFO_MEM_ACTIVE,
+    MEMINFO_MEM_INACTIVE,
+    MEMINFO_MEM_FREE,
+    MEMINFO_MEM_BUFFERS,
+    MEMINFO_MEM_CACHED,
+    MEMINFO_SWAP_TOTAL,
+    MEMINFO_SWAP_USED,
+    MEMINFO_SWAP_FREE,
 };
 enum Rel_summemitems {
     smem_MTOT, smem_MUSE, smem_MACT, smem_MIAC, smem_MFRE,
@@ -323,11 +323,11 @@ static unsigned long unitConvert(unsigned long size)
 
 static void new_format(void)
 {
-#define TICv(E) PROCPS_STAT_VAL(E, ull_int, stat_stack)
-#define DTICv(E) PROCPS_STAT_VAL(E, sl_int, stat_stack)
-#define SYSv(E) PROCPS_STAT_VAL(E, ul_int, stat_stack)
-#define MEMv(E) PROCPS_STAT_VAL(E, ul_int, mem_stack)
-#define DSYSv(E) PROCPS_STAT_VAL(E, s_int, stat_stack)
+#define TICv(E) STAT_VAL(E, ull_int, stat_stack)
+#define DTICv(E) STAT_VAL(E, sl_int, stat_stack)
+#define SYSv(E) STAT_VAL(E, ul_int, stat_stack)
+#define MEMv(E) STAT_VAL(E, ul_int, mem_stack)
+#define DSYSv(E) STAT_VAL(E, s_int, stat_stack)
     const char format[] =
         "%2lu %2lu %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u";
     const char wide_format[] =
@@ -346,7 +346,7 @@ static void new_format(void)
     time_t the_time;
     char timebuf[32];
     struct vmstat_info *vm_info = NULL;
-    struct stat_info *sys_info = NULL;
+    struct stat_info *stat_info = NULL;
     struct stat_stack *stat_stack;
     struct meminfo_info *mem_info = NULL;
     struct meminfo_stack *mem_stack;
@@ -355,10 +355,9 @@ static void new_format(void)
     hz = procps_hertz_get();
     new_header();
 
-
     if (procps_vmstat_new(&vm_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create vmstat structure"));
-    if (procps_stat_new(&sys_info) < 0)
+    if (procps_stat_new(&stat_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));
     if (procps_meminfo_new(&mem_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
@@ -369,7 +368,7 @@ static void new_format(void)
         strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
     }
     /* Do the initial fill */
-    if (!(stat_stack = procps_stat_select(sys_info, First_stat_items, MAX_stat)))
+    if (!(stat_stack = procps_stat_select(stat_info, First_stat_items, MAX_stat)))
         xerrx(EXIT_FAILURE, _("Unable to select stat information"));
     cpu_use = TICv(stat_USR) + TICv(stat_NIC);
     cpu_sys = TICv(stat_SYS) + TICv(stat_IRQ) + TICv(stat_SRQ);
@@ -377,10 +376,10 @@ static void new_format(void)
     cpu_iow = TICv(stat_IOW);
     cpu_sto = TICv(stat_STO);
 
-    pgpgin[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGIN, ul_int);
-    pgpgout[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGOUT, ul_int);
-    pswpin[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPIN, ul_int);
-    pswpout[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPOUT, ul_int);
+    pgpgin[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int);
+    pgpgout[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int);
+    pswpin[tog] = VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int);
+    pswpout[tog] = VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int);
 
     if (!(mem_stack = procps_meminfo_select(mem_info, Mem_items, MAX_mem)))
         xerrx(EXIT_FAILURE, _("Unable to select memory information"));
@@ -399,10 +398,10 @@ static void new_format(void)
            unitConvert(MEMv(mem_FREE)),
            unitConvert((a_option?MEMv(mem_INA):MEMv(mem_BUF))),
            unitConvert((a_option?MEMv(mem_ACT):MEMv(mem_CAC))),
-           (unsigned)( (unitConvert(PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPIN, ul_int)  * kb_per_page) * hz + divo2) / Div ),
-           (unsigned)( (unitConvert(PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPOUT, ul_int)  * kb_per_page) * hz + divo2) / Div ),
-           (unsigned)( (PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGIN, ul_int) * hz + divo2) / Div ),
-           (unsigned)( (PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGOUT, ul_int) * hz + divo2) / Div ),
+           (unsigned)( (unitConvert(VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int)  * kb_per_page) * hz + divo2) / Div ),
+           (unsigned)( (unitConvert(VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int)  * kb_per_page) * hz + divo2) / Div ),
+           (unsigned)( (VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int) * hz + divo2) / Div ),
+           (unsigned)( (VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int) * hz + divo2) / Div ),
            (unsigned)( (SYSv(stat_INT)           * hz + divo2) / Div ),
            (unsigned)( (SYSv(stat_CTX)           * hz + divo2) / Div ),
            (unsigned)( (100*cpu_use        + divo2) / Div ),
@@ -425,7 +424,7 @@ static void new_format(void)
             new_header();
         tog = !tog;
 
-        if (!(stat_stack = procps_stat_select(sys_info, Loop_stat_items, MAX_stat)))
+        if (!(stat_stack = procps_stat_select(stat_info, Loop_stat_items, MAX_stat)))
             xerrx(EXIT_FAILURE, _("Unable to select stat information"));
 
         cpu_use = DTICv(stat_USR) + DTICv(stat_NIC);
@@ -433,10 +432,10 @@ static void new_format(void)
         cpu_idl = DTICv(stat_IDL);
         cpu_iow = DTICv(stat_IOW);
         cpu_sto = DTICv(stat_STO);
-        pgpgin[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGIN, ul_int);
-        pgpgout[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGOUT, ul_int);
-        pswpin[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPIN, ul_int);
-        pswpout[tog] = PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPOUT, ul_int);
+        pgpgin[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int);
+        pgpgout[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int);
+        pswpin[tog] = VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int);
+        pswpout[tog] = VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int);
 
         if (t_option) {
             (void) time( &the_time );
@@ -495,7 +494,7 @@ static void new_format(void)
         printf("\n");
     }
     /* Cleanup */
-    procps_stat_unref(&sys_info);
+    procps_stat_unref(&stat_info);
     procps_vmstat_unref(&vm_info);
     procps_meminfo_unref(&mem_info);
 #undef TICv
@@ -529,7 +528,7 @@ static void diskpartition_header(const char *partition_name)
 
 static void diskpartition_format(const char *partition_name)
 {
- #define partVAL(x) PROCPS_DISKSTATS_VAL(x, ul_int, stack)
+ #define partVAL(x) DISKSTATS_VAL(x, ul_int, stack)
     struct diskstats_info *disk_stat;
     struct diskstats_stack *stack;
     struct diskstats_result *got;
@@ -540,7 +539,7 @@ static void diskpartition_format(const char *partition_name)
         xerr(EXIT_FAILURE,
              _("Unable to create diskstat structure"));
 
-    if (!(got = procps_diskstats_get(disk_stat, partition_name, PROCPS_DISKSTATS_TYPE)))
+    if (!(got = procps_diskstats_get(disk_stat, partition_name, DISKSTATS_TYPE)))
         xerrx(EXIT_FAILURE, _("Disk/Partition %s not found"), partition_name);
 
     diskpartition_header(partition_name);
@@ -627,7 +626,7 @@ static void diskheader(void)
 
 static void diskformat(void)
 {
-#define diskVAL(e,t) PROCPS_DISKSTATS_VAL(e, t, reap->stacks[j])
+#define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j])
     struct diskstats_info *disk_stat;
     struct diskstats_reap *reap;
     int i, j;
@@ -654,7 +653,7 @@ static void diskformat(void)
             strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr);
         }
         for (j = 0; j < reap->total; j++) {
-            if (diskVAL(disk_TYPE, s_int) != PROCPS_DISKSTATS_TYPE_DISK)
+            if (diskVAL(disk_TYPE, s_int) != DISKSTATS_TYPE_DISK)
                 continue; /* not a disk */
             if (moreheaders && ((j % height) == 0))
                 diskheader();
@@ -708,9 +707,9 @@ static void slabformat (void)
     struct slabinfo_reap *reaped;
     int i, j;
     enum slabinfo_item node_items[] = {
-        PROCPS_SLABNODE_AOBJS,    PROCPS_SLABNODE_OBJS,
-        PROCPS_SLABNODE_OBJ_SIZE, PROCPS_SLABNODE_OBJS_PER_SLAB,
-        PROCPS_SLABNODE_NAME };
+        SLABNODE_AOBJS,    SLABNODE_OBJS,
+        SLABNODE_OBJ_SIZE, SLABNODE_OBJS_PER_SLAB,
+        SLABNODE_NAME };
     enum rel_enums {
         slab_AOBJS, slab_OBJS, slab_OSIZE, slab_OPS, slab_NAME };
 
@@ -723,7 +722,7 @@ static void slabformat (void)
     for (i = 0; infinite_updates || i < num_updates; i++) {
         if (!(reaped = procps_slabinfo_reap(slab_info, node_items, MAX_ITEMS)))
             xerrx(EXIT_FAILURE, _("Unable to get slabinfo node data"));
-        if (!(procps_slabinfo_sort(slab_info, reaped->stacks, reaped->total, PROCPS_SLABNODE_NAME, PROCPS_SLABINFO_ASCEND)))
+        if (!(procps_slabinfo_sort(slab_info, reaped->stacks, reaped->total, SLABNODE_NAME, SLABINFO_SORT_ASCEND)))
             xerrx(EXIT_FAILURE, _("Unable to sort slab nodes"));
 
         for (j = 0; j < reaped->total; j++) {
@@ -746,7 +745,7 @@ static void slabformat (void)
 
 static void disksum_format(void)
 {
-#define diskVAL(e,t) PROCPS_DISKSTATS_VAL(e, t, reap->stacks[j])
+#define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j])
     struct diskstats_info *disk_stat;
     struct diskstats_reap *reap;
     int j, disk_count, part_count;
@@ -767,7 +766,7 @@ static void disksum_format(void)
             _("Unable to retrieve disk statistics"));
 
     for (j = 0; j < reap->total; j++) {
-        if (diskVAL(disk_TYPE, s_int) != PROCPS_DISKSTATS_TYPE_DISK) {
+        if (diskVAL(disk_TYPE, s_int) != DISKSTATS_TYPE_DISK) {
             part_count++;
             continue; /* not a disk */
         }
@@ -805,18 +804,18 @@ static void disksum_format(void)
 
 static void sum_format(void)
 {
-#define TICv(E) PROCPS_STAT_VAL(E, ull_int, stat_stack)
-#define SYSv(E) PROCPS_STAT_VAL(E, ul_int, stat_stack)
-#define MEMv(E) unitConvert(PROCPS_STAT_VAL(E, ul_int, mem_stack))
-    struct stat_info *sys_info = NULL;
+#define TICv(E) STAT_VAL(E, ull_int, stat_stack)
+#define SYSv(E) STAT_VAL(E, ul_int, stat_stack)
+#define MEMv(E) unitConvert(STAT_VAL(E, ul_int, mem_stack))
+    struct stat_info *stat_info = NULL;
     struct vmstat_info *vm_info = NULL;
     struct meminfo_info *mem_info = NULL;
     struct stat_stack *stat_stack;
     struct meminfo_stack *mem_stack;
 
-    if (procps_stat_new(&sys_info) < 0)
+    if (procps_stat_new(&stat_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));
-    if (!(stat_stack = procps_stat_select(sys_info, Sum_stat_items, 14)))
+    if (!(stat_stack = procps_stat_select(stat_info, Sum_stat_items, 14)))
         xerrx(EXIT_FAILURE, _("Unable to select stat information"));
     if (procps_vmstat_new(&vm_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create vmstat structure"));
@@ -845,17 +844,17 @@ static void sum_format(void)
     printf(_("%13lld stolen cpu ticks\n"), TICv(sstat_STO));
     printf(_("%13lld non-nice guest cpu ticks\n"), TICv(sstat_GST));
     printf(_("%13lld nice guest cpu ticks\n"), TICv(sstat_GNI));
-    printf(_("%13lu pages paged in\n"), PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGIN, ul_int));
-    printf(_("%13lu pages paged out\n"), PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PGPGOUT, ul_int));
-    printf(_("%13lu pages swapped in\n"), PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPIN, ul_int));
-    printf(_("%13lu pages swapped out\n"), PROCPS_VMSTAT_GET(vm_info, PROCPS_VMSTAT_PSWPOUT, ul_int));
+    printf(_("%13lu pages paged in\n"), VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int));
+    printf(_("%13lu pages paged out\n"), VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int));
+    printf(_("%13lu pages swapped in\n"), VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int));
+    printf(_("%13lu pages swapped out\n"), VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int));
     printf(_("%13lu interrupts\n"), SYSv(sstat_INT));
     printf(_("%13lu CPU context switches\n"), SYSv(sstat_CTX));
     printf(_("%13lu boot time\n"), SYSv(sstat_TOB));
     printf(_("%13lu forks\n"), SYSv(sstat_PCR));
 
     /* Cleanup */
-    procps_stat_unref(&sys_info);
+    procps_stat_unref(&stat_info);
     procps_vmstat_unref(&vm_info);
     procps_meminfo_unref(&mem_info);
 #undef TICv
@@ -865,14 +864,14 @@ static void sum_format(void)
 
 static void fork_format(void)
 {
-    struct stat_info *sys_info = NULL;
+    struct stat_info *stat_info = NULL;
 
-    if (procps_stat_new(&sys_info) < 0)
+    if (procps_stat_new(&stat_info) < 0)
     xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));
 
-    printf(_("%13lu forks\n"), PROCPS_STAT_GET(sys_info, PROCPS_STAT_SYS_PROC_CREATED, ul_int));
+    printf(_("%13lu forks\n"), STAT_GET(stat_info, STAT_SYS_PROC_CREATED, ul_int));
     /* Cleanup */
-    procps_stat_unref(&sys_info);
+    procps_stat_unref(&stat_info);
 }
 
 static int winhi(void)

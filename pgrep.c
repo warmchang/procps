@@ -52,18 +52,18 @@
 #include <proc/procps.h>
 
 enum pids_item Items[] = {
-    PROCPS_PIDS_ID_PID,
-    PROCPS_PIDS_ID_PPID,
-    PROCPS_PIDS_ID_PGRP,
-    PROCPS_PIDS_ID_EUID,
-    PROCPS_PIDS_ID_RUID,
-    PROCPS_PIDS_ID_RGID,
-    PROCPS_PIDS_ID_SESSION,
-    PROCPS_PIDS_ID_TGID,
-    PROCPS_PIDS_TIME_START,
-    PROCPS_PIDS_TTY_NAME,
-    PROCPS_PIDS_CMD,
-    PROCPS_PIDS_CMDLINE
+    PIDS_ID_PID,
+    PIDS_ID_PPID,
+    PIDS_ID_PGRP,
+    PIDS_ID_EUID,
+    PIDS_ID_RUID,
+    PIDS_ID_RGID,
+    PIDS_ID_SESSION,
+    PIDS_ID_TGID,
+    PIDS_TIME_START,
+    PIDS_TTY_NAME,
+    PIDS_CMD,
+    PIDS_CMDLINE
 };
 enum rel_items {
     EU_PID, EU_PPID, EU_PGRP, EU_EUID, EU_RUID, EU_RGID, EU_SESSION,
@@ -471,9 +471,9 @@ static regex_t * do_regcomp (void)
 
 static struct el * select_procs (int *num)
 {
-#define PIDS_GETINT(e) PROCPS_PIDS_VAL(EU_ ## e, s_int, stack)
-#define PIDS_GETULL(e) PROCPS_PIDS_VAL(EU_ ## e, ull_int, stack)
-#define PIDS_GETSTR(e) PROCPS_PIDS_VAL(EU_ ## e, str, stack)
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack)
+#define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, stack)
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack)
     struct pids_info *info=NULL;
     struct procps_namespaces nsp;
     struct pids_stack *stack;
@@ -504,9 +504,9 @@ static struct el * select_procs (int *num)
     if (procps_pids_new(&info, Items, 12) < 0)
         xerrx(EXIT_FATAL,
               _("Unable to create pid info structure"));
-    which = PROCPS_FETCH_TASKS_ONLY;
+    which = PIDS_FETCH_TASKS_ONLY;
     if (opt_threads && !i_am_pkill)
-        which = PROCPS_FETCH_THREADS_TOO;
+        which = PIDS_FETCH_THREADS_TOO;
 
     while ((stack = procps_pids_get(info, which))) {
         int match = 1;

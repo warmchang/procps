@@ -70,12 +70,12 @@ thing##s[thing##_count++] = addme; \
 }while(0)
 
 enum pids_item items[] = {
-    PROCPS_PIDS_ID_PID,
-    PROCPS_PIDS_ID_EUID,
-    PROCPS_PIDS_ID_EUSER,
-    PROCPS_PIDS_TTY,
-    PROCPS_PIDS_TTY_NAME,
-    PROCPS_PIDS_CMD};
+    PIDS_ID_PID,
+    PIDS_ID_EUID,
+    PIDS_ID_EUSER,
+    PIDS_TTY,
+    PIDS_TTY_NAME,
+    PIDS_CMD};
 enum rel_items {
     EU_PID, EU_EUID, EU_EUSER, EU_TTY, EU_TTYNAME, EU_CMD};
 
@@ -164,8 +164,8 @@ static int match_ns(const int pid)
 
 static int ask_user(struct pids_stack *stack)
 {
-#define PIDS_GETINT(e) PROCPS_PIDS_VAL(EU_ ## e, s_int, stack)
-#define PIDS_GETSTR(e) PROCPS_PIDS_VAL(EU_ ## e, str, stack)
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack)
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack)
     char *buf=NULL;
     size_t len=0;
 
@@ -262,8 +262,8 @@ static void show_lists(void)
 
 static void scan_procs(struct run_time_conf_t *run_time)
 {
-#define PIDS_GETINT(e) PROCPS_PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
-#define PIDS_GETSTR(e) PROCPS_PIDS_VAL(EU_ ## e, str, reap->stacks[i])
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i])
     struct pids_info *info=NULL;
     struct pids_fetch *reap;
     int i, total_procs;
@@ -271,7 +271,7 @@ static void scan_procs(struct run_time_conf_t *run_time)
     if (procps_pids_new(&info, items, 6) < 0)
         xerrx(EXIT_FAILURE,
               _("Unable to create pid info structure"));
-    if ((reap = procps_pids_reap(info, PROCPS_FETCH_TASKS_ONLY)) == NULL)
+    if ((reap = procps_pids_reap(info, PIDS_FETCH_TASKS_ONLY)) == NULL)
         xerrx(EXIT_FAILURE,
               _("Unable to load process information"));
 

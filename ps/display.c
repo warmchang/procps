@@ -282,12 +282,12 @@ static void simple_spew(void){
     unsigned *pidlist = xcalloc(selection_list->n, sizeof(unsigned));
     for (i = 0; i < selection_list->n; i++)
       pidlist[i] = selection_list->u[selection_list->n-i-1].pid;
-    pidread = procps_pids_select(Pids_info, pidlist, selection_list->n, PROCPS_SELECT_PID);
+    pidread = procps_pids_select(Pids_info, pidlist, selection_list->n, PIDS_SELECT_PID);
     free(pidlist);
   } else {
     enum pids_fetch_type which;
     which = (thread_flags & (TF_loose_tasks|TF_show_task))
-      ? PROCPS_FETCH_THREADS_TOO : PROCPS_FETCH_TASKS_ONLY;
+      ? PIDS_FETCH_THREADS_TOO : PIDS_FETCH_TASKS_ONLY;
     pidread = procps_pids_reap(Pids_info, which);
   }
   if (!pidread) {
@@ -313,9 +313,9 @@ static void simple_spew(void){
       break;
     case TF_show_proc|TF_show_task:      // m and -m options
       procps_pids_sort(Pids_info, pidread->stacks
-        , pidread->counts->total, PROCPS_PIDS_TIME_START, PROCPS_PIDS_ASCEND);
+        , pidread->counts->total, PIDS_TIME_START, PIDS_SORT_ASCEND);
       procps_pids_sort(Pids_info, pidread->stacks
-        , pidread->counts->total, PROCPS_PIDS_ID_TGID, PROCPS_PIDS_ASCEND);
+        , pidread->counts->total, PIDS_ID_TGID, PIDS_SORT_ASCEND);
       for (i = 0; i < pidread->counts->total; i++) {
         buf = pidread->stacks[i];
 next_proc:
@@ -343,7 +343,7 @@ static void prep_forest_sort(void){
     incoming = search_format_array("ppid");
     if(!incoming) { fprintf(stderr, _("could not find ppid\n")); exit(1); }
     tmp_list = xmalloc(sizeof(sort_node));
-    tmp_list->reverse = PROCPS_PIDS_ASCEND;
+    tmp_list->reverse = PIDS_SORT_ASCEND;
     tmp_list->typecode = '?'; /* what was this for? */
     tmp_list->sr = incoming->sr;
     tmp_list->next = sort_list;
@@ -353,7 +353,7 @@ static void prep_forest_sort(void){
   incoming = search_format_array("start_time");
   if(!incoming) { fprintf(stderr, _("could not find start_time\n")); exit(1); }
   tmp_list = xmalloc(sizeof(sort_node));
-  tmp_list->reverse = PROCPS_PIDS_ASCEND;
+  tmp_list->reverse = PIDS_SORT_ASCEND;
   tmp_list->typecode = '?'; /* what was this for? */
   tmp_list->sr = incoming->sr;
   tmp_list->next = sort_list;
@@ -445,7 +445,7 @@ static void fancy_spew(void){
   int i, n = 0;
 
   which = (thread_flags & TF_loose_tasks)
-    ? PROCPS_FETCH_THREADS_TOO : PROCPS_FETCH_TASKS_ONLY;
+    ? PIDS_FETCH_THREADS_TOO : PIDS_FETCH_TASKS_ONLY;
 
   pidread = procps_pids_reap(Pids_info, which);
   if (!pidread || !pidread->counts->total) {

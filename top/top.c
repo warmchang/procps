@@ -201,14 +201,14 @@ static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||
 static struct meminfo_info *Mem_ctx;
 static struct meminfo_stack *Mem_stack;
 static enum meminfo_item Mem_items[] = {
-   PROCPS_MEMINFO_MEM_FREE,   PROCPS_MEMINFO_MEM_USED,    PROCPS_MEMINFO_MEM_TOTAL,
-   PROCPS_MEMINFO_MEM_CACHED, PROCPS_MEMINFO_MEM_BUFFERS, PROCPS_MEMINFO_MEM_AVAILABLE,
-   PROCPS_MEMINFO_SWAP_TOTAL, PROCPS_MEMINFO_SWAP_FREE,   PROCPS_MEMINFO_SWAP_USED };
+   MEMINFO_MEM_FREE,   MEMINFO_MEM_USED,    MEMINFO_MEM_TOTAL,
+   MEMINFO_MEM_CACHED, MEMINFO_MEM_BUFFERS, MEMINFO_MEM_AVAILABLE,
+   MEMINFO_SWAP_TOTAL, MEMINFO_SWAP_FREE,   MEMINFO_SWAP_USED };
 enum Rel_memitems {
    mem_FRE, mem_USE, mem_TOT, mem_QUE, mem_BUF, mem_AVL,
    swp_TOT, swp_FRE, swp_USE };
         // mem stack results extractor macro, where e=rel enum
-#define MEM_VAL(e) PROCPS_MEMINFO_VAL(e, ul_int, Mem_stack)
+#define MEM_VAL(e) MEMINFO_VAL(e, ul_int, Mem_stack)
         // --- <proc/pids.h> --------------------------------------------------
 static struct pids_info *Pids_ctx;
 static int Pids_itms_cur;                   // 'current' max (<= Fieldstab)
@@ -218,22 +218,22 @@ static struct pids_fetch *Pids_reap;        // for reap or select
         // pid stack results extractor macro, where e=our EU enum, t=type, s=stack
         // ( we'll exploit that <proc/pids.h> provided macro as much as possible )
         // ( but many functions use their own unique tailored version for access )
-#define PID_VAL(e,t,s) PROCPS_PIDS_VAL(Fieldstab[ e ].erel, t, s)
+#define PID_VAL(e,t,s) PIDS_VAL(Fieldstab[ e ].erel, t, s)
         // --- <proc/stat.h> --------------------------------------------------
 static struct stat_info *Stat_ctx;
 static struct stat_reaped *Stat_reap;
 static enum stat_item Stat_items[] = {
-   PROCPS_STAT_TIC_ID,            PROCPS_STAT_TIC_NUMA_NODE,
-   PROCPS_STAT_TIC_DELTA_USER,    PROCPS_STAT_TIC_DELTA_SYSTEM,
-   PROCPS_STAT_TIC_DELTA_NICE,    PROCPS_STAT_TIC_DELTA_IDLE,
-   PROCPS_STAT_TIC_DELTA_IOWAIT,  PROCPS_STAT_TIC_DELTA_IRQ,
-   PROCPS_STAT_TIC_DELTA_SOFTIRQ, PROCPS_STAT_TIC_DELTA_STOLEN };
+   STAT_TIC_ID,            STAT_TIC_NUMA_NODE,
+   STAT_TIC_DELTA_USER,    STAT_TIC_DELTA_SYSTEM,
+   STAT_TIC_DELTA_NICE,    STAT_TIC_DELTA_IDLE,
+   STAT_TIC_DELTA_IOWAIT,  STAT_TIC_DELTA_IRQ,
+   STAT_TIC_DELTA_SOFTIRQ, STAT_TIC_DELTA_STOLEN };
 enum Rel_statitems {
    stat_ID, stat_NU, stat_US, stat_SY, stat_NI,
    stat_IL, stat_IO, stat_IR, stat_SI, stat_ST };
         // cpu/node stack results extractor macros, where e=rel enum, x=index
-#define CPU_VAL(e,x) PROCPS_STAT_VAL(e, s_int, Stat_reap->cpus->stacks[x])
-#define NOD_VAL(e,x) PROCPS_STAT_VAL(e, s_int, Stat_reap->nodes->stacks[x])
+#define CPU_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->cpus->stacks[x])
+#define NOD_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->nodes->stacks[x])
 
 /*######  Tiny useful routine(s)  ########################################*/
 
@@ -1496,100 +1496,100 @@ static struct {
         a  0 width represents columns set once at startup (see zap_fieldstab)
 
      .width  .scale  .align    .erel  .item
-     ------  ------  --------  -----  ------------------------- */
-   {     0,     -1,  A_right,    -1,  PROCPS_PIDS_ID_PID        },  // s_int    EU_PID
-   {     0,     -1,  A_right,    -1,  PROCPS_PIDS_ID_PPID       },  // s_int    EU_PPD
-   {     5,     -1,  A_right,    -1,  PROCPS_PIDS_ID_EUID       },  // u_int    EU_UED
-   {     8,     -1,  A_left,     -1,  PROCPS_PIDS_ID_EUSER      },  // str      EU_UEN
-   {     5,     -1,  A_right,    -1,  PROCPS_PIDS_ID_RUID       },  // u_int    EU_URD
-   {     8,     -1,  A_left,     -1,  PROCPS_PIDS_ID_RUSER      },  // str      EU_URN
-   {     5,     -1,  A_right,    -1,  PROCPS_PIDS_ID_SUID       },  // u_int    EU_USD
-   {     8,     -1,  A_left,     -1,  PROCPS_PIDS_ID_SUSER      },  // str      EU_USN
-   {     5,     -1,  A_right,    -1,  PROCPS_PIDS_ID_EGID       },  // u_int    EU_GID
-   {     8,     -1,  A_left,     -1,  PROCPS_PIDS_ID_EGROUP     },  // str      EU_GRP
-   {     0,     -1,  A_right,    -1,  PROCPS_PIDS_ID_PGRP       },  // s_int    EU_PGD
-   {     8,     -1,  A_left,     -1,  PROCPS_PIDS_TTY_NAME      },  // str      EU_TTY
-   {     0,     -1,  A_right,    -1,  PROCPS_PIDS_ID_TPGID      },  // s_int    EU_TPG
-   {     0,     -1,  A_right,    -1,  PROCPS_PIDS_ID_SESSION    },  // s_int    EU_SID
-   {     3,     -1,  A_right,    -1,  PROCPS_PIDS_PRIORITY      },  // s_int    EU_PRI
-   {     3,     -1,  A_right,    -1,  PROCPS_PIDS_NICE          },  // sl_int   EU_NCE
-   {     3,     -1,  A_right,    -1,  PROCPS_PIDS_NLWP          },  // s_int    EU_THD
-   {     0,     -1,  A_right,    -1,  PROCPS_PIDS_PROCESSOR     },  // u_int    EU_CPN
-   {     0,     -1,  A_right,    -1,  PROCPS_PIDS_TICS_DELTA    },  // sl_int   EU_CPU
-   {     6,     -1,  A_right,    -1,  PROCPS_PIDS_TICS_ALL      },  // ull_int  EU_TME
-   {     9,     -1,  A_right,    -1,  PROCPS_PIDS_TICS_ALL      },  // ull_int  EU_TM2
+     ------  ------  --------  -----  ------------------ */
+   {     0,     -1,  A_right,    -1,  PIDS_ID_PID        },  // s_int    EU_PID
+   {     0,     -1,  A_right,    -1,  PIDS_ID_PPID       },  // s_int    EU_PPD
+   {     5,     -1,  A_right,    -1,  PIDS_ID_EUID       },  // u_int    EU_UED
+   {     8,     -1,  A_left,     -1,  PIDS_ID_EUSER      },  // str      EU_UEN
+   {     5,     -1,  A_right,    -1,  PIDS_ID_RUID       },  // u_int    EU_URD
+   {     8,     -1,  A_left,     -1,  PIDS_ID_RUSER      },  // str      EU_URN
+   {     5,     -1,  A_right,    -1,  PIDS_ID_SUID       },  // u_int    EU_USD
+   {     8,     -1,  A_left,     -1,  PIDS_ID_SUSER      },  // str      EU_USN
+   {     5,     -1,  A_right,    -1,  PIDS_ID_EGID       },  // u_int    EU_GID
+   {     8,     -1,  A_left,     -1,  PIDS_ID_EGROUP     },  // str      EU_GRP
+   {     0,     -1,  A_right,    -1,  PIDS_ID_PGRP       },  // s_int    EU_PGD
+   {     8,     -1,  A_left,     -1,  PIDS_TTY_NAME      },  // str      EU_TTY
+   {     0,     -1,  A_right,    -1,  PIDS_ID_TPGID      },  // s_int    EU_TPG
+   {     0,     -1,  A_right,    -1,  PIDS_ID_SESSION    },  // s_int    EU_SID
+   {     3,     -1,  A_right,    -1,  PIDS_PRIORITY      },  // s_int    EU_PRI
+   {     3,     -1,  A_right,    -1,  PIDS_NICE          },  // sl_int   EU_NCE
+   {     3,     -1,  A_right,    -1,  PIDS_NLWP          },  // s_int    EU_THD
+   {     0,     -1,  A_right,    -1,  PIDS_PROCESSOR     },  // u_int    EU_CPN
+   {     0,     -1,  A_right,    -1,  PIDS_TICS_DELTA    },  // sl_int   EU_CPU
+   {     6,     -1,  A_right,    -1,  PIDS_TICS_ALL      },  // ull_int  EU_TME
+   {     9,     -1,  A_right,    -1,  PIDS_TICS_ALL      },  // ull_int  EU_TM2
 #ifdef BOOST_PERCNT
-   {     5,     -1,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // sl_int   EU_MEM
+   {     5,     -1,  A_right,    -1,  PIDS_VM_RSS        },  // sl_int   EU_MEM
 #else
-   {     4,     -1,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // sl_int   EU_MEM,
+   {     4,     -1,  A_right,    -1,  PIDS_VM_RSS        },  // sl_int   EU_MEM,
 #endif
 #ifndef NOBOOST_MEMS
-   {     7,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_VIRT_KIB  },  // sl_int   EU_VRT
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_SWAP       },  // sl_int   EU_SWP
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // sl_int   EU_RES
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_CODE_KIB  },  // sl_int   EU_COD
-   {     7,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_DATA_KIB  },  // sl_int   EU_DAT
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_SHR_KIB   },  // sl_int   EU_SHR
+   {     7,  SK_Kb,  A_right,    -1,  PIDS_MEM_VIRT_KIB  },  // sl_int   EU_VRT
+   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_SWAP       },  // sl_int   EU_SWP
+   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS        },  // sl_int   EU_RES
+   {     6,  SK_Kb,  A_right,    -1,  PIDS_MEM_CODE_KIB  },  // sl_int   EU_COD
+   {     7,  SK_Kb,  A_right,    -1,  PIDS_MEM_DATA_KIB  },  // sl_int   EU_DAT
+   {     6,  SK_Kb,  A_right,    -1,  PIDS_MEM_SHR_KIB   },  // sl_int   EU_SHR
 #else
-   {     5,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_VIRT_KIB  },  // sl_int   EU_VRT
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_SWAP       },  // sl_int   EU_SWP
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS        },  // sl_int   EU_RES
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_CODE_KIB  },  // sl_int   EU_COD
-   {     5,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_DATA_KIB  },  // sl_int   EU_DAT
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_MEM_SHR_KIB   },  // sl_int   EU_SHR
+   {     5,  SK_Kb,  A_right,    -1,  PIDS_MEM_VIRT_KIB  },  // sl_int   EU_VRT
+   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_SWAP       },  // sl_int   EU_SWP
+   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS        },  // sl_int   EU_RES
+   {     4,  SK_Kb,  A_right,    -1,  PIDS_MEM_CODE_KIB  },  // sl_int   EU_COD
+   {     5,  SK_Kb,  A_right,    -1,  PIDS_MEM_DATA_KIB  },  // sl_int   EU_DAT
+   {     4,  SK_Kb,  A_right,    -1,  PIDS_MEM_SHR_KIB   },  // sl_int   EU_SHR
 #endif
-   {     4,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MAJ       },  // sl_int   EU_FL1
-   {     4,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MIN       },  // sl_int   EU_FL2
-   {     4,     -1,  A_right,    -1,  PROCPS_PIDS_MEM_DT        },  // sl_int   EU_DRT ( always 0 w/ since 2.6 )
-   {     1,     -1,  A_right,    -1,  PROCPS_PIDS_STATE         },  // s_ch     EU_STA
-   {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_CMD           },  // str      EU_CMD
-   {    10,     -1,  A_left,     -1,  PROCPS_PIDS_WCHAN_NAME    },  // str      EU_WCH
-   {     8,     -1,  A_left,     -1,  PROCPS_PIDS_FLAGS         },  // ul_int   EU_FLG
-   {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_CGROUP        },  // str      EU_CGR
-   {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_SUPGIDS       },  // str      EU_SGD
-   {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_SUPGROUPS     },  // str      EU_SGN
-   {     0,     -1,  A_right,    -1,  PROCPS_PIDS_ID_TGID       },  // s_int    EU_TGD
-   {     5,     -1,  A_right,    -1,  PROCPS_PIDS_OOM_ADJ       },  // s_int    EU_OOA
-   {     4,     -1,  A_right,    -1,  PROCPS_PIDS_OOM_SCORE     },  // s_int    EU_OOM
-   {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_ENVIRON       },  // str      EU_ENV
-   {     3,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MAJ_DELTA },  // sl_int   EU_FV1
-   {     3,     -1,  A_right,    -1,  PROCPS_PIDS_FLT_MIN_DELTA },  // sl_int   EU_FV2
+   {     4,     -1,  A_right,    -1,  PIDS_FLT_MAJ       },  // sl_int   EU_FL1
+   {     4,     -1,  A_right,    -1,  PIDS_FLT_MIN       },  // sl_int   EU_FL2
+   {     4,     -1,  A_right,    -1,  PIDS_MEM_DT        },  // sl_int   EU_DRT ( always 0 w/ since 2.6 )
+   {     1,     -1,  A_right,    -1,  PIDS_STATE         },  // s_ch     EU_STA
+   {    -1,     -1,  A_left,     -1,  PIDS_CMD           },  // str      EU_CMD
+   {    10,     -1,  A_left,     -1,  PIDS_WCHAN_NAME    },  // str      EU_WCH
+   {     8,     -1,  A_left,     -1,  PIDS_FLAGS         },  // ul_int   EU_FLG
+   {    -1,     -1,  A_left,     -1,  PIDS_CGROUP        },  // str      EU_CGR
+   {    -1,     -1,  A_left,     -1,  PIDS_SUPGIDS       },  // str      EU_SGD
+   {    -1,     -1,  A_left,     -1,  PIDS_SUPGROUPS     },  // str      EU_SGN
+   {     0,     -1,  A_right,    -1,  PIDS_ID_TGID       },  // s_int    EU_TGD
+   {     5,     -1,  A_right,    -1,  PIDS_OOM_ADJ       },  // s_int    EU_OOA
+   {     4,     -1,  A_right,    -1,  PIDS_OOM_SCORE     },  // s_int    EU_OOM
+   {    -1,     -1,  A_left,     -1,  PIDS_ENVIRON       },  // str      EU_ENV
+   {     3,     -1,  A_right,    -1,  PIDS_FLT_MAJ_DELTA },  // sl_int   EU_FV1
+   {     3,     -1,  A_right,    -1,  PIDS_FLT_MIN_DELTA },  // sl_int   EU_FV2
 #ifndef NOBOOST_MEMS
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_USED       },  // sl_int   EU_USE
+   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_USED       },  // sl_int   EU_USE
 #else
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_USED       },  // sl_int   EU_USE
+   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_USED       },  // sl_int   EU_USE
 #endif
-   {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_IPC        },  // ul_int   EU_NS1
-   {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_MNT        },  // ul_int   EU_NS2
-   {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_NET        },  // ul_int   EU_NS3
-   {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_PID        },  // ul_int   EU_NS4
-   {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_USER       },  // ul_int   EU_NS5
-   {    10,     -1,  A_right,    -1,  PROCPS_PIDS_NS_UTS        },  // ul_int   EU_NS6
-   {     8,     -1,  A_left,     -1,  PROCPS_PIDS_LXCNAME       },  // str      EU_LXC
+   {    10,     -1,  A_right,    -1,  PIDS_NS_IPC        },  // ul_int   EU_NS1
+   {    10,     -1,  A_right,    -1,  PIDS_NS_MNT        },  // ul_int   EU_NS2
+   {    10,     -1,  A_right,    -1,  PIDS_NS_NET        },  // ul_int   EU_NS3
+   {    10,     -1,  A_right,    -1,  PIDS_NS_PID        },  // ul_int   EU_NS4
+   {    10,     -1,  A_right,    -1,  PIDS_NS_USER       },  // ul_int   EU_NS5
+   {    10,     -1,  A_right,    -1,  PIDS_NS_UTS        },  // ul_int   EU_NS6
+   {     8,     -1,  A_left,     -1,  PIDS_LXCNAME       },  // str      EU_LXC
 #ifndef NOBOOST_MEMS
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_ANON   },  // sl_int   EU_RZA
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_FILE   },  // sl_int   EU_RZF
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_LOCKED },  // sl_int   EU_RZL
-   {     6,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_SHARED },  // sl_int   EU_RZS
+   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_ANON   },  // sl_int   EU_RZA
+   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_FILE   },  // sl_int   EU_RZF
+   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_LOCKED },  // sl_int   EU_RZL
+   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_SHARED },  // sl_int   EU_RZS
 #else
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_ANON   },  // sl_int   EU_RZA
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_FILE   },  // sl_int   EU_RZF
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_LOCKED },  // sl_int   EU_RZL
-   {     4,  SK_Kb,  A_right,    -1,  PROCPS_PIDS_VM_RSS_SHARED },  // sl_int   EU_RZS
+   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_ANON   },  // sl_int   EU_RZA
+   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_FILE   },  // sl_int   EU_RZF
+   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_LOCKED },  // sl_int   EU_RZL
+   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_SHARED },  // sl_int   EU_RZS
 #endif
-   {    -1,     -1,  A_left,     -1,  PROCPS_PIDS_CGNAME        },  // str      EU_CGN
-#define eu_LAST        EU_CGN                                       //  ( the last real pflag, currently )
-// xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . ----------------------------------
+   {    -1,     -1,  A_left,     -1,  PIDS_CGNAME        },  // str      EU_CGN
+#define eu_LAST        EU_CGN
+// xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
 #define eu_TIME_START  eu_LAST +3
 #define eu_ID_FUID     eu_LAST +4
 #define eu_XTRA        eu_LAST +5
-   {          -1, -1, -1, -1,         PROCPS_PIDS_CMDLINE       },  // str      ( if Show_CMDLIN )
-   {          -1, -1, -1, -1,         PROCPS_PIDS_TICS_ALL_C    },  // ull_int  ( if Show_CTIMES )
-   {          -1, -1, -1, -1,         PROCPS_PIDS_TIME_START    },  // ull_int  ( if Show_FOREST )
-   {          -1, -1, -1, -1,         PROCPS_PIDS_ID_FUID       },  // u_int    ( if a usrseltyp )
-   {          -1, -1, -1, -1,         PROCPS_PIDS_extra         }   // u_int    ( if Show_FOREST )
+   {          -1, -1, -1, -1,         PIDS_CMDLINE       },  // str      ( if Show_CMDLIN )
+   {          -1, -1, -1, -1,         PIDS_TICS_ALL_C    },  // ull_int  ( if Show_CTIMES )
+   {          -1, -1, -1, -1,         PIDS_TIME_START    },  // ull_int  ( if Show_FOREST )
+   {          -1, -1, -1, -1,         PIDS_ID_FUID       },  // u_int    ( if a usrseltyp )
+   {          -1, -1, -1, -1,         PIDS_extra         }   // u_int    ( if Show_FOREST )
  #undef A_left
  #undef A_right
 };
@@ -2207,8 +2207,8 @@ static void procs_refresh (void) {
    // if in Solaris mode, adjust our scaling for all cpus
    Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
 
-   if (Monpidsidx) Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, PROCPS_SELECT_PID);
-   else Pids_reap = procps_pids_reap(Pids_ctx, Thread_mode ? PROCPS_FETCH_THREADS_TOO : PROCPS_FETCH_TASKS_ONLY);
+   if (Monpidsidx) Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, PIDS_SELECT_PID);
+   else Pids_reap = procps_pids_reap(Pids_ctx, Thread_mode ? PIDS_FETCH_THREADS_TOO : PIDS_FETCH_TASKS_ONLY);
    if (!Pids_reap)
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 
@@ -2845,7 +2845,7 @@ static void before (char *me) {
    // establish max depth for newlib pids stack (# of result structs)
    Pids_itms = alloc_c(sizeof(enum pids_item) * MAXTBL(Fieldstab));
    for (i = 0; i < MAXTBL(Fieldstab); i++)
-      Pids_itms[i] = PROCPS_PIDS_noop;
+      Pids_itms[i] = PIDS_noop;
    Pids_itms_cur = i;
    // we will identify specific items in the build_headers() function
    if (procps_pids_new(&Pids_ctx, Pids_itms, Pids_itms_cur))
@@ -4491,7 +4491,7 @@ static void forest_begin (WIN_t *q) {
       }
 #ifndef TREE_SCANALL
       if (!(procps_pids_sort(Pids_ctx, Seed_ppt, PIDSmaxt
-         , PROCPS_PIDS_TIME_START, PROCPS_PIDS_ASCEND)))
+         , PIDS_TIME_START, PIDS_SORT_ASCEND)))
             error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
 #endif
       for (i = 0; i < PIDSmaxt; i++)           // avoid any hidepid distortions
@@ -4609,7 +4609,7 @@ all_done:
          *       display and thus requiring the cpu summary toggle */
 static void summary_hlp (struct stat_stack *this, const char *pfx) {
  // a tailored 'results stack value' extractor macro
- #define rSv(E)  PROCPS_STAT_VAL(E, sl_int, this)
+ #define rSv(E)  STAT_VAL(E, sl_int, this)
    SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, z_frme, tot_frme;
    float scale;
 
@@ -4702,7 +4702,7 @@ numa_oops:
             // display each cpu node's states
             for (i = 0; i < Numa_node_tot; i++) {
                struct stat_stack *nod_ptr = Stat_reap->nodes->stacks[i];
-               if (NOD_VAL(stat_ID, i) == PROCPS_STAT_NODE_INVALID) continue;
+               if (NOD_VAL(stat_ID, i) == STAT_NODE_INVALID) continue;
                if (!isROOM(anyFLG, 1)) break;
                snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), NOD_VAL(stat_ID, i));
                summary_hlp(nod_ptr, tmp);
@@ -5045,7 +5045,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
 
 
 static int window_show (WIN_t *q, int wmax) {
- #define sORDER  CHKw(q, Qsrt_NORMAL) ? PROCPS_PIDS_DESCEND : PROCPS_PIDS_ASCEND
+ #define sORDER  CHKw(q, Qsrt_NORMAL) ? PIDS_SORT_DESCEND : PIDS_SORT_ASCEND
  /* the isBUSY macro determines if a task is 'active' --
     it returns true if some cpu was used since the last sample.
     ( actual 'running' tasks will be a subset of those selected ) */
@@ -5060,10 +5060,10 @@ static int window_show (WIN_t *q, int wmax) {
       forest_begin(q);
    else {
       enum pids_item item = Fieldstab[q->rc.sortindx].item;
-      if (item == PROCPS_PIDS_CMD && CHKw(q, Show_CMDLIN))
-         item = PROCPS_PIDS_CMDLINE;
-      else if (item == PROCPS_PIDS_TICS_ALL && CHKw(q, Show_CTIMES))
-         item = PROCPS_PIDS_TICS_ALL_C;
+      if (item == PIDS_CMD && CHKw(q, Show_CMDLIN))
+         item = PIDS_CMDLINE;
+      else if (item == PIDS_TICS_ALL && CHKw(q, Show_CTIMES))
+         item = PIDS_TICS_ALL_C;
       if (!(procps_pids_sort(Pids_ctx, q->ppt , PIDSmaxt, item, sORDER)))
          error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
    }
