@@ -326,7 +326,7 @@ static void new_format(void)
 #define TICv(E) STAT_VAL(E, ull_int, stat_stack)
 #define DTICv(E) STAT_VAL(E, sl_int, stat_stack)
 #define SYSv(E) STAT_VAL(E, ul_int, stat_stack)
-#define MEMv(E) STAT_VAL(E, ul_int, mem_stack)
+#define MEMv(E) MEMINFO_VAL(E, ul_int, mem_stack)
 #define DSYSv(E) STAT_VAL(E, s_int, stat_stack)
     const char format[] =
         "%2lu %2lu %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u";
@@ -536,8 +536,7 @@ static void diskpartition_format(const char *partition_name)
     int i;
 
     if (procps_diskstats_new(&disk_stat) < 0)
-        xerr(EXIT_FAILURE,
-             _("Unable to create diskstat structure"));
+        xerrx(EXIT_FAILURE, _("Unable to create diskstat structure"));
 
     if (!(got = procps_diskstats_get(disk_stat, partition_name, DISKSTATS_TYPE)))
         xerrx(EXIT_FAILURE, _("Disk/Partition %s not found"), partition_name);
@@ -637,16 +636,14 @@ static void diskformat(void)
     const char wide_format[] = "%-5s %9lu %9lu %11lu %11lu %9lu %9lu %11lu %11lu %7lu %7lu";
 
     if (procps_diskstats_new(&disk_stat) < 0)
-        xerr(EXIT_FAILURE,
-            _("Unable to create diskstat structure"));
+        xerrx(EXIT_FAILURE, _("Unable to create diskstat structure"));
 
     if (!moreheaders)
         diskheader();
 
     for (i=0; infinite_updates || i < num_updates ; i++) {
         if (!(reap = procps_diskstats_reap(disk_stat, Disk_items, MAX_disk)))
-            xerr(EXIT_FAILURE,
-                _("Unable to retrieve disk statistics"));
+            xerrx(EXIT_FAILURE, _("Unable to retrieve disk statistics"));
         if (t_option) {
             (void) time( &the_time );
             tm_ptr = localtime( &the_time );
@@ -714,7 +711,7 @@ static void slabformat (void)
         slab_AOBJS, slab_OBJS, slab_OSIZE, slab_OPS, slab_NAME };
 
     if (procps_slabinfo_new(&slab_info) < 0)
-        xerr(EXIT_FAILURE, _("Unable to create slabinfo structure"));
+        xerrx(EXIT_FAILURE, _("Unable to create slabinfo structure"));
 
     if (!moreheaders)
         slabheader();
@@ -759,11 +756,9 @@ static void disksum_format(void)
     disk_count = part_count = 0;
 
     if (procps_diskstats_new(&disk_stat) < 0)
-        xerr(EXIT_FAILURE,
-            _("Unable to create diskstat structure"));
+        xerrx(EXIT_FAILURE, _("Unable to create diskstat structure"));
     if (!(reap = procps_diskstats_reap(disk_stat, Disk_items, MAX_disk)))
-        xerr(EXIT_FAILURE,
-            _("Unable to retrieve disk statistics"));
+        xerrx(EXIT_FAILURE, _("Unable to retrieve disk statistics"));
 
     for (j = 0; j < reap->total; j++) {
         if (diskVAL(disk_TYPE, s_int) != DISKSTATS_TYPE_DISK) {

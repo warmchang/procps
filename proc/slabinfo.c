@@ -994,7 +994,7 @@ PROCPS_EXPORT struct slabinfo_stack **procps_slabinfo_sort (
         if (p->item == sortitem)
             break;
         ++offset;
-        if (p->item == SLABINFO_logical_end)
+        if (p->item >= SLABINFO_logical_end)
             return NULL;
         ++p;
     }

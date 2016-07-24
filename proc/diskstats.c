@@ -303,6 +303,7 @@ static struct dev_node *node_add (
     return this;
 } // end: node_add
 
+
 static void node_classify (
         struct dev_node *this)
 {
@@ -319,7 +320,7 @@ static void node_classify (
         this->type = DISKSTATS_TYPE_DISK;
         return;
     }
-    while((dent = readdir(dirp))) {
+    while ((dent = readdir(dirp))) {
         if (strcmp(this->name, dent->d_name) == 0) {
             this->type = DISKSTATS_TYPE_DISK;
             break;
@@ -578,7 +579,7 @@ static int read_diskstats_failed (
         if (rc != 14) {
             if (errno != 0)
                 return -errno;
-            return -EINVAL;
+            return -EIO;
         }
         node.stamped = info->new_stamp;
         if ((rc = node_update(info, &node)))
@@ -605,27 +606,27 @@ static struct stacks_extent *stacks_alloc (
     if (maxstacks < 1)
         return NULL;
 
-    vect_size  = sizeof(void *) * maxstacks;                      // size of the addr vectors |
-    vect_size += sizeof(void *);                                  // plus NULL addr delimiter |
-    head_size  = sizeof(struct diskstats_stack);                  // size of that head struct |
-    list_size  = sizeof(struct diskstats_result) * this->numitems;// any single results stack |
-    blob_size  = sizeof(struct stacks_extent);                    // the extent anchor itself |
-    blob_size += vect_size;                                       // plus room for addr vects |
-    blob_size += head_size * maxstacks;                           // plus room for head thing |
-    blob_size += list_size * maxstacks;                           // plus room for our stacks |
+    vect_size  = sizeof(void *) * maxstacks;                        // size of the addr vectors |
+    vect_size += sizeof(void *);                                    // plus NULL addr delimiter |
+    head_size  = sizeof(struct diskstats_stack);                    // size of that head struct |
+    list_size  = sizeof(struct diskstats_result) * this->numitems;  // any single results stack |
+    blob_size  = sizeof(struct stacks_extent);                      // the extent anchor itself |
+    blob_size += vect_size;                                         // plus room for addr vects |
+    blob_size += head_size * maxstacks;                             // plus room for head thing |
+    blob_size += list_size * maxstacks;                             // plus room for our stacks |
 
-    /* note: all of our memory is allocated in a single blob, facilitating some later free(). |
-             as a minimum, it is important that all those result structs themselves always be |
-             contiguous within every stack since they will be accessed via relative position. | */
+    /* note: all of our memory is allocated in one single blob, facilitating some later free(). |
+             as a minimum, it's important that all of those result structs themselves always be |
+             contiguous within every stack since they will be accessed via a relative position. | */
     if (NULL == (p_blob = calloc(1, blob_size)))
         return NULL;
 
-    p_blob->next = this->extents;                                 // push this extent onto... |
-    this->extents = p_blob;                                       // ...some existing extents |
-    p_vect = (void *)p_blob + sizeof(struct stacks_extent);       // prime our vector pointer |
-    p_blob->stacks = p_vect;                                      // set actual vectors start |
-    v_head = (void *)p_vect + vect_size;                          // prime head pointer start |
-    v_list = v_head + (head_size * maxstacks);                    // prime our stacks pointer |
+    p_blob->next = this->extents;                                   // push this extent onto... |
+    this->extents = p_blob;                                         // ...some existing extents |
+    p_vect = (void *)p_blob + sizeof(struct stacks_extent);         // prime our vector pointer |
+    p_blob->stacks = p_vect;                                        // set actual vectors start |
+    v_head = (void *)p_vect + vect_size;                            // prime head pointer start |
+    v_list = v_head + (head_size * maxstacks);                      // prime our stacks pointer |
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct diskstats_stack *)v_head;
@@ -963,7 +964,7 @@ PROCPS_EXPORT struct diskstats_stack **procps_diskstats_sort (
         if (p->item == sortitem)
             break;
         ++offset;
-        if (p->item == DISKSTATS_logical_end)
+        if (p->item >= DISKSTATS_logical_end)
             return NULL;
         ++p;
     }
