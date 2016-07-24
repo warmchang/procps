@@ -70,6 +70,12 @@ enum stat_reap_type {
     STAT_REAP_CPUS_AND_NODES
 };
 
+enum stat_sort_order {
+    STAT_SORT_ASCEND   = +1,
+    STAT_SORT_DESCEND  = -1
+};
+
+
 struct stat_result {
     enum stat_item item;
     union {
@@ -126,6 +132,13 @@ struct stat_stack *procps_stat_select (
     struct stat_info *info,
     enum stat_item *items,
     int numitems);
+
+struct stat_stack **procps_stat_sort (
+    struct stat_info *info,
+    struct stat_stack *stacks[],
+    int numstacked,
+    enum stat_item sortitem,
+    enum stat_sort_order order);
 
 __END_DECLS
 

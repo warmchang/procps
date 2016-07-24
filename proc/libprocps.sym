@@ -43,6 +43,7 @@ global:
 	procps_stat_get;
 	procps_stat_reap;
 	procps_stat_select;
+	procps_stat_sort;
 	procps_uptime;
 	procps_uptime_sprint;
 	procps_uptime_sprint_short;

@@ -200,10 +200,60 @@ setDECL(SYS_DELTA_PROC_RUNNING) { (void)T; R->result.s_int = S->new.procs_runnin
 #undef SYSsetH
 
 
+// ___ Sorting Support ||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+struct sort_parms {
+    int offset;
+    enum stat_sort_order order;
+};
+
+#define srtNAME(t) sort_results_ ## t
+#define srtDECL(t) static int srtNAME(t) \
+    (const struct stat_stack **A, const struct stat_stack **B, struct sort_parms *P)
+
+srtDECL(s_int) {
+    const struct stat_result *a = (*A)->head + P->offset; \
+    const struct stat_result *b = (*B)->head + P->offset; \
+    return P->order * (a->result.s_int - b->result.s_int);
+}
+
+srtDECL(sl_int) {
+    const struct stat_result *a = (*A)->head + P->offset; \
+    const struct stat_result *b = (*B)->head + P->offset; \
+    return P->order * (a->result.sl_int - b->result.sl_int);
+}
+
+srtDECL(ul_int) {
+    const struct stat_result *a = (*A)->head + P->offset; \
+    const struct stat_result *b = (*B)->head + P->offset; \
+    if ( a->result.ul_int > b->result.ul_int ) return P->order > 0 ?  1 : -1; \
+    if ( a->result.ul_int < b->result.ul_int ) return P->order > 0 ? -1 :  1; \
+    return 0;
+}
+
+srtDECL(ull_int) {
+    const struct stat_result *a = (*A)->head + P->offset; \
+    const struct stat_result *b = (*B)->head + P->offset; \
+    if ( a->result.ull_int > b->result.ull_int ) return P->order > 0 ?  1 : -1; \
+    if ( a->result.ull_int < b->result.ull_int ) return P->order > 0 ? -1 :  1; \
+    return 0;
+}
+
+srtDECL(noop) { \
+    (void)A; (void)B; (void)P; \
+    return 0;
+}
+
+#undef srtDECL
+
+
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 typedef void (*SET_t)(struct stat_result *, struct hist_sys *, struct hist_tic *);
 #define RS(e) (SET_t)setNAME(e)
+
+typedef int  (*QSR_t)(const void *, const void *, void *);
+#define QS(t) (QSR_t)srtNAME(t)
 
         /*
          * Need it be said?
@@ -211,49 +261,52 @@ typedef void (*SET_t)(struct stat_result *, struct hist_sys *, struct hist_tic *
          * those 'enum stat_item' guys ! */
 static struct {
     SET_t setsfunc;              // the actual result setting routine
+    QSR_t sortfunc;              // sort cmp func for a specific type
 } Item_table[] = {
-/*  setsfunc
-    -------------------------- */
-  { RS(noop)                   },
-  { RS(extra)                  },
+/*  setsfunc                     sortfunc
+    --------------------------   ---------  */
+  { RS(noop),                    QS(ul_int)  },
+  { RS(extra),                   QS(noop)    },
 
-  { RS(TIC_ID)                 },
-  { RS(TIC_NUMA_NODE)          },
-  { RS(TIC_USER)               },
-  { RS(TIC_NICE)               },
-  { RS(TIC_SYSTEM)             },
-  { RS(TIC_IDLE)               },
-  { RS(TIC_IOWAIT)             },
-  { RS(TIC_IRQ)                },
-  { RS(TIC_SOFTIRQ)            },
-  { RS(TIC_STOLEN)             },
-  { RS(TIC_GUEST)              },
-  { RS(TIC_GUEST_NICE)         },
-  { RS(TIC_DELTA_USER)         },
-  { RS(TIC_DELTA_NICE)         },
-  { RS(TIC_DELTA_SYSTEM)       },
-  { RS(TIC_DELTA_IDLE)         },
-  { RS(TIC_DELTA_IOWAIT)       },
-  { RS(TIC_DELTA_IRQ)          },
-  { RS(TIC_DELTA_SOFTIRQ)      },
-  { RS(TIC_DELTA_STOLEN)       },
-  { RS(TIC_DELTA_GUEST)        },
-  { RS(TIC_DELTA_GUEST_NICE)   },
+  { RS(TIC_ID),                  QS(s_int)   },
+  { RS(TIC_NUMA_NODE),           QS(s_int)   },
+  { RS(TIC_USER),                QS(ull_int) },
+  { RS(TIC_NICE),                QS(ull_int) },
+  { RS(TIC_SYSTEM),              QS(ull_int) },
+  { RS(TIC_IDLE),                QS(ull_int) },
+  { RS(TIC_IOWAIT),              QS(ull_int) },
+  { RS(TIC_IRQ),                 QS(ull_int) },
+  { RS(TIC_SOFTIRQ),             QS(ull_int) },
+  { RS(TIC_STOLEN),              QS(ull_int) },
+  { RS(TIC_GUEST),               QS(ull_int) },
+  { RS(TIC_GUEST_NICE),          QS(ull_int) },
 
-  { RS(SYS_CTX_SWITCHES)       },
-  { RS(SYS_INTERRUPTS)         },
-  { RS(SYS_PROC_BLOCKED)       },
-  { RS(SYS_PROC_CREATED)       },
-  { RS(SYS_PROC_RUNNING)       },
-  { RS(SYS_TIME_OF_BOOT)       },
-  { RS(SYS_DELTA_CTX_SWITCHES) },
-  { RS(SYS_DELTA_INTERRUPTS)   },
-  { RS(SYS_DELTA_PROC_BLOCKED) },
-  { RS(SYS_DELTA_PROC_CREATED) },
-  { RS(SYS_DELTA_PROC_RUNNING) },
+  { RS(TIC_DELTA_USER),          QS(sl_int)  },
+  { RS(TIC_DELTA_NICE),          QS(sl_int)  },
+  { RS(TIC_DELTA_SYSTEM),        QS(sl_int)  },
+  { RS(TIC_DELTA_IDLE),          QS(sl_int)  },
+  { RS(TIC_DELTA_IOWAIT),        QS(sl_int)  },
+  { RS(TIC_DELTA_IRQ),           QS(sl_int)  },
+  { RS(TIC_DELTA_SOFTIRQ),       QS(sl_int)  },
+  { RS(TIC_DELTA_STOLEN),        QS(sl_int)  },
+  { RS(TIC_DELTA_GUEST),         QS(sl_int)  },
+  { RS(TIC_DELTA_GUEST_NICE),    QS(sl_int)  },
+
+  { RS(SYS_CTX_SWITCHES),        QS(ul_int)  },
+  { RS(SYS_INTERRUPTS),          QS(ul_int)  },
+  { RS(SYS_PROC_BLOCKED),        QS(ul_int)  },
+  { RS(SYS_PROC_CREATED),        QS(ul_int)  },
+  { RS(SYS_PROC_RUNNING),        QS(ul_int)  },
+  { RS(SYS_TIME_OF_BOOT),        QS(ul_int)  },
+
+  { RS(SYS_DELTA_CTX_SWITCHES),  QS(s_int)   },
+  { RS(SYS_DELTA_INTERRUPTS),    QS(s_int)   },
+  { RS(SYS_DELTA_PROC_BLOCKED),  QS(s_int)   },
+  { RS(SYS_DELTA_PROC_CREATED),  QS(s_int)   },
+  { RS(SYS_DELTA_PROC_RUNNING),  QS(s_int)   },
 
  // dummy entry corresponding to STAT_logical_end ...
-  { NULL,                      }
+  { NULL,                        NULL        }
 };
 
     /* please note,
@@ -265,7 +318,10 @@ enum stat_item STAT_TIC_highest = STAT_TIC_DELTA_GUEST_NICE;
 enum stat_item STAT_logical_end = STAT_SYS_DELTA_PROC_RUNNING + 1;
 
 #undef setNAME
+#undef srtNAME
 #undef RS
+#undef QS
+
 
 // ___ Private Functions ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -547,33 +603,33 @@ reap_em_again:
     memcpy(&info->sys_hist.old, &info->sys_hist.new, sizeof(struct stat_data));
 
     llnum = 0;
-    b = strstr(bp, "intr ");
-    if(b) sscanf(b,  "intr %llu", &llnum);
+    if ((b = strstr(bp, "intr ")))
+        sscanf(b,  "intr %llu", &llnum);
     info->sys_hist.new.intr = llnum;
 
     llnum = 0;
-    b = strstr(bp, "ctxt ");
-    if(b) sscanf(b,  "ctxt %llu", &llnum);
+    if ((b = strstr(bp, "ctxt ")))
+        sscanf(b,  "ctxt %llu", &llnum);
     info->sys_hist.new.ctxt = llnum;
 
     llnum = 0;
-    b = strstr(bp, "btime ");
-    if(b) sscanf(b,  "btime %llu", &llnum);
+    if ((b = strstr(bp, "btime ")))
+        sscanf(b,  "btime %llu", &llnum);
     info->sys_hist.new.btime = llnum;
 
     llnum = 0;
-    b = strstr(bp, "processes ");
-    if(b) sscanf(b,  "processes %llu", &llnum);
+    if ((b = strstr(bp, "processes ")))
+        sscanf(b,  "processes %llu", &llnum);
     info->sys_hist.new.procs_created = llnum;
 
     llnum = 0;
-    b = strstr(bp, "procs_blocked ");
-    if(b) sscanf(b,  "procs_blocked %llu", &llnum);
+    if ((b = strstr(bp, "procs_blocked ")))
+        sscanf(b,  "procs_blocked %llu", &llnum);
     info->sys_hist.new.procs_blocked = llnum;
 
     llnum = 0;
-    b = strstr(bp, "procs_running ");
-    if(b) sscanf(b,  "procs_running %llu", &llnum);
+    if ((b = strstr(bp, "procs_running ")))
+        sscanf(b,  "procs_running %llu", &llnum);
     info->sys_hist.new.procs_running = llnum;
 
     // let's not distort the deltas the first time thru ...
@@ -612,27 +668,27 @@ static struct stacks_extent *stacks_alloc (
     if (maxstacks < 1)
         return NULL;
 
-    vect_size  = sizeof(void *) * maxstacks;                   // size of the addr vectors |
-    vect_size += sizeof(void *);                               // plus NULL addr delimiter |
-    head_size  = sizeof(struct stat_stack);                    // size of that head struct |
-    list_size  = sizeof(struct stat_result) * this->items->num;// any single results stack |
-    blob_size  = sizeof(struct stacks_extent);                 // the extent anchor itself |
-    blob_size += vect_size;                                    // plus room for addr vects |
-    blob_size += head_size * maxstacks;                        // plus room for head thing |
-    blob_size += list_size * maxstacks;                        // plus room for our stacks |
+    vect_size  = sizeof(void *) * maxstacks;                     // size of the addr vectors |
+    vect_size += sizeof(void *);                                 // plus NULL addr delimiter |
+    head_size  = sizeof(struct stat_stack);                      // size of that head struct |
+    list_size  = sizeof(struct stat_result) * this->items->num;  // any single results stack |
+    blob_size  = sizeof(struct stacks_extent);                   // the extent anchor itself |
+    blob_size += vect_size;                                      // plus room for addr vects |
+    blob_size += head_size * maxstacks;                          // plus room for head thing |
+    blob_size += list_size * maxstacks;                          // plus room for our stacks |
 
-    /* note: all of our memory is allocated in a single blob, facilitating a later free(). |
-             as a minimum, it is important that the result structures themselves always be |
-             contiguous for every stack since they are accessed through relative position. | */
+    /* note: all of our memory is allocated in one single blob, facilitating a later free(). |
+             as a minimum, it is important that those result structures themselves always be |
+             contiguous within each stack since they are accessed through relative position. | */
     if (NULL == (p_blob = calloc(1, blob_size)))
         return NULL;
 
-    p_blob->next = this->extents;                              // push this extent onto... |
-    this->extents = p_blob;                                    // ...some existing extents |
-    p_vect = (void *)p_blob + sizeof(struct stacks_extent);    // prime our vector pointer |
-    p_blob->stacks = p_vect;                                   // set actual vectors start |
-    v_head = (void *)p_vect + vect_size;                       // prime head pointer start |
-    v_list = v_head + (head_size * maxstacks);                 // prime our stacks pointer |
+    p_blob->next = this->extents;                                // push this extent onto... |
+    this->extents = p_blob;                                      // ...some existing extents |
+    p_vect = (void *)p_blob + sizeof(struct stacks_extent);      // prime our vector pointer |
+    p_blob->stacks = p_vect;                                     // set actual vectors start |
+    v_head = (void *)p_vect + vect_size;                         // prime head pointer start |
+    v_list = v_head + (head_size * maxstacks);                   // prime our stacks pointer |
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct stat_stack *)v_head;
@@ -898,8 +954,8 @@ PROCPS_EXPORT struct stat_result *procps_stat_get (
     if (item < 0 || item >= STAT_logical_end)
         return NULL;
 
-    /* no sense reading the stat with every call from a program like vmstat
-       who chooses not to use the much more efficient 'select' function ... */
+    /* we will NOT read the source file with every call - rather, we'll offer
+       a granularity of 1 second between reads ... */
     cur_secs = time(NULL);
     if (1 <= cur_secs - sav_secs) {
         if (read_stat_failed(info))
@@ -958,9 +1014,9 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
         return NULL;
     info->results.summary = update_single_stack(info, &info->cpu_summary);
 
-    /* unlike the other 'reap' functions, <stat> provides for two separate
-       stacks pointer arrays exposed to callers. Thus, to keep our promise
-       of NULL delimit we must ensure a minimal array for the optional one */
+    /* unlike the other 'reap' functions, <stat> provides for two separate |
+       stacks pointer arrays exposed to callers. Thus, to keep our promise |
+       of NULL delimit we must ensure a minimal array for the optional one | */
     if (!info->nodes.result.stacks
     && (!(info->nodes.result.stacks = malloc(sizeof(void *)))))
         return NULL;
@@ -974,9 +1030,9 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
             break;
         case STAT_REAP_CPUS_AND_NODES:
 #ifndef NUMA_DISABLE
-            /* note: if we are doing numa at all, we must call make_numa_hist
-               before we build (fetch) the cpu stacks since the read_stat guy
-               will have marked (temporarily) all the cpu node ids as invalid */
+            /* note: if we are doing numa at all, we must call make_numa_hist |
+               before we build (fetch) the cpu stacks since the read_stat guy |
+               will have marked (temporarily) all the cpu node ids as invalid | */
             if (0 > make_numa_hist(info))
                 return NULL;
             // tolerate an unexpected absence of libnuma.so ...
@@ -1016,3 +1072,53 @@ PROCPS_EXPORT struct stat_stack *procps_stat_select (
 
     return update_single_stack(info, &info->select);
 } // end: procps_stat_select
+
+
+/*
+ * procps_stat_sort():
+ *
+ * Sort stacks anchored in the passed stack pointers array
+ * based on the designated sort enumerator and specified order.
+ *
+ * Returns those same addresses sorted.
+ *
+ * Note: all of the stacks must be homogeneous (of equal length and content).
+ */
+PROCPS_EXPORT struct stat_stack **procps_stat_sort (
+        struct stat_info *info,
+        struct stat_stack *stacks[],
+        int numstacked,
+        enum stat_item sortitem,
+        enum stat_sort_order order)
+{
+    struct stat_result *p;
+    struct sort_parms parms;
+    int offset;
+
+    if (info == NULL || stacks == NULL)
+        return NULL;
+
+    // a stat_item is currently unsigned, but we'll protect our future
+    if (sortitem < 0 || sortitem >= STAT_logical_end)
+        return NULL;
+    if (order != STAT_SORT_ASCEND && order != STAT_SORT_DESCEND)
+        return NULL;
+    if (numstacked < 2)
+        return stacks;
+
+    offset = 0;
+    p = stacks[0]->head;
+    for (;;) {
+        if (p->item == sortitem)
+            break;
+        ++offset;
+        if (p->item >= STAT_logical_end)
+            return NULL;
+        ++p;
+    }
+    parms.offset = offset;
+    parms.order = order;
+
+    qsort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms);
+    return stacks;
+} // end: procps_stat_sort
