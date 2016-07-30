@@ -54,6 +54,7 @@
 //#define TREE_SCANALL            /* rescan array w/ forest view, avoid sort */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 //#define VALIDATE_NLS            /* validate the integrity of all nls tbls  */
+//#define VER_J_RCFILE            /* increase # of fields, rcfile ver to 'j' */
 
 
 /*######  Notes, etc.  ###################################################*/
@@ -117,7 +118,7 @@ char *strcasestr(const char *haystack, const char *needle);
       -- so SCREENMAX provides for all fields plus a 250+ byte command line */
 #define CAPBUFSIZ    32
 #define CLRBUFSIZ    64
-#define PFLAGSSIZ    80
+#define PFLAGSSIZ   100
 #define SMLBUFSIZ   128
 #define MEDBUFSIZ   256
 #define LRGBUFSIZ   512
@@ -464,27 +465,33 @@ typedef struct WIN_t {
         /* Configuration files support */
 #define SYS_RCFILESPEC  "/etc/toprc"
 #define RCF_EYECATCHER  "Config File (Linux processes with windows)\n"
-#define RCF_VERSION_ID  'i'
 #define RCF_PLUS_H      "\\]^_`abcdefghij"
+#ifdef VER_J_RCFILE
+#define RCF_PLUS_J      "klmnopqrstuvwxyz"
+#define RCF_VERSION_ID  'j'
+#else
+#define RCF_VERSION_ID  'i'
+#define RCF_PLUS_J      ""
+#endif
 
         /* The default fields displayed and their order, if nothing is
            specified by the loser, oops user.
            note: any *contiguous* ascii sequence can serve as fieldscur
                  characters as long as the initial value is coordinated
                  with that specified for FLD_OFFSET
-           ( we're providing for up to 70 fields currently, )
+           ( we're providing for up to 86 fields currently, )
            ( with just one escaped value, the '\' character ) */
 #define FLD_OFFSET  '%'
-   //   seq_fields  "%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghij"
+   //   seq_fields  "%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz"
 #ifdef ORIG_TOPDEFS
-#define DEF_FIELDS  "¥¨³´»½ÀÄ·º¹Å&')*+,-./012568<>?ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H
+#define DEF_FIELDS  "¥¨³´»½ÀÄ·º¹Å&')*+,-./012568<>?ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
 #else
-#define DEF_FIELDS  "¥&K¨³´»½@·º¹56ÄFÅ')*+,-./0128<>?ABCGHIJLMNOPQRSTUVWXYZ[" RCF_PLUS_H
+#define DEF_FIELDS  "¥&K¨³´»½@·º¹56ÄFÅ')*+,-./0128<>?ABCGHIJLMNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
 #endif
         /* Pre-configured windows/field groups */
-#define JOB_FIELDS  "¥¦¹·º(³´Ä»½@<§Å)*+,-./012568>?ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H
-#define MEM_FIELDS  "¥º»<½¾¿ÀÁMBNÃD34·Å&'()*+,-./0125689FGHIJKLOPQRSTUVWXYZ[" RCF_PLUS_H
-#define USR_FIELDS  "¥¦§¨ª°¹·ºÄÅ)+,-./1234568;<=>?@ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H
+#define JOB_FIELDS  "¥¦¹·º(³´Ä»½@<§Å)*+,-./012568>?ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
+#define MEM_FIELDS  "¥º»<½¾¿ÀÁMBNÃD34·Å&'()*+,-./0125689FGHIJKLOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
+#define USR_FIELDS  "¥¦§¨ª°¹·ºÄÅ)+,-./1234568;<=>?@ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
         // old top fields ( 'a'-'z' ) in positions 0-25
         // other suse old top fields ( '{|' ) in positions 26-27
 #define CVT_FIELDS  "%&*'(-0346789:;<=>?@ACDEFGML)+,./125BHIJKNOPQRSTUVWXYZ["
