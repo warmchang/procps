@@ -3485,10 +3485,10 @@ static void configs_read (void) {
          p = fmtmk(N_fmt(RC_bad_entry_fmt), i+1, Rc_name);
 
          // note: "fieldscur=%__s" on next line should equal (PFLAGSSIZ -1) !
-         if (2 != fscanf(fp, "%3s\tfieldscur=%79s\n"
+         if (2 != fscanf(fp, "%3s\tfieldscur=%99s\n"
             , w->rc.winname, w->rc.fieldscur))
                goto default_or_error;
-#if PFLAGSSIZ != 80
+#if PFLAGSSIZ != 100
  // too bad fscanf is not as flexible with his format string as snprintf
  # error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 #endif
@@ -3514,7 +3514,9 @@ static void configs_read (void) {
                // these next 2 are really global, but best documented here
                Rc.summ_mscale = Rc.task_mscale = SK_Kb;
             case 'i':                          // actual RCF_VERSION_ID
-            default:                           // and a future version?
+               scat(w->rc.fieldscur, RCF_PLUS_J);
+            case 'j':                          // and the next version
+            default:
                if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
                   goto default_or_error;
                for (x = 0; x < EU_MAXPFLGS; ++x)
