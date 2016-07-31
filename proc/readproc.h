@@ -21,13 +21,13 @@
 
 __BEGIN_DECLS
 
-// ld	cutime, cstime, priority, nice, timeout, alarm, rss,
-// c	state,
-// d	ppid, pgrp, session, tty, tpgid,
-// s	signal, blocked, sigignore, sigcatch,
-// lu	flags, min_flt, cmin_flt, maj_flt, cmaj_flt, utime, stime,
-// lu	rss_rlim, start_code, end_code, start_stack, kstk_esp, kstk_eip,
-// lu	start_time, vsize, wchan,
+// ld   cutime, cstime, priority, nice, timeout, alarm, rss,
+// c    state,
+// d    ppid, pgrp, session, tty, tpgid,
+// s    signal, blocked, sigignore, sigcatch,
+// lu   flags, min_flt, cmin_flt, maj_flt, cmaj_flt, utime, stime,
+// lu   rss_rlim, start_code, end_code, start_stack, kstk_esp, kstk_eip,
+// lu   start_time, vsize, wchan,
 
 // This is to help document a transition from pid to tgid/tid caused
 // by the introduction of thread support. It is used in cases where
@@ -42,88 +42,88 @@ __BEGIN_DECLS
 typedef struct proc_t {
 // 1st 16 bytes
     int
-        tid,		// (special)       task id, the POSIX thread ID (see also: tgid)
-    	ppid;		// stat,status     pid of parent process
+        tid,            // (special)       task id, the POSIX thread ID (see also: tgid)
+        ppid;           // stat,status     pid of parent process
     long                // next 2 fields are NOT filled in by readproc
         maj_delta,      // stat (special) major page faults since last update
         min_delta;      // stat (special) minor page faults since last update
     unsigned
         pcpu;           // stat (special)  %CPU usage (is not filled in by readproc!!!)
     char
-    	state,		// stat,status     single-char code for process state (S=sleeping)
+        state,          // stat,status     single-char code for process state (S=sleeping)
 #ifdef FALSE_THREADS
         pad_1,          // n/a             padding (psst, also used if multi-threaded)
 #else
         pad_1,          // n/a             padding
 #endif
-    	pad_2,		// n/a             padding
-    	pad_3;		// n/a             padding
+        pad_2,          // n/a             padding
+        pad_3;          // n/a             padding
 // 2nd 16 bytes
     unsigned long long
-	utime,		// stat            user-mode CPU time accumulated by process
-	stime,		// stat            kernel-mode CPU time accumulated by process
+        utime,          // stat            user-mode CPU time accumulated by process
+        stime,          // stat            kernel-mode CPU time accumulated by process
 // and so on...
-	cutime,		// stat            cumulative utime of process and reaped children
-	cstime,		// stat            cumulative stime of process and reaped children
-	start_time;	// stat            start time of process -- seconds since 1-1-70
+        cutime,         // stat            cumulative utime of process and reaped children
+        cstime,         // stat            cumulative stime of process and reaped children
+        start_time;     // stat            start time of process -- seconds since 1-1-70
 #ifdef SIGNAL_STRING
     char
-	// Linux 2.1.7x and up have 64 signals. Allow 64, plus '\0' and padding.
-	signal[18],	// status          mask of pending signals, per-task for readtask() but per-proc for readproc()
-	blocked[18],	// status          mask of blocked signals
-	sigignore[18],	// status          mask of ignored signals
-	sigcatch[18],	// status          mask of caught  signals
-	_sigpnd[18];	// status          mask of PER TASK pending signals
+        // Linux 2.1.7x and up have 64 signals. Allow 64, plus '\0' and padding.
+        signal[18],     // status          mask of pending signals, per-task for readtask() but per-proc for readproc()
+        blocked[18],    // status          mask of blocked signals
+        sigignore[18],  // status          mask of ignored signals
+        sigcatch[18],   // status          mask of caught  signals
+        _sigpnd[18];    // status          mask of PER TASK pending signals
 #else
     long long
-	// Linux 2.1.7x and up have 64 signals.
-	signal,		// status          mask of pending signals, per-task for readtask() but per-proc for readproc()
-	blocked,	// status          mask of blocked signals
-	sigignore,	// status          mask of ignored signals
-	sigcatch,	// status          mask of caught  signals
-	_sigpnd;	// status          mask of PER TASK pending signals
+        // Linux 2.1.7x and up have 64 signals.
+        signal,         // status          mask of pending signals, per-task for readtask() but per-proc for readproc()
+        blocked,        // status          mask of blocked signals
+        sigignore,      // status          mask of ignored signals
+        sigcatch,       // status          mask of caught  signals
+        _sigpnd;        // status          mask of PER TASK pending signals
 #endif
     unsigned long
-	start_code,	// stat            address of beginning of code segment
-	end_code,	// stat            address of end of code segment
-	start_stack,	// stat            address of the bottom of stack for the process
-	kstk_esp,	// stat            kernel stack pointer
-	kstk_eip,	// stat            kernel instruction pointer
-	wchan;		// stat (special)  address of kernel wait channel proc is sleeping in
+        start_code,     // stat            address of beginning of code segment
+        end_code,       // stat            address of end of code segment
+        start_stack,    // stat            address of the bottom of stack for the process
+        kstk_esp,       // stat            kernel stack pointer
+        kstk_eip,       // stat            kernel instruction pointer
+        wchan;          // stat (special)  address of kernel wait channel proc is sleeping in
     long
-	priority,	// stat            kernel scheduling priority
-	nice,		// stat            standard unix nice level of process
-	rss,		// stat            identical to 'resident'
-	alarm,		// stat            ?
+        priority,       // stat            kernel scheduling priority
+        nice,           // stat            standard unix nice level of process
+        rss,            // stat            identical to 'resident'
+        alarm,          // stat            ?
     // the next 7 members come from /proc/#/statm
-	size,		// statm           total virtual memory (as # pages)
-	resident,	// statm           resident non-swapped memory (as # pages)
-	share,		// statm           shared (mmap'd) memory (as # pages)
-	trs,		// statm           text (exe) resident set (as # pages)
-	lrs,		// statm           library resident set (always 0 w/ 2.6)
-	drs,		// statm           data+stack resident set (as # pages)
-	dt;		// statm           dirty pages (always 0 w/ 2.6)
+        size,           // statm           total virtual memory (as # pages)
+        resident,       // statm           resident non-swapped memory (as # pages)
+        share,          // statm           shared (mmap'd) memory (as # pages)
+        trs,            // statm           text (exe) resident set (as # pages)
+        lrs,            // statm           library resident set (always 0 w/ 2.6)
+        drs,            // statm           data+stack resident set (as # pages)
+        dt;             // statm           dirty pages (always 0 w/ 2.6)
     long
-	vm_size,        // status          equals 'size' (as kb)
-	vm_lock,        // status          locked pages (as kb)
-	vm_rss,         // status          equals 'rss' and/or 'resident' (as kb)
-	vm_rss_anon,    // status          the 'anonymous' portion of vm_rss (as kb)
-	vm_rss_file,    // status          the 'file-backed' portion of vm_rss (as kb)
-	vm_rss_shared,  // status          the 'shared' portion of vm_rss (as kb)
-	vm_data,        // status          data only size (as kb)
-	vm_stack,       // status          stack only size (as kb)
-	vm_swap,        // status          based on linux-2.6.34 "swap ents" (as kb)
-	vm_exe,         // status          equals 'trs' (as kb)
-	vm_lib,         // status          total, not just used, library pages (as kb)
-	rtprio,		// stat            real-time priority
-	sched,		// stat            scheduling class
-	vsize,		// stat            number of pages of virtual memory ...
-	rss_rlim,	// stat            resident set size limit?
-	flags,		// stat            kernel flags for the process
-	min_flt,	// stat            number of minor page faults since process start
-	maj_flt,	// stat            number of major page faults since process start
-	cmin_flt,	// stat            cumulative min_flt of process and child processes
-	cmaj_flt;	// stat            cumulative maj_flt of process and child processes
+        vm_size,        // status          equals 'size' (as kb)
+        vm_lock,        // status          locked pages (as kb)
+        vm_rss,         // status          equals 'rss' and/or 'resident' (as kb)
+        vm_rss_anon,    // status          the 'anonymous' portion of vm_rss (as kb)
+        vm_rss_file,    // status          the 'file-backed' portion of vm_rss (as kb)
+        vm_rss_shared,  // status          the 'shared' portion of vm_rss (as kb)
+        vm_data,        // status          data only size (as kb)
+        vm_stack,       // status          stack only size (as kb)
+        vm_swap,        // status          based on linux-2.6.34 "swap ents" (as kb)
+        vm_exe,         // status          equals 'trs' (as kb)
+        vm_lib,         // status          total, not just used, library pages (as kb)
+        rtprio,         // stat            real-time priority
+        sched,          // stat            scheduling class
+        vsize,          // stat            number of pages of virtual memory ...
+        rss_rlim,       // stat            resident set size limit?
+        flags,          // stat            kernel flags for the process
+        min_flt,        // stat            number of minor page faults since process start
+        maj_flt,        // stat            number of major page faults since process start
+        cmin_flt,       // stat            cumulative min_flt of process and child processes
+        cmaj_flt;       // stat            cumulative maj_flt of process and child processes
     char
         *environ,       // (special)       environment as string (/proc/#/environ)
         *cmdline,       // (special)       command line as string (/proc/#/cmdline)
@@ -145,19 +145,19 @@ typedef struct proc_t {
         *fgroup,        // status          filesystem group name
         *cmd;           // stat,status     basename of executable file in call to exec(2)
     int
-	pgrp,		// stat            process group id
-	session,	// stat            session id
-	nlwp,		// stat,status     number of threads, or 0 if no clue
-	tgid,		// (special)       thread group ID, the POSIX PID (see also: tid)
-	tty,		// stat            full device number of controlling terminal
-	/* FIXME: int uids & gids should be uid_t or gid_t from pwd.h */
+        pgrp,           // stat            process group id
+        session,        // stat            session id
+        nlwp,           // stat,status     number of threads, or 0 if no clue
+        tgid,           // (special)       thread group ID, the POSIX PID (see also: tid)
+        tty,            // stat            full device number of controlling terminal
+        /* FIXME: int uids & gids should be uid_t or gid_t from pwd.h */
         euid, egid,     // stat(),status   effective
         ruid, rgid,     // status          real
         suid, sgid,     // status          saved
         fuid, fgid,     // status          fs (used for file access only)
-	tpgid,		// stat            terminal process group id
-	exit_signal,	// stat            might not be SIGCHLD
-	processor;      // stat            current (or most recent?) CPU
+        tpgid,          // stat            terminal process group id
+        exit_signal,    // stat            might not be SIGCHLD
+        processor;      // stat            current (or most recent?) CPU
     int
         oom_score,      // oom_score       (badness for OOM killer)
         oom_adj;        // oom_adj         (adjustment to OOM score)
@@ -181,21 +181,21 @@ typedef struct proc_t {
 #define PROCPATHLEN 64  // must hold /proc/2000222000/task/2000222000/cmdline
 
 typedef struct PROCTAB {
-    DIR*	procfs;
+    DIR*        procfs;
 //    char deBug0[64];
-    DIR*	taskdir;  // for threads
+    DIR*        taskdir;  // for threads
 //    char deBug1[64];
-    pid_t	taskdir_user;  // for threads
+    pid_t       taskdir_user;  // for threads
     int         did_fake; // used when taskdir is missing
     int(*finder)(struct PROCTAB *__restrict const, proc_t *__restrict const);
     proc_t*(*reader)(struct PROCTAB *__restrict const, proc_t *__restrict const);
     int(*taskfinder)(struct PROCTAB *__restrict const, const proc_t *__restrict const, proc_t *__restrict const, char *__restrict const);
     proc_t*(*taskreader)(struct PROCTAB *__restrict const, const proc_t *__restrict const, proc_t *__restrict const, char *__restrict const);
-    pid_t*	pids;	// pids of the procs
-    uid_t*	uids;	// uids of procs
-    int		nuid;	// cannot really sentinel-terminate unsigned short[]
+    pid_t*      pids;   // pids of the procs
+    uid_t*      uids;   // uids of procs
+    int         nuid;   // cannot really sentinel-terminate unsigned short[]
     int         i;  // generic
-    unsigned	flags;
+    unsigned    flags;
     unsigned    u;  // generic
     void *      vp; // generic
     char        path[PROCPATHLEN];  // must hold /proc/2000222000/task/2000222000/cmdline

@@ -597,8 +597,8 @@ LEAVE(0x160);
 static void statm2proc(const char* s, proc_t *restrict P) {
     int num;
     num = sscanf(s, "%ld %ld %ld %ld %ld %ld %ld",
-	   &P->size, &P->resident, &P->share,
-	   &P->trs, &P->lrs, &P->drs, &P->dt);
+           &P->size, &P->resident, &P->share,
+           &P->trs, &P->lrs, &P->drs, &P->dt);
 /*    fprintf(stderr, "statm2proc converted %d fields.\n",num); */
 }
 
@@ -628,7 +628,7 @@ static int file2str(const char *directory, const char *what, struct utlbuf_s *ub
 }
 
 static char** file2strvec(const char* directory, const char* what) {
-    char buf[2048];	/* read buf bytes at a time */
+    char buf[2048];     /* read buf bytes at a time */
     char *p, *rbuf = 0, *endbuf, **q, **ret;
     int fd, tot = 0, n, c, end_of_file = 0;
     int align;
@@ -644,13 +644,13 @@ static char** file2strvec(const char* directory, const char* what) {
             end_of_file = 1;
         if (n == 0 && rbuf == 0) {
             close(fd);
-            return NULL;	/* process died between our open and read */
+            return NULL;        /* process died between our open and read */
         }
         if (end_of_file && (n == 0 || buf[n-1]))/* last read char not null */
-            buf[n++] = '\0';			/* so append null-terminator */
-        rbuf = xrealloc(rbuf, tot + n);		/* allocate more memory */
-        memcpy(rbuf + tot, buf, n);		/* copy buffer into it */
-        tot += n;				/* increment total byte ctr */
+            buf[n++] = '\0';                    /* so append null-terminator */
+        rbuf = xrealloc(rbuf, tot + n);         /* allocate more memory */
+        memcpy(rbuf + tot, buf, n);             /* copy buffer into it */
+        tot += n;                               /* increment total byte ctr */
         if (end_of_file)
             break;
     }
@@ -658,9 +658,9 @@ static char** file2strvec(const char* directory, const char* what) {
     if (n <= 0 && !end_of_file) {
         if (rbuf)
             free(rbuf);
-        return NULL;		/* read error */
+        return NULL;            /* read error */
     }
-    endbuf = rbuf + tot;			/* count space for pointers */
+    endbuf = rbuf + tot;                        /* count space for pointers */
     align = (sizeof(char*)-1) - ((tot + sizeof(char*)-1) & (sizeof(char*)-1));
     for (c = 0, p = rbuf; p < endbuf; p++) {
         if (!*p || *p == '\n')
@@ -668,18 +668,18 @@ static char** file2strvec(const char* directory, const char* what) {
         if (*p == '\n')
             *p = 0;
     }
-    c += sizeof(char*);				/* one extra for NULL term */
+    c += sizeof(char*);                         /* one extra for NULL term */
 
-    rbuf = xrealloc(rbuf, tot + c + align);	/* make room for ptrs AT END */
-    endbuf = rbuf + tot;			/* addr just past data buf */
-    q = ret = (char**) (endbuf+align);		/* ==> free(*ret) to dealloc */
-    *q++ = p = rbuf;				/* point ptrs to the strings */
-    endbuf--;					/* do not traverse final NUL */
+    rbuf = xrealloc(rbuf, tot + c + align);     /* make room for ptrs AT END */
+    endbuf = rbuf + tot;                        /* addr just past data buf */
+    q = ret = (char**) (endbuf+align);          /* ==> free(*ret) to dealloc */
+    *q++ = p = rbuf;                            /* point ptrs to the strings */
+    endbuf--;                                   /* do not traverse final NUL */
     while (++p < endbuf)
-        if (!*p)				/* NUL char implies that */
-            *q++ = p+1;				/* next string -> next char */
+        if (!*p)                                /* NUL char implies that */
+            *q++ = p+1;                         /* next string -> next char */
 
-    *q = 0;					/* null ptr list terminator */
+    *q = 0;                                     /* null ptr list terminator */
     return ret;
 }
 
@@ -839,19 +839,19 @@ static char *lxc_containers (const char *path) {
  */
 
 /* Test if item X of type T is present in the 0 terminated list L */
-#   define XinL(T, X, L) ( {			\
-	    T  x = (X), *l = (L);		\
-	    while (*l && *l != x) l++;		\
-	    *l == x;				\
-	} )
+#   define XinL(T, X, L) ( {                    \
+            T  x = (X), *l = (L);               \
+            while (*l && *l != x) l++;          \
+            *l == x;                            \
+        } )
 
 /* Test if item X of type T is present in the list L of length N */
-#   define XinLN(T, X, L, N) ( {		\
-	    T x = (X), *l = (L);		\
-	    int i = 0, n = (N);			\
-	    while (i < n && l[i] != x) i++;	\
-	    i < n && l[i] == x;			\
-	} )
+#   define XinLN(T, X, L, N) ( {                \
+            T x = (X), *l = (L);                \
+            int i = 0, n = (N);                 \
+            while (i < n && l[i] != x) i++;     \
+            i < n && l[i] == x;                 \
+        } )
 
 //////////////////////////////////////////////////////////////////////////////////
 // This reads process info from /proc in the traditional way, for one process.
@@ -1109,7 +1109,7 @@ next_task:
 // This finds processes in /proc in the traditional way.
 // Return non-zero on success.
 static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
-  static struct dirent *ent;		/* dirent handle */
+  static struct dirent *ent;            /* dirent handle */
   char *restrict const path = PT->path;
   for (;;) {
     ent = readdir(PT->procfs);
@@ -1127,7 +1127,7 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
 // This finds tasks in /proc/*/task/ in the traditional way.
 // Return non-zero on success.
 static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict const t, char *restrict const path) {
-  static struct dirent *ent;		/* dirent handle */
+  static struct dirent *ent;            /* dirent handle */
   if(PT->taskdir_user != p->tgid){
     if(PT->taskdir){
       closedir(PT->taskdir);
