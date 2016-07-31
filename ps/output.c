@@ -452,7 +452,7 @@ setREL1(TIME_ALL)
  */
 static int pr_vsz(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(VM_SIZE)
-  return snprintf(outbuf, COLWID, "%ld", rSv(VM_SIZE, sl_int, pp));
+  return snprintf(outbuf, COLWID, "%lu", rSv(VM_SIZE, ul_int, pp));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -555,8 +555,8 @@ setREL1(PRIORITY)
 // policies (-1).
 static int pr_nice(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL2(NICE,SCHED_CLASS)
-  if(rSv(SCHED_CLASS, ul_int, pp)!=0 && rSv(SCHED_CLASS, ul_int, pp)!=3 && rSv(SCHED_CLASS, ul_int, pp)!=-1) return snprintf(outbuf, COLWID, "-");
-  return snprintf(outbuf, COLWID, "%ld", rSv(NICE, sl_int, pp));
+  if(rSv(SCHED_CLASS, s_int, pp)!=0 && rSv(SCHED_CLASS, s_int, pp)!=3 && rSv(SCHED_CLASS, s_int, pp)!=-1) return snprintf(outbuf, COLWID, "-");
+  return snprintf(outbuf, COLWID, "%d", rSv(NICE, s_int, pp));
 }
 
 // HP-UX   "cls": RT RR RR2 ???? HPUX FIFO KERN
@@ -571,7 +571,7 @@ setREL2(NICE,SCHED_CLASS)
 //                  see miser(1) for this; PRI has some letter codes too
 static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(SCHED_CLASS)
-  switch(rSv(SCHED_CLASS, ul_int, pp)){
+  switch(rSv(SCHED_CLASS, s_int, pp)){
   case -1: return snprintf(outbuf, COLWID, "-");   // not reported
   case  0: return snprintf(outbuf, COLWID, "TS");  // SCHED_OTHER SCHED_NORMAL
   case  1: return snprintf(outbuf, COLWID, "FF");  // SCHED_FIFO
@@ -594,13 +594,13 @@ setREL1(SCHED_CLASS)
 // We just print the priority, and have other keywords for type.
 static int pr_rtprio(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL2(SCHED_CLASS,RTPRIO)
-  if(rSv(SCHED_CLASS, ul_int, pp)==0 || rSv(SCHED_CLASS, ul_int, pp)==(unsigned long)-1) return snprintf(outbuf, COLWID, "-");
-  return snprintf(outbuf, COLWID, "%ld", rSv(RTPRIO, ul_int, pp));
+  if(rSv(SCHED_CLASS, s_int, pp)==0 || rSv(SCHED_CLASS, s_int, pp)==-1) return snprintf(outbuf, COLWID, "-");
+  return snprintf(outbuf, COLWID, "%d", rSv(RTPRIO, s_int, pp));
 }
 static int pr_sched(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(SCHED_CLASS)
-  if(rSv(SCHED_CLASS, ul_int, pp)==(unsigned long)-1) return snprintf(outbuf, COLWID, "-");
-  return snprintf(outbuf, COLWID, "%ld", rSv(SCHED_CLASS, ul_int, pp));
+  if(rSv(SCHED_CLASS, s_int, pp)==-1) return snprintf(outbuf, COLWID, "-");
+  return snprintf(outbuf, COLWID, "%d", rSv(SCHED_CLASS, s_int, pp));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -632,34 +632,17 @@ setREL1(WCHAN_NAME)
   return len;
 }
 
-static int pr_wname(char *restrict const outbuf, const proc_t *restrict const pp){
-/* SGI's IRIX always uses a number for "wchan", so "wname" is provided too.
- *
- * We use '-' for running processes, the location when there is
- * only one thread waiting in the kernel, and '*' when there is
- * more than one thread waiting in the kernel.
- *
- * The output should be truncated to maximal columns width -- overflow
- * is not supported for the "wchan".
- */
-  const char *w;
-  size_t len;
-setREL1(WCHAN_NAME)
-  w = rSv(WCHAN_NAME, str, pp);
-  len = strlen(w);
-  if(len>max_rightward) len=max_rightward;
-  memcpy(outbuf, w, len);
-  outbuf[len] = '\0';
-  return len;
-}
-
 static int pr_nwchan(char *restrict const outbuf, const proc_t *restrict const pp){
+  char buf[32];
 setREL1(WCHAN_ADDR)
   if (!(rSv(WCHAN_ADDR, ul_int, pp) & 0xffffff)) {
     memcpy(outbuf, "-",2);
     return 1;
   }
-  return snprintf(outbuf, COLWID, "%x", (unsigned)rSv(WCHAN_ADDR, ul_int, pp));
+  snprintf(buf, sizeof(buf), "%lx", rSv(WCHAN_ADDR, ul_int, pp));
+  // this will force a match with that old ps ...
+  buf[6] = '\0';
+  return snprintf(outbuf, COLWID, "%s", buf);
 }
 
 /* Terrible trunctuation, like BSD crap uses: I999 J999 K999 */
@@ -697,16 +680,16 @@ static int pr_stat(char *restrict const outbuf, const proc_t *restrict const pp)
        return 0;
     }
     outbuf[end++] = rSv(STATE, s_ch, pp);
-//  if(rSv(RSS, sl_int, pp)==0 && rSv(STATE, s_ch, pp)!='Z') outbuf[end++] = 'W'; // useless "swapped out"
-    if(rSv(NICE, sl_int, pp) < 0) outbuf[end++] = '<';
-    if(rSv(NICE, sl_int, pp) > 0) outbuf[end++] = 'N';
+//  if(rSv(RSS, ul_int, pp)==0 && rSv(STATE, s_ch, pp)!='Z') outbuf[end++] = 'W'; // useless "swapped out"
+    if(rSv(NICE, s_int, pp) < 0) outbuf[end++] = '<';
+    if(rSv(NICE, s_int, pp) > 0) outbuf[end++] = 'N';
 // In this order, NetBSD would add:
 //     traced   'X'
 //     systrace 'x'
 //     exiting  'E' (not printed for zombies)
 //     vforked  'V'
 //     system   'K' (and do not print 'L' too)
-    if(rSv(VM_RSS_LOCKED, sl_int, pp))                        outbuf[end++] = 'L';
+    if(rSv(VM_RSS_LOCKED, ul_int, pp))                        outbuf[end++] = 'L';
     if(rSv(ID_SESSION, s_int, pp) == rSv(ID_TGID, s_int, pp)) outbuf[end++] = 's'; // session leader
     if(rSv(NLWP, s_int, pp) > 1)                              outbuf[end++] = 'l'; // multi-threaded
     if(rSv(ID_PGRP, s_int, pp) == rSv(ID_TPGID, s_int, pp))   outbuf[end++] = '+'; // in foreground process group
@@ -764,8 +747,8 @@ setREL1(ADDR_KSTK_EIP)
 static int old_time_helper(char *dst, unsigned long long t, unsigned long long rel) {
   if(!t)            return snprintf(dst, COLWID, "    -");
   if(t == ~0ULL)    return snprintf(dst, COLWID, "   xx");
-  if((long long)(t-=rel) < 0)  t=0ULL;
-  if(t>9999ULL)     return snprintf(dst, COLWID, "%5llu", t/100ULL);
+  if((long long)(t -= rel) < 0) t = 0ULL;
+  if(t > 9999ULL)   return snprintf(dst, COLWID, "%5llu", t/100ULL);
   else              return snprintf(dst, COLWID, "%2u.%02u", (unsigned)t/100U, (unsigned)t%100U);
 }
 
@@ -794,13 +777,13 @@ setREL1(TIME_START)
 
 static int pr_alarm(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(ALARM)
-    return old_time_helper(outbuf, rSv(ALARM, sl_int, pp), 0ULL);
+    return old_time_helper(outbuf, rSv(ALARM, ul_int, pp), 0ULL);
 }
 
 /* HP-UX puts this in pages and uses "vsz" for kB */
 static int pr_sz(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(VM_SIZE)
-  return snprintf(outbuf, COLWID, "%ld", rSv(VM_SIZE, sl_int, pp)/(page_size/1024));
+  return snprintf(outbuf, COLWID, "%lu", rSv(VM_SIZE, ul_int, pp)/(page_size/1024));
 }
 
 
@@ -853,28 +836,28 @@ setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
 
 static int pr_swapable(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL3(VM_DATA,VM_STACK,VSIZE_PGS)    // that last enum will approximate sort needs
-  return snprintf(outbuf, COLWID, "%ld", rSv(VM_DATA, sl_int, pp) + rSv(VM_STACK, sl_int, pp));
+  return snprintf(outbuf, COLWID, "%lu", rSv(VM_DATA, ul_int, pp) + rSv(VM_STACK, ul_int, pp));
 }
 
 /* nasty old Debian thing */
 static int pr_size(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(VSIZE_PGS)
-  return snprintf(outbuf, COLWID, "%ld", rSv(VSIZE_PGS, ul_int, pp));
+  return snprintf(outbuf, COLWID, "%lu", rSv(VSIZE_PGS, ul_int, pp));
 }
 
 
 static int pr_minflt(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL2(FLT_MIN,FLT_MIN_C)
-    long flt = rSv(FLT_MIN, ul_int, pp);
+    unsigned long flt = rSv(FLT_MIN, ul_int, pp);
     if(include_dead_children) flt = rSv(FLT_MIN_C, ul_int, pp);
-    return snprintf(outbuf, COLWID, "%ld", flt);
+    return snprintf(outbuf, COLWID, "%lu", flt);
 }
 
 static int pr_majflt(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL2(FLT_MAJ,FLT_MAJ_C)
-    long flt = rSv(FLT_MAJ, ul_int, pp);
+    unsigned long flt = rSv(FLT_MAJ, ul_int, pp);
     if(include_dead_children) flt = rSv(FLT_MAJ_C, ul_int, pp);
-    return snprintf(outbuf, COLWID, "%ld", flt);
+    return snprintf(outbuf, COLWID, "%lu", flt);
 }
 
 static int pr_lim(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -885,7 +868,7 @@ setREL1(RSS_RLIM)
       outbuf[2] = '\0';
       return 2;
     }
-    return snprintf(outbuf, COLWID, "%5ld", rSv(RSS_RLIM, ul_int, pp) >> 10L);
+    return snprintf(outbuf, COLWID, "%5lu", rSv(RSS_RLIM, ul_int, pp) >> 10L);
 }
 
 /* should print leading tilde ('~') if process is bound to the CPU */
@@ -896,14 +879,14 @@ setREL1(PROCESSOR)
 
 static int pr_rss(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(VM_RSS)
-  return snprintf(outbuf, COLWID, "%ld", rSv(VM_RSS, sl_int, pp));
+  return snprintf(outbuf, COLWID, "%lu", rSv(VM_RSS, ul_int, pp));
 }
 
 /* pp->vm_rss * 1000 would overflow on 32-bit systems with 64 GB memory */
 static int pr_pmem(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long pmem = 0;
 setREL1(VM_RSS)
-  pmem = rSv(VM_RSS, sl_int, pp) * 1000ULL / memory_total;
+  pmem = rSv(VM_RSS, ul_int, pp) * 1000ULL / memory_total;
   if (pmem > 999) pmem = 999;
   return snprintf(outbuf, COLWID, "%2u.%u", (unsigned)(pmem/10), (unsigned)(pmem%10));
 }
@@ -1466,10 +1449,10 @@ static const format_struct format_array[] = { /*
 {"lwp",       "LWP",     pr_tasks,         PIDS_ID_PID,              5,    SUN,  TO|PIDMAX|RIGHT},
 {"lxc",       "LXC",     pr_lxcname,       PIDS_LXCNAME,             8,    LNX,  ET|LEFT},
 {"m_drs",     "DRS",     pr_drs,           PIDS_VSIZE_PGS,           5,    LNx,  PO|RIGHT},
-{"m_dt",      "DT",      pr_nop,           PIDS_MEM_DT,              4,    LNx,  PO|RIGHT},
-{"m_lrs",     "LRS",     pr_nop,           PIDS_MEM_LRS,             5,    LNx,  PO|RIGHT},
-{"m_resident", "RES",    pr_nop,           PIDS_MEM_RES,             5,    LNx,  PO|RIGHT},
-{"m_share",   "SHRD",    pr_nop,           PIDS_MEM_SHR,             5,    LNx,  PO|RIGHT},
+{"m_dt",      "DT",      pr_nop,           PIDS_MEM_DT_PGS,          4,    LNx,  PO|RIGHT},
+{"m_lrs",     "LRS",     pr_nop,           PIDS_MEM_LRS_PGS,         5,    LNx,  PO|RIGHT},
+{"m_resident", "RES",    pr_nop,           PIDS_MEM_RES_PGS,         5,    LNx,  PO|RIGHT},
+{"m_share",   "SHRD",    pr_nop,           PIDS_MEM_SHR_PGS,         5,    LNx,  PO|RIGHT},
 {"m_size",    "SIZE",    pr_size,          PIDS_VSIZE_PGS,           5,    LNX,  PO|RIGHT},
 {"m_swap",    "SWAP",    pr_nop,           PIDS_noop,                5,    LNx,  PO|RIGHT},
 {"m_trs",     "TRS",     pr_trs,           PIDS_VSIZE_PGS,           5,    LNx,  PO|RIGHT},
@@ -1491,7 +1474,7 @@ static const format_struct format_array[] = { /*
 {"nsigs",     "NSIGS",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*nsignals*/
 {"nswap",     "NSWAP",   pr_nop,           PIDS_noop,                5,    XXX,  AN|RIGHT},
 {"nvcsw",     "VCSW",    pr_nop,           PIDS_noop,                5,    XXX,  AN|RIGHT},
-{"nwchan",    "WCHAN",   pr_nwchan,        PIDS_WCHAN_NAME,          6,    XXX,  TO|RIGHT},
+{"nwchan",    "WCHAN",   pr_nwchan,        PIDS_WCHAN_ADDR,          6,    XXX,  TO|RIGHT},
 {"opri",      "PRI",     pr_opri,          PIDS_PRIORITY,            3,    SUN,  TO|RIGHT},
 {"osz",       "SZ",      pr_nop,           PIDS_noop,                2,    SUN,  PO|RIGHT},
 {"oublk",     "OUBLK",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*oublock*/
@@ -1524,7 +1507,7 @@ static const format_struct format_array[] = { /*
 {"psr",       "PSR",     pr_psr,           PIDS_PROCESSOR,           3,    DEC,  TO|RIGHT},
 {"psxpri",    "PPR",     pr_nop,           PIDS_noop,                3,    DEC,  TO|RIGHT},
 {"re",        "RE",      pr_nop,           PIDS_noop,                3,    BSD,  AN|RIGHT},
-{"resident",  "RES",     pr_nop,           PIDS_MEM_RES,             5,    LNX,  PO|RIGHT},
+{"resident",  "RES",     pr_nop,           PIDS_MEM_RES_PGS,         5,    LNX,  PO|RIGHT},
 {"rgid",      "RGID",    pr_rgid,          PIDS_ID_RGID,             5,    XXX,  ET|RIGHT},
 {"rgroup",    "RGROUP",  pr_rgroup,        PIDS_ID_RGROUP,           8,    U98,  ET|USER},  /* was 8 wide */
 {"rlink",     "RLINK",   pr_nop,           PIDS_noop,                8,    BSD,  AN|RIGHT},
@@ -1624,8 +1607,8 @@ static const format_struct format_array[] = { /*
 {"vm_stack",  "STACK",   pr_nop,           PIDS_VM_STACK,            5,    LNx,  PO|RIGHT},
 {"vsize",     "VSZ",     pr_vsz,           PIDS_VSIZE_PGS,           6,    DEC,  PO|RIGHT}, /*vsz*/
 {"vsz",       "VSZ",     pr_vsz,           PIDS_VM_SIZE,             6,    U98,  PO|RIGHT}, /*vsize*/
-{"wchan",     "WCHAN",   pr_wchan,         PIDS_WCHAN_ADDR,          6,    XXX,  TO|WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
-{"wname",     "WCHAN",   pr_wname,         PIDS_WCHAN_NAME,          6,    SGI,  TO|WCHAN}, /* opposite of nwchan */
+{"wchan",     "WCHAN",   pr_wchan,         PIDS_WCHAN_NAME,          6,    XXX,  TO|WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
+{"wname",     "WCHAN",   pr_wchan,         PIDS_WCHAN_NAME,          6,    SGI,  TO|WCHAN}, /* opposite of nwchan */
 {"xstat",     "XSTAT",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT},
 {"zone",      "ZONE",    pr_context,       PIDS_ID_TGID,            31,    SUN,  ET|LEFT},  // Solaris zone == Linux context?
 {"zoneid",    "ZONEID",  pr_nop,           PIDS_noop,               31,    SUN,  ET|RIGHT}, // Linux only offers context names
