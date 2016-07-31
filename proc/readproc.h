@@ -21,13 +21,6 @@
 
 __BEGIN_DECLS
 
-// ld   cutime, cstime, priority, nice, timeout, alarm, rss,
-// c    state,
-// d    ppid, pgrp, session, tty, tpgid,
-// s    signal, blocked, sigignore, sigcatch,
-// lu   flags, min_flt, cmin_flt, maj_flt, cmaj_flt, utime, stime,
-// lu   rss_rlim, start_code, end_code, start_stack, kstk_esp, kstk_eip,
-// lu   start_time, vsize, wchan,
 
 // This is to help document a transition from pid to tgid/tid caused
 // by the introduction of thread support. It is used in cases where
@@ -44,11 +37,6 @@ typedef struct proc_t {
     int
         tid,            // (special)       task id, the POSIX thread ID (see also: tgid)
         ppid;           // stat,status     pid of parent process
-    long                // next 2 fields are NOT filled in by readproc
-        maj_delta,      // stat (special) major page faults since last update
-        min_delta;      // stat (special) minor page faults since last update
-    unsigned
-        pcpu;           // stat (special)  %CPU usage (is not filled in by readproc!!!)
     char
         state,          // stat,status     single-char code for process state (S=sleeping)
 #ifdef FALSE_THREADS
@@ -65,7 +53,14 @@ typedef struct proc_t {
 // and so on...
         cutime,         // stat            cumulative utime of process and reaped children
         cstime,         // stat            cumulative stime of process and reaped children
-        start_time;     // stat            start time of process -- seconds since 1-1-70
+        start_time,     // stat            start time of process -- seconds since 1-1-70
+        blkio_tics,     // stat            time spent waiting for block IO
+        gtime,          // stat            guest time of the task in jiffies
+        cgtime;         // stat            guest time of the task children in jiffies
+    int                 // next 3 fields are NOT filled in by readproc
+        pcpu,           // stat (special)  elapsed tics for %CPU usage calculation
+        maj_delta,      // stat (special)  major page faults since last update
+        min_delta;      // stat (special)  minor page faults since last update
 #ifdef SIGNAL_STRING
     char
         // Linux 2.1.7x and up have 64 signals. Allow 64, plus '\0' and padding.
@@ -89,12 +84,13 @@ typedef struct proc_t {
         start_stack,    // stat            address of the bottom of stack for the process
         kstk_esp,       // stat            kernel stack pointer
         kstk_eip,       // stat            kernel instruction pointer
-        wchan;          // stat (special)  address of kernel wait channel proc is sleeping in
-    long
-        priority,       // stat            kernel scheduling priority
-        nice,           // stat            standard unix nice level of process
+        wchan,          // stat (special)  address of kernel wait channel proc is sleeping in
         rss,            // stat            identical to 'resident'
-        alarm,          // stat            ?
+        alarm;          // stat            ?
+    int
+        priority,       // stat            kernel scheduling priority
+        nice;           // stat            standard unix nice level of process
+    unsigned long
     // the next 7 members come from /proc/#/statm
         size,           // statm           total virtual memory (as # pages)
         resident,       // statm           resident non-swapped memory (as # pages)
@@ -103,7 +99,7 @@ typedef struct proc_t {
         lrs,            // statm           library resident set (always 0 w/ 2.6)
         drs,            // statm           data+stack resident set (as # pages)
         dt;             // statm           dirty pages (always 0 w/ 2.6)
-    long
+    unsigned long
         vm_size,        // status          equals 'size' (as kb)
         vm_lock,        // status          locked pages (as kb)
         vm_rss,         // status          equals 'rss' and/or 'resident' (as kb)
@@ -115,8 +111,6 @@ typedef struct proc_t {
         vm_swap,        // status          based on linux-2.6.34 "swap ents" (as kb)
         vm_exe,         // status          equals 'trs' (as kb)
         vm_lib,         // status          total, not just used, library pages (as kb)
-        rtprio,         // stat            real-time priority
-        sched,          // stat            scheduling class
         vsize,          // stat            number of pages of virtual memory ...
         rss_rlim,       // stat            resident set size limit?
         flags,          // stat            kernel flags for the process
@@ -145,6 +139,8 @@ typedef struct proc_t {
         *fgroup,        // status          filesystem group name
         *cmd;           // stat,status     basename of executable file in call to exec(2)
     int
+        rtprio,         // stat            real-time priority
+        sched,          // stat            scheduling class
         pgrp,           // stat            process group id
         session,        // stat            session id
         nlwp,           // stat,status     number of threads, or 0 if no clue

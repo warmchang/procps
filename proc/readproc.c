@@ -350,37 +350,37 @@ ENTER(0x220);
         P->fgid = strtol(S,&S,10);
         continue;
     case_VmData:
-        P->vm_data = strtol(S,&S,10);
+        P->vm_data = (unsigned long)strtol(S,&S,10);
         continue;
     case_VmExe:
-        P->vm_exe = strtol(S,&S,10);
+        P->vm_exe = (unsigned long)strtol(S,&S,10);
         continue;
     case_VmLck:
-        P->vm_lock = strtol(S,&S,10);
+        P->vm_lock = (unsigned long)strtol(S,&S,10);
         continue;
     case_VmLib:
-        P->vm_lib = strtol(S,&S,10);
+        P->vm_lib = (unsigned long)strtol(S,&S,10);
         continue;
     case_VmRSS:
-        P->vm_rss = strtol(S,&S,10);
+        P->vm_rss = (unsigned long)strtol(S,&S,10);
         continue;
     case_RssAnon:       // subset of VmRSS, linux-4.5
-        P->vm_rss_anon = strtol(S,&S,10);
+        P->vm_rss_anon = (unsigned long)strtol(S,&S,10);
         continue;
     case_RssFile:       // subset of VmRSS, linux-4.5
-        P->vm_rss_file = strtol(S,&S,10);
+        P->vm_rss_file = (unsigned long)strtol(S,&S,10);
         continue;
     case_RssShmem:      // subset of VmRSS, linux-4.5
-        P->vm_rss_shared = strtol(S,&S,10);
+        P->vm_rss_shared = (unsigned long)strtol(S,&S,10);
         continue;
     case_VmSize:
-        P->vm_size = strtol(S,&S,10);
+        P->vm_size = (unsigned long)strtol(S,&S,10);
         continue;
     case_VmStk:
-        P->vm_stack = strtol(S,&S,10);
+        P->vm_stack = (unsigned long)strtol(S,&S,10);
         continue;
     case_VmSwap: // Linux 2.6.34
-        P->vm_swap = strtol(S,&S,10);
+        P->vm_swap = (unsigned long)strtol(S,&S,10);
         continue;
     case_Groups:
     {   char *nl = strchr(S, '\n');
@@ -551,21 +551,22 @@ ENTER(0x160);
     S = tmp + 2;                 // skip ") "
 
     num = sscanf(S,
-       "%c "
-       "%d %d %d %d %d "
-       "%lu %ld %ld %ld %ld "
-       "%llu %llu %llu %llu "  /* utime stime cutime cstime */
-       "%ld %ld "
-       "%d "
-       "%ld "
-       "%llu "  /* start_time */
-       "%lu "
-       "%ld "
-       "%lu %lu %lu %lu %lu %lu "
-       "%*s %*s %*s %*s " /* discard, no RT signals & Linux 2.1 used hex */
-       "%lu %*u %*u "
-       "%d %d "
-       "%lu %lu",
+       "%c "                      // state
+       "%d %d %d %d %d "          // ppid, pgrp, sid, tty_nr, tty_pgrp
+       "%lu %lu %lu %lu %lu "     // flags, min_flt, cmin_flt, maj_flt, cmaj_flt
+       "%llu %llu %llu %llu "     // utime, stime, cutime, cstime
+       "%d %d "                   // priority, nice
+       "%d "                      // num_threads
+       "%lu "                     // 'alarm' == it_real_value (obsolete, always 0)
+       "%llu "                    // start_time
+       "%lu "                     // vsize
+       "%lu "                     // rss
+       "%lu %lu %lu %lu %lu %lu " // rsslim, start_code, end_code, start_stack, esp, eip
+       "%*s %*s %*s %*s "         // pending, blocked, sigign, sigcatch                      <=== DISCARDED
+       "%lu %*u %*u "             // 0 (former wchan), 0, 0                                  <=== Placeholders only
+       "%d %d "                   // exit_signal, task_cpu
+       "%d %d "                   // rt_priority, policy (sched)
+       "%llu %llu %llu",          // blkio_ticks, gtime, cgtime
        &P->state,
        &P->ppid, &P->pgrp, &P->session, &P->tty, &P->tpgid,
        &P->flags, &P->min_flt, &P->cmin_flt, &P->maj_flt, &P->cmaj_flt,
@@ -582,7 +583,8 @@ ENTER(0x160);
 /* -- Linux 2.0.35 ends here -- */
        &P->exit_signal, &P->processor,  /* 2.2.1 ends with "exit_signal" */
 /* -- Linux 2.2.8 to 2.5.17 end here -- */
-       &P->rtprio, &P->sched  /* both added to 2.5.18 */
+       &P->rtprio, &P->sched,  /* both added to 2.5.18 */
+       &P->blkio_tics, &P->gtime, &P->cgtime
     );
 
     if(!P->nlwp){
@@ -596,7 +598,7 @@ LEAVE(0x160);
 
 static void statm2proc(const char* s, proc_t *restrict P) {
     int num;
-    num = sscanf(s, "%ld %ld %ld %ld %ld %ld %ld",
+    num = sscanf(s, "%lu %lu %lu %lu %lu %lu %lu",
            &P->size, &P->resident, &P->share,
            &P->trs, &P->lrs, &P->drs, &P->dt);
 /*    fprintf(stderr, "statm2proc converted %d fields.\n",num); */

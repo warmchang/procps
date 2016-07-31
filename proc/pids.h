@@ -35,7 +35,7 @@ enum pids_item {
     PIDS_ADDR_KSTK_ESP,     //  ul_int
     PIDS_ADDR_START_CODE,   //  ul_int
     PIDS_ADDR_START_STACK,  //  ul_int
-    PIDS_ALARM,             //  sl_int
+    PIDS_ALARM,             //  ul_int
     PIDS_CGNAME,            //     str
     PIDS_CGROUP,            //     str
     PIDS_CGROUP_V,          //    strv
@@ -46,12 +46,12 @@ enum pids_item {
     PIDS_ENVIRON_V,         //    strv
     PIDS_EXIT_SIGNAL,       //   s_int
     PIDS_FLAGS,             //  ul_int
-    PIDS_FLT_MAJ,           //  sl_int
-    PIDS_FLT_MAJ_C,         //  sl_int
-    PIDS_FLT_MAJ_DELTA,     //  sl_int
-    PIDS_FLT_MIN,           //  sl_int
-    PIDS_FLT_MIN_C,         //  sl_int
-    PIDS_FLT_MIN_DELTA,     //  sl_int
+    PIDS_FLT_MAJ,           //  ul_int
+    PIDS_FLT_MAJ_C,         //  ul_int
+    PIDS_FLT_MAJ_DELTA,     //   s_int
+    PIDS_FLT_MIN,           //  ul_int
+    PIDS_FLT_MIN_C,         //  ul_int
+    PIDS_FLT_MIN_DELTA,     //   s_int
     PIDS_ID_EGID,           //   u_int
     PIDS_ID_EGROUP,         //     str
     PIDS_ID_EUID,           //   u_int
@@ -75,19 +75,19 @@ enum pids_item {
     PIDS_ID_TGID,           //   s_int
     PIDS_ID_TPGID,          //   s_int
     PIDS_LXCNAME,           //     str
-    PIDS_MEM_CODE,          //  sl_int
-    PIDS_MEM_CODE_KIB,      //  sl_int
-    PIDS_MEM_DATA,          //  sl_int
-    PIDS_MEM_DATA_KIB,      //  sl_int
-    PIDS_MEM_DT,            //  sl_int
-    PIDS_MEM_LRS,           //  sl_int
-    PIDS_MEM_RES,           //  sl_int
-    PIDS_MEM_RES_KIB,       //  sl_int
-    PIDS_MEM_SHR,           //  sl_int
-    PIDS_MEM_SHR_KIB,       //  sl_int
-    PIDS_MEM_VIRT,          //  sl_int
-    PIDS_MEM_VIRT_KIB,      //  sl_int
-    PIDS_NICE,              //  sl_int
+    PIDS_MEM_CODE,          //  ul_int
+    PIDS_MEM_CODE_PGS,      //  ul_int
+    PIDS_MEM_DATA,          //  ul_int
+    PIDS_MEM_DATA_PGS,      //  ul_int
+    PIDS_MEM_DT_PGS,        //  ul_int
+    PIDS_MEM_LRS_PGS,       //  ul_int
+    PIDS_MEM_RES,           //  ul_int
+    PIDS_MEM_RES_PGS,       //  ul_int
+    PIDS_MEM_SHR,           //  ul_int
+    PIDS_MEM_SHR_PGS,       //  ul_int
+    PIDS_MEM_VIRT,          //  ul_int
+    PIDS_MEM_VIRT_PGS,      //  ul_int
+    PIDS_NICE,              //   s_int
     PIDS_NLWP,              //   s_int
     PIDS_NS_IPC,            //  ul_int
     PIDS_NS_MNT,            //  ul_int
@@ -99,10 +99,10 @@ enum pids_item {
     PIDS_OOM_SCORE,         //   s_int
     PIDS_PRIORITY,          //   s_int
     PIDS_PROCESSOR,         //   u_int
-    PIDS_RSS,               //  sl_int
+    PIDS_RSS,               //  ul_int
     PIDS_RSS_RLIM,          //  ul_int
-    PIDS_RTPRIO,            //  ul_int
-    PIDS_SCHED_CLASS,       //  ul_int
+    PIDS_RTPRIO,            //   s_int
+    PIDS_SCHED_CLASS,       //   s_int
     PIDS_SD_MACH,           //     str
     PIDS_SD_OUID,           //     str
     PIDS_SD_SEAT,           //     str
@@ -120,7 +120,10 @@ enum pids_item {
     PIDS_SUPGROUPS,         //     str
     PIDS_TICS_ALL,          // ull_int
     PIDS_TICS_ALL_C,        // ull_int
-    PIDS_TICS_DELTA,        //  sl_int
+    PIDS_TICS_ALL_DELTA,    //   s_int
+    PIDS_TICS_BLKIO,        // ull_int
+    PIDS_TICS_GUEST,        // ull_int
+    PIDS_TICS_GUEST_C,      // ull_int
     PIDS_TICS_SYSTEM,       // ull_int
     PIDS_TICS_SYSTEM_C,     // ull_int
     PIDS_TICS_USER,         // ull_int
@@ -131,18 +134,18 @@ enum pids_item {
     PIDS_TTY,               //   s_int
     PIDS_TTY_NAME,          //     str
     PIDS_TTY_NUMBER,        //     str
-    PIDS_VM_DATA,           //  sl_int
-    PIDS_VM_EXE,            //  sl_int
-    PIDS_VM_LIB,            //  sl_int
-    PIDS_VM_RSS,            //  sl_int
-    PIDS_VM_RSS_ANON,       //  sl_int
-    PIDS_VM_RSS_FILE,       //  sl_int
-    PIDS_VM_RSS_LOCKED,     //  sl_int
-    PIDS_VM_RSS_SHARED,     //  sl_int
-    PIDS_VM_SIZE,           //  sl_int
-    PIDS_VM_STACK,          //  sl_int
-    PIDS_VM_SWAP,           //  sl_int
-    PIDS_VM_USED,           //  sl_int
+    PIDS_VM_DATA,           //  ul_int
+    PIDS_VM_EXE,            //  ul_int
+    PIDS_VM_LIB,            //  ul_int
+    PIDS_VM_RSS,            //  ul_int
+    PIDS_VM_RSS_ANON,       //  ul_int
+    PIDS_VM_RSS_FILE,       //  ul_int
+    PIDS_VM_RSS_LOCKED,     //  ul_int
+    PIDS_VM_RSS_SHARED,     //  ul_int
+    PIDS_VM_SIZE,           //  ul_int
+    PIDS_VM_STACK,          //  ul_int
+    PIDS_VM_SWAP,           //  ul_int
+    PIDS_VM_USED,           //  ul_int
     PIDS_VSIZE_PGS,         //  ul_int
     PIDS_WCHAN_ADDR,        //  ul_int
     PIDS_WCHAN_NAME         //     str
@@ -170,7 +173,6 @@ struct pids_result {
         signed char         s_ch;
         signed int          s_int;
         unsigned int        u_int;
-        signed long         sl_int;
         unsigned long       ul_int;
         unsigned long long  ull_int;
         char               *str;
