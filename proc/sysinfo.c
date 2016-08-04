@@ -938,7 +938,7 @@ unsigned int getpartitions_num(struct disk_stat *disks, int ndisks){
 /////////////////////////////////////////////////////////////////////////////
 static int is_disk(char *dev)
 {
-  char syspath[32];
+  char syspath[64];
   char *slash;
 
   while ((slash = strchr(dev, '/')))
