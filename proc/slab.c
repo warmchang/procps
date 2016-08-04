@@ -179,7 +179,7 @@ static int parse_slabinfo20(struct slab_info **list, struct slab_stat *stats,
 		curr->cache_size = (unsigned long)curr->nr_slabs * curr->pages_per_slab * page_size;
 
 		if (curr->nr_objs) {
-			curr->use = 100 * curr->nr_active_objs / curr->nr_objs;
+			curr->use = 100 * (float)curr->nr_active_objs / curr->nr_objs;
 			stats->nr_active_caches++;
 		} else
 			curr->use = 0;
@@ -258,7 +258,7 @@ static int parse_slabinfo11(struct slab_info **list, struct slab_stat *stats,
 		curr->cache_size = (unsigned long)curr->nr_slabs * curr->pages_per_slab * page_size;
 
 		if (curr->nr_objs) {
-			curr->use = 100 * curr->nr_active_objs / curr->nr_objs;
+			curr->use = 100 * (float)curr->nr_active_objs / curr->nr_objs;
 			stats->nr_active_caches++;
 		} else
 			curr->use = 0;
