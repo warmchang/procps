@@ -235,112 +235,117 @@ MEM_set(SWAP_USED,              ul_int,  derived_swap_used)
 typedef void (*SET_t)(struct meminfo_result *, struct mem_hist *);
 #define RS(e) (SET_t)setNAME(e)
 
+#define TS(t) STRINGIFY(t)
+#define TS_noop ""
+
         /*
          * Need it be said?
          * This table must be kept in the exact same order as
          * those 'enum meminfo_item' guys ! */
 static struct {
     SET_t setsfunc;              // the actual result setting routine
+    char *type2str;              // the result type as a string value
 } Item_table[] = {
-/*  setsfunc
-    -------------------------- */
-  { RS(noop)                 },
-  { RS(extra)                },
+/*  setsfunc                   type2str
+    -------------------------  ---------- */
+  { RS(noop),                  TS_noop    },
+  { RS(extra),                 TS_noop    },
 
-  { RS(MEM_ACTIVE)           },
-  { RS(MEM_ACTIVE_ANON)      },
-  { RS(MEM_ACTIVE_FILE)      },
-  { RS(MEM_ANON)             },
-  { RS(MEM_AVAILABLE)        },
-  { RS(MEM_BOUNCE)           },
-  { RS(MEM_BUFFERS)          },
-  { RS(MEM_CACHED)           },
-  { RS(MEM_COMMIT_LIMIT)     },
-  { RS(MEM_COMMITTED_AS)     },
-  { RS(MEM_HARD_CORRUPTED)   },
-  { RS(MEM_DIRTY)            },
-  { RS(MEM_FREE)             },
-  { RS(MEM_HUGE_ANON)        },
-  { RS(MEM_HUGE_FREE)        },
-  { RS(MEM_HUGE_RSVD)        },
-  { RS(MEM_HUGE_SIZE)        },
-  { RS(MEM_HUGE_SURPLUS)     },
-  { RS(MEM_HUGE_TOTAL)       },
-  { RS(MEM_INACTIVE)         },
-  { RS(MEM_INACTIVE_ANON)    },
-  { RS(MEM_INACTIVE_FILE)    },
-  { RS(MEM_KERNEL_STACK)     },
-  { RS(MEM_LOCKED)           },
-  { RS(MEM_MAPPED)           },
-  { RS(MEM_NFS_UNSTABLE)     },
-  { RS(MEM_PAGE_TABLES)      },
-  { RS(MEM_SHARED)           },
-  { RS(MEM_SLAB)             },
-  { RS(MEM_SLAB_RECLAIM)     },
-  { RS(MEM_SLAB_UNRECLAIM)   },
-  { RS(MEM_TOTAL)            },
-  { RS(MEM_UNEVICTABLE)      },
-  { RS(MEM_USED)             },
-  { RS(MEM_VM_ALLOC_CHUNK)   },
-  { RS(MEM_VM_ALLOC_TOTAL)   },
-  { RS(MEM_VM_ALLOC_USED)    },
-  { RS(MEM_WRITEBACK)        },
-  { RS(MEM_WRITEBACK_TMP)    },
+  { RS(MEM_ACTIVE),            TS(ul_int) },
+  { RS(MEM_ACTIVE_ANON),       TS(ul_int) },
+  { RS(MEM_ACTIVE_FILE),       TS(ul_int) },
+  { RS(MEM_ANON),              TS(ul_int) },
+  { RS(MEM_AVAILABLE),         TS(ul_int) },
+  { RS(MEM_BOUNCE),            TS(ul_int) },
+  { RS(MEM_BUFFERS),           TS(ul_int) },
+  { RS(MEM_CACHED),            TS(ul_int) },
+  { RS(MEM_COMMIT_LIMIT),      TS(ul_int) },
+  { RS(MEM_COMMITTED_AS),      TS(ul_int) },
+  { RS(MEM_HARD_CORRUPTED),    TS(ul_int) },
+  { RS(MEM_DIRTY),             TS(ul_int) },
+  { RS(MEM_FREE),              TS(ul_int) },
+  { RS(MEM_HUGE_ANON),         TS(ul_int) },
+  { RS(MEM_HUGE_FREE),         TS(ul_int) },
+  { RS(MEM_HUGE_RSVD),         TS(ul_int) },
+  { RS(MEM_HUGE_SIZE),         TS(ul_int) },
+  { RS(MEM_HUGE_SURPLUS),      TS(ul_int) },
+  { RS(MEM_HUGE_TOTAL),        TS(ul_int) },
+  { RS(MEM_INACTIVE),          TS(ul_int) },
+  { RS(MEM_INACTIVE_ANON),     TS(ul_int) },
+  { RS(MEM_INACTIVE_FILE),     TS(ul_int) },
+  { RS(MEM_KERNEL_STACK),      TS(ul_int) },
+  { RS(MEM_LOCKED),            TS(ul_int) },
+  { RS(MEM_MAPPED),            TS(ul_int) },
+  { RS(MEM_NFS_UNSTABLE),      TS(ul_int) },
+  { RS(MEM_PAGE_TABLES),       TS(ul_int) },
+  { RS(MEM_SHARED),            TS(ul_int) },
+  { RS(MEM_SLAB),              TS(ul_int) },
+  { RS(MEM_SLAB_RECLAIM),      TS(ul_int) },
+  { RS(MEM_SLAB_UNRECLAIM),    TS(ul_int) },
+  { RS(MEM_TOTAL),             TS(ul_int) },
+  { RS(MEM_UNEVICTABLE),       TS(ul_int) },
+  { RS(MEM_USED),              TS(ul_int) },
+  { RS(MEM_VM_ALLOC_CHUNK),    TS(ul_int) },
+  { RS(MEM_VM_ALLOC_TOTAL),    TS(ul_int) },
+  { RS(MEM_VM_ALLOC_USED),     TS(ul_int) },
+  { RS(MEM_WRITEBACK),         TS(ul_int) },
+  { RS(MEM_WRITEBACK_TMP),     TS(ul_int) },
 
-  { RS(DELTA_ACTIVE)         },
-  { RS(DELTA_ACTIVE_ANON)    },
-  { RS(DELTA_ACTIVE_FILE)    },
-  { RS(DELTA_ANON)           },
-  { RS(DELTA_AVAILABLE)      },
-  { RS(DELTA_BOUNCE)         },
-  { RS(DELTA_BUFFERS)        },
-  { RS(DELTA_CACHED)         },
-  { RS(DELTA_COMMIT_LIMIT)   },
-  { RS(DELTA_COMMITTED_AS)   },
-  { RS(DELTA_HARD_CORRUPTED) },
-  { RS(DELTA_DIRTY)          },
-  { RS(DELTA_FREE)           },
-  { RS(DELTA_HUGE_ANON)      },
-  { RS(DELTA_HUGE_FREE)      },
-  { RS(DELTA_HUGE_RSVD)      },
-  { RS(DELTA_HUGE_SIZE)      },
-  { RS(DELTA_HUGE_SURPLUS)   },
-  { RS(DELTA_HUGE_TOTAL)     },
-  { RS(DELTA_INACTIVE)       },
-  { RS(DELTA_INACTIVE_ANON)  },
-  { RS(DELTA_INACTIVE_FILE)  },
-  { RS(DELTA_KERNEL_STACK)   },
-  { RS(DELTA_LOCKED)         },
-  { RS(DELTA_MAPPED)         },
-  { RS(DELTA_NFS_UNSTABLE)   },
-  { RS(DELTA_PAGE_TABLES)    },
-  { RS(DELTA_SHARED)         },
-  { RS(DELTA_SLAB)           },
-  { RS(DELTA_SLAB_RECLAIM)   },
-  { RS(DELTA_SLAB_UNRECLAIM) },
-  { RS(DELTA_TOTAL)          },
-  { RS(DELTA_UNEVICTABLE)    },
-  { RS(DELTA_USED)           },
-  { RS(DELTA_VM_ALLOC_CHUNK) },
-  { RS(DELTA_VM_ALLOC_TOTAL) },
-  { RS(DELTA_VM_ALLOC_USED)  },
-  { RS(DELTA_WRITEBACK)      },
-  { RS(DELTA_WRITEBACK_TMP)  },
+  { RS(DELTA_ACTIVE),          TS(s_int)  },
+  { RS(DELTA_ACTIVE_ANON),     TS(s_int)  },
+  { RS(DELTA_ACTIVE_FILE),     TS(s_int)  },
+  { RS(DELTA_ANON),            TS(s_int)  },
+  { RS(DELTA_AVAILABLE),       TS(s_int)  },
+  { RS(DELTA_BOUNCE),          TS(s_int)  },
+  { RS(DELTA_BUFFERS),         TS(s_int)  },
+  { RS(DELTA_CACHED),          TS(s_int)  },
+  { RS(DELTA_COMMIT_LIMIT),    TS(s_int)  },
+  { RS(DELTA_COMMITTED_AS),    TS(s_int)  },
+  { RS(DELTA_HARD_CORRUPTED),  TS(s_int)  },
+  { RS(DELTA_DIRTY),           TS(s_int)  },
+  { RS(DELTA_FREE),            TS(s_int)  },
+  { RS(DELTA_HUGE_ANON),       TS(s_int)  },
+  { RS(DELTA_HUGE_FREE),       TS(s_int)  },
+  { RS(DELTA_HUGE_RSVD),       TS(s_int)  },
+  { RS(DELTA_HUGE_SIZE),       TS(s_int)  },
+  { RS(DELTA_HUGE_SURPLUS),    TS(s_int)  },
+  { RS(DELTA_HUGE_TOTAL),      TS(s_int)  },
+  { RS(DELTA_INACTIVE),        TS(s_int)  },
+  { RS(DELTA_INACTIVE_ANON),   TS(s_int)  },
+  { RS(DELTA_INACTIVE_FILE),   TS(s_int)  },
+  { RS(DELTA_KERNEL_STACK),    TS(s_int)  },
+  { RS(DELTA_LOCKED),          TS(s_int)  },
+  { RS(DELTA_MAPPED),          TS(s_int)  },
+  { RS(DELTA_NFS_UNSTABLE),    TS(s_int)  },
+  { RS(DELTA_PAGE_TABLES),     TS(s_int)  },
+  { RS(DELTA_SHARED),          TS(s_int)  },
+  { RS(DELTA_SLAB),            TS(s_int)  },
+  { RS(DELTA_SLAB_RECLAIM),    TS(s_int)  },
+  { RS(DELTA_SLAB_UNRECLAIM),  TS(s_int)  },
+  { RS(DELTA_TOTAL),           TS(s_int)  },
+  { RS(DELTA_UNEVICTABLE),     TS(s_int)  },
+  { RS(DELTA_USED),            TS(s_int)  },
+  { RS(DELTA_VM_ALLOC_CHUNK),  TS(s_int)  },
+  { RS(DELTA_VM_ALLOC_TOTAL),  TS(s_int)  },
+  { RS(DELTA_VM_ALLOC_USED),   TS(s_int)  },
+  { RS(DELTA_WRITEBACK),       TS(s_int)  },
+  { RS(DELTA_WRITEBACK_TMP),   TS(s_int)  },
 
-  { RS(MEMHI_FREE)           },
-  { RS(MEMHI_TOTAL)          },
-  { RS(MEMHI_USED)           },
-  { RS(MEMLO_FREE)           },
-  { RS(MEMLO_TOTAL)          },
-  { RS(MEMLO_USED)           },
+  { RS(MEMHI_FREE),            TS(ul_int) },
+  { RS(MEMHI_TOTAL),           TS(ul_int) },
+  { RS(MEMHI_USED),            TS(ul_int) },
 
-  { RS(SWAP_CACHED)          },
-  { RS(SWAP_FREE)            },
-  { RS(SWAP_TOTAL)           },
-  { RS(SWAP_USED)            },
+  { RS(MEMLO_FREE),            TS(ul_int) },
+  { RS(MEMLO_TOTAL),           TS(ul_int) },
+  { RS(MEMLO_USED),            TS(ul_int) },
+
+  { RS(SWAP_CACHED),           TS(ul_int) },
+  { RS(SWAP_FREE),             TS(ul_int) },
+  { RS(SWAP_TOTAL),            TS(ul_int) },
+  { RS(SWAP_USED),             TS(ul_int) },
 
  // dummy entry corresponding to MEMINFO_logical_end ...
-  { NULL,                    }
+  { NULL,                      NULL       }
 };
 
     /* please note,
@@ -846,3 +851,56 @@ PROCPS_EXPORT struct meminfo_stack *procps_meminfo_select (
 
     return info->extents->stacks[0];
 } // end: procps_meminfo_select
+
+
+// --- special debugging function(s) ------------------------------------------
+/*
+ *  The following isn't part of the normal programming interface.  Rather,
+ *  it exists to validate result types referenced in application programs.
+ *
+ *  It's used only when:
+ *      1) the 'XTRA_PROCPS_DEBUG' has been defined, or
+ *      2) the '#include <proc/xtra-procps-debug.h>' used
+ */
+
+PROCPS_EXPORT struct meminfo_result *xtra_meminfo_get (
+        struct meminfo_info *info,
+        enum meminfo_item actual_enum,
+        const char *typestr,
+        const char *file,
+        int lineno)
+{
+    struct meminfo_result *r = procps_meminfo_get(info, actual_enum);
+
+    if (r) {
+        char *str = Item_table[r->item].type2str;
+        if (str[0]
+        && (strcmp(typestr, str)))
+            fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
+    }
+    return r;
+} // end: xtra_meminfo_get_
+
+
+PROCPS_EXPORT void xtra_meminfo_val (
+        int relative_enum,
+        const char *typestr,
+        const struct meminfo_stack *stack,
+        struct meminfo_info *info,
+        const char *file,
+        int lineno)
+{
+    struct meminfo_result *r;
+    char *str;
+
+    r = &stack->head[relative_enum];
+    if (r->item < 0 || r->item >= MEMINFO_logical_end) {
+        fprintf(stderr, "%s line %d: invalid item = %d, relative_enum = %d, type = %s\n"
+            , file, lineno, r->item, relative_enum, typestr);
+        return;
+    }
+    str = Item_table[r->item].type2str;
+    if (str[0]
+    && (strcmp(typestr, str)))
+        fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
+} // end: xtra_meminfo_val

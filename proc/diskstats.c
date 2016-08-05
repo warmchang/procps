@@ -206,6 +206,9 @@ typedef void (*SET_t)(struct diskstats_result *, struct dev_node *);
 typedef int  (*QSR_t)(const void *, const void *, void *);
 #define QS(t) (QSR_t)srtNAME(t)
 
+#define TS(t) STRINGIFY(t)
+#define TS_noop ""
+
         /*
          * Need it be said?
          * This table must be kept in the exact same order as
@@ -213,43 +216,44 @@ typedef int  (*QSR_t)(const void *, const void *, void *);
 static struct {
     SET_t setsfunc;              // the actual result setting routine
     QSR_t sortfunc;              // sort cmp func for a specific type
+    char *type2str;              // the result type as a string value
 } Item_table[] = {
-/*  setsfunc                            sortfunc
-    ----------------------------------  ---------  */
-  { RS(noop),                           QS(ul_int) },
-  { RS(extra),                          QS(noop)   },
+/*  setsfunc                            sortfunc     type2str
+    ----------------------------------  -----------  ---------- */
+  { RS(noop),                           QS(noop),    TS_noop    },
+  { RS(extra),                          QS(ul_int),  TS_noop    },
 
-  { RS(DISKSTATS_NAME),                 QS(str)    },
-  { RS(DISKSTATS_TYPE),                 QS(s_int)  },
-  { RS(DISKSTATS_MAJOR),                QS(s_int)  },
-  { RS(DISKSTATS_MINOR),                QS(s_int)  },
+  { RS(DISKSTATS_NAME),                 QS(str),     TS(str)    },
+  { RS(DISKSTATS_TYPE),                 QS(s_int),   TS(s_int)  },
+  { RS(DISKSTATS_MAJOR),                QS(s_int),   TS(s_int)  },
+  { RS(DISKSTATS_MINOR),                QS(s_int),   TS(s_int)  },
 
-  { RS(DISKSTATS_READS),                QS(ul_int) },
-  { RS(DISKSTATS_READS_MERGED),         QS(ul_int) },
-  { RS(DISKSTATS_READ_SECTORS),         QS(ul_int) },
-  { RS(DISKSTATS_READ_TIME),            QS(ul_int) },
-  { RS(DISKSTATS_WRITES),               QS(ul_int) },
-  { RS(DISKSTATS_WRITES_MERGED),        QS(ul_int) },
-  { RS(DISKSTATS_WRITE_SECTORS),        QS(ul_int) },
-  { RS(DISKSTATS_WRITE_TIME),           QS(ul_int) },
-  { RS(DISKSTATS_IO_TIME),              QS(ul_int) },
-  { RS(DISKSTATS_IO_WTIME),             QS(ul_int) },
+  { RS(DISKSTATS_READS),                QS(ul_int),  TS(ul_int) },
+  { RS(DISKSTATS_READS_MERGED),         QS(ul_int),  TS(ul_int) },
+  { RS(DISKSTATS_READ_SECTORS),         QS(ul_int),  TS(ul_int) },
+  { RS(DISKSTATS_READ_TIME),            QS(ul_int),  TS(ul_int) },
+  { RS(DISKSTATS_WRITES),               QS(ul_int),  TS(ul_int) },
+  { RS(DISKSTATS_WRITES_MERGED),        QS(ul_int),  TS(ul_int) },
+  { RS(DISKSTATS_WRITE_SECTORS),        QS(ul_int),  TS(ul_int) },
+  { RS(DISKSTATS_WRITE_TIME),           QS(ul_int),  TS(ul_int) },
+  { RS(DISKSTATS_IO_TIME),              QS(ul_int),  TS(ul_int) },
+  { RS(DISKSTATS_IO_WTIME),             QS(ul_int),  TS(ul_int) },
 
-  { RS(DISKSTATS_IO_INPROGRESS),        QS(s_int)  },
+  { RS(DISKSTATS_IO_INPROGRESS),        QS(s_int),   TS(s_int)  },
 
-  { RS(DISKSTATS_DELTA_READS),          QS(s_int)  },
-  { RS(DISKSTATS_DELTA_READS_MERGED),   QS(s_int)  },
-  { RS(DISKSTATS_DELTA_READ_SECTORS),   QS(s_int)  },
-  { RS(DISKSTATS_DELTA_READ_TIME),      QS(s_int)  },
-  { RS(DISKSTATS_DELTA_WRITES),         QS(s_int)  },
-  { RS(DISKSTATS_DELTA_WRITES_MERGED),  QS(s_int)  },
-  { RS(DISKSTATS_DELTA_WRITE_SECTORS),  QS(s_int)  },
-  { RS(DISKSTATS_DELTA_WRITE_TIME),     QS(s_int)  },
-  { RS(DISKSTATS_DELTA_IO_TIME),        QS(s_int)  },
-  { RS(DISKSTATS_DELTA_IO_WTIME),       QS(s_int)  },
+  { RS(DISKSTATS_DELTA_READS),          QS(s_int),   TS(s_int)  },
+  { RS(DISKSTATS_DELTA_READS_MERGED),   QS(s_int),   TS(s_int)  },
+  { RS(DISKSTATS_DELTA_READ_SECTORS),   QS(s_int),   TS(s_int)  },
+  { RS(DISKSTATS_DELTA_READ_TIME),      QS(s_int),   TS(s_int)  },
+  { RS(DISKSTATS_DELTA_WRITES),         QS(s_int),   TS(s_int)  },
+  { RS(DISKSTATS_DELTA_WRITES_MERGED),  QS(s_int),   TS(s_int)  },
+  { RS(DISKSTATS_DELTA_WRITE_SECTORS),  QS(s_int),   TS(s_int)  },
+  { RS(DISKSTATS_DELTA_WRITE_TIME),     QS(s_int),   TS(s_int)  },
+  { RS(DISKSTATS_DELTA_IO_TIME),        QS(s_int),   TS(s_int)  },
+  { RS(DISKSTATS_DELTA_IO_WTIME),       QS(s_int),   TS(s_int)  },
 
  // dummy entry corresponding to DISKSTATS_logical_end ...
-  { NULL,                               NULL       }
+  { NULL,                               NULL,        NULL      }
 };
 
     /* please note,
@@ -974,3 +978,57 @@ PROCPS_EXPORT struct diskstats_stack **procps_diskstats_sort (
     qsort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms);
     return stacks;
 } // end: procps_diskstats_sort
+
+
+// --- special debugging function(s) ------------------------------------------
+/*
+ *  The following isn't part of the normal programming interface.  Rather,
+ *  it exists to validate result types referenced in application programs.
+ *
+ *  It's used only when:
+ *      1) the 'XTRA_PROCPS_DEBUG' has been defined, or
+ *      2) the '#include <proc/xtra-procps-debug.h>' used
+ */
+
+PROCPS_EXPORT struct diskstats_result *xtra_diskstats_get (
+        struct diskstats_info *info,
+        const char *name,
+        enum diskstats_item actual_enum,
+        const char *typestr,
+        const char *file,
+        int lineno)
+{
+    struct diskstats_result *r = procps_diskstats_get(info, name, actual_enum);
+
+    if (r) {
+        char *str = Item_table[r->item].type2str;
+        if (str[0]
+        && (strcmp(typestr, str)))
+            fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
+    }
+    return r;
+} // end: xtra_diskstats_get_
+
+
+PROCPS_EXPORT void xtra_diskstats_val (
+        int relative_enum,
+        const char *typestr,
+        const struct diskstats_stack *stack,
+        struct diskstats_info *info,
+        const char *file,
+        int lineno)
+{
+    struct diskstats_result *r;
+    char *str;
+
+    r = &stack->head[relative_enum];
+    if (r->item < 0 || r->item >= DISKSTATS_logical_end) {
+        fprintf(stderr, "%s line %d: invalid item = %d, relative_enum = %d, type = %s\n"
+            , file, lineno, r->item, relative_enum, typestr);
+        return;
+    }
+    str = Item_table[r->item].type2str;
+    if (str[0]
+    && (strcmp(typestr, str)))
+        fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
+} // end: xtra_diskstats_val

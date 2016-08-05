@@ -34,4 +34,8 @@
 #define ESC_STRETCH 1  // since we mangle to '?' this is 1 (would be 4 for octal escapes)
 int escape_str(char *__restrict dst, const char *__restrict src, int bufsize, int *maxcells);
 
+#ifdef XTRA_PROCPS_DEBUG
+#include <proc/xtra-procps-debug.h>
+#endif
+
 #endif

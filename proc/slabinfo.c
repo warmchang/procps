@@ -241,6 +241,9 @@ typedef void (*SET_t)(struct slabinfo_result *, struct slabs_hist *, struct slab
 typedef int  (*QSR_t)(const void *, const void *, void *);
 #define QS(t) (QSR_t)srtNAME(t)
 
+#define TS(t) STRINGIFY(t)
+#define TS_noop ""
+
         /*
          * Need it be said?
          * This table must be kept in the exact same order as
@@ -248,51 +251,52 @@ typedef int  (*QSR_t)(const void *, const void *, void *);
 static struct {
     SET_t setsfunc;              // the actual result setting routine
     QSR_t sortfunc;              // sort cmp func for a specific type
+    char *type2str;              // the result type as a string value
 } Item_table[] = {
-/*  setsfunc                     sortfunc
-    ---------------------------  ---------  */
-  { RS(noop),                    QS(ul_int) },
-  { RS(extra),                   QS(noop)   },
+/*  setsfunc                      sortfunc   type2str
+    ----------------------------  -----------  ---------- */
+  { RS(noop),                     QS(noop),    TS_noop    },
+  { RS(extra),                    QS(ul_int),  TS_noop    },
 
-  { RS(SLABS_OBJS),              QS(noop)   },
-  { RS(SLABS_AOBJS),             QS(noop)   },
-  { RS(SLABS_PAGES),             QS(noop)   },
-  { RS(SLABS_SLABS),             QS(noop)   },
-  { RS(SLABS_ASLABS),            QS(noop)   },
-  { RS(SLABS_CACHES),            QS(noop)   },
-  { RS(SLABS_ACACHES),           QS(noop)   },
-  { RS(SLABS_SIZE_AVG),          QS(noop)   },
-  { RS(SLABS_SIZE_MIN),          QS(noop)   },
-  { RS(SLABS_SIZE_MAX),          QS(noop)   },
-  { RS(SLABS_SIZE_ACTIVE),       QS(noop)   },
-  { RS(SLABS_SIZE_TOTAL),        QS(noop)   },
+  { RS(SLABS_OBJS),               QS(noop),    TS(u_int)  },
+  { RS(SLABS_AOBJS),              QS(noop),    TS(u_int)  },
+  { RS(SLABS_PAGES),              QS(noop),    TS(u_int)  },
+  { RS(SLABS_SLABS),              QS(noop),    TS(u_int)  },
+  { RS(SLABS_ASLABS),             QS(noop),    TS(u_int)  },
+  { RS(SLABS_CACHES),             QS(noop),    TS(u_int)  },
+  { RS(SLABS_ACACHES),            QS(noop),    TS(u_int)  },
+  { RS(SLABS_SIZE_AVG),           QS(noop),    TS(u_int)  },
+  { RS(SLABS_SIZE_MIN),           QS(noop),    TS(u_int)  },
+  { RS(SLABS_SIZE_MAX),           QS(noop),    TS(u_int)  },
+  { RS(SLABS_SIZE_ACTIVE),        QS(noop),    TS(ul_int) },
+  { RS(SLABS_SIZE_TOTAL),         QS(noop),    TS(ul_int) },
 
-  { RS(SLABS_DELTA_OBJS),        QS(noop)   },
-  { RS(SLABS_DELTA_AOBJS),       QS(noop)   },
-  { RS(SLABS_DELTA_PAGES),       QS(noop)   },
-  { RS(SLABS_DELTA_SLABS),       QS(noop)   },
-  { RS(SLABS_DELTA_ASLABS),      QS(noop)   },
-  { RS(SLABS_DELTA_CACHES),      QS(noop)   },
-  { RS(SLABS_DELTA_ACACHES),     QS(noop)   },
-  { RS(SLABS_DELTA_SIZE_AVG),    QS(noop)   },
-  { RS(SLABS_DELTA_SIZE_MIN),    QS(noop)   },
-  { RS(SLABS_DELTA_SIZE_MAX),    QS(noop)   },
-  { RS(SLABS_DELTA_SIZE_ACTIVE), QS(noop)   },
-  { RS(SLABS_DELTA_SIZE_TOTAL),  QS(noop)   },
+  { RS(SLABS_DELTA_OBJS),         QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_AOBJS),        QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_PAGES),        QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_SLABS),        QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_ASLABS),       QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_CACHES),       QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_ACACHES),      QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_SIZE_AVG),     QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_SIZE_MIN),     QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_SIZE_MAX),     QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_SIZE_ACTIVE),  QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_SIZE_TOTAL),   QS(noop),    TS(s_int)  },
 
-  { RS(SLABNODE_NAME),           QS(str)    },
-  { RS(SLABNODE_OBJS),           QS(u_int)  },
-  { RS(SLABNODE_AOBJS),          QS(u_int)  },
-  { RS(SLABNODE_OBJ_SIZE),       QS(u_int)  },
-  { RS(SLABNODE_OBJS_PER_SLAB),  QS(u_int)  },
-  { RS(SLABNODE_PAGES_PER_SLAB), QS(u_int)  },
-  { RS(SLABNODE_SLABS),          QS(u_int)  },
-  { RS(SLABNODE_ASLABS),         QS(u_int)  },
-  { RS(SLABNODE_USE),            QS(u_int)  },
-  { RS(SLABNODE_SIZE),           QS(ul_int) },
+  { RS(SLABNODE_NAME),            QS(str),     TS(str)    },
+  { RS(SLABNODE_OBJS),            QS(u_int),   TS(u_int)  },
+  { RS(SLABNODE_AOBJS),           QS(u_int),   TS(u_int)  },
+  { RS(SLABNODE_OBJ_SIZE),        QS(u_int),   TS(u_int)  },
+  { RS(SLABNODE_OBJS_PER_SLAB),   QS(u_int),   TS(u_int)  },
+  { RS(SLABNODE_PAGES_PER_SLAB),  QS(u_int),   TS(u_int)  },
+  { RS(SLABNODE_SLABS),           QS(u_int),   TS(u_int)  },
+  { RS(SLABNODE_ASLABS),          QS(u_int),   TS(u_int)  },
+  { RS(SLABNODE_USE),             QS(u_int),   TS(u_int)  },
+  { RS(SLABNODE_SIZE),            QS(ul_int),  TS(ul_int) },
 
  // dummy entry corresponding to SLABINFO_logical_end ...
-  { NULL,                        NULL       }
+  { NULL,                         NULL,        NULL       }
 };
 
     /* please note,
@@ -1004,3 +1008,56 @@ PROCPS_EXPORT struct slabinfo_stack **procps_slabinfo_sort (
     qsort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms);
     return stacks;
 } // end: procps_slabinfo_sort
+
+
+// --- special debugging function(s) ------------------------------------------
+/*
+ *  The following isn't part of the normal programming interface.  Rather,
+ *  it exists to validate result types referenced in application programs.
+ *
+ *  It's used only when:
+ *      1) the 'XTRA_PROCPS_DEBUG' has been defined, or
+ *      2) the '#include <proc/xtra-procps-debug.h>' used
+ */
+
+PROCPS_EXPORT struct slabinfo_result *xtra_slabinfo_get (
+        struct slabinfo_info *info,
+        enum slabinfo_item actual_enum,
+        const char *typestr,
+        const char *file,
+        int lineno)
+{
+    struct slabinfo_result *r = procps_slabinfo_get(info, actual_enum);
+
+    if (r) {
+        char *str = Item_table[r->item].type2str;
+        if (str[0]
+        && (strcmp(typestr, str)))
+            fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
+    }
+    return r;
+} // end: xtra_slabinfo_get_
+
+
+PROCPS_EXPORT void xtra_slabinfo_val (
+        int relative_enum,
+        const char *typestr,
+        const struct slabinfo_stack *stack,
+        struct slabinfo_info *info,
+        const char *file,
+        int lineno)
+{
+    struct slabinfo_result *r;
+    char *str;
+
+    r = &stack->head[relative_enum];
+    if (r->item < 0 || r->item >= SLABINFO_logical_end) {
+        fprintf(stderr, "%s line %d: invalid item = %d, relative_enum = %d, type = %s\n"
+            , file, lineno, r->item, relative_enum, typestr);
+        return;
+    }
+    str = Item_table[r->item].type2str;
+    if (str[0]
+    && (strcmp(typestr, str)))
+        fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
+} // end: xtra_slabinfo_val

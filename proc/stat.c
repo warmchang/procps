@@ -255,6 +255,9 @@ typedef void (*SET_t)(struct stat_result *, struct hist_sys *, struct hist_tic *
 typedef int  (*QSR_t)(const void *, const void *, void *);
 #define QS(t) (QSR_t)srtNAME(t)
 
+#define TS(t) STRINGIFY(t)
+#define TS_noop ""
+
         /*
          * Need it be said?
          * This table must be kept in the exact same order as
@@ -262,51 +265,52 @@ typedef int  (*QSR_t)(const void *, const void *, void *);
 static struct {
     SET_t setsfunc;              // the actual result setting routine
     QSR_t sortfunc;              // sort cmp func for a specific type
+    char *type2str;              // the result type as a string value
 } Item_table[] = {
-/*  setsfunc                     sortfunc
-    --------------------------   ---------  */
-  { RS(noop),                    QS(ul_int)  },
-  { RS(extra),                   QS(noop)    },
+/*  setsfunc                     sortfunc      type2str
+    ---------------------------  ------------  ----------- */
+  { RS(noop),                    QS(noop),     TS_noop     },
+  { RS(extra),                   QS(ull_int),  TS_noop     },
 
-  { RS(TIC_ID),                  QS(s_int)   },
-  { RS(TIC_NUMA_NODE),           QS(s_int)   },
-  { RS(TIC_USER),                QS(ull_int) },
-  { RS(TIC_NICE),                QS(ull_int) },
-  { RS(TIC_SYSTEM),              QS(ull_int) },
-  { RS(TIC_IDLE),                QS(ull_int) },
-  { RS(TIC_IOWAIT),              QS(ull_int) },
-  { RS(TIC_IRQ),                 QS(ull_int) },
-  { RS(TIC_SOFTIRQ),             QS(ull_int) },
-  { RS(TIC_STOLEN),              QS(ull_int) },
-  { RS(TIC_GUEST),               QS(ull_int) },
-  { RS(TIC_GUEST_NICE),          QS(ull_int) },
+  { RS(TIC_ID),                  QS(s_int),    TS(s_int)   },
+  { RS(TIC_NUMA_NODE),           QS(s_int),    TS(s_int)   },
+  { RS(TIC_USER),                QS(ull_int),  TS(ull_int) },
+  { RS(TIC_NICE),                QS(ull_int),  TS(ull_int) },
+  { RS(TIC_SYSTEM),              QS(ull_int),  TS(ull_int) },
+  { RS(TIC_IDLE),                QS(ull_int),  TS(ull_int) },
+  { RS(TIC_IOWAIT),              QS(ull_int),  TS(ull_int) },
+  { RS(TIC_IRQ),                 QS(ull_int),  TS(ull_int) },
+  { RS(TIC_SOFTIRQ),             QS(ull_int),  TS(ull_int) },
+  { RS(TIC_STOLEN),              QS(ull_int),  TS(ull_int) },
+  { RS(TIC_GUEST),               QS(ull_int),  TS(ull_int) },
+  { RS(TIC_GUEST_NICE),          QS(ull_int),  TS(ull_int) },
 
-  { RS(TIC_DELTA_USER),          QS(sl_int)  },
-  { RS(TIC_DELTA_NICE),          QS(sl_int)  },
-  { RS(TIC_DELTA_SYSTEM),        QS(sl_int)  },
-  { RS(TIC_DELTA_IDLE),          QS(sl_int)  },
-  { RS(TIC_DELTA_IOWAIT),        QS(sl_int)  },
-  { RS(TIC_DELTA_IRQ),           QS(sl_int)  },
-  { RS(TIC_DELTA_SOFTIRQ),       QS(sl_int)  },
-  { RS(TIC_DELTA_STOLEN),        QS(sl_int)  },
-  { RS(TIC_DELTA_GUEST),         QS(sl_int)  },
-  { RS(TIC_DELTA_GUEST_NICE),    QS(sl_int)  },
+  { RS(TIC_DELTA_USER),          QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_DELTA_NICE),          QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_DELTA_SYSTEM),        QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_DELTA_IDLE),          QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_DELTA_IOWAIT),        QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_DELTA_IRQ),           QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_DELTA_SOFTIRQ),       QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_DELTA_STOLEN),        QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_DELTA_GUEST),         QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_DELTA_GUEST_NICE),    QS(sl_int),   TS(sl_int)  },
 
-  { RS(SYS_CTX_SWITCHES),        QS(ul_int)  },
-  { RS(SYS_INTERRUPTS),          QS(ul_int)  },
-  { RS(SYS_PROC_BLOCKED),        QS(ul_int)  },
-  { RS(SYS_PROC_CREATED),        QS(ul_int)  },
-  { RS(SYS_PROC_RUNNING),        QS(ul_int)  },
-  { RS(SYS_TIME_OF_BOOT),        QS(ul_int)  },
+  { RS(SYS_CTX_SWITCHES),        QS(ul_int),   TS(ul_int)  },
+  { RS(SYS_INTERRUPTS),          QS(ul_int),   TS(ul_int)  },
+  { RS(SYS_PROC_BLOCKED),        QS(ul_int),   TS(ul_int)  },
+  { RS(SYS_PROC_CREATED),        QS(ul_int),   TS(ul_int)  },
+  { RS(SYS_PROC_RUNNING),        QS(ul_int),   TS(ul_int)  },
+  { RS(SYS_TIME_OF_BOOT),        QS(ul_int),   TS(ul_int)  },
 
-  { RS(SYS_DELTA_CTX_SWITCHES),  QS(s_int)   },
-  { RS(SYS_DELTA_INTERRUPTS),    QS(s_int)   },
-  { RS(SYS_DELTA_PROC_BLOCKED),  QS(s_int)   },
-  { RS(SYS_DELTA_PROC_CREATED),  QS(s_int)   },
-  { RS(SYS_DELTA_PROC_RUNNING),  QS(s_int)   },
+  { RS(SYS_DELTA_CTX_SWITCHES),  QS(s_int),    TS(s_int)   },
+  { RS(SYS_DELTA_INTERRUPTS),    QS(s_int),    TS(s_int)   },
+  { RS(SYS_DELTA_PROC_BLOCKED),  QS(s_int),    TS(s_int)   },
+  { RS(SYS_DELTA_PROC_CREATED),  QS(s_int),    TS(s_int)   },
+  { RS(SYS_DELTA_PROC_RUNNING),  QS(s_int),    TS(s_int)   },
 
  // dummy entry corresponding to STAT_logical_end ...
-  { NULL,                        NULL        }
+  { NULL,                        NULL,         NULL        }
 };
 
     /* please note,
@@ -1122,3 +1126,56 @@ PROCPS_EXPORT struct stat_stack **procps_stat_sort (
     qsort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms);
     return stacks;
 } // end: procps_stat_sort
+
+
+// --- special debugging function(s) ------------------------------------------
+/*
+ *  The following isn't part of the normal programming interface.  Rather,
+ *  it exists to validate result types referenced in application programs.
+ *
+ *  It's used only when:
+ *      1) the 'XTRA_PROCPS_DEBUG' has been defined, or
+ *      2) the '#include <proc/xtra-procps-debug.h>' used
+ */
+
+PROCPS_EXPORT struct stat_result *xtra_stat_get (
+        struct stat_info *info,
+        enum stat_item actual_enum,
+        const char *typestr,
+        const char *file,
+        int lineno)
+{
+    struct stat_result *r = procps_stat_get(info, actual_enum);
+
+    if (r) {
+        char *str = Item_table[r->item].type2str;
+        if (str[0]
+        && (strcmp(typestr, str)))
+            fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
+    }
+    return r;
+} // end: xtra_stat_get_
+
+
+PROCPS_EXPORT void xtra_stat_val (
+        int relative_enum,
+        const char *typestr,
+        const struct stat_stack *stack,
+        struct stat_info *info,
+        const char *file,
+        int lineno)
+{
+    struct stat_result *r;
+    char *str;
+
+    r = &stack->head[relative_enum];
+    if (r->item < 0 || r->item >= STAT_logical_end) {
+        fprintf(stderr, "%s line %d: invalid item = %d, relative_enum = %d, type = %s\n"
+            , file, lineno, r->item, relative_enum, typestr);
+        return;
+    }
+    str = Item_table[r->item].type2str;
+    if (str[0]
+    && (strcmp(typestr, str)))
+        fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
+} // end: xtra_stat_val

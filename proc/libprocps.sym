@@ -52,6 +52,17 @@ global:
 	procps_vmstat_unref;
 	procps_vmstat_get;
 	procps_vmstat_select;
+	xtra_diskstats_get;
+	xtra_diskstats_val;
+	xtra_meminfo_get;
+	xtra_meminfo_val;
+	xtra_pids_val;
+	xtra_slabinfo_get;
+	xtra_slabinfo_val;
+	xtra_stat_get;
+	xtra_stat_val;
+	xtra_vmstat_get;
+	xtra_vmstat_val;
 local:
 	*;
 };

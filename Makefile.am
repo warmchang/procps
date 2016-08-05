@@ -206,7 +206,8 @@ proc_libprocps_la_SOURCES = \
 	proc/wchan.c \
 	proc/wchan.h \
 	proc/uptime.c \
-	proc/uptime.h
+	proc/uptime.h \
+	proc/xtra-procps-debug.h
 
 proc_libprocps_la_includedir = $(includedir)/proc/
 proc_libprocps_la_include_HEADERS = \
@@ -223,7 +224,8 @@ proc_libprocps_la_include_HEADERS = \
 	proc/uptime.h \
 	proc/version.h \
 	proc/vmstat.h \
-	proc/wchan.h
+	proc/wchan.h \
+	proc/xtra-procps-debug.h
 
 dist_man_MANS += \
 	proc/openproc.3 \
