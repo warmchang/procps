@@ -632,8 +632,8 @@ static void diskformat(void)
     time_t the_time;
     struct tm *tm_ptr;
     char timebuf[32];
-    const char format[] = "%-5s %6lu %6lu %7lu %7lu %6lu %6lu %7lu %7lu %6lu %6lu";
-    const char wide_format[] = "%-5s %9lu %9lu %11lu %11lu %9lu %9lu %11lu %11lu %7lu %7lu";
+    const char format[] = "%-5s %6lu %6lu %7lu %7lu %6lu %6lu %7lu %7lu %6d %6lu";
+    const char wide_format[] = "%-5s %9lu %9lu %11lu %11lu %9lu %9lu %11lu %11lu %7d %7lu";
 
     if (procps_diskstats_new(&disk_stat) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create diskstat structure"));
@@ -664,7 +664,7 @@ static void diskformat(void)
                 diskVAL(disk_WRITE_MERGE, ul_int),
                 diskVAL(disk_WRITE_SECT, ul_int),
                 diskVAL(disk_WRITE_TIME, ul_int),
-                diskVAL(disk_IO, ul_int) / 1000,
+                diskVAL(disk_IO, s_int) / 1000,
                 diskVAL(disk_IO_TIME, ul_int) / 1000);
             if (t_option)
                 printf(" %s\n", timebuf);
@@ -775,7 +775,7 @@ static void disksum_format(void)
         merged_writes += diskVAL(disk_WRITE_MERGE, ul_int);
         written_sectors += diskVAL(disk_WRITE_SECT, ul_int);
         milli_writing += diskVAL(disk_WRITE_TIME, ul_int);
-        inprogress_IO += diskVAL(disk_IO, ul_int) / 1000;
+        inprogress_IO += diskVAL(disk_IO, s_int) / 1000;
         milli_spent_IO += diskVAL(disk_IO_TIME, ul_int) / 1000;
         weighted_milli_spent_IO += diskVAL(disk_IO_WTIME, ul_int) / 1000;
     }

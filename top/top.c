@@ -52,7 +52,6 @@
 #include "top.h"
 #include "top_nls.h"
 
-
 /*######  Miscellaneous global stuff  ####################################*/
 
         /* The original and new terminal definitions
@@ -4447,10 +4446,11 @@ static int Tree_idx;                        // frame_make resets to zero
          * This little recursive guy is the real forest view workhorse.
          * He fills in the Tree_ppt array and also sets the child indent
          * level which is stored in an 'extra' result struct as a u_int. */
-static void forest_adds (const int self, int level) {
+static void forest_adds (const int self, unsigned level) {
  // tailored 'results stack value' extractor macros
  #define rSv(E,X)  PID_VAL(E, s_int, Seed_ppt[X])
- #define rLevel    PID_VAL(eu_XTRA, u_int, Tree_ppt[Tree_idx])
+ // if xtra-procps-debug.h active, can't use PID_VAL as base due to assignment
+ #define rLevel  Tree_ppt[Tree_idx]->head[Fieldstab[eu_XTRA].erel].result.u_int
    int i;
 
    if (Tree_idx < PIDSmaxt) {               // immunize against insanity
@@ -4965,7 +4965,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             break;
    /* ul_int, scale_pcnt */
          case EU_MEM:
-            cp = scale_pcnt((float)rSv(EU_RES, ul_int) * 100 / MEM_VAL(mem_TOT), W, Jn);
+            cp = scale_pcnt((float)rSv(EU_MEM, ul_int) * 100 / MEM_VAL(mem_TOT), W, Jn);
             break;
    /* ul_int, make_str with special handling */
          case EU_FLG:

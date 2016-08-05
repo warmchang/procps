@@ -267,7 +267,8 @@ static void value_this_proc_pcpu(proc_t *buf){
     seconds = rSv(TIME_ELAPSED, ull_int, buf);
     if(seconds) pcpu = (used_jiffies * 1000ULL / Hertz) / seconds;
 
-    rSv(extra, ul_int, buf) = pcpu;
+    // if xtra-procps-debug.h active, can't use PIDS_VAL as base due to assignment
+    buf->head[rel_extra].result.ul_int = pcpu;
   }
 }
 
@@ -545,7 +546,6 @@ static void finalize_stacks (void)
   chkREL(ID_SUID)
   chkREL(ID_TGID)
   chkREL(STATE)
-  chkREL(TIME_START)
   chkREL(TTY)
   // needed to creata an enhanced 'stat/state'
   chkREL(ID_PGRP)
@@ -561,8 +561,11 @@ static void finalize_stacks (void)
   chkREL(SIGNALS)
   chkREL(SIGPENDING)
   // needed with loss of defunct 'cook_time' macros
+  chkREL(TICS_ALL)
+  chkREL(TICS_ALL_C)
   chkREL(TIME_ALL)
   chkREL(TIME_ELAPSED)
+  chkREL(TIME_START)
   // special items with 'extra' used as former pcpu
   chkREL(extra)
   chkREL(noop)

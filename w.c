@@ -344,6 +344,7 @@ static int find_best_proc(
         char *cmdline)
 {
 #define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i], info)
+#define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, reap->stacks[i], info)
 #define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, reap->stacks[i], info)
 #define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i], info)
     unsigned uid = ~0U;
@@ -413,8 +414,8 @@ static int find_best_proc(
             }
         }
         if (
-            (!ignoreuser && uid != PIDS_GETINT(EUID)
-             && uid != PIDS_GETINT(RUID))
+            (!ignoreuser && uid != PIDS_GETUNT(EUID)
+             && uid != PIDS_GETUNT(RUID))
             || (PIDS_GETINT(PGRP) != PIDS_GETINT(TPGID))
             || (PIDS_GETULL(START) <= best_time)
            )
@@ -426,6 +427,7 @@ static int find_best_proc(
     procps_pids_unref(&info);
     return found_utpid;
 #undef PIDS_GETINT
+#undef PIDS_GETUNT
 #undef PIDS_GETULL
 #undef PIDS_GETSTR
 }
