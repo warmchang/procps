@@ -37,6 +37,8 @@
 #include "xalloc.h"
 #include <proc/procps.h>
 
+static struct pids_info *Pids_info;
+
 enum pids_item Pid_items[] = {
     PIDS_ID_PID,  PIDS_ID_TGID,
     PIDS_CMDLINE, PIDS_ADDR_START_STACK };
@@ -238,8 +240,8 @@ static char *mapping_name(struct pids_stack *p, unsigned long addr,
 	}
 
 	cp = _("  [ anon ]");
-	if (PIDS_VAL(start_stack, ul_int, p) >= addr
-	&& (PIDS_VAL(start_stack, ul_int, p) <= addr + len))
+	if (PIDS_VAL(start_stack, ul_int, p, Pids_info) >= addr
+	&& (PIDS_VAL(start_stack, ul_int, p, Pids_info) <= addr + len))
 		cp = _("  [ stack ]");
 	return cp;
 }
@@ -534,14 +536,14 @@ static int one_proc (struct pids_stack *p)
 	unsigned long long total_shared_dirty = 0ull;
 	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0;
 
-	printf("%u:   %s\n", PIDS_VAL(tgid, s_int, p), PIDS_VAL(cmdline, str, p));
+	printf("%u:   %s\n", PIDS_VAL(tgid, s_int, p, Pids_info), PIDS_VAL(cmdline, str, p, Pids_info));
 
 	if (x_option || X_option || c_option) {
-		sprintf(buf, "/proc/%u/smaps", PIDS_VAL(tgid, s_int, p));
+		sprintf(buf, "/proc/%u/smaps", PIDS_VAL(tgid, s_int, p, Pids_info));
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	} else {
-		sprintf(buf, "/proc/%u/maps", PIDS_VAL(tgid, s_int, p));
+		sprintf(buf, "/proc/%u/maps", PIDS_VAL(tgid, s_int, p, Pids_info));
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	}
@@ -995,7 +997,6 @@ static char *get_default_rc_filename(void)
 
 int main(int argc, char **argv)
 {
-	struct pids_info *info = NULL;
 	struct pids_fetch *pids_fetch;
 	unsigned *pidlist;
 	int reap_count, user_count;
@@ -1136,7 +1137,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	if (procps_pids_new(&info, Pid_items, 4))
+	if (procps_pids_new(&Pids_info, Pid_items, 4))
 		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
 	pidlist = xmalloc(sizeof(pid_t) * argc);
 
@@ -1161,7 +1162,7 @@ int main(int argc, char **argv)
 
 	discover_shm_minor();
 
-	if (!(pids_fetch = procps_pids_select(info, pidlist, user_count, PIDS_SELECT_PID)))
+	if (!(pids_fetch = procps_pids_select(Pids_info, pidlist, user_count, PIDS_SELECT_PID)))
 		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
 
 	for (reap_count = 0; reap_count < pids_fetch->counts->total; reap_count++) {
@@ -1169,7 +1170,7 @@ int main(int argc, char **argv)
 	}
 
 	free(pidlist);
-	procps_pids_unref(&info);
+	procps_pids_unref(&Pids_info);
 
 	/* cleaning the list used for the -c/-X/-XX modes */
 	for (listnode = listhead; listnode != NULL ; ) {

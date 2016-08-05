@@ -471,9 +471,9 @@ static regex_t * do_regcomp (void)
 
 static struct el * select_procs (int *num)
 {
-#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack)
-#define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, stack)
-#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack)
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack, info)
+#define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, stack, info)
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack, info)
     struct pids_info *info=NULL;
     struct procps_namespaces nsp;
     struct pids_stack *stack;

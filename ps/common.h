@@ -34,7 +34,7 @@
 
 /* a 'results stack value' extractor macro
    where: E=rel enum, T=data type, S=stack */
-#define rSv(E,T,S) PIDS_VAL(rel_ ## E, T, S)
+#define rSv(E,T,S) PIDS_VAL(rel_ ## E, T, S, Pids_info)
 
 #define namREL(e) rel_ ## e
 #define makEXT(e) extern int namREL(e);

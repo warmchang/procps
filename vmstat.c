@@ -323,11 +323,11 @@ static unsigned long unitConvert(unsigned long size)
 
 static void new_format(void)
 {
-#define TICv(E) STAT_VAL(E, ull_int, stat_stack)
-#define DTICv(E) STAT_VAL(E, sl_int, stat_stack)
-#define SYSv(E) STAT_VAL(E, ul_int, stat_stack)
-#define MEMv(E) MEMINFO_VAL(E, ul_int, mem_stack)
-#define DSYSv(E) STAT_VAL(E, s_int, stat_stack)
+#define TICv(E) STAT_VAL(E, ull_int, stat_stack, stat_info)
+#define DTICv(E) STAT_VAL(E, sl_int, stat_stack, stat_info)
+#define SYSv(E) STAT_VAL(E, ul_int, stat_stack, stat_info)
+#define MEMv(E) MEMINFO_VAL(E, ul_int, mem_stack, mem_info)
+#define DSYSv(E) STAT_VAL(E, s_int, stat_stack, stat_info)
     const char format[] =
         "%2lu %2lu %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u";
     const char wide_format[] =
@@ -528,7 +528,7 @@ static void diskpartition_header(const char *partition_name)
 
 static void diskpartition_format(const char *partition_name)
 {
- #define partVAL(x) DISKSTATS_VAL(x, ul_int, stack)
+ #define partVAL(x) DISKSTATS_VAL(x, ul_int, stack, disk_stat)
     struct diskstats_info *disk_stat;
     struct diskstats_stack *stack;
     struct diskstats_result *got;
@@ -625,7 +625,7 @@ static void diskheader(void)
 
 static void diskformat(void)
 {
-#define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j])
+#define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j], disk_stat)
     struct diskstats_info *disk_stat;
     struct diskstats_reap *reap;
     int i, j;
@@ -742,7 +742,7 @@ static void slabformat (void)
 
 static void disksum_format(void)
 {
-#define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j])
+#define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j], disk_stat)
     struct diskstats_info *disk_stat;
     struct diskstats_reap *reap;
     int j, disk_count, part_count;
@@ -799,9 +799,9 @@ static void disksum_format(void)
 
 static void sum_format(void)
 {
-#define TICv(E) STAT_VAL(E, ull_int, stat_stack)
-#define SYSv(E) STAT_VAL(E, ul_int, stat_stack)
-#define MEMv(E) unitConvert(STAT_VAL(E, ul_int, mem_stack))
+#define TICv(E) STAT_VAL(E, ull_int, stat_stack, stat_info)
+#define SYSv(E) STAT_VAL(E, ul_int, stat_stack, stat_info)
+#define MEMv(E) unitConvert(MEMINFO_VAL(E, ul_int, mem_stack, mem_info))
     struct stat_info *stat_info = NULL;
     struct vmstat_info *vm_info = NULL;
     struct meminfo_info *mem_info = NULL;

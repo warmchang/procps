@@ -208,7 +208,7 @@ enum Rel_memitems {
    mem_FRE, mem_USE, mem_TOT, mem_QUE, mem_BUF, mem_AVL,
    swp_TOT, swp_FRE, swp_USE };
         // mem stack results extractor macro, where e=rel enum
-#define MEM_VAL(e) MEMINFO_VAL(e, ul_int, Mem_stack)
+#define MEM_VAL(e) MEMINFO_VAL(e, ul_int, Mem_stack, Mem_ctx)
         // --- <proc/pids.h> --------------------------------------------------
 static struct pids_info *Pids_ctx;
 static int Pids_itms_cur;                   // 'current' max (<= Fieldstab)
@@ -218,7 +218,7 @@ static struct pids_fetch *Pids_reap;        // for reap or select
         // pid stack results extractor macro, where e=our EU enum, t=type, s=stack
         // ( we'll exploit that <proc/pids.h> provided macro as much as possible )
         // ( but many functions use their own unique tailored version for access )
-#define PID_VAL(e,t,s) PIDS_VAL(Fieldstab[ e ].erel, t, s)
+#define PID_VAL(e,t,s) PIDS_VAL(Fieldstab[ e ].erel, t, s, Pids_ctx)
         // --- <proc/stat.h> --------------------------------------------------
 static struct stat_info *Stat_ctx;
 static struct stat_reaped *Stat_reap;
@@ -232,8 +232,8 @@ enum Rel_statitems {
    stat_ID, stat_NU, stat_US, stat_SY, stat_NI,
    stat_IL, stat_IO, stat_IR, stat_SI, stat_ST };
         // cpu/node stack results extractor macros, where e=rel enum, x=index
-#define CPU_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->cpus->stacks[x])
-#define NOD_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->nodes->stacks[x])
+#define CPU_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->cpus->stacks[x], Stat_ctx)
+#define NOD_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->nodes->stacks[x], Stat_ctx)
 
 /*######  Tiny useful routine(s)  ########################################*/
 
@@ -4611,7 +4611,7 @@ all_done:
          *       display and thus requiring the cpu summary toggle */
 static void summary_hlp (struct stat_stack *this, const char *pfx) {
  // a tailored 'results stack value' extractor macro
- #define rSv(E)  STAT_VAL(E, sl_int, this)
+ #define rSv(E)  STAT_VAL(E, sl_int, this, Stat_ctx)
    SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, z_frme, tot_frme;
    float scale;
 

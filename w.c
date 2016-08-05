@@ -343,9 +343,9 @@ static int find_best_proc(
         unsigned long long *restrict const pcpu,
         char *cmdline)
 {
-#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
-#define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, reap->stacks[i])
-#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i])
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i], info)
+#define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, reap->stacks[i], info)
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i], info)
     unsigned uid = ~0U;
     int found_utpid = 0;
     int i, total_procs, line;
@@ -404,7 +404,7 @@ static int find_best_proc(
         }
         if (PIDS_GETINT(TTY) != line)
             continue;
-        (*jcpu) += PIDS_VAL(EU_TICS_ALL, ull_int, reap->stacks[i]);
+        (*jcpu) += PIDS_VAL(EU_TICS_ALL, ull_int, reap->stacks[i], info);
         if (!(secondbest_time && PIDS_GETULL(START) <= secondbest_time)) {
             secondbest_time = PIDS_GETULL(START);
             if (cmdline[0] == '-' && cmdline[1] == '\0') {

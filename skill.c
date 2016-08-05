@@ -69,6 +69,8 @@ if(!thing##s) thing##s = xmalloc(sizeof(*thing##s)*saved_argc); \
 thing##s[thing##_count++] = addme; \
 }while(0)
 
+struct pids_info *Pids_info;
+
 enum pids_item items[] = {
     PIDS_ID_PID,
     PIDS_ID_EUID,
@@ -164,8 +166,8 @@ static int match_ns(const int pid)
 
 static int ask_user(struct pids_stack *stack)
 {
-#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack)
-#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack)
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack, Pids_info)
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack, Pids_info)
     char *buf=NULL;
     size_t len=0;
 
@@ -262,16 +264,15 @@ static void show_lists(void)
 
 static void scan_procs(struct run_time_conf_t *run_time)
 {
-#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
-#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i])
-    struct pids_info *info=NULL;
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i], Pids_info)
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i], Pids_info)
     struct pids_fetch *reap;
     int i, total_procs;
 
-    if (procps_pids_new(&info, items, 6) < 0)
+    if (procps_pids_new(&Pids_info, items, 6) < 0)
         xerrx(EXIT_FAILURE,
-              _("Unable to create pid info structure"));
-    if ((reap = procps_pids_reap(info, PIDS_FETCH_TASKS_ONLY)) == NULL)
+              _("Unable to create pid Pids_info structure"));
+    if ((reap = procps_pids_reap(Pids_info, PIDS_FETCH_TASKS_ONLY)) == NULL)
         xerrx(EXIT_FAILURE,
               _("Unable to load process information"));
 
