@@ -140,7 +140,7 @@ struct meminfo_stack {
 #define MEMINFO_GET( info, actual_enum, type ) \
     procps_meminfo_get( info, actual_enum ) -> result . type
 
-#define MEMINFO_VAL( relative_enum, type, stack) \
+#define MEMINFO_VAL( relative_enum, type, stack, info ) \
     stack -> head [ relative_enum ] . result . type
 
 

@@ -108,7 +108,7 @@ struct stat_reaped {
 #define STAT_GET( info, actual_enum, type ) \
     procps_stat_get( info, actual_enum ) -> result . type
 
-#define STAT_VAL( relative_enum, type, stack ) \
+#define STAT_VAL( relative_enum, type, stack, info ) \
     stack -> head [ relative_enum ] . result . type
 
 

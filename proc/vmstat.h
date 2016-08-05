@@ -288,7 +288,7 @@ struct vmstat_stack {
 #define VMSTAT_GET( info, actual_enum, type ) \
     procps_vmstat_get( info, actual_enum ) -> result . type
 
-#define VMSTAT_VAL( relative_enum, type, stack ) \
+#define VMSTAT_VAL( relative_enum, type, stack, info ) \
     stack -> head [ relative_enum ] . result . type
 
 
