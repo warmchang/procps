@@ -233,6 +233,7 @@ enum Rel_statitems {
         // cpu/node stack results extractor macros, where e=rel enum, x=index
 #define CPU_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->cpus->stacks[x], Stat_ctx)
 #define NOD_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->nodes->stacks[x], Stat_ctx)
+#define TIC_VAL(e,s) STAT_VAL(e, sl_int, s, Stat_ctx)
 
 /*######  Tiny useful routine(s)  ########################################*/
 
@@ -4611,7 +4612,7 @@ all_done:
          *       display and thus requiring the cpu summary toggle */
 static void summary_hlp (struct stat_stack *this, const char *pfx) {
  // a tailored 'results stack value' extractor macro
- #define rSv(E)  STAT_VAL(E, sl_int, this, Stat_ctx)
+ #define rSv(E)  TIC_VAL(E, this)
    SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, z_frme, tot_frme;
    float scale;
 
