@@ -95,8 +95,9 @@ struct slabinfo_reap {
 };
 
 
-#define SLABINFO_GET( info, actual_enum, type ) \
-    procps_slabinfo_get( info, actual_enum ) -> result . type
+#define SLABINFO_GET( info, actual_enum, type ) ( { \
+    struct slabinfo_result *r = procps_slabinfo_get( info, actual_enum ); \
+    r ? r->result . type : 0; } )
 
 #define SLABINFO_VAL( relative_enum, type, stack, info ) \
     stack -> head [ relative_enum ] . result . type

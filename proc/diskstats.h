@@ -89,8 +89,9 @@ struct diskstats_reap {
 #define DISKSTATS_TYPE_DISK       -11111
 #define DISKSTATS_TYPE_PARTITION  -22222
 
-#define DISKSTATS_GET( info, name, actual_enum, type ) \
-    procps_diskstats_get( info, name, actual_enum ) -> result . type
+#define DISKSTATS_GET( info, name, actual_enum, type ) ( { \
+    struct diskstats_result *r = procps_diskstats_get( info, actual_enum ); \
+    r ? r->result . type : 0; } )
 
 #define DISKSTATS_VAL( relative_enum, type, stack, info ) \
     stack -> head [ relative_enum ] . result . type

@@ -35,8 +35,10 @@ struct diskstats_result *xtra_diskstats_get (
     const char *file,
     int lineno);
 
-#define DISKSTATS_GET( info, name, actual_enum, type ) \
-    xtra_diskstats_get(info, name, actual_enum , STRINGIFY(type), __FILE__, __LINE__) -> result . type; } )
+#define DISKSTATS_GET( info, name, actual_enum, type ) ( { \
+    struct diskstats_result *r; \
+    r = xtra_diskstats_get(info, name, actual_enum , STRINGIFY(type), __FILE__, __LINE__); \
+    r ? r->result . type : 0; } )
 #endif // . . . . . . . . . .
 
 #ifdef DISKSTATS_VAL
@@ -66,7 +68,9 @@ struct meminfo_result *xtra_meminfo_get (
     int lineno);
 
 #define MEMINFO_GET( info, actual_enum, type ) ( { \
-    xtra_meminfo_get(info, actual_enum , STRINGIFY(type), __FILE__, __LINE__) -> result . type; } )
+    struct meminfo_result *r; \
+    r = xtra_meminfo_get(info, actual_enum , STRINGIFY(type), __FILE__, __LINE__); \
+    r ? r->result . type : 0; } )
 #endif // . . . . . . . . . .
 
 #ifdef MEMINFO_VAL
@@ -112,8 +116,10 @@ struct slabinfo_result *xtra_slabinfo_get (
     const char *file,
     int lineno);
 
-#define SLABINFO_GET( info, actual_enum, type ) \
-    xtra_slabinfo_get(info, actual_enum , STRINGIFY(type), __FILE__, __LINE__) -> result . type; } )
+#define SLABINFO_GET( info, actual_enum, type ) ( { \
+    struct slabinfo_result *r; \
+    r = xtra_slabinfo_get(info, actual_enum , STRINGIFY(type), __FILE__, __LINE__); \
+    r ? r->result . type : 0; } )
 #endif // . . . . . . . . . .
 
 #ifdef SLABINFO_VAL
@@ -143,7 +149,9 @@ struct stat_result *xtra_stat_get (
     int lineno);
 
 #define STAT_GET( info, actual_enum, type ) ( { \
-    xtra_stat_get(info, actual_enum , STRINGIFY(type), __FILE__, __LINE__) -> result . type; } )
+    struct stat_result *r; \
+    r = xtra_stat_get(info, actual_enum , STRINGIFY(type), __FILE__, __LINE__); \
+    r ? r->result . type : 0; } )
 #endif // . . . . . . . . . .
 
 #ifdef STAT_VAL
@@ -173,7 +181,9 @@ struct vmstat_result *xtra_vmstat_get (
     int lineno);
 
 #define VMSTAT_GET( info, actual_enum, type ) ( { \
-    xtra_vmstat_get(info, actual_enum , STRINGIFY(type), __FILE__, __LINE__) -> result . type; } )
+    struct vmstat_result *r; \
+    r = xtra_vmstat_get(info, actual_enum , STRINGIFY(type), __FILE__, __LINE__); \
+    r ? r->result . type : 0; } )
 #endif // . . . . . . . . . .
 
 #ifdef VMSTAT_VAL

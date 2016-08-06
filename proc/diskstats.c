@@ -1000,6 +1000,10 @@ PROCPS_EXPORT struct diskstats_result *xtra_diskstats_get (
 {
     struct diskstats_result *r = procps_diskstats_get(info, name, actual_enum);
 
+    if (actual_enum < 0 || actual_enum >= DISKSTATS_logical_end) {
+        fprintf(stderr, "%s line %d: invalid item = %d, type = %s\n"
+            , file, lineno, actual_enum, typestr);
+    }
     if (r) {
         char *str = Item_table[r->item].type2str;
         if (str[0]

@@ -872,6 +872,10 @@ PROCPS_EXPORT struct meminfo_result *xtra_meminfo_get (
 {
     struct meminfo_result *r = procps_meminfo_get(info, actual_enum);
 
+    if (actual_enum < 0 || actual_enum >= MEMINFO_logical_end) {
+        fprintf(stderr, "%s line %d: invalid item = %d, type = %s\n"
+            , file, lineno, actual_enum, typestr);
+    }
     if (r) {
         char *str = Item_table[r->item].type2str;
         if (str[0]

@@ -1147,6 +1147,10 @@ PROCPS_EXPORT struct stat_result *xtra_stat_get (
 {
     struct stat_result *r = procps_stat_get(info, actual_enum);
 
+    if (actual_enum < 0 || actual_enum >= STAT_logical_end) {
+        fprintf(stderr, "%s line %d: invalid item = %d, type = %s\n"
+            , file, lineno, actual_enum, typestr);
+    }
     if (r) {
         char *str = Item_table[r->item].type2str;
         if (str[0]

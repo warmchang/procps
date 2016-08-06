@@ -1029,6 +1029,10 @@ PROCPS_EXPORT struct slabinfo_result *xtra_slabinfo_get (
 {
     struct slabinfo_result *r = procps_slabinfo_get(info, actual_enum);
 
+    if (actual_enum < 0 || actual_enum >= SLABINFO_logical_end) {
+        fprintf(stderr, "%s line %d: invalid item = %d, type = %s\n"
+            , file, lineno, actual_enum, typestr);
+    }
     if (r) {
         char *str = Item_table[r->item].type2str;
         if (str[0]

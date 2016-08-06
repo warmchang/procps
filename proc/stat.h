@@ -105,8 +105,9 @@ struct stat_reaped {
 #define STAT_SUMMARY_ID    -11111
 #define STAT_NODE_INVALID  -22222
 
-#define STAT_GET( info, actual_enum, type ) \
-    procps_stat_get( info, actual_enum ) -> result . type
+#define STAT_GET( info, actual_enum, type ) ( { \
+    struct stat_result *r = procps_stat_get( info, actual_enum ); \
+    r ? r->result . type : 0; } )
 
 #define STAT_VAL( relative_enum, type, stack, info ) \
     stack -> head [ relative_enum ] . result . type
