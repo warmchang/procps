@@ -46,7 +46,9 @@
  */
 
 #include <ctype.h>
+#if ENABLE_LIBSELINUX
 #include <dlfcn.h>
+#endif
 #include <fcntl.h>
 #include <grp.h>
 #include <limits.h>
