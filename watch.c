@@ -52,10 +52,8 @@
 # define _XOPEN_SOURCE_EXTENDED 1
 # include <wchar.h>
 # include <wctype.h>
-# include <ncursesw/ncurses.h>
-#else
-# include <ncurses.h>
 #endif	/* WITH_WATCH8BIT */
+#include <ncurses.h>
 
 #ifdef FORCE_8BIT
 # undef isprint
