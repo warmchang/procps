@@ -814,7 +814,7 @@ int main(int argc, char *argv[])
 		      program_invocation_short_name);
 
 	for ( ; *argv; argv++) {
-		if (WriteMode || index(*argv, '='))
+		if (WriteMode || strchr(*argv, '='))
 			ReturnCode += WriteSetting(*argv);
 		else
 			ReturnCode += ReadSetting(*argv);
