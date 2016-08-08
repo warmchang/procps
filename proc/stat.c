@@ -1161,7 +1161,7 @@ PROCPS_EXPORT struct stat_result *xtra_stat_get (
 } // end: xtra_stat_get_
 
 
-PROCPS_EXPORT void xtra_stat_val (
+PROCPS_EXPORT struct stat_result *xtra_stat_val (
         int relative_enum,
         const char *typestr,
         const struct stat_stack *stack,
@@ -1169,17 +1169,21 @@ PROCPS_EXPORT void xtra_stat_val (
         const char *file,
         int lineno)
 {
-    struct stat_result *r;
     char *str;
+    int i;
 
-    r = &stack->head[relative_enum];
-    if (r->item < 0 || r->item >= STAT_logical_end) {
-        fprintf(stderr, "%s line %d: invalid item = %d, relative_enum = %d, type = %s\n"
-            , file, lineno, r->item, relative_enum, typestr);
-        return;
+    for (i = 0; stack->head[i].item < STAT_logical_end; i++)
+        ;
+    if (relative_enum < 0 || relative_enum >= i) {
+        fprintf(stderr, "%s line %d: invalid relative_enum = %d, type = %s\n"
+            , file, lineno, relative_enum, typestr);
+        return NULL;
     }
-    str = Item_table[r->item].type2str;
+    str = Item_table[stack->head[relative_enum].item].type2str;
     if (str[0]
-    && (strcmp(typestr, str)))
+    && (strcmp(typestr, str))) {
         fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
+        return NULL;
+    }
+    return &stack->head[relative_enum];
 } // end: xtra_stat_val

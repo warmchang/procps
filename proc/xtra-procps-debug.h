@@ -43,7 +43,7 @@ struct diskstats_result *xtra_diskstats_get (
 
 #ifdef DISKSTATS_VAL
 #undef DISKSTATS_VAL
-void xtra_diskstats_val (
+struct diskstats_result *xtra_diskstats_val (
     int relative_enum,
     const char *typestr,
     const struct diskstats_stack *stack,
@@ -52,8 +52,9 @@ void xtra_diskstats_val (
     int lineno);
 
 #define DISKSTATS_VAL( relative_enum, type, stack, info ) ( { \
-    xtra_diskstats_val(relative_enum, STRINGIFY(type), stack, info, __FILE__, __LINE__); \
-    stack -> head [ relative_enum ] . result . type; } )
+    struct diskstats_result *r; \
+    r = xtra_diskstats_val(relative_enum, STRINGIFY(type), stack, info, __FILE__, __LINE__); \
+    r ? r->result . type : 0; } )
 #endif // . . . . . . . . . .
 
 
@@ -75,7 +76,7 @@ struct meminfo_result *xtra_meminfo_get (
 
 #ifdef MEMINFO_VAL
 #undef MEMINFO_VAL
-void xtra_meminfo_val (
+struct meminfo_result *xtra_meminfo_val (
     int relative_enum,
     const char *typestr,
     const struct meminfo_stack *stack,
@@ -84,15 +85,16 @@ void xtra_meminfo_val (
     int lineno);
 
 #define MEMINFO_VAL( relative_enum, type, stack, info ) ( { \
-    xtra_meminfo_val(relative_enum, STRINGIFY(type), stack, info, __FILE__, __LINE__); \
-    stack -> head [ relative_enum ] . result . type; } )
+    struct meminfo_result *r; \
+    r = xtra_meminfo_val(relative_enum, STRINGIFY(type), stack, info, __FILE__, __LINE__); \
+    r ? r->result . type : 0; } )
 #endif // . . . . . . . . . .
 
 
 // --- PIDS -----------------------------------------------
 #ifdef PIDS_VAL
 #undef PIDS_VAL
-void xtra_pids_val (
+struct pids_result *xtra_pids_val (
     int relative_enum,
     const char *typestr,
     const struct pids_stack *stack,
@@ -101,8 +103,9 @@ void xtra_pids_val (
     int lineno);
 
 #define PIDS_VAL( relative_enum, type, stack, info ) ( { \
-    xtra_pids_val(relative_enum, STRINGIFY(type), stack, info, __FILE__, __LINE__); \
-    stack -> head [ relative_enum ] . result . type; } )
+    struct pids_result *r; \
+    r = xtra_pids_val(relative_enum, STRINGIFY(type), stack, info, __FILE__, __LINE__); \
+    r ? r->result . type : 0; } )
 #endif // . . . . . . . . . .
 
 
@@ -124,7 +127,7 @@ struct slabinfo_result *xtra_slabinfo_get (
 
 #ifdef SLABINFO_VAL
 #undef SLABINFO_VAL
-void xtra_slabinfo_val (
+struct slabinfo_result *xtra_slabinfo_val (
     int relative_enum,
     const char *typestr,
     const struct slabinfo_stack *stack,
@@ -133,8 +136,9 @@ void xtra_slabinfo_val (
     int lineno);
 
 #define SLABINFO_VAL( relative_enum, type, stack, info ) ( { \
-    xtra_slabinfo_val(relative_enum, STRINGIFY(type), stack, info, __FILE__, __LINE__); \
-    stack -> head [ relative_enum ] . result . type; } )
+    struct slabinfo_result *r; \
+    r = xtra_slabinfo_val(relative_enum, STRINGIFY(type), stack, info, __FILE__, __LINE__); \
+    r ? r->result . type : 0; } )
 #endif // . . . . . . . . . .
 
 
@@ -156,7 +160,7 @@ struct stat_result *xtra_stat_get (
 
 #ifdef STAT_VAL
 #undef STAT_VAL
-void xtra_stat_val (
+struct stat_result *xtra_stat_val (
     int relative_enum,
     const char *typestr,
     const struct stat_stack *stack,
@@ -165,8 +169,9 @@ void xtra_stat_val (
     int lineno);
 
 #define STAT_VAL( relative_enum, type, stack, info ) ( { \
-    xtra_stat_val(relative_enum, STRINGIFY(type), stack, info, __FILE__, __LINE__); \
-    stack -> head [ relative_enum ] . result . type; } )
+    struct stat_result *r; \
+    r = xtra_stat_val(relative_enum, STRINGIFY(type), stack, info, __FILE__, __LINE__); \
+    r ? r->result . type : 0; } )
 #endif // . . . . . . . . . .
 
 
@@ -188,7 +193,7 @@ struct vmstat_result *xtra_vmstat_get (
 
 #ifdef VMSTAT_VAL
 #undef VMSTAT_VAL
-void xtra_vmstat_val (
+struct vmstat_result *xtra_vmstat_val (
     int relative_enum,
     const char *typestr,
     const struct vmstat_stack *stack,
@@ -197,8 +202,9 @@ void xtra_vmstat_val (
     int lineno);
 
 #define VMSTAT_VAL( relative_enum, type, stack, info ) ( { \
-    xtra_vmstat_val(relative_enum, STRINGIFY(type), stack, info, __FILE__, __LINE__); \
-    stack -> head [ relative_enum ] . result . type; } )
+    struct vmstat_result *r; \
+    r = xtra_vmstat_val(relative_enum, STRINGIFY(type), stack, info, __FILE__, __LINE__); \
+    r ? r->result . type : 0; } )
 #endif // . . . . . . . . . .
 
 #endif // end: XTRA_PROCPS_DEBUG_H
