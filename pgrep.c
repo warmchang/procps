@@ -472,6 +472,7 @@ static regex_t * do_regcomp (void)
 static struct el * select_procs (int *num)
 {
 #define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack, info)
+#define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, stack, info)
 #define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, stack, info)
 #define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack, info)
     struct pids_info *info=NULL;
@@ -523,11 +524,11 @@ static struct el * select_procs (int *num)
             match = 0;
         else if (opt_pgrp && ! match_numlist (PIDS_GETINT(PGRP), opt_pgrp))
             match = 0;
-        else if (opt_euid && ! match_numlist (PIDS_GETINT(EUID), opt_euid))
+        else if (opt_euid && ! match_numlist (PIDS_GETUNT(EUID), opt_euid))
             match = 0;
-        else if (opt_ruid && ! match_numlist (PIDS_GETINT(RUID), opt_ruid))
+        else if (opt_ruid && ! match_numlist (PIDS_GETUNT(RUID), opt_ruid))
             match = 0;
-        else if (opt_rgid && ! match_numlist (PIDS_GETINT(RGID), opt_rgid))
+        else if (opt_rgid && ! match_numlist (PIDS_GETUNT(RGID), opt_rgid))
             match = 0;
         else if (opt_sid && ! match_numlist (PIDS_GETINT(SESSION), opt_sid))
             match = 0;
@@ -592,6 +593,7 @@ static struct el * select_procs (int *num)
     *num = matches;
     return list;
 #undef PIDS_GETINT
+#undef PIDS_GETUNT
 #undef PIDS_GETULL
 #undef PIDS_GETSTR
 }
