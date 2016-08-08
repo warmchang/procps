@@ -164,10 +164,11 @@ static int match_ns(const int pid)
     return found;
 }
 
-static int ask_user(struct pids_stack *stack)
-{
 #define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack, Pids_info)
 #define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack, Pids_info)
+
+static int ask_user(struct pids_stack *stack)
+{
     char *buf=NULL;
     size_t len=0;
 
@@ -217,6 +218,7 @@ static void nice_or_kill(struct pids_stack *stack,
         return;
     }
 }
+
 #undef PIDS_GETINT
 #undef PIDS_GETSTR
 
@@ -264,8 +266,9 @@ static void show_lists(void)
 
 static void scan_procs(struct run_time_conf_t *run_time)
 {
-#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i], Pids_info)
-#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i], Pids_info)
+ #define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i], Pids_info)
+ #define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, reap->stacks[i], Pids_info)
+ #define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i], Pids_info)
     struct pids_fetch *reap;
     int i, total_procs;
 
@@ -280,7 +283,7 @@ static void scan_procs(struct run_time_conf_t *run_time)
     for (i=0; i < total_procs; i++) {
         if (PIDS_GETINT(PID) == my_pid || PIDS_GETINT(PID) == 0)
             continue;
-        if (uids && !match_intlist(PIDS_GETINT(EUID), uid_count, (int *)uids))
+        if (uids && !match_intlist(PIDS_GETUNT(EUID), uid_count, (int *)uids))
             continue;
         if (ttys && !match_intlist(PIDS_GETINT(TTY), tty_count, ttys))
             continue;
@@ -291,6 +294,9 @@ static void scan_procs(struct run_time_conf_t *run_time)
         nice_or_kill(reap->stacks[i], run_time);
     }
 
+ #undef PIDS_GETINT
+ #undef PIDS_GETUNT
+ #undef PIDS_GETSTR
 }
 
 /* skill and snice help */
