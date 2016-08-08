@@ -1036,7 +1036,6 @@ PROCPS_EXPORT struct diskstats_result *xtra_diskstats_val (
     if (str[0]
     && (strcmp(typestr, str))) {
         fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
-        return NULL;
     }
     return &stack->head[relative_enum];
 } // end: xtra_diskstats_val
