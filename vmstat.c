@@ -700,6 +700,7 @@ static void slabheader(void)
 static void slabformat (void)
 {
  #define MAX_ITEMS (int)(sizeof(node_items) / sizeof(node_items[0]))
+ #define slabVAL(e,t) SLABINFO_VAL(e, t, p, slab_info)
     struct slabinfo_info *slab_info;
     struct slabinfo_reap *reaped;
     int i, j;
@@ -727,17 +728,18 @@ static void slabformat (void)
             if (moreheaders && ((j % height) == 0))
                 slabheader();
             printf("%-24.24s %6u %6u %6u %6u\n",
-                p->head[slab_NAME ].result.str,
-                p->head[slab_AOBJS].result.u_int,
-                p->head[slab_OBJS ].result.u_int,
-                p->head[slab_OSIZE].result.u_int,
-                p->head[slab_OPS  ].result.u_int);
+                slabVAL(slab_NAME,  str),
+                slabVAL(slab_AOBJS, u_int),
+                slabVAL(slab_OBJS,  u_int),
+                slabVAL(slab_OSIZE, u_int),
+                slabVAL(slab_OPS,   u_int));
         }
         if (infinite_updates || i+1 < num_updates)
             sleep(sleep_time);
     }
     procps_slabinfo_unref(&slab_info);
  #undef MAX_ITEMS
+ #undef slabVAL
 }
 
 static void disksum_format(void)

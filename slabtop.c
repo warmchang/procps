@@ -66,9 +66,9 @@ enum slabinfo_item Node_items[] = {
        thus they need not be represented in the Relative_enums */
     SLABNODE_PAGES_PER_SLAB, SLABNODE_ASLABS };
 
-enum Relative_enums {
-    my_OBJS,  my_AOBJS, my_USE,  my_OSIZE,
-    my_SLABS, my_OPS,   my_SIZE, my_NAME };
+enum Relative_node {
+    nod_OBJS,  nod_AOBJS, nod_USE,  nod_OSIZE,
+    nod_SLABS, nod_OPS,   nod_SIZE, nod_NAME };
 
 #define MAX_ITEMS (int)(sizeof(Node_items) / sizeof(Node_items[0]))
 
@@ -205,6 +205,7 @@ static void parse_opts (int argc, char **argv)
 
 static void print_summary (void)
 {
+ #define totalVAL(e,t) SLABINFO_VAL(e, t, p, Slab_info)
     enum slabinfo_item items[] = {
         SLABS_AOBJS,       SLABS_OBJS,
         SLABS_ASLABS,      SLABS_SLABS,
@@ -213,51 +214,49 @@ static void print_summary (void)
         SLABS_SIZE_MIN,    SLABS_SIZE_AVG,
         SLABS_SIZE_MAX
     };
-    enum slabs_enums {
-        stat_AOBJS,   stat_OBJS,   stat_ASLABS, stat_SLABS,
-        stat_ACACHES, stat_CACHES, stat_ACTIVE, stat_TOTAL,
-        stat_MIN,     stat_AVG,    stat_MAX
+    enum rel_items {
+        tot_AOBJS,   tot_OBJS,   tot_ASLABS, tot_SLABS,
+        tot_ACACHES, tot_CACHES, tot_ACTIVE, tot_TOTAL,
+        tot_MIN,     tot_AVG,    tot_MAX
     };
     struct slabinfo_stack *p;
     struct slabinfo_result *stats;
 
     if (!(p = procps_slabinfo_select(Slab_info, items, MAXTBL(items))))
         xerrx(EXIT_FAILURE, _("Error getting slab summary results"));
-    /* we really should use the provided SLABINFO_VAL macro but,
-       let's do this instead to salvage as much original code as possible ... */
-    stats = p->head;
 
     PRINT_line(" %-35s: %u / %u (%.1f%%)\n"
                , /* Translation Hint: Next five strings must not
                   * exceed a length of 35 characters.  */
                  /* xgettext:no-c-format */
                  _("Active / Total Objects (% used)")
-               , stats[stat_AOBJS].result.u_int
-               , stats[stat_OBJS ].result.u_int
-               , 100.0 * stats[stat_AOBJS].result.u_int / stats[stat_OBJS].result.u_int);
+               , totalVAL(tot_AOBJS, u_int)
+               , totalVAL(tot_OBJS,  u_int)
+               , 100.0 * totalVAL(tot_AOBJS, u_int) / totalVAL(tot_OBJS, u_int));
     PRINT_line(" %-35s: %u / %u (%.1f%%)\n"
                , /* xgettext:no-c-format */
                  _("Active / Total Slabs (% used)")
-               , stats[stat_ASLABS].result.u_int
-               , stats[stat_SLABS  ].result.u_int
-               , 100.0 * stats[stat_ASLABS].result.u_int / stats[stat_SLABS].result.u_int);
+               , totalVAL(tot_ASLABS, u_int)
+               , totalVAL(tot_SLABS,  u_int)
+               , 100.0 * totalVAL(tot_ASLABS, u_int) / totalVAL(tot_SLABS, u_int));
     PRINT_line(" %-35s: %u / %u (%.1f%%)\n"
                , /* xgettext:no-c-format */
                  _("Active / Total Caches (% used)")
-               , stats[stat_ACACHES].result.u_int
-               , stats[stat_CACHES ].result.u_int
-               , 100.0 * stats[stat_ACACHES].result.u_int / stats[stat_CACHES].result.u_int);
+               , totalVAL(tot_ACACHES, u_int)
+               , totalVAL(tot_CACHES,  u_int)
+               , 100.0 * totalVAL(tot_ACACHES, u_int) / totalVAL(tot_CACHES, u_int));
     PRINT_line(" %-35s: %.2fK / %.2fK (%.1f%%)\n"
                , /* xgettext:no-c-format */
                  _("Active / Total Size (% used)")
-               , stats[stat_ACTIVE].result.ul_int / 1024.0
-               , stats[stat_TOTAL ].result.ul_int / 1024.0
-               , 100.0 * stats[stat_ACTIVE].result.ul_int / stats[stat_TOTAL].result.ul_int);
+               , totalVAL(tot_ACTIVE, ul_int) / 1024.0
+               , totalVAL(tot_TOTAL,  ul_int) / 1024.0
+               , 100.0 * totalVAL(tot_ACTIVE, ul_int) / totalVAL(tot_TOTAL, ul_int));
     PRINT_line(" %-35s: %.2fK / %.2fK / %.2fK\n\n"
                , _("Minimum / Average / Maximum Object")
-               , stats[stat_MIN].result.u_int / 1024.0
-               , stats[stat_AVG].result.u_int / 1024.0
-               , stats[stat_MAX].result.u_int / 1024.0);
+               , totalVAL(tot_MIN, u_int) / 1024.0
+               , totalVAL(tot_AVG, u_int) / 1024.0
+               , totalVAL(tot_MAX, u_int) / 1024.0);
+ #undef totalVAL
 }
 
 static void print_headings (void)
@@ -269,17 +268,19 @@ static void print_headings (void)
 
 static void print_details (struct slabinfo_stack *stack)
 {
+ #define nodeVAL(e,t) SLABINFO_VAL(e, t, stack, Slab_info)
     PRINT_line("%6u %6u %3u%% %7.2fK %6u %8u %9luK %-23s\n"
-        , stack->head[my_OBJS ].result.u_int
-        , stack->head[my_AOBJS].result.u_int
-        , stack->head[my_USE  ].result.u_int
-        , stack->head[my_OSIZE].result.u_int / 1024.0
-        , stack->head[my_SLABS].result.u_int
-        , stack->head[my_OPS  ].result.u_int
-        , stack->head[my_SIZE ].result.ul_int / 1024
-        , stack->head[my_NAME ].result.str);
+        , nodeVAL(nod_OBJS,  u_int)
+        , nodeVAL(nod_AOBJS, u_int)
+        , nodeVAL(nod_USE,   u_int)
+        , nodeVAL(nod_OSIZE, u_int) / 1024.0
+        , nodeVAL(nod_SLABS, u_int)
+        , nodeVAL(nod_OPS,   u_int)
+        , nodeVAL(nod_SIZE,  ul_int) / 1024
+        , nodeVAL(nod_NAME,  str));
 
     return;
+ #undef nodeVAL
 }
 
 
