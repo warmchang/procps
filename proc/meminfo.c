@@ -76,6 +76,8 @@ struct meminfo_data {
     unsigned long SReclaimable;
     unsigned long SUnreclaim;
     unsigned long Shmem;
+    unsigned long ShmemHugePages;
+    unsigned long ShmemPmdMapped;
     unsigned long Slab;
     unsigned long SwapCached;
     unsigned long SwapFree;
@@ -91,10 +93,6 @@ struct meminfo_data {
     unsigned long derived_mem_lo_used;
     unsigned long derived_mem_used;
     unsigned long derived_swap_used;
-
-    // new with kernel 4.8
-    unsigned long ShmemHugePages;
-    unsigned long ShmemPmdMapped;
 };
 
 struct mem_hist {
@@ -164,6 +162,8 @@ MEM_set(MEM_MAPPED,             ul_int,  Mapped)
 MEM_set(MEM_NFS_UNSTABLE,       ul_int,  NFS_Unstable)
 MEM_set(MEM_PAGE_TABLES,        ul_int,  PageTables)
 MEM_set(MEM_SHARED,             ul_int,  Shmem)
+MEM_set(MEM_SHMEM_HUGE,         ul_int,  ShmemHugePages)
+MEM_set(MEM_SHMEM_HUGE_MAP,     ul_int,  ShmemPmdMapped)
 MEM_set(MEM_SLAB,               ul_int,  Slab)
 MEM_set(MEM_SLAB_RECLAIM,       ul_int,  SReclaimable)
 MEM_set(MEM_SLAB_UNRECLAIM,     ul_int,  SUnreclaim)
@@ -204,6 +204,8 @@ HST_set(DELTA_MAPPED,            s_int,  Mapped)
 HST_set(DELTA_NFS_UNSTABLE,      s_int,  NFS_Unstable)
 HST_set(DELTA_PAGE_TABLES,       s_int,  PageTables)
 HST_set(DELTA_SHARED,            s_int,  Shmem)
+HST_set(DELTA_SHMEM_HUGE,        s_int,  ShmemHugePages)
+HST_set(DELTA_SHMEM_HUGE_MAP,    s_int,  ShmemPmdMapped)
 HST_set(DELTA_SLAB,              s_int,  Slab)
 HST_set(DELTA_SLAB_RECLAIM,      s_int,  SReclaimable)
 HST_set(DELTA_SLAB_UNRECLAIM,    s_int,  SUnreclaim)
@@ -228,12 +230,6 @@ MEM_set(SWAP_CACHED,            ul_int,  SwapCached)
 MEM_set(SWAP_FREE,              ul_int,  SwapFree)
 MEM_set(SWAP_TOTAL,             ul_int,  SwapTotal)
 MEM_set(SWAP_USED,              ul_int,  derived_swap_used)
-
-    // new with kernel 4.8
-MEM_set(MEM_SHMEM_HUGE,         ul_int,  ShmemHugePages)
-MEM_set(MEM_SHMEM_HUGE_MAP,     ul_int,  ShmemPmdMapped)
-HST_set(DELTA_SHMEM_HUGE,        s_int,  ShmemHugePages)
-HST_set(DELTA_SHMEM_HUGE_MAP,    s_int,  ShmemPmdMapped)
 
 #undef setDECL
 #undef MEM_set
@@ -289,6 +285,8 @@ static struct {
   { RS(MEM_NFS_UNSTABLE),      TS(ul_int) },
   { RS(MEM_PAGE_TABLES),       TS(ul_int) },
   { RS(MEM_SHARED),            TS(ul_int) },
+  { RS(MEM_SHMEM_HUGE),        TS(ul_int) },
+  { RS(MEM_SHMEM_HUGE_MAP),    TS(ul_int) },
   { RS(MEM_SLAB),              TS(ul_int) },
   { RS(MEM_SLAB_RECLAIM),      TS(ul_int) },
   { RS(MEM_SLAB_UNRECLAIM),    TS(ul_int) },
@@ -329,6 +327,8 @@ static struct {
   { RS(DELTA_NFS_UNSTABLE),    TS(s_int)  },
   { RS(DELTA_PAGE_TABLES),     TS(s_int)  },
   { RS(DELTA_SHARED),          TS(s_int)  },
+  { RS(DELTA_SHMEM_HUGE),      TS(s_int)  },
+  { RS(DELTA_SHMEM_HUGE_MAP),  TS(s_int)  },
   { RS(DELTA_SLAB),            TS(s_int)  },
   { RS(DELTA_SLAB_RECLAIM),    TS(s_int)  },
   { RS(DELTA_SLAB_UNRECLAIM),  TS(s_int)  },
@@ -354,19 +354,13 @@ static struct {
   { RS(SWAP_TOTAL),            TS(ul_int) },
   { RS(SWAP_USED),             TS(ul_int) },
 
-    // new with kernel 4.8
-  { RS(MEM_SHMEM_HUGE),        TS(ul_int) },
-  { RS(MEM_SHMEM_HUGE_MAP),    TS(ul_int) },
-  { RS(DELTA_SHMEM_HUGE),      TS(s_int)  },
-  { RS(DELTA_SHMEM_HUGE_MAP),  TS(s_int)  },
-
  // dummy entry corresponding to MEMINFO_logical_end ...
   { NULL,                      NULL       }
 };
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum meminfo_item MEMINFO_logical_end = MEMINFO_DELTA_SHMEM_HUGE_MAP + 1;
+enum meminfo_item MEMINFO_logical_end = MEMINFO_SWAP_USED + 1;
 
 #undef setNAME
 #undef RS
@@ -532,6 +526,8 @@ static int make_hash_failed (
     htVAL(SReclaimable)
     htVAL(SUnreclaim)
     htVAL(Shmem)
+    htVAL(ShmemHugePages)
+    htVAL(ShmemPmdMapped)
     htVAL(Slab)
     htVAL(SwapCached)
     htVAL(SwapFree)
@@ -542,10 +538,6 @@ static int make_hash_failed (
     htVAL(VmallocUsed)
     htVAL(Writeback)
     htVAL(WritebackTmp)
-
-    // new with kernel 4.8
-    htVAL(ShmemHugePages)
-    htVAL(ShmemPmdMapped)
 
     return 0;
  #undef htVAL

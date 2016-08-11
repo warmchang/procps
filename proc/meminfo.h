@@ -57,6 +57,8 @@ enum meminfo_item {
     MEMINFO_MEM_NFS_UNSTABLE,      //  ul_int
     MEMINFO_MEM_PAGE_TABLES,       //  ul_int
     MEMINFO_MEM_SHARED,            //  ul_int
+    MEMINFO_MEM_SHMEM_HUGE,        //  ul_int
+    MEMINFO_MEM_SHMEM_HUGE_MAP,    //  ul_int
     MEMINFO_MEM_SLAB,              //  ul_int
     MEMINFO_MEM_SLAB_RECLAIM,      //  ul_int
     MEMINFO_MEM_SLAB_UNRECLAIM,    //  ul_int
@@ -97,6 +99,8 @@ enum meminfo_item {
     MEMINFO_DELTA_NFS_UNSTABLE,    //   s_int
     MEMINFO_DELTA_PAGE_TABLES,     //   s_int
     MEMINFO_DELTA_SHARED,          //   s_int
+    MEMINFO_DELTA_SHMEM_HUGE,      //   s_int
+    MEMINFO_DELTA_SHMEM_HUGE_MAP,  //   s_int
     MEMINFO_DELTA_SLAB,            //   s_int
     MEMINFO_DELTA_SLAB_RECLAIM,    //   s_int
     MEMINFO_DELTA_SLAB_UNRECLAIM,  //   s_int
@@ -120,14 +124,7 @@ enum meminfo_item {
     MEMINFO_SWAP_CACHED,           //  ul_int
     MEMINFO_SWAP_FREE,             //  ul_int
     MEMINFO_SWAP_TOTAL,            //  ul_int
-    MEMINFO_SWAP_USED,             //  ul_int
-
-    // new with kernel 4.8
-    MEMINFO_MEM_SHMEM_HUGE,        //  ul_int
-    MEMINFO_MEM_SHMEM_HUGE_MAP,    //  ul_int
-
-    MEMINFO_DELTA_SHMEM_HUGE,      //   s_int
-    MEMINFO_DELTA_SHMEM_HUGE_MAP,  //   s_int
+    MEMINFO_SWAP_USED              //  ul_int
 };
 
 
