@@ -91,6 +91,10 @@ struct meminfo_data {
     unsigned long derived_mem_lo_used;
     unsigned long derived_mem_used;
     unsigned long derived_swap_used;
+
+    // new with kernel 4.8
+    unsigned long ShmemHugePages;
+    unsigned long ShmemPmdMapped;
 };
 
 struct mem_hist {
@@ -225,6 +229,12 @@ MEM_set(SWAP_FREE,              ul_int,  SwapFree)
 MEM_set(SWAP_TOTAL,             ul_int,  SwapTotal)
 MEM_set(SWAP_USED,              ul_int,  derived_swap_used)
 
+    // new with kernel 4.8
+MEM_set(MEM_SHMEM_HUGE,         ul_int,  ShmemHugePages)
+MEM_set(MEM_SHMEM_HUGE_MAP,     ul_int,  ShmemPmdMapped)
+HST_set(DELTA_SHMEM_HUGE,        s_int,  ShmemHugePages)
+HST_set(DELTA_SHMEM_HUGE_MAP,    s_int,  ShmemPmdMapped)
+
 #undef setDECL
 #undef MEM_set
 #undef HST_set
@@ -344,13 +354,19 @@ static struct {
   { RS(SWAP_TOTAL),            TS(ul_int) },
   { RS(SWAP_USED),             TS(ul_int) },
 
+    // new with kernel 4.8
+  { RS(MEM_SHMEM_HUGE),        TS(ul_int) },
+  { RS(MEM_SHMEM_HUGE_MAP),    TS(ul_int) },
+  { RS(DELTA_SHMEM_HUGE),      TS(s_int)  },
+  { RS(DELTA_SHMEM_HUGE_MAP),  TS(s_int)  },
+
  // dummy entry corresponding to MEMINFO_logical_end ...
   { NULL,                      NULL       }
 };
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum meminfo_item MEMINFO_logical_end = MEMINFO_SWAP_USED + 1;
+enum meminfo_item MEMINFO_logical_end = MEMINFO_DELTA_SHMEM_HUGE_MAP + 1;
 
 #undef setNAME
 #undef RS
@@ -526,6 +542,10 @@ static int make_hash_failed (
     htVAL(VmallocUsed)
     htVAL(Writeback)
     htVAL(WritebackTmp)
+
+    // new with kernel 4.8
+    htVAL(ShmemHugePages)
+    htVAL(ShmemPmdMapped)
 
     return 0;
  #undef htVAL

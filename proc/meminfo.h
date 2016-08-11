@@ -120,7 +120,14 @@ enum meminfo_item {
     MEMINFO_SWAP_CACHED,           //  ul_int
     MEMINFO_SWAP_FREE,             //  ul_int
     MEMINFO_SWAP_TOTAL,            //  ul_int
-    MEMINFO_SWAP_USED              //  ul_int
+    MEMINFO_SWAP_USED,             //  ul_int
+
+    // new with kernel 4.8
+    MEMINFO_MEM_SHMEM_HUGE,        //  ul_int
+    MEMINFO_MEM_SHMEM_HUGE_MAP,    //  ul_int
+
+    MEMINFO_DELTA_SHMEM_HUGE,      //   s_int
+    MEMINFO_DELTA_SHMEM_HUGE_MAP,  //   s_int
 };
 
 
