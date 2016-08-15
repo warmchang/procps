@@ -36,6 +36,9 @@
 #include <netinet/in.h>  /* htons */
 #endif
 
+#include <link.h>
+#include <elf.h>
+
 long smp_num_cpus;     /* number of CPUs */
 long page_bytes;       /* this architecture's page size */
 
@@ -249,15 +252,67 @@ static void old_Hertz_hack(void){
 
 extern char** environ;
 
-/* for ELF executables, notes are pushed before environment and args */
-static unsigned long find_elf_note(unsigned long findme){
+static unsigned long find_elf_note(unsigned long type)
+{
+  ElfW(auxv_t) auxv_struct;
+  ElfW(auxv_t) *auxv_temp;
+  FILE *fd;
+  int i;
+  static ElfW(auxv_t) *auxv = NULL;
   unsigned long *ep = (unsigned long *)environ;
-  while(*ep++);
-  while(*ep){
-    if(ep[0]==findme) return ep[1];
-    ep+=2;
+  unsigned long ret_val = NOTE_NOT_FOUND;
+
+
+  if(!auxv) {
+
+    fd = fopen("/proc/self/auxv", "rb");
+
+    if(!fd) {  // can't open auxv? that could be caused by euid change
+               // ... and we need to fall back to the old and unsafe
+               // ... method that doesn't work when calling library
+               // ... functions with dlopen -> FIXME :(
+
+      while(*ep++);  // for ELF executables, notes are pushed
+      while(*ep){    // ... before environment and args
+        if(ep[0]==type) return ep[1];
+        ep+=2;
+      }
+      return NOTE_NOT_FOUND;
+    }
+
+    auxv = (ElfW(auxv_t) *) malloc(getpagesize());
+    if (!auxv) {
+      perror("malloc");
+      exit(EXIT_FAILURE);
+    }
+
+    i = 0;
+    do {
+      fread(&auxv_struct, sizeof(ElfW(auxv_t)), 1, fd);
+      auxv[i] = auxv_struct;
+      i++;
+    } while (auxv_struct.a_type != AT_NULL);
+
+    fclose(fd);
+
   }
-  return NOTE_NOT_FOUND;
+
+  auxv_temp = auxv;
+  i = 0;
+  do {
+    if(auxv_temp[i].a_type == type) {
+      ret_val = (unsigned long)auxv_temp[i].a_un.a_val;
+      break;
+    }
+    i++;
+  } while (auxv_temp[i].a_type != AT_NULL);
+
+  if (auxv){
+	  auxv_temp = NULL;
+	  free(auxv);
+	  auxv = NULL;
+  }
+  return ret_val;
 }
 
 int have_privs;
