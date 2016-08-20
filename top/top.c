@@ -1772,7 +1772,7 @@ static FLD_t Fieldstab[] = {
    {    -1,     -1,  A_left,   SF(CGR),  L_CGROUP  },
    {    -1,     -1,  A_left,   SF(SGD),  L_status  },
    {    -1,     -1,  A_left,   SF(SGN),  L_SUPGRP  },
-   {     0,     -1,  A_right,  SF(TGD),  L_status  },
+   {     0,     -1,  A_right,  SF(TGD),  L_NONE    },
    {     5,     -1,  A_right,  SF(OOA),  L_OOM     },
    {     4,     -1,  A_right,  SF(OOM),  L_OOM     },
    {    -1,     -1,  A_left,   SF(ENV),  L_ENVIRON },
@@ -1965,8 +1965,10 @@ static void build_headers (void) {
 #endif
 
    // finalize/touchup the libproc PROC_FILLxxx flags for current config...
-   if ((Frames_libflags & L_EITHER) && !(Frames_libflags & L_stat))
-      Frames_libflags |= L_status;
+   if (Frames_libflags & L_EITHER) {
+      if (!(Frames_libflags & (L_stat | L_status)))
+         Frames_libflags |= L_stat;
+   }
    if (!Frames_libflags) Frames_libflags = L_DEFAULT;
    if (Monpidsidx) Frames_libflags |= PROC_PID;
 } // end: build_headers
