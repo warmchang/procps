@@ -282,7 +282,7 @@ SCB_NUMx(PGD, pgrp)
 SCB_NUMx(PID, tid)
 SCB_NUMx(PPD, ppid)
 SCB_NUMx(PRI, priority)
-SCB_NUM1(RES, vm_rss)                  // also serves MEM !
+SCB_NUM1(RES, resident)                // also serves MEM !
 SCB_NUM1(RZA, vm_rss_anon)
 SCB_NUM1(RZF, vm_rss_file)
 SCB_NUM1(RZL, vm_lock)
@@ -1743,21 +1743,21 @@ static FLD_t Fieldstab[] = {
    {     6,     -1,  A_right,  SF(TME),  L_stat    },
    {     9,     -1,  A_right,  SF(TME),  L_stat    }, // EU_TM2 slot
 #ifdef BOOST_PERCNT
-   {     5,     -1,  A_right,  SF(RES),  L_status  }, // EU_MEM slot
+   {     5,     -1,  A_right,  SF(RES),  L_statm   }, // EU_MEM slot
 #else
-   {     4,     -1,  A_right,  SF(RES),  L_status  }, // EU_MEM slot
+   {     4,     -1,  A_right,  SF(RES),  L_statm   }, // EU_MEM slot
 #endif
 #ifndef NOBOOST_MEMS
    {     7,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
    {     6,  SK_Kb,  A_right,  SF(SWP),  L_status  },
-   {     6,  SK_Kb,  A_right,  SF(RES),  L_status  },
+   {     6,  SK_Kb,  A_right,  SF(RES),  L_statm   },
    {     6,  SK_Kb,  A_right,  SF(COD),  L_statm   },
    {     7,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
    {     6,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
 #else
    {     5,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(SWP),  L_status  },
-   {     4,  SK_Kb,  A_right,  SF(RES),  L_status  },
+   {     4,  SK_Kb,  A_right,  SF(RES),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(COD),  L_statm   },
    {     5,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
    {     4,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
@@ -1940,7 +1940,7 @@ static void build_headers (void) {
          if (hdrmax + w->hdrcaplen < (x = strlen(w->columnhdr))) hdrmax = x - w->hdrcaplen;
 #endif
          // with forest view mode, we'll need tgid, ppid & start_time...
-         if (CHKw(w, Show_FOREST)) Frames_libflags |= (L_status | L_stat);
+         if (CHKw(w, Show_FOREST)) Frames_libflags |= L_stat;
          // for 'busy' only processes, we'll need pcpu (utime & stime)...
          if (!CHKw(w, Show_IDLEPS)) Frames_libflags |= L_stat;
          // we must also accommodate an out of view sort field...
@@ -5405,7 +5405,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = make_str(p->lxcname, W, Js, EU_LXC);
             break;
          case EU_MEM:
-            cp = scale_pcnt((float)p->vm_rss * 100 / kb_main_total, W, Jn);
+            cp = scale_pcnt((float)pages2K(p->resident) * 100 / kb_main_total, W, Jn);
             break;
          case EU_NCE:
             cp = make_num(p->nice, W, Jn, AUTOX_NO, 1);
@@ -5442,7 +5442,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
                cp = make_num(p->priority, W, Jn, AUTOX_NO, 0);
             break;
          case EU_RES:
-            cp = scale_mem(S, p->vm_rss, W, Jn);
+            cp = scale_mem(S, pages2K(p->resident), W, Jn);
             break;
          case EU_RZA:
             cp = scale_mem(S, p->vm_rss_anon, W, Jn);
