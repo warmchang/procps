@@ -1519,21 +1519,21 @@ static struct {
    {     6,     -1,  A_right,    -1,  PIDS_TICS_ALL       },  // ull_int  EU_TME
    {     9,     -1,  A_right,    -1,  PIDS_TICS_ALL       },  // ull_int  EU_TM2
 #ifdef BOOST_PERCNT
-   {     5,     -1,  A_right,    -1,  PIDS_VM_RSS         },  // ul_int   EU_MEM
+   {     5,     -1,  A_right,    -1,  PIDS_MEM_RES        },  // ul_int   EU_MEM
 #else
-   {     4,     -1,  A_right,    -1,  PIDS_VM_RSS         },  // ul_int   EU_MEM,
+   {     4,     -1,  A_right,    -1,  PIDS_MEM_RES        },  // ul_int   EU_MEM,
 #endif
 #ifndef NOBOOST_MEMS
    {     7,  SK_Kb,  A_right,    -1,  PIDS_MEM_VIRT       },  // ul_int   EU_VRT
    {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_SWAP        },  // ul_int   EU_SWP
-   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS         },  // ul_int   EU_RES
+   {     6,  SK_Kb,  A_right,    -1,  PIDS_MEM_RES        },  // ul_int   EU_RES
    {     6,  SK_Kb,  A_right,    -1,  PIDS_MEM_CODE       },  // ul_int   EU_COD
    {     7,  SK_Kb,  A_right,    -1,  PIDS_MEM_DATA       },  // ul_int   EU_DAT
    {     6,  SK_Kb,  A_right,    -1,  PIDS_MEM_SHR        },  // ul_int   EU_SHR
 #else
    {     5,  SK_Kb,  A_right,    -1,  PIDS_MEM_VIRT       },  // ul_int   EU_VRT
    {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_SWAP        },  // ul_int   EU_SWP
-   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS         },  // ul_int   EU_RES
+   {     4,  SK_Kb,  A_right,    -1,  PIDS_MEM_RES        },  // ul_int   EU_RES
    {     4,  SK_Kb,  A_right,    -1,  PIDS_MEM_CODE       },  // ul_int   EU_COD
    {     5,  SK_Kb,  A_right,    -1,  PIDS_MEM_DATA       },  // ul_int   EU_DAT
    {     4,  SK_Kb,  A_right,    -1,  PIDS_MEM_SHR        },  // ul_int   EU_SHR
