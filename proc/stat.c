@@ -137,7 +137,7 @@ struct stat_info {
 
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
-#define setNAME(e) set_results_ ## e
+#define setNAME(e) set_stat_ ## e
 #define setDECL(e) static void setNAME(e) \
     (struct stat_result *R, struct hist_sys *S, struct hist_tic *T)
 
@@ -209,7 +209,7 @@ struct sort_parms {
     enum stat_sort_order order;
 };
 
-#define srtNAME(t) sort_results_ ## t
+#define srtNAME(t) sort_stat_ ## t
 #define srtDECL(t) static int srtNAME(t) \
     (const struct stat_stack **A, const struct stat_stack **B, struct sort_parms *P)
 
@@ -339,7 +339,7 @@ static int fake_node_of_cpu (int n) { return (1 == (n % 4)) ? 0 : (n % 4); }
 #endif
 
 
-static inline void assign_results (
+static inline void stat_assign_results (
         struct stat_stack *stack,
         struct hist_sys *sys_hist,
         struct hist_tic *tic_hist)
@@ -354,10 +354,10 @@ static inline void assign_results (
         ++this;
     }
     return;
-} // end: assign_results
+} // end: stat_assign_results
 
 
-static inline void cleanup_stack (
+static inline void stat_cleanup_stack (
         struct stat_result *this)
 {
     for (;;) {
@@ -367,10 +367,10 @@ static inline void cleanup_stack (
             this->result.ull_int = 0;
         ++this;
     }
-} // end: cleanup_stack
+} // end: stat_cleanup_stack
 
 
-static inline void cleanup_stacks_all (
+static inline void stat_cleanup_stacks_all (
         struct ext_support *this)
 {
     struct stacks_extent *ext = this->extents;
@@ -378,14 +378,14 @@ static inline void cleanup_stacks_all (
 
     while (ext) {
         for (i = 0; ext->stacks[i]; i++)
-            cleanup_stack(ext->stacks[i]->head);
+            stat_cleanup_stack(ext->stacks[i]->head);
         ext = ext->next;
     };
     this->dirty_stacks = 0;
-} // end: cleanup_stacks_all
+} // end: stat_cleanup_stacks_all
 
 
-static void extents_free_all (
+static void stat_extents_free_all (
         struct ext_support *this)
 {
     while (this->extents) {
@@ -393,10 +393,10 @@ static void extents_free_all (
         this->extents = this->extents->next;
         free(p);
     };
-} // end: extents_free_all
+} // end: stat_extents_free_all
 
 
-static inline struct stat_result *itemize_stack (
+static inline struct stat_result *stat_itemize_stack (
         struct stat_result *p,
         int depth,
         enum stat_item *items)
@@ -410,10 +410,10 @@ static inline struct stat_result *itemize_stack (
         ++p;
     }
     return p_sav;
-} // end: itemize_stack
+} // end: stat_itemize_stack
 
 
-static inline int items_check_failed (
+static inline int stat_items_check_failed (
         int numitems,
         enum stat_item *items)
 {
@@ -440,10 +440,10 @@ static inline int items_check_failed (
         }
     }
     return 0;
-} // end: items_check_failed
+} // end: stat_items_check_failed
 
 
-static int make_numa_hist (
+static int stat_make_numa_hist (
         struct stat_info *info)
 {
 #ifndef NUMA_DISABLE
@@ -507,10 +507,10 @@ static int make_numa_hist (
 #else
     return 0;
 #endif
-} // end: make_numa_hist
+} // end: stat_make_numa_hist
 
 
-static int read_stat_failed (
+static int stat_read_failed (
         struct stat_info *info)
 {
     struct hist_tic *sum_ptr, *cpu_ptr;
@@ -574,7 +574,7 @@ reap_em_again:
         bp = 1 + strchr(bp, '\n');
         // remember this cpu from last time around
         memcpy(&cpu_ptr->old, &cpu_ptr->new, sizeof(struct stat_jifs));
-        // next can be overridden under 'make_numa_hist'
+        // next can be overridden under 'stat_make_numa_hist'
         cpu_ptr->numa_node = STAT_NODE_INVALID;
 
         if (8 > (rc = sscanf(bp, "cpu%d %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu"
@@ -644,21 +644,21 @@ reap_em_again:
         info->stat_was_read = 1;
     }
     return 0;
-} // end: read_stat_failed
+} // end: stat_read_failed
 
 
 /*
- * stacks_alloc():
+ * stat_stacks_alloc():
  *
  * Allocate and initialize one or more stacks each of which is anchored in an
- * associated stat_stack structure.
+ * associated context structure.
  *
  * All such stacks will have their result structures properly primed with
  * 'items', while the result itself will be zeroed.
  *
  * Returns a stack_extent struct anchoring the 'heads' of each new stack.
  */
-static struct stacks_extent *stacks_alloc (
+static struct stacks_extent *stat_stacks_alloc (
         struct ext_support *this,
         int maxstacks)
 {
@@ -698,17 +698,17 @@ static struct stacks_extent *stacks_alloc (
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct stat_stack *)v_head;
-        p_head->head = itemize_stack((struct stat_result *)v_list, this->items->num, this->items->enums);
+        p_head->head = stat_itemize_stack((struct stat_result *)v_list, this->items->num, this->items->enums);
         p_blob->stacks[i] = p_head;
         v_list += list_size;
         v_head += head_size;
     }
     p_blob->ext_numstacks = maxstacks;
     return p_blob;
-} // end: stacks_alloc
+} // end: stat_stacks_alloc
 
 
-static int stacks_fetch_tics (
+static int stat_stacks_fetch (
         struct stat_info *info,
         struct reap_support *this)
 {
@@ -728,24 +728,24 @@ static int stacks_fetch_tics (
         n_alloc = STACKS_INCR;
     }
     if (!this->fetch.extents) {
-        if (!(ext = stacks_alloc(&this->fetch, n_alloc)))
+        if (!(ext = stat_stacks_alloc(&this->fetch, n_alloc)))
             return -ENOMEM;
         memcpy(this->anchor, ext->stacks, sizeof(void *) * n_alloc);
     }
     if (this->fetch.dirty_stacks)
-        cleanup_stacks_all(&this->fetch);
+        stat_cleanup_stacks_all(&this->fetch);
 
     // iterate stuff --------------------------------------
     for (i = 0; i < n_inuse; i++) {
         if (!(i < n_alloc)) {
             n_alloc += STACKS_INCR;
             if ((!(this->anchor = realloc(this->anchor, sizeof(void *) * n_alloc)))
-            || (!(ext = stacks_alloc(&this->fetch, STACKS_INCR)))) {
+            || (!(ext = stat_stacks_alloc(&this->fetch, STACKS_INCR)))) {
                 return -ENOMEM;
             }
             memcpy(this->anchor + i, ext->stacks, sizeof(void *) * STACKS_INCR);
         }
-        assign_results(this->anchor[i], &info->sys_hist, &this->hist.tics[i]);
+        stat_assign_results(this->anchor[i], &info->sys_hist, &this->hist.tics[i]);
     }
 
     // finalize stuff -------------------------------------
@@ -768,15 +768,15 @@ static int stacks_fetch_tics (
  #undef n_alloc
  #undef n_inuse
  #undef n_saved
-} // end: stacks_fetch_tics
+} // end: stat_stacks_fetch
 
 
-static int stacks_reconfig_maybe (
+static int stat_stacks_reconfig_maybe (
         struct ext_support *this,
         enum stat_item *items,
         int numitems)
 {
-    if (items_check_failed(numitems, items))
+    if (stat_items_check_failed(numitems, items))
         return -EINVAL;
 
     /* is this the first time or have things changed since we were last called?
@@ -789,29 +789,29 @@ static int stacks_reconfig_maybe (
         memcpy(this->items->enums, items, sizeof(enum stat_item) * numitems);
         this->items->enums[numitems] = STAT_logical_end;
         this->items->num = numitems + 1;
-        extents_free_all(this);
+        stat_extents_free_all(this);
         return 1;
     }
     return 0;
-} // end: stacks_reconfig_maybe
+} // end: stat_stacks_reconfig_maybe
 
 
-static struct stat_stack *update_single_stack (
+static struct stat_stack *stat_update_single_stack (
         struct stat_info *info,
         struct ext_support *this)
 {
     if (!this->extents
-    && !(stacks_alloc(this, 1)))
+    && !(stat_stacks_alloc(this, 1)))
        return NULL;
 
     if (this->dirty_stacks)
-        cleanup_stacks_all(this);
+        stat_cleanup_stacks_all(this);
 
-    assign_results(this->extents->stacks[0], &info->sys_hist, &info->cpu_hist);
+    stat_assign_results(this->extents->stacks[0], &info->sys_hist, &info->cpu_hist);
     this->dirty_stacks = 1;
 
     return this->extents->stacks[0];
-} // end: update_single_stack
+} // end: stat_update_single_stack
 
 
 #if defined(PRETEND_NUMA) && defined(NUMA_DISABLE)
@@ -910,7 +910,7 @@ PROCPS_EXPORT int procps_stat_unref (
         if ((*info)->cpus.hist.tics)
             free((*info)->cpus.hist.tics);
         if ((*info)->cpus.fetch.extents)
-            extents_free_all(&(*info)->cpus.fetch);
+            stat_extents_free_all(&(*info)->cpus.fetch);
 
         if ((*info)->nodes.anchor)
             free((*info)->nodes.anchor);
@@ -919,13 +919,13 @@ PROCPS_EXPORT int procps_stat_unref (
         if ((*info)->nodes.hist.tics)
             free((*info)->nodes.hist.tics);
         if ((*info)->nodes.fetch.extents)
-            extents_free_all(&(*info)->nodes.fetch);
+            stat_extents_free_all(&(*info)->nodes.fetch);
 
         if ((*info)->cpu_summary.extents)
-            extents_free_all(&(*info)->cpu_summary);
+            stat_extents_free_all(&(*info)->cpu_summary);
 
         if ((*info)->select.extents)
-            extents_free_all(&(*info)->select);
+            stat_extents_free_all(&(*info)->select);
 
         if ((*info)->reap_items.enums)
             free((*info)->reap_items.enums);
@@ -964,7 +964,7 @@ PROCPS_EXPORT struct stat_result *procps_stat_get (
        a granularity of 1 second between reads ... */
     cur_secs = time(NULL);
     if (1 <= cur_secs - sav_secs) {
-        if (read_stat_failed(info))
+        if (stat_read_failed(info))
             return NULL;
         sav_secs = cur_secs;
     }
@@ -1009,16 +1009,16 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
 }
 #endif
 
-    if (0 > (rc = stacks_reconfig_maybe(&info->cpu_summary, items, numitems)))
+    if (0 > (rc = stat_stacks_reconfig_maybe(&info->cpu_summary, items, numitems)))
         return NULL;
     if (rc) {
-        extents_free_all(&info->cpus.fetch);
-        extents_free_all(&info->nodes.fetch);
+        stat_extents_free_all(&info->cpus.fetch);
+        stat_extents_free_all(&info->nodes.fetch);
     }
 
-    if (read_stat_failed(info))
+    if (stat_read_failed(info))
         return NULL;
-    info->results.summary = update_single_stack(info, &info->cpu_summary);
+    info->results.summary = stat_update_single_stack(info, &info->cpu_summary);
 
     /* unlike the other 'reap' functions, <stat> provides for two separate |
        stacks pointer arrays exposed to callers. Thus, to keep our promise |
@@ -1031,20 +1031,20 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
 
     switch (what) {
         case STAT_REAP_CPUS_ONLY:
-            if (!stacks_fetch_tics(info, &info->cpus))
+            if (!stat_stacks_fetch(info, &info->cpus))
                 return NULL;
             break;
         case STAT_REAP_CPUS_AND_NODES:
 #ifndef NUMA_DISABLE
-            /* note: if we are doing numa at all, we must call make_numa_hist |
+            /* note: if we are doing numa at all, we must call stat_make_numa_hist |
                before we build (fetch) the cpu stacks since the read_stat guy |
                will have marked (temporarily) all the cpu node ids as invalid | */
-            if (0 > make_numa_hist(info))
+            if (0 > stat_make_numa_hist(info))
                 return NULL;
             // tolerate an unexpected absence of libnuma.so ...
-            stacks_fetch_tics(info, &info->nodes);
+            stat_stacks_fetch(info, &info->nodes);
 #endif
-            if (!stacks_fetch_tics(info, &info->cpus))
+            if (!stat_stacks_fetch(info, &info->cpus))
                 return NULL;
             break;
         default:
@@ -1070,13 +1070,13 @@ PROCPS_EXPORT struct stat_stack *procps_stat_select (
     if (info == NULL || items == NULL)
         return NULL;
 
-    if (0 > stacks_reconfig_maybe(&info->select, items, numitems))
+    if (0 > stat_stacks_reconfig_maybe(&info->select, items, numitems))
         return NULL;
 
-    if (read_stat_failed(info))
+    if (stat_read_failed(info))
         return NULL;
 
-    return update_single_stack(info, &info->select);
+    return stat_update_single_stack(info, &info->select);
 } // end: procps_stat_select
 
 

@@ -122,7 +122,7 @@ struct meminfo_info {
 
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
-#define setNAME(e) set_results_ ## e
+#define setNAME(e) set_meminfo_ ## e
 #define setDECL(e) static void setNAME(e) \
     (struct meminfo_result *R, struct mem_hist *H)
 
@@ -368,7 +368,7 @@ enum meminfo_item MEMINFO_logical_end = MEMINFO_SWAP_USED + 1;
 
 // ___ Private Functions ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-static inline void assign_results (
+static inline void meminfo_assign_results (
         struct meminfo_stack *stack,
         struct mem_hist *hist)
 {
@@ -382,10 +382,10 @@ static inline void assign_results (
         ++this;
     }
     return;
-} // end: assign_results
+} // end: meminfo_assign_results
 
 
-static inline void cleanup_stack (
+static inline void meminfo_cleanup_stack (
         struct meminfo_result *this)
 {
     for (;;) {
@@ -395,10 +395,10 @@ static inline void cleanup_stack (
             this->result.ul_int = 0;
         ++this;
     }
-} // end: cleanup_stack
+} // end: meminfo_cleanup_stack
 
 
-static inline void cleanup_stacks_all (
+static inline void meminfo_cleanup_stacks_all (
         struct meminfo_info *info)
 {
     struct stacks_extent *ext = info->extents;
@@ -406,14 +406,14 @@ static inline void cleanup_stacks_all (
 
     while (ext) {
         for (i = 0; ext->stacks[i]; i++)
-            cleanup_stack(ext->stacks[i]->head);
+            meminfo_cleanup_stack(ext->stacks[i]->head);
         ext = ext->next;
     };
     info->dirty_stacks = 0;
-} // end: cleanup_stacks_all
+} // end: meminfo_cleanup_stacks_all
 
 
-static void extents_free_all (
+static void meminfo_extents_free_all (
         struct meminfo_info *info)
 {
     while (info->extents) {
@@ -421,10 +421,10 @@ static void extents_free_all (
         info->extents = info->extents->next;
         free(p);
     };
-} // end: extents_free_all
+} // end: meminfo_extents_free_all
 
 
-static inline struct meminfo_result *itemize_stack (
+static inline struct meminfo_result *meminfo_itemize_stack (
         struct meminfo_result *p,
         int depth,
         enum meminfo_item *items)
@@ -438,10 +438,10 @@ static inline struct meminfo_result *itemize_stack (
         ++p;
     }
     return p_sav;
-} // end: itemize_stack
+} // end: meminfo_itemize_stack
 
 
-static inline int items_check_failed (
+static inline int meminfo_items_check_failed (
         int numitems,
         enum meminfo_item *items)
 {
@@ -468,10 +468,10 @@ static inline int items_check_failed (
     }
 
     return 0;
-} // end: items_check_failed
+} // end: meminfo_items_check_failed
 
 
-static int make_hash_failed (
+static int meminfo_make_hash_failed (
         struct meminfo_info *info)
 {
  #define htVAL(f) e.key = STRINGIFY(f) ":"; e.data = &info->hist.new. f; \
@@ -542,16 +542,16 @@ static int make_hash_failed (
     return 0;
  #undef htVAL
  #undef htXTRA
-} // end: make_hash_failed
+} // end: meminfo_make_hash_failed
 
 
 /*
- * read_meminfo_failed():
+ * meminfo_read_failed():
  *
  * Read the data out of /proc/meminfo putting the information
  * into the supplied info structure
  */
-static int read_meminfo_failed (
+static int meminfo_read_failed (
         struct meminfo_info *info)
 {
  /* a 'memory history reference' macro for readability,
@@ -651,21 +651,21 @@ static int read_meminfo_failed (
     }
     return 0;
  #undef mHr
-} // end: read_meminfo_failed
+} // end: meminfo_read_failed
 
 
 /*
- * stacks_alloc():
+ * meminfo_stacks_alloc():
  *
  * Allocate and initialize one or more stacks each of which is anchored in an
- * associated meminfo_stack structure.
+ * associated context structure.
  *
  * All such stacks will have their result structures properly primed with
  * 'items', while the result itself will be zeroed.
  *
  * Returns a stacks_extent struct anchoring the 'heads' of each new stack.
  */
-static struct stacks_extent *stacks_alloc (
+static struct stacks_extent *meminfo_stacks_alloc (
         struct meminfo_info *info,
         int maxstacks)
 {
@@ -705,14 +705,14 @@ static struct stacks_extent *stacks_alloc (
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct meminfo_stack *)v_head;
-        p_head->head = itemize_stack((struct meminfo_result *)v_list, info->numitems, info->items);
+        p_head->head = meminfo_itemize_stack((struct meminfo_result *)v_list, info->numitems, info->items);
         p_blob->stacks[i] = p_head;
         v_list += list_size;
         v_head += head_size;
     }
     p_blob->ext_numstacks = maxstacks;
     return p_blob;
-} // end: stacks_alloc
+} // end: meminfo_stacks_alloc
 
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -744,7 +744,7 @@ PROCPS_EXPORT int procps_meminfo_new (
     p->refcount = 1;
     p->meminfo_fd = -1;
 
-    if ((rc = make_hash_failed(p))) {
+    if ((rc = meminfo_make_hash_failed(p))) {
         free(p);
         return rc;
     }
@@ -774,7 +774,7 @@ PROCPS_EXPORT int procps_meminfo_unref (
 
     if ((*info)->refcount == 0) {
         if ((*info)->extents)
-            extents_free_all((*info));
+            meminfo_extents_free_all((*info));
         if ((*info)->items)
             free((*info)->items);
         hdestroy_r(&(*info)->hashtab);
@@ -804,7 +804,7 @@ PROCPS_EXPORT struct meminfo_result *procps_meminfo_get (
        a granularity of 1 second between reads ... */
     cur_secs = time(NULL);
     if (1 <= cur_secs - sav_secs) {
-        if (read_meminfo_failed(info))
+        if (meminfo_read_failed(info))
             return NULL;
         sav_secs = cur_secs;
     }
@@ -833,7 +833,7 @@ PROCPS_EXPORT struct meminfo_stack *procps_meminfo_select (
 {
     if (info == NULL || items == NULL)
         return NULL;
-    if (items_check_failed(numitems, items))
+    if (meminfo_items_check_failed(numitems, items))
         return NULL;
 
     /* is this the first time or have things changed since we were last called?
@@ -847,18 +847,18 @@ PROCPS_EXPORT struct meminfo_stack *procps_meminfo_select (
         info->items[numitems] = MEMINFO_logical_end;
         info->numitems = numitems + 1;
         if (info->extents)
-            extents_free_all(info);
+            meminfo_extents_free_all(info);
     }
     if (!info->extents
-    && !(stacks_alloc(info, 1)))
+    && !(meminfo_stacks_alloc(info, 1)))
        return NULL;
 
     if (info->dirty_stacks)
-        cleanup_stacks_all(info);
+        meminfo_cleanup_stacks_all(info);
 
-    if (read_meminfo_failed(info))
+    if (meminfo_read_failed(info))
         return NULL;
-    assign_results(info->extents->stacks[0], &info->hist);
+    meminfo_assign_results(info->extents->stacks[0], &info->hist);
     info->dirty_stacks = 1;
 
     return info->extents->stacks[0];

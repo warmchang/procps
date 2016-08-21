@@ -91,7 +91,7 @@ struct pids_info {
 
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
-static char** vectorize_this (const char* src) {
+static char** pids_vectorize_this (const char* src) {
  #define pSZ  (sizeof(char*))
     char *cpy, **vec;
     int adj, tot;
@@ -106,10 +106,10 @@ static char** vectorize_this (const char* src) {
     *(vec+1) = NULL;                             // null ptr 'list' delimit
     return vec;                                  // ==> free(*vec) to dealloc
  #undef pSZ
-} // end: vectorize_this
+} // end: pids_vectorize_this
 
 
-#define setNAME(e) set_results_ ## e
+#define setNAME(e) set_pids_ ## e
 #define setDECL(e) static void setNAME(e) \
     (struct pids_info *I, struct pids_result *R, proc_t *P)
 
@@ -131,7 +131,7 @@ static char** vectorize_this (const char* src) {
    some sort of hint that they duplicated this char ** item ... */
 #define VEC_set(e,x) setDECL(e) { \
     (void)I; if (NULL != P-> x) { R->result.strv = P-> x;  P-> x = NULL; } \
-    else R->result.strv = vectorize_this("[ duplicate " STRINGIFY(e) " ]"); }
+    else R->result.strv = pids_vectorize_this("[ duplicate " STRINGIFY(e) " ]"); }
 
 
 setDECL(noop)           { (void)I; (void)R; (void)P; return; }
@@ -266,7 +266,7 @@ setDECL(WCHAN_NAME)     { (void)I; R->result.str = strdup(lookup_wchan(P->tid));
 
 // ___ Free Storage Support |||||||||||||||||||||||||||||||||||||||||||||||||||
 
-#define freNAME(t) free_results_ ## t
+#define freNAME(t) free_pids_ ## t
 
 static void freNAME(str) (struct pids_result *R) {
     if (R->result.str) free(R->result.str);
@@ -284,7 +284,7 @@ struct sort_parms {
     enum pids_sort_order order;
 };
 
-#define srtNAME(t) sort_results_ ## t
+#define srtNAME(t) sort_pids_ ## t
 #define srtDECL(t) static int srtNAME(t) \
     (const struct pids_stack **A, const struct pids_stack **B, struct sort_parms *P)
 
@@ -576,7 +576,7 @@ struct history_info {
 };
 
 
-static void config_history (
+static void pids_config_history (
         struct pids_info *info)
 {
     int i;
@@ -587,10 +587,10 @@ static void config_history (
     memcpy(Hr(HHash_two), Hr(HHash_nul), sizeof(Hr(HHash_nul)));
     Hr(PHash_sav) = Hr(HHash_one);     // alternating 'old/new' hash tables
     Hr(PHash_new) = Hr(HHash_two);
-} // end: config_history
+} // end: pids_config_history
 
 
-static inline HST_t *histget (
+static inline HST_t *pids_histget (
         struct pids_info *info,
         int pid)
 {
@@ -602,10 +602,10 @@ static inline HST_t *histget (
         V = Hr(PHist_sav[V].lnk);
     }
     return NULL;
-} // end: histget
+} // end: pids_histget
 
 
-static inline void histput (
+static inline void pids_histput (
         struct pids_info *info,
         unsigned this)
 {
@@ -613,12 +613,12 @@ static inline void histput (
 
     Hr(PHist_new[this].lnk) = Hr(PHash_new[V]);
     Hr(PHash_new[V] = this);
-} // end: histput
+} // end: pids_histput
 
 #undef _HASH_PID_
 
 
-static int make_hist (
+static inline int pids_make_hist (
         struct pids_info *info,
         proc_t *p)
 {
@@ -638,9 +638,9 @@ static int make_hist (
     Hr(PHist_new[nSLOT].min)  = p->min_flt;
     Hr(PHist_new[nSLOT].tics) = tics = (p->utime + p->stime);
 
-    histput(info, nSLOT);
+    pids_histput(info, nSLOT);
 
-    if ((h = histget(info, p->tid))) {
+    if ((h = pids_histget(info, p->tid))) {
         p->pcpu = tics - h->tics;
         p->maj_delta = p->maj_flt - h->maj;
         p->min_delta = p->min_flt - h->min;
@@ -649,10 +649,10 @@ static int make_hist (
     nSLOT++;
     return 0;
  #undef nSLOT
-} // end: make_hist
+} // end: pids_make_hist
 
 
-static inline void toggle_history (
+static inline void pids_toggle_history (
         struct pids_info *info)
 {
     void *v;
@@ -667,11 +667,11 @@ static inline void toggle_history (
     memcpy(Hr(PHash_new), Hr(HHash_nul), sizeof(Hr(HHash_nul)));
 
     info->hist->num_tasks = 0;
-} // end: toggle_history
+} // end: pids_toggle_history
 
 
 #ifdef UNREF_RPTHASH
-static void unref_rpthash (
+static void pids_unref_rpthash (
         struct pids_info *info)
 {
     int i, j, pop, total_occupied, maxdepth, maxdepth_sav, numdepth
@@ -752,7 +752,7 @@ static void unref_rpthash (
             fprintf(stderr, "\n");
         }
     }
-} // end: unref_rpthash
+} // end: pids_unref_rpthash
 #endif // UNREF_RPTHASH
 
 #undef Hr
@@ -761,7 +761,7 @@ static void unref_rpthash (
 
 // ___ Standard Private Functions |||||||||||||||||||||||||||||||||||||||||||||
 
-static inline void assign_results (
+static inline void pids_assign_results (
         struct pids_info *info,
         struct pids_stack *stack,
         proc_t *p)
@@ -777,10 +777,10 @@ static inline void assign_results (
         ++this;
     }
     return;
-} // end: assign_results
+} // end: pids_assign_results
 
 
-static inline void cleanup_stack (
+static inline void pids_cleanup_stack (
         struct pids_result *this)
 {
     for (;;) {
@@ -793,10 +793,10 @@ static inline void cleanup_stack (
             this->result.ull_int = 0;
         ++this;
     }
-} // end: cleanup_stack
+} // end: pids_cleanup_stack
 
 
-static inline void cleanup_stacks_all (
+static inline void pids_cleanup_stacks_all (
         struct pids_info *info)
 {
     struct stacks_extent *ext = info->extents;
@@ -804,18 +804,18 @@ static inline void cleanup_stacks_all (
 
     while (ext) {
         for (i = 0; ext->stacks[i]; i++)
-            cleanup_stack(ext->stacks[i]->head);
+            pids_cleanup_stack(ext->stacks[i]->head);
         ext = ext->next;
     };
     info->dirty_stacks = 0;
-} // end: cleanup_stacks_all
+} // end: pids_cleanup_stacks_all
 
 
         /*
          * This routine exists in case we ever want to offer something like
          * 'static' or 'invarient' results stacks.  By unsplicing an extent
          * from the info anchor it will be isolated from future reset/free. */
-static struct stacks_extent *extent_cut (
+static struct stacks_extent *pids_extent_cut (
         struct pids_info *info,
         struct stacks_extent *ext)
 {
@@ -835,21 +835,10 @@ static struct stacks_extent *extent_cut (
         } while (p);
     }
     return NULL;
-} // end: extent_cut
+} // end: pids_extent_cut
 
 
-static void extents_free_all (
-        struct pids_info *info)
-{
-    while (info->extents) {
-        struct stacks_extent *p = info->extents;
-        info->extents = info->extents->next;
-        free(p);
-    };
-} // end: extents_free_all
-
-
-static inline struct pids_result *itemize_stack (
+static inline struct pids_result *pids_itemize_stack (
         struct pids_result *p,
         int depth,
         enum pids_item *items)
@@ -863,10 +852,10 @@ static inline struct pids_result *itemize_stack (
         ++p;
     }
     return p_sav;
-} // end: itemize_stack
+} // end: pids_itemize_stack
 
 
-static void itemize_stacks_all (
+static void pids_itemize_stacks_all (
         struct pids_info *info)
 {
     struct stacks_extent *ext = info->extents;
@@ -874,14 +863,14 @@ static void itemize_stacks_all (
     while (ext) {
         int i;
         for (i = 0; ext->stacks[i]; i++)
-            itemize_stack(ext->stacks[i]->head, info->curitems, info->items);
+            pids_itemize_stack(ext->stacks[i]->head, info->curitems, info->items);
         ext = ext->next;
     };
     info->dirty_stacks = 0;
-} // end: itemize_stacks_all
+} // end: pids_itemize_stacks_all
 
 
-static inline int items_check_failed (
+static inline int pids_items_check_failed (
         enum pids_item *items,
         int numitems)
 {
@@ -907,10 +896,10 @@ static inline int items_check_failed (
         }
     }
     return 0;
-} // end: items_check_failed
+} // end: pids_items_check_failed
 
 
-static inline void libflags_set (
+static inline void pids_libflags_set (
         struct pids_info *info)
 {
     enum pids_item e;
@@ -928,20 +917,20 @@ static inline void libflags_set (
             info->oldflags |= f_status;
     }
     return;
-} // end: libflags_set
+} // end: pids_libflags_set
 
 
-static inline void oldproc_close (
+static inline void pids_oldproc_close (
         PROCTAB **this)
 {
     if (*this != NULL) {
         closeproc(*this);
         *this = NULL;
     }
-} // end: oldproc_close
+} // end: pids_oldproc_close
 
 
-static inline int oldproc_open (
+static inline int pids_oldproc_open (
         PROCTAB **this,
         unsigned flags,
         ...)
@@ -959,10 +948,10 @@ static inline int oldproc_open (
             return 0;
     }
     return 1;
-} // end: oldproc_open
+} // end: pids_oldproc_open
 
 
-static inline int proc_tally (
+static inline int pids_proc_tally (
         struct pids_info *info,
         struct pids_counts *counts,
         proc_t *p)
@@ -987,23 +976,23 @@ static inline int proc_tally (
     ++counts->total;
 
     if (info->history_yes)
-        return !make_hist(info, p);
+        return !pids_make_hist(info, p);
     return 1;
-} // end: proc_tally
+} // end: pids_proc_tally
 
 
 /*
- * stacks_alloc():
+ * pids_stacks_alloc():
  *
  * Allocate and initialize one or more stacks each of which is anchored in an
- * associated pids_stack structure.
+ * associated context structure.
  *
  * All such stacks will will have their result structures properly primed with
  * 'items', while the result itself will be zeroed.
  *
  * Returns an array of pointers representing the 'heads' of each new stack.
  */
-static struct stacks_extent *stacks_alloc (
+static struct stacks_extent *pids_stacks_alloc (
         struct pids_info *info,
         int maxstacks)
 {
@@ -1043,17 +1032,17 @@ static struct stacks_extent *stacks_alloc (
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct pids_stack *)v_head;
-        p_head->head = itemize_stack((struct pids_result *)v_list, info->curitems, info->items);
+        p_head->head = pids_itemize_stack((struct pids_result *)v_list, info->curitems, info->items);
         p_blob->stacks[i] = p_head;
         v_list += list_size;
         v_head += head_size;
     }
     p_blob->ext_numstacks = maxstacks;
     return p_blob;
-} // end: stacks_alloc
+} // end: pids_stacks_alloc
 
 
-static int stacks_fetch (
+static int pids_stacks_fetch (
         struct pids_info *info)
 {
  #define n_alloc  info->fetch.n_alloc
@@ -1069,14 +1058,14 @@ static int stacks_fetch (
         n_alloc = MEMORY_INCR;
     }
     if (!info->extents) {
-        if (!(ext = stacks_alloc(info, n_alloc)))
+        if (!(ext = pids_stacks_alloc(info, n_alloc)))
             return -ENOMEM;
         memset(info->fetch.anchor, 0, sizeof(void *) * n_alloc);
         memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
-        itemize_stacks_all(info);
+        pids_itemize_stacks_all(info);
     }
-    cleanup_stacks_all(info);
-    toggle_history(info);
+    pids_cleanup_stacks_all(info);
+    pids_toggle_history(info);
     memset(&info->fetch.counts, 0, sizeof(struct pids_counts));
 
     // iterate stuff --------------------------------------
@@ -1085,13 +1074,13 @@ static int stacks_fetch (
         if (!(n_inuse < n_alloc)) {
             n_alloc += MEMORY_INCR;
             if ((!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc)))
-            || (!(ext = stacks_alloc(info, MEMORY_INCR))))
+            || (!(ext = pids_stacks_alloc(info, MEMORY_INCR))))
                 return -1;
             memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * MEMORY_INCR);
         }
-        if (!proc_tally(info, &info->fetch.counts, &task))
+        if (!pids_proc_tally(info, &info->fetch.counts, &task))
             return -1;
-        assign_results(info, info->fetch.anchor[n_inuse++], &task);
+        pids_assign_results(info, info->fetch.anchor[n_inuse++], &task);
     }
 
     // finalize stuff -------------------------------------
@@ -1111,7 +1100,7 @@ static int stacks_fetch (
  #undef n_alloc
  #undef n_inuse
  #undef n_saved
-} // end: stacks_fetch
+} // end: pids_stacks_fetch
 
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -1144,7 +1133,7 @@ PROCPS_EXPORT int procps_pids_new (
     /* if we're without items or numitems, a later call to
        procps_pids_reset() will become mandatory */
     if (items && numitems) {
-        if (items_check_failed(items, numitems)) {
+        if (pids_items_check_failed(items, numitems)) {
             free(p);
             return -EINVAL;
         }
@@ -1157,7 +1146,7 @@ PROCPS_EXPORT int procps_pids_new (
         memcpy(p->items, items, sizeof(enum pids_item) * numitems);
         p->items[numitems] = PIDS_logical_end;
         p->curitems = p->maxitems;
-        libflags_set(p);
+        pids_libflags_set(p);
     }
 
     if (!(p->hist = calloc(MEMORY_INCR, sizeof(struct history_info)))) {
@@ -1165,7 +1154,7 @@ PROCPS_EXPORT int procps_pids_new (
         free(p);
         return -ENOMEM;
     }
-    config_history(p);
+    pids_config_history(p);
 
     pgsz = getpagesize();
     while (pgsz > 1024) { pgsz >>= 1; p->pgs2k_shift++; }
@@ -1202,10 +1191,10 @@ PROCPS_EXPORT int procps_pids_unref (
     (*info)->refcount--;
     if ((*info)->refcount == 0) {
 #ifdef UNREF_RPTHASH
-        unref_rpthash(*info);
+        pids_unref_rpthash(*info);
 #endif
         if ((*info)->extents) {
-            cleanup_stacks_all(*info);
+            pids_cleanup_stacks_all(*info);
             do {
                 struct stacks_extent *p = (*info)->extents;
                 (*info)->extents = (*info)->extents->next;
@@ -1216,7 +1205,7 @@ PROCPS_EXPORT int procps_pids_unref (
             struct stacks_extent *nextext, *ext = (*info)->otherexts;
             while (ext) {
                 nextext = ext->next;
-                cleanup_stack(ext->stacks[0]->head);
+                pids_cleanup_stack(ext->stacks[0]->head);
                 free(ext);
                 ext = nextext;
             };
@@ -1265,14 +1254,14 @@ PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
     if (!info->curitems)
         return NULL;
 
-    if (!(ext = stacks_alloc(info, 1)))
+    if (!(ext = pids_stacks_alloc(info, 1)))
         return NULL;
-    if (!extent_cut(info, ext))
+    if (!pids_extent_cut(info, ext))
         return NULL;
 
     ext->next = info->otherexts;
     info->otherexts = ext;
-    assign_results(info, ext->stacks[0], &self);
+    pids_assign_results(info, ext->stacks[0], &self);
 
     return ext->stacks[0];
 } // end: fatal_proc_unmounted
@@ -1297,28 +1286,28 @@ PROCPS_EXPORT struct pids_stack *procps_pids_get (
 
 fresh_start:
     if (!info->get_ext) {
-        if (!(info->get_ext = stacks_alloc(info, 1)))
+        if (!(info->get_ext = pids_stacks_alloc(info, 1)))
             return NULL;
-        if (!oldproc_open(&info->get_PT, info->oldflags))
+        if (!pids_oldproc_open(&info->get_PT, info->oldflags))
             return NULL;
         info->get_type = which;
         info->read_something = which ? readeither : readproc;
     }
 
     if (info->get_type != which) {
-        oldproc_close(&info->get_PT);
-        cleanup_stack(info->get_ext->stacks[0]->head);
-        if (extent_cut(info, info->get_ext))
+        pids_oldproc_close(&info->get_PT);
+        pids_cleanup_stack(info->get_ext->stacks[0]->head);
+        if (pids_extent_cut(info, info->get_ext))
             free(info->get_ext);
         info->get_ext = NULL;
         goto fresh_start;
     }
 
-    cleanup_stack(info->get_ext->stacks[0]->head);
+    pids_cleanup_stack(info->get_ext->stacks[0]->head);
 
     if (NULL == info->read_something(info->get_PT, &task))
         return NULL;
-    assign_results(info, info->get_ext->stacks[0], &task);
+    pids_assign_results(info, info->get_ext->stacks[0], &task);
 
     return info->get_ext->stacks[0];
 } // end: procps_pids_get
@@ -1346,13 +1335,13 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
     if (!info->curitems)
         return NULL;
 
-    if (!oldproc_open(&info->fetch_PT, info->oldflags))
+    if (!pids_oldproc_open(&info->fetch_PT, info->oldflags))
         return NULL;
     info->read_something = which ? readeither : readproc;
 
-    rc = stacks_fetch(info);
+    rc = pids_stacks_fetch(info);
 
-    oldproc_close(&info->fetch_PT);
+    pids_oldproc_close(&info->fetch_PT);
     // we better have found at least 1 pid
     return (rc > 0) ? &info->fetch.results : NULL;
 } // end: procps_pids_reap
@@ -1365,7 +1354,7 @@ PROCPS_EXPORT int procps_pids_reset (
 {
     if (info == NULL || newitems == NULL)
         return -EINVAL;
-    if (items_check_failed(newitems, newnumitems))
+    if (pids_items_check_failed(newitems, newnumitems))
         return -EINVAL;
 
     /* shame on this caller, they didn't change anything. and unless they have
@@ -1376,24 +1365,28 @@ PROCPS_EXPORT int procps_pids_reset (
 
     if (info->maxitems < newnumitems + 1) {
         if (info->dirty_stacks)
-            cleanup_stacks_all(info);
+            pids_cleanup_stacks_all(info);
+        while (info->extents) {
+            struct stacks_extent *p = info->extents;
+            info->extents = p->next;
+            free(p);
+        };
         // allow for our PIDS_logical_end
         info->maxitems = newnumitems + 1;
         if (!(info->items = realloc(info->items, sizeof(enum pids_item) * info->maxitems)))
             return -ENOMEM;
-        extents_free_all(info);
     }
 
     if (info->dirty_stacks)
-        cleanup_stacks_all(info);
+        pids_cleanup_stacks_all(info);
 
     memcpy(info->items, newitems, sizeof(enum pids_item) * newnumitems);
     info->items[newnumitems] = PIDS_logical_end;
     // account for above PIDS_logical_end
     info->curitems = newnumitems + 1;
 
-    itemize_stacks_all(info);
-    libflags_set(info);
+    pids_itemize_stacks_all(info);
+    pids_libflags_set(info);
 
     return 0;
 } // end: procps_pids_reset
@@ -1430,13 +1423,13 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
     memcpy(ids, these, sizeof(unsigned) * numthese);
     ids[numthese] = 0;
 
-    if (!oldproc_open(&info->fetch_PT, (info->oldflags | which), ids, numthese))
+    if (!pids_oldproc_open(&info->fetch_PT, (info->oldflags | which), ids, numthese))
         return NULL;
     info->read_something = readproc;
 
-    rc = stacks_fetch(info);
+    rc = pids_stacks_fetch(info);
 
-    oldproc_close(&info->fetch_PT);
+    pids_oldproc_close(&info->fetch_PT);
     // no guarantee any pids/uids were found
     return (rc > -1) ? &info->fetch.results : NULL;
 } // end: procps_pids_select

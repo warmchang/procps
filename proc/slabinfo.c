@@ -136,7 +136,7 @@ struct slabinfo_info {
 
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
-#define setNAME(e) set_results_ ## e
+#define setNAME(e) set_slabinfo_ ## e
 #define setDECL(e) static void setNAME(e) \
     (struct slabinfo_result *R, struct slabs_hist *S, struct slabs_node *N)
 
@@ -199,7 +199,7 @@ struct sort_parms {
     enum slabinfo_sort_order order;
 };
 
-#define srtNAME(t) sort_results_ ## t
+#define srtNAME(t) sort_slabinfo_ ## t
 #define srtDECL(t) static int srtNAME(t) \
     (const struct slabinfo_stack **A, const struct slabinfo_stack **B, struct sort_parms *P)
 
@@ -506,7 +506,7 @@ static int read_slabinfo_failed (
 // ___ Private Functions ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // --- generalized support ----------------------------------------------------
 
-static inline void assign_results (
+static inline void slabinfo_assign_results (
         struct slabinfo_stack *stack,
         struct slabs_hist *summ,
         struct slabs_node *node)
@@ -521,10 +521,10 @@ static inline void assign_results (
         ++this;
     }
     return;
-} // end: assign_results
+} // end: slabinfo_assign_results
 
 
-static inline void cleanup_stack (
+static inline void slabinfo_cleanup_stack (
         struct slabinfo_result *this)
 {
     for (;;) {
@@ -534,10 +534,10 @@ static inline void cleanup_stack (
             this->result.ul_int = 0;
         ++this;
     }
-} // end: cleanup_stack
+} // end: slabinfo_cleanup_stack
 
 
-static inline void cleanup_stacks_all (
+static inline void slabinfo_cleanup_stacks_all (
         struct ext_support *this)
 {
     struct stacks_extent *ext = this->extents;
@@ -545,14 +545,14 @@ static inline void cleanup_stacks_all (
 
     while (ext) {
         for (i = 0; ext->stacks[i]; i++)
-            cleanup_stack(ext->stacks[i]->head);
+            slabinfo_cleanup_stack(ext->stacks[i]->head);
         ext = ext->next;
     };
     this->dirty_stacks = 0;
-} // end: cleanup_stacks_all
+} // end: slabinfo_cleanup_stacks_all
 
 
-static void extents_free_all (
+static void slabinfo_extents_free_all (
         struct ext_support *this)
 {
     while (this->extents) {
@@ -560,10 +560,10 @@ static void extents_free_all (
         this->extents = this->extents->next;
         free(p);
     };
-} // end: extents_free_all
+} // end: slabinfo_extents_free_all
 
 
-static inline struct slabinfo_result *itemize_stack (
+static inline struct slabinfo_result *slabinfo_itemize_stack (
         struct slabinfo_result *p,
         int depth,
         enum slabinfo_item *items)
@@ -577,10 +577,10 @@ static inline struct slabinfo_result *itemize_stack (
         ++p;
     }
     return p_sav;
-} // end: itemize_stack
+} // end: slabinfo_itemize_stack
 
 
-static void itemize_stacks_all (
+static void slabinfo_itemize_stacks_all (
         struct ext_support *this)
 {
     struct stacks_extent *ext = this->extents;
@@ -588,14 +588,14 @@ static void itemize_stacks_all (
     while (ext) {
         int i;
         for (i = 0; ext->stacks[i]; i++)
-            itemize_stack(ext->stacks[i]->head, this->numitems, this->items);
+            slabinfo_itemize_stack(ext->stacks[i]->head, this->numitems, this->items);
         ext = ext->next;
     };
     this->dirty_stacks = 0;
-} // end: static void itemize_stacks_all
+} // end: slabinfo_itemize_stacks_all
 
 
-static inline int items_check_failed (
+static inline int slabinfo_items_check_failed (
         struct ext_support *this,
         enum slabinfo_item *items,
         int numitems)
@@ -632,10 +632,21 @@ static inline int items_check_failed (
     }
 
     return 0;
-} // end: items_check_failed
+} // end: slabinfo_items_check_failed
 
 
-static struct stacks_extent *stacks_alloc (
+/*
+ * slabinfo_stacks_alloc():
+ *
+ * Allocate and initialize one or more stacks each of which is anchored in an
+ * associated context structure.
+ *
+ * All such stacks will have their result structures properly primed with
+ * 'items', while the result itself will be zeroed.
+ *
+ * Returns a stacks_extent struct anchoring the 'heads' of each new stack.
+ */
+static struct stacks_extent *slabinfo_stacks_alloc (
         struct ext_support *this,
         int maxstacks)
 {
@@ -675,17 +686,17 @@ static struct stacks_extent *stacks_alloc (
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct slabinfo_stack *)v_head;
-        p_head->head = itemize_stack((struct slabinfo_result *)v_list, this->numitems, this->items);
+        p_head->head = slabinfo_itemize_stack((struct slabinfo_result *)v_list, this->numitems, this->items);
         p_blob->stacks[i] = p_head;
         v_list += list_size;
         v_head += head_size;
     }
     p_blob->ext_numstacks = maxstacks;
     return p_blob;
-} // end: stacks_alloc
+} // end: slabinfo_stacks_alloc
 
 
-static int stacks_fetch (
+static int slabinfo_stacks_fetch (
         struct slabinfo_info *info)
 {
  #define n_alloc  info->fetch.n_alloc
@@ -700,13 +711,13 @@ static int stacks_fetch (
         n_alloc = STACKS_INCR;
     }
     if (!info->fetch_ext.extents) {
-        if (!(ext = stacks_alloc(&info->fetch_ext, n_alloc)))
+        if (!(ext = slabinfo_stacks_alloc(&info->fetch_ext, n_alloc)))
             return -ENOMEM;
         memset(info->fetch.anchor, 0, sizeof(void *) * n_alloc);
         memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
-        itemize_stacks_all(&info->fetch_ext);
+        slabinfo_itemize_stacks_all(&info->fetch_ext);
     }
-    cleanup_stacks_all(&info->fetch_ext);
+    slabinfo_cleanup_stacks_all(&info->fetch_ext);
 
     // iterate stuff --------------------------------------
     n_inuse = 0;
@@ -714,11 +725,11 @@ static int stacks_fetch (
         if (!(n_inuse < n_alloc)) {
             n_alloc += STACKS_INCR;
             if ((!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc)))
-            || (!(ext = stacks_alloc(&info->fetch_ext, STACKS_INCR))))
+            || (!(ext = slabinfo_stacks_alloc(&info->fetch_ext, STACKS_INCR))))
                 return -1;
             memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * STACKS_INCR);
         }
-        assign_results(info->fetch.anchor[n_inuse], &info->hist, &info->nodes[n_inuse]);
+        slabinfo_assign_results(info->fetch.anchor[n_inuse], &info->hist, &info->nodes[n_inuse]);
         ++n_inuse;
     }
 
@@ -740,15 +751,15 @@ static int stacks_fetch (
  #undef n_alloc
  #undef n_inuse
  #undef n_saved
-} // end: stacks_fetch
+} // end: slabinfo_stacks_fetch
 
 
-static int stacks_reconfig_maybe (
+static int slabinfo_stacks_reconfig_maybe (
         struct ext_support *this,
         enum slabinfo_item *items,
         int numitems)
 {
-    if (items_check_failed(this, items, numitems))
+    if (slabinfo_items_check_failed(this, items, numitems))
         return -EINVAL;
     /* is this the first time or have things changed since we were last called?
        if so, gotta' redo all of our stacks stuff ... */
@@ -761,11 +772,11 @@ static int stacks_reconfig_maybe (
         this->items[numitems] = SLABINFO_logical_end;
         this->numitems = numitems + 1;
         if (this->extents)
-            extents_free_all(this);
+            slabinfo_extents_free_all(this);
         return 1;
     }
     return 0;
-} // end: stacks_reconfig_maybe
+} // end: slabinfo_stacks_reconfig_maybe
 
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -838,7 +849,7 @@ PROCPS_EXPORT int procps_slabinfo_unref (
             (*info)->slabinfo_fp = NULL;
         }
         if ((*info)->select_ext.extents)
-            extents_free_all((&(*info)->select_ext));
+            slabinfo_extents_free_all((&(*info)->select_ext));
         if ((*info)->select_ext.items)
             free((*info)->select_ext.items);
 
@@ -848,7 +859,7 @@ PROCPS_EXPORT int procps_slabinfo_unref (
             free((*info)->fetch.results.stacks);
 
         if ((*info)->fetch_ext.extents)
-            extents_free_all(&(*info)->fetch_ext);
+            slabinfo_extents_free_all(&(*info)->fetch_ext);
         if ((*info)->fetch_ext.items)
             free((*info)->fetch_ext.items);
 
@@ -911,15 +922,15 @@ PROCPS_EXPORT struct slabinfo_reap *procps_slabinfo_reap (
     if (info == NULL || items == NULL)
         return NULL;
 
-    if (0 > stacks_reconfig_maybe(&info->fetch_ext, items, numitems))
+    if (0 > slabinfo_stacks_reconfig_maybe(&info->fetch_ext, items, numitems))
         return NULL;
 
     if (info->fetch_ext.dirty_stacks)
-        cleanup_stacks_all(&info->fetch_ext);
+        slabinfo_cleanup_stacks_all(&info->fetch_ext);
 
     if (read_slabinfo_failed(info))
         return NULL;
-    stacks_fetch(info);
+    slabinfo_stacks_fetch(info);
     info->fetch_ext.dirty_stacks = 1;
 
     return &info->fetch.results;
@@ -941,19 +952,19 @@ PROCPS_EXPORT struct slabinfo_stack *procps_slabinfo_select (
     if (info == NULL || items == NULL)
         return NULL;
 
-    if (0 > stacks_reconfig_maybe(&info->select_ext, items, numitems))
+    if (0 > slabinfo_stacks_reconfig_maybe(&info->select_ext, items, numitems))
         return NULL;
 
     if (!info->select_ext.extents
-    && !(stacks_alloc(&info->select_ext, 1)))
+    && !(slabinfo_stacks_alloc(&info->select_ext, 1)))
        return NULL;
 
     if (info->select_ext.dirty_stacks)
-        cleanup_stacks_all(&info->select_ext);
+        slabinfo_cleanup_stacks_all(&info->select_ext);
 
     if (read_slabinfo_failed(info))
         return NULL;
-    assign_results(info->select_ext.extents->stacks[0], &info->hist, &info->nul_node);
+    slabinfo_assign_results(info->select_ext.extents->stacks[0], &info->hist, &info->nul_node);
     info->select_ext.dirty_stacks = 1;
 
     return info->select_ext.extents->stacks[0];

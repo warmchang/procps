@@ -111,7 +111,7 @@ struct diskstats_info {
 
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
-#define setNAME(e) set_results_ ## e
+#define setNAME(e) set_diskstats_ ## e
 #define setDECL(e) static void setNAME(e) \
     (struct diskstats_result *R, struct dev_node *N)
 
@@ -166,7 +166,7 @@ struct sort_parms {
     enum diskstats_sort_order order;
 };
 
-#define srtNAME(t) sort_results_ ## t
+#define srtNAME(t) sort_diskstats_ ## t
 #define srtDECL(t) static int srtNAME(t) \
     (const struct diskstats_stack **A, const struct diskstats_stack **B, struct sort_parms *P)
 
@@ -412,7 +412,7 @@ static int node_update (
 // ___ Private Functions ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // --- generalized support ----------------------------------------------------
 
-static inline void assign_results (
+static inline void diskstats_assign_results (
         struct diskstats_stack *stack,
         struct dev_node *node)
 {
@@ -426,10 +426,10 @@ static inline void assign_results (
         ++this;
     }
     return;
-} // end: assign_results
+} // end: diskstats_assign_results
 
 
-static inline void cleanup_stack (
+static inline void diskstats_cleanup_stack (
         struct diskstats_result *this)
 {
     for (;;) {
@@ -439,10 +439,10 @@ static inline void cleanup_stack (
             this->result.ul_int = 0;
         ++this;
     }
-} // end: cleanup_stack
+} // end: diskstats_cleanup_stack
 
 
-static inline void cleanup_stacks_all (
+static inline void diskstats_cleanup_stacks_all (
         struct ext_support *this)
 {
     struct stacks_extent *ext = this->extents;
@@ -450,14 +450,14 @@ static inline void cleanup_stacks_all (
 
     while (ext) {
         for (i = 0; ext->stacks[i]; i++)
-            cleanup_stack(ext->stacks[i]->head);
+            diskstats_cleanup_stack(ext->stacks[i]->head);
         ext = ext->next;
     };
     this->dirty_stacks = 0;
-} // end: cleanup_stacks_all
+} // end: diskstats_cleanup_stacks_all
 
 
-static void extents_free_all (
+static void diskstats_extents_free_all (
         struct ext_support *this)
 {
     while (this->extents) {
@@ -465,10 +465,10 @@ static void extents_free_all (
         this->extents = this->extents->next;
         free(p);
     };
-} // end: extents_free_all
+} // end: diskstats_extents_free_all
 
 
-static inline struct diskstats_result *itemize_stack (
+static inline struct diskstats_result *diskstats_itemize_stack (
         struct diskstats_result *p,
         int depth,
         enum diskstats_item *items)
@@ -482,10 +482,10 @@ static inline struct diskstats_result *itemize_stack (
         ++p;
     }
     return p_sav;
-} // end: itemize_stack
+} // end: diskstats_itemize_stack
 
 
-static void itemize_stacks_all (
+static void diskstats_itemize_stacks_all (
         struct ext_support *this)
 {
     struct stacks_extent *ext = this->extents;
@@ -493,14 +493,14 @@ static void itemize_stacks_all (
     while (ext) {
         int i;
         for (i = 0; ext->stacks[i]; i++)
-            itemize_stack(ext->stacks[i]->head, this->numitems, this->items);
+            diskstats_itemize_stack(ext->stacks[i]->head, this->numitems, this->items);
         ext = ext->next;
     };
     this->dirty_stacks = 0;
-} // end: static void itemize_stacks_all
+} // end: diskstats_itemize_stacks_all
 
 
-static inline int items_check_failed (
+static inline int diskstats_items_check_failed (
         struct ext_support *this,
         enum diskstats_item *items,
         int numitems)
@@ -528,11 +528,11 @@ static inline int items_check_failed (
     }
 
     return 0;
-} // end: items_check_failed
+} // end: diskstats_items_check_failed
 
 
 /*
- * read_diskstats_failed:
+ * diskstats_read_failed:
  *
  * @info: info structure created at procps_diskstats_new
  *
@@ -541,7 +541,7 @@ static inline int items_check_failed (
  *
  * Returns: 0 on success, negative on error
  */
-static int read_diskstats_failed (
+static int diskstats_read_failed (
         struct diskstats_info *info)
 {
     static const char *fmtstr = "%d %d %" STRINGIFY(DISKSTATS_NAME_LEN) \
@@ -591,10 +591,21 @@ static int read_diskstats_failed (
     }
 
     return 0;
-} //end: read_diskstats_failed
+} // end: diskstats_read_failed
 
 
-static struct stacks_extent *stacks_alloc (
+/*
+ * diskstats_stacks_alloc():
+ *
+ * Allocate and initialize one or more stacks each of which is anchored in an
+ * associated context structure.
+ *
+ * All such stacks will have their result structures properly primed with
+ * 'items', while the result itself will be zeroed.
+ *
+ * Returns a stacks_extent struct anchoring the 'heads' of each new stack.
+ */
+static struct stacks_extent *diskstats_stacks_alloc (
         struct ext_support *this,
         int maxstacks)
 {
@@ -634,17 +645,17 @@ static struct stacks_extent *stacks_alloc (
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct diskstats_stack *)v_head;
-        p_head->head = itemize_stack((struct diskstats_result *)v_list, this->numitems, this->items);
+        p_head->head = diskstats_itemize_stack((struct diskstats_result *)v_list, this->numitems, this->items);
         p_blob->stacks[i] = p_head;
         v_list += list_size;
         v_head += head_size;
     }
     p_blob->ext_numstacks = maxstacks;
     return p_blob;
-} // end: stacks_alloc
+} // end: diskstats_stacks_alloc
 
 
-static int stacks_fetch (
+static int diskstats_stacks_fetch (
         struct diskstats_info *info)
 {
  #define n_alloc  info->fetch.n_alloc
@@ -660,13 +671,13 @@ static int stacks_fetch (
         n_alloc = STACKS_INCR;
     }
     if (!info->fetch_ext.extents) {
-        if (!(ext = stacks_alloc(&info->fetch_ext, n_alloc)))
+        if (!(ext = diskstats_stacks_alloc(&info->fetch_ext, n_alloc)))
             return -ENOMEM;
         memset(info->fetch.anchor, 0, sizeof(void *) * n_alloc);
         memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
-        itemize_stacks_all(&info->fetch_ext);
+        diskstats_itemize_stacks_all(&info->fetch_ext);
     }
-    cleanup_stacks_all(&info->fetch_ext);
+    diskstats_cleanup_stacks_all(&info->fetch_ext);
 
     // iterate stuff --------------------------------------
     n_inuse = 0;
@@ -675,11 +686,11 @@ static int stacks_fetch (
         if (!(n_inuse < n_alloc)) {
             n_alloc += STACKS_INCR;
             if ((!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc)))
-            || (!(ext = stacks_alloc(&info->fetch_ext, STACKS_INCR))))
+            || (!(ext = diskstats_stacks_alloc(&info->fetch_ext, STACKS_INCR))))
                 return -1;
             memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * STACKS_INCR);
         }
-        assign_results(info->fetch.anchor[n_inuse], node);
+        diskstats_assign_results(info->fetch.anchor[n_inuse], node);
         ++n_inuse;
         node = node->next;
     }
@@ -702,15 +713,15 @@ static int stacks_fetch (
  #undef n_alloc
  #undef n_inuse
  #undef n_saved
-} // end: stacks_fetch
+} // end: diskstats_stacks_fetch
 
 
-static int stacks_reconfig_maybe (
+static int diskstats_stacks_reconfig_maybe (
         struct ext_support *this,
         enum diskstats_item *items,
         int numitems)
 {
-    if (items_check_failed(this, items, numitems))
+    if (diskstats_items_check_failed(this, items, numitems))
         return -EINVAL;
     /* is this the first time or have things changed since we were last called?
        if so, gotta' redo all of our stacks stuff ... */
@@ -723,11 +734,11 @@ static int stacks_reconfig_maybe (
         this->items[numitems] = DISKSTATS_logical_end;
         this->numitems = numitems + 1;
         if (this->extents)
-            extents_free_all(this);
+            diskstats_extents_free_all(this);
         return 1;
     }
     return 0;
-} // end: stacks_reconfig_maybe
+} // end: diskstats_stacks_reconfig_maybe
 
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -759,7 +770,7 @@ PROCPS_EXPORT int procps_diskstats_new (
     /* do a priming read here for the following potential benefits: |
          1) ensure there will be no problems with subsequent access |
          2) make delta results potentially useful, even if 1st time | */
-    if ((rc = read_diskstats_failed(p))) {
+    if ((rc = diskstats_read_failed(p))) {
         procps_diskstats_unref(&p);
         return rc;
     }
@@ -801,7 +812,7 @@ PROCPS_EXPORT int procps_diskstats_unref (
             free(p);
         }
         if ((*info)->select_ext.extents)
-            extents_free_all((&(*info)->select_ext));
+            diskstats_extents_free_all((&(*info)->select_ext));
         if ((*info)->select_ext.items)
             free((*info)->select_ext.items);
 
@@ -811,7 +822,7 @@ PROCPS_EXPORT int procps_diskstats_unref (
             free((*info)->fetch.results.stacks);
 
         if ((*info)->fetch_ext.extents)
-            extents_free_all(&(*info)->fetch_ext);
+            diskstats_extents_free_all(&(*info)->fetch_ext);
         if ((*info)->fetch_ext.items)
             free((*info)->fetch_ext.items);
 
@@ -843,7 +854,7 @@ PROCPS_EXPORT struct diskstats_result *procps_diskstats_get (
        a granularity of 1 second between reads ... */
     cur_secs = time(NULL);
     if (1 <= cur_secs - info->new_stamp) {
-        if (read_diskstats_failed(info))
+        if (diskstats_read_failed(info))
             return NULL;
     }
 
@@ -875,15 +886,15 @@ PROCPS_EXPORT struct diskstats_reap *procps_diskstats_reap (
     if (info == NULL || items == NULL)
         return NULL;
 
-    if (0 > stacks_reconfig_maybe(&info->fetch_ext, items, numitems))
+    if (0 > diskstats_stacks_reconfig_maybe(&info->fetch_ext, items, numitems))
         return NULL;
 
     if (info->fetch_ext.dirty_stacks)
-        cleanup_stacks_all(&info->fetch_ext);
+        diskstats_cleanup_stacks_all(&info->fetch_ext);
 
-    if (read_diskstats_failed(info))
+    if (diskstats_read_failed(info))
         return NULL;
-    stacks_fetch(info);
+    diskstats_stacks_fetch(info);
     info->fetch_ext.dirty_stacks = 1;
 
     return &info->fetch.results;
@@ -908,22 +919,22 @@ PROCPS_EXPORT struct diskstats_stack *procps_diskstats_select (
     if (info == NULL || items == NULL)
         return NULL;
 
-    if (0 > stacks_reconfig_maybe(&info->select_ext, items, numitems))
+    if (0 > diskstats_stacks_reconfig_maybe(&info->select_ext, items, numitems))
         return NULL;
 
     if (!info->select_ext.extents
-    && !(stacks_alloc(&info->select_ext, 1)))
+    && !(diskstats_stacks_alloc(&info->select_ext, 1)))
        return NULL;
 
     if (info->select_ext.dirty_stacks)
-        cleanup_stacks_all(&info->select_ext);
+        diskstats_cleanup_stacks_all(&info->select_ext);
 
-    if (read_diskstats_failed(info))
+    if (diskstats_read_failed(info))
         return NULL;
     if (!(node = node_get(info, name)))
         return NULL;
 
-    assign_results(info->select_ext.extents->stacks[0], node);
+    diskstats_assign_results(info->select_ext.extents->stacks[0], node);
     info->select_ext.dirty_stacks = 1;
 
     return info->select_ext.extents->stacks[0];
