@@ -76,7 +76,7 @@ struct pids_info {
     struct fetch_support fetch;        // support for procps_pids_reap & select
     int history_yes;                   // need historical data
     struct history_info *hist;         // pointer to historical support data
-    int dirty_stacks;                  // extents need dynamic storage clean
+    int dirty_stacks;                  // stacks results need attention
     proc_t*(*read_something)(PROCTAB*, proc_t*); // readproc/readeither via which
     unsigned pgs2k_shift;              // to convert some proc vaules
     unsigned oldflags;                 // the old library PROC_FILL flagss
@@ -773,7 +773,6 @@ static inline void pids_assign_results (
         if (item >= PIDS_logical_end)
             break;
         Item_table[item].setsfunc(info, this, p);
-        info->dirty_stacks |= Item_table[item].freefunc ? 1 : 0;
         ++this;
     }
     return;
@@ -1062,7 +1061,6 @@ static int pids_stacks_fetch (
             return -ENOMEM;
         memset(info->fetch.anchor, 0, sizeof(void *) * n_alloc);
         memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
-        pids_itemize_stacks_all(info);
     }
     pids_cleanup_stacks_all(info);
     pids_toggle_history(info);
@@ -1095,6 +1093,7 @@ static int pids_stacks_fetch (
     }
     memcpy(info->fetch.results.stacks, info->fetch.anchor, sizeof(void *) * n_inuse);
     info->fetch.results.stacks[n_inuse] = NULL;
+    info->dirty_stacks = 1;
 
     return n_inuse;     // callers beware, this might be zero !
  #undef n_alloc
