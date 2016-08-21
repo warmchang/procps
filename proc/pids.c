@@ -339,7 +339,7 @@ srtDECL(noop) {
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
    // from either 'stat' or 'status' (preferred)
-#define f_either   PROC_SPARE_1
+#define f_either   PROC_SPARE_1        // either status or stat (favor stat)
 #define f_grp      PROC_FILLGRP
 #define f_lxc      PROC_FILL_LXC
 #define f_ns       PROC_FILLNS
@@ -913,8 +913,8 @@ static inline void pids_libflags_set (
         info->history_yes |= Item_table[e].needhist;
     }
     if (info->oldflags & f_either) {
-        if (!(info->oldflags & f_stat))
-            info->oldflags |= f_status;
+        if (!(info->oldflags & (f_stat | f_status)))
+            info->oldflags |= f_stat;
     }
     return;
 } // end: pids_libflags_set
