@@ -60,6 +60,13 @@ static int escape_str_utf8(char *restrict dst, const char *restrict src, int buf
       my_cells++;
       my_bytes++;
 
+    } else if (len==1) {
+      /* non-multibyte */
+      *(dst++) = isprint(*src) ? *src : '?';
+      src++;
+      my_cells++;
+      my_bytes++;
+
     } else if (!iswprint(wc)) {
       /* multibyte - no printable */
       *(dst++) = '?';
