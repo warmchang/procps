@@ -1596,8 +1596,8 @@ static struct {
 
 
         /*
-         * A calibrate_fields() *Helper* function to refresh the
-         * cached screen geometry and related variables */
+         * A calibrate_fields() *Helper* function which refreshes
+         * all that cached screen geometry plus related variables */
 static void adj_geometry (void) {
    static size_t pseudo_max = 0;
    static int w_set = 0, w_cols = 0, w_rows = 0;
@@ -1683,8 +1683,8 @@ static void adj_geometry (void) {
 
 
         /*
-         * A calibrate_fields() *Helper* function to build the
-         * actual column headers and required library flags */
+         * A calibrate_fields() *Helper* function to build the actual
+         * column headers & ensure necessary item enumerators support */
 static void build_headers (void) {
  #define ckITEM(f) do { if (Fieldstab[f].erel < 0) { Fieldstab[f].erel = Pids_itms_cur; \
       Pids_itms[Pids_itms_cur++] = Fieldstab[f].item; } } while (0)
@@ -1702,11 +1702,8 @@ static void build_headers (void) {
    Pids_itms_cur = 0;
    for (i = 0; i < MAXTBL(Fieldstab); i++)
       Fieldstab[i].erel = -1;
-   ckITEM(EU_PID);      // these 5 fields may not display,
-   ckITEM(EU_STA);      // yet we'll always need the 1st 2
-   ckITEM(EU_CMD);
-   ckITEM(EU_UED);      // plus the last 3 would have been
-   ckITEM(EU_GID);      // guaranteed under old lib scheme
+   ckITEM(EU_PID);      // these 2 fields may not display,
+   ckITEM(EU_STA);      // yet we'll always need them both
 
    do {
       if (VIZISw(w)) {
@@ -1779,9 +1776,8 @@ static void build_headers (void) {
 
 
         /*
-         * This guy coordinates the activities surrounding the maintenance
-         * of each visible window's columns headers and the library flags
-         * required for the openproc interface. */
+         * This guy coordinates the activities surrounding the maintenance of
+         * each visible window's columns headers plus item enumerators needed */
 static void calibrate_fields (void) {
    FLG_t f;
    char *s;
@@ -4573,9 +4569,9 @@ static void do_key (int ch) {
                goto all_done;
             }
    };
-   /* Frames_signal above will force a rebuild of all column headers and
-      the PROC_FILLxxx flags.  It's NOT simply lazy programming.  Here are
-      some keys that COULD require new column headers and/or libproc flags:
+   /* The Frames_signal above will force a rebuild of column headers.
+      It's NOT simply lazy programming.  Below are some keys that may
+      require new column headers and/or new library item enumerators:
          'A' - likely
          'c' - likely when !Mode_altscr, maybe when Mode_altscr
          'F' - likely
