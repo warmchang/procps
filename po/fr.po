@@ -149,8 +149,8 @@ msgid ""
 "              total        used        free      shared     buffers       "
 "cache   available"
 msgstr ""
-"              total       utilisé      libre     partagé    tampons       "
-"cache   disponible"
+"              total     utilisé       libre     partagé     tampons       "
+"cache  disponible"
 
 #: free.c:362
 #, c-format
@@ -158,8 +158,8 @@ msgid ""
 "              total        used        free      shared  buff/cache   "
 "available"
 msgstr ""
-"              total       utilisé      libre     partagé tamp/cache   "
-"disponible"
+"              total     utilisé       libre     partagé  tamp/cache  d"
+"isponible"
 
 #: free.c:365
 msgid "Mem:"
@@ -175,7 +175,7 @@ msgstr "Haute:"
 
 #: free.c:398
 msgid "Swap:"
-msgstr "Partition d'échange:"
+msgstr "Échange:"
 
 #: free.c:405
 msgid "Total:"
