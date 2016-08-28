@@ -2,6 +2,7 @@ procps-ng-NEXT
 ----------------
   * watch: define HOST_NAME_MAX where not defined          Debian #830734
   * library: dont use vm_min_free on non Linux             Debian #831396
+  * library: dont use SIGPWR on FreeBSD                    Debian #832148
 
 procps-ng-3.3.12
 ----------------

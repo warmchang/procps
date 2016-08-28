@@ -56,7 +56,7 @@
 #endif
 
 /* It seems the SPARC libc does not know the kernel supports SIGPWR. */
-#ifndef SIGPWR
+#if defined(__linux__) && !defined(SIGPWR)
 #  warning Your header files lack SIGPWR. (assuming it is number 29)
 #  define SIGPWR 29
 #endif
@@ -84,7 +84,9 @@ static const mapstruct sigtable[] = {
   {"PIPE",   SIGPIPE},
   {"POLL",   SIGPOLL},  /* IO */
   {"PROF",   SIGPROF},
+#ifdef SIGPWR
   {"PWR",    SIGPWR},
+#endif
   {"QUIT",   SIGQUIT},
   {"SEGV",   SIGSEGV},
 #ifdef SIGSTKFLT
