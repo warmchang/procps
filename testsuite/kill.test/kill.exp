@@ -24,6 +24,10 @@ set test "kill convert signal name to number"
 spawn  $kill -lHUP
 expect_pass "$test" "^1\\s*"
 
+set test "kill convert SIG-prefixed signal name to number"
+spawn  $kill -lSIGHUP
+expect_pass "$test" "^1\\s*$"
+
 set test "kill convert signal number to name"
 spawn  $kill -l 1
 expect_pass "$test" "^HUP\\s*"
