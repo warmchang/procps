@@ -47,7 +47,7 @@
 #define DISKSTATS_FILE      "/proc/diskstats"
 #define SYSBLOCK_DIR        "/sys/block"
 
-#define STACKS_INCR         64
+#define STACKS_INCR         64           // amount reap stack allocations grow
 #define STR_COMPARE         strverscmp
 
 struct dev_data {

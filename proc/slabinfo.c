@@ -43,9 +43,9 @@
 
 #define SLABINFO_FILE        "/proc/slabinfo"
 #define SLABINFO_LINE_LEN    2048
-#define SLAB_INFO_NAME_LEN   128
+#define SLABINFO_NAME_LEN    128
 
-#define STACKS_INCR          128
+#define STACKS_INCR          128         // amount reap stack allocations grow
 
 /*
    Because 'select' could, at most, return only node[0] values and since 'reap' |
@@ -76,7 +76,7 @@ struct slabs_summ {
 };
 
 struct slabs_node {
-    char name[SLAB_INFO_NAME_LEN];  /* name of this cache */
+    char name[SLABINFO_NAME_LEN];  /* name of this cache */
     unsigned long cache_size;       /* size of entire cache */
     unsigned int  nr_objs;          /* number of objects in this cache */
     unsigned int  nr_active_objs;   /* number of active objects */
@@ -409,7 +409,7 @@ static int parse_slabinfo20 (
             return retval;
 
         if (sscanf(buffer,
-                   "%" STRINGIFY(SLAB_INFO_NAME_LEN) "s" \
+                   "%" STRINGIFY(SLABINFO_NAME_LEN) "s" \
                    "%u %u %u %u %u : tunables %*u %*u %*u : slabdata %u %u %*u",
                    node->name,
                    &node->nr_active_objs, &node->nr_objs,

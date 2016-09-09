@@ -45,10 +45,11 @@
 #include <proc/pids.h>
 
 
-//#define UNREF_RPTHASH                // report on hashing, at uref time
+//#define UNREF_RPTHASH                  // report hash details at uref() time
 
-#define FILL_ID_MAX  255               // upper limit for pid/uid fills
-#define MEMORY_INCR  128               // amt by which allocations grow
+#define FILL_ID_MAX  255                 // upper limit with select of pid/uid
+#define STACKS_INCR  128                 // amount reap stack allocations grow
+#define NEWOLD_INCR  128                 // amt by which hist allocations grow
 
 
 struct stacks_extent {
@@ -627,7 +628,7 @@ static inline int pids_make_hist (
     HST_t *h;
 
     if (nSLOT + 1 >= Hr(HHist_siz)) {
-        Hr(HHist_siz) += MEMORY_INCR;
+        Hr(HHist_siz) += NEWOLD_INCR;
         Hr(PHist_sav) = realloc(Hr(PHist_sav), sizeof(HST_t) * Hr(HHist_siz));
         Hr(PHist_new) = realloc(Hr(PHist_new), sizeof(HST_t) * Hr(HHist_siz));
         if (!Hr(PHist_sav) || !Hr(PHist_new))
@@ -1052,9 +1053,9 @@ static int pids_stacks_fetch (
 
     // initialize stuff -----------------------------------
     if (!info->fetch.anchor) {
-        if (!(info->fetch.anchor = calloc(sizeof(void *), MEMORY_INCR)))
+        if (!(info->fetch.anchor = calloc(sizeof(void *), STACKS_INCR)))
             return -ENOMEM;
-        n_alloc = MEMORY_INCR;
+        n_alloc = STACKS_INCR;
     }
     if (!info->extents) {
         if (!(ext = pids_stacks_alloc(info, n_alloc)))
@@ -1070,11 +1071,11 @@ static int pids_stacks_fetch (
     n_inuse = 0;
     while (info->read_something(info->fetch_PT, &task)) {
         if (!(n_inuse < n_alloc)) {
-            n_alloc += MEMORY_INCR;
+            n_alloc += STACKS_INCR;
             if ((!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc)))
-            || (!(ext = pids_stacks_alloc(info, MEMORY_INCR))))
+            || (!(ext = pids_stacks_alloc(info, STACKS_INCR))))
                 return -1;
-            memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * MEMORY_INCR);
+            memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * STACKS_INCR);
         }
         if (!pids_proc_tally(info, &info->fetch.counts, &task))
             return -1;
@@ -1148,7 +1149,7 @@ PROCPS_EXPORT int procps_pids_new (
         pids_libflags_set(p);
     }
 
-    if (!(p->hist = calloc(MEMORY_INCR, sizeof(struct history_info)))) {
+    if (!(p->hist = calloc(NEWOLD_INCR, sizeof(struct history_info)))) {
         free(p->items);
         free(p);
         return -ENOMEM;

@@ -38,7 +38,7 @@
 
 #define STAT_FILE "/proc/stat"
 
-#define STACKS_INCR   64               // amount reap stack allocations grow
+#define STACKS_INCR   32               // amount reap stack allocations grow
 #define NEWOLD_INCR   32               // amount jiffs hist allocations grow
 
 /* ------------------------------------------------------------------------- +
