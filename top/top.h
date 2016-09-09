@@ -59,11 +59,6 @@
 
 /*######  Notes, etc.  ###################################################*/
 
-        /* The following convention is used to identify those areas where
-           adaptations for hotplugging are to be found ...
-              *** hotplug_acclimated ***
-           ( hopefully libproc will also be supportive of our efforts ) */
-
         /* For introducing inaugural cgroup support, thanks to:
               Jan Gorig <jgorig@redhat.com> - April, 2011 */
 
