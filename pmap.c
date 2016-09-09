@@ -599,25 +599,23 @@ static int one_proc (struct pids_stack *p)
 		/* hex values are lower case or numeric, keys are upper */
 		if (mapbuf[0] >= 'A' && mapbuf[0] <= 'Z') {
 			/* Its a key */
-			if (sscanf
-			    (mapbuf, "%20[^:]: %llu", smap_key,
-			     &smap_value) == 2) {
-				if (strncmp("Rss", smap_key, 3) == 0) {
+			if (sscanf(mapbuf, "%20[^:]: %llu", smap_key, &smap_value) == 2) {
+				if (strcmp("Rss", smap_key) == 0) {
 					rss = smap_value;
 					total_rss += smap_value;
 					continue;
 				}
-				if (strncmp("Shared_Dirty", smap_key, 12) == 0) {
+				if (strcmp("Shared_Dirty", smap_key) == 0) {
 					shared_dirty = smap_value;
 					total_shared_dirty += smap_value;
 					continue;
 				}
-				if (strncmp("Private_Dirty", smap_key, 13) == 0) {
+				if (strcmp("Private_Dirty", smap_key) == 0) {
 					private_dirty = smap_value;
 					total_private_dirty += smap_value;
 					continue;
 				}
-				if (strncmp("Swap", smap_key, 4) == 0) {
+				if (strcmp("Swap", smap_key) == 0) {
 					/*doesn't matter as long as last */
 					printf("%0*lx %*lu %*llu %*llu %*s %s\n",
 					       maxw1, start_To_Avoid_Warning,
