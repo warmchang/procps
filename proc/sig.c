@@ -261,7 +261,7 @@ char *strtosig(const char *restrict s){
       }
     }
   }
-  free(p);
+  free(copy);
   return converted;
 }
 
