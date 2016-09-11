@@ -227,11 +227,6 @@ proc_libprocps_la_include_HEADERS = \
 	proc/wchan.h \
 	proc/xtra-procps-debug.h
 
-dist_man_MANS += \
-	proc/openproc.3 \
-	proc/readproc.3 \
-	proc/readproctab.3
-
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
 	proc/libprocps.pc
