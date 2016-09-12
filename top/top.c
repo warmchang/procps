@@ -552,7 +552,16 @@ static void bye_bye (const char *str) {
 #endif // end: OFF_HST_HASH
 
 #ifndef NUMA_DISABLE
-  if (Libnuma_handle) dlclose(Libnuma_handle);
+   /* note: we'll skip a dlcose() to avoid the following libnuma memory
+    *       leak which is triggered after a call to numa_node_of_cpu():
+    *         ==1234== LEAK SUMMARY:
+    *         ==1234==    definitely lost: 512 bytes in 1 blocks
+    *         ==1234==    indirectly lost: 48 bytes in 2 blocks
+    *         ==1234==    ...
+    * [ thanks very much libnuma, for all the pain you've caused ]
+    */
+// if (Libnuma_handle)
+//    dlclose(Libnuma_handle);
 #endif
    if (str) {
       fputs(str, stderr);
@@ -1717,7 +1726,7 @@ static FLD_t Fieldstab[] = {
         EU_UED, L_NONE - natural outgrowth of 'stat()' in readproc        (euid)
         EU_CPU, L_stat - never filled by libproc, but requires times      (pcpu)
         EU_CMD, L_stat - may yet require L_CMDLINE in calibrate_fields    (cmd/cmdline)
-        L_EITHER       - must L_status, else L_stat == 64-bit math (__udivdi3) on 32-bit !
+        L_EITHER       - favor L_stat (L_status == ++cost of gpref & hash scheme)
 
      .width  .scale  .align    .sort     .lflg
      ------  ------  --------  --------  --------  */
@@ -3318,6 +3327,8 @@ static void before (char *me) {
       if (Numa_max_node && Numa_node_of_cpu)
          Numa_node_tot = Numa_max_node() + 1;
       else {
+         // this dlclose is safe - we've yet to call numa_node_of_cpu
+         // ( there's one other dlclose which has now been disabled )
          dlclose(Libnuma_handle);
          Libnuma_handle = NULL;
       }
