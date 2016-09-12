@@ -489,15 +489,7 @@ static int stat_make_numa_hist (
             nod_ptr->new.irq    += cpu_ptr->new.irq;    nod_ptr->old.irq    += cpu_ptr->old.irq;
             nod_ptr->new.sirq   += cpu_ptr->new.sirq;   nod_ptr->old.sirq   += cpu_ptr->old.sirq;
             nod_ptr->new.stolen += cpu_ptr->new.stolen; nod_ptr->old.stolen += cpu_ptr->old.stolen;
-            /*
-             * note: the above call to 'our_node_of_cpu' will produce a modest
-             *       memory leak summarized as:
-             *          ==1234== LEAK SUMMARY:
-             *          ==1234==    definitely lost: 512 bytes in 1 blocks
-             *          ==1234==    indirectly lost: 48 bytes in 2 blocks
-             *          ==1234==    ...
-             * [ thanks very much libnuma, for all the pain you've caused us ]
-             */
+
             cpu_ptr->numa_node = node;
             nod_ptr->id = node;
         }
@@ -867,6 +859,8 @@ PROCPS_EXPORT int procps_stat_new (
         if (p->our_max_node && p->our_node_of_cpu)
             p->nodes.total = p->our_max_node() + 1;
         else {
+            // this dlclose is safe - we've yet to call numa_node_of_cpu
+            // ( there's one other dlclose which has now been disabled )
             dlclose(p->libnuma_handle);
             p->libnuma_handle = NULL;
         }
@@ -934,8 +928,16 @@ PROCPS_EXPORT int procps_stat_unref (
 
 #ifndef NUMA_DISABLE
  #ifndef PRETEND_NUMA
-        if ((*info)->libnuma_handle)
-            dlclose((*info)->libnuma_handle);
+        /* note: we'll skip a dlcose() to avoid the following libnuma memory
+         *       leak which is triggered after a call to numa_node_of_cpu():
+         *         ==1234== LEAK SUMMARY:
+         *         ==1234==    definitely lost: 512 bytes in 1 blocks
+         *         ==1234==    indirectly lost: 48 bytes in 2 blocks
+         *         ==1234==    ...
+         * [ thanks very much libnuma, for all the pain you've caused ]
+         */
+//      if ((*info)->libnuma_handle)
+//          dlclose((*info)->libnuma_handle);
  #endif
 #endif
         free(*info);
