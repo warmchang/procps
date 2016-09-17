@@ -125,7 +125,7 @@ struct slabinfo_info {
     int nodes_alloc;                   /* nodes alloc()ed */
     int nodes_used;                    /* nodes using alloced memory */
     struct slabs_node *nodes;          /* first slabnode of this list */
-    struct slabs_hist hist;            /* new/old slabs_summ data */
+    struct slabs_hist slabs;           /* new/old slabs_summ data */
     struct ext_support select_ext;     /* supports concurrent select/reap */
     struct ext_support fetch_ext;      /* supports concurrent select/reap */
     struct fetch_support fetch;        /* support for procps_slabinfo_reap */
@@ -359,7 +359,7 @@ static int get_slabnode (
 
 /* parse_slabinfo20:
  *
- * sactual parse routine for slabinfo 2.x (2.6 kernels)
+ * Actual parse routine for slabinfo 2.x (2.6 kernels)
  * Note: difference between 2.0 and 2.1 is in the ": globalstat" part where version 2.1
  * has extra column <nodeallocs>. We don't use ": globalstat" part in both versions.
  *
@@ -396,10 +396,10 @@ static int parse_slabinfo20 (
     char buffer[SLABINFO_LINE_LEN];
     int retval;
     int page_size = getpagesize();
-    struct slabs_summ *hist = &(info->hist.new);
+    struct slabs_summ *slabs = &(info->slabs.new);
 
-    hist->min_obj_size = INT_MAX;
-    hist->max_obj_size = 0;
+    slabs->min_obj_size = INT_MAX;
+    slabs->max_obj_size = 0;
 
     while (fgets(buffer, SLABINFO_LINE_LEN, info->slabinfo_fp )) {
         if (buffer[0] == '#')
@@ -424,32 +424,32 @@ static int parse_slabinfo20 (
         if (!node->name[0])
             snprintf(node->name, sizeof(node->name), "%s", "unknown");
 
-        if (node->obj_size < hist->min_obj_size)
-            hist->min_obj_size = node->obj_size;
-        if (node->obj_size > hist->max_obj_size)
-            hist->max_obj_size = node->obj_size;
+        if (node->obj_size < slabs->min_obj_size)
+            slabs->min_obj_size = node->obj_size;
+        if (node->obj_size > slabs->max_obj_size)
+            slabs->max_obj_size = node->obj_size;
 
         node->cache_size = (unsigned long)node->nr_slabs * node->pages_per_slab
             * page_size;
 
         if (node->nr_objs) {
             node->use = (unsigned int)100 * (node->nr_active_objs / node->nr_objs);
-            hist->nr_active_caches++;
+            slabs->nr_active_caches++;
         } else
             node->use = 0;
 
-        hist->nr_objs += node->nr_objs;
-        hist->nr_active_objs += node->nr_active_objs;
-        hist->total_size += (unsigned long)node->nr_objs * node->obj_size;
-        hist->active_size += (unsigned long)node->nr_active_objs * node->obj_size;
-        hist->nr_pages += node->nr_slabs * node->pages_per_slab;
-        hist->nr_slabs += node->nr_slabs;
-        hist->nr_active_slabs += node->nr_active_slabs;
-        hist->nr_caches++;
+        slabs->nr_objs += node->nr_objs;
+        slabs->nr_active_objs += node->nr_active_objs;
+        slabs->total_size += (unsigned long)node->nr_objs * node->obj_size;
+        slabs->active_size += (unsigned long)node->nr_active_objs * node->obj_size;
+        slabs->nr_pages += node->nr_slabs * node->pages_per_slab;
+        slabs->nr_slabs += node->nr_slabs;
+        slabs->nr_active_slabs += node->nr_active_slabs;
+        slabs->nr_caches++;
     }
 
-    if (hist->nr_objs)
-        hist->avg_obj_size = hist->total_size / hist->nr_objs;
+    if (slabs->nr_objs)
+        slabs->avg_obj_size = slabs->total_size / slabs->nr_objs;
 
     return 0;
 } // end: parse_slabinfo20
@@ -468,8 +468,8 @@ static int read_slabinfo_failed (
     char line[SLABINFO_LINE_LEN];
     int retval, major, minor;
 
-    memcpy(&info->hist.old, &info->hist.new, sizeof(struct slabs_summ));
-    memset(&(info->hist.new), 0, sizeof(struct slabs_summ));
+    memcpy(&info->slabs.old, &info->slabs.new, sizeof(struct slabs_summ));
+    memset(&(info->slabs.new), 0, sizeof(struct slabs_summ));
     if ((retval = alloc_slabnodes(info)) < 0)
         return retval;
 
@@ -496,7 +496,7 @@ static int read_slabinfo_failed (
         return -ERANGE;
 
     if (!info->slabinfo_was_read) {
-        memcpy(&info->hist.old, &info->hist.new, sizeof(struct slabs_summ));
+        memcpy(&info->slabs.old, &info->slabs.new, sizeof(struct slabs_summ));
         info->slabinfo_was_read = 1;
     }
     return retval;
@@ -729,7 +729,7 @@ static int slabinfo_stacks_fetch (
                 return -1;
             memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * STACKS_INCR);
         }
-        slabinfo_assign_results(info->fetch.anchor[n_inuse], &info->hist, &info->nodes[n_inuse]);
+        slabinfo_assign_results(info->fetch.anchor[n_inuse], &info->slabs, &info->nodes[n_inuse]);
         ++n_inuse;
     }
 
@@ -901,7 +901,7 @@ PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
 //  with 'get', we must NOT honor the usual 'noop' guarantee
 //  if (item > SLABINFO_noop)
         info->get_this.result.ul_int = 0;
-    Item_table[item].setsfunc(&info->get_this, &info->hist, &info->nul_node);
+    Item_table[item].setsfunc(&info->get_this, &info->slabs, &info->nul_node);
 
     return &info->get_this;
 } // end: procps_slabinfo_get
@@ -964,7 +964,7 @@ PROCPS_EXPORT struct slabinfo_stack *procps_slabinfo_select (
 
     if (read_slabinfo_failed(info))
         return NULL;
-    slabinfo_assign_results(info->select_ext.extents->stacks[0], &info->hist, &info->nul_node);
+    slabinfo_assign_results(info->select_ext.extents->stacks[0], &info->slabs, &info->nul_node);
     info->select_ext.dirty_stacks = 1;
 
     return info->select_ext.extents->stacks[0];
