@@ -2163,10 +2163,9 @@ static void cpus_refresh (void) {
    enum stat_reap_type which;
 
    which = STAT_REAP_CPUS_ONLY;
-#ifndef NUMA_DISABLE
    if (CHKw(Curwin, View_CPUNOD))
       which = STAT_REAP_CPUS_AND_NODES;
-#endif
+
    Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items));
    if (!Stat_reap)
       error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__));
@@ -2785,10 +2784,10 @@ signify_that:
          * No matter what *they* say, we handle the really really BIG and
          * IMPORTANT stuff upon which all those lessor functions depend! */
 static void before (char *me) {
-   enum stat_reap_type which;
    struct sigaction sa;
    int i;
    int linux_version_code = procps_linux_version();
+   enum stat_reap_type which = STAT_REAP_CPUS_AND_NODES;
 
    atexit(close_stdout);
 
@@ -2819,11 +2818,7 @@ static void before (char *me) {
    if (linux_version_code >= LINUX_VERSION(2, 6, 11))
       Cpu_States_fmts = N_unq(STATE_lin2x7_fmt);
 
-   // get the total cpus (and, if possible, max numa node number)
-   which = STAT_REAP_CPUS_ONLY;
-#ifndef NUMA_DISABLE
-   which = STAT_REAP_CPUS_AND_NODES;
-#endif
+   // get the total cpus (and, if possible, numa node total)
    if (procps_stat_new(&Stat_ctx) < 0
    || !(Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items))))
       error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__));
@@ -4685,9 +4680,7 @@ static void summary_show (void) {
 
       cpus_refresh();
 
-#ifndef NUMA_DISABLE
       if (!Numa_node_tot) goto numa_nope;
-
       if (CHKw(w, View_CPUNOD)) {
          if (Numa_node_sel < 0) {
 numa_oops:
@@ -4721,8 +4714,8 @@ numa_oops:
             }
          }
       } else
+
 numa_nope:
-#endif
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
          summary_hlp(Stat_reap->summary, N_txt(WORD_allcpus_txt));
