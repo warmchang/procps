@@ -828,6 +828,7 @@ PROCPS_EXPORT int procps_stat_new (
         struct stat_info **info)
 {
     struct stat_info *p;
+    int rc;
 
     if (info == NULL || *info != NULL)
         return -EINVAL;
@@ -868,6 +869,14 @@ PROCPS_EXPORT int procps_stat_new (
     p->our_node_of_cpu = fake_node_of_cpu;
  #endif
 #endif
+
+    /* do a priming read here for the following potential benefits: |
+         1) ensure there will be no problems with subsequent access |
+         2) make delta results potentially useful, even if 1st time | */
+    if ((rc = stat_read_failed(p))) {
+        procps_stat_unref(&p);
+        return rc;
+    }
 
     *info = p;
     return 0;

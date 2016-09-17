@@ -1133,6 +1133,14 @@ PROCPS_EXPORT int procps_vmstat_new (
         return rc;
     }
 
+    /* do a priming read here for the following potential benefits: |
+         1) ensure there will be no problems with subsequent access |
+         2) make delta results potentially useful, even if 1st time | */
+    if ((rc = vmstat_read_failed(p))) {
+        procps_vmstat_unref(&p);
+        return rc;
+    }
+
     *info = p;
     return 0;
 } // end: procps_vmstat_new

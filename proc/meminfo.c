@@ -749,6 +749,14 @@ PROCPS_EXPORT int procps_meminfo_new (
         return rc;
     }
 
+    /* do a priming read here for the following potential benefits: |
+         1) ensure there will be no problems with subsequent access |
+         2) make delta results potentially useful, even if 1st time | */
+    if ((rc = meminfo_read_failed(p))) {
+        procps_meminfo_unref(&p);
+        return rc;
+    }
+
     *info = p;
     return 0;
 } // end: procps_meminfo_new
