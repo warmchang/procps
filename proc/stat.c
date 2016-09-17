@@ -450,21 +450,19 @@ static int stat_make_numa_hist (
     struct hist_tic *cpu_ptr, *nod_ptr;
     int i, node;
 
-    if (info->libnuma_handle == NULL
-    || (!info->nodes.total)) {
+    if (info->libnuma_handle == NULL)
         return 0;
-    }
 
     /* are numa nodes dynamic like online cpus can be?
        ( and be careful, this libnuma call returns the highest node id in use, )
        ( NOT an actual number of nodes - some of those 'slots' might be unused ) */
     info->nodes.total = info->our_max_node() + 1;
 
-    if (!info->nodes.hist.n_alloc
-    || !(info->nodes.total < info->nodes.hist.n_alloc)) {
+    if (info->nodes.hist.n_alloc == 0
+    || (info->nodes.total >= info->nodes.hist.n_alloc)) {
         info->nodes.hist.n_alloc = info->nodes.total + NEWOLD_INCR;
         info->nodes.hist.tics = realloc(info->nodes.hist.tics, info->nodes.hist.n_alloc * sizeof(struct hist_tic));
-        if (!(info->nodes.hist.tics))
+        if (info->nodes.hist.tics == NULL)
             return -ENOMEM;
     }
 
@@ -856,9 +854,8 @@ PROCPS_EXPORT int procps_stat_new (
     || (p->libnuma_handle = dlopen("libnuma.so.1", RTLD_LAZY))) {
         p->our_max_node = dlsym(p->libnuma_handle, "numa_max_node");
         p->our_node_of_cpu = dlsym(p->libnuma_handle, "numa_node_of_cpu");
-        if (p->our_max_node && p->our_node_of_cpu)
-            p->nodes.total = p->our_max_node() + 1;
-        else {
+        if (p->our_max_node == NULL
+        || (p->our_node_of_cpu == NULL)) {
             // this dlclose is safe - we've yet to call numa_node_of_cpu
             // ( there's one other dlclose which has now been disabled )
             dlclose(p->libnuma_handle);
@@ -869,7 +866,6 @@ PROCPS_EXPORT int procps_stat_new (
     p->libnuma_handle = (void *)-1;
     p->our_max_node = fake_max_node;
     p->our_node_of_cpu = fake_node_of_cpu;
-    p->nodes.total = fake_max_node() + 1;
  #endif
 #endif
 
