@@ -28,6 +28,15 @@ token = value
 Note that blank lines are ignored, and whitespace before and after a token or
 value is ignored, although a value can contain whitespace within.  Lines which
 begin with a # or ; are considered comments and ignored.
+.SH NOTES
+As the 
+.BR /etc/sysctl.conf
+file is used to override default kernel parameter values, only a small number of parameters is predefined in the file.
+Use 
+.IR /sbin/sysctl\ \-a
+or follow 
+.BR sysctl (8) 
+to list all possible parameters. The description of individual parameters can be found in the kernel documentation.
 .SH EXAMPLE
 .RS
 .sp
