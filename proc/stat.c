@@ -487,6 +487,8 @@ static int stat_make_numa_hist (
             nod_ptr->new.irq    += cpu_ptr->new.irq;    nod_ptr->old.irq    += cpu_ptr->old.irq;
             nod_ptr->new.sirq   += cpu_ptr->new.sirq;   nod_ptr->old.sirq   += cpu_ptr->old.sirq;
             nod_ptr->new.stolen += cpu_ptr->new.stolen; nod_ptr->old.stolen += cpu_ptr->old.stolen;
+            nod_ptr->new.guest  += cpu_ptr->new.guest;  nod_ptr->old.guest  += cpu_ptr->old.guest;
+            nod_ptr->new.gnice  += cpu_ptr->new.gnice;  nod_ptr->old.gnice  += cpu_ptr->old.gnice;
 
             cpu_ptr->numa_node = node;
             nod_ptr->id = node;
