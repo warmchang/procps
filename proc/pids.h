@@ -35,7 +35,6 @@ enum pids_item {
     PIDS_ADDR_KSTK_ESP,     //  ul_int
     PIDS_ADDR_START_CODE,   //  ul_int
     PIDS_ADDR_START_STACK,  //  ul_int
-    PIDS_ALARM,             //  ul_int
     PIDS_CGNAME,            //     str
     PIDS_CGROUP,            //     str
     PIDS_CGROUP_V,          //    strv
@@ -79,8 +78,6 @@ enum pids_item {
     PIDS_MEM_CODE_PGS,      //  ul_int
     PIDS_MEM_DATA,          //  ul_int
     PIDS_MEM_DATA_PGS,      //  ul_int
-    PIDS_MEM_DT_PGS,        //  ul_int
-    PIDS_MEM_LRS_PGS,       //  ul_int
     PIDS_MEM_RES,           //  ul_int
     PIDS_MEM_RES_PGS,       //  ul_int
     PIDS_MEM_SHR,           //  ul_int

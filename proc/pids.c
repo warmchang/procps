@@ -142,7 +142,6 @@ REG_set(ADDR_KSTK_EIP,    ul_int,  kstk_eip)
 REG_set(ADDR_KSTK_ESP,    ul_int,  kstk_esp)
 REG_set(ADDR_START_CODE,  ul_int,  start_code)
 REG_set(ADDR_START_STACK, ul_int,  start_stack)
-REG_set(ALARM,            ul_int,  alarm)
 STR_set(CGNAME,                    cgname)
 STR_set(CGROUP,                    cgroup)
 VEC_set(CGROUP_V,                  cgroup_v)
@@ -186,8 +185,6 @@ CVT_set(MEM_CODE,         ul_int,  trs)
 REG_set(MEM_CODE_PGS,     ul_int,  trs)
 CVT_set(MEM_DATA,         ul_int,  drs)
 REG_set(MEM_DATA_PGS,     ul_int,  drs)
-REG_set(MEM_DT_PGS,       ul_int,  dt)
-REG_set(MEM_LRS_PGS,      ul_int,  lrs)
 CVT_set(MEM_RES,          ul_int,  resident)
 REG_set(MEM_RES_PGS,      ul_int,  resident)
 CVT_set(MEM_SHR,          ul_int,  share)
@@ -394,7 +391,6 @@ static struct {
     { RS(ADDR_KSTK_ESP),     f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(ADDR_START_CODE),   f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(ADDR_START_STACK),  f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
-    { RS(ALARM),             f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  }, // ( obsolete, always zero )
     { RS(CGNAME),            x_cgroup,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(CGROUP),            x_cgroup,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(CGROUP_V),          v_cgroup,   FF(strv),  QS(strv),      0,        TS(strv)    },
@@ -438,8 +434,6 @@ static struct {
     { RS(MEM_CODE_PGS),      f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(MEM_DATA),          f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(MEM_DATA_PGS),      f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
-    { RS(MEM_DT_PGS),        f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  }, // ( always 0 since linux 2.6 )
-    { RS(MEM_LRS_PGS),       f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  }, // ( always 0 since linux 2.6 )
     { RS(MEM_RES),           f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(MEM_RES_PGS),       f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(MEM_SHR),           f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
