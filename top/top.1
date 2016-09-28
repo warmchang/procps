@@ -984,6 +984,8 @@ written to \*(AS.
 Dirty pages must be written to \*(AS before the corresponding physical
 memory location can be used for some other virtual page.
 
+This field was deprecated with linux 2.6 and is always zero.
+
 .TP 4
 47.\fB nMaj \*(Em Major Page Fault Count \fR
 The number of\fB major\fR page faults that have occurred for a task.
@@ -1001,7 +1003,7 @@ A minor page fault does not involve \*(AS access in making that
 page available.
 
 .TP 4
-48.\fB nTH \*(Em Number of Threads \fR
+49.\fB nTH \*(Em Number of Threads \fR
 The number of threads associated with a process.
 
 .TP 4

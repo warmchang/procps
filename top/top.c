@@ -1540,7 +1540,7 @@ static struct {
 #endif
    {     4,     -1,  A_right,    -1,  PIDS_FLT_MAJ        },  // ul_int   EU_FL1
    {     4,     -1,  A_right,    -1,  PIDS_FLT_MIN        },  // ul_int   EU_FL2
-   {     4,     -1,  A_right,    -1,  PIDS_MEM_DT_PGS     },  // ul_int   EU_DRT ( always 0 w/ since 2.6 )
+   {     4,     -1,  A_right,    -1,  PIDS_noop           },  // ul_int   EU_DRT ( always 0 w/ since 2.6 )
    {     1,     -1,  A_right,    -1,  PIDS_STATE          },  // s_ch     EU_STA
    {    -1,     -1,  A_left,     -1,  PIDS_CMD            },  // str      EU_CMD
    {    10,     -1,  A_left,     -1,  PIDS_WCHAN_NAME     },  // str      EU_WCH
