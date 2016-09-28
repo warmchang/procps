@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef PROC_PIDS_H
-#define PROC_PIDS_H
+#ifndef PROCPS_PIDS_H
+#define PROCPS_PIDS_H
 
 #include <sys/cdefs.h>
 
@@ -236,4 +236,4 @@ struct pids_stack **procps_pids_sort (
     enum pids_sort_order order);
 
 __END_DECLS
-#endif /* _PROC_PIDS_H */
+#endif

@@ -20,8 +20,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-#ifndef PROC_DISKSTATS_H
-#define PROC_DISKSTATS_H
+#ifndef PROCPS_DISKSTATS_H
+#define PROCPS_DISKSTATS_H
 
 #include <sys/cdefs.h>
 

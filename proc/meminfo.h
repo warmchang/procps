@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef PROC_MEMINFO_H
-#define PROC_MEMINFO_H
+#ifndef PROCPS_MEMINFO_H
+#define PROCPS_MEMINFO_H
 
 #include <sys/cdefs.h>
 
@@ -27,7 +27,7 @@ enum meminfo_item {
     MEMINFO_noop,                  //        ( never altered )
     MEMINFO_extra,                 //        ( reset to zero )
     /*
-        note: all of the following values are exressed as KiB
+        note: all of the following values are expressed as KiB
     */
     MEMINFO_MEM_ACTIVE,            //  ul_int
     MEMINFO_MEM_ACTIVE_ANON,       //  ul_int
@@ -165,5 +165,4 @@ struct meminfo_stack *procps_meminfo_select (
     int numitems);
 
 __END_DECLS
-
 #endif

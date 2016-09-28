@@ -710,7 +710,7 @@ static struct {
   { RS(DELTA_ZONE_RECLAIM_FAILED),            TS(sl_int) },
 
  // dummy entry corresponding to VMSTAT_logical_end ...
-  { NULL,                                     NULL        }
+  { NULL,                                     NULL       }
 };
 
     /* please note,

@@ -1045,7 +1045,7 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
             break;
         case STAT_REAP_CPUS_AND_NODES:
 #ifndef NUMA_DISABLE
-            /* note: if we are doing numa at all, we must call stat_make_numa_hist |
+            /* note: if we're doing numa at all, we must do this numa history |
                before we build (fetch) the cpu stacks since the read_stat guy |
                will have marked (temporarily) all the cpu node ids as invalid | */
             if (0 > stat_make_numa_hist(info))

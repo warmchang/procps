@@ -45,11 +45,11 @@
 #include <proc/pids.h>
 
 
-//#define UNREF_RPTHASH                  // report hash details at uref() time
+//#define UNREF_RPTHASH                // report hash details at uref() time
 
-#define FILL_ID_MAX  255                 // upper limit with select of pid/uid
-#define STACKS_INCR  128                 // amount reap stack allocations grow
-#define NEWOLD_INCR  128                 // amt by which hist allocations grow
+#define FILL_ID_MAX  255               // upper limit with select of pid/uid
+#define STACKS_INCR  128               // amount reap stack allocations grow
+#define NEWOLD_INCR  128               // amt by which hist allocations grow
 
 
 struct stacks_extent {
@@ -339,7 +339,6 @@ srtDECL(noop) {
 
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-   // from either 'stat' or 'status' (preferred)
 #define f_either   PROC_SPARE_1        // either status or stat (favor stat)
 #define f_grp      PROC_FILLGRP
 #define f_lxc      PROC_FILL_LXC
@@ -395,7 +394,7 @@ static struct {
     { RS(ADDR_KSTK_ESP),     f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(ADDR_START_CODE),   f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(ADDR_START_STACK),  f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
-    { RS(ALARM),             f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(ALARM),             f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  }, // ( obsolete, always zero )
     { RS(CGNAME),            x_cgroup,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(CGROUP),            x_cgroup,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(CGROUP_V),          v_cgroup,   FF(strv),  QS(strv),      0,        TS(strv)    },
@@ -439,8 +438,8 @@ static struct {
     { RS(MEM_CODE_PGS),      f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(MEM_DATA),          f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(MEM_DATA_PGS),      f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
-    { RS(MEM_DT_PGS),        f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },  // ( always 0 w/ since 2.6 )
-    { RS(MEM_LRS_PGS),       f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(MEM_DT_PGS),        f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  }, // ( always 0 since linux 2.6 )
+    { RS(MEM_LRS_PGS),       f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  }, // ( always 0 since linux 2.6 )
     { RS(MEM_RES),           f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(MEM_RES_PGS),       f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(MEM_SHR),           f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },

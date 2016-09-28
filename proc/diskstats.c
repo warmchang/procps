@@ -253,7 +253,7 @@ static struct {
   { RS(DISKSTATS_DELTA_IO_WTIME),       QS(s_int),   TS(s_int)  },
 
  // dummy entry corresponding to DISKSTATS_logical_end ...
-  { NULL,                               NULL,        NULL      }
+  { NULL,                               NULL,        NULL       }
 };
 
     /* please note,

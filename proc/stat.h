@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef PROC_STAT_H
-#define PROC_STAT_H
+#ifndef PROCPS_STAT_H
+#define PROCPS_STAT_H
 
 #include <sys/cdefs.h>
 
@@ -142,5 +142,4 @@ struct stat_stack **procps_stat_sort (
     enum stat_sort_order order);
 
 __END_DECLS
-
 #endif

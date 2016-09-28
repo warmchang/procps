@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef PROC_SLAB_H
-#define PROC_SLAB_H
+#ifndef PROCPS_SLABINFO_H
+#define PROCPS_SLABINFO_H
 
 #include <sys/cdefs.h>
 
@@ -131,4 +131,4 @@ struct slabinfo_stack **procps_slabinfo_sort (
     enum slabinfo_sort_order order);
 
 __END_DECLS
-#endif /* _PROC_SLAB_H */
+#endif
