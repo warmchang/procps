@@ -745,15 +745,6 @@ setREL1(ADDR_KSTK_EIP)
     return snprintf(outbuf, COLWID, "%08x", (unsigned)(rSv(ADDR_KSTK_EIP, ul_int, pp)));
 }
 
-/* This function helps print old-style time formats */
-static int old_time_helper(char *dst, unsigned long long t, unsigned long long rel) {
-  if(!t)            return snprintf(dst, COLWID, "    -");
-  if(t == ~0ULL)    return snprintf(dst, COLWID, "   xx");
-  if((long long)(t -= rel) < 0) t = 0ULL;
-  if(t > 9999ULL)   return snprintf(dst, COLWID, "%5llu", t/100ULL);
-  else              return snprintf(dst, COLWID, "%2u.%02u", (unsigned)t/100U, (unsigned)t%100U);
-}
-
 static int pr_bsdtime(char *restrict const outbuf, const proc_t *restrict const pp){
     unsigned long long t;
     unsigned u;
@@ -777,10 +768,6 @@ setREL1(TIME_START)
   return 6;
 }
 
-static int pr_alarm(char *restrict const outbuf, const proc_t *restrict const pp){
-setREL1(ALARM)
-    return old_time_helper(outbuf, rSv(ALARM, ul_int, pp), 0ULL);
-}
 
 /* HP-UX puts this in pages and uses "vsz" for kB */
 static int pr_sz(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -1373,7 +1360,7 @@ static const format_struct format_array[] = { /*
 {"acflg",     "ACFLG",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*acflag*/
 {"addr",      "ADDR",    pr_nop,           PIDS_noop,                4,    XXX,  AN|RIGHT},
 {"addr_1",    "ADDR",    pr_nop,           PIDS_noop,                1,    LNX,  AN|LEFT},
-{"alarm",     "ALARM",   pr_alarm,         PIDS_ALARM,               5,    LNX,  AN|RIGHT},
+{"alarm",     "ALARM",   pr_nop,           PIDS_noop,                5,    LNX,  AN|RIGHT},
 {"argc",      "ARGC",    pr_nop,           PIDS_noop,                4,    LNX,  PO|RIGHT},
 {"args",      "COMMAND", pr_args,          PIDS_CMDLINE,             27,   U98,  PO|UNLIMITED}, /*command*/
 {"atime",     "TIME",    pr_time,          PIDS_TIME_ALL,            8,    SOE,  ET|RIGHT}, /*cputime*/ /* was 6 wide */
@@ -1451,8 +1438,8 @@ static const format_struct format_array[] = { /*
 {"lwp",       "LWP",     pr_tasks,         PIDS_ID_PID,              5,    SUN,  TO|PIDMAX|RIGHT},
 {"lxc",       "LXC",     pr_lxcname,       PIDS_LXCNAME,             8,    LNX,  ET|LEFT},
 {"m_drs",     "DRS",     pr_drs,           PIDS_VSIZE_PGS,           5,    LNx,  PO|RIGHT},
-{"m_dt",      "DT",      pr_nop,           PIDS_MEM_DT_PGS,          4,    LNx,  PO|RIGHT},
-{"m_lrs",     "LRS",     pr_nop,           PIDS_MEM_LRS_PGS,         5,    LNx,  PO|RIGHT},
+{"m_dt",      "DT",      pr_nop,           PIDS_noop,                4,    LNx,  PO|RIGHT},
+{"m_lrs",     "LRS",     pr_nop,           PIDS_noop,                5,    LNx,  PO|RIGHT},
 {"m_resident", "RES",    pr_nop,           PIDS_MEM_RES_PGS,         5,    LNx,  PO|RIGHT},
 {"m_share",   "SHRD",    pr_nop,           PIDS_MEM_SHR_PGS,         5,    LNx,  PO|RIGHT},
 {"m_size",    "SIZE",    pr_size,          PIDS_VSIZE_PGS,           5,    LNX,  PO|RIGHT},
