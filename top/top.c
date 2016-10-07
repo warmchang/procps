@@ -3688,9 +3688,9 @@ static inline int find_ofs (const WIN_t *q, const char *buf) {
 
 
 
-   /* This is currently the one true prototype require by top.
-      It is placed here, instead of top.h, so as to avoid a compiler
-      warning when top_nls.c is compiled. */
+   /* This is currently the only true prototype required by top.
+      It is placed here, instead of top.h, to avoid one compiler
+      warning when the top_nls.c source was compiled separately. */
 static const char *task_show (const WIN_t *q, struct pids_stack *p);
 
 static void find_string (int ch) {

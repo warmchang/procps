@@ -159,7 +159,7 @@ char *strcasestr(const char *haystack, const char *needle);
 /* #####  Enum's and Typedef's  ############################################ */
 
         /* Flags for each possible field (and then some) --
-           these MUST be kept in sync with the FLD_t Fieldstab[] array !! */
+           these MUST be kept in sync with the Fieldstab[] array !! */
 enum pflag {
    EU_PID = 0, EU_PPD,
    EU_UED, EU_UEN, EU_URD, EU_URN, EU_USD, EU_USN,
@@ -581,7 +581,7 @@ typedef struct WIN_t {
 //atic const char   *scale_pcnt (float num, int width, int justr);
 //atic const char   *scale_tics (TIC_t tics, int width, int justr);
 /*------  Fields Management support  -------------------------------------*/
-/*atic FLD_t         Fieldstab[] = { ... }                                */
+/*atic struct        Fieldstab[] = { ... }                                */
 //atic void          adj_geometry (void);
 //atic void          build_headers (void);
 //atic void          calibrate_fields (void);
