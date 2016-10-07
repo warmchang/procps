@@ -4486,7 +4486,7 @@ static void forest_begin (WIN_t *q) {
 #endif
       for (i = 0; i < PIDSmaxt; i++)           // avoid any hidepid distortions
          if (!rLevel)                          // identify real or pretend trees
-            forest_adds(i, 1);                 // add as parent plus its children
+            forest_adds(i, 0);                 // add as parent plus its children
    }
    memcpy(Seed_ppt, Tree_ppt, sizeof(void*) * PIDSmaxt);
  #undef rLevel
@@ -4507,9 +4507,9 @@ static inline const char *forest_colour (const WIN_t *q, struct pids_stack *p) {
 #endif
    const char *which = (CHKw(q, Show_CMDLIN)) ? rSv(eu_CMDLINE) : rSv(EU_CMD);
 
-   if (!CHKw(q, Show_FOREST) || 1 == rLevel) return which;
+   if (!CHKw(q, Show_FOREST) || !rLevel) return which;
    if (rLevel > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
-   else snprintf(buf, sizeof(buf), "%*s%s", 4 * (rLevel - 1), " `- ", which);
+   else snprintf(buf, sizeof(buf), "%*s%s", (4 * rLevel), " `- ", which);
    return buf;
  #undef rSv
  #undef rLevel
