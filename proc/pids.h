@@ -144,7 +144,6 @@ enum pids_item {
     PIDS_VM_SWAP,           //  ul_int
     PIDS_VM_USED,           //  ul_int
     PIDS_VSIZE_PGS,         //  ul_int
-    PIDS_WCHAN_ADDR,        //  ul_int
     PIDS_WCHAN_NAME         //     str
 };
 

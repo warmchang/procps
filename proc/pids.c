@@ -251,7 +251,6 @@ REG_set(VM_STACK,         ul_int,  vm_stack)
 REG_set(VM_SWAP,          ul_int,  vm_swap)
 setDECL(VM_USED)        { (void)I; R->result.ul_int = P->vm_swap + P->vm_rss; }
 REG_set(VSIZE_PGS,        ul_int,  vsize)
-REG_set(WCHAN_ADDR,       ul_int,  wchan)
 setDECL(WCHAN_NAME)     { (void)I; R->result.str = strdup(lookup_wchan(P->tid)); }
 
 #undef setDECL
@@ -500,7 +499,6 @@ static struct {
     { RS(VM_SWAP),           f_status,   NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(VM_USED),           f_status,   NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(VSIZE_PGS),         f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
-    { RS(WCHAN_ADDR),        0,          NULL,      QS(ul_int),    0,        TS(ul_int)  }, // oldflags: was f_stat, but linux obsoleted
     { RS(WCHAN_NAME),        0,          FF(str),   QS(str),       0,        TS(str)     }, // oldflags: tid already free
 
    // dummy entry corresponding to PIDS_logical_end ...
