@@ -634,19 +634,6 @@ setREL1(WCHAN_NAME)
   return len;
 }
 
-static int pr_nwchan(char *restrict const outbuf, const proc_t *restrict const pp){
-  char buf[32];
-setREL1(WCHAN_ADDR)
-  if (!(rSv(WCHAN_ADDR, ul_int, pp) & 0xffffff)) {
-    memcpy(outbuf, "-",2);
-    return 1;
-  }
-  snprintf(buf, sizeof(buf), "%lx", rSv(WCHAN_ADDR, ul_int, pp));
-  // this will force a match with that old ps ...
-  buf[6] = '\0';
-  return snprintf(outbuf, COLWID, "%s", buf);
-}
-
 /* Terrible trunctuation, like BSD crap uses: I999 J999 K999 */
 /* FIXME: disambiguate /dev/tty69 and /dev/pts/69. */
 static int pr_tty4(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -1463,7 +1450,7 @@ static const format_struct format_array[] = { /*
 {"nsigs",     "NSIGS",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*nsignals*/
 {"nswap",     "NSWAP",   pr_nop,           PIDS_noop,                5,    XXX,  AN|RIGHT},
 {"nvcsw",     "VCSW",    pr_nop,           PIDS_noop,                5,    XXX,  AN|RIGHT},
-{"nwchan",    "WCHAN",   pr_nwchan,        PIDS_WCHAN_ADDR,          6,    XXX,  TO|RIGHT},
+{"nwchan",    "WCHAN",   pr_nop,           PIDS_noop,                6,    XXX,  TO|RIGHT},
 {"opri",      "PRI",     pr_opri,          PIDS_PRIORITY,            3,    SUN,  TO|RIGHT},
 {"osz",       "SZ",      pr_nop,           PIDS_noop,                2,    SUN,  PO|RIGHT},
 {"oublk",     "OUBLK",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*oublock*/
