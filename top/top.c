@@ -4970,7 +4970,7 @@ static void forest_create (WIN_t *q) {
 #endif
       for (i = 0; i < Frame_maxtask; i++)   // avoid any hidepid distortions
          if (!Seed_ppt[i]->pad_3)           // identify real or pretend trees
-            forest_adds(i, 1);              // add as parent plus its children
+            forest_adds(i, 0);              // add as parent plus its children
    }
    memcpy(Seed_ppt, Tree_ppt, sizeof(proc_t*) * Frame_maxtask);
 } // end: forest_create
@@ -4987,9 +4987,9 @@ static inline const char *forest_display (const WIN_t *q, const proc_t *p) {
 #endif
    const char *which = (CHKw(q, Show_CMDLIN)) ? *p->cmdline : p->cmd;
 
-   if (!CHKw(q, Show_FOREST) || 1 == p->pad_3) return which;
+   if (!CHKw(q, Show_FOREST) || !p->pad_3) return which;
    if (p->pad_3 > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
-   else snprintf(buf, sizeof(buf), "%*s%s", 4 * (p->pad_3 - 1), " `- ", which);
+   else snprintf(buf, sizeof(buf), "%*s%s", (4 * p->pad_3), " `- ", which);
    return buf;
 } // end: forest_display
 
