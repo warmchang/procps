@@ -1704,6 +1704,7 @@ static void build_headers (void) {
       Fieldstab[i].erel = -1;
    ckITEM(EU_PID);      // these 2 fields may not display,
    ckITEM(EU_STA);      // yet we'll always need them both
+   ckITEM(EU_CMD);      // this is used with 'Y' (inspect)
 
    do {
       if (VIZISw(w)) {
@@ -1747,7 +1748,7 @@ static void build_headers (void) {
          if (Fieldstab[EU_TME].erel > -1 && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
          if (Fieldstab[EU_TM2].erel > -1 && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
          // for 'u/U' filtering we need these too (old top forgot that, oops)
-         if (w->usrseltyp) { ckITEM(EU_URD); ckITEM(EU_USD); ckITEM(eu_ID_FUID); }
+         if (w->usrseltyp) { ckITEM(EU_UED); ckITEM(EU_URD); ckITEM(EU_USD); ckITEM(eu_ID_FUID); }
 
          // we must also accommodate an out of view sort field...
          f = w->rc.sortindx;
