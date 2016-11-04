@@ -152,14 +152,25 @@ static const char *scale_size(unsigned long size, int flags, struct commandline_
 		case 4:
 		case 5:
 		case 6:
-            if (4 >=
-                snprintf(buf, sizeof(buf), "%.1f%c",
-                     (float)((size / 1024) * base / power(base, i - 2)), *up))
-                return buf;
-            if (4 >=
-                snprintf(buf, sizeof(buf), "%ld%c",
-                     (long)((size / 1024) * base / power(base, i - 2)), *up))
-                return buf;
+			if (!(flags & FREE_SI)) {
+				if (5 >=
+				    snprintf(buf, sizeof(buf), "%.1f%ci",
+					     (float)((size / 1024) * base / power(base, i - 2)), *up))
+					return buf;
+				if (5 >=
+				    snprintf(buf, sizeof(buf), "%ld%ci",
+					     (long)((size / 1024) * base / power(base, i - 2)), *up))
+					return buf;
+			} else {
+				if (4 >=
+				    snprintf(buf, sizeof(buf), "%.1f%c",
+					     (float)((size / 1024) * base / power(base, i - 2)), *up))
+					return buf;
+				if (4 >=
+				    snprintf(buf, sizeof(buf), "%ld%c",
+					     (long)((size / 1024) * base / power(base, i - 2)), *up))
+					return buf;
+			}
 			break;
 		case 7:
 			break;
