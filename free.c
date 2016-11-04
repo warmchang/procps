@@ -130,17 +130,10 @@ static const char *scale_size(unsigned long size, int flags, struct commandline_
 			snprintf(buf, sizeof(buf), "%lld", ((long long int)size) * 1024);
 			return buf;
 		}
-		if (args.exponent == 2) {
-			if (!(flags & FREE_SI))
-				snprintf(buf, sizeof(buf), "%ld", size);
-			else
-				snprintf(buf, sizeof(buf), "%ld", (long int)(size / 0.9765625));
-			return buf;
-		}
-		if (args.exponent > 2) {
+		if (args.exponent > 1) {
 			/* In desired scale. */
 			snprintf(buf, sizeof(buf), "%ld",
-				 (long int)(size / power(base, args.exponent - 2))
+				 (long int)((size / 1024) * base / power(base, args.exponent - 2))
 			    );
 			return buf;
 		}
@@ -155,29 +148,18 @@ static const char *scale_size(unsigned long size, int flags, struct commandline_
 				return buf;
 			break;
 		case 2:
-
-			if (!(flags & FREE_SI)) {
-				if (4 >= snprintf(buf, sizeof(buf), "%ld%c", size, *up))
-					return buf;
-			} else {
-				if (4 >=
-				    snprintf(buf, sizeof(buf), "%ld%c",
-					     (long)(size / 0.9765625), *up))
-					return buf;
-			}
-			break;
 		case 3:
 		case 4:
 		case 5:
 		case 6:
-			if (4 >=
-			    snprintf(buf, sizeof(buf), "%.1f%c",
-				     (float)(size / power(base, i - 2)), *up))
-				return buf;
-			if (4 >=
-			    snprintf(buf, sizeof(buf), "%ld%c",
-				     (long)(size / power(base, i - 2)), *up))
-				return buf;
+            if (4 >=
+                snprintf(buf, sizeof(buf), "%.1f%c",
+                     (float)((size / 1024) * base / power(base, i - 2)), *up))
+                return buf;
+            if (4 >=
+                snprintf(buf, sizeof(buf), "%ld%c",
+                     (long)((size / 1024) * base / power(base, i - 2)), *up))
+                return buf;
 			break;
 		case 7:
 			break;
