@@ -4592,6 +4592,9 @@ msgstr "Le programme B<watch> a été écrit par Tony Rems E<lt>I<rembo@unisoft.
 #~ msgid "IDL\tSCHED_IDLE\n"
 #~ msgstr "IDL\tSCHED_IDLE\n"
 
+#~ msgid "DLN\tSCHED_DEADLINE\n"
+#~ msgstr "DLN\tSCHED_DEADLINE\n"
+
 #~ msgid "?\tunknown value\n"
 #~ msgstr "?\tvaleur inconnue\n"
 
@@ -5199,11 +5202,11 @@ msgstr "Le programme B<watch> a été écrit par Tony Rems E<lt>I<rembo@unisoft.
 #~ msgid "scheduling policy of the process.  The policies SCHED_OTHER (SCHED_NORMAL),\n"
 #~ msgstr "Ordonnancement de la politique du processus. Les politiques SCHED_OTHER (SCHED_NORMAL),\n"
 
-#~ msgid "SCHED_FIFO, SCHED_RR, SCHED_BATCH, SCHED_ISO, and SCHED_IDLE are respectively\n"
-#~ msgstr "SCHED_FIFO, SCHED_RR, SCHED_BATCH, SCHED_ISO et SCHED_IDLE sont respectivement\n"
+#~ msgid "SCHED_FIFO, SCHED_RR, SCHED_BATCH, SCHED_ISO, SCHED_IDLE and SCHED_DEADLINE are respectively\n"
+#~ msgstr "SCHED_FIFO, SCHED_RR, SCHED_BATCH, SCHED_ISO, SCHED_IDLE et SCHED_DEADLINE sont respectivement\n"
 
-#~ msgid "displayed as 0, 1, 2, 3, 4, and 5.\n"
-#~ msgstr "affichées comme 0, 1, 2, 3, 4 et 5.\n"
+#~ msgid "displayed as 0, 1, 2, 3, 4, 5 and 6.\n"
+#~ msgstr "affichées comme 0, 1, 2, 3, 4, 5 et 6.\n"
 
 #~ msgid "seat\tSEAT\tT{\n"
 #~ msgstr "seat\tSEAT\tT{\n"
