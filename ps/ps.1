@@ -1107,6 +1107,8 @@ ISO	SCHED_ISO
 .br
 IDL	SCHED_IDLE
 .br
+DLN	SCHED_DEADLINE
+.br
 ?	unknown value
 T}
 
@@ -1128,6 +1130,8 @@ B	SCHED_BATCH
 ISO	SCHED_ISO
 .br
 IDL	SCHED_IDLE
+.br
+DLN	SCHED_DEADLINE
 .br
 ?	unknown value
 T}
@@ -1455,6 +1459,8 @@ ISO	SCHED_ISO
 .br
 IDL	SCHED_IDLE
 .br
+DLN	SCHED_DEADLINE
+.br
 ?	unknown value
 T}
 
@@ -1523,8 +1529,8 @@ T}
 
 sched	SCH	T{
 scheduling policy of the process.  The policies SCHED_OTHER (SCHED_NORMAL),
-SCHED_FIFO, SCHED_RR, SCHED_BATCH, SCHED_ISO, and SCHED_IDLE are respectively
-displayed as 0, 1, 2, 3, 4, and 5.
+SCHED_FIFO, SCHED_RR, SCHED_BATCH, SCHED_ISO, SCHED_IDLE and SCHED_DEADLINE are
+respectively displayed as 0, 1, 2, 3, 4, 5 and 6.
 T}
 
 seat	SEAT	T{

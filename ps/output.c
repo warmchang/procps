@@ -694,7 +694,7 @@ static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp
   case  3: return snprintf(outbuf, COLWID, "B");   // SCHED_BATCH
   case  4: return snprintf(outbuf, COLWID, "ISO"); // reserved for SCHED_ISO (Con Kolivas)
   case  5: return snprintf(outbuf, COLWID, "IDL"); // SCHED_IDLE
-  case  6: return snprintf(outbuf, COLWID, "#6");  //
+  case  6: return snprintf(outbuf, COLWID, "DLN"); // SCHED_DEADLINE
   case  7: return snprintf(outbuf, COLWID, "#7");  //
   case  8: return snprintf(outbuf, COLWID, "#8");  //
   case  9: return snprintf(outbuf, COLWID, "#9");  //
