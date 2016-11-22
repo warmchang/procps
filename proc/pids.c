@@ -1180,7 +1180,8 @@ PROCPS_EXPORT int procps_pids_unref (
         return -EINVAL;
 
     (*info)->refcount--;
-    if ((*info)->refcount == 0) {
+
+    if ((*info)->refcount < 1) {
 #ifdef UNREF_RPTHASH
         pids_unref_rpthash(*info);
 #endif

@@ -1162,14 +1162,16 @@ PROCPS_EXPORT int procps_vmstat_unref (
 {
     if (info == NULL || *info == NULL)
         return -EINVAL;
+
     (*info)->refcount--;
 
-    if ((*info)->refcount == 0) {
+    if ((*info)->refcount < 1) {
         if ((*info)->extents)
             vmstat_extents_free_all((*info));
         if ((*info)->items)
             free((*info)->items);
         hdestroy_r(&(*info)->hashtab);
+
         free(*info);
         *info = NULL;
         return 0;

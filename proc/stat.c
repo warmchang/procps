@@ -901,9 +901,10 @@ PROCPS_EXPORT int procps_stat_unref (
 {
     if (info == NULL || *info == NULL)
         return -EINVAL;
+
     (*info)->refcount--;
 
-    if ((*info)->refcount == 0) {
+    if ((*info)->refcount < 1) {
         if ((*info)->cpus.anchor)
             free((*info)->cpus.anchor);
         if ((*info)->cpus.result.stacks)

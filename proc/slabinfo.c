@@ -843,7 +843,8 @@ PROCPS_EXPORT int procps_slabinfo_unref (
         return -EINVAL;
 
     (*info)->refcount--;
-    if ((*info)->refcount == 0) {
+
+    if ((*info)->refcount < 1) {
         if ((*info)->slabinfo_fp) {
             fclose((*info)->slabinfo_fp);
             (*info)->slabinfo_fp = NULL;
@@ -867,7 +868,6 @@ PROCPS_EXPORT int procps_slabinfo_unref (
 
         free(*info);
         *info = NULL;
-
         return 0;
     }
     return (*info)->refcount;

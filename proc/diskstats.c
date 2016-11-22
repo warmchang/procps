@@ -800,7 +800,8 @@ PROCPS_EXPORT int procps_diskstats_unref (
         return -EINVAL;
 
     (*info)->refcount--;
-    if ((*info)->refcount == 0) {
+
+    if ((*info)->refcount < 1) {
         if ((*info)->diskstats_fp) {
             fclose((*info)->diskstats_fp);
             (*info)->diskstats_fp = NULL;
@@ -828,7 +829,6 @@ PROCPS_EXPORT int procps_diskstats_unref (
 
         free(*info);
         *info = NULL;
-
         return 0;
     }
     return (*info)->refcount;
