@@ -651,6 +651,11 @@ static struct el * select_procs (int *num)
 	}
 	closeproc (ptp);
 	*num = matches;
+
+	if ((!matches) && (!opt_full) && (strlen(opt_pattern) > 15))
+		xwarnx(_("pattern that searches for process name longer than 15 characters will result in zero matches\n"
+				 "Try `%s -f' option to match against the complete command line."),
+				 program_invocation_short_name);
 	return list;
 }
 
@@ -886,14 +891,7 @@ static void parse_opts (int argc, char **argv)
 	}
 
 	if (argc - optind == 1)
-	{
 		opt_pattern = argv[optind];
-		if ((!opt_full) && (strlen(opt_pattern) > 15))
-			xwarnx(_("pattern that contains program name longer than 15 characters will result in zero matches\n"
-					 "Try `%s -f' option for thorough search."),
-					 program_invocation_short_name);
-	}
-
 	else if (argc - optind > 1)
 		xerrx(EXIT_USAGE, _("only one pattern can be provided\n"
 				     "Try `%s --help' for more information."),
