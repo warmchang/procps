@@ -1704,7 +1704,7 @@ end_justifies:
 #define L_OOM      PROC_FILLOOM
    // make 'none' non-zero (used to be important to Frames_libflags)
 #define L_NONE     PROC_SPARE_1
-   // from either 'stat' or 'status' (preferred), via bits not otherwise used
+   // from 'status' or 'stat' (favor stat), via bits not otherwise used
 #define L_EITHER   PROC_SPARE_2
    // for calibrate_fields and summary_show 1st pass
 #define L_DEFAULT  PROC_FILLSTAT
