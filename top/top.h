@@ -20,8 +20,6 @@
 #ifndef _Itop
 #define _Itop
 
-#include <proc/procps.h>
-
         /* Defines represented in configure.ac ----------------------------- */
 //#define BOOST_PERCNT            /* enable extra precision for two % fields */
 //#define NOBOOST_MEMS            /* disable extra precision for mem fields  */
@@ -636,7 +634,7 @@ typedef struct WIN_t {
 //atic void          keys_window (int ch);
 //atic void          keys_xtra (int ch);
 /*------  Forest View support  -------------------------------------------*/
-//atic void          forest_adds (const int self, int level);
+//atic void          forest_adds (const int self, unsigned level);
 //atic void          forest_begin (WIN_t *q);
 //atic inline const char *forest_colour (const WIN_t *q, struct pids_stack *p);
 /*------  Main Screen routines  ------------------------------------------*/
