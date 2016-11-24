@@ -47,6 +47,6 @@ const char * lookup_wchan (int pid) {
    // lame ppc64 has a '.' in front of every name
    if (*ret=='.') ret++;
    while(*ret=='_') ret++;
-   
+
    return ret;
 }
