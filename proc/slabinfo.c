@@ -253,7 +253,7 @@ static struct {
     QSR_t sortfunc;              // sort cmp func for a specific type
     char *type2str;              // the result type as a string value
 } Item_table[] = {
-/*  setsfunc                      sortfunc   type2str
+/*  setsfunc                      sortfunc     type2str
     ----------------------------  -----------  ---------- */
   { RS(noop),                     QS(noop),    TS_noop    },
   { RS(extra),                    QS(ul_int),  TS_noop    },
@@ -956,7 +956,7 @@ PROCPS_EXPORT struct slabinfo_stack *procps_slabinfo_select (
         return NULL;
 
     if (!info->select_ext.extents
-    && !(slabinfo_stacks_alloc(&info->select_ext, 1)))
+    && (!slabinfo_stacks_alloc(&info->select_ext, 1)))
        return NULL;
 
     if (info->select_ext.dirty_stacks)

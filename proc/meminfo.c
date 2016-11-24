@@ -860,7 +860,7 @@ PROCPS_EXPORT struct meminfo_stack *procps_meminfo_select (
             meminfo_extents_free_all(info);
     }
     if (!info->extents
-    && !(meminfo_stacks_alloc(info, 1)))
+    && (!meminfo_stacks_alloc(info, 1)))
        return NULL;
 
     if (info->dirty_stacks)

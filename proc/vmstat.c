@@ -1244,7 +1244,7 @@ PROCPS_EXPORT struct vmstat_stack *procps_vmstat_select (
             vmstat_extents_free_all(info);
     }
     if (!info->extents
-    && !(vmstat_stacks_alloc(info, 1)))
+    && (!vmstat_stacks_alloc(info, 1)))
        return NULL;
 
     if (info->dirty_stacks)

@@ -33,7 +33,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "procps-private.h"
+#include <proc/procps-private.h>
 #include <proc/diskstats.h>
 
 /* The following define will cause the 'node_add' function to maintain our |
@@ -923,7 +923,7 @@ PROCPS_EXPORT struct diskstats_stack *procps_diskstats_select (
         return NULL;
 
     if (!info->select_ext.extents
-    && !(diskstats_stacks_alloc(&info->select_ext, 1)))
+    && (!diskstats_stacks_alloc(&info->select_ext, 1)))
        return NULL;
 
     if (info->select_ext.dirty_stacks)
