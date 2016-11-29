@@ -47,7 +47,7 @@ typedef struct proc_t {
         stime,          // stat            kernel-mode CPU time accumulated by process
         cutime,         // stat            cumulative utime of process and reaped children
         cstime,         // stat            cumulative stime of process and reaped children
-        start_time,     // stat            start time of process -- seconds since 1-1-70
+        start_time,     // stat            start time of process -- seconds since system boot
         blkio_tics,     // stat            time spent waiting for block IO
         gtime,          // stat            guest time of the task in jiffies
         cgtime;         // stat            guest time of the task children in jiffies
