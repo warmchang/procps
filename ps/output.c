@@ -843,15 +843,15 @@ tsiz	text size (in Kbytes)
 ***/
 
 static int pr_stackp(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%08x", (unsigned)(pp->start_stack));
+    return snprintf(outbuf, COLWID, "%0*lx", (int)(2*sizeof(long)), pp->start_stack);
 }
 
 static int pr_esp(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%08x", (unsigned)(pp->kstk_esp));
+    return snprintf(outbuf, COLWID, "%0*lx", (int)(2*sizeof(long)), pp->kstk_esp);
 }
 
 static int pr_eip(char *restrict const outbuf, const proc_t *restrict const pp){
-    return snprintf(outbuf, COLWID, "%08x", (unsigned)(pp->kstk_eip));
+    return snprintf(outbuf, COLWID, "%0*lx", (int)(2*sizeof(long)), pp->kstk_eip);
 }
 
 /* This function helps print old-style time formats */
@@ -1475,11 +1475,11 @@ static const format_struct format_array[] = {
 {"dsiz",      "DSIZ",    pr_dsiz,     sr_nop,     4,   0,    LNX, PO|RIGHT},
 {"egid",      "EGID",    pr_egid,     sr_egid,    5,   0,    LNX, ET|RIGHT},
 {"egroup",    "EGROUP",  pr_egroup,   sr_egroup,  8, GRP,    LNX, ET|USER},
-{"eip",       "EIP",     pr_eip,      sr_kstk_eip, 8,  0,    LNX, TO|RIGHT},
+{"eip",       "EIP",     pr_eip,      sr_kstk_eip, (int)(2*sizeof(long)), 0, LNX, TO|RIGHT},
 {"emul",      "EMUL",    pr_nop,      sr_nop,    13,   0,    BSD, PO|LEFT}, /* "FreeBSD ELF32" and such */
-{"end_code",  "E_CODE",  pr_nop,      sr_end_code, 8,  0,    LNx, PO|RIGHT},
+{"end_code",  "E_CODE",  pr_nop,      sr_end_code, (int)(2*sizeof(long)), 0, LNx, PO|RIGHT},
 {"environ","ENVIRONMENT",pr_nop,      sr_nop,    11, ENV,    LNx, PO|UNLIMITED},
-{"esp",       "ESP",     pr_esp,      sr_kstk_esp, 8,  0,    LNX, TO|RIGHT},
+{"esp",       "ESP",     pr_esp,      sr_kstk_esp, (int)(2*sizeof(long)), 0, LNX, TO|RIGHT},
 {"etime",     "ELAPSED", pr_etime,    sr_etime,  11,   0,    U98, ET|RIGHT}, /* was 7 wide */
 {"etimes",    "ELAPSED", pr_etimes,   sr_etime,   7,   0,    BSD, ET|RIGHT}, /* FreeBSD */
 {"euid",      "EUID",    pr_euid,     sr_euid,    5,   0,    LNX, ET|RIGHT},
@@ -1613,10 +1613,10 @@ static const format_struct format_array[] = {
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, AN|RIGHT},
 {"slice",      "SLICE",  pr_sd_slice, sr_nop,    31,  SD,    LNX, ET|LEFT},
 {"spid",      "SPID",    pr_tasks,    sr_tasks,   5,   0,    SGI, TO|PIDMAX|RIGHT},
-{"stackp",    "STACKP",  pr_stackp,   sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*start_stack*/
+{"stackp",    "STACKP",  pr_stackp,   sr_start_stack, (int)(2*sizeof(long)), 0, LNX, PO|RIGHT}, /*start_stack*/
 {"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, ET|RIGHT},
-{"start_code", "S_CODE",  pr_nop,     sr_start_code, 8, 0,   LNx, PO|RIGHT},
-{"start_stack", "STACKP", pr_stackp,  sr_start_stack, 8, 0,  LNX, PO|RIGHT}, /*stackp*/
+{"start_code", "S_CODE",  pr_nop,     sr_start_code,  (int)(2*sizeof(long)), 0, LNx, PO|RIGHT},
+{"start_stack", "STACKP", pr_stackp,  sr_start_stack, (int)(2*sizeof(long)), 0, LNX, PO|RIGHT}, /*stackp*/
 {"start_time", "START",  pr_stime,    sr_start_time, 5, 0,   LNx, ET|RIGHT},
 {"stat",      "STAT",    pr_stat,     sr_state,   4,   0,    BSD, TO|LEFT}, /*state,s*/
 {"state",     "S",       pr_s,        sr_state,   1,   0,    XXX, TO|LEFT}, /*stat,s*/ /* was STAT */
