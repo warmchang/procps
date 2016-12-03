@@ -5,6 +5,7 @@ procps-ng-NEXT
   * library: dont use SIGPWR on FreeBSD                    Debian #832148
   * pmap: fix duplicate output line under '-x' option      Redhat #1374061
   * top: eliminated minor libnuma memory leak
+  * ps: avoid eip/esp address truncations                  Debain #846361
 
 procps-ng-3.3.12
 ----------------
