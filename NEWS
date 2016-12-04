@@ -6,6 +6,7 @@ procps-ng-NEXT
   * pmap: fix duplicate output line under '-x' option      Redhat #1374061
   * top: eliminated minor libnuma memory leak
   * ps: avoid eip/esp address truncations                  Debain #846361
+  * library: don't strip off wchan prefixes (ps & top)     Redhat #1322111
 
 procps-ng-3.3.12
 ----------------
