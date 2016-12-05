@@ -103,7 +103,7 @@ PROCPS_EXPORT int procps_ns_read_pid(
     for (i=0; i < PROCPS_NS_COUNT; i++) {
         snprintf(path, NSPATHLEN, "/proc/%d/ns/%s", pid, ns_names[i]);
         if (0 == stat(path, &st))
-            nsp->ns[i] = (long)st.st_ino;
+            nsp->ns[i] = (unsigned long)st.st_ino;
         else
             nsp->ns[i] = 0;
     }

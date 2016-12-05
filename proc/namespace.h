@@ -36,7 +36,7 @@ enum namespace_type {
 };
 
 struct procps_namespaces {
-    long ns[PROCPS_NS_COUNT];
+    unsigned long ns[PROCPS_NS_COUNT];
 };
 
 const char *procps_ns_get_name(const int id);
