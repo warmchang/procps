@@ -5080,6 +5080,7 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
       which has happened with some SMP kernels (pre-2.4?)
       and when cpus are dynamically added or removed */
  #define TRIMz(x)  ((tz = (SIC_t)(x)) < 0 ? 0 : tz)
+   //    user    syst    nice    idle    wait    hirg    sirq    steal
    SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, z_frme, tot_frme, tz;
    float scale;
 
@@ -5092,13 +5093,11 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
    y_frme = TRIMz(cpu->cur.y - cpu->sav.y);
    z_frme = TRIMz(cpu->cur.z - cpu->sav.z);
    tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme + x_frme + y_frme + z_frme;
-#ifdef CPU_ZEROTICS
-   if (1 > tot_frme) tot_frme = 1;
-#else
+#ifndef CPU_ZEROTICS
    if (tot_frme < cpu->edge)
       tot_frme = u_frme = s_frme = n_frme = i_frme = w_frme = x_frme = y_frme = z_frme = 0;
-   if (1 > tot_frme) i_frme = tot_frme = 1;
 #endif
+   if (1 > tot_frme) i_frme = tot_frme = 1;
    scale = 100.0 / (float)tot_frme;
 
    /* display some kinda' cpu state percentages
@@ -5113,11 +5112,11 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
       char user[SMLBUFSIZ], syst[SMLBUFSIZ], dual[MEDBUFSIZ];
       int ix = Curwin->rc.graph_cpus - 1;
       float pct_user = (float)(u_frme + n_frme) * scale,
-            pct_syst = (float)s_frme * scale;
+            pct_syst = (float)(s_frme + x_frme + y_frme) * scale;
 #ifndef QUICK_GRAPHS
       int num_user = (int)((pct_user * Graph_adj) + .5),
           num_syst = (int)((pct_syst * Graph_adj) + .5);
-      if (num_user + num_syst > Graph_len) --num_syst;
+      if (num_user + num_syst > Graph_len) num_syst = Graph_len - num_user;
       snprintf(user, sizeof(user), gtab[ix].user, num_user, gtab[ix].type);
       snprintf(syst, sizeof(syst), gtab[ix].syst, num_syst, gtab[ix].type);
 #else
@@ -5279,7 +5278,7 @@ numa_nope:
 #ifndef QUICK_GRAPHS
          int num_used = (int)((pct_used * Graph_adj) + .5),
              num_misc = (int)((pct_misc * Graph_adj) + .5);
-         if (num_used + num_misc > Graph_len) --num_misc;
+         if (num_used + num_misc > Graph_len) num_misc = Graph_len - num_used;
          snprintf(used, sizeof(used), gtab[ix].used, num_used, gtab[ix].type);
          snprintf(util, sizeof(util), gtab[ix].misc, num_misc, gtab[ix].type);
 #else
