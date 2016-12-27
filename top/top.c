@@ -222,14 +222,17 @@ static struct pids_fetch *Pids_reap;        // for reap or select
 static struct stat_info *Stat_ctx;
 static struct stat_reaped *Stat_reap;
 static enum stat_item Stat_items[] = {
-   STAT_TIC_ID,            STAT_TIC_NUMA_NODE,
-   STAT_TIC_DELTA_USER,    STAT_TIC_DELTA_SYSTEM,
-   STAT_TIC_DELTA_NICE,    STAT_TIC_DELTA_IDLE,
-   STAT_TIC_DELTA_IOWAIT,  STAT_TIC_DELTA_IRQ,
-   STAT_TIC_DELTA_SOFTIRQ, STAT_TIC_DELTA_STOLEN };
+   STAT_TIC_ID,             STAT_TIC_NUMA_NODE,
+   STAT_TIC_DELTA_USER,     STAT_TIC_DELTA_SYSTEM,
+   STAT_TIC_DELTA_NICE,     STAT_TIC_DELTA_IDLE,
+   STAT_TIC_DELTA_IOWAIT,   STAT_TIC_DELTA_IRQ,
+   STAT_TIC_DELTA_SOFTIRQ,  STAT_TIC_DELTA_STOLEN,
+   STAT_TIC_DELTA_SUM_USER, STAT_TIC_DELTA_SUM_SYSTEM,
+   STAT_TIC_DELTA_SUM_TOTAL };
 enum Rel_statitems {
-   stat_ID, stat_NU, stat_US, stat_SY, stat_NI,
-   stat_IL, stat_IO, stat_IR, stat_SI, stat_ST };
+   stat_ID,  stat_NU,  stat_US,  stat_SY,  stat_NI,
+   stat_IL,  stat_IO,  stat_IR,  stat_SI,  stat_ST,
+   stat_USR, stat_SYS, stat_TOT };
         // cpu/node stack results extractor macros, where e=rel enum, x=index
 #define CPU_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->cpus->stacks[x], Stat_ctx)
 #define NOD_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->nodes->stacks[x], Stat_ctx)
@@ -4601,15 +4604,12 @@ all_done:
 static void summary_hlp (struct stat_stack *this, const char *pfx) {
  // a tailored 'results stack value' extractor macro
  #define rSv(E)  TIC_VAL(E, this)
-   SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, z_frme, tot_frme;
+   SIC_t idl_frme, tot_frme;
    float scale;
 
-   u_frme = rSv(stat_US); s_frme = rSv(stat_SY); n_frme = rSv(stat_NI);
-   i_frme = rSv(stat_IL); w_frme = rSv(stat_IO); x_frme = rSv(stat_IR);
-   y_frme = rSv(stat_SI); z_frme = rSv(stat_ST);
-
-   tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme + x_frme + y_frme + z_frme;
-   if (1 > tot_frme) i_frme = tot_frme = 1;
+   idl_frme = rSv(stat_IL);
+   tot_frme = rSv(stat_TOT);
+   if (1 > tot_frme) idl_frme = tot_frme = 1;
    scale = 100.0 / (float)tot_frme;
 
    /* display some kinda' cpu state percentages
@@ -4623,12 +4623,12 @@ static void summary_hlp (struct stat_stack *this, const char *pfx) {
       };
       char user[SMLBUFSIZ], syst[SMLBUFSIZ], dual[MEDBUFSIZ];
       int ix = Curwin->rc.graph_cpus - 1;
-      float pct_user = (float)(u_frme + n_frme) * scale,
-            pct_syst = (float)s_frme * scale;
+      float pct_user = (float)rSv(stat_USR) * scale,
+            pct_syst = (float)rSv(stat_SYS) * scale;
 #ifndef QUICK_GRAPHS
       int num_user = (int)((pct_user * Graph_adj) + .5),
           num_syst = (int)((pct_syst * Graph_adj) + .5);
-      if (num_user + num_syst > Graph_len) --num_syst;
+      if (num_user + num_syst > Graph_len) num_syst = Graph_len - num_user;
       snprintf(user, sizeof(user), gtab[ix].user, num_user, gtab[ix].type);
       snprintf(syst, sizeof(syst), gtab[ix].syst, num_syst, gtab[ix].type);
 #else
@@ -4640,10 +4640,10 @@ static void summary_hlp (struct stat_stack *this, const char *pfx) {
          , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, dual));
    } else {
       show_special(0, fmtmk(Cpu_States_fmts, pfx
-         , (float)u_frme * scale, (float)s_frme * scale
-         , (float)n_frme * scale, (float)i_frme * scale
-         , (float)w_frme * scale, (float)x_frme * scale
-         , (float)y_frme * scale, (float)z_frme * scale));
+         , (float)rSv(stat_US) * scale, (float)rSv(stat_SY) * scale
+         , (float)rSv(stat_NI) * scale, (float)idl_frme * scale
+         , (float)rSv(stat_IO) * scale, (float)rSv(stat_IR) * scale
+         , (float)rSv(stat_SI) * scale, (float)rSv(stat_ST) * scale));
    }
  #undef rSv
 } // end: summary_hlp
@@ -4785,7 +4785,7 @@ numa_nope:
 #ifndef QUICK_GRAPHS
          int num_used = (int)((pct_used * Graph_adj) + .5),
              num_misc = (int)((pct_misc * Graph_adj) + .5);
-         if (num_used + num_misc > Graph_len) --num_misc;
+         if (num_used + num_misc > Graph_len) num_misc = Graph_len - num_used;
          snprintf(used, sizeof(used), gtab[ix].used, num_used, gtab[ix].type);
          snprintf(util, sizeof(util), gtab[ix].misc, num_misc, gtab[ix].type);
 #else
