@@ -454,14 +454,14 @@ static int parse_slabinfo20 (
 } // end: parse_slabinfo20
 
 
-/* read_slabinfo_failed():
+/* slabinfo_read_failed():
  *
  * Read the data out of /proc/slabinfo putting the information
  * into the supplied info container
  *
  * Returns: 0 on success, negative on error
  */
-static int read_slabinfo_failed (
+static int slabinfo_read_failed (
         struct slabinfo_info *info)
 {
     char line[SLABINFO_LINE_LEN];
@@ -495,7 +495,7 @@ static int read_slabinfo_failed (
         return -ERANGE;
 
     return retval;
-} // end: read_slabinfo_failed
+} // end: slabinfo_read_failed
 
 
 // ___ Private Functions ||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -811,7 +811,7 @@ PROCPS_EXPORT int procps_slabinfo_new (
          1) see if that caller's permissions were sufficient (root) |
          2) make delta results potentially useful, even if 1st time |
          3) elimnate need for history distortions 1st time 'switch' | */
-    if ((rc = read_slabinfo_failed(p))) {
+    if ((rc = slabinfo_read_failed(p))) {
         procps_slabinfo_unref(&p);
         return rc;
     }
@@ -888,7 +888,7 @@ PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
        a granularity of 1 second between reads ... */
     cur_secs = time(NULL);
     if (1 <= cur_secs - sav_secs) {
-        if (read_slabinfo_failed(info))
+        if (slabinfo_read_failed(info))
             return NULL;
         sav_secs = cur_secs;
     }
@@ -924,7 +924,7 @@ PROCPS_EXPORT struct slabinfo_reap *procps_slabinfo_reap (
     if (info->fetch_ext.dirty_stacks)
         slabinfo_cleanup_stacks_all(&info->fetch_ext);
 
-    if (read_slabinfo_failed(info))
+    if (slabinfo_read_failed(info))
         return NULL;
     slabinfo_stacks_fetch(info);
     info->fetch_ext.dirty_stacks = 1;
@@ -958,7 +958,7 @@ PROCPS_EXPORT struct slabinfo_stack *procps_slabinfo_select (
     if (info->select_ext.dirty_stacks)
         slabinfo_cleanup_stacks_all(&info->select_ext);
 
-    if (read_slabinfo_failed(info))
+    if (slabinfo_read_failed(info))
         return NULL;
     slabinfo_assign_results(info->select_ext.extents->stacks[0], &info->slabs, &info->nul_node);
     info->select_ext.dirty_stacks = 1;
