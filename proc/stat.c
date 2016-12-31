@@ -38,6 +38,7 @@
 
 #define STAT_FILE "/proc/stat"
 
+#define BUFFER_INCR   4096             // amount i/p buffer allocations grow
 #define STACKS_INCR   32               // amount reap stack allocations grow
 #define NEWOLD_INCR   32               // amount jiffs hist allocations grow
 
@@ -118,7 +119,9 @@ struct reap_support {
 
 struct stat_info {
     int refcount;
-    int stat_fd;
+    FILE *stat_fp;
+    char *stat_buf;                    // grows to accommodate all /proc/stat
+    int stat_buf_size;                 // current size for the above stat_buf
     struct hist_sys sys_hist;          // SYS type management
     struct hist_tic cpu_hist;          // TIC type management for cpu summary
     struct reap_support cpus;          // TIC type management for real cpus
@@ -568,9 +571,9 @@ static int stat_read_failed (
         struct stat_info *info)
 {
     struct hist_tic *sum_ptr, *cpu_ptr;
-    char buf[8192], *bp, *b;
-    int i, rc, size;
-    unsigned long long llnum = 0;
+    char *bp, *b;
+    int i, rc, num, tot_read;
+    unsigned long long llnum;
 
     if (info == NULL)
         return -EINVAL;
@@ -583,24 +586,36 @@ static int stat_read_failed (
         info->cpus.hist.n_inuse = 0;
     }
 
-    if (-1 == info->stat_fd && (info->stat_fd = open(STAT_FILE, O_RDONLY)) == -1)
+    if (!info->stat_fp
+    && (!(info->stat_fp = fopen(STAT_FILE, "r"))))
         return -errno;
-    if (lseek(info->stat_fd, 0L, SEEK_SET) == -1)
-        return -errno;
+    fflush(info->stat_fp);
+    rewind(info->stat_fp);
 
-    for (;;) {
-        if ((size = read(info->stat_fd, buf, sizeof(buf)-1)) < 0) {
-            if (errno == EINTR || errno == EAGAIN)
-                continue;
-            return -errno;
-        }
-        break;
-    }
-    if (size == 0) {
-        return -EIO;
-    }
-    buf[size] = '\0';
-    bp = buf;
+ #define maxSIZ    info->stat_buf_size
+ #define curSIZ  ( maxSIZ - tot_read )
+ #define curPOS  ( info->stat_buf + tot_read )
+    /* we slurp in the entire directory thus avoiding repeated calls to fread, |
+       especially in a massively parallel environment.  additionally, each cpu |
+       line is then frozen in time rather than changing until we get around to |
+       accessing it.  this helps to minimize (not eliminate) some distortions. | */
+    tot_read = errno = 0;
+    while ((0 < (num = fread(curPOS, 1, curSIZ, info->stat_fp)))) {
+        tot_read += num;
+        if (tot_read < maxSIZ)
+            break;
+        maxSIZ += BUFFER_INCR;
+        if (!(info->stat_buf = realloc(info->stat_buf, maxSIZ)))
+            return -ENOMEM;
+    };
+ #undef maxSIZ
+ #undef curSIZ
+ #undef curPOS
+
+    if (!feof(info->stat_fp))
+        return -errno;
+    info->stat_buf[tot_read] = '\0';
+    bp = info->stat_buf;
 
     sum_ptr = &info->cpu_hist;
     // remember summary from last time around
@@ -892,9 +907,12 @@ PROCPS_EXPORT int procps_stat_new (
         return -EINVAL;
     if (!(p = calloc(1, sizeof(struct stat_info))))
         return -ENOMEM;
-
+    if (!(p->stat_buf = calloc(1, BUFFER_INCR))) {
+        free(p);
+        return -ENOMEM;
+    }
+    p->stat_buf_size = BUFFER_INCR;
     p->refcount = 1;
-    p->stat_fd = -1;
 
     p->results.cpus = &p->cpus.result;
     p->results.nodes = &p->nodes.result;
@@ -962,6 +980,11 @@ PROCPS_EXPORT int procps_stat_unref (
     (*info)->refcount--;
 
     if ((*info)->refcount < 1) {
+        if ((*info)->stat_fp)
+            fclose((*info)->stat_fp);
+        if ((*info)->stat_buf)
+            free((*info)->stat_buf);
+
         if ((*info)->cpus.anchor)
             free((*info)->cpus.anchor);
         if ((*info)->cpus.result.stacks)
