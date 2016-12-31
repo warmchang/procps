@@ -76,6 +76,7 @@ struct hist_sys {
 
 struct hist_tic {
     int id;
+    int id_sav;
     int numa_node;
     int count;
     struct stat_jifs new;
@@ -635,14 +636,16 @@ reap_em_again:
             , &cpu_ptr->new.idle,  &cpu_ptr->new.iowait, &cpu_ptr->new.irq
             , &cpu_ptr->new.sirq,  &cpu_ptr->new.stolen
             , &cpu_ptr->new.guest, &cpu_ptr->new.gnice))) {
-                int id_sav = cpu_ptr->id;
-                memmove(cpu_ptr, sum_ptr, sizeof(struct hist_tic));
-                cpu_ptr->id = id_sav;
+                cpu_ptr->id_sav = -1;
                 break;                   // we must tolerate cpus taken offline
         }
         stat_derive_unique(cpu_ptr);
-        ++i;
+        // don't distort deltas when a cpu is taken offline or brought online
+        if (cpu_ptr->id != cpu_ptr->id_sav)
+            memcpy(&cpu_ptr->old, &cpu_ptr->new, sizeof(struct stat_jifs));
+        cpu_ptr->id_sav = cpu_ptr->id;
         ++cpu_ptr;
+        ++i;
     } while (i < info->cpus.hist.n_alloc);
 
     if (i == info->cpus.hist.n_alloc && rc >= 8) {
