@@ -118,7 +118,6 @@ struct reap_support {
 struct stat_info {
     int refcount;
     int stat_fd;
-    int stat_was_read;                 // is stat file history valid?
     struct hist_sys sys_hist;          // SYS type management
     struct hist_tic cpu_hist;          // TIC type management for cpu summary
     struct reap_support cpus;          // TIC type management for real cpus
@@ -617,9 +616,6 @@ static int stat_read_failed (
         , &sum_ptr->new.guest, &sum_ptr->new.gnice))
             return -1;
     stat_derive_unique(sum_ptr);
-    // let's not distort the deltas the first time thru ...
-    if (!info->stat_was_read)
-        memcpy(&sum_ptr->old, &sum_ptr->new, sizeof(struct stat_jifs));
 
     i = 0;
 reap_em_again:
@@ -645,9 +641,6 @@ reap_em_again:
                 break;                   // we must tolerate cpus taken offline
         }
         stat_derive_unique(cpu_ptr);
-        // let's not distort the deltas the first time thru ...
-        if (!info->stat_was_read)
-            memcpy(&cpu_ptr->old, &cpu_ptr->new, sizeof(struct stat_jifs));
         ++i;
         ++cpu_ptr;
     } while (i < info->cpus.hist.n_alloc);
@@ -695,11 +688,6 @@ reap_em_again:
         sscanf(b,  "procs_running %llu", &llnum);
     info->sys_hist.new.procs_running = llnum;
 
-    // let's not distort the deltas the first time thru ...
-    if (!info->stat_was_read) {
-        memcpy(&info->sys_hist.old, &info->sys_hist.new, sizeof(struct stat_data));
-        info->stat_was_read = 1;
-    }
     return 0;
 } // end: stat_read_failed
 
@@ -939,7 +927,8 @@ PROCPS_EXPORT int procps_stat_new (
 
     /* do a priming read here for the following potential benefits: |
          1) ensure there will be no problems with subsequent access |
-         2) make delta results potentially useful, even if 1st time | */
+         2) make delta results potentially useful, even if 1st time |
+         3) elimnate need for history distortions 1st time 'switch' | */
     if ((rc = stat_read_failed(p))) {
         procps_stat_unref(&p);
         return rc;

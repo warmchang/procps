@@ -121,7 +121,6 @@ struct fetch_support {
 struct slabinfo_info {
     int refcount;
     FILE *slabinfo_fp;
-    int slabinfo_was_read;
     int nodes_alloc;                   /* nodes alloc()ed */
     int nodes_used;                    /* nodes using alloced memory */
     struct slabs_node *nodes;          /* first slabnode of this list */
@@ -495,10 +494,6 @@ static int read_slabinfo_failed (
     else
         return -ERANGE;
 
-    if (!info->slabinfo_was_read) {
-        memcpy(&info->slabs.old, &info->slabs.new, sizeof(struct slabs_summ));
-        info->slabinfo_was_read = 1;
-    }
     return retval;
 } // end: read_slabinfo_failed
 
@@ -814,7 +809,8 @@ PROCPS_EXPORT int procps_slabinfo_new (
 
     /* do a priming read here for the following potential benefits: |
          1) see if that caller's permissions were sufficient (root) |
-         2) make delta results potentially useful, even if 1st time | */
+         2) make delta results potentially useful, even if 1st time |
+         3) elimnate need for history distortions 1st time 'switch' | */
     if ((rc = read_slabinfo_failed(p))) {
         procps_slabinfo_unref(&p);
         return rc;

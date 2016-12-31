@@ -182,7 +182,6 @@ struct stacks_extent {
 struct vmstat_info {
     int refcount;
     int vmstat_fd;
-    int vmstat_was_read;
     int dirty_stacks;
     struct vmstat_hist hist;
     int numitems;
@@ -1029,11 +1028,6 @@ static int vmstat_read_failed (
         head = tail + 1;
     }
 
-    // let's not distort the deltas the first time thru ...
-    if (!info->vmstat_was_read) {
-        memcpy(&info->hist.old, &info->hist.new, sizeof(struct vmstat_data));
-        info->vmstat_was_read = 1;
-    }
     return 0;
 } // end: vmstat_read_failed
 
@@ -1135,7 +1129,8 @@ PROCPS_EXPORT int procps_vmstat_new (
 
     /* do a priming read here for the following potential benefits: |
          1) ensure there will be no problems with subsequent access |
-         2) make delta results potentially useful, even if 1st time | */
+         2) make delta results potentially useful, even if 1st time |
+         3) elimnate need for history distortions 1st time 'switch' | */
     if ((rc = vmstat_read_failed(p))) {
         procps_vmstat_unref(&p);
         return rc;
