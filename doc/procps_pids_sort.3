@@ -1,0 +1,59 @@
+.\" (C) Copyright 2017 Craig Small <csmall@enc.com.au>
+.\"
+.\" %%%LICENSE_START(LGPL_2.1+)
+.\" This manual is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2.1 of the License, or (at your option) any later version.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+.\" %%%LICENSE_END
+.\"
+.TH PROCPS_PIDS_SORT 3 2017-01-05 "libproc-2"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.SH NAME
+procps_pids_sort \-
+Sort process information
+.SH SYNOPSIS
+.B #include <proc/procps.h>
+.sp
+.BI "pids_stack **procps_pids_sort(struct pids_info *" info ", struct pids_stack *" stacks "[], int " numstacked ", enum pids_item " sortitem ", enum pids_sort_order " order ");"
+
+.sp
+Link with \fI\-lprocps\fP.
+
+.SH DESCRIPTION
+\fBprocps_pids_sort\fR sorts the given \fIstacks\fR stack of process
+information and sorts it by the given \fIsortitem\fR. \fInumstacked\fR
+must be the length of the \fIstacks\fR array and all the stacks in the
+list must be homogenous (of equal length and content).
+
+The stacks value can be obtained by a previous call of
+.BR procps_pids_reap (3)
+or
+.BR procps_pids_select (3)
+and then accessing the \fIstacks\fR member from that structure.
+
+\fIorder\fR can be either PIDS_SORT_ASCEND or PIDS_SORT_DESCEND.
+
+.SH RETURN VALUE
+The function returns the sorted stack on success or NULL on failure.
+
+.SH VERSIONS
+.B procps_pids_sort()
+first appeared in libproc-2 version 0.0.
+
+.SH SEE ALSO
+.BR libproc (3),
+.BR procps_pids_new (3),
+.BR procps_pids_reap (3),
+.BR procps_pids_select (3),
+.BR proc (5).

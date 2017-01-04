@@ -1,4 +1,4 @@
-.\" (C) Copyright 2016-2017 Craig Small <csmall@enc.com.au>
+.\" (C) Copyright 2017 Craig Small <csmall@enc.com.au>
 .\"
 .\" %%%LICENSE_START(LGPL_2.1+)
 .\" This manual is free software; you can redistribute it and/or
@@ -16,40 +16,35 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS_PIDS_NEW 3 2017-01-05 "libproc-2"
+.TH PROCPS_PIDS_reset 3 2017-01-05 "libproc-2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .SH NAME
-procps_pids_new \-
-Create a PID information structure
+procps_pids_reset \-
+Change what information is collected for a process
 .SH SYNOPSIS
 .B #include <proc/procps.h>
 .sp
-.BI "int procps_pids_new(struct pids_info **" info ", enum pids_item *" items ", int " numitems ");"
+.BI "int procps_pids_reset(struct pids_info **" info ", enum pids_item *" items ", int " numitems ");"
 .sp
 Link with \fI\-lprocps\fP.
 
 .SH DESCRIPTION
-.BR procps_pids_new ()
-creates a new PID information structure that be used in subsequent calls to
+During the initial call to \fBprocps_pids_new\fR(3), the information structure
+is allocated and the information items are specified.
+\fBprocps_pids_reset\fR allows you to change what items for a process are collected
+without having to unreference and create a new \fIpids_info\fR structure.
+
+The changed  PID information structure can then be used in subsequent calls to
 .BR procps_pids_get (3),
 .BR procps_pids_reap (3),
 .BR procps_pids_reset (3),
 .BR procps_pids_select (3),
-.BR procps_pids_sort (3).
-functions. The pointer to \fIinfo\fR will have memory allocated and a structure
-created.
+.BR procps_pids_sort (3)
+or even to further calls to \fBprocps_pids_reset\fR itself.
 
-\fIitems\fR is an array of enums up to \fInumitems\fR long that selects what
-information about the processed will be stored. \fInumitems\fR is used to
-allocate memory and must be at least the length of \fIitems\fR but can be more.
-For information about what \fIitems\fR can contain, see the \fBPID ITEMS\fR
-section in
-.BR libproc (3).
-
-Once the structure is no longer required,
-.BR procps_pids_unref (3)
-should be used to free it.
+The \fIitems\fR and \fInumitems\fR parameters are identical to the parameters
+used in \fBprocps_pids_new\fR.
 
 .SH RETURN VALUE
 The function returns 0 on success and one of negative values below
@@ -59,16 +54,16 @@ on failure.
 One of the given parameters is incorrect.
 .TP
 .B -ENOMEM
-Unable to allocate memory for the structure.
+Unable to allocate memory for the changed structure.
 
 .SH VERSIONS
-.B procps_pids_new()
+.B procps_pids_reset()
 first appeared in libproc-2 version 0.0.
 
 .SH SEE ALSO
 .BR libproc (3),
+.BR procps_pids_new (3),
 .BR procps_pids_reap (3),
-.BR procps_pids_reset (3),
 .BR procps_pids_select (3),
 .BR procps_pids_sort (3),
 .BR procps_pids_unref (3),

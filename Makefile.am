@@ -60,6 +60,12 @@ dist_man_MANS = \
 	doc/libproc.3 \
 	doc/procps_linux_version.3 \
 	doc/procps_pids_new.3 \
+	doc/procps_pids_reap.3 \
+	doc/procps_pids_ref.3 \
+	doc/procps_pids_reset.3 \
+	doc/procps_pids_select.3 \
+	doc/procps_pids_sort.3 \
+	doc/procps_pids_unref.3 \
 	doc/procps_uptime.3 \
 	doc/procps_uptime_sprint.3 \
 	doc/procps_uptime_sprint_short.3

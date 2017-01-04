@@ -1,4 +1,4 @@
-.\" (C) Copyright 2016-2017 Craig Small <csmall@enc.com.au>
+.\" (C) Copyright 2017 Craig Small <csmall@enc.com.au>
 .\"
 .\" %%%LICENSE_START(LGPL_2.1+)
 .\" This manual is free software; you can redistribute it and/or
@@ -16,60 +16,43 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS_PIDS_NEW 3 2017-01-05 "libproc-2"
+.TH PROCPS_PIDS_UREF 3 2017-01-05 "libproc-2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .SH NAME
-procps_pids_new \-
-Create a PID information structure
+procps_pids_refg \-
+Clear memory of pids structure, if no longer used
 .SH SYNOPSIS
 .B #include <proc/procps.h>
 .sp
-.BI "int procps_pids_new(struct pids_info **" info ", enum pids_item *" items ", int " numitems ");"
+.BI "int procps_pids_refg(struct pids_info **" info ");"
 .sp
 Link with \fI\-lprocps\fP.
 
 .SH DESCRIPTION
-.BR procps_pids_new ()
-creates a new PID information structure that be used in subsequent calls to
-.BR procps_pids_get (3),
-.BR procps_pids_reap (3),
-.BR procps_pids_reset (3),
-.BR procps_pids_select (3),
-.BR procps_pids_sort (3).
-functions. The pointer to \fIinfo\fR will have memory allocated and a structure
-created.
-
-\fIitems\fR is an array of enums up to \fInumitems\fR long that selects what
-information about the processed will be stored. \fInumitems\fR is used to
-allocate memory and must be at least the length of \fIitems\fR but can be more.
-For information about what \fIitems\fR can contain, see the \fBPID ITEMS\fR
-section in
-.BR libproc (3).
-
-Once the structure is no longer required,
-.BR procps_pids_unref (3)
-should be used to free it.
+.BR procps_pids_refg ()
+will note that one less reference is used for the specified structure. If
+this was the last reference, the function returns the memory for the
+PID information structure that was created with
+.BR procps_pids_new (3).
 
 .SH RETURN VALUE
-The function returns 0 on success and one of negative values below
-on failure.
+The function returns 0 if the structure was freed or a positive
+integer of the current references if there were others. It will
+return one of negative values below on failure.
 .TP
 .B -EINVAL
 One of the given parameters is incorrect.
-.TP
-.B -ENOMEM
-Unable to allocate memory for the structure.
 
 .SH VERSIONS
-.B procps_pids_new()
+.B procps_pids_refg()
 first appeared in libproc-2 version 0.0.
 
 .SH SEE ALSO
 .BR libproc (3),
+.BR procps_pids_new (3),
 .BR procps_pids_reap (3),
 .BR procps_pids_reset (3),
 .BR procps_pids_select (3),
 .BR procps_pids_sort (3),
-.BR procps_pids_unref (3),
 .BR proc (5).
