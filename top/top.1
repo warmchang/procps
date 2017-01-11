@@ -69,7 +69,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "November 2016" "procps-ng" "User Commands"
+.TH TOP 1 "January 2017" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -2195,7 +2195,14 @@ Here is an example of the contents of\fI /etc/toprc\fR:
 .\" ......................................................................
 .SS 6b. PERSONAL Configuration File
 .\" ----------------------------------------------------------------------
-This file is written as `$HOME/.your\-name\-4\-\*(We' + `rc'.
+The legacy version is written as `$HOME/.your\-name\-4\-\*(We' + `rc'
+with a leading period.
+
+A newly created \*(CF is written as procps/your\-name\-4\-\*(We' + `rc'
+without a leading period.
+The procps directory will be subordinate to either $XDG_CONFIG_HOME when
+set as an absolute path or the $HOME/.config directory.
+
 Use the `W' \*(CI to create it or update it.
 
 Here is the general layout:
@@ -2211,8 +2218,8 @@ Here is the general layout:
       "      # discussed below
 .fi
 
-If the $HOME variable is not present, \*(We will try to write the
-personal \*(CF to the current directory, subject to permissions.
+If the $HOME and $XDG_CONFIG_HOME variables are not present, \*(We will try
+to write the personal \*(CF in the current directory, subject to permissions.
 
 .\" ......................................................................
 .SS 6c. ADDING INSPECT Entries
