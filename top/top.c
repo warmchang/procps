@@ -40,6 +40,7 @@
 #include <sys/ioctl.h>
 #include <sys/resource.h>
 #include <sys/select.h>      // also available via <sys/types.h>
+#include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>       // also available via <stdlib.h>
 
@@ -2964,12 +2965,9 @@ static int config_cvt (WIN_t *q) {
 static void configs_read (void) {
    float tmp_delay = DEF_DELAY;
    char fbuf[LRGBUFSIZ];
-   const char *p;
+   const char *p, *p_home;
    FILE *fp;
    int i;
-
-   p = getenv("HOME");
-   snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", (p && *p) ? p : ".", Myname);
 
    fp = fopen(SYS_RCFILESPEC, "r");
    if (fp) {
@@ -2979,6 +2977,25 @@ static void configs_read (void) {
             sscanf(fbuf, "%f", &Rc.delay_time);
       }
       fclose(fp);
+   }
+
+   // attempt to use the legacy file first, if we cannot access that file, use
+   // the new XDG basedir locations (XDG_CONFIG_HOME or HOME/.config) instead.
+   p_home = getenv("HOME");
+   if (!p_home || p_home[0] == '\0')
+      p_home = ".";
+   snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", p_home, Myname);
+
+   if (access(Rc_name, F_OK)) {
+      p = getenv("XDG_CONFIG_HOME");
+      // ensure the path we get is absolute, fallback otherwise.
+      if (!p || p[0] != '/') {
+         p = fmtmk("%s/.config", p_home);
+         (void)mkdir(p, 0700);
+      }
+      snprintf(Rc_name, sizeof(Rc_name), "%s/procps", p);
+      (void)mkdir(Rc_name, 0700);
+      snprintf(Rc_name, sizeof(Rc_name), "%s/procps/%src", p, Myname);
    }
 
    fp = fopen(Rc_name, "r");
