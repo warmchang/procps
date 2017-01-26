@@ -7,6 +7,8 @@ procps-ng-NEXT
   * top: eliminated minor libnuma memory leak
   * ps: avoid eip/esp address truncations                  Debain #846361
   * library: don't strip off wchan prefixes (ps & top)     Redhat #1322111
+  * top: add config file support for XDG specification
+  * pgrep: warn about 15+ char name only if -f not used
 
 procps-ng-3.3.12
 ----------------
