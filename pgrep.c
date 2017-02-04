@@ -921,10 +921,12 @@ int main (int argc, char **argv)
 	procs = select_procs (&num);
 	if (i_am_pkill) {
 		int i;
+        int kill_count = 0;
 		for (i = 0; i < num; i++) {
 			if (kill (procs[i].num, opt_signal) != -1) {
 				if (opt_echo)
 					printf(_("%s killed (pid %lu)\n"), procs[i].str, procs[i].num);
+                kill_count++;
 				continue;
 			}
 			if (errno==ESRCH)
@@ -934,6 +936,7 @@ int main (int argc, char **argv)
 		}
 		if (opt_count)
 			fprintf(stdout, "%d\n", num);
+        return !kill_count;
 	} else {
 		if (opt_count) {
 			fprintf(stdout, "%d\n", num);
