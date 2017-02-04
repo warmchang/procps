@@ -5,7 +5,7 @@ procps-ng-NEXT
   * library: dont use SIGPWR on FreeBSD                    Debian #832148
   * pmap: fix duplicate output line under '-x' option      Redhat #1374061
   * top: eliminated minor libnuma memory leak
-  * ps: avoid eip/esp address truncations                  Debain #846361
+  * ps: avoid eip/esp address truncations                  Debian #846361
   * library: don't strip off wchan prefixes (ps & top)     Redhat #1322111
   * top: add config file support for XDG specification
   * pgrep: warn about 15+ char name only if -f not used
