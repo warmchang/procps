@@ -1,8 +1,13 @@
-.\" Manual page for pgrep / pkill.
-.\" Licensed under version 2 of the GNU General Public License.
-.\" Copyright 2000 Kjetil Torgrim Homme
 .\"
-.TH PGREP "1" "September 2015" "procps-ng" "User Commands"
+.\" Copyright 2000 Kjetil Torgrim Homme
+.\"           2017 Craig Small
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.TH PGREP "1" "2017-02-04" "procps-ng" "User Commands"
 .SH NAME
 pgrep, pkill \- look up or signal processes based on name and other attributes
 .SH SYNOPSIS
@@ -197,10 +202,11 @@ $ renice +4 $(pgrep netscape)
 .PD 0
 .TP
 0
-One or more processes matched the criteria.
+One or more processes matched the criteria. For pkill the process must also
+have been successfully signalled.
 .TP
 1
-No processes matched.
+No processes matched or none of them could be signalled.
 .TP
 2
 Syntax error in the command line.
