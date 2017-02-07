@@ -422,7 +422,6 @@ static void __attribute__ ((__noreturn__))
 	int loop = 1;
 	long pid;
 	int exitvalue = EXIT_SUCCESS;
-    int optindex;
     char *sig_option;
 
 	static const struct option longopts[] = {
@@ -447,14 +446,14 @@ static void __attribute__ ((__noreturn__))
 		signo = SIGTERM;
 
 	opterr=0; /* suppress errors on -123 */
-	while (loop == 1 && (i = getopt_long(argc, argv, "l::Ls:hV", longopts, &optindex)) != -1)
+	while (loop == 1 && (i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
 		switch (i) {
 		case 'l':
             sig_option = NULL;
             if (optarg) {
                 sig_option = optarg;
-            } else if (argv[optindex+1] != NULL && argv[optindex+1][0] != '-') {
-                sig_option = argv[optindex+1];
+            } else if (argv[optind] != NULL && argv[optind][0] != '-') {
+                sig_option = argv[optind];
             }
 			if (sig_option) {
 				char *s;
