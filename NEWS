@@ -10,6 +10,7 @@ procps-ng-NEXT
   * top: add config file support for XDG specification
   * pgrep: warn about 15+ char name only if -f not used
   * pkill: Return 0 only if we can kill process            Debian #852758
+  * kill: -l space between name parses correctly           Debian #854407
 
 procps-ng-3.3.12
 ----------------
