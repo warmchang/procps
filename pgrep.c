@@ -144,7 +144,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
     fputs(_(" -F, --pidfile <file>      read PIDs from file\n"), fp);
     fputs(_(" -L, --logpidfile          fail if PID file is not locked\n"), fp);
     fputs(_(" --ns <PID>                match the processes that belong to the same\n"
-        "                           namespace as <pid>\n"), fp);
+        "                           namespace as <pid> or 0 for all namespaces\n"), fp);
     fputs(_(" --nslist <ns,...>         list which namespaces will be considered for\n"
         "                           the --ns option.\n"
         "                           Available namespaces: ipc, mnt, net, pid, user, uts\n"), fp);
@@ -805,8 +805,6 @@ static void parse_opts (int argc, char **argv)
  *            break; */
         case NS_OPTION:
             opt_ns_pid = atoi(optarg);
-            if (opt_ns_pid == 0)
-                usage ('?');
             ++criteria_count;
             break;
         case NSLIST_OPTION:
@@ -861,6 +859,7 @@ int main (int argc, char **argv)
     textdomain(PACKAGE);
     atexit(close_stdout);
 
+    opt_ns_pid = getpid();
     parse_opts (argc, argv);
 
     procs = select_procs (&num);
