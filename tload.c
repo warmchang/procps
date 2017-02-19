@@ -70,6 +70,8 @@ static void setsize(int i)
 			nrows = win.ws_row;
 	}
 	scr_size = nrows * ncols;
+	if (scr_size < 2)
+		xerr(EXIT_FAILURE, _("screen too small"));
 	if (screen == NULL)
 		screen = (char *)xmalloc(scr_size);
 	else
