@@ -62,8 +62,8 @@ extern const char *Uniq_nlstab[];
          * from any text also containiing c-format specifiers.
          */
 enum norm_nls {
-   AMT_kilobyte_txt, AMT_megabyte_txt, AMT_gigabyte_txt, AMT_terabyte_txt,
-   AMT_petabyte_txt, AMT_exxabyte_txt, BAD_delayint_fmt, BAD_integers_txt,
+   AMT_exxabyte_txt, AMT_gigabyte_txt, AMT_kilobyte_txt, AMT_megabyte_txt,
+   AMT_petabyte_txt, AMT_terabyte_txt, BAD_delayint_fmt, BAD_integers_txt,
    BAD_max_task_txt, BAD_mon_pids_fmt, BAD_niterate_fmt, BAD_numfloat_txt,
    BAD_signalid_txt, BAD_username_txt, BAD_widtharg_fmt, CHOOSE_group_txt,
    COLORS_nomap_txt, DELAY_badarg_txt, DELAY_change_fmt, DELAY_secure_txt,
@@ -95,9 +95,9 @@ enum norm_nls {
 };
 
 enum uniq_nls {
-   KEYS_helpbas_fmt, KEYS_helpext_fmt, WINDOWS_help_fmt, COLOR_custom_fmt,
-   FIELD_header_fmt, MEMORY_lines_fmt, STATE_line_1_fmt, STATE_lin2x4_fmt,
-   STATE_lin2x5_fmt, STATE_lin2x6_fmt, STATE_lin2x7_fmt, YINSP_hdsels_fmt,
+   COLOR_custom_fmt, FIELD_header_fmt, KEYS_helpbas_fmt, KEYS_helpext_fmt,
+   MEMORY_lines_fmt, STATE_lin2x4_fmt, STATE_lin2x5_fmt, STATE_lin2x6_fmt,
+   STATE_lin2x7_fmt, STATE_line_1_fmt, WINDOWS_help_fmt, YINSP_hdsels_fmt,
    YINSP_hdview_fmt,
       uniq_MAX
 };
