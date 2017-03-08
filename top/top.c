@@ -1548,11 +1548,11 @@ static inline const char *make_str (const char *str, int width, int justr, int c
          * We'll interpret 'num' as a kibibytes quantity and try to
          * format it to reach 'target' while also fitting 'width'. */
 static const char *scale_mem (int target, unsigned long num, int width, int justr) {
-#ifndef NOBOOST_MEMS
    //                               SK_Kb   SK_Mb      SK_Gb      SK_Tb      SK_Pb      SK_Eb
+#ifdef BOOST_MEMORY
    static const char *fmttab[] =  { "%.0f", "%#.1f%c", "%#.3f%c", "%#.3f%c", "%#.3f%c", NULL };
 #else
-   static const char *fmttab[] =  { "%.0f", "%.0f%c",  "%.0f%c",  "%.0f%c",  "%.0f%c",  NULL };
+   static const char *fmttab[] =  { "%.0f", "%.1f%c",  "%.1f%c",  "%.1f%c",  "%.1f%c",  NULL };
 #endif
    static char buf[SMLBUFSIZ];
    float scaled_num;
@@ -1757,21 +1757,12 @@ static FLD_t Fieldstab[] = {
 #else
    {     4,     -1,  A_right,  SF(RES),  L_statm   }, // EU_MEM slot
 #endif
-#ifndef NOBOOST_MEMS
    {     7,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
    {     6,  SK_Kb,  A_right,  SF(SWP),  L_status  },
    {     6,  SK_Kb,  A_right,  SF(RES),  L_statm   },
    {     6,  SK_Kb,  A_right,  SF(COD),  L_statm   },
    {     7,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
    {     6,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
-#else
-   {     5,  SK_Kb,  A_right,  SF(VRT),  L_statm   },
-   {     4,  SK_Kb,  A_right,  SF(SWP),  L_status  },
-   {     4,  SK_Kb,  A_right,  SF(RES),  L_statm   },
-   {     4,  SK_Kb,  A_right,  SF(COD),  L_statm   },
-   {     5,  SK_Kb,  A_right,  SF(DAT),  L_statm   },
-   {     4,  SK_Kb,  A_right,  SF(SHR),  L_statm   },
-#endif
    {     4,     -1,  A_right,  SF(FL1),  L_stat    },
    {     4,     -1,  A_right,  SF(FL2),  L_stat    },
    {     4,     -1,  A_right,  SF(DRT),  L_statm   },
@@ -1788,11 +1779,7 @@ static FLD_t Fieldstab[] = {
    {    -1,     -1,  A_left,   SF(ENV),  L_ENVIRON },
    {     3,     -1,  A_right,  SF(FV1),  L_stat    },
    {     3,     -1,  A_right,  SF(FV2),  L_stat    },
-#ifndef NOBOOST_MEMS
    {     6,  SK_Kb,  A_right,  SF(USE),  L_status  },
-#else
-   {     4,  SK_Kb,  A_right,  SF(USE),  L_status  },
-#endif
    {    10,     -1,  A_right,  SF(NS1),  L_NS      }, // IPCNS
    {    10,     -1,  A_right,  SF(NS2),  L_NS      }, // MNTNS
    {    10,     -1,  A_right,  SF(NS3),  L_NS      }, // NETNS
@@ -1800,17 +1787,10 @@ static FLD_t Fieldstab[] = {
    {    10,     -1,  A_right,  SF(NS5),  L_NS      }, // USERNS
    {    10,     -1,  A_right,  SF(NS6),  L_NS      }, // UTSNS
    {     8,     -1,  A_left,   SF(LXC),  L_LXC     },
-#ifndef NOBOOST_MEMS
    {     6,  SK_Kb,  A_right,  SF(RZA),  L_status  },
    {     6,  SK_Kb,  A_right,  SF(RZF),  L_status  },
    {     6,  SK_Kb,  A_right,  SF(RZL),  L_status  },
    {     6,  SK_Kb,  A_right,  SF(RZS),  L_status  },
-#else
-   {     4,  SK_Kb,  A_right,  SF(RZA),  L_status  },
-   {     4,  SK_Kb,  A_right,  SF(RZF),  L_status  },
-   {     4,  SK_Kb,  A_right,  SF(RZL),  L_status  },
-   {     4,  SK_Kb,  A_right,  SF(RZS),  L_status  },
-#endif
    {    -1,     -1,  A_left,   SF(CGN),  L_CGROUP  }
  #undef SF
  #undef A_left
@@ -5254,12 +5234,20 @@ numa_nope:
          const char *fmts;
          const char *label;
       } scaletab[] = {
-         { 1, "%1.0f ", NULL },                            // kibibytes
-         { 1024.0, "%#4.3f ", NULL },                      // mebibytes
-         { 1024.0*1024, "%#4.3f ", NULL },                 // gibibytes
-         { 1024.0*1024*1024, "%#4.3f ", NULL },            // tebibytes
-         { 1024.0*1024*1024*1024, "%#4.3f ", NULL },       // pebibytes
-         { 1024.0*1024*1024*1024*1024, "%#4.3f ", NULL }   // exbibytes
+         { 1, "%.0f ", NULL },                             // kibibytes
+#ifdef BOOST_MEMORY
+         { 1024.0, "%#.3f ", NULL },                       // mebibytes
+         { 1024.0*1024, "%#.3f ", NULL },                  // gibibytes
+         { 1024.0*1024*1024, "%#.3f ", NULL },             // tebibytes
+         { 1024.0*1024*1024*1024, "%#.3f ", NULL },        // pebibytes
+         { 1024.0*1024*1024*1024*1024, "%#.3f ", NULL }    // exbibytes
+#else
+         { 1024.0, "%#.1f ", NULL },                       // mebibytes
+         { 1024.0*1024, "%#.1f ", NULL },                  // gibibytes
+         { 1024.0*1024*1024, "%#.1f ", NULL },             // tebibytes
+         { 1024.0*1024*1024*1024, "%#.1f ", NULL },        // pebibytes
+         { 1024.0*1024*1024*1024*1024, "%#.1f ", NULL }    // exbibytes
+#endif
       };
       struct { //                                            0123456789
       // snprintf contents of each buf (after SK_Kb):       'nnnn.nnn 0'

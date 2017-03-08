@@ -23,8 +23,8 @@
 #include "../proc/readproc.h"
 
         /* Defines represented in configure.ac ----------------------------- */
-//#define BOOST_PERCNT            /* enable extra precision for two % fields */
-//#define NOBOOST_MEMS            /* disable extra precision for mem fields  */
+//#define BOOST_MEMORY            /* enable extra precision for mem fields   */
+//#define BOOST_PERCNT            /* enable extra precision for 2 % fields   */
 //#define NUMA_DISABLE            /* disable summary area NUMA/Nodes display */
 //#define ORIG_TOPDEFS            /* with no rcfile retain original defaults */
 //#define SIGNALS_LESS            /* favor reduced signal load over response */
