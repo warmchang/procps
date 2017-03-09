@@ -12,6 +12,7 @@ procps-ng-NEXT
   * pkill: Return 0 only if we can kill process            Debian #852758
   * kill: -l space between name parses correctly           Debian #854407
   * top: show fewer memory decimal places (configurable)
+  * top: provide command line switch for memory scaling
 
 procps-ng-3.3.12
 ----------------

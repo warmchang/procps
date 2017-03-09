@@ -32,7 +32,7 @@
 .ds CI interactive command
 \#                           - Note: our 'Command Line' used in 2 places
 \#                           ( and managed to fit in an 80x24 terminal )
-.ds CL \-\fBhv\fR|\-\fBbcHiOSs\fR \-\fBd\fR secs \-\fBn\fR max \
+.ds CL \-\fBhv\fR|\-\fBbcEHiOSs\fR \-\fBd\fR secs \-\fBn\fR max \
 \-\fBu\fR|\fBU\fR user \-\fBp\fR pid \-\fBo\fR fld \-\fBw\fR [cols] \fR
 .ds CO command\-line option
 .ds CT command toggle
@@ -69,7 +69,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "January 2017" "procps-ng" "User Commands"
+.TH TOP 1 "March 2017" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -391,6 +391,20 @@ When this toggle is \*F, tasks that have not used any \*(PU since the
 last update will not be displayed.
 For additional information regarding this toggle
 \*(Xt 4c. TASK AREA Commands, SIZE.
+
+.TP 5
+\-\fBE\fR\ \ :\fIExtend-Memory-Scaling\fR as:\ \ \fB-E  k\fR | \fBm\fR | \fBg\fR | \fBt\fR | \fBp\fR | \fBe\fR
+Instructs \*(We to force \*(SA memory to be scaled as:
+.nf
+   k \- kibibytes
+   m \- mebibytes
+   g \- gibibytes
+   t \- tebibytes
+   p \- pebibytes
+   e \- exbibytes
+.fi
+
+Later this can be changed with the `E' \*(CT.
 
 .TP 5
 \-\fBn\fR\ \ :\fINumber-of-iterations\fR limit as:\fB\ \ \-n number \fR
