@@ -3650,6 +3650,7 @@ static void parse_args (char **args) {
       .  bunched args are actually handled properly and none are ignored
       .  we tolerate NO whitespace and NO switches -- maybe too tolerant? */
    static const char numbs_str[] = "+,-.0123456789";
+   static const char wrong_str[] = "+,-.";
    float tmp_delay = FLT_MAX;
    int i;
 
@@ -3666,10 +3667,16 @@ static void parse_args (char **args) {
             case '-':
                if (cp[1]) ++cp;
                else if (*args) cp = *args++;
-               if (strspn(cp, numbs_str))
+               if (strspn(cp, wrong_str))
                   error_exit(fmtmk(N_fmt(WRONG_switch_fmt)
                      , cp, Myname, N_txt(USAGE_abbrev_txt)));
                continue;
+            case '1':   // ensure behavior identical to run-time toggle
+               if (CHKw(Curwin, View_CPUNOD)) OFFw(Curwin, View_CPUSUM);
+               else TOGw(Curwin, View_CPUSUM);
+               OFFw(Curwin, View_CPUNOD);
+               SETw(Curwin, View_STATES);
+               break;
             case 'b':
                Batch = 1;
                break;
@@ -3769,8 +3776,7 @@ static void parse_args (char **args) {
                else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
                if ((errmsg = user_certify(Curwin, cp, ch))) error_exit(errmsg);
                cp += strlen(cp);
-               break;
-            }
+            }  break;
             case 'w':
             {  const char *pn = NULL;
                int ai = 0, ci = 0;

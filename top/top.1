@@ -32,7 +32,7 @@
 .ds CI interactive command
 \#                           - Note: our 'Command Line' used in 2 places
 \#                           ( and managed to fit in an 80x24 terminal )
-.ds CL \-\fBhv\fR|\-\fBbcEHiOSs\fR \-\fBd\fR secs \-\fBn\fR max \
+.ds CL \-\fBhv\fR|\-\fBbcEHiOSs1\fR \-\fBd\fR secs \-\fBn\fR max \
 \-\fBu\fR|\fBU\fR user \-\fBp\fR pid \-\fBo\fR fld \-\fBw\fR [cols] \fR
 .ds CO command\-line option
 .ds CT command toggle
@@ -252,7 +252,7 @@ All are explained in detail in the sections that follow.
        l \- Load Avg/Uptime  On  (thus program name)
        t \- Task/Cpu states  On  (1+1 lines, see `1')
        m \- Mem/Swap usage   On  (2 lines worth)
-       1 \- Single Cpu       Off (thus multiple cpus)
+     * 1 \- Single Cpu       Off (thus multiple cpus)
     \fITask-Area-defaults\fR
        b \- Bold hilite      Off (use `reverse')
      * c \- Command line     Off (name, not cmdline)
@@ -485,6 +485,15 @@ in Batch mode actual terminal dimensions can never be exceeded.
 
 \*(NT Without the use of this \*(CO, output width is always based on the
 terminal at which \*(We was invoked whether or not in Batch mode.
+
+.TP 5
+\-\fB1\fR\ \ :\fISingle/Separate-Cpu-States\fR toggle \fR
+Starts \*(We with the last remembered Cpu States portion of the \*(SA reversed.
+Either all \*(Pu information will be displayed in a single line or
+each \*(Pu will be displayed separately, depending on the state of the NUMA Node
+\*(CT ('2').
+
+\*(XC `1' and '2' \*(CIs for additional information.
 
 .\" ----------------------------------------------------------------------
 .SH 2. SUMMARY Display

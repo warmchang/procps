@@ -13,6 +13,7 @@ procps-ng-NEXT
   * kill: -l space between name parses correctly           Debian #854407
   * top: show fewer memory decimal places (configurable)
   * top: provide command line switch for memory scaling
+  * top: provide command line switch for CPU States
 
 procps-ng-3.3.12
 ----------------
