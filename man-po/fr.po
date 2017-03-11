@@ -4662,6 +4662,12 @@ msgstr "Le programme B<watch> a été écrit par Tony Rems E<lt>I<rembo@unisoft.
 #~ msgid "cumulative CPU time, \"[DD-]hh:mm:ss\" format.  (alias\n"
 #~ msgstr "Temps CPU cumulé, au format « [JJ-]HH:MM:SS » (alias\n"
 
+#~ msgid "cputimes\tTIME\tT{\n"
+#~ msgstr "cputimes\tTIME\tT{\n"
+
+#~ msgid "cumulative CPU time in seconds (alias\n"
+#~ msgstr "Temps CPU cumulé en secondes (alias\n"
+
 #~ msgid "B<time>).\n"
 #~ msgstr "B<time>).\n"
 
@@ -5536,6 +5542,12 @@ msgstr "Le programme B<watch> a été écrit par Tony Rems E<lt>I<rembo@unisoft.
 
 #~ msgid "cumulative CPU\\ time, \"[DD-]HH:MM:SS\" format.  (alias\n"
 #~ msgstr "Temps CPU cumulé, au format « [JJ-]HH:MM:SS » (alias\n"
+
+#~ msgid "times\tTIME\tT{\n"
+#~ msgstr "times\tTIME\tT{\n"
+
+#~ msgid "cumulative CPU\\ time in seconds  (alias\n"
+#~ msgstr "Temps CPU cumulé en secondes (alias\n"
 
 #~ msgid "B<cputime>).\n"
 #~ msgstr "B<cputime>).\n"
