@@ -444,6 +444,14 @@ setREL1(TIME_ALL)
   return c;
 }
 
+/* cumulative CPU time in seconds (not same as "etimes") */
+static int pr_times(char *restrict const outbuf, const proc_t *restrict const pp){
+    unsigned long t;
+setREL1(TIME_ALL)
+    t = rSv(TIME_ALL, ull_int, pp);
+  return snprintf(outbuf, COLWID, "%u", t);
+}
+
 /* HP-UX puts this (I forget, vsz or vsize?) in kB and uses "sz" for pages.
  * Unix98 requires "vsz" to be kB.
  * Tru64 does both vsize and vsz like "1.23M"
@@ -1385,6 +1393,7 @@ static const format_struct format_array[] = { /*
 {"cpu",       "CPU",     pr_nop,           PIDS_noop,                3,    BSD,  AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
 {"cpuid",     "CPUID",   pr_psr,           PIDS_PROCESSOR,           5,    BSD,  TO|RIGHT}, // OpenBSD: 8 wide!
 {"cputime",   "TIME",    pr_time,          PIDS_TIME_ALL,            8,    DEC,  ET|RIGHT}, /*time*/
+{"cputimes",  "TIME",    pr_times,         PIDS_TIME_ALL,            8,    LNX,  ET|RIGHT}, /*time*/
 {"ctid",      "CTID",    pr_nop,           PIDS_noop,                5,    SUN,  ET|RIGHT}, // resource contracts?
 {"cursig",    "CURSIG",  pr_nop,           PIDS_noop,                6,    DEC,  AN|RIGHT},
 {"cutime",    "-",       pr_nop,           PIDS_TICS_USER_C,         1,    LNX,  AN|RIGHT},
@@ -1558,6 +1567,7 @@ static const format_struct format_array[] = { /*
 {"tid",       "TID",     pr_tasks,         PIDS_ID_PID,              5,    AIX,  TO|PIDMAX|RIGHT},
 {"time",      "TIME",    pr_time,          PIDS_TIME_ALL,            8,    U98,  ET|RIGHT}, /*cputime*/ /* was 6 wide */
 {"timeout",   "TMOUT",   pr_nop,           PIDS_noop,                5,    LNX,  AN|RIGHT}, // 2.0.xx era
+{"times",     "TIME",    pr_times,         PIDS_TIME_ALL,            8,    LNX,  ET|RIGHT},
 {"tmout",     "TMOUT",   pr_nop,           PIDS_noop,                5,    LNX,  AN|RIGHT}, // 2.0.xx era
 {"tname",     "TTY",     pr_tty8,          PIDS_TTY_NAME,            8,    DEC,  PO|LEFT},
 {"tpgid",     "TPGID",   pr_tpgid,         PIDS_ID_TPGID,            5,    XXX,  PO|PIDMAX|RIGHT},
