@@ -254,7 +254,7 @@ typedef          long long SIC_t;
 #define ALT_WINFLGS  DEF_WINFLGS
 #define ALT_GRAPHS2  0, 0
 #else
-#define DEF_WINFLGS ( View_LOADAV | View_STATES | View_MEMORY \
+#define DEF_WINFLGS ( View_LOADAV | View_STATES | View_MEMORY | Show_CMDLIN \
    | Show_COLORS | Show_FOREST | Show_HIROWS | Show_IDLEPS | Show_JRNUMS | Show_TASKON \
    | Qsrt_NORMAL )
 #define DEF_GRAPHS2  1, 2
