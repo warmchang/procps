@@ -1341,11 +1341,11 @@ static inline const char *make_str (const char *str, int width, int justr, int c
          * We'll interpret 'num' as a kibibytes quantity and try to
          * format it to reach 'target' while also fitting 'width'. */
 static const char *scale_mem (int target, long num, int width, int justr) {
-#ifndef NOBOOST_MEMS
    //                               SK_Kb   SK_Mb      SK_Gb      SK_Tb      SK_Pb      SK_Eb
+#ifdef BOOST_MEMORY
    static const char *fmttab[] =  { "%.0f", "%#.1f%c", "%#.3f%c", "%#.3f%c", "%#.3f%c", NULL };
 #else
-   static const char *fmttab[] =  { "%.0f", "%.0f%c",  "%.0f%c",  "%.0f%c",  "%.0f%c",  NULL };
+   static const char *fmttab[] =  { "%.0f", "%.1f%c",  "%.1f%c",  "%.1f%c",  "%.1f%c",  NULL };
 #endif
    static char buf[SMLBUFSIZ];
    float scaled_num;
@@ -1527,21 +1527,12 @@ static struct {
 #else
    {     4,     -1,  A_right,    -1,  PIDS_MEM_RES        },  // ul_int   EU_MEM,
 #endif
-#ifndef NOBOOST_MEMS
    {     7,  SK_Kb,  A_right,    -1,  PIDS_MEM_VIRT       },  // ul_int   EU_VRT
    {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_SWAP        },  // ul_int   EU_SWP
    {     6,  SK_Kb,  A_right,    -1,  PIDS_MEM_RES        },  // ul_int   EU_RES
    {     6,  SK_Kb,  A_right,    -1,  PIDS_MEM_CODE       },  // ul_int   EU_COD
    {     7,  SK_Kb,  A_right,    -1,  PIDS_MEM_DATA       },  // ul_int   EU_DAT
    {     6,  SK_Kb,  A_right,    -1,  PIDS_MEM_SHR        },  // ul_int   EU_SHR
-#else
-   {     5,  SK_Kb,  A_right,    -1,  PIDS_MEM_VIRT       },  // ul_int   EU_VRT
-   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_SWAP        },  // ul_int   EU_SWP
-   {     4,  SK_Kb,  A_right,    -1,  PIDS_MEM_RES        },  // ul_int   EU_RES
-   {     4,  SK_Kb,  A_right,    -1,  PIDS_MEM_CODE       },  // ul_int   EU_COD
-   {     5,  SK_Kb,  A_right,    -1,  PIDS_MEM_DATA       },  // ul_int   EU_DAT
-   {     4,  SK_Kb,  A_right,    -1,  PIDS_MEM_SHR        },  // ul_int   EU_SHR
-#endif
    {     4,     -1,  A_right,    -1,  PIDS_FLT_MAJ        },  // ul_int   EU_FL1
    {     4,     -1,  A_right,    -1,  PIDS_FLT_MIN        },  // ul_int   EU_FL2
    {     4,     -1,  A_right,    -1,  PIDS_noop           },  // ul_int   EU_DRT ( always 0 w/ since 2.6 )
@@ -1558,11 +1549,7 @@ static struct {
    {    -1,     -1,  A_left,     -1,  PIDS_ENVIRON        },  // str      EU_ENV
    {     3,     -1,  A_right,    -1,  PIDS_FLT_MAJ_DELTA  },  // s_int    EU_FV1
    {     3,     -1,  A_right,    -1,  PIDS_FLT_MIN_DELTA  },  // s_int    EU_FV2
-#ifndef NOBOOST_MEMS
    {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_USED        },  // ul_int   EU_USE
-#else
-   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_USED        },  // ul_int   EU_USE
-#endif
    {    10,     -1,  A_right,    -1,  PIDS_NS_IPC         },  // ul_int   EU_NS1
    {    10,     -1,  A_right,    -1,  PIDS_NS_MNT         },  // ul_int   EU_NS2
    {    10,     -1,  A_right,    -1,  PIDS_NS_NET         },  // ul_int   EU_NS3
@@ -1570,17 +1557,10 @@ static struct {
    {    10,     -1,  A_right,    -1,  PIDS_NS_USER        },  // ul_int   EU_NS5
    {    10,     -1,  A_right,    -1,  PIDS_NS_UTS         },  // ul_int   EU_NS6
    {     8,     -1,  A_left,     -1,  PIDS_LXCNAME        },  // str      EU_LXC
-#ifndef NOBOOST_MEMS
    {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_ANON    },  // ul_int   EU_RZA
    {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_FILE    },  // ul_int   EU_RZF
    {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_LOCKED  },  // ul_int   EU_RZL
    {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_SHARED  },  // ul_int   EU_RZS
-#else
-   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_ANON    },  // ul_int   EU_RZA
-   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_FILE    },  // ul_int   EU_RZF
-   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_LOCKED  },  // ul_int   EU_RZL
-   {     4,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_SHARED  },  // ul_int   EU_RZS
-#endif
    {    -1,     -1,  A_left,     -1,  PIDS_CGNAME         },  // str      EU_CGN
 #define eu_LAST        EU_CGN
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
@@ -4761,12 +4741,20 @@ numa_nope:
          const char *fmts;
          const char *label;
       } scaletab[] = {
-         { 1, "%1.0f ", NULL },                            // kibibytes
-         { 1024.0, "%#4.3f ", NULL },                      // mebibytes
-         { 1024.0*1024, "%#4.3f ", NULL },                 // gibibytes
-         { 1024.0*1024*1024, "%#4.3f ", NULL },            // tebibytes
-         { 1024.0*1024*1024*1024, "%#4.3f ", NULL },       // pebibytes
-         { 1024.0*1024*1024*1024*1024, "%#4.3f ", NULL }   // exbibytes
+         { 1, "%.0f ", NULL },                             // kibibytes
+#ifdef BOOST_MEMORY
+         { 1024.0, "%#.3f ", NULL },                       // mebibytes
+         { 1024.0*1024, "%#.3f ", NULL },                  // gibibytes
+         { 1024.0*1024*1024, "%#.3f ", NULL },             // tebibytes
+         { 1024.0*1024*1024*1024, "%#.3f ", NULL },        // pebibytes
+         { 1024.0*1024*1024*1024*1024, "%#.3f ", NULL }    // exbibytes
+#else
+         { 1024.0, "%#.1f ", NULL },                       // mebibytes
+         { 1024.0*1024, "%#.1f ", NULL },                  // gibibytes
+         { 1024.0*1024*1024, "%#.1f ", NULL },             // tebibytes
+         { 1024.0*1024*1024*1024, "%#.1f ", NULL },        // pebibytes
+         { 1024.0*1024*1024*1024*1024, "%#.1f ", NULL }    // exbibytes
+#endif
       };
       struct { //                                            0123456789
       // snprintf contents of each buf (after SK_Kb):       'nnnn.nnn 0'

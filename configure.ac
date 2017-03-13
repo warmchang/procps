@@ -223,11 +223,11 @@ if test "x$enable_wide_percent" = xyes; then
 fi
 
 AC_ARG_ENABLE([wide-memory],
-  AS_HELP_STRING([--disable-wide-memory], [disable extra precision under memory fields for top]),
-  [], [enable_wide_memory=yes]
+  AS_HELP_STRING([--enable-wide-memory], [provide extra precision under memory fields for top]),
+  [], [enable_wide_memory=no]
 )
-if test "x$enable_wide_memory" = xno; then
-  AC_DEFINE(NOBOOST_MEMS, 1, [disable extra precision under memory fields for top])
+if test "x$enable_wide_memory" = xyes; then
+  AC_DEFINE(BOOST_MEMORY, 1, [provide extra precision under memory fields for top])
 fi
 
 AC_ARG_ENABLE([modern-top],
