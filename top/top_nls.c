@@ -336,7 +336,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[OFF_one_word_txt] = _("Off");
 /* Translation Hint: Only the following words should be translated
    .                 secs (seconds), max (maximum), user, field, cols (columns)*/
-   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]");
+   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcEHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]");
    Norm_nlstab[FOREST_modes_fmt] = _("Forest mode %s");
    Norm_nlstab[FAIL_tty_get_txt] = _("failed tty get");
    Norm_nlstab[FAIL_tty_set_fmt] = _("failed tty set: %s");
@@ -485,6 +485,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[LIB_errormem_fmt] = _("library failed memory statistics, at %d");
    Norm_nlstab[LIB_errorcpu_fmt] = _("library failed cpu statistics, at %d");
    Norm_nlstab[LIB_errorpid_fmt] = _("library failed pids statistics, at %d");
+   Norm_nlstab[BAD_memscale_fmt] = _("bad memory scaling arg '%c'");
 }
 
 

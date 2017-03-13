@@ -250,7 +250,7 @@ typedef          long long SIC_t;
    | Show_HIBOLD | Show_HIROWS | Show_IDLEPS | Show_TASKON | Show_JRNUMS \
    | Qsrt_NORMAL )
 #define DEF_GRAPHS2  0, 0
-#define DEF_SCALES2  SK_Kb, SK_Kb
+#define DEF_SCALES2  SK_Mb, SK_Kb
 #define ALT_WINFLGS  DEF_WINFLGS
 #define ALT_GRAPHS2  0, 0
 #else

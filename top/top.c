@@ -3191,6 +3191,15 @@ static void parse_args (char **args) {
                if (0 > tmp_delay)
                   error_exit(N_txt(DELAY_badarg_txt));
                break;
+            case 'E':
+            {  const char *get = "kmgtpe", *got;
+               if (cp[1]) cp++;
+               else if (*args) cp = *args++;
+               else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
+               if (!(got = strchr(get, tolower(*cp))))
+                  error_exit(fmtmk(N_fmt(BAD_memscale_fmt), *cp));
+               Rc.summ_mscale = (int)(got - get);
+            }  break;
             case 'H':
                Thread_mode = 1;
                break;
@@ -3286,7 +3295,6 @@ static void parse_args (char **args) {
             default :
                error_exit(fmtmk(N_fmt(UNKNOWN_opts_fmt)
                   , *cp, Myname, N_txt(USAGE_abbrev_txt)));
-
          } // end: switch (*cp)
 
          // advance cp and jump over any numerical args used above
