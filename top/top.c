@@ -3676,13 +3676,13 @@ static void parse_args (char **args) {
                else TOGw(Curwin, View_CPUSUM);
                OFFw(Curwin, View_CPUNOD);
                SETw(Curwin, View_STATES);
-               break;
+               goto bump_cp;
             case 'b':
                Batch = 1;
-               break;
+               goto bump_cp;
             case 'c':
                TOGw(Curwin, Show_CMDLIN);
-               break;
+               goto bump_cp;
             case 'd':
                if (cp[1]) ++cp;
                else if (*args) cp = *args++;
@@ -3700,10 +3700,10 @@ static void parse_args (char **args) {
                if (!(got = strchr(get, tolower(*cp))))
                   error_exit(fmtmk(N_fmt(BAD_memscale_fmt), *cp));
                Rc.summ_mscale = (int)(got - get);
-            }  break;
+            }  goto bump_cp;
             case 'H':
                Thread_mode = 1;
-               break;
+               goto bump_cp;
             case 'h':
             case 'v':
                puts(fmtmk(N_fmt(HELP_cmdline_fmt)
@@ -3712,7 +3712,7 @@ static void parse_args (char **args) {
             case 'i':
                TOGw(Curwin, Show_IDLEPS);
                Curwin->rc.maxtasks = 0;
-               break;
+               goto bump_cp;
             case 'n':
                if (cp[1]) cp++;
                else if (*args) cp = *args++;
@@ -3739,8 +3739,8 @@ static void parse_args (char **args) {
                for (i = 0; i < EU_MAXPFLGS; i++)
                   puts(N_col(i));
                bye_bye(NULL);
-            case 'p': {
-               int pid; char *p;
+            case 'p':
+            {  int pid; char *p;
                if (Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
                do {
                   if (cp[1]) cp++;
@@ -3749,8 +3749,7 @@ static void parse_args (char **args) {
                   if (Monpidsidx >= MONPIDMAX)
                      error_exit(fmtmk(N_fmt(LIMIT_exceed_fmt), MONPIDMAX));
                   if (1 != sscanf(cp, "%d", &pid)
-                  || strpbrk(cp, "+-.")
-                  || 0 > pid)
+                  || strpbrk(cp, wrong_str))
                      error_exit(fmtmk(N_fmt(BAD_mon_pids_fmt), cp));
                   if (!pid) pid = getpid();
                   for (i = 0; i < Monpidsidx; i++)
@@ -3763,10 +3762,10 @@ static void parse_args (char **args) {
             }  break;
             case 's':
                Secure_mode = 1;
-               break;
+               goto bump_cp;
             case 'S':
                TOGw(Curwin, Show_CTIMES);
-               break;
+               goto bump_cp;
             case 'u':
             case 'U':
             {  const char *errmsg;
@@ -3797,8 +3796,9 @@ static void parse_args (char **args) {
          } // end: switch (*cp)
 
          // advance cp and jump over any numerical args used above
-         if (*cp) cp += strspn(&cp[1], numbs_str) + 1;
-
+         if (*cp) cp += strspn(&cp[1], numbs_str);
+bump_cp:
+         ++cp;
       } // end: while (*cp)
    } // end: while (*args)
 
