@@ -77,7 +77,6 @@ struct hist_sys {
 
 struct hist_tic {
     int id;
-    int id_sav;
     int numa_node;
     int count;
     struct stat_jifs new;
@@ -440,6 +439,14 @@ static inline int stat_derive_unique (
     this->new.xidl = this->new.idle + this->new.iowait + this->new.stolen;
     this->new.xbsy = this->new.xtot - this->new.xidl;
     this->new.xsys = this->new.xbsy - this->new.xusr;
+
+    // don't distort deltas when cpus are taken offline or brought online
+    if (this->new.xtot < this->old.xtot
+    || (this->new.xusr < this->old.xusr)
+    || (this->new.xidl < this->old.xidl)
+    || (this->new.xbsy < this->old.xbsy)
+    || (this->new.xsys < this->old.xsys))
+        memcpy(&this->old, &this->new, sizeof(struct stat_jifs));
 } // end: stat_derive_unique
 
 
@@ -651,14 +658,9 @@ reap_em_again:
             , &cpu_ptr->new.idle,  &cpu_ptr->new.iowait, &cpu_ptr->new.irq
             , &cpu_ptr->new.sirq,  &cpu_ptr->new.stolen
             , &cpu_ptr->new.guest, &cpu_ptr->new.gnice))) {
-                cpu_ptr->id_sav = -1;
                 break;                   // we must tolerate cpus taken offline
         }
         stat_derive_unique(cpu_ptr);
-        // don't distort deltas when a cpu is taken offline or brought online
-        if (cpu_ptr->id != cpu_ptr->id_sav)
-            memcpy(&cpu_ptr->old, &cpu_ptr->new, sizeof(struct stat_jifs));
-        cpu_ptr->id_sav = cpu_ptr->id;
         ++cpu_ptr;
         ++i;
     } while (i < info->cpus.hist.n_alloc);
