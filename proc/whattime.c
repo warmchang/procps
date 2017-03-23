@@ -147,9 +147,9 @@ char *sprint_uptime(int human_readable) {
     }
 
     if (upminutes || (!upminutes && uptime_secs < 60)) {
-        pos += sprintf(buf + pos, "%s%d %s", comma > 0 ? ", " : "", upminutes,
-                       upminutes != 1 ? "minutes" : "minute");
-        comma += 1;
+      pos += sprintf(buf + pos, "%s%d %s", comma > 0 ? ", " : "", upminutes,
+                     upminutes != 1 ? "minutes" : "minute");
+      comma += 1;
     }
   }
 
