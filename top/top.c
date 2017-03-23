@@ -92,6 +92,7 @@ static int   Rc_questions;
 static unsigned Pg2K_shft = 0;
 
         /* SMP, Irix/Solaris mode, Linux 2.5.xx support */
+static CPU_t      *Cpu_tics;
 static int         Cpu_faux_tot;
 static float       Cpu_pmax;
 static const char *Cpu_States_fmts;
@@ -2347,10 +2348,10 @@ static void zap_fieldstab (void) {
          * This guy's modeled on libproc's 'eight_cpu_numbers' function except
          * we preserve all cpu data in our CPU_t array which is organized
          * as follows:
-         *    cpus[0] thru cpus[n] == tics for each separate cpu
-         *    cpus[sumSLOT]        == tics from the 1st /proc/stat line
-         *  [ and beyond sumSLOT   == tics for each cpu NUMA node ] */
-static CPU_t *cpus_refresh (CPU_t *cpus) {
+         *    Cpu_tics[0] thru Cpu_tics[n] == tics for each separate cpu
+         *    Cpu_tics[sumSLOT]            == tics from /proc/stat line #1
+         *  [ and beyond sumSLOT           == tics for each cpu NUMA node ] */
+static void cpus_refresh (void) {
  #define sumSLOT ( smp_num_cpus )
  #define totSLOT ( 1 + smp_num_cpus + Numa_node_tot)
    static FILE *fp = NULL;
@@ -2368,7 +2369,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
       sav_slot = sumSLOT;
       zap_fieldstab();
       if (fp) { fclose(fp); fp = NULL; }
-      if (cpus) { free(cpus); cpus = NULL; }
+      if (Cpu_tics) free(Cpu_tics);
    }
 
    /* by opening this file once, we'll avoid the hit on minor page faults
@@ -2378,7 +2379,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
          error_exit(fmtmk(N_fmt(FAIL_statopn_fmt), strerror(errno)));
       /* note: we allocate one more CPU_t via totSLOT than 'cpus' so that a
                slot can hold tics representing the /proc/stat cpu summary */
-      cpus = alloc_c(totSLOT * sizeof(CPU_t));
+      Cpu_tics = alloc_c(totSLOT * sizeof(CPU_t));
    }
    rewind(fp);
    fflush(fp);
@@ -2401,7 +2402,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
  #undef buffGRW
 
    // remember from last time around
-   sum_ptr = &cpus[sumSLOT];
+   sum_ptr = &Cpu_tics[sumSLOT];
    memcpy(&sum_ptr->sav, &sum_ptr->cur, sizeof(CT_t));
    // then value the last slot with the cpu summary line
    if (4 > sscanf(bp, "cpu %llu %llu %llu %llu %llu %llu %llu %llu"
@@ -2428,7 +2429,7 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
 
    // now value each separate cpu's tics...
    for (i = 0; i < sumSLOT; i++) {
-      CPU_t *cpu_ptr = &cpus[i];               // avoid gcc subscript bloat
+      CPU_t *cpu_ptr = &Cpu_tics[i];           // avoid gcc subscript bloat
 #ifdef PRETEND8CPUS
       bp = buf;
 #endif
@@ -2439,7 +2440,6 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
          , &cpu_ptr->cur.u, &cpu_ptr->cur.n, &cpu_ptr->cur.s
          , &cpu_ptr->cur.i, &cpu_ptr->cur.w, &cpu_ptr->cur.x
          , &cpu_ptr->cur.y, &cpu_ptr->cur.z)) {
-            memmove(cpu_ptr, sum_ptr, sizeof(CPU_t));
             break;        // tolerate cpus taken offline
       }
 
@@ -2479,8 +2479,6 @@ static CPU_t *cpus_refresh (CPU_t *cpus) {
    } // end: for each cpu
 
    Cpu_faux_tot = i;      // tolerate cpus taken offline
-
-   return cpus;
  #undef sumSLOT
  #undef totSLOT
 } // end: cpus_refresh
@@ -5156,7 +5154,6 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
 static void summary_show (void) {
  #define isROOM(f,n) (CHKw(w, f) && Msg_row + (n) < Screen_rows - 1)
  #define anyFLG 0xffffff
-   static CPU_t *smpcpu = NULL;
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    char tmp[MEDBUFSIZ];
    int i;
@@ -5179,7 +5176,7 @@ static void summary_show (void) {
          , Frame_stopped, Frame_zombied));
       Msg_row += 1;
 
-      smpcpu = cpus_refresh(smpcpu);
+      cpus_refresh();
 
 #ifndef NUMA_DISABLE
       if (!Numa_node_tot) goto numa_nope;
@@ -5187,11 +5184,11 @@ static void summary_show (void) {
       if (CHKw(w, View_CPUNOD)) {
          if (Numa_node_sel < 0) {
             // display the 1st /proc/stat line, then the nodes (if room)
-            summary_hlp(&smpcpu[smp_num_cpus], N_txt(WORD_allcpus_txt));
+            summary_hlp(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt));
             Msg_row += 1;
             // display each cpu node's states
             for (i = 0; i < Numa_node_tot; i++) {
-               CPU_t *nod_ptr = &smpcpu[1 + smp_num_cpus + i];
+               CPU_t *nod_ptr = &Cpu_tics[1 + smp_num_cpus + i];
                if (!isROOM(anyFLG, 1)) break;
 #ifndef OFF_NUMASKIP
                if (nod_ptr->id) {
@@ -5206,13 +5203,13 @@ static void summary_show (void) {
          } else {
             // display the node summary, then the associated cpus (if room)
             snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
-            summary_hlp(&smpcpu[1 + smp_num_cpus + Numa_node_sel], tmp);
+            summary_hlp(&Cpu_tics[1 + smp_num_cpus + Numa_node_sel], tmp);
             Msg_row += 1;
             for (i = 0; i < Cpu_faux_tot; i++) {
-               if (Numa_node_sel == smpcpu[i].node) {
+               if (Numa_node_sel == Cpu_tics[i].node) {
                   if (!isROOM(anyFLG, 1)) break;
-                  snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), smpcpu[i].id);
-                  summary_hlp(&smpcpu[i], tmp);
+                  snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_tics[i].id);
+                  summary_hlp(&Cpu_tics[i], tmp);
                   Msg_row += 1;
                }
             }
@@ -5222,14 +5219,14 @@ numa_nope:
 #endif
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
-         summary_hlp(&smpcpu[Cpu_faux_tot], N_txt(WORD_allcpus_txt));
+         summary_hlp(&Cpu_tics[Cpu_faux_tot], N_txt(WORD_allcpus_txt));
          Msg_row += 1;
 
       } else {
          // display each cpu's states separately, screen height permitting...
          for (i = 0; i < Cpu_faux_tot; i++) {
-            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), smpcpu[i].id);
-            summary_hlp(&smpcpu[i], tmp);
+            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_tics[i].id);
+            summary_hlp(&Cpu_tics[i], tmp);
             Msg_row += 1;
             if (!isROOM(anyFLG, 1)) break;
          }
@@ -5697,6 +5694,7 @@ static void frame_make (void) {
 
    // whoa either first time or thread/task mode change, (re)prime the pump...
    if (Pseudo_row == PROC_XTRA) {
+      cpus_refresh();
       procs_refresh();
       usleep(LIB_USLEEP);
       putp(Cap_clr_scr);

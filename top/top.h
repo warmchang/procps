@@ -730,7 +730,7 @@ typedef struct WIN_t {
 //atic inline void   widths_resize (void);
 //atic void          zap_fieldstab (void);
 /*------  Library Interface  ---------------------------------------------*/
-//atic CPU_t        *cpus_refresh (CPU_t *cpus);
+//atic void          cpus_refresh (void);
 #ifdef OFF_HST_HASH
 //atic inline HST_t *hstbsrch (HST_t *hst, int max, int pid);
 #else
