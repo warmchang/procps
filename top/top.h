@@ -176,6 +176,7 @@ enum pflag {
    EU_LXC,
    EU_RZA, EU_RZF, EU_RZL, EU_RZS,
    EU_CGN,
+   EU_NMA,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
    EU_MAXPFLGS

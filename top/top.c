@@ -1562,7 +1562,8 @@ static struct {
    {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_LOCKED  },  // ul_int   EU_RZL
    {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_SHARED  },  // ul_int   EU_RZS
    {    -1,     -1,  A_left,     -1,  PIDS_CGNAME         },  // str      EU_CGN
-#define eu_LAST        EU_CGN
+   {     0,     -1,  A_right,    -1,  PIDS_PROCESSOR_NODE },  // s_int    EU_NMA
+#define eu_LAST        EU_NMA
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -2081,6 +2082,10 @@ static void zap_fieldstab (void) {
    if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_cnt))) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
       Fieldstab[EU_CPN].width = digits;
+   }
+   Fieldstab[EU_NMA].width = 2;
+   if (2 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Numa_node_tot))) {
+      Fieldstab[EU_NMA].width = digits;
    }
 
 #ifdef BOOST_PERCNT
@@ -4890,6 +4895,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             cp = make_chr(rSv(EU_STA, s_ch), W, Js);
             break;
    /* s_int, make_num without auto width */
+         case EU_NMA:
          case EU_PGD:
          case EU_PID:
          case EU_PPD:
