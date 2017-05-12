@@ -415,7 +415,7 @@ static inline void stat_cleanup_stacks_all (
 } // end: stat_cleanup_stacks_all
 
 
-static inline int stat_derive_unique (
+static inline void stat_derive_unique (
         struct hist_tic *this)
 {
     /* note: we exclude guest tics from xtot since ...

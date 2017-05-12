@@ -220,7 +220,6 @@ static void print_summary (void)
         tot_MIN,     tot_AVG,    tot_MAX
     };
     struct slabinfo_stack *p;
-    struct slabinfo_result *stats;
 
     if (!(p = procps_slabinfo_select(Slab_info, items, MAXTBL(items))))
         xerrx(EXIT_FAILURE, _("Error getting slab summary results"));

@@ -232,8 +232,8 @@ static void process_ansi(FILE * fp)
     if (buf[0] == '\0')
         set_ansi_attribute(0);
 
-	for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
-		if (!set_ansi_attribute(strtol(numstart, &endptr, 10)))
+    for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
+        if (!set_ansi_attribute(strtol(numstart, &endptr, 10)))
             break;
         if (numstart == endptr)
             set_ansi_attribute(0); /* [m treated as [0m */
