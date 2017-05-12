@@ -1267,8 +1267,6 @@ PROCPS_EXPORT struct pids_stack *procps_pids_get (
 
     if (info == NULL)
         return NULL;
-    if (!info->curitems)
-        return NULL;
     if (which != PIDS_FETCH_TASKS_ONLY && which != PIDS_FETCH_THREADS_TOO)
         return NULL;
     /* with items & numitems technically optional at 'new' time, it's
