@@ -16,9 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef NUMA_DISABLE
-#include <dlfcn.h>
-#endif
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -30,6 +27,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include <proc/numa.h>
 #include <proc/sysinfo.h>
 
 #include <proc/procps-private.h>
@@ -41,12 +39,6 @@
 #define BUFFER_INCR   4096             // amount i/p buffer allocations grow
 #define STACKS_INCR   32               // amount reap stack allocations grow
 #define NEWOLD_INCR   32               // amount jiffs hist allocations grow
-
-/* ------------------------------------------------------------------------- +
-   a strictly development #define, existing specifically for the top program |
-   ( and it has no affect if ./configure --disable-numa has been specified ) | */
-//#define PRETEND_NUMA     // pretend there are 3 'discontiguous' numa nodes |
-// ------------------------------------------------------------------------- +
 
 /* ------------------------------------------------------------------------- +
    because 'reap' would be forced to duplicate the global SYS stuff in every |
@@ -128,11 +120,6 @@ struct stat_info {
     struct ext_support cpu_summary;    // supports /proc/stat line #1 results
     struct ext_support select;         // support for 'procps_stat_select()'
     struct stat_reaped results;        // for return to caller after a reap
-#ifndef NUMA_DISABLE
-    void *libnuma_handle;              // if dlopen() for libnuma succeessful
-    int (*our_max_node)(void);         // a libnuma function call via dlsym()
-    int (*our_node_of_cpu)(int);       // a libnuma function call via dlsym()
-#endif
     struct stat_result get_this;       // for return to caller after a get
     struct item_support reap_items;    // items used for reap (shared among 3)
     struct item_support select_items;  // items unique to select
@@ -361,14 +348,6 @@ enum stat_item STAT_logical_end = STAT_SYS_DELTA_PROC_RUNNING + 1;
 
 // ___ Private Functions ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
-#ifndef NUMA_DISABLE
- #ifdef PRETEND_NUMA
-static int fake_max_node (void) { return 3; }
-static int fake_node_of_cpu (int n) { return (1 == (n % 4)) ? 0 : (n % 4); }
- #endif
-#endif
-
-
 static inline void stat_assign_results (
         struct stat_stack *stack,
         struct hist_sys *sys_hist,
@@ -511,17 +490,14 @@ static inline int stat_items_check_failed (
 static int stat_make_numa_hist (
         struct stat_info *info)
 {
-#ifndef NUMA_DISABLE
     struct hist_tic *cpu_ptr, *nod_ptr;
     int i, node;
-
-    if (info->libnuma_handle == NULL)
-        return 0;
 
     /* are numa nodes dynamic like online cpus can be?
        ( and be careful, this libnuma call returns the highest node id in use, )
        ( NOT an actual number of nodes - some of those 'slots' might be unused ) */
-    info->nodes.total = info->our_max_node() + 1;
+    if (!(info->nodes.total = numa_max_node() + 1))
+        return 0;
 
     if (info->nodes.hist.n_alloc == 0
     || (info->nodes.total >= info->nodes.hist.n_alloc)) {
@@ -542,7 +518,7 @@ static int stat_make_numa_hist (
     // spin thru each cpu and value the jiffs for it's numa node
     for (i = 0; i < info->cpus.hist.n_inuse; i++) {
         cpu_ptr = info->cpus.hist.tics + i;
-        if (-1 < (node = info->our_node_of_cpu(cpu_ptr->id))) {
+        if (-1 < (node = numa_node_of_cpu(cpu_ptr->id))) {
             nod_ptr = info->nodes.hist.tics + node;
             nod_ptr->new.user   += cpu_ptr->new.user;   nod_ptr->old.user   += cpu_ptr->old.user;
             nod_ptr->new.nice   += cpu_ptr->new.nice;   nod_ptr->old.nice   += cpu_ptr->old.nice;
@@ -568,9 +544,6 @@ static int stat_make_numa_hist (
     }
     info->nodes.hist.n_inuse = info->nodes.total;
     return info->nodes.hist.n_inuse;
-#else
-    return 0;
-#endif
 } // end: stat_make_numa_hist
 
 
@@ -879,10 +852,6 @@ static struct stat_stack *stat_update_single_stack (
 } // end: stat_update_single_stack
 
 
-#if defined(PRETEND_NUMA) && defined(NUMA_DISABLE)
-# warning 'PRETEND_NUMA' ignored, 'NUMA_DISABLE' is active
-#endif
-
 
 // ___ Public Functions |||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -926,27 +895,7 @@ PROCPS_EXPORT int procps_stat_new (
     // the select guy has its own set of items
     p->select.items = &p->select_items;
 
-#ifndef NUMA_DISABLE
- #ifndef PRETEND_NUMA
-    // we'll try for the most recent version, then a version we know works...
-    if ((p->libnuma_handle = dlopen("libnuma.so", RTLD_LAZY))
-    || (p->libnuma_handle = dlopen("libnuma.so.1", RTLD_LAZY))) {
-        p->our_max_node = dlsym(p->libnuma_handle, "numa_max_node");
-        p->our_node_of_cpu = dlsym(p->libnuma_handle, "numa_node_of_cpu");
-        if (p->our_max_node == NULL
-        || (p->our_node_of_cpu == NULL)) {
-            // this dlclose is safe - we've yet to call numa_node_of_cpu
-            // ( there's one other dlclose which has now been disabled )
-            dlclose(p->libnuma_handle);
-            p->libnuma_handle = NULL;
-        }
-    }
- #else
-    p->libnuma_handle = (void *)-1;
-    p->our_max_node = fake_max_node;
-    p->our_node_of_cpu = fake_node_of_cpu;
- #endif
-#endif
+    numa_init();
 
     /* do a priming read here for the following potential benefits: |
          1) ensure there will be no problems with subsequent access |
@@ -1016,20 +965,8 @@ PROCPS_EXPORT int procps_stat_unref (
         if ((*info)->select_items.enums)
             free((*info)->select_items.enums);
 
-#ifndef NUMA_DISABLE
- #ifndef PRETEND_NUMA
-        /* note: we'll skip a dlcose() to avoid the following libnuma memory
-         *       leak which is triggered after a call to numa_node_of_cpu():
-         *         ==1234== LEAK SUMMARY:
-         *         ==1234==    definitely lost: 512 bytes in 1 blocks
-         *         ==1234==    indirectly lost: 48 bytes in 2 blocks
-         *         ==1234==    ...
-         * [ thanks very much libnuma, for all the pain you've caused ]
-         */
-//      if ((*info)->libnuma_handle)
-//          dlclose((*info)->libnuma_handle);
- #endif
-#endif
+        numa_uninit();
+
         free(*info);
         *info = NULL;
         return 0;
@@ -1127,7 +1064,6 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
                 return NULL;
             break;
         case STAT_REAP_CPUS_AND_NODES:
-#ifndef NUMA_DISABLE
             /* note: if we're doing numa at all, we must do this numa history |
                before we build (fetch) the cpu stacks since the read_stat guy |
                will have marked (temporarily) all the cpu node ids as invalid | */
@@ -1135,7 +1071,6 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
                 return NULL;
             // tolerate an unexpected absence of libnuma.so ...
             stat_stacks_fetch(info, &info->nodes);
-#endif
             if (!stat_stacks_fetch(info, &info->cpus))
                 return NULL;
             break;

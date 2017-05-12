@@ -36,6 +36,7 @@
 #include <sys/types.h>
 
 #include <proc/devname.h>
+#include <proc/numa.h>
 #include <proc/readproc.h>
 #include <proc/sysinfo.h>
 #include <proc/uptime.h>
@@ -203,6 +204,7 @@ REG_set(OOM_ADJ,          s_int,   oom_adj)
 REG_set(OOM_SCORE,        s_int,   oom_score)
 REG_set(PRIORITY,         s_int,   priority)
 REG_set(PROCESSOR,        u_int,   processor)
+setDECL(PROCESSOR_NODE) { (void)I; R->result.s_int = numa_node_of_cpu(P->processor); }
 REG_set(RSS,              ul_int,  rss)
 REG_set(RSS_RLIM,         ul_int,  rss_rlim)
 REG_set(RTPRIO,           s_int,   rtprio)
@@ -451,6 +453,7 @@ static struct {
     { RS(OOM_SCORE),         f_oom,      NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(PRIORITY),          f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(PROCESSOR),         f_stat,     NULL,      QS(u_int),     0,        TS(u_int)   },
+    { RS(PROCESSOR_NODE),    f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(RSS),               f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(RSS_RLIM),          f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(RTPRIO),            f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
@@ -1154,6 +1157,8 @@ PROCPS_EXPORT int procps_pids_new (
     procps_uptime(&uptime_secs, NULL);
     p->boot_seconds = uptime_secs;
 
+    numa_init();
+
     p->fetch.results.counts = &p->fetch.counts;
 
     p->refcount = 1;
@@ -1214,6 +1219,8 @@ PROCPS_EXPORT int procps_pids_unref (
             free((*info)->hist->PHist_new);
             free((*info)->hist);
         }
+
+        numa_uninit();
 
         free(*info);
         *info = NULL;

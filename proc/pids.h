@@ -96,6 +96,7 @@ enum pids_item {
     PIDS_OOM_SCORE,         //   s_int
     PIDS_PRIORITY,          //   s_int
     PIDS_PROCESSOR,         //   u_int
+    PIDS_PROCESSOR_NODE,    //   s_int
     PIDS_RSS,               //  ul_int
     PIDS_RSS_RLIM,          //  ul_int
     PIDS_RTPRIO,            //   s_int

@@ -192,6 +192,8 @@ proc_libprocps_la_SOURCES = \
 	proc/meminfo.h \
 	proc/namespace.c \
 	proc/namespace.h \
+	proc/numa.c \
+	proc/numa.h \
 	proc/pids.c \
 	proc/pids.h \
 	proc/procps.h \
@@ -221,6 +223,7 @@ proc_libprocps_la_include_HEADERS = \
 	proc/devname.h \
 	proc/diskstats.h \
 	proc/escape.h \
+	proc/numa.h \
 	proc/pids.h \
 	proc/procps.h \
 	proc/pwcache.h \
