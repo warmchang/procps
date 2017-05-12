@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS 1 "August 2015" "procps-ng" "User Commands"
+.TH PS 1 "May 2017" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -1377,6 +1377,11 @@ T}
 nlwp	NLWP	T{
 number of lwps (threads) in the process.  (alias
 .BR thcount ).
+T}
+
+numa	NUMA	T{
+The node assocated with the most recently used processor.
+A -1 means that NUMA information is unavailable.
 T}
 
 nwchan	WCHAN	T{

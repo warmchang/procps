@@ -853,6 +853,11 @@ setREL1(PROCESSOR)
   return snprintf(outbuf, COLWID, "%d", rSv(PROCESSOR, u_int, pp));
 }
 
+static int pr_numa(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(PROCESSOR_NODE)
+  return snprintf(outbuf, COLWID, "%d", rSv(PROCESSOR_NODE, s_int, pp));
+}
+
 static int pr_rss(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(VM_RSS)
   return snprintf(outbuf, COLWID, "%lu", rSv(VM_RSS, ul_int, pp));
@@ -1449,6 +1454,7 @@ static const format_struct format_array[] = { /*
 {"nsignals",  "NSIGS",   pr_nop,           PIDS_noop,                5,    DEC,  AN|RIGHT}, /*nsigs*/
 {"nsigs",     "NSIGS",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*nsignals*/
 {"nswap",     "NSWAP",   pr_nop,           PIDS_noop,                5,    XXX,  AN|RIGHT},
+{"numa",      "NUMA",    pr_numa,          PIDS_PROCESSOR_NODE,      4,    XXX,  AN|RIGHT},
 {"nvcsw",     "VCSW",    pr_nop,           PIDS_noop,                5,    XXX,  AN|RIGHT},
 {"nwchan",    "WCHAN",   pr_nop,           PIDS_noop,                6,    XXX,  TO|RIGHT},
 {"opri",      "PRI",     pr_opri,          PIDS_PRIORITY,            3,    SUN,  TO|RIGHT},
