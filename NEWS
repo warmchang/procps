@@ -1,18 +1,22 @@
 procps-ng-NEXT
 ----------------
-  * watch: define HOST_NAME_MAX where not defined          Debian #830734
   * library: dont use vm_min_free on non Linux             Debian #831396
   * library: dont use SIGPWR on FreeBSD                    Debian #832148
-  * pmap: fix duplicate output line under '-x' option      Redhat #1374061
-  * top: eliminated minor libnuma memory leak
-  * ps: avoid eip/esp address truncations                  Debian #846361
   * library: don't strip off wchan prefixes (ps & top)     Redhat #1322111
-  * top: add config file support for XDG specification
   * pgrep: warn about 15+ char name only if -f not used
   * pkill: Return 0 only if we can kill process            Debian #852758
+  * pmap: fix duplicate output line under '-x' option      Redhat #1374061
+  * ps: avoid eip/esp address truncations                  Debian #846361
+  * ps: recognizes SCHED_DEADLINE as valid CPU scheduler
+  * ps: display NUMA node under which a thread ran
+  * top: add config file support for XDG specification
+  * top: eliminated minor libnuma memory leak
   * top: show fewer memory decimal places (configurable)
   * top: provide command line switch for memory scaling
   * top: provide command line switch for CPU States
+  * top: provides more accurate cpu usage at startup
+  * top: display NUMA node under which a thread ran
+  * watch: define HOST_NAME_MAX where not defined          Debian #830734
 
 procps-ng-3.3.12
 ----------------
