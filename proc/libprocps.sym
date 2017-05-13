@@ -39,6 +39,10 @@ global:
 	look_up_our_self;
 	lookup_wchan;
 	meminfo;
+	numa_init;
+	numa_max_node;
+	numa_node_of_cpu;
+	numa_uninit;
 	openproc;
 	page_bytes;
 	pretty_print_signals;

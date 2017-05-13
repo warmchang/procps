@@ -168,6 +168,8 @@ proc_libprocps_la_SOURCES = \
 	proc/devname.h \
 	proc/escape.c \
 	proc/escape.h \
+	proc/numa.c \
+	proc/numa.h \
 	proc/procps-private.h \
 	proc/procps.h \
 	proc/pwcache.c \
@@ -192,6 +194,7 @@ proc_libprocps_la_include_HEADERS = \
 	proc/alloc.h \
 	proc/devname.h \
 	proc/escape.h \
+	proc/numa.h \
 	proc/procps.h \
 	proc/pwcache.h \
 	proc/readproc.h \
