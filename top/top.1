@@ -379,20 +379,6 @@ in Secure mode, except for root (unless the `s' \*(CO was used).
 For additional information on Secure mode \*(Xt 6a. SYSTEM Configuration File.
 
 .TP 5
-\-\fBH\fR\ \ :\fIThreads-mode\fR operation \fR
-Instructs \*(We to display individual threads.
-Without this \*(CO a summation of all threads in each process is shown.
-Later this can be changed with the `H' \*(CI.
-
-.TP 5
-\-\fBi\fR\ \ :\fIIdle-process\fR toggle \fR
-Starts \*(We with the last remembered `i' state reversed.
-When this toggle is \*F, tasks that have not used any \*(PU since the
-last update will not be displayed.
-For additional information regarding this toggle
-\*(Xt 4c. TASK AREA Commands, SIZE.
-
-.TP 5
 \-\fBE\fR\ \ :\fIExtend-Memory-Scaling\fR as:\ \ \fB-E  k\fR | \fBm\fR | \fBg\fR | \fBt\fR | \fBp\fR | \fBe\fR
 Instructs \*(We to force \*(SA memory to be scaled as:
 .nf
@@ -405,6 +391,20 @@ Instructs \*(We to force \*(SA memory to be scaled as:
 .fi
 
 Later this can be changed with the `E' \*(CT.
+
+.TP 5
+\-\fBH\fR\ \ :\fIThreads-mode\fR operation \fR
+Instructs \*(We to display individual threads.
+Without this \*(CO a summation of all threads in each process is shown.
+Later this can be changed with the `H' \*(CI.
+
+.TP 5
+\-\fBi\fR\ \ :\fIIdle-process\fR toggle \fR
+Starts \*(We with the last remembered `i' state reversed.
+When this toggle is \*F, tasks that have not used any \*(PU since the
+last update will not be displayed.
+For additional information regarding this toggle
+\*(Xt 4c. TASK AREA Commands, SIZE.
 
 .TP 5
 \-\fBn\fR\ \ :\fINumber-of-iterations\fR limit as:\fB\ \ \-n number \fR
