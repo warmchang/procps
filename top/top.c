@@ -20,9 +20,6 @@
 
 #include <ctype.h>
 #include <curses.h>
-#ifndef NUMA_DISABLE
-#include <dlfcn.h>
-#endif
 #include <errno.h>
 #include <fcntl.h>
 #include <float.h>
@@ -51,6 +48,7 @@
 #include "../include/nls.h"
 
 #include "../proc/devname.h"
+#include "../proc/numa.h"
 #include "../proc/procps.h"
 #include "../proc/readproc.h"
 #include "../proc/sig.h"
@@ -214,27 +212,12 @@ static int Autox_array [EU_MAXPFLGS],
    static char Scaled_sfxtab[] =  { 'k', 'm', 'g', 't', 'p', 'e', 0 };
 #endif
 
-        /* Support for NUMA Node display, node expansion/targeting and
-           run-time dynamic linking with libnuma.so treated as a plugin */
+        /* Support for NUMA Node display and node expansion/targeting */
 #ifndef OFF_STDERROR
 static int Stderr_save = -1;
 #endif
 static int Numa_node_tot;
 static int Numa_node_sel = -1;
-#ifndef NUMA_DISABLE
-static void *Libnuma_handle;
-#if defined(PRETEND_NUMA) || defined(PRETEND8CPUS)
-static int Numa_max_node(void) { return 3; }
-#ifndef OFF_NUMASKIP
-static int Numa_node_of_cpu(int num) { return (1 == (num % 4)) ? 0 : (num % 4); }
-#else
-static int Numa_node_of_cpu(int num) { return (num % 4); }
-#endif
-#else
-static int (*Numa_max_node)(void);
-static int (*Numa_node_of_cpu)(int num);
-#endif
-#endif
 
         /* Support for Graphing of the View_STATES ('t') and View_MEMORY ('m')
            commands -- which are now both 4-way toggles */
@@ -272,6 +255,13 @@ SCB_NUMx(GID, egid)
 SCB_STRS(GRP, egroup)
 SCB_STRS(LXC, lxcname)
 SCB_NUMx(NCE, nice)
+static int SCB_NAME(NMA) (const proc_t **P, const proc_t **Q) {
+   /* this is a terrible cost to pay for sorting on numa nodes, but it's
+      necessary if we're to avoid ABI breakage via changes to the proc_t  */
+   int p = numa_node_of_cpu((*P)->processor);
+   int q = numa_node_of_cpu((*Q)->processor);
+   return Frame_srtflg * ( q - p );
+}
 SCB_NUM1(NS1, ns[IPCNS])
 SCB_NUM1(NS2, ns[MNTNS])
 SCB_NUM1(NS3, ns[NETNS])
@@ -553,18 +543,7 @@ static void bye_bye (const char *str) {
 #endif // end: ATEOJ_RPTHSH
 #endif // end: OFF_HST_HASH
 
-#ifndef NUMA_DISABLE
-   /* note: we'll skip a dlcose() to avoid the following libnuma memory
-    *       leak which is triggered after a call to numa_node_of_cpu():
-    *         ==1234== LEAK SUMMARY:
-    *         ==1234==    definitely lost: 512 bytes in 1 blocks
-    *         ==1234==    indirectly lost: 48 bytes in 2 blocks
-    *         ==1234==    ...
-    * [ thanks very much libnuma, for all the pain you've caused ]
-    */
-// if (Libnuma_handle)
-//    dlclose(Libnuma_handle);
-#endif
+   numa_uninit();
    if (str) {
       fputs(str, stderr);
       exit(EXIT_FAILURE);
@@ -1792,7 +1771,8 @@ static FLD_t Fieldstab[] = {
    {     6,  SK_Kb,  A_right,  SF(RZF),  L_status  },
    {     6,  SK_Kb,  A_right,  SF(RZL),  L_status  },
    {     6,  SK_Kb,  A_right,  SF(RZS),  L_status  },
-   {    -1,     -1,  A_left,   SF(CGN),  L_CGROUP  }
+   {    -1,     -1,  A_left,   SF(CGN),  L_CGROUP  },
+   {     0,     -1,  A_right,  SF(NMA),  L_stat    },
  #undef SF
  #undef A_left
  #undef A_right
@@ -2286,6 +2266,10 @@ static void zap_fieldstab (void) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
       Fieldstab[EU_CPN].width = digits;
    }
+   Fieldstab[EU_NMA].width = 2;
+   if (2 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Numa_node_tot))) {
+      Fieldstab[EU_NMA].width = digits;
+   }
 
 #ifdef BOOST_PERCNT
    Cpu_pmax = 99.9;
@@ -2359,9 +2343,7 @@ static void cpus_refresh (void) {
    static char *buf;
    CPU_t *sum_ptr;                               // avoid gcc subscript bloat
    int i, num, tot_read;
-#ifndef NUMA_DISABLE
    int node;
-#endif
    char *bp;
 
    /*** hotplug_acclimated ***/
@@ -2421,11 +2403,9 @@ static void cpus_refresh (void) {
       ((sum_ptr->cur.tot - sum_ptr->sav.tot) / smp_num_cpus) / (100 / TICS_EDGE);
 #endif
 
-#ifndef NUMA_DISABLE
    // forget all of the prior node statistics (maybe)
-   if (CHKw(Curwin, View_CPUNOD))
+   if (CHKw(Curwin, View_CPUNOD) && Numa_node_tot)
       memset(sum_ptr + 1, 0, Numa_node_tot * sizeof(CPU_t));
-#endif
 
    // now value each separate cpu's tics...
    for (i = 0; i < sumSLOT; i++) {
@@ -2449,12 +2429,11 @@ static void cpus_refresh (void) {
 #ifdef PRETEND8CPUS
       cpu_ptr->id = i;
 #endif
-#ifndef NUMA_DISABLE
       /* henceforth, with just a little more arithmetic we can avoid
          maintaining *any* node stats unless they're actually needed */
       if (CHKw(Curwin, View_CPUNOD)
       && Numa_node_tot
-      && -1 < (node = Numa_node_of_cpu(cpu_ptr->id))) {
+      && -1 < (node = numa_node_of_cpu(cpu_ptr->id))) {
          // use our own pointer to avoid gcc subscript bloat
          CPU_t *nod_ptr = sum_ptr + 1 + node;
          nod_ptr->cur.u += cpu_ptr->cur.u; nod_ptr->sav.u += cpu_ptr->sav.u;
@@ -2475,7 +2454,6 @@ static void cpus_refresh (void) {
          nod_ptr->id = -1;
 #endif
       }
-#endif
    } // end: for each cpu
 
    Cpu_faux_tot = i;      // tolerate cpus taken offline
@@ -2702,11 +2680,8 @@ static void sysinfo_refresh (int forced) {
 #ifndef PRETEND8CPUS
       cpuinfo();
       Cpu_faux_tot = smp_num_cpus;
-#ifndef NUMA_DISABLE
-      if (Libnuma_handle)
-         Numa_node_tot = Numa_max_node() + 1;
 #endif
-#endif
+      Numa_node_tot = numa_max_node() + 1;
       sav_secs = cur_secs;
    }
 } // end: sysinfo_refresh
@@ -3294,26 +3269,8 @@ static void before (char *me) {
    memcpy(HHash_two, HHash_nul, sizeof(HHash_nul));
 #endif
 
-#ifndef NUMA_DISABLE
-#if defined(PRETEND_NUMA) || defined(PRETEND8CPUS)
-   Numa_node_tot = Numa_max_node() + 1;
-#else
-   // we'll try for the most recent version, then a version we know works...
-   if ((Libnuma_handle = dlopen("libnuma.so", RTLD_LAZY))
-    || (Libnuma_handle = dlopen("libnuma.so.1", RTLD_LAZY))) {
-      Numa_max_node = dlsym(Libnuma_handle, "numa_max_node");
-      Numa_node_of_cpu = dlsym(Libnuma_handle, "numa_node_of_cpu");
-      if (Numa_max_node && Numa_node_of_cpu)
-         Numa_node_tot = Numa_max_node() + 1;
-      else {
-         // this dlclose is safe - we've yet to call numa_node_of_cpu
-         // ( there's one other dlclose which has now been disabled )
-         dlclose(Libnuma_handle);
-         Libnuma_handle = NULL;
-      }
-   }
-#endif
-#endif
+   numa_init();
+   Numa_node_tot = numa_max_node() + 1;
 
 #ifndef SIGRTMAX       // not available on hurd, maybe others too
 #define SIGRTMAX 32
@@ -5178,7 +5135,6 @@ static void summary_show (void) {
 
       cpus_refresh();
 
-#ifndef NUMA_DISABLE
       if (!Numa_node_tot) goto numa_nope;
 
       if (CHKw(w, View_CPUNOD)) {
@@ -5216,7 +5172,6 @@ static void summary_show (void) {
          }
       } else
 numa_nope:
-#endif
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
          summary_hlp(&Cpu_tics[Cpu_faux_tot], N_txt(WORD_allcpus_txt));
@@ -5435,6 +5390,9 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             break;
          case EU_NCE:
             cp = make_num(p->nice, W, Jn, AUTOX_NO, 1);
+            break;
+         case EU_NMA:
+            cp = make_num(numa_node_of_cpu(p->processor), W, Jn, AUTOX_NO, 0);
             break;
          case EU_NS1:  // IPCNS
          case EU_NS2:  // MNTNS

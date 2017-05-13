@@ -25,7 +25,6 @@
         /* Defines represented in configure.ac ----------------------------- */
 //#define BOOST_MEMORY            /* enable extra precision for mem fields   */
 //#define BOOST_PERCNT            /* enable extra precision for 2 % fields   */
-//#define NUMA_DISABLE            /* disable summary area NUMA/Nodes display */
 //#define ORIG_TOPDEFS            /* with no rcfile retain original defaults */
 //#define SIGNALS_LESS            /* favor reduced signal load over response */
 
@@ -49,7 +48,6 @@
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND8CPUS            /* pretend we're smp with 8 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
-//#define PRETEND_NUMA            /* pretend 4 (or 3 w/o OFF_NUMASKIP) Nodes */
 //#define QUICK_GRAPHS            /* use fast algorithm, accept +2% distort  */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
 //#define RECALL_FIXED            /* don't reorder saved strings if recalled */
@@ -206,6 +204,7 @@ enum pflag {
    EU_LXC,
    EU_RZA, EU_RZF, EU_RZL, EU_RZS,
    EU_CGN,
+   EU_NMA,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
    EU_MAXPFLGS
@@ -289,9 +288,7 @@ typedef struct CPU_t {
    SIC_t edge;                    // tics adjustment threshold boundary
 #endif
    int id;                        // cpu number (0 - nn), or numa active flag
-#ifndef NUMA_DISABLE
    int node;                      // the numa node it belongs to
-#endif
 } CPU_t;
 
         /* /////////////////////////////////////////////////////////////// */
@@ -650,12 +647,6 @@ typedef struct WIN_t {
 #endif
 #if defined(RECALL_FIXED) && defined(TERMIOS_ONLY)
 # error 'RECALL_FIXED' conflicts with 'TERMIOS_ONLY'
-#endif
-#if defined(PRETEND_NUMA) && defined(NUMA_DISABLE)
-# error 'PRETEND_NUMA' confilcts with 'NUMA_DISABLE'
-#endif
-#if defined(OFF_NUMASKIP) && defined(NUMA_DISABLE)
-# error 'OFF_NUMASKIP' confilcts with 'NUMA_DISABLE'
 #endif
 #if (LRGBUFSIZ < SCREENMAX)
 # error 'LRGBUFSIZ' must NOT be less than 'SCREENMAX'
