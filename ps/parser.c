@@ -1096,7 +1096,7 @@ static int arg_type(const char *str){
   if((tmp>='a') && (tmp<='z'))   return ARG_GNU;
   if((tmp>='A') && (tmp<='Z'))   return ARG_GNU;
   if(tmp=='\0')                  return ARG_END;
-                                 return ARG_FAIL;
+  return ARG_FAIL;
 }
 
 /* First assume sysv, because that is the POSIX and Unix98 standard. */

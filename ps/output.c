@@ -1262,13 +1262,14 @@ static int pr_lxcname(char *restrict const outbuf, const proc_t *restrict const 
 static int pr_context(char *restrict const outbuf, const proc_t *restrict const pp){
   static void (*ps_freecon)(char*) = 0;
   static int (*ps_getpidcon)(pid_t pid, char **context) = 0;
-  static int (*ps_is_selinux_enabled)(void) = 0;
-  static int tried_load = 0;
-  static int selinux_enabled = 0;
+  static int selinux_enabled = 0;;
   size_t len;
   char *context;
 
 #if ENABLE_LIBSELINUX
+  static int (*ps_is_selinux_enabled)(void) = 0;
+  static int tried_load = 0;
+
   if(!ps_getpidcon && !tried_load){
     void *handle = dlopen("libselinux.so.1", RTLD_NOW);
     if(handle){
@@ -1792,7 +1793,7 @@ static const aix_struct aix_array[] = {
 {'z', "vsz",    "VSZ"},
 {'~', "~",      "~"} /* NULL would ruin alphabetical order */
 };
-static const int aix_array_count = sizeof(aix_array)/sizeof(aix_struct);
+//static const int aix_array_count = sizeof(aix_array)/sizeof(aix_struct);
 
 
 /********************* sorting ***************************/
@@ -1826,7 +1827,7 @@ static const shortsort_struct shortsort_array[] = {
 {'y', "priority"   }, /* nice */
 {'~', "~"          } /* NULL would ruin alphabetical order */
 };
-static const int shortsort_array_count = sizeof(shortsort_array)/sizeof(shortsort_struct);
+//static const int shortsort_array_count = sizeof(shortsort_array)/sizeof(shortsort_struct);
 
 
 /*********** print format_array **********/

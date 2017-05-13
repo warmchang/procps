@@ -624,11 +624,9 @@ LEAVE(0x160);
 /////////////////////////////////////////////////////////////////////////
 
 static void statm2proc(const char* s, proc_t *restrict P) {
-    int num;
-    num = sscanf(s, "%ld %ld %ld %ld %ld %ld %ld",
+    sscanf(s, "%ld %ld %ld %ld %ld %ld %ld",
 	   &P->size, &P->resident, &P->share,
 	   &P->trs, &P->lrs, &P->drs, &P->dt);
-/*    fprintf(stderr, "statm2proc converted %d fields.\n",num); */
 }
 
 static int file2str(const char *directory, const char *what, struct utlbuf_s *ub) {

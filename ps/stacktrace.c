@@ -173,10 +173,12 @@ void debug(int method, char *prog_name){
 }
 
 /************/
+#if 0
 static void stack_trace_sigsegv(int signum){
   (void)signum;
   debug(STACK_TRACE, stored_prog_name);
 }
+#endif
 
 /************/
 #ifdef DEBUG

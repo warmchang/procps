@@ -202,7 +202,6 @@ static void check_unit_set(int *unit_set)
 int main(int argc, char **argv)
 {
 	int c, flags = 0, unit_set = 0;
-	char *endptr;
 	struct commandline_arguments args;
 
 	/*
