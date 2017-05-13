@@ -70,6 +70,7 @@
 #include "../proc/procps.h"
 #include "../proc/devname.h"
 #include "../proc/escape.h"
+#include "../proc/numa.h"
 
 #include "common.h"
 
@@ -975,6 +976,12 @@ static int pr_psr(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%d", pp->processor);
 }
 
+static int pr_numa(char *restrict const outbuf, const proc_t *restrict const pp){
+  static int first = 1;
+  if (first) { numa_init(); first = 0; }   // we'll keep this dependency local
+  return snprintf(outbuf, COLWID, "%d", numa_node_of_cpu(pp->processor));
+}
+
 static int pr_rss(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%lu", pp->vm_rss);
 }
@@ -1545,6 +1552,7 @@ static const format_struct format_array[] = {
 {"nsignals",  "NSIGS",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*nsigs*/
 {"nsigs",     "NSIGS",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*nsignals*/
 {"nswap",     "NSWAP",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
+{"numa",      "NUMA",    pr_numa,     sr_nop,     4,   0,    XXX, AN|RIGHT},
 {"nvcsw",     "VCSW",    pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
 {"nwchan",    "WCHAN",   pr_nwchan,   sr_nop,     6,   0,    XXX, TO|RIGHT},
 {"opri",      "PRI",     pr_opri,     sr_priority, 3,  0,    SUN, TO|RIGHT},
