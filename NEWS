@@ -16,6 +16,7 @@ procps-ng-NEXT
   * top: provide command line switch for CPU States
   * top: provides more accurate cpu usage at startup
   * top: display NUMA node under which a thread ran
+  * top: fix argument parsing quirk resulting in SEGV      Redhat #1450429
   * watch: define HOST_NAME_MAX where not defined          Debian #830734
 
 procps-ng-3.3.12

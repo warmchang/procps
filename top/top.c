@@ -387,7 +387,7 @@ static void bye_bye (const char *str) {
       fputs(str, stderr);
       exit(EXIT_FAILURE);
    }
-   if (Batch) putp("\n");
+   if (Batch) fputs("\n", stdout);
    exit(EXIT_SUCCESS);
 } // end: bye_bye
 
