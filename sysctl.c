@@ -207,8 +207,13 @@ static int ReadSetting(const char *restrict const name)
 	}
 
 	if (pattern && !pattern_match(outname, pattern)) {
-		free(outname);
-		return 0;
+		rc = 0;
+		goto out;
+	}
+
+	if (NameOnly) {
+		fprintf(stdout, "%s\n", outname);
+		goto out;
 	}
 
 	fp = fopen(tmpname, "r");
@@ -237,24 +242,25 @@ static int ReadSetting(const char *restrict const name)
 			 * /sbin/sysctl -a | egrep -6 dev.cdrom.info
 			 */
 			do {
-				if (NameOnly) {
-					fprintf(stdout, "%s\n", outname);
-				} else {
-					/* already has the \n in it */
-					if (PrintName) {
-						fprintf(stdout, "%s = %s",
-							outname, inbuf);
-						if (inbuf[strlen(inbuf) - 1] != '\n')
-							putchar('\n');
-					} else {
-						if (!PrintNewline) {
-							char *nlptr =
-							    strchr(inbuf, '\n');
-							if (nlptr)
-								*nlptr = '\0';
-						}
+				char *nlptr;
+				if (PrintName) {
+					fprintf(stdout, "%s = ", outname);
+					do {
 						fprintf(stdout, "%s", inbuf);
+						nlptr = &inbuf[strlen(inbuf) - 1];
+						/* already has the \n in it */
+						if (*nlptr == '\n')
+							break;
+					} while (fgets(inbuf, sizeof inbuf - 1, fp));
+					if (*nlptr != '\n')
+						putchar('\n');
+				} else {
+					if (!PrintNewline) {
+						nlptr = strchr(inbuf, '\n');
+						if (nlptr)
+							*nlptr = '\0';
 					}
+					fprintf(stdout, "%s", inbuf);
 				}
 			} while (fgets(inbuf, sizeof inbuf - 1, fp));
 		} else {
