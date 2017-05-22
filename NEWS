@@ -1,5 +1,6 @@
 procps-ng-NEXT
 ----------------
+  * kill: -l space between name parses correctly           Debian #854407
   * library: dont use vm_min_free on non Linux             Debian #831396
   * library: dont use SIGPWR on FreeBSD                    Debian #832148
   * library: don't strip off wchan prefixes (ps & top)     Redhat #1322111

@@ -20,15 +20,28 @@ set test "kill list signal names in table"
 spawn $kill -L
 expect_pass "$test" "^\(\\s+\\d+ \[A-Z12+-\]+\)+\\s*$"
 
-set test "kill convert signal name to number"
+set test "kill convert signal name to number no space"
 spawn  $kill -lHUP
 expect_pass "$test" "^1\\s*"
 
-set test "kill convert SIG-prefixed signal name to number"
+set test "kill convert signal name to number with space"
+spawn  $kill -l HUP
+expect_pass "$test" "^1\\s*"
+
+set test "kill convert SIG-prefixed signal name to number no space"
 spawn  $kill -lSIGHUP
 expect_pass "$test" "^1\\s*$"
 
-set test "kill convert signal number to name"
+set test "kill convert SIG-prefixed signal name to number with space"
+spawn  $kill -l SIGHUP
+
+expect_pass "$test" "^1\\s*$"
+
+set test "kill convert signal number to name no space"
+spawn  $kill -l1
+expect_pass "$test" "^HUP\\s*"
+
+set test "kill convert signal number to name with space"
 spawn  $kill -l 1
 expect_pass "$test" "^HUP\\s*"
 

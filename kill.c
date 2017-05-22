@@ -53,6 +53,8 @@ int main(int argc, char **argv)
     int signo, i, loop=1;
     long pid;
     int exitvalue = EXIT_SUCCESS;
+    int optindex;
+    char *sig_option;
 
     static const struct option longopts[] = {
         {"list", optional_argument, NULL, 'l'},
@@ -77,17 +79,23 @@ int main(int argc, char **argv)
         signo = SIGTERM;
 
     opterr=0; /* suppress errors on -123 */
-    while (loop == 1 && (i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
+    while (loop == 1 && (i = getopt_long(argc, argv, "l::Ls:hV", longopts, &optindex)) != -1)
         switch (i) {
         case 'l':
+            sig_option = NULL;
             if (optarg) {
+                sig_option = optarg;
+            } else if (argv[optind] != NULL && argv[optind][0] != '-') {
+                sig_option = argv[optind];
+            }
+            if (sig_option) {
                 char *s;
-                s = strtosig(optarg);
+                s = strtosig(sig_option);
                 if (s)
                     printf("%s\n", s);
                 else
                     xwarnx(_("unknown signal name %s"),
-                          optarg);
+                          sig_option);
                 free(s);
             } else {
                 unix_print_signals();

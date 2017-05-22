@@ -240,9 +240,10 @@ char *strtosig(const char *restrict s)
         p += 3;
     if (isdigit(*p)){
         numsignal = strtol(s,&endp,10);
-        if(*endp || endp==s)
+        if(*endp || endp==s){
             free(p);
-        return NULL; /* not valid */
+            return NULL; /* not valid */
+        }
     }
     if (numsignal){
         for (i = 0; i < number_of_signals; i++){
