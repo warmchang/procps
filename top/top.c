@@ -201,9 +201,9 @@ static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||
 static struct meminfo_info *Mem_ctx;
 static struct meminfo_stack *Mem_stack;
 static enum meminfo_item Mem_items[] = {
-   MEMINFO_MEM_FREE,   MEMINFO_MEM_USED,    MEMINFO_MEM_TOTAL,
-   MEMINFO_MEM_CACHED, MEMINFO_MEM_BUFFERS, MEMINFO_MEM_AVAILABLE,
-   MEMINFO_SWAP_TOTAL, MEMINFO_SWAP_FREE,   MEMINFO_SWAP_USED };
+   MEMINFO_MEM_FREE,       MEMINFO_MEM_USED,    MEMINFO_MEM_TOTAL,
+   MEMINFO_MEM_CACHED_ALL, MEMINFO_MEM_BUFFERS, MEMINFO_MEM_AVAILABLE,
+   MEMINFO_SWAP_TOTAL,     MEMINFO_SWAP_FREE,   MEMINFO_SWAP_USED };
 enum Rel_memitems {
    mem_FRE, mem_USE, mem_TOT, mem_QUE, mem_BUF, mem_AVL,
    swp_TOT, swp_FRE, swp_USE };

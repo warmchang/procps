@@ -371,11 +371,11 @@ int main(int argc, char **argv)
 		if (flags & FREE_WIDE) {
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_BUFFERS, ul_int),
 				    flags, args));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_CACHED, ul_int)
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_CACHED_ALL, ul_int)
 				    , flags, args));
 		} else {
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_BUFFERS, ul_int) +
-				    MEMINFO_GET(mem_info, MEMINFO_MEM_CACHED, ul_int), flags, args));
+				    MEMINFO_GET(mem_info, MEMINFO_MEM_CACHED_ALL, ul_int), flags, args));
 		}
 		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_AVAILABLE, ul_int), flags, args));
 		printf("\n");

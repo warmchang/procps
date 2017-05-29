@@ -124,7 +124,7 @@ static enum meminfo_item Mem_items[] = {
     MEMINFO_MEM_ACTIVE,
     MEMINFO_MEM_INACTIVE,
     MEMINFO_MEM_BUFFERS,
-    MEMINFO_MEM_CACHED
+    MEMINFO_MEM_CACHED_ALL
 };
 enum Rel_memitems {
     mem_SUS, mem_FREE, mem_ACT, mem_INA, mem_BUF, mem_CAC,  MAX_mem
@@ -191,7 +191,7 @@ static enum meminfo_item Sum_mem_items[] = {
     MEMINFO_MEM_INACTIVE,
     MEMINFO_MEM_FREE,
     MEMINFO_MEM_BUFFERS,
-    MEMINFO_MEM_CACHED,
+    MEMINFO_MEM_CACHED_ALL,
     MEMINFO_SWAP_TOTAL,
     MEMINFO_SWAP_USED,
     MEMINFO_SWAP_FREE,
