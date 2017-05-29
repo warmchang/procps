@@ -37,6 +37,7 @@ enum meminfo_item {
     MEMINFO_MEM_BOUNCE,            //  ul_int
     MEMINFO_MEM_BUFFERS,           //  ul_int
     MEMINFO_MEM_CACHED,            //  ul_int
+    MEMINFO_MEM_CACHED_ALL,        //  ul_int
     MEMINFO_MEM_COMMIT_LIMIT,      //  ul_int
     MEMINFO_MEM_COMMITTED_AS,      //  ul_int
     MEMINFO_MEM_HARD_CORRUPTED,    //  ul_int
@@ -79,6 +80,7 @@ enum meminfo_item {
     MEMINFO_DELTA_BOUNCE,          //   s_int
     MEMINFO_DELTA_BUFFERS,         //   s_int
     MEMINFO_DELTA_CACHED,          //   s_int
+    MEMINFO_DELTA_CACHED_ALL,      //   s_int
     MEMINFO_DELTA_COMMIT_LIMIT,    //   s_int
     MEMINFO_DELTA_COMMITTED_AS,    //   s_int
     MEMINFO_DELTA_HARD_CORRUPTED,  //   s_int

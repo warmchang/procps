@@ -89,6 +89,7 @@ struct meminfo_data {
     unsigned long Writeback;
     unsigned long WritebackTmp;
 
+    unsigned long derived_mem_cached;
     unsigned long derived_mem_hi_used;
     unsigned long derived_mem_lo_used;
     unsigned long derived_mem_used;
@@ -141,6 +142,7 @@ MEM_set(MEM_AVAILABLE,          ul_int,  MemAvailable)
 MEM_set(MEM_BOUNCE,             ul_int,  Bounce)
 MEM_set(MEM_BUFFERS,            ul_int,  Buffers)
 MEM_set(MEM_CACHED,             ul_int,  Cached)
+MEM_set(MEM_CACHED_ALL,         ul_int,  derived_mem_cached)
 MEM_set(MEM_COMMIT_LIMIT,       ul_int,  CommitLimit)
 MEM_set(MEM_COMMITTED_AS,       ul_int,  Committed_AS)
 MEM_set(MEM_HARD_CORRUPTED,     ul_int,  HardwareCorrupted)
@@ -183,6 +185,7 @@ HST_set(DELTA_AVAILABLE,         s_int,  MemAvailable)
 HST_set(DELTA_BOUNCE,            s_int,  Bounce)
 HST_set(DELTA_BUFFERS,           s_int,  Buffers)
 HST_set(DELTA_CACHED,            s_int,  Cached)
+HST_set(DELTA_CACHED_ALL,        s_int,  derived_mem_cached)
 HST_set(DELTA_COMMIT_LIMIT,      s_int,  CommitLimit)
 HST_set(DELTA_COMMITTED_AS,      s_int,  Committed_AS)
 HST_set(DELTA_HARD_CORRUPTED,    s_int,  HardwareCorrupted)
@@ -264,6 +267,7 @@ static struct {
   { RS(MEM_BOUNCE),            TS(ul_int) },
   { RS(MEM_BUFFERS),           TS(ul_int) },
   { RS(MEM_CACHED),            TS(ul_int) },
+  { RS(MEM_CACHED_ALL),        TS(ul_int) },
   { RS(MEM_COMMIT_LIMIT),      TS(ul_int) },
   { RS(MEM_COMMITTED_AS),      TS(ul_int) },
   { RS(MEM_HARD_CORRUPTED),    TS(ul_int) },
@@ -306,6 +310,7 @@ static struct {
   { RS(DELTA_BOUNCE),          TS(s_int)  },
   { RS(DELTA_BUFFERS),         TS(s_int)  },
   { RS(DELTA_CACHED),          TS(s_int)  },
+  { RS(DELTA_CACHED_ALL),      TS(s_int)  },
   { RS(DELTA_COMMIT_LIMIT),    TS(s_int)  },
   { RS(DELTA_COMMITTED_AS),    TS(s_int)  },
   { RS(DELTA_HARD_CORRUPTED),  TS(s_int)  },
@@ -617,21 +622,20 @@ static int meminfo_read_failed (
 
     if (0 == mHr(MemAvailable))
         mHr(MemAvailable) = mHr(MemFree);
+    mHr(derived_mem_cached) = mHr(Cached) + mHr(SReclaimable);
+
     /* if 'available' is greater than 'total' or our calculation of mem_used
        overflows, that's symptomatic of running within a lxc container where
        such values will be dramatically distorted over those of the host. */
     if (mHr(MemAvailable) > mHr(MemTotal))
         mHr(MemAvailable) = mHr(MemFree);
-
-    mem_used = mHr(MemTotal) - mHr(MemFree) - mHr(Cached) - mHr(Buffers);
+    mem_used = mHr(MemTotal) - mHr(MemFree) - mHr(derived_mem_cached) - mHr(Buffers);
     if (mem_used < 0)
         mem_used = mHr(MemTotal) - mHr(MemFree);
     mHr(derived_mem_used) = (unsigned long)mem_used;
 
     if (mHr(HighFree) < mHr(HighTotal))
          mHr(derived_mem_hi_used) = mHr(HighTotal) - mHr(HighFree);
-
-    mHr(Cached) += mHr(SReclaimable);
 
     if (0 == mHr(LowTotal)) {
         mHr(LowTotal) = mHr(MemTotal);
