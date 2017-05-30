@@ -178,6 +178,19 @@ AS_IF([test "x$with_systemd" != "xno"], [
 ])
 AM_CONDITIONAL([WITH_SYSTEMD], [test x$with_systemd != xno])
 
+AC_ARG_WITH([elogind],
+  [AS_HELP_STRING([--with-elogind], [enable elogind support])],
+  [], [with_elogind=no]
+)
+# Do not allow elogind if systemd is wanted and found
+AS_IF([test "x$with_systemd" != "xno"], [with_elogind=no])
+
+AS_IF([test "x$with_elogind" != "xno"], [
+  PKG_CHECK_MODULES([ELOGIND], [libelogind])
+  AC_DEFINE(WITH_ELOGIND, 1, [enable elogind support])
+])
+AM_CONDITIONAL([WITH_ELOGIND], [test x$with_elogind != xno])
+
 # AC_ARG_ENABLEs
 AC_ARG_ENABLE([pidof],
   AS_HELP_STRING([--disable-pidof], [do not build pidof]),

@@ -40,6 +40,9 @@
 #ifdef WITH_SYSTEMD
 #include <systemd/sd-login.h>
 #endif
+#ifdef WITH_ELOGIND
+#include <elogind/sd-login.h>
+#endif
 
 // sometimes it's easier to do this manually, w/o gcc helping
 #ifdef PROF
@@ -518,7 +521,7 @@ static void ns2proc(const char *directory, proc_t *restrict p) {
 }
 
 static void sd2proc(proc_t *restrict p) {
-#ifdef WITH_SYSTEMD
+#if defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)
     char buf[64];
     uid_t uid;
 
