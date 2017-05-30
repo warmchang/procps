@@ -35,6 +35,9 @@
 #ifdef WITH_SYSTEMD
 #include <systemd/sd-login.h>
 #endif
+#ifdef WITH_ELOGIND
+#include <elogind/sd-login.h>
+#endif
 
 #include "devname.h"
 #include "escape.h"
@@ -495,7 +498,7 @@ static inline void oomadj2proc(const char *S, proc_t *restrict P)
 ///////////////////////////////////////////////////////////////////////
 
 static int sd2proc (proc_t *restrict p) {
-#ifdef WITH_SYSTEMD
+#if defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)
     char buf[64];
     uid_t uid;
 

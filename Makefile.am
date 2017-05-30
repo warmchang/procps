@@ -246,6 +246,10 @@ if WITH_SYSTEMD
 proc_libproc_2_la_LIBADD += @SYSTEMD_LIBS@
 endif
 
+if WITH_ELOGIND
+proc_libproc_2_la_LIBADD += @ELOGIND_LIBS@
+endif
+
 proc_libproc_2_la_LDFLAGS = \
 	-version-info $(LIBproc_2_CURRENT):$(LIBproc_2_REVISION):$(LIBproc_2_AGE) \
 	-no-undefined \
