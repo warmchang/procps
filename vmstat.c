@@ -241,7 +241,7 @@ static void new_header(void)
     const char *header =
         _("procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----");
     const char *wide_header =
-        _("procs -----------------------memory---------------------- ---swap-- -----io---- -system-- --------cpu--------");
+        _("--procs-- -----------------------memory---------------------- ---swap-- -----io---- -system-- --------cpu--------");
     const char *timestamp_header = _(" -----timestamp-----");
 
     const char format[] =
@@ -260,9 +260,9 @@ static void new_header(void)
 
     printf(
         w_option ? wide_format : format,
-        /* Translation Hint: max 2 chars */
+        /* Translation Hint: max 4 chars */
          _("r"),
-        /* Translation Hint: max 2 chars */
+        /* Translation Hint: max 4 chars */
          _("b"),
         /* Translation Hint: max 6 chars */
          _("swpd"),
@@ -334,7 +334,7 @@ static void new_format(void)
     const char format[] =
         "%2lu %2lu %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u";
     const char wide_format[] =
-        "%2lu %2lu %12lu %12lu %12lu %12lu %4u %4u %5u %5u %4u %4u %3u %3u %3u %3u %3u";
+        "%4lu %4lu %12lu %12lu %12lu %12lu %4u %4u %5u %5u %4u %4u %3u %3u %3u %3u %3u";
 
     unsigned int tog = 0;    /* toggle switch for cleaner code */
     unsigned int i;
