@@ -989,11 +989,9 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         MK_THREAD(t);
 #endif
 
-#ifndef FALSE_THREADS
     if (flags & PROC_FILLMEM)                           // read /proc/#/task/#statm
         if (file2str(path, "statm", &ub) != -1)
             statm2proc(ub.buf, t);
-#endif
 
     if (flags & PROC_FILLSTATUS) {                      // read /proc/#/task/#/status
         if (file2str(path, "status", &ub) != -1) {
@@ -1029,10 +1027,6 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
 
 #ifdef FALSE_THREADS
     if (!p) {
-        if (flags & PROC_FILLMEM)
-            if (file2str(path, "statm", &ub) != -1)
-                statm2proc(ub.buf, t);
-
         if (flags & PROC_FILLSUPGRP)
             supgrps_from_supgids(t);
 #endif
@@ -1056,31 +1050,22 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
 
 #ifdef FALSE_THREADS
     } else {
-        if (t != p) {
-            t->size      = p->size;
-            t->resident  = p->resident;
-            t->share     = p->share;
-            t->trs       = p->trs;
-            t->lrs       = p->lrs;
-            t->drs       = p->drs;
-            t->dt        = p->dt;
-            t->cmdline   = NULL;
-            t->cmdline_v = NULL;
-            t->environ   = NULL;
-            t->environ_v = NULL;
-            t->cgname    = NULL;
-            t->cgroup    = NULL;
-            t->cgroup_v  = NULL;
-            t->supgid    = NULL;
-            t->supgrp    = NULL;
-            t->sd_mach   = NULL;
-            t->sd_ouid   = NULL;
-            t->sd_seat   = NULL;
-            t->sd_sess   = NULL;
-            t->sd_slice  = NULL;
-            t->sd_unit   = NULL;
-            t->sd_uunit  = NULL;
-        }
+        t->cmdline   = NULL;
+        t->cmdline_v = NULL;
+        t->environ   = NULL;
+        t->environ_v = NULL;
+        t->cgname    = NULL;
+        t->cgroup    = NULL;
+        t->cgroup_v  = NULL;
+        t->supgid    = NULL;
+        t->supgrp    = NULL;
+        t->sd_mach   = NULL;
+        t->sd_ouid   = NULL;
+        t->sd_seat   = NULL;
+        t->sd_sess   = NULL;
+        t->sd_slice  = NULL;
+        t->sd_unit   = NULL;
+        t->sd_uunit  = NULL;
     }
 #endif
 
