@@ -1918,6 +1918,8 @@ static void build_headers (void) {
          f = w->rc.sortindx;
          Frames_libflags |= Fieldstab[f].lflg;
          if (EU_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
+         // for 'U' filtering we need the other user ids too
+         if (w->usrseltyp == 'U') Frames_libflags |= L_status;
       } // end: VIZISw(w)
 
       if (Rc.mode_altscr) w = w->next;
