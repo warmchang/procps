@@ -3754,7 +3754,7 @@ static void parse_args (char **args) {
          // advance cp and jump over any numerical args used above
          if (*cp) cp += strspn(&cp[1], numbs_str);
 bump_cp:
-         ++cp;
+         if (*cp) ++cp;
       } // end: while (*cp)
    } // end: while (*args)
 
