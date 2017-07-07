@@ -235,6 +235,9 @@ static int ReadSetting(const char *restrict const name)
 			xwarnx(_("permission denied on key '%s'"), outname);
 			rc = -1;
 			break;
+		case EIO:	    /* Ignore stable_secret below /proc/sys/net/ipv6/conf */
+			rc = -1;
+			break;
 		default:
 			xwarn(_("reading key \"%s\""), outname);
 			rc = -1;
@@ -284,6 +287,9 @@ static int ReadSetting(const char *restrict const name)
 					rc = DisplayAll(tmpname);
 					goto out;
 				}
+			case EIO:	    /* Ignore stable_secret below /proc/sys/net/ipv6/conf */
+				rc = -1;
+				break;
 			default:
 				xwarnx(_("reading key \"%s\""), outname);
 				rc = -1;
