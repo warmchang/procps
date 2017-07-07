@@ -158,6 +158,8 @@ static char *StripLeadingAndTrailingSpaces(char *oneline)
 /*
  * Read a sysctl setting
  */
+#define IOBUFSIZ    (128<<10)
+static char *iobuf;
 static int ReadSetting(const char *restrict const name)
 {
 	int rc = 0;
@@ -219,6 +221,9 @@ static int ReadSetting(const char *restrict const name)
 	}
 
 	fp = fopen(tmpname, "r");
+
+	if (iobuf)
+		setvbuf(fp, iobuf, _IOFBF, IOBUFSIZ);
 
 	if (!fp) {
 		switch (errno) {
@@ -429,6 +434,9 @@ static int WriteSetting(const char *setting)
 	}
 
 	fp = fopen(tmpname, "w");
+
+	if (iobuf)
+		setvbuf(fp, iobuf, _IOFBF, IOBUFSIZ);
 
 	if (!fp) {
 		switch (errno) {
@@ -792,6 +800,8 @@ int main(int argc, char *argv[])
 
 	argc -= optind;
 	argv += optind;
+
+	iobuf = (char*)malloc(IOBUFSIZ);	/* Allow to fail */
 
 	if (DisplayAllOpt)
 		return DisplayAll(PROC_PATH);
