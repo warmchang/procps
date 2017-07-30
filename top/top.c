@@ -2821,9 +2821,10 @@ static void before (char *me) {
 
    // establish max depth for newlib pids stack (# of result structs)
    Pids_itms = alloc_c(sizeof(enum pids_item) * MAXTBL(Fieldstab));
-   for (i = 0; i < MAXTBL(Fieldstab); i++)
-      Pids_itms[i] = PIDS_noop;
-   Pids_itms_cur = i;
+   if (PIDS_noop != 0)
+      for (i = 0; i < MAXTBL(Fieldstab); i++)
+         Pids_itms[i] = PIDS_noop;
+   Pids_itms_cur = MAXTBL(Fieldstab);
    // we will identify specific items in the build_headers() function
    if (procps_pids_new(&Pids_ctx, Pids_itms, Pids_itms_cur))
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
