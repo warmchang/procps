@@ -1077,15 +1077,25 @@ static char *ioline (const char *prompt) {
 
 
         /*
-         * Make locale aware float (but maybe restrict to whole numbers). */
+         * Make locale unaware float (but maybe restrict to whole numbers). */
 static int mkfloat (const char *str, float *num, int whole) {
-   char *ep;
+   char tmp[SMLBUFSIZ], *ep;
 
-   if (whole)
+   if (whole) {
       *num = (float)strtol(str, &ep, 0);
-   else
-      *num = strtof(str, &ep);
-   if (ep != str && *ep == '\0' && *num < INT_MAX)
+      if (ep != str && *ep == '\0' && *num < INT_MAX)
+         return 1;
+      return 0;
+   }
+   snprintf(tmp, sizeof(tmp), "%s", str);
+   *num = strtof(tmp, &ep);
+   if (*ep != '\0') {
+      // fallback - try to swap the floating point separator
+      if (*ep == '.') *ep = ',';
+      else if (*ep == ',') *ep = '.';
+      *num = strtof(tmp, &ep);
+   }
+   if (ep != tmp && *ep == '\0' && *num < INT_MAX)
       return 1;
    return 0;
 } // end: mkfloat
