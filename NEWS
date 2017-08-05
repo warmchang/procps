@@ -18,6 +18,7 @@ procps-ng-NEXT
   * top: provides more accurate cpu usage at startup
   * top: display NUMA node under which a thread ran
   * top: fix argument parsing quirk resulting in SEGV      Redhat #1450429
+  * top: delay interval accepts non-locale radix point     Redhat #1182248
   * watch: define HOST_NAME_MAX where not defined          Debian #830734
 
 procps-ng-3.3.12
