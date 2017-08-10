@@ -9,14 +9,14 @@ procps-ng-NEXT
   * pmap: fix duplicate output line under '-x' option      Redhat #1374061
   * ps: avoid eip/esp address truncations                  Debian #846361
   * ps: recognizes SCHED_DEADLINE as valid CPU scheduler
-  * ps: display NUMA node under which a thread ran
+  * ps: display NUMA node under which a thread ran         issue #58
   * top: add config file support for XDG specification
   * top: eliminated minor libnuma memory leak
-  * top: show fewer memory decimal places (configurable)
-  * top: provide command line switch for memory scaling
-  * top: provide command line switch for CPU States
-  * top: provides more accurate cpu usage at startup
-  * top: display NUMA node under which a thread ran
+  * top: show fewer memory decimal places (configurable)   issue #50
+  * top: provide command line switch for memory scaling    Redhat #1034466, issue #53
+  * top: provide command line switch for CPU States        issue #55
+  * top: provides more accurate cpu usage at startup       Redhat #1182327
+  * top: display NUMA node under which a thread ran        issue #58
   * top: fix argument parsing quirk resulting in SEGV      Redhat #1450429
   * top: delay interval accepts non-locale radix point     Redhat #1182248
   * watch: define HOST_NAME_MAX where not defined          Debian #830734
