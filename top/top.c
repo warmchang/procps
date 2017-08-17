@@ -5249,21 +5249,26 @@ numa_nope:
             { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
          };
          char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ];
-         int ix = w->rc.graph_mems - 1;
-         float pct_used = (float)kb_main_used * (100.0 / (float)kb_main_total),
+         float pct_used, pct_misc, pct_swap;
+         int ix, num_used, num_misc;
+
+         pct_used = (float)kb_main_used * (100.0 / (float)kb_main_total);
 #ifdef MEMGRAPH_OLD
-               pct_misc = (float)(kb_main_buffers + kb_main_cached) * (100.0 / (float)kb_main_total),
+         pct_misc = (float)(kb_main_buffers + kb_main_cached) * (100.0 / (float)kb_main_total);
 #else
-               pct_misc = (float)(kb_main_total - kb_main_available - kb_main_used) * (100.0 / (float)kb_main_total),
+         pct_misc = (float)(kb_main_total - kb_main_available - kb_main_used) * (100.0 / (float)kb_main_total);
 #endif
-               pct_swap = kb_swap_total ? (float)kb_swap_used * (100.0 / (float)kb_swap_total) : 0;
+         if (pct_used + pct_misc > 100.0 || pct_misc < 0) pct_misc = 0;
+         pct_swap = kb_swap_total ? (float)kb_swap_used * (100.0 / (float)kb_swap_total) : 0;
+         ix = w->rc.graph_mems - 1;
 #ifndef QUICK_GRAPHS
-         int num_used = (int)((pct_used * Graph_adj) + .5),
-             num_misc = (int)((pct_misc * Graph_adj) + .5);
+         num_used = (int)((pct_used * Graph_adj) + .5),
+         num_misc = (int)((pct_misc * Graph_adj) + .5);
          if (num_used + num_misc > Graph_len) num_misc = Graph_len - num_used;
          snprintf(used, sizeof(used), gtab[ix].used, num_used, gtab[ix].type);
          snprintf(util, sizeof(util), gtab[ix].misc, num_misc, gtab[ix].type);
 #else
+         (void)num_used; (void)num_misc;
          snprintf(used, sizeof(used), gtab[ix].used, (int)((pct_used * Graph_adj) + .5), gtab[ix].type);
          snprintf(util, sizeof(util), gtab[ix].misc, (int)((pct_misc * Graph_adj) + .4), gtab[ix].type);
 #endif
