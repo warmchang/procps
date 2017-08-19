@@ -202,15 +202,25 @@ int main(int argc, char *argv[]){
 /* Try to guess the device name (useful until /proc/PID/tty is added) */
 static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
   struct stat sbuf;
+#ifndef __CYGWIN__
   int t0, t1;
+#endif
   unsigned tmpmin = min;
 
   switch(maj){
   case   3:      /* /dev/[pt]ty[p-za-o][0-9a-z] is 936 */
     if(tmpmin > 255) return 0;   // should never happen; array index protection
+#ifdef __CYGWIN__
+    sprintf(buf, "dev/cons%d", tmpmin);
+    /* Skip stat call.  The reason is that cons devices are local to
+     * the processes running in that console.  Calling stat from another
+     * console or pty will return -1. */
+   return 1;
+#else
     t0 = "pqrstuvwxyzabcde"[tmpmin>>4];
     t1 = "0123456789abcdef"[tmpmin&0x0f];
     sprintf(buf, "/dev/tty%c%c", t0, t1);
+#endif
     break;
   case   4:
     if(min<64){
@@ -235,8 +245,12 @@ static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
   case  78:  sprintf(buf, "/dev/ttyM%d",  min); break; /* conflict */
   case 105:  sprintf(buf, "/dev/ttyV%d",  min); break;
   case 112:  sprintf(buf, "/dev/ttyM%d",  min); break; /* conflict */
+#ifdef __CYGWIN__
+  case 136:  sprintf(buf, "/dev/pty%d",   min); break;
+#else
   /* 136 ... 143 are /dev/pts/0, /dev/pts/1, /dev/pts/2 ... */
   case 136 ... 143:  sprintf(buf, "/dev/pts/%d",  min+(maj-136)*256); break;
+#endif
   case 148:  sprintf(buf, "/dev/ttyT%d",  min); break;
   case 154:  sprintf(buf, "/dev/ttySR%d", min); break;
   case 156:  sprintf(buf, "/dev/ttySR%d", min+256); break;
@@ -284,6 +298,30 @@ static int link_name(char *restrict const buf, unsigned maj, unsigned min, int p
   return 1;
 }
 
+#ifdef __CYGWIN__
+/* Cygwin keeps the name to the controlling tty in a virtual file called
+   /proc/PID/ctty, including a trailing LF (sigh). */
+static int ctty_name(char *restrict const buf, int pid) {
+  char path[32];
+  FILE *fp;
+  char *lf;
+  sprintf (path, "/proc/%d/ctty", pid);  /* often permission denied */
+  fp = fopen (path, "r");
+  if (!fp)
+    return 0;
+  if (!fgets (buf,TTY_NAME_SIZE,fp))
+    {
+      fclose (fp);
+      return 0;
+    }
+  fclose (fp);
+  lf = strchr (buf, '\n');
+  if (lf)
+    *lf = (lf == buf ? '?' : '\0');
+  return 1;
+}
+#endif
+
 /* number --> name */
 unsigned dev_to_tty(char *restrict ret, unsigned chop, dev_t dev_t_dev, int pid, unsigned int flags) {
   static char buf[TTY_NAME_SIZE];
@@ -291,6 +329,9 @@ unsigned dev_to_tty(char *restrict ret, unsigned chop, dev_t dev_t_dev, int pid,
   unsigned dev = dev_t_dev;
   unsigned i = 0;
   int c;
+#ifdef __CYGWIN__
+  if(  ctty_name(tmp, pid                                        )) goto abbrev;
+#endif
   if(dev == 0u) goto no_tty;
   if(driver_name(tmp, MAJOR_OF(dev), MINOR_OF(dev)               )) goto abbrev;
   if(  link_name(tmp, MAJOR_OF(dev), MINOR_OF(dev), pid, "fd/2"  )) goto abbrev;

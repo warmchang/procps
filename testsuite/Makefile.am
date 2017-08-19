@@ -13,9 +13,12 @@ if LINUX
 # temporarily disabled on other than linux systems, see commit
 # 3d807ae853b8b4264da156065b34f1447658a8ba
 DEJATOOL += \
-	pmap \
+	pmap
+if !CYGWIN
+DEJATOOL += \
 	slabtop \
 	sysctl
+endif
 
 if BUILD_KILL
 DEJATOOL += kill
@@ -34,7 +37,7 @@ DEJATOOL += \
 endif
 
 EXTRA_DIST = \
-	config/unix.exp \
+    config/unix.exp \
     free.test/free.exp \
     kill.test/kill.exp \
     lib.test/fileutils.exp \
@@ -48,8 +51,11 @@ EXTRA_DIST = \
     ps.test/ps_personality.exp \
     ps.test/ps_sched_batch.exp \
     pwdx.test/pwdx.exp \
-    slabtop.test/slabtop.exp \
-    sysctl.test/sysctl_read.exp \
     uptime.test/uptime.exp \
     vmstat.test/vmstat.exp \
     w.test/w.exp
+if !CYGWIN
+EXTRA_DIST += \
+    slabtop.test/slabtop.exp \
+    sysctl.test/sysctl_read.exp
+endif

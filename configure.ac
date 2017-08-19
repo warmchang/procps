@@ -70,6 +70,27 @@ AC_FUNC_REALLOC
 AC_FUNC_STRCOLL
 AC_FUNC_STRTOD
 
+usrbin_execdir='${exec_prefix}/bin'
+AC_SUBST([usrbin_execdir])
+
+if test "x$host_os" = xcygwin
+then
+  prefix=/usr
+  sysconfdir='${prefix}/etc'
+  libexecdir='${prefix}/lib'
+  localstatedir='${prefix}/var'
+  datadir='${prefix}/share'
+  mandir='${prefix}/share/man'
+  infodir='${prefix}/share/info'
+  AC_SUBST([prefix])
+  AC_SUBST([sysconfdir])
+  AC_SUBST([libexecdir])
+  AC_SUBST([localstatedir])
+  AC_SUBST([datadir])
+  AC_SUBST([mandir])
+  AC_SUBST([infodir])
+fi
+
 AM_GNU_GETTEXT_VERSION([0.14.1])
 AM_GNU_GETTEXT([external])
 if test -d "$srcdir/po"

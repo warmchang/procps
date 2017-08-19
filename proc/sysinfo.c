@@ -29,6 +29,9 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+#ifdef __CYGWIN__
+#include <sys/param.h>
+#endif
 #include "alloc.h"
 #include "version.h"
 #include "sysinfo.h" /* include self to verify prototypes */
@@ -74,7 +77,9 @@ static char buf[8192];
 #define SET_IF_DESIRED(x,y) do{  if(x) *(x) = (y); }while(0)
 
 /* return minimum of two values */
+#ifndef __CYGWIN__
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
+#endif
 
 /*
  * procps_hertz_get:

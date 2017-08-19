@@ -64,3 +64,4 @@ watch
 *~
 *.log
 *.sum
+*.exe
