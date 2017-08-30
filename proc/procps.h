@@ -81,7 +81,7 @@
 // Like HIDDEN, but for an alias that gets created.
 // In gcc-3.2 there is an alias+hidden conflict.
 // Many will have patched this bug, but oh well.
-#if ( __GNUC__ == 3 && __GNUC_MINOR__ > 2 ) || __GNUC__ > 3
+#if (( __GNUC__ == 3 && __GNUC_MINOR__ > 2 ) || __GNUC__ > 3) && !defined(__CYGWIN__)
 #define HIDDEN_ALIAS(x) extern __typeof(x) x##_direct __attribute__((alias(#x),visibility("hidden")))
 #else
 #define HIDDEN_ALIAS(x) extern __typeof(x) x##_direct __attribute__((alias(#x)))

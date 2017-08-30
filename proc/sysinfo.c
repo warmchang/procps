@@ -28,6 +28,9 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+#ifdef __CYGWIN__
+#include <sys/param.h>
+#endif
 #include "alloc.h"
 #include "version.h"
 #include "sysinfo.h" /* include self to verify prototypes */
@@ -36,7 +39,9 @@
 #include <netinet/in.h>  /* htons */
 #endif
 
+#ifndef __CYGWIN__
 #include <link.h>
+#endif
 #include <elf.h>
 
 long smp_num_cpus;     /* number of CPUs */
@@ -91,7 +96,9 @@ static char buf[8192];
 #define SET_IF_DESIRED(x,y) do{  if(x) *(x) = (y); }while(0)
 
 /* return minimum of two values */
+#ifndef __CYGWIN__
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
+#endif
 
 /***********************************************************************/
 int uptime(double *restrict uptime_secs, double *restrict idle_secs) {
@@ -224,6 +231,7 @@ static void old_Hertz_hack(void){
   case  247 ...  252 :  Hertz =  250; break;
   case  253 ...  260 :  Hertz =  256; break;
   case  393 ...  408 :  Hertz =  400; break; /* normal << 2 */
+  case  410 ...  600 :  Hertz =  500; break; /* SMP WinNT */
   case  790 ...  808 :  Hertz =  800; break; /* normal << 3 */
   case  990 ... 1010 :  Hertz = 1000; break; /* ARM */
   case 1015 ... 1035 :  Hertz = 1024; break; /* Alpha, ia64 */
@@ -254,6 +262,9 @@ extern char** environ;
 
 static unsigned long find_elf_note(unsigned long type)
 {
+#ifdef __CYGWIN__
+  return NOTE_NOT_FOUND;
+#else
   ElfW(auxv_t) auxv_struct;
   ElfW(auxv_t) *auxv_temp;
   FILE *fd;
@@ -313,6 +324,7 @@ static unsigned long find_elf_note(unsigned long type)
 	  auxv = NULL;
   }
   return ret_val;
+#endif
 }
 
 int have_privs;
@@ -350,6 +362,11 @@ static void init_libproc(void){
   Hertz = 100;
   return;
 #endif /* __FreeBSD__ */
+#ifdef __CYGWIN__
+  // On Cygwin we can rely on the HZ value given in sys/param.h
+  Hertz = (unsigned long long)HZ;    /* <sys/param.h> */
+  return;
+#endif
   old_Hertz_hack();
 }
 

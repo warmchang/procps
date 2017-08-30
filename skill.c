@@ -743,6 +743,11 @@ int main(int argc, char ** argv)
 	else if (strcmp(program_invocation_short_name, "snice") == 0 ||
 		 strcmp(program_invocation_short_name, "lt-snice") == 0)
 		program = PROG_SNICE;
+#ifdef __CYGWIN__
+	else if (strcmp(program_invocation_short_name, "prockill") == 0 ||
+		 strcmp(program_invocation_short_name, "lt-prockill") == 0)
+		program = PROG_KILL;
+#endif
 
 	switch (program) {
 	case PROG_SNICE:
