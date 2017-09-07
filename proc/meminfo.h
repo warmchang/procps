@@ -126,7 +126,12 @@ enum meminfo_item {
     MEMINFO_SWAP_CACHED,           //  ul_int
     MEMINFO_SWAP_FREE,             //  ul_int
     MEMINFO_SWAP_TOTAL,            //  ul_int
-    MEMINFO_SWAP_USED              //  ul_int
+    MEMINFO_SWAP_USED,             //  ul_int
+
+    MEMINFO_SWAP_DELTA_CACHED,     //   s_int
+    MEMINFO_SWAP_DELTA_FREE,       //   s_int
+    MEMINFO_SWAP_DELTA_TOTAL,      //   s_int
+    MEMINFO_SWAP_DELTA_USED        //   s_int
 };
 
 

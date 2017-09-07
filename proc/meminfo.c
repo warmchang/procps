@@ -233,6 +233,11 @@ MEM_set(SWAP_FREE,              ul_int,  SwapFree)
 MEM_set(SWAP_TOTAL,             ul_int,  SwapTotal)
 MEM_set(SWAP_USED,              ul_int,  derived_swap_used)
 
+HST_set(SWAP_DELTA_CACHED,       s_int,  SwapCached)
+HST_set(SWAP_DELTA_FREE,         s_int,  SwapFree)
+HST_set(SWAP_DELTA_TOTAL,        s_int,  SwapTotal)
+HST_set(SWAP_DELTA_USED,         s_int,  derived_swap_used)
+
 #undef setDECL
 #undef MEM_set
 #undef HST_set
@@ -358,13 +363,18 @@ static struct {
   { RS(SWAP_TOTAL),            TS(ul_int) },
   { RS(SWAP_USED),             TS(ul_int) },
 
+  { RS(SWAP_DELTA_CACHED),     TS(s_int)  },
+  { RS(SWAP_DELTA_FREE),       TS(s_int)  },
+  { RS(SWAP_DELTA_TOTAL),      TS(s_int)  },
+  { RS(SWAP_DELTA_USED),       TS(s_int)  },
+
  // dummy entry corresponding to MEMINFO_logical_end ...
   { NULL,                      NULL       }
 };
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum meminfo_item MEMINFO_logical_end = MEMINFO_SWAP_USED + 1;
+enum meminfo_item MEMINFO_logical_end = MEMINFO_SWAP_DELTA_USED + 1;
 
 #undef setNAME
 #undef RS
@@ -646,6 +656,8 @@ static int meminfo_read_failed (
 
     if (mHr(SwapFree) < mHr(SwapTotal))
         mHr(derived_swap_used) = mHr(SwapTotal) - mHr(SwapFree);
+    else
+        mHr(derived_swap_used) = 0;
 
     return 0;
  #undef mHr
