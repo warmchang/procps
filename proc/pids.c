@@ -54,9 +54,9 @@
 
 
 struct stacks_extent {
-    struct pids_stack **stacks;
     int ext_numstacks;
     struct stacks_extent *next;
+    struct pids_stack **stacks;
 };
 
 struct fetch_support {
