@@ -61,31 +61,31 @@
 
 
 struct slabs_summ {
-    unsigned int  nr_objs;          /* number of objects, among all caches */
-    unsigned int  nr_active_objs;   /* number of active objects, among all caches */
-    unsigned int  nr_pages;         /* number of pages consumed by all objects */
-    unsigned int  nr_slabs;         /* number of slabs, among all caches */
-    unsigned int  nr_active_slabs;  /* number of active slabs, among all caches */
-    unsigned int  nr_caches;        /* number of caches */
-    unsigned int  nr_active_caches; /* number of active caches */
-    unsigned int  avg_obj_size;     /* average object size */
-    unsigned int  min_obj_size;     /* size of smallest object */
-    unsigned int  max_obj_size;     /* size of largest object */
-    unsigned long active_size;      /* size of all active objects */
-    unsigned long total_size;       /* size of all objects */
+    unsigned int  nr_objs;           // number of objects, among all caches
+    unsigned int  nr_active_objs;    // number of active objects, among all caches
+    unsigned int  nr_pages;          // number of pages consumed by all objects
+    unsigned int  nr_slabs;          // number of slabs, among all caches
+    unsigned int  nr_active_slabs;   // number of active slabs, among all caches
+    unsigned int  nr_caches;         // number of caches
+    unsigned int  nr_active_caches;  // number of active caches
+    unsigned int  avg_obj_size;      // average object size
+    unsigned int  min_obj_size;      // size of smallest object
+    unsigned int  max_obj_size;      // size of largest object
+    unsigned long active_size;       // size of all active objects
+    unsigned long total_size;        // size of all objects
 };
 
 struct slabs_node {
-    char name[SLABINFO_NAME_LEN];  /* name of this cache */
-    unsigned long cache_size;       /* size of entire cache */
-    unsigned int  nr_objs;          /* number of objects in this cache */
-    unsigned int  nr_active_objs;   /* number of active objects */
-    unsigned int  obj_size;         /* size of each object */
-    unsigned int  objs_per_slab;    /* number of objects per slab */
-    unsigned int  pages_per_slab;   /* number of pages per slab */
-    unsigned int  nr_slabs;         /* number of slabs in this cache */
-    unsigned int  nr_active_slabs;  /* number of active slabs */
-    unsigned int  use;              /* percent full: total / active */
+    char name[SLABINFO_NAME_LEN];    // name of this cache
+    unsigned long cache_size;        // size of entire cache
+    unsigned int  nr_objs;           // number of objects in this cache
+    unsigned int  nr_active_objs;    // number of active objects
+    unsigned int  obj_size;          // size of each object
+    unsigned int  objs_per_slab;     // number of objects per slab
+    unsigned int  pages_per_slab;    // number of pages per slab
+    unsigned int  nr_slabs;          // number of slabs in this cache
+    unsigned int  nr_active_slabs;   // number of active slabs
+    unsigned int  use;               // percent full: total / active
 };
 
 struct slabs_hist {
@@ -100,36 +100,36 @@ struct stacks_extent {
 };
 
 struct ext_support {
-    int numitems;                   // includes 'logical_end' delimiter
-    enum slabinfo_item *items;      // includes 'logical_end' delimiter
-    struct stacks_extent *extents;  // anchor for these extents
+    int numitems;                    // includes 'logical_end' delimiter
+    enum slabinfo_item *items;       // includes 'logical_end' delimiter
+    struct stacks_extent *extents;   // anchor for these extents
 #ifdef ENFORCE_LOGICAL
-    enum slabinfo_item lowest;      // range of allowable enums
+    enum slabinfo_item lowest;       // range of allowable enums
     enum slabinfo_item highest;
 #endif
     int dirty_stacks;
 };
 
 struct fetch_support {
-    struct slabinfo_stack **anchor; // fetch consolidated extents
-    int n_alloc;                    // number of above pointers allocated
-    int n_inuse;                    // number of above pointers occupied
-    int n_alloc_save;               // last known reap.stacks allocation
-    struct slabinfo_reap results;   // count + stacks for return to caller
+    struct slabinfo_stack **anchor;  // fetch consolidated extents
+    int n_alloc;                     // number of above pointers allocated
+    int n_inuse;                     // number of above pointers occupied
+    int n_alloc_save;                // last known reap.stacks allocation
+    struct slabinfo_reap results;    // count + stacks for return to caller
 };
 
 struct slabinfo_info {
     int refcount;
     FILE *slabinfo_fp;
-    int nodes_alloc;                   /* nodes alloc()ed */
-    int nodes_used;                    /* nodes using alloced memory */
-    struct slabs_node *nodes;          /* first slabnode of this list */
-    struct slabs_hist slabs;           /* new/old slabs_summ data */
-    struct ext_support select_ext;     /* supports concurrent select/reap */
-    struct ext_support fetch_ext;      /* supports concurrent select/reap */
-    struct fetch_support fetch;        /* support for procps_slabinfo_reap */
-    struct slabs_node nul_node;        /* used by slabinfo_get/select */
-    struct slabinfo_result get_this;   /* used by slabinfo_get */
+    int nodes_alloc;                 // nodes alloc()ed
+    int nodes_used;                  // nodes using alloced memory
+    struct slabs_node *nodes;        // first slabnode of this list
+    struct slabs_hist slabs;         // new/old slabs_summ data
+    struct ext_support select_ext;   // supports concurrent select/reap
+    struct ext_support fetch_ext;    // supports concurrent select/reap
+    struct fetch_support fetch;      // support for procps_slabinfo_reap
+    struct slabs_node nul_node;      // used by slabinfo_get/select
+    struct slabinfo_result get_this; // used by slabinfo_get
 };
 
 
@@ -657,27 +657,27 @@ static struct stacks_extent *slabinfo_stacks_alloc (
     if (maxstacks < 1)
         return NULL;
 
-    vect_size  = sizeof(void *) * maxstacks;                   // size of the addr vectors |
-    vect_size += sizeof(void *);                               // plus NULL addr delimiter |
-    head_size  = sizeof(struct slabinfo_stack);                // size of that head struct |
-    list_size  = sizeof(struct slabinfo_result)*this->numitems;// any single results stack |
-    blob_size  = sizeof(struct stacks_extent);                 // the extent anchor itself |
-    blob_size += vect_size;                                    // plus room for addr vects |
-    blob_size += head_size * maxstacks;                        // plus room for head thing |
-    blob_size += list_size * maxstacks;                        // plus room for our stacks |
+    vect_size  = sizeof(void *) * maxstacks;                     // size of the addr vectors |
+    vect_size += sizeof(void *);                                 // plus NULL addr delimiter |
+    head_size  = sizeof(struct slabinfo_stack);                  // size of that head struct |
+    list_size  = sizeof(struct slabinfo_result)*this->numitems;  // any single results stack |
+    blob_size  = sizeof(struct stacks_extent);                   // the extent anchor itself |
+    blob_size += vect_size;                                      // plus room for addr vects |
+    blob_size += head_size * maxstacks;                          // plus room for head thing |
+    blob_size += list_size * maxstacks;                          // plus room for our stacks |
 
-    /* note: all of our memory is allocated in a single blob, facilitating a later free(). |
-             as a minimum, it is important that the result structures themselves always be |
-             contiguous for every stack since they are accessed through relative position. | */
+    /* note: all of our memory is allocated in one single blob, facilitating a later free(). |
+             as a minimum, it is important that those result structures themselves always be |
+             contiguous within each stack since they are accessed through relative position. | */
     if (NULL == (p_blob = calloc(1, blob_size)))
         return NULL;
 
-    p_blob->next = this->extents;                              // push this extent onto... |
-    this->extents = p_blob;                                    // ...some existing extents |
-    p_vect = (void *)p_blob + sizeof(struct stacks_extent);    // prime our vector pointer |
-    p_blob->stacks = p_vect;                                   // set actual vectors start |
-    v_head = (void *)p_vect + vect_size;                       // prime head pointer start |
-    v_list = v_head + (head_size * maxstacks);                 // prime our stacks pointer |
+    p_blob->next = this->extents;                                // push this extent onto... |
+    this->extents = p_blob;                                      // ...some existing extents |
+    p_vect = (void *)p_blob + sizeof(struct stacks_extent);      // prime our vector pointer |
+    p_blob->stacks = p_vect;                                     // set actual vectors start |
+    v_head = (void *)p_vect + vect_size;                         // prime head pointer start |
+    v_list = v_head + (head_size * maxstacks);                   // prime our stacks pointer |
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct slabinfo_stack *)v_head;

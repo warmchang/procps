@@ -99,13 +99,13 @@ struct fetch_support {
 struct diskstats_info {
     int refcount;
     FILE *diskstats_fp;
-    time_t old_stamp;                  /* previous read seconds */
-    time_t new_stamp;                  /* current read seconds */
-    struct dev_node *nodes;            /* dev nodes anchor */
-    struct ext_support select_ext;     /* supports concurrent select/reap */
-    struct ext_support fetch_ext;      /* supports concurrent select/reap */
-    struct fetch_support fetch;        /* support for procps_diskstats_reap */
-    struct diskstats_result get_this;  /* used by procps_diskstats_get */
+    time_t old_stamp;                  // previous read seconds
+    time_t new_stamp;                  // current read seconds
+    struct dev_node *nodes;            // dev nodes anchor
+    struct ext_support select_ext;     // supports concurrent select/reap
+    struct ext_support fetch_ext;      // supports concurrent select/reap
+    struct fetch_support fetch;        // support for procps_diskstats_reap
+    struct diskstats_result get_this;  // used by procps_diskstats_get
 };
 
 

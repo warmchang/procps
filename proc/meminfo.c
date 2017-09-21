@@ -495,7 +495,7 @@ static int meminfo_make_hash_failed (
     ENTRY e, *ep;
     size_t n;
 
-    // will also include those 4 derived fields (more is better)
+    // will also include those derived fields (more is better)
     n = sizeof(struct meminfo_data) / sizeof(unsigned long);
     // we'll follow the hsearch recommendation of an extra 25%
     hcreate_r(n + (n / 4), &info->hashtab);
@@ -691,27 +691,27 @@ static struct stacks_extent *meminfo_stacks_alloc (
     if (maxstacks < 1)
         return NULL;
 
-    vect_size  = sizeof(void *) * maxstacks;                   // size of the addr vectors |
-    vect_size += sizeof(void *);                               // plus NULL addr delimiter |
-    head_size  = sizeof(struct meminfo_stack);                 // size of that head struct |
-    list_size  = sizeof(struct meminfo_result)*info->numitems; // any single results stack |
-    blob_size  = sizeof(struct stacks_extent);                 // the extent anchor itself |
-    blob_size += vect_size;                                    // plus room for addr vects |
-    blob_size += head_size * maxstacks;                        // plus room for head thing |
-    blob_size += list_size * maxstacks;                        // plus room for our stacks |
+    vect_size  = sizeof(void *) * maxstacks;                    // size of the addr vectors |
+    vect_size += sizeof(void *);                                // plus NULL addr delimiter |
+    head_size  = sizeof(struct meminfo_stack);                  // size of that head struct |
+    list_size  = sizeof(struct meminfo_result)*info->numitems;  // any single results stack |
+    blob_size  = sizeof(struct stacks_extent);                  // the extent anchor itself |
+    blob_size += vect_size;                                     // plus room for addr vects |
+    blob_size += head_size * maxstacks;                         // plus room for head thing |
+    blob_size += list_size * maxstacks;                         // plus room for our stacks |
 
-    /* note: all of our memory is allocated in a single blob, facilitating a later free(). |
-             as a minimum, it is important that the result structures themselves always be |
-             contiguous for every stack since they are accessed through relative position. | */
+    /* note: all of this memory is allocated in a single blob, facilitating a later free(). |
+             as a minimum, it is important that the result structures themselves always are |
+             contiguous within each stack since they're accessed through relative position. | */
     if (NULL == (p_blob = calloc(1, blob_size)))
         return NULL;
 
-    p_blob->next = info->extents;                              // push this extent onto... |
-    info->extents = p_blob;                                    // ...some existing extents |
-    p_vect = (void *)p_blob + sizeof(struct stacks_extent);    // prime our vector pointer |
-    p_blob->stacks = p_vect;                                   // set actual vectors start |
-    v_head = (void *)p_vect + vect_size;                       // prime head pointer start |
-    v_list = v_head + (head_size * maxstacks);                 // prime our stacks pointer |
+    p_blob->next = info->extents;                               // push this extent onto... |
+    info->extents = p_blob;                                     // ...some existing extents |
+    p_vect = (void *)p_blob + sizeof(struct stacks_extent);     // prime our vector pointer |
+    p_blob->stacks = p_vect;                                    // set actual vectors start |
+    v_head = (void *)p_vect + vect_size;                        // prime head pointer start |
+    v_list = v_head + (head_size * maxstacks);                  // prime our stacks pointer |
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct meminfo_stack *)v_head;

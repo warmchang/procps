@@ -510,7 +510,7 @@ static struct {
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum pids_item PIDS_logical_end  = PIDS_WCHAN_NAME + 1;
+enum pids_item PIDS_logical_end = PIDS_WCHAN_NAME + 1;
 
 #undef setNAME
 #undef freNAME
