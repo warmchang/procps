@@ -203,10 +203,10 @@ PROCPS_EXPORT char *procps_uptime_sprint_short(void)
         comma += 1;
     }
 
-    if (upminutes) {
+    if (upminutes || (!upminutes && uptime_secs < 60)) {
         pos += sprintf(shortbuf + pos, "%s%d %s",
-                       comma  > 0 ? ", " : "", upminutes,
-                       upminutes > 1 ? "minutes" : "minute");
+                       comma > 0 ? ", " : "", upminutes,
+                       upminutes != 1 ? "minutes" : "minute");
         comma += 1;
     }
     return shortbuf;
