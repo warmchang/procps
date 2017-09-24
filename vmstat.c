@@ -425,22 +425,18 @@ static void new_format(void)
 
 static void diskpartition_header(const char *partition_name)
 {
-	printf("%-10s %10s %10s %10s %10s\n",
+	printf("%-10s %10s  %16s  %10s  %16s\n",
 	       partition_name,
        /* Translation Hint: Translating folloging disk partition
 	* header fields that follow (marked with max x chars) might
 	* not work, unless manual page is translated as well. */
-	       /* Translation Hint: max 10 chars. The word is
-	        * expected to be centralized, use spaces at the end
-	        * to do that. */
-	       _("reads  "),
-	       /* Translation Hint: max 10 chars */
+	       /* Translation Hint: max 10 chars. */
+	       _("reads"),
+	       /* Translation Hint: max 16 chars. */
 	       _("read sectors"),
-	       /* Translation Hint: max 10 chars. The word is
-	        * expected to be centralized, use spaces at the end
-	        * to do that. */
-	       _("writes   "),
-	       /* Translation Hint: max 10 chars */
+	       /* Translation Hint: max 10 chars. */
+	       _("writes"),
+	       /* Translation Hint: max 16 chars */
 	       _("requested writes"));
 }
 
@@ -450,7 +446,7 @@ static int diskpartition_format(const char *partition_name)
 	struct disk_stat *disks;
 	struct partition_stat *partitions, *current_partition = NULL;
 	unsigned long ndisks, j, k, npartitions;
-	const char format[] = "%20u %10llu %10u %10llu\n";
+	const char format[] = "%21u  %16llu  %10u  %16llu\n";
 
 	fDiskstat = fopen("/proc/diskstats", "rb");
 	if (!fDiskstat)
