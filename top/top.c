@@ -641,6 +641,76 @@ static void sig_resize (int dont_care_sig) {
    (void)dont_care_sig;
 } // end: sig_resize
 
+/*######  Special UTF-8 Multi-Byte support  ##############################*/
+
+        /* Support for NLS translated 'string' length */
+static char UTF8_tab[] = {
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x00 - 0x0F
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x10 - 0x1F
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x20 - 0x2F
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x30 - 0x3F
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x40 - 0x4F
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x50 - 0x5F
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x60 - 0x6F
+   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x70 - 0x7F
+  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0x80 - 0x8F
+  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0x90 - 0x9F
+  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xA0 - 0xAF
+  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xB0 - 0xBF
+  -1,-1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 0xC0 - 0xCF, 0xC2 = begins 2
+   2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 0xD0 - 0xDF
+   3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 0xE0 - 0xEF, 0xE0 = begins 3
+   4, 4, 4, 4, 4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xF0 - 0xFF, 0xF0 = begins 4
+};                                                 //            ( 0xF5 & beyond invalid )
+
+
+        /*
+         * Determine difference between total bytes versus printable
+         * characters in that passed, potentially multi-byte, string */
+static int utf8_delta (const char *str) {
+    const unsigned char *p = (const unsigned char *)str;
+    int clen, cnum = 0;
+
+    while (*p) {
+        // -1 represents a decoding error, pretend it's untranslated ...
+        if (0 > (clen = UTF8_tab[*p])) return 0;
+        p += clen;
+        ++cnum;
+    }
+    return (int)((const char *)p - str) - cnum;
+} // end: utf8_delta
+
+
+        /*
+         * Determine a logical end within a potential multi-byte string
+         * where maximum printable chars could be accommodated in width */
+static int utf8_embody (const char *str, int width) {
+    const unsigned char *p = (const unsigned char *)str;
+    int clen, cnum = 0;
+
+    while (*p) {
+        // -1 represents a decoding error, pretend it's untranslated ...
+        if (0 > (clen = UTF8_tab[*p])) return width;
+        if (cnum + 1 >= width) break;
+        p += clen;
+        ++cnum;
+    }
+    return (int)((const char *)p - str);
+} // end: utf8_embody
+
+
+        /*
+         * Like the regular justify_pad routine but this guy
+         * can accommodate the multi-byte translated strings */
+static const char *utf8_justify (const char *str, int width, int justr) {
+   static char l_fmt[]  = "%-*.*s%s", r_fmt[] = "%*.*s%s";
+   static char buf[SCREENMAX];
+
+   width += utf8_delta(str);
+   snprintf(buf, sizeof(buf), justr ? r_fmt : l_fmt, width, width, str, COLPADSTR);
+   return buf;
+} // end: utf8_justify
+
 /*######  Misc Color/Display support  ####################################*/
 
         /*
@@ -732,7 +802,7 @@ static void show_msg (const char *str) {
    PUTT("%s%s %.*s %s%s%s"
       , tg2(0, Msg_row)
       , Curwin->capclr_msg
-      , Screen_cols - 2
+      , utf8_embody(str, Screen_cols - 2)
       , str
       , Cap_curs_hide
       , Caps_off
@@ -745,8 +815,11 @@ static void show_msg (const char *str) {
         /*
          * Show an input prompt + larger cursor (if possible) */
 static int show_pmt (const char *str) {
-   int rc;
+   char buf[MEDBUFSIZ];
+   int len;
 
+   snprintf(buf, sizeof(buf), "%.*s", utf8_embody(str, Screen_cols - 2), str);
+   len = utf8_delta(buf);
 #ifdef PRETENDNOCAP
    PUTT("\n%s%s%.*s %s%s%s"
 #else
@@ -754,14 +827,15 @@ static int show_pmt (const char *str) {
 #endif
       , tg2(0, Msg_row)
       , Curwin->capclr_pmt
-      , Screen_cols - 2
-      , str
+      , (Screen_cols - 2) + len
+      , buf
       , Cap_curs_huge
       , Caps_off
       , Cap_clr_eol);
    fflush(stdout);
+   len = strlen(buf) - len;
    // +1 for the space we added or -1 for the cursor...
-   return ((rc = (int)strlen(str)+1) < Screen_cols) ? rc : Screen_cols-1;
+   return (len + 1 < Screen_cols) ? len + 1 : Screen_cols - 1;
 } // end: show_pmt
 
 
@@ -840,6 +914,7 @@ static void show_special (int interact, const char *glob) {
                   , Curwin->captab[ch], room, sub_beg, Caps_off);
                rp = scat(rp, tmp);
                room -= (sub_end - sub_beg);
+               room += utf8_delta(sub_beg);
                sub_beg = (sub_end += 2);
                break;
             default:                   // nothin' special, just text
@@ -1906,7 +1981,7 @@ static void build_headers (void) {
 #endif
             if (EU_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
             Frames_libflags |= Fieldstab[f].lflg;
-            s = scat(s, justify_pad(N_col(f)
+            s = scat(s, utf8_justify(N_col(f)
                , VARcol(f) ? w->varcolsz : Fieldstab[f].width
                , CHKw(w, Fieldstab[f].align)));
 #ifdef USE_X_COLHDR
@@ -2116,21 +2191,27 @@ static void display_fields (int focus, int extend) {
       const char *e = (i == focus && extend) ? w->capclr_hdr : "";
       FLG_t f = FLDget(w, i);
       char sbuf[xSUFX+1];
+      int xcol, xfld;
 
-      // prep sacrificial suffix
+      // obtain translated deltas (if any) ...
+      xcol = utf8_delta(fmtmk("%.*s", utf8_embody(N_col(f), 7), N_col(f)));
+      xfld = utf8_delta(fmtmk("%.*s", utf8_embody(N_fld(f), smax), N_fld(f)));
+
+      // prep sacrificial suffix ...
       snprintf(sbuf, sizeof(sbuf), "= %s", N_fld(f));
 
-      PUTT("%s%c%s%s %s%-7.7s%s%s%s %-*.*s%s"
+      PUTT("%s%c%s%s %s%-*.*s%s%s%s %-*.*s%s"
          , tg2(x, y)
          , b ? '*' : ' '
          , b ? w->cap_bold : Cap_norm
          , e
          , i == focus ? w->capclr_hdr : ""
+         , 7 + xcol, 7 + xcol
          , N_col(f)
          , Cap_norm
          , b ? w->cap_bold : ""
          , e
-         , smax, smax
+         , smax + xfld, smax + xfld
          , sbuf
          , Cap_norm);
    }
