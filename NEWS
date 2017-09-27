@@ -21,6 +21,7 @@ procps-ng-NEXT
   * top: delay interval accepts non-locale radix point     Redhat #1182248
   * top: address a wishlist man page NLS suggestion        Debian #865689
   * top: fix potential distortion in 'Mem' graph display   issue #64
+  * top: provide proper multi-byte string handling         issue #68
   * watch: define HOST_NAME_MAX where not defined          Debian #830734
   * vmstat: Fix alignment for disk partition format        issue #69
 
