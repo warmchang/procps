@@ -4434,7 +4434,7 @@ static void keys_global (int ch) {
          else {
             int val,
                 def = w->ppt[w->begtask]->tid,
-                pid = get_int(fmtmk(N_txt(GET_pid2nice_fmt), def));
+                pid = get_int(fmtmk(N_fmt(GET_pid2nice_fmt), def));
             if (pid > GET_NUM_ESC) {
                if (pid == GET_NUM_NOT) pid = def;
                val = get_int(fmtmk(N_fmt(GET_nice_num_fmt), pid));
