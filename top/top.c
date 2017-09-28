@@ -549,6 +549,26 @@ static const char *utf8_justify (const char *str, int width, int justr) {
    snprintf(buf, sizeof(buf), justr ? r_fmt : l_fmt, width, width, str, COLPADSTR);
    return buf;
 } // end: utf8_justify
+
+
+        /*
+         * Returns a physical or logical column number given a
+         * multi-byte string and a target column value */
+static int utf8_proper_col (const char *str, int col, int tophysical) {
+    const unsigned char *p = (const unsigned char *)str;
+    int clen, tlen = 0, cnum = 0;
+
+    while (*p) {
+        // -1 represents a decoding error, don't encourage repositioning ...
+        if (0 > (clen = UTF8_tab[*p])) return col;
+        if (tophysical && cnum + 1 > col) break;
+        p += clen;
+        tlen += clen;
+        if (!tophysical && tlen > col) break;
+        ++cnum;
+    }
+    return tophysical ? tlen : cnum;
+} // end: utf8_proper_col
 
 /*######  Misc Color/Display support  ####################################*/
 
@@ -2392,6 +2412,7 @@ static struct I_struc Inspect;
 
 static char   **Insp_p;           // pointers to each line start
 static int      Insp_nl;          // total lines, total Insp_p entries
+static int      Insp_utf8;        // treat Insp_buf as translatable, else raw
 static char    *Insp_buf;         // the results from insp_do_file/pipe
 static size_t   Insp_bufsz;       // allocated size of Insp_buf
 static size_t   Insp_bufrd;       // bytes actually in Insp_buf
@@ -2399,9 +2420,11 @@ static struct I_ent *Insp_sel;    // currently selected Inspect entry
 
         // Our 'make status line' macro
 #define INSP_MKSL(big,txt) { int _sz = big ? Screen_cols : 80; \
-   putp(tg2(0, (Msg_row = 3))); \
-   PUTT("%s%.*s", Curwin->capclr_hdr, Screen_cols -1 \
-      , fmtmk("%-*.*s%s", _sz, _sz, txt, Cap_clr_eol)); \
+   const char *_p; \
+   _sz += utf8_delta(txt); \
+   _p = fmtmk("%-*.*s", _sz, _sz, txt); \
+   PUTT("%s%s%.*s%s", tg2(0, (Msg_row = 3)), Curwin->capclr_hdr \
+      , utf8_embody(_p, Screen_cols), _p, Cap_clr_eol); \
    putp(Caps_off); fflush(stdout); }
 
         // Our 'row length' macro, equivalent to a strlen() call
@@ -2505,7 +2528,7 @@ static void insp_do_pipe (char *fmts, int pid) {
         /*
          * This guy is a *Helper* function serving the following two masters:
          *   insp_find_str() - find the next Insp_sel->fstr match
-         *   insp_make_row() - highlight any Insp_sel->fstr matches in-view
+         *   insp_mkrow_...  - highlight any Insp_sel->fstr matches in-view
          * If Insp_sel->fstr is found in the designated row, he returns the
          * offset from the start of the row, otherwise he returns a huge
          * integer so traditional fencepost usage can be employed. */
@@ -2588,7 +2611,7 @@ static void insp_find_str (int ch, int *col, int *row) {
          * Those will be highlighted with the current windows's capclr_msg,
          * while visible search matches display with capclr_hdr for emphasis.
          * ( we hide ugly plumbing in macros to concentrate on the algorithm ) */
-static inline void insp_make_row (int col, int row) {
+static void insp_mkrow_raw (int col, int row) {
  #define maxSZ ( Screen_cols - (to + 1) )
  #define capNO { if (hicap) { putp(Caps_off); hicap = 0; } }
  #define mkFND { PUTT("%s%.*s%s", Curwin->capclr_hdr, maxSZ, Insp_sel->fstr, Caps_off); \
@@ -2637,7 +2660,77 @@ static inline void insp_make_row (int col, int row) {
  #undef mkCTL
  #undef mkUNP
  #undef mkSTD
-} // end: insp_make_row
+} // end: insp_mkrow_raw
+
+
+        /*
+         * This guy is a *Helper* function responsible for positioning a
+         * single row in the current 'X axis' within a multi-byte string
+         * then displaying the results. Along the way he ensures control
+         * characters will then be displayed in two positions like '^A'.
+         * ( assuming they can even get past those 'gettext' utilities ) */
+static void insp_mkrow_utf8 (int col, int row) {
+ #define maxSZ ( Screen_cols - (to + 1) )
+ #define mkFND { PUTT("%s%.*s%s", Curwin->capclr_hdr, maxSZ, Insp_sel->fstr, Caps_off); \
+    fr += Insp_sel->flen; to += Insp_sel->flen; }
+#ifndef INSP_JUSTNOT
+ #define mkCTL { int x = maxSZ; const char *p = fmtmk("^%c", uch + '@'); \
+    PUTT("%s%.*s%s", Curwin->capclr_msg, x, p, Caps_off); to += 2; }
+#else
+ #define mkCTL { if ((to += 2) <= Screen_cols) \
+    PUTT("%s^%c%s", Curwin->capclr_msg, uch + '@', Caps_off); }
+#endif
+ #define doPUT(buf) if (++to <= Screen_cols) putp(buf);
+   static char buf1[2], buf2[3], buf3[4], buf4[5];
+   char tline[BIGBUFSIZ];
+   int fr, to, ofs;
+
+   col = utf8_proper_col(Insp_p[row], col, 1);
+   if (col < INSP_RLEN(row))
+      memcpy(tline, Insp_p[row] + col, sizeof(tline));
+   else tline[0] = '\n';
+
+   for (fr = 0, to = 0, ofs = 0; to < Screen_cols -1; ) {
+      if (!ofs)
+         ofs = insp_find_ofs(col + fr, row);
+      if (col + fr < ofs) {
+         unsigned char uch = tline[fr++];
+         switch (UTF8_tab[(int)uch]) {
+            case 1:
+               if (uch == '\n')   break;
+               else if (uch < 32) mkCTL
+               else { buf1[0] = uch; doPUT(buf1) }
+               break;
+            case 2:
+               buf2[0] = uch; buf2[1] = tline[fr++];
+               doPUT(buf2)
+               break;
+            case 3:
+               buf3[0] = uch; buf3[1] = tline[fr++]; buf3[2] = tline[fr++];
+               doPUT(buf3)
+               break;
+            case 4:
+               buf4[0] = uch; buf4[1] = tline[fr++]; buf4[2] = tline[fr++]; buf4[3] = tline[fr++];
+               doPUT(buf4)
+               break;
+            default:
+               buf1[0] = ' ';
+               doPUT(buf1)
+               break;
+         }
+      } else {
+         mkFND
+         ofs = 0;
+      }
+      if (col + fr >= INSP_RLEN(row)) break;
+   }
+   putp(Cap_clr_eol);
+
+ #undef maxSZ
+ #undef mkFND
+ #undef mkCTL
+ #undef doPUT
+} // end: insp_mkrow_utf8
 
 
         /*
@@ -2648,6 +2741,7 @@ static inline void insp_make_row (int col, int row) {
          * otherwise being jumpy). */
 static inline void insp_show_pgs (int col, int row, int max) {
    char buf[SMLBUFSIZ];
+   void (*mkrow_func)(int, int);
    int r = snprintf(buf, sizeof(buf), "%d", Insp_nl);
    int c = snprintf(buf, sizeof(buf), "%d", col +Screen_cols);
    int l = row +1, ls = Insp_nl;;
@@ -2661,9 +2755,11 @@ static inline void insp_show_pgs (int col, int row, int max) {
       , (unsigned long)Insp_bufrd);
    INSP_MKSL(0, buf);
 
+   mkrow_func = Insp_utf8 ? insp_mkrow_utf8 : insp_mkrow_raw;
+
    for ( ; max && row < Insp_nl; row++) {
       putp("\n");
-      insp_make_row(col, row);
+      mkrow_func(col, row);
       --max;
    }
 
@@ -2757,7 +2853,13 @@ signify_that:
          case '&':
          case '/':
          case 'n':
-            insp_find_str(key, &curcol, &curlin);
+            if (!Insp_utf8)
+               insp_find_str(key, &curcol, &curlin);
+            else {
+               int tmpcol = utf8_proper_col(Insp_p[curlin], curcol, 1);
+               insp_find_str(key, &tmpcol, &curlin);
+               curcol = utf8_proper_col(Insp_p[curlin], tmpcol, 0);
+            }
             // must re-hide cursor in case a prompt for a string makes it huge
             putp((Cursor_state = Cap_curs_hide));
             break;
@@ -2843,6 +2945,7 @@ signify_that:
             INSP_BUSY;
             Insp_sel = &Inspect.tab[sel];
             Inspect.tab[sel].func(Inspect.tab[sel].fmts, pid);
+            Insp_utf8 = utf8_delta(Insp_buf);
             key = insp_view_choice(p);
             free(Insp_buf);
             free(Insp_p);

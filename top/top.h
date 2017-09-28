@@ -552,6 +552,7 @@ typedef struct WIN_t {
 //atic int           utf8_delta (const char *str);
 //atic int           utf8_embody (const char *str, int width);
 //atic const char   *utf8_justify (const char *str, int width, int justr);
+//atic int           utf8_proper_col (const char *str, int col, int tophysical);
 /*------  Misc Color/Display support  ------------------------------------*/
 //atic void          capsmk (WIN_t *q);
 //atic void          show_msg (const char *str);
@@ -606,7 +607,8 @@ typedef struct WIN_t {
 //atic void          insp_do_pipe (char *fmts, int pid);
 //atic inline int    insp_find_ofs (int col, int row);
 //atic void          insp_find_str (int ch, int *col, int *row);
-//atic inline void   insp_make_row (int col, int row);
+//atic void          insp_mkrow_raw (int col, int row);
+//atic void          insp_mkrow_utf8 (int col, int row);
 //atic void          insp_show_pgs (int col, int row, int max);
 //atic int           insp_view_choice (struct pids_stack *obj);
 //atic void          inspection_utility (int pid);
