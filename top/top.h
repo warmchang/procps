@@ -547,6 +547,11 @@ typedef struct WIN_t {
 //atic void          sig_endpgm (int dont_care_sig);
 //atic void          sig_paused (int dont_care_sig);
 //atic void          sig_resize (int dont_care_sig);
+/*------  Special UTF-8 Multi-Byte support  ------------------------------*/
+/*atic char          UTF8_tab[] = { ... }                                 */
+//atic int           utf8_delta (const char *str);
+//atic int           utf8_embody (const char *str, int width);
+//atic const char   *utf8_justify (const char *str, int width, int justr);
 /*------  Misc Color/Display support  ------------------------------------*/
 //atic void          capsmk (WIN_t *q);
 //atic void          show_msg (const char *str);
