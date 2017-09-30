@@ -1630,6 +1630,25 @@ static inline const char *make_str (const char *str, int width, int justr, int c
 
 
         /*
+         * Make and then justify a potentially multi-byte character string,
+         * and include a visual clue should tuncation be necessary. */
+static inline const char *make_str_utf8 (const char *str, int width, int justr, int col) {
+   static char buf[SCREENMAX];
+   int delta = utf8_delta(str);
+
+   if (width >= (int)strlen(str) - delta)
+      snprintf(buf, sizeof(buf), "%s", str);
+   else {
+      snprintf(buf, sizeof(buf), "%.*s", utf8_embody(str, width - 1), str);
+      delta = utf8_delta(buf);
+      buf[width + delta - 1] = COLPLUSCH;
+      AUTOX_COL(col);
+   }
+   return justify_pad(buf, width + delta, justr);
+} // end: make_str_utf8
+
+
+        /*
          * Do some scaling then justify stuff.
          * We'll interpret 'num' as a kibibytes quantity and try to
          * format it to reach 'target' while also fitting 'width'. */
@@ -5495,8 +5514,13 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
  #define makeVAR(v)  { const char *pv = v; \
     if (!q->varcolbeg) cp = make_str(pv, q->varcolsz, Js, AUTOX_NO); \
     else cp = make_str(q->varcolbeg < (int)strlen(pv) ? pv + q->varcolbeg : "", q->varcolsz, Js, AUTOX_NO); }
+ #define varUTF8(v)  { const char *pv = v; \
+    if (!q->varcolbeg) cp = make_str_utf8(pv, q->varcolsz, Js, AUTOX_NO); \
+    else cp = make_str_utf8((q->varcolbeg < ((int)strlen(pv) - utf8_delta(pv))) \
+    ? pv + utf8_embody(pv, q->varcolbeg) : "", q->varcolsz, Js, AUTOX_NO); }
 #else
  #define makeVAR(v) cp = make_str(v, q->varcolsz, Js, AUTOX_NO)
+ #define varUTF8(v) cp = make_str_utf8(v, q->varcolsz, Js, AUTOX_NO)
 #endif
  #define pages2K(n)  (unsigned long)( (n) << Pg2K_shft )
    static char rbuf[ROWMINSIZ];
@@ -5581,7 +5605,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = make_num(p->egid, W, Jn, EU_GID, 0);
             break;
          case EU_GRP:
-            cp = make_str(p->egroup, W, Js, EU_GRP);
+            cp = make_str_utf8(p->egroup, W, Js, EU_GRP);
             break;
          case EU_LXC:
             cp = make_str(p->lxcname, W, Js, EU_LXC);
@@ -5645,7 +5669,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             makeVAR(p->supgid);
             break;
          case EU_SGN:
-            makeVAR(p->supgrp);
+            varUTF8(p->supgrp);
             break;
          case EU_SHR:
             cp = scale_mem(S, pages2K(p->share), W, Jn);
@@ -5685,13 +5709,13 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = make_num(p->euid, W, Jn, EU_UED, 0);
             break;
          case EU_UEN:
-            cp = make_str(p->euser, W, Js, EU_UEN);
+            cp = make_str_utf8(p->euser, W, Js, EU_UEN);
             break;
          case EU_URD:
             cp = make_num(p->ruid, W, Jn, EU_URD, 0);
             break;
          case EU_URN:
-            cp = make_str(p->ruser, W, Js, EU_URN);
+            cp = make_str_utf8(p->ruser, W, Js, EU_URN);
             break;
          case EU_USD:
             cp = make_num(p->suid, W, Jn, EU_USD, 0);
@@ -5700,7 +5724,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
             cp = scale_mem(S, (p->vm_swap + p->vm_rss), W, Jn);
             break;
          case EU_USN:
-            cp = make_str(p->suser, W, Js, EU_USN);
+            cp = make_str_utf8(p->suser, W, Js, EU_USN);
             break;
          case EU_VRT:
             cp = scale_mem(S, pages2K(p->size), W, Jn);
@@ -5749,6 +5773,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
    }
    return rbuf;
  #undef makeVAR
+ #undef varUTF8
  #undef pages2K
 } // end: task_show
 
