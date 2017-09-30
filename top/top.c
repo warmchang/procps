@@ -643,7 +643,7 @@ static void sig_resize (int dont_care_sig) {
 
 /*######  Special UTF-8 Multi-Byte support  ##############################*/
 
-        /* Support for NLS translated 'string' length */
+        /* Support for NLS translated multi-byte strings */
 static char UTF8_tab[] = {
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x00 - 0x0F
    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x10 - 0x1F
@@ -682,7 +682,7 @@ static int utf8_delta (const char *str) {
 
 
         /*
-         * Determine a logical end within a potential multi-byte string
+         * Determine a physical end within a potential multi-byte string
          * where maximum printable chars could be accommodated in width */
 static int utf8_embody (const char *str, int width) {
     const unsigned char *p = (const unsigned char *)str;
@@ -691,9 +691,8 @@ static int utf8_embody (const char *str, int width) {
     while (*p) {
         // -1 represents a decoding error, pretend it's untranslated ...
         if (0 > (clen = UTF8_tab[*p])) return width;
-        if (cnum + 1 >= width) break;
         p += clen;
-        ++cnum;
+        if (++cnum >= width) break;
     }
     return (int)((const char *)p - str);
 } // end: utf8_embody
@@ -705,9 +704,11 @@ static int utf8_embody (const char *str, int width) {
 static const char *utf8_justify (const char *str, int width, int justr) {
    static char l_fmt[]  = "%-*.*s%s", r_fmt[] = "%*.*s%s";
    static char buf[SCREENMAX];
+   const char *p;
 
-   width += utf8_delta(str);
-   snprintf(buf, sizeof(buf), justr ? r_fmt : l_fmt, width, width, str, COLPADSTR);
+   p = fmtmk("%.*s", utf8_embody(str, width), str);
+   width += utf8_delta(p);
+   snprintf(buf, sizeof(buf), justr ? r_fmt : l_fmt, width, width, p, COLPADSTR);
    return buf;
 } // end: utf8_justify
 
