@@ -1443,6 +1443,25 @@ static inline const char *make_str (const char *str, int width, int justr, int c
 
 
         /*
+         * Make and then justify a potentially multi-byte character string,
+         * and include a visual clue should tuncation be necessary. */
+static inline const char *make_str_utf8 (const char *str, int width, int justr, int col) {
+   static char buf[SCREENMAX];
+   int delta = utf8_delta(str);
+
+   if (width >= (int)strlen(str) - delta)
+      snprintf(buf, sizeof(buf), "%s", str);
+   else {
+      snprintf(buf, sizeof(buf), "%.*s", utf8_embody(str, width - 1), str);
+      delta = utf8_delta(buf);
+      buf[width + delta - 1] = COLPLUSCH;
+      AUTOX_COL(col);
+   }
+   return justify_pad(buf, width + delta, justr);
+} // end: make_str_utf8
+
+
+        /*
          * Do some scaling then justify stuff.
          * We'll interpret 'num' as a kibibytes quantity and try to
          * format it to reach 'target' while also fitting 'width'. */
@@ -5053,8 +5072,13 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
 #ifndef SCROLLVAR_NO
  #define makeVAR(S)  { if (!q->varcolbeg) cp = make_str(S, q->varcolsz, Js, AUTOX_NO); \
     else cp = make_str(q->varcolbeg < (int)strlen(S) ? S + q->varcolbeg : "", q->varcolsz, Js, AUTOX_NO); }
+ #define varUTF8(S)  { const char *pv = S; \
+    if (!q->varcolbeg) cp = make_str_utf8(pv, q->varcolsz, Js, AUTOX_NO); \
+    else cp = make_str_utf8((q->varcolbeg < ((int)strlen(pv) - utf8_delta(pv))) \
+    ? pv + utf8_embody(pv, q->varcolbeg) : "", q->varcolsz, Js, AUTOX_NO); }
 #else
  #define makeVAR(S) cp = make_str(S, q->varcolsz, Js, AUTOX_NO)
+ #define varUTF8(S) cp = make_str_utf8(S, q->varcolsz, Js, AUTOX_NO)
 #endif
    static char rbuf[ROWMINSIZ];
    char *rp;
@@ -5192,22 +5216,28 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          }
             break;
    /* str, make_str (all AUTOX yes) */
-         case EU_GRP:
          case EU_LXC:
          case EU_TTY:
+         case EU_WCH:
+            cp = make_str(rSv(i, str), W, Js, i);
+            break;
+   /* str, make_str_utf8 (all AUTOX yes) */
+         case EU_GRP:
          case EU_UEN:
          case EU_URN:
          case EU_USN:
-         case EU_WCH:
-            cp = make_str(rSv(i, str), W, Js, i);
+            cp = make_str_utf8(rSv(i, str), W, Js, i);
             break;
    /* str, make_str with varialbe width */
          case EU_CGN:
          case EU_CGR:
          case EU_ENV:
          case EU_SGD:
-         case EU_SGN:
             makeVAR(rSv(i, str));
+            break;
+   /* str, make_str_utf8 with varialbe width */
+         case EU_SGN:
+            varUTF8(rSv(i, str));
             break;
    /* str, make_str with varialbe width + additional decoration */
          case EU_CMD:
@@ -5254,6 +5284,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
    return rbuf;
  #undef rSv
  #undef makeVAR
+ #undef varUTF8
 } // end: task_show
 
 
