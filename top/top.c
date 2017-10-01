@@ -2700,6 +2700,7 @@ static void insp_mkrow_utf8 (int col, int row) {
  #define mkCTL { if ((to += 2) <= Screen_cols) \
     PUTT("%s^%c%s", Curwin->capclr_msg, uch + '@', Caps_off); }
 #endif
+ #define mkNUL { buf1[0] = ' '; doPUT(buf1) }
  #define doPUT(buf) if (++to <= Screen_cols) putp(buf);
    static char buf1[2], buf2[3], buf3[4], buf4[5];
    char tline[BIGBUFSIZ];
@@ -2719,6 +2720,7 @@ static void insp_mkrow_utf8 (int col, int row) {
             case 1:
                if (uch == '\n')   break;
                else if (uch < 32) mkCTL
+               else if (uch == 127) mkNUL
                else { buf1[0] = uch; doPUT(buf1) }
                break;
             case 2:
@@ -2734,8 +2736,7 @@ static void insp_mkrow_utf8 (int col, int row) {
                doPUT(buf4)
                break;
             default:
-               buf1[0] = ' ';
-               doPUT(buf1)
+               mkNUL
                break;
          }
       } else {
@@ -2749,6 +2750,7 @@ static void insp_mkrow_utf8 (int col, int row) {
  #undef maxSZ
  #undef mkFND
  #undef mkCTL
+ #undef mkNUL
  #undef doPUT
 } // end: insp_mkrow_utf8
 
