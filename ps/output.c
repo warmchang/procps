@@ -1022,10 +1022,13 @@ static int do_pr_name(char *restrict const outbuf, const char *restrict const na
     if(len <= (int)max_rightward)
       return len;  /* returns number of cells */
 
-    len = max_rightward-1;
-    outbuf[len++] = '+';
-    outbuf[len] = 0;
-    return len;
+    // only use '+' when not on a multi-byte char, else show uid
+    if ((unsigned)outbuf[max_rightward-1] < 127) {
+      len = max_rightward-1;
+      outbuf[len++] = '+';
+      outbuf[len] = 0;
+      return len;
+    }
   }
   return snprintf(outbuf, COLWID, "%u", u);
 }
