@@ -114,10 +114,21 @@ static void build_two_nlstabs (void) {
    .     1) a field name/column header - mostly upper case
    .     2) the related description    - both upper and lower case
    .
-   .  To avoid truncation at runtime, each column header is noted with
-   .  its maximum size and the following description must not exceed
-   .  20 characters.  Fewer characters are ok.
+   .  To avoid truncation on the main top display, each column header
+   .  is noted with its maximum size, while a few are 'variable' width.
+   .  Names for the latter should probably be 10 or fewer characters.
    .
+   .  Those fields shown with a '+' are also eligible for user resizing
+   .  using the 'X' command. That means the default width might produce
+   .  truncation but need not if widened (see the man page 'X' command).
+   .
+   .  All headers are subject to a maximum of 7 on the Fields Management
+   .  screen where truncation is entirely acceptable.
+   .
+   .  The associated descriptions are always limited to 20 characters,
+   .  and are used only on the Fields Management screen.
+   .
+   .  In all cases, fewer characters are just fine.
    . */
 
 /* Translation Hint: maximum 'PID' = 5 */
@@ -126,34 +137,34 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'PPID' = 5 */
    Head_nlstab[EU_PPD] = _("PPID");
    Desc_nlstab[EU_PPD] = _("Parent Process pid");
-/* Translation Hint: maximum 'UID' = 5 */
+/* Translation Hint: maximum 'UID' = 5 + */
    Head_nlstab[EU_UED] = _("UID");
    Desc_nlstab[EU_UED] = _("Effective User Id");
-/* Translation Hint: maximum 'USER' = 7 */
+/* Translation Hint: maximum 'USER' = 8 + */
    Head_nlstab[EU_UEN] = _("USER");
    Desc_nlstab[EU_UEN] = _("Effective User Name");
-/* Translation Hint: maximum 'RUID' = 5 */
+/* Translation Hint: maximum 'RUID' = 5 + */
    Head_nlstab[EU_URD] = _("RUID");
    Desc_nlstab[EU_URD] = _("Real User Id");
-/* Translation Hint: maximum 'RUSER' = 7 */
+/* Translation Hint: maximum 'RUSER' = 8 + */
    Head_nlstab[EU_URN] = _("RUSER");
    Desc_nlstab[EU_URN] = _("Real User Name");
-/* Translation Hint: maximum 'SUID' = 5 */
+/* Translation Hint: maximum 'SUID' = 5 + */
    Head_nlstab[EU_USD] = _("SUID");
    Desc_nlstab[EU_USD] = _("Saved User Id");
-/* Translation Hint: maximum 'SUSER' = 7 */
+/* Translation Hint: maximum 'SUSER' = 8 + */
    Head_nlstab[EU_USN] = _("SUSER");
    Desc_nlstab[EU_USN] = _("Saved User Name");
-/* Translation Hint: maximum 'GID' = 5 */
+/* Translation Hint: maximum 'GID' = 5 + */
    Head_nlstab[EU_GID] = _("GID");
    Desc_nlstab[EU_GID] = _("Group Id");
-/* Translation Hint: maximum 'GROUP' = 7 */
+/* Translation Hint: maximum 'GROUP' = 8 + */
    Head_nlstab[EU_GRP] = _("GROUP");
    Desc_nlstab[EU_GRP] = _("Group Name");
 /* Translation Hint: maximum 'PGRP' = 5 */
    Head_nlstab[EU_PGD] = _("PGRP");
    Desc_nlstab[EU_PGD] = _("Process Group Id");
-/* Translation Hint: maximum 'TTY' = 7 */
+/* Translation Hint: maximum 'TTY' = 8 + */
    Head_nlstab[EU_TTY] = _("TTY");
    Desc_nlstab[EU_TTY] = _("Controlling Tty");
 /* Translation Hint: maximum 'TPGID' = 5 */
@@ -180,28 +191,28 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum '' = 6 */
    Head_nlstab[EU_TME] = _("TIME");
    Desc_nlstab[EU_TME] = _("CPU Time");
-/* Translation Hint: maximum 'TIME+' = 7 */
+/* Translation Hint: maximum 'TIME+' = 9 */
    Head_nlstab[EU_TM2] = _("TIME+");
    Desc_nlstab[EU_TM2] = _("CPU Time, hundredths");
 /* Translation Hint: maximum '%MEM' = 4 */
    Head_nlstab[EU_MEM] = _("%MEM");
    Desc_nlstab[EU_MEM] = _("Memory Usage (RES)");
-/* Translation Hint: maximum 'VIRT' = 5 */
+/* Translation Hint: maximum 'VIRT' = 7 */
    Head_nlstab[EU_VRT] = _("VIRT");
    Desc_nlstab[EU_VRT] = _("Virtual Image (KiB)");
-/* Translation Hint: maximum 'SWAP' = 4 */
+/* Translation Hint: maximum 'SWAP' = 6 */
    Head_nlstab[EU_SWP] = _("SWAP");
    Desc_nlstab[EU_SWP] = _("Swapped Size (KiB)");
-/* Translation Hint: maximum 'RES' = 4 */
+/* Translation Hint: maximum 'RES' = 6 */
    Head_nlstab[EU_RES] = _("RES");
    Desc_nlstab[EU_RES] = _("Resident Size (KiB)");
 /* Translation Hint: maximum 'CODE' = 4 */
    Head_nlstab[EU_COD] = _("CODE");
    Desc_nlstab[EU_COD] = _("Code Size (KiB)");
-/* Translation Hint: maximum 'DATA' = 4 */
+/* Translation Hint: maximum 'DATA' = 7 */
    Head_nlstab[EU_DAT] = _("DATA");
    Desc_nlstab[EU_DAT] = _("Data+Stack (KiB)");
-/* Translation Hint: maximum 'SHR' = 4 */
+/* Translation Hint: maximum 'SHR' = 6 */
    Head_nlstab[EU_SHR] = _("SHR");
    Desc_nlstab[EU_SHR] = _("Shared Memory (KiB)");
 /* Translation Hint: maximum 'nMaj' = 4 */
@@ -216,22 +227,22 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'S' = 1 */
    Head_nlstab[EU_STA] = _("S");
    Desc_nlstab[EU_STA] = _("Process Status");
-/* Translation Hint: maximum 'COMMAND' = 7 */
+/* Translation Hint: maximum 'COMMAND' = variable */
    Head_nlstab[EU_CMD] = _("COMMAND");
    Desc_nlstab[EU_CMD] = _("Command Name/Line");
-/* Translation Hint: maximum 'WCHAN' = 7 */
+/* Translation Hint: maximum 'WCHAN' = 10 + */
    Head_nlstab[EU_WCH] = _("WCHAN");
    Desc_nlstab[EU_WCH] = _("Sleeping in Function");
-/* Translation Hint: maximum 'Flags' = 7 */
+/* Translation Hint: maximum 'Flags' = 8 */
    Head_nlstab[EU_FLG] = _("Flags");
    Desc_nlstab[EU_FLG] = _("Task Flags <sched.h>");
-/* Translation Hint: maximum 'CGROUPS' = 7 */
+/* Translation Hint: maximum 'CGROUPS' = variable */
    Head_nlstab[EU_CGR] = _("CGROUPS");
    Desc_nlstab[EU_CGR] = _("Control Groups");
-/* Translation Hint: maximum 'SUPGIDS' = 7 */
+/* Translation Hint: maximum 'SUPGIDS' = variable */
    Head_nlstab[EU_SGD] = _("SUPGIDS");
    Desc_nlstab[EU_SGD] = _("Supp Groups IDs");
-/* Translation Hint: maximum 'SUPGRPS' = 7 */
+/* Translation Hint: maximum 'SUPGRPS' = variable */
    Head_nlstab[EU_SGN] = _("SUPGRPS");
    Desc_nlstab[EU_SGN] = _("Supp Groups Names");
 /* Translation Hint: maximum 'TGID' = 5 */
@@ -243,7 +254,7 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'OOMs' = 4 */
    Head_nlstab[EU_OOM] = _("OOMs");
    Desc_nlstab[EU_OOM] = _("OOMEM Score current");
-/* Translation Hint: maximum 'ENVIRON' = 7 */
+/* Translation Hint: maximum 'ENVIRON' = variable */
    Head_nlstab[EU_ENV] = _("ENVIRON");
 /* Translation Hint: the abbreviation 'vars' below is shorthand for
                      'variables' */
@@ -254,43 +265,43 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'vMn' = 3 */
    Head_nlstab[EU_FV2] = _("vMn");
    Desc_nlstab[EU_FV2] = _("Minor Faults delta");
-/* Translation Hint: maximum 'USED' = 4 */
+/* Translation Hint: maximum 'USED' = 6 */
    Head_nlstab[EU_USE] = _("USED");
    Desc_nlstab[EU_USE] = _("Res+Swap Size (KiB)");
-/* Translation Hint: maximum 'nsIPC' = 7 */
+/* Translation Hint: maximum 'nsIPC' = 10 + */
    Head_nlstab[EU_NS1] = _("nsIPC");
    Desc_nlstab[EU_NS1] = _("IPC namespace Inode");
-/* Translation Hint: maximum 'nsMNT' = 7 */
+/* Translation Hint: maximum 'nsMNT' = 10 + */
    Head_nlstab[EU_NS2] = _("nsMNT");
    Desc_nlstab[EU_NS2] = _("MNT namespace Inode");
-/* Translation Hint: maximum 'nsNET' = 7 */
+/* Translation Hint: maximum 'nsNET' = 10 + */
    Head_nlstab[EU_NS3] = _("nsNET");
    Desc_nlstab[EU_NS3] = _("NET namespace Inode");
-/* Translation Hint: maximum 'nsPID' = 7 */
+/* Translation Hint: maximum 'nsPID' = 10 + */
    Head_nlstab[EU_NS4] = _("nsPID");
    Desc_nlstab[EU_NS4] = _("PID namespace Inode");
-/* Translation Hint: maximum 'nsUSER' = 7 */
+/* Translation Hint: maximum 'nsUSER' = 10 + */
    Head_nlstab[EU_NS5] = _("nsUSER");
    Desc_nlstab[EU_NS5] = _("USER namespace Inode");
-/* Translation Hint: maximum 'nsUTS' = 7 */
+/* Translation Hint: maximum 'nsUTS' = 10 + */
    Head_nlstab[EU_NS6] = _("nsUTS");
    Desc_nlstab[EU_NS6] = _("UTS namespace Inode");
-/* Translation Hint: maximum 'LXC' = 7 */
+/* Translation Hint: maximum 'LXC' = 8 + */
    Head_nlstab[EU_LXC] = _("LXC");
    Desc_nlstab[EU_LXC] = _("LXC container name");
-/* Translation Hint: maximum 'RSan' = 4 */
+/* Translation Hint: maximum 'RSan' = 6 */
    Head_nlstab[EU_RZA] = _("RSan");
    Desc_nlstab[EU_RZA] = _("RES Anonymous (KiB)");
-/* Translation Hint: maximum 'RSfd' = 4 */
+/* Translation Hint: maximum 'RSfd' = 6 */
    Head_nlstab[EU_RZF] = _("RSfd");
    Desc_nlstab[EU_RZF] = _("RES File-based (KiB)");
-/* Translation Hint: maximum 'RSlk' = 4 */
+/* Translation Hint: maximum 'RSlk' = 6 */
    Head_nlstab[EU_RZL] = _("RSlk");
    Desc_nlstab[EU_RZL] = _("RES Locked (KiB)");
-/* Translation Hint: maximum 'RSsh' = 4 */
+/* Translation Hint: maximum 'RSsh' = 6 */
    Head_nlstab[EU_RZS] = _("RSsh");
    Desc_nlstab[EU_RZS] = _("RES Shared (KiB)");
-/* Translation Hint: maximum 'CGNAME' = 7 */
+/* Translation Hint: maximum 'CGNAME' = variable */
    Head_nlstab[EU_CGN] = _("CGNAME");
    Desc_nlstab[EU_CGN] = _("Control Group name");
 /* Translation Hint: maximum 'NU' = 2 */
