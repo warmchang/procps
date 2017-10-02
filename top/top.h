@@ -69,6 +69,9 @@
         /* For the impetus and NUMA/Node prototype design, thanks to:
               Lance Shelton <LShelton@fusionio.com> - April, 2013 */
 
+        /* For prompting & helping with top's utf-8 support, thanks to:
+              Göran Uddeborg <goeran@uddeborg.se> - September, 2017 */
+
    // pretend as if #define _GNU_SOURCE
 char *strcasestr(const char *haystack, const char *needle);
 

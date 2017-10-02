@@ -771,7 +771,7 @@ static void show_special (int interact, const char *glob) {
             case 5: case 6: case 7: case 8:
                *sub_end = '\0';
                snprintf(tmp, sizeof(tmp), "%s%.*s%s"
-                  , Curwin->captab[ch], room, sub_beg, Caps_off);
+                  , Curwin->captab[ch], utf8_embody(sub_beg, room), sub_beg, Caps_off);
                rp = scat(rp, tmp);
                room -= (sub_end - sub_beg);
                room += utf8_delta(sub_beg);
@@ -794,7 +794,7 @@ static void show_special (int interact, const char *glob) {
       it probably means caller wants to retain cursor position on this final
       line.  That, in turn, means we're interactive and so we'll just do our
       'fit-to-screen' thingy while also leaving room for the cursor... */
-   if (*glob) PUTT("%.*s", Screen_cols -1, glob);
+   if (*glob) PUTT("%.*s", utf8_embody(glob, Screen_cols - 1), glob);
 } // end: show_special
 
 

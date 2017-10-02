@@ -520,6 +520,17 @@ static void build_uniq_nlstab (void) {
    .  If you would like additional information regarding these strings,
    .  please see the prologue to the show_special function in the top.c
    .  source file.
+   .
+   .  Caution:
+   .    The next three items represent pages for interacting with a user.
+   .    In all cases, the last lines of text must be treated with care.
+   .
+   .    They must not end with a newline character so that at runtime the
+   .    cursor will remain on that final text line.
+   .
+   .    Also, the special sequences (tilde+number) must not appear on the
+   .    last line (the one without the newline). So please avoid any line
+   .    wraps that could place them there.
    . */
 
    Uniq_nlstab[KEYS_helpbas_fmt] = _(""
