@@ -5072,8 +5072,9 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
  // a tailored 'results stack value' extractor macro
  #define rSv(E,T)  PID_VAL(E, T, p)
 #ifndef SCROLLVAR_NO
- #define makeVAR(S)  { if (!q->varcolbeg) cp = make_str(S, q->varcolsz, Js, AUTOX_NO); \
-    else cp = make_str(q->varcolbeg < (int)strlen(S) ? S + q->varcolbeg : "", q->varcolsz, Js, AUTOX_NO); }
+ #define makeVAR(S)  { const char *pv = S; \
+    if (!q->varcolbeg) cp = make_str(pv, q->varcolsz, Js, AUTOX_NO); \
+    else cp = make_str(q->varcolbeg < (int)strlen(pv) ? pv + q->varcolbeg : "", q->varcolsz, Js, AUTOX_NO); }
  #define varUTF8(S)  { const char *pv = S; \
     if (!q->varcolbeg) cp = make_str_utf8(pv, q->varcolsz, Js, AUTOX_NO); \
     else cp = make_str_utf8((q->varcolbeg < ((int)strlen(pv) - utf8_delta(pv))) \
