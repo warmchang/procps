@@ -1465,7 +1465,7 @@ static inline const char *make_str_utf8 (const char *str, int width, int justr, 
          * Do some scaling then justify stuff.
          * We'll interpret 'num' as a kibibytes quantity and try to
          * format it to reach 'target' while also fitting 'width'. */
-static const char *scale_mem (int target, long num, int width, int justr) {
+static const char *scale_mem (int target, unsigned long num, int width, int justr) {
    //                               SK_Kb   SK_Mb      SK_Gb      SK_Tb      SK_Pb      SK_Eb
 #ifdef BOOST_MEMORY
    static const char *fmttab[] =  { "%.0f", "%#.1f%c", "%#.3f%c", "%#.3f%c", "%#.3f%c", NULL };
