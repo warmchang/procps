@@ -616,15 +616,24 @@ static void build_uniq_nlstab (void) {
    .     --> "   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~
    .     --> "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5
    .
+   .  Other translatable text
    .     --> "   available toggles: ~1B~2 =disable bold globa
    .     --> "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks
    .
-   .     --> "Select ~1target~2 as upper case letter:\n"
+   .     --> "1) Select ~1target~2 as upper case letter:\n"
    .     --> "   S~2 = Summary Data,~1  M~2 = Messages/Prompt
    .     --> "   H~2 = Column Heads,~1  T~2 = Task Informatio
-   .     --> "Select ~1color~2 as number:\n"
+   .     --> "2) Select ~1color~2 as number:\n"
    .     --> "   0~2 = black,~1  1~2 = red,    ~1  2~2 = gree
    .     --> "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan
+   . *   --> "\n"
+   .     --> "3) Then use these keys when finished:\n"
+   .     --> "   'q' to abort changes to window '~1%s~2'\n"
+   . **  --> "   'a' or 'w' to commit & change another, <Ente
+   .
+   .     Note:
+   . *      maybe sacrifice the entire line (with the "\n") ...
+   . **     ... so <Enter> text potion could be on its own line
    . */
    Uniq_nlstab[COLOR_custom_fmt] = _(""
       "Help for color mapping~2 - %s\n"
