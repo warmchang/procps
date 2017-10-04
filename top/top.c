@@ -1449,9 +1449,7 @@ static inline const char *make_str_utf8 (const char *str, int width, int justr, 
    static char buf[SCREENMAX];
    int delta = utf8_delta(str);
 
-   if (width >= (int)strlen(str) - delta)
-      snprintf(buf, sizeof(buf), "%s", str);
-   else {
+   if (width + delta <= snprintf(buf, sizeof(buf), "%s", str)) {
       snprintf(buf, sizeof(buf), "%.*s", utf8_embody(str, width - 1), str);
       delta = utf8_delta(buf);
       buf[width + delta - 1] = COLPLUSCH;
