@@ -562,10 +562,10 @@ static int utf8_proper_col (const char *str, int col, int tophysical) {
     while (*p) {
         // -1 represents a decoding error, don't encourage repositioning ...
         if (0 > (clen = UTF8_tab[*p])) return col;
-        if (tophysical && cnum + 1 > col) break;
+        if (cnum + 1 > col && tophysical) break;
         p += clen;
         tlen += clen;
-        if (!tophysical && tlen > col) break;
+        if (tlen > col && !tophysical) break;
         ++cnum;
     }
     return tophysical ? tlen : cnum;
