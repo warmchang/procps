@@ -328,7 +328,7 @@ static void build_norm_nlstab (void) {
 
    Norm_nlstab[EXIT_signals_fmt] = _(""
       "\tsignal %d (%s) was caught by %s, please\n"
-      "\tsee http://www.debian.org/Bugs/Reporting\n");
+      "\tsend bug reports to <procps@freelists.org>\n");
    Norm_nlstab[WRONG_switch_fmt] = _(""
       "inappropriate '%s'\n"
       "Usage:\n  %s%s");
