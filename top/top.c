@@ -706,11 +706,11 @@ static int utf8_embody (const char *str, int width) {
 static const char *utf8_justify (const char *str, int width, int justr) {
    static char l_fmt[]  = "%-*.*s%s", r_fmt[] = "%*.*s%s";
    static char buf[SCREENMAX];
-   const char *p;
+   char tmp[SCREENMAX];
 
-   p = fmtmk("%.*s", utf8_embody(str, width), str);
-   width += utf8_delta(p);
-   snprintf(buf, sizeof(buf), justr ? r_fmt : l_fmt, width, width, p, COLPADSTR);
+   snprintf(tmp, sizeof(tmp), "%.*s", utf8_embody(str, width), str);
+   width += utf8_delta(tmp);
+   snprintf(buf, sizeof(buf), justr ? r_fmt : l_fmt, width, width, tmp, COLPADSTR);
    return buf;
 } // end: utf8_justify
 
