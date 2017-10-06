@@ -507,16 +507,16 @@ static char UTF8_tab[] = {
          * Determine difference between total bytes versus printable
          * characters in that passed, potentially multi-byte, string */
 static int utf8_delta (const char *str) {
-    const unsigned char *p = (const unsigned char *)str;
-    int clen, cnum = 0;
+   const unsigned char *p = (const unsigned char *)str;
+   int clen, cnum = 0;
 
-    while (*p) {
-        // -1 represents a decoding error, pretend it's untranslated ...
-        if (0 > (clen = UTF8_tab[*p])) return 0;
-        p += clen;
-        ++cnum;
-    }
-    return (int)((const char *)p - str) - cnum;
+   while (*p) {
+      // -1 represents a decoding error, pretend it's untranslated ...
+      if (0 > (clen = UTF8_tab[*p])) return 0;
+      p += clen;
+      ++cnum;
+   }
+   return (int)((const char *)p - str) - cnum;
 } // end: utf8_delta
 
 
@@ -524,16 +524,18 @@ static int utf8_delta (const char *str) {
          * Determine a physical end within a potential multi-byte string
          * where maximum printable chars could be accommodated in width */
 static int utf8_embody (const char *str, int width) {
-    const unsigned char *p = (const unsigned char *)str;
-    int clen, cnum = 0;
+   const unsigned char *p = (const unsigned char *)str;
+   int clen, cnum = 0;
 
-    while (*p) {
-        // -1 represents a decoding error, pretend it's untranslated ...
-        if (0 > (clen = UTF8_tab[*p])) return width;
-        p += clen;
-        if (++cnum >= width) break;
-    }
-    return (int)((const char *)p - str);
+   if (width > 0) {
+      while (*p) {
+         // -1 represents a decoding error, pretend it's untranslated ...
+         if (0 > (clen = UTF8_tab[*p])) return width;
+         p += clen;
+         if (++cnum >= width) break;
+      }
+   }
+   return (int)((const char *)p - str);
 } // end: utf8_embody
 
 
@@ -556,19 +558,19 @@ static const char *utf8_justify (const char *str, int width, int justr) {
          * Returns a physical or logical column number given a
          * multi-byte string and a target column value */
 static int utf8_proper_col (const char *str, int col, int tophysical) {
-    const unsigned char *p = (const unsigned char *)str;
-    int clen, tlen = 0, cnum = 0;
+   const unsigned char *p = (const unsigned char *)str;
+   int clen, tlen = 0, cnum = 0;
 
-    while (*p) {
-        // -1 represents a decoding error, don't encourage repositioning ...
-        if (0 > (clen = UTF8_tab[*p])) return col;
-        if (cnum + 1 > col && tophysical) break;
-        p += clen;
-        tlen += clen;
-        if (tlen > col && !tophysical) break;
-        ++cnum;
-    }
-    return tophysical ? tlen : cnum;
+   while (*p) {
+      // -1 represents a decoding error, don't encourage repositioning ...
+      if (0 > (clen = UTF8_tab[*p])) return col;
+      if (cnum + 1 > col && tophysical) break;
+      p += clen;
+      tlen += clen;
+      if (tlen > col && !tophysical) break;
+      ++cnum;
+   }
+   return tophysical ? tlen : cnum;
 } // end: utf8_proper_col
 
 /*######  Misc Color/Display support  ####################################*/
