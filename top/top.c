@@ -3188,7 +3188,7 @@ static void configs_read (void) {
       p_home = ".";
    snprintf(Rc_name, sizeof(Rc_name), "%s/.%src", p_home, Myname);
 
-   if (access(Rc_name, F_OK)) {
+   if (!(fp = fopen(Rc_name, "r"))) {
       p = getenv("XDG_CONFIG_HOME");
       // ensure the path we get is absolute, fallback otherwise.
       if (!p || p[0] != '/') {
@@ -3198,9 +3198,9 @@ static void configs_read (void) {
       snprintf(Rc_name, sizeof(Rc_name), "%s/procps", p);
       (void)mkdir(Rc_name, 0700);
       snprintf(Rc_name, sizeof(Rc_name), "%s/procps/%src", p, Myname);
+      fp = fopen(Rc_name, "r");
    }
 
-   fp = fopen(Rc_name, "r");
    if (fp) {
       int tmp_whole, tmp_fract;
       if (fgets(fbuf, sizeof(fbuf), fp))       // ignore eyecatcher
