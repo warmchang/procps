@@ -2197,16 +2197,17 @@ static void display_fields (int focus, int extend) {
  #define mkERR { putp("\n"); putp(N_txt(XTRA_winsize_txt)); return; }
  #define mxCOL ( (Screen_cols / 11) > 0 ? (Screen_cols / 11) : 1 )
  #define yRSVD  4
- #define xSUFX  22
+ #define xEQUS  2                      // length of suffix beginning '= '
+ #define xSUFX  22                     // total suffix length, incl xEQUS
  #define xPRFX (10 + xadd)
  #define xTOTL (xPRFX + xSUFX)
+   static int col_sav, row_sav;
    WIN_t *w = Curwin;                  // avoid gcc bloat with a local copy
    int i;                              // utility int (a row, tot cols, ix)
    int smax;                           // printable width of xSUFX
    int xadd = 0;                       // spacing between data columns
    int cmax = Screen_cols;             // total data column width
    int rmax = Screen_rows - yRSVD;     // total useable rows
-   static int col_sav, row_sav;
 
    i = (EU_MAXPFLGS % mxCOL) ? 1 : 0;
    if (rmax < i + (EU_MAXPFLGS / mxCOL)) mkERR;
@@ -2230,15 +2231,15 @@ static void display_fields (int focus, int extend) {
       int b = FLDviz(w, i), x = (i / rmax) * cmax, y = (i % rmax) + yRSVD;
       const char *e = (i == focus && extend) ? w->capclr_hdr : "";
       FLG_t f = FLDget(w, i);
-      char sbuf[xSUFX+1];
+      char sbuf[xSUFX*4];                        // 4 = max multi-byte
       int xcol, xfld;
+
+      // prep sacrificial suffix (allowing for beginning '= ') ...
+      snprintf(sbuf, sizeof(sbuf), "= %.*s", utf8_embody(N_fld(f), smax - xEQUS), N_fld(f));
 
       // obtain translated deltas (if any) ...
       xcol = utf8_delta(fmtmk("%.*s", utf8_embody(N_col(f), 7), N_col(f)));
-      xfld = utf8_delta(fmtmk("%.*s", utf8_embody(N_fld(f), smax), N_fld(f)));
-
-      // prep sacrificial suffix ...
-      snprintf(sbuf, sizeof(sbuf), "= %s", N_fld(f));
+      xfld = utf8_delta(sbuf + xEQUS);           // ignore beginning '= '
 
       PUTT("%s%c%s%s %s%-*.*s%s%s%s %-*.*s%s"
          , tg2(x, y)
@@ -2260,6 +2261,7 @@ static void display_fields (int focus, int extend) {
  #undef mkERR
  #undef mxCOL
  #undef yRSVD
+ #undef xEQUS
  #undef xSUFX
  #undef xPRFX
  #undef xTOTL
