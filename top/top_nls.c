@@ -661,11 +661,19 @@ static void build_uniq_nlstab (void) {
       "   'q' to abort changes to window '~1%s~2'\n"
       "   'a' or 'w' to commit & change another, <Enter> to commit and end ");
 
+/* Translation Hint:
+   .  This Fields Management header should be 3 lines long so as
+   .  to allow 1 blank line before the fields & descriptions.
+   .  If absoultely necessary, 4 lines could be used (but never more).
+   . */
    Uniq_nlstab[FIELD_header_fmt] = _(""
       "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
       "   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n"
       "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!\n");
 
+/* Translation Hint:
+   .  The next 5 items must each be translated as a single line.
+   . */
    Uniq_nlstab[STATE_line_1_fmt] = _("%s:~3"
       " %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n");
 
@@ -681,10 +689,14 @@ static void build_uniq_nlstab (void) {
    Uniq_nlstab[STATE_lin2x7_fmt] = _("%%%s~3"
       "%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n");
 
+/* Translation Hint: this must be translated as 2 lines with words above & below aligned */
    Uniq_nlstab[MEMORY_lines_fmt] = _(""
       "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3\n"
       "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3\n");
 
+/* Translation Hint:
+   .  The next 2 headers for 'Inspection' must each be 3 lines or less
+   . */
    Uniq_nlstab[YINSP_hdsels_fmt] = _(""
       "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
       "Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to ~1end~5 !\n"
