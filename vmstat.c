@@ -528,7 +528,7 @@ static void diskpartition_format(const char *partition_name)
     struct diskstats_info *disk_stat;
     struct diskstats_stack *stack;
     struct diskstats_result *got;
-	const char format[] = "%21u  %16llu  %10u  %16llu\n";
+	const char format[] = "%21lu  %16lu  %10lu  %16lu\n";
     int i;
 
     if (procps_diskstats_new(&disk_stat) < 0)
