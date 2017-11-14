@@ -681,6 +681,7 @@ typedef struct WIN_t {
 //atic void          sig_endpgm (int dont_care_sig);
 //atic void          sig_paused (int dont_care_sig);
 //atic void          sig_resize (int dont_care_sig);
+//atic void          xalloc_our_handler (const char *fmts, ...);
 /*------  Special UTF-8 Multi-Byte support  ------------------------------*/
 /*atic char          UTF8_tab[] = { ... }                                 */
 //atic int           utf8_delta (const char *str);

@@ -47,7 +47,9 @@ global:
 	page_bytes;
 	pretty_print_signals;
 	print_uptime;
+	procps_linux_version;
 	put_slabinfo;
+	pwcache_get_user;
 	readeither;
 	readproc;
 	readproctab2;
@@ -62,8 +64,7 @@ global:
 	tty_to_dev;
 	unix_print_signals;
 	uptime;
-	pwcache_get_user;
-	procps_linux_version;
+	xalloc_err_handler;
 local:
 	*;
 };

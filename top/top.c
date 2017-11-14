@@ -47,6 +47,7 @@
 #include "../include/fileutils.h"
 #include "../include/nls.h"
 
+#include "../proc/alloc.h"
 #include "../proc/devname.h"
 #include "../proc/numa.h"
 #include "../proc/procps.h"
@@ -640,6 +641,20 @@ static void sig_resize (int dont_care_sig) {
    Frames_signal = BREAK_sig;
    (void)dont_care_sig;
 } // end: sig_resize
+
+
+        /*
+         * Handles libproc memory errors, so our tty can be reset */
+static void xalloc_our_handler (const char *fmts, ...) {
+   static char buf[MEDBUFSIZ];
+   va_list va;
+
+   va_start(va, fmts);
+   vsnprintf(buf, sizeof(buf), fmts, va);
+   va_end(va);
+   scat(buf, "\n");
+   bye_bye(buf);
+} // end: xalloc_our_handler
 
 /*######  Special UTF-8 Multi-Byte support  ##############################*/
 
@@ -3464,6 +3479,9 @@ static void before (char *me) {
 
    // accommodate nls/gettext potential translations
    initialize_nls();
+
+   // override default library memory alloc error handler
+   xalloc_err_handler = xalloc_our_handler;
 
    // establish cpu particulars
 #ifdef PRETEND8CPUS
