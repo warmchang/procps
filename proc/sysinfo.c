@@ -32,7 +32,6 @@
 #ifdef __CYGWIN__
 #include <sys/param.h>
 #endif
-#include "alloc.h"
 #include "version.h"
 #include "sysinfo.h" /* include self to verify prototypes */
 #include "procps-private.h"
@@ -126,57 +125,24 @@ PROCPS_EXPORT int procps_loadavg(
         double *restrict av15)
 {
     double avg_1=0, avg_5=0, avg_15=0;
-    char *savelocale;
+    char savelocale[128];
     int retval=0;
 
     FILE_TO_BUF(LOADAVG_FILE,loadavg_fd);
-    savelocale = strdup(setlocale(LC_NUMERIC, NULL));
+    snprintf(savelocale, sizeof(savelocale), "%s", setlocale(LC_NUMERIC, NULL));
     setlocale(LC_NUMERIC, "C");
     if (sscanf(buf, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3) {
+        setlocale(LC_NUMERIC, savelocale);
         retval = -ERANGE;
     }
     setlocale(LC_NUMERIC, savelocale);
-    free(savelocale);
     SET_IF_DESIRED(av1,  avg_1);
     SET_IF_DESIRED(av5,  avg_5);
     SET_IF_DESIRED(av15, avg_15);
     return retval;
 }
 
-  static char buff[BUFFSIZE]; /* used in the procedures */
-/***********************************************************************/
-
-static void crash(const char *filename) {
-    perror(filename);
-    exit(EXIT_FAILURE);
-}
-
 /////////////////////////////////////////////////////////////////////////////
-// based on Fabian Frederick's /proc/slabinfo parser
-
-unsigned int getslabinfo (struct slab_cache **slab){
-  FILE* fd;
-  int cSlab = 0;
-  buff[BUFFSIZE-1] = 0;
-  *slab = NULL;
-  fd = fopen("/proc/slabinfo", "rb");
-  if(!fd) crash("/proc/slabinfo");
-  while (fgets(buff,BUFFSIZE-1,fd)){
-    if(!memcmp("slabinfo - version:",buff,19)) continue; // skip header
-    if(*buff == '#')                           continue; // skip comments
-    (*slab) = xrealloc(*slab, (cSlab+1)*sizeof(struct slab_cache));
-    sscanf(buff,  "%47s %u %u %u %u",  // allow 47; max seen is 24
-      (*slab)[cSlab].name,
-      &(*slab)[cSlab].active_objs,
-      &(*slab)[cSlab].num_objs,
-      &(*slab)[cSlab].objsize,
-      &(*slab)[cSlab].objperslab
-    ) ;
-    cSlab++;
-  }
-  fclose(fd);
-  return cSlab;
-}
 
 #define PROCFS_PID_MAX "/proc/sys/kernel/pid_max"
 #define DEFAULT_PID_LENGTH 5
@@ -219,7 +185,7 @@ PROCPS_EXPORT unsigned int procps_pid_length(void)
  */
 long procps_cpu_count(void)
 {
-    long cpus=1;
+    long cpus;
 
     cpus = sysconf(_SC_NPROCESSORS_ONLN);
     if (cpus < 1)

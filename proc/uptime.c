@@ -70,23 +70,21 @@ PROCPS_EXPORT int procps_uptime(
         double *restrict idle_secs)
 {
     double up=0, idle=0;
-    char *savelocale;
+    char savelocale[128];
     FILE *fp;
 
     if ((fp = fopen(UPTIME_FILE, "r")) == NULL)
         return -errno;
 
-    savelocale = strdup(setlocale(LC_NUMERIC, NULL));
+    snprintf(savelocale, sizeof(savelocale), "%s", setlocale(LC_NUMERIC, NULL));
     setlocale(LC_NUMERIC, "C");
     if (fscanf(fp, "%lf %lf", &up, &idle) < 2) {
         setlocale(LC_NUMERIC, savelocale);
-        free(savelocale);
         fclose(fp);
         return -ERANGE;
     }
     fclose(fp);
     setlocale(LC_NUMERIC, savelocale);
-    free(savelocale);
     if (uptime_secs)
         *uptime_secs = up;
     if (idle_secs)

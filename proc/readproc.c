@@ -21,7 +21,6 @@
 
 #include "version.h"
 #include "readproc.h"
-#include "alloc.h"
 #include "escape.h"
 #include "pwcache.h"
 #include "devname.h"
@@ -149,7 +148,7 @@ typedef struct status_table_struct {
 // and the number of entries. Currently, the table is padded to 128
 // entries and we therefore mask with 127.
 
-static void status2proc(char *S, proc_t *restrict P, int is_proc){
+static int status2proc (char *S, proc_t *restrict P, int is_proc) {
     long Threads = 0;
     long Tgid = 0;
     long Pid = 0;
@@ -279,8 +278,8 @@ ENTER(0x220);
             buf[u++] = c;
         }
         buf[u] = '\0';
-        if (!P->cmd)
-            P->cmd = strndup(buf, 15);
+        if (!P->cmd && !(P->cmd = strndup(buf, 15)))
+            return 1;
         S--;   // put back the '\n' or '\0'
         continue;
     }
@@ -391,7 +390,9 @@ ENTER(0x220);
 #else
         if (j) {
 #endif
-            P->supgid = xmalloc(j+1);       // +1 in case space disappears
+            P->supgid = malloc(j+1);        // +1 in case space disappears
+            if (!P->supgid)
+                return 1;
             memcpy(P->supgid, S, j);
             if (' ' != P->supgid[--j]) ++j;
             P->supgid[j] = '\0';            // whack the space or the newline
@@ -448,32 +449,39 @@ ENTER(0x220);
     }
 
 #ifdef FALSE_THREADS
-    if (!P->supgid && !IS_THREAD(P))
+    if (!P->supgid && !IS_THREAD(P)) {
 #else
-    if (!P->supgid)
+    if (!P->supgid) {
 #endif
-        P->supgid = xstrdup("-");
-
+        P->supgid = strdup("-");
+        if (!P->supgid)
+            return 1;
+    }
 LEAVE(0x220);
+    return 0;
 }
 #undef GPERF_TABLE_SIZE
 
-static void supgrps_from_supgids (proc_t *p) {
+static int supgrps_from_supgids (proc_t *p) {
     char *g, *s;
     int t;
 
     if (!p->supgid || '-' == *p->supgid) {
-        p->supgrp = xstrdup("-");
-        return;
+        if (!(p->supgrp = strdup("-")))
+            return 1;
+        return 0;
     }
     s = p->supgid;
     t = 0;
     do {
         if (',' == *s) ++s;
         g = pwcache_get_group((uid_t)strtol(s, &s, 10));
-        p->supgrp = xrealloc(p->supgrp, P_G_SZ+t+2);
+        if (!(p->supgrp = realloc(p->supgrp, P_G_SZ+t+2)))
+            return 1;
         t += snprintf(p->supgrp+t, P_G_SZ+2, "%s%s", t ? "," : "", g);
     } while (*s);
+
+    return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -488,49 +496,66 @@ static inline void oomadj2proc(const char* S, proc_t *restrict P)
 }
 ///////////////////////////////////////////////////////////////////////
 
-static void sd2proc(proc_t *restrict p) {
+static int sd2proc (proc_t *restrict p) {
 #ifdef WITH_SYSTEMD
     char buf[64];
     uid_t uid;
 
-    if (0 > sd_pid_get_machine_name(p->tid, &p->sd_mach))
-        p->sd_mach = strdup("-");
-
-    if (0 > sd_pid_get_owner_uid(p->tid, &uid))
-        p->sd_ouid = strdup("-");
-    else {
+    if (0 > sd_pid_get_machine_name(p->tid, &p->sd_mach)) {
+        if (!(p->sd_mach = strdup("-")))
+            return 1;
+    }
+    if (0 > sd_pid_get_owner_uid(p->tid, &uid)) {
+        if (!(p->sd_ouid = strdup("-")))
+            return 1;
+    } else {
         snprintf(buf, sizeof(buf), "%d", (int)uid);
-        p->sd_ouid = strdup(buf);
+        if (!(p->sd_ouid = strdup(buf)))
+            return 1;
     }
     if (0 > sd_pid_get_session(p->tid, &p->sd_sess)) {
-        p->sd_sess = strdup("-");
-        p->sd_seat = strdup("-");
+        if (!(p->sd_sess = strdup("-")))
+            return 1;
+        if (!(p->sd_seat = strdup("-")))
+            return 1;
     } else {
         if (0 > sd_session_get_seat(p->sd_sess, &p->sd_seat))
-            p->sd_seat = strdup("-");
+            if (!(p->sd_seat = strdup("-")))
+                return 1;
     }
     if (0 > sd_pid_get_slice(p->tid, &p->sd_slice))
-        p->sd_slice = strdup("-");
+        if (!(p->sd_slice = strdup("-")))
+            return 1;
     if (0 > sd_pid_get_unit(p->tid, &p->sd_unit))
-        p->sd_unit = strdup("-");
+        if (!(p->sd_unit = strdup("-")))
+            return 1;
     if (0 > sd_pid_get_user_unit(p->tid, &p->sd_uunit))
-        p->sd_uunit = strdup("-");
+        if (!(p->sd_uunit = strdup("-")))
+            return 1;
 #else
-    p->sd_mach  = strdup("?");
-    p->sd_ouid  = strdup("?");
-    p->sd_seat  = strdup("?");
-    p->sd_sess  = strdup("?");
-    p->sd_slice = strdup("?");
-    p->sd_unit  = strdup("?");
-    p->sd_uunit = strdup("?");
+    if (!(p->sd_mach  = strdup("?")))
+        return 1;
+    if (!(p->sd_ouid  = strdup("?")))
+        return 1;
+    if (!(p->sd_seat  = strdup("?")))
+        return 1;
+    if (!(p->sd_sess  = strdup("?")))
+        return 1;
+    if (!(p->sd_slice = strdup("?")))
+        return 1;
+    if (!(p->sd_unit  = strdup("?")))
+        return 1;
+    if (!(p->sd_uunit = strdup("?")))
+        return 1;
 #endif
+    return 0;
 }
 ///////////////////////////////////////////////////////////////////////
 
 
 // Reads /proc/*/stat files, being careful not to trip over processes with
 // names like ":-) 1 2 3 4 5 6".
-static void stat2proc(const char* S, proc_t *restrict P) {
+static int stat2proc (const char* S, proc_t *restrict P) {
     unsigned num;
     char* tmp;
 
@@ -546,8 +571,8 @@ ENTER(0x160);
     tmp = strrchr(S, ')');
     num = tmp - S;
     if(num >= 16) num = 15;
-    if (!P->cmd)
-       P->cmd = strndup(S, num);
+    if (!P->cmd && !(P->cmd = strndup(S, num)))
+       return 1;
     S = tmp + 2;                 // skip ") "
 
     num = sscanf(S,
@@ -591,6 +616,7 @@ ENTER(0x160);
       P->nlwp = 1;
     }
 
+    return 0;
 LEAVE(0x160);
 }
 
@@ -610,15 +636,21 @@ static int file2str(const char *directory, const char *what, struct utlbuf_s *ub
     /* on first use we preallocate a buffer of minimum size to emulate
        former 'local static' behavior -- even if this read fails, that
        buffer will likely soon be used for another subdirectory anyway
-       ( besides, with this xcalloc we will never need to use memcpy ) */
+       ( besides, with the calloc call we will never need use memcpy ) */
     if (ub->buf) ub->buf[0] = '\0';
-    else ub->buf = xcalloc((ub->siz = buffGRW));
+    else {
+        ub->buf = calloc(1, (ub->siz = buffGRW));
+        if (!ub->buf) return -1;
+    }
     sprintf(path, "%s/%s", directory, what);
     if (-1 == (fd = open(path, O_RDONLY, 0))) return -1;
     while (0 < (num = read(fd, ub->buf + tot_read, ub->siz - tot_read))) {
         tot_read += num;
         if (tot_read < ub->siz) break;
-        ub->buf = xrealloc(ub->buf, (ub->siz += buffGRW));
+        if (!(ub->buf = realloc(ub->buf, (ub->siz += buffGRW)))) {
+            close(fd);
+            return -1;
+        }
     };
     ub->buf[tot_read] = '\0';
     close(fd);
@@ -648,7 +680,8 @@ static char** file2strvec(const char* directory, const char* what) {
         }
         if (end_of_file && (n == 0 || buf[n-1]))/* last read char not null */
             buf[n++] = '\0';                    /* so append null-terminator */
-        rbuf = xrealloc(rbuf, tot + n);         /* allocate more memory */
+        rbuf = realloc(rbuf, tot + n);          /* allocate more memory */
+        if (!rbuf) return NULL;
         memcpy(rbuf + tot, buf, n);             /* copy buffer into it */
         tot += n;                               /* increment total byte ctr */
         if (end_of_file)
@@ -670,7 +703,8 @@ static char** file2strvec(const char* directory, const char* what) {
     }
     c += sizeof(char*);                         /* one extra for NULL term */
 
-    rbuf = xrealloc(rbuf, tot + c + align);     /* make room for ptrs AT END */
+    rbuf = realloc(rbuf, tot + c + align);      /* make room for ptrs AT END */
+    if (!rbuf) return NULL;
     endbuf = rbuf + tot;                        /* addr just past data buf */
     q = ret = (char**) (endbuf+align);          /* ==> free(*ret) to dealloc */
     *q++ = p = rbuf;                            /* point ptrs to the strings */
@@ -722,7 +756,7 @@ static int read_unvectored(char *restrict const dst, unsigned sz, const char* wh
 
     // This routine reads a 'cgroup' for the designated proc_t and
     // guarantees the caller a valid proc_t.cgroup pointer.
-static void fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
+static int fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
  #define vMAX ( MAX_BUFSZ - (int)(dst - dst_buffer) )
     char *src, *dst, *grp, *eob, *name;
     int tot, x, whackable_int = MAX_BUFSZ;
@@ -740,18 +774,20 @@ static void fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
         dst += snprintf(dst, vMAX, "%s", (dst > dst_buffer) ? "," : "");
         dst += escape_str(dst, grp, vMAX, &whackable_int);
     }
-    p->cgroup = strdup(dst_buffer[0] ? dst_buffer : "-");
-
+    if (!(p->cgroup = strdup(dst_buffer[0] ? dst_buffer : "-")))
+        return 1;
     name = strstr(p->cgroup, ":name=");
     if (name && *(name+6)) name += 6; else name = p->cgroup;
-    p->cgname = strdup(name);
+    if (!(p->cgname = strdup(name)))
+        return 1;
+    return 0;
  #undef vMAX
 }
 
     // This routine reads a 'cmdline' for the designated proc_t, "escapes"
     // the result into a single string while guaranteeing the caller a
     // valid proc_t.cmdline pointer.
-static void fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
+static int fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
  #define uFLG ( ESC_BRACKETS | ESC_DEFUNCT )
     int whackable_int = MAX_BUFSZ;
 
@@ -760,18 +796,24 @@ static void fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
     else
         escape_command(dst_buffer, p, MAX_BUFSZ, &whackable_int, uFLG);
     p->cmdline = strdup(dst_buffer[0] ? dst_buffer : "?");
+    if (!p->cmdline)
+        return 1;
+    return 0;
  #undef uFLG
 }
 
     // This routine reads an 'environ' for the designated proc_t and
     // guarantees the caller a valid proc_t.environ pointer.
-static void fill_environ_cvt (const char* directory, proc_t *restrict p) {
+static int fill_environ_cvt (const char* directory, proc_t *restrict p) {
     int whackable_int = MAX_BUFSZ;
 
     dst_buffer[0] = '\0';
     if (read_unvectored(src_buffer, MAX_BUFSZ, directory, "environ", ' '))
         escape_str(dst_buffer, src_buffer, MAX_BUFSZ, &whackable_int);
     p->environ = strdup(dst_buffer[0] ? dst_buffer : "-");
+    if (!p->environ)
+        return 1;
+    return 0;
 }
 
 
@@ -781,6 +823,7 @@ static void fill_environ_cvt (const char* directory, proc_t *restrict p) {
 static char *lxc_containers (const char *path) {
     static struct utlbuf_s ub = { NULL, 0 };   // util buffer for whole cgroup
     static char lxc_none[] = "-";
+    static char lxc_oops[] = "?";              // used when memory alloc fails
     /*
        try to locate the lxc delimiter eyecatcher somewhere in a task's cgroup
        directory -- the following are from nested privileged plus unprivileged
@@ -821,8 +864,12 @@ static char *lxc_containers (const char *path) {
                     return ele->name;          // return just a recycled name
                 ele = ele->next;
             }
-            ele = (struct lxc_ele *)xmalloc(sizeof(struct lxc_ele));
-            ele->name = xstrdup(p2);
+            if (!(ele = (struct lxc_ele *)malloc(sizeof(struct lxc_ele))))
+                return lxc_oops;
+            if (!(ele->name = strdup(p2))) {
+                free(ele);
+                return lxc_oops;
+            }
             ele->next = anchor;                // push the new container name
             anchor = ele;
             return ele->name;                  // return a new container name
@@ -862,6 +909,7 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     static struct stat sb;     // stat() buffer
     char *restrict const path = PT->path;
     unsigned flags = PT->flags;
+    int rc = 0;
 
     if (stat(path, &sb) == -1)                  /* no such dirent (anymore) */
         goto next_proc;
@@ -875,7 +923,7 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLSTAT) {                // read /proc/#/stat
         if (file2str(path, "stat", &ub) == -1)
             goto next_proc;
-        stat2proc(ub.buf, p);
+        rc += stat2proc(ub.buf, p);
     }
 
     if (flags & PROC_FILLMEM) {                 // read /proc/#/statm
@@ -885,9 +933,9 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
 
     if (flags & PROC_FILLSTATUS) {              // read /proc/#/status
         if (file2str(path, "status", &ub) != -1){
-            status2proc(ub.buf, p, 1);
+            rc += status2proc(ub.buf, p, 1);
             if (flags & PROC_FILLSUPGRP)
-                supgrps_from_supgids(p);
+                rc += supgrps_from_supgids(p);
         }
     }
 
@@ -921,17 +969,17 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLENV)                   // read /proc/#/environ
         p->environ_v = file2strvec(path, "environ");
     if (flags & PROC_EDITENVRCVT)
-        fill_environ_cvt(path, p);
+        rc += fill_environ_cvt(path, p);
 
     if (flags & PROC_FILLARG)                   // read /proc/#/cmdline
         p->cmdline_v = file2strvec(path, "cmdline");
     if (flags & PROC_EDITCMDLCVT)
-        fill_cmdline_cvt(path, p);
+        rc += fill_cmdline_cvt(path, p);
 
     if ((flags & PROC_FILLCGROUP))              // read /proc/#/cgroup
         p->cgroup_v = file2strvec(path, "cgroup");
     if (flags & PROC_EDITCGRPCVT)
-        fill_cgroup_cvt(path, p);
+        rc += fill_cgroup_cvt(path, p);
 
     if (flags & PROC_FILLOOM) {
         if (file2str(path, "oom_score", &ub) != -1)
@@ -945,12 +993,13 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
 
 
     if (flags & PROC_FILLSYSTEMD)               // get sd-login.h stuff
-        sd2proc(p);
+        rc += sd2proc(p);
 
     if (flags & PROC_FILL_LXC)                  // value the lxc name
         p->lxcname = lxc_containers(path);
 
-    return p;
+    if (rc == 0) return p;
+    errno = ENOMEM;
 next_proc:
     return NULL;
 }
@@ -968,6 +1017,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     static struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status
     static struct stat sb;     // stat() buffer
     unsigned flags = PT->flags;
+    int rc = 0;
 
     if (stat(path, &sb) == -1)                  /* no such dirent (anymore) */
         goto next_task;
@@ -981,7 +1031,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     if (flags & PROC_FILLSTAT) {                        // read /proc/#/task/#/stat
         if (file2str(path, "stat", &ub) == -1)
             goto next_task;
-        stat2proc(ub.buf, t);
+        rc += stat2proc(ub.buf, t);
     }
 
 #ifdef FALSE_THREADS
@@ -989,16 +1039,16 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         MK_THREAD(t);
 #endif
 
-    if (flags & PROC_FILLMEM)                           // read /proc/#/task/#statm
+    if (flags & PROC_FILLMEM) {                         // read /proc/#/task/#statm
         if (file2str(path, "statm", &ub) != -1)
             statm2proc(ub.buf, t);
-
+    }
     if (flags & PROC_FILLSTATUS) {                      // read /proc/#/task/#/status
         if (file2str(path, "status", &ub) != -1) {
-            status2proc(ub.buf, t, 0);
+            rc += status2proc(ub.buf, t, 0);
 #ifndef FALSE_THREADS
             if (flags & PROC_FILLSUPGRP)
-                supgrps_from_supgids(t);
+                rc += supgrps_from_supgids(t);
 #endif
         }
     }
@@ -1028,25 +1078,25 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
 #ifdef FALSE_THREADS
     if (!p) {
         if (flags & PROC_FILLSUPGRP)
-            supgrps_from_supgids(t);
+            rc += supgrps_from_supgids(t);
 #endif
         if (flags & PROC_FILLENV)                       // read /proc/#/task/#/environ
             t->environ_v = file2strvec(path, "environ");
         if (flags & PROC_EDITENVRCVT)
-            fill_environ_cvt(path, t);
+            rc += fill_environ_cvt(path, t);
 
         if (flags & PROC_FILLARG)                       // read /proc/#/task/#/cmdline
             t->cmdline_v = file2strvec(path, "cmdline");
         if (flags & PROC_EDITCMDLCVT)
-            fill_cmdline_cvt(path, t);
+            rc += fill_cmdline_cvt(path, t);
 
         if ((flags & PROC_FILLCGROUP))                  // read /proc/#/task/#/cgroup
             t->cgroup_v = file2strvec(path, "cgroup");
         if (flags & PROC_EDITCGRPCVT)
-            fill_cgroup_cvt(path, t);
+            rc += fill_cgroup_cvt(path, t);
 
         if (flags & PROC_FILLSYSTEMD)                   // get sd-login.h stuff
-            sd2proc(t);
+            rc += sd2proc(t);
 
 #ifdef FALSE_THREADS
     } else {
@@ -1082,7 +1132,8 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     if (flags & PROC_FILL_LXC)
         t->lxcname = lxc_containers(path);
 
-    return t;
+    if (rc == 0) return t;
+    errno = ENOMEM;
 next_task:
 #ifndef FALSE_THREADS
     (void)p;
@@ -1172,10 +1223,13 @@ proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
 //  }
 
   saved_p = p;
-  if(!p) p = xcalloc(sizeof *p);
-  else free_acquired(p, 1);
-
+  if (p) free_acquired(p, 1);
+  else {
+    p = calloc(1, sizeof *p);
+    if (!p) goto out;
+  }
   for(;;){
+    if (errno == ENOMEM) goto out;
     // fills in the path, plus p->tid and p->tgid
     if (!PT->finder(PT,p)) goto out;
 
@@ -1203,13 +1257,17 @@ proc_t* readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
     proc_t *saved_x, *ret;
 
     saved_x = x;
-    if (!x) x = xcalloc(sizeof(*x));
-    else free_acquired(x,1);
+    if (x) free_acquired(x,1);
+    else {
+        x = calloc(1, sizeof(*x));
+        if (!x) goto end_procs;
+    }
     if (new_p) goto next_task;
 
 next_proc:
     new_p = NULL;
     for (;;) {
+        if (errno == ENOMEM) goto end_procs;
         // fills in the PT->path, plus skel_p.tid and skel_p.tgid
         if (!PT->finder(PT,&skel_p)) goto end_procs;       // simple_nextpid
         if (!task_dir_missing) break;
@@ -1238,8 +1296,10 @@ PROCTAB* openproc(unsigned flags, ...) {
     va_list ap;
     struct stat sbuf;
     static int did_stat;
-    PROCTAB* PT = xmalloc(sizeof(PROCTAB));
+    PROCTAB* PT = malloc(sizeof(PROCTAB));
 
+    if (!PT)
+        return NULL;
     if (!did_stat){
         task_dir_missing = stat("/proc/self/task", &sbuf);
         did_stat = 1;
@@ -1269,10 +1329,13 @@ PROCTAB* openproc(unsigned flags, ...) {
     }
     va_end(ap);
 
-    if (!src_buffer){
-        src_buffer = xmalloc(MAX_BUFSZ);
-        dst_buffer = xmalloc(MAX_BUFSZ);
-    }
+    if (!src_buffer
+    && !(src_buffer = malloc(MAX_BUFSZ)))
+        return NULL;
+    if (!dst_buffer
+    && !(dst_buffer = malloc(MAX_BUFSZ)))
+        return NULL;
+
     return PT;
 }
 
@@ -1288,15 +1351,17 @@ void closeproc(PROCTAB* PT) {
 
 
 //////////////////////////////////////////////////////////////////////////////////
-void look_up_our_self(proc_t *p) {
+int look_up_our_self(proc_t *p) {
     struct utlbuf_s ub = { NULL, 0 };
+    int rc = 0;
 
     if(file2str("/proc/self", "stat", &ub) == -1){
         fprintf(stderr, "Error, do this: mount -t proc proc /proc\n");
         _exit(47);
     }
-    stat2proc(ub.buf, p);  // parse /proc/self/stat
+    rc = stat2proc(ub.buf, p);  // parse /proc/self/stat
     free(ub.buf);
+    return !rc;
 }
 
 #undef MK_THREAD

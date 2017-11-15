@@ -28,14 +28,15 @@
 #include <pwd.h>
 #include <grp.h>
 
-#include "alloc.h"
 #include "pwcache.h"
 #include "procps-private.h"
 
 // might as well fill cache lines... else we waste memory anyway
 
-#define	HASHSIZE	64		/* power of 2 */
-#define	HASH(x)		((x) & (HASHSIZE - 1))
+#define HASHSIZE  64              /* power of 2 */
+#define HASH(x)   ((x) & (HASHSIZE - 1))
+
+static char ERRname[] = "?";
 
 static struct pwbuf {
     struct pwbuf *next;
@@ -49,15 +50,16 @@ char *pwcache_get_user(uid_t uid) {
 
     p = &pwhash[HASH(uid)];
     while (*p) {
-	if ((*p)->uid == uid)
-	    return((*p)->name);
-	p = &(*p)->next;
+        if ((*p)->uid == uid)
+            return((*p)->name);
+        p = &(*p)->next;
     }
-    *p = (struct pwbuf *) xmalloc(sizeof(struct pwbuf));
+    if (!(*p = (struct pwbuf *)malloc(sizeof(struct pwbuf))))
+        return ERRname;
     (*p)->uid = uid;
     pw = getpwuid(uid);
     if(!pw || strlen(pw->pw_name) >= P_G_SZ)
-	sprintf((*p)->name, "%u", uid);
+        sprintf((*p)->name, "%u", uid);
     else
         strcpy((*p)->name, pw->pw_name);
 
@@ -81,7 +83,8 @@ char *pwcache_get_group(gid_t gid) {
             return((*g)->name);
         g = &(*g)->next;
     }
-    *g = (struct grpbuf *) xmalloc(sizeof(struct grpbuf));
+    if (!(*g = (struct grpbuf *)malloc(sizeof(struct grpbuf))))
+        return ERRname;;
     (*g)->gid = gid;
     gr = getgrgid(gid);
     if (!gr || strlen(gr->gr_name) >= P_G_SZ)

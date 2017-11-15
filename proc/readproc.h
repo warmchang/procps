@@ -33,7 +33,6 @@ __BEGIN_DECLS
 // Most of it comes from task_struct in linux/sched.h
 //
 typedef struct proc_t {
-// 1st 16 bytes
     int
         tid,            // (special)       task id, the POSIX thread ID (see also: tgid)
         ppid;           // stat,status     pid of parent process
@@ -46,11 +45,9 @@ typedef struct proc_t {
 #endif
         pad_2,          // n/a             padding
         pad_3;          // n/a             padding
-// 2nd 16 bytes
     unsigned long long
         utime,          // stat            user-mode CPU time accumulated by process
         stime,          // stat            kernel-mode CPU time accumulated by process
-// and so on...
         cutime,         // stat            cumulative utime of process and reaped children
         cstime,         // stat            cumulative stime of process and reaped children
         start_time,     // stat            start time of process -- seconds since 1-1-70
@@ -64,7 +61,7 @@ typedef struct proc_t {
 #ifdef SIGNAL_STRING
     char
         // Linux 2.1.7x and up have 64 signals. Allow 64, plus '\0' and padding.
-        signal[18],     // status          mask of pending signals, per-task for readtask() but per-proc for readproc()
+        signal[18],     // status          mask of pending signals
         blocked[18],    // status          mask of blocked signals
         sigignore[18],  // status          mask of ignored signals
         sigcatch[18],   // status          mask of caught  signals
@@ -72,7 +69,7 @@ typedef struct proc_t {
 #else
     long long
         // Linux 2.1.7x and up have 64 signals.
-        signal,         // status          mask of pending signals, per-task for readtask() but per-proc for readproc()
+        signal,         // status          mask of pending signals
         blocked,        // status          mask of blocked signals
         sigignore,      // status          mask of ignored signals
         sigcatch,       // status          mask of caught  signals
@@ -258,7 +255,7 @@ PROCTAB* openproc(unsigned flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */
 //       with the previous process or thread.
 proc_t* readproc(PROCTAB *__restrict const PT, proc_t *__restrict p);
 proc_t* readeither(PROCTAB *__restrict const PT, proc_t *__restrict x);
-void look_up_our_self(proc_t *p);
+int look_up_our_self(proc_t *p);
 void closeproc(PROCTAB* PT);
 
 __END_DECLS

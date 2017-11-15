@@ -26,7 +26,6 @@
 #include <unistd.h>
 #include "version.h"
 #include "devname.h"
-#include "alloc.h"
 
 // This is the buffer size for a tty name. Any path is legal,
 // which makes PAGE_SIZE appropriate (see kernel source), but
@@ -83,7 +82,8 @@ static void load_drivers(void){
     end = strchr(p, ' ');
     if(!end) continue;
     len = end - p;
-    tmn = xcalloc(sizeof(tty_map_node));
+    if (!(tmn = calloc(1, sizeof(tty_map_node))))
+       goto fail;
     tmn->next = tty_map;
     tty_map = tmn;
     /* if we have a devfs type name such as /dev/tts/%d then strip the %d but
