@@ -237,8 +237,6 @@ proc_libprocps_la_LDFLAGS = \
 	-Wl,--version-script=$(top_srcdir)/proc/libprocps.sym
 
 proc_libprocps_la_SOURCES = \
-	proc/alloc.c \
-	proc/alloc.h \
 	proc/devname.c \
 	proc/devname.h \
 	proc/diskstats.c \
@@ -277,7 +275,6 @@ proc_libprocps_la_SOURCES = \
 
 proc_libprocps_la_includedir = $(includedir)/proc/
 proc_libprocps_la_include_HEADERS = \
-	proc/alloc.h \
 	proc/devname.h \
 	proc/diskstats.h \
 	proc/escape.h \
