@@ -811,14 +811,14 @@ static inline int vmstat_items_check_failed (
      */
     if (numitems < 1
     || (void *)items < (void *)(unsigned long)(2 * VMSTAT_logical_end))
-        return -1;
+        return 1;
 
     for (i = 0; i < numitems; i++) {
         // a vmstat_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
-            return -1;
+            return 1;
         if (items[i] >= VMSTAT_logical_end)
-            return -1;
+            return 1;
     }
 
     return 0;
@@ -829,13 +829,14 @@ static int vmstat_make_hash_failed (
         struct vmstat_info *info)
 {
  #define htVAL(f) e.key = STRINGIFY(f); e.data = &info->hist.new. f; \
-  if (!hsearch_r(e, ENTER, &ep, &info->hashtab)) return -errno;
+  if (!hsearch_r(e, ENTER, &ep, &info->hashtab)) return 1;
     ENTRY e, *ep;
     size_t n;
 
     n = sizeof(struct vmstat_data) / sizeof(unsigned long);
     // we'll follow the hsearch recommendation of an extra 25%
-    hcreate_r(n + (n / 4), &info->hashtab);
+    if (!hcreate_r(n + (n / 4), &info->hashtab))
+        return 1;
 
     htVAL(allocstall)
     htVAL(balloon_deflate)
@@ -985,21 +986,23 @@ static int vmstat_read_failed (
 
     if (-1 == info->vmstat_fd
     && (info->vmstat_fd = open(VMSTAT_FILE, O_RDONLY)) == -1)
-        return -errno;
+        return 1;
 
     if (lseek(info->vmstat_fd, 0L, SEEK_SET) == -1)
-        return -errno;
+        return 1;
 
     for (;;) {
         if ((size = read(info->vmstat_fd, buf, sizeof(buf)-1)) < 0) {
             if (errno == EINTR || errno == EAGAIN)
                 continue;
-            return -errno;
+            return 1;
         }
         break;
     }
-    if (size == 0)
-        return -1;
+    if (size == 0) {
+        errno = EIO;
+        return 1;
+    }
     buf[size] = '\0';
 
     head = buf;
@@ -1112,7 +1115,6 @@ PROCPS_EXPORT int procps_vmstat_new (
         struct vmstat_info **info)
 {
     struct vmstat_info *p;
-    int rc;
 
     if (info == NULL || *info != NULL)
         return -EINVAL;
@@ -1122,18 +1124,18 @@ PROCPS_EXPORT int procps_vmstat_new (
     p->refcount = 1;
     p->vmstat_fd = -1;
 
-    if ((rc = vmstat_make_hash_failed(p))) {
+    if (vmstat_make_hash_failed(p)) {
         free(p);
-        return rc;
+        return -errno;
     }
 
     /* do a priming read here for the following potential benefits: |
          1) ensure there will be no problems with subsequent access |
          2) make delta results potentially useful, even if 1st time |
          3) elimnate need for history distortions 1st time 'switch' | */
-    if ((rc = vmstat_read_failed(p))) {
+    if (vmstat_read_failed(p)) {
         procps_vmstat_unref(&p);
-        return rc;
+        return -errno;
     }
 
     *info = p;
@@ -1161,6 +1163,8 @@ PROCPS_EXPORT int procps_vmstat_unref (
     (*info)->refcount--;
 
     if ((*info)->refcount < 1) {
+        int errno_sav = errno;
+
         if ((*info)->extents)
             vmstat_extents_free_all((*info));
         if ((*info)->items)
@@ -1169,6 +1173,8 @@ PROCPS_EXPORT int procps_vmstat_unref (
 
         free(*info);
         *info = NULL;
+
+        errno = errno_sav;
         return 0;
     }
     return (*info)->refcount;
@@ -1184,10 +1190,12 @@ PROCPS_EXPORT struct vmstat_result *procps_vmstat_get (
     static time_t sav_secs;
     time_t cur_secs;
 
+    errno = EINVAL;
     if (info == NULL)
         return NULL;
     if (item < 0 || item >= VMSTAT_logical_end)
         return NULL;
+    errno = 0;
 
     /* we will NOT read the vmstat file with every call - rather, we'll offer
        a granularity of 1 second between reads ... */
@@ -1199,9 +1207,8 @@ PROCPS_EXPORT struct vmstat_result *procps_vmstat_get (
     }
 
     info->get_this.item = item;
-//  with 'get', we must NOT honor the usual 'noop' guarantee
-//  if (item > VMSTAT_noop)
-        info->get_this.result.ul_int = 0;
+    //  with 'get', we must NOT honor the usual 'noop' guarantee
+    info->get_this.result.ul_int = 0;
     Item_table[item].setsfunc(&info->get_this, &info->hist);
 
     return &info->get_this;
@@ -1220,10 +1227,12 @@ PROCPS_EXPORT struct vmstat_stack *procps_vmstat_select (
         enum vmstat_item *items,
         int numitems)
 {
+    errno = EINVAL;
     if (info == NULL || items == NULL)
         return NULL;
     if (vmstat_items_check_failed(numitems, items))
         return NULL;
+    errno = 0;
 
     /* is this the first time or have things changed since we were last called?
        if so, gotta' redo all of our stacks stuff ... */

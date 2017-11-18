@@ -88,6 +88,7 @@ struct pids_info {
     PROCTAB *get_PT;                   // oldlib interface for active 'get'
     struct stacks_extent *get_ext;     // an extent used for active 'get'
     enum pids_fetch_type get_type;     // last known type of 'get' request
+    int seterr;                        // an ENOMEM encountered during assign
 };
 
 
@@ -101,7 +102,7 @@ static char** pids_vectorize_this (const char* src) {
     tot = strlen(src) + 1;                       // prep for our vectors
     adj = (pSZ-1) - ((tot + pSZ-1) & (pSZ-1));   // calc alignment bytes
     cpy = calloc(1, tot + adj + (2 * pSZ));      // get new larger buffer
-    if (!cpy) return NULL;                       // we no longer use xcalloc
+    if (!cpy) return NULL;                       // oops, looks like ENOMEM
     snprintf(cpy, tot, "%s", src);               // duplicate their string
     vec = (char**)(cpy + tot + adj);             // prep pointer to pointers
     *vec = cpy;                                  // point 1st vector to string
@@ -120,20 +121,22 @@ static char** pids_vectorize_this (const char* src) {
     R->result. t = (long)(P-> x) << I -> pgs2k_shift; }
 /* strdup of a static char array */
 #define DUP_set(e,x) setDECL(e) { \
-    (void)I; R->result.str = strdup(P-> x); }
+    if (!(R->result.str = strdup(P-> x))) I->seterr = 1; }
 /* regular assignment copy */
 #define REG_set(e,t,x) setDECL(e) { \
     (void)I; R->result. t = P-> x; }
 /* take ownership of a normal single string if possible, else return
    some sort of hint that they duplicated this char * item ... */
 #define STR_set(e,x) setDECL(e) { \
-    (void)I; if (NULL != P-> x) { R->result.str = P-> x; P-> x = NULL; } \
-    else R->result.str = strdup("[ duplicate " STRINGIFY(e) " ]"); }
+    if (NULL != P-> x) { R->result.str = P-> x; P-> x = NULL; } \
+    else { R->result.str = strdup("[ duplicate " STRINGIFY(e) " ]"); \
+      if (!R->result.str) I->seterr = 1; } }
 /* take ownership of true vectorized strings if possible, else return
    some sort of hint that they duplicated this char ** item ... */
 #define VEC_set(e,x) setDECL(e) { \
-    (void)I; if (NULL != P-> x) { R->result.strv = P-> x;  P-> x = NULL; } \
-    else R->result.strv = pids_vectorize_this("[ duplicate " STRINGIFY(e) " ]"); }
+    if (NULL != P-> x) { R->result.strv = P-> x;  P-> x = NULL; } \
+    else { R->result.strv = pids_vectorize_this("[ duplicate " STRINGIFY(e) " ]"); \
+      if (!R->result.str) I->seterr = 1; } }
 
 
 setDECL(noop)           { (void)I; (void)R; (void)P; return; }
@@ -238,8 +241,8 @@ setDECL(TIME_ALL)       { R->result.ull_int = (P->utime + P->stime) / I->hertz; 
 setDECL(TIME_ELAPSED)   { unsigned long long t = P->start_time / I->hertz; R->result.ull_int = I->boot_seconds >= t ? (I->boot_seconds - t) : 0; }
 REG_set(TIME_START,       ull_int, start_time)
 REG_set(TTY,              s_int,   tty)
-setDECL(TTY_NAME)       { char buf[64]; (void)I; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); R->result.str = strdup(buf); }
-setDECL(TTY_NUMBER)     { char buf[64]; (void)I; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS); R->result.str = strdup(buf); }
+setDECL(TTY_NAME)       { char buf[64]; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
+setDECL(TTY_NUMBER)     { char buf[64]; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
 REG_set(VM_DATA,          ul_int,  vm_data)
 REG_set(VM_EXE,           ul_int,  vm_exe)
 REG_set(VM_LIB,           ul_int,  vm_lib)
@@ -253,7 +256,7 @@ REG_set(VM_STACK,         ul_int,  vm_stack)
 REG_set(VM_SWAP,          ul_int,  vm_swap)
 setDECL(VM_USED)        { (void)I; R->result.ul_int = P->vm_swap + P->vm_rss; }
 REG_set(VSIZE_PGS,        ul_int,  vsize)
-setDECL(WCHAN_NAME)     { (void)I; R->result.str = strdup(lookup_wchan(P->tid)); }
+setDECL(WCHAN_NAME)     { if (!(R->result.str = strdup(lookup_wchan(P->tid)))) I->seterr = 1;; }
 
 #undef setDECL
 #undef CVT_set
@@ -626,7 +629,7 @@ static inline int pids_make_hist (
         Hr(PHist_sav) = realloc(Hr(PHist_sav), sizeof(HST_t) * Hr(HHist_siz));
         Hr(PHist_new) = realloc(Hr(PHist_new), sizeof(HST_t) * Hr(HHist_siz));
         if (!Hr(PHist_sav) || !Hr(PHist_new))
-            return -ENOMEM;
+            return 0;
     }
     Hr(PHist_new[nSLOT].pid)  = p->tid;
     Hr(PHist_new[nSLOT].maj)  = p->maj_flt;
@@ -642,7 +645,7 @@ static inline int pids_make_hist (
     }
 
     nSLOT++;
-    return 0;
+    return 1;
  #undef nSLOT
 } // end: pids_make_hist
 
@@ -756,13 +759,14 @@ static void pids_unref_rpthash (
 
 // ___ Standard Private Functions |||||||||||||||||||||||||||||||||||||||||||||
 
-static inline void pids_assign_results (
+static inline int pids_assign_results (
         struct pids_info *info,
         struct pids_stack *stack,
         proc_t *p)
 {
     struct pids_result *this = stack->head;
 
+    info->seterr = 0;
     for (;;) {
         enum pids_item item = this->item;
         if (item >= PIDS_logical_end)
@@ -770,7 +774,7 @@ static inline void pids_assign_results (
         Item_table[item].setsfunc(info, this, p);
         ++this;
     }
-    return;
+    return !info->seterr;
 } // end: pids_assign_results
 
 
@@ -880,13 +884,14 @@ static inline int pids_items_check_failed (
      */
     if (numitems < 1
     || (void *)items < (void *)0x8000)      // twice as big as our largest enum
-        return -1;
+        return 1;
+
     for (i = 0; i < numitems; i++) {
         // a pids_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
-            return -1;
+            return 1;
         if (items[i] >= PIDS_logical_end) {
-            return -1;
+            return 1;
         }
     }
     return 0;
@@ -918,8 +923,10 @@ static inline void pids_oldproc_close (
         PROCTAB **this)
 {
     if (*this != NULL) {
+        int errsav = errno;
         closeproc(*this);
         *this = NULL;
+        errno = errsav;
     }
 } // end: pids_oldproc_close
 
@@ -970,7 +977,7 @@ static inline int pids_proc_tally (
     ++counts->total;
 
     if (info->history_yes)
-        return !pids_make_hist(info, p);
+        return pids_make_hist(info, p);
     return 1;
 } // end: pids_proc_tally
 
@@ -1048,12 +1055,12 @@ static int pids_stacks_fetch (
     // initialize stuff -----------------------------------
     if (!info->fetch.anchor) {
         if (!(info->fetch.anchor = calloc(sizeof(void *), STACKS_INCR)))
-            return -ENOMEM;
+            return -1;
         n_alloc = STACKS_INCR;
     }
     if (!info->extents) {
         if (!(ext = pids_stacks_alloc(info, n_alloc)))
-            return -ENOMEM;
+            return -1;       // here, errno was set to ENOMEM
         memset(info->fetch.anchor, 0, sizeof(void *) * n_alloc);
         memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
     }
@@ -1066,15 +1073,21 @@ static int pids_stacks_fetch (
     while (info->read_something(info->fetch_PT, &task)) {
         if (!(n_inuse < n_alloc)) {
             n_alloc += STACKS_INCR;
-            if ((!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc)))
+            if (!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc))
             || (!(ext = pids_stacks_alloc(info, STACKS_INCR))))
-                return -1;
+                return -1;   // here, errno was set to ENOMEM
             memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * STACKS_INCR);
         }
         if (!pids_proc_tally(info, &info->fetch.counts, &task))
-            return -1;
-        pids_assign_results(info, info->fetch.anchor[n_inuse++], &task);
+            return -1;       // here, errno was set to ENOMEM
+        if (!pids_assign_results(info, info->fetch.anchor[n_inuse++], &task))
+            return -1;       // here, errno was set to ENOMEM
     }
+    /* while the possibility is extremely remote, the readproc.c (read_something)
+       simple_readproc and simple_readtask guys could have encountered this error
+       in which case they would have returned a NULL, thus ending our while loop. */
+    if (errno == ENOMEM)
+        return -1;
 
     // finalize stuff -------------------------------------
     /* note: we go to this trouble of maintaining a duplicate of the consolidated |
@@ -1084,7 +1097,7 @@ static int pids_stacks_fetch (
     if (n_saved < n_inuse + 1) {
         n_saved = n_inuse + 1;
         if (!(info->fetch.results.stacks = realloc(info->fetch.results.stacks, sizeof(void *) * n_saved)))
-            return -ENOMEM;
+            return -1;
     }
     memcpy(info->fetch.results.stacks, info->fetch.anchor, sizeof(void *) * n_inuse);
     info->fetch.results.stacks[n_inuse] = NULL;
@@ -1120,7 +1133,6 @@ PROCPS_EXPORT int procps_pids_new (
 
     if (info == NULL || *info != NULL)
         return -EINVAL;
-
     if (!(p = calloc(1, sizeof(struct pids_info))))
         return -ENOMEM;
 
@@ -1241,26 +1253,29 @@ PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
 
     /* this is very likely the *only* newlib function where the
        context (pids_info) of NULL will ever be permitted */
-    look_up_our_self(&self);
-    if (!return_self)
+    if (!look_up_our_self(&self)
+    || (!return_self))
         return NULL;
 
+    errno = EINVAL;
     if (info == NULL)
         return NULL;
-
     /* with items & numitems technically optional at 'new' time, it's
        expected 'reset' will have been called -- but just in case ... */
     if (!info->curitems)
         return NULL;
+    errno = 0;
 
     if (!(ext = pids_stacks_alloc(info, 1)))
         return NULL;
-    if (!pids_extent_cut(info, ext))
+    if (!pids_extent_cut(info, ext)) {
+        errno = EADDRNOTAVAIL;
         return NULL;
-
+    }
     ext->next = info->otherexts;
     info->otherexts = ext;
-    pids_assign_results(info, ext->stacks[0], &self);
+    if (!pids_assign_results(info, ext->stacks[0], &self))
+        return NULL;
 
     return ext->stacks[0];
 } // end: fatal_proc_unmounted
@@ -1272,6 +1287,7 @@ PROCPS_EXPORT struct pids_stack *procps_pids_get (
 {
     static proc_t task;    // static for initial zeroes + later dynamic free(s)
 
+    errno = EINVAL;
     if (info == NULL)
         return NULL;
     if (which != PIDS_FETCH_TASKS_ONLY && which != PIDS_FETCH_THREADS_TOO)
@@ -1284,9 +1300,9 @@ PROCPS_EXPORT struct pids_stack *procps_pids_get (
 fresh_start:
     if (!info->get_ext) {
         if (!(info->get_ext = pids_stacks_alloc(info, 1)))
-            return NULL;
+            return NULL;     // here, errno was overridden with ENOMEM
         if (!pids_oldproc_open(&info->get_PT, info->oldflags))
-            return NULL;
+            return NULL;     // here, errno was overridden with ENOMEM/others
         info->get_type = which;
         info->read_something = which ? readeither : readproc;
     }
@@ -1299,13 +1315,14 @@ fresh_start:
         info->get_ext = NULL;
         goto fresh_start;
     }
+    errno = 0;
 
     pids_cleanup_stack(info->get_ext->stacks[0]->head);
 
     if (NULL == info->read_something(info->get_PT, &task))
         return NULL;
-    pids_assign_results(info, info->get_ext->stacks[0], &task);
-
+    if (!pids_assign_results(info, info->get_ext->stacks[0], &task))
+        return NULL;
     return info->get_ext->stacks[0];
 } // end: procps_pids_get
 
@@ -1323,6 +1340,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
 {
     int rc;
 
+    errno = EINVAL;
     if (info == NULL)
         return NULL;
     if (which != PIDS_FETCH_TASKS_ONLY && which != PIDS_FETCH_THREADS_TOO)
@@ -1331,6 +1349,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
        expected 'reset' will have been called -- but just in case ... */
     if (!info->curitems)
         return NULL;
+    errno = 0;
 
     if (!pids_oldproc_open(&info->fetch_PT, info->oldflags))
         return NULL;
@@ -1405,6 +1424,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
     unsigned ids[FILL_ID_MAX + 1];
     int rc;
 
+    errno = EINVAL;
     if (info == NULL || these == NULL)
         return NULL;
     if (numthese < 1 || numthese > FILL_ID_MAX)
@@ -1415,6 +1435,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
        expected 'reset' will have been called -- but just in case ... */
     if (!info->curitems)
         return NULL;
+    errno = 0;
 
     // this zero delimiter is really only needed with PIDS_SELECT_PID
     memcpy(ids, these, sizeof(unsigned) * numthese);
@@ -1428,7 +1449,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
 
     pids_oldproc_close(&info->fetch_PT);
     // no guarantee any pids/uids were found
-    return (rc > -1) ? &info->fetch.results : NULL;
+    return (rc >= 0) ? &info->fetch.results : NULL;
 } // end: procps_pids_select
 
 
@@ -1453,6 +1474,7 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
     struct pids_result *p;
     int offset;
 
+    errno = EINVAL;
     if (info == NULL || stacks == NULL)
         return NULL;
     // a pids_item is currently unsigned, but we'll protect our future
@@ -1475,6 +1497,8 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
             return NULL;
         ++p;
     }
+    errno = 0;
+
     parms.offset = offset;
     parms.order = order;
 

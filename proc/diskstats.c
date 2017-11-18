@@ -390,13 +390,13 @@ static int node_update (
 
     if (!target) {
         if (!(target = malloc(sizeof(struct dev_node))))
-            return -ENOMEM;
+            return 0;
         memcpy(target, source, sizeof(struct dev_node));
         // let's not distort the deltas when a new node is created ...
         memcpy(&target->old, &target->new, sizeof(struct dev_data));
         node_classify(target);
         node_add(info, target);
-        return 0;
+        return 1;
     }
     // remember history from last time around ...
     memcpy(&source->old, &target->new, sizeof(struct dev_data));
@@ -405,7 +405,7 @@ static int node_update (
     source->next = target->next;
     // finally 'update' the existing node struct ...
     memcpy(target, source, sizeof(struct dev_node));
-    return 0;
+    return 1;
 } // end: node_update
 
 
@@ -517,14 +517,14 @@ static inline int diskstats_items_check_failed (
      */
     if (numitems < 1
     || (void *)items < (void *)(unsigned long)(2 * DISKSTATS_logical_end))
-        return -1;
+        return 1;
 
     for (i = 0; i < numitems; i++) {
         // a diskstats_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
-            return -1;
+            return 1;
         if (items[i] >= DISKSTATS_logical_end)
-            return -1;
+            return 1;
     }
 
     return 0;
@@ -539,7 +539,7 @@ static inline int diskstats_items_check_failed (
  * Read the data out of /proc/diskstats putting the information
  * into the supplied info structure
  *
- * Returns: 0 on success, negative on error
+ * Returns: 0 on success, 1 on error
  */
 static int diskstats_read_failed (
         struct diskstats_info *info)
@@ -552,10 +552,10 @@ static int diskstats_read_failed (
 
     if (!info->diskstats_fp
     && (!(info->diskstats_fp = fopen(DISKSTATS_FILE, "r"))))
-        return -errno;
+        return 1;
 
     if (fseek(info->diskstats_fp, 0L, SEEK_SET) == -1)
-        return -errno;
+        return 1;
 
     info->old_stamp = info->new_stamp;
     info->new_stamp = time(NULL);
@@ -581,13 +581,12 @@ static int diskstats_read_failed (
             , &node.new.io_wtime);
 
         if (rc != 14) {
-            if (errno != 0)
-                return -errno;
-            return -EIO;
+            errno = ERANGE;
+            return 1;
         }
         node.stamped = info->new_stamp;
-        if ((rc = node_update(info, &node)))
-            return rc;
+        if (!node_update(info, &node))
+            return 1;        // here, errno was set to ENOMEM
     }
 
     return 0;
@@ -672,7 +671,7 @@ static int diskstats_stacks_fetch (
     }
     if (!info->fetch_ext.extents) {
         if (!(ext = diskstats_stacks_alloc(&info->fetch_ext, n_alloc)))
-            return -ENOMEM;
+            return -1;       // here, errno was set to ENOMEM
         memset(info->fetch.anchor, 0, sizeof(void *) * n_alloc);
         memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
         diskstats_itemize_stacks_all(&info->fetch_ext);
@@ -687,7 +686,7 @@ static int diskstats_stacks_fetch (
             n_alloc += STACKS_INCR;
             if ((!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc)))
             || (!(ext = diskstats_stacks_alloc(&info->fetch_ext, STACKS_INCR))))
-                return -1;
+                return -1;   // here, errno was set to ENOMEM
             memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * STACKS_INCR);
         }
         diskstats_assign_results(info->fetch.anchor[n_inuse], node);
@@ -703,7 +702,7 @@ static int diskstats_stacks_fetch (
     if (n_saved < n_inuse + 1) {
         n_saved = n_inuse + 1;
         if (!(info->fetch.results.stacks = realloc(info->fetch.results.stacks, sizeof(void *) * n_saved)))
-            return -ENOMEM;
+            return -1;
     }
     memcpy(info->fetch.results.stacks, info->fetch.anchor, sizeof(void *) * n_inuse);
     info->fetch.results.stacks[n_inuse] = NULL;
@@ -722,14 +721,14 @@ static int diskstats_stacks_reconfig_maybe (
         int numitems)
 {
     if (diskstats_items_check_failed(this, items, numitems))
-        return -EINVAL;
+        return -1;
     /* is this the first time or have things changed since we were last called?
        if so, gotta' redo all of our stacks stuff ... */
     if (this->numitems != numitems + 1
     || memcmp(this->items, items, sizeof(enum diskstats_item) * numitems)) {
         // allow for our DISKSTATS_logical_end
         if (!(this->items = realloc(this->items, sizeof(enum diskstats_item) * (numitems + 1))))
-            return -ENOMEM;
+            return -1;       // here, errno was set to ENOMEM
         memcpy(this->items, items, sizeof(enum diskstats_item) * numitems);
         this->items[numitems] = DISKSTATS_logical_end;
         this->numitems = numitems + 1;
@@ -757,11 +756,9 @@ PROCPS_EXPORT int procps_diskstats_new (
         struct diskstats_info **info)
 {
     struct diskstats_info *p;
-    int rc;
 
     if (info == NULL)
         return -EINVAL;
-
     if (!(p = calloc(1, sizeof(struct diskstats_info))))
         return -ENOMEM;
 
@@ -771,9 +768,9 @@ PROCPS_EXPORT int procps_diskstats_new (
          1) ensure there will be no problems with subsequent access |
          2) make delta results potentially useful, even if 1st time |
          3) elimnate need for history distortions 1st time 'switch' | */
-    if ((rc = diskstats_read_failed(p))) {
+    if (diskstats_read_failed(p)) {
         procps_diskstats_unref(&p);
-        return rc;
+        return -errno;
     }
 
     *info = p;
@@ -803,6 +800,8 @@ PROCPS_EXPORT int procps_diskstats_unref (
     (*info)->refcount--;
 
     if ((*info)->refcount < 1) {
+        int errno_sav = errno;
+
         if ((*info)->diskstats_fp) {
             fclose((*info)->diskstats_fp);
             (*info)->diskstats_fp = NULL;
@@ -830,6 +829,8 @@ PROCPS_EXPORT int procps_diskstats_unref (
 
         free(*info);
         *info = NULL;
+
+        errno = errno_sav;
         return 0;
     }
     return (*info)->refcount;
@@ -846,10 +847,12 @@ PROCPS_EXPORT struct diskstats_result *procps_diskstats_get (
     struct dev_node *node;
     time_t cur_secs;
 
+    errno = EINVAL;
     if (info == NULL)
         return NULL;
     if (item < 0 || item >= DISKSTATS_logical_end)
         return NULL;
+    errno = 0;
 
     /* we will NOT read the diskstat file with every call - rather, we'll offer
        a granularity of 1 second between reads ... */
@@ -860,12 +863,13 @@ PROCPS_EXPORT struct diskstats_result *procps_diskstats_get (
     }
 
     info->get_this.item = item;
-//  with 'get', we must NOT honor the usual 'noop' guarantee
-//  if (item > DISKSTATS_noop)
-        info->get_this.result.ul_int = 0;
+    //  with 'get', we must NOT honor the usual 'noop' guarantee
+    info->get_this.result.ul_int = 0;
 
-    if (!(node = node_get(info, name)))
+    if (!(node = node_get(info, name))) {
+        errno = ENXIO;
         return NULL;
+    }
     Item_table[item].setsfunc(&info->get_this, node);
 
     return &info->get_this;
@@ -884,18 +888,20 @@ PROCPS_EXPORT struct diskstats_reap *procps_diskstats_reap (
         enum diskstats_item *items,
         int numitems)
 {
+    errno = EINVAL;
     if (info == NULL || items == NULL)
         return NULL;
-
     if (0 > diskstats_stacks_reconfig_maybe(&info->fetch_ext, items, numitems))
-        return NULL;
+        return NULL;         // here, errno may be overridden with ENOMEM
+    errno = 0;
 
     if (info->fetch_ext.dirty_stacks)
         diskstats_cleanup_stacks_all(&info->fetch_ext);
 
     if (diskstats_read_failed(info))
         return NULL;
-    diskstats_stacks_fetch(info);
+    if (0 > diskstats_stacks_fetch(info))
+        return NULL;
     info->fetch_ext.dirty_stacks = 1;
 
     return &info->fetch.results;
@@ -917,11 +923,12 @@ PROCPS_EXPORT struct diskstats_stack *procps_diskstats_select (
 {
     struct dev_node *node;
 
+    errno = EINVAL;
     if (info == NULL || items == NULL)
         return NULL;
-
     if (0 > diskstats_stacks_reconfig_maybe(&info->select_ext, items, numitems))
-        return NULL;
+        return NULL;         // here, errno may be overridden with ENOMEM
+    errno = 0;
 
     if (!info->select_ext.extents
     && (!diskstats_stacks_alloc(&info->select_ext, 1)))
@@ -932,8 +939,10 @@ PROCPS_EXPORT struct diskstats_stack *procps_diskstats_select (
 
     if (diskstats_read_failed(info))
         return NULL;
-    if (!(node = node_get(info, name)))
+    if (!(node = node_get(info, name))) {
+        errno = ENXIO;
         return NULL;
+    }
 
     diskstats_assign_results(info->select_ext.extents->stacks[0], node);
     info->select_ext.dirty_stacks = 1;
@@ -963,9 +972,9 @@ PROCPS_EXPORT struct diskstats_stack **procps_diskstats_sort (
     struct sort_parms parms;
     int offset;
 
+    errno = EINVAL;
     if (info == NULL || stacks == NULL)
         return NULL;
-
     // a diskstats_item is currently unsigned, but we'll protect our future
     if (sortitem < 0 || sortitem >= DISKSTATS_logical_end)
         return NULL;
@@ -984,9 +993,9 @@ PROCPS_EXPORT struct diskstats_stack **procps_diskstats_sort (
             return NULL;
         ++p;
     }
-    parms.offset = offset;
-    parms.order = order;
+    errno = 0;
 
+    parms.order = order;
     qsort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms);
     return stacks;
 } // end: procps_diskstats_sort

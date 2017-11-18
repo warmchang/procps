@@ -320,16 +320,16 @@ static int alloc_slabnodes (
     int new_count;
 
     if (info->nodes_used < info->nodes_alloc)
-        return 0;
+        return 1;
     /* Increment the allocated number of slabs */
     new_count = info->nodes_alloc * 5/4+30;
 
     new_nodes = realloc(info->nodes, sizeof(struct slabs_node) * new_count);
     if (!new_nodes)
-        return -ENOMEM;
+        return 0;
     info->nodes = new_nodes;
     info->nodes_alloc = new_count;
-    return 0;
+    return 1;
 } // end: alloc_slabnodes
 
 
@@ -345,14 +345,12 @@ static int get_slabnode (
         struct slabinfo_info *info,
         struct slabs_node **node)
 {
-    int retval;
-
     if (info->nodes_used == info->nodes_alloc) {
-        if ((retval = alloc_slabnodes(info)) < 0)
-            return retval;
+        if (!alloc_slabnodes(info))
+            return 0;        // here, errno was set to ENOMEM
     }
     *node = &(info->nodes[info->nodes_used++]);
-    return 0;
+    return 1;
 } // end: get_slabnode
 
 
@@ -393,7 +391,6 @@ static int parse_slabinfo20 (
 {
     struct slabs_node *node;
     char buffer[SLABINFO_LINE_LEN];
-    int retval;
     int page_size = getpagesize();
     struct slabs_summ *slabs = &(info->slabs.new);
 
@@ -404,8 +401,8 @@ static int parse_slabinfo20 (
         if (buffer[0] == '#')
             continue;
 
-        if ((retval = get_slabnode(info, &node)) < 0)
-            return retval;
+        if (!get_slabnode(info, &node))
+            return 1;        // here, errno was set to ENOMEM
 
         if (sscanf(buffer,
                    "%" STRINGIFY(SLABINFO_NAME_LEN) "s" \
@@ -415,9 +412,8 @@ static int parse_slabinfo20 (
                    &node->obj_size, &node->objs_per_slab,
                    &node->pages_per_slab, &node->nr_active_slabs,
                    &node->nr_slabs) < 8) {
-            if (errno != 0)
-                return -errno;
-            return -EINVAL;
+            errno = ERANGE;
+            return 1;
         }
 
         if (!node->name[0])
@@ -428,8 +424,7 @@ static int parse_slabinfo20 (
         if (node->obj_size > slabs->max_obj_size)
             slabs->max_obj_size = node->obj_size;
 
-        node->cache_size = (unsigned long)node->nr_slabs * node->pages_per_slab
-            * page_size;
+        node->cache_size = (unsigned long)node->nr_slabs * node->pages_per_slab * page_size;
 
         if (node->nr_objs) {
             node->use = (unsigned int)100 * (node->nr_active_objs / node->nr_objs);
@@ -459,42 +454,40 @@ static int parse_slabinfo20 (
  * Read the data out of /proc/slabinfo putting the information
  * into the supplied info container
  *
- * Returns: 0 on success, negative on error
+ * Returns: 0 on success, 1 on error
  */
 static int slabinfo_read_failed (
         struct slabinfo_info *info)
 {
     char line[SLABINFO_LINE_LEN];
-    int retval, major, minor;
+    int major, minor;
 
     memcpy(&info->slabs.old, &info->slabs.new, sizeof(struct slabs_summ));
     memset(&(info->slabs.new), 0, sizeof(struct slabs_summ));
-    if ((retval = alloc_slabnodes(info)) < 0)
-        return retval;
+    if (!alloc_slabnodes(info))
+        return 1;            // here, errno was set to ENOMEM
 
     memset(info->nodes, 0, sizeof(struct slabs_node)*info->nodes_alloc);
     info->nodes_used = 0;
 
     if (NULL == info->slabinfo_fp
     && (info->slabinfo_fp = fopen(SLABINFO_FILE, "r")) == NULL)
-        return -errno;
+        return 1;
 
     if (fseek(info->slabinfo_fp, 0L, SEEK_SET) < 0)
-        return -errno;
+        return 1;
 
     /* Parse the version string */
     if (!fgets(line, SLABINFO_LINE_LEN, info->slabinfo_fp))
-        return -errno;
+        return 1;
 
-    if (sscanf(line, "slabinfo - version: %d.%d", &major, &minor) != 2)
-        return -EINVAL;
+    if (2 != sscanf(line, "slabinfo - version: %d.%d", &major, &minor)
+    || (major != 2)) {
+        errno = ERANGE;
+        return 1;
+    }
 
-    if (major == 2)
-        retval = parse_slabinfo20(info);
-    else
-        return -ERANGE;
-
-    return retval;
+    return parse_slabinfo20(info);
 } // end: slabinfo_read_failed
 
 
@@ -607,7 +600,7 @@ static inline int slabinfo_items_check_failed (
      */
     if (numitems < 1
     || (void *)items < (void *)(unsigned long)(2 * SLABINFO_logical_end))
-        return -1;
+        return 1;
 
     for (i = 0; i < numitems; i++) {
 #ifdef ENFORCE_LOGICAL
@@ -616,13 +609,13 @@ static inline int slabinfo_items_check_failed (
             continue;
         if (items[i] < this->lowest
         || (items[i] > this->highest))
-            return -1;
+            return 1;
 #else
         // a slabinfo_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
-            return -1;
+            return 1;
         if (items[i] >= SLABINFO_logical_end)
-            return -1;
+            return 1;
 #endif
     }
 
@@ -702,12 +695,12 @@ static int slabinfo_stacks_fetch (
     // initialize stuff -----------------------------------
     if (!info->fetch.anchor) {
         if (!(info->fetch.anchor = calloc(sizeof(void *), STACKS_INCR)))
-            return -ENOMEM;
+            return -1;
         n_alloc = STACKS_INCR;
     }
     if (!info->fetch_ext.extents) {
         if (!(ext = slabinfo_stacks_alloc(&info->fetch_ext, n_alloc)))
-            return -ENOMEM;
+            return -1;       // here, errno was set to ENOMEM
         memset(info->fetch.anchor, 0, sizeof(void *) * n_alloc);
         memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
         slabinfo_itemize_stacks_all(&info->fetch_ext);
@@ -721,7 +714,7 @@ static int slabinfo_stacks_fetch (
             n_alloc += STACKS_INCR;
             if ((!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc)))
             || (!(ext = slabinfo_stacks_alloc(&info->fetch_ext, STACKS_INCR))))
-                return -1;
+                return -1;   // here, errno was set to ENOMEM
             memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * STACKS_INCR);
         }
         slabinfo_assign_results(info->fetch.anchor[n_inuse], &info->slabs, &info->nodes[n_inuse]);
@@ -736,7 +729,7 @@ static int slabinfo_stacks_fetch (
     if (n_saved < n_inuse + 1) {
         n_saved = n_inuse + 1;
         if (!(info->fetch.results.stacks = realloc(info->fetch.results.stacks, sizeof(void *) * n_saved)))
-            return -ENOMEM;
+            return -1;
     }
     memcpy(info->fetch.results.stacks, info->fetch.anchor, sizeof(void *) * n_inuse);
     info->fetch.results.stacks[n_inuse] = NULL;
@@ -755,14 +748,14 @@ static int slabinfo_stacks_reconfig_maybe (
         int numitems)
 {
     if (slabinfo_items_check_failed(this, items, numitems))
-        return -EINVAL;
+        return -1;
     /* is this the first time or have things changed since we were last called?
        if so, gotta' redo all of our stacks stuff ... */
     if (this->numitems != numitems + 1
     || memcmp(this->items, items, sizeof(enum slabinfo_item) * numitems)) {
         // allow for our SLABINFO_logical_end
         if (!(this->items = realloc(this->items, sizeof(enum slabinfo_item) * (numitems + 1))))
-            return -ENOMEM;
+            return -1;
         memcpy(this->items, items, sizeof(enum slabinfo_item) * numitems);
         this->items[numitems] = SLABINFO_logical_end;
         this->numitems = numitems + 1;
@@ -790,11 +783,9 @@ PROCPS_EXPORT int procps_slabinfo_new (
         struct slabinfo_info **info)
 {
     struct slabinfo_info *p;
-    int rc;
 
-    if (info == NULL)
+    if (info == NULL || *info != NULL)
         return -EINVAL;
-
     if (!(p = calloc(1, sizeof(struct slabinfo_info))))
         return -ENOMEM;
 
@@ -811,9 +802,9 @@ PROCPS_EXPORT int procps_slabinfo_new (
          1) see if that caller's permissions were sufficient (root) |
          2) make delta results potentially useful, even if 1st time |
          3) elimnate need for history distortions 1st time 'switch' | */
-    if ((rc = slabinfo_read_failed(p))) {
+    if (slabinfo_read_failed(p)) {
         procps_slabinfo_unref(&p);
-        return rc;
+        return -errno;
     }
 
     *info = p;
@@ -841,6 +832,8 @@ PROCPS_EXPORT int procps_slabinfo_unref (
     (*info)->refcount--;
 
     if ((*info)->refcount < 1) {
+        int errno_sav = errno;
+
         if ((*info)->slabinfo_fp) {
             fclose((*info)->slabinfo_fp);
             (*info)->slabinfo_fp = NULL;
@@ -864,6 +857,8 @@ PROCPS_EXPORT int procps_slabinfo_unref (
 
         free(*info);
         *info = NULL;
+
+        errno = errno_sav;
         return 0;
     }
     return (*info)->refcount;
@@ -879,10 +874,12 @@ PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
     static time_t sav_secs;
     time_t cur_secs;
 
+    errno = EINVAL;
     if (info == NULL)
         return NULL;
     if (item < 0 || item >= SLABINFO_logical_end)
         return NULL;
+    errno = 0;
 
     /* we will NOT read the slabinfo file with every call - rather, we'll offer
        a granularity of 1 second between reads ... */
@@ -894,9 +891,8 @@ PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
     }
 
     info->get_this.item = item;
-//  with 'get', we must NOT honor the usual 'noop' guarantee
-//  if (item > SLABINFO_noop)
-        info->get_this.result.ul_int = 0;
+    //  with 'get', we must NOT honor the usual 'noop' guarantee
+    info->get_this.result.ul_int = 0;
     Item_table[item].setsfunc(&info->get_this, &info->slabs, &info->nul_node);
 
     return &info->get_this;
@@ -915,18 +911,20 @@ PROCPS_EXPORT struct slabinfo_reap *procps_slabinfo_reap (
         enum slabinfo_item *items,
         int numitems)
 {
+    errno = EINVAL;
     if (info == NULL || items == NULL)
         return NULL;
-
     if (0 > slabinfo_stacks_reconfig_maybe(&info->fetch_ext, items, numitems))
-        return NULL;
+        return NULL;         // here, errno may be overridden with ENOMEM
+    errno = 0;
 
     if (info->fetch_ext.dirty_stacks)
         slabinfo_cleanup_stacks_all(&info->fetch_ext);
 
     if (slabinfo_read_failed(info))
         return NULL;
-    slabinfo_stacks_fetch(info);
+    if (0 > slabinfo_stacks_fetch(info))
+        return NULL;
     info->fetch_ext.dirty_stacks = 1;
 
     return &info->fetch.results;
@@ -945,11 +943,12 @@ PROCPS_EXPORT struct slabinfo_stack *procps_slabinfo_select (
         enum slabinfo_item *items,
         int numitems)
 {
+    errno = EINVAL;
     if (info == NULL || items == NULL)
         return NULL;
-
     if (0 > slabinfo_stacks_reconfig_maybe(&info->select_ext, items, numitems))
-        return NULL;
+        return NULL;         // here, errno may be overridden with ENOMEM
+    errno = 0;
 
     if (!info->select_ext.extents
     && (!slabinfo_stacks_alloc(&info->select_ext, 1)))
@@ -988,9 +987,9 @@ PROCPS_EXPORT struct slabinfo_stack **procps_slabinfo_sort (
     struct sort_parms parms;
     int offset;
 
+    errno = EINVAL;
     if (info == NULL || stacks == NULL)
         return NULL;
-
     // a slabinfo_item is currently unsigned, but we'll protect our future
     if (sortitem < 0 || sortitem >= SLABINFO_logical_end)
         return NULL;
@@ -1009,6 +1008,8 @@ PROCPS_EXPORT struct slabinfo_stack **procps_slabinfo_sort (
             return NULL;
         ++p;
     }
+    errno = 0;
+
     parms.offset = offset;
     parms.order = order;
 

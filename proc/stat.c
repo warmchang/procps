@@ -473,14 +473,14 @@ static inline int stat_items_check_failed (
      */
     if (numitems < 1
     || (void *)items < (void *)(unsigned long)(2 * STAT_logical_end))
-        return -1;
+        return 1;
 
     for (i = 0; i < numitems; i++) {
         // a stat_item is currently unsigned, but we'll protect our future
         if (items[i] < 0)
-            return -1;
+            return 1;
         if (items[i] >= STAT_logical_end) {
-            return -1;
+            return 1;
         }
     }
     return 0;
@@ -561,14 +561,14 @@ static int stat_read_failed (
     if (!info->cpus.hist.n_alloc) {
         info->cpus.hist.tics = calloc(NEWOLD_INCR, sizeof(struct hist_tic));
         if (!(info->cpus.hist.tics))
-            return -ENOMEM;
+            return 1;
         info->cpus.hist.n_alloc = NEWOLD_INCR;
         info->cpus.hist.n_inuse = 0;
     }
 
     if (!info->stat_fp
     && (!(info->stat_fp = fopen(STAT_FILE, "r"))))
-        return -errno;
+        return 1;
     fflush(info->stat_fp);
     rewind(info->stat_fp);
 
@@ -579,21 +579,23 @@ static int stat_read_failed (
        especially in a massively parallel environment.  additionally, each cpu |
        line is then frozen in time rather than changing until we get around to |
        accessing it.  this helps to minimize (not eliminate) some distortions. | */
-    tot_read = errno = 0;
+    tot_read = 0;
     while ((0 < (num = fread(curPOS, 1, curSIZ, info->stat_fp)))) {
         tot_read += num;
         if (tot_read < maxSIZ)
             break;
         maxSIZ += BUFFER_INCR;
         if (!(info->stat_buf = realloc(info->stat_buf, maxSIZ)))
-            return -ENOMEM;
+            return 1;
     };
  #undef maxSIZ
  #undef curSIZ
  #undef curPOS
 
-    if (!feof(info->stat_fp))
-        return -errno;
+    if (!feof(info->stat_fp)) {
+        errno = EIO;
+        return 1;
+    }
     info->stat_buf[tot_read] = '\0';
     bp = info->stat_buf;
 
@@ -609,8 +611,10 @@ static int stat_read_failed (
         , &sum_ptr->new.user,  &sum_ptr->new.nice,   &sum_ptr->new.system
         , &sum_ptr->new.idle,  &sum_ptr->new.iowait, &sum_ptr->new.irq
         , &sum_ptr->new.sirq,  &sum_ptr->new.stolen
-        , &sum_ptr->new.guest, &sum_ptr->new.gnice))
-            return -1;
+        , &sum_ptr->new.guest, &sum_ptr->new.gnice)) {
+            errno = ERANGE;
+            return 1;
+    }
     stat_derive_unique(sum_ptr);
 
     i = 0;
@@ -642,7 +646,7 @@ reap_em_again:
         info->cpus.hist.n_alloc += NEWOLD_INCR;
         info->cpus.hist.tics = realloc(info->cpus.hist.tics, info->cpus.hist.n_alloc * sizeof(struct hist_tic));
         if (!(info->cpus.hist.tics))
-            return -ENOMEM;
+            return 1;
         goto reap_em_again;
     }
 
@@ -756,18 +760,15 @@ static int stat_stacks_fetch (
     struct stacks_extent *ext;
     int i;
 
-    if (this == NULL)
-        return -EINVAL;
-
     // initialize stuff -----------------------------------
     if (!this->anchor) {
         if (!(this->anchor = calloc(sizeof(void *), STACKS_INCR)))
-            return -ENOMEM;
+            return -1;
         n_alloc = STACKS_INCR;
     }
     if (!this->fetch.extents) {
         if (!(ext = stat_stacks_alloc(&this->fetch, n_alloc)))
-            return -ENOMEM;
+            return -1;       // here, errno was set to ENOMEM
         memcpy(this->anchor, ext->stacks, sizeof(void *) * n_alloc);
     }
     if (this->fetch.dirty_stacks)
@@ -778,9 +779,8 @@ static int stat_stacks_fetch (
         if (!(i < n_alloc)) {
             n_alloc += STACKS_INCR;
             if ((!(this->anchor = realloc(this->anchor, sizeof(void *) * n_alloc)))
-            || (!(ext = stat_stacks_alloc(&this->fetch, STACKS_INCR)))) {
-                return -ENOMEM;
-            }
+            || (!(ext = stat_stacks_alloc(&this->fetch, STACKS_INCR))))
+                return -1;   // here, errno was set to ENOMEM
             memcpy(this->anchor + i, ext->stacks, sizeof(void *) * STACKS_INCR);
         }
         stat_assign_results(this->anchor[i], &info->sys_hist, &this->hist.tics[i]);
@@ -794,7 +794,7 @@ static int stat_stacks_fetch (
     if (n_saved < i + 1) {
         n_saved = i + 1;
         if (!(this->result.stacks = realloc(this->result.stacks, sizeof(void *) * n_saved)))
-            return -ENOMEM;
+            return -1;
     }
     memcpy(this->result.stacks, this->anchor, sizeof(void *) * i);
     this->result.stacks[i] = NULL;
@@ -815,15 +815,14 @@ static int stat_stacks_reconfig_maybe (
         int numitems)
 {
     if (stat_items_check_failed(numitems, items))
-        return -EINVAL;
-
+        return -1;
     /* is this the first time or have things changed since we were last called?
        if so, gotta' redo all of our stacks stuff ... */
     if (this->items->num != numitems + 1
     || memcmp(this->items->enums, items, sizeof(enum stat_item) * numitems)) {
         // allow for our STAT_logical_end
         if (!(this->items->enums = realloc(this->items->enums, sizeof(enum stat_item) * (numitems + 1))))
-            return -ENOMEM;
+            return -1;
         memcpy(this->items->enums, items, sizeof(enum stat_item) * numitems);
         this->items->enums[numitems] = STAT_logical_end;
         this->items->num = numitems + 1;
@@ -872,7 +871,6 @@ PROCPS_EXPORT int procps_stat_new (
         struct stat_info **info)
 {
     struct stat_info *p;
-    int rc;
 
     if (info == NULL || *info != NULL)
         return -EINVAL;
@@ -901,9 +899,9 @@ PROCPS_EXPORT int procps_stat_new (
          1) ensure there will be no problems with subsequent access |
          2) make delta results potentially useful, even if 1st time |
          3) elimnate need for history distortions 1st time 'switch' | */
-    if ((rc = stat_read_failed(p))) {
+    if (stat_read_failed(p)) {
         procps_stat_unref(&p);
-        return rc;
+        return -errno;
     }
 
     *info = p;
@@ -931,6 +929,8 @@ PROCPS_EXPORT int procps_stat_unref (
     (*info)->refcount--;
 
     if ((*info)->refcount < 1) {
+        int errno_sav = errno;
+
         if ((*info)->stat_fp)
             fclose((*info)->stat_fp);
         if ((*info)->stat_buf)
@@ -969,6 +969,8 @@ PROCPS_EXPORT int procps_stat_unref (
 
         free(*info);
         *info = NULL;
+
+        errno = errno_sav;
         return 0;
     }
     return (*info)->refcount;
@@ -984,10 +986,12 @@ PROCPS_EXPORT struct stat_result *procps_stat_get (
     static time_t sav_secs;
     time_t cur_secs;
 
+    errno = EINVAL;
     if (info == NULL)
         return NULL;
     if (item < 0 || item >= STAT_logical_end)
         return NULL;
+    errno = 0;
 
     /* we will NOT read the source file with every call - rather, we'll offer
        a granularity of 1 second between reads ... */
@@ -999,9 +1003,8 @@ PROCPS_EXPORT struct stat_result *procps_stat_get (
     }
 
     info->get_this.item = item;
-//  with 'get', we must NOT honor the usual 'noop' guarantee
-//  if (item > STAT_noop)
-        info->get_this.result.ull_int = 0;
+    //  with 'get', we must NOT honor the usual 'noop' guarantee
+    info->get_this.result.ull_int = 0;
     Item_table[item].setsfunc(&info->get_this, &info->sys_hist, &info->cpu_hist);
 
     return &info->get_this;
@@ -1023,6 +1026,7 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
 {
     int rc;
 
+    errno = EINVAL;
     if (info == NULL || items == NULL)
         return NULL;
     if (what != STAT_REAP_CPUS_ONLY && what != STAT_REAP_CPUS_AND_NODES)
@@ -1037,13 +1041,13 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
     }
 }
 #endif
-
     if (0 > (rc = stat_stacks_reconfig_maybe(&info->cpu_summary, items, numitems)))
-        return NULL;
+        return NULL;         // here, errno may be overridden with ENOMEM
     if (rc) {
         stat_extents_free_all(&info->cpus.fetch);
         stat_extents_free_all(&info->nodes.fetch);
     }
+    errno = 0;
 
     if (stat_read_failed(info))
         return NULL;
@@ -1060,7 +1064,7 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
 
     switch (what) {
         case STAT_REAP_CPUS_ONLY:
-            if (!stat_stacks_fetch(info, &info->cpus))
+            if (0 > stat_stacks_fetch(info, &info->cpus))
                 return NULL;
             break;
         case STAT_REAP_CPUS_AND_NODES:
@@ -1069,9 +1073,9 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
                will have marked (temporarily) all the cpu node ids as invalid | */
             if (0 > stat_make_numa_hist(info))
                 return NULL;
-            // tolerate an unexpected absence of libnuma.so ...
-            stat_stacks_fetch(info, &info->nodes);
-            if (!stat_stacks_fetch(info, &info->cpus))
+            if (0 > stat_stacks_fetch(info, &info->nodes))
+                return NULL;
+            if (0 > stat_stacks_fetch(info, &info->cpus))
                 return NULL;
             break;
         default:
@@ -1094,11 +1098,12 @@ PROCPS_EXPORT struct stat_stack *procps_stat_select (
         enum stat_item *items,
         int numitems)
 {
+    errno = EINVAL;
     if (info == NULL || items == NULL)
         return NULL;
-
     if (0 > stat_stacks_reconfig_maybe(&info->select, items, numitems))
-        return NULL;
+        return NULL;         // here, errno may be overridden with ENOMEM
+    errno = 0;
 
     if (stat_read_failed(info))
         return NULL;
@@ -1128,9 +1133,9 @@ PROCPS_EXPORT struct stat_stack **procps_stat_sort (
     struct sort_parms parms;
     int offset;
 
+    errno = EINVAL;
     if (info == NULL || stacks == NULL)
         return NULL;
-
     // a stat_item is currently unsigned, but we'll protect our future
     if (sortitem < 0 || sortitem >= STAT_logical_end)
         return NULL;
@@ -1149,6 +1154,8 @@ PROCPS_EXPORT struct stat_stack **procps_stat_sort (
             return NULL;
         ++p;
     }
+    errno = 0;
+
     parms.offset = offset;
     parms.order = order;
 
