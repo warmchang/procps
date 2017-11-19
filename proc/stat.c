@@ -555,9 +555,6 @@ static int stat_read_failed (
     int i, rc, num, tot_read;
     unsigned long long llnum;
 
-    if (info == NULL)
-        return -EINVAL;
-
     if (!info->cpus.hist.n_alloc) {
         info->cpus.hist.tics = calloc(NEWOLD_INCR, sizeof(struct hist_tic));
         if (!(info->cpus.hist.tics))
@@ -710,11 +707,6 @@ static struct stacks_extent *stat_stacks_alloc (
     size_t vect_size, head_size, list_size, blob_size;
     void *v_head, *v_list;
     int i;
-
-    if (this == NULL || this->items == NULL)
-        return NULL;
-    if (maxstacks < 1)
-        return NULL;
 
     vect_size  = sizeof(void *) * maxstacks;                     // size of the addr vectors |
     vect_size += sizeof(void *);                                 // plus NULL addr delimiter |

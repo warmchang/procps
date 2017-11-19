@@ -615,11 +615,6 @@ static struct stacks_extent *diskstats_stacks_alloc (
     void *v_head, *v_list;
     int i;
 
-    if (this == NULL || this->items == NULL)
-        return NULL;
-    if (maxstacks < 1)
-        return NULL;
-
     vect_size  = sizeof(void *) * maxstacks;                        // size of the addr vectors |
     vect_size += sizeof(void *);                                    // plus NULL addr delimiter |
     head_size  = sizeof(struct diskstats_stack);                    // size of that head struct |

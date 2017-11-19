@@ -1004,11 +1004,6 @@ static struct stacks_extent *pids_stacks_alloc (
     void *v_head, *v_list;
     int i;
 
-    if (info == NULL || info->items == NULL)
-        return NULL;
-    if (maxstacks < 1)
-        return NULL;
-
     vect_size  = sizeof(void *) * maxstacks;                   // size of the addr vectors |
     vect_size += sizeof(void *);                               // plus NULL addr delimiter |
     head_size  = sizeof(struct pids_stack);                    // size of that head struct |

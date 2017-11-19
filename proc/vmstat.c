@@ -976,9 +976,6 @@ static int vmstat_read_failed (
     int size;
     unsigned long *valptr;
 
-    if (info == NULL)
-        return -1;
-
     // remember history from last time around
     memcpy(&info->hist.old, &info->hist.new, sizeof(struct vmstat_data));
     // clear out the soon to be 'current' values
@@ -1056,11 +1053,6 @@ static struct stacks_extent *vmstat_stacks_alloc (
     size_t vect_size, head_size, list_size, blob_size;
     void *v_head, *v_list;
     int i;
-
-    if (info == NULL || info->items == NULL)
-        return NULL;
-    if (maxstacks < 1)
-        return NULL;
 
     vect_size  = sizeof(void *) * maxstacks;                   // size of the addr vectors |
     vect_size += sizeof(void *);                               // plus NULL addr delimiter |
