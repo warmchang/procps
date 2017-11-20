@@ -697,7 +697,7 @@ static void slabformat (void)
 {
  #define MAX_ITEMS (int)(sizeof(node_items) / sizeof(node_items[0]))
  #define slabVAL(e,t) SLABINFO_VAL(e, t, p, slab_info)
-    struct slabinfo_info *slab_info;
+    struct slabinfo_info *slab_info = NULL;
     struct slabinfo_reap *reaped;
     int i, j;
     enum slabinfo_item node_items[] = {
