@@ -21,6 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <limits.h>
 #include <locale.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -47,6 +48,7 @@
 
 #define DEF_SORT_FUNC		sort_nr_objs
 
+static int run_once;
 static unsigned short cols, rows;
 static struct termios saved_tty;
 static long delay = 3;
@@ -176,6 +178,8 @@ static void term_size(int unusused __attribute__ ((__unused__)))
 		cols = 80;
 		rows = 24;
 	}
+	if (run_once)
+		rows = USHRT_MAX;
 }
 
 static void sigint_handler(int unused __attribute__ ((__unused__)))
@@ -289,7 +293,7 @@ int main(int argc, char *argv[])
 	int is_tty, o;
 	unsigned short old_rows;
 	struct slab_info *slab_list = NULL;
-	int run_once = 0, retval = EXIT_SUCCESS;
+	int retval = EXIT_SUCCESS;
 
 	static const struct option longopts[] = {
 		{ "delay",	required_argument, NULL, 'd' },
