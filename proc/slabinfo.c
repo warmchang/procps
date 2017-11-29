@@ -427,7 +427,7 @@ static int parse_slabinfo20 (
         node->cache_size = (unsigned long)node->nr_slabs * node->pages_per_slab * page_size;
 
         if (node->nr_objs) {
-            node->use = (unsigned int)100 * (node->nr_active_objs / node->nr_objs);
+            node->use = (unsigned int)(100 * ((float)node->nr_active_objs / node->nr_objs));
             slabs->nr_active_caches++;
         } else
             node->use = 0;
