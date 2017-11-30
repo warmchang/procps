@@ -410,7 +410,7 @@ int main(int argc, char *argv[])
 		attroff(A_REVERSE);
 
 		curr = slab_list;
-		for (i = 0; i < rows - 8 && curr->next; i++) {
+		for (i = 0; i < rows - 8 && curr; i++) {
 			print_line("%6u %6u %3u%% %7.2fK %6u %8u %9uK %-23s\n",
 				curr->nr_objs, curr->nr_active_objs, curr->use,
 				curr->obj_size / 1024.0, curr->nr_slabs,
