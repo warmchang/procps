@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <term.h>            // foul sob, defines all sorts of stuff...
+#undef    raw
 #undef    tab
 #undef    TTY
 #include <termios.h>
@@ -258,7 +259,7 @@ SCB_STRS(LXC, lxcname)
 SCB_NUMx(NCE, nice)
 static int SCB_NAME(NMA) (const proc_t **P, const proc_t **Q) {
    /* this is a terrible cost to pay for sorting on numa nodes, but it's
-      necessary if we're to avoid ABI breakage via changes to the proc_t  */
+      necessary if we're to avoid ABI breakage via changes to the proc_t */
    int p = numa_node_of_cpu((*P)->processor);
    int q = numa_node_of_cpu((*Q)->processor);
    return Frame_srtflg * ( q - p );
@@ -884,7 +885,7 @@ static int show_pmt (const char *str) {
          *       "some text <_delimiter_> some more text <_delimiter_>...\n"
          *    Where <_delimiter_> is a two byte combination consisting of a
          *    tilde followed by an ascii digit in the range of 1 - 8.
-         *       examples: ~1,  ~5,  ~8, etc.
+         *       examples: ~1, ~5, ~8, etc.
          *    The tilde is effectively stripped and the next digit
          *    converted to an index which is then used to select an
          *    'attribute' from a capabilities table.  That attribute
@@ -2249,7 +2250,8 @@ static void display_fields (int focus, int extend) {
       char sbuf[xSUFX*4];                        // 4 = max multi-byte
       int xcol, xfld;
 
-      // prep sacrificial suffix (allowing for beginning '= ') ...
+      /* prep sacrificial suffix (allowing for beginning '= ')
+         note: width passed to 'utf8_embody' may go negative, but he'll be just fine */
       snprintf(sbuf, sizeof(sbuf), "= %.*s", utf8_embody(N_fld(f), smax - xEQUS), N_fld(f));
 
       // obtain translated deltas (if any) ...
@@ -3192,7 +3194,7 @@ static void insp_mkrow_utf8 (int col, int row) {
          unsigned char uch = tline[fr++];
          switch (UTF8_tab[(int)uch]) {
             case 1:
-               if (uch == '\n')   break;
+               if (uch == '\n') break;
                else if (uch < 32) mkCTL
                else if (uch == 127) mkNUL
                else { buf1[0] = uch; doPUT(buf1) }
