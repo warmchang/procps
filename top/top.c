@@ -1895,7 +1895,7 @@ static void calibrate_fields (void) {
    char *s;
    const char *h;
    WIN_t *w = Curwin;
-   int i, varcolcnt, len;
+   int i, varcolcnt, len, rc;
 
    adj_geometry();
 
@@ -1974,8 +1974,8 @@ static void calibrate_fields (void) {
 
    build_headers();
 
-   if (procps_pids_reset(Pids_ctx, Pids_itms, Pids_itms_cur))
-      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
+   if ((rc = procps_pids_reset(Pids_ctx, Pids_itms, Pids_itms_cur)))
+      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(-rc)));
 
    if (CHKw(Curwin, View_SCROLL))
       updt_scroll_msg();
@@ -2293,7 +2293,7 @@ static void cpus_refresh (void) {
 
    Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items));
    if (!Stat_reap)
-      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__));
+      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
    // adapt to changes in total numa nodes (assuming it's even possible)
    if (Stat_reap->nodes->total && Stat_reap->nodes->total != Numa_node_tot) {
       Numa_node_tot = Stat_reap->nodes->total;
@@ -2328,7 +2328,7 @@ static void procs_refresh (void) {
    if (Monpidsidx) Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, PIDS_SELECT_PID);
    else Pids_reap = procps_pids_reap(Pids_ctx, Thread_mode ? PIDS_FETCH_THREADS_TOO : PIDS_FETCH_TASKS_ONLY);
    if (!Pids_reap)
-      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
+      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
 
    // now refresh each window's stacks pointer array...
    if (n_alloc < n_reap) {
@@ -2361,7 +2361,7 @@ static void sysinfo_refresh (int forced) {
 
    if (3 <= cur_secs - sav_secs) {
       if (!(Mem_stack = procps_meminfo_select(Mem_ctx, Mem_items, MAXTBL(Mem_items))))
-         error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__));
+         error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__, strerror(errno)));
       sav_secs = cur_secs;
    }
 } // end: sysinfo_refresh
@@ -2995,7 +2995,7 @@ signify_that:
          * IMPORTANT stuff upon which all those lessor functions depend! */
 static void before (char *me) {
    struct sigaction sa;
-   int i;
+   int i, rc;
    int linux_version_code = procps_linux_version();
    enum stat_reap_type which = STAT_REAP_CPUS_AND_NODES;
 
@@ -3029,15 +3029,16 @@ static void before (char *me) {
       Cpu_States_fmts = N_unq(STATE_lin2x7_fmt);
 
    // get the total cpus (and, if possible, numa node total)
-   if (procps_stat_new(&Stat_ctx) < 0
-   || !(Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items))))
-      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__));
+   if ((rc = procps_stat_new(&Stat_ctx)))
+      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(-rc)));
+   if (!(Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items))))
+      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
    Numa_node_tot = Stat_reap->nodes->total;
    Cpu_cnt = Stat_reap->cpus->total;
 
    // prepare for memory stats from new library API ...
-   if (procps_meminfo_new(&Mem_ctx) < 0)
-      error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__));
+   if ((rc = procps_meminfo_new(&Mem_ctx)))
+      error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__, strerror(-rc)));
 
    // establish max depth for newlib pids stack (# of result structs)
    Pids_itms = alloc_c(sizeof(enum pids_item) * MAXTBL(Fieldstab));
@@ -3046,8 +3047,8 @@ static void before (char *me) {
          Pids_itms[i] = PIDS_noop;
    Pids_itms_cur = MAXTBL(Fieldstab);
    // we will identify specific items in the build_headers() function
-   if (procps_pids_new(&Pids_ctx, Pids_itms, Pids_itms_cur))
-      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
+   if ((rc = procps_pids_new(&Pids_ctx, Pids_itms, Pids_itms_cur)))
+      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(-rc)));
 
 #ifndef SIGRTMAX       // not available on hurd, maybe others too
 #define SIGRTMAX 32
@@ -4721,7 +4722,7 @@ static void forest_begin (WIN_t *q) {
 #ifndef TREE_SCANALL
       if (!(procps_pids_sort(Pids_ctx, Seed_ppt, PIDSmaxt
          , PIDS_TIME_START, PIDS_SORT_ASCEND)))
-            error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
+            error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
 #endif
       for (i = 0; i < PIDSmaxt; i++)           // avoid any hidepid distortions
          if (!rLevel)                          // identify real or pretend trees
@@ -5316,7 +5317,7 @@ static int window_show (WIN_t *q, int wmax) {
       else if (item == PIDS_TICS_ALL && CHKw(q, Show_CTIMES))
          item = PIDS_TICS_ALL_C;
       if (!(procps_pids_sort(Pids_ctx, q->ppt , PIDSmaxt, item, sORDER)))
-         error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__));
+         error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
    }
 
    i = q->begtask;
