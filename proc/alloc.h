@@ -5,6 +5,8 @@
 
 EXTERN_C_BEGIN
 
+typedef void (*message_fn)(const char *__restrict, ...) __attribute__((format(printf,1,2)));
+
  /* change xalloc_err_handler to override the default fprintf(stderr... */
 extern message_fn xalloc_err_handler;
 
