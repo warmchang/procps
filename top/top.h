@@ -584,7 +584,8 @@ typedef struct WIN_t {
 /*      ( see module top_nls.c for the nls translatable data ) */
 
         /* Configuration files support */
-#define SYS_RCFILESPEC  "/etc/toprc"
+#define SYS_RCRESTRICT  "/etc/toprc"
+#define SYS_RCDEFAULTS  "/etc/topdefaultrc"
 #define RCF_EYECATCHER  "Config File (Linux processes with windows)\n"
 #define RCF_PLUS_H      "\\]^_`abcdefghij"
 #ifdef VER_J_RCFILE
@@ -759,6 +760,7 @@ typedef struct WIN_t {
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
 //atic int           config_cvt (WIN_t *q);
+//atic const char   *config_file (FILE *fp, const char *name, float *delay);
 //atic void          configs_read (void);
 //atic void          parse_args (char **args);
 //atic void          whack_terminal (void);

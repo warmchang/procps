@@ -3546,7 +3546,7 @@ static void before (char *me) {
 
 
         /*
-         * A configs_read *Helper* function responsible for converting
+         * A config_file *Helper* function responsible for converting
          * a single window's old rc stuff into a new style rcfile entry */
 static int config_cvt (WIN_t *q) {
    static struct {
@@ -3612,34 +3612,174 @@ static int config_cvt (WIN_t *q) {
    x = q->rc.sortindx;
    q->rc.sortindx = fields_src[x] - FLD_OFFSET;
 
-   Rc_questions = 1;
    return 0;
 } // end: config_cvt
 
 
         /*
-         * Build the local RC file name then try to read both of 'em.
-         * 'SYS_RCFILESPEC' contains two lines consisting of the secure
-         *   mode switch and an update interval.  It's presence limits what
-         *   ordinary users are allowed to do.
-         * 'Rc_name' contains multiple lines - 3 global + 3 per window.
-         *   line 1  : an eyecatcher and creating program/alias name
-         *   line 2  : an id, Mode_altcsr, Mode_irixps, Delay_time, Curwin.
-         *   For each of the 4 windows:
-         *     line a: contains w->winname, fieldscur
-         *     line b: contains w->winflags, sortindx, maxtasks, graph modes
-         *     line c: contains w->summclr, msgsclr, headclr, taskclr
-         *   line 15 : miscellaneous additional global settings
-         *   Any remaining lines are devoted to the 'Inspect Other' feature */
+         * A configs_read *Helper* function responsible for processing
+         * a configuration file (personal or system-wide default) */
+static const char *config_file (FILE *fp, const char *name, float *delay) {
+   char fbuf[LRGBUFSIZ];
+   int i, tmp_whole, tmp_fract;
+   const char *p = NULL;
+
+   p = fmtmk(N_fmt(RC_bad_files_fmt), name);
+   if (fgets(fbuf, sizeof(fbuf), fp))       // ignore eyecatcher
+      ;                                     // avoid -Wunused-result
+   if (6 != fscanf(fp
+      , "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%d.%d, Curwin=%d\n"
+      , &Rc.id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_whole, &tmp_fract, &i)) {
+         return p;
+   }
+   if (Rc.id < 'a' || Rc.id > RCF_VERSION_ID)
+      return p;
+   // you saw that, right?  (fscanf stickin' it to 'i')
+   Curwin = &Winstk[i];
+   // this may be ugly, but it keeps us locale independent...
+   *delay = (float)tmp_whole + (float)tmp_fract / 1000;
+
+   for (i = 0 ; i < GROUPSMAX; i++) {
+      int x;
+      WIN_t *w = &Winstk[i];
+      p = fmtmk(N_fmt(RC_bad_entry_fmt), i+1, name);
+
+      // note: "fieldscur=%__s" on next line should equal (PFLAGSSIZ -1) !
+      if (2 != fscanf(fp, "%3s\tfieldscur=%99s\n"
+         , w->rc.winname, w->rc.fieldscur))
+            return p;
+#if PFLAGSSIZ != 100
+ too bad fscanf is not as flexible with his format string as snprintf
+error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
+#endif
+      // be tolerant of missing release 3.3.10 graph modes additions
+      if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d\n"
+         , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks, &w->rc.graph_cpus, &w->rc.graph_mems))
+            return p;
+      if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
+         , &w->rc.summclr, &w->rc.msgsclr
+         , &w->rc.headclr, &w->rc.taskclr))
+            return p;
+
+      switch (Rc.id) {
+         case 'a':                          // 3.2.8 (former procps)
+            if (config_cvt(w))
+               return p;
+         case 'f':                          // 3.3.0 thru 3.3.3 (ng)
+            SETw(w, Show_JRNUMS);
+         case 'g':                          // from 3.3.4 thru 3.3.8
+            scat(w->rc.fieldscur, RCF_PLUS_H);
+         case 'h':                          // this is release 3.3.9
+            w->rc.graph_cpus = w->rc.graph_mems = 0;
+            // these next 2 are really global, but best documented here
+            Rc.summ_mscale = Rc.task_mscale = SK_Kb;
+         case 'i':                          // actual RCF_VERSION_ID
+            scat(w->rc.fieldscur, RCF_PLUS_J);
+         case 'j':                          // and the next version
+         default:
+            if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
+               return p;
+            for (x = 0; x < EU_MAXPFLGS; ++x)
+               if (EU_MAXPFLGS <= FLDget(w, x))
+                  return p;
+            break;
+      }
+#ifndef USE_X_COLHDR
+      OFFw(w, NOHIFND_xxx | NOHISEL_xxx);
+#endif
+   } // end: for (GROUPSMAX)
+
+   // any new addition(s) last, for older rcfiles compatibility...
+   if (fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
+      , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress))
+         ;                                  // avoid -Wunused-result
+
+   // we'll start off Inspect stuff with 1 'potential' blank line
+   // ( only realized if we end up with Inspect.total > 0 )
+   for (i = 0, Inspect.raw = alloc_s("\n");;) {
+    #define iT(element) Inspect.tab[i].element
+      size_t lraw = strlen(Inspect.raw) +1;
+      char *s;
+
+      if (!fgets(fbuf, sizeof(fbuf), fp)) break;
+      lraw += strlen(fbuf) +1;
+      Inspect.raw = alloc_r(Inspect.raw, lraw);
+      strcat(Inspect.raw, fbuf);
+
+      if (fbuf[0] == '#' || fbuf[0] == '\n') continue;
+      Inspect.tab = alloc_r(Inspect.tab, sizeof(struct I_ent) * (i + 1));
+
+      if (!(s = strtok(fbuf, "\t\n"))) { Rc_questions = 1; continue; }
+      iT(type) = alloc_s(s);
+      if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; continue; }
+      iT(name) = alloc_s(s);
+      if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; continue; }
+      iT(fmts) = alloc_s(s);
+
+      switch (toupper(fbuf[0])) {
+         case 'F':
+            iT(func) = insp_do_file;
+            break;
+         case 'P':
+            iT(func) = insp_do_pipe;
+            break;
+         default:
+            Rc_questions = 1;
+            continue;
+      }
+      iT(farg) = (strstr(iT(fmts), "%d")) ? 1 : 0;
+      iT(fstr) = alloc_c(FNDBUFSIZ);
+      iT(flen) = 0;
+
+      ++i;
+    #undef iT
+   } // end: for ('inspect' entries)
+
+   Inspect.total = i;
+#ifndef INSP_OFFDEMO
+   if (!Inspect.total) {
+    #define mkS(n) N_txt(YINSP_demo ## n ## _txt)
+      const char *sels[] = { mkS(01), mkS(02), mkS(03) };
+      Inspect.total = Inspect.demo = MAXTBL(sels);
+      Inspect.tab = alloc_c(sizeof(struct I_ent) * Inspect.total);
+      for (i = 0; i < Inspect.total; i++) {
+         Inspect.tab[i].type = alloc_s(N_txt(YINSP_deqtyp_txt));
+         Inspect.tab[i].name = alloc_s(sels[i]);
+         Inspect.tab[i].func = insp_do_demo;
+         Inspect.tab[i].fmts = alloc_s(N_txt(YINSP_deqfmt_txt));
+         Inspect.tab[i].fstr = alloc_c(FNDBUFSIZ);
+      }
+    #undef mkS
+   }
+#endif
+   return NULL;
+} // end: config_file
+
+
+        /*
+         * Try reading up to 3 rcfiles
+         * 1. 'SYS_RCRESTRICT' contains two lines consisting of the secure
+         *     mode switch and an update interval.  Its presence limits what
+         *     ordinary users are allowed to do.
+         * 2. 'Rc_name' contains multiple lines - 3 global + 3 per window.
+         *     line 1  : an eyecatcher and creating program/alias name
+         *     line 2  : an id, Mode_altcsr, Mode_irixps, Delay_time, Curwin.
+         *     For each of the 4 windows:
+         *       line a: contains w->winname, fieldscur
+         *       line b: contains w->winflags, sortindx, maxtasks, graph modes
+         *       line c: contains w->summclr, msgsclr, headclr, taskclr
+         *     line 15 : miscellaneous additional global settings
+         *     Any remaining lines are devoted to the 'Inspect Other' feature
+         * 3. 'SYS_RCDEFAULTS' system-wide defaults if 'Rc_name' absent
+         *    format is identical to #2 above */
 static void configs_read (void) {
    float tmp_delay = DEF_DELAY;
-   char fbuf[LRGBUFSIZ];
    const char *p, *p_home;
    FILE *fp;
-   int i;
 
-   fp = fopen(SYS_RCFILESPEC, "r");
+   fp = fopen(SYS_RCRESTRICT, "r");
    if (fp) {
+      char fbuf[SMLBUFSIZ];
       if (fgets(fbuf, sizeof(fbuf), fp)) {     // sys rc file, line 1
          Secure_mode = 1;
          if (fgets(fbuf, sizeof(fbuf), fp))    // sys rc file, line 2
@@ -3669,143 +3809,17 @@ static void configs_read (void) {
    }
 
    if (fp) {
-      int tmp_whole, tmp_fract;
-      if (fgets(fbuf, sizeof(fbuf), fp))       // ignore eyecatcher
-         ;                                     // avoid -Wunused-result
-      if (6 != fscanf(fp
-         , "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%d.%d, Curwin=%d\n"
-         , &Rc.id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_whole, &tmp_fract, &i)) {
-            p = fmtmk(N_fmt(RC_bad_files_fmt), Rc_name);
-            Rc_questions = -1;
-            goto try_inspect_entries;          // maybe a faulty 'inspect' echo
-      }
-      // you saw that, right?  (fscanf stickin' it to 'i')
-      Curwin = &Winstk[i];
-      // this may be ugly, but it keeps us locale independent...
-      tmp_delay = (float)tmp_whole + (float)tmp_fract / 1000;
-
-      for (i = 0 ; i < GROUPSMAX; i++) {
-         int x;
-         WIN_t *w = &Winstk[i];
-         p = fmtmk(N_fmt(RC_bad_entry_fmt), i+1, Rc_name);
-
-         // note: "fieldscur=%__s" on next line should equal (PFLAGSSIZ -1) !
-         if (2 != fscanf(fp, "%3s\tfieldscur=%99s\n"
-            , w->rc.winname, w->rc.fieldscur))
-               goto default_or_error;
-#if PFLAGSSIZ != 100
- // too bad fscanf is not as flexible with his format string as snprintf
- # error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
-#endif
-         // be tolerant of missing release 3.3.10 graph modes additions
-         if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d\n"
-            , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks, &w->rc.graph_cpus, &w->rc.graph_mems))
-               goto default_or_error;
-         if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
-            , &w->rc.summclr, &w->rc.msgsclr
-            , &w->rc.headclr, &w->rc.taskclr))
-               goto default_or_error;
-
-         switch (Rc.id) {
-            case 'a':                          // 3.2.8 (former procps)
-               if (config_cvt(w))
-                  goto default_or_error;
-            case 'f':                          // 3.3.0 thru 3.3.3 (ng)
-               SETw(w, Show_JRNUMS);
-            case 'g':                          // from 3.3.4 thru 3.3.8
-               scat(w->rc.fieldscur, RCF_PLUS_H);
-            case 'h':                          // this is release 3.3.9
-               w->rc.graph_cpus = w->rc.graph_mems = 0;
-               // these next 2 are really global, but best documented here
-               Rc.summ_mscale = Rc.task_mscale = SK_Kb;
-            case 'i':                          // actual RCF_VERSION_ID
-               scat(w->rc.fieldscur, RCF_PLUS_J);
-            case 'j':                          // and the next version
-            default:
-               if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
-                  goto default_or_error;
-               for (x = 0; x < EU_MAXPFLGS; ++x)
-                  if (EU_MAXPFLGS <= FLDget(w, x))
-                     goto default_or_error;
-               break;
-         }
-#ifndef USE_X_COLHDR
-         OFFw(w, NOHIFND_xxx | NOHISEL_xxx);
-#endif
-      } // end: for (GROUPSMAX)
-
-      // any new addition(s) last, for older rcfiles compatibility...
-      if (fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
-         , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress))
-            ;                                  // avoid -Wunused-result
-
-try_inspect_entries:
-      // we'll start off Inspect stuff with 1 'potential' blank line
-      // ( only realized if we end up with Inspect.total > 0 )
-      for (i = 0, Inspect.raw = alloc_s("\n");;) {
-       #define iT(element) Inspect.tab[i].element
-         size_t lraw = strlen(Inspect.raw) +1;
-         char *s;
-
-         if (!fgets(fbuf, sizeof(fbuf), fp)) break;
-         lraw += strlen(fbuf) +1;
-         Inspect.raw = alloc_r(Inspect.raw, lraw);
-         strcat(Inspect.raw, fbuf);
-
-         if (fbuf[0] == '#' || fbuf[0] == '\n') continue;
-         Inspect.tab = alloc_r(Inspect.tab, sizeof(struct I_ent) * (i + 1));
-
-         if (!(s = strtok(fbuf, "\t\n"))) { Rc_questions = 1; continue; }
-         iT(type) = alloc_s(s);
-         if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; continue; }
-         iT(name) = alloc_s(s);
-         if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; continue; }
-         iT(fmts) = alloc_s(s);
-
-         switch (toupper(fbuf[0])) {
-            case 'F':
-               iT(func) = insp_do_file;
-               break;
-            case 'P':
-               iT(func) = insp_do_pipe;
-               break;
-            default:
-               Rc_questions = 1;
-               continue;
-         }
-
-         iT(farg) = (strstr(iT(fmts), "%d")) ? 1 : 0;
-         iT(fstr) = alloc_c(FNDBUFSIZ);
-         iT(flen) = 0;
-
-         if (Rc_questions < 0) Rc_questions = 1;
-         ++i;
-       #undef iT
-      } // end: for ('inspect' entries)
-
-      Inspect.total = i;
-#ifndef INSP_OFFDEMO
-      if (!Inspect.total) {
-       #define mkS(n) N_txt(YINSP_demo ## n ## _txt)
-         const char *sels[] = { mkS(01), mkS(02), mkS(03) };
-         Inspect.total = Inspect.demo = MAXTBL(sels);
-         Inspect.tab = alloc_c(sizeof(struct I_ent) * Inspect.total);
-         for (i = 0; i < Inspect.total; i++) {
-            Inspect.tab[i].type = alloc_s(N_txt(YINSP_deqtyp_txt));
-            Inspect.tab[i].name = alloc_s(sels[i]);
-            Inspect.tab[i].func = insp_do_demo;
-            Inspect.tab[i].fmts = alloc_s(N_txt(YINSP_deqfmt_txt));
-            Inspect.tab[i].fstr = alloc_c(FNDBUFSIZ);
-         }
-       #undef mkS
-      }
-#endif
-      if (Rc_questions < 0) {
-         p = fmtmk(N_fmt(RC_bad_files_fmt), Rc_name);
+      if ((p = config_file(fp, Rc_name, &tmp_delay)))
          goto default_or_error;
-      }
       fclose(fp);
-   } // end: if (fp)
+   } else {
+      fp = fopen(SYS_RCDEFAULTS, "r");
+      if (fp) {
+         if ((p = config_file(fp, SYS_RCDEFAULTS, &tmp_delay)))
+            goto default_or_error;
+         fclose(fp);
+      }
+   }
 
    // lastly, establish the true runtime secure mode and delay time
    if (!getuid()) Secure_mode = 0;
@@ -3815,11 +3829,11 @@ try_inspect_entries:
 default_or_error:
 #ifdef RCFILE_NOERR
 {  RCF_t rcdef = DEF_RCFILE;
+   int i;
    fclose(fp);
    Rc = rcdef;
    for (i = 0 ; i < GROUPSMAX; i++)
       Winstk[i].rc  = Rc.win[i];
-   Rc_questions = 1;
 }
 #else
    error_exit(p);
