@@ -423,7 +423,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[GET_find_str_txt] = _("Locate string");
    Norm_nlstab[FIND_no_find_fmt] = _("%s\"%s\" not found");
    Norm_nlstab[XTRA_fixwide_fmt] = _("width incr is %d, change to (0 default, -1 auto)");
-   Norm_nlstab[XTRA_warncfg_txt] = _("Overwrite existing obsolete/corrupted rcfile?");
+   Norm_nlstab[XTRA_warncfg_txt] = _("rcfile has 'inspect' entry error(s), write anyway?");
    Norm_nlstab[XTRA_badflds_fmt] = _("unrecognized field name '%s'");
    Norm_nlstab[XTRA_winsize_txt] = _("even using field names only, window is now too small");
 #ifndef INSP_OFFDEMO

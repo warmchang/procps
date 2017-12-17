@@ -69,7 +69,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "August 2017" "procps-ng" "User Commands"
+.TH TOP 1 "December 2017" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -113,7 +113,6 @@ The remaining Table of Contents
 .nf
     OVERVIEW
        Operation
-       Startup Defaults
        Linux Memory Types
     1. COMMAND\-LINE Options
     2. SUMMARY Display
@@ -139,9 +138,10 @@ The remaining Table of Contents
        d. SEARCHING in a Window
        e. FILTERING in a Window
     6. FILES
-       a. SYSTEM Configuration File
-       b. PERSONAL Configuration File
-       c. ADDING INSPECT Entries
+       a. PERSONAL Configuration File
+       b. ADDING INSPECT Entries
+       c. SYSTEM Configuration File
+       d. SYSTEM Restrictions File
     7. STUPID TRICKS Sampler
        a. Kernel Magic
        b. Bouncing Windows
@@ -229,44 +229,6 @@ And there are four additional keys available with line oriented input.
        Delete   character \fBremoved\fR at cursor, moving others left
        Home     jump to \fBbeginning\fR of input line
        End      jump to \fBend\fR of input line
-.fi
-
-.\" ......................................................................
-.SS Startup Defaults
-.\" ----------------------------------------------------------------------
-The following startup defaults assume no \*(CF, thus no user customizations.
-Even so, items shown with an \*(AK could be overridden through the
-command-line.
-All are explained in detail in the sections that follow.
-
-.nf
-    \fIGlobal-defaults\fR
-       A \- Alt display      Off (full-screen)
-     * d \- Delay time       1.5 seconds
-     * H \- Threads mode     Off (summarize as tasks)
-       I \- Irix mode        On  (no, `solaris' smp)
-     * p \- PID monitoring   Off (show all processes)
-     * s \- Secure mode      Off (unsecured)
-       B \- Bold enable      On  (yes, bold globally)
-    \fISummary-Area-defaults\fR
-       l \- Load Avg/Uptime  On  (thus program name)
-       t \- Task/Cpu states  On  (1+1 lines, see `1')
-       m \- Mem/Swap usage   On  (2 lines worth)
-     * 1 \- Single Cpu       Off (thus multiple cpus)
-    \fITask-Area-defaults\fR
-       b \- Bold hilite      Off (use `reverse')
-     * c \- Command line     Off (name, not cmdline)
-     * i \- Idle tasks       On  (show all tasks)
-       J \- Num align right  On  (not left justify)
-       j \- Str align right  Off (not right justify)
-       R \- Reverse sort     On  (pids high-to-low)
-     * S \- Cumulative time  Off (no, dead children)
-     * u \- User filter      Off (show euid only)
-     * U \- User filter      Off (show any uid)
-       V \- Forest view      On  (show as branches)
-       x \- Column hilite    Off (no, sort field)
-       y \- Row hilite       On  (yes, running tasks)
-       z \- color/mono       On  (show colors)
 .fi
 
 .\" ......................................................................
@@ -376,7 +338,7 @@ Later this can be changed with the `d' or `s' \*(CIs.
 Fractional seconds are honored, but a negative number is not allowed.
 In all cases, however, such changes are prohibited if \*(We is running
 in Secure mode, except for root (unless the `s' \*(CO was used).
-For additional information on Secure mode \*(Xt 6a. SYSTEM Configuration File.
+For additional information on Secure mode \*(Xt 6d. SYSTEM Restrictions File.
 
 .TP 5
 \-\fBE\fR\ \ :\fIExtend-Memory-Scaling\fR as:\ \ \fB-E  k\fR | \fBm\fR | \fBg\fR | \fBt\fR | \fBp\fR | \fBe\fR
@@ -448,7 +410,7 @@ The `p', `u' and `U' \*(COs are mutually exclusive.
 .TP 5
 \-\fBs\fR\ \ :\fISecure-mode\fR operation \fR
 Starts \*(We with secure mode forced, even for root.
-This mode is far better controlled through the system \*(CF
+This mode is far better controlled through a system \*(CF
 (\*(Xt 6. FILES).
 
 .TP 5
@@ -1377,7 +1339,7 @@ while the normal \*(We iterative display is paused.
 
 \*(NT This \*(CI is only fully realized when supporting entries have been
 manually added to the end of the \*(We \*(CF.
-For details on creating those entries, \*(Xt 6c. ADDING INSPECT Entries.
+For details on creating those entries, \*(Xt 6b. ADDING INSPECT Entries.
 
 Most of the keys used to navigate the Inspect feature are reflected in
 its header prologue.
@@ -2190,35 +2152,10 @@ to filtering.
 .\" ----------------------------------------------------------------------
 .SH 6. FILES
 .\" ----------------------------------------------------------------------
-.\" ......................................................................
-.SS 6a. SYSTEM Configuration File
+.SS 6a. PERSONAL Configuration File
 .\" ----------------------------------------------------------------------
-The presence of this file will influence which version of the help screen
-is shown to an ordinary user.
-More importantly, it will limit what ordinary users are allowed
-to do when \*(We is running.
-They will not be able to issue the following commands.
-.nf
-    k        Kill a task
-    r        Renice a task
-    d or s   Change delay/sleep interval
-.fi
+This file is created or updated via the 'W' \*(CI.
 
-The system \*(CF is\fB not\fR created by \*(We.
-Rather, you create this file manually and place it in the \fI/etc \fR
-directory.
-Its name must be `toprc' and must have no leading `.' (period).
-It must have only two lines.
-
-Here is an example of the contents of\fI /etc/toprc\fR:
-.nf
-    s        # line 1: secure mode switch
-    5.0      # line 2: delay interval in seconds
-.fi
-
-.\" ......................................................................
-.SS 6b. PERSONAL Configuration File
-.\" ----------------------------------------------------------------------
 The legacy version is written as `$HOME/.your\-name\-4\-\*(We' + `rc'
 with a leading period.
 
@@ -2227,9 +2164,7 @@ without a leading period.
 The procps directory will be subordinate to either $XDG_CONFIG_HOME when
 set as an absolute path or the $HOME/.config directory.
 
-Use the `W' \*(CI to create it or update it.
-
-Here is the general layout:
+While not intended to be edited manually, here is the general layout:
 .nf
     global   # line  1: the program name/alias notation
       "      # line  2: id,altscr,irixps,delay,curwin
@@ -2246,7 +2181,7 @@ If the $HOME and $XDG_CONFIG_HOME variables are not present, \*(We will try
 to write the personal \*(CF in the current directory, subject to permissions.
 
 .\" ......................................................................
-.SS 6c. ADDING INSPECT Entries
+.SS 6b. ADDING INSPECT Entries
 .\" ----------------------------------------------------------------------
 To exploit the `Y' \*(CI, you must add entries at the\fB end\fR of the
 \*(We personal \*(CF.
@@ -2363,6 +2298,48 @@ those numbered selections actually mean.
 In that way, many more choices can be made visible.
 .PP
 
+.\" ......................................................................
+.SS 6c. SYSTEM Configuration File
+.\" ----------------------------------------------------------------------
+This \*(CF represents defaults for users who have not saved their own \*(CF.
+The format mirrors exactly the personal \*(CF and can also include `inspect'
+entries as explained above.
+
+Creating it is a simple process.
+
+1. Configure \*(We appropriately for your installation and preserve that
+configuration with the `W' \*(CI.
+
+2. Add and test any desired `inspect' entries.
+
+3. Copy that \*(CF to the \fI/etc/\fR directory as `\fBtopdefaultrc\fR'.
+
+.\" ......................................................................
+.SS 6d. SYSTEM Restrictions File
+.\" ----------------------------------------------------------------------
+The presence of this file will influence which version of the help screen
+is shown to an ordinary user.
+
+More importantly, it will limit what ordinary users are allowed
+to do when \*(We is running.
+They will not be able to issue the following commands.
+.nf
+    k        Kill a task
+    r        Renice a task
+    d or s   Change delay/sleep interval
+.fi
+
+This \*(CF is not created by \*(We.
+Rather, it is created manually and placed it in the \fI/etc/\fR
+directory as `\fBtoprc\fR'.
+
+It should have exactly two lines, as shown in this example:
+.nf
+    s        # line 1: secure mode switch
+    5.0      # line 2: delay interval in seconds
+.fi
+
+.\" ......................................................................
 .\" ----------------------------------------------------------------------
 .SH 7. STUPID TRICKS Sampler
 .\" ----------------------------------------------------------------------
