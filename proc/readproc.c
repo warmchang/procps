@@ -1182,7 +1182,7 @@ static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict con
   t->tid = strtoul(ent->d_name, NULL, 10);
   t->tgid = p->tgid;
 //t->ppid = p->ppid;  // cover for kernel behavior? we want both actually...?
-  snprintf(path, PROCPATHLEN, "/proc/%d/task/%s", p->tgid, ent->d_name);
+  snprintf(path, PROCPATHLEN, "/proc/%d/task/%.10s", p->tgid, ent->d_name);
   return 1;
 }
 
