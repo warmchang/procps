@@ -24,6 +24,7 @@ procps-ng-NEXT
   * top: provide proper multi-byte string handling         issue #68
   * watch: define HOST_NAME_MAX where not defined          Debian #830734
   * vmstat: Fix alignment for disk partition format        issue #69
+  * watch: Support ANSI 39,49 reset sequences              issue #73
 
 procps-ng-3.3.12
 ----------------
