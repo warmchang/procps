@@ -184,6 +184,12 @@ static int set_ansi_attribute(const int attrib)
 	case 27:	/* unset inversed */
 		attributes &= ~A_REVERSE;
 		break;
+    case 39:
+        fg_col = 0;
+        break;
+    case 49:
+        bg_col = 0;
+        break;
 	default:
 		if (attrib >= 30 && attrib <= 37) {	/* set foreground color */
 			fg_col = attrib - 30 + 1;
