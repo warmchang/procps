@@ -7,7 +7,7 @@
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH PGREP "1" "2017-02-04" "procps-ng" "User Commands"
+.TH PGREP "1" "2017-12-22" "procps-ng" "User Commands"
 .SH NAME
 pgrep, pkill \- look up or signal processes based on name and other attributes
 .SH SYNOPSIS
@@ -194,10 +194,10 @@ processes:
 $ ps \-fp $(pgrep \-d, \-x xterm)
 .PP
 Example 4: Make all
-.B netscape
+.B chrome
 processes run nicer:
 .IP
-$ renice +4 $(pgrep netscape)
+$ renice +4 $(pgrep chrome)
 .SH "EXIT STATUS"
 .PD 0
 .TP
