@@ -278,12 +278,15 @@ proc_libprocps_la_include_HEADERS = \
 	proc/devname.h \
 	proc/diskstats.h \
 	proc/escape.h \
+	proc/meminfo.h \
+	proc/namespace.h \
 	proc/numa.h \
 	proc/pids.h \
 	proc/procps.h \
 	proc/pwcache.h \
 	proc/readproc.h \
 	proc/slabinfo.h \
+	proc/stat.h \
 	proc/sysinfo.h \
 	proc/uptime.h \
 	proc/version.h \
