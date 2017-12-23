@@ -34,8 +34,10 @@
  * You get SIGSTKFLT and SIGUNUSED instead on i386, m68k, ppc, and arm.
  * (this is a Linux & libc bug -- both must be fixed)
  *
- * Total garbage: SIGIO SIGINFO SIGIOT SIGLOST SIGCLD
+ * Total garbage: SIGIO SIGINFO SIGIOT SIGCLD
  *                 (popular ones are handled as aliases)
+ *                SIGLOST
+ *                 (except on the Hurd; reused to mean a server died)
  * Nearly garbage: SIGSTKFLT SIGUNUSED (nothing else to fill slots)
  */
 
@@ -48,6 +50,10 @@
 /* If we see both, it is likely SIGSTKFLT (junk) was replaced. */
 #ifdef SIGEMT
 #  undef SIGSTKFLT
+#endif
+
+#if !defined(__GNU__) && defined(SIGLOST)
+#  undef SIGLOST
 #endif
 
 #ifndef SIGRTMIN
@@ -81,6 +87,9 @@ static const mapstruct sigtable[] = {
   {"ILL",    SIGILL},
   {"INT",    SIGINT},
   {"KILL",   SIGKILL},
+#ifdef SIGLOST
+  {"LOST",   SIGLOST},  /* Hurd-specific */
+#endif
   {"PIPE",   SIGPIPE},
   {"POLL",   SIGPOLL},  /* IO */
   {"PROF",   SIGPROF},
@@ -108,7 +117,25 @@ static const mapstruct sigtable[] = {
   {"XFSZ",   SIGXFSZ}
 };
 
-const int number_of_signals = sizeof(sigtable)/sizeof(mapstruct);
+
+#define number_of_signals (sizeof(sigtable)/sizeof(mapstruct))
+
+#define XJOIN(a, b) JOIN(a, b)
+#define JOIN(a, b) a##b
+#define STATIC_ASSERT(x) typedef int XJOIN(static_assert_on_line_,__LINE__)[(x) ? 1 : -1]
+
+/* sanity check */
+#if defined(__linux__)
+STATIC_ASSERT(number_of_signals == 31);
+#elif defined(__FreeBSD_kernel__) || defined(__FreeBSD__)
+STATIC_ASSERT(number_of_signals == 30);
+#elif defined(__GNU__)
+STATIC_ASSERT(number_of_signals == 31);
+#elif defined(__CYGWIN__)
+STATIC_ASSERT(number_of_signals == 31);
+#else
+#  warning Unknown operating system; assuming number_of_signals is correct
+#endif
 
 static int compare_signal_names(const void *a, const void *b){
   return strcasecmp( ((const mapstruct*)a)->name, ((const mapstruct*)b)->name );
