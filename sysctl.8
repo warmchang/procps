@@ -78,7 +78,10 @@ values listing.
 Print value without new line.
 .TP
 \fB\-\-system\fR
-Load settings from all system configuration files.
+Load settings from all system configuration files. Files are read from
+directories in the following list in given order from top to bottom.
+Once a file of a given filename is loaded, any file of the same name
+in subsequent directories is ignored.
 .br
 /run/sysctl.d/*.conf
 .br
