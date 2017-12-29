@@ -215,6 +215,10 @@ if WITH_SYSTEMD
 proc_libprocps_la_LIBADD += @SYSTEMD_LIBS@
 endif
 
+if WITH_ELOGIND
+proc_libprocps_la_LIBADD += @ELOGIND_LIBS@
+endif
+
 proc_libprocps_la_LDFLAGS = \
 	-version-info $(LIBprocps_CURRENT):$(LIBprocps_REVISION):$(LIBprocps_AGE) \
 	-no-undefined \
