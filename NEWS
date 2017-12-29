@@ -10,6 +10,7 @@ procps-ng-NEXT
   * ps: avoid eip/esp address truncations                  Debian #846361
   * ps: recognizes SCHED_DEADLINE as valid CPU scheduler
   * ps: display NUMA node under which a thread ran         issue #58
+  * sysctl: Permit empty string for value                  issue #74
   * top: add config file support for XDG specification
   * top: eliminated minor libnuma memory leak
   * top: show fewer memory decimal places (configurable)   issue #50
