@@ -45,6 +45,7 @@
 //#define OFF_SCROLLBK            /* disable tty emulators scrollback buffer */
 //#define OFF_STDERROR            /* disable our stderr buffering (redirect) */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
+//#define OFF_XTRAWIDE            /* disable our extra wide multi-byte logic */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND8CPUS            /* pretend we're smp with 8 ticsers (sic)  */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
@@ -685,6 +686,7 @@ typedef struct WIN_t {
 //atic void          xalloc_our_handler (const char *fmts, ...);
 /*------  Special UTF-8 Multi-Byte support  ------------------------------*/
 /*atic char          UTF8_tab[] = { ... }                                 */
+//atic inline int    utf8_cols (const unsigned char *p, int n);
 //atic int           utf8_delta (const char *str);
 //atic int           utf8_embody (const char *str, int width);
 //atic const char   *utf8_justify (const char *str, int width, int justr);

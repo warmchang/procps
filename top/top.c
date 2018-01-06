@@ -37,6 +37,7 @@
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
+#include <wchar.h>
 
 #include <sys/ioctl.h>
 #include <sys/resource.h>
@@ -681,6 +682,24 @@ static char UTF8_tab[] = {
 
 
         /*
+         * Accommodate any potential differences between some multibyte
+         * character sequence and the screen columns needed to print it */
+static inline int utf8_cols (const unsigned char *p, int n) {
+#ifndef OFF_XTRAWIDE
+   wchar_t wc;
+   int wlen;
+
+   (void)mbtowc(&wc, (const char *)p, n);
+   if ((wlen = wcwidth(wc)) < 1) wlen = 1;
+   return wlen;
+#else
+   (void)p; (void)n;
+   return 1;
+#endif
+} // end: utf8_cols
+
+
+        /*
          * Determine difference between total bytes versus printable
          * characters in that passed, potentially multi-byte, string */
 static int utf8_delta (const char *str) {
@@ -690,8 +709,8 @@ static int utf8_delta (const char *str) {
    while (*p) {
       // -1 represents a decoding error, pretend it's untranslated ...
       if (0 > (clen = UTF8_tab[*p])) return 0;
+      cnum += utf8_cols(p, clen);
       p += clen;
-      ++cnum;
    }
    return (int)((const char *)p - str) - cnum;
 } // end: utf8_delta
@@ -708,8 +727,8 @@ static int utf8_embody (const char *str, int width) {
       while (*p) {
          // -1 represents a decoding error, pretend it's untranslated ...
          if (0 > (clen = UTF8_tab[*p])) return width;
+         if (width < (cnum += utf8_cols(p, clen))) break;
          p += clen;
-         if (++cnum >= width) break;
       }
    }
    return (int)((const char *)p - str);
@@ -3108,15 +3127,15 @@ static void insp_find_str (int ch, int *col, int *row) {
          * while visible search matches display with capclr_hdr for emphasis.
          * ( we hide ugly plumbing in macros to concentrate on the algorithm ) */
 static void insp_mkrow_raw (int col, int row) {
- #define maxSZ ( Screen_cols - (to + 1) )
+ #define maxSZ ( Screen_cols - to )
  #define capNO { if (hicap) { putp(Caps_off); hicap = 0; } }
  #define mkFND { PUTT("%s%.*s%s", Curwin->capclr_hdr, maxSZ, Insp_sel->fstr, Caps_off); \
     fr += Insp_sel->flen -1; to += Insp_sel->flen; hicap = 0; }
 #ifndef INSP_JUSTNOT
- #define mkCTL { int x = maxSZ; const char *p = fmtmk("^%c", uch + '@'); \
-    PUTT("%s%.*s", (!hicap) ? Curwin->capclr_msg : "", x, p); to += 2; hicap = 1; }
- #define mkUNP { int x = maxSZ; const char *p = fmtmk("<%02X>", uch); \
-    PUTT("%s%.*s", (!hicap) ? Curwin->capclr_msg : "", x, p); to += 4; hicap = 1; }
+ #define mkCTL { const char *p = fmtmk("^%c", uch + '@'); \
+    PUTT("%s%.*s", (!hicap) ? Curwin->capclr_msg : "", maxSZ, p); to += 2; hicap = 1; }
+ #define mkUNP { const char *p = fmtmk("<%02X>", uch); \
+    PUTT("%s%.*s", (!hicap) ? Curwin->capclr_msg : "", maxSZ, p); to += 4; hicap = 1; }
 #else
  #define mkCTL { if ((to += 2) <= Screen_cols) \
     PUTT("%s^%c", (!hicap) ? Curwin->capclr_msg : "", uch + '@'); hicap = 1; }
@@ -3125,7 +3144,7 @@ static void insp_mkrow_raw (int col, int row) {
 #endif
  #define mkSTD { capNO; if (++to <= Screen_cols) { static char _str[2]; \
     _str[0] = uch; putp(_str); } }
-   char tline[SCREENMAX];
+   unsigned char tline[SCREENMAX];
    int fr, to, ofs;
    int hicap = 0;
 
@@ -3133,7 +3152,7 @@ static void insp_mkrow_raw (int col, int row) {
       memcpy(tline, Insp_p[row] + col, sizeof(tline));
    else tline[0] = '\n';
 
-   for (fr = 0, to = 0, ofs = 0; to < Screen_cols -1; fr++) {
+   for (fr = 0, to = 0, ofs = 0; to < Screen_cols; fr++) {
       if (!ofs)
          ofs = insp_find_ofs(col + fr, row);
       if (col + fr < ofs) {
@@ -3166,20 +3185,20 @@ static void insp_mkrow_raw (int col, int row) {
          * characters will then be displayed in two positions like '^A'.
          * ( assuming they can even get past those 'gettext' utilities ) */
 static void insp_mkrow_utf8 (int col, int row) {
- #define maxSZ ( Screen_cols - (to + 1) )
+ #define maxSZ ( Screen_cols - to )
  #define mkFND { PUTT("%s%.*s%s", Curwin->capclr_hdr, maxSZ, Insp_sel->fstr, Caps_off); \
     fr += Insp_sel->flen; to += Insp_sel->flen; }
 #ifndef INSP_JUSTNOT
- #define mkCTL { int x = maxSZ; const char *p = fmtmk("^%c", uch + '@'); \
-    PUTT("%s%.*s%s", Curwin->capclr_msg, x, p, Caps_off); to += 2; }
+ #define mkCTL { const char *p = fmtmk("^%c", uch + '@'); \
+    PUTT("%s%.*s%s", Curwin->capclr_msg, maxSZ, p, Caps_off); to += 2; }
 #else
  #define mkCTL { if ((to += 2) <= Screen_cols) \
     PUTT("%s^%c%s", Curwin->capclr_msg, uch + '@', Caps_off); }
 #endif
  #define mkNUL { buf1[0] = ' '; doPUT(buf1) }
- #define doPUT(buf) if (++to <= Screen_cols) putp(buf);
+ #define doPUT(buf) if ((to += cno) <= Screen_cols) putp(buf);
    static char buf1[2], buf2[3], buf3[4], buf4[5];
-   char tline[BIGBUFSIZ];
+   unsigned char tline[BIGBUFSIZ];
    int fr, to, ofs;
 
    col = utf8_proper_col(Insp_p[row], col, 1);
@@ -3187,15 +3206,17 @@ static void insp_mkrow_utf8 (int col, int row) {
       memcpy(tline, Insp_p[row] + col, sizeof(tline));
    else tline[0] = '\n';
 
-   for (fr = 0, to = 0, ofs = 0; to < Screen_cols -1; ) {
+   for (fr = 0, to = 0, ofs = 0; to < Screen_cols; ) {
       if (!ofs)
          ofs = insp_find_ofs(col + fr, row);
       if (col + fr < ofs) {
-         unsigned char uch = tline[fr++];
-         switch (UTF8_tab[(int)uch]) {
+         unsigned char uch = tline[fr];
+         int bno = UTF8_tab[uch];
+         int cno = utf8_cols(&tline[fr++], bno);
+         switch (bno) {
             case 1:
                if (uch == '\n') break;
-               else if (uch < 32) mkCTL
+               if (uch < 32) mkCTL
                else if (uch == 127) mkNUL
                else { buf1[0] = uch; doPUT(buf1) }
                break;
