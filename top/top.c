@@ -3309,7 +3309,7 @@ error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
          *     line 15 : miscellaneous additional global settings
          *     Any remaining lines are devoted to the 'Inspect Other' feature
          * 3. 'SYS_RCDEFAULTS' system-wide defaults if 'Rc_name' absent
-         *    format is identical to #2 above */
+         *     format is identical to #2 above */
 static void configs_read (void) {
    float tmp_delay = DEF_DELAY;
    const char *p, *p_home;
@@ -3347,15 +3347,15 @@ static void configs_read (void) {
    }
 
    if (fp) {
-      if ((p = config_file(fp, Rc_name, &tmp_delay)))
-         goto default_or_error;
+      p = config_file(fp, Rc_name, &tmp_delay);
       fclose(fp);
+      if (p) goto default_or_error;
    } else {
       fp = fopen(SYS_RCDEFAULTS, "r");
       if (fp) {
-         if ((p = config_file(fp, SYS_RCDEFAULTS, &tmp_delay)))
-            goto default_or_error;
+         p = config_file(fp, SYS_RCDEFAULTS, &tmp_delay);
          fclose(fp);
+         if (p) goto default_or_error;
       }
    }
 
