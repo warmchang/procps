@@ -222,9 +222,6 @@ static int ReadSetting(const char *restrict const name)
 
 	fp = fopen(tmpname, "r");
 
-	if (iobuf)
-		setvbuf(fp, iobuf, _IOFBF, IOBUFSIZ);
-
 	if (!fp) {
 		switch (errno) {
 		case ENOENT:
@@ -246,6 +243,9 @@ static int ReadSetting(const char *restrict const name)
 			break;
 		}
 	} else {
+	    if (iobuf)
+            setvbuf(fp, iobuf, _IOFBF, IOBUFSIZ);
+
 		errno = 0;
 		if (fgets(inbuf, sizeof inbuf - 1, fp)) {
 			/* this loop is required, see
