@@ -39,6 +39,7 @@
 //#define OFF_SCROLLBK            /* disable tty emulators scrollback buffer */
 //#define OFF_STDERROR            /* disable our stderr buffering (redirect) */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
+//#define OFF_XTRAWIDE            /* disable our extra wide multi-byte logic */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define QUICK_GRAPHS            /* use fast algorithm, accept +2% distort  */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
@@ -553,6 +554,7 @@ typedef struct WIN_t {
 //atic void          sig_resize (int dont_care_sig);
 /*------  Special UTF-8 Multi-Byte support  ------------------------------*/
 /*atic char          UTF8_tab[] = { ... }                                 */
+//atic inline int    utf8_cols (const unsigned char *p, int n);
 //atic int           utf8_delta (const char *str);
 //atic int           utf8_embody (const char *str, int width);
 //atic const char   *utf8_justify (const char *str, int width, int justr);
