@@ -1,6 +1,7 @@
 procps-ng-NEXT
 ----------------
   * doc: Document I idle state in ps.1 and top.1           Debian #886967
+  * free: fix some of the SI multiples                     issue #45
   * kill: -l space between name parses correctly           Debian #854407
   * library: dont use vm_min_free on non Linux             Debian #831396
   * library: dont use SIGPWR on FreeBSD                    Debian #832148

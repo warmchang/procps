@@ -133,7 +133,7 @@ static const char *scale_size(unsigned long size, int flags, struct commandline_
 		if (args.exponent > 1) {
 			/* In desired scale. */
 			snprintf(buf, sizeof(buf), "%ld",
-				 (long int)((size / 1024) * base / power(base, args.exponent - 2))
+                 (long int)((size * 1024) / power(base, args.exponent-1))
 			    );
 			return buf;
 		}
