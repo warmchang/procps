@@ -2728,17 +2728,21 @@ static void procs_hlp (proc_t *this) {
       case 'R':
          Frame_running++;
          break;
-      case 'S':
-      case 'D':
-         Frame_sleepin++;
-         break;
+      case 't':     // 't' (tracing stop)
       case 'T':
          Frame_stopped++;
          break;
       case 'Z':
          Frame_zombied++;
          break;
-      default:                    // keep gcc happy
+      default:
+         /* currently: 'D' (disk sleep),
+                       'I' (idle),
+                       'P' (parked),
+                       'S' (sleeping),
+                       'X' (dead - actually 'dying' & probably never seen)
+         */
+         Frame_sleepin++;
          break;
    }
 
