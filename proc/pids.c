@@ -961,17 +961,23 @@ static inline int pids_proc_tally (
         case 'R':
             ++counts->running;
             break;
+        case 'D':      // 'D' (disk sleep)
         case 'S':
-        case 'D':
             ++counts->sleeping;
             break;
+        case 't':      // 't' (tracing stop)
         case 'T':
             ++counts->stopped;
             break;
         case 'Z':
             ++counts->zombied;
             break;
-        default:                // keep gcc happy
+        default:
+            /* currently: 'I' (idle),
+                          'P' (parked),
+                          'X' (dead - actually 'dying' & probably never seen)
+            */
+            ++counts->other;
             break;
     }
     ++counts->total;

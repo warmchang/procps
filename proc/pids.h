@@ -183,7 +183,7 @@ struct pids_stack {
 
 struct pids_counts {
     int total;
-    int running, sleeping, stopped, zombied;
+    int running, sleeping, stopped, zombied, other;
 };
 
 struct pids_fetch {
