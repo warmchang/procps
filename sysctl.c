@@ -511,17 +511,20 @@ static int pattern_match(const char *string, const char *pat)
  */
 static int Preload(const char *restrict const filename)
 {
-	char oneline[LINELEN];
-	char buffer[LINELEN];
+	char *oneline;
 	FILE *fp;
 	char *t;
 	int n = 0;
 	int rc = 0;
+	size_t blen = LINELEN;
+	ssize_t rlen;
 	char *name, *value;
 	glob_t globbuf;
 	int globerr;
 	int globflg;
 	int j;
+
+	oneline = xmalloc(blen);
 
 	globflg = GLOB_NOCHECK;
 #ifdef GLOB_BRACE
@@ -544,13 +547,19 @@ static int Preload(const char *restrict const filename)
 		    ? stdin : fopen(globbuf.gl_pathv[j], "r");
 		if (!fp) {
 			xwarn(_("cannot open \"%s\""), globbuf.gl_pathv[j]);
-			return -1;
+			rc = -1;
+			goto out;
 		}
 
-		while (fgets(oneline, sizeof oneline, fp)) {
-			n++;
-			t = StripLeadingAndTrailingSpaces(oneline);
+		while ((rlen =  getline(&oneline, &blen, fp)) != -1) {
+			size_t offset;
 
+			n++;
+
+			if (rlen < 2)
+				continue;
+
+			t = StripLeadingAndTrailingSpaces(oneline);
 			if (strlen(t) < 2)
 				continue;
 
@@ -569,6 +578,10 @@ static int Preload(const char *restrict const filename)
 			if (pattern && !pattern_match(name, pattern))
 				continue;
 
+			offset = strlen(name);
+			memmove(&oneline[0], name, offset);
+			oneline[offset++] = '=';
+
 			value = strtok(NULL, "\n\r");
 			if (!value || !*value) {
 				xwarnx(_("%s(%d): invalid syntax, continuing..."),
@@ -580,12 +593,16 @@ static int Preload(const char *restrict const filename)
 				value++;
 
 			/* should NameOnly affect this? */
-			sprintf(buffer, "%s=%s", name, value);
-			rc |= WriteSetting(buffer);
+			memmove(&oneline[offset], value, strlen(value));
+			offset += strlen(value);
+			oneline[offset] = '\0';
+
+			rc |= WriteSetting(oneline);
 		}
 
 		fclose(fp);
 	}
+out:
 	return rc;
 }
 
