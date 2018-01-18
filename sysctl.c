@@ -45,6 +45,7 @@
 #include "fileutils.h"
 #include "nls.h"
 #include "xalloc.h"
+#include "proc/procio.h"
 #include "proc/procps.h"
 #include "proc/version.h"
 
@@ -65,6 +66,10 @@ static bool PrintNewline;
 static bool IgnoreError;
 static bool Quiet;
 static char *pattern;
+
+#define LINELEN 4096
+static char *iobuf;
+static size_t iolen = LINELEN;
 
 /* Function prototypes. */
 static int pattern_match(const char *string, const char *pat);
@@ -158,14 +163,12 @@ static char *StripLeadingAndTrailingSpaces(char *oneline)
 /*
  * Read a sysctl setting
  */
-#define IOBUFSIZ    (128<<10)
-static char *iobuf;
 static int ReadSetting(const char *restrict const name)
 {
 	int rc = 0;
 	char *restrict tmpname;
 	char *restrict outname;
-	char inbuf[1025];
+	ssize_t rlen;
 	FILE *restrict fp;
 	struct stat ts;
 
@@ -220,7 +223,7 @@ static int ReadSetting(const char *restrict const name)
 		goto out;
 	}
 
-	fp = fopen(tmpname, "r");
+	fp = fprocopen(tmpname, "r");
 
 	if (!fp) {
 		switch (errno) {
@@ -243,11 +246,8 @@ static int ReadSetting(const char *restrict const name)
 			break;
 		}
 	} else {
-	    if (iobuf)
-            setvbuf(fp, iobuf, _IOFBF, IOBUFSIZ);
-
 		errno = 0;
-		if (fgets(inbuf, sizeof inbuf - 1, fp)) {
+		if ((rlen = getline(&iobuf, &iolen, fp)) > 0) {
 			/* this loop is required, see
 			 * /sbin/sysctl -a | egrep -6 dev.cdrom.info
 			 */
@@ -256,23 +256,23 @@ static int ReadSetting(const char *restrict const name)
 				if (PrintName) {
 					fprintf(stdout, "%s = ", outname);
 					do {
-						fprintf(stdout, "%s", inbuf);
-						nlptr = &inbuf[strlen(inbuf) - 1];
+						fprintf(stdout, "%s", iobuf);
+						nlptr = &iobuf[strlen(iobuf) - 1];
 						/* already has the \n in it */
 						if (*nlptr == '\n')
 							break;
-					} while (fgets(inbuf, sizeof inbuf - 1, fp));
+					} while ((rlen = getline(&iobuf, &iolen, fp)) > 0);
 					if (*nlptr != '\n')
 						putchar('\n');
 				} else {
 					if (!PrintNewline) {
-						nlptr = strchr(inbuf, '\n');
+						nlptr = strchr(iobuf, '\n');
 						if (nlptr)
 							*nlptr = '\0';
 					}
-					fprintf(stdout, "%s", inbuf);
+					fprintf(stdout, "%s", iobuf);
 				}
-			} while (fgets(inbuf, sizeof inbuf - 1, fp));
+			} while ((rlen = getline(&iobuf, &iolen, fp)) > 0);
 		} else {
 			switch (errno) {
 			case EACCES:
@@ -439,10 +439,7 @@ static int WriteSetting(const char *setting)
 		goto out;
 	}
 
-	fp = fopen(tmpname, "w");
-
-	if (iobuf)
-		setvbuf(fp, iobuf, _IOFBF, IOBUFSIZ);
+	fp = fprocopen(tmpname, "w");
 
 	if (!fp) {
 		switch (errno) {
@@ -503,28 +500,22 @@ static int pattern_match(const char *string, const char *pat)
 	return (1);
 }
 
-#define LINELEN 4096
-
 /*
  * Preload the sysctl's from the conf file.  We parse the file and then
  * reform it (strip out whitespace).
  */
 static int Preload(const char *restrict const filename)
 {
-	char *oneline;
 	FILE *fp;
 	char *t;
 	int n = 0;
 	int rc = 0;
-	size_t blen = LINELEN;
 	ssize_t rlen;
 	char *name, *value;
 	glob_t globbuf;
 	int globerr;
 	int globflg;
 	int j;
-
-	oneline = xmalloc(blen);
 
 	globflg = GLOB_NOCHECK;
 #ifdef GLOB_BRACE
@@ -551,7 +542,7 @@ static int Preload(const char *restrict const filename)
 			goto out;
 		}
 
-		while ((rlen =  getline(&oneline, &blen, fp)) != -1) {
+		while ((rlen =  getline(&iobuf, &iolen, fp)) > 0) {
 			size_t offset;
 
 			n++;
@@ -559,7 +550,7 @@ static int Preload(const char *restrict const filename)
 			if (rlen < 2)
 				continue;
 
-			t = StripLeadingAndTrailingSpaces(oneline);
+			t = StripLeadingAndTrailingSpaces(iobuf);
 			if (strlen(t) < 2)
 				continue;
 
@@ -579,8 +570,8 @@ static int Preload(const char *restrict const filename)
 				continue;
 
 			offset = strlen(name);
-			memmove(&oneline[0], name, offset);
-			oneline[offset++] = '=';
+			memmove(&iobuf[0], name, offset);
+			iobuf[offset++] = '=';
 
 			value = strtok(NULL, "\n\r");
 			if (!value || !*value) {
@@ -593,11 +584,11 @@ static int Preload(const char *restrict const filename)
 				value++;
 
 			/* should NameOnly affect this? */
-			memmove(&oneline[offset], value, strlen(value));
+			memmove(&iobuf[offset], value, strlen(value));
 			offset += strlen(value);
-			oneline[offset] = '\0';
+			iobuf[offset] = '\0';
 
-			rc |= WriteSetting(oneline);
+			rc |= WriteSetting(iobuf);
 		}
 
 		fclose(fp);
@@ -824,7 +815,7 @@ int main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
-	iobuf = (char*)malloc(IOBUFSIZ);	/* Allow to fail */
+	iobuf = xmalloc(iolen);
 
 	if (DisplayAllOpt)
 		return DisplayAll(PROC_PATH);
