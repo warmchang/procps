@@ -1664,14 +1664,10 @@ static struct {
    {     3,     -1,  A_right,    -1,  PIDS_NICE           },  // s_int    EU_NCE
    {     3,     -1,  A_right,    -1,  PIDS_NLWP           },  // s_int    EU_THD
    {     0,     -1,  A_right,    -1,  PIDS_PROCESSOR      },  // u_int    EU_CPN
-   {     0,     -1,  A_right,    -1,  PIDS_TICS_ALL_DELTA },  // s_int    EU_CPU
+   {     5,     -1,  A_right,    -1,  PIDS_TICS_ALL_DELTA },  // s_int    EU_CPU
    {     6,     -1,  A_right,    -1,  PIDS_TICS_ALL       },  // ull_int  EU_TME
    {     9,     -1,  A_right,    -1,  PIDS_TICS_ALL       },  // ull_int  EU_TM2
-#ifdef BOOST_PERCNT
    {     5,     -1,  A_right,    -1,  PIDS_MEM_RES        },  // ul_int   EU_MEM
-#else
-   {     4,     -1,  A_right,    -1,  PIDS_MEM_RES        },  // ul_int   EU_MEM,
-#endif
    {     7,  SK_Kb,  A_right,    -1,  PIDS_MEM_VIRT       },  // ul_int   EU_VRT
    {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_SWAP        },  // ul_int   EU_SWP
    {     6,  SK_Kb,  A_right,    -1,  PIDS_MEM_RES        },  // ul_int   EU_RES
@@ -2220,6 +2216,8 @@ static void zap_fieldstab (void) {
    char buf[8];
 
    if (!once) {
+      Fieldstab[EU_CPN].width = 1;
+      Fieldstab[EU_NMA].width = 2;
       Fieldstab[EU_PID].width = Fieldstab[EU_PPD].width
          = Fieldstab[EU_PGD].width = Fieldstab[EU_SID].width
          = Fieldstab[EU_TGD].width = Fieldstab[EU_TPG].width = 5;
@@ -2232,40 +2230,25 @@ static void zap_fieldstab (void) {
       once = 1;
    }
 
-   Fieldstab[EU_CPN].width = 1;
-   if (1 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_cnt))) {
+   Cpu_pmax = 99.9;
+   if (Rc.mode_irixps && Cpu_cnt > 1 && !Thread_mode) {
+      Cpu_pmax = 100.0 * Cpu_cnt;
+      if (Cpu_cnt > 10) {
+         if (Cpu_pmax > 99999.0) Cpu_pmax = 99999.0;
+      } else {
+         if (Cpu_pmax > 999.9) Cpu_pmax = 999.9;
+      }
+   }
+
+   digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_cnt);
+   if (1 < digits) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
       Fieldstab[EU_CPN].width = digits;
    }
-   Fieldstab[EU_NMA].width = 2;
-   if (2 < (digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Numa_node_tot))) {
+   digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Numa_node_tot);
+   if (2 < digits) {
       Fieldstab[EU_NMA].width = digits;
    }
-
-#ifdef BOOST_PERCNT
-   Cpu_pmax = 99.9;
-   Fieldstab[EU_CPU].width = 5;
-   if (Rc.mode_irixps && Cpu_cnt > 1 && !Thread_mode) {
-      Cpu_pmax = 100.0 * Cpu_cnt;
-      if (Cpu_cnt > 10) {
-         if (Cpu_pmax > 99999.0) Cpu_pmax = 99999.0;
-      } else {
-         if (Cpu_pmax > 999.9) Cpu_pmax = 999.9;
-      }
-   }
-#else
-   Cpu_pmax = 99.9;
-   Fieldstab[EU_CPU].width = 4;
-   if (Rc.mode_irixps && Cpu_cnt > 1 && !Thread_mode) {
-      Cpu_pmax = 100.0 * Cpu_cnt;
-      if (Cpu_cnt > 10) {
-         if (Cpu_pmax > 99999.0) Cpu_pmax = 99999.0;
-      } else {
-         if (Cpu_pmax > 999.9) Cpu_pmax = 999.9;
-      }
-      Fieldstab[EU_CPU].width = 5;
-   }
-#endif
 
    /* and accommodate optional wider non-scalable columns (maybe) */
    if (!AUTOX_MODE) {
