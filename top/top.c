@@ -511,11 +511,12 @@ static char UTF8_tab[] = {
 static inline int utf8_cols (const unsigned char *p, int n) {
 #ifndef OFF_XTRAWIDE
    wchar_t wc;
-   int wlen;
 
-   (void)mbtowc(&wc, (const char *)p, n);
-   if ((wlen = wcwidth(wc)) < 1) wlen = 1;
-   return wlen;
+   if (n > 1) {
+      (void)mbtowc(&wc, (const char *)p, n);
+      if ((n = wcwidth(wc)) < 1) n = 1;
+   }
+   return n;
 #else
    (void)p; (void)n;
    return 1;
