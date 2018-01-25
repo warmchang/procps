@@ -2212,9 +2212,19 @@ static inline void widths_resize (void) {
          * This routine exists just to consolidate most of the messin'
          * around with the Fieldstab array and some related stuff. */
 static void zap_fieldstab (void) {
+#ifdef WIDEN_COLUMN
+ #define maX(E) ( (wtab[E].wnls > wtab[E].wmin) \
+  ? wtab[E].wnls : wtab[E].wmin )
+   static struct {
+      int wmin;         // minimum field width (-1 == variable width)
+      int wnls;         // translated header column requirements
+      int watx;         // +1 == non-scalable auto sized columns
+   } wtab[EU_MAXPFLGS];
+#endif
    static int once;
    unsigned digits;
    char buf[8];
+   int i;
 
    if (!once) {
       Fieldstab[EU_CPN].width = 1;
@@ -2228,6 +2238,23 @@ static void zap_fieldstab (void) {
             = Fieldstab[EU_PGD].width = Fieldstab[EU_SID].width
             = Fieldstab[EU_TGD].width = Fieldstab[EU_TPG].width = digits;
       }
+#ifdef WIDEN_COLUMN
+      // identify our non-scalable auto sized columns
+      wtab[EU_UED].watx = wtab[EU_UEN].watx = wtab[EU_URD].watx
+         = wtab[EU_URN].watx = wtab[EU_USD].watx = wtab[EU_USN].watx
+         = wtab[EU_GID].watx = wtab[EU_GRP].watx = wtab[EU_TTY].watx
+         = wtab[EU_WCH].watx = wtab[EU_NS1].watx = wtab[EU_NS2].watx
+         = wtab[EU_NS3].watx = wtab[EU_NS4].watx = wtab[EU_NS5].watx
+         = wtab[EU_NS6].watx = wtab[EU_LXC].watx = +1;
+      /* establish translatable header 'column' requirements
+         and ensure .width reflects the widest value */
+      for (i = 0; i < EU_MAXPFLGS; i++) {
+         wtab[i].wmin = Fieldstab[i].width;
+         wtab[i].wnls = (int)strlen(N_col(i)) - utf8_delta(N_col(i));
+         if (wtab[i].wmin != -1)
+            Fieldstab[i].width = maX(i);
+      }
+#endif
       once = 1;
    }
 
@@ -2241,6 +2268,27 @@ static void zap_fieldstab (void) {
       }
    }
 
+#ifdef WIDEN_COLUMN
+   digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_cnt);
+   if (wtab[EU_CPN].wmin < digits) {
+      if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
+      wtab[EU_CPN].wmin = digits;
+      Fieldstab[EU_CPN].width = maX(EU_CPN);
+   }
+   digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Numa_node_tot);
+   if (wtab[EU_NMA].wmin < digits) {
+      wtab[EU_NMA].wmin = digits;
+      Fieldstab[EU_NMA].width = maX(EU_NMA);
+   }
+
+   // and accommodate optional wider non-scalable columns (maybe)
+   if (!AUTOX_MODE) {
+      for (i = 0; i < EU_MAXPFLGS; i++) {
+         if (wtab[i].watx)
+            Fieldstab[i].width = Rc.fixed_widest ? Rc.fixed_widest + maX(i) : maX(i);
+      }
+   }
+#else
    digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_cnt);
    if (1 < digits) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
@@ -2250,10 +2298,8 @@ static void zap_fieldstab (void) {
    if (2 < digits) {
       Fieldstab[EU_NMA].width = digits;
    }
-
-   /* and accommodate optional wider non-scalable columns (maybe) */
+   // and accommodate optional wider non-scalable columns (maybe)
    if (!AUTOX_MODE) {
-      int i;
       Fieldstab[EU_UED].width = Fieldstab[EU_URD].width
          = Fieldstab[EU_USD].width = Fieldstab[EU_GID].width
          = Rc.fixed_widest ? 5 + Rc.fixed_widest : 5;
@@ -2268,6 +2314,7 @@ static void zap_fieldstab (void) {
          Fieldstab[i].width
             = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
    }
+#endif
 
    /* plus user selectable scaling */
    Fieldstab[EU_VRT].scale = Fieldstab[EU_SWP].scale
@@ -2279,6 +2326,7 @@ static void zap_fieldstab (void) {
 
    // lastly, ensure we've got proper column headers...
    calibrate_fields();
+ #undef maX
 } // end: zap_fieldstab
 
 /*######  Library Interface  #############################################*/
