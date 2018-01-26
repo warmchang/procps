@@ -2863,7 +2863,7 @@ static int insp_view_choice (struct pids_stack *obj) {
  #define makFS(dst) { if (Insp_sel->flen < 22) \
        snprintf(dst, sizeof(dst), "%s", Insp_sel->fstr); \
     else snprintf(dst, sizeof(dst), "%.19s...", Insp_sel->fstr); }
-   char buf[SMLBUFSIZ];
+   char buf[LRGBUFSIZ];
    int key, curlin = 0, curcol = 0;
 
 signify_that:
