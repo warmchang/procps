@@ -1,8 +1,6 @@
 /* top_nls.h - provide the basis for future nls translations */
 /*
- * Copyright (c) 2011-2017, by: James C. Warner
- *    All rights reserved.      8921 Hilloway Road
- *                              Eden Prairie, Minnesota 55347 USA
+ * Copyright (c) 2011-2018, by: James C. Warner
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
