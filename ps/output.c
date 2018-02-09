@@ -1213,6 +1213,34 @@ static int pr_sgi_p(char *restrict const outbuf, const proc_t *restrict const pp
   return snprintf(outbuf, COLWID, "*");
 }
 
+/* LoginID implementation */
+static int pr_luid(char *restrict const outbuf, const proc_t *restrict const pp){
+    char filename[48];
+    ssize_t num_read;
+    int fd;
+    u_int32_t luid;
+
+    snprintf(filename, sizeof filename, "/proc/%d/loginuid", pp->tgid);
+
+    if ((fd = open(filename, O_RDONLY, 0)) != -1) {
+        num_read = read(fd, outbuf, OUTBUF_SIZE - 1);
+        close(fd);
+        if (num_read > 0) {
+            outbuf[num_read] = '\0';
+
+            // processes born before audit have no LoginID set
+            luid = (u_int32_t) atoi(outbuf);
+            if (luid != -1)
+                return num_read;
+        }
+    }
+    outbuf[0] = '-';
+    outbuf[1] = '\0';
+    num_read = 1;
+    return num_read;
+}
+
+
 /************************* Systemd stuff ********************************/
 static int pr_sd_unit(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%s", pp->sd_unit);
@@ -1526,7 +1554,7 @@ static const format_struct format_array[] = {
 {"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
 {"lsession",  "SESSION", pr_sd_session, sr_nop,  11,  SD,    LNX, ET|LEFT},
 {"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, ET|RIGHT},
-{"luid",      "LUID",    pr_nop,      sr_nop,     5,   0,    LNX, ET|RIGHT}, /* login ID */
+{"luid",      "LUID",    pr_luid,     sr_nop,     5,   0,    LNX, ET|RIGHT}, /* login ID */
 {"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, ET|USER}, /* login USER */
 {"lwp",       "LWP",     pr_tasks,    sr_tasks,   5,   0,    SUN, TO|PIDMAX|RIGHT},
 {"lxc",       "LXC",     pr_lxcname,  sr_lxcname, 8, LXC,    LNX, ET|LEFT},
