@@ -165,6 +165,8 @@ typedef struct proc_t {
         *sd_uunit;      // n/a             systemd user unit id
     char
         *lxcname;       // n/a             lxc container name
+    int
+        luid;           // loginuid        user id at login
 } proc_t;
 
 // PROCTAB: data structure holding the persistent information readproc needs
@@ -223,6 +225,7 @@ typedef struct PROCTAB {
 #define PROC_FILLNS          0x8000 // fill in proc_t namespace information
 #define PROC_FILLSYSTEMD    0x80000 // fill in proc_t systemd information
 #define PROC_FILL_LXC      0x800000 // fill in proc_t lxcname, if possible
+#define PROC_FILL_LUID     0x400000 // fill in proc_t luid (login user id)
 
 #define PROC_LOOSE_TASKS     0x2000 // treat threads as if they were processes
 

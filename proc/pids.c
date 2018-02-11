@@ -170,6 +170,7 @@ REG_set(ID_FGID,          u_int,   fgid)
 REG_set(ID_FGROUP,        str,     fgroup)
 REG_set(ID_FUID,          u_int,   fuid)
 REG_set(ID_FUSER,         str,     fuser)
+REG_set(ID_LOGIN,         s_int,   luid)
 REG_set(ID_PGRP,          s_int,   pgrp)
 REG_set(ID_PID,           s_int,   tid)
 REG_set(ID_PPID,          s_int,   ppid)
@@ -342,6 +343,7 @@ srtDECL(noop) {
 
 #define f_either   PROC_SPARE_1        // either status or stat (favor stat)
 #define f_grp      PROC_FILLGRP
+#define f_login    PROC_FILL_LUID
 #define f_lxc      PROC_FILL_LXC
 #define f_ns       PROC_FILLNS
 #define f_oom      PROC_FILLOOM
@@ -419,6 +421,7 @@ static struct {
     { RS(ID_FGROUP),         x_ogroup,   NULL,      QS(str),       0,        TS(str)     },
     { RS(ID_FUID),           f_status,   NULL,      QS(u_int),     0,        TS(u_int)   },
     { RS(ID_FUSER),          x_ouser,    NULL,      QS(str),       0,        TS(str)     }, // freefunc NULL w/ cached string
+    { RS(ID_LOGIN),          f_login,    NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(ID_PGRP),           f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(ID_PID),            0,          NULL,      QS(s_int),     0,        TS(s_int)   }, // oldflags: free w/ simple_nextpid
     { RS(ID_PPID),           f_either,   NULL,      QS(s_int),     0,        TS(s_int)   },

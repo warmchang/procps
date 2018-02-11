@@ -877,6 +877,25 @@ static char *lxc_containers (const char *path) {
     }
     return lxc_none;
 }
+
+
+    // Provide the user id at login (or -1 if not available)
+static int login_uid (const char *path) {
+    char buf[PROCPATHLEN];
+    int fd, id, in;
+
+    id = -1;
+    snprintf(buf, sizeof(buf), "%s/loginuid", path);
+    if ((fd = open(buf, O_RDONLY, 0)) != -1) {
+        in = read(fd, buf, sizeof(buf) - 1);
+        close(fd);
+        if (in > 0) {
+            buf[in] = '\0';
+            id = atoi(buf);
+        }
+    }
+    return id;
+}
 ///////////////////////////////////////////////////////////////////////
 
 
@@ -997,6 +1016,9 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
 
     if (flags & PROC_FILL_LXC)                  // value the lxc name
         p->lxcname = lxc_containers(path);
+
+    if (flags & PROC_FILL_LUID)                 // value the login user id
+        p->luid = login_uid(path);
 
     if (rc == 0) return p;
     errno = ENOMEM;
@@ -1131,6 +1153,9 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
 
     if (flags & PROC_FILL_LXC)
         t->lxcname = lxc_containers(path);
+
+    if (flags & PROC_FILL_LUID)
+        t->luid = login_uid(path);
 
     if (rc == 0) return t;
     errno = ENOMEM;

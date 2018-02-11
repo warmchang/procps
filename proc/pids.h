@@ -59,6 +59,7 @@ enum pids_item {
     PIDS_ID_FGROUP,         //     str
     PIDS_ID_FUID,           //   u_int
     PIDS_ID_FUSER,          //     str
+    PIDS_ID_LOGIN,          //   s_int
     PIDS_ID_PGRP,           //   s_int
     PIDS_ID_PID,            //   s_int
     PIDS_ID_PPID,           //   s_int
