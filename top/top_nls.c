@@ -305,6 +305,9 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'NU' = 2 */
    Head_nlstab[EU_NMA] = _("NU");
    Desc_nlstab[EU_NMA] = _("Last Used NUMA node");
+/* Translation Hint: maximum 'LOGID' = 5 + */
+   Head_nlstab[EU_LID] = _("LOGID");
+   Desc_nlstab[EU_LID] = _("Login User Id");
 }
 
 

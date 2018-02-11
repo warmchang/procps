@@ -1703,7 +1703,8 @@ static struct {
    {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_SHARED  },  // ul_int   EU_RZS
    {    -1,     -1,  A_left,     -1,  PIDS_CGNAME         },  // str      EU_CGN
    {     0,     -1,  A_right,    -1,  PIDS_PROCESSOR_NODE },  // s_int    EU_NMA
-#define eu_LAST        EU_NMA
+   {     5,     -1,  A_right,    -1,  PIDS_ID_LOGIN       },  // s_int    EU_LID
+#define eu_LAST        EU_LID
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -2243,7 +2244,8 @@ static void zap_fieldstab (void) {
          = wtab[EU_GID].watx = wtab[EU_GRP].watx = wtab[EU_TTY].watx
          = wtab[EU_WCH].watx = wtab[EU_NS1].watx = wtab[EU_NS2].watx
          = wtab[EU_NS3].watx = wtab[EU_NS4].watx = wtab[EU_NS5].watx
-         = wtab[EU_NS6].watx = wtab[EU_LXC].watx = +1;
+         = wtab[EU_NS6].watx = wtab[EU_LXC].watx = wtab[EU_LID].watx
+         = +1;
       /* establish translatable header 'column' requirements
          and ensure .width reflects the widest value */
       for (i = 0; i < EU_MAXPFLGS; i++) {
@@ -5192,6 +5194,10 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          case EU_STA:
             cp = make_chr(rSv(EU_STA, s_ch), W, Js);
             break;
+   /* s_int, make_num with auto width */
+         case EU_LID:
+            cp = make_num(rSv(EU_LID, s_int), W, Jn, EU_LID, 0);
+            break;
    /* s_int, make_num without auto width */
          case EU_NMA:
          case EU_PGD:
@@ -5216,23 +5222,12 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             break;
    /* s_int, make_num or make_str */
          case EU_PRI:
-            if (-99 > rSv(EU_PRI, s_int) || 999 < rSv(EU_PRI, s_int)) {
+            if (-99 > rSv(EU_PRI, s_int) || 999 < rSv(EU_PRI, s_int))
                cp = make_str("rt", W, Jn, AUTOX_NO);
-            } else
+            else
                cp = make_num(rSv(EU_PRI, s_int), W, Jn, AUTOX_NO, 0);
             break;
-   /* u_int, make_num without auto width */
-         case EU_CPN:
-            cp = make_num(rSv(i, u_int), W, Jn, AUTOX_NO, 0);
-            break;
-   /* u_int, make_num with auto width */
-         case EU_GID:
-         case EU_UED:
-         case EU_URD:
-         case EU_USD:
-            cp = make_num(rSv(i, u_int), W, Jn, i, 0);
-            break;
-   /* u_int, scale_pcnt with special handling */
+   /* s_int, scale_pcnt with special handling */
          case EU_CPU:
          {  float u = (float)rSv(EU_CPU, s_int) * Frame_etscale;
             int n = rSv(EU_THD, s_int);
@@ -5242,6 +5237,17 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             if (u > Cpu_pmax) u = Cpu_pmax;
             cp = scale_pcnt(u, W, Jn);
          }
+            break;
+   /* u_int, make_num without auto width */
+         case EU_CPN:
+            cp = make_num(rSv(EU_CPN, u_int), W, Jn, AUTOX_NO, 0);
+            break;
+   /* u_int, make_num with auto width */
+         case EU_GID:
+         case EU_UED:
+         case EU_URD:
+         case EU_USD:
+            cp = make_num(rSv(i, u_int), W, Jn, i, 0);
             break;
    /* ul_int, make_num with auto width and zero supression */
          case EU_NS1:
@@ -5311,7 +5317,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             break;
    /* str, make_str_utf8 with varialbe width */
          case EU_SGN:
-            varUTF8(rSv(i, str));
+            varUTF8(rSv(EU_SGN, str));
             break;
    /* str, make_str with varialbe width + additional decoration */
          case EU_CMD:
