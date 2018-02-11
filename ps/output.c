@@ -999,6 +999,11 @@ static int pr_fuid(char *restrict const outbuf, const proc_t *restrict const pp)
 setREL1(ID_FUID)
   return snprintf(outbuf, COLWID, "%d", rSv(ID_FUID, u_int, pp));
 }
+static int pr_luid(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(ID_LOGIN)
+  if(rSv(ID_LOGIN, s_int, pp)==-1) return snprintf(outbuf, COLWID, "-");
+  return snprintf(outbuf, COLWID, "%d", rSv(ID_LOGIN, s_int, pp));
+}
 
 // The Open Group Base Specifications Issue 6 (IEEE Std 1003.1, 2004 Edition)
 // requires that user and group names print as decimal numbers if there is
@@ -1428,7 +1433,7 @@ static const format_struct format_array[] = { /*
 {"longtname", "TTY",     pr_tty8,          PIDS_TTY_NAME,            8,    DEC,  PO|LEFT},
 {"lsession",  "SESSION", pr_sd_session,    PIDS_SD_SESS,            11,    LNX,  ET|LEFT},
 {"lstart",    "STARTED", pr_lstart,        PIDS_TIME_START,         24,    XXX,  ET|RIGHT},
-{"luid",      "LUID",    pr_nop,           PIDS_noop,                5,    LNX,  ET|RIGHT}, /* login ID */
+{"luid",      "LUID",    pr_luid,          PIDS_ID_LOGIN,            5,    LNX,  ET|RIGHT}, /* login ID */
 {"luser",     "LUSER",   pr_nop,           PIDS_noop,                8,    LNX,  ET|USER},  /* login USER */
 {"lwp",       "LWP",     pr_tasks,         PIDS_ID_PID,              5,    SUN,  TO|PIDMAX|RIGHT},
 {"lxc",       "LXC",     pr_lxcname,       PIDS_LXCNAME,             8,    LNX,  ET|LEFT},
