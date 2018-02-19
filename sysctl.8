@@ -6,7 +6,7 @@
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 .\" GNU General Public License for more details."
-.TH SYSCTL "8" "Jan 2012" "procps-ng" "System Administration"
+.TH SYSCTL "8" "2018-02-19" "procps-ng" "System Administration"
 .SH NAME
 sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
@@ -38,9 +38,7 @@ is the key and
 .I value
 is the value to set it to.  If the value contains quotes or characters
 which are parsed by the shell, you may need to enclose the value in double
-quotes.  This requires the
-.B \-w
-parameter to use.
+quotes.
 .TP
 \fB\-n\fR, \fB\-\-values\fR
 Use this option to disable printing of the key name when printing values.
@@ -56,7 +54,7 @@ have programmable completion.
 Use this option to not display the values set to stdout.
 .TP
 \fB\-w\fR, \fB\-\-write\fR
-Use this option when you want to change a sysctl setting.
+Use this option when all arguments prescribe a key to be set.
 .TP
 \fB\-p\fR[\fIFILE\fR], \fB\-\-load\fR[=\fIFILE\fR]
 Load in sysctl settings from the file specified or /etc/sysctl.conf if none
