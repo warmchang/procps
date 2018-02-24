@@ -27,6 +27,8 @@ pidof -- find the process ID of a running program.
 .IR omitpid[,omitpid..] ]
 .RB [ \-o
 .IR omitpid[,omitpid..].. ]
+.RB [ \-S
+.IR separator ]
 .B program
 .RB [ program.. ]
 .SH DESCRIPTION
@@ -47,6 +49,9 @@ shells running the named scripts.
 Tells \fIpidof\fP to omit processes with that process id. The special
 pid \fB%PPID\fP can be used to name the parent process of the \fIpidof\fP
 program, in other words the calling shell or shell script.
+.IP "-S \fIseparator\fP"
+Use \fIseparator\fP as a separator put between pids. Used only when
+more than one pids are printed for the program.
 .SH "EXIT STATUS"
 .TP
 .B 0
