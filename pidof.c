@@ -65,6 +65,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(_(" -c, --check-root          omit processes with different root\n"), fp);
 	fputs(_(" -x                        also find shells running the named scripts\n"), fp);
 	fputs(_(" -o, --omit-pid <PID,...>  omit processes with PID\n"), fp);
+	fputs(_(" -S, --separator SEP       use SEP as separator put between PIDs"), fp);
 	fputs(USAGE_SEPARATOR, fp);
 	fputs(USAGE_HELP, fp);
 	fputs(USAGE_VERSION, fp);
@@ -290,12 +291,14 @@ int main (int argc, char **argv)
 	int found = 0;
 	int first_pid = 1;
 
-	const char *opts = "scnxmo:?Vh";
+	const char *separator = " ";
+	const char *opts = "scnxmo:S:?Vh";
 
 	static const struct option longopts[] = {
 		{"check-root", no_argument, NULL, 'c'},
 		{"single-shot", no_argument, NULL, 's'},
 		{"omit-pid", required_argument, NULL, 'o'},
+		{"separator", required_argument, NULL, 's'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -326,6 +329,9 @@ int main (int argc, char **argv)
 				opt_rootdir_check = 1;
 				pidof_root = pid_link(getpid(), "root");
 			}
+			break;
+		case 'S':
+			separator = optarg;
 			break;
 		case 'V':
 			printf (PROCPS_NG_VERSION);
@@ -360,7 +366,7 @@ int main (int argc, char **argv)
 					first_pid = 0;
 					printf ("%ld", (long) procs[i].pid);
 				} else {
-					printf (" %ld", (long) procs[i].pid);
+					printf ("%s%ld", separator, (long) procs[i].pid);
 				}
 				if (opt_single_shot) break;
 			}
