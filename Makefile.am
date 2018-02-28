@@ -233,6 +233,8 @@ proc_libprocps_la_SOURCES = \
 	proc/escape.h \
 	proc/numa.c \
 	proc/numa.h \
+	proc/procio.c \
+	proc/procio.h \
 	proc/procps-private.h \
 	proc/procps.h \
 	proc/pwcache.c \
@@ -258,6 +260,7 @@ proc_libprocps_la_include_HEADERS = \
 	proc/devname.h \
 	proc/escape.h \
 	proc/numa.h \
+	proc/procio.h \
 	proc/procps.h \
 	proc/pwcache.h \
 	proc/readproc.h \
@@ -269,6 +272,7 @@ proc_libprocps_la_include_HEADERS = \
 	proc/whattime.h
 
 dist_man_MANS += \
+	proc/procio.3 \
 	proc/openproc.3 \
 	proc/readproc.3 \
 	proc/readproctab.3

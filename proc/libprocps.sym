@@ -8,6 +8,7 @@ global:
 	escape_str;
 	escape_strlist;
 	escaped_copy;
+	fprocopen;
 	free_slabinfo;
 	freeproc;
 	get_ns_id;
