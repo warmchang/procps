@@ -14,6 +14,7 @@ procps-ng-NEXT
   * ps: display NUMA node under which a thread ran         issue #58
   * sysctl: Permit empty string for value                  issue #74
   * sysctl: Don't segv when file not available             issue #76
+  * sysctl: Read and write large buffers                   request #56
   * top: add config file support for XDG specification
   * top: eliminated minor libnuma memory leak
   * top: show fewer memory decimal places (configurable)   issue #50

@@ -272,7 +272,7 @@ proc_libprocps_la_include_HEADERS = \
 	proc/whattime.h
 
 dist_man_MANS += \
-	proc/procio.3 \
+	proc/fprocopen.3 \
 	proc/openproc.3 \
 	proc/readproc.3 \
 	proc/readproctab.3
