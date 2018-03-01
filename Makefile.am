@@ -210,7 +210,11 @@ pmap_SOURCES = pmap.c lib/fileutils.c
 if !CYGWIN
 pwdx_SOURCES = pwdx.c lib/fileutils.c
 pwdx_LDADD= $(CYGWINFLAGS)
-sysctl_SOURCES = sysctl.c lib/fileutils.c
+sysctl_SOURCES = \
+	sysctl.c \
+	lib/fileutils.c \
+	procio.c \
+	procio.h
 sysctl_LDADD=
 endif
 tload_SOURCES = tload.c lib/strutils.c lib/fileutils.c
@@ -252,8 +256,6 @@ proc_libprocps_la_SOURCES = \
 	proc/numa.h \
 	proc/pids.c \
 	proc/pids.h \
-	proc/procio.c \
-	proc/procio.h \
 	proc/procps.h \
 	proc/pwcache.c \
 	proc/pwcache.h \
@@ -284,7 +286,6 @@ proc_libprocps_la_include_HEADERS = \
 	proc/namespace.h \
 	proc/numa.h \
 	proc/pids.h \
-	proc/procio.h \
 	proc/procps.h \
 	proc/pwcache.h \
 	proc/readproc.h \
