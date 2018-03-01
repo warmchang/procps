@@ -195,7 +195,11 @@ pmap_SOURCES = pmap.c lib/fileutils.c
 if !CYGWIN
 pwdx_SOURCES = pwdx.c lib/fileutils.c
 pwdx_LDADD= $(CYGWINFLAGS)
-sysctl_SOURCES = sysctl.c lib/fileutils.c
+sysctl_SOURCES = \
+	sysctl.c \
+	lib/fileutils.c \
+	procio.c \
+	procio.h
 endif
 tload_SOURCES = tload.c lib/strutils.c lib/fileutils.c
 uptime_SOURCES = uptime.c lib/fileutils.c
@@ -233,8 +237,6 @@ proc_libprocps_la_SOURCES = \
 	proc/escape.h \
 	proc/numa.c \
 	proc/numa.h \
-	proc/procio.c \
-	proc/procio.h \
 	proc/procps-private.h \
 	proc/procps.h \
 	proc/pwcache.c \
@@ -260,7 +262,6 @@ proc_libprocps_la_include_HEADERS = \
 	proc/devname.h \
 	proc/escape.h \
 	proc/numa.h \
-	proc/procio.h \
 	proc/procps.h \
 	proc/pwcache.h \
 	proc/readproc.h \
@@ -272,7 +273,6 @@ proc_libprocps_la_include_HEADERS = \
 	proc/whattime.h
 
 dist_man_MANS += \
-	proc/fprocopen.3 \
 	proc/openproc.3 \
 	proc/readproc.3 \
 	proc/readproctab.3
