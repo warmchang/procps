@@ -3,9 +3,6 @@
 
 #include "procps.h"
 
-EXTERN_C_BEGIN
+FILE *fprocopen(const char *, const char *);
 
-extern FILE *fprocopen(const char *, const char *);
-
-EXTERN_C_END
 #endif
