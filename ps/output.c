@@ -1685,8 +1685,8 @@ static const format_struct format_array[] = {
 {"thcount",   "THCNT",   pr_nlwp,     sr_nlwp,    5,   0,    AIX, PO|RIGHT},
 {"tid",       "TID",     pr_tasks,    sr_tasks,   5,   0,    AIX, TO|PIDMAX|RIGHT},
 {"time",      "TIME",    pr_time,     sr_time,    8,   0,    U98, ET|RIGHT}, /*cputime*/ /* was 6 wide */
-{"times",     "TIME",    pr_times,    sr_time,    8,   0,    LNX, ET|RIGHT},
 {"timeout",   "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
+{"times",     "TIME",    pr_times,    sr_time,    8,   0,    LNX, ET|RIGHT},
 {"tmout",     "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
 {"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
 {"tpgid",     "TPGID",   pr_tpgid,    sr_tpgid,   5,   0,    XXX, PO|PIDMAX|RIGHT},
