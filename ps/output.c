@@ -568,6 +568,12 @@ static int pr_time(char *restrict const outbuf, const proc_t *restrict const pp)
   return c;
 }
 
+/* cumulative CPU time in seconds (not same as "etimes") */
+static int pr_times(char *restrict const outbuf, const proc_t *restrict const pp){
+  unsigned t = cook_time(pp);
+  return snprintf(outbuf, COLWID, "%u", t);
+}
+
 /* HP-UX puts this (I forget, vsz or vsize?) in kB and uses "sz" for pages.
  * Unix98 requires "vsz" to be kB.
  * Tru64 does both vsize and vsz like "1.23M"
@@ -1506,6 +1512,7 @@ static const format_struct format_array[] = {
 {"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
 {"cpuid",     "CPUID",   pr_psr,      sr_nop,     5,   0,    BSD, TO|RIGHT}, // OpenBSD: 8 wide!
 {"cputime",   "TIME",    pr_time,     sr_time,    8,   0,    DEC, ET|RIGHT}, /*time*/
+{"cputimes",  "TIME",    pr_times,    sr_time,    8,   0,    LNX, ET|RIGHT}, /*time*/
 {"ctid",      "CTID",    pr_nop,      sr_nop,     5,   0,    SUN, ET|RIGHT}, // resource contracts?
 {"cursig",    "CURSIG",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
 {"cutime",    "-",       pr_nop,      sr_cutime,  1,   0,    LNX, AN|RIGHT},
@@ -1678,6 +1685,7 @@ static const format_struct format_array[] = {
 {"thcount",   "THCNT",   pr_nlwp,     sr_nlwp,    5,   0,    AIX, PO|RIGHT},
 {"tid",       "TID",     pr_tasks,    sr_tasks,   5,   0,    AIX, TO|PIDMAX|RIGHT},
 {"time",      "TIME",    pr_time,     sr_time,    8,   0,    U98, ET|RIGHT}, /*cputime*/ /* was 6 wide */
+{"times",     "TIME",    pr_times,    sr_time,    8,   0,    LNX, ET|RIGHT},
 {"timeout",   "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
 {"tmout",     "TMOUT",   pr_nop,      sr_nop,     5,   0,    LNX, AN|RIGHT}, // 2.0.xx era
 {"tname",     "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
