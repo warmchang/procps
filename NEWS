@@ -7,6 +7,7 @@ procps-ng-NEXT
   * library: dont use SIGPWR on FreeBSD                    Debian #832148
   * library: don't strip off wchan prefixes (ps & top)     Redhat #1322111
   * pgrep: warn about 15+ char name only if -f not used
+  * pidof: specify separator between pids                  merge #58
   * pkill: Return 0 only if we can kill process            Debian #852758
   * pmap: fix duplicate output line under '-x' option      Redhat #1374061
   * ps: avoid eip/esp address truncations                  Debian #846361
@@ -14,7 +15,7 @@ procps-ng-NEXT
   * ps: display NUMA node under which a thread ran         issue #58
   * sysctl: Permit empty string for value                  issue #74
   * sysctl: Don't segv when file not available             issue #76
-  * sysctl: Read and write large buffers                   request #56
+  * sysctl: Read and write large buffers                   merge #56
   * top: add config file support for XDG specification
   * top: eliminated minor libnuma memory leak
   * top: show fewer memory decimal places (configurable)   issue #50
