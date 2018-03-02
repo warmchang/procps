@@ -13,6 +13,7 @@ procps-ng-NEXT
   * ps: avoid eip/esp address truncations                  Debian #846361
   * ps: recognizes SCHED_DEADLINE as valid CPU scheduler
   * ps: display NUMA node under which a thread ran         issue #58
+  * ps: Add seconds display for cputime and time           merge #43
   * sysctl: Permit empty string for value                  issue #74
   * sysctl: Don't segv when file not available             issue #76
   * sysctl: Read and write large buffers                   merge #56
