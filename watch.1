@@ -1,4 +1,4 @@
-.TH WATCH 1 "2016-06-03" "procps-ng" "User Commands"
+.TH WATCH 1 "2018-03-03" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -54,13 +54,13 @@ changes.
 Interpret ANSI color and style sequences.
 .TP
 \fB\-x\fR, \fB\-\-exec\fR
+Pass
 .I command
-is given to
-.B sh \-c
-which means that you may need to use extra quoting to get the desired effect.
-This with the \-\-exec option, which passes the command to
+to
 .BR exec (2)
-instead.
+instead of
+.B sh \-c
+which reduces the need to use extra quoting to get the desired effect.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
