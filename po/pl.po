@@ -1,22 +1,23 @@
 # Polish translation for procps-ng.
 # Copyright (C) 2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
-# Jakub Bogusz <qboosh@pld-linux.org>, 2014-2015.
+# Jakub Bogusz <qboosh@pld-linux.org>, 2014-2017.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-3.3.10-rc1\n"
+"Project-Id-Version: procps-ng-3.3.12\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2016-07-10 08:19+1000\n"
-"PO-Revision-Date: 2015-01-23 23:06+0100\n"
+"POT-Creation-Date: 2018-03-12 13:02+1100\n"
+"PO-Revision-Date: 2017-12-23 11:52+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Bugs: Report translation errors to the Language-Team address.\n"
 
-#: free.c:74 slabtop.c:189 uptime.c:59 w.c:453
+#: free.c:74 slabtop.c:193 uptime.c:59 w.c:453
 #, c-format
 msgid " %s [options]\n"
 msgstr " %s [opcje]\n"
@@ -26,53 +27,44 @@ msgid " -b, --bytes         show output in bytes\n"
 msgstr " -b, --bytes         wyjście w bajtach\n"
 
 #: free.c:77
-#, fuzzy
 msgid "     --kilo          show output in kilobytes\n"
-msgstr " -k, --kilo          wyjście w kilobajtach\n"
+msgstr "     --kilo          wyjście w kilobajtach\n"
 
 #: free.c:78
-#, fuzzy
 msgid "     --mega          show output in megabytes\n"
-msgstr " -m, --mega          wyjście w megabajtach\n"
+msgstr "     --mega          wyjście w megabajtach\n"
 
 #: free.c:79
-#, fuzzy
 msgid "     --giga          show output in gigabytes\n"
-msgstr " -g, --giga          wyjście w gigabajtach\n"
+msgstr "     --giga          wyjście w gigabajtach\n"
 
 #: free.c:80
 msgid "     --tera          show output in terabytes\n"
 msgstr "     --tera          wyjście w terabajtach\n"
 
 #: free.c:81
-#, fuzzy
 msgid "     --peta          show output in petabytes\n"
-msgstr "     --tera          wyjście w terabajtach\n"
+msgstr "     --peta          wyjście w petabajtach\n"
 
 #: free.c:82
-#, fuzzy
 msgid " -k, --kibi          show output in kibibytes\n"
-msgstr " -k, --kilo          wyjście w kilobajtach\n"
+msgstr " -k, --kibi          wyjście w kibibajtach\n"
 
 #: free.c:83
-#, fuzzy
 msgid " -m, --mebi          show output in mebibytes\n"
-msgstr " -m, --mega          wyjście w megabajtach\n"
+msgstr " -m, --mebi          wyjście w mebibajtach\n"
 
 #: free.c:84
-#, fuzzy
 msgid " -g, --gibi          show output in gibibytes\n"
-msgstr " -g, --giga          wyjście w gigabajtach\n"
+msgstr " -g, --gibi          wyjście w gibibajtach\n"
 
 #: free.c:85
-#, fuzzy
 msgid "     --tebi          show output in tebibytes\n"
-msgstr "     --tera          wyjście w terabajtach\n"
+msgstr "     --tebi          wyjście w tebibajtach\n"
 
 #: free.c:86
-#, fuzzy
 msgid "     --pebi          show output in pebibytes\n"
-msgstr "     --tera          wyjście w terabajtach\n"
+msgstr "     --pebi          wyjście w pebibajtach\n"
 
 #: free.c:87
 msgid " -h, --human         show human-readable output\n"
@@ -107,25 +99,25 @@ msgstr " -w, --wide          szeroki format wyjścia\n"
 msgid "     --help     display this help and exit\n"
 msgstr "     --help     wyświetlenie tego opisu i zakończenie\n"
 
-#: free.c:198
+#: free.c:191
 msgid "Multiple unit options doesn't make sense."
-msgstr ""
+msgstr "Podanie wielu opcji ustawiających jednostkę nie ma sensu."
 
-#: free.c:330
+#: free.c:322
 #, c-format
 msgid "seconds argument `%s' is not positive number"
 msgstr "argument liczby sekund `%s' nie jest liczbą dodatnią"
 
-#: free.c:336
+#: free.c:328
 msgid "failed to parse count argument"
 msgstr "niezrozumiały argument liczby powtórzeń"
 
-#: free.c:339
+#: free.c:331
 #, c-format
 msgid "failed to parse count argument: '%s'"
 msgstr "niezrozumiały argument liczby powtórzeń: '%s'"
 
-#: free.c:360
+#: free.c:352
 #, c-format
 msgid ""
 "              total        used        free      shared     buffers       "
@@ -134,7 +126,7 @@ msgstr ""
 "              razem       użyte       wolne    dzielone      bufory     w "
 "cache    dostępne"
 
-#: free.c:362
+#: free.c:354
 #, c-format
 msgid ""
 "              total        used        free      shared  buff/cache   "
@@ -143,23 +135,23 @@ msgstr ""
 "              razem       użyte       wolne    dzielone   buf/cache    "
 "dostępne"
 
-#: free.c:365
+#: free.c:357
 msgid "Mem:"
 msgstr "Pamięć:"
 
-#: free.c:385
+#: free.c:377
 msgid "Low:"
 msgstr "Niska:"
 
-#: free.c:391
+#: free.c:383
 msgid "High:"
 msgstr "Wysoka:"
 
-#: free.c:398
+#: free.c:390
 msgid "Swap:"
 msgstr "Wymiana:"
 
-#: free.c:405
+#: free.c:397
 msgid "Total:"
 msgstr "Razem:"
 
@@ -221,6 +213,7 @@ msgstr " -G, --group <GID,...>     dopasowanie ID grupy rzeczywistej\n"
 #: pgrep.c:120
 msgid " -i, --ignore-case         match case insensitively\n"
 msgstr ""
+" -i, --ignore-case         dopasowywanie bez uwzględniania wielkości liter\n"
 
 #: pgrep.c:121
 msgid " -n, --newest              select most recently started\n"
@@ -268,9 +261,10 @@ msgstr ""
 "zablokowany\n"
 
 #: pgrep.c:131
+#, fuzzy
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
-"                           namespace as <pid>\n"
+"                           namespace as <pid> or 0 for all namespaces\n"
 msgstr ""
 " --ns <PID>                dopasowanie procesów należących do tej samej\n"
 "                           przestrzeni nazw, co <pid>\n"
@@ -317,11 +311,19 @@ msgstr "nie podano liczby: %s"
 msgid "Error reading reference namespace information\n"
 msgstr "Błąd przy odczycie informacji o przestrzeni nazw odniesienia\n"
 
-#: pgrep.c:610 pidof.c:230 pidof.c:271 sysctl.c:643
+#: pgrep.c:610 pidof.c:231 pidof.c:272 sysctl.c:672
 msgid "internal error"
 msgstr "błąd wewnętrzny"
 
-#: pgrep.c:876
+#: pgrep.c:656
+#, c-format
+msgid ""
+"pattern that searches for process name longer than 15 characters will result "
+"in zero matches\n"
+"Try `%s -f' option to match against the complete command line."
+msgstr ""
+
+#: pgrep.c:879
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
@@ -330,7 +332,7 @@ msgstr ""
 "-L bez -F nie ma sensu\n"
 "`%s --help' pokaże więcej informacji."
 
-#: pgrep.c:883
+#: pgrep.c:886
 #, c-format
 msgid ""
 "pidfile not valid\n"
@@ -339,7 +341,7 @@ msgstr ""
 "nieprawidłowy plik pid\n"
 "`%s --help' pokaże więcej informacji."
 
-#: pgrep.c:891
+#: pgrep.c:894
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
@@ -348,7 +350,7 @@ msgstr ""
 "można podać tylko jeden wzorzec\n"
 "`%s --help' pokaże więcej informacji."
 
-#: pgrep.c:895
+#: pgrep.c:898
 #, c-format
 msgid ""
 "no matching criteria specified\n"
@@ -357,12 +359,12 @@ msgstr ""
 "nie podano kryterium dopasowania\n"
 "`%s --help' pokaże więcej informacji."
 
-#: pgrep.c:922
+#: pgrep.c:927
 #, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "zabito %s (pid %lu)\n"
 
-#: pgrep.c:928
+#: pgrep.c:934
 #, c-format
 msgid "killing pid %ld failed"
 msgstr "zabicie PID-u %ld nie powiodło się"
@@ -390,7 +392,11 @@ msgstr ""
 msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
 msgstr " -o, --omit-pid <PID,...>  pominięcie procesów o podanych PID-ach\n"
 
-#: pidof.c:274
+#: pidof.c:67
+msgid " -S, --separator SEP       use SEP as separator put between PIDs"
+msgstr ""
+
+#: pidof.c:275
 #, c-format
 msgid "illegal omit pid value (%s)!\n"
 msgstr "błędna wartość PID-u do pominięcia (%s)!\n"
@@ -520,104 +526,104 @@ msgstr "Nieznany format pliku smaps!"
 msgid "inconsistent detail field in smaps file, line:\n"
 msgstr "niespójne pole szczegółów w pliku smaps, linia:\n"
 
-#: pmap.c:714
+#: pmap.c:712
 msgid "total kB"
 msgstr "razem kB"
 
-#: pmap.c:725
+#: pmap.c:723
 #, c-format
 msgid "mapped: %ldK    writeable/private: %ldK    shared: %ldK\n"
 msgstr "odwzorowane: %ldK  do zapisu/prywatne: %ldK  dzielone: %ldK\n"
 
 #. Translation Hint: keep total string length
 #. * as 24 characters. Adjust %16 if needed
-#: pmap.c:734
+#: pmap.c:732
 #, c-format
 msgid " total %16ldK\n"
 msgstr " razem %16ldK\n"
 
 #. Translation Hint: keep total string length
 #. * as 16 characters. Adjust %8 if needed
-#: pmap.c:740
+#: pmap.c:738
 #, c-format
 msgid " total %8ldK\n"
 msgstr " razem %8ldK\n"
 
-#: pmap.c:767 skill.c:500 skill.c:534 skill.c:621 tload.c:128 tload.c:133
-#: vmstat.c:959 vmstat.c:968 watch.c:726
+#: pmap.c:765 skill.c:507 skill.c:541 skill.c:628 tload.c:130 tload.c:135
+#: vmstat.c:955 vmstat.c:964 watch.c:732
 msgid "failed to parse argument"
 msgstr "niezrozumiały argument"
 
-#: pmap.c:811
+#: pmap.c:809
 #, c-format
 msgid "config line too long - line %d"
 msgstr "linia konfiguracji zbyt długa - linia %d"
 
-#: pmap.c:836
+#: pmap.c:834
 #, c-format
 msgid "unsupported section found in the config - line %d"
 msgstr "nie obsługiwana sekcja w konfiguracji - linia %d"
 
-#: pmap.c:839 pmap.c:850 pmap.c:861 pmap.c:880 pmap.c:892
+#: pmap.c:837 pmap.c:848 pmap.c:859 pmap.c:878 pmap.c:890
 #, c-format
 msgid "syntax error found in the config - line %d"
 msgstr "błąd składni w konfiguracji - linia %d"
 
-#: pmap.c:911
+#: pmap.c:909
 msgid "the file already exists - delete or rename it first"
 msgstr "plik już istnieje - proszę najpierw usunąć lub zmienić nazwę"
 
-#: pmap.c:974
+#: pmap.c:972
 msgid "HOME variable undefined"
 msgstr "nie zdefiniowana zmienna HOME"
 
-#: pmap.c:982
+#: pmap.c:980
 msgid "memory allocation failed"
 msgstr "nie udało się przydzielić pamięci"
 
-#: pmap.c:1034
+#: pmap.c:1032
 msgid "option -r is ignored as SunOS compatibility"
 msgstr "opcja -r jest ignorowana dla zgodności z SunOS-em"
 
-#: pmap.c:1081
+#: pmap.c:1079
 msgid "options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"
 msgstr "opcje -c, -C, -d, -n, -N, -x, -X wykluczają się wzajemnie"
 
-#: pmap.c:1084
+#: pmap.c:1082
 msgid "options -p, -q are mutually exclusive with -n, -N"
 msgstr "opcje -p, -q wykluczają się z -n, -N"
 
-#: pmap.c:1087
+#: pmap.c:1085
 msgid "too many arguments"
 msgstr "za dużo argumentów"
 
-#: pmap.c:1091
+#: pmap.c:1089
 msgid "rc file successfully created, feel free to edit the content"
 msgstr "plik rc został utworzony, można modyfikować jego zawartość"
 
-#: pmap.c:1094
+#: pmap.c:1092
 msgid "couldn't create the rc file"
 msgstr "nie udało się utworzyć pliku rc"
 
-#: pmap.c:1106
+#: pmap.c:1104
 #, c-format
 msgid "~/.%src file successfully created, feel free to edit the content"
 msgstr "plik ~/.%src został utworzony, można modyfikować jego zawartość"
 
-#: pmap.c:1109
+#: pmap.c:1107
 #, c-format
 msgid "couldn't create ~/.%src"
 msgstr "nie udało się utworzyć pliku ~/.%src"
 
-#: pmap.c:1114
+#: pmap.c:1112
 msgid "argument missing"
 msgstr "brak argumentu"
 
-#: pmap.c:1128
+#: pmap.c:1126
 msgid "couldn't read the rc file"
 msgstr "nie udało się odczytać pliku rc"
 
-#: pmap.c:1130
+#: pmap.c:1128
 #, c-format
 msgid "couldn't read ~/.%src"
 msgstr "nie udało się odczytać pliku ~/.%src"
@@ -1100,17 +1106,17 @@ msgstr ""
 "\n"
 "Więcej szczegółów w ps(1).\n"
 
-#: ps/output.c:1969
+#: ps/output.c:2019
 #, c-format
 msgid "fix bigness error\n"
 msgstr "poprawić błąd z dużym rozmiarem\n"
 
-#: ps/output.c:2044
+#: ps/output.c:2094
 #, c-format
 msgid "bad alignment code\n"
 msgstr "niewłaściwy kod wyrównania\n"
 
-#: ps/output.c:2106
+#: ps/output.c:2156
 #, c-format
 msgid "unknown page size (assume 4096)\n"
 msgstr "nieznany rozmiar strony (przyjęto 4096)\n"
@@ -1687,74 +1693,74 @@ msgstr ""
 "Numer priorytetu to liczba od +20 (najwolniej) do -20 (najszybciej).\n"
 "Liczby ujemne są zarezerwowane dla administratorów.\n"
 
-#: skill.c:457
+#: skill.c:464
 #, c-format
 msgid "unknown signal name %s"
 msgstr "nieznana nazwa sygnału %s"
 
-#: skill.c:477
+#: skill.c:484
 #, c-format
 msgid "invalid argument %c"
 msgstr "błędny argument %c"
 
-#: skill.c:514
+#: skill.c:521
 #, c-format
 msgid "something at line %d\n"
 msgstr "coś w linii %d\n"
 
-#: skill.c:537
+#: skill.c:544
 #, c-format
 msgid "priority %lu out of range"
 msgstr "priorytet %lu jest spoza zakresu"
 
-#: skill.c:650
+#: skill.c:657
 #, c-format
 msgid "invalid pid number %s"
 msgstr "błędny numer pid %s"
 
-#: skill.c:654
+#: skill.c:661
 msgid "error reading reference namespace information"
 msgstr "błąd odczytu informacji o przestrzeni nazw odniesienia"
 
-#: skill.c:662
+#: skill.c:669
 msgid "invalid namespace list"
 msgstr "błędna lista przestrzeni nazw"
 
-#: skill.c:700
+#: skill.c:707
 msgid "no process selection criteria"
 msgstr "nie podano kryteriów wyboru"
 
-#: skill.c:703
+#: skill.c:710
 msgid "general flags may not be repeated"
 msgstr "flag ogólnych nie można powtarzać"
 
-#: skill.c:706
+#: skill.c:713
 msgid "-i makes no sense with -v, -f, and -n"
 msgstr "-i nie ma sensu z -v, -f ani -n"
 
-#: skill.c:708
+#: skill.c:715
 msgid "-v makes no sense with -i and -f"
 msgstr "-v nie ma sensu z -i ani -f"
 
-#: skill.c:753
+#: skill.c:765
 #, c-format
 msgid "skill: \"%s\" is not supported\n"
 msgstr "skill: \"%s\" nie jest obsługiwany\n"
 
-#: slabtop.c:191
+#: slabtop.c:195
 msgid " -d, --delay <secs>  delay updates\n"
 msgstr " -d, --delay <sek>   opóźnienie aktualizacji\n"
 
-#: slabtop.c:192
+#: slabtop.c:196
 msgid " -o, --once          only display once, then exit\n"
 msgstr " -o, --once          wyświetlenie jednorazowe i zakończenie\n"
 
-#: slabtop.c:193
+#: slabtop.c:197
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
 msgstr ""
 " -s, --sort <znak>   określenie kryterium sortowania wg znaku (p. niżej)\n"
 
-#: slabtop.c:198
+#: slabtop.c:202
 msgid ""
 "\n"
 "The following are valid sort criteria:\n"
@@ -1762,148 +1768,149 @@ msgstr ""
 "\n"
 "Poprawne kryteria sortowania to:\n"
 
-#: slabtop.c:199
+#: slabtop.c:203
 msgid " a: sort by number of active objects\n"
 msgstr " a: sortowanie wg liczby aktywnych obiektów\n"
 
-#: slabtop.c:200
+#: slabtop.c:204
 msgid " b: sort by objects per slab\n"
 msgstr " b: sortowanie wg obiektów na slab\n"
 
-#: slabtop.c:201
+#: slabtop.c:205
 msgid " c: sort by cache size\n"
 msgstr " c: sortowanie wg rozmiaru pamięci podręcznej\n"
 
-#: slabtop.c:202
+#: slabtop.c:206
 msgid " l: sort by number of slabs\n"
 msgstr " l: sortowanie wg liczby slabów\n"
 
-#: slabtop.c:203
+#: slabtop.c:207
 msgid " v: sort by number of active slabs\n"
 msgstr " v: sortowanie wg liczby aktywnych slabów\n"
 
-#: slabtop.c:204
+#: slabtop.c:208
 msgid " n: sort by name\n"
 msgstr " n: sortowanie wg nazwy\n"
 
-#: slabtop.c:205
+#: slabtop.c:209
 msgid " o: sort by number of objects (the default)\n"
 msgstr " o: sortowanie wg liczby obiektów (domyślne)\n"
 
-#: slabtop.c:206
+#: slabtop.c:210
 msgid " p: sort by pages per slab\n"
 msgstr " p: sortowanie wg liczby stron na slab\n"
 
-#: slabtop.c:207
+#: slabtop.c:211
 msgid " s: sort by object size\n"
 msgstr " s: sortowanie wg rozmiaru obiektu\n"
 
-#: slabtop.c:208
+#: slabtop.c:212
 msgid " u: sort by cache utilization\n"
 msgstr " u: sortowanie wg wykorzystania pamięci podręcznej\n"
 
-#: slabtop.c:317
+#: slabtop.c:321
 msgid "illegal delay"
 msgstr "niedozwolone opóźnienie"
 
-#: slabtop.c:320 tload.c:135 vmstat.c:961
+#: slabtop.c:324 tload.c:137 vmstat.c:957
 msgid "delay must be positive integer"
 msgstr "opóźnienie musi być liczbą całkowitą dodatnią"
 
-#: slabtop.c:342
+#: slabtop.c:346
 msgid "terminal setting retrieval"
 msgstr "odczyt ustawień terminala"
 
 #. Translation Hint: Next five strings must not
 #. * exceed 35 length in characters.
-#: slabtop.c:381
+#: slabtop.c:385
 #, no-c-format
 msgid "Active / Total Objects (% used)"
 msgstr "Obiektów aktywnych / razem (% uż.)"
 
-#: slabtop.c:385
+#: slabtop.c:389
 #, no-c-format
 msgid "Active / Total Slabs (% used)"
 msgstr "Slabów aktywnych / razem (% uż.)"
 
-#: slabtop.c:389
+#: slabtop.c:393
 #, no-c-format
 msgid "Active / Total Caches (% used)"
 msgstr "Buforów aktywnych / razem (% uż.)"
 
-#: slabtop.c:393
+#: slabtop.c:397
 #, no-c-format
 msgid "Active / Total Size (% used)"
 msgstr "Rozmiar aktywny / razem (% uż.)"
 
-#: slabtop.c:396
+#: slabtop.c:400
 msgid "Minimum / Average / Maximum Object"
 msgstr "Obiektów min / średnio / max"
 
 #. Translation Hint: Please keep alignment of the
 #. * following intact.
-#: slabtop.c:405
+#: slabtop.c:409
 msgid "  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"
 msgstr "  OB. AKTYWNE  UŻ. ROZM.OB.  PŁYTY  OB./PŁ. ROZM.CACHE NAZWA"
 
-#: sysctl.c:86
+#: sysctl.c:92
 #, c-format
 msgid "separators should not be repeated: %s"
 msgstr "separatory nie powinny się powtarzać: %s"
 
-#: sysctl.c:105
+#: sysctl.c:111
 #, c-format
 msgid " %s [options] [variable[=value] ...]\n"
 msgstr " %s [opcje] [zmienna[=wartość] ...]\n"
 
-#: sysctl.c:108
+#: sysctl.c:114
 msgid "  -a, --all            display all variables\n"
 msgstr "  -a, --all            wyświetlenie wszystkich zmiennych\n"
 
-#: sysctl.c:109
+#: sysctl.c:115
 msgid "  -A                   alias of -a\n"
 msgstr "  -A                   alias dla opcji -a\n"
 
-#: sysctl.c:110
+#: sysctl.c:116
 msgid "  -X                   alias of -a\n"
 msgstr "  -X                   alias dla opcji -a\n"
 
-#: sysctl.c:111
+#: sysctl.c:117
 msgid "      --deprecated     include deprecated parameters to listing\n"
 msgstr ""
 "      --deprecated     dołączenie do listingu parametrów przestarzałych\n"
 
-#: sysctl.c:112
+#: sysctl.c:118
 msgid "  -b, --binary         print value without new line\n"
 msgstr "  -b, --binary         wypisanie wartości bez nowej linii\n"
 
-#: sysctl.c:113
+#: sysctl.c:119
 msgid "  -e, --ignore         ignore unknown variables errors\n"
 msgstr ""
 "  -e, --ignore         zignorowanie błędów dotyczących nieznanych zmiennych\n"
 
-#: sysctl.c:114
+#: sysctl.c:120
 msgid "  -N, --names          print variable names without values\n"
 msgstr "  -N, --names          wypisanie nazw zmiennych bez wartości\n"
 
-#: sysctl.c:115
-msgid "  -n, --values         print only values of a variables\n"
+#: sysctl.c:121
+#, fuzzy
+msgid "  -n, --values         print only values of the given variable(s)\n"
 msgstr "  -n, --values         wypisanie tylko wartości zmiennych\n"
 
-#: sysctl.c:116
+#: sysctl.c:122
 msgid "  -p, --load[=<file>]  read values from file\n"
 msgstr "  -p, --load[=<plik>]  odczyt wartości z pliku\n"
 
-#: sysctl.c:117
+#: sysctl.c:123
 msgid "  -f                   alias of -p\n"
 msgstr "  -f                   alias dla opcji -p\n"
 
-#: sysctl.c:118
+#: sysctl.c:124
 msgid "      --system         read values from all system directories\n"
 msgstr ""
 "      --system         odczyt wartości ze wszystkich katalogów systemowych\n"
 
-#: sysctl.c:119
+#: sysctl.c:125
 msgid ""
 "  -r, --pattern <expression>\n"
 "                       select setting that match expression\n"
@@ -1911,72 +1918,72 @@ msgstr ""
 "  -r, --pattern <wyrażenie>\n"
 "                       wybór ustawień pasujących do wyrażenia\n"
 
-#: sysctl.c:121
+#: sysctl.c:127
 msgid "  -q, --quiet          do not echo variable set\n"
 msgstr "  -q, --quiet          bez wypisywania ustawianej zmiennej\n"
 
-#: sysctl.c:122
+#: sysctl.c:128
 msgid "  -w, --write          enable writing a value to variable\n"
 msgstr "  -w, --write          włączenie zapisu wartości do zmiennej\n"
 
-#: sysctl.c:123
+#: sysctl.c:129
 msgid "  -o                   does nothing\n"
 msgstr "  -o                   nic nie robi\n"
 
-#: sysctl.c:124
+#: sysctl.c:130
 msgid "  -x                   does nothing\n"
 msgstr "  -x                   nic nie robi\n"
 
-#: sysctl.c:125
+#: sysctl.c:131
 msgid "  -d                   alias of -h\n"
 msgstr "  -d                   alias dla opcji -h\n"
 
-#: sysctl.c:171 sysctl.c:222 sysctl.c:431
+#: sysctl.c:177 sysctl.c:233 sysctl.c:449
 #, c-format
 msgid "\"%s\" is an unknown key"
 msgstr "nieznany klucz: \"%s\""
 
-#: sysctl.c:194 sysctl.c:333 sysctl.c:409
+#: sysctl.c:200 sysctl.c:351 sysctl.c:427
 #, c-format
 msgid "cannot stat %s"
 msgstr "nie można wykonać stat na %s"
 
-#: sysctl.c:227 sysctl.c:265 sysctl.c:436
+#: sysctl.c:238 sysctl.c:280 sysctl.c:454
 #, c-format
 msgid "permission denied on key '%s'"
 msgstr "brak uprawnień do klucza '%s'"
 
-#: sysctl.c:231 sysctl.c:279
+#: sysctl.c:245 sysctl.c:297
 #, c-format
 msgid "reading key \"%s\""
 msgstr "odczyt klucz \"%s\""
 
-#: sysctl.c:317
+#: sysctl.c:335
 #, c-format
 msgid "unable to open directory \"%s\""
 msgstr "nie można otworzyć katalogu \"%s\""
 
-#: sysctl.c:374
+#: sysctl.c:392
 #, c-format
 msgid "\"%s\" must be of the form name=value"
 msgstr "\"%s\" musi być w postaci klucz=wartość"
 
-#: sysctl.c:383
+#: sysctl.c:401
 #, c-format
 msgid "malformed setting \"%s\""
 msgstr "błędnie sformułowane ustawienie \"%s\""
 
-#: sysctl.c:403
+#: sysctl.c:421
 #, c-format
 msgid "%s is deprecated, value not set"
 msgstr "%s jest przestarzałe, wartość nie ustawiona"
 
-#: sysctl.c:416 sysctl.c:421 sysctl.c:440 sysctl.c:449
+#: sysctl.c:434 sysctl.c:439 sysctl.c:458 sysctl.c:467
 #, c-format
 msgid "setting key \"%s\""
 msgstr "ustawianie klucza \"%s\""
 
-#: sysctl.c:514
+#: sysctl.c:529
 #, c-format
 msgid ""
 "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
@@ -1985,26 +1992,26 @@ msgstr ""
 "GLOB_TILDE nie jest obsługiwane na tej platformie, tylda w \"%s\" nie "
 "zostanie rozwinięta."
 
-#: sysctl.c:520
+#: sysctl.c:535
 msgid "glob failed"
 msgstr "glob nie powiódł się"
 
-#: sysctl.c:526
+#: sysctl.c:541
 #, c-format
 msgid "cannot open \"%s\""
 msgstr "nie można otworzyć \"%s\""
 
-#: sysctl.c:542 sysctl.c:554
+#: sysctl.c:563 sysctl.c:579
 #, c-format
 msgid "%s(%d): invalid syntax, continuing..."
 msgstr "%s(%d): błędna składnia, kontynuacja..."
 
-#: sysctl.c:653 sysctl.c:660
+#: sysctl.c:682 sysctl.c:689
 #, c-format
 msgid "* Applying %s ...\n"
 msgstr "* Ustawianie %s ...\n"
 
-#: sysctl.c:810
+#: sysctl.c:841
 #, c-format
 msgid ""
 "no variables specified\n"
@@ -2013,7 +2020,7 @@ msgstr ""
 "nie podano zmiennych\n"
 "Polecenie `%s --help' pozwoli uzyskać więcej informacji."
 
-#: sysctl.c:814
+#: sysctl.c:845
 #, c-format
 msgid ""
 "options -N and -q cannot coexist\n"
@@ -2022,32 +2029,36 @@ msgstr ""
 "opcje -N i -q nie mogą wystąpić wspólnie\n"
 "Polecenie `%s --help' pozwoli uzyskać więcej informacji."
 
-#: tload.c:89
+#: tload.c:75
+msgid "screen too small"
+msgstr ""
+
+#: tload.c:91
 #, c-format
 msgid " %s [options] [tty]\n"
 msgstr " %s [opcje] [tty]\n"
 
-#: tload.c:91
+#: tload.c:93
 msgid " -d, --delay <secs>  update delay in seconds\n"
 msgstr " -d, --delay <sek>   opóźnienie uaktualnień w sekundach\n"
 
-#: tload.c:92
+#: tload.c:94
 msgid " -s, --scale <num>   vertical scale\n"
 msgstr " -s, --scale <ile>   skala pionowa\n"
 
-#: tload.c:130
+#: tload.c:132
 msgid "scale cannot be negative"
 msgstr "skala nie może być ujemna"
 
-#: tload.c:137 vmstat.c:963
+#: tload.c:139 vmstat.c:959
 msgid "too large delay value"
 msgstr "zbyt duża wartość opóźnienia"
 
-#: tload.c:152
+#: tload.c:154
 msgid "can not open tty"
 msgstr "nie można otworzyć tty"
 
-#: tload.c:211 tload.c:213
+#: tload.c:213 tload.c:215
 msgid "writing to tty failed"
 msgstr "zapis na tty nie powiódł się"
 
@@ -2059,528 +2070,546 @@ msgstr "zapis na tty nie powiódł się"
 #. .     1) a field name/column header - mostly upper case
 #. .     2) the related description    - both upper and lower case
 #. .
-#. .  To avoid truncation at runtime, each column header is noted with
-#. .  its maximum size and the following description must not exceed
-#. .  20 characters.  Fewer characters are ok.
+#. .  To avoid truncation on the main top display, each column header
+#. .  is noted with its maximum size, while a few are 'variable' width.
+#. .  Names for the latter should probably be 10 or fewer characters.
 #. .
+#. .  Those fields shown with a '+' are also eligible for user resizing
+#. .  using the 'X' command. That means the default width might produce
+#. .  truncation but need not if widened (see the man page 'X' command).
+#. .
+#. .  All headers are subject to a maximum of 7 on the Fields Management
+#. .  screen where truncation is entirely acceptable.
+#. .
+#. .  The associated descriptions are always limited to 20 characters,
+#. .  and are used only on the Fields Management screen.
+#. .
+#. .  In all cases, fewer characters are just fine.
 #. .
 #. Translation Hint: maximum 'PID' = 5
-#: top/top_nls.c:124
+#: top/top_nls.c:133
 msgid "PID"
 msgstr "PID"
 
-#: top/top_nls.c:125
+#: top/top_nls.c:134
 msgid "Process Id"
 msgstr "Id. procesu"
 
 #. Translation Hint: maximum 'PPID' = 5
-#: top/top_nls.c:127
+#: top/top_nls.c:136
 msgid "PPID"
 msgstr "PPID"
 
-#: top/top_nls.c:128
+#: top/top_nls.c:137
 msgid "Parent Process pid"
 msgstr "Id. procesu rodzica"
 
-#. Translation Hint: maximum 'UID' = 5
-#: top/top_nls.c:130
+#. Translation Hint: maximum 'UID' = 5 +
+#: top/top_nls.c:139
 msgid "UID"
 msgstr "UID"
 
-#: top/top_nls.c:131
+#: top/top_nls.c:140
 msgid "Effective User Id"
 msgstr "Id. użytkownika efektywnego"
 
-#. Translation Hint: maximum 'USER' = 7
-#: top/top_nls.c:133 w.c:591
+#. Translation Hint: maximum 'USER' = 8 +
+#: top/top_nls.c:142 w.c:591
 msgid "USER"
 msgstr "UŻYTK."
 
-#: top/top_nls.c:134
+#: top/top_nls.c:143
 msgid "Effective User Name"
 msgstr "Nazwa użytkownika efektywnego"
 
-#. Translation Hint: maximum 'RUID' = 5
-#: top/top_nls.c:136
+#. Translation Hint: maximum 'RUID' = 5 +
+#: top/top_nls.c:145
 msgid "RUID"
 msgstr "RUID"
 
-#: top/top_nls.c:137
+#: top/top_nls.c:146
 msgid "Real User Id"
 msgstr "Id. użytkownika rzeczywistego"
 
-#. Translation Hint: maximum 'RUSER' = 7
-#: top/top_nls.c:139
+#. Translation Hint: maximum 'RUSER' = 8 +
+#: top/top_nls.c:148
 msgid "RUSER"
 msgstr "UŻYTK.R."
 
-#: top/top_nls.c:140
+#: top/top_nls.c:149
 msgid "Real User Name"
 msgstr "Nazwa użytkownika rzeczywistego"
 
-#. Translation Hint: maximum 'SUID' = 5
-#: top/top_nls.c:142
+#. Translation Hint: maximum 'SUID' = 5 +
+#: top/top_nls.c:151
 msgid "SUID"
 msgstr "SUID"
 
-#: top/top_nls.c:143
+#: top/top_nls.c:152
 msgid "Saved User Id"
 msgstr "Id. użytkownika zachowanego"
 
-#. Translation Hint: maximum 'SUSER' = 7
-#: top/top_nls.c:145
+#. Translation Hint: maximum 'SUSER' = 8 +
+#: top/top_nls.c:154
 msgid "SUSER"
 msgstr "UŻYTK.Z."
 
-#: top/top_nls.c:146
+#: top/top_nls.c:155
 msgid "Saved User Name"
 msgstr "Nazwa użytkownika zachowanego"
 
-#. Translation Hint: maximum 'GID' = 5
-#: top/top_nls.c:148
+#. Translation Hint: maximum 'GID' = 5 +
+#: top/top_nls.c:157
 msgid "GID"
 msgstr "GID"
 
-#: top/top_nls.c:149
+#: top/top_nls.c:158
 msgid "Group Id"
 msgstr "Id. grupy"
 
-#. Translation Hint: maximum 'GROUP' = 7
-#: top/top_nls.c:151
+#. Translation Hint: maximum 'GROUP' = 8 +
+#: top/top_nls.c:160
 msgid "GROUP"
 msgstr "GRUPA"
 
-#: top/top_nls.c:152
+#: top/top_nls.c:161
 msgid "Group Name"
 msgstr "Nazwa grupy"
 
 #. Translation Hint: maximum 'PGRP' = 5
-#: top/top_nls.c:154
+#: top/top_nls.c:163
 msgid "PGRP"
 msgstr "PGRP"
 
-#: top/top_nls.c:155
+#: top/top_nls.c:164
 msgid "Process Group Id"
 msgstr "Id. grupy procesów"
 
-#. Translation Hint: maximum 'TTY' = 7
-#: top/top_nls.c:157
+#. Translation Hint: maximum 'TTY' = 8 +
+#: top/top_nls.c:166
 msgid "TTY"
 msgstr "TTY"
 
-#: top/top_nls.c:158
+#: top/top_nls.c:167
 msgid "Controlling Tty"
 msgstr "Terminal sterujący"
 
 #. Translation Hint: maximum 'TPGID' = 5
-#: top/top_nls.c:160
+#: top/top_nls.c:169
 msgid "TPGID"
 msgstr "TPGID"
 
-#: top/top_nls.c:161
+#: top/top_nls.c:170
 msgid "Tty Process Grp Id"
 msgstr "Id. grupy procesów terminala"
 
 #. Translation Hint: maximum 'SID' = 5
-#: top/top_nls.c:163
+#: top/top_nls.c:172
 msgid "SID"
 msgstr "SID"
 
-#: top/top_nls.c:164
+#: top/top_nls.c:173
 msgid "Session Id"
 msgstr "Id. sesji"
 
 #. Translation Hint: maximum 'PR' = 3
-#: top/top_nls.c:166
+#: top/top_nls.c:175
 msgid "PR"
 msgstr "PR"
 
-#: top/top_nls.c:167
+#: top/top_nls.c:176
 msgid "Priority"
 msgstr "Priorytet"
 
 #. Translation Hint: maximum 'NI' = 3
-#: top/top_nls.c:169
+#: top/top_nls.c:178
 msgid "NI"
 msgstr "NI"
 
-#: top/top_nls.c:170
+#: top/top_nls.c:179
 msgid "Nice Value"
 msgstr "Wartość nice"
 
 #. Translation Hint: maximum 'nTH' = 3
-#: top/top_nls.c:172
+#: top/top_nls.c:181
 msgid "nTH"
 msgstr "nWT"
 
-#: top/top_nls.c:173
+#: top/top_nls.c:182
 msgid "Number of Threads"
 msgstr "Liczba wątków"
 
 #. Translation Hint: maximum 'P' = 1
-#: top/top_nls.c:175
+#: top/top_nls.c:184
 msgid "P"
 msgstr "P"
 
-#: top/top_nls.c:176
+#: top/top_nls.c:185
 msgid "Last Used Cpu (SMP)"
 msgstr "Ostatnio używany CPU (SMP)"
 
 #. Translation Hint: maximum '%CPU' = 4
-#: top/top_nls.c:178
+#: top/top_nls.c:187
 #, c-format
 msgid "%CPU"
 msgstr "%CPU"
 
-#: top/top_nls.c:179
+#: top/top_nls.c:188
 msgid "CPU Usage"
 msgstr "Wykorzystanie CPU"
 
 #. Translation Hint: maximum '' = 6
-#: top/top_nls.c:181
+#: top/top_nls.c:190
 msgid "TIME"
 msgstr "CZAS"
 
-#: top/top_nls.c:182
+#: top/top_nls.c:191
 msgid "CPU Time"
 msgstr "Czas CPU"
 
-#. Translation Hint: maximum 'TIME+' = 7
-#: top/top_nls.c:184
+#. Translation Hint: maximum 'TIME+' = 9
+#: top/top_nls.c:193
 msgid "TIME+"
 msgstr "CZAS+"
 
-#: top/top_nls.c:185
+#: top/top_nls.c:194
 msgid "CPU Time, hundredths"
 msgstr "Czas CPU, setne sekundy"
 
 #. Translation Hint: maximum '%MEM' = 4
-#: top/top_nls.c:187
+#: top/top_nls.c:196
 msgid "%MEM"
 msgstr "%PAM"
 
-#: top/top_nls.c:188
+#: top/top_nls.c:197
 msgid "Memory Usage (RES)"
 msgstr "Wykorzystanie pamięci (RES)"
 
-#. Translation Hint: maximum 'VIRT' = 5
-#: top/top_nls.c:190
+#. Translation Hint: maximum 'VIRT' = 7
+#: top/top_nls.c:199
 msgid "VIRT"
 msgstr "WIRT"
 
-#: top/top_nls.c:191
+#: top/top_nls.c:200
 msgid "Virtual Image (KiB)"
 msgstr "Obraz wirtualny (KiB)"
 
-#. Translation Hint: maximum 'SWAP' = 4
-#: top/top_nls.c:193
+#. Translation Hint: maximum 'SWAP' = 6
+#: top/top_nls.c:202
 msgid "SWAP"
 msgstr "SWAP"
 
-#: top/top_nls.c:194
+#: top/top_nls.c:203
 msgid "Swapped Size (KiB)"
 msgstr "Obszar wymieniony (KiB)"
 
-#. Translation Hint: maximum 'RES' = 4
-#: top/top_nls.c:196
+#. Translation Hint: maximum 'RES' = 6
+#: top/top_nls.c:205
 msgid "RES"
 msgstr "REZ"
 
-#: top/top_nls.c:197
+#: top/top_nls.c:206
 msgid "Resident Size (KiB)"
 msgstr "Obszar rezydentny (KiB)"
 
 #. Translation Hint: maximum 'CODE' = 4
-#: top/top_nls.c:199
+#: top/top_nls.c:208
 msgid "CODE"
 msgstr "KOD"
 
-#: top/top_nls.c:200
+#: top/top_nls.c:209
 msgid "Code Size (KiB)"
 msgstr "Rozmiar kodu (KiB)"
 
-#. Translation Hint: maximum 'DATA' = 4
-#: top/top_nls.c:202
+#. Translation Hint: maximum 'DATA' = 7
+#: top/top_nls.c:211
 msgid "DATA"
 msgstr "DANE"
 
-#: top/top_nls.c:203
+#: top/top_nls.c:212
 msgid "Data+Stack (KiB)"
 msgstr "Dane+stos (KiB)"
 
-#. Translation Hint: maximum 'SHR' = 4
-#: top/top_nls.c:205
+#. Translation Hint: maximum 'SHR' = 6
+#: top/top_nls.c:214
 msgid "SHR"
 msgstr "WSP"
 
-#: top/top_nls.c:206
+#: top/top_nls.c:215
 msgid "Shared Memory (KiB)"
 msgstr "Pamięć współdzielona (KiB)"
 
 #. Translation Hint: maximum 'nMaj' = 4
-#: top/top_nls.c:208
+#: top/top_nls.c:217
 msgid "nMaj"
 msgstr "nMaj"
 
-#: top/top_nls.c:209
+#: top/top_nls.c:218
 msgid "Major Page Faults"
 msgstr "Twarde błędy braku strony"
 
 #. Translation Hint: maximum 'nMin' = 4
-#: top/top_nls.c:211
+#: top/top_nls.c:220
 msgid "nMin"
 msgstr "nMin"
 
-#: top/top_nls.c:212
+#: top/top_nls.c:221
 msgid "Minor Page Faults"
 msgstr "Miękkie błędy braku strony"
 
 #. Translation Hint: maximum 'nDRT' = 4
-#: top/top_nls.c:214
+#: top/top_nls.c:223
 msgid "nDRT"
 msgstr "nDRT"
 
-#: top/top_nls.c:215
+#: top/top_nls.c:224
 msgid "Dirty Pages Count"
 msgstr "Liczba stron brudnych"
 
 #. Translation Hint: maximum 'S' = 1
-#: top/top_nls.c:217
+#: top/top_nls.c:226
 msgid "S"
 msgstr "S"
 
-#: top/top_nls.c:218
+#: top/top_nls.c:227
 msgid "Process Status"
 msgstr "Stan procesu"
 
-#. Translation Hint: maximum 'COMMAND' = 7
-#: top/top_nls.c:220
+#. Translation Hint: maximum 'COMMAND' = variable
+#: top/top_nls.c:229
 msgid "COMMAND"
 msgstr "KOMENDA"
 
-#: top/top_nls.c:221
+#: top/top_nls.c:230
 msgid "Command Name/Line"
 msgstr "Nazwa/linia polecenia"
 
-#. Translation Hint: maximum 'WCHAN' = 7
-#: top/top_nls.c:223
+#. Translation Hint: maximum 'WCHAN' = 10 +
+#: top/top_nls.c:232
 msgid "WCHAN"
 msgstr "WCHAN"
 
-#: top/top_nls.c:224
+#: top/top_nls.c:233
 msgid "Sleeping in Function"
 msgstr "Funkcja oczekująca"
 
-#. Translation Hint: maximum 'Flags' = 7
-#: top/top_nls.c:226
+#. Translation Hint: maximum 'Flags' = 8
+#: top/top_nls.c:235
 msgid "Flags"
 msgstr "Flagi"
 
-#: top/top_nls.c:227
+#: top/top_nls.c:236
 msgid "Task Flags <sched.h>"
 msgstr "Flagi zadania (<sched.h>)"
 
-#. Translation Hint: maximum 'CGROUPS' = 7
-#: top/top_nls.c:229
+#. Translation Hint: maximum 'CGROUPS' = variable
+#: top/top_nls.c:238
 msgid "CGROUPS"
 msgstr "GRUPY S"
 
-#: top/top_nls.c:230
+#: top/top_nls.c:239
 msgid "Control Groups"
 msgstr "Grupy sterujące"
 
-#. Translation Hint: maximum 'SUPGIDS' = 7
-#: top/top_nls.c:232
+#. Translation Hint: maximum 'SUPGIDS' = variable
+#: top/top_nls.c:241
 msgid "SUPGIDS"
 msgstr "DOD.GID"
 
-#: top/top_nls.c:233
+#: top/top_nls.c:242
 msgid "Supp Groups IDs"
 msgstr "Id. grup dodatkowych"
 
-#. Translation Hint: maximum 'SUPGRPS' = 7
-#: top/top_nls.c:235
+#. Translation Hint: maximum 'SUPGRPS' = variable
+#: top/top_nls.c:244
 msgid "SUPGRPS"
 msgstr "DOD.GR."
 
-#: top/top_nls.c:236
+#: top/top_nls.c:245
 msgid "Supp Groups Names"
 msgstr "Nazwy grup dodatkowych"
 
 #. Translation Hint: maximum 'TGID' = 5
-#: top/top_nls.c:238
+#: top/top_nls.c:247
 msgid "TGID"
 msgstr "TGID"
 
-#: top/top_nls.c:239
+#: top/top_nls.c:248
 msgid "Thread Group Id"
 msgstr "Id. grupy wątków"
 
 #. Translation Hint: maximum 'OOMa' = 5
-#: top/top_nls.c:241
+#: top/top_nls.c:250
 msgid "OOMa"
-msgstr ""
+msgstr "OOMa"
 
-#: top/top_nls.c:242
+#: top/top_nls.c:251
 msgid "OOMEM Adjustment"
-msgstr ""
+msgstr "Korekta OOMEM"
 
 #. Translation Hint: maximum 'OOMs' = 4
-#: top/top_nls.c:244
+#: top/top_nls.c:253
 msgid "OOMs"
-msgstr ""
+msgstr "OOMs"
 
-#: top/top_nls.c:245
+#: top/top_nls.c:254
 msgid "OOMEM Score current"
-msgstr ""
+msgstr "Bieżąca punktacja OOMEM"
 
-#. Translation Hint: maximum 'ENVIRON' = 7
-#: top/top_nls.c:247
+#. Translation Hint: maximum 'ENVIRON' = variable
+#: top/top_nls.c:256
 msgid "ENVIRON"
 msgstr "ZMIENNE"
 
 #. Translation Hint: the abbreviation 'vars' below is shorthand for
 #. 'variables'
-#: top/top_nls.c:250
+#: top/top_nls.c:259
 msgid "Environment vars"
 msgstr "Zmienne środowiskowe (ENV)"
 
 #. Translation Hint: maximum 'vMj' = 3
-#: top/top_nls.c:252
+#: top/top_nls.c:261
 msgid "vMj"
 msgstr "vMj"
 
-#: top/top_nls.c:253
+#: top/top_nls.c:262
 msgid "Major Faults delta"
 msgstr "Odstęp między twardymi błędami braku strony"
 
 #. Translation Hint: maximum 'vMn' = 3
-#: top/top_nls.c:255
+#: top/top_nls.c:264
 msgid "vMn"
 msgstr "vMn"
 
-#: top/top_nls.c:256
+#: top/top_nls.c:265
 msgid "Minor Faults delta"
 msgstr "Odstęp między miękkimi błędami braku strony"
 
-#. Translation Hint: maximum 'USED' = 4
-#: top/top_nls.c:258
+#. Translation Hint: maximum 'USED' = 6
+#: top/top_nls.c:267
 msgid "USED"
 msgstr "UŻ."
 
-#: top/top_nls.c:259
+#: top/top_nls.c:268
 msgid "Res+Swap Size (KiB)"
 msgstr "Rozmiar rezydentny+swap (KiB)"
 
-#. Translation Hint: maximum 'nsIPC' = 7
-#: top/top_nls.c:261
+#. Translation Hint: maximum 'nsIPC' = 10 +
+#: top/top_nls.c:270
 msgid "nsIPC"
 msgstr "nsIPC"
 
-#: top/top_nls.c:262
+#: top/top_nls.c:271
 msgid "IPC namespace Inode"
 msgstr "I-węzeł przestrzeni nazw IPC"
 
-#. Translation Hint: maximum 'nsMNT' = 7
-#: top/top_nls.c:264
+#. Translation Hint: maximum 'nsMNT' = 10 +
+#: top/top_nls.c:273
 msgid "nsMNT"
 msgstr "nsMNT"
 
-#: top/top_nls.c:265
+#: top/top_nls.c:274
 msgid "MNT namespace Inode"
 msgstr "I-węzeł przestrzeni nazw MNT"
 
-#. Translation Hint: maximum 'nsNET' = 7
-#: top/top_nls.c:267
+#. Translation Hint: maximum 'nsNET' = 10 +
+#: top/top_nls.c:276
 msgid "nsNET"
 msgstr "nsNET"
 
-#: top/top_nls.c:268
+#: top/top_nls.c:277
 msgid "NET namespace Inode"
 msgstr "I-węzeł przestrzeni nazw NET"
 
-#. Translation Hint: maximum 'nsPID' = 7
-#: top/top_nls.c:270
+#. Translation Hint: maximum 'nsPID' = 10 +
+#: top/top_nls.c:279
 msgid "nsPID"
 msgstr "nsPID"
 
-#: top/top_nls.c:271
+#: top/top_nls.c:280
 msgid "PID namespace Inode"
 msgstr "I-węzeł przestrzeni nazw PID"
 
-#. Translation Hint: maximum 'nsUSER' = 7
-#: top/top_nls.c:273
+#. Translation Hint: maximum 'nsUSER' = 10 +
+#: top/top_nls.c:282
 msgid "nsUSER"
 msgstr "nsUSER"
 
-#: top/top_nls.c:274
+#: top/top_nls.c:283
 msgid "USER namespace Inode"
 msgstr "I-węzeł przestrzeni nazw użytkowników (USER)"
 
-#. Translation Hint: maximum 'nsUTS' = 7
-#: top/top_nls.c:276
+#. Translation Hint: maximum 'nsUTS' = 10 +
+#: top/top_nls.c:285
 msgid "nsUTS"
 msgstr "nsUTS"
 
-#: top/top_nls.c:277
+#: top/top_nls.c:286
 msgid "UTS namespace Inode"
 msgstr "I-węzeł przestrzeni nazw UTS"
 
-#. Translation Hint: maximum 'LXC' = 7
-#: top/top_nls.c:279
-msgid "LXC"
-msgstr ""
-
-#: top/top_nls.c:280
-msgid "LXC container name"
-msgstr ""
-
-#. Translation Hint: maximum 'RSan' = 4
-#: top/top_nls.c:282
-msgid "RSan"
-msgstr ""
-
-#: top/top_nls.c:283
-msgid "RES Anonymous (KiB)"
-msgstr ""
-
-#. Translation Hint: maximum 'RSfd' = 4
-#: top/top_nls.c:285
-msgid "RSfd"
-msgstr ""
-
-#: top/top_nls.c:286
-msgid "RES File-based (KiB)"
-msgstr ""
-
-#. Translation Hint: maximum 'RSlk' = 4
+#. Translation Hint: maximum 'LXC' = 8 +
 #: top/top_nls.c:288
-msgid "RSlk"
-msgstr ""
+msgid "LXC"
+msgstr "LXC"
 
 #: top/top_nls.c:289
-msgid "RES Locked (KiB)"
-msgstr ""
+msgid "LXC container name"
+msgstr "Nazwa kontenera LXC"
 
-#. Translation Hint: maximum 'RSsh' = 4
+#. Translation Hint: maximum 'RSan' = 6
 #: top/top_nls.c:291
-msgid "RSsh"
-msgstr ""
+msgid "RSan"
+msgstr "RZan"
 
 #: top/top_nls.c:292
-#, fuzzy
-msgid "RES Shared (KiB)"
-msgstr "Pamięć współdzielona (KiB)"
+msgid "RES Anonymous (KiB)"
+msgstr "REZ anonimowe (KiB)"
 
-#. Translation Hint: maximum 'CGNAME' = 7
+#. Translation Hint: maximum 'RSfd' = 6
 #: top/top_nls.c:294
-msgid "CGNAME"
-msgstr ""
+msgid "RSfd"
+msgstr "RZpl"
 
 #: top/top_nls.c:295
-#, fuzzy
+msgid "RES File-based (KiB)"
+msgstr "REZ oparte o pliki (KiB)"
+
+#. Translation Hint: maximum 'RSlk' = 6
+#: top/top_nls.c:297
+msgid "RSlk"
+msgstr "RZbl"
+
+#: top/top_nls.c:298
+msgid "RES Locked (KiB)"
+msgstr "REZ zablokowane (KiB)"
+
+#. Translation Hint: maximum 'RSsh' = 6
+#: top/top_nls.c:300
+msgid "RSsh"
+msgstr "RZws"
+
+#: top/top_nls.c:301
+msgid "RES Shared (KiB)"
+msgstr "REZ współdzielone (KiB)"
+
+#. Translation Hint: maximum 'CGNAME' = variable
+#: top/top_nls.c:303
+msgid "CGNAME"
+msgstr "NAZWACG"
+
+#: top/top_nls.c:304
 msgid "Control Group name"
-msgstr "Grupy sterujące"
+msgstr "Nazwa grupy sterującej (CG)"
+
+#. Translation Hint: maximum 'NU' = 2
+#: top/top_nls.c:306
+msgid "NU"
+msgstr ""
+
+#: top/top_nls.c:307
+msgid "Last Used NUMA node"
+msgstr ""
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -2592,16 +2621,16 @@ msgstr "Grupy sterujące"
 #. .  and should not be translated without also making corresponding
 #. .  c-code logic changes.
 #. .
-#: top/top_nls.c:315
-#, c-format
+#: top/top_nls.c:327
+#, fuzzy, c-format
 msgid ""
 "\tsignal %d (%s) was caught by %s, please\n"
-"\tsee http://www.debian.org/Bugs/Reporting\n"
+"\tsend bug reports to <procps@freelists.org>\n"
 msgstr ""
 "\tprogram %3$s otrzymał sygnał %1$d (%2$s), proszę\n"
 "\tzobaczyć http://www.debian.org/Bugs/Reporting\n"
 
-#: top/top_nls.c:318
+#: top/top_nls.c:330
 #, c-format
 msgid ""
 "inappropriate '%s'\n"
@@ -2612,7 +2641,7 @@ msgstr ""
 "Składnia:\n"
 "  %s%s"
 
-#: top/top_nls.c:321
+#: top/top_nls.c:333
 #, c-format
 msgid ""
 "  %s\n"
@@ -2623,47 +2652,47 @@ msgstr ""
 "Składnia:\n"
 "  %s%s"
 
-#: top/top_nls.c:324
+#: top/top_nls.c:336
 #, c-format
 msgid "failed /proc/stat open: %s"
 msgstr "nie udało się otworzyć /proc/stat: %s"
 
-#: top/top_nls.c:325
+#: top/top_nls.c:337
 #, c-format
 msgid "failed openproc: %s"
 msgstr "nie udało się wykonać openproc: %s"
 
-#: top/top_nls.c:326
+#: top/top_nls.c:338
 #, c-format
 msgid "bad delay interval '%s'"
 msgstr "błędny okres opóźnienia '%s'"
 
-#: top/top_nls.c:327
+#: top/top_nls.c:339
 #, c-format
 msgid "bad iterations argument '%s'"
 msgstr "błędna liczba iteracji '%s'"
 
-#: top/top_nls.c:328
+#: top/top_nls.c:340
 #, c-format
 msgid "pid limit (%d) exceeded"
 msgstr "przekroczony limit pid (%d)"
 
-#: top/top_nls.c:329
+#: top/top_nls.c:341
 #, c-format
 msgid "bad pid '%s'"
 msgstr "błędny pid '%s'"
 
-#: top/top_nls.c:330
+#: top/top_nls.c:342
 #, c-format
 msgid "-%c requires argument"
 msgstr "-%c wymaga argumentu"
 
-#: top/top_nls.c:331
+#: top/top_nls.c:343
 #, c-format
 msgid "bad width arg '%s'"
 msgstr "błędna szerokość '%s'"
 
-#: top/top_nls.c:332
+#: top/top_nls.c:344
 #, c-format
 msgid ""
 "unknown option '%c'\n"
@@ -2674,326 +2703,327 @@ msgstr ""
 "Składnia:\n"
 "  %s%s"
 
-#: top/top_nls.c:335
+#: top/top_nls.c:347
 msgid "-d disallowed in \"secure\" mode"
 msgstr "-d nie jest dozwolone w trybie \"bezpiecznym\""
 
-#: top/top_nls.c:336
+#: top/top_nls.c:348
 msgid "-d requires positive argument"
 msgstr "-d wymaga argumentu będącego liczbą dodatnią"
 
-#: top/top_nls.c:337
+#: top/top_nls.c:349
 msgid "On"
 msgstr "Tak"
 
-#: top/top_nls.c:338
+#: top/top_nls.c:350
 msgid "Off"
 msgstr "Nie"
 
 #. Translation Hint: Only the following words should be translated
 #. .                 secs (seconds), max (maximum), user, field, cols (columns)
-#: top/top_nls.c:341
-msgid " -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
+#: top/top_nls.c:353
+#, fuzzy
+msgid " -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
 msgstr ""
 " -hv | -bcHiOSs -d sek -n max -u|U użytkownik -p pid(y) -o pole -w [kolumny]"
 
-#: top/top_nls.c:342
+#: top/top_nls.c:354
 msgid "failed /proc/stat read"
 msgstr "nie udało się odczytać /proc/stat"
 
-#: top/top_nls.c:343
+#: top/top_nls.c:355
 #, c-format
 msgid "Forest mode %s"
 msgstr "Tryb lasu %s"
 
-#: top/top_nls.c:344
+#: top/top_nls.c:356
 msgid "failed tty get"
 msgstr "nie udało się odczytać ustawienia terminala"
 
-#: top/top_nls.c:345
+#: top/top_nls.c:357
 #, c-format
 msgid "failed tty set: %s"
 msgstr "nie udało się ustawić terminala: %s"
 
-#: top/top_nls.c:346
+#: top/top_nls.c:358
 msgid "Choose field group (1 - 4)"
 msgstr "Wybór grupy pól (1 - 4)"
 
-#: top/top_nls.c:347
+#: top/top_nls.c:359
 msgid "Command disabled, 'A' mode required"
 msgstr "Polecenie wyłączone, wymagany tryb 'A'"
 
-#: top/top_nls.c:348
+#: top/top_nls.c:360
 #, c-format
 msgid "Command disabled, activate %s with '-' or '_'"
 msgstr "Polecenie wyłączone, można włączyć %s klawiszem '-' lub '_'"
 
-#: top/top_nls.c:349
+#: top/top_nls.c:361
 msgid "No colors to map!"
 msgstr "Brak kolorów do odwzorowania!"
 
-#: top/top_nls.c:350
+#: top/top_nls.c:362
 #, c-format
 msgid "Failed '%s' open: %s"
 msgstr "Nie udało się otworzyć '%s': %s"
 
-#: top/top_nls.c:351
+#: top/top_nls.c:363
 #, c-format
 msgid "Wrote configuration to '%s'"
 msgstr "Zapisano konfigurację do '%s'"
 
-#: top/top_nls.c:352
+#: top/top_nls.c:364
 #, c-format
 msgid "Change delay from %.1f to"
 msgstr "Zmiana opóźnienia z %.1f na"
 
-#: top/top_nls.c:353
+#: top/top_nls.c:365
 #, c-format
 msgid "Show threads %s"
 msgstr "Wyświetlanie wątków %s"
 
-#: top/top_nls.c:354
+#: top/top_nls.c:366
 #, c-format
 msgid "Irix mode %s"
 msgstr "Tryb Irix %s"
 
-#: top/top_nls.c:355
+#: top/top_nls.c:367
 #, c-format
 msgid "PID to signal/kill [default pid = %d]"
 msgstr "PID do zabicia/wysłania sygnału [domyślny pid = %d]"
 
-#: top/top_nls.c:356
+#: top/top_nls.c:368
 #, c-format
 msgid "Send pid %d signal [%d/sigterm]"
 msgstr "Wysłanie do pidu %d sygnału [%d/sigterm]"
 
-#: top/top_nls.c:357
+#: top/top_nls.c:369
 #, c-format
 msgid "Failed signal pid '%d' with '%d': %s"
 msgstr "Nie udało się wysłać do pidu '%d' sygnału '%d': %s"
 
-#: top/top_nls.c:358
+#: top/top_nls.c:370
 msgid "Invalid signal"
 msgstr "Błędny sygnał"
 
-#: top/top_nls.c:359
+#: top/top_nls.c:371
 #, c-format
 msgid "PID to renice [default pid = %d]"
 msgstr "PID do zmiany nice [domyślny pid = %d]"
 
-#: top/top_nls.c:360
+#: top/top_nls.c:372
 #, c-format
 msgid "Renice PID %d to value"
 msgstr "Zmiana nice PID-u %d na wartość"
 
-#: top/top_nls.c:361
+#: top/top_nls.c:373
 #, c-format
 msgid "Failed renice of PID %d to %d: %s"
 msgstr "Nie udało się zmienić nice PID-u %d na %d: %s"
 
-#: top/top_nls.c:362
+#: top/top_nls.c:374
 #, c-format
 msgid "Rename window '%s' to (1-3 chars)"
 msgstr "Zmiana nazwy okna '%s' na (1-3 znaki)"
 
-#: top/top_nls.c:363
+#: top/top_nls.c:375
 #, c-format
 msgid "Cumulative time %s"
 msgstr "Czas przyrostowy %s"
 
-#: top/top_nls.c:364
+#: top/top_nls.c:376
 #, c-format
 msgid "Maximum tasks = %d, change to (0 is unlimited)"
 msgstr "Maksymalna liczba zadań = %d, zmienić na (0=bez ograniczeń)"
 
-#: top/top_nls.c:365
+#: top/top_nls.c:377
 msgid "Invalid maximum"
 msgstr "Błędne maksimum"
 
-#: top/top_nls.c:366
+#: top/top_nls.c:378
 msgid "Which user (blank for all)"
 msgstr "Jaki użytkownik (puste - wszyscy)"
 
-#: top/top_nls.c:367
+#: top/top_nls.c:379
 msgid "Unknown command - try 'h' for help"
 msgstr "Nieznane polecenie - 'h' wyświetli pomoc"
 
-#: top/top_nls.c:368
+#: top/top_nls.c:380
 #, c-format
 msgid "scroll coordinates: y = %d/%%d (tasks), x = %d/%d (fields)"
 msgstr "współrzędne przewinięcia: y = %d/%%d (zadania), x = %d/%d (pola)"
 
-#: top/top_nls.c:369
+#: top/top_nls.c:381
 msgid "failed memory allocate"
 msgstr "nie udało się przydzielić pamięci"
 
-#: top/top_nls.c:370
+#: top/top_nls.c:382
 msgid "failed memory re-allocate"
 msgstr "nie udało się zmienić przydziału pamięci"
 
-#: top/top_nls.c:371
+#: top/top_nls.c:383
 msgid "Unacceptable floating point"
 msgstr "Niedozwolona liczba zmiennoprzecinkowa"
 
-#: top/top_nls.c:372
+#: top/top_nls.c:384
 msgid "Invalid user"
 msgstr "Błędny użytkownik"
 
-#: top/top_nls.c:373
+#: top/top_nls.c:385
 msgid "forest view"
 msgstr "widok lasu"
 
-#: top/top_nls.c:374
+#: top/top_nls.c:386
 msgid "failed pid maximum size test"
 msgstr "nie udało się sprawdzić maksymalnego rozmiaru PID-a"
 
-#: top/top_nls.c:375
+#: top/top_nls.c:387
 msgid "failed number of cpus test"
 msgstr "nie udało się sprawdzić liczby procesorów"
 
-#: top/top_nls.c:376
+#: top/top_nls.c:388
 #, c-format
 msgid "incompatible rcfile, you should delete '%s'"
 msgstr "niezgodny plik rc, należy usunąć '%s'"
 
-#: top/top_nls.c:377
+#: top/top_nls.c:389
 #, c-format
 msgid "window entry #%d corrupt, please delete '%s'"
 msgstr "wpis okna #%d uszkodzony, proszę usunąć '%s'"
 
-#: top/top_nls.c:378
+#: top/top_nls.c:390
 msgid "Unavailable in secure mode"
 msgstr "Niedostępne w trybie bezpiecznym"
 
-#: top/top_nls.c:379
+#: top/top_nls.c:391
 msgid "Only 1 cpu detected"
 msgstr "Wykryto tylko 1 procesor"
 
-#: top/top_nls.c:380
+#: top/top_nls.c:392
 msgid "Unacceptable integer"
 msgstr "Niedozwolona liczba całkowita"
 
-#: top/top_nls.c:381
+#: top/top_nls.c:393
 msgid "conflicting process selections (U/p/u)"
 msgstr "konflikt wyboru procesów (U/p/u)"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 kibibytes (1024 bytes)
-#: top/top_nls.c:384
+#: top/top_nls.c:396
 msgid "KiB"
 msgstr "KiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 mebibytes (1,048,576 bytes)
-#: top/top_nls.c:387
+#: top/top_nls.c:399
 msgid "MiB"
 msgstr "MiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 gibibytes (1,073,741,824 bytes)
-#: top/top_nls.c:390
+#: top/top_nls.c:402
 msgid "GiB"
 msgstr "GiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 tebibytes (1,099,511,627,776 bytes)
-#: top/top_nls.c:393
+#: top/top_nls.c:405
 msgid "TiB"
 msgstr "TiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 pebibytes (1,024 tebibytes)
-#: top/top_nls.c:396
+#: top/top_nls.c:408
 msgid "PiB"
 msgstr "PiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 exbibytes (1,024 pebibytes)
-#: top/top_nls.c:399
+#: top/top_nls.c:411
 msgid "EiB"
 msgstr "EiB"
 
-#: top/top_nls.c:400
+#: top/top_nls.c:412
 msgid "Threads"
 msgstr "Wątki"
 
-#: top/top_nls.c:401
+#: top/top_nls.c:413
 msgid "Tasks"
 msgstr "Zadania"
 
 #. Translation Hint: The following "word" is meant to represent either a single
 #. .                 cpu or all of the processors in a multi-processor computer
 #. .                 (should be exactly 6 characters, not counting the colon)
-#: top/top_nls.c:405
+#: top/top_nls.c:417
 msgid "Cpu(s):"
 msgstr "CPU:   "
 
 #. Translation Hint: The following "word" is meant to represent a single processor
 #. .                 (should be exactly 3 characters)
-#: top/top_nls.c:408
+#: top/top_nls.c:420
 #, c-format
 msgid "Cpu%-3d:"
 msgstr "CPU%-3d:"
 
 #. Translation Hint: The following word "another" must have 1 trailing space
-#: top/top_nls.c:410
+#: top/top_nls.c:422
 msgid "another "
 msgstr "kolejnego "
 
-#: top/top_nls.c:411
+#: top/top_nls.c:423
 msgid "Locate next inactive, use \"L\""
 msgstr "Odnalezienie następnego nieaktywnego, klawisz \"L\""
 
-#: top/top_nls.c:412
+#: top/top_nls.c:424
 msgid "Locate string"
 msgstr "Odnalezienie łańcucha"
 
-#: top/top_nls.c:413
+#: top/top_nls.c:425
 #, c-format
 msgid "%s\"%s\" not found"
 msgstr "nie znaleziono %s\"%s\""
 
-#: top/top_nls.c:414
+#: top/top_nls.c:426
 #, c-format
 msgid "width incr is %d, change to (0 default, -1 auto)"
 msgstr "zw. szerokości %d, zmiana na (0=domyślne, -1=auto)"
 
-#: top/top_nls.c:415
-msgid "Overwrite existing obsolete/corrupted rcfile?"
-msgstr "Nadpisać istniejący przestarzały/uszkodzony plik rc?"
+#: top/top_nls.c:427
+msgid "rcfile has 'inspect' entry error(s), write anyway?"
+msgstr ""
 
-#: top/top_nls.c:416
+#: top/top_nls.c:428
 #, c-format
 msgid "unrecognized field name '%s'"
 msgstr "nierozpoznana nazwa pola '%s'"
 
-#: top/top_nls.c:417
+#: top/top_nls.c:429
 msgid "even using field names only, window is now too small"
 msgstr "nawet przy użyciu tylko nazw pól, okno jest teraz za małe"
 
-#: top/top_nls.c:419
+#: top/top_nls.c:431
 msgid "Open Files"
 msgstr "Otwarte pliki"
 
-#: top/top_nls.c:420
+#: top/top_nls.c:432
 msgid "NUMA Info"
 msgstr "Informacje NUMA"
 
-#: top/top_nls.c:421
+#: top/top_nls.c:433
 msgid "Log"
 msgstr "Log"
 
-#: top/top_nls.c:422
+#: top/top_nls.c:434
 msgid ""
 "the '=' key will eventually show the actual file read or command(s) "
 "executed ..."
 msgstr "klawisz '=' może pokazać czytany plik lub wykonywane polecenia..."
 
-#: top/top_nls.c:423
+#: top/top_nls.c:435
 msgid "demo"
 msgstr "demo"
 
-#: top/top_nls.c:424
+#: top/top_nls.c:436
 #, c-format
 msgid ""
 "This is simulated output representing the contents of some file or the "
@@ -3080,103 +3110,103 @@ msgstr ""
 "\n"
 "Miłej zabawy!\n"
 
-#: top/top_nls.c:456
+#: top/top_nls.c:468
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
 msgstr ""
 "aby włączyć 'Y', należy wcisnąć <Enter>, następnie 'W' i zrestartować topa"
 
-#: top/top_nls.c:458
+#: top/top_nls.c:470
 msgid "to enable 'Y' please consult the top man page (press Enter)"
 msgstr ""
 "aby włączyć 'Y', należy przeczytać stronę man programu top (teraz wcisnąć "
 "Enter)"
 
-#: top/top_nls.c:460
+#: top/top_nls.c:472
 #, c-format
 msgid "Selection failed with: %s\n"
 msgstr "Wybór nie powiódł się, błąd: %s\n"
 
-#: top/top_nls.c:461
+#: top/top_nls.c:473
 #, c-format
 msgid "unable to inspect, pid %d not found"
 msgstr "nie można zbadać, nie znaleziono pidu %d"
 
-#: top/top_nls.c:462
+#: top/top_nls.c:474
 #, c-format
 msgid "inspect at PID [default pid = %d]"
 msgstr "podgląd PID-u [domyślny = %d]"
 
-#: top/top_nls.c:463
+#: top/top_nls.c:475
 #, c-format
 msgid "%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read"
 msgstr "%s: odczytano linie: %*d-%-*d, kolumny %*d-%*d, bajtów: %lu"
 
-#: top/top_nls.c:464
+#: top/top_nls.c:476
 msgid "patience please, working..."
 msgstr "proszę czekać, przetwarzanie..."
 
 #. Translation Hint: Below are 2 abbreviations which can be as long as needed:
 #. .                 FLD = FIELD, VAL = VALUE
-#: top/top_nls.c:467
+#: top/top_nls.c:479
 #, c-format
 msgid "add filter #%d (%s) as: [!]FLD?VAL"
 msgstr "dodanie filtra #%d (%s) jako: [!]POLE?WARTOŚĆ"
 
-#: top/top_nls.c:468
+#: top/top_nls.c:480
 msgid "ignoring case"
 msgstr "ignorowanie wielkości liter"
 
-#: top/top_nls.c:469
+#: top/top_nls.c:481
 msgid "case sensitive"
 msgstr "rozróżnianie wielkości liter"
 
-#: top/top_nls.c:470
+#: top/top_nls.c:482
 msgid "duplicate filter was ignored"
 msgstr "zignorowano powtórzony filtr"
 
-#: top/top_nls.c:471
+#: top/top_nls.c:483
 #, c-format
 msgid "'%s' filter delimiter is missing"
 msgstr "brak ogranicznika filtra '%s'"
 
-#: top/top_nls.c:472
+#: top/top_nls.c:484
 #, c-format
 msgid "'%s' filter value is missing"
 msgstr "brak wartości filtra '%s'"
 
-#: top/top_nls.c:473
+#: top/top_nls.c:485
 msgid "include"
 msgstr "dodanie"
 
-#: top/top_nls.c:474
+#: top/top_nls.c:486
 msgid "exclude"
 msgstr "wykluczenie"
 
-#: top/top_nls.c:475
+#: top/top_nls.c:487
 #, c-format
 msgid "<Enter> to resume, filters: %s"
 msgstr "<Enter> wznawia, filtry: %s"
 
-#: top/top_nls.c:476
+#: top/top_nls.c:488
 msgid "none"
 msgstr "brak"
 
 #. Translation Hint: The following word 'Node' should be exactly 4 characters
-#: top/top_nls.c:478
+#: top/top_nls.c:490
 #, c-format
 msgid "Node%-2d:"
 msgstr "Węzeł%-2d:"
 
-#: top/top_nls.c:479
+#: top/top_nls.c:491
 #, c-format
 msgid "expand which node (0-%d)"
 msgstr "który węzeł rozwinąć (0-%d)"
 
-#: top/top_nls.c:480
+#: top/top_nls.c:492
 msgid "invalid node"
 msgstr "błędny węzeł"
 
-#: top/top_nls.c:481
+#: top/top_nls.c:493
 msgid "sorry, NUMA extensions unavailable"
 msgstr "niestety rozszerzenia NUMA nie są dostępne"
 
@@ -3184,13 +3214,18 @@ msgstr "niestety rozszerzenia NUMA nie są dostępne"
 #. .                 'Swap' represents the linux swap file --
 #. .                 please make both translations exactly 4 characters,
 #. .                 padding with extra spaces as necessary
-#: top/top_nls.c:486
+#: top/top_nls.c:498
 msgid "Mem "
 msgstr "RAM "
 
-#: top/top_nls.c:487
+#: top/top_nls.c:499
 msgid "Swap"
 msgstr "Swap"
+
+#: top/top_nls.c:500
+#, fuzzy, c-format
+msgid "bad memory scaling arg '%c'"
+msgstr "błędna liczba iteracji '%s'"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3216,7 +3251,18 @@ msgstr "Swap"
 #. .  please see the prologue to the show_special function in the top.c
 #. .  source file.
 #. .
-#: top/top_nls.c:521
+#. .  Caution:
+#. .    The next three items represent pages for interacting with a user.
+#. .    In all cases, the last lines of text must be treated with care.
+#. .
+#. .    They must not end with a newline character so that at runtime the
+#. .    cursor will remain on that final text line.
+#. .
+#. .    Also, the special sequences (tilde+number) must not appear on the
+#. .    last line (the one without the newline). So please avoid any line
+#. .    wraps that could place them there.
+#. .
+#: top/top_nls.c:545
 #, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
@@ -3298,7 +3344,7 @@ msgstr ""
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
 #. .                 also imbedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
-#: top/top_nls.c:549
+#: top/top_nls.c:573
 msgid ""
 "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
 "  d or s    Set update interval\n"
@@ -3306,7 +3352,7 @@ msgstr ""
 "  k,r       Operowanie zadaniami: '~1k~2' zabicie; '~1r~2' zmiana nice\n"
 "  d lub s   Ustawienie częstotliwości uaktualnień\n"
 
-#: top/top_nls.c:553
+#: top/top_nls.c:577
 #, c-format
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
@@ -3408,17 +3454,26 @@ msgstr ""
 #. .     --> "   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~
 #. .     --> "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5
 #. .
+#. .  Other translatable text
 #. .     --> "   available toggles: ~1B~2 =disable bold globa
 #. .     --> "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks
 #. .
-#. .     --> "Select ~1target~2 as upper case letter:\n"
+#. .     --> "1) Select ~1target~2 as upper case letter:\n"
 #. .     --> "   S~2 = Summary Data,~1  M~2 = Messages/Prompt
 #. .     --> "   H~2 = Column Heads,~1  T~2 = Task Informatio
-#. .     --> "Select ~1color~2 as number:\n"
+#. .     --> "2) Select ~1color~2 as number:\n"
 #. .     --> "   0~2 = black,~1  1~2 = red,    ~1  2~2 = gree
 #. .     --> "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan
+#. . *   --> "\n"
+#. .     --> "3) Then use these keys when finished:\n"
+#. .     --> "   'q' to abort changes to window '~1%s~2'\n"
+#. . **  --> "   'a' or 'w' to commit & change another, <Ente
 #. .
-#: top/top_nls.c:603
+#. .     Note:
+#. . *      maybe sacrifice the entire line (with the "\n") ...
+#. . **     ... so <Enter> text potion could be on its own line
+#. .
+#: top/top_nls.c:636
 #, c-format
 msgid ""
 "Help for color mapping~2 - %s\n"
@@ -3477,7 +3532,12 @@ msgstr ""
 "   'q' porzuca zmiany w oknie '~1%s~2'\n"
 "   'a' lub 'w' zapisuje i zmienia inne, <Enter> zapisuje i kończy "
 
-#: top/top_nls.c:629
+#. Translation Hint:
+#. .  This Fields Management header should be 3 lines long so as
+#. .  to allow 1 blank line before the fields & descriptions.
+#. .  If absoultely necessary, 4 lines could be used (but never more).
+#. .
+#: top/top_nls.c:667
 #, c-format
 msgid ""
 "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
@@ -3492,7 +3552,10 @@ msgstr ""
 "ustawia\n"
 "   sortowanie. Klawisz 'q' lub <Esc> kończy.\n"
 
-#: top/top_nls.c:634
+#. Translation Hint:
+#. .  The next 5 items must each be translated as a single line.
+#. .
+#: top/top_nls.c:675
 #, c-format
 msgid ""
 "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
@@ -3501,7 +3564,7 @@ msgstr ""
 "%s:~2razem:~3 %3u~2, działających:~3 %3u~2, śpiących:~3 %3u~2, zatrzymanych:"
 "~3 %3u~2, zombie:~3 %3u\n"
 
-#: top/top_nls.c:637
+#: top/top_nls.c:678
 #, c-format
 msgid ""
 "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
@@ -3510,7 +3573,7 @@ msgstr ""
 "%%%s~3 %#5.1f ~2użytk.,~3 %#5.1f ~2system,~3 %#5.1f ~2nice,~3 %#5.1f ~2bezcz."
 "~3\n"
 
-#: top/top_nls.c:640
+#: top/top_nls.c:681
 #, c-format
 msgid ""
 "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
@@ -3522,7 +3585,7 @@ msgstr ""
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt
-#: top/top_nls.c:646
+#: top/top_nls.c:687
 #, c-format
 msgid ""
 "%%%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f "
@@ -3534,7 +3597,7 @@ msgstr ""
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt, st = steal time
-#: top/top_nls.c:652
+#: top/top_nls.c:693
 #, c-format
 msgid ""
 "%%%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
@@ -3543,7 +3606,8 @@ msgstr ""
 "%%%s~3%#5.1f ~2uż,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2be,~3%#5.1f ~2io,"
 "~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2sk~3\n"
 
-#: top/top_nls.c:655
+#. Translation Hint: this must be translated as 2 lines with words above & below aligned
+#: top/top_nls.c:697
 #, c-format
 msgid ""
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3\n"
@@ -3552,28 +3616,31 @@ msgstr ""
 "%s %s:~3 %9.9s~2razem,~3 %9.9s~2wolne,~3 %9.9s~2użyte,~3 %9.9s~2buf/cache~3\n"
 "%s %s:~3 %9.9s~2razem,~3 %9.9s~2wolne,~3 %9.9s~2użyte.~3 %9.9s~2dost. %s~3\n"
 
-#: top/top_nls.c:659
-#, fuzzy, c-format
+#. Translation Hint:
+#. .  The next 2 headers for 'Inspection' must each be 3 lines or less
+#. .
+#: top/top_nls.c:704
+#, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
 "Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to "
 "~1end~5 !\n"
 "Options~2: ~1%s\n"
 msgstr ""
-"Podgląd~2 Pauza: pid ~1%d~6 działający ~1%s~6 jako użytkownik ~1%s~6\n"
+"Podgląd~2 Pauza: pid ~1%d~6 działający ~1%s~6\n"
 "Obsługa~2: lewo/prawo, potem <Enter> aby ~1wybrać~5 opcję; 'q' lub <Esc> aby "
 "~1zakończyć~5.\n"
 "Opcje~2: ~1%s\n"
 
-#: top/top_nls.c:664
-#, fuzzy, c-format
+#: top/top_nls.c:709
+#, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
 "Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to "
 "~1locate~5/~1next~5.\n"
 "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n"
 msgstr ""
-"Podgląd~2 Widok: ~1%s~3, ~1%s~3, ~1%s~3.  Szukanie: ~1%s~6\n"
+"Podgląd~2 Widok: pid ~1%s~3, działający ~1%s~3. Szukanie: ~1%s~6\n"
 "Obsługa~2: lewo/prawo/góra/dół/itp. ~1nawigacja~5; 'L'/'&' ~1szukanie~5/"
 "~1następny~5.\n"
 "Lub~2:     <Enter> aby ~1wybrać inny~5; 'q' lub <Esc> aby ~1zakończyć~5.\n"
@@ -3652,7 +3719,7 @@ msgstr ""
 "proc. -----------------------pamięć---------------------- ---swap-- ---we/"
 "wy--- -system-- --------cpu-------"
 
-#: vmstat.c:198 vmstat.c:523
+#: vmstat.c:198 vmstat.c:519
 msgid " -----timestamp-----"
 msgstr "--------czas--------"
 
@@ -3754,35 +3821,33 @@ msgstr "sk"
 #. Translation Hint: Translating folloging disk partition
 #. * header fields that follow (marked with max x chars) might
 #. * not work, unless manual page is translated as well.
-#. Translation Hint: max 10 chars. The word is
-#. * expected to be centralized, use spaces at the end
-#. * to do that.
-#: vmstat.c:436
-msgid "reads  "
-msgstr "odczyty  "
+#. Translation Hint: max 10 chars.
+#: vmstat.c:434
+#, fuzzy
+msgid "reads"
+msgstr "wątki"
 
-#. Translation Hint: max 10 chars
-#: vmstat.c:438
+#. Translation Hint: max 16 chars.
+#: vmstat.c:436
 msgid "read sectors"
 msgstr "odcz.sekt."
 
-#. Translation Hint: max 10 chars. The word is
-#. * expected to be centralized, use spaces at the end
-#. * to do that.
-#: vmstat.c:442
-msgid "writes   "
+#. Translation Hint: max 10 chars.
+#: vmstat.c:438
+#, fuzzy
+msgid "writes"
 msgstr "zapisy  "
 
-#. Translation Hint: max 10 chars
-#: vmstat.c:444
+#. Translation Hint: max 16 chars
+#: vmstat.c:440
 msgid "requested writes"
 msgstr "żąd.zapisy"
 
-#: vmstat.c:458
+#: vmstat.c:454
 msgid "your kernel does not support diskstat. (2.5.70 or above required)"
 msgstr "to jądro nie obsługuje statystyk diskstat (wymagane 2.5.70 lub nowsze)"
 
-#: vmstat.c:520
+#: vmstat.c:516
 msgid ""
 "disk- ------------reads------------ ------------writes----------- -----"
 "IO------"
@@ -3790,7 +3855,7 @@ msgstr ""
 "dysk- ----------odczyty------------ ------------zapisy----------- ----we/"
 "wy----"
 
-#: vmstat.c:522
+#: vmstat.c:518
 msgid ""
 "disk- -------------------reads------------------- -------------------"
 "writes------------------ ------IO-------"
@@ -3799,36 +3864,36 @@ msgstr ""
 "zapisy------------------ -----we/wy-----"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:541 vmstat.c:549
+#: vmstat.c:537 vmstat.c:545
 msgid "total"
 msgstr "razem"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:543 vmstat.c:551
+#: vmstat.c:539 vmstat.c:547
 msgid "merged"
 msgstr "zgrup."
 
 #. Translation Hint: max 7 chars
-#: vmstat.c:545 vmstat.c:553
+#: vmstat.c:541 vmstat.c:549
 msgid "sectors"
 msgstr "sekt."
 
 #. Translation Hint: max 7 chars
-#: vmstat.c:547 vmstat.c:555
+#: vmstat.c:543 vmstat.c:551
 msgid "ms"
 msgstr "ms"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:557
+#: vmstat.c:553
 msgid "cur"
 msgstr "bież."
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:559
+#: vmstat.c:555
 msgid "sec"
 msgstr "sek"
 
-#: vmstat.c:669
+#: vmstat.c:665
 msgid "your kernel does not support diskstat (2.5.70 or above required)"
 msgstr "to jądro nie obsługuje statystyk diskstat (wymagane 2.5.70 lub nowsze)"
 
@@ -3836,250 +3901,250 @@ msgstr "to jądro nie obsługuje statystyk diskstat (wymagane 2.5.70 lub nowsze)
 #. * follow (marked with max x chars) might not work, unless
 #. * manual page is translated as well.
 #. Translation Hint: max 24 chars
-#: vmstat.c:679
+#: vmstat.c:675
 msgid "Cache"
 msgstr "Cache"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:681
+#: vmstat.c:677
 msgid "Num"
 msgstr "Ile"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:683
+#: vmstat.c:679
 msgid "Total"
 msgstr "Razem"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:685
+#: vmstat.c:681
 msgid "Size"
 msgstr "Rozm."
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:687
+#: vmstat.c:683
 msgid "Pages"
 msgstr "Stron"
 
-#: vmstat.c:699
+#: vmstat.c:695
 msgid ""
 "your kernel does not support slabinfo or your permissions are insufficient"
 msgstr "to jądro nie obsługuje slabinfo albo niewystarczające uprawnienia"
 
-#: vmstat.c:751
+#: vmstat.c:747
 #, c-format
 msgid "%13d disks \n"
 msgstr "Dysków:                %d\n"
 
-#: vmstat.c:752
+#: vmstat.c:748
 #, c-format
 msgid "%13d partitions \n"
 msgstr "Partycji:              %d\n"
 
-#: vmstat.c:768
+#: vmstat.c:764
 #, c-format
 msgid "%13lu total reads\n"
 msgstr "Odczytów razem:        %lu\n"
 
-#: vmstat.c:769
+#: vmstat.c:765
 #, c-format
 msgid "%13lu merged reads\n"
 msgstr "Odczytów zgrupowanych: %lu\n"
 
-#: vmstat.c:770
+#: vmstat.c:766
 #, c-format
 msgid "%13lu read sectors\n"
 msgstr "Odczytanych sektorów:  %lu\n"
 
-#: vmstat.c:771
+#: vmstat.c:767
 #, c-format
 msgid "%13lu milli reading\n"
 msgstr "Odczyty w ms:          %lu\n"
 
-#: vmstat.c:772
+#: vmstat.c:768
 #, c-format
 msgid "%13lu writes\n"
 msgstr "Zapisów:               %lu\n"
 
-#: vmstat.c:773
+#: vmstat.c:769
 #, c-format
 msgid "%13lu merged writes\n"
 msgstr "Zapisów zgrupowanych:  %lu\n"
 
-#: vmstat.c:774
+#: vmstat.c:770
 #, c-format
 msgid "%13lu written sectors\n"
 msgstr "Zapisanych sektorów:   %lu\n"
 
-#: vmstat.c:775
+#: vmstat.c:771
 #, c-format
 msgid "%13lu milli writing\n"
 msgstr "Zapisy w ms:           %lu\n"
 
-#: vmstat.c:776
+#: vmstat.c:772
 #, c-format
 msgid "%13lu inprogress IO\n"
 msgstr "Trwających op. we/wy:  %lu\n"
 
-#: vmstat.c:777
+#: vmstat.c:773
 #, c-format
 msgid "%13lu milli spent IO\n"
 msgstr "We/wy w ms:            %lu\n"
 
-#: vmstat.c:798
+#: vmstat.c:794
 #, c-format
 msgid "%13lu %s total memory\n"
 msgstr "Pamięć razem:              %13lu %s\n"
 
-#: vmstat.c:799
+#: vmstat.c:795
 #, c-format
 msgid "%13lu %s used memory\n"
 msgstr "Pamięć użyta:              %13lu %s\n"
 
-#: vmstat.c:800
+#: vmstat.c:796
 #, c-format
 msgid "%13lu %s active memory\n"
 msgstr "Pamięć aktywna:            %13lu %s\n"
 
-#: vmstat.c:801
+#: vmstat.c:797
 #, c-format
 msgid "%13lu %s inactive memory\n"
 msgstr "Pamięć nieaktywna:         %13lu %s\n"
 
-#: vmstat.c:802
+#: vmstat.c:798
 #, c-format
 msgid "%13lu %s free memory\n"
 msgstr "Pamięć wolna:              %13lu %s\n"
 
-#: vmstat.c:803
+#: vmstat.c:799
 #, c-format
 msgid "%13lu %s buffer memory\n"
 msgstr "Pamięć buforów:            %13lu %s\n"
 
-#: vmstat.c:804
+#: vmstat.c:800
 #, c-format
 msgid "%13lu %s swap cache\n"
 msgstr "Pam. podr. obsz. wymiany:  %13lu %s\n"
 
-#: vmstat.c:805
+#: vmstat.c:801
 #, c-format
 msgid "%13lu %s total swap\n"
 msgstr "Obszar wymiany razem:      %13lu %s\n"
 
-#: vmstat.c:806
+#: vmstat.c:802
 #, c-format
 msgid "%13lu %s used swap\n"
 msgstr "Obszar wymiany użyty:      %13lu %s\n"
 
-#: vmstat.c:807
+#: vmstat.c:803
 #, c-format
 msgid "%13lu %s free swap\n"
 msgstr "Obszar wymiany wolny:      %13lu %s\n"
 
-#: vmstat.c:808
+#: vmstat.c:804
 #, c-format
 msgid "%13lld non-nice user cpu ticks\n"
 msgstr "Cykli CPU użytk. zwykłych: %13lld\n"
 
-#: vmstat.c:809
+#: vmstat.c:805
 #, c-format
 msgid "%13lld nice user cpu ticks\n"
 msgstr "Cykli CPU użytk. z nice:   %13lld\n"
 
-#: vmstat.c:810
+#: vmstat.c:806
 #, c-format
 msgid "%13lld system cpu ticks\n"
 msgstr "Cykli CPU systemowych:     %13lld\n"
 
-#: vmstat.c:811
+#: vmstat.c:807
 #, c-format
 msgid "%13lld idle cpu ticks\n"
 msgstr "Cykli CPU bezczynności:    %13lld\n"
 
-#: vmstat.c:812
+#: vmstat.c:808
 #, c-format
 msgid "%13lld IO-wait cpu ticks\n"
 msgstr "Cykli CPU oczek. na we/wy: %13lld\n"
 
-#: vmstat.c:813
+#: vmstat.c:809
 #, c-format
 msgid "%13lld IRQ cpu ticks\n"
 msgstr "Cykli CPU w IRQ:           %13lld\n"
 
-#: vmstat.c:814
+#: vmstat.c:810
 #, c-format
 msgid "%13lld softirq cpu ticks\n"
 msgstr "Cykli CPU w softirq:       %13lld\n"
 
-#: vmstat.c:815
+#: vmstat.c:811
 #, c-format
 msgid "%13lld stolen cpu ticks\n"
 msgstr "Cykli CPU skradzionych:    %13lld\n"
 
-#: vmstat.c:816
+#: vmstat.c:812
 #, c-format
 msgid "%13lu pages paged in\n"
 msgstr "Stron wczytanych z dysku:  %13lu\n"
 
-#: vmstat.c:817
+#: vmstat.c:813
 #, c-format
 msgid "%13lu pages paged out\n"
 msgstr "Stron usuniętych z pam.:   %13lu\n"
 
-#: vmstat.c:818
+#: vmstat.c:814
 #, c-format
 msgid "%13lu pages swapped in\n"
 msgstr "Stron z pamięci wymiany:   %13lu\n"
 
-#: vmstat.c:819
+#: vmstat.c:815
 #, c-format
 msgid "%13lu pages swapped out\n"
 msgstr "Stron do pamięci wymiany:  %13lu\n"
 
-#: vmstat.c:820
+#: vmstat.c:816
 #, c-format
 msgid "%13u interrupts\n"
 msgstr "Przerwań:                  %13u\n"
 
-#: vmstat.c:821
+#: vmstat.c:817
 #, c-format
 msgid "%13u CPU context switches\n"
 msgstr "Przełączeń kontekstu CPU:  %13u\n"
 
-#: vmstat.c:822
+#: vmstat.c:818
 #, c-format
 msgid "%13u boot time\n"
 msgstr "Czas rozruchu:             %13u\n"
 
-#: vmstat.c:823 vmstat.c:838
+#: vmstat.c:819 vmstat.c:834
 #, c-format
 msgid "%13u forks\n"
 msgstr "Odgałęzień procesów:       %13u\n"
 
 #. Translation Hint: do not change argument characters
-#: vmstat.c:940
+#: vmstat.c:936
 msgid "-S requires k, K, m or M (default is KiB)"
 msgstr "-S wymaga k, K, m lub M (domyślnie KiB)"
 
-#: vmstat.c:991
+#: vmstat.c:987
 #, c-format
 msgid "partition was not found\n"
 msgstr "nie znaleziono partycji\n"
 
-#: watch.c:90
+#: watch.c:89
 #, c-format
 msgid " %s [options] command\n"
 msgstr " %s [opcje] polecenie\n"
 
-#: watch.c:92
+#: watch.c:91
 msgid "  -b, --beep             beep if command has a non-zero exit\n"
 msgstr "  -b, --beep             piknięcie, jeśli polecenie zwróci błąd\n"
 
-#: watch.c:93
+#: watch.c:92
 msgid "  -c, --color            interpret ANSI color and style sequences\n"
 msgstr ""
 "  -c, --color            interpretowanie sekwencji kolorów i styli ANSI\n"
 
-#: watch.c:94
+#: watch.c:93
 msgid ""
 "  -d, --differences[=<permanent>]\n"
 "                         highlight changes between updates\n"
@@ -4087,87 +4152,87 @@ msgstr ""
 "  -d, --differences[=<trwałe>]\n"
 "                         podświetlanie zmian między uaktualnieniami\n"
 
-#: watch.c:96
+#: watch.c:95
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
 msgstr "  -e, --errexit          zakończenie, jeśli polecenie zwróci błąd\n"
 
-#: watch.c:97
+#: watch.c:96
 msgid "  -g, --chgexit          exit when output from command changes\n"
 msgstr ""
 "  -g, --chgexit          zakończenie, jeśli wyjście polecenia się zmieni\n"
 
-#: watch.c:98
+#: watch.c:97
 msgid "  -n, --interval <secs>  seconds to wait between updates\n"
 msgstr ""
 "  -n, --interval <sek>   liczba sekund do odczekania między uaktualnieniami\n"
 
-#: watch.c:99
+#: watch.c:98
 msgid "  -p, --precise          attempt run command in precise intervals\n"
 msgstr ""
 "  -p, --precise          próba uruchamiania polecenia w dokładnych "
 "odstępach\n"
 
-#: watch.c:100
+#: watch.c:99
 msgid "  -t, --no-title         turn off header\n"
 msgstr "  -t, --no-title         wyłączenie nagłówka\n"
 
-#: watch.c:101
+#: watch.c:100
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
 msgstr ""
 "  -x, --exec             przekazanie polecenia do uruchomienia zamiast \"sh -"
 "c\"\n"
 
-#: watch.c:104
+#: watch.c:103
 msgid " -v, --version  output version information and exit\n"
 msgstr " -v, --version  wypisanie informacji o wejściu i zakończenie\n"
 
-#: watch.c:384
+#: watch.c:390
 #, c-format
 msgid "Every %.1fs: "
 msgstr "Co %.1fs: "
 
-#: watch.c:385
+#: watch.c:391
 #, c-format
 msgid "%s: %s"
-msgstr ""
+msgstr "%s: %s"
 
-#: watch.c:456
+#: watch.c:462
 msgid "unable to create IPC pipes"
 msgstr "nie można utworzyć potoków IPC"
 
-#: watch.c:466
+#: watch.c:472
 msgid "unable to fork process"
 msgstr "nie można rozgałęzić procesu"
 
-#: watch.c:471
+#: watch.c:477
 msgid "dup2 failed"
 msgstr "dup2 nie powiodło się"
 
-#: watch.c:478
+#: watch.c:484
 #, c-format
 msgid "unable to execute '%s'"
 msgstr "nie można uruchomić '%s'"
 
-#: watch.c:495
+#: watch.c:501
 msgid "fdopen"
 msgstr "fdopen"
 
-#: watch.c:641
+#: watch.c:647
 msgid "waitpid"
 msgstr "waitpid"
 
-#: watch.c:649
+#: watch.c:655
 msgid "command exit with a non-zero status, press a key to exit"
 msgstr ""
 "polecenie zakończyło się kodem błędnym; proszę nacisnąć klawisz, aby "
 "zakończyć"
 
-#: watch.c:773
+#: watch.c:779
 #, c-format
 msgid "unicode handling error\n"
 msgstr "błąd obsługi unikodu\n"
 
-#: watch.c:779
+#: watch.c:785
 #, c-format
 msgid "unicode handling error (malloc)\n"
 msgstr "błąd obsługi unikodu (malloc)\n"
@@ -4296,33 +4361,8 @@ msgstr ""
 msgid "%s from %s\n"
 msgstr "%s z pakietu %s\n"
 
-#~ msgid "seconds argument `%s' failed"
-#~ msgstr "niezrozumiały argument liczby sekund `%s'"
+#~ msgid "Overwrite existing obsolete/corrupted rcfile?"
+#~ msgstr "Nadpisać istniejący przestarzały/uszkodzony plik rc?"
 
-#~ msgid "alternate System.map file must follow -n"
-#~ msgstr "po -n musi wystąpić alternatywny plik System.map"
-
-#~ msgid "alternate System.map file must follow N"
-#~ msgstr "po N musi wystąpić alternatywny plik System.map"
-
-#~ msgid "Adj"
-#~ msgstr "Adj"
-
-#~ msgid "oom_adjustment (2^X)"
-#~ msgstr "poprawka OOM (2^X)"
-
-#~ msgid "Badness"
-#~ msgstr "Badness"
-
-#~ msgid "oom_score (badness)"
-#~ msgstr "Punktacja OOM (badness)"
-
-#~ msgid "%d column window is too narrow"
-#~ msgstr "Okno o szerokości %d jest za wąskie"
-
-#~ msgid "%d column width exceeds command buffer size, truncating to %d"
-#~ msgstr ""
-#~ "Szerokość okna %d przekracza rozmiar bufora polecenia, ograniczenie do %d"
-
-#~ msgid "warning: screen width %d suboptimal"
-#~ msgstr "uwaga: szerokość ekranu %d nie jest optymalna"
+#~ msgid "reads  "
+#~ msgstr "odczyty  "

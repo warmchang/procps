@@ -1,24 +1,26 @@
 # procps-ng in zh_CN
 # Copyright (C) 2015 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
+# Boyuan Yang <073plan@gmail.com>, 2017.
 # Mingye Wang <arthur200126@gmail.com>, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 3.3.10-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2016-07-10 08:19+1000\n"
-"PO-Revision-Date: 2015-10-30 09:39-0400\n"
-"Last-Translator: Mingye Wang (Arthur2e5) <arthur200126@gmail.com>\n"
+"POT-Creation-Date: 2018-03-12 13:02+1100\n"
+"PO-Revision-Date: 2017-11-15 18:55+0800\n"
+"Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.4\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Bugs: Report translation errors to the Language-Team address.\n"
+"X-Generator: Poedit 2.0.4\n"
 
-#: free.c:74 slabtop.c:189 uptime.c:59 w.c:453
+#: free.c:74 slabtop.c:193 uptime.c:59 w.c:453
 #, c-format
 msgid " %s [options]\n"
 msgstr " %s [选项]\n"
@@ -44,12 +46,12 @@ msgstr " -g, --giga          以吉字节显示输出\n"
 
 #: free.c:80
 msgid "     --tera          show output in terabytes\n"
-msgstr ""
+msgstr "     --tera          以太字节显示输出\n"
 
 #: free.c:81
 #, fuzzy
 msgid "     --peta          show output in petabytes\n"
-msgstr " -m, --mega          以兆字节显示输出\n"
+msgstr "     --tera          以太字节显示输出\n"
 
 #: free.c:82
 #, fuzzy
@@ -69,12 +71,12 @@ msgstr " -g, --giga          以吉字节显示输出\n"
 #: free.c:85
 #, fuzzy
 msgid "     --tebi          show output in tebibytes\n"
-msgstr " -b, --bytes         以字节显示输出\n"
+msgstr "     --tera          以太字节显示输出\n"
 
 #: free.c:86
 #, fuzzy
 msgid "     --pebi          show output in pebibytes\n"
-msgstr " -k, --kilo          以千字节显示输出\n"
+msgstr "     --tera          以太字节显示输出\n"
 
 #: free.c:87
 msgid " -h, --human         show human-readable output\n"
@@ -105,30 +107,29 @@ msgid " -w, --wide          wide output\n"
 msgstr " -w, --wide          宽版输出\n"
 
 #: free.c:95 w.c:462
-#, fuzzy
 msgid "     --help     display this help and exit\n"
-msgstr "      --help\t\t显示此帮助信息并退出\n"
+msgstr "     --help     显示此帮助信息并退出\n"
 
-#: free.c:198
+#: free.c:191
 msgid "Multiple unit options doesn't make sense."
 msgstr ""
 
-#: free.c:330
+#: free.c:322
 #, fuzzy, c-format
 msgid "seconds argument `%s' is not positive number"
 msgstr "无效的秒数：%s"
 
-#: free.c:336
+#: free.c:328
 #, fuzzy
 msgid "failed to parse count argument"
 msgstr "模板实参表语法错误"
 
-#: free.c:339
+#: free.c:331
 #, fuzzy, c-format
 msgid "failed to parse count argument: '%s'"
 msgstr "查询 spec 文件 %s 失败，无法解析\n"
 
-#: free.c:360
+#: free.c:352
 #, c-format
 msgid ""
 "              total        used        free      shared     buffers       "
@@ -137,7 +138,7 @@ msgstr ""
 "              总计         已用        空闲      共享       缓冲          缓"
 "存    可用"
 
-#: free.c:362
+#: free.c:354
 #, c-format
 msgid ""
 "              total        used        free      shared  buff/cache   "
@@ -145,23 +146,23 @@ msgid ""
 msgstr ""
 "              总计         已用        空闲      共享    缓冲/缓存    可用"
 
-#: free.c:365
+#: free.c:357
 msgid "Mem:"
 msgstr "内存："
 
-#: free.c:385
+#: free.c:377
 msgid "Low:"
 msgstr "低："
 
-#: free.c:391
+#: free.c:383
 msgid "High:"
 msgstr "高："
 
-#: free.c:398
+#: free.c:390
 msgid "Swap:"
 msgstr "交换："
 
-#: free.c:405
+#: free.c:397
 msgid "Total:"
 msgstr "总量："
 
@@ -268,7 +269,7 @@ msgstr ""
 #: pgrep.c:131
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
-"                           namespace as <pid>\n"
+"                           namespace as <pid> or 0 for all namespaces\n"
 msgstr ""
 
 #: pgrep.c:133
@@ -308,45 +309,53 @@ msgstr "%s：错误的编号：%s"
 msgid "Error reading reference namespace information\n"
 msgstr ""
 
-#: pgrep.c:610 pidof.c:230 pidof.c:271 sysctl.c:643
+#: pgrep.c:610 pidof.c:231 pidof.c:272 sysctl.c:672
 #, fuzzy
 msgid "internal error"
 msgstr "内部错误"
 
-#: pgrep.c:876
+#: pgrep.c:656
+#, c-format
+msgid ""
+"pattern that searches for process name longer than 15 characters will result "
+"in zero matches\n"
+"Try `%s -f' option to match against the complete command line."
+msgstr ""
+
+#: pgrep.c:879
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: pgrep.c:883
+#: pgrep.c:886
 #, fuzzy, c-format
 msgid ""
 "pidfile not valid\n"
 "Try `%s --help' for more information."
 msgstr "尝试“%s --help”以获得更多信息。\n"
 
-#: pgrep.c:891
+#: pgrep.c:894
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: pgrep.c:895
+#: pgrep.c:898
 #, c-format
 msgid ""
 "no matching criteria specified\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: pgrep.c:922
+#: pgrep.c:927
 #, fuzzy, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "%s：第%lu 次，共%lu 次 (%s)..."
 
-#: pgrep.c:928
+#: pgrep.c:934
 #, c-format
 msgid "killing pid %ld failed"
 msgstr ""
@@ -372,7 +381,11 @@ msgstr ""
 msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
 msgstr ""
 
-#: pidof.c:274
+#: pidof.c:67
+msgid " -S, --separator SEP       use SEP as separator put between PIDs"
+msgstr ""
+
+#: pidof.c:275
 #, c-format
 msgid "illegal omit pid value (%s)!\n"
 msgstr ""
@@ -516,112 +529,112 @@ msgstr "未知的格式类型“%s”"
 msgid "inconsistent detail field in smaps file, line:\n"
 msgstr ""
 
-#: pmap.c:714
+#: pmap.c:712
 #, fuzzy
 msgid "total kB"
 msgstr "总用量"
 
-#: pmap.c:725
+#: pmap.c:723
 #, c-format
 msgid "mapped: %ldK    writeable/private: %ldK    shared: %ldK\n"
 msgstr ""
 
 #. Translation Hint: keep total string length
 #. * as 24 characters. Adjust %16 if needed
-#: pmap.c:734
+#: pmap.c:732
 #, fuzzy, c-format
 msgid " total %16ldK\n"
 msgstr "总用量"
 
 #. Translation Hint: keep total string length
 #. * as 16 characters. Adjust %8 if needed
-#: pmap.c:740
+#: pmap.c:738
 #, fuzzy, c-format
 msgid " total %8ldK\n"
 msgstr "总用量"
 
-#: pmap.c:767 skill.c:500 skill.c:534 skill.c:621 tload.c:128 tload.c:133
-#: vmstat.c:959 vmstat.c:968 watch.c:726
+#: pmap.c:765 skill.c:507 skill.c:541 skill.c:628 tload.c:130 tload.c:135
+#: vmstat.c:955 vmstat.c:964 watch.c:732
 #, fuzzy
 msgid "failed to parse argument"
 msgstr "模板实参表语法错误"
 
-#: pmap.c:811
+#: pmap.c:809
 #, fuzzy, c-format
 msgid "config line too long - line %d"
 msgstr "输入行太长"
 
-#: pmap.c:836
+#: pmap.c:834
 #, c-format
 msgid "unsupported section found in the config - line %d"
 msgstr ""
 
-#: pmap.c:839 pmap.c:850 pmap.c:861 pmap.c:880 pmap.c:892
+#: pmap.c:837 pmap.c:848 pmap.c:859 pmap.c:878 pmap.c:890
 #, fuzzy, c-format
 msgid "syntax error found in the config - line %d"
 msgstr "脚本“%s”: 语法错误发生于第 %d 列 %s%s\n"
 
-#: pmap.c:911
+#: pmap.c:909
 msgid "the file already exists - delete or rename it first"
 msgstr ""
 
-#: pmap.c:974
+#: pmap.c:972
 #, fuzzy
 msgid "HOME variable undefined"
 msgstr "TY 中未定义的变量"
 
-#: pmap.c:982
+#: pmap.c:980
 #, fuzzy
 msgid "memory allocation failed"
 msgstr "内存分配失败"
 
-#: pmap.c:1034
+#: pmap.c:1032
 #, fuzzy
 msgid "option -r is ignored as SunOS compatibility"
 msgstr "为 GCC 链接器选项兼容性忽略"
 
-#: pmap.c:1081
+#: pmap.c:1079
 msgid "options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"
 msgstr ""
 
-#: pmap.c:1084
+#: pmap.c:1082
 msgid "options -p, -q are mutually exclusive with -n, -N"
 msgstr ""
 
-#: pmap.c:1087
+#: pmap.c:1085
 msgid "too many arguments"
 msgstr "实参太多"
 
-#: pmap.c:1091
+#: pmap.c:1089
 msgid "rc file successfully created, feel free to edit the content"
 msgstr ""
 
-#: pmap.c:1094
+#: pmap.c:1092
 #, fuzzy
 msgid "couldn't create the rc file"
 msgstr "无法创建临时文件"
 
-#: pmap.c:1106
+#: pmap.c:1104
 #, c-format
 msgid "~/.%src file successfully created, feel free to edit the content"
 msgstr ""
 
-#: pmap.c:1109
+#: pmap.c:1107
 #, fuzzy, c-format
 msgid "couldn't create ~/.%src"
 msgstr "无法为 %s建立管道： %m\n"
 
-#: pmap.c:1114
+#: pmap.c:1112
 #, fuzzy
 msgid "argument missing"
 msgstr "%2$q+#D的第 %1$P 个形参缺少默认实参"
 
-#: pmap.c:1128
+#: pmap.c:1126
 #, fuzzy
 msgid "couldn't read the rc file"
 msgstr "%s：无法读取区块 %llu\n"
 
-#: pmap.c:1130
+#: pmap.c:1128
 #, fuzzy, c-format
 msgid "couldn't read ~/.%src"
 msgstr "%s：无法读取区块 %llu\n"
@@ -1104,17 +1117,17 @@ msgid ""
 "For more details see ps(1).\n"
 msgstr ""
 
-#: ps/output.c:1969
+#: ps/output.c:2019
 #, fuzzy, c-format
 msgid "fix bigness error\n"
 msgstr "修正"
 
-#: ps/output.c:2044
+#: ps/output.c:2094
 #, fuzzy, c-format
 msgid "bad alignment code\n"
 msgstr "错误的条件码"
 
-#: ps/output.c:2106
+#: ps/output.c:2156
 #, c-format
 msgid "unknown page size (assume 4096)\n"
 msgstr ""
@@ -1239,9 +1252,8 @@ msgid "embedded '-' among SysV options makes no sense"
 msgstr ""
 
 #: ps/parser.c:498
-#, fuzzy
 msgid "unsupported SysV option"
-msgstr "=选项"
+msgstr "不支持的 SysV 选项"
 
 #: ps/parser.c:511
 msgid "cannot happen - problem #1"
@@ -1717,374 +1729,379 @@ msgid ""
 "Negative priority numbers are restricted to administrative users.\n"
 msgstr ""
 
-#: skill.c:457
+#: skill.c:464
 #, fuzzy, c-format
 msgid "unknown signal name %s"
 msgstr "未知的寄存器名：%s"
 
-#: skill.c:477
+#: skill.c:484
 #, fuzzy, c-format
 msgid "invalid argument %c"
 msgstr "(无效的参数)"
 
-#: skill.c:514
+#: skill.c:521
 #, fuzzy, c-format
 msgid "something at line %d\n"
 msgstr "行 %d：第二个 %%prep\n"
 
-#: skill.c:537
+#: skill.c:544
 #, fuzzy, c-format
 msgid "priority %lu out of range"
 msgstr "请求的 init_priority 越界"
 
-#: skill.c:650
+#: skill.c:657
 #, fuzzy, c-format
 msgid "invalid pid number %s"
 msgstr "无效的区块编号%s"
 
-#: skill.c:654
+#: skill.c:661
 msgid "error reading reference namespace information"
 msgstr ""
 
-#: skill.c:662
+#: skill.c:669
 #, fuzzy
 msgid "invalid namespace list"
 msgstr "无效的命名空间名"
 
-#: skill.c:700
+#: skill.c:707
 #, fuzzy
 msgid "no process selection criteria"
 msgstr "需要选择语句"
 
-#: skill.c:703
+#: skill.c:710
 msgid "general flags may not be repeated"
 msgstr ""
 
-#: skill.c:706
+#: skill.c:713
 msgid "-i makes no sense with -v, -f, and -n"
 msgstr ""
 
-#: skill.c:708
+#: skill.c:715
 msgid "-v makes no sense with -i and -f"
 msgstr ""
 
-#: skill.c:753
+#: skill.c:765
 #, fuzzy, c-format
 msgid "skill: \"%s\" is not supported\n"
 msgstr "%s：不支持"
 
-#: slabtop.c:191
+#: slabtop.c:195
 #, fuzzy
 msgid " -d, --delay <secs>  delay updates\n"
 msgstr " D - 换行 tx 延迟 (ms)\t:"
 
-#: slabtop.c:192
+#: slabtop.c:196
 msgid " -o, --once          only display once, then exit\n"
 msgstr ""
 
-#: slabtop.c:193
+#: slabtop.c:197
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
 msgstr ""
 
-#: slabtop.c:198
+#: slabtop.c:202
 msgid ""
 "\n"
 "The following are valid sort criteria:\n"
 msgstr ""
 
-#: slabtop.c:199
+#: slabtop.c:203
 msgid " a: sort by number of active objects\n"
 msgstr ""
 
-#: slabtop.c:200
+#: slabtop.c:204
 msgid " b: sort by objects per slab\n"
 msgstr ""
 
-#: slabtop.c:201
+#: slabtop.c:205
 #, fuzzy
 msgid " c: sort by cache size\n"
 msgstr "一级缓存列长度"
 
-#: slabtop.c:202
+#: slabtop.c:206
 #, fuzzy
 msgid " l: sort by number of slabs\n"
 msgstr "在%L处把一个无穷大或非数转换为 INTEGER"
 
-#: slabtop.c:203
+#: slabtop.c:207
 msgid " v: sort by number of active slabs\n"
 msgstr ""
 
-#: slabtop.c:204
+#: slabtop.c:208
 #, fuzzy
 msgid " n: sort by name\n"
 msgstr "  [N]          - 使用名称的实例 [数量]\n"
 
-#: slabtop.c:205
+#: slabtop.c:209
 msgid " o: sort by number of objects (the default)\n"
 msgstr ""
 
-#: slabtop.c:206
+#: slabtop.c:210
 msgid " p: sort by pages per slab\n"
 msgstr ""
 
-#: slabtop.c:207
+#: slabtop.c:211
 msgid " s: sort by object size\n"
 msgstr ""
 
-#: slabtop.c:208
+#: slabtop.c:212
 msgid " u: sort by cache utilization\n"
 msgstr ""
 
-#: slabtop.c:317
+#: slabtop.c:321
 #, fuzzy
 msgid "illegal delay"
 msgstr "<非法的精度>"
 
-#: slabtop.c:320 tload.c:135 vmstat.c:961
+#: slabtop.c:324 tload.c:137 vmstat.c:957
 #, fuzzy
 msgid "delay must be positive integer"
 msgstr "“N”的值必须是正数。"
 
-#: slabtop.c:342
+#: slabtop.c:346
 #, fuzzy
 msgid "terminal setting retrieval"
 msgstr "设置检索配额为 NUMBER。"
 
 #. Translation Hint: Next five strings must not
 #. * exceed 35 length in characters.
-#: slabtop.c:381
+#: slabtop.c:385
 #, fuzzy, no-c-format
 msgid "Active / Total Objects (% used)"
 msgstr "局部对象的总大小太大"
 
-#: slabtop.c:385
+#: slabtop.c:389
 #, no-c-format
 msgid "Active / Total Slabs (% used)"
 msgstr ""
 
-#: slabtop.c:389
+#: slabtop.c:393
 #, no-c-format
 msgid "Active / Total Caches (% used)"
 msgstr ""
 
-#: slabtop.c:393
+#: slabtop.c:397
 #, fuzzy, no-c-format
 msgid "Active / Total Size (% used)"
 msgstr "局部对象的总大小太大"
 
-#: slabtop.c:396
+#: slabtop.c:400
 #, fuzzy
 msgid "Minimum / Average / Maximum Object"
 msgstr "默认 %d 最小 %d 最大 %d"
 
 #. Translation Hint: Please keep alignment of the
 #. * following intact.
-#: slabtop.c:405
+#: slabtop.c:409
 msgid "  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"
 msgstr ""
 
-#: sysctl.c:86
+#: sysctl.c:92
 #, fuzzy, c-format
 msgid "separators should not be repeated: %s"
 msgstr "格式字符串中有重复的 %s"
 
-#: sysctl.c:105
+#: sysctl.c:111
 #, fuzzy, c-format
 msgid " %s [options] [variable[=value] ...]\n"
 msgstr "  %s 的选项：\n"
 
-#: sysctl.c:108
+#: sysctl.c:114
 #, fuzzy
 msgid "  -a, --all            display all variables\n"
 msgstr "所有变量默认位于 near 节中"
 
-#: sysctl.c:109
+#: sysctl.c:115
 #, fuzzy
 msgid "  -A                   alias of -a\n"
 msgstr "-fmit-class-file 的别名"
 
-#: sysctl.c:110
+#: sysctl.c:116
 #, fuzzy
 msgid "  -X                   alias of -a\n"
 msgstr "-fmit-class-file 的别名"
 
-#: sysctl.c:111
+#: sysctl.c:117
 msgid "      --deprecated     include deprecated parameters to listing\n"
 msgstr ""
 
-#: sysctl.c:112
+#: sysctl.c:118
 msgid "  -b, --binary         print value without new line\n"
 msgstr ""
 
-#: sysctl.c:113
+#: sysctl.c:119
 msgid "  -e, --ignore         ignore unknown variables errors\n"
 msgstr ""
 
-#: sysctl.c:114
+#: sysctl.c:120
 msgid "  -N, --names          print variable names without values\n"
 msgstr ""
 
-#: sysctl.c:115
-msgid "  -n, --values         print only values of a variables\n"
-msgstr ""
+#: sysctl.c:121
+#, fuzzy
+msgid "  -n, --values         print only values of the given variable(s)\n"
+msgstr "所有变量默认位于 near 节中"
 
-#: sysctl.c:116
+#: sysctl.c:122
 msgid "  -p, --load[=<file>]  read values from file\n"
 msgstr ""
 
-#: sysctl.c:117
+#: sysctl.c:123
 #, fuzzy
 msgid "  -f                   alias of -p\n"
 msgstr "(p)"
 
-#: sysctl.c:118
+#: sysctl.c:124
 msgid "      --system         read values from all system directories\n"
 msgstr ""
 
-#: sysctl.c:119
+#: sysctl.c:125
 msgid ""
 "  -r, --pattern <expression>\n"
 "                       select setting that match expression\n"
 msgstr ""
 
-#: sysctl.c:121
+#: sysctl.c:127
 msgid "  -q, --quiet          do not echo variable set\n"
 msgstr ""
 
-#: sysctl.c:122
+#: sysctl.c:128
 msgid "  -w, --write          enable writing a value to variable\n"
 msgstr ""
 
-#: sysctl.c:123
+#: sysctl.c:129
 #, fuzzy
 msgid "  -o                   does nothing\n"
 msgstr "不起作用。为向前兼容保留的选项。"
 
-#: sysctl.c:124
+#: sysctl.c:130
 #, fuzzy
 msgid "  -x                   does nothing\n"
 msgstr "不起作用。为向前兼容保留的选项。"
 
-#: sysctl.c:125
+#: sysctl.c:131
 #, fuzzy
 msgid "  -d                   alias of -h\n"
 msgstr "栏位别名"
 
-#: sysctl.c:171 sysctl.c:222 sysctl.c:431
+#: sysctl.c:177 sysctl.c:233 sysctl.c:449
 #, fuzzy, c-format
 msgid "\"%s\" is an unknown key"
 msgstr "%s: 不是带装甲的(armored)公钥。\n"
 
-#: sysctl.c:194 sysctl.c:333 sysctl.c:409
+#: sysctl.c:200 sysctl.c:351 sysctl.c:427
 #, c-format
 msgid "cannot stat %s"
 msgstr "无法获取%s 的文件状态(stat)"
 
-#: sysctl.c:227 sysctl.c:265 sysctl.c:436
+#: sysctl.c:238 sysctl.c:280 sysctl.c:454
 #, fuzzy, c-format
 msgid "permission denied on key '%s'"
 msgstr "无法格式化设备 %s，权限被拒绝。\n"
 
-#: sysctl.c:231 sysctl.c:279
+#: sysctl.c:245 sysctl.c:297
 #, fuzzy, c-format
 msgid "reading key \"%s\""
 msgstr "读取%s 时出错"
 
-#: sysctl.c:317
+#: sysctl.c:335
 #, fuzzy, c-format
 msgid "unable to open directory \"%s\""
 msgstr "无法打开 %s。"
 
-#: sysctl.c:374
+#: sysctl.c:392
 #, fuzzy, c-format
 msgid "\"%s\" must be of the form name=value"
 msgstr "%s：--param 实参的形式应该为“名字=值”"
 
-#: sysctl.c:383
+#: sysctl.c:401
 #, fuzzy, c-format
 msgid "malformed setting \"%s\""
 msgstr "设置%s 的权限"
 
-#: sysctl.c:403
+#: sysctl.c:421
 #, fuzzy, c-format
 msgid "%s is deprecated, value not set"
 msgstr "必须为 %s 设置一个值\n"
 
-#: sysctl.c:416 sysctl.c:421 sysctl.c:440 sysctl.c:449
+#: sysctl.c:434 sysctl.c:439 sysctl.c:458 sysctl.c:467
 #, fuzzy, c-format
 msgid "setting key \"%s\""
 msgstr "设置%s 的权限"
 
-#: sysctl.c:514
+#: sysctl.c:529
 #, c-format
 msgid ""
 "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
 "expanded."
 msgstr ""
 
-#: sysctl.c:520
+#: sysctl.c:535
 #, fuzzy
 msgid "glob failed"
 msgstr "不使用 glob 参数"
 
-#: sysctl.c:526
+#: sysctl.c:541
 #, fuzzy, c-format
 msgid "cannot open \"%s\""
 msgstr "无法打开 %s！"
 
-#: sysctl.c:542 sysctl.c:554
+#: sysctl.c:563 sysctl.c:579
 #, fuzzy, c-format
 msgid "%s(%d): invalid syntax, continuing..."
 msgstr "定位“%s”时语法无效。"
 
-#: sysctl.c:653 sysctl.c:660
+#: sysctl.c:682 sysctl.c:689
 #, c-format
 msgid "* Applying %s ...\n"
 msgstr ""
 
-#: sysctl.c:810
+#: sysctl.c:841
 #, fuzzy, c-format
 msgid ""
 "no variables specified\n"
 "Try `%s --help' for more information."
 msgstr "尝试“%s --help”以获得更多信息。\n"
 
-#: sysctl.c:814
+#: sysctl.c:845
 #, c-format
 msgid ""
 "options -N and -q cannot coexist\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: tload.c:89
+#: tload.c:75
+msgid "screen too small"
+msgstr ""
+
+#: tload.c:91
 #, fuzzy, c-format
 msgid " %s [options] [tty]\n"
 msgstr "不是一个 tty"
 
-#: tload.c:91
+#: tload.c:93
 msgid " -d, --delay <secs>  update delay in seconds\n"
 msgstr ""
 
-#: tload.c:92
+#: tload.c:94
 msgid " -s, --scale <num>   vertical scale\n"
 msgstr ""
 
-#: tload.c:130
+#: tload.c:132
 #, fuzzy
 msgid "scale cannot be negative"
 msgstr "淡青色密度比例"
 
-#: tload.c:137 vmstat.c:963
+#: tload.c:139 vmstat.c:959
 #, fuzzy
 msgid "too large delay value"
 msgstr "制表符限长过大"
 
-#: tload.c:152
+#: tload.c:154
 #, fuzzy
 msgid "can not open tty"
 msgstr "不是一个 tty"
 
-#: tload.c:211 tload.c:213
+#: tload.c:213 tload.c:215
 #, fuzzy
 msgid "writing to tty failed"
 msgstr " TTY"
@@ -2097,38 +2114,49 @@ msgstr " TTY"
 #. .     1) a field name/column header - mostly upper case
 #. .     2) the related description    - both upper and lower case
 #. .
-#. .  To avoid truncation at runtime, each column header is noted with
-#. .  its maximum size and the following description must not exceed
-#. .  20 characters.  Fewer characters are ok.
+#. .  To avoid truncation on the main top display, each column header
+#. .  is noted with its maximum size, while a few are 'variable' width.
+#. .  Names for the latter should probably be 10 or fewer characters.
 #. .
+#. .  Those fields shown with a '+' are also eligible for user resizing
+#. .  using the 'X' command. That means the default width might produce
+#. .  truncation but need not if widened (see the man page 'X' command).
+#. .
+#. .  All headers are subject to a maximum of 7 on the Fields Management
+#. .  screen where truncation is entirely acceptable.
+#. .
+#. .  The associated descriptions are always limited to 20 characters,
+#. .  and are used only on the Fields Management screen.
+#. .
+#. .  In all cases, fewer characters are just fine.
 #. .
 #. Translation Hint: maximum 'PID' = 5
-#: top/top_nls.c:124
+#: top/top_nls.c:133
 msgid "PID"
 msgstr "进程号"
 
-#: top/top_nls.c:125
+#: top/top_nls.c:134
 #, fuzzy
 msgid "Process Id"
 msgstr "%s：无效的进程号"
 
 #. Translation Hint: maximum 'PPID' = 5
-#: top/top_nls.c:127
+#: top/top_nls.c:136
 msgid "PPID"
 msgstr ""
 
-#: top/top_nls.c:128
+#: top/top_nls.c:137
 #, fuzzy
 msgid "Parent Process pid"
 msgstr "具有 pid %d 的进程不存在。\n"
 
-#. Translation Hint: maximum 'UID' = 5
-#: top/top_nls.c:130
+#. Translation Hint: maximum 'UID' = 5 +
+#: top/top_nls.c:139
 #, fuzzy
 msgid "UID"
 msgstr "getUname：过多的 uid\n"
 
-#: top/top_nls.c:131
+#: top/top_nls.c:140
 #, fuzzy
 msgid "Effective User Id"
 msgstr ""
@@ -2136,112 +2164,112 @@ msgstr ""
 "与id -un 相同。\n"
 "\n"
 
-#. Translation Hint: maximum 'USER' = 7
-#: top/top_nls.c:133 w.c:591
+#. Translation Hint: maximum 'USER' = 8 +
+#: top/top_nls.c:142 w.c:591
 msgid "USER"
 msgstr "USER"
 
-#: top/top_nls.c:134
+#: top/top_nls.c:143
 msgid "Effective User Name"
 msgstr ""
 
-#. Translation Hint: maximum 'RUID' = 5
-#: top/top_nls.c:136
-msgid "RUID"
-msgstr ""
-
-#: top/top_nls.c:137
-#, fuzzy
-msgid "Real User Id"
-msgstr "设置用户ID 失败"
-
-#. Translation Hint: maximum 'RUSER' = 7
-#: top/top_nls.c:139
-msgid "RUSER"
-msgstr ""
-
-#: top/top_nls.c:140
-#, fuzzy
-msgid "Real User Name"
-msgstr "无用户名: %s\n"
-
-#. Translation Hint: maximum 'SUID' = 5
-#: top/top_nls.c:142
-msgid "SUID"
-msgstr ""
-
-#: top/top_nls.c:143
-#, fuzzy
-msgid "Saved User Id"
-msgstr "设置用户ID 失败"
-
-#. Translation Hint: maximum 'SUSER' = 7
+#. Translation Hint: maximum 'RUID' = 5 +
 #: top/top_nls.c:145
-msgid "SUSER"
+msgid "RUID"
 msgstr ""
 
 #: top/top_nls.c:146
 #, fuzzy
+msgid "Real User Id"
+msgstr "设置用户ID 失败"
+
+#. Translation Hint: maximum 'RUSER' = 8 +
+#: top/top_nls.c:148
+msgid "RUSER"
+msgstr ""
+
+#: top/top_nls.c:149
+#, fuzzy
+msgid "Real User Name"
+msgstr "无用户名: %s\n"
+
+#. Translation Hint: maximum 'SUID' = 5 +
+#: top/top_nls.c:151
+msgid "SUID"
+msgstr ""
+
+#: top/top_nls.c:152
+#, fuzzy
+msgid "Saved User Id"
+msgstr "设置用户ID 失败"
+
+#. Translation Hint: maximum 'SUSER' = 8 +
+#: top/top_nls.c:154
+msgid "SUSER"
+msgstr ""
+
+#: top/top_nls.c:155
+#, fuzzy
 msgid "Saved User Name"
 msgstr "无用户名: %s\n"
 
-#. Translation Hint: maximum 'GID' = 5
-#: top/top_nls.c:148
+#. Translation Hint: maximum 'GID' = 5 +
+#: top/top_nls.c:157
 #, fuzzy
 msgid "GID"
 msgstr "getGname：过多的 gid\n"
 
-#: top/top_nls.c:149
+#: top/top_nls.c:158
 #, fuzzy
 msgid "Group Id"
 msgstr "无法找到ID 为%lu 的用户的属组"
 
-#. Translation Hint: maximum 'GROUP' = 7
-#: top/top_nls.c:151
+#. Translation Hint: maximum 'GROUP' = 8 +
+#: top/top_nls.c:160
 msgid "GROUP"
 msgstr "GROUP"
 
-#: top/top_nls.c:152
+#: top/top_nls.c:161
 #, fuzzy
 msgid "Group Name"
 msgstr "为了使用dns，群组名称不能包含底线"
 
 #. Translation Hint: maximum 'PGRP' = 5
-#: top/top_nls.c:154
+#: top/top_nls.c:163
 msgid "PGRP"
 msgstr ""
 
-#: top/top_nls.c:155
+#: top/top_nls.c:164
 msgid "Process Group Id"
 msgstr ""
 
-#. Translation Hint: maximum 'TTY' = 7
-#: top/top_nls.c:157
+#. Translation Hint: maximum 'TTY' = 8 +
+#: top/top_nls.c:166
 #, fuzzy
 msgid "TTY"
 msgstr " TTY"
 
-#: top/top_nls.c:158
+#: top/top_nls.c:167
 #, fuzzy
 msgid "Controlling Tty"
 msgstr "不是一个 tty"
 
 #. Translation Hint: maximum 'TPGID' = 5
-#: top/top_nls.c:160
+#: top/top_nls.c:169
 msgid "TPGID"
 msgstr ""
 
-#: top/top_nls.c:161
+#: top/top_nls.c:170
 #, fuzzy
 msgid "Tty Process Grp Id"
 msgstr "%s：无效的进程号"
 
 #. Translation Hint: maximum 'SID' = 5
-#: top/top_nls.c:163
+#: top/top_nls.c:172
 msgid "SID"
 msgstr ""
 
-#: top/top_nls.c:164
+#: top/top_nls.c:173
 #, fuzzy
 msgid "Session Id"
 msgstr ""
@@ -2252,114 +2280,114 @@ msgstr ""
 "\n"
 
 #. Translation Hint: maximum 'PR' = 3
-#: top/top_nls.c:166
+#: top/top_nls.c:175
 msgid "PR"
 msgstr "PR"
 
-#: top/top_nls.c:167
+#: top/top_nls.c:176
 msgid "Priority"
 msgstr "优先级"
 
 #. Translation Hint: maximum 'NI' = 3
-#: top/top_nls.c:169
+#: top/top_nls.c:178
 msgid "NI"
 msgstr ""
 
-#: top/top_nls.c:170
+#: top/top_nls.c:179
 #, fuzzy
 msgid "Nice Value"
 msgstr "值"
 
 #. Translation Hint: maximum 'nTH' = 3
-#: top/top_nls.c:172
+#: top/top_nls.c:181
 msgid "nTH"
 msgstr ""
 
-#: top/top_nls.c:173
+#: top/top_nls.c:182
 #, fuzzy
 msgid "Number of Threads"
 msgstr "编号"
 
 #. Translation Hint: maximum 'P' = 1
-#: top/top_nls.c:175
+#: top/top_nls.c:184
 #, fuzzy
 msgid "P"
 msgstr "(p)"
 
-#: top/top_nls.c:176
+#: top/top_nls.c:185
 #, fuzzy
 msgid "Last Used Cpu (SMP)"
 msgstr "%<%%%>约束用于最后一个操作数"
 
 #. Translation Hint: maximum '%CPU' = 4
-#: top/top_nls.c:178
+#: top/top_nls.c:187
 #, fuzzy, c-format
 msgid "%CPU"
 msgstr "CPU              "
 
-#: top/top_nls.c:179
+#: top/top_nls.c:188
 #, fuzzy
 msgid "CPU Usage"
 msgstr "CPU              "
 
 #. Translation Hint: maximum '' = 6
-#: top/top_nls.c:181
+#: top/top_nls.c:190
 msgid "TIME"
 msgstr "时间"
 
-#: top/top_nls.c:182
+#: top/top_nls.c:191
 #, fuzzy
 msgid "CPU Time"
 msgstr "CPU 时间超时"
 
-#. Translation Hint: maximum 'TIME+' = 7
-#: top/top_nls.c:184
+#. Translation Hint: maximum 'TIME+' = 9
+#: top/top_nls.c:193
 #, fuzzy
 msgid "TIME+"
 msgstr "时间"
 
-#: top/top_nls.c:185
+#: top/top_nls.c:194
 #, fuzzy
 msgid "CPU Time, hundredths"
 msgstr "CPU 时间超时"
 
 #. Translation Hint: maximum '%MEM' = 4
-#: top/top_nls.c:187
+#: top/top_nls.c:196
 #, fuzzy
 msgid "%MEM"
 msgstr "为循环启用预取时最小的指令/内存操作比"
 
-#: top/top_nls.c:188
+#: top/top_nls.c:197
 #, fuzzy
 msgid "Memory Usage (RES)"
 msgstr "内存\n"
 
-#. Translation Hint: maximum 'VIRT' = 5
-#: top/top_nls.c:190
+#. Translation Hint: maximum 'VIRT' = 7
+#: top/top_nls.c:199
 #, fuzzy
 msgid "VIRT"
 msgstr ""
 "\n"
 "  virt            识别虚拟化 ASE 指令。\n"
 
-#: top/top_nls.c:191
+#: top/top_nls.c:200
 #, fuzzy
 msgid "Virtual Image (KiB)"
 msgstr "%s: 未提供映像名称 ('--image')"
 
-#. Translation Hint: maximum 'SWAP' = 4
-#: top/top_nls.c:193
+#. Translation Hint: maximum 'SWAP' = 6
+#: top/top_nls.c:202
 #, fuzzy
 msgid "SWAP"
 msgstr "交换"
 
-#: top/top_nls.c:194
+#: top/top_nls.c:203
 #, fuzzy
 msgid "Swapped Size (KiB)"
 msgstr "大小"
 
-#. Translation Hint: maximum 'RES' = 4
-#: top/top_nls.c:196
+#. Translation Hint: maximum 'RES' = 6
+#: top/top_nls.c:205
 #, fuzzy
 msgid "RES"
 msgstr ""
@@ -2367,324 +2395,333 @@ msgstr ""
 "单个文件名被认为是输入文件。没有输入文件时就使用标准输入，默认格式\n"
 "为 rc。没有输出文件时就使用标准输出，默认格式为 rc。\n"
 
-#: top/top_nls.c:197
+#: top/top_nls.c:206
 #, fuzzy
 msgid "Resident Size (KiB)"
 msgstr "页面尺寸"
 
 #. Translation Hint: maximum 'CODE' = 4
-#: top/top_nls.c:199
+#: top/top_nls.c:208
 #, fuzzy
 msgid "CODE"
 msgstr "编码"
 
-#: top/top_nls.c:200
+#: top/top_nls.c:209
 #, fuzzy
 msgid "Code Size (KiB)"
 msgstr "代码大小：小、中或大"
 
-#. Translation Hint: maximum 'DATA' = 4
-#: top/top_nls.c:202
+#. Translation Hint: maximum 'DATA' = 7
+#: top/top_nls.c:211
 #, fuzzy
 msgid "DATA"
 msgstr "没有资料"
 
-#: top/top_nls.c:203
+#: top/top_nls.c:212
 #, fuzzy
 msgid "Data+Stack (KiB)"
 msgstr "栈上溢出"
 
-#. Translation Hint: maximum 'SHR' = 4
-#: top/top_nls.c:205
+#. Translation Hint: maximum 'SHR' = 6
+#: top/top_nls.c:214
 msgid "SHR"
 msgstr ""
 
-#: top/top_nls.c:206
+#: top/top_nls.c:215
 #, fuzzy
 msgid "Shared Memory (KiB)"
 msgstr "共享内存对象"
 
 #. Translation Hint: maximum 'nMaj' = 4
-#: top/top_nls.c:208
+#: top/top_nls.c:217
 msgid "nMaj"
 msgstr ""
 
-#: top/top_nls.c:209
+#: top/top_nls.c:218
 msgid "Major Page Faults"
 msgstr ""
 
 #. Translation Hint: maximum 'nMin' = 4
-#: top/top_nls.c:211
+#: top/top_nls.c:220
 msgid "nMin"
 msgstr ""
 
-#: top/top_nls.c:212
+#: top/top_nls.c:221
 msgid "Minor Page Faults"
 msgstr ""
 
 #. Translation Hint: maximum 'nDRT' = 4
-#: top/top_nls.c:214
+#: top/top_nls.c:223
 msgid "nDRT"
 msgstr ""
 
-#: top/top_nls.c:215
+#: top/top_nls.c:224
 #, fuzzy
 msgid "Dirty Pages Count"
 msgstr "已本地化的手册页"
 
 #. Translation Hint: maximum 'S' = 1
-#: top/top_nls.c:217
+#: top/top_nls.c:226
 msgid "S"
 msgstr "日"
 
-#: top/top_nls.c:218
+#: top/top_nls.c:227
 #, fuzzy
 msgid "Process Status"
 msgstr "killall: 无法从进程状态获取用户ID(UID)\n"
 
-#. Translation Hint: maximum 'COMMAND' = 7
-#: top/top_nls.c:220
+#. Translation Hint: maximum 'COMMAND' = variable
+#: top/top_nls.c:229
 msgid "COMMAND"
 msgstr "COMMAND"
 
-#: top/top_nls.c:221
+#: top/top_nls.c:230
 #, fuzzy
 msgid "Command Name/Line"
 msgstr "<命令行>"
 
-#. Translation Hint: maximum 'WCHAN' = 7
-#: top/top_nls.c:223
-msgid "WCHAN"
-msgstr ""
-
-#: top/top_nls.c:224
-#, fuzzy
-msgid "Sleeping in Function"
-msgstr "暂停中"
-
-#. Translation Hint: maximum 'Flags' = 7
-#: top/top_nls.c:226
-msgid "Flags"
-msgstr "标志"
-
-#: top/top_nls.c:227
-#, fuzzy
-msgid "Task Flags <sched.h>"
-msgstr "根据任务"
-
-#. Translation Hint: maximum 'CGROUPS' = 7
-#: top/top_nls.c:229
-msgid "CGROUPS"
-msgstr ""
-
-#: top/top_nls.c:230
-#, fuzzy
-msgid "Control Groups"
-msgstr " 组="
-
-#. Translation Hint: maximum 'SUPGIDS' = 7
+#. Translation Hint: maximum 'WCHAN' = 10 +
 #: top/top_nls.c:232
-msgid "SUPGIDS"
+msgid "WCHAN"
 msgstr ""
 
 #: top/top_nls.c:233
 #, fuzzy
+msgid "Sleeping in Function"
+msgstr "暂停中"
+
+#. Translation Hint: maximum 'Flags' = 8
+#: top/top_nls.c:235
+msgid "Flags"
+msgstr "标志"
+
+#: top/top_nls.c:236
+#, fuzzy
+msgid "Task Flags <sched.h>"
+msgstr "根据任务"
+
+#. Translation Hint: maximum 'CGROUPS' = variable
+#: top/top_nls.c:238
+msgid "CGROUPS"
+msgstr ""
+
+#: top/top_nls.c:239
+#, fuzzy
+msgid "Control Groups"
+msgstr " 组="
+
+#. Translation Hint: maximum 'SUPGIDS' = variable
+#: top/top_nls.c:241
+msgid "SUPGIDS"
+msgstr ""
+
+#: top/top_nls.c:242
+#, fuzzy
 msgid "Supp Groups IDs"
 msgstr " 组="
 
-#. Translation Hint: maximum 'SUPGRPS' = 7
-#: top/top_nls.c:235
+#. Translation Hint: maximum 'SUPGRPS' = variable
+#: top/top_nls.c:244
 msgid "SUPGRPS"
 msgstr ""
 
-#: top/top_nls.c:236
+#: top/top_nls.c:245
 #, fuzzy
 msgid "Supp Groups Names"
 msgstr " 组="
 
 #. Translation Hint: maximum 'TGID' = 5
-#: top/top_nls.c:238
+#: top/top_nls.c:247
 msgid "TGID"
 msgstr ""
 
-#: top/top_nls.c:239
+#: top/top_nls.c:248
 #, fuzzy
 msgid "Thread Group Id"
 msgstr "设置组ID 失败"
 
 #. Translation Hint: maximum 'OOMa' = 5
-#: top/top_nls.c:241
+#: top/top_nls.c:250
 msgid "OOMa"
 msgstr ""
 
-#: top/top_nls.c:242
+#: top/top_nls.c:251
 msgid "OOMEM Adjustment"
 msgstr ""
 
 #. Translation Hint: maximum 'OOMs' = 4
-#: top/top_nls.c:244
+#: top/top_nls.c:253
 msgid "OOMs"
 msgstr ""
 
-#: top/top_nls.c:245
+#: top/top_nls.c:254
 msgid "OOMEM Score current"
 msgstr ""
 
-#. Translation Hint: maximum 'ENVIRON' = 7
-#: top/top_nls.c:247
+#. Translation Hint: maximum 'ENVIRON' = variable
+#: top/top_nls.c:256
 msgid "ENVIRON"
 msgstr ""
 
 #. Translation Hint: the abbreviation 'vars' below is shorthand for
 #. 'variables'
-#: top/top_nls.c:250
+#: top/top_nls.c:259
 #, fuzzy
 msgid "Environment vars"
 msgstr "__io 变量默认为 volatile"
 
 #. Translation Hint: maximum 'vMj' = 3
-#: top/top_nls.c:252
+#: top/top_nls.c:261
 msgid "vMj"
 msgstr ""
 
-#: top/top_nls.c:253
+#: top/top_nls.c:262
 msgid "Major Faults delta"
 msgstr ""
 
 #. Translation Hint: maximum 'vMn' = 3
-#: top/top_nls.c:255
+#: top/top_nls.c:264
 msgid "vMn"
 msgstr ""
 
-#: top/top_nls.c:256
+#: top/top_nls.c:265
 msgid "Minor Faults delta"
 msgstr ""
 
-#. Translation Hint: maximum 'USED' = 4
-#: top/top_nls.c:258
+#. Translation Hint: maximum 'USED' = 6
+#: top/top_nls.c:267
 #, fuzzy
 msgid "USED"
 msgstr "已用"
 
-#: top/top_nls.c:259
+#: top/top_nls.c:268
 msgid "Res+Swap Size (KiB)"
 msgstr ""
 
-#. Translation Hint: maximum 'nsIPC' = 7
-#: top/top_nls.c:261
-msgid "nsIPC"
-msgstr ""
-
-#: top/top_nls.c:262
-#, fuzzy
-msgid "IPC namespace Inode"
-msgstr "%qT不是一个命名空间"
-
-#. Translation Hint: maximum 'nsMNT' = 7
-#: top/top_nls.c:264
-msgid "nsMNT"
-msgstr ""
-
-#: top/top_nls.c:265
-#, fuzzy
-msgid "MNT namespace Inode"
-msgstr "%qT不是一个命名空间"
-
-#. Translation Hint: maximum 'nsNET' = 7
-#: top/top_nls.c:267
-msgid "nsNET"
-msgstr ""
-
-#: top/top_nls.c:268
-#, fuzzy
-msgid "NET namespace Inode"
-msgstr "网络共享"
-
-#. Translation Hint: maximum 'nsPID' = 7
+#. Translation Hint: maximum 'nsIPC' = 10 +
 #: top/top_nls.c:270
-msgid "nsPID"
+msgid "nsIPC"
 msgstr ""
 
 #: top/top_nls.c:271
 #, fuzzy
-msgid "PID namespace Inode"
-msgstr "警告：此系统不支持--pid=PID"
+msgid "IPC namespace Inode"
+msgstr "%qT不是一个命名空间"
 
-#. Translation Hint: maximum 'nsUSER' = 7
+#. Translation Hint: maximum 'nsMNT' = 10 +
 #: top/top_nls.c:273
-msgid "nsUSER"
+msgid "nsMNT"
 msgstr ""
 
 #: top/top_nls.c:274
 #, fuzzy
-msgid "USER namespace Inode"
-msgstr "USER"
+msgid "MNT namespace Inode"
+msgstr "%qT不是一个命名空间"
 
-#. Translation Hint: maximum 'nsUTS' = 7
+#. Translation Hint: maximum 'nsNET' = 10 +
 #: top/top_nls.c:276
-msgid "nsUTS"
+msgid "nsNET"
 msgstr ""
 
 #: top/top_nls.c:277
 #, fuzzy
-msgid "UTS namespace Inode"
-msgstr "%qT不是一个命名空间"
+msgid "NET namespace Inode"
+msgstr "网络共享"
 
-#. Translation Hint: maximum 'LXC' = 7
+#. Translation Hint: maximum 'nsPID' = 10 +
 #: top/top_nls.c:279
-msgid "LXC"
+msgid "nsPID"
 msgstr ""
 
 #: top/top_nls.c:280
-msgid "LXC container name"
-msgstr ""
+#, fuzzy
+msgid "PID namespace Inode"
+msgstr "警告：此系统不支持--pid=PID"
 
-#. Translation Hint: maximum 'RSan' = 4
+#. Translation Hint: maximum 'nsUSER' = 10 +
 #: top/top_nls.c:282
-msgid "RSan"
+msgid "nsUSER"
 msgstr ""
 
 #: top/top_nls.c:283
-msgid "RES Anonymous (KiB)"
-msgstr ""
+#, fuzzy
+msgid "USER namespace Inode"
+msgstr "USER"
 
-#. Translation Hint: maximum 'RSfd' = 4
+#. Translation Hint: maximum 'nsUTS' = 10 +
 #: top/top_nls.c:285
-msgid "RSfd"
+msgid "nsUTS"
 msgstr ""
 
 #: top/top_nls.c:286
-msgid "RES File-based (KiB)"
-msgstr ""
+#, fuzzy
+msgid "UTS namespace Inode"
+msgstr "%qT不是一个命名空间"
 
-#. Translation Hint: maximum 'RSlk' = 4
+#. Translation Hint: maximum 'LXC' = 8 +
 #: top/top_nls.c:288
-msgid "RSlk"
+msgid "LXC"
 msgstr ""
 
 #: top/top_nls.c:289
-msgid "RES Locked (KiB)"
+msgid "LXC container name"
 msgstr ""
 
-#. Translation Hint: maximum 'RSsh' = 4
+#. Translation Hint: maximum 'RSan' = 6
 #: top/top_nls.c:291
-msgid "RSsh"
+msgid "RSan"
 msgstr ""
 
 #: top/top_nls.c:292
+msgid "RES Anonymous (KiB)"
+msgstr ""
+
+#. Translation Hint: maximum 'RSfd' = 6
+#: top/top_nls.c:294
+msgid "RSfd"
+msgstr ""
+
+#: top/top_nls.c:295
+msgid "RES File-based (KiB)"
+msgstr ""
+
+#. Translation Hint: maximum 'RSlk' = 6
+#: top/top_nls.c:297
+msgid "RSlk"
+msgstr ""
+
+#: top/top_nls.c:298
+msgid "RES Locked (KiB)"
+msgstr ""
+
+#. Translation Hint: maximum 'RSsh' = 6
+#: top/top_nls.c:300
+msgid "RSsh"
+msgstr ""
+
+#: top/top_nls.c:301
 #, fuzzy
 msgid "RES Shared (KiB)"
 msgstr "共享内存对象"
 
-#. Translation Hint: maximum 'CGNAME' = 7
-#: top/top_nls.c:294
+#. Translation Hint: maximum 'CGNAME' = variable
+#: top/top_nls.c:303
 msgid "CGNAME"
 msgstr ""
 
-#: top/top_nls.c:295
+#: top/top_nls.c:304
 #, fuzzy
 msgid "Control Group name"
 msgstr " 组="
+
+#. Translation Hint: maximum 'NU' = 2
+#: top/top_nls.c:306
+msgid "NU"
+msgstr ""
+
+#: top/top_nls.c:307
+msgid "Last Used NUMA node"
+msgstr ""
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -2696,14 +2733,14 @@ msgstr " 组="
 #. .  and should not be translated without also making corresponding
 #. .  c-code logic changes.
 #. .
-#: top/top_nls.c:315
+#: top/top_nls.c:327
 #, c-format
 msgid ""
 "\tsignal %d (%s) was caught by %s, please\n"
-"\tsee http://www.debian.org/Bugs/Reporting\n"
+"\tsend bug reports to <procps@freelists.org>\n"
 msgstr ""
 
-#: top/top_nls.c:318
+#: top/top_nls.c:330
 #, fuzzy, c-format
 msgid ""
 "inappropriate '%s'\n"
@@ -2711,7 +2748,7 @@ msgid ""
 "  %s%s"
 msgstr "用法：%s [选项] 输入文件\n"
 
-#: top/top_nls.c:321
+#: top/top_nls.c:333
 #, fuzzy, c-format
 msgid ""
 "  %s\n"
@@ -2719,47 +2756,47 @@ msgid ""
 "  %s%s"
 msgstr "用法：%s [选项] 输入文件\n"
 
-#: top/top_nls.c:324
+#: top/top_nls.c:336
 #, fuzzy, c-format
 msgid "failed /proc/stat open: %s"
 msgstr "无法打开 /proc 目录: %s\n"
 
-#: top/top_nls.c:325
+#: top/top_nls.c:337
 #, fuzzy, c-format
 msgid "failed openproc: %s"
 msgstr "%s: 打开失败：%s\n"
 
-#: top/top_nls.c:326
+#: top/top_nls.c:338
 #, fuzzy, c-format
 msgid "bad delay interval '%s'"
 msgstr "无效的时间间隔%s"
 
-#: top/top_nls.c:327
+#: top/top_nls.c:339
 #, fuzzy, c-format
 msgid "bad iterations argument '%s'"
 msgstr "错误的正则表达式: %s\n"
 
-#: top/top_nls.c:328
+#: top/top_nls.c:340
 #, fuzzy, c-format
 msgid "pid limit (%d) exceeded"
 msgstr "CPU 时间超时"
 
-#: top/top_nls.c:329
+#: top/top_nls.c:341
 #, fuzzy, c-format
 msgid "bad pid '%s'"
 msgstr "%*s 用户     进程号 权限   命令\n"
 
-#: top/top_nls.c:330
+#: top/top_nls.c:342
 #, fuzzy, c-format
 msgid "-%c requires argument"
 msgstr "%s：选项需要一个参数 --“%c”\n"
 
-#: top/top_nls.c:331
+#: top/top_nls.c:343
 #, fuzzy, c-format
 msgid "bad width arg '%s'"
 msgstr "行 %d：%%setup 中存在坏的参数：%s\n"
 
-#: top/top_nls.c:332
+#: top/top_nls.c:344
 #, fuzzy, c-format
 msgid ""
 "unknown option '%c'\n"
@@ -2767,279 +2804,277 @@ msgid ""
 "  %s%s"
 msgstr "%s：不明选项 -%c\n"
 
-#: top/top_nls.c:335
+#: top/top_nls.c:347
 #, fuzzy
 msgid "-d disallowed in \"secure\" mode"
 msgstr "程序错误，转换模式 %d 无效\n"
 
-#: top/top_nls.c:336
+#: top/top_nls.c:348
 #, fuzzy
 msgid "-d requires positive argument"
 msgstr "命名空间选项需要一个参数"
 
-#: top/top_nls.c:337
+#: top/top_nls.c:349
 msgid "On"
 msgstr ""
 
-#: top/top_nls.c:338
+#: top/top_nls.c:350
 #, fuzzy
 msgid "Off"
 msgstr "关闭"
 
 #. Translation Hint: Only the following words should be translated
 #. .                 secs (seconds), max (maximum), user, field, cols (columns)
-#: top/top_nls.c:341
-msgid " -hv | -bcHiOSs -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
+#: top/top_nls.c:353
+msgid " -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
 msgstr ""
 
-#: top/top_nls.c:342
+#: top/top_nls.c:354
 #, fuzzy
 msgid "failed /proc/stat read"
 msgstr "获取文件状态失败(stat)"
 
-#: top/top_nls.c:343
+#: top/top_nls.c:355
 #, fuzzy, c-format
 msgid "Forest mode %s"
 msgstr "spec 文件权限不好：%s(%s)\n"
 
-#: top/top_nls.c:344
+#: top/top_nls.c:356
 #, fuzzy
 msgid "failed tty get"
 msgstr "无法取得%s 的属性"
 
-#: top/top_nls.c:345
+#: top/top_nls.c:357
 #, fuzzy, c-format
 msgid "failed tty set: %s"
 msgstr "设置新用户%s 失败"
 
-#: top/top_nls.c:346
+#: top/top_nls.c:358
 msgid "Choose field group (1 - 4)"
 msgstr ""
 
-#: top/top_nls.c:347
+#: top/top_nls.c:359
 msgid "Command disabled, 'A' mode required"
 msgstr ""
 
-#: top/top_nls.c:348
+#: top/top_nls.c:360
 #, fuzzy, c-format
 msgid "Command disabled, activate %s with '-' or '_'"
 msgstr "用法：%s [选项] 命令\n"
 
-#: top/top_nls.c:349
+#: top/top_nls.c:361
 #, fuzzy
 msgid "No colors to map!"
 msgstr "优先权颜色"
 
-#: top/top_nls.c:350
+#: top/top_nls.c:362
 #, fuzzy, c-format
 msgid "Failed '%s' open: %s"
 msgstr "%s：打开 %s 时失败：%s\n"
 
-#: top/top_nls.c:351
+#: top/top_nls.c:363
 #, fuzzy, c-format
 msgid "Wrote configuration to '%s'"
 msgstr "已写至：%s\n"
 
-#: top/top_nls.c:352
+#: top/top_nls.c:364
 #, c-format
 msgid "Change delay from %.1f to"
 msgstr ""
 
-#: top/top_nls.c:353
+#: top/top_nls.c:365
 #, fuzzy, c-format
 msgid "Show threads %s"
 msgstr "%<num_threads%>值必须为正"
 
-#: top/top_nls.c:354
+#: top/top_nls.c:366
 #, fuzzy, c-format
 msgid "Irix mode %s"
 msgstr "spec 文件权限不好：%s(%s)\n"
 
-#: top/top_nls.c:355
+#: top/top_nls.c:367
 #, c-format
 msgid "PID to signal/kill [default pid = %d]"
 msgstr ""
 
-#: top/top_nls.c:356
+#: top/top_nls.c:368
 #, c-format
 msgid "Send pid %d signal [%d/sigterm]"
 msgstr ""
 
-#: top/top_nls.c:357
+#: top/top_nls.c:369
 #, fuzzy, c-format
 msgid "Failed signal pid '%d' with '%d': %s"
 msgstr "%s(%s) 短脚本运行失败，信号 %d\n"
 
-#: top/top_nls.c:358
-#, fuzzy
+#: top/top_nls.c:370
 msgid "Invalid signal"
-msgstr "%s：无效的信号"
+msgstr "无效的信号"
 
-#: top/top_nls.c:359
+#: top/top_nls.c:371
 #, fuzzy, c-format
 msgid "PID to renice [default pid = %d]"
 msgstr "具有 pid %d 的进程不存在。\n"
 
-#: top/top_nls.c:360
+#: top/top_nls.c:372
 #, fuzzy, c-format
 msgid "Renice PID %d to value"
 msgstr "具有 pid %d 的进程不存在。\n"
 
-#: top/top_nls.c:361
+#: top/top_nls.c:373
 #, fuzzy, c-format
 msgid "Failed renice of PID %d to %d: %s"
 msgstr "无法打开 pid %d (%s) 的 stat 文件\n"
 
-#: top/top_nls.c:362
+#: top/top_nls.c:374
 #, c-format
 msgid "Rename window '%s' to (1-3 chars)"
 msgstr ""
 
-#: top/top_nls.c:363
+#: top/top_nls.c:375
 #, fuzzy, c-format
 msgid "Cumulative time %s"
 msgstr "累积的项目"
 
-#: top/top_nls.c:364
+#: top/top_nls.c:376
 #, c-format
 msgid "Maximum tasks = %d, change to (0 is unlimited)"
 msgstr ""
 
-#: top/top_nls.c:365
+#: top/top_nls.c:377
 #, fuzzy
 msgid "Invalid maximum"
 msgstr "目录最大深度%s 无效"
 
-#: top/top_nls.c:366
+#: top/top_nls.c:378
 msgid "Which user (blank for all)"
 msgstr ""
 
-#: top/top_nls.c:367
+#: top/top_nls.c:379
 msgid "Unknown command - try 'h' for help"
 msgstr ""
 
-#: top/top_nls.c:368
+#: top/top_nls.c:380
 #, c-format
 msgid "scroll coordinates: y = %d/%%d (tasks), x = %d/%d (fields)"
 msgstr ""
 
-#: top/top_nls.c:369
+#: top/top_nls.c:381
 #, fuzzy
 msgid "failed memory allocate"
 msgstr "%s：配置分区区块时失败\n"
 
-#: top/top_nls.c:370
+#: top/top_nls.c:382
 #, fuzzy
 msgid "failed memory re-allocate"
 msgstr "无法为已找到的进程分配内存: %s\n"
 
-#: top/top_nls.c:371
+#: top/top_nls.c:383
 #, fuzzy
 msgid "Unacceptable floating point"
 msgstr "使用硬件浮点单元"
 
-#: top/top_nls.c:372
+#: top/top_nls.c:384
 #, fuzzy
 msgid "Invalid user"
 msgstr "无效的用户"
 
-#: top/top_nls.c:373
+#: top/top_nls.c:385
 #, fuzzy
 msgid "forest view"
 msgstr "浏览者："
 
-#: top/top_nls.c:374
+#: top/top_nls.c:386
 msgid "failed pid maximum size test"
 msgstr ""
 
-#: top/top_nls.c:375
+#: top/top_nls.c:387
 msgid "failed number of cpus test"
 msgstr ""
 
-#: top/top_nls.c:376
+#: top/top_nls.c:388
 #, c-format
 msgid "incompatible rcfile, you should delete '%s'"
 msgstr ""
 
-#: top/top_nls.c:377
+#: top/top_nls.c:389
 #, c-format
 msgid "window entry #%d corrupt, please delete '%s'"
 msgstr ""
 
-#: top/top_nls.c:378
+#: top/top_nls.c:390
 msgid "Unavailable in secure mode"
 msgstr ""
 
-#: top/top_nls.c:379
-#, fuzzy
+#: top/top_nls.c:391
 msgid "Only 1 cpu detected"
-msgstr "%s 只接受 1 个参数"
+msgstr "仅探测到 1 个 CPU"
 
-#: top/top_nls.c:380
+#: top/top_nls.c:392
 #, fuzzy
 msgid "Unacceptable integer"
 msgstr "整数溢出"
 
-#: top/top_nls.c:381
+#: top/top_nls.c:393
 msgid "conflicting process selections (U/p/u)"
 msgstr ""
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 kibibytes (1024 bytes)
-#: top/top_nls.c:384
+#: top/top_nls.c:396
 msgid "KiB"
 msgstr "KiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 mebibytes (1,048,576 bytes)
-#: top/top_nls.c:387
+#: top/top_nls.c:399
 msgid "MiB"
 msgstr "MiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 gibibytes (1,073,741,824 bytes)
-#: top/top_nls.c:390
+#: top/top_nls.c:402
 msgid "GiB"
 msgstr "GiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 tebibytes (1,099,511,627,776 bytes)
-#: top/top_nls.c:393
+#: top/top_nls.c:405
 msgid "TiB"
 msgstr "TiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 pebibytes (1,024 tebibytes)
-#: top/top_nls.c:396
+#: top/top_nls.c:408
 msgid "PiB"
 msgstr "PiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 exbibytes (1,024 pebibytes)
-#: top/top_nls.c:399
+#: top/top_nls.c:411
 msgid "EiB"
 msgstr "EiB"
 
-#: top/top_nls.c:400
+#: top/top_nls.c:412
 #, fuzzy
 msgid "Threads"
 msgstr "不能同时使用 mthreads 和 mlegacy-threads"
 
-#: top/top_nls.c:401
+#: top/top_nls.c:413
 msgid "Tasks"
 msgstr "任务"
 
 #. Translation Hint: The following "word" is meant to represent either a single
 #. .                 cpu or all of the processors in a multi-processor computer
 #. .                 (should be exactly 6 characters, not counting the colon)
-#: top/top_nls.c:405
+#: top/top_nls.c:417
 #, fuzzy
 msgid "Cpu(s):"
 msgstr "CPU              "
 
 #. Translation Hint: The following "word" is meant to represent a single processor
 #. .                 (should be exactly 3 characters)
-#: top/top_nls.c:408
+#: top/top_nls.c:420
 #, fuzzy, c-format
 msgid "Cpu%-3d:"
 msgstr ""
@@ -3047,69 +3082,69 @@ msgstr ""
 "  CPU#: %-3d\t\tTTY：%s\t线程：%ld\n"
 
 #. Translation Hint: The following word "another" must have 1 trailing space
-#: top/top_nls.c:410
+#: top/top_nls.c:422
 #, fuzzy
 msgid "another "
 msgstr "当一个局部变量掩盖了另一个局部变量时给出警告"
 
-#: top/top_nls.c:411
+#: top/top_nls.c:423
 msgid "Locate next inactive, use \"L\""
 msgstr ""
 
-#: top/top_nls.c:412
+#: top/top_nls.c:424
 #, fuzzy
 msgid "Locate string"
 msgstr "(不是字符串)"
 
-#: top/top_nls.c:413
+#: top/top_nls.c:425
 #, fuzzy, c-format
 msgid "%s\"%s\" not found"
 msgstr "%s%s 预期为 %s 却找到 %s\n"
 
-#: top/top_nls.c:414
+#: top/top_nls.c:426
 #, c-format
 msgid "width incr is %d, change to (0 default, -1 auto)"
 msgstr ""
 
-#: top/top_nls.c:415
-msgid "Overwrite existing obsolete/corrupted rcfile?"
+#: top/top_nls.c:427
+msgid "rcfile has 'inspect' entry error(s), write anyway?"
 msgstr ""
 
-#: top/top_nls.c:416
+#: top/top_nls.c:428
 #, fuzzy, c-format
 msgid "unrecognized field name '%s'"
 msgstr "无法识别的节名%qE"
 
-#: top/top_nls.c:417
+#: top/top_nls.c:429
 msgid "even using field names only, window is now too small"
 msgstr ""
 
-#: top/top_nls.c:419
+#: top/top_nls.c:431
 #, fuzzy
 msgid "Open Files"
 msgstr "无法打开 %%files 的文件 %s: %s\n"
 
-#: top/top_nls.c:420
+#: top/top_nls.c:432
 #, fuzzy
 msgid "NUMA Info"
 msgstr "无信息"
 
-#: top/top_nls.c:421
+#: top/top_nls.c:433
 #, fuzzy
 msgid "Log"
 msgstr "登录"
 
-#: top/top_nls.c:422
+#: top/top_nls.c:434
 msgid ""
 "the '=' key will eventually show the actual file read or command(s) "
 "executed ..."
 msgstr ""
 
-#: top/top_nls.c:423
+#: top/top_nls.c:435
 msgid "demo"
 msgstr ""
 
-#: top/top_nls.c:424
+#: top/top_nls.c:436
 #, c-format
 msgid ""
 "This is simulated output representing the contents of some file or the "
@@ -3159,108 +3194,107 @@ msgid ""
 "Enjoy!\n"
 msgstr ""
 
-#: top/top_nls.c:456
+#: top/top_nls.c:468
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
 msgstr ""
 
-#: top/top_nls.c:458
+#: top/top_nls.c:470
 msgid "to enable 'Y' please consult the top man page (press Enter)"
 msgstr ""
 
-#: top/top_nls.c:460
+#: top/top_nls.c:472
 #, fuzzy, c-format
 msgid "Selection failed with: %s\n"
 msgstr "需要选择语句"
 
-#: top/top_nls.c:461
+#: top/top_nls.c:473
 #, fuzzy, c-format
 msgid "unable to inspect, pid %d not found"
 msgstr "无法打开 pid %d (%s) 的 stat 文件\n"
 
-#: top/top_nls.c:462
+#: top/top_nls.c:474
 #, fuzzy, c-format
 msgid "inspect at PID [default pid = %d]"
 msgstr "具有 pid %d 的进程不存在。\n"
 
-#: top/top_nls.c:463
+#: top/top_nls.c:475
 #, c-format
 msgid "%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read"
 msgstr ""
 
-#: top/top_nls.c:464
+#: top/top_nls.c:476
 #, fuzzy
 msgid "patience please, working..."
 msgstr "无法记录目前的工作目录"
 
 #. Translation Hint: Below are 2 abbreviations which can be as long as needed:
 #. .                 FLD = FIELD, VAL = VALUE
-#: top/top_nls.c:467
+#: top/top_nls.c:479
 #, c-format
 msgid "add filter #%d (%s) as: [!]FLD?VAL"
 msgstr ""
 
-#: top/top_nls.c:468
+#: top/top_nls.c:480
 #, fuzzy
 msgid "ignoring case"
 msgstr "(未知的案例)"
 
-#: top/top_nls.c:469
-#, fuzzy
+#: top/top_nls.c:481
 msgid "case sensitive"
-msgstr "(未知的案例)"
+msgstr "大小写敏感"
 
-#: top/top_nls.c:470
+#: top/top_nls.c:482
 #, fuzzy
 msgid "duplicate filter was ignored"
 msgstr "忽略"
 
-#: top/top_nls.c:471
+#: top/top_nls.c:483
 #, fuzzy, c-format
 msgid "'%s' filter delimiter is missing"
 msgstr "%s：分界符后应该跟随整数"
 
-#: top/top_nls.c:472
+#: top/top_nls.c:484
 #, fuzzy, c-format
 msgid "'%s' filter value is missing"
 msgstr "%2$s %3$s 中丢失 %1$s\n"
 
-#: top/top_nls.c:473
+#: top/top_nls.c:485
 #, fuzzy
 msgid "include"
 msgstr "#include \"...\" 搜索从这里开始：\n"
 
-#: top/top_nls.c:474
+#: top/top_nls.c:486
 #, fuzzy
 msgid "exclude"
 msgstr "被排除的路径必须以 / 开头"
 
-#: top/top_nls.c:475
+#: top/top_nls.c:487
 #, fuzzy, c-format
 msgid "<Enter> to resume, filters: %s"
 msgstr "设备 %s 不支持恢复。\n"
 
-#: top/top_nls.c:476
+#: top/top_nls.c:488
 #, fuzzy
 msgid "none"
 msgstr "无"
 
 #. Translation Hint: The following word 'Node' should be exactly 4 characters
-#: top/top_nls.c:478
+#: top/top_nls.c:490
 #, fuzzy, c-format
 msgid "Node%-2d:"
 msgstr "verify_cgraph_node 失败"
 
-#: top/top_nls.c:479
+#: top/top_nls.c:491
 #, c-format
 msgid "expand which node (0-%d)"
 msgstr ""
 
-#: top/top_nls.c:480
+#: top/top_nls.c:492
 #, fuzzy
 msgid "invalid node"
 msgstr "verify_cgraph_node 失败"
 
-#: top/top_nls.c:481
+#: top/top_nls.c:493
 msgid "sorry, NUMA extensions unavailable"
 msgstr ""
 
@@ -3268,15 +3302,20 @@ msgstr ""
 #. .                 'Swap' represents the linux swap file --
 #. .                 please make both translations exactly 4 characters,
 #. .                 padding with extra spaces as necessary
-#: top/top_nls.c:486
+#: top/top_nls.c:498
 #, fuzzy
 msgid "Mem "
 msgstr "为循环启用预取时最小的指令/内存操作比"
 
-#: top/top_nls.c:487
+#: top/top_nls.c:499
 #, fuzzy
 msgid "Swap"
 msgstr "交换"
+
+#: top/top_nls.c:500
+#, fuzzy, c-format
+msgid "bad memory scaling arg '%c'"
+msgstr "错误的正则表达式: %s\n"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3302,7 +3341,18 @@ msgstr "交换"
 #. .  please see the prologue to the show_special function in the top.c
 #. .  source file.
 #. .
-#: top/top_nls.c:521
+#. .  Caution:
+#. .    The next three items represent pages for interacting with a user.
+#. .    In all cases, the last lines of text must be treated with care.
+#. .
+#. .    They must not end with a newline character so that at runtime the
+#. .    cursor will remain on that final text line.
+#. .
+#. .    Also, the special sequences (tilde+number) must not appear on the
+#. .    last line (the one without the newline). So please avoid any line
+#. .    wraps that could place them there.
+#. .
+#: top/top_nls.c:545
 #, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
@@ -3347,13 +3397,15 @@ msgstr ""
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
 #. .                 also imbedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
-#: top/top_nls.c:549
+#: top/top_nls.c:573
 msgid ""
 "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
 "  d or s    Set update interval\n"
 msgstr ""
+"  k,r       操作进程：'~1k~2' 杀死；'~1r~2' 设置优先级\n"
+"  d or s    设定更新间隔\n"
 
-#: top/top_nls.c:553
+#: top/top_nls.c:577
 #, c-format
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
@@ -3413,17 +3465,26 @@ msgstr ""
 #. .     --> "   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~
 #. .     --> "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5
 #. .
+#. .  Other translatable text
 #. .     --> "   available toggles: ~1B~2 =disable bold globa
 #. .     --> "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks
 #. .
-#. .     --> "Select ~1target~2 as upper case letter:\n"
+#. .     --> "1) Select ~1target~2 as upper case letter:\n"
 #. .     --> "   S~2 = Summary Data,~1  M~2 = Messages/Prompt
 #. .     --> "   H~2 = Column Heads,~1  T~2 = Task Informatio
-#. .     --> "Select ~1color~2 as number:\n"
+#. .     --> "2) Select ~1color~2 as number:\n"
 #. .     --> "   0~2 = black,~1  1~2 = red,    ~1  2~2 = gree
 #. .     --> "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan
+#. . *   --> "\n"
+#. .     --> "3) Then use these keys when finished:\n"
+#. .     --> "   'q' to abort changes to window '~1%s~2'\n"
+#. . **  --> "   'a' or 'w' to commit & change another, <Ente
 #. .
-#: top/top_nls.c:603
+#. .     Note:
+#. . *      maybe sacrifice the entire line (with the "\n") ...
+#. . **     ... so <Enter> text potion could be on its own line
+#. .
+#: top/top_nls.c:636
 #, c-format
 msgid ""
 "Help for color mapping~2 - %s\n"
@@ -3455,7 +3516,12 @@ msgid ""
 "   'a' or 'w' to commit & change another, <Enter> to commit and end "
 msgstr ""
 
-#: top/top_nls.c:629
+#. Translation Hint:
+#. .  This Fields Management header should be 3 lines long so as
+#. .  to allow 1 blank line before the fields & descriptions.
+#. .  If absoultely necessary, 4 lines could be used (but never more).
+#. .
+#: top/top_nls.c:667
 #, c-format
 msgid ""
 "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
@@ -3464,21 +3530,24 @@ msgid ""
 "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!\n"
 msgstr ""
 
-#: top/top_nls.c:634
+#. Translation Hint:
+#. .  The next 5 items must each be translated as a single line.
+#. .
+#: top/top_nls.c:675
 #, c-format
 msgid ""
 "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
 "~2zombie~3\n"
 msgstr ""
 
-#: top/top_nls.c:637
+#: top/top_nls.c:678
 #, c-format
 msgid ""
 "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
 "~2idle~3\n"
 msgstr ""
 
-#: top/top_nls.c:640
+#: top/top_nls.c:681
 #, c-format
 msgid ""
 "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
@@ -3488,7 +3557,7 @@ msgstr ""
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt
-#: top/top_nls.c:646
+#: top/top_nls.c:687
 #, c-format
 msgid ""
 "%%%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f "
@@ -3498,21 +3567,25 @@ msgstr ""
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt, st = steal time
-#: top/top_nls.c:652
+#: top/top_nls.c:693
 #, c-format
 msgid ""
 "%%%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
 "~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
 msgstr ""
 
-#: top/top_nls.c:655
+#. Translation Hint: this must be translated as 2 lines with words above & below aligned
+#: top/top_nls.c:697
 #, c-format
 msgid ""
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3\n"
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3\n"
 msgstr ""
 
-#: top/top_nls.c:659
+#. Translation Hint:
+#. .  The next 2 headers for 'Inspection' must each be 3 lines or less
+#. .
+#: top/top_nls.c:704
 #, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
@@ -3521,7 +3594,7 @@ msgid ""
 "Options~2: ~1%s\n"
 msgstr ""
 
-#: top/top_nls.c:664
+#: top/top_nls.c:709
 #, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
@@ -3605,7 +3678,7 @@ msgid ""
 "io---- -system-- --------cpu--------"
 msgstr ""
 
-#: vmstat.c:198 vmstat.c:523
+#: vmstat.c:198 vmstat.c:519
 #, fuzzy
 msgid " -----timestamp-----"
 msgstr "关闭时间戳记"
@@ -3710,79 +3783,77 @@ msgstr ""
 #. Translation Hint: Translating folloging disk partition
 #. * header fields that follow (marked with max x chars) might
 #. * not work, unless manual page is translated as well.
-#. Translation Hint: max 10 chars. The word is
-#. * expected to be centralized, use spaces at the end
-#. * to do that.
-#: vmstat.c:436
-msgid "reads  "
-msgstr "读取   "
+#. Translation Hint: max 10 chars.
+#: vmstat.c:434
+#, fuzzy
+msgid "reads"
+msgstr "不能同时使用 mthreads 和 mlegacy-threads"
 
-#. Translation Hint: max 10 chars
-#: vmstat.c:438
+#. Translation Hint: max 16 chars.
+#: vmstat.c:436
 #, fuzzy
 msgid "read sectors"
 msgstr "扇区"
 
-#. Translation Hint: max 10 chars. The word is
-#. * expected to be centralized, use spaces at the end
-#. * to do that.
-#: vmstat.c:442
-msgid "writes   "
+#. Translation Hint: max 10 chars.
+#: vmstat.c:438
+#, fuzzy
+msgid "writes"
 msgstr "写入   "
 
-#. Translation Hint: max 10 chars
-#: vmstat.c:444
+#. Translation Hint: max 16 chars
+#: vmstat.c:440
 #, fuzzy
 msgid "requested writes"
 msgstr "要求的对齐边界太大"
 
-#: vmstat.c:458
+#: vmstat.c:454
 msgid "your kernel does not support diskstat. (2.5.70 or above required)"
 msgstr ""
 
-#: vmstat.c:520
+#: vmstat.c:516
 msgid ""
 "disk- ------------reads------------ ------------writes----------- -----"
 "IO------"
 msgstr ""
 
-#: vmstat.c:522
+#: vmstat.c:518
 msgid ""
 "disk- -------------------reads------------------- -------------------"
 "writes------------------ ------IO-------"
 msgstr ""
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:541 vmstat.c:549
+#: vmstat.c:537 vmstat.c:545
 msgid "total"
 msgstr "总用量"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:543 vmstat.c:551
+#: vmstat.c:539 vmstat.c:547
 msgid "merged"
 msgstr ""
 
 #. Translation Hint: max 7 chars
-#: vmstat.c:545 vmstat.c:553
+#: vmstat.c:541 vmstat.c:549
 msgid "sectors"
 msgstr "扇区"
 
 #. Translation Hint: max 7 chars
-#: vmstat.c:547 vmstat.c:555
+#: vmstat.c:543 vmstat.c:551
 msgid "ms"
 msgstr ""
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:557
+#: vmstat.c:553
 msgid "cur"
 msgstr ""
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:559
+#: vmstat.c:555
 msgid "sec"
 msgstr ""
 
-#: vmstat.c:669
+#: vmstat.c:665
 msgid "your kernel does not support diskstat (2.5.70 or above required)"
 msgstr ""
 
@@ -3790,282 +3861,282 @@ msgstr ""
 #. * follow (marked with max x chars) might not work, unless
 #. * manual page is translated as well.
 #. Translation Hint: max 24 chars
-#: vmstat.c:679
+#: vmstat.c:675
 #, fuzzy
 msgid "Cache"
 msgstr "以 KB 表示的软件数据缓存的大小"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:681
+#: vmstat.c:677
 #, fuzzy
 msgid "Num"
 msgstr "NUM"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:683
+#: vmstat.c:679
 msgid "Total"
 msgstr "总共"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:685
+#: vmstat.c:681
 msgid "Size"
 msgstr "大小"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:687
+#: vmstat.c:683
 #, fuzzy
 msgid "Pages"
 msgstr "用于生成简单的手册页的实用程序"
 
-#: vmstat.c:699
+#: vmstat.c:695
 msgid ""
 "your kernel does not support slabinfo or your permissions are insufficient"
-msgstr ""
+msgstr "您的内核不支持 slabinfo 或您的权限不够"
 
-#: vmstat.c:751
+#: vmstat.c:747
 #, c-format
 msgid "%13d disks \n"
 msgstr ""
 
-#: vmstat.c:752
+#: vmstat.c:748
 #, fuzzy, c-format
 msgid "%13d partitions \n"
 msgstr "主分区过多。"
 
-#: vmstat.c:768
+#: vmstat.c:764
 #, fuzzy, c-format
 msgid "%13lu total reads\n"
 msgstr "总用量"
 
-#: vmstat.c:769
+#: vmstat.c:765
 #, c-format
 msgid "%13lu merged reads\n"
 msgstr ""
 
-#: vmstat.c:770
+#: vmstat.c:766
 #, fuzzy, c-format
 msgid "%13lu read sectors\n"
 msgstr "扇区"
 
-#: vmstat.c:771
+#: vmstat.c:767
 #, fuzzy, c-format
 msgid "%13lu milli reading\n"
 msgstr "读取宏"
 
-#: vmstat.c:772
+#: vmstat.c:768
 #, c-format
 msgid "%13lu writes\n"
 msgstr ""
 
-#: vmstat.c:773
+#: vmstat.c:769
 #, c-format
 msgid "%13lu merged writes\n"
 msgstr ""
 
-#: vmstat.c:774
+#: vmstat.c:770
 #, fuzzy, c-format
 msgid "%13lu written sectors\n"
 msgstr "扇区"
 
-#: vmstat.c:775
+#: vmstat.c:771
 #, fuzzy, c-format
 msgid "%13lu milli writing\n"
 msgstr "写入%qs时错误"
 
-#: vmstat.c:776
+#: vmstat.c:772
 #, fuzzy, c-format
 msgid "%13lu inprogress IO\n"
 msgstr "错误的 IO 基类型(%d)"
 
-#: vmstat.c:777
+#: vmstat.c:773
 #, c-format
 msgid "%13lu milli spent IO\n"
 msgstr ""
 
-#: vmstat.c:798
+#: vmstat.c:794
 #, fuzzy, c-format
 msgid "%13lu %s total memory\n"
 msgstr "脚本“%s”: 内存耗尽%s\n"
 
-#: vmstat.c:799
+#: vmstat.c:795
 #, fuzzy, c-format
 msgid "%13lu %s used memory\n"
 msgstr "脚本“%s”: 内存耗尽%s\n"
 
-#: vmstat.c:800
+#: vmstat.c:796
 #, fuzzy, c-format
 msgid "%13lu %s active memory\n"
 msgstr "设备 %s 未激活。\n"
 
-#: vmstat.c:801
+#: vmstat.c:797
 #, fuzzy, c-format
 msgid "%13lu %s inactive memory\n"
 msgstr "脚本“%s”: 内存耗尽%s\n"
 
-#: vmstat.c:802
+#: vmstat.c:798
 #, fuzzy, c-format
 msgid "%13lu %s free memory\n"
 msgstr "脚本“%s”: 内存耗尽%s\n"
 
-#: vmstat.c:803
+#: vmstat.c:799
 #, fuzzy, c-format
 msgid "%13lu %s buffer memory\n"
 msgstr "内存节 %s+%x"
 
-#: vmstat.c:804
+#: vmstat.c:800
 #, fuzzy, c-format
 msgid "%13lu %s swap cache\n"
 msgstr "无法丢弃缓存：%s"
 
-#: vmstat.c:805
+#: vmstat.c:801
 #, c-format
 msgid "%13lu %s total swap\n"
 msgstr ""
 
-#: vmstat.c:806
+#: vmstat.c:802
 #, fuzzy, c-format
 msgid "%13lu %s used swap\n"
 msgstr "%s 与%<%%%c%>%s 格式并用"
 
-#: vmstat.c:807
+#: vmstat.c:803
 #, c-format
 msgid "%13lu %s free swap\n"
 msgstr ""
 
-#: vmstat.c:808
+#: vmstat.c:804
 #, c-format
 msgid "%13lld non-nice user cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:809
+#: vmstat.c:805
 #, c-format
 msgid "%13lld nice user cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:810
+#: vmstat.c:806
 #, c-format
 msgid "%13lld system cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:811
+#: vmstat.c:807
 #, c-format
 msgid "%13lld idle cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:812
+#: vmstat.c:808
 #, c-format
 msgid "%13lld IO-wait cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:813
+#: vmstat.c:809
 #, c-format
 msgid "%13lld IRQ cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:814
+#: vmstat.c:810
 #, c-format
 msgid "%13lld softirq cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:815
+#: vmstat.c:811
 #, c-format
 msgid "%13lld stolen cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:816
+#: vmstat.c:812
 #, fuzzy, c-format
 msgid "%13lu pages paged in\n"
 msgstr "已本地化的手册页"
 
-#: vmstat.c:817
+#: vmstat.c:813
 #, c-format
 msgid "%13lu pages paged out\n"
 msgstr ""
 
-#: vmstat.c:818
+#: vmstat.c:814
 #, fuzzy, c-format
 msgid "%13lu pages swapped in\n"
 msgstr "用于生成简单的手册页的实用程序"
 
-#: vmstat.c:819
+#: vmstat.c:815
 #, c-format
 msgid "%13lu pages swapped out\n"
 msgstr ""
 
-#: vmstat.c:820
+#: vmstat.c:816
 #, c-format
 msgid "%13u interrupts\n"
 msgstr ""
 
-#: vmstat.c:821
+#: vmstat.c:817
 #, c-format
 msgid "%13u CPU context switches\n"
 msgstr ""
 
-#: vmstat.c:822
+#: vmstat.c:818
 #, fuzzy, c-format
 msgid "%13u boot time\n"
 msgstr "无法获取启动时间"
 
-#: vmstat.c:823 vmstat.c:838
+#: vmstat.c:819 vmstat.c:834
 #, c-format
 msgid "%13u forks\n"
 msgstr ""
 
 #. Translation Hint: do not change argument characters
-#: vmstat.c:940
+#: vmstat.c:936
 msgid "-S requires k, K, m or M (default is KiB)"
 msgstr ""
 
-#: vmstat.c:991
+#: vmstat.c:987
 #, fuzzy, c-format
 msgid "partition was not found\n"
 msgstr "找不到有效的分区映射。"
 
-#: watch.c:90
+#: watch.c:89
 #, fuzzy, c-format
 msgid " %s [options] command\n"
 msgstr "用法：%s [选项] 命令\n"
 
-#: watch.c:92
+#: watch.c:91
 msgid "  -b, --beep             beep if command has a non-zero exit\n"
 msgstr ""
 
-#: watch.c:93
+#: watch.c:92
 msgid "  -c, --color            interpret ANSI color and style sequences\n"
 msgstr ""
 
-#: watch.c:94
+#: watch.c:93
 msgid ""
 "  -d, --differences[=<permanent>]\n"
 "                         highlight changes between updates\n"
 msgstr ""
 
-#: watch.c:96
+#: watch.c:95
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
 msgstr ""
 
-#: watch.c:97
+#: watch.c:96
 msgid "  -g, --chgexit          exit when output from command changes\n"
 msgstr ""
 
-#: watch.c:98
+#: watch.c:97
 msgid "  -n, --interval <secs>  seconds to wait between updates\n"
 msgstr ""
 
-#: watch.c:99
+#: watch.c:98
 msgid "  -p, --precise          attempt run command in precise intervals\n"
 msgstr ""
 
-#: watch.c:100
+#: watch.c:99
 msgid "  -t, --no-title         turn off header\n"
 msgstr ""
 
-#: watch.c:101
+#: watch.c:100
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
 msgstr ""
 
-#: watch.c:104
+#: watch.c:103
 #, fuzzy
 msgid " -v, --version  output version information and exit\n"
 msgstr ""
@@ -4076,55 +4147,54 @@ msgstr ""
 "  -h, --help       显示这个说明然后离开\n"
 "  -v, --version    输出版本信息然后离开\n"
 
-#: watch.c:384
+#: watch.c:390
 #, fuzzy, c-format
 msgid "Every %.1fs: "
 msgstr "每秒时间戳记列"
 
-#: watch.c:385
+#: watch.c:391
 #, c-format
 msgid "%s: %s"
 msgstr ""
 
-#: watch.c:456
+#: watch.c:462
 #, fuzzy
 msgid "unable to create IPC pipes"
 msgstr "无法创建不可改变的头区。\n"
 
-#: watch.c:466
-#, fuzzy
+#: watch.c:472
 msgid "unable to fork process"
-msgstr "创建系统进程(fork)出错"
+msgstr "无法创建 (fork) 进程"
 
-#: watch.c:471
+#: watch.c:477
 #, fuzzy
 msgid "dup2 failed"
 msgstr " 失败 - "
 
-#: watch.c:478
+#: watch.c:484
 #, fuzzy, c-format
 msgid "unable to execute '%s'"
 msgstr "无法执行“%s”：%s"
 
-#: watch.c:495
+#: watch.c:501
 msgid "fdopen"
 msgstr "fdopen"
 
-#: watch.c:641
+#: watch.c:647
 #, fuzzy
 msgid "waitpid"
 msgstr "waitpid 失败"
 
-#: watch.c:649
+#: watch.c:655
 msgid "command exit with a non-zero status, press a key to exit"
 msgstr "命令以非零状态退出，按任意键退出"
 
-#: watch.c:773
+#: watch.c:779
 #, fuzzy, c-format
 msgid "unicode handling error\n"
 msgstr "以 null 终止的 unicode 字符串"
 
-#: watch.c:779
+#: watch.c:785
 #, c-format
 msgid "unicode handling error (malloc)\n"
 msgstr "unicode 处理错误 (malloc)\n"
@@ -4226,7 +4296,7 @@ msgstr ""
 
 #: include/c.h:155
 msgid "\n"
-msgstr ""
+msgstr "\n"
 
 #: include/c.h:156
 msgid " -h, --help     display this help and exit\n"
@@ -4257,6 +4327,9 @@ msgstr ""
 #, fuzzy
 #~ msgid "oom_adjustment (2^X)"
 #~ msgstr " X: 2             R: 7-E-1\n"
+
+#~ msgid "reads  "
+#~ msgstr "读取   "
 
 #, fuzzy
 #~ msgid "warning: screen width %d suboptimal"
