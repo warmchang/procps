@@ -208,9 +208,9 @@ w_SOURCES = w.c lib/fileutils.c
 # proc/libprocps.la
 
 # See http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
-LIBprocps_CURRENT=6
+LIBprocps_CURRENT=7
 LIBprocps_REVISION=0
-LIBprocps_AGE=0
+LIBprocps_AGE=1
 
 proc_libprocps_la_LIBADD = $(LIB_KPARTS)
 
