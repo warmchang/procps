@@ -45,9 +45,10 @@
 #include "fileutils.h"
 #include "nls.h"
 #include "xalloc.h"
-#include "proc/procio.h"
 #include "proc/procps.h"
 #include "proc/version.h"
+
+extern FILE *fprocopen(const char *, const char *);
 
 /*
  *    Globals...
