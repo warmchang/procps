@@ -213,8 +213,7 @@ pwdx_LDADD= $(CYGWINFLAGS)
 sysctl_SOURCES = \
 	sysctl.c \
 	lib/fileutils.c \
-	procio.c \
-	procio.h
+	lib/procio.c
 sysctl_LDADD=
 endif
 tload_SOURCES = tload.c lib/strutils.c lib/fileutils.c

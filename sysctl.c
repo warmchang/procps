@@ -45,7 +45,7 @@
 #include "fileutils.h"
 #include "nls.h"
 #include "xalloc.h"
-#include "proc/procio.h"
+#include "procio.h"
 
 /*
  *    Globals...
