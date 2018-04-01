@@ -1,14 +1,14 @@
 # Polish translation for procps-ng.
 # Copyright (C) 2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
-# Jakub Bogusz <qboosh@pld-linux.org>, 2014-2017.
+# Jakub Bogusz <qboosh@pld-linux.org>, 2014-2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-3.3.12\n"
+"Project-Id-Version: procps-ng-3.3.13-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2018-03-12 13:02+1100\n"
-"PO-Revision-Date: 2017-12-23 11:52+0100\n"
+"PO-Revision-Date: 2018-03-14 18:40+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -261,13 +261,12 @@ msgstr ""
 "zablokowany\n"
 
 #: pgrep.c:131
-#, fuzzy
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid> or 0 for all namespaces\n"
 msgstr ""
 " --ns <PID>                dopasowanie procesów należących do tej samej\n"
-"                           przestrzeni nazw, co <pid>\n"
+"                           przestrzeni nazw, co <pid> lub 0 dla wszystkich\n"
 
 #: pgrep.c:133
 msgid ""
@@ -322,6 +321,9 @@ msgid ""
 "in zero matches\n"
 "Try `%s -f' option to match against the complete command line."
 msgstr ""
+"wzorzec wyszukujący nazwy procesów dłuższe niż 15 znaków nie zostanie "
+"dopasowany\n"
+"Proszę spróbować opcji `%s -f', aby dopasować do pełnej linii polecenia."
 
 #: pgrep.c:879
 #, c-format
@@ -394,7 +396,7 @@ msgstr " -o, --omit-pid <PID,...>  pominięcie procesów o podanych PID-ach\n"
 
 #: pidof.c:67
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
-msgstr ""
+msgstr " -S, --separator SEP       użycie SEP jako separatora między PID-ami"
 
 #: pidof.c:275
 #, c-format
@@ -1893,9 +1895,8 @@ msgid "  -N, --names          print variable names without values\n"
 msgstr "  -N, --names          wypisanie nazw zmiennych bez wartości\n"
 
 #: sysctl.c:121
-#, fuzzy
 msgid "  -n, --values         print only values of the given variable(s)\n"
-msgstr "  -n, --values         wypisanie tylko wartości zmiennych\n"
+msgstr "  -n, --values         wypisanie tylko wartości podanych zmiennych\n"
 
 #: sysctl.c:122
 msgid "  -p, --load[=<file>]  read values from file\n"
@@ -2031,7 +2032,7 @@ msgstr ""
 
 #: tload.c:75
 msgid "screen too small"
-msgstr ""
+msgstr "ekran za mały"
 
 #: tload.c:91
 #, c-format
@@ -2605,11 +2606,11 @@ msgstr "Nazwa grupy sterującej (CG)"
 #. Translation Hint: maximum 'NU' = 2
 #: top/top_nls.c:306
 msgid "NU"
-msgstr ""
+msgstr "NU"
 
 #: top/top_nls.c:307
 msgid "Last Used NUMA node"
-msgstr ""
+msgstr "Ostatnio używany węzeł NUMA"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -2622,13 +2623,13 @@ msgstr ""
 #. .  c-code logic changes.
 #. .
 #: top/top_nls.c:327
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\tsignal %d (%s) was caught by %s, please\n"
 "\tsend bug reports to <procps@freelists.org>\n"
 msgstr ""
 "\tprogram %3$s otrzymał sygnał %1$d (%2$s), proszę\n"
-"\tzobaczyć http://www.debian.org/Bugs/Reporting\n"
+"\twysyłać raporty błędów na adres <procps@freelists.org>\n"
 
 #: top/top_nls.c:330
 #, c-format
@@ -2722,10 +2723,10 @@ msgstr "Nie"
 #. Translation Hint: Only the following words should be translated
 #. .                 secs (seconds), max (maximum), user, field, cols (columns)
 #: top/top_nls.c:353
-#, fuzzy
 msgid " -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
 msgstr ""
-" -hv | -bcHiOSs -d sek -n max -u|U użytkownik -p pid(y) -o pole -w [kolumny]"
+" -hv | -bcEHiOSs1 -d sek -n max -u|U użytkownik -p pid(y) -o pole -w "
+"[kolumny]"
 
 #: top/top_nls.c:354
 msgid "failed /proc/stat read"
@@ -2990,7 +2991,7 @@ msgstr "zw. szerokości %d, zmiana na (0=domyślne, -1=auto)"
 
 #: top/top_nls.c:427
 msgid "rcfile has 'inspect' entry error(s), write anyway?"
-msgstr ""
+msgstr "plik rc ma błędne wpisy 'inspect', zapisać mimo to?"
 
 #: top/top_nls.c:428
 #, c-format
@@ -3223,9 +3224,9 @@ msgid "Swap"
 msgstr "Swap"
 
 #: top/top_nls.c:500
-#, fuzzy, c-format
+#, c-format
 msgid "bad memory scaling arg '%c'"
-msgstr "błędna liczba iteracji '%s'"
+msgstr "błędny argument skalowania pamięci '%c'"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3823,25 +3824,23 @@ msgstr "sk"
 #. * not work, unless manual page is translated as well.
 #. Translation Hint: max 10 chars.
 #: vmstat.c:434
-#, fuzzy
 msgid "reads"
-msgstr "wątki"
+msgstr "odczyty"
 
 #. Translation Hint: max 16 chars.
 #: vmstat.c:436
 msgid "read sectors"
-msgstr "odcz.sekt."
+msgstr "odcz. sektory"
 
 #. Translation Hint: max 10 chars.
 #: vmstat.c:438
-#, fuzzy
 msgid "writes"
-msgstr "zapisy  "
+msgstr "zapisy"
 
 #. Translation Hint: max 16 chars
 #: vmstat.c:440
 msgid "requested writes"
-msgstr "żąd.zapisy"
+msgstr "żądania zapisu"
 
 #: vmstat.c:454
 msgid "your kernel does not support diskstat. (2.5.70 or above required)"
@@ -4360,9 +4359,3 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s z pakietu %s\n"
-
-#~ msgid "Overwrite existing obsolete/corrupted rcfile?"
-#~ msgstr "Nadpisać istniejący przestarzały/uszkodzony plik rc?"
-
-#~ msgid "reads  "
-#~ msgstr "odczyty  "

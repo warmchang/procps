@@ -1,9 +1,9 @@
 # Messages français de procps-ng
-# Copyright (C) 2017 Free Software Foundation, Inc.
+# Copyright (C) 2018 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
 # Frédéric Marchal <fmarchal@perso.be>, 2014.
 # Stéphane Aulery <lkppo@free.fr>, 2015
-# Frédéric Marchal <fmarchal@perso.be>, 2017.
+# Frédéric Marchal <fmarchal@perso.be>, 2018.
 #
 # La qualité de cette traduction est vraiment très mauvaise car:
 # 1) la mise en forme des messages impose des contraintes insensées: traduire
@@ -21,10 +21,10 @@
 #                                                     Frédéric Marchal
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 3.3.12\n"
+"Project-Id-Version: procps-ng 3.3.13-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2018-03-12 13:02+1100\n"
-"PO-Revision-Date: 2017-12-23 13:02+0100\n"
+"PO-Revision-Date: 2018-03-15 07:10+0100\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "Language: fr\n"
@@ -282,13 +282,14 @@ msgstr ""
 " -L, --logpidfile          échoue si le fichier PID n'est pas verrouillé\n"
 
 #: pgrep.c:131
-#, fuzzy
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid> or 0 for all namespaces\n"
 msgstr ""
 " --ns <PID>                trouve les processus qui appartiennent au même\n"
-"                           espace de nom que <PID>\n"
+"                           espace de nom que <PID> ou 0 pour tous les "
+"espaces\n"
+"                           de noms\n"
 
 #: pgrep.c:133
 msgid ""
@@ -344,6 +345,10 @@ msgid ""
 "in zero matches\n"
 "Try `%s -f' option to match against the complete command line."
 msgstr ""
+"un motif qui cherche un nom de processus plus long que 15 caractères ne "
+"retournera aucun résultat\n"
+"Essayez l'option « %s -f » pour obtenir une correspondance sur la ligne de "
+"commande complète."
 
 #: pgrep.c:879
 #, c-format
@@ -417,7 +422,7 @@ msgstr " -o, --omit-pid <PID,…>    omet les processus avec ce PID\n"
 
 #: pidof.c:67
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
-msgstr ""
+msgstr " -S, --separator SEP       place le séparateur SEP entre les PID"
 
 #: pidof.c:275
 #, c-format
@@ -1934,9 +1939,9 @@ msgstr ""
 "  -N, --names          affiche les noms des variables sans les valeurs\n"
 
 #: sysctl.c:121
-#, fuzzy
 msgid "  -n, --values         print only values of the given variable(s)\n"
-msgstr "  -n, --values         affiche uniquement les valeurs des variables\n"
+msgstr ""
+"  -n, --values         affiche uniquement les valeurs de la variable donnée\n"
 
 #: sysctl.c:122
 msgid "  -p, --load[=<file>]  read values from file\n"
@@ -2076,7 +2081,7 @@ msgstr ""
 
 #: tload.c:75
 msgid "screen too small"
-msgstr ""
+msgstr "écran trop petit"
 
 #: tload.c:91
 #, c-format
@@ -2650,11 +2655,11 @@ msgstr "Nom groupe contrôle"
 #. Translation Hint: maximum 'NU' = 2
 #: top/top_nls.c:306
 msgid "NU"
-msgstr ""
+msgstr "NU"
 
 #: top/top_nls.c:307
 msgid "Last Used NUMA node"
-msgstr ""
+msgstr "Dernier nœud NUMA utilisé"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -2667,13 +2672,13 @@ msgstr ""
 #. .  c-code logic changes.
 #. .
 #: top/top_nls.c:327
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\tsignal %d (%s) was caught by %s, please\n"
 "\tsend bug reports to <procps@freelists.org>\n"
 msgstr ""
 "\tle signal %d (%s) a été intercepté par %s, veuillez\n"
-"\tconsulter http://www.debian.org/Bugs/Reporting\n"
+"\tenvoyer les rapports de bogues à <procps@freelists.org>\n"
 
 #: top/top_nls.c:330
 #, c-format
@@ -2767,9 +2772,8 @@ msgstr "Off"
 #. Translation Hint: Only the following words should be translated
 #. .                 secs (seconds), max (maximum), user, field, cols (columns)
 #: top/top_nls.c:353
-#, fuzzy
 msgid " -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
-msgstr " -hv | -bcHiOSs -d sec -n max -u|U util -p pid(s) -o champ -w [col]"
+msgstr " -hv | -bcEHiOSs1  -d sec -n max -u|U util -p pid(s) -o champ -w [col]"
 
 #: top/top_nls.c:354
 msgid "failed /proc/stat read"
@@ -3035,6 +3039,7 @@ msgstr "largeur incr est %d, change à (0 défaut, -1 auto)"
 #: top/top_nls.c:427
 msgid "rcfile has 'inspect' entry error(s), write anyway?"
 msgstr ""
+"rcfile a une ou des erreur(s) d'entrée « inspect », écrire quand-même ?"
 
 #: top/top_nls.c:428
 #, c-format
@@ -3275,9 +3280,9 @@ msgid "Swap"
 msgstr "Éch "
 
 #: top/top_nls.c:500
-#, fuzzy, c-format
+#, c-format
 msgid "bad memory scaling arg '%c'"
-msgstr "mauvais argument d'interactions « %s »"
+msgstr "mauvais argument de mise à l'échelle de la mémoire « %c »"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3881,9 +3886,8 @@ msgstr "st"
 #. * not work, unless manual page is translated as well.
 #. Translation Hint: max 10 chars.
 #: vmstat.c:434
-#, fuzzy
 msgid "reads"
-msgstr "threads"
+msgstr "lectures"
 
 #. Translation Hint: max 16 chars.
 #: vmstat.c:436
@@ -3892,7 +3896,6 @@ msgstr "secteurs lus"
 
 #. Translation Hint: max 10 chars.
 #: vmstat.c:438
-#, fuzzy
 msgid "writes"
 msgstr "écritures"
 
