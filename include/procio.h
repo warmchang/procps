@@ -1,8 +1,6 @@
 #ifndef PROCPS_PROC_PROCIO_H
 #define PROCPS_PROC_PROCIO_H
 
-#include "procps.h"
-
-FILE *fprocopen(const char *, const char *);
+FILE *fprocopen(const char *path, const char *mode);
 
 #endif
