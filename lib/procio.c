@@ -80,7 +80,7 @@ FILE *fprocopen(const char *path, const char *mode)
 		goto out;
 	}
 
-	delim = ',';				/* default delimeter is the colon */
+	delim = ',';				/* default delimeter is the comma */
 	for (c = 1; c < len; c++) {
 		switch (mode[c]) {
 		case '\0':

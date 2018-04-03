@@ -37,7 +37,7 @@ function opens files below
 whose name is the string to by path and associates a stream with it.
 The argument
 .I mode
-points to a string beginning with one of the following sequences
+points to a string containing one of the following sequences
 .TP
 .B r
 Open a file below
@@ -51,17 +51,17 @@ Open a file below
 for writing even large buffers.  The optional delimeter character
 can be one of the follwoing
 .BR '\ ' ,\  ',' ,\  '.' ,\ and\  ':'
-where the default is the colon
+where the default is the comma
 .BR ',' .
-This allows to split very large input lines into pieces at this
-delimeter and write each of them to the opened file below
+This allows splitting very large input lines into pieces at this
+delimeter and writing each of them to the opened file below
 .IR /proc/## .
 .TP
 .B e
 The underlying file descriptor will be closed if you use any
-of the ‘exec...’ functions within your code.
+of the `exec...' functions within your code.
 .PP
-The internal API allows to use stdio functions to read and write
+The internal API allows the use of stdio functions to read and write
 large buffers below
 .IR /proc/## .
 .PP
