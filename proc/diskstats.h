@@ -23,9 +23,9 @@
 #ifndef PROCPS_DISKSTATS_H
 #define PROCPS_DISKSTATS_H
 
-#include <sys/cdefs.h>
-
-__BEGIN_DECLS
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum diskstats_item {
     DISKSTATS_noop,                 //        ( never altered )
@@ -126,5 +126,7 @@ struct diskstats_stack **procps_diskstats_sort (
     enum diskstats_item sortitem,
     enum diskstats_sort_order order);
 
-__END_DECLS
+#ifdef __cplusplus
+}
+#endif
 #endif

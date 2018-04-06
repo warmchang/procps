@@ -23,9 +23,9 @@
 #ifndef PROCPS_SLABINFO_H
 #define PROCPS_SLABINFO_H
 
-#include <sys/cdefs.h>
-
-__BEGIN_DECLS
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum slabinfo_item {
     SLABINFO_noop,            //       ( never altered )
@@ -130,5 +130,7 @@ struct slabinfo_stack **procps_slabinfo_sort (
     enum slabinfo_item sortitem,
     enum slabinfo_sort_order order);
 
-__END_DECLS
+#ifdef __cplusplus
+}
+#endif
 #endif

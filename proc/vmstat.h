@@ -24,9 +24,9 @@
 #ifndef PROCPS_VMSTAT_H
 #define PROCPS_VMSTAT_H
 
-#include <sys/cdefs.h>
-
-__BEGIN_DECLS
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum vmstat_item {
     VMSTAT_noop,                                 //       ( never altered )
@@ -308,5 +308,7 @@ struct vmstat_stack *procps_vmstat_select (
     enum vmstat_item *items,
     int numitems);
 
-__END_DECLS
+#ifdef __cplusplus
+}
+#endif
 #endif

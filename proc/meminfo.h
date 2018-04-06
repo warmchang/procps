@@ -19,9 +19,9 @@
 #ifndef PROCPS_MEMINFO_H
 #define PROCPS_MEMINFO_H
 
-#include <sys/cdefs.h>
-
-__BEGIN_DECLS
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum meminfo_item {
     MEMINFO_noop,                  //        ( never altered )
@@ -171,5 +171,7 @@ struct meminfo_stack *procps_meminfo_select (
     enum meminfo_item *items,
     int numitems);
 
-__END_DECLS
+#ifdef __cplusplus
+}
+#endif
 #endif

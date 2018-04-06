@@ -23,7 +23,9 @@
 #ifndef PROC_NAMESPACE_H
 #define PROC_NAMESPACE_H
 
-__BEGIN_DECLS
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum namespace_type {
     PROCPS_NS_IPC,
@@ -44,6 +46,8 @@ const char *procps_ns_get_name(const int id);
 int procps_ns_get_id(const char *name);
 
 int procps_ns_read_pid(const int pid, struct procps_namespaces *nsp);
-__END_DECLS
 
+#ifdef __cplusplus
+}
+#endif
 #endif

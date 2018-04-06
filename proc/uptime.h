@@ -25,13 +25,15 @@
 #ifndef PROC_UPTIME_H
 #define PROC_UPTIME_H
 
-#include <features.h>
-__BEGIN_DECLS
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 int procps_uptime(double *uptime_secs, double *idle_secs);
 char *procps_uptime_sprint(void);
 char *procps_uptime_sprint_short(void);
 
-__END_DECLS
-
+#ifdef __cplusplus
+}
+#endif
 #endif

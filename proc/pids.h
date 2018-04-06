@@ -23,9 +23,9 @@
 #ifndef PROCPS_PIDS_H
 #define PROCPS_PIDS_H
 
-#include <sys/cdefs.h>
-
-__BEGIN_DECLS
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum pids_item {
     PIDS_noop,              //        ( never altered )
@@ -233,5 +233,7 @@ struct pids_stack **procps_pids_sort (
     enum pids_item sortitem,
     enum pids_sort_order order);
 
-__END_DECLS
+#ifdef __cplusplus
+}
+#endif
 #endif

@@ -19,9 +19,9 @@
 #ifndef PROCPS_STAT_H
 #define PROCPS_STAT_H
 
-#include <sys/cdefs.h>
-
-__BEGIN_DECLS
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum stat_item {
     STAT_noop,                    //        ( never altered )
@@ -154,5 +154,7 @@ struct stat_stack **procps_stat_sort (
     enum stat_item sortitem,
     enum stat_sort_order order);
 
-__END_DECLS
+#ifdef __cplusplus
+}
+#endif
 #endif
