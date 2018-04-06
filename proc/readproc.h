@@ -19,8 +19,6 @@
 // the following is development only, forcing display of "[ duplicate ENUM ]" strings
 // #define FALSE_THREADS        /* set most child string fields to NULL */
 
-__BEGIN_DECLS
-
 
 // This is to help document a transition from pid to tgid/tid caused
 // by the introduction of thread support. It is used in cases where
@@ -261,5 +259,4 @@ proc_t* readeither(PROCTAB *__restrict const PT, proc_t *__restrict x);
 int look_up_our_self(proc_t *p);
 void closeproc(PROCTAB* PT);
 
-__END_DECLS
 #endif

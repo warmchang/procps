@@ -11,8 +11,6 @@
  * GNU Library General Public License for more details.
  */
 
-__BEGIN_DECLS
-
 extern const int number_of_signals;
 
 extern const char *get_sigtable_name(int row);
@@ -32,5 +30,4 @@ extern void pretty_print_signals(void);
 
 extern void unix_print_signals(void);
 
-__END_DECLS
 #endif

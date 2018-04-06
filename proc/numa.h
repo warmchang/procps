@@ -20,16 +20,10 @@
 #ifndef PROCPS_NUMA_H
 #define PROCPS_NUMA_H
 
-#include <features.h>
-
-__BEGIN_DECLS
-
 void numa_init (void);
 void numa_uninit (void);
 
 extern int (*numa_max_node) (void);
 extern int (*numa_node_of_cpu) (int);
-
-__END_DECLS
 
 #endif
