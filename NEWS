@@ -1,3 +1,7 @@
+procps-ng-3.3.14
+----------------
+  * pgrep: Don't segfault on non match                     Debian #894917
+
 procps-ng-3.3.13
 ----------------
   * library: Increment to 7:0:1
