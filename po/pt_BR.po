@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 3.3.13-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2018-03-12 13:02+1100\n"
+"POT-Creation-Date: 2018-04-10 21:33+1000\n"
 "PO-Revision-Date: 2018-03-14 09:26-0200\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldpbr-translation@lists.sourceforge."
@@ -261,13 +261,13 @@ msgid " -L, --logpidfile          fail if PID file is not locked\n"
 msgstr " -L, --logpidfile          falha se arquivo PID não estiver travado\n"
 
 #: pgrep.c:131
+#, fuzzy
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
-"                           namespace as <pid> or 0 for all namespaces\n"
+"                           namespace as <pid>\n"
 msgstr ""
-" --ns <PID>                corresponde os processos que pertencem ao\n"
-"                           mesmo espaço de nomes que <pid> ou 0 para\n"
-"                           todos os espaços de nomes\n"
+" --ns <pid>               corresponde os processos que pertencem ao\n"
+"                          mesmo espaço de nomes que <pid>\n"
 
 #: pgrep.c:133
 msgid ""
@@ -325,7 +325,7 @@ msgstr ""
 "resultar em zero correspondências\n"
 "Tente a opção \"%s -f\" para corresponder com a linha de comando completa."
 
-#: pgrep.c:879
+#: pgrep.c:881
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
@@ -334,7 +334,7 @@ msgstr ""
 "-L sem -F não faz sentido\n"
 "Tente \"%s --help\" para mais informações."
 
-#: pgrep.c:886
+#: pgrep.c:888
 #, c-format
 msgid ""
 "pidfile not valid\n"
@@ -343,7 +343,7 @@ msgstr ""
 "arquivo de pid não válido\n"
 "Tente \"%s --help\" para mais informações."
 
-#: pgrep.c:894
+#: pgrep.c:896
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
@@ -352,7 +352,7 @@ msgstr ""
 "apenas um padrão pode ser fornecido\n"
 "Tente \"%s --help\" para mais informações."
 
-#: pgrep.c:898
+#: pgrep.c:900
 #, c-format
 msgid ""
 "no matching criteria specified\n"
@@ -361,12 +361,12 @@ msgstr ""
 "nenhum critério de ocorrência especificado\n"
 "Tente \"%s --help\" para mais informações."
 
-#: pgrep.c:927
+#: pgrep.c:928
 #, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "%s terminado (pid %lu)\n"
 
-#: pgrep.c:934
+#: pgrep.c:935
 #, c-format
 msgid "killing pid %ld failed"
 msgstr "terminação de pid %ld falhou"
@@ -4452,6 +4452,14 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s de %s\n"
+
+#~ msgid ""
+#~ " --ns <PID>                match the processes that belong to the same\n"
+#~ "                           namespace as <pid> or 0 for all namespaces\n"
+#~ msgstr ""
+#~ " --ns <PID>                corresponde os processos que pertencem ao\n"
+#~ "                           mesmo espaço de nomes que <pid> ou 0 para\n"
+#~ "                           todos os espaços de nomes\n"
 
 #~ msgid "Overwrite existing obsolete/corrupted rcfile?"
 #~ msgstr "Sobrescrever o arquivo rc obsoleto/corrompido existente?"

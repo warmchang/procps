@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 3.3.10-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2018-03-12 13:02+1100\n"
+"POT-Creation-Date: 2018-04-10 21:33+1000\n"
 "PO-Revision-Date: 2017-11-15 18:55+0800\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -269,7 +269,7 @@ msgstr ""
 #: pgrep.c:131
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
-"                           namespace as <pid> or 0 for all namespaces\n"
+"                           namespace as <pid>\n"
 msgstr ""
 
 #: pgrep.c:133
@@ -322,40 +322,40 @@ msgid ""
 "Try `%s -f' option to match against the complete command line."
 msgstr ""
 
-#: pgrep.c:879
+#: pgrep.c:881
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: pgrep.c:886
+#: pgrep.c:888
 #, fuzzy, c-format
 msgid ""
 "pidfile not valid\n"
 "Try `%s --help' for more information."
 msgstr "尝试“%s --help”以获得更多信息。\n"
 
-#: pgrep.c:894
+#: pgrep.c:896
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: pgrep.c:898
+#: pgrep.c:900
 #, c-format
 msgid ""
 "no matching criteria specified\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: pgrep.c:927
+#: pgrep.c:928
 #, fuzzy, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "%s：第%lu 次，共%lu 次 (%s)..."
 
-#: pgrep.c:934
+#: pgrep.c:935
 #, c-format
 msgid "killing pid %ld failed"
 msgstr ""
