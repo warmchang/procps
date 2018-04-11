@@ -1,5 +1,9 @@
-procps-ng-NEXT
+procps-ng-3.3.13
 ----------------
+  * library: Increment to 7:0:1
+    No changes, no removals
+    New fuctions: numa_init, numa_max_node, numa_node_of_cpu,
+      numa_uninit, xalloc_err_handler
   * doc: Document I idle state in ps.1 and top.1           Debian #886967
   * free: fix some of the SI multiples                     issue #45
   * kill: -l space between name parses correctly           Debian #854407
