@@ -380,7 +380,8 @@ static void output_header(char *restrict command, double interval)
 	char *ts = ctime(&t);
 	char *header;
 	char *right_header;
-	char hostname[HOST_NAME_MAX + 1];
+	int max_host_name_len = (int) sysconf(_SC_HOST_NAME_MAX);
+	char hostname[max_host_name_len + 1];
 	int command_columns = 0;	/* not including final \0 */
 
 	gethostname(hostname, sizeof(hostname));
