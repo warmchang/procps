@@ -15,7 +15,7 @@
 .\" along with this program; if not, write to the Free Software
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 .\"
-.TH PIDOF 1 "24 Jul 2013" "" "User Commands"
+.TH PIDOF 1 "2018-03-03" "" "User Commands"
 .SH NAME
 pidof -- find the process ID of a running program.
 .SH SYNOPSIS
@@ -59,6 +59,13 @@ At least one program was found with the requested name.
 .TP
 .B 1
 No program was found with the requested name.
+
+.SH BUGS
+When using the \fI\-x\fP option,
+.B pidof
+only has a simple method for detecting scripts and will miss scripts that,
+for example, use env. This limitation is due to how the scripts look in
+the proc filesystem.
 
 .SH SEE ALSO
 .BR pgrep (1),
