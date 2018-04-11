@@ -11,6 +11,8 @@ if [ -d man-po ] ; then
     mkdir -p man-po
 fi
 
+PO_FILES="man-po/*.po"
+
 po4a-updatepo -f man -m ${SRCDIR}/free.1 \
                      -m ${SRCDIR}/kill.1 \
                      -m ${SRCDIR}/pgrep.1 \
@@ -28,7 +30,7 @@ po4a-updatepo -f man -m ${SRCDIR}/free.1 \
                      -m ${SRCDIR}/vmstat.8 \
                      -m ${SRCDIR}/w.1 \
                      -m ${SRCDIR}/watch.1 \
-                     -p man-po/template-man.pot
+                     -p man-po/template-man.pot ${PO_FILES}
 
 po4a-updatepo -f man -m ${SRCDIR}/ps/ps.1 \
                      -p man-po/template-man-ps.pot

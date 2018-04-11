@@ -65,3 +65,4 @@ watch
 *.log
 *.sum
 *.exe
+*.mo

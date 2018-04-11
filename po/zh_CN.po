@@ -1,132 +1,133 @@
-# Vietnamese translations for procps-ng package
-# Bản dịch Tiếng Việt dành cho gói procps-ng.
-# Copyright (C) 2014 Free Software Foundation, Inc.
+# procps-ng in zh_CN
+# Copyright (C) 2015 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
-# Trần Ngọc Quân <vnwildman@gmail.com>, 2014.
+# Boyuan Yang <073plan@gmail.com>, 2017.
+# Mingye Wang <arthur200126@gmail.com>, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 3.3.10-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2018-03-12 13:02+1100\n"
-"PO-Revision-Date: 2014-09-13 08:57+0700\n"
-"Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
-"Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
-"Language: vi\n"
+"PO-Revision-Date: 2017-11-15 18:55+0800\n"
+"Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
+"Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Poedit-Basepath: ../\n"
+"X-Bugs: Report translation errors to the Language-Team address.\n"
+"X-Generator: Poedit 2.0.4\n"
 
 #: free.c:74 slabtop.c:193 uptime.c:59 w.c:453
 #, c-format
 msgid " %s [options]\n"
-msgstr " %s [các tùy chọn]\n"
+msgstr " %s [选项]\n"
 
 #: free.c:76
 msgid " -b, --bytes         show output in bytes\n"
-msgstr " -b, --bytes         hiển thị kết xuất theo đơn vị byte\n"
+msgstr " -b, --bytes         以字节显示输出\n"
 
 #: free.c:77
 #, fuzzy
 msgid "     --kilo          show output in kilobytes\n"
-msgstr " -k, --kilo          hiển thị kết xuất theo đơn vị kilobytes\n"
+msgstr " -k, --kilo          以千字节显示输出\n"
 
 #: free.c:78
 #, fuzzy
 msgid "     --mega          show output in megabytes\n"
-msgstr " -m, --mega          hiển thị kết xuất theo đơn vị megabytes\n"
+msgstr " -m, --mega          以兆字节显示输出\n"
 
 #: free.c:79
 #, fuzzy
 msgid "     --giga          show output in gigabytes\n"
-msgstr " -g, --giga          hiển thị kết xuất theo đơn vị gigabytes\n"
+msgstr " -g, --giga          以吉字节显示输出\n"
 
 #: free.c:80
 msgid "     --tera          show output in terabytes\n"
-msgstr "     --tera          hiển thị kết xuất theo đơn vị terabytes\n"
+msgstr "     --tera          以太字节显示输出\n"
 
 #: free.c:81
 #, fuzzy
 msgid "     --peta          show output in petabytes\n"
-msgstr "     --tera          hiển thị kết xuất theo đơn vị terabytes\n"
+msgstr "     --tera          以太字节显示输出\n"
 
 #: free.c:82
 #, fuzzy
 msgid " -k, --kibi          show output in kibibytes\n"
-msgstr " -k, --kilo          hiển thị kết xuất theo đơn vị kilobytes\n"
+msgstr " -k, --kilo          以千字节显示输出\n"
 
 #: free.c:83
 #, fuzzy
 msgid " -m, --mebi          show output in mebibytes\n"
-msgstr " -m, --mega          hiển thị kết xuất theo đơn vị megabytes\n"
+msgstr " -m, --mega          以兆字节显示输出\n"
 
 #: free.c:84
 #, fuzzy
 msgid " -g, --gibi          show output in gibibytes\n"
-msgstr " -g, --giga          hiển thị kết xuất theo đơn vị gigabytes\n"
+msgstr " -g, --giga          以吉字节显示输出\n"
 
 #: free.c:85
 #, fuzzy
 msgid "     --tebi          show output in tebibytes\n"
-msgstr "     --tera          hiển thị kết xuất theo đơn vị terabytes\n"
+msgstr "     --tera          以太字节显示输出\n"
 
 #: free.c:86
 #, fuzzy
 msgid "     --pebi          show output in pebibytes\n"
-msgstr "     --tera          hiển thị kết xuất theo đơn vị terabytes\n"
+msgstr "     --tera          以太字节显示输出\n"
 
 #: free.c:87
 msgid " -h, --human         show human-readable output\n"
-msgstr " -h, --human         hiển thị ở dạng cho con người đọc\n"
+msgstr ""
 
 #: free.c:88
 msgid "     --si            use powers of 1000 not 1024\n"
-msgstr "     --si            dùng lũy thừa của 1000 không phải 1024\n"
+msgstr ""
 
 #: free.c:89
 msgid " -l, --lohi          show detailed low and high memory statistics\n"
-msgstr " -l, --lohi          hiển thị thống kê chi tiết bộ nhớ thấp và cao\n"
+msgstr ""
 
 #: free.c:90
 msgid " -t, --total         show total for RAM + swap\n"
-msgstr " -t, --total         hiển thị tổng số cho RAM + swap\n"
+msgstr ""
 
 #: free.c:91
 msgid " -s N, --seconds N   repeat printing every N seconds\n"
-msgstr " -s N, --seconds N   in lặp lại sau mỗi N giây\n"
+msgstr ""
 
 #: free.c:92
 msgid " -c N, --count N     repeat printing N times, then exit\n"
-msgstr " -c N, --count N     in lặp lại N lần rồi thoát\n"
+msgstr ""
 
 #: free.c:93
 msgid " -w, --wide          wide output\n"
-msgstr " -w, --wide          kết xuất rộng\n"
+msgstr " -w, --wide          宽版输出\n"
 
 #: free.c:95 w.c:462
 msgid "     --help     display this help and exit\n"
-msgstr "     --help     hiển thị trợ giúp này rồi thoát\n"
+msgstr "     --help     显示此帮助信息并退出\n"
 
 #: free.c:191
 msgid "Multiple unit options doesn't make sense."
 msgstr ""
 
 #: free.c:322
-#, c-format
+#, fuzzy, c-format
 msgid "seconds argument `%s' is not positive number"
-msgstr "đối số thứ hai “%s” không phải là số nguyên dương"
+msgstr "无效的秒数：%s"
 
 #: free.c:328
+#, fuzzy
 msgid "failed to parse count argument"
-msgstr "gặp lỗi khi phân tích số lượng đối số"
+msgstr "模板实参表语法错误"
 
 #: free.c:331
-#, c-format
+#, fuzzy, c-format
 msgid "failed to parse count argument: '%s'"
-msgstr "gặp lỗi khi phân tích số lượng đối số: “%s”"
+msgstr "查询 spec 文件 %s 失败，无法解析\n"
 
 #: free.c:352
 #, c-format
@@ -134,8 +135,8 @@ msgid ""
 "              total        used        free      shared     buffers       "
 "cache   available"
 msgstr ""
-"               tổng        dùng       trống        chsẻ         đệm     nhớ "
-"tạm    sẵn sàng"
+"              总计         已用        空闲      共享       缓冲          缓"
+"存    可用"
 
 #: free.c:354
 #, c-format
@@ -143,84 +144,82 @@ msgid ""
 "              total        used        free      shared  buff/cache   "
 "available"
 msgstr ""
-"               tổng        dùng       trống        chsẻ     đệm/tạm    sẵn "
-"sàng"
+"              总计         已用        空闲      共享    缓冲/缓存    可用"
 
 #: free.c:357
 msgid "Mem:"
-msgstr "BNhớ:"
+msgstr "内存："
 
 #: free.c:377
 msgid "Low:"
-msgstr "Thấp:"
+msgstr "低："
 
 #: free.c:383
 msgid "High:"
-msgstr "Cao:"
+msgstr "高："
 
 #: free.c:390
 msgid "Swap:"
-msgstr "Tráo đổi:"
+msgstr "交换："
 
 #: free.c:397
 msgid "Total:"
-msgstr "Tổng:"
+msgstr "总量："
 
 #: lib/fileutils.c:38
 msgid "write error"
-msgstr "lỗi ghi"
+msgstr "写入错误"
 
 #: pgrep.c:103
-#, c-format
+#, fuzzy, c-format
 msgid " %s [options] <pattern>\n"
-msgstr " %s [các-tùy-chọn] <mẫu_tìm_kiếm>\n"
+msgstr "通配符模式用于排除"
 
 #: pgrep.c:106
 msgid " -d, --delimiter <string>  specify output delimiter\n"
 msgstr ""
-" -d, --delimiter <chuỗi>   chỉ định chuỗi ngăn cách dùng cho kết xuất\n"
 
 #: pgrep.c:107
 msgid " -l, --list-name           list PID and process name\n"
-msgstr " -l, --list-name           liệt kê tên và mã số tiến trình\n"
+msgstr ""
 
 #: pgrep.c:108
 msgid " -a, --list-full           list PID and full command line\n"
 msgstr ""
-" -l, --list-name           liệt kê mã số tiến trình và toàn bộ dòng lệnh\n"
 
 #: pgrep.c:109
+#, fuzzy
 msgid " -v, --inverse             negates the matching\n"
-msgstr " -v, --inverse             đảo người những cái khớp mẫu\n"
+msgstr "对%<%T::%s(%A)%#V%>的调用没有匹配的函数"
 
 #: pgrep.c:110
 msgid " -w, --lightweight         list all TID\n"
-msgstr " -w, --lightweight         liệt kê mọi TID\n"
+msgstr ""
 
 #: pgrep.c:113
 msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
 msgstr ""
-" -<sig>, --signal <sig>    tín hiệu để gửi đi (hoặc là số hoặc là tên)\n"
 
 #: pgrep.c:114
 msgid " -e, --echo                display what is killed\n"
-msgstr " -e, --echo                hiển thị cái gì bị giết\n"
+msgstr ""
 
 #: pgrep.c:116
+#, fuzzy
 msgid " -c, --count               count of matching processes\n"
-msgstr " -c, --count               đếm số tiến trình khớp\n"
+msgstr "只印出各文件匹配列的计数"
 
 #: pgrep.c:117
 msgid " -f, --full                use full process name to match\n"
-msgstr " -f, --full                dùng khớp toàn bộ tên tiến trình\n"
+msgstr ""
 
 #: pgrep.c:118
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
-msgstr " -g, --pgroup <PGID,...>   khớp với mã số nhóm tiến trình\n"
+msgstr ""
 
 #: pgrep.c:119
 msgid " -G, --group <GID,...>     match real group IDs\n"
-msgstr " -G, --group <GID,...>     khớp với mã số thật của nhóm\n"
+msgstr ""
 
 #: pgrep.c:120
 msgid " -i, --ignore-case         match case insensitively\n"
@@ -228,54 +227,50 @@ msgstr ""
 
 #: pgrep.c:121
 msgid " -n, --newest              select most recently started\n"
-msgstr " -n, --newest              chọn cái khởi chạy gần đây nhất\n"
+msgstr ""
 
 #: pgrep.c:122
 msgid " -o, --oldest              select least recently started\n"
-msgstr " -o, --oldest              chọn cái khởi chạy xa đây nhất\n"
+msgstr ""
 
 #: pgrep.c:123
 msgid ""
 " -P, --parent <PPID,...>   match only child processes of the given parent\n"
-msgstr " -P, --parent <PPID,...>   khớp với con của tiến trình đã cho\n"
+msgstr ""
 
 #: pgrep.c:124
 msgid " -s, --session <SID,...>   match session IDs\n"
-msgstr " -s, --session <SID,...>   khớp mã phiên\n"
+msgstr ""
 
 #: pgrep.c:125
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
-msgstr " -t, --terminal <tty,...>  khớp bằng thiết bị cuối điều khiển\n"
+msgstr ""
 
 #: pgrep.c:126
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
-msgstr " -u, --euid <ID,...>       khớp với mã số chịu tác động\n"
+msgstr ""
 
 #: pgrep.c:127
 msgid " -U, --uid <ID,...>        match by real IDs\n"
-msgstr " -U, --uid <ID,...>        khớp với mã số thật\n"
+msgstr ""
 
 #: pgrep.c:128
 msgid " -x, --exact               match exactly with the command name\n"
-msgstr " -x, --exact               chỉ khớp chính xác tên lệnh\n"
+msgstr ""
 
 #: pgrep.c:129
 msgid " -F, --pidfile <file>      read PIDs from file\n"
-msgstr " -F, --pidfile <tập-tin>   đọc mã số tiến trình từ tập tin\n"
+msgstr ""
 
 #: pgrep.c:130
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
 msgstr ""
-" -L, --logpidfile          lỗi nếu tập-tin mã số tiến trình không bị khóa\n"
 
 #: pgrep.c:131
-#, fuzzy
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid> or 0 for all namespaces\n"
 msgstr ""
-" --ns <PID>                khớp tiến trình mà nó cùng không gian tên với\n"
-"                           tiến trình có mã số này\n"
 
 #: pgrep.c:133
 msgid ""
@@ -284,42 +279,40 @@ msgid ""
 "                           Available namespaces: ipc, mnt, net, pid, user, "
 "uts\n"
 msgstr ""
-" --nslist <ns,...>         liệt kê không gian tên nào sẽ được xem xét cho\n"
-"                           tùy chọn --ns. Không gian tên sẵn có là:\n"
-"                                      ipc, mnt, net, pid, user, uts\n"
 
 #: pgrep.c:274
-#, c-format
+#, fuzzy, c-format
 msgid "invalid user name: %s"
-msgstr "tên người dùng không hợp lệ: %s"
+msgstr "无用户名: %s\n"
 
 #: pgrep.c:291
-#, c-format
+#, fuzzy, c-format
 msgid "invalid group name: %s"
-msgstr "tên nhóm không hợp lệ: %s"
+msgstr "无效的组列表%s"
 
 #: pgrep.c:302
-#, c-format
+#, fuzzy, c-format
 msgid "invalid process group: %s"
-msgstr "nhóm tiến trình không hợp lệ: %s"
+msgstr "无效的组：%s"
 
 #: pgrep.c:314
-#, c-format
+#, fuzzy, c-format
 msgid "invalid session id: %s"
-msgstr "mã số phiên làm việc không hợp lệ: %s"
+msgstr "%s：无效的进程号"
 
 #: pgrep.c:326
-#, c-format
+#, fuzzy, c-format
 msgid "not a number: %s"
-msgstr "không phải con số: %s"
+msgstr "%s：错误的编号：%s"
 
 #: pgrep.c:507
 msgid "Error reading reference namespace information\n"
-msgstr "Gặp lỗi khi đọc thông tin tham chiếu không gian tên\n"
+msgstr ""
 
 #: pgrep.c:610 pidof.c:231 pidof.c:272 sysctl.c:672
+#, fuzzy
 msgid "internal error"
-msgstr "lỗi nội bộ"
+msgstr "内部错误"
 
 #: pgrep.c:656
 #, c-format
@@ -335,17 +328,13 @@ msgid ""
 "-L without -F makes no sense\n"
 "Try `%s --help' for more information."
 msgstr ""
-"-L mà không có -F là không hợp lý\n"
-"Chạy “%s --help” để biết thêm chi tiết."
 
 #: pgrep.c:886
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "pidfile not valid\n"
 "Try `%s --help' for more information."
-msgstr ""
-"tập tin mã số tiến trình không hợp lệ\n"
-"Chạy “%s --help” để biết thêm chi tiết."
+msgstr "尝试“%s --help”以获得更多信息。\n"
 
 #: pgrep.c:894
 #, c-format
@@ -353,8 +342,6 @@ msgid ""
 "only one pattern can be provided\n"
 "Try `%s --help' for more information."
 msgstr ""
-"chỉ được dùng một mẫu tìm kiếm\n"
-"Hãy chạy lệnh “%s --help” để có thêm thông tin."
 
 #: pgrep.c:898
 #, c-format
@@ -362,40 +349,37 @@ msgid ""
 "no matching criteria specified\n"
 "Try `%s --help' for more information."
 msgstr ""
-"chưa chỉ định tiêu chí tìm kiếm\n"
-"Hãy chạy lệnh “%s --help” để có thêm thông tin."
 
 #: pgrep.c:927
-#, c-format
+#, fuzzy, c-format
 msgid "%s killed (pid %lu)\n"
-msgstr "đã giết %s (mã số tiến trình %lu)\n"
+msgstr "%s：第%lu 次，共%lu 次 (%s)..."
 
 #: pgrep.c:934
 #, c-format
 msgid "killing pid %ld failed"
-msgstr "gặp lỗi khi giết tiến trình mã số %ld"
+msgstr ""
 
 #: pidof.c:61
-#, c-format
+#, fuzzy, c-format
 msgid " %s [options] [program [...]]\n"
-msgstr " %s [các tùy chọn] [chương trình [...]]\n"
+msgstr "  %s 的选项：\n"
 
 #: pidof.c:63
 msgid " -s, --single-shot         return one PID only\n"
-msgstr " -s, --single-shot         chỉ trả về một mã số tiến trình\n"
+msgstr ""
 
 #: pidof.c:64
 msgid " -c, --check-root          omit processes with different root\n"
-msgstr " -c, --check-root          bỏ qua tiến trình khác root\n"
+msgstr ""
 
 #: pidof.c:65
 msgid " -x                        also find shells running the named scripts\n"
 msgstr ""
-" -x                        cũng tìn các hệ vỏ đang chạy tên kịch bản đã cho\n"
 
 #: pidof.c:66
 msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
-msgstr " -o, --omit-pid <PID,...>  bỏ qua các tiến trình có mã số này\n"
+msgstr ""
 
 #: pidof.c:67
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
@@ -404,274 +388,302 @@ msgstr ""
 #: pidof.c:275
 #, c-format
 msgid "illegal omit pid value (%s)!\n"
-msgstr "giá trị mã số tiến trình bỏ qua không hợp lệ (%s)!\n"
+msgstr ""
 
 #: pmap.c:61
 msgid "Address"
-msgstr "Địa chỉ"
+msgstr "住址"
 
 #: pmap.c:62
+#, fuzzy
 msgid "Offset"
-msgstr "Offset"
+msgstr "字符偏移量为零"
 
 #: pmap.c:63
+#, fuzzy
 msgid "Device"
-msgstr "Thiết bị"
+msgstr "<设备>"
 
 #: pmap.c:64
+#, fuzzy
 msgid "Mapping"
-msgstr "Ánh xạ"
+msgstr "内核不支持 loop-AES 兼容映射。\n"
 
 #: pmap.c:68
 msgid "Perm"
-msgstr "Perm"
+msgstr ""
 
 #: pmap.c:69
+#, fuzzy
 msgid "Inode"
-msgstr "Inode"
+msgstr "设备：%Dh/%dd\tInode：%-10i  硬链接：%h\n"
 
 #: pmap.c:72
 msgid "Kbytes"
-msgstr "Kbyte"
+msgstr ""
 
 #: pmap.c:73
+#, fuzzy
 msgid "Mode"
-msgstr "Chế độ"
+msgstr ""
+"  -m, --mode=模式   \t设置权限模式(类似chmod)，而不是rwxrwxrwx 减umask\n"
 
 #: pmap.c:74
+#, fuzzy
 msgid "RSS"
-msgstr "RSS"
+msgstr ""
+"内存\n"
+"  Vsize：      %-10s\n"
+"  RSS：        %-10s\t\t RSS 限制：%s\n"
+"  程序开始：   %#-10lx\t\t 程序停止： %#-10lx\n"
+"  堆栈开始：   %#-10lx\n"
+"  堆栈指针 (ESP)：%#10lx\t 指令指针 (EIP)：%#10lx\n"
 
 #: pmap.c:75
 msgid "Dirty"
-msgstr "Bẩn"
+msgstr ""
 
 #: pmap.c:109
-#, c-format
+#, fuzzy, c-format
 msgid " %s [options] PID [PID ...]\n"
-msgstr " %s [các-tùy-chọn] PID [PID ...]\n"
+msgstr "%*s 用户     进程号 权限   命令\n"
 
 #: pmap.c:111
 msgid " -x, --extended              show details\n"
-msgstr " -x, --extended              hiển thị chi tiết\n"
+msgstr ""
 
 #: pmap.c:112
 msgid " -X                          show even more details\n"
-msgstr " -X                          hiển thị chi tiết hơn nữa\n"
+msgstr ""
 
 #: pmap.c:113
 msgid "            WARNING: format changes according to /proc/PID/smaps\n"
-msgstr "            CẢNH BÁO: định dạng thay đổi tùy theo /proc/PID/smaps\n"
+msgstr ""
 
 #: pmap.c:114
 msgid " -XX                         show everything the kernel provides\n"
-msgstr " -XX                         hiển thị mọi thứ nhân cung cấp\n"
+msgstr ""
 
 #: pmap.c:115
 msgid " -c, --read-rc               read the default rc\n"
-msgstr " -c, --read-rc               đọc rc mặc định\n"
+msgstr ""
 
 #: pmap.c:116
 msgid " -C, --read-rc-from=<file>   read the rc from file\n"
-msgstr " -C, --read-rc-from=<tập-tin>  đọc rc từ tập tin\n"
+msgstr ""
 
 #: pmap.c:117
 msgid " -n, --create-rc             create new default rc\n"
-msgstr " -n, --create-rc             tạo rc mặc định mới\n"
+msgstr ""
 
 #: pmap.c:118
 msgid " -N, --create-rc-to=<file>   create new rc to file\n"
-msgstr " -N, --create-rc-to=<tập-tin>  tạo rc mới cho tập tin\n"
+msgstr ""
 
 #: pmap.c:119
 msgid "            NOTE: pid arguments are not allowed with -n, -N\n"
-msgstr "            CHÚ Ý: đối số mã tiến trình không cho phép với -n, -N\n"
+msgstr ""
 
 #: pmap.c:120
+#, fuzzy
 msgid " -d, --device                show the device format\n"
-msgstr " -d, --device                hiển thị định dạng thiết bị\n"
+msgstr "显示设备状态"
 
 #: pmap.c:121
 msgid " -q, --quiet                 do not display header and footer\n"
-msgstr " -q, --quiet                 không hiển thị phần đầu và phần chân\n"
+msgstr ""
 
 #: pmap.c:122
 msgid " -p, --show-path             show path in the mapping\n"
-msgstr " -p, --show-path             hiển thị đường dẫn trong ánh xạ\n"
+msgstr ""
 
 #: pmap.c:123
 msgid " -A, --range=<low>[,<high>]  limit results to the given range\n"
-msgstr " -A, --range=<thấp>[,<cao>]  giới hạn kết quả thành vùng đã cho\n"
+msgstr ""
 
 #: pmap.c:201
+#, fuzzy
 msgid "shared memory detach"
-msgstr "bộ nhớ chia sẻ tách ra"
+msgstr "共享内存对象"
 
 #: pmap.c:205
+#, fuzzy
 msgid "shared memory remove"
-msgstr "bộ nhớ chia sẻ gỡ bỏ"
+msgstr "共享内存对象"
 
 #: pmap.c:238
 msgid "  [ anon ]"
-msgstr "  [ vô danh ]"
+msgstr ""
 
 #: pmap.c:240
+#, fuzzy
 msgid "  [ stack ]"
-msgstr "  [ ngăn xếp ]"
+msgstr "栈错误"
 
 #: pmap.c:325
+#, fuzzy
 msgid "Unknown format in smaps file!"
-msgstr "Không hiểu định dạng trong tập tin smaps!"
+msgstr "未知的格式类型“%s”"
 
 #: pmap.c:368
 msgid "inconsistent detail field in smaps file, line:\n"
-msgstr "trường chi tiết mâu thuẫn trong tập tin smaps, dòng:\n"
+msgstr ""
 
 #: pmap.c:712
+#, fuzzy
 msgid "total kB"
-msgstr "tổng kB"
+msgstr "总用量"
 
 #: pmap.c:723
 #, c-format
 msgid "mapped: %ldK    writeable/private: %ldK    shared: %ldK\n"
-msgstr " ánhxạ: %ldK     có thể ghi/riêng: %ldK    chiasẻ: %ldK\n"
+msgstr ""
 
 #. Translation Hint: keep total string length
 #. * as 24 characters. Adjust %16 if needed
 #: pmap.c:732
-#, c-format
+#, fuzzy, c-format
 msgid " total %16ldK\n"
-msgstr " tổng %16ldK\n"
+msgstr "总用量"
 
 #. Translation Hint: keep total string length
 #. * as 16 characters. Adjust %8 if needed
 #: pmap.c:738
-#, c-format
+#, fuzzy, c-format
 msgid " total %8ldK\n"
-msgstr " tổng %8ldK\n"
+msgstr "总用量"
 
 #: pmap.c:765 skill.c:507 skill.c:541 skill.c:628 tload.c:130 tload.c:135
 #: vmstat.c:955 vmstat.c:964 watch.c:732
+#, fuzzy
 msgid "failed to parse argument"
-msgstr "gặp lỗi khi phân tích đối số"
+msgstr "模板实参表语法错误"
 
 #: pmap.c:809
-#, c-format
+#, fuzzy, c-format
 msgid "config line too long - line %d"
-msgstr "dòng cấu hình quá dài trong - dòng %d"
+msgstr "输入行太长"
 
 #: pmap.c:834
 #, c-format
 msgid "unsupported section found in the config - line %d"
-msgstr "tìm thấy phần không được hỗ trợ trong cấu hình - dòng %d"
+msgstr ""
 
 #: pmap.c:837 pmap.c:848 pmap.c:859 pmap.c:878 pmap.c:890
-#, c-format
+#, fuzzy, c-format
 msgid "syntax error found in the config - line %d"
-msgstr "tìm thấy lỗi cú pháp trong cấu hình - dòng %d"
+msgstr "脚本“%s”: 语法错误发生于第 %d 列 %s%s\n"
 
 #: pmap.c:909
 msgid "the file already exists - delete or rename it first"
-msgstr "tập tin đã có rồi - hãy hóa hay đổi tên nó trước."
+msgstr ""
 
 #: pmap.c:972
+#, fuzzy
 msgid "HOME variable undefined"
-msgstr "chưa định nghĩa biến HOME"
+msgstr "TY 中未定义的变量"
 
 #: pmap.c:980
+#, fuzzy
 msgid "memory allocation failed"
-msgstr "gặp lỗi cấp phát bộ nhớ"
+msgstr "内存分配失败"
 
 #: pmap.c:1032
+#, fuzzy
 msgid "option -r is ignored as SunOS compatibility"
-msgstr "tùy chọn -r bị bỏ qua để tương thích với SunOS"
+msgstr "为 GCC 链接器选项兼容性忽略"
 
 #: pmap.c:1079
 msgid "options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"
-msgstr "các tuỳ chọn -c, -C, -d, -n, -N, -x, -X loại từ lẫn nhau"
+msgstr ""
 
 #: pmap.c:1082
 msgid "options -p, -q are mutually exclusive with -n, -N"
-msgstr "tùy chọn -p, -q xung đột với -n, -N"
+msgstr ""
 
 #: pmap.c:1085
 msgid "too many arguments"
-msgstr "quá nhiều đối số"
+msgstr "实参太多"
 
 #: pmap.c:1089
 msgid "rc file successfully created, feel free to edit the content"
-msgstr "đã tạo thành công tập tin tài nguyên, có thể sửa nội dung của nó"
+msgstr ""
 
 #: pmap.c:1092
+#, fuzzy
 msgid "couldn't create the rc file"
-msgstr "không tạo được tập tin tài nguyên"
+msgstr "无法创建临时文件"
 
 #: pmap.c:1104
 #, c-format
 msgid "~/.%src file successfully created, feel free to edit the content"
-msgstr "đã tạo thành công ~/.%src, có thể sửa nội dung của nó"
+msgstr ""
 
 #: pmap.c:1107
-#, c-format
+#, fuzzy, c-format
 msgid "couldn't create ~/.%src"
-msgstr "không thể tạo ~/.%src"
+msgstr "无法为 %s建立管道： %m\n"
 
 #: pmap.c:1112
+#, fuzzy
 msgid "argument missing"
-msgstr "thiếu đối số"
+msgstr "%2$q+#D的第 %1$P 个形参缺少默认实参"
 
 #: pmap.c:1126
+#, fuzzy
 msgid "couldn't read the rc file"
-msgstr "không thể đọc tập tin rc"
+msgstr "%s：无法读取区块 %llu\n"
 
 #: pmap.c:1128
-#, c-format
+#, fuzzy, c-format
 msgid "couldn't read ~/.%src"
-msgstr "không thể đọc ~/.%src"
+msgstr "%s：无法读取区块 %llu\n"
 
 #: ps/display.c:54
-#, c-format
+#, fuzzy, c-format
 msgid "Signal %d (%s) caught by %s (%s).\n"
-msgstr "Tín hiệu %d (%s) bắt bởi %s (%s).\n"
+msgstr "%s(%s%d) 被信号 %d 杀死\n"
 
 #: ps/display.c:66 ps/display.c:271 ps/parser.c:495 ps/parser.c:742
 #: ps/select.c:95 ps/sortformat.c:544
+#, fuzzy
 msgid "please report this bug"
-msgstr "hãy thông báo lỗi này"
+msgstr "请报告该 BUG。\n"
 
 #: ps/display.c:356
-#, c-format
+#, fuzzy, c-format
 msgid "error: not enough memory\n"
-msgstr "lỗi: không đủ bộ nhớ\n"
+msgstr "没有足够的内存进行重定位排序"
 
 #: ps/display.c:367 ps/display.c:542
 #, c-format
 msgid "error: can not access /proc\n"
-msgstr "lỗi: không thể truy cập /proc\n"
+msgstr ""
 
 #: ps/display.c:417
-#, c-format
+#, fuzzy, c-format
 msgid "could not find start_time\n"
-msgstr "không thể tìm thấy start_time\n"
+msgstr "找不到类%qE"
 
 #: ps/display.c:428
-#, c-format
+#, fuzzy, c-format
 msgid "could not find ppid\n"
-msgstr "không thể tìm thấy mã số tiến trình cha\n"
+msgstr "找不到类%qE"
 
 #: ps/global.c:169
 #, c-format
 msgid "your %dx%d screen size is bogus. expect trouble\n"
-msgstr "cỡ màn hình của bạn là %dx%d là không có thật. cần lo lắng\n"
+msgstr ""
 
 #: ps/global.c:242 ps/global.c:254
+#, fuzzy
 msgid "environment specified an unknown personality"
-msgstr "môi trường đã chỉ định một tính cá nhân chưa biết"
+msgstr "初始值设定项里有未知的字段%qE"
 
 #: ps/global.c:246
-#, c-format
+#, fuzzy, c-format
 msgid "cannot strdup() personality text\n"
-msgstr "không thể strdup() chữ thường cá nhân\n"
+msgstr "无法推断 CD-Text 文件名"
 
 #. Translation Note:
 #. . The following translatable word will be used to recognize the
@@ -682,7 +694,7 @@ msgstr "không thể strdup() chữ thường cá nhân\n"
 #.
 #: ps/global.c:401
 msgid "help"
-msgstr "trợ_giúp"
+msgstr "help"
 
 #. Translation Notes for ps Help #1 ---------------------------------
 #. .  This next group of lines represents 6 pairs of words + abbreviations
@@ -706,162 +718,167 @@ msgstr "trợ_giúp"
 #. .
 #. Translation Hint, Pair #1
 #: ps/help.c:63
+#, fuzzy
 msgid "simple"
-msgstr "đơn_giản"
+msgstr "简单的 IF"
 
 #: ps/help.c:63
 msgid "s"
-msgstr "g"
+msgstr "s"
 
 #. Translation Hint, Pair #2
 #: ps/help.c:65
+#, fuzzy
 msgid "list"
-msgstr "danh_sách"
+msgstr "LIST"
 
 #: ps/help.c:65
+#, fuzzy
 msgid "l"
-msgstr "s"
+msgstr "L"
 
 #. Translation Hint, Pair #3
 #: ps/help.c:67
+#, fuzzy
 msgid "output"
-msgstr "đầu_ra"
+msgstr "输出"
 
 #: ps/help.c:67
+#, fuzzy
 msgid "o"
-msgstr "r"
+msgstr "%s%s 预期为 %#o 却找到 %#o"
 
 #. Translation Hint, Pair #4
 #: ps/help.c:69
+#, fuzzy
 msgid "threads"
-msgstr "tuyến_trình"
+msgstr "不能同时使用 mthreads 和 mlegacy-threads"
 
 #: ps/help.c:69
+#, fuzzy
 msgid "t"
-msgstr "t"
+msgstr "二"
 
 #. Translation Hint, Pair #5
 #: ps/help.c:71
+#, fuzzy
 msgid "misc"
-msgstr "lặt_vặt"
+msgstr "杂项             "
 
 #: ps/help.c:71
+#, fuzzy
 msgid "m"
-msgstr "v"
+msgstr "M"
 
 #. Translation Hint, Pair #6
 #: ps/help.c:73
+#, fuzzy
 msgid "all"
-msgstr "tất_cả"
+msgstr "所有"
 
 #: ps/help.c:73
 msgid "a"
-msgstr "c"
+msgstr ""
 
 #: ps/help.c:94
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Usage:\n"
 " %s [options]\n"
-msgstr ""
-"\n"
-"Cách dùng:\n"
-" %s [các-tùy-chọn]\n"
+msgstr "用法：%s [选项]... main类名 [输出文件]\n"
 
 #: ps/help.c:99
+#, fuzzy
 msgid ""
 "\n"
 "Basic options:\n"
-msgstr ""
-"\n"
-"Các tùy chọn cơ bản:\n"
+msgstr " 选项为：\n"
 
 #: ps/help.c:100
+#, fuzzy
 msgid " -A, -e               all processes\n"
-msgstr " -A, -e               mọi tiến trình\n"
+msgstr "未发现进程。\n"
 
 #: ps/help.c:101
 msgid " -a                   all with tty, except session leaders\n"
-msgstr " -a                   tất với tty, trừ phần dẫn đầu phiên\n"
+msgstr ""
 
 #: ps/help.c:102
 msgid "  a                   all with tty, including other users\n"
-msgstr "  a                   tất với tty, gồm các người dùng khác\n"
+msgstr ""
 
 #: ps/help.c:103
 msgid " -d                   all except session leaders\n"
 msgstr ""
-" -d                   tất cả trừ phần dẫn đầu phiên\n"
-"\n"
 
 #: ps/help.c:104
+#, fuzzy
 msgid " -N, --deselect       negate selection\n"
-msgstr " -N, --deselect       đảo vùng chọn\n"
+msgstr "N  使用文件名选择窗口..................."
 
 #: ps/help.c:105
+#, fuzzy
 msgid "  r                   only running processes\n"
-msgstr "  r                   chỉ các tiến trình đang chạy\n"
+msgstr "“u”只在使用“r”选项的时候才有意义。"
 
 #: ps/help.c:106
 msgid "  T                   all processes on this terminal\n"
-msgstr "  T                   mọi tiến trình trên thiết bị cuối này\n"
+msgstr ""
 
 #: ps/help.c:107
 msgid "  x                   processes without controlling ttys\n"
-msgstr "  x                   tiến trình không điều khiển các tty\n"
+msgstr ""
 
 #: ps/help.c:110
+#, fuzzy
 msgid ""
 "\n"
 "Selection by list:\n"
-msgstr ""
-"\n"
-"Chọn theo danh sách:\n"
+msgstr "需要选择语句"
 
 #: ps/help.c:111
+#, fuzzy
 msgid " -C <command>         command name\n"
-msgstr " -C <lệnh>            tên lệnh\n"
+msgstr "标准命令"
 
 #: ps/help.c:112
 msgid " -G, --Group <GID>    real group id or name\n"
-msgstr " -G, --Group <GID>    tên hay mã số nhóm thật\n"
+msgstr ""
 
 #: ps/help.c:113
 msgid " -g, --group <group>  session or effective group name\n"
-msgstr " -g, --group <nhóm>   tên nhóm chịu tác động hay phiên\n"
+msgstr ""
 
 #: ps/help.c:114
 msgid " -p, p, --pid <PID>   process id\n"
-msgstr " -p, p, --pid <PID>   mã số tiến trình\n"
+msgstr ""
 
 #: ps/help.c:115
 msgid "        --ppid <PID>  parent process id\n"
-msgstr "        --ppid <PID>  mã số tiến trình cha\n"
+msgstr ""
 
 #: ps/help.c:116
 msgid ""
 " -q, q, --quick-pid <PID>\n"
 "                      process id (quick mode)\n"
 msgstr ""
-" -q, q, --quick-pid <PID>\n"
-"                      mã số tiến trình (chế độ nhanh)\n"
 
 #: ps/help.c:118
 msgid " -s, --sid <session>  session id\n"
-msgstr " -s, --sid <phiên>    mã phiên\n"
+msgstr ""
 
 #: ps/help.c:119
 msgid " -t, t, --tty <tty>   terminal\n"
-msgstr " -t, t, --tty <tty>   thiết bị cuối\n"
+msgstr ""
 
 #: ps/help.c:120
 msgid " -u, U, --user <UID>  effective user id or name\n"
-msgstr " -u, U, --user <UID>  mã số hay tên của người dùng chịu tác động\n"
+msgstr ""
 
 #: ps/help.c:121
 msgid " -U, --User <UID>     real user id or name\n"
-msgstr " -U, --User <UID>     mã số hay tên của người dùng thật\n"
+msgstr ""
 
 #: ps/help.c:122
 msgid ""
@@ -870,196 +887,199 @@ msgid ""
 "    a comma-separated list e.g. '-u root,nobody' or\n"
 "    a blank-separated list e.g. '-p 123 4567'\n"
 msgstr ""
-"\n"
-"  Các tùy chọn về chọn lựa nhận đối số của chúng là một trong hai:\n"
-"    một danh sách ngăn cách bằng dấu phẩy ví dụ “-u root,nobody” hoặc là\n"
-"    một danh sách ngăn cách bằng khoảng trắng ví dụ như “-p 123 4567”\n"
 
 #: ps/help.c:128
+#, fuzzy
 msgid ""
 "\n"
 "Output formats:\n"
-msgstr ""
-"\n"
-"Định dạng xuất:\n"
+msgstr "警告：输入和输出格式不兼容"
 
 #: ps/help.c:129
+#, fuzzy
 msgid " -F                   extra full\n"
-msgstr " -F                   đầy đủ phần mở rộng\n"
+msgstr "    -F, --fullname                      打印全名\n"
 
 #: ps/help.c:130
 msgid " -f                   full-format, including command lines\n"
-msgstr " -f                   định dạng đầy đủ, bao gồm các dòng lệnh\n"
+msgstr ""
 
 #: ps/help.c:131
 msgid "  f, --forest         ascii art process tree\n"
-msgstr "  f, --forest         cây tiến trình dạng ascii\n"
+msgstr ""
 
 #: ps/help.c:132
+#, fuzzy
 msgid " -H                   show process hierarchy\n"
-msgstr " -H                   hiển thị thứ bậc tiến trình\n"
+msgstr "显示处理钥匙圈"
 
 #: ps/help.c:133
+#, fuzzy
 msgid " -j                   jobs format\n"
-msgstr " -j                   định dạng công việc\n"
+msgstr "发布寻求协助"
 
 #: ps/help.c:134
 msgid "  j                   BSD job control format\n"
-msgstr "  j                   định dạng điều khiển công việc BSD\n"
+msgstr ""
 
 #: ps/help.c:135
+#, fuzzy
 msgid " -l                   long format\n"
-msgstr " -l                   định dạng dài\n"
+msgstr ""
+"\n"
+"  -l\t对指定用户输出完整的长格式信息\n"
+"  -b\t在长格式中省略用户主目录以及登录 shell\n"
+"  -h\t在长格式中省略用户的项目文件\n"
+"  -p\t在长格式中省略用户的计划文件\n"
+"  -s\t输出短格式信息(默认)\n"
 
 #: ps/help.c:136
+#, fuzzy
 msgid "  l                   BSD long format\n"
-msgstr "  l                   định dạng BSD dài\n"
+msgstr "%s 出现在%L处的格式字符串中"
 
 #: ps/help.c:137
 msgid " -M, Z                add security data (for SELinux)\n"
-msgstr " -M, Z                thêm dữ liệu an ninh (cho SELinux)\n"
+msgstr ""
 
 #: ps/help.c:138
 msgid " -O <format>          preloaded with default columns\n"
-msgstr " -O <định_dạng>       tải trước với các cột mặc định\n"
+msgstr ""
 
 #: ps/help.c:139
 msgid "  O <format>          as -O, with BSD personality\n"
-msgstr "  O <định_dạng>       như -O, với cá tính BSD\n"
+msgstr ""
 
 #: ps/help.c:140
 msgid ""
 " -o, o, --format <format>\n"
 "                      user-defined format\n"
 msgstr ""
-" -o, o, --format <định_dạng>\n"
-"                      định dạng do người dùng định nghĩa\n"
 
 #: ps/help.c:142
+#, fuzzy
 msgid "  s                   signal format\n"
-msgstr "  s                   định dạng tín hiệu\n"
+msgstr "%s：无效的信号"
 
 #: ps/help.c:143
 msgid "  u                   user-oriented format\n"
-msgstr "  u                   định dạng hướng người dùng\n"
+msgstr ""
 
 #: ps/help.c:144
 msgid "  v                   virtual memory format\n"
-msgstr "  v                   định dạng bộ nhớ ảo\n"
+msgstr ""
 
 #: ps/help.c:145
+#, fuzzy
 msgid "  X                   register format\n"
-msgstr "  X                   định dạng thanh ghi\n"
+msgstr "注册"
 
 #: ps/help.c:146
 msgid ""
 " -y                   do not show flags, show rss vs. addr (used with -l)\n"
 msgstr ""
-" -y                   không hiển thị các cờ, hiển thị rss và addr (dùng với -"
-"l)\n"
 
 #: ps/help.c:147
+#, fuzzy
 msgid "     --context        display security context (for SELinux)\n"
-msgstr "     --context        hiển thị ngữ cảnh bảo mật (cho SELinux)\n"
+msgstr "正在更改%s 的安全环境\n"
 
 #: ps/help.c:148
 msgid "     --headers        repeat header lines, one per page\n"
-msgstr "     --headers        lặp lại việc in dòng đầu, mỗi lần một trang\n"
+msgstr ""
 
 #: ps/help.c:149
 msgid "     --no-headers     do not print header at all\n"
-msgstr "     --no-headers     không hiển thị cả phần đầu\n"
+msgstr ""
 
 #: ps/help.c:150
 msgid ""
 "     --cols, --columns, --width <num>\n"
 "                      set screen width\n"
 msgstr ""
-"     --cols, --columns, --width <số>\n"
-"                      đặt chiều rộng màn hình\n"
 
 #: ps/help.c:152
 msgid ""
 "     --rows, --lines <num>\n"
 "                      set screen height\n"
 msgstr ""
-"     --rows, --lines <số>\n"
-"                      đặt chiều cao màn hình\n"
 
 #: ps/help.c:156
+#, fuzzy
 msgid ""
 "\n"
 "Show threads:\n"
-msgstr ""
-"\n"
-"Hiển thị các tiến trình:\n"
+msgstr "[显示]S"
 
 #: ps/help.c:157
+#, fuzzy
 msgid "  H                   as if they were processes\n"
-msgstr "  H                   as if they were processes\n"
+msgstr "未发现进程。\n"
 
 #: ps/help.c:158
 msgid " -L                   possibly with LWP and NLWP columns\n"
-msgstr " -L                   có thể với cột SPID và NLWP\n"
+msgstr ""
 
 #: ps/help.c:159
+#, fuzzy
 msgid " -m, m                after processes\n"
-msgstr " -m, m                sau các tiến trình\n"
+msgstr "‘m’标记"
 
 #: ps/help.c:160
 msgid " -T                   possibly with SPID column\n"
-msgstr " -T                   có thể với cột SPID\n"
+msgstr ""
 
 #: ps/help.c:163
+#, fuzzy
 msgid ""
 "\n"
 "Miscellaneous options:\n"
-msgstr ""
-"\n"
-"Tùy chọn hỗn tạp:\n"
+msgstr "杂项（未分类）"
 
 #: ps/help.c:164
 msgid " -c                   show scheduling class with -l option\n"
-msgstr " -c                   hiển thị lớp lịch biểu với tùy chọn -l\n"
+msgstr ""
 
 #: ps/help.c:165
 msgid "  c                   show true command name\n"
-msgstr "  c                   hiển thị tên câu lệnh đúng\n"
+msgstr ""
 
 #: ps/help.c:166
 msgid "  e                   show the environment after command\n"
-msgstr "  e                   hiển thị môi trường sau lệnh\n"
+msgstr ""
 
 #: ps/help.c:167
 msgid ""
 "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
 msgstr ""
-"  k,    --sort        chỉ định thứ tự sắp xếp là: [+|-]key[,[+|-]key[,...]]\n"
 
 #: ps/help.c:168
+#, fuzzy
 msgid "  L                   show format specifiers\n"
-msgstr "  L                   hiển thị đặc tả định dạng\n"
+msgstr "%s 出现在%L处的格式字符串中"
 
 #: ps/help.c:169
 msgid "  n                   display numeric uid and wchan\n"
-msgstr "  n                   hiển thị mã số và wchan bằng số\n"
+msgstr ""
 
 #: ps/help.c:170
 msgid "  S,    --cumulative  include some dead child process data\n"
-msgstr "  S,    --cumulative  bao gồm một số dữ liệu tiến trình con chết\n"
+msgstr ""
 
 #: ps/help.c:171
 msgid " -y                   do not show flags, show rss (only with -l)\n"
 msgstr ""
-" -y                   không hiển thị các cờ, hiển thị rss (chỉ với -l)\n"
 
 #: ps/help.c:172
+#, fuzzy
 msgid " -V, V, --version     display version information and exit\n"
-msgstr " -V, V, --version     hiển thị phiên bản rồi thoát\n"
+msgstr ""
+"\n"
+"  -v, --version              显示程序版本然后离开"
 
 #: ps/help.c:173
 msgid " -w, w                unlimited output width\n"
-msgstr " -w, w                không giới hạn độ rộng kết xuất\n"
+msgstr ""
 
 #: ps/help.c:174
 #, c-format
@@ -1068,9 +1088,6 @@ msgid ""
 "        --%s <%s|%s|%s|%s|%s|%s>\n"
 "                      display help and exit\n"
 msgstr ""
-"\n"
-"        --%s <%s|%s|%s|%s|%s|%s>\n"
-"                      hiển thị trợ giúp rồi thoát\n"
 
 #. Translation Notes for ps Help #2 ---------------------------------
 #. .  Most of the following c-format string is derived from the 6
@@ -1092,10 +1109,6 @@ msgid ""
 "  or '%s --%s <%s|%s|%s|%s|%s|%s>'\n"
 " for additional help text.\n"
 msgstr ""
-"\n"
-" Hãy chạy lệnh “%s --%s <%s|%s|%s|%s|%s|%s>”\n"
-"          hoặc “%s --%s <%s|%s|%s|%s|%s|%s>”\n"
-" để có thông tin trợ giúp dạng văn bản.\n"
 
 #: ps/help.c:208
 #, c-format
@@ -1103,555 +1116,593 @@ msgid ""
 "\n"
 "For more details see ps(1).\n"
 msgstr ""
-"\n"
-"Để có thêm thông tin vui lòng xem ps(1).\n"
 
 #: ps/output.c:2019
-#, c-format
+#, fuzzy, c-format
 msgid "fix bigness error\n"
-msgstr "sửa lỗi lớn\n"
+msgstr "修正"
 
 #: ps/output.c:2094
-#, c-format
+#, fuzzy, c-format
 msgid "bad alignment code\n"
-msgstr "mã căn chỉnh sai\n"
+msgstr "错误的条件码"
 
 #: ps/output.c:2156
 #, c-format
 msgid "unknown page size (assume 4096)\n"
-msgstr "không hiểu cỡ trang (coi là 4096)\n"
+msgstr ""
 
 #: ps/parser.c:57
+#, fuzzy
 msgid "the option is exclusive: "
-msgstr "tùy chọn bị loại trừ:"
+msgstr "排他"
 
 #: ps/parser.c:87
+#, fuzzy
 msgid "process ID list syntax error"
-msgstr "lỗi cú pháp danh sách mã số tiến trình"
+msgstr "%C处的参数列表语法错误"
 
 #: ps/parser.c:88 ps/parser.c:89
+#, fuzzy
 msgid "process ID out of range"
-msgstr "mã số tiến trình nằm ngoài phạm vi"
+msgstr "未指定进程号"
 
 #: ps/parser.c:102
+#, fuzzy
 msgid "user name does not exist"
-msgstr "tên người dùng không tồn tại"
+msgstr "用户%s 不存在 - 使用root\n"
 
 #: ps/parser.c:108
+#, fuzzy
 msgid "user ID out of range"
-msgstr "mã số người dùng nằm ngoài phạm vi"
+msgstr "设置用户ID 失败"
 
 #: ps/parser.c:121
+#, fuzzy
 msgid "group name does not exist"
-msgstr "tên nhóm không tồn tại"
+msgstr "群组%s 不存在 - 使用root\n"
 
 #: ps/parser.c:127
+#, fuzzy
 msgid "group ID out of range"
-msgstr "mã số nhóm nằm ngoài phạm vi"
+msgstr "设置组ID 失败"
 
 #: ps/parser.c:143 ps/parser.c:167
+#, fuzzy
 msgid "TTY could not be found"
-msgstr "không thể tìm thấy TTY"
+msgstr "不是一个 tty"
 
 #: ps/parser.c:169
+#, fuzzy
 msgid "list member was not a TTY"
-msgstr "liệt kê các thành viên không phải là TTY"
+msgstr "项目成员列表"
 
 #: ps/parser.c:194
+#, fuzzy
 msgid "improper list"
-msgstr "danh sách không thích hợp"
+msgstr "LIST"
 
 #: ps/parser.c:242
 msgid "list of command names must follow -C"
-msgstr "danh sách các tên lệnh phải theo sau -C"
+msgstr ""
 
 #: ps/parser.c:256
 msgid "list of real groups must follow -G"
-msgstr "danh sách các nhóm thật phải theo sau -G"
+msgstr ""
 
 #: ps/parser.c:269
 msgid "list of jobs must follow -J"
-msgstr "danh sách công việc phải theo sau -j"
+msgstr ""
 
 #: ps/parser.c:297
 msgid "format or sort specification must follow -O"
-msgstr "định dạng hay đặc tả sắp xếp phải theo sau -O"
+msgstr ""
 
 #: ps/parser.c:308
 msgid "list of PRM groups must follow -R"
-msgstr "danh sách nhóm PRM phải theo sau -R"
+msgstr ""
 
 #: ps/parser.c:327
 msgid "list of real users must follow -U"
-msgstr "danh sách người dùng thật phải theo sau -U"
+msgstr ""
 
 #: ps/parser.c:368
 msgid "list of session leaders OR effective group names must follow -g"
 msgstr ""
-"danh sách dẫn đầu phiên HOẶC các tên nhóm chịu ảnh hưởng phải theo sau -g"
 
 #: ps/parser.c:379
 msgid "list of session leaders OR effective group IDs was invalid"
-msgstr "danh sách dẫn đầu phiên HOẶC các mã số nhóm chịu ảnh không hợp lệ"
+msgstr ""
 
 #: ps/parser.c:403
 msgid "format specification must follow -o"
-msgstr "đặc tả định dạng phải theo sau -o"
+msgstr ""
 
 #: ps/parser.c:409
 msgid "list of process IDs must follow -p"
-msgstr "danh sách các mã số tiến trình phải theo sau -p"
+msgstr ""
 
 #: ps/parser.c:426
+#, fuzzy
 msgid "the -r option is reserved"
-msgstr "tùy chọn -r chưa dùng"
+msgstr "保留"
 
 #: ps/parser.c:432
 msgid "list of session IDs must follow -s"
-msgstr "danh sách các mã phiên làm việc phải theo sau -s"
+msgstr ""
 
 #: ps/parser.c:440
 msgid "list of terminals (pty, tty...) must follow -t"
-msgstr "danh sách thiết bị cuối  (pty, tty...) phải theo sau -t"
+msgstr ""
 
 #: ps/parser.c:448
 msgid "list of users must follow -u"
-msgstr "danh sách người dùng phải theo sau -u"
+msgstr ""
 
 #: ps/parser.c:470
 msgid "must set personality to get -x option"
-msgstr "phải đặt “cá nhân” để lấy tùy chọn -x"
+msgstr ""
 
 #: ps/parser.c:485
 msgid "list of zones (contexts, labels, whatever?) must follow -z"
 msgstr ""
-"danh sách vùng (ngữ cảnh, nhãn, cái nào đi chăng nữa?) cũng phải theo sau -z"
 
 #: ps/parser.c:492
 msgid "embedded '-' among SysV options makes no sense"
-msgstr "nhúng “-” cùng với các tùy chọn SysV là không có lý"
+msgstr ""
 
 #: ps/parser.c:498
 msgid "unsupported SysV option"
-msgstr "không hỗ trợ tùy chọn SysV"
+msgstr "不支持的 SysV 选项"
 
 #: ps/parser.c:511
 msgid "cannot happen - problem #1"
-msgstr "không thể xảy ra - vấn đề #1"
+msgstr ""
 
 #: ps/parser.c:515
 msgid "cannot happen - problem #2"
-msgstr "không thể xảy ra - vấn đề #2"
+msgstr ""
 
 #: ps/parser.c:517
 msgid "second chance parse failed, not BSD or SysV"
-msgstr "phân tích thay đổi thứ hai gặp lỗi, chẳng phải BSD cũng không SysV"
+msgstr ""
 
 #: ps/parser.c:534
+#, fuzzy
 msgid "option A is reserved"
-msgstr "tùy chọn A chưa dùng"
+msgstr "保留"
 
 #: ps/parser.c:539
+#, fuzzy
 msgid "option C is reserved"
-msgstr "tùy chọn C chưa dùng"
+msgstr "无效的选项“-%c”\n"
 
 #: ps/parser.c:559
 msgid "format or sort specification must follow O"
-msgstr "đặc tả định dạng hay sắp xếp phải theo sau O"
+msgstr ""
 
 #: ps/parser.c:584
 msgid "list of users must follow U"
-msgstr "danh sách người dùng phải theo sau U"
+msgstr ""
 
 #: ps/parser.c:596
 msgid "obsolete W option not supported (you have a /dev/drum?)"
-msgstr "không hỗ trợ tùy chọn cũ W (bạn có /dev/drum?)"
+msgstr ""
 
 #: ps/parser.c:632 ps/parser.c:899 ps/parser.c:908
+#, fuzzy
 msgid "only one heading option may be specified"
-msgstr "chỉ được chỉ ra một tùy chọn về phần đầu"
+msgstr "只能指定一个设备"
 
 #: ps/parser.c:647
 msgid "long sort specification must follow 'k'"
-msgstr "đặc tả sắp xếp dài phải theo sau “k”"
+msgstr ""
 
 #: ps/parser.c:675
 msgid "format specification must follow o"
-msgstr "đặc tả định dạng phải theo sau o"
+msgstr ""
 
 #: ps/parser.c:681
 msgid "list of process IDs must follow p"
-msgstr "danh sách mã số tiến trình phải theo sau p"
+msgstr ""
 
 #: ps/parser.c:739
 msgid "embedded '-' among BSD options makes no sense"
-msgstr "nhúng “-” giữa những tùy chọn BSD là không hợp lý"
+msgstr ""
 
 #: ps/parser.c:745
+#, fuzzy
 msgid "unsupported option (BSD syntax)"
-msgstr "tùy chọn không được hỗ trợ (cú pháp BSD)"
+msgstr "不支持旧语法：%s\n"
 
 #: ps/parser.c:831 ps/parser.c:843
+#, fuzzy
 msgid "unknown gnu long option"
-msgstr "không hiểu tùy chọn dạng dài gnu"
+msgstr "%s：不明选项 -%c\n"
 
 #: ps/parser.c:851
 msgid "list of real groups must follow --Group"
-msgstr "danh sách nhóm thật phải theo sau --Group"
+msgstr ""
 
 #: ps/parser.c:859
 msgid "list of real users must follow --User"
-msgstr "danh sách người dùng thật phải theo sau --User"
+msgstr ""
 
 #: ps/parser.c:878
 msgid "number of columns must follow --cols, --width, or --columns"
-msgstr "số lượng cột phải theo sau --cols, --width, hay --columns"
+msgstr ""
 
 #: ps/parser.c:881
 msgid "option --cumulative does not take an argument"
-msgstr "tùy chọn --cumulative không nhận đối số"
+msgstr ""
 
 #: ps/parser.c:886
 msgid "option --deselect does not take an argument"
-msgstr "tùy chọn --deselect không nhận đối số"
+msgstr ""
 
 #: ps/parser.c:898
 msgid "option --no-heading does not take an argument"
-msgstr "tùy chọn --no-heading không nhận đối số"
+msgstr ""
 
 #: ps/parser.c:907
 msgid "option --heading does not take an argument"
-msgstr "tùy chọn --heading không nhận đối số"
+msgstr ""
 
 #: ps/parser.c:913
 msgid "option --forest does not take an argument"
-msgstr "tùy chọn --forest không nhận đối số"
+msgstr ""
 
 #: ps/parser.c:919
+#, fuzzy
 msgid "format specification must follow --format"
-msgstr "đặc tả định dạng phải theo sau --format"
+msgstr "%C处重复的格式规格"
 
 #: ps/parser.c:925
 msgid "list of effective groups must follow --group"
-msgstr "danh sách nhóm chịu ảnh hưởng phải theo sau --group"
+msgstr ""
 
 #: ps/parser.c:943
 msgid "list of process IDs must follow --pid"
-msgstr "danh sách mã số tiến trình phải theo sau --pid"
+msgstr ""
 
 #: ps/parser.c:959
 msgid "list of process IDs must follow --ppid"
-msgstr "danh sách mã số tiến trình phải theo sau --ppid"
+msgstr ""
 
 #: ps/parser.c:977
 msgid "number of rows must follow --rows or --lines"
-msgstr "số dòng phải theo sau --rows hay --lines"
+msgstr ""
 
 #: ps/parser.c:981
 msgid "some sid thing(s) must follow --sid"
-msgstr "một số thứ sid phải theo sau --sid"
+msgstr ""
 
 #: ps/parser.c:989
 msgid "long sort specification must follow --sort"
-msgstr "đặc tả sắp xếp dài phải theo sau --sort"
+msgstr ""
 
 #: ps/parser.c:995
 msgid "list of ttys must follow --tty"
-msgstr "danh sách tty phải theo sau --tty"
+msgstr ""
 
 #: ps/parser.c:1003
 msgid "list of effective users must follow --user"
-msgstr "danh sách người dùng chịu ảnh hưởng phải theo sau --user"
+msgstr ""
 
 #: ps/parser.c:1119
+#, fuzzy
 msgid "way bad"
-msgstr "sai đường"
+msgstr "错误的寄存器名"
 
 #: ps/parser.c:1133
+#, fuzzy
 msgid "garbage option"
-msgstr "tùy chọn rác"
+msgstr "(} 之后的无用数据)"
 
 #: ps/parser.c:1137
 msgid "something broke"
-msgstr "có cái gì đó hỏng"
+msgstr ""
 
 #: ps/parser.c:1157
 msgid "thread display conflicts with forest display"
-msgstr "hiển thị tuyến trình xung đột với forest"
+msgstr ""
 
 #: ps/parser.c:1162
 msgid "thread flags conflict; can't use H with m or -m"
-msgstr "xung đột cờ tuyến trình; không thể dùng H cùng với m hay -m"
+msgstr ""
 
 #: ps/parser.c:1164
 msgid "thread flags conflict; can't use both m and -m"
-msgstr "xung đột cờ tuyến trình; không thể dùng cả m và -m"
+msgstr ""
 
 #: ps/parser.c:1166
 msgid "thread flags conflict; can't use both -L and -T"
-msgstr "xung đột cờ tuyến trình; không thể dùng cả -L và -T"
+msgstr ""
 
 #: ps/parser.c:1239 ps/parser.c:1240
-#, c-format
+#, fuzzy, c-format
 msgid "error: %s\n"
-msgstr "lỗi: %s\n"
+msgstr "%K调用%qs，声明有错误属性：%s"
 
 #: ps/select.c:71
 msgid "process selection options conflict"
-msgstr "tùy chọn chọn tiến trình xung đột"
+msgstr ""
 
 #: ps/sortformat.c:106 ps/sortformat.c:111
 msgid "seriously crashing: goodbye cruel world"
-msgstr "đổ vỡ nghiêm trọng: chào tạm biệt thế giới phũ phàng"
+msgstr ""
 
 #: ps/sortformat.c:146
 msgid "improper AIX field descriptor"
-msgstr "bộ mô tả trường AIX không thích hợp"
+msgstr ""
 
 #: ps/sortformat.c:167
+#, fuzzy
 msgid "unknown AIX field descriptor"
-msgstr "không hiểu bộ mô tả trường AIX"
+msgstr "初始值设定项里有未知的字段%qE"
 
 #: ps/sortformat.c:172
 msgid "AIX field descriptor processing bug"
-msgstr "tiến trình bộ mô tả trường AIX lỗi"
+msgstr ""
 
 #: ps/sortformat.c:285
 #, c-format
 msgid "unknown user-defined format specifier \"%s\""
-msgstr "không hiểu chỉ định định dạng người dùng định nghĩa \"%s\""
+msgstr ""
 
 #: ps/sortformat.c:311
+#, fuzzy
 msgid "empty format list"
-msgstr "danh sách định dạng trống"
+msgstr "空白标签格式"
 
 #: ps/sortformat.c:312
+#, fuzzy
 msgid "improper format list"
-msgstr "danh sách định dạng không thích hợp"
+msgstr "LIST"
 
 #: ps/sortformat.c:313
 msgid "column widths must be unsigned decimal numbers"
-msgstr "độ rộng cột phải là số thập phân không dấu"
+msgstr ""
 
 #: ps/sortformat.c:314
 msgid "can not set width for a macro (multi-column) format specifier"
-msgstr "không thể đặt độ rộng cho một chỉ định định dạng macro (đa cột)"
+msgstr ""
 
 #: ps/sortformat.c:367 ps/sortformat.c:383
+#, fuzzy
 msgid "improper sort list"
-msgstr "danh sách sắp xếp không thích hợp"
+msgstr "排序"
 
 #: ps/sortformat.c:378
+#, fuzzy
 msgid "empty sort list"
-msgstr "danh sách sắp xếp trống rỗng"
+msgstr "排序"
 
 #: ps/sortformat.c:399 ps/sortformat.c:477 ps/sortformat.c:479
+#, fuzzy
 msgid "unknown sort specifier"
-msgstr "không hiểu chỉ định sắp xếp"
+msgstr "排序"
 
 #: ps/sortformat.c:426 ps/sortformat.c:437 ps/sortformat.c:443
+#, fuzzy
 msgid "bad sorting code"
-msgstr "mã sắp xếp sai"
+msgstr "错误的内建代码"
 
 #: ps/sortformat.c:440
 msgid "PPID sort and forest output conflict"
-msgstr "kết xuât forest và sắp xếp PPID xung đột nhau"
+msgstr ""
 
 #: ps/sortformat.c:514
 msgid "option -O can not follow other format options"
-msgstr "tùy chọn -O không thể theo các tùy chọn định dạng khác"
+msgstr ""
 
 #: ps/sortformat.c:521 ps/sortformat.c:539
+#, fuzzy
 msgid "multiple sort options"
-msgstr "đã chỉ ra nhiều tùy chọn sắp xếp"
+msgstr "排序"
 
 #: ps/sortformat.c:529
 msgid "option O is neither first format nor sort order"
 msgstr ""
-"tùy chọn O không phải là định dạng đầu cũng không phải là thứ tự sắp xếp"
 
 #: ps/sortformat.c:656
 msgid "modifier -y without format -l makes no sense"
-msgstr "-y chỉnh sửa mà không có -l định dạng là không hợp lý"
+msgstr ""
 
 #: ps/sortformat.c:756
 msgid "bug: must reset the list first"
-msgstr "lỗi: phải đặt lại danh sách trước"
+msgstr ""
 
 #: ps/sortformat.c:794
 msgid "tell <procps@freelists.org> what you expected"
-msgstr "gửi thư cho <procps@freelists.org> là cái bạn cần"
+msgstr ""
 
 #: ps/sortformat.c:804
 msgid ""
 "tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
 msgstr ""
-"gửi thư cho <procps@freelists.org> là cái bạn cần (-L/-T, -m/m/H, và "
-"$PS_FORMAT)"
 
 #: ps/sortformat.c:821
-#, c-format
+#, fuzzy, c-format
 msgid "warning: $PS_FORMAT ignored. (%s)\n"
-msgstr "cảnh báo: $PS_FORMAT bị bỏ qua. (%s)\n"
+msgstr "%s 和 %s 出现在 %s 格式字符串中时被忽略"
 
 #: ps/sortformat.c:826 ps/sortformat.c:836
+#, fuzzy
 msgid "conflicting format options"
-msgstr "có xung đột trong các tùy chọn định dạng"
+msgstr "格式"
 
 #: ps/sortformat.c:827
 msgid "can not use output modifiers with user-defined output"
-msgstr "không thể dùng bộ chỉnh sửa với kết xuất người dùng định nghĩa"
+msgstr ""
 
 #: ps/sortformat.c:828
 msgid "-L/-T with H/m/-m and -o/-O/o/O is nonsense"
-msgstr "-L/-T với H/m/-m và -o/-O/o/O là không hợp lý"
+msgstr ""
 
 #: ps/sortformat.c:886
 msgid "internal error: no PID or PPID for -j option"
-msgstr "lỗi nội tại: không có PID hay PPID cho tùy chọn -j"
+msgstr ""
 
 #: ps/sortformat.c:888
+#, fuzzy
 msgid "lost my PGID"
-msgstr "mất mã số tiến trình nhóm cha"
+msgstr "资源丢失"
 
 #: ps/sortformat.c:901
+#, fuzzy
 msgid "internal error: no PRI for -c option"
-msgstr "lỗi nội bộ: không PRI cho tùy chọn -c"
+msgstr "内部错误 -- 该选项尚未实现"
 
 #: ps/sortformat.c:904
+#, fuzzy
 msgid "lost my CLS"
-msgstr "mất CLS của tôi"
+msgstr "资源丢失"
 
 #: ps/sortformat.c:909
 msgid "-T with H/-m/m but no PID for SPID to follow"
-msgstr "-T với H/-m/m nhưng lại không có mã số tiến trình cho SPID để theo"
+msgstr ""
 
 #: ps/sortformat.c:920
 msgid "-L with H/-m/m but no PID/PGID/SID/SESS for NLWP to follow"
-msgstr "-L với H/-m/m nhưng không có PID/PGID/SID/SESS cho NLWP để theo"
+msgstr ""
 
 #: pwdx.c:37
-#, c-format
+#, fuzzy, c-format
 msgid " %s [options] pid...\n"
-msgstr " %s [các-tùy-chọn] pid...\n"
+msgstr "%*s 用户     进程号 权限   命令\n"
 
 #: pwdx.c:113
-#, c-format
+#, fuzzy, c-format
 msgid "invalid process id: %s"
-msgstr "mã số tiến trình không hợp lệ: %s"
+msgstr "%s：无效的进程号"
 
 #: skill.c:185
-#, c-format
+#, fuzzy, c-format
 msgid "cannot open file %s"
-msgstr "không thể mở tập tin %s"
+msgstr "无法打开协议文件 \"%s\": %s\n"
 
 #: skill.c:326
-#, c-format
+#, fuzzy, c-format
 msgid " %s [options] <pid> [...]\n"
-msgstr " %s [các-tùy-chọn] <pid> [...]\n"
+msgstr "%*s 用户     进程号 权限   命令\n"
 
 #: skill.c:328
 msgid " <pid> [...]            send signal to every <pid> listed\n"
 msgstr ""
-" <pid> [...]            gửi tín hiệu cho mọi mã số tiến trình đã liệt kê\n"
 
 #: skill.c:329
 msgid ""
 " -<signal>, -s, --signal <signal>\n"
 "                        specify the <signal> to be sent\n"
 msgstr ""
-" -<signal>, -s, --signal <tín_hiệu>\n"
-"                        chỉ định tín hiệu sẽ được gửi\n"
 
 #: skill.c:331
 msgid ""
 " -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
 msgstr ""
-" -l, --list=[<tín_hiệu>]  lệt kê tất cả tên tín hiệu, hoặc chuyển đổi một "
-"cái thành tên\n"
 
 #: skill.c:332
 msgid " -L, --table            list all signal names in a nice table\n"
-msgstr " -L, --table            liệt kê mọi tên tín hiệu trong bản nice\n"
+msgstr ""
 
 #: skill.c:347
-#, c-format
+#, fuzzy, c-format
 msgid " %s [signal] [options] <expression>\n"
-msgstr " %s [tín-hiệu] [các-tùy-chọn] <biểu-thức>\n"
+msgstr "  %s 的选项：\n"
 
 #: skill.c:351
 #, c-format
 msgid " %s [new priority] [options] <expression>\n"
-msgstr " %s [mức ưu tiên mới] [các-tùy-chọn] <biểu thức>\n"
+msgstr ""
 
 #: skill.c:355
 msgid " -f, --fast         fast mode (not implemented)\n"
-msgstr " -f, --fast         chế độ nhanh (chưa thực hiện)\n"
+msgstr ""
 
 #: skill.c:356
 msgid " -i, --interactive  interactive\n"
-msgstr " -i, --interactive  tương tác\n"
+msgstr ""
 
 #: skill.c:357
+#, fuzzy
 msgid " -l, --list         list all signal names\n"
-msgstr " -l, --list         liệt kê mọi tên tín hiệu\n"
+msgstr ""
+"      killall -l, --list\n"
+"      killall -V, --version\n"
+"\n"
+"  -e,--exact          对长名字需要严格匹配\n"
+"  -I,--ignore-case    匹配进程名时忽略大小写\n"
+"  -g,--process-group  杀死进程组而不是进程\n"
+"  -y,--younger-than   杀死比 时间 年轻的进程\n"
+"  -o,--older-than     杀死比 时间 年老的进程\n"
+"  -i,--interactive    在杀死进程前要求确认\n"
+"  -l,--list           显示所有的信号名\n"
+"  -q,--quiet          不要打印抱怨信息\n"
+"  -r,--regexp         将 \"进程名\" 视为扩展正则表达式\n"
+"  -s,--signal 信号    发送 \"信号\" 而不是 SIGTERM\n"
+"  -u,--user 用户      仅杀死 \"用户\" 的进程\n"
+"  -v,--verbose        信号成功送出时打印信息\n"
+"  -V,--version        显示版本信息\n"
+"  -w,--wait           等待进程死亡\n"
 
 #: skill.c:358
 msgid " -L, --table        list all signal names in a nice table\n"
-msgstr " -L, --table        liệt kê mọi tên tín hiệu trong bảng nice\n"
+msgstr ""
 
 #: skill.c:359
 msgid ""
 " -n, --no-action    do not actually kill processes; just print what would "
 "happen\n"
 msgstr ""
-" -n, --no-action    không thực hiện giết tiến trình thật; chỉ hiển thị những "
-"gì có thể xảy ra\n"
 
 #: skill.c:360
+#, fuzzy
 msgid " -v, --verbose      explain what is being done\n"
-msgstr " -v, --verbose      giải thích đang làm gì\n"
+msgstr ""
+"  -u, --update\t\t\t只在源文件比目标文件新，或目标文件\n"
+"\t\t\t\t\t不存在时才进行复制\n"
+"  -v, --verbose\t\t显示详细的进行步骤\n"
+"  -x, --one-file-system\t不跨越文件系统进行操作\n"
 
 #: skill.c:361
+#, fuzzy
 msgid " -w, --warnings     enable warnings (not implemented)\n"
-msgstr " -w, --warnings     bật cảnh báo (chưa thực hiện)\n"
+msgstr "启用所有关于“XX未使用”的警告"
 
 #: skill.c:363
 msgid ""
 "Expression can be: terminal, user, pid, command.\n"
 "The options below may be used to ensure correct interpretation.\n"
 msgstr ""
-"Biểu thức có thể là: terminal, user, pid, command.\n"
-"Các tùy chọn ở phía dưới có thể được dùng để đảm bảo rằng nó phiên dịch "
-"đúng.\n"
 
 #: skill.c:365
+#, fuzzy
 msgid " -c, --command <command>  expression is a command name\n"
-msgstr " -c, --command <lệnh>  biểu thức là một tên lệnh\n"
+msgstr "用法：%s [选项]... [-] [名称=值]... [命令 [参数]...]\n"
 
 #: skill.c:366
 msgid " -p, --pid <pid>          expression is a process id number\n"
-msgstr " -p, --pid <pid>          biểu thức là mã số tiến trình\n"
+msgstr ""
 
 #: skill.c:367
 msgid " -t, --tty <tty>          expression is a terminal\n"
-msgstr " -t, --tty <tty>          biểu thức là một thiết bị cuối\n"
+msgstr ""
 
 #: skill.c:368
+#, fuzzy
 msgid " -u, --user <username>    expression is a username\n"
-msgstr " -u, --user <tài_khoản>    biểu thức là một tên tài khoản người dùng\n"
+msgstr "设置 USER 作为代理服务器用户名。"
 
 #: skill.c:370
 msgid "Alternatively, expression can be:\n"
-msgstr "Thay vào đó, biểu thức có thể là:\n"
+msgstr ""
 
 #: skill.c:371
 msgid ""
 " --ns <pid>               match the processes that belong to the same\n"
 "                          namespace as <pid>\n"
 msgstr ""
-" --ns <pid>               khớp tiến trình mà nó có cùng không gian tên\n"
-"                          với mã số tiến trình này\n"
 
 #: skill.c:373
 msgid ""
@@ -1659,9 +1710,6 @@ msgid ""
 "                          the --ns option; available namespaces are\n"
 ":                          ipc, mnt, net, pid, user, uts\n"
 msgstr ""
-" --nslist <ns,...>        liệt kê không gian tên nào sẽ xem xét cho\n"
-"                          tùy chọn --ns; các không gian tên sẵn có là:\n"
-":                          ipc, mnt, net, pid, user, uts\n"
 
 #: skill.c:383
 #, c-format
@@ -1671,10 +1719,6 @@ msgid ""
 "Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.\n"
 "Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"
 msgstr ""
-"\n"
-"Tín hiệu mặc định là TERM. Dùng -l hoặc -L để liệt kê các tín hiệu sẵn có.\n"
-"Các tín hiệu thực sự hữu dụng bao gồm HUP, INT, KILL, STOP, CONT, và 0.\n"
-"Các tín hiệu thay thế có thể chỉ định theo ba cách: -SIGKILL -KILL -9\n"
 
 #: skill.c:390
 #, c-format
@@ -1684,296 +1728,305 @@ msgid ""
 "Priority numbers range from +20 (slowest) to -20 (fastest).\n"
 "Negative priority numbers are restricted to administrative users.\n"
 msgstr ""
-"\n"
-"Mức ưu tiên mặc định là +4. (snice +4 ...)\n"
-"Số của mức ưu tiên là từ +20 (thấp nhất) đến -20 (nhanh nhất).\n"
-"Các mức ưu tiên là số âm là được hạn chế cho những người quản trị.\n"
 
 #: skill.c:464
-#, c-format
+#, fuzzy, c-format
 msgid "unknown signal name %s"
-msgstr "không hiểu tên tín hiệu: %s"
+msgstr "未知的寄存器名：%s"
 
 #: skill.c:484
-#, c-format
+#, fuzzy, c-format
 msgid "invalid argument %c"
-msgstr "đối số %c không hợp lệ"
+msgstr "(无效的参数)"
 
 #: skill.c:521
-#, c-format
+#, fuzzy, c-format
 msgid "something at line %d\n"
-msgstr "cái gì đó tại dòng %d\n"
+msgstr "行 %d：第二个 %%prep\n"
 
 #: skill.c:544
-#, c-format
+#, fuzzy, c-format
 msgid "priority %lu out of range"
-msgstr "mức ưu tiên %lu nằm ngoài phạm vi"
+msgstr "请求的 init_priority 越界"
 
 #: skill.c:657
-#, c-format
+#, fuzzy, c-format
 msgid "invalid pid number %s"
-msgstr "mã số tiến trình không hợp lệ %s"
+msgstr "无效的区块编号%s"
 
 #: skill.c:661
 msgid "error reading reference namespace information"
-msgstr "lỗi đọc thông tin không gian tên tham chiếu"
+msgstr ""
 
 #: skill.c:669
+#, fuzzy
 msgid "invalid namespace list"
-msgstr "danh sách không gian tên không hợp lệ"
+msgstr "无效的命名空间名"
 
 #: skill.c:707
+#, fuzzy
 msgid "no process selection criteria"
-msgstr "chưa có tiêu chí chọn tiến trình"
+msgstr "需要选择语句"
 
 #: skill.c:710
 msgid "general flags may not be repeated"
-msgstr "các cờ chung không thể lặp lại"
+msgstr ""
 
 #: skill.c:713
 msgid "-i makes no sense with -v, -f, and -n"
-msgstr "-i không hợp lý với -v, -f, và -n"
+msgstr ""
 
 #: skill.c:715
 msgid "-v makes no sense with -i and -f"
-msgstr "-v không hợp lý với -i và -f"
+msgstr ""
 
 #: skill.c:765
-#, c-format
+#, fuzzy, c-format
 msgid "skill: \"%s\" is not supported\n"
-msgstr "skill: \"%s\" không được hỗ trợ\n"
+msgstr "%s：不支持"
 
 #: slabtop.c:195
+#, fuzzy
 msgid " -d, --delay <secs>  delay updates\n"
-msgstr " -d, --delay <giây>  khoảng trễ giữa những lần cập nhật\n"
+msgstr " D - 换行 tx 延迟 (ms)\t:"
 
 #: slabtop.c:196
 msgid " -o, --once          only display once, then exit\n"
-msgstr " -o, --once          chỉ hiển thị một lần rồi thoát\n"
+msgstr ""
 
 #: slabtop.c:197
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
-msgstr " -s, --sort <kýtự>   chỉ định tiêu chí xếp bằng ký tự (xem ở dưới)\n"
+msgstr ""
 
 #: slabtop.c:202
 msgid ""
 "\n"
 "The following are valid sort criteria:\n"
 msgstr ""
-"\n"
-"Có các tiêu chí sắp xếp hợp lệ sau:\n"
 
 #: slabtop.c:203
 msgid " a: sort by number of active objects\n"
-msgstr " a: xếp theo số đối tượng đang hoạt động\n"
+msgstr ""
 
 #: slabtop.c:204
 msgid " b: sort by objects per slab\n"
-msgstr " b: xếp theo đối tượng trên mỗi slab\n"
+msgstr ""
 
 #: slabtop.c:205
+#, fuzzy
 msgid " c: sort by cache size\n"
-msgstr " c: xếp theo kích cỡ bộ nhớ tạm\n"
+msgstr "一级缓存列长度"
 
 #: slabtop.c:206
+#, fuzzy
 msgid " l: sort by number of slabs\n"
-msgstr " l: xếp theo số lượng slab\n"
+msgstr "在%L处把一个无穷大或非数转换为 INTEGER"
 
 #: slabtop.c:207
 msgid " v: sort by number of active slabs\n"
-msgstr " v: xếp theo số slab hoạt động\n"
+msgstr ""
 
 #: slabtop.c:208
+#, fuzzy
 msgid " n: sort by name\n"
-msgstr " n: xếp theo tên\n"
+msgstr "  [N]          - 使用名称的实例 [数量]\n"
 
 #: slabtop.c:209
 msgid " o: sort by number of objects (the default)\n"
-msgstr " o: xếp theo số của đối tượng (mặc định)\n"
+msgstr ""
 
 #: slabtop.c:210
 msgid " p: sort by pages per slab\n"
-msgstr " p: xếp theo số trang trên mỗi slab\n"
+msgstr ""
 
 #: slabtop.c:211
 msgid " s: sort by object size\n"
-msgstr " s: xếp theo kích cỡ đối tượng\n"
+msgstr ""
 
 #: slabtop.c:212
 msgid " u: sort by cache utilization\n"
-msgstr " u: xếp theo mức tiêu thụ bộ nhớ tạm\n"
+msgstr ""
 
 #: slabtop.c:321
+#, fuzzy
 msgid "illegal delay"
-msgstr "giá trị trễ không hợp lệ"
+msgstr "<非法的精度>"
 
 #: slabtop.c:324 tload.c:137 vmstat.c:957
+#, fuzzy
 msgid "delay must be positive integer"
-msgstr "khoảng trễ phải là số dương"
+msgstr "“N”的值必须是正数。"
 
 #: slabtop.c:346
+#, fuzzy
 msgid "terminal setting retrieval"
-msgstr "thu hồi các cài đặt thiết bị cuối"
+msgstr "设置检索配额为 NUMBER。"
 
 #. Translation Hint: Next five strings must not
 #. * exceed 35 length in characters.
 #: slabtop.c:385
-#, no-c-format
+#, fuzzy, no-c-format
 msgid "Active / Total Objects (% used)"
-msgstr "ĐTượng Hoạt động / Tổng (% dùng)"
+msgstr "局部对象的总大小太大"
 
 #: slabtop.c:389
 #, no-c-format
 msgid "Active / Total Slabs (% used)"
-msgstr "Slab   Hoạt động / Tổng (% dùng)"
+msgstr ""
 
 #: slabtop.c:393
 #, no-c-format
 msgid "Active / Total Caches (% used)"
-msgstr "NhTạm  Hoạt động / Tổng (% dùng)"
+msgstr ""
 
 #: slabtop.c:397
-#, no-c-format
+#, fuzzy, no-c-format
 msgid "Active / Total Size (% used)"
-msgstr "Cỡ     Hoạt động / Tổng (% dùng)"
+msgstr "局部对象的总大小太大"
 
 #: slabtop.c:400
+#, fuzzy
 msgid "Minimum / Average / Maximum Object"
-msgstr "ĐTượng Tối thiểu / TBình / Tối đa"
+msgstr "默认 %d 最小 %d 最大 %d"
 
 #. Translation Hint: Please keep alignment of the
 #. * following intact.
 #: slabtop.c:409
 msgid "  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"
-msgstr "    ĐT  HOẠTĐ DÙNG  ĐT   CỠ  SLABS  ĐT/SLAB NhTẠM   CỠ  TÊN"
+msgstr ""
 
 #: sysctl.c:92
-#, c-format
+#, fuzzy, c-format
 msgid "separators should not be repeated: %s"
-msgstr "bộ phân chia không thể lặp lại: %s"
+msgstr "格式字符串中有重复的 %s"
 
 #: sysctl.c:111
-#, c-format
+#, fuzzy, c-format
 msgid " %s [options] [variable[=value] ...]\n"
-msgstr " %s [các-tùy-chọn] [biến[=giá_trị] ...]\n"
+msgstr "  %s 的选项：\n"
 
 #: sysctl.c:114
+#, fuzzy
 msgid "  -a, --all            display all variables\n"
-msgstr "  -a, --all            hiển thị mọi biến\n"
+msgstr "所有变量默认位于 near 节中"
 
 #: sysctl.c:115
+#, fuzzy
 msgid "  -A                   alias of -a\n"
-msgstr "  -A                   bí danh của -a\n"
+msgstr "-fmit-class-file 的别名"
 
 #: sysctl.c:116
+#, fuzzy
 msgid "  -X                   alias of -a\n"
-msgstr "  -X                   bí danh của -a\n"
+msgstr "-fmit-class-file 的别名"
 
 #: sysctl.c:117
 msgid "      --deprecated     include deprecated parameters to listing\n"
-msgstr "      --deprecated     bao gồm các tham số cũ vào liệt kê\n"
+msgstr ""
 
 #: sysctl.c:118
 msgid "  -b, --binary         print value without new line\n"
-msgstr "  -b, --binary         hiển thị giá trị mà không có ký tự dòng mới\n"
+msgstr ""
 
 #: sysctl.c:119
 msgid "  -e, --ignore         ignore unknown variables errors\n"
-msgstr "  -e, --ignore         lờ đi các lỗi biến không hiểu\n"
+msgstr ""
 
 #: sysctl.c:120
 msgid "  -N, --names          print variable names without values\n"
-msgstr "  -N, --names          hiển thị các tên biến mà không có giá trị\n"
+msgstr ""
 
 #: sysctl.c:121
 #, fuzzy
 msgid "  -n, --values         print only values of the given variable(s)\n"
-msgstr "  -n, --values         chỉ hiển thị giá trị của các biến\n"
+msgstr "所有变量默认位于 near 节中"
 
 #: sysctl.c:122
 msgid "  -p, --load[=<file>]  read values from file\n"
-msgstr "  -p, --load[=<tập-tin>] đọc giá-trị từ tập-tin\n"
+msgstr ""
 
 #: sysctl.c:123
+#, fuzzy
 msgid "  -f                   alias of -p\n"
-msgstr "  -f                   bí danh của -p\n"
+msgstr "(p)"
 
 #: sysctl.c:124
 msgid "      --system         read values from all system directories\n"
-msgstr "      --system         đọc giá trị từ mọi thư mục hệ thống\n"
+msgstr ""
 
 #: sysctl.c:125
 msgid ""
 "  -r, --pattern <expression>\n"
 "                       select setting that match expression\n"
 msgstr ""
-"  -r, --pattern <biểu thức>\n"
-"                       chọn các cài đặt mà nó khớp với biểu thức\n"
 
 #: sysctl.c:127
 msgid "  -q, --quiet          do not echo variable set\n"
-msgstr "  -q, --quiet          không in ra tập hợp biến\n"
+msgstr ""
 
 #: sysctl.c:128
 msgid "  -w, --write          enable writing a value to variable\n"
-msgstr "  -w, --write          bật ghi giá trị cho biến\n"
+msgstr ""
 
 #: sysctl.c:129
+#, fuzzy
 msgid "  -o                   does nothing\n"
-msgstr "  -o                   không làm gì cả\n"
+msgstr "不起作用。为向前兼容保留的选项。"
 
 #: sysctl.c:130
+#, fuzzy
 msgid "  -x                   does nothing\n"
-msgstr "  -x                   không làm gì cả\n"
+msgstr "不起作用。为向前兼容保留的选项。"
 
 #: sysctl.c:131
+#, fuzzy
 msgid "  -d                   alias of -h\n"
-msgstr "  -d                   bí danh của -h\n"
+msgstr "栏位别名"
 
 #: sysctl.c:177 sysctl.c:233 sysctl.c:449
-#, c-format
+#, fuzzy, c-format
 msgid "\"%s\" is an unknown key"
-msgstr "\"%s\" là một khóa chưa biết"
+msgstr "%s: 不是带装甲的(armored)公钥。\n"
 
 #: sysctl.c:200 sysctl.c:351 sysctl.c:427
 #, c-format
 msgid "cannot stat %s"
-msgstr "không thể lấy thống kê %s"
+msgstr "无法获取%s 的文件状态(stat)"
 
 #: sysctl.c:238 sysctl.c:280 sysctl.c:454
-#, c-format
+#, fuzzy, c-format
 msgid "permission denied on key '%s'"
-msgstr "không đủ thẩm quyền với khóa “%s”"
+msgstr "无法格式化设备 %s，权限被拒绝。\n"
 
 #: sysctl.c:245 sysctl.c:297
-#, c-format
+#, fuzzy, c-format
 msgid "reading key \"%s\""
-msgstr "đọc khóa \"%s\""
+msgstr "读取%s 时出错"
 
 #: sysctl.c:335
-#, c-format
+#, fuzzy, c-format
 msgid "unable to open directory \"%s\""
-msgstr "không thể mở thư mục \"%s\""
+msgstr "无法打开 %s。"
 
 #: sysctl.c:392
-#, c-format
+#, fuzzy, c-format
 msgid "\"%s\" must be of the form name=value"
-msgstr "\"%s\" phải có dạng tên=giá_trị"
+msgstr "%s：--param 实参的形式应该为“名字=值”"
 
 #: sysctl.c:401
-#, c-format
+#, fuzzy, c-format
 msgid "malformed setting \"%s\""
-msgstr "cài đặt sai dạng \"%s\""
+msgstr "设置%s 的权限"
 
 #: sysctl.c:421
-#, c-format
+#, fuzzy, c-format
 msgid "%s is deprecated, value not set"
-msgstr "%s đã lỗi thời, giá trị không được đặt"
+msgstr "必须为 %s 设置一个值\n"
 
 #: sysctl.c:434 sysctl.c:439 sysctl.c:458 sysctl.c:467
-#, c-format
+#, fuzzy, c-format
 msgid "setting key \"%s\""
-msgstr "đặt khóa \"%s\""
+msgstr "设置%s 的权限"
 
 #: sysctl.c:529
 #, c-format
@@ -1981,36 +2034,33 @@ msgid ""
 "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
 "expanded."
 msgstr ""
-"GLOB_TILDE không được hỗ trợ trên nền tảng của bạn, dấu sóng trong \"%s\" sẽ "
-"không được mở rộng."
 
 #: sysctl.c:535
+#, fuzzy
 msgid "glob failed"
-msgstr "glob gặp lỗi"
+msgstr "不使用 glob 参数"
 
 #: sysctl.c:541
-#, c-format
+#, fuzzy, c-format
 msgid "cannot open \"%s\""
-msgstr "không thể mở \"%s\""
+msgstr "无法打开 %s！"
 
 #: sysctl.c:563 sysctl.c:579
-#, c-format
+#, fuzzy, c-format
 msgid "%s(%d): invalid syntax, continuing..."
-msgstr "%s(%d): cú pháp không hợp lệ, tiếp tục..."
+msgstr "定位“%s”时语法无效。"
 
 #: sysctl.c:682 sysctl.c:689
 #, c-format
 msgid "* Applying %s ...\n"
-msgstr "* Đang áp dụng %s ...\n"
+msgstr ""
 
 #: sysctl.c:841
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "no variables specified\n"
 "Try `%s --help' for more information."
-msgstr ""
-"chưa chỉ ra biến nào\n"
-"Hãy chạy lệnh “%s --help” để có thêm thông tin."
+msgstr "尝试“%s --help”以获得更多信息。\n"
 
 #: sysctl.c:845
 #, c-format
@@ -2018,41 +2068,43 @@ msgid ""
 "options -N and -q cannot coexist\n"
 "Try `%s --help' for more information."
 msgstr ""
-"các tùy chọn -N và -q không thể cùng tồn tại\n"
-"Chạy lệnh “%s --help” để biết chi tiết."
 
 #: tload.c:75
 msgid "screen too small"
 msgstr ""
 
 #: tload.c:91
-#, c-format
+#, fuzzy, c-format
 msgid " %s [options] [tty]\n"
-msgstr " %s [các-tùy-chọn] [tty]\n"
+msgstr "不是一个 tty"
 
 #: tload.c:93
 msgid " -d, --delay <secs>  update delay in seconds\n"
-msgstr " -d, --delay <giây>  trễ cập nhật trong số giây này\n"
+msgstr ""
 
 #: tload.c:94
 msgid " -s, --scale <num>   vertical scale\n"
-msgstr " -s, --scale <số>    tỷ lệ biến đổi dọc\n"
+msgstr ""
 
 #: tload.c:132
+#, fuzzy
 msgid "scale cannot be negative"
-msgstr "tỷ lệ không thể âm"
+msgstr "淡青色密度比例"
 
 #: tload.c:139 vmstat.c:959
+#, fuzzy
 msgid "too large delay value"
-msgstr "giá trị trễ quá lớn"
+msgstr "制表符限长过大"
 
 #: tload.c:154
+#, fuzzy
 msgid "can not open tty"
-msgstr "không thể mở tty"
+msgstr "不是一个 tty"
 
 #: tload.c:213 tload.c:215
+#, fuzzy
 msgid "writing to tty failed"
-msgstr "gặp lỗi khi ghi ra tty"
+msgstr " TTY"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -2081,128 +2133,151 @@ msgstr "gặp lỗi khi ghi ra tty"
 #. Translation Hint: maximum 'PID' = 5
 #: top/top_nls.c:133
 msgid "PID"
-msgstr "PID"
+msgstr "进程号"
 
 #: top/top_nls.c:134
+#, fuzzy
 msgid "Process Id"
-msgstr "Mã tiến trình"
+msgstr "%s：无效的进程号"
 
 #. Translation Hint: maximum 'PPID' = 5
 #: top/top_nls.c:136
 msgid "PPID"
-msgstr "PPID"
+msgstr ""
 
 #: top/top_nls.c:137
+#, fuzzy
 msgid "Parent Process pid"
-msgstr "mã số tiến trình cha"
+msgstr "具有 pid %d 的进程不存在。\n"
 
 #. Translation Hint: maximum 'UID' = 5 +
 #: top/top_nls.c:139
+#, fuzzy
 msgid "UID"
-msgstr "UID"
+msgstr "getUname：过多的 uid\n"
 
 #: top/top_nls.c:140
+#, fuzzy
 msgid "Effective User Id"
-msgstr "Mã số người dùng chịu tác động"
+msgstr ""
+"显示与当前的有效用户ID 相关联的用户名。\n"
+"与id -un 相同。\n"
+"\n"
 
 #. Translation Hint: maximum 'USER' = 8 +
 #: top/top_nls.c:142 w.c:591
 msgid "USER"
-msgstr "NG_DÙNG"
+msgstr "USER"
 
 #: top/top_nls.c:143
 msgid "Effective User Name"
-msgstr "Người dùng chịu tác động"
+msgstr ""
 
 #. Translation Hint: maximum 'RUID' = 5 +
 #: top/top_nls.c:145
 msgid "RUID"
-msgstr "RUID"
+msgstr ""
 
 #: top/top_nls.c:146
+#, fuzzy
 msgid "Real User Id"
-msgstr "Mã số người dùng thật"
+msgstr "设置用户ID 失败"
 
 #. Translation Hint: maximum 'RUSER' = 8 +
 #: top/top_nls.c:148
 msgid "RUSER"
-msgstr "RUSER"
+msgstr ""
 
 #: top/top_nls.c:149
+#, fuzzy
 msgid "Real User Name"
-msgstr "Tên người dùng thật"
+msgstr "无用户名: %s\n"
 
 #. Translation Hint: maximum 'SUID' = 5 +
 #: top/top_nls.c:151
 msgid "SUID"
-msgstr "SUID"
+msgstr ""
 
 #: top/top_nls.c:152
+#, fuzzy
 msgid "Saved User Id"
-msgstr "Mã số người dùng đã lưu"
+msgstr "设置用户ID 失败"
 
 #. Translation Hint: maximum 'SUSER' = 8 +
 #: top/top_nls.c:154
 msgid "SUSER"
-msgstr "SUSER"
+msgstr ""
 
 #: top/top_nls.c:155
+#, fuzzy
 msgid "Saved User Name"
-msgstr "Tên người dùng đã lưu"
+msgstr "无用户名: %s\n"
 
 #. Translation Hint: maximum 'GID' = 5 +
 #: top/top_nls.c:157
+#, fuzzy
 msgid "GID"
-msgstr "GID"
+msgstr "getGname：过多的 gid\n"
 
 #: top/top_nls.c:158
+#, fuzzy
 msgid "Group Id"
-msgstr "Mã nhóm"
+msgstr "无法找到ID 为%lu 的用户的属组"
 
 #. Translation Hint: maximum 'GROUP' = 8 +
 #: top/top_nls.c:160
 msgid "GROUP"
-msgstr "NHÓM"
+msgstr "GROUP"
 
 #: top/top_nls.c:161
+#, fuzzy
 msgid "Group Name"
-msgstr "Tên nhóm"
+msgstr "为了使用dns，群组名称不能包含底线"
 
 #. Translation Hint: maximum 'PGRP' = 5
 #: top/top_nls.c:163
 msgid "PGRP"
-msgstr "PGRP"
+msgstr ""
 
 #: top/top_nls.c:164
 msgid "Process Group Id"
-msgstr "Mã số nhóm tiến trình"
+msgstr ""
 
 #. Translation Hint: maximum 'TTY' = 8 +
 #: top/top_nls.c:166
+#, fuzzy
 msgid "TTY"
-msgstr "TTY"
+msgstr " TTY"
 
 #: top/top_nls.c:167
+#, fuzzy
 msgid "Controlling Tty"
-msgstr "Đang điều khiển Tty"
+msgstr "不是一个 tty"
 
 #. Translation Hint: maximum 'TPGID' = 5
 #: top/top_nls.c:169
 msgid "TPGID"
-msgstr "TPGID"
+msgstr ""
 
 #: top/top_nls.c:170
+#, fuzzy
 msgid "Tty Process Grp Id"
-msgstr "Mã số nhóm tiến trình Tty"
+msgstr "%s：无效的进程号"
 
 #. Translation Hint: maximum 'SID' = 5
 #: top/top_nls.c:172
 msgid "SID"
-msgstr "SID"
+msgstr ""
 
 #: top/top_nls.c:173
+#, fuzzy
 msgid "Session Id"
-msgstr "Mã số phiên chạy"
+msgstr ""
+"进程、群组和运行阶段识别码\n"
+"    进程识别号：%d\t\t     上层识别号：%d\n"
+"    群组识别号：%d\t\t 运行阶段识别码：%d\n"
+"  T 群组识别号：%d\n"
+"\n"
 
 #. Translation Hint: maximum 'PR' = 3
 #: top/top_nls.c:175
@@ -2211,224 +2286,259 @@ msgstr "PR"
 
 #: top/top_nls.c:176
 msgid "Priority"
-msgstr "Ưu tiên"
+msgstr "优先级"
 
 #. Translation Hint: maximum 'NI' = 3
 #: top/top_nls.c:178
 msgid "NI"
-msgstr "NI"
+msgstr ""
 
 #: top/top_nls.c:179
+#, fuzzy
 msgid "Nice Value"
-msgstr "Giá trị nice"
+msgstr "值"
 
 #. Translation Hint: maximum 'nTH' = 3
 #: top/top_nls.c:181
 msgid "nTH"
-msgstr "nTH"
+msgstr ""
 
 #: top/top_nls.c:182
+#, fuzzy
 msgid "Number of Threads"
-msgstr "Số tuyến trình"
+msgstr "编号"
 
 #. Translation Hint: maximum 'P' = 1
 #: top/top_nls.c:184
+#, fuzzy
 msgid "P"
-msgstr "P"
+msgstr "(p)"
 
 #: top/top_nls.c:185
+#, fuzzy
 msgid "Last Used Cpu (SMP)"
-msgstr "Cpu đã dùng cuối(SMP)"
+msgstr "%<%%%>约束用于最后一个操作数"
 
 #. Translation Hint: maximum '%CPU' = 4
 #: top/top_nls.c:187
-#, c-format
+#, fuzzy, c-format
 msgid "%CPU"
-msgstr "%CPU"
+msgstr "CPU              "
 
 #: top/top_nls.c:188
+#, fuzzy
 msgid "CPU Usage"
-msgstr "Mức tiêu dùng CPU"
+msgstr "CPU              "
 
 #. Translation Hint: maximum '' = 6
 #: top/top_nls.c:190
 msgid "TIME"
-msgstr "GIỜ"
+msgstr "时间"
 
 #: top/top_nls.c:191
+#, fuzzy
 msgid "CPU Time"
-msgstr "Thời gian CPU"
+msgstr "CPU 时间超时"
 
 #. Translation Hint: maximum 'TIME+' = 9
 #: top/top_nls.c:193
+#, fuzzy
 msgid "TIME+"
-msgstr "THGIAN+"
+msgstr "时间"
 
 #: top/top_nls.c:194
+#, fuzzy
 msgid "CPU Time, hundredths"
-msgstr "Thời gian CPU, phần trăm"
+msgstr "CPU 时间超时"
 
 #. Translation Hint: maximum '%MEM' = 4
 #: top/top_nls.c:196
+#, fuzzy
 msgid "%MEM"
-msgstr "%MEM"
+msgstr "为循环启用预取时最小的指令/内存操作比"
 
 #: top/top_nls.c:197
+#, fuzzy
 msgid "Memory Usage (RES)"
-msgstr "Dùng bộ nhớ (RES)"
+msgstr "内存\n"
 
 #. Translation Hint: maximum 'VIRT' = 7
 #: top/top_nls.c:199
+#, fuzzy
 msgid "VIRT"
-msgstr "VIRT"
+msgstr ""
+"\n"
+"  virt            识别虚拟化 ASE 指令。\n"
 
 #: top/top_nls.c:200
+#, fuzzy
 msgid "Virtual Image (KiB)"
-msgstr "Ảnh ảo (KiB)"
+msgstr "%s: 未提供映像名称 ('--image')"
 
 #. Translation Hint: maximum 'SWAP' = 6
 #: top/top_nls.c:202
+#, fuzzy
 msgid "SWAP"
-msgstr "SWAP"
+msgstr "交换"
 
 #: top/top_nls.c:203
+#, fuzzy
 msgid "Swapped Size (KiB)"
-msgstr "Kích cỡ tráo đổi (KiB)"
+msgstr "大小"
 
 #. Translation Hint: maximum 'RES' = 6
 #: top/top_nls.c:205
+#, fuzzy
 msgid "RES"
-msgstr "RES"
+msgstr ""
+"FORMAT 是 rc、res 或 coff 之一，在未指定时根据文件的扩展名进行判断。\n"
+"单个文件名被认为是输入文件。没有输入文件时就使用标准输入，默认格式\n"
+"为 rc。没有输出文件时就使用标准输出，默认格式为 rc。\n"
 
 #: top/top_nls.c:206
+#, fuzzy
 msgid "Resident Size (KiB)"
-msgstr "Kích cỡ thường trú (KiB)"
+msgstr "页面尺寸"
 
 #. Translation Hint: maximum 'CODE' = 4
 #: top/top_nls.c:208
+#, fuzzy
 msgid "CODE"
-msgstr "MÃ"
+msgstr "编码"
 
 #: top/top_nls.c:209
+#, fuzzy
 msgid "Code Size (KiB)"
-msgstr "Kích cỡ mã (KiB)"
+msgstr "代码大小：小、中或大"
 
 #. Translation Hint: maximum 'DATA' = 7
 #: top/top_nls.c:211
+#, fuzzy
 msgid "DATA"
-msgstr "DATA"
+msgstr "没有资料"
 
 #: top/top_nls.c:212
+#, fuzzy
 msgid "Data+Stack (KiB)"
-msgstr "Dữ liệu + Ngăn xếp (KiB)"
+msgstr "栈上溢出"
 
 #. Translation Hint: maximum 'SHR' = 6
 #: top/top_nls.c:214
 msgid "SHR"
-msgstr "SHR"
+msgstr ""
 
 #: top/top_nls.c:215
+#, fuzzy
 msgid "Shared Memory (KiB)"
-msgstr "Bộ nhớ chia sẻ (KiB)"
+msgstr "共享内存对象"
 
 #. Translation Hint: maximum 'nMaj' = 4
 #: top/top_nls.c:217
 msgid "nMaj"
-msgstr "nMaj"
+msgstr ""
 
 #: top/top_nls.c:218
 msgid "Major Page Faults"
-msgstr "Lỗi trang lớn"
+msgstr ""
 
 #. Translation Hint: maximum 'nMin' = 4
 #: top/top_nls.c:220
 msgid "nMin"
-msgstr "nMin"
+msgstr ""
 
 #: top/top_nls.c:221
 msgid "Minor Page Faults"
-msgstr "Lỗi trang nhỏ"
+msgstr ""
 
 #. Translation Hint: maximum 'nDRT' = 4
 #: top/top_nls.c:223
 msgid "nDRT"
-msgstr "nDRT"
+msgstr ""
 
 #: top/top_nls.c:224
+#, fuzzy
 msgid "Dirty Pages Count"
-msgstr "Số lượng trang xấu"
+msgstr "已本地化的手册页"
 
 #. Translation Hint: maximum 'S' = 1
 #: top/top_nls.c:226
 msgid "S"
-msgstr "S"
+msgstr "日"
 
 #: top/top_nls.c:227
+#, fuzzy
 msgid "Process Status"
-msgstr "Trạng thái Tiến trình"
+msgstr "killall: 无法从进程状态获取用户ID(UID)\n"
 
 #. Translation Hint: maximum 'COMMAND' = variable
 #: top/top_nls.c:229
 msgid "COMMAND"
-msgstr "LỆNH"
+msgstr "COMMAND"
 
 #: top/top_nls.c:230
+#, fuzzy
 msgid "Command Name/Line"
-msgstr "Dòng/Tên lệnh"
+msgstr "<命令行>"
 
 #. Translation Hint: maximum 'WCHAN' = 10 +
 #: top/top_nls.c:232
 msgid "WCHAN"
-msgstr "WCHAN"
+msgstr ""
 
 #: top/top_nls.c:233
+#, fuzzy
 msgid "Sleeping in Function"
-msgstr "Ngủ trong Hàm"
+msgstr "暂停中"
 
 #. Translation Hint: maximum 'Flags' = 8
 #: top/top_nls.c:235
 msgid "Flags"
-msgstr "Cờ"
+msgstr "标志"
 
 #: top/top_nls.c:236
+#, fuzzy
 msgid "Task Flags <sched.h>"
-msgstr "Cờ nhiệm vụ <sched.h>"
+msgstr "根据任务"
 
 #. Translation Hint: maximum 'CGROUPS' = variable
 #: top/top_nls.c:238
 msgid "CGROUPS"
-msgstr "CGROUPS"
+msgstr ""
 
 #: top/top_nls.c:239
+#, fuzzy
 msgid "Control Groups"
-msgstr "Nhóm điều khiển"
+msgstr " 组="
 
 #. Translation Hint: maximum 'SUPGIDS' = variable
 #: top/top_nls.c:241
 msgid "SUPGIDS"
-msgstr "SUPGIDS"
+msgstr ""
 
 #: top/top_nls.c:242
+#, fuzzy
 msgid "Supp Groups IDs"
-msgstr "Mã số nhóm Supp"
+msgstr " 组="
 
 #. Translation Hint: maximum 'SUPGRPS' = variable
 #: top/top_nls.c:244
 msgid "SUPGRPS"
-msgstr "SUPGRPS"
+msgstr ""
 
 #: top/top_nls.c:245
+#, fuzzy
 msgid "Supp Groups Names"
-msgstr "Tên nhóm Supp"
+msgstr " 组="
 
 #. Translation Hint: maximum 'TGID' = 5
 #: top/top_nls.c:247
 msgid "TGID"
-msgstr "TGID"
+msgstr ""
 
 #: top/top_nls.c:248
+#, fuzzy
 msgid "Thread Group Id"
-msgstr "Mã số nhóm tuyến trình"
+msgstr "设置组ID 失败"
 
 #. Translation Hint: maximum 'OOMa' = 5
 #: top/top_nls.c:250
@@ -2451,94 +2561,102 @@ msgstr ""
 #. Translation Hint: maximum 'ENVIRON' = variable
 #: top/top_nls.c:256
 msgid "ENVIRON"
-msgstr "BIẾN_MT"
+msgstr ""
 
 #. Translation Hint: the abbreviation 'vars' below is shorthand for
 #. 'variables'
 #: top/top_nls.c:259
+#, fuzzy
 msgid "Environment vars"
-msgstr "Các biến môi trường"
+msgstr "__io 变量默认为 volatile"
 
 #. Translation Hint: maximum 'vMj' = 3
 #: top/top_nls.c:261
 msgid "vMj"
-msgstr "vMj"
+msgstr ""
 
 #: top/top_nls.c:262
 msgid "Major Faults delta"
-msgstr "Vùng lỗi lớn"
+msgstr ""
 
 #. Translation Hint: maximum 'vMn' = 3
 #: top/top_nls.c:264
 msgid "vMn"
-msgstr "vMn"
+msgstr ""
 
 #: top/top_nls.c:265
 msgid "Minor Faults delta"
-msgstr "Vùng lỗi nhỏ"
+msgstr ""
 
 #. Translation Hint: maximum 'USED' = 6
 #: top/top_nls.c:267
+#, fuzzy
 msgid "USED"
-msgstr "DÙNG"
+msgstr "已用"
 
 #: top/top_nls.c:268
 msgid "Res+Swap Size (KiB)"
-msgstr "Tài nguyên+Cỡ Swap (KiB)"
+msgstr ""
 
 #. Translation Hint: maximum 'nsIPC' = 10 +
 #: top/top_nls.c:270
 msgid "nsIPC"
-msgstr "nsIPC"
+msgstr ""
 
 #: top/top_nls.c:271
+#, fuzzy
 msgid "IPC namespace Inode"
-msgstr "Nút không gian tên IPC"
+msgstr "%qT不是一个命名空间"
 
 #. Translation Hint: maximum 'nsMNT' = 10 +
 #: top/top_nls.c:273
 msgid "nsMNT"
-msgstr "nsMNT"
+msgstr ""
 
 #: top/top_nls.c:274
+#, fuzzy
 msgid "MNT namespace Inode"
-msgstr "Nút không gian tên MNT"
+msgstr "%qT不是一个命名空间"
 
 #. Translation Hint: maximum 'nsNET' = 10 +
 #: top/top_nls.c:276
 msgid "nsNET"
-msgstr "nsNET"
+msgstr ""
 
 #: top/top_nls.c:277
+#, fuzzy
 msgid "NET namespace Inode"
-msgstr "Nút không gian tên NET"
+msgstr "网络共享"
 
 #. Translation Hint: maximum 'nsPID' = 10 +
 #: top/top_nls.c:279
 msgid "nsPID"
-msgstr "nsPID"
+msgstr ""
 
 #: top/top_nls.c:280
+#, fuzzy
 msgid "PID namespace Inode"
-msgstr "Nút không gian tên PID"
+msgstr "警告：此系统不支持--pid=PID"
 
 #. Translation Hint: maximum 'nsUSER' = 10 +
 #: top/top_nls.c:282
 msgid "nsUSER"
-msgstr "nsUSER"
+msgstr ""
 
 #: top/top_nls.c:283
+#, fuzzy
 msgid "USER namespace Inode"
-msgstr "Nút không gian tên USER"
+msgstr "USER"
 
 #. Translation Hint: maximum 'nsUTS' = 10 +
 #: top/top_nls.c:285
 msgid "nsUTS"
-msgstr "nsUTS"
+msgstr ""
 
 #: top/top_nls.c:286
+#, fuzzy
 msgid "UTS namespace Inode"
-msgstr "Nút không gian tên UTS"
+msgstr "%qT不是一个命名空间"
 
 #. Translation Hint: maximum 'LXC' = 8 +
 #: top/top_nls.c:288
@@ -2584,7 +2702,7 @@ msgstr ""
 #: top/top_nls.c:301
 #, fuzzy
 msgid "RES Shared (KiB)"
-msgstr "Bộ nhớ chia sẻ (KiB)"
+msgstr "共享内存对象"
 
 #. Translation Hint: maximum 'CGNAME' = variable
 #: top/top_nls.c:303
@@ -2594,7 +2712,7 @@ msgstr ""
 #: top/top_nls.c:304
 #, fuzzy
 msgid "Control Group name"
-msgstr "Nhóm điều khiển"
+msgstr " 组="
 
 #. Translation Hint: maximum 'NU' = 2
 #: top/top_nls.c:306
@@ -2616,291 +2734,290 @@ msgstr ""
 #. .  c-code logic changes.
 #. .
 #: top/top_nls.c:327
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\tsignal %d (%s) was caught by %s, please\n"
 "\tsend bug reports to <procps@freelists.org>\n"
 msgstr ""
-"\ttín hiệu %d (%s) đã bị bắt bởi %s, vui lòng\n"
-"\txem http://www.debian.org/Bugs/Reporting\n"
 
 #: top/top_nls.c:330
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "inappropriate '%s'\n"
 "Usage:\n"
 "  %s%s"
-msgstr ""
-"“%s” không thích hợp\n"
-"Cách dùng:\n"
-"  %s%s"
+msgstr "用法：%s [选项] 输入文件\n"
 
 #: top/top_nls.c:333
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "  %s\n"
 "Usage:\n"
 "  %s%s"
-msgstr ""
-"  %s\n"
-"Cách dùng:\n"
-"  %s%s"
+msgstr "用法：%s [选项] 输入文件\n"
 
 #: top/top_nls.c:336
-#, c-format
+#, fuzzy, c-format
 msgid "failed /proc/stat open: %s"
-msgstr "gặp lỗi khi mở /proc/stat: %s"
+msgstr "无法打开 /proc 目录: %s\n"
 
 #: top/top_nls.c:337
-#, c-format
+#, fuzzy, c-format
 msgid "failed openproc: %s"
-msgstr "gặp lỗi khi openproc: %s"
+msgstr "%s: 打开失败：%s\n"
 
 #: top/top_nls.c:338
-#, c-format
+#, fuzzy, c-format
 msgid "bad delay interval '%s'"
-msgstr "khoảng nhịp trễ sai “%s”"
+msgstr "无效的时间间隔%s"
 
 #: top/top_nls.c:339
-#, c-format
+#, fuzzy, c-format
 msgid "bad iterations argument '%s'"
-msgstr "đối số lặp lại sai “%s”"
+msgstr "错误的正则表达式: %s\n"
 
 #: top/top_nls.c:340
-#, c-format
+#, fuzzy, c-format
 msgid "pid limit (%d) exceeded"
-msgstr "đã tới giới hạn mã số tiến trình (%d)"
+msgstr "CPU 时间超时"
 
 #: top/top_nls.c:341
-#, c-format
+#, fuzzy, c-format
 msgid "bad pid '%s'"
-msgstr "mã số tiến trình sai “%s”"
+msgstr "%*s 用户     进程号 权限   命令\n"
 
 #: top/top_nls.c:342
-#, c-format
+#, fuzzy, c-format
 msgid "-%c requires argument"
-msgstr "-%c cần đối số"
+msgstr "%s：选项需要一个参数 --“%c”\n"
 
 #: top/top_nls.c:343
-#, c-format
+#, fuzzy, c-format
 msgid "bad width arg '%s'"
-msgstr "đối số độ rộng sai “%s”"
+msgstr "行 %d：%%setup 中存在坏的参数：%s\n"
 
 #: top/top_nls.c:344
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "unknown option '%c'\n"
 "Usage:\n"
 "  %s%s"
-msgstr ""
-"không hiểu tùy chọn “%c”\n"
-"Cách dùng:\n"
-" %s%s"
+msgstr "%s：不明选项 -%c\n"
 
 #: top/top_nls.c:347
+#, fuzzy
 msgid "-d disallowed in \"secure\" mode"
-msgstr "-d không cho phép trong chế độ \"secure\""
+msgstr "程序错误，转换模式 %d 无效\n"
 
 #: top/top_nls.c:348
+#, fuzzy
 msgid "-d requires positive argument"
-msgstr "tùy chọn -d cần đối số dương"
+msgstr "命名空间选项需要一个参数"
 
 #: top/top_nls.c:349
 msgid "On"
-msgstr "Bật"
+msgstr ""
 
 #: top/top_nls.c:350
+#, fuzzy
 msgid "Off"
-msgstr "Tắt"
+msgstr "关闭"
 
 #. Translation Hint: Only the following words should be translated
 #. .                 secs (seconds), max (maximum), user, field, cols (columns)
 #: top/top_nls.c:353
-#, fuzzy
 msgid " -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
 msgstr ""
-" -hv | -bcHiOSs -d giây -n t.đa -u|U người_dùng -p (các)_mã_số_tiến_trình -o "
-"trường -w [cột]"
 
 #: top/top_nls.c:354
+#, fuzzy
 msgid "failed /proc/stat read"
-msgstr "gặp lỗi khi đọc /proc/stat"
+msgstr "获取文件状态失败(stat)"
 
 #: top/top_nls.c:355
-#, c-format
+#, fuzzy, c-format
 msgid "Forest mode %s"
-msgstr "Chế độ forest %s"
+msgstr "spec 文件权限不好：%s(%s)\n"
 
 #: top/top_nls.c:356
+#, fuzzy
 msgid "failed tty get"
-msgstr "gặp lỗi khi lấy tty"
+msgstr "无法取得%s 的属性"
 
 #: top/top_nls.c:357
-#, c-format
+#, fuzzy, c-format
 msgid "failed tty set: %s"
-msgstr "gặp lỗi khi đặt tty: %s"
+msgstr "设置新用户%s 失败"
 
 #: top/top_nls.c:358
 msgid "Choose field group (1 - 4)"
-msgstr "Chọn nhóm trường (1 - 4)"
+msgstr ""
 
 #: top/top_nls.c:359
 msgid "Command disabled, 'A' mode required"
-msgstr "Lệnh bị tắt, cần chế độ “A”"
+msgstr ""
 
 #: top/top_nls.c:360
-#, c-format
+#, fuzzy, c-format
 msgid "Command disabled, activate %s with '-' or '_'"
-msgstr "Lệnh bị tắt, kích hoạt %s bằng “-” or “_”"
+msgstr "用法：%s [选项] 命令\n"
 
 #: top/top_nls.c:361
+#, fuzzy
 msgid "No colors to map!"
-msgstr "Không có màu để ánh xạ!"
+msgstr "优先权颜色"
 
 #: top/top_nls.c:362
-#, c-format
+#, fuzzy, c-format
 msgid "Failed '%s' open: %s"
-msgstr "Gặp lỗi khi mở “%s”: %s"
+msgstr "%s：打开 %s 时失败：%s\n"
 
 #: top/top_nls.c:363
-#, c-format
+#, fuzzy, c-format
 msgid "Wrote configuration to '%s'"
-msgstr "Ghi cấu hình vào “%s”"
+msgstr "已写至：%s\n"
 
 #: top/top_nls.c:364
 #, c-format
 msgid "Change delay from %.1f to"
-msgstr "Đổi độ trễ từ %.1f thành"
+msgstr ""
 
 #: top/top_nls.c:365
-#, c-format
+#, fuzzy, c-format
 msgid "Show threads %s"
-msgstr "Hiển thị tiến trình %s"
+msgstr "%<num_threads%>值必须为正"
 
 #: top/top_nls.c:366
-#, c-format
+#, fuzzy, c-format
 msgid "Irix mode %s"
-msgstr "chế độ Irix %s"
+msgstr "spec 文件权限不好：%s(%s)\n"
 
 #: top/top_nls.c:367
 #, c-format
 msgid "PID to signal/kill [default pid = %d]"
-msgstr "Mã số tiến trình để signal/kill [mặc định mã số tiến trình = %d]"
+msgstr ""
 
 #: top/top_nls.c:368
 #, c-format
 msgid "Send pid %d signal [%d/sigterm]"
-msgstr "Gửi tín hiệu mã số tiến trình %d [%d/sigterm]"
+msgstr ""
 
 #: top/top_nls.c:369
-#, c-format
+#, fuzzy, c-format
 msgid "Failed signal pid '%d' with '%d': %s"
-msgstr "Gặp lỗi khi signal mã số tiên strinhf “%d” với “%d”: %s"
+msgstr "%s(%s) 短脚本运行失败，信号 %d\n"
 
 #: top/top_nls.c:370
 msgid "Invalid signal"
-msgstr "Tín hiệu không hợp lệ"
+msgstr "无效的信号"
 
 #: top/top_nls.c:371
-#, c-format
+#, fuzzy, c-format
 msgid "PID to renice [default pid = %d]"
-msgstr "mã số tiến trình cần renice [mặc định pid = %d]"
+msgstr "具有 pid %d 的进程不存在。\n"
 
 #: top/top_nls.c:372
-#, c-format
+#, fuzzy, c-format
 msgid "Renice PID %d to value"
-msgstr "Renice mã số tiến trình %d thành giá trị"
+msgstr "具有 pid %d 的进程不存在。\n"
 
 #: top/top_nls.c:373
-#, c-format
+#, fuzzy, c-format
 msgid "Failed renice of PID %d to %d: %s"
-msgstr "Gặp lỗi khi renice mã số tiến trình %d thành %d: %s"
+msgstr "无法打开 pid %d (%s) 的 stat 文件\n"
 
 #: top/top_nls.c:374
 #, c-format
 msgid "Rename window '%s' to (1-3 chars)"
-msgstr "Đổi tên cửa sổ “%s” thành (1-3 ký tự)"
+msgstr ""
 
 #: top/top_nls.c:375
-#, c-format
+#, fuzzy, c-format
 msgid "Cumulative time %s"
-msgstr "Tổng thời gian %s"
+msgstr "累积的项目"
 
 #: top/top_nls.c:376
 #, c-format
 msgid "Maximum tasks = %d, change to (0 is unlimited)"
-msgstr "Nhiệm vụ tối đa = %d, đổi thành (0 là không giới hạn)"
+msgstr ""
 
 #: top/top_nls.c:377
+#, fuzzy
 msgid "Invalid maximum"
-msgstr "Số tối đa không hợp lệ"
+msgstr "目录最大深度%s 无效"
 
 #: top/top_nls.c:378
 msgid "Which user (blank for all)"
-msgstr "Người dùng nào (để trống là tất cả)"
+msgstr ""
 
 #: top/top_nls.c:379
 msgid "Unknown command - try 'h' for help"
-msgstr "Không hiểu lệnh - hãy thử “h” để xem trợ giúp"
+msgstr ""
 
 #: top/top_nls.c:380
 #, c-format
 msgid "scroll coordinates: y = %d/%%d (tasks), x = %d/%d (fields)"
-msgstr "hệ tọa độ cuộn: y = %d/%%d (nhiệm vụ), x = %d/%d (trường)"
+msgstr ""
 
 #: top/top_nls.c:381
+#, fuzzy
 msgid "failed memory allocate"
-msgstr "gặp lỗi khi tái cấp phát bộ nhớ"
+msgstr "%s：配置分区区块时失败\n"
 
 #: top/top_nls.c:382
+#, fuzzy
 msgid "failed memory re-allocate"
-msgstr "gặp lỗi tái cấp phát bộ nhớ"
+msgstr "无法为已找到的进程分配内存: %s\n"
 
 #: top/top_nls.c:383
+#, fuzzy
 msgid "Unacceptable floating point"
-msgstr "Không chấp nhận số thực dấu chấm động"
+msgstr "使用硬件浮点单元"
 
 #: top/top_nls.c:384
+#, fuzzy
 msgid "Invalid user"
-msgstr "Người dùng không hợp lệ"
+msgstr "无效的用户"
 
 #: top/top_nls.c:385
+#, fuzzy
 msgid "forest view"
-msgstr "hiển thị dạng cây"
+msgstr "浏览者："
 
 #: top/top_nls.c:386
 msgid "failed pid maximum size test"
-msgstr "gặp lỗi khi kiểm tra cỡ tối đa mã số tiến trình"
+msgstr ""
 
 #: top/top_nls.c:387
 msgid "failed number of cpus test"
-msgstr "gặp lỗi khi kiểm tra số lượng bộ vi xử lý"
+msgstr ""
 
 #: top/top_nls.c:388
 #, c-format
 msgid "incompatible rcfile, you should delete '%s'"
-msgstr "tập tin tài nguyên không tương thích, bạn nên xóa “%s”"
+msgstr ""
 
 #: top/top_nls.c:389
 #, c-format
 msgid "window entry #%d corrupt, please delete '%s'"
-msgstr "mục tin cửa sổ #%d sai hỏng, vui lòng xóa “%s”"
+msgstr ""
 
 #: top/top_nls.c:390
 msgid "Unavailable in secure mode"
-msgstr "Không sẵn sàng trong chế độ an ninh"
+msgstr ""
 
 #: top/top_nls.c:391
 msgid "Only 1 cpu detected"
-msgstr "Chỉ tìm thấy một cpu"
+msgstr "仅探测到 1 个 CPU"
 
 #: top/top_nls.c:392
+#, fuzzy
 msgid "Unacceptable integer"
-msgstr "Không thể chấp nhận số nguyên"
+msgstr "整数溢出"
 
 #: top/top_nls.c:393
 msgid "conflicting process selections (U/p/u)"
-msgstr "chọn tiến trình xung đột (U/p/u)"
+msgstr ""
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 kibibytes (1024 bytes)
@@ -2939,85 +3056,93 @@ msgid "EiB"
 msgstr "EiB"
 
 #: top/top_nls.c:412
+#, fuzzy
 msgid "Threads"
-msgstr "Tuyến trình"
+msgstr "不能同时使用 mthreads 和 mlegacy-threads"
 
 #: top/top_nls.c:413
 msgid "Tasks"
-msgstr "Tác vụ"
+msgstr "任务"
 
 #. Translation Hint: The following "word" is meant to represent either a single
 #. .                 cpu or all of the processors in a multi-processor computer
 #. .                 (should be exactly 6 characters, not counting the colon)
 #: top/top_nls.c:417
+#, fuzzy
 msgid "Cpu(s):"
-msgstr "Cpu(s):"
+msgstr "CPU              "
 
 #. Translation Hint: The following "word" is meant to represent a single processor
 #. .                 (should be exactly 3 characters)
 #: top/top_nls.c:420
-#, c-format
+#, fuzzy, c-format
 msgid "Cpu%-3d:"
-msgstr "Cpu%-3d:"
+msgstr ""
+"进程：  %-14s\t\t状态：%c (%s)\n"
+"  CPU#: %-3d\t\tTTY：%s\t线程：%ld\n"
 
 #. Translation Hint: The following word "another" must have 1 trailing space
 #: top/top_nls.c:422
+#, fuzzy
 msgid "another "
-msgstr "cái khác"
+msgstr "当一个局部变量掩盖了另一个局部变量时给出警告"
 
 #: top/top_nls.c:423
 msgid "Locate next inactive, use \"L\""
-msgstr "Vị trí không hoạt động tiếp theo, dùng \"L\""
+msgstr ""
 
 #: top/top_nls.c:424
+#, fuzzy
 msgid "Locate string"
-msgstr "Chuỗi định vị"
+msgstr "(不是字符串)"
 
 #: top/top_nls.c:425
-#, c-format
+#, fuzzy, c-format
 msgid "%s\"%s\" not found"
-msgstr "không tìm thấy %s\"%s\""
+msgstr "%s%s 预期为 %s 却找到 %s\n"
 
 #: top/top_nls.c:426
 #, c-format
 msgid "width incr is %d, change to (0 default, -1 auto)"
-msgstr "độ rộng của incr là %d, thay đổi thành (mặc định là 0, -1 là tự động)"
+msgstr ""
 
 #: top/top_nls.c:427
 msgid "rcfile has 'inspect' entry error(s), write anyway?"
 msgstr ""
 
 #: top/top_nls.c:428
-#, c-format
+#, fuzzy, c-format
 msgid "unrecognized field name '%s'"
-msgstr "không thừa nhận tên trường “%s”"
+msgstr "无法识别的节名%qE"
 
 #: top/top_nls.c:429
 msgid "even using field names only, window is now too small"
-msgstr "ngay cả khi chỉ dùng tên trường, cửa sổ bây giờ cũng quá nhỏ"
+msgstr ""
 
 #: top/top_nls.c:431
+#, fuzzy
 msgid "Open Files"
-msgstr "Tập tin đang mở"
+msgstr "无法打开 %%files 的文件 %s: %s\n"
 
 #: top/top_nls.c:432
+#, fuzzy
 msgid "NUMA Info"
-msgstr "Thông tin NUMA"
+msgstr "无信息"
 
 #: top/top_nls.c:433
+#, fuzzy
 msgid "Log"
-msgstr "Nhật ký"
+msgstr "登录"
 
 #: top/top_nls.c:434
 msgid ""
 "the '=' key will eventually show the actual file read or command(s) "
 "executed ..."
 msgstr ""
-"phím “=” sẽ đưa ra tập tin thực đọc cuối cùng hoặc lệnh đã thực hiện ..."
 
 #: top/top_nls.c:435
 msgid "demo"
-msgstr "thử"
+msgstr ""
 
 #: top/top_nls.c:436
 #, c-format
@@ -3068,163 +3193,129 @@ msgid ""
 "\n"
 "Enjoy!\n"
 msgstr ""
-"Cái này mô phỏng đầu ra đại diện cho nội dung của một số tập tin hay đầu "
-"vào\n"
-"từ một số lệnh.  Chính xác như các lệnh và/hoặc tập tin độc nhất cho bạn.\n"
-"\n"
-"Mặc dù phần này chỉ với mục đích thông tin, nhưng nó vẫn được cuộn và tìm\n"
-"kiếm giống như là kết xuất sẽ thế.  Bạn được khuyến khích thử nghiệm với\n"
-"những tính năng như là được giải thích ở trong phần mở đầu ở trên.\n"
-"\n"
-"Để bật tính năng Kiểm soát thực, các mục tin phải được thêm vào cuối của\n"
-"tập tin cấu hình các nhân top.  Bạn có thể dùng một trình biên soạn ưa "
-"thích\n"
-"để thực hiện việc này, cẩn thận đừng làm xáo trộn các mục sẵn có.\n"
-"\n"
-"Cách khác để thêm các mục là theo các chỉ dẫn phía dưới, nhưng hãy cẩn thận "
-"vì nó\n"
-"có thể đè lên tập tin tài nguyên.  Các lệnh echo được chuyển hướng phải "
-"không\n"
-"thay (>) nhưng thêm (>>) vào tập tin đó.\n"
-"\n"
-"  /bin/echo -e \"pipe\\tMở Tập tin\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
-"  /bin/echo -e \"file\\tThông tin NUMA\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
-"toprc\n"
-"\n"
-"Nếu bạn không biết vị trí hay tên của tập tin tài nguyên, thì dùng lệnh “W”\n"
-"ghi chép những thứ chi tiết.  Sau khi trở lại tập tin tài nguyên hiện tại,\n"
-"hay thử  phần xuất các lệnh echo ở trên chính xác như được trình bày, thay "
-"thế\n"
-"“.toprc” cho thích hợp.  Cách tiếp cận nhanh nhất có thể là dùng lệnh chép/"
-"dán\n"
-"để tránh lỗi đánh máy.\n"
-"\n"
-"Cuối cùng, khởi động lại top để khám phá các mục Kiểm soát thực tế được tổ "
-"hợp với\n"
-"lệnh mới có thể mang lại.  Các khả năng có thể là chạy mãi không dùng, đặt "
-"biệt là\n"
-"xem xét xem mục tin kiểu “pipe” có thể bao gồm văn lệnh hệ vỏ nữa!\n"
-"\n"
-"Để có thêm thông tin quan trọng, vui lòng tham khảo tài liệu top.\n"
-"Sau đó tăng cường top với những mục “file” hay “pipe” được cá nhân\n"
-"hóa toàn diện của bạn.\n"
-"\n"
-"Chúc vui!\n"
 
 #: top/top_nls.c:468
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
-msgstr "để bật “Y” nhấn <Enter> sau đó gõ “W” và khởi động lại top"
+msgstr ""
 
 #: top/top_nls.c:470
 msgid "to enable 'Y' please consult the top man page (press Enter)"
-msgstr "để bật “Y” hãy xem trang hướng dẫn lệnh top (nhấn Enter)"
+msgstr ""
 
 #: top/top_nls.c:472
-#, c-format
+#, fuzzy, c-format
 msgid "Selection failed with: %s\n"
-msgstr "Việc chọn gặp lỗi với: %s\n"
+msgstr "需要选择语句"
 
 #: top/top_nls.c:473
-#, c-format
+#, fuzzy, c-format
 msgid "unable to inspect, pid %d not found"
-msgstr "không thể điều tra, không tìm thấy mã số tiến trình %d"
+msgstr "无法打开 pid %d (%s) 的 stat 文件\n"
 
 #: top/top_nls.c:474
-#, c-format
+#, fuzzy, c-format
 msgid "inspect at PID [default pid = %d]"
-msgstr "điều tra tại PID [mặc định mã số tiến trình = %d]"
+msgstr "具有 pid %d 的进程不存在。\n"
 
 #: top/top_nls.c:475
 #, c-format
 msgid "%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read"
-msgstr "%s: %*d-%-*d dòng, %*d-%*d cột, đọc %lu byte"
+msgstr ""
 
 #: top/top_nls.c:476
+#, fuzzy
 msgid "patience please, working..."
-msgstr "hãy nhẫn nại, đang chạy..."
+msgstr "无法记录目前的工作目录"
 
 #. Translation Hint: Below are 2 abbreviations which can be as long as needed:
 #. .                 FLD = FIELD, VAL = VALUE
 #: top/top_nls.c:479
 #, c-format
 msgid "add filter #%d (%s) as: [!]FLD?VAL"
-msgstr "thêm bộ lọc #%d (%s) như: [!]FLD?VAL"
+msgstr ""
 
 #: top/top_nls.c:480
+#, fuzzy
 msgid "ignoring case"
-msgstr "không phân biệt HOA/thường"
+msgstr "(未知的案例)"
 
 #: top/top_nls.c:481
 msgid "case sensitive"
-msgstr "phân biệt HOA/thường"
+msgstr "大小写敏感"
 
 #: top/top_nls.c:482
+#, fuzzy
 msgid "duplicate filter was ignored"
-msgstr "bộ lọc bị trùng sẽ bỏ qua"
+msgstr "忽略"
 
 #: top/top_nls.c:483
-#, c-format
+#, fuzzy, c-format
 msgid "'%s' filter delimiter is missing"
-msgstr "“%s” thiếu bộ phân cách bộ lọc"
+msgstr "%s：分界符后应该跟随整数"
 
 #: top/top_nls.c:484
-#, c-format
+#, fuzzy, c-format
 msgid "'%s' filter value is missing"
-msgstr "“%s” thiếu giá trị lọc"
+msgstr "%2$s %3$s 中丢失 %1$s\n"
 
 #: top/top_nls.c:485
+#, fuzzy
 msgid "include"
-msgstr "bao gồm"
+msgstr "#include \"...\" 搜索从这里开始：\n"
 
 #: top/top_nls.c:486
+#, fuzzy
 msgid "exclude"
-msgstr "loại trừ"
+msgstr "被排除的路径必须以 / 开头"
 
 #: top/top_nls.c:487
-#, c-format
+#, fuzzy, c-format
 msgid "<Enter> to resume, filters: %s"
-msgstr "Bấm <Enter> để phục hồi, các bộ lọc: %s"
+msgstr "设备 %s 不支持恢复。\n"
 
 #: top/top_nls.c:488
+#, fuzzy
 msgid "none"
-msgstr "không"
+msgstr "无"
 
 #. Translation Hint: The following word 'Node' should be exactly 4 characters
 #: top/top_nls.c:490
-#, c-format
+#, fuzzy, c-format
 msgid "Node%-2d:"
-msgstr "Nút %-2d:"
+msgstr "verify_cgraph_node 失败"
 
 #: top/top_nls.c:491
 #, c-format
 msgid "expand which node (0-%d)"
-msgstr "mở rộng nút nào (0-%d)"
+msgstr ""
 
 #: top/top_nls.c:492
+#, fuzzy
 msgid "invalid node"
-msgstr "nút không hợp lệ"
+msgstr "verify_cgraph_node 失败"
 
 #: top/top_nls.c:493
 msgid "sorry, NUMA extensions unavailable"
-msgstr "rất tiếc, phần mở rộng NUMA không sẵn có"
+msgstr ""
 
 #. Translation Hint: 'Mem ' is an abbreviation for physical memory/ram
 #. .                 'Swap' represents the linux swap file --
 #. .                 please make both translations exactly 4 characters,
 #. .                 padding with extra spaces as necessary
 #: top/top_nls.c:498
+#, fuzzy
 msgid "Mem "
-msgstr "BNhớ"
+msgstr "为循环启用预取时最小的指令/内存操作比"
 
 #: top/top_nls.c:499
+#, fuzzy
 msgid "Swap"
-msgstr "TĐổi"
+msgstr "交换"
 
 #: top/top_nls.c:500
 #, fuzzy, c-format
 msgid "bad memory scaling arg '%c'"
-msgstr "đối số lặp lại sai “%s”"
+msgstr "错误的正则表达式: %s\n"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3302,42 +3393,6 @@ msgid ""
 "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
-"Phần trợ giúp cho lệnh tương tác~2 - %s\n"
-"Cửa sổ ~1%s~6: ~1Chế độ tích luỹ ~3%s~2.  ~1Hệ thống~6: ~1Trễ  ~3%.1f "
-"giây~2; ~1Chế độ an ninh ~3%s~2.\n"
-"\n"
-"  Z~5,~1B~5,E,e   Toàn cục: “~1Z~2” màu; “~1B~2” đậm; “~1E~2”/“~1e~2” tỷ lệ "
-"bộ nhớ tổng/tác vụ\n"
-"  l,t,m     Bật/Tắt tóm lược: “~1l~2” tải tb; “~1t~2” tkê tác vụ/cpu; "
-"“~1m~2” thông tin bộ nhớ\n"
-"  0,1,2,3,I Bật/Tắt: “~10~2” zeros; “~11~2/~12~2/~13~2” hiển thị nút tên "
-"cpus hay numa; “~1I~2” chế độ Irix\n"
-"  f,F,X     Trường: “~1f~2”/“~1F~2” thêm/bỏ/thứ tự/sắp xếp; “~1X~2” tăng độ "
-"rộng cố định của trường\n"
-"\n"
-"  L,&,<,> . Vị trí: “~1L~2”/“~1&~2” tìm/tìm_lại; Di chuyển cột sắp xếp: "
-"“~1<~2”/“~1>~2” trái/phải\n"
-"  R,H,V,J . Bật/Tắt: “~1R~2” Sắp xếp; “~1H~2” Tuyến trình; “~1V~2” Hiển thị "
-"dạng cây; “~1J~2” Số chỉnh\n"
-"  c,i,S,j . Bật/Tắt: “~1c~2” tên/dòng lệnh; “~1i~2” Nghỉ; “~1S~2” Thời gian; "
-"“~1j~2” Chuỗi chỉnh\n"
-"  x~5,~1y~5     . Bật/Tắt tô màu: “~1x~2” sắp xếp trường; “~1y~2” tác vụ "
-"đang chạy\n"
-"  z~5,~1b~5     . Bật/Tắt: “~1z~2” màu/đen trắng; “~1b~2” đậm/đảo (chỉ nếu "
-"“x” hoặc “y”)\n"
-"  u,U,o,O . Lọc theo: “~1u~2”/“~1U~2” người chịu tác động hay bất kỳ; "
-"“~1o~2”/“~1O~2” tiêu chí khác\n"
-"  n,#,^O  . Đặt: “~1n~2”/“~1#~2” tác vụ tối đa được hiển thị; Hiển thị: "
-"~1Ctrl~2+'~1O~2” các bộ lọc khác\n"
-"  C,...   . Bật/Tắt tọa độ cuộn lời nhắn cho: ~1up~2,~1down~2,~1left~2,"
-"~1right~2,~1home~2,~1end~2\n"
-"\n"
-"%s  W,Y       Ghi tập tin cấu hình “~1W~2'; Kiểm tra đầu ra khác “~1Y~2”\n"
-"  q         Quit\n"
-"          ( các lệnh hiển thị với “.” cần một hiển thị tác vụ ~1khả dụng~2 "
-"~1cửa sổ~2 )\n"
-"Nhấn “~1h~2” hay “~1?~2” để có trợ giúp với ~1Cửa sổ~2,\n"
-"Gõ “q” hoặc <Esc> để tiếp tục "
 
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
 #. .                 also imbedded in the translatable text (along with escape seqs)
@@ -3347,8 +3402,8 @@ msgid ""
 "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
 "  d or s    Set update interval\n"
 msgstr ""
-"  k,r       Thao tác với các nhiệm vụ: “~1k~2” kill; “~1r~2” renice\n"
-"  d hay s   Đặt thời gian cập nhật\n"
+"  k,r       操作进程：'~1k~2' 杀死；'~1r~2' 设置优先级\n"
+"  d or s    设定更新间隔\n"
 
 #: top/top_nls.c:577
 #, c-format
@@ -3395,47 +3450,6 @@ msgid ""
 "the '~1a~2' and '~1w~2'\n"
 "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' "
 msgstr ""
-"Phần trợ giúp cho Nhóm cửa sổ / trường~2 - \"Cửa sổ hiện tại\" = ~1 %s ~6\n"
-"\n"
-". Dùng nhiều ~1cửa sổ~2, từng cái với tùy chọn cấu hình riêng (màu,trường,"
-"sắp xếp,v.v..)\n"
-". Cửa sổ “hiện tại” điều kiển ~1Vùng tổng hợp~2 và đáp ứng các ~1Câu lệnh~2 "
-"của bạn\n"
-"  . cái mà ~1trình bày tác vụ~2 của cửa sổ có thể trả về ~1Off~2 & ~1On~2, "
-"co/giãn những cái khác\n"
-"  . với ~1KHÔNG~2 trình bày tác vụ, một số lệnh có thể sẽ bị ~1tắt~2 "
-"(“i”,'R”,'n”,'c”, v.v..)\n"
-"    cho đến khi một ~1cửa sổ khác~2 đã kích hoạt, làm cho nó thành cửa sổ "
-"“hiện tại”\n"
-". Bạn ~1đổi~2 cửa sổ “hiện tại” bằng: ~1 1~2) quay tròn tiếp/ngược;~1 2~2) "
-"chọn\n"
-"  một nhóm trường đặc biệt; hay~1 3~2) thoát khỏi ánh xạ mày hoặc màn hình "
-"trường\n"
-". Các lệnh ~1sẵn sàng mọi lúc   -------------~2\n"
-"    A       . Bật/tắt chế độ trình bày luân phiên nhau, hiển thị ~1Đơn~2 / "
-"~1Nhiều~2 cửa sổ\n"
-"    g       . Chọn nhóm trường khác và làm nó thành “hiện tại”, hoặc đổi "
-"ngay\n"
-"              bằng cách chọn một con số từ: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 ="
-"%s; hay~1 4~2 =%s\n"
-". Các lệnh ~1cầm~2 chế độ “~1A~2” ~1  -------------~2\n"
-"    G       . Đổi ~1Tên~5 của nhóm cửa sổ/trường “hiện tại”\n"
-" ~1*~4  a , w   . Quay tròn cả bốn cửa sổ:  “~1a~5” Về phía trước; “~1w~5” "
-"Ngược lại\n"
-" ~1*~4  - , _   . Hiện/Ẩn:  “~1-~5” cửa sổ ~1Hiện tại~2; “~1_~5” mọi ~1Hữu "
-"hình~2/~1Vô hình~2\n"
-"  Màn hình sẽ bị chia nhỏ ngay cả giữa các phần trình bày tác vụ.  Nhưng bạn "
-"có thể làm cho\n"
-"  một số ~1lớn lên~2 hay ~1nhỏ đi~2, dùng lệnh “~1n~2” và “~1i~2”.  Sau đó "
-"bạn có thể:\n"
-" ~1*~4  = , +   . Tái cân bằng các tác vụ:  “~1=~5” cửa sổ ~1Hiện hành~2; "
-"“~1+~5” ~1Mọi~2 cửa sổ\n"
-"              (cái này cũng đồng thời ép buộc cửa sổ ~1hiện tại~2 hay "
-"~1mỗi~2 trở nên hữu hình)\n"
-"\n"
-"Ở chế độ'~1A~2”, phím “~1*~4” là các lệnh ~1cơ bản~2 của bạn.  Hãy thử lệnh "
-"“~1a~2” và “~1w~2”\n"
-"cộng với lệnh con “g” NGAY.  Nhấn <Enter> để tạo “Hiện tại” "
 
 #. Translation Notes ------------------------------------------------
 #. .  The following 'Help for color mapping' simulated screen should
@@ -3501,33 +3515,6 @@ msgid ""
 "   'q' to abort changes to window '~1%s~2'\n"
 "   'a' or 'w' to commit & change another, <Enter> to commit and end "
 msgstr ""
-"Trợ giúp cho ánh_xạ~2 màu - %s\n"
-"cửa sổ hiện tại: ~1%s~6\n"
-"\n"
-"   màu - 04:25:44 chạy được 8 ngày, 50 phút,  7 người dùng,  tải trung "
-"bình:\n"
-"   Tác vụ:~3  64 ~2tổng,~3   2 ~3đang chạy,~3  62 ~2ngủ,~3   0 ~2dừng,~3\n"
-"   %%Cpu(s):~3  76.5 ~2người dùng,~3  11.2 ~2hệ thống,~3   0.0 ~2tốt,~3  "
-"12.3 ~2nghỉ~3\n"
-"   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5\n"
-"   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP S COMMAND    ~6\n"
-"   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
-"   ~1 8601 pts/1    7 -10  0.4   0:00.03   916    0 R color -b -z~7\n"
-"   11005 ~8?      ~7  9   0  0.0   0:02.50  2852 1008 S amor -sessi~8\n"
-"   bật/tắt sẵn có: ~1B~2 =tắt in đậm toàn cục (~1%s~2),\n"
-"       ~1z~2 =màu/đen_trắng (~1%s~2), ~1b~2 =tác vụ \"đậm\"/đảo (~1%s~2)\n"
-"\n"
-"1) chọn một ~1đích~2 là một chữ cái in HOA, ~1đích hiện tại~2 là ~1 %c ~4:\n"
-"   S~2 = Dữ liệu tóm lược,~1  M~2 = Messages/Prompts,\n"
-"   H~2 = Đầu cột,~1  T~2 = Thông tin tác vụ\n"
-"2) Chọn một ~1màu~2 là một con số, ~1màu hiện tại~2 là ~1 %d ~4:\n"
-"   0~2 = đen,~1  1~2 = đỏ,    ~1  2~2 = xanh lá,~1  3~2 = vàng,\n"
-"   4~2 = lam, ~1  5~2 = đỏ thắm,~1  6~2 = xanh lá mạ, ~1  7~2 = trắng\n"
-"\n"
-"3) Dùng các phím sau khi hoàn tất:\n"
-"   “q” bãi bỏ các thay đổi với cửa sổ “~1%s~2”\n"
-"   “a” hay “w” để chuyển giao & thay đổi khác, <Enter> để chuyển giao và kết "
-"thúc "
 
 #. Translation Hint:
 #. .  This Fields Management header should be 3 lines long so as
@@ -3542,12 +3529,6 @@ msgid ""
 "commits,\n"
 "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!\n"
 msgstr ""
-"Quản lý các trường~2 cho cửa sổ ~1%s~6, của cái hiện tại sắp xếp trường là "
-"~1%s~2\n"
-"   Di chuyển bằng Up/Dn, Right chọn cho di chuyển sau đó là <Enter> hoặc "
-"Left ủy thác,\n"
-"   “d” hay <Phím cách> để bật tắt hiển thị, “s” đặt sắp xếp.  Dùng “q” hay "
-"<Esc> để kết thúc!\n"
 
 #. Translation Hint:
 #. .  The next 5 items must each be translated as a single line.
@@ -3558,7 +3539,6 @@ msgid ""
 "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
 "~2zombie~3\n"
 msgstr ""
-"%s:~3 %3u ~2tổng,~3 %3u ~2chạy,~3 %3u ~2ngủ,~3 %3u ~2dừng,~3 %3u ~2ma~3\n"
 
 #: top/top_nls.c:678
 #, c-format
@@ -3566,8 +3546,6 @@ msgid ""
 "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
 "~2idle~3\n"
 msgstr ""
-"%%%s~3 %#5.1f  ~2ngdùng,~3 %#5.1f  ~2hthống,~3 %#5.1f  ~2nice,~3 %#5.1f  "
-"~2nghỉ~3\n"
 
 #: top/top_nls.c:681
 #, c-format
@@ -3575,8 +3553,6 @@ msgid ""
 "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
 "~2idle,~3 %#5.1f  ~2IO-wait~3\n"
 msgstr ""
-"%%%s~3 %#5.1f  ~2ngdùng,~3 %#5.1f  ~2hthống,~3 %#5.1f  ~2nice,~3 %#5.1f  "
-"~2nghỉ,~3 %#5.1f  ~2đợi-VR~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
@@ -3587,8 +3563,6 @@ msgid ""
 "%%%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f "
 "~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n"
 msgstr ""
-"%%%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f "
-"~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
@@ -3599,8 +3573,6 @@ msgid ""
 "%%%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
 "~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
 msgstr ""
-"%%%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
-"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
 
 #. Translation Hint: this must be translated as 2 lines with words above & below aligned
 #: top/top_nls.c:697
@@ -3609,211 +3581,204 @@ msgid ""
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3\n"
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3\n"
 msgstr ""
-"%s %s:~3 %9.9s~2tổng,~3 %9.9s~2trống,~3 %9.9s~2dùng,~3 %9.9s~2bộđệm/tạm~3\n"
-"%s %s:~3 %9.9s~2tổng,~3 %9.9s~2trống,~3 %9.9s~2dùng.~3 %9.9s~2%s sẵnsàng~3\n"
 
 #. Translation Hint:
 #. .  The next 2 headers for 'Inspection' must each be 3 lines or less
 #. .
 #: top/top_nls.c:704
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
 "Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to "
 "~1end~5 !\n"
 "Options~2: ~1%s\n"
 msgstr ""
-"Điều tra~2 Dừng tại: pid ~1%d~6 chạy ~1%s~6 dưới danh nghĩa người dùng "
-"~1%s~6\n"
-"Dùng~2:  phím mũi tên trái/phải sau đó bấm <Enter> để ~1chọn~5 một tùy chọn; "
-"“q” hay <Esc> để ~1thoát~5 !\n"
-"Tùy chọn~2: ~1%s\n"
 
 #: top/top_nls.c:709
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
 "Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to "
 "~1locate~5/~1next~5.\n"
 "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n"
 msgstr ""
-"Điều tra~2 Xem tại: ~1%s~3, ~1%s~3, ~1%s~3.  Vị trí: ~1%s~6\n"
-"Dùng~2:  Phím mũi tên trái/phải/lên/xuống/v.v.. để ~1di chuyển~5 kết xuất; "
-"“L”/“&” để ~1định vị~5/~1kế~5.\n"
-"Hay~2:   <Enter> để ~1chọn cái khác~5; “q” hay <Esc> để ~1thát~5 !\n"
 
 #: uptime.c:61
 msgid " -p, --pretty   show uptime in pretty format\n"
-msgstr " -p, --pretty   hiển thị thời gian chạy ở định dạng đẹp\n"
+msgstr ""
 
 #: uptime.c:63
+#, fuzzy
 msgid " -s, --since    system up since\n"
-msgstr " -s, --since    hệ thống bật từ\n"
+msgstr "跳过%s，因为它位于不同的设备上"
 
 #: vmstat.c:93
-#, c-format
+#, fuzzy, c-format
 msgid " %s [options] [delay [count]]\n"
-msgstr "%s [ các_tùy_chọn ] [ trễ [ số_lượng ] ]\n"
+msgstr "%s：在%s 处的计数无效"
 
 #: vmstat.c:96
+#, fuzzy
 msgid " -a, --active           active/inactive memory\n"
-msgstr " -a, --active           bộ nhớ hoạt hay không hoạt động\n"
+msgstr "帐号未启用"
 
 #: vmstat.c:97
 msgid " -f, --forks            number of forks since boot\n"
 msgstr ""
-" -f, --forks            số lượng tiến trình rẽ nhánh kể từ lúc khởi động\n"
 
 #: vmstat.c:98
+#, fuzzy
 msgid " -m, --slabs            slabinfo\n"
-msgstr " -m, --slabs            thông tin slab\n"
+msgstr "‘m’标记"
 
 #: vmstat.c:99
 msgid " -n, --one-header       do not redisplay header\n"
-msgstr " -n, --one-header       không hiển thị lại dòng đầu\n"
+msgstr ""
 
 #: vmstat.c:100
 msgid " -s, --stats            event counter statistics\n"
-msgstr " -s, --stats            thống kê con đếm sự kiện\n"
+msgstr ""
 
 #: vmstat.c:101
+#, fuzzy
 msgid " -d, --disk             disk statistics\n"
-msgstr " -d, --disk             thống kê đĩa\n"
+msgstr "不明的磁盘旗标，%d。"
 
 #: vmstat.c:102
 msgid " -D, --disk-sum         summarize disk statistics\n"
-msgstr " -D, --disk-sum         thống kê tổng thể đĩa\n"
+msgstr ""
 
 #: vmstat.c:103
 msgid " -p, --partition <dev>  partition specific statistics\n"
-msgstr " -p, --partition <dev>  thống kê phân vùng\n"
+msgstr ""
 
 #: vmstat.c:104
 msgid " -S, --unit <char>      define display unit\n"
-msgstr " -S, --unit <kýtự>      định nghĩa đơn vị hiển thị\n"
+msgstr ""
 
 #: vmstat.c:105
+#, fuzzy
 msgid " -w, --wide             wide output\n"
-msgstr " -w, --wide             kết xuất rộng\n"
+msgstr "格式字符串是一个宽字符串"
 
 #: vmstat.c:106
+#, fuzzy
 msgid " -t, --timestamp        show timestamp\n"
-msgstr " -t, --timestamp        hiển thị dấu vết thời gian\n"
+msgstr "正在更新 armap 时间戳"
 
 #: vmstat.c:195
 msgid ""
 "procs -----------memory---------- ---swap-- -----io---- -system-- ------"
 "cpu-----"
 msgstr ""
-"ttrình -----------bộ nhớ----------- ---swap-- -----vr---- -hệthống ------"
-"cpu-----"
 
 #: vmstat.c:197
 msgid ""
 "procs -----------------------memory---------------------- ---swap-- -----"
 "io---- -system-- --------cpu--------"
 msgstr ""
-"ttrình -----------------------bộnhớ------------------------ ---swap-- -----"
-"vr---- -hệthống --------cpu--------"
 
 #: vmstat.c:198 vmstat.c:519
+#, fuzzy
 msgid " -----timestamp-----"
-msgstr "--dấu vết thời gian--"
+msgstr "关闭时间戳记"
 
 #. Translation Hint: max 2 chars
 #: vmstat.c:217
+#, fuzzy
 msgid "r"
-msgstr "r"
+msgstr " R - 调制解调器有 DCD 线 ....."
 
 #. Translation Hint: max 2 chars
 #: vmstat.c:219
+#, fuzzy
 msgid "b"
-msgstr "b"
+msgstr "B<2>"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:221
 msgid "swpd"
-msgstr "swpd"
+msgstr "交换"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:223
 msgid "free"
-msgstr "trống"
+msgstr "空闲"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:225
 msgid "inact"
-msgstr "inact"
+msgstr "不活动"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:227
 msgid "buff"
-msgstr "buff"
+msgstr "缓冲"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:229
 msgid "active"
-msgstr "hđộng"
+msgstr "活动"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:231
 msgid "cache"
-msgstr "nhớtạm"
+msgstr "缓存"
 
 #. Translation Hint: max 4 chars
 #: vmstat.c:233
 msgid "si"
-msgstr "si"
+msgstr ""
 
 #. Translation Hint: max 4 chars
 #: vmstat.c:235
 msgid "so"
-msgstr "so"
+msgstr ""
 
 #. Translation Hint: max 5 chars
 #: vmstat.c:237
 msgid "bi"
-msgstr "bi"
+msgstr ""
 
 #. Translation Hint: max 5 chars
 #: vmstat.c:239
 msgid "bo"
-msgstr "bo"
+msgstr ""
 
 #. Translation Hint: max 4 chars
 #: vmstat.c:241
 msgid "in"
-msgstr "in"
+msgstr ""
 
 #. Translation Hint: max 4 chars
 #: vmstat.c:243
 msgid "cs"
-msgstr "cs"
+msgstr ""
 
 #. Translation Hint: max 2 chars
 #: vmstat.c:245
 msgid "us"
-msgstr "us"
+msgstr ""
 
 #. Translation Hint: max 2 chars
 #: vmstat.c:247
 msgid "sy"
-msgstr "sy"
+msgstr ""
 
 #. Translation Hint: max 2 chars
 #: vmstat.c:249
 msgid "id"
-msgstr "id"
+msgstr ""
 
 #. Translation Hint: max 2 chars
 #: vmstat.c:251
 msgid "wa"
-msgstr "wa"
+msgstr ""
 
 #. Translation Hint: max 2 chars
 #: vmstat.c:253
 msgid "st"
-msgstr "st"
+msgstr ""
 
 #. Translation Hint: Translating folloging disk partition
 #. * header fields that follow (marked with max x chars) might
@@ -3822,364 +3787,370 @@ msgstr "st"
 #: vmstat.c:434
 #, fuzzy
 msgid "reads"
-msgstr "tuyến_trình"
+msgstr "不能同时使用 mthreads 和 mlegacy-threads"
 
 #. Translation Hint: max 16 chars.
 #: vmstat.c:436
+#, fuzzy
 msgid "read sectors"
-msgstr "cung từ đã đọc"
+msgstr "扇区"
 
 #. Translation Hint: max 10 chars.
 #: vmstat.c:438
 #, fuzzy
 msgid "writes"
-msgstr "ghi      "
+msgstr "写入   "
 
 #. Translation Hint: max 16 chars
 #: vmstat.c:440
+#, fuzzy
 msgid "requested writes"
-msgstr "yêu cầu ghi"
+msgstr "要求的对齐边界太大"
 
 #: vmstat.c:454
 msgid "your kernel does not support diskstat. (2.5.70 or above required)"
-msgstr "hạt nhân của bạn không hỗ trợ diskstat. (cần 2.5.70 hoặc mới hơn)"
+msgstr ""
 
 #: vmstat.c:516
 msgid ""
 "disk- ------------reads------------ ------------writes----------- -----"
 "IO------"
 msgstr ""
-"đĩa-- --------------đọc------------ ---------------ghi----------- ------"
-"VR-----"
 
 #: vmstat.c:518
 msgid ""
 "disk- -------------------reads------------------- -------------------"
 "writes------------------ ------IO-------"
 msgstr ""
-"đĩa-- ---------------------đọc------------------- ----------------------"
-"ghi------------------ ------VR-------"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:537 vmstat.c:545
 msgid "total"
-msgstr "tổng"
+msgstr "总用量"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:539 vmstat.c:547
 msgid "merged"
-msgstr "đãtrộn"
+msgstr ""
 
 #. Translation Hint: max 7 chars
 #: vmstat.c:541 vmstat.c:549
 msgid "sectors"
-msgstr "cungtừ"
+msgstr "扇区"
 
 #. Translation Hint: max 7 chars
 #: vmstat.c:543 vmstat.c:551
 msgid "ms"
-msgstr "ms"
+msgstr ""
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:553
 msgid "cur"
-msgstr "Vthtại"
+msgstr ""
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:555
 msgid "sec"
-msgstr "giây"
+msgstr ""
 
 #: vmstat.c:665
 msgid "your kernel does not support diskstat (2.5.70 or above required)"
-msgstr "your kernel does not support diskstat (2.5.70 or above required)"
+msgstr ""
 
 #. Translation Hint: Translating folloging slab fields that
 #. * follow (marked with max x chars) might not work, unless
 #. * manual page is translated as well.
 #. Translation Hint: max 24 chars
 #: vmstat.c:675
+#, fuzzy
 msgid "Cache"
-msgstr "Nhớ tạm"
+msgstr "以 KB 表示的软件数据缓存的大小"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:677
+#, fuzzy
 msgid "Num"
-msgstr "Số"
+msgstr "NUM"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:679
 msgid "Total"
-msgstr "Tổng"
+msgstr "总共"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:681
 msgid "Size"
-msgstr "Cỡ"
+msgstr "大小"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:683
+#, fuzzy
 msgid "Pages"
-msgstr "Trang"
+msgstr "用于生成简单的手册页的实用程序"
 
 #: vmstat.c:695
 msgid ""
 "your kernel does not support slabinfo or your permissions are insufficient"
-msgstr "hạt nhân của bạn không hỗ trợ slabinfo hoặc bạn không đủ thẩm quyền"
+msgstr "您的内核不支持 slabinfo 或您的权限不够"
 
 #: vmstat.c:747
 #, c-format
 msgid "%13d disks \n"
-msgstr "%13d đĩa \n"
+msgstr ""
 
 #: vmstat.c:748
-#, c-format
+#, fuzzy, c-format
 msgid "%13d partitions \n"
-msgstr "%13d phân vùng \n"
+msgstr "主分区过多。"
 
 #: vmstat.c:764
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu total reads\n"
-msgstr "%13lu tổng đọc\n"
+msgstr "总用量"
 
 #: vmstat.c:765
 #, c-format
 msgid "%13lu merged reads\n"
-msgstr "%13lu đọc hòa trộn\n"
+msgstr ""
 
 #: vmstat.c:766
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu read sectors\n"
-msgstr "%13lu cung từ đã đọc\n"
+msgstr "扇区"
 
 #: vmstat.c:767
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu milli reading\n"
-msgstr "%13lu đọc milli\n"
+msgstr "读取宏"
 
 #: vmstat.c:768
 #, c-format
 msgid "%13lu writes\n"
-msgstr "%13lu ghi\n"
+msgstr ""
 
 #: vmstat.c:769
 #, c-format
 msgid "%13lu merged writes\n"
-msgstr "%13lu ghi hòa trộn\n"
+msgstr ""
 
 #: vmstat.c:770
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu written sectors\n"
-msgstr "%13lu cung từ đã ghi\n"
+msgstr "扇区"
 
 #: vmstat.c:771
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu milli writing\n"
-msgstr "%13lu milli ghi\n"
+msgstr "写入%qs时错误"
 
 #: vmstat.c:772
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu inprogress IO\n"
-msgstr "%13lu VR trong tiến trình\n"
+msgstr "错误的 IO 基类型(%d)"
 
 #: vmstat.c:773
 #, c-format
 msgid "%13lu milli spent IO\n"
-msgstr "%13lu milli dùng VR\n"
+msgstr ""
 
 #: vmstat.c:794
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu %s total memory\n"
-msgstr "%13lu %s tổng bộ nhớ\n"
+msgstr "脚本“%s”: 内存耗尽%s\n"
 
 #: vmstat.c:795
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu %s used memory\n"
-msgstr "%13lu %s bộ nhớ đã dùng\n"
+msgstr "脚本“%s”: 内存耗尽%s\n"
 
 #: vmstat.c:796
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu %s active memory\n"
-msgstr "%13lu %s bộ nhớ hoạt động\n"
+msgstr "设备 %s 未激活。\n"
 
 #: vmstat.c:797
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu %s inactive memory\n"
-msgstr "%13lu %s bộ nhớ không hoạt động\n"
+msgstr "脚本“%s”: 内存耗尽%s\n"
 
 #: vmstat.c:798
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu %s free memory\n"
-msgstr "%13lu %s bộ nhớ trống\n"
+msgstr "脚本“%s”: 内存耗尽%s\n"
 
 #: vmstat.c:799
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu %s buffer memory\n"
-msgstr "%13lu %s bộ nhớ đệm\n"
+msgstr "内存节 %s+%x"
 
 #: vmstat.c:800
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu %s swap cache\n"
-msgstr "%13lu %s nhớ tạm tráo đổi\n"
+msgstr "无法丢弃缓存：%s"
 
 #: vmstat.c:801
 #, c-format
 msgid "%13lu %s total swap\n"
-msgstr "%13lu %s tổng tráo đổi\n"
+msgstr ""
 
 #: vmstat.c:802
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu %s used swap\n"
-msgstr "%13lu %s tráo đổi đã dùng\n"
+msgstr "%s 与%<%%%c%>%s 格式并用"
 
 #: vmstat.c:803
 #, c-format
 msgid "%13lu %s free swap\n"
-msgstr "%13lu %s tráo đổi còn trống\n"
+msgstr ""
 
 #: vmstat.c:804
 #, c-format
 msgid "%13lld non-nice user cpu ticks\n"
-msgstr "%13lld tíc-tắc cpu người dùng không-tốt\n"
+msgstr ""
 
 #: vmstat.c:805
 #, c-format
 msgid "%13lld nice user cpu ticks\n"
-msgstr "%13lld tíc-tắc cpu người dùng tốt\n"
+msgstr ""
 
 #: vmstat.c:806
 #, c-format
 msgid "%13lld system cpu ticks\n"
-msgstr "%13lld tíc-tắc cpu hệ thống\n"
+msgstr ""
 
 #: vmstat.c:807
 #, c-format
 msgid "%13lld idle cpu ticks\n"
-msgstr "%13lld tíc-tắc cpu nghỉ\n"
+msgstr ""
 
 #: vmstat.c:808
 #, c-format
 msgid "%13lld IO-wait cpu ticks\n"
-msgstr "%13lld tíc-tắc cpu chờ VR\n"
+msgstr ""
 
 #: vmstat.c:809
 #, c-format
 msgid "%13lld IRQ cpu ticks\n"
-msgstr "%13lld tíc-tắc cpu IQR\n"
+msgstr ""
 
 #: vmstat.c:810
 #, c-format
 msgid "%13lld softirq cpu ticks\n"
-msgstr "%13lld tíc-tắc cpu ngắt bằng phần mềm\n"
+msgstr ""
 
 #: vmstat.c:811
 #, c-format
 msgid "%13lld stolen cpu ticks\n"
-msgstr "%13lld tíc-tắc cpu bị mất\n"
+msgstr ""
 
 #: vmstat.c:812
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu pages paged in\n"
-msgstr "%13lu trang được đánh trang vào\n"
+msgstr "已本地化的手册页"
 
 #: vmstat.c:813
 #, c-format
 msgid "%13lu pages paged out\n"
-msgstr "%13lu trang được đánh trang ra\n"
+msgstr ""
 
 #: vmstat.c:814
-#, c-format
+#, fuzzy, c-format
 msgid "%13lu pages swapped in\n"
-msgstr "%13lu trang tráo đổi vào\n"
+msgstr "用于生成简单的手册页的实用程序"
 
 #: vmstat.c:815
 #, c-format
 msgid "%13lu pages swapped out\n"
-msgstr "%13lu trang tráo đổi ra\n"
+msgstr ""
 
 #: vmstat.c:816
 #, c-format
 msgid "%13u interrupts\n"
-msgstr "%13u ngắt\n"
+msgstr ""
 
 #: vmstat.c:817
 #, c-format
 msgid "%13u CPU context switches\n"
-msgstr "%13u chuyển ngữ cảnh CPU\n"
+msgstr ""
 
 #: vmstat.c:818
-#, c-format
+#, fuzzy, c-format
 msgid "%13u boot time\n"
-msgstr "%13u lần khởi động máy\n"
+msgstr "无法获取启动时间"
 
 #: vmstat.c:819 vmstat.c:834
 #, c-format
 msgid "%13u forks\n"
-msgstr "%13u tiến trình rẽ nhánh\n"
+msgstr ""
 
 #. Translation Hint: do not change argument characters
 #: vmstat.c:936
 msgid "-S requires k, K, m or M (default is KiB)"
-msgstr "-S cần k, K, m hay M (mặc định là KiB)"
+msgstr ""
 
 #: vmstat.c:987
-#, c-format
+#, fuzzy, c-format
 msgid "partition was not found\n"
-msgstr "không tìm thấy phân vùng\n"
+msgstr "找不到有效的分区映射。"
 
 #: watch.c:89
-#, c-format
+#, fuzzy, c-format
 msgid " %s [options] command\n"
-msgstr " %s [các-tùy-chọn] lệnh\n"
+msgstr "用法：%s [选项] 命令\n"
 
 #: watch.c:91
 msgid "  -b, --beep             beep if command has a non-zero exit\n"
-msgstr "  -b, --beep             kêu bíp nếu lệnh thoát khác không\n"
+msgstr ""
 
 #: watch.c:92
 msgid "  -c, --color            interpret ANSI color and style sequences\n"
-msgstr "  -c, --color            phiên dịch màu ANSI và dãy kiểu\n"
+msgstr ""
 
 #: watch.c:93
 msgid ""
 "  -d, --differences[=<permanent>]\n"
 "                         highlight changes between updates\n"
 msgstr ""
-"  -d, --differences[=<permanent>]\n"
-"                         tô sáng các thay đổi giữa những lần cập nhật\n"
 
 #: watch.c:95
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
-msgstr "  -e, --errexit          thoát nếu lệnh kết thúc khác không\n"
+msgstr ""
 
 #: watch.c:96
 msgid "  -g, --chgexit          exit when output from command changes\n"
-msgstr "  -g, --chgexit          thoát khi kết xuất từ lệnh có thay đổi\n"
+msgstr ""
 
 #: watch.c:97
 msgid "  -n, --interval <secs>  seconds to wait between updates\n"
-msgstr "  -n, --interval <giây>  số giây đợi giữa các lần cập nhật\n"
+msgstr ""
 
 #: watch.c:98
 msgid "  -p, --precise          attempt run command in precise intervals\n"
-msgstr "  -p, --precise          cố chạy lệnh ở nhịp thời gian chính xác\n"
+msgstr ""
 
 #: watch.c:99
 msgid "  -t, --no-title         turn off header\n"
-msgstr "  -t, --no-title         không in phần đầu\n"
+msgstr ""
 
 #: watch.c:100
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
-msgstr "  -x, --exec             chuyển lệnh cho exec thay cho \"sh -c\"\n"
+msgstr ""
 
 #: watch.c:103
+#, fuzzy
 msgid " -v, --version  output version information and exit\n"
-msgstr " -v, --version  hiển thị thông tin phiên bản rồi thoát\n"
+msgstr ""
+"将分区表的变更通报操作系统。\n"
+"\n"
+"  -d, --dry-run    并非真的通报操作系统\n"
+"  -s, --summary    印出内容的概要\n"
+"  -h, --help       显示这个说明然后离开\n"
+"  -v, --version    输出版本信息然后离开\n"
 
 #: watch.c:390
-#, c-format
+#, fuzzy, c-format
 msgid "Every %.1fs: "
-msgstr "Mỗi %.1fs: "
+msgstr "每秒时间戳记列"
 
 #: watch.c:391
 #, c-format
@@ -4187,102 +4158,104 @@ msgid "%s: %s"
 msgstr ""
 
 #: watch.c:462
+#, fuzzy
 msgid "unable to create IPC pipes"
-msgstr "không thể tạo đường ống IPC"
+msgstr "无法创建不可改变的头区。\n"
 
 #: watch.c:472
 msgid "unable to fork process"
-msgstr "không thể rẽ nhánh tiến trình"
+msgstr "无法创建 (fork) 进程"
 
 #: watch.c:477
+#, fuzzy
 msgid "dup2 failed"
-msgstr "dup2 bị lỗi"
+msgstr " 失败 - "
 
 #: watch.c:484
-#, c-format
+#, fuzzy, c-format
 msgid "unable to execute '%s'"
-msgstr "không thể thực hiện “%s”"
+msgstr "无法执行“%s”：%s"
 
 #: watch.c:501
 msgid "fdopen"
 msgstr "fdopen"
 
 #: watch.c:647
+#, fuzzy
 msgid "waitpid"
-msgstr "waitpid"
+msgstr "waitpid 失败"
 
 #: watch.c:655
 msgid "command exit with a non-zero status, press a key to exit"
-msgstr "lệnh kết thúc với mã thoát khác không, hãy bấm phím bất kỳ để thoát"
+msgstr "命令以非零状态退出，按任意键退出"
 
 #: watch.c:779
-#, c-format
+#, fuzzy, c-format
 msgid "unicode handling error\n"
-msgstr "xử lý unicode gặp lỗi\n"
+msgstr "以 null 终止的 unicode 字符串"
 
 #: watch.c:785
 #, c-format
 msgid "unicode handling error (malloc)\n"
-msgstr "xử lý unicode gặp lỗi (malloc)\n"
+msgstr "unicode 处理错误 (malloc)\n"
 
 #: w.c:245 w.c:260
 #, c-format
 msgid " %2ludays"
-msgstr " %2lungày"
+msgstr ""
 
 #. Translation Hint: Minutes:Seconds
 #. Translation Hint: Hours:Minutes
 #: w.c:254 w.c:264
 #, c-format
 msgid " %2lu:%02um"
-msgstr " %2lu:%02uphút"
+msgstr ""
 
 #. Translation Hint: Seconds:Centiseconds
 #: w.c:272
 #, c-format
 msgid " %2lu.%02us"
-msgstr " %2lu.%02ugiây"
+msgstr ""
 
 #: w.c:455
+#, fuzzy
 msgid " -h, --no-header     do not print header\n"
-msgstr " -h, --no-header     không in phần đầu\n"
+msgstr "打印使用到的头文件名"
 
 #: w.c:456
 msgid " -u, --no-current    ignore current process username\n"
-msgstr " -u, --no-current    bỏ qua tiến trình từ người dùng hiện tại\n"
+msgstr ""
 
 #: w.c:457
+#, fuzzy
 msgid " -s, --short         short format\n"
-msgstr " -s, --short         định dạng ngắn gọn\n"
+msgstr "%<short%>对%qs无效"
 
 #: w.c:458
 msgid " -f, --from          show remote hostname field\n"
-msgstr " -f, --from          hiển thị trường tên máy chủ\n"
+msgstr ""
 
 #: w.c:459
+#, fuzzy
 msgid " -o, --old-style     old style output\n"
-msgstr " -o, --old-style     hiển thị kiểu cũ\n"
+msgstr "旧式的函数定义"
 
 #: w.c:460
 msgid ""
 " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
-msgstr " -i, --ip-addr       hiển thị địa chỉ IP thay cho tên máy (nếu được)\n"
+msgstr ""
 
 #: w.c:557
 #, c-format
 msgid ""
 "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
 msgstr ""
-"“chiều dài biến môi trường của người dùng” PROCPS_USERLEN phải nằm giữa 8 và "
-"%d, nên bỏ qua\n"
 
 #: w.c:567
 #, c-format
 msgid ""
 "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
 msgstr ""
-"“chiều dài biến môi trường từ” PROCPS_FROMLEN phải nằm giữa 8 và %d, nên bỏ "
-"qua\n"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
@@ -4293,17 +4266,17 @@ msgstr "%-*s TTY      "
 
 #: w.c:593
 msgid "FROM"
-msgstr "TỪ"
+msgstr "来自"
 
 #: w.c:595
-#, c-format
+#, fuzzy, c-format
 msgid "  LOGIN@   IDLE   JCPU   PCPU WHAT\n"
-msgstr " ĐNHẬP@      NGHỈ   JCPU   PCPU   GÌ\n"
+msgstr "  登陆于   空闲   JCPU   PCPU WHAT\n"
 
 #: w.c:597
 #, c-format
 msgid "   IDLE WHAT\n"
-msgstr "   NGHỈ GÌ\n"
+msgstr "   空闲等待\n"
 
 #: include/c.h:153
 msgid ""
@@ -4311,7 +4284,7 @@ msgid ""
 "Usage:\n"
 msgstr ""
 "\n"
-"Cách dùng:\n"
+"用法：\n"
 
 #: include/c.h:154
 msgid ""
@@ -4319,7 +4292,7 @@ msgid ""
 "Options:\n"
 msgstr ""
 "\n"
-"Các tùy chọn:\n"
+"选项：\n"
 
 #: include/c.h:155
 msgid "\n"
@@ -4327,11 +4300,11 @@ msgstr "\n"
 
 #: include/c.h:156
 msgid " -h, --help     display this help and exit\n"
-msgstr " -h, --help     hiển thị trợ giúp này rồi thoát\n"
+msgstr " -h, --help     显示此帮助然后离开\n"
 
 #: include/c.h:157
 msgid " -V, --version  output version information and exit\n"
-msgstr " -V, --version  hiển thị thông tin phiên bản rồi thoát\n"
+msgstr " -V, --version  显示程序版本然后离开\n"
 
 #: include/c.h:158
 #, c-format
@@ -4340,59 +4313,24 @@ msgid ""
 "For more details see %s.\n"
 msgstr ""
 "\n"
-"Để có thêm thông tin vui lòng xem %s.\n"
+"欲了解更多详细信息，请参见 %s。\n"
 
 #: include/c.h:160
 #, c-format
 msgid "%s from %s\n"
-msgstr "%s nằm trong gói phần mềm “%s”.\n"
+msgstr ""
 
+#, fuzzy
 #~ msgid "seconds argument `%s' failed"
-#~ msgstr "đối số thứ hai “%s” bị lỗi"
+#~ msgstr "无效的秒数：%s"
 
-#~ msgid "alternate System.map file must follow -n"
-#~ msgstr "tập tin System.map thay thế phải theo sau -n"
-
-#~ msgid "alternate System.map file must follow N"
-#~ msgstr "tập tin System.map thay thế phải theo sau N"
-
-#~ msgid "Adj"
-#~ msgstr "Sửa"
-
+#, fuzzy
 #~ msgid "oom_adjustment (2^X)"
-#~ msgstr "oom_adjustment (2^X)"
-
-#~ msgid "Badness"
-#~ msgstr "Tồi"
-
-#~ msgid "oom_score (badness)"
-#~ msgstr "oom_score (tồi)"
-
-#~ msgid "Overwrite existing obsolete/corrupted rcfile?"
-#~ msgstr "Đè lên tập tin tài nguyên cũ/hỏng không?"
+#~ msgstr " X: 2             R: 7-E-1\n"
 
 #~ msgid "reads  "
-#~ msgstr "đọc  "
+#~ msgstr "读取   "
 
-#~ msgid "%d column window is too narrow"
-#~ msgstr "cửa sổ %d cột là quá hẹp"
-
-#~ msgid "%d column width exceeds command buffer size, truncating to %d"
-#~ msgstr "độ rộng cột %d là vượt quá cỡ bộ đệm lệnh, cắt ngắn thành %d"
-
+#, fuzzy
 #~ msgid "warning: screen width %d suboptimal"
-#~ msgstr "cảnh báo: độ rộng màn hình %d gần dưới điểm cực thuận"
-
-#~ msgid ""
-#~ " -o, --old           use old format (without -/+buffers/cache line)\n"
-#~ msgstr ""
-#~ " -o, --old           dùng định dạng cũ (không có dòng -/+đệm/nhớ_tạm)\n"
-
-#~ msgid "-/+ buffers/cache:"
-#~ msgstr "-/+ đệm/nhớ_tạm:"
-
-#~ msgid "Nothing to highlight!"
-#~ msgstr "Không có gì cần tô sáng!"
-
-#~ msgid "could not parse rcfile inspect entry %d"
-#~ msgstr "không thể phân tích mục tin kiểm tra tập tin tài nguyên %d"
+#~ msgstr "警告：无效的宽度值%lu，已使用%d 代替"
