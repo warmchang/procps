@@ -7,6 +7,7 @@ procps-ng-NEXT
   * library: dont use SIGPWR on FreeBSD                    Debian #832148
   * library: don't strip off wchan prefixes (ps & top)     Redhat #1322111
   * pgrep: warn about 15+ char name only if -f not used
+  * pgrep/pkill: only match in same namespace by default   merge #41
   * pidof: specify separator between pids                  merge #58
   * pkill: Return 0 only if we can kill process            Debian #852758
   * pmap: fix duplicate output line under '-x' option      Redhat #1374061
@@ -14,6 +15,7 @@ procps-ng-NEXT
   * ps: recognizes SCHED_DEADLINE as valid CPU scheduler
   * ps: display NUMA node under which a thread ran         issue #58
   * ps: Add seconds display for cputime and time           merge #43
+  * ps: Add LUID field                                     merge #57 Redhat #1518986
   * sysctl: Permit empty string for value                  issue #74
   * sysctl: Don't segv when file not available             issue #76
   * sysctl: Read and write large buffers                   merge #56
