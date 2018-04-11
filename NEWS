@@ -1,6 +1,7 @@
 procps-ng-3.3.14
 ----------------
   * pgrep: Don't segfault on non match                     Debian #894917
+  * pgrep/pkill: Revert so matches all namespaces          issue #91
 
 procps-ng-3.3.13
 ----------------
