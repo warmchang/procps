@@ -115,7 +115,7 @@ static void __attribute__ ((__noreturn__))
 	fputs(_("  -b, --binary         print value without new line\n"), out);
 	fputs(_("  -e, --ignore         ignore unknown variables errors\n"), out);
 	fputs(_("  -N, --names          print variable names without values\n"), out);
-	fputs(_("  -n, --values         print only values of a variables\n"), out);
+	fputs(_("  -n, --values         print only values of the given variable(s)\n"), out);
 	fputs(_("  -p, --load[=<file>]  read values from file\n"), out);
 	fputs(_("  -f                   alias of -p\n"), out);
 	fputs(_("      --system         read values from all system directories\n"), out);
