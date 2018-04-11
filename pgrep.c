@@ -592,7 +592,7 @@ static struct el * select_procs (int *num)
 
     *num = matches;
 
-    if ((!opt_full) && (strlen(opt_pattern) > 15))
+    if ((!matches) && (!opt_full) && opt_pattern && (strlen(opt_pattern) > 15))
         xwarnx(_("pattern that searches for process name longer than 15 characters will result in zero matches\n"
                  "Try `%s -f' option to match against the complete command line."),
                program_invocation_short_name);
