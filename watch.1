@@ -21,7 +21,8 @@ has changed at least once since first iteration.
 \fB\-n\fR, \fB\-\-interval\fR \fIseconds\fR
 Specify update interval.  The command will not allow quicker than 0.1 second
 interval, in which the smaller values are converted. Both '.' and ',' work
-for any locales.
+for any locales. The WATCH_INTERVAL environment can be used to persistently
+set a non-default interval (following the same rules and formatting).
 .TP
 \fB\-p\fR, \fB\-\-precise\fR
 Make
