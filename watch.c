@@ -671,6 +671,7 @@ int main(int argc, char *argv[])
 {
 	int optc;
 	double interval = 2;
+	char *interval_string;
 	char *command;
 	char **command_argv;
 	int command_length = 0;	/* not including final \0 */
@@ -704,6 +705,10 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
+	interval_string = getenv("WATCH_INTERVAL");
+	if(interval_string != NULL) 
+		interval = strtod_nol_or_err(interval_string, _("Could not parse interval from WATCH_INTERVAL"));
+
 	while ((optc =
 		getopt_long(argc, argv, "+bced::ghn:pvtx", longopts, (int *)0))
 	       != EOF) {
@@ -733,10 +738,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'n':
 			interval = strtod_nol_or_err(optarg, _("failed to parse argument"));
-			if (interval < 0.1)
-				interval = 0.1;
-			if (interval > UINT_MAX)
-				interval = UINT_MAX;
 			break;
 		case 'p':
 			precise_timekeeping = 1;
@@ -752,6 +753,11 @@ int main(int argc, char *argv[])
 			break;
 		}
 	}
+
+	if (interval < 0.1)
+		interval = 0.1;
+	if (interval > UINT_MAX)
+		interval = UINT_MAX;
 
 	if (optind >= argc)
 		usage(stderr);
