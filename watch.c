@@ -290,6 +290,11 @@ static void process_ansi(FILE * fp)
     int ansi_attribute;
 
 	c = getc(fp);
+
+	if (c == '(') {
+		c = getc(fp);
+		c = getc(fp);
+	}
 	if (c != '[') {
 		ungetc(c, fp);
 		return;
