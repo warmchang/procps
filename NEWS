@@ -1,9 +1,10 @@
 procps-ng-3.3.14
 ----------------
+  * free: Fix scaling on 32-bit systems                    issue #89
   * pgrep: Don't segfault on non match                     Debian #894917
   * pgrep/pkill: Revert so matches all namespaces          issue #91
-  * free: Fix scaling on 32-bit systems                    issue #89
   * library: Build on non-glibc systems                    issue #88
+  * library: Just check for SIGLOST and don't delete it    issye #93
 
 procps-ng-3.3.13
 ----------------
