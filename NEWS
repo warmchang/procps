@@ -17,6 +17,7 @@ procps-ng-3.3.13
   * library: dont use vm_min_free on non Linux             Debian #831396
   * library: dont use SIGPWR on FreeBSD                    Debian #832148
   * library: don't strip off wchan prefixes (ps & top)     Redhat #1322111
+  * library: Just check for SIGLOST and don't delete it    issue #93
   * pgrep: warn about 15+ char name only if -f not used
   * pgrep/pkill: only match in same namespace by default   merge #41
   * pidof: specify separator between pids                  merge #58

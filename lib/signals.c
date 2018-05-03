@@ -52,10 +52,6 @@
 #  undef SIGSTKFLT
 #endif
 
-#if !defined(__GNU__) && defined(SIGLOST)
-#  undef SIGLOST
-#endif
-
 #ifndef SIGRTMIN
 #  warning Standards require that <signal.h> define SIGRTMIN; assuming 32
 #  define SIGRTMIN 32
@@ -87,7 +83,7 @@ static const mapstruct sigtable[] = {
   {"ILL",    SIGILL},
   {"INT",    SIGINT},
   {"KILL",   SIGKILL},
-#ifdef SIGLOST
+#if defined(__GNU__)
   {"LOST",   SIGLOST},  /* Hurd-specific */
 #endif
   {"PIPE",   SIGPIPE},
