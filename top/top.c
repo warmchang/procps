@@ -3715,7 +3715,7 @@ static const char *config_file (FILE *fp, const char *name, float *delay) {
    *delay = (float)tmp_whole + (float)tmp_fract / 1000;
 
    for (i = 0 ; i < GROUPSMAX; i++) {
-      int x;
+      int n, x;
       WIN_t *w = &Winstk[i];
       p = fmtmk(N_fmt(RC_bad_entry_fmt), i+1, name);
 
@@ -3727,6 +3727,11 @@ static const char *config_file (FILE *fp, const char *name, float *delay) {
  too bad fscanf is not as flexible with his format string as snprintf
 error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 #endif
+      // ensure there's been no manual alteration of fieldscur
+      for (n = 0 ; n < EU_MAXPFLGS; n++) {
+         if (strchr(w->rc.fieldscur, w->rc.fieldscur[n]) != strrchr(w->rc.fieldscur, w->rc.fieldscur[n]))
+            return p;
+      }
       // be tolerant of missing release 3.3.10 graph modes additions
       if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d\n"
          , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks, &w->rc.graph_cpus, &w->rc.graph_mems))
