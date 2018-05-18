@@ -3756,6 +3756,11 @@ error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
             return p;
       if (UNSAFE_SORTINDX(w->rc.sortindx, sizeof(Fieldstab) / sizeof(Fieldstab[0])))
          return p;
+      if (w->rc.graph_cpus < 0 || w->rc.graph_cpus > 2)
+         return p;
+      if (w->rc.graph_mems < 0 || w->rc.graph_mems > 2)
+         return p;
+
       if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
          , &w->rc.summclr, &w->rc.msgsclr
          , &w->rc.headclr, &w->rc.taskclr))
@@ -3795,6 +3800,10 @@ error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
          ;                                  // avoid -Wunused-result
    if (Rc.fixed_widest < -1 || Rc.fixed_widest > SCREENMAX)
       Rc.fixed_widest = 0;
+   if (Rc.summ_mscale < 0   || Rc.summ_mscale > SK_Eb)
+      Rc.summ_mscale = 0;
+   if (Rc.task_mscale < 0   || Rc.task_mscale > SK_Pb)
+      Rc.task_mscale = 0;
 
    // we'll start off Inspect stuff with 1 'potential' blank line
    // ( only realized if we end up with Inspect.total > 0 )
@@ -5619,7 +5628,7 @@ numa_nope:
       }
 
       if (w->rc.graph_mems) {
-         static struct {
+         static const struct {
             const char *used, *misc, *swap, *type;
          } gtab[] = {
             { "%-.*s~7", "%-.*s~8", "%-.*s~8", Graph_bars },
