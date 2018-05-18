@@ -3699,6 +3699,8 @@ static int config_cvt (WIN_t *q) {
    // lastly, we must adjust the old sort field enum...
    x = q->rc.sortindx;
    q->rc.sortindx = fields_src[x] - FLD_OFFSET;
+   if (q->rc.sortindx < 0 || q->rc.sortindx >= EU_MAXPFLGS)
+      return 1;
 
    return 0;
 } // end: config_cvt
@@ -3746,6 +3748,8 @@ error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
       if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d\n"
          , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks, &w->rc.graph_cpus, &w->rc.graph_mems))
             return p;
+      if (w->rc.sortindx < 0 || w->rc.sortindx >= EU_MAXPFLGS)
+         return p;
       if (w->rc.graph_cpus < 0 || w->rc.graph_cpus > 2)
          return p;
       if (w->rc.graph_mems < 0 || w->rc.graph_mems > 2)
