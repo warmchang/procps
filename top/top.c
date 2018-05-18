@@ -928,7 +928,7 @@ static void show_special (int interact, const char *glob) {
   /* note: the following is for documentation only,
            the real captab is now found in a group's WIN_t !
      +------------------------------------------------------+
-     | char *captab[] = {                 :   Cap's/Delim's |
+     | char *captab[] = {                 :   Cap's = Index |
      |   Cap_norm, Cap_norm,              =   \000, \001,   |
      |   cap_bold, capclr_sum,            =   \002, \003,   |
      |   capclr_msg, capclr_pmt,          =   \004, \005,   |
@@ -938,9 +938,16 @@ static void show_special (int interact, const char *glob) {
      +------------------------------------------------------+ */
   /* ( Pssst, after adding the termcap transitions, row may )
      ( exceed 300+ bytes, even in an 80x24 terminal window! )
-     ( And if we're no longer guaranteed lines created only )
-     ( by top, we'll need larger buffs plus some protection )
-     ( against overrunning them with this 'lin_end - glob'. ) */
+     ( Shown here are the former buffer size specifications )
+     ( char tmp[SMLBUFSIZ], lin[MEDBUFSIZ], row[LRGBUFSIZ]. )
+     ( So now we use larger buffers and a little protection )
+     ( against overrunning them with this 'lin_end - glob'. )
+
+     ( That was uncovered during 'Inspect' development when )
+     ( this guy was being considered for a supporting role. )
+     ( However, such an approach was abandoned. As a result )
+     ( this function is called only with a glob under top's )
+     ( control and never containing any 'raw/binary' chars! ) */
    char tmp[LRGBUFSIZ], lin[LRGBUFSIZ], row[ROWMAXSIZ];
    char *rp, *lin_end, *sub_beg, *sub_end;
    int room;
@@ -948,7 +955,7 @@ static void show_special (int interact, const char *glob) {
    // handle multiple lines passed in a bunch
    while ((lin_end = strchr(glob, '\n'))) {
      #define myMIN(a,b) (((a) < (b)) ? (a) : (b))
-      size_t lessor = myMIN((size_t)(lin_end - glob), sizeof(lin) -1);
+      size_t lessor = myMIN((size_t)(lin_end - glob), sizeof(lin) -3);
 
       // create a local copy we can extend and otherwise abuse
       memcpy(lin, glob, lessor);
@@ -963,6 +970,8 @@ static void show_special (int interact, const char *glob) {
          if ('~' == ch) ch = *(sub_end + 1) - '0';
          switch (ch) {
             case 0:                    // no end delim, captab makes normal
+               // only possible when '\n' was NOT preceeded with a '~#' sequence
+               // ( '~1' thru '~8' is valid range, '~0' is never actually used )
                *(sub_end + 1) = '\0';  // extend str end, then fall through
                *(sub_end + 2) = '\0';  // ( +1 optimization for usual path )
             case 1: case 2: case 3: case 4:
