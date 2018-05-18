@@ -4,6 +4,7 @@ procps-ng-3.3.15
     No removals, no new functions
     Changes: slab and pid structures
   * pgrep: Fix stack-based buffer overflow                 CVE-2018-1125
+  * pgrep: Remove >15 warning as comm can be longer        issue #92
   * ps: Fix buffer overflow in output buffer, causing DOS  CVE-2018-1123
   * library: Just check for SIGLOST and don't delete it    issue #93
   * library: Fix integer overflow and LPE in file2strvec   CVE-2018-1124
