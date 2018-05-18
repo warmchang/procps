@@ -1,10 +1,22 @@
+procps-ng-3.3.15
+----------------
+  * library: Increment to 8:0:1
+    No removals, no new functions
+    Changes: slab and pid structures
+  * pgrep: Fix stack-based buffer overflow                 CVE-2018-1125
+  * ps: Fix buffer overflow in output buffer, causing DOS  CVE-2018-1123
+  * library: Just check for SIGLOST and don't delete it    issue #93
+  * library: Fix integer overflow and LPE in file2strvec   CVE-2018-1124
+  * library: Use size_t for alloc functions                CVE-2018-1126
+  * library: Increase comm size to 64
+  * top: Don't use cwd for location of config              CVE-2018-1122
+
 procps-ng-3.3.14
 ----------------
   * free: Fix scaling on 32-bit systems                    issue #89
   * pgrep: Don't segfault on non match                     Debian #894917
   * pgrep/pkill: Revert so matches all namespaces          issue #91
   * library: Build on non-glibc systems                    issue #88
-  * library: Just check for SIGLOST and don't delete it    issye #93
 
 procps-ng-3.3.13
 ----------------
