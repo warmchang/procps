@@ -963,6 +963,8 @@ static void show_special (int interact, const char *glob) {
          if ('~' == ch) ch = *(sub_end + 1) - '0';
          switch (ch) {
             case 0:                    // no end delim, captab makes normal
+               *(sub_end + 1) = '\0';  // extend str end, then fall through
+               *(sub_end + 2) = '\0';  // ( +1 optimization for usual path )
             case 1: case 2: case 3: case 4:
             case 5: case 6: case 7: case 8:
                *sub_end = '\0';
@@ -971,8 +973,6 @@ static void show_special (int interact, const char *glob) {
                rp = scat(rp, tmp);
                room -= (sub_end - sub_beg);
                room += utf8_delta(sub_beg);
-               if (!ch) goto done_substrings;
-               if (!*(sub_end + 1)) goto done_substrings;
                sub_beg = (sub_end += 2);
                break;
             default:                   // nothin' special, just text
@@ -980,7 +980,6 @@ static void show_special (int interact, const char *glob) {
          }
          if (0 >= room) break;         // skip substrings that won't fit
       }
-done_substrings:
 
       if (interact) PUTT("%s%s\n", row, Cap_clr_eol);
       else PUFF("%s%s\n", row, Caps_endline);
