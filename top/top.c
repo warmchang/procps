@@ -3715,6 +3715,12 @@ static const char *config_file (FILE *fp, const char *name, float *delay) {
    }
    if (Rc.id < 'a' || Rc.id > RCF_VERSION_ID)
       return p;
+   if (Rc.mode_altscr < 0 || Rc.mode_altscr > 1)
+      return p;
+   if (Rc.mode_irixps < 0 || Rc.mode_irixps > 1)
+      return p;
+   if (tmp_whole < 0)
+      return p;
    // you saw that, right?  (fscanf stickin' it to 'i')
    if (i < 0 || i >= GROUPSMAX)
       return p;
@@ -3732,8 +3738,8 @@ static const char *config_file (FILE *fp, const char *name, float *delay) {
          , w->rc.winname, w->rc.fieldscur))
             return p;
 #if PFLAGSSIZ != 100
- too bad fscanf is not as flexible with his format string as snprintf
-error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
+ // too bad fscanf is not as flexible with his format string as snprintf
+ #error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 #endif
       // ensure there's been no manual alteration of fieldscur
       for (n = 0 ; n < EU_MAXPFLGS; n++) {
@@ -3746,6 +3752,8 @@ error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
             return p;
       if (w->rc.sortindx < 0 || w->rc.sortindx >= EU_MAXPFLGS)
          return p;
+      if (w->rc.maxtasks < 0)
+         return p;
       if (w->rc.graph_cpus < 0 || w->rc.graph_cpus > 2)
          return p;
       if (w->rc.graph_mems < 0 || w->rc.graph_mems > 2)
@@ -3755,6 +3763,10 @@ error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
          , &w->rc.summclr, &w->rc.msgsclr
          , &w->rc.headclr, &w->rc.taskclr))
             return p;
+      if (w->rc.summclr < 0 || w->rc.summclr > 7) return p;
+      if (w->rc.msgsclr < 0 || w->rc.msgsclr > 7) return p;
+      if (w->rc.headclr < 0 || w->rc.headclr > 7) return p;
+      if (w->rc.taskclr < 0 || w->rc.taskclr > 7) return p;
 
       switch (Rc.id) {
          case 'a':                          // 3.2.8 (former procps)
