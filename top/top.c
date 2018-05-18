@@ -3706,8 +3706,7 @@ static const char *config_file (FILE *fp, const char *name, float *delay) {
    const char *p = NULL;
 
    p = fmtmk(N_fmt(RC_bad_files_fmt), name);
-   if (fgets(fbuf, sizeof(fbuf), fp))       // ignore eyecatcher
-      ;                                     // avoid -Wunused-result
+   (void)fgets(fbuf, sizeof(fbuf), fp);     // ignore eyecatcher
    if (6 != fscanf(fp
       , "Id:%c, Mode_altscr=%d, Mode_irixps=%d, Delay_time=%d.%d, Curwin=%d\n"
       , &Rc.id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_whole, &tmp_fract, &i)) {
@@ -3797,9 +3796,8 @@ static const char *config_file (FILE *fp, const char *name, float *delay) {
    } // end: for (GROUPSMAX)
 
    // any new addition(s) last, for older rcfiles compatibility...
-   if (fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
-      , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress))
-         ;                                  // avoid -Wunused-result
+   (void)fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
+      , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress);
    if (Rc.fixed_widest < -1 || Rc.fixed_widest > SCREENMAX)
       Rc.fixed_widest = 0;
    if (Rc.summ_mscale < 0   || Rc.summ_mscale > SK_Eb)
