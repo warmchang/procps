@@ -546,14 +546,13 @@ typedef struct WIN_t {
                . assumed to represent a complete screen ROW
                . subject to optimization, thus MAY be discarded */
 #define PUFF(fmt,arg...) do { \
-      char _str[ROWMAXSIZ], *_eol; \
+      char _str[ROWMAXSIZ]; \
       const int _len = snprintf(_str, sizeof(_str), fmt, ## arg); \
-      _eol = _str + (_len < 0 ? 0 : (size_t)_len >= sizeof(_str) ? sizeof(_str)-1 : (size_t)_len); \
       if (Batch) { \
+         char *_eol = _str + (_len < 0 ? 0 : (size_t)_len >= sizeof(_str) ? sizeof(_str)-1 : (size_t)_len); \
          while (_eol > _str && _eol[-1] == ' ') _eol--; *_eol = '\0'; putp(_str); } \
       else if (Pseudo_row >= 0 && Pseudo_row < Screen_rows) { \
-         char *_ptr = &Pseudo_screen[Pseudo_row * ROWMAXSIZ]; \
-         if (Pseudo_row + 1 < Screen_rows) ++Pseudo_row; \
+         char *_ptr = &Pseudo_screen[Pseudo_row++ * ROWMAXSIZ]; \
          if (!strcmp(_ptr, _str)) putp("\n"); \
          else { \
             strcpy(_ptr, _str); \
