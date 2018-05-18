@@ -22,7 +22,6 @@
 #include <fcntl.h>
 #include <float.h>
 #include <limits.h>
-#include <stdint.h>
 #include <pwd.h>
 #include <signal.h>
 #include <stdarg.h>
@@ -2727,15 +2726,6 @@ static inline void hstput (unsigned idx) {
 #undef _HASH_
 #endif
 
-
-#define grow_by_size(nmemb, over, size) do { \
-   if ((nmemb) < 0 || (size_t)(nmemb) >= INT_MAX / 5) \
-      error_exit("integer overflow in procs_refresh"); \
-   (nmemb) = (nmemb) * 5 / 4 + (over); \
-   if ((nmemb) < 0 || (size_t)(nmemb) >= SSIZE_MAX / (size)) \
-      error_exit("integer overflow in procs_refresh"); \
-} while (0)
-
         /*
          * Refresh procs *Helper* function to eliminate yet one more need
          * to loop through our darn proc_t table.  He's responsible for:
@@ -2807,7 +2797,7 @@ static void procs_hlp (proc_t *this) {
    }
 
    if (Frame_maxtask+1 >= HHist_siz) {
-      grow_by_size(HHist_siz, 100, sizeof(HST_t));
+      HHist_siz = HHist_siz * 5 / 4 + 100;
       PHist_sav = alloc_r(PHist_sav, sizeof(HST_t) * HHist_siz);
       PHist_new = alloc_r(PHist_new, sizeof(HST_t) * HHist_siz);
    }
@@ -2869,7 +2859,7 @@ static void procs_refresh (void) {
 
    for (;;) {
       if (n_used == n_alloc) {
-         grow_by_size(n_alloc, 10, sizeof(proc_t*));
+         n_alloc = 10 + ((n_alloc * 5) / 4);     // grow by over 25%
          private_ppt = alloc_r(private_ppt, sizeof(proc_t*) * n_alloc);
          // ensure NULL pointers for the additional memory just acquired
          memset(private_ppt + n_used, 0, sizeof(proc_t*) * (n_alloc - n_used));
@@ -2895,8 +2885,6 @@ static void procs_refresh (void) {
    }
  #undef n_used
 } // end: procs_refresh
-
-#undef grow_by_size
 
 
         /*
