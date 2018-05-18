@@ -2797,6 +2797,8 @@ static void procs_hlp (proc_t *this) {
    }
 
    if (Frame_maxtask+1 >= HHist_siz) {
+      /* we're subject to integer overflow if total linux tasks ever approach |
+         400+ million (but, do you think memory might be the bigger problem?) | */
       HHist_siz = HHist_siz * 5 / 4 + 100;
       PHist_sav = alloc_r(PHist_sav, sizeof(HST_t) * HHist_siz);
       PHist_new = alloc_r(PHist_new, sizeof(HST_t) * HHist_siz);
@@ -2859,6 +2861,8 @@ static void procs_refresh (void) {
 
    for (;;) {
       if (n_used == n_alloc) {
+         /* we're subject to integer overflow if total linux tasks ever approach |
+            400+ million (but, do you think memory might be the bigger problem?) | */
          n_alloc = 10 + ((n_alloc * 5) / 4);     // grow by over 25%
          private_ppt = alloc_r(private_ppt, sizeof(proc_t*) * n_alloc);
          // ensure NULL pointers for the additional memory just acquired
