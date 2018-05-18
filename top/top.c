@@ -1865,9 +1865,6 @@ end_justifies:
    // for calibrate_fields and summary_show 1st pass
 #define L_DEFAULT  PROC_FILLSTAT
 
-#define UNSAFE_SORTINDX(indx, size) \
-   ((indx) < 0 || (size_t)(indx) >= (size))
-
         /* These are our gosh darn 'Fields' !
            They MUST be kept in sync with pflags !! */
 static FLD_t Fieldstab[] = {
@@ -2059,8 +2056,6 @@ static void build_headers (void) {
 
    do {
       if (VIZISw(w)) {
-         if (UNSAFE_SORTINDX(w->rc.sortindx, sizeof(Fieldstab) / sizeof(Fieldstab[0])))
-            w->rc.sortindx = EU_PID;
          memset((s = w->columnhdr), 0, sizeof(w->columnhdr));
          if (Rc.mode_altscr) s = scat(s, fmtmk("%d", w->winnum), w->columnhdr, sizeof(w->columnhdr));
          for (i = 0; i < w->maxpflgs; i++) {
@@ -2335,8 +2330,7 @@ static void fields_utility (void) {
 #endif
  #define swapEM  { char c; unSCRL; c = w->rc.fieldscur[i]; \
        w->rc.fieldscur[i] = *p; *p = c; p = &w->rc.fieldscur[i]; }
- #define spewFI  { char *t; if (UNSAFE_SORTINDX(w->rc.sortindx, EU_MAXPFLGS)) w->rc.sortindx = EU_PID; \
-       f = w->rc.sortindx; t = strchr(w->rc.fieldscur, f + FLD_OFFSET); \
+ #define spewFI  { char *t; f = w->rc.sortindx; t = strchr(w->rc.fieldscur, f + FLD_OFFSET); \
        if (!t) t = strchr(w->rc.fieldscur, (f + FLD_OFFSET) | 0x80); \
        i = (t) ? (int)(t - w->rc.fieldscur) : 0; }
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
@@ -3703,8 +3697,6 @@ static int config_cvt (WIN_t *q) {
    strcpy(q->rc.fieldscur, fields_dst);
 
    // lastly, we must adjust the old sort field enum...
-   if (UNSAFE_SORTINDX(q->rc.sortindx, sizeof(fields_src) / sizeof(fields_src[0])))
-      return 1;
    x = q->rc.sortindx;
    q->rc.sortindx = fields_src[x] - FLD_OFFSET;
 
@@ -3754,8 +3746,6 @@ error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
       if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d\n"
          , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks, &w->rc.graph_cpus, &w->rc.graph_mems))
             return p;
-      if (UNSAFE_SORTINDX(w->rc.sortindx, sizeof(Fieldstab) / sizeof(Fieldstab[0])))
-         return p;
       if (w->rc.graph_cpus < 0 || w->rc.graph_cpus > 2)
          return p;
       if (w->rc.graph_mems < 0 || w->rc.graph_mems > 2)
@@ -5981,8 +5971,6 @@ static int window_show (WIN_t *q, int wmax) {
       else Frame_srtflg = -1;
       Frame_ctimes = CHKw(q, Show_CTIMES);          // this & next, only maybe
       Frame_cmdlin = CHKw(q, Show_CMDLIN);
-      if (UNSAFE_SORTINDX(q->rc.sortindx, sizeof(Fieldstab) / sizeof(Fieldstab[0])))
-         q->rc.sortindx = EU_PID;
       qsort(q->ppt, Frame_maxtask, sizeof(proc_t*), Fieldstab[q->rc.sortindx].sort);
    }
 
