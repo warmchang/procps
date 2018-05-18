@@ -5456,13 +5456,13 @@ static void summary_hlp (CPU_t *cpu, const char *pfx) {
 
    /* display some kinda' cpu state percentages
       (who or what is explained by the passed prefix) */
-   static const struct {
-      const char *user, *syst, *type;
-   } gtab[] = {
-      { "%-.*s~7", "%-.*s~8", Graph_bars },
-      { "%-.*s~4", "%-.*s~6", Graph_blks }
-   };
-   if (Curwin->rc.graph_cpus >= 1 && (size_t)Curwin->rc.graph_cpus <= sizeof(gtab) / sizeof(gtab[0])) {
+   if (Curwin->rc.graph_cpus) {
+      static struct {
+         const char *user, *syst, *type;
+      } gtab[] = {
+         { "%-.*s~7", "%-.*s~8", Graph_bars },
+         { "%-.*s~4", "%-.*s~6", Graph_blks }
+      };
       char user[SMLBUFSIZ], syst[SMLBUFSIZ], dual[MEDBUFSIZ];
       int ix = Curwin->rc.graph_cpus - 1;
       float pct_user = (float)(u_frme + n_frme) * scale,
@@ -5577,33 +5577,32 @@ numa_nope:
    } // end: View_STATES
 
    // Display Memory and Swap stats
-   static struct {
-      float div;
-      const char *fmts;
-      const char *label;
-   } scaletab[] = {
-      { 1, "%.0f ", NULL },                             // kibibytes
-#ifdef BOOST_MEMORY
-      { 1024.0, "%#.3f ", NULL },                       // mebibytes
-      { 1024.0*1024, "%#.3f ", NULL },                  // gibibytes
-      { 1024.0*1024*1024, "%#.3f ", NULL },             // tebibytes
-      { 1024.0*1024*1024*1024, "%#.3f ", NULL },        // pebibytes
-      { 1024.0*1024*1024*1024*1024, "%#.3f ", NULL }    // exbibytes
-#else
-      { 1024.0, "%#.1f ", NULL },                       // mebibytes
-      { 1024.0*1024, "%#.1f ", NULL },                  // gibibytes
-      { 1024.0*1024*1024, "%#.1f ", NULL },             // tebibytes
-      { 1024.0*1024*1024*1024, "%#.1f ", NULL },        // pebibytes
-      { 1024.0*1024*1024*1024*1024, "%#.1f ", NULL }    // exbibytes
-#endif
-   };
-   if (isROOM(View_MEMORY, 2) &&
-       Rc.summ_mscale >= 0 && (size_t)Rc.summ_mscale < sizeof(scaletab) / sizeof(scaletab[0])) {
+   if (isROOM(View_MEMORY, 2)) {
     #define bfT(n)  buftab[n].buf
     #define scT(e)  scaletab[Rc.summ_mscale]. e
     #define mkM(x) (float)kb_main_ ## x / scT(div)
     #define mkS(x) (float)kb_swap_ ## x / scT(div)
     #define prT(b,z) { if (9 < snprintf(b, 10, scT(fmts), z)) b[8] = '+'; }
+      static struct {
+         float div;
+         const char *fmts;
+         const char *label;
+      } scaletab[] = {
+         { 1, "%.0f ", NULL },                             // kibibytes
+#ifdef BOOST_MEMORY
+         { 1024.0, "%#.3f ", NULL },                       // mebibytes
+         { 1024.0*1024, "%#.3f ", NULL },                  // gibibytes
+         { 1024.0*1024*1024, "%#.3f ", NULL },             // tebibytes
+         { 1024.0*1024*1024*1024, "%#.3f ", NULL },        // pebibytes
+         { 1024.0*1024*1024*1024*1024, "%#.3f ", NULL }    // exbibytes
+#else
+         { 1024.0, "%#.1f ", NULL },                       // mebibytes
+         { 1024.0*1024, "%#.1f ", NULL },                  // gibibytes
+         { 1024.0*1024*1024, "%#.1f ", NULL },             // tebibytes
+         { 1024.0*1024*1024*1024, "%#.1f ", NULL },        // pebibytes
+         { 1024.0*1024*1024*1024*1024, "%#.1f ", NULL }    // exbibytes
+#endif
+      };
       struct { //                                            0123456789
       // snprintf contents of each buf (after SK_Kb):       'nnnn.nnn 0'
       // and prT macro might replace space at buf[8] with:   ------> +
@@ -5619,13 +5618,13 @@ numa_nope:
          scaletab[5].label = N_txt(AMT_exxabyte_txt);
       }
 
-      static const struct {
-         const char *used, *misc, *swap, *type;
-      } gtab[] = {
-         { "%-.*s~7", "%-.*s~8", "%-.*s~8", Graph_bars },
-         { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
-      };
-      if (w->rc.graph_mems >= 1 && (size_t)w->rc.graph_mems <= sizeof(gtab) / sizeof(gtab[0])) {
+      if (w->rc.graph_mems) {
+         static struct {
+            const char *used, *misc, *swap, *type;
+         } gtab[] = {
+            { "%-.*s~7", "%-.*s~8", "%-.*s~8", Graph_bars },
+            { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
+         };
          char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ];
          float pct_used, pct_misc, pct_swap;
          int ix, num_used, num_misc;
