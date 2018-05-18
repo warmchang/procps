@@ -2130,13 +2130,12 @@ static void calibrate_fields (void) {
          w->hdrcaplen = 0;   // really only used with USE_X_COLHDR
          // build window's pflgsall array, establish upper bounds for maxpflgs
          for (i = 0, w->totpflgs = 0; i < EU_MAXPFLGS; i++) {
-            if (FLDviz(w, i) && w->totpflgs < PFLAGSSIZ) {
+            if (FLDviz(w, i)) {
                f = FLDget(w, i);
 #ifdef USE_X_COLHDR
                w->pflgsall[w->totpflgs++] = f;
 #else
-               if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx &&
-                  w->totpflgs <= PFLAGSSIZ - 3) {
+               if (CHKw(w, Show_HICOLS) && f == w->rc.sortindx) {
                   w->pflgsall[w->totpflgs++] = EU_XON;
                   w->pflgsall[w->totpflgs++] = f;
                   w->pflgsall[w->totpflgs++] = EU_XOF;
