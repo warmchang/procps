@@ -189,7 +189,7 @@ typedef union sel_union {
   uid_t uid;
   gid_t gid;
   dev_t tty;
-  char  cmd[16];  /* this is _not_ \0 terminated */
+  char  cmd[64];  /* this is _not_ \0 terminated */
 } sel_union;
 
 typedef struct selection_node {
