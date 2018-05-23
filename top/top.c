@@ -3759,8 +3759,7 @@ static const char *config_file (FILE *fp, const char *name, float *delay) {
          return p;
 
       if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
-         , &w->rc.summclr, &w->rc.msgsclr
-         , &w->rc.headclr, &w->rc.taskclr))
+         , &w->rc.summclr, &w->rc.msgsclr, &w->rc.headclr, &w->rc.taskclr))
             return p;
       if (w->rc.summclr < 0 || w->rc.summclr > 7) return p;
       if (w->rc.msgsclr < 0 || w->rc.msgsclr > 7) return p;
@@ -3804,6 +3803,8 @@ static const char *config_file (FILE *fp, const char *name, float *delay) {
       Rc.summ_mscale = 0;
    if (Rc.task_mscale < 0   || Rc.task_mscale > SK_Pb)
       Rc.task_mscale = 0;
+   if (Rc.zero_suppress < 0 || Rc.zero_suppress > 1)
+      Rc.zero_suppress = 0;
 
    // we'll start off Inspect stuff with 1 'potential' blank line
    // ( only realized if we end up with Inspect.total > 0 )
