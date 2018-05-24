@@ -3468,8 +3468,8 @@ static void inspection_utility (int pid) {
       Inspect.tab[sel].caps = "~4"; dst[0] = '\0'; \
       for (i = 0; i < Inspect.total; i++) { char _s[SMLBUFSIZ]; \
          snprintf(_s, sizeof(_s), " %s %s", Inspect.tab[i].name, Inspect.tab[i].caps); \
-         strcat(dst, _s); } }
-   char sels[MEDBUFSIZ];
+         strncat(dst, _s, (sizeof(dst) - 1) - strlen(dst)); } }
+   char sels[SCREENMAX];
    static int sel;
    int i, key;
    proc_t *p;
