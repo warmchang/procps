@@ -387,12 +387,15 @@ ENTER(0x220);
         P->vm_swap = strtol(S,&S,10);
         continue;
     case_Groups:
-    {   char *nl = strchr(S, '\n');
-        size_t j = nl ? (size_t)(nl - S) : strlen(S);
+    {   char *ss = S, *nl = strchr(S, '\n');
+        size_t j;
 
+        while (' ' == *ss || '\t' == *ss) ss++;
+        if (ss >= nl) continue;
+        j = nl ? (size_t)(nl - ss) : strlen(ss);
         if (j > 0 && j < INT_MAX) {
             P->supgid = xmalloc(j+1);       // +1 in case space disappears
-            memcpy(P->supgid, S, j);
+            memcpy(P->supgid, ss, j);
             if (unlikely(' ' != P->supgid[--j])) ++j;
             P->supgid[j] = '\0';            // whack the space or the newline
             for ( ; j; j--)
@@ -472,7 +475,11 @@ static void supgrps_from_supgids (proc_t *p) {
 
         while (',' == *s) ++s;
         gid = strtol(s, &end, 10);
-        if (end <= s) break;
+        if (end <= s) {
+            if (!p->supgrp)
+                p->supgrp = xstrdup("-");
+            break;
+        }
         s = end;
         g = pwcache_get_group(gid);
 
