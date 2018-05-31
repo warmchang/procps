@@ -2,6 +2,7 @@
 *.o
 *.so
 *.swp
+*.asc
 .deps
 .libs
 .version
