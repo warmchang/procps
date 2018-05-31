@@ -1,19 +1,19 @@
-'\" t
-.\" (The preceding line is a note to broken versions of man to tell
-.\" them to pre-process this man page with tbl)
-.\" Man page for skill and snice.
-.\" Licensed under version 2 of the GNU General Public License.
-.\" Written by Albert Cahalan, converted to a man page by
-.\" Michael K. Johnson
-.\"
-.TH SKILL 1 "October 2011" "procps-ng" "User Commands"
+.ig
+Written by Albert Cahalan, converted to a man page by Michael K. Johnson
+
+This manpage is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+..
+.TH SKILL 1 "2018-05-31" "procps-ng" "User Commands"
 .SH NAME
 skill, snice \- send a signal or report process status
 .SH SYNOPSIS
 .B skill
 .RI [ signal ]
 .RI [ options ]
-.I expression
+.I expression
 .br
 .B snice
 .RI [ "new priority" ]
@@ -81,7 +81,7 @@ The next expression is a command name.
 \fB\-\-ns \fIpid\fR
 Match the processes that belong to the same namespace as pid.
 .TP
-\fB\-\-nslist \fIns,...\fR
+\fB\-\-nslist \fIns\/\fR,\,\fI...\/\fR
 list which namespaces will be considered for the --ns option.
 Available namespaces: ipc, mnt, net, pid, user, uts.
 .PD
@@ -91,7 +91,7 @@ The behavior of signals is explained in
 manual page.
 .SH EXAMPLES
 .TP
-.B snice -c seti -c crack +7
+.B snice \-c seti \-c crack +7
 Slow down seti and crack commands.
 .TP
 .B skill \-KILL \-t /dev/pts/*
@@ -110,12 +110,12 @@ Stop three users.
 .SH STANDARDS
 No standards apply.
 .SH AUTHOR
-.UR albert@users.sf.net
+.MT albert@users.sf.net
 Albert Cahalan
-.UE
+.ME
 wrote skill and snice in 1999 as a replacement for a non-free
 version.
 .SH "REPORTING BUGS"
 Please send bug reports to
-.UR procps@freelists.org
-.UE
+.MT procps@freelists.org
+.ME
