@@ -1,3 +1,7 @@
+procps-ng-NEXT
+----------------
+  * docs: Use correct symbols for -h option in free.1      Debian #898774
+
 procps-ng-3.3.15
 ----------------
   * library: Increment to 8:0:1
