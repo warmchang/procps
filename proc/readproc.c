@@ -268,7 +268,7 @@ ENTER(0x220);
 #endif
 
     case_Name:
-    {   char buf[16];
+    {   char buf[64];
         unsigned u = 0;
         while(u < sizeof(buf) - 1u){
             int c = *S++;
@@ -283,7 +283,7 @@ ENTER(0x220);
             buf[u++] = c;
         }
         buf[u] = '\0';
-        if (!P->cmd && !(P->cmd = strndup(buf, 15)))
+        if (!P->cmd && !(P->cmd = strdup(buf)))
             return 1;
         S--;   // put back the '\n' or '\0'
         continue;
