@@ -475,11 +475,7 @@ static void supgrps_from_supgids (proc_t *p) {
 
         while (',' == *s) ++s;
         gid = strtol(s, &end, 10);
-        if (end <= s) {
-            if (!p->supgrp)
-                p->supgrp = xstrdup("-");
-            break;
-        }
+        if (end <= s) break;
         s = end;
         g = pwcache_get_group(gid);
 
@@ -491,6 +487,9 @@ static void supgrps_from_supgids (proc_t *p) {
         else if (len >= max) len = max-1;
         t += len;
     } while (*s);
+
+    if (!p->supgrp)
+        p->supgrp = xstrdup("-");
 }
 
 ///////////////////////////////////////////////////////////////////////
