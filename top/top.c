@@ -3219,7 +3219,7 @@ static int config_cvt (WIN_t *q) {
 
 
         /*
-         * A configs_read *Helper* function responsible for processing
+         * A configs_reads *Helper* function responsible for processing
          * a configuration file (personal or system-wide default) */
 static const char *config_file (FILE *fp, const char *name, float *delay) {
    char fbuf[LRGBUFSIZ];
@@ -3365,19 +3365,24 @@ error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 } // end: config_file
 
 
-static int snprintf_Rc_name (const char *const format, ...) __attribute__((format(printf,1,2)));
-static int snprintf_Rc_name (const char *const format, ...) {
+        /*
+         * A configs_reads *Helper* function responsible for ensuring the
+         * complete path was established, otherwise force the 'W' to fail */
+static int configs_path (const char *const fmts, ...) __attribute__((format(printf,1,2)));
+static int configs_path (const char *const fmts, ...) {
    int len;
    va_list ap;
-   va_start(ap, format);
-   len = vsnprintf(Rc_name, sizeof(Rc_name), format, ap);
+
+   va_start(ap, fmts);
+   len = vsnprintf(Rc_name, sizeof(Rc_name), fmts, ap);
    va_end(ap);
    if (len <= 0 || (size_t)len >= sizeof(Rc_name)) {
       Rc_name[0] = '\0';
-      return 0;
+      len = 0;
    }
    return len;
-}
+} // end: configs_path
+
 
         /*
          * Try reading up to 3 rcfiles
@@ -3395,7 +3400,7 @@ static int snprintf_Rc_name (const char *const format, ...) {
          *     Any remaining lines are devoted to the 'Inspect Other' feature
          * 3. 'SYS_RCDEFAULTS' system-wide defaults if 'Rc_name' absent
          *     format is identical to #2 above */
-static void configs_read (void) {
+static void configs_reads (void) {
    float tmp_delay = DEF_DELAY;
    const char *p, *p_home;
    FILE *fp;
@@ -3422,7 +3427,7 @@ static void configs_read (void) {
       }
    }
    if (p_home) {
-      snprintf_Rc_name("%s/.%src", p_home, Myname);
+      configs_path("%s/.%src", p_home, Myname);
    }
 
    if (!(fp = fopen(Rc_name, "r"))) {
@@ -3433,9 +3438,9 @@ static void configs_read (void) {
          p = fmtmk("%s/.config", p_home);
          (void)mkdir(p, 0700);
       }
-      if (!snprintf_Rc_name("%s/procps", p)) goto system_default;
+      if (!configs_path("%s/procps", p)) goto system_default;
       (void)mkdir(Rc_name, 0700);
-      if (!snprintf_Rc_name("%s/procps/%src", p, Myname)) goto system_default;
+      if (!configs_path("%s/procps/%src", p, Myname)) goto system_default;
       fp = fopen(Rc_name, "r");
    }
 
@@ -3469,7 +3474,7 @@ default_or_error:
 #else
    error_exit(p);
 #endif
-} // end: configs_read
+} // end: configs_reads
 
 
         /*
@@ -5574,7 +5579,7 @@ int main (int dont_care_argc, char **argv) {
    before(*argv);
                                         //                 +-------------+
    wins_stage_1();                      //                 top (sic) slice
-   configs_read();                      //                 > spread etc, <
+   configs_reads();                     //                 > spread etc, <
    parse_args(&argv[1]);                //                 > lean stuff, <
    whack_terminal();                    //                 > onions etc. <
    wins_stage_2();                      //                 as bottom slice
