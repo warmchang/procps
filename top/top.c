@@ -2890,7 +2890,7 @@ signify_that:
    adj_geometry();
 
    for (;;) {
-      char pid[6], cmd[16];
+      char pid[6], cmd[64];
 
       if (curcol < 0) curcol = 0;
       if (curlin >= Insp_nl) curlin = Insp_nl -1;
