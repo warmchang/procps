@@ -1213,4 +1213,5 @@ PROCPS_EXPORT struct stat_result *xtra_stat_val (
         fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
     }
     return &stack->head[relative_enum];
+    (void)info;
 } // end: xtra_stat_val

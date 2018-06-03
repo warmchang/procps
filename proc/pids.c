@@ -1546,4 +1546,5 @@ PROCPS_EXPORT struct pids_result *xtra_pids_val (
         fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
     }
     return &stack->head[relative_enum];
+    (void)info;
 } // end: xtra_pids_val

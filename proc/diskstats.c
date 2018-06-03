@@ -501,7 +501,6 @@ static void diskstats_itemize_stacks_all (
 
 
 static inline int diskstats_items_check_failed (
-        struct ext_support *this,
         enum diskstats_item *items,
         int numitems)
 {
@@ -715,7 +714,7 @@ static int diskstats_stacks_reconfig_maybe (
         enum diskstats_item *items,
         int numitems)
 {
-    if (diskstats_items_check_failed(this, items, numitems))
+    if (diskstats_items_check_failed(items, numitems))
         return -1;
     /* is this the first time or have things changed since we were last called?
        if so, gotta' redo all of our stacks stuff ... */
@@ -1054,4 +1053,5 @@ PROCPS_EXPORT struct diskstats_result *xtra_diskstats_val (
         fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
     }
     return &stack->head[relative_enum];
+    (void)info;
 } // end: xtra_diskstats_val
