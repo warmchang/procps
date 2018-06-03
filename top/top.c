@@ -3343,6 +3343,7 @@ static const char *config_file (FILE *fp, const char *name, float *delay) {
    for (i = 0, Inspect.raw = alloc_s("\n");;) {
     #define iT(element) Inspect.tab[i].element
       size_t lraw = strlen(Inspect.raw) +1;
+      int n, x;
       char *s;
 
       if (i < 0 || (size_t)i >= INT_MAX / sizeof(struct I_ent)) break;
@@ -3356,6 +3357,14 @@ static const char *config_file (FILE *fp, const char *name, float *delay) {
       if (fbuf[0] == '#' || fbuf[0] == '\n') continue;
       Inspect.tab = alloc_r(Inspect.tab, sizeof(struct I_ent) * (i + 1));
 
+      // part of this is used in a show_special() call, so let's sanitize it
+      for (n = 0, x = strlen(fbuf); n < x; n++) {
+         if ((fbuf[n] != '\t' && fbuf[n] != '\n')
+          && (fbuf[n] < ' ')) {
+            fbuf[n] = '.';
+            Rc_questions = 1;
+         }
+      }
       if (!(s = strtok(fbuf, "\t\n"))) { Rc_questions = 1; continue; }
       iT(type) = alloc_s(s);
       if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; continue; }
