@@ -54,9 +54,7 @@ extern void __cyg_profile_func_enter(void*,void*);
 #endif
 
 #ifdef FALSE_THREADS
-// used when multi-threaded and some memory must not be freed
-#define MK_THREAD(q)   q->pad_1 =  '\xee'
-#define IS_THREAD(q) ( q->pad_1 == '\xee' )
+#define IS_THREAD(q) ( q->tid != q->tgid )
 #endif
 
 // utility buffers of MAX_BUFSZ bytes each, available to
@@ -88,6 +86,7 @@ static unsigned long long unhex(const char *restrict cp){
 
 static int task_dir_missing;
 
+
 // free any additional dynamically acquired storage associated with a proc_t
 // ( and if it's to be reused, refresh it otherwise destroy it )
 static inline void free_acquired (proc_t *p, int reuse) {
@@ -111,6 +110,7 @@ static inline void free_acquired (proc_t *p, int reuse) {
 
     memset(p, reuse ? '\0' : '\xff', sizeof(*p));
 }
+
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -283,8 +283,14 @@ ENTER(0x220);
             buf[u++] = c;
         }
         buf[u] = '\0';
+#ifdef FALSE_THREADS
+        if (!IS_THREAD(P)) {
+#endif
         if (!P->cmd && !(P->cmd = strdup(buf)))
             return 1;
+#ifdef FALSE_THREADS
+        }
+#endif
         S--;   // put back the '\n' or '\0'
         continue;
     }
@@ -391,10 +397,9 @@ ENTER(0x220);
         size_t j = nl ? (size_t)(nl - S) : strlen(S);
 
 #ifdef FALSE_THREADS
-        if (!IS_THREAD(P) && j > 0 && j < INT_MAX) {
-#else
-        if (j > 0 && j < INT_MAX) {
+        if (IS_THREAD(P)) continue;
 #endif
+        if (j > 0 && j < INT_MAX) {
             P->supgid = malloc(j+1);        // +1 in case space disappears
             if (!P->supgid)
                 return 1;
@@ -454,23 +459,29 @@ ENTER(0x220);
     }
 
 #ifdef FALSE_THREADS
-    if (!P->supgid && !IS_THREAD(P)) {
-#else
-    if (!P->supgid) {
+    if (!IS_THREAD(P)) {
 #endif
+    if (!P->supgid) {
         P->supgid = strdup("-");
         if (!P->supgid)
             return 1;
     }
+#ifdef FALSE_THREADS
+    }
+#endif
 LEAVE(0x220);
     return 0;
 }
 #undef GPERF_TABLE_SIZE
 
+
 static int supgrps_from_supgids (proc_t *p) {
     char *g, *s;
     int t;
 
+#ifdef FALSE_THREADS
+    if (IS_THREAD(p)) return 0;
+#endif
     if (!p->supgid || '-' == *p->supgid) {
         if (!(p->supgrp = strdup("-")))
             return 1;
@@ -503,7 +514,9 @@ static int supgrps_from_supgids (proc_t *p) {
     return 0;
 }
 
+
 ///////////////////////////////////////////////////////////////////////
+
 static inline void oomscore2proc(const char* S, proc_t *restrict P)
 {
     sscanf(S, "%d", &P->oom_score);
@@ -513,6 +526,8 @@ static inline void oomadj2proc(const char* S, proc_t *restrict P)
 {
     sscanf(S, "%d", &P->oom_adj);
 }
+
+
 ///////////////////////////////////////////////////////////////////////
 
 static int sd2proc (proc_t *restrict p) {
@@ -569,8 +584,9 @@ static int sd2proc (proc_t *restrict p) {
 #endif
     return 0;
 }
-///////////////////////////////////////////////////////////////////////
 
+
+///////////////////////////////////////////////////////////////////////
 
 // Reads /proc/*/stat files, being careful not to trip over processes with
 // names like ":-) 1 2 3 4 5 6".
@@ -592,8 +608,14 @@ ENTER(0x160);
     tmp = strrchr(S, ')');
     if (!tmp || !tmp[1]) return 0;
     num = tmp - S;
+#ifdef FALSE_THREADS
+    if (!IS_THREAD(P)) {
+#endif
     if (!P->cmd && !(P->cmd = strndup(S, num)))
        return 1;
+#ifdef FALSE_THREADS
+     }
+#endif
     S = tmp + 2;                 // skip ") "
 
     sscanf(S,
@@ -641,6 +663,7 @@ ENTER(0x160);
 LEAVE(0x160);
 }
 
+
 /////////////////////////////////////////////////////////////////////////
 
 static void statm2proc(const char* s, proc_t *restrict P) {
@@ -648,6 +671,7 @@ static void statm2proc(const char* s, proc_t *restrict P) {
            &P->size, &P->resident, &P->share,
            &P->trs, &P->lrs, &P->drs, &P->dt);
 }
+
 
 static int file2str(const char *directory, const char *what, struct utlbuf_s *ub) {
  #define buffGRW 1024
@@ -684,6 +708,7 @@ static int file2str(const char *directory, const char *what, struct utlbuf_s *ub
     return tot_read;
  #undef buffGRW
 }
+
 
 static char** file2strvec(const char* directory, const char* what) {
     char buf[2048];     /* read buf bytes at a time */
@@ -759,6 +784,7 @@ static char** file2strvec(const char* directory, const char* what) {
     return ret;
 }
 
+
     // this is the former under utilized 'read_cmdline', which has been
     // generalized in support of these new libproc flags:
     //     PROC_EDITCGRPCVT, PROC_EDITCMDLCVT and PROC_EDITENVRCVT
@@ -801,6 +827,7 @@ static int read_unvectored(char *restrict const dst, unsigned sz, const char* wh
     return n;
 }
 
+
     // This routine reads a 'cgroup' for the designated proc_t and
     // guarantees the caller a valid proc_t.cgroup pointer.
 static int fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
@@ -834,6 +861,7 @@ static int fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
  #undef vMAX
 }
 
+
     // This routine reads a 'cmdline' for the designated proc_t, "escapes"
     // the result into a single string while guaranteeing the caller a
     // valid proc_t.cmdline pointer.
@@ -851,6 +879,7 @@ static int fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
     return 0;
  #undef uFLG
 }
+
 
     // This routine reads an 'environ' for the designated proc_t and
     // guarantees the caller a valid proc_t.environ pointer.
@@ -946,8 +975,9 @@ static int login_uid (const char *path) {
     }
     return id;
 }
-///////////////////////////////////////////////////////////////////////
 
+
+///////////////////////////////////////////////////////////////////////
 
 /* These are some nice GNU C expression subscope "inline" functions.
  * The can be used with arbitrary types and evaluate their arguments
@@ -968,6 +998,7 @@ static int login_uid (const char *path) {
             while (i < n && l[i] != x) i++;     \
             i < n && l[i] == x;                 \
         } )
+
 
 //////////////////////////////////////////////////////////////////////////////////
 // This reads process info from /proc in the traditional way, for one process.
@@ -1076,14 +1107,11 @@ next_proc:
     return NULL;
 }
 
+
 //////////////////////////////////////////////////////////////////////////////////
 // This reads /proc/*/task/* data, for one task.
-#ifdef FALSE_THREADS
-// p is the POSIX process (task group summary) & source for some copies if !NULL
-#else
-// p is the POSIX process (task group summary) (not needed by THIS implementation)
-#endif
-// t is the POSIX thread (task group member, generally not the leader)
+// p is the POSIX process (task group leader, not needed by THIS implementation)
+// t is the POSIX thread  (task group member, generally not the leader)
 // path is a path to the task, with some room to spare.
 static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict const t, char *restrict const path) {
     static struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status
@@ -1106,11 +1134,6 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         rc += stat2proc(ub.buf, t);
     }
 
-#ifdef FALSE_THREADS
-    if (p)
-        MK_THREAD(t);
-#endif
-
     if (flags & PROC_FILLMEM) {                         // read /proc/#/task/#statm
         if (file2str(path, "statm", &ub) != -1)
             statm2proc(ub.buf, t);
@@ -1118,10 +1141,8 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     if (flags & PROC_FILLSTATUS) {                      // read /proc/#/task/#/status
         if (file2str(path, "status", &ub) != -1) {
             rc += status2proc(ub.buf, t, 0);
-#ifndef FALSE_THREADS
             if (flags & PROC_FILLSUPGRP)
                 rc += supgrps_from_supgids(t);
-#endif
         }
     }
 
@@ -1148,47 +1169,26 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     }
 
 #ifdef FALSE_THREADS
-    if (!p) {
-        if (flags & PROC_FILLSUPGRP)
-            rc += supgrps_from_supgids(t);
+    if (!IS_THREAD(t)) {
 #endif
-        if (flags & PROC_FILLENV)                       // read /proc/#/task/#/environ
-            t->environ_v = file2strvec(path, "environ");
-        if (flags & PROC_EDITENVRCVT)
-            rc += fill_environ_cvt(path, t);
+    if (flags & PROC_FILLARG)                       // read /proc/#/task/#/cmdline
+        t->cmdline_v = file2strvec(path, "cmdline");
+    if (flags & PROC_EDITCMDLCVT)
+        rc += fill_cmdline_cvt(path, t);
 
-        if (flags & PROC_FILLARG)                       // read /proc/#/task/#/cmdline
-            t->cmdline_v = file2strvec(path, "cmdline");
-        if (flags & PROC_EDITCMDLCVT)
-            rc += fill_cmdline_cvt(path, t);
+    if (flags & PROC_FILLENV)                       // read /proc/#/task/#/environ
+        t->environ_v = file2strvec(path, "environ");
+    if (flags & PROC_EDITENVRCVT)
+        rc += fill_environ_cvt(path, t);
 
-        if ((flags & PROC_FILLCGROUP))                  // read /proc/#/task/#/cgroup
-            t->cgroup_v = file2strvec(path, "cgroup");
-        if (flags & PROC_EDITCGRPCVT)
-            rc += fill_cgroup_cvt(path, t);
+    if ((flags & PROC_FILLCGROUP))                  // read /proc/#/task/#/cgroup
+        t->cgroup_v = file2strvec(path, "cgroup");
+    if (flags & PROC_EDITCGRPCVT)
+        rc += fill_cgroup_cvt(path, t);
 
-        if (flags & PROC_FILLSYSTEMD)                   // get sd-login.h stuff
-            rc += sd2proc(t);
-
+    if (flags & PROC_FILLSYSTEMD)                   // get sd-login.h stuff
+        rc += sd2proc(t);
 #ifdef FALSE_THREADS
-    } else {
-        t->environ   = NULL;
-        t->cmdline   = NULL;
-        t->cgname    = NULL;
-        t->cgroup    = NULL;
-        t->environ_v = NULL;
-        t->cmdline_v = NULL;
-        t->cgroup_v  = NULL;
-        t->supgid    = NULL;
-        t->supgrp    = NULL;
-        t->cmd       = NULL;
-        t->sd_mach   = NULL;
-        t->sd_ouid   = NULL;
-        t->sd_seat   = NULL;
-        t->sd_sess   = NULL;
-        t->sd_slice  = NULL;
-        t->sd_unit   = NULL;
-        t->sd_uunit  = NULL;
     }
 #endif
 
@@ -1198,7 +1198,6 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
         if (file2str(path, "oom_score_adj", &ub) != -1)
             oomadj2proc(ub.buf, t);
     }
-
     if (flags & PROC_FILLNS)                            // read /proc/#/task/#/ns/*
         procps_ns_read_pid(t->tid, &(t->ns));
 
@@ -1211,11 +1210,10 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     if (rc == 0) return t;
     errno = ENOMEM;
 next_task:
-#ifndef FALSE_THREADS
-    (void)p;
-#endif
     return NULL;
+    (void)p;
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////
 // This finds processes in /proc in the traditional way.
@@ -1233,6 +1231,7 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
   snprintf(path, PROCPATHLEN, "/proc/%s", ent->d_name);
   return 1;
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////
 // This finds tasks in /proc/*/task/ in the traditional way.
@@ -1261,6 +1260,7 @@ static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict con
   return 1;
 }
 
+
 //////////////////////////////////////////////////////////////////////////////////
 // This "finds" processes in a list that was given to openproc().
 // Return non-zero on success. (tgid was handy)
@@ -1274,6 +1274,7 @@ static int listed_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
   }
   return tgid;
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////
 /* readproc: return a pointer to a proc_t filled with requested info about the
@@ -1421,6 +1422,7 @@ PROCTAB* openproc(unsigned flags, ...) {
     return PT;
 }
 
+
 // terminate a process table scan
 void closeproc(PROCTAB* PT) {
     if (PT){
@@ -1446,6 +1448,5 @@ int look_up_our_self(proc_t *p) {
     return !rc;
 }
 
-#undef MK_THREAD
 #undef IS_THREAD
 #undef MAX_BUFSZ
