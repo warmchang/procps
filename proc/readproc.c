@@ -393,17 +393,20 @@ ENTER(0x220);
         P->vm_swap = (unsigned long)strtol(S,&S,10);
         continue;
     case_Groups:
-    {   char *nl = strchr(S, '\n');
-        size_t j = nl ? (size_t)(nl - S) : strlen(S);
+    {   char *ss = S, *nl = strchr(S, '\n');
+        size_t j;
 
 #ifdef FALSE_THREADS
         if (IS_THREAD(P)) continue;
 #endif
+        while (' ' == *ss || '\t' == *ss) ss++;
+        if (ss >= nl) continue;
+        j = nl ? (size_t)(nl - ss) : strlen(ss);
         if (j > 0 && j < INT_MAX) {
             P->supgid = malloc(j+1);        // +1 in case space disappears
             if (!P->supgid)
                 return 1;
-            memcpy(P->supgid, S, j);
+            memcpy(P->supgid, ss, j);
             if (' ' != P->supgid[--j]) ++j;
             P->supgid[j] = '\0';            // whack the space or the newline
             for ( ; j; j--)
@@ -482,11 +485,9 @@ static int supgrps_from_supgids (proc_t *p) {
 #ifdef FALSE_THREADS
     if (IS_THREAD(p)) return 0;
 #endif
-    if (!p->supgid || '-' == *p->supgid) {
-        if (!(p->supgrp = strdup("-")))
-            return 1;
-        return 0;
-    }
+    if (!p->supgid || '-' == *p->supgid)
+        goto wrap_up;
+
     s = p->supgid;
     t = 0;
     do {
@@ -511,6 +512,10 @@ static int supgrps_from_supgids (proc_t *p) {
         t += len;
     } while (*s);
 
+wrap_up:
+    if (!p->supgrp
+    && !(p->supgrp = strdup("-")))
+        return 1;
     return 0;
 }
 
