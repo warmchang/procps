@@ -3761,10 +3761,11 @@ static const char *config_file (FILE *fp, const char *name, float *delay) {
       if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
          , &w->rc.summclr, &w->rc.msgsclr, &w->rc.headclr, &w->rc.taskclr))
             return p;
-      if (w->rc.summclr < 0 || w->rc.summclr > 7) return p;
-      if (w->rc.msgsclr < 0 || w->rc.msgsclr > 7) return p;
-      if (w->rc.headclr < 0 || w->rc.headclr > 7) return p;
-      if (w->rc.taskclr < 0 || w->rc.taskclr > 7) return p;
+      // would prefer to use 'max_colors', but it isn't available yet...
+      if (w->rc.summclr < 0 || w->rc.summclr > 255) return p;
+      if (w->rc.msgsclr < 0 || w->rc.msgsclr > 255) return p;
+      if (w->rc.headclr < 0 || w->rc.headclr > 255) return p;
+      if (w->rc.taskclr < 0 || w->rc.taskclr > 255) return p;
 
       switch (Rc.id) {
          case 'a':                          // 3.2.8 (former procps)
@@ -4348,7 +4349,7 @@ signify_that:
       putp(Cap_home);
       // this string is well above ISO C89's minimum requirements!
       show_special(1, fmtmk(N_unq(COLOR_custom_fmt)
-         , PACKAGE_STRING, w->grpname
+         , w->grpname
          , CHKw(w, View_NOBOLD) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
          , CHKw(w, Show_COLORS) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
          , CHKw(w, Show_HIBOLD) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
@@ -4384,6 +4385,16 @@ signify_that:
          case '0': case '1': case '2': case '3':
          case '4': case '5': case '6': case '7':
             clr = key - '0';
+            *pclr = clr;
+            break;
+         case kbd_UP:
+            ++clr;
+            if (clr >= max_colors) clr = 0;
+            *pclr = clr;
+            break;
+         case kbd_DOWN:
+            --clr;
+            if (clr < 0) clr = max_colors - 1;
             *pclr = clr;
             break;
          case 'B':

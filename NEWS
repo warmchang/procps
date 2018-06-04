@@ -1,6 +1,7 @@
 procps-ng-NEXT
 ----------------
   * docs: Use correct symbols for -h option in free.1      Debian #898774
+  * top: can now exploit 256-color terminals               issue #96
 
 procps-ng-3.3.15
 ----------------
