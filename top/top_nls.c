@@ -609,36 +609,11 @@ static void build_uniq_nlstab (void) {
    .  this form and any translation could produce unpleasing results
    .  that are unlikely to parallel the running top program.
    .
-   .  If you decide to proceed with translation, do the following
-   .  lines only, taking care not to disturbe the tilde + number.
-   .
-   .  Simulated screen excerpt:
-   .     --> "   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62
-   .     --> "   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~
-   .     --> "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5
-   .
-   .  Other translatable text
-   .     --> "   available toggles: ~1B~2 =disable bold globa
-   .     --> "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks
-   .
-   .     --> "1) Select ~1target~2 as upper case letter:\n"
-   .     --> "   S~2 = Summary Data,~1  M~2 = Messages/Prompt
-   .     --> "   H~2 = Column Heads,~1  T~2 = Task Informatio
-   .     --> "2) Select ~1color~2 as number:\n"
-   .     --> "   0~2 = black,~1  1~2 = red,    ~1  2~2 = gree
-   .     --> "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan
-   . *   --> "\n"
-   .     --> "3) Then use these keys when finished:\n"
-   .     --> "   'q' to abort changes to window '~1%s~2'\n"
-   . **  --> "   'a' or 'w' to commit & change another, <Ente
-   .
-   .     Note:
-   . *      maybe sacrifice the entire line (with the "\n") ...
-   . **     ... so <Enter> text potion could be on its own line
+   .  If you decide to proceed with translation, please take care
+   .  to not disturb the spaces and the tilde + number delimiters.
    . */
    Uniq_nlstab[COLOR_custom_fmt] = _(""
-      "Help for color mapping~2 - %s\n"
-      "current window: ~1%s~6\n"
+      "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
       "\n"
       "   color - 04:25:44 up 8 days, 50 min,  7 users,  load average:\n"
       "   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,~3\n"
@@ -654,7 +629,8 @@ static void build_uniq_nlstab (void) {
       "1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c ~4:\n"
       "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n"
       "   H~2 = Column Heads,~1  T~2 = Task Information\n"
-      "2) Select a ~1color~2 as a number, ~1current color~2 is ~1 %d ~4:\n"
+      "2) Select a ~1color~2 as a number or use the up/down arrow keys\n"
+      "   to raise/lower the 256 colors value, ~1current color~2 is ~1 %d ~4:\n"
       "   0~2 = black,~1  1~2 = red,    ~1  2~2 = green,~1  3~2 = yellow,\n"
       "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan, ~1  7~2 = white\n"
       "\n"
