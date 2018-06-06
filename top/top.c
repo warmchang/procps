@@ -4802,6 +4802,7 @@ static void keys_global (int ch) {
          if (!CHKw(w, View_STATES))
             show_msg(fmtmk(N_fmt(THREADS_show_fmt)
                , Thread_mode ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
+         Winstk[0].begtask = Winstk[1].begtask = Winstk[2].begtask = Winstk[3].begtask = 0;
          // force an extra procs refresh to avoid %cpu distortions...
          Pseudo_row = PROC_XTRA;
          break;
