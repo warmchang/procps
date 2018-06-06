@@ -1138,7 +1138,7 @@ static int iokey (int action) {
       const char *str;
       int key;
    } tinfo_tab[] = {
-      { "\033\n",kbd_ENTER }, { NULL, kbd_UP       }, { NULL, kbd_DOWN     },
+      { "\n", kbd_ENTER    }, { NULL, kbd_UP       }, { NULL, kbd_DOWN     },
       { NULL, kbd_LEFT     }, { NULL, kbd_RIGHT    }, { NULL, kbd_PGUP     },
       { NULL, kbd_PGDN     }, { NULL, kbd_HOME     }, { NULL, kbd_END      },
       { NULL, kbd_BKSP     }, { NULL, kbd_INS      }, { NULL, kbd_DEL      },
