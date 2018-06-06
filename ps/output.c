@@ -449,7 +449,7 @@ static int pr_times(char *restrict const outbuf, const proc_t *restrict const pp
     unsigned long t;
 setREL1(TIME_ALL)
     t = rSv(TIME_ALL, ull_int, pp);
-  return snprintf(outbuf, COLWID, "%u", t);
+  return snprintf(outbuf, COLWID, "%lu", t);
 }
 
 /* HP-UX puts this (I forget, vsz or vsize?) in kB and uses "sz" for pages.
