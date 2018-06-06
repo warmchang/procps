@@ -132,9 +132,7 @@ setREL1(noop)
   return snprintf(outbuf, COLWID, "%c", '-');
 }
 
-
 /********* Unix 98 ************/
-
 /***
 
 Only comm and args are allowed to contain blank characters; all others are
@@ -272,10 +270,11 @@ Modifications to the arguments are not shown.
  * "comm", "ucmd", "ucomm"  are all the same:  short unless -f
  * ( determinations are made in display.c, we mostly deal with results ) */
 static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp){
-  char *endp = outbuf;
-  int rightward = max_rightward;
-  int fh;
+  char *endp;
+  int rightward, fh;
 setREL2(CMDLINE,ENVIRON)
+  endp = outbuf;
+  rightward = max_rightward;
   fh = forest_helper(outbuf);
   endp += fh;
   rightward -= fh;
@@ -296,10 +295,11 @@ setREL2(CMDLINE,ENVIRON)
  * "comm", "ucmd", "ucomm"  are all the same:  short unless -f
  * ( determinations are made in display.c, we mostly deal with results ) */
 static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp){
-  char *endp = outbuf;
-  int rightward = max_rightward;
-  int fh;
+  char *endp;
+  int rightward, fh;
 setREL3(CMD,CMDLINE,ENVIRON)
+  endp = outbuf;
+  rightward = max_rightward;
   fh = forest_helper(outbuf);
   endp += fh;
   rightward -= fh;
@@ -318,27 +318,29 @@ setREL3(CMD,CMDLINE,ENVIRON)
   return max_rightward-rightward;
 }
 
-
 static int pr_cgname(char *restrict const outbuf,const proc_t *restrict const pp) {
-  int rightward = max_rightward;
+  int rightward;
 setREL1(CGNAME)
+  rightward = max_rightward;
   escaped_copy(outbuf, rSv(CGNAME, str, pp), OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
 static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp) {
-  int rightward = max_rightward;
+  int rightward;
 setREL1(CGROUP)
+  rightward = max_rightward;
   escaped_copy(outbuf, rSv(CGROUP, str, pp), OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
 /* Non-standard, from SunOS 5 */
 static int pr_fname(char *restrict const outbuf, const proc_t *restrict const pp){
-  char *endp = outbuf;
-  int rightward = max_rightward;
-  int fh;
+  char *endp;
+  int rightward, fh;
 setREL1(CMD)
+  endp = outbuf;
+  rightward = max_rightward;
   fh = forest_helper(outbuf);
   endp += fh;
   rightward -= fh;
@@ -353,8 +355,9 @@ setREL1(CMD)
 static int pr_etime(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long t;
   unsigned dd,hh,mm,ss;
-  char *cp = outbuf;
+  char *cp;
 setREL1(TIME_ELAPSED)
+  cp = outbuf;
   t = rSv(TIME_ELAPSED, ull_int, pp);
   ss = t%60;
   t /= 60;
@@ -380,9 +383,10 @@ setREL1(TIME_ELAPSED)
 /* "Processor utilisation for scheduling."  --- we use %cpu w/o fraction */
 static int pr_c(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long total_time;   /* jiffies used by this process */
-  unsigned pcpu = 0;               /* scaled %cpu, 99 means 99% */
+  unsigned pcpu;                   /* scaled %cpu, 99 means 99% */
   unsigned long long seconds;      /* seconds of process life */
 setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
+  pcpu = 0;
   if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
   else total_time = rSv(TICS_ALL, ull_int, pp);
   seconds = rSv(TIME_ELAPSED, ull_int, pp);
@@ -394,9 +398,10 @@ setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
 /* normal %CPU in ##.# format. */
 static int pr_pcpu(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long total_time;   /* jiffies used by this process */
-  unsigned pcpu = 0;               /* scaled %cpu, 999 means 99.9% */
+  unsigned pcpu;                   /* scaled %cpu, 999 means 99.9% */
   unsigned long long seconds;      /* seconds of process life */
 setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
+  pcpu = 0;
   if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
   else total_time = rSv(TICS_ALL, ull_int, pp);
   seconds = rSv(TIME_ELAPSED, ull_int, pp);
@@ -405,12 +410,14 @@ setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
     return snprintf(outbuf, COLWID, "%u", pcpu/10U);
   return snprintf(outbuf, COLWID, "%u.%u", pcpu/10U, pcpu%10U);
 }
+
 /* this is a "per-mill" format, like %cpu with no decimal point */
 static int pr_cp(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long total_time;   /* jiffies used by this process */
-  unsigned pcpu = 0;               /* scaled %cpu, 999 means 99.9% */
+  unsigned pcpu;                   /* scaled %cpu, 999 means 99.9% */
   unsigned long long seconds;      /* seconds of process life */
 setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
+  pcpu = 0;
   if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
   else total_time = rSv(TICS_ALL, ull_int, pp);
   seconds = rSv(TIME_ELAPSED, ull_int, pp);
@@ -547,7 +554,6 @@ setREL1(PRIORITY)
     return snprintf(outbuf, COLWID, "%d", rSv(PRIORITY, s_int, pp) + 100);
 }
 
-
 // not legal as UNIX "PRI"
 // "pri"               (was 20..60, now    0..139)
 static int pr_pri(char *restrict const outbuf, const proc_t *restrict const pp){         /* 20..60 */
@@ -599,6 +605,7 @@ setREL1(SCHED_CLASS)
   default: return snprintf(outbuf, COLWID, "?");   // unknown value
   }
 }
+
 // Based on "type", FreeBSD would do:
 //    REALTIME  "real:%u", prio
 //    NORMAL    "normal"
@@ -610,6 +617,7 @@ setREL2(SCHED_CLASS,RTPRIO)
   if(rSv(SCHED_CLASS, s_int, pp)==0 || rSv(SCHED_CLASS, s_int, pp)==-1) return snprintf(outbuf, COLWID, "-");
   return snprintf(outbuf, COLWID, "%d", rSv(RTPRIO, s_int, pp));
 }
+
 static int pr_sched(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(SCHED_CLASS)
   if(rSv(SCHED_CLASS, s_int, pp)==-1) return snprintf(outbuf, COLWID, "-");
@@ -667,7 +675,7 @@ static int pr_oldstate(char *restrict const outbuf, const proc_t *restrict const
 
 // This state display is Unix98 compliant and has lots of info like BSD.
 static int pr_stat(char *restrict const outbuf, const proc_t *restrict const pp){
-    int end = 0;
+    int end;
     if (!outbuf) {
        chkREL(STATE)
        chkREL(NICE)
@@ -679,6 +687,7 @@ static int pr_stat(char *restrict const outbuf, const proc_t *restrict const pp)
        chkREL(ID_TPGID)
        return 0;
     }
+    end = 0;
     outbuf[end++] = rSv(STATE, s_ch, pp);
 //  if(rSv(RSS, ul_int, pp)==0 && rSv(STATE, s_ch, pp)!='Z') outbuf[end++] = 'W'; // useless "swapped out"
     if(rSv(NICE, s_int, pp) < 0) outbuf[end++] = '<';
@@ -766,13 +775,11 @@ setREL1(TIME_START)
   return 6;
 }
 
-
 /* HP-UX puts this in pages and uses "vsz" for kB */
 static int pr_sz(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(VM_SIZE)
   return snprintf(outbuf, COLWID, "%lu", rSv(VM_SIZE, ul_int, pp)/(page_size/1024));
 }
-
 
 /*
  * FIXME: trs,drs,tsiz,dsiz,m_trs,m_drs,vm_exe,vm_data,trss
@@ -791,32 +798,36 @@ setREL1(VM_SIZE)
 
 /* kB data size. See drs, tsiz & trs. */
 static int pr_dsiz(char *restrict const outbuf, const proc_t *restrict const pp){
-    long dsiz = 0;
+    long dsiz;
 setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
+    dsiz = 0;
     if(rSv(VSIZE_PGS, ul_int, pp)) dsiz += (rSv(VSIZE_PGS, ul_int, pp) - rSv(ADDR_END_CODE, ul_int, pp) + rSv(ADDR_START_CODE, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", dsiz);
 }
 
 /* kB text (code) size. See trs, dsiz & drs. */
 static int pr_tsiz(char *restrict const outbuf, const proc_t *restrict const pp){
-    long tsiz = 0;
+    long tsiz;
 setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
+    tsiz = 0;
     if(rSv(VSIZE_PGS, ul_int, pp)) tsiz += (rSv(ADDR_END_CODE, ul_int, pp) - rSv(ADDR_START_CODE, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", tsiz);
 }
 
 /* kB _resident_ data size. See dsiz, tsiz & trs. */
 static int pr_drs(char *restrict const outbuf, const proc_t *restrict const pp){
-    long drs = 0;
+    long drs;
 setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
+    drs = 0;
     if(rSv(VSIZE_PGS, ul_int, pp)) drs += (rSv(VSIZE_PGS, ul_int, pp) - rSv(ADDR_END_CODE, ul_int, pp) + rSv(ADDR_START_CODE, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", drs);
 }
 
 /* kB text _resident_ (code) size. See tsiz, dsiz & drs. */
 static int pr_trs(char *restrict const outbuf, const proc_t *restrict const pp){
-    long trs = 0;
+    long trs;
 setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
+    trs = 0;
     if(rSv(VSIZE_PGS, ul_int, pp)) trs += (rSv(ADDR_END_CODE, ul_int, pp) - rSv(ADDR_START_CODE, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", trs);
 }
@@ -831,7 +842,6 @@ static int pr_size(char *restrict const outbuf, const proc_t *restrict const pp)
 setREL1(VSIZE_PGS)
   return snprintf(outbuf, COLWID, "%lu", rSv(VSIZE_PGS, ul_int, pp));
 }
-
 
 static int pr_minflt(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL2(FLT_MIN,FLT_MIN_C)
@@ -876,8 +886,9 @@ setREL1(VM_RSS)
 
 /* pp->vm_rss * 1000 would overflow on 32-bit systems with 64 GB memory */
 static int pr_pmem(char *restrict const outbuf, const proc_t *restrict const pp){
-  unsigned long pmem = 0;
+  unsigned long pmem;
 setREL1(VM_RSS)
+  pmem = 0;
   pmem = rSv(VM_RSS, ul_int, pp) * 1000ULL / memory_total;
   if (pmem > 999) pmem = 999;
   return snprintf(outbuf, COLWID, "%2u.%u", (unsigned)(pmem/10), (unsigned)(pmem%10));
@@ -931,7 +942,6 @@ setREL1(TIME_START)
   return snprintf(outbuf, COLWID, "  %6.6s", str+4);
 }
 
-
 static int help_pr_sig(char *restrict const outbuf, const char *restrict const sig){
   long len = 0;
   len = strlen(sig);
@@ -967,7 +977,6 @@ static int pr_sigcatch(char *restrict const outbuf, const proc_t *restrict const
 setREL1(SIGCATCH)
   return help_pr_sig(outbuf, rSv(SIGCATCH, str, pp));
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1106,15 +1115,17 @@ setREL1(ID_SESSION)
 }
 
 static int pr_supgid(char *restrict const outbuf, const proc_t *restrict const pp){
-  int rightward = max_rightward;
+  int rightward;
 setREL1(SUPGIDS)
+  rightward = max_rightward;
   escaped_copy(outbuf, rSv(SUPGIDS, str, pp), OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
 static int pr_supgrp(char *restrict const outbuf, const proc_t *restrict const pp){
-  int rightward = max_rightward;
+  int rightward;
 setREL1(SUPGROUPS)
+  rightward = max_rightward;
   escaped_copy(outbuf, rSv(SUPGROUPS, str, pp), OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
@@ -1197,13 +1208,13 @@ setREL1(LXCNAME)
 // 2. the -z and -Z option issue
 // 3. width of output
 static int pr_context(char *restrict const outbuf, const proc_t *restrict const pp){
-  static void (*ps_freecon)(char*) = 0;
-  static int (*ps_getpidcon)(pid_t pid, char **context) = 0;
+  static void (*ps_freecon)(char*);
+  static int (*ps_getpidcon)(pid_t pid, char **context);
 #if ENABLE_LIBSELINUX
-  static int (*ps_is_selinux_enabled)(void) = 0;
-  static int tried_load = 0;
+  static int (*ps_is_selinux_enabled)(void);
+  static int tried_load;
 #endif
-  static int selinux_enabled = 0;
+  static int selinux_enabled;
   size_t len;
   char *context;
 setREL1(ID_TGID)
