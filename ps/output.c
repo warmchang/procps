@@ -274,8 +274,9 @@ Modifications to the arguments are not shown.
 static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp = outbuf;
   int rightward = max_rightward;
-  int fh = forest_helper(outbuf);
+  int fh;
 setREL2(CMDLINE,ENVIRON)
+  fh = forest_helper(outbuf);
   endp += fh;
   rightward -= fh;
   endp += escaped_copy(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE, &rightward);
@@ -297,8 +298,9 @@ setREL2(CMDLINE,ENVIRON)
 static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp = outbuf;
   int rightward = max_rightward;
-  int fh = forest_helper(outbuf);
+  int fh;
 setREL3(CMD,CMDLINE,ENVIRON)
+  fh = forest_helper(outbuf);
   endp += fh;
   rightward -= fh;
   if(unix_f_option)
@@ -335,8 +337,9 @@ setREL1(CGROUP)
 static int pr_fname(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp = outbuf;
   int rightward = max_rightward;
-  int fh = forest_helper(outbuf);
+  int fh;
 setREL1(CMD)
+  fh = forest_helper(outbuf);
   endp += fh;
   rightward -= fh;
   if (rightward>8)  /* 8=default, but forest maybe feeds more */
