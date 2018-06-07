@@ -4694,7 +4694,7 @@ static void keys_window (int ch) {
          if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS) && 0 < w->begtask) w->begtask -= 1;
          break;
       case kbd_DOWN:
-         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS) && (w->begtask < PIDSmaxt -1)) w->begtask += 1;
+         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS) && (w->begtask < PIDSmaxt - 1)) w->begtask += 1;
          break;
 #ifdef USE_X_COLHDR // ------------------------------------
       case kbd_LEFT:
@@ -4762,33 +4762,39 @@ static void keys_window (int ch) {
          break;
 #endif // USE_X_COLHDR ------------------------------------
       case kbd_PGUP:
-         if (VIZCHKw(w)) if (0 < w->begtask) {
+         if (VIZCHKw(w)) {
+            if (CHKw(w, Show_IDLEPS) && 0 < w->begtask) {
                w->begtask -= (w->winlines - 1);
                if (0 > w->begtask) w->begtask = 0;
             }
+         }
          break;
       case kbd_PGDN:
-         if (VIZCHKw(w)) if (w->begtask < PIDSmaxt -1) {
+         if (VIZCHKw(w)) {
+            if (CHKw(w, Show_IDLEPS) && w->begtask < PIDSmaxt - 1) {
                w->begtask += (w->winlines - 1);
-               if (w->begtask > PIDSmaxt -1) w->begtask = PIDSmaxt -1;
+               if (w->begtask > PIDSmaxt - 1) w->begtask = PIDSmaxt - 1;
                if (0 > w->begtask) w->begtask = 0;
-             }
+            }
+         }
          break;
       case kbd_HOME:
 #ifndef SCROLLVAR_NO
-         if (VIZCHKw(w)) w->begtask = w->begpflg = w->varcolbeg = 0;
+         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begtask = w->begpflg = w->varcolbeg = 0;
 #else
-         if (VIZCHKw(w)) w->begtask = w->begpflg = 0;
+         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begtask = w->begpflg = 0;
 #endif
          break;
       case kbd_END:
          if (VIZCHKw(w)) {
-            w->begtask = (PIDSmaxt - w->winlines) +1;
-            if (0 > w->begtask) w->begtask = 0;
-            w->begpflg = w->endpflg;
+            if (CHKw(w, Show_IDLEPS)) {
+               w->begtask = (PIDSmaxt - w->winlines) + 1;
+               if (0 > w->begtask) w->begtask = 0;
+               w->begpflg = w->endpflg;
 #ifndef SCROLLVAR_NO
-            w->varcolbeg = 0;
+               w->varcolbeg = 0;
 #endif
+            }
          }
          break;
       default:                    // keep gcc happy
