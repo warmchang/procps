@@ -35,7 +35,7 @@ translated_MANS +=$(foreach lang,$(ps_langs), $(lang)/man1/ps.1)
 
 PO4A_UPDATEPO = po4a-updatepo
 PO4A_TRANSLATE = po4a-translate
-translate_manpage = $(PO4A_TRANSLATE) -f man -m $< -p $*.po -l $@
+translate_manpage = $(PO4A_TRANSLATE) -o translate_joined=MT -o noarg=ME -f man -m $< -p $*.po -l $@
 
 CLEANFILES = $(DIST_MAN_POTS) $(translated_MANS)
 maintainer-clean-local:
@@ -55,13 +55,13 @@ MAN_POT_FILES = $(top_srcdir)/free.1 $(top_srcdir)/kill.1 $(top_srcdir)/pgrep.1 
 DIST_MAN_POTS = $(MAN_PS_POT) $(MAN_TOP_POT) $(MAN_POT)
 
 $(MAN_PS_POT): $(MAN_PS_POT_FILES)
-	$(PO4A_UPDATEPO) -f man -m $< -p $@
+	$(PO4A_UPDATEPO) -o translate_joined=MT -o noarg=ME -f man -m $< -p $@
 
 $(MAN_TOP_POT): $(MAN_TOP_POT_FILES)
-	$(PO4A_UPDATEPO) -f man -m $< -p $@
+	$(PO4A_UPDATEPO) -o translate_joined=MT -o noarg=ME -f man -m $< -p $@
 
 $(MAN_POT): $(MAN_POT_FILES)
-	$(PO4A_UPDATEPO) -f man -m $< -p $@
+	$(PO4A_UPDATEPO) -o translate_joined=MT -o noarg=ME -f man -m $< -p $@
 
 dist_man_MANS = $(foreach lang, $(all_langs), $(foreach section, $(MAN_SECTIONS), $(wildcard $(lang)/man$(section)/*.$(section))))
 dist-hook: translate-mans
