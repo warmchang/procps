@@ -627,7 +627,7 @@ static void build_uniq_nlstab (void) {
       "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n"
       "   H~2 = Column Heads,~1  T~2 = Task Information\n"
       "2) Select a ~1color~2 as a number or use the up/down arrow keys\n"
-      "   to raise/lower the 256 colors value, ~1current color~2 is ~1 %d ~4:\n"
+      "   to raise/lower the %d colors value, ~1current color~2 is ~1 %d ~4:\n"
       "   0~2 = black,~1  1~2 = red,    ~1  2~2 = green,~1  3~2 = yellow,\n"
       "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan, ~1  7~2 = white\n"
       "\n"
