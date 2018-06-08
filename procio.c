@@ -249,7 +249,7 @@ ssize_t proc_write(void *c, const char *buf, size_t count)
 			do {
 				token = NULL;
 				if (cookie->offset > LINELEN)
-					token = (char*)memrchr(cookie->buf+offset, ',', LINELEN);
+					token = (char*)memrchr(cookie->buf+offset, cookie->delim, LINELEN);
 				else
 					token = (char*)memrchr(cookie->buf+offset, '\n', LINELEN);
 				if (token)
