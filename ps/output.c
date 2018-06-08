@@ -1250,6 +1250,26 @@ static int pr_luid(char *restrict const outbuf, const proc_t *restrict const pp)
 }
 
 
+/* full path to executable */
+static int pr_exe(char *restrict const outbuf, const proc_t *restrict const pp){
+    char filename[48];
+    ssize_t num_read;
+
+    snprintf(filename, sizeof filename, "/proc/%d/exe", pp->tgid);
+
+    num_read = readlink(filename, outbuf, OUTBUF_SIZE-1);
+    if (num_read > 0) {
+        outbuf[num_read] = '\0';
+    }
+    else {
+        outbuf[0] = '-';
+        outbuf[1] = '\0';
+        num_read = 1;
+    }
+
+    return num_read;
+}
+
 /************************* Systemd stuff ********************************/
 static int pr_sd_unit(char *restrict const outbuf, const proc_t *restrict const pp){
   return snprintf(outbuf, COLWID, "%s", pp->sd_unit);
@@ -1533,6 +1553,7 @@ static const format_struct format_array[] = {
 {"etimes",    "ELAPSED", pr_etimes,   sr_etime,   7,   0,    BSD, ET|RIGHT}, /* FreeBSD */
 {"euid",      "EUID",    pr_euid,     sr_euid,    5,   0,    LNX, ET|RIGHT},
 {"euser",     "EUSER",   pr_euser,    sr_euser,   8, USR,    LNX, ET|USER},
+{"exe",       "EXE",     pr_exe,      sr_nop,    27,   0,    LNX, PO|UNLIMITED},
 {"f",         "F",       pr_flag,     sr_flags,   1,   0,    XXX, ET|RIGHT}, /*flags*/
 {"fgid",      "FGID",    pr_fgid,     sr_fgid,    5,   0,    LNX, ET|RIGHT},
 {"fgroup",    "FGROUP",  pr_fgroup,   sr_fgroup,  8, GRP,    LNX, ET|USER},
