@@ -3885,7 +3885,7 @@ signify_that:
          , CHKw(w, View_NOBOLD) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
          , CHKw(w, Show_COLORS) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
          , CHKw(w, Show_HIBOLD) ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)
-         , tgt, clr, w->grpname));
+         , tgt, max_colors, clr, w->grpname));
       putp(Cap_clr_eos);
       fflush(stdout);
 
