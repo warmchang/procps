@@ -4360,6 +4360,7 @@ signify_that:
       if (Frames_signal) goto signify_that;
       key = iokey(1);
       if (key < 1) goto signify_that;
+      if (key == kbd_ESC) break;
 
       switch (key) {
          case 'S':
@@ -4418,7 +4419,7 @@ signify_that:
       capsmk(w);
    } while (key != kbdAPPLY && key != kbdABORT);
 
-   if (key == kbdABORT) wins_clrhlp(w, 0);
+   if (key == kbdABORT || key == kbd_ESC) wins_clrhlp(w, 0);
 
  #undef kbdABORT
  #undef kbdAPPLY
