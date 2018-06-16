@@ -23,6 +23,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "config.h"
 #include "c.h"
 #include "fileutils.h"
 #include "nls.h"
@@ -54,14 +55,28 @@
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
-#include <utmp.h>
+#ifdef HAVE_UTMPX_H
+#	include <utmpx.h>
+#else
+#	include <utmp.h>
+#endif
 #include <arpa/inet.h>
 
 static int ignoreuser = 0;	/* for '-u' */
 static int oldstyle = 0;	/* for '-o' */
 static proc_t **procs;		/* our snapshot of the process table */
 
+#ifdef HAVE_UTMPX_H
+typedef struct utmpx utmp_t;
+#else
 typedef struct utmp utmp_t;
+#endif
+
+#if !defined(UT_HOSTSIZE) || defined(__UT_HOSTSIZE)
+#	define UT_HOSTSIZE __UT_HOSTSIZE
+#	define UT_LINESIZE __UT_LINESIZE
+#	define UT_NAMESIZE __UT_NAMESIZE
+#endif
 
 #ifdef W_SHOWFROM
 # define FROM_STRING "on"
@@ -412,7 +427,11 @@ static void showinfo(utmp_t * u, int formtype, int maxcmd, int from,
 		printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, u->ut_line);
 		if (from)
 			print_from(u, ip_addresses, fromlen);
+#ifdef HAVE_UTMPX_H
+		print_logintime(u->ut_tv.tv_sec, stdout);
+#else
 		print_logintime(u->ut_time, stdout);
+#endif
 		if (*u->ut_line == ':')
 			/* idle unknown for xdm logins */
 			printf(" ?xdm? ");
@@ -604,11 +623,19 @@ int main(int argc, char **argv)
 			printf(_("   IDLE WHAT\n"));
 	}
 
+#ifdef HAVE_UTMPX_H
+	setutxent();
+#else
 	utmpname(UTMP_FILE);
 	setutent();
+#endif
 	if (user) {
 		for (;;) {
+#ifdef HAVE_UTMPX_H
+			u = getutxent();
+#else
 			u = getutent();
+#endif
 			if (unlikely(!u))
 				break;
 			if (u->ut_type != USER_PROCESS)
@@ -619,7 +646,11 @@ int main(int argc, char **argv)
 		}
 	} else {
 		for (;;) {
+#ifdef HAVE_UTMPX_H
+			u = getutxent();
+#else
 			u = getutent();
+#endif
 			if (unlikely(!u))
 				break;
 			if (u->ut_type != USER_PROCESS)
@@ -629,7 +660,11 @@ int main(int argc, char **argv)
 					 fromlen, ip_addresses);
 		}
 	}
+#ifdef HAVE_UTMPX_H
+	endutxent();
+#else
 	endutent();
+#endif
 
 	return EXIT_SUCCESS;
 }
