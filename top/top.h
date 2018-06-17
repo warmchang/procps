@@ -757,6 +757,7 @@ typedef struct WIN_t {
 //atic int           insp_view_choice (proc_t *obj);
 //atic void          inspection_utility (int pid);
 /*------  Other Filtering ------------------------------------------------*/
+//atic const char   *osel_add (int ch, char *glob);
 //atic void          osel_clear (WIN_t *q);
 //atic inline int    osel_matched (const WIN_t *q, FLG_t enu, const char *str);
 /*------  Startup routines  ----------------------------------------------*/
@@ -782,7 +783,7 @@ typedef struct WIN_t {
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);
 //atic void          help_view (void);
-//atic void          other_selection (int ch);
+//atic void          other_filters (int ch);
 //atic void          write_rcfile (void);
 /*------  Interactive Input Secondary support (do_key helpers)  ----------*/
 //atic void          keys_global (int ch);

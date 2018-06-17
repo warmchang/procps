@@ -3484,6 +3484,71 @@ struct osel_s {
    int   enu;                                  // field (procflag) to filter
 };
 
+        /*
+         * A function to parse, validate and build a single 'other filter' */
+static const char *osel_add (int ch, char *glob) {
+   int (*rel)(const char *, const char *);
+   char *(*sel)(const char *, const char *);
+   char raw[MEDBUFSIZ], ops, *pval;
+   struct osel_s *osel;
+   int inc, enu;
+
+   if (ch == 'o') {
+      rel   = strcasecmp;
+      sel   = strcasestr;
+   } else {
+      rel   = strcmp;
+      sel   = strstr;
+   }
+
+   if (!snprintf(raw, sizeof(raw), "%s", glob))
+      return NULL;
+   for (osel = Curwin->osel_1st; osel; ) {
+      if (!strcmp(osel->raw, raw))             // #1: is criteria duplicate?
+         return N_txt(OSEL_errdups_txt);
+      osel = osel->nxt;
+   }
+   if (*glob != '!') inc = 1;                  // #2: is it include/exclude?
+   else { ++glob; inc = 0; }
+
+   if (!(pval = strpbrk(glob, "<=>")))         // #3: do we see a delimiter?
+      return fmtmk(N_fmt(OSEL_errdelm_fmt)
+         , inc ? N_txt(WORD_include_txt) : N_txt(WORD_exclude_txt));
+   ops = *(pval);
+   *(pval++) = '\0';
+
+   for (enu = 0; enu < EU_MAXPFLGS; enu++)     // #4: is this a valid field?
+      if (!STRCMP(N_col(enu), glob)) break;
+   if (enu == EU_MAXPFLGS)
+      return fmtmk(N_fmt(XTRA_badflds_fmt), glob);
+
+   if (!(*pval))                               // #5: did we get some value?
+      return fmtmk(N_fmt(OSEL_errvalu_fmt)
+         , inc ? N_txt(WORD_include_txt) : N_txt(WORD_exclude_txt));
+   if (Curwin->osel_prt && strlen(Curwin->osel_prt) >= INT_MAX - (sizeof(raw) + 6))
+      return NULL;
+
+   osel = alloc_c(sizeof(struct osel_s));
+   osel->inc = inc;
+   osel->enu = enu;
+   osel->ops = ops;
+   if (ops == '=') osel->val = alloc_s(pval);
+   else osel->val = alloc_s(justify_pad(pval, Fieldstab[enu].width, Fieldstab[enu].align));
+   osel->rel = rel;
+   osel->sel = sel;
+   osel->raw = alloc_s(raw);
+
+   osel->nxt = Curwin->osel_1st;
+   Curwin->osel_1st = osel;
+   Curwin->osel_tot += 1;
+
+   if (!Curwin->osel_prt) Curwin->osel_prt = alloc_c(strlen(raw) + 3);
+   else Curwin->osel_prt = alloc_r(Curwin->osel_prt, strlen(Curwin->osel_prt) + strlen(raw) + 6);
+   strcat(Curwin->osel_prt, fmtmk("%s'%s'", (Curwin->osel_tot > 1) ? " + " : "", raw));
+
+   return NULL;
+} // end: osel_add
+
 
         /*
          * A function to turn off entire other filtering in the given window */
@@ -3889,6 +3954,7 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
       Rc.zero_suppress = 0;
 
    // lastly, let's process any optional glob(s) ...
+   fbuf[0] = '\0';
    config_insp(fp, fbuf, sizeof(fbuf));
 
    return NULL;
@@ -4655,76 +4721,25 @@ signify_that:
 } // end: help_view
 
 
-static void other_selection (int ch) {
-   int (*rel)(const char *, const char *);
-   char *(*sel)(const char *, const char *);
-   char raw[MEDBUFSIZ], ops, *glob, *pval;
-   struct osel_s *osel;
-   const char *typ;
-   int inc, enu;
+static void other_filters (int ch) {
+   const char *txt, *p;
+   char *glob;
 
-   if (ch == 'o') {
-      typ   = N_txt(OSEL_casenot_txt);
-      rel   = strcasecmp;
-      sel   = strcasestr;
-   } else {
-      typ   = N_txt(OSEL_caseyes_txt);
-      rel   = strcmp;
-      sel   = strstr;
-   }
-   glob = ioline(fmtmk(N_fmt(OSEL_prompts_fmt), Curwin->osel_tot + 1, typ));
-   if (*glob == kbd_ESC
-   || !snprintf(raw, sizeof(raw), "%s", glob))
+   if (ch == 'o') txt = N_txt(OSEL_casenot_txt);
+   else txt = N_txt(OSEL_caseyes_txt);
+
+   glob = ioline(fmtmk(N_fmt(OSEL_prompts_fmt), Curwin->osel_tot + 1, txt));
+   if (*glob == kbd_ESC || !*glob)
       return;
-   for (osel = Curwin->osel_1st; osel; ) {
-      if (!strcmp(osel->raw, glob)) {          // #1: is criteria duplicate?
-         show_msg(N_txt(OSEL_errdups_txt));
-         return;
-      }
-      osel = osel->nxt;
-   }
-   if (*glob != '!') inc = 1;                  // #2: is it include/exclude?
-   else { ++glob; inc = 0; }
-   if (!(pval = strpbrk(glob, "<=>"))) {       // #3: do we see a delimiter?
-      show_msg(fmtmk(N_fmt(OSEL_errdelm_fmt)
-         , inc ? N_txt(WORD_include_txt) : N_txt(WORD_exclude_txt)));
+
+   if ((p = osel_add(ch, glob))) {
+      show_msg(p);
       return;
    }
-   ops = *(pval);
-   *(pval++) = '\0';
-   for (enu = 0; enu < EU_MAXPFLGS; enu++)     // #4: is this a valid field?
-      if (!STRCMP(N_col(enu), glob)) break;
-   if (enu == EU_MAXPFLGS) {
-      show_msg(fmtmk(N_fmt(XTRA_badflds_fmt), glob));
-      return;
-   }
-   if (!(*pval)) {                             // #5: did we get some value?
-      show_msg(fmtmk(N_fmt(OSEL_errvalu_fmt)
-         , inc ? N_txt(WORD_include_txt) : N_txt(WORD_exclude_txt)));
-      return;
-   }
-   if (Curwin->osel_prt && strlen(Curwin->osel_prt) >= INT_MAX - (sizeof(raw) + 6)) {
-      return;
-   }
-   osel = alloc_c(sizeof(struct osel_s));
-   osel->inc = inc;
-   osel->enu = enu;
-   osel->ops = ops;
-   if (ops == '=') osel->val = alloc_s(pval);
-   else osel->val = alloc_s(justify_pad(pval, Fieldstab[enu].width, Fieldstab[enu].align));
-   osel->rel = rel;
-   osel->sel = sel;
-   osel->raw = alloc_s(raw);
-   osel->nxt = Curwin->osel_1st;
-   Curwin->osel_1st = osel;
-   Curwin->osel_tot += 1;
-   if (!Curwin->osel_prt) Curwin->osel_prt = alloc_c(strlen(raw) + 3);
-   else Curwin->osel_prt = alloc_r(Curwin->osel_prt, strlen(Curwin->osel_prt) + strlen(raw) + 6);
-   strcat(Curwin->osel_prt, fmtmk("%s'%s'", (Curwin->osel_tot > 1) ? " + " : "", raw));
 #ifndef USE_X_COLHDR
    SETw(Curwin, NOHISEL_xxx);
 #endif
-} // end: other_selection
+} // end: other_filters
 
 
 static void write_rcfile (void) {
@@ -5063,7 +5078,7 @@ static void keys_task (int ch) {
          break;
       case 'O':
       case 'o':
-         if (VIZCHKw(w)) other_selection(ch);
+         if (VIZCHKw(w)) other_filters(ch);
          break;
       case 'U':
       case 'u':
