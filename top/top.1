@@ -1973,8 +1973,10 @@ Such highlighting will be restored when a window's search string is empty.
 .\" ......................................................................
 .SS 5e. FILTERING in a Window
 .\" ----------------------------------------------------------------------
-You can use this Other Filter feature to establish selection criteria which
+You can use this `Other Filter' feature to establish selection criteria which
 will then determine which tasks are shown in the \*(CW.
+Such filters can be made presistent if preserved in the rcfile via
+the 'W' \*(CI.
 
 Establishing a filter requires: 1) a field name; 2) an operator; and
 3) a selection value, as a minimum.
@@ -2172,9 +2174,9 @@ While not intended to be edited manually, here is the general layout:
     window   # line  b: winflags,sortindx,maxtasks,graph modes
       "      # line  c: summclr,msgsclr,headclr,taskclr
     global   # line 15: additional miscellaneous settings
-      "      # any remaining lines are devoted to the
-      "      # generalized inspect provisions
-      "      # discussed below
+      "      # any remaining lines are devoted to optional
+      "      # active 'other filters' discussed in section 5e above
+      "      # plus 'inspect' entries discussed in section 6b below
 .fi
 
 If a valid absolute path to the rcfile cannot be established, customizations
