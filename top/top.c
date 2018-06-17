@@ -1497,74 +1497,6 @@ static inline const char *hex_make (KLONG num, int noz) {
 
 
         /*
-         * This sructure is hung from a WIN_t when other filtering is active */
-struct osel_s {
-   struct osel_s *nxt;                         // the next criteria or NULL.
-   int (*rel)(const char *, const char *);     // relational strings compare
-   char *(*sel)(const char *, const char *);   // for selection str compares
-   char *raw;                                  // raw user input (dup check)
-   char *val;                                  // value included or excluded
-   int   ops;                                  // filter delimiter/operation
-   int   inc;                                  // include == 1, exclude == 0
-   int   enu;                                  // field (procflag) to filter
-};
-
-
-        /*
-         * A function to turn off entire other filtering in the given window */
-static void osel_clear (WIN_t *q) {
-   struct osel_s *osel = q->osel_1st;
-
-   while (osel) {
-      struct osel_s *nxt = osel->nxt;
-      free(osel->val);
-      free(osel->raw);
-      free(osel);
-      osel = nxt;
-   }
-   q->osel_tot = 0;
-   q->osel_1st = NULL;
-   free (q->osel_prt);
-   q->osel_prt = NULL;
-#ifndef USE_X_COLHDR
-   OFFw(Curwin, NOHISEL_xxx);
-#endif
-} // end: osel_clear
-
-
-        /*
-         * Determine if there are matching values or relationships among the
-         * other criteria in this passed window -- it's called from only one
-         * place, and likely inlined even without the directive */
-static inline int osel_matched (const WIN_t *q, FLG_t enu, const char *str) {
-   struct osel_s *osel = q->osel_1st;
-
-   while (osel) {
-      if (osel->enu == enu) {
-         int r;
-         switch (osel->ops) {
-            case '<':                          // '<' needs the r < 0 unless
-               r = osel->rel(str, osel->val);  // '!' which needs an inverse
-               if ((r >= 0 && osel->inc) || (r < 0 && !osel->inc)) return 0;
-               break;
-            case '>':                          // '>' needs the r > 0 unless
-               r = osel->rel(str, osel->val);  // '!' which needs an inverse
-               if ((r <= 0 && osel->inc) || (r > 0 && !osel->inc)) return 0;
-               break;
-            default:
-            {  char *p = osel->sel(str, osel->val);
-               if ((!p && osel->inc) || (p && !osel->inc)) return 0;
-            }
-               break;
-         }
-      }
-      osel = osel->nxt;
-   }
-   return 1;
-} // end: osel_matched
-
-
-        /*
          * Validate the passed string as a user name or number,
          * and/or update the window's 'u/U' selection stuff. */
 static const char *user_certify (WIN_t *q, const char *str, char typ) {
@@ -3536,6 +3468,75 @@ signify_that:
 #undef INSP_MKSL
 #undef INSP_RLEN
 #undef INSP_BUSY
+
+/*######  Other Filtering  ###############################################*/
+
+        /*
+         * This sructure is hung from a WIN_t when other filtering is active */
+struct osel_s {
+   struct osel_s *nxt;                         // the next criteria or NULL.
+   int (*rel)(const char *, const char *);     // relational strings compare
+   char *(*sel)(const char *, const char *);   // for selection str compares
+   char *raw;                                  // raw user input (dup check)
+   char *val;                                  // value included or excluded
+   int   ops;                                  // filter delimiter/operation
+   int   inc;                                  // include == 1, exclude == 0
+   int   enu;                                  // field (procflag) to filter
+};
+
+
+        /*
+         * A function to turn off entire other filtering in the given window */
+static void osel_clear (WIN_t *q) {
+   struct osel_s *osel = q->osel_1st;
+
+   while (osel) {
+      struct osel_s *nxt = osel->nxt;
+      free(osel->val);
+      free(osel->raw);
+      free(osel);
+      osel = nxt;
+   }
+   q->osel_tot = 0;
+   q->osel_1st = NULL;
+   free (q->osel_prt);
+   q->osel_prt = NULL;
+#ifndef USE_X_COLHDR
+   OFFw(Curwin, NOHISEL_xxx);
+#endif
+} // end: osel_clear
+
+
+        /*
+         * Determine if there are matching values or relationships among the
+         * other criteria in this passed window -- it's called from only one
+         * place, and likely inlined even without the directive */
+static inline int osel_matched (const WIN_t *q, FLG_t enu, const char *str) {
+   struct osel_s *osel = q->osel_1st;
+
+   while (osel) {
+      if (osel->enu == enu) {
+         int r;
+         switch (osel->ops) {
+            case '<':                          // '<' needs the r < 0 unless
+               r = osel->rel(str, osel->val);  // '!' which needs an inverse
+               if ((r >= 0 && osel->inc) || (r < 0 && !osel->inc)) return 0;
+               break;
+            case '>':                          // '>' needs the r > 0 unless
+               r = osel->rel(str, osel->val);  // '!' which needs an inverse
+               if ((r <= 0 && osel->inc) || (r > 0 && !osel->inc)) return 0;
+               break;
+            default:
+            {  char *p = osel->sel(str, osel->val);
+               if ((!p && osel->inc) || (p && !osel->inc)) return 0;
+            }
+               break;
+         }
+      }
+      osel = osel->nxt;
+   }
+   return 1;
+} // end: osel_matched
 
 /*######  Startup routines  ##############################################*/
 
