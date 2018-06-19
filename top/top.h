@@ -779,6 +779,13 @@ typedef struct WIN_t {
 //atic void          wins_reflag (int what, int flg);
 //atic void          wins_stage_1 (void);
 //atic void          wins_stage_2 (void);
+/*------  Forest View support  -------------------------------------------*/
+//atic void          forest_adds (const int self, int level);
+#ifndef TREE_SCANALL
+//atic int           forest_based (const proc_t **x, const proc_t **y);
+#endif
+//atic void          forest_create (WIN_t *q);
+//atic inline const char *forest_display (const WIN_t *q, const proc_t *p);
 /*------  Interactive Input Tertiary support  ----------------------------*/
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);
@@ -791,13 +798,6 @@ typedef struct WIN_t {
 //atic void          keys_task (int ch);
 //atic void          keys_window (int ch);
 //atic void          keys_xtra (int ch);
-/*------  Forest View support  -------------------------------------------*/
-//atic void          forest_adds (const int self, int level);
-#ifndef TREE_SCANALL
-//atic int           forest_based (const proc_t **x, const proc_t **y);
-#endif
-//atic void          forest_create (WIN_t *q);
-//atic inline const char *forest_display (const WIN_t *q, const proc_t *p);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void          do_key (int ch);
 //atic void          summary_hlp (CPU_t *cpu, const char *pfx);

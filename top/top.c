@@ -4679,6 +4679,98 @@ static void wins_stage_2 (void) {
 #endif
 } // end: wins_stage_2
 
+/*######  Forest View support  ###########################################*/
+
+        /*
+         * We try to keep most existing code unaware of our activities
+         * ( plus, maintain alphabetical order with carefully chosen )
+         * ( function names: forest_a, forest_b, forest_c & forest_d )
+         * ( each with exactly one letter more than its predecessor! ) */
+static proc_t **Seed_ppt;                   // temporary win ppt pointer
+static proc_t **Tree_ppt;                   // forest_create will resize
+static int      Tree_idx;                   // frame_make resets to zero
+
+        /*
+         * This little recursive guy is the real forest view workhorse.
+         * He fills in the Tree_ppt array and also sets the child indent
+         * level which is stored in an unused proc_t padding byte. */
+static void forest_adds (const int self, int level) {
+   int i;
+
+   if (Tree_idx < Frame_maxtask) {          // immunize against insanity
+      if (level > 100) level = 101;         // our arbitrary nests limit
+      Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child
+      Tree_ppt[Tree_idx++]->pad_3 = level;  // borrow 1 byte, 127 levels
+#ifdef TREE_SCANALL
+      for (i = 0; i < Frame_maxtask; i++) {
+         if (i == self) continue;
+#else
+      for (i = self + 1; i < Frame_maxtask; i++) {
+#endif
+         if (Seed_ppt[self]->tid == Seed_ppt[i]->tgid
+         || (Seed_ppt[self]->tid == Seed_ppt[i]->ppid && Seed_ppt[i]->tid == Seed_ppt[i]->tgid))
+            forest_adds(i, level + 1);      // got one child any others?
+      }
+   }
+} // end: forest_adds
+
+
+#ifndef TREE_SCANALL
+        /*
+         * Our qsort callback to order a ppt by the non-display start_time
+         * which will make us immune from any pid, ppid or tgid anomalies
+         * if/when pid values are wrapped by the kernel! */
+static int forest_based (const proc_t **x, const proc_t **y) {
+   if ( (*x)->start_time > (*y)->start_time ) return  1;
+   if ( (*x)->start_time < (*y)->start_time ) return -1;
+   return 0;
+} // end: forest_based
+#endif
+
+
+        /*
+         * This routine is responsible for preparing the proc_t's for
+         * a forest display in the designated window.  Upon completion,
+         * he'll replace the original window ppt with our specially
+         * ordered forest version. */
+static void forest_create (WIN_t *q) {
+   static int hwmsav;
+   int i;
+
+   Seed_ppt = q->ppt;                       // avoid passing WIN_t ptrs
+   if (!Tree_idx) {                         // do just once per frame
+      if (hwmsav < Frame_maxtask) {         // grow, but never shrink
+         hwmsav = Frame_maxtask;
+         Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
+      }
+#ifndef TREE_SCANALL
+      qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), (QFP_t)forest_based);
+#endif
+      for (i = 0; i < Frame_maxtask; i++)   // avoid any hidepid distortions
+         if (!Seed_ppt[i]->pad_3)           // identify real or pretend trees
+            forest_adds(i, 0);              // add as parent plus its children
+   }
+   memcpy(Seed_ppt, Tree_ppt, sizeof(proc_t*) * Frame_maxtask);
+} // end: forest_create
+
+
+        /*
+         * This guy adds the artwork to either p->cmd or p->cmdline
+         * when in forest view mode, otherwise he just returns 'em. */
+static inline const char *forest_display (const WIN_t *q, const proc_t *p) {
+#ifndef SCROLLVAR_NO
+   static char buf[1024*64*2]; // the same as readproc's MAX_BUFSZ
+#else
+   static char buf[ROWMINSIZ];
+#endif
+   const char *which = (CHKw(q, Show_CMDLIN)) ? *p->cmdline : p->cmd;
+
+   if (!CHKw(q, Show_FOREST) || !p->pad_3) return which;
+   if (p->pad_3 > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
+   else snprintf(buf, sizeof(buf), "%*s%s", (4 * p->pad_3), " `- ", which);
+   return buf;
+} // end: forest_display
+
 /*######  Interactive Input Tertiary support  ############################*/
 
   /*
@@ -5432,98 +5524,6 @@ static void keys_xtra (int ch) {
 // some have objected to this message, so we'll just keep silent...
 // show_msg(fmtmk("%s sort compatibility key honored", xmsg));
 } // end: keys_xtra
-
-/*######  Forest View support  ###########################################*/
-
-        /*
-         * We try to keep most existing code unaware of our activities
-         * ( plus, maintain alphabetical order with carefully chosen )
-         * ( function names: forest_a, forest_b, forest_c & forest_d )
-         * ( each with exactly one letter more than its predecessor! ) */
-static proc_t **Seed_ppt;                   // temporary win ppt pointer
-static proc_t **Tree_ppt;                   // forest_create will resize
-static int      Tree_idx;                   // frame_make resets to zero
-
-        /*
-         * This little recursive guy is the real forest view workhorse.
-         * He fills in the Tree_ppt array and also sets the child indent
-         * level which is stored in an unused proc_t padding byte. */
-static void forest_adds (const int self, int level) {
-   int i;
-
-   if (Tree_idx < Frame_maxtask) {          // immunize against insanity
-      if (level > 100) level = 101;         // our arbitrary nests limit
-      Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child
-      Tree_ppt[Tree_idx++]->pad_3 = level;  // borrow 1 byte, 127 levels
-#ifdef TREE_SCANALL
-      for (i = 0; i < Frame_maxtask; i++) {
-         if (i == self) continue;
-#else
-      for (i = self + 1; i < Frame_maxtask; i++) {
-#endif
-         if (Seed_ppt[self]->tid == Seed_ppt[i]->tgid
-         || (Seed_ppt[self]->tid == Seed_ppt[i]->ppid && Seed_ppt[i]->tid == Seed_ppt[i]->tgid))
-            forest_adds(i, level + 1);      // got one child any others?
-      }
-   }
-} // end: forest_adds
-
-
-#ifndef TREE_SCANALL
-        /*
-         * Our qsort callback to order a ppt by the non-display start_time
-         * which will make us immune from any pid, ppid or tgid anomalies
-         * if/when pid values are wrapped by the kernel! */
-static int forest_based (const proc_t **x, const proc_t **y) {
-   if ( (*x)->start_time > (*y)->start_time ) return  1;
-   if ( (*x)->start_time < (*y)->start_time ) return -1;
-   return 0;
-} // end: forest_based
-#endif
-
-
-        /*
-         * This routine is responsible for preparing the proc_t's for
-         * a forest display in the designated window.  Upon completion,
-         * he'll replace the original window ppt with our specially
-         * ordered forest version. */
-static void forest_create (WIN_t *q) {
-   static int hwmsav;
-   int i;
-
-   Seed_ppt = q->ppt;                       // avoid passing WIN_t ptrs
-   if (!Tree_idx) {                         // do just once per frame
-      if (hwmsav < Frame_maxtask) {         // grow, but never shrink
-         hwmsav = Frame_maxtask;
-         Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
-      }
-#ifndef TREE_SCANALL
-      qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), (QFP_t)forest_based);
-#endif
-      for (i = 0; i < Frame_maxtask; i++)   // avoid any hidepid distortions
-         if (!Seed_ppt[i]->pad_3)           // identify real or pretend trees
-            forest_adds(i, 0);              // add as parent plus its children
-   }
-   memcpy(Seed_ppt, Tree_ppt, sizeof(proc_t*) * Frame_maxtask);
-} // end: forest_create
-
-
-        /*
-         * This guy adds the artwork to either p->cmd or p->cmdline
-         * when in forest view mode, otherwise he just returns 'em. */
-static inline const char *forest_display (const WIN_t *q, const proc_t *p) {
-#ifndef SCROLLVAR_NO
-   static char buf[1024*64*2]; // the same as readproc's MAX_BUFSZ
-#else
-   static char buf[ROWMINSIZ];
-#endif
-   const char *which = (CHKw(q, Show_CMDLIN)) ? *p->cmdline : p->cmd;
-
-   if (!CHKw(q, Show_FOREST) || !p->pad_3) return which;
-   if (p->pad_3 > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
-   else snprintf(buf, sizeof(buf), "%*s%s", (4 * p->pad_3), " `- ", which);
-   return buf;
-} // end: forest_display
 
 /*######  Main Screen routines  ##########################################*/
 
