@@ -62,7 +62,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "May 2018" "procps-ng" "User Commands"
+.TH TOP 1 "June 2018" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -1102,7 +1102,7 @@ depending on the context in which they are issued.
         C, l, t, m, 1, 2, 3
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, J, j, x, y, z
-        Content:     c, f, F, o, O, S, u, U, V
+        Content:     c, f, F, o, O, S, u, U, V, ^V
         Size:        #, i, n
         Sorting:     <, >, f, F, R
   4d.\fI Color-Mapping \fR
@@ -1147,20 +1147,13 @@ those \*(CIs applicable to \*(AM.
 .TP 7
 \ \ \ \fB=\fR\ \ :\fIExit-Task-Limits \fR
 Removes restrictions on which tasks are shown.
-This command will reverse any `i' (idle tasks) and `n' (max tasks)
-commands that might be active.
+This command will reverse any `i' (idle tasks), `n' (max tasks)
+and `^V' (hide children) commands that might be active.
 It also provides for an exit from PID monitoring, User filtering,
 Other filtering and Locate processing.
-See the `\-p' \*(CO for a discussion of PID monitoring, the `U' or `u'
-\*(CIs for User filtering the `O' or `o' \*(CIs for Other filtering
-and `L' or `&' \*(CIs for Locate processing.
 
-Additionally, any window that has been scrolled will be reset with
+Additionally, if the window has been scrolled it will be reset with
 this command.
-\*(XT 5c. SCROLLING a Window for additional information regarding
-vertical and horizontal scrolling.
-
-When operating in \*(AM this command has a broader meaning.
 
 .TP 7
 \ \ \ \fB0\fR\ \ :\fIZero-Suppress\fR toggle \fR
@@ -1588,6 +1581,18 @@ threads (\*(Xc `H' \*(CI).
 mode in the \*(CW.
 \*(XT 4c. TASK AREA Commands, SORTING for information on those keys.
 
+.TP 7
+\ \ \fB^V\fR\ \ :\fIHide/Show-Children\fR toggle (Ctrl key + `V') \fR
+When in forest view mode, this key serves as a toggle to collapse or
+expand the children of a parent.
+
+The toggle is applied against the first (topmost) process in the \*(CW.
+\*(XT 5c. SCROLLING a Window for additional information regarding
+vertical scrolling.
+
+If the target process has not forked any children, this key has no effect.
+It also has no effect when not in forest view mode.
+
 .PP
 .\" ..................................................
 .B SIZE\fR of \*(TW
@@ -1762,8 +1767,9 @@ as the only display element.
 .TP 7
 *\ \ \fB=\fR | \fB+\fR\ \ :\fIEqualize-(reinitialize)-Window(s) \fR
 The `=' key forces the \*(CW's \*(TD to be visible.
-It also reverses any `i' (idle tasks), `n' (max tasks), `u/U' (user filter),
-\`o/O' (other filter) and 'L' (locate) commands that might be active.
+It also reverses any active `i' (idle tasks), `n' (max tasks), `u/U'
+(user filter), `o/O' (other filter), `^V' (hide children) and 'L' (locate)
+commands.
 Also, if the window had been scrolled, it will be reset with this command.
 \*(XT 5c. SCROLLING a Window for additional information regarding vertical
 and horizontal scrolling.
@@ -1772,7 +1778,8 @@ The `+' key does the same for all windows.
 The four \*(TDs will reappear, evenly balanced.
 They will also have retained any customizations you had previously
 applied, except for the `i' (idle tasks), `n' (max tasks), `u/U'
-(user filter), `o/O' (other filter), `L' (locate) and scrolling \*(CIs.
+(user filter), `o/O' (other filter), `^V' (hide children), `L' (locate)
+and scrolling \*(CIs.
 
 .TP 7
 *\ \ \fBA\fR\ \ :\fIAlternate-Display-Mode\fR toggle \fR
