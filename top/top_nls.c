@@ -635,7 +635,7 @@ static void build_uniq_nlstab (void) {
       "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan, ~1  7~2 = white\n"
       "\n"
       "3) Then use these keys when finished:\n"
-      "   'q' to abort changes to window '~1%s~2'\n"
+      "   'q' or <Esc> to abort changes to window '~1%s~2'\n"
       "   'a' or 'w' to commit & change another, <Enter> to commit and end ");
 
 /* Translation Hint:
