@@ -498,6 +498,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[WORD_abv_mem_txt] = _("Mem ");
    Norm_nlstab[WORD_abv_swp_txt] = _("Swap");
    Norm_nlstab[BAD_memscale_fmt] = _("bad memory scaling arg '%c'");
+   Norm_nlstab[XTRA_vforest_fmt] = _("PID to collapse/expand [default pid = %d]");
 }
 
 
@@ -558,7 +559,7 @@ static void build_uniq_nlstab (void) {
       "  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
       "  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' other criteria\n"
       "  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' other filter(s)\n"
-      "  C,...   . Toggle scroll coordinates msg for: ~1up~2,~1down~2,~1left~2,~1right~2,~1home~2,~1end~2\n"
+      "  C,^V    . Toggle: '~1C~2' coordinates; ~1Ctrl~2+'~1V~2' hide/show forest view children\n"
       "\n"
       "%s"
       "  W,Y       Write configuration file '~1W~2'; Inspect other output '~1Y~2'\n"

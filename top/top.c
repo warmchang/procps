@@ -4682,13 +4682,20 @@ static void wins_stage_2 (void) {
 /*######  Forest View support  ###########################################*/
 
         /*
-         * We try to keep most existing code unaware of our activities
-         * ( plus, maintain alphabetical order with carefully chosen )
-         * ( function names: forest_a, forest_b, forest_c & forest_d )
-         * ( each with exactly one letter more than its predecessor! ) */
+         * We try keeping most existing code unaware of these activities
+         * ( plus, maintain alphabetical order within carefully chosen )
+         * ( function names of: forest_a, forest_b, forest_c, forest_d )
+         * ( with each name exactly 1 letter more than its predecessor ) */
 static proc_t **Seed_ppt;                   // temporary win ppt pointer
 static proc_t **Tree_ppt;                   // forest_create will resize
 static int      Tree_idx;                   // frame_make resets to zero
+        /* those next two support collapse/expand children. the Hide_pid
+           array holds parent pids whose children have been manipulated.
+           positive pid values represent parents with collapsed children
+           while a negative pid value means children have been expanded.
+           ( both of these are managed under the 'keys_task()' routine ) */
+static int     *Hide_pid;                   // collapsible process array
+static int      Hide_tot;                   // total used in above array
 
         /*
          * This little recursive guy is the real forest view workhorse.
@@ -4730,25 +4737,49 @@ static int forest_based (const proc_t **x, const proc_t **y) {
 
         /*
          * This routine is responsible for preparing the proc_t's for
-         * a forest display in the designated window.  Upon completion,
-         * he'll replace the original window ppt with our specially
-         * ordered forest version. */
+         * a forest display in a designated window. After completion,
+         * he will replace the original window ppt with our specially
+         * ordered forest version. He also marks any hidden children! */
 static void forest_create (WIN_t *q) {
    static int hwmsav;
-   int i;
+   int i, j;
 
    Seed_ppt = q->ppt;                       // avoid passing WIN_t ptrs
    if (!Tree_idx) {                         // do just once per frame
       if (hwmsav < Frame_maxtask) {         // grow, but never shrink
          hwmsav = Frame_maxtask;
          Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
+         Hide_pid = alloc_r(Hide_pid, sizeof(int) * hwmsav);
       }
+
 #ifndef TREE_SCANALL
       qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), (QFP_t)forest_based);
 #endif
       for (i = 0; i < Frame_maxtask; i++)   // avoid any hidepid distortions
          if (!Seed_ppt[i]->pad_3)           // identify real or pretend trees
             forest_adds(i, 0);              // add as parent plus its children
+
+      /* we're borrowing some pad bytes in the proc_t,
+         pad_2: 'x' means a collapsed thread, 'z' means an unseen child
+         pad_3: where level number is stored (0 - 100) */
+      for (i = 0; i < Hide_tot; i++) {
+         if (Hide_pid[i] > 0) {
+            for (j = 0; j < Frame_maxtask; j++) {
+               if (Tree_ppt[j]->tid == Hide_pid[i]) {
+                  int  idx = j;
+                  char lvl = Tree_ppt[j]->pad_3;
+                  Tree_ppt[j]->pad_2 = 'x';
+                  while (j+1 < Frame_maxtask && Tree_ppt[j+1]->pad_3 > lvl) {
+                     Tree_ppt[j+1]->pad_2 = 'z';
+                     idx = 0;
+                     ++j;
+                  }
+                  // no children found, so unmark this puppy
+                  if (idx) Tree_ppt[idx]->pad_2 = '\0';
+               }
+            }
+         }
+      }
    }
    memcpy(Seed_ppt, Tree_ppt, sizeof(proc_t*) * Frame_maxtask);
 } // end: forest_create
@@ -4766,6 +4797,13 @@ static inline const char *forest_display (const WIN_t *q, const proc_t *p) {
    const char *which = (CHKw(q, Show_CMDLIN)) ? *p->cmdline : p->cmd;
 
    if (!CHKw(q, Show_FOREST) || !p->pad_3) return which;
+#ifndef TREE_VWINALL
+   if (q == Curwin)
+#endif
+   if (p->pad_2 == 'x') {
+      snprintf(buf, sizeof(buf), "+%*s%s", ((4 * p->pad_3) - 1), "`- ", which);
+      return buf;
+   }
    if (p->pad_3 > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
    else snprintf(buf, sizeof(buf), "%*s%s", (4 * p->pad_3), " `- ", which);
    return buf;
@@ -5336,6 +5374,29 @@ static void keys_task (int ch) {
             capsmk(w);
          }
          break;
+      case kbd_CtrlV:
+         if (VIZCHKw(w)) {
+            if (CHKw(w, Show_FOREST)) {
+               int i, pid = w->ppt[w->begtask]->tid;
+#ifdef TREE_VPROMPT
+               int got = get_int(fmtmk(N_txt(XTRA_vforest_fmt), pid));
+               if (got < GET_NUM_NOT) break;
+               if (got > GET_NUM_NOT) pid = got;
+#endif
+               for (i = 0; i < Hide_tot; i++) {
+                  if (Hide_pid[i] == pid || Hide_pid[i] == -pid) {
+                     Hide_pid[i] = -Hide_pid[i];
+                     break;
+                  }
+               }
+               if (i == Hide_tot) Hide_pid[Hide_tot++] = pid;
+               // plenty of room, but if everything's expaned let's reset ...
+               for (i = 0; i < Hide_tot; i++)
+                  if (Hide_pid[i] > 0) break;
+               if (i == Hide_tot) Hide_tot = 0;
+            }
+         }
+         break;
       default:                    // keep gcc happy
          break;
    }
@@ -5348,12 +5409,14 @@ static void keys_window (int ch) {
    switch (ch) {
       case '+':
          if (ALTCHKw) wins_reflag(Flags_OFF, EQUWINS_xxx);
+         Hide_tot = 0;
          break;
       case '-':
          if (ALTCHKw) TOGw(w, Show_TASKON);
          break;
       case '=':
          win_reset(w);
+         Hide_tot = 0;
          break;
       case '_':
          if (ALTCHKw) wins_reflag(Flags_TOG, Show_TASKON);
@@ -5543,7 +5606,7 @@ static void do_key (int ch) {
       { keys_task,
          { '#', '<', '>', 'b', 'c', 'i', 'J', 'j', 'n', 'O', 'o'
          , 'R', 'S', 'U', 'u', 'V', 'x', 'y', 'z'
-         , kbd_CtrlO, '\0' } },
+         , kbd_CtrlO, kbd_CtrlV, '\0' } },
       { keys_window,
          { '+', '-', '=', '_', '&', 'A', 'a', 'G', 'L', 'w'
          , kbd_UP, kbd_DOWN, kbd_LEFT, kbd_RIGHT, kbd_PGUP, kbd_PGDN
@@ -5877,6 +5940,15 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
    static char rbuf[ROWMINSIZ];
    char *rp;
    int x;
+
+   /* we're borrowing some pad bytes in the proc_t,
+      pad_2: 'x' means a collapsed thread, 'z' means an unseen child
+      pad_3: where level number is stored (0 - 100) */
+#ifndef TREE_VWINALL
+   if (q == Curwin)
+#endif
+   if (CHKw(q, Show_FOREST) && p->pad_2 == 'z')
+      return "";
 
    // we must begin a row with a possible window number in mind...
    *(rp = rbuf) = '\0';
