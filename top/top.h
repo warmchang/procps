@@ -622,7 +622,8 @@ typedef struct WIN_t {
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
 //atic int           config_cvt (WIN_t *q);
-//atic const char   *config_file (FILE *fp, const char *name, float *delay);
+//atic int           config_insp (FILE *fp, char *buf, size_t size);
+//atic const char   *configs_file (FILE *fp, const char *name, float *delay);
 //atic int           configs_path (const char *const fmts, ...);
 //atic void          configs_reads (void);
 //atic void          parse_args (char **args);
