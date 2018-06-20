@@ -3301,10 +3301,14 @@ static int config_cvt (WIN_t *q) {
 static int config_insp (FILE *fp, char *buf, size_t size) {
    int i;
 
-   // we'll start off Inspect stuff with 1 'potential' blank line
+   // we'll start off with a 'potential' blank or empty line
    // ( only realized if we end up with Inspect.total > 0 )
-   for (i = 0, Inspect.raw = alloc_s("\n");;) {
+   if (!buf[0] || buf[0] != '\n') Inspect.raw = alloc_s("\n");
+   else Inspect.raw = alloc_c(1);
+
+   for (i = 0;;) {
     #define iT(element) Inspect.tab[i].element
+    #define nxtLINE { buf[0] = '\0'; continue; }
       size_t lraw = strlen(Inspect.raw) +1;
       int n, x;
       char *s;
@@ -3312,12 +3316,12 @@ static int config_insp (FILE *fp, char *buf, size_t size) {
       if (i < 0 || (size_t)i >= INT_MAX / sizeof(struct I_ent)) break;
       if (lraw >= INT_MAX - size) break;
 
-      if (!fgets(buf, size, fp)) break;
+      if (!buf[0] && !fgets(buf, size, fp)) break;
       lraw += strlen(buf) +1;
       Inspect.raw = alloc_r(Inspect.raw, lraw);
       strcat(Inspect.raw, buf);
 
-      if (buf[0] == '#' || buf[0] == '\n') continue;
+      if (buf[0] == '#' || buf[0] == '\n') nxtLINE;
       Inspect.tab = alloc_r(Inspect.tab, sizeof(struct I_ent) * (i + 1));
 
       // part of this is used in a show_special() call, so let's sanitize it
@@ -3328,11 +3332,11 @@ static int config_insp (FILE *fp, char *buf, size_t size) {
             Rc_questions = 1;
          }
       }
-      if (!(s = strtok(buf, "\t\n"))) { Rc_questions = 1; continue; }
+      if (!(s = strtok(buf, "\t\n")))  { Rc_questions = 1; nxtLINE; }
       iT(type) = alloc_s(s);
-      if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; continue; }
+      if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; nxtLINE; }
       iT(name) = alloc_s(s);
-      if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; continue; }
+      if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; nxtLINE; }
       iT(fmts) = alloc_s(s);
 
       switch (toupper(buf[0])) {
@@ -3344,14 +3348,16 @@ static int config_insp (FILE *fp, char *buf, size_t size) {
             break;
          default:
             Rc_questions = 1;
-            continue;
+            nxtLINE;
       }
       iT(farg) = (strstr(iT(fmts), "%d")) ? 1 : 0;
       iT(fstr) = alloc_c(FNDBUFSIZ);
       iT(flen) = 0;
 
+      buf[0] = '\0';
       ++i;
     #undef iT
+    #undef nxtLINE
    } // end: for ('inspect' entries)
 
    Inspect.total = i;
