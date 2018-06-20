@@ -331,7 +331,7 @@ typedef struct CPU_t {
 #define Show_JRSTRS  0x040000     // 'j' - right justify "string" data cols
 #define Show_JRNUMS  0x020000     // 'J' - right justify "numeric" data cols
         // these flag(s) have no command as such - they're for internal use
-#define INFINDS_xxx  0x010000     // build rows for find_string, not display
+#define NOPRINT_xxx  0x010000     // build task rows only (not for display)
 #define EQUWINS_xxx  0x000001     // rebalance all wins & tasks (off i,n,u/U)
 #ifndef USE_X_COLHDR
 #define NOHISEL_xxx  0x200000     // restrict Show_HICOLS for osel temporarily
@@ -411,6 +411,7 @@ typedef struct WIN_t {
           begpflg,         // scrolled beginning pos into pflgsall array
           endpflg,         // scrolled ending pos into pflgsall array
           begtask,         // scrolled beginning pos into Frame_maxtask
+          begnext,         // new scrolled delta for next frame's begtask
 #ifndef SCROLLVAR_NO
           varcolbeg,       // scrolled position within variable width col
 #endif
@@ -806,6 +807,7 @@ typedef struct WIN_t {
 //atic void          summary_hlp (CPU_t *cpu, const char *pfx);
 //atic void          summary_show (void);
 //atic const char   *task_show (const WIN_t *q, const proc_t *p);
+//atic void          window_hlp (void);
 //atic int           window_show (WIN_t *q, int wmax);
 /*------  Entry point plus two  ------------------------------------------*/
 //atic void          frame_hlp (int wix, int max);

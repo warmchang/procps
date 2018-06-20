@@ -4386,9 +4386,9 @@ static void win_names (WIN_t *q, const char *name) {
 static void win_reset (WIN_t *q) {
          SETw(q, Show_IDLEPS | Show_TASKON);
 #ifndef SCROLLVAR_NO
-         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->varcolbeg = 0;
+         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = q->varcolbeg = 0;
 #else
-         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = 0;
+         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = 0;
 #endif
          Monpidsidx = 0;
          osel_clear(q);
@@ -4848,7 +4848,7 @@ static void find_string (int ch) {
 #endif
    }
    if (Curwin->findstr[0]) {
-      SETw(Curwin, INFINDS_xxx);
+      SETw(Curwin, NOPRINT_xxx);
       for (i = Curwin->begtask; i < Frame_maxtask; i++) {
          const char *row = task_show(Curwin, Curwin->ppt[i]);
          if (*row && -1 < find_ofs(Curwin, row)) {
@@ -5430,10 +5430,10 @@ static void keys_window (int ch) {
          }
          break;
       case kbd_UP:
-         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS) && 0 < w->begtask) w->begtask -= 1;
+         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begnext = -1;
          break;
       case kbd_DOWN:
-         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS) && (w->begtask < Frame_maxtask - 1)) w->begtask += 1;
+         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begnext = +1;
          break;
 #ifdef USE_X_COLHDR // ------------------------------------
       case kbd_LEFT:
@@ -5503,17 +5503,14 @@ static void keys_window (int ch) {
       case kbd_PGUP:
          if (VIZCHKw(w)) {
             if (CHKw(w, Show_IDLEPS) && 0 < w->begtask) {
-               w->begtask -= (w->winlines - 1);
-               if (0 > w->begtask) w->begtask = 0;
+               w->begnext = -(w->winlines - 1);
             }
          }
          break;
       case kbd_PGDN:
          if (VIZCHKw(w)) {
             if (CHKw(w, Show_IDLEPS) && w->begtask < Frame_maxtask - 1) {
-               w->begtask += (w->winlines - 1);
-               if (w->begtask > Frame_maxtask - 1) w->begtask = Frame_maxtask - 1;
-               if (0 > w->begtask) w->begtask = 0;
+               w->begnext = +(w->winlines - 1);
             }
          }
          break;
@@ -5527,8 +5524,7 @@ static void keys_window (int ch) {
       case kbd_END:
          if (VIZCHKw(w)) {
             if (CHKw(w, Show_IDLEPS)) {
-               w->begtask = (Frame_maxtask - w->winlines) + 1;
-               if (0 > w->begtask) w->begtask = 0;
+               w->begnext = (Frame_maxtask - w->winlines) + 1;
                w->begpflg = w->endpflg;
 #ifndef SCROLLVAR_NO
                w->varcolbeg = 0;
@@ -5958,7 +5954,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
          case EU_XON:
          case EU_XOF:
             cp = NULL;
-            if (!CHKw(q, INFINDS_xxx | NOHIFND_xxx | NOHISEL_xxx)) {
+            if (!CHKw(q, NOPRINT_xxx | NOHIFND_xxx | NOHISEL_xxx)) {
                /* treat running tasks specially - entire row may get highlighted
                   so we needn't turn it on and we MUST NOT turn it off */
                if (!('R' == p->state && CHKw(q, Show_HIROWS)))
@@ -6160,7 +6156,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
       #undef Jn
    } // end: for 'maxpflgs'
 
-   if (!CHKw(q, INFINDS_xxx)) {
+   if (!CHKw(q, NOPRINT_xxx)) {
       const char *cap = ((CHKw(q, Show_HIROWS) && 'R' == p->state))
          ? q->capclr_rowhigh : q->capclr_rownorm;
       char *row = rbuf;
@@ -6192,6 +6188,51 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
 
 
         /*
+         * A window_show *Helper* function ensuring that Curwin's 'begtask'
+         * represents a visible process (not any hidden/filtered-out task).
+         * In reality, this function is called:
+         *   1) exclusively for the current window
+         *   2) immediately after interacting with a user
+         *   3) with the only key stuck: up, down, pgup, pgdn or end */
+static void window_hlp (void) {
+   WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
+   int i;
+
+   SETw(w, NOPRINT_xxx);
+   w->begtask += w->begnext;
+   if (w->begtask < 0) w->begtask = 0;
+   if (w->begtask >= Frame_maxtask) w->begtask = Frame_maxtask - 1;
+
+   // potentially scroll forward ...
+   if (w->begnext > 0) {
+      for (i = w->begtask; i < Frame_maxtask; i++) {
+         if (user_matched(w, w->ppt[i])
+         && (*task_show(w, w->ppt[i])))
+            break;
+      }
+      if (i < Frame_maxtask) {
+         w->begtask = i;
+         goto wrap_up;
+      }
+      // no luck forward, so let's try backward
+      w->begtask = Frame_maxtask - 1;
+   }
+
+   // potentially scroll backward ...
+   for (i = w->begtask; i > 0; i--) {
+      if (user_matched(w, w->ppt[i])
+      && (*task_show(w, w->ppt[i])))
+         break;
+   }
+   w->begtask = i;
+
+wrap_up:
+   w->begnext = 0;
+   OFFw(w, NOPRINT_xxx);
+} // end: window_hlp
+
+
+        /*
          * Squeeze as many tasks as we can into a single window,
          * after sorting the passed proc table. */
 static int window_show (WIN_t *q, int wmax) {
@@ -6214,6 +6255,9 @@ static int window_show (WIN_t *q, int wmax) {
       Frame_cmdlin = CHKw(q, Show_CMDLIN);
       qsort(q->ppt, Frame_maxtask, sizeof(proc_t*), Fieldstab[q->rc.sortindx].sort);
    }
+
+   if (q->begnext) window_hlp();
+   else OFFw(q, NOPRINT_xxx);
 
    i = q->begtask;
    lwin = 1;                                        // 1 for the column header
@@ -6304,7 +6348,6 @@ static void frame_make (void) {
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();
    Max_lines = (Screen_rows - Msg_row) - 1;
-   OFFw(w, INFINDS_xxx);
 
    // we're now on Msg_row so clear out any residual messages ...
    putp(Cap_clr_eol);
