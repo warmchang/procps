@@ -4226,6 +4226,102 @@ static inline int wins_usrselect (const WIN_t *q, struct pids_stack *p) {
  #undef rSv
 } // end: wins_usrselect
 
+/*######  Forest View support  ###########################################*/
+
+        /*
+         * We try to keep most existing code unaware of our activities
+         * ( plus, maintain alphabetical order with carefully chosen )
+         * ( function names like such: forest_a, forest_b & forest_c )
+         * ( each with exactly one letter more than its predecessor! ) */
+static struct pids_stack **Seed_ppt;        // temporary win ppt pointer
+static struct pids_stack **Tree_ppt;        // forest_begin resizes this
+static int Tree_idx;                        // frame_make resets to zero
+
+        /*
+         * This little recursive guy is the real forest view workhorse.
+         * He fills in the Tree_ppt array and also sets the child indent
+         * level which is stored in an 'extra' result struct as a u_int. */
+static void forest_adds (const int self, unsigned level) {
+ // tailored 'results stack value' extractor macros
+ #define rSv(E,X)  PID_VAL(E, s_int, Seed_ppt[X])
+ // if xtra-procps-debug.h active, can't use PID_VAL as base due to assignment
+ #define rLevel  Tree_ppt[Tree_idx]->head[Fieldstab[eu_XTRA].erel].result.u_int
+   int i;
+
+   if (Tree_idx < PIDSmaxt) {               // immunize against insanity
+      if (level > 100) level = 101;         // our arbitrary nests limit
+      Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child
+      rLevel = level;                       // while recording its level
+      ++Tree_idx;
+#ifdef TREE_SCANALL
+      for (i = 0; i < PIDSmaxt; i++) {
+         if (i == self) continue;
+#else
+      for (i = self + 1; i < PIDSmaxt; i++) {
+#endif
+         if (rSv(EU_PID, self) == rSv(EU_TGD, i)
+         || (rSv(EU_PID, self) == rSv(EU_PPD, i) && rSv(EU_PID, i) == rSv(EU_TGD, i)))
+            forest_adds(i, level + 1);      // got one child any others?
+      }
+   }
+ #undef rSv
+ #undef rLevel
+} // end: forest_adds
+
+
+        /*
+         * This routine is responsible for preparing the stacks ptr array
+         * for forest display in the designated window.  Upon completion,
+         * he'll replace the original window ppt with our specially
+         * ordered forest version. */
+static void forest_begin (WIN_t *q) {
+ // tailored 'results stack value' extractor macro
+ #define rLevel  PID_VAL(eu_XTRA, u_int, Seed_ppt[i])
+   static int hwmsav;
+   int i;
+
+   Seed_ppt = q->ppt;                          // avoid passing pointers
+   if (!Tree_idx) {                            // do just once per frame
+      if (hwmsav < PIDSmaxt) {                 // grow, but never shrink
+         hwmsav = PIDSmaxt;
+         Tree_ppt = alloc_r(Tree_ppt, sizeof(void*) * hwmsav);
+      }
+#ifndef TREE_SCANALL
+      if (!(procps_pids_sort(Pids_ctx, Seed_ppt, PIDSmaxt
+         , PIDS_TIME_START, PIDS_SORT_ASCEND)))
+            error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
+#endif
+      for (i = 0; i < PIDSmaxt; i++)           // avoid any hidepid distortions
+         if (!rLevel)                          // identify real or pretend trees
+            forest_adds(i, 0);                 // add as parent plus its children
+   }
+   memcpy(Seed_ppt, Tree_ppt, sizeof(void*) * PIDSmaxt);
+ #undef rLevel
+} // end: forest_begin
+
+
+        /*
+         * This guy adds the artwork to either a 'cmd' or 'cmdline'
+         * when in forest view mode, otherwise he just returns 'em. */
+static inline const char *forest_colour (const WIN_t *q, struct pids_stack *p) {
+ // tailored 'results stack value' extractor macros
+ #define rSv(E)  PID_VAL(E, str, p)
+ #define rLevel  PID_VAL(eu_XTRA, u_int, p)
+#ifndef SCROLLVAR_NO
+   static char buf[1024*64*2]; // the same as libray's max buffer size
+#else
+   static char buf[ROWMINSIZ];
+#endif
+   const char *which = (CHKw(q, Show_CMDLIN)) ? rSv(eu_CMDLINE) : rSv(EU_CMD);
+
+   if (!CHKw(q, Show_FOREST) || !rLevel) return which;
+   if (rLevel > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
+   else snprintf(buf, sizeof(buf), "%*s%s", (4 * rLevel), " `- ", which);
+   return buf;
+ #undef rSv
+ #undef rLevel
+} // end: forest_colour
+
 /*######  Interactive Input Tertiary support  ############################*/
 
   /*
@@ -4979,102 +5075,6 @@ static void keys_xtra (int ch) {
 // some have objected to this message, so we'll just keep silent...
 // show_msg(fmtmk("%s sort compatibility key honored", xmsg));
 } // end: keys_xtra
-
-/*######  Forest View support  ###########################################*/
-
-        /*
-         * We try to keep most existing code unaware of our activities
-         * ( plus, maintain alphabetical order with carefully chosen )
-         * ( function names like such: forest_a, forest_b & forest_c )
-         * ( each with exactly one letter more than its predecessor! ) */
-static struct pids_stack **Seed_ppt;        // temporary win ppt pointer
-static struct pids_stack **Tree_ppt;        // forest_begin resizes this
-static int Tree_idx;                        // frame_make resets to zero
-
-        /*
-         * This little recursive guy is the real forest view workhorse.
-         * He fills in the Tree_ppt array and also sets the child indent
-         * level which is stored in an 'extra' result struct as a u_int. */
-static void forest_adds (const int self, unsigned level) {
- // tailored 'results stack value' extractor macros
- #define rSv(E,X)  PID_VAL(E, s_int, Seed_ppt[X])
- // if xtra-procps-debug.h active, can't use PID_VAL as base due to assignment
- #define rLevel  Tree_ppt[Tree_idx]->head[Fieldstab[eu_XTRA].erel].result.u_int
-   int i;
-
-   if (Tree_idx < PIDSmaxt) {               // immunize against insanity
-      if (level > 100) level = 101;         // our arbitrary nests limit
-      Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child
-      rLevel = level;                       // while recording its level
-      ++Tree_idx;
-#ifdef TREE_SCANALL
-      for (i = 0; i < PIDSmaxt; i++) {
-         if (i == self) continue;
-#else
-      for (i = self + 1; i < PIDSmaxt; i++) {
-#endif
-         if (rSv(EU_PID, self) == rSv(EU_TGD, i)
-         || (rSv(EU_PID, self) == rSv(EU_PPD, i) && rSv(EU_PID, i) == rSv(EU_TGD, i)))
-            forest_adds(i, level + 1);      // got one child any others?
-      }
-   }
- #undef rSv
- #undef rLevel
-} // end: forest_adds
-
-
-        /*
-         * This routine is responsible for preparing the stacks ptr array
-         * for forest display in the designated window.  Upon completion,
-         * he'll replace the original window ppt with our specially
-         * ordered forest version. */
-static void forest_begin (WIN_t *q) {
- // tailored 'results stack value' extractor macro
- #define rLevel  PID_VAL(eu_XTRA, u_int, Seed_ppt[i])
-   static int hwmsav;
-   int i;
-
-   Seed_ppt = q->ppt;                          // avoid passing pointers
-   if (!Tree_idx) {                            // do just once per frame
-      if (hwmsav < PIDSmaxt) {                 // grow, but never shrink
-         hwmsav = PIDSmaxt;
-         Tree_ppt = alloc_r(Tree_ppt, sizeof(void*) * hwmsav);
-      }
-#ifndef TREE_SCANALL
-      if (!(procps_pids_sort(Pids_ctx, Seed_ppt, PIDSmaxt
-         , PIDS_TIME_START, PIDS_SORT_ASCEND)))
-            error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
-#endif
-      for (i = 0; i < PIDSmaxt; i++)           // avoid any hidepid distortions
-         if (!rLevel)                          // identify real or pretend trees
-            forest_adds(i, 0);                 // add as parent plus its children
-   }
-   memcpy(Seed_ppt, Tree_ppt, sizeof(void*) * PIDSmaxt);
- #undef rLevel
-} // end: forest_begin
-
-
-        /*
-         * This guy adds the artwork to either a 'cmd' or 'cmdline'
-         * when in forest view mode, otherwise he just returns 'em. */
-static inline const char *forest_colour (const WIN_t *q, struct pids_stack *p) {
- // tailored 'results stack value' extractor macros
- #define rSv(E)  PID_VAL(E, str, p)
- #define rLevel  PID_VAL(eu_XTRA, u_int, p)
-#ifndef SCROLLVAR_NO
-   static char buf[1024*64*2]; // the same as libray's max buffer size
-#else
-   static char buf[ROWMINSIZ];
-#endif
-   const char *which = (CHKw(q, Show_CMDLIN)) ? rSv(eu_CMDLINE) : rSv(EU_CMD);
-
-   if (!CHKw(q, Show_FOREST) || !rLevel) return which;
-   if (rLevel > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
-   else snprintf(buf, sizeof(buf), "%*s%s", (4 * rLevel), " `- ", which);
-   return buf;
- #undef rSv
- #undef rLevel
-} // end: forest_colour
 
 /*######  Main Screen routines  ##########################################*/
 
