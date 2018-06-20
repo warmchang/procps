@@ -579,8 +579,6 @@ typedef struct WIN_t {
 //atic float         get_float (const char *prompt);
 //atic int           get_int (const char *prompt);
 //atic inline const char *hex_make (long num, int noz);
-//atic void          osel_clear (WIN_t *q);
-//atic inline int    osel_matched (const WIN_t *q, FLG_t enu, const char *str);
 //atic const char   *user_certify (WIN_t *q, const char *str, char typ);
 /*------  Basic Formatting support  --------------------------------------*/
 //atic inline const char *justify_pad (const char *str, int width, int justr);
@@ -619,6 +617,9 @@ typedef struct WIN_t {
 //atic void          insp_show_pgs (int col, int row, int max);
 //atic int           insp_view_choice (struct pids_stack *obj);
 //atic void          inspection_utility (int pid);
+/*------  Other Filtering ------------------------------------------------*/
+//atic void          osel_clear (WIN_t *q);
+//atic inline int    osel_matched (const WIN_t *q, FLG_t enu, const char *str);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
 //atic int           config_cvt (WIN_t *q);
