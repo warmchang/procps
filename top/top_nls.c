@@ -377,7 +377,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[BAD_max_task_txt] = _("Invalid maximum");
    Norm_nlstab[GET_user_ids_txt] = _("Which user (blank for all)");
    Norm_nlstab[UNKNOWN_cmds_txt] = _("Unknown command - try 'h' for help");
-   Norm_nlstab[SCROLL_coord_fmt] = _("scroll coordinates: y = %d/%%d (tasks), x = %d/%d (fields)");
+   Norm_nlstab[SCROLL_coord_fmt] = _("scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)");
    Norm_nlstab[FAIL_alloc_c_txt] = _("failed memory allocate");
    Norm_nlstab[FAIL_alloc_r_txt] = _("failed memory re-allocate");
    Norm_nlstab[BAD_numfloat_txt] = _("Unacceptable floating point");
