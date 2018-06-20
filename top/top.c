@@ -195,6 +195,14 @@ static int   Graph_len;      // scaled length (<= GRAPH_actual)
 static const char Graph_blks[] = "                                                                                                    ";
 static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
 
+        /* Support for 'Other Filters' in the configuration file */
+static const char Osel_delim_1_txt[] = "begin: saved other filter data -------------------\n";
+static const char Osel_delim_2_txt[] = "end  : saved other filter data -------------------\n";
+static const char Osel_window_fmts[] = "window #%d, osel_tot=%d\n";
+#define OSEL_FILTER   "filter="
+static const char Osel_filterO_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%s\n";
+static const char Osel_filterI_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%*s\n";
+
         /* Support for the new library API -- acquired (if necessary)
            at program startup and referenced throughout our lifetime. */
         // --- <proc/meminfo.h> -----------------------------------------------
@@ -3005,11 +3013,12 @@ struct osel_s {
    int   ops;                                  // filter delimiter/operation
    int   inc;                                  // include == 1, exclude == 0
    int   enu;                                  // field (procflag) to filter
+   int   typ;                                  // typ used to set: rel & sel
 };
 
         /*
          * A function to parse, validate and build a single 'other filter' */
-static const char *osel_add (int ch, char *glob) {
+static const char *osel_add (WIN_t *q, int ch, char *glob, int push) {
    int (*rel)(const char *, const char *);
    char *(*sel)(const char *, const char *);
    char raw[MEDBUFSIZ], ops, *pval;
@@ -3026,7 +3035,7 @@ static const char *osel_add (int ch, char *glob) {
 
    if (!snprintf(raw, sizeof(raw), "%s", glob))
       return NULL;
-   for (osel = Curwin->osel_1st; osel; ) {
+   for (osel = q->osel_1st; osel; ) {
       if (!strcmp(osel->raw, raw))             // #1: is criteria duplicate?
          return N_txt(OSEL_errdups_txt);
       osel = osel->nxt;
@@ -3048,10 +3057,9 @@ static const char *osel_add (int ch, char *glob) {
    if (!(*pval))                               // #5: did we get some value?
       return fmtmk(N_fmt(OSEL_errvalu_fmt)
          , inc ? N_txt(WORD_include_txt) : N_txt(WORD_exclude_txt));
-   if (Curwin->osel_prt && strlen(Curwin->osel_prt) >= INT_MAX - (sizeof(raw) + 6))
-      return NULL;
 
    osel = alloc_c(sizeof(struct osel_s));
+   osel->typ = ch;
    osel->inc = inc;
    osel->enu = enu;
    osel->ops = ops;
@@ -3061,13 +3069,24 @@ static const char *osel_add (int ch, char *glob) {
    osel->sel = sel;
    osel->raw = alloc_s(raw);
 
-   osel->nxt = Curwin->osel_1st;
-   Curwin->osel_1st = osel;
-   Curwin->osel_tot += 1;
-
-   if (!Curwin->osel_prt) Curwin->osel_prt = alloc_c(strlen(raw) + 3);
-   else Curwin->osel_prt = alloc_r(Curwin->osel_prt, strlen(Curwin->osel_prt) + strlen(raw) + 6);
-   strcat(Curwin->osel_prt, fmtmk("%s'%s'", (Curwin->osel_tot > 1) ? " + " : "", raw));
+   if (push) {
+      // a LIFO queue was used when we're interactive
+      osel->nxt = q->osel_1st;
+      q->osel_1st = osel;
+   } else {
+      // a FIFO queue must be employed for the rcfile
+      if (!q->osel_1st)
+         q->osel_1st = osel;
+      else {
+         struct osel_s *prev, *walk = q->osel_1st;
+         do {
+            prev = walk;
+            walk = walk->nxt;
+         } while (walk);
+         prev->nxt = osel;
+      }
+   }
+   q->osel_tot += 1;
 
    return NULL;
 } // end: osel_add
@@ -3087,10 +3106,8 @@ static void osel_clear (WIN_t *q) {
    }
    q->osel_tot = 0;
    q->osel_1st = NULL;
-   free (q->osel_prt);
-   q->osel_prt = NULL;
 #ifndef USE_X_COLHDR
-   OFFw(Curwin, NOHISEL_xxx);
+   OFFw(q, NOHISEL_xxx);
 #endif
 } // end: osel_clear
 
@@ -3382,6 +3399,50 @@ static int config_insp (FILE *fp, char *buf, size_t size) {
 
 
         /*
+         * A configs_file *Helper* function responsible for reading
+         * and validating a configuration file's 'Other Filter' entries */
+static int config_osel (FILE *fp, char *buf, size_t size) {
+   int i, ch, tot, wno, begun;
+   char *p;
+
+   for (begun = 0;;) {
+      if (!fgets(buf, size, fp)) return 0;
+      if (buf[0] == '\n') continue;
+      // whoa, must be an 'inspect' entry
+      if (!begun && !strstr(buf, Osel_delim_1_txt))
+         return 0;
+      // ok, we're now begining
+      if (!begun && strstr(buf, Osel_delim_1_txt)) {
+         begun = 1;
+         continue;
+      }
+      // this marks the end of our stuff
+      if (begun && strstr(buf, Osel_delim_2_txt))
+         break;
+
+      if (2 != sscanf(buf, Osel_window_fmts, &wno, &tot))
+         goto end_oops;
+
+      for (i = 0; i < tot; i++) {
+         if (!fgets(buf, size, fp)) return 1;
+         if (1 > sscanf(buf, Osel_filterI_fmt, &ch)) goto end_oops;
+         if ((p = strchr(buf, '\n'))) *p = '\0';
+         if (!(p = strstr(buf, OSEL_FILTER))) goto end_oops;
+         p += sizeof(OSEL_FILTER) - 1;
+         if (osel_add(&Winstk[wno], ch, p, 0)) goto end_oops;
+      }
+   }
+   // let's prime that buf for the next guy...
+   fgets(buf, size, fp);
+   return 0;
+
+end_oops:
+   Rc_questions = 1;
+   return 1;
+} // end: config_osel
+
+
+        /*
          * A configs_reads *Helper* function responsible for processing
          * a configuration file (personal or system-wide default) */
 static const char *configs_file (FILE *fp, const char *name, float *delay) {
@@ -3492,7 +3553,9 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
       Rc.zero_suppress = 0;
 
    // lastly, let's process any optional glob(s) ...
+   // (darn, must do osel 1st even though alphabetically 2nd)
    fbuf[0] = '\0';
+   config_osel(fp, fbuf, sizeof(fbuf));
    config_insp(fp, fbuf, sizeof(fbuf));
 
    return NULL;
@@ -3531,7 +3594,8 @@ static int configs_path (const char *const fmts, ...) {
          *       line b: contains w->winflags, sortindx, maxtasks, graph modes
          *       line c: contains w->summclr, msgsclr, headclr, taskclr
          *     line 15 : miscellaneous additional global settings
-         *     Any remaining lines are devoted to the 'Inspect Other' feature
+         *     Any remaining lines are devoted to the optional entries
+         *     supporting the 'Other Filter' and 'Inspect' provisions.
          * 3. 'SYS_RCDEFAULTS' system-wide defaults if 'Rc_name' absent
          *     format is identical to #2 above */
 static void configs_reads (void) {
@@ -4275,23 +4339,51 @@ signify_that:
 
 
 static void other_filters (int ch) {
+   WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    const char *txt, *p;
    char *glob;
 
-   if (ch == 'o') txt = N_txt(OSEL_casenot_txt);
-   else txt = N_txt(OSEL_caseyes_txt);
-
-   glob = ioline(fmtmk(N_fmt(OSEL_prompts_fmt), Curwin->osel_tot + 1, txt));
-   if (*glob == kbd_ESC || !*glob)
-      return;
-
-   if ((p = osel_add(ch, glob))) {
-      show_msg(p);
-      return;
-   }
+   switch (ch) {
+      case 'o':
+      case 'O':
+         if (ch == 'o') txt = N_txt(OSEL_casenot_txt);
+         else txt = N_txt(OSEL_caseyes_txt);
+         glob = ioline(fmtmk(N_fmt(OSEL_prompts_fmt), w->osel_tot + 1, txt));
+         if (*glob == kbd_ESC || *glob == '\0')
+            return;
+         if ((p = osel_add(w, ch, glob, 1))) {
+            show_msg(p);
+            return;
+         }
 #ifndef USE_X_COLHDR
-   SETw(Curwin, NOHISEL_xxx);
+         SETw(w, NOHISEL_xxx);
 #endif
+         break;
+      case kbd_CtrlO:
+         if (VIZCHKw(w)) {
+            char buf[SCREENMAX], **pp;
+            struct osel_s *osel;
+            int i;
+
+            i = 0;
+            osel = w->osel_1st;
+            pp = alloc_c((w->osel_tot + 1) * sizeof(char**));
+            while (osel && i < w->osel_tot) {
+               pp[i++] = osel->raw;
+               osel = osel->nxt;
+            }
+            buf[0] = '\0';
+            for ( ; i > 0; )
+               strncat(buf, fmtmk("%s'%s'", " + " , pp[--i]), sizeof(buf) - (strlen(buf) + 1));
+            if (buf[0]) p = buf + strspn(buf, " + ");
+            else p = N_txt(WORD_noneone_txt);
+            ioline(fmtmk(N_fmt(OSEL_statlin_fmt), p));
+            free(pp);
+         }
+         break;
+      default:                    // keep gcc happy
+         break;
+   }
 } // end: other_filters
 
 
@@ -4331,6 +4423,23 @@ static void write_rcfile (void) {
    // any new addition(s) last, for older rcfiles compatibility...
    fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
       , Rc.fixed_widest, Rc.summ_mscale, Rc.task_mscale, Rc.zero_suppress);
+
+   if (Winstk[0].osel_tot + Winstk[1].osel_tot
+     + Winstk[2].osel_tot + Winstk[3].osel_tot) {
+      fprintf(fp, "\n");
+      fprintf(fp, Osel_delim_1_txt);
+      for (i = 0 ; i < GROUPSMAX; i++) {
+         struct osel_s *osel = Winstk[i].osel_1st;
+         if (osel) {
+            fprintf(fp, Osel_window_fmts, i, Winstk[i].osel_tot);
+            do {
+               fprintf(fp, Osel_filterO_fmt, osel->typ, osel->raw);
+               osel = osel->nxt;
+            } while (osel);
+         }
+      }
+      fprintf(fp, Osel_delim_2_txt);
+   }
 
    if (Inspect.raw)
       fputs(Inspect.raw, fp);
@@ -4631,6 +4740,7 @@ static void keys_task (int ch) {
          break;
       case 'O':
       case 'o':
+      case kbd_CtrlO:
          if (VIZCHKw(w)) other_filters(ch);
          break;
       case 'U':
@@ -4680,11 +4790,6 @@ static void keys_task (int ch) {
             TOGw(w, Show_COLORS);
             capsmk(w);
          }
-         break;
-      case kbd_CtrlO:
-         if (VIZCHKw(w))
-            ioline(fmtmk(N_fmt(OSEL_statlin_fmt)
-               , w->osel_prt ? w->osel_prt : N_txt(WORD_noneone_txt)));
          break;
       default:                    // keep gcc happy
          break;

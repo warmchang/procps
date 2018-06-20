@@ -346,7 +346,6 @@ typedef struct WIN_t {
          *captab [CAPTABMAX];          // captab needed by show_special()
    struct osel_s *osel_1st;            // other selection criteria anchor
    int    osel_tot;                    // total of other selection criteria
-   char  *osel_prt;                    // other stuff printable as status line
    char  *findstr;                     // window's current/active search string
    int    findlen;                     // above's strlen, without call overhead
    struct pids_stack **ppt;            // this window's stacks ptr array
@@ -618,13 +617,14 @@ typedef struct WIN_t {
 //atic int           insp_view_choice (struct pids_stack *obj);
 //atic void          inspection_utility (int pid);
 /*------  Other Filtering ------------------------------------------------*/
-//atic const char   *osel_add (int ch, char *glob);
+//atic const char   *osel_add (WIN_t *q, int ch, char *glob, int push);
 //atic void          osel_clear (WIN_t *q);
 //atic inline int    osel_matched (const WIN_t *q, FLG_t enu, const char *str);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
 //atic int           config_cvt (WIN_t *q);
 //atic int           config_insp (FILE *fp, char *buf, size_t size);
+//atic int           config_osel (FILE *fp, char *buf, size_t size);
 //atic const char   *configs_file (FILE *fp, const char *name, float *delay);
 //atic int           configs_path (const char *const fmts, ...);
 //atic void          configs_reads (void);
