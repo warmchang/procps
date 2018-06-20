@@ -100,10 +100,6 @@ static int Screen_cols, Screen_rows, Max_lines;
            stick the cursor between frames. */
 static int Msg_row;
 
-        /* The nearly complete scroll coordinates message for the current
-           window, built at the time column headers are constructed */
-static char Scroll_fmts [SMLBUFSIZ];
-
         /* Global/Non-windows mode stuff that is NOT persistent */
 static int Batch = 0,           // batch mode, collect no input, dumb output
            Loops = -1,          // number of iterations, -1 loops forever
@@ -730,6 +726,32 @@ static int show_pmt (const char *str) {
 
 
         /*
+         * Create and print the optional scroll coordinates message */
+static void show_scroll (void) {
+   char tmp1[SMLBUFSIZ], tmp2[SMLBUFSIZ];
+   int totpflgs = Curwin->totpflgs;
+   int begpflgs = Curwin->begpflg + 1;
+
+#ifndef USE_X_COLHDR
+   if (CHKw(Curwin, Show_HICOLS)) {
+      totpflgs -= 2;
+      if (ENUpos(Curwin, Curwin->rc.sortindx) < Curwin->begpflg) begpflgs -= 2;
+   }
+#endif
+   if (1 > totpflgs) totpflgs = 1;
+   if (1 > begpflgs) begpflgs = 1;
+   snprintf(tmp1, sizeof(tmp1), N_fmt(SCROLL_coord_fmt), Curwin->begtask + 1, PIDSmaxt, begpflgs, totpflgs);
+#ifndef SCROLLVAR_NO
+   if (Curwin->varcolbeg) {
+      snprintf(tmp2, sizeof(tmp2), " + %d", Curwin->varcolbeg);
+      scat(tmp1, tmp2);
+   }
+#endif
+   PUTT("%s%s  %.*s%s", tg2(0, Msg_row), Caps_off, Screen_cols - 3, tmp1, Cap_clr_eol);
+} // end: show_scroll
+
+
+        /*
          * Show lines with specially formatted elements, but only output
          * what will fit within the current screen width.
          *    Our special formatting consists of:
@@ -835,36 +857,6 @@ static void show_special (int interact, const char *glob) {
       'fit-to-screen' thingy while also leaving room for the cursor... */
    if (*glob) PUTT("%.*s", utf8_embody(glob, Screen_cols - 1), glob);
 } // end: show_special
-
-
-        /*
-         * Create a nearly complete scroll coordinates message, but still
-         * a format string since we'll be missing the current total tasks. */
-static void updt_scroll_msg (void) {
-   char tmp1[SMLBUFSIZ], tmp2[SMLBUFSIZ];
-   int totpflgs = Curwin->totpflgs;
-   int begpflgs = Curwin->begpflg + 1;
-
-#ifndef USE_X_COLHDR
-   if (CHKw(Curwin, Show_HICOLS)) {
-      totpflgs -= 2;
-      if (ENUpos(Curwin, Curwin->rc.sortindx) < Curwin->begpflg) begpflgs -= 2;
-   }
-#endif
-   if (1 > totpflgs) totpflgs = 1;
-   if (1 > begpflgs) begpflgs = 1;
-   snprintf(tmp1, sizeof(tmp1)
-      , N_fmt(SCROLL_coord_fmt), Curwin->begtask + 1, begpflgs, totpflgs);
-   strcpy(tmp2, tmp1);
-#ifndef SCROLLVAR_NO
-   if (Curwin->varcolbeg)
-      snprintf(tmp2, sizeof(tmp2), "%s + %d", tmp1, Curwin->varcolbeg);
-#endif
-   // this Scroll_fmts string no longer provides for termcap tgoto so that
-   // the usage timing is critical -- see frame_make() for additional info
-   snprintf(Scroll_fmts, sizeof(Scroll_fmts)
-      , "%s  %.*s%s", Caps_off, Screen_cols - 3, tmp2, Cap_clr_eol);
-} // end: updt_scroll_msg
 
 /*######  Low Level Memory/Keyboard/File I/O support  ####################*/
 
@@ -1952,9 +1944,6 @@ static void calibrate_fields (void) {
 
    if ((rc = procps_pids_reset(Pids_ctx, Pids_itms, Pids_itms_cur)))
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(-rc)));
-
-   if (CHKw(Curwin, View_SCROLL))
-      updt_scroll_msg();
 } // end: calibrate_fields
 
 
@@ -5820,12 +5809,8 @@ static void frame_make (void) {
    Max_lines = (Screen_rows - Msg_row) - 1;
    OFFw(w, INFINDS_xxx);
 
-   /* one way or another, rid us of any prior frame's msg
-      [ now that this is positioned after the call to summary_show(), ]
-      [ we no longer need or employ tg2(0, Msg_row) since all summary ]
-      [ lines end with a newline, and header lines begin with newline ] */
-   if (VIZISw(w) && CHKw(w, View_SCROLL)) PUTT(Scroll_fmts, PIDSmaxt);
-   else putp(Cap_clr_eol);
+   // we're now on Msg_row so clear out any residual messages ...
+   putp(Cap_clr_eol);
 
    if (!Rc.mode_altscr) {
       // only 1 window to show so, piece o' cake
@@ -5848,6 +5833,9 @@ static void frame_make (void) {
       putp(Cap_nl_clreos);
       PSU_CLREOS(Pseudo_row);
    }
+
+   if (CHKw(w, View_SCROLL) && VIZISw(Curwin))
+      show_scroll();
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable
