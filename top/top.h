@@ -48,6 +48,8 @@
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
 //#define TREE_SCANALL            /* rescan array w/ forest view, avoid sort */
+//#define TREE_VPROMPT            /* pid collapse/expand prompt, vs. top row */
+//#define TREE_VWINALL            /* pid collapse/expand impacts all windows */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 //#define VALIDATE_NLS            /* validate the integrity of all nls tbls  */
 //#define VER_J_RCFILE            /* increase # of fields, rcfile ver to 'j' */
@@ -151,6 +153,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_INS    138
 #define kbd_DEL    139
 #define kbd_CtrlO  '\017'
+#define kbd_CtrlV  '\026'
 
         /* Special value in Pseudo_row to force an additional procs refresh
            -- used at startup and for task/thread mode transitions */

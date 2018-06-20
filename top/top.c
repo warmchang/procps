@@ -1665,12 +1665,14 @@ static struct {
 #define eu_TICS_ALL_C  eu_LAST +2
 #define eu_TIME_START  eu_LAST +3
 #define eu_ID_FUID     eu_LAST +4
-#define eu_XTRA        eu_LAST +5
+#define eu_LVL         eu_LAST +5
+#define eu_HID         eu_LAST +6
    {          -1, -1, -1, -1,         PIDS_CMDLINE        },  // str      ( if Show_CMDLIN )
    {          -1, -1, -1, -1,         PIDS_TICS_ALL_C     },  // ull_int  ( if Show_CTIMES )
    {          -1, -1, -1, -1,         PIDS_TIME_START     },  // ull_int  ( if Show_FOREST )
    {          -1, -1, -1, -1,         PIDS_ID_FUID        },  // u_int    ( if a usrseltyp )
-   {          -1, -1, -1, -1,         PIDS_extra          }   // u_int    ( if Show_FOREST )
+   {          -1, -1, -1, -1,         PIDS_extra          },  // u_int    ( if Show_FOREST )
+   {          -1, -1, -1, -1,         PIDS_extra          }   // s_ch     ( if Show_FOREST )
  #undef A_left
  #undef A_right
 };
@@ -1827,7 +1829,7 @@ static void build_headers (void) {
          // for 'busy' only processes, we'll need elapsed tics
          if (!CHKw(w, Show_IDLEPS)) ckITEM(EU_CPU);
          // with forest view mode, we'll need pid, tgid, ppid & start_time...
-         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_XTRA); }
+         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_LVL); ckITEM(eu_HID);}
          // for 'cumulative' times, we'll need equivalent of cutime & cstime
          if (Fieldstab[EU_TME].erel > -1 && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
          if (Fieldstab[EU_TM2].erel > -1 && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
@@ -4229,13 +4231,20 @@ static inline int wins_usrselect (const WIN_t *q, struct pids_stack *p) {
 /*######  Forest View support  ###########################################*/
 
         /*
-         * We try to keep most existing code unaware of our activities
-         * ( plus, maintain alphabetical order with carefully chosen )
-         * ( function names like such: forest_a, forest_b & forest_c )
-         * ( each with exactly one letter more than its predecessor! ) */
+         * We try keeping most existing code unaware of these activities
+         * ( plus, maintain alphabetical order within carefully chosen )
+         * ( function names like such: forest_a, forest_b and forest_c )
+         * ( with each name exactly 1 letter more than its predecessor ) */
 static struct pids_stack **Seed_ppt;        // temporary win ppt pointer
 static struct pids_stack **Tree_ppt;        // forest_begin resizes this
 static int Tree_idx;                        // frame_make resets to zero
+        /* those next two support collapse/expand children. the Hide_pid
+           array holds parent pids whose children have been manipulated.
+           positive pid values represent parents with collapsed children
+           while a negative pid value means children have been expanded.
+           ( both of these are managed under the 'keys_task()' routine ) */
+static int     *Hide_pid;                   // collapsible process array
+static int      Hide_tot;                   // total used in above array
 
         /*
          * This little recursive guy is the real forest view workhorse.
@@ -4243,15 +4252,15 @@ static int Tree_idx;                        // frame_make resets to zero
          * level which is stored in an 'extra' result struct as a u_int. */
 static void forest_adds (const int self, unsigned level) {
  // tailored 'results stack value' extractor macros
- #define rSv(E,X)  PID_VAL(E, s_int, Seed_ppt[X])
- // if xtra-procps-debug.h active, can't use PID_VAL as base due to assignment
- #define rLevel  Tree_ppt[Tree_idx]->head[Fieldstab[eu_XTRA].erel].result.u_int
+ #define rSv(E,X) PID_VAL(E, s_int, Seed_ppt[X])
+ // if xtra-procps-debug.h active, can't use PID_VAL with assignment
+ #define rSv_Lvl  Tree_ppt[Tree_idx]->head[Fieldstab[eu_LVL].erel].result.u_int
    int i;
 
    if (Tree_idx < PIDSmaxt) {               // immunize against insanity
       if (level > 100) level = 101;         // our arbitrary nests limit
       Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child
-      rLevel = level;                       // while recording its level
+      rSv_Lvl = level;                      // while recording its level
       ++Tree_idx;
 #ifdef TREE_SCANALL
       for (i = 0; i < PIDSmaxt; i++) {
@@ -4265,38 +4274,68 @@ static void forest_adds (const int self, unsigned level) {
       }
    }
  #undef rSv
- #undef rLevel
+ #undef rSv_Lvl
 } // end: forest_adds
 
 
         /*
-         * This routine is responsible for preparing the stacks ptr array
-         * for forest display in the designated window.  Upon completion,
-         * he'll replace the original window ppt with our specially
-         * ordered forest version. */
+         * This function is responsible for making a stacks ptr array
+         * a forest display in a designated window. After completion,
+         * he will replace the original window ppt with our specially
+         * ordered forest version. He also marks any hidden children! */
 static void forest_begin (WIN_t *q) {
- // tailored 'results stack value' extractor macro
- #define rLevel  PID_VAL(eu_XTRA, u_int, Seed_ppt[i])
    static int hwmsav;
-   int i;
+   int i, j;
 
    Seed_ppt = q->ppt;                          // avoid passing pointers
    if (!Tree_idx) {                            // do just once per frame
       if (hwmsav < PIDSmaxt) {                 // grow, but never shrink
          hwmsav = PIDSmaxt;
          Tree_ppt = alloc_r(Tree_ppt, sizeof(void*) * hwmsav);
+         Hide_pid = alloc_r(Hide_pid, sizeof(int) * hwmsav);
       }
+
 #ifndef TREE_SCANALL
       if (!(procps_pids_sort(Pids_ctx, Seed_ppt, PIDSmaxt
          , PIDS_TIME_START, PIDS_SORT_ASCEND)))
             error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
 #endif
-      for (i = 0; i < PIDSmaxt; i++)           // avoid any hidepid distortions
-         if (!rLevel)                          // identify real or pretend trees
-            forest_adds(i, 0);                 // add as parent plus its children
-   }
+      for (i = 0; i < PIDSmaxt; i++) {         // avoid some hidepid distortions
+         if (!PID_VAL(eu_LVL, u_int, Seed_ppt[i])) // real & pseudo parents == 0
+            forest_adds(i, 0);                 // add a parent with its children
+      }
+
+      /* we're employing a couple of 'PIDS_extra' results in our stacks
+            eu_LVL (u_int): where level number is stored (0 - 100)
+            eu_HID (s_ch) : where 'x' == collapsed and 'z' == unseen */
+      for (i = 0; i < Hide_tot; i++) {
+       #define rSv_Pid(X)  PID_VAL(EU_PID, s_int, Tree_ppt[X])
+       // if xtra-procps-debug.h active, can't use PID_VAL with assignment
+       #define rSv_Lvl(X)  Tree_ppt[X]->head[Fieldstab[eu_LVL].erel].result.u_int
+       #define rSv_Hid(X)  Tree_ppt[X]->head[Fieldstab[eu_HID].erel].result.s_ch
+
+         if (Hide_pid[i] > 0) {
+            for (j = 0; j < PIDSmaxt; j++) {
+               if (rSv_Pid(j) == Hide_pid[i]) {
+                  int  idx = j;
+                  unsigned lvl = rSv_Lvl(idx);
+                  rSv_Hid(idx) = 'x';
+                  while (j+1 < PIDSmaxt && rSv_Lvl(j+1) > lvl) {
+                     rSv_Hid(j+1) = 'z';
+                     idx = 0;
+                     ++j;
+                  }
+                  // no children found, so unmark this puppy
+                  if (idx) rSv_Hid(idx) = '\0';
+               }
+            }
+         }
+       #undef rSv_Pid
+       #undef rSv_Lvl
+       #undef rSv_Hid
+      }
+   } // end: !Tree_idx
    memcpy(Seed_ppt, Tree_ppt, sizeof(void*) * PIDSmaxt);
- #undef rLevel
 } // end: forest_begin
 
 
@@ -4305,8 +4344,9 @@ static void forest_begin (WIN_t *q) {
          * when in forest view mode, otherwise he just returns 'em. */
 static inline const char *forest_colour (const WIN_t *q, struct pids_stack *p) {
  // tailored 'results stack value' extractor macros
- #define rSv(E)  PID_VAL(E, str, p)
- #define rLevel  PID_VAL(eu_XTRA, u_int, p)
+ #define rSv(E)   PID_VAL(E, str, p)
+ #define rSv_Lvl  PID_VAL(eu_LVL, u_int, p)
+ #define rSv_Hid  PID_VAL(eu_HID, s_ch, p)
 #ifndef SCROLLVAR_NO
    static char buf[1024*64*2]; // the same as libray's max buffer size
 #else
@@ -4314,12 +4354,20 @@ static inline const char *forest_colour (const WIN_t *q, struct pids_stack *p) {
 #endif
    const char *which = (CHKw(q, Show_CMDLIN)) ? rSv(eu_CMDLINE) : rSv(EU_CMD);
 
-   if (!CHKw(q, Show_FOREST) || !rLevel) return which;
-   if (rLevel > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
-   else snprintf(buf, sizeof(buf), "%*s%s", (4 * rLevel), " `- ", which);
+   if (!CHKw(q, Show_FOREST) || rSv_Lvl == 0) return which;
+#ifndef TREE_VWINALL
+   if (q == Curwin)            // note: the following is NOT indented
+#endif
+   if (rSv_Hid == 'x') {
+      snprintf(buf, sizeof(buf), "+%*s%s", ((4 * rSv_Lvl) - 1), "`- ", which);
+      return buf;
+   }
+   if (rSv_Lvl > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
+   else snprintf(buf, sizeof(buf), "%*s%s", (4 * rSv_Lvl), " `- ", which);
    return buf;
  #undef rSv
- #undef rLevel
+ #undef rSv_Lvl
+ #undef rSv_Hid
 } // end: forest_colour
 
 /*######  Interactive Input Tertiary support  ############################*/
@@ -4887,6 +4935,29 @@ static void keys_task (int ch) {
             capsmk(w);
          }
          break;
+      case kbd_CtrlV:
+         if (VIZCHKw(w)) {
+            if (CHKw(w, Show_FOREST)) {
+               int i, pid = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
+#ifdef TREE_VPROMPT
+               int got = get_int(fmtmk(N_txt(XTRA_vforest_fmt), pid));
+               if (got < GET_NUM_NOT) break;
+               if (got > GET_NUM_NOT) pid = got;
+#endif
+               for (i = 0; i < Hide_tot; i++) {
+                  if (Hide_pid[i] == pid || Hide_pid[i] == -pid) {
+                     Hide_pid[i] = -Hide_pid[i];
+                     break;
+                  }
+               }
+               if (i == Hide_tot) Hide_pid[Hide_tot++] = pid;
+               // plenty of room, but if everything's expaned let's reset ...
+               for (i = 0; i < Hide_tot; i++)
+                  if (Hide_pid[i] > 0) break;
+               if (i == Hide_tot) Hide_tot = 0;
+            }
+         }
+         break;
       default:                    // keep gcc happy
          break;
    }
@@ -4899,12 +4970,14 @@ static void keys_window (int ch) {
    switch (ch) {
       case '+':
          if (ALTCHKw) wins_reflag(Flags_OFF, EQUWINS_xxx);
+         Hide_tot = 0;
          break;
       case '-':
          if (ALTCHKw) TOGw(w, Show_TASKON);
          break;
       case '=':
          win_reset(w);
+         Hide_tot = 0;
          break;
       case '_':
          if (ALTCHKw) wins_reflag(Flags_TOG, Show_TASKON);
@@ -5094,7 +5167,7 @@ static void do_key (int ch) {
       { keys_task,
          { '#', '<', '>', 'b', 'c', 'i', 'J', 'j', 'n', 'O', 'o'
          , 'R', 'S', 'U', 'u', 'V', 'x', 'y', 'z'
-         , kbd_CtrlO, '\0' } },
+         , kbd_CtrlO, kbd_CtrlV, '\0' } },
       { keys_window,
          { '+', '-', '=', '_', '&', 'A', 'a', 'G', 'L', 'w'
          , kbd_UP, kbd_DOWN, kbd_LEFT, kbd_RIGHT, kbd_PGUP, kbd_PGDN
@@ -5413,6 +5486,15 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
    static char rbuf[ROWMINSIZ];
    char *rp;
    int x;
+
+   /* we're employing a couple of 'PIDS_extra' results in our stacks
+         eu_LVL (u_int): where level number is stored (0 - 100)
+         eu_HID (s_ch) : where 'x' == collapsed and 'z' == unseen */
+#ifndef TREE_VWINALL
+   if (q == Curwin)            // note: the following is NOT indented
+#endif
+   if (CHKw(q, Show_FOREST) && rSv(eu_HID, s_ch)  == 'z')
+      return "";
 
    // we must begin a row with a possible window number in mind...
    *(rp = rbuf) = '\0';
