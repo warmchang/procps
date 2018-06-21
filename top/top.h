@@ -388,6 +388,10 @@ typedef struct WIN_t {
 #define SCROLLAMT    8
 #endif
 
+        // Support for a proper (visible) row #1 whenever Curwin changes
+        // ( or a certain vertical scrolling key has been struck )
+#define mkVIZrow1(q) { q->begtask -= 1; q->begnext = +1; }
+
         /* Special Section: end ------------------------------------------ */
         /* /////////////////////////////////////////////////////////////// */
 

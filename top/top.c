@@ -3957,7 +3957,9 @@ static WIN_t *win_select (int ch) {
       default:                    // keep gcc happy
          break;
    }
-   return Curwin = w;
+   Curwin = w;
+   mkVIZrow1(Curwin);
+   return Curwin;
 } // end: win_select
 
 
@@ -4183,6 +4185,9 @@ static void wins_stage_2 (void) {
    }
    // fill in missing Fieldstab members and build each window's columnhdr
    zap_fieldstab();
+
+   // with preserved 'other filters', ensure a visible task on row #1
+   mkVIZrow1(Curwin);
 
    // lastly, initialize a signal set used to throttle one troublesome signal
    sigemptyset(&Sigwinch_set);
@@ -4940,7 +4945,7 @@ static void keys_task (int ch) {
                   }
                }
                if (i == Hide_tot) Hide_pid[Hide_tot++] = pid;
-               // plenty of room, but if everything's expaned let's reset ...
+               // plenty of room, but if everything's expanded let's reset ...
                for (i = 0; i < Hide_tot; i++)
                   if (Hide_pid[i] > 0) break;
                if (i == Hide_tot) Hide_tot = 0;
@@ -5077,8 +5082,10 @@ static void keys_window (int ch) {
       case kbd_HOME:
 #ifndef SCROLLVAR_NO
          if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begtask = w->begpflg = w->varcolbeg = 0;
+         mkVIZrow1(w);
 #else
          if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begtask = w->begpflg = 0;
+         mkVIZrow1(w);
 #endif
          break;
       case kbd_END:
@@ -5693,20 +5700,24 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          * A window_show *Helper* function ensuring that Curwin's 'begtask'
          * represents a visible process (not any hidden/filtered-out task).
          * In reality, this function is called:
-         *   1) exclusively for the current window
-         *   2) immediately after interacting with a user
-         *   3) with the only key stuck: up, down, pgup, pgdn or end */
+         *   1) exclusively for the 'current' window
+         *   2) immediately after interacting with the user
+         *   3) who struck 1 of these: up, down, pgup, pgdn, home or end
+         *   4) or upon the user switching from one window to another window */
 static void window_hlp (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
-   int i;
+   int i, reversed;
 
    SETw(w, NOPRINT_xxx);
    w->begtask += w->begnext;
-   if (w->begtask < 0) w->begtask = 0;
-   if (w->begtask >= PIDSmaxt) w->begtask = PIDSmaxt - 1;
+   // next 'if' will force a forward scan ...
+   if (w->begtask <= 0) { w->begtask = 0; w->begnext = +1; }
+   else if (w->begtask >= PIDSmaxt) w->begtask = PIDSmaxt - 1;
 
+   reversed = 0;
    // potentially scroll forward ...
    if (w->begnext > 0) {
+fwd_redux:
       for (i = w->begtask; i < PIDSmaxt; i++) {
          if (wins_usrselect(w, w->ppt[i])
          && (*task_show(w, w->ppt[i])))
@@ -5726,7 +5737,14 @@ static void window_hlp (void) {
       && (*task_show(w, w->ppt[i])))
          break;
    }
-   w->begtask = i;
+   // reached the top, but maybe this guy ain't visible
+   if (!(w->begtask = i) && !reversed) {
+      if (!(wins_usrselect(w, w->ppt[0]))
+      || (!(*task_show(w, w->ppt[0])))) {
+         reversed = 1;
+         goto fwd_redux;
+      }
+   }
 
 wrap_up:
    w->begnext = 0;
