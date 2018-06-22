@@ -1159,6 +1159,12 @@ setREL2(STATE,PROCESSOR)
   return snprintf(outbuf, COLWID, "*");
 }
 
+/* full path to executable */
+static int pr_exe(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(EXE)
+    return snprintf(outbuf, COLWID, "%s", rSv(EXE, str, pp));
+}
+
 /************************* Systemd stuff ********************************/
 static int pr_sd_unit(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(SD_UNIT)
@@ -1442,6 +1448,7 @@ static const format_struct format_array[] = { /*
 {"etimes",    "ELAPSED", pr_etimes,        PIDS_TIME_ELAPSED,        7,    BSD,  ET|RIGHT}, /* FreeBSD */
 {"euid",      "EUID",    pr_euid,          PIDS_ID_EUID,             5,    LNX,  ET|RIGHT},
 {"euser",     "EUSER",   pr_euser,         PIDS_ID_EUSER,            8,    LNX,  ET|USER},
+{"exe",       "EXE",     pr_exe,           PIDS_EXE,                27,    LNX,  PO|UNLIMITED},
 {"f",         "F",       pr_flag,          PIDS_FLAGS,               1,    XXX,  ET|RIGHT}, /*flags*/
 {"fgid",      "FGID",    pr_fgid,          PIDS_FLAGS,               5,    LNX,  ET|RIGHT},
 {"fgroup",    "FGROUP",  pr_fgroup,        PIDS_ID_FGROUP,           8,    LNX,  ET|USER},
