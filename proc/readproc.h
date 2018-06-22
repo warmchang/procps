@@ -162,7 +162,8 @@ typedef struct proc_t {
         *sd_unit,       // n/a             systemd system unit id
         *sd_uunit;      // n/a             systemd user unit id
     char
-        *lxcname;       // n/a             lxc container name
+        *lxcname,       // n/a             lxc container name
+        *exe;           // exe             executable path + name
     int
         luid;           // loginuid        user id at login
 } proc_t;
@@ -224,6 +225,7 @@ typedef struct PROCTAB {
 #define PROC_FILLSYSTEMD    0x80000 // fill in proc_t systemd information
 #define PROC_FILL_LXC      0x800000 // fill in proc_t lxcname, if possible
 #define PROC_FILL_LUID     0x400000 // fill in proc_t luid (login user id)
+#define PROC_FILL_EXE      0x200000 // fill in proc_t exe path + pgm name
 
 #define PROC_LOOSE_TASKS     0x2000 // treat threads as if they were processes
 

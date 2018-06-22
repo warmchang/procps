@@ -43,6 +43,7 @@ enum pids_item {
     PIDS_CMDLINE_V,         //    strv
     PIDS_ENVIRON,           //     str
     PIDS_ENVIRON_V,         //    strv
+    PIDS_EXE,               //     str
     PIDS_EXIT_SIGNAL,       //   s_int
     PIDS_FLAGS,             //  ul_int
     PIDS_FLT_MAJ,           //  ul_int

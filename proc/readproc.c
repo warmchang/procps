@@ -90,16 +90,15 @@ static int task_dir_missing;
 // free any additional dynamically acquired storage associated with a proc_t
 // ( and if it's to be reused, refresh it otherwise destroy it )
 static inline void free_acquired (proc_t *p, int reuse) {
-    if (p->environ)   free((void*)p->environ);
-    if (p->cmdline)   free((void*)p->cmdline);
     if (p->cgname)    free((void*)p->cgname);
     if (p->cgroup)    free((void*)p->cgroup);
-    if (p->environ_v) free((void*)*p->environ_v);
-    if (p->cmdline_v) free((void*)*p->cmdline_v);
     if (p->cgroup_v)  free((void*)*p->cgroup_v);
-    if (p->supgid)    free(p->supgid);
-    if (p->supgrp)    free(p->supgrp);
     if (p->cmd)       free(p->cmd);
+    if (p->cmdline)   free((void*)p->cmdline);
+    if (p->cmdline_v) free((void*)*p->cmdline_v);
+    if (p->environ)   free((void*)p->environ);
+    if (p->environ_v) free((void*)*p->environ_v);
+    if (p->exe)       free(p->exe);
     if (p->sd_mach)   free(p->sd_mach);
     if (p->sd_ouid)   free(p->sd_ouid);
     if (p->sd_seat)   free(p->sd_seat);
@@ -107,6 +106,8 @@ static inline void free_acquired (proc_t *p, int reuse) {
     if (p->sd_slice)  free(p->sd_slice);
     if (p->sd_unit)   free(p->sd_unit);
     if (p->sd_uunit)  free(p->sd_uunit);
+    if (p->supgid)    free(p->supgid);
+    if (p->supgrp)    free(p->supgrp);
 
     memset(p, reuse ? '\0' : '\xff', sizeof(*p));
 }
@@ -982,6 +983,20 @@ static int login_uid (const char *path) {
 }
 
 
+static char *readlink_exe (const char *path){
+    char buf[PROCPATHLEN];
+    int in;
+
+    snprintf(buf, sizeof(buf), "%s/exe", path);
+    in = (int)readlink(buf, dst_buffer, MAX_BUFSZ-1);
+    if (in > 0) {
+        dst_buffer[in] = '\0';
+        return strdup(dst_buffer);
+    }
+    return strdup("-");
+}
+
+
 ///////////////////////////////////////////////////////////////////////
 
 /* These are some nice GNU C expression subscope "inline" functions.
@@ -1106,6 +1121,9 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILL_LUID)                 // value the login user id
         p->luid = login_uid(path);
 
+    if (flags & PROC_FILL_EXE)
+        p->exe = readlink_exe(path);
+
     if (rc == 0) return p;
     errno = ENOMEM;
 next_proc:
@@ -1193,6 +1211,9 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
 
     if (flags & PROC_FILLSYSTEMD)                   // get sd-login.h stuff
         rc += sd2proc(t);
+
+    if (flags & PROC_FILL_EXE)
+        t->exe = readlink_exe(path);
 #ifdef FALSE_THREADS
     }
 #endif

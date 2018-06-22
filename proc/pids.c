@@ -155,6 +155,7 @@ STR_set(CMDLINE,                   cmdline)
 VEC_set(CMDLINE_V,                 cmdline_v)
 STR_set(ENVIRON,                   environ)
 VEC_set(ENVIRON_V,                 environ_v)
+STR_set(EXE,                       exe)
 REG_set(EXIT_SIGNAL,      s_int,   exit_signal)
 REG_set(FLAGS,            ul_int,  flags)
 REG_set(FLT_MAJ,          ul_int,  maj_flt)
@@ -343,6 +344,7 @@ srtDECL(noop) {
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 #define f_either   PROC_SPARE_1        // either status or stat (favor stat)
+#define f_exe      PROC_FILL_EXE
 #define f_grp      PROC_FILLGRP
 #define f_login    PROC_FILL_LUID
 #define f_lxc      PROC_FILL_LXC
@@ -406,6 +408,7 @@ static struct {
     { RS(CMDLINE_V),         v_arg,      FF(strv),  QS(strv),      0,        TS(strv)    },
     { RS(ENVIRON),           x_environ,  FF(str),   QS(str),       0,        TS(str)     },
     { RS(ENVIRON_V),         v_env,      FF(strv),  QS(strv),      0,        TS(strv)    },
+    { RS(EXE),               f_exe,      FF(str),   QS(str),       0,        TS(str)     },
     { RS(EXIT_SIGNAL),       f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(FLAGS),             f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(FLT_MAJ),           f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
