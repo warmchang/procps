@@ -308,6 +308,9 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'LOGID' = 5 + */
    Head_nlstab[EU_LID] = _("LOGID");
    Desc_nlstab[EU_LID] = _("Login User Id");
+/* Translation Hint: maximum 'EXE' = variable */
+   Head_nlstab[EU_EXE] = _("EXE");
+   Desc_nlstab[EU_EXE] = _("Executable Path");
 }
 
 

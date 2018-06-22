@@ -184,6 +184,7 @@ enum pflag {
    EU_CGN,
    EU_NMA,
    EU_LID,
+   EU_EXE,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
    EU_MAXPFLGS

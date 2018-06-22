@@ -1651,7 +1651,8 @@ static struct {
    {    -1,     -1,  A_left,     -1,  PIDS_CGNAME         },  // str      EU_CGN
    {     0,     -1,  A_right,    -1,  PIDS_PROCESSOR_NODE },  // s_int    EU_NMA
    {     5,     -1,  A_right,    -1,  PIDS_ID_LOGIN       },  // s_int    EU_LID
-#define eu_LAST        EU_LID
+   {    -1,     -1,  A_left,     -1,  PIDS_EXE            },  // str      EU_EXE
+#define eu_LAST        EU_EXE
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -5640,6 +5641,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          case EU_CGN:
          case EU_CGR:
          case EU_ENV:
+         case EU_EXE:
          case EU_SGD:
             makeVAR(rSv(i, str));
             break;
