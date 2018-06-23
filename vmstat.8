@@ -71,8 +71,8 @@ Switches outputs between 1000
 .RI ( m ),
 or 1048576
 .RI ( M )
-bytes.  Note this does not change the swap (si/so) or block (bi/bo)
-fields.
+bytes.  Note this does not change the block (bi/bo) fields, which are always
+measured in blocks.
 .TP
 \fB\-t\fR, \fB\-\-timestamp\fR
 Append timestamp to each line
@@ -98,6 +98,7 @@ b: The number of processes in uninterruptible sleep.
 .PP
 .SS
 .B "Memory"
+These are affected by the \-\-unit option.
 .nf
 swpd: the amount of virtual memory used.
 free: the amount of idle memory.
@@ -109,6 +110,7 @@ active: the amount of active memory.  (\-a option)
 .PP
 .SS
 .B "Swap"
+These are affected by the \-\-unit option.
 .nf
 si: Amount of memory swapped in from disk (/s).
 so: Amount of memory swapped to disk (/s).
