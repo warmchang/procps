@@ -718,7 +718,6 @@ typedef struct WIN_t {
 //atic int           get_int (const char *prompt);
 //atic inline const char *hex_make (KLONG num, int noz);
 //atic const char   *user_certify (WIN_t *q, const char *str, char typ);
-//atic inline int    user_matched (const WIN_t *q, const proc_t *p);
 /*------  Basic Formatting support  --------------------------------------*/
 //atic inline const char *justify_pad (const char *str, int width, int justr);
 //atic inline const char *make_chr (const char ch, int width, int justr);
@@ -787,6 +786,7 @@ typedef struct WIN_t {
 //atic void          wins_reflag (int what, int flg);
 //atic void          wins_stage_1 (void);
 //atic void          wins_stage_2 (void);
+//atic inline int    wins_usrselect (const WIN_t *q, const int idx);
 /*------  Forest View support  -------------------------------------------*/
 //atic void          forest_adds (const int self, int level);
 #ifndef TREE_SCANALL
@@ -810,7 +810,7 @@ typedef struct WIN_t {
 //atic void          do_key (int ch);
 //atic void          summary_hlp (CPU_t *cpu, const char *pfx);
 //atic void          summary_show (void);
-//atic const char   *task_show (const WIN_t *q, const proc_t *p);
+//atic const char   *task_show (const WIN_t *q, const int idx);
 //atic void          window_hlp (void);
 //atic int           window_show (WIN_t *q, int wmax);
 /*------  Entry point plus two  ------------------------------------------*/

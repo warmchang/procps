@@ -1527,29 +1527,6 @@ static const char *user_certify (WIN_t *q, const char *str, char typ) {
    }
    return NULL;
 } // end: user_certify
-
-
-        /*
-         * Determine if this proc_t matches the 'u/U' selection criteria
-         * for a given window -- it's called from only one place, and
-         * likely inlined even without the directive */
-static inline int user_matched (const WIN_t *q, const proc_t *p) {
-   switch(q->usrseltyp) {
-      case 0:                                    // uid selection inactive
-         return 1;
-      case 'U':                                  // match any uid
-         if (p->ruid == q->usrseluid) return q->usrselflg;
-         if (p->suid == q->usrseluid) return q->usrselflg;
-         if (p->fuid == q->usrseluid) return q->usrselflg;
-      // fall through...
-      case 'u':                                  // match effective uid
-         if (p->euid == q->usrseluid) return q->usrselflg;
-      // fall through...
-      default:                                   // no match...
-         ;
-   }
-   return !q->usrselflg;
-} // end: user_matched
 
 /*######  Basic Formatting support  ######################################*/
 
@@ -4673,6 +4650,29 @@ static void wins_stage_2 (void) {
    sigaddset(&Sigwinch_set, SIGWINCH);
 #endif
 } // end: wins_stage_2
+
+
+        /*
+         * Determine if this task matches the 'u/U' selection
+         * criteria for a given window */
+static inline int wins_usrselect (const WIN_t *q, const int idx) {
+   proc_t *p = q->ppt[idx];
+   switch(q->usrseltyp) {
+      case 0:                                    // uid selection inactive
+         return 1;
+      case 'U':                                  // match any uid
+         if (p->ruid == q->usrseluid) return q->usrselflg;
+         if (p->suid == q->usrseluid) return q->usrselflg;
+         if (p->fuid == q->usrseluid) return q->usrselflg;
+      // fall through...
+      case 'u':                                  // match effective uid
+         if (p->euid == q->usrseluid) return q->usrselflg;
+      // fall through...
+      default:                                   // no match...
+         ;
+   }
+   return !q->usrselflg;
+} // end: wins_usrselect
 
 /*######  Forest View support  ###########################################*/
 
@@ -4689,8 +4689,8 @@ static int      Tree_idx;                   // frame_make resets to zero
            positive pid values represent parents with collapsed children
            while a negative pid value means children have been expanded.
            ( both of these are managed under the 'keys_task()' routine ) */
-static int     *Hide_pid;                   // collapsible process array
-static int      Hide_tot;                   // total used in above array
+static int *Hide_pid;                       // collapsible process array
+static int  Hide_tot;                       // total used in above array
 
         /*
          * This little recursive guy is the real forest view workhorse.
@@ -4750,10 +4750,10 @@ static void forest_create (WIN_t *q) {
 #ifndef TREE_SCANALL
       qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), (QFP_t)forest_based);
 #endif
-      for (i = 0; i < Frame_maxtask; i++)   // avoid any hidepid distortions
-         if (!Seed_ppt[i]->pad_3)           // identify real or pretend trees
-            forest_adds(i, 0);              // add as parent plus its children
-
+      for (i = 0; i < Frame_maxtask; i++) { // avoid any hidepid distortions
+         if (!Seed_ppt[i]->pad_3)           // real & pseudo parents == zero
+            forest_adds(i, 0);              // add a parent and its children
+      }
       /* we're borrowing some pad bytes in the proc_t,
          pad_2: 'x' means a collapsed thread, 'z' means an unseen child
          pad_3: where level number is stored (0 - 100) */
@@ -4761,16 +4761,17 @@ static void forest_create (WIN_t *q) {
          if (Hide_pid[i] > 0) {
             for (j = 0; j < Frame_maxtask; j++) {
                if (Tree_ppt[j]->tid == Hide_pid[i]) {
-                  int  idx = j;
-                  char lvl = Tree_ppt[j]->pad_3;
-                  Tree_ppt[j]->pad_2 = 'x';
-                  while (j+1 < Frame_maxtask && Tree_ppt[j+1]->pad_3 > lvl) {
+                  int parent = j;
+                  int children = 0;
+                  char level = Tree_ppt[j]->pad_3;
+
+                  while (j+1 < Frame_maxtask && Tree_ppt[j+1]->pad_3 > level) {
                      Tree_ppt[j+1]->pad_2 = 'z';
-                     idx = 0;
+                     children = 1;
                      ++j;
                   }
-                  // no children found, so unmark this puppy
-                  if (idx) Tree_ppt[idx]->pad_2 = '\0';
+                  // children found (and collapsed), so mark that puppy
+                  if (children) Tree_ppt[parent]->pad_2 = 'x';
                }
             }
          }
@@ -4830,7 +4831,7 @@ static inline int find_ofs (const WIN_t *q, const char *buf) {
    /* This is currently the one true prototype require by top.
       It is placed here, instead of top.h, so as to avoid a compiler
       warning when top_nls.c is compiled. */
-static const char *task_show (const WIN_t *q, const proc_t *p);
+static const char *task_show (const WIN_t *q, const int idx);
 
 static void find_string (int ch) {
  #define reDUX (found) ? N_txt(WORD_another_txt) : ""
@@ -4855,7 +4856,7 @@ static void find_string (int ch) {
    if (Curwin->findstr[0]) {
       SETw(Curwin, NOPRINT_xxx);
       for (i = Curwin->begtask; i < Frame_maxtask; i++) {
-         const char *row = task_show(Curwin, Curwin->ppt[i]);
+         const char *row = task_show(Curwin, i);
          if (*row && -1 < find_ofs(Curwin, row)) {
             found = 1;
             if (i == Curwin->begtask) continue;
@@ -5916,7 +5917,7 @@ numa_nope:
         /*
          * Build the information for a single task row and
          * display the results or return them to the caller. */
-static const char *task_show (const WIN_t *q, const proc_t *p) {
+static const char *task_show (const WIN_t *q, const int idx) {
 #ifndef SCROLLVAR_NO
  #define makeVAR(v)  { const char *pv = v; \
     if (!q->varcolbeg) cp = make_str(pv, q->varcolsz, Js, AUTOX_NO); \
@@ -5933,6 +5934,7 @@ static const char *task_show (const WIN_t *q, const proc_t *p) {
    static char rbuf[ROWMINSIZ];
    char *rp;
    int x;
+   proc_t *p = q->ppt[idx];
 
    /* we're borrowing some pad bytes in the proc_t,
       pad_2: 'x' means a collapsed thread, 'z' means an unseen child
@@ -6217,8 +6219,8 @@ static void window_hlp (void) {
    if (w->begnext > 0) {
 fwd_redux:
       for (i = w->begtask; i < Frame_maxtask; i++) {
-         if (user_matched(w, w->ppt[i])
-         && (*task_show(w, w->ppt[i])))
+         if (wins_usrselect(w, i)
+         && (*task_show(w, i)))
             break;
       }
       if (i < Frame_maxtask) {
@@ -6231,14 +6233,14 @@ fwd_redux:
 
    // potentially scroll backward ...
    for (i = w->begtask; i > 0; i--) {
-      if (user_matched(w, w->ppt[i])
-      && (*task_show(w, w->ppt[i])))
+      if (wins_usrselect(w, i)
+      && (*task_show(w, i)))
          break;
    }
    // reached the top, but maybe this guy ain't visible
    if (!(w->begtask = i) && !reversed) {
-      if (!(user_matched(w, w->ppt[0]))
-      || (!(*task_show(w, w->ppt[0])))) {
+      if (!(wins_usrselect(w, 0))
+      || (!(*task_show(w, 0)))) {
          reversed = 1;
          goto fwd_redux;
       }
@@ -6285,14 +6287,14 @@ static int window_show (WIN_t *q, int wmax) {
       checking some stuff with each iteration and check it just once... */
    if (CHKw(q, Show_IDLEPS) && !q->usrseltyp)
       while (i < Frame_maxtask && lwin < wmax) {
-         if (*task_show(q, q->ppt[i++]))
+         if (*task_show(q, i++))
             ++lwin;
       }
    else
       while (i < Frame_maxtask && lwin < wmax) {
          if ((CHKw(q, Show_IDLEPS) || isBUSY(q->ppt[i]))
-         && user_matched(q, q->ppt[i])
-         && *task_show(q, q->ppt[i]))
+         && wins_usrselect(q, i)
+         && *task_show(q, i))
             ++lwin;
          ++i;
       }
