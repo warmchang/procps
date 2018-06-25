@@ -4684,13 +4684,16 @@ static inline int wins_usrselect (const WIN_t *q, const int idx) {
 static proc_t **Seed_ppt;                   // temporary win ppt pointer
 static proc_t **Tree_ppt;                   // forest_create will resize
 static int      Tree_idx;                   // frame_make resets to zero
-        /* those next two support collapse/expand children. the Hide_pid
+        /* the next three support collapse/expand children. the Hide_pid
            array holds parent pids whose children have been manipulated.
            positive pid values represent parents with collapsed children
            while a negative pid value means children have been expanded.
            ( both of these are managed under the 'keys_task()' routine ) */
 static int *Hide_pid;                       // collapsible process array
 static int  Hide_tot;                       // total used in above array
+#ifndef TREE_VCPUOFF
+static int *Hide_cpu;                       // accum tics from collapsed
+#endif
 
         /*
          * This little recursive guy is the real forest view workhorse.
@@ -4745,6 +4748,9 @@ static void forest_create (WIN_t *q) {
          hwmsav = Frame_maxtask;
          Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
          Hide_pid = alloc_r(Hide_pid, sizeof(int) * hwmsav);
+#ifndef TREE_VCPUOFF
+         Hide_cpu = alloc_r(Hide_cpu, sizeof(int) * hwmsav);
+#endif
       }
 
 #ifndef TREE_SCANALL
@@ -4754,6 +4760,9 @@ static void forest_create (WIN_t *q) {
          if (!Seed_ppt[i]->pad_3)           // real & pseudo parents == zero
             forest_adds(i, 0);              // add a parent and its children
       }
+#ifndef TREE_VCPUOFF
+      memset(Hide_cpu, 0, sizeof(int) * Frame_maxtask);
+#endif
       /* we're borrowing some pad bytes in the proc_t,
          pad_2: 'x' means a collapsed thread, 'z' means an unseen child
          pad_3: where level number is stored (0 - 100) */
@@ -4767,6 +4776,9 @@ static void forest_create (WIN_t *q) {
 
                   while (j+1 < Frame_maxtask && Tree_ppt[j+1]->pad_3 > level) {
                      Tree_ppt[j+1]->pad_2 = 'z';
+#ifndef TREE_VCPUOFF
+                     Hide_cpu[parent] += Tree_ppt[j+1]->pcpu;
+#endif
                      children = 1;
                      ++j;
                   }
@@ -5987,10 +5999,18 @@ static const char *task_show (const WIN_t *q, const int idx) {
             cp = make_num(p->processor, W, Jn, AUTOX_NO, 0);
             break;
          case EU_CPU:
-         {  float u = (float)p->pcpu * Frame_etscale;
+         {  float u = (float)p->pcpu;
+#ifndef TREE_VCPUOFF
+            // Hide_cpu entry is always zero, unless we're a collapsed parent
+            u += Hide_cpu[idx];
+            u *= Frame_etscale;
+            if (p->pad_2 != 'x' && u > 100.0 * p->nlwp) u = 100.0 * p->nlwp;
+#else
+            u *= Frame_etscale;
             /* process can't use more %cpu than number of threads it has
              ( thanks Jaromir Capik <jcapik@redhat.com> ) */
             if (u > 100.0 * p->nlwp) u = 100.0 * p->nlwp;
+#endif
             if (u > Cpu_pmax) u = Cpu_pmax;
             cp = scale_pcnt(u, W, Jn);
          }
