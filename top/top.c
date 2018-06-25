@@ -1659,11 +1659,13 @@ static struct {
 #define eu_TIME_START  eu_LAST +3
 #define eu_ID_FUID     eu_LAST +4
 #define eu_LVL         eu_LAST +5
-#define eu_HID         eu_LAST +6
+#define eu_ADD         eu_LAST +6
+#define eu_HID         eu_LAST +7
    {          -1, -1, -1, -1,         PIDS_CMDLINE        },  // str      ( if Show_CMDLIN )
    {          -1, -1, -1, -1,         PIDS_TICS_ALL_C     },  // ull_int  ( if Show_CTIMES )
    {          -1, -1, -1, -1,         PIDS_TIME_START     },  // ull_int  ( if Show_FOREST )
    {          -1, -1, -1, -1,         PIDS_ID_FUID        },  // u_int    ( if a usrseltyp )
+   {          -1, -1, -1, -1,         PIDS_extra          },  // u_int    ( if Show_FOREST )
    {          -1, -1, -1, -1,         PIDS_extra          },  // u_int    ( if Show_FOREST )
    {          -1, -1, -1, -1,         PIDS_extra          }   // s_ch     ( if Show_FOREST )
  #undef A_left
@@ -1822,7 +1824,7 @@ static void build_headers (void) {
          // for 'busy' only processes, we'll need elapsed tics
          if (!CHKw(w, Show_IDLEPS)) ckITEM(EU_CPU);
          // with forest view mode, we'll need pid, tgid, ppid & start_time...
-         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_LVL); ckITEM(eu_HID);}
+         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_LVL); ckITEM(eu_ADD); ckITEM(eu_HID); }
          // for 'cumulative' times, we'll need equivalent of cutime & cstime
          if (Fieldstab[EU_TME].erel > -1 && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
          if (Fieldstab[EU_TM2].erel > -1 && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
@@ -4199,9 +4201,8 @@ static void wins_stage_2 (void) {
 
 
         /*
-         * Determine if this task matches the 'u/U' selection criteria
-         * for a given window -- it is called from only one place, and
-         * will likely be inlined even without the following directive */
+         * Determine if this task matches the 'u/U' selection
+         * criteria for a given window */
 static inline int wins_usrselect (const WIN_t *q, struct pids_stack *p) {
  // a tailored 'results stack value' extractor macro
  #define rSv(E)  PID_VAL(E, u_int, p)
@@ -4238,8 +4239,8 @@ static int Tree_idx;                        // frame_make resets to zero
            positive pid values represent parents with collapsed children
            while a negative pid value means children have been expanded.
            ( both of these are managed under the 'keys_task()' routine ) */
-static int     *Hide_pid;                   // collapsible process array
-static int      Hide_tot;                   // total used in above array
+static int *Hide_pid;                       // collapsible process array
+static int  Hide_tot;                       // total used in above array
 
         /*
          * This little recursive guy is the real forest view workhorse.
@@ -4300,34 +4301,45 @@ static void forest_begin (WIN_t *q) {
             forest_adds(i, 0);                 // add a parent with its children
       }
 
-      /* we're employing a couple of 'PIDS_extra' results in our stacks
-            eu_LVL (u_int): where level number is stored (0 - 100)
+      /* we're employing 3 additional 'PIDS_extra' results in our stacks
+            eu_LVL (u_int): where a level number is stored (0 - 100)
+            eu_ADD (u_int): where children's accumulated tics stored
             eu_HID (s_ch) : where 'x' == collapsed and 'z' == unseen */
       for (i = 0; i < Hide_tot; i++) {
        #define rSv_Pid(X)  PID_VAL(EU_PID, s_int, Tree_ppt[X])
        // if xtra-procps-debug.h active, can't use PID_VAL with assignment
        #define rSv_Lvl(X)  Tree_ppt[X]->head[Fieldstab[eu_LVL].erel].result.u_int
+       #define rSv_Add(X)  Tree_ppt[X]->head[Fieldstab[eu_ADD].erel].result.u_int
        #define rSv_Hid(X)  Tree_ppt[X]->head[Fieldstab[eu_HID].erel].result.s_ch
+       /* next isn't needed if TREE_VCPUOFF was defined, but it costs us nothing
+          yet we must never assume that PIDS_CPU result struct is always present */
+       #define rSv_Cpu(X)  (Fieldstab[EU_CPU].erel < 0) ? 0 : PID_VAL(EU_CPU, s_int, Tree_ppt[X])
 
          if (Hide_pid[i] > 0) {
             for (j = 0; j < PIDSmaxt; j++) {
                if (rSv_Pid(j) == Hide_pid[i]) {
-                  int  idx = j;
-                  unsigned lvl = rSv_Lvl(idx);
-                  rSv_Hid(idx) = 'x';
-                  while (j+1 < PIDSmaxt && rSv_Lvl(j+1) > lvl) {
+                  int parent = j;
+                  int children = 0;
+                  unsigned level = rSv_Lvl(parent);
+
+                  while (j+1 < PIDSmaxt && rSv_Lvl(j+1) > level) {
+#ifndef TREE_VCPUOFF
+                     rSv_Add(parent) += rSv_Cpu(j+1);
+#endif
                      rSv_Hid(j+1) = 'z';
-                     idx = 0;
+                     children = 1;
                      ++j;
                   }
-                  // no children found, so unmark this puppy
-                  if (idx) rSv_Hid(idx) = '\0';
+                  // children found (and collapsed), so mark that puppy
+                  if (children) rSv_Hid(parent) = 'x';
                }
             }
          }
        #undef rSv_Pid
        #undef rSv_Lvl
+       #undef rSv_Add
        #undef rSv_Hid
+       #undef rSv_Cpu
       }
    } // end: !Tree_idx
    memcpy(Seed_ppt, Tree_ppt, sizeof(void*) * PIDSmaxt);
@@ -5480,8 +5492,9 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
    char *rp;
    int x;
 
-   /* we're employing a couple of 'PIDS_extra' results in our stacks
-         eu_LVL (u_int): where level number is stored (0 - 100)
+   /* we're employing 3 additional 'PIDS_extra' results in our stacks
+         eu_LVL (u_int): where a level number is stored (0 - 100)
+         eu_ADD (u_int): where children's accumulated tics stored
          eu_HID (s_ch) : where 'x' == collapsed and 'z' == unseen */
 #ifndef TREE_VWINALL
    if (q == Curwin)            // note: the following is NOT indented
@@ -5558,11 +5571,19 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             break;
    /* s_int, scale_pcnt with special handling */
          case EU_CPU:
-         {  float u = (float)rSv(EU_CPU, s_int) * Frame_etscale;
+         {  float u = (float)rSv(EU_CPU, s_int);
             int n = rSv(EU_THD, s_int);
+#ifndef TREE_VCPUOFF
+            // this eu_ADD is always zero, unless we're a collapsed parent
+            u += rSv(eu_ADD, u_int);
+            u *= Frame_etscale;
+            if (rSv(eu_HID, s_ch) != 'x' && u > 100.0 * n) u = 100.0 * n;
+#else
+            u *= Frame_etscale;
             /* process can't use more %cpu than number of threads it has
              ( thanks Jaromir Capik <jcapik@redhat.com> ) */
             if (u > 100.0 * n) u = 100.0 * n;
+#endif
             if (u > Cpu_pmax) u = Cpu_pmax;
             cp = scale_pcnt(u, W, Jn);
          }
