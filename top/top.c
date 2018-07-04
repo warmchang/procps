@@ -201,19 +201,8 @@ static const char Osel_filterI_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%*s\n";
 
         /* Support for the new library API -- acquired (if necessary)
            at program startup and referenced throughout our lifetime. */
-        // --- <proc/meminfo.h> -----------------------------------------------
-static struct meminfo_info *Mem_ctx;
-static struct meminfo_stack *Mem_stack;
-static enum meminfo_item Mem_items[] = {
-   MEMINFO_MEM_FREE,       MEMINFO_MEM_USED,    MEMINFO_MEM_TOTAL,
-   MEMINFO_MEM_CACHED_ALL, MEMINFO_MEM_BUFFERS, MEMINFO_MEM_AVAILABLE,
-   MEMINFO_SWAP_TOTAL,     MEMINFO_SWAP_FREE,   MEMINFO_SWAP_USED };
-enum Rel_memitems {
-   mem_FRE, mem_USE, mem_TOT, mem_QUE, mem_BUF, mem_AVL,
-   swp_TOT, swp_FRE, swp_USE };
-        // mem stack results extractor macro, where e=rel enum
-#define MEM_VAL(e) MEMINFO_VAL(e, ul_int, Mem_stack, Mem_ctx)
-        // --- <proc/pids.h> --------------------------------------------------
+        /*
+         *  --- <proc/pids.h> -------------------------------------------------- */
 static struct pids_info *Pids_ctx;
 static int Pids_itms_cur;                   // 'current' max (<= Fieldstab)
 static enum pids_item *Pids_itms;           // allocated as MAXTBL(Fieldstab)
@@ -223,7 +212,8 @@ static struct pids_fetch *Pids_reap;        // for reap or select
         // ( we'll exploit that <proc/pids.h> provided macro as much as possible )
         // ( but many functions use their own unique tailored version for access )
 #define PID_VAL(e,t,s) PIDS_VAL(Fieldstab[ e ].erel, t, s, Pids_ctx)
-        // --- <proc/stat.h> --------------------------------------------------
+        /*
+         *  --- <proc/stat.h> -------------------------------------------------- */
 static struct stat_info *Stat_ctx;
 static struct stat_reaped *Stat_reap;
 static enum stat_item Stat_items[] = {
@@ -235,13 +225,31 @@ static enum stat_item Stat_items[] = {
    STAT_TIC_DELTA_SUM_USER, STAT_TIC_DELTA_SUM_SYSTEM,
    STAT_TIC_DELTA_SUM_TOTAL };
 enum Rel_statitems {
-   stat_ID,  stat_NU,  stat_US,  stat_SY,  stat_NI,
-   stat_IL,  stat_IO,  stat_IR,  stat_SI,  stat_ST,
-   stat_USR, stat_SYS, stat_TOT };
+   stat_ID, stat_NU,
+   stat_US, stat_SY,
+   stat_NI, stat_IL,
+   stat_IO, stat_IR,
+   stat_SI, stat_ST,
+   stat_SUM_USR, stat_SUM_SYS,
+   stat_SUM_TOT };
         // cpu/node stack results extractor macros, where e=rel enum, x=index
 #define CPU_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->cpus->stacks[x], Stat_ctx)
 #define NOD_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->nodes->stacks[x], Stat_ctx)
 #define TIC_VAL(e,s) STAT_VAL(e, sl_int, s, Stat_ctx)
+        /*
+         * --- <proc/meminfo.h> ----------------------------------------------- */
+static struct meminfo_info *Mem_ctx;
+static struct meminfo_stack *Mem_stack;
+static enum meminfo_item Mem_items[] = {
+   MEMINFO_MEM_FREE,       MEMINFO_MEM_USED,    MEMINFO_MEM_TOTAL,
+   MEMINFO_MEM_CACHED_ALL, MEMINFO_MEM_BUFFERS, MEMINFO_MEM_AVAILABLE,
+   MEMINFO_SWAP_TOTAL,     MEMINFO_SWAP_FREE,   MEMINFO_SWAP_USED };
+enum Rel_memitems {
+   mem_FRE, mem_USE, mem_TOT,
+   mem_QUE, mem_BUF, mem_AVL,
+   swp_TOT, swp_FRE, swp_USE };
+        // mem stack results extractor macro, where e=rel enum
+#define MEM_VAL(e) MEMINFO_VAL(e, ul_int, Mem_stack, Mem_ctx)
 
 /*######  Tiny useful routine(s)  ########################################*/
 
@@ -1583,8 +1591,8 @@ static struct {
 } Fieldstab[] = {
    // these identifiers reflect the default column alignment but they really
    // contain the WIN_t flag used to check/change justification at run-time!
- #define A_right Show_JRNUMS       /* toggled with upper case 'J' */
  #define A_left  Show_JRSTRS       /* toggled with lower case 'j' */
+ #define A_right Show_JRNUMS       /* toggled with upper case 'J' */
 
 /* .width anomalies:
         a -1 width represents variable width columns
@@ -1651,23 +1659,23 @@ static struct {
    {    -1,     -1,  A_left,     -1,  PIDS_CGNAME         },  // str      EU_CGN
    {     0,     -1,  A_right,    -1,  PIDS_PROCESSOR_NODE },  // s_int    EU_NMA
    {     5,     -1,  A_right,    -1,  PIDS_ID_LOGIN       },  // s_int    EU_LID
-   {    -1,     -1,  A_left,     -1,  PIDS_EXE            },  // str      EU_EXE
+   {    -1,     -1,  A_left,     -1,  PIDS_EXE            }   // str      EU_EXE
 #define eu_LAST        EU_EXE
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
 #define eu_TIME_START  eu_LAST +3
 #define eu_ID_FUID     eu_LAST +4
-#define eu_LVL         eu_LAST +5
-#define eu_ADD         eu_LAST +6
-#define eu_HID         eu_LAST +7
-   {          -1, -1, -1, -1,         PIDS_CMDLINE        },  // str      ( if Show_CMDLIN )
-   {          -1, -1, -1, -1,         PIDS_TICS_ALL_C     },  // ull_int  ( if Show_CTIMES )
-   {          -1, -1, -1, -1,         PIDS_TIME_START     },  // ull_int  ( if Show_FOREST )
-   {          -1, -1, -1, -1,         PIDS_ID_FUID        },  // u_int    ( if a usrseltyp )
-   {          -1, -1, -1, -1,         PIDS_extra          },  // u_int    ( if Show_FOREST )
-   {          -1, -1, -1, -1,         PIDS_extra          },  // u_int    ( if Show_FOREST )
-   {          -1, -1, -1, -1,         PIDS_extra          }   // s_ch     ( if Show_FOREST )
+#define eu_TREE_LVL    eu_LAST +5
+#define eu_TREE_ADD    eu_LAST +6
+#define eu_TREE_HID    eu_LAST +7
+   , {  -1, -1, -1, -1,  PIDS_CMDLINE     }  // str      ( if Show_CMDLIN, eu_CMDLINE    )
+   , {  -1, -1, -1, -1,  PIDS_TICS_ALL_C  }  // ull_int  ( if Show_CTIMES, eu_TICS_ALL_C )
+   , {  -1, -1, -1, -1,  PIDS_TIME_START  }  // ull_int  ( if Show_FOREST, eu_TIME_START )
+   , {  -1, -1, -1, -1,  PIDS_ID_FUID     }  // u_int    ( if a usrseltyp, eu_ID_FUID    )
+   , {  -1, -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_LVL   )
+   , {  -1, -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_ADD   )
+   , {  -1, -1, -1, -1,  PIDS_extra       }  // s_ch     ( if Show_FOREST, eu_TREE_HID   )
  #undef A_left
  #undef A_right
 };
@@ -1824,7 +1832,7 @@ static void build_headers (void) {
          // for 'busy' only processes, we'll need elapsed tics
          if (!CHKw(w, Show_IDLEPS)) ckITEM(EU_CPU);
          // with forest view mode, we'll need pid, tgid, ppid & start_time...
-         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_LVL); ckITEM(eu_ADD); ckITEM(eu_HID); }
+         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_TREE_LVL); ckITEM(eu_TREE_ADD); ckITEM(eu_TREE_HID); }
          // for 'cumulative' times, we'll need equivalent of cutime & cstime
          if (Fieldstab[EU_TME].erel > -1 && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
          if (Fieldstab[EU_TM2].erel > -1 && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
@@ -2346,9 +2354,9 @@ static void procs_refresh (void) {
       for (i = 0; i < GROUPSMAX; i++)
          memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void*) * PIDSmaxt);
    }
- #undef n_reap
- #undef nALGN2
  #undef nALIGN
+ #undef nALGN2
+ #undef n_reap
 } // end: procs_refresh
 
 
@@ -2803,7 +2811,7 @@ static inline void insp_show_pgs (int col, int row, int max) {
         /*
          * This guy is responsible for displaying the Insp_buf contents and
          * managing all scrolling/locate requests until the user gives up. */
-static int insp_view_choice (struct pids_stack *obj) {
+static int insp_view_choice (struct pids_stack *p) {
 #ifdef INSP_SLIDE_1
  #define hzAMT  1
 #else
@@ -2811,8 +2819,8 @@ static int insp_view_choice (struct pids_stack *obj) {
 #endif
  #define maxLN (Screen_rows - (Msg_row +1))
  #define makHD(b1,b2) { \
-    snprintf(b1, sizeof(b1), "%d", PID_VAL(EU_PID, s_int, obj)); \
-    snprintf(b2, sizeof(b2), "%s", PID_VAL(EU_CMD, str, obj)); }
+    snprintf(b1, sizeof(b1), "%d", PID_VAL(EU_PID, s_int, p)); \
+    snprintf(b2, sizeof(b2), "%s", PID_VAL(EU_CMD, str, p)); }
  #define makFS(dst) { if (Insp_sel->flen < 22) \
        snprintf(dst, sizeof(dst), "%s", Insp_sel->fstr); \
     else snprintf(dst, sizeof(dst), "%.19s...", Insp_sel->fstr); }
@@ -4204,7 +4212,7 @@ static void wins_stage_2 (void) {
          * Determine if this task matches the 'u/U' selection
          * criteria for a given window */
 static inline int wins_usrselect (const WIN_t *q, struct pids_stack *p) {
- // a tailored 'results stack value' extractor macro
+  // a tailored 'results stack value' extractor macro
  #define rSv(E)  PID_VAL(E, u_int, p)
    switch(q->usrseltyp) {
       case 0:                                    // uid selection inactive
@@ -4247,10 +4255,10 @@ static int  Hide_tot;                       // total used in above array
          * He fills in the Tree_ppt array and also sets the child indent
          * level which is stored in an 'extra' result struct as a u_int. */
 static void forest_adds (const int self, unsigned level) {
- // tailored 'results stack value' extractor macros
+  // tailored 'results stack value' extractor macros
  #define rSv(E,X) PID_VAL(E, s_int, Seed_ppt[X])
- // if xtra-procps-debug.h active, can't use PID_VAL with assignment
- #define rSv_Lvl  Tree_ppt[Tree_idx]->head[Fieldstab[eu_LVL].erel].result.u_int
+  // if xtra-procps-debug.h active, can't use PID_VAL with assignment
+ #define rSv_Lvl  Tree_ppt[Tree_idx]->head[Fieldstab[eu_TREE_LVL].erel].result.u_int
    int i;
 
    if (Tree_idx < PIDSmaxt) {               // immunize against insanity
@@ -4297,23 +4305,25 @@ static void forest_begin (WIN_t *q) {
             error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
 #endif
       for (i = 0; i < PIDSmaxt; i++) {         // avoid some hidepid distortions
-         if (!PID_VAL(eu_LVL, u_int, Seed_ppt[i])) // real & pseudo parents == 0
+         if (!PID_VAL(eu_TREE_LVL, u_int, Seed_ppt[i])) // parents equal level 0
             forest_adds(i, 0);                 // add a parent with its children
       }
 
-      /* we're employing 3 additional 'PIDS_extra' results in our stacks
-            eu_LVL (u_int): where a level number is stored (0 - 100)
-            eu_ADD (u_int): where children's accumulated tics stored
-            eu_HID (s_ch) : where 'x' == collapsed and 'z' == unseen */
+      /* we are employing 3 additional 'PIDS_extra' results in our stacks
+            eu_TREE_LVL (u_int): where a level number is stored (0 - 100)
+            eu_TREE_ADD (u_int): where children's accumulated tics stored
+            eu_TREE_HID (s_ch) : where 'x' == collapsed and 'z' == unseen */
       for (i = 0; i < Hide_tot; i++) {
-       #define rSv_Pid(X)  PID_VAL(EU_PID, s_int, Tree_ppt[X])
-       // if xtra-procps-debug.h active, can't use PID_VAL with assignment
-       #define rSv_Lvl(X)  Tree_ppt[X]->head[Fieldstab[eu_LVL].erel].result.u_int
-       #define rSv_Add(X)  Tree_ppt[X]->head[Fieldstab[eu_ADD].erel].result.u_int
-       #define rSv_Hid(X)  Tree_ppt[X]->head[Fieldstab[eu_HID].erel].result.s_ch
-       /* next isn't needed if TREE_VCPUOFF was defined, but it costs us nothing
-          yet we must never assume that PIDS_CPU result struct is always present */
-       #define rSv_Cpu(X)  (Fieldstab[EU_CPU].erel < 0) ? 0 : PID_VAL(EU_CPU, s_int, Tree_ppt[X])
+
+        // if xtra-procps-debug.h active, can't use PID_VAL with assignment
+       #define rSv(E,T,X)  Tree_ppt[X]->head[Fieldstab[E].erel].result.T
+       #define rSv_Pid(X)  rSv(EU_PID, s_int, X)
+       #define rSv_Lvl(X)  rSv(eu_TREE_LVL, u_int, X)
+       #define rSv_Add(X)  rSv(eu_TREE_ADD, u_int, X)
+       #define rSv_Hid(X)  rSv(eu_TREE_HID, s_ch, X)
+        /* next isn't needed if TREE_VCPUOFF was defined, but it costs us nothing
+           yet we must never assume that PIDS_CPU result struct is always present */
+       #define rSv_Cpu(X)  (Fieldstab[EU_CPU].erel < 0) ? 0 : rSv(EU_CPU, s_int, X)
 
          if (Hide_pid[i] > 0) {
             for (j = 0; j < PIDSmaxt; j++) {
@@ -4321,20 +4331,20 @@ static void forest_begin (WIN_t *q) {
                   int parent = j;
                   int children = 0;
                   unsigned level = rSv_Lvl(parent);
-
                   while (j+1 < PIDSmaxt && rSv_Lvl(j+1) > level) {
-#ifndef TREE_VCPUOFF
-                     rSv_Add(parent) += rSv_Cpu(j+1);
-#endif
-                     rSv_Hid(j+1) = 'z';
-                     children = 1;
                      ++j;
+                     rSv_Hid(j) = 'z';
+#ifndef TREE_VCPUOFF
+                     rSv_Add(parent) += rSv_Cpu(j);
+#endif
+                     children = 1;
                   }
                   // children found (and collapsed), so mark that puppy
                   if (children) rSv_Hid(parent) = 'x';
                }
             }
          }
+       #undef rSv
        #undef rSv_Pid
        #undef rSv_Lvl
        #undef rSv_Add
@@ -4350,10 +4360,10 @@ static void forest_begin (WIN_t *q) {
          * This guy adds the artwork to either a 'cmd' or 'cmdline'
          * when in forest view mode, otherwise he just returns 'em. */
 static inline const char *forest_colour (const WIN_t *q, struct pids_stack *p) {
- // tailored 'results stack value' extractor macros
+  // tailored 'results stack value' extractor macros
  #define rSv(E)   PID_VAL(E, str, p)
- #define rSv_Lvl  PID_VAL(eu_LVL, u_int, p)
- #define rSv_Hid  PID_VAL(eu_HID, s_ch, p)
+ #define rSv_Lvl  PID_VAL(eu_TREE_LVL, u_int, p)
+ #define rSv_Hid  PID_VAL(eu_TREE_HID, s_ch, p)
 #ifndef SCROLLVAR_NO
    static char buf[1024*64*2]; // the same as libray's max buffer size
 #else
@@ -5237,13 +5247,13 @@ all_done:
          *    3) massive smp guys leaving little or no room for process
          *       display and thus requiring the cpu summary toggle */
 static void summary_hlp (struct stat_stack *this, const char *pfx) {
- // a tailored 'results stack value' extractor macro
+  // a tailored 'results stack value' extractor macro
  #define rSv(E)  TIC_VAL(E, this)
    SIC_t idl_frme, tot_frme;
    float scale;
 
    idl_frme = rSv(stat_IL);
-   tot_frme = rSv(stat_TOT);
+   tot_frme = rSv(stat_SUM_TOT);
    if (1 > tot_frme) idl_frme = tot_frme = 1;
    scale = 100.0 / (float)tot_frme;
 
@@ -5258,8 +5268,8 @@ static void summary_hlp (struct stat_stack *this, const char *pfx) {
       };
       char user[SMLBUFSIZ], syst[SMLBUFSIZ], dual[MEDBUFSIZ];
       int ix = Curwin->rc.graph_cpus - 1;
-      float pct_user = (float)rSv(stat_USR) * scale,
-            pct_syst = (float)rSv(stat_SYS) * scale;
+      float pct_user = (float)rSv(stat_SUM_USR) * scale,
+            pct_syst = (float)rSv(stat_SUM_SYS) * scale;
 #ifndef QUICK_GRAPHS
       int num_user = (int)((pct_user * Graph_adj) + .5),
           num_syst = (int)((pct_syst * Graph_adj) + .5);
@@ -5474,7 +5484,7 @@ numa_nope:
          * Build the information for a single task row and
          * display the results or return them to the caller. */
 static const char *task_show (const WIN_t *q, struct pids_stack *p) {
- // a tailored 'results stack value' extractor macro
+  // a tailored 'results stack value' extractor macro
  #define rSv(E,T)  PID_VAL(E, T, p)
 #ifndef SCROLLVAR_NO
  #define makeVAR(S)  { const char *pv = S; \
@@ -5492,14 +5502,14 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
    char *rp;
    int x;
 
-   /* we're employing 3 additional 'PIDS_extra' results in our stacks
-         eu_LVL (u_int): where a level number is stored (0 - 100)
-         eu_ADD (u_int): where children's accumulated tics stored
-         eu_HID (s_ch) : where 'x' == collapsed and 'z' == unseen */
+   /* we are employing 3 additional 'PIDS_extra' results in our stacks
+         eu_TREE_LVL (u_int): where a level number is stored (0 - 100)
+         eu_TREE_ADD (u_int): where children's accumulated tics stored
+         eu_TREE_HID (s_ch) : where 'x' == collapsed and 'z' == unseen */
 #ifndef TREE_VWINALL
    if (q == Curwin)            // note: the following is NOT indented
 #endif
-   if (CHKw(q, Show_FOREST) && rSv(eu_HID, s_ch)  == 'z')
+   if (CHKw(q, Show_FOREST) && rSv(eu_TREE_HID, s_ch)  == 'z')
       return "";
 
    // we must begin a row with a possible window number in mind...
@@ -5574,10 +5584,10 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          {  float u = (float)rSv(EU_CPU, s_int);
             int n = rSv(EU_THD, s_int);
 #ifndef TREE_VCPUOFF
-            // this eu_ADD is always zero, unless we're a collapsed parent
-            u += rSv(eu_ADD, u_int);
+            // this eu_TREE_ADD is always zero, unless we're a collapsed parent
+            u += rSv(eu_TREE_ADD, u_int);
             u *= Frame_etscale;
-            if (rSv(eu_HID, s_ch) != 'x' && u > 100.0 * n) u = 100.0 * n;
+            if (rSv(eu_TREE_HID, s_ch) != 'x' && u > 100.0 * n) u = 100.0 * n;
 #else
             u *= Frame_etscale;
             /* process can't use more %cpu than number of threads it has
@@ -5824,9 +5834,8 @@ static int window_show (WIN_t *q, int wmax) {
 
    return lwin;
  #undef sORDER
- #undef sFIELD
- #undef winMIN
  #undef isBUSY
+ #undef winMIN
 } // end: window_show
 
 /*######  Entry point plus two  ##########################################*/

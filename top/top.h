@@ -624,7 +624,7 @@ typedef struct WIN_t {
 //atic void          insp_mkrow_raw (int col, int row);
 //atic void          insp_mkrow_utf8 (int col, int row);
 //atic void          insp_show_pgs (int col, int row, int max);
-//atic int           insp_view_choice (struct pids_stack *obj);
+//atic int           insp_view_choice (struct pids_stack *p);
 //atic void          inspection_utility (int pid);
 /*------  Other Filtering ------------------------------------------------*/
 //atic const char   *osel_add (WIN_t *q, int ch, char *glob, int push);
