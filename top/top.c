@@ -1780,8 +1780,8 @@ static FLD_t Fieldstab[] = {
  #define SF(f) (QFP_t)SCB_NAME(f)
    // these identifiers reflect the default column alignment but they really
    // contain the WIN_t flag used to check/change justification at run-time!
- #define A_right Show_JRNUMS       /* toggled with upper case 'J' */
  #define A_left  Show_JRSTRS       /* toggled with lower case 'j' */
+ #define A_right Show_JRNUMS       /* toggled with upper case 'J' */
 
 /* .width anomalies:
         a -1 width represents variable width columns
@@ -3254,7 +3254,7 @@ static inline void insp_show_pgs (int col, int row, int max) {
         /*
          * This guy is responsible for displaying the Insp_buf contents and
          * managing all scrolling/locate requests until the user gives up. */
-static int insp_view_choice (proc_t *obj) {
+static int insp_view_choice (proc_t *p) {
 #ifdef INSP_SLIDE_1
  #define hzAMT  1
 #else
@@ -3262,8 +3262,8 @@ static int insp_view_choice (proc_t *obj) {
 #endif
  #define maxLN (Screen_rows - (Msg_row +1))
  #define makHD(b1,b2) { \
-    snprintf(b1, sizeof(b1), "%d", obj->tid); \
-    snprintf(b2, sizeof(b2), "%s", obj->cmd); }
+    snprintf(b1, sizeof(b1), "%d", p->tid); \
+    snprintf(b2, sizeof(b2), "%s", p->cmd); }
  #define makFS(dst) { if (Insp_sel->flen < 22) \
        snprintf(dst, sizeof(dst), "%s", Insp_sel->fstr); \
     else snprintf(dst, sizeof(dst), "%.19s...", Insp_sel->fstr); }
@@ -4775,12 +4775,12 @@ static void forest_create (WIN_t *q) {
                   char level = Tree_ppt[j]->pad_3;
 
                   while (j+1 < Frame_maxtask && Tree_ppt[j+1]->pad_3 > level) {
-                     Tree_ppt[j+1]->pad_2 = 'z';
+                     ++j;
+                     Tree_ppt[j]->pad_2 = 'z';
 #ifndef TREE_VCPUOFF
-                     Hide_cpu[parent] += Tree_ppt[j+1]->pcpu;
+                     Hide_cpu[parent] += Tree_ppt[j]->pcpu;
 #endif
                      children = 1;
-                     ++j;
                   }
                   // children found (and collapsed), so mark that puppy
                   if (children) Tree_ppt[parent]->pad_2 = 'x';
@@ -6320,8 +6320,8 @@ static int window_show (WIN_t *q, int wmax) {
       }
 
    return lwin;
- #undef winMIN
  #undef isBUSY
+ #undef winMIN
 } // end: window_show
 
 /*######  Entry point plus two  ##########################################*/
