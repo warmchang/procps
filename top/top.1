@@ -603,10 +603,10 @@ divided by the total number of \*(PUs.
 You toggle Irix/Solaris modes with the `I' \*(CI.
 
 \*(NT When running in forest view mode (`V') with children
-collapsed (`^V'), this field will also include the \*(PU time of
+collapsed (`v'), this field will also include the \*(PU time of
 those unseen children.
 \*(XT 4c. TASK AREA Commands, CONTENT for more information regarding
-the `V' and `^V' toggles.
+the `V' and `v' toggles.
 
 .TP 4
  2.\fB %MEM \*(Em Memory Usage (RES) \fR
@@ -1108,7 +1108,7 @@ depending on the context in which they are issued.
         C, l, t, m, 1, 2, 3
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, J, j, x, y, z
-        Content:     c, f, F, o, O, S, u, U, V, ^V
+        Content:     c, f, F, o, O, S, u, U, V, v
         Size:        #, i, n
         Sorting:     <, >, f, F, R
   4d.\fI Color-Mapping \fR
@@ -1154,7 +1154,7 @@ those \*(CIs applicable to \*(AM.
 \ \ \ \fB=\fR\ \ :\fIExit-Task-Limits \fR
 Removes restrictions on which tasks are shown.
 This command will reverse any `i' (idle tasks), `n' (max tasks)
-and `^V' (hide children) commands that might be active.
+and `v' (hide children) commands that might be active.
 It also provides for an exit from PID monitoring, User filtering,
 Other filtering and Locate processing.
 
@@ -1588,7 +1588,7 @@ mode in the \*(CW.
 \*(XT 4c. TASK AREA Commands, SORTING for information on those keys.
 
 .TP 7
-\ \ \fB^V\fR\ \ :\fIHide/Show-Children\fR toggle (Ctrl key + `V') \fR
+\ \ \ \fBv\fR\ \ :\fIHide/Show-Children\fR toggle \fR
 When in forest view mode, this key serves as a toggle to collapse or
 expand the children of a parent.
 
@@ -1774,7 +1774,7 @@ as the only display element.
 *\ \ \fB=\fR | \fB+\fR\ \ :\fIEqualize-(reinitialize)-Window(s) \fR
 The `=' key forces the \*(CW's \*(TD to be visible.
 It also reverses any active `i' (idle tasks), `n' (max tasks), `u/U'
-(user filter), `o/O' (other filter), `^V' (hide children) and 'L' (locate)
+(user filter), `o/O' (other filter), `v' (hide children) and 'L' (locate)
 commands.
 Also, if the window had been scrolled, it will be reset with this command.
 \*(XT 5c. SCROLLING a Window for additional information regarding vertical
@@ -1784,7 +1784,7 @@ The `+' key does the same for all windows.
 The four \*(TDs will reappear, evenly balanced.
 They will also have retained any customizations you had previously
 applied, except for the `i' (idle tasks), `n' (max tasks), `u/U'
-(user filter), `o/O' (other filter), `^V' (hide children), `L' (locate)
+(user filter), `o/O' (other filter), `v' (hide children), `L' (locate)
 and scrolling \*(CIs.
 
 .TP 7

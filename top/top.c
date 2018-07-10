@@ -5351,6 +5351,29 @@ static void keys_task (int ch) {
                   ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
          }
          break;
+      case 'v':
+         if (VIZCHKw(w)) {
+            if (CHKw(w, Show_FOREST)) {
+               int i, pid = w->ppt[w->begtask]->tid;
+#ifdef TREE_VPROMPT
+               int got = get_int(fmtmk(N_txt(XTRA_vforest_fmt), pid));
+               if (got < GET_NUM_NOT) break;
+               if (got > GET_NUM_NOT) pid = got;
+#endif
+               for (i = 0; i < Hide_tot; i++) {
+                  if (Hide_pid[i] == pid || Hide_pid[i] == -pid) {
+                     Hide_pid[i] = -Hide_pid[i];
+                     break;
+                  }
+               }
+               if (i == Hide_tot) Hide_pid[Hide_tot++] = pid;
+               // plenty of room, but if everything's expanded let's reset ...
+               for (i = 0; i < Hide_tot; i++)
+                  if (Hide_pid[i] > 0) break;
+               if (i == Hide_tot) Hide_tot = 0;
+            }
+         }
+         break;
       case 'x':
          if (VIZCHKw(w)) {
 #ifdef USE_X_COLHDR
@@ -5380,29 +5403,6 @@ static void keys_task (int ch) {
          if (VIZCHKw(w)) {
             TOGw(w, Show_COLORS);
             capsmk(w);
-         }
-         break;
-      case kbd_CtrlV:
-         if (VIZCHKw(w)) {
-            if (CHKw(w, Show_FOREST)) {
-               int i, pid = w->ppt[w->begtask]->tid;
-#ifdef TREE_VPROMPT
-               int got = get_int(fmtmk(N_txt(XTRA_vforest_fmt), pid));
-               if (got < GET_NUM_NOT) break;
-               if (got > GET_NUM_NOT) pid = got;
-#endif
-               for (i = 0; i < Hide_tot; i++) {
-                  if (Hide_pid[i] == pid || Hide_pid[i] == -pid) {
-                     Hide_pid[i] = -Hide_pid[i];
-                     break;
-                  }
-               }
-               if (i == Hide_tot) Hide_pid[Hide_tot++] = pid;
-               // plenty of room, but if everything's expanded let's reset ...
-               for (i = 0; i < Hide_tot; i++)
-                  if (Hide_pid[i] > 0) break;
-               if (i == Hide_tot) Hide_tot = 0;
-            }
          }
          break;
       default:                    // keep gcc happy
@@ -5611,8 +5611,8 @@ static void do_key (int ch) {
          { '1', '2', '3', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,
          { '#', '<', '>', 'b', 'c', 'i', 'J', 'j', 'n', 'O', 'o'
-         , 'R', 'S', 'U', 'u', 'V', 'x', 'y', 'z'
-         , kbd_CtrlO, kbd_CtrlV, '\0' } },
+         , 'R', 'S', 'U', 'u', 'V', 'v', 'x', 'y', 'z'
+         , kbd_CtrlO, '\0' } },
       { keys_window,
          { '+', '-', '=', '_', '&', 'A', 'a', 'G', 'L', 'w'
          , kbd_UP, kbd_DOWN, kbd_LEFT, kbd_RIGHT, kbd_PGUP, kbd_PGDN
