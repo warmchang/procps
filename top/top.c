@@ -1666,16 +1666,18 @@ static struct {
 #define eu_TICS_ALL_C  eu_LAST +2
 #define eu_TIME_START  eu_LAST +3
 #define eu_ID_FUID     eu_LAST +4
-#define eu_TREE_LVL    eu_LAST +5
-#define eu_TREE_ADD    eu_LAST +6
-#define eu_TREE_HID    eu_LAST +7
+#define eu_TREE_HID    eu_LAST +5
+#define eu_TREE_LVL    eu_LAST +6
    , {  -1, -1, -1, -1,  PIDS_CMDLINE     }  // str      ( if Show_CMDLIN, eu_CMDLINE    )
    , {  -1, -1, -1, -1,  PIDS_TICS_ALL_C  }  // ull_int  ( if Show_CTIMES, eu_TICS_ALL_C )
    , {  -1, -1, -1, -1,  PIDS_TIME_START  }  // ull_int  ( if Show_FOREST, eu_TIME_START )
    , {  -1, -1, -1, -1,  PIDS_ID_FUID     }  // u_int    ( if a usrseltyp, eu_ID_FUID    )
-   , {  -1, -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_LVL   )
-   , {  -1, -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_ADD   )
    , {  -1, -1, -1, -1,  PIDS_extra       }  // s_ch     ( if Show_FOREST, eu_TREE_HID   )
+   , {  -1, -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_LVL   )
+#ifndef TREE_VCPUOFF
+#define eu_TREE_ADD    eu_LAST +7
+   , {  -1, -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_ADD   )
+#endif
  #undef A_left
  #undef A_right
 };
@@ -1832,7 +1834,11 @@ static void build_headers (void) {
          // for 'busy' only processes, we'll need elapsed tics
          if (!CHKw(w, Show_IDLEPS)) ckITEM(EU_CPU);
          // with forest view mode, we'll need pid, tgid, ppid & start_time...
-         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_TREE_LVL); ckITEM(eu_TREE_ADD); ckITEM(eu_TREE_HID); }
+#ifndef TREE_VCPUOFF
+         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_TREE_HID); ckITEM(eu_TREE_LVL); ckITEM(eu_TREE_ADD); }
+#else
+         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_TREE_HID); ckITEM(eu_TREE_LVL); }
+#endif
          // for 'cumulative' times, we'll need equivalent of cutime & cstime
          if (Fieldstab[EU_TME].erel > -1 && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
          if (Fieldstab[EU_TM2].erel > -1 && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
@@ -4309,20 +4315,20 @@ static void forest_begin (WIN_t *q) {
             forest_adds(i, 0);                 // add a parent with its children
       }
 
-      /* we are employing 3 additional 'PIDS_extra' results in our stacks
+      /* we use up to three additional 'PIDS_extra' results in our stacks
+            eu_TREE_HID (s_ch) : where 'x' == collapsed and 'z' == unseen
             eu_TREE_LVL (u_int): where a level number is stored (0 - 100)
-            eu_TREE_ADD (u_int): where children's accumulated tics stored
-            eu_TREE_HID (s_ch) : where 'x' == collapsed and 'z' == unseen */
+            eu_TREE_ADD (u_int): where children's tics are stored (maybe) */
       for (i = 0; i < Hide_tot; i++) {
 
         // if xtra-procps-debug.h active, can't use PID_VAL with assignment
        #define rSv(E,T,X)  Tree_ppt[X]->head[Fieldstab[E].erel].result.T
        #define rSv_Pid(X)  rSv(EU_PID, s_int, X)
        #define rSv_Lvl(X)  rSv(eu_TREE_LVL, u_int, X)
-       #define rSv_Add(X)  rSv(eu_TREE_ADD, u_int, X)
        #define rSv_Hid(X)  rSv(eu_TREE_HID, s_ch, X)
-        /* next isn't needed if TREE_VCPUOFF was defined, but it costs us nothing
+        /* next two aren't needed if TREE_VCPUOFF is defined, but cost us nothing
            yet we must never assume that PIDS_CPU result struct is always present */
+       #define rSv_Add(X)  rSv(eu_TREE_ADD, u_int, X)
        #define rSv_Cpu(X)  (Fieldstab[EU_CPU].erel < 0) ? 0 : rSv(EU_CPU, s_int, X)
 
          if (Hide_pid[i] > 0) {
@@ -4347,8 +4353,8 @@ static void forest_begin (WIN_t *q) {
        #undef rSv
        #undef rSv_Pid
        #undef rSv_Lvl
-       #undef rSv_Add
        #undef rSv_Hid
+       #undef rSv_Add
        #undef rSv_Cpu
       }
    } // end: !Tree_idx
@@ -5502,10 +5508,10 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
    char *rp;
    int x;
 
-   /* we are employing 3 additional 'PIDS_extra' results in our stacks
+   /* we use up to three additional 'PIDS_extra' results in our stacks
+         eu_TREE_HID (s_ch) : where 'x' == collapsed and 'z' == unseen
          eu_TREE_LVL (u_int): where a level number is stored (0 - 100)
-         eu_TREE_ADD (u_int): where children's accumulated tics stored
-         eu_TREE_HID (s_ch) : where 'x' == collapsed and 'z' == unseen */
+         eu_TREE_ADD (u_int): where children's tics are stored (maybe) */
 #ifndef TREE_VWINALL
    if (q == Curwin)            // note: the following is NOT indented
 #endif
