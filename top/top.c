@@ -4692,7 +4692,7 @@ static int      Tree_idx;                   // frame_make resets to zero
 static int *Hide_pid;                       // collapsible process array
 static int  Hide_tot;                       // total used in above array
 #ifndef TREE_VCPUOFF
-static int *Hide_cpu;                       // accum tics from collapsed
+static unsigned *Hide_cpu;                  // accum tics from collapsed
 #endif
 
         /*
@@ -4749,7 +4749,7 @@ static void forest_create (WIN_t *q) {
          Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
          Hide_pid = alloc_r(Hide_pid, sizeof(int) * hwmsav);
 #ifndef TREE_VCPUOFF
-         Hide_cpu = alloc_r(Hide_cpu, sizeof(int) * hwmsav);
+         Hide_cpu = alloc_r(Hide_cpu, sizeof(unsigned) * hwmsav);
 #endif
       }
 
@@ -4761,7 +4761,7 @@ static void forest_create (WIN_t *q) {
             forest_adds(i, 0);              // add a parent and its children
       }
 #ifndef TREE_VCPUOFF
-      memset(Hide_cpu, 0, sizeof(int) * Frame_maxtask);
+      memset(Hide_cpu, 0, sizeof(unsigned) * Frame_maxtask);
 #endif
       /* we're borrowing some pad bytes in the proc_t,
          pad_2: 'x' means a collapsed thread, 'z' means an unseen child
@@ -6002,7 +6002,7 @@ static const char *task_show (const WIN_t *q, const int idx) {
          {  float u = (float)p->pcpu;
 #ifndef TREE_VCPUOFF
             // Hide_cpu entry is always zero, unless we're a collapsed parent
-            u += Hide_cpu[idx];
+            if (CHKw(q, Show_FOREST)) u += Hide_cpu[idx];
             u *= Frame_etscale;
             if (p->pad_2 != 'x' && u > 100.0 * p->nlwp) u = 100.0 * p->nlwp;
 #else
