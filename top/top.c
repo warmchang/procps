@@ -6001,7 +6001,9 @@ static const char *task_show (const WIN_t *q, const int idx) {
          case EU_CPU:
          {  float u = (float)p->pcpu;
 #ifndef TREE_VCPUOFF
-            // Hide_cpu entry is always zero, unless we're a collapsed parent
+ #ifndef TREE_VWINALL
+            if (q == Curwin)   // note: the following is NOT indented
+ #endif
             if (CHKw(q, Show_FOREST)) u += Hide_cpu[idx];
             u *= Frame_etscale;
             if (p->pad_2 != 'x' && u > 100.0 * p->nlwp) u = 100.0 * p->nlwp;
