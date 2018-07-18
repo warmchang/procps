@@ -5590,8 +5590,10 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          {  float u = (float)rSv(EU_CPU, s_int);
             int n = rSv(EU_THD, s_int);
 #ifndef TREE_VCPUOFF
-            // this eu_TREE_ADD is always zero, unless we're a collapsed parent
-            u += rSv(eu_TREE_ADD, u_int);
+ #ifndef TREE_VWINALL
+            if (q == Curwin)   // note: the following is NOT indented
+ #endif
+            if (CHKw(q, Show_FOREST)) u += rSv(eu_TREE_ADD, u_int);
             u *= Frame_etscale;
             if (rSv(eu_TREE_HID, s_ch) != 'x' && u > 100.0 * n) u = 100.0 * n;
 #else
