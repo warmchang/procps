@@ -3763,7 +3763,7 @@ static int config_insp (FILE *fp, char *buf, size_t size) {
     #define nxtLINE { buf[0] = '\0'; continue; }
       size_t lraw = strlen(Inspect.raw) +1;
       int n, x;
-      char *s;
+      char *s1, *s2, *s3;
 
       if (i < 0 || (size_t)i >= INT_MAX / sizeof(struct I_ent)) break;
       if (lraw >= INT_MAX - size) break;
@@ -3784,12 +3784,9 @@ static int config_insp (FILE *fp, char *buf, size_t size) {
             Rc_questions = 1;
          }
       }
-      if (!(s = strtok(buf, "\t\n")))  { Rc_questions = 1; nxtLINE; }
-      iT(type) = alloc_s(s);
-      if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; nxtLINE; }
-      iT(name) = alloc_s(s);
-      if (!(s = strtok(NULL, "\t\n"))) { Rc_questions = 1; nxtLINE; }
-      iT(fmts) = alloc_s(s);
+      if (!(s1 = strtok(buf, "\t\n")))  { Rc_questions = 1; nxtLINE; }
+      if (!(s2 = strtok(NULL, "\t\n"))) { Rc_questions = 1; nxtLINE; }
+      if (!(s3 = strtok(NULL, "\t\n"))) { Rc_questions = 1; nxtLINE; }
 
       switch (toupper(buf[0])) {
          case 'F':
@@ -3802,6 +3799,9 @@ static int config_insp (FILE *fp, char *buf, size_t size) {
             Rc_questions = 1;
             nxtLINE;
       }
+      iT(type) = alloc_s(s1);
+      iT(name) = alloc_s(s2);
+      iT(fmts) = alloc_s(s3);
       iT(farg) = (strstr(iT(fmts), "%d")) ? 1 : 0;
       iT(fstr) = alloc_c(FNDBUFSIZ);
       iT(flen) = 0;
