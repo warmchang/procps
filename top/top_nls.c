@@ -473,7 +473,8 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[YINSP_pidbad_fmt] = _("unable to inspect, pid %d not found");
    Norm_nlstab[YINSP_pidsee_fmt] = _("inspect at PID [default pid = %d]");
    Norm_nlstab[YINSP_status_fmt] = _("%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read");
-   Norm_nlstab[YINSP_workin_txt] = _("patience please, working...");
+   Norm_nlstab[YINSP_waitin_txt] = _("patience please, working ...");
+   Norm_nlstab[YINSP_workin_txt] = _("working, use Ctrl-C to end ...");
 /* Translation Hint: Below are 2 abbreviations which can be as long as needed:
    .                 FLD = FIELD, VAL = VALUE */
    Norm_nlstab[OSEL_prompts_fmt] = _("add filter #%d (%s) as: [!]FLD?VAL");

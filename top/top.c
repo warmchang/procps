@@ -2866,6 +2866,12 @@ static void sysinfo_refresh (int forced) {
          *     # file ^I <your_name> ^I /proc/%d/status
          *     # but this will eliminate embedded '\t' ...
          *     pipe ^I <your_name> ^I cat /proc/%d/status | expand -
+         *
+         * Note: If a pipe such as the following was established, one must
+         * use Ctrl-C to terminate that pipe in order to review the results.
+         * This is the single occasion where a '^C' will not terminate top.
+         *
+         *     pipe ^I Trace ^I /usr/bin/strace -p %d 2>&1
          */
 
         /*
@@ -2909,8 +2915,8 @@ static struct I_ent *Insp_sel;    // currently selected Inspect entry
         // Our 'row length' macro, equivalent to a strlen() call
 #define INSP_RLEN(idx) (int)(Insp_p[idx +1] - Insp_p[idx] -1)
 
-        // Our 'busy' (wait please) macro
-#define INSP_BUSY  { INSP_MKSL(0, N_txt(YINSP_workin_txt)); }
+        // Our 'busy/working' macro
+#define INSP_BUSY(enu)  { INSP_MKSL(0, N_txt(enu)) }
 
 
         /*
@@ -2991,8 +2997,14 @@ static void insp_do_file (char *fmts, int pid) {
          * The generalized PIPE utility. */
 static void insp_do_pipe (char *fmts, int pid) {
    char buf[LRGBUFSIZ];
+   struct sigaction sa;
    FILE *fp;
    int rc;
+
+   memset(&sa, 0, sizeof(sa));
+   sigemptyset(&sa.sa_mask);
+   sa.sa_handler = SIG_IGN;
+   sigaction(SIGINT, &sa, NULL);
 
    snprintf(buf, sizeof(buf), fmts, pid);
    fp = popen(buf, "r");
@@ -3001,6 +3013,9 @@ static void insp_do_pipe (char *fmts, int pid) {
    if (rc) Insp_bufrd = snprintf(Insp_buf, Insp_bufsz, "%s"
       , fmtmk(N_fmt(YINSP_failed_fmt), strerror(errno)));
    insp_cnt_nl();
+
+   sa.sa_handler = sig_endpgm;
+   sigaction(SIGINT, &sa, NULL);
 } // end: insp_do_pipe
 
 
@@ -3058,7 +3073,7 @@ static void insp_find_str (int ch, int *col, int *row) {
    if (Insp_sel->fstr[0]) {
       int xx, yy;
 
-      INSP_BUSY;
+      INSP_BUSY(YINSP_waitin_txt);
       for (xx = *col, yy = *row; yy < Insp_nl; ) {
          xx = insp_find_ofs(xx, yy);
          if (xx < INSP_RLEN(yy)) {
@@ -3425,7 +3440,8 @@ signify_that:
             key = INT_MAX;
             break;
          case kbd_ENTER:
-            INSP_BUSY;
+            INSP_BUSY(!strcmp("file", Inspect.tab[sel].type)
+               ? YINSP_waitin_txt : YINSP_workin_txt);
             Insp_sel = &Inspect.tab[sel];
             Inspect.tab[sel].func(Inspect.tab[sel].fmts, pid);
             Insp_utf8 = utf8_delta(Insp_buf);

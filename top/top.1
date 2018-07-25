@@ -62,7 +62,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "June 2018" "procps-ng" "User Commands"
+.TH TOP 1 "July 2018" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -2272,12 +2272,13 @@ enable backslash interpretation regardless of which shell you use.
   "pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr" >> ~/.toprc
 .fi
 
-\fBCaution\fR:
 If any inspect entry you create produces output with unprintable characters
 they will be displayed in either the ^C notation or hexadecimal <FF> form,
 depending on their value.
 This applies to tab characters as well, which will show as `^I'.
 If you want a truer representation, any embedded tabs should be expanded.
+The following example takes what could have been a `file' entry but employs
+a `pipe' instead so as to expand the embedded tabs.
 
 .nf
   # next would have contained `\\t' ...
@@ -2286,18 +2287,23 @@ If you want a truer representation, any embedded tabs should be expanded.
   pipe ^I <your_name> ^I cat /proc/%d/status | expand \-
 .fi
 
-The above example takes what could have been a `file' entry but employs
-a `pipe' instead so as to expand the embedded tabs.
+\*(NT Some programs might rely on \fISIGINT\fR to end.
+Therefore, if a `\fBpipe\fR' such as the following is established, one must
+use Ctrl-C to terminate it in order to review the results.
+This is the single occasion where a `^C' will not also terminate \*(We.
 
-\*(NT While `\fBpipe\fR' type entries have been discussed in terms of pipelines
+.nf
+  pipe ^I Trace ^I /usr/bin/strace -p %d 2>&1
+.fi
+
+Lastly, while `\fBpipe\fR' type entries have been discussed in terms of pipelines
 and commands, there is nothing to prevent you from including \fI shell scripts\fR
 as well.
 Perhaps even newly created scripts designed specifically for the `Y' \*(CI.
 
-Lastly, as the number of your Inspect entries grows over time, the `Options:'
+For example, as the number of your Inspect entries grows over time, the `Options:'
 row will be truncated when screen width is exceeded.
 That does not affect operation other than to make some selections invisible.
-
 However, if some choices are lost to truncation but you want to see more options,
 there is an easy solution hinted at below.
 
