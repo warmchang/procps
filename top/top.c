@@ -204,14 +204,14 @@ static const char Osel_filterI_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%*s\n";
         /*
          *  --- <proc/pids.h> -------------------------------------------------- */
 static struct pids_info *Pids_ctx;
-static int Pids_itms_cur;                   // 'current' max (<= Fieldstab)
+static int Pids_itms_tot;                   // same as MAXTBL(Fieldstab)
 static enum pids_item *Pids_itms;           // allocated as MAXTBL(Fieldstab)
 static struct pids_fetch *Pids_reap;        // for reap or select
 #define PIDSmaxt Pids_reap->counts->total   // just a little less wordy
         // pid stack results extractor macro, where e=our EU enum, t=type, s=stack
         // ( we'll exploit that <proc/pids.h> provided macro as much as possible )
         // ( but many functions use their own unique tailored version for access )
-#define PID_VAL(e,t,s) PIDS_VAL(Fieldstab[ e ].erel, t, s, Pids_ctx)
+#define PID_VAL(e,t,s) PIDS_VAL(e, t, s, Pids_ctx)
         /*
          *  --- <proc/stat.h> -------------------------------------------------- */
 static struct stat_info *Stat_ctx;
@@ -329,15 +329,15 @@ static void bye_bye (const char *str) __attribute__((__noreturn__));
 static void bye_bye (const char *str) {
    at_eoj();                 // restore tty in preparation for exit
 #ifdef ATEOJ_RPTSTD
-{  struct pids_stack *p;
+{
    if (!str && !Frames_signal && Ttychanged) { fprintf(stderr,
       "\n%s's Summary report:"
       "\n\tProgram"
       "\n\t   %s"
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
       "\n\t   Stat_reap->cpus->total = %d, Stat_reap->nodes->total = %d"
-      "\n\t   sizeof(struct pids_result) = %u, sizeof(struct pids_stack) = %u"
-      "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
+      "\n\t   Pids_itms_tot = %d, sizeof(struct pids_result) = %d, pids stack size = %d"
+      "\n\t   SCREENMAX = %d, ROWMINSIZ = %d, ROWMAXSIZ = %d"
       "\n\t   PACKAGE = '%s', LOCALEDIR = '%s'"
       "\n\tTerminal: %s"
       "\n\t   device = %s, ncurses = v%s"
@@ -364,8 +364,8 @@ static void bye_bye (const char *str) {
       , PACKAGE_STRING
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
       , Stat_reap->cpus->total, Stat_reap->nodes->total
-      , (unsigned)sizeof(struct pids_result), (unsigned)sizeof(*p)
-      , (unsigned)SCREENMAX, (unsigned)ROWMINSIZ, (unsigned)ROWMAXSIZ
+      , Pids_itms_tot, (int)sizeof(struct pids_result), (int)(sizeof(struct pids_result) * Pids_itms_tot)
+      , (int)SCREENMAX, (int)ROWMINSIZ, (int)ROWMAXSIZ
       , PACKAGE, LOCALEDIR
 #ifdef PRETENDNOCAP
       , "dumb"
@@ -1586,7 +1586,6 @@ static struct {
    int           width;         // field width, if applicable
    int           scale;         // scaled target, if applicable
    const int     align;         // the default column alignment flag
-   int           erel;          // relative position in dynamic Pids_itms
    const enum pids_item item;   // the new libproc item enum identifier
 } Fieldstab[] = {
    // these identifiers reflect the default column alignment but they really
@@ -1598,68 +1597,68 @@ static struct {
         a -1 width represents variable width columns
         a  0 width represents columns set once at startup (see zap_fieldstab)
 
-     .width  .scale  .align    .erel  .item
-     ------  ------  --------  -----  ------------------- */
-   {     0,     -1,  A_right,    -1,  PIDS_ID_PID         },  // s_int    EU_PID
-   {     0,     -1,  A_right,    -1,  PIDS_ID_PPID        },  // s_int    EU_PPD
-   {     5,     -1,  A_right,    -1,  PIDS_ID_EUID        },  // u_int    EU_UED
-   {     8,     -1,  A_left,     -1,  PIDS_ID_EUSER       },  // str      EU_UEN
-   {     5,     -1,  A_right,    -1,  PIDS_ID_RUID        },  // u_int    EU_URD
-   {     8,     -1,  A_left,     -1,  PIDS_ID_RUSER       },  // str      EU_URN
-   {     5,     -1,  A_right,    -1,  PIDS_ID_SUID        },  // u_int    EU_USD
-   {     8,     -1,  A_left,     -1,  PIDS_ID_SUSER       },  // str      EU_USN
-   {     5,     -1,  A_right,    -1,  PIDS_ID_EGID        },  // u_int    EU_GID
-   {     8,     -1,  A_left,     -1,  PIDS_ID_EGROUP      },  // str      EU_GRP
-   {     0,     -1,  A_right,    -1,  PIDS_ID_PGRP        },  // s_int    EU_PGD
-   {     8,     -1,  A_left,     -1,  PIDS_TTY_NAME       },  // str      EU_TTY
-   {     0,     -1,  A_right,    -1,  PIDS_ID_TPGID       },  // s_int    EU_TPG
-   {     0,     -1,  A_right,    -1,  PIDS_ID_SESSION     },  // s_int    EU_SID
-   {     3,     -1,  A_right,    -1,  PIDS_PRIORITY       },  // s_int    EU_PRI
-   {     3,     -1,  A_right,    -1,  PIDS_NICE           },  // s_int    EU_NCE
-   {     3,     -1,  A_right,    -1,  PIDS_NLWP           },  // s_int    EU_THD
-   {     0,     -1,  A_right,    -1,  PIDS_PROCESSOR      },  // u_int    EU_CPN
-   {     5,     -1,  A_right,    -1,  PIDS_TICS_ALL_DELTA },  // s_int    EU_CPU
-   {     6,     -1,  A_right,    -1,  PIDS_TICS_ALL       },  // ull_int  EU_TME
-   {     9,     -1,  A_right,    -1,  PIDS_TICS_ALL       },  // ull_int  EU_TM2
-   {     5,     -1,  A_right,    -1,  PIDS_MEM_RES        },  // ul_int   EU_MEM
-   {     7,  SK_Kb,  A_right,    -1,  PIDS_MEM_VIRT       },  // ul_int   EU_VRT
-   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_SWAP        },  // ul_int   EU_SWP
-   {     6,  SK_Kb,  A_right,    -1,  PIDS_MEM_RES        },  // ul_int   EU_RES
-   {     6,  SK_Kb,  A_right,    -1,  PIDS_MEM_CODE       },  // ul_int   EU_COD
-   {     7,  SK_Kb,  A_right,    -1,  PIDS_MEM_DATA       },  // ul_int   EU_DAT
-   {     6,  SK_Kb,  A_right,    -1,  PIDS_MEM_SHR        },  // ul_int   EU_SHR
-   {     4,     -1,  A_right,    -1,  PIDS_FLT_MAJ        },  // ul_int   EU_FL1
-   {     4,     -1,  A_right,    -1,  PIDS_FLT_MIN        },  // ul_int   EU_FL2
-   {     4,     -1,  A_right,    -1,  PIDS_noop           },  // ul_int   EU_DRT ( always 0 w/ since 2.6 )
-   {     1,     -1,  A_right,    -1,  PIDS_STATE          },  // s_ch     EU_STA
-   {    -1,     -1,  A_left,     -1,  PIDS_CMD            },  // str      EU_CMD
-   {    10,     -1,  A_left,     -1,  PIDS_WCHAN_NAME     },  // str      EU_WCH
-   {     8,     -1,  A_left,     -1,  PIDS_FLAGS          },  // ul_int   EU_FLG
-   {    -1,     -1,  A_left,     -1,  PIDS_CGROUP         },  // str      EU_CGR
-   {    -1,     -1,  A_left,     -1,  PIDS_SUPGIDS        },  // str      EU_SGD
-   {    -1,     -1,  A_left,     -1,  PIDS_SUPGROUPS      },  // str      EU_SGN
-   {     0,     -1,  A_right,    -1,  PIDS_ID_TGID        },  // s_int    EU_TGD
-   {     5,     -1,  A_right,    -1,  PIDS_OOM_ADJ        },  // s_int    EU_OOA
-   {     4,     -1,  A_right,    -1,  PIDS_OOM_SCORE      },  // s_int    EU_OOM
-   {    -1,     -1,  A_left,     -1,  PIDS_ENVIRON        },  // str      EU_ENV
-   {     3,     -1,  A_right,    -1,  PIDS_FLT_MAJ_DELTA  },  // s_int    EU_FV1
-   {     3,     -1,  A_right,    -1,  PIDS_FLT_MIN_DELTA  },  // s_int    EU_FV2
-   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_USED        },  // ul_int   EU_USE
-   {    10,     -1,  A_right,    -1,  PIDS_NS_IPC         },  // ul_int   EU_NS1
-   {    10,     -1,  A_right,    -1,  PIDS_NS_MNT         },  // ul_int   EU_NS2
-   {    10,     -1,  A_right,    -1,  PIDS_NS_NET         },  // ul_int   EU_NS3
-   {    10,     -1,  A_right,    -1,  PIDS_NS_PID         },  // ul_int   EU_NS4
-   {    10,     -1,  A_right,    -1,  PIDS_NS_USER        },  // ul_int   EU_NS5
-   {    10,     -1,  A_right,    -1,  PIDS_NS_UTS         },  // ul_int   EU_NS6
-   {     8,     -1,  A_left,     -1,  PIDS_LXCNAME        },  // str      EU_LXC
-   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_ANON    },  // ul_int   EU_RZA
-   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_FILE    },  // ul_int   EU_RZF
-   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_LOCKED  },  // ul_int   EU_RZL
-   {     6,  SK_Kb,  A_right,    -1,  PIDS_VM_RSS_SHARED  },  // ul_int   EU_RZS
-   {    -1,     -1,  A_left,     -1,  PIDS_CGNAME         },  // str      EU_CGN
-   {     0,     -1,  A_right,    -1,  PIDS_PROCESSOR_NODE },  // s_int    EU_NMA
-   {     5,     -1,  A_right,    -1,  PIDS_ID_LOGIN       },  // s_int    EU_LID
-   {    -1,     -1,  A_left,     -1,  PIDS_EXE            }   // str      EU_EXE
+     .width  .scale  .align    .item
+     ------  ------  --------  ------------------- */
+   {     0,     -1,  A_right,  PIDS_ID_PID         },  // s_int    EU_PID
+   {     0,     -1,  A_right,  PIDS_ID_PPID        },  // s_int    EU_PPD
+   {     5,     -1,  A_right,  PIDS_ID_EUID        },  // u_int    EU_UED
+   {     8,     -1,  A_left,   PIDS_ID_EUSER       },  // str      EU_UEN
+   {     5,     -1,  A_right,  PIDS_ID_RUID        },  // u_int    EU_URD
+   {     8,     -1,  A_left,   PIDS_ID_RUSER       },  // str      EU_URN
+   {     5,     -1,  A_right,  PIDS_ID_SUID        },  // u_int    EU_USD
+   {     8,     -1,  A_left,   PIDS_ID_SUSER       },  // str      EU_USN
+   {     5,     -1,  A_right,  PIDS_ID_EGID        },  // u_int    EU_GID
+   {     8,     -1,  A_left,   PIDS_ID_EGROUP      },  // str      EU_GRP
+   {     0,     -1,  A_right,  PIDS_ID_PGRP        },  // s_int    EU_PGD
+   {     8,     -1,  A_left,   PIDS_TTY_NAME       },  // str      EU_TTY
+   {     0,     -1,  A_right,  PIDS_ID_TPGID       },  // s_int    EU_TPG
+   {     0,     -1,  A_right,  PIDS_ID_SESSION     },  // s_int    EU_SID
+   {     3,     -1,  A_right,  PIDS_PRIORITY       },  // s_int    EU_PRI
+   {     3,     -1,  A_right,  PIDS_NICE           },  // s_int    EU_NCE
+   {     3,     -1,  A_right,  PIDS_NLWP           },  // s_int    EU_THD
+   {     0,     -1,  A_right,  PIDS_PROCESSOR      },  // u_int    EU_CPN
+   {     5,     -1,  A_right,  PIDS_TICS_ALL_DELTA },  // s_int    EU_CPU
+   {     6,     -1,  A_right,  PIDS_TICS_ALL       },  // ull_int  EU_TME
+   {     9,     -1,  A_right,  PIDS_TICS_ALL       },  // ull_int  EU_TM2
+   {     5,     -1,  A_right,  PIDS_MEM_RES        },  // ul_int   EU_MEM
+   {     7,  SK_Kb,  A_right,  PIDS_MEM_VIRT       },  // ul_int   EU_VRT
+   {     6,  SK_Kb,  A_right,  PIDS_VM_SWAP        },  // ul_int   EU_SWP
+   {     6,  SK_Kb,  A_right,  PIDS_MEM_RES        },  // ul_int   EU_RES
+   {     6,  SK_Kb,  A_right,  PIDS_MEM_CODE       },  // ul_int   EU_COD
+   {     7,  SK_Kb,  A_right,  PIDS_MEM_DATA       },  // ul_int   EU_DAT
+   {     6,  SK_Kb,  A_right,  PIDS_MEM_SHR        },  // ul_int   EU_SHR
+   {     4,     -1,  A_right,  PIDS_FLT_MAJ        },  // ul_int   EU_FL1
+   {     4,     -1,  A_right,  PIDS_FLT_MIN        },  // ul_int   EU_FL2
+   {     4,     -1,  A_right,  PIDS_noop           },  // ul_int   EU_DRT ( always 0 w/ since 2.6 )
+   {     1,     -1,  A_right,  PIDS_STATE          },  // s_ch     EU_STA
+   {    -1,     -1,  A_left,   PIDS_CMD            },  // str      EU_CMD
+   {    10,     -1,  A_left,   PIDS_WCHAN_NAME     },  // str      EU_WCH
+   {     8,     -1,  A_left,   PIDS_FLAGS          },  // ul_int   EU_FLG
+   {    -1,     -1,  A_left,   PIDS_CGROUP         },  // str      EU_CGR
+   {    -1,     -1,  A_left,   PIDS_SUPGIDS        },  // str      EU_SGD
+   {    -1,     -1,  A_left,   PIDS_SUPGROUPS      },  // str      EU_SGN
+   {     0,     -1,  A_right,  PIDS_ID_TGID        },  // s_int    EU_TGD
+   {     5,     -1,  A_right,  PIDS_OOM_ADJ        },  // s_int    EU_OOA
+   {     4,     -1,  A_right,  PIDS_OOM_SCORE      },  // s_int    EU_OOM
+   {    -1,     -1,  A_left,   PIDS_ENVIRON        },  // str      EU_ENV
+   {     3,     -1,  A_right,  PIDS_FLT_MAJ_DELTA  },  // s_int    EU_FV1
+   {     3,     -1,  A_right,  PIDS_FLT_MIN_DELTA  },  // s_int    EU_FV2
+   {     6,  SK_Kb,  A_right,  PIDS_VM_USED        },  // ul_int   EU_USE
+   {    10,     -1,  A_right,  PIDS_NS_IPC         },  // ul_int   EU_NS1
+   {    10,     -1,  A_right,  PIDS_NS_MNT         },  // ul_int   EU_NS2
+   {    10,     -1,  A_right,  PIDS_NS_NET         },  // ul_int   EU_NS3
+   {    10,     -1,  A_right,  PIDS_NS_PID         },  // ul_int   EU_NS4
+   {    10,     -1,  A_right,  PIDS_NS_USER        },  // ul_int   EU_NS5
+   {    10,     -1,  A_right,  PIDS_NS_UTS         },  // ul_int   EU_NS6
+   {     8,     -1,  A_left,   PIDS_LXCNAME        },  // str      EU_LXC
+   {     6,  SK_Kb,  A_right,  PIDS_VM_RSS_ANON    },  // ul_int   EU_RZA
+   {     6,  SK_Kb,  A_right,  PIDS_VM_RSS_FILE    },  // ul_int   EU_RZF
+   {     6,  SK_Kb,  A_right,  PIDS_VM_RSS_LOCKED  },  // ul_int   EU_RZL
+   {     6,  SK_Kb,  A_right,  PIDS_VM_RSS_SHARED  },  // ul_int   EU_RZS
+   {    -1,     -1,  A_left,   PIDS_CGNAME         },  // str      EU_CGN
+   {     0,     -1,  A_right,  PIDS_PROCESSOR_NODE },  // s_int    EU_NMA
+   {     5,     -1,  A_right,  PIDS_ID_LOGIN       },  // s_int    EU_LID
+   {    -1,     -1,  A_left,   PIDS_EXE            }   // str      EU_EXE
 #define eu_LAST        EU_EXE
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
@@ -1668,16 +1667,14 @@ static struct {
 #define eu_ID_FUID     eu_LAST +4
 #define eu_TREE_HID    eu_LAST +5
 #define eu_TREE_LVL    eu_LAST +6
-   , {  -1, -1, -1, -1,  PIDS_CMDLINE     }  // str      ( if Show_CMDLIN, eu_CMDLINE    )
-   , {  -1, -1, -1, -1,  PIDS_TICS_ALL_C  }  // ull_int  ( if Show_CTIMES, eu_TICS_ALL_C )
-   , {  -1, -1, -1, -1,  PIDS_TIME_START  }  // ull_int  ( if Show_FOREST, eu_TIME_START )
-   , {  -1, -1, -1, -1,  PIDS_ID_FUID     }  // u_int    ( if a usrseltyp, eu_ID_FUID    )
-   , {  -1, -1, -1, -1,  PIDS_extra       }  // s_ch     ( if Show_FOREST, eu_TREE_HID   )
-   , {  -1, -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_LVL   )
-#ifndef TREE_VCPUOFF
 #define eu_TREE_ADD    eu_LAST +7
-   , {  -1, -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_ADD   )
-#endif
+   , {  -1, -1, -1,  PIDS_CMDLINE     }  // str      ( if Show_CMDLIN, eu_CMDLINE    )
+   , {  -1, -1, -1,  PIDS_TICS_ALL_C  }  // ull_int  ( if Show_CTIMES, eu_TICS_ALL_C )
+   , {  -1, -1, -1,  PIDS_TIME_START  }  // ull_int  ( if Show_FOREST, eu_TIME_START )
+   , {  -1, -1, -1,  PIDS_ID_FUID     }  // u_int    ( if a usrseltyp, eu_ID_FUID    )
+   , {  -1, -1, -1,  PIDS_extra       }  // s_ch     ( if Show_FOREST, eu_TREE_HID   )
+   , {  -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_LVL   )
+   , {  -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_ADD   )
  #undef A_left
  #undef A_right
 };
@@ -1777,10 +1774,8 @@ static void adj_geometry (void) {
          * A calibrate_fields() *Helper* function to build the actual
          * column headers & ensure necessary item enumerators support */
 static void build_headers (void) {
- #define ckITEM(f) do { if (Fieldstab[f].erel < 0) { Fieldstab[f].erel = Pids_itms_cur; \
-      Pids_itms[Pids_itms_cur++] = Fieldstab[f].item; } } while (0)
- #define ckCMDS(w) do { if (CHKw(w, Show_CMDLIN)) ckITEM(eu_CMDLINE); \
-      else ckITEM(EU_CMD); } while (0)
+ #define ckITEM(f) do { Pids_itms[f] = Fieldstab[f].item; } while (0)
+ #define ckCMDS(w) do { if (CHKw(w, Show_CMDLIN)) ckITEM(eu_CMDLINE); } while (0)
    FLG_t f;
    char *s;
    WIN_t *w = Curwin;
@@ -1790,9 +1785,9 @@ static void build_headers (void) {
    int i;
 
    // reset the newlib enum selected indicator
-   Pids_itms_cur = 0;
-   for (i = 0; i < MAXTBL(Fieldstab); i++)
-      Fieldstab[i].erel = -1;
+   for (i = 0; i < MAXTBL(Fieldstab); i++) {
+      Pids_itms[i] = PIDS_extra;
+   }
    ckITEM(EU_PID);      // these 2 fields may not display,
    ckITEM(EU_STA);      // yet we'll always need them both
    ckITEM(EU_CMD);      // this is used with 'Y' (inspect)
@@ -1812,9 +1807,23 @@ static void build_headers (void) {
 #else
             if (EU_MAXPFLGS <= f) continue;
 #endif
-            if (EU_CMD == f) ckCMDS(w);
-            else ckITEM(f);
-
+            ckITEM(f);
+            switch (f) {
+               case EU_CMD:
+                  ckCMDS(w);
+                  break;
+               case EU_CPU:
+               // cpu calculations depend on number of threads
+                  ckITEM(EU_THD);
+                  break;
+               case EU_TME:
+               case EU_TM2:
+               // for 'cumulative' times, we'll need equivalent of cutime & cstime
+                  if (CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
+                  break;
+               default:
+                  break;
+            }
             s = scat(s, utf8_justify(N_col(f)
                , VARcol(f) ? w->varcolsz : Fieldstab[f].width
                , CHKw(w, Fieldstab[f].align)));
@@ -1829,8 +1838,6 @@ static void build_headers (void) {
          // prepare to even out column header lengths...
          if (hdrmax + w->hdrcaplen < (x = strlen(w->columnhdr))) hdrmax = x - w->hdrcaplen;
 #endif
-         // cpu calculations depend on number of threads
-         if (Fieldstab[EU_CPU].erel > -1) ckITEM(EU_THD);
          // for 'busy' only processes, we'll need elapsed tics
          if (!CHKw(w, Show_IDLEPS)) ckITEM(EU_CPU);
          // with forest view mode, we'll need pid, tgid, ppid & start_time...
@@ -1839,9 +1846,6 @@ static void build_headers (void) {
 #else
          if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_TREE_HID); ckITEM(eu_TREE_LVL); }
 #endif
-         // for 'cumulative' times, we'll need equivalent of cutime & cstime
-         if (Fieldstab[EU_TME].erel > -1 && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
-         if (Fieldstab[EU_TM2].erel > -1 && CHKw(w, Show_CTIMES)) ckITEM(eu_TICS_ALL_C);
          // for 'u/U' filtering we need these too (old top forgot that, oops)
          if (w->usrseltyp) { ckITEM(EU_UED); ckITEM(EU_URD); ckITEM(EU_USD); ckITEM(eu_ID_FUID); }
 
@@ -1959,7 +1963,7 @@ static void calibrate_fields (void) {
 
    build_headers();
 
-   if ((rc = procps_pids_reset(Pids_ctx, Pids_itms, Pids_itms_cur)))
+   if ((rc = procps_pids_reset(Pids_ctx, Pids_itms, Pids_itms_tot)))
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(-rc)));
 } // end: calibrate_fields
 
@@ -3224,9 +3228,9 @@ static void before (char *me) {
    if (PIDS_noop != 0)
       for (i = 0; i < MAXTBL(Fieldstab); i++)
          Pids_itms[i] = PIDS_noop;
-   Pids_itms_cur = MAXTBL(Fieldstab);
+   Pids_itms_tot = MAXTBL(Fieldstab);
    // we will identify specific items in the build_headers() function
-   if ((rc = procps_pids_new(&Pids_ctx, Pids_itms, Pids_itms_cur)))
+   if ((rc = procps_pids_new(&Pids_ctx, Pids_itms, Pids_itms_tot)))
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(-rc)));
 
 #ifndef SIGRTMAX       // not available on hurd, maybe others too
@@ -4280,7 +4284,7 @@ static void forest_adds (const int self, unsigned level) {
   // tailored 'results stack value' extractor macros
  #define rSv(E,X) PID_VAL(E, s_int, Seed_ppt[X])
   // if xtra-procps-debug.h active, can't use PID_VAL with assignment
- #define rSv_Lvl  Tree_ppt[Tree_idx]->head[Fieldstab[eu_TREE_LVL].erel].result.u_int
+ #define rSv_Lvl  Tree_ppt[Tree_idx]->head[eu_TREE_LVL].result.u_int
    int i;
 
    if (Tree_idx < PIDSmaxt) {               // immunize against insanity
@@ -4338,14 +4342,14 @@ static void forest_begin (WIN_t *q) {
       for (i = 0; i < Hide_tot; i++) {
 
         // if xtra-procps-debug.h active, can't use PID_VAL with assignment
-       #define rSv(E,T,X)  Tree_ppt[X]->head[Fieldstab[E].erel].result.T
+       #define rSv(E,T,X)  Tree_ppt[X]->head[E].result.T
        #define rSv_Pid(X)  rSv(EU_PID, s_int, X)
        #define rSv_Lvl(X)  rSv(eu_TREE_LVL, u_int, X)
        #define rSv_Hid(X)  rSv(eu_TREE_HID, s_ch, X)
         /* next two aren't needed if TREE_VCPUOFF is defined, but cost us nothing
-           yet we must never assume that PIDS_CPU result struct is always present */
+           and that EU_CPU slot will now always be present (even if it is zeroed) */
        #define rSv_Add(X)  rSv(eu_TREE_ADD, u_int, X)
-       #define rSv_Cpu(X)  (Fieldstab[EU_CPU].erel < 0) ? 0 : rSv(EU_CPU, s_int, X)
+       #define rSv_Cpu(X)  rSv(EU_CPU, s_int, X)
 
          if (Hide_pid[i] > 0) {
             for (j = 0; j < PIDSmaxt; j++) {
@@ -5611,6 +5615,8 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
  #endif
             if (CHKw(q, Show_FOREST)) u += rSv(eu_TREE_ADD, u_int);
             u *= Frame_etscale;
+            /* technically, eu_TREE_HID is only valid if Show_FOREST is active
+               but its zeroed out slot will always be present now */
             if (rSv(eu_TREE_HID, s_ch) != 'x' && u > 100.0 * n) u = 100.0 * n;
 #else
             u *= Frame_etscale;
