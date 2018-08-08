@@ -720,7 +720,7 @@ static char** file2strvec(const char* directory, const char* what) {
 	#undef ARG_LEN
 	if (end_of_file &&
 	    ((n > 0 && buf[n-1] != '\0') ||	/* last read char not null */
-	     (n <= 0 && rbuf[tot-1] != '\0')))	/* last read char not null */
+	     (n <= 0 && rbuf && rbuf[tot-1] != '\0')))	/* last read char not null */
 	    buf[n++] = '\0';			/* so append null-terminator */
 
 	if (n <= 0) break; /* unneeded (end_of_file = 1) but avoid realloc */
