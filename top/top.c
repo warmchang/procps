@@ -898,10 +898,10 @@ static char *alloc_s (const char *str) {
 
 
         /*
-         * This function is used in connection with raw single byte
-         * unsolicited keyboard input that's susceptible to SIGWINCH
-         * interrupts (or any other signal).  He also supports timout
-         * in the absence of user keystrokes or some signal interrupt. */
+         * An 'I/O available' routine which will detect raw single byte |
+         * unsolicited keyboard input which was susceptible to SIGWINCH |
+         * interrupts (or any other signal).  He'll also support timout |
+         * in the absence of any user keystrokes or a signal interrupt. | */
 static inline int ioa (struct timespec *ts) {
    fd_set fs;
    int rc;
@@ -1784,7 +1784,7 @@ static void build_headers (void) {
 #endif
    int i;
 
-   // reset the newlib enum selected indicator
+   // ensure fields not visible incur no significant library costs
    for (i = 0; i < MAXTBL(Fieldstab); i++) {
       Pids_itms[i] = PIDS_extra;
    }
@@ -2357,12 +2357,12 @@ static void procs_refresh (void) {
 //    n_alloc = nALIGN(n_reap, 100);
       n_alloc = nALGN2(n_reap, 128);
       for (i = 0; i < GROUPSMAX; i++) {
-         Winstk[i].ppt = alloc_r(Winstk[i].ppt, sizeof(void*) * n_alloc);
-         memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void*) * PIDSmaxt);
+         Winstk[i].ppt = alloc_r(Winstk[i].ppt, sizeof(void *) * n_alloc);
+         memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void *) * PIDSmaxt);
       }
    } else {
       for (i = 0; i < GROUPSMAX; i++)
-         memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void*) * PIDSmaxt);
+         memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void *) * PIDSmaxt);
    }
  #undef nALIGN
  #undef nALGN2
@@ -2510,13 +2510,13 @@ static void insp_cnt_nl (void) {
    }
 }
 #endif
-   Insp_p = alloc_c(sizeof(char*) * 2);
+   Insp_p = alloc_c(sizeof(char *) * 2);
 
    for (Insp_nl = 0; beg < end; beg++) {
       if (*beg == '\n') {
          Insp_p[Insp_nl++] = cur;
          // keep our array ahead of next potential need (plus the 2 above)
-         Insp_p = alloc_r(Insp_p, (sizeof(char*) * (Insp_nl +3)));
+         Insp_p = alloc_r(Insp_p, (sizeof(char *) * (Insp_nl +3)));
          cur = beg +1;
       }
    }
@@ -4321,7 +4321,7 @@ static void forest_begin (WIN_t *q) {
    if (!Tree_idx) {                            // do just once per frame
       if (hwmsav < PIDSmaxt) {                 // grow, but never shrink
          hwmsav = PIDSmaxt;
-         Tree_ppt = alloc_r(Tree_ppt, sizeof(void*) * hwmsav);
+         Tree_ppt = alloc_r(Tree_ppt, sizeof(void *) * hwmsav);
          Hide_pid = alloc_r(Hide_pid, sizeof(int) * hwmsav);
       }
 
@@ -4378,7 +4378,7 @@ static void forest_begin (WIN_t *q) {
        #undef rSv_Cpu
       }
    } // end: !Tree_idx
-   memcpy(Seed_ppt, Tree_ppt, sizeof(void*) * PIDSmaxt);
+   memcpy(Seed_ppt, Tree_ppt, sizeof(void *) * PIDSmaxt);
 } // end: forest_begin
 
 
@@ -4554,7 +4554,7 @@ static void other_filters (int ch) {
 
             i = 0;
             osel = w->osel_1st;
-            pp = alloc_c((w->osel_tot + 1) * sizeof(char**));
+            pp = alloc_c((w->osel_tot + 1) * sizeof(char **));
             while (osel && i < w->osel_tot) {
                pp[i++] = osel->raw;
                osel = osel->nxt;
