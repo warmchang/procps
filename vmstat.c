@@ -80,6 +80,9 @@ static int a_option;
 /* "-w" means "wide output" */
 static int w_option;
 
+/* "-y" means "skip first output" */
+static int y_option;
+
 /* "-t" means "show timestamp" */
 static int t_option;
 
@@ -232,6 +235,7 @@ static void __attribute__ ((__noreturn__))
     fputs(_(" -S, --unit <char>      define display unit\n"), out);
     fputs(_(" -w, --wide             wide output\n"), out);
     fputs(_(" -t, --timestamp        show timestamp\n"), out);
+    fputs(_(" -y, --no-first         skips first line of output\n"), out);
     fputs(USAGE_SEPARATOR, out);
     fputs(USAGE_HELP, out);
     fputs(USAGE_VERSION, out);
@@ -315,11 +319,11 @@ static void new_header(void)
     if (t_option) {
         (void) time( &the_time );
         tm_ptr = localtime( &the_time );
-		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
-			const size_t len = strlen(timestamp_header);
-			if (len >= 1 && len - 1 < sizeof(timebuf)) {
-				timebuf[len - 1] = '\0';
-			}
+        if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
+            const size_t len = strlen(timestamp_header);
+            if (len >= 1 && len - 1 < sizeof(timebuf)) {
+                timebuf[len - 1] = '\0';
+            }
         } else {
             timebuf[0] = '\0';
         }
@@ -378,25 +382,6 @@ static void new_format(void)
     if (procps_meminfo_new(&mem_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
 
-    if (t_option) {
-        (void) time( &the_time );
-        tm_ptr = localtime( &the_time );
-		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
-			;
-		} else {
-			timebuf[0] = '\0';
-		}
-    }
-    /* Do the initial fill */
-    if (!(stat_stack = procps_stat_select(stat_info, First_stat_items, MAX_stat)))
-        xerrx(EXIT_FAILURE, _("Unable to select stat information"));
-    cpu_use = TICv(stat_USR) + TICv(stat_NIC);
-    cpu_sys = TICv(stat_SYS) + TICv(stat_IRQ) + TICv(stat_SRQ);
-    cpu_idl = TICv(stat_IDL);
-    cpu_iow = TICv(stat_IOW);
-    cpu_sto = TICv(stat_STO);
-    cpu_gue = TICv(stat_GST) + TICv(stat_GNI);
-
     pgpgin[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int);
     pgpgout[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int);
     pswpin[tog] = VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int);
@@ -405,40 +390,62 @@ static void new_format(void)
     if (!(mem_stack = procps_meminfo_select(mem_info, Mem_items, MAX_mem)))
         xerrx(EXIT_FAILURE, _("Unable to select memory information"));
 
-    Div = cpu_use + cpu_sys + cpu_idl + cpu_iow + cpu_sto;
-    if (!Div) {
-        Div = 1;
-        cpu_idl = 1;
-    }
-    divo2 = Div / 2UL;
-    cpu_use = (cpu_use >= cpu_gue)? cpu_use - cpu_gue : 0;
+    if (y_option == 0) {
+        if (t_option) {
+            (void) time( &the_time );
+            tm_ptr = localtime( &the_time );
+            if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
+                ;
+            } else {
+                timebuf[0] = '\0';
+            }
+        }
+        /* Do the initial fill */
+        if (!(stat_stack = procps_stat_select(stat_info, First_stat_items, MAX_stat)))
+            xerrx(EXIT_FAILURE, _("Unable to select stat information"));
+        cpu_use = TICv(stat_USR) + TICv(stat_NIC);
+        cpu_sys = TICv(stat_SYS) + TICv(stat_IRQ) + TICv(stat_SRQ);
+        cpu_idl = TICv(stat_IDL);
+        cpu_iow = TICv(stat_IOW);
+        cpu_sto = TICv(stat_STO);
+        cpu_gue = TICv(stat_GST) + TICv(stat_GNI);
 
-    printf(w_option ? wide_format : format,
-           SYSv(stat_PRU),
-           SYSv(stat_PBL),
-           unitConvert(MEMv(mem_SUS)),
-           unitConvert(MEMv(mem_FREE)),
-           unitConvert((a_option?MEMv(mem_INA):MEMv(mem_BUF))),
-           unitConvert((a_option?MEMv(mem_ACT):MEMv(mem_CAC))),
-           (unsigned)( (unitConvert(VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int)  * kb_per_page) * hz + divo2) / Div ),
-           (unsigned)( (unitConvert(VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int)  * kb_per_page) * hz + divo2) / Div ),
-           (unsigned)( (VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int) * hz + divo2) / Div ),
-           (unsigned)( (VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int) * hz + divo2) / Div ),
-           (unsigned)( (SYSv(stat_INT)           * hz + divo2) / Div ),
-           (unsigned)( (SYSv(stat_CTX)           * hz + divo2) / Div ),
-           (unsigned)( (100*cpu_use        + divo2) / Div ),
-           (unsigned)( (100*cpu_sys        + divo2) / Div ),
-           (unsigned)( (100*cpu_idl        + divo2) / Div ),
-           (unsigned)( (100*cpu_iow        + divo2) / Div ),
-           (unsigned)( (100*cpu_sto        + divo2) / Div ),
-           (unsigned)( (100*cpu_gue        + divo2) / Div )
-    );
+        Div = cpu_use + cpu_sys + cpu_idl + cpu_iow + cpu_sto;
+        if (!Div) {
+            Div = 1;
+            cpu_idl = 1;
+        }
+        divo2 = Div / 2UL;
+        cpu_use = (cpu_use >= cpu_gue)? cpu_use - cpu_gue : 0;
 
-    if (t_option) {
-        printf(" %s", timebuf);
-    }
+        printf(w_option ? wide_format : format,
+               SYSv(stat_PRU),
+               SYSv(stat_PBL),
+               unitConvert(MEMv(mem_SUS)),
+               unitConvert(MEMv(mem_FREE)),
+               unitConvert((a_option?MEMv(mem_INA):MEMv(mem_BUF))),
+               unitConvert((a_option?MEMv(mem_ACT):MEMv(mem_CAC))),
+               (unsigned)( (unitConvert(VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int)  * kb_per_page) * hz + divo2) / Div ),
+               (unsigned)( (unitConvert(VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int)  * kb_per_page) * hz + divo2) / Div ),
+               (unsigned)( (VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int) * hz + divo2) / Div ),
+               (unsigned)( (VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int) * hz + divo2) / Div ),
+               (unsigned)( (SYSv(stat_INT)           * hz + divo2) / Div ),
+               (unsigned)( (SYSv(stat_CTX)           * hz + divo2) / Div ),
+               (unsigned)( (100*cpu_use        + divo2) / Div ),
+               (unsigned)( (100*cpu_sys        + divo2) / Div ),
+               (unsigned)( (100*cpu_idl        + divo2) / Div ),
+               (unsigned)( (100*cpu_iow        + divo2) / Div ),
+               (unsigned)( (100*cpu_sto        + divo2) / Div ),
+               (unsigned)( (100*cpu_gue        + divo2) / Div )
+        );
 
-    printf("\n");
+        if (t_option) {
+            printf(" %s", timebuf);
+        }
+
+        printf("\n");
+    } else
+        num_updates++;
 
     /* main loop */
     for (i = 1; infinite_updates || i < num_updates; i++) {
@@ -464,11 +471,11 @@ static void new_format(void)
         if (t_option) {
             (void) time( &the_time );
             tm_ptr = localtime( &the_time );
-			if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
-				;
-			} else {
-				timebuf[0] = '\0';
-			}
+            if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
+                ;
+            } else {
+                timebuf[0] = '\0';
+            }
         }
 
         /* idle can run backwards for a moment -- kernel "feature" */
@@ -522,7 +529,7 @@ static void new_format(void)
                (unsigned)( (100*cpu_iow+divo2)/Div ),
                /* st */
                (unsigned)( (100*cpu_sto+divo2)/Div ),
-	       /* gu */
+           /* gu */
                (unsigned)( (100*cpu_gue+divo2)/Div )
         );
 
@@ -567,7 +574,7 @@ static void diskpartition_format(const char *partition_name)
     struct diskstats_info *disk_stat = NULL;
     struct diskstats_stack *stack;
     struct diskstats_result *got;
-	const char format[] = "%21lu  %16lu  %10lu  %16lu\n";
+    const char format[] = "%21lu  %16lu  %10lu  %16lu\n";
     int i;
 
     if (procps_diskstats_new(&disk_stat) < 0)
@@ -647,11 +654,11 @@ static void diskheader(void)
     if (t_option) {
         (void) time( &the_time );
         tm_ptr = localtime( &the_time );
-		if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
-			const size_t len = strlen(timestamp_header);
-			if (len >= 1 && len - 1 < sizeof(timebuf)) {
-				timebuf[len - 1] = '\0';
-			}
+        if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Z", tm_ptr)) {
+            const size_t len = strlen(timestamp_header);
+            if (len >= 1 && len - 1 < sizeof(timebuf)) {
+                timebuf[len - 1] = '\0';
+            }
         } else {
             timebuf[0] = '\0';
         }
@@ -685,11 +692,11 @@ static void diskformat(void)
         if (t_option) {
             (void) time( &the_time );
             tm_ptr = localtime( &the_time );
-			if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
-				;
-			} else {
-				timebuf[0] = '\0';
-			}
+            if (tm_ptr && strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", tm_ptr)) {
+                ;
+            } else {
+                timebuf[0] = '\0';
+            }
         }
         for (j = 0; j < reap->total; j++) {
             if (diskVAL(disk_TYPE, s_int) != DISKSTATS_TYPE_DISK)
@@ -944,6 +951,7 @@ int main(int argc, char *argv[])
         {"timestamp", no_argument, NULL, 't'},
         {"help", no_argument, NULL, 'h'},
         {"version", no_argument, NULL, 'V'},
+        {"no-first", no_argument, NULL, 'y'},
         {NULL, 0, NULL, 0}
     };
 
@@ -956,7 +964,7 @@ int main(int argc, char *argv[])
     atexit(close_stdout);
 
     while ((c =
-        getopt_long(argc, argv, "afmnsdDp:S:wthV", longopts, NULL)) != -1)
+        getopt_long(argc, argv, "afmnsdDp:S:wthVy", longopts, NULL)) != -1)
         switch (c) {
         case 'V':
             printf(PROCPS_NG_VERSION);
@@ -1022,6 +1030,10 @@ int main(int argc, char *argv[])
             break;
         case 't':
             t_option = 1;
+            break;
+        case 'y':
+            /* Don't display stats since system restart */
+            y_option = 1;
             break;
         default:
             /* no other aguments defined yet. */
