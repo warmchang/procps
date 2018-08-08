@@ -6,7 +6,7 @@
 #define PROCPS_NG_NLS_H
 
 /* programs issuing textdomain() need PACKAGE string */
-#include "../config.h"
+#include "config.h"
 
 /* programs issuing bindtextdomain() also need LOCALEDIR string */
 #ifndef LOCALEDIR
