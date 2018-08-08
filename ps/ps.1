@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS 1 2018-05-31 "procps-ng" "User Commands"
+.TH PS 1 2018-08-08 "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -236,6 +236,10 @@ Identical to
 Select by command name.  This selects the processes whose executable name is
 given in
 .IR cmdlist .
+NOTE: The command name is not the same as the command line. Previous versions
+of procps and the kernel truncated this command name to 15 characters. This
+limitation is no longer present in both. If you depended on matching only
+15 characters, you may no longer get a match.
 .TP
 .BI \-G \ grplist
 Select by real group ID (RGID) or name.  This selects the processes whose
