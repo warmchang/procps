@@ -414,7 +414,7 @@ static void bye_bye (const char *str) {
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
       "\n\t   page_bytes = %d, Cpu_faux_tot = %d, smp_num_cpus = %d"
       "\n\t   sizeof(CPU_t) = %u, sizeof(HST_t) = %u (%d HST_t's/Page), HHist_siz = %u"
-      "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t*) = %u"
+      "\n\t   sizeof(proc_t) = %u, sizeof(proc_t.cmd) = %u, sizeof(proc_t *) = %u"
       "\n\t   Frames_libflags = %08lX"
       "\n\t   SCREENMAX = %u, ROWMINSIZ = %u, ROWMAXSIZ = %u"
       "\n\t   PACKAGE = '%s', LOCALEDIR = '%s'"
@@ -444,7 +444,7 @@ static void bye_bye (const char *str) {
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
       , (int)page_bytes, Cpu_faux_tot, (int)smp_num_cpus, (unsigned)sizeof(CPU_t)
       , (unsigned)sizeof(HST_t), ((int)page_bytes / (int)sizeof(HST_t)), HHist_siz
-      , (unsigned)sizeof(proc_t), (unsigned)sizeof(p->cmd), (unsigned)sizeof(proc_t*)
+      , (unsigned)sizeof(proc_t), (unsigned)sizeof(p->cmd), (unsigned)sizeof(proc_t *)
       , (long)Frames_libflags
       , (unsigned)SCREENMAX, (unsigned)ROWMINSIZ, (unsigned)ROWMAXSIZ
       , PACKAGE, LOCALEDIR
@@ -1069,10 +1069,10 @@ static char *alloc_s (const char *str) {
 
 
         /*
-         * This function is used in connection with raw single byte
-         * unsolicited keyboard input that's susceptible to SIGWINCH
-         * interrupts (or any other signal).  He also supports timout
-         * in the absence of user keystrokes or some signal interrupt. */
+         * An 'I/O available' routine which will detect raw single byte |
+         * unsolicited keyboard input which was susceptible to SIGWINCH |
+         * interrupts (or any other signal).  He'll also support timout |
+         * in the absence of any user keystrokes or a signal interrupt. | */
 static inline int ioa (struct timespec *ts) {
    fd_set fs;
    int rc;
@@ -2758,7 +2758,7 @@ static void procs_refresh (void) {
    proc_t *ptask;
    PROCTAB* PT;
    int i;
-   proc_t*(*read_something)(PROCTAB*, proc_t*);
+   proc_t *(*read_something)(PROCTAB*, proc_t *);
 
    procs_hlp(NULL);                              // prep for a new frame
    if (NULL == (PT = openproc(Frames_libflags, Monpids)))
@@ -2770,9 +2770,9 @@ static void procs_refresh (void) {
          /* we're subject to integer overflow if total linux tasks ever approach |
             400+ million (but, do you think memory might be the bigger problem?) | */
          n_alloc = 10 + ((n_alloc * 5) / 4);     // grow by over 25%
-         private_ppt = alloc_r(private_ppt, sizeof(proc_t*) * n_alloc);
+         private_ppt = alloc_r(private_ppt, sizeof(proc_t *) * n_alloc);
          // ensure NULL pointers for the additional memory just acquired
-         memset(private_ppt + n_used, 0, sizeof(proc_t*) * (n_alloc - n_used));
+         memset(private_ppt + n_used, 0, sizeof(proc_t *) * (n_alloc - n_used));
       }
       // on the way to n_alloc, the library will allocate the underlying
       // proc_t storage whenever our private_ppt[] pointer is NULL...
@@ -2785,12 +2785,12 @@ static void procs_refresh (void) {
    // lastly, refresh each window's proc pointers table...
    if (n_saved == n_alloc)
       for (i = 0; i < GROUPSMAX; i++)
-         memcpy(Winstk[i].ppt, private_ppt, sizeof(proc_t*) * n_used);
+         memcpy(Winstk[i].ppt, private_ppt, sizeof(proc_t *) * n_used);
    else {
       n_saved = n_alloc;
       for (i = 0; i < GROUPSMAX; i++) {
-         Winstk[i].ppt = alloc_r(Winstk[i].ppt, sizeof(proc_t*) * n_alloc);
-         memcpy(Winstk[i].ppt, private_ppt, sizeof(proc_t*) * n_used);
+         Winstk[i].ppt = alloc_r(Winstk[i].ppt, sizeof(proc_t *) * n_alloc);
+         memcpy(Winstk[i].ppt, private_ppt, sizeof(proc_t *) * n_used);
       }
    }
  #undef n_used
@@ -2943,13 +2943,13 @@ static void insp_cnt_nl (void) {
    }
 }
 #endif
-   Insp_p = alloc_c(sizeof(char*) * 2);
+   Insp_p = alloc_c(sizeof(char *) * 2);
 
    for (Insp_nl = 0; beg < end; beg++) {
       if (*beg == '\n') {
          Insp_p[Insp_nl++] = cur;
          // keep our array ahead of next potential need (plus the 2 above)
-         Insp_p = alloc_r(Insp_p, (sizeof(char*) * (Insp_nl +3)));
+         Insp_p = alloc_r(Insp_p, (sizeof(char *) * (Insp_nl +3)));
          cur = beg +1;
       }
    }
@@ -4762,7 +4762,7 @@ static void forest_create (WIN_t *q) {
    if (!Tree_idx) {                         // do just once per frame
       if (hwmsav < Frame_maxtask) {         // grow, but never shrink
          hwmsav = Frame_maxtask;
-         Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t*) * hwmsav);
+         Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t *) * hwmsav);
          Hide_pid = alloc_r(Hide_pid, sizeof(int) * hwmsav);
 #ifndef TREE_VCPUOFF
          Hide_cpu = alloc_r(Hide_cpu, sizeof(unsigned) * hwmsav);
@@ -4770,7 +4770,7 @@ static void forest_create (WIN_t *q) {
       }
 
 #ifndef TREE_SCANALL
-      qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t*), (QFP_t)forest_based);
+      qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t *), (QFP_t)forest_based);
 #endif
       for (i = 0; i < Frame_maxtask; i++) { // avoid any hidepid distortions
          if (!Seed_ppt[i]->pad_3)           // real & pseudo parents == zero
@@ -4805,7 +4805,7 @@ static void forest_create (WIN_t *q) {
          }
       }
    }
-   memcpy(Seed_ppt, Tree_ppt, sizeof(proc_t*) * Frame_maxtask);
+   memcpy(Seed_ppt, Tree_ppt, sizeof(proc_t *) * Frame_maxtask);
 } // end: forest_create
 
 
@@ -4974,7 +4974,7 @@ static void other_filters (int ch) {
 
             i = 0;
             osel = w->osel_1st;
-            pp = alloc_c((w->osel_tot + 1) * sizeof(char**));
+            pp = alloc_c((w->osel_tot + 1) * sizeof(char **));
             while (osel && i < w->osel_tot) {
                pp[i++] = osel->raw;
                osel = osel->nxt;
@@ -6311,7 +6311,7 @@ static int window_show (WIN_t *q, int wmax) {
       else Frame_srtflg = -1;
       Frame_ctimes = CHKw(q, Show_CTIMES);          // this & next, only maybe
       Frame_cmdlin = CHKw(q, Show_CMDLIN);
-      qsort(q->ppt, Frame_maxtask, sizeof(proc_t*), Fieldstab[q->rc.sortindx].sort);
+      qsort(q->ppt, Frame_maxtask, sizeof(proc_t *), Fieldstab[q->rc.sortindx].sort);
    }
 
    if (q->begnext) window_hlp();
