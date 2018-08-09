@@ -4367,6 +4367,8 @@ static void forest_begin (WIN_t *q) {
                   }
                   // children found (and collapsed), so mark that puppy
                   if (children) rSv_Hid(parent) = 'x';
+                  // this will force a check of the next Hide_pid, if any
+                  j = PIDSmaxt;
                }
             }
          }
