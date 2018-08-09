@@ -4800,6 +4800,8 @@ static void forest_create (WIN_t *q) {
                   }
                   // children found (and collapsed), so mark that puppy
                   if (children) Tree_ppt[parent]->pad_2 = 'x';
+                  // this will force a check of the next Hide_pid, if any
+                  j = Frame_maxtask;
                }
             }
          }
