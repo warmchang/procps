@@ -3615,7 +3615,11 @@ static void before (char *me) {
    struct sigaction sa;
    proc_t p;
    int i;
+#ifndef PRETEND2_5_X
    int linux_version_code = procps_linux_version();
+#else
+   int linux_version_code = LINUX_VERSION(2,5,43);
+#endif
 
    atexit(close_stdout);
 

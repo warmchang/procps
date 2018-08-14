@@ -92,10 +92,6 @@
         /* For prompting & helping with top's utf-8 support, thanks to:
               Göran Uddeborg <goeran@uddeborg.se> - September, 2017 */
 
-#ifdef PRETEND2_5_X
-#define linux_version_code LINUX_VERSION(2,5,43)
-#endif
-
    // pretend as if #define _GNU_SOURCE
 char *strcasestr(const char *haystack, const char *needle);
 
