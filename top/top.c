@@ -736,7 +736,10 @@ static int show_pmt (const char *str) {
         /*
          * Create and print the optional scroll coordinates message */
 static void show_scroll (void) {
-   char tmp1[SMLBUFSIZ], tmp2[SMLBUFSIZ];
+   char tmp1[SMLBUFSIZ];
+#ifndef SCROLLVAR_NO
+   char tmp2[SMLBUFSIZ];
+#endif
    int totpflgs = Curwin->totpflgs;
    int begpflgs = Curwin->begpflg + 1;
 
