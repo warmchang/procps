@@ -4368,12 +4368,17 @@ static void forest_begin (WIN_t *q) {
 #endif
                      children = 1;
                   }
-                  // children found (and collapsed), so mark that puppy
+                  /* if any children found (and collapsed), mark the parent
+                     ( when children aren't found we won't negate the pid )
+                     ( to prevent a future scan since who's to say such a )
+                     ( task won't fork one or more children in the future ) */
                   if (children) rSv_Hid(parent) = 'x';
-                  // this will force a check of the next Hide_pid, if any
-                  j = PIDSmaxt;
+                  // this will force a check of the next Hide_pid[], if any
+                  j = PIDSmaxt + 1;
                }
             }
+            // if target task disappeared (ended), prevent further scanning
+            if (j == PIDSmaxt) Hide_pid[i] = -Hide_pid[i];
          }
        #undef rSv
        #undef rSv_Pid
