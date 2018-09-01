@@ -308,6 +308,10 @@ struct vmstat_stack *procps_vmstat_select (
     enum vmstat_item *items,
     int numitems);
 
+
+#ifdef XTRA_PROCPS_DEBUG
+# include <proc/xtra-procps-debug.h>
+#endif
 #ifdef __cplusplus
 }
 #endif

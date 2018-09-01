@@ -130,6 +130,10 @@ struct slabinfo_stack **procps_slabinfo_sort (
     enum slabinfo_item sortitem,
     enum slabinfo_sort_order order);
 
+
+#ifdef XTRA_PROCPS_DEBUG
+# include <proc/xtra-procps-debug.h>
+#endif
 #ifdef __cplusplus
 }
 #endif

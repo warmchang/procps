@@ -154,6 +154,10 @@ struct stat_stack **procps_stat_sort (
     enum stat_item sortitem,
     enum stat_sort_order order);
 
+
+#ifdef XTRA_PROCPS_DEBUG
+# include <proc/xtra-procps-debug.h>
+#endif
 #ifdef __cplusplus
 }
 #endif

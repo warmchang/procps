@@ -171,6 +171,10 @@ struct meminfo_stack *procps_meminfo_select (
     enum meminfo_item *items,
     int numitems);
 
+
+#ifdef XTRA_PROCPS_DEBUG
+# include <proc/xtra-procps-debug.h>
+#endif
 #ifdef __cplusplus
 }
 #endif

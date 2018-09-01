@@ -126,6 +126,10 @@ struct diskstats_stack **procps_diskstats_sort (
     enum diskstats_item sortitem,
     enum diskstats_sort_order order);
 
+
+#ifdef XTRA_PROCPS_DEBUG
+# include <proc/xtra-procps-debug.h>
+#endif
 #ifdef __cplusplus
 }
 #endif

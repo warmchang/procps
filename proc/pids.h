@@ -234,6 +234,10 @@ struct pids_stack **procps_pids_sort (
     enum pids_item sortitem,
     enum pids_sort_order order);
 
+
+#ifdef XTRA_PROCPS_DEBUG
+# include <proc/xtra-procps-debug.h>
+#endif
 #ifdef __cplusplus
 }
 #endif
