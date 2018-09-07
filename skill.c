@@ -507,7 +507,7 @@ static void __attribute__ ((__noreturn__))
 			} else {
 			    /* Special case for signal digit negative
 			     * PIDs */
-			    pid = atoi(argv[optind]);
+			    pid = atoi(argv[optind-1]);
 			    if (kill((pid_t)pid, signo) != 0)
 				exitvalue = EXIT_FAILURE;
 			    exit(exitvalue);
