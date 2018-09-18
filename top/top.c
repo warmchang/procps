@@ -4231,7 +4231,8 @@ static void wins_stage_2 (void) {
    // fill in missing Fieldstab members and build each window's columnhdr
    zap_fieldstab();
 
-   // with preserved 'other filters', ensure a visible task on row #1
+   // with preserved 'other filters' & command line 'user filters',
+   // we must ensure that we always have a visible task on row one.
    mkVIZrow1(Curwin);
 
    // lastly, initialize a signal set used to throttle one troublesome signal
@@ -4943,7 +4944,10 @@ static void keys_task (int ch) {
       case 'O':
       case 'o':
       case kbd_CtrlO:
-         if (VIZCHKw(w)) other_filters(ch);
+         if (VIZCHKw(w)) {
+            other_filters(ch);
+            mkVIZrow1(w);
+         }
          break;
       case 'U':
       case 'u':
@@ -4952,6 +4956,7 @@ static void keys_task (int ch) {
             if (*str != kbd_ESC
             && (errmsg = user_certify(w, str, ch)))
                 show_msg(errmsg);
+            mkVIZrow1(w);
          }
          break;
       case 'V':
@@ -5780,7 +5785,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          * In reality, this function is called:
          *   1) exclusively for the 'current' window
          *   2) immediately after interacting with the user
-         *   3) who struck 1 of these: up, down, pgup, pgdn, home or end
+         *   3) who struck: up, down, pgup, pgdn, home, end, 'o/O' or 'u/U'
          *   4) or upon the user switching from one window to another window */
 static void window_hlp (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
