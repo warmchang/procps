@@ -56,6 +56,7 @@
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
 //#define TREE_SCANALL            /* rescan array w/ forest view, avoid sort */
+//#define TREE_VALTMRK            /* use an indented '+' with collapsed pids */
 //#define TREE_VCPUOFF            /* a collapsed parent excludes child's cpu */
 //#define TREE_VPROMPT            /* pid collapse/expand prompt, vs. top row */
 //#define TREE_VWINALL            /* pid collapse/expand impacts all windows */

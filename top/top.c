@@ -4840,7 +4840,11 @@ static inline const char *forest_display (const WIN_t *q, const proc_t *p) {
    if (q == Curwin)            // note: the following is NOT indented
 #endif
    if (p->pad_2 == 'x') {
+#ifdef TREE_VALTMRK
+      snprintf(buf, sizeof(buf), "%*s%s", (4 * p->pad_3), "`+ ", which);
+#else
       snprintf(buf, sizeof(buf), "+%*s%s", ((4 * p->pad_3) - 1), "`- ", which);
+#endif
       return buf;
    }
    if (p->pad_3 > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
