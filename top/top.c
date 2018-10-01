@@ -4418,7 +4418,11 @@ static inline const char *forest_colour (const WIN_t *q, struct pids_stack *p) {
    if (q == Curwin)            // note: the following is NOT indented
 #endif
    if (rSv_Hid == 'x') {
+#ifdef TREE_VALTMRK
+      snprintf(buf, sizeof(buf), "%*s%s", (4 * rSv_Lvl), "`+ ", which);
+#else
       snprintf(buf, sizeof(buf), "+%*s%s", ((4 * rSv_Lvl) - 1), "`- ", which);
+#endif
       return buf;
    }
    if (rSv_Lvl > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
