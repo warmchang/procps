@@ -4712,7 +4712,7 @@ static int      Tree_idx;                   // frame_make resets to zero
            array holds parent pids whose children have been manipulated.
            positive pid values represent parents with collapsed children
            while a negative pid value means children have been expanded.
-           ( both of these are managed under the 'keys_task()' routine ) */
+           ( the first two are managed under the 'keys_task()' routine ) */
 static int *Hide_pid;                       // collapsible process array
 static int  Hide_tot;                       // total used in above array
 #ifndef TREE_VCPUOFF
@@ -4771,7 +4771,6 @@ static void forest_create (WIN_t *q) {
       if (hwmsav < Frame_maxtask) {         // grow, but never shrink
          hwmsav = Frame_maxtask;
          Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t *) * hwmsav);
-         Hide_pid = alloc_r(Hide_pid, sizeof(int) * hwmsav);
 #ifndef TREE_VCPUOFF
          Hide_cpu = alloc_r(Hide_cpu, sizeof(unsigned) * hwmsav);
 #endif
@@ -5405,11 +5404,19 @@ static void keys_task (int ch) {
                      break;
                   }
                }
-               if (i == Hide_tot) Hide_pid[Hide_tot++] = pid;
-               // plenty of room, but if everything's expanded let's reset ...
-               for (i = 0; i < Hide_tot; i++)
-                  if (Hide_pid[i] > 0) break;
-               if (i == Hide_tot) Hide_tot = 0;
+               if (i == Hide_tot) {
+                  static int totsav;
+                  if (Hide_tot >= totsav) {
+                     totsav += 128;
+                     Hide_pid = alloc_r(Hide_pid, sizeof(int) * totsav);
+                  }
+                  Hide_pid[Hide_tot++] = pid;
+               } else {
+                  // if everything's expanded, let's empty the array ...
+                  for (i = 0; i < Hide_tot; i++)
+                     if (Hide_pid[i] > 0) break;
+                  if (i == Hide_tot) Hide_tot = 0;
+               }
             }
          }
          break;
