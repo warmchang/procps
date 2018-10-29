@@ -280,7 +280,7 @@ static int conv_uid (const char *restrict name, struct el *restrict e)
 		xwarnx(_("invalid user name: %s"), name);
 		return 0;
 	}
-	e->num = pwd->pw_uid;
+	e->num = (int) pwd->pw_uid;
 	return 1;
 }
 
@@ -297,7 +297,7 @@ static int conv_gid (const char *restrict name, struct el *restrict e)
 		xwarnx(_("invalid group name: %s"), name);
 		return 0;
 	}
-	e->num = grp->gr_gid;
+	e->num = (int) grp->gr_gid;
 	return 1;
 }
 
