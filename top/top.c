@@ -4331,7 +4331,6 @@ static void forest_begin (WIN_t *q) {
       if (hwmsav < PIDSmaxt) {                 // grow, but never shrink
          hwmsav = PIDSmaxt;
          Tree_ppt = alloc_r(Tree_ppt, sizeof(void *) * hwmsav);
-         Hide_pid = alloc_r(Hide_pid, sizeof(int) * hwmsav);
       }
 
 #ifndef TREE_SCANALL
@@ -4986,11 +4985,19 @@ static void keys_task (int ch) {
                      break;
                   }
                }
-               if (i == Hide_tot) Hide_pid[Hide_tot++] = pid;
-               // plenty of room, but if everything's expanded let's reset ...
-               for (i = 0; i < Hide_tot; i++)
-                  if (Hide_pid[i] > 0) break;
-               if (i == Hide_tot) Hide_tot = 0;
+               if (i == Hide_tot) {
+                  static int totsav;
+                  if (Hide_tot >= totsav) {
+                     totsav += 128;
+                     Hide_pid = alloc_r(Hide_pid, sizeof(int) * totsav);
+                  }
+                  Hide_pid[Hide_tot++] = pid;
+               } else {
+                  // if everything's expanded, let's empty the array ...
+                  for (i = 0; i < Hide_tot; i++)
+                     if (Hide_pid[i] > 0) break;
+                  if (i == Hide_tot) Hide_tot = 0;
+               }
             }
          }
          break;
