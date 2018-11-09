@@ -36,6 +36,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <stdbool.h>
+#include <time.h>
 
 /* EXIT_SUCCESS is 0 */
 /* EXIT_FAILURE is 1 */
@@ -52,6 +53,7 @@
 #include "proc/sig.h"
 #include "proc/devname.h"
 #include "proc/sysinfo.h"
+#include "ps/common.h"
 
 #define grow_size(x) do { \
 	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
@@ -72,6 +74,7 @@ static int opt_full = 0;
 static int opt_long = 0;
 static int opt_longlong = 0;
 static int opt_oldest = 0;
+static int opt_older = 0;
 static int opt_newest = 0;
 static int opt_negate = 0;
 static int opt_exact = 0;
@@ -129,6 +132,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(_(" -i, --ignore-case         match case insensitively\n"), fp);
 	fputs(_(" -n, --newest              select most recently started\n"), fp);
 	fputs(_(" -o, --oldest              select least recently started\n"), fp);
+	fputs(_(" -O, --older <seconds>     select where older than seconds\n"), fp);
 	fputs(_(" -P, --parent <PPID,...>   match only child processes of the given parent\n"), fp);
 	fputs(_(" -s, --session <SID,...>   match session IDs\n"), fp);
 	fputs(_(" -t, --terminal <tty,...>  match by controlling terminal\n"), fp);
@@ -438,7 +442,7 @@ static PROCTAB *do_openproc (void)
 		flags |= PROC_FILLCOM;
 	if (opt_ruid || opt_rgid)
 		flags |= PROC_FILLSTATUS;
-	if (opt_oldest || opt_newest || opt_pgrp || opt_sid || opt_term)
+	if (opt_oldest || opt_newest || opt_pgrp || opt_sid || opt_term || opt_older)
 		flags |= PROC_FILLSTAT;
 	if (!(flags & PROC_FILLSTAT))
 		flags |= PROC_FILLSTATUS;  /* FIXME: need one, and PROC_FILLANY broken */
@@ -526,15 +530,18 @@ static struct el * select_procs (int *num)
 	char *cmdsearch = xmalloc(cmdlen);
 	char *cmdoutput = xmalloc(cmdlen);
 	proc_t ns_task;
+	time_t now;
 
 	ptp = do_openproc();
 	preg = do_regcomp();
 
+	now = time(NULL);
 	if (opt_newest) saved_start_time =  0ULL;
 	else saved_start_time = ~0ULL;
 
 	if (opt_newest) saved_pid = 0;
 	if (opt_oldest) saved_pid = INT_MAX;
+	if (opt_older) reset_global();
 	if (opt_ns_pid && ns_read(opt_ns_pid, &ns_task)) {
 		fputs(_("Error reading reference namespace information\n"),
 		      stderr);
@@ -579,6 +586,8 @@ static struct el * select_procs (int *num)
 				match = match_strlist (tty, opt_term);
 			}
 		}
+		else if (opt_older)
+			if(now - seconds_since_boot + (task.start_time / Hertz) + opt_older > now) match = 0;
 		else if (opt_runstates) {
 			match = 0;
 			if (strchr(opt_runstates, task.state)) match = 1;
@@ -614,6 +623,7 @@ static struct el * select_procs (int *num)
 				strncpy (cmdoutput, task.cmd, cmdlen - 1);
 			cmdoutput[cmdlen - 1] = '\0';
 		}
+
 
 		if (match && opt_pattern) {
 			if (opt_full && task.cmdline)
@@ -662,7 +672,7 @@ static struct el * select_procs (int *num)
 			// control is free
 			if (opt_threads && !i_am_pkill) {
 				while (readtask(ptp, &task, &subtask)){
-					// don't add redundand tasks
+					// don't add redundant tasks
 					if (task.XXXID == subtask.XXXID)
 						continue;
 
@@ -732,6 +742,7 @@ static void parse_opts (int argc, char **argv)
 		{"ignore-case", no_argument, NULL, 'i'},
 		{"newest", no_argument, NULL, 'n'},
 		{"oldest", no_argument, NULL, 'o'},
+		{"older", required_argument, NULL, 'O'},
 		{"parent", required_argument, NULL, 'P'},
 		{"session", required_argument, NULL, 's'},
 		{"terminal", required_argument, NULL, 't'},
@@ -765,7 +776,7 @@ static void parse_opts (int argc, char **argv)
 		strcat (opts, "lad:vw");
 	}
 
-	strcat (opts, "LF:cfinoxP:g:s:u:U:G:t:r:?Vh");
+	strcat (opts, "LF:cfinoxP:O:g:s:u:U:G:t:r:?Vh");
 
 	while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
 		switch (opt) {
@@ -860,6 +871,9 @@ static void parse_opts (int argc, char **argv)
 				usage ('?');
 			opt_oldest = 1;
 			++criteria_count;
+			break;
+		case 'O':
+			opt_older = atoi (optarg);
 			break;
 		case 's':   /* Solaris: match by session ID -- zero means self */
 			opt_sid = split_list (optarg, conv_sid);
@@ -971,7 +985,7 @@ int main (int argc, char **argv)
 	procs = select_procs (&num);
 	if (i_am_pkill) {
 		int i;
-        int kill_count = 0;
+		int kill_count = 0;
 		for (i = 0; i < num; i++) {
 			if (execute_kill (procs[i].num, opt_signal) != -1) {
 				if (opt_echo)
@@ -986,7 +1000,7 @@ int main (int argc, char **argv)
 		}
 		if (opt_count)
 			fprintf(stdout, "%d\n", num);
-        return !kill_count;
+		return !kill_count;
 	} else {
 		if (opt_count) {
 			fprintf(stdout, "%d\n", num);
