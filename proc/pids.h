@@ -74,6 +74,7 @@ enum pids_item {
     PIDS_ID_SUID,           //   u_int
     PIDS_ID_SUSER,          //     str
     PIDS_ID_TGID,           //   s_int
+    PIDS_ID_TID,            //   s_int
     PIDS_ID_TPGID,          //   s_int
     PIDS_LXCNAME,           //     str
     PIDS_MEM_CODE,          //  ul_int

@@ -186,6 +186,7 @@ REG_set(ID_SGROUP,        str,     sgroup)
 REG_set(ID_SUID,          u_int,   suid)
 REG_set(ID_SUSER,         str,     suser)
 REG_set(ID_TGID,          s_int,   tgid)
+REG_set(ID_TID,           s_int,   tid)
 REG_set(ID_TPGID,         s_int,   tpgid)
 REG_set(LXCNAME,          str,     lxcname)
 CVT_set(MEM_CODE,         ul_int,  trs)
@@ -439,6 +440,7 @@ static struct {
     { RS(ID_SUID),           f_status,   NULL,      QS(u_int),     0,        TS(u_int)   },
     { RS(ID_SUSER),          x_ouser,    NULL,      QS(str),       0,        TS(str)     }, // freefunc NULL w/ cached string
     { RS(ID_TGID),           0,          NULL,      QS(s_int),     0,        TS(s_int)   }, // oldflags: free w/ simple_nextpid
+    { RS(ID_TID),            0,          NULL,      QS(s_int),     0,        TS(s_int)   }, // oldflags: free w/ simple_nexttid
     { RS(ID_TPGID),          f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(LXCNAME),           f_lxc,      NULL,      QS(str),       0,        TS(str)     }, // freefunc NULL w/ cached string
     { RS(MEM_CODE),          f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
