@@ -37,22 +37,22 @@
 
 struct meminfo_data {
     unsigned long Active;
-    unsigned long Active_anon;         // as: Active(anon):
-    unsigned long Active_file;         // as: Active(file):
+    unsigned long Active_anon;         // as: Active(anon):  man 5 proc: 'to be documented'
+    unsigned long Active_file;         // as: Active(file):  man 5 proc: 'to be documented'
     unsigned long AnonHugePages;
     unsigned long AnonPages;
     unsigned long Bounce;
     unsigned long Buffers;
     unsigned long Cached;
-    unsigned long CmaFree;             //  man 5 proc: 'to be documented'
-    unsigned long CmaTotal;            //  man 5 proc: 'to be documented'
+    unsigned long CmaFree;
+    unsigned long CmaTotal;
     unsigned long CommitLimit;
     unsigned long Committed_AS;
     unsigned long DirectMap1G;         //  man 5 proc: 'to be documented'
     unsigned long DirectMap2M;         //  man 5 proc: 'to be documented'
     unsigned long DirectMap4k;         //  man 5 proc: 'to be documented'
     unsigned long Dirty;
-    unsigned long HardwareCorrupted;
+    unsigned long HardwareCorrupted;   //  man 5 proc: 'to be documented'
     unsigned long HighFree;
     unsigned long HighTotal;
     unsigned long HugePages_Free;
@@ -61,8 +61,9 @@ struct meminfo_data {
     unsigned long HugePages_Total;
     unsigned long Hugepagesize;
     unsigned long Inactive;
-    unsigned long Inactive_anon;       // as: Inactive(anon):
-    unsigned long Inactive_file;       // as: Inactive(file):
+    unsigned long Inactive_anon;       // as: Inactive(anon):  man 5 proc: 'to be documented'
+    unsigned long Inactive_file;       // as: Inactive(file):  man 5 proc: 'to be documented'
+    unsigned long KReclaimable;
     unsigned long KernelStack;
     unsigned long LowFree;
     unsigned long LowTotal;
@@ -70,9 +71,11 @@ struct meminfo_data {
     unsigned long MemAvailable;
     unsigned long MemFree;
     unsigned long MemTotal;
-    unsigned long Mlocked;
+    unsigned long Mlocked;             //  man 5 proc: 'to be documented'
+    unsigned long MmapCopy;            //  man 5 proc: 'to be documented'
     unsigned long NFS_Unstable;
     unsigned long PageTables;
+    unsigned long Quicklists;          //  man 5 proc: 'to be documented'
     unsigned long SReclaimable;
     unsigned long SUnreclaim;
     unsigned long Shmem;
@@ -82,7 +85,7 @@ struct meminfo_data {
     unsigned long SwapCached;
     unsigned long SwapFree;
     unsigned long SwapTotal;
-    unsigned long Unevictable;
+    unsigned long Unevictable;         //  man 5 proc: 'to be documented'
     unsigned long VmallocChunk;
     unsigned long VmallocTotal;
     unsigned long VmallocUsed;
@@ -157,11 +160,14 @@ MEM_set(MEM_HUGE_TOTAL,         ul_int,  HugePages_Total)
 MEM_set(MEM_INACTIVE,           ul_int,  Inactive)
 MEM_set(MEM_INACTIVE_ANON,      ul_int,  Inactive_anon)
 MEM_set(MEM_INACTIVE_FILE,      ul_int,  Inactive_file)
+MEM_set(MEM_KERNEL_RECLAIM,     ul_int,  KReclaimable)
 MEM_set(MEM_KERNEL_STACK,       ul_int,  KernelStack)
 MEM_set(MEM_LOCKED,             ul_int,  Mlocked)
 MEM_set(MEM_MAPPED,             ul_int,  Mapped)
+MEM_set(MEM_MAP_COPY,           ul_int,  MmapCopy)
 MEM_set(MEM_NFS_UNSTABLE,       ul_int,  NFS_Unstable)
 MEM_set(MEM_PAGE_TABLES,        ul_int,  PageTables)
+MEM_set(MEM_QUICKLISTS,         ul_int,  Quicklists)
 MEM_set(MEM_SHARED,             ul_int,  Shmem)
 MEM_set(MEM_SHMEM_HUGE,         ul_int,  ShmemHugePages)
 MEM_set(MEM_SHMEM_HUGE_MAP,     ul_int,  ShmemPmdMapped)
@@ -200,11 +206,14 @@ HST_set(DELTA_HUGE_TOTAL,        s_int,  HugePages_Total)
 HST_set(DELTA_INACTIVE,          s_int,  Inactive)
 HST_set(DELTA_INACTIVE_ANON,     s_int,  Inactive_anon)
 HST_set(DELTA_INACTIVE_FILE,     s_int,  Inactive_file)
+HST_set(DELTA_KERNEL_RECLAIM,    s_int,  KReclaimable)
 HST_set(DELTA_KERNEL_STACK,      s_int,  KernelStack)
 HST_set(DELTA_LOCKED,            s_int,  Mlocked)
 HST_set(DELTA_MAPPED,            s_int,  Mapped)
+HST_set(DELTA_MAP_COPY,          s_int,  MmapCopy)
 HST_set(DELTA_NFS_UNSTABLE,      s_int,  NFS_Unstable)
 HST_set(DELTA_PAGE_TABLES,       s_int,  PageTables)
+HST_set(DELTA_QUICKLISTS,        s_int,  Quicklists)
 HST_set(DELTA_SHARED,            s_int,  Shmem)
 HST_set(DELTA_SHMEM_HUGE,        s_int,  ShmemHugePages)
 HST_set(DELTA_SHMEM_HUGE_MAP,    s_int,  ShmemPmdMapped)
@@ -287,11 +296,14 @@ static struct {
   { RS(MEM_INACTIVE),          TS(ul_int) },
   { RS(MEM_INACTIVE_ANON),     TS(ul_int) },
   { RS(MEM_INACTIVE_FILE),     TS(ul_int) },
+  { RS(MEM_KERNEL_RECLAIM),    TS(ul_int) },
   { RS(MEM_KERNEL_STACK),      TS(ul_int) },
   { RS(MEM_LOCKED),            TS(ul_int) },
   { RS(MEM_MAPPED),            TS(ul_int) },
+  { RS(MEM_MAP_COPY),          TS(ul_int) },
   { RS(MEM_NFS_UNSTABLE),      TS(ul_int) },
   { RS(MEM_PAGE_TABLES),       TS(ul_int) },
+  { RS(MEM_QUICKLISTS),        TS(ul_int) },
   { RS(MEM_SHARED),            TS(ul_int) },
   { RS(MEM_SHMEM_HUGE),        TS(ul_int) },
   { RS(MEM_SHMEM_HUGE_MAP),    TS(ul_int) },
@@ -330,11 +342,14 @@ static struct {
   { RS(DELTA_INACTIVE),        TS(s_int)  },
   { RS(DELTA_INACTIVE_ANON),   TS(s_int)  },
   { RS(DELTA_INACTIVE_FILE),   TS(s_int)  },
+  { RS(DELTA_KERNEL_RECLAIM),  TS(s_int)  },
   { RS(DELTA_KERNEL_STACK),    TS(s_int)  },
   { RS(DELTA_LOCKED),          TS(s_int)  },
   { RS(DELTA_MAPPED),          TS(s_int)  },
+  { RS(DELTA_MAP_COPY),        TS(s_int)  },
   { RS(DELTA_NFS_UNSTABLE),    TS(s_int)  },
   { RS(DELTA_PAGE_TABLES),     TS(s_int)  },
+  { RS(DELTA_QUICKLISTS),      TS(s_int)  },
   { RS(DELTA_SHARED),          TS(s_int)  },
   { RS(DELTA_SHMEM_HUGE),      TS(s_int)  },
   { RS(DELTA_SHMEM_HUGE_MAP),  TS(s_int)  },
@@ -528,16 +543,19 @@ static int meminfo_make_hash_failed (
     htVAL(Inactive)
     htXTRA(Inactive(anon), Inactive_anon)
     htXTRA(Inactive(file), Inactive_file)
+    htVAL(KReclaimable)
     htVAL(KernelStack)
     htVAL(LowFree)
     htVAL(LowTotal)
     htVAL(Mapped)
+    htVAL(MmapCopy)
     htVAL(MemAvailable)
     htVAL(MemFree)
     htVAL(MemTotal)
     htVAL(Mlocked)
     htVAL(NFS_Unstable)
     htVAL(PageTables)
+    htVAL(Quicklists)
     htVAL(SReclaimable)
     htVAL(SUnreclaim)
     htVAL(Shmem)

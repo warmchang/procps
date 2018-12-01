@@ -52,11 +52,14 @@ enum meminfo_item {
     MEMINFO_MEM_INACTIVE,          //  ul_int
     MEMINFO_MEM_INACTIVE_ANON,     //  ul_int
     MEMINFO_MEM_INACTIVE_FILE,     //  ul_int
+    MEMINFO_MEM_KERNEL_RECLAIM,    //  ul_int
     MEMINFO_MEM_KERNEL_STACK,      //  ul_int
     MEMINFO_MEM_LOCKED,            //  ul_int
     MEMINFO_MEM_MAPPED,            //  ul_int
+    MEMINFO_MEM_MAP_COPY,          //  ul_int
     MEMINFO_MEM_NFS_UNSTABLE,      //  ul_int
     MEMINFO_MEM_PAGE_TABLES,       //  ul_int
+    MEMINFO_MEM_QUICKLISTS,        //  ul_int
     MEMINFO_MEM_SHARED,            //  ul_int
     MEMINFO_MEM_SHMEM_HUGE,        //  ul_int
     MEMINFO_MEM_SHMEM_HUGE_MAP,    //  ul_int
@@ -95,11 +98,14 @@ enum meminfo_item {
     MEMINFO_DELTA_INACTIVE,        //   s_int
     MEMINFO_DELTA_INACTIVE_ANON,   //   s_int
     MEMINFO_DELTA_INACTIVE_FILE,   //   s_int
+    MEMINFO_DELTA_KERNEL_RECLAIM,  //   s_int
     MEMINFO_DELTA_KERNEL_STACK,    //   s_int
     MEMINFO_DELTA_LOCKED,          //   s_int
     MEMINFO_DELTA_MAPPED,          //   s_int
+    MEMINFO_DELTA_MAP_COPY,        //   s_int
     MEMINFO_DELTA_NFS_UNSTABLE,    //   s_int
     MEMINFO_DELTA_PAGE_TABLES,     //   s_int
+    MEMINFO_DELTA_QUICKLISTS,      //   s_int
     MEMINFO_DELTA_SHARED,          //   s_int
     MEMINFO_DELTA_SHMEM_HUGE,      //   s_int
     MEMINFO_DELTA_SHMEM_HUGE_MAP,  //   s_int
