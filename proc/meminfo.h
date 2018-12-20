@@ -29,115 +29,117 @@ enum meminfo_item {
     /*
         note: all of the following values are expressed as KiB
     */
-    MEMINFO_MEM_ACTIVE,            //  ul_int
-    MEMINFO_MEM_ACTIVE_ANON,       //  ul_int
-    MEMINFO_MEM_ACTIVE_FILE,       //  ul_int
-    MEMINFO_MEM_ANON,              //  ul_int
-    MEMINFO_MEM_AVAILABLE,         //  ul_int
-    MEMINFO_MEM_BOUNCE,            //  ul_int
-    MEMINFO_MEM_BUFFERS,           //  ul_int
-    MEMINFO_MEM_CACHED,            //  ul_int
-    MEMINFO_MEM_CACHED_ALL,        //  ul_int
-    MEMINFO_MEM_COMMIT_LIMIT,      //  ul_int
-    MEMINFO_MEM_COMMITTED_AS,      //  ul_int
-    MEMINFO_MEM_HARD_CORRUPTED,    //  ul_int
-    MEMINFO_MEM_DIRTY,             //  ul_int
-    MEMINFO_MEM_FREE,              //  ul_int
-    MEMINFO_MEM_HUGE_ANON,         //  ul_int
-    MEMINFO_MEM_HUGE_FREE,         //  ul_int
-    MEMINFO_MEM_HUGE_RSVD,         //  ul_int
-    MEMINFO_MEM_HUGE_SIZE,         //  ul_int
-    MEMINFO_MEM_HUGE_SURPLUS,      //  ul_int
-    MEMINFO_MEM_HUGE_TOTAL,        //  ul_int
-    MEMINFO_MEM_INACTIVE,          //  ul_int
-    MEMINFO_MEM_INACTIVE_ANON,     //  ul_int
-    MEMINFO_MEM_INACTIVE_FILE,     //  ul_int
-    MEMINFO_MEM_KERNEL_RECLAIM,    //  ul_int
-    MEMINFO_MEM_KERNEL_STACK,      //  ul_int
-    MEMINFO_MEM_LOCKED,            //  ul_int
-    MEMINFO_MEM_MAPPED,            //  ul_int
-    MEMINFO_MEM_MAP_COPY,          //  ul_int
-    MEMINFO_MEM_NFS_UNSTABLE,      //  ul_int
-    MEMINFO_MEM_PAGE_TABLES,       //  ul_int
-    MEMINFO_MEM_QUICKLISTS,        //  ul_int
-    MEMINFO_MEM_SHARED,            //  ul_int
-    MEMINFO_MEM_SHMEM_HUGE,        //  ul_int
-    MEMINFO_MEM_SHMEM_HUGE_MAP,    //  ul_int
-    MEMINFO_MEM_SLAB,              //  ul_int
-    MEMINFO_MEM_SLAB_RECLAIM,      //  ul_int
-    MEMINFO_MEM_SLAB_UNRECLAIM,    //  ul_int
-    MEMINFO_MEM_TOTAL,             //  ul_int
-    MEMINFO_MEM_UNEVICTABLE,       //  ul_int
-    MEMINFO_MEM_USED,              //  ul_int
-    MEMINFO_MEM_VM_ALLOC_CHUNK,    //  ul_int
-    MEMINFO_MEM_VM_ALLOC_TOTAL,    //  ul_int
-    MEMINFO_MEM_VM_ALLOC_USED,     //  ul_int
-    MEMINFO_MEM_WRITEBACK,         //  ul_int
-    MEMINFO_MEM_WRITEBACK_TMP,     //  ul_int
+                                   //  returns        origin, see proc(5)
+                                   //  -------        -------------------
+    MEMINFO_MEM_ACTIVE,            //  ul_int         /proc/meminfo
+    MEMINFO_MEM_ACTIVE_ANON,       //  ul_int          "
+    MEMINFO_MEM_ACTIVE_FILE,       //  ul_int          "
+    MEMINFO_MEM_ANON,              //  ul_int          "
+    MEMINFO_MEM_AVAILABLE,         //  ul_int          "
+    MEMINFO_MEM_BOUNCE,            //  ul_int          "
+    MEMINFO_MEM_BUFFERS,           //  ul_int          "
+    MEMINFO_MEM_CACHED,            //  ul_int          "
+    MEMINFO_MEM_CACHED_ALL,        //  ul_int          "
+    MEMINFO_MEM_COMMIT_LIMIT,      //  ul_int          "
+    MEMINFO_MEM_COMMITTED_AS,      //  ul_int          "
+    MEMINFO_MEM_HARD_CORRUPTED,    //  ul_int          "
+    MEMINFO_MEM_DIRTY,             //  ul_int          "
+    MEMINFO_MEM_FREE,              //  ul_int          "
+    MEMINFO_MEM_HUGE_ANON,         //  ul_int          "
+    MEMINFO_MEM_HUGE_FREE,         //  ul_int          "
+    MEMINFO_MEM_HUGE_RSVD,         //  ul_int          "
+    MEMINFO_MEM_HUGE_SIZE,         //  ul_int          "
+    MEMINFO_MEM_HUGE_SURPLUS,      //  ul_int          "
+    MEMINFO_MEM_HUGE_TOTAL,        //  ul_int          "
+    MEMINFO_MEM_INACTIVE,          //  ul_int          "
+    MEMINFO_MEM_INACTIVE_ANON,     //  ul_int          "
+    MEMINFO_MEM_INACTIVE_FILE,     //  ul_int          "
+    MEMINFO_MEM_KERNEL_RECLAIM,    //  ul_int          "
+    MEMINFO_MEM_KERNEL_STACK,      //  ul_int          "
+    MEMINFO_MEM_LOCKED,            //  ul_int          "
+    MEMINFO_MEM_MAPPED,            //  ul_int          "
+    MEMINFO_MEM_MAP_COPY,          //  ul_int          "
+    MEMINFO_MEM_NFS_UNSTABLE,      //  ul_int          "
+    MEMINFO_MEM_PAGE_TABLES,       //  ul_int          "
+    MEMINFO_MEM_QUICKLISTS,        //  ul_int          "
+    MEMINFO_MEM_SHARED,            //  ul_int          "
+    MEMINFO_MEM_SHMEM_HUGE,        //  ul_int          "
+    MEMINFO_MEM_SHMEM_HUGE_MAP,    //  ul_int          "
+    MEMINFO_MEM_SLAB,              //  ul_int          "
+    MEMINFO_MEM_SLAB_RECLAIM,      //  ul_int          "
+    MEMINFO_MEM_SLAB_UNRECLAIM,    //  ul_int          "
+    MEMINFO_MEM_TOTAL,             //  ul_int          "
+    MEMINFO_MEM_UNEVICTABLE,       //  ul_int          "
+    MEMINFO_MEM_USED,              //  ul_int          "
+    MEMINFO_MEM_VM_ALLOC_CHUNK,    //  ul_int          "
+    MEMINFO_MEM_VM_ALLOC_TOTAL,    //  ul_int          "
+    MEMINFO_MEM_VM_ALLOC_USED,     //  ul_int          "
+    MEMINFO_MEM_WRITEBACK,         //  ul_int          "
+    MEMINFO_MEM_WRITEBACK_TMP,     //  ul_int          "
 
-    MEMINFO_DELTA_ACTIVE,          //   s_int
-    MEMINFO_DELTA_ACTIVE_ANON,     //   s_int
-    MEMINFO_DELTA_ACTIVE_FILE,     //   s_int
-    MEMINFO_DELTA_ANON,            //   s_int
-    MEMINFO_DELTA_AVAILABLE,       //   s_int
-    MEMINFO_DELTA_BOUNCE,          //   s_int
-    MEMINFO_DELTA_BUFFERS,         //   s_int
-    MEMINFO_DELTA_CACHED,          //   s_int
-    MEMINFO_DELTA_CACHED_ALL,      //   s_int
-    MEMINFO_DELTA_COMMIT_LIMIT,    //   s_int
-    MEMINFO_DELTA_COMMITTED_AS,    //   s_int
-    MEMINFO_DELTA_HARD_CORRUPTED,  //   s_int
-    MEMINFO_DELTA_DIRTY,           //   s_int
-    MEMINFO_DELTA_FREE,            //   s_int
-    MEMINFO_DELTA_HUGE_ANON,       //   s_int
-    MEMINFO_DELTA_HUGE_FREE,       //   s_int
-    MEMINFO_DELTA_HUGE_RSVD,       //   s_int
-    MEMINFO_DELTA_HUGE_SIZE,       //   s_int
-    MEMINFO_DELTA_HUGE_SURPLUS,    //   s_int
-    MEMINFO_DELTA_HUGE_TOTAL,      //   s_int
-    MEMINFO_DELTA_INACTIVE,        //   s_int
-    MEMINFO_DELTA_INACTIVE_ANON,   //   s_int
-    MEMINFO_DELTA_INACTIVE_FILE,   //   s_int
-    MEMINFO_DELTA_KERNEL_RECLAIM,  //   s_int
-    MEMINFO_DELTA_KERNEL_STACK,    //   s_int
-    MEMINFO_DELTA_LOCKED,          //   s_int
-    MEMINFO_DELTA_MAPPED,          //   s_int
-    MEMINFO_DELTA_MAP_COPY,        //   s_int
-    MEMINFO_DELTA_NFS_UNSTABLE,    //   s_int
-    MEMINFO_DELTA_PAGE_TABLES,     //   s_int
-    MEMINFO_DELTA_QUICKLISTS,      //   s_int
-    MEMINFO_DELTA_SHARED,          //   s_int
-    MEMINFO_DELTA_SHMEM_HUGE,      //   s_int
-    MEMINFO_DELTA_SHMEM_HUGE_MAP,  //   s_int
-    MEMINFO_DELTA_SLAB,            //   s_int
-    MEMINFO_DELTA_SLAB_RECLAIM,    //   s_int
-    MEMINFO_DELTA_SLAB_UNRECLAIM,  //   s_int
-    MEMINFO_DELTA_TOTAL,           //   s_int
-    MEMINFO_DELTA_UNEVICTABLE,     //   s_int
-    MEMINFO_DELTA_USED,            //   s_int
-    MEMINFO_DELTA_VM_ALLOC_CHUNK,  //   s_int
-    MEMINFO_DELTA_VM_ALLOC_TOTAL,  //   s_int
-    MEMINFO_DELTA_VM_ALLOC_USED,   //   s_int
-    MEMINFO_DELTA_WRITEBACK,       //   s_int
-    MEMINFO_DELTA_WRITEBACK_TMP,   //   s_int
+    MEMINFO_DELTA_ACTIVE,          //   s_int         dervied from above
+    MEMINFO_DELTA_ACTIVE_ANON,     //   s_int          "
+    MEMINFO_DELTA_ACTIVE_FILE,     //   s_int          "
+    MEMINFO_DELTA_ANON,            //   s_int          "
+    MEMINFO_DELTA_AVAILABLE,       //   s_int          "
+    MEMINFO_DELTA_BOUNCE,          //   s_int          "
+    MEMINFO_DELTA_BUFFERS,         //   s_int          "
+    MEMINFO_DELTA_CACHED,          //   s_int          "
+    MEMINFO_DELTA_CACHED_ALL,      //   s_int          "
+    MEMINFO_DELTA_COMMIT_LIMIT,    //   s_int          "
+    MEMINFO_DELTA_COMMITTED_AS,    //   s_int          "
+    MEMINFO_DELTA_HARD_CORRUPTED,  //   s_int          "
+    MEMINFO_DELTA_DIRTY,           //   s_int          "
+    MEMINFO_DELTA_FREE,            //   s_int          "
+    MEMINFO_DELTA_HUGE_ANON,       //   s_int          "
+    MEMINFO_DELTA_HUGE_FREE,       //   s_int          "
+    MEMINFO_DELTA_HUGE_RSVD,       //   s_int          "
+    MEMINFO_DELTA_HUGE_SIZE,       //   s_int          "
+    MEMINFO_DELTA_HUGE_SURPLUS,    //   s_int          "
+    MEMINFO_DELTA_HUGE_TOTAL,      //   s_int          "
+    MEMINFO_DELTA_INACTIVE,        //   s_int          "
+    MEMINFO_DELTA_INACTIVE_ANON,   //   s_int          "
+    MEMINFO_DELTA_INACTIVE_FILE,   //   s_int          "
+    MEMINFO_DELTA_KERNEL_RECLAIM,  //   s_int          "
+    MEMINFO_DELTA_KERNEL_STACK,    //   s_int          "
+    MEMINFO_DELTA_LOCKED,          //   s_int          "
+    MEMINFO_DELTA_MAPPED,          //   s_int          "
+    MEMINFO_DELTA_MAP_COPY,        //   s_int          "
+    MEMINFO_DELTA_NFS_UNSTABLE,    //   s_int          "
+    MEMINFO_DELTA_PAGE_TABLES,     //   s_int          "
+    MEMINFO_DELTA_QUICKLISTS,      //   s_int          "
+    MEMINFO_DELTA_SHARED,          //   s_int          "
+    MEMINFO_DELTA_SHMEM_HUGE,      //   s_int          "
+    MEMINFO_DELTA_SHMEM_HUGE_MAP,  //   s_int          "
+    MEMINFO_DELTA_SLAB,            //   s_int          "
+    MEMINFO_DELTA_SLAB_RECLAIM,    //   s_int          "
+    MEMINFO_DELTA_SLAB_UNRECLAIM,  //   s_int          "
+    MEMINFO_DELTA_TOTAL,           //   s_int          "
+    MEMINFO_DELTA_UNEVICTABLE,     //   s_int          "
+    MEMINFO_DELTA_USED,            //   s_int          "
+    MEMINFO_DELTA_VM_ALLOC_CHUNK,  //   s_int          "
+    MEMINFO_DELTA_VM_ALLOC_TOTAL,  //   s_int          "
+    MEMINFO_DELTA_VM_ALLOC_USED,   //   s_int          "
+    MEMINFO_DELTA_WRITEBACK,       //   s_int          "
+    MEMINFO_DELTA_WRITEBACK_TMP,   //   s_int          "
 
-    MEMINFO_MEMHI_FREE,            //  ul_int
-    MEMINFO_MEMHI_TOTAL,           //  ul_int
-    MEMINFO_MEMHI_USED,            //  ul_int
+    MEMINFO_MEMHI_FREE,            //  ul_int         /proc/meminfo
+    MEMINFO_MEMHI_TOTAL,           //  ul_int          "
+    MEMINFO_MEMHI_USED,            //  ul_int          "
 
-    MEMINFO_MEMLO_FREE,            //  ul_int
-    MEMINFO_MEMLO_TOTAL,           //  ul_int
-    MEMINFO_MEMLO_USED,            //  ul_int
+    MEMINFO_MEMLO_FREE,            //  ul_int          "
+    MEMINFO_MEMLO_TOTAL,           //  ul_int          "
+    MEMINFO_MEMLO_USED,            //  ul_int          "
 
-    MEMINFO_SWAP_CACHED,           //  ul_int
-    MEMINFO_SWAP_FREE,             //  ul_int
-    MEMINFO_SWAP_TOTAL,            //  ul_int
-    MEMINFO_SWAP_USED,             //  ul_int
+    MEMINFO_SWAP_CACHED,           //  ul_int          "
+    MEMINFO_SWAP_FREE,             //  ul_int          "
+    MEMINFO_SWAP_TOTAL,            //  ul_int          "
+    MEMINFO_SWAP_USED,             //  ul_int          "
 
-    MEMINFO_SWAP_DELTA_CACHED,     //   s_int
-    MEMINFO_SWAP_DELTA_FREE,       //   s_int
-    MEMINFO_SWAP_DELTA_TOTAL,      //   s_int
-    MEMINFO_SWAP_DELTA_USED        //   s_int
+    MEMINFO_SWAP_DELTA_CACHED,     //   s_int         dervied from above
+    MEMINFO_SWAP_DELTA_FREE,       //   s_int          "
+    MEMINFO_SWAP_DELTA_TOTAL,      //   s_int          "
+    MEMINFO_SWAP_DELTA_USED        //   s_int          "
 };
 
 

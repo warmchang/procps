@@ -26,56 +26,57 @@ extern "C" {
 enum stat_item {
     STAT_noop,                    //        ( never altered )
     STAT_extra,                   //        ( reset to zero )
+                                  //  returns        origin, see proc(5)
+                                  //  -------        -------------------
+    STAT_TIC_ID,                  //    s_int        /proc/stat
+    STAT_TIC_NUMA_NODE,           //    s_int      [ ID based, see: numa(3) ]
+    STAT_TIC_NUM_CONTRIBUTORS,    //    s_int      [ ID based, see: numa(3) ]
+    STAT_TIC_USER,                //  ull_int        /proc/stat
+    STAT_TIC_NICE,                //  ull_int         "
+    STAT_TIC_SYSTEM,              //  ull_int         "
+    STAT_TIC_IDLE,                //  ull_int         "
+    STAT_TIC_IOWAIT,              //  ull_int         "
+    STAT_TIC_IRQ,                 //  ull_int         "
+    STAT_TIC_SOFTIRQ,             //  ull_int         "
+    STAT_TIC_STOLEN,              //  ull_int         "
+    STAT_TIC_GUEST,               //  ull_int         "
+    STAT_TIC_GUEST_NICE,          //  ull_int         "
 
-    STAT_TIC_ID,                  //   s_int
-    STAT_TIC_NUMA_NODE,           //   s_int
-    STAT_TIC_NUM_CONTRIBUTORS,    //   s_int
-    STAT_TIC_USER,                // ull_int
-    STAT_TIC_NICE,                // ull_int
-    STAT_TIC_SYSTEM,              // ull_int
-    STAT_TIC_IDLE,                // ull_int
-    STAT_TIC_IOWAIT,              // ull_int
-    STAT_TIC_IRQ,                 // ull_int
-    STAT_TIC_SOFTIRQ,             // ull_int
-    STAT_TIC_STOLEN,              // ull_int
-    STAT_TIC_GUEST,               // ull_int
-    STAT_TIC_GUEST_NICE,          // ull_int
+    STAT_TIC_SUM_TOTAL,           //  ull_int         "
+    STAT_TIC_SUM_BUSY,            //  ull_int         "
+    STAT_TIC_SUM_IDLE,            //  ull_int         "
+    STAT_TIC_SUM_USER,            //  ull_int         "
+    STAT_TIC_SUM_SYSTEM,          //  ull_int         "
 
-    STAT_TIC_SUM_TOTAL,           // ull_int
-    STAT_TIC_SUM_BUSY,            // ull_int
-    STAT_TIC_SUM_IDLE,            // ull_int
-    STAT_TIC_SUM_USER,            // ull_int
-    STAT_TIC_SUM_SYSTEM,          // ull_int
+    STAT_TIC_DELTA_USER,          //   sl_int        dervied from above
+    STAT_TIC_DELTA_NICE,          //   sl_int         "
+    STAT_TIC_DELTA_SYSTEM,        //   sl_int         "
+    STAT_TIC_DELTA_IDLE,          //   sl_int         "
+    STAT_TIC_DELTA_IOWAIT,        //   sl_int         "
+    STAT_TIC_DELTA_IRQ,           //   sl_int         "
+    STAT_TIC_DELTA_SOFTIRQ,       //   sl_int         "
+    STAT_TIC_DELTA_STOLEN,        //   sl_int         "
+    STAT_TIC_DELTA_GUEST,         //   sl_int         "
+    STAT_TIC_DELTA_GUEST_NICE,    //   sl_int         "
 
-    STAT_TIC_DELTA_USER,          //  sl_int
-    STAT_TIC_DELTA_NICE,          //  sl_int
-    STAT_TIC_DELTA_SYSTEM,        //  sl_int
-    STAT_TIC_DELTA_IDLE,          //  sl_int
-    STAT_TIC_DELTA_IOWAIT,        //  sl_int
-    STAT_TIC_DELTA_IRQ,           //  sl_int
-    STAT_TIC_DELTA_SOFTIRQ,       //  sl_int
-    STAT_TIC_DELTA_STOLEN,        //  sl_int
-    STAT_TIC_DELTA_GUEST,         //  sl_int
-    STAT_TIC_DELTA_GUEST_NICE,    //  sl_int
+    STAT_TIC_DELTA_SUM_TOTAL,     //   sl_int         "
+    STAT_TIC_DELTA_SUM_BUSY,      //   sl_int         "
+    STAT_TIC_DELTA_SUM_IDLE,      //   sl_int         "
+    STAT_TIC_DELTA_SUM_USER,      //   sl_int         "
+    STAT_TIC_DELTA_SUM_SYSTEM,    //   sl_int         "
 
-    STAT_TIC_DELTA_SUM_TOTAL,     //  sl_int
-    STAT_TIC_DELTA_SUM_BUSY,      //  sl_int
-    STAT_TIC_DELTA_SUM_IDLE,      //  sl_int
-    STAT_TIC_DELTA_SUM_USER,      //  sl_int
-    STAT_TIC_DELTA_SUM_SYSTEM,    //  sl_int
+    STAT_SYS_CTX_SWITCHES,        //   ul_int        /proc/stat
+    STAT_SYS_INTERRUPTS,          //   ul_int         "
+    STAT_SYS_PROC_BLOCKED,        //   ul_int         "
+    STAT_SYS_PROC_CREATED,        //   ul_int         "
+    STAT_SYS_PROC_RUNNING,        //   ul_int         "
+    STAT_SYS_TIME_OF_BOOT,        //   ul_int         "
 
-    STAT_SYS_CTX_SWITCHES,        //  ul_int
-    STAT_SYS_INTERRUPTS,          //  ul_int
-    STAT_SYS_PROC_BLOCKED,        //  ul_int
-    STAT_SYS_PROC_CREATED,        //  ul_int
-    STAT_SYS_PROC_RUNNING,        //  ul_int
-    STAT_SYS_TIME_OF_BOOT,        //  ul_int
-
-    STAT_SYS_DELTA_CTX_SWITCHES,  //   s_int
-    STAT_SYS_DELTA_INTERRUPTS,    //   s_int
-    STAT_SYS_DELTA_PROC_BLOCKED,  //   s_int
-    STAT_SYS_DELTA_PROC_CREATED,  //   s_int
-    STAT_SYS_DELTA_PROC_RUNNING   //   s_int
+    STAT_SYS_DELTA_CTX_SWITCHES,  //    s_int        dervied from above
+    STAT_SYS_DELTA_INTERRUPTS,    //    s_int         "
+    STAT_SYS_DELTA_PROC_BLOCKED,  //    s_int         "
+    STAT_SYS_DELTA_PROC_CREATED,  //    s_int         "
+    STAT_SYS_DELTA_PROC_RUNNING   //    s_int         "
 };
 
 enum stat_reap_type {

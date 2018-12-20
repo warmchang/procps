@@ -30,35 +30,36 @@ extern "C" {
 enum diskstats_item {
     DISKSTATS_noop,                 //        ( never altered )
     DISKSTATS_extra,                //        ( reset to zero )
+                                    //  returns        origin, see proc(5)
+                                    //  -------        -------------------
+    DISKSTATS_NAME,                 //     str         /proc/diskstats
+    DISKSTATS_TYPE,                 //   s_int          "
+    DISKSTATS_MAJOR,                //   s_int          "
+    DISKSTATS_MINOR,                //   s_int          "
 
-    DISKSTATS_NAME,                 //    str
-    DISKSTATS_TYPE,                 //  s_int
-    DISKSTATS_MAJOR,                //  s_int
-    DISKSTATS_MINOR,                //  s_int
+    DISKSTATS_READS,                //  ul_int          "
+    DISKSTATS_READS_MERGED,         //  ul_int          "
+    DISKSTATS_READ_SECTORS,         //  ul_int          "
+    DISKSTATS_READ_TIME,            //  ul_int          "
+    DISKSTATS_WRITES,               //  ul_int          "
+    DISKSTATS_WRITES_MERGED,        //  ul_int          "
+    DISKSTATS_WRITE_SECTORS,        //  ul_int          "
+    DISKSTATS_WRITE_TIME,           //  ul_int          "
+    DISKSTATS_IO_TIME,              //  ul_int          "
+    DISKSTATS_IO_WTIME,             //  ul_int          "
 
-    DISKSTATS_READS,                // ul_int
-    DISKSTATS_READS_MERGED,         // ul_int
-    DISKSTATS_READ_SECTORS,         // ul_int
-    DISKSTATS_READ_TIME,            // ul_int
-    DISKSTATS_WRITES,               // ul_int
-    DISKSTATS_WRITES_MERGED,        // ul_int
-    DISKSTATS_WRITE_SECTORS,        // ul_int
-    DISKSTATS_WRITE_TIME,           // ul_int
-    DISKSTATS_IO_TIME,              // ul_int
-    DISKSTATS_IO_WTIME,             // ul_int
+    DISKSTATS_IO_INPROGRESS,        //   s_int          "
 
-    DISKSTATS_IO_INPROGRESS,        //  s_int
-
-    DISKSTATS_DELTA_READS,          //  s_int
-    DISKSTATS_DELTA_READS_MERGED,   //  s_int
-    DISKSTATS_DELTA_READ_SECTORS,   //  s_int
-    DISKSTATS_DELTA_READ_TIME,      //  s_int
-    DISKSTATS_DELTA_WRITES,         //  s_int
-    DISKSTATS_DELTA_WRITES_MERGED,  //  s_int
-    DISKSTATS_DELTA_WRITE_SECTORS,  //  s_int
-    DISKSTATS_DELTA_WRITE_TIME,     //  s_int
-    DISKSTATS_DELTA_IO_TIME,        //  s_int
-    DISKSTATS_DELTA_IO_WTIME        //  s_int
+    DISKSTATS_DELTA_READS,          //   s_int         dervied from above
+    DISKSTATS_DELTA_READS_MERGED,   //   s_int          "
+    DISKSTATS_DELTA_READ_SECTORS,   //   s_int          "
+    DISKSTATS_DELTA_READ_TIME,      //   s_int          "
+    DISKSTATS_DELTA_WRITES,         //   s_int          "
+    DISKSTATS_DELTA_WRITES_MERGED,  //   s_int          "
+    DISKSTATS_DELTA_WRITE_SECTORS,  //   s_int          "
+    DISKSTATS_DELTA_WRITE_TIME,     //   s_int          "
+    DISKSTATS_DELTA_IO_TIME,        //   s_int          "
+    DISKSTATS_DELTA_IO_WTIME        //   s_int          "
 };
 
 enum diskstats_sort_order {

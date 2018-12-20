@@ -24,49 +24,50 @@
 #define PROCPS_SLABINFO_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C "{
 #endif
 
 enum slabinfo_item {
     SLABINFO_noop,            //       ( never altered )
     SLABINFO_extra,           //       ( reset to zero )
+                              //  returns        origin, see proc(5)
+                              //  -------        -------------------
+    SLABS_OBJS,               //   u_int         /proc/slabinfo
+    SLABS_AOBJS,              //   u_int          "
+    SLABS_PAGES,              //   u_int          "
+    SLABS_SLABS,              //   u_int          "
+    SLABS_ASLABS,             //   u_int          "
+    SLABS_CACHES,             //   u_int          "
+    SLABS_ACACHES,            //   u_int          "
+    SLABS_SIZE_AVG,           //   u_int          "
+    SLABS_SIZE_MIN,           //   u_int          "
+    SLABS_SIZE_MAX,           //   u_int          "
+    SLABS_SIZE_ACTIVE,        //  ul_int          "
+    SLABS_SIZE_TOTAL,         //  ul_int          "
 
-    SLABS_OBJS,               //  u_int
-    SLABS_AOBJS,              //  u_int
-    SLABS_PAGES,              //  u_int
-    SLABS_SLABS,              //  u_int
-    SLABS_ASLABS,             //  u_int
-    SLABS_CACHES,             //  u_int
-    SLABS_ACACHES,            //  u_int
-    SLABS_SIZE_AVG,           //  u_int
-    SLABS_SIZE_MIN,           //  u_int
-    SLABS_SIZE_MAX,           //  u_int
-    SLABS_SIZE_ACTIVE,        // ul_int
-    SLABS_SIZE_TOTAL,         // ul_int
+    SLABS_DELTA_OBJS,         //   s_int         dervied from above
+    SLABS_DELTA_AOBJS,        //   s_int          "
+    SLABS_DELTA_PAGES,        //   s_int          "
+    SLABS_DELTA_SLABS,        //   s_int          "
+    SLABS_DELTA_ASLABS,       //   s_int          "
+    SLABS_DELTA_CACHES,       //   s_int          "
+    SLABS_DELTA_ACACHES,      //   s_int          "
+    SLABS_DELTA_SIZE_AVG,     //   s_int          "
+    SLABS_DELTA_SIZE_MIN,     //   s_int          "
+    SLABS_DELTA_SIZE_MAX,     //   s_int          "
+    SLABS_DELTA_SIZE_ACTIVE,  //   s_int          "
+    SLABS_DELTA_SIZE_TOTAL,   //   s_int          "
 
-    SLABS_DELTA_OBJS,         //  s_int
-    SLABS_DELTA_AOBJS,        //  s_int
-    SLABS_DELTA_PAGES,        //  s_int
-    SLABS_DELTA_SLABS,        //  s_int
-    SLABS_DELTA_ASLABS,       //  s_int
-    SLABS_DELTA_CACHES,       //  s_int
-    SLABS_DELTA_ACACHES,      //  s_int
-    SLABS_DELTA_SIZE_AVG,     //  s_int
-    SLABS_DELTA_SIZE_MIN,     //  s_int
-    SLABS_DELTA_SIZE_MAX,     //  s_int
-    SLABS_DELTA_SIZE_ACTIVE,  //  s_int
-    SLABS_DELTA_SIZE_TOTAL,   //  s_int
-
-    SLABNODE_NAME,            //    str
-    SLABNODE_OBJS,            //  u_int
-    SLABNODE_AOBJS,           //  u_int
-    SLABNODE_OBJ_SIZE,        //  u_int
-    SLABNODE_OBJS_PER_SLAB,   //  u_int
-    SLABNODE_PAGES_PER_SLAB,  //  u_int
-    SLABNODE_SLABS,           //  u_int
-    SLABNODE_ASLABS,          //  u_int
-    SLABNODE_USE,             //  u_int
-    SLABNODE_SIZE             // ul_int
+    SLABNODE_NAME,            //     str         /proc/slabinfo
+    SLABNODE_OBJS,            //   u_int          "
+    SLABNODE_AOBJS,           //   u_int          "
+    SLABNODE_OBJ_SIZE,        //   u_int          "
+    SLABNODE_OBJS_PER_SLAB,   //   u_int          "
+    SLABNODE_PAGES_PER_SLAB,  //   u_int          "
+    SLABNODE_SLABS,           //   u_int          "
+    SLABNODE_ASLABS,          //   u_int          "
+    SLABNODE_USE,             //   u_int          "
+    SLABNODE_SIZE             //  ul_int          "
 };
 
 enum slabinfo_sort_order {
