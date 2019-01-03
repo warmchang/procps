@@ -63,11 +63,12 @@ enum pids_item Items[] = {
     PIDS_TIME_START,
     PIDS_TTY_NAME,
     PIDS_CMD,
-    PIDS_CMDLINE
+    PIDS_CMDLINE,
+    PIDS_STATE
 };
 enum rel_items {
     EU_PID, EU_PPID, EU_PGRP, EU_EUID, EU_RUID, EU_RGID, EU_SESSION,
-    EU_TGID, EU_STARTTIME, EU_TTYNAME, EU_CMD, EU_CMDLINE
+    EU_TGID, EU_STARTTIME, EU_TTYNAME, EU_CMD, EU_CMDLINE, EU_STA
 };
 #define grow_size(x) do { \
 	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
@@ -111,6 +112,7 @@ static struct el *opt_ruid = NULL;
 static struct el *opt_nslist = NULL;
 static char *opt_pattern = NULL;
 static char *opt_pidfile = NULL;
+static char *opt_runstates = NULL;
 
 /* by default, all namespaces will be checked */
 static int ns_flags = 0x3f;
@@ -149,6 +151,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
     fputs(_(" -x, --exact               match exactly with the command name\n"), fp);
     fputs(_(" -F, --pidfile <file>      read PIDs from file\n"), fp);
     fputs(_(" -L, --logpidfile          fail if PID file is not locked\n"), fp);
+	fputs(_(" -r, --runstates <state>   match runstates [D,S,Z,...]\n"), fp);
     fputs(_(" --ns <PID>                match the processes that belong to the same\n"
         "                           namespace as <pid>\n"), fp);
     fputs(_(" --nslist <ns,...>         list which namespaces will be considered for\n"
@@ -482,6 +485,7 @@ static struct el * select_procs (int *num)
 #define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, stack, info)
 #define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, stack, info)
 #define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack, info)
+#define PIDS_GETSCH(e) PIDS_VAL(EU_ ## e, s_ch, stack, info)
     struct pids_info *info=NULL;
     struct procps_namespaces nsp;
     struct pids_stack *stack;
@@ -509,7 +513,7 @@ static struct el * select_procs (int *num)
               _("Error reading reference namespace information\n"));
     }
 
-    if (procps_pids_new(&info, Items, 12) < 0)
+    if (procps_pids_new(&info, Items, 13) < 0)
         xerrx(EXIT_FATAL,
               _("Unable to create pid info structure"));
     which = PIDS_FETCH_TASKS_ONLY;
@@ -543,6 +547,8 @@ static struct el * select_procs (int *num)
             match = 0;
         else if (opt_term)
             match = match_strlist(PIDS_GETSTR(TTYNAME), opt_term);
+		else if (opt_runstates && ! strchr(opt_runstates, PIDS_GETSCH(STA)))
+            match = 0;
 
         task_cmdline = PIDS_GETSTR(CMDLINE);
         task_cmdline[CMDSTRSIZE -1] = '\0';
@@ -666,6 +672,7 @@ static void parse_opts (int argc, char **argv)
         {"echo", no_argument, NULL, 'e'},
         {"ns", required_argument, NULL, NS_OPTION},
         {"nslist", required_argument, NULL, NSLIST_OPTION},
+		{"runstates", required_argument, NULL, 'r'},
         {"help", no_argument, NULL, 'h'},
         {"version", no_argument, NULL, 'V'},
         {NULL, 0, NULL, 0}
@@ -684,7 +691,7 @@ static void parse_opts (int argc, char **argv)
         strcat (opts, "lad:vw");
     }
 
-    strcat (opts, "LF:cfinoxP:g:s:u:U:G:t:?Vh");
+    strcat (opts, "LF:cfinoxP:g:s:u:U:G:t:r:?Vh");
 
     while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
         switch (opt) {
@@ -818,6 +825,10 @@ static void parse_opts (int argc, char **argv)
                 usage ('?');
             ++criteria_count;
             break;
+		case 'r': /* match by runstate */
+			opt_runstates = xstrdup (optarg);
+			++criteria_count;
+			break;
         case NSLIST_OPTION:
             opt_nslist = split_list (optarg, conv_ns);
             if (opt_nslist == NULL)
