@@ -926,22 +926,28 @@ static char *lxc_containers (const char *path) {
            1:cpuset,cpu,cpuacct,devices,freezer,net_cls,blkio,perf_event,net_prio:/lxc/lxc-P
     */
     if (file2str(path, "cgroup", &ub) > 0) {
-        static const char lxc_delm[] = "/lxc/";
+        /* ouch, next two defaults could be changed at lxc ./configure time
+           ( and a changed 'lxc.cgroup.pattern' is only available to root ) */
+        static const char lxc_delm1[] = "/lxc/";          // thru lxc-3.0.3
+        static const char lxc_delm2[] = "/lxc.payload/";  // with lxc-3.1.0
+        const char *delim;
         char *p1;
 
-        if ((p1 = strstr(ub.buf, lxc_delm))) {
+        if ((p1 = strstr(ub.buf, (delim = lxc_delm1)))
+        || ((p1 = strstr(ub.buf, (delim = lxc_delm2))))) {
             static struct lxc_ele {
                 struct lxc_ele *next;
                 char *name;
             } *anchor = NULL;
             struct lxc_ele *ele = anchor;
+            int delim_len = strlen(delim);
             char *p2;
 
             if ((p2 = strchr(p1, '\n')))       // isolate a controller's line
                 *p2 = '\0';
             do {                               // deal with nested containers
-                p2 = p1 + (sizeof(lxc_delm)-1);
-                p1 = strstr(p2, lxc_delm);
+                p2 = p1 + (delim_len);
+                p1 = strstr(p2, delim);
             } while (p1);
             if ((p1 = strchr(p2, '/')))        // isolate name only substring
                 *p1 = '\0';
