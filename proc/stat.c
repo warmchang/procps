@@ -877,7 +877,6 @@ PROCPS_EXPORT int procps_stat_new (
 
     p->results.cpus = &p->cpus.result;
     p->results.nodes = &p->nodes.result;
-    p->cpus.total = procps_cpu_count();
 
     // these 3 are for reap, sharing a single set of items
     p->cpu_summary.items = p->cpus.fetch.items = p->nodes.fetch.items = &p->reap_items;
