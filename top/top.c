@@ -2817,7 +2817,6 @@ static void sysinfo_refresh (int forced) {
       meminfo();
 #ifndef PRETEND8CPUS
       cpuinfo();
-      Cpu_faux_tot = smp_num_cpus;
 #endif
       Numa_node_tot = numa_max_node() + 1;
       sav_secs = cur_secs;
@@ -3637,10 +3636,10 @@ static void before (char *me) {
    xalloc_err_handler = xalloc_our_handler;
 
    // establish cpu particulars
+   cpuinfo();
 #ifdef PRETEND8CPUS
    smp_num_cpus = 8;
 #endif
-   Cpu_faux_tot = smp_num_cpus;
    Cpu_States_fmts = N_unq(STATE_lin2x4_fmt);
    if (linux_version_code > LINUX_VERSION(2, 5, 41))
       Cpu_States_fmts = N_unq(STATE_lin2x5_fmt);
@@ -5124,7 +5123,7 @@ static void keys_global (int ch) {
          Pseudo_row = PROC_XTRA;
          break;
       case 'I':
-         if (Cpu_faux_tot > 1) {
+         if (smp_num_cpus > 1) {
             Rc.mode_irixps = !Rc.mode_irixps;
             show_msg(fmtmk(N_fmt(IRIX_curmode_fmt)
                , Rc.mode_irixps ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
@@ -5855,7 +5854,7 @@ static void summary_show (void) {
 numa_nope:
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
-         summary_hlp(&Cpu_tics[Cpu_faux_tot], N_txt(WORD_allcpus_txt));
+         summary_hlp(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt));
          Msg_row += 1;
 
       } else {
