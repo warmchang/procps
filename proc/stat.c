@@ -163,12 +163,6 @@ TIC_set(TIC_STOLEN,               ull_int,  stolen)
 TIC_set(TIC_GUEST,                ull_int,  guest)
 TIC_set(TIC_GUEST_NICE,           ull_int,  gnice)
 
-TIC_set(TIC_SUM_TOTAL,            ull_int,  xtot)
-TIC_set(TIC_SUM_BUSY,             ull_int,  xbsy)
-TIC_set(TIC_SUM_IDLE,             ull_int,  xidl)
-TIC_set(TIC_SUM_USER,             ull_int,  xusr)
-TIC_set(TIC_SUM_SYSTEM,           ull_int,  xsys)
-
 TICsetH(TIC_DELTA_USER,           sl_int,   user)
 TICsetH(TIC_DELTA_NICE,           sl_int,   nice)
 TICsetH(TIC_DELTA_SYSTEM,         sl_int,   system)
@@ -180,11 +174,17 @@ TICsetH(TIC_DELTA_STOLEN,         sl_int,   stolen)
 TICsetH(TIC_DELTA_GUEST,          sl_int,   guest)
 TICsetH(TIC_DELTA_GUEST_NICE,     sl_int,   gnice)
 
-TICsetH(TIC_DELTA_SUM_TOTAL,      sl_int,   xtot)
-TICsetH(TIC_DELTA_SUM_BUSY,       sl_int,   xbsy)
-TICsetH(TIC_DELTA_SUM_IDLE,       sl_int,   xidl)
-TICsetH(TIC_DELTA_SUM_USER,       sl_int,   xusr)
-TICsetH(TIC_DELTA_SUM_SYSTEM,     sl_int,   xsys)
+TIC_set(TIC_SUM_TOTAL,            ull_int,  xtot)
+TIC_set(TIC_SUM_IDLE,             ull_int,  xidl)
+TIC_set(TIC_SUM_USER,             ull_int,  xusr)
+TIC_set(TIC_SUM_BUSY,             ull_int,  xbsy)
+TIC_set(TIC_SUM_SYSTEM,           ull_int,  xsys)
+
+TICsetH(TIC_SUM_DELTA_TOTAL,      sl_int,   xtot)
+TICsetH(TIC_SUM_DELTA_IDLE,       sl_int,   xidl)
+TICsetH(TIC_SUM_DELTA_USER,       sl_int,   xusr)
+TICsetH(TIC_SUM_DELTA_BUSY,       sl_int,   xbsy)
+TICsetH(TIC_SUM_DELTA_SYSTEM,     sl_int,   xsys)
 
 SYS_set(SYS_CTX_SWITCHES,         ul_int,   ctxt)
 SYS_set(SYS_INTERRUPTS,           ul_int,   intr)
@@ -292,12 +292,6 @@ static struct {
   { RS(TIC_GUEST),               QS(ull_int),  TS(ull_int) },
   { RS(TIC_GUEST_NICE),          QS(ull_int),  TS(ull_int) },
 
-  { RS(TIC_SUM_TOTAL),           QS(ull_int),  TS(ull_int) },
-  { RS(TIC_SUM_BUSY),            QS(ull_int),  TS(ull_int) },
-  { RS(TIC_SUM_IDLE),            QS(ull_int),  TS(ull_int) },
-  { RS(TIC_SUM_USER),            QS(ull_int),  TS(ull_int) },
-  { RS(TIC_SUM_SYSTEM),          QS(ull_int),  TS(ull_int) },
-
   { RS(TIC_DELTA_USER),          QS(sl_int),   TS(sl_int)  },
   { RS(TIC_DELTA_NICE),          QS(sl_int),   TS(sl_int)  },
   { RS(TIC_DELTA_SYSTEM),        QS(sl_int),   TS(sl_int)  },
@@ -309,11 +303,17 @@ static struct {
   { RS(TIC_DELTA_GUEST),         QS(sl_int),   TS(sl_int)  },
   { RS(TIC_DELTA_GUEST_NICE),    QS(sl_int),   TS(sl_int)  },
 
-  { RS(TIC_DELTA_SUM_TOTAL),     QS(sl_int),   TS(sl_int)  },
-  { RS(TIC_DELTA_SUM_BUSY),      QS(sl_int),   TS(sl_int)  },
-  { RS(TIC_DELTA_SUM_IDLE),      QS(sl_int),   TS(sl_int)  },
-  { RS(TIC_DELTA_SUM_USER),      QS(sl_int),   TS(sl_int)  },
-  { RS(TIC_DELTA_SUM_SYSTEM),    QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_SUM_TOTAL),           QS(ull_int),  TS(ull_int) },
+  { RS(TIC_SUM_IDLE),            QS(ull_int),  TS(ull_int) },
+  { RS(TIC_SUM_USER),            QS(ull_int),  TS(ull_int) },
+  { RS(TIC_SUM_BUSY),            QS(ull_int),  TS(ull_int) },
+  { RS(TIC_SUM_SYSTEM),          QS(ull_int),  TS(ull_int) },
+
+  { RS(TIC_SUM_DELTA_TOTAL),     QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_SUM_DELTA_IDLE),      QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_SUM_DELTA_USER),      QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_SUM_DELTA_BUSY),      QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_SUM_DELTA_SYSTEM),    QS(sl_int),   TS(sl_int)  },
 
   { RS(SYS_CTX_SWITCHES),        QS(ul_int),   TS(ul_int)  },
   { RS(SYS_INTERRUPTS),          QS(ul_int),   TS(ul_int)  },
@@ -1060,8 +1060,8 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
             break;
         case STAT_REAP_CPUS_AND_NODES:
             /* note: if we're doing numa at all, we must do this numa history |
-               before we build (fetch) the cpu stacks since the read_stat guy |
-               will have marked (temporarily) all the cpu node ids as invalid | */
+               before we build (fetch) cpu stacks since that stat_read_failed |
+               guy always marks (temporarily) all the cpu node ids as invalid | */
             if (0 > stat_make_numa_hist(info))
                 return NULL;
             if (0 > stat_stacks_fetch(info, &info->nodes))

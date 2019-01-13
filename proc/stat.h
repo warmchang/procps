@@ -30,7 +30,8 @@ enum stat_item {
                                   //  -------        -------------------
     STAT_TIC_ID,                  //    s_int        /proc/stat
     STAT_TIC_NUMA_NODE,           //    s_int      [ ID based, see: numa(3) ]
-    STAT_TIC_NUM_CONTRIBUTORS,    //    s_int      [ ID based, see: numa(3) ]
+    STAT_TIC_NUM_CONTRIBUTORS,    //    s_int      [ total CPUs contributing to TIC counts ]
+
     STAT_TIC_USER,                //  ull_int        /proc/stat
     STAT_TIC_NICE,                //  ull_int         "
     STAT_TIC_SYSTEM,              //  ull_int         "
@@ -41,12 +42,6 @@ enum stat_item {
     STAT_TIC_STOLEN,              //  ull_int         "
     STAT_TIC_GUEST,               //  ull_int         "
     STAT_TIC_GUEST_NICE,          //  ull_int         "
-
-    STAT_TIC_SUM_TOTAL,           //  ull_int         "
-    STAT_TIC_SUM_BUSY,            //  ull_int         "
-    STAT_TIC_SUM_IDLE,            //  ull_int         "
-    STAT_TIC_SUM_USER,            //  ull_int         "
-    STAT_TIC_SUM_SYSTEM,          //  ull_int         "
 
     STAT_TIC_DELTA_USER,          //   sl_int        dervied from above
     STAT_TIC_DELTA_NICE,          //   sl_int         "
@@ -59,11 +54,17 @@ enum stat_item {
     STAT_TIC_DELTA_GUEST,         //   sl_int         "
     STAT_TIC_DELTA_GUEST_NICE,    //   sl_int         "
 
-    STAT_TIC_DELTA_SUM_TOTAL,     //   sl_int         "
-    STAT_TIC_DELTA_SUM_BUSY,      //   sl_int         "
-    STAT_TIC_DELTA_SUM_IDLE,      //   sl_int         "
-    STAT_TIC_DELTA_SUM_USER,      //   sl_int         "
-    STAT_TIC_DELTA_SUM_SYSTEM,    //   sl_int         "
+    STAT_TIC_SUM_TOTAL,           //  ull_int        derived from all except GUEST tics
+    STAT_TIC_SUM_IDLE,            //  ull_int        derived from IDLE + IOWAIT + STOLEN tics
+    STAT_TIC_SUM_USER,            //  ull_int        derived from USER + NICE tics
+    STAT_TIC_SUM_BUSY,            //  ull_int        derived from SUM_TOTAL - SUM_IDLE tics
+    STAT_TIC_SUM_SYSTEM,          //  ull_int        derived from SUM_BUSY - SUM_USER tics
+
+    STAT_TIC_SUM_DELTA_TOTAL,     //   sl_int        dervied from above
+    STAT_TIC_SUM_DELTA_IDLE,      //   sl_int         "
+    STAT_TIC_SUM_DELTA_USER,      //   sl_int         "
+    STAT_TIC_SUM_DELTA_BUSY,      //   sl_int         "
+    STAT_TIC_SUM_DELTA_SYSTEM,    //   sl_int         "
 
     STAT_SYS_CTX_SWITCHES,        //   ul_int        /proc/stat
     STAT_SYS_INTERRUPTS,          //   ul_int         "
