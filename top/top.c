@@ -840,7 +840,7 @@ static void show_special (int interact, const char *glob) {
          if ('~' == ch) ch = *(sub_end + 1) - '0';
          switch (ch) {
             case 0:                    // no end delim, captab makes normal
-               // only possible when '\n' was NOT preceeded with a '~#' sequence
+               // only possible when '\n' was NOT preceded with a '~#' sequence
                // ( '~1' thru '~8' is valid range, '~0' is never actually used )
                *(sub_end + 1) = '\0';  // extend str end, then fall through
                *(sub_end + 2) = '\0';  // ( +1 optimization for usual path )
@@ -3447,7 +3447,7 @@ static int config_osel (FILE *fp, char *buf, size_t size) {
       // whoa, must be an 'inspect' entry
       if (!begun && !strstr(buf, Osel_delim_1_txt))
          return 0;
-      // ok, we're now begining
+      // ok, we're now beginning
       if (!begun && strstr(buf, Osel_delim_1_txt)) {
          begun = 1;
          continue;
