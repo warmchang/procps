@@ -28,7 +28,6 @@
 #include <sys/types.h>
 
 #include <proc/numa.h>
-#include <proc/sysinfo.h>
 
 #include <proc/procps-private.h>
 #include <proc/stat.h>
