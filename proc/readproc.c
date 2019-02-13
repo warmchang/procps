@@ -928,8 +928,8 @@ static char *lxc_containers (const char *path) {
     if (file2str(path, "cgroup", &ub) > 0) {
         /* ouch, next two defaults could be changed at lxc ./configure time
            ( and a changed 'lxc.cgroup.pattern' is only available to root ) */
-        static const char lxc_delm1[] = "/lxc/";          // thru lxc-3.0.3
-        static const char lxc_delm2[] = "/lxc.payload/";  // with lxc-3.1.0
+        static const char *lxc_delm1 = "lxc.payload/";    // with lxc-3.1.0
+        static const char *lxc_delm2 = "lxc/";            // thru lxc-3.0.3
         const char *delim;
         char *p1;
 
@@ -946,7 +946,7 @@ static char *lxc_containers (const char *path) {
             if ((p2 = strchr(p1, '\n')))       // isolate a controller's line
                 *p2 = '\0';
             do {                               // deal with nested containers
-                p2 = p1 + (delim_len);
+                p2 = p1 + delim_len;
                 p1 = strstr(p2, delim);
             } while (p1);
             if ((p1 = strchr(p2, '/')))        // isolate name only substring
