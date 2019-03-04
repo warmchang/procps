@@ -465,7 +465,7 @@ static int WriteSetting(const char *setting)
 			rc = 0;
 		if (close_stream(fp) != 0)
 			xwarn(_("setting key \"%s\""), outname);
-		if (rc == 0 && !Quiet) {
+		else if (rc == 0 && !Quiet) {
 			if (NameOnly) {
 				fprintf(stdout, "%s\n", outname);
 			} else {
