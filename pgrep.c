@@ -560,7 +560,7 @@ static struct el * select_procs (int *num)
 			match = 0;
 			if (strchr(opt_runstates, task.state)) match = 1;
 		}
-		
+
 		if (task.cmdline && (opt_longlong || opt_full) ) {
 			int i = 0;
 			int bytes = sizeof (cmdline);
