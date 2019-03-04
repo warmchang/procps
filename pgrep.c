@@ -96,6 +96,7 @@ static struct el *opt_ruid = NULL;
 static struct el *opt_nslist = NULL;
 static char *opt_pattern = NULL;
 static char *opt_pidfile = NULL;
+static char *opt_runstates = NULL;
 
 /* by default, all namespaces will be checked */
 static int ns_flags = 0x3f;
@@ -134,6 +135,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(_(" -x, --exact               match exactly with the command name\n"), fp);
 	fputs(_(" -F, --pidfile <file>      read PIDs from file\n"), fp);
 	fputs(_(" -L, --logpidfile          fail if PID file is not locked\n"), fp);
+	fputs(_(" -r, --runstates <state>   match runstates [D,S,Z,...]\n"), fp);
 	fputs(_(" --ns <PID>                match the processes that belong to the same\n"
 		"                           namespace as <pid>\n"), fp);
 	fputs(_(" --nslist <ns,...>         list which namespaces will be considered for\n"
@@ -519,6 +521,7 @@ static struct el * select_procs (int *num)
 	memset(&task, 0, sizeof (task));
 	memset(&subtask, 0, sizeof (subtask));
 	while(readproc(ptp, &task)) {
+		/* printf( "Process state %c\n", task.state ); */
 		int match = 1;
 
 		if (task.XXXID == myself)
@@ -553,6 +556,11 @@ static struct el * select_procs (int *num)
 				match = match_strlist (tty, opt_term);
 			}
 		}
+		else if (opt_runstates) {
+			match = 0;
+			if (strchr(opt_runstates, task.state)) match = 1;
+		}
+		
 		if (task.cmdline && (opt_longlong || opt_full) ) {
 			int i = 0;
 			int bytes = sizeof (cmdline);
@@ -710,6 +718,7 @@ static void parse_opts (int argc, char **argv)
 		{"echo", no_argument, NULL, 'e'},
 		{"ns", required_argument, NULL, NS_OPTION},
 		{"nslist", required_argument, NULL, NSLIST_OPTION},
+		{"runstates", required_argument, NULL, 'r'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -728,7 +737,7 @@ static void parse_opts (int argc, char **argv)
 		strcat (opts, "lad:vw");
 	}
 
-	strcat (opts, "LF:cfinoxP:g:s:u:U:G:t:?Vh");
+	strcat (opts, "LF:cfinoxP:g:s:u:U:G:t:r:?Vh");
 
 	while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
 		switch (opt) {
@@ -856,6 +865,11 @@ static void parse_opts (int argc, char **argv)
 			break;
 /*		case 'z':   / * Solaris: match by zone ID * /
  *			break; */
+
+		case 'r': /* match by runstate */
+			opt_runstates = xstrdup (optarg);
+			++criteria_count;
+			break;
 		case NS_OPTION:
 			opt_ns_pid = atoi(optarg);
 			if (opt_ns_pid == 0)
