@@ -584,6 +584,7 @@ static void slabinfo_itemize_stacks_all (
 
 
 static inline int slabinfo_items_check_failed (
+        struct ext_support *this,
         enum slabinfo_item *items,
         int numitems)
 {
@@ -615,6 +616,7 @@ static inline int slabinfo_items_check_failed (
             return 1;
         if (items[i] >= SLABINFO_logical_end)
             return 1;
+        (void)this;
 #endif
     }
 
@@ -741,7 +743,7 @@ static int slabinfo_stacks_reconfig_maybe (
         enum slabinfo_item *items,
         int numitems)
 {
-    if (slabinfo_items_check_failed(items, numitems))
+    if (slabinfo_items_check_failed(this, items, numitems))
         return -1;
     /* is this the first time or have things changed since we were last called?
        if so, gotta' redo all of our stacks stuff ... */

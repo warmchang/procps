@@ -989,7 +989,9 @@ PROCPS_EXPORT struct diskstats_stack **procps_diskstats_sort (
     }
     errno = 0;
 
+    parms.offset = offset;
     parms.order = order;
+
     qsort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms);
     return stacks;
 } // end: procps_diskstats_sort
