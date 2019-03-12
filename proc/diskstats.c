@@ -138,7 +138,7 @@ REG_set(DISKSTATS_WRITES_MERGED,        ul_int,  writes_merged)
 REG_set(DISKSTATS_WRITE_SECTORS,        ul_int,  write_sectors)
 REG_set(DISKSTATS_WRITE_TIME,           ul_int,  write_time)
 REG_set(DISKSTATS_IO_TIME,              ul_int,  io_time)
-REG_set(DISKSTATS_IO_WTIME,             ul_int,  io_wtime)
+REG_set(DISKSTATS_WEIGHTED_TIME,        ul_int,  io_wtime)
 
 REG_set(DISKSTATS_IO_INPROGRESS,        s_int,   io_inprogress)
 
@@ -151,7 +151,7 @@ HST_set(DISKSTATS_DELTA_WRITES_MERGED,  s_int,   writes_merged)
 HST_set(DISKSTATS_DELTA_WRITE_SECTORS,  s_int,   write_sectors)
 HST_set(DISKSTATS_DELTA_WRITE_TIME,     s_int,   write_time)
 HST_set(DISKSTATS_DELTA_IO_TIME,        s_int,   io_time)
-HST_set(DISKSTATS_DELTA_IO_WTIME,       s_int,   io_wtime)
+HST_set(DISKSTATS_DELTA_WEIGHTED_TIME,  s_int,   io_wtime)
 
 #undef setDECL
 #undef DEV_set
@@ -237,7 +237,7 @@ static struct {
   { RS(DISKSTATS_WRITE_SECTORS),        QS(ul_int),  TS(ul_int) },
   { RS(DISKSTATS_WRITE_TIME),           QS(ul_int),  TS(ul_int) },
   { RS(DISKSTATS_IO_TIME),              QS(ul_int),  TS(ul_int) },
-  { RS(DISKSTATS_IO_WTIME),             QS(ul_int),  TS(ul_int) },
+  { RS(DISKSTATS_WEIGHTED_TIME),        QS(ul_int),  TS(ul_int) },
 
   { RS(DISKSTATS_IO_INPROGRESS),        QS(s_int),   TS(s_int)  },
 
@@ -250,7 +250,7 @@ static struct {
   { RS(DISKSTATS_DELTA_WRITE_SECTORS),  QS(s_int),   TS(s_int)  },
   { RS(DISKSTATS_DELTA_WRITE_TIME),     QS(s_int),   TS(s_int)  },
   { RS(DISKSTATS_DELTA_IO_TIME),        QS(s_int),   TS(s_int)  },
-  { RS(DISKSTATS_DELTA_IO_WTIME),       QS(s_int),   TS(s_int)  },
+  { RS(DISKSTATS_DELTA_WEIGHTED_TIME),  QS(s_int),   TS(s_int)  },
 
  // dummy entry corresponding to DISKSTATS_logical_end ...
   { NULL,                               NULL,        NULL       }
@@ -258,7 +258,7 @@ static struct {
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum diskstats_item DISKSTATS_logical_end = DISKSTATS_DELTA_IO_WTIME + 1;
+enum diskstats_item DISKSTATS_logical_end = DISKSTATS_DELTA_WEIGHTED_TIME + 1;
 
 #undef setNAME
 #undef srtNAME

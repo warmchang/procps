@@ -159,10 +159,10 @@ STR_set(EXE,                       exe)
 REG_set(EXIT_SIGNAL,      s_int,   exit_signal)
 REG_set(FLAGS,            ul_int,  flags)
 REG_set(FLT_MAJ,          ul_int,  maj_flt)
-REG_set(FLT_MAJ_C,        ul_int,  cmaj_flt)
+setDECL(FLT_MAJ_C)      { (void)I; R->result.ul_int = P->maj_flt + P->cmaj_flt; }
 REG_set(FLT_MAJ_DELTA,    s_int,   maj_delta)
 REG_set(FLT_MIN,          ul_int,  min_flt)
-REG_set(FLT_MIN_C,        ul_int,  cmin_flt)
+setDECL(FLT_MIN_C)      { (void)I; R->result.ul_int = P->min_flt + P->cmin_flt; }
 REG_set(FLT_MIN_DELTA,    s_int,   min_delta)
 REG_set(ID_EGID,          u_int,   egid)
 REG_set(ID_EGROUP,        str,     egroup)
@@ -210,11 +210,11 @@ REG_set(NS_UTS,           ul_int,  ns.ns[5])
 REG_set(OOM_ADJ,          s_int,   oom_adj)
 REG_set(OOM_SCORE,        s_int,   oom_score)
 REG_set(PRIORITY,         s_int,   priority)
+REG_set(PRIORITY_RT,      s_int,   rtprio)
 REG_set(PROCESSOR,        u_int,   processor)
 setDECL(PROCESSOR_NODE) { (void)I; R->result.s_int = numa_node_of_cpu(P->processor); }
 REG_set(RSS,              ul_int,  rss)
 REG_set(RSS_RLIM,         ul_int,  rss_rlim)
-REG_set(RTPRIO,           s_int,   rtprio)
 REG_set(SCHED_CLASS,      s_int,   sched)
 STR_set(SD_MACH,                   sd_mach)
 STR_set(SD_OUID,                   sd_ouid)
@@ -464,11 +464,11 @@ static struct {
     { RS(OOM_ADJ),           f_oom,      NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(OOM_SCORE),         f_oom,      NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(PRIORITY),          f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
+    { RS(PRIORITY_RT),       f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(PROCESSOR),         f_stat,     NULL,      QS(u_int),     0,        TS(u_int)   },
     { RS(PROCESSOR_NODE),    f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(RSS),               f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(RSS_RLIM),          f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
-    { RS(RTPRIO),            f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(SCHED_CLASS),       f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(SD_MACH),           f_systemd,  FF(str),   QS(str),       0,        TS(str)     },
     { RS(SD_OUID),           f_systemd,  FF(str),   QS(str),       0,        TS(str)     },

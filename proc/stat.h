@@ -43,7 +43,7 @@ enum stat_item {
     STAT_TIC_GUEST,               //  ull_int         "
     STAT_TIC_GUEST_NICE,          //  ull_int         "
 
-    STAT_TIC_DELTA_USER,          //   sl_int        dervied from above
+    STAT_TIC_DELTA_USER,          //   sl_int        derived from above
     STAT_TIC_DELTA_NICE,          //   sl_int         "
     STAT_TIC_DELTA_SYSTEM,        //   sl_int         "
     STAT_TIC_DELTA_IDLE,          //   sl_int         "
@@ -60,7 +60,7 @@ enum stat_item {
     STAT_TIC_SUM_BUSY,            //  ull_int        derived from SUM_TOTAL - SUM_IDLE tics
     STAT_TIC_SUM_SYSTEM,          //  ull_int        derived from SUM_BUSY - SUM_USER tics
 
-    STAT_TIC_SUM_DELTA_TOTAL,     //   sl_int        dervied from above
+    STAT_TIC_SUM_DELTA_TOTAL,     //   sl_int        derived from above
     STAT_TIC_SUM_DELTA_IDLE,      //   sl_int         "
     STAT_TIC_SUM_DELTA_USER,      //   sl_int         "
     STAT_TIC_SUM_DELTA_BUSY,      //   sl_int         "
@@ -73,7 +73,7 @@ enum stat_item {
     STAT_SYS_PROC_RUNNING,        //   ul_int         "
     STAT_SYS_TIME_OF_BOOT,        //   ul_int         "
 
-    STAT_SYS_DELTA_CTX_SWITCHES,  //    s_int        dervied from above
+    STAT_SYS_DELTA_CTX_SWITCHES,  //    s_int        derived from above
     STAT_SYS_DELTA_INTERRUPTS,    //    s_int         "
     STAT_SYS_DELTA_PROC_BLOCKED,  //    s_int         "
     STAT_SYS_DELTA_PROC_CREATED,  //    s_int         "

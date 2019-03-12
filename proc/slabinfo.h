@@ -28,46 +28,46 @@ extern "C "{
 #endif
 
 enum slabinfo_item {
-    SLABINFO_noop,            //       ( never altered )
-    SLABINFO_extra,           //       ( reset to zero )
-                              //  returns        origin, see proc(5)
-                              //  -------        -------------------
-    SLABS_OBJS,               //   u_int         /proc/slabinfo
-    SLABS_AOBJS,              //   u_int          "
-    SLABS_PAGES,              //   u_int          "
-    SLABS_SLABS,              //   u_int          "
-    SLABS_ASLABS,             //   u_int          "
-    SLABS_CACHES,             //   u_int          "
-    SLABS_ACACHES,            //   u_int          "
-    SLABS_SIZE_AVG,           //   u_int          "
-    SLABS_SIZE_MIN,           //   u_int          "
-    SLABS_SIZE_MAX,           //   u_int          "
-    SLABS_SIZE_ACTIVE,        //  ul_int          "
-    SLABS_SIZE_TOTAL,         //  ul_int          "
+    SLABINFO_noop,              //        ( never altered )
+    SLABINFO_extra,             //        ( reset to zero )
+                                //  returns        origin, see proc(5)
+                                //  -------        -------------------
+    SLAB_NAME,                  //      str        /proc/slabinfo
+    SLAB_NUM_OBJS,              //    u_int         "
+    SLAB_ACTIVE_OBJS,           //    u_int         "
+    SLAB_OBJ_SIZE,              //    u_int         "
+    SLAB_OBJ_PER_SLAB,          //    u_int         "
+    SLAB_NUMS_SLABS,            //    u_int         "
+    SLAB_ACTIVE_SLABS,          //    u_int         "
+    SLAB_PAGES_PER_SLAB,        //    u_int         "
+    SLAB_PERCENT_USED,          //    u_int        derived from ACTIVE_OBJS / NUM_OBJS
+    SLAB_SIZE_TOTAL,            //   ul_int        derived from page size * NUM_OBJS * PAGES_PER_SLAB
 
-    SLABS_DELTA_OBJS,         //   s_int         dervied from above
-    SLABS_DELTA_AOBJS,        //   s_int          "
-    SLABS_DELTA_PAGES,        //   s_int          "
-    SLABS_DELTA_SLABS,        //   s_int          "
-    SLABS_DELTA_ASLABS,       //   s_int          "
-    SLABS_DELTA_CACHES,       //   s_int          "
-    SLABS_DELTA_ACACHES,      //   s_int          "
-    SLABS_DELTA_SIZE_AVG,     //   s_int          "
-    SLABS_DELTA_SIZE_MIN,     //   s_int          "
-    SLABS_DELTA_SIZE_MAX,     //   s_int          "
-    SLABS_DELTA_SIZE_ACTIVE,  //   s_int          "
-    SLABS_DELTA_SIZE_TOTAL,   //   s_int          "
+    SLABS_CACHES_TOTAL,         //    u_int        derived from all caches
+    SLABS_CACHES_ACTIVE,        //    u_int         "
+    SLABS_NUM_OBJS,             //    u_int         "
+    SLABS_ACTIVE_OBJS,          //    u_int         "
+    SLABS_OBJ_SIZE_AVG,         //    u_int         "
+    SLABS_OBJ_SIZE_MIN,         //    u_int         "
+    SLABS_OBJ_SIZE_MAX,         //    u_int         "
+    SLABS_NUMS_SLABS,           //    u_int         "
+    SLABS_ACTIVE_SLABS,         //    u_int         "
+    SLABS_PAGES_TOTAL,          //    u_int         "
+    SLABS_SIZE_ACTIVE,          //   ul_int         "
+    SLABS_SIZE_TOTAL,           //   ul_int         "
 
-    SLABNODE_NAME,            //     str         /proc/slabinfo
-    SLABNODE_OBJS,            //   u_int          "
-    SLABNODE_AOBJS,           //   u_int          "
-    SLABNODE_OBJ_SIZE,        //   u_int          "
-    SLABNODE_OBJS_PER_SLAB,   //   u_int          "
-    SLABNODE_PAGES_PER_SLAB,  //   u_int          "
-    SLABNODE_SLABS,           //   u_int          "
-    SLABNODE_ASLABS,          //   u_int          "
-    SLABNODE_USE,             //   u_int          "
-    SLABNODE_SIZE             //  ul_int          "
+    SLABS_DELTA_CACHES_TOTAL,   //    s_int        derived from above
+    SLABS_DELTA_CACHES_ACTIVE,  //    s_int         "
+    SLABS_DELTA_NUM_OBJS,       //    s_int         "
+    SLABS_DELTA_ACTIVE_OBJS,    //    s_int         "
+    SLABS_DELTA_OBJ_SIZE_AVG,   //    s_int         "
+    SLABS_DELTA_OBJ_SIZE_MIN,   //    s_int         "
+    SLABS_DELTA_OBJ_SIZE_MAX,   //    s_int         "
+    SLABS_DELTA_NUMS_SLABS,     //    s_int         "
+    SLABS_DELTA_ACTIVE_SLABS,   //    s_int         "
+    SLABS_DELTA_PAGES_TOTAL,    //    s_int         "
+    SLABS_DELTA_SIZE_ACTIVE,    //    s_int         "
+    SLABS_DELTA_SIZE_TOTAL      //    s_int         "
 };
 
 enum slabinfo_sort_order {

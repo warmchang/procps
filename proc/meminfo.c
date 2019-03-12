@@ -48,9 +48,10 @@ struct meminfo_data {
     unsigned long CmaTotal;
     unsigned long CommitLimit;
     unsigned long Committed_AS;
-    unsigned long DirectMap1G;         //  man 5 proc: 'to be documented'
-    unsigned long DirectMap2M;         //  man 5 proc: 'to be documented'
-    unsigned long DirectMap4k;         //  man 5 proc: 'to be documented'
+    unsigned long DirectMap1G;
+    unsigned long DirectMap2M;
+    unsigned long DirectMap4M;
+    unsigned long DirectMap4k;
     unsigned long Dirty;
     unsigned long HardwareCorrupted;   //  man 5 proc: 'to be documented'
     unsigned long HighFree;
@@ -60,6 +61,7 @@ struct meminfo_data {
     unsigned long HugePages_Surp;
     unsigned long HugePages_Total;
     unsigned long Hugepagesize;
+    unsigned long Hugetlb;
     unsigned long Inactive;
     unsigned long Inactive_anon;       // as: Inactive(anon):  man 5 proc: 'to be documented'
     unsigned long Inactive_file;       // as: Inactive(file):  man 5 proc: 'to be documented'
@@ -75,6 +77,7 @@ struct meminfo_data {
     unsigned long MmapCopy;            //  man 5 proc: 'to be documented'
     unsigned long NFS_Unstable;
     unsigned long PageTables;
+    unsigned long Percpu;
     unsigned long Quicklists;          //  man 5 proc: 'to be documented'
     unsigned long SReclaimable;
     unsigned long SUnreclaim;
@@ -146,11 +149,21 @@ MEM_set(MEM_BOUNCE,             ul_int,  Bounce)
 MEM_set(MEM_BUFFERS,            ul_int,  Buffers)
 MEM_set(MEM_CACHED,             ul_int,  Cached)
 MEM_set(MEM_CACHED_ALL,         ul_int,  derived_mem_cached)
-MEM_set(MEM_COMMIT_LIMIT,       ul_int,  CommitLimit)
+MEM_set(MEM_CMA_FREE,           ul_int,  CmaFree)
+MEM_set(MEM_CMA_TOTAL,          ul_int,  CmaTotal)
 MEM_set(MEM_COMMITTED_AS,       ul_int,  Committed_AS)
-MEM_set(MEM_HARD_CORRUPTED,     ul_int,  HardwareCorrupted)
+MEM_set(MEM_COMMIT_LIMIT,       ul_int,  CommitLimit)
+MEM_set(MEM_DIRECTMAP_1G,       ul_int,  DirectMap1G)
+MEM_set(MEM_DIRECTMAP_2M,       ul_int,  DirectMap2M)
+MEM_set(MEM_DIRECTMAP_4K,       ul_int,  DirectMap4k)
+MEM_set(MEM_DIRECTMAP_4M,       ul_int,  DirectMap4M)
 MEM_set(MEM_DIRTY,              ul_int,  Dirty)
 MEM_set(MEM_FREE,               ul_int,  MemFree)
+MEM_set(MEM_HARD_CORRUPTED,     ul_int,  HardwareCorrupted)
+MEM_set(MEM_HIGH_FREE,          ul_int,  HighFree)
+MEM_set(MEM_HIGH_TOTAL,         ul_int,  HighTotal)
+MEM_set(MEM_HIGH_USED,          ul_int,  derived_mem_hi_used)
+MEM_set(MEM_HUGETBL,            ul_int,  Hugetlb)
 MEM_set(MEM_HUGE_ANON,          ul_int,  AnonHugePages)
 MEM_set(MEM_HUGE_FREE,          ul_int,  HugePages_Free)
 MEM_set(MEM_HUGE_RSVD,          ul_int,  HugePages_Rsvd)
@@ -163,10 +176,14 @@ MEM_set(MEM_INACTIVE_FILE,      ul_int,  Inactive_file)
 MEM_set(MEM_KERNEL_RECLAIM,     ul_int,  KReclaimable)
 MEM_set(MEM_KERNEL_STACK,       ul_int,  KernelStack)
 MEM_set(MEM_LOCKED,             ul_int,  Mlocked)
+MEM_set(MEM_LOW_FREE,           ul_int,  LowFree)
+MEM_set(MEM_LOW_TOTAL,          ul_int,  LowTotal)
+MEM_set(MEM_LOW_USED,           ul_int,  derived_mem_lo_used)
 MEM_set(MEM_MAPPED,             ul_int,  Mapped)
 MEM_set(MEM_MAP_COPY,           ul_int,  MmapCopy)
 MEM_set(MEM_NFS_UNSTABLE,       ul_int,  NFS_Unstable)
 MEM_set(MEM_PAGE_TABLES,        ul_int,  PageTables)
+MEM_set(MEM_PER_CPU,            ul_int,  Percpu)
 MEM_set(MEM_QUICKLISTS,         ul_int,  Quicklists)
 MEM_set(MEM_SHARED,             ul_int,  Shmem)
 MEM_set(MEM_SHMEM_HUGE,         ul_int,  ShmemHugePages)
@@ -192,11 +209,21 @@ HST_set(DELTA_BOUNCE,            s_int,  Bounce)
 HST_set(DELTA_BUFFERS,           s_int,  Buffers)
 HST_set(DELTA_CACHED,            s_int,  Cached)
 HST_set(DELTA_CACHED_ALL,        s_int,  derived_mem_cached)
-HST_set(DELTA_COMMIT_LIMIT,      s_int,  CommitLimit)
+HST_set(DELTA_CMA_FREE,          s_int,  CmaFree)
+HST_set(DELTA_CMA_TOTAL,         s_int,  CmaTotal)
 HST_set(DELTA_COMMITTED_AS,      s_int,  Committed_AS)
-HST_set(DELTA_HARD_CORRUPTED,    s_int,  HardwareCorrupted)
+HST_set(DELTA_COMMIT_LIMIT,      s_int,  CommitLimit)
+HST_set(DELTA_DIRECTMAP_1G,      s_int,  DirectMap1G)
+HST_set(DELTA_DIRECTMAP_2M,      s_int,  DirectMap2M)
+HST_set(DELTA_DIRECTMAP_4K,      s_int,  DirectMap4k)
+HST_set(DELTA_DIRECTMAP_4M,      s_int,  DirectMap4M)
 HST_set(DELTA_DIRTY,             s_int,  Dirty)
 HST_set(DELTA_FREE,              s_int,  MemFree)
+HST_set(DELTA_HARD_CORRUPTED,    s_int,  HardwareCorrupted)
+HST_set(DELTA_HIGH_FREE,         s_int,  HighFree)
+HST_set(DELTA_HIGH_TOTAL,        s_int,  HighTotal)
+HST_set(DELTA_HIGH_USED,         s_int,  derived_mem_hi_used)
+HST_set(DELTA_HUGETBL,           s_int,  Hugetlb)
 HST_set(DELTA_HUGE_ANON,         s_int,  AnonHugePages)
 HST_set(DELTA_HUGE_FREE,         s_int,  HugePages_Free)
 HST_set(DELTA_HUGE_RSVD,         s_int,  HugePages_Rsvd)
@@ -209,10 +236,14 @@ HST_set(DELTA_INACTIVE_FILE,     s_int,  Inactive_file)
 HST_set(DELTA_KERNEL_RECLAIM,    s_int,  KReclaimable)
 HST_set(DELTA_KERNEL_STACK,      s_int,  KernelStack)
 HST_set(DELTA_LOCKED,            s_int,  Mlocked)
+HST_set(DELTA_LOW_FREE,          s_int,  LowFree)
+HST_set(DELTA_LOW_TOTAL,         s_int,  LowTotal)
+HST_set(DELTA_LOW_USED,          s_int,  derived_mem_lo_used)
 HST_set(DELTA_MAPPED,            s_int,  Mapped)
 HST_set(DELTA_MAP_COPY,          s_int,  MmapCopy)
 HST_set(DELTA_NFS_UNSTABLE,      s_int,  NFS_Unstable)
 HST_set(DELTA_PAGE_TABLES,       s_int,  PageTables)
+HST_set(DELTA_PER_CPU,           s_int,  Percpu)
 HST_set(DELTA_QUICKLISTS,        s_int,  Quicklists)
 HST_set(DELTA_SHARED,            s_int,  Shmem)
 HST_set(DELTA_SHMEM_HUGE,        s_int,  ShmemHugePages)
@@ -228,14 +259,6 @@ HST_set(DELTA_VM_ALLOC_TOTAL,    s_int,  VmallocTotal)
 HST_set(DELTA_VM_ALLOC_USED,     s_int,  VmallocUsed)
 HST_set(DELTA_WRITEBACK,         s_int,  Writeback)
 HST_set(DELTA_WRITEBACK_TMP,     s_int,  WritebackTmp)
-
-MEM_set(MEMHI_FREE,             ul_int,  HighFree)
-MEM_set(MEMHI_TOTAL,            ul_int,  HighTotal)
-MEM_set(MEMHI_USED,             ul_int,  derived_mem_hi_used)
-
-MEM_set(MEMLO_FREE,             ul_int,  LowFree)
-MEM_set(MEMLO_TOTAL,            ul_int,  LowTotal)
-MEM_set(MEMLO_USED,             ul_int,  derived_mem_lo_used)
 
 MEM_set(SWAP_CACHED,            ul_int,  SwapCached)
 MEM_set(SWAP_FREE,              ul_int,  SwapFree)
@@ -282,11 +305,21 @@ static struct {
   { RS(MEM_BUFFERS),           TS(ul_int) },
   { RS(MEM_CACHED),            TS(ul_int) },
   { RS(MEM_CACHED_ALL),        TS(ul_int) },
-  { RS(MEM_COMMIT_LIMIT),      TS(ul_int) },
+  { RS(MEM_CMA_FREE),          TS(ul_int) },
+  { RS(MEM_CMA_TOTAL),         TS(ul_int) },
   { RS(MEM_COMMITTED_AS),      TS(ul_int) },
-  { RS(MEM_HARD_CORRUPTED),    TS(ul_int) },
+  { RS(MEM_COMMIT_LIMIT),      TS(ul_int) },
+  { RS(MEM_DIRECTMAP_1G),      TS(ul_int) },
+  { RS(MEM_DIRECTMAP_2M),      TS(ul_int) },
+  { RS(MEM_DIRECTMAP_4K),      TS(ul_int) },
+  { RS(MEM_DIRECTMAP_4M),      TS(ul_int) },
   { RS(MEM_DIRTY),             TS(ul_int) },
   { RS(MEM_FREE),              TS(ul_int) },
+  { RS(MEM_HARD_CORRUPTED),    TS(ul_int) },
+  { RS(MEM_HIGH_FREE),         TS(ul_int) },
+  { RS(MEM_HIGH_TOTAL),        TS(ul_int) },
+  { RS(MEM_HIGH_USED),         TS(ul_int) },
+  { RS(MEM_HUGETBL),           TS(ul_int) },
   { RS(MEM_HUGE_ANON),         TS(ul_int) },
   { RS(MEM_HUGE_FREE),         TS(ul_int) },
   { RS(MEM_HUGE_RSVD),         TS(ul_int) },
@@ -299,10 +332,14 @@ static struct {
   { RS(MEM_KERNEL_RECLAIM),    TS(ul_int) },
   { RS(MEM_KERNEL_STACK),      TS(ul_int) },
   { RS(MEM_LOCKED),            TS(ul_int) },
+  { RS(MEM_LOW_FREE),          TS(ul_int) },
+  { RS(MEM_LOW_TOTAL),         TS(ul_int) },
+  { RS(MEM_LOW_USED),          TS(ul_int) },
   { RS(MEM_MAPPED),            TS(ul_int) },
   { RS(MEM_MAP_COPY),          TS(ul_int) },
   { RS(MEM_NFS_UNSTABLE),      TS(ul_int) },
   { RS(MEM_PAGE_TABLES),       TS(ul_int) },
+  { RS(MEM_PER_CPU),           TS(ul_int) },
   { RS(MEM_QUICKLISTS),        TS(ul_int) },
   { RS(MEM_SHARED),            TS(ul_int) },
   { RS(MEM_SHMEM_HUGE),        TS(ul_int) },
@@ -328,11 +365,21 @@ static struct {
   { RS(DELTA_BUFFERS),         TS(s_int)  },
   { RS(DELTA_CACHED),          TS(s_int)  },
   { RS(DELTA_CACHED_ALL),      TS(s_int)  },
-  { RS(DELTA_COMMIT_LIMIT),    TS(s_int)  },
+  { RS(DELTA_CMA_FREE),        TS(s_int)  },
+  { RS(DELTA_CMA_TOTAL),       TS(s_int)  },
   { RS(DELTA_COMMITTED_AS),    TS(s_int)  },
-  { RS(DELTA_HARD_CORRUPTED),  TS(s_int)  },
+  { RS(DELTA_COMMIT_LIMIT),    TS(s_int)  },
+  { RS(DELTA_DIRECTMAP_1G),    TS(s_int)  },
+  { RS(DELTA_DIRECTMAP_2M),    TS(s_int)  },
+  { RS(DELTA_DIRECTMAP_4K),    TS(s_int)  },
+  { RS(DELTA_DIRECTMAP_4M),    TS(s_int)  },
   { RS(DELTA_DIRTY),           TS(s_int)  },
   { RS(DELTA_FREE),            TS(s_int)  },
+  { RS(DELTA_HARD_CORRUPTED),  TS(s_int)  },
+  { RS(DELTA_HIGH_FREE),       TS(s_int)  },
+  { RS(DELTA_HIGH_TOTAL),      TS(s_int)  },
+  { RS(DELTA_HIGH_USED),       TS(s_int)  },
+  { RS(DELTA_HUGETBL),         TS(s_int)  },
   { RS(DELTA_HUGE_ANON),       TS(s_int)  },
   { RS(DELTA_HUGE_FREE),       TS(s_int)  },
   { RS(DELTA_HUGE_RSVD),       TS(s_int)  },
@@ -345,10 +392,14 @@ static struct {
   { RS(DELTA_KERNEL_RECLAIM),  TS(s_int)  },
   { RS(DELTA_KERNEL_STACK),    TS(s_int)  },
   { RS(DELTA_LOCKED),          TS(s_int)  },
+  { RS(DELTA_LOW_FREE),        TS(s_int)  },
+  { RS(DELTA_LOW_TOTAL),       TS(s_int)  },
+  { RS(DELTA_LOW_USED),        TS(s_int)  },
   { RS(DELTA_MAPPED),          TS(s_int)  },
   { RS(DELTA_MAP_COPY),        TS(s_int)  },
   { RS(DELTA_NFS_UNSTABLE),    TS(s_int)  },
   { RS(DELTA_PAGE_TABLES),     TS(s_int)  },
+  { RS(DELTA_PER_CPU),         TS(s_int)  },
   { RS(DELTA_QUICKLISTS),      TS(s_int)  },
   { RS(DELTA_SHARED),          TS(s_int)  },
   { RS(DELTA_SHMEM_HUGE),      TS(s_int)  },
@@ -364,14 +415,6 @@ static struct {
   { RS(DELTA_VM_ALLOC_USED),   TS(s_int)  },
   { RS(DELTA_WRITEBACK),       TS(s_int)  },
   { RS(DELTA_WRITEBACK_TMP),   TS(s_int)  },
-
-  { RS(MEMHI_FREE),            TS(ul_int) },
-  { RS(MEMHI_TOTAL),           TS(ul_int) },
-  { RS(MEMHI_USED),            TS(ul_int) },
-
-  { RS(MEMLO_FREE),            TS(ul_int) },
-  { RS(MEMLO_TOTAL),           TS(ul_int) },
-  { RS(MEMLO_USED),            TS(ul_int) },
 
   { RS(SWAP_CACHED),           TS(ul_int) },
   { RS(SWAP_FREE),             TS(ul_int) },
@@ -530,6 +573,7 @@ static int meminfo_make_hash_failed (
     htVAL(Committed_AS)
     htVAL(DirectMap1G)
     htVAL(DirectMap2M)
+    htVAL(DirectMap4M)
     htVAL(DirectMap4k)
     htVAL(Dirty)
     htVAL(HardwareCorrupted)
@@ -540,6 +584,7 @@ static int meminfo_make_hash_failed (
     htVAL(HugePages_Surp)
     htVAL(HugePages_Total)
     htVAL(Hugepagesize)
+    htVAL(Hugetlb)
     htVAL(Inactive)
     htXTRA(Inactive(anon), Inactive_anon)
     htXTRA(Inactive(file), Inactive_file)
@@ -548,13 +593,14 @@ static int meminfo_make_hash_failed (
     htVAL(LowFree)
     htVAL(LowTotal)
     htVAL(Mapped)
-    htVAL(MmapCopy)
     htVAL(MemAvailable)
     htVAL(MemFree)
     htVAL(MemTotal)
     htVAL(Mlocked)
+    htVAL(MmapCopy)
     htVAL(NFS_Unstable)
     htVAL(PageTables)
+    htVAL(Percpu)
     htVAL(Quicklists)
     htVAL(SReclaimable)
     htVAL(SUnreclaim)

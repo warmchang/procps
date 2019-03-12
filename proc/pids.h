@@ -32,124 +32,124 @@ enum pids_item {
     PIDS_extra,             //        ( reset to zero )
                             //  returns        origin, see proc(5)
                             //  -------        -------------------
-    PIDS_ADDR_END_CODE,     //   ul_int        stat
-    PIDS_ADDR_KSTK_EIP,     //   ul_int        stat
-    PIDS_ADDR_KSTK_ESP,     //   ul_int        stat
-    PIDS_ADDR_START_CODE,   //   ul_int        stat
-    PIDS_ADDR_START_STACK,  //   ul_int        stat
-    PIDS_CGNAME,            //      str        cgroup
+    PIDS_ADDR_END_CODE,     //   ul_int        stat: endcode
+    PIDS_ADDR_KSTK_EIP,     //   ul_int        stat: kstkeip
+    PIDS_ADDR_KSTK_ESP,     //   ul_int        stat: kstkesp
+    PIDS_ADDR_START_CODE,   //   ul_int        stat: startcode
+    PIDS_ADDR_START_STACK,  //   ul_int        stat: statstack
+    PIDS_CGNAME,            //      str      [ derived from CGROUP ':name=' ]
     PIDS_CGROUP,            //      str        cgroup
-    PIDS_CGROUP_V,          //     strv        cgroup
-    PIDS_CMD,               //      str        stat or status
+    PIDS_CGROUP_V,          //     strv        cgroup, as *str[]
+    PIDS_CMD,               //      str        stat: comm or status: Name
     PIDS_CMDLINE,           //      str        cmdline
-    PIDS_CMDLINE_V,         //     strv        cmdline
+    PIDS_CMDLINE_V,         //     strv        cmdline, as *str[]
     PIDS_ENVIRON,           //      str        environ
-    PIDS_ENVIRON_V,         //     strv        environ
+    PIDS_ENVIRON_V,         //     strv        environ, as *str[]
     PIDS_EXE,               //      str        exe
-    PIDS_EXIT_SIGNAL,       //    s_int        stat
-    PIDS_FLAGS,             //   ul_int        stat
-    PIDS_FLT_MAJ,           //   ul_int        stat
-    PIDS_FLT_MAJ_C,         //   ul_int        stat
-    PIDS_FLT_MAJ_DELTA,     //    s_int        stat
-    PIDS_FLT_MIN,           //   ul_int        stat
-    PIDS_FLT_MIN_C,         //   ul_int        stat
-    PIDS_FLT_MIN_DELTA,     //    s_int        stat
-    PIDS_ID_EGID,           //    u_int        status
-    PIDS_ID_EGROUP,         //      str      [ EGID based, see: getgrgid(3) ]
-    PIDS_ID_EUID,           //    u_int        status
-    PIDS_ID_EUSER,          //      str      [ EUID based, see: getpwuid(3) ]
-    PIDS_ID_FGID,           //    u_int        status
-    PIDS_ID_FGROUP,         //      str      [ FGID based, see: getgrgid(3) ]
-    PIDS_ID_FUID,           //    u_int        status
-    PIDS_ID_FUSER,          //      str      [ FUID based, see: getpwuid(3) ]
+    PIDS_EXIT_SIGNAL,       //    s_int        stat: exit_signal
+    PIDS_FLAGS,             //   ul_int        stat: flags
+    PIDS_FLT_MAJ,           //   ul_int        stat: majflt
+    PIDS_FLT_MAJ_C,         //   ul_int        stat: majflt + cmajflt
+    PIDS_FLT_MAJ_DELTA,     //    s_int      [ derived from FLT_MAJ ]
+    PIDS_FLT_MIN,           //   ul_int        stat: minflt
+    PIDS_FLT_MIN_C,         //   ul_int        stat: minflt + cminflt
+    PIDS_FLT_MIN_DELTA,     //    s_int      [ derived from FLT_MIN ]
+    PIDS_ID_EGID,           //    u_int        status: Uid
+    PIDS_ID_EGROUP,         //      str      [ derived from EGID, see getgrgid(3) ]
+    PIDS_ID_EUID,           //    u_int        status: Uid
+    PIDS_ID_EUSER,          //      str      [ derived from EUID, see getpwuid(3) ]
+    PIDS_ID_FGID,           //    u_int        status: Uid
+    PIDS_ID_FGROUP,         //      str      [ derived from FGID, see getgrgid(3) ]
+    PIDS_ID_FUID,           //    u_int        status: Uid
+    PIDS_ID_FUSER,          //      str      [ derived from FUID, see getpwuid(3) ]
     PIDS_ID_LOGIN,          //    s_int        loginuid
-    PIDS_ID_PGRP,           //    s_int        stat
-    PIDS_ID_PID,            //    s_int        as: /proc/<pid>
-    PIDS_ID_PPID,           //    s_int        stat or status
-    PIDS_ID_RGID,           //    u_int        status
-    PIDS_ID_RGROUP,         //      str      [ RGID based, see: getgrgid(3) ]
-    PIDS_ID_RUID,           //    u_int        status
-    PIDS_ID_RUSER,          //      str      [ RUID based, see: getpwuid(3) ]
-    PIDS_ID_SESSION,        //    s_int        stat
-    PIDS_ID_SGID,           //    u_int        status
-    PIDS_ID_SGROUP,         //      str      [ SGID based, see: getgrgid(3) ]
-    PIDS_ID_SUID,           //    u_int        status
-    PIDS_ID_SUSER,          //      str      [ SUID based, see: getpwuid(3) ]
-    PIDS_ID_TGID,           //    s_int        status
-    PIDS_ID_TID,            //    s_int        as: /proc/<pid>/task/<tid>
-    PIDS_ID_TPGID,          //    s_int        stat
-    PIDS_LXCNAME,           //      str        cgroup
-    PIDS_MEM_CODE,          //   ul_int        statm
-    PIDS_MEM_CODE_PGS,      //   ul_int        statm
-    PIDS_MEM_DATA,          //   ul_int        statm
-    PIDS_MEM_DATA_PGS,      //   ul_int        statm
-    PIDS_MEM_RES,           //   ul_int        statm
-    PIDS_MEM_RES_PGS,       //   ul_int        statm
-    PIDS_MEM_SHR,           //   ul_int        statm
-    PIDS_MEM_SHR_PGS,       //   ul_int        statm
-    PIDS_MEM_VIRT,          //   ul_int        statm
-    PIDS_MEM_VIRT_PGS,      //   ul_int        statm
-    PIDS_NICE,              //    s_int        stat
-    PIDS_NLWP,              //    s_int        stat or status
+    PIDS_ID_PGRP,           //    s_int        stat: pgrp
+    PIDS_ID_PID,            //    s_int        from /proc/<pid>
+    PIDS_ID_PPID,           //    s_int        stat: ppid or status: PPid
+    PIDS_ID_RGID,           //    u_int        status: Gid
+    PIDS_ID_RGROUP,         //      str      [ derived from RGID, see getgrgid(3) ]
+    PIDS_ID_RUID,           //    u_int        status: Gid
+    PIDS_ID_RUSER,          //      str      [ derived from RUID, see getpwuid(3) ]
+    PIDS_ID_SESSION,        //    s_int        stat: session
+    PIDS_ID_SGID,           //    u_int        status: Gid
+    PIDS_ID_SGROUP,         //      str      [ derived from SGID, see getgrgid(3) ]
+    PIDS_ID_SUID,           //    u_int        status: Gid
+    PIDS_ID_SUSER,          //      str      [ derived from SUID, see getpwuid(3) ]
+    PIDS_ID_TGID,           //    s_int        status: Tgid
+    PIDS_ID_TID,            //    s_int        from /proc/<pid>/task/<tid>
+    PIDS_ID_TPGID,          //    s_int        stat: tpgid
+    PIDS_LXCNAME,           //      str      [ derived from CGROUP 'lxc.payload/' ]
+    PIDS_MEM_CODE,          //   ul_int      [ derived from MEM_CODE_PGS, as KiB ]
+    PIDS_MEM_CODE_PGS,      //   ul_int        statm: text
+    PIDS_MEM_DATA,          //   ul_int      [ derived from MEM_DATA_PGS, as KiB ]
+    PIDS_MEM_DATA_PGS,      //   ul_int        statm: data
+    PIDS_MEM_RES,           //   ul_int      [ derived from MEM_RES_PGS, as KiB ]
+    PIDS_MEM_RES_PGS,       //   ul_int        statm: resident
+    PIDS_MEM_SHR,           //   ul_int      [ derived from MEM_SHR_PGS, as KiB ]
+    PIDS_MEM_SHR_PGS,       //   ul_int        statm: shared
+    PIDS_MEM_VIRT,          //   ul_int      [ derived from MEM_VIRT_PGS, as KiB ]
+    PIDS_MEM_VIRT_PGS,      //   ul_int        statm: size
+    PIDS_NICE,              //    s_int        stat: nice
+    PIDS_NLWP,              //    s_int        stat: num_threads or status: Threads
     PIDS_NS_IPC,            //   ul_int        ns/
-    PIDS_NS_MNT,            //   ul_int        ns/
-    PIDS_NS_NET,            //   ul_int        ns/
-    PIDS_NS_PID,            //   ul_int        ns/
-    PIDS_NS_USER,           //   ul_int        ns/
-    PIDS_NS_UTS,            //   ul_int        ns/
+    PIDS_NS_MNT,            //   ul_int         "
+    PIDS_NS_NET,            //   ul_int         "
+    PIDS_NS_PID,            //   ul_int         "
+    PIDS_NS_USER,           //   ul_int         "
+    PIDS_NS_UTS,            //   ul_int         "
     PIDS_OOM_ADJ,           //    s_int        oom_score_adj
     PIDS_OOM_SCORE,         //    s_int        oom_score
-    PIDS_PRIORITY,          //    s_int        stat
-    PIDS_PROCESSOR,         //    u_int        stat
-    PIDS_PROCESSOR_NODE,    //    s_int        stat
-    PIDS_RSS,               //   ul_int        stat
-    PIDS_RSS_RLIM,          //   ul_int        stat
-    PIDS_RTPRIO,            //    s_int        stat
-    PIDS_SCHED_CLASS,       //    s_int        stat
-    PIDS_SD_MACH,           //      str      [ PID/TID based, see: sd-login(3) ]
+    PIDS_PRIORITY,          //    s_int        stat: priority
+    PIDS_PRIORITY_RT,       //    s_int        stat: rt_priority
+    PIDS_PROCESSOR,         //    u_int        stat: processor
+    PIDS_PROCESSOR_NODE,    //    s_int      [ derived from PROCESSOR, see numa(3) ]
+    PIDS_RSS,               //   ul_int        stat: rss
+    PIDS_RSS_RLIM,          //   ul_int        stat: rsslim
+    PIDS_SCHED_CLASS,       //    s_int        stat: policy
+    PIDS_SD_MACH,           //      str      [ derived from PID/TID, see sd-login(3) ]
     PIDS_SD_OUID,           //      str         "
     PIDS_SD_SEAT,           //      str         "
     PIDS_SD_SESS,           //      str         "
     PIDS_SD_SLICE,          //      str         "
     PIDS_SD_UNIT,           //      str         "
     PIDS_SD_UUNIT,          //      str         "
-    PIDS_SIGBLOCKED,        //      str        status
-    PIDS_SIGCATCH,          //      str        status
-    PIDS_SIGIGNORE,         //      str        status
-    PIDS_SIGNALS,           //      str        status
-    PIDS_SIGPENDING,        //      str        status
-    PIDS_STATE,             //     s_ch        stat or status
-    PIDS_SUPGIDS,           //      str        status
-    PIDS_SUPGROUPS,         //      str      [ SUPGIDS based, see: getgrgid(3) ]
-    PIDS_TICS_ALL,          //  ull_int        stat
-    PIDS_TICS_ALL_C,        //  ull_int        stat
-    PIDS_TICS_ALL_DELTA,    //    s_int        stat
-    PIDS_TICS_BLKIO,        //  ull_int        stat
-    PIDS_TICS_GUEST,        //  ull_int        stat
-    PIDS_TICS_GUEST_C,      //  ull_int        stat
-    PIDS_TICS_SYSTEM,       //  ull_int        stat
-    PIDS_TICS_SYSTEM_C,     //  ull_int        stat
-    PIDS_TICS_USER,         //  ull_int        stat
-    PIDS_TICS_USER_C,       //  ull_int        stat
-    PIDS_TIME_ALL,          //  ull_int        stat
-    PIDS_TIME_ELAPSED,      //  ull_int        stat
-    PIDS_TIME_START,        //  ull_int        stat
-    PIDS_TTY,               //    s_int        stat
-    PIDS_TTY_NAME,          //      str        stat
-    PIDS_TTY_NUMBER,        //      str        stat
-    PIDS_VM_DATA,           //   ul_int        status
-    PIDS_VM_EXE,            //   ul_int        status
-    PIDS_VM_LIB,            //   ul_int        status
-    PIDS_VM_RSS,            //   ul_int        status
-    PIDS_VM_RSS_ANON,       //   ul_int        status
-    PIDS_VM_RSS_FILE,       //   ul_int        status
-    PIDS_VM_RSS_LOCKED,     //   ul_int        status
-    PIDS_VM_RSS_SHARED,     //   ul_int        status
-    PIDS_VM_SIZE,           //   ul_int        status
-    PIDS_VM_STACK,          //   ul_int        status
-    PIDS_VM_SWAP,           //   ul_int        status
-    PIDS_VM_USED,           //   ul_int        status
-    PIDS_VSIZE_PGS,         //   ul_int        stat
+    PIDS_SIGBLOCKED,        //      str        status: SigBlk
+    PIDS_SIGCATCH,          //      str        status: SigCgt
+    PIDS_SIGIGNORE,         //      str        status: SigIgn
+    PIDS_SIGNALS,           //      str        status: ShdPnd
+    PIDS_SIGPENDING,        //      str        status: SigPnd
+    PIDS_STATE,             //     s_ch        stat: state or status: State
+    PIDS_SUPGIDS,           //      str        status: Groups
+    PIDS_SUPGROUPS,         //      str      [ derived from SUPGIDS, see getgrgid(3) ]
+    PIDS_TICS_ALL,          //  ull_int        stat: stime + utime
+    PIDS_TICS_ALL_C,        //  ull_int        stat: stime + utime + cstime + cutime
+    PIDS_TICS_ALL_DELTA,    //    s_int      [ derived from TICS_ALL ]
+    PIDS_TICS_BLKIO,        //  ull_int        stat: delayacct_blkio_ticks
+    PIDS_TICS_GUEST,        //  ull_int        stat: guest_time
+    PIDS_TICS_GUEST_C,      //  ull_int        stat: guest_time + cguest_time
+    PIDS_TICS_SYSTEM,       //  ull_int        stat: stime
+    PIDS_TICS_SYSTEM_C,     //  ull_int        stat: stime + cstime
+    PIDS_TICS_USER,         //  ull_int        stat: utime
+    PIDS_TICS_USER_C,       //  ull_int        stat: utime + cutime
+    PIDS_TIME_ALL,          //  ull_int      [ derived from (utime + stime) / hertz ]
+    PIDS_TIME_ELAPSED,      //  ull_int      [ derived from /proc/uptime - (starttime / hertz) }
+    PIDS_TIME_START,        //  ull_int        stat: starttime
+    PIDS_TTY,               //    s_int        stat: tty_nr
+    PIDS_TTY_NAME,          //      str      [ derived from TTY ]
+    PIDS_TTY_NUMBER,        //      str      [ derived from TTY as str ]
+    PIDS_VM_DATA,           //   ul_int        status: VmData
+    PIDS_VM_EXE,            //   ul_int        status: VmExe
+    PIDS_VM_LIB,            //   ul_int        status: VmLib
+    PIDS_VM_RSS,            //   ul_int        status: VmRSS
+    PIDS_VM_RSS_ANON,       //   ul_int        status: RssAnon
+    PIDS_VM_RSS_FILE,       //   ul_int        status: RssFile
+    PIDS_VM_RSS_LOCKED,     //   ul_int        status: VmLck
+    PIDS_VM_RSS_SHARED,     //   ul_int        status: RssShmem
+    PIDS_VM_SIZE,           //   ul_int        status: VmSize
+    PIDS_VM_STACK,          //   ul_int        status: VmStk
+    PIDS_VM_SWAP,           //   ul_int        status: VmSwap
+    PIDS_VM_USED,           //   ul_int        status: VmRSS + VmSwap
+    PIDS_VSIZE_PGS,         //   ul_int        stat: vsize
     PIDS_WCHAN_NAME         //      str        wchan
 };
 

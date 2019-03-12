@@ -52,11 +52,11 @@
    would be forced to duplicate global slabs stuff in every node results stack, |
    the following #define can be used to enforce strictly logical return values. |
       select: allow only SLABINFO & SLABS items
-      reap:   allow only SLABINFO & SLABNODE items
+      reap:   allow only SLABINFO & SLAB items
    Without the #define, these functions always return something even if just 0. |
       get:    return only SLABS results, else 0
       select: return only SLABINFO & SLABS results, else zero
-      reap:   return any requested, even when duplicated in each node's stack */
+      reap:   return any requested, even when duplicated in each cache's stack */
 //#define ENFORCE_LOGICAL  // ensure only logical items accepted by select/reap
 
 
@@ -148,42 +148,42 @@ struct slabinfo_info {
 setDECL(noop)  { (void)R; (void)S; (void)N; }
 setDECL(extra) { (void)R; (void)S; (void)N; }
 
-REG_set(SLABS_OBJS,               u_int,  nr_objs)
-REG_set(SLABS_AOBJS,              u_int,  nr_active_objs)
-REG_set(SLABS_PAGES,              u_int,  nr_pages)
-REG_set(SLABS_SLABS,              u_int,  nr_slabs)
-REG_set(SLABS_ASLABS,             u_int,  nr_active_slabs)
-REG_set(SLABS_CACHES,             u_int,  nr_caches)
-REG_set(SLABS_ACACHES,            u_int,  nr_active_caches)
-REG_set(SLABS_SIZE_AVG,           u_int,  avg_obj_size)
-REG_set(SLABS_SIZE_MIN,           u_int,  min_obj_size)
-REG_set(SLABS_SIZE_MAX,           u_int,  max_obj_size)
-REG_set(SLABS_SIZE_ACTIVE,       ul_int,  active_size)
-REG_set(SLABS_SIZE_TOTAL,        ul_int,  total_size)
+NOD_set(SLAB_NAME,                     str,  name)
+NOD_set(SLAB_NUM_OBJS,               u_int,  nr_objs)
+NOD_set(SLAB_ACTIVE_OBJS,            u_int,  nr_active_objs)
+NOD_set(SLAB_OBJ_SIZE,               u_int,  obj_size)
+NOD_set(SLAB_OBJ_PER_SLAB,           u_int,  objs_per_slab)
+NOD_set(SLAB_NUMS_SLABS,             u_int,  nr_slabs)
+NOD_set(SLAB_ACTIVE_SLABS,           u_int,  nr_active_slabs)
+NOD_set(SLAB_PAGES_PER_SLAB,         u_int,  pages_per_slab)
+NOD_set(SLAB_PERCENT_USED,           u_int,  use)
+NOD_set(SLAB_SIZE_TOTAL,            ul_int,  cache_size)
 
-HST_set(SLABS_DELTA_OBJS,         s_int,  nr_objs)
-HST_set(SLABS_DELTA_AOBJS,        s_int,  nr_active_objs)
-HST_set(SLABS_DELTA_PAGES,        s_int,  nr_pages)
-HST_set(SLABS_DELTA_SLABS,        s_int,  nr_slabs)
-HST_set(SLABS_DELTA_ASLABS,       s_int,  nr_active_slabs)
-HST_set(SLABS_DELTA_CACHES,       s_int,  nr_caches)
-HST_set(SLABS_DELTA_ACACHES,      s_int,  nr_active_caches)
-HST_set(SLABS_DELTA_SIZE_AVG,     s_int,  avg_obj_size)
-HST_set(SLABS_DELTA_SIZE_MIN,     s_int,  min_obj_size)
-HST_set(SLABS_DELTA_SIZE_MAX,     s_int,  max_obj_size)
-HST_set(SLABS_DELTA_SIZE_ACTIVE,  s_int,  active_size)
-HST_set(SLABS_DELTA_SIZE_TOTAL,   s_int,  total_size)
+REG_set(SLABS_CACHES_TOTAL,          u_int,  nr_caches)
+REG_set(SLABS_CACHES_ACTIVE,         u_int,  nr_active_caches)
+REG_set(SLABS_NUM_OBJS,              u_int,  nr_objs)
+REG_set(SLABS_ACTIVE_OBJS,           u_int,  nr_active_objs)
+REG_set(SLABS_OBJ_SIZE_AVG,          u_int,  avg_obj_size)
+REG_set(SLABS_OBJ_SIZE_MIN,          u_int,  min_obj_size)
+REG_set(SLABS_OBJ_SIZE_MAX,          u_int,  max_obj_size)
+REG_set(SLABS_NUMS_SLABS,            u_int,  nr_slabs)
+REG_set(SLABS_ACTIVE_SLABS,          u_int,  nr_active_slabs)
+REG_set(SLABS_PAGES_TOTAL,           u_int,  nr_pages)
+REG_set(SLABS_SIZE_ACTIVE,          ul_int,  active_size)
+REG_set(SLABS_SIZE_TOTAL,           ul_int,  total_size)
 
-NOD_set(SLABNODE_NAME,              str,  name)
-NOD_set(SLABNODE_OBJS,            u_int,  nr_objs)
-NOD_set(SLABNODE_AOBJS,           u_int,  nr_active_objs)
-NOD_set(SLABNODE_OBJ_SIZE,        u_int,  obj_size)
-NOD_set(SLABNODE_OBJS_PER_SLAB,   u_int,  objs_per_slab)
-NOD_set(SLABNODE_PAGES_PER_SLAB,  u_int,  pages_per_slab)
-NOD_set(SLABNODE_SLABS,           u_int,  nr_slabs)
-NOD_set(SLABNODE_ASLABS,          u_int,  nr_active_slabs)
-NOD_set(SLABNODE_USE,             u_int,  use)
-NOD_set(SLABNODE_SIZE,           ul_int,  cache_size)
+HST_set(SLABS_DELTA_CACHES_TOTAL,    s_int,  nr_caches)
+HST_set(SLABS_DELTA_CACHES_ACTIVE,   s_int,  nr_active_caches)
+HST_set(SLABS_DELTA_NUM_OBJS,        s_int,  nr_objs)
+HST_set(SLABS_DELTA_ACTIVE_OBJS,     s_int,  nr_active_objs)
+HST_set(SLABS_DELTA_OBJ_SIZE_AVG,    s_int,  avg_obj_size)
+HST_set(SLABS_DELTA_OBJ_SIZE_MIN,    s_int,  min_obj_size)
+HST_set(SLABS_DELTA_OBJ_SIZE_MAX,    s_int,  max_obj_size)
+HST_set(SLABS_DELTA_NUMS_SLABS,      s_int,  nr_slabs)
+HST_set(SLABS_DELTA_ACTIVE_SLABS,    s_int,  nr_active_slabs)
+HST_set(SLABS_DELTA_PAGES_TOTAL,     s_int,  nr_pages)
+HST_set(SLABS_DELTA_SIZE_ACTIVE,     s_int,  active_size)
+HST_set(SLABS_DELTA_SIZE_TOTAL,      s_int,  total_size)
 
 #undef setDECL
 #undef REG_set
@@ -252,55 +252,55 @@ static struct {
     QSR_t sortfunc;              // sort cmp func for a specific type
     char *type2str;              // the result type as a string value
 } Item_table[] = {
-/*  setsfunc                      sortfunc     type2str
-    ----------------------------  -----------  ---------- */
-  { RS(noop),                     QS(noop),    TS_noop    },
-  { RS(extra),                    QS(ul_int),  TS_noop    },
+/*  setsfunc                        sortfunc     type2str
+    ------------------------------  -----------  ---------- */
+  { RS(noop),                       QS(noop),    TS_noop    },
+  { RS(extra),                      QS(ul_int),  TS_noop    },
 
-  { RS(SLABS_OBJS),               QS(noop),    TS(u_int)  },
-  { RS(SLABS_AOBJS),              QS(noop),    TS(u_int)  },
-  { RS(SLABS_PAGES),              QS(noop),    TS(u_int)  },
-  { RS(SLABS_SLABS),              QS(noop),    TS(u_int)  },
-  { RS(SLABS_ASLABS),             QS(noop),    TS(u_int)  },
-  { RS(SLABS_CACHES),             QS(noop),    TS(u_int)  },
-  { RS(SLABS_ACACHES),            QS(noop),    TS(u_int)  },
-  { RS(SLABS_SIZE_AVG),           QS(noop),    TS(u_int)  },
-  { RS(SLABS_SIZE_MIN),           QS(noop),    TS(u_int)  },
-  { RS(SLABS_SIZE_MAX),           QS(noop),    TS(u_int)  },
-  { RS(SLABS_SIZE_ACTIVE),        QS(noop),    TS(ul_int) },
-  { RS(SLABS_SIZE_TOTAL),         QS(noop),    TS(ul_int) },
+  { RS(SLAB_NAME),                  QS(str),     TS(str)    },
+  { RS(SLAB_NUM_OBJS),              QS(u_int),   TS(u_int)  },
+  { RS(SLAB_ACTIVE_OBJS),           QS(u_int),   TS(u_int)  },
+  { RS(SLAB_OBJ_SIZE),              QS(u_int),   TS(u_int)  },
+  { RS(SLAB_OBJ_PER_SLAB),          QS(u_int),   TS(u_int)  },
+  { RS(SLAB_NUMS_SLABS),            QS(u_int),   TS(u_int)  },
+  { RS(SLAB_ACTIVE_SLABS),          QS(u_int),   TS(u_int)  },
+  { RS(SLAB_PAGES_PER_SLAB),        QS(u_int),   TS(u_int)  },
+  { RS(SLAB_PERCENT_USED),          QS(u_int),   TS(u_int)  },
+  { RS(SLAB_SIZE_TOTAL),            QS(ul_int),  TS(ul_int) },
 
-  { RS(SLABS_DELTA_OBJS),         QS(noop),    TS(s_int)  },
-  { RS(SLABS_DELTA_AOBJS),        QS(noop),    TS(s_int)  },
-  { RS(SLABS_DELTA_PAGES),        QS(noop),    TS(s_int)  },
-  { RS(SLABS_DELTA_SLABS),        QS(noop),    TS(s_int)  },
-  { RS(SLABS_DELTA_ASLABS),       QS(noop),    TS(s_int)  },
-  { RS(SLABS_DELTA_CACHES),       QS(noop),    TS(s_int)  },
-  { RS(SLABS_DELTA_ACACHES),      QS(noop),    TS(s_int)  },
-  { RS(SLABS_DELTA_SIZE_AVG),     QS(noop),    TS(s_int)  },
-  { RS(SLABS_DELTA_SIZE_MIN),     QS(noop),    TS(s_int)  },
-  { RS(SLABS_DELTA_SIZE_MAX),     QS(noop),    TS(s_int)  },
-  { RS(SLABS_DELTA_SIZE_ACTIVE),  QS(noop),    TS(s_int)  },
-  { RS(SLABS_DELTA_SIZE_TOTAL),   QS(noop),    TS(s_int)  },
+  { RS(SLABS_CACHES_TOTAL),         QS(noop),    TS(u_int)  },
+  { RS(SLABS_CACHES_ACTIVE),        QS(noop),    TS(u_int)  },
+  { RS(SLABS_NUM_OBJS),             QS(noop),    TS(u_int)  },
+  { RS(SLABS_ACTIVE_OBJS),          QS(noop),    TS(u_int)  },
+  { RS(SLABS_OBJ_SIZE_AVG),         QS(noop),    TS(u_int)  },
+  { RS(SLABS_OBJ_SIZE_MIN),         QS(noop),    TS(u_int)  },
+  { RS(SLABS_OBJ_SIZE_MAX),         QS(noop),    TS(u_int)  },
+  { RS(SLABS_NUMS_SLABS),           QS(noop),    TS(u_int)  },
+  { RS(SLABS_ACTIVE_SLABS),         QS(noop),    TS(u_int)  },
+  { RS(SLABS_PAGES_TOTAL),          QS(noop),    TS(u_int)  },
+  { RS(SLABS_SIZE_ACTIVE),          QS(noop),    TS(ul_int) },
+  { RS(SLABS_SIZE_TOTAL),           QS(noop),    TS(ul_int) },
 
-  { RS(SLABNODE_NAME),            QS(str),     TS(str)    },
-  { RS(SLABNODE_OBJS),            QS(u_int),   TS(u_int)  },
-  { RS(SLABNODE_AOBJS),           QS(u_int),   TS(u_int)  },
-  { RS(SLABNODE_OBJ_SIZE),        QS(u_int),   TS(u_int)  },
-  { RS(SLABNODE_OBJS_PER_SLAB),   QS(u_int),   TS(u_int)  },
-  { RS(SLABNODE_PAGES_PER_SLAB),  QS(u_int),   TS(u_int)  },
-  { RS(SLABNODE_SLABS),           QS(u_int),   TS(u_int)  },
-  { RS(SLABNODE_ASLABS),          QS(u_int),   TS(u_int)  },
-  { RS(SLABNODE_USE),             QS(u_int),   TS(u_int)  },
-  { RS(SLABNODE_SIZE),            QS(ul_int),  TS(ul_int) },
+  { RS(SLABS_DELTA_CACHES_TOTAL),   QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_CACHES_ACTIVE),  QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_NUM_OBJS),       QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_ACTIVE_OBJS),    QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_OBJ_SIZE_AVG),   QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_OBJ_SIZE_MIN),   QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_OBJ_SIZE_MAX),   QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_NUMS_SLABS),     QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_ACTIVE_SLABS),   QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_PAGES_TOTAL),    QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_SIZE_ACTIVE),    QS(noop),    TS(s_int)  },
+  { RS(SLABS_DELTA_SIZE_TOTAL),     QS(noop),    TS(s_int)  },
 
  // dummy entry corresponding to SLABINFO_logical_end ...
-  { NULL,                         NULL,        NULL       }
+  { NULL,                           NULL,        NULL       }
 };
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum slabinfo_item SLABINFO_logical_end = SLABNODE_SIZE + 1;
+enum slabinfo_item SLABINFO_logical_end = SLABS_DELTA_SIZE_TOTAL + 1;
 
 #undef setNAME
 #undef srtNAME
@@ -786,10 +786,10 @@ PROCPS_EXPORT int procps_slabinfo_new (
         return -ENOMEM;
 
 #ifdef ENFORCE_LOGICAL
-    p->select_ext.lowest  = SLABS_OBJS;
+    p->select_ext.lowest  = SLABS_CACHES_TOTAL;
     p->select_ext.highest = SLABS_DELTA_SIZE_TOTAL;
-    p->fetch_ext.lowest   = SLABNODE_NAME;
-    p->fetch_ext.highest  = SLABNODE_SIZE;
+    p->fetch_ext.lowest   = SLAB_NAME;
+    p->fetch_ext.highest  = SLAB_SIZE_TOTAL;
 #endif
 
     p->refcount = 1;
@@ -897,7 +897,7 @@ PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
 
 /* procps_slabinfo_reap():
  *
- * Harvest all the requested SLABNODE (individual nodes) information
+ * Harvest all the requested SLAB (individual nodes) information
  * providing the result stacks along with the total number of nodes.
  *
  * Returns: pointer to a slabinfo_reap struct on success, NULL on error.
