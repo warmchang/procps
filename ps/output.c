@@ -626,9 +626,9 @@ setREL1(SCHED_CLASS)
 //    default   "%u:%u", type, prio
 // We just print the priority, and have other keywords for type.
 static int pr_rtprio(char *restrict const outbuf, const proc_t *restrict const pp){
-setREL2(SCHED_CLASS,RTPRIO)
+setREL2(SCHED_CLASS,PRIORITY_RT)
   if(rSv(SCHED_CLASS, s_int, pp)==0 || rSv(SCHED_CLASS, s_int, pp)==-1) return snprintf(outbuf, COLWID, "-");
-  return snprintf(outbuf, COLWID, "%d", rSv(RTPRIO, s_int, pp));
+  return snprintf(outbuf, COLWID, "%d", rSv(PRIORITY_RT, s_int, pp));
 }
 
 static int pr_sched(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -1551,7 +1551,7 @@ static const format_struct format_array[] = { /*
 {"rss",       "RSS",     pr_rss,           PIDS_VM_RSS,              5,    XXX,  PO|RIGHT}, /* was 5 wide */
 {"rssize",    "RSS",     pr_rss,           PIDS_VM_RSS,              5,    DEC,  PO|RIGHT}, /*rsz*/
 {"rsz",       "RSZ",     pr_rss,           PIDS_VM_RSS,              5,    BSD,  PO|RIGHT}, /*rssize*/
-{"rtprio",    "RTPRIO",  pr_rtprio,        PIDS_RTPRIO,              6,    BSD,  TO|RIGHT},
+{"rtprio",    "RTPRIO",  pr_rtprio,        PIDS_PRIORITY_RT,         6,    BSD,  TO|RIGHT},
 {"ruid",      "RUID",    pr_ruid,          PIDS_ID_RUID,             5,    XXX,  ET|RIGHT},
 {"ruser",     "RUSER",   pr_ruser,         PIDS_ID_RUSER,            8,    U98,  ET|USER},
 {"s",         "S",       pr_s,             PIDS_STATE,               1,    SUN,  TO|LEFT},  /*stat,state*/

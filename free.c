@@ -380,15 +380,15 @@ int main(int argc, char **argv)
 		 */
 		if (flags & FREE_LOHI) {
 			printf("%-7s", _("Low:"));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEMLO_TOTAL, ul_int), flags, args));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEMLO_USED, ul_int), flags, args));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEMLO_FREE, ul_int), flags, args));
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_TOTAL, ul_int), flags, args));
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_USED, ul_int), flags, args));
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_FREE, ul_int), flags, args));
 			printf("\n");
 
 			printf("%-7s", _("High:"));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEMHI_TOTAL, ul_int), flags, args));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEMHI_USED, ul_int), flags, args));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEMHI_FREE, ul_int), flags, args));
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_TOTAL, ul_int), flags, args));
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_USED, ul_int), flags, args));
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_FREE, ul_int), flags, args));
 			printf("\n");
 		}
 

@@ -143,7 +143,7 @@ static enum diskstats_item Disk_items[] = {
     DISKSTATS_WRITE_TIME,
     DISKSTATS_IO_INPROGRESS,
     DISKSTATS_IO_TIME,
-    DISKSTATS_IO_WTIME
+    DISKSTATS_WEIGHTED_TIME
 };
 enum Rel_diskitems {
     disk_TYPE,  disk_NAME,
@@ -719,9 +719,9 @@ static void slabformat (void)
     struct slabinfo_reap *reaped;
     int i, j;
     enum slabinfo_item node_items[] = {
-        SLABNODE_AOBJS,    SLABNODE_OBJS,
-        SLABNODE_OBJ_SIZE, SLABNODE_OBJS_PER_SLAB,
-        SLABNODE_NAME };
+        SLAB_ACTIVE_OBJS, SLAB_NUM_OBJS,
+        SLAB_OBJ_SIZE,    SLAB_OBJ_PER_SLAB,
+        SLAB_NAME };
     enum rel_enums {
         slab_AOBJS, slab_OBJS, slab_OSIZE, slab_OPS, slab_NAME };
 
@@ -734,7 +734,7 @@ static void slabformat (void)
     for (i = 0; infinite_updates || i < num_updates; i++) {
         if (!(reaped = procps_slabinfo_reap(slab_info, node_items, MAX_ITEMS)))
             xerrx(EXIT_FAILURE, _("Unable to get slabinfo node data"));
-        if (!(procps_slabinfo_sort(slab_info, reaped->stacks, reaped->total, SLABNODE_NAME, SLABINFO_SORT_ASCEND)))
+        if (!(procps_slabinfo_sort(slab_info, reaped->stacks, reaped->total, SLAB_NAME, SLABINFO_SORT_ASCEND)))
             xerrx(EXIT_FAILURE, _("Unable to sort slab nodes"));
 
         for (j = 0; j < reaped->total; j++) {

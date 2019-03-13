@@ -44,7 +44,7 @@
 #include "strutils.h"
 #include <proc/procps.h>
 
-#define DEFAULT_SORT  SLABNODE_OBJS
+#define DEFAULT_SORT  SLAB_NUM_OBJS
 #define CHAINS_ALLOC  150
 #define MAXTBL(t) (int)( sizeof(t) / sizeof(t[0]) )
 
@@ -59,12 +59,12 @@ enum slabinfo_item Sort_item = DEFAULT_SORT;
 enum slabinfo_sort_order Sort_Order = SLABINFO_SORT_DESCEND;
 
 enum slabinfo_item Node_items[] = {
-    SLABNODE_OBJS,     SLABNODE_AOBJS, SLABNODE_USE,
-    SLABNODE_OBJ_SIZE, SLABNODE_SLABS, SLABNODE_OBJS_PER_SLAB,
-    SLABNODE_SIZE,     SLABNODE_NAME,
+    SLAB_NUM_OBJS,   SLAB_ACTIVE_OBJS, SLAB_PERCENT_USED,
+    SLAB_OBJ_SIZE,   SLAB_NUMS_SLABS,  SLAB_OBJ_PER_SLAB,
+    SLAB_SIZE_TOTAL, SLAB_NAME,
     /* next 2 are sortable but are not displayable,
        thus they need not be represented in the Relative_enums */
-    SLABNODE_PAGES_PER_SLAB, SLABNODE_ASLABS };
+    SLAB_PAGES_PER_SLAB, SLAB_ACTIVE_SLABS };
 
 enum Relative_node {
     nod_OBJS,  nod_AOBJS, nod_USE,  nod_OSIZE,
@@ -131,35 +131,35 @@ static void set_sort_stuff (const char key)
 
     switch (tolower(key)) {
     case 'n':
-        Sort_item = SLABNODE_NAME;
+        Sort_item = SLAB_NAME;
         Sort_Order = SLABINFO_SORT_ASCEND;
         break;
     case 'o':
-        Sort_item = SLABNODE_OBJS;
+        Sort_item = SLAB_NUM_OBJS;
         break;
     case 'a':
-        Sort_item = SLABNODE_AOBJS;
+        Sort_item = SLAB_ACTIVE_OBJS;
         break;
     case 's':
-        Sort_item = SLABNODE_OBJ_SIZE;
+        Sort_item = SLAB_OBJ_SIZE;
         break;
     case 'b':
-        Sort_item = SLABNODE_OBJS_PER_SLAB;
+        Sort_item = SLAB_OBJ_PER_SLAB;
         break;
     case 'p':
-        Sort_item = SLABNODE_PAGES_PER_SLAB;
+        Sort_item = SLAB_PAGES_PER_SLAB;
         break;
     case 'l':
-        Sort_item = SLABNODE_SLABS;
+        Sort_item = SLAB_NUMS_SLABS;
         break;
     case 'v':
-        Sort_item = SLABNODE_ASLABS;
+        Sort_item = SLAB_ACTIVE_SLABS;
         break;
     case 'c':
-        Sort_item = SLABNODE_SIZE;
+        Sort_item = SLAB_SIZE_TOTAL;
         break;
     case 'u':
-        Sort_item = SLABNODE_USE;
+        Sort_item = SLAB_PERCENT_USED;
         break;
     default:
         break;
@@ -207,12 +207,12 @@ static void print_summary (void)
 {
  #define totalVAL(e,t) SLABINFO_VAL(e, t, p, Slab_info)
     enum slabinfo_item items[] = {
-        SLABS_AOBJS,       SLABS_OBJS,
-        SLABS_ASLABS,      SLABS_SLABS,
-        SLABS_ACACHES,     SLABS_CACHES,
-        SLABS_SIZE_ACTIVE, SLABS_SIZE_TOTAL,
-        SLABS_SIZE_MIN,    SLABS_SIZE_AVG,
-        SLABS_SIZE_MAX
+        SLABS_ACTIVE_OBJS,   SLABS_NUM_OBJS,
+        SLABS_ACTIVE_SLABS,  SLABS_NUMS_SLABS,
+        SLABS_CACHES_ACTIVE, SLABS_CACHES_TOTAL,
+        SLABS_SIZE_ACTIVE,   SLABS_SIZE_TOTAL,
+        SLABS_OBJ_SIZE_MIN,  SLABS_OBJ_SIZE_AVG,
+        SLABS_OBJ_SIZE_MAX
     };
     enum rel_items {
         tot_AOBJS,   tot_OBJS,   tot_ASLABS, tot_SLABS,
