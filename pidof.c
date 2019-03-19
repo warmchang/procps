@@ -56,7 +56,7 @@ static int opt_single_shot    = 0;  /* -s */
 static int opt_scripts_too    = 0;  /* -x */
 static int opt_rootdir_check  = 0;  /* -c */
 static int opt_with_workers   = 0;  /* -w */
-
+static int opt_quiet          = 0;  /* -q */
 
 static char *pidof_root = NULL;
 
@@ -70,8 +70,9 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(USAGE_OPTIONS, fp);
 	fputs(_(" -s, --single-shot         return one PID only\n"), fp);
 	fputs(_(" -c, --check-root          omit processes with different root\n"), fp);
-	fputs(_(" -x                        also find shells running the named scripts\n"), fp);
+	fputs(_(" -q,                       quiet mode, only set the exit code\n"), fp);
 	fputs(_(" -w, --with-workers        show kernel workers too\n"), fp);
+	fputs(_(" -x                        also find shells running the named scripts\n"), fp);
 	fputs(_(" -o, --omit-pid <PID,...>  omit processes with PID\n"), fp);
 	fputs(_(" -S, --separator SEP       use SEP as separator put between PIDs"), fp);
 	fputs(USAGE_SEPARATOR, fp);
@@ -294,13 +295,14 @@ int main (int argc, char **argv)
 	int first_pid = 1;
 
 	const char *separator = " ";
-	const char *opts = "scnxwmo:S:?Vh";
+	const char *opts = "scnqxwmo:S:?Vh";
 
 	static const struct option longopts[] = {
 		{"check-root", no_argument, NULL, 'c'},
 		{"single-shot", no_argument, NULL, 's'},
 		{"omit-pid", required_argument, NULL, 'o'},
 		{"separator", required_argument, NULL, 'S'},
+		{"quiet", no_argument, NULL, 'q'},
 		{"with-workers", no_argument, NULL, 'w'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
@@ -318,6 +320,9 @@ int main (int argc, char **argv)
 	/* process command-line options */
 	while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
 		switch (opt) {
+		case 'q':
+			opt_quiet = 1;
+			/* fallthrough */
 		case 's':
 			opt_single_shot = 1;
 			break;
@@ -372,11 +377,13 @@ int main (int argc, char **argv)
 
 			found = 1;
 			for (i = proc_count - 1; i >= 0; i--) {	/* and display their PIDs */
-				if (first_pid) {
-					first_pid = 0;
-					printf ("%ld", (long) procs[i].pid);
-				} else {
-					printf ("%s%ld", separator, (long) procs[i].pid);
+				if (!opt_quiet) {
+					if (first_pid) {
+						first_pid = 0;
+						printf ("%ld", (long) procs[i].pid);
+					} else {
+						printf ("%s%ld", separator, (long) procs[i].pid);
+					}
 				}
 				if (opt_single_shot) break;
 			}
@@ -386,7 +393,7 @@ int main (int argc, char **argv)
 	}
 
 	/* final line feed */
-	if (found) printf("\n");
+	if (!opt_quiet && found) printf("\n");
 
 	/* some cleaning */
 	safe_free(procs);
