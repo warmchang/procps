@@ -53,7 +53,6 @@
 #include "proc/sig.h"
 #include "proc/devname.h"
 #include "proc/sysinfo.h"
-#include "ps/common.h"
 
 #define grow_size(x) do { \
 	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
@@ -531,17 +530,21 @@ static struct el * select_procs (int *num)
 	char *cmdoutput = xmalloc(cmdlen);
 	proc_t ns_task;
 	time_t now;
+	double uptime_secs, idle_secs;
+
 
 	ptp = do_openproc();
 	preg = do_regcomp();
 
 	now = time(NULL);
+	if (uptime(&uptime_secs, &idle_secs) == 0)
+		xerrx(EXIT_FAILURE, "uptime");
+
 	if (opt_newest) saved_start_time =  0ULL;
 	else saved_start_time = ~0ULL;
 
 	if (opt_newest) saved_pid = 0;
 	if (opt_oldest) saved_pid = INT_MAX;
-	if (opt_older) reset_global();
 	if (opt_ns_pid && ns_read(opt_ns_pid, &ns_task)) {
 		fputs(_("Error reading reference namespace information\n"),
 		      stderr);
@@ -551,7 +554,6 @@ static struct el * select_procs (int *num)
 	memset(&task, 0, sizeof (task));
 	memset(&subtask, 0, sizeof (subtask));
 	while(readproc(ptp, &task)) {
-		/* printf( "Process state %c\n", task.state ); */
 		int match = 1;
 
 		if (task.XXXID == myself)
@@ -587,7 +589,7 @@ static struct el * select_procs (int *num)
 			}
 		}
 		else if (opt_older)
-			if(now - seconds_since_boot + (task.start_time / Hertz) + opt_older > now) match = 0;
+			if(now - uptime_secs + (task.start_time / Hertz) + opt_older > now) match = 0;
 		else if (opt_runstates) {
 			match = 0;
 			if (strchr(opt_runstates, task.state)) match = 1;

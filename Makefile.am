@@ -189,8 +189,8 @@ else
 endif
 
 free_SOURCES = free.c lib/strutils.c lib/fileutils.c
-pgrep_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c ps/global.c
-pkill_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c ps/global.c
+pgrep_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c
+pkill_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c
 pmap_SOURCES = pmap.c lib/fileutils.c
 if !CYGWIN
 pwdx_SOURCES = pwdx.c lib/fileutils.c
