@@ -530,14 +530,14 @@ static struct el * select_procs (int *num)
 	char *cmdoutput = xmalloc(cmdlen);
 	proc_t ns_task;
 	time_t now;
-	double uptime_secs, idle_secs;
+	int uptime_secs;
 
 
 	ptp = do_openproc();
 	preg = do_regcomp();
 
 	now = time(NULL);
-	if (uptime(&uptime_secs, &idle_secs) == 0)
+	if ((uptime_secs=uptime(0,0)) == 0)
 		xerrx(EXIT_FAILURE, "uptime");
 
 	if (opt_newest) saved_start_time =  0ULL;
