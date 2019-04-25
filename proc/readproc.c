@@ -835,6 +835,34 @@ static int read_unvectored(char *restrict const dst, unsigned sz, const char* wh
 }
 
 
+char** vectorize_this_str (const char* src) {
+ #define pSZ  (sizeof(char*))
+    char *cpy, **vec;
+    size_t adj, tot;
+
+    tot = strlen(src) + 1;                       // prep for our vectors
+    if (tot < 1 || tot >= INT_MAX) tot = INT_MAX-1; // integer overflow?
+    adj = (pSZ-1) - ((tot + pSZ-1) & (pSZ-1));   // calc alignment bytes
+    cpy = calloc(1, tot + adj + (2 * pSZ));      // get new larger buffer
+    if (!cpy) return NULL;                       // oops, looks like ENOMEM
+    snprintf(cpy, tot, "%s", src);               // duplicate their string
+    vec = (char**)(cpy + tot + adj);             // prep pointer to pointers
+    *vec = cpy;                                  // point 1st vector to string
+    *(vec+1) = NULL;                             // null ptr 'list' delimit
+    return vec;                                  // ==> free(*vec) to dealloc
+ #undef pSZ
+}
+
+
+    // This littl' guy just serves those true vectorized fields
+    // ( when a /proc source field didn't exist )
+static int vectorize_dash_rc (char*** vec) {
+    if (!(*vec = vectorize_this_str("-")))
+        return 1;
+    return 0;
+}
+
+
     // This routine reads a 'cgroup' for the designated proc_t and
     // guarantees the caller a valid proc_t.cgroup pointer.
 static int fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
@@ -1094,17 +1122,20 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     }
 
     if (flags & PROC_FILLENV)                   // read /proc/#/environ
-        p->environ_v = file2strvec(path, "environ");
+        if (!(p->environ_v = file2strvec(path, "environ")))
+            rc += vectorize_dash_rc(&p->environ_v);
     if (flags & PROC_EDITENVRCVT)
         rc += fill_environ_cvt(path, p);
 
     if (flags & PROC_FILLARG)                   // read /proc/#/cmdline
-        p->cmdline_v = file2strvec(path, "cmdline");
+        if (!(p->cmdline_v = file2strvec(path, "cmdline")))
+            rc += vectorize_dash_rc(&p->cmdline_v);
     if (flags & PROC_EDITCMDLCVT)
         rc += fill_cmdline_cvt(path, p);
 
     if ((flags & PROC_FILLCGROUP))              // read /proc/#/cgroup
-        p->cgroup_v = file2strvec(path, "cgroup");
+        if (!(p->cgroup_v = file2strvec(path, "cgroup")))
+            rc += vectorize_dash_rc(&p->cgroup_v);
     if (flags & PROC_EDITCGRPCVT)
         rc += fill_cgroup_cvt(path, p);
 
@@ -1202,17 +1233,20 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, const proc_t *restric
     if (!IS_THREAD(t)) {
 #endif
     if (flags & PROC_FILLARG)                       // read /proc/#/task/#/cmdline
-        t->cmdline_v = file2strvec(path, "cmdline");
+        if (!(t->cmdline_v = file2strvec(path, "cmdline")))
+            rc += vectorize_dash_rc(&t->cmdline_v);
     if (flags & PROC_EDITCMDLCVT)
         rc += fill_cmdline_cvt(path, t);
 
     if (flags & PROC_FILLENV)                       // read /proc/#/task/#/environ
-        t->environ_v = file2strvec(path, "environ");
+        if (!(t->environ_v = file2strvec(path, "environ")))
+            rc += vectorize_dash_rc(&t->environ_v);
     if (flags & PROC_EDITENVRCVT)
         rc += fill_environ_cvt(path, t);
 
     if ((flags & PROC_FILLCGROUP))                  // read /proc/#/task/#/cgroup
-        t->cgroup_v = file2strvec(path, "cgroup");
+        if (!(t->cgroup_v = file2strvec(path, "cgroup")))
+            rc += vectorize_dash_rc(&t->cgroup_v);
     if (flags & PROC_EDITCGRPCVT)
         rc += fill_cgroup_cvt(path, t);
 

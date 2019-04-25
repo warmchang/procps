@@ -132,7 +132,7 @@ enum pids_item {
     PIDS_TICS_USER,         //  ull_int        stat: utime
     PIDS_TICS_USER_C,       //  ull_int        stat: utime + cutime
     PIDS_TIME_ALL,          //  ull_int      [ derived from (utime + stime) / hertz ]
-    PIDS_TIME_ELAPSED,      //  ull_int      [ derived from /proc/uptime - (starttime / hertz) }
+    PIDS_TIME_ELAPSED,      //  ull_int      [ derived from /proc/uptime - (starttime / hertz) ]
     PIDS_TIME_START,        //  ull_int        stat: starttime
     PIDS_TTY,               //    s_int        stat: tty_nr
     PIDS_TTY_NAME,          //      str      [ derived from TTY ]

@@ -94,25 +94,6 @@ struct pids_info {
 
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
-static char** pids_vectorize_this (const char* src) {
- #define pSZ  (sizeof(char*))
-    char *cpy, **vec;
-    size_t adj, tot;
-
-    tot = strlen(src) + 1;                       // prep for our vectors
-    if (tot < 1 || tot >= INT_MAX) tot = INT_MAX-1; // integer overflow?
-    adj = (pSZ-1) - ((tot + pSZ-1) & (pSZ-1));   // calc alignment bytes
-    cpy = calloc(1, tot + adj + (2 * pSZ));      // get new larger buffer
-    if (!cpy) return NULL;                       // oops, looks like ENOMEM
-    snprintf(cpy, tot, "%s", src);               // duplicate their string
-    vec = (char**)(cpy + tot + adj);             // prep pointer to pointers
-    *vec = cpy;                                  // point 1st vector to string
-    *(vec+1) = NULL;                             // null ptr 'list' delimit
-    return vec;                                  // ==> free(*vec) to dealloc
- #undef pSZ
-} // end: pids_vectorize_this
-
-
 #define setNAME(e) set_pids_ ## e
 #define setDECL(e) static void setNAME(e) \
     (struct pids_info *I, struct pids_result *R, proc_t *P)
@@ -136,7 +117,7 @@ static char** pids_vectorize_this (const char* src) {
    some sort of hint that they duplicated this char ** item ... */
 #define VEC_set(e,x) setDECL(e) { \
     if (NULL != P-> x) { R->result.strv = P-> x;  P-> x = NULL; } \
-    else { R->result.strv = pids_vectorize_this("[ duplicate " STRINGIFY(e) " ]"); \
+    else { R->result.strv = vectorize_this_str("[ duplicate " STRINGIFY(e) " ]"); \
       if (!R->result.str) I->seterr = 1; } }
 
 

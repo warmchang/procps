@@ -260,5 +260,6 @@ proc_t* readproc(PROCTAB *__restrict const PT, proc_t *__restrict p);
 proc_t* readeither(PROCTAB *__restrict const PT, proc_t *__restrict x);
 int look_up_our_self(proc_t *p);
 void closeproc(PROCTAB* PT);
+char** vectorize_this_str(const char* src);
 
 #endif
