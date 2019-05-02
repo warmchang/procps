@@ -86,7 +86,7 @@ struct pids_info {
     unsigned long hertz;               // for TIME_ALL & TIME_ELAPSED calculations
     unsigned long long boot_seconds;   // for TIME_ELAPSED calculation
     PROCTAB *get_PT;                   // oldlib interface for active 'get'
-    struct stacks_extent *get_ext;     // an extent used for active 'get'
+    struct stacks_extent *get_ext;     // for active 'get' (also within 'extents')
     enum pids_fetch_type get_type;     // last known type of 'get' request
     int seterr;                        // an ENOMEM encountered during assign
 };
@@ -1047,13 +1047,10 @@ static int pids_stacks_fetch (
     if (!info->fetch.anchor) {
         if (!(info->fetch.anchor = calloc(sizeof(void *), STACKS_INCR)))
             return -1;
-        n_alloc = STACKS_INCR;
-    }
-    if (!info->extents) {
-        if (!(ext = pids_stacks_alloc(info, n_alloc)))
+        if (!(ext = pids_stacks_alloc(info, STACKS_INCR)))
             return -1;       // here, errno was set to ENOMEM
-        memset(info->fetch.anchor, 0, sizeof(void *) * n_alloc);
-        memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
+        memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * STACKS_INCR);
+        n_alloc = STACKS_INCR;
     }
     pids_cleanup_stacks_all(info);
     pids_toggle_history(info);
@@ -1223,6 +1220,9 @@ PROCPS_EXPORT int procps_pids_unref (
             free((*info)->hist);
         }
 
+        if ((*info)->get_ext)
+           pids_oldproc_close(&(*info)->get_PT);
+
         numa_uninit();
 
         free(*info);
@@ -1288,10 +1288,10 @@ PROCPS_EXPORT struct pids_stack *procps_pids_get (
     if (!info->curitems)
         return NULL;
 
-fresh_start:
     if (!info->get_ext) {
         if (!(info->get_ext = pids_stacks_alloc(info, 1)))
             return NULL;     // here, errno was overridden with ENOMEM
+fresh_start:
         if (!pids_oldproc_open(&info->get_PT, info->oldflags))
             return NULL;     // here, errno was overridden with ENOMEM/others
         info->get_type = which;
@@ -1300,10 +1300,6 @@ fresh_start:
 
     if (info->get_type != which) {
         pids_oldproc_close(&info->get_PT);
-        pids_cleanup_stack(info->get_ext->stacks[0]->head);
-        if (pids_extent_cut(info, info->get_ext))
-            free(info->get_ext);
-        info->get_ext = NULL;
         goto fresh_start;
     }
     errno = 0;
@@ -1364,6 +1360,9 @@ PROCPS_EXPORT int procps_pids_reset (
     if (pids_items_check_failed(newitems, newnumitems))
         return -EINVAL;
 
+    if (info->dirty_stacks)
+        pids_cleanup_stacks_all(info);
+
     /* shame on this caller, they didn't change anything. and unless they have
        altered the depth of the stacks we're not gonna change anything either! */
     if (info->curitems == newnumitems + 1
@@ -1371,21 +1370,24 @@ PROCPS_EXPORT int procps_pids_reset (
         return 0;
 
     if (info->maxitems < newnumitems + 1) {
-        if (info->dirty_stacks)
-            pids_cleanup_stacks_all(info);
         while (info->extents) {
             struct stacks_extent *p = info->extents;
             info->extents = p->next;
             free(p);
         };
+        if (info->get_ext) {
+           pids_oldproc_close(&info->get_PT);
+           info->get_ext = NULL;
+        }
+        if (info->fetch.anchor) {
+            free(info->fetch.anchor);
+            info->fetch.anchor = NULL;
+        }
         // allow for our PIDS_logical_end
         info->maxitems = newnumitems + 1;
         if (!(info->items = realloc(info->items, sizeof(enum pids_item) * info->maxitems)))
             return -ENOMEM;
     }
-
-    if (info->dirty_stacks)
-        pids_cleanup_stacks_all(info);
 
     memcpy(info->items, newitems, sizeof(enum pids_item) * newnumitems);
     info->items[newnumitems] = PIDS_logical_end;
