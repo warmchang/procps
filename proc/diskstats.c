@@ -485,21 +485,6 @@ static inline struct diskstats_result *diskstats_itemize_stack (
 } // end: diskstats_itemize_stack
 
 
-static void diskstats_itemize_stacks_all (
-        struct ext_support *this)
-{
-    struct stacks_extent *ext = this->extents;
-
-    while (ext) {
-        int i;
-        for (i = 0; ext->stacks[i]; i++)
-            diskstats_itemize_stack(ext->stacks[i]->head, this->numitems, this->items);
-        ext = ext->next;
-    };
-    this->dirty_stacks = 0;
-} // end: diskstats_itemize_stacks_all
-
-
 static inline int diskstats_items_check_failed (
         enum diskstats_item *items,
         int numitems)
@@ -666,9 +651,7 @@ static int diskstats_stacks_fetch (
     if (!info->fetch_ext.extents) {
         if (!(ext = diskstats_stacks_alloc(&info->fetch_ext, n_alloc)))
             return -1;       // here, errno was set to ENOMEM
-        memset(info->fetch.anchor, 0, sizeof(void *) * n_alloc);
         memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
-        diskstats_itemize_stacks_all(&info->fetch_ext);
     }
     diskstats_cleanup_stacks_all(&info->fetch_ext);
 

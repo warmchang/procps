@@ -568,21 +568,6 @@ static inline struct slabinfo_result *slabinfo_itemize_stack (
 } // end: slabinfo_itemize_stack
 
 
-static void slabinfo_itemize_stacks_all (
-        struct ext_support *this)
-{
-    struct stacks_extent *ext = this->extents;
-
-    while (ext) {
-        int i;
-        for (i = 0; ext->stacks[i]; i++)
-            slabinfo_itemize_stack(ext->stacks[i]->head, this->numitems, this->items);
-        ext = ext->next;
-    };
-    this->dirty_stacks = 0;
-} // end: slabinfo_itemize_stacks_all
-
-
 static inline int slabinfo_items_check_failed (
         struct ext_support *this,
         enum slabinfo_item *items,
@@ -697,9 +682,7 @@ static int slabinfo_stacks_fetch (
     if (!info->fetch_ext.extents) {
         if (!(ext = slabinfo_stacks_alloc(&info->fetch_ext, n_alloc)))
             return -1;       // here, errno was set to ENOMEM
-        memset(info->fetch.anchor, 0, sizeof(void *) * n_alloc);
         memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
-        slabinfo_itemize_stacks_all(&info->fetch_ext);
     }
     slabinfo_cleanup_stacks_all(&info->fetch_ext);
 
