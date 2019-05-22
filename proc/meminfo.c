@@ -116,7 +116,6 @@ struct stacks_extent {
 struct meminfo_info {
     int refcount;
     int meminfo_fd;
-    int dirty_stacks;
     struct mem_hist hist;
     int numitems;
     enum meminfo_item *items;
@@ -137,8 +136,8 @@ struct meminfo_info {
 // delta assignment
 #define HST_set(e,t,x) setDECL(e) { R->result. t = ( H->new . x - H->old. x ); }
 
-setDECL(noop)                { (void)R; (void)H; }
-setDECL(extra)               { (void)R; (void)H; }
+setDECL(noop)  { (void)R; (void)H; }
+setDECL(extra) { (void)H; R->result.ul_int = 0; }
 
 MEM_set(MEM_ACTIVE,             ul_int,  Active)
 MEM_set(MEM_ACTIVE_ANON,        ul_int,  Active_anon)
@@ -457,34 +456,6 @@ static inline void meminfo_assign_results (
 } // end: meminfo_assign_results
 
 
-static inline void meminfo_cleanup_stack (
-        struct meminfo_result *this)
-{
-    for (;;) {
-        if (this->item >= MEMINFO_logical_end)
-            break;
-        if (this->item > MEMINFO_noop)
-            this->result.ul_int = 0;
-        ++this;
-    }
-} // end: meminfo_cleanup_stack
-
-
-static inline void meminfo_cleanup_stacks_all (
-        struct meminfo_info *info)
-{
-    struct stacks_extent *ext = info->extents;
-    int i;
-
-    while (ext) {
-        for (i = 0; ext->stacks[i]; i++)
-            meminfo_cleanup_stack(ext->stacks[i]->head);
-        ext = ext->next;
-    };
-    info->dirty_stacks = 0;
-} // end: meminfo_cleanup_stacks_all
-
-
 static void meminfo_extents_free_all (
         struct meminfo_info *info)
 {
@@ -506,7 +477,6 @@ static inline struct meminfo_result *meminfo_itemize_stack (
 
     for (i = 0; i < depth; i++) {
         p->item = items[i];
-        p->result.ul_int = 0;
         ++p;
     }
     return p_sav;
@@ -939,13 +909,9 @@ PROCPS_EXPORT struct meminfo_stack *procps_meminfo_select (
     && (!meminfo_stacks_alloc(info, 1)))
        return NULL;
 
-    if (info->dirty_stacks)
-        meminfo_cleanup_stacks_all(info);
-
     if (meminfo_read_failed(info))
         return NULL;
     meminfo_assign_results(info->extents->stacks[0], &info->hist);
-    info->dirty_stacks = 1;
 
     return info->extents->stacks[0];
 } // end: procps_meminfo_select

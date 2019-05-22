@@ -203,7 +203,6 @@ struct stacks_extent {
 struct vmstat_info {
     int refcount;
     int vmstat_fd;
-    int dirty_stacks;
     struct vmstat_hist hist;
     int numitems;
     enum vmstat_item *items;
@@ -224,8 +223,8 @@ struct vmstat_info {
 // delta assignment
 #define HST_set(e,x) setDECL(e) { R->result.sl_int = ( H->new . x - H->old. x ); }
 
-setDECL(noop)   { (void)R; (void)H; }
-setDECL(extra)  { (void)R; (void)H; }
+setDECL(noop)  { (void)R; (void)H; }
+setDECL(extra) { (void)H; R->result.ul_int = 0; }
 
 REG_set(ALLOCSTALL_DMA,                        allocstall_dma)
 REG_set(ALLOCSTALL_DMA32,                      allocstall_dma32)
@@ -844,34 +843,6 @@ static inline void vmstat_assign_results (
 } // end: vmstat_assign_results
 
 
-static inline void vmstat_cleanup_stack (
-        struct vmstat_result *this)
-{
-    for (;;) {
-        if (this->item >= VMSTAT_logical_end)
-            break;
-        if (this->item > VMSTAT_noop)
-            this->result.ul_int = 0;
-        ++this;
-    }
-} // end: vmstat_cleanup_stack
-
-
-static inline void vmstat_cleanup_stacks_all (
-        struct vmstat_info *info)
-{
-    struct stacks_extent *ext = info->extents;
-    int i;
-
-    while (ext) {
-        for (i = 0; ext->stacks[i]; i++)
-            vmstat_cleanup_stack(ext->stacks[i]->head);
-        ext = ext->next;
-    };
-    info->dirty_stacks = 0;
-} // end: vmstat_cleanup_stacks_all
-
-
 static void vmstat_extents_free_all (
         struct vmstat_info *info)
 {
@@ -893,7 +864,6 @@ static inline struct vmstat_result *vmstat_itemize_stack (
 
     for (i = 0; i < depth; i++) {
         p->item = items[i];
-        p->result.ul_int = 0;
         ++p;
     }
     return p_sav;
@@ -1369,13 +1339,9 @@ PROCPS_EXPORT struct vmstat_stack *procps_vmstat_select (
     && (!vmstat_stacks_alloc(info, 1)))
        return NULL;
 
-    if (info->dirty_stacks)
-        vmstat_cleanup_stacks_all(info);
-
     if (vmstat_read_failed(info))
         return NULL;
     vmstat_assign_results(info->extents->stacks[0], &info->hist);
-    info->dirty_stacks = 1;
 
     return info->extents->stacks[0];
 } // end: procps_vmstat_select

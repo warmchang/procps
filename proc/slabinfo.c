@@ -107,7 +107,6 @@ struct ext_support {
     enum slabinfo_item lowest;       // range of allowable enums
     enum slabinfo_item highest;
 #endif
-    int dirty_stacks;
 };
 
 struct fetch_support {
@@ -146,7 +145,7 @@ struct slabinfo_info {
 #define HST_set(e,t,x) setDECL(e) { (void)N; R->result. t = (signed long)S->new . x - S->old. x; }
 
 setDECL(noop)  { (void)R; (void)S; (void)N; }
-setDECL(extra) { (void)R; (void)S; (void)N; }
+setDECL(extra) { (void)S; (void)N; R->result.ul_int = 0; }
 
 NOD_set(SLAB_NAME,                     str,  name)
 NOD_set(SLAB_NUM_OBJS,               u_int,  nr_objs)
@@ -512,34 +511,6 @@ static inline void slabinfo_assign_results (
 } // end: slabinfo_assign_results
 
 
-static inline void slabinfo_cleanup_stack (
-        struct slabinfo_result *this)
-{
-    for (;;) {
-        if (this->item >= SLABINFO_logical_end)
-            break;
-        if (this->item > SLABINFO_noop)
-            this->result.ul_int = 0;
-        ++this;
-    }
-} // end: slabinfo_cleanup_stack
-
-
-static inline void slabinfo_cleanup_stacks_all (
-        struct ext_support *this)
-{
-    struct stacks_extent *ext = this->extents;
-    int i;
-
-    while (ext) {
-        for (i = 0; ext->stacks[i]; i++)
-            slabinfo_cleanup_stack(ext->stacks[i]->head);
-        ext = ext->next;
-    };
-    this->dirty_stacks = 0;
-} // end: slabinfo_cleanup_stacks_all
-
-
 static void slabinfo_extents_free_all (
         struct ext_support *this)
 {
@@ -561,7 +532,6 @@ static inline struct slabinfo_result *slabinfo_itemize_stack (
 
     for (i = 0; i < depth; i++) {
         p->item = items[i];
-        p->result.ul_int = 0;
         ++p;
     }
     return p_sav;
@@ -684,7 +654,6 @@ static int slabinfo_stacks_fetch (
             return -1;       // here, errno was set to ENOMEM
         memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
     }
-    slabinfo_cleanup_stacks_all(&info->fetch_ext);
 
     // iterate stuff --------------------------------------
     n_inuse = 0;
@@ -897,14 +866,10 @@ PROCPS_EXPORT struct slabinfo_reap *procps_slabinfo_reap (
         return NULL;         // here, errno may be overridden with ENOMEM
     errno = 0;
 
-    if (info->fetch_ext.dirty_stacks)
-        slabinfo_cleanup_stacks_all(&info->fetch_ext);
-
     if (slabinfo_read_failed(info))
         return NULL;
     if (0 > slabinfo_stacks_fetch(info))
         return NULL;
-    info->fetch_ext.dirty_stacks = 1;
 
     return &info->fetch.results;
 } // end: procps_slabinfo_reap
@@ -933,13 +898,9 @@ PROCPS_EXPORT struct slabinfo_stack *procps_slabinfo_select (
     && (!slabinfo_stacks_alloc(&info->select_ext, 1)))
        return NULL;
 
-    if (info->select_ext.dirty_stacks)
-        slabinfo_cleanup_stacks_all(&info->select_ext);
-
     if (slabinfo_read_failed(info))
         return NULL;
     slabinfo_assign_results(info->select_ext.extents->stacks[0], &info->slabs, &info->nul_node);
-    info->select_ext.dirty_stacks = 1;
 
     return info->select_ext.extents->stacks[0];
 } // end: procps_slabinfo_select

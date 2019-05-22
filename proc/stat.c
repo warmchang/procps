@@ -88,7 +88,6 @@ struct item_support {
 struct ext_support {
     struct item_support *items;        // how these stacks are configured
     struct stacks_extent *extents;     // anchor for these extents
-    int dirty_stacks;
 };
 
 struct tic_support {
@@ -144,8 +143,8 @@ struct stat_info {
     (void)T; R->result. t = ( S->new . x - S->old. x ); \
     if (R->result. t < 0) R->result. t = 0; }
 
-setDECL(noop)                   { (void)R; (void)S; (void)T; }
-setDECL(extra)                  { (void)R; (void)S; (void)T; }
+setDECL(noop)  { (void)R; (void)S; (void)T; }
+setDECL(extra) { (void)S; (void)T; R->result.ull_int = 0; }
 
 setDECL(TIC_ID)                 { (void)S; R->result.s_int = T->id;  }
 setDECL(TIC_NUMA_NODE)          { (void)S; R->result.s_int = T->numa_node; }
@@ -365,34 +364,6 @@ static inline void stat_assign_results (
 } // end: stat_assign_results
 
 
-static inline void stat_cleanup_stack (
-        struct stat_result *this)
-{
-    for (;;) {
-        if (this->item >= STAT_logical_end)
-            break;
-        if (this->item > STAT_noop)
-            this->result.ull_int = 0;
-        ++this;
-    }
-} // end: stat_cleanup_stack
-
-
-static inline void stat_cleanup_stacks_all (
-        struct ext_support *this)
-{
-    struct stacks_extent *ext = this->extents;
-    int i;
-
-    while (ext) {
-        for (i = 0; ext->stacks[i]; i++)
-            stat_cleanup_stack(ext->stacks[i]->head);
-        ext = ext->next;
-    };
-    this->dirty_stacks = 0;
-} // end: stat_cleanup_stacks_all
-
-
 static inline void stat_derive_unique (
         struct hist_tic *this)
 {
@@ -449,7 +420,6 @@ static inline struct stat_result *stat_itemize_stack (
 
     for (i = 0; i < depth; i++) {
         p->item = items[i];
-        p->result.ull_int = 0;
         ++p;
     }
     return p_sav;
@@ -762,8 +732,6 @@ static int stat_stacks_fetch (
             return -1;       // here, errno was set to ENOMEM
         memcpy(this->anchor, ext->stacks, sizeof(void *) * n_alloc);
     }
-    if (this->fetch.dirty_stacks)
-        stat_cleanup_stacks_all(&this->fetch);
 
     // iterate stuff --------------------------------------
     for (i = 0; i < n_inuse; i++) {
@@ -790,7 +758,6 @@ static int stat_stacks_fetch (
     memcpy(this->result.stacks, this->anchor, sizeof(void *) * i);
     this->result.stacks[i] = NULL;
     this->result.total = i;
-    this->fetch.dirty_stacks = 1;
 
     // callers beware, this might be zero (maybe no libnuma.so) ...
     return this->result.total;
@@ -832,11 +799,7 @@ static struct stat_stack *stat_update_single_stack (
     && !(stat_stacks_alloc(this, 1)))
        return NULL;
 
-    if (this->dirty_stacks)
-        stat_cleanup_stacks_all(this);
-
     stat_assign_results(this->extents->stacks[0], &info->sys_hist, &info->cpu_hist);
-    this->dirty_stacks = 1;
 
     return this->extents->stacks[0];
 } // end: stat_update_single_stack

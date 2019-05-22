@@ -78,7 +78,6 @@ struct pids_info {
     struct fetch_support fetch;        // support for procps_pids_reap & select
     int history_yes;                   // need historical data
     struct history_info *hist;         // pointer to historical support data
-    int dirty_stacks;                  // stacks results need attention
     proc_t*(*read_something)(PROCTAB*, proc_t*); // readproc/readeither via which
     unsigned pgs2k_shift;              // to convert some proc vaules
     unsigned oldflags;                 // the old library PROC_FILL flagss
@@ -92,6 +91,19 @@ struct pids_info {
 };
 
 
+// ___ Free Storage Support |||||||||||||||||||||||||||||||||||||||||||||||||||
+
+#define freNAME(t) free_pids_ ## t
+
+static void freNAME(str) (struct pids_result *R) {
+    if (R->result.str) free(R->result.str);
+}
+
+static void freNAME(strv) (struct pids_result *R) {
+    if (R->result.strv && *R->result.strv) free(*R->result.strv);
+}
+
+
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
 #define setNAME(e) set_pids_ ## e
@@ -103,6 +115,7 @@ struct pids_info {
     R->result. t = (long)(P-> x) << I -> pgs2k_shift; }
 /* strdup of a static char array */
 #define DUP_set(e,x) setDECL(e) { \
+    freNAME(str)(R); \
     if (!(R->result.str = strdup(P-> x))) I->seterr = 1; }
 /* regular assignment copy */
 #define REG_set(e,t,x) setDECL(e) { \
@@ -110,19 +123,22 @@ struct pids_info {
 /* take ownership of a normal single string if possible, else return
    some sort of hint that they duplicated this char * item ... */
 #define STR_set(e,x) setDECL(e) { \
+    freNAME(str)(R); \
     if (NULL != P-> x) { R->result.str = P-> x; P-> x = NULL; } \
     else { R->result.str = strdup("[ duplicate " STRINGIFY(e) " ]"); \
       if (!R->result.str) I->seterr = 1; } }
 /* take ownership of true vectorized strings if possible, else return
    some sort of hint that they duplicated this char ** item ... */
 #define VEC_set(e,x) setDECL(e) { \
+    freNAME(strv)(R); \
     if (NULL != P-> x) { R->result.strv = P-> x;  P-> x = NULL; } \
     else { R->result.strv = vectorize_this_str("[ duplicate " STRINGIFY(e) " ]"); \
       if (!R->result.str) I->seterr = 1; } }
 
 
-setDECL(noop)           { (void)I; (void)R; (void)P; return; }
-setDECL(extra)          { (void)I; (void)R; (void)P; return; }
+setDECL(noop)  { (void)I; (void)R; (void)P; }
+setDECL(extra) { (void)I; (void)P; R->result.ull_int = 0; }
+
 REG_set(ADDR_END_CODE,    ul_int,  end_code)
 REG_set(ADDR_KSTK_EIP,    ul_int,  kstk_eip)
 REG_set(ADDR_KSTK_ESP,    ul_int,  kstk_esp)
@@ -226,8 +242,8 @@ setDECL(TIME_ALL)       { R->result.ull_int = (P->utime + P->stime) / I->hertz; 
 setDECL(TIME_ELAPSED)   { unsigned long long t = P->start_time / I->hertz; R->result.ull_int = I->boot_seconds >= t ? (I->boot_seconds - t) : 0; }
 REG_set(TIME_START,       ull_int, start_time)
 REG_set(TTY,              s_int,   tty)
-setDECL(TTY_NAME)       { char buf[64]; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
-setDECL(TTY_NUMBER)     { char buf[64]; dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
+setDECL(TTY_NAME)       { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
+setDECL(TTY_NUMBER)     { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
 REG_set(VM_DATA,          ul_int,  vm_data)
 REG_set(VM_EXE,           ul_int,  vm_exe)
 REG_set(VM_LIB,           ul_int,  vm_lib)
@@ -241,7 +257,7 @@ REG_set(VM_STACK,         ul_int,  vm_stack)
 REG_set(VM_SWAP,          ul_int,  vm_swap)
 setDECL(VM_USED)        { (void)I; R->result.ul_int = P->vm_swap + P->vm_rss; }
 REG_set(VSIZE_PGS,        ul_int,  vsize)
-setDECL(WCHAN_NAME)     { if (!(R->result.str = strdup(lookup_wchan(P->tid)))) I->seterr = 1;; }
+setDECL(WCHAN_NAME)     { freNAME(str)(R); if (!(R->result.str = strdup(lookup_wchan(P->tid)))) I->seterr = 1;; }
 
 #undef setDECL
 #undef CVT_set
@@ -249,19 +265,6 @@ setDECL(WCHAN_NAME)     { if (!(R->result.str = strdup(lookup_wchan(P->tid)))) I
 #undef REG_set
 #undef STR_set
 #undef VEC_set
-
-
-// ___ Free Storage Support |||||||||||||||||||||||||||||||||||||||||||||||||||
-
-#define freNAME(t) free_pids_ ## t
-
-static void freNAME(str) (struct pids_result *R) {
-    if (R->result.str) free(R->result.str);
-}
-
-static void freNAME(strv) (struct pids_result *R) {
-    if (R->result.strv && *R->result.strv) free(*R->result.strv);
-}
 
 
 // ___ Sorting Support ||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -777,8 +780,7 @@ static inline void pids_cleanup_stack (
             break;
         if (Item_table[item].freefunc)
             Item_table[item].freefunc(this);
-        if (item > PIDS_noop)
-            this->result.ull_int = 0;
+        this->result.ull_int = 0;
         ++this;
     }
 } // end: pids_cleanup_stack
@@ -795,7 +797,6 @@ static inline void pids_cleanup_stacks_all (
             pids_cleanup_stack(ext->stacks[i]->head);
         ext = ext->next;
     };
-    info->dirty_stacks = 0;
 } // end: pids_cleanup_stacks_all
 
 
@@ -836,7 +837,6 @@ static inline struct pids_result *pids_itemize_stack (
 
     for (i = 0; i < depth; i++) {
         p->item = items[i];
-        p->result.ull_int = 0;
         ++p;
     }
     return p_sav;
@@ -854,7 +854,6 @@ static void pids_itemize_stacks_all (
             pids_itemize_stack(ext->stacks[i]->head, info->curitems, info->items);
         ext = ext->next;
     };
-    info->dirty_stacks = 0;
 } // end: pids_itemize_stacks_all
 
 
@@ -1052,7 +1051,6 @@ static int pids_stacks_fetch (
         memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * STACKS_INCR);
         n_alloc = STACKS_INCR;
     }
-    pids_cleanup_stacks_all(info);
     pids_toggle_history(info);
     memset(&info->fetch.counts, 0, sizeof(struct pids_counts));
 
@@ -1089,7 +1087,6 @@ static int pids_stacks_fetch (
     }
     memcpy(info->fetch.results.stacks, info->fetch.anchor, sizeof(void *) * n_inuse);
     info->fetch.results.stacks[n_inuse] = NULL;
-    info->dirty_stacks = 1;
 
     return n_inuse;     // callers beware, this might be zero !
  #undef n_alloc
@@ -1304,8 +1301,6 @@ fresh_start:
     }
     errno = 0;
 
-    pids_cleanup_stack(info->get_ext->stacks[0]->head);
-
     if (NULL == info->read_something(info->get_PT, &task))
         return NULL;
     if (!pids_assign_results(info, info->get_ext->stacks[0], &task))
@@ -1360,8 +1355,7 @@ PROCPS_EXPORT int procps_pids_reset (
     if (pids_items_check_failed(newitems, newnumitems))
         return -EINVAL;
 
-    if (info->dirty_stacks)
-        pids_cleanup_stacks_all(info);
+    pids_cleanup_stacks_all(info);
 
     /* shame on this caller, they didn't change anything. and unless they have
        altered the depth of the stacks we're not gonna change anything either! */
@@ -1394,6 +1388,7 @@ PROCPS_EXPORT int procps_pids_reset (
     // account for above PIDS_logical_end
     info->curitems = newnumitems + 1;
 
+    // if extents freed above, pids_stacks_alloc() will itemize ...
     pids_itemize_stacks_all(info);
     pids_libflags_set(info);
 

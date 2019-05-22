@@ -85,7 +85,6 @@ struct ext_support {
     int numitems;                      // includes 'logical_end' delimiter
     enum diskstats_item *items;        // includes 'logical_end' delimiter
     struct stacks_extent *extents;     // anchor for these extents
-    int dirty_stacks;
 };
 
 struct fetch_support {
@@ -122,7 +121,7 @@ struct diskstats_info {
 #define HST_set(e,t,x) setDECL(e) { R->result. t = ( N->new . x - N->old. x ); }
 
 setDECL(noop)  { (void)R; (void)N; }
-setDECL(extra) { (void)R; (void)N; }
+setDECL(extra) { (void)N; R->result.ul_int = 0; }
 
 DEV_set(DISKSTATS_NAME,                 str,     name)
 DEV_set(DISKSTATS_TYPE,                 s_int,   type)
@@ -429,34 +428,6 @@ static inline void diskstats_assign_results (
 } // end: diskstats_assign_results
 
 
-static inline void diskstats_cleanup_stack (
-        struct diskstats_result *this)
-{
-    for (;;) {
-        if (this->item >= DISKSTATS_logical_end)
-            break;
-        if (this->item > DISKSTATS_noop)
-            this->result.ul_int = 0;
-        ++this;
-    }
-} // end: diskstats_cleanup_stack
-
-
-static inline void diskstats_cleanup_stacks_all (
-        struct ext_support *this)
-{
-    struct stacks_extent *ext = this->extents;
-    int i;
-
-    while (ext) {
-        for (i = 0; ext->stacks[i]; i++)
-            diskstats_cleanup_stack(ext->stacks[i]->head);
-        ext = ext->next;
-    };
-    this->dirty_stacks = 0;
-} // end: diskstats_cleanup_stacks_all
-
-
 static void diskstats_extents_free_all (
         struct ext_support *this)
 {
@@ -478,7 +449,6 @@ static inline struct diskstats_result *diskstats_itemize_stack (
 
     for (i = 0; i < depth; i++) {
         p->item = items[i];
-        p->result.ul_int = 0;
         ++p;
     }
     return p_sav;
@@ -653,7 +623,6 @@ static int diskstats_stacks_fetch (
             return -1;       // here, errno was set to ENOMEM
         memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * n_alloc);
     }
-    diskstats_cleanup_stacks_all(&info->fetch_ext);
 
     // iterate stuff --------------------------------------
     n_inuse = 0;
@@ -872,14 +841,10 @@ PROCPS_EXPORT struct diskstats_reap *procps_diskstats_reap (
         return NULL;         // here, errno may be overridden with ENOMEM
     errno = 0;
 
-    if (info->fetch_ext.dirty_stacks)
-        diskstats_cleanup_stacks_all(&info->fetch_ext);
-
     if (diskstats_read_failed(info))
         return NULL;
     if (0 > diskstats_stacks_fetch(info))
         return NULL;
-    info->fetch_ext.dirty_stacks = 1;
 
     return &info->fetch.results;
 } // end: procps_diskstats_reap
@@ -911,9 +876,6 @@ PROCPS_EXPORT struct diskstats_stack *procps_diskstats_select (
     && (!diskstats_stacks_alloc(&info->select_ext, 1)))
        return NULL;
 
-    if (info->select_ext.dirty_stacks)
-        diskstats_cleanup_stacks_all(&info->select_ext);
-
     if (diskstats_read_failed(info))
         return NULL;
     if (!(node = node_get(info, name))) {
@@ -922,7 +884,6 @@ PROCPS_EXPORT struct diskstats_stack *procps_diskstats_select (
     }
 
     diskstats_assign_results(info->select_ext.extents->stacks[0], node);
-    info->select_ext.dirty_stacks = 1;
 
     return info->select_ext.extents->stacks[0];
 } // end: procps_diskstats_select
