@@ -46,6 +46,17 @@
 //#define ENFORCE_LOGICAL  // ensure only logical items are accepted by reap |
 // ------------------------------------------------------------------------- +
 
+/* --------------------------------------------------------------------------+
+   this next define is equivalent to the master top's CPU_ZEROTICS provision |
+   except that here in newlib we'll take an opposite approach to our default | */
+//#define CPU_IDLE_FORCED  // show as 100% idle if fewer ticks than expected |
+// --------------------------------------------------------------------------+
+
+#ifdef CPU_IDLE_FORCED
+    /* this is the % used in establishing a ticks threshold below which some |
+       cpu will be treated 'idle' rather than reflect misleading tick values | */
+#define TICS_THRESHOLD ( 100 / 20 )
+#endif
 
 struct stat_jifs {
     unsigned long long user, nice, system, idle, iowait, irq, sirq, stolen, guest, gnice;
@@ -72,6 +83,9 @@ struct hist_tic {
     int count;
     struct stat_jifs new;
     struct stat_jifs old;
+#ifdef CPU_IDLE_FORCED
+    unsigned long edge;                // only valued/valid with cpu summary |
+#endif
 };
 
 struct stacks_extent {
@@ -582,6 +596,13 @@ static int stat_read_failed (
             return 1;
     }
     stat_derive_unique(sum_ptr);
+#ifdef CPU_IDLE_FORCED
+    /* if any cpu accumulated substantially fewer tics than what is expected |
+       we'll force it to be treated as 'idle' so as not to return misleading |
+       statistics (and that sum_ptr->count also serves as first time switch) | */
+    if (sum_ptr->count) sum_ptr->edge =
+        ((sum_ptr->new.xtot - sum_ptr->old.xtot) / sum_ptr->count) / TICS_THRESHOLD;
+#endif
 
     i = 0;
 reap_em_again:
@@ -604,6 +625,14 @@ reap_em_again:
                 break;                   // we must tolerate cpus taken offline
         }
         stat_derive_unique(cpu_ptr);
+#ifdef CPU_IDLE_FORCED
+        // first time through (that priming read) sum_ptr->edge will be zero |
+        if (cpu_ptr->new.xtot < sum_ptr->edge) {
+            cpu_ptr->old.xtot = cpu_ptr->old.xbsy = cpu_ptr->old.xidl = cpu_ptr->old.xusr = cpu_ptr->old.xsys
+                = cpu_ptr->new.xbsy = cpu_ptr->new.xusr = cpu_ptr->new.xsys = 0;
+            cpu_ptr->new.xtot = cpu_ptr->new.xidl = 1;
+        }
+#endif
         ++cpu_ptr;
         ++i;
     } while (i < info->cpus.hist.n_alloc);
