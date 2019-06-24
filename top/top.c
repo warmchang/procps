@@ -969,8 +969,6 @@ static int ioch (int ech, char *buf, unsigned cnt) {
          * note: we support more keys than we currently need, in case
          *       we attract new consumers in the future */
 static int iokey (int action) {
-   static char buf12[CAPBUFSIZ], buf13[CAPBUFSIZ]
-      , buf14[CAPBUFSIZ], buf15[CAPBUFSIZ];
    static struct {
       const char *str;
       int key;
@@ -979,17 +977,16 @@ static int iokey (int action) {
       { NULL, kbd_LEFT     }, { NULL, kbd_RIGHT    }, { NULL, kbd_PGUP     },
       { NULL, kbd_PGDN     }, { NULL, kbd_HOME     }, { NULL, kbd_END      },
       { NULL, kbd_BKSP     }, { NULL, kbd_INS      }, { NULL, kbd_DEL      },
-         // next 4 destined to be meta + arrow keys...
-      { buf12, kbd_PGUP    }, { buf13, kbd_PGDN    },
-      { buf14, kbd_HOME    }, { buf15, kbd_END     },
          // remainder are alternatives for above, just in case...
          // ( the k,j,l,h entries are the vim cursor motion keys )
-      { "\033\\",   kbd_UP    }, { "\033/",    kbd_DOWN  }, /* meta+      \,/ */
-      { "\033<",    kbd_LEFT  }, { "\033>",    kbd_RIGHT }, /* meta+      <,> */
       { "\033k",    kbd_UP    }, { "\033j",    kbd_DOWN  }, /* meta+      k,j */
       { "\033h",    kbd_LEFT  }, { "\033l",    kbd_RIGHT }, /* meta+      h,l */
       { "\033\013", kbd_PGUP  }, { "\033\012", kbd_PGDN  }, /* ctrl+meta+ k,j */
-      { "\033\010", kbd_HOME  }, { "\033\014", kbd_END   }  /* ctrl+meta+ h,l */
+      { "\033\010", kbd_HOME  }, { "\033\014", kbd_END   }, /* ctrl+meta+ h,l */
+      { "\xC3\xAB", kbd_UP    }, { "\xC3\xAA", kbd_DOWN  }, /* meta+      k,j (some xterms) */
+      { "\xC3\xA8", kbd_LEFT  }, { "\xC3\xAC", kbd_RIGHT }, /* meta+      h,l (some xterms) */
+      { "\xC2\x8B", kbd_PGUP  }, { "\xC2\x8A", kbd_PGDN  }, /* ctrl+meta+ k,j (some xterms) */
+      { "\xC2\x88", kbd_HOME  }, { "\xC2\x8C", kbd_END   }  /* ctrl+meta+ h,l (some xterms) */
    };
 #ifdef TERMIOS_ONLY
    char buf[SMLBUFSIZ], *pb;
@@ -1013,10 +1010,6 @@ static int iokey (int action) {
       tinfo_tab[9].str  = tOk(key_backspace);
       tinfo_tab[10].str = tOk(key_ic);
       tinfo_tab[11].str = tOk(key_dc);
-      STRLCPY(buf12, fmtmk("\033%s", tOk(key_up)));
-      STRLCPY(buf13, fmtmk("\033%s", tOk(key_down)));
-      STRLCPY(buf14, fmtmk("\033%s", tOk(key_left)));
-      STRLCPY(buf15, fmtmk("\033%s", tOk(key_right)));
       // next is critical so returned results match bound terminfo keys
       putp(tOk(keypad_xmit));
       // ( converse keypad_local issued at pause/pgm end, just in case )
@@ -1055,7 +1048,7 @@ static int iokey (int action) {
          return tinfo_tab[i].key;
 
    // no match, so we'll return single non-escaped keystrokes only
-   if (buf[0] == '\033' && buf[1]) return 0;
+   if (buf[0] == '\033' && buf[1]) return -1;
    return buf[0];
 } // end: iokey
 
