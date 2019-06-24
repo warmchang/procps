@@ -8,6 +8,7 @@ procps-ng-NEXT
   * top: preserves 'other filters' in configuration file   issue #99
   * top: can now collapse/expand forest view children      issue #99
   * top: parent %CPU time includes collapsed children
+  * top: improve xterm support for vim navigation keys     issue #135
 
 procps-ng-3.3.15
 ----------------
