@@ -5141,14 +5141,14 @@ static void keys_window (int ch) {
       case kbd_PGUP:
          if (VIZCHKw(w)) {
             if (CHKw(w, Show_IDLEPS) && 0 < w->begtask) {
-               w->begnext = -(w->winlines - 1);
+               w->begnext = -(w->winlines - (Rc.mode_altscr ? 1 : 2));
             }
          }
          break;
       case kbd_PGDN:
          if (VIZCHKw(w)) {
             if (CHKw(w, Show_IDLEPS) && w->begtask < PIDSmaxt - 1) {
-               w->begnext = +(w->winlines - 1);
+               w->begnext = +(w->winlines - (Rc.mode_altscr ? 1 : 2));
             }
          }
          break;
