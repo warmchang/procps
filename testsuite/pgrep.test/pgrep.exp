@@ -34,9 +34,9 @@ set test "pgrep with : delimiter"
 spawn $pgrep -d : $testproc_comm
 expect_pass "$test" "^${testproc1_pid}:${testproc2_pid}\\s*$"
 
-# FIXME - Need to test against -f flag
 set test "pgrep match against full process name"
-untested $test
+spawn $pgrep -f "$testproc_path\\s+$testproc_arg_str"
+expect_pass "$test" "^$testproc1_pid\\s*$"
 
 set test "pgrep with matching gid"
 spawn $pgrep -G $gid $testproc_comm
@@ -51,8 +51,8 @@ spawn $pgrep -l $testproc_comm
 expect_pass "$test" "^$testproc1_pid\\s+$testproc_comm\\s+$testproc2_pid\\s+$testproc_comm\\s*$"
 
 set test "pgrep with full command line"
-spawn $pgrep -a $testproc_comm
-expect_pass "$test" "^$testproc1_pid\\s+$testproc_path\\s+$testproc2_pid\\s+$testproc_path\\s*$"
+spawn $pgrep -af "$testproc_path$"
+expect_pass "$test" "^$testproc2_pid\\s+$testproc_path\\s*$"
 
 set test "pgrep find newest test pid"
 spawn $pgrep -n $testproc_comm
