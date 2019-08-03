@@ -973,20 +973,19 @@ static int iokey (int action) {
       const char *str;
       int key;
    } tinfo_tab[] = {
-      { "\n", kbd_ENTER    }, { NULL, kbd_UP       }, { NULL, kbd_DOWN     },
-      { NULL, kbd_LEFT     }, { NULL, kbd_RIGHT    }, { NULL, kbd_PGUP     },
-      { NULL, kbd_PGDN     }, { NULL, kbd_HOME     }, { NULL, kbd_END      },
-      { NULL, kbd_BKSP     }, { NULL, kbd_INS      }, { NULL, kbd_DEL      },
+      { NULL, kbd_BKSP  }, { NULL, kbd_INS   }, { NULL, kbd_DEL   },
+      { NULL, kbd_LEFT  }, { NULL, kbd_DOWN  }, { NULL, kbd_UP    }, { NULL, kbd_RIGHT },
+      { NULL, kbd_HOME  }, { NULL, kbd_PGDN  }, { NULL, kbd_PGUP  }, { NULL, kbd_END   },
          // remainder are alternatives for above, just in case...
-         // ( the k,j,l,h entries are the vim cursor motion keys )
-      { "\033k",    kbd_UP    }, { "\033j",    kbd_DOWN  }, /* meta+      k,j */
-      { "\033h",    kbd_LEFT  }, { "\033l",    kbd_RIGHT }, /* meta+      h,l */
-      { "\033\013", kbd_PGUP  }, { "\033\012", kbd_PGDN  }, /* ctrl+meta+ k,j */
-      { "\033\010", kbd_HOME  }, { "\033\014", kbd_END   }, /* ctrl+meta+ h,l */
-      { "\xC3\xAB", kbd_UP    }, { "\xC3\xAA", kbd_DOWN  }, /* meta+      k,j (some xterms) */
-      { "\xC3\xA8", kbd_LEFT  }, { "\xC3\xAC", kbd_RIGHT }, /* meta+      h,l (some xterms) */
-      { "\xC2\x8B", kbd_PGUP  }, { "\xC2\x8A", kbd_PGDN  }, /* ctrl+meta+ k,j (some xterms) */
-      { "\xC2\x88", kbd_HOME  }, { "\xC2\x8C", kbd_END   }  /* ctrl+meta+ h,l (some xterms) */
+         // ( the h,j,k,l entries are the vim cursor motion keys )
+      { "\033h",    kbd_LEFT  }, { "\033j",    kbd_DOWN  }, /* meta+      h,j */
+      { "\033k",    kbd_UP    }, { "\033l",    kbd_RIGHT }, /* meta+      k,l */
+      { "\033\010", kbd_HOME  }, { "\033\012", kbd_PGDN  }, /* ctrl+meta+ h,j */
+      { "\033\013", kbd_PGUP  }, { "\033\014", kbd_END   }, /* ctrl+meta+ k,l */
+      { "\xC3\xA8", kbd_LEFT  }, { "\xC3\xAA", kbd_DOWN  }, /* meta+      h,j (some xterms) */
+      { "\xC3\xAB", kbd_UP    }, { "\xC3\xAC", kbd_RIGHT }, /* meta+      k,l (some xterms) */
+      { "\xC2\x88", kbd_HOME  }, { "\xC2\x8A", kbd_PGDN  }, /* ctrl+meta+ h,j (some xterms) */
+      { "\xC2\x8B", kbd_PGUP  }, { "\xC2\x8C", kbd_END   }  /* ctrl+meta+ k,l (some xterms) */
    };
 #ifdef TERMIOS_ONLY
    char buf[SMLBUFSIZ], *pb;
@@ -999,17 +998,17 @@ static int iokey (int action) {
 
    if (action == 0) {
     #define tOk(s)  s ? s : ""
-      tinfo_tab[1].str  = tOk(key_up);
-      tinfo_tab[2].str  = tOk(key_down);
+      tinfo_tab[0].str  = tOk(key_backspace);
+      tinfo_tab[1].str  = tOk(key_ic);
+      tinfo_tab[2].str  = tOk(key_dc);
       tinfo_tab[3].str  = tOk(key_left);
-      tinfo_tab[4].str  = tOk(key_right);
-      tinfo_tab[5].str  = tOk(key_ppage);
-      tinfo_tab[6].str  = tOk(key_npage);
+      tinfo_tab[4].str  = tOk(key_down);
+      tinfo_tab[5].str  = tOk(key_up);
+      tinfo_tab[6].str  = tOk(key_right);
       tinfo_tab[7].str  = tOk(key_home);
-      tinfo_tab[8].str  = tOk(key_end);
-      tinfo_tab[9].str  = tOk(key_backspace);
-      tinfo_tab[10].str = tOk(key_ic);
-      tinfo_tab[11].str = tOk(key_dc);
+      tinfo_tab[8].str  = tOk(key_npage);
+      tinfo_tab[9].str  = tOk(key_ppage);
+      tinfo_tab[10].str = tOk(key_end);
       // next is critical so returned results match bound terminfo keys
       putp(tOk(keypad_xmit));
       // ( converse keypad_local issued at pause/pgm end, just in case )
