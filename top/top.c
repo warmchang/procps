@@ -90,7 +90,7 @@ static float       Cpu_pmax;
 static const char *Cpu_States_fmts;
 
         /* Specific process id monitoring support */
-static unsigned Monpids [MONPIDMAX] = { 0 };
+static unsigned Monpids [MONPIDMAX+1] = { 0 };
 static int      Monpidsidx = 0;
 
         /* Current screen dimensions.
