@@ -114,7 +114,7 @@ static int proc_was_listed(proc_t *buf){
     break; case SEL_SESS: return_if_match(rSv(ID_SESSION, s_int, buf),pid);
 
     break; case SEL_COMM: i=sn->n; while(i--)
-    if(!strncmp( rSv(CMD, str, buf), (*(sn->u+i)).cmd, 15 )) return 1;
+    if(!strncmp( rSv(CMD, str, buf), (*(sn->u+i)).cmd, 63 )) return 1;
 
 #undef return_if_match
 
