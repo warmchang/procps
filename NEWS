@@ -2,13 +2,13 @@ procps-ng-NEXT
 ----------------
   * docs: Use correct symbols for -h option in free.1      Debian #898774
   * docs: ps.1 now warns about command name length         issue #101
-  * pgrep: Match on runstate                               issue 109
-                                                           Debian #919381
+  * pgrep: Match on runstate                               issue #109, Debian #919381
   * top: can now exploit 256-color terminals               issue #96
   * top: preserves 'other filters' in configuration file   issue #99
   * top: can now collapse/expand forest view children      issue #99
   * top: parent %CPU time includes collapsed children
   * top: improve xterm support for vim navigation keys     issue #135
+  * top: avoid segmentation fault at program termination   Redhat #1737552
 
 procps-ng-3.3.15
 ----------------
