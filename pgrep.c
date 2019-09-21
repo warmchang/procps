@@ -42,8 +42,6 @@
 #define EXIT_FATAL 3
 #define XALLOC_EXIT_CODE EXIT_FATAL
 
-#define CMDSTRSIZE 4096
-
 #include "c.h"
 #include "fileutils.h"
 #include "nsutils.h"
@@ -499,9 +497,10 @@ static struct el * select_procs (int *num)
 	regex_t *preg;
 	pid_t myself = getpid();
 	struct el *list = NULL;
-	char cmdline[CMDSTRSIZE] = "";
-	char cmdsearch[CMDSTRSIZE] = "";
-	char cmdoutput[CMDSTRSIZE] = "";
+        long cmdlen = sysconf(_SC_ARG_MAX) * sizeof(char);
+	char *cmdline = xmalloc(cmdlen);
+	char *cmdsearch = xmalloc(cmdlen);
+	char *cmdoutput = xmalloc(cmdlen);
 	proc_t ns_task;
 
 	ptp = do_openproc();
@@ -563,7 +562,7 @@ static struct el * select_procs (int *num)
 
 		if (task.cmdline && (opt_longlong || opt_full) ) {
 			int i = 0;
-			int bytes = sizeof (cmdline);
+			long bytes = cmdlen;
 			char *str = cmdline;
 
 			/* make sure it is always NUL-terminated */
@@ -586,18 +585,18 @@ static struct el * select_procs (int *num)
 
 		if (opt_long || opt_longlong || (match && opt_pattern)) {
 			if (opt_longlong && task.cmdline)
-				strncpy (cmdoutput, cmdline, sizeof cmdoutput - 1);
+				strncpy (cmdoutput, cmdline, cmdlen - 1);
 			else
-				strncpy (cmdoutput, task.cmd, sizeof cmdoutput - 1);
-			cmdoutput[sizeof cmdoutput - 1] = '\0';
+				strncpy (cmdoutput, task.cmd, cmdlen - 1);
+			cmdoutput[cmdlen - 1] = '\0';
 		}
 
 		if (match && opt_pattern) {
 			if (opt_full && task.cmdline)
-				strncpy (cmdsearch, cmdline, sizeof cmdsearch - 1);
+				strncpy (cmdsearch, cmdline, cmdlen - 1);
 			else
-				strncpy (cmdsearch, task.cmd, sizeof cmdsearch - 1);
-			cmdsearch[sizeof cmdsearch - 1] = '\0';
+				strncpy (cmdsearch, task.cmd, cmdlen - 1);
+			cmdsearch[cmdlen - 1] = '\0';
 
 			if (regexec (preg, cmdsearch, 0, NULL, 0) != 0)
 				match = 0;
@@ -660,6 +659,10 @@ static struct el * select_procs (int *num)
 	}
 	closeproc (ptp);
 	*num = matches;
+
+        free(cmdline);
+        free(cmdsearch);
+        free(cmdoutput);
 
 	return list;
 }

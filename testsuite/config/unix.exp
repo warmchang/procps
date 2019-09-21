@@ -118,7 +118,7 @@ proc expect_table_dsc { test match_header match_item } {
 }
 
 proc make_testproc { } {
-    global testproc_path testproc_comm testproc1_pid testproc2_pid topdir
+    global testproc_path testproc_comm testproc_arg_str testproc1_pid testproc2_pid topdir
 
     set testproc_realpath "${topdir}/lib/test_process"
     set testproc_comm "spcorp"
@@ -133,8 +133,19 @@ proc make_testproc { } {
         eof { perror "test proc does not link to test process" }
     }
 
-
-    set testproc1_pid [ exec $testproc_path & ]
+    # make a process with the argument set to a fraction of ARG_MAX length
+    # but small enough we do not run TCL out of memory for regular expressions
+    # nor do we get argument list too long (104857 was found to work on Ubuntu 18.04)
+    set max_arg_len [ expr min([ exec /usr/bin/getconf ARG_MAX ], 104857) ]
+    # ensure we have enough slack to launch the test prog and pgrep
+    set reserved_space [expr max([ string length $testproc_path ], [ string length $topdir ] + 10)]
+    set testproc_arg_str "a"
+    set i $reserved_space
+    while {$i<$max_arg_len} {
+      incr i
+      append testproc_arg_str "a"
+    }
+    set testproc1_pid [ exec $testproc_path $testproc_arg_str & ]
     set testproc2_pid [ exec $testproc_path & ]
 }
 
