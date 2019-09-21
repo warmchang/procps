@@ -6,7 +6,7 @@
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 .\" GNU General Public License for more details."
-.TH SYSCTL.CONF "5" "January 2012" "procps-ng" "File Formats"
+.TH SYSCTL.CONF "5" "2019-09-21" "procps-ng" "File Formats"
 .SH NAME
 sysctl.conf \- sysctl preload/configuration file
 .SH DESCRIPTION
@@ -28,6 +28,10 @@ token = value
 Note that blank lines are ignored, and whitespace before and after a token or
 value is ignored, although a value can contain whitespace within.  Lines which
 begin with a # or ; are considered comments and ignored.
+
+If a line begins with a single \-, any attempts to set the value that fail will be
+ignored.
+
 .SH NOTES
 As the
 .BR /etc/sysctl.conf
