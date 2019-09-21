@@ -42,8 +42,6 @@
 #define EXIT_FATAL 3
 #define XALLOC_EXIT_CODE EXIT_FATAL
 
-#define CMDSTRSIZE 4096
-
 #include "c.h"
 #include "fileutils.h"
 #include "nls.h"
@@ -496,8 +494,10 @@ static struct el * select_procs (int *num)
     regex_t *preg;
     pid_t myself = getpid();
     struct el *list = NULL;
-    char cmdsearch[CMDSTRSIZE] = "";
-    char cmdoutput[CMDSTRSIZE] = "";
+    long cmdlen = sysconf(_SC_ARG_MAX) * sizeof(char);
+    char *cmdline = xmalloc(cmdlen);
+    char *cmdsearch = xmalloc(cmdlen);
+    char *cmdoutput = xmalloc(cmdlen);
     char *task_cmdline;
     enum pids_fetch_type which;
 
@@ -551,22 +551,21 @@ static struct el * select_procs (int *num)
             match = 0;
 
         task_cmdline = PIDS_GETSTR(CMDLINE);
-        task_cmdline[CMDSTRSIZE -1] = '\0';
 
         if (opt_long || opt_longlong || (match && opt_pattern)) {
             if (opt_longlong)
-                strncpy (cmdoutput, task_cmdline, sizeof cmdoutput -1);
+                strncpy (cmdoutput, task_cmdline, cmdlen -1);
             else
-                strncpy (cmdoutput, PIDS_GETSTR(CMD), sizeof cmdoutput -1);
-            cmdoutput[sizeof cmdoutput - 1] = '\0';
+                strncpy (cmdoutput, PIDS_GETSTR(CMD), cmdlen -1);
+            cmdoutput[cmdlen - 1] = '\0';
         }
 
         if (match && opt_pattern) {
             if (opt_full)
-                strncpy (cmdsearch, task_cmdline, sizeof cmdsearch -1);
+                strncpy (cmdsearch, task_cmdline, cmdlen -1);
             else
-                strncpy (cmdsearch, PIDS_GETSTR(CMD), sizeof cmdsearch -1);
-            cmdsearch[sizeof cmdsearch - 1] = '\0';
+                strncpy (cmdsearch, PIDS_GETSTR(CMD), cmdlen -1);
+            cmdsearch[cmdlen - 1] = '\0';
 
             if (regexec (preg, cmdsearch, 0, NULL, 0) != 0)
                 match = 0;
@@ -604,6 +603,9 @@ static struct el * select_procs (int *num)
         }
     }
     procps_pids_unref(&info);
+    free(cmdline);
+    free(cmdsearch);
+    free(cmdoutput);
 
     *num = matches;
 
