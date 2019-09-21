@@ -375,6 +375,7 @@ static int WriteSetting(const char *setting)
 	char *tmpname;
 	char *outname;
 	char *last_dot;
+	bool ignore_failure;
 
 	FILE *fp;
 	struct stat ts;
@@ -398,6 +399,10 @@ static int WriteSetting(const char *setting)
 		xwarnx(_("malformed setting \"%s\""), setting);
 		return -2;
 	}
+
+	ignore_failure = name[0] == '-';
+	if (ignore_failure)
+	    name++;
 
 	/* used to open the file */
 	tmpname = xmalloc(equals - name + 1 + strlen(PROC_PATH));
@@ -443,19 +448,22 @@ static int WriteSetting(const char *setting)
 		switch (errno) {
 		case ENOENT:
 			if (!IgnoreError) {
-				xwarnx(_("\"%s\" is an unknown key"), outname);
-				rc = -1;
+				xwarnx(_("\"%s\" is an unknown key%s"), outname, (ignore_failure?_(", ignoring"):""));
+				if (!ignore_failure)
+				    rc = -1;
 			}
 			break;
+		case EPERM:
+		case EROFS:
 		case EACCES:
-			xwarnx(_("permission denied on key '%s'"), outname);
-			rc = -1;
+			xwarnx(_("permission denied on key \"%s\"%s"), outname, (ignore_failure?_(", ignoring"):""));
 			break;
 		default:
-			xwarn(_("setting key \"%s\""), outname);
-			rc = -1;
+			xwarn(_("setting key \"%s\"%s"), outname, (ignore_failure?_(", ignoring"):""));
 			break;
 		}
+		if (!ignore_failure && errno != ENOENT)
+		    rc = -1;
 	} else {
 		rc = fprintf(fp, "%s\n", value);
 		if (0 < rc)
