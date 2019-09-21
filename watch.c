@@ -806,7 +806,7 @@ int main(int argc, char *argv[])
 			use_default_colors();
 			init_ansi_colors();
 		} else {
-			flags |= WATCH_COLOR;
+			flags &= ~WATCH_COLOR;
 		}
 	}
 	nonl();
