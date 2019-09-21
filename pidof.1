@@ -15,7 +15,7 @@
 .\" along with this program; if not, write to the Free Software
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 .\"
-.TH PIDOF 1 "2018-03-03" "" "User Commands"
+.TH PIDOF 1 "2019-09-21" "" "User Commands"
 .SH NAME
 pidof -- find the process ID of a running program.
 .SH SYNOPSIS
@@ -52,6 +52,8 @@ program, in other words the calling shell or shell script.
 .IP "-S \fIseparator\fP"
 Use \fIseparator\fP as a separator put between pids. Used only when
 more than one pids are printed for the program.
+The \fI\-d\fR option is an alias for this option for sysvinit pidof
+compatibility.
 .SH "EXIT STATUS"
 .TP
 .B 0

@@ -295,13 +295,13 @@ int main (int argc, char **argv)
 	int first_pid = 1;
 
 	const char *separator = " ";
-	const char *opts = "scnxmo:S:?Vh";
+	const char *opts = "scdnxmo:S:?Vh";
 
 	static const struct option longopts[] = {
 		{"check-root", no_argument, NULL, 'c'},
 		{"single-shot", no_argument, NULL, 's'},
 		{"omit-pid", required_argument, NULL, 'o'},
-		{"separator", required_argument, NULL, 's'},
+		{"separator", required_argument, NULL, 'S'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -334,6 +334,7 @@ int main (int argc, char **argv)
 				pidof_root = pid_link(getpid(), "root");
 			}
 			break;
+		case 'd': /* sysv pidof uses this for S */
 		case 'S':
 			separator = optarg;
 			break;
