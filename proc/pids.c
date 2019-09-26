@@ -133,7 +133,7 @@ static void freNAME(strv) (struct pids_result *R) {
     freNAME(strv)(R); \
     if (NULL != P-> x) { R->result.strv = P-> x;  P-> x = NULL; } \
     else { R->result.strv = vectorize_this_str("[ duplicate " STRINGIFY(e) " ]"); \
-      if (!R->result.str) I->seterr = 1; } }
+      if (!R->result.strv) I->seterr = 1; } }
 
 
 setDECL(noop)  { (void)I; (void)R; (void)P; }
