@@ -69,21 +69,6 @@ struct utlbuf_s {
     int   siz;     // current len of the above
 } utlbuf_s;
 
-#ifndef SIGNAL_STRING
-// convert hex string to unsigned long long
-static unsigned long long unhex(const char *restrict cp){
-    unsigned long long ull = 0;
-    for(;;){
-        char c = *cp++;
-        if(!( (c >= '0' && c <= '9') ||
-              (c >= 'A' && c <= 'F') ||
-              (c >= 'a' && c <= 'f') )) break;
-        ull = (ull<<4) | (c - (c >= 'a' ? 'a'-10 : c >= 'A' ? 'A'-10 : '0'));
-    }
-    return ull;
-}
-#endif
-
 static int task_dir_missing;
 
 
@@ -295,7 +280,6 @@ ENTER(0x220);
         S--;   // put back the '\n' or '\0'
         continue;
     }
-#ifdef SIGNAL_STRING
     case_ShdPnd:
         memcpy(P->signal, S, 16);
         P->signal[16] = '\0';
@@ -316,23 +300,6 @@ ENTER(0x220);
         memcpy(P->_sigpnd, S, 16);
         P->_sigpnd[16] = '\0';
         continue;
-#else
-    case_ShdPnd:
-        P->signal = unhex(S);
-        continue;
-    case_SigBlk:
-        P->blocked = unhex(S);
-        continue;
-    case_SigCgt:
-        P->sigcatch = unhex(S);
-        continue;
-    case_SigIgn:
-        P->sigignore = unhex(S);
-        continue;
-    case_SigPnd:
-        P->_sigpnd = unhex(S);
-        continue;
-#endif
     case_State:
         P->state = *S;
         continue;
@@ -437,16 +404,10 @@ ENTER(0x220);
 #endif
 
     // recent kernels supply per-tgid pending signals
-#ifdef SIGNAL_STRING
     if(!is_proc || !P->signal[0]){
         memcpy(P->signal, P->_sigpnd, 16);
         P->signal[16] = '\0';
     }
-#else
-    if(!is_proc){
-        P->signal = P->_sigpnd;
-    }
-#endif
 
     // Linux 2.4.13-pre1 to max 2.4.xx have a useless "Tgid"
     // that is not initialized for built-in kernel tasks.

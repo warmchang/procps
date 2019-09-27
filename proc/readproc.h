@@ -15,7 +15,6 @@
 #include <unistd.h>
 #include <proc/namespace.h>
 
-#define SIGNAL_STRING
 // the following is development only, forcing display of "[ duplicate ENUM ]" strings
 // #define FALSE_THREADS        /* set most child string fields to NULL */
 
@@ -56,7 +55,6 @@ typedef struct proc_t {
         pcpu,           // stat (special)  elapsed tics for %CPU usage calculation
         maj_delta,      // stat (special)  major page faults since last update
         min_delta;      // stat (special)  minor page faults since last update
-#ifdef SIGNAL_STRING
     char
         // Linux 2.1.7x and up have 64 signals. Allow 64, plus '\0' and padding.
         signal[18],     // status          mask of pending signals
@@ -64,15 +62,6 @@ typedef struct proc_t {
         sigignore[18],  // status          mask of ignored signals
         sigcatch[18],   // status          mask of caught  signals
         _sigpnd[18];    // status          mask of PER TASK pending signals
-#else
-    long long
-        // Linux 2.1.7x and up have 64 signals.
-        signal,         // status          mask of pending signals
-        blocked,        // status          mask of blocked signals
-        sigignore,      // status          mask of ignored signals
-        sigcatch,       // status          mask of caught  signals
-        _sigpnd;        // status          mask of PER TASK pending signals
-#endif
     unsigned long
         start_code,     // stat            address of beginning of code segment
         end_code,       // stat            address of end of code segment
