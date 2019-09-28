@@ -169,7 +169,6 @@ typedef struct PROCTAB {
     DIR*        taskdir;  // for threads
 //    char deBug1[64];
     pid_t       taskdir_user;  // for threads
-    int         did_fake; // used when taskdir is missing
     int(*finder)(struct PROCTAB *__restrict const, proc_t *__restrict const);
     proc_t*(*reader)(struct PROCTAB *__restrict const, proc_t *__restrict const);
     int(*taskfinder)(struct PROCTAB *__restrict const, const proc_t *__restrict const, proc_t *__restrict const, char *__restrict const);

@@ -1319,13 +1319,6 @@ proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
   proc_t *ret;
   proc_t *saved_p;
 
-  PT->did_fake=0;
-//  if (PT->taskdir) {
-//    closedir(PT->taskdir);
-//    PT->taskdir = NULL;
-//    PT->taskdir_user = -1;
-//  }
-
   saved_p = p;
   if (p) free_acquired(p, 1);
   else {
