@@ -172,7 +172,7 @@ typedef struct PROCTAB {
     int(*finder)(struct PROCTAB *__restrict const, proc_t *__restrict const);
     proc_t*(*reader)(struct PROCTAB *__restrict const, proc_t *__restrict const);
     int(*taskfinder)(struct PROCTAB *__restrict const, const proc_t *__restrict const, proc_t *__restrict const, char *__restrict const);
-    proc_t*(*taskreader)(struct PROCTAB *__restrict const, const proc_t *__restrict const, proc_t *__restrict const, char *__restrict const);
+    proc_t*(*taskreader)(struct PROCTAB *__restrict const, proc_t *__restrict const, char *__restrict const);
     pid_t*      pids;   // pids of the procs
     uid_t*      uids;   // uids of procs
     int         nuid;   // cannot really sentinel-terminate unsigned short[]
