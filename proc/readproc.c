@@ -73,28 +73,24 @@ static int task_dir_missing;
 
 
 // free any additional dynamically acquired storage associated with a proc_t
-// ( and if it's to be reused, refresh it otherwise destroy it )
-static inline void free_acquired (proc_t *p, int reuse) {
-    if (p->cgname)    free((void*)p->cgname);
-    if (p->cgroup)    free((void*)p->cgroup);
-    if (p->cgroup_v)  free((void*)*p->cgroup_v);
-    if (p->cmd)       free(p->cmd);
-    if (p->cmdline)   free((void*)p->cmdline);
-    if (p->cmdline_v) free((void*)*p->cmdline_v);
-    if (p->environ)   free((void*)p->environ);
-    if (p->environ_v) free((void*)*p->environ_v);
-    if (p->exe)       free(p->exe);
-    if (p->sd_mach)   free(p->sd_mach);
-    if (p->sd_ouid)   free(p->sd_ouid);
-    if (p->sd_seat)   free(p->sd_seat);
-    if (p->sd_sess)   free(p->sd_sess);
-    if (p->sd_slice)  free(p->sd_slice);
-    if (p->sd_unit)   free(p->sd_unit);
-    if (p->sd_uunit)  free(p->sd_uunit);
-    if (p->supgid)    free(p->supgid);
-    if (p->supgrp)    free(p->supgrp);
+static inline void free_acquired (proc_t *p) {
+    /*
+     * here we free those items that might exist even when not explicitly |
+     * requested by our caller.  it is expected that pid.c will then free |
+     * any remaining dynamic memory which might be dangling off a proc_t. | */
+    if (p->cgname)   free(p->cgname);
+    if (p->cgroup)   free(p->cgroup);
+    if (p->cmd)      free(p->cmd);
+    if (p->sd_mach)  free(p->sd_mach);
+    if (p->sd_ouid)  free(p->sd_ouid);
+    if (p->sd_seat)  free(p->sd_seat);
+    if (p->sd_sess)  free(p->sd_sess);
+    if (p->sd_slice) free(p->sd_slice);
+    if (p->sd_unit)  free(p->sd_unit);
+    if (p->sd_uunit) free(p->sd_uunit);
+    if (p->supgid)   free(p->supgid);
 
-    memset(p, reuse ? '\0' : '\xff', sizeof(*p));
+    memset(p, '\0', sizeof(proc_t));
 }
 
 
@@ -1315,14 +1311,9 @@ static int listed_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
  */
 proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
   proc_t *ret;
-  proc_t *saved_p;
 
-  saved_p = p;
-  if (p) free_acquired(p, 1);
-  else {
-    p = calloc(1, sizeof *p);
-    if (!p) goto out;
-  }
+  free_acquired(p);
+
   for(;;){
     if (errno == ENOMEM) goto out;
     // fills in the path, plus p->tid and p->tgid
@@ -1334,8 +1325,6 @@ proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
   }
 
 out:
-  if(!saved_p) free(p);
-  // FIXME: maybe set tid to -1 here, for "-" in display?
   return NULL;
 }
 
@@ -1350,14 +1339,10 @@ proc_t* readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
     static proc_t *new_p;    // for process/task transitions
     static int canary;
     char path[PROCPATHLEN];
-    proc_t *saved_x, *ret;
+    proc_t *ret;
 
-    saved_x = x;
-    if (x) free_acquired(x,1);
-    else {
-        x = calloc(1, sizeof(*x));
-        if (!x) goto end_procs;
-    }
+    free_acquired(x);
+
     if (new_p) {
         if (new_p->tid != canary) new_p = NULL;
         goto next_task;
@@ -1386,7 +1371,6 @@ next_task:
     return ret;
 
 end_procs:
-    if (!saved_x) free(x);
     return NULL;
 }
 
