@@ -200,9 +200,9 @@ static void check_proc(int pid, struct run_time_conf_t *run_time)
 			goto closure;
 	}
 	len = read(fd, buf, sizeof(buf));
-	if (len <= 0 || (size_t)len >= sizeof(buf))
+	if (len <= 0)
 		goto closure;
-	buf[len] = '\0';
+	buf[sizeof(buf) -1] = '\0';
 	tmp = strrchr(buf, ')');
 	if (!tmp)
 		goto closure;
