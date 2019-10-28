@@ -55,13 +55,16 @@ MAN_POT_FILES = $(top_srcdir)/free.1 $(top_srcdir)/kill.1 $(top_srcdir)/pgrep.1 
 DIST_MAN_POTS = $(MAN_PS_POT) $(MAN_TOP_POT) $(MAN_POT)
 
 $(MAN_PS_POT): $(MAN_PS_POT_FILES)
-	$(PO4A_UPDATEPO) -o translate_joined=MT -o noarg=ME -f man -m $< -p $@
+	$(eval po4a_manfiles := $(foreach manfile,$^,$(addprefix -m , $(manfile))))
+	$(PO4A_UPDATEPO) -o translate_joined=MT -o noarg=ME -f man $(po4a_manfiles) -p $@
 
 $(MAN_TOP_POT): $(MAN_TOP_POT_FILES)
-	$(PO4A_UPDATEPO) -o translate_joined=MT -o noarg=ME -f man -m $< -p $@
+	$(eval po4a_manfiles := $(foreach manfile,$^,$(addprefix -m , $(manfile))))
+	$(PO4A_UPDATEPO) -o translate_joined=MT -o noarg=ME -f man $(po4a_manfiles) -p $@
 
 $(MAN_POT): $(MAN_POT_FILES)
-	$(PO4A_UPDATEPO) -o translate_joined=MT -o noarg=ME -f man -m $< -p $@
+	$(eval po4a_manfiles := $(foreach manfile,$^,$(addprefix -m , $(manfile))))
+	$(PO4A_UPDATEPO) -o translate_joined=MT -o noarg=ME -f man $(po4a_manfiles) -p $@
 
 dist_man_MANS = $(foreach lang, $(all_langs), $(foreach section, $(MAN_SECTIONS), $(wildcard $(lang)/man$(section)/*.$(section))))
 dist-hook: translate-mans
