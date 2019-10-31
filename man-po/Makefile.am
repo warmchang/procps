@@ -7,7 +7,7 @@ get-trans:
 	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man-ps/  ps
 	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man-top/  top
 
-translate-mans: dist-man-paths $(translated_MANS)
+translate-mans: $(translated_MANS)
 
 base_langs = $(patsubst %.po,%,$(wildcard *.po))
 top_langs = $(patsubst %.po,%,$(notdir $(wildcard top/*.po)))
@@ -66,15 +66,19 @@ $(MAN_POT): $(MAN_POT_FILES)
 	$(eval po4a_manfiles := $(foreach manfile,$^,$(addprefix -m , $(manfile))))
 	$(PO4A_UPDATEPO) -o translate_joined=MT -o noarg=ME -f man $(po4a_manfiles) -p $@
 
-dist_man_MANS = $(foreach lang, $(all_langs), $(foreach section, $(MAN_SECTIONS), $(wildcard $(lang)/man$(section)/*.$(section))))
+man_MANS := $(foreach lang, $(all_langs), $(foreach section, $(MAN_SECTIONS), $(wildcard $(lang)/man$(section)/*.$(section))))
 dist-hook: translate-mans
 	echo $(translated_MANS)
 
 
-dist-man-paths:
-	echo $(top_langs)
-	@for p in $(man_paths) ; do \
-	    echo " $(MKDIR_P) '$$p'"; \
+install-data-local: translate-mans
+	for l in $(base_langs) ; do \
+	    for sect in `ls $$l` ; do \
+	      $(MKDIR_P) $(DESTDIR)$(mandir)/$$l/$$sect ; \
+	      for file in `ls $$l/$$sect` ; do \
+	          $(INSTALL_DATA) $$l/$$sect/$$file $(DESTDIR)$(mandir)/$$l/$$sect ; \
+              done ; \
+            done ; \
 	done
 
 # My Makefile-fu fails me here, I cannot see how to have double-wildcards

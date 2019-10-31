@@ -2,6 +2,7 @@ procps-ng-NEXT
 ----------------
   * docs: Use correct symbols for -h option in free.1      Debian #898774
   * docs: ps.1 now warns about command name length         issue #101
+  * docs: install translated man pages                     issue #146
   * pgrep: Match on runstate                               issue #109, Debian #919381
   * snice: Fix matching on pid                             merge #89
   * top: can now exploit 256-color terminals               issue #96
