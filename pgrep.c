@@ -497,8 +497,7 @@ static regex_t * do_regcomp (void)
 
         if (re_err) {
             regerror (re_err, preg, errbuf, sizeof(errbuf));
-            fputs(errbuf,stderr);
-            exit (EXIT_USAGE);
+            xerrx(EXIT_USAGE, errbuf);
         }
     }
     return preg;
