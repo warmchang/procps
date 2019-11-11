@@ -28,6 +28,7 @@ kill
 libtool
 ltmain.sh
 m4/
+man-po/translated
 Makefile
 Makefile.in
 missing

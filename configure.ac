@@ -42,6 +42,12 @@ AC_PROG_LN_S
 PKG_PROG_PKG_CONFIG
 AC_PROG_MAKE_SET
 
+AC_PATH_PROG(PO4A, po4a)
+if test "xPO4A" = "x" ; then
+    AM_CONDITIONAL(USE_PO4A, false)
+else
+    AM_CONDITIONAL(USE_PO4A, true)
+fi
 # Checks for header files.
 AC_HEADER_MAJOR
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h float.h langinfo.h libintl.h limits.h locale.h netinet/in.h stdint.h stdio_ext.h stdlib.h string.h sys/file.h sys/ioctl.h sys/param.h sys/time.h termios.h unistd.h utmp.h values.h wchar.h wctype.h])
