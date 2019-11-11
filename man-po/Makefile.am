@@ -16,10 +16,6 @@ po4a-dist:
 	-@po4a -M utf-8 -k 0 po4a.cfg
 endif
 
-
-get-trans:
-	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man/  .
-
 translated_langs = $(notdir $(wildcard translated/*))
 
 install-data-local:

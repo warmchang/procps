@@ -2,15 +2,15 @@
 # Copyright © 2017, 2018 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
 #
-# Göran Uddeborg <goeran@uddeborg.se>, 2017, 2018.
+# Göran Uddeborg <goeran@uddeborg.se>, 2017, 2018, 2019.
 #
-# $Id: procps-ng.po,v 1.12 2018-03-18 19:11:40+01 göran Exp $
+# $Id: procps-ng.po,v 1.15 2019-11-04 17:00:20+01 göran Exp $
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 3.3.13-rc1\n"
+"Project-Id-Version: procps-ng 3.3.16-pre2\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2019-10-29 07:52+1100\n"
-"PO-Revision-Date: 2018-03-18 19:10+0100\n"
+"PO-Revision-Date: 2019-11-04 17:00+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -120,21 +120,13 @@ msgstr "misslyckades att tolka upprepningsargumentet: ”%s”"
 
 #: free.c:352
 #, c-format
-msgid ""
-"              total        used        free      shared     buffers       "
-"cache   available"
-msgstr ""
-"             totalt      använt       fritt       delat   buffertar       "
-"cache  tillgängl."
+msgid "              total        used        free      shared     buffers       cache   available"
+msgstr "             totalt      använt       fritt       delat   buffertar       cache  tillgängl."
 
 #: free.c:354
 #, c-format
-msgid ""
-"              total        used        free      shared  buff/cache   "
-"available"
-msgstr ""
-"             totalt      använt       fritt       delat  buff/cache  "
-"tillgängl."
+msgid "              total        used        free      shared  buff/cache   available"
+msgstr "             totalt      använt       fritt       delat  buff/cache  tillgängl."
 
 #: free.c:357
 msgid "Mem:"
@@ -164,9 +156,8 @@ msgid "write error"
 msgstr "skrivfel"
 
 #: pgrep.c:57 pidof.c:35 skill.c:72
-#, fuzzy
 msgid "integer overflow"
-msgstr "internt fel"
+msgstr "heltalsspill"
 
 #: pgrep.c:108
 #, c-format
@@ -195,8 +186,7 @@ msgstr " -w, --lightweight         lista alla TID\n"
 
 #: pgrep.c:118
 msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
-msgstr ""
-" -<sig>, --signal <sig>    signal att skicka (antingen nummer eller namn)\n"
+msgstr " -<sig>, --signal <sig>    signal att skicka (antingen nummer eller namn)\n"
 
 #: pgrep.c:119
 msgid " -e, --echo                display what is killed\n"
@@ -208,8 +198,7 @@ msgstr " -c, --count               antal matchande processer\n"
 
 #: pgrep.c:122
 msgid " -f, --full                use full process name to match\n"
-msgstr ""
-" -f, --full                använd fullständigt processnamn för att matcha\n"
+msgstr " -f, --full                använd fullständigt processnamn för att matcha\n"
 
 #: pgrep.c:123
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
@@ -232,11 +221,8 @@ msgid " -o, --oldest              select least recently started\n"
 msgstr " -o, --oldest              välj den först startade\n"
 
 #: pgrep.c:128
-msgid ""
-" -P, --parent <PPID,...>   match only child processes of the given parent\n"
-msgstr ""
-" -P, --parent <PPID,…>     matcha endast barnprocesser till den givna "
-"föräldern\n"
+msgid " -P, --parent <PPID,...>   match only child processes of the given parent\n"
+msgstr " -P, --parent <PPID,…>     matcha endast barnprocesser till den givna föräldern\n"
 
 #: pgrep.c:129
 msgid " -s, --session <SID,...>   match session IDs\n"
@@ -268,28 +254,25 @@ msgstr " -L, --logpidfile          misslyckas om PID-filen inte kan låsas\n"
 
 #: pgrep.c:136
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
-msgstr ""
+msgstr " -r, --runstates <status>  matcha körstatus [D,S,Z,…]\n"
 
 #: pgrep.c:137
-#, fuzzy
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
 msgstr ""
-" --ns <pid>               matcha processerna som tillhör samma namnrymd\n"
-"                          som <pid>\n"
+" --ns <PID>                matcha processerna som tillhör samma\n"
+"                           namnrymd som <PID>\n"
 
 #: pgrep.c:139
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
-"                           Available namespaces: ipc, mnt, net, pid, user, "
-"uts\n"
+"                           Available namespaces: ipc, mnt, net, pid, user, uts\n"
 msgstr ""
 " --nslist <ns,…>           lista vilka namnrymder som övervägs för\n"
 "                           flaggan --ns.\n"
-"                           Tillgängliga namnrymder: ipc, mnt, net, pid, "
-"user,\n"
+"                           Tillgängliga namnrymder: ipc, mnt, net, pid, user,\n"
 "                           uts\n"
 
 #: pgrep.c:280
@@ -386,8 +369,7 @@ msgstr " -c, --check-root          uteslut processer med en annan rot\n"
 
 #: pidof.c:71
 msgid " -x                        also find shells running the named scripts\n"
-msgstr ""
-" -x                        hitta även skal som kör de namngivna skripten\n"
+msgstr " -x                        hitta även skal som kör de namngivna skripten\n"
 
 #: pidof.c:72
 msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
@@ -497,9 +479,7 @@ msgstr " -p, --show-path             visa sökväg i mappningarna\n"
 
 #: pmap.c:124
 msgid " -A, --range=<low>[,<high>]  limit results to the given range\n"
-msgstr ""
-" -A, --range=<låg>[,<hög>]   begränsa resultatet till det angivna "
-"intervallet\n"
+msgstr " -A, --range=<låg>[,<hög>]   begränsa resultatet till det angivna intervallet\n"
 
 #: pmap.c:202
 msgid "shared memory detach"
@@ -949,11 +929,8 @@ msgid "  X                   register format\n"
 msgstr "  X                   registerformat\n"
 
 #: ps/help.c:146
-msgid ""
-" -y                   do not show flags, show rss vs. addr (used with -l)\n"
-msgstr ""
-" -y                   visa inte flaggor, visa rss i.st.f. adr (används med -"
-"l)\n"
+msgid " -y                   do not show flags, show rss vs. addr (used with -l)\n"
+msgstr " -y                   visa inte flaggor, visa rss i.st.f. adr (används med -l)\n"
 
 #: ps/help.c:147
 msgid "     --context        display security context (for SELinux)\n"
@@ -1028,15 +1005,12 @@ msgid "  e                   show the environment after command\n"
 msgstr "  e                   visa miljön efter kommandot\n"
 
 #: ps/help.c:167
-msgid ""
-"  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
-msgstr ""
-"  k,    --sort        ange sorteringsordning som: [+|-]nyckel[,[+|-]nyckel[,"
-"…]]\n"
+msgid "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
+msgstr "  k,    --sort        ange sorteringsordning som: [+|-]nyckel[,[+|-]nyckel[,…]]\n"
 
 #: ps/help.c:168
 msgid "  L                   show format specifiers\n"
-msgstr "  L                   visa formateringsspecificerare\n"
+msgstr "  L                   visa formatspecificerare\n"
 
 #: ps/help.c:169
 msgid "  n                   display numeric uid and wchan\n"
@@ -1425,9 +1399,7 @@ msgstr "kolumnbredder måste vara teckenlösa decimaltal"
 
 #: ps/sortformat.c:317
 msgid "can not set width for a macro (multi-column) format specifier"
-msgstr ""
-"det går inte att sätta bredden för en (flerkolumners) "
-"makroformatspecificerare"
+msgstr "det går inte att sätta bredden för en (flerkolumners) makroformatspecificerare"
 
 #: ps/sortformat.c:370 ps/sortformat.c:386
 msgid "improper sort list"
@@ -1475,10 +1447,8 @@ msgid "tell <procps@freelists.org> what you expected"
 msgstr "berätta för <procps@freelists.org> vad du förväntade dig"
 
 #: ps/sortformat.c:808
-msgid ""
-"tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
-msgstr ""
-"berätta för <procps@freelists.org> vad du vill (-L/-T, -m/m/H och $PS_FORMAT)"
+msgid "tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
+msgstr "berätta för <procps@freelists.org> vad du vill (-L/-T, -m/m/H och $PS_FORMAT)"
 
 #: ps/sortformat.c:825
 #, c-format
@@ -1491,9 +1461,7 @@ msgstr "formatflaggor står i konflikt"
 
 #: ps/sortformat.c:831
 msgid "can not use output modifiers with user-defined output"
-msgstr ""
-"det går inte att använda utmatningsmodifierare med användardefinierad "
-"utmatning"
+msgstr "det går inte att använda utmatningsmodifierare med användardefinierad utmatning"
 
 #: ps/sortformat.c:832
 msgid "-L/-T with H/m/-m and -o/-O/o/O is nonsense"
@@ -1556,11 +1524,8 @@ msgstr ""
 "                        ange vilken <signal> som skall skickas\n"
 
 #: skill.c:344
-msgid ""
-" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
-msgstr ""
-" -l, --list=[<signal>]  lista alla signalnamn, eller gör om en till ett "
-"namn\n"
+msgid " -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
+msgstr " -l, --list=[<signal>]  lista alla signalnamn, eller gör om en till ett namn\n"
 
 #: skill.c:345
 msgid " -L, --table            list all signal names in a nice table\n"
@@ -1593,11 +1558,8 @@ msgid " -L, --table        list all signal names in a nice table\n"
 msgstr " -L, --table        lista alla signalnamn i en trevlig tabell\n"
 
 #: skill.c:372
-msgid ""
-" -n, --no-action    do not actually kill processes; just print what would "
-"happen\n"
-msgstr ""
-" -n, --no-action    döda inte processen; skriv bara vad som skulle hända\n"
+msgid " -n, --no-action    do not actually kill processes; just print what would happen\n"
+msgstr " -n, --no-action    döda inte processen; skriv bara vad som skulle hända\n"
 
 #: skill.c:373
 msgid " -v, --verbose      explain what is being done\n"
@@ -1663,8 +1625,7 @@ msgid ""
 msgstr ""
 "\n"
 "Standardsignalen är TERM. Använd -l eller -L för att lista tillgängliga\n"
-"signaler.  Särskilt användbara signaler inkluderar HUP, INT, KILL, STOP, "
-"CONT\n"
+"signaler.  Särskilt användbara signaler inkluderar HUP, INT, KILL, STOP, CONT\n"
 "och 0.  Alternativa signaler kan anges på tre sätt: -SIGKILL -KILL -9\n"
 
 #: skill.c:403
@@ -1744,8 +1705,7 @@ msgstr " -o, --once          visa endast en gång, avsluta sedan\n"
 
 #: slabtop.c:197
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
-msgstr ""
-" -s, --sort <tkn>    ange sorteringskriterium enligt tecken (se nedan)\n"
+msgstr " -s, --sort <tkn>    ange sorteringskriterium enligt tecken (se nedan)\n"
 
 #: slabtop.c:202
 msgid ""
@@ -1967,33 +1927,28 @@ msgid "setting key \"%s\""
 msgstr "sätter nyckeln ”%s”"
 
 #: sysctl.c:454
-#, fuzzy, c-format
+#, c-format
 msgid "\"%s\" is an unknown key%s"
-msgstr "”%s” är en okänd nyckel"
+msgstr "”%s” är en okänd nyckel%s"
 
 #: sysctl.c:454 sysctl.c:462 sysctl.c:465
-#, fuzzy
 msgid ", ignoring"
-msgstr "ignorerar skiftläge"
+msgstr ", ignorerar"
 
 #: sysctl.c:462
-#, fuzzy, c-format
+#, c-format
 msgid "permission denied on key \"%s\"%s"
-msgstr "tillåtelse nekad för nyckeln ”%s”"
+msgstr "tillåtelse nekad för nyckeln ”%s”%s"
 
 #: sysctl.c:465
-#, fuzzy, c-format
+#, c-format
 msgid "setting key \"%s\"%s"
-msgstr "sätter nyckeln ”%s”"
+msgstr "sätter nyckeln ”%s”%s"
 
 #: sysctl.c:537
 #, c-format
-msgid ""
-"GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
-"expanded."
-msgstr ""
-"GLOB_TILDE stödjs inte på din plattform, tildet i ”%s” kommer inte "
-"expanderas."
+msgid "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be expanded."
+msgstr "GLOB_TILDE stödjs inte på din plattform, tildet i ”%s” kommer inte expanderas."
 
 #: sysctl.c:543
 msgid "glob failed"
@@ -2033,9 +1988,8 @@ msgstr ""
 "Prova ”%s --help” för mer information."
 
 #: tload.c:75 tload.c:77
-#, fuzzy
 msgid "screen too small or too large"
-msgstr "skärmen är för liten"
+msgstr "skärmen är för liten eller för stor"
 
 #: tload.c:80
 msgid "screen too small"
@@ -2855,9 +2809,9 @@ msgid "Unknown command - try 'h' for help"
 msgstr "Okänt kommando — prova ”h” för hjälp"
 
 #: top/top_nls.c:380
-#, fuzzy, c-format
+#, c-format
 msgid "scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)"
-msgstr "rullkoordinater: y = %d/%%d (uppgifter), x = %d/%d (fält)"
+msgstr "rullkoordinater: y = %d/%d (uppgifter), x = %d/%d (fält)"
 
 #: top/top_nls.c:381
 msgid "failed memory allocate"
@@ -2995,9 +2949,8 @@ msgid "width incr is %d, change to (0 default, -1 auto)"
 msgstr "breddökning är %d, ändra till (0 standard, -1 auto)"
 
 #: top/top_nls.c:427
-#, fuzzy
 msgid "rcfile has inspect/other-filter error(s), save anyway?"
-msgstr "rcfilen har ”inspect”-postfel, skriv ändå?"
+msgstr "rcfilen har inspect/other-filterfel, spara ändå?"
 
 #: top/top_nls.c:428
 #, c-format
@@ -3021,12 +2974,8 @@ msgid "Log"
 msgstr "Logg"
 
 #: top/top_nls.c:434
-msgid ""
-"the '=' key will eventually show the actual file read or command(s) "
-"executed ..."
-msgstr ""
-"tangenten ”=” kommer så småningom visa den faktiskt lästa filen eller körda "
-"kommandot …"
+msgid "the '=' key will eventually show the actual file read or command(s) executed ..."
+msgstr "tangenten ”=” kommer så småningom visa den faktiskt lästa filen eller körda kommandot …"
 
 #: top/top_nls.c:435
 msgid "demo"
@@ -3035,45 +2984,31 @@ msgstr "demo"
 #: top/top_nls.c:436
 #, c-format
 msgid ""
-"This is simulated output representing the contents of some file or the "
-"output\n"
-"from some command.  Exactly which commands and/or files are solely up to "
-"you.\n"
+"This is simulated output representing the contents of some file or the output\n"
+"from some command.  Exactly which commands and/or files are solely up to you.\n"
 "\n"
-"Although this text is for information purposes only, it can still be "
-"scrolled\n"
-"and searched like real output will be.  You are encouraged to experiment "
-"with\n"
+"Although this text is for information purposes only, it can still be scrolled\n"
+"and searched like real output will be.  You are encouraged to experiment with\n"
 "those features as explained in the prologue above.\n"
 "\n"
-"To enable real Inspect functionality, entries must be added to the end of "
-"the\n"
-"top personal personal configuration file.  You could use your favorite "
-"editor\n"
+"To enable real Inspect functionality, entries must be added to the end of the\n"
+"top personal personal configuration file.  You could use your favorite editor\n"
 "to accomplish this, taking care not to disturb existing entries.\n"
 "\n"
-"Another way to add entries is illustrated below, but it risks overwriting "
-"the\n"
-"rcfile.  Redirected echoes must not replace (>) but append (>>) to that "
-"file.\n"
+"Another way to add entries is illustrated below, but it risks overwriting the\n"
+"rcfile.  Redirected echoes must not replace (>) but append (>>) to that file.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
-"toprc\n"
+"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
 "\n"
-"If you don't know the location or name of the top rcfile, use the 'W' "
-"command\n"
-"and note those details.  After backing up the current rcfile, try issuing "
-"the\n"
-"above echoes exactly as shown, replacing '.toprc' as appropriate.  The "
-"safest\n"
+"If you don't know the location or name of the top rcfile, use the 'W' command\n"
+"and note those details.  After backing up the current rcfile, try issuing the\n"
+"above echoes exactly as shown, replacing '.toprc' as appropriate.  The safest\n"
 "approach would be to use copy then paste to avoid any typing mistakes.\n"
 "\n"
-"Finally, restart top to reveal what actual Inspect entries combined with "
-"this\n"
-"new command can offer.  The possibilities are endless, especially "
-"considering\n"
+"Finally, restart top to reveal what actual Inspect entries combined with this\n"
+"new command can offer.  The possibilities are endless, especially considering\n"
 "that 'pipe' type entries can include shell scripts too!\n"
 "\n"
 "For additional important information, please consult the top documentation.\n"
@@ -3092,46 +3027,35 @@ msgstr ""
 "\n"
 "För att aktivera verklig inspektionsfunktionalitet måste poster läggas till\n"
 "till slutet av den personliga top-konfigurationsfilen.  Du kan använda din\n"
-"favoritredigerare för att åstadkomma detta, försiktigt så att inte "
-"befintliga\n"
+"favoritredigerare för att åstadkomma detta, försiktigt så att inte befintliga\n"
 "poster skadas.\n"
 "\n"
-"Ett annat sätt att lägga till poster illustreras nedan, men det riskerar "
-"att\n"
-"skriva över rc-filen.  Omdirigerade echo-kommandon får inte ersätta (>) "
-"utan\n"
+"Ett annat sätt att lägga till poster illustreras nedan, men det riskerar att\n"
+"skriva över rc-filen.  Omdirigerade echo-kommandon får inte ersätta (>) utan\n"
 "måste lägga till (>>) till den filen.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tÖppna filer\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA-info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLogg\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
-"toprc\n"
+"  /bin/echo -e \"pipe\\tLogg\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
 "\n"
-"Om du inte vet platsen för eller namnet på top-rc-filen, använd kommandot "
-"”W”\n"
-"och observera detaljerna.  Prova, efter att du säkerhetskopierat den "
-"aktuella\n"
-"rc-filen, att skriva ovanstående echo:n exakt som de står, utom att du "
-"ersätter\n"
-"”.toprc” på lämpligt sätt.  Säkraste sättet vore att kopiera och sedan "
-"klistra\n"
+"Om du inte vet platsen för eller namnet på top-rc-filen, använd kommandot ”W”\n"
+"och observera detaljerna.  Prova, efter att du säkerhetskopierat den aktuella\n"
+"rc-filen, att skriva ovanstående echo:n exakt som de står, utom att du ersätter\n"
+"”.toprc” på lämpligt sätt.  Säkraste sättet vore att kopiera och sedan klistra\n"
 "in för att undvika skrivfel.\n"
 "\n"
 "Starta slutligen om top för att se vad de faktiska inspektionsposterna\n"
 "kombinerade med detta nya kommando kan erbjuda.  Möjligheterna är oändliga,\n"
-"särskilt med tanke på att poster av typen ”pipe” även kan inkludera "
-"skalskript.\n"
+"särskilt med tanke på att poster av typen ”pipe” även kan inkludera skalskript.\n"
 "\n"
-"Se top-dokumentationen för mer viktig information .  Förbättra sedan top "
-"med\n"
+"Se top-dokumentationen för mer viktig information .  Förbättra sedan top med\n"
 "dina helt egna anpassade ”file”- och ”pipe”-poster.\n"
 "\n"
 "Mycket nöje!\n"
 
 #: top/top_nls.c:468
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
-msgstr ""
-"för att aktivera ”Y” tryck <Retur> och skriv sedan ”W” och starta om top"
+msgstr "för att aktivera ”Y” tryck <Retur> och skriv sedan ”W” och starta om top"
 
 #: top/top_nls.c:470
 msgid "to enable 'Y' please consult the top man page (press Enter)"
@@ -3158,13 +3082,12 @@ msgid "%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read"
 msgstr "%s: %*d-%-*d rader, %*d-%*d kolumner, %lu byte lästa"
 
 #: top/top_nls.c:476
-#, fuzzy
 msgid "patience please, working ..."
 msgstr "ha tålamod, arbetar …"
 
 #: top/top_nls.c:477
 msgid "working, use Ctrl-C to end ..."
-msgstr ""
+msgstr "arbetar, använd Ctrl-C för att avsluta …"
 
 #. Translation Hint: Below are 2 abbreviations which can be as long as needed:
 #. .                 FLD = FIELD, VAL = VALUE
@@ -3249,9 +3172,9 @@ msgid "bad memory scaling arg '%c'"
 msgstr "felaktigt minnesskalningsargument ”%c”"
 
 #: top/top_nls.c:502
-#, fuzzy, c-format
+#, c-format
 msgid "PID to collapse/expand [default pid = %d]"
-msgstr "PID att ändra nice-värde på [standard pid = %d]"
+msgstr "PID att fälla ihop/expandera [standard pid = %d]"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3289,81 +3212,51 @@ msgstr "PID att ändra nice-värde på [standard pid = %d]"
 #. .    wraps that could place them there.
 #. .
 #: top/top_nls.c:547
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
-"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
-"~1Secure mode ~3%s~2.\n"
+"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; ~1Secure mode ~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' "
-"summary/task memory scale\n"
-"  l,t,m     Toggle Summary: '~1l~2' load avg; '~1t~2' task/cpu stats; "
-"'~1m~2' memory info\n"
-"  0,1,2,3,I Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpus or numa node "
-"views; '~1I~2' Irix mode\n"
-"  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase "
-"fixed-width\n"
+"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' summary/task memory scale\n"
+"  l,t,m     Toggle Summary: '~1l~2' load avg; '~1t~2' task/cpu stats; '~1m~2' memory info\n"
+"  0,1,2,3,I Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpus or numa node views; '~1I~2' Irix mode\n"
+"  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase fixed-width\n"
 "\n"
-"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: "
-"'~1<~2'/'~1>~2' left/right\n"
-"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; "
-"'~1C~2' Coordinates\n"
-"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; "
-"'~1j~2' Str justify\n"
-"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running "
-"tasks\n"
-"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if "
-"'x' or 'y')\n"
-"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' "
-"other criteria\n"
-"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' "
-"other filter(s)\n"
-"  V,v     . Toggle: '~1V~2' forest view; '~1v~2' hide/show forest view "
-"children\n"
+"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n"
+"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; '~1C~2' Coordinates\n"
+"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; '~1j~2' Str justify\n"
+"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
+"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
+"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' other criteria\n"
+"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' other filter(s)\n"
+"  V,v     . Toggle: '~1V~2' forest view; '~1v~2' hide/show forest view children\n"
 "\n"
-"%s  W,Y       Write configuration file '~1W~2'; Inspect other output "
-"'~1Y~2'\n"
+"%s  W,Y       Write configuration file '~1W~2'; Inspect other output '~1Y~2'\n"
 "  q         Quit\n"
-"          ( commands shown with '.' require a ~1visible~2 task display "
-"~1window~2 ) \n"
+"          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
 "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
 "Hjälp för interaktiva kommandon~2 — %s\n"
-"Fönster ~1%s~6: ~1Ackumulativt läge ~3%s~2.  ~1System~6: ~1Fördr. ~3%.1f "
-"s~2; ~1Säkert läge ~3%s~2.\n"
+"Fönster ~1%s~6: ~1Ackumulativt läge ~3%s~2.  ~1System~6: ~1Fördr. ~3%.1f s~2; ~1Säkert läge ~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   Globalt: ”~1Z~2” färger; ”~1B~2” fet; ”~1E~2”/”~1e~2” "
-"sammanf./uppg. minnesskala\n"
-"  l,t,m     Växla sammanf.: ”~1l~2” last; ”~1t~2” uppg./cpu-stat.; ”~1m~2” "
-"minnesinfo\n"
-"  0,1,2,3,I Växla: ”~10~2” nollor; ”~11~2/~12~2/~13~2” cpu- eller numa-"
-"nodvyer; ”~1I~2” Irix-läge\n"
-"  f,F,X     Fält: ”~1f~2”/”~1F~2” lägg till/ta bort/ordna/sortera; ”~1X~2” "
-"öka fast bredd\n"
+"  Z~5,~1B~5,E,e   Globalt: ”~1Z~2” färger; ”~1B~2” fet; ”~1E~2”/”~1e~2” sammanf./uppg. minnesskala\n"
+"  l,t,m     Växla sammanf.: ”~1l~2” last; ”~1t~2” uppg./cpu-stat.; ”~1m~2” minnesinfo\n"
+"  0,1,2,3,I Växla: ”~10~2” nollor; ”~11~2/~12~2/~13~2” cpu- eller numa-nodvyer; ”~1I~2” Irix-läge\n"
+"  f,F,X     Fält: ”~1f~2”/”~1F~2” lägg till/ta bort/ordna/sortera; ”~1X~2” öka fast bredd\n"
 "\n"
-"  L,&,<,> . Hitta: ”~1L~2”/”~1&~2” sök/igen; Byt sorteringskolumn: "
-"”~1<~2”/”~1>~2” vä/hö\n"
-"  R,H,V,J . Växla: ”~1R~2” Sortering; ”~1H~2” Trådar; ”~1V~2” Skogsvy; "
-"”~1J~2” Taljustera\n"
-"  c,i,S,j . Växla: ”~1c~2” Kmd-namn/-rad; ”~1i~2” Inaktiv; ”~1S~2” Tid; "
-"”~1j~2” Strängjustera\n"
-"  x~5,~1y~5     . Växla markering: ”~1x~2” sorteringsfält; ”~1y~2” körande "
-"uppgifter\n"
-"  z~5,~1b~5     . Växla: ”~1z~2” färg/mono; ”~1b~2” fet/invers (endast om "
-"”x” eller ”y”)\n"
-"  u,U,o,O . Filtrera enl: ”~1u~2”/”~1U~2” effektiv/någon anv; "
-"”~1o~2”/”~1O~2” andra kriterier\n"
-"  n,#,^O  . Sätt: ”~1n~2”/”~1#~2” max visade uppgifter; Visa: "
-"~1Ctrl~2+”~1O~2” andra filter\n"
-"  C,...   . Växla rullkoordinatmeddelande för: ~1upp~2,~1ned~2,~1vänster~2,"
-"~1höger~2,~1home~2,~1end~2\n"
+"  L,&,<,> . Hitta: ”~1L~2”/”~1&~2” sök/igen; Byt sorteringskolumn: ”~1<~2”/”~1>~2” vä/hö\n"
+"  R,H,J,C . Växla: ”~1R~2” Sortering; ”~1H~2” Trådar; ”~1J~2” Taljustera; ”~1C~2” Koordinater\n"
+"  c,i,S,j . Växla: ”~1c~2” Kmd-namn/-rad; ”~1i~2” Inaktiv; ”~1S~2” Tid; ”~1j~2” Strängjustera\n"
+"  x~5,~1y~5     . Växla markering: ”~1x~2” sorteringsfält; ”~1y~2” körande uppgifter\n"
+"  z~5,~1b~5     . Växla: ”~1z~2” färg/mono; ”~1b~2” fet/invers (endast om ”x” eller ”y”)\n"
+"  u,U,o,O . Filtrera enl: ”~1u~2”/”~1U~2” effektiv/någon anv; ”~1o~2”/”~1O~2” andra kriterier\n"
+"  n,#,^O  . Sätt: ”~1n~2”/”~1#~2” max visade uppgifter; Visa: ~1Ctrl~2+”~1O~2” andra filter\n"
+"  V,v     . Växla ”~1V~2” skogsvy; ”~1v~2” dölj/visa skogsvybarn\n"
 "\n"
-"%s  W,Y       Skriv konfigurationsfil ”~1W~2”; Inspektera annan utdata "
-"”~1Y~2”\n"
+"%s  W,Y       Skriv konfigurationsfil ”~1W~2”; Inspektera annan utdata ”~1Y~2”\n"
 "  q         Avsluta\n"
-"          ( kommandon med ”.” behöver ett ~1synligt~2 "
-"uppgifts~1fönster~2 ) \n"
+"          ( kommandon med ”.” behöver ett ~1synligt~2 uppgifts~1fönster~2 ) \n"
 "Tryck ”~1h~2” eller ”~1?~2” för hjälp med ~1fönster~2,\n"
 "Tryck ”q” eller <Esc> för att fortsätta "
 
@@ -3383,84 +3276,52 @@ msgstr ""
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
-". Use multiple ~1windows~2, each with separate config opts (color,fields,"
-"sort,etc)\n"
-". The 'current' window controls the ~1Summary Area~2 and responds to your "
-"~1Commands~2\n"
-"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/"
-"shrinking others\n"
-"  . with ~1NO~2 task display, some commands will be ~1disabled~2 "
-"('i','R','n','c', etc)\n"
-"    until a ~1different window~2 has been activated, making it the 'current' "
-"window\n"
-". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;"
-"~1 2~2) choosing\n"
-"  a specific field group; or~1 3~2) exiting the color mapping or fields "
-"screens\n"
+". Use multiple ~1windows~2, each with separate config opts (color,fields,sort,etc)\n"
+". The 'current' window controls the ~1Summary Area~2 and responds to your ~1Commands~2\n"
+"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/shrinking others\n"
+"  . with ~1NO~2 task display, some commands will be ~1disabled~2 ('i','R','n','c', etc)\n"
+"    until a ~1different window~2 has been activated, making it the 'current' window\n"
+". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;~1 2~2) choosing\n"
+"  a specific field group; or~1 3~2) exiting the color mapping or fields screens\n"
 ". Commands ~1available anytime   -------------~2\n"
-"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 "
-"windows\n"
-"    g       . Choose another field group and make it 'current', or change "
-"now\n"
-"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; "
-"or~1 4~2 =%s\n"
+"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 windows\n"
+"    g       . Choose another field group and make it 'current', or change now\n"
+"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; or~1 4~2 =%s\n"
 ". Commands ~1requiring~2 '~1A~2' mode~1  -------------~2\n"
 "    G       . Change the ~1Name~5 of the 'current' window/field group\n"
-" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' "
-"Backward\n"
-" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all "
-"~1Visible~2/~1Invisible~2\n"
-"  The screen will be divided evenly between task displays.  But you can "
-"make\n"
-"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then "
-"later you could:\n"
-" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' "
-"~1Every~2 window\n"
-"              (this also forces the ~1current~2 or ~1every~2 window to "
-"become visible)\n"
+" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' Backward\n"
+" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all ~1Visible~2/~1Invisible~2\n"
+"  The screen will be divided evenly between task displays.  But you can make\n"
+"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then later you could:\n"
+" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' ~1Every~2 window\n"
+"              (this also forces the ~1current~2 or ~1every~2 window to become visible)\n"
 "\n"
-"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try "
-"the '~1a~2' and '~1w~2'\n"
+"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try the '~1a~2' and '~1w~2'\n"
 "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' "
 msgstr ""
 "Hjälp för fönster / Fältgrupper~2 — ”Aktuellt fönster” = ~1 %s ~6\n"
 "\n"
-". Använd flera ~1fönster~2, vart och ett med egna konfig-alt. (färg,fält,"
-"sort,etc)\n"
-". Det ”aktuella” fönstret styr ~1Sammanfattning~2 och svarar på dina "
-"~1kommandon~2\n"
-"  . det fönstrets ~1uppg.-visning~2 kan slås ~1av~2 & ~1på~2, växer/krymper "
-"andra\n"
-"  . ~1UTAN~2 uppg.-visning, blir några kommandon ~1avaktiverade~2 "
-"(”i”,”R”,”n”,”c”, etc)\n"
-"    tills ett ~1annat fönster~2 aktiverats, vilket gör det till ”aktuellt” "
-"fönster\n"
-". Du ~1byter~2 det ”aktuella” fönstret med: ~1 1~2) cirkulerar framåt/bakåt;"
-"~1 2~2) väljer\n"
-"  en viss fältgrupp; eller~1 3~2) avslutar färgkodnings- eller fält-"
-"skärmarna\n"
+". Använd flera ~1fönster~2, vart och ett med egna konfig-alt. (färg,fält,sort,etc)\n"
+". Det ”aktuella” fönstret styr ~1Sammanfattning~2 och svarar på dina ~1kommandon~2\n"
+"  . det fönstrets ~1uppg.-visning~2 kan slås ~1av~2 & ~1på~2, växer/krymper andra\n"
+"  . ~1UTAN~2 uppg.-visning, blir några kommandon ~1avaktiverade~2 (”i”,”R”,”n”,”c”, etc)\n"
+"    tills ett ~1annat fönster~2 aktiverats, vilket gör det till ”aktuellt” fönster\n"
+". Du ~1byter~2 det ”aktuella” fönstret med: ~1 1~2) cirkulerar framåt/bakåt;~1 2~2) väljer\n"
+"  en viss fältgrupp; eller~1 3~2) avslutar färgkodnings- eller fält-skärmarna\n"
 ". Kommandon som ~1alltid är tillgängliga   -------------~2\n"
-"    A       . Växlare för alternativt visningsläge, visa ~1ensamt~2 / "
-"~1flera~2 fönster\n"
+"    A       . Växlare för alternativt visningsläge, visa ~1ensamt~2 / ~1flera~2 fönster\n"
 "    g       . Välj en annan fältgrupp och gör den ”aktuell”, eller byt nu\n"
-"              genom att välja ett tal: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; "
-"eller~1 4~2 =%s\n"
+"              genom att välja ett tal: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; eller~1 4~2 =%s\n"
 ". Kommandon som ~1kräver~2 ”~1A~2”-läge~1  -------------~2\n"
 "    G       . Ändra ~1namnet~5 på ”aktuellt” fönster/fältgrupp\n"
-" ~1*~4  a , w   . Rotera genom alla fyra fönster:  ”~1a~5” framåt; ”~1w~5” "
-"bakåt\n"
-" ~1*~4  - , _   . Visa/Dölj:  ”~1-~5” ~1aktuellt~2 fönster; ”~1_~5” alla "
-"~1synliga~2/~1osynliga~2\n"
+" ~1*~4  a , w   . Rotera genom alla fyra fönster:  ”~1a~5” framåt; ”~1w~5” bakåt\n"
+" ~1*~4  - , _   . Visa/Dölj:  ”~1-~5” ~1aktuellt~2 fönster; ”~1_~5” alla ~1synliga~2/~1osynliga~2\n"
 "  Skärmen kommer delas lika mellan uppgiftsvisningar.  Men du kan göra\n"
-"  några ~1större~2 eller ~1mindre~2, med kommandona ”~1n~2” och ”~1i~2”.  "
-"Sedan kan du:\n"
-" ~1*~4  = , +   . Balansera om uppgifter:  ”~1=~5” ~1aktuellt~2 fönster; "
-"”~1+~5” ~1varje~2 fönster\n"
-"              (detta tvingar även ~1aktuellt~2 eller ~1alla~2 fönster att "
-"bli synliga)\n"
+"  några ~1större~2 eller ~1mindre~2, med kommandona ”~1n~2” och ”~1i~2”.  Sedan kan du:\n"
+" ~1*~4  = , +   . Balansera om uppgifter:  ”~1=~5” ~1aktuellt~2 fönster; ”~1+~5” ~1varje~2 fönster\n"
+"              (detta tvingar även ~1aktuellt~2 eller ~1alla~2 fönster att bli synliga)\n"
 "\n"
-"I ”~1A~2”-läge är ”~1*~4”-tecken dina ~1viktiga~2 kommandon.  Prova "
-"kommandona ”~1a~2” och ”~1w~2”\n"
+"I ”~1A~2”-läge är ”~1*~4”-tecken dina ~1viktiga~2 kommandon.  Prova kommandona ”~1a~2” och ”~1w~2”\n"
 "plus underkommandona ”g” NU.  Tryck <Retur> för att göra ”aktuellt” "
 
 #. Translation Notes ------------------------------------------------
@@ -3473,15 +3334,13 @@ msgstr ""
 #. .  to not disturb the spaces and the tilde + number delimiters.
 #. .
 #: top/top_nls.c:614
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
 "   color - 04:25:44 up 8 days, 50 min,  7 users,  load average:\n"
-"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,"
-"~3\n"
-"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 "
-"~2idle~3\n"
+"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,~3\n"
+"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 ~2idle~3\n"
 "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP S COMMAND    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
@@ -3490,8 +3349,7 @@ msgid ""
 "   available toggles: ~1B~2 =disable bold globally (~1%s~2),\n"
 "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks \"bold\"/reverse (~1%s~2)\n"
 "\n"
-"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c "
-"~4:\n"
+"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c ~4:\n"
 "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n"
 "   H~2 = Column Heads,~1  T~2 = Task Information\n"
 "2) Select a ~1color~2 as a number or use the up/down arrow keys\n"
@@ -3503,14 +3361,11 @@ msgid ""
 "   'q' or <Esc> to abort changes to window '~1%s~2'\n"
 "   'a' or 'w' to commit & change another, <Enter> to commit and end "
 msgstr ""
-"Hjälp för färganpassning~2 — %s\n"
-"aktuellt fönster: ~1%s~6\n"
+"Hjälp för färganpassning~2 — ”Aktuellt fönster” = ~1 %s ~6\n"
 "\n"
 "   färg - 04:25:44 uppe 8 dagar, 50 min,  7 användare,  last:\n"
-"   Uppg.:~3  64 ~2totalt,~3   2 ~3körande,~3  62 ~2sovande,~3   0 ~2stoppade,"
-"~3\n"
-"   %%Cpu/er:~3  76,5 ~2anv.,~3  11,2 ~2system,~3   0,0 ~2nice,~3  12,3 "
-"~2inakt.~3\n"
+"   Uppg.:~3  64 ~2totalt,~3   2 ~3körande,~3  62 ~2sovande,~3   0 ~2stoppade,~3\n"
+"   %%Cpu/er:~3  76,5 ~2anv.,~3  11,2 ~2system,~3   0,0 ~2nice,~3  12,3 ~2inakt.~3\n"
 "   ~1 Otrevligt meddelande! ~4  -eller-  ~1Inmatningsprompt~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT VÄXL S KOMMAND    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
@@ -3522,14 +3377,14 @@ msgstr ""
 "1) Välj ett ~1mål~2 som en versal bokstav, ~1aktuellt mål~2 är ~1 %c ~4:\n"
 "   S~2 = Sammanf.-data,~1  M~2 = Meddelande/prompter,\n"
 "   H~2 = Kolumnhuvuden,~1  T~2 = Uppgiftsinformation\n"
-"2) Välj en ~1färg~2 som ett tal, ~1aktuell färg~2 är ~1 %d ~4:\n"
+"2) Välj en ~1färg~2 som ett tal eller använd upp-/nerpiltangenterna\n"
+"   för att höja/sänka %d-färgens värde, , ~1aktuell färg~2 är ~1 %d ~4:\n"
 "   0~2 = svart,~1  1~2 = röd,    ~1  2~2 = grön,~1   3~2 = gul,\n"
 "   4~2 = blå, ~1   5~2 = magenta,~1  6~2 = cyan, ~1  7~2 = vit\n"
 "\n"
 "3) Använd sedan dessa tangenter efteråt:\n"
-"   ”q” för att avbryta ändringar till fönstret ”~1%s~2”\n"
-"   ”a” el ”w” för att spara & ändra en annan, <Retur> för att spara och "
-"avsluta "
+"   ”q” eller <Esc> för att avbryta ändringar till fönstret ”~1%s~2”\n"
+"   ”a” el ”w” för att spara & ändra en annan, <Retur> för att spara och avsluta "
 
 #. Translation Hint:
 #. .  This Fields Management header should be 3 lines long so as
@@ -3540,69 +3395,46 @@ msgstr ""
 #, c-format
 msgid ""
 "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
-"   Navigate with Up/Dn, Right selects for move then <Enter> or Left "
-"commits,\n"
+"   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n"
 "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!\n"
 msgstr ""
 "Fälthantering~2 för fönster ~1%s~6, vars aktuella sorteringsfält är ~1%s~2\n"
-"   Navigera med Upp/Ner, Höger väljer för flytt och <Retur> el Vänster "
-"sparar,\n"
-"   ”d” el <Mellanslag> växlar visning, ”s” anger sort.  ”q” el <Esc> "
-"avslutar!\n"
+"   Navigera med Upp/Ner, Höger väljer för flytt och <Retur> el Vänster sparar,\n"
+"   ”d” el <Mellanslag> växlar visning, ”s” anger sort.  ”q” el <Esc> avslutar!\n"
 
 #. Translation Hint:
 #. .  The next 5 items must each be translated as a single line.
 #. .
 #: top/top_nls.c:653
 #, c-format
-msgid ""
-"%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
-"~2zombie~3\n"
-msgstr ""
-"%s:~3 %3u ~2totalt,~3 %3u ~2körande,~3 %3u ~2sovande,~3 %3u ~2stoppade,~3 "
-"%3u ~2zombie~3\n"
+msgid "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n"
+msgstr "%s:~3 %3u ~2totalt,~3 %3u ~2körande,~3 %3u ~2sovande,~3 %3u ~2stoppade,~3 %3u ~2zombie~3\n"
 
 #: top/top_nls.c:656
 #, c-format
-msgid ""
-"%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
-"~2idle~3\n"
-msgstr ""
-"%%%s~3 %#5.1f  ~2anv.,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
-"~2inakt.~3\n"
+msgid "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3\n"
+msgstr "%%%s~3 %#5.1f  ~2anv.,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2inakt.~3\n"
 
 #: top/top_nls.c:659
 #, c-format
-msgid ""
-"%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
-"~2idle,~3 %#5.1f  ~2IO-wait~3\n"
-msgstr ""
-"%%%s~3 %#5.1f  ~2anv.,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
-"~2inakt.,~3 %#5.1f  ~2IO-vänt~3\n"
+msgid "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,~3 %#5.1f  ~2IO-wait~3\n"
+msgstr "%%%s~3 %#5.1f  ~2anv.,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2inakt.,~3 %#5.1f  ~2IO-vänt~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt
 #: top/top_nls.c:665
 #, c-format
-msgid ""
-"%%%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f "
-"~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n"
-msgstr ""
-"%%%s~3 %#5.1f ~2an,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2in,~3 %#5.1f "
-"~2vä,~3 %#5.1f ~2ha,~3 %#5.1f ~2ma~3\n"
+msgid "%%%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n"
+msgstr "%%%s~3 %#5.1f ~2an,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2in,~3 %#5.1f ~2vä,~3 %#5.1f ~2ha,~3 %#5.1f ~2ma~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt, st = steal time
 #: top/top_nls.c:671
 #, c-format
-msgid ""
-"%%%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
-"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
-msgstr ""
-"%%%s~3%#5.1f ~2an,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2in,~3%#5.1f ~2vä,"
-"~3%#5.1f ~2ha,~3%#5.1f ~2ma,~3%#5.1f ~2st~3\n"
+msgid "%%%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
+msgstr "%%%s~3%#5.1f ~2an,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2in,~3%#5.1f ~2vä,~3%#5.1f ~2ha,~3%#5.1f ~2ma,~3%#5.1f ~2st~3\n"
 
 #. Translation Hint: this must be translated as 2 lines with words above & below aligned
 #: top/top_nls.c:675
@@ -3611,8 +3443,7 @@ msgid ""
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3\n"
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3\n"
 msgstr ""
-"%s %s:~3 %9.9s~2totalt,~3 %9.9s~2fritt,~3 %9.9s~2anv.,~3 %9.9s~2buff/"
-"cache~3\n"
+"%s %s:~3 %9.9s~2totalt,~3 %9.9s~2fritt,~3 %9.9s~2anv.,~3 %9.9s~2buff/cache~3\n"
 "%s %s:~3 %9.9s~2totalt,~3 %9.9s~2fritt,~3 %9.9s~2anv.,~3 %9.9s~2tillg %s~3\n"
 
 #. Translation Hint:
@@ -3622,28 +3453,23 @@ msgstr ""
 #, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
-"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to "
-"~1end~5 !\n"
+"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to ~1end~5 !\n"
 "Options~2: ~1%s\n"
 msgstr ""
 "Inspektion~2 Paus vid: pid ~1%d~6, körande ~1%s~6\n"
-"Använd~2:  vänster/höger och <Retur> för att ~1välja~5 ett alternativ; 'q' "
-"eller <Esc> för att ~1avsluta~5 !\n"
+"Använd~2:  vänster/höger och <Retur> för att ~1välja~5 ett alternativ; 'q' eller <Esc> för att ~1avsluta~5 !\n"
 "Alternativ~2: ~1%s\n"
 
 #: top/top_nls.c:687
 #, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
-"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to "
-"~1locate~5/~1next~5.\n"
+"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to ~1locate~5/~1next~5.\n"
 "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n"
 msgstr ""
 "Inspektion~2 Visa vid pid: ~1%s~3, körande ~1%s~3.  Hitta: ~1%s~6\n"
-"Använd~2:  vänster/höger/upp/ner/etc för att ~1navigera~5 utdatan; 'L'/'&' "
-"för att ~1hitta~5/~1nästa~5.\n"
-"Eller~2:   <Retur> för att ~1välja en annan~5; 'q' eller <Esc> för att "
-"~1avsluta~5 !\n"
+"Använd~2:  vänster/höger/upp/ner/etc för att ~1navigera~5 utdatan; 'L'/'&' för att ~1hitta~5/~1nästa~5.\n"
+"Eller~2:   <Retur> för att ~1välja en annan~5; 'q' eller <Esc> för att ~1avsluta~5 !\n"
 
 #: uptime.c:64
 msgid " -p, --pretty   show uptime in pretty format\n"
@@ -3703,20 +3529,12 @@ msgid " -t, --timestamp        show timestamp\n"
 msgstr " -t, --timestamp        visa tidsstämplar\n"
 
 #: vmstat.c:195
-msgid ""
-"procs -----------memory---------- ---swap-- -----io---- -system-- ------"
-"cpu-----"
-msgstr ""
-"procs -----------minne----------- -växling- -----io---- -system-- ------"
-"cpu-----"
+msgid "procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----"
+msgstr "procs -----------minne----------- -växling- -----io---- -system-- ------cpu-----"
 
 #: vmstat.c:197
-msgid ""
-"procs -----------------------memory---------------------- ---swap-- -----"
-"io---- -system-- --------cpu--------"
-msgstr ""
-"procs -----------------------minne----------------------- -växling- -----"
-"io---- -system-- --------cpu--------"
+msgid "procs -----------------------memory---------------------- ---swap-- -----io---- -system-- --------cpu--------"
+msgstr "procs -----------------------minne----------------------- -växling- -----io---- -system-- --------cpu--------"
 
 #: vmstat.c:198 vmstat.c:530
 msgid " -----timestamp-----"
@@ -3847,20 +3665,12 @@ msgid "your kernel does not support diskstat. (2.5.70 or above required)"
 msgstr "din kärna stödjer inte diskstat.  (2.5.70 eller senare krävs)"
 
 #: vmstat.c:527
-msgid ""
-"disk- ------------reads------------ ------------writes----------- -----"
-"IO------"
-msgstr ""
-"disk- ----------läsningar---------- ----------skrivningar-------- -----"
-"IO------"
+msgid "disk- ------------reads------------ ------------writes----------- -----IO------"
+msgstr "disk- ----------läsningar---------- ----------skrivningar-------- -----IO------"
 
 #: vmstat.c:529
-msgid ""
-"disk- -------------------reads------------------- -------------------"
-"writes------------------ ------IO-------"
-msgstr ""
-"disk- -----------------läsningar----------------- ----------------"
-"skrivningar---------------- ------IO-------"
+msgid "disk- -------------------reads------------------- -------------------writes------------------ ------IO-------"
+msgstr "disk- -----------------läsningar----------------- ----------------skrivningar---------------- ------IO-------"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:548 vmstat.c:556
@@ -3925,10 +3735,8 @@ msgid "Pages"
 msgstr "Sidor"
 
 #: vmstat.c:717
-msgid ""
-"your kernel does not support slabinfo or your permissions are insufficient"
-msgstr ""
-"din kärna stödjer inte slabinfo eller så har du inte tillräckliga rättigheter"
+msgid "your kernel does not support slabinfo or your permissions are insufficient"
+msgstr "din kärna stödjer inte slabinfo eller så har du inte tillräckliga rättigheter"
 
 #: vmstat.c:769
 #, c-format
@@ -4153,8 +3961,7 @@ msgstr ""
 
 #: watch.c:95
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
-msgstr ""
-"  -e, --errexit          avsluta om kommandot avslutas med annat än noll\n"
+msgstr "  -e, --errexit          avsluta om kommandot avslutas med annat än noll\n"
 
 #: watch.c:96
 msgid "  -g, --chgexit          exit when output from command changes\n"
@@ -4166,8 +3973,7 @@ msgstr "  -n, --interval <sek>   sekunder att vänta mellan uppdateringar\n"
 
 #: watch.c:98
 msgid "  -p, --precise          attempt run command in precise intervals\n"
-msgstr ""
-"  -p, --precise          försök att köra kommandot med precisa intervall\n"
+msgstr "  -p, --precise          försök att köra kommandot med precisa intervall\n"
 
 #: watch.c:99
 msgid "  -t, --no-title         turn off header\n"
@@ -4175,8 +3981,7 @@ msgstr "  -t, --no-title         slå av rubrik\n"
 
 #: watch.c:100
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
-msgstr ""
-"  -x, --exec             skicka kommandot till exec istället för ”sh -c”\n"
+msgstr "  -x, --exec             skicka kommandot till exec istället för ”sh -c”\n"
 
 #: watch.c:103
 msgid " -v, --version  output version information and exit\n"
@@ -4219,8 +4024,7 @@ msgstr "waitpid"
 
 #: watch.c:655
 msgid "command exit with a non-zero status, press a key to exit"
-msgstr ""
-"kommandot avslutade med en nollskild status, tryck en tangent för att avsluta"
+msgstr "kommandot avslutade med en nollskild status, tryck en tangent för att avsluta"
 
 #: watch.c:779
 #, c-format
@@ -4271,26 +4075,18 @@ msgid " -o, --old-style     old style output\n"
 msgstr " -o, --old-style     utdata i gammal stil\n"
 
 #: w.c:464
-msgid ""
-" -i, --ip-addr       display IP address instead of hostname (if possible)\n"
-msgstr ""
-" -i, --ip-addr       visa IP-adress istället för värdnamn (om möjligt)\n"
+msgid " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
+msgstr " -i, --ip-addr       visa IP-adress istället för värdnamn (om möjligt)\n"
 
 #: w.c:561
 #, c-format
-msgid ""
-"User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
-msgstr ""
-"Miljövariabeln PROCPS_USERLEN för användarnamnslängd måste vara mellan 8 och "
-"%i, ignorerar.\n"
+msgid "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
+msgstr "Miljövariabeln PROCPS_USERLEN för användarnamnslängd måste vara mellan 8 och %i, ignorerar.\n"
 
 #: w.c:571
 #, c-format
-msgid ""
-"from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
-msgstr ""
-"Miljövariabeln PROCPS_FROMLEN för frånlängd måste vara mellan 8 och %d, "
-"ignorerar.\n"
+msgid "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
+msgstr "Miljövariabeln PROCPS_FROMLEN för frånlängd måste vara mellan 8 och %d, ignorerar.\n"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
@@ -4354,22 +4150,3 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s från %s\n"
-
-#~ msgid ""
-#~ "pattern that searches for process name longer than 15 characters will "
-#~ "result in zero matches\n"
-#~ "Try `%s -f' option to match against the complete command line."
-#~ msgstr ""
-#~ "mönster som söker efter processnamn längre än 15 tecken kommer resultera "
-#~ "i noll träffar\n"
-#~ "Prova flaggan ”%s -f” för att matcha mot den fullständiga kommandoraden."
-
-#~ msgid "unknown page size (assume 4096)\n"
-#~ msgstr "okänd sidstorlek (antar 4096)\n"
-
-#~ msgid ""
-#~ " --ns <PID>                match the processes that belong to the same\n"
-#~ "                           namespace as <pid> or 0 for all namespaces\n"
-#~ msgstr ""
-#~ " --ns <PID>                matcha processer som tillhör samma namnrymd\n"
-#~ "                           som <pid> eller 0 för alla namnrymder\n"
