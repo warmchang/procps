@@ -6,9 +6,13 @@
 #   make -C man-po po4a-dist
 # To update man page translations
 
-DIST_translated_MANS = $(shell find translated -name '*.[1-9]')
+translated_MANS = $(wildcard translated/*/*.[1-9])
+translated_MAN_sections=$(subst .,,$(sort $(suffix $(translated_MANS))))
 
-EXTRA_DIST = po4a.cfg $(DIST_translated_MANS)
+translated_langs = $(notdir $(wildcard translated/*))
+
+
+EXTRA_DIST = po4a.cfg $(translated_MANS)
 
 if USE_PO4A
 
@@ -16,16 +20,18 @@ po4a-dist:
 	-@po4a -M utf-8 -k 0 po4a.cfg
 endif
 
-translated_langs = $(notdir $(wildcard translated/*))
 
 install-data-local:
 	for l in $(translated_langs) ; do \
-	    for sect in `ls translated/$$l` ; do \
-	      $(MKDIR_P) $(DESTDIR)$(mandir)/$$l/$$sect ; \
-	      for file in `ls translated/$$l/$$sect` ; do \
-	          $(INSTALL_DATA) $$file $(DESTDIR)$(mandir)/$$l/$$sect ; \
-              done ; \
+	    for sect in $(translated_MAN_sections) ; do \
+	      manpages=`ls translated/$$l/*.$$sect 2>/dev/null` ; \
+	      if [ -n "$$manpages" ] ; then \
+	          $(MKDIR_P) $(DESTDIR)$(mandir)/$$l/man$$sect ; \
+	          for file in `ls translated/$$l/*.$$sect` ; do \
+	              $(INSTALL_DATA) $$file $(DESTDIR)$(mandir)/$$l/man$$sect ; \
+                  done ; \
+	      fi ; \
             done ; \
 	done
 
-.PHONY = translated_langs get-trans po4a-dist
+.PHONY = translated_langs po4a-dist
