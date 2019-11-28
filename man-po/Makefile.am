@@ -6,32 +6,76 @@
 #   make -C man-po po4a-dist
 # To update man page translations
 
+dist_man_MANS = \
+	../free.1 \
+	../pgrep.1 \
+	../pkill.1 \
+	../pmap.1 \
+	../uptime.1 \
+	../vmstat.8 \
+	../w.1 \
+	../ps/procps.1
+
+if !CYGWIN
+dist_man_MANS += \
+	../pwdx.1 \
+	../tload.1 \
+	../sysctl.8 \
+	../sysctl.conf.5 \
+	../ps/ps.1
+endif
+
 translated_MANS = $(wildcard translated/*/*.[1-9])
 translated_MAN_sections=$(subst .,,$(sort $(suffix $(translated_MANS))))
 
 translated_langs = $(notdir $(wildcard translated/*))
 
 
-EXTRA_DIST = po4a.cfg $(translated_MANS)
+EXTRA_DIST = po4a.cfg \
+	     procps-man.pot \
+	     $(translated_MANS)
+
+LINGUAS_DIST=$(subst .po,,$(wildcard $(srcdir)/*.po))
+# If the user has not defined it let's use the default.
+LINGUAS ?= $(LINGUAS_DIST)
+
+
+PO4A_V = $(PO4A_V_@AM_V@)
+PO4A_V_ = $(PO4A_V_@AM_DEFAULT_V@)
+PO4A_V_0 = @echo "  PO4A   $@";
+
+PO4A_OPTS = --srcdir $(srcdir) --destdir $(CURDIR) \
+            --package-name $(PACKAGE) --package-version $(VERSION) \
+            --msgid-bugs-address "Procps list <procps@freelists.org>"
 
 if USE_PO4A
 
-po4a-dist:
-	-@po4a -M utf-8 -k 0 po4a.cfg
+update-po:
+	$(PO4A_V) $(PO4A) $(PO4A_OPTS) --force $(srcdir)/po4a.cfg
+
+#clean-local:
+#	rm -rf translated/$(LINGUAS_DIST)
+#
+
+procps-man.pot:
+#	parafiles = $(patsubst %,-m%,$(subst :, ,$(dist_man_MANS)))
+#	parafiles = $(dist_man_MANS:doc=Ente)
+	po4a-gettextize -M utf8 --option groff_code=verbatim --option generated --option untranslated="a.RE,\|" --option unknown_macros=untranslated -f man $(patsubst %,-m%,$(subst :, ,$(dist_man_MANS))) -p $@
+
 endif
 
-
 install-data-local:
-	for l in $(translated_langs) ; do \
-	    for sect in $(translated_MAN_sections) ; do \
-	      manpages=`ls translated/$$l/*.$$sect 2>/dev/null` ; \
-	      if [ -n "$$manpages" ] ; then \
-	          $(MKDIR_P) $(DESTDIR)$(mandir)/$$l/man$$sect ; \
-	          for file in `ls translated/$$l/*.$$sect` ; do \
-	              $(INSTALL_DATA) $$file $(DESTDIR)$(mandir)/$$l/man$$sect ; \
-                  done ; \
-	      fi ; \
-            done ; \
+	for lang in $(LINGUAS) ; do \
+	    files=""; \
+	    for trans in $(notdir $(dist_man_MANS)); do \
+		if [ -f $(CURDIR)/translated/$$lang/$$trans ]; then \
+		    files="$$files $(CURDIR)/translated/$$lang/$$trans"; \
+		elif [ -f $(srcdir)/translated/$$lang/$$trans ]; then \
+		    files="$$files $(srcdir)/translated/$$lang/$$trans"; \
+		fi; \
+	    done; \
+	    $(MAKE) install-man \
+	            mandir="$(mandir)/$$lang" \
+		    man_MANS="" \
+		    dist_man_MANS="$$files"; \
 	done
-
-.PHONY = translated_langs po4a-dist

@@ -29,6 +29,7 @@ libtool
 ltmain.sh
 m4/
 man-po/translated
+man-po/*.pot
 Makefile
 Makefile.in
 missing
