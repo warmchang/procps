@@ -1,5 +1,9 @@
 procps-ng-NEXT
 ----------------
+  * library: Increment to 8:2:0
+    No removals or functions
+    Internal changes only, so revision is incremented.
+    Previous version should have been 8:1:0 not 8:0:1
   * docs: Use correct symbols for -h option in free.1      Debian #898774
   * docs: ps.1 now warns about command name length         issue #101
   * docs: install translated man pages                     issue #146
