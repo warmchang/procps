@@ -146,15 +146,15 @@ struct stat_info {
 
 // regular assignment
 #define TIC_set(e,t,x) setDECL(e) { \
-    (void)S; R->result. t = T->new . x; }
+    (void)S; R->result. t = T->new. x; }
 #define SYS_set(e,t,x) setDECL(e) { \
-    (void)T; R->result. t = S->new . x; }
+    (void)T; R->result. t = S->new. x; }
 // delta assignment
 #define TICsetH(e,t,x) setDECL(e) { \
-    (void)S; R->result. t = ( T->new . x - T->old. x ); \
+    (void)S; R->result. t = ( T->new. x - T->old. x ); \
     if (R->result. t < 0) R->result. t = 0; }
 #define SYSsetH(e,t,x) setDECL(e) { \
-    (void)T; R->result. t = ( S->new . x - S->old. x ); \
+    (void)T; R->result. t = ( S->new. x - S->old. x ); \
     if (R->result. t < 0) R->result. t = 0; }
 
 setDECL(noop)  { (void)R; (void)S; (void)T; }

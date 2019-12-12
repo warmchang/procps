@@ -132,9 +132,9 @@ struct meminfo_info {
     (struct meminfo_result *R, struct mem_hist *H)
 
 // regular assignment
-#define MEM_set(e,t,x) setDECL(e) { R->result. t = H->new . x; }
+#define MEM_set(e,t,x) setDECL(e) { R->result. t = H->new. x; }
 // delta assignment
-#define HST_set(e,t,x) setDECL(e) { R->result. t = ( H->new . x - H->old. x ); }
+#define HST_set(e,t,x) setDECL(e) { R->result. t = ( H->new. x - H->old. x ); }
 
 setDECL(noop)  { (void)R; (void)H; }
 setDECL(extra) { (void)H; R->result.ul_int = 0; }

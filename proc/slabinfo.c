@@ -139,10 +139,10 @@ struct slabinfo_info {
     (struct slabinfo_result *R, struct slabs_hist *S, struct slabs_node *N)
 
 // regular assignment
-#define REG_set(e,t,x) setDECL(e) { (void)N; R->result. t = S->new . x; }
+#define REG_set(e,t,x) setDECL(e) { (void)N; R->result. t = S->new. x; }
 #define NOD_set(e,t,x) setDECL(e) { (void)S; R->result. t = N-> x; }
 // delta assignment
-#define HST_set(e,t,x) setDECL(e) { (void)N; R->result. t = (signed long)S->new . x - S->old. x; }
+#define HST_set(e,t,x) setDECL(e) { (void)N; R->result. t = (signed long)S->new. x - S->old. x; }
 
 setDECL(noop)  { (void)R; (void)S; (void)N; }
 setDECL(extra) { (void)S; (void)N; R->result.ul_int = 0; }

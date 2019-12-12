@@ -116,9 +116,9 @@ struct diskstats_info {
 
 // regular assignment
 #define DEV_set(e,t,x) setDECL(e) { R->result. t = N-> x; }
-#define REG_set(e,t,x) setDECL(e) { R->result. t = N->new . x; }
+#define REG_set(e,t,x) setDECL(e) { R->result. t = N->new. x; }
 // delta assignment
-#define HST_set(e,t,x) setDECL(e) { R->result. t = ( N->new . x - N->old. x ); }
+#define HST_set(e,t,x) setDECL(e) { R->result. t = ( N->new. x - N->old. x ); }
 
 setDECL(noop)  { (void)R; (void)N; }
 setDECL(extra) { (void)N; R->result.ul_int = 0; }

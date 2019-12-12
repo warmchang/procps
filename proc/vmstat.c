@@ -219,9 +219,9 @@ struct vmstat_info {
     (struct vmstat_result *R, struct vmstat_hist *H)
 
 // regular assignment
-#define REG_set(e,x) setDECL(e) { R->result.ul_int = H->new . x; }
+#define REG_set(e,x) setDECL(e) { R->result.ul_int = H->new. x; }
 // delta assignment
-#define HST_set(e,x) setDECL(e) { R->result.sl_int = ( H->new . x - H->old. x ); }
+#define HST_set(e,x) setDECL(e) { R->result.sl_int = ( H->new. x - H->old. x ); }
 
 setDECL(noop)  { (void)R; (void)H; }
 setDECL(extra) { (void)H; R->result.ul_int = 0; }
