@@ -154,8 +154,7 @@ struct stat_info {
     (void)S; R->result. t = ( T->new. x - T->old. x ); \
     if (R->result. t < 0) R->result. t = 0; }
 #define SYSsetH(e,t,x) setDECL(e) { \
-    (void)T; R->result. t = ( S->new. x - S->old. x ); \
-    if (R->result. t < 0) R->result. t = 0; }
+    (void)T; R->result. t = ( S->new. x - S->old. x ); }
 
 setDECL(noop)  { (void)R; (void)S; (void)T; }
 setDECL(extra) { (void)S; (void)T; R->result.ull_int = 0; }
@@ -207,9 +206,9 @@ SYS_set(SYS_TIME_OF_BOOT,         ul_int,   btime)
 
 SYSsetH(SYS_DELTA_CTX_SWITCHES,   s_int,    ctxt)
 SYSsetH(SYS_DELTA_INTERRUPTS,     s_int,    intr)
-setDECL(SYS_DELTA_PROC_BLOCKED) { (void)T; R->result.s_int = S->new.procs_blocked - S->old.procs_blocked; }
+SYSsetH(SYS_DELTA_PROC_BLOCKED,   s_int,    procs_blocked)
 SYSsetH(SYS_DELTA_PROC_CREATED,   s_int,    procs_created)
-setDECL(SYS_DELTA_PROC_RUNNING) { (void)T; R->result.s_int = S->new.procs_running - S->old.procs_running; }
+SYSsetH(SYS_DELTA_PROC_RUNNING,   s_int,    procs_running)
 
 #undef setDECL
 #undef TIC_set
