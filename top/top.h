@@ -224,7 +224,7 @@ enum scale_enum {
 
         /* Used to manipulate (and document) the Frames_signal states */
 enum resize_states {
-   BREAK_off = 0, BREAK_kbd, BREAK_sig
+   BREAK_off = 0, BREAK_kbd, BREAK_sig, BREAK_autox
 };
 
         /* This typedef just ensures consistent 'process flags' handling */

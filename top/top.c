@@ -2320,7 +2320,8 @@ static inline void widths_resize (void) {
          Autox_found = 1;
       }
    }
-   if (Autox_found) calibrate_fields();
+   // trigger a call to calibrate_fields (via zap_fieldstab)
+   if (Autox_found) Frames_signal = BREAK_autox;
 } // end: widths_resize
 
 
@@ -6407,6 +6408,10 @@ static void frame_make (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    int i, scrlins;
 
+   // check auto-sized width increases from the last iteration...
+   if (AUTOX_MODE && Autox_found)
+      widths_resize();
+
    // deal with potential signal(s) since the last time around...
    if (Frames_signal)
       zap_fieldstab();
@@ -6459,10 +6464,6 @@ static void frame_make (void) {
    /* we'll deem any terminal not supporting tgoto as dumb and disable
       the normal non-interactive output optimization... */
    if (!Cap_can_goto) PSU_CLREOS(0);
-
-   /* lastly, check auto-sized width needs for the next iteration */
-   if (AUTOX_MODE && Autox_found)
-      widths_resize();
 } // end: frame_make
 
 
