@@ -569,13 +569,6 @@ static void build_uniq_nlstab (void) {
       "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
       "Type 'q' or <Esc> to continue ");
 
-/* Translation Hint: As is true for the text above, the "keys" shown to the left and
-   .                 also imbedded in the translatable text (along with escape seqs)
-   .                 should never themselves be translated. */
-   Uniq_nlstab[KEYS_helpext_fmt] = _(""
-      "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
-      "  d or s    Set update interval\n");
-
    Uniq_nlstab[WINDOWS_help_fmt] = _(""
       "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
       "\n"
@@ -636,6 +629,13 @@ static void build_uniq_nlstab (void) {
       "3) Then use these keys when finished:\n"
       "   'q' or <Esc> to abort changes to window '~1%s~2'\n"
       "   'a' or 'w' to commit & change another, <Enter> to commit and end ");
+
+/* Translation Hint: As is true for the text above, the "keys" shown to the left and
+   .                 also imbedded in the translatable text (along with escape seqs)
+   .                 should never themselves be translated. */
+   Uniq_nlstab[KEYS_helpext_fmt] = _(""
+      "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
+      "  d or s    Set update interval\n");
 
 /* Translation Hint:
    .  This Fields Management header should be 3 lines long so as
