@@ -579,18 +579,22 @@ static void error_exit (const char *str) {
 
         /*
          * Catches all remaining signals not otherwise handled */
+static void sig_abexit (int sig) NORETURN;
 static void sig_abexit (int sig) {
    sigset_t ss;
 
-// POSIX.1-2004 async-signal-safe: sigfillset, sigprocmask, signal, raise
+// POSIX.1-2004 async-signal-safe: sigfillset, sigprocmask, signal, sigemptyset, sigaddset, raise
    sigfillset(&ss);
    sigprocmask(SIG_BLOCK, &ss, NULL);
    at_eoj();                 // restore tty in preparation for exit
    fprintf(stderr, N_fmt(EXIT_signals_fmt)
       , sig, signal_number_to_name(sig), Myname);
    signal(sig, SIG_DFL);     // allow core dumps, if applicable
+   sigemptyset(&ss);
+   sigaddset(&ss, sig);
+   sigprocmask(SIG_UNBLOCK, &ss, NULL);
    raise(sig);               // ( plus set proper return code )
-   _exit(sig | 0x80);        // if default sig action is ignore
+   _exit(EXIT_FAILURE);      // if default sig action is ignore
 } // end: sig_abexit
 
 
