@@ -44,6 +44,10 @@ long Hertz;
 
 /* just reports a crash */
 static void signal_handler(int signo){
+  sigset_t ss;
+
+  sigfillset(&ss);
+  sigprocmask(SIG_BLOCK, &ss, NULL);
   if(signo==SIGPIPE) _exit(0);  /* "ps | head" will cause this */
   /* fprintf() is not reentrant, but we _exit() anyway */
   fprintf(stderr,
@@ -61,6 +65,9 @@ static void signal_handler(int signo){
     default:
       error_at_line(0, 0, __FILE__, __LINE__, "%s", _("please report this bug"));
       signal(signo, SIG_DFL);  /* allow core file creation */
+      sigemptyset(&ss);
+      sigaddset(&ss, signo);
+      sigprocmask(SIG_UNBLOCK, &ss, NULL);
       kill(getpid(), signo);
       _exit(EXIT_FAILURE);
   }
