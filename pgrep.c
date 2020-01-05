@@ -485,6 +485,26 @@ static regex_t * do_regcomp (void)
 	return preg;
 }
 
+/*
+ * SC_ARG_MAX used to return the maximum size a command line can be
+ * however changes to the kernel mean this can be bigger than we can
+ * alloc. Clamp it to 128kB like xargs and friends do
+ * Should also not be smaller than POSIX_ARG_MAX which is 4096
+ */
+static size_t get_arg_max(void)
+{
+#define MIN_ARG_SIZE 4096u
+#define MAX_ARG_SIZE (128u * 1024u)
+
+    size_t val = sysconf(_SC_ARG_MAX);
+
+    if (val < MIN_ARG_SIZE)
+	val = MIN_ARG_SIZE;
+    if (val > MAX_ARG_SIZE)
+	val = MAX_ARG_SIZE;
+
+    return val;
+}
 static struct el * select_procs (int *num)
 {
 	PROCTAB *ptp;
@@ -497,7 +517,7 @@ static struct el * select_procs (int *num)
 	regex_t *preg;
 	pid_t myself = getpid();
 	struct el *list = NULL;
-        long cmdlen = sysconf(_SC_ARG_MAX) * sizeof(char);
+        long cmdlen = get_arg_max() * sizeof(char);
 	char *cmdline = xmalloc(cmdlen);
 	char *cmdsearch = xmalloc(cmdlen);
 	char *cmdoutput = xmalloc(cmdlen);
