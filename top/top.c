@@ -604,6 +604,7 @@ static void sig_abexit (int sig) {
          *    SIGUSR1 and SIGUSR2 */
 static void sig_endpgm (int dont_care_sig) NORETURN;
 static void sig_endpgm (int dont_care_sig) {
+   Frames_signal = BREAK_sig;
    bye_bye(NULL);
    (void)dont_care_sig;
 } // end: sig_endpgm
