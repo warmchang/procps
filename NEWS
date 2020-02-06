@@ -1,3 +1,7 @@
+procps-ng NEXT
+--------------
+  * pgrep: Check sanity of SG_ARG_MAX                      issue #152
+
 procps-ng-3.3.16
 ----------------
   * library: Increment to 8:2:0
