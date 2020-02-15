@@ -1,6 +1,7 @@
 procps-ng NEXT
 --------------
   * pgrep: Check sanity of SG_ARG_MAX                      issue #152
+  * top: ensure config file backward compatibility         Debian #951335
 
 procps-ng-3.3.16
 ----------------
