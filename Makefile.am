@@ -49,6 +49,9 @@ bin_PROGRAMS = \
 	uptime \
 	vmstat \
 	w
+if BUILD_PWAIT
+bin_PROGRAMS += pwait
+endif
 else
 usrbin_exec_PROGRAMS += \
 	ps/pscommand \
@@ -81,6 +84,10 @@ dist_man_MANS += \
 	sysctl.8 \
 	sysctl.conf.5 \
 	ps/ps.1
+
+if BUILD_PWAIT
+dist_man_MANS += pwait.1
+endif
 endif
 
 EXTRA_DIST = \
@@ -192,6 +199,9 @@ free_SOURCES = free.c lib/strutils.c lib/fileutils.c
 pgrep_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c
 pkill_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c
 pmap_SOURCES = pmap.c lib/fileutils.c
+if BUILD_PWAIT
+pwait_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c
+endif
 if !CYGWIN
 pwdx_SOURCES = pwdx.c lib/fileutils.c
 pwdx_LDADD= $(CYGWINFLAGS)

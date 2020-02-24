@@ -10,6 +10,7 @@ AM_INIT_AUTOMAKE([foreign 1.11 subdir-objects -Wall -Wno-portability tar-pax no-
 AM_SILENT_RULES([yes])
 AC_CONFIG_SRCDIR([free.c])
 AC_CONFIG_HEADERS([config.h])
+AC_LANG([C])
 
 # Checks for programs.
 AC_USE_SYSTEM_EXTENSIONS
@@ -124,6 +125,21 @@ AC_TRY_COMPILE([#include <errno.h>],
 			[Define if program_invocation_short_name is defined])
 		AC_MSG_RESULT(yes),
 		AC_MSG_RESULT(no))
+
+AC_CHECK_FUNC([pidfd_open], [enable_pwait=yes], [
+  AC_MSG_CHECKING([for __NR_pidfd_open])
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+#include <sys/syscall.h>
+#ifndef __NR_pidfd_open
+#error __NR_pidfd_open not defined
+#endif
+    ])], [enable_pwait=yes], [enable_pwait=no])
+  AC_MSG_RESULT([$enable_pwait])
+])
+if test "$enable_pwait" = yes; then
+  AC_DEFINE([ENABLE_PWAIT], [1], [Enable pwait])
+fi
+AM_CONDITIONAL([BUILD_PWAIT], [test x$enable_pwait = xyes])
 
 dnl watch8bit must be before the AC_ARG_WITH set as it sets up ncurses
 AC_SUBST([WITH_WATCH8BIT])
