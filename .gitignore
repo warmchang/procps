@@ -37,6 +37,7 @@ pgrep
 pidof
 pkill
 pmap
+pwait
 procps-ng-*.tar.xz
 proc/.depend
 proc/libprocps.la
