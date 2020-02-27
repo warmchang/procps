@@ -619,8 +619,8 @@ static int PreloadSystem(void)
 {
 	unsigned di, i;
 	const char *dirs[] = {
-		"/run/sysctl.d",
 		"/etc/sysctl.d",
+		"/run/sysctl.d",
 		"/usr/local/lib/sysctl.d",
 		"/usr/lib/sysctl.d",
 		"/lib/sysctl.d",

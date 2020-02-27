@@ -6,7 +6,7 @@
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 .\" GNU General Public License for more details."
-.TH SYSCTL "8" "2018-02-19" "procps-ng" "System Administration"
+.TH SYSCTL "8" "2020-02-27" "procps-ng" "System Administration"
 .SH NAME
 sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
@@ -81,9 +81,9 @@ directories in the following list in given order from top to bottom.
 Once a file of a given filename is loaded, any file of the same name
 in subsequent directories is ignored.
 .br
-/run/sysctl.d/*.conf
-.br
 /etc/sysctl.d/*.conf
+.br
+/run/sysctl.d/*.conf
 .br
 /usr/local/lib/sysctl.d/*.conf
 .br
@@ -151,6 +151,16 @@ to /proc file system by other means.  For example:
 echo 256 > /proc/sys/net/ipv6/neigh/eth0/base_reachable_time
 .SH FILES
 .I /proc/sys
+.br
+.I /etc/sysctl.d/*.conf
+.br
+.I /run/sysctl.d/*.conf
+.br
+.I /usr/local/lib/sysctl.d/*.conf
+.br
+.I /usr/lib/sysctl.d/*.conf
+.br
+.I /lib/sysctl.d/*.conf
 .br
 .I /etc/sysctl.conf
 .SH SEE ALSO

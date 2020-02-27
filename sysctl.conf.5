@@ -6,7 +6,7 @@
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 .\" GNU General Public License for more details."
-.TH SYSCTL.CONF "5" "2019-09-21" "procps-ng" "File Formats"
+.TH SYSCTL.CONF "5" "2020-02-27" "procps-ng" "File Formats"
 .SH NAME
 sysctl.conf \- sysctl preload/configuration file
 .SH DESCRIPTION
@@ -55,22 +55,22 @@ to list all possible parameters. The description of individual parameters can be
 .RE
 .PP
 .SH FILES
-.TP
-/run/sysctl.d/*.conf
-.TQ
-/etc/sysctl.d/*.conf
-.TQ
-/usr/local/lib/sysctl.d/*.conf
-.TQ
-/usr/lib/sysctl.d/*.conf
-.TQ
-/lib/sysctl.d/*.conf
-.TQ
-/etc/sysctl.conf
+.I /etc/sysctl.d/*.conf
+.br
+.I /run/sysctl.d/*.conf
+.br
+.I /usr/local/lib/sysctl.d/*.conf
+.br
+.I /usr/lib/sysctl.d/*.conf
+.br
+.I /lib/sysctl.d/*.conf
+.br
+.I /etc/sysctl.conf
+
 The paths where
-sysctl
+.B sysctl
 preload files usually exist.  See also
-sysctl
+.B sysctl
 option
 .IR \-\-system .
 .SH SEE ALSO
