@@ -2,6 +2,8 @@ procps-ng NEXT
 --------------
   * pgrep: Check sanity of SG_ARG_MAX                      issue #152
   * top: ensure config file backward compatibility         Debian #951335
+  * sysctl: Match systemd directory order
+  * sysctl: Document directory order                       Debian #951550
 
 procps-ng-3.3.16
 ----------------
@@ -14,8 +16,6 @@ procps-ng-3.3.16
   * docs: install translated man pages                     issue #146
   * pgrep: Match on runstate                               issue #109, Debian #919381
   * snice: Fix matching on pid                             merge #89
-  * sysctl: Match systemd directory order
-  * sysctl: Document directory order                       Debian #951550
   * top: can now exploit 256-color terminals               issue #96
   * top: preserves 'other filters' in configuration file   issue #99
   * top: can now collapse/expand forest view children      issue #99
