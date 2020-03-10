@@ -1309,7 +1309,7 @@ static int pr_lxcname(char *restrict const outbuf, const proc_t *restrict const 
 static int pr_context(char *restrict const outbuf, const proc_t *restrict const pp){
   static void (*ps_freecon)(char*) = 0;
   static int (*ps_getpidcon)(pid_t pid, char **context) = 0;
-  static int selinux_enabled = 0;;
+  static int selinux_enabled = 0;
   size_t len;
   char *context;
 
