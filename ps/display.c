@@ -426,6 +426,7 @@ static void prep_forest_sort(void){
     tmp_list = malloc(sizeof(sort_node));
     tmp_list->reverse = 0;
     tmp_list->typecode = '?'; /* what was this for? */
+    tmp_list->pr = incoming->pr;
     tmp_list->sr = incoming->sr;
     tmp_list->need = incoming->need;
     tmp_list->next = sort_list;
@@ -437,6 +438,7 @@ static void prep_forest_sort(void){
   tmp_list = malloc(sizeof(sort_node));
   tmp_list->reverse = 0;
   tmp_list->typecode = '?'; /* what was this for? */
+  tmp_list->pr = incoming->pr;
   tmp_list->sr = incoming->sr;
   tmp_list->need = incoming->need;
   tmp_list->next = sort_list;
@@ -452,7 +454,21 @@ static int compare_two_procs(const void *a, const void *b){
   sort_node *tmp_list = sort_list;
   while(tmp_list){
     int result;
-    result = (*tmp_list->sr)(*(const proc_t *const*)a, *(const proc_t *const*)b);
+    if (tmp_list->sr)
+      result = (*tmp_list->sr)(*(const proc_t *const*)a, *(const proc_t *const*)b);
+    else {
+      /*
+       * Compare by using printing function to "print" the strings
+       * into temporary buffers, then strcmp() can be used to compare
+       * the two results as usual. This is used where direct string
+       * comparison can't be used because the sort key is not directly
+       * in the proc_t structure.
+       */
+      char buf_a[OUTBUF_SIZE], buf_b[OUTBUF_SIZE];
+      (void) (*tmp_list->pr)(buf_a, *(const proc_t *const*)a);
+      (void) (*tmp_list->pr)(buf_b, *(const proc_t *const*)b);
+      result = strcmp(buf_a, buf_b);
+    }
     if(result) return (tmp_list->reverse) ? -result : result;
     tmp_list = tmp_list->next;
   }

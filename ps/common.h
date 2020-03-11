@@ -201,6 +201,7 @@ typedef struct selection_node {
 
 typedef struct sort_node {
   struct sort_node *next;
+  int (*pr)(char *restrict const outbuf, const proc_t *restrict const pp); // print function
   int (*sr)(const proc_t* P, const proc_t* Q); /* sort function */
   int reverse;   /* can sort backwards */
   int typecode;
