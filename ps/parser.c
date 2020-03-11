@@ -140,7 +140,7 @@ static const char *parse_tty(char *str, sel_union *ret){
   char path[4096];
   if(str[0]=='/'){
     if(stat(str, &sbuf) >= 0) goto found_it;
-    return _("TTY could not be found");;
+    return _("TTY could not be found");
   }
 #define lookup(p) \
   snprintf(path,4096,p,str); \
@@ -164,7 +164,7 @@ static const char *parse_tty(char *str, sel_union *ret){
     return 0;
   }
 #undef lookup
-  return _("TTY could not be found");;
+  return _("TTY could not be found");
 found_it:
   if(!S_ISCHR(sbuf.st_mode)) return _("list member was not a TTY");
   ret->tty = sbuf.st_rdev;
