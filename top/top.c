@@ -2814,7 +2814,7 @@ static inline void insp_show_pgs (int col, int row, int max) {
    void (*mkrow_func)(int, int);
    int r = snprintf(buf, sizeof(buf), "%d", Insp_nl);
    int c = snprintf(buf, sizeof(buf), "%d", col +Screen_cols);
-   int l = row +1, ls = Insp_nl;;
+   int l = row +1, ls = Insp_nl;
 
    if (!Insp_bufrd)
       l = ls = 0;
@@ -4828,7 +4828,7 @@ static void keys_summary (int ch) {
          if (!CHKw(w, View_MEMORY))
             SETw(w, View_MEMORY);
          else if (++w->rc.graph_mems > 2) {
-            w->rc.graph_mems = 0;;
+            w->rc.graph_mems = 0;
             OFFw(w, View_MEMORY);
          }
          break;
@@ -4836,7 +4836,7 @@ static void keys_summary (int ch) {
          if (!CHKw(w, View_STATES))
             SETw(w, View_STATES);
          else if (++w->rc.graph_cpus > 2) {
-            w->rc.graph_cpus = 0;;
+            w->rc.graph_cpus = 0;
             OFFw(w, View_STATES);
          }
          break;
