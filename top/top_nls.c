@@ -350,7 +350,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[OFF_one_word_txt] = _("Off");
 /* Translation Hint: Only the following words should be translated
    .                 secs (seconds), max (maximum), user, field, cols (columns)*/
-   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]");
+   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]");
    Norm_nlstab[FAIL_statget_txt] = _("failed /proc/stat read");
    Norm_nlstab[FOREST_modes_fmt] = _("Forest mode %s");
    Norm_nlstab[FAIL_tty_get_txt] = _("failed tty get");
