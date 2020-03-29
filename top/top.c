@@ -3767,6 +3767,15 @@ static void parse_args (char **args) {
                if (0 > tmp_delay)
                   error_exit(N_txt(DELAY_badarg_txt));
                break;
+            case 'e':
+            {  const char *get = "kmgtp", *got;
+               if (cp[1]) cp++;
+               else if (*args) cp = *args++;
+               else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
+               if (!(got = strchr(get, tolower(*cp))))
+                  error_exit(fmtmk(N_fmt(BAD_memscale_fmt), *cp));
+               Rc.task_mscale = (int)(got - get);
+            }  goto bump_cp;
             case 'E':
             {  const char *get = "kmgtpe", *got;
                if (cp[1]) cp++;

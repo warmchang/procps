@@ -25,8 +25,8 @@
 .ds CI interactive command
 \#                           - Note: our 'Command Line' used in 2 places
 \#                           ( and managed to fit in an 80x24 terminal )
-.ds CL \-\fBhv\fR|\-\fBbcEHiOSs1\fR \-\fBd\fR secs \-\fBn\fR max \
-\-\fBu\fR|\fBU\fR user \-\fBp\fR pid \-\fBo\fR fld \-\fBw\fR [cols] \fR
+.ds CL \-\fBhv\fR|\-\fBbcEeHiOSs1\fR \-\fBd\fR secs \-\fBn\fR max \
+\-\fBu\fR|\fBU\fR user \-\fBp\fR pids \-\fBo\fR field \-\fBw\fR [cols] \fR
 .ds CO command\-line option
 .ds CT command toggle
 .ds CW `current' window
@@ -334,7 +334,20 @@ in Secure mode, except for root (unless the `s' \*(CO was used).
 For additional information on Secure mode \*(Xt 6d. SYSTEM Restrictions File.
 
 .TP 5
-\-\fBE\fR\ \ :\fIExtend-Memory-Scaling\fR as:\ \ \fB-E  k\fR | \fBm\fR | \fBg\fR | \fBt\fR | \fBp\fR | \fBe\fR
+\-\fBe\fR\ \ :\fIEnforce-Task-Memory-Scaling\fR as:\ \ \fB-e  k\fR | \fBm\fR | \fBg\fR | \fBt\fR | \fBp\fR
+Instructs \*(We to force \*(TA memory to be scaled as:
+.nf
+   k \- kibibytes
+   m \- mebibytes
+   g \- gibibytes
+   t \- tebibytes
+   p \- pebibytes
+.fi
+
+Later this can be changed with the `e' \*(CT.
+
+.TP 5
+\-\fBE\fR\ \ :\fIEnforce-Summary-Memory-Scaling\fR as:\ \ \fB-E  k\fR | \fBm\fR | \fBg\fR | \fBt\fR | \fBp\fR | \fBe\fR
 Instructs \*(We to force \*(SA memory to be scaled as:
 .nf
    k \- kibibytes
@@ -1207,7 +1220,7 @@ If at any time you wish to know the current delay time, simply ask for
 help and view the system summary on the second line.
 
 .TP 7
-\ \ \ \fBE\fR\ \ :\fIExtend-Memory-Scale\fR in Summary Area
+\ \ \ \fBE\fR\ \ :\fIEnforce-Summary-Memory-Scale\fR in Summary Area
 With this command you can cycle through the available \*(SA memory scaling
 which ranges from KiB (kibibytes or 1,024 bytes) through EiB (exbibytes or
 1,152,921,504,606,846,976 bytes).
@@ -1217,8 +1230,8 @@ means that \*(We was forced to truncate some portion of that number.
 By raising the scaling factor, such truncation can be avoided.
 
 .TP 7
-\ \ \ \fBe\fR\ \ :\fIExtend-Memory-Scale\fR in Task Windows
-With this command you can cycle through the available \*(TW memory scaling
+\ \ \ \fBe\fR\ \ :\fIEnforce-Task-Memory-Scale\fR in Task Area
+With this command you can cycle through the available \*(TA memory scaling
 which ranges from KiB (kibibytes or 1,024 bytes) through PiB (pebibytes or
 1,125,899,906,842,624 bytes).
 
