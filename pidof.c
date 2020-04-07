@@ -145,6 +145,7 @@ static void select_procs (void)
 	static int size = 0;
 	char *cmd_arg0, *cmd_arg0base;
 	char *cmd_arg1, *cmd_arg1base;
+	char *stat_cmd;
 	char *program_base;
 	char *root_link;
 	char *exe_link;
@@ -172,9 +173,9 @@ static void select_procs (void)
 			}
 		}
 
-		if (!is_omitted(tid) && p_cmdline && *p_cmdline) {
+		if (!is_omitted(tid)) {
 
-			cmd_arg0 = *p_cmdline;
+			cmd_arg0 = (p_cmdline && *p_cmdline) ? *p_cmdline : "\0";
 
 			/* processes starting with '-' are login shells */
 			if (*cmd_arg0 == '-') {
@@ -196,12 +197,14 @@ static void select_procs (void)
 			    !strcmp(program_base, cmd_arg0) ||
 			    !strcmp(program, cmd_arg0) ||
 
+			    !strcmp(program, stat_cmd) ||
+
 			    !strcmp(program, exe_link_base) ||
 			    !strcmp(program, exe_link))
 			{
 				match = 1;
 
-			} else if (opt_scripts_too && *(p_cmdline+1)) {
+			} else if (opt_scripts_too && p_cmdline && *(p_cmdline+1)) {
 
 				cmd_arg1 = *(p_cmdline+1);
 
