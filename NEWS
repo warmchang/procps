@@ -1,14 +1,16 @@
 procps-ng-NEXT
 --------------
+  * pgrep: Check sanity of SG_ARG_MAX                      issue #152
   * ps.1: Mention stime alias                              issue #164
+  * top: ensure config file backward compatibility         Debian #951335
+  * sysctl: Match systemd directory order
+  * sysctl: Document directory order                       Debian #951550
 
 procps-ng-3.3.16
 ----------------
   * docs: Use correct symbols for -h option in free.1      Debian #898774
   * docs: ps.1 now warns about command name length         issue #101
   * pgrep: Match on runstate                               issue #109, Debian #919381
-  * sysctl: Match systemd directory order
-  * sysctl: Document directory order                       Debian #951550
   * top: can now exploit 256-color terminals               issue #96
   * top: preserves 'other filters' in configuration file   issue #99
   * top: can now collapse/expand forest view children      issue #99
