@@ -911,15 +911,17 @@ static char *lxc_containers (const char *path) {
            1:cpuset,cpu,cpuacct,devices,freezer,net_cls,blkio,perf_event,net_prio:/lxc/lxc-P
     */
     if (file2str(path, "cgroup", &ub) > 0) {
-        /* ouch, next two defaults could be changed at lxc ./configure time
+        /* ouch, the next defaults could be changed at lxc ./configure time
            ( and a changed 'lxc.cgroup.pattern' is only available to root ) */
-        static const char *lxc_delm1 = "lxc.payload/";    // with lxc-3.1.0
-        static const char *lxc_delm2 = "lxc/";            // thru lxc-3.0.3
+        static const char *lxc_delm1 = "lxc.payload.";    // with lxc-4.0.0
+        static const char *lxc_delm2 = "lxc.payload/";    // thru lxc-3.2.1
+        static const char *lxc_delm3 = "lxc/";            // thru lxc-3.0.3
         const char *delim;
         char *p1;
 
         if ((p1 = strstr(ub.buf, (delim = lxc_delm1)))
-        || ((p1 = strstr(ub.buf, (delim = lxc_delm2))))) {
+        || ((p1 = strstr(ub.buf, (delim = lxc_delm2)))
+        || ((p1 = strstr(ub.buf, (delim = lxc_delm3)))))) {
             static struct lxc_ele {
                 struct lxc_ele *next;
                 char *name;
