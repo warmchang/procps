@@ -1,6 +1,6 @@
 /* top.h - Header file:         show Linux processes */
 /*
- * Copyright (c) 2002-2019, by: James C. Warner
+ * Copyright (c) 2002-2020, by: James C. Warner
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
