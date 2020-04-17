@@ -6,10 +6,11 @@ configure script. If you have a configure script already then
 you might not need it.
 
 A typical installation would go something like
-> ./autogen.sh
-> ./configure
-> make
-> make install
+
+    ./autogen.sh
+    ./configure
+    make
+    make install
 
 The configure script has a lot of options, so please have a read
 of `configure --help` to see what they are and what they are used
@@ -21,4 +22,4 @@ procps has a series of test scripts (and more are welcome if they
 are repeatable). You will need to install DejaGNU to run it and
 it is simply:
 
-> make check
+    make check
