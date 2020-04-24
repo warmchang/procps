@@ -121,19 +121,19 @@ msgstr "misslyckades att tolka upprepningsargumentet: ”%s”"
 #: free.c:352
 #, c-format
 msgid ""
-"              total        used        free      shared     buffers       "
+"               total        used        free      shared     buffers       "
 "cache   available"
 msgstr ""
-"             totalt      använt       fritt       delat   buffertar       "
+"              totalt      använt       fritt       delat   buffertar       "
 "cache  tillgängl."
 
 #: free.c:354
 #, c-format
 msgid ""
-"              total        used        free      shared  buff/cache   "
+"               total        used        free      shared  buff/cache   "
 "available"
 msgstr ""
-"             totalt      använt       fritt       delat  buff/cache  "
+"              totalt      använt       fritt       delat  buff/cache  "
 "tillgängl."
 
 #: free.c:357

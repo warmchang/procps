@@ -120,19 +120,19 @@ msgstr "niezrozumiały argument liczby powtórzeń: '%s'"
 #: free.c:352
 #, c-format
 msgid ""
-"              total        used        free      shared     buffers       "
+"               total        used        free      shared     buffers       "
 "cache   available"
 msgstr ""
-"              razem       użyte       wolne    dzielone      bufory     w "
+"               razem       użyte       wolne    dzielone      bufory     w "
 "cache    dostępne"
 
 #: free.c:354
 #, c-format
 msgid ""
-"              total        used        free      shared  buff/cache   "
+"               total        used        free      shared  buff/cache   "
 "available"
 msgstr ""
-"              razem       użyte       wolne    dzielone   buf/cache    "
+"               razem       użyte       wolne    dzielone   buf/cache    "
 "dostępne"
 
 #: free.c:357

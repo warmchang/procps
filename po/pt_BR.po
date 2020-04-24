@@ -122,19 +122,19 @@ msgstr "falha ao analisar a quantidade de argumentos: \"%s\""
 #: free.c:352
 #, c-format
 msgid ""
-"              total        used        free      shared     buffers       "
+"               total        used        free      shared     buffers       "
 "cache   available"
 msgstr ""
-"              total       usada       livre    compart.     buffers       "
+"               total       usada       livre    compart.     buffers       "
 "cache  disponível"
 
 #: free.c:354
 #, c-format
 msgid ""
-"              total        used        free      shared  buff/cache   "
+"               total        used        free      shared  buff/cache   "
 "available"
 msgstr ""
-"              total       usada       livre    compart.  buff/cache  "
+"               total       usada       livre    compart.  buff/cache  "
 "disponível"
 
 #: free.c:357

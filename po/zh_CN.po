@@ -132,7 +132,7 @@ msgstr "查询 spec 文件 %s 失败，无法解析\n"
 #: free.c:352
 #, c-format
 msgid ""
-"              total        used        free      shared     buffers       "
+"               total        used        free      shared     buffers       "
 "cache   available"
 msgstr ""
 "              总计         已用        空闲      共享       缓冲          缓"
@@ -141,7 +141,7 @@ msgstr ""
 #: free.c:354
 #, c-format
 msgid ""
-"              total        used        free      shared  buff/cache   "
+"               total        used        free      shared  buff/cache   "
 "available"
 msgstr ""
 "              总计         已用        空闲      共享    缓冲/缓存    可用"

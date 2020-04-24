@@ -131,19 +131,19 @@ msgstr "gặp lỗi khi phân tích số lượng đối số: “%s”"
 #: free.c:352
 #, c-format
 msgid ""
-"              total        used        free      shared     buffers       "
+"               total        used        free      shared     buffers       "
 "cache   available"
 msgstr ""
-"               tổng        dùng       trống        chsẻ         đệm     nhớ "
+"                tổng        dùng       trống        chsẻ         đệm     nhớ "
 "tạm    sẵn sàng"
 
 #: free.c:354
 #, c-format
 msgid ""
-"              total        used        free      shared  buff/cache   "
+"               total        used        free      shared  buff/cache   "
 "available"
 msgstr ""
-"               tổng        dùng       trống        chsẻ     đệm/tạm    sẵn "
+"                tổng        dùng       trống        chsẻ     đệm/tạm    sẵn "
 "sàng"
 
 #: free.c:357

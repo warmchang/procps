@@ -349,13 +349,13 @@ int main(int argc, char **argv)
 		 * the header, and the words need to be right align to
 		 * beginning of a number. */
 		if (flags & FREE_WIDE) {
-			printf(_("              total        used        free      shared     buffers       cache   available"));
+			printf(_("               total        used        free      shared     buffers       cache   available"));
 		} else {
-			printf(_("              total        used        free      shared  buff/cache   available"));
+			printf(_("               total        used        free      shared  buff/cache   available"));
 		}
 		printf("\n");
-		printf("%-7s", _("Mem:"));
-		printf(" %11s", scale_size(kb_main_total, flags, args));
+		printf("%-9s", _("Mem:"));
+		printf("%11s", scale_size(kb_main_total, flags, args));
 		printf(" %11s", scale_size(kb_main_used, flags, args));
 		printf(" %11s", scale_size(kb_main_free, flags, args));
 		printf(" %11s", scale_size(kb_main_shared, flags, args));
@@ -374,28 +374,28 @@ int main(int argc, char **argv)
 		 * to print the high info, even if it is zero.
 		 */
 		if (flags & FREE_LOHI) {
-			printf("%-7s", _("Low:"));
-			printf(" %11s", scale_size(kb_low_total, flags, args));
+			printf("%-9s", _("Low:"));
+			printf("%11s", scale_size(kb_low_total, flags, args));
 			printf(" %11s", scale_size(kb_low_total - kb_low_free, flags, args));
 			printf(" %11s", scale_size(kb_low_free, flags, args));
 			printf("\n");
 
-			printf("%-7s", _("High:"));
-			printf(" %11s", scale_size(kb_high_total, flags, args));
+			printf("%-9s", _("High:"));
+			printf("%11s", scale_size(kb_high_total, flags, args));
 			printf(" %11s", scale_size(kb_high_total - kb_high_free, flags, args));
 			printf(" %11s", scale_size(kb_high_free, flags, args));
 			printf("\n");
 		}
 
-		printf("%-7s", _("Swap:"));
-		printf(" %11s", scale_size(kb_swap_total, flags, args));
+		printf("%-9s", _("Swap:"));
+		printf("%11s", scale_size(kb_swap_total, flags, args));
 		printf(" %11s", scale_size(kb_swap_used, flags, args));
 		printf(" %11s", scale_size(kb_swap_free, flags, args));
 		printf("\n");
 
 		if (flags & FREE_TOTAL) {
-			printf("%-7s", _("Total:"));
-			printf(" %11s", scale_size(kb_main_total + kb_swap_total, flags, args));
+			printf("%-9s", _("Total:"));
+			printf("%11s", scale_size(kb_main_total + kb_swap_total, flags, args));
 			printf(" %11s", scale_size(kb_main_used + kb_swap_used, flags, args));
 			printf(" %11s", scale_size(kb_main_free + kb_swap_free, flags, args));
 			printf("\n");
