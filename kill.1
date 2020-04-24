@@ -6,7 +6,7 @@ it under the terms of the GNU General Public License as published by the
 Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 ..
-.TH KILL 1 "2018-05-31" "procps-ng" "User Commands"
+.TH KILL 1 "2020-04-24" "procps-ng" "User Commands"
 .SH NAME
 kill \- send a signal to a process
 .SH SYNOPSIS
@@ -44,6 +44,18 @@ to be sent.  The signal can be specified by using name or number.
 The behavior of signals is explained in
 .BR signal (7)
 manual page.
+.TP
+\fB\-q\fR, \fB\-\-queue \fIvalue\fP
+Use
+.BR sigqueue(2)
+rather than
+.BR kill(2)
+and the value argument is used to specify
+an integer to be sent with the signal. If the receiving process has
+installed a handler for this signal using the SA_SIGINFO flag to
+.BR sigaction(2)
+, then it can obtain this data via the si_value field of the
+siginfo_t structure.
 .TP
 \fB\-l\fR, \fB\-\-list\fR [\fIsignal\fR]
 List signal names.  This option has optional argument, which

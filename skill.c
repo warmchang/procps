@@ -26,6 +26,7 @@
 #include <pwd.h>
 #include <signal.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/resource.h>
@@ -341,6 +342,7 @@ static void __attribute__ ((__noreturn__)) kill_usage(FILE * out)
 	fputs(_(" <pid> [...]            send signal to every <pid> listed\n"), out);
 	fputs(_(" -<signal>, -s, --signal <signal>\n"
 		"                        specify the <signal> to be sent\n"), out);
+	fputs(_(" -q, --queue <value>    integer value to be sent with the signal\n"), out);
 	fputs(_(" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"), out);
 	fputs(_(" -L, --table            list all signal names in a nice table\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -434,7 +436,9 @@ static void __attribute__ ((__noreturn__))
 	int signo, i;
 	long pid;
 	int exitvalue = EXIT_SUCCESS;
-    char *sig_option;
+	union sigval sigval;
+	bool use_sigqueue = false;
+	char *sig_option;
 
 	static const struct option longopts[] = {
 		{"list", optional_argument, NULL, 'l'},
@@ -442,6 +446,7 @@ static void __attribute__ ((__noreturn__))
 		{"signal", required_argument, NULL, 's'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
+		{"queue", required_argument, NULL, 'q'},
 		{NULL, 0, NULL, 0}
 	};
 
@@ -458,7 +463,7 @@ static void __attribute__ ((__noreturn__))
 		signo = SIGTERM;
 
 	opterr=0; /* suppress errors on -123 */
-	while ((i = getopt_long(argc, argv, "l::Ls:hV", longopts, NULL)) != -1)
+	while ((i = getopt_long(argc, argv, "l::Ls:hVq:", longopts, NULL)) != -1)
 		switch (i) {
 		case 'l':
             sig_option = NULL;
@@ -491,6 +496,10 @@ static void __attribute__ ((__noreturn__))
 		case 'V':
 			display_kill_version();
 			exit(EXIT_SUCCESS);
+		case 'q':
+			sigval.sival_int = strtol_or_err(optarg, _("must be an integer value to be passed with the signal."));
+			use_sigqueue = true;
+			break;
 		case '?':
 			if (!isdigit(optopt)) {
 				xwarnx(_("invalid argument %c"), optopt);
@@ -516,7 +525,11 @@ static void __attribute__ ((__noreturn__))
 
 	for (i = 0; i < argc; i++) {
 		pid = strtol_or_err(argv[i], _("failed to parse argument"));
-		if (!kill((pid_t) pid, signo))
+		if (use_sigqueue) {
+		    if (!sigqueue((pid_t) pid, signo, sigval))
+			continue;
+		}
+		else if (!kill((pid_t) pid, signo))
 			continue;
         error(0, errno, "(%ld)", pid);
 		exitvalue = EXIT_FAILURE;
