@@ -21,6 +21,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <signal.h>
 #include <ctype.h>
 
@@ -39,6 +40,7 @@ static void __attribute__ ((__noreturn__)) print_usage(FILE * out)
     fputs(_(" <pid> [...]            send signal to every <pid> listed\n"), out);
     fputs(_(" -<signal>, -s, --signal <signal>\n"
         "                        specify the <signal> to be sent\n"), out);
+    fputs(_(" -q, --queue <value>    integer value to be sent with the signal\n"), out);
     fputs(_(" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"), out);
     fputs(_(" -L, --table            list all signal names in a nice table\n"), out);
     fputs(USAGE_SEPARATOR, out);
@@ -48,12 +50,22 @@ static void __attribute__ ((__noreturn__)) print_usage(FILE * out)
     exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+inline static int execute_kill(pid_t pid, int sig_num, const bool use_sigqueue, union sigval sigval)
+{
+    if (use_sigqueue)
+        return sigqueue(pid, sig_num, sigval);
+    else
+        return kill(pid, sig_num);
+}
+
 int main(int argc, char **argv)
 {
     int signo, i;
     long pid;
     int exitvalue = EXIT_SUCCESS;
     int optindex;
+    union sigval sigval;
+    bool use_sigqueue = false;
     char *sig_option;
 
     static const struct option longopts[] = {
@@ -62,6 +74,7 @@ int main(int argc, char **argv)
         {"signal", required_argument, NULL, 's'},
         {"help", no_argument, NULL, 'h'},
         {"version", no_argument, NULL, 'V'},
+        {"queue", required_argument, NULL, 'q'},
         {NULL, 0, NULL, 0}
     };
 
@@ -79,7 +92,7 @@ int main(int argc, char **argv)
         signo = SIGTERM;
 
     opterr=0; /* suppress errors on -123 */
-    while ((i = getopt_long(argc, argv, "l::Ls:hV", longopts, &optindex)) != -1)
+    while ((i = getopt_long(argc, argv, "l::Ls:hVq:", longopts, &optindex)) != -1)
         switch (i) {
         case 'l':
             sig_option = NULL;
@@ -112,6 +125,10 @@ int main(int argc, char **argv)
         case 'V':
             fprintf(stdout, PROCPS_NG_VERSION);
             exit(EXIT_SUCCESS);
+        case 'q':
+            sigval.sival_int = strtol_or_err(optarg, _("must be an integer value to be passed with the signal."));
+	    use_sigqueue = true;
+	    break;
         case '?':
             if (!isdigit(optopt)) {
                 xwarnx(_("invalid argument %c"), optopt);
@@ -119,9 +136,9 @@ int main(int argc, char **argv)
             } else {
                 /* Special case for signal digit negative
                  * PIDs */
-                pid = (long)('0' - optopt);
-                if (kill((pid_t)pid, signo) != 0)
-                exitvalue = EXIT_FAILURE;
+		pid = (long)('0' - optopt);
+		if (!execute_kill((pid_t) pid, signo, use_sigqueue, sigval))
+		    exitvalue = EXIT_FAILURE;
                 exit(exitvalue);
             }
             xerrx(EXIT_FAILURE, _("internal error"));
@@ -137,7 +154,7 @@ int main(int argc, char **argv)
 
     for (i = 0; i < argc; i++) {
         pid = strtol_or_err(argv[i], _("failed to parse argument"));
-        if (!kill((pid_t) pid, signo))
+        if (!execute_kill((pid_t) pid, signo, use_sigqueue, sigval))
             continue;
         error(0, errno, "(%ld)", pid);
         exitvalue = EXIT_FAILURE;
