@@ -123,19 +123,19 @@ msgstr "Anzahl im Argument konnte nicht verarbeitet werden: »%s«"
 #: free.c:352
 #, c-format
 msgid ""
-"              total        used        free      shared     buffers       "
+"               total        used        free      shared     buffers       "
 "cache   available"
 msgstr ""
-"              gesamt       benutzt     frei      gemeins.   Puffer        "
+"               gesamt       benutzt     frei      gemeins.   Puffer        "
 "Cache   verfügbar"
 
 #: free.c:354
 #, c-format
 msgid ""
-"              total        used        free      shared  buff/cache   "
+"               total        used        free      shared  buff/cache   "
 "available"
 msgstr ""
-"              gesamt       benutzt     frei      gemns.  Puffer/Cache "
+"               gesamt       benutzt     frei      gemns.  Puffer/Cache "
 "verfügbar"
 
 #: free.c:357

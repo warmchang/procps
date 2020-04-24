@@ -351,13 +351,13 @@ int main(int argc, char **argv)
 		 * the header, and the words need to be right align to
 		 * beginning of a number. */
 		if (flags & FREE_WIDE) {
-			printf(_("              total        used        free      shared     buffers       cache   available"));
+			printf(_("               total        used        free      shared     buffers       cache   available"));
 		} else {
-			printf(_("              total        used        free      shared  buff/cache   available"));
+			printf(_("               total        used        free      shared  buff/cache   available"));
 		}
 		printf("\n");
-		printf("%-7s", _("Mem:"));
-		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_TOTAL, ul_int), flags, args));
+		printf("%-9s", _("Mem:"));
+		printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_TOTAL, ul_int), flags, args));
 		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_USED, ul_int), flags, args));
 		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_FREE, ul_int), flags, args));
 		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_SHARED, ul_int), flags, args));
@@ -379,28 +379,28 @@ int main(int argc, char **argv)
 		 * to print the high info, even if it is zero.
 		 */
 		if (flags & FREE_LOHI) {
-			printf("%-7s", _("Low:"));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_TOTAL, ul_int), flags, args));
+			printf("%-9s", _("Low:"));
+			printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_TOTAL, ul_int), flags, args));
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_USED, ul_int), flags, args));
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_FREE, ul_int), flags, args));
 			printf("\n");
 
-			printf("%-7s", _("High:"));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_TOTAL, ul_int), flags, args));
+			printf("%-9s", _("High:"));
+			printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_TOTAL, ul_int), flags, args));
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_USED, ul_int), flags, args));
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_FREE, ul_int), flags, args));
 			printf("\n");
 		}
 
-		printf("%-7s", _("Swap:"));
-		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_TOTAL, ul_int), flags, args));
+		printf("%-9s", _("Swap:"));
+		printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_TOTAL, ul_int), flags, args));
 		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_USED, ul_int), flags, args));
 		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_FREE, ul_int), flags, args));
 		printf("\n");
 
 		if (flags & FREE_TOTAL) {
-			printf("%-7s", _("Total:"));
-			printf(" %11s", scale_size(
+			printf("%-9s", _("Total:"));
+			printf("%11s", scale_size(
 				    MEMINFO_GET(mem_info, MEMINFO_MEM_TOTAL, ul_int) +
 				    MEMINFO_GET(mem_info, MEMINFO_SWAP_TOTAL, ul_int), flags, args));
 			printf(" %11s", scale_size(

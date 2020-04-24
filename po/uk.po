@@ -126,19 +126,19 @@ msgstr "не вдалося обробити аргумент кількості
 #: free.c:352
 #, c-format
 msgid ""
-"              total        used        free      shared     buffers       "
+"               total        used        free      shared     buffers       "
 "cache   available"
 msgstr ""
-"             загалом       використ.   вільна    спільна    буфери        "
+"              загалом       використ.   вільна    спільна    буфери        "
 "кеш     дост."
 
 #: free.c:354
 #, c-format
 msgid ""
-"              total        used        free      shared  buff/cache   "
+"               total        used        free      shared  buff/cache   "
 "available"
 msgstr ""
-"             загалом       використ.   вільна    спільна буфери/кеш   дост."
+"              загалом       використ.   вільна    спільна буфери/кеш   дост."
 
 #: free.c:357
 msgid "Mem:"
