@@ -1,5 +1,6 @@
 procps-ng NEXT
 --------------
+  * kill: Pass int to signalled process                    merge #32
   * pgrep: Check sanity of SG_ARG_MAX                      issue #152
   * pidof: show worker threads                             Redhat #1803640
   * ps.1: Mention stime alias                              issue #164
