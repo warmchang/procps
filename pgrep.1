@@ -7,7 +7,7 @@
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH PGREP "1" "2019-03-05" "procps-ng" "User Commands"
+.TH PGREP "1" "2020-04-24" "procps-ng" "User Commands"
 .SH NAME
 pgrep, pkill \- look up or signal processes based on name and other attributes
 .SH SYNOPSIS
@@ -166,6 +166,18 @@ which namespaces to match.
 Match only the provided namespaces. Available namespaces:
 ipc, mnt, net, pid, user,uts.
 .TP
+\fB\-q\fR, \fB\-\-queue \fIvalue\fP
+Use
+.BR sigqueue(3)
+rather than
+.BR kill(2)
+and the value argument is used to specify
+an integer to be sent with the signal. If the receiving process has
+installed a handler for this signal using the SA_SIGINFO flag to
+.BR sigaction(2)
+, then it can obtain this data via the si_value field of the
+siginfo_t structure.
+.TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
 .TP
@@ -244,6 +256,7 @@ Defunct processes are reported.
 .BR ps (1),
 .BR regex (7),
 .BR signal (7),
+.BR sigqueue (3),
 .BR killall (1),
 .BR skill (1),
 .BR kill (1),

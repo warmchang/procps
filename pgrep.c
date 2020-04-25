@@ -35,6 +35,7 @@
 #include <regex.h>
 #include <errno.h>
 #include <getopt.h>
+#include <stdbool.h>
 
 /* EXIT_SUCCESS is 0 */
 /* EXIT_FAILURE is 1 */
@@ -81,6 +82,8 @@ static int opt_case = 0;
 static int opt_echo = 0;
 static int opt_threads = 0;
 static pid_t opt_ns_pid = 0;
+static bool use_sigqueue = false;
+static union sigval sigval = {0};
 
 static const char *opt_delim = "\n";
 static struct el *opt_pgrp = NULL;
@@ -116,6 +119,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	}
 	if (i_am_pkill == 1) {
 		fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"), fp);
+		fputs(_(" -q, --queue <value>       integer value to be sent with the signal\n"), fp);
 		fputs(_(" -e, --echo                display what is killed\n"), fp);
 	}
 	fputs(_(" -c, --count               count of matching processes\n"), fp);
@@ -741,6 +745,7 @@ static void parse_opts (int argc, char **argv)
 		{"echo", no_argument, NULL, 'e'},
 		{"ns", required_argument, NULL, NS_OPTION},
 		{"nslist", required_argument, NULL, NSLIST_OPTION},
+		{"queue", required_argument, NULL, 'q'},
 		{"runstates", required_argument, NULL, 'r'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
@@ -754,7 +759,7 @@ static void parse_opts (int argc, char **argv)
 		if (-1 < sig)
 			opt_signal = sig;
 		/* These options are for pkill only */
-		strcat (opts, "e");
+		strcat (opts, "eq:");
 	} else {
 		/* These options are for pgrep only */
 		strcat (opts, "lad:vw");
@@ -904,6 +909,10 @@ static void parse_opts (int argc, char **argv)
 			if (opt_nslist == NULL)
 				usage ('?');
 			break;
+		case 'q':
+			sigval.sival_int = atoi(optarg);
+			use_sigqueue = true;
+			break;
 		case 'h':
 		case '?':
 			usage (opt);
@@ -936,6 +945,13 @@ static void parse_opts (int argc, char **argv)
 				     program_invocation_short_name);
 }
 
+inline static int execute_kill(pid_t pid, int sig_num)
+{
+    if (use_sigqueue)
+        return sigqueue(pid, sig_num, sigval);
+    else
+        return kill(pid, sig_num);
+}
 
 int main (int argc, char **argv)
 {
@@ -957,7 +973,7 @@ int main (int argc, char **argv)
 		int i;
         int kill_count = 0;
 		for (i = 0; i < num; i++) {
-			if (kill (procs[i].num, opt_signal) != -1) {
+			if (execute_kill (procs[i].num, opt_signal) != -1) {
 				if (opt_echo)
 					printf(_("%s killed (pid %lu)\n"), procs[i].str, procs[i].num);
                 kill_count++;
