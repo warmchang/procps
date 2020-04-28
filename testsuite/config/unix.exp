@@ -52,11 +52,30 @@ proc expect_pass { testname reg } {
     }
 }
 
+proc expect_pipeproc_pass { testname reg } {
+    global pipeproc_spawnid
+
+    expect {
+	-i $pipeproc_spawnid
+        -re "$reg" { pass "$testname" }
+        default { fail "$testname" }
+		timeout { fail "$testname (timeout)" }
+    }
+}
+
 proc expect_blank { testname } {
     expect {
         -re "\\w" { fail "$testname" }
         eof { pass "$testname" }
         timeout { pass "$testname" }
+    }
+}
+
+proc expect_blank_continue { testname } {
+    expect {
+        -re "\\w" { fail "$testname" }
+        eof { }
+        timeout { pass "$testname (timeout)" }
     }
 }
 
@@ -117,6 +136,15 @@ proc expect_table_dsc { test match_header match_item } {
     #}
 }
 
+proc make_pipeproc { } {
+    global pipeproc_pid pipeproc_spawnid topdir
+
+    set testproc_realpath "${topdir}/lib/test_process"
+
+    set pipeproc_pid [ spawn $testproc_realpath ]
+    set pipeproc_spawnid $spawn_id
+
+}
 proc make_testproc { } {
     global testproc_path testproc_comm testproc_arg_str testproc1_pid testproc2_pid topdir
 
@@ -155,6 +183,11 @@ proc kill_testproc { } {
     kill_process $testproc1_pid
     kill_process $testproc2_pid
     file delete $testproc_path
+}
+
+proc kill_pipeproc { } {
+    global pipeproc_pid
+    kill_process $pipeproc_pid
 }
 
 proc get_tty {} {

@@ -38,19 +38,37 @@ static void usage(void)
 
 
 void
-signal_handler(int signum)
+signal_handler(int signum, siginfo_t *siginfo, void *ucontext)
 {
+    char *signame = NULL;
+
     switch(signum) {
 	case SIGUSR1:
-	    printf("SIG SIGUSR1\n");
+	    signame = strdup("SIGUSR1");
 	    break;
 	case SIGUSR2:
-	    printf("SIG SIGUSR2\n");
+	    signame = strdup("SIGUSR2");
 	    break;
 	default:
 	    printf("SIG unknown\n");
 	    exit(EXIT_FAILURE);
     }
+    if (signame == NULL) {
+	printf("SIG malloc error\n");
+	exit(EXIT_FAILURE);
+    }
+    switch (siginfo->si_code) {
+	case SI_USER:
+	    printf("SIG %s\n", signame);
+	    break;
+	case SI_QUEUE:
+	    printf("SIG %s value=%d\n", signame, siginfo->si_int);
+	    break;
+	default:
+	    printf("Unknown si_code %d\n", siginfo->si_code);
+	    exit(EXIT_FAILURE);
+    }
+
 }
 
 int main(int argc, char *argv[])
@@ -74,9 +92,9 @@ int main(int argc, char *argv[])
     }
 
     /* Setup signal handling */
-    signal_action.sa_handler = signal_handler;
+    signal_action.sa_sigaction = signal_handler;
     sigemptyset (&signal_action.sa_mask);
-    signal_action.sa_flags = 0;
+    signal_action.sa_flags = SA_SIGINFO;
     sigaction(SIGUSR1, &signal_action, NULL);
     sigaction(SIGUSR2, &signal_action, NULL);
 

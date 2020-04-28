@@ -18,7 +18,6 @@ expect_pass "$test" "^\(lt-\)\?pkill: no matching criteria specified\\s*"
 make_testproc
 set testproc_len [ string length $testproc_comm ]
 set testproc_trim [ string range $testproc_comm 0 [ expr { $testproc_len - 2 } ] ]
-set testproc1_sid [ exec $ps --no-headers -o sid $testproc1_pid ]
 
 set test "pkill find both test pids"
 spawn $pkill -0 -e $testproc_comm
@@ -30,3 +29,19 @@ expect_pass "$test" "^$testproc_comm killed \\(pid $testproc1_pid\\)\\s+$testpro
 
 # Cleanup
 kill_testproc
+
+make_pipeproc
+
+set test "pkill with SIGUSR1"
+spawn $pkill -USR1 -e $testproc_comm
+expect_pipeproc_pass "$test" "SIG SIGUSR1"
+
+set test "pkill with SIGUSR2"
+spawn $pkill -USR2 -e $testproc_comm
+expect_pipeproc_pass "$test" "SIG SIGUSR2"
+
+set test "pkill with queued int"
+spawn $pkill -USR1 -e -q 42 $testproc_comm
+expect_pipeproc_pass "$test" "SIG SIGUSR1 value=42"
+
+kill_pipeproc

@@ -45,26 +45,21 @@ set test "kill convert signal number to name with space"
 spawn  $kill -l 1
 expect_pass "$test" "^HUP\\s*"
 
-#set test "kill numbered process"
-#make_testproc
-#if { [ file isdirectory "/proc/$testproc1_pid" ] && [ file isdirectory "/proc/$testproc2_pid" ] } {
-#} else {
-#    perror "Could not start test processes"
-#}
-#exec $kill -KILL $testproc1_pid
-#wait
-#if { [ file exists "/proc/$testproc1_pid" ] } {
-#    exec kill $testproc2_pid
-#    fail "$test (proc 1 exists)"
-#} else {
-#    exec $kill -KILL $testproc2_pid
-#    wait
-#    if { [ file exists "/proc/$testproc2_pid" ] } {
-#        exec kill $testproc2_pid
-#        fail "$test (proc 2 exists)"
-#    } else {
-#        pass "$test"
-#    }
-#}
-## Cleanup
-#exec rm $testproc_path
+make_pipeproc
+
+set test "kill with SIGUSR1"
+spawn $kill -USR1 $pipeproc_pid
+expect_blank_continue "$test"
+expect_pipeproc_pass "$test" "SIG SIGUSR1"
+
+set test "kill with long SIGUSR2"
+spawn $kill -s SIGUSR2 $pipeproc_pid
+expect_blank_continue "$test"
+expect_pipeproc_pass "$test" "SIG SIGUSR2"
+
+set test "kill with queued int"
+spawn $kill -USR1 -q 42 $pipeproc_pid
+expect_blank_continue "$test"
+expect_pipeproc_pass "$test" "SIG SIGUSR1 value=42"
+
+kill_pipeproc
