@@ -74,7 +74,7 @@ typedef struct proc_t {
 // and so on...
 	cutime,		// stat            cumulative utime of process and reaped children
 	cstime,		// stat            cumulative stime of process and reaped children
-	start_time;	// stat            start time of process -- seconds since 1-1-70
+	start_time;	// stat            start time of process -- seconds since system boot
 #ifdef SIGNAL_STRING
     char
 	// Linux 2.1.7x and up have 64 signals. Allow 64, plus '\0' and padding.
