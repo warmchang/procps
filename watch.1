@@ -1,4 +1,4 @@
-.TH WATCH 1 "2018-03-03" "procps-ng" "User Commands"
+.TH WATCH 1 "2020-05-12" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -21,7 +21,8 @@ has changed at least once since first iteration.
 \fB\-n\fR, \fB\-\-interval\fR \fIseconds\fR
 Specify update interval.  The command will not allow quicker than 0.1 second
 interval, in which the smaller values are converted. Both '.' and ',' work
-for any locales.
+for any locales. The WATCH_INTERVAL environment can be used to persistently
+set a non-default interval (following the same rules and formatting).
 .TP
 \fB\-p\fR, \fB\-\-precise\fR
 Make
@@ -100,6 +101,16 @@ failed, or command exited up on error.
 .TP
 .B other
 The watch will propagate command exit status as child exit status.
+.SH ENVIRONMENT
+The behaviour of
+.B watch
+is affected by the following environment variables.
+
+.TP
+.B WATCH_INTERVAL
+Update interval, follows the same rules as the
+.B \-\-interval
+command line option.
 .SH NOTES
 POSIX option processing is used (i.e., option processing stops at
 the first non\-option argument).  This means that flags after
