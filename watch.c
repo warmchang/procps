@@ -706,7 +706,7 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	interval_string = getenv("WATCH_INTERVAL");
-	if(interval_string != NULL) 
+	if(interval_string != NULL)
 		interval = strtod_nol_or_err(interval_string, _("Could not parse interval from WATCH_INTERVAL"));
 
 	while ((optc =
