@@ -213,9 +213,9 @@ static void new_header(void)
 
 	printf(
 	    w_option ? wide_format : format,
-	    /* Translation Hint: max 4 chars */
+	    /* Translation Hint: max 2 chars */
 	     _("r"),
-	    /* Translation Hint: max 4 chars */
+	    /* Translation Hint: max 2 chars */
 	     _("b"),
 	    /* Translation Hint: max 6 chars */
 	     _("swpd"),

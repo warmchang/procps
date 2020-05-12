@@ -137,18 +137,18 @@ msgid "failed to parse count argument: '%s'"
 msgstr "échec du décodage de l'argument du nombre de répétitions: « %s »"
 
 #: free.c:352
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"               total        used        free      shared     buffers       "
+"              total        used        free      shared     buffers       "
 "cache   available"
 msgstr ""
 "               total       utilisé      libre     partagé    tampons       "
 "cache   disponible"
 
 #: free.c:354
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"               total        used        free      shared  buff/cache   "
+"              total        used        free      shared  buff/cache   "
 "available"
 msgstr ""
 "               total       utilisé      libre     partagé tamp/cache   "

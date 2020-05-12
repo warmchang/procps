@@ -9,6 +9,7 @@ procps-ng NEXT
   * sysctl: Document directory order                       Debian #951550
   * top: ensure config file backward compatibility         Debian #951335
   * top: add command line 'e' for symmetry with 'E'        issue #165
+  * vmstat: Wide mode gives wider proc columns             merge #48
 
 procps-ng-3.3.16
 ----------------
