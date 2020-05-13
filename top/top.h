@@ -54,6 +54,7 @@
 //#define SCROLLVAR_NO            /* disable intra-column horizontal scroll  */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
+//#define TOG4_NOFORCE            /* no force 2 abreast mode with '4' toggle */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
 //#define TREE_SCANALL            /* rescan array w/ forest view, avoid sort */
 //#define TREE_VALTMRK            /* use an indented '+' with collapsed pids */
@@ -435,6 +436,7 @@ typedef struct WIN_t {
    int    osel_tot;                    // total of other selection criteria
    char  *findstr;                     // window's current/active search string
    int    findlen;                     // above's strlen, without call overhead
+   int    double_up;                   // show individual cpus 2 abreast
    proc_t **ppt;                       // this window's proc_t ptr array
    struct WIN_t *next,                 // next window in window stack
                 *prev;                 // prior window in window stack
@@ -804,7 +806,8 @@ typedef struct WIN_t {
 //atic void          keys_xtra (int ch);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void          do_key (int ch);
-//atic void          summary_hlp (CPU_t *cpu, const char *pfx);
+//atic inline int    sum_cpu (const char *str, int nobuf);
+//atic int           summary_hlp (CPU_t *cpu, const char *pfx, int nobuf);
 //atic void          summary_show (void);
 //atic const char   *task_show (const WIN_t *q, const int idx);
 //atic void          window_hlp (void);
