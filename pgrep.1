@@ -7,7 +7,7 @@
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH PGREP "1" "2020-04-24" "procps-ng" "User Commands"
+.TH PGREP "1" "2020-05-17" "procps-ng" "User Commands"
 .SH NAME
 pgrep, pkill \- look up or signal processes based on name and other attributes
 .SH SYNOPSIS
@@ -99,6 +99,9 @@ Select only the newest (most recently started) of the matching processes.
 .TP
 \fB\-o\fR, \fB\-\-oldest\fR
 Select only the oldest (least recently started) of the matching processes.
+.TP
+\fB\-O\fR, \fB\-\-older\fR \fIsecs\fP
+Select processes older than secs.
 .TP
 \fB\-P\fR, \fB\-\-parent\fR \fIppid\fP,...
 Only match processes whose parent process ID is listed.

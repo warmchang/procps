@@ -36,6 +36,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <stdbool.h>
+#include <time.h>
 
 /* EXIT_SUCCESS is 0 */
 /* EXIT_FAILURE is 1 */
@@ -63,11 +64,12 @@ enum pids_item Items[] = {
     PIDS_TTY_NAME,
     PIDS_CMD,
     PIDS_CMDLINE,
-    PIDS_STATE
+    PIDS_STATE,
+    PIDS_TIME_ELAPSED
 };
 enum rel_items {
     EU_PID, EU_PPID, EU_PGRP, EU_EUID, EU_RUID, EU_RGID, EU_SESSION,
-    EU_TGID, EU_STARTTIME, EU_TTYNAME, EU_CMD, EU_CMDLINE, EU_STA
+    EU_TGID, EU_STARTTIME, EU_TTYNAME, EU_CMD, EU_CMDLINE, EU_STA, EU_ELAPSED
 };
 #define grow_size(x) do { \
 	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
@@ -88,6 +90,7 @@ static int opt_full = 0;
 static int opt_long = 0;
 static int opt_longlong = 0;
 static int opt_oldest = 0;
+static int opt_older = 0;
 static int opt_newest = 0;
 static int opt_negate = 0;
 static int opt_exact = 0;
@@ -145,6 +148,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
     fputs(_(" -i, --ignore-case         match case insensitively\n"), fp);
     fputs(_(" -n, --newest              select most recently started\n"), fp);
     fputs(_(" -o, --oldest              select least recently started\n"), fp);
+    fputs(_(" -O, --older <seconds>     select where older than seconds\n"), fp);
     fputs(_(" -P, --parent <PPID,...>   match only child processes of the given parent\n"), fp);
     fputs(_(" -s, --session <SID,...>   match session IDs\n"), fp);
     fputs(_(" -t, --terminal <tty,...>  match by controlling terminal\n"), fp);
@@ -525,8 +529,14 @@ static struct el * select_procs (int *num)
     char *cmdoutput = xmalloc(cmdlen);
     char *task_cmdline;
     enum pids_fetch_type which;
+    time_t now;
+    double uptime_secs;
 
     preg = do_regcomp();
+
+    now = time(NULL);
+    if (procps_uptime(&uptime_secs, NULL) < 0)
+        xerrx(EXIT_FAILURE, "uptime");
 
     if (opt_newest) saved_start_time =  0ULL;
     else saved_start_time = ~0ULL;
@@ -538,7 +548,7 @@ static struct el * select_procs (int *num)
               _("Error reading reference namespace information\n"));
     }
 
-    if (procps_pids_new(&info, Items, 13) < 0)
+    if (procps_pids_new(&info, Items, 14) < 0)
         xerrx(EXIT_FATAL,
               _("Unable to create pid info structure"));
     which = PIDS_FETCH_TASKS_ONLY;
@@ -570,9 +580,11 @@ static struct el * select_procs (int *num)
             match = 0;
         else if (opt_ns_pid && ! match_ns (PIDS_GETINT(PID), &nsp))
             match = 0;
+	else if (opt_older && PIDS_GETULL(ELAPSED) < opt_older)
+	    match = 0;
         else if (opt_term)
             match = match_strlist(PIDS_GETSTR(TTYNAME), opt_term);
-		else if (opt_runstates && ! strchr(opt_runstates, PIDS_GETSCH(STA)))
+        else if (opt_runstates && ! strchr(opt_runstates, PIDS_GETSCH(STA)))
             match = 0;
 
         task_cmdline = PIDS_GETSTR(CMDLINE);
@@ -686,6 +698,7 @@ static void parse_opts (int argc, char **argv)
         {"ignore-case", no_argument, NULL, 'i'},
         {"newest", no_argument, NULL, 'n'},
         {"oldest", no_argument, NULL, 'o'},
+        {"older", required_argument, NULL, 'O'},
         {"parent", required_argument, NULL, 'P'},
         {"session", required_argument, NULL, 's'},
         {"terminal", required_argument, NULL, 't'},
@@ -719,7 +732,7 @@ static void parse_opts (int argc, char **argv)
         strcat (opts, "lad:vw");
     }
 
-    strcat (opts, "LF:cfinoxP:g:s:u:U:G:t:r:?Vh");
+    strcat (opts, "LF:cfinoxP:O:g:s:u:U:G:t:r:?Vh");
 
     while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
         switch (opt) {
@@ -815,6 +828,10 @@ static void parse_opts (int argc, char **argv)
             opt_oldest = 1;
             ++criteria_count;
             break;
+        case 'O':
+            opt_older = atoi (optarg);
+	    ++criteria_count;
+	    break;
         case 's':   /* Solaris: match by session ID -- zero means self */
             opt_sid = split_list (optarg, conv_sid);
             if (opt_sid == NULL)
