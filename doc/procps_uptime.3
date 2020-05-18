@@ -1,4 +1,4 @@
-.\" (C) Copyright 2016 Craig Small <csmall@enc.com.au>
+.\" (C) Copyright 2016-2020 Craig Small <csmall@dropbear.xyz>
 .\"
 .\" %%%LICENSE_START(LGPL_2.1+)
 .\" This manual is free software; you can redistribute it and/or
@@ -16,23 +16,30 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS_UPTIME 3 2016-05-01 "libproc-2"
+.TH PROCPS_UPTIME 3 2020-05-18 "libproc-2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .SH NAME
-procps_uptime \-
+procps_uptime, procps_sprint, procps_uptime_sprint_short \-
 provide the uptime and idle time in seconds
 .SH SYNOPSIS
+.nf
 .B #include <proc/procps.h>
-.sp
+.PP
 .BI "int procps_uptime(double * " uptime_secs ", double * " idle_secs ");"
+.B char *procps_uptime_sprint(void);
+.B char *procps_uptime_sprint_short(void);
 .sp
 Link with \fI\-lprocps\fP.
 .SH DESCRIPTION
-The function
 .BR procps_uptime ()
-fills the location of the two double points with the current sytem uptime
-and idle time.
+returns the uptime and idle time of the system. Either the
+\fIuptime_secs\fR or \fIidle_secs\fR can be \fBNULL\fR in which case that
+variable will not be returned.
+
+The \fBsprint\fR variety of the functions return a human-readable
+string of the uptime and other statistics.
+
 .SH RETURN VALUE
 .BR procps_uptime ()
 returns 0 on success. On failure, it
@@ -44,6 +51,17 @@ Unable to parse the uptime file.
 .BR procps_uptime ()
 may also return any (negated) value that \fBfopen\fR() may set errno to.
 
+.BR procps_uptime_sprint_short ()
+return a string from a statically allocated buffer which displays uptime.
+
+.BR procps_uptime_sprint ()
+also displays users and load average in the buffer. The formats are the
+same as
+.BR uptime (1)
+with and without the
+.B \-p
+option.
+
 .SH FILES
 .TP
 .I /proc/uptime
@@ -54,5 +72,6 @@ The raw values for uptime and idle time.
 first appeared in libproc-2 version 0.0.
 
 .SH SEE ALSO
+.BR uptime (1),
 .BR fopen (3),
 .BR proc (5).
