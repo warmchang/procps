@@ -1,0 +1,76 @@
+.\" (C) Copyright 2020 Craig Small <csmall@dropbear.xyz>
+.\"
+.\" %%%LICENSE_START(LGPL_2.1+)
+.\" This manual is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2.1 of the License, or (at your option) any later version.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+.\" %%%LICENSE_END
+.\"
+.TH PROCPS_LINUX_VERSION 3 2020-05-18 "libproc-2"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.SH NAME
+procps_ns \-
+provide information on the namespaces
+.SH SYNOPSIS
+.nf
+.B #include <proc/namespace.h>
+.PP
+.BI "int procps_ns_get_id(const char * " name ");"
+.BI "const char *procps_ns_get_name(const int " id ");"
+.BI "int procps_ns_read_pid(const int " pid ", struct procps_namespaces * " nsp ");"
+.sp
+Link with \fI\-lprocps\fP.
+.SH DESCRIPTION
+The family of
+.BR procps_ns ()
+functions return information about the Linux namespaces.
+
+.BR procps_ns_get_id ()
+finds the ID of the namespace for the given namespace name.
+
+.BR procps_ns_get_name ()
+finds the name of the namespace of the given integer ID.
+
+.BR procps_ns_read_pid ()
+puts the inodes for the namespaces of the given process into
+the array pointed to \fInsp\fR.
+
+.SH RETURN VALUE
+.BR procps_ns_get_id ()
+returns an integer for the namespace ID for the given name or
+.B \-EINVAL
+for an invalid input or an unknown namespace name.
+
+.BR procps_ns_get_name ()
+returns a statically allocated string containing the name of the
+namespace for the given ID. If the name is not found the function
+returns
+.B NULL
+
+.BR procps_ns_read_pid ()
+Returns 0 on success and \fB\-EINVAL\fR on failure.
+
+.SH FILES
+.TP
+.IB /proc/ PID /ns
+contains the set of namespaces for a particular \fBPID\fR.
+
+.SH VERSIONS
+The
+.BR procps_ns ()
+set of functions first appeared in libproc-2 version 0.0.
+
+.SH SEE ALSO
+.BR proc (5),
+.BR namespaces (7).

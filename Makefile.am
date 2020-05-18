@@ -83,6 +83,9 @@ dist_man_MANS = \
 	doc/procps_pids_select.3 \
 	doc/procps_pids_sort.3 \
 	doc/procps_pids_unref.3 \
+	doc/procps_ns_get_id.3 \
+	doc/procps_ns_get_name.3 \
+	doc/procps_ns_read_pid.3 \
 	doc/procps_uptime.3 \
 	doc/procps_uptime_sprint.3 \
 	doc/procps_uptime_sprint_short.3
