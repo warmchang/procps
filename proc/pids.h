@@ -78,7 +78,7 @@ enum pids_item {
     PIDS_ID_TGID,           //    s_int        status: Tgid
     PIDS_ID_TID,            //    s_int        from /proc/<pid>/task/<tid>
     PIDS_ID_TPGID,          //    s_int        stat: tpgid
-    PIDS_LXCNAME,           //      str      [ derived from CGROUP 'lxc.payload/' ]
+    PIDS_LXCNAME,           //      str      [ derived from CGROUP 'lxc.payload' ]
     PIDS_MEM_CODE,          //   ul_int      [ derived from MEM_CODE_PGS, as KiB ]
     PIDS_MEM_CODE_PGS,      //   ul_int        statm: text
     PIDS_MEM_DATA,          //   ul_int      [ derived from MEM_DATA_PGS, as KiB ]
