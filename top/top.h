@@ -464,7 +464,6 @@ typedef struct WIN_t {
 #define its_YOUR_fault { *((char *)0) = '!'; }
 
 
-/*######  Display Support *Data*  ########################################*/
 /*######  Some Display Support *Data*  ###################################*/
 /*      ( see module top_nls.c for the nls translatable data ) */
 
