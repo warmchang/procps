@@ -4412,6 +4412,7 @@ static void win_reset (WIN_t *q) {
          // NOHISEL_xxx is redundant (already turned off by osel_clear)
          OFFw(q, NOHIFND_xxx | NOHISEL_xxx);
 #endif
+         q->combine_cpus = 0;
 } // end: win_reset
 
 
@@ -5224,6 +5225,15 @@ static void keys_summary (int ch) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
 
    switch (ch) {
+      case '!':
+         if (CHKw(w, View_CPUSUM) || CHKw(w, View_CPUNOD))
+            show_msg(N_txt(XTRA_modebad_txt));
+         else {
+            if (!w->combine_cpus) w->combine_cpus = 1;
+            else w->combine_cpus *= 2;
+            if (w->combine_cpus >= Cpu_faux_tot) w->combine_cpus = 0;
+         }
+         break;
       case '1':
          if (CHKw(w, View_CPUNOD)) OFFw(w, View_CPUSUM);
          else TOGw(w, View_CPUSUM);
@@ -5673,6 +5683,136 @@ static void keys_xtra (int ch) {
 // show_msg(fmtmk("%s sort compatibility key honored", xmsg));
 } // end: keys_xtra
 
+/*######  Cpu Display Secondary support (summary_show helpers)  ##########*/
+
+        /*
+         * Cpu *Helper* function to combine and or show the state
+         * percentages for 1 cpu or 2 adjacent cpus (one single line). */
+static inline int cpu_prt (const char *str, int nobuf) {
+   static char row[ROWMINSIZ];
+   static int tog;
+   char *p;
+
+   p = scat(row, str);
+   if (nobuf || !Curwin->double_up)
+      goto flush_it;
+   if (!tog) {
+      scat(p, Double_sp);
+      tog = 1;
+      return 0;
+   }
+flush_it:
+   scat(p, "\n");
+   show_special(0, row);
+   row[0] = '\0';
+   tog = 0;
+   return 1;
+} // end: cpu_prt
+
+
+        /*
+         * State display *Helper* function to calc and display the state
+         * percentages for a single cpu.  In this way, we can support
+         * the following environments without the usual code bloat.
+         *    1) single cpu machines
+         *    2) modest smp boxes with room for each cpu's percentages
+         *    3) massive smp guys leaving little or no room for process
+         *       display and thus requiring the cpu summary toggle */
+static int cpu_tics (CPU_t *cpu, const char *pfx, int nobuf) {
+   /* we'll trim to zero if we get negative time ticks,
+      which has happened with some SMP kernels (pre-2.4?)
+      and when cpus are dynamically added or removed */
+ #define TRIMz(x)  ((tz = (SIC_t)(x)) < 0 ? 0 : tz)
+   //    user    syst    nice    idle    wait    hirg    sirq    steal
+   SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, z_frme, tot_frme, tz;
+   float scale;
+   int n;
+
+   u_frme = TRIMz(cpu->cur.u - cpu->sav.u);
+   s_frme = TRIMz(cpu->cur.s - cpu->sav.s);
+   n_frme = TRIMz(cpu->cur.n - cpu->sav.n);
+   i_frme = TRIMz(cpu->cur.i - cpu->sav.i);
+   w_frme = TRIMz(cpu->cur.w - cpu->sav.w);
+   x_frme = TRIMz(cpu->cur.x - cpu->sav.x);
+   y_frme = TRIMz(cpu->cur.y - cpu->sav.y);
+   z_frme = TRIMz(cpu->cur.z - cpu->sav.z);
+   tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme + x_frme + y_frme + z_frme;
+#ifndef CPU_ZEROTICS
+   if (tot_frme < cpu->edge)
+      tot_frme = u_frme = s_frme = n_frme = i_frme = w_frme = x_frme = y_frme = z_frme = 0;
+#endif
+   if (1 > tot_frme) i_frme = tot_frme = 1;
+   scale = 100.0 / (float)tot_frme;
+
+   /* display some kinda' cpu state percentages
+      (who or what is explained by the passed prefix) */
+   if (Curwin->rc.graph_cpus) {
+      static struct {
+         const char *user, *syst, *type;
+      } gtab[] = {
+         { "%-.*s~7", "%-.*s~8", Graph_bars },
+         { "%-.*s~4", "%-.*s~6", Graph_blks }
+      };
+      char user[SMLBUFSIZ], syst[SMLBUFSIZ], dual[MEDBUFSIZ];
+      int ix = Curwin->rc.graph_cpus - 1;
+      float pct_user = (float)(u_frme + n_frme) * scale,
+            pct_syst = (float)(s_frme + x_frme + y_frme) * scale;
+#ifndef QUICK_GRAPHS
+      int num_user = (int)((pct_user * Graph_adj) + .5),
+          num_syst = (int)((pct_syst * Graph_adj) + .5);
+      if (num_user + num_syst > Graph_len) num_syst = Graph_len - num_user;
+      snprintf(user, sizeof(user), gtab[ix].user, num_user, gtab[ix].type);
+      snprintf(syst, sizeof(syst), gtab[ix].syst, num_syst, gtab[ix].type);
+#else
+      snprintf(user, sizeof(user), gtab[ix].user, (int)((pct_user * Graph_adj) + .5), gtab[ix].type);
+      snprintf(syst, sizeof(syst), gtab[ix].syst, (int)((pct_syst * Graph_adj) + .4), gtab[ix].type);
+#endif
+      snprintf(dual, sizeof(dual), "%s%s", user, syst);
+      n = cpu_prt(fmtmk("%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1"
+         , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, dual), nobuf);
+   } else {
+      n = cpu_prt(fmtmk(Cpu_States_fmts, pfx
+         , (float)u_frme * scale, (float)s_frme * scale
+         , (float)n_frme * scale, (float)i_frme * scale
+         , (float)w_frme * scale, (float)x_frme * scale
+         , (float)y_frme * scale, (float)z_frme * scale), nobuf);
+   }
+   return n;
+ #undef TRIMz
+} // end: cpu_tics
+
+
+        /*
+         * Cpu *Helper* function to combine adjacent cpu stats
+         * in an effort to reduce total number of processors shown */
+static int cpu_unify (CPU_t *cpu, int nobuf) {
+   static CPU_t accum;
+   static int ix, beg;
+   char pfx[16];
+   int n;
+
+   accum.cur.u += cpu->cur.u; accum.cur.s += cpu->cur.s;
+   accum.cur.n += cpu->cur.n; accum.cur.i += cpu->cur.i;
+   accum.cur.w += cpu->cur.w; accum.cur.x += cpu->cur.x;
+   accum.cur.y += cpu->cur.y; accum.cur.z += cpu->cur.z;
+   accum.sav.u += cpu->sav.u; accum.sav.s += cpu->sav.s;
+   accum.sav.n += cpu->sav.n; accum.sav.i += cpu->sav.i;
+   accum.sav.w += cpu->sav.w; accum.sav.x += cpu->sav.x;
+   accum.sav.y += cpu->sav.y; accum.sav.z += cpu->sav.z;
+
+   if (!ix) beg = cpu->id;
+   if (nobuf || ix >= Curwin->combine_cpus) {
+      snprintf(pfx, sizeof(pfx), "%-7.7s:", fmtmk("%d-%d", beg, cpu->id));
+      n = cpu_tics(&accum, pfx, nobuf);
+      memset(&accum, 0, sizeof(CPU_t));
+      ix = beg = 0;
+      return n;
+   }
+   ++ix;
+
+   return 0;
+} // end: cpu_unify
+
 /*######  Main Screen routines  ##########################################*/
 
         /*
@@ -5687,7 +5827,7 @@ static void do_key (int ch) {
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
-         { '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
+         { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,
          { '#', '<', '>', 'b', 'c', 'i', 'J', 'j', 'n', 'O', 'o'
          , 'R', 'S', 'U', 'u', 'V', 'v', 'x', 'y', 'z'
@@ -5748,103 +5888,6 @@ all_done:
 
 
         /*
-         * Cpu *Helper* function to combine and or show the state
-         * percentages for 1 cpu or 2 adjacent cpus (one single line). */
-static inline int sum_cpu (const char *str, int nobuf) {
-   static char row[ROWMINSIZ];
-   static int tog;
-   char *p;
-
-   p = scat(row, str);
-   if (nobuf || !Curwin->double_up)
-      goto flush_it;
-   if (!tog) {
-      scat(p, Double_sp);
-      tog = 1;
-      return 0;
-   }
-flush_it:
-   scat(p, "\n");
-   show_special(0, row);
-   row[0] = '\0';
-   tog = 0;
-   return 1;
-} // end: sum_cpu
-
-
-        /*
-         * State display *Helper* function to calc and display the state
-         * percentages for a single cpu.  In this way, we can support
-         * the following environments without the usual code bloat.
-         *    1) single cpu machines
-         *    2) modest smp boxes with room for each cpu's percentages
-         *    3) massive smp guys leaving little or no room for process
-         *       display and thus requiring the cpu summary toggle */
-static int summary_hlp (CPU_t *cpu, const char *pfx, int nobuf) {
-   /* we'll trim to zero if we get negative time ticks,
-      which has happened with some SMP kernels (pre-2.4?)
-      and when cpus are dynamically added or removed */
- #define TRIMz(x)  ((tz = (SIC_t)(x)) < 0 ? 0 : tz)
-   //    user    syst    nice    idle    wait    hirg    sirq    steal
-   SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, z_frme, tot_frme, tz;
-   float scale;
-   int n;
-
-   u_frme = TRIMz(cpu->cur.u - cpu->sav.u);
-   s_frme = TRIMz(cpu->cur.s - cpu->sav.s);
-   n_frme = TRIMz(cpu->cur.n - cpu->sav.n);
-   i_frme = TRIMz(cpu->cur.i - cpu->sav.i);
-   w_frme = TRIMz(cpu->cur.w - cpu->sav.w);
-   x_frme = TRIMz(cpu->cur.x - cpu->sav.x);
-   y_frme = TRIMz(cpu->cur.y - cpu->sav.y);
-   z_frme = TRIMz(cpu->cur.z - cpu->sav.z);
-   tot_frme = u_frme + s_frme + n_frme + i_frme + w_frme + x_frme + y_frme + z_frme;
-#ifndef CPU_ZEROTICS
-   if (tot_frme < cpu->edge)
-      tot_frme = u_frme = s_frme = n_frme = i_frme = w_frme = x_frme = y_frme = z_frme = 0;
-#endif
-   if (1 > tot_frme) i_frme = tot_frme = 1;
-   scale = 100.0 / (float)tot_frme;
-
-   /* display some kinda' cpu state percentages
-      (who or what is explained by the passed prefix) */
-   if (Curwin->rc.graph_cpus) {
-      static struct {
-         const char *user, *syst, *type;
-      } gtab[] = {
-         { "%-.*s~7", "%-.*s~8", Graph_bars },
-         { "%-.*s~4", "%-.*s~6", Graph_blks }
-      };
-      char user[SMLBUFSIZ], syst[SMLBUFSIZ], dual[MEDBUFSIZ];
-      int ix = Curwin->rc.graph_cpus - 1;
-      float pct_user = (float)(u_frme + n_frme) * scale,
-            pct_syst = (float)(s_frme + x_frme + y_frme) * scale;
-#ifndef QUICK_GRAPHS
-      int num_user = (int)((pct_user * Graph_adj) + .5),
-          num_syst = (int)((pct_syst * Graph_adj) + .5);
-      if (num_user + num_syst > Graph_len) num_syst = Graph_len - num_user;
-      snprintf(user, sizeof(user), gtab[ix].user, num_user, gtab[ix].type);
-      snprintf(syst, sizeof(syst), gtab[ix].syst, num_syst, gtab[ix].type);
-#else
-      snprintf(user, sizeof(user), gtab[ix].user, (int)((pct_user * Graph_adj) + .5), gtab[ix].type);
-      snprintf(syst, sizeof(syst), gtab[ix].syst, (int)((pct_syst * Graph_adj) + .4), gtab[ix].type);
-#endif
-      snprintf(dual, sizeof(dual), "%s%s", user, syst);
-      n = sum_cpu(fmtmk("%%%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1"
-         , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, dual), nobuf);
-   } else {
-      n = sum_cpu(fmtmk(Cpu_States_fmts, pfx
-         , (float)u_frme * scale, (float)s_frme * scale
-         , (float)n_frme * scale, (float)i_frme * scale
-         , (float)w_frme * scale, (float)x_frme * scale
-         , (float)y_frme * scale, (float)z_frme * scale), nobuf);
-   }
-   return n;
- #undef TRIMz
-} // end: summary_hlp
-
-
-        /*
          * In support of a new frame:
          *    1) Display uptime and load average (maybe)
          *    2) Display task/cpu states (maybe)
@@ -5881,7 +5924,7 @@ static void summary_show (void) {
       if (CHKw(w, View_CPUNOD)) {
          if (Numa_node_sel < 0) {
             // display the 1st /proc/stat line, then the nodes (if room)
-            Msg_row += summary_hlp(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
+            Msg_row += cpu_tics(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
             // display each cpu node's states
             for (i = 0; i < Numa_node_tot; i++) {
                CPU_t *nod_ptr = &Cpu_tics[1 + smp_num_cpus + i];
@@ -5890,7 +5933,7 @@ static void summary_show (void) {
                if (nod_ptr->id) {
 #endif
                snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), i);
-               Msg_row += summary_hlp(nod_ptr, tmp, 1);
+               Msg_row += cpu_tics(nod_ptr, tmp, 1);
 #ifndef OFF_NUMASKIP
                }
 #endif
@@ -5898,12 +5941,12 @@ static void summary_show (void) {
          } else {
             // display the node summary, then the associated cpus (if room)
             snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
-            Msg_row += summary_hlp(&Cpu_tics[1 + smp_num_cpus + Numa_node_sel], tmp, 1);
+            Msg_row += cpu_tics(&Cpu_tics[1 + smp_num_cpus + Numa_node_sel], tmp, 1);
             for (i = 0; i < Cpu_faux_tot; i++) {
                if (Numa_node_sel == Cpu_tics[i].node) {
                   if (!isROOM(anyFLG, 1)) break;
                   snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_tics[i].id);
-                  Msg_row += summary_hlp(&Cpu_tics[i], tmp, 1);
+                  Msg_row += cpu_tics(&Cpu_tics[i], tmp, 1);
                }
             }
          }
@@ -5911,13 +5954,20 @@ static void summary_show (void) {
 numa_nope:
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
-         Msg_row += summary_hlp(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
+         Msg_row += cpu_tics(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
       } else {
          // display each cpu's states separately, screen height permitting...
-         for (i = 0; i < Cpu_faux_tot; i++) {
-            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_tics[i].id);
-            Msg_row += summary_hlp(&Cpu_tics[i], tmp, (i+1 >= Cpu_faux_tot));
-            if (!isROOM(anyFLG, 1)) break;
+         if (w->combine_cpus) {
+            for (i = 0; i < Cpu_faux_tot; i++) {
+               Msg_row += cpu_unify(&Cpu_tics[i], (i+1 >= Cpu_faux_tot));
+               if (!isROOM(anyFLG, 1)) break;
+            }
+         } else {
+            for (i = 0; i < Cpu_faux_tot; i++) {
+               snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_tics[i].id);
+               Msg_row += cpu_tics(&Cpu_tics[i], tmp, (i+1 >= Cpu_faux_tot));
+               if (!isROOM(anyFLG, 1)) break;
+            }
          }
       }
    } // end: View_STATES

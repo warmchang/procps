@@ -82,8 +82,8 @@ enum norm_nls {
    WORD_abv_mem_txt, WORD_abv_swp_txt, WORD_allcpus_txt, WORD_another_txt,
    WORD_eachcpu_fmt, WORD_exclude_txt, WORD_include_txt, WORD_noneone_txt,
    WORD_process_txt, WORD_threads_txt, WRITE_rcfile_fmt, WRONG_switch_fmt,
-   XTRA_badflds_fmt, XTRA_fixwide_fmt, XTRA_size2up_txt, XTRA_vforest_fmt,
-   XTRA_warncfg_txt, XTRA_winsize_txt,
+   XTRA_badflds_fmt, XTRA_fixwide_fmt, XTRA_modebad_txt, XTRA_size2up_txt,
+   XTRA_vforest_fmt, XTRA_warncfg_txt, XTRA_winsize_txt,
 #ifndef INSP_OFFDEMO
    YINSP_demo01_txt, YINSP_demo02_txt, YINSP_demo03_txt, YINSP_deqfmt_txt,
    YINSP_deqtyp_txt, YINSP_dstory_txt,
