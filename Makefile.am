@@ -83,7 +83,6 @@ dist_man_MANS += \
 endif
 
 EXTRA_DIST = \
-	.version \
 	autogen.sh \
 	contrib \
 	COPYING.LIB \
