@@ -1,7 +1,7 @@
 .ig
 . manual page for NEW and IMPROVED linux top
 .
-. Copyright (c) 2002-2019, by: James C. Warner
+. Copyright (c) 2002-2020, by: James C. Warner
 .
 . This file may be copied under the terms of the GNU Public License.
 ..
@@ -62,7 +62,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "April 2020" "procps-ng" "User Commands"
+.TH TOP 1 "May 2020" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 
 .\" ----------------------------------------------------------------------
@@ -1125,7 +1125,7 @@ depending on the context in which they are issued.
         <Ent/Sp> ?, =, 0,
         A, B, d, E, e, g, h, H, I, k, q, r, s, W, X, Y, Z
   4b.\fI Summary-Area-Commands \fR
-        C, l, t, m, 1, 2, 3
+        C, l, t, m, 1, 2, 3, 4
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, J, j, x, y, z
         Content:     c, f, F, o, O, S, u, U, V, v
@@ -1460,8 +1460,16 @@ It is only available if a system has the requisite NUMA support.
 \ \ \ \fB3\fR\ \ :\fIExpand-NUMA-Node \fR
 You will be invited to enter a number representing a NUMA Node.
 Thereafter, a node summary plus the statistics for each cpu in that
-node will be shown until either the `1' or `2' \*(CT is pressed.
+node will be shown until the `1', `2' or `4' \*(CT is pressed.
 This \*(CI is only available if a system has the requisite NUMA support.
+
+.TP 7
+\ \ \ \fB4\fR\ \ :\fIDisplay-Cpus-Two-Abreast \fR
+This command turns the `1' toggle \*F for individual \*(Pu display
+but prints the results two abreast.
+It requires a terminal with a minimum width of 165 columns.
+If a terminal's width is decreased below the minimum while \*(We
+is running, \*(We reverts to the normal `1' toggle \*F state.
 
 .PP
 \*(NT If the entire \*(SA has been toggled \*F for any window, you would
