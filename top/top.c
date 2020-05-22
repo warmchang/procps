@@ -204,6 +204,11 @@ static const char Osel_window_fmts[] = "window #%d, osel_tot=%d\n";
 static const char Osel_filterO_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%s\n";
 static const char Osel_filterI_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%*s\n";
 
+        /* Support for 2 abreast Cpu display (if terminal is wide enough) */
+static char Double_sp[] =  "     ";
+#define DOUBLE_space  (sizeof(Double_sp) - 1)
+#define DOUBLE_limit  (160 + DOUBLE_space)
+
         /* Support for the new library API -- acquired (if necessary)
            at program startup and referenced throughout our lifetime. */
         /*
@@ -1767,6 +1772,11 @@ static void adj_geometry (void) {
    if (Graph_len >= 0) Graph_len = GRAPH_actual;
    else if (Screen_cols > 80) Graph_len = Screen_cols - GRAPH_prefix - GRAPH_suffix;
    else Graph_len = 80 - GRAPH_prefix - GRAPH_suffix;
+   if (Screen_cols < DOUBLE_limit) Curwin->double_up = 0;
+   if (Curwin->double_up) {
+      Graph_len = (Screen_cols - DOUBLE_space - (2 * (GRAPH_prefix + + GRAPH_suffix))) / 2;
+      if (Graph_len > GRAPH_actual) Graph_len = GRAPH_actual;
+   }
    Graph_adj = (float)Graph_len / 100.0;
 
    fflush(stdout);
@@ -4801,6 +4811,7 @@ static void keys_summary (int ch) {
          else TOGw(w, View_CPUSUM);
          OFFw(w, View_CPUNOD);
          SETw(w, View_STATES);
+         w->double_up = 0;
          break;
       case '2':
          if (!Numa_node_tot)
@@ -4810,6 +4821,7 @@ static void keys_summary (int ch) {
             if (!CHKw(w, View_CPUNOD)) SETw(w, View_CPUSUM);
             SETw(w, View_STATES);
             Numa_node_sel = -1;
+            w->double_up = 0;
          }
          break;
       case '3':
@@ -4822,10 +4834,26 @@ static void keys_summary (int ch) {
                   Numa_node_sel = num;
                   SETw(w, View_CPUNOD | View_STATES);
                   OFFw(w, View_CPUSUM);
+                  w->double_up = 0;
                } else
                   show_msg(N_txt(NUMA_nodebad_txt));
             }
          }
+         break;
+      case '4':
+         w->double_up = !w->double_up;
+         if (w->double_up && Screen_cols < DOUBLE_limit) {
+            show_msg(N_txt(XTRA_size2up_txt));
+            w->double_up = 0;
+            break;
+         }
+#ifdef TOG4_NOFORCE
+         if (CHKw(w, (View_CPUSUM | View_CPUNOD)))
+            w->double_up = 0;
+#else
+         if (w->double_up)
+            OFFw(w, (View_CPUSUM | View_CPUNOD));
+#endif
          break;
       case 'C':
          VIZTOGw(w, View_SCROLL);
@@ -5241,7 +5269,7 @@ static void do_key (int ch) {
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
-         { '1', '2', '3', 'C', 'l', 'm', 't', '\0' } },
+         { '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,
          { '#', '<', '>', 'b', 'c', 'i', 'J', 'j', 'n', 'O', 'o'
          , 'R', 'S', 'U', 'u', 'V', 'v', 'x', 'y', 'z'
@@ -5302,6 +5330,31 @@ all_done:
 
 
         /*
+         * Cpu *Helper* function to combine and or show the state
+         * percentages for 1 cpu or 2 adjacent cpus (one single line). */
+static inline int sum_cpu (const char *str, int nobuf) {
+   static char row[ROWMINSIZ];
+   static int tog;
+   char *p;
+
+   p = scat(row, str);
+   if (nobuf || !Curwin->double_up)
+      goto flush_it;
+   if (!tog) {
+      scat(p, Double_sp);
+      tog = 1;
+      return 0;
+   }
+flush_it:
+   scat(p, "\n");
+   show_special(0, row);
+   row[0] = '\0';
+   tog = 0;
+   return 1;
+} // end: sum_cpu
+
+
+        /*
          * State display *Helper* function to calc and display the state
          * percentages for a single cpu.  In this way, we can support
          * the following environments without the usual code bloat.
@@ -5309,11 +5362,12 @@ all_done:
          *    2) modest smp boxes with room for each cpu's percentages
          *    3) massive smp guys leaving little or no room for process
          *       display and thus requiring the cpu summary toggle */
-static void summary_hlp (struct stat_stack *this, const char *pfx) {
+static int summary_hlp (struct stat_stack *this, const char *pfx, int nobuf) {
   // a tailored 'results stack value' extractor macro
  #define rSv(E)  TIC_VAL(E, this)
    SIC_t idl_frme, tot_frme;
    float scale;
+   int n;
 
    idl_frme = rSv(stat_IL);
    tot_frme = rSv(stat_SUM_TOT);
@@ -5344,15 +5398,16 @@ static void summary_hlp (struct stat_stack *this, const char *pfx) {
       snprintf(syst, sizeof(syst), gtab[ix].syst, (int)((pct_syst * Graph_adj) + .4), gtab[ix].type);
 #endif
       snprintf(dual, sizeof(dual), "%s%s", user, syst);
-      show_special(0, fmtmk("%%%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1\n"
-         , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, dual));
+      n = sum_cpu(fmtmk("%%%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1"
+         , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, dual), nobuf);
    } else {
-      show_special(0, fmtmk(Cpu_States_fmts, pfx
+      n = sum_cpu(fmtmk(Cpu_States_fmts, pfx
          , (float)rSv(stat_US) * scale, (float)rSv(stat_SY) * scale
          , (float)rSv(stat_NI) * scale, (float)idl_frme * scale
          , (float)rSv(stat_IO) * scale, (float)rSv(stat_IR) * scale
-         , (float)rSv(stat_SI) * scale, (float)rSv(stat_ST) * scale));
+         , (float)rSv(stat_SI) * scale, (float)rSv(stat_ST) * scale), nobuf);
    }
+   return n;
  #undef rSv
 } // end: summary_hlp
 
@@ -5395,16 +5450,14 @@ static void summary_show (void) {
          if (Numa_node_sel < 0) {
 numa_oops:
             // display the 1st /proc/stat line, then the nodes (if room)
-            summary_hlp(Stat_reap->summary, N_txt(WORD_allcpus_txt));
-            Msg_row += 1;
+            Msg_row += summary_hlp(Stat_reap->summary, N_txt(WORD_allcpus_txt), 1);
             // display each cpu node's states
             for (i = 0; i < Numa_node_tot; i++) {
                struct stat_stack *nod_ptr = Stat_reap->nodes->stacks[i];
                if (NOD_VAL(stat_ID, i) == STAT_NODE_INVALID) continue;
                if (!isROOM(anyFLG, 1)) break;
                snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), NOD_VAL(stat_ID, i));
-               summary_hlp(nod_ptr, tmp);
-               Msg_row += 1;
+               Msg_row += summary_hlp(nod_ptr, tmp, 1);
             }
          } else {
             // display the node summary, then the associated cpus (if room)
@@ -5412,14 +5465,12 @@ numa_oops:
                if (Numa_node_sel == NOD_VAL(stat_ID, i)) break;
             if (i == Numa_node_tot) goto numa_oops;
             snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
-            summary_hlp(Stat_reap->nodes->stacks[Numa_node_sel], tmp);
-            Msg_row += 1;
+            Msg_row += summary_hlp(Stat_reap->nodes->stacks[Numa_node_sel], tmp, 1);
             for (i = 0; i < Cpu_cnt; i++) {
                if (Numa_node_sel == CPU_VAL(stat_NU, i)) {
                   if (!isROOM(anyFLG, 1)) break;
                   snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
-                  summary_hlp(Stat_reap->cpus->stacks[i], tmp);
-                  Msg_row += 1;
+                  Msg_row += summary_hlp(Stat_reap->cpus->stacks[i], tmp, 1);
                }
             }
          }
@@ -5428,15 +5479,12 @@ numa_oops:
 numa_nope:
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
-         summary_hlp(Stat_reap->summary, N_txt(WORD_allcpus_txt));
-         Msg_row += 1;
-
+         Msg_row += summary_hlp(Stat_reap->summary, N_txt(WORD_allcpus_txt), 1);
       } else {
          // display each cpu's states separately, screen height permitting...
          for (i = 0; i < Cpu_cnt; i++) {
             snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
-            summary_hlp(Stat_reap->cpus->stacks[i], tmp);
-            Msg_row += 1;
+            Msg_row += summary_hlp(Stat_reap->cpus->stacks[i], tmp, (i+1 >= Cpu_cnt));
             if (!isROOM(anyFLG, 1)) break;
          }
       }

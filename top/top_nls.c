@@ -506,6 +506,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[LIB_errorpid_fmt] = _("library failed pids statistics, at %d: %s");
    Norm_nlstab[BAD_memscale_fmt] = _("bad memory scaling arg '%c'");
    Norm_nlstab[XTRA_vforest_fmt] = _("PID to collapse/expand [default pid = %d]");
+   Norm_nlstab[XTRA_size2up_txt] = _("terminal is not wide enough");
 }
 
 
@@ -555,8 +556,8 @@ static void build_uniq_nlstab (void) {
       "Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; ~1Secure mode ~3%s~2.\n"
       "\n"
       "  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' summary/task memory scale\n"
-      "  l,t,m     Toggle Summary: '~1l~2' load avg; '~1t~2' task/cpu stats; '~1m~2' memory info\n"
-      "  0,1,2,3,I Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpus or numa node views; '~1I~2' Irix mode\n"
+      "  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; '~1I~2' Irix mode\n"
+      "  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; '~14~2' cpus two abreast\n"
       "  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase fixed-width\n"
       "\n"
       "  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n"
@@ -663,13 +664,13 @@ static void build_uniq_nlstab (void) {
    .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
    .                 hi hardware interrupt, si = software interrupt */
    Uniq_nlstab[STATE_lin2x6_fmt] = _("%%%s~3"
-      " %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n");
+      " %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3");
 
 /* Translation Hint: Only the following abbreviations need be translated
    .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
    .                 hi hardware interrupt, si = software interrupt, st = steal time */
    Uniq_nlstab[STATE_lin2x7_fmt] = _("%%%s~3"
-      "%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n");
+      "%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3");
 
 /* Translation Hint: this must be translated as 2 lines with words above & below aligned */
    Uniq_nlstab[MEMORY_lines_fmt] = _(""
