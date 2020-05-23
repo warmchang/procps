@@ -1125,7 +1125,7 @@ depending on the context in which they are issued.
         <Ent/Sp> ?, =, 0,
         A, B, d, E, e, g, h, H, I, k, q, r, s, W, X, Y, Z
   4b.\fI Summary-Area-Commands \fR
-        C, l, t, m, 1, 2, 3, 4
+        C, l, t, m, 1, 2, 3, 4, !
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, J, j, x, y, z
         Content:     c, f, F, o, O, S, u, U, V, v
@@ -1171,12 +1171,12 @@ Typing `h' or `?' on that help screen will take you to help for
 those \*(CIs applicable to \*(AM.
 
 .TP 7
-\ \ \ \fB=\fR\ \ :\fIExit-Task-Limits \fR
-Removes restrictions on which tasks are shown.
+\ \ \ \fB=\fR\ \ :\fIExit-Display-Limits \fR
+Removes restrictions on what is shown.
 This command will reverse any `i' (idle tasks), `n' (max tasks)
 and `v' (hide children) commands that might be active.
 It also provides for an exit from PID monitoring, User filtering,
-Other filtering and Locate processing.
+Other filtering, Locate processing and Combine Cpus mode.
 
 Additionally, if the window has been scrolled it will be reset with
 this command.
@@ -1470,6 +1470,25 @@ but prints the results two abreast.
 It requires a terminal with a minimum width of 165 columns.
 If a terminal's width is decreased below the minimum while \*(We
 is running, \*(We reverts to the normal `1' toggle \*F state.
+
+.TP 7
+\ \ \ \fB!\fR\ \ :\fICombine-Cpus-Mode \fR
+This \*(CT is intended for massively parallel SMP environments where,
+even with the `4' \*(CT, not all processors can be displayed.
+With each press of `!' the number of adjacent \*(Pu's combined is
+doubled thus reducing the total number of \*(Pu lines displayed.
+
+For example, with the first press of `!' one adjacent \*(Pu will be
+combined and displayed as `0-1, 2-3, ...' instead of the normal
+`%Cpu0, %Cpu1, %Cpu2, %Cpu3, ...'.
+With a second `!' \*(CT two adjacent \*(Pus are combined and shown
+as `0-2, 3-5, ...'.
+Then the third '!' press, combining four adjacent \*(Pus, shows
+as `0-4, 5-7, ...', etc.
+
+Such progression continues until individual \*(Pus are again displayed
+and impacts both the `1' and `4' toggles (one or two columns).
+Use the `=' \*(CT to exit \fBCombine Cpus\fR mode.
 
 .PP
 \*(NT If the entire \*(SA has been toggled \*F for any window, you would
@@ -1794,21 +1813,19 @@ If all 4 \*(TDs are currently visible, this \*(CI will leave the \*(SA
 as the only display element.
 
 .TP 7
-*\ \ \fB=\fR | \fB+\fR\ \ :\fIEqualize-(reinitialize)-Window(s) \fR
+*\ \ \fB=\fR | \fB+\fR\ \ :\fIEqualize/Reset-Window(s) \fR
 The `=' key forces the \*(CW's \*(TD to be visible.
 It also reverses any active `i' (idle tasks), `n' (max tasks), `u/U'
-(user filter), `o/O' (other filter), `v' (hide children) and 'L' (locate)
-commands.
+(user filter), `o/O' (other filter), `v' (hide children), `L' (locate)
+and `!' (combine cpus) commands.
 Also, if the window had been scrolled, it will be reset with this command.
 \*(XT 5c. SCROLLING a Window for additional information regarding vertical
 and horizontal scrolling.
 
 The `+' key does the same for all windows.
-The four \*(TDs will reappear, evenly balanced.
-They will also have retained any customizations you had previously
-applied, except for the `i' (idle tasks), `n' (max tasks), `u/U'
-(user filter), `o/O' (other filter), `v' (hide children), `L' (locate)
-and scrolling \*(CIs.
+The four \*(TDs will reappear, evenly balanced, while retaining
+any customizations previously applied beyond those noted
+for the `=' \*(CT.
 
 .TP 7
 *\ \ \fBA\fR\ \ :\fIAlternate-Display-Mode\fR toggle \fR
