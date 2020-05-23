@@ -416,11 +416,11 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[WORD_process_txt] = _("Tasks");
 /* Translation Hint: The following "word" is meant to represent either a single
    .                 cpu or all of the processors in a multi-processor computer
-   .                 (should be exactly 6 characters, not counting the colon)*/
-   Norm_nlstab[WORD_allcpus_txt] = _("Cpu(s):");
+   .                 (should be exactly 6 characters, excluding leading % & colon) */
+   Norm_nlstab[WORD_allcpus_txt] = _("%Cpu(s):");
 /* Translation Hint: The following "word" is meant to represent a single processor
-   .                 (should be exactly 3 characters) */
-   Norm_nlstab[WORD_eachcpu_fmt] = _("Cpu%-3d:");
+   .                 (should be exactly 3 characters, excluding leading %%, fmt chars & colon) */
+   Norm_nlstab[WORD_eachcpu_fmt] = _("%%Cpu%-3d:");
 /* Translation Hint: The following word "another" must have 1 trailing space */
    Norm_nlstab[WORD_another_txt] = _("another ");
    Norm_nlstab[FIND_no_next_txt] = _("Locate next inactive, use \"L\"");
@@ -490,8 +490,9 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[WORD_exclude_txt] = _("exclude");
    Norm_nlstab[OSEL_statlin_fmt] = _("<Enter> to resume, filters: %s");
    Norm_nlstab[WORD_noneone_txt] = _("none");
-/* Translation Hint: The following word 'Node' should be exactly 4 characters */
-   Norm_nlstab[NUMA_nodenam_fmt] = _("Node%-2d:");
+/* Translation Hint: The following word 'Node' should be exactly
+                     4 characters, excluding leading %%, fmt chars & colon) */
+   Norm_nlstab[NUMA_nodenam_fmt] = _("%%Node%-2d:");
    Norm_nlstab[NUMA_nodeget_fmt] = _("expand which node (0-%d)");
    Norm_nlstab[NUMA_nodebad_txt] = _("invalid node");
    Norm_nlstab[NUMA_nodenot_txt] = _("sorry, NUMA extensions unavailable");
@@ -507,6 +508,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[BAD_memscale_fmt] = _("bad memory scaling arg '%c'");
    Norm_nlstab[XTRA_vforest_fmt] = _("PID to collapse/expand [default pid = %d]");
    Norm_nlstab[XTRA_size2up_txt] = _("terminal is not wide enough");
+   Norm_nlstab[XTRA_modebad_txt] = _("wrong mode, command inactive");
 }
 
 
@@ -570,7 +572,7 @@ static void build_uniq_nlstab (void) {
       "  V,v     . Toggle: '~1V~2' forest view; '~1v~2' hide/show forest view children\n"
       "\n"
       "%s"
-      "  W,Y       Write configuration file '~1W~2'; Inspect other output '~1Y~2'\n"
+      "  W,Y,!     Write config file '~1W~2'; Inspect other output '~1Y~2'; Combine Cpus '~1!~2'\n"
       "  q         Quit\n"
       "          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
       "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
@@ -663,13 +665,13 @@ static void build_uniq_nlstab (void) {
 /* Translation Hint: Only the following abbreviations need be translated
    .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
    .                 hi hardware interrupt, si = software interrupt */
-   Uniq_nlstab[STATE_lin2x6_fmt] = _("%%%s~3"
+   Uniq_nlstab[STATE_lin2x6_fmt] = _("%s~3"
       " %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3");
 
 /* Translation Hint: Only the following abbreviations need be translated
    .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
    .                 hi hardware interrupt, si = software interrupt, st = steal time */
-   Uniq_nlstab[STATE_lin2x7_fmt] = _("%%%s~3"
+   Uniq_nlstab[STATE_lin2x7_fmt] = _("%s~3"
       "%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3");
 
 /* Translation Hint: this must be translated as 2 lines with words above & below aligned */

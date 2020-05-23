@@ -356,6 +356,7 @@ typedef struct WIN_t {
    char  *findstr;                     // window's current/active search string
    int    findlen;                     // above's strlen, without call overhead
    int    double_up;                   // show individual cpus 2 abreast
+   int    combine_cpus;                // keep combining adjacent cpus
    struct pids_stack **ppt;            // this window's stacks ptr array
    struct WIN_t *next,                 // next window in window stack
                 *prev;                 // prior window in window stack
@@ -668,10 +669,12 @@ typedef struct WIN_t {
 //atic void          keys_task (int ch);
 //atic void          keys_window (int ch);
 //atic void          keys_xtra (int ch);
+/*------  Cpu Display Secondary Support (summary_show helpers)  ----------*/
+//atic inline int    cpu_prt (const char *str, int nobuf);
+//atic int           cpu_tics (struct stat_stack *this, const char *pfx, int nobuf);
+//atic int           cpu_unify (struct stat_stack *this, int nobuf);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void          do_key (int ch);
-//atic inline int    sum_cpu (const char *str, int nobuf);
-//atic int           summary_hlp (struct stat_stack *this, const char *pfx, int nobuf);
 //atic void          summary_show (void);
 //atic const char   *task_show (const WIN_t *q, struct pids_stack *p);
 //atic void          window_hlp (void);
