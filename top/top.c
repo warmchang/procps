@@ -2336,8 +2336,12 @@ static void cpus_refresh (void) {
       Numa_node_tot = Stat_reap->nodes->total;
       Numa_node_sel = -1;
    }
-   if (Stat_reap->cpus->total && Stat_reap->cpus->total != Cpu_cnt)
+   if (Stat_reap->cpus->total && Stat_reap->cpus->total != Cpu_cnt) {
       Cpu_cnt = Stat_reap->cpus->total;
+#ifdef PRETEND48CPU
+      Cpu_cnt = 48;
+#endif
+   }
    return;
 } // end: cpus_refresh
 
@@ -3233,6 +3237,9 @@ static void before (char *me) {
       error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
    Numa_node_tot = Stat_reap->nodes->total;
    Cpu_cnt = Stat_reap->cpus->total;
+#ifdef PRETEND48CPU
+   Cpu_cnt = 48;
+#endif
 
    // prepare for memory stats from new library API ...
    if ((rc = procps_meminfo_new(&Mem_ctx)))
@@ -5516,7 +5523,11 @@ numa_oops:
             if (i == Numa_node_tot) goto numa_oops;
             snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
             Msg_row += cpu_tics(Stat_reap->nodes->stacks[Numa_node_sel], tmp, 1);
+#ifdef PRETEND48CPU
+            for (i = 0; i < Stat_reap->cpus->total; i++) {
+#else
             for (i = 0; i < Cpu_cnt; i++) {
+#endif
                if (Numa_node_sel == CPU_VAL(stat_NU, i)) {
                   if (!isROOM(anyFLG, 1)) break;
                   snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
@@ -5534,13 +5545,23 @@ numa_nope:
          // display each cpu's states separately, screen height permitting...
          if (w->combine_cpus) {
             for (i = 0; i < Cpu_cnt; i++) {
+#ifdef PRETEND48CPU
+               Stat_reap->summary->head[stat_ID].result.s_int = i;
+               Msg_row += cpu_unify(Stat_reap->summary, (i+1 >= Cpu_cnt));
+#else
                Msg_row += cpu_unify(Stat_reap->cpus->stacks[i], (i+1 >= Cpu_cnt));
+#endif
                if (!isROOM(anyFLG, 1)) break;
             }
          } else {
             for (i = 0; i < Cpu_cnt; i++) {
+#ifdef PRETEND48CPU
+               snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), i);
+               Msg_row += cpu_tics(Stat_reap->summary, tmp, (i+1 >= Cpu_cnt));
+#else
                snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
                Msg_row += cpu_tics(Stat_reap->cpus->stacks[i], tmp, (i+1 >= Cpu_cnt));
+#endif
                if (!isROOM(anyFLG, 1)) break;
             }
          }

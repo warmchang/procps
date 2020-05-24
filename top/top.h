@@ -38,6 +38,7 @@
 //#define OFF_STDERROR            /* disable our stderr buffering (redirect) */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
 //#define OFF_XTRAWIDE            /* disable our extra wide multi-byte logic */
+//#define PRETEND48CPU            /* pretend we're smp with 48 ticsers (sic) */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define QUICK_GRAPHS            /* use fast algorithm, accept +2% distort  */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
