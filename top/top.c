@@ -2547,7 +2547,7 @@ static void cpus_refresh (void) {
    // now value each separate cpu's tics...
    for (i = 0; i < sumSLOT; i++) {
       CPU_t *cpu_ptr = &Cpu_tics[i];           // avoid gcc subscript bloat
-#ifdef PRETEND8CPUS
+#ifdef PRETEND48CPU
       bp = buf;
 #endif
       bp = 1 + strchr(bp, '\n');
@@ -2563,7 +2563,7 @@ static void cpus_refresh (void) {
 #ifndef CPU_ZEROTICS
       cpu_ptr->edge = sum_ptr->edge;
 #endif
-#ifdef PRETEND8CPUS
+#ifdef PRETEND48CPU
       cpu_ptr->id = i;
 #endif
       /* henceforth, with just a little more arithmetic we can avoid
@@ -2822,7 +2822,7 @@ static void sysinfo_refresh (int forced) {
    /*** hotplug_acclimated ***/
    if (3 <= cur_secs - sav_secs) {
       meminfo();
-#ifndef PRETEND8CPUS
+#ifndef PRETEND48CPU
       cpuinfo();
 #endif
       Numa_node_tot = numa_max_node() + 1;
@@ -3644,8 +3644,8 @@ static void before (char *me) {
 
    // establish cpu particulars
    cpuinfo();
-#ifdef PRETEND8CPUS
-   smp_num_cpus = 8;
+#ifdef PRETEND48CPU
+   smp_num_cpus = 48;
 #endif
    Cpu_States_fmts = N_unq(STATE_lin2x4_fmt);
    if (linux_version_code > LINUX_VERSION(2, 5, 41))

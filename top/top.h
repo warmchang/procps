@@ -45,7 +45,7 @@
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
 //#define OFF_XTRAWIDE            /* disable our extra wide multi-byte logic */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
-//#define PRETEND8CPUS            /* pretend we're smp with 8 ticsers (sic)  */
+//#define PRETEND48CPU            /* pretend we're smp with 48 ticsers (sic) */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */
 //#define QUICK_GRAPHS            /* use fast algorithm, accept +2% distort  */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
