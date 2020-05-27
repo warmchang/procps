@@ -3472,6 +3472,8 @@ static int config_osel (FILE *fp, char *buf, size_t size) {
 
       if (2 != sscanf(buf, Osel_window_fmts, &wno, &tot))
          goto end_oops;
+      if (wno < 0 || wno >= GROUPSMAX) goto end_oops;
+      if (tot < 0) goto end_oops;
 
       for (i = 0; i < tot; i++) {
          if (!fgets(buf, size, fp)) return 1;
@@ -3561,16 +3563,21 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
          case 'a':                          // 3.2.8 (former procps)
             if (config_cvt(w))
                return p;
+         // fall through
          case 'f':                          // 3.3.0 thru 3.3.3 (ng)
             SETw(w, Show_JRNUMS);
+         // fall through
          case 'g':                          // from 3.3.4 thru 3.3.8
             scat(w->rc.fieldscur, RCF_PLUS_H);
+         // fall through
          case 'h':                          // this is release 3.3.9
             w->rc.graph_cpus = w->rc.graph_mems = 0;
             // these next 2 are really global, but best documented here
             Rc.summ_mscale = Rc.task_mscale = SK_Kb;
+         // fall through
          case 'i':                          // actual RCF_VERSION_ID
             scat(w->rc.fieldscur, RCF_PLUS_J);
+         // fall through
          case 'j':                          // and the next version
          default:
             if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
@@ -4597,7 +4604,7 @@ static void other_filters (int ch) {
 
             i = 0;
             osel = w->osel_1st;
-            pp = alloc_c((w->osel_tot + 1) * sizeof(char **));
+            pp = alloc_c((w->osel_tot + 1) * sizeof(char *));
             while (osel && i < w->osel_tot) {
                pp[i++] = osel->raw;
                osel = osel->nxt;
