@@ -237,7 +237,11 @@ static const char Osel_filterI_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%*s\n";
         /* Support for 2 abreast Cpu display (if terminal is wide enough) */
 static char Double_sp[] =  "     ";
 #define DOUBLE_space  (sizeof(Double_sp) - 1)
-#define DOUBLE_limit  (160 + DOUBLE_space)
+#ifdef TOG4_NOTRUNC
+ #define DOUBLE_limit  (160 + DOUBLE_space)
+#else
+ #define DOUBLE_limit  ( 80 )
+#endif
 
 /*######  Sort callbacks  ################################################*/
 
