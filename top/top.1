@@ -1467,28 +1467,32 @@ This \*(CI is only available if a system has the requisite NUMA support.
 \ \ \ \fB4\fR\ \ :\fIDisplay-Cpus-Two-Abreast \fR
 This command turns the `1' toggle \*F for individual \*(Pu display
 but prints the results two abreast.
-It requires a terminal with a minimum width of 165 columns.
+It requires a terminal with a minimum width of 80 columns.
 If a terminal's width is decreased below the minimum while \*(We
 is running, \*(We reverts to the normal `1' toggle \*F state.
+
+To avoid truncation when displaying detailed \*(Pu statistcs,
+as opposed to the graphic representations, a minimum width
+of 165 columns would be required.
 
 .TP 7
 \ \ \ \fB!\fR\ \ :\fICombine-Cpus-Mode \fR
 This \*(CT is intended for massively parallel SMP environments where,
 even with the `4' \*(CT, not all processors can be displayed.
-With each press of `!' the number of adjacent \*(Pu's combined is
+With each press of `!' the number of additional \*(Pu's combined is
 doubled thus reducing the total number of \*(Pu lines displayed.
 
-For example, with the first press of `!' one adjacent \*(Pu will be
+For example, with the first press of `!' one additional \*(Pu will be
 combined and displayed as `0-1, 2-3, ...' instead of the normal
 `%Cpu0, %Cpu1, %Cpu2, %Cpu3, ...'.
-With a second `!' \*(CT two adjacent \*(Pus are combined and shown
+With a second `!' \*(CT two additional \*(Pus are combined and shown
 as `0-2, 3-5, ...'.
-Then the third '!' press, combining four adjacent \*(Pus, shows
-as `0-4, 5-7, ...', etc.
+Then the third '!' press, combining four additional \*(Pus, shows
+as `0-4, 5-9, ...', etc.
 
 Such progression continues until individual \*(Pus are again displayed
 and impacts both the `1' and `4' toggles (one or two columns).
-Use the `=' \*(CT to exit \fBCombine Cpus\fR mode.
+Use the `=' command to exit \fBCombine Cpus\fR mode.
 
 .PP
 \*(NT If the entire \*(SA has been toggled \*F for any window, you would

@@ -48,6 +48,7 @@
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
 //#define TOG4_NOFORCE            /* no force 2 abreast mode with '4' toggle */
+//#define TOG4_NOTRUNC            /* ensure no truncation in 2 abreast mode  */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
 //#define TREE_SCANALL            /* rescan array w/ forest view, avoid sort */
 //#define TREE_VALTMRK            /* use an indented '+' with collapsed pids */
@@ -357,7 +358,7 @@ typedef struct WIN_t {
    char  *findstr;                     // window's current/active search string
    int    findlen;                     // above's strlen, without call overhead
    int    double_up;                   // show individual cpus 2 abreast
-   int    combine_cpus;                // keep combining adjacent cpus
+   int    combine_cpus;                // keep combining additional cpus
    struct pids_stack **ppt;            // this window's stacks ptr array
    struct WIN_t *next,                 // next window in window stack
                 *prev;                 // prior window in window stack
