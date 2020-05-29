@@ -82,6 +82,7 @@ static sigset_t Sigwinch_set;
 static char  Rc_name [OURPATHSZ];
 static RCF_t Rc = DEF_RCFILE;
 static int   Rc_questions;
+static int   Rc_compatibilty;
 
         /* SMP, Irix/Solaris mode, Linux 2.5.xx support (and beyond) */
 static long        Hertz;
@@ -3613,6 +3614,10 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
    if (Rc.zero_suppress < 0 || Rc.zero_suppress > 1)
       Rc.zero_suppress = 0;
 
+   // prepare to warn that older top can no longer read rcfile ...
+   if (Rc.id != RCF_VERSION_ID)
+      Rc_compatibilty = 1;
+
    // lastly, let's process any optional glob(s) ...
    // (darn, must do osel 1st even though alphabetically 2nd)
    fbuf[0] = '\0';
@@ -4637,6 +4642,12 @@ static void write_rcfile (void) {
       if ('y' != tolower(iokey(1)))
          return;
       Rc_questions = 0;
+   }
+   if (Rc_compatibilty) {
+      show_pmt(N_txt(XTRA_warnold_txt));
+      if ('y' != tolower(iokey(1)))
+         return;
+      Rc_compatibilty = 0;
    }
    if (!(fp = fopen(Rc_name, "w"))) {
       show_msg(fmtmk(N_fmt(FAIL_rc_open_fmt), Rc_name, strerror(errno)));

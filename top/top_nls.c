@@ -509,6 +509,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[XTRA_vforest_fmt] = _("PID to collapse/expand [default pid = %d]");
    Norm_nlstab[XTRA_size2up_txt] = _("terminal is not wide enough");
    Norm_nlstab[XTRA_modebad_txt] = _("wrong mode, command inactive");
+   Norm_nlstab[XTRA_warnold_txt] = _("saving prevents older top from reading, save anyway?");
 }
 
 
