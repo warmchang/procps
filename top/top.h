@@ -373,6 +373,8 @@ typedef struct RCW_t {  // the 'window' portion of an rcfile
           maxtasks,               // user requested maximum, 0 equals all
           graph_cpus,             // 't' - View_STATES supplementary vals
           graph_mems,             // 'm' - View_MEMORY supplememtary vals
+          double_up,              // '4' - show individual cpus 2 abreast
+          combine_cpus,           // '!' - keep combining additional cpus
           summclr,                // a colors 'number' used for summ info
           msgsclr,                //             "           in msgs/pmts
           headclr,                //             "           in cols head
@@ -437,8 +439,6 @@ typedef struct WIN_t {
    int    osel_tot;                    // total of other selection criteria
    char  *findstr;                     // window's current/active search string
    int    findlen;                     // above's strlen, without call overhead
-   int    double_up;                   // show individual cpus 2 abreast
-   int    combine_cpus;                // keep combining additional cpus
    proc_t **ppt;                       // this window's proc_t ptr array
    struct WIN_t *next,                 // next window in window stack
                 *prev;                 // prior window in window stack
@@ -595,13 +595,8 @@ typedef struct WIN_t {
 #define SYS_RCDEFAULTS  "/etc/topdefaultrc"
 #define RCF_EYECATCHER  "Config File (Linux processes with windows)\n"
 #define RCF_PLUS_H      "\\]^_`abcdefghij"
-#ifdef VER_J_RCFILE
 #define RCF_PLUS_J      "klmnopqrstuvwxyz"
 #define RCF_VERSION_ID  'j'
-#else
-#define RCF_VERSION_ID  'i'
-#define RCF_PLUS_J      ""
-#endif
 
         /* The default fields displayed and their order, if nothing is
            specified by the loser, oops user.
@@ -630,16 +625,16 @@ typedef struct WIN_t {
         /* The default values for the local config file */
 #define DEF_RCFILE { \
    RCF_VERSION_ID, 0, 1, DEF_DELAY, 0, { \
-   { EU_CPU, DEF_WINFLGS, 0, DEF_GRAPHS2, \
+   { EU_CPU, DEF_WINFLGS, 0, DEF_GRAPHS2, 1, 0, \
       COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED, \
       "Def", DEF_FIELDS }, \
-   { EU_PID, ALT_WINFLGS, 0, ALT_GRAPHS2, \
+   { EU_PID, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, \
       COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, COLOR_CYAN, \
       "Job", JOB_FIELDS }, \
-   { EU_MEM, ALT_WINFLGS, 0, ALT_GRAPHS2, \
+   { EU_MEM, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, \
       COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA, \
       "Mem", MEM_FIELDS }, \
-   { EU_UEN, ALT_WINFLGS, 0, ALT_GRAPHS2, \
+   { EU_UEN, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, \
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
    }, 0, DEF_SCALES2, 0 }
