@@ -1777,8 +1777,8 @@ static void adj_geometry (void) {
    if (Graph_len >= 0) Graph_len = GRAPH_actual;
    else if (Screen_cols > 80) Graph_len = Screen_cols - GRAPH_prefix - GRAPH_suffix;
    else Graph_len = 80 - GRAPH_prefix - GRAPH_suffix;
-   if (Screen_cols < DOUBLE_limit) Curwin->double_up = 0;
-   if (Curwin->double_up) {
+   if (Screen_cols < DOUBLE_limit) Curwin->rc.double_up = 0;
+   if (Curwin->rc.double_up) {
       Graph_len = (Screen_cols - DOUBLE_space - (2 * (GRAPH_prefix + + GRAPH_suffix))) / 2;
       if (Graph_len > GRAPH_actual) Graph_len = GRAPH_actual;
    }
@@ -3543,8 +3543,10 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
  #error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
 #endif
       // be tolerant of missing release 3.3.10 graph modes additions
-      if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d\n"
-         , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks, &w->rc.graph_cpus, &w->rc.graph_mems))
+      if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d"
+                         ", double_up=%d, combine_cpus=%d\n"
+         , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks, &w->rc.graph_cpus, &w->rc.graph_mems
+         , &w->rc.double_up, &w->rc.combine_cpus))
             return p;
       if (w->rc.sortindx < 0 || w->rc.sortindx >= EU_MAXPFLGS)
          return p;
@@ -3553,6 +3555,11 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
       if (w->rc.graph_cpus < 0 || w->rc.graph_cpus > 2)
          return p;
       if (w->rc.graph_mems < 0 || w->rc.graph_mems > 2)
+         return p;
+      if (w->rc.double_up < 0 || w->rc.double_up > 1)
+         return p;
+      // can't check upper bounds until Cpu_cnt is known
+      if (w->rc.combine_cpus < 0)
          return p;
 
       if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
@@ -3580,10 +3587,10 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
             // these next 2 are really global, but best documented here
             Rc.summ_mscale = Rc.task_mscale = SK_Kb;
          // fall through
-         case 'i':                          // actual RCF_VERSION_ID
+         case 'i':                          // from 3.3.10 thru 3.3.16
             scat(w->rc.fieldscur, RCF_PLUS_J);
          // fall through
-         case 'j':                          // and the next version
+         case 'j':                          // current RCF_VERSION_ID
          default:
             if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
                return p;
@@ -3657,7 +3664,7 @@ static int configs_path (const char *const fmts, ...) {
          *     line 2  : an id, Mode_altcsr, Mode_irixps, Delay_time, Curwin.
          *     For each of the 4 windows:
          *       line a: contains w->winname, fieldscur
-         *       line b: contains w->winflags, sortindx, maxtasks, graph modes
+         *       line b: contains w->winflags, sortindx, maxtasks, etc
          *       line c: contains w->summclr, msgsclr, headclr, taskclr
          *     line 15 : miscellaneous additional global settings
          *     Any remaining lines are devoted to the optional entries
@@ -4014,7 +4021,7 @@ static void win_reset (WIN_t *q) {
          // NOHISEL_xxx is redundant (already turned off by osel_clear)
          OFFw(q, NOHIFND_xxx | NOHISEL_xxx);
 #endif
-         q->combine_cpus = 0;
+         q->rc.combine_cpus = 0;
 } // end: win_reset
 
 
@@ -4261,6 +4268,8 @@ static void wins_stage_2 (void) {
       capsmk(&Winstk[i]);
       Winstk[i].findstr = alloc_c(FNDBUFSIZ);
       Winstk[i].findlen = 0;
+      if (Winstk[i].rc.combine_cpus >= Cpu_cnt)
+         Winstk[i].rc.combine_cpus = 0;
    }
    if (!Batch)
       putp((Cursor_state = Cap_curs_hide));
@@ -4664,9 +4673,11 @@ static void write_rcfile (void) {
    for (i = 0 ; i < GROUPSMAX; i++) {
       fprintf(fp, "%s\tfieldscur=%s\n"
          , Winstk[i].rc.winname, Winstk[i].rc.fieldscur);
-      fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d\n"
+      fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d"
+                  ", double_up=%d, combine_cpus=%d\n"
          , Winstk[i].rc.winflags, Winstk[i].rc.sortindx, Winstk[i].rc.maxtasks
-         , Winstk[i].rc.graph_cpus,  Winstk[i].rc.graph_mems);
+         , Winstk[i].rc.graph_cpus,  Winstk[i].rc.graph_mems
+         , Winstk[i].rc.double_up,  Winstk[i].rc.combine_cpus);
       fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
          , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
          , Winstk[i].rc.headclr, Winstk[i].rc.taskclr);
@@ -4840,9 +4851,9 @@ static void keys_summary (int ch) {
          if (CHKw(w, View_CPUSUM) || CHKw(w, View_CPUNOD))
             show_msg(N_txt(XTRA_modebad_txt));
          else {
-            if (!w->combine_cpus) w->combine_cpus = 1;
-            else w->combine_cpus *= 2;
-            if (w->combine_cpus >= Cpu_cnt) w->combine_cpus = 0;
+            if (!w->rc.combine_cpus) w->rc.combine_cpus = 1;
+            else w->rc.combine_cpus *= 2;
+            if (w->rc.combine_cpus >= Cpu_cnt) w->rc.combine_cpus = 0;
          }
          break;
       case '1':
@@ -4850,7 +4861,7 @@ static void keys_summary (int ch) {
          else TOGw(w, View_CPUSUM);
          OFFw(w, View_CPUNOD);
          SETw(w, View_STATES);
-         w->double_up = 0;
+         w->rc.double_up = 0;
          break;
       case '2':
          if (!Numa_node_tot)
@@ -4860,7 +4871,7 @@ static void keys_summary (int ch) {
             if (!CHKw(w, View_CPUNOD)) SETw(w, View_CPUSUM);
             SETw(w, View_STATES);
             Numa_node_sel = -1;
-            w->double_up = 0;
+            w->rc.double_up = 0;
          }
          break;
       case '3':
@@ -4873,24 +4884,24 @@ static void keys_summary (int ch) {
                   Numa_node_sel = num;
                   SETw(w, View_CPUNOD | View_STATES);
                   OFFw(w, View_CPUSUM);
-                  w->double_up = 0;
+                  w->rc.double_up = 0;
                } else
                   show_msg(N_txt(NUMA_nodebad_txt));
             }
          }
          break;
       case '4':
-         w->double_up = !w->double_up;
-         if (w->double_up && Screen_cols < DOUBLE_limit) {
+         w->rc.double_up = !w->rc.double_up;
+         if (w->rc.double_up && Screen_cols < DOUBLE_limit) {
             show_msg(N_txt(XTRA_size2up_txt));
-            w->double_up = 0;
+            w->rc.double_up = 0;
             break;
          }
 #ifdef TOG4_NOFORCE
          if (CHKw(w, (View_CPUSUM | View_CPUNOD)))
-            w->double_up = 0;
+            w->rc.double_up = 0;
 #else
-         if (w->double_up)
+         if (w->rc.double_up)
             OFFw(w, (View_CPUSUM | View_CPUNOD));
 #endif
          break;
@@ -5305,7 +5316,7 @@ static inline int cpu_prt (const char *str, int nobuf) {
    char *p;
 
    p = scat(row, str);
-   if (nobuf || !Curwin->double_up)
+   if (nobuf || !Curwin->rc.double_up)
       goto flush_it;
    if (!tog) {
       scat(p, Double_sp);
@@ -5405,7 +5416,7 @@ static int cpu_unify (struct stat_stack *this, int nobuf) {
    stack[stat_SUM_TOT].result.sl_int += rSv(stat_SUM_TOT, sl_int);
 
    if (!ix) beg = rSv(stat_ID, s_int);
-   if (nobuf || ix >= Curwin->combine_cpus) {
+   if (nobuf || ix >= Curwin->rc.combine_cpus) {
       snprintf(pfx, sizeof(pfx), "%-7.7s:", fmtmk("%d-%d", beg, rSv(stat_ID, s_int)));
       n = cpu_tics(&accum, pfx, nobuf);
       memset(&stack, 0, sizeof(stack));
@@ -5565,7 +5576,7 @@ numa_nope:
          Msg_row += cpu_tics(Stat_reap->summary, N_txt(WORD_allcpus_txt), 1);
       } else {
          // display each cpu's states separately, screen height permitting...
-         if (w->combine_cpus) {
+         if (w->rc.combine_cpus) {
             for (i = 0; i < Cpu_cnt; i++) {
 #ifdef PRETEND48CPU
                Stat_reap->summary->head[stat_ID].result.s_int = i;
