@@ -96,6 +96,9 @@ static CPU_t      *Cpu_tics;
 static int         Cpu_faux_tot;
 static float       Cpu_pmax;
 static const char *Cpu_States_fmts;
+#ifdef PRETEND48CPU
+static int         Cpu_true_tot;
+#endif
 
         /* Specific process id monitoring support */
 static pid_t Monpids [MONPIDMAX+1] = { 0 };
@@ -2553,7 +2556,9 @@ static void cpus_refresh (void) {
    for (i = 0; i < sumSLOT; i++) {
       CPU_t *cpu_ptr = &Cpu_tics[i];           // avoid gcc subscript bloat
 #ifdef PRETEND48CPU
-      bp = buf;
+      int j;
+      if (i == 0) j = 0; else ++j;
+      if (j >= Cpu_true_tot) { bp = buf; j = 0; }
 #endif
       bp = 1 + strchr(bp, '\n');
       // remember from last time around
@@ -3650,6 +3655,7 @@ static void before (char *me) {
    // establish cpu particulars
    cpuinfo();
 #ifdef PRETEND48CPU
+   Cpu_true_tot = smp_num_cpus;
    smp_num_cpus = 48;
 #endif
    Cpu_States_fmts = N_unq(STATE_lin2x4_fmt);
@@ -5975,7 +5981,11 @@ static void summary_show (void) {
             // display the node summary, then the associated cpus (if room)
             snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
             Msg_row += cpu_tics(&Cpu_tics[1 + smp_num_cpus + Numa_node_sel], tmp, 1);
+#ifdef PRETEND48CPU
+            for (i = 0; i < Cpu_true_tot; i++) {
+#else
             for (i = 0; i < Cpu_faux_tot; i++) {
+#endif
                if (Numa_node_sel == Cpu_tics[i].node) {
                   if (!isROOM(anyFLG, 1)) break;
                   snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_tics[i].id);
