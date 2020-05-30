@@ -5576,28 +5576,38 @@ numa_nope:
          Msg_row += cpu_tics(Stat_reap->summary, N_txt(WORD_allcpus_txt), 1);
       } else {
          // display each cpu's states separately, screen height permitting...
+#ifdef PRETEND48CPU
+         if (w->rc.combine_cpus) {
+            int j;
+            for (i = 0, j = 0; i < Cpu_cnt; i++) {
+               Stat_reap->cpus->stacks[j]->head[stat_ID].result.s_int = i;
+               Msg_row += cpu_unify(Stat_reap->cpus->stacks[j], (i+1 >= Cpu_cnt));
+               if (++j >= Stat_reap->cpus->total) j = 0;
+               if (!isROOM(anyFLG, 1)) break;
+            }
+         } else {
+            int j;
+            for (i = 0, j = 0; i < Cpu_cnt; i++) {
+               snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), i);
+               Msg_row += cpu_tics(Stat_reap->cpus->stacks[j], tmp, (i+1 >= Cpu_cnt));
+               if (++j >= Stat_reap->cpus->total) j = 0;
+               if (!isROOM(anyFLG, 1)) break;
+            }
+         }
+#else
          if (w->rc.combine_cpus) {
             for (i = 0; i < Cpu_cnt; i++) {
-#ifdef PRETEND48CPU
-               Stat_reap->summary->head[stat_ID].result.s_int = i;
-               Msg_row += cpu_unify(Stat_reap->summary, (i+1 >= Cpu_cnt));
-#else
                Msg_row += cpu_unify(Stat_reap->cpus->stacks[i], (i+1 >= Cpu_cnt));
-#endif
                if (!isROOM(anyFLG, 1)) break;
             }
          } else {
             for (i = 0; i < Cpu_cnt; i++) {
-#ifdef PRETEND48CPU
-               snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), i);
-               Msg_row += cpu_tics(Stat_reap->summary, tmp, (i+1 >= Cpu_cnt));
-#else
                snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
                Msg_row += cpu_tics(Stat_reap->cpus->stacks[i], tmp, (i+1 >= Cpu_cnt));
-#endif
                if (!isROOM(anyFLG, 1)) break;
             }
          }
+#endif
       }
    } // end: View_STATES
 
