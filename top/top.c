@@ -4270,6 +4270,8 @@ static void wins_stage_2 (void) {
       Winstk[i].findlen = 0;
       if (Winstk[i].rc.combine_cpus >= Cpu_cnt)
          Winstk[i].rc.combine_cpus = 0;
+      if (CHKw(&Winstk[i], (View_CPUSUM | View_CPUNOD)))
+         Winstk[i].rc.double_up = 0;
    }
    if (!Batch)
       putp((Cursor_state = Cap_curs_hide));
