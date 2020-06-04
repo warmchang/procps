@@ -1,6 +1,6 @@
 .\"             -*-Nroff-*-
 .\"
-.TH W "1" "September 2015" "procps-ng" "User Commands"
+.TH W "1" "2020-06-04" "procps-ng" "User Commands"
 .SH NAME
 w \- Show who is logged on and what they are doing.
 .SH SYNOPSIS
@@ -30,8 +30,12 @@ Don't print the header.
 .TP
 \fB\-u\fR, \fB\-\-no\-current\fR
 Ignores the username while figuring out the
-current process and cpu times.  To demonstrate this, do a "su" and do a "w"
-and a "w \-u".
+current process and cpu times.  To demonstrate this, do a
+.B su
+and do a
+.B w
+and a
+.BR "w \-u".
 .TP
 \fB\-s\fR, \fB\-\-short\fR
 Use the short format.  Don't print the login time, JCPU or PCPU times.
