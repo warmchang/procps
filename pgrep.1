@@ -1,13 +1,13 @@
 .\"
 .\" Copyright 2000 Kjetil Torgrim Homme
-.\"           2017 Craig Small
+.\"           2017-2020 Craig Small
 .\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH PGREP "1" "2020-04-24" "procps-ng" "User Commands"
+.TH PGREP "1" "2020-06-04" "procps-ng" "User Commands"
 .SH NAME
 pgrep, pkill \- look up or signal processes based on name and other attributes
 .SH SYNOPSIS
@@ -141,29 +141,27 @@ context.  In
 context this option is disabled.
 .TP
 \fB\-x\fR, \fB\-\-exact\fR\fR
-Only match processes whose names (or command line if \-f is specified)
+Only match processes whose names (or command lines if \fB\-f\fR is specified)
 .B exactly
 match the
 .IR pattern .
 .TP
 \fB\-F\fR, \fB\-\-pidfile\fR \fIfile\fR
-Read
-.IR PID 's
-from file.  This option is perhaps more useful for
+Read \fIPID\fRs from \fIfile\fR.  This option is perhaps more useful for
 .B pkill
 than
 .BR pgrep .
 .TP
 \fB\-L\fR, \fB\-\-logpidfile\fR
-Fail if pidfile (see -F) not locked.
+Fail if pidfile (see \fB\-F\fR) not locked.
 .TP
 \fB\-r\fR, \fB\-\-runstates\fR \fID,R,S,Z,\fP...
 Match only processes which match the process state.
 .TP
 \fB\-\-ns \fIpid\fP
 Match processes that belong to the same namespaces. Required to run as
-root to match processes from other users. See \-\-nslist for how to limit
-which namespaces to match.
+root to match processes from other users. See \fB\-\-nslist\fR for how to
+limit which namespaces to match.
 .TP
 \fB\-\-nslist \fIname\fP,...
 Match only the provided namespaces. Available namespaces:
@@ -234,7 +232,7 @@ Fatal error: out of memory etc.
 .PD
 .SH NOTES
 The process name used for matching is limited to the 15 characters present in
-the output of /proc/\fIpid\fP/stat.  Use the \-f option to match against the
+the output of /proc/\fIpid\fP/stat.  Use the \fB\-f\fR option to match against the
 complete command line, /proc/\fIpid\fP/cmdline.
 .PP
 The running

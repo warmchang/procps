@@ -43,8 +43,9 @@ The following are valid sort criteria used to sort the individual slab caches
 and thereby determine what are the "top" slab caches to display.  The default
 sort criteria is to sort by the number of objects ("o").
 .PP
-The sort criteria can also be changed while slabtop is running by pressing
-the associated character.
+The sort criteria can also be changed while
+.B slabtop
+is running by pressing the associated character.
 .TS
 l l l.
 \fBcharacter	description	header\fR
@@ -89,7 +90,9 @@ requires a 2.4 or later kernel (specifically, a version 1.1 or later
 .IR /proc/slabinfo ).
 Kernel 2.2 should be supported in the future.
 .PP
-The slabtop statistic header is tracking how many bytes of slabs are being
+The
+.B slabtop
+statistic header is tracking how many bytes of slabs are being
 used and is not a measure of physical memory.  The 'Slab' field in the
 /proc/meminfo file is tracking information about used slab physical memory.
 .SH AUTHORS

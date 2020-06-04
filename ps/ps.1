@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS 1 2018-08-08 "procps-ng" "User Commands"
+.TH PS "1" "2020-06-04" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -32,7 +32,7 @@ ps \- report a snapshot of the current processes.
 .B ps
 displays information about a selection of the active processes.  If you want
 a repetitive update of the selection and the displayed information, use
-.IR top (1)
+.B top
 instead.
 .P
 This version of
@@ -56,14 +56,14 @@ implementations that this
 .B ps
 is compatible with.
 .P
-Note that "\fBps \-aux\fR" is distinct from "\fBps\ aux\fR".  The POSIX and
-UNIX standards require that "\fBps\ \-aux\fR" print all processes owned by a
-user named "x", as well as printing all processes that would be selected by
+Note that \fBps \-aux\fR is distinct from \fBps\ aux\fR.  The POSIX and
+UNIX standards require that \fBps\ \-aux\fR print all processes owned by a
+user named \fIx\fR, as well as printing all processes that would be selected by
 the
 .B \-a
-option.  If the user named "x" does not exist, this
+option.  If the user named \fIx\fR does not exist, this
 .B ps
-may interpret the command as "\fBps\ aux\fR" instead and print a warning.
+may interpret the command as \fBps\ aux\fR instead and print a warning.
 This behavior is intended to aid in transitioning old scripts and habits.  It
 is fragile, subject to change, and thus should not be relied upon.
 .P
@@ -743,7 +743,7 @@ Show threads, possibly with SPID column.
 .SH "OTHER INFORMATION"
 .TP
 .BI \-\-help \ section
-Print a help message.  The section argument can be one of
+Print a help message.  The \fIsection\fR argument can be one of
 .IR s imple,
 .IR l ist,
 .IR o utput,
@@ -796,20 +796,18 @@ will be destroyed by
 if the parent process exits.
 .PP
 If the length of the username is greater than the length of the display
-column, the username will be truncated.  See the \-o and \-O formatting
-options to customize length.
+column, the username will be truncated.  See the \fB\-o\fR and \fB\-O\fR
+formatting options to customize length.
 .PP
 Commands options such as
 .B ps \-aux
 are not recommended as it is a confusion of two different standards.
 According to the POSIX and UNIX standards, the above command asks to
 display all processes with a TTY (generally the commands users are
-running) plus all processes owned by a user named "x".  If that user
+running) plus all processes owned by a user named \fIx\fR.  If that user
 doesn't exist, then
 .B ps
-will assume you really meant
-.RB """" ps
-.IR aux """."
+will assume you really meant \fBps aux\fR.
 .SH "PROCESS FLAGS"
 The sum of these values is displayed in the "F" column,
 which is provided by the
@@ -1163,8 +1161,8 @@ fully destroyed by its parent.  The output in this column may contain spaces.
 (alias
 .BR ucmd ", " ucomm ).
 See also the
-.B args format keyword,
-the
+.B args
+format keyword, the
 .B \-f
 option, and the
 .B c
@@ -1325,7 +1323,8 @@ T}
 
 ipcns	IPCNS	T{
 Unique inode number describing the namespace the process belongs to.
-See namespaces(7).
+See
+.IR namespaces (7).
 T}
 
 label	LABEL	T{
@@ -1377,12 +1376,14 @@ T}
 
 mntns	MNTNS	T{
 Unique inode number describing the namespace the process belongs to.
-See namespaces(7).
+See
+.IR namespaces (7).
 T}
 
 netns	NETNS	T{
 Unique inode number describing the namespace the process belongs to.
-See namespaces(7).
+See
+.IR namespaces (7).
 T}
 
 ni	NI	T{
@@ -1407,7 +1408,7 @@ T}
 
 numa	NUMA	T{
 The node assocated with the most recently used processor.
-A -1 means that NUMA information is unavailable.
+A \fI\-1\fR means that NUMA information is unavailable.
 T}
 
 nwchan	WCHAN	T{
@@ -1463,7 +1464,8 @@ T}
 
 pidns	PIDNS	T{
 Unique inode number describing the namespace the process belongs to.
-See namespaces(7).
+See
+.IR namespaces (7).
 T}
 
 pmem	%MEM	T{
@@ -1826,12 +1828,14 @@ T}
 
 userns	USERNS	T{
 Unique inode number describing the namespace the process belongs to.
-See namespaces(7).
+See
+.IR namespaces (7).
 T}
 
 utsns	UTSNS	T{
 Unique inode number describing the namespace the process belongs to.
-See namespaces(7).
+See
+.IR namespaces (7).
 T}
 
 uunit	UUNIT	T{

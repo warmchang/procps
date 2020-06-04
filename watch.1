@@ -1,4 +1,4 @@
-.TH WATCH 1 "2020-05-12" "procps-ng" "User Commands"
+.TH WATCH 1 "2020-06-04" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -13,10 +13,11 @@ allows you to watch the program output change over time.  By default,
 \fIcommand\fR is run every 2 seconds and \fBwatch\fR will run until interrupted.
 .SH OPTIONS
 .TP
-\fB\-d\fR, \fB\-\-differences\fR [\fIpermanent\fR]
-Highlight the differences between successive updates.  Option will read
-optional argument that changes highlight to be permanent, allowing to see what
-has changed at least once since first iteration.
+.BR \-d ", " \-\-differences [ =permanent ]
+Highlight the differences between successive updates. If the optional
+\fB=permanent\fR argument is specified then
+.B watch
+will show all changes since the first iteration.
 .TP
 \fB\-n\fR, \fB\-\-interval\fR \fIseconds\fR
 Specify update interval.  The command will not allow quicker than 0.1 second
@@ -124,7 +125,7 @@ next scheduled update.  All
 .B \-\-differences
 highlighting is lost on that update as well.
 
-Non-printing characters are stripped from program output.  Use "cat -v" as
+Non-printing characters are stripped from program output.  Use \fBcat -v\fR as
 part of the command pipeline if you want to see them.
 
 Combining Characters that are supposed to display on the character at the
