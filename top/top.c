@@ -5422,7 +5422,7 @@ static int cpu_unify (struct stat_stack *this, int nobuf) {
       snprintf(pfx, sizeof(pfx), "%-7.7s:", fmtmk("%d-%d", beg, rSv(stat_ID, s_int)));
       n = cpu_tics(&accum, pfx, nobuf);
       memset(&stack, 0, sizeof(stack));
-      ix = beg = 0;
+      ix = 0;
       return n;
    }
    ++ix;
