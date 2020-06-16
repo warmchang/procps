@@ -5846,11 +5846,10 @@ static int cpu_unify (CPU_t *cpu, int nobuf) {
       snprintf(pfx, sizeof(pfx), "%-7.7s:", fmtmk("%d-%d", beg, cpu->id));
       n = cpu_tics(&accum, pfx, nobuf);
       memset(&accum, 0, sizeof(CPU_t));
-      ix = beg = 0;
+      ix = 0;
       return n;
    }
    ++ix;
-
    return 0;
 } // end: cpu_unify
 
