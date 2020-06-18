@@ -85,36 +85,16 @@ static int escape_str_utf8(char *restrict dst, const char *restrict src, int buf
       my_bytes++;
 
     } else {
-      /* multibyte - printable */
+      /* multibyte - maybe, kinda "printable" */
       int wlen = wcwidth(wc);
-
-      if (wlen<=0) {
-	// invisible multibyte -- we don't ignore it, because some terminal
-	// interpret it wrong and more safe is replace it with '?'
-	*(dst++) = '?';
-	src+=len;
-	my_cells++;
-	my_bytes++;
-      } else {
-        // multibyte - printable
-        // Got space?
-        if (wlen > *maxcells-my_cells || len >= bufsize-(my_bytes+1)) break;
-        // 0x9b is control byte for some terminals
-        if (memchr(src, 0x9B, len)) {
-	  // unsafe multibyte
-	  *(dst++) = '?';
-	  src+=len;
-	  my_cells++;
-	  my_bytes++;
-        } else {
-	  // safe multibyte
-       	  memcpy(dst, src, len);
-	  my_cells += wlen;
-	  dst += len;
-	  my_bytes += len;
-          src += len;
-        }
-      }
+      // Got space?
+      if (wlen > *maxcells-my_cells || len >= bufsize-(my_bytes+1)) break;
+      // safe multibyte
+      memcpy(dst, src, len);
+      dst += len;
+      src += len;
+      my_bytes += len;
+      if (wlen > 0) my_cells += wlen;
     }
     //fprintf(stdout, "cells: %d\n", my_cells);
   }
