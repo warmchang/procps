@@ -710,7 +710,8 @@ static inline int utf8_cols (const unsigned char *p, int n) {
 
    if (n > 1) {
       (void)mbtowc(&wc, (const char *)p, n);
-      if ((n = wcwidth(wc)) < 1) n = 1;
+      // allow a zero as valid, as with a 'combining acute accent'
+      if ((n = wcwidth(wc)) < 0) n = 1;
    }
    return n;
 #else
