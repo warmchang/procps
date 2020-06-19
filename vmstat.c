@@ -637,7 +637,7 @@ static void diskformat(void)
 {
 #define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j], disk_stat)
     struct diskstats_info *disk_stat;
-    struct diskstats_reap *reap;
+    struct diskstats_reaped *reap;
     int i, j;
     time_t the_time;
     struct tm *tm_ptr;
@@ -716,7 +716,7 @@ static void slabformat (void)
  #define MAX_ITEMS (int)(sizeof(node_items) / sizeof(node_items[0]))
  #define slabVAL(e,t) SLABINFO_VAL(e, t, p, slab_info)
     struct slabinfo_info *slab_info = NULL;
-    struct slabinfo_reap *reaped;
+    struct slabinfo_reaped *reaped;
     int i, j;
     enum slabinfo_item node_items[] = {
         SLAB_ACTIVE_OBJS, SLAB_NUM_OBJS,
@@ -760,7 +760,7 @@ static void disksum_format(void)
 {
 #define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j], disk_stat)
     struct diskstats_info *disk_stat;
-    struct diskstats_reap *reap;
+    struct diskstats_reaped *reap;
     int j, disk_count, part_count;
     unsigned long reads, merged_reads, read_sectors, milli_reading, writes,
                   merged_writes, written_sectors, milli_writing, inprogress_IO,

@@ -314,7 +314,7 @@ int main(int argc, char *argv[])
     }
 
     do {
-        struct slabinfo_reap *reaped;
+        struct slabinfo_reaped *reaped;
         struct timeval tv;
         fd_set readfds;
         int i;
