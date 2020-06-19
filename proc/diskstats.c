@@ -92,7 +92,7 @@ struct fetch_support {
     int n_alloc;                       // number of above pointers allocated
     int n_inuse;                       // number of above pointers occupied
     int n_alloc_save;                  // last known reap.stacks allocation
-    struct diskstats_reap results;     // count + stacks for return to caller
+    struct diskstats_reaped results;   // count + stacks for return to caller
 };
 
 struct diskstats_info {
@@ -827,9 +827,9 @@ PROCPS_EXPORT struct diskstats_result *procps_diskstats_get (
  * Harvest all the requested disks information providing
  * the result stacks along with the total number of harvested.
  *
- * Returns: pointer to a diskstats_reap struct on success, NULL on error.
+ * Returns: pointer to a diskstats_reaped struct on success, NULL on error.
  */
-PROCPS_EXPORT struct diskstats_reap *procps_diskstats_reap (
+PROCPS_EXPORT struct diskstats_reaped *procps_diskstats_reap (
         struct diskstats_info *info,
         enum diskstats_item *items,
         int numitems)

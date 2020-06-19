@@ -90,7 +90,7 @@ struct slabinfo_stack {
     struct slabinfo_result *head;
 };
 
-struct slabinfo_reap {
+struct slabinfo_reaped {
     int total;
     struct slabinfo_stack **stacks;
 };
@@ -114,7 +114,7 @@ struct slabinfo_result *procps_slabinfo_get (
     struct slabinfo_info *info,
     enum slabinfo_item item);
 
-struct slabinfo_reap *procps_slabinfo_reap (
+struct slabinfo_reaped *procps_slabinfo_reap (
     struct slabinfo_info *info,
     enum slabinfo_item *items,
     int numitems);

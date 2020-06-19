@@ -114,7 +114,7 @@ struct fetch_support {
     int n_alloc;                     // number of above pointers allocated
     int n_inuse;                     // number of above pointers occupied
     int n_alloc_save;                // last known reap.stacks allocation
-    struct slabinfo_reap results;    // count + stacks for return to caller
+    struct slabinfo_reaped results;  // count + stacks for return to caller
 };
 
 struct slabinfo_info {
@@ -852,9 +852,9 @@ PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
  * Harvest all the requested SLAB (individual nodes) information
  * providing the result stacks along with the total number of nodes.
  *
- * Returns: pointer to a slabinfo_reap struct on success, NULL on error.
+ * Returns: pointer to a slabinfo_reaped struct on success, NULL on error.
  */
-PROCPS_EXPORT struct slabinfo_reap *procps_slabinfo_reap (
+PROCPS_EXPORT struct slabinfo_reaped *procps_slabinfo_reap (
         struct slabinfo_info *info,
         enum slabinfo_item *items,
         int numitems)

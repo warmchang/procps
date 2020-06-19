@@ -81,7 +81,7 @@ struct diskstats_stack {
     struct diskstats_result *head;
 };
 
-struct diskstats_reap {
+struct diskstats_reaped {
     int total;
     struct diskstats_stack **stacks;
 };
@@ -109,7 +109,7 @@ struct diskstats_result *procps_diskstats_get (
     const char *name,
     enum diskstats_item item);
 
-struct diskstats_reap *procps_diskstats_reap (
+struct diskstats_reaped *procps_diskstats_reap (
     struct diskstats_info *info,
     enum diskstats_item *items,
     int numitems);
