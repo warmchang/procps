@@ -1,4 +1,4 @@
-.\" (C) Copyright 2020 Craig Small <csmall@dropbear.xyz>
+.\" (C) Copyright 2020 Jim Warner <warnerjc@comcast.net>
 .\"
 .\" %%%LICENSE_START(LGPL_2.1+)
 .\" This manual is free software; you can redistribute it and/or
@@ -16,164 +16,158 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS_LINUX_VERSION 3 2020-0519 "libproc-2"
+.TH PROCPS_LINUX_VERSION 3 "June 2020" "libproc-2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
+.nh
 .SH NAME
-procps \- API to the procps librayr
+procps \- API to access system level information in the /proc filesystem
+
 .SH SYNOPSIS
-See XXXXX for what file to include
+Five distinct interfaces are represented in this synopsis and named after
+the files they access in the /proc pseudo filesystem:
+.BR diskstats ", " meminfo ", " slabinfo ", " stat " and " vmstat .
 
-.BI "int PROCITEM_new(struct PROCITEM_info **" info ");"
+.nf
+.RS +4
+#include <procps/\fBnamed_interface\fR.h>
 
-.BI "int PROCITEM_ref(struct PROCITEM_info *" info ");"
+.BI "int procps_new   (struct info **" info );
+.BI "int procps_ref   (struct info  *" info );
+.BI "int procps_unref (struct info **" info );
 
-.BI "int PROCITEM_unref(struct PROCITEM_info *" info ");"
+.BI "struct result *procps_get ("
+.BI "    struct info *" info ,
+.RI "[   const char *" name ",      ]   \fBdiskstats\fR api only"
+.BI "    enum item " item );
 
-.BI "struct diststats_result *procps_diststats_get(struct diststats_info *" info ", const char *" name ", enum diststats_item " item ");"
+.BI "struct stack *procps_select ("
+.BI "    struct info *" info ,
+.RI "[   const char *" name ",      ]   \fBdiskstats\fR api only"
+.BI "    enum item *" items ,
+.BI "    int " numitems );
 
-.BI "struct PROCITEM_result *procps_PROCITEM_get(struct PROCITEM_info *" info ", enum PROCITEM_item " item ");"
-(for all other PROCITEMs except diskstats)
+.BI "struct reaped *procps_reap ("
+.BI "    struct info *" info ,
+.RI "[   enum reap_type " what ",   ]   \fBstat\fR api only"
+.BI "    enum item *" items ,
+.BI "    int " numitems );
 
-.BI "struct PROCITEM_reap *procps_PROCITEM_reap(struct PROCITEM_info * " info ", enum PROCITEM_item *" items ", int " numitems ");"
-(for PROCITEMs diskstats and slabinfo)
+.BI "struct stack **procps_sort ("
+.BI "    struct info *" info ,
+.BI "    struct stack *" stacks[] ,
+.BI "    int " numstacked ,
+.BI "    enum item " sortitem ,
+.BI "    enum sort_order " order );
+.RE
+.fi
 
-.BI "struct stat_reap *procps_stat_reap(struct stat_info * " info ", enum stat_item *" items ", int " numitems ");"
+The above functions and structures are generic but the specific
+\fBnamed_interface\fR would also be part of any identifiers.
+For example, `procps_new' would actually be `procps_\fBmeminfo\fR_new'
+and `info' would really be `\fBdiskstats\fR_info', etc.
 
-.BI "struct diststats_stack *procps_diststats_select(struct diststats_info *" info ", const char *" name ", enum diststats_item *" items ", int " numitems ");"
-
-.BI "struct PROCITEM_stack *procps_PROCITEM_select(struct PROCITEM_info *" info ", enum PROCITEM_item *" items ", int " numitems ");"
-(for all other PROCITEMs except diskstats)
-
-.BI "struct PROCITEM_stack **procps_PROCITEM_sort(struct PROCITEM_info *" info ", struct PROCITEM_stack *" stacks "[], int " numstacked ", enum PROCITEM_item " sortitem ", enum PROCITEM_sort_order " order ");"
+The same \fBnamed_interface\fR is used in each header file name with
+an appended `.h' suffix.
 
 Link with \fI\-lprocps\fP.
 
 .SH DESCRIPTION
-This manual page describes the common functions for obtaining information
-about the following information types out of the
-.BR proc (5)
-filesystem:
-.TP
-.B diskstats
-I/O statistics of the system disks.
-.TP
-.B meminfo
-Statistics on the usage of the memory system such as what is seen in
-.BR free (1).
-Does not have \fB_reap\fR or \fB_sort\fR functions.
-.TP
-.B slabinfo
-Statistics on the memory caches called slabs.
-.TP
-.B stat
-Generic system statistics such as CPU times and interrupts.
-.TP
-.B vmstat
-Virtual memory statistics.
-Does not have \fB_reap\fR or \fB_sort\fR functions.
-.PP
-.BR procps_pids
-man page describes similar functions for obtaining information about the
-running processes on a system.
-.PP
-For each statistics type, substitute the name for \fBPROCITEM\fR as
-seen in the \fBSYNOPSIS\fR. For example, to obtain a new \fBmeminfo\fR
-structure, you would call
-.BI procps_meminfo_new( &info_ptr );
-where \fIinfo_ptr\fR is a pointer to \fIstruct meminfo_info\fR.
-.SS Procps functions
-.TP
-.B _new()
-The first call to the library should always be the relevant \fB_new\fR() function to obtain a \fIinfo\fR
-structure that can be used for subsequent calls on the library. The function just allocates memory to the
-structure and does not fetch any data.
-.TP
-.B _ref()
-Increments an internal reference count within the given \fIinfo\fR structure.
-.TP
-.B _unref()
-Decrements an internal reference count within the given \fIinfo\fR structure.
-If the count reaches zero then the structure is de-allocated.
-.TP
-.B _get()
-Get one piece of data as described by the enum. For diskstats the device also
-needs to be specified. For subsequent calls to this function, the data is only
-refeshed after one second from the previous call.
-.TP
-.B _reap()
-Get multiple pieces of data as described in the array of enums.
-.TP
-.B select()
-ok reap versus select...
-.TP
-.B sort()
-Sorts the already-fetched data in the given stacks based upon the given
-item and sort order.
-.SS Procps structures
-The procps library uses a variety of structures to hold the extracted,
-filtered or sorted information about the various aspects of the proc
-filesystem.
-.TP
-.B info structure
-The main structure used for the library. All information calls for a particular
-information type will need this structure. For example, all functions for
-vmstat will have a requirement for \fBstruct vmstat_info\fR.
-.TP
-.B item enum
-The item enum is used to select a particular statistic from the information
-type. This determines if you get the value for free memory versus used, or
-system CPU time versus user CPU time.
-.TP
-.B result struct
-Holds a single value for a particular statistic, including the \fBitem enum\fR
-to tell what the value is for. As results can be of various types, the structure
-uses a union.
-.TP
-.B stack structure
-A stack is simply an array of \fBresult struct\fR. This is used to contain
-multiple values in one place.
-.TP
-.B reap struct
-Structure holding multiple \fBstack struct\fRs.
+.SS Overview
+Central to these interfaces is a simple `result'
+structure reflecting an `item' plus its value (in a union
+with standard C language types as members).
+All `result' structures are automatically allocated and
+provided by the library.
+
+By specifying an array of `items', these structures can be
+organized as a `stack', potentially yielding many results
+with a single function call.
+Thus, a `stack' can be viewed as a variable length record
+whose content and order is determined solely by the user.
+
+As part of each interface there are two unique items.
+The `noop' and `extra' items exist to hold user values.
+They are never set by the library, but the `extra'
+result will be zeroed with each library interaction.
+
+The \fBnamed_interface\fR header file will be an essential
+document during user program development.
+There you will find available items, their return type
+(the `result' struct member name) and the source for such values.
+Additional enumerators and structures are also documented there.
+
+.SS Usage
+The following would be a typical sequence of calls to
+these interfaces.
+
+.nf
+.RB "1. " procps_new()
+.RB "2. " procps_get() ", " procps_select() " or " procps_reap()
+.RB "3. " procps_unref()
+.fi
+
+Optionally, a user may choose to sort results returned from
+a \fBreap\fR function call.
+
+.SS Caveats
+The \fBnew\fR, \fBref\fR, \fBunref\fR, \fBget\fR and \fBselect\fR
+functions are available in all five interfaces.
+
+For the \fBnew\fR and \fBunref\fR functions, the address of an \fIinfo\fR
+struct pointer must be supplied.
+With \fBnew\fR it must have been initialized to NULL.
+With \fBunref\fR it will be reset to NULL if the reference count reaches zero.
+
+In the case of the \fBdiskstats\fR interface, a \fIname\fR parameter
+on the \fBget\fR and \fBselect\fR functions identifies a disk or
+partition name
+
+The \fBdiskstats\fR, \fBslabinfo\fR and \fBstat\fR interfaces support
+unpredictable variable outcomes.
+As such, they export a \fBreap\fR function to retrieve multiple `stacks'
+with a single invocation.
+
+Those same interfaces also offer a \fBsort\fR function whose
+parameters \fIstacks\fR and \fInumstacked\fR would normally be those
+returned in the `reaped' structure.
 
 .SH RETURN VALUE
-The \fBprocps_PROCITEM_new\fR() functions return 0 on success and 1 on any failure.
+.SS Functions Returning an `int'
+An error will be indicated by a negative number that
+is always the inverse of some well known errno.h value.
+
+Success is indicated by a zero return value.
+However, the \fBref\fR and \fBunref\fR functions return
+the current \fIinfo\fR structure reference count.
+
+.SS Functions Returning an `address'
+An error will be indicated by a NULL return pointer
+with the reason found in the formal errno value.
+
+Success is indicated by a pointer to the named structure.
+
+.SH DEBUGGING
+To aid in program development, there is a provision that can
+help ensure `result' member references agree with library
+expectations.
+This feature can be activated through either of the following
+methods and any discrepancies will be wrtten to \fBstderr\fR.
+
+.IP 1) 3
+Add CFLAGS='-DXTRA_PROCPS_DEBUG' to any other ./configure
+options employed.
+
+.IP 2) 3
+Add #include <procps/xtra-procps-debug.h> to any program
+\fIafter\fR the named interface includes.
+
 .PP
-The \fBprocps_PROCITEM_ref\fR() and \fBprocps_PROCITEM_unref\fR() functions
-return the updated reference count on success and \fB-EINVAL\fR if given
-invalid parameters.
-.PP
-The \fBprocps_PROCITEM_result\fR() functions return a pointer to
-.B struct PROCITEM_result
-structure on success and \fBNULL\fR on failure.
-.PP
-The \fBprocps_PROCITEM_reap\fR() functions return a pointer to
-.B struct PROCITEM_reap
-structure on success and \fBNULL\fR on failure.
-.PP
-The \fBprocps_PROCITEM_select\fR() and \fBprocps_PROCITEM_sort\fR
- functions return a pointer to
-.B struct PROCITEM_stack
-structure on success and \fBNULL\fR on failure.
-.SH FILES
-.TP
-.I /proc/diskstats
-I/O statistics for disks
-.TP
-.I /proc/meminfo
-Memory useage statistics
-.TP
-.I /proc/slabinfo
-Source of the statistics of slabinfo
-.TP
-.I /proc/vmstat
-Source of the statistics for virtual memory.
-.SH VERSIONS
-All of the new API functions
-first appeared in libproc-2 version 0.0.
+This verification feature incurs substantial overhead.
+Therefore, it is important that it \fInot\fR be activated
+for a production/release build.
 
 .SH SEE ALSO
-.BR procps_pids (3),
-.BR proc (5),
-.BR slabinfo (5).
+.BR procps_misc (3)
+.BR procps_pids (3)
+.BR proc (5).
