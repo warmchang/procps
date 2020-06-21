@@ -1,0 +1,180 @@
+.\" (C) Copyright 2020 Jim Warner <warnerjc@comcast.net>
+.\"
+.\" %%%LICENSE_START(LGPL_2.1+)
+.\" This manual is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2.1 of the License, or (at your option) any later version.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+.\" %%%LICENSE_END
+.\"
+.TH PROCPS_LINUX_VERSION 3 "June 2020" "libproc-2"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.nh
+.SH NAME
+procps_pids \- API to access task/thread information in the /proc filesystem
+
+.SH SYNOPSIS
+.nf
+#include <procps/pids.h>
+
+.BI "int procps_pids_new   (struct pids_info **" info ", enum pids_item *" items ", int " numitems );
+.BI "int procps_pids_ref   (struct pids_info  *" info );
+.BI "int procps_pids_unref (struct pids_info **" info );
+
+
+.BI "struct pids_stack *procps_pids_get ("
+.BI "    struct pids_info *" info ,
+.BI "    enum pids_fetch_type " which );
+
+.BI "struct pids_fetch *procps_pids_reap ("
+.BI "    struct pids_info *" info ,
+.BI "    enum pids_fetch_type " which );
+
+.BI "struct pids_fetch *procps_pids_select ("
+.BI "    struct pids_info *" info ,
+.BI "    unsigned *" these ,
+.BI "    int " numthese ,
+.BI "    enum pids_select_type " which );
+
+.BI "struct pids_stack **procps_pids_sort ("
+.BI "    struct pids_info *" info ,
+.BI "    struct pids_stack *" stacks[] ,
+.BI "    int " numstacked ,
+.BI "    enum pids_item " sortitem ,
+.BI "    enum pids_sort_order " order );
+
+
+.BI "int procps_pids_reset ("
+.BI "    struct pids_info *" info ,
+.BI "    enum pids_item *" newitems ,
+.BI "    int " newnumitems );
+
+.BI "struct pids_stack *fatal_proc_unmounted ("
+.BI "    struct pids_info *" info ,
+.BI "    int " return_self );
+
+.fi
+
+Link with \fI\-lprocps\fP.
+
+.SH DESCRIPTION
+.SS Overview
+Central to this interface is a simple `result'
+structure reflecting an `item' plus its value (in a union
+with standard C language types as members).
+All `result' structures are automatically allocated and
+provided by the library.
+
+By specifying an array of `items', these structures can be
+organized as a `stack', potentially yielding many results
+with a single function call.
+Thus, a `stack' can be viewed as a variable length record
+whose content and order is determined solely by the user.
+
+As part of each interface there are two unique items.
+The `noop' and `extra' items exist to hold user values.
+They are never set by the library, but the `extra'
+result will be zeroed with each library interaction.
+
+The pids.h file will be an essential document during
+user program development.
+There you will find available items, their return type
+(the `result' struct member name) and the source for such values.
+Additional enumerators and structures are also documented there.
+
+.SS Usage
+The following would be a typical sequence of calls to
+this interface.
+
+.nf
+.RB "1. " procps_pids_new()
+.RB "2. " procps_pids_get() ", " procps_pids_reap() " or " procps_pids_select()
+.RB "3. " procps_pids_unref()
+.fi
+
+Optionally, a user may choose to sort results returned from
+\fBreap\fR or \fBselect\fR.
+The \fBsort\fR function parameters \fIstacks\fR and \fInumstacked\fR
+would normally be those returned in the `pids_fetch' structure.
+
+.SS Caveats
+The <pids> API differs from others in that those items
+of interest must be provided at \fBnew\fR or \fBreset\fR time,
+the latter being unique to this API.
+If either the \fIitems\fR or \fInumitems\fR parameter is zero at
+\fBnew\fR time, then \fBreset\fR becomes mandatory before
+issuing any other call.
+
+For the \fBnew\fR and \fBunref\fR functions, the address of an \fIinfo\fR
+struct pointer must be supplied.
+With \fBnew\fR it must have been initialized to NULL.
+With \fBunref\fR it will be reset to NULL if the reference count reaches zero.
+
+The \fBget\fR function is an iterator, for successive
+PIDs/TIDs, returning those items previously identified
+via \fBnew\fR or \fBreset\fR.
+
+The \fBselect\fR function requires an array of PIDs or UIDs as
+\fIthese\fR along with \fInumthese\fR to identify which processes
+are to be fetched.
+This function then operates as a subset of \fBreap\fR
+while returning those items previously identified via \fBnew\fR
+or \fBreset\fR.
+
+Lastly, a \fBfatal_proc_unmounted\fR function may be called before
+any other function to ensure that the /proc/ directory is mounted.
+As such, the \fIitem\fR parameter would be NULL and the
+\fIreturn_self\fR parameter zero.
+If, however, some items are desired for the issuing program (a
+\fIreturn_self\fR other than zero) then the \fBnew\fR call must precede
+it to obtain the required \fIinfo\fR pointer.
+
+.SH RETURN VALUE
+.SS Functions Returning an `int'
+An error will be indicated by a negative number that
+is always the inverse of some well known errno.h value.
+
+Success is indicated by a zero return value.
+However, the \fBref\fR and \fBunref\fR functions return
+the current \fIinfo\fR structure reference count.
+
+.SS Functions Returning an `address'
+An error will be indicated by a NULL return pointer
+with the reason found in the formal errno value.
+
+Success is indicated by a pointer to the named structure.
+
+.SH DEBUGGING
+To aid in program development, there is a provision that can
+help ensure `result' member references agree with library
+expectations.
+This feature can be activated through either of the following
+methods and any discrepancies will be wrtten to \fBstderr\fR.
+
+.IP 1) 3
+Add CFLAGS='-DXTRA_PROCPS_DEBUG' to any other ./configure
+options employed.
+
+.IP 2) 3
+Add #include <procps/xtra-procps-debug.h> to any program
+\fIafter\fR the #include <procps/pids.h>.
+
+.PP
+This verification feature incurs substantial overhead.
+Therefore, it is important that it \fInot\fR be activated
+for a production/release build.
+
+.SH SEE ALSO
+.BR procps (3)
+.BR procps_misc (3)
+.BR proc (5).
