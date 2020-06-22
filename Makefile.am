@@ -74,18 +74,12 @@ dist_man_MANS = \
 	uptime.1 \
 	vmstat.8 \
 	w.1 \
-	doc/libproc.3 \
+	doc/procps.3 \
 	doc/procps_linux_version.3 \
-	doc/procps_pids_new.3 \
-	doc/procps_pids_reap.3 \
-	doc/procps_pids_ref.3 \
-	doc/procps_pids_reset.3 \
-	doc/procps_pids_select.3 \
-	doc/procps_pids_sort.3 \
-	doc/procps_pids_unref.3 \
 	doc/procps_ns_get_id.3 \
 	doc/procps_ns_get_name.3 \
 	doc/procps_ns_read_pid.3 \
+	doc/procps_pids.3 \
 	doc/procps_uptime.3 \
 	doc/procps_uptime_sprint.3 \
 	doc/procps_uptime_sprint_short.3
@@ -279,7 +273,7 @@ proc_libprocps_la_SOURCES = \
 	proc/uptime.h \
 	proc/xtra-procps-debug.h
 
-proc_libprocps_la_includedir = $(includedir)/proc/
+proc_libprocps_la_includedir = $(includedir)/procps/
 proc_libprocps_la_include_HEADERS = \
 	proc/devname.h \
 	proc/diskstats.h \
