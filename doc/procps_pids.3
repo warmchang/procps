@@ -97,9 +97,10 @@ The following would be a typical sequence of calls to
 this interface.
 
 .nf
-.RB "1. " procps_pids_new()
-.RB "2. " procps_pids_get() ", " procps_pids_reap() " or " procps_pids_select()
-.RB "3. " procps_pids_unref()
+.RB "1. " fatal_proc_unmounted()
+.RB "2. " procps_pids_new()
+.RB "3. " procps_pids_get() ", " procps_pids_reap() " or " procps_pids_select()
+.RB "4. " procps_pids_unref()
 .fi
 
 Optionally, a user may choose to sort results returned from
@@ -158,6 +159,9 @@ Success is indicated by a pointer to the named structure.
 To aid in program development, there is a provision that can
 help ensure `result' member references agree with library
 expectations.
+It assumes that a supplied macro in the header file is
+used to access the `result' value.
+
 This feature can be activated through either of the following
 methods and any discrepancies will be wrtten to \fBstderr\fR.
 
