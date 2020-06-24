@@ -249,7 +249,7 @@ enum Rel_statitems {
    stat_SUM_TOT };
         // cpu/node stack results extractor macros, where e=rel enum, x=index
 #define CPU_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->cpus->stacks[x], Stat_ctx)
-#define NOD_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->nodes->stacks[x], Stat_ctx)
+#define NOD_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->numa->stacks[x], Stat_ctx)
 #define TIC_VAL(e,s) STAT_VAL(e, sl_int, s, Stat_ctx)
         /*
          * --- <proc/meminfo.h> ----------------------------------------------- */
@@ -355,7 +355,7 @@ static void bye_bye (const char *str) {
       "\n\tProgram"
       "\n\t   %s"
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
-      "\n\t   Stat_reap->cpus->total = %d, Stat_reap->nodes->total = %d"
+      "\n\t   Stat_reap->cpus->total = %d, Stat_reap->numa->total = %d"
       "\n\t   Pids_itms_tot = %d, sizeof(struct pids_result) = %d, pids stack size = %d"
       "\n\t   SCREENMAX = %d, ROWMINSIZ = %d, ROWMAXSIZ = %d"
       "\n\t   PACKAGE = '%s', LOCALEDIR = '%s'"
@@ -383,7 +383,7 @@ static void bye_bye (const char *str) {
       , __func__
       , PACKAGE_STRING
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
-      , Stat_reap->cpus->total, Stat_reap->nodes->total
+      , Stat_reap->cpus->total, Stat_reap->numa->total
       , Pids_itms_tot, (int)sizeof(struct pids_result), (int)(sizeof(struct pids_result) * Pids_itms_tot)
       , (int)SCREENMAX, (int)ROWMINSIZ, (int)ROWMAXSIZ
       , PACKAGE, LOCALEDIR
@@ -2332,14 +2332,14 @@ static void cpus_refresh (void) {
 
    which = STAT_REAP_CPUS_ONLY;
    if (CHKw(Curwin, View_CPUNOD))
-      which = STAT_REAP_CPUS_AND_NODES;
+      which = STAT_REAP_NUMA_NODES_TOO;
 
    Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items));
    if (!Stat_reap)
       error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
    // adapt to changes in total numa nodes (assuming it's even possible)
-   if (Stat_reap->nodes->total && Stat_reap->nodes->total != Numa_node_tot) {
-      Numa_node_tot = Stat_reap->nodes->total;
+   if (Stat_reap->numa->total && Stat_reap->numa->total != Numa_node_tot) {
+      Numa_node_tot = Stat_reap->numa->total;
       Numa_node_sel = -1;
    }
    if (Stat_reap->cpus->total && Stat_reap->cpus->total != Cpu_cnt) {
@@ -3205,7 +3205,7 @@ static void before (char *me) {
    struct sigaction sa;
    int i, rc;
    int linux_version_code = procps_linux_version();
-   enum stat_reap_type which = STAT_REAP_CPUS_AND_NODES;
+   enum stat_reap_type which = STAT_REAP_NUMA_NODES_TOO;
 
    atexit(close_stdout);
 
@@ -3241,7 +3241,7 @@ static void before (char *me) {
       error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(-rc)));
    if (!(Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items))))
       error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
-   Numa_node_tot = Stat_reap->nodes->total;
+   Numa_node_tot = Stat_reap->numa->total;
    Cpu_cnt = Stat_reap->cpus->total;
 #ifdef PRETEND48CPU
    Cpu_cnt = 48;
@@ -5546,19 +5546,24 @@ numa_oops:
             Msg_row += cpu_tics(Stat_reap->summary, N_txt(WORD_allcpus_txt), 1);
             // display each cpu node's states
             for (i = 0; i < Numa_node_tot; i++) {
-               struct stat_stack *nod_ptr = Stat_reap->nodes->stacks[i];
-               if (NOD_VAL(stat_ID, i) == STAT_NODE_INVALID) continue;
+               struct stat_stack *nod_ptr = Stat_reap->numa->stacks[i];
+               if (NOD_VAL(stat_NU, i) == STAT_NODE_INVALID) continue;
                if (!isROOM(anyFLG, 1)) break;
                snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), NOD_VAL(stat_ID, i));
                Msg_row += cpu_tics(nod_ptr, tmp, 1);
             }
          } else {
             // display the node summary, then the associated cpus (if room)
-            for (i = 0; i < Numa_node_tot; i++)
-               if (Numa_node_sel == NOD_VAL(stat_ID, i)) break;
-            if (i == Numa_node_tot) goto numa_oops;
+            for (i = 0; i < Numa_node_tot; i++) {
+               if (Numa_node_sel == NOD_VAL(stat_ID, i)
+               && (NOD_VAL(stat_NU, i) != STAT_NODE_INVALID)) break;
+            }
+            if (i == Numa_node_tot) {
+               Numa_node_sel = -1;
+               goto numa_oops;
+            }
             snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
-            Msg_row += cpu_tics(Stat_reap->nodes->stacks[Numa_node_sel], tmp, 1);
+            Msg_row += cpu_tics(Stat_reap->numa->stacks[Numa_node_sel], tmp, 1);
 #ifdef PRETEND48CPU
             for (i = 0; i < Stat_reap->cpus->total; i++) {
 #else

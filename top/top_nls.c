@@ -493,8 +493,8 @@ static void build_norm_nlstab (void) {
 /* Translation Hint: The following word 'Node' should be exactly
                      4 characters, excluding leading %%, fmt chars & colon) */
    Norm_nlstab[NUMA_nodenam_fmt] = _("%%Node%-2d:");
-   Norm_nlstab[NUMA_nodeget_fmt] = _("expand which node (0-%d)");
-   Norm_nlstab[NUMA_nodebad_txt] = _("invalid node");
+   Norm_nlstab[NUMA_nodeget_fmt] = _("expand which numa node (0-%d)");
+   Norm_nlstab[NUMA_nodebad_txt] = _("invalid numa node");
    Norm_nlstab[NUMA_nodenot_txt] = _("sorry, NUMA extensions unavailable");
 /* Translation Hint: 'Mem ' is an abbreviation for physical memory/ram
    .                 'Swap' represents the linux swap file --
