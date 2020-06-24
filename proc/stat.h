@@ -28,8 +28,8 @@ enum stat_item {
     STAT_extra,                   //        ( reset to zero )
                                   //  returns        origin, see proc(5)
                                   //  -------        -------------------
-    STAT_TIC_ID,                  //    s_int        /proc/stat
-    STAT_TIC_NUMA_NODE,           //    s_int      [ ID based, see: numa(3) ]
+    STAT_TIC_ID,                  //    s_int        /proc/stat, cpu or numa node id
+    STAT_TIC_NUMA_NODE,           //    s_int      [ CPU ID based, see: numa(3) ]
     STAT_TIC_NUM_CONTRIBUTORS,    //    s_int      [ total CPUs contributing to TIC counts ]
 
     STAT_TIC_USER,                //  ull_int        /proc/stat
@@ -82,7 +82,7 @@ enum stat_item {
 
 enum stat_reap_type {
     STAT_REAP_CPUS_ONLY,
-    STAT_REAP_CPUS_AND_NODES
+    STAT_REAP_NUMA_NODES_TOO
 };
 
 enum stat_sort_order {
@@ -113,12 +113,16 @@ struct stat_reap {
 struct stat_reaped {
     struct stat_stack *summary;
     struct stat_reap *cpus;
-    struct stat_reap *nodes;
+    struct stat_reap *numa;
 };
 
 
+    // STAT_TIC_ID value for /proc/stat cpu summary
 #define STAT_SUMMARY_ID    -11111
+    // STAT_TIC_NUMA_NODE value for STAT_REAP_CPUS_ONLY or
+    // for STAT_REAP_NUMA_NODES_TOO when node was inactive
 #define STAT_NODE_INVALID  -22222
+
 
 #define STAT_GET( info, actual_enum, type ) ( { \
     struct stat_result *r = procps_stat_get( info, actual_enum ); \

@@ -493,7 +493,8 @@ static int stat_make_numa_hist (
     memset(info->nodes.hist.tics, 0, info->nodes.hist.n_alloc * sizeof(struct hist_tic));
     nod_ptr = info->nodes.hist.tics;
     for (i = 0; i < info->nodes.total; i++) {
-        nod_ptr->id = nod_ptr->numa_node = STAT_NODE_INVALID;
+        nod_ptr->numa_node = STAT_NODE_INVALID;
+        nod_ptr->id = i;
         ++nod_ptr;
     }
 
@@ -519,8 +520,7 @@ static int stat_make_numa_hist (
             nod_ptr->new.xusr += cpu_ptr->new.xusr;  nod_ptr->old.xusr += cpu_ptr->old.xusr;
             nod_ptr->new.xsys += cpu_ptr->new.xsys;  nod_ptr->old.xsys += cpu_ptr->old.xsys;
 
-            cpu_ptr->numa_node = node;
-            nod_ptr->id = node;
+            cpu_ptr->numa_node = nod_ptr->numa_node = node;
             nod_ptr->count++; ;
         }
     }
@@ -866,7 +866,7 @@ PROCPS_EXPORT int procps_stat_new (
     p->refcount = 1;
 
     p->results.cpus = &p->cpus.result;
-    p->results.nodes = &p->nodes.result;
+    p->results.numa = &p->nodes.result;
 
     // these 3 are for reap, sharing a single set of items
     p->cpu_summary.items = p->cpus.fetch.items = p->nodes.fetch.items = &p->reap_items;
@@ -1010,7 +1010,7 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
     errno = EINVAL;
     if (info == NULL || items == NULL)
         return NULL;
-    if (what != STAT_REAP_CPUS_ONLY && what != STAT_REAP_CPUS_AND_NODES)
+    if (what != STAT_REAP_CPUS_ONLY && what != STAT_REAP_NUMA_NODES_TOO)
         return NULL;
 
 #ifdef ENFORCE_LOGICAL
@@ -1048,7 +1048,7 @@ PROCPS_EXPORT struct stat_reaped *procps_stat_reap (
             if (0 > stat_stacks_fetch(info, &info->cpus))
                 return NULL;
             break;
-        case STAT_REAP_CPUS_AND_NODES:
+        case STAT_REAP_NUMA_NODES_TOO:
             /* note: if we're doing numa at all, we must do this numa history |
                before we build (fetch) cpu stacks since that stat_read_failed |
                guy always marks (temporarily) all the cpu node ids as invalid | */
