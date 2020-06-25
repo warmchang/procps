@@ -21,7 +21,7 @@
 .\"
 .nh
 .SH NAME
-procps_pids \- API to access task/thread information in the /proc filesystem
+procps_pids \- API to access process information in the /proc filesystem
 
 .SH SYNOPSIS
 .nf
@@ -134,7 +134,7 @@ or \fBreset\fR.
 
 Lastly, a \fBfatal_proc_unmounted\fR function may be called before
 any other function to ensure that the /proc/ directory is mounted.
-As such, the \fIitem\fR parameter would be NULL and the
+As such, the \fIinfo\fR parameter would be NULL and the
 \fIreturn_self\fR parameter zero.
 If, however, some items are desired for the issuing program (a
 \fIreturn_self\fR other than zero) then the \fBnew\fR call must precede
@@ -154,6 +154,8 @@ An error will be indicated by a NULL return pointer
 with the reason found in the formal errno value.
 
 Success is indicated by a pointer to the named structure.
+However, if one survives the \fBfatal_proc_unmounted\fR call,
+NULL is always returned when \fIreturn_self\fR is zero.
 
 .SH DEBUGGING
 To aid in program development, there is a provision that can
