@@ -1,5 +1,6 @@
 procps-ng NEXT
 --------------
+  * all: properly handle utf8 cmdline translations         issue #176
   * kill: Pass int to signalled process                    merge #32
   * pgrep: Pass int to signalled process                   merge #32
   * pgrep: Check sanity of SG_ARG_MAX                      issue #152
