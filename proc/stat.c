@@ -35,9 +35,9 @@
 
 #define STAT_FILE "/proc/stat"
 
-#define BUFFER_INCR   4096             // amount i/p buffer allocations grow
-#define STACKS_INCR   32               // amount reap stack allocations grow
-#define NEWOLD_INCR   32               // amount jiffs hist allocations grow
+#define BUFFER_INCR   8192             // amount i/p buffer allocations grow
+#define STACKS_INCR   64               // amount reap stack allocations grow
+#define NEWOLD_INCR   64               // amount jiffs hist allocations grow
 
 /* ------------------------------------------------------------------------- +
    because 'reap' would be forced to duplicate the global SYS stuff in every |
