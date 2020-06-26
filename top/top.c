@@ -2512,7 +2512,7 @@ static void cpus_refresh (void) {
    rewind(fp);
    fflush(fp);
 
- #define buffGRW 1024
+ #define buffGRW 8192
    /* we slurp in the entire directory thus avoiding repeated calls to fgets,
       especially in a massively parallel environment.  additionally, each cpu
       line is then frozen in time rather than changing until we get around to
