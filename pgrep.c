@@ -529,12 +529,10 @@ static struct el * select_procs (int *num)
     char *cmdoutput = xmalloc(cmdlen);
     char *task_cmdline;
     enum pids_fetch_type which;
-    time_t now;
     double uptime_secs;
 
     preg = do_regcomp();
 
-    now = time(NULL);
     if (procps_uptime(&uptime_secs, NULL) < 0)
         xerrx(EXIT_FAILURE, "uptime");
 

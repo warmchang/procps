@@ -145,7 +145,6 @@ static void select_procs (void)
 	static int size = 0;
 	char *cmd_arg0, *cmd_arg0base;
 	char *cmd_arg1, *cmd_arg1base;
-	char *stat_cmd;
 	char *program_base;
 	char *root_link;
 	char *exe_link;
@@ -196,9 +195,6 @@ static void select_procs (void)
 			if (!strcmp(program, cmd_arg0base) ||
 			    !strcmp(program_base, cmd_arg0) ||
 			    !strcmp(program, cmd_arg0) ||
-
-			    !strcmp(program, stat_cmd) ||
-
 			    !strcmp(program, exe_link_base) ||
 			    !strcmp(program, exe_link))
 			{
