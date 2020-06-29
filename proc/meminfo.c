@@ -32,7 +32,8 @@
 #include <proc/meminfo.h>
 
 
-#define MEMINFO_FILE "/proc/meminfo"
+#define MEMINFO_FILE  "/proc/meminfo"
+#define MEMINFO_BUFF  8192
 
 
 struct meminfo_data {
@@ -606,7 +607,7 @@ static int meminfo_read_failed (
  /* a 'memory history reference' macro for readability,
     so we can focus the field names ... */
  #define mHr(f) info->hist.new. f
-    char buf[8192];
+    char buf[MEMINFO_BUFF];
     char *head, *tail;
     int size;
     unsigned long *valptr;

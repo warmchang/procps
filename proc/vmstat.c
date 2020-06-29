@@ -38,7 +38,8 @@
 #include <proc/vmstat.h>
 
 
-#define VMSTAT_FILE "/proc/vmstat"
+#define VMSTAT_FILE  "/proc/vmstat"
+#define VMSTAT_BUFF  8192
 
 /*
  *  Perhaps someday we'll all learn what is in these fields. But |
@@ -1067,7 +1068,7 @@ static int vmstat_make_hash_failed (
 static int vmstat_read_failed (
         struct vmstat_info *info)
 {
-    char buf[8192];
+    char buf[VMSTAT_BUFF];
     char *head, *tail;
     int size;
     unsigned long *valptr;
