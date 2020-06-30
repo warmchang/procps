@@ -36,7 +36,8 @@
 #include "fileutils.h"
 #include "nls.h"
 #include "xalloc.h"
-#include <proc/procps.h>
+
+#include <proc/pids.h>
 
 static struct pids_info *Pids_info;
 

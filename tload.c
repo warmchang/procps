@@ -24,13 +24,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <proc/procps.h>
-#include "c.h"
-#include "fileutils.h"
-#include "nls.h"
-#include "strutils.h"
-#include "xalloc.h"
-
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
@@ -43,6 +36,14 @@
 #include <termios.h>
 #include <unistd.h>
 #include <limits.h>
+
+#include "c.h"
+#include "fileutils.h"
+#include "nls.h"
+#include "strutils.h"
+#include "xalloc.h"
+
+#include <proc/sysinfo.h>
 
 static char *screen;
 

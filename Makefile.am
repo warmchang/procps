@@ -252,7 +252,6 @@ proc_libprocps_la_SOURCES = \
 	proc/numa.h \
 	proc/pids.c \
 	proc/pids.h \
-	proc/procps.h \
 	proc/pwcache.c \
 	proc/pwcache.h \
 	proc/readproc.c \
@@ -282,7 +281,6 @@ proc_libprocps_la_include_HEADERS = \
 	proc/namespace.h \
 	proc/numa.h \
 	proc/pids.h \
-	proc/procps.h \
 	proc/pwcache.h \
 	proc/readproc.h \
 	proc/slabinfo.h \

@@ -26,12 +26,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
-#include "c.h"
-#include "nls.h"
-#include "strutils.h"
-#include "fileutils.h"
-
 #include <locale.h>
 #include <errno.h>
 #include <limits.h>
@@ -41,7 +35,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <proc/procps.h>
+#include "config.h"
+#include "c.h"
+#include "nls.h"
+#include "strutils.h"
+#include "fileutils.h"
+
+#include <proc/meminfo.h>
 
 #ifndef SIZE_MAX
 #define SIZE_MAX		32

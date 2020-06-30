@@ -49,7 +49,10 @@
 #include "nls.h"
 #include "signals.h"
 #include "xalloc.h"
-#include <proc/procps.h>
+
+#include <proc/namespace.h>
+#include <proc/pids.h>
+#include <proc/uptime.h>
 
 enum pids_item Items[] = {
     PIDS_ID_PID,

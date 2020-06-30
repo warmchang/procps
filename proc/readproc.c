@@ -19,12 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "version.h"
-#include "readproc.h"
-#include "escape.h"
-#include "pwcache.h"
-#include "devname.h"
-#include "procps.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -41,7 +35,13 @@
 #ifdef WITH_SYSTEMD
 #include <systemd/sd-login.h>
 #endif
-#include <proc/namespace.h>
+
+#include "devname.h"
+#include "escape.h"
+#include "namespace.h"
+#include "pwcache.h"
+#include "readproc.h"
+#include "version.h"
 
 // sometimes it's easier to do this manually, w/o gcc helping
 #ifdef PROF

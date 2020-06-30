@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <proc/procps.h>
+#include <proc/uptime.h>
 #include "tests.h"
 
 int check_uptime(void *data)

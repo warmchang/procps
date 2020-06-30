@@ -21,7 +21,6 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <string.h>
-#include <proc/procps.h>
 
 #include "escape.h"
 #include "readproc.h"

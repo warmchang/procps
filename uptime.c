@@ -27,7 +27,8 @@
 #include "c.h"
 #include "fileutils.h"
 #include "nls.h"
-#include <proc/procps.h>
+
+#include <proc/uptime.h>
 
 static void print_uptime_since()
 {

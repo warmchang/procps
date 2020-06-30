@@ -13,7 +13,11 @@
 #define PROCPS_PS_H
 
 #include "../include/nls.h"
-#include <proc/procps.h>
+#include <proc/escape.h>
+#include <proc/meminfo.h>
+#include <proc/pids.h>
+#include <proc/stat.h>
+#include <proc/sysinfo.h>
 
 // --- <pids> interface begin ||||||||||||||||||||||||||||||||||||||||||||
 // -----------------------------------------------------------------------

@@ -34,8 +34,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <proc/procps.h>
-
 #include "c.h"
 #include "fileutils.h"
 #include "signals.h"
@@ -43,6 +41,9 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "rpmatch.h"
+
+#include <proc/namespace.h>
+#include <proc/pids.h>
 
 #define DEFAULT_NICE 4
 
