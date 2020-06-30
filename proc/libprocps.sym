@@ -1,6 +1,5 @@
 LIBPROCPS_0 {
 global:
-	escape_str;
 	fatal_proc_unmounted;
 	procps_cpu_count;
 	procps_diskstats_new;

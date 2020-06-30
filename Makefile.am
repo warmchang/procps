@@ -276,7 +276,6 @@ proc_libprocps_la_includedir = $(includedir)/procps/
 proc_libprocps_la_include_HEADERS = \
 	proc/devname.h \
 	proc/diskstats.h \
-	proc/escape.h \
 	proc/meminfo.h \
 	proc/namespace.h \
 	proc/numa.h \

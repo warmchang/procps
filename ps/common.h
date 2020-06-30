@@ -13,7 +13,6 @@
 #define PROCPS_PS_H
 
 #include "../include/nls.h"
-#include <proc/escape.h>
 #include <proc/meminfo.h>
 #include <proc/pids.h>
 #include <proc/stat.h>
@@ -204,7 +203,6 @@ makEXT(noop)
  * Try not to overflow the output buffer:
  *    32 pages for env+cmd
  *    64 kB pages on IA-64
- *    4 chars for "\377", or 1 when mangling to '?'  (ESC_STRETCH)
  *    plus some slack for other stuff
  * That is about 8.5 MB on IA-64, or 0.6 MB on i386
  *
@@ -214,7 +212,7 @@ makEXT(noop)
  */
 
 /* output buffer size */
-#define OUTBUF_SIZE (2 * 64*1024 * ESC_STRETCH)
+#define OUTBUF_SIZE (2 * 64*1024)
 
 /******************* PS DEFINE *******************/
 

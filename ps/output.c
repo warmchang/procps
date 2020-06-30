@@ -49,8 +49,10 @@
 #if ENABLE_LIBSELINUX
 #include <dlfcn.h>
 #endif
+#include <ctype.h>
 #include <fcntl.h>
 #include <grp.h>
+#include <langinfo.h>
 #include <limits.h>
 #include <pwd.h>
 #include <stdio.h>
@@ -58,12 +60,13 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <wchar.h>
+#include <wctype.h>
 
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/resource.h>
 #include <sys/types.h>
-
 
 #include "../include/c.h"
 
@@ -77,7 +80,6 @@
 
 static unsigned max_rightward = OUTBUF_SIZE-1; /* space for RIGHT stuff */
 static unsigned max_leftward = OUTBUF_SIZE-1; /* space for LEFT stuff */
-
 
 
 static int wide_signals;  /* true if we have room */
@@ -133,6 +135,117 @@ static int escaped_copy(char *restrict dst, const char *restrict src, int bufsiz
         n = bufsize-1;
     *maxroom -= n;
     return n;
+}
+
+// duplicated from proc/escape.c so both can be made private
+static int escape_str_utf8 (char *dst, const char *src, int bufsize, int *maxcells) {
+  int my_cells = 0;
+  int my_bytes = 0;
+  mbstate_t s;
+
+  SECURE_ESCAPE_ARGS(dst, bufsize, *maxcells);
+
+  memset(&s, 0, sizeof (s));
+
+  for(;;) {
+    wchar_t wc;
+    int len = 0;
+
+    if(my_cells >= *maxcells || my_bytes+1 >= bufsize)
+      break;
+
+    if (!(len = mbrtowc (&wc, src, MB_CUR_MAX, &s)))
+      /* 'str' contains \0 */
+      break;
+
+    if (len < 0) {
+      /* invalid multibyte sequence -- zeroize state */
+      memset (&s, 0, sizeof (s));
+      *(dst++) = '?';
+      src++;
+      my_cells++;
+      my_bytes++;
+
+    } else if (len==1) {
+      /* non-multibyte */
+      *(dst++) = isprint(*src) ? *src : '?';
+      src++;
+      my_cells++;
+      my_bytes++;
+
+    } else if (!iswprint(wc)) {
+      /* multibyte - no printable */
+      *(dst++) = '?';
+      src+=len;
+      my_cells++;
+      my_bytes++;
+
+    } else {
+      /* multibyte - maybe, kinda "printable" */
+      int wlen = wcwidth(wc);
+      // Got space?
+      if (wlen > *maxcells-my_cells || len >= bufsize-(my_bytes+1)) break;
+      // safe multibyte
+      memcpy(dst, src, len);
+      dst += len;
+      src += len;
+      my_bytes += len;
+      if (wlen > 0) my_cells += wlen;
+    }
+    //fprintf(stdout, "cells: %d\n", my_cells);
+  }
+  *dst = '\0';
+
+  // fprintf(stderr, "maxcells: %d, my_cells; %d\n", *maxcells, my_cells);
+
+  *maxcells -= my_cells;
+  return my_bytes;        // bytes of text, excluding the NUL
+}
+
+// duplicated from proc/escape.c so both can be made private
+static int escape_str (char *dst, const char *src, int bufsize, int *maxcells) {
+  unsigned char c;
+  int my_cells = 0;
+  int my_bytes = 0;
+  const char codes[] =
+  "Z..............................."
+  "||||||||||||||||||||||||||||||||"
+  "||||||||||||||||||||||||||||||||"
+  "|||||||||||||||||||||||||||||||."
+  "????????????????????????????????"
+  "????????????????????????????????"
+  "????????????????????????????????"
+  "????????????????????????????????";
+  static int utf_init=0;
+
+  if(utf_init==0){
+     /* first call -- check if UTF stuff is usable */
+     char *enc = nl_langinfo(CODESET);
+     utf_init = enc && strcasecmp(enc, "UTF-8")==0 ? 1 : -1;
+  }
+  if (utf_init==1 && MB_CUR_MAX>1) {
+     /* UTF8 locales */
+     return escape_str_utf8(dst, src, bufsize, maxcells);
+  }
+
+  SECURE_ESCAPE_ARGS(dst, bufsize, *maxcells);
+
+  if(bufsize > *maxcells+1) bufsize=*maxcells+1; // FIXME: assumes 8-bit locale
+
+  for(;;){
+    if(my_cells >= *maxcells || my_bytes+1 >= bufsize)
+      break;
+    c = (unsigned char) *(src++);
+    if(!c) break;
+    if(codes[c]!='|') c=codes[c];
+    my_cells++;
+    my_bytes++;
+    *(dst++) = c;
+  }
+  *dst = '\0';
+
+  *maxcells -= my_cells;
+  return my_bytes;        // bytes of text, excluding the NUL
 }
 
 /***************************************************************************/

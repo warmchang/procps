@@ -17,21 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <ctype.h>
+#include <langinfo.h>
 #include <limits.h>
 #include <stdio.h>
-#include <sys/types.h>
+#include <stdlib.h>  /* MB_CUR_MAX */
 #include <string.h>
+#include <wchar.h>
+#include <wctype.h>
+#include <sys/types.h>
 
 #include "escape.h"
 #include "readproc.h"
 
-#if (__GNU_LIBRARY__ >= 6) && (!defined(__UCLIBC__) || defined(__UCLIBC_HAS_WCHAR__))
-# include <wchar.h>
-# include <wctype.h>
-# include <stdlib.h>  /* MB_CUR_MAX */
-# include <ctype.h>
-# include <langinfo.h>
-#endif
 
 #define SECURE_ESCAPE_ARGS(dst, bytes, cells) do { \
   if ((bytes) <= 0) return 0; \
@@ -42,8 +40,7 @@
 } while (0)
 
 
-#if (__GNU_LIBRARY__ >= 6) && (!defined(__UCLIBC__) || defined(__UCLIBC_HAS_WCHAR__))
-static int escape_str_utf8(char *restrict dst, const char *restrict src, int bufsize, int *maxcells){
+static int escape_str_utf8 (char *dst, const char *src, int bufsize, int *maxcells) {
   int my_cells = 0;
   int my_bytes = 0;
   mbstate_t s;
@@ -107,10 +104,9 @@ static int escape_str_utf8(char *restrict dst, const char *restrict src, int buf
   return my_bytes;        // bytes of text, excluding the NUL
 }
 
-#endif /* __GNU_LIBRARY__  */
 
 /* sanitize a string via one-way mangle */
-int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *maxcells){
+int escape_str (char *dst, const char *src, int bufsize, int *maxcells) {
   unsigned char c;
   int my_cells = 0;
   int my_bytes = 0;
@@ -124,7 +120,6 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
   "????????????????????????????????"
   "????????????????????????????????";
 
-#if (__GNU_LIBRARY__ >= 6) && (!defined(__UCLIBC__) || defined(__UCLIBC_HAS_WCHAR__))
   static int utf_init=0;
 
   if(utf_init==0){
@@ -136,7 +131,6 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
      /* UTF8 locales */
      return escape_str_utf8(dst, src, bufsize, maxcells);
   }
-#endif
 
   SECURE_ESCAPE_ARGS(dst, bufsize, *maxcells);
 
@@ -163,7 +157,7 @@ int escape_str(char *restrict dst, const char *restrict src, int bufsize, int *m
 // escape an argv or environment string array
 //
 // bytes arg means sizeof(buf)
-static int escape_strlist(char *restrict dst, char *restrict const *restrict src, size_t bytes, int *cells){
+static int escape_strlist (char *dst, const char **src, size_t bytes, int *cells) {
   size_t i = 0;
 
   for(;;){
@@ -180,12 +174,12 @@ static int escape_strlist(char *restrict dst, char *restrict const *restrict src
 
 ///////////////////////////////////////////////////
 
-int escape_command(char *restrict const outbuf, const proc_t *restrict const pp, int bytes, int *cells, unsigned flags){
+int escape_command (char *const outbuf, const proc_t *pp, int bytes, int *cells, unsigned flags) {
   int overhead = 0;
   int end = 0;
 
   if(flags & ESC_ARGS){
-    char **lc = (char**)pp->cmdline;
+    const char **lc = (const char**)pp->cmdline;
     if(lc && *lc) return escape_strlist(outbuf, lc, bytes, cells);
   }
   if(flags & ESC_BRACKETS){
@@ -217,4 +211,3 @@ int escape_command(char *restrict const outbuf, const proc_t *restrict const pp,
   outbuf[end] = '\0';
   return end;  // bytes, not including the NUL
 }
-
