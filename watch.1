@@ -34,7 +34,7 @@ every
 .I interval
 seconds. Try it with
 .B ntptime
-and notice how the fractional seconds stays (nearly) the same, as opposed to
+(if present) and notice how the fractional seconds stays (nearly) the same, as opposed to
 normal mode where they continuously increase.
 .TP
 \fB\-t\fR, \fB\-\-no\-title\fR
@@ -190,4 +190,4 @@ watch uname \-r
 .I \-p
 isn't guaranteed to work across reboots, especially in the face of
 .B ntpdate
-or other bootup time-changing mechanisms)
+(if present) or other bootup time-changing mechanisms)
