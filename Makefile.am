@@ -274,21 +274,16 @@ proc_libprocps_la_SOURCES = \
 
 proc_libprocps_la_includedir = $(includedir)/procps/
 proc_libprocps_la_include_HEADERS = \
-	proc/devname.h \
 	proc/diskstats.h \
 	proc/meminfo.h \
 	proc/namespace.h \
-	proc/numa.h \
 	proc/pids.h \
-	proc/pwcache.h \
-	proc/readproc.h \
 	proc/slabinfo.h \
 	proc/stat.h \
 	proc/sysinfo.h \
 	proc/uptime.h \
 	proc/version.h \
 	proc/vmstat.h \
-	proc/wchan.h \
 	proc/xtra-procps-debug.h
 
 pkgconfigdir = $(libdir)/pkgconfig
