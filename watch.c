@@ -137,22 +137,21 @@ static void init_ansi_colors(void)
 }
 
 
-static int color_escape_sequence(char* escape_sequence) {
+static int color_escape_sequence(char** escape_sequence) {
     int num;
 
-    if (escape_sequence[0] != ';')
+    if ((*escape_sequence)[0] != ';')
         return 0; /* not understood */
 
-    if (escape_sequence[1] == '5') {
+    if ((*escape_sequence)[1] == '5') {
         // 8 bit!
-        if (escape_sequence[2] != ';')
+        if ((*escape_sequence)[2] != ';')
             return 0; /* not understood */
-        num = strtol(escape_sequence + 3, NULL, 10);
+        num = strtol((*escape_sequence) + 3, escape_sequence, 10);
         if (num >= 0 && num <= 7) {
-            // Low intensity colors. Show them as high intensity for
-            // simplicity of implementation.
             return num + 1;
         } else if (num >= 8 && num <= 15) {
+            // Bright intensity colors. Show them as normal for simplicty of impl
             return num - 8 + 1;
         }
     }
@@ -161,7 +160,7 @@ static int color_escape_sequence(char* escape_sequence) {
 }
 
 
-static int set_ansi_attribute(const int attrib, char* escape_sequence)
+static int set_ansi_attribute(const int attrib, char** escape_sequence)
 {
 	switch (attrib) {
 	case -1:	/* restore last settings */
@@ -281,7 +280,7 @@ static void process_ansi(FILE * fp)
 
     for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
         ansi_attribute = strtol(numstart, &endptr, 10);
-        if (!set_ansi_attribute(ansi_attribute, endptr))
+        if (!set_ansi_attribute(ansi_attribute, &endptr))
             break;
     }
 }
