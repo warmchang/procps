@@ -137,7 +137,31 @@ static void init_ansi_colors(void)
 }
 
 
-static int set_ansi_attribute(const int attrib)
+static int color_escape_sequence(char* escape_sequence) {
+    int num;
+
+    if (escape_sequence[0] != ';')
+        return 0; /* not understood */
+
+    if (escape_sequence[1] == '5') {
+        // 8 bit!
+        if (escape_sequence[2] != ';')
+            return 0; /* not understood */
+        num = strtol(escape_sequence + 3, NULL, 10);
+        if (num >= 0 && num <= 7) {
+            // Low intensity colors. Show them as high intensity for
+            // simplicity of implementation.
+            return num + 1;
+        } else if (num >= 8 && num <= 15) {
+            return num - 8 + 1;
+        }
+    }
+
+    return 0; /* not understood */
+}
+
+
+static int set_ansi_attribute(const int attrib, char* escape_sequence)
 {
 	switch (attrib) {
 	case -1:	/* restore last settings */
@@ -185,12 +209,27 @@ static int set_ansi_attribute(const int attrib)
 	case 27:	/* unset inversed */
 		attributes &= ~A_REVERSE;
 		break;
+    case 38:
+        fg_col = color_escape_sequence(escape_sequence);
+        if (fg_col == 0) {
+            return 0; /* not understood */
+        }
+        break;
 	case 39:
 		fg_col = 0;
 		break;
+    case 48:
+        bg_col = color_escape_sequence(escape_sequence);
+        if (bg_col == 0) {
+            return 0; /* not understood */
+        }
+        break;
 	case 49:
 		bg_col = 0;
 		break;
+    case 49:
+        bg_col = 0;
+        break;
 	default:
 		if (attrib >= 30 && attrib <= 37) {	/* set foreground color */
 			fg_col = attrib - 30 + 1;
@@ -207,6 +246,7 @@ static int set_ansi_attribute(const int attrib)
 static void process_ansi(FILE * fp)
 {
 	int i, c;
+	int ansi_attribute;
 	char buf[MAX_ANSIBUF];
 	char *numstart, *endptr;
 
@@ -235,14 +275,15 @@ static void process_ansi(FILE * fp)
 	 * attributes to apply, but typically there are between 1 and 3.
 	 */
 
-	/* Special case of <ESC>[m */
-	if (buf[0] == '\0')
-		set_ansi_attribute(0);
+    /* Special case of <ESC>[m */
+    if (buf[0] == '\0')
+        set_ansi_attribute(0, NULL);
 
-	for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
-		if (!set_ansi_attribute(strtol(numstart, &endptr, 10)))
-			break;
-	}
+    for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
+        ansi_attribute = strtol(numstart, &endptr, 10);
+        if (!set_ansi_attribute(ansi_attribute, endptr))
+            break;
+    }
 }
 
 static void __attribute__ ((__noreturn__)) do_exit(int status)
@@ -522,7 +563,7 @@ static int run_command(char *restrict command, char **restrict command_argv)
 	for (y = show_title; y < height; y++) {
 		int eolseen = 0, tabpending = 0, tabwaspending = 0;
 		if (flags & WATCH_COLOR)
-			set_ansi_attribute(-1);
+			set_ansi_attribute(-1, NULL);
 #ifdef WITH_WATCH8BIT
 		wint_t carry = WEOF;
 #endif
@@ -535,7 +576,7 @@ static int run_command(char *restrict command, char **restrict command_argv)
 			int attr = 0;
 
 			if (tabwaspending && (flags & WATCH_COLOR))
-				set_ansi_attribute(-1);
+				set_ansi_attribute(-1, NULL);
 			tabwaspending = 0;
 
 			if (!eolseen) {
