@@ -138,7 +138,30 @@ static void init_ansi_colors(void)
 }
 
 
-static int set_ansi_attribute(const int attrib)
+static int color_escape_sequence(char** escape_sequence) {
+    int num;
+
+    if ((*escape_sequence)[0] != ';')
+        return 0; /* not understood */
+
+    if ((*escape_sequence)[1] == '5') {
+        // 8 bit!
+        if ((*escape_sequence)[2] != ';')
+            return 0; /* not understood */
+        num = strtol((*escape_sequence) + 3, escape_sequence, 10);
+        if (num >= 0 && num <= 7) {
+            return num + 1;
+        } else if (num >= 8 && num <= 15) {
+            // Bright intensity colors. Show them as normal for simplicty of impl
+            return num - 8 + 1;
+        }
+    }
+
+    return 0; /* not understood */
+}
+
+
+static int set_ansi_attribute(const int attrib, char** escape_sequence)
 {
 	switch (attrib) {
 	case -1:	/* restore last settings */
@@ -210,6 +233,7 @@ static void process_ansi(FILE * fp)
 	int i, c;
 	char buf[MAX_ANSIBUF];
 	char *numstart, *endptr = buf;
+    int ansi_attribute;
 
 	c = getc(fp);
 	if (c != '[') {
@@ -238,13 +262,14 @@ static void process_ansi(FILE * fp)
 
     /* Special case of <ESC>[m */
     if (buf[0] == '\0')
-        set_ansi_attribute(0);
+        set_ansi_attribute(0, NULL);
 
     for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
-        if (!set_ansi_attribute(strtol(numstart, &endptr, 10)))
+        ansi_attribute = strtol(numstart, &endptr, 10);
+        if (!set_ansi_attribute(ansi_attribute, &endptr))
             break;
         if (numstart == endptr)
-            set_ansi_attribute(0); /* [m treated as [0m */
+            set_ansi_attribute(0, NULL); /* [m treated as [0m */
     }
 }
 
