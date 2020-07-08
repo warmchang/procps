@@ -5768,7 +5768,6 @@ static int cpu_tics (CPU_t *cpu, const char *pfx, int nobuf) {
    //    user    syst    nice    idle    wait    hirg    sirq    steal
    SIC_t u_frme, s_frme, n_frme, i_frme, w_frme, x_frme, y_frme, z_frme, tot_frme, tz;
    float scale;
-   int n;
 
    u_frme = TRIMz(cpu->cur.u - cpu->sav.u);
    s_frme = TRIMz(cpu->cur.s - cpu->sav.s);
@@ -5810,16 +5809,15 @@ static int cpu_tics (CPU_t *cpu, const char *pfx, int nobuf) {
       snprintf(syst, sizeof(syst), gtab[ix].syst, (int)((pct_syst * Graph_adj) + .4), gtab[ix].type);
 #endif
       snprintf(dual, sizeof(dual), "%s%s", user, syst);
-      n = cpu_prt(fmtmk("%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1"
+      return cpu_prt(fmtmk("%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1"
          , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, dual), nobuf);
    } else {
-      n = cpu_prt(fmtmk(Cpu_States_fmts, pfx
+      return cpu_prt(fmtmk(Cpu_States_fmts, pfx
          , (float)u_frme * scale, (float)s_frme * scale
          , (float)n_frme * scale, (float)i_frme * scale
          , (float)w_frme * scale, (float)x_frme * scale
          , (float)y_frme * scale, (float)z_frme * scale), nobuf);
    }
-   return n;
  #undef TRIMz
 } // end: cpu_tics
 
