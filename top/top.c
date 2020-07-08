@@ -5348,7 +5348,6 @@ static int cpu_tics (struct stat_stack *this, const char *pfx, int nobuf) {
  #define rSv(E)  TIC_VAL(E, this)
    SIC_t idl_frme, tot_frme;
    float scale;
-   int n;
 
    idl_frme = rSv(stat_IL);
    tot_frme = rSv(stat_SUM_TOT);
@@ -5379,16 +5378,15 @@ static int cpu_tics (struct stat_stack *this, const char *pfx, int nobuf) {
       snprintf(syst, sizeof(syst), gtab[ix].syst, (int)((pct_syst * Graph_adj) + .4), gtab[ix].type);
 #endif
       snprintf(dual, sizeof(dual), "%s%s", user, syst);
-      n = cpu_prt(fmtmk("%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1"
+      return cpu_prt(fmtmk("%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1"
          , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, dual), nobuf);
    } else {
-      n = cpu_prt(fmtmk(Cpu_States_fmts, pfx
+      return cpu_prt(fmtmk(Cpu_States_fmts, pfx
          , (float)rSv(stat_US) * scale, (float)rSv(stat_SY) * scale
          , (float)rSv(stat_NI) * scale, (float)idl_frme * scale
          , (float)rSv(stat_IO) * scale, (float)rSv(stat_IR) * scale
          , (float)rSv(stat_SI) * scale, (float)rSv(stat_ST) * scale), nobuf);
    }
-   return n;
  #undef rSv
 } // end: cpu_tics
 
