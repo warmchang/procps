@@ -5319,14 +5319,13 @@ static inline int cpu_prt (const char *str, int nobuf) {
    char *p;
 
    p = scat(row, str);
-   if (nobuf || !Curwin->rc.double_up)
-      goto flush_it;
-   if (!tog) {
+   if (Curwin->rc.double_up
+   && (!nobuf)
+   && (!tog)) {
       scat(p, Double_sp);
       tog = 1;
       return 0;
    }
-flush_it:
    scat(p, "\n");
    show_special(0, row);
    row[0] = '\0';
