@@ -83,7 +83,7 @@ static int line_wrap = 1;
 #define MAX_ANSIBUF 100
 
 static void __attribute__ ((__noreturn__))
-    usage(FILE * out)
+	usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
@@ -185,12 +185,12 @@ static int set_ansi_attribute(const int attrib)
 	case 27:	/* unset inversed */
 		attributes &= ~A_REVERSE;
 		break;
-    case 39:
-        fg_col = 0;
-        break;
-    case 49:
-        bg_col = 0;
-        break;
+	case 39:
+		fg_col = 0;
+		break;
+	case 49:
+		bg_col = 0;
+		break;
 	default:
 		if (attrib >= 30 && attrib <= 37) {	/* set foreground color */
 			fg_col = attrib - 30 + 1;
@@ -201,7 +201,7 @@ static int set_ansi_attribute(const int attrib)
 		}
 	}
 	attrset(attributes | COLOR_PAIR(bg_col * nr_of_colors + fg_col + 1));
-    return 1;
+	return 1;
 }
 
 static void process_ansi(FILE * fp)
@@ -235,14 +235,14 @@ static void process_ansi(FILE * fp)
 	 * attributes to apply, but typically there are between 1 and 3.
 	 */
 
-    /* Special case of <ESC>[m */
-    if (buf[0] == '\0')
-        set_ansi_attribute(0);
+	/* Special case of <ESC>[m */
+	if (buf[0] == '\0')
+		set_ansi_attribute(0);
 
-    for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
-        if (!set_ansi_attribute(strtol(numstart, &endptr, 10)))
-            break;
-    }
+	for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
+		if (!set_ansi_attribute(strtol(numstart, &endptr, 10)))
+			break;
+	}
 }
 
 static void __attribute__ ((__noreturn__)) do_exit(int status)
@@ -379,7 +379,7 @@ static void output_header(char *restrict command, double interval)
 	char *ts = ctime(&t);
 	char *header;
 	char *right_header;
-    int max_host_name_len = (int) sysconf(_SC_HOST_NAME_MAX);
+	int max_host_name_len = (int) sysconf(_SC_HOST_NAME_MAX);
 	char hostname[max_host_name_len + 1];
 	int command_columns = 0;	/* not including final \0 */
 
@@ -415,7 +415,7 @@ static void output_header(char *restrict command, double interval)
 				mvaddstr(0, width - rhlen - 4, "... ");
 			} else {
 #ifdef WITH_WATCH8BIT
-	            command_columns = wcswidth(wcommand, -1);
+				command_columns = wcswidth(wcommand, -1);
 				if (width < rhlen + hlen + command_columns) {
 					/* print truncated */
 					int available = width - rhlen - hlen;
@@ -431,14 +431,14 @@ static void output_header(char *restrict command, double interval)
 					mvaddwstr(0, hlen, wcommand);
 				}
 #else
-                command_columns = strlen(command);
-                if (width < rhlen + hlen + command_columns) {
-                    /* print truncated */
-                    mvaddnstr(0, hlen, command, width - rhlen - hlen - 4);
-                    mvaddstr(0, width - rhlen - 4, "... ");
-                } else {
-                    mvaddnstr(0, hlen, command, width - rhlen - hlen);
-                }
+				command_columns = strlen(command);
+				if (width < rhlen + hlen + command_columns) {
+					/* print truncated */
+					mvaddnstr(0, hlen, command, width - rhlen - hlen - 4);
+					mvaddstr(0, width - rhlen - 4, "... ");
+				} else {
+					mvaddnstr(0, hlen, command, width - rhlen - hlen);
+				}
 #endif	/* WITH_WATCH8BIT */
 			}
 		}
