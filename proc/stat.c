@@ -1152,7 +1152,7 @@ PROCPS_EXPORT struct stat_stack **procps_stat_sort (
  *
  *  It's used only when:
  *      1) the 'XTRA_PROCPS_DEBUG' has been defined, or
- *      2) the '#include <proc/xtra-procps-debug.h>' used
+ *      2) an #include of 'xtra-procps-debug.h' is used
  */
 
 PROCPS_EXPORT struct stat_result *xtra_stat_get (
@@ -1192,8 +1192,8 @@ PROCPS_EXPORT struct stat_result *xtra_stat_val (
     for (i = 0; stack->head[i].item < STAT_logical_end; i++)
         ;
     if (relative_enum < 0 || relative_enum >= i) {
-        fprintf(stderr, "%s line %d: invalid relative_enum = %d, type = %s\n"
-            , file, lineno, relative_enum, typestr);
+        fprintf(stderr, "%s line %d: invalid relative_enum = %d, valid range = 0-%d\n"
+            , file, lineno, relative_enum, i-1);
         return NULL;
     }
     str = Item_table[stack->head[relative_enum].item].type2str;
