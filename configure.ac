@@ -180,8 +180,11 @@ else
   AM_CONDITIONAL(WITH_NCURSES, true)
   if test "$enable_watch8bit" = yes; then
     PKG_CHECK_MODULES([NCURSESW], [ncursesw], [WATCH_NCURSES_LIBS="$NCURSESW_LIBS"], [
-      AC_CHECK_LIB([ncursesw], [addwstr], [WATCH_NCURSES_LIBS=-lncursesw],
-                   [AC_MSG_ERROR([Cannot find ncurses wide library ncursesw with --enable-watch8bit])])
+      AC_CHECK_LIB([ncursesw], [addwstr], [WATCH_NCURSES_LIBS=-lncursesw], [
+        AC_CHECK_LIB([ncurses], [addwstr], [WATCH_NCURSES_LIBS=-lncurses], [
+          AC_MSG_ERROR([Cannot find ncurses wide library ncursesw with --enable-watch8bit])
+	])
+      ])
     ])
   else
     WATCH_NCURSES_LIBS="$NCURSES_LIBS"
