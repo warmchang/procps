@@ -138,36 +138,36 @@ static void init_ansi_colors(void)
 
 
 static int process_ansi_color_escape_sequence(char** escape_sequence) {
-    // process SGR ANSI color escape sequence
-    // Eg 8-bit
-    // 38;5;⟨n⟩  (set fg color to n)
-    // 48;5;⟨n⟩  (set bg color to n)
-    //
-    // Eg 24-bit (not yet implemented)
-    // ESC[ 38;2;⟨r⟩;⟨g⟩;⟨b⟩ m Select RGB foreground color
-    // ESC[ 48;2;⟨r⟩;⟨g⟩;⟨b⟩ m Select RGB background color
-    int num;
+	// process SGR ANSI color escape sequence
+	// Eg 8-bit
+	// 38;5;⟨n⟩  (set fg color to n)
+	// 48;5;⟨n⟩  (set bg color to n)
+	//
+	// Eg 24-bit (not yet implemented)
+	// ESC[ 38;2;⟨r⟩;⟨g⟩;⟨b⟩ m Select RGB foreground color
+	// ESC[ 48;2;⟨r⟩;⟨g⟩;⟨b⟩ m Select RGB background color
+	int num;
 
-    if ((*escape_sequence)[0] != ';')
-        return 0; /* not understood */
+	if ((*escape_sequence)[0] != ';')
+		return 0; /* not understood */
 
-    if ((*escape_sequence)[1] == '5') {
-        // 8 bit! ANSI specifies a predefined set of 256 colors here.
-        if ((*escape_sequence)[2] != ';')
-            return 0; /* not understood */
-        num = strtol((*escape_sequence) + 3, escape_sequence, 10);
-        if (num >= 0 && num <= 7) {
-            // 0-7 are standard colors  same as SGR 30-37
-            return num + 1;
-        }
+	if ((*escape_sequence)[1] == '5') {
+		// 8 bit! ANSI specifies a predefined set of 256 colors here.
+		if ((*escape_sequence)[2] != ';')
+			return 0; /* not understood */
+		num = strtol((*escape_sequence) + 3, escape_sequence, 10);
+		if (num >= 0 && num <= 7) {
+			// 0-7 are standard colors  same as SGR 30-37
+			return num + 1;
+		}
 
-        // Remainder aren't yet implemented
-        // 8- 15:  high intensity colors (as in ESC [ 90–97 m)
-        // 16-231:  6 × 6 × 6 cube (216 colors): 16 + 36 × r + 6 × g + b (0 ≤ r, g, b ≤ 5)
-        // 232-255:  grayscale from black to white in 24 steps
-    }
+		// Remainder aren't yet implemented
+		// 8- 15:  high intensity colors (as in ESC [ 90–97 m)
+		// 16-231:  6 × 6 × 6 cube (216 colors): 16 + 36 × r + 6 × g + b (0 ≤ r, g, b ≤ 5)
+		// 232-255:  grayscale from black to white in 24 steps
+	}
 
-    return 0; /* not understood */
+	return 0; /* not understood */
 }
 
 
@@ -225,18 +225,15 @@ static int set_ansi_attribute(const int attrib, char** escape_sequence)
             return 0; /* not understood */
         }
         break;
-	case 39:
-		fg_col = 0;
-		break;
+    case 39:
+        fg_col = 0;
+        break;
     case 48:
         bg_col = process_ansi_color_escape_sequence(escape_sequence);
         if (bg_col == 0) {
             return 0; /* not understood */
         }
         break;
-	case 49:
-		bg_col = 0;
-		break;
     case 49:
         bg_col = 0;
         break;
@@ -285,15 +282,15 @@ static void process_ansi(FILE * fp)
 	 * attributes to apply, but typically there are between 1 and 3.
 	 */
 
-    /* Special case of <ESC>[m */
-    if (buf[0] == '\0')
-        set_ansi_attribute(0, NULL);
+	/* Special case of <ESC>[m */
+	if (buf[0] == '\0')
+		set_ansi_attribute(0, NULL);
 
-    for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
-        ansi_attribute = strtol(numstart, &endptr, 10);
-        if (!set_ansi_attribute(ansi_attribute, &endptr))
-            break;
-    }
+	for (endptr = numstart = buf; *endptr != '\0'; numstart = endptr + 1) {
+		ansi_attribute = strtol(numstart, &endptr, 10);
+		if (!set_ansi_attribute(ansi_attribute, &endptr))
+			break;
+	}
 }
 
 static void __attribute__ ((__noreturn__)) do_exit(int status)
