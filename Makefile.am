@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/include \
+	-Wno-unused-result \
 	-DLOCALEDIR=\"$(localedir)\"
 
 PACKAGE_VERSION = @PACKAGE_VERSION@
