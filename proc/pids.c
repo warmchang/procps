@@ -1069,9 +1069,9 @@ static int pids_stacks_fetch (
         if (!pids_assign_results(info, info->fetch.anchor[n_inuse++], &task))
             return -1;       // here, errno was set to ENOMEM
     }
-    /* while the possibility is extremely remote, the readproc.c (read_something)
-       simple_readproc and simple_readtask guys could have encountered this error
-       in which case they would have returned a NULL, thus ending our while loop. */
+    /* while the possibility is extremely remote, the readproc.c (read_something) |
+       simple_readproc and simple_readtask guys could have encountered this error |
+       in which case they would have returned a NULL, thus ending our while loop. | */
     if (errno == ENOMEM)
         return -1;
 
