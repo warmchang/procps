@@ -162,7 +162,7 @@ struct stat_stack **procps_stat_sort (
 
 
 #ifdef XTRA_PROCPS_DEBUG
-# include <proc/xtra-procps-debug.h>
+# include "xtra-procps-debug.h"
 #endif
 #ifdef __cplusplus
 }

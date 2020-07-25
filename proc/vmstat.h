@@ -353,7 +353,7 @@ struct vmstat_stack *procps_vmstat_select (
 
 
 #ifdef XTRA_PROCPS_DEBUG
-# include <proc/xtra-procps-debug.h>
+# include "xtra-procps-debug.h"
 #endif
 #ifdef __cplusplus
 }
