@@ -488,7 +488,7 @@ static void getrunners(unsigned int *restrict running, unsigned int *restrict bl
     char c;
 
     if (!isdigit(ent->d_name[0])) continue;
-    sprintf(tbuf, "/proc/%s/stat", ent->d_name);
+    snprintf(tbuf, sizeof(tbuf), "/proc/%s/stat", ent->d_name);
 
     fd = open(tbuf, O_RDONLY, 0);
     if (fd == -1) continue;

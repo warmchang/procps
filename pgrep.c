@@ -588,8 +588,9 @@ static struct el * select_procs (int *num)
 				match = match_strlist (tty, opt_term);
 			}
 		}
-		else if (opt_older)
+		else if (opt_older) {
 			if(now - uptime_secs + (task.start_time / Hertz) + opt_older > now) match = 0;
+		}
 		else if (opt_runstates) {
 			match = 0;
 			if (strchr(opt_runstates, task.state)) match = 1;
