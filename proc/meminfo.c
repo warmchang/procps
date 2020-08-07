@@ -54,6 +54,8 @@ struct meminfo_data {
     unsigned long DirectMap4M;
     unsigned long DirectMap4k;
     unsigned long Dirty;
+    unsigned long FileHugePages;
+    unsigned long FilePmdMapped;
     unsigned long HardwareCorrupted;   //  man 5 proc: 'to be documented'
     unsigned long HighFree;
     unsigned long HighTotal;
@@ -79,9 +81,9 @@ struct meminfo_data {
     unsigned long NFS_Unstable;
     unsigned long PageTables;
     unsigned long Percpu;
-    unsigned long Quicklists;          //  man 5 proc: 'to be documented'
     unsigned long SReclaimable;
     unsigned long SUnreclaim;
+    unsigned long ShadowCallStack;
     unsigned long Shmem;
     unsigned long ShmemHugePages;
     unsigned long ShmemPmdMapped;
@@ -158,6 +160,8 @@ MEM_set(MEM_DIRECTMAP_2M,       ul_int,  DirectMap2M)
 MEM_set(MEM_DIRECTMAP_4K,       ul_int,  DirectMap4k)
 MEM_set(MEM_DIRECTMAP_4M,       ul_int,  DirectMap4M)
 MEM_set(MEM_DIRTY,              ul_int,  Dirty)
+MEM_set(MEM_FILE_HUGEPAGES,     ul_int,  FileHugePages)
+MEM_set(MEM_FILE_PMDMAPPED,     ul_int,  FilePmdMapped)
 MEM_set(MEM_FREE,               ul_int,  MemFree)
 MEM_set(MEM_HARD_CORRUPTED,     ul_int,  HardwareCorrupted)
 MEM_set(MEM_HIGH_FREE,          ul_int,  HighFree)
@@ -184,7 +188,7 @@ MEM_set(MEM_MAP_COPY,           ul_int,  MmapCopy)
 MEM_set(MEM_NFS_UNSTABLE,       ul_int,  NFS_Unstable)
 MEM_set(MEM_PAGE_TABLES,        ul_int,  PageTables)
 MEM_set(MEM_PER_CPU,            ul_int,  Percpu)
-MEM_set(MEM_QUICKLISTS,         ul_int,  Quicklists)
+MEM_set(MEM_SHADOWCALLSTACK,    ul_int,  ShadowCallStack)
 MEM_set(MEM_SHARED,             ul_int,  Shmem)
 MEM_set(MEM_SHMEM_HUGE,         ul_int,  ShmemHugePages)
 MEM_set(MEM_SHMEM_HUGE_MAP,     ul_int,  ShmemPmdMapped)
@@ -218,6 +222,8 @@ HST_set(DELTA_DIRECTMAP_2M,      s_int,  DirectMap2M)
 HST_set(DELTA_DIRECTMAP_4K,      s_int,  DirectMap4k)
 HST_set(DELTA_DIRECTMAP_4M,      s_int,  DirectMap4M)
 HST_set(DELTA_DIRTY,             s_int,  Dirty)
+HST_set(DELTA_FILE_HUGEPAGES,    s_int,  FileHugePages)
+HST_set(DELTA_FILE_PMDMAPPED,    s_int,  FilePmdMapped)
 HST_set(DELTA_FREE,              s_int,  MemFree)
 HST_set(DELTA_HARD_CORRUPTED,    s_int,  HardwareCorrupted)
 HST_set(DELTA_HIGH_FREE,         s_int,  HighFree)
@@ -244,7 +250,7 @@ HST_set(DELTA_MAP_COPY,          s_int,  MmapCopy)
 HST_set(DELTA_NFS_UNSTABLE,      s_int,  NFS_Unstable)
 HST_set(DELTA_PAGE_TABLES,       s_int,  PageTables)
 HST_set(DELTA_PER_CPU,           s_int,  Percpu)
-HST_set(DELTA_QUICKLISTS,        s_int,  Quicklists)
+HST_set(DELTA_SHADOWCALLSTACK,   s_int,  ShadowCallStack)
 HST_set(DELTA_SHARED,            s_int,  Shmem)
 HST_set(DELTA_SHMEM_HUGE,        s_int,  ShmemHugePages)
 HST_set(DELTA_SHMEM_HUGE_MAP,    s_int,  ShmemPmdMapped)
@@ -314,6 +320,8 @@ static struct {
   { RS(MEM_DIRECTMAP_4K),      TS(ul_int) },
   { RS(MEM_DIRECTMAP_4M),      TS(ul_int) },
   { RS(MEM_DIRTY),             TS(ul_int) },
+  { RS(MEM_FILE_HUGEPAGES),    TS(ul_int) },
+  { RS(MEM_FILE_PMDMAPPED),    TS(ul_int) },
   { RS(MEM_FREE),              TS(ul_int) },
   { RS(MEM_HARD_CORRUPTED),    TS(ul_int) },
   { RS(MEM_HIGH_FREE),         TS(ul_int) },
@@ -340,7 +348,7 @@ static struct {
   { RS(MEM_NFS_UNSTABLE),      TS(ul_int) },
   { RS(MEM_PAGE_TABLES),       TS(ul_int) },
   { RS(MEM_PER_CPU),           TS(ul_int) },
-  { RS(MEM_QUICKLISTS),        TS(ul_int) },
+  { RS(MEM_SHADOWCALLSTACK),   TS(ul_int) },
   { RS(MEM_SHARED),            TS(ul_int) },
   { RS(MEM_SHMEM_HUGE),        TS(ul_int) },
   { RS(MEM_SHMEM_HUGE_MAP),    TS(ul_int) },
@@ -374,6 +382,8 @@ static struct {
   { RS(DELTA_DIRECTMAP_4K),    TS(s_int)  },
   { RS(DELTA_DIRECTMAP_4M),    TS(s_int)  },
   { RS(DELTA_DIRTY),           TS(s_int)  },
+  { RS(DELTA_FILE_HUGEPAGES),  TS(s_int)  },
+  { RS(DELTA_FILE_PMDMAPPED),  TS(s_int)  },
   { RS(DELTA_FREE),            TS(s_int)  },
   { RS(DELTA_HARD_CORRUPTED),  TS(s_int)  },
   { RS(DELTA_HIGH_FREE),       TS(s_int)  },
@@ -400,7 +410,7 @@ static struct {
   { RS(DELTA_NFS_UNSTABLE),    TS(s_int)  },
   { RS(DELTA_PAGE_TABLES),     TS(s_int)  },
   { RS(DELTA_PER_CPU),         TS(s_int)  },
-  { RS(DELTA_QUICKLISTS),      TS(s_int)  },
+  { RS(DELTA_SHADOWCALLSTACK), TS(s_int) },
   { RS(DELTA_SHARED),          TS(s_int)  },
   { RS(DELTA_SHMEM_HUGE),      TS(s_int)  },
   { RS(DELTA_SHMEM_HUGE_MAP),  TS(s_int)  },
@@ -547,6 +557,8 @@ static int meminfo_make_hash_failed (
     htVAL(DirectMap4M)
     htVAL(DirectMap4k)
     htVAL(Dirty)
+    htVAL(FileHugePages)
+    htVAL(FilePmdMapped)
     htVAL(HardwareCorrupted)
     htVAL(HighFree)
     htVAL(HighTotal)
@@ -572,9 +584,9 @@ static int meminfo_make_hash_failed (
     htVAL(NFS_Unstable)
     htVAL(PageTables)
     htVAL(Percpu)
-    htVAL(Quicklists)
     htVAL(SReclaimable)
     htVAL(SUnreclaim)
+    htVAL(ShadowCallStack)
     htVAL(Shmem)
     htVAL(ShmemHugePages)
     htVAL(ShmemPmdMapped)
