@@ -82,7 +82,11 @@ struct vmstat_data {
     unsigned long nr_dirty;
     unsigned long nr_dirty_background_threshold;
     unsigned long nr_dirty_threshold;
+    unsigned long nr_file_hugepages;
     unsigned long nr_file_pages;
+    unsigned long nr_file_pmdmapped;
+    unsigned long nr_foll_pin_acquired;
+    unsigned long nr_foll_pin_released;
     unsigned long nr_free_cma;
     unsigned long nr_free_pages;
     unsigned long nr_inactive_anon;
@@ -94,11 +98,16 @@ struct vmstat_data {
     unsigned long nr_mapped;
     unsigned long nr_mlock;
     unsigned long nr_page_table_pages;
+    unsigned long nr_shadow_call_stack;
     unsigned long nr_shmem;
     unsigned long nr_shmem_hugepages;
     unsigned long nr_shmem_pmdmapped;
     unsigned long nr_slab_reclaimable;
     unsigned long nr_slab_unreclaimable;
+/*                nr_tlb_local_flush_all;        CONFIG_DEBUG_TLBFLUSH only */
+/*                nr_tlb_local_flush_one;        CONFIG_DEBUG_TLBFLUSH only */
+/*                nr_tlb_remote_flush;           CONFIG_DEBUG_TLBFLUSH only */
+/*                nr_tlb_remote_flush_received;  CONFIG_DEBUG_TLBFLUSH only */
     unsigned long nr_unevictable;
     unsigned long nr_unstable;
     unsigned long nr_vmscan_immediate_reclaim;
@@ -145,15 +154,19 @@ struct vmstat_data {
     unsigned long pgpgout;
     unsigned long pgrefill;
     unsigned long pgrotated;
+    unsigned long pgscan_anon;
     unsigned long pgscan_direct;
     unsigned long pgscan_direct_throttle;
+    unsigned long pgscan_file;
     unsigned long pgscan_kswapd;
     unsigned long pgskip_dma;
     unsigned long pgskip_dma32;
     unsigned long pgskip_high;
     unsigned long pgskip_movable;
     unsigned long pgskip_normal;
+    unsigned long pgsteal_anon;
     unsigned long pgsteal_direct;
+    unsigned long pgsteal_file;
     unsigned long pgsteal_kswapd;
     unsigned long pswpin;
     unsigned long pswpout;
@@ -165,7 +178,10 @@ struct vmstat_data {
     unsigned long thp_deferred_split_page;
     unsigned long thp_fault_alloc;
     unsigned long thp_fault_fallback;
+    unsigned long thp_fault_fallback_charge;
     unsigned long thp_file_alloc;
+    unsigned long thp_file_fallback;
+    unsigned long thp_file_fallback_charge;
     unsigned long thp_file_mapped;
     unsigned long thp_split_page;
     unsigned long thp_split_page_failed;
@@ -182,6 +198,8 @@ struct vmstat_data {
     unsigned long unevictable_pgs_rescued;
     unsigned long unevictable_pgs_scanned;
     unsigned long unevictable_pgs_stranded;
+/*                vmacache_find_calls;           CONFIG_DEBUG_VM_VMACACHE only */
+/*                vmacache_find_hits;            CONFIG_DEBUG_VM_VMACACHE only */
     unsigned long workingset_activate;
     unsigned long workingset_nodereclaim;
     unsigned long workingset_nodes;
@@ -260,7 +278,11 @@ REG_set(NR_DIRTIED,                            nr_dirtied)
 REG_set(NR_DIRTY,                              nr_dirty)
 REG_set(NR_DIRTY_BACKGROUND_THRESHOLD,         nr_dirty_background_threshold)
 REG_set(NR_DIRTY_THRESHOLD,                    nr_dirty_threshold)
+REG_set(NR_FILE_HUGEPAGES,                     nr_file_hugepages)
 REG_set(NR_FILE_PAGES,                         nr_file_pages)
+REG_set(NR_FILE_PMDMAPPED,                     nr_file_pmdmapped)
+REG_set(NR_FOLL_PIN_ACQUIRED,                  nr_foll_pin_acquired)
+REG_set(NR_FOLL_PIN_RELEASED,                  nr_foll_pin_released)
 REG_set(NR_FREE_CMA,                           nr_free_cma)
 REG_set(NR_FREE_PAGES,                         nr_free_pages)
 REG_set(NR_INACTIVE_ANON,                      nr_inactive_anon)
@@ -272,6 +294,7 @@ REG_set(NR_KERNEL_STACK,                       nr_kernel_stack)
 REG_set(NR_MAPPED,                             nr_mapped)
 REG_set(NR_MLOCK,                              nr_mlock)
 REG_set(NR_PAGE_TABLE_PAGES,                   nr_page_table_pages)
+REG_set(NR_SHADOW_CALL_STACK,                  nr_shadow_call_stack)
 REG_set(NR_SHMEM,                              nr_shmem)
 REG_set(NR_SHMEM_HUGEPAGES,                    nr_shmem_hugepages)
 REG_set(NR_SHMEM_PMDMAPPED,                    nr_shmem_pmdmapped)
@@ -323,15 +346,19 @@ REG_set(PGPGIN,                                pgpgin)
 REG_set(PGPGOUT,                               pgpgout)
 REG_set(PGREFILL,                              pgrefill)
 REG_set(PGROTATED,                             pgrotated)
+REG_set(PGSCAN_ANON,                           pgscan_anon)
 REG_set(PGSCAN_DIRECT,                         pgscan_direct)
 REG_set(PGSCAN_DIRECT_THROTTLE,                pgscan_direct_throttle)
+REG_set(PGSCAN_FILE,                           pgscan_file)
 REG_set(PGSCAN_KSWAPD,                         pgscan_kswapd)
 REG_set(PGSKIP_DMA,                            pgskip_dma)
 REG_set(PGSKIP_DMA32,                          pgskip_dma32)
 REG_set(PGSKIP_HIGH,                           pgskip_high)
 REG_set(PGSKIP_MOVABLE,                        pgskip_movable)
 REG_set(PGSKIP_NORMAL,                         pgskip_normal)
+REG_set(PGSTEAL_ANON,                          pgsteal_anon)
 REG_set(PGSTEAL_DIRECT,                        pgsteal_direct)
+REG_set(PGSTEAL_FILE,                          pgsteal_file)
 REG_set(PGSTEAL_KSWAPD,                        pgsteal_kswapd)
 REG_set(PSWPIN,                                pswpin)
 REG_set(PSWPOUT,                               pswpout)
@@ -343,7 +370,10 @@ REG_set(THP_COLLAPSE_ALLOC_FAILED,             thp_collapse_alloc_failed)
 REG_set(THP_DEFERRED_SPLIT_PAGE,               thp_deferred_split_page)
 REG_set(THP_FAULT_ALLOC,                       thp_fault_alloc)
 REG_set(THP_FAULT_FALLBACK,                    thp_fault_fallback)
+REG_set(THP_FAULT_FALLBACK_CHARGE,             thp_fault_fallback_charge)
 REG_set(THP_FILE_ALLOC,                        thp_file_alloc)
+REG_set(THP_FILE_FALLBACK,                     thp_file_fallback)
+REG_set(THP_FILE_FALLBACK_CHARGE,              thp_file_fallback_charge)
 REG_set(THP_FILE_MAPPED,                       thp_file_mapped)
 REG_set(THP_SPLIT_PAGE,                        thp_split_page)
 REG_set(THP_SPLIT_PAGE_FAILED,                 thp_split_page_failed)
@@ -400,7 +430,11 @@ HST_set(DELTA_NR_DIRTIED,                      nr_dirtied)
 HST_set(DELTA_NR_DIRTY,                        nr_dirty)
 HST_set(DELTA_NR_DIRTY_BACKGROUND_THRESHOLD,   nr_dirty_background_threshold)
 HST_set(DELTA_NR_DIRTY_THRESHOLD,              nr_dirty_threshold)
+HST_set(DELTA_NR_FILE_HUGEPAGES,               nr_file_hugepages)
 HST_set(DELTA_NR_FILE_PAGES,                   nr_file_pages)
+HST_set(DELTA_NR_FILE_PMDMAPPED,               nr_file_pmdmapped)
+HST_set(DELTA_NR_FOLL_PIN_ACQUIRED,            nr_foll_pin_acquired)
+HST_set(DELTA_NR_FOLL_PIN_RELEASED,            nr_foll_pin_released)
 HST_set(DELTA_NR_FREE_CMA,                     nr_free_cma)
 HST_set(DELTA_NR_FREE_PAGES,                   nr_free_pages)
 HST_set(DELTA_NR_INACTIVE_ANON,                nr_inactive_anon)
@@ -412,6 +446,7 @@ HST_set(DELTA_NR_KERNEL_STACK,                 nr_kernel_stack)
 HST_set(DELTA_NR_MAPPED,                       nr_mapped)
 HST_set(DELTA_NR_MLOCK,                        nr_mlock)
 HST_set(DELTA_NR_PAGE_TABLE_PAGES,             nr_page_table_pages)
+HST_set(DELTA_NR_SHADOW_CALL_STACK,            nr_shadow_call_stack)
 HST_set(DELTA_NR_SHMEM,                        nr_shmem)
 HST_set(DELTA_NR_SHMEM_HUGEPAGES,              nr_shmem_hugepages)
 HST_set(DELTA_NR_SHMEM_PMDMAPPED,              nr_shmem_pmdmapped)
@@ -463,15 +498,19 @@ HST_set(DELTA_PGPGIN,                          pgpgin)
 HST_set(DELTA_PGPGOUT,                         pgpgout)
 HST_set(DELTA_PGREFILL,                        pgrefill)
 HST_set(DELTA_PGROTATED,                       pgrotated)
+HST_set(DELTA_PGSCAN_ANON,                     pgscan_anon)
 HST_set(DELTA_PGSCAN_DIRECT,                   pgscan_direct)
 HST_set(DELTA_PGSCAN_DIRECT_THROTTLE,          pgscan_direct_throttle)
+HST_set(DELTA_PGSCAN_FILE,                     pgscan_file)
 HST_set(DELTA_PGSCAN_KSWAPD,                   pgscan_kswapd)
 HST_set(DELTA_PGSKIP_DMA,                      pgskip_dma)
 HST_set(DELTA_PGSKIP_DMA32,                    pgskip_dma32)
 HST_set(DELTA_PGSKIP_HIGH,                     pgskip_high)
 HST_set(DELTA_PGSKIP_MOVABLE,                  pgskip_movable)
 HST_set(DELTA_PGSKIP_NORMAL,                   pgskip_normal)
+HST_set(DELTA_PGSTEAL_ANON,                    pgsteal_anon)
 HST_set(DELTA_PGSTEAL_DIRECT,                  pgsteal_direct)
+HST_set(DELTA_PGSTEAL_FILE,                    pgsteal_file)
 HST_set(DELTA_PGSTEAL_KSWAPD,                  pgsteal_kswapd)
 HST_set(DELTA_PSWPIN,                          pswpin)
 HST_set(DELTA_PSWPOUT,                         pswpout)
@@ -483,7 +522,10 @@ HST_set(DELTA_THP_COLLAPSE_ALLOC_FAILED,       thp_collapse_alloc_failed)
 HST_set(DELTA_THP_DEFERRED_SPLIT_PAGE,         thp_deferred_split_page)
 HST_set(DELTA_THP_FAULT_ALLOC,                 thp_fault_alloc)
 HST_set(DELTA_THP_FAULT_FALLBACK,              thp_fault_fallback)
+HST_set(DELTA_THP_FAULT_FALLBACK_CHARGE,       thp_fault_fallback_charge)
 HST_set(DELTA_THP_FILE_ALLOC,                  thp_file_alloc)
+HST_set(DELTA_THP_FILE_FALLBACK,               thp_file_fallback)
+HST_set(DELTA_THP_FILE_FALLBACK_CHARGE,        thp_file_fallback_charge)
 HST_set(DELTA_THP_FILE_MAPPED,                 thp_file_mapped)
 HST_set(DELTA_THP_SPLIT_PAGE,                  thp_split_page)
 HST_set(DELTA_THP_SPLIT_PAGE_FAILED,           thp_split_page_failed)
@@ -566,7 +608,11 @@ static struct {
   { RS(NR_DIRTY),                              TS(ul_int) },
   { RS(NR_DIRTY_BACKGROUND_THRESHOLD),         TS(ul_int) },
   { RS(NR_DIRTY_THRESHOLD),                    TS(ul_int) },
+  { RS(NR_FILE_HUGEPAGES),                     TS(ul_int) },
   { RS(NR_FILE_PAGES),                         TS(ul_int) },
+  { RS(NR_FILE_PMDMAPPED),                     TS(ul_int) },
+  { RS(NR_FOLL_PIN_ACQUIRED),                  TS(ul_int) },
+  { RS(NR_FOLL_PIN_RELEASED),                  TS(ul_int) },
   { RS(NR_FREE_CMA),                           TS(ul_int) },
   { RS(NR_FREE_PAGES),                         TS(ul_int) },
   { RS(NR_INACTIVE_ANON),                      TS(ul_int) },
@@ -578,6 +624,7 @@ static struct {
   { RS(NR_MAPPED),                             TS(ul_int) },
   { RS(NR_MLOCK),                              TS(ul_int) },
   { RS(NR_PAGE_TABLE_PAGES),                   TS(ul_int) },
+  { RS(NR_SHADOW_CALL_STACK),                  TS(ul_int) },
   { RS(NR_SHMEM),                              TS(ul_int) },
   { RS(NR_SHMEM_HUGEPAGES),                    TS(ul_int) },
   { RS(NR_SHMEM_PMDMAPPED),                    TS(ul_int) },
@@ -629,15 +676,19 @@ static struct {
   { RS(PGPGOUT),                               TS(ul_int) },
   { RS(PGREFILL),                              TS(ul_int) },
   { RS(PGROTATED),                             TS(ul_int) },
+  { RS(PGSCAN_ANON),                           TS(ul_int) },
   { RS(PGSCAN_DIRECT),                         TS(ul_int) },
   { RS(PGSCAN_DIRECT_THROTTLE),                TS(ul_int) },
+  { RS(PGSCAN_FILE),                           TS(ul_int) },
   { RS(PGSCAN_KSWAPD),                         TS(ul_int) },
   { RS(PGSKIP_DMA),                            TS(ul_int) },
   { RS(PGSKIP_DMA32),                          TS(ul_int) },
   { RS(PGSKIP_HIGH),                           TS(ul_int) },
   { RS(PGSKIP_MOVABLE),                        TS(ul_int) },
   { RS(PGSKIP_NORMAL),                         TS(ul_int) },
+  { RS(PGSTEAL_ANON),                          TS(ul_int) },
   { RS(PGSTEAL_DIRECT),                        TS(ul_int) },
+  { RS(PGSTEAL_FILE),                          TS(ul_int) },
   { RS(PGSTEAL_KSWAPD),                        TS(ul_int) },
   { RS(PSWPIN),                                TS(ul_int) },
   { RS(PSWPOUT),                               TS(ul_int) },
@@ -649,7 +700,10 @@ static struct {
   { RS(THP_DEFERRED_SPLIT_PAGE),               TS(ul_int) },
   { RS(THP_FAULT_ALLOC),                       TS(ul_int) },
   { RS(THP_FAULT_FALLBACK),                    TS(ul_int) },
+  { RS(THP_FAULT_FALLBACK_CHARGE),             TS(ul_int) },
   { RS(THP_FILE_ALLOC),                        TS(ul_int) },
+  { RS(THP_FILE_FALLBACK),                     TS(ul_int) },
+  { RS(THP_FILE_FALLBACK_CHARGE),              TS(ul_int) },
   { RS(THP_FILE_MAPPED),                       TS(ul_int) },
   { RS(THP_SPLIT_PAGE),                        TS(ul_int) },
   { RS(THP_SPLIT_PAGE_FAILED),                 TS(ul_int) },
@@ -706,7 +760,11 @@ static struct {
   { RS(DELTA_NR_DIRTY),                        TS(sl_int) },
   { RS(DELTA_NR_DIRTY_BACKGROUND_THRESHOLD),   TS(sl_int) },
   { RS(DELTA_NR_DIRTY_THRESHOLD),              TS(sl_int) },
+  { RS(DELTA_NR_FILE_HUGEPAGES),               TS(sl_int) },
   { RS(DELTA_NR_FILE_PAGES),                   TS(sl_int) },
+  { RS(DELTA_NR_FILE_PMDMAPPED),               TS(sl_int) },
+  { RS(DELTA_NR_FOLL_PIN_ACQUIRED),            TS(sl_int) },
+  { RS(DELTA_NR_FOLL_PIN_RELEASED),            TS(sl_int) },
   { RS(DELTA_NR_FREE_CMA),                     TS(sl_int) },
   { RS(DELTA_NR_FREE_PAGES),                   TS(sl_int) },
   { RS(DELTA_NR_INACTIVE_ANON),                TS(sl_int) },
@@ -718,6 +776,7 @@ static struct {
   { RS(DELTA_NR_MAPPED),                       TS(sl_int) },
   { RS(DELTA_NR_MLOCK),                        TS(sl_int) },
   { RS(DELTA_NR_PAGE_TABLE_PAGES),             TS(sl_int) },
+  { RS(DELTA_NR_SHADOW_CALL_STACK),            TS(sl_int) },
   { RS(DELTA_NR_SHMEM),                        TS(sl_int) },
   { RS(DELTA_NR_SHMEM_HUGEPAGES),              TS(sl_int) },
   { RS(DELTA_NR_SHMEM_PMDMAPPED),              TS(sl_int) },
@@ -769,15 +828,19 @@ static struct {
   { RS(DELTA_PGPGOUT),                         TS(sl_int) },
   { RS(DELTA_PGREFILL),                        TS(sl_int) },
   { RS(DELTA_PGROTATED),                       TS(sl_int) },
+  { RS(DELTA_PGSCAN_ANON),                     TS(sl_int) },
   { RS(DELTA_PGSCAN_DIRECT),                   TS(sl_int) },
   { RS(DELTA_PGSCAN_DIRECT_THROTTLE),          TS(sl_int) },
+  { RS(DELTA_PGSCAN_FILE),                     TS(sl_int) },
   { RS(DELTA_PGSCAN_KSWAPD),                   TS(sl_int) },
   { RS(DELTA_PGSKIP_DMA),                      TS(sl_int) },
   { RS(DELTA_PGSKIP_DMA32),                    TS(sl_int) },
   { RS(DELTA_PGSKIP_HIGH),                     TS(sl_int) },
   { RS(DELTA_PGSKIP_MOVABLE),                  TS(sl_int) },
   { RS(DELTA_PGSKIP_NORMAL),                   TS(sl_int) },
+  { RS(DELTA_PGSTEAL_ANON),                    TS(sl_int) },
   { RS(DELTA_PGSTEAL_DIRECT),                  TS(sl_int) },
+  { RS(DELTA_PGSTEAL_FILE),                    TS(sl_int) },
   { RS(DELTA_PGSTEAL_KSWAPD),                  TS(sl_int) },
   { RS(DELTA_PSWPIN),                          TS(sl_int) },
   { RS(DELTA_PSWPOUT),                         TS(sl_int) },
@@ -789,7 +852,10 @@ static struct {
   { RS(DELTA_THP_DEFERRED_SPLIT_PAGE),         TS(sl_int) },
   { RS(DELTA_THP_FAULT_ALLOC),                 TS(sl_int) },
   { RS(DELTA_THP_FAULT_FALLBACK),              TS(sl_int) },
+  { RS(DELTA_THP_FAULT_FALLBACK_CHARGE),       TS(sl_int) },
   { RS(DELTA_THP_FILE_ALLOC),                  TS(sl_int) },
+  { RS(DELTA_THP_FILE_FALLBACK),               TS(sl_int) },
+  { RS(DELTA_THP_FILE_FALLBACK_CHARGE),        TS(sl_int) },
   { RS(DELTA_THP_FILE_MAPPED),                 TS(sl_int) },
   { RS(DELTA_THP_SPLIT_PAGE),                  TS(sl_int) },
   { RS(DELTA_THP_SPLIT_PAGE_FAILED),           TS(sl_int) },
@@ -947,7 +1013,11 @@ static int vmstat_make_hash_failed (
     htVAL(nr_dirty)
     htVAL(nr_dirty_background_threshold)
     htVAL(nr_dirty_threshold)
+    htVAL(nr_file_hugepages)
     htVAL(nr_file_pages)
+    htVAL(nr_file_pmdmapped)
+    htVAL(nr_foll_pin_acquired)
+    htVAL(nr_foll_pin_released)
     htVAL(nr_free_cma)
     htVAL(nr_free_pages)
     htVAL(nr_inactive_anon)
@@ -959,6 +1029,7 @@ static int vmstat_make_hash_failed (
     htVAL(nr_mapped)
     htVAL(nr_mlock)
     htVAL(nr_page_table_pages)
+    htVAL(nr_shadow_call_stack)
     htVAL(nr_shmem)
     htVAL(nr_shmem_hugepages)
     htVAL(nr_shmem_pmdmapped)
@@ -1010,15 +1081,19 @@ static int vmstat_make_hash_failed (
     htVAL(pgpgout)
     htVAL(pgrefill)
     htVAL(pgrotated)
+    htVAL(pgscan_anon)
     htVAL(pgscan_direct)
     htVAL(pgscan_direct_throttle)
+    htVAL(pgscan_file)
     htVAL(pgscan_kswapd)
     htVAL(pgskip_dma)
     htVAL(pgskip_dma32)
     htVAL(pgskip_high)
     htVAL(pgskip_movable)
     htVAL(pgskip_normal)
+    htVAL(pgsteal_anon)
     htVAL(pgsteal_direct)
+    htVAL(pgsteal_file)
     htVAL(pgsteal_kswapd)
     htVAL(pswpin)
     htVAL(pswpout)
@@ -1030,7 +1105,10 @@ static int vmstat_make_hash_failed (
     htVAL(thp_deferred_split_page)
     htVAL(thp_fault_alloc)
     htVAL(thp_fault_fallback)
+    htVAL(thp_fault_fallback_charge)
     htVAL(thp_file_alloc)
+    htVAL(thp_file_fallback)
+    htVAL(thp_file_fallback_charge)
     htVAL(thp_file_mapped)
     htVAL(thp_split_page)
     htVAL(thp_split_page_failed)
