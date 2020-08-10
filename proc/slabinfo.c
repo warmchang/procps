@@ -47,6 +47,13 @@
 
 #define STACKS_INCR          128         // amount reap stack allocations grow
 
+/* ---------------------------------------------------------------------------- +
+   this #define will be used to help ensure that our Item_table is synchronized |
+   with all the enumerators found in the associated header file. It is intended |
+   to only be defined locally (and temporarily) at some point prior to release! | */
+// #define ITEMTABLE_DEBUG //-------------------------------------------------- |
+// ---------------------------------------------------------------------------- +
+
 /*
    Because 'select' could, at most, return only node[0] values and since 'reap' |
    would be forced to duplicate global slabs stuff in every node results stack, |
@@ -134,7 +141,7 @@ struct slabinfo_info {
 
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
-#define setNAME(e) set_slabinfo_ ## e
+#define setNAME(e) set_ ## e
 #define setDECL(e) static void setNAME(e) \
     (struct slabinfo_result *R, struct slabs_hist *S, struct slabs_node *N)
 
@@ -144,8 +151,8 @@ struct slabinfo_info {
 // delta assignment
 #define HST_set(e,t,x) setDECL(e) { (void)N; R->result. t = (signed long)S->new. x - S->old. x; }
 
-setDECL(noop)  { (void)R; (void)S; (void)N; }
-setDECL(extra) { (void)S; (void)N; R->result.ul_int = 0; }
+setDECL(SLABINFO_noop)  { (void)R; (void)S; (void)N; }
+setDECL(SLABINFO_extra) { (void)S; (void)N; R->result.ul_int = 0; }
 
 NOD_set(SLAB_NAME,                     str,  name)
 NOD_set(SLAB_NUM_OBJS,               u_int,  nr_objs)
@@ -234,7 +241,11 @@ srtDECL(noop) { \
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 typedef void (*SET_t)(struct slabinfo_result *, struct slabs_hist *, struct slabs_node *);
+#ifdef ITEMTABLE_DEBUG
+#define RS(e) (SET_t)setNAME(e), e, STRINGIFY(e)
+#else
 #define RS(e) (SET_t)setNAME(e)
+#endif
 
 typedef int  (*QSR_t)(const void *, const void *, void *);
 #define QS(t) (QSR_t)srtNAME(t)
@@ -248,13 +259,17 @@ typedef int  (*QSR_t)(const void *, const void *, void *);
          * those *enum slabinfo_item* guys ! */
 static struct {
     SET_t setsfunc;              // the actual result setting routine
+#ifdef ITEMTABLE_DEBUG
+    int   enumnumb;              // enumerator (must match position!)
+    char *enum2str;              // enumerator name as a char* string
+#endif
     QSR_t sortfunc;              // sort cmp func for a specific type
     char *type2str;              // the result type as a string value
 } Item_table[] = {
 /*  setsfunc                        sortfunc     type2str
     ------------------------------  -----------  ---------- */
-  { RS(noop),                       QS(noop),    TS_noop    },
-  { RS(extra),                      QS(ul_int),  TS_noop    },
+  { RS(SLABINFO_noop),              QS(noop),    TS_noop    },
+  { RS(SLABINFO_extra),             QS(ul_int),  TS_noop    },
 
   { RS(SLAB_NAME),                  QS(str),     TS(str)    },
   { RS(SLAB_NUM_OBJS),              QS(u_int),   TS(u_int)  },
@@ -292,9 +307,6 @@ static struct {
   { RS(SLABS_DELTA_PAGES_TOTAL),    QS(noop),    TS(s_int)  },
   { RS(SLABS_DELTA_SIZE_ACTIVE),    QS(noop),    TS(s_int)  },
   { RS(SLABS_DELTA_SIZE_TOTAL),     QS(noop),    TS(s_int)  },
-
- // dummy entry corresponding to SLABINFO_logical_end ...
-  { NULL,                           NULL,        NULL       }
 };
 
     /* please note,
@@ -731,6 +743,23 @@ PROCPS_EXPORT int procps_slabinfo_new (
         struct slabinfo_info **info)
 {
     struct slabinfo_info *p;
+
+#ifdef ITEMTABLE_DEBUG
+    int i, failed = 0;
+    for (i = 0; i < MAXTABLE(Item_table); i++) {
+        if (i != Item_table[i].enumnumb) {
+            fprintf(stderr, "%s: enum/table error: Item_table[%d] was %s, but its value is %d\n"
+                , __FILE__, i, Item_table[i].enum2str, Item_table[i].enumnumb);
+            failed = 1;
+        }
+    }
+    if (i != SLABINFO_logical_end) {
+        fprintf(stderr, "%s: SLABINFO_logical_end is %d, expected %d\n"
+            , __FILE__, SLABINFO_logical_end, i);
+        failed = 1;
+    }
+    if (failed) _Exit(EXIT_FAILURE);
+#endif
 
     if (info == NULL || *info != NULL)
         return -EINVAL;

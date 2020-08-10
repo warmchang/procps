@@ -35,6 +35,13 @@
 #define MEMINFO_FILE  "/proc/meminfo"
 #define MEMINFO_BUFF  8192
 
+/* ------------------------------------------------------------------------- +
+   this provision can be used to ensure that our Item_table was synchronized |
+   with those enumerators found in the associated header file. It's intended |
+   to only be used locally (& temporarily) at some point prior to a release! | */
+// #define ITEMTABLE_DEBUG //----------------------------------------------- |
+// ------------------------------------------------------------------------- +
+
 
 struct meminfo_data {
     unsigned long Active;
@@ -284,7 +291,11 @@ HST_set(SWAP_DELTA_USED,         s_int,  derived_swap_used)
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 typedef void (*SET_t)(struct meminfo_result *, struct mem_hist *);
+#ifdef ITEMTABLE_DEBUG
+#define RS(e) (SET_t)setNAME(e), MEMINFO_ ## e, STRINGIFY(MEMINFO_ ## e)
+#else
 #define RS(e) (SET_t)setNAME(e)
+#endif
 
 #define TS(t) STRINGIFY(t)
 #define TS_noop ""
@@ -295,6 +306,10 @@ typedef void (*SET_t)(struct meminfo_result *, struct mem_hist *);
          * those 'enum meminfo_item' guys ! */
 static struct {
     SET_t setsfunc;              // the actual result setting routine
+#ifdef ITEMTABLE_DEBUG
+    int   enumnumb;              // enumerator (must match position!)
+    char *enum2str;              // enumerator name as a char* string
+#endif
     char *type2str;              // the result type as a string value
 } Item_table[] = {
 /*  setsfunc                   type2str
@@ -435,9 +450,6 @@ static struct {
   { RS(SWAP_DELTA_FREE),       TS(s_int)  },
   { RS(SWAP_DELTA_TOTAL),      TS(s_int)  },
   { RS(SWAP_DELTA_USED),       TS(s_int)  },
-
- // dummy entry corresponding to MEMINFO_logical_end ...
-  { NULL,                      NULL       }
 };
 
     /* please note,
@@ -786,6 +798,23 @@ PROCPS_EXPORT int procps_meminfo_new (
         struct meminfo_info **info)
 {
     struct meminfo_info *p;
+
+#ifdef ITEMTABLE_DEBUG
+    int i, failed = 0;
+    for (i = 0; i < MAXTABLE(Item_table); i++) {
+        if (i != Item_table[i].enumnumb) {
+            fprintf(stderr, "%s: enum/table error: Item_table[%d] was %s, but its value is %d\n"
+                , __FILE__, i, Item_table[i].enum2str, Item_table[i].enumnumb);
+            failed = 1;
+        }
+    }
+    if (i != MEMINFO_logical_end) {
+        fprintf(stderr, "%s: MEMINFO_logical_end is %d, expected %d\n"
+            , __FILE__, MEMINFO_logical_end, i);
+        failed = 1;
+    }
+    if (failed) _Exit(EXIT_FAILURE);
+#endif
 
     if (info == NULL || *info != NULL)
         return -EINVAL;

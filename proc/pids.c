@@ -52,6 +52,13 @@
 #define STACKS_INCR  128               // amount reap stack allocations grow
 #define NEWOLD_INCR  128               // amt by which hist allocations grow
 
+/* ------------------------------------------------------------------------- +
+   this provision can be used to ensure that our Item_table was synchronized |
+   with those enumerators found in the associated header file. It's intended |
+   to only be used locally (& temporarily) at some point prior to a release! | */
+// #define ITEMTABLE_DEBUG //----------------------------------------------- |
+// ------------------------------------------------------------------------- +
+
 
 struct stacks_extent {
     int ext_numstacks;
@@ -357,7 +364,11 @@ typedef void (*SET_t)(struct pids_info *, struct pids_result *, proc_t *);
 typedef void (*FRE_t)(struct pids_result *);
 typedef int  (*QSR_t)(const void *, const void *, void *);
 
+#ifdef ITEMTABLE_DEBUG
+#define RS(e) (SET_t)setNAME(e), PIDS_ ## e, STRINGIFY(PIDS_ ## e)
+#else
 #define RS(e) (SET_t)setNAME(e)
+#endif
 #define FF(t) (FRE_t)freNAME(t)
 #define QS(t) (QSR_t)srtNAME(t)
 #define TS(t) STRINGIFY(t)
@@ -369,6 +380,10 @@ typedef int  (*QSR_t)(const void *, const void *, void *);
          * those 'enum pids_item' guys ! */
 static struct {
     SET_t    setsfunc;            // the actual result setting routine
+#ifdef ITEMTABLE_DEBUG
+    int      enumnumb;            // enumerator (must match position!)
+    char    *enum2str;            // enumerator name as a char* string
+#endif
     unsigned oldflags;            // PROC_FILLxxxx flags for this item
     FRE_t    freefunc;            // free function for strings storage
     QSR_t    sortfunc;            // sort cmp func for a specific type
@@ -499,9 +514,6 @@ static struct {
     { RS(VM_USED),           f_status,   NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(VSIZE_PGS),         f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(WCHAN_NAME),        0,          FF(str),   QS(str),       0,        TS(str)     }, // oldflags: tid already free
-
-   // dummy entry corresponding to PIDS_logical_end ...
-    { NULL,                  0,          NULL,      NULL,          0,        NULL        }
 };
 
     /* please note,
@@ -1115,6 +1127,23 @@ PROCPS_EXPORT int procps_pids_new (
     struct pids_info *p;
     double uptime_secs;
     int pgsz;
+
+#ifdef ITEMTABLE_DEBUG
+    int i, failed = 0;
+    for (i = 0; i < MAXTABLE(Item_table); i++) {
+        if (i != Item_table[i].enumnumb) {
+            fprintf(stderr, "%s: enum/table error: Item_table[%d] was %s, but its value is %d\n"
+                , __FILE__, i, Item_table[i].enum2str, Item_table[i].enumnumb);
+            failed = 1;
+        }
+    }
+    if (i != PIDS_logical_end) {
+        fprintf(stderr, "%s: PIDS_logical_end is %d, expected %d\n"
+            , __FILE__, PIDS_logical_end, i);
+        failed = 1;
+    }
+    if (failed) _Exit(EXIT_FAILURE);
+#endif
 
     if (info == NULL || *info != NULL)
         return -EINVAL;

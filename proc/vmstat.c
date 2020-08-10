@@ -41,6 +41,14 @@
 #define VMSTAT_FILE  "/proc/vmstat"
 #define VMSTAT_BUFF  8192
 
+/* ------------------------------------------------------------- +
+   this provision can be used to help ensure that our Item_table |
+   was synchronized with the enumerators found in the associated |
+   header file. It's intended to be used locally (& temporarily) |
+   at least once at some point prior to publishing new releases! | */
+// #define ITEMTABLE_DEBUG //----------------------------------- |
+// ------------------------------------------------------------- +
+
 /*
  *  Perhaps someday we'll all learn what is in these fields. But |
  *  that might require available linux documentation progressing |
@@ -557,7 +565,11 @@ HST_set(DELTA_ZONE_RECLAIM_FAILED,             zone_reclaim_failed)
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 typedef void (*SET_t)(struct vmstat_result *, struct vmstat_hist *);
+#ifdef ITEMTABLE_DEBUG
+#define RS(e) (SET_t)setNAME(e), VMSTAT_ ## e, STRINGIFY(VMSTAT_ ## e)
+#else
 #define RS(e) (SET_t)setNAME(e)
+#endif
 
 #define TS(t) STRINGIFY(t)
 #define TS_noop ""
@@ -568,6 +580,10 @@ typedef void (*SET_t)(struct vmstat_result *, struct vmstat_hist *);
          * those 'enum vmstat_item' guys ! */
 static struct {
     SET_t setsfunc;              // the actual result setting routine
+#ifdef ITEMTABLE_DEBUG
+    int   enumnumb;              // enumerator (must match position!)
+    char *enum2str;              // enumerator name as a char* string
+#endif
     char *type2str;              // the result type as a string value
 } Item_table[] = {
 /*  setsfunc                                   type2str
@@ -878,9 +894,6 @@ static struct {
   { RS(DELTA_WORKINGSET_REFAULT),              TS(sl_int) },
   { RS(DELTA_WORKINGSET_RESTORE),              TS(sl_int) },
   { RS(DELTA_ZONE_RECLAIM_FAILED),             TS(sl_int) },
-
- // dummy entry corresponding to VMSTAT_logical_end ...
-  { NULL,                                      NULL       }
 };
 
     /* please note,
@@ -1282,6 +1295,23 @@ PROCPS_EXPORT int procps_vmstat_new (
         struct vmstat_info **info)
 {
     struct vmstat_info *p;
+
+#ifdef ITEMTABLE_DEBUG
+    int i, failed = 0;
+    for (i = 0; i < MAXTABLE(Item_table); i++) {
+        if (i != Item_table[i].enumnumb) {
+            fprintf(stderr, "%s: enum/table error: Item_table[%d] was %s, but its value is %d\n"
+                , __FILE__, i, Item_table[i].enum2str, Item_table[i].enumnumb);
+            failed = 1;
+        }
+    }
+    if (i != VMSTAT_logical_end) {
+        fprintf(stderr, "%s: VMSTAT_logical_end is %d, expected %d\n"
+            , __FILE__, VMSTAT_logical_end, i);
+        failed = 1;
+    }
+    if (failed) _Exit(EXIT_FAILURE);
+#endif
 
     if (info == NULL || *info != NULL)
         return -EINVAL;

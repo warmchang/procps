@@ -40,6 +40,13 @@
 #define NEWOLD_INCR   64               // amount jiffs hist allocations grow
 
 /* ------------------------------------------------------------------------- +
+   this provision can be used to ensure that our Item_table was synchronized |
+   with those enumerators found in the associated header file. It's intended |
+   to only be used locally (& temporarily) at some point prior to a release! | */
+// #define ITEMTABLE_DEBUG //----------------------------------------------- |
+// ------------------------------------------------------------------------- +
+
+/* ------------------------------------------------------------------------- +
    because 'reap' would be forced to duplicate the global SYS stuff in every |
    TIC type results stack, the following #define can be used to enforce that |
    only STAT_noop and STAT_extra plus all the STAT_TIC items will be allowed | */
@@ -267,7 +274,11 @@ srtDECL(noop) { \
 // ___ Controlling Table ||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 typedef void (*SET_t)(struct stat_result *, struct hist_sys *, struct hist_tic *);
+#ifdef ITEMTABLE_DEBUG
+#define RS(e) (SET_t)setNAME(e), STAT_ ## e, STRINGIFY(STAT_ ## e)
+#else
 #define RS(e) (SET_t)setNAME(e)
+#endif
 
 typedef int  (*QSR_t)(const void *, const void *, void *);
 #define QS(t) (QSR_t)srtNAME(t)
@@ -281,6 +292,10 @@ typedef int  (*QSR_t)(const void *, const void *, void *);
          * those 'enum stat_item' guys ! */
 static struct {
     SET_t setsfunc;              // the actual result setting routine
+#ifdef ITEMTABLE_DEBUG
+    int   enumnumb;              // enumerator (must match position!)
+    char *enum2str;              // enumerator name as a char* string
+#endif
     QSR_t sortfunc;              // sort cmp func for a specific type
     char *type2str;              // the result type as a string value
 } Item_table[] = {
@@ -338,9 +353,6 @@ static struct {
   { RS(SYS_DELTA_PROC_BLOCKED),  QS(s_int),    TS(s_int)   },
   { RS(SYS_DELTA_PROC_CREATED),  QS(s_int),    TS(s_int)   },
   { RS(SYS_DELTA_PROC_RUNNING),  QS(s_int),    TS(s_int)   },
-
- // dummy entry corresponding to STAT_logical_end ...
-  { NULL,                        NULL,         NULL        }
 };
 
     /* please note,
@@ -853,6 +865,23 @@ PROCPS_EXPORT int procps_stat_new (
         struct stat_info **info)
 {
     struct stat_info *p;
+
+#ifdef ITEMTABLE_DEBUG
+    int i, failed = 0;
+    for (i = 0; i < MAXTABLE(Item_table); i++) {
+        if (i != Item_table[i].enumnumb) {
+            fprintf(stderr, "%s: enum/table error: Item_table[%d] was %s, but its value is %d\n"
+                , __FILE__, i, Item_table[i].enum2str, Item_table[i].enumnumb);
+            failed = 1;
+        }
+    }
+    if (i != STAT_logical_end) {
+        fprintf(stderr, "%s: STAT_logical_end is %d, expected %d\n"
+            , __FILE__, STAT_logical_end, i);
+        failed = 1;
+    }
+    if (failed) _Exit(EXIT_FAILURE);
+#endif
 
     if (info == NULL || *info != NULL)
         return -EINVAL;
