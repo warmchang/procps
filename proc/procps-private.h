@@ -24,5 +24,6 @@
 #define STRINGIFY_ARG(a)	#a
 #define STRINGIFY(a)		STRINGIFY_ARG(a)
 
+#define MAXTABLE(t)		(int)(sizeof(t) / sizeof(t[0]))
 
 #endif
