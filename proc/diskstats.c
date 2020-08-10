@@ -123,34 +123,34 @@ struct diskstats_info {
 setDECL(noop)  { (void)R; (void)N; }
 setDECL(extra) { (void)N; R->result.ul_int = 0; }
 
-DEV_set(DISKSTATS_NAME,                 str,     name)
-DEV_set(DISKSTATS_TYPE,                 s_int,   type)
-DEV_set(DISKSTATS_MAJOR,                s_int,   major)
-DEV_set(DISKSTATS_MINOR,                s_int,   minor)
+DEV_set(NAME,                 str,     name)
+DEV_set(TYPE,                 s_int,   type)
+DEV_set(MAJOR,                s_int,   major)
+DEV_set(MINOR,                s_int,   minor)
 
-REG_set(DISKSTATS_READS,                ul_int,  reads)
-REG_set(DISKSTATS_READS_MERGED,         ul_int,  reads_merged)
-REG_set(DISKSTATS_READ_SECTORS,         ul_int,  read_sectors)
-REG_set(DISKSTATS_READ_TIME,            ul_int,  read_time)
-REG_set(DISKSTATS_WRITES,               ul_int,  writes)
-REG_set(DISKSTATS_WRITES_MERGED,        ul_int,  writes_merged)
-REG_set(DISKSTATS_WRITE_SECTORS,        ul_int,  write_sectors)
-REG_set(DISKSTATS_WRITE_TIME,           ul_int,  write_time)
-REG_set(DISKSTATS_IO_TIME,              ul_int,  io_time)
-REG_set(DISKSTATS_WEIGHTED_TIME,        ul_int,  io_wtime)
+REG_set(READS,                ul_int,  reads)
+REG_set(READS_MERGED,         ul_int,  reads_merged)
+REG_set(READ_SECTORS,         ul_int,  read_sectors)
+REG_set(READ_TIME,            ul_int,  read_time)
+REG_set(WRITES,               ul_int,  writes)
+REG_set(WRITES_MERGED,        ul_int,  writes_merged)
+REG_set(WRITE_SECTORS,        ul_int,  write_sectors)
+REG_set(WRITE_TIME,           ul_int,  write_time)
+REG_set(IO_TIME,              ul_int,  io_time)
+REG_set(WEIGHTED_TIME,        ul_int,  io_wtime)
 
-REG_set(DISKSTATS_IO_INPROGRESS,        s_int,   io_inprogress)
+REG_set(IO_INPROGRESS,        s_int,   io_inprogress)
 
-HST_set(DISKSTATS_DELTA_READS,          s_int,   reads)
-HST_set(DISKSTATS_DELTA_READS_MERGED,   s_int,   reads_merged)
-HST_set(DISKSTATS_DELTA_READ_SECTORS,   s_int,   read_sectors)
-HST_set(DISKSTATS_DELTA_READ_TIME,      s_int,   read_time)
-HST_set(DISKSTATS_DELTA_WRITES,         s_int,   writes)
-HST_set(DISKSTATS_DELTA_WRITES_MERGED,  s_int,   writes_merged)
-HST_set(DISKSTATS_DELTA_WRITE_SECTORS,  s_int,   write_sectors)
-HST_set(DISKSTATS_DELTA_WRITE_TIME,     s_int,   write_time)
-HST_set(DISKSTATS_DELTA_IO_TIME,        s_int,   io_time)
-HST_set(DISKSTATS_DELTA_WEIGHTED_TIME,  s_int,   io_wtime)
+HST_set(DELTA_READS,          s_int,   reads)
+HST_set(DELTA_READS_MERGED,   s_int,   reads_merged)
+HST_set(DELTA_READ_SECTORS,   s_int,   read_sectors)
+HST_set(DELTA_READ_TIME,      s_int,   read_time)
+HST_set(DELTA_WRITES,         s_int,   writes)
+HST_set(DELTA_WRITES_MERGED,  s_int,   writes_merged)
+HST_set(DELTA_WRITE_SECTORS,  s_int,   write_sectors)
+HST_set(DELTA_WRITE_TIME,     s_int,   write_time)
+HST_set(DELTA_IO_TIME,        s_int,   io_time)
+HST_set(DELTA_WEIGHTED_TIME,  s_int,   io_wtime)
 
 #undef setDECL
 #undef DEV_set
@@ -217,39 +217,39 @@ static struct {
     QSR_t sortfunc;              // sort cmp func for a specific type
     char *type2str;              // the result type as a string value
 } Item_table[] = {
-/*  setsfunc                            sortfunc     type2str
-    ----------------------------------  -----------  ---------- */
-  { RS(noop),                           QS(noop),    TS_noop    },
-  { RS(extra),                          QS(ul_int),  TS_noop    },
+/*  setsfunc                  sortfunc     type2str
+    ------------------------  -----------  ---------- */
+  { RS(noop),                 QS(noop),    TS_noop    },
+  { RS(extra),                QS(ul_int),  TS_noop    },
 
-  { RS(DISKSTATS_NAME),                 QS(str),     TS(str)    },
-  { RS(DISKSTATS_TYPE),                 QS(s_int),   TS(s_int)  },
-  { RS(DISKSTATS_MAJOR),                QS(s_int),   TS(s_int)  },
-  { RS(DISKSTATS_MINOR),                QS(s_int),   TS(s_int)  },
+  { RS(NAME),                 QS(str),     TS(str)    },
+  { RS(TYPE),                 QS(s_int),   TS(s_int)  },
+  { RS(MAJOR),                QS(s_int),   TS(s_int)  },
+  { RS(MINOR),                QS(s_int),   TS(s_int)  },
 
-  { RS(DISKSTATS_READS),                QS(ul_int),  TS(ul_int) },
-  { RS(DISKSTATS_READS_MERGED),         QS(ul_int),  TS(ul_int) },
-  { RS(DISKSTATS_READ_SECTORS),         QS(ul_int),  TS(ul_int) },
-  { RS(DISKSTATS_READ_TIME),            QS(ul_int),  TS(ul_int) },
-  { RS(DISKSTATS_WRITES),               QS(ul_int),  TS(ul_int) },
-  { RS(DISKSTATS_WRITES_MERGED),        QS(ul_int),  TS(ul_int) },
-  { RS(DISKSTATS_WRITE_SECTORS),        QS(ul_int),  TS(ul_int) },
-  { RS(DISKSTATS_WRITE_TIME),           QS(ul_int),  TS(ul_int) },
-  { RS(DISKSTATS_IO_TIME),              QS(ul_int),  TS(ul_int) },
-  { RS(DISKSTATS_WEIGHTED_TIME),        QS(ul_int),  TS(ul_int) },
+  { RS(READS),                QS(ul_int),  TS(ul_int) },
+  { RS(READS_MERGED),         QS(ul_int),  TS(ul_int) },
+  { RS(READ_SECTORS),         QS(ul_int),  TS(ul_int) },
+  { RS(READ_TIME),            QS(ul_int),  TS(ul_int) },
+  { RS(WRITES),               QS(ul_int),  TS(ul_int) },
+  { RS(WRITES_MERGED),        QS(ul_int),  TS(ul_int) },
+  { RS(WRITE_SECTORS),        QS(ul_int),  TS(ul_int) },
+  { RS(WRITE_TIME),           QS(ul_int),  TS(ul_int) },
+  { RS(IO_TIME),              QS(ul_int),  TS(ul_int) },
+  { RS(WEIGHTED_TIME),        QS(ul_int),  TS(ul_int) },
 
-  { RS(DISKSTATS_IO_INPROGRESS),        QS(s_int),   TS(s_int)  },
+  { RS(IO_INPROGRESS),        QS(s_int),   TS(s_int)  },
 
-  { RS(DISKSTATS_DELTA_READS),          QS(s_int),   TS(s_int)  },
-  { RS(DISKSTATS_DELTA_READS_MERGED),   QS(s_int),   TS(s_int)  },
-  { RS(DISKSTATS_DELTA_READ_SECTORS),   QS(s_int),   TS(s_int)  },
-  { RS(DISKSTATS_DELTA_READ_TIME),      QS(s_int),   TS(s_int)  },
-  { RS(DISKSTATS_DELTA_WRITES),         QS(s_int),   TS(s_int)  },
-  { RS(DISKSTATS_DELTA_WRITES_MERGED),  QS(s_int),   TS(s_int)  },
-  { RS(DISKSTATS_DELTA_WRITE_SECTORS),  QS(s_int),   TS(s_int)  },
-  { RS(DISKSTATS_DELTA_WRITE_TIME),     QS(s_int),   TS(s_int)  },
-  { RS(DISKSTATS_DELTA_IO_TIME),        QS(s_int),   TS(s_int)  },
-  { RS(DISKSTATS_DELTA_WEIGHTED_TIME),  QS(s_int),   TS(s_int)  },
+  { RS(DELTA_READS),          QS(s_int),   TS(s_int)  },
+  { RS(DELTA_READS_MERGED),   QS(s_int),   TS(s_int)  },
+  { RS(DELTA_READ_SECTORS),   QS(s_int),   TS(s_int)  },
+  { RS(DELTA_READ_TIME),      QS(s_int),   TS(s_int)  },
+  { RS(DELTA_WRITES),         QS(s_int),   TS(s_int)  },
+  { RS(DELTA_WRITES_MERGED),  QS(s_int),   TS(s_int)  },
+  { RS(DELTA_WRITE_SECTORS),  QS(s_int),   TS(s_int)  },
+  { RS(DELTA_WRITE_TIME),     QS(s_int),   TS(s_int)  },
+  { RS(DELTA_IO_TIME),        QS(s_int),   TS(s_int)  },
+  { RS(DELTA_WEIGHTED_TIME),  QS(s_int),   TS(s_int)  },
 
  // dummy entry corresponding to DISKSTATS_logical_end ...
   { NULL,                               NULL,        NULL       }
