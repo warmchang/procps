@@ -328,12 +328,15 @@ lib_test_strtod_nol_SOURCES = lib/test_strtod_nol.c lib/strutils.c
 lib_test_strtod_nol_LDADD = $(CYGWINFLAGS)
 
 noinst_PROGRAMS += \
+	proc/test_Itemtables \
 	proc/test_pids \
 	proc/test_uptime \
 	proc/test_sysinfo \
 	proc/test_version \
 	proc/test_namespace
 
+proc_test_Itemtables_SOURCES = proc/test_Itemtables.c
+proc_test_Itemtables_LDADD = proc/libprocps.la
 proc_test_pids_SOURCES = proc/test_pids.c
 proc_test_pids_LDADD = proc/libprocps.la
 proc_test_uptime_SOURCES = proc/test_uptime.c
@@ -370,6 +373,7 @@ BUILT_SOURCES = $(top_srcdir)/.version
 
 # Test programs not used by dejagnu but run directly
 TESTS = \
+	proc/test_Itemtables \
 	proc/test_pids \
 	proc/test_uptime \
 	proc/test_sysinfo \
