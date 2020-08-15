@@ -1,3 +1,5 @@
+## Process this file with automake to produce Makefile.in
+
 CYGWINFLAGS =
 if CYGWIN
 CYGWINFLAGS += -lintl
@@ -309,11 +311,12 @@ ps_pscommand_SOURCES =  \
 	lib/signals.c
 
 
-# Test programs required for dejagnu
+# Test programs required for dejagnu or standalone testing
 noinst_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
-	lib/test_process
+	lib/test_process \
+	lib/test_strtod_nol
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
 lib_test_strutils_LDADD = $(CYGWINFLAGS)
@@ -321,19 +324,26 @@ lib_test_fileutils_SOURCES = lib/test_fileutils.c lib/fileutils.c
 lib_test_fileutils_LDADD = $(CYGWINFLAGS)
 lib_test_process_SOURCES = lib/test_process.c
 lib_test_process_LDADD = $(CYGWINFLAGS)
-
-proc_test_sysinfo_SOURCES = proc/test_sysinfo.c
-proc_test_sysinfo_LDADD = proc/libprocps.la
-proc_test_namespace_SOURCES = proc/test_namespace.c
-proc_test_namespace_LDADD = proc/libprocps.la
-proc_test_pids_SOURCES = proc/test_pids.c
-proc_test_pids_LDADD = proc/libprocps.la
-proc_test_uptime_SOURCES = include/tests.h proc/test_uptime.c
-proc_test_uptime_LDADD = proc/libprocps.la
-proc_test_version_SOURCES = include/tests.h proc/test_version.c
-proc_test_version_LDADD = proc/libprocps.la
 lib_test_strtod_nol_SOURCES = lib/test_strtod_nol.c lib/strutils.c
 lib_test_strtod_nol_LDADD = $(CYGWINFLAGS)
+
+noinst_PROGRAMS += \
+	proc/test_pids \
+	proc/test_uptime \
+	proc/test_sysinfo \
+	proc/test_version \
+	proc/test_namespace
+
+proc_test_pids_SOURCES = proc/test_pids.c
+proc_test_pids_LDADD = proc/libprocps.la
+proc_test_uptime_SOURCES = proc/test_uptime.c
+proc_test_uptime_LDADD = proc/libprocps.la
+proc_test_sysinfo_SOURCES = proc/test_sysinfo.c
+proc_test_sysinfo_LDADD = proc/libprocps.la
+proc_test_version_SOURCES = proc/test_version.c
+proc_test_version_LDADD = proc/libprocps.la
+proc_test_namespace_SOURCES = proc/test_namespace.c
+proc_test_namespace_LDADD = proc/libprocps.la
 
 if CYGWIN
 	skill_LDADD = $(CYGWINFLAGS)
@@ -359,12 +369,15 @@ endif
 BUILT_SOURCES = $(top_srcdir)/.version
 
 # Test programs not used by dejagnu but run directly
-TESTS = proc/test_sysinfo \
+TESTS = \
 	proc/test_pids \
-	proc/test_namespace \
 	proc/test_uptime \
+	proc/test_sysinfo \
 	proc/test_version \
+	proc/test_namespace \
+	lib/test_fileutils \
 	lib/test_strtod_nol
+
 check_PROGRAMS = $(TESTS)
 
 $(top_srcdir)/.version:
