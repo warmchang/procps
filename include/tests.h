@@ -2,6 +2,8 @@
 #ifndef PROCPS_NG_TESTS_H
 #define PROCPS_NG_TESTS_H
 
+#include <stdio.h>
+
 typedef int (*TestFunction)(void *data);
 
 char *testname;

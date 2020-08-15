@@ -6,4 +6,5 @@ dist_noinst_HEADERS = \
 	rpmatch.h \
 	signals.h \
 	strutils.h \
+	tests.h \
 	xalloc.h
