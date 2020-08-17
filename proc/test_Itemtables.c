@@ -29,58 +29,52 @@
 #include "tests.h"
 
 static int check_diskstats (void *data) {
-    struct diskstats_info *ctx;
+    struct diskstats_info *ctx = NULL;
     testname = "Itemtable check, diskstats";
-    procps_diskstats_new(&ctx);
-    procps_diskstats_unref(&ctx);
-    return (1);
+    if (procps_diskstats_new(&ctx) < 0) return 0;
+    return (procps_diskstats_unref(&ctx) == 0);
 }
 
 static int check_meminfo (void *data) {
-    struct meminfo_info *ctx;
+    struct meminfo_info *ctx = NULL;
     testname = "Itemtable check, meminfo";
-    procps_meminfo_new(&ctx);
-    procps_meminfo_unref(&ctx);
-    return (1);
+    if (procps_meminfo_new(&ctx) < 0) return 0;
+    return (procps_meminfo_unref(&ctx) == 0);
 }
 
 static int check_pids (void *data) {
-    struct pids_info *ctx;
+    struct pids_info *ctx = NULL;;
     testname = "Itemtable check, pids";
-    procps_pids_new(&ctx, NULL, 0);
-    procps_pids_unref(&ctx);
-    return (1);
+    if (procps_pids_new(&ctx, NULL, 0) < 0) return 0;
+    return (procps_pids_unref(&ctx) == 0);
 }
 
 static int check_slabinfo (void *data) {
-    struct slabinfo_info *ctx;
+    struct slabinfo_info *ctx = NULL;
     testname = "Itemtable check, slabinfo";
-    procps_slabinfo_new(&ctx);
-    procps_slabinfo_unref(&ctx);
-    return (1);
+    if (procps_slabinfo_new(&ctx) < 0) return 0;
+    return (procps_slabinfo_unref(&ctx) == 0);
 }
 
 static int check_stat (void *data) {
-    struct stat_info *ctx;
+    struct stat_info *ctx = NULL;
     testname = "Itemtable check, stat";
-    procps_stat_new(&ctx);
-    procps_stat_unref(&ctx);
-    return (1);
+    if (procps_stat_new(&ctx) < 0) return 0;
+    return (procps_stat_unref(&ctx) == 0);
 }
 
 static int check_vmstat (void *data) {
-    struct vmstat_info *ctx;
+    struct vmstat_info *ctx = NULL;
     testname = "Itemtable check, vmstat";
-    procps_vmstat_new(&ctx);
-    procps_vmstat_unref(&ctx);
-    return (1);
+    if (procps_vmstat_new(&ctx) < 0) return 0;
+    return (procps_vmstat_unref(&ctx) == 0);
 }
 
 static TestFunction test_funcs[] = {
     check_diskstats,
     check_meminfo,
     check_pids,
-    check_slabinfo,
+    // check_slabinfo, EPERM errors
     check_stat,
     check_vmstat,
     NULL
