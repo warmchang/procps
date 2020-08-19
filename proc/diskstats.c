@@ -733,7 +733,7 @@ PROCPS_EXPORT int procps_diskstats_new (
     if (failed) _Exit(EXIT_FAILURE);
 #endif
 
-    if (info == NULL)
+    if (info == NULL || *info != NULL)
         return -EINVAL;
     if (!(p = calloc(1, sizeof(struct diskstats_info))))
         return -ENOMEM;
