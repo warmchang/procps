@@ -667,7 +667,7 @@ typedef struct WIN_t {
 //atic void          keys_window (int ch);
 //atic void          keys_xtra (int ch);
 /*------  Cpu Display Secondary Support (summary_show helpers)  ----------*/
-//atic inline int    cpu_prt (const char *str, int nobuf);
+//atic inline int    cpu_see (const char *str, int nobuf);
 //atic int           cpu_tics (struct stat_stack *this, const char *pfx, int nobuf);
 //atic int           cpu_unify (struct stat_stack *this, int nobuf);
 /*------  Main Screen routines  ------------------------------------------*/

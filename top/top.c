@@ -5311,9 +5311,15 @@ static void keys_xtra (int ch) {
 /*######  Cpu Display Secondary support (summary_show helpers)  ##########*/
 
         /*
-         * Cpu *Helper* function to combine and or show the state
-         * percentages for 1 cpu or 2 adjacent cpus (one single line). */
-static inline int cpu_prt (const char *str, int nobuf) {
+         * note how alphabetical order is maintained within carefully chosen |
+         * function names such as: (s)cpu_see, (t)cpu_tics, and (u)cpu_unify |
+         * with each name exactly 1 letter more than the preceeding function |
+         * ( surely, this must make us run much more efficiently. amirite? ) | */
+
+        /*
+         * Cpu *Helper* function to show the percentages for one or two cpus |
+         * as a single line. We return the number of lines actually printed. | */
+static inline int cpu_see (const char *str, int nobuf) {
    static char row[ROWMINSIZ];
    static int tog;
    char *p;
@@ -5331,17 +5337,18 @@ static inline int cpu_prt (const char *str, int nobuf) {
    row[0] = '\0';
    tog = 0;
    return 1;
-} // end: cpu_prt
+} // end: cpu_see
 
 
         /*
-         * State display *Helper* function to calc and display the state
-         * percentages for a single cpu.  In this way, we can support
-         * the following environments without the usual code bloat.
-         *    1) single cpu machines
-         *    2) modest smp boxes with room for each cpu's percentages
-         *    3) massive smp guys leaving little or no room for process
-         *       display and thus requiring the cpu summary toggle */
+         * State display *Helper* function to calculate plus display (maybe) |
+         * the percentages for a single cpu.  In this way, we'll support the |
+         * following environments without (hopefully) that usual code bloat: |
+         *    1) single cpu platforms (no matter the paucity of these types) |
+         *    2) modest smp boxes with ample room for each cpu's percentages |
+         *    3) massive smp guys leaving little or no room for that process |
+         *       display and thus requiring the '1', '4', or '!' cpu toggles |
+         * ( we return the number of lines printed, as reported by cpu_see ) | */
 static int cpu_tics (struct stat_stack *this, const char *pfx, int nobuf) {
   // a tailored 'results stack value' extractor macro
  #define rSv(E)  TIC_VAL(E, this)
@@ -5377,10 +5384,10 @@ static int cpu_tics (struct stat_stack *this, const char *pfx, int nobuf) {
       snprintf(syst, sizeof(syst), gtab[ix].syst, (int)((pct_syst * Graph_adj) + .4), gtab[ix].type);
 #endif
       snprintf(dual, sizeof(dual), "%s%s", user, syst);
-      return cpu_prt(fmtmk("%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1"
+      return cpu_see(fmtmk("%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1"
          , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, dual), nobuf);
    } else {
-      return cpu_prt(fmtmk(Cpu_States_fmts, pfx
+      return cpu_see(fmtmk(Cpu_States_fmts, pfx
          , (float)rSv(stat_US) * scale, (float)rSv(stat_SY) * scale
          , (float)rSv(stat_NI) * scale, (float)idl_frme * scale
          , (float)rSv(stat_IO) * scale, (float)rSv(stat_IR) * scale
@@ -5391,8 +5398,9 @@ static int cpu_tics (struct stat_stack *this, const char *pfx, int nobuf) {
 
 
         /*
-         * Cpu *Helper* function to combine adjacent cpu stats
-         * in an effort to reduce total number of processors shown */
+         * Cpu *Helper* function to combine additional cpu statistics in our |
+         * efforts to reduce the total number of processors that'll be shown |
+         * ( we return the number of lines printed, as reported by cpu_see ) | */
 static int cpu_unify (struct stat_stack *this, int nobuf) {
   // a tailored 'results stack value' extractor macro
  #define rSv(E,T)  STAT_VAL(E, T, this, Stat_ctx)
