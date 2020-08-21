@@ -4751,35 +4751,35 @@ static inline int wins_usrselect (const WIN_t *q, const int idx) {
 /*######  Forest View support  ###########################################*/
 
         /*
-         * We try keeping most existing code unaware of these activities
-         * ( plus, maintain alphabetical order within carefully chosen )
-         * ( function names of: forest_a, forest_b, forest_c, forest_d )
-         * ( with each name exactly 1 letter more than its predecessor ) */
-static proc_t **Seed_ppt;                   // temporary win ppt pointer
-static proc_t **Tree_ppt;                   // forest_create will resize
-static int      Tree_idx;                   // frame_make resets to zero
-        /* the next three support collapse/expand children. the Hide_pid
-           array holds parent pids whose children have been manipulated.
-           positive pid values represent parents with collapsed children
-           while a negative pid value means children have been expanded.
-           ( the first two are managed under the 'keys_task()' routine ) */
-static int *Hide_pid;                       // collapsible process array
-static int  Hide_tot;                       // total used in above array
+         * We try keeping most existing code unaware of these activities |
+         * ( plus, maintain alphabetical order within carefully chosen ) |
+         * ( names beginning forest_a, forest_b, forest_c and forest_d ) |
+         * ( with each name exactly 1 letter more than its predecessor ) | */
+static proc_t **Seed_ppt;                   // temporary win ppt pointer |
+static proc_t **Tree_ppt;                   // forest_create will resize |
+static int      Tree_idx;                   // frame_make resets to zero |
+        /* the next three support collapse/expand children. the Hide_pid |
+           array holds parent pids whose children have been manipulated. |
+           positive pid values represent parents with collapsed children |
+           while a negative pid value means children have been expanded. |
+           ( the first two are managed under the 'keys_task()' routine ) | */
+static int *Hide_pid;                       // collapsible process array |
+static int  Hide_tot;                       // total used in above array |
 #ifndef TREE_VCPUOFF
-static unsigned *Hide_cpu;                  // accum tics from collapsed
+static unsigned *Hide_cpu;                  // accum tics from collapsed |
 #endif
 
         /*
-         * This little recursive guy is the real forest view workhorse.
-         * He fills in the Tree_ppt array and also sets the child indent
-         * level which is stored in an unused proc_t padding byte. */
+         * This little recursive guy was the real forest view workhorse. |
+         * He fills in the Tree_ppt array and also sets the child indent |
+         * level which is stored in an 'extra' result struct as a u_int. | */
 static void forest_adds (const int self, int level) {
    int i;
 
-   if (Tree_idx < Frame_maxtask) {          // immunize against insanity
-      if (level > 100) level = 101;         // our arbitrary nests limit
-      Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child
-      Tree_ppt[Tree_idx++]->pad_3 = level;  // borrow 1 byte, 127 levels
+   if (Tree_idx < Frame_maxtask) {          // immunize against insanity |
+      if (level > 100) level = 101;         // our arbitrary nests limit |
+      Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child |
+      Tree_ppt[Tree_idx++]->pad_3 = level;  // borrow 1 byte, 127 levels |
 #ifdef TREE_SCANALL
       for (i = 0; i < Frame_maxtask; i++) {
          if (i == self) continue;
@@ -4796,9 +4796,9 @@ static void forest_adds (const int self, int level) {
 
 #ifndef TREE_SCANALL
         /*
-         * Our qsort callback to order a ppt by the non-display start_time
-         * which will make us immune from any pid, ppid or tgid anomalies
-         * if/when pid values are wrapped by the kernel! */
+         * A qsort callback to order a ppt by the non-display start_time |
+         * which will make us immune to any pid, ppid and tgid anomalies |
+         * if/when the pid values ever become are wrapped by the kernel! | */
 static int forest_based (const proc_t **x, const proc_t **y) {
    if ( (*x)->start_time > (*y)->start_time ) return  1;
    if ( (*x)->start_time < (*y)->start_time ) return -1;
@@ -4808,17 +4808,17 @@ static int forest_based (const proc_t **x, const proc_t **y) {
 
 
         /*
-         * This routine is responsible for preparing the proc_t's for
-         * a forest display in a designated window. After completion,
-         * he will replace the original window ppt with our specially
-         * ordered forest version. He also marks any hidden children! */
+         * This function is responsible for preparing those proc_t's for |
+         * a forest display in that designated window. After completion, |
+         * he'll replace that original window ppt array with a specially |
+         * ordered forest view version. He'll also mark hidden children! | */
 static void forest_create (WIN_t *q) {
    static int hwmsav;
    int i, j;
 
-   Seed_ppt = q->ppt;                       // avoid passing WIN_t ptrs
-   if (!Tree_idx) {                         // do just once per frame
-      if (hwmsav < Frame_maxtask) {         // grow, but never shrink
+   Seed_ppt = q->ppt;                          // avoid passing pointers |
+   if (!Tree_idx) {                            // do just once per frame |
+      if (hwmsav < Frame_maxtask) {            // grow, but never shrink |
          hwmsav = Frame_maxtask;
          Tree_ppt = alloc_r(Tree_ppt, sizeof(proc_t *) * hwmsav);
 #ifndef TREE_VCPUOFF
@@ -4829,16 +4829,16 @@ static void forest_create (WIN_t *q) {
 #ifndef TREE_SCANALL
       qsort(Seed_ppt, Frame_maxtask, sizeof(proc_t *), (QFP_t)forest_based);
 #endif
-      for (i = 0; i < Frame_maxtask; i++) { // avoid any hidepid distortions
-         if (!Seed_ppt[i]->pad_3)           // real & pseudo parents == zero
-            forest_adds(i, 0);              // add a parent and its children
+      for (i = 0; i < Frame_maxtask; i++) {    // avoid hidepid distorts |
+         if (!Seed_ppt[i]->pad_3)              // parents are at level 0 |
+            forest_adds(i, 0);                 // add parents + children |
       }
 #ifndef TREE_VCPUOFF
       memset(Hide_cpu, 0, sizeof(unsigned) * Frame_maxtask);
 #endif
-      /* we're borrowing some pad bytes in the proc_t,
-         pad_2: 'x' means a collapsed thread, 'z' means an unseen child
-         pad_3: where level number is stored (0 - 100) */
+      /* now we're going to borrow a couple of 'pad' bytes in the proc_t |
+         pad_2: 'x' means a collapsed thread & 'z' means an unseen child |
+         pad_3: this is where the level numbers will be stored (0 - 100) | */
       for (i = 0; i < Hide_tot; i++) {
          if (Hide_pid[i] > 0) {
             for (j = 0; j < Frame_maxtask; j++) {
@@ -4855,16 +4855,16 @@ static void forest_create (WIN_t *q) {
 #endif
                      children = 1;
                   }
-                  /* if any children found (and collapsed), mark the parent
-                     ( when children aren't found we won't negate the pid )
-                     ( to prevent a future scan since who's to say such a )
-                     ( task won't fork one or more children in the future ) */
+                  /* if any children found (& collapsed) mark the parent |
+                     ( when children aren't found don't negate the pid ) |
+                     ( to prevent future scans since who's to say such ) |
+                     ( tasks will not fork more children in the future ) | */
                   if (children) Tree_ppt[parent]->pad_2 = 'x';
-                  // this will force a check of the next Hide_pid[], if any
+                  // this will force a check of next Hide_pid[i], if any |
                   j = Frame_maxtask + 1;
                }
             }
-            // if target task disappeared (ended), prevent further scanning
+            // if a target task disappeared prevent any further scanning |
             if (j == Frame_maxtask) Hide_pid[i] = -Hide_pid[i];
          }
       }
@@ -4874,8 +4874,8 @@ static void forest_create (WIN_t *q) {
 
 
         /*
-         * This guy adds the artwork to either p->cmd or p->cmdline
-         * when in forest view mode, otherwise he just returns 'em. */
+         * This guy adds the artwork to either 'cmd' or 'cmdline' values |
+         * when we're in forest view mode otherwise he just returns them | */
 static inline const char *forest_display (const WIN_t *q, const proc_t *p) {
 #ifndef SCROLLVAR_NO
    static char buf[1024*64*2]; // the same as readproc's MAX_BUFSZ
