@@ -4322,25 +4322,25 @@ static inline int wins_usrselect (const WIN_t *q, struct pids_stack *p) {
 /*######  Forest View support  ###########################################*/
 
         /*
-         * We try keeping most existing code unaware of these activities
-         * ( plus, maintain alphabetical order within carefully chosen )
-         * ( function names like such: forest_a, forest_b and forest_c )
-         * ( with each name exactly 1 letter more than its predecessor ) */
-static struct pids_stack **Seed_ppt;        // temporary win ppt pointer
-static struct pids_stack **Tree_ppt;        // forest_begin resizes this
-static int Tree_idx;                        // frame_make resets to zero
-        /* those next two support collapse/expand children. the Hide_pid
-           array holds parent pids whose children have been manipulated.
-           positive pid values represent parents with collapsed children
-           while a negative pid value means children have been expanded.
-           ( both of these are managed under the 'keys_task()' routine ) */
-static int *Hide_pid;                       // collapsible process array
-static int  Hide_tot;                       // total used in above array
+         * We try keeping most existing code unaware of these activities |
+         * ( plus, maintain alphabetical order within carefully chosen ) |
+         * ( names having the prefixes forest_a, forest_b and forest_c ) |
+         * ( with each name exactly 1 letter more than its predecessor ) | */
+static struct pids_stack **Seed_ppt;        // temporary win ppt pointer |
+static struct pids_stack **Tree_ppt;        // forest_begin resizes this |
+static int Tree_idx;                        // frame_make resets to zero |
+        /* those next two support collapse/expand children. the Hide_pid |
+           array holds parent pids whose children have been manipulated. |
+           positive pid values represent parents with collapsed children |
+           while a negative pid value means children have been expanded. |
+           ( both of these are managed under the 'keys_task()' routine ) | */
+static int *Hide_pid;                       // collapsible process array |
+static int  Hide_tot;                       // total used in above array |
 
         /*
-         * This little recursive guy is the real forest view workhorse.
-         * He fills in the Tree_ppt array and also sets the child indent
-         * level which is stored in an 'extra' result struct as a u_int. */
+         * This little recursive guy was the real forest view workhorse. |
+         * He fills in the Tree_ppt array and also sets the child indent |
+         * level which is stored in an 'extra' result struct as a u_int. | */
 static void forest_adds (const int self, unsigned level) {
   // tailored 'results stack value' extractor macros
  #define rSv(E,X) PID_VAL(E, s_int, Seed_ppt[X])
@@ -4348,10 +4348,10 @@ static void forest_adds (const int self, unsigned level) {
  #define rSv_Lvl  Tree_ppt[Tree_idx]->head[eu_TREE_LVL].result.u_int
    int i;
 
-   if (Tree_idx < PIDSmaxt) {               // immunize against insanity
-      if (level > 100) level = 101;         // our arbitrary nests limit
-      Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child
-      rSv_Lvl = level;                      // while recording its level
+   if (Tree_idx < PIDSmaxt) {               // immunize against insanity |
+      if (level > 100) level = 101;         // our arbitrary nests limit |
+      Tree_ppt[Tree_idx] = Seed_ppt[self];  // add this as root or child |
+      rSv_Lvl = level;                      // while recording its level |
       ++Tree_idx;
 #ifdef TREE_SCANALL
       for (i = 0; i < PIDSmaxt; i++) {
@@ -4370,17 +4370,17 @@ static void forest_adds (const int self, unsigned level) {
 
 
         /*
-         * This function is responsible for making a stacks ptr array
-         * a forest display in a designated window. After completion,
-         * he will replace the original window ppt with our specially
-         * ordered forest version. He also marks any hidden children! */
+         * This function is responsible for making that stacks ptr array |
+         * a forest display in that designated window. After completion, |
+         * he'll replace that original window ppt array with a specially |
+         * ordered forest view version. He'll also mark hidden children! | */
 static void forest_begin (WIN_t *q) {
    static int hwmsav;
    int i, j;
 
-   Seed_ppt = q->ppt;                          // avoid passing pointers
-   if (!Tree_idx) {                            // do just once per frame
-      if (hwmsav < PIDSmaxt) {                 // grow, but never shrink
+   Seed_ppt = q->ppt;                          // avoid passing pointers |
+   if (!Tree_idx) {                            // do just once per frame |
+      if (hwmsav < PIDSmaxt) {                 // grow, but never shrink |
          hwmsav = PIDSmaxt;
          Tree_ppt = alloc_r(Tree_ppt, sizeof(void *) * hwmsav);
       }
@@ -4390,24 +4390,24 @@ static void forest_begin (WIN_t *q) {
          , PIDS_TIME_START, PIDS_SORT_ASCEND)))
             error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
 #endif
-      for (i = 0; i < PIDSmaxt; i++) {         // avoid some hidepid distortions
-         if (!PID_VAL(eu_TREE_LVL, u_int, Seed_ppt[i])) // parents equal level 0
-            forest_adds(i, 0);                 // add a parent with its children
+      for (i = 0; i < PIDSmaxt; i++) {         // avoid hidepid distorts |
+         if (!PID_VAL(eu_TREE_LVL, u_int, Seed_ppt[i])) // parents lvl 0 |
+            forest_adds(i, 0);                 // add parents + children |
       }
 
-      /* we use up to three additional 'PIDS_extra' results in our stacks
-            eu_TREE_HID (s_ch) : where 'x' == collapsed and 'z' == unseen
-            eu_TREE_LVL (u_int): where a level number is stored (0 - 100)
-            eu_TREE_ADD (u_int): where children's tics are stored (maybe) */
+      /* we use up to three additional 'PIDS_extra' results in our stack |
+            eu_TREE_HID (s_ch) :  where 'x' == collapsed & 'z' == unseen |
+            eu_TREE_LVL (u_int):  where level number is stored (0 - 100) |
+            eu_TREE_ADD (u_int):  where a children's tics stored (maybe) | */
       for (i = 0; i < Hide_tot; i++) {
 
-        // if xtra-procps-debug.h active, can't use PID_VAL with assignment
+        // if have xtra-procps-debug.h, cannpt use PID_VAL w/ assignment |
        #define rSv(E,T,X)  Tree_ppt[X]->head[E].result.T
        #define rSv_Pid(X)  rSv(EU_PID, s_int, X)
        #define rSv_Lvl(X)  rSv(eu_TREE_LVL, u_int, X)
        #define rSv_Hid(X)  rSv(eu_TREE_HID, s_ch, X)
-        /* next two aren't needed if TREE_VCPUOFF is defined, but cost us nothing
-           and that EU_CPU slot will now always be present (even if it is zeroed) */
+        /* next 2 aren't needed if TREE_VCPUOFF but they cost us nothing |
+           & the EU_CPU slot will now always be present (even if it's 0) | */
        #define rSv_Add(X)  rSv(eu_TREE_ADD, u_int, X)
        #define rSv_Cpu(X)  rSv(EU_CPU, s_int, X)
 
@@ -4425,16 +4425,16 @@ static void forest_begin (WIN_t *q) {
 #endif
                      children = 1;
                   }
-                  /* if any children found (and collapsed), mark the parent
-                     ( when children aren't found we won't negate the pid )
-                     ( to prevent a future scan since who's to say such a )
-                     ( task won't fork one or more children in the future ) */
+                  /* if any children found (& collapsed) mark the parent |
+                     ( when children aren't found don't negate the pid ) |
+                     ( to prevent future scans since who's to say such ) |
+                     ( tasks will not fork more children in the future ) | */
                   if (children) rSv_Hid(parent) = 'x';
-                  // this will force a check of the next Hide_pid[], if any
+                  // this will force a check of next Hide_pid[i], if any |
                   j = PIDSmaxt + 1;
                }
             }
-            // if target task disappeared (ended), prevent further scanning
+            // if a target task disappeared prevent any further scanning |
             if (j == PIDSmaxt) Hide_pid[i] = -Hide_pid[i];
          }
        #undef rSv
@@ -4450,8 +4450,8 @@ static void forest_begin (WIN_t *q) {
 
 
         /*
-         * This guy adds the artwork to either a 'cmd' or 'cmdline'
-         * when in forest view mode, otherwise he just returns 'em. */
+         * This guy adds the artwork to either 'cmd' or 'cmdline' values |
+         * when we're in forest view mode otherwise he just returns them | */
 static inline const char *forest_colour (const WIN_t *q, struct pids_stack *p) {
   // tailored 'results stack value' extractor macros
  #define rSv(E)   PID_VAL(E, str, p)
