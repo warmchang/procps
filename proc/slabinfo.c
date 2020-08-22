@@ -311,7 +311,7 @@ static struct {
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum slabinfo_item SLABINFO_logical_end = SLABS_DELTA_SIZE_TOTAL + 1;
+enum slabinfo_item SLABINFO_logical_end = MAXTABLE(Item_table);
 
 #undef setNAME
 #undef srtNAME
@@ -752,11 +752,6 @@ PROCPS_EXPORT int procps_slabinfo_new (
                 , __FILE__, i, Item_table[i].enum2str, Item_table[i].enumnumb);
             failed = 1;
         }
-    }
-    if (i != SLABINFO_logical_end) {
-        fprintf(stderr, "%s: SLABINFO_logical_end is %d, expected %d\n"
-            , __FILE__, SLABINFO_logical_end, i);
-        failed = 1;
     }
     if (failed) _Exit(EXIT_FAILURE);
 #endif

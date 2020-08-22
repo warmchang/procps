@@ -361,7 +361,7 @@ static struct {
 #ifdef ENFORCE_LOGICAL
 enum stat_item STAT_TIC_highest = STAT_TIC_DELTA_GUEST_NICE;
 #endif
-enum stat_item STAT_logical_end = STAT_SYS_DELTA_PROC_RUNNING + 1;
+enum stat_item STAT_logical_end = MAXTABLE(Item_table);
 
 #undef setNAME
 #undef srtNAME
@@ -874,11 +874,6 @@ PROCPS_EXPORT int procps_stat_new (
                 , __FILE__, i, Item_table[i].enum2str, Item_table[i].enumnumb);
             failed = 1;
         }
-    }
-    if (i != STAT_logical_end) {
-        fprintf(stderr, "%s: STAT_logical_end is %d, expected %d\n"
-            , __FILE__, STAT_logical_end, i);
-        failed = 1;
     }
     if (failed) _Exit(EXIT_FAILURE);
 #endif

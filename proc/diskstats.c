@@ -270,7 +270,7 @@ static struct {
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum diskstats_item DISKSTATS_logical_end = DISKSTATS_DELTA_WEIGHTED_TIME + 1;
+enum diskstats_item DISKSTATS_logical_end = MAXTABLE(Item_table);
 
 #undef setNAME
 #undef srtNAME
@@ -724,11 +724,6 @@ PROCPS_EXPORT int procps_diskstats_new (
                 , __FILE__, i, Item_table[i].enum2str, Item_table[i].enumnumb);
             failed = 1;
         }
-    }
-    if (i != DISKSTATS_logical_end) {
-        fprintf(stderr, "%s: DISKSTATS_logical_end is %d, expected %d\n"
-            , __FILE__, DISKSTATS_logical_end, i);
-        failed = 1;
     }
     if (failed) _Exit(EXIT_FAILURE);
 #endif

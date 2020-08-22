@@ -518,7 +518,7 @@ static struct {
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum pids_item PIDS_logical_end = PIDS_WCHAN_NAME + 1;
+enum pids_item PIDS_logical_end = MAXTABLE(Item_table);
 
 #undef setNAME
 #undef freNAME
@@ -1136,11 +1136,6 @@ PROCPS_EXPORT int procps_pids_new (
                 , __FILE__, i, Item_table[i].enum2str, Item_table[i].enumnumb);
             failed = 1;
         }
-    }
-    if (i != PIDS_logical_end) {
-        fprintf(stderr, "%s: PIDS_logical_end is %d, expected %d\n"
-            , __FILE__, PIDS_logical_end, i);
-        failed = 1;
     }
     if (failed) _Exit(EXIT_FAILURE);
 #endif

@@ -454,7 +454,7 @@ static struct {
 
     /* please note,
      * this enum MUST be 1 greater than the highest value of any enum */
-enum meminfo_item MEMINFO_logical_end = MEMINFO_SWAP_DELTA_USED + 1;
+enum meminfo_item MEMINFO_logical_end = MAXTABLE(Item_table);
 
 #undef setNAME
 #undef RS
@@ -807,11 +807,6 @@ PROCPS_EXPORT int procps_meminfo_new (
                 , __FILE__, i, Item_table[i].enum2str, Item_table[i].enumnumb);
             failed = 1;
         }
-    }
-    if (i != MEMINFO_logical_end) {
-        fprintf(stderr, "%s: MEMINFO_logical_end is %d, expected %d\n"
-            , __FILE__, MEMINFO_logical_end, i);
-        failed = 1;
     }
     if (failed) _Exit(EXIT_FAILURE);
 #endif
