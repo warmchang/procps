@@ -18,7 +18,6 @@
 #ifndef PROCPS_PRIVATE_H
 #define PROCPS_PRIVATE_H
 
-#define FUNCTION __attribute__((__const__))  // no access to global mem, even via ptr, and no side effect
 #define PROCPS_EXPORT __attribute__ ((visibility("default")))
 
 #define STRINGIFY_ARG(a)	#a
