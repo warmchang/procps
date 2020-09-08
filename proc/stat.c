@@ -67,7 +67,7 @@
 
 struct stat_jifs {
     unsigned long long user, nice, system, idle, iowait, irq, sirq, stolen, guest, gnice;
-    unsigned long long xtot, xbsy, xidl, xusr, xsys;
+    unsigned long long xusr, xsys, xidl, xbsy, xtot;
 };
 
 struct stat_data {
@@ -192,17 +192,17 @@ TICsetH(TIC_DELTA_STOLEN,         sl_int,   stolen)
 TICsetH(TIC_DELTA_GUEST,          sl_int,   guest)
 TICsetH(TIC_DELTA_GUEST_NICE,     sl_int,   gnice)
 
-TIC_set(TIC_SUM_TOTAL,            ull_int,  xtot)
-TIC_set(TIC_SUM_IDLE,             ull_int,  xidl)
 TIC_set(TIC_SUM_USER,             ull_int,  xusr)
-TIC_set(TIC_SUM_BUSY,             ull_int,  xbsy)
 TIC_set(TIC_SUM_SYSTEM,           ull_int,  xsys)
+TIC_set(TIC_SUM_IDLE,             ull_int,  xidl)
+TIC_set(TIC_SUM_BUSY,             ull_int,  xbsy)
+TIC_set(TIC_SUM_TOTAL,            ull_int,  xtot)
 
-TICsetH(TIC_SUM_DELTA_TOTAL,      sl_int,   xtot)
-TICsetH(TIC_SUM_DELTA_IDLE,       sl_int,   xidl)
 TICsetH(TIC_SUM_DELTA_USER,       sl_int,   xusr)
-TICsetH(TIC_SUM_DELTA_BUSY,       sl_int,   xbsy)
 TICsetH(TIC_SUM_DELTA_SYSTEM,     sl_int,   xsys)
+TICsetH(TIC_SUM_DELTA_IDLE,       sl_int,   xidl)
+TICsetH(TIC_SUM_DELTA_BUSY,       sl_int,   xbsy)
+TICsetH(TIC_SUM_DELTA_TOTAL,      sl_int,   xtot)
 
 SYS_set(SYS_CTX_SWITCHES,         ul_int,   ctxt)
 SYS_set(SYS_INTERRUPTS,           ul_int,   intr)
@@ -329,17 +329,17 @@ static struct {
   { RS(TIC_DELTA_GUEST),         QS(sl_int),   TS(sl_int)  },
   { RS(TIC_DELTA_GUEST_NICE),    QS(sl_int),   TS(sl_int)  },
 
-  { RS(TIC_SUM_TOTAL),           QS(ull_int),  TS(ull_int) },
-  { RS(TIC_SUM_IDLE),            QS(ull_int),  TS(ull_int) },
   { RS(TIC_SUM_USER),            QS(ull_int),  TS(ull_int) },
-  { RS(TIC_SUM_BUSY),            QS(ull_int),  TS(ull_int) },
   { RS(TIC_SUM_SYSTEM),          QS(ull_int),  TS(ull_int) },
+  { RS(TIC_SUM_IDLE),            QS(ull_int),  TS(ull_int) },
+  { RS(TIC_SUM_BUSY),            QS(ull_int),  TS(ull_int) },
+  { RS(TIC_SUM_TOTAL),           QS(ull_int),  TS(ull_int) },
 
-  { RS(TIC_SUM_DELTA_TOTAL),     QS(sl_int),   TS(sl_int)  },
-  { RS(TIC_SUM_DELTA_IDLE),      QS(sl_int),   TS(sl_int)  },
   { RS(TIC_SUM_DELTA_USER),      QS(sl_int),   TS(sl_int)  },
-  { RS(TIC_SUM_DELTA_BUSY),      QS(sl_int),   TS(sl_int)  },
   { RS(TIC_SUM_DELTA_SYSTEM),    QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_SUM_DELTA_IDLE),      QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_SUM_DELTA_BUSY),      QS(sl_int),   TS(sl_int)  },
+  { RS(TIC_SUM_DELTA_TOTAL),     QS(sl_int),   TS(sl_int)  },
 
   { RS(SYS_CTX_SWITCHES),        QS(ul_int),   TS(ul_int)  },
   { RS(SYS_INTERRUPTS),          QS(ul_int),   TS(ul_int)  },
@@ -392,34 +392,33 @@ static inline void stat_assign_results (
 static inline void stat_derive_unique (
         struct hist_tic *this)
 {
-    /* note: we exclude guest tics from xtot since ...
-             'user' already includes 'guest'
-             'nice' already includes 'gnice'
-       ( see: ./kernel/sched/cputime.c, account_guest_time ) */
-    this->new.xtot
+    /* note: we calculate these derived values in a manner consistent with
+             the calculations for cgroup accounting, as nearly as possible
+       ( see linux sources: ./kernel/cgroup/rstat.c, root_cgroup_cputime ) */
+    this->new.xusr
         = this->new.user
-        + this->new.nice
-        + this->new.system
-        + this->new.idle
-        + this->new.iowait
+        + this->new.nice;
+    this->new.xsys
+        = this->new.system
         + this->new.irq
-        + this->new.sirq
-        + this->new.stolen;
-    this->new.xusr = this->new.user + this->new.nice;
-    /* this stolen guy is one i'm not sure of yet, but it's documented as:
-          "the time spent in other operating systems
-           when running in a virtualized environment"
-       so it would seem to apply to an 'involuntary wait' for a guest OS */
-    this->new.xidl = this->new.idle + this->new.iowait + this->new.stolen;
-    this->new.xbsy = this->new.xtot - this->new.xidl;
-    this->new.xsys = this->new.xbsy - this->new.xusr;
+        + this->new.sirq;
+    this->new.xidl
+        = this->new.idle
+        + this->new.iowait;
+    this->new.xtot
+        = this->new.xusr + this->new.xsys + this->new.xidl
+        + this->new.stolen
+        + this->new.guest
+        + this->new.gnice;
+    this->new.xbsy
+        = this->new.xtot - this->new.xidl;
 
     // don't distort deltas when cpus are taken offline or brought online
-    if (this->new.xtot < this->old.xtot
-    || (this->new.xusr < this->old.xusr)
+    if (this->new.xusr < this->old.xusr
+    || (this->new.xsys < this->old.xsys)
     || (this->new.xidl < this->old.xidl)
     || (this->new.xbsy < this->old.xbsy)
-    || (this->new.xsys < this->old.xsys))
+    || (this->new.xtot < this->old.xtot))
         memcpy(&this->old, &this->new, sizeof(struct stat_jifs));
 } // end: stat_derive_unique
 
@@ -526,11 +525,11 @@ static int stat_make_numa_hist (
             nod_ptr->new.guest  += cpu_ptr->new.guest;  nod_ptr->old.guest  += cpu_ptr->old.guest;
             nod_ptr->new.gnice  += cpu_ptr->new.gnice;  nod_ptr->old.gnice  += cpu_ptr->old.gnice;
 
-            nod_ptr->new.xtot += cpu_ptr->new.xtot;  nod_ptr->old.xtot += cpu_ptr->old.xtot;
-            nod_ptr->new.xbsy += cpu_ptr->new.xbsy;  nod_ptr->old.xbsy += cpu_ptr->old.xbsy;
-            nod_ptr->new.xidl += cpu_ptr->new.xidl;  nod_ptr->old.xidl += cpu_ptr->old.xidl;
             nod_ptr->new.xusr += cpu_ptr->new.xusr;  nod_ptr->old.xusr += cpu_ptr->old.xusr;
             nod_ptr->new.xsys += cpu_ptr->new.xsys;  nod_ptr->old.xsys += cpu_ptr->old.xsys;
+            nod_ptr->new.xidl += cpu_ptr->new.xidl;  nod_ptr->old.xidl += cpu_ptr->old.xidl;
+            nod_ptr->new.xbsy += cpu_ptr->new.xbsy;  nod_ptr->old.xbsy += cpu_ptr->old.xbsy;
+            nod_ptr->new.xtot += cpu_ptr->new.xtot;  nod_ptr->old.xtot += cpu_ptr->old.xtot;
 
             cpu_ptr->numa_node = nod_ptr->numa_node = node;
             nod_ptr->count++; ;
