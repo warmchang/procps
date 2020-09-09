@@ -6045,6 +6045,8 @@ static int window_show (WIN_t *q, int wmax) {
 
    // Display Column Headings -- and distract 'em while we sort (maybe)
    PUFF("\n%s%s%s", q->capclr_hdr, q->columnhdr, Caps_endline);
+   // and just in case 'Monpids' is active but matched no processes ...
+   if (!PIDSmaxt) return 1;                         // 1 for the column header
 
    if (CHKw(q, Show_FOREST))
       forest_begin(q);

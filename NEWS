@@ -13,6 +13,7 @@ procps-ng NEXT
   * top: add command line 'e' for symmetry with 'E'        issue #165
   * top: add '4' toggle for two abreast cpu display        issue #172
   * top: add '!' toggle for combining multiple cpus
+  * top: fix potential SEGV involving -p switch            merge #114
   * vmstat: Wide mode gives wider proc columns             merge #48
   * watch: Add environment variable for interval           merge #62
 
