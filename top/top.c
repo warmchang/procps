@@ -5897,6 +5897,8 @@ static void do_key (int ch) {
          write_rcfile();
          goto all_done;
       default:               // and now, the real work...
+         // and just in case 'Monpids' is active but matched no processes ...
+         if (!Frame_maxtask && ch != '=') goto all_done;
          for (i = 0; i < MAXTBL(key_tab); ++i)
             if (strchr(key_tab[i].keys, ch)) {
                key_tab[i].func(ch);
