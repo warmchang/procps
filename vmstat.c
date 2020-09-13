@@ -542,7 +542,7 @@ static void diskpartition_header(const char *partition_name)
 static void diskpartition_format(const char *partition_name)
 {
  #define partVAL(x) DISKSTATS_VAL(x, ul_int, stack, disk_stat)
-    struct diskstats_info *disk_stat;
+    struct diskstats_info *disk_stat = NULL;
     struct diskstats_stack *stack;
     struct diskstats_result *got;
 	const char format[] = "%21lu  %16lu  %10lu  %16lu\n";
@@ -642,7 +642,7 @@ static void diskheader(void)
 static void diskformat(void)
 {
 #define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j], disk_stat)
-    struct diskstats_info *disk_stat;
+    struct diskstats_info *disk_stat = NULL;
     struct diskstats_reaped *reap;
     int i, j;
     time_t the_time;
@@ -765,7 +765,7 @@ static void slabformat (void)
 static void disksum_format(void)
 {
 #define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j], disk_stat)
-    struct diskstats_info *disk_stat;
+    struct diskstats_info *disk_stat = NULL;
     struct diskstats_reaped *reap;
     int j, disk_count, part_count;
     unsigned long reads, merged_reads, read_sectors, milli_reading, writes,
