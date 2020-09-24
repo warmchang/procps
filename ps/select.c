@@ -116,11 +116,15 @@ static int proc_was_listed(proc_t *buf){
     break; case SEL_TTY : return_if_match(tty,tty);
     break; case SEL_SESS: return_if_match(session,pid);
 
-    break; case SEL_COMM: i=sn->n; while(i--)
-    if(!strncmp( buf->cmd, (*(sn->u+i)).cmd, 63 )) return 1;
-
-
-
+    break;
+    case SEL_COMM:
+	i=sn->n;
+	while(i--) {
+	    /* special case, comm is 16 characters but match is longer */
+	    if (strlen(buf->cmd) == 15 && strlen((*(sn->u+i)).cmd) >= 15)
+		if(!strncmp( buf->cmd, (*(sn->u+i)).cmd, 15 )) return 1;
+	    if(!strncmp( buf->cmd, (*(sn->u+i)).cmd, 63 )) return 1;
+	}
 #undef return_if_match
 
     }

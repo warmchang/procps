@@ -7,6 +7,7 @@ procps-ng NEXT
   * pgrep: Add older than selection                        merge #79
   * pidof: show worker threads                             Redhat #1803640
   * ps.1: Mention stime alias                              issue #164
+  * ps: check also match on truncated 16 char comm names
   * sysctl: Match systemd directory order
   * sysctl: Document directory order                       Debian #951550
   * top: ensure config file backward compatibility         Debian #951335
