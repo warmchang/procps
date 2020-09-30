@@ -49,8 +49,10 @@
 //#define UNREF_RPTHASH                // report hash details at uref() time
 
 #define FILL_ID_MAX  255               // upper limit with select of pid/uid
-#define STACKS_INCR  128               // amount reap stack allocations grow
-#define NEWOLD_INCR  128               // amt by which hist allocations grow
+#define STACKS_INIT  1024              // amount of initial stack allocation
+#define STACKS_GROW  128               // amount reap stack allocations grow
+#define NEWOLD_INIT  1024              // amount for initial hist allocation
+#define NEWOLD_GROW  128               // amt by which hist allocations grow
 
 /* ------------------------------------------------------------------------- +
    this provision can be used to ensure that our Item_table was synchronized |
@@ -630,7 +632,7 @@ static inline int pids_make_hist (
     HST_t *h;
 
     if (nSLOT + 1 >= Hr(HHist_siz)) {
-        Hr(HHist_siz) += NEWOLD_INCR;
+        Hr(HHist_siz) += NEWOLD_GROW;
         Hr(PHist_sav) = realloc(Hr(PHist_sav), sizeof(HST_t) * Hr(HHist_siz));
         Hr(PHist_new) = realloc(Hr(PHist_new), sizeof(HST_t) * Hr(HHist_siz));
         if (!Hr(PHist_sav) || !Hr(PHist_new))
@@ -1056,12 +1058,12 @@ static int pids_stacks_fetch (
 
     // initialize stuff -----------------------------------
     if (!info->fetch.anchor) {
-        if (!(info->fetch.anchor = calloc(sizeof(void *), STACKS_INCR)))
+        if (!(info->fetch.anchor = calloc(STACKS_INIT, sizeof(void *))))
             return -1;
-        if (!(ext = pids_stacks_alloc(info, STACKS_INCR)))
+        if (!(ext = pids_stacks_alloc(info, STACKS_INIT)))
             return -1;       // here, errno was set to ENOMEM
-        memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * STACKS_INCR);
-        n_alloc = STACKS_INCR;
+        memcpy(info->fetch.anchor, ext->stacks, sizeof(void *) * STACKS_INIT);
+        n_alloc = STACKS_INIT;
     }
     pids_toggle_history(info);
     memset(&info->fetch.counts, 0, sizeof(struct pids_counts));
@@ -1070,11 +1072,11 @@ static int pids_stacks_fetch (
     n_inuse = 0;
     while (info->read_something(info->fetch_PT, &task)) {
         if (!(n_inuse < n_alloc)) {
-            n_alloc += STACKS_INCR;
+            n_alloc += STACKS_GROW;
             if (!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc))
-            || (!(ext = pids_stacks_alloc(info, STACKS_INCR))))
+            || (!(ext = pids_stacks_alloc(info, STACKS_GROW))))
                 return -1;   // here, errno was set to ENOMEM
-            memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * STACKS_INCR);
+            memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * STACKS_GROW);
         }
         if (!pids_proc_tally(info, &info->fetch.counts, &task))
             return -1;       // here, errno was set to ENOMEM
@@ -1164,11 +1166,19 @@ PROCPS_EXPORT int procps_pids_new (
         pids_libflags_set(p);
     }
 
-    if (!(p->hist = calloc(NEWOLD_INCR, sizeof(struct history_info)))) {
+    if (!(p->hist = calloc(1, sizeof(struct history_info)))
+    || (!(p->hist->PHist_new = calloc(NEWOLD_INIT, sizeof(HST_t))))
+    || (!(p->hist->PHist_sav = calloc(NEWOLD_INIT, sizeof(HST_t))))) {
         free(p->items);
+        if (p->hist) {
+            free(p->hist->PHist_sav);  // this & next might be NULL ...
+            free(p->hist->PHist_new);
+            free(p->hist);
+        }
         free(p);
         return -ENOMEM;
     }
+    p->hist->HHist_siz = NEWOLD_INIT;
     pids_config_history(p);
 
     pgsz = getpagesize();
