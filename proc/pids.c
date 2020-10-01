@@ -553,7 +553,7 @@ enum pids_item PIDS_logical_end = MAXTABLE(Item_table);
 // ___ History Support Private Functions ||||||||||||||||||||||||||||||||||||||
 //   ( stolen from top when he wasn't looking ) -------------------------------
 
-#define HHASH_SIZE  1024
+#define HHASH_SIZE  4096
 #define _HASH_PID_(K) (K & (HHASH_SIZE - 1))
 
 #define Hr(x)  info->hist->x           // 'hist ref', minimize stolen impact
