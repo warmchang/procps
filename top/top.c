@@ -190,7 +190,7 @@ static int    HHist_siz;               // max number of HST_t structs
 static HST_t *PHist_sav,               // alternating 'old/new' HST_t anchors
              *PHist_new;
 #ifndef OFF_HST_HASH
-#define       HHASH_SIZ  1024
+#define       HHASH_SIZ  4096
 static int    HHash_one [HHASH_SIZ],   // actual hash tables ( hereafter known
               HHash_two [HHASH_SIZ],   // as PHash_sav/PHash_new )
               HHash_nul [HHASH_SIZ];   // 'empty' hash table image
