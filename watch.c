@@ -78,6 +78,7 @@ static int screen_size_changed = 0;
 static int first_screen = 1;
 static int show_title = 2;	/* number of lines used, 2 or 0 */
 static int precise_timekeeping = 0;
+static int line_wrap = 1;
 
 #define min(x,y) ((x) > (y) ? (y) : (x))
 #define MAX_ANSIBUF 100
@@ -98,6 +99,7 @@ static void __attribute__ ((__noreturn__))
 	fputs(_("  -n, --interval <secs>  seconds to wait between updates\n"), out);
 	fputs(_("  -p, --precise          attempt run command in precise intervals\n"), out);
 	fputs(_("  -t, --no-title         turn off header\n"), out);
+	fputs(_("  -w, --no-wrap          turn off line wrapping\n"), out);
 	fputs(_("  -x, --exec             pass command to exec instead of \"sh -c\"\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -450,6 +452,22 @@ static void output_header(char *restrict command, double interval)
 	return;
 }
 
+static void find_eol(FILE *p)
+{
+    int c;
+#ifdef WITH_WATCH8BIT
+    do {
+	c = my_getwc(p);
+    } while (c != WEOF
+	    && c!= L'\n');
+#else
+    do {
+	c = getc(p);
+    } while (c != EOF
+	    && c != '\n');
+#endif /* WITH_WATCH8BIT */
+}
+
 static int run_command(char *restrict command, char **restrict command_argv)
 {
 	FILE *p;
@@ -640,6 +658,12 @@ static int run_command(char *restrict command, char **restrict command_argv)
 #endif
 		}
 		oldeolseen = eolseen;
+		if (!line_wrap) {
+		    reset_ansi();
+		    if (flags & WATCH_COLOR)
+			attrset(A_NORMAL);
+		    find_eol(p);
+		}
 	}
 
 	fclose(p);
@@ -693,6 +717,7 @@ int main(int argc, char *argv[])
 		{"exec", no_argument, 0, 'x'},
 		{"precise", no_argument, 0, 'p'},
 		{"no-title", no_argument, 0, 't'},
+		{"no-wrap", no_argument, 0, 'w'},
 		{"version", no_argument, 0, 'v'},
 		{0, 0, 0, 0}
 	};
@@ -710,7 +735,7 @@ int main(int argc, char *argv[])
 		interval = strtod_nol_or_err(interval_string, _("Could not parse interval from WATCH_INTERVAL"));
 
 	while ((optc =
-		getopt_long(argc, argv, "+bced::ghn:pvtx", longopts, (int *)0))
+		getopt_long(argc, argv, "+bced::ghn:pvtwx", longopts, (int *)0))
 	       != EOF) {
 		switch (optc) {
 		case 'b':
@@ -732,6 +757,9 @@ int main(int argc, char *argv[])
 			break;
 		case 't':
 			show_title = 0;
+			break;
+		case 'w':
+			line_wrap = 0;
 			break;
 		case 'x':
 			flags |= WATCH_EXEC;

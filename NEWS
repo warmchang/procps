@@ -17,6 +17,7 @@ procps-ng NEXT
   * top: fix potential SEGV involving -p switch            merge #114
   * vmstat: Wide mode gives wider proc columns             merge #48
   * watch: Add environment variable for interval           merge #62
+  * watch: Add no linewrap option                          issue #182
 
 procps-ng-3.3.16
 ----------------
