@@ -727,7 +727,7 @@ static void pids_unref_rpthash (
         for (pop = total_occupied, cross_foot = 0; maxdepth; maxdepth--) {
             for (i = 0, numdepth = 0; i < HHASH_SIZE; i++)
                 if (depths[i] == maxdepth) ++numdepth;
-            fprintf(stderr,
+            if (numdepth) fprintf(stderr,
                 "\t %5d (%3d%%) hash table entries at depth %d\n"
                 , numdepth, (numdepth * 100) / total_occupied, maxdepth);
             pop -= numdepth;
