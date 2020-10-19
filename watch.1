@@ -1,4 +1,4 @@
-.TH WATCH 1 "2020-06-04" "procps-ng" "User Commands"
+.TH WATCH 1 "2020-10-19" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -63,6 +63,9 @@ to
 instead of
 .B sh \-c
 which reduces the need to use extra quoting to get the desired effect.
+.TP
+\fB\-w\fR, \fB\-\-no\-linewrap\fR
+Turn off line wrapping. Long lines will be truncated instead of wrapped to the next line.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
