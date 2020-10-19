@@ -532,7 +532,7 @@ static void bye_bye (const char *str) {
          for (pop = total_occupied, cross_foot = 0; maxdepth; maxdepth--) {
             for (i = 0, numdepth = 0; i < HHASH_SIZ; i++)
                if (depths[i] == maxdepth) ++numdepth;
-            fprintf(stderr,
+            if (numdepth) fprintf(stderr,
                "\t %5d (%3d%%) hash table entries at depth %d\n"
                , numdepth, (numdepth * 100) / total_occupied, maxdepth + 1);
             pop -= numdepth;
