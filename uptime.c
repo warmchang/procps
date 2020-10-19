@@ -107,6 +107,9 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 
+	if (optind != argc)
+	    usage(stderr);
+
 	print_uptime(p);
 	return EXIT_SUCCESS;
 }

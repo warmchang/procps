@@ -341,6 +341,9 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	if (optind != argc)
+	    usage(stderr);
+
 	is_tty = isatty(STDIN_FILENO);
 	if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
 		xwarn(_("terminal setting retrieval"));
