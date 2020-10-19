@@ -312,7 +312,7 @@ ps_pscommand_SOURCES =  \
 
 
 # Test programs required for dejagnu or standalone testing
-noinst_PROGRAMS = \
+check_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
 	lib/test_process \
@@ -327,7 +327,7 @@ lib_test_process_LDADD = $(CYGWINFLAGS)
 lib_test_strtod_nol_SOURCES = lib/test_strtod_nol.c lib/strutils.c
 lib_test_strtod_nol_LDADD = $(CYGWINFLAGS)
 
-noinst_PROGRAMS += \
+check_PROGRAMS += \
 	proc/test_Itemtables \
 	proc/test_pids \
 	proc/test_uptime \
@@ -386,7 +386,8 @@ TESTS = \
 	lib/test_fileutils \
 	lib/test_strtod_nol
 
-check_PROGRAMS = $(TESTS)
+# Automake should do this, but it doesn't
+check: $(check_PROGRAMS)
 
 $(top_srcdir)/.version:
 	touch $(top_srcdir)/.version
