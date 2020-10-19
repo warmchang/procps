@@ -371,9 +371,13 @@ endif
 
 BUILT_SOURCES = $(top_srcdir)/.version
 
+check-lib: clean
+	$(MAKE) CFLAGS=-DITEMTABLE_DEBUG proc/test_Itemtables
+	$(top_builddir)/proc/test_Itemtables
+	$(MAKE) clean
+
 # Test programs not used by dejagnu but run directly
 TESTS = \
-	proc/test_Itemtables \
 	proc/test_pids \
 	proc/test_uptime \
 	proc/test_sysinfo \
