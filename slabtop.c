@@ -202,6 +202,8 @@ static void parse_opts (int argc, char **argv)
             usage(stderr);
         }
     }
+    if (optind != argc)
+        usage(stderr);
 }
 
 static void print_summary (void)

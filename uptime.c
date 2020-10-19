@@ -106,6 +106,9 @@ int main(int argc, char **argv)
             usage(stderr);
         }
 
+    if (optind != argc)
+        usage(stderr);
+
     if (p)
         printf("%s\n", procps_uptime_sprint_short());
     else

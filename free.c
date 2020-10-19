@@ -342,6 +342,8 @@ int main(int argc, char **argv)
 		default:
 			usage(stderr);
 		}
+	if (optind != argc)
+	    usage(stderr);
 
 	if (procps_meminfo_new(&mem_info) < 0)
 	    xerrx(EXIT_FAILURE,
