@@ -1,0 +1,82 @@
+.\" (C) Copyright 2020 Craig Small <csmall@dropbear.xyz>
+.\"
+.\" %%%LICENSE_START(LGPL_2.1+)
+.\" This manual is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU Lesser General Public
+.\" License as published by the Free Software Foundation; either
+.\" version 2.1 of the License, or (at your option) any later version.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" Lesser General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU Lesser General Public
+.\" License along with this library; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+.\" %%%LICENSE_END
+.\"
+.TH PROCPS_MISC 3 2020-10-20 "libproc-2"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.SH NAME
+procps_misc \- API to system information in the /proc filesystem
+.SH SYNOPSIS
+.nf
+.B #include <proc/sysinfo.h>
+.PP
+.B long procps_cpu_count(void);
+.B long procps_hertz_get(void);
+.BI "int procps_loadavg(double * " av1 ", double * " av5 ", double * " av15 ");"
+.B unsigned int procps_pid_length(void);
+.sp
+Link with \fI\-lprocps\fP.
+.SH DESCRIPTION
+.BR procps_cpu_count ()
+returns the number of CPUs that are currently online. On most systems returns
+the value of
+.BI sysconf( _SC_NPROCESSORS_ONLN )
+or assumed to be \fI1\fR.
+
+.BR procps_hertz_get ()
+returns the number of clock ticks per second. On most systems returns the
+value of
+.BI sysconf( _SC_CLK_TCK )
+or assumed to be \fI100\fR. Divide certain values returned in the
+in the \fI/proc\fR filesystem by this value to convert from ticks to seconds.
+
+.BR procps_loadavg ()
+Fetches the system load average and puts the 1, 5 and 15 minute averages into
+the locations in the given pointers. If the relevant pointer is \fINULL\fR then
+.BR procps_loadavg ()
+will not set that value.
+
+.BR procps_pid_length ()
+Returns the maximum string length for a PID on the system. For example, if the largest
+possible PID value on was 123, then the length would be 3. If the file
+\fI/proc/sys/kernel/pid_max\fR is unreadable, the value is assumed to be  \fI5\fR.
+
+.SH RETURN VALUE
+For
+.BR procps_cpu_count "() , " procps_hertz_get "() and " procps_pid_length ()
+see the \fBDESCRIPTION\fR section for return values.
+
+.BR procps_loadavg ()
+returns 0 on success. On failure, it
+returns a negative integer to one of the values defined below.
+.TP
+.B -ERANGE
+Unable to parse the loadavg file.
+.PP
+
+.SH FILES
+.TP
+.I /proc/loadavg
+The raw values for load average.
+.TP
+.I /proc/sys/kernel/pid_max
+Contains the value at which PIDs wrap around, one greater than the maximum PID value.
+
+.SH SEE ALSO
+.BR sysconf (3),
+.BR proc (5).
