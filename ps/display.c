@@ -633,6 +633,7 @@ int main(int argc, char *argv[]){
   setlocale (LC_ALL, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
+  setenv("TZ", ":/etc/localtime", 0);
 
 #ifdef DEBUG
   init_stack_trace(argv[0]);
