@@ -571,7 +571,9 @@ static void bye_bye (const char *str) {
       fputs(str, stderr);
       exit(EXIT_FAILURE);
    }
-   if (Batch) fputs("\n", stdout);
+   if (Batch) {
+      write(fileno(stdout), "\n", sizeof("\n"));
+   }
    exit(EXIT_SUCCESS);
 } // end: bye_bye
 
