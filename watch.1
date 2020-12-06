@@ -1,4 +1,4 @@
-.TH WATCH 1 "2020-10-19" "procps-ng" "User Commands"
+.TH WATCH 1 "2020-12-06" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -13,9 +13,9 @@ allows you to watch the program output change over time.  By default,
 \fIcommand\fR is run every 2 seconds and \fBwatch\fR will run until interrupted.
 .SH OPTIONS
 .TP
-.BR \-d ", " \-\-differences [ =permanent ]
+\fB\-d\fR, \fB\-\-differences\fR[=\fIpermanent\fR]
 Highlight the differences between successive updates. If the optional
-\fB=permanent\fR argument is specified then
+\fIpermanent\fR argument is specified then
 .B watch
 will show all changes since the first iteration.
 .TP
@@ -31,8 +31,9 @@ Make
 attempt to run
 .I command
 every
-.I interval
-seconds. Try it with
+.B \-\-interval
+.IR seconds .
+Try it with
 .B ntptime
 (if present) and notice how the fractional seconds stays (nearly) the same, as opposed to
 normal mode where they continuously increase.
@@ -136,24 +137,25 @@ last column on the screen may display one column early, or they may not
 display at all.
 
 Combining Characters never count as different in
-.I \-\-differences
+.B \-\-differences
 mode.  Only the base character counts.
 
 Blank lines directly after a line which ends in the last column do not
 display.
 
-.I \-\-precise
+.B \-\-precise
 mode doesn't yet have advanced temporal distortion technology to compensate
 for a
 .I command
 that takes more than
-.I interval
-seconds to execute.
+.B \-\-interval
+.I seconds
+to execute.
 .B watch
 also can get into a state where it rapid-fires as many executions of
 .I command
 as it can to catch up from a previous executions running longer than
-.I interval
+.B \-\-interval
 (for example,
 .B netstat
 taking ages on a DNS lookup).
@@ -180,7 +182,7 @@ watch echo '$$'
 watch echo "'"'$$'"'"
 .PP
 To see the effect of precision time keeping, try adding
-.I \-p
+.B \-p
 to
 .IP
 watch \-n 10 sleep 1
@@ -190,7 +192,7 @@ You can watch for your administrator to install the latest kernel with
 watch uname \-r
 .PP
 (Note that
-.I \-p
+.B \-p
 isn't guaranteed to work across reboots, especially in the face of
 .B ntpdate
 (if present) or other bootup time-changing mechanisms)
