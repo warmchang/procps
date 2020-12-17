@@ -1,6 +1,7 @@
 .dirstamp
 *.trs
 test_fileutils
+test_nsutils
 test_process
 test_strutils
 test_strtod_nol
