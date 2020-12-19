@@ -1422,7 +1422,8 @@ PROCPS_EXPORT int procps_pids_reset (
     // account for above PIDS_logical_end
     info->curitems = newnumitems + 1;
 
-    // if extents freed above, pids_stacks_alloc() will itemize ...
+    // if extents were freed above, this next guy will have no effect
+    // so we'll rely on pids_stacks_alloc() to itemize ...
     pids_itemize_stacks_all(info);
     pids_libflags_set(info);
 
