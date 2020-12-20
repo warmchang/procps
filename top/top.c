@@ -5790,49 +5790,49 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             break;
 #endif
    /* s_ch, make_chr */
-         case EU_STA:
+         case EU_STA:        // PIDS_STATE
             cp = make_chr(rSv(EU_STA, s_ch), W, Js);
             break;
    /* s_int, make_num with auto width */
-         case EU_LID:
+         case EU_LID:        // PIDS_ID_LOGIN
             cp = make_num(rSv(EU_LID, s_int), W, Jn, EU_LID, 0);
             break;
    /* s_int, make_num without auto width */
-         case EU_NMA:
-         case EU_PGD:
-         case EU_PID:
-         case EU_PPD:
-         case EU_SID:
-         case EU_TGD:
-         case EU_THD:
-         case EU_TPG:
+         case EU_NMA:        // PIDS_PROCESSOR_NODE
+         case EU_PGD:        // PIDS_ID_PGRP
+         case EU_PID:        // PIDS_ID_PID
+         case EU_PPD:        // PIDS_ID_PPID
+         case EU_SID:        // PIDS_ID_SESSION
+         case EU_TGD:        // PIDS_ID_TGID
+         case EU_THD:        // PIDS_NLWP
+         case EU_TPG:        // PIDS_ID_TPGID
             cp = make_num(rSv(i, s_int), W, Jn, AUTOX_NO, 0);
             break;
    /* s_int, make_num without auto width, but with zero supression */
-         case EU_NCE:
-         case EU_OOA:
-         case EU_OOM:
+         case EU_NCE:        // PIDS_NICE
+         case EU_OOA:        // PIDS_OOM_ADJ
+         case EU_OOM:        // PIDS_OOM_SCORE
             cp = make_num(rSv(i, s_int), W, Jn, AUTOX_NO, 1);
             break;
    /* s_int, scale_num */
-         case EU_FV1:
-         case EU_FV2:
+         case EU_FV1:        // PIDS_FLT_MAJ_DELTA
+         case EU_FV2:        // PIDS_FLT_MIN_DELTA
             cp = scale_num(rSv(i, s_int), W, Jn);
             break;
    /* s_int, make_num or make_str */
-         case EU_PRI:
+         case EU_PRI:        // PIDS_PRIORITY
             if (-99 > rSv(EU_PRI, s_int) || 999 < rSv(EU_PRI, s_int))
                cp = make_str("rt", W, Jn, AUTOX_NO);
             else
                cp = make_num(rSv(EU_PRI, s_int), W, Jn, AUTOX_NO, 0);
             break;
    /* s_int, scale_pcnt with special handling */
-         case EU_CPU:
+         case EU_CPU:        // PIDS_TICS_ALL_DELTA
          {  float u = (float)rSv(EU_CPU, s_int);
             int n = rSv(EU_THD, s_int);
 #ifndef TREE_VCPUOFF
  #ifndef TREE_VWINALL
-            if (q == Curwin)   // note: the following is NOT indented
+            if (q == Curwin) // note: the following is NOT indented
  #endif
             if (CHKw(q, Show_FOREST)) u += rSv(eu_TREE_ADD, u_int);
             u *= Frame_etscale;
@@ -5850,56 +5850,56 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          }
             break;
    /* u_int, make_num without auto width */
-         case EU_CPN:
+         case EU_CPN:        // PIDS_PROCESSOR
             cp = make_num(rSv(EU_CPN, u_int), W, Jn, AUTOX_NO, 0);
             break;
    /* u_int, make_num with auto width */
-         case EU_GID:
-         case EU_UED:
-         case EU_URD:
-         case EU_USD:
+         case EU_GID:        // PIDS_ID_EGID
+         case EU_UED:        // PIDS_ID_EUID
+         case EU_URD:        // PIDS_ID_RUID
+         case EU_USD:        // PIDS_ID_SUID
             cp = make_num(rSv(i, u_int), W, Jn, i, 0);
             break;
    /* ul_int, make_num with auto width and zero supression */
-         case EU_NS1:
-         case EU_NS2:
-         case EU_NS3:
-         case EU_NS4:
-         case EU_NS5:
-         case EU_NS6:
+         case EU_NS1:        // PIDS_NS_IPC
+         case EU_NS2:        // PIDS_NS_MNT
+         case EU_NS3:        // PIDS_NS_NET
+         case EU_NS4:        // PIDS_NS_PID
+         case EU_NS5:        // PIDS_NS_USER
+         case EU_NS6:        // PIDS_NS_UTS
             cp = make_num(rSv(i, ul_int), W, Jn, i, 1);
             break;
    /* ul_int, scale_mem */
-         case EU_COD:
-         case EU_DAT:
-         case EU_DRT:   // really # pgs, but always zero since 2.6
-         case EU_RES:
-         case EU_RZA:
-         case EU_RZF:
-         case EU_RZL:
-         case EU_RZS:
-         case EU_SHR:
-         case EU_SWP:
-         case EU_USE:
-         case EU_VRT:
+         case EU_COD:        // PIDS_MEM_CODE
+         case EU_DAT:        // PIDS_MEM_DATA
+         case EU_DRT:        // PIDS_noop, really # pgs, but always 0 since 2.6
+         case EU_RES:        // PIDS_MEM_RES
+         case EU_RZA:        // PIDS_VM_RSS_ANON
+         case EU_RZF:        // PIDS_VM_RSS_FILE
+         case EU_RZL:        // PIDS_VM_RSS_LOCKED
+         case EU_RZS:        // PIDS_VM_RSS_SHARED
+         case EU_SHR:        // PIDS_MEM_SHR
+         case EU_SWP:        // PIDS_VM_SWAP
+         case EU_USE:        // PIDS_VM_USED
+         case EU_VRT:        // PIDS_MEM_VIRT
             cp = scale_mem(S, rSv(i, ul_int), W, Jn);
             break;
    /* ul_int, scale_num */
-         case EU_FL1:
-         case EU_FL2:
+         case EU_FL1:        // PIDS_FLT_MAJ
+         case EU_FL2:        // PIDS_FLT_MIN
             cp = scale_num(rSv(i, ul_int), W, Jn);
             break;
    /* ul_int, scale_pcnt */
-         case EU_MEM:
+         case EU_MEM:        // derive from PIDS_MEM_RES
             cp = scale_pcnt((float)rSv(EU_MEM, ul_int) * 100 / MEM_VAL(mem_TOT), W, Jn);
             break;
    /* ul_int, make_str with special handling */
-         case EU_FLG:
+         case EU_FLG:        // PIDS_FLAGS
             cp = make_str(hex_make(rSv(EU_FLG, ul_int), 1), W, Js, AUTOX_NO);
             break;
    /* ull_int, scale_tics */
-         case EU_TM2:
-         case EU_TME:
+         case EU_TM2:        // PIDS_TICS_ALL
+         case EU_TME:        // PIDS_TICS_ALL
          {  TIC_t t;
             if (CHKw(q, Show_CTIMES)) t = rSv(eu_TICS_ALL_C, ull_int);
             else t = rSv(i, ull_int);
@@ -5907,35 +5907,35 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          }
             break;
    /* str, make_str (all AUTOX yes) */
-         case EU_LXC:
-         case EU_TTY:
-         case EU_WCH:
+         case EU_LXC:        // PIDS_LXCNAME
+         case EU_TTY:        // PIDS_TTY_NAME
+         case EU_WCH:        // PIDS_WCHAN_NAME
             cp = make_str(rSv(i, str), W, Js, i);
             break;
    /* str, make_str_utf8 (all AUTOX yes) */
-         case EU_GRP:
-         case EU_UEN:
-         case EU_URN:
-         case EU_USN:
+         case EU_GRP:        // PIDS_ID_EGROUP
+         case EU_UEN:        // PIDS_ID_EUSER
+         case EU_URN:        // PIDS_ID_RUSER
+         case EU_USN:        // PIDS_ID_SUSER
             cp = make_str_utf8(rSv(i, str), W, Js, i);
             break;
    /* str, make_str with varialbe width */
-         case EU_CGN:
-         case EU_CGR:
-         case EU_ENV:
-         case EU_EXE:
-         case EU_SGD:
+         case EU_CGN:        // PIDS_CGNAME
+         case EU_CGR:        // PIDS_CGROUP
+         case EU_ENV:        // PIDS_ENVIRON
+         case EU_EXE:        // PIDS_EXE
+         case EU_SGD:        // PIDS_SUPGIDS
             makeVAR(rSv(i, str));
             break;
    /* str, make_str_utf8 with varialbe width */
-         case EU_SGN:
+         case EU_SGN:        // PIDS_SUPGROUPS
             varUTF8(rSv(EU_SGN, str));
             break;
    /* str, make_str with varialbe width + additional decoration */
-         case EU_CMD:
+         case EU_CMD:        // PIDS_CMD or PIDS_CMDLINE
             makeVAR(forest_colour(q, p));
             break;
-         default:               // keep gcc happy
+         default:            // keep gcc happy
             continue;
       } // end: switch 'procflag'
 
