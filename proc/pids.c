@@ -1139,6 +1139,16 @@ PROCPS_EXPORT int procps_pids_new (
             failed = 1;
         }
     }
+    if (PIDS_SELECT_PID != PROC_PID) {
+        fprintf(stderr, "%s: header error: PIDS_SELECT_PID = 0x%04x, PROC_PID = 0x%04x\n"
+            , __FILE__, PIDS_SELECT_PID, PROC_PID);
+        failed = 1;
+    }
+    if (PIDS_SELECT_UID != PROC_UID) {
+        fprintf(stderr, "%s: header error: PIDS_SELECT_UID = 0x%04x, PROC_UID = 0x%04x\n"
+            , __FILE__, PIDS_SELECT_UID, PROC_UID);
+        failed = 1;
+    }
     if (failed) _Exit(EXIT_FAILURE);
 #endif
 

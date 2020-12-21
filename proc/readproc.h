@@ -220,6 +220,7 @@ typedef struct PROCTAB {
 // consider only processes with one of the passed:
 #define PROC_PID             0x1000  // process id numbers ( 0   terminated)
 #define PROC_UID             0x4000  // user id numbers    ( length needed )
+// Note: the above 2 values must NOT change without also changing pids.h !!!
 
 #define PROC_EDITCGRPCVT    0x10000 // edit `cgroup' as regular string
 #define PROC_EDITCMDLCVT    0x20000 // edit `cmdline' as regular string
