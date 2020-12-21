@@ -16,13 +16,19 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS_MISC 3 2020-10-20 "libproc-2"
+.TH PROCPS_MISC 3 2020-12-21 "libproc-2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .SH NAME
 procps_misc \- API to system information in the /proc filesystem
 .SH SYNOPSIS
 .nf
+.B #include <proc/namespace.h>
+.PP
+.BI "int procps_ns_get_id(const char * " name ");"
+.BI "const char *procps_ns_get_name(const int " id ");"
+.BI "int procps_ns_read_pid(const int " pid ", struct procps_namespaces * " nsp ");"
+.PP
 .B #include <proc/sysinfo.h>
 .PP
 .B long procps_cpu_count(void);
@@ -88,6 +94,16 @@ To encode a given Linux version, such as using it to compare against the current
 version, use the following macro:
 .TP
 .BI LINUX_VERSION( major , minor , patch )
+.PP
+.BR procps_ns_get_id ()
+finds the ID of the namespace for the given namespace name.
+
+.BR procps_ns_get_name ()
+finds the name of the namespace of the given integer ID.
+
+.BR procps_ns_read_pid ()
+puts the inodes for the namespaces of the given process into
+the array pointed to \fInsp\fR.
 
 .SH RETURN VALUE
 For
@@ -115,6 +131,20 @@ Unable to parse the osrelease file.
 .BR procps_linux_version ()
 may also return any (negated) value that \fBfopen\fR() may set errno to.
 
+.BR procps_ns_get_id ()
+returns an integer for the namespace ID for the given name or
+.B \-EINVAL
+for an invalid input or an unknown namespace name.
+
+.BR procps_ns_get_name ()
+returns a statically allocated string containing the name of the
+namespace for the given ID. If the name is not found the function
+returns
+.B NULL
+
+.BR procps_ns_read_pid ()
+Returns 0 on success and \fB\-EINVAL\fR on failure.
+
 .SH FILES
 .TP
 .I /proc/loadavg
@@ -125,6 +155,8 @@ Contains the release version of the Linux kernel or proc filesystem.
 .TP
 .I /proc/sys/kernel/pid_max
 Contains the value at which PIDs wrap around, one greater than the maximum PID value.
+.IB /proc/ PID /ns
+contains the set of namespaces for a particular \fBPID\fR.
 
 .SH BUGS
 Due to the way the three numbers are encoded into a single integer,
