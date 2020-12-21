@@ -36,6 +36,12 @@ procps_misc \- API to system information in the /proc filesystem
 .BI "int procps_loadavg(double * " av1 ", double * " av5 ", double * " av15 ");"
 .B unsigned int procps_pid_length(void);
 .PP
+.B #include <proc/uptime.h>
+.PP
+.BI "int procps_uptime(double * " uptime_secs ", double * " idle_secs ");"
+.B char *procps_uptime_sprint(void);
+.B char *procps_uptime_sprint_short(void);
+.PP
 .B #include <proc/version.h>
 .PP
 .B int procps_linux_version(void);
@@ -95,6 +101,14 @@ version, use the following macro:
 .TP
 .BI LINUX_VERSION( major , minor , patch )
 .PP
+.BR procps_uptime ()
+returns the uptime and idle time of the system. Either the
+\fIuptime_secs\fR or \fIidle_secs\fR can be \fBNULL\fR in which case that
+variable will not be returned.
+
+The \fBsprint\fR variety of the functions return a human-readable
+string of the uptime and other statistics.
+
 .BR procps_ns_get_id ()
 finds the ID of the namespace for the given namespace name.
 
@@ -145,6 +159,27 @@ returns
 .BR procps_ns_read_pid ()
 Returns 0 on success and \fB\-EINVAL\fR on failure.
 
+.BR procps_uptime ()
+returns 0 on success. On failure, it
+returns a negative integer to one of the values defined below.
+.TP
+.B -ERANGE
+Unable to parse the uptime file.
+.PP
+.BR procps_uptime ()
+may also return any (negated) value that \fBfopen\fR() may set errno to.
+
+.BR procps_uptime_sprint_short ()
+return a string from a statically allocated buffer which displays uptime.
+
+.BR procps_uptime_sprint ()
+also displays users and load average in the buffer. The formats are the
+same as
+.BR uptime (1)
+with and without the
+.B \-p
+option.
+
 .SH FILES
 .TP
 .I /proc/loadavg
@@ -155,6 +190,10 @@ Contains the release version of the Linux kernel or proc filesystem.
 .TP
 .I /proc/sys/kernel/pid_max
 Contains the value at which PIDs wrap around, one greater than the maximum PID value.
+.TP
+.I /proc/uptime
+The raw values for uptime and idle time.
+.TP
 .IB /proc/ PID /ns
 contains the set of namespaces for a particular \fBPID\fR.
 
@@ -168,6 +207,7 @@ out, this function will break.
 .\" Maj/6yr - In 7452 we'll think of something
 
 .SH SEE ALSO
+.BR uptime (1),
 .BR fopen (3),
 .BR sysconf (3),
 .BR proc (5).
