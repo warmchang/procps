@@ -29,9 +29,17 @@ procps_misc \- API to system information in the /proc filesystem
 .B long procps_hertz_get(void);
 .BI "int procps_loadavg(double * " av1 ", double * " av5 ", double * " av15 ");"
 .B unsigned int procps_pid_length(void);
+.PP
+.B #include <proc/version.h>
+.PP
+.B int procps_linux_version(void);
 .sp
 Link with \fI\-lprocps\fP.
 .SH DESCRIPTION
+This manual page describes the miscellaneous API functions of the
+.B procps
+library.
+
 .BR procps_cpu_count ()
 returns the number of CPUs that are currently online. On most systems returns
 the value of
@@ -56,6 +64,31 @@ Returns the maximum string length for a PID on the system. For example, if the l
 possible PID value on was 123, then the length would be 3. If the file
 \fI/proc/sys/kernel/pid_max\fR is unreadable, the value is assumed to be  \fI5\fR.
 
+.BR procps_linux_version ()
+returns the current Linux version as an integer. On non-Linux systems that
+have an emulated proc filesystem this function returns the version of the
+Linux emulation instead.
+The Linux version consists of a triple of positive integers representing
+the major, minor and patch versions of the kernel.
+.PP
+The library provides 3 macros for separating out the components.
+.RS 4
+.TP 1.2i
+.BR LINUX_VERSION_MAJOR (ver)
+Extract the major component from the given version integer.
+.TP
+.BR LINUX_VERSION_MINOR (ver)
+Extract the minor component from the given version integer.
+.TP
+.BR LINUX_VERSION_PATCH (ver)
+Extract the patch component from the given version integer.
+.RE
+.PP
+To encode a given Linux version, such as using it to compare against the current
+version, use the following macro:
+.TP
+.BI LINUX_VERSION( major , minor , patch )
+
 .SH RETURN VALUE
 For
 .BR procps_cpu_count "() , " procps_hertz_get "() and " procps_pid_length ()
@@ -69,14 +102,40 @@ returns a negative integer to one of the values defined below.
 Unable to parse the loadavg file.
 .PP
 
+.BR procps_linux_version ()
+returns a positive integer encoding the Linux version if successful. Otherwise
+returns a negative integer to one of the values defined below.
+.TP
+.B -EIO
+The procps library was unable to read the osrelease file.
+.TP
+.B -ERANGE
+Unable to parse the osrelease file.
+.PP
+.BR procps_linux_version ()
+may also return any (negated) value that \fBfopen\fR() may set errno to.
+
 .SH FILES
 .TP
 .I /proc/loadavg
 The raw values for load average.
 .TP
+.I /proc/sys/kernel/osrelease
+Contains the release version of the Linux kernel or proc filesystem.
+.TP
 .I /proc/sys/kernel/pid_max
 Contains the value at which PIDs wrap around, one greater than the maximum PID value.
 
+.SH BUGS
+Due to the way the three numbers are encoded into a single integer,
+.BR procps_linux_version ()
+and the associated macros assume 255 for the maximum value for the
+minor and patch level and 32767 (hex 0x7fff) for the maximum value
+for the major version. In other words, when Linux v 32768.0.0 comes
+out, this function will break.
+.\" Maj/6yr - In 7452 we'll think of something
+
 .SH SEE ALSO
+.BR fopen (3),
 .BR sysconf (3),
 .BR proc (5).
