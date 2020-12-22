@@ -78,15 +78,8 @@ dist_man_MANS = \
 	vmstat.8 \
 	w.1 \
 	doc/procps.3 \
-	doc/procps_linux_version.3 \
-	doc/procps_ns_get_id.3 \
-	doc/procps_ns_get_name.3 \
-	doc/procps_ns_read_pid.3 \
 	doc/procps_pids.3 \
-	doc/procps_misc.3 \
-	doc/procps_uptime.3 \
-	doc/procps_uptime_sprint.3 \
-	doc/procps_uptime_sprint_short.3
+	doc/procps_misc.3
 
 if !CYGWIN
 dist_man_MANS += \
