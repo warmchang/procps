@@ -663,6 +663,11 @@ static struct el * select_procs (int *num)
     free(cmdsearch);
     free(cmdoutput);
 
+    if (preg) {
+        regfree(preg);
+        free(preg);
+    }
+
     *num = matches;
 
     if ((!matches) && (!opt_full) && opt_pattern && (strlen(opt_pattern) > 15))
