@@ -28,6 +28,7 @@ set flag_match {
     "bsdtime,cputime,etime,etimes" "\\s*TIME\\s+TIME\\s+ELAPSED\\s+ELAPSED\\s*\(\\s*\\d+:\\d{2}\\s+\\d{2}:\\d{2}:\\d{2}\\s+\(\\d{2}:\)?\\d{2}:\\d{2}\\s+\\d+\\s*\)+$"
     "user,ruser,group,rgroup,uid,ruid,gid,rgid" "\\s*USER\\s+RUSER\\s+GROUP\\s+RGROUP\\s+UID\\s+RUID\\s+GID\\s+RGID\\s+\(\(\\s*\[A-Za-z0-9_+-\]+\\s+\){4}\(\\d+\\s+\){4}\\s*\)+$"
     "cputimes,times" "\\s*TIME\\s+TIME\\s+\\d+\\s+\\d+\\s*"
+    "pid,exe" "\\s*PID\\s+EXE\\s+\\d+\\s+\\s*"
 }
 
 foreach { flag match } $flag_match  {
