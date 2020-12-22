@@ -1118,8 +1118,10 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILL_LUID)                 // value the login user id
         p->luid = login_uid(path);
 
-    if (flags & PROC_FILL_EXE)
-        p->exe = readlink_exe(path);
+    if (flags & PROC_FILL_EXE) {
+        if (!(p->exe = readlink_exe(path)))
+            rc += 1;
+    }
 
     if (rc == 0) return p;
     errno = ENOMEM;
@@ -1211,8 +1213,10 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLSYSTEMD)                   // get sd-login.h stuff
         rc += sd2proc(t);
 
-    if (flags & PROC_FILL_EXE)
-        t->exe = readlink_exe(path);
+    if (flags & PROC_FILL_EXE) {
+        if (!(t->exe = readlink_exe(path)))
+            rc += 1;
+    }
 #ifdef FALSE_THREADS
     }
 #endif
