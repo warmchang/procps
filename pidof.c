@@ -57,6 +57,8 @@ static char *program = NULL;
 static int opt_single_shot    = 0;  /* -s */
 static int opt_scripts_too    = 0;  /* -x */
 static int opt_rootdir_check  = 0;  /* -c */
+static int opt_with_workers   = 0;  /* -w */
+
 
 static char *pidof_root = NULL;
 
@@ -71,6 +73,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(_(" -s, --single-shot         return one PID only\n"), fp);
 	fputs(_(" -c, --check-root          omit processes with different root\n"), fp);
 	fputs(_(" -x                        also find shells running the named scripts\n"), fp);
+	fputs(_(" -w, --with-workers        show kernel workers too\n"), fp);
 	fputs(_(" -o, --omit-pid <PID,...>  omit processes with PID\n"), fp);
 	fputs(_(" -S, --separator SEP       use SEP as separator put between PIDs"), fp);
 	fputs(USAGE_SEPARATOR, fp);
@@ -173,7 +176,7 @@ static void select_procs (void)
 			}
 		}
 
-		if (!is_omitted(tid)) {
+		if (!is_omitted(tid) && ((p_cmdline && *p_cmdline) || opt_with_workers)) {
 
 			cmd_arg0 = (p_cmdline && *p_cmdline) ? *p_cmdline : "\0";
 
@@ -196,6 +199,7 @@ static void select_procs (void)
 			if (!strcmp(program, cmd_arg0base) ||
 			    !strcmp(program_base, cmd_arg0) ||
 			    !strcmp(program, cmd_arg0) ||
+			    (opt_with_workers && !strcmp(program, p_cmd)) ||
 			    !strcmp(program, exe_link_base) ||
 			    !strcmp(program, exe_link))
 			{
@@ -295,13 +299,14 @@ int main (int argc, char **argv)
 	int first_pid = 1;
 
 	const char *separator = " ";
-	const char *opts = "scdnxmo:S:?Vh";
+	const char *opts = "scnxwmo:S:?Vh";
 
 	static const struct option longopts[] = {
 		{"check-root", no_argument, NULL, 'c'},
 		{"single-shot", no_argument, NULL, 's'},
 		{"omit-pid", required_argument, NULL, 'o'},
 		{"separator", required_argument, NULL, 'S'},
+		{"with-workers", no_argument, NULL, 'w'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -326,6 +331,9 @@ int main (int argc, char **argv)
 			break;
 		case 'x':
 			opt_scripts_too = 1;
+			break;
+		case 'w':
+			opt_with_workers = 1;
 			break;
 		case 'c':
 			if (geteuid() == 0) {
@@ -360,6 +368,8 @@ int main (int argc, char **argv)
 	while (argc - optind) {		/* for each program */
 
 		program = argv[optind++];
+
+		if (*program == '\0') continue;
 
 		select_procs();	/* get the list of matching processes */
 

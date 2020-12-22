@@ -45,6 +45,9 @@ the current root directory of processes they do not own.
 .IP \-x
 Scripts too - this causes the program to also return process id's of
 shells running the named scripts.
+.IP \-w
+Show also processes that do not have visible command line (e.g. kernel
+worker threads).
 .IP "-o \fIomitpid\fP"
 Tells \fIpidof\fP to omit processes with that process id. The special
 pid \fB%PPID\fP can be used to name the parent process of the \fIpidof\fP
