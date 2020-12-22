@@ -9,6 +9,11 @@ set not_uid [ expr { $uid + 1 } ]
 set gid [ exec id -g ]
 set not_gid [ expr { $gid + 1 } ]
 
+if { ![ file exists $pwait ] } {
+    untested { skipping (not build)}
+    return
+}
+
 set test "pwait with no arguments"
 spawn $pwait
 expect_pass "$test" "^\(lt-\)\?pwait: no matching criteria specified\\s*"
