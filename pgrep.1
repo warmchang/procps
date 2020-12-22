@@ -9,12 +9,15 @@
 .\"
 .TH PGREP "1" "2020-06-04" "procps-ng" "User Commands"
 .SH NAME
-pgrep, pkill \- look up or signal processes based on name and other attributes
+pgrep, pkill, pwait \- look up, signal, or wait for processes based on name and other attributes
 .SH SYNOPSIS
 .B pgrep
 [options] pattern
 .br
 .B pkill
+[options] pattern
+.br
+.B pwait
 [options] pattern
 .SH DESCRIPTION
 .B pgrep
@@ -41,6 +44,9 @@ OR
 will send the specified signal (by default
 .BR SIGTERM )
 to each process instead of listing them on stdout.
+.PP
+.B pwait
+will wait for each process instead of listing them on stdout.
 .SH OPTIONS
 .TP
 \fB\-\fR\fIsignal\fP
@@ -54,7 +60,9 @@ only.)
 \fB\-c\fR, \fB\-\-count\fR
 Suppress normal output; instead print a count of matching processes.  When
 count does not match anything, e.g. returns zero, the command will return
-non-zero value.
+non-zero value. Note that for pkill and pwait, the count is the number of
+matching processes, not the processes that were successfully signaled or waited
+for.
 .TP
 \fB\-d\fR, \fB\-\-delimiter\fR \fIdelimiter\fP
 Sets the string used to delimit each process ID in the output (by default a
@@ -77,9 +85,10 @@ is set, the full command line is used.
 \fB\-g\fR, \fB\-\-pgroup\fR \fIpgrp\fP,...
 Only match processes in the process group IDs listed.  Process group 0 is
 translated into
-.BR pgrep 's
+.BR pgrep 's,
+.BR pkill 's,
 or
-.BR pkill 's
+.BR pwait 's
 own process group.
 .TP
 \fB\-G\fR, \fB\-\-group\fR \fIgid\fP,...
@@ -114,9 +123,10 @@ Only match processes whose parent process ID is listed.
 \fB\-s\fR, \fB\-\-session\fR \fIsid\fP,...
 Only match processes whose process session ID is listed.  Session ID 0
 is translated into
-.BR pgrep 's
+.BR pgrep 's,
+.BR pkill 's,
 or
-.BR pkill 's
+.BR pwait 's
 own session ID.
 .TP
 \fB\-t\fR, \fB\-\-terminal\fR \fIterm\fP,...
@@ -134,6 +144,8 @@ symbolical value may be used.
 \fB\-v\fR, \fB\-\-inverse\fR\fR
 Negates the matching.  This option is usually used in
 .BR pgrep 's
+or
+.BR pwait 's
 context.  In
 .BR pkill 's
 context the short option is disabled to avoid accidental usage of the option.
@@ -141,6 +153,8 @@ context the short option is disabled to avoid accidental usage of the option.
 \fB\-w\fR, \fB\-\-lightweight\fR\fR
 Shows all thread ids instead of pids in
 .BR pgrep 's
+or
+.BR pwait 's
 context.  In
 .BR pkill 's
 context this option is disabled.
@@ -152,8 +166,8 @@ match the
 .IR pattern .
 .TP
 \fB\-F\fR, \fB\-\-pidfile\fR \fIfile\fR
-Read \fIPID\fRs from \fIfile\fR.  This option is perhaps more useful for
-.B pkill
+Read \fIPID\fRs from \fIfile\fR.  This option is more useful for
+.BR pkill or pwait
 than
 .BR pgrep .
 .TP
@@ -223,8 +237,8 @@ $ renice +4 $(pgrep chrome)
 .PD 0
 .TP
 0
-One or more processes matched the criteria. For pkill the process must also
-have been successfully signalled.
+One or more processes matched the criteria. For pkill and pwait, one or more
+processes must also have been successfully signalled or waited for.
 .TP
 1
 No processes matched or none of them could be signalled.
@@ -241,9 +255,10 @@ the output of /proc/\fIpid\fP/stat.  Use the \fB\-f\fR option to match against t
 complete command line, /proc/\fIpid\fP/cmdline.
 .PP
 The running
-.B pgrep
+.BR pgrep ,
+.BR pkill ,
 or
-.B pkill
+.B pwait
 process will never report itself as a
 match.
 .SH BUGS

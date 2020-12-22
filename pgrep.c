@@ -38,6 +38,11 @@
 #include <stdbool.h>
 #include <time.h>
 
+#if defined(ENABLE_PWAIT) && !defined(HAVE_PIDFD_OPEN)
+#include <sys/epoll.h>
+#include <sys/syscall.h>
+#endif
+
 /* EXIT_SUCCESS is 0 */
 /* EXIT_FAILURE is 1 */
 #define EXIT_USAGE 2
@@ -60,7 +65,13 @@
 	(x) = (x) * 5 / 4 + 4; \
 } while (0)
 
-static int i_am_pkill = 0;
+static enum {
+    PGREP = 0,
+    PKILL,
+#ifdef ENABLE_PWAIT
+    PWAIT,
+#endif
+} prog_mode;
 
 struct el {
 	long	num;
@@ -112,17 +123,24 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(USAGE_HEADER, fp);
 	fprintf(fp, _(" %s [options] <pattern>\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, fp);
-	if (i_am_pkill == 0) {
+	switch (prog_mode) {
+	case PGREP:
 		fputs(_(" -d, --delimiter <string>  specify output delimiter\n"),fp);
 		fputs(_(" -l, --list-name           list PID and process name\n"),fp);
 		fputs(_(" -a, --list-full           list PID and full command line\n"),fp);
 		fputs(_(" -v, --inverse             negates the matching\n"),fp);
 		fputs(_(" -w, --lightweight         list all TID\n"), fp);
-	}
-	if (i_am_pkill == 1) {
+		break;
+	case PKILL:
 		fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"), fp);
 		fputs(_(" -q, --queue <value>       integer value to be sent with the signal\n"), fp);
 		fputs(_(" -e, --echo                display what is killed\n"), fp);
+		break;
+#ifdef ENABLE_PWAIT
+	case PWAIT:
+		fputs(_(" -e, --echo                display PIDs before waiting\n"), fp);
+		break;
+#endif
 	}
 	fputs(_(" -c, --count               count of matching processes\n"), fp);
 	fputs(_(" -f, --full                use full process name to match\n"), fp);
@@ -669,11 +687,8 @@ static struct el * select_procs (int *num)
 				xerrx(EXIT_FAILURE, _("internal error"));
 			}
 
-			// pkill does not need subtasks!
-			// this control is still done at
-			// argparse time, but a further
-			// control is free
-			if (opt_threads && !i_am_pkill) {
+			// pkill and pwait don't support -w, but this is checked in getopt
+			if (opt_threads) {
 				while (readtask(ptp, &task, &subtask)){
 					// don't add redundant tasks
 					if (task.XXXID == subtask.XXXID)
@@ -722,6 +737,13 @@ static int signal_option(int *argc, char **argv)
 	return -1;
 }
 
+#if defined(ENABLE_PWAIT) && !defined(HAVE_PIDFD_OPEN)
+static int pidfd_open (pid_t pid, unsigned int flags)
+{
+	return syscall(__NR_pidfd_open, pid, flags);
+}
+#endif
+
 static void parse_opts (int argc, char **argv)
 {
 	char opts[64] = "";
@@ -766,16 +788,21 @@ static void parse_opts (int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
-	if (strstr (program_invocation_short_name, "pkill")) {
+#ifdef ENABLE_PWAIT
+	if (strcmp (program_invocation_short_name, "pwait") == 0) {
+		prog_mode = PWAIT;
+		strcat (opts, "e");
+	} else
+#endif
+        if (strcmp (program_invocation_short_name, "pkill") == 0) {
 		int sig;
-		i_am_pkill = 1;
+		prog_mode = PKILL;
 		sig = signal_option(&argc, argv);
 		if (-1 < sig)
 			opt_signal = sig;
-		/* These options are for pkill only */
 		strcat (opts, "eq:");
 	} else {
-		/* These options are for pgrep only */
+		prog_mode = PGREP;
 		strcat (opts, "lad:vw");
 	}
 
@@ -974,6 +1001,14 @@ int main (int argc, char **argv)
 {
 	struct el *procs;
 	int num;
+	int i;
+	int kill_count = 0;
+#ifdef ENABLE_PWAIT
+	int poll_count = 0;
+	int wait_count = 0;
+	int epollfd = epoll_create(1);
+	struct epoll_event ev, events[32];
+#endif
 
 #ifdef HAVE_PROGRAM_INVOCATION_NAME
 	program_invocation_name = program_invocation_short_name;
@@ -986,25 +1021,8 @@ int main (int argc, char **argv)
 	parse_opts (argc, argv);
 
 	procs = select_procs (&num);
-	if (i_am_pkill) {
-		int i;
-		int kill_count = 0;
-		for (i = 0; i < num; i++) {
-			if (execute_kill (procs[i].num, opt_signal) != -1) {
-				if (opt_echo)
-					printf(_("%s killed (pid %lu)\n"), procs[i].str, procs[i].num);
-                kill_count++;
-				continue;
-			}
-			if (errno==ESRCH)
-				 /* gone now, which is OK */
-				continue;
-			xwarn(_("killing pid %ld failed"), procs[i].num);
-		}
-		if (opt_count)
-			fprintf(stdout, "%d\n", num);
-		return !kill_count;
-	} else {
+	switch (prog_mode) {
+	case PGREP:
 		if (opt_count) {
 			fprintf(stdout, "%d\n", num);
 		} else {
@@ -1013,6 +1031,59 @@ int main (int argc, char **argv)
 			else
 				output_numlist (procs,num);
 		}
+		return !num;
+
+	case PKILL:
+		for (i = 0; i < num; i++) {
+			if (execute_kill (procs[i].num, opt_signal) != -1) {
+				if (opt_echo)
+					printf(_("%s killed (pid %lu)\n"), procs[i].str, procs[i].num);
+				kill_count++;
+				continue;
+			}
+			if (errno==ESRCH)
+				/* gone now, which is OK */
+				continue;
+			xwarn(_("killing pid %ld failed"), procs[i].num);
+		}
+		if (opt_count)
+			fprintf(stdout, "%d\n", num);
+		return !kill_count;
+
+#ifdef ENABLE_PWAIT
+	case PWAIT:
+		if (opt_count)
+			fprintf(stdout, "%d\n", num);
+
+		for (i = 0; i < num; i++) {
+			if (opt_echo)
+				printf(_("waiting for %s (pid %lu)\n"), procs[i].str, procs[i].num);
+			int pidfd = pidfd_open(procs[i].num, 0);
+			if (pidfd == -1) {
+				/* ignore ESRCH, same as pkill */
+				if (errno != ESRCH)
+					xwarn(_("opening pid %ld failed"), procs[i].num);
+				continue;
+			}
+			ev.events = EPOLLIN | EPOLLET;
+			ev.data.fd = pidfd;
+			if (epoll_ctl(epollfd, EPOLL_CTL_ADD, pidfd, &ev) != -1)
+				poll_count++;
+		}
+
+		while (wait_count < poll_count) {
+			int ew = epoll_wait(epollfd, events, sizeof(events)/sizeof(events[0]), -1);
+			if (ew == -1) {
+				if (errno == EINTR)
+					continue;
+				xwarn(_("epoll_wait failed"));
+			}
+			wait_count += ew;
+		}
+
+		return !wait_count;
+#endif
 	}
-	return !num; /* exit(EXIT_SUCCESS) if match, otherwise exit(EXIT_FAILURE) */
+    /* Not sure if it is possible to get here */
+    return -1;
 }
