@@ -15,16 +15,16 @@
 .\" along with this program; if not, write to the Free Software
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 .\"
-.TH PIDOF 1 "2020-06-04" "" "User Commands"
+.TH PIDOF 1 "2020-12-22" "" "User Commands"
 .SH NAME
 pidof -- find the process ID of a running program
 .SH SYNOPSIS
 .B pidof
 .RB [ \-s ]
 .RB [ \-c ]
+.RB [ \-q ]
+.RB [ \-w ]
 .RB [ \-x ]
-.RB [ \-o
-.IR omitpid[,omitpid...] ]
 .RB [ \-o
 .IR omitpid[,omitpid...]... ]
 .RB [ \-S
@@ -42,12 +42,14 @@ Single shot - this instructs the program to only return one \fIpid\fP.
 Only return process ids that are running with the same root directory.
 This option is ignored for non-root users, as they will be unable to check
 the current root directory of processes they do not own.
-.IP \-x
-Scripts too - this causes the program to also return process id's of
-shells running the named scripts.
+.IP \-q
+Quiet mode, suppress any output and only sets the exit status accordingly.
 .IP \-w
 Show also processes that do not have visible command line (e.g. kernel
 worker threads).
+.IP \-x
+Scripts too - this causes the program to also return process id's of
+shells running the named scripts.
 .IP "-o \fIomitpid\fP"
 Tells \fIpidof\fP to omit processes with that process id. The special
 pid \fB%PPID\fP can be used to name the parent process of the \fIpidof\fP
