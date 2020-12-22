@@ -5730,7 +5730,7 @@ static void keys_xtra (int ch) {
         /*
          * note how alphabetical order is maintained within carefully chosen |
          * function names such as: (s)cpu_see, (t)cpu_tics, and (u)cpu_unify |
-         * with each name exactly 1 letter more than the preceeding function |
+         * with every name exactly 1 letter more than the preceding function |
          * ( surely, this must make us run much more efficiently. amirite? ) | */
 
         /*
