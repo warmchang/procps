@@ -333,6 +333,7 @@ static sort_node *do_one_sort_spec(const char *spec){
   if(fs){
     sort_node *thisnode;
     thisnode = malloc(sizeof(sort_node));
+    thisnode->pr = fs->pr;
     thisnode->sr = fs->sr;
     thisnode->need = fs->need;
     thisnode->reverse = reverse;

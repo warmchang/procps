@@ -1500,12 +1500,12 @@ static const format_struct format_array[] = {
 /* code       header     print()      sort()    width need vendor flags  */
 {"%cpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    BSD, ET|RIGHT}, /*pcpu*/
 {"%mem",      "%MEM",    pr_pmem,     sr_rss,     4,   0,    BSD, PO|RIGHT}, /*pmem*/
-{"_left",     "LLLLLLLL", pr_t_left,  sr_nop,     8,   0,    TST, ET|LEFT},
-{"_left2",    "L2L2L2L2", pr_t_left2, sr_nop,     8,   0,    TST, ET|LEFT},
-{"_right",    "RRRRRRRRRRR", pr_t_right, sr_nop, 11,   0,    TST, ET|RIGHT},
-{"_right2",   "R2R2R2R2R2R", pr_t_right2, sr_nop, 11,  0,    TST, ET|RIGHT},
-{"_unlimited","U",   pr_t_unlimited,  sr_nop,    16,   0,    TST, ET|UNLIMITED},
-{"_unlimited2","U2", pr_t_unlimited2, sr_nop,    16,   0,    TST, ET|UNLIMITED},
+{"_left",     "LLLLLLLL", pr_t_left,  NULL,       8,   0,    TST, ET|LEFT},
+{"_left2",    "L2L2L2L2", pr_t_left2, NULL,       8,   0,    TST, ET|LEFT},
+{"_right",    "RRRRRRRRRRR", pr_t_right, NULL,   11,   0,    TST, ET|RIGHT},
+{"_right2",   "R2R2R2R2R2R", pr_t_right2, NULL,   11,  0,    TST, ET|RIGHT},
+{"_unlimited","U",   pr_t_unlimited,  NULL,      16,   0,    TST, ET|UNLIMITED},
+{"_unlimited2","U2", pr_t_unlimited2, NULL,      16,   0,    TST, ET|UNLIMITED},
 {"acflag",    "ACFLG",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT}, /*acflg*/
 {"acflg",     "ACFLG",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*acflag*/
 {"addr",      "ADDR",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
@@ -1514,12 +1514,12 @@ static const format_struct format_array[] = {
 {"argc",      "ARGC",    pr_nop,      sr_nop,     4,   0,    LNX, PO|RIGHT},
 {"args",      "COMMAND", pr_args,     sr_cmd,    27, ARG,    U98, PO|UNLIMITED}, /*command*/
 {"atime",     "TIME",    pr_time,     sr_time,    8,   0,    SOE, ET|RIGHT}, /*cputime*/ /* was 6 wide */
-{"blocked",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigmask*/
+{"blocked",   "BLOCKED", pr_sigmask,  NULL,       9,   0,    BSD, TO|SIGNAL}, /*sigmask*/
 {"bnd",       "BND",     pr_nop,      sr_nop,     1,   0,    AIX, TO|RIGHT},
-{"bsdstart",  "START",   pr_bsdstart, sr_nop,     6,   0,    LNX, ET|RIGHT},
-{"bsdtime",   "TIME",    pr_bsdtime,  sr_nop,     6,   0,    LNX, ET|RIGHT},
+{"bsdstart",  "START",   pr_bsdstart, NULL,       6,   0,    LNX, ET|RIGHT},
+{"bsdtime",   "TIME",    pr_bsdtime,  NULL,       6,   0,    LNX, ET|RIGHT},
 {"c",         "C",       pr_c,        sr_pcpu,    2,   0,    SUN, ET|RIGHT},
-{"caught",    "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigcatch*/
+{"caught",    "CAUGHT",  pr_sigcatch, NULL,       9,   0,    BSD, TO|SIGNAL}, /*sigcatch*/
 {"cgname",    "CGNAME",  pr_cgname,   sr_cgname, 27,CGRP,    LNX, PO|UNLIMITED},
 {"cgroup",    "CGROUP",  pr_cgroup,   sr_cgroup, 27,CGRP,    LNX, PO|UNLIMITED},
 {"class",     "CLS",     pr_class,    sr_sched,   3,   0,    XXX, TO|LEFT},
@@ -1530,10 +1530,10 @@ static const format_struct format_array[] = {
 {"cnswap",    "-",       pr_nop,      sr_nop,     1,   0,    LNX, AN|RIGHT},
 {"comm",      "COMMAND", pr_comm,     sr_cmd,    15, COM,    U98, PO|UNLIMITED}, /*ucomm*/
 {"command",   "COMMAND", pr_args,     sr_cmd,    27, ARG,    XXX, PO|UNLIMITED}, /*args*/
-{"context",   "CONTEXT", pr_context,  sr_nop,    31,   0,    LNX, ET|LEFT},
+{"context",   "CONTEXT", pr_context,  NULL,      31,   0,    LNX, ET|LEFT},
 {"cp",        "CP",      pr_cp,       sr_pcpu,    3,   0,    DEC, ET|RIGHT}, /*cpu*/
 {"cpu",       "CPU",     pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
-{"cpuid",     "CPUID",   pr_psr,      sr_nop,     5,   0,    BSD, TO|RIGHT}, // OpenBSD: 8 wide!
+{"cpuid",     "CPUID",   pr_psr,      NULL,       5,   0,    BSD, TO|RIGHT}, // OpenBSD: 8 wide!
 {"cputime",   "TIME",    pr_time,     sr_time,    8,   0,    DEC, ET|RIGHT}, /*time*/
 {"cputimes",  "TIME",    pr_times,    sr_time,    8,   0,    LNX, ET|RIGHT}, /*time*/
 {"ctid",      "CTID",    pr_nop,      sr_nop,     5,   0,    SUN, ET|RIGHT}, // resource contracts?
@@ -1541,7 +1541,7 @@ static const format_struct format_array[] = {
 {"cutime",    "-",       pr_nop,      sr_cutime,  1,   0,    LNX, AN|RIGHT},
 {"cwd",       "CWD",     pr_nop,      sr_nop,     3,   0,    LNX, AN|LEFT},
 {"drs",       "DRS",     pr_drs,      sr_drs,     5, MEM,    LNX, PO|RIGHT},
-{"dsiz",      "DSIZ",    pr_dsiz,     sr_nop,     4,   0,    LNX, PO|RIGHT},
+{"dsiz",      "DSIZ",    pr_dsiz,     NULL,       4,   0,    LNX, PO|RIGHT},
 {"egid",      "EGID",    pr_egid,     sr_egid,    5,   0,    LNX, ET|RIGHT},
 {"egroup",    "EGROUP",  pr_egroup,   sr_egroup,  8, GRP,    LNX, ET|USER},
 {"eip",       "EIP",     pr_eip,      sr_kstk_eip, (int)(2*sizeof(long)), 0, LNX, TO|RIGHT},
@@ -1559,7 +1559,7 @@ static const format_struct format_array[] = {
 {"fgroup",    "FGROUP",  pr_fgroup,   sr_fgroup,  8, GRP,    LNX, ET|USER},
 {"flag",      "F",       pr_flag,     sr_flags,   1,   0,    DEC, ET|RIGHT},
 {"flags",     "F",       pr_flag,     sr_flags,   1,   0,    BSD, ET|RIGHT}, /*f*/ /* was FLAGS, 8 wide */
-{"fname",     "COMMAND", pr_fname,    sr_nop,     8,   0,    SUN, PO|LEFT},
+{"fname",     "COMMAND", pr_fname,    NULL,       8,   0,    SUN, PO|LEFT},
 {"fsgid",     "FSGID",   pr_fgid,     sr_fgid,    5,   0,    LNX, ET|RIGHT},
 {"fsgroup",   "FSGROUP", pr_fgroup,   sr_fgroup,  8, GRP,    LNX, ET|USER},
 {"fsuid",     "FSUID",   pr_fuid,     sr_fuid,    5,   0,    LNX, ET|RIGHT},
@@ -1568,7 +1568,7 @@ static const format_struct format_array[] = {
 {"fuser",     "FUSER",   pr_fuser,    sr_fuser,   8, USR,    LNX, ET|USER},
 {"gid",       "GID",     pr_egid,     sr_egid,    5,   0,    SUN, ET|RIGHT},
 {"group",     "GROUP",   pr_egroup,   sr_egroup,  8, GRP,    U98, ET|USER},
-{"ignored",   "IGNORED", pr_sigignore,sr_nop,     9,   0,    BSD, TO|SIGNAL}, /*sigignore*/
+{"ignored",   "IGNORED", pr_sigignore,NULL,       9,   0,    BSD, TO|SIGNAL}, /*sigignore*/
 {"inblk",     "INBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*inblock*/
 {"inblock",   "INBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*inblk*/
 {"intpri",    "PRI",     pr_opri,     sr_priority, 3,  0,    HPU, TO|RIGHT},
@@ -1577,15 +1577,15 @@ static const format_struct format_array[] = {
 {"jobc",      "JOBC",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
 {"ktrace",    "KTRACE",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
 {"ktracep",   "KTRACEP", pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
-{"label",     "LABEL",   pr_context,  sr_nop,    31,  0,     SGI, ET|LEFT},
-{"lastcpu",   "C",       pr_psr,      sr_nop,     3,   0,    BSD, TO|RIGHT}, // DragonFly
+{"label",     "LABEL",   pr_context,  NULL,      31,   0,    SGI, ET|LEFT},
+{"lastcpu",   "C",       pr_psr,      NULL,       3,   0,    BSD, TO|RIGHT}, // DragonFly
 {"lim",       "LIM",     pr_lim,      sr_rss_rlim, 5,  0,    BSD, AN|RIGHT},
 {"login",     "LOGNAME", pr_nop,      sr_nop,     8,   0,    BSD, AN|LEFT}, /*logname*/   /* double check */
 {"logname",   "LOGNAME", pr_nop,      sr_nop,     8,   0,    XXX, AN|LEFT}, /*login*/
 {"longtname", "TTY",     pr_tty8,     sr_tty,     8,   0,    DEC, PO|LEFT},
-{"lsession",  "SESSION", pr_sd_session, sr_nop,  11,  SD,    LNX, ET|LEFT},
-{"lstart",    "STARTED", pr_lstart,   sr_nop,    24,   0,    XXX, ET|RIGHT},
-{"luid",      "LUID",    pr_luid,     sr_nop,     5,   0,    LNX, ET|RIGHT}, /* login ID */
+{"lsession",  "SESSION", pr_sd_session, NULL,    11,  SD,    LNX, ET|LEFT},
+{"lstart",    "STARTED", pr_lstart,   NULL,      24,   0,    XXX, ET|RIGHT},
+{"luid",      "LUID",    pr_luid,     NULL,       5,   0,    LNX, ET|RIGHT}, /* login ID */
 {"luser",     "LUSER",   pr_nop,      sr_nop,     8, USR,    LNX, ET|USER}, /* login USER */
 {"lwp",       "LWP",     pr_tasks,    sr_tasks,   5,   0,    SUN, TO|PIDMAX|RIGHT},
 {"lxc",       "LXC",     pr_lxcname,  sr_lxcname, 8, LXC,    LNX, ET|LEFT},
@@ -1597,7 +1597,7 @@ static const format_struct format_array[] = {
 {"m_size",    "SIZE",    pr_size,     sr_size,    5, MEM,    LNX, PO|RIGHT},
 {"m_swap",    "SWAP",    pr_nop,      sr_nop,     5,   0,    LNx, PO|RIGHT},
 {"m_trs",     "TRS",     pr_trs,      sr_trs,     5, MEM,    LNx, PO|RIGHT},
-{"machine",   "MACHINE", pr_sd_machine, sr_nop,  31,  SD,    LNX, ET|LEFT},
+{"machine",   "MACHINE", pr_sd_machine, NULL,    31,  SD,    LNX, ET|LEFT},
 {"maj_flt",   "MAJFL",   pr_majflt,   sr_maj_flt, 6,   0,    LNX, AN|RIGHT},
 {"majflt",    "MAJFLT",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
 {"min_flt",   "MINFL",   pr_minflt,   sr_min_flt, 6,   0,    LNX, AN|RIGHT},
@@ -1614,19 +1614,19 @@ static const format_struct format_array[] = {
 {"nsignals",  "NSIGS",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*nsigs*/
 {"nsigs",     "NSIGS",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*nsignals*/
 {"nswap",     "NSWAP",   pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
-{"numa",      "NUMA",    pr_numa,     sr_nop,     4,   0,    XXX, AN|RIGHT},
+{"numa",      "NUMA",    pr_numa,     NULL,       4,   0,    XXX, AN|RIGHT},
 {"nvcsw",     "VCSW",    pr_nop,      sr_nop,     5,   0,    XXX, AN|RIGHT},
-{"nwchan",    "WCHAN",   pr_nwchan,   sr_nop,     6,   0,    XXX, TO|RIGHT},
+{"nwchan",    "WCHAN",   pr_nwchan,   NULL,       6,   0,    XXX, TO|RIGHT},
 {"opri",      "PRI",     pr_opri,     sr_priority, 3,  0,    SUN, TO|RIGHT},
 {"osz",       "SZ",      pr_nop,      sr_nop,     2,   0,    SUN, PO|RIGHT},
 {"oublk",     "OUBLK",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT}, /*oublock*/
 {"oublock",   "OUBLK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT}, /*oublk*/
-{"ouid",      "OWNER",   pr_sd_ouid,  sr_nop,     5,  SD,    LNX, ET|LEFT},
+{"ouid",      "OWNER",   pr_sd_ouid,  NULL,       5,  SD,    LNX, ET|LEFT},
 {"p_ru",      "P_RU",    pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
 {"paddr",     "PADDR",   pr_nop,      sr_nop,     6,   0,    BSD, AN|RIGHT},
 {"pagein",    "PAGEIN",  pr_majflt,   sr_maj_flt, 6,   0,    XXX, AN|RIGHT},
 {"pcpu",      "%CPU",    pr_pcpu,     sr_pcpu,    4,   0,    U98, ET|RIGHT}, /*%cpu*/
-{"pending",   "PENDING", pr_sig,      sr_nop,     9,   0,    BSD, ET|SIGNAL}, /*sig*/
+{"pending",   "PENDING", pr_sig,      NULL,       9,   0,    BSD, ET|SIGNAL}, /*sig*/
 {"pgid",      "PGID",    pr_pgid,     sr_pgrp,    5,   0,    U98, PO|PIDMAX|RIGHT},
 {"pgrp",      "PGRP",    pr_pgid,     sr_pgrp,    5,   0,    LNX, PO|PIDMAX|RIGHT},
 {"pid",       "PID",     pr_procs,    sr_procs,   5,   0,    U98, PO|PIDMAX|RIGHT},
@@ -1635,18 +1635,18 @@ static const format_struct format_array[] = {
 {"poip",      "-",       pr_nop,      sr_nop,     1,   0,    BSD, AN|RIGHT},
 {"policy",    "POL",     pr_class,    sr_sched,   3,   0,    DEC, TO|LEFT},
 {"ppid",      "PPID",    pr_ppid,     sr_ppid,    5,   0,    U98, PO|PIDMAX|RIGHT},
-{"pri",       "PRI",     pr_pri,      sr_nop,     3,   0,    XXX, TO|RIGHT},
-{"pri_api",   "API",     pr_pri_api,  sr_nop,     3,   0,    LNX, TO|RIGHT},
-{"pri_bar",   "BAR",     pr_pri_bar,  sr_nop,     3,   0,    LNX, TO|RIGHT},
-{"pri_baz",   "BAZ",     pr_pri_baz,  sr_nop,     3,   0,    LNX, TO|RIGHT},
-{"pri_foo",   "FOO",     pr_pri_foo,  sr_nop,     3,   0,    LNX, TO|RIGHT},
+{"pri",       "PRI",     pr_pri,      NULL,       3,   0,    XXX, TO|RIGHT},
+{"pri_api",   "API",     pr_pri_api,  NULL,       3,   0,    LNX, TO|RIGHT},
+{"pri_bar",   "BAR",     pr_pri_bar,  NULL,       3,   0,    LNX, TO|RIGHT},
+{"pri_baz",   "BAZ",     pr_pri_baz,  NULL,       3,   0,    LNX, TO|RIGHT},
+{"pri_foo",   "FOO",     pr_pri_foo,  NULL,       3,   0,    LNX, TO|RIGHT},
 {"priority",  "PRI",     pr_priority, sr_priority, 3,  0,    LNX, TO|RIGHT},
 {"prmgrp",    "PRMGRP",  pr_nop,      sr_nop,    12,   0,    HPU, PO|RIGHT},
 {"prmid",     "PRMID",   pr_nop,      sr_nop,    12,   0,    HPU, PO|RIGHT},
 {"project",   "PROJECT", pr_nop,      sr_nop,    12,   0,    SUN, PO|LEFT}, // see prm* andctid
 {"projid",    "PROJID",  pr_nop,      sr_nop,     5,   0,    SUN, PO|RIGHT},
 {"pset",      "PSET",    pr_nop,      sr_nop,     4,   0,    DEC, TO|RIGHT},
-{"psr",       "PSR",     pr_psr,      sr_nop,     3,   0,    DEC, TO|RIGHT},
+{"psr",       "PSR",     pr_psr,      NULL,       3,   0,    DEC, TO|RIGHT},
 {"psxpri",    "PPR",     pr_nop,      sr_nop,     3,   0,    DEC, TO|RIGHT},
 {"re",        "RE",      pr_nop,      sr_nop,     3,   0,    BSD, AN|RIGHT},
 {"resident",  "RES",     pr_nop,      sr_resident, 5,MEM,    LNX, PO|RIGHT},
@@ -1663,29 +1663,29 @@ static const format_struct format_array[] = {
 {"sched",     "SCH",     pr_sched,    sr_sched,   3,   0,    AIX, TO|RIGHT},
 {"scnt",      "SCNT",    pr_nop,      sr_nop,     4,   0,    DEC, AN|RIGHT},  /* man page misspelling of scount? */
 {"scount",    "SC",      pr_nop,      sr_nop,     4,   0,    AIX, AN|RIGHT},  /* scnt==scount, DEC claims both */
-{"seat",      "SEAT",    pr_sd_seat,  sr_nop,    11,  SD,    LNX, ET|LEFT},
+{"seat",      "SEAT",    pr_sd_seat,  NULL,      11,  SD,    LNX, ET|LEFT},
 {"sess",      "SESS",    pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT},
 {"session",   "SESS",    pr_sess,     sr_session, 5,   0,    LNX, PO|PIDMAX|RIGHT},
-{"sgi_p",     "P",       pr_sgi_p,    sr_nop,     1,   0,    LNX, TO|RIGHT}, /* "cpu" number */
-{"sgi_rss",   "RSS",     pr_rss,      sr_nop,     4,   0,    LNX, PO|LEFT}, /* SZ:RSS */
+{"sgi_p",     "P",       pr_sgi_p,    NULL,       1,   0,    LNX, TO|RIGHT}, /* "cpu" number */
+{"sgi_rss",   "RSS",     pr_rss,      NULL,       4,   0,    LNX, PO|LEFT}, /* SZ:RSS */
 {"sgid",      "SGID",    pr_sgid,     sr_sgid,    5,   0,    LNX, ET|RIGHT},
 {"sgroup",    "SGROUP",  pr_sgroup,   sr_sgroup,  8, GRP,    LNX, ET|USER},
 {"share",     "-",       pr_nop,      sr_share,   1, MEM,    LNX, PO|RIGHT},
 {"sid",       "SID",     pr_sess,     sr_session, 5,   0,    XXX, PO|PIDMAX|RIGHT}, /* Sun & HP */
-{"sig",       "PENDING", pr_sig,      sr_nop,     9,   0,    XXX, ET|SIGNAL}, /*pending -- Dragonfly uses this for whole-proc and "tsig" for thread */
-{"sig_block", "BLOCKED",  pr_sigmask, sr_nop,     9,   0,    LNX, TO|SIGNAL},
-{"sig_catch", "CATCHED", pr_sigcatch, sr_nop,     9,   0,    LNX, TO|SIGNAL},
-{"sig_ignore", "IGNORED",pr_sigignore, sr_nop,    9,   0,    LNX, TO|SIGNAL},
-{"sig_pend",  "SIGNAL",   pr_sig,     sr_nop,     9,   0,    LNX, ET|SIGNAL},
-{"sigcatch",  "CAUGHT",  pr_sigcatch, sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*caught*/
-{"sigignore", "IGNORED", pr_sigignore,sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*ignored*/
-{"sigmask",   "BLOCKED", pr_sigmask,  sr_nop,     9,   0,    XXX, TO|SIGNAL}, /*blocked*/
+{"sig",       "PENDING", pr_sig,      NULL,       9,   0,    XXX, ET|SIGNAL}, /*pending -- Dragonfly uses this for whole-proc and "tsig" for thread */
+{"sig_block", "BLOCKED",  pr_sigmask, NULL,       9,   0,    LNX, TO|SIGNAL},
+{"sig_catch", "CATCHED", pr_sigcatch, NULL,       9,   0,    LNX, TO|SIGNAL},
+{"sig_ignore", "IGNORED",pr_sigignore,NULL,       9,   0,    LNX, TO|SIGNAL},
+{"sig_pend",  "SIGNAL",   pr_sig,     NULL,       9,   0,    LNX, ET|SIGNAL},
+{"sigcatch",  "CAUGHT",  pr_sigcatch, NULL,       9,   0,    XXX, TO|SIGNAL}, /*caught*/
+{"sigignore", "IGNORED", pr_sigignore,NULL,       9,   0,    XXX, TO|SIGNAL}, /*ignored*/
+{"sigmask",   "BLOCKED", pr_sigmask,  NULL,       9,   0,    XXX, TO|SIGNAL}, /*blocked*/
 {"size",      "SIZE",    pr_swapable, sr_swapable, 5,  0,    SCO, PO|RIGHT},
 {"sl",        "SL",      pr_nop,      sr_nop,     3,   0,    XXX, AN|RIGHT},
-{"slice",      "SLICE",  pr_sd_slice, sr_nop,    31,  SD,    LNX, ET|LEFT},
+{"slice",      "SLICE",  pr_sd_slice, NULL,      31,  SD,    LNX, ET|LEFT},
 {"spid",      "SPID",    pr_tasks,    sr_tasks,   5,   0,    SGI, TO|PIDMAX|RIGHT},
 {"stackp",    "STACKP",  pr_stackp,   sr_start_stack, (int)(2*sizeof(long)), 0, LNX, PO|RIGHT}, /*start_stack*/
-{"start",     "STARTED", pr_start,    sr_nop,     8,   0,    XXX, ET|RIGHT},
+{"start",     "STARTED", pr_start,    NULL,       8,   0,    XXX, ET|RIGHT},
 {"start_code", "S_CODE",  pr_nop,     sr_start_code,  (int)(2*sizeof(long)), 0, LNx, PO|RIGHT},
 {"start_stack", "STACKP", pr_stackp,  sr_start_stack, (int)(2*sizeof(long)), 0, LNX, PO|RIGHT}, /*stackp*/
 {"start_time", "START",  pr_stime,    sr_start_time, 5, 0,   LNx, ET|RIGHT},
@@ -1694,15 +1694,15 @@ static const format_struct format_array[] = {
 {"status",    "STATUS",  pr_nop,      sr_nop,     6,   0,    DEC, AN|RIGHT},
 {"stime",     "STIME",   pr_stime,    sr_stime,   5,   0,    XXX, ET|RIGHT}, /* was 6 wide */
 {"suid",      "SUID",    pr_suid,     sr_suid,    5,   0,    LNx, ET|RIGHT},
-{"supgid",    "SUPGID",  pr_supgid,   sr_nop,    20,   0,    LNX, PO|UNLIMITED},
-{"supgrp",    "SUPGRP",  pr_supgrp,   sr_nop,    40,SGRP,    LNX, PO|UNLIMITED},
+{"supgid",    "SUPGID",  pr_supgid,   NULL,      20,   0,    LNX, PO|UNLIMITED},
+{"supgrp",    "SUPGRP",  pr_supgrp,   NULL,      40,SGRP,    LNX, PO|UNLIMITED},
 {"suser",     "SUSER",   pr_suser,    sr_suser,   8, USR,    LNx, ET|USER},
 {"svgid",     "SVGID",   pr_sgid,     sr_sgid,    5,   0,    XXX, ET|RIGHT},
 {"svgroup",   "SVGROUP", pr_sgroup,   sr_sgroup,  8, GRP,    LNX, ET|USER},
 {"svuid",     "SVUID",   pr_suid,     sr_suid,    5,   0,    XXX, ET|RIGHT},
 {"svuser",    "SVUSER",  pr_suser,    sr_suser,   8, USR,    LNX, ET|USER},
 {"systime",   "SYSTEM",  pr_nop,      sr_nop,     6,   0,    DEC, ET|RIGHT},
-{"sz",        "SZ",      pr_sz,       sr_nop,     5,   0,    HPU, PO|RIGHT},
+{"sz",        "SZ",      pr_sz,       NULL,       5,   0,    HPU, PO|RIGHT},
 {"taskid",    "TASKID",  pr_nop,      sr_nop,     5,   0,    SUN, TO|PIDMAX|RIGHT}, // is this a thread ID?
 {"tdev",      "TDEV",    pr_nop,      sr_nop,     4,   0,    XXX, AN|RIGHT},
 {"tgid",      "TGID",    pr_procs,    sr_procs,   5,   0,    LNX, PO|PIDMAX|RIGHT},
@@ -1719,8 +1719,8 @@ static const format_struct format_array[] = {
 {"tsess",     "TSESS",   pr_nop,      sr_nop,     5,   0,    BSD, PO|PIDMAX|RIGHT},
 {"tsession",  "TSESS",   pr_nop,      sr_nop,     5,   0,    DEC, PO|PIDMAX|RIGHT},
 {"tsid",      "TSID",    pr_nop,      sr_nop,     5,   0,    BSD, PO|PIDMAX|RIGHT},
-{"tsig",      "PENDING", pr_tsig,     sr_nop,     9,   0,    BSD, ET|SIGNAL}, /* Dragonfly used this for thread-specific, and "sig" for whole-proc */
-{"tsiz",      "TSIZ",    pr_tsiz,     sr_nop,     4,   0,    BSD, PO|RIGHT},
+{"tsig",      "PENDING", pr_tsig,     NULL,       9,   0,    BSD, ET|SIGNAL}, /* Dragonfly used this for thread-specific, and "sig" for whole-proc */
+{"tsiz",      "TSIZ",    pr_tsiz,     NULL,       4,   0,    BSD, PO|RIGHT},
 {"tt",        "TT",      pr_tty8,     sr_tty,     8,   0,    BSD, PO|LEFT},
 {"tty",       "TT",      pr_tty8,     sr_tty,     8,   0,    U98, PO|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */
 {"tty4",      "TTY",     pr_tty4,     sr_tty,     4,   0,    LNX, PO|LEFT},
@@ -1732,7 +1732,7 @@ static const format_struct format_array[] = {
 {"uid_hack",  "UID",     pr_euser,    sr_euser,   8, USR,    XXX, ET|USER},
 {"umask",     "UMASK",   pr_nop,      sr_nop,     5,   0,    DEC, AN|RIGHT},
 {"uname",     "USER",    pr_euser,    sr_euser,   8, USR,    DEC, ET|USER}, /* man page misspelling of user? */
-{"unit",      "UNIT",    pr_sd_unit,  sr_nop,    31,  SD,    LNX, ET|LEFT},
+{"unit",      "UNIT",    pr_sd_unit,  NULL,      31,  SD,    LNX, ET|LEFT},
 {"upr",       "UPR",     pr_nop,      sr_nop,     3,   0,    BSD, TO|RIGHT}, /*usrpri*/
 {"uprocp",    "UPROCP",  pr_nop,      sr_nop,     8,   0,    BSD, AN|RIGHT},
 {"user",      "USER",    pr_euser,    sr_euser,   8, USR,    U98, ET|USER}, /* BSD n forces this to UID */
@@ -1742,7 +1742,7 @@ static const format_struct format_array[] = {
 {"util",      "C",       pr_c,        sr_pcpu,    2,   0,    SGI, ET|RIGHT}, // not sure about "C"
 {"utime",     "UTIME",   pr_nop,      sr_utime,   6,   0,    LNx, ET|RIGHT},
 {"utsns",     "UTSNS",   pr_utsns,    sr_utsns,  10,  NS,    LNX, ET|RIGHT},
-{"uunit",     "UUNIT",   pr_sd_uunit, sr_nop,    31,  SD,    LNX, ET|LEFT},
+{"uunit",     "UUNIT",   pr_sd_uunit, NULL,      31,  SD,    LNX, ET|LEFT},
 {"vm_data",   "DATA",    pr_nop,      sr_vm_data, 5,   0,    LNx, PO|RIGHT},
 {"vm_exe",    "EXE",     pr_nop,      sr_vm_exe,  5,   0,    LNx, PO|RIGHT},
 {"vm_lib",    "LIB",     pr_nop,      sr_vm_lib,  5,   0,    LNx, PO|RIGHT},
@@ -1751,9 +1751,9 @@ static const format_struct format_array[] = {
 {"vsize",     "VSZ",     pr_vsz,      sr_vsize,   6,   0,    DEC, PO|RIGHT}, /*vsz*/
 {"vsz",       "VSZ",     pr_vsz,      sr_vm_size, 6,   0,    U98, PO|RIGHT}, /*vsize*/
 {"wchan",     "WCHAN",   pr_wchan,    sr_wchan,   6,   0,    XXX, TO|WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
-{"wname",     "WCHAN",   pr_wname,    sr_nop,     6,   0,    SGI, TO|WCHAN}, /* opposite of nwchan */
+{"wname",     "WCHAN",   pr_wname,    NULL,       6,   0,    SGI, TO|WCHAN}, /* opposite of nwchan */
 {"xstat",     "XSTAT",   pr_nop,      sr_nop,     5,   0,    BSD, AN|RIGHT},
-{"zone",      "ZONE",    pr_context,  sr_nop,    31,   0,    SUN, ET|LEFT}, // Solaris zone == Linux context?
+{"zone",      "ZONE",    pr_context,  NULL,      31,   0,    SUN, ET|LEFT}, // Solaris zone == Linux context?
 {"zoneid",    "ZONEID",  pr_nop,      sr_nop,    31,   0,    SUN, ET|RIGHT},// Linux only offers context names
 {"~",         "-",       pr_nop,      sr_nop,     1,   0,    LNX, AN|RIGHT}  /* NULL would ruin alphabetical order */
 };
