@@ -570,7 +570,8 @@ static struct el * select_procs (int *num)
         xerrx(EXIT_FATAL,
               _("Unable to create pid info structure"));
     which = PIDS_FETCH_TASKS_ONLY;
-    if (opt_threads && !i_am_pkill)
+    // pkill and pwait don't support -w, but this is checked in getopt
+    if (opt_threads)
         which = PIDS_FETCH_THREADS_TOO;
 
     while ((stack = procps_pids_get(info, which))) {
