@@ -1415,12 +1415,14 @@ setREL1(ID_TGID)
 // like "args"
 static int pr_t_unlimited(char *restrict const outbuf, const proc_t *restrict const pp){
   static const char *const vals[] = {"[123456789-12345] <defunct>","ps","123456789-123456"};
+  if (!outbuf) return 0;
   (void)pp;
   snprintf(outbuf, max_rightward+1, "%s", vals[lines_to_next_header%3u]);
   return strlen(outbuf);
 }
 static int pr_t_unlimited2(char *restrict const outbuf, const proc_t *restrict const pp){
   static const char *const vals[] = {"unlimited", "[123456789-12345] <defunct>","ps","123456789-123456"};
+  if (!outbuf) return 0;
   (void)pp;
   snprintf(outbuf, max_rightward+1, "%s", vals[lines_to_next_header%4u]);
   return strlen(outbuf);
@@ -1429,11 +1431,13 @@ static int pr_t_unlimited2(char *restrict const outbuf, const proc_t *restrict c
 // like "etime"
 static int pr_t_right(char *restrict const outbuf, const proc_t *restrict const pp){
   static const char *const vals[] = {"999-23:59:59","99-23:59:59","9-23:59:59","59:59"};
+  if (!outbuf) return 0;
   (void)pp;
   return snprintf(outbuf, COLWID, "%s", vals[lines_to_next_header%4u]);
 }
 static int pr_t_right2(char *restrict const outbuf, const proc_t *restrict const pp){
   static const char *const vals[] = {"999-23:59:59","99-23:59:59","9-23:59:59"};
+  if (!outbuf) return 0;
   (void)pp;
   return snprintf(outbuf, COLWID, "%s", vals[lines_to_next_header%3u]);
 }
@@ -1441,11 +1445,13 @@ static int pr_t_right2(char *restrict const outbuf, const proc_t *restrict const
 // like "tty"
 static int pr_t_left(char *restrict const outbuf, const proc_t *restrict const pp){
   static const char *const vals[] = {"tty7","pts/9999","iseries/vtty42","ttySMX0","3270/tty4"};
+  if (!outbuf) return 0;
   (void)pp;
   return snprintf(outbuf, COLWID, "%s", vals[lines_to_next_header%5u]);
 }
 static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const pp){
   static const char *const vals[] = {"tty7","pts/9999","ttySMX0","3270/tty4"};
+  if (!outbuf) return 0;
   (void)pp;
   return snprintf(outbuf, COLWID, "%s", vals[lines_to_next_header%4u]);
 }
