@@ -112,6 +112,7 @@ static int nr_of_colors;
 static int attributes;
 static int fg_col;
 static int bg_col;
+static int more_colors;
 
 
 static void reset_ansi(void)
@@ -123,16 +124,39 @@ static void reset_ansi(void)
 
 static void init_ansi_colors(void)
 {
+	int color;
+
 	short ncurses_colors[] = {
 		-1, COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW,
 		COLOR_BLUE, COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE
 	};
-
 	nr_of_colors = sizeof(ncurses_colors) / sizeof(short);
 
+	more_colors = (COLORS >= 16) && (COLOR_PAIRS >= 16 * 16);
+
+	// Initialize ncurses colors. -1 is terminal default
+	// 0-7 are auto created standard colors initialized by ncurses
+	if (more_colors) {
+		// Initialize using ANSI SGR 8-bit specified colors
+		// 8-15 are bright colors
+		init_color(8, 333, 333, 333);  // Bright black
+		init_color(9, 1000, 333, 333);  // Bright red
+		init_color(10, 333, 1000, 333);  // Bright green
+		init_color(11, 1000, 1000, 333);  // Bright yellow
+		init_color(12, 333, 333, 1000);  // Bright blue
+		init_color(13, 1000, 333, 1000);  // Bright magenta
+		init_color(14, 333, 1000, 1000);  // Bright cyan
+		// Often ncurses is built with only 256 colors, so lets
+		// stop here - so we can support the -1 terminal default
+		//init_color(15, 1000, 1000, 1000);  // Bright white
+		nr_of_colors += 7;
+	}
+
+	// Initialize all color pairs with ncurses
 	for (bg_col = 0; bg_col < nr_of_colors; bg_col++)
 		for (fg_col = 0; fg_col < nr_of_colors; fg_col++)
-			init_pair(bg_col * nr_of_colors + fg_col + 1, ncurses_colors[fg_col], ncurses_colors[bg_col]);
+			init_pair(bg_col * nr_of_colors + fg_col + 1, fg_col - 1, bg_col - 1);
+
 	reset_ansi();
 }
 
@@ -160,9 +184,12 @@ static int process_ansi_color_escape_sequence(char** escape_sequence) {
 			// 0-7 are standard colors  same as SGR 30-37
 			return num + 1;
 		}
+		if (num >= 8 && num <= 15) {
+			// 8-15 are standard colors  same as SGR 90-97
+			 return more_colors ? num + 1 : num - 8 + 1;
+		}
 
 		// Remainder aren't yet implemented
-		// 8- 15:  high intensity colors (as in ESC [ 90–97 m)
 		// 16-231:  6 × 6 × 6 cube (216 colors): 16 + 36 × r + 6 × g + b (0 ≤ r, g, b ≤ 5)
 		// 232-255:  grayscale from black to white in 24 steps
 	}
@@ -242,11 +269,15 @@ static int set_ansi_attribute(const int attrib, char** escape_sequence)
 			fg_col = attrib - 30 + 1;
 		} else if (attrib >= 40 && attrib <= 47) { /* set background color */
 			bg_col = attrib - 40 + 1;
+		} else if (attrib >= 90 && attrib <= 97) { /* set bright fg color */
+			fg_col = more_colors ? attrib - 90 + 9 : attrib - 90 + 1;
+		} else if (attrib >= 100 && attrib <= 107) { /* set bright bg color */
+			bg_col = more_colors ? attrib - 100 + 9 : attrib - 100 + 1;
 		} else {
 			return 0; /* Not understood */
 		}
 	}
-	attrset(attributes | COLOR_PAIR(bg_col * nr_of_colors + fg_col + 1));
+	attr_set(attributes, bg_col * nr_of_colors + fg_col + 1, NULL);
 	return 1;
 }
 
