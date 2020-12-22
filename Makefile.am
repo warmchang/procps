@@ -209,7 +209,7 @@ pgrep_SOURCES = pgrep.c lib/fileutils.c lib/signals.c
 pkill_SOURCES = pgrep.c lib/fileutils.c lib/signals.c
 pmap_SOURCES = pmap.c lib/fileutils.c
 if BUILD_PWAIT
-pwait_SOURCES = pgrep.c lib/fileutils.c lib/nsutils.c
+pwait_SOURCES = pgrep.c lib/fileutils.c lib/signals.c
 endif
 if !CYGWIN
 pwdx_SOURCES = pwdx.c lib/fileutils.c
