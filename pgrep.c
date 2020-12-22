@@ -716,6 +716,11 @@ static struct el * select_procs (int *num)
         free(cmdsearch);
         free(cmdoutput);
 
+	if (preg) {
+		regfree(preg);
+		free(preg);
+	}
+
 	return list;
 }
 
