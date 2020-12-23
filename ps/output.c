@@ -119,7 +119,7 @@ static void get_memory_total()
   if ((cells) <= 0) return 0; \
 } while (0)
 
-// copy an already 'escaped' string,
+// copy a string that doesn't need to be 'escaped'
 static int escaped_copy(char *restrict dst, const char *restrict src, int bufsize, int *maxroom){
     int n;
 
@@ -402,13 +402,13 @@ setREL2(CMDLINE,ENVIRON)
   fh = forest_helper(outbuf);
   endp += fh;
   rightward -= fh;
-  endp += escaped_copy(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
+  endp += escape_str(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
   if(bsd_e_option && rightward>1) {
     char *e = rSv(ENVIRON, str, pp);
     if(*e != '-' || *(e+1) != '\0') {
       *endp++ = ' ';
       rightward--;
-      escaped_copy(endp, e, OUTBUF_SIZE_AT(endp), &rightward);
+      escape_str(endp, e, OUTBUF_SIZE_AT(endp), &rightward);
     }
   }
   return max_rightward-rightward;
@@ -428,15 +428,15 @@ setREL3(CMD,CMDLINE,ENVIRON)
   endp += fh;
   rightward -= fh;
   if(unix_f_option)
-    endp += escaped_copy(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
+    endp += escape_str(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
   else
-    endp += escaped_copy(endp, rSv(CMD, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
+    endp += escape_str(endp, rSv(CMD, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
   if(bsd_e_option && rightward>1) {
     char *e = rSv(ENVIRON, str, pp);
     if(*e != '-' || *(e+1) != '\0') {
       *endp++ = ' ';
       rightward--;
-      escaped_copy(endp, e, OUTBUF_SIZE_AT(endp), &rightward);
+      escape_str(endp, e, OUTBUF_SIZE_AT(endp), &rightward);
     }
   }
   return max_rightward-rightward;
@@ -446,7 +446,7 @@ static int pr_cgname(char *restrict const outbuf,const proc_t *restrict const pp
   int rightward;
 setREL1(CGNAME)
   rightward = max_rightward;
-  escaped_copy(outbuf, rSv(CGNAME, str, pp), OUTBUF_SIZE, &rightward);
+  escape_str(outbuf, rSv(CGNAME, str, pp), OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
@@ -454,7 +454,7 @@ static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp
   int rightward;
 setREL1(CGROUP)
   rightward = max_rightward;
-  escaped_copy(outbuf, rSv(CGROUP, str, pp), OUTBUF_SIZE, &rightward);
+  escape_str(outbuf, rSv(CGROUP, str, pp), OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
@@ -1256,7 +1256,7 @@ static int pr_supgrp(char *restrict const outbuf, const proc_t *restrict const p
   int rightward;
 setREL1(SUPGROUPS)
   rightward = max_rightward;
-  escaped_copy(outbuf, rSv(SUPGROUPS, str, pp), OUTBUF_SIZE, &rightward);
+  escape_str(outbuf, rSv(SUPGROUPS, str, pp), OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
@@ -1274,8 +1274,11 @@ setREL2(STATE,PROCESSOR)
 
 /* full path to executable */
 static int pr_exe(char *restrict const outbuf, const proc_t *restrict const pp){
+  int rightward;
 setREL1(EXE)
-    return snprintf(outbuf, COLWID, "%s", rSv(EXE, str, pp));
+  rightward = max_rightward;
+  escape_str(outbuf, rSv(EXE, str, pp), OUTBUF_SIZE, &rightward);
+  return max_rightward-rightward;
 }
 
 /************************* Systemd stuff ********************************/
