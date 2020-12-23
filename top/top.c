@@ -5919,21 +5919,21 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          case EU_USN:        // PIDS_ID_SUSER
             cp = make_str_utf8(rSv(i, str), W, Js, i);
             break;
-   /* str, make_str with varialbe width */
+   /* str, make_str_utf8 with varialbe width */
          case EU_CGN:        // PIDS_CGNAME
          case EU_CGR:        // PIDS_CGROUP
          case EU_ENV:        // PIDS_ENVIRON
          case EU_EXE:        // PIDS_EXE
-         case EU_SGD:        // PIDS_SUPGIDS
-            makeVAR(rSv(i, str));
-            break;
-   /* str, make_str_utf8 with varialbe width */
          case EU_SGN:        // PIDS_SUPGROUPS
-            varUTF8(rSv(EU_SGN, str));
+            varUTF8(rSv(i, str));
+            break;
+   /* str, make_str with varialbe width */
+         case EU_SGD:        // PIDS_SUPGIDS
+            makeVAR(rSv(EU_SGD, str));
             break;
    /* str, make_str with varialbe width + additional decoration */
          case EU_CMD:        // PIDS_CMD or PIDS_CMDLINE
-            makeVAR(forest_colour(q, p));
+            varUTF8(forest_colour(q, p));
             break;
          default:            // keep gcc happy
             continue;
