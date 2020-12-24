@@ -404,7 +404,7 @@ static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp)
   rightward -= fh;
 
   if(pp->cmdline && !bsd_c_option)
-    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE_AT(endp), &rightward);
+    endp += escape_str(endp, *pp->cmdline, OUTBUF_SIZE_AT(endp), &rightward);
   else
     endp += escape_command(endp, pp, OUTBUF_SIZE_AT(endp), &rightward, ESC_DEFUNCT);
 
@@ -431,7 +431,7 @@ static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp)
   rightward -= fh;
 
   if(pp->cmdline && unix_f_option)
-    endp += escaped_copy(endp, *pp->cmdline, OUTBUF_SIZE_AT(endp), &rightward);
+    endp += escape_str(endp, *pp->cmdline, OUTBUF_SIZE_AT(endp), &rightward);
   else
     endp += escape_command(endp, pp, OUTBUF_SIZE_AT(endp), &rightward, ESC_DEFUNCT);
 
@@ -448,14 +448,14 @@ static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp)
 static int pr_cgname(char *restrict const outbuf, const proc_t *restrict const pp){
   int rightward = max_rightward;
 
-  escaped_copy(outbuf, pp->cgname, OUTBUF_SIZE, &rightward);
+  escape_str(outbuf, pp->cgname, OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
 static int pr_cgroup(char *restrict const outbuf,const proc_t *restrict const pp) {
   int rightward = max_rightward;
 
-  escaped_copy(outbuf, *pp->cgroup, OUTBUF_SIZE, &rightward);
+  escape_str(outbuf, *pp->cgroup, OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
@@ -1208,7 +1208,7 @@ static int pr_supgid(char *restrict const outbuf, const proc_t *restrict const p
 
 static int pr_supgrp(char *restrict const outbuf, const proc_t *restrict const pp){
   int rightward = max_rightward;
-  escaped_copy(outbuf, pp->supgrp, OUTBUF_SIZE, &rightward);
+  escape_str(outbuf, pp->supgrp, OUTBUF_SIZE, &rightward);
   return max_rightward-rightward;
 }
 
