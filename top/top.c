@@ -6185,13 +6185,13 @@ static const char *task_show (const WIN_t *q, const int idx) {
             break;
 #endif
          case EU_CGN:
-            makeVAR(p->cgname);
+            varUTF8(p->cgname);
             break;
          case EU_CGR:
-            makeVAR(p->cgroup[0]);
+            varUTF8(p->cgroup[0]);
             break;
          case EU_CMD:
-            makeVAR(forest_display(q, p));
+            varUTF8(forest_display(q, p));
             break;
          case EU_COD:
             cp = scale_mem(S, pages2K(p->trs), W, Jn);
@@ -6225,7 +6225,7 @@ static const char *task_show (const WIN_t *q, const int idx) {
             cp = scale_num(p->dt, W, Jn);
             break;
          case EU_ENV:
-            makeVAR(p->environ[0]);
+            varUTF8(p->environ[0]);
             break;
          case EU_FL1:
             cp = scale_num(p->maj_flt, W, Jn);
