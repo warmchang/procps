@@ -825,7 +825,7 @@ static int vectorize_dash_rc (char*** vec) {
 static int fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
  #define vMAX ( MAX_BUFSZ - (int)(dst - dst_buffer) )
     char *src, *dst, *grp, *eob, *name;
-    int tot, x, whackable_int = MAX_BUFSZ, len;
+    int tot, x, len;
 
     *(dst = dst_buffer) = '\0';                  // empty destination
     tot = read_unvectored(src_buffer, MAX_BUFSZ, directory, "cgroup", '\0');
@@ -841,7 +841,7 @@ static int fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
         len = snprintf(dst, vMAX, "%s", (dst > dst_buffer) ? "," : "");
         if (len < 0 || len >= vMAX) break;
         dst += len;
-        dst += escape_str(dst, grp, vMAX, &whackable_int);
+        dst += escape_str(dst, grp, vMAX);
     }
     if (!(p->cgroup = strdup(dst_buffer[0] ? dst_buffer : "-")))
         return 1;
@@ -859,12 +859,10 @@ static int fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
     // valid proc_t.cmdline pointer.
 static int fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
  #define uFLG ( ESC_BRACKETS | ESC_DEFUNCT )
-    int whackable_int = MAX_BUFSZ;
-
     if (read_unvectored(src_buffer, MAX_BUFSZ, directory, "cmdline", ' '))
-        escape_str(dst_buffer, src_buffer, MAX_BUFSZ, &whackable_int);
+        escape_str(dst_buffer, src_buffer, MAX_BUFSZ);
     else
-        escape_command(dst_buffer, p, MAX_BUFSZ, &whackable_int, uFLG);
+        escape_command(dst_buffer, p, MAX_BUFSZ, uFLG);
     p->cmdline = strdup(dst_buffer[0] ? dst_buffer : "?");
     if (!p->cmdline)
         return 1;
@@ -876,11 +874,9 @@ static int fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
     // This routine reads an 'environ' for the designated proc_t and
     // guarantees the caller a valid proc_t.environ pointer.
 static int fill_environ_cvt (const char* directory, proc_t *restrict p) {
-    int whackable_int = MAX_BUFSZ;
-
     dst_buffer[0] = '\0';
     if (read_unvectored(src_buffer, MAX_BUFSZ, directory, "environ", ' '))
-        escape_str(dst_buffer, src_buffer, MAX_BUFSZ, &whackable_int);
+        escape_str(dst_buffer, src_buffer, MAX_BUFSZ);
     p->environ = strdup(dst_buffer[0] ? dst_buffer : "-");
     if (!p->environ)
         return 1;

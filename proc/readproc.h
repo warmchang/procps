@@ -215,8 +215,6 @@ typedef struct PROCTAB {
 #define PROC_FILL_LUID     0x400000 // fill in proc_t luid (login user id)
 #define PROC_FILL_EXE      0x200000 // fill in proc_t exe path + pgm name
 
-#define PROC_LOOSE_TASKS     0x2000 // treat threads as if they were processes
-
 // consider only processes with one of the passed:
 #define PROC_PID             0x1000  // process id numbers ( 0   terminated)
 #define PROC_UID             0x4000  // user id numbers    ( length needed )
