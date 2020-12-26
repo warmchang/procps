@@ -844,7 +844,7 @@ static void fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
         len = snprintf(dst, vMAX, "%s", (dst > dst_buffer) ? "," : "");
         if (len < 0 || len >= vMAX) break;
         dst += len;
-        dst += escape_str(dst, grp, vMAX, &whackable_int);
+        dst += escaped_copy(dst, grp, vMAX, &whackable_int);
     }
     p->cgroup = vectorize_this_str(dst_buffer[0] ? dst_buffer : "-");
 
@@ -862,7 +862,7 @@ static void fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
     int whackable_int = MAX_BUFSZ;
 
     if (read_unvectored(src_buffer, MAX_BUFSZ, directory, "cmdline", ' '))
-        escape_str(dst_buffer, src_buffer, MAX_BUFSZ, &whackable_int);
+        escaped_copy(dst_buffer, src_buffer, MAX_BUFSZ, &whackable_int);
     else
         escape_command(dst_buffer, p, MAX_BUFSZ, &whackable_int, uFLG);
     p->cmdline = vectorize_this_str(dst_buffer);
@@ -876,7 +876,7 @@ static void fill_environ_cvt (const char* directory, proc_t *restrict p) {
 
     dst_buffer[0] = '\0';
     if (read_unvectored(src_buffer, MAX_BUFSZ, directory, "environ", ' '))
-        escape_str(dst_buffer, src_buffer, MAX_BUFSZ, &whackable_int);
+        escaped_copy(dst_buffer, src_buffer, MAX_BUFSZ, &whackable_int);
     p->environ = vectorize_this_str(dst_buffer[0] ? dst_buffer : "-");
 }
 

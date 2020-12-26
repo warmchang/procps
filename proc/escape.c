@@ -222,10 +222,10 @@ int escape_command(char *restrict const outbuf, const proc_t *restrict const pp,
 
 /////////////////////////////////////////////////
 
-// copy an already 'escaped' string,
+// copy a string, but 'escape' any control characters
 // using the traditional escape.h calling conventions
 int escaped_copy(char *restrict dst, const char *restrict src, int bufsize, int *maxroom){
-  int n;
+  int i, n;
 
   SECURE_ESCAPE_ARGS(dst, bufsize, *maxroom);
   if (bufsize > *maxroom+1) bufsize = *maxroom+1;
@@ -236,6 +236,12 @@ int escaped_copy(char *restrict dst, const char *restrict src, int bufsize, int 
     return 0;
   }
   if (n >= bufsize) n = bufsize-1;
+
+  // control chars, especially tabs, create alignment problems for ps & top ...
+  for (i = 0; i < n; i++)
+    if ((unsigned char)dst[i] < 0x20 || dst[i] == 0x7f)
+      dst[i] = '?';
+
   *maxroom -= n;
   return n;
 }
