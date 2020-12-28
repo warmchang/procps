@@ -250,9 +250,9 @@ ENTER(0x220);
 #endif
 
     case_Name:
-    {   char buf[64];
+    {   char buf[64], raw[64];
         unsigned u = 0;
-        while(u < sizeof(buf) - 1u){
+        while(u < sizeof(raw) - 1u){
             int c = *S++;
             if(c=='\n') break;
             if(c=='\0') break;     // should never happen
@@ -262,14 +262,16 @@ ENTER(0x220);
                 if(!c)      break; // should never happen
                 if(c=='n') c='\n'; // else we assume it is '\\'
             }
-            buf[u++] = c;
+            raw[u++] = c;
         }
-        buf[u] = '\0';
+        raw[u] = '\0';
 #ifdef FALSE_THREADS
         if (!IS_THREAD(P)) {
 #endif
-        if (!P->cmd && !(P->cmd = strdup(buf)))
-            return 1;
+        if (!P->cmd) {
+            escape_str(buf, raw, sizeof(buf));
+            if (!(P->cmd = strdup(buf))) return 1;
+        }
 #ifdef FALSE_THREADS
         }
 #endif
@@ -554,6 +556,7 @@ static int sd2proc (proc_t *restrict p) {
 // Reads /proc/*/stat files, being careful not to trip over processes with
 // names like ":-) 1 2 3 4 5 6".
 static int stat2proc (const char* S, proc_t *restrict P) {
+    char buf[64], raw[64];
     size_t num;
     char* tmp;
 
@@ -570,12 +573,16 @@ ENTER(0x160);
     S++;
     tmp = strrchr(S, ')');
     if (!tmp || !tmp[1]) return 0;
-    num = tmp - S;
 #ifdef FALSE_THREADS
     if (!IS_THREAD(P)) {
 #endif
-    if (!P->cmd && !(P->cmd = strndup(S, num)))
-       return 1;
+    if (!P->cmd) {
+       num = tmp - S;
+       memcpy(raw, S, num);
+       raw[num] = '\0';
+       escape_str(buf, raw, sizeof(buf));
+       if (!(P->cmd = strdup(buf))) return 1;
+    }
 #ifdef FALSE_THREADS
      }
 #endif
@@ -978,9 +985,10 @@ static char *readlink_exe (const char *path){
     int in;
 
     snprintf(buf, sizeof(buf), "%s/exe", path);
-    in = (int)readlink(buf, dst_buffer, MAX_BUFSZ-1);
+    in = (int)readlink(buf, src_buffer, MAX_BUFSZ-1);
     if (in > 0) {
-        dst_buffer[in] = '\0';
+        src_buffer[in] = '\0';
+        escape_str(dst_buffer, src_buffer, MAX_BUFSZ);
         return strdup(dst_buffer);
     }
     return strdup("-");

@@ -1,6 +1,7 @@
 /*
  * escape.c - printing handling
  * Copyright 1998-2002 by Albert Cahalan
+ * Copyright 2020 Jim Warner <james.warner@comcast.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <langinfo.h>
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
@@ -31,56 +33,112 @@
   if ((bytes) >= INT_MAX) return 0; \
 } while (0)
 
+static char UTF_tab[] = {
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x00 - 0x0F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x10 - 0x1F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x20 - 0x2F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x30 - 0x3F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x40 - 0x4F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x50 - 0x5F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x60 - 0x6F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x70 - 0x7F
+   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0x80 - 0x8F
+   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0x90 - 0x9F
+   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xA0 - 0xAF
+   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xB0 - 0xBF
+   -1,-1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 0xC0 - 0xCF, 0xC2 = begins 2
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 0xD0 - 0xDF
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 0xE0 - 0xEF, 0xE0 = begins 3
+    4, 4, 4, 4, 4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xF0 - 0xFF, 0xF0 = begins 4
+};                                                  //            ( 0xF5 & beyond invalid )
+
+static const unsigned char ESC_tab[] = {
+   "@..............................."   // 0x00 - 0x1F
+   "||||||||||||||||||||||||||||||||"   // 0x20 - 0x3F
+   "||||||||||||||||||||||||||||||||"   // 0x40 - 0x5f
+   "|||||||||||||||||||||||||||||||."   // 0x60 - 0x7F
+   "????????????????????????????????"   // 0x80 - 0x9F
+   "????????????????????????????????"   // 0xA0 - 0xBF
+   "????????????????????????????????"   // 0xC0 - 0xDF
+   "????????????????????????????????"   // 0xE0 - 0xFF
+};
+
+static inline void esc_all (unsigned char *str) {
+   unsigned char c;
+   int i;
+
+   // if bad locale/corrupt str, replace non-printing stuff
+   for (i = 0; str[i] != '\0'; i++)
+      if ((c = ESC_tab[str[i]]) != '|')
+         str[i] = c;
+}
+
+
+static inline void esc_ctl (unsigned char *str, int len) {
+   int i, n;
+
+   for (i = 0; i < len; ) {
+      // even with a proper locale, strings might be corrupt
+      if ((n = UTF_tab[str[i]]) < 0 || i + n > len) {
+         esc_all(&str[i]);
+         return;
+      }
+      // and eliminate those non-printing control characters
+      if (str[i] < 0x20 || str[i] == 0x7f)
+         str[i] = '?';
+      i += n;
+   }
+}
+
 
 int escape_str (unsigned char *dst, const unsigned char *src, int bufsize) {
-  int i, n;
+   static int utf_sw = 0;
+   int n;
 
-  SECURE_ESCAPE_ARGS(dst, bufsize);
-
-  n = snprintf(dst, bufsize, "%s", src);
-  if (n < 0) {
-    *dst = '\0';
-    return 0;
-  }
-  if (n >= bufsize) n = bufsize-1;
-
-  // control chars, especially tabs, create alignment problems for ps & top ...
-  for (i = 0; i < n; i++)
-    if (dst[i] < 0x20 || dst[i] == 0x7f)
-      dst[i] = '?';
-
-  return n;
+   if (utf_sw == 0) {
+      char *enc = nl_langinfo(CODESET);
+      utf_sw = enc && strcasecmp(enc, "UTF-8") == 0 ? 1 : -1;
+   }
+   SECURE_ESCAPE_ARGS(dst, bufsize);
+   n = snprintf(dst, bufsize, "%s", src);
+   if (n < 0) {
+      *dst = '\0';
+      return 0;
+   }
+   if (n >= bufsize) n = bufsize-1;
+   if (utf_sw < 0)
+      esc_all(dst);
+   else
+      esc_ctl(dst, n);
+   return n;
 }
 
 
 int escape_command (unsigned char *outbuf, const proc_t *pp, int bytes, unsigned flags) {
-  int overhead = 0;
-  int end = 0;
+   int overhead = 0;
+   int end = 0;
 
-  if(flags & ESC_BRACKETS){
-    overhead += 2;
-  }
-  if(flags & ESC_DEFUNCT){
-    if(pp->state=='Z') overhead += 10;    // chars in " <defunct>"
-    else flags &= ~ESC_DEFUNCT;
-  }
-  if(overhead + 1 >= bytes){   // if no room for even one byte of the command name
-    outbuf[0] = '\0';
-    return 0;
-  }
-  if(flags & ESC_BRACKETS){
-    outbuf[end++] = '[';
-  }
-  end += escape_str(outbuf+end, pp->cmd, bytes-overhead);
-
-  // Hmmm, do we want "[foo] <defunct>" or "[foo <defunct>]"?
-  if(flags & ESC_BRACKETS){
-    outbuf[end++] = ']';
-  }
-  if(flags & ESC_DEFUNCT){
-    memcpy(outbuf+end, " <defunct>", 10);
-    end += 10;
-  }
-  outbuf[end] = '\0';
-  return end;  // bytes, not including the NUL
+   if (flags & ESC_BRACKETS)
+      overhead += 2;
+   if (flags & ESC_DEFUNCT) {
+      if (pp->state == 'Z') overhead += 10;    // chars in " <defunct>"
+      else flags &= ~ESC_DEFUNCT;
+   }
+   if (overhead + 1 >= bytes) {
+      // if no room for even one byte of the command name
+      outbuf[0] = '\0';
+      return 0;
+   }
+   if (flags & ESC_BRACKETS)
+      outbuf[end++] = '[';
+   end += escape_str(outbuf+end, pp->cmd, bytes-overhead);
+   // we want "[foo] <defunct>", not "[foo <defunct>]"
+   if (flags & ESC_BRACKETS)
+      outbuf[end++] = ']';
+   if (flags & ESC_DEFUNCT) {
+      memcpy(outbuf+end, " <defunct>", 10);
+      end += 10;
+   }
+   outbuf[end] = '\0';
+   return end;  // bytes, not including the NUL
 }
