@@ -3209,15 +3209,16 @@ static void before (char *me) {
 
    atexit(close_stdout);
 
-   // is /proc mounted?
-   fatal_proc_unmounted(NULL, 0);
-
    // setup our program name
    Myname = strrchr(me, '/');
    if (Myname) ++Myname; else Myname = me;
 
    // accommodate nls/gettext potential translations
+   // ( must 'setlocale' before our libproc called )
    initialize_nls();
+
+   // is /proc mounted?
+   fatal_proc_unmounted(NULL, 0);
 
 #ifndef OFF_STDERROR
    /* there's a chance that damn libnuma may spew to stderr so we gotta
