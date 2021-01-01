@@ -6191,7 +6191,10 @@ static const char *task_show (const WIN_t *q, const int idx) {
             varUTF8(p->cgroup[0]);
             break;
          case EU_CMD:
-            varUTF8(forest_display(q, p));
+            if (CHKw(q, Show_CMDLIN))
+               varUTF8(forest_display(q, p))
+            else
+               makeVAR(forest_display(q, p));
             break;
          case EU_COD:
             cp = scale_mem(S, pages2K(p->trs), W, Jn);
