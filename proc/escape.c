@@ -26,14 +26,13 @@
 #include "escape.h"
 #include "readproc.h"
 
-
 #define SECURE_ESCAPE_ARGS(dst, bytes) do { \
   if ((bytes) <= 0) return 0; \
   *(dst) = '\0'; \
   if ((bytes) >= INT_MAX) return 0; \
 } while (0)
 
-static char UTF_tab[] = {
+static const char UTF_tab[] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x00 - 0x0F
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x10 - 0x1F
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x20 - 0x2F
@@ -46,33 +45,33 @@ static char UTF_tab[] = {
    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0x90 - 0x9F
    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xA0 - 0xAF
    -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xB0 - 0xBF
-   -1,-1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 0xC0 - 0xCF, 0xC2 = begins 2
+   -1,-1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 0xC0 - 0xCF
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 0xD0 - 0xDF
-    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 0xE0 - 0xEF, 0xE0 = begins 3
-    4, 4, 4, 4, 4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xF0 - 0xFF, 0xF0 = begins 4
-};                                                  //            ( 0xF5 & beyond invalid )
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 0xE0 - 0xEF
+    4, 4, 4, 4, 4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xF0 - 0xFF
+};
 
 static const unsigned char ESC_tab[] = {
-   "@..............................."   // 0x00 - 0x1F
-   "||||||||||||||||||||||||||||||||"   // 0x20 - 0x3F
-   "||||||||||||||||||||||||||||||||"   // 0x40 - 0x5f
-   "|||||||||||||||||||||||||||||||."   // 0x60 - 0x7F
-   "????????????????????????????????"   // 0x80 - 0x9F
-   "????????????????????????????????"   // 0xA0 - 0xBF
-   "????????????????????????????????"   // 0xC0 - 0xDF
-   "????????????????????????????????"   // 0xE0 - 0xFF
+   "@..............................." // 0x00 - 0x1F
+   "||||||||||||||||||||||||||||||||" // 0x20 - 0x3F
+   "||||||||||||||||||||||||||||||||" // 0x40 - 0x5f
+   "|||||||||||||||||||||||||||||||." // 0x60 - 0x7F
+   "????????????????????????????????" // 0x80 - 0x9F
+   "????????????????????????????????" // 0xA0 - 0xBF
+   "????????????????????????????????" // 0xC0 - 0xDF
+   "????????????????????????????????" // 0xE0 - 0xFF
 };
 
 static inline void esc_all (unsigned char *str) {
    unsigned char c;
-   int i;
 
    // if bad locale/corrupt str, replace non-printing stuff
-   for (i = 0; str[i] != '\0'; i++)
-      if ((c = ESC_tab[str[i]]) != '|')
-         str[i] = c;
+   while (*str) {
+      if ((c = ESC_tab[*str]) != '|')
+         *str = c;
+      ++str;
+   }
 }
-
 
 static inline void esc_ctl (unsigned char *str, int len) {
    int i, n;
@@ -89,7 +88,6 @@ static inline void esc_ctl (unsigned char *str, int len) {
       i += n;
    }
 }
-
 
 int escape_str (unsigned char *dst, const unsigned char *src, int bufsize) {
    static int utf_sw = 0;
@@ -112,7 +110,6 @@ int escape_str (unsigned char *dst, const unsigned char *src, int bufsize) {
       esc_ctl(dst, n);
    return n;
 }
-
 
 int escape_command (unsigned char *outbuf, const proc_t *pp, int bytes, unsigned flags) {
    int overhead = 0;
