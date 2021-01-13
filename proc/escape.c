@@ -78,13 +78,14 @@ static inline void esc_ctl (unsigned char *str, int len) {
 
    for (i = 0; i < len; ) {
       // even with a proper locale, strings might be corrupt
-      if ((n = UTF_tab[str[i]]) < 0 || i + n > len) {
-         esc_all(&str[i]);
+      if ((n = UTF_tab[*str]) < 0 || i + n > len) {
+         esc_all(str);
          return;
       }
       // and eliminate those non-printing control characters
-      if (str[i] < 0x20 || str[i] == 0x7f)
-         str[i] = '?';
+      if (*str < 0x20 || *str == 0x7f)
+         *str = '?';
+      str += n;
       i += n;
    }
 }
