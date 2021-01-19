@@ -42,7 +42,7 @@
 #include "xalloc.h"
 #include "rpmatch.h"
 
-#include <proc/namespace.h>
+#include <proc/misc.h>
 #include <proc/pids.h>
 
 #define DEFAULT_NICE 4
@@ -62,7 +62,7 @@ static const char **cmds;
 static int *pids;
 static char **namespaces;
 static int ns_pid;
-static struct procps_namespaces match_namespaces;
+static struct procps_ns match_namespaces;
 static int ns_flags = 0x3f;
 
 #define ENLIST(thing,addme) do{ \
@@ -149,7 +149,7 @@ static int match_strlist(const char *value, const int len, const char **list)
 
 static int match_ns(const int pid)
 {
-    struct procps_namespaces proc_ns;
+    struct procps_ns proc_ns;
     int found = 1;
     int i;
 

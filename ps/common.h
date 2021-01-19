@@ -14,9 +14,9 @@
 
 #include "../include/nls.h"
 #include <proc/meminfo.h>
+#include <proc/misc.h>
 #include <proc/pids.h>
 #include <proc/stat.h>
-#include <proc/sysinfo.h>
 
 // --- <pids> interface begin ||||||||||||||||||||||||||||||||||||||||||||
 // -----------------------------------------------------------------------

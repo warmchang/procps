@@ -13,7 +13,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <unistd.h>
-#include <proc/namespace.h>
+#include <proc/misc.h>
 
 // the following is development only, forcing display of "[ duplicate ENUM ]" strings
 // #define FALSE_THREADS        /* set most child string fields to NULL */
@@ -141,7 +141,7 @@ typedef struct proc_t {
     int
         oom_score,      // oom_score       (badness for OOM killer)
         oom_adj;        // oom_adj         (adjustment to OOM score)
-    struct procps_namespaces ns; // (ns subdir)     inode number of namespaces
+    struct procps_ns ns; // (ns subdir)     inode number of namespaces
     char
         *sd_mach,       // n/a             systemd vm/container name
         *sd_ouid,       // n/a             systemd session owner uid

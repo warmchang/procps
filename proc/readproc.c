@@ -38,10 +38,9 @@
 
 #include "devname.h"
 #include "escape.h"
-#include "namespace.h"
+#include "misc.h"
 #include "pwcache.h"
 #include "readproc.h"
-#include "version.h"
 
 // sometimes it's easier to do this manually, w/o gcc helping
 #ifdef PROF

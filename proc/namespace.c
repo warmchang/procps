@@ -21,7 +21,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include <proc/namespace.h>
+#include <proc/misc.h>
 #include "proc/procps-private.h"
 
 #define NSPATHLEN 64
@@ -81,7 +81,7 @@ PROCPS_EXPORT int procps_ns_get_id(const char *name)
  *
  * Find all namespaces for the given process.
  * @pid: Process ID for required process
- * @nsp: Pointer to the struct procps_namespaces
+ * @nsp: Pointer to the struct procps_ns
  *
  * Returns:
  *   0 on success
@@ -89,7 +89,7 @@ PROCPS_EXPORT int procps_ns_get_id(const char *name)
  */
 PROCPS_EXPORT int procps_ns_read_pid(
         const int pid,
-        struct procps_namespaces *nsp)
+        struct procps_ns *nsp)
 {
     char path[NSPATHLEN+1];
     struct stat st;

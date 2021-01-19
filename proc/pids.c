@@ -36,10 +36,9 @@
 #include <sys/types.h>
 
 #include <proc/devname.h>
+#include <proc/misc.h>
 #include <proc/numa.h>
 #include <proc/readproc.h>
-#include <proc/sysinfo.h>
-#include <proc/uptime.h>
 #include <proc/wchan.h>
 
 #include <proc/procps-private.h>

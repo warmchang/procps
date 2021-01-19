@@ -49,11 +49,9 @@
 #include "../include/nls.h"
 
 #include <proc/meminfo.h>
+#include <proc/misc.h>
 #include <proc/pids.h>
 #include <proc/stat.h>
-#include <proc/sysinfo.h>
-#include <proc/uptime.h>
-#include <proc/version.h>
 
 #include "top.h"
 #include "top_nls.h"

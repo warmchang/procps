@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <proc/sysinfo.h>
+#include <proc/misc.h>
 #include "tests.h"
 
 int check_hertz(void *data)

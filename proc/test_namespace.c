@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <proc/namespace.h>
+#include <proc/misc.h>
 #include "tests.h"
 
 int check_name_minus(void *data)

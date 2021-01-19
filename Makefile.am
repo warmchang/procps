@@ -253,8 +253,8 @@ proc_libprocps_la_SOURCES = \
 	proc/procps-private.h \
 	proc/meminfo.c \
 	proc/meminfo.h \
+	proc/misc.h \
 	proc/namespace.c \
-	proc/namespace.h \
 	proc/numa.c \
 	proc/numa.h \
 	proc/pids.c \
@@ -268,28 +268,22 @@ proc_libprocps_la_SOURCES = \
 	proc/stat.c \
 	proc/stat.h \
 	proc/sysinfo.c \
-	proc/sysinfo.h \
 	proc/version.c \
-	proc/version.h \
 	proc/vmstat.c \
 	proc/vmstat.h \
 	proc/wchan.c \
 	proc/wchan.h \
 	proc/uptime.c \
-	proc/uptime.h \
 	proc/xtra-procps-debug.h
 
 proc_libprocps_la_includedir = $(includedir)/procps/
 proc_libprocps_la_include_HEADERS = \
 	proc/diskstats.h \
 	proc/meminfo.h \
-	proc/namespace.h \
+	proc/misc.h \
 	proc/pids.h \
 	proc/slabinfo.h \
 	proc/stat.h \
-	proc/sysinfo.h \
-	proc/uptime.h \
-	proc/version.h \
 	proc/vmstat.h \
 	proc/xtra-procps-debug.h
 

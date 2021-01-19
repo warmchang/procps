@@ -32,8 +32,7 @@
 #ifdef __CYGWIN__
 #include <sys/param.h>
 #endif
-#include "version.h"
-#include "sysinfo.h" /* include self to verify prototypes */
+#include "misc.h"
 #include "procps-private.h"
 
 

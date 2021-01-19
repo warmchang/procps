@@ -24,7 +24,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "version.h"
+#include "misc.h"
 #include "devname.h"
 
 // This is the buffer size for a tty name. Any path is legal,

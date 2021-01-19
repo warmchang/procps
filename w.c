@@ -54,9 +54,8 @@
 #include "fileutils.h"
 #include "nls.h"
 
+#include <proc/misc.h>
 #include <proc/pids.h>
-#include <proc/sysinfo.h>
-#include <proc/uptime.h>
 
 static int ignoreuser = 0;	/* for '-u' */
 static int oldstyle = 0;	/* for '-o' */

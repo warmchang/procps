@@ -22,8 +22,8 @@
  */
 #include <errno.h>
 #include <stdio.h>
+#include "misc.h"
 #include "procps-private.h"
-#include "version.h"
 
 #define PROCFS_OSRELEASE "/proc/sys/kernel/osrelease"
 

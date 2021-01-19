@@ -31,8 +31,7 @@
 #include <unistd.h>
 #include <utmp.h>
 
-#include <proc/uptime.h>
-#include <proc/sysinfo.h>
+#include <proc/misc.h>
 #include "procps-private.h"
 
 #define UPTIME_FILE "/proc/uptime"

@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <proc/version.h>
+#include <proc/misc.h>
 #include "tests.h"
 
 int check_linux_version(void *data)

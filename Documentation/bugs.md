@@ -67,7 +67,7 @@ variable `linux_version_code` from libproc/version.c.  It is the same
 number as the macro `LINUX_VERSION_CODE` for which the kernel /proc fs
 code was compiled.
 
-A macro is provide in libproc/version.h to construct the code from its
+A macro is provide in libproc/misc.h to construct the code from its
 components, e.g.
 >  if (linux_version_code < LINUX_VERSION(2,5,41))
 >     /* blah blah blah */

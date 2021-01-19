@@ -55,9 +55,8 @@
 #include "signals.h"
 #include "xalloc.h"
 
-#include <proc/namespace.h>
+#include <proc/misc.h>
 #include <proc/pids.h>
-#include <proc/uptime.h>
 
 enum pids_item Items[] = {
     PIDS_ID_PID,
@@ -432,9 +431,9 @@ static int match_strlist (const char *restrict value, const struct el *restrict 
 }
 
 static int match_ns (const int pid,
-                     const struct procps_namespaces *match_ns)
+                     const struct procps_ns *match_ns)
 {
-    struct procps_namespaces proc_ns;
+    struct procps_ns proc_ns;
     int found = 1;
     int i;
 
@@ -534,7 +533,7 @@ static struct el * select_procs (int *num)
 #define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack, info)
 #define PIDS_GETSCH(e) PIDS_VAL(EU_ ## e, s_ch, stack, info)
     struct pids_info *info=NULL;
-    struct procps_namespaces nsp;
+    struct procps_ns nsp;
     struct pids_stack *stack;
     unsigned long long saved_start_time;      /* for new/old support */
     int saved_pid = 0;                        /* for new/old support */
