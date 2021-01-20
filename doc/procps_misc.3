@@ -1,4 +1,5 @@
 .\" (C) Copyright 2020 Craig Small <csmall@dropbear.xyz>
+.\" (C) Copyright 2021 Jim Warner <warnerjc@comcast.net>
 .\"
 .\" %%%LICENSE_START(LGPL_2.1+)
 .\" This manual is free software; you can redistribute it and/or
@@ -16,169 +17,128 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS_MISC 3 2020-12-21 "libproc-2"
+.TH PROCPS_MISC 3 "January 2021" "libproc-2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
+.nh
 .SH NAME
-procps_misc \- API to system information in the /proc filesystem
+procps_misc \- API for miscellaneous information in the /proc filesystem
 .SH SYNOPSIS
 .nf
-.B #include <proc/namespace.h>
+.B #include <procps/misc.h>
 .PP
-.BI "int procps_ns_get_id(const char * " name ");"
-.BI "const char *procps_ns_get_name(const int " id ");"
-.BI "int procps_ns_read_pid(const int " pid ", struct procps_namespaces * " nsp ");"
-.PP
-.B #include <proc/sysinfo.h>
-.PP
-.B long procps_cpu_count(void);
-.B long procps_hertz_get(void);
-.BI "int procps_loadavg(double * " av1 ", double * " av5 ", double * " av15 ");"
-.B unsigned int procps_pid_length(void);
-.PP
-.B #include <proc/uptime.h>
-.PP
-.BI "int procps_uptime(double * " uptime_secs ", double * " idle_secs ");"
-.B char *procps_uptime_sprint(void);
-.B char *procps_uptime_sprint_short(void);
-.PP
-.B #include <proc/version.h>
-.PP
-.B int procps_linux_version(void);
-.sp
-Link with \fI\-lprocps\fP.
-.SH DESCRIPTION
-This manual page describes the miscellaneous API functions of the
-.B procps
-library.
-
-.BR procps_cpu_count ()
-returns the number of CPUs that are currently online. On most systems returns
-the value of
-.BI sysconf( _SC_NPROCESSORS_ONLY )
-or assumed to be \fI1\fR.
-
-.BR procps_hertz_get ()
-returns the number of clock ticks per second. On most systems returns the
-value of
-.BI sysconf( _SC_CLK_TCK )
-or assumed to be \fI100\fR. Divide certain values returned in the
-in the \fI/proc\fR filesystem by this value to convert from ticks to seconds.
-
-.BR procps_loadavg ()
-Fetches the system load average and puts the 1, 5 and 15 minute averages into
-the locations in the given pointers. If the relevant pointer is \fINULL\fR then
-.BR procps_loadavg ()
-will not set that value.
-
-.BR procps_pid_length ()
-Returns the maximum string length for a PID on the system. For example, if the largest
-possible PID value on was 123, then the length would be 3. If the file
-\fI/proc/sys/kernel/pid_max\fR is unreadable, the value is assumed to be  \fI5\fR.
-
-.BR procps_linux_version ()
-returns the current Linux version as an integer. On non-Linux systems that
-have an emulated proc filesystem this function returns the version of the
-Linux emulation instead.
-The Linux version consists of a triple of positive integers representing
-the major, minor and patch versions of the kernel.
-.PP
-The library provides 3 macros for separating out the components.
+Platform Particulars
 .RS 4
-.TP 1.2i
-.BR LINUX_VERSION_MAJOR (ver)
-Extract the major component from the given version integer.
-.TP
-.BR LINUX_VERSION_MINOR (ver)
-Extract the minor component from the given version integer.
-.TP
-.BR LINUX_VERSION_PATCH (ver)
-Extract the patch component from the given version integer.
+.PP
+.B "long         procps_cpu_count (void);"
+.B "long         procps_hertz_get (void);"
+.B "unsigned int procps_pid_length (void);"
+.B "int          procps_linux_version (void);"
 .RE
 .PP
-To encode a given Linux version, such as using it to compare against the current
-version, use the following macro:
-.TP
-.BI LINUX_VERSION( major , minor , patch )
+Runtime Particulars
 .PP
-.BR procps_uptime ()
-returns the uptime and idle time of the system. Either the
-\fIuptime_secs\fR or \fIidle_secs\fR can be \fBNULL\fR in which case that
-variable will not be returned.
+.RS 4
+.BI "int    procps_loadavg (double * " av1 ", double * " av5 ", double * " av15 ");"
+.BI "int    procps_uptime (double * " uptime_secs ", double * " idle_secs ");"
+.B  "char * procps_uptime_sprint (void);"
+.B  "char * procps_uptime_sprint_short (void);"
+.RE
+.PP
+Namespace Particulars
+.PP
+.RS 4
+.BI "int          procps_ns_get_id (const char * " name ");"
+.BI "const char * procps_ns_get_name (int " id ");"
+.BI "int          procps_ns_read_pid (int " pid ", struct procps_ns * " nsp ");"
+.RE
+.sp
+Link with \fI\-lprocps\fP.
 
-The \fBsprint\fR variety of the functions return a human-readable
-string of the uptime and other statistics.
+.SH DESCRIPTION
+.BR procps_cpu_count ()
+returns the number of CPUs that are currently online as
+.BI sysconf( _SC_NPROCESSORS_ONLY )
+or an assumed \fI1\fR.
 
-.BR procps_ns_get_id ()
-finds the ID of the namespace for the given namespace name.
+.BR procps_hertz_get ()
+returns the number of clock ticks per second as
+.BI sysconf( _SC_CLK_TCK )
+or an assumed \fI100\fR.
+Dividing tics by this value yields seconds.
 
-.BR procps_ns_get_name ()
-finds the name of the namespace of the given integer ID.
+.BR procps_pid_length ()
+returns the maximum string length for a PID on the system. For example, if the largest
+possible PID value on was 123, then the length would be 3. If the file
+\fI/proc/sys/kernel/pid_max\fR is unreadable, the value is assumed to be \fI5\fR.
 
-.BR procps_ns_read_pid ()
-puts the inodes for the namespaces of the given process into
-the array pointed to \fInsp\fR.
-
-.SH RETURN VALUE
-For
-.BR procps_cpu_count "() , " procps_hertz_get "() and " procps_pid_length ()
-see the \fBDESCRIPTION\fR section for return values.
+.BR procps_linux_version ()
+returns the current Linux version as an encoded integer. On non-Linux systems that
+have an emulated proc filesystem this function returns the version of the
+Linux emulation instead.
+The version consists of three positive integers representing the major,
+minor and patch levels.
+The following macros are provided for encoding a given Linux version or
+separating out the components of the current version.
+.RS 4
+.PP
+LINUX_VERSION(\ major\ ,\ minor\ ,\ patch\ )
+.PP
+LINUX_VERSION_MAJOR(\ ver\ )
+.PP
+LINUX_VERSION_MINOR(\ ver\ )
+.PP
+LINUX_VERSION_PATCH(\ ver\ )
+.RE
 
 .BR procps_loadavg ()
-returns 0 on success. On failure, it
-returns a negative integer to one of the values defined below.
-.TP
-.B -ERANGE
-Unable to parse the loadavg file.
-.PP
+fetches the system load average and puts the 1, 5 and 15 minute averages into
+location(s) specified by any pointer which is not \fINULL\fR.
 
-.BR procps_linux_version ()
-returns a positive integer encoding the Linux version if successful. Otherwise
-returns a negative integer to one of the values defined below.
-.TP
-.B -EIO
-The procps library was unable to read the osrelease file.
-.TP
-.B -ERANGE
-Unable to parse the osrelease file.
+.BR procps_uptime ()
+returns uptime and/or idle seconds into location(s) specified by any pointer
+which is not \fINULL\fR.
+The \fBsprint\fR varieties return a human-readable string in one of two forms.
+.RS 4
 .PP
-.BR procps_linux_version ()
-may also return any (negated) value that \fBfopen\fR() may set errno to.
+HH:MM:SS up HH:MM, # users, load average: 1, 5, 15 MM averages
+.PP
+up HH, MM
+.RE
 
 .BR procps_ns_get_id ()
-returns an integer for the namespace ID for the given name or
-.B \-EINVAL
-for an invalid input or an unknown namespace name.
+returns the integer id (enum namespace_type) of the namespace for the given namespace \fIname\fR.
 
 .BR procps_ns_get_name ()
-returns a statically allocated string containing the name of the
-namespace for the given ID. If the name is not found the function
-returns
-.B NULL
+returns the name of the namespace for the given \fIid\fR (enum namespace_type).
 
 .BR procps_ns_read_pid ()
-Returns 0 on success and \fB\-EINVAL\fR on failure.
-
-.BR procps_uptime ()
-returns 0 on success. On failure, it
-returns a negative integer to one of the values defined below.
-.TP
-.B -ERANGE
-Unable to parse the uptime file.
+returns the inodes for the namespaces of the given process in the
+procps_ns structure pointed to by \fInsp\fR.
+Those inodes will appear in the order proscribed by enum namespace_type.
 .PP
-.BR procps_uptime ()
-may also return any (negated) value that \fBfopen\fR() may set errno to.
+.RS 4
+.nf
+enum namespace_type {
+    PROCPS_NS_IPC,
+    PROCPS_NS_MNT,
+    PROCPS_NS_NET,
+    PROCPS_NS_PID,
+    PROCPS_NS_USER,
+    PROCPS_NS_UTS
+};
+.fi
+.RE
 
-.BR procps_uptime_sprint_short ()
-return a string from a statically allocated buffer which displays uptime.
 
-.BR procps_uptime_sprint ()
-also displays users and load average in the buffer. The formats are the
-same as
-.BR uptime (1)
-with and without the
-.B \-p
-option.
+.SH RETURN VALUE
+.SS Functions Returning an `int' or `long'
+An error will be indicated by a negative number that
+is always the inverse of some well known errno.h value.
+
+.SS Functions Returning an `address'
+An error will be indicated by a NULL return pointer
+with the reason found in the formal errno value.
 
 .SH FILES
 .TP
@@ -194,20 +154,10 @@ Contains the value at which PIDs wrap around, one greater than the maximum PID v
 .I /proc/uptime
 The raw values for uptime and idle time.
 .TP
-.IB /proc/ PID /ns
+.IB /proc/<PID>/ns
 contains the set of namespaces for a particular \fBPID\fR.
 
-.SH BUGS
-Due to the way the three numbers are encoded into a single integer,
-.BR procps_linux_version ()
-and the associated macros assume 255 for the maximum value for the
-minor and patch level and 32767 (hex 0x7fff) for the maximum value
-for the major version. In other words, when Linux v 32768.0.0 comes
-out, this function will break.
-.\" Maj/6yr - In 7452 we'll think of something
-
 .SH SEE ALSO
-.BR uptime (1),
-.BR fopen (3),
-.BR sysconf (3),
+.BR procps (3).
+.BR procps_pids (3).
 .BR proc (5).
