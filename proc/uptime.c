@@ -5,7 +5,7 @@
  * Copyright (C) ???? Larry Greenfield <greenfie@gauss.rutgers.edu>
  * Copyright (C) 1993 J. Cowley
  * Copyright (C) 1998-2003 Albert Cahalan
- * Copyright (C) 2015 Craig Small <csmall@enc.com.au>
+ * Copyright (C) 2015 Craig Small <csmall@dropbear.xyz>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

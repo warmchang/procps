@@ -4,7 +4,7 @@
  * Copyright (C) 1995 Martin Schulze <joey@infodrom.north.de>
  * Copyright (C) 1996 Charles Blake <cblake@bbn.com>
  * Copyright (C) 2003 Albert Cahalan
- * Copyright (C) 2015 Craig Small <csmall@enc.com.au>
+ * Copyright (C) 2015 Craig Small <csmall@dropbear.xyz>
  * Copyright (C) 2016 Jim Warner <james.warner@comcast.net>
  *
  * This library is free software; you can redistribute it and/or

@@ -2,7 +2,7 @@
  * pids.c - task/thread/process related declarations for libproc
  *
  * Copyright (C) 1998-2005 Albert Cahalan
- * Copyright (C) 2015 Craig Small <csmall@enc.com.au>
+ * Copyright (C) 2015 Craig Small <csmall@dropbear.xyz>
  * Copyright (C) 2015 Jim Warner <james.warner@comcast.net>
  *
  * This library is free software; you can redistribute it and/or

@@ -7,7 +7,7 @@
  * Copyright 1995 Martin Schulze <joey@infodrom.north.de>
  * Copyright 1996 Charles Blake <cblake@bbn.com>
  * Copyright 1998-2003 Albert Cahalan
- * Copyright 2015 Craig Small <csmall@enc.com.au>
+ * Copyright 2015 Craig Small <csmall@dropbear.xyz>
  * Copyright 2021 Jim Warner <james.warner@comcast.net>
  *
  * This library is free software; you can redistribute it and/or

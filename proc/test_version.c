@@ -2,7 +2,7 @@
  * libprocps - Library to read proc filesystem
  * Tests for version library calls
  *
- * Copyright 2016 Craig Small <csmall@enc.com.au>
+ * Copyright 2016 Craig Small <csmall@dropbear.xyz>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

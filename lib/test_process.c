@@ -1,7 +1,7 @@
 /*
  * test_procps -- program to create a process to test procps
  *
- * Copyright 2015 Craig Small <csmall@enc.com.au>
+ * Copyright 2015 Craig Small <csmall@dropbear.xyz>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
