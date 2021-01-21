@@ -351,11 +351,13 @@ sysconf_DATA = sysctl.conf
 endif
 endif
 
-BUILT_SOURCES = $(top_srcdir)/.version
+BUILT_SOURCES = .version
 
-$(top_srcdir)/.version:
-	touch $(top_srcdir)/.version
+CLEANFILES = .version
+
+.version:
 	echo $(VERSION) > $@-t && mv $@-t $@
+
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
 
