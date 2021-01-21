@@ -35,7 +35,9 @@ EXTRA_DIST = po4a.cfg \
 	     procps-man.pot \
 	     $(translated_MANS)
 
-LINGUAS_DIST=$(subst .po,,$(wildcard $(srcdir)/*.po))
+# Extract the list of languages from the po4a config file.
+LINGUAS_DIST = $(shell sed -ne 's/^.*\[po4a_langs\] \(.*\)$$/\1/p' $(srcdir)/po4a.cfg)
+
 # If the user has not defined it let's use the default.
 LINGUAS ?= $(LINGUAS_DIST)
 
