@@ -48,34 +48,74 @@ PO4A_OPTS = --srcdir $(srcdir) --destdir $(CURDIR) \
             --package-name $(PACKAGE) --package-version $(VERSION) \
             --msgid-bugs-address "Procps list <procps@freelists.org>"
 
-if USE_PO4A
+all-local: all-local-@USE_PO4A@
 
-update-po:
-	$(PO4A_V) $(PO4A) $(PO4A_OPTS) --force $(srcdir)/po4a.cfg
+all-local-no:
+all-local-yes: man.stamp
 
-#clean-local:
-#	rm -rf translated/$(LINGUAS_DIST)
-#
+# FIXME: Use a stamp file until po4a supports them internally.
+man.stamp:
+	$(PO4A_V) $(PO4A) $(PO4A_OPTS) $(srcdir)/po4a.cfg
+	$(AM_V_at) touch $@
+
+clean-local: clean-local-@USE_PO4A@
+
+clean-local-no:
+clean-local-yes:
+	rm -rf $(LINGUAS_DIST)
+	$(AM_V_at) rm -f man.stamp
+
+.PHONY: update-po
 
 procps-man.pot:
 #	parafiles = $(patsubst %,-m%,$(subst :, ,$(dist_man_MANS)))
 #	parafiles = $(dist_man_MANS:doc=Ente)
 	po4a-gettextize -M utf8 --option groff_code=verbatim --option generated --option untranslated="a.RE,\|" --option unknown_macros=untranslated -f man $(patsubst %,-m%,$(subst :, ,$(dist_man_MANS))) -p $@
 
-endif
 
-install-data-local:
+install-data-local: install-data-local-@USE_PO4A@
+
+install-data-local-no:
+install-data-local-yes:
 	for lang in $(LINGUAS) ; do \
 	    files=""; \
 	    for trans in $(notdir $(dist_man_MANS)); do \
-		if [ -f $(CURDIR)/translated/$$lang/$$trans ]; then \
-		    files="$$files $(CURDIR)/translated/$$lang/$$trans"; \
-		elif [ -f $(srcdir)/translated/$$lang/$$trans ]; then \
-		    files="$$files $(srcdir)/translated/$$lang/$$trans"; \
+		if [ -f $(CURDIR)/$$lang/$$trans ]; then \
+		    files="$$files $(CURDIR)/$$lang/$$trans"; \
+		elif [ -f $(srcdir)/$$lang/$$trans ]; then \
+		    files="$$files $(srcdir)/$$lang/$$trans"; \
 		fi; \
 	    done; \
 	    $(MAKE) install-man \
 	            mandir="$(mandir)/$$lang" \
 		    man_MANS="" \
 		    dist_man_MANS="$$files"; \
+	done
+
+uninstall-local: uninstall-local-@USE_PO4A@
+
+uninstall-local-no:
+uninstall-local-yes:
+	for lang in $(LINGUAS); do \
+		files=""; \
+		for trans in $(notdir $(dist_man_MANS)); do \
+			if [ -f $(CURDIR)/$$lang/$$trans ]; then \
+				files="$$files $(CURDIR)/$$lang/$$trans"; \
+			elif [ -f $(srcdir)/$$lang/$$trans ]; then \
+				files="$$files $(srcdir)/$$lang/$$trans"; \
+			fi; \
+		done; \
+		$(MAKE) uninstall-man \
+			mandir="$(mandir)/$$lang" \
+			man_MANS="" \
+			dist_man_MANS="$$files"; \
+	done
+
+dist-hook: man.stamp
+	cp $(srcdir)/man.stamp $(distdir)/
+	for lang in $(LINGUAS_DIST); do \
+		cp $(srcdir)/$$lang.po $(distdir); \
+		cp $(srcdir)/$$lang.add $(distdir); \
+		$(MKDIR_P) $(distdir)/$$lang; \
+		cp -r $(srcdir)/$$lang $(distdir)/; \
 	done
