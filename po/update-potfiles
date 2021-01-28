@@ -8,6 +8,7 @@ fi
 find . -name '*.c' |
 	sort |
 	sed 's|^./||
-/^contrib/d' > po/POTFILES.in
+/^contrib/d
+/^procps-ng/d' > po/POTFILES.in
 
 echo include/c.h >> po/POTFILES.in
