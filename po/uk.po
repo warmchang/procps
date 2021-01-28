@@ -2,13 +2,13 @@
 # Copyright (C) 2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
 #
-# Yuri Chornoivan <yurchor@ukr.net>, 2014, 2017, 2018, 2019.
+# Yuri Chornoivan <yurchor@ukr.net>, 2014, 2017, 2018, 2019, 2021.
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-3.3.16-pre2\n"
+"Project-Id-Version: procps-ng-3.3.17rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2021-01-21 20:38+1100\n"
-"PO-Revision-Date: 2019-10-29 11:14+0200\n"
+"PO-Revision-Date: 2021-01-22 12:30+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -16,9 +16,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Lokalize 19.11.70\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Lokalize 20.11.70\n"
 
 #: free.c:74 slabtop.c:193 uptime.c:62 w.c:476
 #, c-format
@@ -75,14 +74,11 @@ msgstr " -h, --human         вивести дані у зручному для 
 
 #: free.c:88
 msgid "     --si            use powers of 1000 not 1024\n"
-msgstr ""
-"     --si            використовувати одиниці з кратністю 1000, а не 1024\n"
+msgstr "     --si            використовувати одиниці з кратністю 1000, а не 1024\n"
 
 #: free.c:89
 msgid " -l, --lohi          show detailed low and high memory statistics\n"
-msgstr ""
-" -l, --lohi          вивести докладні дані щодо використання верхньої і "
-"нижньої областей пам’яті\n"
+msgstr " -l, --lohi          вивести докладні дані щодо використання верхньої і нижньої областей пам’яті\n"
 
 #: free.c:90
 msgid " -t, --total         show total for RAM + swap\n"
@@ -94,8 +90,7 @@ msgstr " -s N, --seconds N   повторювати виведення кожн�
 
 #: free.c:92
 msgid " -c N, --count N     repeat printing N times, then exit\n"
-msgstr ""
-" -c N, --count N     повторити виведення N разів, потім завершити роботу\n"
+msgstr " -c N, --count N     повторити виведення N разів, потім завершити роботу\n"
 
 #: free.c:93
 msgid " -w, --wide          wide output\n"
@@ -124,21 +119,14 @@ msgid "failed to parse count argument: '%s'"
 msgstr "не вдалося обробити аргумент кількості: «%s»"
 
 #: free.c:354
-#, fuzzy, c-format
-msgid ""
-"               total        used        free      shared     buffers       "
-"cache   available"
-msgstr ""
-"              загалом       використ.   вільна    спільна    буфери        "
-"кеш     дост."
+#, c-format
+msgid "               total        used        free      shared     buffers       cache   available"
+msgstr "               загалом      використ.   вільна    спільна    буфери        кеш     дост."
 
 #: free.c:356
-#, fuzzy, c-format
-msgid ""
-"               total        used        free      shared  buff/cache   "
-"available"
-msgstr ""
-"              загалом       використ.   вільна    спільна буфери/кеш   дост."
+#, c-format
+msgid "               total        used        free      shared  buff/cache   available"
+msgstr "               загалом      використ.   вільна    спільна буфери/кеш   дост."
 
 #: free.c:359
 msgid "Mem:"
@@ -183,8 +171,7 @@ msgstr " -l, --list-name           вивести список PID і назву
 
 #: pgrep.c:130
 msgid " -a, --list-full           list PID and full command line\n"
-msgstr ""
-" -a, --list-full           вивести список PID на рядків команд повністю\n"
+msgstr " -a, --list-full           вивести список PID на рядків команд повністю\n"
 
 #: pgrep.c:131
 msgid " -v, --inverse             negates the matching\n"
@@ -196,22 +183,19 @@ msgstr " -w, --lightweight         вивести список усіх TID\n"
 
 #: pgrep.c:135
 msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
-msgstr ""
-" -<сиг>, --signal <сиг>    сигнал, який слід надіслати (у форматі числа або "
-"назви)\n"
+msgstr " -<сиг>, --signal <сиг>    сигнал, який слід надіслати (у форматі числа або назви)\n"
 
 #: pgrep.c:136
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
-msgstr ""
+msgstr " -q, --queue <значення>    ціле значення, яке має бути надіслано із сигналом\n"
 
 #: pgrep.c:137
 msgid " -e, --echo                display what is killed\n"
 msgstr " -e, --echo                вивести дані щодо того, що було завершено\n"
 
 #: pgrep.c:141
-#, fuzzy
 msgid " -e, --echo                display PIDs before waiting\n"
-msgstr " -e, --echo                вивести дані щодо того, що було завершено\n"
+msgstr " -e, --echo                вивести PID до очікування\n"
 
 #: pgrep.c:145
 msgid " -c, --count               count of matching processes\n"
@@ -219,20 +203,15 @@ msgstr " -c, --count               полічити відповідні про�
 
 #: pgrep.c:146
 msgid " -f, --full                use full process name to match\n"
-msgstr ""
-" -f, --full                для встановлення відповідності використати назву "
-"повністю\n"
+msgstr " -f, --full                для встановлення відповідності використати назву повністю\n"
 
 #: pgrep.c:147
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
-msgstr ""
-" -g, --pgroup <PGID,...>   відповідність за ідентифікаторами груп процесів у "
-"списку\n"
+msgstr " -g, --pgroup <PGID,...>   відповідність за ідентифікаторами груп процесів у списку\n"
 
 #: pgrep.c:148
 msgid " -G, --group <GID,...>     match real group IDs\n"
-msgstr ""
-" -G, --group <GID,...>     відповідність за справжніми ідентифікаторами\n"
+msgstr " -G, --group <GID,...>     відповідність за справжніми ідентифікаторами\n"
 
 #: pgrep.c:149
 msgid " -i, --ignore-case         match case insensitively\n"
@@ -247,16 +226,12 @@ msgid " -o, --oldest              select least recently started\n"
 msgstr " -o, --oldest              вибрати перші запущені\n"
 
 #: pgrep.c:152
-#, fuzzy
 msgid " -O, --older <seconds>     select where older than seconds\n"
-msgstr " -d, --delay <сек.>  затримка оновлення у секундах\n"
+msgstr " -O, --older <секунди>     вибрати ті, які старіші за вказане значення у секундах\n"
 
 #: pgrep.c:153
-msgid ""
-" -P, --parent <PPID,...>   match only child processes of the given parent\n"
-msgstr ""
-" -P, --parent <PPID,...>   відповідність лише за дочірніми процесами "
-"вказаного процесу\n"
+msgid " -P, --parent <PPID,...>   match only child processes of the given parent\n"
+msgstr " -P, --parent <PPID,...>   відповідність лише за дочірніми процесами вказаного процесу\n"
 
 #: pgrep.c:154
 msgid " -s, --session <SID,...>   match session IDs\n"
@@ -268,18 +243,15 @@ msgstr " -t, --terminal <tty,...>  відповідність за термін�
 
 #: pgrep.c:156
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
-msgstr ""
-" -u, --euid <ID,...>       відповідність за ефективними ідентифікаторами\n"
+msgstr " -u, --euid <ID,...>       відповідність за ефективними ідентифікаторами\n"
 
 #: pgrep.c:157
 msgid " -U, --uid <ID,...>        match by real IDs\n"
-msgstr ""
-" -U, --uid <ID,...>        відповідність за справжніми ідентифікаторами\n"
+msgstr " -U, --uid <ID,...>        відповідність за справжніми ідентифікаторами\n"
 
 #: pgrep.c:158
 msgid " -x, --exact               match exactly with the command name\n"
-msgstr ""
-" -x, --exact               встановити точну відповідність з назвою команди\n"
+msgstr " -x, --exact               встановити точну відповідність з назвою команди\n"
 
 #: pgrep.c:159
 msgid " -F, --pidfile <file>      read PIDs from file\n"
@@ -287,9 +259,7 @@ msgstr " -F, --pidfile <файл>      прочитати PID з файла\n"
 
 #: pgrep.c:160
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
-msgstr ""
-" -L, --logpidfile          завершити з помилкою, якщо файл PID не "
-"заблоковано\n"
+msgstr " -L, --logpidfile          завершити з помилкою, якщо файл PID не заблоковано\n"
 
 #: pgrep.c:161
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
@@ -307,14 +277,11 @@ msgstr ""
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
-"                           Available namespaces: ipc, mnt, net, pid, user, "
-"uts\n"
+"                           Available namespaces: ipc, mnt, net, pid, user, uts\n"
 msgstr ""
-" --nslist <ns,...>         вивести список просторів назв, які "
-"використовуватимуться для\n"
+" --nslist <ns,...>         вивести список просторів назв, які використовуватимуться для\n"
 "                           обробки з параметром --ns.\n"
-"                           Можливі простори назв: ipc, mnt, net, pid, user, "
-"uts\n"
+"                           Можливі простори назв: ipc, mnt, net, pid, user, uts\n"
 
 #: pgrep.c:305
 #, c-format
@@ -398,17 +365,16 @@ msgstr "не вдалося завершити роботу pid %ld"
 #: pgrep.c:1065
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
-msgstr ""
+msgstr "очікуємо на %s (pid %lu)\n"
 
 #: pgrep.c:1070
-#, fuzzy, c-format
+#, c-format
 msgid "opening pid %ld failed"
-msgstr "не вдалося завершити роботу pid %ld"
+msgstr "не вдалося відкрити pid %ld"
 
 #: pgrep.c:1084
-#, fuzzy
 msgid "epoll_wait failed"
-msgstr "не вдалося отримати місце у пам'яті"
+msgstr "помилка epoll_wait"
 
 #: pidof.c:69
 #, c-format
@@ -421,24 +387,19 @@ msgstr " -s, --single-shot         вивести лише один PID\n"
 
 #: pidof.c:72
 msgid " -c, --check-root          omit processes with different root\n"
-msgstr ""
-" -c, --check-root          пропускати процеси з іншим кореневим каталогом\n"
+msgstr " -c, --check-root          пропускати процеси з іншим кореневим каталогом\n"
 
 #: pidof.c:73
-#, fuzzy
 msgid " -q,                       quiet mode, only set the exit code\n"
-msgstr " -XX                         вивести усе, що надається ядром\n"
+msgstr " -q,                       режим без повідомлень, лише встановити код виходу\n"
 
 #: pidof.c:74
-#, fuzzy
 msgid " -w, --with-workers        show kernel workers too\n"
-msgstr " -s, --short         скорочений формат\n"
+msgstr " -w, --with-workers        показувати і обробники з ядра\n"
 
 #: pidof.c:75
 msgid " -x                        also find shells running the named scripts\n"
-msgstr ""
-" -x                        знайти також оболонки, у яких запущено вказані за "
-"назвами скрипти\n"
+msgstr " -x                        знайти також оболонки, у яких запущено вказані за назвами скрипти\n"
 
 #: pidof.c:76
 msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
@@ -446,9 +407,7 @@ msgstr " -o, --omit-pid <PID,...>  пропускати процеси із вк
 
 #: pidof.c:77
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
-msgstr ""
-" -S, --separator РОЗД      використовувати РОЗД як роздільник між записами "
-"PID"
+msgstr " -S, --separator РОЗД      використовувати РОЗД як роздільник між записами PID"
 
 #: pidof.c:281
 #, c-format
@@ -510,8 +469,7 @@ msgstr " -X                          вивести додаткові подр�
 
 #: pmap.c:114
 msgid "            WARNING: format changes according to /proc/PID/smaps\n"
-msgstr ""
-"            ПОПЕРЕДЖЕННЯ: формат змінено відповідно до /proc/PID/smaps\n"
+msgstr "            ПОПЕРЕДЖЕННЯ: формат змінено відповідно до /proc/PID/smaps\n"
 
 #: pmap.c:115
 msgid " -XX                         show everything the kernel provides\n"
@@ -535,9 +493,7 @@ msgstr " -N, --create-rc-to=<файл>   створити rc у вказаном
 
 #: pmap.c:120
 msgid "            NOTE: pid arguments are not allowed with -n, -N\n"
-msgstr ""
-"            Зауваження: аргументи pid не можна використовувати разом з -n, -"
-"N\n"
+msgstr "            Зауваження: аргументи pid не можна використовувати разом з -n, -N\n"
 
 #: pmap.c:121
 msgid " -d, --device                show the device format\n"
@@ -640,8 +596,7 @@ msgstr "параметр -r ігнорується з міркувань сум�
 
 #: pmap.c:1084
 msgid "options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"
-msgstr ""
-"параметри -c, -C, -d, -n, -N, -x, -X не можна використовувати одночасно"
+msgstr "параметри -c, -C, -d, -n, -N, -x, -X не можна використовувати одночасно"
 
 #: pmap.c:1087
 msgid "options -p, -q are mutually exclusive with -n, -N"
@@ -716,8 +671,7 @@ msgstr "не вдалося знайти ppid\n"
 #: ps/global.c:169
 #, c-format
 msgid "your %dx%d screen size is bogus. expect trouble\n"
-msgstr ""
-"ваш розмір екрана, %dx%d символів, є несправжнім. Очікуємо на проблеми.\n"
+msgstr "ваш розмір екрана, %dx%d символів, є несправжнім. Очікуємо на проблеми.\n"
 
 #: ps/global.c:242 ps/global.c:254
 msgid "environment specified an unknown personality"
@@ -1005,11 +959,8 @@ msgid "  X                   register format\n"
 msgstr "  X                   формат реєстрації\n"
 
 #: ps/help.c:146
-msgid ""
-" -y                   do not show flags, show rss vs. addr (used with -l)\n"
-msgstr ""
-" -y                   не виводити прапорці, виводити у форматі rss - адреса "
-"(використовується з -l)\n"
+msgid " -y                   do not show flags, show rss vs. addr (used with -l)\n"
+msgstr " -y                   не виводити прапорці, виводити у форматі rss - адреса (використовується з -l)\n"
 
 #: ps/help.c:147
 msgid "     --context        display security context (for SELinux)\n"
@@ -1017,8 +968,7 @@ msgstr "     --context        вивести контекст безпеки (д
 
 #: ps/help.c:148
 msgid "     --headers        repeat header lines, one per page\n"
-msgstr ""
-"     --headers        повторювати рядки заголовка, по одному на сторінку\n"
+msgstr "     --headers        повторювати рядки заголовка, по одному на сторінку\n"
 
 #: ps/help.c:149
 msgid "     --no-headers     do not print header at all\n"
@@ -1085,11 +1035,8 @@ msgid "  e                   show the environment after command\n"
 msgstr "  e                   вивести дані середовища після команди\n"
 
 #: ps/help.c:167
-msgid ""
-"  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
-msgstr ""
-"  k,    --sort        вказати спосіб упорядковування: [+|-]ключ[,"
-"[+|-]ключ[,...]]\n"
+msgid "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
+msgstr "  k,    --sort        вказати спосіб упорядковування: [+|-]ключ[,[+|-]ключ[,...]]\n"
 
 #: ps/help.c:168
 msgid "  L                   show format specifiers\n"
@@ -1101,8 +1048,7 @@ msgstr "  n                   вивести числові значення uid
 
 #: ps/help.c:170
 msgid "  S,    --cumulative  include some dead child process data\n"
-msgstr ""
-"  S,    --cumulative  включити деякі дані щодо «мертвих» дочірніх процесів\n"
+msgstr "  S,    --cumulative  включити деякі дані щодо «мертвих» дочірніх процесів\n"
 
 #: ps/help.c:171
 msgid " -y                   do not show flags, show rss (only with -l)\n"
@@ -1237,14 +1183,11 @@ msgstr "після -U має бути вказано список справжн
 
 #: ps/parser.c:368
 msgid "list of session leaders OR effective group names must follow -g"
-msgstr ""
-"після -g має бути вказано список лідерів сеансів або назв ефективних груп"
+msgstr "після -g має бути вказано список лідерів сеансів або назв ефективних груп"
 
 #: ps/parser.c:379
 msgid "list of session leaders OR effective group IDs was invalid"
-msgstr ""
-"список лідерів сеансів або ідентифікаторів ефективних груп виявився "
-"некоректним"
+msgstr "список лідерів сеансів або ідентифікаторів ефективних груп виявився некоректним"
 
 #: ps/parser.c:403
 msgid "format specification must follow -o"
@@ -1356,8 +1299,7 @@ msgstr "після --User має бути вказано список справ
 
 #: ps/parser.c:878
 msgid "number of columns must follow --cols, --width, or --columns"
-msgstr ""
-"після --cols, --width або --columns має бути вказано кількість стовпчиків"
+msgstr "після --cols, --width або --columns має бути вказано кількість стовпчиків"
 
 #: ps/parser.c:881
 msgid "option --cumulative does not take an argument"
@@ -1487,9 +1429,7 @@ msgstr "значеннями ширин стовпчиків мають бути
 
 #: ps/sortformat.c:317
 msgid "can not set width for a macro (multi-column) format specifier"
-msgstr ""
-"не вдалося встановити ширину для специфікатора формату макросу "
-"(багатостовпчикового)"
+msgstr "не вдалося встановити ширину для специфікатора формату макросу (багатостовпчикового)"
 
 #: ps/sortformat.c:371 ps/sortformat.c:387
 msgid "improper sort list"
@@ -1537,11 +1477,8 @@ msgid "tell <procps@freelists.org> what you expected"
 msgstr "повідомте за адресою <procps@freelists.org> про очікувані результати"
 
 #: ps/sortformat.c:809
-msgid ""
-"tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
-msgstr ""
-"повідомте за адресою <procps@freelists.org> про очікувані результати (-L/-T, "
-"-m/m/H і $PS_FORMAT)"
+msgid "tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
+msgstr "повідомте за адресою <procps@freelists.org> про очікувані результати (-L/-T, -m/m/H і $PS_FORMAT)"
 
 #: ps/sortformat.c:826
 #, c-format
@@ -1554,9 +1491,7 @@ msgstr "конфлікт параметрів форматування"
 
 #: ps/sortformat.c:832
 msgid "can not use output modifiers with user-defined output"
-msgstr ""
-"не можна використовувати модифікатори виведення з визначеним користувачем "
-"виведенням"
+msgstr "не можна використовувати модифікатори виведення з визначеним користувачем виведенням"
 
 #: ps/sortformat.c:833
 msgid "-L/-T with H/m/-m and -o/-O/o/O is nonsense"
@@ -1620,19 +1555,15 @@ msgstr ""
 
 #: skill.c:345
 msgid " -q, --queue <value>    integer value to be sent with the signal\n"
-msgstr ""
+msgstr " -q, --queue <значення> ціле значення, яке має бути надіслано із сигналом\n"
 
 #: skill.c:346
-msgid ""
-" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
-msgstr ""
-" -l, --list [=<сигнал>] вивести список усіх назв сигналів або перетворити "
-"номер на назву\n"
+msgid " -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
+msgstr " -l, --list [=<сигнал>] вивести список усіх назв сигналів або перетворити номер на назву\n"
 
 #: skill.c:347
 msgid " -L, --table            list all signal names in a nice table\n"
-msgstr ""
-" -L, --table            показати список усіх назв сигналів у таблиці nice\n"
+msgstr " -L, --table            показати список усіх назв сигналів у таблиці nice\n"
 
 #: skill.c:362
 #, c-format
@@ -1661,12 +1592,8 @@ msgid " -L, --table        list all signal names in a nice table\n"
 msgstr " -L, --table        вивести список усіх назв сигналів у таблиці nice\n"
 
 #: skill.c:374
-msgid ""
-" -n, --no-action    do not actually kill processes; just print what would "
-"happen\n"
-msgstr ""
-" -n, --no-action    не завершувати роботу процесів; просто вивести дані щодо "
-"дій, які буде виконано\n"
+msgid " -n, --no-action    do not actually kill processes; just print what would happen\n"
+msgstr " -n, --no-action    не завершувати роботу процесів; просто вивести дані щодо дій, які буде виконано\n"
 
 #: skill.c:375
 msgid " -v, --verbose      explain what is being done\n"
@@ -1682,8 +1609,7 @@ msgid ""
 "The options below may be used to ensure correct interpretation.\n"
 msgstr ""
 "Можливі вирази: terminal, user, pid, command.\n"
-"Наведені нижче параметри може бути використано для забезпечення належної "
-"інтерпретації.\n"
+"Наведені нижче параметри може бути використано для забезпечення належної інтерпретації.\n"
 
 #: skill.c:380
 msgid " -c, --command <command>  expression is a command name\n"
@@ -1721,8 +1647,7 @@ msgid ""
 msgstr ""
 " --nslist <ns,..>         вивести список просторів назв для\n"
 "                           обробки з параметром --ns.\n"
-"                           Можливі простори назв: ipc, mnt, net, pid, user, "
-"uts\n"
+"                           Можливі простори назв: ipc, mnt, net, pid, user, uts\n"
 
 #: skill.c:398
 #, c-format
@@ -1733,8 +1658,7 @@ msgid ""
 "Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"
 msgstr ""
 "\n"
-"Типовим сигналом є TERM. Скористайтеся -l або -L для отримання списку "
-"сигналів.\n"
+"Типовим сигналом є TERM. Скористайтеся -l або -L для отримання списку сигналів.\n"
 "Зокрема, корисними сигналами є HUP, INT, KILL, STOP, CONT та 0.\n"
 "Інші сигнали може бути вказано у три способи: -SIGKILL -KILL -9\n"
 
@@ -1759,7 +1683,7 @@ msgstr "невідома назва сигналу, %s"
 
 #: skill.c:500
 msgid "must be an integer value to be passed with the signal."
-msgstr ""
+msgstr "має бути цілим значенням, яке слід передати разом із сигналом."
 
 #: skill.c:505
 #, c-format
@@ -1820,9 +1744,7 @@ msgstr " -o, --once          показати лише раз, потім зав
 
 #: slabtop.c:197
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
-msgstr ""
-" -s, --sort <символ> вказати критерій упорядковування за допомогою символу "
-"(див. нижче)\n"
+msgstr " -s, --sort <символ> вказати критерій упорядковування за допомогою символу (див. нижче)\n"
 
 #: slabtop.c:202
 msgid ""
@@ -1944,14 +1866,11 @@ msgstr "      --deprecated     включити до списку застарі
 
 #: sysctl.c:118
 msgid "  -b, --binary         print value without new line\n"
-msgstr ""
-"  -b, --binary         вивести значення без додавання символу розриву рядка\n"
+msgstr "  -b, --binary         вивести значення без додавання символу розриву рядка\n"
 
 #: sysctl.c:119
 msgid "  -e, --ignore         ignore unknown variables errors\n"
-msgstr ""
-"  -e, --ignore         ігнорувати повідомлення про помилки, пов’язані з "
-"невідомими змінними\n"
+msgstr "  -e, --ignore         ігнорувати повідомлення про помилки, пов’язані з невідомими змінними\n"
 
 #: sysctl.c:120
 msgid "  -N, --names          print variable names without values\n"
@@ -1959,8 +1878,7 @@ msgstr "  -N, --names          вивести назви змінних без �
 
 #: sysctl.c:121
 msgid "  -n, --values         print only values of the given variable(s)\n"
-msgstr ""
-"  -n, --values         вивести лише значення вказаних змінних змінних\n"
+msgstr "  -n, --values         вивести лише значення вказаних змінних змінних\n"
 
 #: sysctl.c:122
 msgid "  -p, --load[=<file>]  read values from file\n"
@@ -2068,12 +1986,8 @@ msgstr "встановлюємо ключ «%s»%s"
 
 #: sysctl.c:537
 #, c-format
-msgid ""
-"GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
-"expanded."
-msgstr ""
-"На цій платформі не передбачено підтримки GLOB_TILDE, тильду у «%s» не буде "
-"замінено."
+msgid "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be expanded."
+msgstr "На цій платформі не передбачено підтримки GLOB_TILDE, тильду у «%s» не буде замінено."
 
 #: sysctl.c:543
 msgid "glob failed"
@@ -2809,12 +2723,8 @@ msgstr "Вимкнено"
 #. Translation Hint: Only the following words should be translated
 #. .                 secs (seconds), max (maximum), user, field, cols (columns)
 #: top/top_nls.c:353
-#, fuzzy
-msgid ""
-" -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
-msgstr ""
-" -hv | -bcEHiOSs1 -d сек. -n макс. -u|U користувач -p pid -o поле -w "
-"[стовпчики]"
+msgid " -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
+msgstr " -hv | -bcEeHiOSs1 -d сек. -n макс. -u|U користувач -p pid -o поле -w [стовпчики]"
 
 #: top/top_nls.c:354
 msgid "failed /proc/stat read"
@@ -3044,16 +2954,16 @@ msgstr "Завдання"
 #. .                 cpu or all of the processors in a multi-processor computer
 #. .                 (should be exactly 6 characters, excluding leading % & colon)
 #: top/top_nls.c:417
-#, fuzzy, c-format
+#, c-format
 msgid "%Cpu(s):"
-msgstr "Процесор:"
+msgstr "%CПроц.:"
 
 #. Translation Hint: The following "word" is meant to represent a single processor
 #. .                 (should be exactly 3 characters, excluding leading %%, fmt chars & colon)
 #: top/top_nls.c:420
-#, fuzzy, c-format
+#, c-format
 msgid "%%Cpu%-3d:"
-msgstr "Проц%-3d:"
+msgstr "%%Прц%-3d:"
 
 #. Translation Hint: The following word "another" must have 1 trailing space
 #: top/top_nls.c:422
@@ -3080,9 +2990,7 @@ msgstr "крок збільшення ширини, %d, змінити (0 — т
 
 #: top/top_nls.c:427
 msgid "rcfile has inspect/other-filter error(s), save anyway?"
-msgstr ""
-"У rcfile виявлено помилки за допомогою інспектування або іншого "
-"фільтрування. Зберегти його попри це?"
+msgstr "У rcfile виявлено помилки за допомогою інспектування або іншого фільтрування. Зберегти його попри це?"
 
 #: top/top_nls.c:428
 #, c-format
@@ -3106,12 +3014,8 @@ msgid "Log"
 msgstr "Журнал"
 
 #: top/top_nls.c:434
-msgid ""
-"the '=' key will eventually show the actual file read or command(s) "
-"executed ..."
-msgstr ""
-"нарешті, ключ «=» покаже справжнє читання даних з файла або виконану "
-"команду..."
+msgid "the '=' key will eventually show the actual file read or command(s) executed ..."
+msgstr "нарешті, ключ «=» покаже справжнє читання даних з файла або виконану команду..."
 
 #: top/top_nls.c:435
 msgid "demo"
@@ -3120,45 +3024,31 @@ msgstr "демо"
 #: top/top_nls.c:436
 #, c-format
 msgid ""
-"This is simulated output representing the contents of some file or the "
-"output\n"
-"from some command.  Exactly which commands and/or files are solely up to "
-"you.\n"
+"This is simulated output representing the contents of some file or the output\n"
+"from some command.  Exactly which commands and/or files are solely up to you.\n"
 "\n"
-"Although this text is for information purposes only, it can still be "
-"scrolled\n"
-"and searched like real output will be.  You are encouraged to experiment "
-"with\n"
+"Although this text is for information purposes only, it can still be scrolled\n"
+"and searched like real output will be.  You are encouraged to experiment with\n"
 "those features as explained in the prologue above.\n"
 "\n"
-"To enable real Inspect functionality, entries must be added to the end of "
-"the\n"
-"top personal personal configuration file.  You could use your favorite "
-"editor\n"
+"To enable real Inspect functionality, entries must be added to the end of the\n"
+"top personal personal configuration file.  You could use your favorite editor\n"
 "to accomplish this, taking care not to disturb existing entries.\n"
 "\n"
-"Another way to add entries is illustrated below, but it risks overwriting "
-"the\n"
-"rcfile.  Redirected echoes must not replace (>) but append (>>) to that "
-"file.\n"
+"Another way to add entries is illustrated below, but it risks overwriting the\n"
+"rcfile.  Redirected echoes must not replace (>) but append (>>) to that file.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
-"toprc\n"
+"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
 "\n"
-"If you don't know the location or name of the top rcfile, use the 'W' "
-"command\n"
-"and note those details.  After backing up the current rcfile, try issuing "
-"the\n"
-"above echoes exactly as shown, replacing '.toprc' as appropriate.  The "
-"safest\n"
+"If you don't know the location or name of the top rcfile, use the 'W' command\n"
+"and note those details.  After backing up the current rcfile, try issuing the\n"
+"above echoes exactly as shown, replacing '.toprc' as appropriate.  The safest\n"
 "approach would be to use copy then paste to avoid any typing mistakes.\n"
 "\n"
-"Finally, restart top to reveal what actual Inspect entries combined with "
-"this\n"
-"new command can offer.  The possibilities are endless, especially "
-"considering\n"
+"Finally, restart top to reveal what actual Inspect entries combined with this\n"
+"new command can offer.  The possibilities are endless, especially considering\n"
 "that 'pipe' type entries can include shell scripts too!\n"
 "\n"
 "For additional important information, please consult the top documentation.\n"
@@ -3166,37 +3056,29 @@ msgid ""
 "\n"
 "Enjoy!\n"
 msgstr ""
-"Це імітація виведених даних вмісту певного файла або або результату "
-"виконання\n"
+"Це імітація виведених даних вмісту певного файла або або результату виконання\n"
 "певної команди. Вибір команд і/або файлів є вашою справою.\n"
 "\n"
-"Хоча призначення цього тексту є суто інформаційним, його можна гортати, у "
-"ньому\n"
+"Хоча призначення цього тексту є суто інформаційним, його можна гортати, у ньому\n"
 "можна виконувати пошук, як у звичайних виведених даних. Поекспериментуйте з\n"
 "можливостями, описаними у передмові вище.\n"
 "\n"
-"Щоб увімкнути функціональні можливості справжнього інспектування, записи "
-"має\n"
+"Щоб увімкнути функціональні можливості справжнього інспектування, записи має\n"
 "бути додано наприкінці особистого файла налаштувань top. Для цього можна\n"
-"скористатися вашим улюбленим текстовим редактором, подбавши про "
-"недоторканність\n"
+"скористатися вашим улюбленим текстовим редактором, подбавши про недоторканність\n"
 "наявних записів.\n"
 "\n"
-"Інший спосіб додавання записів проілюстровано нижче. Цей спосіб є "
-"ризикованим\n"
-"через можливість перезапису файла rc. Переспрямовування виведення не "
-"повинне\n"
+"Інший спосіб додавання записів проілюстровано нижче. Цей спосіб є ризикованим\n"
+"через можливість перезапису файла rc. Переспрямовування виведення не повинне\n"
 "замінювати вміст (>), а лише доповнювати вміст (>>) цього файла.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tВідкрити файли\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tДані щодо NUMA\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tЖурнал\\ttail -n200 /var/log/syslog | sort -Mr\" >> "
-"~/.toprc\n"
+"  /bin/echo -e \"pipe\\tЖурнал\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
 "\n"
 "Якщо вам не відоме місце зберігання або назва файла rc top, скористайтеся\n"
 "командою «W», яка допоможе вам дізнатися ці подробиці. Після створення\n"
-"резервної копії поточного файла rc, спробуйте віддати команди, наведені "
-"вище\n"
+"резервної копії поточного файла rc, спробуйте віддати команди, наведені вище\n"
 "точно так, як їх записано, замінивши «.toprc» відповідним файлом.\n"
 "Найбезпечнішим підходом буде копіювання з наступним вставленням, щоб\n"
 "уникнути друкарських помилок.\n"
@@ -3214,14 +3096,11 @@ msgstr ""
 
 #: top/top_nls.c:468
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
-msgstr ""
-"щоб увімкнути «Y», натисніть <Enter>, потім введіть «W» і перезапустіть top"
+msgstr "щоб увімкнути «Y», натисніть <Enter>, потім введіть «W» і перезапустіть top"
 
 #: top/top_nls.c:470
 msgid "to enable 'Y' please consult the top man page (press Enter)"
-msgstr ""
-"щоб увімкнути «Y», будь ласка, ознайомтеся зі сторінкою підручника з top "
-"(натисніть Enter)"
+msgstr "щоб увімкнути «Y», будь ласка, ознайомтеся зі сторінкою підручника з top (натисніть Enter)"
 
 #: top/top_nls.c:472
 #, c-format
@@ -3300,9 +3179,9 @@ msgstr "немає"
 #. Translation Hint: The following word 'Node' should be exactly
 #. 4 characters, excluding leading %%, fmt chars & colon)
 #: top/top_nls.c:492
-#, fuzzy, c-format
+#, c-format
 msgid "%%Node%-2d:"
-msgstr "Вузол%-2d:"
+msgstr "%%Вузол%-2d:"
 
 #: top/top_nls.c:493
 #, c-format
@@ -3341,15 +3220,15 @@ msgstr "PID для зміни згортання або розгортання [
 
 #: top/top_nls.c:504
 msgid "terminal is not wide enough"
-msgstr ""
+msgstr "термінал є недостатньо широким"
 
 #: top/top_nls.c:505
 msgid "wrong mode, command inactive"
-msgstr ""
+msgstr "помилковий режим, команда є неактивною"
 
 #: top/top_nls.c:506
 msgid "saving prevents older top from reading, save anyway?"
-msgstr ""
+msgstr "після збереження зникне можливість читати застарілі повідомлення на початку списку. Зберегти попри це?"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3387,81 +3266,51 @@ msgstr ""
 #. .    wraps that could place them there.
 #. .
 #: top/top_nls.c:551
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
-"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
-"~1Secure mode ~3%s~2.\n"
+"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; ~1Secure mode ~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' "
-"summary/task memory scale\n"
-"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; "
-"'~1I~2' Irix mode\n"
-"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; "
-"'~14~2' cpus two abreast\n"
-"  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase "
-"fixed-width\n"
+"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' summary/task memory scale\n"
+"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; '~1I~2' Irix mode\n"
+"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; '~14~2' cpus two abreast\n"
+"  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase fixed-width\n"
 "\n"
-"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: "
-"'~1<~2'/'~1>~2' left/right\n"
-"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; "
-"'~1C~2' Coordinates\n"
-"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; "
-"'~1j~2' Str justify\n"
-"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running "
-"tasks\n"
-"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if "
-"'x' or 'y')\n"
-"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' "
-"other criteria\n"
-"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' "
-"other filter(s)\n"
-"  V,v     . Toggle: '~1V~2' forest view; '~1v~2' hide/show forest view "
-"children\n"
+"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n"
+"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; '~1C~2' Coordinates\n"
+"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; '~1j~2' Str justify\n"
+"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
+"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
+"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' other criteria\n"
+"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' other filter(s)\n"
+"  V,v     . Toggle: '~1V~2' forest view; '~1v~2' hide/show forest view children\n"
 "\n"
-"%s  W,Y,!     Write config file '~1W~2'; Inspect other output '~1Y~2'; "
-"Combine Cpus '~1!~2'\n"
+"%s  W,Y,!     Write config file '~1W~2'; Inspect other output '~1Y~2'; Combine Cpus '~1!~2'\n"
 "  q         Quit\n"
-"          ( commands shown with '.' require a ~1visible~2 task display "
-"~1window~2 ) \n"
+"          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
 "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
 "Довідка щодо інтерактивних команд~2 - %s\n"
-"Вікно ~1%s~6: ~1Накопичувальний режим ~3%s~2.  ~1Система~6: ~1Затримка "
-"~3%.1f сек.~2; ~1Режим захисту ~3%s~2.\n"
+"Вікно ~1%s~6: ~1Накопичувальний режим ~3%s~2.  ~1Система~6: ~1Затримка ~3%.1f сек.~2; ~1Режим захисту ~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   Загалом: '~1Z~2' кольорів; '~1B~2' напівжирний; "
-"'~1E~2'/'~1e~2' масштаб пам’яті для резюме/завдання\n"
-"  l,t,m     Toggle Summary: '~1l~2' load avg; '~1t~2' task/cpu stats; "
-"'~1m~2' дані щодо пам’яті\n"
-"  0,1,2,3,I Перемикання: '~10~2' нулів; '~11~2/~12~2/~13~2' показу "
-"процесорів та вузлів numa; '~1I~2' режим Irix\n"
-"  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase "
-"фіксована ширина\n"
+"  Z~5,~1B~5,E,e   Загалом: '~1Z~2' кольорів; '~1B~2' напівжирний; '~1E~2'/'~1e~2' масштаб пам’яті для резюме/завдання\n"
+"  l,t,m,I   Перемикання: '~1l~2' сер. навант.; '~1t~2' завдань/проц; '~1m~2' memory; '~1I~2' режим Irix\n"
+"  0,1,2,3,4 Перемикання: '~10~2' нулі; '~11~2/~12~2/~13~2' перегляди проц/numa; '~14~2' два проц. поряд\n"
+"  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase фіксована ширина\n"
 "\n"
-"  L,&,<,> . Пошук: '~1L~2'/'~1&~2' знайти дані; Пересунути стовпчик "
-"упорядковування: '~1<~2'/'~1>~2' ліворуч/праворуч\n"
-"  R,H,J,C . Перемикання: '~1R~2' Упорядковування; '~1H~2' Потоки; '~1J~2' "
-"Вирівнювання цифр; '~1C~2' Координати\n"
-"  c,i,S,j . Перемикання: '~1c~2' Назва або рядок команди; '~1i~2' "
-"Бездіяльність; '~1S~2' Час; '~1j~2' Вирівнювання рядків\n"
-"  x~5,~1y~5     . Перемикання підсвічування: '~1x~2' поле упорядковування; "
-"'~1y~2' завдання, що виконуються\n"
-"  z~5,~1b~5     . Перемикання: '~1z~2' колір/моно; '~1b~2' напівжирний/"
-"зворотній (лише якщо 'x' або 'y')\n"
-"  u,U,o,O . Фільтрування: '~1u~2'/'~1U~2' за ефективним/будь-яким "
-"користувачем; '~1o~2'/'~1O~2' інші критерії\n"
-"  n,#,^O  . Встановлення: '~1n~2'/'~1#~2' максимальна показана кількість "
-"завдань; Показ: ~1Ctrl~2+'~1O~2' інші фільтри\n"
-"  V,v     . Перемикання: '~1V~2' перегляд лісу; '~1v~2' приховати або "
-"показати дочірні об'єкти перегляду лісу\n"
+"  L,&,<,> . Пошук: '~1L~2'/'~1&~2' знайти дані; Пересунути стовпчик упорядковування: '~1<~2'/'~1>~2' ліворуч/праворуч\n"
+"  R,H,J,C . Перемикання: '~1R~2' Упорядковування; '~1H~2' Потоки; '~1J~2' Вирівнювання цифр; '~1C~2' Координати\n"
+"  c,i,S,j . Перемикання: '~1c~2' Назва або рядок команди; '~1i~2' Бездіяльність; '~1S~2' Час; '~1j~2' Вирівнювання рядків\n"
+"  x~5,~1y~5     . Перемикання підсвічування: '~1x~2' поле упорядковування; '~1y~2' завдання, що виконуються\n"
+"  z~5,~1b~5     . Перемикання: '~1z~2' колір/моно; '~1b~2' напівжирний/зворотній (лише якщо 'x' або 'y')\n"
+"  u,U,o,O . Фільтрування: '~1u~2'/'~1U~2' за ефективним/будь-яким користувачем; '~1o~2'/'~1O~2' інші критерії\n"
+"  n,#,^O  . Встановлення: '~1n~2'/'~1#~2' максимальна показана кількість завдань; Показ: ~1Ctrl~2+'~1O~2' інші фільтри\n"
+"  V,v     . Перемикання: '~1V~2' перегляд лісу; '~1v~2' приховати або показати дочірні об'єкти перегляду лісу\n"
 "\n"
-"%s  W,Y       Записати файл налаштувань '~1W~2'; Інспектувати інші виведені "
-"дані '~1Y~2'\n"
+"%s  W,Y,!     Записати файл налаштувань '~1W~2'; Інспектувати інші виведені дані '~1Y~2'; Поєднати процесори '~1!~2'\n"
 "  q         Вийти\n"
-"          ( для команд з «.» потрібне ~1видиме~2 ~1вікно~2 показу "
-"завдань ) \n"
+"          ( для команд з «.» потрібне ~1видиме~2 ~1вікно~2 показу завдань ) \n"
 "Натисніть «~1h~2» або «~1?~2» для отримання довідки щодо ~1Windows~2,\n"
 "Натисніть «q» або <Esc>, щоб продовжити перегляд даних. "
 
@@ -3470,83 +3319,52 @@ msgstr ""
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
-". Use multiple ~1windows~2, each with separate config opts (color,fields,"
-"sort,etc)\n"
-". The 'current' window controls the ~1Summary Area~2 and responds to your "
-"~1Commands~2\n"
-"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/"
-"shrinking others\n"
-"  . with ~1NO~2 task display, some commands will be ~1disabled~2 "
-"('i','R','n','c', etc)\n"
-"    until a ~1different window~2 has been activated, making it the 'current' "
-"window\n"
-". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;"
-"~1 2~2) choosing\n"
-"  a specific field group; or~1 3~2) exiting the color mapping or fields "
-"screens\n"
+". Use multiple ~1windows~2, each with separate config opts (color,fields,sort,etc)\n"
+". The 'current' window controls the ~1Summary Area~2 and responds to your ~1Commands~2\n"
+"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/shrinking others\n"
+"  . with ~1NO~2 task display, some commands will be ~1disabled~2 ('i','R','n','c', etc)\n"
+"    until a ~1different window~2 has been activated, making it the 'current' window\n"
+". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;~1 2~2) choosing\n"
+"  a specific field group; or~1 3~2) exiting the color mapping or fields screens\n"
 ". Commands ~1available anytime   -------------~2\n"
-"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 "
-"windows\n"
-"    g       . Choose another field group and make it 'current', or change "
-"now\n"
-"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; "
-"or~1 4~2 =%s\n"
+"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 windows\n"
+"    g       . Choose another field group and make it 'current', or change now\n"
+"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; or~1 4~2 =%s\n"
 ". Commands ~1requiring~2 '~1A~2' mode~1  -------------~2\n"
 "    G       . Change the ~1Name~5 of the 'current' window/field group\n"
-" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' "
-"Backward\n"
-" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all "
-"~1Visible~2/~1Invisible~2\n"
-"  The screen will be divided evenly between task displays.  But you can "
-"make\n"
-"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then "
-"later you could:\n"
-" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' "
-"~1Every~2 window\n"
-"              (this also forces the ~1current~2 or ~1every~2 window to "
-"become visible)\n"
+" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' Backward\n"
+" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all ~1Visible~2/~1Invisible~2\n"
+"  The screen will be divided evenly between task displays.  But you can make\n"
+"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then later you could:\n"
+" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' ~1Every~2 window\n"
+"              (this also forces the ~1current~2 or ~1every~2 window to become visible)\n"
 "\n"
-"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try "
-"the '~1a~2' and '~1w~2'\n"
+"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try the '~1a~2' and '~1w~2'\n"
 "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' "
 msgstr ""
 "Довідка щодо вікон / груп полів~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
-". Використання декількох ~1вікон~2 з окремими параметрами налаштування "
-"(колір, поля, впорядкування тощо)\n"
+". Використання декількох ~1вікон~2 з окремими параметрами налаштування (колір, поля, впорядкування тощо)\n"
 ". «Поточне» вікно керує ~1областю резюме~2 і відповідає на ваші ~1команди~2\n"
-"  . ~1показ завдань~2 цього вікна може бути ~1вимкнено~2 і ~1увімкнено~2, з "
-"розширенням або звуженням інших\n"
-"  . якщо показу завдань ~1немає~2, деякі з команд буде ~1вимкнено~2 "
-"('i','R','n','c', тощо),\n"
-"    аж доки не буде активовано ~1інше вікно~2, яке після цього стане "
-"«поточним» вікном\n"
-". ~1Змінити~2 «поточне» вікно можна так: ~1 1~2) циклічним переходом вперед/"
-"назад;~1 2~2) вибором\n"
+"  . ~1показ завдань~2 цього вікна може бути ~1вимкнено~2 і ~1увімкнено~2, з розширенням або звуженням інших\n"
+"  . якщо показу завдань ~1немає~2, деякі з команд буде ~1вимкнено~2 ('i','R','n','c', тощо),\n"
+"    аж доки не буде активовано ~1інше вікно~2, яке після цього стане «поточним» вікном\n"
+". ~1Змінити~2 «поточне» вікно можна так: ~1 1~2) циклічним переходом вперед/назад;~1 2~2) вибором\n"
 "  певної групи полів;~1 3~2) виходом прив’язки кольорів або панелей полів\n"
 ". Команди, ~1доступні завжди   -------------~2\n"
-"    A       . Перемикач режиму показу, показ ~1єдиного~2 / ~1декількох~2 "
-"вікон\n"
-"    g       . Вибрати іншу групу полів і зробити її «поточною» або негайна "
-"зміна\n"
-"              вибором номеру: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; або~1 4~2 ="
-"%s\n"
+"    A       . Перемикач режиму показу, показ ~1єдиного~2 / ~1декількох~2 вікон\n"
+"    g       . Вибрати іншу групу полів і зробити її «поточною» або негайна зміна\n"
+"              вибором номеру: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; або~1 4~2 =%s\n"
 ". Команди, що ~1потребують~2 режиму «~1A~2»~1  -------------~2\n"
 "    G       . Змінити ~1назву~5 «поточного» вікна або групи полів\n"
-" ~1*~4  a , w   . Циклічний перехід усіма чотирма вікнами:  «~1a~5» вперед; "
-"«~1w~5» назад\n"
-" ~1*~4  - , _   . Показати або сховати:  «~1-~5» ~1поточне~2 вікно; «~1_~5» "
-"усі ~1видимі~2/~1невидимі~2\n"
+" ~1*~4  a , w   . Циклічний перехід усіма чотирма вікнами:  «~1a~5» вперед; «~1w~5» назад\n"
+" ~1*~4  - , _   . Показати або сховати:  «~1-~5» ~1поточне~2 вікно; «~1_~5» усі ~1видимі~2/~1невидимі~2\n"
 "  Екран буде рівномірно поділено між показами завдань. ~1Збільшити~2 або\n"
-"  ~1зменшити~2 розмір панелі можна за допомогою команд «~1n~2» та «~1i~2».  "
-"Згодом можна:\n"
-" ~1*~4  = , +   . Змінити баланс завдань:  «~1=~5» ~1поточне~2 вікно; "
-"«~1+~5» ~1кожне~2 вікно\n"
-"              (ці команди примусово зроблять ~1поточне~2 або ~1кожне~2 вікно "
-"видимим)\n"
+"  ~1зменшити~2 розмір панелі можна за допомогою команд «~1n~2» та «~1i~2».  Згодом можна:\n"
+" ~1*~4  = , +   . Змінити баланс завдань:  «~1=~5» ~1поточне~2 вікно; «~1+~5» ~1кожне~2 вікно\n"
+"              (ці команди примусово зроблять ~1поточне~2 або ~1кожне~2 вікно видимим)\n"
 "\n"
-"У режимі «~1A~2» клавіші «~1*~4» визначають ~1основні~2 команди. Спробуйте "
-"скористатися командами «~1a~2» і «~1w~2»\n"
+"У режимі «~1A~2» клавіші «~1*~4» визначають ~1основні~2 команди. Спробуйте скористатися командами «~1a~2» і «~1w~2»\n"
 "разом з підкомандою «g» зараз же. Натисніть <Enter>, щоб зробити «поточним» "
 
 #. Translation Notes ------------------------------------------------
@@ -3564,10 +3382,8 @@ msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
 "   color - 04:25:44 up 8 days, 50 min,  7 users,  load average:\n"
-"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,"
-"~3\n"
-"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 "
-"~2idle~3\n"
+"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,~3\n"
+"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 ~2idle~3\n"
 "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP S COMMAND    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
@@ -3576,8 +3392,7 @@ msgid ""
 "   available toggles: ~1B~2 =disable bold globally (~1%s~2),\n"
 "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks \"bold\"/reverse (~1%s~2)\n"
 "\n"
-"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c "
-"~4:\n"
+"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c ~4:\n"
 "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n"
 "   H~2 = Column Heads,~1  T~2 = Task Information\n"
 "2) Select a ~1color~2 as a number or use the up/down arrow keys\n"
@@ -3591,35 +3406,28 @@ msgid ""
 msgstr ""
 "Довідка щодо прив’язки кольорів~2 - \"Поточне вікно\" = ~1 %s ~6\n"
 "\n"
-"   колір - 04:25:44, працюємо 8 днів, 50 хв.,  7 користувачів, середнє "
-"навантаження:\n"
-"   Завдань:~3  64 ~2загалом,~3   2 ~3працює,~3  62 ~2приспано,~3   0 "
-"~2зупинено,~3\n"
-"   %%Процесори:~3  76.5 ~2кор.,~3  11.2 ~2система,~3   0.0 ~2упод.,~3  12.3 "
-"~2безд.~3\n"
+"   колір - 04:25:44, працюємо 8 днів, 50 хв.,  7 користувачів, середнє навантаження:\n"
+"   Завдань:~3  64 ~2загалом,~3   2 ~3працює,~3  62 ~2приспано,~3   0 ~2зупинено,~3\n"
+"   %%Процесори:~3  76.5 ~2кор.,~3  11.2 ~2система,~3   0.0 ~2упод.,~3  12.3 ~2безд.~3\n"
 "   ~1 Якесь повідомлення! ~4  -або-  ~1Запит щодо введення~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP S КОМАНДА   ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
 "   ~1 8601 pts/1    7 -10  0.4   0:00.03   916    0 R color -b -z~7\n"
 "   11005 ~8?      ~7  9   0  0.0   0:02.50  2852 1008 S amor -sessi~8\n"
 "   доступні перемикачі: ~1B~2 =вимкнути напівжирний загалом (~1%s~2),\n"
-"       ~1z~2 =колір/моно (~1%s~2), ~1b~2 =\"напівжирні\"/зворотній порядок "
-"(~1%s~2)\n"
+"       ~1z~2 =колір/моно (~1%s~2), ~1b~2 =\"напівжирні\"/зворотній порядок (~1%s~2)\n"
 "\n"
-"1) Виберіть ~1ціль~2 за літерою верхнього регістра, ~1поточною ціллю~2 є ~1 "
-"%c ~4:\n"
+"1) Виберіть ~1ціль~2 за літерою верхнього регістра, ~1поточною ціллю~2 є ~1 %c ~4:\n"
 "   S~2 = Резюме даних,~1  M~2 = Повідомлення або запити,\n"
 "   H~2 = Заголовки стовпчиків,~1  T~2 = Дані щодо завдань\n"
 "2) Виберіть ~1колір~2 за числом або скористайтеся клавішами зі стрілками\n"
-"   для збільшення чи зменшення значення кольорів %d, ~1поточним кольором~2 є "
-"~1 %d ~4:\n"
+"   для збільшення чи зменшення значення кольорів %d, ~1поточним кольором~2 є ~1 %d ~4:\n"
 "   0~2 = чорний,~1 1~2 = червоний,    ~1  2~2 = зелений,~1  3~2 = жовтий,\n"
 "   4~2 = синій, ~1  5~2 = малиновий,~1  6~2 = блакитний, ~1  7~2 = білий\n"
 "\n"
 "3) Скористайтеся однією з цих клавіш:\n"
 "   q або Esc — перервати внесення змін до вікна '~1%s~2'\n"
-"   a або w — внести зміни і перейти до внесення інших змін, <Enter> — внести "
-"зміни і завершити "
+"   a або w — внести зміни і перейти до внесення інших змін, <Enter> — внести зміни і завершити "
 
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
 #. .                 also imbedded in the translatable text (along with escape seqs)
@@ -3629,8 +3437,7 @@ msgid ""
 "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
 "  d or s    Set update interval\n"
 msgstr ""
-"  k,r       Керувати завданнями: «~1k~2» — завершити; «~1r~2» — змінити "
-"пріоритетність\n"
+"  k,r       Керувати завданнями: «~1k~2» — завершити; «~1r~2» — змінити пріоритетність\n"
 "  d або s   Встановити інтервал оновлення\n"
 
 #. Translation Hint:
@@ -3642,8 +3449,7 @@ msgstr ""
 #, c-format
 msgid ""
 "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
-"   Navigate with Up/Dn, Right selects for move then <Enter> or Left "
-"commits,\n"
+"   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n"
 "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!\n"
 msgstr ""
 "Керування полями~2 для вікна ~1%s~6, де полем упорядковування є ~1%s~2\n"
@@ -3657,53 +3463,34 @@ msgstr ""
 #. .
 #: top/top_nls.c:657
 #, c-format
-msgid ""
-"%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
-"~2zombie~3\n"
-msgstr ""
-"%s:~3 %3u ~2загалом,~3 %3u ~2працює,~3 %3u ~2приспано,~3 %3u ~2зупинено,~3 "
-"%3u ~2зомбі~3\n"
+msgid "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n"
+msgstr "%s:~3 %3u ~2загалом,~3 %3u ~2працює,~3 %3u ~2приспано,~3 %3u ~2зупинено,~3 %3u ~2зомбі~3\n"
 
 #: top/top_nls.c:660
-#, fuzzy, c-format
-msgid ""
-"%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3"
-msgstr ""
-"%%%s~3 %#5.1f  ~2кор.,~3 %#5.1f  ~2система,~3 %#5.1f  ~2упод.,~3 %#5.1f  "
-"~2безд.~3\n"
+#, c-format
+msgid "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3"
+msgstr "%s~3 %#5.1f  ~2кор.,~3 %#5.1f  ~2сист.,~3 %#5.1f   ~2упод.,~3 %#5.1f ~2безд.~3"
 
 #: top/top_nls.c:663
-#, fuzzy, c-format
-msgid ""
-"%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,"
-"~3 %#5.1f  ~2IO-wait~3"
-msgstr ""
-"%%%s~3 %#5.1f  ~2кор.,~3 %#5.1f  ~2система,~3 %#5.1f  ~2упод.,~3 %#5.1f  "
-"~2безд.,~3 %#5.1f  ~2IO-очік.~3\n"
+#, c-format
+msgid "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,~3 %#5.1f  ~2IO-wait~3"
+msgstr "%s~3 %#5.1f  ~2кор.,~3 %#5.1f  ~2система,~3 %#5.1f ~2упод.,~3 %#5.1f ~2безд,~3 %#5.1f  ~2IO-очік.~3"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt
 #: top/top_nls.c:669
-#, fuzzy, c-format
-msgid ""
-"%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
-"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3"
-msgstr ""
-"%%%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f "
-"~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n"
+#, c-format
+msgid "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3"
+msgstr "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt, st = steal time
 #: top/top_nls.c:675
-#, fuzzy, c-format
-msgid ""
-"%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
-"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3"
-msgstr ""
-"%%%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
-"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
+#, c-format
+msgid "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3"
+msgstr "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3"
 
 #. Translation Hint: this must be translated as 2 lines with words above & below aligned
 #: top/top_nls.c:679
@@ -3722,28 +3509,23 @@ msgstr ""
 #, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
-"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to "
-"~1end~5 !\n"
+"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to ~1end~5 !\n"
 "Options~2: ~1%s\n"
 msgstr ""
 "Інспектування~2 Призупинка: pid ~1%d~6 виконується ~1%s~6\n"
-"Кор.~2:  ліворуч/праворуч, потім <Enter> для ~1вибору~5 пункту; q або <Esc> "
-"для ~1завершення~5 !\n"
+"Кор.~2:  ліворуч/праворуч, потім <Enter> для ~1вибору~5 пункту; q або <Esc> для ~1завершення~5 !\n"
 "Пункти~2: ~1%s\n"
 
 #: top/top_nls.c:691
 #, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
-"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to "
-"~1locate~5/~1next~5.\n"
+"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to ~1locate~5/~1next~5.\n"
 "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n"
 msgstr ""
 "Інспектування~2 Перегляд у pid: ~1%s~3, виконується ~1%s~3.  Місце: ~1%s~6\n"
-"Кор.~2:  ліворуч, праворуч, вниз, вгору тощо для ~1навігації~5 даними; L/& "
-"для ~1пошуку~5/~1переходу далі~5.\n"
-"Або~2:   <Enter> для ~1позначення іншого~5; q або <Esc> для ~1завершення "
-"роботи~5 !\n"
+"Кор.~2:  ліворуч, праворуч, вниз, вгору тощо для ~1навігації~5 даними; L/& для ~1пошуку~5/~1переходу далі~5.\n"
+"Або~2:   <Enter> для ~1позначення іншого~5; q або <Esc> для ~1завершення роботи~5 !\n"
 
 #: uptime.c:64
 msgid " -p, --pretty   show uptime in pretty format\n"
@@ -3784,8 +3566,7 @@ msgstr " -d, --disk             статистика щодо використа
 
 #: vmstat.c:102
 msgid " -D, --disk-sum         summarize disk statistics\n"
-msgstr ""
-" -D, --disk-sum         підсумкова статистика щодо використання диска\n"
+msgstr " -D, --disk-sum         підсумкова статистика щодо використання диска\n"
 
 #: vmstat.c:103
 msgid " -p, --partition <dev>  partition specific statistics\n"
@@ -3804,21 +3585,12 @@ msgid " -t, --timestamp        show timestamp\n"
 msgstr " -t, --timestamp        вивести часову позначку\n"
 
 #: vmstat.c:195
-msgid ""
-"procs -----------memory---------- ---swap-- -----io---- -system-- ------"
-"cpu-----"
-msgstr ""
-"проц  -----------пам’ять--------- ---своп-- ----в/в---- -система- ----"
-"процесор---"
+msgid "procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----"
+msgstr "проц  -----------пам’ять--------- ---своп-- ----в/в---- -система- ----процесор---"
 
 #: vmstat.c:197
-#, fuzzy
-msgid ""
-"--procs-- -----------------------memory---------------------- ---swap-- -----"
-"io---- -system-- --------cpu--------"
-msgstr ""
-"проц  -----------------------пам’ять--------------------- ---своп-- ----в/"
-"в---- -система- -----процесор------"
+msgid "--procs-- -----------------------memory---------------------- ---swap-- -----io---- -system-- --------cpu--------"
+msgstr "--проц--  -----------------------пам’ять--------------------- ---своп-- ----в/в---- -система- -----процесор------"
 
 #: vmstat.c:198 vmstat.c:530
 msgid " -----timestamp-----"
@@ -3944,25 +3716,15 @@ msgstr "запитаних записів"
 
 #: vmstat.c:465
 msgid "your kernel does not support diskstat. (2.5.70 or above required)"
-msgstr ""
-"у ядрі вашої системи не передбачено підтримки diskstat. (Потрібне ядро "
-"2.5.70 або новіше)"
+msgstr "у ядрі вашої системи не передбачено підтримки diskstat. (Потрібне ядро 2.5.70 або новіше)"
 
 #: vmstat.c:527
-msgid ""
-"disk- ------------reads------------ ------------writes----------- -----"
-"IO------"
-msgstr ""
-"диск- -----------читання----------- ------------запис----------- -----В/"
-"В-----"
+msgid "disk- ------------reads------------ ------------writes----------- -----IO------"
+msgstr "диск- -----------читання----------- ------------запис----------- -----В/В-----"
 
 #: vmstat.c:529
-msgid ""
-"disk- -------------------reads------------------- -------------------"
-"writes------------------ ------IO-------"
-msgstr ""
-"диск- ------------------читання------------------ -------------------"
-"запис------------------- ------В/В------"
+msgid "disk- -------------------reads------------------- -------------------writes------------------ ------IO-------"
+msgstr "диск- ------------------читання------------------ -------------------запис------------------- ------В/В------"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:548 vmstat.c:556
@@ -3996,9 +3758,7 @@ msgstr "сек"
 
 #: vmstat.c:687
 msgid "your kernel does not support diskstat (2.5.70 or above required)"
-msgstr ""
-"у ядрі вашої системи не передбачено підтримки diskstat (Потрібне ядро 2.5.70 "
-"або новіше)"
+msgstr "у ядрі вашої системи не передбачено підтримки diskstat (Потрібне ядро 2.5.70 або новіше)"
 
 #. Translation Hint: Translating folloging slab fields that
 #. * follow (marked with max x chars) might not work, unless
@@ -4029,11 +3789,8 @@ msgid "Pages"
 msgstr "Сторінки"
 
 #: vmstat.c:717
-msgid ""
-"your kernel does not support slabinfo or your permissions are insufficient"
-msgstr ""
-"у ядрі вашої системи не передбачено підтримки slabinfo або у вас недостатні "
-"права доступу"
+msgid "your kernel does not support slabinfo or your permissions are insufficient"
+msgstr "у ядрі вашої системи не передбачено підтримки slabinfo або у вас недостатні права доступу"
 
 #: vmstat.c:769
 #, c-format
@@ -4242,15 +3999,11 @@ msgstr " %s [параметри] команда\n"
 
 #: watch.c:92
 msgid "  -b, --beep             beep if command has a non-zero exit\n"
-msgstr ""
-"  -b, --beep             гудок, якщо виконання команди завершується "
-"ненульовим станом\n"
+msgstr "  -b, --beep             гудок, якщо виконання команди завершується ненульовим станом\n"
 
 #: watch.c:93
 msgid "  -c, --color            interpret ANSI color and style sequences\n"
-msgstr ""
-"  -c, --color            обробляти послідовності символів ANSI для кольорів "
-"і стилю\n"
+msgstr "  -c, --color            обробляти послідовності символів ANSI для кольорів і стилю\n"
 
 #: watch.c:94
 msgid ""
@@ -4262,14 +4015,11 @@ msgstr ""
 
 #: watch.c:96
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
-msgstr ""
-"  -e, --errexit          вийти, якщо виконання команди завершується "
-"ненульовим станом\n"
+msgstr "  -e, --errexit          вийти, якщо виконання команди завершується ненульовим станом\n"
 
 #: watch.c:97
 msgid "  -g, --chgexit          exit when output from command changes\n"
-msgstr ""
-"  -g, --chgexit          вийти, якщо змінюються дані, виведені командою\n"
+msgstr "  -g, --chgexit          вийти, якщо змінюються дані, виведені командою\n"
 
 #: watch.c:98
 msgid "  -n, --interval <secs>  seconds to wait between updates\n"
@@ -4277,17 +4027,15 @@ msgstr "  -n, --interval <число> кількість секунд очіку
 
 #: watch.c:99
 msgid "  -p, --precise          attempt run command in precise intervals\n"
-msgstr ""
-"  -p, --precise          намагатися виконувати команду з точними проміжками\n"
+msgstr "  -p, --precise          намагатися виконувати команду з точними проміжками\n"
 
 #: watch.c:100
 msgid "  -t, --no-title         turn off header\n"
 msgstr "  -t, --no-title         вимкнути заголовок\n"
 
 #: watch.c:101
-#, fuzzy
 msgid "  -w, --no-wrap          turn off line wrapping\n"
-msgstr "  -t, --no-title         вимкнути заголовок\n"
+msgstr "  -w, --no-wrap          вимкнути перенесення рядків\n"
 
 #: watch.c:102
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
@@ -4334,13 +4082,11 @@ msgstr "waitpid"
 
 #: watch.c:763
 msgid "command exit with a non-zero status, press a key to exit"
-msgstr ""
-"виконання команди завершено з ненульовим повідомлення щодо стану, натисніть "
-"клавішу, щоб завершити роботу"
+msgstr "виконання команди завершено з ненульовим повідомлення щодо стану, натисніть клавішу, щоб завершити роботу"
 
 #: watch.c:816
 msgid "Could not parse interval from WATCH_INTERVAL"
-msgstr ""
+msgstr "Не вдалося обробити інтервал з WATCH_INTERVAL"
 
 #: watch.c:897
 #, c-format
@@ -4391,26 +4137,18 @@ msgid " -o, --old-style     old style output\n"
 msgstr " -o, --old-style     виведення даних у застарілому форматі\n"
 
 #: w.c:483
-msgid ""
-" -i, --ip-addr       display IP address instead of hostname (if possible)\n"
-msgstr ""
-" -i, --ip-addr       виводити IP-адресу замість назви вузла (якщо можна)\n"
+msgid " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
+msgstr " -i, --ip-addr       виводити IP-адресу замість назви вузла (якщо можна)\n"
 
 #: w.c:580
 #, c-format
-msgid ""
-"User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
-msgstr ""
-"Значення довжини для середовища користувача, PROCPS_USERLEN, має належати "
-"діапазону від 8 до %i, ігноруємо.\n"
+msgid "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
+msgstr "Значення довжини для середовища користувача, PROCPS_USERLEN, має належати діапазону від 8 до %i, ігноруємо.\n"
 
 #: w.c:590
 #, c-format
-msgid ""
-"from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
-msgstr ""
-"значення довжини вхідних даних середовища, PROCPS_FROMLEN, має бути від 8 до "
-"%d, ігноруємо\n"
+msgid "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
+msgstr "значення довжини вхідних даних середовища, PROCPS_FROMLEN, має бути від 8 до %d, ігноруємо\n"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
@@ -4479,18 +4217,14 @@ msgstr "%s з %s\n"
 #~ " --ns <PID>                match the processes that belong to the same\n"
 #~ "                           namespace as <pid> or 0 for all namespaces\n"
 #~ msgstr ""
-#~ " --ns <PID>                відповідність процесам, що належать тому "
-#~ "самому\n"
-#~ "                           простору назв, що і <pid> або 0 для усіх "
-#~ "просторів назв\n"
+#~ " --ns <PID>                відповідність процесам, що належать тому самому\n"
+#~ "                           простору назв, що і <pid> або 0 для усіх просторів назв\n"
 
 #~ msgid ""
-#~ "pattern that searches for process name longer than 15 characters will "
-#~ "result in zero matches\n"
+#~ "pattern that searches for process name longer than 15 characters will result in zero matches\n"
 #~ "Try `%s -f' option to match against the complete command line."
 #~ msgstr ""
-#~ "зразки для пошуку назви процесу, яка є довшою за 15 символів, призведуть "
-#~ "до того, що нічого не буде знайдено\n"
+#~ "зразки для пошуку назви процесу, яка є довшою за 15 символів, призведуть до того, що нічого не буде знайдено\n"
 #~ "Спробуйте параметр «%s -f», щоб виконати пошук за повним рядком команди."
 
 #~ msgid "unknown page size (assume 4096)\n"
@@ -4532,11 +4266,8 @@ msgstr "%s з %s\n"
 #~ msgid "warning: screen width %d suboptimal"
 #~ msgstr "попередження: ширина екрана %d не є оптимальною"
 
-#~ msgid ""
-#~ " -o, --old           use old format (without -/+buffers/cache line)\n"
-#~ msgstr ""
-#~ " -o, --old           використовувати застарілий формат (без рядка -/"
-#~ "+буфери/кеш)\n"
+#~ msgid " -o, --old           use old format (without -/+buffers/cache line)\n"
+#~ msgstr " -o, --old           використовувати застарілий формат (без рядка -/+буфери/кеш)\n"
 
 #~ msgid "-/+ buffers/cache:"
 #~ msgstr "-/+ буфери/кеш:"

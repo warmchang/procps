@@ -1,9 +1,9 @@
 # Messages français de procps-ng
-# Copyright (C) 2019 Free Software Foundation, Inc.
+# Copyright (C) 2021 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
 # Frédéric Marchal <fmarchal@perso.be>, 2014.
 # Stéphane Aulery <lkppo@free.fr>, 2015
-# Frédéric Marchal <fmarchal@perso.be>, 2019.
+# Frédéric Marchal <fmarchal@perso.be>, 2021.
 #
 # La qualité de cette traduction est vraiment très mauvaise car:
 # 1) la mise en forme des messages impose des contraintes insensées: traduire
@@ -21,10 +21,10 @@
 #                                                     Frédéric Marchal
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 3.3.16-pre2\n"
+"Project-Id-Version: procps-ng 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2021-01-21 20:38+1100\n"
-"PO-Revision-Date: 2019-10-29 10:28+0100\n"
+"PO-Revision-Date: 2021-01-22 12:01+0100\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "Language: fr\n"
@@ -85,8 +85,7 @@ msgstr "     --pebi          afficher la sortie en pébioctets\n"
 
 #: free.c:87
 msgid " -h, --human         show human-readable output\n"
-msgstr ""
-" -h, --human         afficher la sortie sous forme lisible par un humain\n"
+msgstr " -h, --human         afficher la sortie sous forme lisible par un humain\n"
 
 #: free.c:88
 msgid "     --si            use powers of 1000 not 1024\n"
@@ -94,9 +93,7 @@ msgstr "     --si            utiliser des puissances de 1000 au lieu de 1024\n"
 
 #: free.c:89
 msgid " -l, --lohi          show detailed low and high memory statistics\n"
-msgstr ""
-" -l, --lohi          afficher des statistiques détaillées pour les mémoires "
-"basse et haute\n"
+msgstr " -l, --lohi          afficher des statistiques détaillées pour les mémoires basse et haute\n"
 
 #: free.c:90
 msgid " -t, --total         show total for RAM + swap\n"
@@ -137,22 +134,14 @@ msgid "failed to parse count argument: '%s'"
 msgstr "échec du décodage de l'argument du nombre de répétitions: « %s »"
 
 #: free.c:354
-#, fuzzy, c-format
-msgid ""
-"               total        used        free      shared     buffers       "
-"cache   available"
-msgstr ""
-"               total       utilisé      libre     partagé    tampons       "
-"cache   disponible"
+#, c-format
+msgid "               total        used        free      shared     buffers       cache   available"
+msgstr "               total       utilisé      libre     partagé    tampons       cache   disponible"
 
 #: free.c:356
-#, fuzzy, c-format
-msgid ""
-"               total        used        free      shared  buff/cache   "
-"available"
-msgstr ""
-"               total       utilisé      libre     partagé tamp/cache   "
-"disponible"
+#, c-format
+msgid "               total        used        free      shared  buff/cache   available"
+msgstr "               total       utilisé      libre     partagé tamp/cache   disponible"
 
 #: free.c:359
 msgid "Mem:"
@@ -197,8 +186,7 @@ msgstr " -l, --list-name           liste le PID et le nom du processus\n"
 
 #: pgrep.c:130
 msgid " -a, --list-full           list PID and full command line\n"
-msgstr ""
-" -a, --list-full           liste le PID et la ligne de commande complète\n"
+msgstr " -a, --list-full           liste le PID et la ligne de commande complète\n"
 
 #: pgrep.c:131
 msgid " -v, --inverse             negates the matching\n"
@@ -210,22 +198,19 @@ msgstr " -w, --lightweight         liste tous les TID\n"
 
 #: pgrep.c:135
 msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
-msgstr ""
-" -<sig>, --signal <sig>    signal à envoyer (<sig> est le numéro ou le nom "
-"du signal)\n"
+msgstr " -<sig>, --signal <sig>    signal à envoyer (<sig> est le numéro ou le nom du signal)\n"
 
 #: pgrep.c:136
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
-msgstr ""
+msgstr " -q, --queue <valeur>      valeur entière à envoyer avec le signal\n"
 
 #: pgrep.c:137
 msgid " -e, --echo                display what is killed\n"
 msgstr " -e, --echo                affiche ce qui est tué\n"
 
 #: pgrep.c:141
-#, fuzzy
 msgid " -e, --echo                display PIDs before waiting\n"
-msgstr " -e, --echo                affiche ce qui est tué\n"
+msgstr " -e, --echo                affiche les PID avant l'attente\n"
 
 #: pgrep.c:145
 msgid " -c, --count               count of matching processes\n"
@@ -233,13 +218,11 @@ msgstr " -c, --count               compte les processus correspondants\n"
 
 #: pgrep.c:146
 msgid " -f, --full                use full process name to match\n"
-msgstr ""
-" -f, --full                correspondance sur le nom complet du processus\n"
+msgstr " -f, --full                correspondance sur le nom complet du processus\n"
 
 #: pgrep.c:147
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
-msgstr ""
-" -g, --pgroup <PGID,…>     affiche les ID de groupe des processus listés\n"
+msgstr " -g, --pgroup <PGID,…>     affiche les ID de groupe des processus listés\n"
 
 #: pgrep.c:148
 msgid " -G, --group <GID,...>     match real group IDs\n"
@@ -258,16 +241,12 @@ msgid " -o, --oldest              select least recently started\n"
 msgstr " -o, --oldest              sélectionne le moins récemment démarré\n"
 
 #: pgrep.c:152
-#, fuzzy
 msgid " -O, --older <seconds>     select where older than seconds\n"
-msgstr " -d, --delay <secs>  délai de mise à jour en secondes\n"
+msgstr " -O, --older <secondes>    sélectionne ceux plus vieux que secondes\n"
 
 #: pgrep.c:153
-msgid ""
-" -P, --parent <PPID,...>   match only child processes of the given parent\n"
-msgstr ""
-" -P, --parent <PPID,…>     correspondance parmi les processus enfants du "
-"parent donné\n"
+msgid " -P, --parent <PPID,...>   match only child processes of the given parent\n"
+msgstr " -P, --parent <PPID,…>     correspondance parmi les processus enfants du parent donné\n"
 
 #: pgrep.c:154
 msgid " -s, --session <SID,...>   match session IDs\n"
@@ -287,8 +266,7 @@ msgstr " -U, --uid <ID,…>          correspondance sur le ID réel\n"
 
 #: pgrep.c:158
 msgid " -x, --exact               match exactly with the command name\n"
-msgstr ""
-" -x, --exact               correspondance exacte avec le nom de la commande\n"
+msgstr " -x, --exact               correspondance exacte avec le nom de la commande\n"
 
 #: pgrep.c:159
 msgid " -F, --pidfile <file>      read PIDs from file\n"
@@ -296,35 +274,29 @@ msgstr " -F, --pidfile <fichier>   lit les PID depuis le fichier\n"
 
 #: pgrep.c:160
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
-msgstr ""
-" -L, --logpidfile          échoue si le fichier PID n'est pas verrouillé\n"
+msgstr " -L, --logpidfile          échoue si le fichier PID n'est pas verrouillé\n"
 
 #: pgrep.c:161
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
-msgstr ""
-" -r, --runstates <état>    correspond aux états d'exécution [D,S,Z,…]\n"
+msgstr " -r, --runstates <état>    correspond aux états d'exécution [D,S,Z,…]\n"
 
 #: pgrep.c:162
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
 msgstr ""
-" --ns <PID>                fait correspondre les processus qui "
-"appartiennent\n"
+" --ns <PID>                fait correspondre les processus qui appartiennent\n"
 "                           au même espace de nom que <pid>\n"
 
 #: pgrep.c:164
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
-"                           Available namespaces: ipc, mnt, net, pid, user, "
-"uts\n"
+"                           Available namespaces: ipc, mnt, net, pid, user, uts\n"
 msgstr ""
-" --nslist <ns,…>           liste les espaces de noms qui seront acceptés "
-"par\n"
+" --nslist <ns,…>           liste les espaces de noms qui seront acceptés par\n"
 "                           l'option --ns.\n"
-"                           Espaces de noms disponibles: ipc, mnt, net, pid, "
-"user, uts\n"
+"                           Espaces de noms disponibles: ipc, mnt, net, pid, user, uts\n"
 
 #: pgrep.c:305
 #, c-format
@@ -353,8 +325,7 @@ msgstr "pas un nombre: %s"
 
 #: pgrep.c:567
 msgid "Error reading reference namespace information\n"
-msgstr ""
-"Erreur lors de la lecture des informations de l'espace de nom de référence\n"
+msgstr "Erreur lors de la lecture des informations de l'espace de nom de référence\n"
 
 #: pgrep.c:687 pidof.c:239 pidof.c:278 skill.c:515 sysctl.c:680
 msgid "internal error"
@@ -409,17 +380,16 @@ msgstr "le pid %ld n'a pu être tué"
 #: pgrep.c:1065
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
-msgstr ""
+msgstr "attente de %s (pid %lu)\n"
 
 #: pgrep.c:1070
-#, fuzzy, c-format
+#, c-format
 msgid "opening pid %ld failed"
-msgstr "le pid %ld n'a pu être tué"
+msgstr "l'ouverture du pid %ld a échoué"
 
 #: pgrep.c:1084
-#, fuzzy
 msgid "epoll_wait failed"
-msgstr "l'allocation de mémoire a échoué"
+msgstr "epoll_wait a échoué"
 
 #: pidof.c:69
 #, c-format
@@ -432,24 +402,19 @@ msgstr " -s, --single-shot         retourne un seul PID\n"
 
 #: pidof.c:72
 msgid " -c, --check-root          omit processes with different root\n"
-msgstr ""
-" -c, --check-root          omet les processus avec des racines différentes\n"
+msgstr " -c, --check-root          omet les processus avec des racines différentes\n"
 
 #: pidof.c:73
-#, fuzzy
 msgid " -q,                       quiet mode, only set the exit code\n"
-msgstr " -XX                         montre tout ce que le kernel fournis\n"
+msgstr " -q                        mode silencieux, retourne uniquement un code de sortie\n"
 
 #: pidof.c:74
-#, fuzzy
 msgid " -w, --with-workers        show kernel workers too\n"
-msgstr " -s, --short         format court\n"
+msgstr " -w, --with-workers        montre aussi les « workers » du noyau\n"
 
 #: pidof.c:75
 msgid " -x                        also find shells running the named scripts\n"
-msgstr ""
-" -x                        trouve aussi les shells exécutant les scripts "
-"nommés\n"
+msgstr " -x                        trouve aussi les shells exécutant les scripts nommés\n"
 
 #: pidof.c:76
 msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
@@ -543,8 +508,7 @@ msgstr " -N, --create-rc-to=<fichier> crée un nouveau rc dans le fichier\n"
 
 #: pmap.c:120
 msgid "            NOTE: pid arguments are not allowed with -n, -N\n"
-msgstr ""
-"            NOTE: un pid n'est pas accepté comme argument avec -n, -N\n"
+msgstr "            NOTE: un pid n'est pas accepté comme argument avec -n, -N\n"
 
 #: pmap.c:121
 msgid " -d, --device                show the device format\n"
@@ -552,8 +516,7 @@ msgstr " -d, --device                montre le format du périphérique\n"
 
 #: pmap.c:122
 msgid " -q, --quiet                 do not display header and footer\n"
-msgstr ""
-" -q, --quiet                 n'affiche pas l'en-tête ni le pied de page\n"
+msgstr " -q, --quiet                 n'affiche pas l'en-tête ni le pied de page\n"
 
 #: pmap.c:123
 msgid " -p, --show-path             show path in the mapping\n"
@@ -561,8 +524,7 @@ msgstr " -p, --show-path             montre le chemin dans la carte\n"
 
 #: pmap.c:124
 msgid " -A, --range=<low>[,<high>]  limit results to the given range\n"
-msgstr ""
-" -A, --range=<min>[,<max>]   limite les résultats à l'intervalle donné\n"
+msgstr " -A, --range=<min>[,<max>]   limite les résultats à l'intervalle donné\n"
 
 #: pmap.c:202
 msgid "shared memory detach"
@@ -849,8 +811,7 @@ msgstr " -a                   tous avec un tty sauf les têtes de sessions\n"
 
 #: ps/help.c:102
 msgid "  a                   all with tty, including other users\n"
-msgstr ""
-"  a                   tous avec un tty y compris les autres utilisateurs\n"
+msgstr "  a                   tous avec un tty y compris les autres utilisateurs\n"
 
 #: ps/help.c:103
 msgid " -d                   all except session leaders\n"
@@ -951,8 +912,7 @@ msgstr " -F                   vraiment complet\n"
 
 #: ps/help.c:130
 msgid " -f                   full-format, including command lines\n"
-msgstr ""
-" -f                   format complet y compris les lignes de commande\n"
+msgstr " -f                   format complet y compris les lignes de commande\n"
 
 #: ps/help.c:131
 msgid "  f, --forest         ascii art process tree\n"
@@ -1015,11 +975,8 @@ msgid "  X                   register format\n"
 msgstr "  X                   format de registre\n"
 
 #: ps/help.c:146
-msgid ""
-" -y                   do not show flags, show rss vs. addr (used with -l)\n"
-msgstr ""
-" -y                   ne montre pas les fanions, montre rss/adr (utilisé "
-"avec -l)\n"
+msgid " -y                   do not show flags, show rss vs. addr (used with -l)\n"
+msgstr " -y                   ne montre pas les fanions, montre rss/adr (utilisé avec -l)\n"
 
 #: ps/help.c:147
 msgid "     --context        display security context (for SELinux)\n"
@@ -1083,8 +1040,7 @@ msgstr ""
 
 #: ps/help.c:164
 msgid " -c                   show scheduling class with -l option\n"
-msgstr ""
-" -c                   montre la classe d'ordonnancement avec l'option -l\n"
+msgstr " -c                   montre la classe d'ordonnancement avec l'option -l\n"
 
 #: ps/help.c:165
 msgid "  c                   show true command name\n"
@@ -1095,10 +1051,8 @@ msgid "  e                   show the environment after command\n"
 msgstr "  e                   montre l'environnement après la commande\n"
 
 #: ps/help.c:167
-msgid ""
-"  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
-msgstr ""
-"  k,    --sort        indique l'ordre de tri: [+|-]clé[,[+|-]clé[,…]]\n"
+msgid "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
+msgstr "  k,    --sort        indique l'ordre de tri: [+|-]clé[,[+|-]clé[,…]]\n"
 
 #: ps/help.c:168
 msgid "  L                   show format specifiers\n"
@@ -1110,15 +1064,11 @@ msgstr "  n                   affiche les uid et wchan sous forme numérique\n"
 
 #: ps/help.c:170
 msgid "  S,    --cumulative  include some dead child process data\n"
-msgstr ""
-"  S,    --cumulative  inclus quelques données sur les processus enfants "
-"terminés\n"
+msgstr "  S,    --cumulative  inclus quelques données sur les processus enfants terminés\n"
 
 #: ps/help.c:171
 msgid " -y                   do not show flags, show rss (only with -l)\n"
-msgstr ""
-" -y                   ne montre pas les fanions, montre rss (uniquement avec "
-"-l)\n"
+msgstr " -y                   ne montre pas les fanions, montre rss (uniquement avec -l)\n"
 
 #: ps/help.c:172
 msgid " -V, V, --version     display version information and exit\n"
@@ -1249,14 +1199,11 @@ msgstr "la liste des utilisateurs réels doit suivre -U"
 
 #: ps/parser.c:368
 msgid "list of session leaders OR effective group names must follow -g"
-msgstr ""
-"la liste des têtes de sessions OU des noms de groupes effectifs doit suivre -"
-"g"
+msgstr "la liste des têtes de sessions OU des noms de groupes effectifs doit suivre -g"
 
 #: ps/parser.c:379
 msgid "list of session leaders OR effective group IDs was invalid"
-msgstr ""
-"la liste des têtes de sessions OU des ID de groupes effectifs était invalide"
+msgstr "la liste des têtes de sessions OU des ID de groupes effectifs était invalide"
 
 #: ps/parser.c:403
 msgid "format specification must follow -o"
@@ -1288,8 +1235,7 @@ msgstr "la personnalité doit être définie pour avoir l'option -x"
 
 #: ps/parser.c:485
 msgid "list of zones (contexts, labels, whatever?) must follow -z"
-msgstr ""
-"la liste des zones (contextes, étiquettes, quoi d'autre ?) doit suivre -z"
+msgstr "la liste des zones (contextes, étiquettes, quoi d'autre ?) doit suivre -z"
 
 #: ps/parser.c:492
 msgid "embedded '-' among SysV options makes no sense"
@@ -1445,20 +1391,15 @@ msgstr "l'affichage par threads est en conflit avec l'affichage de type forêt"
 
 #: ps/parser.c:1162
 msgid "thread flags conflict; can't use H with m or -m"
-msgstr ""
-"conflit dans les fanions de threads: H ne peut être utilisé avec m ou -m"
+msgstr "conflit dans les fanions de threads: H ne peut être utilisé avec m ou -m"
 
 #: ps/parser.c:1164
 msgid "thread flags conflict; can't use both m and -m"
-msgstr ""
-"conflit dans les fanions de threads: m et -m ne peuvent être utilisés "
-"ensemble"
+msgstr "conflit dans les fanions de threads: m et -m ne peuvent être utilisés ensemble"
 
 #: ps/parser.c:1166
 msgid "thread flags conflict; can't use both -L and -T"
-msgstr ""
-"conflit dans les fanions de threads: -L et -T ne peuvent être utilisés "
-"ensemble"
+msgstr "conflit dans les fanions de threads: -L et -T ne peuvent être utilisés ensemble"
 
 #: ps/parser.c:1239 ps/parser.c:1240
 #, c-format
@@ -1504,9 +1445,7 @@ msgstr "les largeurs de colonnes doivent être des nombres décimaux non signés
 
 #: ps/sortformat.c:317
 msgid "can not set width for a macro (multi-column) format specifier"
-msgstr ""
-"la largeur ne peut pas être définie pour une macro (multi colonne) de "
-"spécificateur de format"
+msgstr "la largeur ne peut pas être définie pour une macro (multi colonne) de spécificateur de format"
 
 #: ps/sortformat.c:371 ps/sortformat.c:387
 msgid "improper sort list"
@@ -1554,11 +1493,8 @@ msgid "tell <procps@freelists.org> what you expected"
 msgstr "dites à <procps@freelists.org> ce que vous attendiez"
 
 #: ps/sortformat.c:809
-msgid ""
-"tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
-msgstr ""
-"dites à <procps@freelists.org> ce que vous voulez (-L/-T, -m/m/H et "
-"$PS_FORMAT)"
+msgid "tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
+msgstr "dites à <procps@freelists.org> ce que vous voulez (-L/-T, -m/m/H et $PS_FORMAT)"
 
 #: ps/sortformat.c:826
 #, c-format
@@ -1571,9 +1507,7 @@ msgstr "options de format en conflit"
 
 #: ps/sortformat.c:832
 msgid "can not use output modifiers with user-defined output"
-msgstr ""
-"un modificateur de sortie ne peut pas être utilisé avec une sortie définie "
-"par l'utilisateur"
+msgstr "un modificateur de sortie ne peut pas être utilisé avec une sortie définie par l'utilisateur"
 
 #: ps/sortformat.c:833
 msgid "-L/-T with H/m/-m and -o/-O/o/O is nonsense"
@@ -1637,19 +1571,15 @@ msgstr ""
 
 #: skill.c:345
 msgid " -q, --queue <value>    integer value to be sent with the signal\n"
-msgstr ""
+msgstr " -q, --queue <valeur>   valeur entière à envoyer avec le signal\n"
 
 #: skill.c:346
-msgid ""
-" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
-msgstr ""
-" -l, --list=[<signal>]  liste tous les noms de signaux ou en converti un en "
-"son nom\n"
+msgid " -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
+msgstr " -l, --list=[<signal>]  liste tous les noms de signaux ou en converti un en son nom\n"
 
 #: skill.c:347
 msgid " -L, --table            list all signal names in a nice table\n"
-msgstr ""
-" -L, --table            liste tous les noms de signaux dans une belle table\n"
+msgstr " -L, --table            liste tous les noms de signaux dans une belle table\n"
 
 #: skill.c:362
 #, c-format
@@ -1675,16 +1605,11 @@ msgstr " -l, --list         liste tous les noms de signaux\n"
 
 #: skill.c:373
 msgid " -L, --table        list all signal names in a nice table\n"
-msgstr ""
-" -L, --table        liste tous les noms de signaux dans une belle table\n"
+msgstr " -L, --table        liste tous les noms de signaux dans une belle table\n"
 
 #: skill.c:374
-msgid ""
-" -n, --no-action    do not actually kill processes; just print what would "
-"happen\n"
-msgstr ""
-" -n, --no-action    ne tue pas réellement le processus. Affiche simplement "
-"ce qui va se passer\n"
+msgid " -n, --no-action    do not actually kill processes; just print what would happen\n"
+msgstr " -n, --no-action    ne tue pas réellement le processus. Affiche simplement ce qui va se passer\n"
 
 #: skill.c:375
 msgid " -v, --verbose      explain what is being done\n"
@@ -1700,8 +1625,7 @@ msgid ""
 "The options below may be used to ensure correct interpretation.\n"
 msgstr ""
 "L'expression peut être: terminal, user, pid, command.\n"
-"Les options ci-dessous peuvent être utilisées pour assurer une "
-"interprétation correcte.\n"
+"Les options ci-dessous peuvent être utilisées pour assurer une interprétation correcte.\n"
 
 #: skill.c:380
 msgid " -c, --command <command>  expression is a command name\n"
@@ -1709,9 +1633,7 @@ msgstr " -c, --command <commande> l'expression est un nom de commande\n"
 
 #: skill.c:381
 msgid " -p, --pid <pid>          expression is a process id number\n"
-msgstr ""
-" -p, --pid <pid>          l'expression est un numéro d'identification de "
-"processus\n"
+msgstr " -p, --pid <pid>          l'expression est un numéro d'identification de processus\n"
 
 #: skill.c:382
 msgid " -t, --tty <tty>          expression is a terminal\n"
@@ -1740,8 +1662,7 @@ msgid ""
 ":                          ipc, mnt, net, pid, user, uts\n"
 msgstr ""
 " --nslist <en,…>          liste quels espaces de noms vont être pris en\n"
-"                          considération par l'option --ns. Les espaces de "
-"noms\n"
+"                          considération par l'option --ns. Les espaces de noms\n"
 "                          disponibles sont: ipc, mnt, net, pid, user, uts\n"
 
 #: skill.c:398
@@ -1754,10 +1675,8 @@ msgid ""
 msgstr ""
 "\n"
 "Le signal par défaut est TERM. Utilisez -l ou -L pour afficher les signaux\n"
-"disponibles. Les signaux particulièrement utiles comprennent HUP, INT, "
-"KILL,\n"
-"STOP, CONT et 0. Les signaux peuvent aussi être spécifiés de trois "
-"manières:\n"
+"disponibles. Les signaux particulièrement utiles comprennent HUP, INT, KILL,\n"
+"STOP, CONT et 0. Les signaux peuvent aussi être spécifiés de trois manières:\n"
 "-SIGKILL -KILL -9\n"
 
 #: skill.c:405
@@ -1770,8 +1689,7 @@ msgid ""
 msgstr ""
 "\n"
 "La priorité par défaut est +4. (snice +4 …)\n"
-"La priorité prend une valeur entre +20 (le plus bas) à -20 (le plus "
-"rapide).\n"
+"La priorité prend une valeur entre +20 (le plus bas) à -20 (le plus rapide).\n"
 "Les priorités négatives sont accessibles aux seuls administrateurs.\n"
 
 #: skill.c:481
@@ -1781,7 +1699,7 @@ msgstr "nom de signal %s inconnu"
 
 #: skill.c:500
 msgid "must be an integer value to be passed with the signal."
-msgstr ""
+msgstr "doit être une valeur entière passée avec le signal."
 
 #: skill.c:505
 #, c-format
@@ -1805,8 +1723,7 @@ msgstr "numéro de pid %s invalide"
 
 #: skill.c:679
 msgid "error reading reference namespace information"
-msgstr ""
-"erreur lors de la lecture de l'information de l'espace de nom de référence"
+msgstr "erreur lors de la lecture de l'information de l'espace de nom de référence"
 
 #: skill.c:687
 msgid "invalid namespace list"
@@ -1843,9 +1760,7 @@ msgstr " -o, --once          n'affiche qu'une seule fois puis arrête\n"
 
 #: slabtop.c:197
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
-msgstr ""
-" -s, --sort <car>    spécifie le critère de tri par caractère (voir plus "
-"bas)\n"
+msgstr " -s, --sort <car>    spécifie le critère de tri par caractère (voir plus bas)\n"
 
 #: slabtop.c:202
 msgid ""
@@ -1975,13 +1890,11 @@ msgstr "  -e, --ignore         ignore les erreurs des variables inconnues\n"
 
 #: sysctl.c:120
 msgid "  -N, --names          print variable names without values\n"
-msgstr ""
-"  -N, --names          affiche les noms des variables sans les valeurs\n"
+msgstr "  -N, --names          affiche les noms des variables sans les valeurs\n"
 
 #: sysctl.c:121
 msgid "  -n, --values         print only values of the given variable(s)\n"
-msgstr ""
-"  -n, --values         affiche uniquement les valeurs de la variable donnée\n"
+msgstr "  -n, --values         affiche uniquement les valeurs de la variable donnée\n"
 
 #: sysctl.c:122
 msgid "  -p, --load[=<file>]  read values from file\n"
@@ -1995,8 +1908,7 @@ msgstr "  -f                   synonyme de -p\n"
 
 #: sysctl.c:124
 msgid "      --system         read values from all system directories\n"
-msgstr ""
-"      --system         lis les valeurs depuis tous les répertoires systèmes\n"
+msgstr "      --system         lis les valeurs depuis tous les répertoires systèmes\n"
 
 #: sysctl.c:125
 msgid ""
@@ -2004,8 +1916,7 @@ msgid ""
 "                       select setting that match expression\n"
 msgstr ""
 "  -r, --pattern <expression>\n"
-"                       sélectionne les paramètres qui correspondent à "
-"l'expression\n"
+"                       sélectionne les paramètres qui correspondent à l'expression\n"
 
 #: sysctl.c:127
 msgid "  -q, --quiet          do not echo variable set\n"
@@ -2013,8 +1924,7 @@ msgstr "  -q, --quiet          ne répète pas la variable changée\n"
 
 #: sysctl.c:128
 msgid "  -w, --write          enable writing a value to variable\n"
-msgstr ""
-"  -w, --write          active l'écriture d'une valeur dans la variable\n"
+msgstr "  -w, --write          active l'écriture d'une valeur dans la variable\n"
 
 #: sysctl.c:129
 msgid "  -o                   does nothing\n"
@@ -2094,12 +2004,8 @@ msgstr "change la clé « %s »%s"
 
 #: sysctl.c:537
 #, c-format
-msgid ""
-"GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
-"expanded."
-msgstr ""
-"GLOB_TILDE n'est pas supporté sur votre plate-forme. Le tilde dans « %s » ne "
-"sera pas remplacé."
+msgid "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be expanded."
+msgstr "GLOB_TILDE n'est pas supporté sur votre plate-forme. Le tilde dans « %s » ne sera pas remplacé."
 
 #: sysctl.c:543
 msgid "glob failed"
@@ -2835,10 +2741,8 @@ msgstr "Off"
 #. Translation Hint: Only the following words should be translated
 #. .                 secs (seconds), max (maximum), user, field, cols (columns)
 #: top/top_nls.c:353
-#, fuzzy
-msgid ""
-" -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
-msgstr " -hv | -bcEHiOSs1  -d sec -n max -u|U util -p pid(s) -o champ -w [col]"
+msgid " -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
+msgstr " -hv | -bcEeHiOSs1 -d sec -n max -u|U util -p pid(s) -o champ -w [col]"
 
 #: top/top_nls.c:354
 msgid "failed /proc/stat read"
@@ -3068,16 +2972,16 @@ msgstr "Tâches"
 #. .                 cpu or all of the processors in a multi-processor computer
 #. .                 (should be exactly 6 characters, excluding leading % & colon)
 #: top/top_nls.c:417
-#, fuzzy, c-format
+#, c-format
 msgid "%Cpu(s):"
-msgstr "Cpu(s):"
+msgstr "%Cpu(s):"
 
 #. Translation Hint: The following "word" is meant to represent a single processor
 #. .                 (should be exactly 3 characters, excluding leading %%, fmt chars & colon)
 #: top/top_nls.c:420
-#, fuzzy, c-format
+#, c-format
 msgid "%%Cpu%-3d:"
-msgstr "Cpu%-3d:"
+msgstr "%%Cpu%-3d:"
 
 #. Translation Hint: The following word "another" must have 1 trailing space
 #: top/top_nls.c:422
@@ -3104,9 +3008,7 @@ msgstr "largeur incr est %d, change à (0 défaut, -1 auto)"
 
 #: top/top_nls.c:427
 msgid "rcfile has inspect/other-filter error(s), save anyway?"
-msgstr ""
-"rcfile a une ou des erreur(s) d'entrée « inspect » ou d'autre filtre, écrire "
-"quand-même ?"
+msgstr "rcfile a une ou des erreur(s) d'entrée « inspect » ou d'autre filtre, écrire quand-même ?"
 
 #: top/top_nls.c:428
 #, c-format
@@ -3115,9 +3017,7 @@ msgstr "nom de champ « %s » non reconnu"
 
 #: top/top_nls.c:429
 msgid "even using field names only, window is now too small"
-msgstr ""
-"même en n'utilisant que les noms de champs, la fenêtre est maintenant trop "
-"petite"
+msgstr "même en n'utilisant que les noms de champs, la fenêtre est maintenant trop petite"
 
 #: top/top_nls.c:431
 msgid "Open Files"
@@ -3132,12 +3032,8 @@ msgid "Log"
 msgstr "Journal"
 
 #: top/top_nls.c:434
-msgid ""
-"the '=' key will eventually show the actual file read or command(s) "
-"executed ..."
-msgstr ""
-"la touche « = » montera le fichier réellement lu ou la/les commande(s) "
-"exécutée(s)…"
+msgid "the '=' key will eventually show the actual file read or command(s) executed ..."
+msgstr "la touche « = » montera le fichier réellement lu ou la/les commande(s) exécutée(s)…"
 
 #: top/top_nls.c:435
 msgid "demo"
@@ -3146,45 +3042,31 @@ msgstr "démo"
 #: top/top_nls.c:436
 #, c-format
 msgid ""
-"This is simulated output representing the contents of some file or the "
-"output\n"
-"from some command.  Exactly which commands and/or files are solely up to "
-"you.\n"
+"This is simulated output representing the contents of some file or the output\n"
+"from some command.  Exactly which commands and/or files are solely up to you.\n"
 "\n"
-"Although this text is for information purposes only, it can still be "
-"scrolled\n"
-"and searched like real output will be.  You are encouraged to experiment "
-"with\n"
+"Although this text is for information purposes only, it can still be scrolled\n"
+"and searched like real output will be.  You are encouraged to experiment with\n"
 "those features as explained in the prologue above.\n"
 "\n"
-"To enable real Inspect functionality, entries must be added to the end of "
-"the\n"
-"top personal personal configuration file.  You could use your favorite "
-"editor\n"
+"To enable real Inspect functionality, entries must be added to the end of the\n"
+"top personal personal configuration file.  You could use your favorite editor\n"
 "to accomplish this, taking care not to disturb existing entries.\n"
 "\n"
-"Another way to add entries is illustrated below, but it risks overwriting "
-"the\n"
-"rcfile.  Redirected echoes must not replace (>) but append (>>) to that "
-"file.\n"
+"Another way to add entries is illustrated below, but it risks overwriting the\n"
+"rcfile.  Redirected echoes must not replace (>) but append (>>) to that file.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
-"toprc\n"
+"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
 "\n"
-"If you don't know the location or name of the top rcfile, use the 'W' "
-"command\n"
-"and note those details.  After backing up the current rcfile, try issuing "
-"the\n"
-"above echoes exactly as shown, replacing '.toprc' as appropriate.  The "
-"safest\n"
+"If you don't know the location or name of the top rcfile, use the 'W' command\n"
+"and note those details.  After backing up the current rcfile, try issuing the\n"
+"above echoes exactly as shown, replacing '.toprc' as appropriate.  The safest\n"
 "approach would be to use copy then paste to avoid any typing mistakes.\n"
 "\n"
-"Finally, restart top to reveal what actual Inspect entries combined with "
-"this\n"
-"new command can offer.  The possibilities are endless, especially "
-"considering\n"
+"Finally, restart top to reveal what actual Inspect entries combined with this\n"
+"new command can offer.  The possibilities are endless, especially considering\n"
 "that 'pipe' type entries can include shell scripts too!\n"
 "\n"
 "For additional important information, please consult the top documentation.\n"
@@ -3192,16 +3074,14 @@ msgid ""
 "\n"
 "Enjoy!\n"
 msgstr ""
-"Ceci est une sortie simulée représentant le contenu d'un fichier ou la "
-"sortie\n"
+"Ceci est une sortie simulée représentant le contenu d'un fichier ou la sortie\n"
 "d'une commande. Quelle commande ou quel fichier dépend uniquement de vous.\n"
 "\n"
 "Bien que ce texte soit purement informatif, vous pouvez le faire défiler ou\n"
 "lancer une recherche comme une sortie réelle. Vous êtes encouragé à\n"
 "expérimenter ces fonctionnalités comme expliqué dans le prologue ci-dessus.\n"
 "\n"
-"Pour activer les fonctionnalités réelles d'Inspect, des entrées doivent "
-"être\n"
+"Pour activer les fonctionnalités réelles d'Inspect, des entrées doivent être\n"
 "ajoutées à la fin du fichier personnel de configuration de top. Vous pouvez\n"
 "utiliser votre éditeur de texte pour accomplir ceci en prenant soin de ne\n"
 "pas démettre les entrées existantes.\n"
@@ -3213,8 +3093,7 @@ msgstr ""
 "\n"
 "  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
-"toprc\n"
+"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
 "\n"
 "Si vous ignorez l'emplacement ou le nom du fichier rcfiled de top, utilisez\n"
 "la commande « W » et notez ces détails. Après avoir fait une copie de\n"
@@ -3223,10 +3102,8 @@ msgstr ""
 "La manière la plus sûre est d'utiliser un copier/coller pour éviter les\n"
 "fautes de frappe.\n"
 "\n"
-"Finalement, redémarrez top pour révéler ce que les entrées Inspect "
-"combinées\n"
-"avec cette nouvelle commande peuvent offrir. Les possibilités sont "
-"illimitées,\n"
+"Finalement, redémarrez top pour révéler ce que les entrées Inspect combinées\n"
+"avec cette nouvelle commande peuvent offrir. Les possibilités sont illimitées,\n"
 "surtout en considérant que les entrées de type « pipe » peuvent inclure des\n"
 "scripts shell aussi !\n"
 "\n"
@@ -3238,8 +3115,7 @@ msgstr ""
 
 #: top/top_nls.c:468
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
-msgstr ""
-"pour activer « Y », appuyez sur <Entrée> puis tapez « W » et redémarrez top"
+msgstr "pour activer « Y », appuyez sur <Entrée> puis tapez « W » et redémarrez top"
 
 #: top/top_nls.c:470
 msgid "to enable 'Y' please consult the top man page (press Enter)"
@@ -3322,9 +3198,9 @@ msgstr "aucun"
 #. Translation Hint: The following word 'Node' should be exactly
 #. 4 characters, excluding leading %%, fmt chars & colon)
 #: top/top_nls.c:492
-#, fuzzy, c-format
+#, c-format
 msgid "%%Node%-2d:"
-msgstr "Nœud%-2d:"
+msgstr "%%Nœud%-2d:"
 
 #: top/top_nls.c:493
 #, c-format
@@ -3363,15 +3239,15 @@ msgstr "PID à replier ou étendre [pid par défaut = %d]"
 
 #: top/top_nls.c:504
 msgid "terminal is not wide enough"
-msgstr ""
+msgstr "le terminal n'est pas assez large"
 
 #: top/top_nls.c:505
 msgid "wrong mode, command inactive"
-msgstr ""
+msgstr "mode incorrect, commande inactive"
 
 #: top/top_nls.c:506
 msgid "saving prevents older top from reading, save anyway?"
-msgstr ""
+msgstr "l'enregistrement empêche un ancien top de le lire, enregistrer malgré tout ?"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3409,84 +3285,52 @@ msgstr ""
 #. .    wraps that could place them there.
 #. .
 #: top/top_nls.c:551
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
-"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
-"~1Secure mode ~3%s~2.\n"
+"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; ~1Secure mode ~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' "
-"summary/task memory scale\n"
-"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; "
-"'~1I~2' Irix mode\n"
-"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; "
-"'~14~2' cpus two abreast\n"
-"  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase "
-"fixed-width\n"
+"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' summary/task memory scale\n"
+"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; '~1I~2' Irix mode\n"
+"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; '~14~2' cpus two abreast\n"
+"  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase fixed-width\n"
 "\n"
-"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: "
-"'~1<~2'/'~1>~2' left/right\n"
-"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; "
-"'~1C~2' Coordinates\n"
-"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; "
-"'~1j~2' Str justify\n"
-"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running "
-"tasks\n"
-"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if "
-"'x' or 'y')\n"
-"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' "
-"other criteria\n"
-"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' "
-"other filter(s)\n"
-"  V,v     . Toggle: '~1V~2' forest view; '~1v~2' hide/show forest view "
-"children\n"
+"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n"
+"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; '~1C~2' Coordinates\n"
+"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; '~1j~2' Str justify\n"
+"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
+"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
+"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' other criteria\n"
+"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' other filter(s)\n"
+"  V,v     . Toggle: '~1V~2' forest view; '~1v~2' hide/show forest view children\n"
 "\n"
-"%s  W,Y,!     Write config file '~1W~2'; Inspect other output '~1Y~2'; "
-"Combine Cpus '~1!~2'\n"
+"%s  W,Y,!     Write config file '~1W~2'; Inspect other output '~1Y~2'; Combine Cpus '~1!~2'\n"
 "  q         Quit\n"
-"          ( commands shown with '.' require a ~1visible~2 task display "
-"~1window~2 ) \n"
+"          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
 "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
 "Aide pour les commandes interactives~2 - %s\n"
-"Fenêtre ~1%s~6: ~1Mode cumulatif ~3%s~2.  ~1Système~6: ~1Délai ~3%.1lf "
-"secs~2; ~1Mode sûr ~3%s~2.\n"
+"Fenêtre ~1%s~6: ~1Mode cumulatif ~3%s~2.  ~1Système~6: ~1Délai ~3%.1lf secs~2; ~1Mode sûr ~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   Global: «~1Z~2» couleurs; «~1B~2» gras; «~1E~2»/«~1e~2» "
-"résumé/échelle mem tâches\n"
-"  l,t,m     Commuter résumé: «~1l~2» charge moy; «~1t~2» stats tâche/cpu; "
-"«~1m~2» info mem\n"
-"  0,1,2,3,I Commuter: «~10~2» zéros; «~11~2/~12~2/~13~2» vues nœuds cpus ou "
-"numa; «~1I~2» Mode Irix\n"
-"  f,F,X     Champs: «~1f~2»/«~1F~2» ajouter/supprimer/ordre/tri; «~1X~2» "
-"augmenter largeur fixe\n"
+"  Z~5,~1B~5,E,e   Global: «~1Z~2» couleurs; «~1B~2» gras; «~1E~2»/«~1e~2» résumé/échelle mem tâches\n"
+"  l,t,m,I   Commuter: «~1l~2» charge moy; «~1t~2» stats tâche/cpu; «~1m~2» info mem; «~1I~2» Mode Irix\n"
+"  0,1,2,3,4 Commuter: «~10~2» zéros; «~11~2/~12~2/~13~2» vues nœuds cpus ou numa; «~14~2» cpus par deux\n"
+"  f,F,X     Champs: «~1f~2»/«~1F~2» ajouter/supprimer/ordre/tri; «~1X~2» augmenter largeur fixe\n"
 "\n"
-"  L,&,<,> . Identifier: «~1L~2»/«~1&~2» chercher/encore; Déplacer colonne "
-"tri: «~1<~2»/«~1>~2» gauche/droite\n"
-"  R,H,J,C . Commuter: «~1R~2» Tri; «~1H~2» Threads; «~1J~2» Justifier "
-"nombre, «~1C~2» Coordonnées\n"
-"  c,i,S,j . Commuter: «~1c~2» Nom/ligne com; «~1i~2» Repos; «~1S~2» Temps; "
-"«~1j~2» Justifier chaîne\n"
-"  x~5,~1y~5     . Commuter mise en évidence: «~1x~2» champ de tri; «~1y~2» "
-"tâches en cours\n"
-"  z~5,~1b~5     . Commuter: «~1z~2» couleur/mono; «~1b~2» gras/inverse "
-"(uniquement avec « x » ou « y »)\n"
-"  u,U,o,O . Filtrer par: «~1u~2»/«~1U~2» utilisateur eff/tous; "
-"«~1o~2»/«~1O~2» autre critère\n"
-"  n,#,^O  . Changer: «~1n~2»/«~1#~2» tâches max affichées; Montrer: "
-"~1Ctrl~2+«~1O~2» autre(s) filtre(s)\n"
-"  C,...   . Commuter msg coord défil pour: ~1haut~2,~1bas~2,~1gauche~2,"
-"~1droite~2,~1début~2,~1fin~2\n"
-"  V,v     . Communter: '~1V~2' vue forêt; '~1v~2' montrer/cacher les enfants "
-"dans la vue forêt\n"
+"  L,&,<,> . Identifier: «~1L~2»/«~1&~2» chercher/encore; Déplacer colonne tri: «~1<~2»/«~1>~2» gauche/droite\n"
+"  R,H,J,C . Commuter: «~1R~2» Tri; «~1H~2» Threads; «~1J~2» Justifier nombre, «~1C~2» Coordonnées\n"
+"  c,i,S,j . Commuter: «~1c~2» Nom/ligne com; «~1i~2» Repos; «~1S~2» Temps; «~1j~2» Justifier chaîne\n"
+"  x~5,~1y~5     . Commuter mise en évidence: «~1x~2» champ de tri; «~1y~2» tâches en cours\n"
+"  z~5,~1b~5     . Commuter: «~1z~2» couleur/mono; «~1b~2» gras/inverse (uniquement avec « x » ou « y »)\n"
+"  u,U,o,O . Filtrer par: «~1u~2»/«~1U~2» utilisateur eff/tous; «~1o~2»/«~1O~2» autre critère\n"
+"  n,#,^O  . Changer: «~1n~2»/«~1#~2» tâches max affichées; Montrer: ~1Ctrl~2+«~1O~2» autre(s) filtre(s)\n"
+"  V,v     . Commuter: '~1V~2' vue forêt; '~1v~2' montrer/cacher les enfants dans la vue forêt\n"
 "\n"
-"%s  W,Y       Écrire le fichier de config «~1W~2»; Inspecter autre sortie "
-"«~1Y~2»\n"
+"%s  W,Y,!     Écrire le fichier de config «~1W~2»; Inspecter autre sortie «~1Y~2»; Combiner Cpus «~1!~2»\n"
 "  q         Quitter\n"
-"         ( commandes montrée avec « . » exigent une ~1fenêtre~2 ~1visible~2 "
-"d'affichage des tâches ) \n"
-"Appuyez sur «~1h̃2» ou «~1?~2» pour l'aide sur les ~1Fenêtres~2,\n"
+"         ( commandes montrée avec « . » exigent une ~1fenêtre~2 ~1visible~2 d'affichage des tâches ) \n"
+"Appuyez sur «~1h̃~2» ou «~1?~2» pour l'aide sur les ~1Fenêtres~2,\n"
 "Appuyez sur « q » ou « ESC » pour continuer "
 
 #: top/top_nls.c:576
@@ -3494,91 +3338,54 @@ msgstr ""
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
-". Use multiple ~1windows~2, each with separate config opts (color,fields,"
-"sort,etc)\n"
-". The 'current' window controls the ~1Summary Area~2 and responds to your "
-"~1Commands~2\n"
-"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/"
-"shrinking others\n"
-"  . with ~1NO~2 task display, some commands will be ~1disabled~2 "
-"('i','R','n','c', etc)\n"
-"    until a ~1different window~2 has been activated, making it the 'current' "
-"window\n"
-". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;"
-"~1 2~2) choosing\n"
-"  a specific field group; or~1 3~2) exiting the color mapping or fields "
-"screens\n"
+". Use multiple ~1windows~2, each with separate config opts (color,fields,sort,etc)\n"
+". The 'current' window controls the ~1Summary Area~2 and responds to your ~1Commands~2\n"
+"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/shrinking others\n"
+"  . with ~1NO~2 task display, some commands will be ~1disabled~2 ('i','R','n','c', etc)\n"
+"    until a ~1different window~2 has been activated, making it the 'current' window\n"
+". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;~1 2~2) choosing\n"
+"  a specific field group; or~1 3~2) exiting the color mapping or fields screens\n"
 ". Commands ~1available anytime   -------------~2\n"
-"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 "
-"windows\n"
-"    g       . Choose another field group and make it 'current', or change "
-"now\n"
-"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; "
-"or~1 4~2 =%s\n"
+"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 windows\n"
+"    g       . Choose another field group and make it 'current', or change now\n"
+"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; or~1 4~2 =%s\n"
 ". Commands ~1requiring~2 '~1A~2' mode~1  -------------~2\n"
 "    G       . Change the ~1Name~5 of the 'current' window/field group\n"
-" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' "
-"Backward\n"
-" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all "
-"~1Visible~2/~1Invisible~2\n"
-"  The screen will be divided evenly between task displays.  But you can "
-"make\n"
-"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then "
-"later you could:\n"
-" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' "
-"~1Every~2 window\n"
-"              (this also forces the ~1current~2 or ~1every~2 window to "
-"become visible)\n"
+" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' Backward\n"
+" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all ~1Visible~2/~1Invisible~2\n"
+"  The screen will be divided evenly between task displays.  But you can make\n"
+"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then later you could:\n"
+" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' ~1Every~2 window\n"
+"              (this also forces the ~1current~2 or ~1every~2 window to become visible)\n"
 "\n"
-"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try "
-"the '~1a~2' and '~1w~2'\n"
+"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try the '~1a~2' and '~1w~2'\n"
 "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' "
 msgstr ""
-"Aide pour les fenêtres / Groupes de champs~2 – « Fenêtre courante » = ~1 %s "
-"~6\n"
+"Aide pour les fenêtres / Groupes de champs~2 – « Fenêtre courante » = ~1 %s ~6\n"
 "\n"
-". Utiliser plusieurs ~1fenêtres~2, chacune avec des options de configuration "
-"(couleur,champs,tri,etc)\n"
-". La fenêtre « courante » contrôle la ~1zone de résumé~2 et répond à vos "
-"~1Commandes~2\n"
-"  . l'~1affichage de tâches~2 de cette fenêtre peut être ~1éteint~2 ou "
-"~1allumé~2, agrandir/réduire les autres\n"
-"  . ~1SANS~2 affichage de tâches, certaines commandes seront ~1désactivées~2 "
-"(«i»,«R»,«n»,«c», etc)\n"
-"    jusqu'à ce qu'une ~1fenêtre différente~2 soit activée et devienne la "
-"fenêtre « courante »\n"
-". Vous ~1changez~2 la fenêtre « courante » en: ~1 1~2) rotation avant/"
-"arrière;~1 2~2) choisissant\n"
-"  un group de champ spécifique; ou~1 3~2) sortant des écrans de "
-"correspondance des couleurs ou des champs\n"
+". Utiliser plusieurs ~1fenêtres~2, chacune avec des options de configuration (couleur,champs,tri,etc)\n"
+". La fenêtre « courante » contrôle la ~1zone de résumé~2 et répond à vos ~1Commandes~2\n"
+"  . l'~1affichage de tâches~2 de cette fenêtre peut être ~1éteint~2 ou ~1allumé~2, agrandir/réduire les autres\n"
+"  . ~1SANS~2 affichage de tâches, certaines commandes seront ~1désactivées~2 («i»,«R»,«n»,«c», etc)\n"
+"    jusqu'à ce qu'une ~1fenêtre différente~2 soit activée et devienne la fenêtre « courante »\n"
+". Vous ~1changez~2 la fenêtre « courante » en: ~1 1~2) rotation avant/arrière;~1 2~2) choisissant\n"
+"  un group de champ spécifique; ou~1 3~2) sortant des écrans de correspondance des couleurs ou des champs\n"
 ". Commandes ~1disponibles tout le temps   -------------~2\n"
-"    A        . Basculer vers le mode d'affichage alternatif, montrer "
-"~1Une~2 / ~1Plusieurs~2 fenêtres\n"
-"    g        . Choisir un autre groupe de champs et le rendre « courant », "
-"ou changer maintenant\n"
-"               en choisissant un nombre:  ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; "
-"ou~1 4~2 =%s\n"
+"    A        . Basculer vers le mode d'affichage alternatif, montrer ~1Une~2 / ~1Plusieurs~2 fenêtres\n"
+"    g        . Choisir un autre groupe de champs et le rendre « courant », ou changer maintenant\n"
+"               en choisissant un nombre:  ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; ou~1 4~2 =%s\n"
 ". Commandes ~1exigeant~2 le mode «~1A~2»~1  -------------~2\n"
-"    G        . Changer le ~1Nom~2 de la fenêtre/groupe de champs "
-"« courant »\n"
-" ~1*~4  a , w   . Rotation par toutes les quatre fenêtres: «~1a~5» avant, "
-"«~1w~5» arrière\n"
-" ~1*~4  - , _   . Montrer/cacher: «~1-~5» fenêtre « courante »; «~1_~5» "
-"toutes ~1Visibles~2/~1Invisibles~2\n"
-" L'écran sera divisé de manière équitable entre les affichages de tâches. "
-"Mais vous pouvez en rendre\n"
-" certaines plus ~1larges~2 ou plus ~1petites~2 en utilisant les commandes  "
-"«~1n~2» et «~1i~2».\n"
+"    G        . Changer le ~1Nom~2 de la fenêtre/groupe de champs « courant »\n"
+" ~1*~4  a , w   . Rotation par toutes les quatre fenêtres: «~1a~5» avant, «~1w~5» arrière\n"
+" ~1*~4  - , _   . Montrer/cacher: «~1-~5» fenêtre « courante »; «~1_~5» toutes ~1Visibles~2/~1Invisibles~2\n"
+" L'écran sera divisé de manière équitable entre les affichages de tâches. Mais vous pouvez en rendre\n"
+" certaines plus ~1larges~2 ou plus ~1petites~2 en utilisant les commandes  «~1n~2» et «~1i~2».\n"
 " Vous pouvez ensuite:\n"
-" ~1*~4  = , +   . Ré-équilibrer les tâches: «~1=~5» fenêtre ~1courante~2; "
-"«~1+̃5» ~1toutes~2 fenêtres\n"
-"              (ceci force aussi la fenêtre ~1courante~2 ou ~1toutes~2 les "
-"fenêtres à devenir visibles)\n"
+" ~1*~4  = , +   . Ré-équilibrer les tâches: «~1=~5» fenêtre ~1courante~2; «~1+̃5» ~1toutes~2 fenêtres\n"
+"              (ceci force aussi la fenêtre ~1courante~2 ou ~1toutes~2 les fenêtres à devenir visibles)\n"
 "\n"
-"En mode «~1A~2», les touches «~1*~4» sont vos commandes ~1essentielles~2. "
-"Essayez les commandes «~1a~2»\n"
-"et «~1w~2» ainsi que les sous-commandes «g» MAINTENANT. Appuyez sur "
-"« Entrée » pour rendre « courant » "
+"En mode «~1A~2», les touches «~1*~4» sont vos commandes ~1essentielles~2. Essayez les commandes «~1a~2»\n"
+"et «~1w~2» ainsi que les sous-commandes «g» MAINTENANT. Appuyez sur « Entrée » pour rendre « courant » "
 
 #. Translation Notes ------------------------------------------------
 #. .  The following 'Help for color mapping' simulated screen should
@@ -3595,10 +3402,8 @@ msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
 "   color - 04:25:44 up 8 days, 50 min,  7 users,  load average:\n"
-"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,"
-"~3\n"
-"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 "
-"~2idle~3\n"
+"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,~3\n"
+"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 ~2idle~3\n"
 "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP S COMMAND    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
@@ -3607,8 +3412,7 @@ msgid ""
 "   available toggles: ~1B~2 =disable bold globally (~1%s~2),\n"
 "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks \"bold\"/reverse (~1%s~2)\n"
 "\n"
-"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c "
-"~4:\n"
+"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c ~4:\n"
 "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n"
 "   H~2 = Column Heads,~1  T~2 = Task Information\n"
 "2) Select a ~1color~2 as a number or use the up/down arrow keys\n"
@@ -3620,38 +3424,30 @@ msgid ""
 "   'q' or <Esc> to abort changes to window '~1%s~2'\n"
 "   'a' or 'w' to commit & change another, <Enter> to commit and end "
 msgstr ""
-"Aide pour la correspondance des couleurs~2 - « Fenêtre Actuelle » = ~1 %s "
-"~6\n"
+"Aide pour la correspondance des couleurs~2 - « Fenêtre Actuelle » = ~1 %s ~6\n"
 "\n"
 "   couleur - 04:25:44 up 8 jours, 50 min,  7 utilisateurs,  charge moyenne:\n"
-"   Tâches:~3  64 ~2total,~3   2 ~3exécutée,~3  62 ~2endormie,~3   0 "
-"~2arrêtée,~3\n"
-"   %%Cpu(s):~3  76.5 ~2util.,~3  11.2 ~2système,~3   0.0 ~2nice,~3  12.3 "
-"~2inactif~3\n"
+"   Tâches:~3  64 ~2total,~3   2 ~3exécutée,~3  62 ~2endormie,~3   0 ~2arrêtée,~3\n"
+"   %%Cpu(s):~3  76.5 ~2util.,~3  11.2 ~2système,~3   0.0 ~2nice,~3  12.3 ~2inactif~3\n"
 "   ~1 Message méchant! ~4  -or-  ~1Invite d'entrée~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TEMPS+   VIRT SWAP S COMMANDE    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
 "   ~1 8601 pts/1    7 -10  0.4   0:00.03   916    0 R couleur -b -z~7\n"
 "   11005 ~8?      ~7  9   0  0.0   0:02.50  2852 1008 S amor -sessi~8\n"
 "   commutateurs disponibles: ~1B~2 =désactive gras globalement (~1%s~2),\n"
-"       ~1z~2 =couleur/mono (~1%s~2), ~1b~2 =tâches \"gras\"/inversé "
-"(~1%s~2)\n"
+"       ~1z~2 =couleur/mono (~1%s~2), ~1b~2 =tâches \"gras\"/inversé (~1%s~2)\n"
 "\n"
-"1) Choisissez une ~1cible~2 en lettre majuscule, la ~1cible actuelle~2 est "
-"~1 %c ~4:\n"
+"1) Choisissez une ~1cible~2 en lettre majuscule, la ~1cible actuelle~2 est ~1 %c ~4:\n"
 "   S~2 = Données résumées,~1  M~2 = Messages/Invites,\n"
 "   H~2 = En-têtes de colonnes,~1  T~2 = Informations tâches\n"
-"2) Choisissez une ~1couleur~2 par un nombre ou utilisez les flèches haut/"
-"bas\n"
-"   pour augmenter/diminuer la valeur des %d couleurs, la ~1couleur "
-"actuelle~2 est ~1 %d ~4:\n"
+"2) Choisissez une ~1couleur~2 par un nombre ou utilisez les flèches haut/bas\n"
+"   pour augmenter/diminuer la valeur des %d couleurs, la ~1couleur actuelle~2 est ~1 %d ~4:\n"
 "   0~2 = noir,~1   1~2 = rouge,  ~1  2~2 = vert ,~1  3~2 = jaune,\n"
 "   4~2 = bleu, ~1  5~2 = magenta,~1  6~2 = cyan, ~1  7~2 = blanc\n"
 "\n"
 "3) Utilisez ensuite ces touches pour terminer:\n"
 "   'q' ou « Échap » pour annuler les changements à la fenêtre '~1%s~2'\n"
-"   'a' ou 'w' pour valider et changer une autre, <Entrée> pour valider et "
-"terminer "
+"   'a' ou 'w' pour valider et changer une autre, <Entrée> pour valider et terminer "
 
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
 #. .                 also imbedded in the translatable text (along with escape seqs)
@@ -3673,68 +3469,46 @@ msgstr ""
 #, c-format
 msgid ""
 "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
-"   Navigate with Up/Dn, Right selects for move then <Enter> or Left "
-"commits,\n"
+"   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n"
 "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!\n"
 msgstr ""
 "Gestion des champs~2 pour la fenêtre ~1%s~6 qui trie selon le champ ~1%s~2\n"
-"   Naviguer avec Haut/Bas, Droit sélectionne pour le déplacement puis "
-"<Entrée> ou Gauche applique le changement,\n"
-"   'd' ou <Espace> bascule l'affichage, 's' change le tri. Utiliser 'q' ou "
-"<Echap> pour terminer !\n"
+"   Naviguer avec Haut/Bas, Droit sélectionne pour le déplacement puis <Entrée> ou Gauche applique le changement,\n"
+"   'd' ou <Espace> bascule l'affichage, 's' change le tri. Utiliser 'q' ou <Echap> pour terminer !\n"
 
 #. Translation Hint:
 #. .  The next 5 items must each be translated as a single line.
 #. .
 #: top/top_nls.c:657
 #, c-format
-msgid ""
-"%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
-"~2zombie~3\n"
-msgstr ""
-"%s:~3 %3u ~2total,~3 %3u ~2en cours,~3 %3u ~2en veille,~3 %3u ~2arrêté,~3 "
-"%3u ~2zombie~3\n"
+msgid "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n"
+msgstr "%s:~3 %3u ~2total,~3 %3u ~2en cours,~3 %3u ~2en veille,~3 %3u ~2arrêté,~3 %3u ~2zombie~3\n"
 
 #: top/top_nls.c:660
-#, fuzzy, c-format
-msgid ""
-"%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3"
-msgstr ""
-"%%%s~3 %#5.1f ~2util.,~3 %#5.1f ~2système,~3 %#5.1f ~2courtoisie,~3 %#5.1f "
-"~2inactif~3\n"
+#, c-format
+msgid "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3"
+msgstr "%s~3 %#5.1f ~2util.,~3 %#5.1f ~2système,~3 %#5.1f ~2courtoisie,~3 %#5.1f ~2inactif~3"
 
 #: top/top_nls.c:663
-#, fuzzy, c-format
-msgid ""
-"%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,"
-"~3 %#5.1f  ~2IO-wait~3"
-msgstr ""
-"%%%s~3 %#5.1f  ~2util.,~3 %#5.1f  ~2système,~3 %#5.1f  ~2courtoisie,~3 "
-"%#5.1f  ~2inactif,~3 %#5.1f  ~2attente E/S~3\n"
+#, c-format
+msgid "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,~3 %#5.1f  ~2IO-wait~3"
+msgstr "%s~3 %#5.1f  ~2util.,~3 %#5.1f  ~2système,~3 %#5.1f  ~2courtoisie,~3 %#5.1f  ~2inactif,~3 %#5.1f  ~2attente E/S~3"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt
 #: top/top_nls.c:669
-#, fuzzy, c-format
-msgid ""
-"%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
-"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3"
-msgstr ""
-"%%%s~3 %#5.1f ~2ut,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f "
-"~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n"
+#, c-format
+msgid "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3"
+msgstr "%s~3 %#5.1f ~2ut,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt, st = steal time
 #: top/top_nls.c:675
-#, fuzzy, c-format
-msgid ""
-"%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
-"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3"
-msgstr ""
-"%%%s~3%#5.1f ~2ut,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
-"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
+#, c-format
+msgid "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3"
+msgstr "%s~3%#5.1f ~2ut,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3"
 
 #. Translation Hint: this must be translated as 2 lines with words above & below aligned
 #: top/top_nls.c:679
@@ -3753,33 +3527,27 @@ msgstr ""
 #, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
-"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to "
-"~1end~5 !\n"
+"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to ~1end~5 !\n"
 "Options~2: ~1%s\n"
 msgstr ""
 "Inspection~2 Pause à: pid ~1%d~6 en cours ~1%s~6\n"
-"Usage~2:  gauche/droite puis <Entrée> pour ~1sélectionner~5 une option; "
-"« q » ou <Éch> pour ~1terminer~5 !\n"
+"Usage~2:  gauche/droite puis <Entrée> pour ~1sélectionner~5 une option; « q » ou <Éch> pour ~1terminer~5 !\n"
 "Options~2: ~1%s\n"
 
 #: top/top_nls.c:691
 #, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
-"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to "
-"~1locate~5/~1next~5.\n"
+"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to ~1locate~5/~1next~5.\n"
 "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n"
 msgstr ""
 "Inspection~2 Vue au pid: ~1%s~3, exécution ~1%s~3.  Position: ~1%s~6\n"
-"Usage~2:  gauche/droite/haut/bas/etc pour ~1naviguer~5 dans la sortie; "
-"« L »/« & » pour ~1trouver~5/~1suivant~5.\n"
-"Ou~2:   <Entrée> pour ~1sélectionner une autre~5; « q » or <Éch> pour "
-"~1terminer~5 !\n"
+"Usage~2:  gauche/droite/haut/bas/etc pour ~1naviguer~5 dans la sortie; « L »/« & » pour ~1trouver~5/~1suivant~5.\n"
+"Ou~2:   <Entrée> pour ~1sélectionner une autre~5; « q » or <Éch> pour ~1terminer~5 !\n"
 
 #: uptime.c:64
 msgid " -p, --pretty   show uptime in pretty format\n"
-msgstr ""
-" -p, --pretty   montre le temps de fonctionnement dans un joli format\n"
+msgstr " -p, --pretty   montre le temps de fonctionnement dans un joli format\n"
 
 #: uptime.c:66
 msgid " -s, --since    system up since\n"
@@ -3835,21 +3603,12 @@ msgid " -t, --timestamp        show timestamp\n"
 msgstr " -t, --timestamp        affiche l'horodatage\n"
 
 #: vmstat.c:195
-msgid ""
-"procs -----------memory---------- ---swap-- -----io---- -system-- ------"
-"cpu-----"
-msgstr ""
-"procs ----------mémoire---------- -échange- -----io---- -système- ------"
-"cpu-----"
+msgid "procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----"
+msgstr "procs ----------mémoire---------- -échange- -----io---- -système- ------cpu-----"
 
 #: vmstat.c:197
-#, fuzzy
-msgid ""
-"--procs-- -----------------------memory---------------------- ---swap-- -----"
-"io---- -system-- --------cpu--------"
-msgstr ""
-"procs -----------------------mémoire--------------------- -échange- -----"
-"io---- -système- --------cpu--------"
+msgid "--procs-- -----------------------memory---------------------- ---swap-- -----io---- -system-- --------cpu--------"
+msgstr "--procs-- -----------------------mémoire--------------------- -échange- -----io---- -système- --------cpu--------"
 
 #: vmstat.c:198 vmstat.c:530
 msgid " -----timestamp-----"
@@ -3978,20 +3737,12 @@ msgid "your kernel does not support diskstat. (2.5.70 or above required)"
 msgstr "votre kernel ne supporte pas diskstat. (2.5.70 ou plus requis)"
 
 #: vmstat.c:527
-msgid ""
-"disk- ------------reads------------ ------------writes----------- -----"
-"IO------"
-msgstr ""
-"disq- -----------lectures--------- -----------écritures--------- -----"
-"ES------"
+msgid "disk- ------------reads------------ ------------writes----------- -----IO------"
+msgstr "disq- -----------lectures--------- -----------écritures--------- -----ES------"
 
 #: vmstat.c:529
-msgid ""
-"disk- -------------------reads------------------- -------------------"
-"writes------------------ ------IO-------"
-msgstr ""
-"disq- ------------------lectures----------------- ------------------"
-"écritures---------------- ------ES-------"
+msgid "disk- -------------------reads------------------- -------------------writes------------------ ------IO-------"
+msgstr "disq- ------------------lectures----------------- ------------------écritures---------------- ------ES-------"
 
 #. Translation Hint: max 6 chars
 #: vmstat.c:548 vmstat.c:556
@@ -4056,10 +3807,8 @@ msgid "Pages"
 msgstr "Pages"
 
 #: vmstat.c:717
-msgid ""
-"your kernel does not support slabinfo or your permissions are insufficient"
-msgstr ""
-"votre kernel ne supporte pas slabinfo ou vos permissions sont insuffisantes"
+msgid "your kernel does not support slabinfo or your permissions are insufficient"
+msgstr "votre kernel ne supporte pas slabinfo ou vos permissions sont insuffisantes"
 
 #: vmstat.c:769
 #, c-format
@@ -4268,15 +4017,11 @@ msgstr " %s [options] commande\n"
 
 #: watch.c:92
 msgid "  -b, --beep             beep if command has a non-zero exit\n"
-msgstr ""
-"  -b, --beep             émet un bip si la commande sort avec un code non "
-"nul\n"
+msgstr "  -b, --beep             émet un bip si la commande sort avec un code non nul\n"
 
 #: watch.c:93
 msgid "  -c, --color            interpret ANSI color and style sequences\n"
-msgstr ""
-"  -c, --color            interprète les séquences de couleurs et de styles "
-"ANSI\n"
+msgstr "  -c, --color            interprète les séquences de couleurs et de styles ANSI\n"
 
 #: watch.c:94
 msgid ""
@@ -4284,18 +4029,15 @@ msgid ""
 "                         highlight changes between updates\n"
 msgstr ""
 "  -d, --differences[=<permanent>]\n"
-"                         met en évidence les changements entre mises à "
-"jours\n"
+"                         met en évidence les changements entre mises à jours\n"
 
 #: watch.c:96
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
-msgstr ""
-"  -e, --errexit          termine si la commande sort avec un code non nul\n"
+msgstr "  -e, --errexit          termine si la commande sort avec un code non nul\n"
 
 #: watch.c:97
 msgid "  -g, --chgexit          exit when output from command changes\n"
-msgstr ""
-"  -g, --chgexit          termine quand la sortie de la commande change\n"
+msgstr "  -g, --chgexit          termine quand la sortie de la commande change\n"
 
 #: watch.c:98
 msgid "  -n, --interval <secs>  seconds to wait between updates\n"
@@ -4303,23 +4045,19 @@ msgstr "  -n, --interval <sec>   secondes de délai entre mises à jours\n"
 
 #: watch.c:99
 msgid "  -p, --precise          attempt run command in precise intervals\n"
-msgstr ""
-"  -p, --precise          essaie d'exécuter la commande à intervalles "
-"réguliers\n"
+msgstr "  -p, --precise          essaie d'exécuter la commande à intervalles réguliers\n"
 
 #: watch.c:100
 msgid "  -t, --no-title         turn off header\n"
 msgstr "  -t, --no-title         masque l'en-tête\n"
 
 #: watch.c:101
-#, fuzzy
 msgid "  -w, --no-wrap          turn off line wrapping\n"
-msgstr "  -t, --no-title         masque l'en-tête\n"
+msgstr "  -w, --no-wrap          désactive le retour à la ligne\n"
 
 #: watch.c:102
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
-msgstr ""
-"  -x, --exec             passe la commande à exec au lieu de « sh -c »\n"
+msgstr "  -x, --exec             passe la commande à exec au lieu de « sh -c »\n"
 
 #: watch.c:105
 msgid " -v, --version  output version information and exit\n"
@@ -4362,13 +4100,11 @@ msgstr "waitpid"
 
 #: watch.c:763
 msgid "command exit with a non-zero status, press a key to exit"
-msgstr ""
-"la commande s'est terminée avec un statut non nul, pressez une touche pour "
-"terminer"
+msgstr "la commande s'est terminée avec un statut non nul, pressez une touche pour terminer"
 
 #: watch.c:816
 msgid "Could not parse interval from WATCH_INTERVAL"
-msgstr ""
+msgstr "Impossible d'analyser l'intervalle dans WATCH_INTERVAL"
 
 #: watch.c:897
 #, c-format
@@ -4404,8 +4140,7 @@ msgstr " -h, --no-header     n'affiche pas l'en-tête\n"
 
 #: w.c:479
 msgid " -u, --no-current    ignore current process username\n"
-msgstr ""
-" -u, --no-current    ignore le nom d'utilisateur du processus courant\n"
+msgstr " -u, --no-current    ignore le nom d'utilisateur du processus courant\n"
 
 #: w.c:480
 msgid " -s, --short         short format\n"
@@ -4420,27 +4155,18 @@ msgid " -o, --old-style     old style output\n"
 msgstr " -o, --old-style     sortie dans l'ancien style\n"
 
 #: w.c:483
-msgid ""
-" -i, --ip-addr       display IP address instead of hostname (if possible)\n"
-msgstr ""
-" -i, --ip-addr       affiche l'adresse IP au lieu du nom d'hôte (si "
-"possible)\n"
+msgid " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
+msgstr " -i, --ip-addr       affiche l'adresse IP au lieu du nom d'hôte (si possible)\n"
 
 #: w.c:580
 #, c-format
-msgid ""
-"User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
-msgstr ""
-"la longueur « utilisateur » dans l'environnement PROCPS_USERLEN doit être "
-"entre 8 et %i, ignoré.\n"
+msgid "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
+msgstr "la longueur « utilisateur » dans l'environnement PROCPS_USERLEN doit être entre 8 et %i, ignoré.\n"
 
 #: w.c:590
 #, c-format
-msgid ""
-"from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
-msgstr ""
-"la longueur « de » dans l'environnement PROCPS_FROMLEN doit être entre 8 et "
-"%d, ignoré.\n"
+msgid "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
+msgstr "la longueur « de » dans l'environnement PROCPS_FROMLEN doit être entre 8 et %d, ignoré.\n"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
@@ -4509,21 +4235,16 @@ msgstr "%s de %s\n"
 #~ " --ns <PID>                match the processes that belong to the same\n"
 #~ "                           namespace as <pid> or 0 for all namespaces\n"
 #~ msgstr ""
-#~ " --ns <PID>                trouve les processus qui appartiennent au "
-#~ "même\n"
-#~ "                           espace de nom que <PID> ou 0 pour tous les "
-#~ "espaces\n"
+#~ " --ns <PID>                trouve les processus qui appartiennent au même\n"
+#~ "                           espace de nom que <PID> ou 0 pour tous les espaces\n"
 #~ "                           de noms\n"
 
 #~ msgid ""
-#~ "pattern that searches for process name longer than 15 characters will "
-#~ "result in zero matches\n"
+#~ "pattern that searches for process name longer than 15 characters will result in zero matches\n"
 #~ "Try `%s -f' option to match against the complete command line."
 #~ msgstr ""
-#~ "un motif qui cherche un nom de processus plus long que 15 caractères ne "
-#~ "retournera aucun résultat\n"
-#~ "Essayez l'option « %s -f » pour obtenir une correspondance sur la ligne "
-#~ "de commande complète."
+#~ "un motif qui cherche un nom de processus plus long que 15 caractères ne retournera aucun résultat\n"
+#~ "Essayez l'option « %s -f » pour obtenir une correspondance sur la ligne de commande complète."
 
 #~ msgid "unknown page size (assume 4096)\n"
 #~ msgstr "taille de page inconnue (4096 supposé)\n"
@@ -4560,18 +4281,13 @@ msgstr "%s de %s\n"
 #~ msgstr "la fenêtre avec %d colonnes est trop étroite"
 
 #~ msgid "%d column width exceeds command buffer size, truncating to %d"
-#~ msgstr ""
-#~ "la largeur de colonne %d dépasse la taille du tampon de commande, tronqué "
-#~ "à %d"
+#~ msgstr "la largeur de colonne %d dépasse la taille du tampon de commande, tronqué à %d"
 
 #~ msgid "warning: screen width %d suboptimal"
 #~ msgstr "attention: la largeur %d de l'écran n'est pas optimale"
 
-#~ msgid ""
-#~ " -o, --old           use old format (without -/+buffers/cache line)\n"
-#~ msgstr ""
-#~ " -o, --old           utiliser l'ancien format (sans la ligne -/+tampon/"
-#~ "cache)\n"
+#~ msgid " -o, --old           use old format (without -/+buffers/cache line)\n"
+#~ msgstr " -o, --old           utiliser l'ancien format (sans la ligne -/+tampon/cache)\n"
 
 #~ msgid "-/+ buffers/cache:"
 #~ msgstr "-/+ tampons/cache:"
