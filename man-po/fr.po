@@ -689,7 +689,7 @@ msgstr "AUTEUR"
 #. type: Plain text
 #: ../kill.1:104
 msgid "E<.MT albert@users.sf.net> Albert Cahalan E<.ME> wrote kill in 1999 to replace a bsdutils one that was not standards compliant.  The util-linux one might also work correctly."
-msgstr "Albert Cahalan <albert@users.sf.net> a écrit kill en 1999 pour remplacer la version « bsdutils » qui ne suivait pas les normes. La version d’util-linux devrait aussi fonctionner correctement."
+msgstr "Albert Cahalan E<.MT albert@users.sf.net> a écrit kill en 1999 pour remplacer la version « bsdutils » qui ne suivait pas les normes. La version d’util-linux devrait aussi fonctionner correctement."
 
 #. type: SH
 #: ../kill.1:104 ../pgrep.1:289 ../pmap.1:86 ../pwdx.1:31 ../skill.1:118
