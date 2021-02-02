@@ -356,10 +356,10 @@ srtDECL(noop) {
 #define v_arg      PROC_FILLARG
 #define v_cgroup   PROC_FILLCGROUP
 #define v_env      PROC_FILLENV
-   // remaining are compound flags
-#define x_ogroup   PROC_FILLSTATUS  | PROC_FILLGRP
-#define x_ouser    PROC_FILLSTATUS  | PROC_FILLUSR
-#define x_supgrp   PROC_FILLSTATUS  | PROC_FILLSUPGRP
+   // these next three will also force PROC_FILLSTATUS
+#define x_ogroup   PROC_FILL_OGROUPS
+#define x_ouser    PROC_FILL_OUSERS
+#define x_supgrp   PROC_FILL_SUPGRP
 
 typedef void (*SET_t)(struct pids_info *, struct pids_result *, proc_t *);
 typedef void (*FRE_t)(struct pids_result *);

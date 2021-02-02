@@ -1051,8 +1051,18 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLSTATUS) {              // read /proc/#/status
         if (file2str(path, "status", &ub) != -1){
             rc += status2proc(ub.buf, p, 1);
-            if (flags & PROC_FILLSUPGRP)
+            if (flags & (PROC_FILL_SUPGRP & ~PROC_FILLSTATUS))
                 rc += supgrps_from_supgids(p);
+            if (flags & (PROC_FILL_OUSERS & ~PROC_FILLSTATUS)) {
+                p->ruser = pwcache_get_user(p->ruid);
+                p->suser = pwcache_get_user(p->suid);
+                p->fuser = pwcache_get_user(p->fuid);
+            }
+            if (flags & (PROC_FILL_OGROUPS & ~PROC_FILLSTATUS)) {
+                p->rgroup = pwcache_get_group(p->rgid);
+                p->sgroup = pwcache_get_group(p->sgid);
+                p->fgroup = pwcache_get_group(p->fgid);
+            }
         }
     }
 
@@ -1063,25 +1073,10 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
 
     /* some number->text resolving which is time consuming */
     /* ( names are cached, so memcpy to arrays was silly ) */
-    if (flags & PROC_FILLUSR){
+    if (flags & PROC_FILLUSR)
         p->euser = pwcache_get_user(p->euid);
-        if(flags & PROC_FILLSTATUS) {
-            p->ruser = pwcache_get_user(p->ruid);
-            p->suser = pwcache_get_user(p->suid);
-            p->fuser = pwcache_get_user(p->fuid);
-        }
-    }
-
-    /* some number->text resolving which is time consuming */
-    /* ( names are cached, so memcpy to arrays was silly ) */
-    if (flags & PROC_FILLGRP){
+    if (flags & PROC_FILLGRP)
         p->egroup = pwcache_get_group(p->egid);
-        if(flags & PROC_FILLSTATUS) {
-            p->rgroup = pwcache_get_group(p->rgid);
-            p->sgroup = pwcache_get_group(p->sgid);
-            p->fgroup = pwcache_get_group(p->fgid);
-        }
-    }
 
     if (flags & PROC_FILLENV)                   // read /proc/#/environ
         if (!(p->environ_v = file2strvec(path, "environ")))
@@ -1165,32 +1160,27 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLSTATUS) {                      // read /proc/#/task/#/status
         if (file2str(path, "status", &ub) != -1) {
             rc += status2proc(ub.buf, t, 0);
-            if (flags & PROC_FILLSUPGRP)
+            if (flags & (PROC_FILL_SUPGRP & ~PROC_FILLSTATUS))
                 rc += supgrps_from_supgids(t);
+            if (flags & (PROC_FILL_OUSERS & ~PROC_FILLSTATUS)) {
+                t->ruser = pwcache_get_user(t->ruid);
+                t->suser = pwcache_get_user(t->suid);
+                t->fuser = pwcache_get_user(t->fuid);
+            }
+            if (flags & (PROC_FILL_OGROUPS & ~PROC_FILLSTATUS)) {
+                t->rgroup = pwcache_get_group(t->rgid);
+                t->sgroup = pwcache_get_group(t->sgid);
+                t->fgroup = pwcache_get_group(t->fgid);
+            }
         }
     }
 
     /* some number->text resolving which is time consuming */
     /* ( names are cached, so memcpy to arrays was silly ) */
-    if (flags & PROC_FILLUSR){
+    if (flags & PROC_FILLUSR)
         t->euser = pwcache_get_user(t->euid);
-        if(flags & PROC_FILLSTATUS) {
-            t->ruser = pwcache_get_user(t->ruid);
-            t->suser = pwcache_get_user(t->suid);
-            t->fuser = pwcache_get_user(t->fuid);
-        }
-    }
-
-    /* some number->text resolving which is time consuming */
-    /* ( names are cached, so memcpy to arrays was silly ) */
-    if (flags & PROC_FILLGRP){
+    if (flags & PROC_FILLGRP)
         t->egroup = pwcache_get_group(t->egid);
-        if(flags & PROC_FILLSTATUS) {
-            t->rgroup = pwcache_get_group(t->rgid);
-            t->sgroup = pwcache_get_group(t->sgid);
-            t->fgroup = pwcache_get_group(t->fgid);
-        }
-    }
 
 #ifdef FALSE_THREADS
     if (!IS_THREAD(t)) {

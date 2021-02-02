@@ -207,7 +207,6 @@ typedef struct PROCTAB {
 #define PROC_FILLSTATUS      0x0020 // read status
 #define PROC_FILLSTAT        0x0040 // read stat
 #define PROC_FILLCGROUP      0x0200 // alloc and fill in `cgroup` vectors
-#define PROC_FILLSUPGRP      0x0400 // resolve supplementary group id -> group name
 #define PROC_FILLOOM         0x0800 // fill in proc_t oom_score and oom_adj
 #define PROC_FILLNS          0x8000 // fill in proc_t namespace information
 #define PROC_FILLSYSTEMD    0x80000 // fill in proc_t systemd information
@@ -223,6 +222,11 @@ typedef struct PROCTAB {
 #define PROC_EDITCGRPCVT    0x10000 // edit `cgroup' as regular string
 #define PROC_EDITCMDLCVT    0x20000 // edit `cmdline' as regular string
 #define PROC_EDITENVRCVT    0x40000 // edit `environ' as regular string
+
+// these three also require the PROC_FILLSTATUS flage
+#define PROC_FILL_OUSERS   ( 0x0080 | PROC_FILLSTATUS ) // obtain other user names
+#define PROC_FILL_OGROUPS  ( 0x0100 | PROC_FILLSTATUS ) // obtain other group names
+#define PROC_FILL_SUPGRP   ( 0x0400 | PROC_FILLSTATUS ) // obtain supplementary group names
 
 // it helps to give app code a few spare bits
 #define PROC_SPARE_1     0x01000000
