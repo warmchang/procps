@@ -109,6 +109,8 @@ these interfaces.
 
 Optionally, a user may choose to sort results returned from
 a \fBreap\fR function call.
+The \fBsort\fR function parameters \fIstacks\fR and \fInumstacked\fR
+would normally be those returned in the `reaped' structure.
 
 .SS Caveats
 The \fBnew\fR, \fBref\fR, \fBunref\fR, \fBget\fR and \fBselect\fR
@@ -127,10 +129,7 @@ The \fBdiskstats\fR, \fBslabinfo\fR and \fBstat\fR interfaces support
 unpredictable variable outcomes.
 As such, they export a \fBreap\fR function to retrieve multiple `stacks'
 with a single invocation.
-
-Those same interfaces also offer a \fBsort\fR function whose
-parameters \fIstacks\fR and \fInumstacked\fR would normally be those
-returned in the `reaped' structure.
+These same interfaces also provide a \fBsort\fR function.
 
 .SH RETURN VALUE
 .SS Functions Returning an `int'
