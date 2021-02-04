@@ -1,6 +1,6 @@
 /* top_nls.h - provide the basis for future nls translations */
 /*
- * Copyright (c) 2011-2018, by: James C. Warner
+ * Copyright (c) 2011-2021, by: James C. Warner
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
