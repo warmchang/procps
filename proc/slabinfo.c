@@ -1,13 +1,10 @@
 /*
- * slabinfo.c - slabinfo related functions for libproc
- *
- * Chris Rivera <cmrivera@ufl.edu>
- * Robert Love <rml@tech9.net>
+ * slabinfo.c - slab pools related definitions for libprocps
  *
  * Copyright (C) 2003 Chris Rivera
  * Copyright (C) 2004 Albert Cahalan
  * Copyright (C) 2015 Craig Small <csmall@dropbear.xyz>
- * Copyright (C) 2016 Jim Warnerl <james.warner@comcast.net>
+ * Copyright (C) 2016-2021 Jim Warnerl <james.warner@comcast.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
