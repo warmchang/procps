@@ -1,5 +1,8 @@
 procps-ng-3.3.17
 ---------------
+  * library: Increment to 8:3:0
+    No removals for additions
+    Internal changes only
   * all: properly handle utf8 cmdline translations         issue #176
   * kill: Pass int to signalled process                    merge #32
   * pgrep: Pass int to signalled process                   merge #32
