@@ -75,10 +75,7 @@ procps-man.pot:
 	po4a-gettextize -M utf8 --option groff_code=verbatim --option generated --option untranslated="a.RE,\|" --option unknown_macros=untranslated -f man $(patsubst %,-m%,$(subst :, ,$(dist_man_MANS))) -p $@
 
 
-install-data-local: install-data-local-@USE_PO4A@
-
-install-data-local-no:
-install-data-local-yes:
+install-data-local:
 	for lang in $(LINGUAS) ; do \
 	    files=""; \
 	    for trans in $(notdir $(dist_man_MANS)); do \
@@ -94,10 +91,7 @@ install-data-local-yes:
 		    dist_man_MANS="$$files"; \
 	done
 
-uninstall-local: uninstall-local-@USE_PO4A@
-
-uninstall-local-no:
-uninstall-local-yes:
+uninstall-local:
 	for lang in $(LINGUAS); do \
 		files=""; \
 		for trans in $(notdir $(dist_man_MANS)); do \
