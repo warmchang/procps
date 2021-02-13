@@ -716,8 +716,7 @@ static int slabinfo_stacks_reconfig_maybe (
         memcpy(this->items, items, sizeof(enum slabinfo_item) * numitems);
         this->items[numitems] = SLABINFO_logical_end;
         this->numitems = numitems + 1;
-        if (this->extents)
-            slabinfo_extents_free_all(this);
+        slabinfo_extents_free_all(this);
         return 1;
     }
     return 0;

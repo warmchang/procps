@@ -691,8 +691,7 @@ static int diskstats_stacks_reconfig_maybe (
         memcpy(this->items, items, sizeof(enum diskstats_item) * numitems);
         this->items[numitems] = DISKSTATS_logical_end;
         this->numitems = numitems + 1;
-        if (this->extents)
-            diskstats_extents_free_all(this);
+        diskstats_extents_free_all(this);
         return 1;
     }
     return 0;
