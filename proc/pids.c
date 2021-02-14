@@ -1192,10 +1192,11 @@ PROCPS_EXPORT int procps_pids_new (
 
     pgsz = getpagesize();
     while (pgsz > 1024) { pgsz >>= 1; p->pgs2k_shift++; }
-
     p->hertz = procps_hertz_get();
-    procps_uptime(&uptime_secs, NULL);
-    p->boot_seconds = uptime_secs;
+
+    // in case 'fatal_proc_unmounted' wasn't called and /proc isn't mounted
+    if (0 >= procps_uptime(&uptime_secs, NULL))
+        p->boot_seconds = uptime_secs;
 
     numa_init();
 
