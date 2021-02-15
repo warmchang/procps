@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man-3.3.17rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2021-02-15 21:26+1100\n"
+"POT-Creation-Date: 2021-02-15 21:41+1100\n"
 "PO-Revision-Date: 2021-01-22 12:13+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -49,12 +49,12 @@ msgstr "procps-ng"
 msgid "User Commands"
 msgstr "Dienstprogramme für Benutzer"
 
-#.  ----------------------------------------------------------------------
 #. type: SH
 #: ../free.1:6 ../kill.1:9 ../pgrep.1:11 ../pidof.1:19 ../pmap.1:9 ../pwdx.1:7
 #: ../skill.1:10 ../slabtop.1:6 ../sysctl.8:10 ../sysctl.conf.5:10 ../tload.1:5
 #: ../uptime.1:4 ../vmstat.8:4 ../w.1:4 ../watch.1:2 ../ps/ps.1:27
-#: ../top/top.1:70
+#: ../top/top.1:70 ../doc/procps.3:23 ../doc/procps_misc.3:24
+#: ../doc/procps_pids.3:23
 #, no-wrap
 msgid "NAME"
 msgstr "BEZEICHNUNG"
@@ -64,12 +64,12 @@ msgstr "BEZEICHNUNG"
 msgid "free - Display amount of free and used memory in the system"
 msgstr "free - Anzeige des freien und belegten Speichers"
 
-#.  ----------------------------------------------------------------------
 #. type: SH
 #: ../free.1:8 ../kill.1:11 ../pgrep.1:13 ../pidof.1:21 ../pmap.1:11
 #: ../pwdx.1:9 ../skill.1:12 ../slabtop.1:8 ../sysctl.8:12 ../tload.1:7
 #: ../uptime.1:6 ../vmstat.8:6 ../w.1:6 ../watch.1:4 ../ps/ps.1:29
-#: ../top/top.1:75
+#: ../top/top.1:75 ../doc/procps.3:26 ../doc/procps_misc.3:26
+#: ../doc/procps_pids.3:26
 #, no-wrap
 msgid "SYNOPSIS"
 msgstr "ÜBERSICHT"
@@ -79,12 +79,12 @@ msgstr "ÜBERSICHT"
 msgid "B<free> [I<options>]"
 msgstr "B<free> [I<Optionen>]"
 
-#.  ----------------------------------------------------------------------
 #. type: SH
 #: ../free.1:11 ../kill.1:14 ../pgrep.1:22 ../pidof.1:34 ../pmap.1:14
 #: ../skill.1:22 ../slabtop.1:11 ../sysctl.8:18 ../sysctl.conf.5:12
 #: ../tload.1:10 ../uptime.1:9 ../vmstat.8:10 ../w.1:9 ../watch.1:7
-#: ../ps/ps.1:33 ../ps/ps.1:1007 ../top/top.1:82
+#: ../ps/ps.1:33 ../ps/ps.1:1007 ../top/top.1:82 ../doc/procps.3:75
+#: ../doc/procps_misc.3:58 ../doc/procps_pids.3:70
 #, no-wrap
 msgid "DESCRIPTION"
 msgstr "BESCHREIBUNG"
@@ -494,6 +494,7 @@ msgstr "Versionsinformationen anzeigen."
 #. type: SH
 #: ../free.1:133 ../slabtop.1:77 ../sysctl.8:154 ../sysctl.conf.5:57
 #: ../tload.1:34 ../uptime.1:39 ../vmstat.8:201 ../w.1:74
+#: ../doc/procps_misc.3:143
 #, no-wrap
 msgid "FILES"
 msgstr "DATEIEN"
@@ -540,7 +541,8 @@ msgstr "E<.UR procps@freelists.org> E<.UE>"
 #: ../free.1:145 ../kill.1:84 ../pgrep.1:277 ../pidof.1:78 ../pmap.1:79
 #: ../pwdx.1:19 ../skill.1:102 ../slabtop.1:81 ../sysctl.8:168
 #: ../sysctl.conf.5:76 ../tload.1:37 ../uptime.1:56 ../vmstat.8:208 ../w.1:81
-#: ../ps/ps.1:1958
+#: ../ps/ps.1:1958 ../doc/procps.3:172 ../doc/procps_misc.3:160
+#: ../doc/procps_pids.3:183
 #, no-wrap
 msgid "SEE ALSO"
 msgstr "SIEHE AUCH"
@@ -15482,6 +15484,778 @@ msgid ""
 msgstr ""
 "B<free>(1), B<ps>(1), B<uptime>(1), B<atop>(1), B<slabtop>(1), B<vmstat>(8), "
 "B<w>(1)"
+
+#. type: TH
+#: ../doc/procps.3:19
+#, fuzzy, no-wrap
+#| msgid "PROCPS_USERLEN"
+msgid "PROCPS"
+msgstr "PROCPS_USERLEN"
+
+#. type: TH
+#: ../doc/procps.3:19 ../doc/procps_misc.3:20 ../doc/procps_pids.3:19
+#, no-wrap
+msgid "January 2021"
+msgstr ""
+
+#. type: TH
+#: ../doc/procps.3:19 ../doc/procps_misc.3:20 ../doc/procps_pids.3:19
+#, no-wrap
+msgid "libproc-2"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:25
+msgid "procps - API to access system level information in the /proc filesystem"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:30
+msgid ""
+"Five distinct interfaces are represented in this synopsis and named after "
+"the files they access in the /proc pseudo filesystem: B<diskstats>, "
+"B<meminfo>, B<slabinfo>, B<stat> and B<vmstat>."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:34
+#, no-wrap
+msgid "#include E<lt>procps/B<named_interface>.hE<gt>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:38
+#, no-wrap
+msgid ""
+"B<int procps_new   (struct info **>I<info>B<);>\n"
+"B<int procps_ref   (struct info  *>I<info>B<);>\n"
+"B<int procps_unref (struct info **>I<info>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:43
+#, no-wrap
+msgid ""
+"B<struct result *procps_get (>\n"
+"B<    struct info *>I<info>B<,>\n"
+"[   const char *I<name>,      ]   B<diskstats> api only\n"
+"B<    enum item >I<item>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:49
+#, no-wrap
+msgid ""
+"B<struct stack *procps_select (>\n"
+"B<    struct info *>I<info>B<,>\n"
+"[   const char *I<name>,      ]   B<diskstats> api only\n"
+"B<    enum item *>I<items>B<,>\n"
+"B<    int >I<numitems>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:55
+#, no-wrap
+msgid ""
+"B<struct reaped *procps_reap (>\n"
+"B<    struct info *>I<info>B<,>\n"
+"[   enum reap_type I<what>,   ]   B<stat> api only\n"
+"B<    enum item *>I<items>B<,>\n"
+"B<    int >I<numitems>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:62
+#, no-wrap
+msgid ""
+"B<struct stack **procps_sort (>\n"
+"B<    struct info *>I<info>B<,>\n"
+"B<    struct stack *>I<stacks[]>B<,>\n"
+"B<    int >I<numstacked>B<,>\n"
+"B<    enum item >I<sortitem>B<,>\n"
+"B<    enum sort_order >I<order>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:69
+msgid ""
+"The above functions and structures are generic but the specific "
+"B<named_interface> would also be part of any identifiers.  For example, "
+"`procps_new' would actually be `procps_B<meminfo>_new' and `info' would "
+"really be `B<diskstats>_info', etc."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:72
+msgid ""
+"The same B<named_interface> is used in each header file name with an "
+"appended `.h' suffix."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:74 ../doc/procps_pids.3:69
+msgid "Link with I<-lprocps>."
+msgstr ""
+
+#. type: SS
+#: ../doc/procps.3:76 ../doc/procps_pids.3:71
+#, no-wrap
+msgid "Overview"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:82
+msgid ""
+"Central to these interfaces is a simple `result' structure reflecting an "
+"`item' plus its value (in a union with standard C language types as "
+"members).  All `result' structures are automatically allocated and provided "
+"by the library."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:88 ../doc/procps_pids.3:83
+msgid ""
+"By specifying an array of `items', these structures can be organized as a "
+"`stack', potentially yielding many results with a single function call.  "
+"Thus, a `stack' can be viewed as a variable length record whose content and "
+"order is determined solely by the user."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:93 ../doc/procps_pids.3:88
+msgid ""
+"As part of each interface there are two unique items.  The `noop' and "
+"`extra' items exist to hold user values.  They are never set by the library, "
+"but the `extra' result will be zeroed with each library interaction."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:99
+msgid ""
+"The B<named_interface> header file will be an essential document during user "
+"program development.  There you will find available items, their return type "
+"(the `result' struct member name) and the source for such values.  "
+"Additional enumerators and structures are also documented there."
+msgstr ""
+
+#. type: SS
+#: ../doc/procps.3:100 ../doc/procps_pids.3:95
+#, no-wrap
+msgid "Usage"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:103
+msgid "The following would be a typical sequence of calls to these interfaces."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:108
+#, no-wrap
+msgid ""
+"1. B<procps_new()>\n"
+"2. B<procps_get()>, B<procps_select()> or B<procps_reap()>\n"
+"3. B<procps_unref()>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:114
+msgid ""
+"Optionally, a user may choose to sort results returned from a B<reap> "
+"function call.  The B<sort> function parameters I<stacks> and I<numstacked> "
+"would normally be those returned in the `reaped' structure."
+msgstr ""
+
+#. type: SS
+#: ../doc/procps.3:115 ../doc/procps_pids.3:111
+#, no-wrap
+msgid "Caveats"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:118
+msgid ""
+"The B<new>, B<ref>, B<unref>, B<get> and B<select> functions are available "
+"in all five interfaces."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:123 ../doc/procps_pids.3:123
+msgid ""
+"For the B<new> and B<unref> functions, the address of an I<info> struct "
+"pointer must be supplied.  With B<new> it must have been initialized to "
+"NULL.  With B<unref> it will be reset to NULL if the reference count reaches "
+"zero."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:127
+msgid ""
+"In the case of the B<diskstats> interface, a I<name> parameter on the B<get> "
+"and B<select> functions identifies a disk or partition name"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:133
+msgid ""
+"The B<diskstats>, B<slabinfo> and B<stat> interfaces support unpredictable "
+"variable outcomes.  As such, they export a B<reap> function to retrieve "
+"multiple `stacks' with a single invocation.  These same interfaces also "
+"provide a B<sort> function."
+msgstr ""
+
+#. type: SH
+#: ../doc/procps.3:134 ../doc/procps_misc.3:134 ../doc/procps_pids.3:143
+#, no-wrap
+msgid "RETURN VALUE"
+msgstr ""
+
+#. type: SS
+#: ../doc/procps.3:135 ../doc/procps_pids.3:144
+#, no-wrap
+msgid "Functions Returning an `int'"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:138 ../doc/procps_misc.3:138 ../doc/procps_pids.3:147
+msgid ""
+"An error will be indicated by a negative number that is always the inverse "
+"of some well known errno.h value."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:142 ../doc/procps_pids.3:151
+msgid ""
+"Success is indicated by a zero return value.  However, the B<ref> and "
+"B<unref> functions return the current I<info> structure reference count."
+msgstr ""
+
+#. type: SS
+#: ../doc/procps.3:143 ../doc/procps_misc.3:139 ../doc/procps_pids.3:152
+#, no-wrap
+msgid "Functions Returning an `address'"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:146 ../doc/procps_misc.3:142 ../doc/procps_pids.3:155
+msgid ""
+"An error will be indicated by a NULL return pointer with the reason found in "
+"the formal errno value."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:148
+msgid "Success is indicated by a pointer to the named structure."
+msgstr ""
+
+#. type: SH
+#: ../doc/procps.3:149 ../doc/procps_pids.3:160
+#, no-wrap
+msgid "DEBUGGING"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:155 ../doc/procps_pids.3:166
+msgid ""
+"To aid in program development, there is a provision that can help ensure "
+"`result' member references agree with library expectations.  It assumes that "
+"a supplied macro in the header file is used to access the `result' value."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:158 ../doc/procps_pids.3:169
+msgid ""
+"This feature can be activated through either of the following methods and "
+"any discrepancies will be wrtten to B<stderr>."
+msgstr ""
+
+#. type: IP
+#: ../doc/procps.3:159 ../doc/procps_pids.3:170
+#, fuzzy, no-wrap
+#| msgid "1"
+msgid "1)"
+msgstr "1"
+
+#. type: Plain text
+#: ../doc/procps.3:162 ../doc/procps_pids.3:173
+msgid ""
+"Add CFLAGS='-DXTRA_PROCPS_DEBUG' to any other ./configure options employed."
+msgstr ""
+
+#. type: IP
+#: ../doc/procps.3:163 ../doc/procps_pids.3:174
+#, fuzzy, no-wrap
+#| msgid "2"
+msgid "2)"
+msgstr "2"
+
+#. type: Plain text
+#: ../doc/procps.3:166
+msgid ""
+"Add #include E<lt>procps/xtra-procps-debug.hE<gt> to any program I<after> "
+"the named interface includes."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:171 ../doc/procps_pids.3:182
+msgid ""
+"This verification feature incurs substantial overhead.  Therefore, it is "
+"important that it I<not> be activated for a production/release build."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:175
+#, fuzzy
+#| msgid "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
+msgid "B<procps_misc>(3)  B<procps_pids>(3)  B<proc>(5)."
+msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
+
+#. type: TH
+#: ../doc/procps_misc.3:20
+#, fuzzy, no-wrap
+#| msgid "PROCPS_USERLEN"
+msgid "PROCPS_MISC"
+msgstr "PROCPS_USERLEN"
+
+#. type: Plain text
+#: ../doc/procps_misc.3:26
+msgid "procps_misc - API for miscellaneous information in the /proc filesystem"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:29
+#, no-wrap
+msgid "B<#include E<lt>procps/misc.hE<gt>>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:31
+#, no-wrap
+msgid "Platform Particulars\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:37
+#, no-wrap
+msgid ""
+"B<long         procps_cpu_count (void);>\n"
+"B<long         procps_hertz_get (void);>\n"
+"B<unsigned int procps_pid_length (void);>\n"
+"B<int          procps_linux_version (void);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:40
+#, no-wrap
+msgid "Runtime Particulars\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:46
+#, no-wrap
+msgid ""
+"B<int    procps_loadavg (double * >I<av1>B<, double * >I<av5>B<, double * >I<av15>B<);>\n"
+"B<int    procps_uptime (double * >I<uptime_secs>B<, double * >I<idle_secs>B<);>\n"
+"B<char * procps_uptime_sprint (void);>\n"
+"B<char * procps_uptime_sprint_short (void);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:49
+#, no-wrap
+msgid "Namespace Particulars\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:54
+#, no-wrap
+msgid ""
+"B<int          procps_ns_get_id (const char * >I<name>B<);>\n"
+"B<const char * procps_ns_get_name (int >I<id>B<);>\n"
+"B<int          procps_ns_read_pid (int >I<pid>B<, struct procps_ns * >I<nsp>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:57
+#, no-wrap
+msgid "Link with I<-lprocps>.\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:63
+msgid ""
+"B<procps_cpu_count>()  returns the number of CPUs that are currently online "
+"as B<sysconf(>I<_SC_NPROCESSORS_ONLY>B<)> or an assumed I<1>."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:69
+msgid ""
+"B<procps_hertz_get>()  returns the number of clock ticks per second as "
+"B<sysconf(>I<_SC_CLK_TCK>B<)> or an assumed I<100>.  Dividing tics by this "
+"value yields seconds."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:74
+msgid ""
+"B<procps_pid_length>()  returns the maximum string length for a PID on the "
+"system. For example, if the largest possible PID value on was 123, then the "
+"length would be 3. If the file I</proc/sys/kernel/pid_max> is unreadable, "
+"the value is assumed to be I<5>."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:83
+msgid ""
+"B<procps_linux_version>()  returns the current Linux version as an encoded "
+"integer. On non-Linux systems that have an emulated proc filesystem this "
+"function returns the version of the Linux emulation instead.  The version "
+"consists of three positive integers representing the major, minor and patch "
+"levels.  The following macros are provided for encoding a given Linux "
+"version or separating out the components of the current version."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:86
+msgid "LINUX_VERSION(\\ major\\ ,\\ minor\\ ,\\ patch\\ )"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:88
+msgid "LINUX_VERSION_MAJOR(\\ ver\\ )"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:90
+msgid "LINUX_VERSION_MINOR(\\ ver\\ )"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:92
+msgid "LINUX_VERSION_PATCH(\\ ver\\ )"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:97
+msgid ""
+"B<procps_loadavg>()  fetches the system load average and puts the 1, 5 and "
+"15 minute averages into location(s) specified by any pointer which is not "
+"I<NULL>."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:102
+msgid ""
+"B<procps_uptime>()  returns uptime and/or idle seconds into location(s) "
+"specified by any pointer which is not I<NULL>.  The B<sprint> varieties "
+"return a human-readable string in one of two forms."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:105
+msgid "HH:MM:SS up HH:MM, # users, load average: 1, 5, 15 MM averages"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:107
+msgid "up HH, MM"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:111
+msgid ""
+"B<procps_ns_get_id>()  returns the integer id (enum namespace_type) of the "
+"namespace for the given namespace I<name>."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:114
+msgid ""
+"B<procps_ns_get_name>()  returns the name of the namespace for the given "
+"I<id> (enum namespace_type)."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:119
+msgid ""
+"B<procps_ns_read_pid>()  returns the inodes for the namespaces of the given "
+"process in the procps_ns structure pointed to by I<nsp>.  Those inodes will "
+"appear in the order proscribed by enum namespace_type."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:130
+#, no-wrap
+msgid ""
+"enum namespace_type {\n"
+"    PROCPS_NS_IPC,\n"
+"    PROCPS_NS_MNT,\n"
+"    PROCPS_NS_NET,\n"
+"    PROCPS_NS_PID,\n"
+"    PROCPS_NS_USER,\n"
+"    PROCPS_NS_UTS\n"
+"};\n"
+msgstr ""
+
+#. type: SS
+#: ../doc/procps_misc.3:135
+#, no-wrap
+msgid "Functions Returning an `int' or `long'"
+msgstr ""
+
+#. type: TP
+#: ../doc/procps_misc.3:144
+#, fuzzy, no-wrap
+#| msgid "I</proc/slabinfo>"
+msgid "I</proc/loadavg>"
+msgstr "I</proc/slabinfo>"
+
+#. type: Plain text
+#: ../doc/procps_misc.3:147
+msgid "The raw values for load average."
+msgstr ""
+
+#. type: TP
+#: ../doc/procps_misc.3:147
+#, no-wrap
+msgid "I</proc/sys/kernel/osrelease>"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:150
+msgid "Contains the release version of the Linux kernel or proc filesystem."
+msgstr ""
+
+#. type: TP
+#: ../doc/procps_misc.3:150
+#, fuzzy, no-wrap
+#| msgid "I</proc/sys>"
+msgid "I</proc/sys/kernel/pid_max>"
+msgstr "I</proc/sys>"
+
+#. type: Plain text
+#: ../doc/procps_misc.3:153
+msgid ""
+"Contains the value at which PIDs wrap around, one greater than the maximum "
+"PID value."
+msgstr ""
+
+#. type: TP
+#: ../doc/procps_misc.3:153
+#, fuzzy, no-wrap
+#| msgid "I</proc>"
+msgid "I</proc/uptime>"
+msgstr "I</proc>"
+
+#. type: Plain text
+#: ../doc/procps_misc.3:156
+msgid "The raw values for uptime and idle time."
+msgstr ""
+
+#. type: TP
+#: ../doc/procps_misc.3:156
+#, no-wrap
+msgid "I</proc/E<lt>PIDE<gt>/ns>"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:159
+msgid "contains the set of namespaces for a particular B<PID>."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_misc.3:163
+#, fuzzy
+#| msgid "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
+msgid "B<procps>(3).  B<procps_pids>(3).  B<proc>(5)."
+msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
+
+#. type: TH
+#: ../doc/procps_pids.3:19
+#, fuzzy, no-wrap
+#| msgid "PROCPS_USERLEN"
+msgid "PROCPS_PIDS"
+msgstr "PROCPS_USERLEN"
+
+#. type: Plain text
+#: ../doc/procps_pids.3:25
+msgid "procps_pids - API to access process information in the /proc filesystem"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:29
+#, no-wrap
+msgid "#include E<lt>procps/pids.hE<gt>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:33
+#, no-wrap
+msgid ""
+"B<int procps_pids_new   (struct pids_info **>I<info>B<, enum pids_item *>I<items>B<, int >I<numitems>B<);>\n"
+"B<int procps_pids_ref   (struct pids_info  *>I<info>B<);>\n"
+"B<int procps_pids_unref (struct pids_info **>I<info>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:38
+#, no-wrap
+msgid ""
+"B<struct pids_stack *procps_pids_get (>\n"
+"B<    struct pids_info *>I<info>B<,>\n"
+"B<    enum pids_fetch_type >I<which>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:42
+#, no-wrap
+msgid ""
+"B<struct pids_fetch *procps_pids_reap (>\n"
+"B<    struct pids_info *>I<info>B<,>\n"
+"B<    enum pids_fetch_type >I<which>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:48
+#, no-wrap
+msgid ""
+"B<struct pids_fetch *procps_pids_select (>\n"
+"B<    struct pids_info *>I<info>B<,>\n"
+"B<    unsigned *>I<these>B<,>\n"
+"B<    int >I<numthese>B<,>\n"
+"B<    enum pids_select_type >I<which>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:55
+#, no-wrap
+msgid ""
+"B<struct pids_stack **procps_pids_sort (>\n"
+"B<    struct pids_info *>I<info>B<,>\n"
+"B<    struct pids_stack *>I<stacks[]>B<,>\n"
+"B<    int >I<numstacked>B<,>\n"
+"B<    enum pids_item >I<sortitem>B<,>\n"
+"B<    enum pids_sort_order >I<order>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:61
+#, no-wrap
+msgid ""
+"B<int procps_pids_reset (>\n"
+"B<    struct pids_info *>I<info>B<,>\n"
+"B<    enum pids_item *>I<newitems>B<,>\n"
+"B<    int >I<newnumitems>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:65
+#, no-wrap
+msgid ""
+"B<struct pids_stack *fatal_proc_unmounted (>\n"
+"B<    struct pids_info *>I<info>B<,>\n"
+"B<    int >I<return_self>B<);>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:77
+msgid ""
+"Central to this interface is a simple `result' structure reflecting an "
+"`item' plus its value (in a union with standard C language types as "
+"members).  All `result' structures are automatically allocated and provided "
+"by the library."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:94
+msgid ""
+"The pids.h file will be an essential document during user program "
+"development.  There you will find available items, their return type (the "
+"`result' struct member name) and the source for such values.  Additional "
+"enumerators and structures are also documented there."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:98
+msgid "The following would be a typical sequence of calls to this interface."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:104
+#, no-wrap
+msgid ""
+"1. B<fatal_proc_unmounted()>\n"
+"2. B<procps_pids_new()>\n"
+"3. B<procps_pids_get()>, B<procps_pids_reap()> or B<procps_pids_select()>\n"
+"4. B<procps_pids_unref()>\n"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:110
+msgid ""
+"Optionally, a user may choose to sort results returned from a B<reap> or "
+"B<select> function call.  The B<sort> function parameters I<stacks> and "
+"I<numstacked> would normally be those returned in the `pids_fetch' structure."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:118
+msgid ""
+"The E<lt>pidsE<gt> API differs from others in that those items of interest "
+"must be provided at B<new> or B<reset> time, the latter being unique to this "
+"API.  If either the I<items> or I<numitems> parameter is zero at B<new> "
+"time, then B<reset> becomes mandatory before issuing any other call."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:127
+msgid ""
+"The B<get> function is an iterator, for successive PIDs/TIDs, returning "
+"those items previously identified via B<new> or B<reset>."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:134
+msgid ""
+"The B<select> function requires an array of PIDs or UIDs as I<these> along "
+"with I<numthese> to identify which processes are to be fetched.  This "
+"function then operates as a subset of B<reap> while returning those items "
+"previously identified via B<new> or B<reset>."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:142
+msgid ""
+"Lastly, a B<fatal_proc_unmounted> function may be called before any other "
+"function to ensure that the /proc/ directory is mounted.  As such, the "
+"I<info> parameter would be NULL and the I<return_self> parameter zero.  If, "
+"however, some items are desired for the issuing program (a I<return_self> "
+"other than zero) then the B<new> call must precede it to obtain the required "
+"I<info> pointer."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:159
+msgid ""
+"Success is indicated by a pointer to the named structure.  However, if one "
+"survives the B<fatal_proc_unmounted> call, NULL is always returned when "
+"I<return_self> is zero."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:177
+msgid ""
+"Add #include E<lt>procps/xtra-procps-debug.hE<gt> to any program I<after> "
+"the #include E<lt>procps/pids.hE<gt>."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:186
+#, fuzzy
+#| msgid "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
+msgid "B<procps>(3)  B<procps_misc>(3)  B<proc>(5)."
+msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 
 #~ msgid "Please send bug reports to E<.MT procps@freelists.org> E<.ME>"
 #~ msgstr ""
