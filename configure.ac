@@ -132,20 +132,20 @@ AC_TRY_COMPILE([#include <errno.h>],
 		AC_MSG_RESULT(yes),
 		AC_MSG_RESULT(no))
 
-AC_CHECK_FUNC([pidfd_open], [enable_pwait=yes], [
+AC_CHECK_FUNC([pidfd_open], [enable_pidwait=yes], [
   AC_MSG_CHECKING([for __NR_pidfd_open])
   AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 #include <sys/syscall.h>
 #ifndef __NR_pidfd_open
 #error __NR_pidfd_open not defined
 #endif
-    ])], [enable_pwait=yes], [enable_pwait=no])
-  AC_MSG_RESULT([$enable_pwait])
+    ])], [enable_pidwait=yes], [enable_pidwait=no])
+  AC_MSG_RESULT([$enable_pidwait])
 ])
-if test "$enable_pwait" = yes; then
-  AC_DEFINE([ENABLE_PWAIT], [1], [Enable pwait])
+if test "$enable_pidwait" = yes; then
+  AC_DEFINE([ENABLE_PIDWAIT], [1], [Enable pidwait])
 fi
-AM_CONDITIONAL([BUILD_PWAIT], [test x$enable_pwait = xyes])
+AM_CONDITIONAL([BUILD_PIDWAIT], [test x$enable_pidwait = xyes])
 
 dnl watch8bit must be before the AC_ARG_WITH set as it sets up ncurses
 AC_SUBST([WITH_WATCH8BIT])

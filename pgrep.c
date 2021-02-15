@@ -38,7 +38,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-#if defined(ENABLE_PWAIT) && !defined(HAVE_PIDFD_OPEN)
+#if defined(ENABLE_PIDWAIT) && !defined(HAVE_PIDFD_OPEN)
 #include <sys/epoll.h>
 #include <sys/syscall.h>
 #endif
@@ -68,8 +68,8 @@
 static enum {
     PGREP = 0,
     PKILL,
-#ifdef ENABLE_PWAIT
-    PWAIT,
+#ifdef ENABLE_PIDWAIT
+    PIDWAIT,
 #endif
 } prog_mode;
 
@@ -136,8 +136,8 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 		fputs(_(" -q, --queue <value>       integer value to be sent with the signal\n"), fp);
 		fputs(_(" -e, --echo                display what is killed\n"), fp);
 		break;
-#ifdef ENABLE_PWAIT
-	case PWAIT:
+#ifdef ENABLE_PIDWAIT
+	case PIDWAIT:
 		fputs(_(" -e, --echo                display PIDs before waiting\n"), fp);
 		break;
 #endif
@@ -687,7 +687,7 @@ static struct el * select_procs (int *num)
 				xerrx(EXIT_FAILURE, _("internal error"));
 			}
 
-			// pkill and pwait don't support -w, but this is checked in getopt
+			// pkill and pidwait don't support -w, but this is checked in getopt
 			if (opt_threads) {
 				while (readtask(ptp, &task, &subtask)){
 					// don't add redundant tasks
@@ -742,7 +742,7 @@ static int signal_option(int *argc, char **argv)
 	return -1;
 }
 
-#if defined(ENABLE_PWAIT) && !defined(HAVE_PIDFD_OPEN)
+#if defined(ENABLE_PIDWAIT) && !defined(HAVE_PIDFD_OPEN)
 static int pidfd_open (pid_t pid, unsigned int flags)
 {
 	return syscall(__NR_pidfd_open, pid, flags);
@@ -793,9 +793,9 @@ static void parse_opts (int argc, char **argv)
 		{NULL, 0, NULL, 0}
 	};
 
-#ifdef ENABLE_PWAIT
-	if (strcmp (program_invocation_short_name, "pwait") == 0) {
-		prog_mode = PWAIT;
+#ifdef ENABLE_PIDWAIT
+	if (strcmp (program_invocation_short_name, "pidwait") == 0) {
+		prog_mode = PIDWAIT;
 		strcat (opts, "e");
 	} else
 #endif
@@ -1008,7 +1008,7 @@ int main (int argc, char **argv)
 	int num;
 	int i;
 	int kill_count = 0;
-#ifdef ENABLE_PWAIT
+#ifdef ENABLE_PIDWAIT
 	int poll_count = 0;
 	int wait_count = 0;
 	int epollfd = epoll_create(1);
@@ -1055,8 +1055,8 @@ int main (int argc, char **argv)
 			fprintf(stdout, "%d\n", num);
 		return !kill_count;
 
-#ifdef ENABLE_PWAIT
-	case PWAIT:
+#ifdef ENABLE_PIDWAIT
+	case PIDWAIT:
 		if (opt_count)
 			fprintf(stdout, "%d\n", num);
 

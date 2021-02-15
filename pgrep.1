@@ -9,7 +9,7 @@
 .\"
 .TH PGREP "1" "2020-06-04" "procps-ng" "User Commands"
 .SH NAME
-pgrep, pkill, pwait \- look up, signal, or wait for processes based on name and other attributes
+pgrep, pkill, pidwait \- look up, signal, or wait for processes based on name and other attributes
 .SH SYNOPSIS
 .B pgrep
 [options] pattern
@@ -17,7 +17,7 @@ pgrep, pkill, pwait \- look up, signal, or wait for processes based on name and 
 .B pkill
 [options] pattern
 .br
-.B pwait
+.B pidwait
 [options] pattern
 .SH DESCRIPTION
 .B pgrep
@@ -45,7 +45,7 @@ will send the specified signal (by default
 .BR SIGTERM )
 to each process instead of listing them on stdout.
 .PP
-.B pwait
+.B pidwait
 will wait for each process instead of listing them on stdout.
 .SH OPTIONS
 .TP
@@ -60,7 +60,7 @@ only.)
 \fB\-c\fR, \fB\-\-count\fR
 Suppress normal output; instead print a count of matching processes.  When
 count does not match anything, e.g. returns zero, the command will return
-non-zero value. Note that for pkill and pwait, the count is the number of
+non-zero value. Note that for pkill and pidwait, the count is the number of
 matching processes, not the processes that were successfully signaled or waited
 for.
 .TP
@@ -88,7 +88,7 @@ translated into
 .BR pgrep 's,
 .BR pkill 's,
 or
-.BR pwait 's
+.BR pidwait 's
 own process group.
 .TP
 \fB\-G\fR, \fB\-\-group\fR \fIgid\fP,...
@@ -126,7 +126,7 @@ is translated into
 .BR pgrep 's,
 .BR pkill 's,
 or
-.BR pwait 's
+.BR pidwait 's
 own session ID.
 .TP
 \fB\-t\fR, \fB\-\-terminal\fR \fIterm\fP,...
@@ -145,7 +145,7 @@ symbolical value may be used.
 Negates the matching.  This option is usually used in
 .BR pgrep 's
 or
-.BR pwait 's
+.BR pidwait 's
 context.  In
 .BR pkill 's
 context the short option is disabled to avoid accidental usage of the option.
@@ -154,7 +154,7 @@ context the short option is disabled to avoid accidental usage of the option.
 Shows all thread ids instead of pids in
 .BR pgrep 's
 or
-.BR pwait 's
+.BR pidwait 's
 context.  In
 .BR pkill 's
 context this option is disabled.
@@ -167,7 +167,7 @@ match the
 .TP
 \fB\-F\fR, \fB\-\-pidfile\fR \fIfile\fR
 Read \fIPID\fRs from \fIfile\fR.  This option is more useful for
-.BR pkill or pwait
+.BR pkill or pidwait
 than
 .BR pgrep .
 .TP
@@ -237,7 +237,7 @@ $ renice +4 $(pgrep chrome)
 .PD 0
 .TP
 0
-One or more processes matched the criteria. For pkill and pwait, one or more
+One or more processes matched the criteria. For pkill and pidwait, one or more
 processes must also have been successfully signalled or waited for.
 .TP
 1
@@ -258,7 +258,7 @@ The running
 .BR pgrep ,
 .BR pkill ,
 or
-.B pwait
+.B pidwait
 process will never report itself as a
 match.
 .SH BUGS
