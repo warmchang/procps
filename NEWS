@@ -1,5 +1,11 @@
-procps-ng NEXT
---------------
+procps-ng-NEXT
+---------------
+  * Rename pwait to pidwait
+
+procps-ng-3.3.17
+---------------
+  * library: Incremented to 8:3:0
+    (no removals or additions, internal changes only)
   * all: properly handle utf8 cmdline translations         issue #176
   * kill: Pass int to signalled process                    merge #32
   * pgrep: Pass int to signalled process                   merge #32
