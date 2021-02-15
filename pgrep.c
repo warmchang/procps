@@ -569,7 +569,7 @@ static struct el * select_procs (int *num)
         xerrx(EXIT_FATAL,
               _("Unable to create pid info structure"));
     which = PIDS_FETCH_TASKS_ONLY;
-    // pkill and pwait don't support -w, but this is checked in getopt
+    // pkill and pidwait don't support -w, but this is checked in getopt
     if (opt_threads)
         which = PIDS_FETCH_THREADS_TOO;
 
@@ -751,7 +751,7 @@ static void parse_opts (int argc, char **argv)
 
 #ifdef ENABLE_PIDWAIT
     if (strcmp (program_invocation_short_name, "pidwait") == 0) {
-        prog_mode = PWAIT;
+        prog_mode = PIDWAIT;
         strcat (opts, "e");
     } else
 #endif
