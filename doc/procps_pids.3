@@ -81,7 +81,7 @@ with a single function call.
 Thus, a `stack' can be viewed as a variable length record
 whose content and order is determined solely by the user.
 
-As part of each interface there are two unique items.
+As part of this interface there are two unique enumerators.
 The `noop' and `extra' items exist to hold user values.
 They are never set by the library, but the `extra'
 result will be zeroed with each library interaction.
@@ -103,10 +103,23 @@ this interface.
 .RB "4. " procps_pids_unref()
 .fi
 
-Optionally, a user may choose to sort results returned from
-a \fBreap\fR or \fBselect\fR function call.
-The \fBsort\fR function parameters \fIstacks\fR and \fInumstacked\fR
-would normally be those returned in the `pids_fetch' structure.
+The \fBget\fR function is an iterator for successive PIDs/TIDs,
+returning those `items' previously identified via \fBnew\fR
+or \fBreset\fR.
+
+Two functions support unpredictable variable outcomes.
+The \fBreap\fR function gathers data for all processes while
+the \fBselect\fR function deals with specific PIDs or UIDs.
+Both can return multiple `stacks' each containing multiple `result'
+structures.
+Optionally, a user may choose to \fBsort\fR such results
+
+To exploit any `stack', and access individual `result' structures,
+a \fIrelative_enum\fR is required as shown in the \fBVAL\fR macro
+defined in the header file.
+Such values could be hard coded as: 0 through numitems-1.
+However, this need is typically satisfied by creating your own
+enumerators corresponding to the order of the `items' array.
 
 .SS Caveats
 The <pids> API differs from others in that those items
@@ -121,16 +134,17 @@ struct pointer must be supplied.
 With \fBnew\fR it must have been initialized to NULL.
 With \fBunref\fR it will be reset to NULL if the reference count reaches zero.
 
-The \fBget\fR function is an iterator, for successive
-PIDs/TIDs, returning those items previously identified
-via \fBnew\fR or \fBreset\fR.
+The \fBget\fR and \fBreap\fR functions use the \fIwhich\fR parameter
+to specify whether just tasks or both tasks and threads are to be fetched.
 
 The \fBselect\fR function requires an array of PIDs or UIDs as
 \fIthese\fR along with \fInumthese\fR to identify which processes
 are to be fetched.
-This function then operates as a subset of \fBreap\fR
-while returning those items previously identified via \fBnew\fR
-or \fBreset\fR.
+This function then operates as a subset of \fBreap\fR.
+
+When usng the \fBsort\fR function, the parameters \fIstacks\fR and
+\fInumstacked\fR would normally be those returned in the `pids_fetch'
+structure.
 
 Lastly, a \fBfatal_proc_unmounted\fR function may be called before
 any other function to ensure that the /proc/ directory is mounted.
@@ -138,7 +152,7 @@ As such, the \fIinfo\fR parameter would be NULL and the
 \fIreturn_self\fR parameter zero.
 If, however, some items are desired for the issuing program (a
 \fIreturn_self\fR other than zero) then the \fBnew\fR call must precede
-it to obtain the required \fIinfo\fR pointer.
+it to identify the \fIitems\fR and obtain the required \fIinfo\fR pointer.
 
 .SH RETURN VALUE
 .SS Functions Returning an `int'

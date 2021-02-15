@@ -86,7 +86,7 @@ with a single function call.
 Thus, a `stack' can be viewed as a variable length record
 whose content and order is determined solely by the user.
 
-As part of each interface there are two unique items.
+As part of each interface there are two unique enumerators.
 The `noop' and `extra' items exist to hold user values.
 They are never set by the library, but the `extra'
 result will be zeroed with each library interaction.
@@ -107,10 +107,26 @@ these interfaces.
 .RB "3. " procps_unref()
 .fi
 
-Optionally, a user may choose to sort results returned from
-a \fBreap\fR function call.
-The \fBsort\fR function parameters \fIstacks\fR and \fInumstacked\fR
-would normally be those returned in the `reaped' structure.
+The \fBget\fR function is used to retrieve a `result' structure for
+a single `item'.
+Alternatively, a \fBGET\fR macro is available when only the return
+value is of interest.
+
+The \fBselect\fR function can retrieve multiple `result' structures
+in a single `stack'.
+
+For unpredictable variable outcomes, the \fBdiskstats\fR, \fBslabinfo\fR
+and \fBstat\fR interfaces export a \fBreap\fR function.
+It is used to retrieve multiple `stacks' each containing multiple
+`result' structures.
+Optionally, a user may choose to \fBsort\fR those results.
+
+To exploit any `stack', and access individual `result' structures,
+a \fIrelative_enum\fR is required as shown in the \fBVAL\fR macro
+defined in the header file.
+Such values could be hard coded as: 0 through numitems-1.
+However, this need is typically satisfied by creating your own
+enumerators corresponding to the order of the `items' array.
 
 .SS Caveats
 The \fBnew\fR, \fBref\fR, \fBunref\fR, \fBget\fR and \fBselect\fR
@@ -125,11 +141,13 @@ In the case of the \fBdiskstats\fR interface, a \fIname\fR parameter
 on the \fBget\fR and \fBselect\fR functions identifies a disk or
 partition name
 
-The \fBdiskstats\fR, \fBslabinfo\fR and \fBstat\fR interfaces support
-unpredictable variable outcomes.
-As such, they export a \fBreap\fR function to retrieve multiple `stacks'
-with a single invocation.
-These same interfaces also provide a \fBsort\fR function.
+For the \fBstat\fR interface, a \fIwhat\fR parameter on the \fBreap\fR
+function identifies whether data for just CPUs or both CPUs and NUMA
+nodes is to be gathered.
+
+When usng the \fBsort\fR function, the parameters \fIstacks\fR and
+\fInumstacked\fR would normally be those returned in the `reaped'
+structure.
 
 .SH RETURN VALUE
 .SS Functions Returning an `int'
