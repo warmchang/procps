@@ -1,15 +1,15 @@
 # procps-ng in zh_CN
 # Copyright (C) 2015 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
-# Boyuan Yang <073plan@gmail.com>, 2017.
+# Boyuan Yang <073plan@gmail.com>, 2017, 2019.
 # Mingye Wang <arthur200126@gmail.com>, 2015.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 3.3.10-rc1\n"
+"Project-Id-Version: procps-ng 3.3.16-pre2\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2018-04-10 21:33+1000\n"
-"PO-Revision-Date: 2017-11-15 18:55+0800\n"
+"POT-Creation-Date: 2019-10-29 07:52+1100\n"
+"PO-Revision-Date: 2019-12-17 13:37-0500\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -18,9 +18,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 2.2.4\n"
 
-#: free.c:74 slabtop.c:193 uptime.c:59 w.c:453
+#: free.c:74 slabtop.c:193 uptime.c:62 w.c:457
 #, c-format
 msgid " %s [options]\n"
 msgstr " %s [选项]\n"
@@ -30,61 +30,64 @@ msgid " -b, --bytes         show output in bytes\n"
 msgstr " -b, --bytes         以字节显示输出\n"
 
 #: free.c:77
-#, fuzzy
 msgid "     --kilo          show output in kilobytes\n"
-msgstr " -k, --kilo          以千字节显示输出\n"
+msgstr "     --kilo          使用千字节显示输出\n"
 
 #: free.c:78
-#, fuzzy
 msgid "     --mega          show output in megabytes\n"
-msgstr " -m, --mega          以兆字节显示输出\n"
+msgstr "     --mega          使用兆字节显示输出\n"
 
 #: free.c:79
-#, fuzzy
 msgid "     --giga          show output in gigabytes\n"
-msgstr " -g, --giga          以吉字节显示输出\n"
+msgstr "     --giga          使用吉字节显示输出\n"
 
 #: free.c:80
 msgid "     --tera          show output in terabytes\n"
-msgstr "     --tera          以太字节显示输出\n"
+msgstr "     --tera          使用太字节显示输出\n"
 
 #: free.c:81
 #, fuzzy
+#| msgid "     --tera          show output in terabytes\n"
 msgid "     --peta          show output in petabytes\n"
 msgstr "     --tera          以太字节显示输出\n"
 
 #: free.c:82
 #, fuzzy
+#| msgid " -k, --kilo          show output in kilobytes\n"
 msgid " -k, --kibi          show output in kibibytes\n"
 msgstr " -k, --kilo          以千字节显示输出\n"
 
 #: free.c:83
 #, fuzzy
+#| msgid " -m, --mega          show output in megabytes\n"
 msgid " -m, --mebi          show output in mebibytes\n"
 msgstr " -m, --mega          以兆字节显示输出\n"
 
 #: free.c:84
 #, fuzzy
+#| msgid " -g, --giga          show output in gigabytes\n"
 msgid " -g, --gibi          show output in gibibytes\n"
 msgstr " -g, --giga          以吉字节显示输出\n"
 
 #: free.c:85
 #, fuzzy
+#| msgid "     --tera          show output in terabytes\n"
 msgid "     --tebi          show output in tebibytes\n"
 msgstr "     --tera          以太字节显示输出\n"
 
 #: free.c:86
 #, fuzzy
+#| msgid "     --tera          show output in terabytes\n"
 msgid "     --pebi          show output in pebibytes\n"
 msgstr "     --tera          以太字节显示输出\n"
 
 #: free.c:87
 msgid " -h, --human         show human-readable output\n"
-msgstr ""
+msgstr " -h, --human         显示人类可读的输出\n"
 
 #: free.c:88
 msgid "     --si            use powers of 1000 not 1024\n"
-msgstr ""
+msgstr "     --si            使用 1000 的倍数而非使用 1024\n"
 
 #: free.c:89
 msgid " -l, --lohi          show detailed low and high memory statistics\n"
@@ -106,7 +109,7 @@ msgstr ""
 msgid " -w, --wide          wide output\n"
 msgstr " -w, --wide          宽版输出\n"
 
-#: free.c:95 w.c:462
+#: free.c:95 w.c:466
 msgid "     --help     display this help and exit\n"
 msgstr "     --help     显示此帮助信息并退出\n"
 
@@ -131,20 +134,13 @@ msgstr "查询 spec 文件 %s 失败，无法解析\n"
 
 #: free.c:352
 #, c-format
-msgid ""
-"               total        used        free      shared     buffers       "
-"cache   available"
-msgstr ""
-"              总计         已用        空闲      共享       缓冲          缓"
-"存    可用"
+msgid "              total        used        free      shared     buffers       cache   available"
+msgstr "              总计         已用        空闲      共享       缓冲          缓存    可用"
 
 #: free.c:354
 #, c-format
-msgid ""
-"               total        used        free      shared  buff/cache   "
-"available"
-msgstr ""
-"              总计         已用        空闲      共享    缓冲/缓存    可用"
+msgid "              total        used        free      shared  buff/cache   available"
+msgstr "              总计         已用        空闲      共享    缓冲/缓存    可用"
 
 #: free.c:357
 msgid "Mem:"
@@ -170,218 +166,215 @@ msgstr "总量："
 msgid "write error"
 msgstr "写入错误"
 
-#: pgrep.c:103
+#: pgrep.c:57 pidof.c:35 skill.c:72
+msgid "integer overflow"
+msgstr "整数溢出"
+
+#: pgrep.c:108
 #, fuzzy, c-format
 msgid " %s [options] <pattern>\n"
 msgstr "通配符模式用于排除"
 
-#: pgrep.c:106
+#: pgrep.c:111
 msgid " -d, --delimiter <string>  specify output delimiter\n"
 msgstr ""
 
-#: pgrep.c:107
+#: pgrep.c:112
 msgid " -l, --list-name           list PID and process name\n"
 msgstr ""
 
-#: pgrep.c:108
+#: pgrep.c:113
 msgid " -a, --list-full           list PID and full command line\n"
 msgstr ""
 
-#: pgrep.c:109
+#: pgrep.c:114
 #, fuzzy
 msgid " -v, --inverse             negates the matching\n"
 msgstr "对%<%T::%s(%A)%#V%>的调用没有匹配的函数"
 
-#: pgrep.c:110
+#: pgrep.c:115
 msgid " -w, --lightweight         list all TID\n"
 msgstr ""
 
-#: pgrep.c:113
+#: pgrep.c:118
 msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
 msgstr ""
 
-#: pgrep.c:114
+#: pgrep.c:119
 msgid " -e, --echo                display what is killed\n"
 msgstr ""
 
-#: pgrep.c:116
+#: pgrep.c:121
 #, fuzzy
 msgid " -c, --count               count of matching processes\n"
 msgstr "只印出各文件匹配列的计数"
 
-#: pgrep.c:117
+#: pgrep.c:122
 msgid " -f, --full                use full process name to match\n"
 msgstr ""
 
-#: pgrep.c:118
+#: pgrep.c:123
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
 msgstr ""
 
-#: pgrep.c:119
+#: pgrep.c:124
 msgid " -G, --group <GID,...>     match real group IDs\n"
 msgstr ""
 
-#: pgrep.c:120
+#: pgrep.c:125
 msgid " -i, --ignore-case         match case insensitively\n"
 msgstr ""
 
-#: pgrep.c:121
+#: pgrep.c:126
 msgid " -n, --newest              select most recently started\n"
 msgstr ""
 
-#: pgrep.c:122
+#: pgrep.c:127
 msgid " -o, --oldest              select least recently started\n"
 msgstr ""
 
-#: pgrep.c:123
-msgid ""
-" -P, --parent <PPID,...>   match only child processes of the given parent\n"
-msgstr ""
-
-#: pgrep.c:124
-msgid " -s, --session <SID,...>   match session IDs\n"
-msgstr ""
-
-#: pgrep.c:125
-msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
-msgstr ""
-
-#: pgrep.c:126
-msgid " -u, --euid <ID,...>       match by effective IDs\n"
-msgstr ""
-
-#: pgrep.c:127
-msgid " -U, --uid <ID,...>        match by real IDs\n"
-msgstr ""
-
 #: pgrep.c:128
-msgid " -x, --exact               match exactly with the command name\n"
+msgid " -P, --parent <PPID,...>   match only child processes of the given parent\n"
 msgstr ""
 
 #: pgrep.c:129
-msgid " -F, --pidfile <file>      read PIDs from file\n"
+msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr ""
 
 #: pgrep.c:130
-msgid " -L, --logpidfile          fail if PID file is not locked\n"
+msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
 msgstr ""
 
 #: pgrep.c:131
+msgid " -u, --euid <ID,...>       match by effective IDs\n"
+msgstr ""
+
+#: pgrep.c:132
+msgid " -U, --uid <ID,...>        match by real IDs\n"
+msgstr ""
+
+#: pgrep.c:133
+msgid " -x, --exact               match exactly with the command name\n"
+msgstr ""
+
+#: pgrep.c:134
+msgid " -F, --pidfile <file>      read PIDs from file\n"
+msgstr ""
+
+#: pgrep.c:135
+msgid " -L, --logpidfile          fail if PID file is not locked\n"
+msgstr ""
+
+#: pgrep.c:136
+msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
+msgstr ""
+
+#: pgrep.c:137
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
 msgstr ""
 
-#: pgrep.c:133
+#: pgrep.c:139
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
-"                           Available namespaces: ipc, mnt, net, pid, user, "
-"uts\n"
+"                           Available namespaces: ipc, mnt, net, pid, user, uts\n"
 msgstr ""
 
-#: pgrep.c:274
+#: pgrep.c:280
 #, fuzzy, c-format
 msgid "invalid user name: %s"
 msgstr "无用户名: %s\n"
 
-#: pgrep.c:291
+#: pgrep.c:297
 #, fuzzy, c-format
 msgid "invalid group name: %s"
 msgstr "无效的组列表%s"
 
-#: pgrep.c:302
+#: pgrep.c:308
 #, fuzzy, c-format
 msgid "invalid process group: %s"
 msgstr "无效的组：%s"
 
-#: pgrep.c:314
+#: pgrep.c:320
 #, fuzzy, c-format
 msgid "invalid session id: %s"
 msgstr "%s：无效的进程号"
 
-#: pgrep.c:326
-#, fuzzy, c-format
+#: pgrep.c:332
+#, c-format
 msgid "not a number: %s"
-msgstr "%s：错误的编号：%s"
+msgstr "不是数字：%s"
 
-#: pgrep.c:507
+#: pgrep.c:515
 msgid "Error reading reference namespace information\n"
 msgstr ""
 
-#: pgrep.c:610 pidof.c:231 pidof.c:272 sysctl.c:672
-#, fuzzy
+#: pgrep.c:632 pidof.c:233 pidof.c:272 skill.c:506 sysctl.c:680
 msgid "internal error"
 msgstr "内部错误"
 
-#: pgrep.c:656
-#, c-format
-msgid ""
-"pattern that searches for process name longer than 15 characters will result "
-"in zero matches\n"
-"Try `%s -f' option to match against the complete command line."
-msgstr ""
-
-#: pgrep.c:881
+#: pgrep.c:895
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: pgrep.c:888
+#: pgrep.c:902
 #, fuzzy, c-format
 msgid ""
 "pidfile not valid\n"
 "Try `%s --help' for more information."
 msgstr "尝试“%s --help”以获得更多信息。\n"
 
-#: pgrep.c:896
+#: pgrep.c:910
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: pgrep.c:900
+#: pgrep.c:914
 #, c-format
 msgid ""
 "no matching criteria specified\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: pgrep.c:928
+#: pgrep.c:942
 #, fuzzy, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "%s：第%lu 次，共%lu 次 (%s)..."
 
-#: pgrep.c:935
+#: pgrep.c:949
 #, c-format
 msgid "killing pid %ld failed"
 msgstr ""
 
-#: pidof.c:61
+#: pidof.c:67
 #, fuzzy, c-format
 msgid " %s [options] [program [...]]\n"
 msgstr "  %s 的选项：\n"
 
-#: pidof.c:63
+#: pidof.c:69
 msgid " -s, --single-shot         return one PID only\n"
-msgstr ""
+msgstr " -s, --single-shot         只返回一个 PID\n"
 
-#: pidof.c:64
+#: pidof.c:70
 msgid " -c, --check-root          omit processes with different root\n"
 msgstr ""
 
-#: pidof.c:65
+#: pidof.c:71
 msgid " -x                        also find shells running the named scripts\n"
 msgstr ""
 
-#: pidof.c:66
+#: pidof.c:72
 msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
 msgstr ""
 
-#: pidof.c:67
+#: pidof.c:73
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
 msgstr ""
 
@@ -390,45 +383,42 @@ msgstr ""
 msgid "illegal omit pid value (%s)!\n"
 msgstr ""
 
-#: pmap.c:61
-msgid "Address"
-msgstr "住址"
-
 #: pmap.c:62
-#, fuzzy
-msgid "Offset"
-msgstr "字符偏移量为零"
+msgid "Address"
+msgstr "地址"
 
 #: pmap.c:63
-#, fuzzy
-msgid "Device"
-msgstr "<设备>"
+msgid "Offset"
+msgstr "偏移量"
 
 #: pmap.c:64
+msgid "Device"
+msgstr "设备"
+
+#: pmap.c:65
 #, fuzzy
 msgid "Mapping"
 msgstr "内核不支持 loop-AES 兼容映射。\n"
 
-#: pmap.c:68
+#: pmap.c:69
 msgid "Perm"
 msgstr ""
 
-#: pmap.c:69
+#: pmap.c:70
 #, fuzzy
 msgid "Inode"
 msgstr "设备：%Dh/%dd\tInode：%-10i  硬链接：%h\n"
 
-#: pmap.c:72
+#: pmap.c:73
 msgid "Kbytes"
 msgstr ""
 
-#: pmap.c:73
+#: pmap.c:74
 #, fuzzy
 msgid "Mode"
-msgstr ""
-"  -m, --mode=模式   \t设置权限模式(类似chmod)，而不是rwxrwxrwx 减umask\n"
+msgstr "  -m, --mode=模式   \t设置权限模式(类似chmod)，而不是rwxrwxrwx 减umask\n"
 
-#: pmap.c:74
+#: pmap.c:75
 #, fuzzy
 msgid "RSS"
 msgstr ""
@@ -439,233 +429,226 @@ msgstr ""
 "  堆栈开始：   %#-10lx\n"
 "  堆栈指针 (ESP)：%#10lx\t 指令指针 (EIP)：%#10lx\n"
 
-#: pmap.c:75
+#: pmap.c:76
 msgid "Dirty"
 msgstr ""
 
-#: pmap.c:109
+#: pmap.c:110
 #, fuzzy, c-format
 msgid " %s [options] PID [PID ...]\n"
 msgstr "%*s 用户     进程号 权限   命令\n"
 
-#: pmap.c:111
-msgid " -x, --extended              show details\n"
-msgstr ""
-
 #: pmap.c:112
-msgid " -X                          show even more details\n"
-msgstr ""
+msgid " -x, --extended              show details\n"
+msgstr " -x, --extended              显示细节\n"
 
 #: pmap.c:113
+msgid " -X                          show even more details\n"
+msgstr " -X                          显示更多细节\n"
+
+#: pmap.c:114
 msgid "            WARNING: format changes according to /proc/PID/smaps\n"
 msgstr ""
 
-#: pmap.c:114
-msgid " -XX                         show everything the kernel provides\n"
-msgstr ""
-
 #: pmap.c:115
-msgid " -c, --read-rc               read the default rc\n"
-msgstr ""
+msgid " -XX                         show everything the kernel provides\n"
+msgstr " -XX                         显示内核提供的所有信息\n"
 
 #: pmap.c:116
-msgid " -C, --read-rc-from=<file>   read the rc from file\n"
-msgstr ""
+msgid " -c, --read-rc               read the default rc\n"
+msgstr " -c, --read-rc               读取默认 rc 文件\n"
 
 #: pmap.c:117
-msgid " -n, --create-rc             create new default rc\n"
-msgstr ""
+msgid " -C, --read-rc-from=<file>   read the rc from file\n"
+msgstr " -C, --read-rc-from=<文件>   将指定文件作为 rc 文件读取\n"
 
 #: pmap.c:118
+msgid " -n, --create-rc             create new default rc\n"
+msgstr " -n, --create-rc             创建新的默认 rc 文件\n"
+
+#: pmap.c:119
 msgid " -N, --create-rc-to=<file>   create new rc to file\n"
 msgstr ""
 
-#: pmap.c:119
+#: pmap.c:120
 msgid "            NOTE: pid arguments are not allowed with -n, -N\n"
 msgstr ""
 
-#: pmap.c:120
-#, fuzzy
-msgid " -d, --device                show the device format\n"
-msgstr "显示设备状态"
-
 #: pmap.c:121
+msgid " -d, --device                show the device format\n"
+msgstr " -d, --device                显示设备格式\n"
+
+#: pmap.c:122
 msgid " -q, --quiet                 do not display header and footer\n"
 msgstr ""
 
-#: pmap.c:122
+#: pmap.c:123
 msgid " -p, --show-path             show path in the mapping\n"
 msgstr ""
 
-#: pmap.c:123
+#: pmap.c:124
 msgid " -A, --range=<low>[,<high>]  limit results to the given range\n"
 msgstr ""
 
-#: pmap.c:201
+#: pmap.c:202
 #, fuzzy
 msgid "shared memory detach"
 msgstr "共享内存对象"
 
-#: pmap.c:205
+#: pmap.c:206
 #, fuzzy
 msgid "shared memory remove"
 msgstr "共享内存对象"
 
-#: pmap.c:238
+#: pmap.c:231
 msgid "  [ anon ]"
 msgstr ""
 
-#: pmap.c:240
+#: pmap.c:233
 #, fuzzy
 msgid "  [ stack ]"
 msgstr "栈错误"
 
-#: pmap.c:325
+#: pmap.c:319 pmap.c:325
 #, fuzzy
 msgid "Unknown format in smaps file!"
 msgstr "未知的格式类型“%s”"
 
-#: pmap.c:368
+#: pmap.c:364
 msgid "inconsistent detail field in smaps file, line:\n"
 msgstr ""
 
-#: pmap.c:712
+#: pmap.c:714
 #, fuzzy
 msgid "total kB"
 msgstr "总用量"
 
-#: pmap.c:723
+#: pmap.c:725
 #, c-format
 msgid "mapped: %ldK    writeable/private: %ldK    shared: %ldK\n"
 msgstr ""
 
 #. Translation Hint: keep total string length
 #. * as 24 characters. Adjust %16 if needed
-#: pmap.c:732
+#: pmap.c:734
 #, fuzzy, c-format
 msgid " total %16ldK\n"
 msgstr "总用量"
 
 #. Translation Hint: keep total string length
 #. * as 16 characters. Adjust %8 if needed
-#: pmap.c:738
+#: pmap.c:740
 #, fuzzy, c-format
 msgid " total %8ldK\n"
 msgstr "总用量"
 
-#: pmap.c:765 skill.c:507 skill.c:541 skill.c:628 tload.c:130 tload.c:135
-#: vmstat.c:955 vmstat.c:964 watch.c:732
+#: pmap.c:771 skill.c:518 skill.c:550 skill.c:634 tload.c:135 tload.c:140
+#: vmstat.c:977 vmstat.c:986 watch.c:732
 #, fuzzy
 msgid "failed to parse argument"
 msgstr "模板实参表语法错误"
 
-#: pmap.c:809
+#: pmap.c:814
 #, fuzzy, c-format
 msgid "config line too long - line %d"
 msgstr "输入行太长"
 
-#: pmap.c:834
+#: pmap.c:839
 #, c-format
 msgid "unsupported section found in the config - line %d"
 msgstr ""
 
-#: pmap.c:837 pmap.c:848 pmap.c:859 pmap.c:878 pmap.c:890
+#: pmap.c:842 pmap.c:853 pmap.c:864 pmap.c:883 pmap.c:895
 #, fuzzy, c-format
 msgid "syntax error found in the config - line %d"
 msgstr "脚本“%s”: 语法错误发生于第 %d 列 %s%s\n"
 
-#: pmap.c:909
+#: pmap.c:914
 msgid "the file already exists - delete or rename it first"
-msgstr ""
+msgstr "文件已存在 - 请先将其删除或重命名"
 
-#: pmap.c:972
-#, fuzzy
+#: pmap.c:977
 msgid "HOME variable undefined"
-msgstr "TY 中未定义的变量"
+msgstr "未定义 HOME 变量"
 
-#: pmap.c:980
-#, fuzzy
+#: pmap.c:985
 msgid "memory allocation failed"
 msgstr "内存分配失败"
 
-#: pmap.c:1032
-#, fuzzy
+#: pmap.c:1037
 msgid "option -r is ignored as SunOS compatibility"
-msgstr "为 GCC 链接器选项兼容性忽略"
+msgstr "为 SunOS 兼容性忽略 -r 选项"
 
-#: pmap.c:1079
+#: pmap.c:1084
 msgid "options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"
-msgstr ""
+msgstr "选项 -c, -C, -d, -n, -N, -x, -X 之间是互斥的"
 
-#: pmap.c:1082
+#: pmap.c:1087
 msgid "options -p, -q are mutually exclusive with -n, -N"
-msgstr ""
+msgstr "选项 -p, -q 和 -n, -N 互斥"
 
-#: pmap.c:1085
+#: pmap.c:1090 pmap.c:1142
 msgid "too many arguments"
-msgstr "实参太多"
+msgstr "参数过多"
 
-#: pmap.c:1089
+#: pmap.c:1094
 msgid "rc file successfully created, feel free to edit the content"
-msgstr ""
+msgstr "已成功创建 rc 文件，请按需编辑其内容"
 
-#: pmap.c:1092
-#, fuzzy
+#: pmap.c:1097
 msgid "couldn't create the rc file"
-msgstr "无法创建临时文件"
+msgstr "无法创建 rc 文件"
 
-#: pmap.c:1104
+#: pmap.c:1109
 #, c-format
 msgid "~/.%src file successfully created, feel free to edit the content"
-msgstr ""
-
-#: pmap.c:1107
-#, fuzzy, c-format
-msgid "couldn't create ~/.%src"
-msgstr "无法为 %s建立管道： %m\n"
+msgstr "已成功创建 ~/.%src 文件，请按需编辑其内容"
 
 #: pmap.c:1112
-#, fuzzy
+#, c-format
+msgid "couldn't create ~/.%src"
+msgstr "无法创建 ~/.%src"
+
+#: pmap.c:1117
 msgid "argument missing"
-msgstr "%2$q+#D的第 %1$P 个形参缺少默认实参"
+msgstr "缺少参数"
 
-#: pmap.c:1126
-#, fuzzy
+#: pmap.c:1131
 msgid "couldn't read the rc file"
-msgstr "%s：无法读取区块 %llu\n"
+msgstr "无法读取 rc 文件"
 
-#: pmap.c:1128
-#, fuzzy, c-format
+#: pmap.c:1133
+#, c-format
 msgid "couldn't read ~/.%src"
-msgstr "%s：无法读取区块 %llu\n"
+msgstr "无法读取 ~/.%src"
 
 #: ps/display.c:54
-#, fuzzy, c-format
+#, c-format
 msgid "Signal %d (%s) caught by %s (%s).\n"
-msgstr "%s(%s%d) 被信号 %d 杀死\n"
+msgstr "信号 %d（%s）已由 %s（%s）捕获。\n"
 
-#: ps/display.c:66 ps/display.c:271 ps/parser.c:495 ps/parser.c:742
-#: ps/select.c:95 ps/sortformat.c:544
-#, fuzzy
+#: ps/display.c:66 ps/display.c:272 ps/display.c:480 ps/output.c:2174
+#: ps/parser.c:495 ps/parser.c:742 ps/select.c:95 ps/sortformat.c:263
+#: ps/sortformat.c:301 ps/sortformat.c:548
 msgid "please report this bug"
-msgstr "请报告该 BUG。\n"
+msgstr "请报告此问题"
 
-#: ps/display.c:356
-#, fuzzy, c-format
+#: ps/display.c:357
+#, c-format
 msgid "error: not enough memory\n"
-msgstr "没有足够的内存进行重定位排序"
+msgstr "错误：没有足够的内存\n"
 
-#: ps/display.c:367 ps/display.c:542
+#: ps/display.c:368 ps/display.c:553
 #, c-format
 msgid "error: can not access /proc\n"
-msgstr ""
+msgstr "错误：无法访问 /proc\n"
 
-#: ps/display.c:417
+#: ps/display.c:418
 #, fuzzy, c-format
 msgid "could not find start_time\n"
 msgstr "找不到类%qE"
 
-#: ps/display.c:428
+#: ps/display.c:429
 #, fuzzy, c-format
 msgid "could not find ppid\n"
 msgstr "找不到类%qE"
@@ -673,7 +656,7 @@ msgstr "找不到类%qE"
 #: ps/global.c:169
 #, c-format
 msgid "your %dx%d screen size is bogus. expect trouble\n"
-msgstr ""
+msgstr "您的 %dx%d 的屏幕尺寸可能并非真实尺寸。程序运行可能不正常\n"
 
 #: ps/global.c:242 ps/global.c:254
 #, fuzzy
@@ -781,19 +764,23 @@ msgid "a"
 msgstr ""
 
 #: ps/help.c:94
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
 " %s [options]\n"
-msgstr "用法：%s [选项]... main类名 [输出文件]\n"
+msgstr ""
+"\n"
+"用法：\n"
+" %s [选项]\n"
 
 #: ps/help.c:99
-#, fuzzy
 msgid ""
 "\n"
 "Basic options:\n"
-msgstr " 选项为：\n"
+msgstr ""
+"\n"
+"基本选项：\n"
 
 #: ps/help.c:100
 #, fuzzy
@@ -838,9 +825,8 @@ msgid ""
 msgstr "需要选择语句"
 
 #: ps/help.c:111
-#, fuzzy
 msgid " -C <command>         command name\n"
-msgstr "标准命令"
+msgstr " -C <命令>            命令名称\n"
 
 #: ps/help.c:112
 msgid " -G, --Group <GID>    real group id or name\n"
@@ -852,11 +838,11 @@ msgstr ""
 
 #: ps/help.c:114
 msgid " -p, p, --pid <PID>   process id\n"
-msgstr ""
+msgstr " -p, p, --pid <PID>   进程编号\n"
 
 #: ps/help.c:115
 msgid "        --ppid <PID>  parent process id\n"
-msgstr ""
+msgstr "        --ppid <PID>  父进程编号\n"
 
 #: ps/help.c:116
 msgid ""
@@ -870,7 +856,7 @@ msgstr ""
 
 #: ps/help.c:119
 msgid " -t, t, --tty <tty>   terminal\n"
-msgstr ""
+msgstr " -t, t, --tty <tty>   终端\n"
 
 #: ps/help.c:120
 msgid " -u, U, --user <UID>  effective user id or name\n"
@@ -878,7 +864,7 @@ msgstr ""
 
 #: ps/help.c:121
 msgid " -U, --User <UID>     real user id or name\n"
-msgstr ""
+msgstr " -U, --User <UID>     真实用户编号或名称\n"
 
 #: ps/help.c:122
 msgid ""
@@ -889,11 +875,12 @@ msgid ""
 msgstr ""
 
 #: ps/help.c:128
-#, fuzzy
 msgid ""
 "\n"
 "Output formats:\n"
-msgstr "警告：输入和输出格式不兼容"
+msgstr ""
+"\n"
+"输出格式：\n"
 
 #: ps/help.c:129
 #, fuzzy
@@ -902,11 +889,11 @@ msgstr "    -F, --fullname                      打印全名\n"
 
 #: ps/help.c:130
 msgid " -f                   full-format, including command lines\n"
-msgstr ""
+msgstr " -f                   完整格式，包含命令行\n"
 
 #: ps/help.c:131
 msgid "  f, --forest         ascii art process tree\n"
-msgstr ""
+msgstr "  f, --forest         ascii 字符艺术显示的进程树\n"
 
 #: ps/help.c:132
 #, fuzzy
@@ -920,27 +907,19 @@ msgstr "发布寻求协助"
 
 #: ps/help.c:134
 msgid "  j                   BSD job control format\n"
-msgstr ""
+msgstr "  j                   BSD 任务控制格式\n"
 
 #: ps/help.c:135
-#, fuzzy
 msgid " -l                   long format\n"
-msgstr ""
-"\n"
-"  -l\t对指定用户输出完整的长格式信息\n"
-"  -b\t在长格式中省略用户主目录以及登录 shell\n"
-"  -h\t在长格式中省略用户的项目文件\n"
-"  -p\t在长格式中省略用户的计划文件\n"
-"  -s\t输出短格式信息(默认)\n"
+msgstr " -l                   长格式\n"
 
 #: ps/help.c:136
-#, fuzzy
 msgid "  l                   BSD long format\n"
-msgstr "%s 出现在%L处的格式字符串中"
+msgstr "  l                   BSD 长格式\n"
 
 #: ps/help.c:137
 msgid " -M, Z                add security data (for SELinux)\n"
-msgstr ""
+msgstr " -M, Z                添加安全数据（用于 SELinux）\n"
 
 #: ps/help.c:138
 msgid " -O <format>          preloaded with default columns\n"
@@ -955,11 +934,12 @@ msgid ""
 " -o, o, --format <format>\n"
 "                      user-defined format\n"
 msgstr ""
+" -o, o, --format <格式>\n"
+"                      用户定义的格式\n"
 
 #: ps/help.c:142
-#, fuzzy
 msgid "  s                   signal format\n"
-msgstr "%s：无效的信号"
+msgstr "  s                   信号格式\n"
 
 #: ps/help.c:143
 msgid "  u                   user-oriented format\n"
@@ -967,22 +947,19 @@ msgstr ""
 
 #: ps/help.c:144
 msgid "  v                   virtual memory format\n"
-msgstr ""
+msgstr "  v                   虚拟内存格式\n"
 
 #: ps/help.c:145
-#, fuzzy
 msgid "  X                   register format\n"
-msgstr "注册"
+msgstr "  X                   寄存器格式\n"
 
 #: ps/help.c:146
-msgid ""
-" -y                   do not show flags, show rss vs. addr (used with -l)\n"
+msgid " -y                   do not show flags, show rss vs. addr (used with -l)\n"
 msgstr ""
 
 #: ps/help.c:147
-#, fuzzy
 msgid "     --context        display security context (for SELinux)\n"
-msgstr "正在更改%s 的安全环境\n"
+msgstr "     --context        显示安全上下文（用于 SELinux）\n"
 
 #: ps/help.c:148
 msgid "     --headers        repeat header lines, one per page\n"
@@ -1049,8 +1026,7 @@ msgid "  e                   show the environment after command\n"
 msgstr ""
 
 #: ps/help.c:167
-msgid ""
-"  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
+msgid "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
 msgstr ""
 
 #: ps/help.c:168
@@ -1079,7 +1055,7 @@ msgstr ""
 
 #: ps/help.c:173
 msgid " -w, w                unlimited output width\n"
-msgstr ""
+msgstr " -w, w                不限制输出宽度\n"
 
 #: ps/help.c:174
 #, c-format
@@ -1088,6 +1064,9 @@ msgid ""
 "        --%s <%s|%s|%s|%s|%s|%s>\n"
 "                      display help and exit\n"
 msgstr ""
+"\n"
+"        --%s <%s|%s|%s|%s|%s|%s>\n"
+"                      显示帮助信息并退出\n"
 
 #. Translation Notes for ps Help #2 ---------------------------------
 #. .  Most of the following c-format string is derived from the 6
@@ -1116,21 +1095,18 @@ msgid ""
 "\n"
 "For more details see ps(1).\n"
 msgstr ""
+"\n"
+"如需了解更多细节，请阅读 ps(1)。\n"
 
-#: ps/output.c:2019
+#: ps/output.c:2022
 #, fuzzy, c-format
 msgid "fix bigness error\n"
 msgstr "修正"
 
-#: ps/output.c:2094
+#: ps/output.c:2105
 #, fuzzy, c-format
 msgid "bad alignment code\n"
 msgstr "错误的条件码"
-
-#: ps/output.c:2156
-#, c-format
-msgid "unknown page size (assume 4096)\n"
-msgstr ""
 
 #: ps/parser.c:57
 #, fuzzy
@@ -1138,14 +1114,12 @@ msgid "the option is exclusive: "
 msgstr "排他"
 
 #: ps/parser.c:87
-#, fuzzy
 msgid "process ID list syntax error"
-msgstr "%C处的参数列表语法错误"
+msgstr "进程编号列表语法错误"
 
 #: ps/parser.c:88 ps/parser.c:89
-#, fuzzy
 msgid "process ID out of range"
-msgstr "未指定进程号"
+msgstr "进程编号超出范围"
 
 #: ps/parser.c:102
 #, fuzzy
@@ -1153,9 +1127,8 @@ msgid "user name does not exist"
 msgstr "用户%s 不存在 - 使用root\n"
 
 #: ps/parser.c:108
-#, fuzzy
 msgid "user ID out of range"
-msgstr "设置用户ID 失败"
+msgstr "用户编号超出范围"
 
 #: ps/parser.c:121
 #, fuzzy
@@ -1168,9 +1141,8 @@ msgid "group ID out of range"
 msgstr "设置组ID 失败"
 
 #: ps/parser.c:143 ps/parser.c:167
-#, fuzzy
 msgid "TTY could not be found"
-msgstr "不是一个 tty"
+msgstr "无法找到 TTY"
 
 #: ps/parser.c:169
 #, fuzzy
@@ -1223,9 +1195,8 @@ msgid "list of process IDs must follow -p"
 msgstr ""
 
 #: ps/parser.c:426
-#, fuzzy
 msgid "the -r option is reserved"
-msgstr "保留"
+msgstr "-r 选项已被预留"
 
 #: ps/parser.c:432
 msgid "list of session IDs must follow -s"
@@ -1257,15 +1228,15 @@ msgstr "不支持的 SysV 选项"
 
 #: ps/parser.c:511
 msgid "cannot happen - problem #1"
-msgstr ""
+msgstr "不应发生 - 问题 #1"
 
 #: ps/parser.c:515
 msgid "cannot happen - problem #2"
-msgstr ""
+msgstr "不应发生 - 问题 #2"
 
 #: ps/parser.c:517
 msgid "second chance parse failed, not BSD or SysV"
-msgstr ""
+msgstr "第二次解析同样失败，并非 BSD 或 SysV"
 
 #: ps/parser.c:534
 #, fuzzy
@@ -1308,7 +1279,7 @@ msgstr ""
 
 #: ps/parser.c:739
 msgid "embedded '-' among BSD options makes no sense"
-msgstr ""
+msgstr "BSD 选项中嵌入的 '-' 不合理"
 
 #: ps/parser.c:745
 #, fuzzy
@@ -1316,9 +1287,8 @@ msgid "unsupported option (BSD syntax)"
 msgstr "不支持旧语法：%s\n"
 
 #: ps/parser.c:831 ps/parser.c:843
-#, fuzzy
 msgid "unknown gnu long option"
-msgstr "%s：不明选项 -%c\n"
+msgstr "未知的 gnu 长选项"
 
 #: ps/parser.c:851
 msgid "list of real groups must follow --Group"
@@ -1390,18 +1360,16 @@ msgid "list of effective users must follow --user"
 msgstr ""
 
 #: ps/parser.c:1119
-#, fuzzy
 msgid "way bad"
-msgstr "错误的寄存器名"
+msgstr "有些地方出错了"
 
 #: ps/parser.c:1133
-#, fuzzy
 msgid "garbage option"
-msgstr "(} 之后的无用数据)"
+msgstr "多余的无用选项"
 
 #: ps/parser.c:1137
 msgid "something broke"
-msgstr ""
+msgstr "有什么地方不太对劲"
 
 #: ps/parser.c:1157
 msgid "thread display conflicts with forest display"
@@ -1420,150 +1388,148 @@ msgid "thread flags conflict; can't use both -L and -T"
 msgstr ""
 
 #: ps/parser.c:1239 ps/parser.c:1240
-#, fuzzy, c-format
+#, c-format
 msgid "error: %s\n"
-msgstr "%K调用%qs，声明有错误属性：%s"
+msgstr "错误：%s\n"
 
 #: ps/select.c:71
 msgid "process selection options conflict"
 msgstr ""
 
-#: ps/sortformat.c:106 ps/sortformat.c:111
+#: ps/sortformat.c:107 ps/sortformat.c:112
 msgid "seriously crashing: goodbye cruel world"
 msgstr ""
 
-#: ps/sortformat.c:146
+#: ps/sortformat.c:147
 msgid "improper AIX field descriptor"
 msgstr ""
 
-#: ps/sortformat.c:167
+#: ps/sortformat.c:168
 #, fuzzy
 msgid "unknown AIX field descriptor"
 msgstr "初始值设定项里有未知的字段%qE"
 
-#: ps/sortformat.c:172
+#: ps/sortformat.c:173
 msgid "AIX field descriptor processing bug"
 msgstr ""
 
-#: ps/sortformat.c:285
+#: ps/sortformat.c:287
 #, c-format
 msgid "unknown user-defined format specifier \"%s\""
 msgstr ""
 
-#: ps/sortformat.c:311
-#, fuzzy
+#: ps/sortformat.c:314
 msgid "empty format list"
-msgstr "空白标签格式"
+msgstr "空格式列表"
 
-#: ps/sortformat.c:312
+#: ps/sortformat.c:315
 #, fuzzy
 msgid "improper format list"
 msgstr "LIST"
 
-#: ps/sortformat.c:313
+#: ps/sortformat.c:316
 msgid "column widths must be unsigned decimal numbers"
 msgstr ""
 
-#: ps/sortformat.c:314
+#: ps/sortformat.c:317
 msgid "can not set width for a macro (multi-column) format specifier"
 msgstr ""
 
-#: ps/sortformat.c:367 ps/sortformat.c:383
+#: ps/sortformat.c:370 ps/sortformat.c:386
 #, fuzzy
 msgid "improper sort list"
 msgstr "排序"
 
-#: ps/sortformat.c:378
+#: ps/sortformat.c:381
 #, fuzzy
 msgid "empty sort list"
 msgstr "排序"
 
-#: ps/sortformat.c:399 ps/sortformat.c:477 ps/sortformat.c:479
+#: ps/sortformat.c:402 ps/sortformat.c:481 ps/sortformat.c:483
 #, fuzzy
 msgid "unknown sort specifier"
 msgstr "排序"
 
-#: ps/sortformat.c:426 ps/sortformat.c:437 ps/sortformat.c:443
+#: ps/sortformat.c:429 ps/sortformat.c:434 ps/sortformat.c:441
+#: ps/sortformat.c:447
 #, fuzzy
 msgid "bad sorting code"
 msgstr "错误的内建代码"
 
-#: ps/sortformat.c:440
+#: ps/sortformat.c:444
 msgid "PPID sort and forest output conflict"
 msgstr ""
 
-#: ps/sortformat.c:514
+#: ps/sortformat.c:518
 msgid "option -O can not follow other format options"
 msgstr ""
 
-#: ps/sortformat.c:521 ps/sortformat.c:539
+#: ps/sortformat.c:525 ps/sortformat.c:543
 #, fuzzy
 msgid "multiple sort options"
 msgstr "排序"
 
-#: ps/sortformat.c:529
+#: ps/sortformat.c:533
 msgid "option O is neither first format nor sort order"
 msgstr ""
 
-#: ps/sortformat.c:656
+#: ps/sortformat.c:660
 msgid "modifier -y without format -l makes no sense"
 msgstr ""
 
-#: ps/sortformat.c:756
+#: ps/sortformat.c:760
 msgid "bug: must reset the list first"
-msgstr ""
+msgstr "错误：必须首先重置列表"
 
-#: ps/sortformat.c:794
+#: ps/sortformat.c:798
 msgid "tell <procps@freelists.org> what you expected"
+msgstr "请向 <procps@freelists.org> 报告问题和您期望的结果"
+
+#: ps/sortformat.c:808
+msgid "tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
 msgstr ""
 
-#: ps/sortformat.c:804
-msgid ""
-"tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
-msgstr ""
-
-#: ps/sortformat.c:821
-#, fuzzy, c-format
+#: ps/sortformat.c:825
+#, c-format
 msgid "warning: $PS_FORMAT ignored. (%s)\n"
-msgstr "%s 和 %s 出现在 %s 格式字符串中时被忽略"
+msgstr "警告：$PS_FORMAT 已忽略。（%s）\n"
 
-#: ps/sortformat.c:826 ps/sortformat.c:836
-#, fuzzy
+#: ps/sortformat.c:830 ps/sortformat.c:840
 msgid "conflicting format options"
-msgstr "格式"
+msgstr "冲突的格式选项"
 
-#: ps/sortformat.c:827
+#: ps/sortformat.c:831
 msgid "can not use output modifiers with user-defined output"
 msgstr ""
 
-#: ps/sortformat.c:828
+#: ps/sortformat.c:832
 msgid "-L/-T with H/m/-m and -o/-O/o/O is nonsense"
 msgstr ""
 
-#: ps/sortformat.c:886
+#: ps/sortformat.c:890
 msgid "internal error: no PID or PPID for -j option"
-msgstr ""
+msgstr "内部错误：没有用于 -j 选项的 PID 或 PPID"
 
-#: ps/sortformat.c:888
+#: ps/sortformat.c:892
 #, fuzzy
 msgid "lost my PGID"
 msgstr "资源丢失"
 
-#: ps/sortformat.c:901
+#: ps/sortformat.c:905
 #, fuzzy
 msgid "internal error: no PRI for -c option"
 msgstr "内部错误 -- 该选项尚未实现"
 
-#: ps/sortformat.c:904
+#: ps/sortformat.c:908
 #, fuzzy
 msgid "lost my CLS"
 msgstr "资源丢失"
 
-#: ps/sortformat.c:909
+#: ps/sortformat.c:913
 msgid "-T with H/-m/m but no PID for SPID to follow"
 msgstr ""
 
-#: ps/sortformat.c:920
+#: ps/sortformat.c:924
 msgid "-L with H/-m/m but no PID/PGID/SID/SESS for NLWP to follow"
 msgstr ""
 
@@ -1573,90 +1539,69 @@ msgid " %s [options] pid...\n"
 msgstr "%*s 用户     进程号 权限   命令\n"
 
 #: pwdx.c:113
-#, fuzzy, c-format
+#, c-format
 msgid "invalid process id: %s"
-msgstr "%s：无效的进程号"
+msgstr "无效的进程号：%s"
 
-#: skill.c:185
-#, fuzzy, c-format
+#: skill.c:188
+#, c-format
 msgid "cannot open file %s"
-msgstr "无法打开协议文件 \"%s\": %s\n"
+msgstr "无法打开文件 %s"
 
-#: skill.c:326
+#: skill.c:339
 #, fuzzy, c-format
 msgid " %s [options] <pid> [...]\n"
 msgstr "%*s 用户     进程号 权限   命令\n"
 
-#: skill.c:328
+#: skill.c:341
 msgid " <pid> [...]            send signal to every <pid> listed\n"
 msgstr ""
 
-#: skill.c:329
+#: skill.c:342
 msgid ""
 " -<signal>, -s, --signal <signal>\n"
 "                        specify the <signal> to be sent\n"
 msgstr ""
 
-#: skill.c:331
-msgid ""
-" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
+#: skill.c:344
+msgid " -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
 msgstr ""
 
-#: skill.c:332
+#: skill.c:345
 msgid " -L, --table            list all signal names in a nice table\n"
 msgstr ""
 
-#: skill.c:347
+#: skill.c:360
 #, fuzzy, c-format
 msgid " %s [signal] [options] <expression>\n"
 msgstr "  %s 的选项：\n"
 
-#: skill.c:351
+#: skill.c:364
 #, c-format
 msgid " %s [new priority] [options] <expression>\n"
 msgstr ""
 
-#: skill.c:355
+#: skill.c:368
 msgid " -f, --fast         fast mode (not implemented)\n"
 msgstr ""
 
-#: skill.c:356
+#: skill.c:369
 msgid " -i, --interactive  interactive\n"
 msgstr ""
 
-#: skill.c:357
-#, fuzzy
+#: skill.c:370
 msgid " -l, --list         list all signal names\n"
-msgstr ""
-"      killall -l, --list\n"
-"      killall -V, --version\n"
-"\n"
-"  -e,--exact          对长名字需要严格匹配\n"
-"  -I,--ignore-case    匹配进程名时忽略大小写\n"
-"  -g,--process-group  杀死进程组而不是进程\n"
-"  -y,--younger-than   杀死比 时间 年轻的进程\n"
-"  -o,--older-than     杀死比 时间 年老的进程\n"
-"  -i,--interactive    在杀死进程前要求确认\n"
-"  -l,--list           显示所有的信号名\n"
-"  -q,--quiet          不要打印抱怨信息\n"
-"  -r,--regexp         将 \"进程名\" 视为扩展正则表达式\n"
-"  -s,--signal 信号    发送 \"信号\" 而不是 SIGTERM\n"
-"  -u,--user 用户      仅杀死 \"用户\" 的进程\n"
-"  -v,--verbose        信号成功送出时打印信息\n"
-"  -V,--version        显示版本信息\n"
-"  -w,--wait           等待进程死亡\n"
+msgstr " -l, --list         列出全部信号名称\n"
 
-#: skill.c:358
+#: skill.c:371
 msgid " -L, --table        list all signal names in a nice table\n"
+msgstr " -L, --table        以表格形式列出所有信号名称\n"
+
+#: skill.c:372
+msgid " -n, --no-action    do not actually kill processes; just print what would happen\n"
 msgstr ""
 
-#: skill.c:359
-msgid ""
-" -n, --no-action    do not actually kill processes; just print what would "
-"happen\n"
-msgstr ""
-
-#: skill.c:360
+#: skill.c:373
 #, fuzzy
 msgid " -v, --verbose      explain what is being done\n"
 msgstr ""
@@ -1665,53 +1610,53 @@ msgstr ""
 "  -v, --verbose\t\t显示详细的进行步骤\n"
 "  -x, --one-file-system\t不跨越文件系统进行操作\n"
 
-#: skill.c:361
+#: skill.c:374
 #, fuzzy
 msgid " -w, --warnings     enable warnings (not implemented)\n"
 msgstr "启用所有关于“XX未使用”的警告"
 
-#: skill.c:363
+#: skill.c:376
 msgid ""
 "Expression can be: terminal, user, pid, command.\n"
 "The options below may be used to ensure correct interpretation.\n"
 msgstr ""
 
-#: skill.c:365
+#: skill.c:378
 #, fuzzy
 msgid " -c, --command <command>  expression is a command name\n"
 msgstr "用法：%s [选项]... [-] [名称=值]... [命令 [参数]...]\n"
 
-#: skill.c:366
+#: skill.c:379
 msgid " -p, --pid <pid>          expression is a process id number\n"
 msgstr ""
 
-#: skill.c:367
+#: skill.c:380
 msgid " -t, --tty <tty>          expression is a terminal\n"
 msgstr ""
 
-#: skill.c:368
+#: skill.c:381
 #, fuzzy
 msgid " -u, --user <username>    expression is a username\n"
 msgstr "设置 USER 作为代理服务器用户名。"
 
-#: skill.c:370
+#: skill.c:383
 msgid "Alternatively, expression can be:\n"
 msgstr ""
 
-#: skill.c:371
+#: skill.c:384
 msgid ""
 " --ns <pid>               match the processes that belong to the same\n"
 "                          namespace as <pid>\n"
 msgstr ""
 
-#: skill.c:373
+#: skill.c:386
 msgid ""
 " --nslist <ns,...>        list which namespaces will be considered for\n"
 "                          the --ns option; available namespaces are\n"
 ":                          ipc, mnt, net, pid, user, uts\n"
 msgstr ""
 
-#: skill.c:383
+#: skill.c:396
 #, c-format
 msgid ""
 "\n"
@@ -1720,7 +1665,7 @@ msgid ""
 "Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"
 msgstr ""
 
-#: skill.c:390
+#: skill.c:403
 #, c-format
 msgid ""
 "\n"
@@ -1729,58 +1674,57 @@ msgid ""
 "Negative priority numbers are restricted to administrative users.\n"
 msgstr ""
 
-#: skill.c:464
-#, fuzzy, c-format
+#: skill.c:476
+#, c-format
 msgid "unknown signal name %s"
-msgstr "未知的寄存器名：%s"
+msgstr "未知的信号名称 %s"
 
-#: skill.c:484
+#: skill.c:496
 #, fuzzy, c-format
 msgid "invalid argument %c"
 msgstr "(无效的参数)"
 
-#: skill.c:521
+#: skill.c:532
 #, fuzzy, c-format
 msgid "something at line %d\n"
 msgstr "行 %d：第二个 %%prep\n"
 
-#: skill.c:544
+#: skill.c:553
 #, fuzzy, c-format
 msgid "priority %lu out of range"
 msgstr "请求的 init_priority 越界"
 
-#: skill.c:657
-#, fuzzy, c-format
+#: skill.c:662
+#, c-format
 msgid "invalid pid number %s"
-msgstr "无效的区块编号%s"
+msgstr "无效的 pid 数字 %s"
 
-#: skill.c:661
+#: skill.c:666
 msgid "error reading reference namespace information"
 msgstr ""
 
-#: skill.c:669
-#, fuzzy
+#: skill.c:674
 msgid "invalid namespace list"
-msgstr "无效的命名空间名"
+msgstr "无效的命名空间列表"
 
-#: skill.c:707
+#: skill.c:711
 #, fuzzy
 msgid "no process selection criteria"
 msgstr "需要选择语句"
 
-#: skill.c:710
+#: skill.c:714
 msgid "general flags may not be repeated"
 msgstr ""
 
-#: skill.c:713
+#: skill.c:717
 msgid "-i makes no sense with -v, -f, and -n"
 msgstr ""
 
-#: skill.c:715
+#: skill.c:719
 msgid "-v makes no sense with -i and -f"
 msgstr ""
 
-#: skill.c:765
+#: skill.c:769
 #, fuzzy, c-format
 msgid "skill: \"%s\" is not supported\n"
 msgstr "%s：不支持"
@@ -1852,7 +1796,7 @@ msgstr ""
 msgid "illegal delay"
 msgstr "<非法的精度>"
 
-#: slabtop.c:324 tload.c:137 vmstat.c:957
+#: slabtop.c:324 tload.c:142 vmstat.c:979
 #, fuzzy
 msgid "delay must be positive integer"
 msgstr "“N”的值必须是正数。"
@@ -1864,34 +1808,34 @@ msgstr "设置检索配额为 NUMBER。"
 
 #. Translation Hint: Next five strings must not
 #. * exceed 35 length in characters.
-#: slabtop.c:385
+#: slabtop.c:386
 #, fuzzy, no-c-format
 msgid "Active / Total Objects (% used)"
 msgstr "局部对象的总大小太大"
 
-#: slabtop.c:389
+#: slabtop.c:390
 #, no-c-format
 msgid "Active / Total Slabs (% used)"
 msgstr ""
 
-#: slabtop.c:393
+#: slabtop.c:394
 #, no-c-format
 msgid "Active / Total Caches (% used)"
 msgstr ""
 
-#: slabtop.c:397
+#: slabtop.c:398
 #, fuzzy, no-c-format
 msgid "Active / Total Size (% used)"
 msgstr "局部对象的总大小太大"
 
-#: slabtop.c:400
+#: slabtop.c:401
 #, fuzzy
 msgid "Minimum / Average / Maximum Object"
 msgstr "默认 %d 最小 %d 最大 %d"
 
 #. Translation Hint: Please keep alignment of the
 #. * following intact.
-#: slabtop.c:409
+#: slabtop.c:410
 msgid "  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"
 msgstr ""
 
@@ -1946,9 +1890,8 @@ msgid "  -p, --load[=<file>]  read values from file\n"
 msgstr ""
 
 #: sysctl.c:123
-#, fuzzy
 msgid "  -f                   alias of -p\n"
-msgstr "(p)"
+msgstr "  -f                   -p 的别名\n"
 
 #: sysctl.c:124
 msgid "      --system         read values from all system directories\n"
@@ -1969,31 +1912,28 @@ msgid "  -w, --write          enable writing a value to variable\n"
 msgstr ""
 
 #: sysctl.c:129
-#, fuzzy
 msgid "  -o                   does nothing\n"
-msgstr "不起作用。为向前兼容保留的选项。"
+msgstr "  -o                   没有效果\n"
 
 #: sysctl.c:130
-#, fuzzy
 msgid "  -x                   does nothing\n"
-msgstr "不起作用。为向前兼容保留的选项。"
+msgstr "  -x                   没有效果\n"
 
 #: sysctl.c:131
-#, fuzzy
 msgid "  -d                   alias of -h\n"
-msgstr "栏位别名"
+msgstr "  -d                   -h 的别名\n"
 
-#: sysctl.c:177 sysctl.c:233 sysctl.c:449
+#: sysctl.c:177 sysctl.c:233
 #, fuzzy, c-format
 msgid "\"%s\" is an unknown key"
 msgstr "%s: 不是带装甲的(armored)公钥。\n"
 
-#: sysctl.c:200 sysctl.c:351 sysctl.c:427
+#: sysctl.c:200 sysctl.c:351 sysctl.c:432
 #, c-format
 msgid "cannot stat %s"
 msgstr "无法获取%s 的文件状态(stat)"
 
-#: sysctl.c:238 sysctl.c:280 sysctl.c:454
+#: sysctl.c:238 sysctl.c:280
 #, fuzzy, c-format
 msgid "permission denied on key '%s'"
 msgstr "无法格式化设备 %s，权限被拒绝。\n"
@@ -2008,100 +1948,122 @@ msgstr "读取%s 时出错"
 msgid "unable to open directory \"%s\""
 msgstr "无法打开 %s。"
 
-#: sysctl.c:392
+#: sysctl.c:393
 #, fuzzy, c-format
 msgid "\"%s\" must be of the form name=value"
 msgstr "%s：--param 实参的形式应该为“名字=值”"
 
-#: sysctl.c:401
+#: sysctl.c:402
 #, fuzzy, c-format
 msgid "malformed setting \"%s\""
 msgstr "设置%s 的权限"
 
-#: sysctl.c:421
+#: sysctl.c:426
 #, fuzzy, c-format
 msgid "%s is deprecated, value not set"
 msgstr "必须为 %s 设置一个值\n"
 
-#: sysctl.c:434 sysctl.c:439 sysctl.c:458 sysctl.c:467
+#: sysctl.c:439 sysctl.c:444 sysctl.c:475
 #, fuzzy, c-format
 msgid "setting key \"%s\""
 msgstr "设置%s 的权限"
 
-#: sysctl.c:529
+#: sysctl.c:454
+#, fuzzy, c-format
+msgid "\"%s\" is an unknown key%s"
+msgstr "%s: 不是带装甲的(armored)公钥。\n"
+
+#: sysctl.c:454 sysctl.c:462 sysctl.c:465
+#, fuzzy
+msgid ", ignoring"
+msgstr "(未知的案例)"
+
+#: sysctl.c:462
+#, fuzzy, c-format
+msgid "permission denied on key \"%s\"%s"
+msgstr "无法格式化设备 %s，权限被拒绝。\n"
+
+#: sysctl.c:465
+#, fuzzy, c-format
+msgid "setting key \"%s\"%s"
+msgstr "设置%s 的权限"
+
+#: sysctl.c:537
 #, c-format
-msgid ""
-"GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
-"expanded."
+msgid "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be expanded."
 msgstr ""
 
-#: sysctl.c:535
+#: sysctl.c:543
 #, fuzzy
 msgid "glob failed"
 msgstr "不使用 glob 参数"
 
-#: sysctl.c:541
+#: sysctl.c:549
 #, fuzzy, c-format
 msgid "cannot open \"%s\""
 msgstr "无法打开 %s！"
 
-#: sysctl.c:563 sysctl.c:579
+#: sysctl.c:571 sysctl.c:587
 #, fuzzy, c-format
 msgid "%s(%d): invalid syntax, continuing..."
 msgstr "定位“%s”时语法无效。"
 
-#: sysctl.c:682 sysctl.c:689
+#: sysctl.c:690 sysctl.c:697
 #, c-format
 msgid "* Applying %s ...\n"
 msgstr ""
 
-#: sysctl.c:841
+#: sysctl.c:849
 #, fuzzy, c-format
 msgid ""
 "no variables specified\n"
 "Try `%s --help' for more information."
 msgstr "尝试“%s --help”以获得更多信息。\n"
 
-#: sysctl.c:845
+#: sysctl.c:853
 #, c-format
 msgid ""
 "options -N and -q cannot coexist\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: tload.c:75
+#: tload.c:75 tload.c:77
+msgid "screen too small or too large"
+msgstr ""
+
+#: tload.c:80
 msgid "screen too small"
 msgstr ""
 
-#: tload.c:91
-#, fuzzy, c-format
+#: tload.c:96
+#, c-format
 msgid " %s [options] [tty]\n"
-msgstr "不是一个 tty"
+msgstr " %s [选项] [tty]\n"
 
-#: tload.c:93
+#: tload.c:98
 msgid " -d, --delay <secs>  update delay in seconds\n"
 msgstr ""
 
-#: tload.c:94
+#: tload.c:99
 msgid " -s, --scale <num>   vertical scale\n"
 msgstr ""
 
-#: tload.c:132
+#: tload.c:137
 #, fuzzy
 msgid "scale cannot be negative"
 msgstr "淡青色密度比例"
 
-#: tload.c:139 vmstat.c:959
+#: tload.c:144 vmstat.c:981
 #, fuzzy
 msgid "too large delay value"
 msgstr "制表符限长过大"
 
-#: tload.c:154
+#: tload.c:159
 #, fuzzy
 msgid "can not open tty"
 msgstr "不是一个 tty"
 
-#: tload.c:213 tload.c:215
+#: tload.c:218 tload.c:220
 #, fuzzy
 msgid "writing to tty failed"
 msgstr " TTY"
@@ -2136,9 +2098,8 @@ msgid "PID"
 msgstr "进程号"
 
 #: top/top_nls.c:134
-#, fuzzy
 msgid "Process Id"
-msgstr "%s：无效的进程号"
+msgstr "进程编号"
 
 #. Translation Hint: maximum 'PPID' = 5
 #: top/top_nls.c:136
@@ -2165,7 +2126,7 @@ msgstr ""
 "\n"
 
 #. Translation Hint: maximum 'USER' = 8 +
-#: top/top_nls.c:142 w.c:591
+#: top/top_nls.c:142 w.c:598
 msgid "USER"
 msgstr "USER"
 
@@ -2189,9 +2150,8 @@ msgid "RUSER"
 msgstr ""
 
 #: top/top_nls.c:149
-#, fuzzy
 msgid "Real User Name"
-msgstr "无用户名: %s\n"
+msgstr "真实用户名"
 
 #. Translation Hint: maximum 'SUID' = 5 +
 #: top/top_nls.c:151
@@ -2326,9 +2286,8 @@ msgid "%CPU"
 msgstr "CPU              "
 
 #: top/top_nls.c:188
-#, fuzzy
 msgid "CPU Usage"
-msgstr "CPU              "
+msgstr "CPU 使用情况"
 
 #. Translation Hint: maximum '' = 6
 #: top/top_nls.c:190
@@ -2466,9 +2425,8 @@ msgid "S"
 msgstr "日"
 
 #: top/top_nls.c:227
-#, fuzzy
 msgid "Process Status"
-msgstr "killall: 无法从进程状态获取用户ID(UID)\n"
+msgstr "进程状态"
 
 #. Translation Hint: maximum 'COMMAND' = variable
 #: top/top_nls.c:229
@@ -2749,12 +2707,15 @@ msgid ""
 msgstr "用法：%s [选项] 输入文件\n"
 
 #: top/top_nls.c:333
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "  %s\n"
 "Usage:\n"
 "  %s%s"
-msgstr "用法：%s [选项] 输入文件\n"
+msgstr ""
+"  %s\n"
+"用法：\n"
+"  %s%s"
 
 #: top/top_nls.c:336
 #, fuzzy, c-format
@@ -2830,9 +2791,8 @@ msgid " -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
 msgstr ""
 
 #: top/top_nls.c:354
-#, fuzzy
 msgid "failed /proc/stat read"
-msgstr "获取文件状态失败(stat)"
+msgstr "读取 /proc/stat 失败"
 
 #: top/top_nls.c:355
 #, fuzzy, c-format
@@ -2883,9 +2843,9 @@ msgid "Change delay from %.1f to"
 msgstr ""
 
 #: top/top_nls.c:365
-#, fuzzy, c-format
+#, c-format
 msgid "Show threads %s"
-msgstr "%<num_threads%>值必须为正"
+msgstr ""
 
 #: top/top_nls.c:366
 #, fuzzy, c-format
@@ -2956,7 +2916,7 @@ msgstr ""
 
 #: top/top_nls.c:380
 #, c-format
-msgid "scroll coordinates: y = %d/%%d (tasks), x = %d/%d (fields)"
+msgid "scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)"
 msgstr ""
 
 #: top/top_nls.c:381
@@ -3097,9 +3057,9 @@ msgid "Locate string"
 msgstr "(不是字符串)"
 
 #: top/top_nls.c:425
-#, fuzzy, c-format
+#, c-format
 msgid "%s\"%s\" not found"
-msgstr "%s%s 预期为 %s 却找到 %s\n"
+msgstr "%s\"%s\" 未找到"
 
 #: top/top_nls.c:426
 #, c-format
@@ -3107,7 +3067,7 @@ msgid "width incr is %d, change to (0 default, -1 auto)"
 msgstr ""
 
 #: top/top_nls.c:427
-msgid "rcfile has 'inspect' entry error(s), write anyway?"
+msgid "rcfile has inspect/other-filter error(s), save anyway?"
 msgstr ""
 
 #: top/top_nls.c:428
@@ -3135,9 +3095,7 @@ msgid "Log"
 msgstr "登录"
 
 #: top/top_nls.c:434
-msgid ""
-"the '=' key will eventually show the actual file read or command(s) "
-"executed ..."
+msgid "the '=' key will eventually show the actual file read or command(s) executed ..."
 msgstr ""
 
 #: top/top_nls.c:435
@@ -3147,45 +3105,31 @@ msgstr ""
 #: top/top_nls.c:436
 #, c-format
 msgid ""
-"This is simulated output representing the contents of some file or the "
-"output\n"
-"from some command.  Exactly which commands and/or files are solely up to "
-"you.\n"
+"This is simulated output representing the contents of some file or the output\n"
+"from some command.  Exactly which commands and/or files are solely up to you.\n"
 "\n"
-"Although this text is for information purposes only, it can still be "
-"scrolled\n"
-"and searched like real output will be.  You are encouraged to experiment "
-"with\n"
+"Although this text is for information purposes only, it can still be scrolled\n"
+"and searched like real output will be.  You are encouraged to experiment with\n"
 "those features as explained in the prologue above.\n"
 "\n"
-"To enable real Inspect functionality, entries must be added to the end of "
-"the\n"
-"top personal personal configuration file.  You could use your favorite "
-"editor\n"
+"To enable real Inspect functionality, entries must be added to the end of the\n"
+"top personal personal configuration file.  You could use your favorite editor\n"
 "to accomplish this, taking care not to disturb existing entries.\n"
 "\n"
-"Another way to add entries is illustrated below, but it risks overwriting "
-"the\n"
-"rcfile.  Redirected echoes must not replace (>) but append (>>) to that "
-"file.\n"
+"Another way to add entries is illustrated below, but it risks overwriting the\n"
+"rcfile.  Redirected echoes must not replace (>) but append (>>) to that file.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
-"toprc\n"
+"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
 "\n"
-"If you don't know the location or name of the top rcfile, use the 'W' "
-"command\n"
-"and note those details.  After backing up the current rcfile, try issuing "
-"the\n"
-"above echoes exactly as shown, replacing '.toprc' as appropriate.  The "
-"safest\n"
+"If you don't know the location or name of the top rcfile, use the 'W' command\n"
+"and note those details.  After backing up the current rcfile, try issuing the\n"
+"above echoes exactly as shown, replacing '.toprc' as appropriate.  The safest\n"
 "approach would be to use copy then paste to avoid any typing mistakes.\n"
 "\n"
-"Finally, restart top to reveal what actual Inspect entries combined with "
-"this\n"
-"new command can offer.  The possibilities are endless, especially "
-"considering\n"
+"Finally, restart top to reveal what actual Inspect entries combined with this\n"
+"new command can offer.  The possibilities are endless, especially considering\n"
 "that 'pipe' type entries can include shell scripts too!\n"
 "\n"
 "For additional important information, please consult the top documentation.\n"
@@ -3224,77 +3168,80 @@ msgstr ""
 
 #: top/top_nls.c:476
 #, fuzzy
-msgid "patience please, working..."
+msgid "patience please, working ..."
 msgstr "无法记录目前的工作目录"
+
+#: top/top_nls.c:477
+msgid "working, use Ctrl-C to end ..."
+msgstr ""
 
 #. Translation Hint: Below are 2 abbreviations which can be as long as needed:
 #. .                 FLD = FIELD, VAL = VALUE
-#: top/top_nls.c:479
+#: top/top_nls.c:480
 #, c-format
 msgid "add filter #%d (%s) as: [!]FLD?VAL"
 msgstr ""
 
-#: top/top_nls.c:480
-#, fuzzy
-msgid "ignoring case"
-msgstr "(未知的案例)"
-
 #: top/top_nls.c:481
+msgid "ignoring case"
+msgstr "忽略大小写"
+
+#: top/top_nls.c:482
 msgid "case sensitive"
 msgstr "大小写敏感"
 
-#: top/top_nls.c:482
+#: top/top_nls.c:483
 #, fuzzy
 msgid "duplicate filter was ignored"
 msgstr "忽略"
 
-#: top/top_nls.c:483
+#: top/top_nls.c:484
 #, fuzzy, c-format
 msgid "'%s' filter delimiter is missing"
 msgstr "%s：分界符后应该跟随整数"
 
-#: top/top_nls.c:484
+#: top/top_nls.c:485
 #, fuzzy, c-format
 msgid "'%s' filter value is missing"
 msgstr "%2$s %3$s 中丢失 %1$s\n"
 
-#: top/top_nls.c:485
+#: top/top_nls.c:486
 #, fuzzy
 msgid "include"
 msgstr "#include \"...\" 搜索从这里开始：\n"
 
-#: top/top_nls.c:486
+#: top/top_nls.c:487
 #, fuzzy
 msgid "exclude"
 msgstr "被排除的路径必须以 / 开头"
 
-#: top/top_nls.c:487
+#: top/top_nls.c:488
 #, fuzzy, c-format
 msgid "<Enter> to resume, filters: %s"
 msgstr "设备 %s 不支持恢复。\n"
 
-#: top/top_nls.c:488
+#: top/top_nls.c:489
 #, fuzzy
 msgid "none"
 msgstr "无"
 
 #. Translation Hint: The following word 'Node' should be exactly 4 characters
-#: top/top_nls.c:490
+#: top/top_nls.c:491
 #, fuzzy, c-format
 msgid "Node%-2d:"
 msgstr "verify_cgraph_node 失败"
 
-#: top/top_nls.c:491
+#: top/top_nls.c:492
 #, c-format
 msgid "expand which node (0-%d)"
 msgstr ""
 
-#: top/top_nls.c:492
+#: top/top_nls.c:493
 #, fuzzy
 msgid "invalid node"
 msgstr "verify_cgraph_node 失败"
 
-#: top/top_nls.c:493
+#: top/top_nls.c:494
 msgid "sorry, NUMA extensions unavailable"
 msgstr ""
 
@@ -3302,20 +3249,25 @@ msgstr ""
 #. .                 'Swap' represents the linux swap file --
 #. .                 please make both translations exactly 4 characters,
 #. .                 padding with extra spaces as necessary
-#: top/top_nls.c:498
+#: top/top_nls.c:499
 #, fuzzy
 msgid "Mem "
 msgstr "为循环启用预取时最小的指令/内存操作比"
 
-#: top/top_nls.c:499
+#: top/top_nls.c:500
 #, fuzzy
 msgid "Swap"
 msgstr "交换"
 
-#: top/top_nls.c:500
+#: top/top_nls.c:501
 #, fuzzy, c-format
 msgid "bad memory scaling arg '%c'"
 msgstr "错误的正则表达式: %s\n"
+
+#: top/top_nls.c:502
+#, fuzzy, c-format
+msgid "PID to collapse/expand [default pid = %d]"
+msgstr "具有 pid %d 的进程不存在。\n"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3352,44 +3304,29 @@ msgstr "错误的正则表达式: %s\n"
 #. .    last line (the one without the newline). So please avoid any line
 #. .    wraps that could place them there.
 #. .
-#: top/top_nls.c:545
+#: top/top_nls.c:547
 #, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
-"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
-"~1Secure mode ~3%s~2.\n"
+"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; ~1Secure mode ~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' "
-"summary/task memory scale\n"
-"  l,t,m     Toggle Summary: '~1l~2' load avg; '~1t~2' task/cpu stats; "
-"'~1m~2' memory info\n"
-"  0,1,2,3,I Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpus or numa node "
-"views; '~1I~2' Irix mode\n"
-"  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase "
-"fixed-width\n"
+"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' summary/task memory scale\n"
+"  l,t,m     Toggle Summary: '~1l~2' load avg; '~1t~2' task/cpu stats; '~1m~2' memory info\n"
+"  0,1,2,3,I Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpus or numa node views; '~1I~2' Irix mode\n"
+"  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase fixed-width\n"
 "\n"
-"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: "
-"'~1<~2'/'~1>~2' left/right\n"
-"  R,H,V,J . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1V~2' Forest view; "
-"'~1J~2' Num justify\n"
-"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; "
-"'~1j~2' Str justify\n"
-"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running "
-"tasks\n"
-"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if "
-"'x' or 'y')\n"
-"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' "
-"other criteria\n"
-"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' "
-"other filter(s)\n"
-"  C,...   . Toggle scroll coordinates msg for: ~1up~2,~1down~2,~1left~2,"
-"~1right~2,~1home~2,~1end~2\n"
+"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n"
+"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; '~1C~2' Coordinates\n"
+"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; '~1j~2' Str justify\n"
+"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
+"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
+"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' other criteria\n"
+"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' other filter(s)\n"
+"  V,v     . Toggle: '~1V~2' forest view; '~1v~2' hide/show forest view children\n"
 "\n"
-"%s  W,Y       Write configuration file '~1W~2'; Inspect other output "
-"'~1Y~2'\n"
+"%s  W,Y       Write configuration file '~1W~2'; Inspect other output '~1Y~2'\n"
 "  q         Quit\n"
-"          ( commands shown with '.' require a ~1visible~2 task display "
-"~1window~2 ) \n"
+"          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
 "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
@@ -3397,7 +3334,7 @@ msgstr ""
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
 #. .                 also imbedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
-#: top/top_nls.c:573
+#: top/top_nls.c:575
 msgid ""
 "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
 "  d or s    Set update interval\n"
@@ -3405,49 +3342,32 @@ msgstr ""
 "  k,r       操作进程：'~1k~2' 杀死；'~1r~2' 设置优先级\n"
 "  d or s    设定更新间隔\n"
 
-#: top/top_nls.c:577
+#: top/top_nls.c:579
 #, c-format
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
-". Use multiple ~1windows~2, each with separate config opts (color,fields,"
-"sort,etc)\n"
-". The 'current' window controls the ~1Summary Area~2 and responds to your "
-"~1Commands~2\n"
-"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/"
-"shrinking others\n"
-"  . with ~1NO~2 task display, some commands will be ~1disabled~2 "
-"('i','R','n','c', etc)\n"
-"    until a ~1different window~2 has been activated, making it the 'current' "
-"window\n"
-". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;"
-"~1 2~2) choosing\n"
-"  a specific field group; or~1 3~2) exiting the color mapping or fields "
-"screens\n"
+". Use multiple ~1windows~2, each with separate config opts (color,fields,sort,etc)\n"
+". The 'current' window controls the ~1Summary Area~2 and responds to your ~1Commands~2\n"
+"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/shrinking others\n"
+"  . with ~1NO~2 task display, some commands will be ~1disabled~2 ('i','R','n','c', etc)\n"
+"    until a ~1different window~2 has been activated, making it the 'current' window\n"
+". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;~1 2~2) choosing\n"
+"  a specific field group; or~1 3~2) exiting the color mapping or fields screens\n"
 ". Commands ~1available anytime   -------------~2\n"
-"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 "
-"windows\n"
-"    g       . Choose another field group and make it 'current', or change "
-"now\n"
-"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; "
-"or~1 4~2 =%s\n"
+"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 windows\n"
+"    g       . Choose another field group and make it 'current', or change now\n"
+"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; or~1 4~2 =%s\n"
 ". Commands ~1requiring~2 '~1A~2' mode~1  -------------~2\n"
 "    G       . Change the ~1Name~5 of the 'current' window/field group\n"
-" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' "
-"Backward\n"
-" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all "
-"~1Visible~2/~1Invisible~2\n"
-"  The screen will be divided evenly between task displays.  But you can "
-"make\n"
-"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then "
-"later you could:\n"
-" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' "
-"~1Every~2 window\n"
-"              (this also forces the ~1current~2 or ~1every~2 window to "
-"become visible)\n"
+" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' Backward\n"
+" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all ~1Visible~2/~1Invisible~2\n"
+"  The screen will be divided evenly between task displays.  But you can make\n"
+"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then later you could:\n"
+" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' ~1Every~2 window\n"
+"              (this also forces the ~1current~2 or ~1every~2 window to become visible)\n"
 "\n"
-"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try "
-"the '~1a~2' and '~1w~2'\n"
+"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try the '~1a~2' and '~1w~2'\n"
 "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' "
 msgstr ""
 
@@ -3457,44 +3377,17 @@ msgstr ""
 #. .  this form and any translation could produce unpleasing results
 #. .  that are unlikely to parallel the running top program.
 #. .
-#. .  If you decide to proceed with translation, do the following
-#. .  lines only, taking care not to disturbe the tilde + number.
+#. .  If you decide to proceed with translation, please take care
+#. .  to not disturb the spaces and the tilde + number delimiters.
 #. .
-#. .  Simulated screen excerpt:
-#. .     --> "   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62
-#. .     --> "   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~
-#. .     --> "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5
-#. .
-#. .  Other translatable text
-#. .     --> "   available toggles: ~1B~2 =disable bold globa
-#. .     --> "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks
-#. .
-#. .     --> "1) Select ~1target~2 as upper case letter:\n"
-#. .     --> "   S~2 = Summary Data,~1  M~2 = Messages/Prompt
-#. .     --> "   H~2 = Column Heads,~1  T~2 = Task Informatio
-#. .     --> "2) Select ~1color~2 as number:\n"
-#. .     --> "   0~2 = black,~1  1~2 = red,    ~1  2~2 = gree
-#. .     --> "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan
-#. . *   --> "\n"
-#. .     --> "3) Then use these keys when finished:\n"
-#. .     --> "   'q' to abort changes to window '~1%s~2'\n"
-#. . **  --> "   'a' or 'w' to commit & change another, <Ente
-#. .
-#. .     Note:
-#. . *      maybe sacrifice the entire line (with the "\n") ...
-#. . **     ... so <Enter> text potion could be on its own line
-#. .
-#: top/top_nls.c:636
+#: top/top_nls.c:614
 #, c-format
 msgid ""
-"Help for color mapping~2 - %s\n"
-"current window: ~1%s~6\n"
+"Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
 "   color - 04:25:44 up 8 days, 50 min,  7 users,  load average:\n"
-"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,"
-"~3\n"
-"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 "
-"~2idle~3\n"
+"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,~3\n"
+"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 ~2idle~3\n"
 "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP S COMMAND    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
@@ -3503,16 +3396,16 @@ msgid ""
 "   available toggles: ~1B~2 =disable bold globally (~1%s~2),\n"
 "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks \"bold\"/reverse (~1%s~2)\n"
 "\n"
-"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c "
-"~4:\n"
+"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c ~4:\n"
 "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n"
 "   H~2 = Column Heads,~1  T~2 = Task Information\n"
-"2) Select a ~1color~2 as a number, ~1current color~2 is ~1 %d ~4:\n"
+"2) Select a ~1color~2 as a number or use the up/down arrow keys\n"
+"   to raise/lower the %d colors value, ~1current color~2 is ~1 %d ~4:\n"
 "   0~2 = black,~1  1~2 = red,    ~1  2~2 = green,~1  3~2 = yellow,\n"
 "   4~2 = blue, ~1  5~2 = magenta,~1  6~2 = cyan, ~1  7~2 = white\n"
 "\n"
 "3) Then use these keys when finished:\n"
-"   'q' to abort changes to window '~1%s~2'\n"
+"   'q' or <Esc> to abort changes to window '~1%s~2'\n"
 "   'a' or 'w' to commit & change another, <Enter> to commit and end "
 msgstr ""
 
@@ -3521,61 +3414,50 @@ msgstr ""
 #. .  to allow 1 blank line before the fields & descriptions.
 #. .  If absoultely necessary, 4 lines could be used (but never more).
 #. .
-#: top/top_nls.c:667
+#: top/top_nls.c:645
 #, c-format
 msgid ""
 "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
-"   Navigate with Up/Dn, Right selects for move then <Enter> or Left "
-"commits,\n"
+"   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n"
 "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!\n"
 msgstr ""
 
 #. Translation Hint:
 #. .  The next 5 items must each be translated as a single line.
 #. .
-#: top/top_nls.c:675
+#: top/top_nls.c:653
 #, c-format
-msgid ""
-"%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
-"~2zombie~3\n"
+msgid "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n"
 msgstr ""
 
-#: top/top_nls.c:678
+#: top/top_nls.c:656
 #, c-format
-msgid ""
-"%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
-"~2idle~3\n"
+msgid "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3\n"
 msgstr ""
 
-#: top/top_nls.c:681
+#: top/top_nls.c:659
 #, c-format
-msgid ""
-"%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
-"~2idle,~3 %#5.1f  ~2IO-wait~3\n"
+msgid "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,~3 %#5.1f  ~2IO-wait~3\n"
 msgstr ""
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt
-#: top/top_nls.c:687
+#: top/top_nls.c:665
 #, c-format
-msgid ""
-"%%%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f "
-"~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n"
+msgid "%%%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n"
 msgstr ""
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt, st = steal time
-#: top/top_nls.c:693
+#: top/top_nls.c:671
 #, c-format
-msgid ""
-"%%%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
-"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
+msgid "%%%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
 msgstr ""
 
 #. Translation Hint: this must be translated as 2 lines with words above & below aligned
-#: top/top_nls.c:697
+#: top/top_nls.c:675
 #, c-format
 msgid ""
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3\n"
@@ -3585,29 +3467,27 @@ msgstr ""
 #. Translation Hint:
 #. .  The next 2 headers for 'Inspection' must each be 3 lines or less
 #. .
-#: top/top_nls.c:704
+#: top/top_nls.c:682
 #, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
-"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to "
-"~1end~5 !\n"
+"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to ~1end~5 !\n"
 "Options~2: ~1%s\n"
 msgstr ""
 
-#: top/top_nls.c:709
+#: top/top_nls.c:687
 #, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
-"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to "
-"~1locate~5/~1next~5.\n"
+"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to ~1locate~5/~1next~5.\n"
 "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n"
 msgstr ""
 
-#: uptime.c:61
+#: uptime.c:64
 msgid " -p, --pretty   show uptime in pretty format\n"
 msgstr ""
 
-#: uptime.c:63
+#: uptime.c:66
 #, fuzzy
 msgid " -s, --since    system up since\n"
 msgstr "跳过%s，因为它位于不同的设备上"
@@ -3667,21 +3547,16 @@ msgid " -t, --timestamp        show timestamp\n"
 msgstr "正在更新 armap 时间戳"
 
 #: vmstat.c:195
-msgid ""
-"procs -----------memory---------- ---swap-- -----io---- -system-- ------"
-"cpu-----"
+msgid "procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----"
 msgstr ""
 
 #: vmstat.c:197
-msgid ""
-"procs -----------------------memory---------------------- ---swap-- -----"
-"io---- -system-- --------cpu--------"
+msgid "procs -----------------------memory---------------------- ---swap-- -----io---- -system-- --------cpu--------"
 msgstr ""
 
-#: vmstat.c:198 vmstat.c:519
-#, fuzzy
+#: vmstat.c:198 vmstat.c:530
 msgid " -----timestamp-----"
-msgstr "关闭时间戳记"
+msgstr " -----timestamp-----"
 
 #. Translation Hint: max 2 chars
 #: vmstat.c:217
@@ -3784,76 +3659,73 @@ msgstr ""
 #. * header fields that follow (marked with max x chars) might
 #. * not work, unless manual page is translated as well.
 #. Translation Hint: max 10 chars.
-#: vmstat.c:434
+#: vmstat.c:445
 #, fuzzy
 msgid "reads"
 msgstr "不能同时使用 mthreads 和 mlegacy-threads"
 
 #. Translation Hint: max 16 chars.
-#: vmstat.c:436
+#: vmstat.c:447
 #, fuzzy
 msgid "read sectors"
 msgstr "扇区"
 
 #. Translation Hint: max 10 chars.
-#: vmstat.c:438
+#: vmstat.c:449
 #, fuzzy
+#| msgid "writes   "
 msgid "writes"
 msgstr "写入   "
 
 #. Translation Hint: max 16 chars
-#: vmstat.c:440
+#: vmstat.c:451
 #, fuzzy
 msgid "requested writes"
 msgstr "要求的对齐边界太大"
 
-#: vmstat.c:454
+#: vmstat.c:465
 msgid "your kernel does not support diskstat. (2.5.70 or above required)"
 msgstr ""
 
-#: vmstat.c:516
-msgid ""
-"disk- ------------reads------------ ------------writes----------- -----"
-"IO------"
+#: vmstat.c:527
+msgid "disk- ------------reads------------ ------------writes----------- -----IO------"
 msgstr ""
 
-#: vmstat.c:518
-msgid ""
-"disk- -------------------reads------------------- -------------------"
-"writes------------------ ------IO-------"
+#: vmstat.c:529
+msgid "disk- -------------------reads------------------- -------------------writes------------------ ------IO-------"
 msgstr ""
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:537 vmstat.c:545
+#: vmstat.c:548 vmstat.c:556
 msgid "total"
 msgstr "总用量"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:539 vmstat.c:547
+#: vmstat.c:550 vmstat.c:558
 msgid "merged"
 msgstr ""
 
 #. Translation Hint: max 7 chars
-#: vmstat.c:541 vmstat.c:549
+#: vmstat.c:552 vmstat.c:560
 msgid "sectors"
 msgstr "扇区"
 
 #. Translation Hint: max 7 chars
-#: vmstat.c:543 vmstat.c:551
+#: vmstat.c:554 vmstat.c:562
 msgid "ms"
 msgstr ""
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:553
+#: vmstat.c:564
 msgid "cur"
 msgstr ""
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:555
+#: vmstat.c:566
 msgid "sec"
 msgstr ""
 
-#: vmstat.c:665
+#: vmstat.c:687
 msgid "your kernel does not support diskstat (2.5.70 or above required)"
 msgstr ""
 
@@ -3861,237 +3733,236 @@ msgstr ""
 #. * follow (marked with max x chars) might not work, unless
 #. * manual page is translated as well.
 #. Translation Hint: max 24 chars
-#: vmstat.c:675
+#: vmstat.c:697
 #, fuzzy
 msgid "Cache"
 msgstr "以 KB 表示的软件数据缓存的大小"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:677
+#: vmstat.c:699
 #, fuzzy
 msgid "Num"
 msgstr "NUM"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:679
+#: vmstat.c:701
 msgid "Total"
 msgstr "总共"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:681
+#: vmstat.c:703
 msgid "Size"
 msgstr "大小"
 
 #. Translation Hint: max 6 chars
-#: vmstat.c:683
+#: vmstat.c:705
 #, fuzzy
 msgid "Pages"
 msgstr "用于生成简单的手册页的实用程序"
 
-#: vmstat.c:695
-msgid ""
-"your kernel does not support slabinfo or your permissions are insufficient"
+#: vmstat.c:717
+msgid "your kernel does not support slabinfo or your permissions are insufficient"
 msgstr "您的内核不支持 slabinfo 或您的权限不够"
 
-#: vmstat.c:747
+#: vmstat.c:769
 #, c-format
 msgid "%13d disks \n"
 msgstr ""
 
-#: vmstat.c:748
+#: vmstat.c:770
 #, fuzzy, c-format
 msgid "%13d partitions \n"
 msgstr "主分区过多。"
 
-#: vmstat.c:764
+#: vmstat.c:786
 #, fuzzy, c-format
 msgid "%13lu total reads\n"
 msgstr "总用量"
 
-#: vmstat.c:765
+#: vmstat.c:787
 #, c-format
 msgid "%13lu merged reads\n"
 msgstr ""
 
-#: vmstat.c:766
+#: vmstat.c:788
 #, fuzzy, c-format
 msgid "%13lu read sectors\n"
 msgstr "扇区"
 
-#: vmstat.c:767
+#: vmstat.c:789
 #, fuzzy, c-format
 msgid "%13lu milli reading\n"
 msgstr "读取宏"
 
-#: vmstat.c:768
+#: vmstat.c:790
 #, c-format
 msgid "%13lu writes\n"
 msgstr ""
 
-#: vmstat.c:769
+#: vmstat.c:791
 #, c-format
 msgid "%13lu merged writes\n"
 msgstr ""
 
-#: vmstat.c:770
+#: vmstat.c:792
 #, fuzzy, c-format
 msgid "%13lu written sectors\n"
 msgstr "扇区"
 
-#: vmstat.c:771
+#: vmstat.c:793
 #, fuzzy, c-format
 msgid "%13lu milli writing\n"
 msgstr "写入%qs时错误"
 
-#: vmstat.c:772
+#: vmstat.c:794
 #, fuzzy, c-format
 msgid "%13lu inprogress IO\n"
 msgstr "错误的 IO 基类型(%d)"
 
-#: vmstat.c:773
+#: vmstat.c:795
 #, c-format
 msgid "%13lu milli spent IO\n"
 msgstr ""
 
-#: vmstat.c:794
+#: vmstat.c:816
 #, fuzzy, c-format
 msgid "%13lu %s total memory\n"
 msgstr "脚本“%s”: 内存耗尽%s\n"
 
-#: vmstat.c:795
+#: vmstat.c:817
 #, fuzzy, c-format
 msgid "%13lu %s used memory\n"
 msgstr "脚本“%s”: 内存耗尽%s\n"
 
-#: vmstat.c:796
+#: vmstat.c:818
 #, fuzzy, c-format
 msgid "%13lu %s active memory\n"
 msgstr "设备 %s 未激活。\n"
 
-#: vmstat.c:797
+#: vmstat.c:819
 #, fuzzy, c-format
 msgid "%13lu %s inactive memory\n"
 msgstr "脚本“%s”: 内存耗尽%s\n"
 
-#: vmstat.c:798
+#: vmstat.c:820
 #, fuzzy, c-format
 msgid "%13lu %s free memory\n"
 msgstr "脚本“%s”: 内存耗尽%s\n"
 
-#: vmstat.c:799
+#: vmstat.c:821
 #, fuzzy, c-format
 msgid "%13lu %s buffer memory\n"
 msgstr "内存节 %s+%x"
 
-#: vmstat.c:800
+#: vmstat.c:822
 #, fuzzy, c-format
 msgid "%13lu %s swap cache\n"
 msgstr "无法丢弃缓存：%s"
 
-#: vmstat.c:801
+#: vmstat.c:823
 #, c-format
 msgid "%13lu %s total swap\n"
 msgstr ""
 
-#: vmstat.c:802
+#: vmstat.c:824
 #, fuzzy, c-format
 msgid "%13lu %s used swap\n"
 msgstr "%s 与%<%%%c%>%s 格式并用"
 
-#: vmstat.c:803
+#: vmstat.c:825
 #, c-format
 msgid "%13lu %s free swap\n"
 msgstr ""
 
-#: vmstat.c:804
+#: vmstat.c:826
 #, c-format
 msgid "%13lld non-nice user cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:805
+#: vmstat.c:827
 #, c-format
 msgid "%13lld nice user cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:806
+#: vmstat.c:828
 #, c-format
 msgid "%13lld system cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:807
+#: vmstat.c:829
 #, c-format
 msgid "%13lld idle cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:808
+#: vmstat.c:830
 #, c-format
 msgid "%13lld IO-wait cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:809
+#: vmstat.c:831
 #, c-format
 msgid "%13lld IRQ cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:810
+#: vmstat.c:832
 #, c-format
 msgid "%13lld softirq cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:811
+#: vmstat.c:833
 #, c-format
 msgid "%13lld stolen cpu ticks\n"
 msgstr ""
 
-#: vmstat.c:812
+#: vmstat.c:834
 #, fuzzy, c-format
 msgid "%13lu pages paged in\n"
 msgstr "已本地化的手册页"
 
-#: vmstat.c:813
+#: vmstat.c:835
 #, c-format
 msgid "%13lu pages paged out\n"
 msgstr ""
 
-#: vmstat.c:814
+#: vmstat.c:836
 #, fuzzy, c-format
 msgid "%13lu pages swapped in\n"
 msgstr "用于生成简单的手册页的实用程序"
 
-#: vmstat.c:815
+#: vmstat.c:837
 #, c-format
 msgid "%13lu pages swapped out\n"
 msgstr ""
 
-#: vmstat.c:816
+#: vmstat.c:838
 #, c-format
 msgid "%13u interrupts\n"
 msgstr ""
 
-#: vmstat.c:817
+#: vmstat.c:839
 #, c-format
 msgid "%13u CPU context switches\n"
 msgstr ""
 
-#: vmstat.c:818
+#: vmstat.c:840
 #, fuzzy, c-format
 msgid "%13u boot time\n"
 msgstr "无法获取启动时间"
 
-#: vmstat.c:819 vmstat.c:834
+#: vmstat.c:841 vmstat.c:856
 #, c-format
 msgid "%13u forks\n"
 msgstr ""
 
 #. Translation Hint: do not change argument characters
-#: vmstat.c:936
+#: vmstat.c:958
 msgid "-S requires k, K, m or M (default is KiB)"
 msgstr ""
 
-#: vmstat.c:987
-#, fuzzy, c-format
+#: vmstat.c:1009
+#, c-format
 msgid "partition was not found\n"
-msgstr "找不到有效的分区映射。"
+msgstr "未找到分区\n"
 
 #: watch.c:89
 #, fuzzy, c-format
@@ -4100,7 +3971,7 @@ msgstr "用法：%s [选项] 命令\n"
 
 #: watch.c:91
 msgid "  -b, --beep             beep if command has a non-zero exit\n"
-msgstr ""
+msgstr "  -b, --beep             如果命令以非零返回值退出的话则发出哔声\n"
 
 #: watch.c:92
 msgid "  -c, --color            interpret ANSI color and style sequences\n"
@@ -4126,15 +3997,15 @@ msgstr ""
 
 #: watch.c:98
 msgid "  -p, --precise          attempt run command in precise intervals\n"
-msgstr ""
+msgstr "  -p, --precise          尝试以精确的间隔运行命令\n"
 
 #: watch.c:99
 msgid "  -t, --no-title         turn off header\n"
-msgstr ""
+msgstr "  -t, --no-title         关闭头部显示\n"
 
 #: watch.c:100
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
-msgstr ""
+msgstr "  -x, --exec             将命令传给 exec 而非“sh -c”\n"
 
 #: watch.c:103
 #, fuzzy
@@ -4155,7 +4026,7 @@ msgstr "每秒时间戳记列"
 #: watch.c:391
 #, c-format
 msgid "%s: %s"
-msgstr ""
+msgstr "%s: %s"
 
 #: watch.c:462
 #, fuzzy
@@ -4167,23 +4038,21 @@ msgid "unable to fork process"
 msgstr "无法创建 (fork) 进程"
 
 #: watch.c:477
-#, fuzzy
 msgid "dup2 failed"
-msgstr " 失败 - "
+msgstr "dup2 失败"
 
 #: watch.c:484
-#, fuzzy, c-format
+#, c-format
 msgid "unable to execute '%s'"
-msgstr "无法执行“%s”：%s"
+msgstr "无法执行“%s”"
 
 #: watch.c:501
 msgid "fdopen"
 msgstr "fdopen"
 
 #: watch.c:647
-#, fuzzy
 msgid "waitpid"
-msgstr "waitpid 失败"
+msgstr "waitpid"
 
 #: watch.c:655
 msgid "command exit with a non-zero status, press a key to exit"
@@ -4217,63 +4086,59 @@ msgstr ""
 msgid " %2lu.%02us"
 msgstr ""
 
-#: w.c:455
+#: w.c:459
 #, fuzzy
 msgid " -h, --no-header     do not print header\n"
 msgstr "打印使用到的头文件名"
 
-#: w.c:456
+#: w.c:460
 msgid " -u, --no-current    ignore current process username\n"
 msgstr ""
 
-#: w.c:457
+#: w.c:461
 #, fuzzy
 msgid " -s, --short         short format\n"
 msgstr "%<short%>对%qs无效"
 
-#: w.c:458
+#: w.c:462
 msgid " -f, --from          show remote hostname field\n"
 msgstr ""
 
-#: w.c:459
-#, fuzzy
+#: w.c:463
 msgid " -o, --old-style     old style output\n"
-msgstr "旧式的函数定义"
+msgstr " -o, --old-style     旧格式输出\n"
 
-#: w.c:460
-msgid ""
-" -i, --ip-addr       display IP address instead of hostname (if possible)\n"
+#: w.c:464
+msgid " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
 msgstr ""
 
-#: w.c:557
+#: w.c:561
 #, c-format
-msgid ""
-"User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
+msgid "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
 msgstr ""
 
-#: w.c:567
+#: w.c:571
 #, c-format
-msgid ""
-"from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
+msgid "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
 msgstr ""
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
-#: w.c:591
+#: w.c:598
 #, c-format
 msgid "%-*s TTY      "
 msgstr "%-*s TTY      "
 
-#: w.c:593
+#: w.c:600
 msgid "FROM"
 msgstr "来自"
 
-#: w.c:595
+#: w.c:602
 #, fuzzy, c-format
 msgid "  LOGIN@   IDLE   JCPU   PCPU WHAT\n"
 msgstr "  登陆于   空闲   JCPU   PCPU WHAT\n"
 
-#: w.c:597
+#: w.c:604
 #, c-format
 msgid "   IDLE WHAT\n"
 msgstr "   空闲等待\n"
