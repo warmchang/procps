@@ -43,6 +43,18 @@ AC_PROG_LN_S
 PKG_PROG_PKG_CONFIG
 AC_PROG_MAKE_SET
 
+AC_DEFUN([PROCPS_PROG_PO4A], [
+  AC_REQUIRE([AM_NLS])
+  AC_CHECK_PROGS([PO4A], [po4a])
+  AS_IF([test "$USE_NLS" = "yes" && test -n "$PO4A"], [
+    USE_PO4A=yes
+  ], [
+    USE_PO4A=no
+  ])
+  AC_SUBST([USE_PO4A])
+])
+PROCPS_PROG_PO4A
+
 # Checks for header files.
 AC_HEADER_MAJOR
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h float.h langinfo.h libintl.h limits.h locale.h stdint.h stdio_ext.h stdlib.h string.h sys/file.h sys/ioctl.h sys/param.h sys/time.h termios.h unistd.h utmp.h utmpx.h values.h wchar.h wctype.h])

@@ -397,5 +397,3 @@ get-trans:
 	echo "Getting the latest translations from translationproject.org..."
 	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng/  po
 	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man/  man-po
-	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man-ps/  man-po/ps
-	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man-top/  man-po/top

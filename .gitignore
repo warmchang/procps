@@ -29,6 +29,11 @@ kill
 libtool
 ltmain.sh
 m4/
+man-po/translated
+man-po/*.pot
+man-po/man.stamp
+man-po/??/*
+man-po/??_??/*
 Makefile
 Makefile.in
 missing
