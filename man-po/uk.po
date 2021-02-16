@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man-3.3.17rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2021-02-15 21:41+1100\n"
+"POT-Creation-Date: 2021-02-16 06:43+1100\n"
 "PO-Revision-Date: 2021-01-22 19:14+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -835,11 +835,15 @@ msgstr "4 червня 2020 року"
 
 #. type: Plain text
 #: ../pgrep.1:13
+#, fuzzy
+#| msgid ""
+#| "pgrep, pkill, pidwait - look up, signal, or wait for processes based on "
+#| "name and other attributes"
 msgid ""
-"pgrep, pkill, pwait - look up, signal, or wait for processes based on name "
+"pgrep, pkill, pidwait - look up, signal, or wait for processes based on name "
 "and other attributes"
 msgstr ""
-"pgrep, pkill, pwait — пошук, надсилання сигналів процесам або очікування на "
+"pgrep, pkill, pidwait — пошук, надсилання сигналів процесам або очікування на "
 "завершення роботи процесів на основі даних щодо їхньої назви та інших "
 "атрибутів"
 
@@ -855,8 +859,10 @@ msgstr "B<pkill> [параметри] взірець"
 
 #. type: Plain text
 #: ../pgrep.1:22
-msgid "B<pwait> [options] pattern"
-msgstr "B<pwait> [параметри] взірець"
+#, fuzzy
+#| msgid "B<pidwait> [options] pattern"
+msgid "B<pidwait> [options] pattern"
+msgstr "B<pidwait> [параметри] взірець"
 
 #. type: Plain text
 #: ../pgrep.1:27
@@ -904,9 +910,13 @@ msgstr ""
 
 #. type: Plain text
 #: ../pgrep.1:50
-msgid "B<pwait> will wait for each process instead of listing them on stdout."
+#, fuzzy
+#| msgid ""
+#| "B<pidwait> will wait for each process instead of listing them on stdout."
+msgid ""
+"B<pidwait> will wait for each process instead of listing them on stdout."
 msgstr ""
-"B<pwait> чекатиме на усі процеси замість виведення їхнього списку до stdout."
+"B<pidwait> чекатиме на усі процеси замість виведення їхнього списку до stdout."
 
 #. type: TP
 #: ../pgrep.1:51
@@ -938,17 +948,24 @@ msgstr "B<-c>, B<--count>"
 
 #. type: Plain text
 #: ../pgrep.1:66
+#, fuzzy
+#| msgid ""
+#| "Suppress normal output; instead print a count of matching processes.  "
+#| "When count does not match anything, e.g. returns zero, the command will "
+#| "return non-zero value. Note that for pkill and pidwait, the count is the "
+#| "number of matching processes, not the processes that were successfully "
+#| "signaled or waited for."
 msgid ""
 "Suppress normal output; instead print a count of matching processes.  When "
 "count does not match anything, e.g. returns zero, the command will return "
-"non-zero value. Note that for pkill and pwait, the count is the number of "
+"non-zero value. Note that for pkill and pidwait, the count is the number of "
 "matching processes, not the processes that were successfully signaled or "
 "waited for."
 msgstr ""
 "Придушити звичайне виведення. Замість цього, вивести кількість відповідних "
 "процесів. Якщо не вдасться знайти нічого, наприклад, буде повернуто нульове "
 "значення, програма поверне ненульове значення помилки. Зауважте, що для "
-"pkill і pwait кількість є кількістю відповідних процесів, а не кількістю "
+"pkill і pidwait кількість є кількістю відповідних процесів, а не кількістю "
 "процесів, яким було успішно надіслано сигнал, або кількість процесів, на які "
 "очікувала програма."
 
@@ -1003,13 +1020,17 @@ msgstr "B<-g>, B<--pgroup> I<група процесів>,..."
 
 #. type: Plain text
 #: ../pgrep.1:93
+#, fuzzy
+#| msgid ""
+#| "Only match processes in the process group IDs listed.  Process group 0 is "
+#| "translated into B<pgrep>'s, B<pkill>'s, or B<pidwait>'s own process group."
 msgid ""
 "Only match processes in the process group IDs listed.  Process group 0 is "
-"translated into B<pgrep>'s, B<pkill>'s, or B<pwait>'s own process group."
+"translated into B<pgrep>'s, B<pkill>'s, or B<pidwait>'s own process group."
 msgstr ""
 "Встановлювати відповідність процесів лише для вказаного списку "
 "ідентифікаторів груп. Група процесів 0 відповідає власній групі процесів "
-"B<pgrep>, B<pkill> або B<pwait>."
+"B<pgrep>, B<pkill> або B<pidwait>."
 
 #. type: TP
 #: ../pgrep.1:93
@@ -1119,13 +1140,17 @@ msgstr "B<-s>, B<--session> I<sid>,..."
 
 #. type: Plain text
 #: ../pgrep.1:131
+#, fuzzy
+#| msgid ""
+#| "Only match processes whose process session ID is listed.  Session ID 0 is "
+#| "translated into B<pgrep>'s, B<pkill>'s, or B<pidwait>'s own session ID."
 msgid ""
 "Only match processes whose process session ID is listed.  Session ID 0 is "
-"translated into B<pgrep>'s, B<pkill>'s, or B<pwait>'s own session ID."
+"translated into B<pgrep>'s, B<pkill>'s, or B<pidwait>'s own session ID."
 msgstr ""
 "Встановлювати відповідність лише тих процесів, які мають ідентифікатори "
 "сеансів процесів зі вказаного списку. Ідентифікатор 0 відповідає "
-"ідентифікаторам сеансів самих програм B<pgrep>, B<pkill> або B<pwait>."
+"ідентифікаторам сеансів самих програм B<pgrep>, B<pkill> або B<pidwait>."
 
 #. type: TP
 #: ../pgrep.1:131
@@ -1182,13 +1207,18 @@ msgstr "B<-v>, B<--inverse>"
 
 #. type: Plain text
 #: ../pgrep.1:152
+#, fuzzy
+#| msgid ""
+#| "Negates the matching.  This option is usually used in B<pgrep>'s or "
+#| "B<pidwait>'s context.  In B<pkill>'s context the short option is disabled "
+#| "to avoid accidental usage of the option."
 msgid ""
 "Negates the matching.  This option is usually used in B<pgrep>'s or "
-"B<pwait>'s context.  In B<pkill>'s context the short option is disabled to "
+"B<pidwait>'s context.  In B<pkill>'s context the short option is disabled to "
 "avoid accidental usage of the option."
 msgstr ""
 "Інвертує відповідність. Зазвичай, цей параметр використовується у контексті "
-"B<pgrep> або B<pwait>. У контексті B<pkill> скорочену форму параметра "
+"B<pgrep> або B<pidwait>. У контексті B<pkill> скорочену форму параметра "
 "вимкнено для того, щоб запобігти випадковому використанню цього параметра."
 
 #. type: TP
@@ -1199,12 +1229,16 @@ msgstr "B<-w>, B<--lightweight>"
 
 #. type: Plain text
 #: ../pgrep.1:161
+#, fuzzy
+#| msgid ""
+#| "Shows all thread ids instead of pids in B<pgrep>'s or B<pidwait>'s "
+#| "context.  In B<pkill>'s context this option is disabled."
 msgid ""
-"Shows all thread ids instead of pids in B<pgrep>'s or B<pwait>'s context.  "
+"Shows all thread ids instead of pids in B<pgrep>'s or B<pidwait>'s context.  "
 "In B<pkill>'s context this option is disabled."
 msgstr ""
 "Показує усіх ідентифікатори потоків обробки, замість ідентифікаторів, у "
-"контексті B<pgrep> або B<pwait>. У контексті B<pkill> цей параметр вимкнено."
+"контексті B<pgrep> або B<pidwait>. У контексті B<pkill> цей параметр вимкнено."
 
 #. type: TP
 #: ../pgrep.1:161
@@ -1229,12 +1263,16 @@ msgstr "B<-F>, B<--pidfile> I<файл>"
 
 #. type: Plain text
 #: ../pgrep.1:173
+#, fuzzy
+#| msgid ""
+#| "Read I<PID>s from I<file>.  This option is more useful for "
+#| "B<pkill>orB<pidwait> than B<pgrep>."
 msgid ""
 "Read I<PID>s from I<file>.  This option is more useful for "
-"B<pkill>orB<pwait> than B<pgrep>."
+"B<pkill>orB<pidwait> than B<pgrep>."
 msgstr ""
 "Прочитати I<PID> з I<файла>. Ймовірно, цей параметр корисніший для B<pkill> "
-"або B<pwait>, а не для B<pgrep>."
+"або B<pidwait>, а не для B<pgrep>."
 
 #. type: TP
 #: ../pgrep.1:173
@@ -1389,11 +1427,15 @@ msgstr "0"
 
 #. type: Plain text
 #: ../pgrep.1:242
+#, fuzzy
+#| msgid ""
+#| "One or more processes matched the criteria. For pkill and pidwait, one or "
+#| "more processes must also have been successfully signalled or waited for."
 msgid ""
-"One or more processes matched the criteria. For pkill and pwait, one or more "
-"processes must also have been successfully signalled or waited for."
+"One or more processes matched the criteria. For pkill and pidwait, one or "
+"more processes must also have been successfully signalled or waited for."
 msgstr ""
-"Вказаному критерію відповідає один або декілька процесів. Для pkill і pwait "
+"Вказаному критерію відповідає один або декілька процесів. Для pkill і pidwait "
 "також має бути один або декілька процесів, яким успішно надіслано сигнал або "
 "які перебувають у стані очікування."
 
@@ -1452,11 +1494,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../pgrep.1:265
+#, fuzzy
+#| msgid ""
+#| "The running B<pgrep>, B<pkill>, or B<pidwait> process will never report "
+#| "itself as a match."
 msgid ""
-"The running B<pgrep>, B<pkill>, or B<pwait> process will never report itself "
-"as a match."
+"The running B<pgrep>, B<pkill>, or B<pidwait> process will never report "
+"itself as a match."
 msgstr ""
-"Запущений процес B<pgrep>, B<pkill> або B<pwait> ніколи не повідомлятиметься "
+"Запущений процес B<pgrep>, B<pkill> або B<pidwait> ніколи не повідомлятиметься "
 "самим собою як відповідник."
 
 #. type: Plain text

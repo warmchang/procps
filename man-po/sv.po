@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2021-02-15 21:41+1100\n"
+"POT-Creation-Date: 2021-02-16 06:43+1100\n"
 "PO-Revision-Date: 2021-01-28 22:55+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -825,11 +825,15 @@ msgstr "2020-06-04"
 
 #. type: Plain text
 #: ../pgrep.1:13
+#, fuzzy
+#| msgid ""
+#| "pgrep, pkill, pidwait - look up, signal, or wait for processes based on "
+#| "name and other attributes"
 msgid ""
-"pgrep, pkill, pwait - look up, signal, or wait for processes based on name "
+"pgrep, pkill, pidwait - look up, signal, or wait for processes based on name "
 "and other attributes"
 msgstr ""
-"pgrep, pkill, pwait — slå upp, signalera eller vänta på processer baserat på "
+"pgrep, pkill, pidwait — slå upp, signalera eller vänta på processer baserat på "
 "namn och andra attribut"
 
 #. type: Plain text
@@ -844,8 +848,10 @@ msgstr "B<pkill> [flaggor] mönster"
 
 #. type: Plain text
 #: ../pgrep.1:22
-msgid "B<pwait> [options] pattern"
-msgstr "B<pwait> [flaggor] mönster"
+#, fuzzy
+#| msgid "B<pidwait> [options] pattern"
+msgid "B<pidwait> [options] pattern"
+msgstr "B<pidwait> [flaggor] mönster"
 
 #. type: Plain text
 #: ../pgrep.1:27
@@ -893,9 +899,13 @@ msgstr ""
 
 #. type: Plain text
 #: ../pgrep.1:50
-msgid "B<pwait> will wait for each process instead of listing them on stdout."
+#, fuzzy
+#| msgid ""
+#| "B<pidwait> will wait for each process instead of listing them on stdout."
+msgid ""
+"B<pidwait> will wait for each process instead of listing them on stdout."
 msgstr ""
-"B<pwait> kommer vänta på varje process istället för att räkna upp dem på "
+"B<pidwait> kommer vänta på varje process istället för att räkna upp dem på "
 "standard ut."
 
 #. type: TP
@@ -935,7 +945,7 @@ msgstr "B<-c>, B<--count>"
 msgid ""
 "Suppress normal output; instead print a count of matching processes.  When "
 "count does not match anything, e.g. returns zero, the command will return "
-"non-zero value. Note that for pkill and pwait, the count is the number of "
+"non-zero value. Note that for pkill and pidwait, the count is the number of "
 "matching processes, not the processes that were successfully signaled or "
 "waited for."
 msgstr ""
@@ -1001,7 +1011,7 @@ msgstr "B<-g>, B<--pgroup> I<pgrp>,…"
 #| "translated into B<pgrep>'s or B<pkill>'s own process group."
 msgid ""
 "Only match processes in the process group IDs listed.  Process group 0 is "
-"translated into B<pgrep>'s, B<pkill>'s, or B<pwait>'s own process group."
+"translated into B<pgrep>'s, B<pkill>'s, or B<pidwait>'s own process group."
 msgstr ""
 "Matcha endast processer i de processgrupper vars ID listas.  Processgrupp 0 "
 "översätts till B<pgrep>s eller B<pkill>s egen processgrupp."
@@ -1112,12 +1122,16 @@ msgstr "B<-s>, B<--session> I<sid>,…"
 
 #. type: Plain text
 #: ../pgrep.1:131
+#, fuzzy
+#| msgid ""
+#| "Only match processes whose process session ID is listed.  Session ID 0 is "
+#| "translated into B<pgrep>'s, B<pkill>'s, or B<pidwait>'s own session ID."
 msgid ""
 "Only match processes whose process session ID is listed.  Session ID 0 is "
-"translated into B<pgrep>'s, B<pkill>'s, or B<pwait>'s own session ID."
+"translated into B<pgrep>'s, B<pkill>'s, or B<pidwait>'s own session ID."
 msgstr ""
 "Matcha endast processer vars processessions-ID listas.  Sessions-ID 0 "
-"översätts till B<pgrep>s, B<pkill>s eller B<pwait>s eget sessions-ID."
+"översätts till B<pgrep>s, B<pkill>s eller B<pidwait>s eget sessions-ID."
 
 #. type: TP
 #: ../pgrep.1:131
@@ -1172,13 +1186,18 @@ msgstr "B<-v>, B<--inverse>"
 
 #. type: Plain text
 #: ../pgrep.1:152
+#, fuzzy
+#| msgid ""
+#| "Negates the matching.  This option is usually used in B<pgrep>'s or "
+#| "B<pidwait>'s context.  In B<pkill>'s context the short option is disabled "
+#| "to avoid accidental usage of the option."
 msgid ""
 "Negates the matching.  This option is usually used in B<pgrep>'s or "
-"B<pwait>'s context.  In B<pkill>'s context the short option is disabled to "
+"B<pidwait>'s context.  In B<pkill>'s context the short option is disabled to "
 "avoid accidental usage of the option."
 msgstr ""
 "Negerar matchningen.  Denna flagga används oftast i B<pgrep>s eller "
-"B<pwait>s sammanhang.  I B<pkill>s sammanhang är den korta flaggan "
+"B<pidwait>s sammanhang.  I B<pkill>s sammanhang är den korta flaggan "
 "avaktiverad för att undvika att flaggan används av misstag."
 
 #. type: TP
@@ -1189,11 +1208,15 @@ msgstr "B<-w>, B<--lightweight>"
 
 #. type: Plain text
 #: ../pgrep.1:161
+#, fuzzy
+#| msgid ""
+#| "Shows all thread ids instead of pids in B<pgrep>'s or B<pidwait>'s "
+#| "context.  In B<pkill>'s context this option is disabled."
 msgid ""
-"Shows all thread ids instead of pids in B<pgrep>'s or B<pwait>'s context.  "
+"Shows all thread ids instead of pids in B<pgrep>'s or B<pidwait>'s context.  "
 "In B<pkill>'s context this option is disabled."
 msgstr ""
-"Visar alla tråd-id:n istället för pid:n i B<pgrep>s eller B<pwait>s "
+"Visar alla tråd-id:n istället för pid:n i B<pgrep>s eller B<pidwait>s "
 "sammanhang.  I B<pkill>s sammanhang är denna flagga avaktiverad."
 
 #. type: TP
@@ -1229,7 +1252,7 @@ msgstr "B<-F>, B<--pidfile> I<fil>"
 #| "than B<pgrep>."
 msgid ""
 "Read I<PID>s from I<file>.  This option is more useful for "
-"B<pkill>orB<pwait> than B<pgrep>."
+"B<pkill>orB<pidwait> than B<pgrep>."
 msgstr ""
 "Läs I<PID>:n från en fil.  Denna flagga är kanske mer användbar för B<pkill> "
 "än B<pgrep>."
@@ -1393,8 +1416,8 @@ msgstr "0"
 #| "One or more processes matched the criteria. For pkill the process must "
 #| "also have been successfully signalled."
 msgid ""
-"One or more processes matched the criteria. For pkill and pwait, one or more "
-"processes must also have been successfully signalled or waited for."
+"One or more processes matched the criteria. For pkill and pidwait, one or "
+"more processes must also have been successfully signalled or waited for."
 msgstr ""
 "En eller flera processer matchar kriterierna.  För pkill måste även "
 "processen framgångsrikt ha signalerats."
@@ -1456,8 +1479,8 @@ msgstr ""
 #| "The running B<pgrep> or B<pkill> process will never report itself as a "
 #| "match."
 msgid ""
-"The running B<pgrep>, B<pkill>, or B<pwait> process will never report itself "
-"as a match."
+"The running B<pgrep>, B<pkill>, or B<pidwait> process will never report "
+"itself as a match."
 msgstr ""
 "Den körande B<pgrep>- eller B<pkill>-processen kommer aldrig rapportera sig "
 "själv som en matchning."

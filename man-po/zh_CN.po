@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.10-rc3\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2021-02-15 21:41+1100\n"
+"POT-Creation-Date: 2021-02-16 06:43+1100\n"
 "PO-Revision-Date: 2015-10-30 09:26-0400\n"
 "Last-Translator: Mingye Wang (Arthur2e5) <arthur200126@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -751,7 +751,7 @@ msgstr ""
 #. type: Plain text
 #: ../pgrep.1:13
 msgid ""
-"pgrep, pkill, pwait - look up, signal, or wait for processes based on name "
+"pgrep, pkill, pidwait - look up, signal, or wait for processes based on name "
 "and other attributes"
 msgstr ""
 
@@ -767,7 +767,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../pgrep.1:22
-msgid "B<pwait> [options] pattern"
+msgid "B<pidwait> [options] pattern"
 msgstr ""
 
 #. type: Plain text
@@ -809,7 +809,8 @@ msgstr ""
 
 #. type: Plain text
 #: ../pgrep.1:50
-msgid "B<pwait> will wait for each process instead of listing them on stdout."
+msgid ""
+"B<pidwait> will wait for each process instead of listing them on stdout."
 msgstr ""
 
 #. type: TP
@@ -842,7 +843,7 @@ msgstr ""
 msgid ""
 "Suppress normal output; instead print a count of matching processes.  When "
 "count does not match anything, e.g. returns zero, the command will return "
-"non-zero value. Note that for pkill and pwait, the count is the number of "
+"non-zero value. Note that for pkill and pidwait, the count is the number of "
 "matching processes, not the processes that were successfully signaled or "
 "waited for."
 msgstr ""
@@ -894,7 +895,7 @@ msgstr ""
 #: ../pgrep.1:93
 msgid ""
 "Only match processes in the process group IDs listed.  Process group 0 is "
-"translated into B<pgrep>'s, B<pkill>'s, or B<pwait>'s own process group."
+"translated into B<pgrep>'s, B<pkill>'s, or B<pidwait>'s own process group."
 msgstr ""
 
 #. type: TP
@@ -999,7 +1000,7 @@ msgstr ""
 #: ../pgrep.1:131
 msgid ""
 "Only match processes whose process session ID is listed.  Session ID 0 is "
-"translated into B<pgrep>'s, B<pkill>'s, or B<pwait>'s own session ID."
+"translated into B<pgrep>'s, B<pkill>'s, or B<pidwait>'s own session ID."
 msgstr ""
 
 #. type: TP
@@ -1051,7 +1052,7 @@ msgstr ""
 #: ../pgrep.1:152
 msgid ""
 "Negates the matching.  This option is usually used in B<pgrep>'s or "
-"B<pwait>'s context.  In B<pkill>'s context the short option is disabled to "
+"B<pidwait>'s context.  In B<pkill>'s context the short option is disabled to "
 "avoid accidental usage of the option."
 msgstr ""
 
@@ -1064,7 +1065,7 @@ msgstr ""
 #. type: Plain text
 #: ../pgrep.1:161
 msgid ""
-"Shows all thread ids instead of pids in B<pgrep>'s or B<pwait>'s context.  "
+"Shows all thread ids instead of pids in B<pgrep>'s or B<pidwait>'s context.  "
 "In B<pkill>'s context this option is disabled."
 msgstr ""
 
@@ -1091,7 +1092,7 @@ msgstr ""
 #: ../pgrep.1:173
 msgid ""
 "Read I<PID>s from I<file>.  This option is more useful for "
-"B<pkill>orB<pwait> than B<pgrep>."
+"B<pkill>orB<pidwait> than B<pgrep>."
 msgstr ""
 
 #. type: TP
@@ -1235,8 +1236,8 @@ msgstr ""
 #. type: Plain text
 #: ../pgrep.1:242
 msgid ""
-"One or more processes matched the criteria. For pkill and pwait, one or more "
-"processes must also have been successfully signalled or waited for."
+"One or more processes matched the criteria. For pkill and pidwait, one or "
+"more processes must also have been successfully signalled or waited for."
 msgstr ""
 
 #. type: IP
@@ -1284,8 +1285,8 @@ msgstr ""
 #. type: Plain text
 #: ../pgrep.1:265
 msgid ""
-"The running B<pgrep>, B<pkill>, or B<pwait> process will never report itself "
-"as a match."
+"The running B<pgrep>, B<pkill>, or B<pidwait> process will never report "
+"itself as a match."
 msgstr ""
 
 #. type: Plain text
