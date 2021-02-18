@@ -35,11 +35,7 @@ typedef struct proc_t {
         ppid;           // stat,status     pid of parent process
     char
         state,          // stat,status     single-char code for process state (S=sleeping)
-#ifdef FALSE_THREADS
-        pad_1,          // n/a             padding (psst, also used if multi-threaded)
-#else
         pad_1,          // n/a             padding
-#endif
         pad_2,          // n/a             padding
         pad_3;          // n/a             padding
     unsigned long long
