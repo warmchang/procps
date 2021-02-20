@@ -1,6 +1,7 @@
 procps-ng-NEXT
 ---------------
   * Rename pwait to pidwait
+  * library: renamed to libproc-2 and reset to 0:0:0
 
 procps-ng-3.3.17
 ---------------

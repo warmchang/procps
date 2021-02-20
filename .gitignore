@@ -45,8 +45,8 @@ pmap
 pidwait
 procps-ng-*.tar.xz
 proc/.depend
-proc/libprocps.la
-proc/libprocps.pc
+proc/libproc-2.la
+proc/libproc-2.pc
 proc/Makefile
 proc/Makefile.in
 ps/Makefile

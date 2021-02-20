@@ -1,4 +1,4 @@
-LIBPROCPS_0 {
+LIBPROC_2 {
 global:
 	fatal_proc_unmounted;
 	procps_cpu_count;

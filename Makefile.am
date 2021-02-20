@@ -26,10 +26,10 @@ SUBDIRS = \
 	testsuite
 
 AM_CFLAGS = -Iproc
-LDADD = ./proc/libprocps.la $(CYGWINFLAGS)
+LDADD = ./proc/libproc-2.la $(CYGWINFLAGS)
 
 if CYGWIN
-AM_LDFLAGS += ./proc/libprocps.la $(CYGWINFLAGS)
+AM_LDFLAGS += ./proc/libproc-2.la $(CYGWINFLAGS)
 endif
 
 transform =
@@ -70,7 +70,7 @@ usrbin_exec_PROGRAMS += \
 endif
 
 lib_LTLIBRARIES = \
-	proc/libprocps.la
+	proc/libproc-2.la
 
 dist_man_MANS = \
 	free.1 \
@@ -225,25 +225,24 @@ uptime_SOURCES = uptime.c lib/fileutils.c
 vmstat_SOURCES = vmstat.c lib/strutils.c lib/fileutils.c
 w_SOURCES = w.c lib/fileutils.c
 
-# proc/libprocps.la
 
 # See http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
-LIBprocps_CURRENT=7
-LIBprocps_REVISION=0
-LIBprocps_AGE=1
+LIBproc_2_CURRENT=0
+LIBproc_2_REVISION=0
+LIBproc_2_AGE=0
 
-proc_libprocps_la_LIBADD = $(LIB_KPARTS)
+proc_libproc_2_la_LIBADD = $(LIB_KPARTS)
 
 if WITH_SYSTEMD
-proc_libprocps_la_LIBADD += @SYSTEMD_LIBS@
+proc_libproc_2_la_LIBADD += @SYSTEMD_LIBS@
 endif
 
-proc_libprocps_la_LDFLAGS = \
-	-version-info $(LIBprocps_CURRENT):$(LIBprocps_REVISION):$(LIBprocps_AGE) \
+proc_libproc_2_la_LDFLAGS = \
+	-version-info $(LIBproc_2_CURRENT):$(LIBproc_2_REVISION):$(LIBproc_2_AGE) \
 	-no-undefined \
-	-Wl,--version-script=$(top_srcdir)/proc/libprocps.sym
+	-Wl,--version-script=$(top_srcdir)/proc/libproc-2.sym
 
-proc_libprocps_la_SOURCES = \
+proc_libproc_2_la_SOURCES = \
 	proc/devname.c \
 	proc/devname.h \
 	proc/diskstats.c \
@@ -276,8 +275,8 @@ proc_libprocps_la_SOURCES = \
 	proc/uptime.c \
 	proc/xtra-procps-debug.h
 
-proc_libprocps_la_includedir = $(includedir)/procps/
-proc_libprocps_la_include_HEADERS = \
+proc_libproc_2_la_includedir = $(includedir)/procps/
+proc_libproc_2_la_include_HEADERS = \
 	proc/diskstats.h \
 	proc/meminfo.h \
 	proc/misc.h \
@@ -289,9 +288,9 @@ proc_libprocps_la_include_HEADERS = \
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
-	proc/libprocps.pc
+	proc/libproc-2.pc
 
-EXTRA_DIST += proc/libprocps.sym
+EXTRA_DIST += proc/libproc-2.sym
 
 # ps/pscommand
 
@@ -334,17 +333,17 @@ check_PROGRAMS += \
 	proc/test_namespace
 
 proc_test_Itemtables_SOURCES = proc/test_Itemtables.c
-proc_test_Itemtables_LDADD = proc/libprocps.la
+proc_test_Itemtables_LDADD = proc/libproc-2.la
 proc_test_pids_SOURCES = proc/test_pids.c
-proc_test_pids_LDADD = proc/libprocps.la
+proc_test_pids_LDADD = proc/libproc-2.la
 proc_test_uptime_SOURCES = proc/test_uptime.c
-proc_test_uptime_LDADD = proc/libprocps.la
+proc_test_uptime_LDADD = proc/libproc-2.la
 proc_test_sysinfo_SOURCES = proc/test_sysinfo.c
-proc_test_sysinfo_LDADD = proc/libprocps.la
+proc_test_sysinfo_LDADD = proc/libproc-2.la
 proc_test_version_SOURCES = proc/test_version.c
-proc_test_version_LDADD = proc/libprocps.la
+proc_test_version_LDADD = proc/libproc-2.la
 proc_test_namespace_SOURCES = proc/test_namespace.c
-proc_test_namespace_LDADD = proc/libprocps.la
+proc_test_namespace_LDADD = proc/libproc-2.la
 
 if CYGWIN
 	skill_LDADD = $(CYGWINFLAGS)
