@@ -1170,7 +1170,7 @@ static int vmstat_read_failed (
     memset(&info->hist.new, 0, sizeof(struct vmstat_data));
 
     if (-1 == info->vmstat_fd
-    && (info->vmstat_fd = open(VMSTAT_FILE, O_RDONLY)) == -1)
+    && (-1 == (info->vmstat_fd = open(VMSTAT_FILE, O_RDONLY))))
         return 1;
 
     if (lseek(info->vmstat_fd, 0L, SEEK_SET) == -1)
@@ -1196,8 +1196,7 @@ static int vmstat_read_failed (
         static ENTRY e;      // just to keep coverity off our backs (e.data)
         ENTRY *ep;
 
-        tail = strchr(head, ' ');
-        if (!tail)
+        if (!(tail = strchr(head, ' ')))
             break;
         *tail = '\0';
         valptr = NULL;
@@ -1205,13 +1204,11 @@ static int vmstat_read_failed (
         e.key = head;
         if (hsearch_r(e, FIND, &ep, &info->hashtab))
             valptr = ep->data;
-
         head = tail + 1;
         if (valptr)
-            *valptr = strtoul(head, &tail, 10);
+            *valptr = strtoul(head, NULL, 10);
 
-        tail = strchr(head, '\n');
-        if (!tail)
+        if (!(tail = strchr(head, '\n')))
             break;
         head = tail + 1;
     }
