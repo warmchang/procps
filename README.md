@@ -30,7 +30,7 @@ The following programs are found in procps:
 ## Reporting Bugs
 There are a few ways of reporting bugs or feature requests:
 
-1. Your distributions bug reporter. If you are using a distribution your first
+1. Your distribution's bug reporter. If you are using a distribution your first
 port of call is their bug tracker. This is because each distribution has their
 own patches and way of dealing with bugs. Also bug reporting often does not need
 any subscription to websites.
