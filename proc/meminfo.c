@@ -542,9 +542,9 @@ static inline int meminfo_items_check_failed (
 static int meminfo_make_hash_failed (
         struct meminfo_info *info)
 {
- #define htVAL(f) e.key = STRINGIFY(f) ":"; e.data = &info->hist.new. f; \
+ #define htVAL(f) e.key = STRINGIFY(f); e.data = &info->hist.new. f; \
   if (!hsearch_r(e, ENTER, &ep, &info->hashtab)) return 1;
- #define htXTRA(k,f) e.key = STRINGIFY(k) ":"; e.data = &info->hist.new. f; \
+ #define htXTRA(k,f) e.key = STRINGIFY(k); e.data = &info->hist.new. f; \
   if (!hsearch_r(e, ENTER, &ep, &info->hashtab)) return 1;
     ENTRY e, *ep;
     size_t n;
@@ -672,7 +672,7 @@ static int meminfo_read_failed (
         static ENTRY e;      // just to keep coverity off our backs (e.data)
         ENTRY *ep;
 
-        if (!(tail = strchr(head, ' ')))
+        if (!(tail = strchr(head, ':')))
             break;
         *tail = '\0';
         valptr = NULL;
