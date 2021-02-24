@@ -1,4 +1,3 @@
 #!/bin/sh
 
-BASEDIR=$(dirname ${0})
-${BASEDIR}/../../lib/test_fileutils >&-
+${PWD}/../lib/test_fileutils >&-
