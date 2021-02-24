@@ -23,7 +23,6 @@ LINGUAS_DIST = $(shell sed -ne 's/^.*\[po4a_langs\] \(.*\)$$/\1/p' $(srcdir)/po4
 # If the user has not defined it let's use the default.
 LINGUAS ?= $(LINGUAS_DIST)
 
-
 PO4A_V = $(PO4A_V_@AM_V@)
 PO4A_V_ = $(PO4A_V_@AM_DEFAULT_V@)
 PO4A_V_0 = @echo "  PO4A   $@";
@@ -67,7 +66,7 @@ install-data-local:
 		    files="$$files $(srcdir)/$$lang/$$trans"; \
 		fi; \
 	    done; \
-	    $(MAKE) install-man \
+	    $(MAKE) -C .. install-man \
 	            mandir="$(mandir)/$$lang" \
 		    man_MANS="" \
 		    dist_man_MANS="$$files"; \
@@ -83,7 +82,7 @@ uninstall-local:
 				files="$$files $(srcdir)/$$lang/$$trans"; \
 			fi; \
 		done; \
-		$(MAKE) uninstall-man \
+		$(MAKE) -C .. uninstall-man \
 			mandir="$(mandir)/$$lang" \
 			man_MANS="" \
 			dist_man_MANS="$$files"; \
