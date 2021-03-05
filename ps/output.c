@@ -704,6 +704,15 @@ setREL2(NICE,SCHED_CLASS)
   return snprintf(outbuf, COLWID, "%d", rSv(NICE, s_int, pp));
 }
 
+static int pr_oom_adj(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(OOM_ADJ)
+  return snprintf(outbuf, COLWID, "%d", rSv(OOM_ADJ, s_int, pp));
+}
+
+static int pr_oom(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(OOM_SCORE)
+  return snprintf(outbuf, COLWID, "%d", rSv(OOM_SCORE, s_int, pp));
+}
 // HP-UX   "cls": RT RR RR2 ???? HPUX FIFO KERN
 // Solaris "class": SYS TS FX IA RT FSS (FIFO is RR w/ Inf quant)
 //                  FIFO+RR share RT; FIFO has Inf quant
@@ -1634,6 +1643,8 @@ static const format_struct format_array[] = { /*
 {"numa",      "NUMA",    pr_numa,          PIDS_PROCESSOR_NODE,      4,    XXX,  AN|RIGHT},
 {"nvcsw",     "VCSW",    pr_nop,           PIDS_noop,                5,    XXX,  AN|RIGHT},
 {"nwchan",    "WCHAN",   pr_nop,           PIDS_noop,                6,    XXX,  TO|RIGHT},
+{"oom",       "OOM",     pr_oom,           PIDS_OOM_SCORE,           4,    XXX,  TO|RIGHT},
+{"oomadj",    "OOMADJ",  pr_oom_adj,       PIDS_OOM_ADJ,             5,    XXX,  TO|RIGHT},
 {"opri",      "PRI",     pr_opri,          PIDS_PRIORITY,            3,    SUN,  TO|RIGHT},
 {"osz",       "SZ",      pr_nop,           PIDS_noop,                2,    SUN,  PO|RIGHT},
 {"oublk",     "OUBLK",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*oublock*/

@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS "1" "2020-06-04" "procps-ng" "User Commands"
+.TH PS "1" "2021-03-05" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -1419,6 +1419,17 @@ nwchan	WCHAN	T{
 address of the kernel function where the process is sleeping (use
 .B wchan
 if you want the kernel function name).
+T}
+
+oom	OOM	T{
+Out of Memory Score. The value, ranging from 0 to +1000, used to select
+task(s) to kill when memory is exhausted.
+T}
+
+oomadj	OOMADJ	T{
+Out of Memory Adjustment Factor. The value is added to the current out of
+memory score which is then used to determine which task to kill when memory
+is exhausted.
 T}
 
 ouid	OWNER	T{
