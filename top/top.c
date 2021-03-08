@@ -1452,7 +1452,7 @@ static inline const char *make_str_utf8 (const char *str, int width, int justr, 
          * Do some scaling then justify stuff.
          * We'll interpret 'num' as a kibibytes quantity and try to
          * format it to reach 'target' while also fitting 'width'. */
-static const char *scale_mem (int target, unsigned long num, int width, int justr) {
+static const char *scale_mem (int target, float num, int width, int justr) {
    //                               SK_Kb   SK_Mb      SK_Gb      SK_Tb      SK_Pb      SK_Eb
 #ifdef BOOST_MEMORY
    static const char *fmttab[] =  { "%.0f", "%#.1f%c", "%#.3f%c", "%#.3f%c", "%#.3f%c", NULL };
@@ -1460,7 +1460,6 @@ static const char *scale_mem (int target, unsigned long num, int width, int just
    static const char *fmttab[] =  { "%.0f", "%.1f%c",  "%.1f%c",  "%.1f%c",  "%.1f%c",  NULL };
 #endif
    static char buf[SMLBUFSIZ];
-   float scaled_num;
    char *psfx;
    int i;
 
@@ -1468,12 +1467,11 @@ static const char *scale_mem (int target, unsigned long num, int width, int just
    if (Rc.zero_suppress && 0 >= num)
       goto end_justifies;
 
-   scaled_num = num;
    for (i = SK_Kb, psfx = Scaled_sfxtab; i < SK_Eb; psfx++, i++) {
       if (i >= target
-      && (width >= snprintf(buf, sizeof(buf), fmttab[i], scaled_num, *psfx)))
+      && (width >= snprintf(buf, sizeof(buf), fmttab[i], num, *psfx)))
          goto end_justifies;
-      scaled_num /= 1024.0;
+      num /= 1024.0;
    }
 
    // well shoot, this outta' fit...
@@ -1485,23 +1483,21 @@ end_justifies:
 
         /*
          * Do some scaling then justify stuff. */
-static const char *scale_num (unsigned long num, int width, int justr) {
+static const char *scale_num (float num, int width, int justr) {
    static char buf[SMLBUFSIZ];
-   float scaled_num;
    char *psfx;
 
    buf[0] = '\0';
    if (Rc.zero_suppress && 0 >= num)
       goto end_justifies;
-   if (width >= snprintf(buf, sizeof(buf), "%lu", num))
+   if (width >= snprintf(buf, sizeof(buf), "%.0f", num))
       goto end_justifies;
 
-   scaled_num = num;
    for (psfx = Scaled_sfxtab; 0 < *psfx; psfx++) {
-      scaled_num /= 1024.0;
-      if (width >= snprintf(buf, sizeof(buf), "%.1f%c", scaled_num, *psfx))
+      num /= 1024.0;
+      if (width >= snprintf(buf, sizeof(buf), "%.1f%c", num, *psfx))
          goto end_justifies;
-      if (width >= snprintf(buf, sizeof(buf), "%.0f%c", scaled_num, *psfx))
+      if (width >= snprintf(buf, sizeof(buf), "%.0f%c", num, *psfx))
          goto end_justifies;
    }
 
