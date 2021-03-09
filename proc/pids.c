@@ -147,11 +147,11 @@ static void freNAME(strv) (struct pids_result *R) {
 setDECL(noop)  { (void)I; (void)R; (void)P; }
 setDECL(extra) { (void)I; (void)P; R->result.ull_int = 0; }
 
-REG_set(ADDR_END_CODE,    ul_int,  end_code)
-REG_set(ADDR_KSTK_EIP,    ul_int,  kstk_eip)
-REG_set(ADDR_KSTK_ESP,    ul_int,  kstk_esp)
-REG_set(ADDR_START_CODE,  ul_int,  start_code)
-REG_set(ADDR_START_STACK, ul_int,  start_stack)
+REG_set(ADDR_CODE_END,    ul_int,  end_code)
+REG_set(ADDR_CODE_START,  ul_int,  start_code)
+REG_set(ADDR_CURR_EIP,    ul_int,  kstk_eip)
+REG_set(ADDR_CURR_ESP,    ul_int,  kstk_esp)
+REG_set(ADDR_STACK_START, ul_int,  start_stack)
 STR_set(CGNAME,                    cgname)
 STR_set(CGROUP,                    cgroup)
 VEC_set(CGROUP_V,                  cgroup_v)
@@ -396,11 +396,11 @@ static struct {
     { RS(noop),              0,          NULL,      QS(noop),      0,        TS_noop     }, // user only, never altered
     { RS(extra),             0,          NULL,      QS(ull_int),   0,        TS_noop     }, // user only, reset to zero
 
-    { RS(ADDR_END_CODE),     f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
-    { RS(ADDR_KSTK_EIP),     f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
-    { RS(ADDR_KSTK_ESP),     f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
-    { RS(ADDR_START_CODE),   f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
-    { RS(ADDR_START_STACK),  f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(ADDR_CODE_END),     f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(ADDR_CODE_START),   f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(ADDR_CURR_EIP),     f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(ADDR_CURR_ESP),     f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(ADDR_STACK_START),  f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(CGNAME),            x_cgroup,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(CGROUP),            x_cgroup,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(CGROUP_V),          v_cgroup,   FF(strv),  QS(strv),      0,        TS(strv)    },

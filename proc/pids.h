@@ -32,15 +32,15 @@ enum pids_item {
     PIDS_extra,             //        ( reset to zero )
                             //  returns        origin, see proc(5)
                             //  -------        -------------------
-    PIDS_ADDR_END_CODE,     //   ul_int        stat: endcode
-    PIDS_ADDR_KSTK_EIP,     //   ul_int        stat: kstkeip
-    PIDS_ADDR_KSTK_ESP,     //   ul_int        stat: kstkesp
-    PIDS_ADDR_START_CODE,   //   ul_int        stat: startcode
-    PIDS_ADDR_START_STACK,  //   ul_int        stat: statstack
+    PIDS_ADDR_CODE_END,     //   ul_int        stat: end_code
+    PIDS_ADDR_CODE_START,   //   ul_int        stat: start_code
+    PIDS_ADDR_CURR_EIP,     //   ul_int        stat: eip
+    PIDS_ADDR_CURR_ESP,     //   ul_int        stat: esp
+    PIDS_ADDR_STACK_START,  //   ul_int        stat: start_stack
     PIDS_CGNAME,            //      str        derived from CGROUP ':name='
     PIDS_CGROUP,            //      str        cgroup
     PIDS_CGROUP_V,          //     strv        cgroup, as *str[]
-    PIDS_CMD,               //      str        stat: comm or status: Name
+    PIDS_CMD,               //      str        stat: tcomm or status: Name
     PIDS_CMDLINE,           //      str        cmdline
     PIDS_CMDLINE_V,         //     strv        cmdline, as *str[]
     PIDS_ENVIRON,           //      str        environ
@@ -48,17 +48,17 @@ enum pids_item {
     PIDS_EXE,               //      str        exe
     PIDS_EXIT_SIGNAL,       //    s_int        stat: exit_signal
     PIDS_FLAGS,             //   ul_int        stat: flags
-    PIDS_FLT_MAJ,           //   ul_int        stat: majflt
-    PIDS_FLT_MAJ_C,         //   ul_int        stat: majflt + cmajflt
+    PIDS_FLT_MAJ,           //   ul_int        stat: maj_flt
+    PIDS_FLT_MAJ_C,         //   ul_int        stat: maj_flt + cmaj_flt
     PIDS_FLT_MAJ_DELTA,     //    s_int        derived from FLT_MAJ
-    PIDS_FLT_MIN,           //   ul_int        stat: minflt
-    PIDS_FLT_MIN_C,         //   ul_int        stat: minflt + cminflt
+    PIDS_FLT_MIN,           //   ul_int        stat: min_flt
+    PIDS_FLT_MIN_C,         //   ul_int        stat: min_flt + cmin_flt
     PIDS_FLT_MIN_DELTA,     //    s_int        derived from FLT_MIN
-    PIDS_ID_EGID,           //    u_int        status: Uid
+    PIDS_ID_EGID,           //    u_int        status: Gid
     PIDS_ID_EGROUP,         //      str        derived from EGID, see getgrgid(3)
     PIDS_ID_EUID,           //    u_int        status: Uid
     PIDS_ID_EUSER,          //      str        derived from EUID, see getpwuid(3)
-    PIDS_ID_FGID,           //    u_int        status: Uid
+    PIDS_ID_FGID,           //    u_int        status: Gid
     PIDS_ID_FGROUP,         //      str        derived from FGID, see getgrgid(3)
     PIDS_ID_FUID,           //    u_int        status: Uid
     PIDS_ID_FUSER,          //      str        derived from FUID, see getpwuid(3)
@@ -68,21 +68,21 @@ enum pids_item {
     PIDS_ID_PPID,           //    s_int        stat: ppid or status: PPid
     PIDS_ID_RGID,           //    u_int        status: Gid
     PIDS_ID_RGROUP,         //      str        derived from RGID, see getgrgid(3)
-    PIDS_ID_RUID,           //    u_int        status: Gid
+    PIDS_ID_RUID,           //    u_int        status: Uid
     PIDS_ID_RUSER,          //      str        derived from RUID, see getpwuid(3)
-    PIDS_ID_SESSION,        //    s_int        stat: session
+    PIDS_ID_SESSION,        //    s_int        stat: sid
     PIDS_ID_SGID,           //    u_int        status: Gid
     PIDS_ID_SGROUP,         //      str        derived from SGID, see getgrgid(3)
-    PIDS_ID_SUID,           //    u_int        status: Gid
+    PIDS_ID_SUID,           //    u_int        status: Uid
     PIDS_ID_SUSER,          //      str        derived from SUID, see getpwuid(3)
     PIDS_ID_TGID,           //    s_int        status: Tgid
     PIDS_ID_TID,            //    s_int        from /proc/<pid>/task/<tid>
-    PIDS_ID_TPGID,          //    s_int        stat: tpgid
+    PIDS_ID_TPGID,          //    s_int        stat: tty_pgrp
     PIDS_LXCNAME,           //      str        derived from CGROUP 'lxc.payload'
     PIDS_MEM_CODE,          //   ul_int        derived from MEM_CODE_PGS, as KiB
-    PIDS_MEM_CODE_PGS,      //   ul_int        statm: text
+    PIDS_MEM_CODE_PGS,      //   ul_int        statm: trs
     PIDS_MEM_DATA,          //   ul_int        derived from MEM_DATA_PGS, as KiB
-    PIDS_MEM_DATA_PGS,      //   ul_int        statm: data
+    PIDS_MEM_DATA_PGS,      //   ul_int        statm: drs
     PIDS_MEM_RES,           //   ul_int        derived from MEM_RES_PGS, as KiB
     PIDS_MEM_RES_PGS,       //   ul_int        statm: resident
     PIDS_MEM_SHR,           //   ul_int        derived from MEM_SHR_PGS, as KiB
@@ -101,7 +101,7 @@ enum pids_item {
     PIDS_OOM_SCORE,         //    s_int        oom_score
     PIDS_PRIORITY,          //    s_int        stat: priority
     PIDS_PRIORITY_RT,       //    s_int        stat: rt_priority
-    PIDS_PROCESSOR,         //    u_int        stat: processor
+    PIDS_PROCESSOR,         //    u_int        stat: task_cpu
     PIDS_PROCESSOR_NODE,    //    s_int        derived from PROCESSOR, see numa(3)
     PIDS_RSS,               //   ul_int        stat: rss
     PIDS_RSS_RLIM,          //   ul_int        stat: rsslim
@@ -124,16 +124,16 @@ enum pids_item {
     PIDS_TICS_ALL,          //  ull_int        stat: stime + utime
     PIDS_TICS_ALL_C,        //  ull_int        stat: stime + utime + cstime + cutime
     PIDS_TICS_ALL_DELTA,    //    s_int        derived from TICS_ALL
-    PIDS_TICS_BLKIO,        //  ull_int        stat: delayacct_blkio_ticks
-    PIDS_TICS_GUEST,        //  ull_int        stat: guest_time
-    PIDS_TICS_GUEST_C,      //  ull_int        stat: guest_time + cguest_time
+    PIDS_TICS_BLKIO,        //  ull_int        stat: blkio_ticks
+    PIDS_TICS_GUEST,        //  ull_int        stat: gtime
+    PIDS_TICS_GUEST_C,      //  ull_int        stat: gtime + cgtime
     PIDS_TICS_SYSTEM,       //  ull_int        stat: stime
     PIDS_TICS_SYSTEM_C,     //  ull_int        stat: stime + cstime
     PIDS_TICS_USER,         //  ull_int        stat: utime
     PIDS_TICS_USER_C,       //  ull_int        stat: utime + cutime
     PIDS_TIME_ALL,          //  ull_int        derived from (utime + stime) / hertz
     PIDS_TIME_ELAPSED,      //  ull_int        derived from /proc/uptime - (starttime / hertz)
-    PIDS_TIME_START,        //  ull_int        stat: starttime
+    PIDS_TIME_START,        //  ull_int        stat: start_time
     PIDS_TTY,               //    s_int        stat: tty_nr
     PIDS_TTY_NAME,          //      str        derived from TTY
     PIDS_TTY_NUMBER,        //      str        derived from TTY as str
