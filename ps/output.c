@@ -873,18 +873,18 @@ tsiz	text size (in Kbytes)
 ***/
 
 static int pr_stackp(char *restrict const outbuf, const proc_t *restrict const pp){
-setREL1(ADDR_START_STACK)
-    return snprintf(outbuf, COLWID, "%0*lx", (int)(2*sizeof(long)), rSv(ADDR_START_STACK, ul_int, pp));
+setREL1(ADDR_STACK_START)
+    return snprintf(outbuf, COLWID, "%0*lx", (int)(2*sizeof(long)), rSv(ADDR_STACK_START, ul_int, pp));
 }
 
 static int pr_esp(char *restrict const outbuf, const proc_t *restrict const pp){
-setREL1(ADDR_KSTK_ESP)
-    return snprintf(outbuf, COLWID, "%0*lx", (int)(2*sizeof(long)), rSv(ADDR_KSTK_ESP, ul_int, pp));
+setREL1(ADDR_CURR_ESP)
+    return snprintf(outbuf, COLWID, "%0*lx", (int)(2*sizeof(long)), rSv(ADDR_CURR_ESP, ul_int, pp));
 }
 
 static int pr_eip(char *restrict const outbuf, const proc_t *restrict const pp){
-setREL1(ADDR_KSTK_EIP)
-    return snprintf(outbuf, COLWID, "%0*lx", (int)(2*sizeof(long)), rSv(ADDR_KSTK_EIP, ul_int, pp));
+setREL1(ADDR_CURR_EIP)
+    return snprintf(outbuf, COLWID, "%0*lx", (int)(2*sizeof(long)), rSv(ADDR_CURR_EIP, ul_int, pp));
 }
 
 static int pr_bsdtime(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -934,36 +934,36 @@ setREL1(VM_SIZE)
 /* kB data size. See drs, tsiz & trs. */
 static int pr_dsiz(char *restrict const outbuf, const proc_t *restrict const pp){
     long dsiz;
-setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
+setREL3(VSIZE_PGS,ADDR_CODE_END,ADDR_CODE_START)
     dsiz = 0;
-    if(rSv(VSIZE_PGS, ul_int, pp)) dsiz += (rSv(VSIZE_PGS, ul_int, pp) - rSv(ADDR_END_CODE, ul_int, pp) + rSv(ADDR_START_CODE, ul_int, pp)) >> 10;
+    if(rSv(VSIZE_PGS, ul_int, pp)) dsiz += (rSv(VSIZE_PGS, ul_int, pp) - rSv(ADDR_CODE_END, ul_int, pp) + rSv(ADDR_CODE_START, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", dsiz);
 }
 
 /* kB text (code) size. See trs, dsiz & drs. */
 static int pr_tsiz(char *restrict const outbuf, const proc_t *restrict const pp){
     long tsiz;
-setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
+setREL3(VSIZE_PGS,ADDR_CODE_END,ADDR_CODE_START)
     tsiz = 0;
-    if(rSv(VSIZE_PGS, ul_int, pp)) tsiz += (rSv(ADDR_END_CODE, ul_int, pp) - rSv(ADDR_START_CODE, ul_int, pp)) >> 10;
+    if(rSv(VSIZE_PGS, ul_int, pp)) tsiz += (rSv(ADDR_CODE_END, ul_int, pp) - rSv(ADDR_CODE_START, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", tsiz);
 }
 
 /* kB _resident_ data size. See dsiz, tsiz & trs. */
 static int pr_drs(char *restrict const outbuf, const proc_t *restrict const pp){
     long drs;
-setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
+setREL3(VSIZE_PGS,ADDR_CODE_END,ADDR_CODE_START)
     drs = 0;
-    if(rSv(VSIZE_PGS, ul_int, pp)) drs += (rSv(VSIZE_PGS, ul_int, pp) - rSv(ADDR_END_CODE, ul_int, pp) + rSv(ADDR_START_CODE, ul_int, pp)) >> 10;
+    if(rSv(VSIZE_PGS, ul_int, pp)) drs += (rSv(VSIZE_PGS, ul_int, pp) - rSv(ADDR_CODE_END, ul_int, pp) + rSv(ADDR_CODE_START, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", drs);
 }
 
 /* kB text _resident_ (code) size. See tsiz, dsiz & drs. */
 static int pr_trs(char *restrict const outbuf, const proc_t *restrict const pp){
     long trs;
-setREL3(VSIZE_PGS,ADDR_END_CODE,ADDR_START_CODE)
+setREL3(VSIZE_PGS,ADDR_CODE_END,ADDR_CODE_START)
     trs = 0;
-    if(rSv(VSIZE_PGS, ul_int, pp)) trs += (rSv(ADDR_END_CODE, ul_int, pp) - rSv(ADDR_START_CODE, ul_int, pp)) >> 10;
+    if(rSv(VSIZE_PGS, ul_int, pp)) trs += (rSv(ADDR_CODE_END, ul_int, pp) - rSv(ADDR_CODE_START, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", trs);
 }
 
@@ -1570,11 +1570,11 @@ static const format_struct format_array[] = { /*
 {"dsiz",      "DSIZ",    pr_dsiz,          PIDS_VSIZE_PGS,           4,    LNX,  PO|RIGHT},
 {"egid",      "EGID",    pr_egid,          PIDS_ID_EGID,             5,    LNX,  ET|RIGHT},
 {"egroup",    "EGROUP",  pr_egroup,        PIDS_ID_EGROUP,           8,    LNX,  ET|USER},
-{"eip",       "EIP",     pr_eip,           PIDS_ADDR_KSTK_EIP, (int)(2*sizeof(long)), LNX, TO|RIGHT},
+{"eip",       "EIP",     pr_eip,           PIDS_ADDR_CURR_EIP, (int)(2*sizeof(long)), LNX, TO|RIGHT},
 {"emul",      "EMUL",    pr_nop,           PIDS_noop,               13,    BSD,  PO|LEFT},  /* "FreeBSD ELF32" and such */
-{"end_code",  "E_CODE",  pr_nop,           PIDS_ADDR_END_CODE, (int)(2*sizeof(long)), LNx, PO|RIGHT}, // sortable, but unprintable ??
+{"end_code",  "E_CODE",  pr_nop,           PIDS_ADDR_CODE_END, (int)(2*sizeof(long)), LNx, PO|RIGHT}, // sortable, but unprintable ??
 {"environ","ENVIRONMENT",pr_nop,           PIDS_noop,               11,    LNx,  PO|UNLIMITED},
-{"esp",       "ESP",     pr_esp,           PIDS_ADDR_KSTK_ESP, (int)(2*sizeof(long)), LNX, TO|RIGHT},
+{"esp",       "ESP",     pr_esp,           PIDS_ADDR_CURR_ESP, (int)(2*sizeof(long)), LNX, TO|RIGHT},
 {"etime",     "ELAPSED", pr_etime,         PIDS_TIME_ELAPSED,       11,    U98,  ET|RIGHT}, /* was 7 wide */
 {"etimes",    "ELAPSED", pr_etimes,        PIDS_TIME_ELAPSED,        7,    BSD,  ET|RIGHT}, /* FreeBSD */
 {"euid",      "EUID",    pr_euid,          PIDS_ID_EUID,             5,    LNX,  ET|RIGHT},
@@ -1712,10 +1712,10 @@ static const format_struct format_array[] = { /*
 {"sl",        "SL",      pr_nop,           PIDS_noop,                3,    XXX,  AN|RIGHT},
 {"slice",      "SLICE",  pr_sd_slice,      PIDS_SD_SLICE,           31,    LNX,  ET|LEFT},
 {"spid",      "SPID",    pr_tasks,         PIDS_ID_PID,              5,    SGI,  TO|PIDMAX|RIGHT},
-{"stackp",    "STACKP",  pr_stackp,        PIDS_ADDR_START_STACK, (int)(2*sizeof(long)), LNX, PO|RIGHT}, /*start_stack*/
+{"stackp",    "STACKP",  pr_stackp,        PIDS_ADDR_STACK_START, (int)(2*sizeof(long)), LNX, PO|RIGHT}, /*start_stack*/
 {"start",     "STARTED", pr_start,         PIDS_TIME_START,          8,    XXX,  ET|RIGHT},
-{"start_code", "S_CODE", pr_nop,           PIDS_ADDR_START_CODE,  (int)(2*sizeof(long)), LNx, PO|RIGHT}, // sortable, but unprintable ??
-{"start_stack", "STACKP",pr_stackp,        PIDS_ADDR_START_STACK, (int)(2*sizeof(long)), LNX, PO|RIGHT}, /*stackp*/
+{"start_code", "S_CODE", pr_nop,           PIDS_ADDR_CODE_START,  (int)(2*sizeof(long)), LNx, PO|RIGHT}, // sortable, but unprintable ??
+{"start_stack", "STACKP",pr_stackp,        PIDS_ADDR_STACK_START, (int)(2*sizeof(long)), LNX, PO|RIGHT}, /*stackp*/
 {"start_time", "START",  pr_stime,         PIDS_TIME_START,          5,    LNx,  ET|RIGHT},
 {"stat",      "STAT",    pr_stat,          PIDS_STATE,               4,    BSD,  TO|LEFT},  /*state,s*/
 {"state",     "S",       pr_s,             PIDS_STATE,               1,    XXX,  TO|LEFT},  /*stat,s*/ /* was STAT */

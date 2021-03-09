@@ -43,7 +43,7 @@ static struct pids_info *Pids_info;
 
 enum pids_item Pid_items[] = {
     PIDS_ID_PID,  PIDS_ID_TGID,
-    PIDS_CMDLINE, PIDS_ADDR_START_STACK };
+    PIDS_CMDLINE, PIDS_ADDR_STACK_START };
 enum rel_items { pid, tgid, cmdline, start_stack };
 
 const char *nls_Address,

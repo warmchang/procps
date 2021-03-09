@@ -68,11 +68,11 @@ extern int               Pids_index;
 
 // most of these need not be extern, they're unique to output.c
 // (but for future flexibility the easiest path has been taken)
-makEXT(ADDR_END_CODE)
-makEXT(ADDR_KSTK_EIP)
-makEXT(ADDR_KSTK_ESP)
-makEXT(ADDR_START_CODE)
-makEXT(ADDR_START_STACK)
+makEXT(ADDR_CODE_END)
+makEXT(ADDR_CODE_START)
+makEXT(ADDR_CURR_EIP)
+makEXT(ADDR_CURR_ESP)
+makEXT(ADDR_STACK_START)
 makEXT(CGNAME)
 makEXT(CGROUP)
 makEXT(CMD)

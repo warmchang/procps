@@ -54,11 +54,11 @@ int Pids_index;                       // actual number of active enums
 
 // most of these could be defined as static in the output.c module
 // (but for future flexibility, the easiest route has been chosen)
-makREL(ADDR_END_CODE)
-makREL(ADDR_KSTK_EIP)
-makREL(ADDR_KSTK_ESP)
-makREL(ADDR_START_CODE)
-makREL(ADDR_START_STACK)
+makREL(ADDR_CODE_END)
+makREL(ADDR_CODE_START)
+makREL(ADDR_CURR_EIP)
+makREL(ADDR_CURR_ESP)
+makREL(ADDR_STACK_START)
 makREL(ALARM)
 makREL(CGNAME)
 makREL(CGROUP)
