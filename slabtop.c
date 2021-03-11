@@ -48,10 +48,11 @@
 #define DEFAULT_SORT  SLAB_NUM_OBJS
 #define CHAINS_ALLOC  150
 #define MAXTBL(t) (int)( sizeof(t) / sizeof(t[0]) )
+#define DEFAULT_DELAY 3
 
 static unsigned short Cols, Rows;
 static struct termios Saved_tty;
-static long Delay = 3;
+static long Delay = 0;
 static int Run_once = 0;
 
 static struct slabinfo_info *Slab_info;
@@ -181,6 +182,8 @@ static void parse_opts (int argc, char **argv)
     while ((o = getopt_long(argc, argv, "d:s:ohV", longopts, NULL)) != -1) {
         switch (o) {
         case 'd':
+	    if (Run_once)
+		xerrx(EXIT_FAILURE, _("Cannot combine -d and -o options"));
             errno = 0;
             Delay = strtol_or_err(optarg, _("illegal delay"));
             if (Delay < 1)
@@ -190,8 +193,9 @@ static void parse_opts (int argc, char **argv)
             set_sort_stuff(optarg[0]);
             break;
         case 'o':
+	    if (Delay != 0)
+		xerrx(EXIT_FAILURE, _("Cannot combine -d and -o options"));
             Run_once=1;
-            Delay = 0;
             break;
         case 'V':
             printf(PROCPS_NG_VERSION);
@@ -204,6 +208,8 @@ static void parse_opts (int argc, char **argv)
     }
     if (optind != argc)
         usage(stderr);
+    if (!Run_once && Delay == 0)
+	Delay = DEFAULT_DELAY;
 }
 
 static void print_summary (void)
