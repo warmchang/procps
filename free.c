@@ -188,7 +188,7 @@ static void check_unit_set(int *unit_set)
 {
     if (*unit_set)
 	xerrx(EXIT_FAILURE,
-		_("Multiple unit options doesn't make sense."));
+		_("Multiple unit options don't make sense."));
     *unit_set = 1;
 }
 
