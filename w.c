@@ -588,9 +588,6 @@ int main(int argc, char **argv)
 		case 'h':
 			header = 0;
 			break;
-		case 'l':
-			longform = 1;
-			break;
 		case 's':
 			longform = 0;
 			break;
