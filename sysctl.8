@@ -6,7 +6,7 @@
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 .\" GNU General Public License for more details."
-.TH SYSCTL "8" "2020-02-27" "procps-ng" "System Administration"
+.TH SYSCTL "8" "2021-03-29" "procps-ng" "System Administration"
 .SH NAME
 sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
@@ -76,22 +76,9 @@ values listing.
 Print value without new line.
 .TP
 \fB\-\-system\fR
-Load settings from all system configuration files. Files are read from
-directories in the following list in given order from top to bottom.
-Once a file of a given filename is loaded, any file of the same name
-in subsequent directories is ignored.
-.br
-/etc/sysctl.d/*.conf
-.br
-/run/sysctl.d/*.conf
-.br
-/usr/local/lib/sysctl.d/*.conf
-.br
-/usr/lib/sysctl.d/*.conf
-.br
-/lib/sysctl.d/*.conf
-.br
-/etc/sysctl.conf
+Load settings from all system configuration files. See the
+.B SYSTEM FILE PRECEDENCE
+section below.
 .TP
 \fB\-r\fR, \fB\-\-pattern\fR \fIpattern\fR
 Only apply settings that match
@@ -123,6 +110,30 @@ Display help text and exit.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
+.SH SYSTEM FILE PRECEDENCE
+When using the \fB\-\-system\fR option,
+.B sysctl
+will read files from directories in the following list in given
+order from top to bottom. Once a file of a given filename is loaded, any
+file of the same name in subsequent directories is ignored.
+
+/etc/sysctl.d/*.conf
+.br
+/run/sysctl.d/*.conf
+.br
+/usr/local/lib/sysctl.d/*.conf
+.br
+/usr/lib/sysctl.d/*.conf
+.br
+/lib/sysctl.d/*.conf
+.br
+/etc/sysctl.conf
+
+All configuration files are sorted in lexicographic order, regardless of the
+directory they reside in. Configuration files can either be completely
+replaced (by having a new configuration file with the same name in a
+directory of higher priority) or partially replaced (by having a configuration
+file that is ordered later).
 .SH EXAMPLES
 /sbin/sysctl \-a
 .br
