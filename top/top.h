@@ -64,7 +64,6 @@
 //#define TREE_VWINALL            /* pid collapse/expand impacts all windows */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 //#define VALIDATE_NLS            /* validate the integrity of all nls tbls  */
-//#define VER_J_RCFILE            /* increase # of fields, rcfile ver to 'j' */
 //#define WIDEN_COLUMN            /* base column widths on translated header */
 
 
