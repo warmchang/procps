@@ -750,12 +750,14 @@ static void parse_opts (int argc, char **argv)
     };
 
 #ifdef ENABLE_PIDWAIT
-    if (strcmp (program_invocation_short_name, "pidwait") == 0) {
+    if (strcmp (program_invocation_short_name, "pidwait") == 0 ||
+        strcmp (program_invocation_short_name, "lt-pidwait") == 0) {
         prog_mode = PIDWAIT;
         strcat (opts, "e");
     } else
 #endif
-    if (strcmp (program_invocation_short_name, "pkill") == 0) {
+    if (strcmp (program_invocation_short_name, "pkill") == 0 ||
+        strcmp (program_invocation_short_name, "lt-pkill") == 0) {
         int sig;
         prog_mode = PKILL;
         sig = signal_option(&argc, argv);

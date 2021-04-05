@@ -2,6 +2,7 @@ procps-ng-NEXT
 ---------------
   * Rename pwait to pidwait
   * library: renamed to libproc-2 and reset to 0:0:0
+  * pkill: Check for lt- variants of program name          issue #192
   * ps: Add OOM and OOMADJ fields                          issue #198
   * slabtop: Don't combine d and o options                 issue #160
 
