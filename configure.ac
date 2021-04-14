@@ -226,7 +226,9 @@ AC_ARG_WITH([systemd],
   [], [with_systemd=no]
 )
 AS_IF([test "x$with_systemd" != "xno"], [
-  PKG_CHECK_MODULES([SYSTEMD], [libsystemd])
+  PKG_CHECK_MODULES([SYSTEMD], [libsystemd],,
+    [PKG_CHECK_MODULES([SYSTEMD], [libsystemd-login])]
+  )
   AC_DEFINE(WITH_SYSTEMD, 1, [enable systemd support])
 ])
 AM_CONDITIONAL([WITH_SYSTEMD], [test x$with_systemd != xno])
