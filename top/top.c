@@ -1628,7 +1628,7 @@ static struct {
    {     3,     -1,  A_right,  PIDS_NICE           },  // s_int    EU_NCE
    {     3,     -1,  A_right,  PIDS_NLWP           },  // s_int    EU_THD
    {     0,     -1,  A_right,  PIDS_PROCESSOR      },  // u_int    EU_CPN
-   {     5,     -1,  A_right,  PIDS_TICS_ALL_DELTA },  // s_int    EU_CPU
+   {     5,     -1,  A_right,  PIDS_TICS_ALL_DELTA },  // u_int    EU_CPU
    {     6,     -1,  A_right,  PIDS_TICS_ALL       },  // ull_int  EU_TME
    {     9,     -1,  A_right,  PIDS_TICS_ALL       },  // ull_int  EU_TM2
    {     5,     -1,  A_right,  PIDS_MEM_RES        },  // ul_int   EU_MEM
@@ -4406,7 +4406,7 @@ static void forest_begin (WIN_t *q) {
         /* next 2 aren't needed if TREE_VCPUOFF but they cost us nothing |
            & the EU_CPU slot will now always be present (even if it's 0) | */
        #define rSv_Add(X)  rSv(eu_TREE_ADD, u_int, X)
-       #define rSv_Cpu(X)  rSv(EU_CPU, s_int, X)
+       #define rSv_Cpu(X)  rSv(EU_CPU, u_int, X)
 
          if (Hide_pid[i] > 0) {
             for (j = 0; j < PIDSmaxt; j++) {
@@ -5825,7 +5825,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             break;
    /* s_int, scale_pcnt with special handling */
          case EU_CPU:        // PIDS_TICS_ALL_DELTA
-         {  float u = (float)rSv(EU_CPU, s_int);
+         {  float u = (float)rSv(EU_CPU, u_int);
             int n = rSv(EU_THD, s_int);
 #ifndef TREE_VCPUOFF
  #ifndef TREE_VWINALL
@@ -6038,7 +6038,7 @@ static int window_show (WIN_t *q, int wmax) {
  /* the isBUSY macro determines if a task is 'active' --
     it returns true if some cpu was used since the last sample.
     ( actual 'running' tasks will be a subset of those selected ) */
- #define isBUSY(x)   (0 < PID_VAL(EU_CPU, s_int, (x)))
+ #define isBUSY(x)   (0 < PID_VAL(EU_CPU, u_int, (x)))
  #define winMIN(a,b) (((a) < (b)) ? (a) : (b))
    int i, lwin;
 
