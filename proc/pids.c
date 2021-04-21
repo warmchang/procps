@@ -626,23 +626,23 @@ static inline int pids_make_hist (
         struct pids_info *info,
         proc_t *p)
 {
- #define nSLOT info->hist->num_tasks
     TIC_t tics;
     HST_t *h;
+    int slot = info->hist->num_tasks;
 
-    if (nSLOT + 1 >= Hr(HHist_siz)) {
+    if (slot + 1 >= Hr(HHist_siz)) {
         Hr(HHist_siz) += NEWOLD_GROW;
         Hr(PHist_sav) = realloc(Hr(PHist_sav), sizeof(HST_t) * Hr(HHist_siz));
         Hr(PHist_new) = realloc(Hr(PHist_new), sizeof(HST_t) * Hr(HHist_siz));
         if (!Hr(PHist_sav) || !Hr(PHist_new))
             return 0;
     }
-    Hr(PHist_new[nSLOT].pid)  = p->tid;
-    Hr(PHist_new[nSLOT].maj)  = p->maj_flt;
-    Hr(PHist_new[nSLOT].min)  = p->min_flt;
-    Hr(PHist_new[nSLOT].tics) = tics = (p->utime + p->stime);
+    Hr(PHist_new[slot].pid)  = p->tid;
+    Hr(PHist_new[slot].maj)  = p->maj_flt;
+    Hr(PHist_new[slot].min)  = p->min_flt;
+    Hr(PHist_new[slot].tics) = tics = (p->utime + p->stime);
 
-    pids_histput(info, nSLOT);
+    pids_histput(info, slot);
 
     if ((h = pids_histget(info, p->tid))) {
         p->pcpu = tics - h->tics;
@@ -650,9 +650,8 @@ static inline int pids_make_hist (
         p->min_delta = p->min_flt - h->min;
     }
 
-    nSLOT++;
+    info->hist->num_tasks++;
     return 1;
- #undef nSLOT
 } // end: pids_make_hist
 
 
