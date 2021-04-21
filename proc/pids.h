@@ -123,7 +123,7 @@ enum pids_item {
     PIDS_SUPGROUPS,         //      str        derived from SUPGIDS, see getgrgid(3)
     PIDS_TICS_ALL,          //  ull_int        stat: stime + utime
     PIDS_TICS_ALL_C,        //  ull_int        stat: stime + utime + cstime + cutime
-    PIDS_TICS_ALL_DELTA,    //    s_int        derived from TICS_ALL
+    PIDS_TICS_ALL_DELTA,    //    u_int        derived from TICS_ALL
     PIDS_TICS_BLKIO,        //  ull_int        stat: blkio_ticks
     PIDS_TICS_GUEST,        //  ull_int        stat: gtime
     PIDS_TICS_GUEST_C,      //  ull_int        stat: gtime + cgtime

@@ -238,7 +238,7 @@ STR_set(SUPGIDS,                   supgid)
 STR_set(SUPGROUPS,                 supgrp)
 setDECL(TICS_ALL)       { (void)I; R->result.ull_int = P->utime + P->stime; }
 setDECL(TICS_ALL_C)     { (void)I; R->result.ull_int = P->utime + P->stime + P->cutime + P->cstime; }
-REG_set(TICS_ALL_DELTA,   s_int,   pcpu)
+REG_set(TICS_ALL_DELTA,   u_int,   pcpu)
 REG_set(TICS_BLKIO,       ull_int, blkio_tics)
 REG_set(TICS_GUEST,       ull_int, gtime)
 setDECL(TICS_GUEST_C)   { (void)I; R->result.ull_int = P->gtime + P->cgtime; }
@@ -487,7 +487,7 @@ static struct {
     { RS(SUPGROUPS),         x_supgrp,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(TICS_ALL),          f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
     { RS(TICS_ALL_C),        f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
-    { RS(TICS_ALL_DELTA),    f_stat,     NULL,      QS(s_int),     +1,       TS(s_int)   },
+    { RS(TICS_ALL_DELTA),    f_stat,     NULL,      QS(u_int),     +1,       TS(u_int)   },
     { RS(TICS_BLKIO),        f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
     { RS(TICS_GUEST),        f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
     { RS(TICS_GUEST_C),      f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
