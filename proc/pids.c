@@ -645,10 +645,13 @@ static inline int pids_make_hist (
     pids_histput(info, slot);
 
     if ((h = pids_histget(info, p->tid))) {
-        p->pcpu = tics - h->tics;
+        tics -= h->tics;
         p->maj_delta = p->maj_flt - h->maj;
         p->min_delta = p->min_flt - h->min;
     }
+    /* here we're saving elapsed tics, which will include any
+       tasks not previously seen via that pids_histget() guy! */
+    p->pcpu = tics;
 
     info->hist->num_tasks++;
     return 1;
