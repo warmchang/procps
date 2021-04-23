@@ -24,13 +24,13 @@
 #include "procps.h"
 #include "escape.h"
 #include "readproc.h"
+#include "nls.h"
 
 #if (__GNU_LIBRARY__ >= 6) && (!defined(__UCLIBC__) || defined(__UCLIBC_HAS_WCHAR__))
 # include <wchar.h>
 # include <wctype.h>
 # include <stdlib.h>  /* MB_CUR_MAX */
 # include <ctype.h>
-# include <langinfo.h>
 #endif
 
 #define SECURE_ESCAPE_ARGS(dst, bytes, cells) do { \
