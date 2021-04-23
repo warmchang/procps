@@ -243,6 +243,12 @@ AC_ARG_ENABLE([kill],
   [], [enable_kill=yes]
 )
 AM_CONDITIONAL(BUILD_KILL, test "x$enable_kill" = xyes)
+AC_ARG_ENABLE([w],
+  AS_HELP_STRING([--disable-w], [do not build w]),
+  [], [enable_w=yes]
+)
+AM_CONDITIONAL(BUILD_W, test "x$enable_w" = xyes)
+
 AM_CONDITIONAL(LINUX, test "x$host_os" = xlinux-gnu)
 AM_CONDITIONAL(CYGWIN, test "x$host_os" = xcygwin)
 
