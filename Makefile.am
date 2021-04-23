@@ -47,8 +47,7 @@ bin_PROGRAMS = \
 	pwdx \
 	tload \
 	uptime \
-	vmstat \
-	w
+	vmstat
 if BUILD_PIDWAIT
 bin_PROGRAMS += pidwait
 endif
@@ -60,8 +59,7 @@ usrbin_exec_PROGRAMS += \
 	pkill \
 	pmap \
 	uptime \
-	vmstat \
-	w
+	vmstat
 endif
 
 lib_LTLIBRARIES = \
@@ -74,7 +72,6 @@ dist_man_MANS = \
 	pmap.1 \
 	uptime.1 \
 	vmstat.8 \
-	w.1 \
 	ps/procps.1
 
 if !CYGWIN
@@ -135,6 +132,19 @@ dist_man_MANS += kill.1
 kill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/nsutils.c
 else
   EXTRA_DIST += kill.1
+endif
+
+if BUILD_W
+if CYGWIN
+usrbin_exec_PROGRAMS += w
+else
+bin_PROGRAMS += w
+endif
+
+dist_man_MANS += w.1
+w_SOURCES = w.c lib/fileutils.c
+else
+  EXTRA_DIST += w.1
 endif
 
 if WITH_NCURSES
@@ -213,7 +223,6 @@ endif
 tload_SOURCES = tload.c lib/strutils.c lib/fileutils.c
 uptime_SOURCES = uptime.c lib/fileutils.c
 vmstat_SOURCES = vmstat.c lib/strutils.c lib/fileutils.c
-w_SOURCES = w.c lib/fileutils.c
 
 # proc/libprocps.la
 
