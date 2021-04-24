@@ -1232,6 +1232,38 @@ setREL2(ID_SGROUP,ID_SGID)
 
 //////////////////////////////////////////////////////////////////////////////////
 
+// IO stats
+static int pr_rbytes(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(IO_READ_BYTES)
+  return snprintf(outbuf, COLWID, "%lu", rSv(IO_READ_BYTES, ul_int, pp));
+}
+static int pr_rchars(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(IO_READ_CHARS)
+  return snprintf(outbuf, COLWID, "%lu", rSv(IO_READ_CHARS, ul_int, pp));
+}
+static int pr_rops(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(IO_READ_OPS)
+  return snprintf(outbuf, COLWID, "%lu", rSv(IO_READ_OPS, ul_int, pp));
+}
+static int pr_wbytes(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(IO_WRITE_BYTES)
+  return snprintf(outbuf, COLWID, "%lu", rSv(IO_WRITE_BYTES, ul_int, pp));
+}
+static int pr_wcbytes(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(IO_WRITE_CBYTES)
+  return snprintf(outbuf, COLWID, "%lu", rSv(IO_WRITE_CBYTES, ul_int, pp));
+}
+static int pr_wchars(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(IO_WRITE_CHARS)
+  return snprintf(outbuf, COLWID, "%lu", rSv(IO_WRITE_CHARS, ul_int, pp));
+}
+static int pr_wops(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(IO_WRITE_OPS)
+  return snprintf(outbuf, COLWID, "%lu", rSv(IO_WRITE_OPS, ul_int, pp));
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+
 // PID pid, TGID tgid
 static int pr_procs(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(ID_TGID)
@@ -1676,11 +1708,14 @@ static const format_struct format_array[] = { /*
 {"pset",      "PSET",    pr_nop,           PIDS_noop,                4,    DEC,  TO|RIGHT},
 {"psr",       "PSR",     pr_psr,           PIDS_PROCESSOR,           3,    DEC,  TO|RIGHT},
 {"psxpri",    "PPR",     pr_nop,           PIDS_noop,                3,    DEC,  TO|RIGHT},
+{"rbytes",    "RBYTES",  pr_rbytes,        PIDS_IO_READ_BYTES,       5,    LNX,  TO|RIGHT},
+{"rchars",    "RCHARS",  pr_rchars,        PIDS_IO_READ_CHARS,       5,    LNX,  TO|RIGHT},
 {"re",        "RE",      pr_nop,           PIDS_noop,                3,    BSD,  AN|RIGHT},
 {"resident",  "RES",     pr_nop,           PIDS_MEM_RES_PGS,         5,    LNX,  PO|RIGHT},
 {"rgid",      "RGID",    pr_rgid,          PIDS_ID_RGID,             5,    XXX,  ET|RIGHT},
 {"rgroup",    "RGROUP",  pr_rgroup,        PIDS_ID_RGROUP,           8,    U98,  ET|USER},  /* was 8 wide */
 {"rlink",     "RLINK",   pr_nop,           PIDS_noop,                8,    BSD,  AN|RIGHT},
+{"rops",      "ROPS",    pr_rops,          PIDS_IO_READ_OPS,         5,    LNX,  TO|RIGHT},
 {"rss",       "RSS",     pr_rss,           PIDS_VM_RSS,              5,    XXX,  PO|RIGHT}, /* was 5 wide */
 {"rssize",    "RSS",     pr_rss,           PIDS_VM_RSS,              5,    DEC,  PO|RIGHT}, /*rsz*/
 {"rsz",       "RSZ",     pr_rss,           PIDS_VM_RSS,              5,    BSD,  PO|RIGHT}, /*rssize*/
@@ -1778,8 +1813,12 @@ static const format_struct format_array[] = { /*
 {"vm_stack",  "STACK",   pr_nop,           PIDS_VM_STACK,            5,    LNx,  PO|RIGHT},
 {"vsize",     "VSZ",     pr_vsz,           PIDS_VSIZE_PGS,           6,    DEC,  PO|RIGHT}, /*vsz*/
 {"vsz",       "VSZ",     pr_vsz,           PIDS_VM_SIZE,             6,    U98,  PO|RIGHT}, /*vsize*/
+{"wbytes",    "WBYTES",  pr_wbytes,        PIDS_IO_WRITE_BYTES,      5,    LNX,  TO|RIGHT},
+{"wcbytes",   "WCBYTES", pr_wcbytes,       PIDS_IO_WRITE_CBYTES,     5,    LNX,  TO|RIGHT},
 {"wchan",     "WCHAN",   pr_wchan,         PIDS_WCHAN_NAME,          6,    XXX,  TO|WCHAN}, /* BSD n forces this to nwchan */ /* was 10 wide */
+{"wchars",    "WCHARS",  pr_wchars,        PIDS_IO_WRITE_CHARS,      5,    LNX,  TO|RIGHT},
 {"wname",     "WCHAN",   pr_wchan,         PIDS_WCHAN_NAME,          6,    SGI,  TO|WCHAN}, /* opposite of nwchan */
+{"wops",      "WOPS",    pr_wops,          PIDS_IO_WRITE_OPS,        5,    LNX,  TO|RIGHT},
 {"xstat",     "XSTAT",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT},
 {"zone",      "ZONE",    pr_context,       PIDS_ID_TGID,            31,    SUN,  ET|LEFT},  // Solaris zone == Linux context?
 {"zoneid",    "ZONEID",  pr_nop,           PIDS_noop,               31,    SUN,  ET|RIGHT}, // Linux only offers context names

@@ -1524,6 +1524,14 @@ psr	PSR	T{
 processor that process last executed on.
 T}
 
+rbytes	RBYTES	T{
+Number of bytes which this process really did cause to be fetched from the storage layer.
+T}
+
+rchars	RCHARS	T{
+Number of bytes which this task has caused to be read from storage.
+T}
+
 rgid	RGID	T{
 real group ID.
 T}
@@ -1531,6 +1539,11 @@ T}
 rgroup	RGROUP	T{
 real group name.  This will be the textual group ID, if it can be obtained
 and the field width permits, or a decimal representation otherwise.
+T}
+
+rops	ROPS	T{
+Number of read I/O operations—that is, system calls such as
+.BR read "(2) and " pread (2).
 T}
 
 rss	RSS	T{
@@ -1866,8 +1879,25 @@ mappings are currently excluded; this is subject to change.  (alias
 .BR vsize ).
 T}
 
+wbytes	WBYTES	T{
+Number of bytes which this process caused to be sent to the storage layer.
+T}
+
+wcbytes	WCBYTES	T{
+Number of cancelled write bytes.
+T}
+
 wchan	WCHAN	T{
 name of the kernel function in which the process is sleeping.
+T}
+
+wchars	WCHARS	T{
+Number of bytes which this task has caused, or shall cause to be written to disk.
+T}
+
+wops	WOPS	T{
+Number of write I/O operations—that is, system calls such as
+.BR write "(2) and " pwrite (2).
 T}
 
 .TE
