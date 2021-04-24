@@ -4,6 +4,7 @@ procps-ng-NEXT
   * library: renamed to libproc-2 and reset to 0:0:0
   * pkill: Check for lt- variants of program name          issue #192
   * ps: Add OOM and OOMADJ fields                          issue #198
+  * ps: Add IO Accounting fields                           issue #184
   * slabtop: Don't combine d and o options                 issue #160
 
 procps-ng-3.3.17
