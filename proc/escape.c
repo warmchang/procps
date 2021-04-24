@@ -18,13 +18,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <langinfo.h>
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "escape.h"
 #include "readproc.h"
+#include "nls.h"
 
 #define SECURE_ESCAPE_ARGS(dst, bytes) do { \
   if ((bytes) <= 0) return 0; \
