@@ -641,6 +641,12 @@ static void statm2proc(const char* s, proc_t *restrict P) {
            &P->trs, &P->lrs, &P->drs, &P->dt);
 }
 
+static void io2proc(const char* s, proc_t *restrict P) {
+    int num;
+    num = sscanf(s, "rchar: %lu wchar: %lu syscr: %lu syscw: %lu read_bytes: %lu write_bytes: %lu cancelled_write_bytes: %lu",
+            &P->rchar, &P->wchar, &P->syscr,
+            &P->syscw, &P->read_bytes, &P->write_bytes, &P->cancelled_write_bytes);
+}
 
 static int file2str(const char *directory, const char *what, struct utlbuf_s *ub) {
  #define buffGRW 1024
@@ -1043,6 +1049,11 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
         rc += stat2proc(ub.buf, p);
     }
 
+    if (flags & PROC_FILLIO) {                  // read /proc/#/io
+        if (file2str(path, "io", &ub) != -1)
+            io2proc(ub.buf, p);
+    }
+
     if (flags & PROC_FILLMEM) {                 // read /proc/#/statm
         if (file2str(path, "statm", &ub) != -1)
             statm2proc(ub.buf, p);
@@ -1151,6 +1162,11 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
         if (file2str(path, "stat", &ub) == -1)
             goto next_task;
         rc += stat2proc(ub.buf, t);
+    }
+
+    if (flags & PROC_FILLIO) {                          // read /proc/#/io
+        if (file2str(path, "io", &ub) != -1)
+            io2proc(ub.buf, t);
     }
 
     if (flags & PROC_FILLMEM) {                         // read /proc/#/task/#statm

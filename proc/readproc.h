@@ -97,7 +97,14 @@ typedef struct proc_t {
         min_flt,        // stat            number of minor page faults since process start
         maj_flt,        // stat            number of major page faults since process start
         cmin_flt,       // stat            cumulative min_flt of process and child processes
-        cmaj_flt;       // stat            cumulative maj_flt of process and child processes
+        cmaj_flt,       // stat            cumulative maj_flt of process and child processes
+        rchar,          // io              characters read
+        wchar,          // io              characters written
+        syscr,          // io              number of read I/O operations
+        syscw,          // io              number of write I/O operations
+        read_bytes,     // io              number of bytes fetched from the storage layer
+        write_bytes,    // io              number of bytes sent to the storage layer
+        cancelled_write_bytes; // io       number of bytes truncating pagecache
     char
         *environ,       // (special)       environment as string (/proc/#/environ)
         *cmdline,       // (special)       command line as string (/proc/#/cmdline)
@@ -209,6 +216,7 @@ typedef struct PROCTAB {
 #define PROC_FILL_LXC      0x800000 // fill in proc_t lxcname, if possible
 #define PROC_FILL_LUID     0x400000 // fill in proc_t luid (login user id)
 #define PROC_FILL_EXE      0x200000 // fill in proc_t exe path + pgm name
+#define PROC_FILLIO      0x01000000 // fill in proc_t io information
 
 // consider only processes with one of the passed:
 #define PROC_PID             0x1000  // process id numbers ( 0   terminated)
@@ -225,10 +233,10 @@ typedef struct PROCTAB {
 #define PROC_FILL_SUPGRP   ( 0x0400 | PROC_FILLSTATUS ) // obtain supplementary group names
 
 // it helps to give app code a few spare bits
-#define PROC_SPARE_1     0x01000000
-#define PROC_SPARE_2     0x02000000
-#define PROC_SPARE_3     0x04000000
-#define PROC_SPARE_4     0x08000000
+#define PROC_SPARE_1     0x02000000
+#define PROC_SPARE_2     0x04000000
+#define PROC_SPARE_3     0x08000000
+#define PROC_SPARE_4     0x10000000
 
 // Function definitions
 // Initialize a PROCTAB structure holding needed call-to-call persistent data

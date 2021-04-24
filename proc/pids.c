@@ -193,6 +193,13 @@ REG_set(ID_SUSER,         str,     suser)
 REG_set(ID_TGID,          s_int,   tgid)
 REG_set(ID_TID,           s_int,   tid)
 REG_set(ID_TPGID,         s_int,   tpgid)
+REG_set(IO_READ_BYTES,    ul_int,  read_bytes)
+REG_set(IO_READ_CHARS,    ul_int,  rchar)
+REG_set(IO_READ_OPS,      ul_int,  syscr)
+REG_set(IO_WRITE_BYTES,   ul_int,  write_bytes)
+REG_set(IO_WRITE_CBYTES,  ul_int,  cancelled_write_bytes)
+REG_set(IO_WRITE_CHARS,   ul_int,  wchar)
+REG_set(IO_WRITE_OPS,     ul_int,  syscw)
 REG_set(LXCNAME,          str,     lxcname)
 CVT_set(MEM_CODE,         ul_int,  trs)
 REG_set(MEM_CODE_PGS,     ul_int,  trs)
@@ -341,6 +348,7 @@ srtDECL(noop) {
 #define f_grp      PROC_FILLGRP
 #define f_login    PROC_FILL_LUID
 #define f_lxc      PROC_FILL_LXC
+#define f_io       PROC_FILLIO
 #define f_ns       PROC_FILLNS
 #define f_oom      PROC_FILLOOM
 #define f_stat     PROC_FILLSTAT
@@ -442,6 +450,13 @@ static struct {
     { RS(ID_TGID),           0,          NULL,      QS(s_int),     0,        TS(s_int)   }, // oldflags: free w/ simple_nextpid
     { RS(ID_TID),            0,          NULL,      QS(s_int),     0,        TS(s_int)   }, // oldflags: free w/ simple_nexttid
     { RS(ID_TPGID),          f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
+    { RS(IO_READ_BYTES),     f_io,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(IO_READ_CHARS),     f_io,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(IO_READ_OPS),       f_io,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(IO_WRITE_BYTES),    f_io,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(IO_WRITE_CBYTES),   f_io,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(IO_WRITE_CHARS),    f_io,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(IO_WRITE_OPS),      f_io,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(LXCNAME),           f_lxc,      NULL,      QS(str),       0,        TS(str)     }, // freefunc NULL w/ cached string
     { RS(MEM_CODE),          f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(MEM_CODE_PGS),      f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
