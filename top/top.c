@@ -377,6 +377,7 @@ static void bye_bye (const char *str) {
       "\n\t   sortindx = %d, maxtasks = %d"
       "\n\t   varcolsz = %d, winlines = %d"
       "\n\t   strlen(columnhdr) = %d"
+      "\n\t   current fieldscur = %d, maximum fieldscur = %d"
       "\n"
       , __func__
       , PACKAGE_STRING
@@ -404,6 +405,7 @@ static void bye_bye (const char *str) {
       , Curwin->rc.sortindx, Curwin->rc.maxtasks
       , Curwin->varcolsz, Curwin->winlines
       , (int)strlen(Curwin->columnhdr)
+      , EU_MAXPFLGS, (int)strlen(Curwin->rc.fieldscur)
       );
    }
 }
