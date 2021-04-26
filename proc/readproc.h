@@ -104,7 +104,27 @@ typedef struct proc_t {
         syscw,          // io              number of write I/O operations
         read_bytes,     // io              number of bytes fetched from the storage layer
         write_bytes,    // io              number of bytes sent to the storage layer
-        cancelled_write_bytes; // io       number of bytes truncating pagecache
+        cancelled_write_bytes, // io       number of bytes truncating pagecache
+        smap_Rss,              // smaps_rollup  mapping currently resident in RAM
+        smap_Pss,              //    "     Rss divided by total processes sharing it
+        smap_Pss_Anon,         //    "     proportional share of 'anonymous' memory
+        smap_Pss_File,         //    "     proportional share of 'file' memory
+        smap_Pss_Shmem,        //    "     proportional share of 'shmem' memory
+        smap_Shared_Clean,     //    "     unmodified shared memory
+        smap_Shared_Dirty,     //    "     altered shared memory
+        smap_Private_Clean,    //    "     unmodified private memory
+        smap_Private_Dirty,    //    "     altered private memory
+        smap_Referenced,       //    "     memory marked as referenced/accessed
+        smap_Anonymous,        //    "     memory not belonging to any file
+        smap_LazyFree,         //    "     memory marked by madvise(MADV_FREE)
+        smap_AnonHugePages,    //    "     memory backed by transparent huge pages
+        smap_ShmemPmdMapped,   //    "     shmem/tmpfs memory backed by huge pages
+        smap_FilePmdMapped,    //    "     file memory backed by huge pages
+        smap_Shared_Hugetlb,   //    "     hugetlbfs backed memory *not* counted in Rss/Pss
+        smap_Private_Hugetlb,  //    "     hugetlbfs backed memory *not* counted in Rss/Pss
+        smap_Swap,             //    "     swapped would-be-anonymous memory (includes swapped out shmem)
+        smap_SwapPss,          //    "     the proportional share of 'Swap' (excludes swapped out shmem)
+        smap_Locked;           //    "     memory amount locked to RAM
     char
         *environ,       // (special)       environment as string (/proc/#/environ)
         *cmdline,       // (special)       command line as string (/proc/#/cmdline)
@@ -217,6 +237,7 @@ typedef struct PROCTAB {
 #define PROC_FILL_LUID     0x400000 // fill in proc_t luid (login user id)
 #define PROC_FILL_EXE      0x200000 // fill in proc_t exe path + pgm name
 #define PROC_FILLIO      0x01000000 // fill in proc_t io information
+#define PROC_FILLSMAPS   0x02000000 // fill in proc_t smaps_rollup stuff
 
 // consider only processes with one of the passed:
 #define PROC_PID             0x1000  // process id numbers ( 0   terminated)
@@ -233,10 +254,10 @@ typedef struct PROCTAB {
 #define PROC_FILL_SUPGRP   ( 0x0400 | PROC_FILLSTATUS ) // obtain supplementary group names
 
 // it helps to give app code a few spare bits
-#define PROC_SPARE_1     0x02000000
-#define PROC_SPARE_2     0x04000000
-#define PROC_SPARE_3     0x08000000
-#define PROC_SPARE_4     0x10000000
+#define PROC_SPARE_1     0x04000000
+#define PROC_SPARE_2     0x08000000
+#define PROC_SPARE_3     0x10000000
+#define PROC_SPARE_4     0x20000000
 
 // Function definitions
 // Initialize a PROCTAB structure holding needed call-to-call persistent data

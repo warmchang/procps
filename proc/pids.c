@@ -240,6 +240,26 @@ DUP_set(SIGCATCH,                  sigcatch)
 DUP_set(SIGIGNORE,                 sigignore)
 DUP_set(SIGNALS,                   signal)
 DUP_set(SIGPENDING,                _sigpnd)
+REG_set(SMAP_ANONYMOUS,   ul_int,  smap_Anonymous)
+REG_set(SMAP_HUGETBL_PRV, ul_int,  smap_Private_Hugetlb)
+REG_set(SMAP_HUGETBL_SHR, ul_int,  smap_Shared_Hugetlb)
+REG_set(SMAP_HUGE_ANON,   ul_int,  smap_AnonHugePages)
+REG_set(SMAP_HUGE_FILE,   ul_int,  smap_FilePmdMapped)
+REG_set(SMAP_HUGE_SHMEM,  ul_int,  smap_ShmemPmdMapped)
+REG_set(SMAP_LAZY_FREE,   ul_int,  smap_LazyFree)
+REG_set(SMAP_LOCKED,      ul_int,  smap_Locked)
+REG_set(SMAP_PRV_CLEAN,   ul_int,  smap_Private_Clean)
+REG_set(SMAP_PRV_DIRTY,   ul_int,  smap_Private_Dirty)
+REG_set(SMAP_PSS,         ul_int,  smap_Pss)
+REG_set(SMAP_PSS_ANON,    ul_int,  smap_Pss_Anon)
+REG_set(SMAP_PSS_FILE,    ul_int,  smap_Pss_File)
+REG_set(SMAP_PSS_SHMEM,   ul_int,  smap_Pss_Shmem)
+REG_set(SMAP_REFERENCED,  ul_int,  smap_Referenced)
+REG_set(SMAP_RSS,         ul_int,  smap_Rss)
+REG_set(SMAP_SHR_CLEAN,   ul_int,  smap_Shared_Clean)
+REG_set(SMAP_SHR_DIRTY,   ul_int,  smap_Shared_Dirty)
+REG_set(SMAP_SWAP,        ul_int,  smap_Swap)
+REG_set(SMAP_SWAP_PSS,    ul_int,  smap_SwapPss)
 REG_set(STATE,            s_ch,    state)
 STR_set(SUPGIDS,                   supgid)
 STR_set(SUPGROUPS,                 supgrp)
@@ -351,6 +371,7 @@ srtDECL(noop) {
 #define f_lxc      PROC_FILL_LXC
 #define f_ns       PROC_FILLNS
 #define f_oom      PROC_FILLOOM
+#define f_smaps    PROC_FILLSMAPS
 #define f_stat     PROC_FILLSTAT
 #define f_statm    PROC_FILLMEM
 #define f_status   PROC_FILLSTATUS
@@ -497,6 +518,26 @@ static struct {
     { RS(SIGIGNORE),         f_status,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(SIGNALS),           f_status,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(SIGPENDING),        f_status,   FF(str),   QS(str),       0,        TS(str)     },
+    { RS(SMAP_ANONYMOUS),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_HUGETBL_PRV),  f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_HUGETBL_SHR),  f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_HUGE_ANON),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_HUGE_FILE),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_HUGE_SHMEM),   f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_LAZY_FREE),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_LOCKED),       f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_PRV_CLEAN),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_PRV_DIRTY),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_PSS),          f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_PSS_ANON),     f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_PSS_FILE),     f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_PSS_SHMEM),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_REFERENCED),   f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_RSS),          f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_SHR_CLEAN),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_SHR_DIRTY),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_SWAP),         f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_SWAP_PSS),     f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(STATE),             f_either,   NULL,      QS(s_ch),      0,        TS(s_ch)    },
     { RS(SUPGIDS),           f_status,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(SUPGROUPS),         x_supgrp,   FF(str),   QS(str),       0,        TS(str)     },
@@ -551,6 +592,7 @@ enum pids_item PIDS_logical_end = MAXTABLE(Item_table);
 #undef f_lxc
 #undef f_ns
 #undef f_oom
+#undef f_smaps
 //#undef f_stat                   // needed later
 #undef f_statm
 //#undef f_status                 // needed later

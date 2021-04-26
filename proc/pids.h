@@ -125,6 +125,26 @@ enum pids_item {
     PIDS_SIGIGNORE,         //      str        status: SigIgn
     PIDS_SIGNALS,           //      str        status: ShdPnd
     PIDS_SIGPENDING,        //      str        status: SigPnd
+    PIDS_SMAP_ANONYMOUS,    //   ul_int        smaps_rollup: Anonymous
+    PIDS_SMAP_HUGETBL_PRV,  //   ul_int        smaps_rollup: Private_Hugetlb
+    PIDS_SMAP_HUGETBL_SHR,  //   ul_int        smaps_rollup: Shared_Hugetlb
+    PIDS_SMAP_HUGE_ANON,    //   ul_int        smaps_rollup: AnonHugePages
+    PIDS_SMAP_HUGE_FILE,    //   ul_int        smaps_rollup: FilePmdMapped
+    PIDS_SMAP_HUGE_SHMEM,   //   ul_int        smaps_rollup: ShmemPmdMapped
+    PIDS_SMAP_LAZY_FREE,    //   ul_int        smaps_rollup: LazyFree
+    PIDS_SMAP_LOCKED,       //   ul_int        smaps_rollup: Locked
+    PIDS_SMAP_PRV_CLEAN,    //   ul_int        smaps_rollup: Private_Clean
+    PIDS_SMAP_PRV_DIRTY,    //   ul_int        smaps_rollup: Private_Dirty
+    PIDS_SMAP_PSS,          //   ul_int        smaps_rollup: Pss
+    PIDS_SMAP_PSS_ANON,     //   ul_int        smaps_rollup: Pss_Anon
+    PIDS_SMAP_PSS_FILE,     //   ul_int        smaps_rollup: Pss_File
+    PIDS_SMAP_PSS_SHMEM,    //   ul_int        smaps_rollup: Pss_Shmem
+    PIDS_SMAP_REFERENCED,   //   ul_int        smaps_rollup: Referenced
+    PIDS_SMAP_RSS,          //   ul_int        smaps_rollup: Rss
+    PIDS_SMAP_SHR_CLEAN,    //   ul_int        smaps_rollup: Shared_Clean
+    PIDS_SMAP_SHR_DIRTY,    //   ul_int        smaps_rollup: Shared_Dirty
+    PIDS_SMAP_SWAP,         //   ul_int        smaps_rollup: Swap
+    PIDS_SMAP_SWAP_PSS,     //   ul_int        smaps_rollup: SwapPss
     PIDS_STATE,             //     s_ch        stat: state or status: State
     PIDS_SUPGIDS,           //      str        status: Groups
     PIDS_SUPGROUPS,         //      str        derived from SUPGIDS, see getgrgid(3)

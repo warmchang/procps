@@ -648,6 +648,72 @@ static void io2proc(const char* s, proc_t *restrict P) {
             &P->syscw, &P->read_bytes, &P->write_bytes, &P->cancelled_write_bytes);
 }
 
+    // Assuming permissions have allowed the read of smaps_rollup, this
+    // guy will extract some %lu data. Considering the number of items,
+    // we are between small enough to use a sscanf and large enough for
+    // a search.h approach. Thus we roll (get it?) our own custom code.
+static void smaps2proc (const char* s, proc_t *restrict P) {
+  #define enMAX (int)((sizeof(smaptab) / sizeof(smaptab[0])))
+    // 1st proc_t data field
+  #define fZERO tid
+    // a smaptab entry generator
+  #define mkENT(F) { #F ":", -1, (int)((void*)&q->smap_ ## F - (void*)&q->fZERO) }
+    // make a target field
+  #define mkOBJ(e) ( (unsigned long *)((void *)&P->fZERO + smaptab[e].offs) )
+    static const proc_t *q;
+    static struct {
+        const char *item;
+        int slen;
+        int offs;
+    } smaptab[] =  {
+        /*    Size                 smaps only, not rollup */
+        /*    KernelPageSize                 "            */
+        /*    MMUPageSize                    "            */
+        mkENT(Rss),
+        mkENT(Pss),
+        mkENT(Pss_Anon),        /* rollup only, not smaps */
+        mkENT(Pss_File),        /*            "           */
+        mkENT(Pss_Shmem),       /*            "           */
+        mkENT(Shared_Clean),
+        mkENT(Shared_Dirty),
+        mkENT(Private_Clean),
+        mkENT(Private_Dirty),
+        mkENT(Referenced),
+        mkENT(Anonymous),
+        mkENT(LazyFree),
+        mkENT(AnonHugePages),
+        mkENT(ShmemPmdMapped),
+        mkENT(FilePmdMapped),
+        mkENT(Shared_Hugetlb),
+        mkENT(Private_Hugetlb),
+        mkENT(Swap),
+        mkENT(SwapPss),
+        mkENT(Locked)
+        /*    THPeligible          smaps only, not rollup */
+        /*    ProtectionKey                  "            */
+        /*    VmFlags                        "            */
+    };
+    char *head, *tail;
+    int i;
+
+    if (smaptab[0].slen < 0) {
+        for (i = 0; i < enMAX; i++)
+            smaptab[i].slen = (int)strlen(smaptab[i].item);
+    }
+    for (i = 0; i < enMAX; i++) {
+        if (!(head = strstr(s, smaptab[i].item)))
+            continue;
+        head += smaptab[i].slen;
+        *mkOBJ(i) = strtoul(head, &tail, 10);
+        // saves some overhead BUT makes us dependent on current order
+        s = tail;
+    }
+  #undef enMAX
+  #undef fZERO
+  #undef mkENT
+  #undef mkOBJ
+}
+
 static int file2str(const char *directory, const char *what, struct utlbuf_s *ub) {
  #define buffGRW 1024
     char path[PROCPATHLEN];
@@ -1054,6 +1120,11 @@ static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
             io2proc(ub.buf, p);
     }
 
+    if (flags & PROC_FILLSMAPS) {               // read /proc/#/smaps_rollup
+        if (file2str(path, "smaps_rollup", &ub) != -1)
+            smaps2proc(ub.buf, p);
+    }
+
     if (flags & PROC_FILLMEM) {                 // read /proc/#/statm
         if (file2str(path, "statm", &ub) != -1)
             statm2proc(ub.buf, p);
@@ -1169,10 +1240,16 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
             io2proc(ub.buf, t);
     }
 
+    if (flags & PROC_FILLSMAPS) {               // read /proc/#/task/#/smaps_rollup
+        if (file2str(path, "smaps_rollup", &ub) != -1)
+            smaps2proc(ub.buf, t);
+    }
+
     if (flags & PROC_FILLMEM) {                 // read /proc/#/task/#/statm
         if (file2str(path, "statm", &ub) != -1)
             statm2proc(ub.buf, t);
     }
+
     if (flags & PROC_FILLSTATUS) {              // read /proc/#/task/#/status
         if (file2str(path, "status", &ub) != -1) {
             rc += status2proc(ub.buf, t, 0);
