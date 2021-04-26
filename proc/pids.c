@@ -346,9 +346,9 @@ srtDECL(noop) {
 #define f_either   PROC_SPARE_1        // either status or stat (favor stat)
 #define f_exe      PROC_FILL_EXE
 #define f_grp      PROC_FILLGRP
+#define f_io       PROC_FILLIO
 #define f_login    PROC_FILL_LUID
 #define f_lxc      PROC_FILL_LXC
-#define f_io       PROC_FILLIO
 #define f_ns       PROC_FILLNS
 #define f_oom      PROC_FILLOOM
 #define f_stat     PROC_FILLSTAT
@@ -356,14 +356,14 @@ srtDECL(noop) {
 #define f_status   PROC_FILLSTATUS
 #define f_systemd  PROC_FILLSYSTEMD
 #define f_usr      PROC_FILLUSR
-   // these next three will yield a single string (never vectorized)
-#define x_cgroup   PROC_EDITCGRPCVT
-#define x_cmdline  PROC_EDITCMDLCVT
-#define x_environ  PROC_EDITENVRCVT
    // these next three will yield true verctorized strings
 #define v_arg      PROC_FILLARG
 #define v_cgroup   PROC_FILLCGROUP
 #define v_env      PROC_FILLENV
+   // these next three will yield a single string (never vectorized)
+#define x_cgroup   PROC_EDITCGRPCVT
+#define x_cmdline  PROC_EDITCMDLCVT
+#define x_environ  PROC_EDITENVRCVT
    // these next three will also force PROC_FILLSTATUS
 #define x_ogroup   PROC_FILL_OGROUPS
 #define x_ouser    PROC_FILL_OUSERS
@@ -544,7 +544,10 @@ enum pids_item PIDS_logical_end = MAXTABLE(Item_table);
 #undef QS
 
 //#undef f_either                 // needed later
+#undef f_exe
 #undef f_grp
+#undef f_io
+#undef f_login
 #undef f_lxc
 #undef f_ns
 #undef f_oom

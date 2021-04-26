@@ -1158,22 +1158,22 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
     t->euid = sb.st_uid;                        /* need a way to get real uid */
     t->egid = sb.st_gid;                        /* need a way to get real gid */
 
-    if (flags & PROC_FILLSTAT) {                        // read /proc/#/task/#/stat
+    if (flags & PROC_FILLSTAT) {                // read /proc/#/task/#/stat
         if (file2str(path, "stat", &ub) == -1)
             goto next_task;
         rc += stat2proc(ub.buf, t);
     }
 
-    if (flags & PROC_FILLIO) {                          // read /proc/#/io
+    if (flags & PROC_FILLIO) {                  // read /proc/#/task/#/io
         if (file2str(path, "io", &ub) != -1)
             io2proc(ub.buf, t);
     }
 
-    if (flags & PROC_FILLMEM) {                         // read /proc/#/task/#statm
+    if (flags & PROC_FILLMEM) {                 // read /proc/#/task/#/statm
         if (file2str(path, "statm", &ub) != -1)
             statm2proc(ub.buf, t);
     }
-    if (flags & PROC_FILLSTATUS) {                      // read /proc/#/task/#/status
+    if (flags & PROC_FILLSTATUS) {              // read /proc/#/task/#/status
         if (file2str(path, "status", &ub) != -1) {
             rc += status2proc(ub.buf, t, 0);
             if (flags & (PROC_FILL_SUPGRP & ~PROC_FILLSTATUS))
@@ -1201,25 +1201,25 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
 #ifdef FALSE_THREADS
     if (!IS_THREAD(t)) {
 #endif
-    if (flags & PROC_FILLARG)                       // read /proc/#/task/#/cmdline
+    if (flags & PROC_FILLARG)                   // read /proc/#/task/#/cmdline
         if (!(t->cmdline_v = file2strvec(path, "cmdline")))
             rc += vectorize_dash_rc(&t->cmdline_v);
     if (flags & PROC_EDITCMDLCVT)
         rc += fill_cmdline_cvt(path, t);
 
-    if (flags & PROC_FILLENV)                       // read /proc/#/task/#/environ
+    if (flags & PROC_FILLENV)                   // read /proc/#/task/#/environ
         if (!(t->environ_v = file2strvec(path, "environ")))
             rc += vectorize_dash_rc(&t->environ_v);
     if (flags & PROC_EDITENVRCVT)
         rc += fill_environ_cvt(path, t);
 
-    if ((flags & PROC_FILLCGROUP))                  // read /proc/#/task/#/cgroup
+    if ((flags & PROC_FILLCGROUP))              // read /proc/#/task/#/cgroup
         if (!(t->cgroup_v = file2strvec(path, "cgroup")))
             rc += vectorize_dash_rc(&t->cgroup_v);
     if (flags & PROC_EDITCGRPCVT)
         rc += fill_cgroup_cvt(path, t);
 
-    if (flags & PROC_FILLSYSTEMD)                   // get sd-login.h stuff
+    if (flags & PROC_FILLSYSTEMD)               // get sd-login.h stuff
         rc += sd2proc(t);
 
     if (flags & PROC_FILL_EXE) {
@@ -1236,7 +1236,7 @@ static proc_t* simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
         if (file2str(path, "oom_score_adj", &ub) != -1)
             oomadj2proc(ub.buf, t);
     }
-    if (flags & PROC_FILLNS)                            // read /proc/#/task/#/ns/*
+    if (flags & PROC_FILLNS)                    // read /proc/#/task/#/ns/*
         procps_ns_read_pid(t->tid, &(t->ns));
 
     if (flags & PROC_FILL_LXC)
