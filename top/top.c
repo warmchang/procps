@@ -1671,8 +1671,13 @@ static struct {
    {    -1,     -1,  A_left,   PIDS_CGNAME         },  // str      EU_CGN
    {     0,     -1,  A_right,  PIDS_PROCESSOR_NODE },  // s_int    EU_NMA
    {     5,     -1,  A_right,  PIDS_ID_LOGIN       },  // s_int    EU_LID
-   {    -1,     -1,  A_left,   PIDS_EXE            }   // str      EU_EXE
-#define eu_LAST        EU_EXE
+   {    -1,     -1,  A_left,   PIDS_EXE            },  // str      EU_EXE
+   {     6,  SK_Kb,  A_right,  PIDS_SMAP_RSS       },  // ul_int   EU_RSS
+   {     6,  SK_Kb,  A_right,  PIDS_SMAP_PSS       },  // ul_int   EU_PSS
+   {     6,  SK_Kb,  A_right,  PIDS_SMAP_PSS_ANON  },  // ul_int   EU_PZA
+   {     6,  SK_Kb,  A_right,  PIDS_SMAP_PSS_FILE  },  // ul_int   EU_PZF
+   {     6,  SK_Kb,  A_right,  PIDS_SMAP_PSS_SHMEM }   // ul_int   EU_PZS
+#define eu_LAST        EU_PZS
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -2312,7 +2317,10 @@ static void zap_fieldstab (void) {
       = Fieldstab[EU_DAT].scale = Fieldstab[EU_SHR].scale
       = Fieldstab[EU_USE].scale = Fieldstab[EU_RZA].scale
       = Fieldstab[EU_RZF].scale = Fieldstab[EU_RZL].scale
-      = Fieldstab[EU_RZS].scale = Rc.task_mscale;
+      = Fieldstab[EU_RZS].scale = Fieldstab[EU_RSS].scale
+      = Fieldstab[EU_PSS].scale = Fieldstab[EU_PZA].scale
+      = Fieldstab[EU_PZF].scale = Fieldstab[EU_PZS].scale
+      = Rc.task_mscale;
 
    // lastly, ensure we've got proper column headers...
    calibrate_fields();
@@ -3589,8 +3597,10 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
          // fall through
          case 'i':                          // from 3.3.10 thru 3.3.16
             scat(w->rc.fieldscur, RCF_PLUS_J);
+            w->rc.double_up = w->rc.combine_cpus = 0;
          // fall through
-         case 'j':                          // current RCF_VERSION_ID
+         case 'j':                          // this is release 3.3.17
+         case 'k':                          // current RCF_VERSION_ID
          default:
             if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
                return p;
@@ -5872,7 +5882,12 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
          case EU_COD:        // PIDS_MEM_CODE
          case EU_DAT:        // PIDS_MEM_DATA
          case EU_DRT:        // PIDS_noop, really # pgs, but always 0 since 2.6
+         case EU_PZA:        // PIDS_SMAP_PSS_ANON
+         case EU_PZF:        // PIDS_SMAP_PSS_FILE
+         case EU_PZS:        // PIDS_SMAP_PSS_SHMEM
+         case EU_PSS:        // PIDS_SMAP_PSS
          case EU_RES:        // PIDS_MEM_RES
+         case EU_RSS:        // PIDS_SMAP_RSS
          case EU_RZA:        // PIDS_VM_RSS_ANON
          case EU_RZF:        // PIDS_VM_RSS_FILE
          case EU_RZL:        // PIDS_VM_RSS_LOCKED

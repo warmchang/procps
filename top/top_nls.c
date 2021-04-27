@@ -311,6 +311,24 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'EXE' = variable */
    Head_nlstab[EU_EXE] = _("EXE");
    Desc_nlstab[EU_EXE] = _("Executable Path");
+/* Translation Hint: With the next 5 fields, notice how an extra space
+                     has been added ahead of one 'KiB' so that they all
+                     align. You need not preserve such alignment. */
+/* Translation Hint: maximum 'RSS' = 6 */
+   Head_nlstab[EU_RSS] = _("RSS");
+   Desc_nlstab[EU_RSS] = _("Res Mem (smaps), KiB");
+/* Translation Hint: maximum 'PSS' = 6 */
+   Head_nlstab[EU_PSS] = _("PSS");
+   Desc_nlstab[EU_PSS] = _("Proportion RSS,  KiB");
+/* Translation Hint: maximum 'PSan' = 6 */
+   Head_nlstab[EU_PZA] = _("PSan");
+   Desc_nlstab[EU_PZA] = _("Proportion Anon. KiB");
+/* Translation Hint: maximum 'PSfd' = 6 */
+   Head_nlstab[EU_PZF] = _("PSfd");
+   Desc_nlstab[EU_PZF] = _("Proportion File, KiB");
+/* Translation Hint: maximum 'PSsh' = 6 */
+   Head_nlstab[EU_PZS] = _("PSsh");
+   Desc_nlstab[EU_PZS] = _("Proportion Shrd, KiB");
 }
 
 
