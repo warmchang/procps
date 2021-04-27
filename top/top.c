@@ -453,9 +453,10 @@ static void bye_bye (const char *str) {
 #else
       "\n\t   winflags = %08x, maxpflgs = %d"
 #endif
-      "\n\t   sortindx = %d, fieldscur = %s"
-      "\n\t   maxtasks = %d, varcolsz = %d, winlines = %d"
+      "\n\t   sortindx = %d, maxtasks = %d"
+      "\n\t   varcolsz = %d, winlines = %d"
       "\n\t   strlen(columnhdr) = %d"
+      "\n\t   current fieldscur = %d, maximum fieldscur = %d"
       "\n"
       , __func__
       , PACKAGE_STRING
@@ -482,9 +483,10 @@ static void bye_bye (const char *str) {
       , (unsigned)sizeof(WIN_t), GROUPSMAX
       , Curwin->rc.winname, Curwin->grpname
       , Curwin->rc.winflags, Curwin->maxpflgs
-      , Curwin->rc.sortindx, Curwin->rc.fieldscur
-      , Curwin->rc.maxtasks, Curwin->varcolsz, Curwin->winlines
+      , Curwin->rc.sortindx, Curwin->rc.maxtasks
+      , Curwin->varcolsz, Curwin->winlines
       , (int)strlen(Curwin->columnhdr)
+      , EU_MAXPFLGS, (int)strlen(Curwin->rc.fieldscur)
       );
    }
 }
