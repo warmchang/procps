@@ -2,10 +2,12 @@ procps-ng-NEXT
 ---------------
   * Rename pwait to pidwait
   * library: renamed to libproc-2 and reset to 0:0:0
+  * library: add support for accessing smaps_rollup        issue #112, #201
   * pkill: Check for lt- variants of program name          issue #192
   * ps: Add OOM and OOMADJ fields                          issue #198
   * ps: Add IO Accounting fields                           issue #184
   * slabtop: Don't combine d and o options                 issue #160
+  * top: exploit some library smaps_rollup provisions      issue #112
 
 procps-ng-3.3.17
 ---------------
