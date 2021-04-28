@@ -102,7 +102,9 @@ static enum stat_item First_stat_items[] = {
     STAT_TIC_SOFTIRQ,
     STAT_TIC_IDLE,
     STAT_TIC_IOWAIT,
-    STAT_TIC_STOLEN
+    STAT_TIC_STOLEN,
+    STAT_TIC_GUEST,
+    STAT_TIC_GUEST_NICE
 };
 static enum stat_item Loop_stat_items[] = {
     STAT_SYS_PROC_RUNNING,
@@ -116,12 +118,15 @@ static enum stat_item Loop_stat_items[] = {
     STAT_TIC_DELTA_SOFTIRQ,
     STAT_TIC_DELTA_IDLE,
     STAT_TIC_DELTA_IOWAIT,
-    STAT_TIC_DELTA_STOLEN
+    STAT_TIC_DELTA_STOLEN,
+    STAT_TIC_DELTA_GUEST,
+    STAT_TIC_DELTA_GUEST_NICE
 };
 enum Rel_statitems {
     stat_PRU, stat_PBL, stat_INT, stat_CTX,
     stat_USR, stat_NIC, stat_SYS, stat_IRQ, stat_SRQ,
-    stat_IDL, stat_IOW, stat_STO, MAX_stat
+    stat_IDL, stat_IOW, stat_STO, stat_GST, stat_GNI,
+    MAX_stat
 };
 
 static enum meminfo_item Mem_items[] = {
@@ -247,13 +252,13 @@ static void new_header(void)
     const char *header =
         _("procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----");
     const char *wide_header =
-        _("--procs-- -----------------------memory---------------------- ---swap-- -----io---- -system-- --------cpu--------");
+        _("--procs-- -----------------------memory---------------------- ---swap-- -----io---- -system-- ----------cpu----------");
     const char *timestamp_header = _(" -----timestamp-----");
 
     const char format[] =
         "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s %2s";
     const char wide_format[] =
-        "%2s %2s %12s %12s %12s %12s %4s %4s %5s %5s %4s %4s %3s %3s %3s %3s %3s";
+        "%4s %4s %12s %12s %12s %12s %4s %4s %5s %5s %4s %4s %3s %3s %3s %3s %3s %3s";
 
 
     printf("%s", w_option ? wide_header : header);
@@ -303,7 +308,9 @@ static void new_header(void)
         /* Translation Hint: max 2 chars */
          _("wa"),
         /* Translation Hint: max 2 chars */
-         _("st"));
+         _("st"),
+        /* Translation Hint: max 2 chars */
+         _("gu"));
 
     if (t_option) {
         (void) time( &the_time );
@@ -340,12 +347,12 @@ static void new_format(void)
     const char format[] =
         "%2lu %2lu %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u";
     const char wide_format[] =
-        "%4lu %4lu %12lu %12lu %12lu %12lu %4u %4u %5u %5u %4u %4u %3u %3u %3u %3u %3u";
+        "%4lu %4lu %12lu %12lu %12lu %12lu %4u %4u %5u %5u %4u %4u %3u %3u %3u %3u %3u %3u";
 
     unsigned int tog = 0;    /* toggle switch for cleaner code */
     unsigned int i;
     long hz;
-    long long cpu_use, cpu_sys, cpu_idl, cpu_iow, cpu_sto;
+    long long cpu_use, cpu_sys, cpu_idl, cpu_iow, cpu_sto, cpu_gue;
     long long Div, divo2;
     unsigned long pgpgin[2], pgpgout[2], pswpin[2] = {0,0}, pswpout[2];
     unsigned int sleep_half;
@@ -388,6 +395,7 @@ static void new_format(void)
     cpu_idl = TICv(stat_IDL);
     cpu_iow = TICv(stat_IOW);
     cpu_sto = TICv(stat_STO);
+    cpu_gue = TICv(stat_GST) + TICv(stat_GNI);
 
     pgpgin[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int);
     pgpgout[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int);
@@ -403,6 +411,7 @@ static void new_format(void)
         cpu_idl = 1;
     }
     divo2 = Div / 2UL;
+    cpu_use = (cpu_use >= cpu_gue)? cpu_use - cpu_gue : 0;
 
     printf(w_option ? wide_format : format,
            SYSv(stat_PRU),
@@ -421,7 +430,8 @@ static void new_format(void)
            (unsigned)( (100*cpu_sys        + divo2) / Div ),
            (unsigned)( (100*cpu_idl        + divo2) / Div ),
            (unsigned)( (100*cpu_iow        + divo2) / Div ),
-           (unsigned)( (100*cpu_sto        + divo2) / Div )
+           (unsigned)( (100*cpu_sto        + divo2) / Div ),
+           (unsigned)( (100*cpu_gue        + divo2) / Div )
     );
 
     if (t_option) {
@@ -445,6 +455,7 @@ static void new_format(void)
         cpu_idl = DTICv(stat_IDL);
         cpu_iow = DTICv(stat_IOW);
         cpu_sto = DTICv(stat_STO);
+        cpu_gue = TICv(stat_GST) + TICv(stat_GNI);
         pgpgin[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int);
         pgpgout[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int);
         pswpin[tog] = VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int);
@@ -473,6 +484,15 @@ static void new_format(void)
         Div = cpu_use + cpu_sys + cpu_idl + cpu_iow + cpu_sto;
         if (!Div) Div = 1, cpu_idl = 1;
         divo2 = Div / 2UL;
+
+        /* guest time is also in user time, we need to subtract. Due to timing
+         * effects guest could be larger than user. We use 0 that case */
+        if (cpu_use >= cpu_gue) {
+            cpu_use -= cpu_gue;
+        } else {
+            cpu_use = 0;
+        }
+
         printf(w_option ? wide_format : format,
                SYSv(stat_PRU),
                SYSv(stat_PBL),
@@ -501,7 +521,9 @@ static void new_format(void)
                /* wa */
                (unsigned)( (100*cpu_iow+divo2)/Div ),
                /* st */
-               (unsigned)( (100*cpu_sto+divo2)/Div )
+               (unsigned)( (100*cpu_sto+divo2)/Div ),
+	       /* gu */
+               (unsigned)( (100*cpu_gue+divo2)/Div )
         );
 
         if (t_option) {
