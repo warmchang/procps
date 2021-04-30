@@ -659,7 +659,7 @@ static void smaps2proc (const char* s, proc_t *restrict P) {
     // a smaptab entry generator
   #define mkENT(F) { #F ":", -1, (int)((void*)&q->smap_ ## F - (void*)&q->fZERO) }
     // make a target field
-  #define mkOBJ(e) ( (unsigned long *)((void *)&P->fZERO + smaptab[e].offs) )
+  #define mkOBJ(X) ( (unsigned long *)((void *)&P->fZERO + smaptab[X].offs) )
     static const proc_t *q;
     static struct {
         const char *item;

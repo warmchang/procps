@@ -241,11 +241,11 @@ DUP_set(SIGIGNORE,                 sigignore)
 DUP_set(SIGNALS,                   signal)
 DUP_set(SIGPENDING,                _sigpnd)
 REG_set(SMAP_ANONYMOUS,   ul_int,  smap_Anonymous)
-REG_set(SMAP_HUGETBL_PRV, ul_int,  smap_Private_Hugetlb)
-REG_set(SMAP_HUGETBL_SHR, ul_int,  smap_Shared_Hugetlb)
 REG_set(SMAP_HUGE_ANON,   ul_int,  smap_AnonHugePages)
 REG_set(SMAP_HUGE_FILE,   ul_int,  smap_FilePmdMapped)
 REG_set(SMAP_HUGE_SHMEM,  ul_int,  smap_ShmemPmdMapped)
+REG_set(SMAP_HUGE_TLBPRV, ul_int,  smap_Private_Hugetlb)
+REG_set(SMAP_HUGE_TLBSHR, ul_int,  smap_Shared_Hugetlb)
 REG_set(SMAP_LAZY_FREE,   ul_int,  smap_LazyFree)
 REG_set(SMAP_LOCKED,      ul_int,  smap_Locked)
 REG_set(SMAP_PRV_CLEAN,   ul_int,  smap_Private_Clean)
@@ -519,11 +519,11 @@ static struct {
     { RS(SIGNALS),           f_status,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(SIGPENDING),        f_status,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(SMAP_ANONYMOUS),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
-    { RS(SMAP_HUGETBL_PRV),  f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
-    { RS(SMAP_HUGETBL_SHR),  f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(SMAP_HUGE_ANON),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(SMAP_HUGE_FILE),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(SMAP_HUGE_SHMEM),   f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_HUGE_TLBPRV),  f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_HUGE_TLBSHR),  f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(SMAP_LAZY_FREE),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(SMAP_LOCKED),       f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(SMAP_PRV_CLEAN),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },

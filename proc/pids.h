@@ -126,11 +126,11 @@ enum pids_item {
     PIDS_SIGNALS,           //      str        status: ShdPnd
     PIDS_SIGPENDING,        //      str        status: SigPnd
     PIDS_SMAP_ANONYMOUS,    //   ul_int        smaps_rollup: Anonymous
-    PIDS_SMAP_HUGETBL_PRV,  //   ul_int        smaps_rollup: Private_Hugetlb
-    PIDS_SMAP_HUGETBL_SHR,  //   ul_int        smaps_rollup: Shared_Hugetlb
     PIDS_SMAP_HUGE_ANON,    //   ul_int        smaps_rollup: AnonHugePages
     PIDS_SMAP_HUGE_FILE,    //   ul_int        smaps_rollup: FilePmdMapped
     PIDS_SMAP_HUGE_SHMEM,   //   ul_int        smaps_rollup: ShmemPmdMapped
+    PIDS_SMAP_HUGE_TLBPRV,  //   ul_int        smaps_rollup: Private_Hugetlb
+    PIDS_SMAP_HUGE_TLBSHR,  //   ul_int        smaps_rollup: Shared_Hugetlb
     PIDS_SMAP_LAZY_FREE,    //   ul_int        smaps_rollup: LazyFree
     PIDS_SMAP_LOCKED,       //   ul_int        smaps_rollup: Locked
     PIDS_SMAP_PRV_CLEAN,    //   ul_int        smaps_rollup: Private_Clean
