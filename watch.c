@@ -125,8 +125,6 @@ static void reset_ansi(void)
 
 static void init_ansi_colors(void)
 {
-	int color;
-
 	short ncurses_colors[] = {
 		-1, COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW,
 		COLOR_BLUE, COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE
@@ -172,6 +170,9 @@ static int process_ansi_color_escape_sequence(char** escape_sequence) {
 	// ESC[ 38;2;⟨r⟩;⟨g⟩;⟨b⟩ m Select RGB foreground color
 	// ESC[ 48;2;⟨r⟩;⟨g⟩;⟨b⟩ m Select RGB background color
 	int num;
+
+	if (!escape_sequence)
+		return 0; /* avoid NULLPTR dereference, return "not understood" */
 
 	if ((*escape_sequence)[0] != ';')
 		return 0; /* not understood */

@@ -352,6 +352,9 @@ static void print_extended_maps (FILE *f)
 			if (listnode == NULL) {
 				assert(firstmapping == 2);
 				listnode = calloc(1, sizeof *listnode);
+				if (listnode == NULL)
+					xerrx(EXIT_FAILURE, _("ERROR: memory allocation failed"));
+
 				if (listhead == NULL) {
 					assert(listtail == NULL);
 					listhead = listnode;
