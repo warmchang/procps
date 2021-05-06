@@ -69,6 +69,7 @@ signal_handler(int signum, siginfo_t *siginfo, void *ucontext)
 	    exit(EXIT_FAILURE);
     }
 
+    free(signame);
 }
 
 int main(int argc, char *argv[])
