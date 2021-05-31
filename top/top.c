@@ -4475,7 +4475,6 @@ static WIN_t *win_select (int ch) {
          break;
    }
    Curwin = w;
-   mkVIZrow1(Curwin);
    return Curwin;
 } // end: win_select
 
@@ -5148,6 +5147,7 @@ static void keys_global (int ch) {
       case '?':
       case 'h':
          help_view();
+         mkVIZrow1(Curwin);
          break;
       case 'B':
          TOGw(w, View_NOBOLD);
@@ -5175,6 +5175,7 @@ static void keys_global (int ch) {
          break;
       case 'g':
          win_select(0);
+         mkVIZrow1(Curwin);
          break;
       case 'H':
          Thread_mode = !Thread_mode;
@@ -5254,6 +5255,7 @@ static void keys_global (int ch) {
          break;
       case 'Z':
          wins_colors();
+         mkVIZrow1(Curwin);
          break;
       case '0':
          Rc.zero_suppress = !Rc.zero_suppress;
@@ -5573,7 +5575,10 @@ static void keys_window (int ch) {
          break;
       case 'a':
       case 'w':
-         if (ALTCHKw) win_select(ch);
+         if (ALTCHKw) {
+            win_select(ch);
+            mkVIZrow1(Curwin);
+         }
          break;
       case 'G':
          if (ALTCHKw) {
