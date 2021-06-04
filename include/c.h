@@ -118,7 +118,7 @@ static void error(int status, int errnum, const char *format, ...)
         vfprintf(stderr, format, argp);
         va_end(argp);
         if (errnum != 0)
-                fprintf(stderr, ": error code %d", errnum);
+                fprintf(stderr, ": %s", strerror(errnum));
         fprintf(stderr, "\n");
         if (status != 0)
                 exit(status);
