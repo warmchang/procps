@@ -107,73 +107,52 @@ double power(unsigned int base, unsigned int expo)
 /* idea of this function is copied from top size scaling */
 static const char *scale_size(unsigned long size, int flags, struct commandline_arguments args)
 {
-	static char nextup[] = { 'B', 'K', 'M', 'G', 'T', 'P', 0 };
+	static char up[] = { 'B', 'K', 'M', 'G', 'T', 'P', 0 };
 	static char buf[BUFSIZ];
 	int i;
-	char *up;
 	float base;
+	long long bytes;
 
-	if (flags & FREE_SI)
-		base = 1000.0;
-	else
-		base = 1024.0;
-
-	/* default output */
-	if (args.exponent == 0 && !(flags & FREE_HUMANREADABLE)) {
-		snprintf(buf, sizeof(buf), "%ld", size);
-		return buf;
-	}
+	base = (flags & FREE_SI) ? 1000.0 : 1024.0;
+	bytes = size * 1024LL;
 
 	if (!(flags & FREE_HUMANREADABLE)) {
-		if (args.exponent == 1) {
-			/* in bytes, which can not be in SI */
-			snprintf(buf, sizeof(buf), "%lld", ((long long int)size) * 1024);
+		switch (args.exponent) {
+		case 0:
+			/* default output */
+			snprintf(buf, sizeof(buf), "%ld", size);
 			return buf;
-		}
-		if (args.exponent > 1) {
+		case 1:
+			/* in bytes, which can not be in SI */
+			snprintf(buf, sizeof(buf), "%lld", bytes);
+			return buf;
+		default:
 			/* In desired scale. */
 			snprintf(buf, sizeof(buf), "%ld",
-                 (long int)((size * 1024.0) / power(base, args.exponent-1))
-			    );
+			        (long)(bytes / power(base, args.exponent-1)));
 			return buf;
 		}
 	}
 
 	/* human readable output */
-	up = nextup;
-	for (i = 1; up[0] != 0; i++, up++) {
-		switch (i) {
-		case 1:
-			if (4 >= snprintf(buf, sizeof(buf), "%ld%c", (long)size * 1024, *up))
+	if (4 >= snprintf(buf, sizeof(buf), "%lld%c", bytes, up[0]))
+		return buf;
+
+	for (i = 1; up[i] != 0; i++) {
+		if (flags & FREE_SI) {
+			if (4 >= snprintf(buf, sizeof(buf), "%.1f%c",
+			                  (float)(bytes / power(base, i)), up[i]))
 				return buf;
-			break;
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-			if (!(flags & FREE_SI)) {
-				if (5 >=
-				    snprintf(buf, sizeof(buf), "%.1f%ci",
-					     (float)((size / 1024) * base / power(base, i - 2)), *up))
-					return buf;
-				if (5 >=
-				    snprintf(buf, sizeof(buf), "%ld%ci",
-					     (long)((size / 1024) * base / power(base, i - 2)), *up))
-					return buf;
-			} else {
-				if (4 >=
-				    snprintf(buf, sizeof(buf), "%.1f%c",
-					     (float)((size / 1024) * base / power(base, i - 2)), *up))
-					return buf;
-				if (4 >=
-				    snprintf(buf, sizeof(buf), "%ld%c",
-					     (long)((size / 1024) * base / power(base, i - 2)), *up))
-					return buf;
-			}
-			break;
-		case 7:
-			break;
+			if (4 >= snprintf(buf, sizeof(buf), "%ld%c",
+			                  (long)(bytes / power(base, i)), up[i]))
+				return buf;
+		} else {
+			if (5 >= snprintf(buf, sizeof(buf), "%.1f%ci",
+			                  (float)(bytes / power(base, i)), up[i]))
+				return buf;
+			if (5 >= snprintf(buf, sizeof(buf), "%ld%ci",
+			                  (long)(bytes / power(base, i)), up[i]))
+				return buf;
 		}
 	}
 	/*
