@@ -4719,7 +4719,7 @@ static void wins_stage_2 (void) {
 
    // with preserved 'other filters' & command line 'user filters',
    // we must ensure that we always have a visible task on row one.
-   mkVIZrow1(Curwin);
+   mkVIZrow1
 
    // lastly, initialize a signal set used to throttle one troublesome signal
    sigemptyset(&Sigwinch_set);
@@ -5147,7 +5147,7 @@ static void keys_global (int ch) {
       case '?':
       case 'h':
          help_view();
-         mkVIZrow1(Curwin);
+         mkVIZrow1
          break;
       case 'B':
          TOGw(w, View_NOBOLD);
@@ -5175,7 +5175,7 @@ static void keys_global (int ch) {
          break;
       case 'g':
          win_select(0);
-         mkVIZrow1(Curwin);
+         mkVIZrow1
          break;
       case 'H':
          Thread_mode = !Thread_mode;
@@ -5255,7 +5255,7 @@ static void keys_global (int ch) {
          break;
       case 'Z':
          wins_colors();
-         mkVIZrow1(Curwin);
+         mkVIZrow1
          break;
       case '0':
          Rc.zero_suppress = !Rc.zero_suppress;
@@ -5459,7 +5459,7 @@ static void keys_task (int ch) {
       case kbd_CtrlO:
          if (VIZCHKw(w)) {
             other_filters(ch);
-            mkVIZrow1(w);
+            mkVIZrow1
          }
          break;
       case 'U':
@@ -5469,7 +5469,7 @@ static void keys_task (int ch) {
             if (*str != kbd_ESC
             && (errmsg = user_certify(w, str, ch)))
                 show_msg(errmsg);
-            mkVIZrow1(w);
+            mkVIZrow1
          }
          break;
       case 'V':
@@ -5577,7 +5577,7 @@ static void keys_window (int ch) {
       case 'w':
          if (ALTCHKw) {
             win_select(ch);
-            mkVIZrow1(Curwin);
+            mkVIZrow1
          }
          break;
       case 'G':
@@ -5588,10 +5588,10 @@ static void keys_window (int ch) {
          }
          break;
       case kbd_UP:
-         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begnext = -1;
+         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) mkVIZrowX(-1)
          break;
       case kbd_DOWN:
-         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begnext = +1;
+         if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) mkVIZrowX(+1)
          break;
 #ifdef USE_X_COLHDR // ------------------------------------
       case kbd_LEFT:
@@ -5661,30 +5661,30 @@ static void keys_window (int ch) {
       case kbd_PGUP:
          if (VIZCHKw(w)) {
             if (CHKw(w, Show_IDLEPS) && 0 < w->begtask) {
-               w->begnext = -(w->winlines - (Rc.mode_altscr ? 1 : 2));
+               mkVIZrowX(-(w->winlines - (Rc.mode_altscr ? 1 : 2)))
             }
          }
          break;
       case kbd_PGDN:
          if (VIZCHKw(w)) {
             if (CHKw(w, Show_IDLEPS) && w->begtask < Frame_maxtask - 1) {
-               w->begnext = +(w->winlines - (Rc.mode_altscr ? 1 : 2));
+               mkVIZrowX(+(w->winlines - (Rc.mode_altscr ? 1 : 2)))
             }
          }
          break;
       case kbd_HOME:
 #ifndef SCROLLVAR_NO
          if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begtask = w->begpflg = w->varcolbeg = 0;
-         mkVIZrow1(w);
+         mkVIZrow1
 #else
          if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begtask = w->begpflg = 0;
-         mkVIZrow1(w);
+         mkVIZrow1
 #endif
          break;
       case kbd_END:
          if (VIZCHKw(w)) {
             if (CHKw(w, Show_IDLEPS)) {
-               w->begnext = (Frame_maxtask - w->winlines) + 1;
+               mkVIZrowX((Frame_maxtask - w->winlines) + 1)
                w->begpflg = w->endpflg;
 #ifndef SCROLLVAR_NO
                w->varcolbeg = 0;
@@ -6438,7 +6438,8 @@ static const char *task_show (const WIN_t *q, const int idx) {
          *   1) exclusively for the 'current' window
          *   2) immediately after interacting with the user
          *   3) who struck: up, down, pgup, pgdn, home, end, 'o/O' or 'u/U'
-         *   4) or upon the user switching from one window to another window */
+         *   4) or upon the user switching from one window to another window
+         * ( note: it's entirely possible there are NO visible tasks to show ) */
 static void window_hlp (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    int i, reversed;
@@ -6472,8 +6473,10 @@ fwd_redux:
       && (*task_show(w, i)))
          break;
    }
+   w->begtask = i;
+
    // reached the top, but maybe this guy ain't visible
-   if (!(w->begtask = i) && !reversed) {
+   if (!w->begtask && !reversed) {
       if (!(wins_usrselect(w, 0))
       || (!(*task_show(w, 0)))) {
          reversed = 1;
@@ -6513,7 +6516,7 @@ static int window_show (WIN_t *q, int wmax) {
       qsort(q->ppt, Frame_maxtask, sizeof(proc_t *), Fieldstab[q->rc.sortindx].sort);
    }
 
-   if (q->begnext) window_hlp();
+   if (mkVIZyes) window_hlp();
    else OFFw(q, NOPRINT_xxx);
 
    i = q->begtask;
