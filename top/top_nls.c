@@ -322,13 +322,16 @@ static void build_two_nlstabs (void) {
    Desc_nlstab[EU_PSS] = _("Proportion RSS,  KiB");
 /* Translation Hint: maximum 'PSan' = 6 */
    Head_nlstab[EU_PZA] = _("PSan");
-   Desc_nlstab[EU_PZA] = _("Proportion Anon. KiB");
+   Desc_nlstab[EU_PZA] = _("Proportion Anon, KiB");
 /* Translation Hint: maximum 'PSfd' = 6 */
    Head_nlstab[EU_PZF] = _("PSfd");
    Desc_nlstab[EU_PZF] = _("Proportion File, KiB");
 /* Translation Hint: maximum 'PSsh' = 6 */
    Head_nlstab[EU_PZS] = _("PSsh");
    Desc_nlstab[EU_PZS] = _("Proportion Shrd, KiB");
+/* Translation Hint: maximum 'USS' = 6 */
+   Head_nlstab[EU_USS] = _("USS");
+   Desc_nlstab[EU_USS] = _("Unique RSS, KiB");
 }
 
 

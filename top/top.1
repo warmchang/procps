@@ -59,6 +59,8 @@
 .ds XT See topic
 .ds Xt see topic
 .ds XX See `OVERVIEW, Linux Memory Types' for additional details
+.ds ZX Accessing smaps values is 10x more costly than other \
+memory statistics and data for other users requires root privileges
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
@@ -826,9 +828,7 @@ It is also the sum of the `PSan', `PSfd' and `PSsh' fields.
 For example, if a process has 1000 resident pages alone and 1000 resident
 pages shared with another process, its `PSS' would be 1500 (times page size).
 
-Accessing smaps values is 10x more costly than
-other memory statistics and data for other users
-requires root privileges.
+\*(ZX.
 
 .PP
 25.\fB PSan \*(Em Proportional Anonymous Memory, smaps (KiB) \fR
@@ -841,9 +841,7 @@ As was true for `PSS' above (total proportional resident memory),
 these fields represent the proportion of this task's share of each type
 of memory divided by the number of processes sharing it.
 
-Accessing smaps values is 10x more costly than
-other memory statistics and data for other users
-requires root privileges.
+\*(ZX.
 .RE
 
 .TP 4
@@ -867,9 +865,7 @@ Another, more precise view of process non-swapped \*(MP.
 It is obtained from the `smaps_rollup' file and is
 generally slightly larger than that shown for `RES'.
 
-Accessing smaps values is 10x more costly than
-other memory statistics and data for other users
-requires root privileges.
+\*(ZX.
 
 .TP 4
 30.\fB RSan \*(Em Resident Anonymous Memory Size (KiB) \fR
@@ -1018,7 +1014,15 @@ the swapped out portion of its address space (SWAP).
 The\fI effective\fR user name of the task's owner.
 
 .TP 4
-52.\fB VIRT \*(Em Virtual Memory Size (KiB) \fR
+52.\fB USS \*(Em Unique Set Size \fR
+The non-swapped portion of \*(MP (`RSS') not shared with
+any other process.
+It is derived from the `smaps_rollup' file.
+
+\*(ZX.
+
+.TP 4
+53.\fB VIRT \*(Em Virtual Memory Size (KiB) \fR
 The total amount of \*(MV used by the task.
 It includes all code, data and shared libraries plus pages that have been
 swapped out and pages that have been mapped but not used.
@@ -1026,13 +1030,13 @@ swapped out and pages that have been mapped but not used.
 \*(XX.
 
 .TP 4
-53.\fB WCHAN \*(Em Sleeping in Function \fR
+54.\fB WCHAN \*(Em Sleeping in Function \fR
 This field will show the name of the kernel function in which the task
 is currently sleeping.
 Running tasks will display a dash (`\-') in this column.
 
 .TP 4
-54.\fB nDRT \*(Em Dirty Pages Count \fR
+55.\fB nDRT \*(Em Dirty Pages Count \fR
 The number of pages that have been modified since they were last
 written to \*(AS.
 Dirty pages must be written to \*(AS before the corresponding physical
@@ -1041,7 +1045,7 @@ memory location can be used for some other virtual page.
 This field was deprecated with linux 2.6 and is always zero.
 
 .TP 4
-55.\fB nMaj \*(Em Major Page Fault Count \fR
+56.\fB nMaj \*(Em Major Page Fault Count \fR
 The number of\fB major\fR page faults that have occurred for a task.
 A page fault occurs when a process attempts to read from or write to a
 virtual page that is not currently present in its address space.
@@ -1049,7 +1053,7 @@ A major page fault is when \*(AS access is involved in making that
 page available.
 
 .TP 4
-56.\fB nMin \*(Em Minor Page Fault count \fR
+57.\fB nMin \*(Em Minor Page Fault count \fR
 The number of\fB minor\fR page faults that have occurred for a task.
 A page fault occurs when a process attempts to read from or write to a
 virtual page that is not currently present in its address space.
@@ -1057,50 +1061,50 @@ A minor page fault does not involve \*(AS access in making that
 page available.
 
 .TP 4
-57.\fB nTH \*(Em Number of Threads \fR
+58.\fB nTH \*(Em Number of Threads \fR
 The number of threads associated with a process.
 
 .TP 4
-58.\fB nsIPC \*(Em IPC namespace \fR
+59.\fB nsIPC \*(Em IPC namespace \fR
 The Inode of the namespace used to isolate interprocess communication (IPC)
 resources such as System V IPC objects and POSIX message queues.
 
 .TP 4
-59.\fB nsMNT \*(Em MNT namespace \fR
+60.\fB nsMNT \*(Em MNT namespace \fR
 The Inode of the namespace used to isolate filesystem mount points thus
 offering different views of the filesystem hierarchy.
 
 .TP 4
-60.\fB nsNET \*(Em NET namespace \fR
+61.\fB nsNET \*(Em NET namespace \fR
 The Inode of the namespace used to isolate resources such as network devices,
 IP addresses, IP routing, port numbers, etc.
 
 .TP 4
-61.\fB nsPID \*(Em PID namespace \fR
+62.\fB nsPID \*(Em PID namespace \fR
 The Inode of the namespace used to isolate process ID numbers
 meaning they need not remain unique.
 Thus, each such namespace could have its own `init/systemd' (PID #1) to
 manage various initialization tasks and reap orphaned child processes.
 
 .TP 4
-62.\fB nsUSER \*(Em USER namespace \fR
+63.\fB nsUSER \*(Em USER namespace \fR
 The Inode of the namespace used to isolate the user and group ID numbers.
 Thus, a process could have a normal unprivileged user ID outside a user
 namespace while having a user ID of 0, with full root privileges, inside
 that namespace.
 
 .TP 4
-63.\fB nsUTS \*(Em UTS namespace \fR
+64.\fB nsUTS \*(Em UTS namespace \fR
 The Inode of the namespace used to isolate hostname and NIS domain name.
 UTS simply means "UNIX Time-sharing System".
 
 .TP 4
-64.\fB vMj \*(Em Major Page Fault Count Delta\fR
+65.\fB vMj \*(Em Major Page Fault Count Delta\fR
 The number of\fB major\fR page faults that have occurred since the
 last update (see nMaj).
 
 .TP 4
-65.\fB vMn \*(Em Minor Page Fault Count Delta\fR
+66.\fB vMn \*(Em Minor Page Fault Count Delta\fR
 The number of\fB minor\fR page faults that have occurred since the
 last update (see nMin).
 
