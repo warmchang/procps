@@ -1123,9 +1123,8 @@ setREL1(SIGCATCH)
 }
 
 static int pr_uss(char *restrict const outbuf, const proc_t *restrict const pp){
-setREL2(SMAP_PRV_CLEAN, SMAP_PRV_DIRTY)
-  return snprintf(outbuf, COLWID, "%lu",
-	  rSv(SMAP_PRV_CLEAN, ul_int, pp) + rSv(SMAP_PRV_DIRTY, ul_int, pp));
+setREL1(SMAP_PRV_TOTAL)
+  return snprintf(outbuf, COLWID, "%lu", rSv(SMAP_PRV_TOTAL, ul_int, pp));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1814,7 +1813,7 @@ static const format_struct format_array[] = { /*
 {"userns",    "USERNS",  pr_userns,        PIDS_NS_USER,            10,    LNX,  ET|RIGHT},
 {"usertime",  "USER",    pr_nop,           PIDS_noop,                4,    DEC,  ET|RIGHT},
 {"usrpri",    "UPR",     pr_nop,           PIDS_noop,                3,    DEC,  TO|RIGHT}, /*upr*/
-{"uss",       "USS",     pr_uss,           PIDS_SMAP_PRV_CLEAN,      5,    XXX,  PO|RIGHT},
+{"uss",       "USS",     pr_uss,           PIDS_SMAP_PRV_TOTAL,      5,    XXX,  PO|RIGHT},
 {"util",      "C",       pr_c,             PIDS_extra,               2,    SGI,  ET|RIGHT}, // not sure about "C"
 {"utime",     "UTIME",   pr_nop,           PIDS_TICS_USER,           6,    LNx,  ET|RIGHT},
 {"utsns",     "UTSNS",   pr_utsns,         PIDS_NS_UTS,             10,    LNX,  ET|RIGHT},
