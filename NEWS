@@ -1,6 +1,7 @@
 procps-ng-NEXT
 ---------------
   * Rename pwait to pidwait
+  * free: Add committed line option                        merge #25
   * library: renamed to libproc-2 and reset to 0:0:0
   * library: add support for accessing smaps_rollup        issue #112, #201
   * pkill: Check for lt- variants of program name          issue #192

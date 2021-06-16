@@ -54,6 +54,7 @@
 #define FREE_SI			(1 << 5)
 #define FREE_REPEAT		(1 << 6)
 #define FREE_REPEATCOUNT	(1 << 7)
+#define FREE_COMMITTED		(1 << 8)
 
 struct commandline_arguments {
 	int exponent;		/* demanded in kilos, magas... */
@@ -88,6 +89,7 @@ static void __attribute__ ((__noreturn__))
 	fputs(_("     --si            use powers of 1000 not 1024\n"), out);
 	fputs(_(" -l, --lohi          show detailed low and high memory statistics\n"), out);
 	fputs(_(" -t, --total         show total for RAM + swap\n"), out);
+	fputs(_(" -v, --committed     show committed memory and commit limit\n"), out);
 	fputs(_(" -s N, --seconds N   repeat printing every N seconds\n"), out);
 	fputs(_(" -c N, --count N     repeat printing N times, then exit\n"), out);
 	fputs(_(" -w, --wide          wide output\n"), out);
@@ -209,6 +211,7 @@ int main(int argc, char **argv)
 		{  "si",	no_argument,	    NULL,  SI_OPTION	},
 		{  "lohi",	no_argument,	    NULL,  'l'		},
 		{  "total",	no_argument,	    NULL,  't'		},
+		{  "committed",	no_argument,	    NULL,  'v'		},
 		{  "seconds",	required_argument,  NULL,  's'		},
 		{  "count",	required_argument,  NULL,  'c'		},
 		{  "wide",	no_argument,	    NULL,  'w'		},
@@ -230,7 +233,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "bkmghltc:ws:V", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "bkmghltvc:ws:V", longopts, NULL)) != -1)
 		switch (c) {
 		case 'b':
 		        check_unit_set(&unit_set);
@@ -292,6 +295,9 @@ int main(int argc, char **argv)
 			break;
 		case 't':
 			flags |= FREE_TOTAL;
+			break;
+		case 'v':
+			flags |= FREE_COMMITTED;
 			break;
 		case 's':
 			flags |= FREE_REPEAT;
@@ -392,6 +398,16 @@ int main(int argc, char **argv)
 				    MEMINFO_GET(mem_info, MEMINFO_SWAP_FREE, ul_int), flags, args));
 			printf("\n");
 		}
+		if (flags & FREE_COMMITTED) {
+			printf("%-9s", _("Comm:"));
+			printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_COMMIT_LIMIT, ul_int), flags, args));
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_COMMITTED_AS, ul_int), flags, args));
+			printf(" %11s", scale_size(
+				    MEMINFO_GET(mem_info, MEMINFO_MEM_COMMIT_LIMIT, ul_int) -
+				    MEMINFO_GET(mem_info, MEMINFO_MEM_COMMITTED_AS, ul_int), flags, args));
+			printf("\n");
+		}
+
 		fflush(stdout);
 		if (flags & FREE_REPEATCOUNT) {
 			args.repeat_counter--;

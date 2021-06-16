@@ -2,7 +2,7 @@
 .\"  This page Copyright (C) 1993 Matt Welsh, mdw@sunsite.unc.edu.
 .\"  Long options where added at April 15th, 2011.
 .\"  Freely distributable under the terms of the GPL
-.TH FREE 1 "2018-05-31" "procps-ng" "User Commands"
+.TH FREE 1 "2020-06-16" "procps-ng" "User Commands"
 .SH NAME
 free \- Display amount of free and used memory in the system
 .SH SYNOPSIS
@@ -123,6 +123,11 @@ of 1024).
 .TP
 \fB\-t\fR, \fB\-\-total\fR
 Display a line showing the column totals.
+.TP
+\fB\-v\fR, \fB\-\-committed\fR
+Display a line showing the memory commit limit and amount of committed/uncommitted
+memory. The \fBtotal\fR column on this line will display the memory commit
+limit.   This line is relevant if memory overcommit is disabled.
 .TP
 \fB\-\-help\fR
 Print help.
