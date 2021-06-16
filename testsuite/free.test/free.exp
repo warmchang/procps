@@ -39,6 +39,10 @@ set test "free with total"
 spawn $free -t
 expect_pass "$test" "^${free_header}Mem:\\s+${memtotal_kb}\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*Swap:\\s+${swaptotal_kb}\\s+\\d+\\s+\\d+\\s*Total:\\s+\\d+\\s+\\d+\\s+\\d+\\s*"
 
+set test "free with commit"
+spawn $free -v
+expect_pass "$test" "^${free_header}Mem:\\s+${memtotal_kb}\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s+\\d+\\s*Swap:\\s+${swaptotal_kb}\\s+\\d+\\s+\\d+\\s*Comm:\\s+\\d+\\s+\\d+\\s+\\d+\\s*"
+
 set test "free with negative repeat count"
 spawn $free -c -2
 expect_pass "$test" "\(lt-\)\?free: failed to parse count argument: '-2': Numerical result out of range"
