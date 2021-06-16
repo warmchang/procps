@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS "1" "2021-03-29" "procps-ng" "User Commands"
+.TH PS "1" "2021-06-16" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -1524,6 +1524,11 @@ psr	PSR	T{
 processor that process last executed on.
 T}
 
+pss	PSS	T{
+Proportional share size, the non-swapped physical memory, with shared memory
+proportionally accounted to all tasks mapping it.
+T}
+
 rbytes	RBYTES	T{
 Number of bytes which this process really did cause to be fetched from the storage layer.
 T}
@@ -1853,6 +1858,11 @@ userns	USERNS	T{
 Unique inode number describing the namespace the process belongs to.
 See
 .IR namespaces (7).
+T}
+
+uss	USS	T{
+Unique set size, the non-swapped physical memory, which
+is not shared with an another task.
 T}
 
 utsns	UTSNS	T{

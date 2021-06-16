@@ -1009,6 +1009,11 @@ setREL1(PROCESSOR)
   return snprintf(outbuf, COLWID, "%d", rSv(PROCESSOR, u_int, pp));
 }
 
+static int pr_pss(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(SMAP_PSS)
+  return snprintf(outbuf, COLWID, "%lu", rSv(SMAP_PSS, ul_int, pp));
+}
+
 static int pr_numa(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(PROCESSOR_NODE)
   return snprintf(outbuf, COLWID, "%d", rSv(PROCESSOR_NODE, s_int, pp));
@@ -1115,6 +1120,12 @@ setREL1(SIGIGNORE)
 static int pr_sigcatch(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(SIGCATCH)
   return help_pr_sig(outbuf, rSv(SIGCATCH, str, pp));
+}
+
+static int pr_uss(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL2(SMAP_PRV_CLEAN, SMAP_PRV_DIRTY)
+  return snprintf(outbuf, COLWID, "%lu",
+	  rSv(SMAP_PRV_CLEAN, ul_int, pp) + rSv(SMAP_PRV_DIRTY, ul_int, pp));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1707,6 +1718,7 @@ static const format_struct format_array[] = { /*
 {"projid",    "PROJID",  pr_nop,           PIDS_noop,                5,    SUN,  PO|RIGHT},
 {"pset",      "PSET",    pr_nop,           PIDS_noop,                4,    DEC,  TO|RIGHT},
 {"psr",       "PSR",     pr_psr,           PIDS_PROCESSOR,           3,    DEC,  TO|RIGHT},
+{"pss",       "PSS",     pr_pss,           PIDS_SMAP_PSS,            5,    XXX,  PO|RIGHT},
 {"psxpri",    "PPR",     pr_nop,           PIDS_noop,                3,    DEC,  TO|RIGHT},
 {"rbytes",    "RBYTES",  pr_rbytes,        PIDS_IO_READ_BYTES,       5,    LNX,  TO|RIGHT},
 {"rchars",    "RCHARS",  pr_rchars,        PIDS_IO_READ_CHARS,       5,    LNX,  TO|RIGHT},
@@ -1802,6 +1814,7 @@ static const format_struct format_array[] = { /*
 {"userns",    "USERNS",  pr_userns,        PIDS_NS_USER,            10,    LNX,  ET|RIGHT},
 {"usertime",  "USER",    pr_nop,           PIDS_noop,                4,    DEC,  ET|RIGHT},
 {"usrpri",    "UPR",     pr_nop,           PIDS_noop,                3,    DEC,  TO|RIGHT}, /*upr*/
+{"uss",       "USS",     pr_uss,           PIDS_SMAP_PRV_CLEAN,      5,    XXX,  PO|RIGHT},
 {"util",      "C",       pr_c,             PIDS_extra,               2,    SGI,  ET|RIGHT}, // not sure about "C"
 {"utime",     "UTIME",   pr_nop,           PIDS_TICS_USER,           6,    LNx,  ET|RIGHT},
 {"utsns",     "UTSNS",   pr_utsns,         PIDS_NS_UTS,             10,    LNX,  ET|RIGHT},
