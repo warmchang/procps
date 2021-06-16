@@ -250,6 +250,7 @@ REG_set(SMAP_LAZY_FREE,   ul_int,  smap_LazyFree)
 REG_set(SMAP_LOCKED,      ul_int,  smap_Locked)
 REG_set(SMAP_PRV_CLEAN,   ul_int,  smap_Private_Clean)
 REG_set(SMAP_PRV_DIRTY,   ul_int,  smap_Private_Dirty)
+setDECL(SMAP_PRV_TOTAL) { (void)I; R->result.ul_int = P->smap_Private_Clean + P->smap_Private_Dirty; }
 REG_set(SMAP_PSS,         ul_int,  smap_Pss)
 REG_set(SMAP_PSS_ANON,    ul_int,  smap_Pss_Anon)
 REG_set(SMAP_PSS_FILE,    ul_int,  smap_Pss_File)
@@ -528,6 +529,7 @@ static struct {
     { RS(SMAP_LOCKED),       f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(SMAP_PRV_CLEAN),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(SMAP_PRV_DIRTY),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(SMAP_PRV_TOTAL),    f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(SMAP_PSS),          f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(SMAP_PSS_ANON),     f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(SMAP_PSS_FILE),     f_smaps,    NULL,      QS(ul_int),    0,        TS(ul_int)  },

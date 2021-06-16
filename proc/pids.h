@@ -135,6 +135,7 @@ enum pids_item {
     PIDS_SMAP_LOCKED,       //   ul_int        smaps_rollup: Locked
     PIDS_SMAP_PRV_CLEAN,    //   ul_int        smaps_rollup: Private_Clean
     PIDS_SMAP_PRV_DIRTY,    //   ul_int        smaps_rollup: Private_Dirty
+    PIDS_SMAP_PRV_TOTAL,    //   ul_int        derived from SMAP_PRV_CLEAN + SMAP_PRV_DIRTY
     PIDS_SMAP_PSS,          //   ul_int        smaps_rollup: Pss
     PIDS_SMAP_PSS_ANON,     //   ul_int        smaps_rollup: Pss_Anon
     PIDS_SMAP_PSS_FILE,     //   ul_int        smaps_rollup: Pss_File
