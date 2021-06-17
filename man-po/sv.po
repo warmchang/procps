@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2021-02-16 06:43+1100\n"
+"POT-Creation-Date: 2021-06-16 20:20+1000\n"
 "PO-Revision-Date: 2021-01-28 22:55+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -472,7 +472,7 @@ msgstr "Skriv ut hjälp."
 
 #. type: TP
 #: ../free.1:129 ../pgrep.1:200 ../pmap.1:61 ../pwdx.1:13 ../skill.1:61
-#: ../slabtop.1:35 ../sysctl.8:123 ../tload.1:30 ../uptime.1:36 ../vmstat.8:84
+#: ../slabtop.1:36 ../sysctl.8:110 ../tload.1:30 ../uptime.1:36 ../vmstat.8:84
 #: ../w.1:58
 #, no-wrap
 msgid "B<-V>, B<--version>"
@@ -484,8 +484,8 @@ msgid "Display version information."
 msgstr "Visa versionsinformation."
 
 #. type: SH
-#: ../free.1:133 ../slabtop.1:77 ../sysctl.8:154 ../sysctl.conf.5:57
-#: ../tload.1:34 ../uptime.1:39 ../vmstat.8:201 ../w.1:74
+#: ../free.1:133 ../slabtop.1:78 ../sysctl.8:165 ../sysctl.conf.5:57
+#: ../tload.1:34 ../uptime.1:39 ../vmstat.8:202 ../w.1:74
 #: ../doc/procps_misc.3:143
 #, no-wrap
 msgid "FILES"
@@ -503,7 +503,7 @@ msgid "memory information"
 msgstr "minnesinformation"
 
 #. type: SH
-#: ../free.1:138 ../pgrep.1:265 ../pidof.1:71 ../tload.1:42 ../vmstat.8:216
+#: ../free.1:138 ../pgrep.1:265 ../pidof.1:71 ../tload.1:42 ../vmstat.8:217
 #: ../watch.1:126
 #, no-wrap
 msgid "BUGS"
@@ -533,10 +533,10 @@ msgstr "E<.UR procps@freelists.org> E<.UE>"
 
 #. type: SH
 #: ../free.1:145 ../kill.1:84 ../pgrep.1:277 ../pidof.1:78 ../pmap.1:79
-#: ../pwdx.1:19 ../skill.1:102 ../slabtop.1:81 ../sysctl.8:168
-#: ../sysctl.conf.5:76 ../tload.1:37 ../uptime.1:56 ../vmstat.8:208 ../w.1:81
-#: ../ps/ps.1:1958 ../doc/procps.3:172 ../doc/procps_misc.3:160
-#: ../doc/procps_pids.3:183
+#: ../pwdx.1:19 ../skill.1:102 ../slabtop.1:82 ../sysctl.8:179
+#: ../sysctl.conf.5:76 ../tload.1:37 ../uptime.1:56 ../vmstat.8:209 ../w.1:81
+#: ../ps/ps.1:1999 ../doc/procps.3:190 ../doc/procps_misc.3:160
+#: ../doc/procps_pids.3:197
 #, no-wrap
 msgid "SEE ALSO"
 msgstr "SE ÄVEN"
@@ -674,8 +674,8 @@ msgid "List signal names in a nice table."
 msgstr "Lista signalnamn i en trevlig tabell."
 
 #. type: SH
-#: ../kill.1:67 ../pgrep.1:252 ../slabtop.1:86 ../sysctl.conf.5:35
-#: ../vmstat.8:186 ../watch.1:119 ../ps/ps.1:770
+#: ../kill.1:67 ../pgrep.1:252 ../slabtop.1:87 ../sysctl.conf.5:35
+#: ../vmstat.8:187 ../watch.1:119 ../ps/ps.1:770
 #, no-wrap
 msgid "NOTES"
 msgstr "OBSERVERA"
@@ -693,7 +693,7 @@ msgstr ""
 
 #.  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #. type: SH
-#: ../kill.1:71 ../pgrep.1:212 ../skill.1:92 ../sysctl.8:126 ../watch.1:162
+#: ../kill.1:71 ../pgrep.1:212 ../skill.1:92 ../sysctl.8:137 ../watch.1:162
 #: ../ps/ps.1:99
 #, no-wrap
 msgid "EXAMPLES"
@@ -753,7 +753,7 @@ msgstr ""
 "B<signal>(7), B<sigqueue>(3), B<skill>(1)"
 
 #. type: SH
-#: ../kill.1:93 ../pmap.1:82 ../pwdx.1:22 ../skill.1:110 ../ps/ps.1:1965
+#: ../kill.1:93 ../pmap.1:82 ../pwdx.1:22 ../skill.1:110 ../ps/ps.1:2006
 #, no-wrap
 msgid "STANDARDS"
 msgstr "STANDARDER"
@@ -772,7 +772,7 @@ msgstr ""
 
 #. type: SH
 #: ../kill.1:97 ../pgrep.1:286 ../pidof.1:81 ../pwdx.1:26 ../skill.1:112
-#: ../sysctl.8:171 ../sysctl.conf.5:78 ../ps/ps.1:1983
+#: ../sysctl.8:182 ../sysctl.conf.5:78 ../ps/ps.1:2024
 #, no-wrap
 msgid "AUTHOR"
 msgstr "UPPHOVSMAN"
@@ -795,16 +795,16 @@ msgstr ""
 
 #. type: SH
 #: ../kill.1:103 ../pgrep.1:290 ../pmap.1:86 ../pwdx.1:31 ../skill.1:118
-#: ../slabtop.1:104 ../sysctl.8:175 ../sysctl.conf.5:82 ../tload.1:58
-#: ../uptime.1:61 ../vmstat.8:228 ../w.1:98
+#: ../slabtop.1:105 ../sysctl.8:186 ../sysctl.conf.5:82 ../tload.1:58
+#: ../uptime.1:61 ../vmstat.8:229 ../w.1:98
 #, no-wrap
 msgid "REPORTING BUGS"
 msgstr "RAPPORTERA FEL"
 
 #. type: Plain text
 #: ../kill.1:106 ../pgrep.1:293 ../pmap.1:89 ../pwdx.1:34 ../skill.1:121
-#: ../slabtop.1:107 ../sysctl.8:178 ../sysctl.conf.5:85 ../tload.1:61
-#: ../uptime.1:64 ../vmstat.8:231 ../w.1:101
+#: ../slabtop.1:108 ../sysctl.8:189 ../sysctl.conf.5:85 ../tload.1:61
+#: ../uptime.1:64 ../vmstat.8:232 ../w.1:101
 msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>"
 msgstr ""
 "Skicka felrapporter till E<.UR procps@freelists.org> E<.UE>\n"
@@ -818,7 +818,7 @@ msgstr "PGREP"
 
 #. type: TH
 #: ../pgrep.1:10 ../pmap.1:8 ../pwdx.1:6 ../sysctl.conf.5:9 ../tload.1:4
-#: ../vmstat.8:3 ../w.1:3 ../ps/ps.1:7
+#: ../vmstat.8:3 ../w.1:3
 #, no-wrap
 msgid "2020-06-04"
 msgstr "2020-06-04"
@@ -833,8 +833,8 @@ msgid ""
 "pgrep, pkill, pidwait - look up, signal, or wait for processes based on name "
 "and other attributes"
 msgstr ""
-"pgrep, pkill, pidwait — slå upp, signalera eller vänta på processer baserat på "
-"namn och andra attribut"
+"pgrep, pkill, pidwait — slå upp, signalera eller vänta på processer baserat "
+"på namn och andra attribut"
 
 #. type: Plain text
 #: ../pgrep.1:16
@@ -1319,14 +1319,14 @@ msgstr ""
 "net, pid, user, uts."
 
 #. type: Plain text
-#: ../pgrep.1:203 ../pmap.1:64 ../slabtop.1:38 ../sysctl.8:126 ../tload.1:33
+#: ../pgrep.1:203 ../pmap.1:64 ../slabtop.1:39 ../sysctl.8:113 ../tload.1:33
 #: ../vmstat.8:87 ../watch.1:76
 msgid "Display version information and exit."
 msgstr "Visa versionsinformation och avsluta."
 
 #. type: TP
-#: ../pgrep.1:203 ../pmap.1:58 ../pwdx.1:16 ../skill.1:58 ../slabtop.1:38
-#: ../sysctl.8:120 ../tload.1:27 ../uptime.1:30 ../vmstat.8:87 ../watch.1:70
+#: ../pgrep.1:203 ../pmap.1:58 ../pwdx.1:16 ../skill.1:58 ../slabtop.1:39
+#: ../sysctl.8:107 ../tload.1:27 ../uptime.1:30 ../vmstat.8:87 ../watch.1:70
 #, no-wrap
 msgid "B<-h>, B<--help>"
 msgstr "B<-h>, B<--help>"
@@ -1423,7 +1423,7 @@ msgstr ""
 "processen framgångsrikt ha signalerats."
 
 #. type: IP
-#: ../pgrep.1:242 ../ps/ps.1:45 ../ps/ps.1:819 ../ps/ps.1:1971
+#: ../pgrep.1:242 ../ps/ps.1:45 ../ps/ps.1:819 ../ps/ps.1:2012
 #, no-wrap
 msgid "1"
 msgstr "1"
@@ -1434,7 +1434,7 @@ msgid "No processes matched or none of them could be signalled."
 msgstr "Inga processer matchade eller inga av dem kunde signaleras."
 
 #. type: IP
-#: ../pgrep.1:245 ../ps/ps.1:47 ../ps/ps.1:1973
+#: ../pgrep.1:245 ../ps/ps.1:47 ../ps/ps.1:2014
 #, no-wrap
 msgid "2"
 msgstr "2"
@@ -1445,7 +1445,7 @@ msgid "Syntax error in the command line."
 msgstr "Syntaxfel på kommandoraden."
 
 #. type: IP
-#: ../pgrep.1:248 ../ps/ps.1:49 ../ps/ps.1:1975
+#: ../pgrep.1:248 ../ps/ps.1:49 ../ps/ps.1:2016
 #, no-wrap
 msgid "3"
 msgstr "3"
@@ -1773,7 +1773,7 @@ msgstr ""
 "Observera att argumenten låg och hög är en enda sträng separerad med komma."
 
 #. type: TP
-#: ../pmap.1:36 ../sysctl.8:111
+#: ../pmap.1:36 ../sysctl.8:98
 #, no-wrap
 msgid "B<-X>"
 msgstr "B<-X>"
@@ -1854,7 +1854,7 @@ msgid "Create new configuration to I<file>"
 msgstr "Skapa en ny konfiguration i I<fil>"
 
 #. type: Plain text
-#: ../pmap.1:61 ../skill.1:61 ../sysctl.8:123 ../w.1:55 ../watch.1:73
+#: ../pmap.1:61 ../skill.1:61 ../sysctl.8:110 ../w.1:55 ../watch.1:73
 msgid "Display help text and exit."
 msgstr "Visa hjälptext och avsluta."
 
@@ -2228,8 +2228,8 @@ msgstr "SLABTOP"
 #. type: TH
 #: ../slabtop.1:5
 #, no-wrap
-msgid "June 2011"
-msgstr "Juni 2011"
+msgid "2021-03-11"
+msgstr ""
 
 #. type: Plain text
 #: ../slabtop.1:8
@@ -2270,49 +2270,54 @@ msgid "B<-d>, B<--delay>=I<N>"
 msgstr "B<-d>, B<--delay>=I<N>"
 
 #. type: Plain text
-#: ../slabtop.1:29
+#: ../slabtop.1:30
+#, fuzzy
+#| msgid ""
+#| "Refresh the display every I<n> in seconds.  By default, B<slabtop> "
+#| "refreshes the display every three seconds.  To exit the program, hit B<q.>"
 msgid ""
 "Refresh the display every I<n> in seconds.  By default, B<slabtop> refreshes "
-"the display every three seconds.  To exit the program, hit B<q.>"
+"the display every three seconds.  To exit the program, hit B<q>.  This "
+"cannot be combined with the B<-o> option."
 msgstr ""
 "Uppdatera visningen var I<n>:e sekund.  Som standard uppdaterar B<slabtop> "
 "visningen var tredje sekund.  För att avsluta programmet, tryck B<q>."
 
 #. type: TP
-#: ../slabtop.1:29
+#: ../slabtop.1:30
 #, no-wrap
 msgid "B<-s>, B<--sort>=I<S>"
 msgstr "B<-s>, B<--sort>=I<S>"
 
 #. type: Plain text
-#: ../slabtop.1:32
+#: ../slabtop.1:33
 msgid "Sort by I<S>, where I<S> is one of the sort criteria."
 msgstr "Sortera efter I<S>, där I<S> är ett av sorteringskriterierna."
 
 #. type: TP
-#: ../slabtop.1:32
+#: ../slabtop.1:33
 #, no-wrap
 msgid "B<-o>, B<--once>"
 msgstr "B<-o>, B<--once>"
 
 #. type: Plain text
-#: ../slabtop.1:35
+#: ../slabtop.1:36
 msgid "Display the output once and then exit."
 msgstr "Visa utdata en gång och avsluta sedan."
 
 #. type: Plain text
-#: ../slabtop.1:41
+#: ../slabtop.1:42
 msgid "Display usage information and exit."
 msgstr "Visa användningsinformation och avsluta."
 
 #. type: SH
-#: ../slabtop.1:41
+#: ../slabtop.1:42
 #, no-wrap
 msgid "SORT CRITERIA"
 msgstr "SORTERINGSKRITERIER"
 
 #. type: Plain text
-#: ../slabtop.1:45
+#: ../slabtop.1:46
 msgid ""
 "The following are valid sort criteria used to sort the individual slab "
 "caches and thereby determine what are the \"top\" slab caches to display.  "
@@ -2324,7 +2329,7 @@ msgstr ""
 "objekt (”o”)."
 
 #. type: Plain text
-#: ../slabtop.1:49
+#: ../slabtop.1:50
 msgid ""
 "The sort criteria can also be changed while B<slabtop> is running by "
 "pressing the associated character."
@@ -2333,205 +2338,205 @@ msgstr ""
 "den tillhörande bokstaven."
 
 #. type: tbl table
-#: ../slabtop.1:51
+#: ../slabtop.1:52
 #, no-wrap
 msgid "B<character>"
 msgstr "B<tecken>"
 
 #. type: tbl table
-#: ../slabtop.1:51
+#: ../slabtop.1:52
 #, no-wrap
 msgid "B<description>"
 msgstr "B<beskrivning>"
 
 #. type: tbl table
-#: ../slabtop.1:51
+#: ../slabtop.1:52
 #, no-wrap
 msgid "B<header>"
 msgstr "B<huvud>"
 
 #. type: tbl table
-#: ../slabtop.1:52
+#: ../slabtop.1:53
 #, no-wrap
 msgid "a"
 msgstr "a"
 
 #. type: tbl table
-#: ../slabtop.1:52
+#: ../slabtop.1:53
 #, no-wrap
 msgid "number of active objects"
 msgstr "antal aktiva objekt"
 
 #. type: tbl table
-#: ../slabtop.1:52
+#: ../slabtop.1:53
 #, no-wrap
 msgid "ACTIVE"
 msgstr "AKTIVT"
 
 #. type: tbl table
-#: ../slabtop.1:53
+#: ../slabtop.1:54
 #, no-wrap
 msgid "b"
 msgstr "b"
 
 #. type: tbl table
-#: ../slabtop.1:53
+#: ../slabtop.1:54
 #, no-wrap
 msgid "objects per slab"
 msgstr "objekt per skiva"
 
 #. type: tbl table
-#: ../slabtop.1:53
+#: ../slabtop.1:54
 #, no-wrap
 msgid "OBJ/SLAB"
 msgstr "OBJ/SKIVA"
 
 #. type: tbl table
-#: ../slabtop.1:54 ../ps/ps.1:912 ../ps/ps.1:1077
+#: ../slabtop.1:55 ../ps/ps.1:912 ../ps/ps.1:1077
 #, no-wrap
 msgid "c"
 msgstr "c"
 
 #. type: tbl table
-#: ../slabtop.1:54
+#: ../slabtop.1:55
 #, no-wrap
 msgid "cache size"
 msgstr "cachestorlek"
 
 #. type: tbl table
-#: ../slabtop.1:54
+#: ../slabtop.1:55
 #, no-wrap
 msgid "CACHE SIZE"
 msgstr "CACHESTORLEK"
 
 #. type: TP
-#: ../slabtop.1:55 ../ps/ps.1:884
+#: ../slabtop.1:56 ../ps/ps.1:884
 #, no-wrap
 msgid "l"
 msgstr "l"
 
 #. type: tbl table
-#: ../slabtop.1:55
+#: ../slabtop.1:56
 #, no-wrap
 msgid "number of slabs"
 msgstr "antal skivor"
 
 #. type: tbl table
-#: ../slabtop.1:55
+#: ../slabtop.1:56
 #, no-wrap
 msgid "SLABS"
 msgstr "SKIVOR"
 
 #. type: tbl table
-#: ../slabtop.1:56 ../ps/ps.1:935
+#: ../slabtop.1:57 ../ps/ps.1:935
 #, no-wrap
 msgid "v"
 msgstr "v"
 
 #. type: tbl table
-#: ../slabtop.1:56
+#: ../slabtop.1:57
 #, no-wrap
 msgid "number of active slabs"
 msgstr "antal aktiva skivor"
 
 #. type: tbl table
-#: ../slabtop.1:56 ../slabtop.1:59
+#: ../slabtop.1:57 ../slabtop.1:60
 #, no-wrap
 msgid "N/A"
 msgstr "saknas"
 
 #. type: tbl table
-#: ../slabtop.1:57 ../ps/ps.1:922
+#: ../slabtop.1:58 ../ps/ps.1:922
 #, no-wrap
 msgid "n"
 msgstr "n"
 
 #. type: tbl table
-#: ../slabtop.1:57
+#: ../slabtop.1:58
 #, no-wrap
 msgid "name"
 msgstr "namn"
 
 #. type: tbl table
-#: ../slabtop.1:57
+#: ../slabtop.1:58
 #, no-wrap
 msgid "NAME\\:"
 msgstr "NAMN\\:"
 
 #. type: tbl table
-#: ../slabtop.1:58 ../ps/ps.1:924
+#: ../slabtop.1:59 ../ps/ps.1:924
 #, no-wrap
 msgid "o"
 msgstr "o"
 
 #. type: tbl table
-#: ../slabtop.1:58
+#: ../slabtop.1:59
 #, no-wrap
 msgid "number of objects"
 msgstr "antal objekt"
 
 #. type: tbl table
-#: ../slabtop.1:58
+#: ../slabtop.1:59
 #, no-wrap
 msgid "OBJS"
 msgstr "OBJ"
 
 #. type: tbl table
-#: ../slabtop.1:59 ../ps/ps.1:925
+#: ../slabtop.1:60 ../ps/ps.1:925
 #, no-wrap
 msgid "p"
 msgstr "p"
 
 #. type: tbl table
-#: ../slabtop.1:59
+#: ../slabtop.1:60
 #, no-wrap
 msgid "pages per slab"
 msgstr "sidor per skiva"
 
 #. type: tbl table
-#: ../slabtop.1:60 ../ps/ps.1:881 ../ps/ps.1:929 ../ps/ps.1:1558
+#: ../slabtop.1:61 ../ps/ps.1:881 ../ps/ps.1:929 ../ps/ps.1:1582
 #, no-wrap
 msgid "s"
 msgstr "s"
 
 #. type: tbl table
-#: ../slabtop.1:60
+#: ../slabtop.1:61
 #, no-wrap
 msgid "object size"
 msgstr "objektstorlek"
 
 #. type: tbl table
-#: ../slabtop.1:60
+#: ../slabtop.1:61
 #, no-wrap
 msgid "OBJ SIZE"
 msgstr "OBJ-STRL"
 
 #. type: tbl table
-#: ../slabtop.1:61 ../ps/ps.1:934
+#: ../slabtop.1:62 ../ps/ps.1:934
 #, no-wrap
 msgid "u"
 msgstr "u"
 
 #. type: tbl table
-#: ../slabtop.1:61
+#: ../slabtop.1:62
 #, no-wrap
 msgid "cache utilization"
 msgstr "cacheanvändning"
 
 #. type: tbl table
-#: ../slabtop.1:61
+#: ../slabtop.1:62
 #, no-wrap
 msgid "USE"
 msgstr "ANV"
 
 #. type: SH
-#: ../slabtop.1:63
+#: ../slabtop.1:64
 #, no-wrap
 msgid "COMMANDS"
 msgstr "KOMMANDON"
 
 #. type: Plain text
-#: ../slabtop.1:67
+#: ../slabtop.1:68
 msgid ""
 "B<slabtop> accepts keyboard commands from the user during use.  The "
 "following are supported.  In the case of letters, both cases are accepted."
@@ -2540,7 +2545,7 @@ msgstr ""
 "Följande stödjs.  Vad gäller bokstäver tas både versaler och gemener emot."
 
 #. type: Plain text
-#: ../slabtop.1:71
+#: ../slabtop.1:72
 msgid ""
 "Each of the valid sort characters are also accepted, to change the sort "
 "routine. See the section B<SORT CRITERIA>."
@@ -2549,45 +2554,45 @@ msgstr ""
 "sorteringsrutinen.  Se avsnittet B<SORTERINGSKRITERIER>."
 
 #. type: TP
-#: ../slabtop.1:71
+#: ../slabtop.1:72
 #, no-wrap
 msgid "B<E<lt>SPACEBARE<gt>>"
 msgstr "B<E<lt>MELLANSLAGE<gt>>"
 
 #. type: Plain text
-#: ../slabtop.1:74
+#: ../slabtop.1:75
 msgid "Refresh the screen."
 msgstr "Uppdatera skärmen."
 
 #. type: TP
-#: ../slabtop.1:74
+#: ../slabtop.1:75
 #, no-wrap
 msgid "B<Q>"
 msgstr "B<Q>"
 
 #. type: Plain text
-#: ../slabtop.1:77
+#: ../slabtop.1:78
 msgid "Quit the program."
 msgstr "Avsluta programmet."
 
 #. type: TP
-#: ../slabtop.1:78
+#: ../slabtop.1:79
 #, no-wrap
 msgid "I</proc/slabinfo>"
 msgstr "I</proc/slabinfo>"
 
 #. type: Plain text
-#: ../slabtop.1:81
+#: ../slabtop.1:82
 msgid "slab information"
 msgstr "skivinformation"
 
 #. type: Plain text
-#: ../slabtop.1:86
+#: ../slabtop.1:87
 msgid "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 
 #. type: Plain text
-#: ../slabtop.1:92
+#: ../slabtop.1:93
 msgid ""
 "Currently, B<slabtop> requires a 2.4 or later kernel (specifically, a "
 "version 1.1 or later I</proc/slabinfo>).  Kernel 2.2 should be supported in "
@@ -2598,7 +2603,7 @@ msgstr ""
 "framtiden."
 
 #. type: Plain text
-#: ../slabtop.1:98
+#: ../slabtop.1:99
 #, fuzzy
 #| msgid ""
 #| "The slabtop statistic header is tracking how many bytes of slabs are "
@@ -2616,18 +2621,18 @@ msgstr ""
 "följer information om skivors använda fysiska minne."
 
 #. type: SH
-#: ../slabtop.1:98 ../tload.1:50 ../uptime.1:46 ../vmstat.8:218 ../w.1:88
+#: ../slabtop.1:99 ../tload.1:50 ../uptime.1:46 ../vmstat.8:219 ../w.1:88
 #, no-wrap
 msgid "AUTHORS"
 msgstr "UPPHOVSMÄN"
 
 #. type: Plain text
-#: ../slabtop.1:100
+#: ../slabtop.1:101
 msgid "Written by Chris Rivera and Robert Love."
 msgstr "Skrivet av Chris Rivera och Robert Love."
 
 #. type: Plain text
-#: ../slabtop.1:104
+#: ../slabtop.1:105
 msgid "B<slabtop> was inspired by Martin Bligh's perl script, B<vmtop>."
 msgstr "B<slabtop> inspirerades av Martin Blighs perl-skript B<vmtop>."
 
@@ -2638,11 +2643,10 @@ msgid "SYSCTL"
 msgstr "SYSCTL"
 
 #. type: TH
-#: ../sysctl.8:9
-#, fuzzy, no-wrap
-#| msgid "2018-02-19"
-msgid "2020-02-27"
-msgstr "2018-02-19"
+#: ../sysctl.8:9 ../ps/ps.1:7
+#, no-wrap
+msgid "2021-03-29"
+msgstr ""
 
 #. type: TH
 #: ../sysctl.8:9 ../vmstat.8:3
@@ -2837,10 +2841,94 @@ msgid "B<--system>"
 msgstr "B<--system>"
 
 #. type: Plain text
-#: ../sysctl.8:83
+#: ../sysctl.8:82
 msgid ""
-"Load settings from all system configuration files. Files are read from "
-"directories in the following list in given order from top to bottom.  Once a "
+"Load settings from all system configuration files. See the B<SYSTEM FILE "
+"PRECEDENCE> section below."
+msgstr ""
+
+#. type: TP
+#: ../sysctl.8:82
+#, no-wrap
+msgid "B<-r>, B<--pattern> I<pattern>"
+msgstr "B<-r>, B<--pattern> I<mönster>"
+
+#. type: Plain text
+#: ../sysctl.8:89
+msgid ""
+"Only apply settings that match I<pattern>.  The I<pattern> uses extended "
+"regular expression syntax."
+msgstr ""
+"Verkställ endast inställningar som matchar I<mönster>.  I<Mönstret> använder "
+"syntaxen för utökade reguljära uttryck."
+
+#. type: TP
+#: ../sysctl.8:89 ../ps/ps.1:165
+#, no-wrap
+msgid "B<-A>"
+msgstr "B<-A>"
+
+#. type: Plain text
+#: ../sysctl.8:92 ../sysctl.8:101
+msgid "Alias of B<-a>"
+msgstr "Alias för B<-a>"
+
+#. type: TP
+#: ../sysctl.8:92 ../ps/ps.1:174
+#, no-wrap
+msgid "B<-d>"
+msgstr "B<-d>"
+
+#. type: Plain text
+#: ../sysctl.8:95
+msgid "Alias of B<-h>"
+msgstr "Alias för B<-h>"
+
+#. type: TP
+#: ../sysctl.8:95 ../ps/ps.1:434
+#, no-wrap
+msgid "B<-f>"
+msgstr "B<-f>"
+
+#. type: Plain text
+#: ../sysctl.8:98
+msgid "Alias of B<-p>"
+msgstr "Alias för B<-p>"
+
+#. type: TP
+#: ../sysctl.8:101
+#, no-wrap
+msgid "B<-o>"
+msgstr "B<-o>"
+
+#. type: Plain text
+#: ../sysctl.8:104 ../sysctl.8:107
+msgid "Does nothing, exists for BSD compatibility."
+msgstr "Gör ingenting, finns för kompatibilitet med BSD."
+
+#. type: TP
+#: ../sysctl.8:104
+#, no-wrap
+msgid "B<-x>"
+msgstr "B<-x>"
+
+#. type: SH
+#: ../sysctl.8:113
+#, no-wrap
+msgid "SYSTEM FILE PRECEDENCE"
+msgstr ""
+
+#. type: Plain text
+#: ../sysctl.8:119
+#, fuzzy
+#| msgid ""
+#| "Load settings from all system configuration files. Files are read from "
+#| "directories in the following list in given order from top to bottom.  "
+#| "Once a file of a given filename is loaded, any file of the same name in "
+#| "subsequent directories is ignored."
+msgid ""
+"When using the B<--system> option, B<sysctl> will read files from "
+"directories in the following list in given order from top to bottom. Once a "
 "file of a given filename is loaded, any file of the same name in subsequent "
 "directories is ignored."
 msgstr ""
@@ -2850,148 +2938,95 @@ msgstr ""
 "följande kataloger."
 
 #. type: Plain text
-#: ../sysctl.8:85
+#: ../sysctl.8:121
 msgid "/etc/sysctl.d/*.conf"
 msgstr "/etc/sysctl.d/*.conf"
 
 #. type: Plain text
-#: ../sysctl.8:87
+#: ../sysctl.8:123
 msgid "/run/sysctl.d/*.conf"
 msgstr "/run/sysctl.d/*.conf"
 
 #. type: Plain text
-#: ../sysctl.8:89
+#: ../sysctl.8:125
 msgid "/usr/local/lib/sysctl.d/*.conf"
 msgstr "/usr/local/lib/sysctl.d/*.conf"
 
 #. type: Plain text
-#: ../sysctl.8:91
+#: ../sysctl.8:127
 msgid "/usr/lib/sysctl.d/*.conf"
 msgstr "/usr/lib/sysctl.d/*.conf"
 
 #. type: Plain text
-#: ../sysctl.8:93
+#: ../sysctl.8:129
 msgid "/lib/sysctl.d/*.conf"
 msgstr "/lib/sysctl.d/*.conf"
 
 #. type: Plain text
-#: ../sysctl.8:95
+#: ../sysctl.8:131
 msgid "/etc/sysctl.conf"
 msgstr "/etc/sysctl.conf"
 
-#. type: TP
-#: ../sysctl.8:95
-#, no-wrap
-msgid "B<-r>, B<--pattern> I<pattern>"
-msgstr "B<-r>, B<--pattern> I<mönster>"
-
 #. type: Plain text
-#: ../sysctl.8:102
+#: ../sysctl.8:137
 msgid ""
-"Only apply settings that match I<pattern>.  The I<pattern> uses extended "
-"regular expression syntax."
+"All configuration files are sorted in lexicographic order, regardless of the "
+"directory they reside in. Configuration files can either be completely "
+"replaced (by having a new configuration file with the same name in a "
+"directory of higher priority) or partially replaced (by having a "
+"configuration file that is ordered later)."
 msgstr ""
-"Verkställ endast inställningar som matchar I<mönster>.  I<Mönstret> använder "
-"syntaxen för utökade reguljära uttryck."
-
-#. type: TP
-#: ../sysctl.8:102 ../ps/ps.1:165
-#, no-wrap
-msgid "B<-A>"
-msgstr "B<-A>"
 
 #. type: Plain text
-#: ../sysctl.8:105 ../sysctl.8:114
-msgid "Alias of B<-a>"
-msgstr "Alias för B<-a>"
-
-#. type: TP
-#: ../sysctl.8:105 ../ps/ps.1:174
-#, no-wrap
-msgid "B<-d>"
-msgstr "B<-d>"
-
-#. type: Plain text
-#: ../sysctl.8:108
-msgid "Alias of B<-h>"
-msgstr "Alias för B<-h>"
-
-#. type: TP
-#: ../sysctl.8:108 ../ps/ps.1:434
-#, no-wrap
-msgid "B<-f>"
-msgstr "B<-f>"
-
-#. type: Plain text
-#: ../sysctl.8:111
-msgid "Alias of B<-p>"
-msgstr "Alias för B<-p>"
-
-#. type: TP
-#: ../sysctl.8:114
-#, no-wrap
-msgid "B<-o>"
-msgstr "B<-o>"
-
-#. type: Plain text
-#: ../sysctl.8:117 ../sysctl.8:120
-msgid "Does nothing, exists for BSD compatibility."
-msgstr "Gör ingenting, finns för kompatibilitet med BSD."
-
-#. type: TP
-#: ../sysctl.8:117
-#, no-wrap
-msgid "B<-x>"
-msgstr "B<-x>"
-
-#. type: Plain text
-#: ../sysctl.8:128
+#: ../sysctl.8:139
 msgid "/sbin/sysctl -a"
 msgstr "/sbin/sysctl -a"
 
 #. type: Plain text
-#: ../sysctl.8:130
+#: ../sysctl.8:141
 msgid "/sbin/sysctl -n kernel.hostname"
 msgstr "/sbin/sysctl -n kernel.hostname"
 
 #. type: Plain text
-#: ../sysctl.8:132
+#: ../sysctl.8:143
 msgid "/sbin/sysctl -w kernel.domainname=\"example.com\""
 msgstr "/sbin/sysctl -w kernel.domainname=\"example.com\""
 
 #. type: Plain text
-#: ../sysctl.8:134
+#: ../sysctl.8:145
 msgid "/sbin/sysctl -p/etc/sysctl.conf"
 msgstr "/sbin/sysctl -p/etc/sysctl.conf"
 
 #. type: Plain text
-#: ../sysctl.8:136
+#: ../sysctl.8:147
 msgid "/sbin/sysctl -a --pattern forward"
 msgstr "/sbin/sysctl -a --pattern forward"
 
 #. type: Plain text
-#: ../sysctl.8:138
+#: ../sysctl.8:149
 msgid "/sbin/sysctl -a --pattern forward$"
 msgstr "/sbin/sysctl -a --pattern forward$"
 
 #. type: Plain text
-#: ../sysctl.8:140
+#: ../sysctl.8:151
 msgid "/sbin/sysctl -a --pattern 'net.ipv4.conf.(eth|wlan)0.arp'"
 msgstr "/sbin/sysctl -a --pattern 'net.ipv4.conf.(eth|wlan)0.arp'"
 
 #. type: Plain text
-#: ../sysctl.8:142
-msgid "/sbin/sysctl --system --pattern '^net.ipv6'"
+#: ../sysctl.8:153
+#, fuzzy
+#| msgid "/sbin/sysctl --system --pattern '^net.ipv6'"
+msgid "/sbin/sysctl --pattern '\\[char94]net.ipv6' --system"
 msgstr "/sbin/sysctl --system --pattern '^net.ipv6'"
 
 #. type: SH
-#: ../sysctl.8:142
+#: ../sysctl.8:153
 #, no-wrap
 msgid "DEPRECATED PARAMETERS"
 msgstr "FÖRÅLDRADE PARAMETRAR"
 
 #. type: Plain text
-#: ../sysctl.8:152
+#: ../sysctl.8:163
 #, fuzzy
 #| msgid ""
 #| "The B<base_reachable_time> and B<retrans_time> are deprecated.  The "
@@ -3010,62 +3045,62 @@ msgstr ""
 "på annat sätt.  Till exempel:"
 
 #. type: Plain text
-#: ../sysctl.8:154
+#: ../sysctl.8:165
 msgid "echo 256 E<gt> /proc/sys/net/ipv6/neigh/eth0/base_reachable_time"
 msgstr "echo 256 E<gt> /proc/sys/net/ipv6/neigh/eth0/base_reachable_time"
 
 #. type: Plain text
-#: ../sysctl.8:156
+#: ../sysctl.8:167
 msgid "I</proc/sys>"
 msgstr "I</proc/sys>"
 
 #. type: Plain text
-#: ../sysctl.8:158 ../sysctl.conf.5:59
+#: ../sysctl.8:169 ../sysctl.conf.5:59
 #, fuzzy
 #| msgid "/etc/sysctl.d/*.conf"
 msgid "I</etc/sysctl.d/*.conf>"
 msgstr "/etc/sysctl.d/*.conf"
 
 #. type: Plain text
-#: ../sysctl.8:160 ../sysctl.conf.5:61
+#: ../sysctl.8:171 ../sysctl.conf.5:61
 #, fuzzy
 #| msgid "/run/sysctl.d/*.conf"
 msgid "I</run/sysctl.d/*.conf>"
 msgstr "/run/sysctl.d/*.conf"
 
 #. type: Plain text
-#: ../sysctl.8:162 ../sysctl.conf.5:63
+#: ../sysctl.8:173 ../sysctl.conf.5:63
 #, fuzzy
 #| msgid "/usr/local/lib/sysctl.d/*.conf"
 msgid "I</usr/local/lib/sysctl.d/*.conf>"
 msgstr "/usr/local/lib/sysctl.d/*.conf"
 
 #. type: Plain text
-#: ../sysctl.8:164 ../sysctl.conf.5:65
+#: ../sysctl.8:175 ../sysctl.conf.5:65
 #, fuzzy
 #| msgid "/usr/lib/sysctl.d/*.conf"
 msgid "I</usr/lib/sysctl.d/*.conf>"
 msgstr "/usr/lib/sysctl.d/*.conf"
 
 #. type: Plain text
-#: ../sysctl.8:166 ../sysctl.conf.5:67
+#: ../sysctl.8:177 ../sysctl.conf.5:67
 #, fuzzy
 #| msgid "/lib/sysctl.d/*.conf"
 msgid "I</lib/sysctl.d/*.conf>"
 msgstr "/lib/sysctl.d/*.conf"
 
 #. type: Plain text
-#: ../sysctl.8:168 ../sysctl.conf.5:69
+#: ../sysctl.8:179 ../sysctl.conf.5:69
 msgid "I</etc/sysctl.conf>"
 msgstr "I</etc/sysctl.conf>"
 
 #. type: Plain text
-#: ../sysctl.8:171
+#: ../sysctl.8:182
 msgid "B<sysctl.conf>(5)  B<regex>(7)"
 msgstr "B<sysctl.conf>(5)  B<regex>(7)"
 
 #. type: Plain text
-#: ../sysctl.8:175 ../sysctl.conf.5:82
+#: ../sysctl.8:186 ../sysctl.conf.5:82
 msgid "E<.UR staikos@0wned.org> George Staikos E<.UE>"
 msgstr "E<.UR staikos@0wned.org> George Staikos E<.UE>"
 
@@ -3710,7 +3745,7 @@ msgstr ""
 "vu: Mängden minne växlat ut till disk (/s).\n"
 
 #. type: SS
-#: ../vmstat.8:119 ../vmstat.8:163
+#: ../vmstat.8:119 ../vmstat.8:164
 #, no-wrap
 msgid "IO"
 msgstr "IO"
@@ -3753,14 +3788,21 @@ msgid "These are percentages of total CPU time."
 msgstr "Detta är procentandelar av total CPU-tid."
 
 #. type: Plain text
-#: ../vmstat.8:142
-#, no-wrap
+#: ../vmstat.8:143
+#, fuzzy, no-wrap
+#| msgid ""
+#| "us: Time spent running non-kernel code.  (user time, including nice time)\n"
+#| "sy: Time spent running kernel code.  (system time)\n"
+#| "id: Time spent idle.  Prior to Linux 2.5.41, this includes IO-wait time.\n"
+#| "wa: Time spent waiting for IO.  Prior to Linux 2.5.41, included in idle.\n"
+#| "st: Time stolen from a virtual machine.  Prior to Linux 2.6.11, unknown.\n"
 msgid ""
 "us: Time spent running non-kernel code.  (user time, including nice time)\n"
 "sy: Time spent running kernel code.  (system time)\n"
 "id: Time spent idle.  Prior to Linux 2.5.41, this includes IO-wait time.\n"
 "wa: Time spent waiting for IO.  Prior to Linux 2.5.41, included in idle.\n"
 "st: Time stolen from a virtual machine.  Prior to Linux 2.6.11, unknown.\n"
+"gu: Time spent running KVM guest code (guest time, including guest nice).\n"
 msgstr ""
 "an: Tid tillbringad att köra icke-kärnkod.  (användartid, inklusive nice-tid)\n"
 "sy: Tid tillbringad att köra kärnkod.  (systemtid)\n"
@@ -3769,19 +3811,19 @@ msgstr ""
 "st: Tid stulen från en virtuell maskin.  Före Linux 2.6.11, okänd.\n"
 
 #. type: SH
-#: ../vmstat.8:144
+#: ../vmstat.8:145
 #, no-wrap
 msgid "FIELD DESCRIPTION FOR DISK MODE"
 msgstr "FÄLTBESKRIVNING FÖR DISK-LÄGET"
 
 #. type: SS
-#: ../vmstat.8:145
+#: ../vmstat.8:146
 #, no-wrap
 msgid "Reads"
 msgstr "Läsningar"
 
 #. type: Plain text
-#: ../vmstat.8:152
+#: ../vmstat.8:153
 #, no-wrap
 msgid ""
 "total: Total reads completed successfully\n"
@@ -3795,13 +3837,13 @@ msgstr ""
 "ms: millisekunder tillbringat med läsningar\n"
 
 #. type: SS
-#: ../vmstat.8:154
+#: ../vmstat.8:155
 #, no-wrap
 msgid "Writes"
 msgstr "Skrivningar"
 
 #. type: Plain text
-#: ../vmstat.8:161
+#: ../vmstat.8:162
 #, no-wrap
 msgid ""
 "total: Total writes completed successfully\n"
@@ -3815,7 +3857,7 @@ msgstr ""
 "ms: millisekunder tillbringat med skrivningar\n"
 
 #. type: Plain text
-#: ../vmstat.8:168
+#: ../vmstat.8:169
 #, no-wrap
 msgid ""
 "cur: I/O in progress\n"
@@ -3825,13 +3867,13 @@ msgstr ""
 "s: sekunder tillbringat i I/O\n"
 
 #. type: SH
-#: ../vmstat.8:170
+#: ../vmstat.8:171
 #, no-wrap
 msgid "FIELD DESCRIPTION FOR DISK PARTITION MODE"
 msgstr "FÄLTBESKRIVNING FÖR DISKPARTITIONSLÄGET"
 
 #. type: Plain text
-#: ../vmstat.8:176
+#: ../vmstat.8:177
 #, no-wrap
 msgid ""
 "reads: Total number of reads issued to this partition\n"
@@ -3845,13 +3887,13 @@ msgstr ""
 "beg skrivn: Totalt antal skrivbegäranden gjorda för partitionen\n"
 
 #. type: SH
-#: ../vmstat.8:178
+#: ../vmstat.8:179
 #, no-wrap
 msgid "FIELD DESCRIPTION FOR SLAB MODE"
 msgstr "FÄLTBESKRIVNING FÖR SKIVLÄGET"
 
 #. type: Plain text
-#: ../vmstat.8:185
+#: ../vmstat.8:186
 #, no-wrap
 msgid ""
 "cache: Cache name\n"
@@ -3867,14 +3909,14 @@ msgstr ""
 "sidor: Antal sidor med åtminstone ett aktivt objekt\n"
 
 #. type: Plain text
-#: ../vmstat.8:189
+#: ../vmstat.8:190
 #, fuzzy
 #| msgid "B<vmstat > does not require special permissions."
 msgid "B<vmstat> does not require special permissions."
 msgstr "B<vmstat> behöver inte särskilda rättigheter."
 
 #. type: Plain text
-#: ../vmstat.8:193
+#: ../vmstat.8:194
 msgid ""
 "These reports are intended to help identify system bottlenecks.  Linux "
 "B<vmstat> does not count itself as a running process."
@@ -3883,7 +3925,7 @@ msgstr ""
 "systemet.  Linux B<vmstat> räknar inte sig själv som en körande process."
 
 #. type: Plain text
-#: ../vmstat.8:196
+#: ../vmstat.8:197
 msgid ""
 "All linux blocks are currently 1024 bytes.  Old kernels may report blocks as "
 "512 bytes, 2048 bytes, or 4096 bytes."
@@ -3892,7 +3934,7 @@ msgstr ""
 "block som 512 byte, 2048 byte eller 4096 byte."
 
 #. type: Plain text
-#: ../vmstat.8:199
+#: ../vmstat.8:200
 msgid ""
 "Since procps 3.1.9, vmstat lets you choose units (k, K, m, M).  Default is K "
 "(1024 bytes) in the default mode."
@@ -3901,12 +3943,12 @@ msgstr ""
 "K (1024 byte) i standardläget."
 
 #. type: Plain text
-#: ../vmstat.8:201
+#: ../vmstat.8:202
 msgid "vmstat uses slabinfo 1.1"
 msgstr "vmstat använder slabinfo 1.1"
 
 #. type: Plain text
-#: ../vmstat.8:207
+#: ../vmstat.8:208
 #, no-wrap
 msgid ""
 "/proc/meminfo\n"
@@ -3918,24 +3960,24 @@ msgstr ""
 "/proc/*/stat\n"
 
 #. type: Plain text
-#: ../vmstat.8:215
+#: ../vmstat.8:216
 msgid "B<free>(1), B<iostat>(1), B<mpstat>(1), B<ps>(1), B<sar>(1), B<top>(1)"
 msgstr "B<free>(1), B<iostat>(1), B<mpstat>(1), B<ps>(1), B<sar>(1), B<top>(1)"
 
 #. type: Plain text
-#: ../vmstat.8:218
+#: ../vmstat.8:219
 msgid ""
 "Does not tabulate the block io per device or count the number of system "
 "calls."
 msgstr "Tabellerar inte block-io per enhet eller antalet systemanrop."
 
 #. type: Plain text
-#: ../vmstat.8:223
+#: ../vmstat.8:224
 msgid "Written by E<.UR al172@yfn.\\:ysu.\\:edu> Henry Ware E<.UE .>"
 msgstr "Skriven av E<.UR al172@yfn.\\:ysu.\\:edu> Henry Ware E<.UE .>"
 
 #. type: Plain text
-#: ../vmstat.8:228
+#: ../vmstat.8:229
 msgid ""
 "E<.UR ffrederick@users.\\:sourceforge.\\:net> Fabian Fr\\('ed\\('erick E<."
 "UE> (diskstat, slab, partitions...)"
@@ -4161,9 +4203,10 @@ msgstr "WATCH"
 
 #. type: TH
 #: ../watch.1:1
-#, no-wrap
-msgid "2020-12-06"
-msgstr "2020-12-06"
+#, fuzzy, no-wrap
+#| msgid "2020-04-24"
+msgid "2021-04-24"
+msgstr "2020-04-24"
 
 #. type: Plain text
 #: ../watch.1:4
@@ -4337,7 +4380,7 @@ msgstr ""
 #: ../watch.1:67
 #, fuzzy, no-wrap
 #| msgid "B<-t>, B<--no-title>"
-msgid "B<-w>, B<--no-linewrap>"
+msgid "B<-w>, B<--no-wrap>"
 msgstr "B<-t>, B<--no-title>"
 
 #. type: Plain text
@@ -6245,7 +6288,7 @@ msgid "forked but didn't exec"
 msgstr ""
 
 #. type: IP
-#: ../ps/ps.1:822 ../ps/ps.1:1977
+#: ../ps/ps.1:822 ../ps/ps.1:2018
 #, no-wrap
 msgid "4"
 msgstr ""
@@ -6304,7 +6347,7 @@ msgid "running or runnable (on run queue)"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:845 ../ps/ps.1:930 ../ps/ps.1:1558 ../ps/ps.1:1680
+#: ../ps/ps.1:845 ../ps/ps.1:930 ../ps/ps.1:1582 ../ps/ps.1:1704
 #, no-wrap
 msgid "S"
 msgstr ""
@@ -6481,7 +6524,7 @@ msgid "C"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:913 ../ps/ps.1:957 ../ps/ps.1:1429
+#: ../ps/ps.1:913 ../ps/ps.1:957 ../ps/ps.1:1440
 #, no-wrap
 msgid "pcpu"
 msgstr ""
@@ -6518,7 +6561,7 @@ msgid "g"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:915 ../ps/ps.1:1455
+#: ../ps/ps.1:915 ../ps/ps.1:1466
 #, no-wrap
 msgid "pgrp"
 msgstr ""
@@ -6536,7 +6579,7 @@ msgid "G"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:916 ../ps/ps.1:1769
+#: ../ps/ps.1:916 ../ps/ps.1:1793
 #, no-wrap
 msgid "tpgid"
 msgstr ""
@@ -6676,7 +6719,7 @@ msgid "session ID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:925 ../ps/ps.1:965 ../ps/ps.1:1462
+#: ../ps/ps.1:925 ../ps/ps.1:965 ../ps/ps.1:1473
 #, no-wrap
 msgid "pid"
 msgstr ""
@@ -6688,13 +6731,13 @@ msgid "process ID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:926 ../ps/ps.1:1584
+#: ../ps/ps.1:926 ../ps/ps.1:1608
 #, no-wrap
 msgid "P"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:926 ../ps/ps.1:959 ../ps/ps.1:1504
+#: ../ps/ps.1:926 ../ps/ps.1:959 ../ps/ps.1:1515
 #, no-wrap
 msgid "ppid"
 msgstr ""
@@ -6712,7 +6755,7 @@ msgid "r"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:927 ../ps/ps.1:1525
+#: ../ps/ps.1:927 ../ps/ps.1:1549
 #, no-wrap
 msgid "rss"
 msgstr ""
@@ -6736,7 +6779,7 @@ msgid "resident pages"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:929 ../ps/ps.1:1634
+#: ../ps/ps.1:929 ../ps/ps.1:1658
 #, no-wrap
 msgid "size"
 msgstr ""
@@ -6761,7 +6804,7 @@ msgid "amount of shared pages"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:931 ../ps/ps.1:970 ../ps/ps.1:1783
+#: ../ps/ps.1:931 ../ps/ps.1:970 ../ps/ps.1:1807
 #, no-wrap
 msgid "tty"
 msgstr ""
@@ -6773,7 +6816,7 @@ msgid "the device number of the controlling tty"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:932 ../ps/ps.1:1663
+#: ../ps/ps.1:932 ../ps/ps.1:1687
 #, no-wrap
 msgid "start_time"
 msgstr ""
@@ -6791,7 +6834,7 @@ msgid "U"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:933 ../ps/ps.1:1802
+#: ../ps/ps.1:933 ../ps/ps.1:1826
 #, no-wrap
 msgid "uid"
 msgstr ""
@@ -6803,7 +6846,7 @@ msgid "user ID number"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:934 ../ps/ps.1:960 ../ps/ps.1:1821
+#: ../ps/ps.1:934 ../ps/ps.1:960 ../ps/ps.1:1845
 #, fuzzy, no-wrap
 #| msgid "B<user >"
 msgid "user"
@@ -6817,7 +6860,7 @@ msgid "user name"
 msgstr "namn"
 
 #. type: tbl table
-#: ../ps/ps.1:935 ../ps/ps.1:1845
+#: ../ps/ps.1:935 ../ps/ps.1:1869
 #, no-wrap
 msgid "vsize"
 msgstr ""
@@ -6886,7 +6929,7 @@ msgid "%C"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:957 ../ps/ps.1:1009 ../ps/ps.1:1429
+#: ../ps/ps.1:957 ../ps/ps.1:1009 ../ps/ps.1:1440
 #, no-wrap
 msgid "%CPU"
 msgstr ""
@@ -6916,7 +6959,7 @@ msgid "%P"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:959 ../ps/ps.1:1504
+#: ../ps/ps.1:959 ../ps/ps.1:1515
 #, no-wrap
 msgid "PPID"
 msgstr ""
@@ -6928,7 +6971,7 @@ msgid "%U"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:960 ../ps/ps.1:1809 ../ps/ps.1:1821
+#: ../ps/ps.1:960 ../ps/ps.1:1833 ../ps/ps.1:1845
 #, no-wrap
 msgid "USER"
 msgstr ""
@@ -6948,7 +6991,7 @@ msgstr ""
 
 #. type: tbl table
 #: ../ps/ps.1:961 ../ps/ps.1:962 ../ps/ps.1:1023 ../ps/ps.1:1154
-#: ../ps/ps.1:1183 ../ps/ps.1:1292 ../ps/ps.1:1795
+#: ../ps/ps.1:1183 ../ps/ps.1:1292 ../ps/ps.1:1819
 #, fuzzy, no-wrap
 #| msgid "COMMANDS"
 msgid "COMMAND"
@@ -6974,13 +7017,13 @@ msgid "%g"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:963 ../ps/ps.1:1520
+#: ../ps/ps.1:963 ../ps/ps.1:1539
 #, no-wrap
 msgid "rgroup"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:963 ../ps/ps.1:1520
+#: ../ps/ps.1:963 ../ps/ps.1:1539
 #, no-wrap
 msgid "RGROUP"
 msgstr ""
@@ -7012,7 +7055,7 @@ msgid "%p"
 msgstr "p"
 
 #. type: tbl table
-#: ../ps/ps.1:965 ../ps/ps.1:1462
+#: ../ps/ps.1:965 ../ps/ps.1:1473
 #, fuzzy, no-wrap
 #| msgid "PIDOF"
 msgid "PID"
@@ -7025,13 +7068,13 @@ msgid "%r"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:966 ../ps/ps.1:1449
+#: ../ps/ps.1:966 ../ps/ps.1:1460
 #, no-wrap
 msgid "pgid"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:966 ../ps/ps.1:1449
+#: ../ps/ps.1:966 ../ps/ps.1:1460
 #, no-wrap
 msgid "PGID"
 msgstr ""
@@ -7062,14 +7105,14 @@ msgid "%u"
 msgstr "u"
 
 #. type: tbl table
-#: ../ps/ps.1:968 ../ps/ps.1:1553
+#: ../ps/ps.1:968 ../ps/ps.1:1577
 #, fuzzy, no-wrap
 #| msgid "B<user >"
 msgid "ruser"
 msgstr "B<användare >"
 
 #. type: tbl table
-#: ../ps/ps.1:968 ../ps/ps.1:1553
+#: ../ps/ps.1:968 ../ps/ps.1:1577
 #, no-wrap
 msgid "RUSER"
 msgstr ""
@@ -7081,14 +7124,14 @@ msgid "%x"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:969 ../ps/ps.1:1754
+#: ../ps/ps.1:969 ../ps/ps.1:1778
 #, no-wrap
 msgid "time"
 msgstr ""
 
 #. type: tbl table
 #: ../ps/ps.1:969 ../ps/ps.1:1071 ../ps/ps.1:1195 ../ps/ps.1:1200
-#: ../ps/ps.1:1754 ../ps/ps.1:1759
+#: ../ps/ps.1:1778 ../ps/ps.1:1783
 #, fuzzy, no-wrap
 #| msgid "UPTIME"
 msgid "TIME"
@@ -7101,7 +7144,7 @@ msgid "%y"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:970 ../ps/ps.1:1764
+#: ../ps/ps.1:970 ../ps/ps.1:1788
 #, no-wrap
 msgid "TTY"
 msgstr ""
@@ -7113,13 +7156,13 @@ msgid "%z"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:971 ../ps/ps.1:1852
+#: ../ps/ps.1:971 ../ps/ps.1:1876
 #, no-wrap
 msgid "vsz"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:971 ../ps/ps.1:1845 ../ps/ps.1:1852
+#: ../ps/ps.1:971 ../ps/ps.1:1869 ../ps/ps.1:1876
 #, no-wrap
 msgid "VSZ"
 msgstr ""
@@ -7199,7 +7242,7 @@ msgid "%mem"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1017 ../ps/ps.1:1473
+#: ../ps/ps.1:1017 ../ps/ps.1:1484
 #, no-wrap
 msgid "%MEM"
 msgstr ""
@@ -7238,9 +7281,9 @@ msgstr ""
 #: ../ps/ps.1:1111 ../ps/ps.1:1113 ../ps/ps.1:1115 ../ps/ps.1:1117
 #: ../ps/ps.1:1119 ../ps/ps.1:1129 ../ps/ps.1:1131 ../ps/ps.1:1133
 #: ../ps/ps.1:1135 ../ps/ps.1:1137 ../ps/ps.1:1139 ../ps/ps.1:1141
-#: ../ps/ps.1:1143 ../ps/ps.1:1167 ../ps/ps.1:1486 ../ps/ps.1:1488
-#: ../ps/ps.1:1490 ../ps/ps.1:1492 ../ps/ps.1:1494 ../ps/ps.1:1496
-#: ../ps/ps.1:1498 ../ps/ps.1:1500
+#: ../ps/ps.1:1143 ../ps/ps.1:1167 ../ps/ps.1:1497 ../ps/ps.1:1499
+#: ../ps/ps.1:1501 ../ps/ps.1:1503 ../ps/ps.1:1505 ../ps/ps.1:1507
+#: ../ps/ps.1:1509 ../ps/ps.1:1511
 #, no-wrap
 msgid ".br\n"
 msgstr ""
@@ -7273,7 +7316,7 @@ msgid "blocked"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1056 ../ps/ps.1:1627
+#: ../ps/ps.1:1056 ../ps/ps.1:1651
 #, no-wrap
 msgid "BLOCKED"
 msgstr ""
@@ -7296,7 +7339,7 @@ msgid "bsdstart"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1064 ../ps/ps.1:1663
+#: ../ps/ps.1:1064 ../ps/ps.1:1687
 #, no-wrap
 msgid "START"
 msgstr ""
@@ -7342,7 +7385,7 @@ msgid "caught"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1083 ../ps/ps.1:1613
+#: ../ps/ps.1:1083 ../ps/ps.1:1637
 #, no-wrap
 msgid "CAUGHT"
 msgstr ""
@@ -7418,61 +7461,61 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1103 ../ps/ps.1:1127 ../ps/ps.1:1484
+#: ../ps/ps.1:1103 ../ps/ps.1:1127 ../ps/ps.1:1495
 #, no-wrap
 msgid ".IP \"\" 2\n"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1105 ../ps/ps.1:1129 ../ps/ps.1:1486
+#: ../ps/ps.1:1105 ../ps/ps.1:1129 ../ps/ps.1:1497
 #, no-wrap
 msgid "-\tnot reported\n"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1107 ../ps/ps.1:1131 ../ps/ps.1:1488
+#: ../ps/ps.1:1107 ../ps/ps.1:1131 ../ps/ps.1:1499
 #, no-wrap
 msgid "TS\tSCHED_OTHER\n"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1109 ../ps/ps.1:1133 ../ps/ps.1:1490
+#: ../ps/ps.1:1109 ../ps/ps.1:1133 ../ps/ps.1:1501
 #, no-wrap
 msgid "FF\tSCHED_FIFO\n"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1111 ../ps/ps.1:1135 ../ps/ps.1:1492
+#: ../ps/ps.1:1111 ../ps/ps.1:1135 ../ps/ps.1:1503
 #, no-wrap
 msgid "RR\tSCHED_RR\n"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1113 ../ps/ps.1:1137 ../ps/ps.1:1494
+#: ../ps/ps.1:1113 ../ps/ps.1:1137 ../ps/ps.1:1505
 #, no-wrap
 msgid "B\tSCHED_BATCH\n"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1115 ../ps/ps.1:1139 ../ps/ps.1:1496
+#: ../ps/ps.1:1115 ../ps/ps.1:1139 ../ps/ps.1:1507
 #, no-wrap
 msgid "ISO\tSCHED_ISO\n"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1117 ../ps/ps.1:1141 ../ps/ps.1:1498
+#: ../ps/ps.1:1117 ../ps/ps.1:1141 ../ps/ps.1:1509
 #, no-wrap
 msgid "IDL\tSCHED_IDLE\n"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1119 ../ps/ps.1:1143 ../ps/ps.1:1500
+#: ../ps/ps.1:1119 ../ps/ps.1:1143 ../ps/ps.1:1511
 #, no-wrap
 msgid "DLN\tSCHED_DEADLINE\n"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1121 ../ps/ps.1:1145 ../ps/ps.1:1502
+#: ../ps/ps.1:1121 ../ps/ps.1:1145 ../ps/ps.1:1513
 #, fuzzy, no-wrap
 #| msgid "token = value\n"
 msgid "?\tunknown value"
@@ -7485,7 +7528,7 @@ msgid "cls"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1147 ../ps/ps.1:1788
+#: ../ps/ps.1:1147 ../ps/ps.1:1812
 #, no-wrap
 msgid "CMD"
 msgstr ""
@@ -7967,7 +8010,7 @@ msgid "ignored"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1321 ../ps/ps.1:1620
+#: ../ps/ps.1:1321 ../ps/ps.1:1644
 #, no-wrap
 msgid "IGNORED"
 msgstr ""
@@ -7996,8 +8039,8 @@ msgid "IPCNS"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1333 ../ps/ps.1:1386 ../ps/ps.1:1392 ../ps/ps.1:1471
-#: ../ps/ps.1:1832 ../ps/ps.1:1838
+#: ../ps/ps.1:1333 ../ps/ps.1:1386 ../ps/ps.1:1392 ../ps/ps.1:1482
+#: ../ps/ps.1:1856 ../ps/ps.1:1862
 #, no-wrap
 msgid ""
 "Unique inode number describing the namespace the process belongs to.\n"
@@ -8034,7 +8077,7 @@ msgid "lstart"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1342 ../ps/ps.1:1656
+#: ../ps/ps.1:1342 ../ps/ps.1:1680
 #, no-wrap
 msgid "STARTED"
 msgstr ""
@@ -8270,7 +8313,7 @@ msgid "nwchan"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1418 ../ps/ps.1:1858
+#: ../ps/ps.1:1418 ../ps/ps.1:1890
 #, no-wrap
 msgid "WCHAN"
 msgstr ""
@@ -8287,17 +8330,58 @@ msgstr ""
 #. type: tbl table
 #: ../ps/ps.1:1424
 #, no-wrap
-msgid "ouid"
+msgid "oom"
 msgstr ""
 
 #. type: tbl table
 #: ../ps/ps.1:1424
 #, no-wrap
-msgid "OWNER"
+msgid "OOM"
 msgstr ""
 
 #. type: tbl table
 #: ../ps/ps.1:1427
+#, no-wrap
+msgid ""
+"Out of Memory Score. The value, ranging from 0 to +1000, used to select\n"
+"task(s) to kill when memory is exhausted."
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1429
+#, no-wrap
+msgid "oomadj"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1429
+#, no-wrap
+msgid "OOMADJ"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1433
+#, no-wrap
+msgid ""
+"Out of Memory Adjustment Factor. The value is added to the current out of\n"
+"memory score which is then used to determine which task to kill when memory\n"
+"is exhausted."
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1435
+#, no-wrap
+msgid "ouid"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1435
+#, no-wrap
+msgid "OWNER"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1438
 #, no-wrap
 msgid ""
 "displays the Unix user identifier of the owner of the session of a process,\n"
@@ -8305,7 +8389,7 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1434
+#: ../ps/ps.1:1445
 #, no-wrap
 msgid ""
 "see\n"
@@ -8315,19 +8399,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1436
+#: ../ps/ps.1:1447
 #, no-wrap
 msgid "pending"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1436 ../ps/ps.1:1606
+#: ../ps/ps.1:1447 ../ps/ps.1:1630
 #, no-wrap
 msgid "PENDING"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1447
+#: ../ps/ps.1:1458
 #, no-wrap
 msgid ""
 "mask of the pending signals. See\n"
@@ -8343,7 +8427,7 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1453
+#: ../ps/ps.1:1464
 #, no-wrap
 msgid ""
 "process group ID or, equivalently, the process ID of the process group\n"
@@ -8352,13 +8436,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1455
+#: ../ps/ps.1:1466
 #, no-wrap
 msgid "PGRP"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1460
+#: ../ps/ps.1:1471
 #, no-wrap
 msgid ""
 "see\n"
@@ -8368,7 +8452,7 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1465
+#: ../ps/ps.1:1476
 #, no-wrap
 msgid ""
 "a number representing the process ID (alias\n"
@@ -8376,25 +8460,25 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1467
+#: ../ps/ps.1:1478
 #, no-wrap
 msgid "pidns"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1467
+#: ../ps/ps.1:1478
 #, no-wrap
 msgid "PIDNS"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1473
+#: ../ps/ps.1:1484
 #, no-wrap
 msgid "pmem"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1478
+#: ../ps/ps.1:1489
 #, no-wrap
 msgid ""
 "see\n"
@@ -8404,19 +8488,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1480
+#: ../ps/ps.1:1491
 #, no-wrap
 msgid "policy"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1480
+#: ../ps/ps.1:1491
 #, no-wrap
 msgid "POL"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1484
+#: ../ps/ps.1:1495
 #, no-wrap
 msgid ""
 "scheduling class of the process.  (alias\n"
@@ -8425,67 +8509,103 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1506
+#: ../ps/ps.1:1517
 #, no-wrap
 msgid "parent process ID."
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1508
+#: ../ps/ps.1:1519
 #, no-wrap
 msgid "pri"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1508
+#: ../ps/ps.1:1519
 #, no-wrap
 msgid "PRI"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1510
+#: ../ps/ps.1:1521
 #, no-wrap
 msgid "priority of the process.  Higher number means lower priority."
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1512
+#: ../ps/ps.1:1523
 #, no-wrap
 msgid "psr"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1512
+#: ../ps/ps.1:1523
 #, no-wrap
 msgid "PSR"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1514
+#: ../ps/ps.1:1525
 #, no-wrap
-msgid "processor that process is currently assigned to."
+msgid "processor that process last executed on."
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1516
+#: ../ps/ps.1:1527
+#, no-wrap
+msgid "rbytes"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1527
+#, no-wrap
+msgid "RBYTES"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1529
+#, no-wrap
+msgid "Number of bytes which this process really did cause to be fetched from the storage layer."
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1531
+#, no-wrap
+msgid "rchars"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1531
+#, no-wrap
+msgid "RCHARS"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1533
+#, no-wrap
+msgid "Number of bytes which this task has caused to be read from storage."
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1535
 #, no-wrap
 msgid "rgid"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1516
+#: ../ps/ps.1:1535
 #, no-wrap
 msgid "RGID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1518
+#: ../ps/ps.1:1537
 #, no-wrap
 msgid "real group ID."
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1523
+#: ../ps/ps.1:1542
 #, no-wrap
 msgid ""
 "real group name.  This will be the textual group ID, if it can be obtained\n"
@@ -8493,13 +8613,33 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1525 ../ps/ps.1:1531
+#: ../ps/ps.1:1544
+#, no-wrap
+msgid "rops"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1544
+#, no-wrap
+msgid "ROPS"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1547
+#, no-wrap
+msgid ""
+"Number of read I/O operationsâthat is, system calls such as\n"
+"B<read>(2) and B<pread>(2)."
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1549 ../ps/ps.1:1555
 #, no-wrap
 msgid "RSS"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1529
+#: ../ps/ps.1:1553
 #, no-wrap
 msgid ""
 "resident set size, the non-swapped physical memory that a task has used (in\n"
@@ -8508,13 +8648,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1531
+#: ../ps/ps.1:1555
 #, no-wrap
 msgid "rssize"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1536
+#: ../ps/ps.1:1560
 #, no-wrap
 msgid ""
 "see\n"
@@ -8524,19 +8664,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1538
+#: ../ps/ps.1:1562
 #, no-wrap
 msgid "rsz"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1538
+#: ../ps/ps.1:1562
 #, no-wrap
 msgid "RSZ"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1543
+#: ../ps/ps.1:1567
 #, no-wrap
 msgid ""
 "see\n"
@@ -8546,43 +8686,43 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1545
+#: ../ps/ps.1:1569
 #, no-wrap
 msgid "rtprio"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1545
+#: ../ps/ps.1:1569
 #, no-wrap
 msgid "RTPRIO"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1547
+#: ../ps/ps.1:1571
 #, no-wrap
 msgid "realtime priority."
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1549
+#: ../ps/ps.1:1573
 #, no-wrap
 msgid "ruid"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1549
+#: ../ps/ps.1:1573
 #, no-wrap
 msgid "RUID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1551
+#: ../ps/ps.1:1575
 #, no-wrap
 msgid "real user ID."
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1556
+#: ../ps/ps.1:1580
 #, no-wrap
 msgid ""
 "real user ID.  This will be the textual user ID, if it can be obtained and\n"
@@ -8590,7 +8730,7 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1565
+#: ../ps/ps.1:1589
 #, no-wrap
 msgid ""
 "minimal state display (one character).  See section\n"
@@ -8602,19 +8742,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1567
+#: ../ps/ps.1:1591
 #, no-wrap
 msgid "sched"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1567
+#: ../ps/ps.1:1591
 #, no-wrap
 msgid "SCH"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1571
+#: ../ps/ps.1:1595
 #, no-wrap
 msgid ""
 "scheduling policy of the process.  The policies SCHED_OTHER (SCHED_NORMAL),\n"
@@ -8623,19 +8763,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1573
+#: ../ps/ps.1:1597
 #, no-wrap
 msgid "seat"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1573
+#: ../ps/ps.1:1597
 #, no-wrap
 msgid "SEAT"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1577
+#: ../ps/ps.1:1601
 #, no-wrap
 msgid ""
 "displays the identifier associated with all hardware devices assigned\n"
@@ -8644,19 +8784,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1579
+#: ../ps/ps.1:1603
 #, no-wrap
 msgid "sess"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1579
+#: ../ps/ps.1:1603
 #, no-wrap
 msgid "SESS"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1582
+#: ../ps/ps.1:1606
 #, no-wrap
 msgid ""
 "session ID or, equivalently, the process ID of the session leader.  (alias\n"
@@ -8664,13 +8804,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1584
+#: ../ps/ps.1:1608
 #, no-wrap
 msgid "sgi_p"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1587
+#: ../ps/ps.1:1611
 #, no-wrap
 msgid ""
 "processor that the process is currently executing on.  Displays \"*\" if the\n"
@@ -8678,19 +8818,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1589
+#: ../ps/ps.1:1613
 #, no-wrap
 msgid "sgid"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1589
+#: ../ps/ps.1:1613
 #, no-wrap
 msgid "SGID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1592
+#: ../ps/ps.1:1616
 #, no-wrap
 msgid ""
 "saved group ID.  (alias\n"
@@ -8698,19 +8838,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1594
+#: ../ps/ps.1:1618
 #, no-wrap
 msgid "sgroup"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1594
+#: ../ps/ps.1:1618
 #, no-wrap
 msgid "SGROUP"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1597
+#: ../ps/ps.1:1621
 #, no-wrap
 msgid ""
 "saved group name.  This will be the textual group ID, if it can be obtained\n"
@@ -8718,19 +8858,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1599
+#: ../ps/ps.1:1623
 #, no-wrap
 msgid "sid"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1599
+#: ../ps/ps.1:1623
 #, no-wrap
 msgid "SID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1604
+#: ../ps/ps.1:1628
 #, no-wrap
 msgid ""
 "see\n"
@@ -8740,13 +8880,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1606
+#: ../ps/ps.1:1630
 #, no-wrap
 msgid "sig"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1611
+#: ../ps/ps.1:1635
 #, no-wrap
 msgid ""
 "see\n"
@@ -8756,13 +8896,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1613
+#: ../ps/ps.1:1637
 #, no-wrap
 msgid "sigcatch"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1618
+#: ../ps/ps.1:1642
 #, no-wrap
 msgid ""
 "see\n"
@@ -8772,13 +8912,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1620
+#: ../ps/ps.1:1644
 #, no-wrap
 msgid "sigignore"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1625
+#: ../ps/ps.1:1649
 #, no-wrap
 msgid ""
 "see\n"
@@ -8788,13 +8928,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1627
+#: ../ps/ps.1:1651
 #, no-wrap
 msgid "sigmask"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1632
+#: ../ps/ps.1:1656
 #, no-wrap
 msgid ""
 "see\n"
@@ -8804,14 +8944,14 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1634
+#: ../ps/ps.1:1658
 #, fuzzy, no-wrap
 #| msgid "OBJ SIZE"
 msgid "SIZE"
 msgstr "OBJ-STRL"
 
 #. type: tbl table
-#: ../ps/ps.1:1638
+#: ../ps/ps.1:1662
 #, no-wrap
 msgid ""
 "approximate amount of swap space that would be required if the process were\n"
@@ -8820,19 +8960,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1640
+#: ../ps/ps.1:1664
 #, no-wrap
 msgid "slice"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1640
+#: ../ps/ps.1:1664
 #, no-wrap
 msgid "SLICE"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1643
+#: ../ps/ps.1:1667
 #, no-wrap
 msgid ""
 "displays the slice unit which a process belongs to,\n"
@@ -8840,19 +8980,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1645
+#: ../ps/ps.1:1669
 #, no-wrap
 msgid "spid"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1645
+#: ../ps/ps.1:1669
 #, no-wrap
 msgid "SPID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1650
+#: ../ps/ps.1:1674
 #, no-wrap
 msgid ""
 "see\n"
@@ -8862,31 +9002,31 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1652
+#: ../ps/ps.1:1676
 #, no-wrap
 msgid "stackp"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1652
+#: ../ps/ps.1:1676
 #, no-wrap
 msgid "STACKP"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1654
+#: ../ps/ps.1:1678
 #, no-wrap
 msgid "address of the bottom (start) of stack for the process."
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1656
+#: ../ps/ps.1:1680
 #, no-wrap
 msgid "start"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1661
+#: ../ps/ps.1:1685
 #, no-wrap
 msgid ""
 "time the command started.  If the process was started less than 24 hours ago,\n"
@@ -8896,7 +9036,7 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1670
+#: ../ps/ps.1:1694
 #, no-wrap
 msgid ""
 "starting time or date of the process.  Only the year will be displayed if the\n"
@@ -8908,20 +9048,20 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1672
+#: ../ps/ps.1:1696
 #, no-wrap
 msgid "stat"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1672
+#: ../ps/ps.1:1696
 #, fuzzy, no-wrap
 #| msgid "VMSTAT"
 msgid "STAT"
 msgstr "VMSTAT"
 
 #. type: tbl table
-#: ../ps/ps.1:1678
+#: ../ps/ps.1:1702
 #, no-wrap
 msgid ""
 "multi-character process state.  See section\n"
@@ -8932,13 +9072,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1680
+#: ../ps/ps.1:1704
 #, no-wrap
 msgid "state"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1683
+#: ../ps/ps.1:1707
 #, no-wrap
 msgid ""
 "see\n"
@@ -8946,38 +9086,38 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1685
+#: ../ps/ps.1:1709
 #, no-wrap
 msgid "stime"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1685
+#: ../ps/ps.1:1709
 #, fuzzy, no-wrap
 #| msgid "UPTIME"
 msgid "STIME"
 msgstr "UPTIME"
 
 #. type: tbl table
-#: ../ps/ps.1:1687
+#: ../ps/ps.1:1711
 #, no-wrap
 msgid "see B<start_time>. (alias B<start_time>)."
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1689
+#: ../ps/ps.1:1713
 #, no-wrap
 msgid "suid"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1689
+#: ../ps/ps.1:1713
 #, no-wrap
 msgid "SUID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1692
+#: ../ps/ps.1:1716
 #, no-wrap
 msgid ""
 "saved user ID.  (alias\n"
@@ -8985,19 +9125,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1694
+#: ../ps/ps.1:1718
 #, no-wrap
 msgid "supgid"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1694
+#: ../ps/ps.1:1718
 #, no-wrap
 msgid "SUPGID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1697
+#: ../ps/ps.1:1721
 #, no-wrap
 msgid ""
 "group ids of supplementary groups, if any.  See\n"
@@ -9005,19 +9145,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1699
+#: ../ps/ps.1:1723
 #, no-wrap
 msgid "supgrp"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1699
+#: ../ps/ps.1:1723
 #, no-wrap
 msgid "SUPGRP"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1702
+#: ../ps/ps.1:1726
 #, no-wrap
 msgid ""
 "group names of supplementary groups, if any.  See\n"
@@ -9025,20 +9165,20 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1704
+#: ../ps/ps.1:1728
 #, fuzzy, no-wrap
 #| msgid "B<user >"
 msgid "suser"
 msgstr "B<användare >"
 
 #. type: tbl table
-#: ../ps/ps.1:1704
+#: ../ps/ps.1:1728
 #, no-wrap
 msgid "SUSER"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1708
+#: ../ps/ps.1:1732
 #, no-wrap
 msgid ""
 "saved user name.  This will be the textual user ID, if it can be obtained and\n"
@@ -9047,19 +9187,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1710
+#: ../ps/ps.1:1734
 #, no-wrap
 msgid "svgid"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1710
+#: ../ps/ps.1:1734
 #, no-wrap
 msgid "SVGID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1715
+#: ../ps/ps.1:1739
 #, no-wrap
 msgid ""
 "see\n"
@@ -9069,19 +9209,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1717
+#: ../ps/ps.1:1741
 #, no-wrap
 msgid "svuid"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1717
+#: ../ps/ps.1:1741
 #, no-wrap
 msgid "SVUID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1722
+#: ../ps/ps.1:1746
 #, no-wrap
 msgid ""
 "see\n"
@@ -9091,20 +9231,20 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1724
+#: ../ps/ps.1:1748
 #, fuzzy, no-wrap
 #| msgid "s"
 msgid "sz"
 msgstr "s"
 
 #. type: tbl table
-#: ../ps/ps.1:1724
+#: ../ps/ps.1:1748
 #, no-wrap
 msgid "SZ"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1729
+#: ../ps/ps.1:1753
 #, no-wrap
 msgid ""
 "size in physical pages of the core image of the process.  This includes text,\n"
@@ -9114,19 +9254,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1731
+#: ../ps/ps.1:1755
 #, no-wrap
 msgid "tgid"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1731
+#: ../ps/ps.1:1755
 #, no-wrap
 msgid "TGID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1735
+#: ../ps/ps.1:1759
 #, no-wrap
 msgid ""
 "a number representing the thread group to which a task belongs (alias\n"
@@ -9135,20 +9275,20 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1737
+#: ../ps/ps.1:1761
 #, fuzzy, no-wrap
 #| msgid "I<count>"
 msgid "thcount"
 msgstr "I<antal>"
 
 #. type: tbl table
-#: ../ps/ps.1:1737
+#: ../ps/ps.1:1761
 #, no-wrap
 msgid "THCNT"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1743
+#: ../ps/ps.1:1767
 #, no-wrap
 msgid ""
 "see\n"
@@ -9159,19 +9299,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1745
+#: ../ps/ps.1:1769
 #, no-wrap
 msgid "tid"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1745
+#: ../ps/ps.1:1769
 #, no-wrap
 msgid "TID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1752
+#: ../ps/ps.1:1776
 #, no-wrap
 msgid ""
 "the unique number representing a dispatchable entity (alias\n"
@@ -9183,7 +9323,7 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1757
+#: ../ps/ps.1:1781
 #, no-wrap
 msgid ""
 "cumulative CPU\\ time, \"[DD-]HH:MM:SS\" format.  (alias\n"
@@ -9191,13 +9331,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1759
+#: ../ps/ps.1:1783
 #, no-wrap
 msgid "times"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1762
+#: ../ps/ps.1:1786
 #, no-wrap
 msgid ""
 "cumulative CPU\\ time in seconds (alias\n"
@@ -9205,14 +9345,14 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1764
+#: ../ps/ps.1:1788
 #, fuzzy, no-wrap
 #| msgid "name"
 msgid "tname"
 msgstr "namn"
 
 #. type: tbl table
-#: ../ps/ps.1:1767
+#: ../ps/ps.1:1791
 #, no-wrap
 msgid ""
 "controlling tty (terminal).  (alias\n"
@@ -9220,13 +9360,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1769
+#: ../ps/ps.1:1793
 #, no-wrap
 msgid "TPGID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1772
+#: ../ps/ps.1:1796
 #, no-wrap
 msgid ""
 "ID of the foreground process group on the tty (terminal) that the process is\n"
@@ -9234,38 +9374,38 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1774
+#: ../ps/ps.1:1798
 #, no-wrap
 msgid "trs"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1774
+#: ../ps/ps.1:1798
 #, fuzzy, no-wrap
 #| msgid "AUTHORS"
 msgid "TRS"
 msgstr "UPPHOVSMÄN"
 
 #. type: tbl table
-#: ../ps/ps.1:1776
+#: ../ps/ps.1:1800
 #, no-wrap
 msgid "text resident set size, the amount of physical memory devoted to executable code."
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1778
+#: ../ps/ps.1:1802
 #, no-wrap
 msgid "tt"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1778 ../ps/ps.1:1783
+#: ../ps/ps.1:1802 ../ps/ps.1:1807
 #, no-wrap
 msgid "TT"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1781
+#: ../ps/ps.1:1805
 #, no-wrap
 msgid ""
 "controlling tty (terminal).  (alias\n"
@@ -9273,7 +9413,7 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1786
+#: ../ps/ps.1:1810
 #, no-wrap
 msgid ""
 "controlling tty (terminal).  (alias\n"
@@ -9281,13 +9421,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1788
+#: ../ps/ps.1:1812
 #, no-wrap
 msgid "ucmd"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1793
+#: ../ps/ps.1:1817
 #, no-wrap
 msgid ""
 "see\n"
@@ -9297,13 +9437,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1795
+#: ../ps/ps.1:1819
 #, no-wrap
 msgid "ucomm"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1800
+#: ../ps/ps.1:1824
 #, no-wrap
 msgid ""
 "see\n"
@@ -9313,13 +9453,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1802
+#: ../ps/ps.1:1826
 #, no-wrap
 msgid "UID"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1807
+#: ../ps/ps.1:1831
 #, no-wrap
 msgid ""
 "see\n"
@@ -9329,14 +9469,14 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1809
+#: ../ps/ps.1:1833
 #, fuzzy, no-wrap
 #| msgid "name"
 msgid "uname"
 msgstr "namn"
 
 #. type: tbl table
-#: ../ps/ps.1:1814
+#: ../ps/ps.1:1838
 #, no-wrap
 msgid ""
 "see\n"
@@ -9346,19 +9486,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1816
+#: ../ps/ps.1:1840
 #, no-wrap
 msgid "unit"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1816
+#: ../ps/ps.1:1840
 #, no-wrap
 msgid "UNIT"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1819
+#: ../ps/ps.1:1843
 #, no-wrap
 msgid ""
 "displays unit which a process belongs to,\n"
@@ -9366,7 +9506,7 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1826
+#: ../ps/ps.1:1850
 #, no-wrap
 msgid ""
 "see\n"
@@ -9376,43 +9516,43 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1828
+#: ../ps/ps.1:1852
 #, no-wrap
 msgid "userns"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1828
+#: ../ps/ps.1:1852
 #, no-wrap
 msgid "USERNS"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1834
+#: ../ps/ps.1:1858
 #, no-wrap
 msgid "utsns"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1834
+#: ../ps/ps.1:1858
 #, no-wrap
 msgid "UTSNS"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1840
+#: ../ps/ps.1:1864
 #, no-wrap
 msgid "uunit"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1840
+#: ../ps/ps.1:1864
 #, no-wrap
 msgid "UUNIT"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1843
+#: ../ps/ps.1:1867
 #, no-wrap
 msgid ""
 "displays user unit which a process belongs to,\n"
@@ -9420,7 +9560,7 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1850
+#: ../ps/ps.1:1874
 #, no-wrap
 msgid ""
 "see\n"
@@ -9430,7 +9570,7 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1856
+#: ../ps/ps.1:1880
 #, no-wrap
 msgid ""
 "virtual memory size of the process in KiB (1024-byte units).  Device\n"
@@ -9439,111 +9579,186 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1858
+#: ../ps/ps.1:1882
+#, no-wrap
+msgid "wbytes"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1882
+#, no-wrap
+msgid "WBYTES"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1884
+#, no-wrap
+msgid "Number of bytes which this process caused to be sent to the storage layer."
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1886
+#, no-wrap
+msgid "wcbytes"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1886
+#, no-wrap
+msgid "WCBYTES"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1888
+#, fuzzy, no-wrap
+#| msgid "number of active objects"
+msgid "Number of cancelled write bytes."
+msgstr "antal aktiva objekt"
+
+#. type: tbl table
+#: ../ps/ps.1:1890
 #, no-wrap
 msgid "wchan"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1860
+#: ../ps/ps.1:1892
 #, no-wrap
 msgid "name of the kernel function in which the process is sleeping."
 msgstr ""
 
+#. type: tbl table
+#: ../ps/ps.1:1894
+#, no-wrap
+msgid "wchars"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1894
+#, no-wrap
+msgid "WCHARS"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1896
+#, no-wrap
+msgid "Number of bytes which this task has caused, or shall cause to be written to disk."
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1898
+#, no-wrap
+msgid "wops"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1898
+#, no-wrap
+msgid "WOPS"
+msgstr ""
+
+#. type: tbl table
+#: ../ps/ps.1:1901
+#, no-wrap
+msgid ""
+"Number of write I/O operationsâthat is, system calls such as\n"
+"B<write>(2) and B<pwrite>(2)."
+msgstr ""
+
 #. type: SH
-#: ../ps/ps.1:1866
+#: ../ps/ps.1:1907
 #, fuzzy, no-wrap
 #| msgid "ENVIRONMENT"
 msgid "ENVIRONMENT VARIABLES"
 msgstr "MILJÖ"
 
 #. type: Plain text
-#: ../ps/ps.1:1869
+#: ../ps/ps.1:1910
 msgid "The following environment variables could affect B<ps>:"
 msgstr ""
 
 #. type: TP
-#: ../ps/ps.1:1869
+#: ../ps/ps.1:1910
 #, no-wrap
 msgid "B<COLUMNS>"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1872
+#: ../ps/ps.1:1913
 msgid "Override default display width."
 msgstr ""
 
 #. type: TP
-#: ../ps/ps.1:1872
+#: ../ps/ps.1:1913
 #, no-wrap
 msgid "B<LINES>"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1875
+#: ../ps/ps.1:1916
 msgid "Override default display height."
 msgstr ""
 
 #. type: TP
-#: ../ps/ps.1:1875
+#: ../ps/ps.1:1916
 #, no-wrap
 msgid "B<PS_PERSONALITY>"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1880 ../ps/ps.1:1885
+#: ../ps/ps.1:1921 ../ps/ps.1:1926
 msgid ""
 "Set to one of posix, old, linux, bsd, sun, digital...  (see section "
 "B<PERSONALITY> below)."
 msgstr ""
 
 #. type: TP
-#: ../ps/ps.1:1880
+#: ../ps/ps.1:1921
 #, no-wrap
 msgid "B<CMD_ENV>"
 msgstr ""
 
 #. type: TP
-#: ../ps/ps.1:1885
+#: ../ps/ps.1:1926
 #, no-wrap
 msgid "B<I_WANT_A_BROKEN_PS>"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1888
+#: ../ps/ps.1:1929
 msgid "Force obsolete command line interpretation."
 msgstr ""
 
 #. type: TP
-#: ../ps/ps.1:1888
+#: ../ps/ps.1:1929
 #, no-wrap
 msgid "B<LC_TIME>"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1891
+#: ../ps/ps.1:1932
 msgid "Date format."
 msgstr ""
 
 #. type: TP
-#: ../ps/ps.1:1891
+#: ../ps/ps.1:1932
 #, no-wrap
 msgid "B<PS_COLORS>"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1894
+#: ../ps/ps.1:1935
 msgid "Not currently supported."
 msgstr ""
 
 #. type: TP
-#: ../ps/ps.1:1894
+#: ../ps/ps.1:1935
 #, no-wrap
 msgid "B<PS_FORMAT>"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1905
+#: ../ps/ps.1:1946
 msgid ""
 "Default output format override. You may set this to a format string of the "
 "type used for the B<-o> option.  The B<DefSysV> and B<DefBSD> values are "
@@ -9551,46 +9766,46 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../ps/ps.1:1905
+#: ../ps/ps.1:1946
 #, no-wrap
 msgid "B<POSIXLY_CORRECT>"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1908 ../ps/ps.1:1915
+#: ../ps/ps.1:1949 ../ps/ps.1:1956
 msgid "Don't find excuses to ignore bad \"features\"."
 msgstr ""
 
 #. type: TP
-#: ../ps/ps.1:1908
+#: ../ps/ps.1:1949
 #, no-wrap
 msgid "B<POSIX2>"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1912
+#: ../ps/ps.1:1953
 msgid "When set to \"on\", acts as B<POSIXLY_CORRECT>."
 msgstr ""
 
 #. type: TP
-#: ../ps/ps.1:1912
+#: ../ps/ps.1:1953
 #, no-wrap
 msgid "B<UNIX95>"
 msgstr ""
 
 #. type: TP
-#: ../ps/ps.1:1915
+#: ../ps/ps.1:1956
 #, no-wrap
 msgid "B<_XPG>"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1918
+#: ../ps/ps.1:1959
 msgid "Cancel B<CMD_ENV>=I<irix> non-standard behavior."
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1926
+#: ../ps/ps.1:1967
 msgid ""
 "In general, it is a bad idea to set these variables.  The one exception is "
 "B<CMD_ENV> or B<PS_PERSONALITY>, which could be set to Linux for normal "
@@ -9599,304 +9814,304 @@ msgid ""
 msgstr ""
 
 #. type: SH
-#: ../ps/ps.1:1927
+#: ../ps/ps.1:1968
 #, no-wrap
 msgid "PERSONALITY"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1930
+#: ../ps/ps.1:1971
 #, no-wrap
 msgid "390"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1930
+#: ../ps/ps.1:1971
 #, no-wrap
 msgid "like the OS/390 OpenEdition B<ps>"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1931
+#: ../ps/ps.1:1972
 #, no-wrap
 msgid "aix"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1931
+#: ../ps/ps.1:1972
 #, no-wrap
 msgid "like AIX B<ps>"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1932
+#: ../ps/ps.1:1973
 #, no-wrap
 msgid "bsd"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1932
+#: ../ps/ps.1:1973
 #, no-wrap
 msgid "like FreeBSD B<ps> (totally non-standard)"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1933
+#: ../ps/ps.1:1974
 #, no-wrap
 msgid "compaq"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1933
+#: ../ps/ps.1:1974
 #, no-wrap
 msgid "like Digital Unix B<ps>"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1934
+#: ../ps/ps.1:1975
 #, no-wrap
 msgid "debian"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1934 ../ps/ps.1:1936
+#: ../ps/ps.1:1975 ../ps/ps.1:1977
 #, no-wrap
 msgid "like the old Debian B<ps>"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1935
+#: ../ps/ps.1:1976
 #, no-wrap
 msgid "digital"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1935
+#: ../ps/ps.1:1976
 #, no-wrap
 msgid "like Tru64 (was Digital\\ Unix, was OSF/1) B<ps>"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1936
+#: ../ps/ps.1:1977
 #, no-wrap
 msgid "gnu"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1937
+#: ../ps/ps.1:1978
 #, fuzzy, no-wrap
 #| msgid "p"
 msgid "hp"
 msgstr "p"
 
 #. type: tbl table
-#: ../ps/ps.1:1937 ../ps/ps.1:1938
+#: ../ps/ps.1:1978 ../ps/ps.1:1979
 #, no-wrap
 msgid "like HP-UX B<ps>"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1938
+#: ../ps/ps.1:1979
 #, no-wrap
 msgid "hpux"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1939
+#: ../ps/ps.1:1980
 #, no-wrap
 msgid "irix"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1939 ../ps/ps.1:1946
+#: ../ps/ps.1:1980 ../ps/ps.1:1987
 #, no-wrap
 msgid "like Irix B<ps>"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1940
+#: ../ps/ps.1:1981
 #, no-wrap
 msgid "linux"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1940
+#: ../ps/ps.1:1981
 #, no-wrap
 msgid "***** B<recommended> *****"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1941
+#: ../ps/ps.1:1982
 #, no-wrap
 msgid "old"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1941
+#: ../ps/ps.1:1982
 #, no-wrap
 msgid "like the original Linux B<ps> (totally non-standard)"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1942
+#: ../ps/ps.1:1983
 #, no-wrap
 msgid "os390"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1942 ../ps/ps.1:1944
+#: ../ps/ps.1:1983 ../ps/ps.1:1985
 #, no-wrap
 msgid "like OS/390 Open Edition B<ps>"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1943
+#: ../ps/ps.1:1984
 #, no-wrap
 msgid "posix"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1943 ../ps/ps.1:1949 ../ps/ps.1:1950 ../ps/ps.1:1952
-#: ../ps/ps.1:1953 ../ps/ps.1:1954
+#: ../ps/ps.1:1984 ../ps/ps.1:1990 ../ps/ps.1:1991 ../ps/ps.1:1993
+#: ../ps/ps.1:1994 ../ps/ps.1:1995
 #, no-wrap
 msgid "standard"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1944
+#: ../ps/ps.1:1985
 #, no-wrap
 msgid "s390"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1945
+#: ../ps/ps.1:1986
 #, no-wrap
 msgid "sco"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1945
+#: ../ps/ps.1:1986
 #, no-wrap
 msgid "like SCO B<ps>"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1946
+#: ../ps/ps.1:1987
 #, no-wrap
 msgid "sgi"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1947
+#: ../ps/ps.1:1988
 #, no-wrap
 msgid "solaris2"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1947
+#: ../ps/ps.1:1988
 #, no-wrap
 msgid "like Solaris 2+ (SunOS 5) B<ps>"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1948
+#: ../ps/ps.1:1989
 #, no-wrap
 msgid "sunos4"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1948
+#: ../ps/ps.1:1989
 #, no-wrap
 msgid "like SunOS 4 (Solaris 1) B<ps> (totally non-standard)"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1949
+#: ../ps/ps.1:1990
 #, no-wrap
 msgid "svr4"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1950
+#: ../ps/ps.1:1991
 #, no-wrap
 msgid "sysv"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1951
+#: ../ps/ps.1:1992
 #, no-wrap
 msgid "tru64"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1951
+#: ../ps/ps.1:1992
 #, no-wrap
 msgid "like Tru64 (was Digital Unix, was OSF/1) B<ps>"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1952
+#: ../ps/ps.1:1993
 #, no-wrap
 msgid "unix"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1953
+#: ../ps/ps.1:1994
 #, no-wrap
 msgid "unix95"
 msgstr ""
 
 #. type: tbl table
-#: ../ps/ps.1:1954
+#: ../ps/ps.1:1995
 #, no-wrap
 msgid "unix98"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1963
+#: ../ps/ps.1:2004
 #, fuzzy
 #| msgid "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 msgid "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 
 #. type: Plain text
-#: ../ps/ps.1:1969
+#: ../ps/ps.1:2010
 msgid "This B<ps> conforms to:"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1973
+#: ../ps/ps.1:2014
 msgid "Version 2 of the Single Unix Specification"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1975
+#: ../ps/ps.1:2016
 msgid "The Open Group Technical Standard Base Specifications, Issue\\ 6"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1977
+#: ../ps/ps.1:2018
 msgid "IEEE Std 1003.1, 2004\\ Edition"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1979
+#: ../ps/ps.1:2020
 msgid "X/Open System Interfaces Extension [UP\\ XSI]"
 msgstr ""
 
 #. type: IP
-#: ../ps/ps.1:1979
+#: ../ps/ps.1:2020
 #, no-wrap
 msgid "5"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:1981
+#: ../ps/ps.1:2022
 msgid "ISO/IEC 9945:2003"
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:2010
+#: ../ps/ps.1:2051
 msgid ""
 "B<ps> was originally written by E<.UR lankeste@\\:fwi.\\:uva.\\:nl> Branko "
 "Lankester E<.UE .> E<.UR johnsonm@\\:redhat.\\:com> Michael K. Johnson E<."
@@ -9912,7 +10127,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../ps/ps.1:2014
+#: ../ps/ps.1:2055
 #, fuzzy
 #| msgid ""
 #| "Please send bug reports to E<.MT procps@\\:freelists.\\:org> E<.ME .> No "
@@ -10184,7 +10399,7 @@ msgstr "SLABTOP"
 #. type: TH
 #: ../top/top.1:65
 #, no-wrap
-msgid "February 2021"
+msgid "April 2021"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
@@ -11231,8 +11446,8 @@ msgid "A task's currently resident share of available \\*(MP."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:630 ../top/top.1:667 ../top/top.1:700 ../top/top.1:834
-#: ../top/top.1:887 ../top/top.1:931 ../top/top.1:976 ../top/top.1:988
+#: ../top/top.1:630 ../top/top.1:667 ../top/top.1:700 ../top/top.1:863
+#: ../top/top.1:926 ../top/top.1:970 ../top/top.1:1015 ../top/top.1:1027
 msgid "\\*(XX."
 msgstr ""
 
@@ -11395,7 +11610,7 @@ msgstr ""
 #. type: TP
 #: ../top/top.1:716
 #, no-wrap
-msgid "9.B< EXE \\*(Em Executable Path >"
+msgid " 9.B< EXE \\*(Em Executable Path >"
 msgstr ""
 
 #. type: Plain text
@@ -11416,7 +11631,7 @@ msgstr ""
 #. type: TP
 #: ../top/top.1:725
 #, no-wrap
-msgid " 10.B< Flags \\*(Em Task Flags >"
+msgid "10.B< Flags \\*(Em Task Flags >"
 msgstr ""
 
 #. type: Plain text
@@ -11629,19 +11844,70 @@ msgstr ""
 #. type: TP
 #: ../top/top.1:820
 #, no-wrap
-msgid "24.B< RES \\*(Em Resident Memory Size (KiB) >"
+msgid "24.B< PSS \\*(Em Proportional Resident Memory, smaps (KiB) >"
 msgstr ""
 
 #. type: Plain text
 #: ../top/top.1:825
 msgid ""
-"A subset of the virtual address space (VIRT) representing the non-swapped "
-"\\*(MP a task is currently using.  It is also the sum of the RSan, RSfd and "
-"RSsh fields."
+"The proportion of this task's share of `RSS' where each page is divided by "
+"the number of processes sharing it.  It is also the sum of the `PSan', "
+"`PSfd' and `PSsh' fields."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:829
+#: ../top/top.1:828
+msgid ""
+"For example, if a process has 1000 resident pages alone and 1000 resident "
+"pages shared with another process, its `PSS' would be 1500 (times page size)."
+msgstr ""
+
+#. type: Plain text
+#: ../top/top.1:832 ../top/top.1:847 ../top/top.1:873
+msgid ""
+"Accessing smaps values is 10x more costly than other memory statistics and "
+"data for other users requires root privileges."
+msgstr ""
+
+#. type: Plain text
+#: ../top/top.1:835
+msgid "25.B< PSan \\*(Em Proportional Anonymous Memory, smaps (KiB) >"
+msgstr ""
+
+#. type: Plain text
+#: ../top/top.1:837
+msgid "26.B< PSfd \\*(Em Proportional File Memory, smaps (KiB) >"
+msgstr ""
+
+#. type: Plain text
+#: ../top/top.1:839
+msgid "27.B< PSsh \\*(Em Proportional Shmem Memory, smaps (KiB) >"
+msgstr ""
+
+#. type: Plain text
+#: ../top/top.1:843
+msgid ""
+"As was true for `PSS' above (total proportional resident memory), these "
+"fields represent the proportion of this task's share of each type of memory "
+"divided by the number of processes sharing it."
+msgstr ""
+
+#. type: TP
+#: ../top/top.1:849
+#, no-wrap
+msgid "28.B< RES \\*(Em Resident Memory Size (KiB) >"
+msgstr ""
+
+#. type: Plain text
+#: ../top/top.1:854
+msgid ""
+"A subset of the virtual address space (VIRT) representing the non-swapped "
+"\\*(MP a task is currently using.  It is also the sum of the `RSan', `RSfd' "
+"and `RSsh' fields."
+msgstr ""
+
+#. type: Plain text
+#: ../top/top.1:858
 msgid ""
 "It can include private anonymous pages, private pages mapped to files "
 "(including program images and shared libraries) plus shared anonymous "
@@ -11650,33 +11916,47 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:832
+#: ../top/top.1:861
 msgid ""
 "Lastly, this field may also include shared file-backed pages which, when "
 "modified, act as a dedicated \\*(MS and thus will never impact SWAP."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:835
+#: ../top/top.1:864
 #, no-wrap
-msgid "25.B< RSan \\*(Em Resident Anonymous Memory Size (KiB) >"
+msgid "29.B< RSS \\*(Em Resident Memory, smaps (KiB) >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:839
+#: ../top/top.1:869
+msgid ""
+"Another, more precise view of process non-swapped \\*(MP.  It is obtained "
+"from the `smaps_rollup' file and is generally slightly larger than that "
+"shown for `RES'."
+msgstr ""
+
+#. type: TP
+#: ../top/top.1:874
+#, no-wrap
+msgid "30.B< RSan \\*(Em Resident Anonymous Memory Size (KiB) >"
+msgstr ""
+
+#. type: Plain text
+#: ../top/top.1:878
 msgid ""
 "A subset of resident memory (RES) representing private pages not mapped to a "
 "file."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:840
+#: ../top/top.1:879
 #, no-wrap
-msgid "26.B< RSfd \\*(Em Resident File-Backed Memory Size (KiB) >"
+msgid "31.B< RSfd \\*(Em Resident File-Backed Memory Size (KiB) >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:845
+#: ../top/top.1:884
 msgid ""
 "A subset of resident memory (RES) representing the implicitly shared pages "
 "supporting program images and shared libraries.  It also includes explicit "
@@ -11684,61 +11964,61 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:846
+#: ../top/top.1:885
 #, no-wrap
-msgid "27.B< RSlk \\*(Em Resident Locked Memory Size (KiB) >"
+msgid "32.B< RSlk \\*(Em Resident Locked Memory Size (KiB) >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:849
+#: ../top/top.1:888
 msgid "A subset of resident memory (RES) which cannot be swapped out."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:850
+#: ../top/top.1:889
 #, no-wrap
-msgid "28.B< RSsh \\*(Em Resident Shared Memory Size (KiB) >"
+msgid "33.B< RSsh \\*(Em Resident Shared Memory Size (KiB) >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:854
+#: ../top/top.1:893
 msgid ""
 "A subset of resident memory (RES) representing the explicitly shared "
 "anonymous shm*/mmap pages."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:855
+#: ../top/top.1:894
 #, no-wrap
-msgid "29.B< RUID \\*(Em Real User Id >"
+msgid "34.B< RUID \\*(Em Real User Id >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:858
+#: ../top/top.1:897
 msgid "TheI< real> user ID."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:859
+#: ../top/top.1:898
 #, no-wrap
-msgid "30.B< RUSER \\*(Em Real User Name >"
+msgid "35.B< RUSER \\*(Em Real User Name >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:862
+#: ../top/top.1:901
 #, fuzzy
 #| msgid "The next expression is a username."
 msgid "TheI< real> user name."
 msgstr "Nästa uttryck är ett användarnamn."
 
 #. type: TP
-#: ../top/top.1:863
+#: ../top/top.1:902
 #, no-wrap
-msgid "31.B< S \\*(Em Process Status >"
+msgid "36.B< S \\*(Em Process Status >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:873
+#: ../top/top.1:912
 #, no-wrap
 msgid ""
 "The status of the task which can be one of:\n"
@@ -11752,7 +12032,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:878
+#: ../top/top.1:917
 msgid ""
 "Tasks shown as running should be more properly thought of as ready to run "
 "\\*(Em their task_struct is simply represented on the Linux run-queue.  Even "
@@ -11761,13 +12041,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:879
+#: ../top/top.1:918
 #, no-wrap
-msgid "32.B< SHR \\*(Em Shared Memory Size (KiB) >"
+msgid "37.B< SHR \\*(Em Shared Memory Size (KiB) >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:885
+#: ../top/top.1:924
 msgid ""
 "A subset of resident memory (RES) that may be used by other processes.  It "
 "will include shared anonymous pages and shared file-backed pages.  It also "
@@ -11776,13 +12056,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:888
+#: ../top/top.1:927
 #, no-wrap
-msgid "33.B< SID \\*(Em Session Id >"
+msgid "38.B< SID \\*(Em Session Id >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:896
+#: ../top/top.1:935
 msgid ""
 "A session is a collection of process groups (\\*(Xa PGRP), usually "
 "established by the login shell.  A newly forked process joins the session of "
@@ -11792,31 +12072,31 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:897
+#: ../top/top.1:936
 #, no-wrap
-msgid "34.B< SUID \\*(Em Saved User Id >"
+msgid "39.B< SUID \\*(Em Saved User Id >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:900
+#: ../top/top.1:939
 msgid "TheI< saved> user ID."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:901
+#: ../top/top.1:940
 #, no-wrap
-msgid "35.B< SUPGIDS \\*(Em Supplementary Group IDs >"
+msgid "40.B< SUPGIDS \\*(Em Supplementary Group IDs >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:906
+#: ../top/top.1:945
 msgid ""
 "The IDs of any supplementary group(s) established at login or inherited from "
 "a task's parent.  They are displayed in a comma delimited list."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:910
+#: ../top/top.1:949
 msgid ""
 "\\*(NT The SUPGIDS field, unlike most columns, is not fixed-width.  When "
 "displayed, it plus any other variable width columns will be allocated all "
@@ -11824,20 +12104,20 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:911
+#: ../top/top.1:950
 #, no-wrap
-msgid "36.B< SUPGRPS \\*(Em Supplementary Group Names >"
+msgid "41.B< SUPGRPS \\*(Em Supplementary Group Names >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:916
+#: ../top/top.1:955
 msgid ""
 "The names of any supplementary group(s) established at login or inherited "
 "from a task's parent.  They are displayed in a comma delimited list."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:920
+#: ../top/top.1:959
 msgid ""
 "\\*(NT The SUPGRPS field, unlike most columns, is not fixed-width.  When "
 "displayed, it plus any other variable width columns will be allocated all "
@@ -11845,37 +12125,37 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:921
+#: ../top/top.1:960
 #, no-wrap
-msgid "37.B< SUSER \\*(Em Saved User Name >"
+msgid "42.B< SUSER \\*(Em Saved User Name >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:924
+#: ../top/top.1:963
 msgid "TheI< saved> user name."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:925
+#: ../top/top.1:964
 #, no-wrap
-msgid "38.B< SWAP \\*(Em Swapped Size (KiB) >"
+msgid "43.B< SWAP \\*(Em Swapped Size (KiB) >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:929
+#: ../top/top.1:968
 msgid ""
 "The formerly resident portion of a task's address space written to the "
 "\\*(MS when \\*(MP becomes over committed."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:932
+#: ../top/top.1:971
 #, no-wrap
-msgid "39.B< TGID \\*(Em Thread Group Id >"
+msgid "44.B< TGID \\*(Em Thread Group Id >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:937
+#: ../top/top.1:976
 msgid ""
 "The ID of the thread group to which a task belongs.  It is the PID of the "
 "thread group leader.  In kernel terms, it represents those tasks that share "
@@ -11883,13 +12163,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:938
+#: ../top/top.1:977
 #, no-wrap
-msgid "40.B< TIME \\*(Em \\*(PU Time >"
+msgid "45.B< TIME \\*(Em \\*(PU Time >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:945
+#: ../top/top.1:984
 msgid ""
 "Total \\*(PU time the task has used since it started.  When Cumulative mode "
 "is \\*O, each process is listed with the \\*(Pu time that it and its dead "
@@ -11899,26 +12179,26 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:946
+#: ../top/top.1:985
 #, no-wrap
-msgid "41.B< TIME+ \\*(Em \\*(PU Time, hundredths >"
+msgid "46.B< TIME+ \\*(Em \\*(PU Time, hundredths >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:950
+#: ../top/top.1:989
 msgid ""
 "The same as TIME, but reflecting more granularity through hundredths of a "
 "second."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:951
+#: ../top/top.1:990
 #, no-wrap
-msgid "42.B< TPGID \\*(Em Tty Process Group Id >"
+msgid "47.B< TPGID \\*(Em Tty Process Group Id >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:957
+#: ../top/top.1:996
 msgid ""
 "The process group ID of the foreground process for the connected tty, or -1 "
 "if a process is not connected to a terminal.  By convention, this value "
@@ -11926,13 +12206,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:958
+#: ../top/top.1:997
 #, no-wrap
-msgid "43.B< TTY \\*(Em Controlling Tty >"
+msgid "48.B< TTY \\*(Em Controlling Tty >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:965
+#: ../top/top.1:1004
 msgid ""
 "The name of the controlling terminal.  This is usually the device (serial "
 "port, pty, etc.) from which the process was started, and which it uses for "
@@ -11941,48 +12221,48 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:966
+#: ../top/top.1:1005
 #, no-wrap
-msgid "44.B< UID \\*(Em User Id >"
+msgid "49.B< UID \\*(Em User Id >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:969
+#: ../top/top.1:1008
 msgid "TheI< effective> user ID of the task's owner."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:970
+#: ../top/top.1:1009
 #, no-wrap
-msgid "45.B< USED \\*(Em Memory in Use (KiB) >"
+msgid "50.B< USED \\*(Em Memory in Use (KiB) >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:974
+#: ../top/top.1:1013
 msgid ""
 "This field represents the non-swapped \\*(MP a task is using (RES) plus the "
 "swapped out portion of its address space (SWAP)."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:977
+#: ../top/top.1:1016
 #, no-wrap
-msgid "46.B< USER \\*(Em User Name >"
+msgid "51.B< USER \\*(Em User Name >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:980
+#: ../top/top.1:1019
 msgid "TheI< effective> user name of the task's owner."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:981
+#: ../top/top.1:1020
 #, no-wrap
-msgid "47.B< VIRT \\*(Em Virtual Memory Size (KiB) >"
+msgid "52.B< VIRT \\*(Em Virtual Memory Size (KiB) >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:986
+#: ../top/top.1:1025
 msgid ""
 "The total amount of \\*(MV used by the task.  It includes all code, data and "
 "shared libraries plus pages that have been swapped out and pages that have "
@@ -11990,26 +12270,26 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:989
+#: ../top/top.1:1028
 #, no-wrap
-msgid "48.B< WCHAN \\*(Em Sleeping in Function >"
+msgid "53.B< WCHAN \\*(Em Sleeping in Function >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:994
+#: ../top/top.1:1033
 msgid ""
 "This field will show the name of the kernel function in which the task is "
 "currently sleeping.  Running tasks will display a dash (`-') in this column."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:995
+#: ../top/top.1:1034
 #, no-wrap
-msgid "49.B< nDRT \\*(Em Dirty Pages Count >"
+msgid "54.B< nDRT \\*(Em Dirty Pages Count >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1001
+#: ../top/top.1:1040
 msgid ""
 "The number of pages that have been modified since they were last written to "
 "\\*(AS.  Dirty pages must be written to \\*(AS before the corresponding "
@@ -12017,18 +12297,18 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1003
+#: ../top/top.1:1042
 msgid "This field was deprecated with linux 2.6 and is always zero."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1004
+#: ../top/top.1:1043
 #, no-wrap
-msgid "50.B< nMaj \\*(Em Major Page Fault Count >"
+msgid "55.B< nMaj \\*(Em Major Page Fault Count >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1011
+#: ../top/top.1:1050
 msgid ""
 "The number ofB< major> page faults that have occurred for a task.  A page "
 "fault occurs when a process attempts to read from or write to a virtual page "
@@ -12037,13 +12317,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1012
+#: ../top/top.1:1051
 #, no-wrap
-msgid "51.B< nMin \\*(Em Minor Page Fault count >"
+msgid "56.B< nMin \\*(Em Minor Page Fault count >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1019
+#: ../top/top.1:1058
 msgid ""
 "The number ofB< minor> page faults that have occurred for a task.  A page "
 "fault occurs when a process attempts to read from or write to a virtual page "
@@ -12052,63 +12332,63 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1020
+#: ../top/top.1:1059
 #, no-wrap
-msgid "52.B< nTH \\*(Em Number of Threads >"
+msgid "57.B< nTH \\*(Em Number of Threads >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1023
+#: ../top/top.1:1062
 msgid "The number of threads associated with a process."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1024
+#: ../top/top.1:1063
 #, no-wrap
-msgid "53.B< nsIPC \\*(Em IPC namespace >"
+msgid "58.B< nsIPC \\*(Em IPC namespace >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1028
+#: ../top/top.1:1067
 msgid ""
 "The Inode of the namespace used to isolate interprocess communication (IPC)  "
 "resources such as System V IPC objects and POSIX message queues."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1029
+#: ../top/top.1:1068
 #, no-wrap
-msgid "54.B< nsMNT \\*(Em MNT namespace >"
+msgid "59.B< nsMNT \\*(Em MNT namespace >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1033
+#: ../top/top.1:1072
 msgid ""
 "The Inode of the namespace used to isolate filesystem mount points thus "
 "offering different views of the filesystem hierarchy."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1034
+#: ../top/top.1:1073
 #, no-wrap
-msgid "55.B< nsNET \\*(Em NET namespace >"
+msgid "60.B< nsNET \\*(Em NET namespace >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1038
+#: ../top/top.1:1077
 msgid ""
 "The Inode of the namespace used to isolate resources such as network "
 "devices, IP addresses, IP routing, port numbers, etc."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1039
+#: ../top/top.1:1078
 #, no-wrap
-msgid "56.B< nsPID \\*(Em PID namespace >"
+msgid "61.B< nsPID \\*(Em PID namespace >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1045
+#: ../top/top.1:1084
 msgid ""
 "The Inode of the namespace used to isolate process ID numbers meaning they "
 "need not remain unique.  Thus, each such namespace could have its own `init/"
@@ -12117,13 +12397,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1046
+#: ../top/top.1:1085
 #, no-wrap
-msgid "57.B< nsUSER \\*(Em USER namespace >"
+msgid "62.B< nsUSER \\*(Em USER namespace >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1052
+#: ../top/top.1:1091
 msgid ""
 "The Inode of the namespace used to isolate the user and group ID numbers.  "
 "Thus, a process could have a normal unprivileged user ID outside a user "
@@ -12132,39 +12412,39 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1053
+#: ../top/top.1:1092
 #, no-wrap
-msgid "58.B< nsUTS \\*(Em UTS namespace >"
+msgid "63.B< nsUTS \\*(Em UTS namespace >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1057
+#: ../top/top.1:1096
 msgid ""
 "The Inode of the namespace used to isolate hostname and NIS domain name.  "
 "UTS simply means \"UNIX Time-sharing System\"."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1058
+#: ../top/top.1:1097
 #, no-wrap
-msgid "59.B< vMj \\*(Em Major Page Fault Count Delta>"
+msgid "64.B< vMj \\*(Em Major Page Fault Count Delta>"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1062
+#: ../top/top.1:1101
 msgid ""
 "The number ofB< major> page faults that have occurred since the last update "
 "(see nMaj)."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1063
+#: ../top/top.1:1102
 #, no-wrap
-msgid "60.B< vMn \\*(Em Minor Page Fault Count Delta>"
+msgid "65.B< vMn \\*(Em Minor Page Fault Count Delta>"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1067
+#: ../top/top.1:1106
 msgid ""
 "The number ofB< minor> page faults that have occurred since the last update "
 "(see nMin)."
@@ -12172,14 +12452,14 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:1069
+#: ../top/top.1:1108
 #, no-wrap
 msgid "3b. MANAGING Fields"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:1076
+#: ../top/top.1:1115
 msgid ""
 "After pressing the \\*(CI `f' or `F' (Fields Management) you will be "
 "presented with a screen showing: 1) the \\*(CW name; 2) the designated sort "
@@ -12189,16 +12469,16 @@ msgid ""
 msgstr ""
 
 #. type: IP
-#: ../top/top.1:1078 ../top/top.1:1084 ../top/top.1:1089 ../top/top.1:1093
-#: ../top/top.1:1098 ../top/top.1:2417 ../top/top.1:2440 ../top/top.1:2449
-#: ../top/top.1:2465 ../top/top.1:2471 ../top/top.1:2477 ../top/top.1:2487
-#: ../top/top.1:2504
+#: ../top/top.1:1117 ../top/top.1:1123 ../top/top.1:1128 ../top/top.1:1132
+#: ../top/top.1:1137 ../top/top.1:2456 ../top/top.1:2479 ../top/top.1:2488
+#: ../top/top.1:2504 ../top/top.1:2510 ../top/top.1:2516 ../top/top.1:2526
+#: ../top/top.1:2543
 #, no-wrap
 msgid "\\(bu"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1083
+#: ../top/top.1:1122
 msgid ""
 "As the on screen instructions indicate, you navigate among the fields with "
 "theB< Up> andB< Down> \\*(KAs.  The PgUp, PgDn, Home and End keys can also "
@@ -12206,21 +12486,21 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1088
+#: ../top/top.1:1127
 msgid ""
 "TheB< Right> \\*(KA selects a field for repositioning and theB< Left> \\*(KA "
 "or the E<lt>B<Enter>E<gt> key commits that field's placement."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1092
+#: ../top/top.1:1131
 msgid ""
 "The `B<d>' key or the E<lt>B<Space>E<gt> bar toggles a field's display "
 "status, and thus the presence or absence of the asterisk."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1097
+#: ../top/top.1:1136
 msgid ""
 "The `B<s>' key designates a field as the sort field.  \\*(XT 4c. TASK AREA "
 "Commands, SORTING for additional information regarding your selection of a "
@@ -12228,14 +12508,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1101
+#: ../top/top.1:1140
 msgid ""
 "The `B<a>' and `B<w>' keys can be used to cycle through all available "
 "windows and the `B<q>' or E<lt>B<Esc>E<gt> keys exit Fields Management."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1110
+#: ../top/top.1:1149
 msgid ""
 "The Fields Management screen can also be used to change the \\*(CG in either "
 "\\*(FM or \\*(AM.  Whatever was targeted when `q' or E<lt>EscE<gt> was "
@@ -12245,7 +12525,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1117
+#: ../top/top.1:1156
 msgid ""
 "\\*(NT Any window that has been scrolledI< horizontally> will be reset if "
 "any field changes are made via the Fields Management screen.  AnyI< "
@@ -12256,14 +12536,14 @@ msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: SH
-#: ../top/top.1:1119
+#: ../top/top.1:1158
 #, no-wrap
 msgid "4. INTERACTIVE Commands"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:1124
+#: ../top/top.1:1163
 msgid ""
 "Listed below is a brief index of commands within categories.  Some commands "
 "appear more than once \\*(Em their meaning or scope may vary depending on "
@@ -12271,7 +12551,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1144
+#: ../top/top.1:1183
 #, no-wrap
 msgid ""
 "  4a.I< Global-Commands >\n"
@@ -12296,14 +12576,14 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:1147
+#: ../top/top.1:1186
 #, no-wrap
 msgid "4a. GLOBAL Commands"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:1152
+#: ../top/top.1:1191
 msgid ""
 "The global \\*(CIs areB< always> available in both \\*(FM and \\*(AM.  "
 "However, some of these \\*(CIs areB< not available> when running in Secure "
@@ -12311,20 +12591,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1156
+#: ../top/top.1:1195
 msgid ""
 "If you wish to know in advance whether or not your \\*(We has been secured, "
 "simply ask for help and view the system summary on the second line."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1157
+#: ../top/top.1:1196
 #, no-wrap
 msgid "\\ \\ E<lt>B<Enter>E<gt> or E<lt>B<Space>E<gt>\\ \\ :I<Refresh-Display >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1162
+#: ../top/top.1:1201
 msgid ""
 "These commands awaken \\*(We and following receipt of any input the entire "
 "display will be repainted.  They also force an update of any hotplugged "
@@ -12332,20 +12612,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1165
+#: ../top/top.1:1204
 msgid ""
 "Use either of these keys if you have a large delay interval and wish to see "
 "current status,"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1166
+#: ../top/top.1:1205
 #, no-wrap
 msgid "\\ \\ \\ B<?> | B<h>\\ \\ :I<Help >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1171
+#: ../top/top.1:1210
 msgid ""
 "There are two help levels available.  The first will provide a reminder of "
 "all the basic \\*(CIs.  If \\*(We isI< secured>, that screen will be "
@@ -12353,20 +12633,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1174
+#: ../top/top.1:1213
 msgid ""
 "Typing `h' or `?' on that help screen will take you to help for those "
 "\\*(CIs applicable to \\*(AM."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1175
+#: ../top/top.1:1214
 #, no-wrap
 msgid "\\ \\ \\ B<=>\\ \\ :I<Exit-Display-Limits >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1182
+#: ../top/top.1:1221
 msgid ""
 "Removes restrictions on what is shown.  This command will reverse any "
 "`i' (idle tasks), `n' (max tasks)  and `v' (hide children) commands that "
@@ -12375,20 +12655,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1185
+#: ../top/top.1:1224
 msgid ""
 "Additionally, if the window has been scrolled it will be reset with this "
 "command."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1186
+#: ../top/top.1:1225
 #, no-wrap
 msgid "\\ \\ \\ B<0>\\ \\ :I<Zero-Suppress> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1191
+#: ../top/top.1:1230
 msgid ""
 "This command determines whether zeros are shown or suppressed for many of "
 "the fields in a \\*(TW.  Fields like UID, GID, NI, PR or P are not affected "
@@ -12396,26 +12676,26 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1192
+#: ../top/top.1:1231
 #, no-wrap
 msgid "\\ \\ \\ B<A>\\ \\ :I<Alternate-Display-Mode> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1197
+#: ../top/top.1:1236
 msgid ""
 "This command will switch between \\*(FM and \\*(AM.  \\*(XT 5. ALTERNATE-"
 "DISPLAY Provisions and the `g' \\*(CI for insight into \\*(CWs and \\*(FGs."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1198
+#: ../top/top.1:1237
 #, no-wrap
 msgid "\\ \\ \\ B<B>\\ \\ :I<Bold-Disable/Enable> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1204
+#: ../top/top.1:1243
 msgid ""
 "This command will influence use of the bold terminfo capability and altersB< "
 "both> the \\*(SA and \\*(TA for the \\*(CW.  While it is intended primarily "
@@ -12423,7 +12703,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1209
+#: ../top/top.1:1248
 msgid ""
 "\\*(NT When this toggle is \\*O and \\*(We is operating in monochrome mode, "
 "theB< entire display> will appear as normal text.  Thus, unless the `x' and/"
@@ -12432,20 +12712,20 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1210
+#: ../top/top.1:1249
 #, no-wrap
 msgid "*\\ \\ B<d> | B<s>\\ \\ :I<Change-Delay-Time-interval >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1214
+#: ../top/top.1:1253
 msgid ""
 "You will be prompted to enter the delay time, in seconds, between display "
 "updates."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1220
+#: ../top/top.1:1259
 msgid ""
 "Fractional seconds are honored, but a negative number is not allowed.  "
 "Entering 0 causes (nearly) continuous updates, with an unsatisfactory "
@@ -12455,20 +12735,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1223
+#: ../top/top.1:1262
 msgid ""
 "If at any time you wish to know the current delay time, simply ask for help "
 "and view the system summary on the second line."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1224
+#: ../top/top.1:1263
 #, no-wrap
 msgid "\\ \\ \\ B<E>\\ \\ :I<Enforce-Summary-Memory-Scale> in Summary Area"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1229
+#: ../top/top.1:1268
 msgid ""
 "With this command you can cycle through the available \\*(SA memory scaling "
 "which ranges from KiB (kibibytes or 1,024 bytes) through EiB (exbibytes or "
@@ -12476,7 +12756,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1233
+#: ../top/top.1:1272
 msgid ""
 "If you see a `+' between a displayed number and the following label, it "
 "means that \\*(We was forced to truncate some portion of that number.  By "
@@ -12484,13 +12764,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1234
+#: ../top/top.1:1273
 #, no-wrap
 msgid "\\ \\ \\ B<e>\\ \\ :I<Enforce-Task-Memory-Scale> in Task Area"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1239
+#: ../top/top.1:1278
 msgid ""
 "With this command you can cycle through the available \\*(TA memory scaling "
 "which ranges from KiB (kibibytes or 1,024 bytes) through PiB (pebibytes or "
@@ -12498,7 +12778,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1246
+#: ../top/top.1:1285
 msgid ""
 "While \\*(We will try to honor the selected target range, additional scaling "
 "might still be necessary in order to accommodate current values.  If you "
@@ -12509,13 +12789,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1247
+#: ../top/top.1:1286
 #, no-wrap
 msgid "\\ \\ \\ B<g>\\ \\ :I<Choose-Another-Window/Field-Group >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1253
+#: ../top/top.1:1292
 msgid ""
 "You will be prompted to enter a number between 1 and 4 designating the "
 "\\*(FG which should be made the \\*(CW.  You will soon grow comfortable with "
@@ -12523,13 +12803,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1254
+#: ../top/top.1:1293
 #, no-wrap
 msgid "\\ \\ \\ B<H>\\ \\ :I<Threads-mode> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1259
+#: ../top/top.1:1298
 msgid ""
 "When this toggle is \\*O, individual threads will be displayed for all "
 "processes in all visible \\*(TWs.  Otherwise, \\*(We displays a summation of "
@@ -12537,13 +12817,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1260
+#: ../top/top.1:1299
 #, no-wrap
 msgid "\\ \\ \\ B<I>\\ \\ :I<Irix/Solaris-Mode> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1265
+#: ../top/top.1:1304
 msgid ""
 "When operating in Solaris mode (`I' toggled \\*F), a task's \\*(Pu usage "
 "will be divided by the total number of \\*(PUs.  After issuing this command, "
@@ -12551,18 +12831,18 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1266
+#: ../top/top.1:1305
 #, no-wrap
 msgid "*\\ \\ B<k>\\ \\ :I<Kill-a-task >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1269
+#: ../top/top.1:1308
 msgid "You will be prompted for a PID and then the signal to send."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1273 ../top/top.1:1295
+#: ../top/top.1:1312 ../top/top.1:1334
 msgid ""
 "Entering no PID or a negative number will be interpreted as the default "
 "shown in the prompt (the first task displayed).  A PID value of zero means "
@@ -12570,21 +12850,21 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1276
+#: ../top/top.1:1315
 msgid ""
 "The default signal, as reflected in the prompt, is SIGTERM.  However, you "
 "can send any signal, via number or name."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1279
+#: ../top/top.1:1318
 msgid ""
 "If you wish to abort the kill process, do one of the following depending on "
 "your progress:"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1283
+#: ../top/top.1:1322
 #, no-wrap
 msgid ""
 "    1) at the pid prompt, type an invalid number\n"
@@ -12593,24 +12873,24 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1285
+#: ../top/top.1:1324
 #, no-wrap
 msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1288
+#: ../top/top.1:1327
 #, no-wrap
 msgid "*\\ \\ B<r>\\ \\ :I<Renice-a-Task >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1291
+#: ../top/top.1:1330
 msgid "You will be prompted for a PID and then the value to nice it to."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1301
+#: ../top/top.1:1340
 msgid ""
 "A positive nice value will cause a process to lose priority.  Conversely, a "
 "negative nice value will cause a process to be viewed more favorably by the "
@@ -12619,14 +12899,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1304
+#: ../top/top.1:1343
 msgid ""
 "If you wish to abort the renice process, do one of the following depending "
 "on your progress:"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1308
+#: ../top/top.1:1347
 #, no-wrap
 msgid ""
 "    1) at the pid prompt, type an invalid number\n"
@@ -12635,13 +12915,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1310
+#: ../top/top.1:1349
 #, no-wrap
 msgid "\\ \\ \\ B<W>\\ \\ :I<Write-the-Configuration-File >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1316
+#: ../top/top.1:1355
 msgid ""
 "This will save all of your options and toggles plus the current display mode "
 "and delay time.  By issuing this command just before quitting \\*(We, you "
@@ -12649,25 +12929,25 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1317
+#: ../top/top.1:1356
 #, no-wrap
 msgid "\\ \\ \\ B<X>\\ \\ :I<Extra-Fixed-Width >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1322
+#: ../top/top.1:1361
 msgid ""
 "Some fields are fixed width and not scalable.  As such, they are subject to "
 "truncation which would be indicated by a `+' in the last position."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1324
+#: ../top/top.1:1363
 msgid "This \\*(CI can be used to alter the widths of the following fields:"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1334
+#: ../top/top.1:1373
 #, no-wrap
 msgid ""
 "   I< field  default    field  default    field  default >\n"
@@ -12681,14 +12961,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1339
+#: ../top/top.1:1378
 msgid ""
 "You will be prompted for the amount to be added to the default widths shown "
 "above.  Entering zero forces a return to those defaults."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1344
+#: ../top/top.1:1383
 msgid ""
 "If you enter a negative number, \\*(We will automatically increase the "
 "column size as needed until there is no more truncated data.  You can "
@@ -12697,7 +12977,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1348
+#: ../top/top.1:1387
 msgid ""
 "\\*(NT Whether explicitly or automatically increased, the widths for these "
 "fields are never decreased by \\*(We.  To narrow them you must specify a "
@@ -12705,13 +12985,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1349
+#: ../top/top.1:1388
 #, no-wrap
 msgid "\\ \\ \\ B<Y>\\ \\ :I<Inspect-Other-Output >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1355
+#: ../top/top.1:1394
 msgid ""
 "After issuing the `Y' \\*(CI, you will be prompted for a target PID.  Typing "
 "a value or accepting the default results in a separate screen.  That screen "
@@ -12720,7 +13000,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1359
+#: ../top/top.1:1398
 msgid ""
 "\\*(NT This \\*(CI is only fully realized when supporting entries have been "
 "manually added to the end of the \\*(We \\*(CF.  For details on creating "
@@ -12728,7 +13008,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1366
+#: ../top/top.1:1405
 msgid ""
 "Most of the keys used to navigate the Inspect feature are reflected in its "
 "header prologue.  There are, however, additional keys available once you "
@@ -12737,7 +13017,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1376
+#: ../top/top.1:1415
 #, no-wrap
 msgid ""
 "   I< key      function >\n"
@@ -12751,13 +13031,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1378
+#: ../top/top.1:1417
 #, no-wrap
 msgid "\\ \\ \\ B<Z>\\ \\ :I<Change-Color-Mapping >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1383
+#: ../top/top.1:1422
 msgid ""
 "This key will take you to a separate screen where you can change the colors "
 "for the \\*(CW, or for all windows.  For details regarding this \\*(CI "
@@ -12765,13 +13045,13 @@ msgid ""
 msgstr ""
 
 #. type: IP
-#: ../top/top.1:1384 ../top/top.1:1868
+#: ../top/top.1:1423 ../top/top.1:1907
 #, no-wrap
 msgid "*"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1387
+#: ../top/top.1:1426
 msgid ""
 "The commands shown with an \\*(AK are not available in Secure mode, nor will "
 "they be shown on the level-1 help screen."
@@ -12779,14 +13059,14 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:1389
+#: ../top/top.1:1428
 #, no-wrap
 msgid "4b. SUMMARY AREA Commands"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:1394
+#: ../top/top.1:1433
 msgid ""
 "The \\*(SA \\*(CIs areB< always available> in both \\*(FM and \\*(AM.  They "
 "affect the beginning lines of your display and will determine the position "
@@ -12794,20 +13074,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1398
+#: ../top/top.1:1437
 msgid ""
 "These commands always impact just the \\*(CG.  \\*(XT 5. ALTERNATE-DISPLAY "
 "Provisions and the `g' \\*(CI for insight into \\*(CWs and \\*(FGs."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1399
+#: ../top/top.1:1438
 #, no-wrap
 msgid "\\ \\ \\ B<C>\\ \\ :I<Show-scroll-coordinates> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1404
+#: ../top/top.1:1443
 msgid ""
 "Toggle an informational message which is displayed whenever the message line "
 "is not otherwise being used.  For additional information \\*(Xt 5c. "
@@ -12815,26 +13095,26 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1405
+#: ../top/top.1:1444
 #, no-wrap
 msgid "\\ \\ \\ B<l>\\ \\ :I<Load-Average/Uptime> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1409
+#: ../top/top.1:1448
 msgid ""
 "This is also the line containing the program name (possibly an alias)  when "
 "operating in \\*(FM or the \\*(CW name when operating in \\*(AM."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1410
+#: ../top/top.1:1449
 #, no-wrap
 msgid "\\ \\ \\ B<t>\\ \\ :I<Task/Cpu-States> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1415
+#: ../top/top.1:1454
 msgid ""
 "This command affects from 2 to many \\*(SA lines, depending on the state of "
 "the `1', `2' or `3' \\*(CTs and whether or not \\*(We is running under true "
@@ -12842,19 +13122,19 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1418
+#: ../top/top.1:1457
 msgid ""
 "This portion of the \\*(SA is also influenced by the `H' \\*(CI toggle, as "
 "reflected in the total label which shows either Tasks or Threads."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1420 ../top/top.1:1437
+#: ../top/top.1:1459 ../top/top.1:1476
 msgid "This command serves as a 4-way toggle, cycling through these modes:"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1425
+#: ../top/top.1:1464
 #, no-wrap
 msgid ""
 "    1. detailed percentages by category\n"
@@ -12864,7 +13144,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1430
+#: ../top/top.1:1469
 msgid ""
 "When operating in either of the graphic modes, the display becomes much more "
 "meaningful when individual CPUs or NUMA nodes are also displayed.  \\*(XC "
@@ -12872,20 +13152,20 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1431
+#: ../top/top.1:1470
 #, no-wrap
 msgid "\\ \\ \\ B<m>\\ \\ :I<Memory/Swap-Usage> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1435
+#: ../top/top.1:1474
 msgid ""
 "This command affects the two \\*(SA lines dealing with physical and virtual "
 "memory."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1442
+#: ../top/top.1:1481
 #, no-wrap
 msgid ""
 "    1. detailed percentages by memory type\n"
@@ -12895,13 +13175,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1444
+#: ../top/top.1:1483
 #, no-wrap
 msgid "\\ \\ \\ B<1>\\ \\ :I<Single/Separate-Cpu-States> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1449
+#: ../top/top.1:1488
 msgid ""
 "This command affects how the `t' command's Cpu States portion is shown.  "
 "Although this toggle exists primarily to serve massively-parallel SMP "
@@ -12909,7 +13189,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1454
+#: ../top/top.1:1493
 msgid ""
 "When you see `%Cpu(s):' in the \\*(SA, the `1' toggle is \\*O and all \\*(Pu "
 "information is gathered in a single line.  Otherwise, each \\*(Pu is "
@@ -12917,13 +13197,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1455
+#: ../top/top.1:1494
 #, no-wrap
 msgid "\\ \\ \\ B<2>\\ \\ :I<NUMA-Nodes/Cpu-Summary> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1460
+#: ../top/top.1:1499
 msgid ""
 "This command toggles between the `1' command cpu summary display (only)  or "
 "a summary display plus the cpu usage statistics for each NUMA Node.  It is "
@@ -12931,13 +13211,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1461
+#: ../top/top.1:1500
 #, no-wrap
 msgid "\\ \\ \\ B<3>\\ \\ :I<Expand-NUMA-Node >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1467
+#: ../top/top.1:1506
 msgid ""
 "You will be invited to enter a number representing a NUMA Node.  Thereafter, "
 "a node summary plus the statistics for each cpu in that node will be shown "
@@ -12946,13 +13226,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1468
+#: ../top/top.1:1507
 #, no-wrap
 msgid "\\ \\ \\ B<4>\\ \\ :I<Display-Cpus-Two-Abreast >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1475
+#: ../top/top.1:1514
 msgid ""
 "This command turns the `1' toggle \\*F for individual \\*(Pu display but "
 "prints the results two abreast.  It requires a terminal with a minimum width "
@@ -12961,7 +13241,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1479
+#: ../top/top.1:1518
 msgid ""
 "To avoid truncation when displaying detailed \\*(Pu statistcs, as opposed to "
 "the graphic representations, a minimum width of 165 columns would be "
@@ -12969,22 +13249,22 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1480
+#: ../top/top.1:1519
 #, no-wrap
 msgid "\\ \\ \\ B<!>\\ \\ :I<Combine-Cpus-Mode >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1486
+#: ../top/top.1:1525
 msgid ""
 "This \\*(CT is intended for massively parallel SMP environments where, even "
 "with the `4' \\*(CT, not all processors can be displayed.  With each press "
-"of `!' the number of additional \\*(Pu's combined is doubled thus reducing "
+"of `!' the number of additional \\*(Pus combined is doubled thus reducing "
 "the total number of \\*(Pu lines displayed."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1494
+#: ../top/top.1:1533
 msgid ""
 "For example, with the first press of `!' one additional \\*(Pu will be "
 "combined and displayed as `0-1, 2-3, ...' instead of the normal `%Cpu0, "
@@ -12994,7 +13274,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1498
+#: ../top/top.1:1537
 msgid ""
 "Such progression continues until individual \\*(Pus are again displayed and "
 "impacts both the `1' and `4' toggles (one or two columns).  Use the `=' "
@@ -13002,7 +13282,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1504
+#: ../top/top.1:1543
 msgid ""
 "\\*(NT If the entire \\*(SA has been toggled \\*F for any window, you would "
 "be left with just theB< message line>.  In that way, you will have maximized "
@@ -13012,37 +13292,37 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:1506
+#: ../top/top.1:1545
 #, no-wrap
 msgid "4c. TASK AREA Commands"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:1509
+#: ../top/top.1:1548
 msgid "The \\*(TA \\*(CIs areB< always> available in \\*(FM."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1512
+#: ../top/top.1:1551
 msgid ""
 "The \\*(TA \\*(CIs areB< never available> in \\*(AMI< if> the \\*(CW's "
 "\\*(TD has been toggled \\*F (\\*(Xt 5. ALTERNATE-DISPLAY Provisions)."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1516
+#: ../top/top.1:1555
 msgid "B<APPEARANCE> of \\*(TW"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1517
+#: ../top/top.1:1556
 #, no-wrap
 msgid "\\ \\ \\ B<J>\\ \\ :I<Justify-Numeric-Columns> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1523
+#: ../top/top.1:1562
 msgid ""
 "Alternates between right-justified (the default) and left-justified numeric "
 "data.  If the numeric data completely fills the available column, this "
@@ -13050,13 +13330,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1524
+#: ../top/top.1:1563
 #, no-wrap
 msgid "\\ \\ \\ B<j>\\ \\ :I<Justify-Character-Columns> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1530
+#: ../top/top.1:1569
 msgid ""
 "Alternates between left-justified (the default) and right-justified "
 "character data.  If the character data completely fills the available "
@@ -13064,20 +13344,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1535
+#: ../top/top.1:1574
 msgid ""
 "The following commands will also be influenced by the state of the global "
 "`B' (bold enable) toggle."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1537
+#: ../top/top.1:1576
 #, no-wrap
 msgid "\\ \\ \\ B<b>\\ \\ :I<Bold/Reverse> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1542
+#: ../top/top.1:1581
 msgid ""
 "This command will impact how the `x' and `y' toggles are displayed.  It may "
 "also impact the \\*(SA when a bar graph has been selected for \\*(Pu states "
@@ -13085,13 +13365,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1543
+#: ../top/top.1:1582
 #, no-wrap
 msgid "\\ \\ \\ B<x>\\ \\ :I<Column-Highlight> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1551
+#: ../top/top.1:1590
 #, no-wrap
 msgid ""
 "Changes highlighting for the current sort field.\n"
@@ -13103,7 +13383,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1556
+#: ../top/top.1:1595
 msgid ""
 "\\*(NT Whenever Searching and/or Other Filtering is active in a window, "
 "column highlighting is temporarily disabled.  \\*(XC notes at the end of "
@@ -13111,13 +13391,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1557
+#: ../top/top.1:1596
 #, no-wrap
 msgid "\\ \\ \\ B<y>\\ \\ :I<Row-Highlight> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1562
+#: ../top/top.1:1601
 msgid ""
 "Changes highlighting for \"running\" tasks.  For additional insight into "
 "this task state, \\*(Xt 3a. DESCRIPTIONS of Fields, the `S' field (Process "
@@ -13125,20 +13405,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1565
+#: ../top/top.1:1604
 msgid ""
 "Use of this provision provides important insight into your system's health.  "
 "The only costs will be a few additional tty escape sequences."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1566
+#: ../top/top.1:1605
 #, no-wrap
 msgid "\\ \\ \\ B<z>\\ \\ :I<Color/Monochrome> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1572
+#: ../top/top.1:1611
 msgid ""
 "Switches the \\*(CW between your last used color scheme and the older form "
 "of black-on-white or white-on-black.  This command will alterB< both> the "
@@ -13147,18 +13427,18 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1576
+#: ../top/top.1:1615
 msgid "B<CONTENT> of \\*(TW"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1577
+#: ../top/top.1:1616
 #, no-wrap
 msgid "\\ \\ \\ B<c>\\ \\ :I<Command-Line/Program-Name> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1582
+#: ../top/top.1:1621
 msgid ""
 "This command will be honored whether or not the COMMAND column is currently "
 "visible.  Later, should that field come into view, the change you applied "
@@ -13166,13 +13446,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1583 ../top/top.1:1725
+#: ../top/top.1:1622 ../top/top.1:1764
 #, no-wrap
 msgid "\\ \\ \\ B<f> | B<F>\\ \\ :I<Fields-Management >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1589
+#: ../top/top.1:1628
 msgid ""
 "These keys display a separate screen where you can change which fields are "
 "displayed, their order and also designate the sort field.  For additional "
@@ -13180,13 +13460,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1590
+#: ../top/top.1:1629
 #, no-wrap
 msgid "\\ \\ \\ B<o> | B<O>\\ \\ :I<Other-Filtering >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1596
+#: ../top/top.1:1635
 msgid ""
 "You will be prompted for the selection criteria which then determines which "
 "tasks will be shown in the \\*(CW.  Your criteria can be made case sensitive "
@@ -13195,27 +13475,27 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1599
+#: ../top/top.1:1638
 msgid ""
 "\\*(XT 5e. FILTERING in a window for details on these and additional related "
 "\\*(CIs."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1600
+#: ../top/top.1:1639
 #, no-wrap
 msgid "\\ \\ \\ B<S>\\ \\ :I<Cumulative-Time-Mode> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1604
+#: ../top/top.1:1643
 msgid ""
 "When Cumulative mode is \\*O, each process is listed with the \\*(Pu time "
 "that it and its dead children have used."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1611
+#: ../top/top.1:1650
 msgid ""
 "When \\*F, programs that fork into many separate tasks will appear less "
 "demanding.  For programs like `init' or a shell this is appropriate but for "
@@ -13225,7 +13505,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1615
+#: ../top/top.1:1654
 msgid ""
 "After issuing this command, you'll be informed of the new state of this "
 "toggle.  If you wish to know in advance whether or not Cumulative mode is in "
@@ -13233,13 +13513,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1616
+#: ../top/top.1:1655
 #, no-wrap
 msgid "\\ \\ \\ B<u> | B<U>\\ \\ :I<Show-Specific-User-Only >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1621
+#: ../top/top.1:1660
 msgid ""
 "You will be prompted for theB< uid> orB< name> of the user to display.  The -"
 "u option matches on B< effective> user whereas the -U option matches onB< "
@@ -13247,7 +13527,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1626
+#: ../top/top.1:1665
 msgid ""
 "Thereafter, in that \\*(TW only matching users will be shown, or possibly no "
 "processes will be shown.  Prepending an exclamation point (`!') to the user "
@@ -13256,7 +13536,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1630
+#: ../top/top.1:1669
 msgid ""
 "Different \\*(TWs can be used to filter different users.  Later, if you wish "
 "to monitor all users again in the \\*(CW, re-issue this command but just "
@@ -13264,13 +13544,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1631
+#: ../top/top.1:1670
 #, no-wrap
 msgid "\\ \\ \\ B<V>\\ \\ :I<Forest-View-Mode> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1638
+#: ../top/top.1:1677
 msgid ""
 "In this mode, processes are reordered according to their parents and the "
 "layout of the COMMAND column resembles that of a tree.  In forest view mode "
@@ -13279,7 +13559,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1642
+#: ../top/top.1:1681
 msgid ""
 "\\*(NT Typing any key affecting the sort order will exit forest view mode in "
 "the \\*(CW.  \\*(XT 4c. TASK AREA Commands, SORTING for information on those "
@@ -13287,20 +13567,20 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1643
+#: ../top/top.1:1682
 #, no-wrap
 msgid "\\ \\ \\ B<v>\\ \\ :I<Hide/Show-Children> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1647
+#: ../top/top.1:1686
 msgid ""
 "When in forest view mode, this key serves as a toggle to collapse or expand "
 "the children of a parent."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1651
+#: ../top/top.1:1690
 msgid ""
 "The toggle is applied against the first (topmost) process in the \\*(CW.  "
 "\\*(XT 5c. SCROLLING a Window for additional information regarding vertical "
@@ -13308,25 +13588,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1654
+#: ../top/top.1:1693
 msgid ""
 "If the target process has not forked any children, this key has no effect.  "
 "It also has no effect when not in forest view mode."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1658
+#: ../top/top.1:1697
 msgid "B<SIZE> of \\*(TW"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1659
+#: ../top/top.1:1698
 #, no-wrap
 msgid "\\ \\ \\ B<i>\\ \\ :I<Idle-Process> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1667
+#: ../top/top.1:1706
 msgid ""
 "Displays all tasks or just active tasks.  When this toggle is \\*F, tasks "
 "that have not used any \\*(PU since the last update will not be displayed.  "
@@ -13335,7 +13615,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1670
+#: ../top/top.1:1709
 msgid ""
 "If this command is applied to the last \\*(TD when in \\*(AM, then it will "
 "not affect the window's size, as all prior \\*(TDs will have already been "
@@ -13343,20 +13623,20 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1671
+#: ../top/top.1:1710
 #, no-wrap
 msgid "\\ \\ \\ B<n> | B<#>\\ \\ :I<Set-Maximum-Tasks >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1675
+#: ../top/top.1:1714
 msgid ""
 "You will be prompted to enter the number of tasks to display.  The lessor of "
 "your number and available screen rows will be used."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1680
+#: ../top/top.1:1719
 msgid ""
 "When used in \\*(AM, this is the command that gives you precise control over "
 "the size of each currently visible \\*(TD, except for the very last.  It "
@@ -13365,19 +13645,19 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1683
+#: ../top/top.1:1722
 msgid ""
 "\\*(NT If you wish to increase the size of the last visible \\*(TD when in "
 "\\*(AM, simply decrease the size of the \\*(TD(s) above it."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1687
+#: ../top/top.1:1726
 msgid "B<SORTING> of \\*(TW"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1692
+#: ../top/top.1:1731
 msgid ""
 "For compatibility, this \\*(We supports most of the former \\*(We sort "
 "keys.  Since this is primarily a service to former \\*(We users, these "
@@ -13385,7 +13665,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1699
+#: ../top/top.1:1738
 #, no-wrap
 msgid ""
 "     I< command   sorted-field                  supported >\n"
@@ -13397,7 +13677,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1704
+#: ../top/top.1:1743
 msgid ""
 "Before using any of the following sort provisions, \\*(We suggests that you "
 "temporarily turn on column highlighting using the `x' \\*(CI.  That will "
@@ -13405,7 +13685,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1710
+#: ../top/top.1:1749
 #, no-wrap
 msgid ""
 "The following \\*(CIs willB< only> be honored when the current sort field\n"
@@ -13416,40 +13696,40 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1711
+#: ../top/top.1:1750
 #, no-wrap
 msgid "\\ \\ \\ B<E<lt>>\\ \\ :I<Move-Sort-Field-Left >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1715
+#: ../top/top.1:1754
 msgid ""
 "Moves the sort column to the left unless the current sort field is the first "
 "field being displayed."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1716
+#: ../top/top.1:1755
 #, no-wrap
 msgid "\\ \\ \\ B<E<gt>>\\ \\ :I<Move-Sort-Field-Right >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1720
+#: ../top/top.1:1759
 msgid ""
 "Moves the sort column to the right unless the current sort field is the last "
 "field being displayed."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1724
+#: ../top/top.1:1763
 msgid ""
 "The following \\*(CIs willB< always> be honored whether or not the current "
 "sort field is visible."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1731
+#: ../top/top.1:1770
 msgid ""
 "These keys display a separate screen where you can change which field is "
 "used as the sort column, among other functions.  This can be a convenient "
@@ -13458,13 +13738,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1732
+#: ../top/top.1:1771
 #, no-wrap
 msgid "\\ \\ \\ B<R>\\ \\ :I<Reverse/Normal-Sort-Field> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1735
+#: ../top/top.1:1774
 msgid ""
 "Using this \\*(CI you can alternate between high-to-low and low-to-high "
 "sorts."
@@ -13472,14 +13752,14 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:1737
+#: ../top/top.1:1776
 #, no-wrap
 msgid "4d. COLOR Mapping"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:1742
+#: ../top/top.1:1781
 msgid ""
 "When you issue the `Z' \\*(CI, you will be presented with a separate "
 "screen.  That screen can be used to change the colors in just the \\*(CW or "
@@ -13487,12 +13767,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1745
+#: ../top/top.1:1784
 msgid "The following \\*(CIs are available."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1756
+#: ../top/top.1:1795
 #, no-wrap
 msgid ""
 "    B<4> upper case letters to select aB< target >\n"
@@ -13508,7 +13788,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1762
+#: ../top/top.1:1801
 msgid ""
 "If you use `a' or `w' to cycle the targeted window, you will have applied "
 "the color scheme that was displayed when you left that window.  You can, of "
@@ -13517,7 +13797,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1767
+#: ../top/top.1:1806
 msgid ""
 "The Color Mapping screen can also be used to change the \\*(CG in either "
 "\\*(FM or \\*(AM.  Whatever was targeted when `q' or E<lt>EnterE<gt> was "
@@ -13526,7 +13806,7 @@ msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: SH
-#: ../top/top.1:1769
+#: ../top/top.1:1808
 #, no-wrap
 msgid "5. ALTERNATE-DISPLAY Provisions"
 msgstr ""
@@ -13534,19 +13814,19 @@ msgstr ""
 #.  ----------------------------------------------------------------------
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:1772
+#: ../top/top.1:1811
 #, no-wrap
 msgid "5a. WINDOWS Overview"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1774
+#: ../top/top.1:1813
 #, no-wrap
 msgid "B<Field Groups/Windows>:"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1781
+#: ../top/top.1:1820
 msgid ""
 "In \\*(FM there is a single window represented by the entire screen.  That "
 "single window can still be changed to display 1 of 4 differentB< field "
@@ -13555,14 +13835,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1784
+#: ../top/top.1:1823
 msgid ""
 "In \\*(AM, those 4 underlying \\*(FGs can now be made visible "
 "simultaneously, or can be turned \\*F individually at your command."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1789
+#: ../top/top.1:1828
 msgid ""
 "The \\*(SA will always exist, even if it's only the message line.  At any "
 "given time onlyI< one> \\*(SA can be displayed.  However, depending on your "
@@ -13571,13 +13851,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1790
+#: ../top/top.1:1829
 #, no-wrap
 msgid "B<Current Window>:"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1796
+#: ../top/top.1:1835
 msgid ""
 "The \\*(CW is the window associated with the \\*(SA and the window to which "
 "task related commands are always directed.  Since in \\*(AM you can toggle "
@@ -13585,7 +13865,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1801
+#: ../top/top.1:1840
 msgid ""
 "A further complication arises when you have toggled the first \\*(SA line "
 "\\*F.  With the loss of the window name (the `l' toggled line), you'll not "
@@ -13594,19 +13874,19 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:1803
+#: ../top/top.1:1842
 #, no-wrap
 msgid "5b. COMMANDS for Windows"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1805
+#: ../top/top.1:1844
 #, no-wrap
 msgid "\\ \\ \\ B<-> | B<_>\\ \\ :I<Show/Hide-Window(s)> toggles "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1812
+#: ../top/top.1:1851
 msgid ""
 "The `-' key turns the \\*(CW's \\*(TD \\*O and \\*F.  When \\*O, that \\*(TA "
 "will show a minimum of the columns header you've established with the `f' "
@@ -13615,7 +13895,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1818
+#: ../top/top.1:1857
 msgid ""
 "The `_' key does the same for all \\*(TDs.  In other words, it switches "
 "between the currently visible \\*(TD(s) and any \\*(TD(s) you had toggled "
@@ -13624,13 +13904,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1819
+#: ../top/top.1:1858
 #, no-wrap
 msgid "*\\ \\ B<=> | B<+>\\ \\ :I<Equalize/Reset-Window(s) >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1828
+#: ../top/top.1:1867
 msgid ""
 "The `=' key forces the \\*(CW's \\*(TD to be visible.  It also reverses any "
 "active `i' (idle tasks), `n' (max tasks), `u/U' (user filter), `o/O' (other "
@@ -13641,7 +13921,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1833
+#: ../top/top.1:1872
 msgid ""
 "The `+' key does the same for all windows.  The four \\*(TDs will reappear, "
 "evenly balanced, while retaining any customizations previously applied "
@@ -13649,18 +13929,18 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1834
+#: ../top/top.1:1873
 #, no-wrap
 msgid "*\\ \\ B<A>\\ \\ :I<Alternate-Display-Mode> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1837
+#: ../top/top.1:1876
 msgid "This command will switch between \\*(FM and \\*(AM."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1841
+#: ../top/top.1:1880
 msgid ""
 "The first time you issue this command, all four \\*(TDs will be shown.  "
 "Thereafter when you switch modes, you will see only the \\*(TD(s) you've "
@@ -13668,13 +13948,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1842
+#: ../top/top.1:1881
 #, no-wrap
 msgid "*\\ \\ B<a> | B<w>\\ \\ :I<Next-Window-Forward/Backward >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1848
+#: ../top/top.1:1887
 msgid ""
 "This will change the \\*(CW, which in turn changes the window to which "
 "commands are directed.  These keys act in a circular fashion so you can "
@@ -13682,7 +13962,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1852
+#: ../top/top.1:1891
 msgid ""
 "Assuming the window name is visible (you have not toggled `l' \\*F), "
 "whenever the \\*(CW name loses its emphasis/color, that's a reminder the "
@@ -13690,45 +13970,45 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1853
+#: ../top/top.1:1892
 #, no-wrap
 msgid "*\\ \\ B<g>\\ \\ :I<Choose-Another-Window/Field-Group >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1857
+#: ../top/top.1:1896
 msgid ""
 "You will be prompted to enter a number between 1 and 4 designating the "
 "\\*(FG which should be made the \\*(CW."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1861
+#: ../top/top.1:1900
 msgid ""
 "In \\*(FM, this command is necessary to alter the \\*(CW.  In \\*(AM, it is "
 "simply a less convenient alternative to the `a' and `w' commands."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1862
+#: ../top/top.1:1901
 #, no-wrap
 msgid "\\ \\ \\ B<G>\\ \\ :I<Change-Window/Field-Group-Name >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1867
+#: ../top/top.1:1906
 msgid ""
 "You will be prompted for a new name to be applied to the \\*(CW.  It does "
 "not require that the window name be visible (the `l' toggle to be \\*O)."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1870
+#: ../top/top.1:1909
 msgid "The \\*(CIs shown with an \\*(AK have use beyond \\*(AM."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1874
+#: ../top/top.1:1913
 #, no-wrap
 msgid ""
 "    =, A, g    are always available\n"
@@ -13738,14 +14018,14 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:1877
+#: ../top/top.1:1916
 #, no-wrap
 msgid "5c. SCROLLING a Window"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:1883
+#: ../top/top.1:1922
 msgid ""
 "Typically a \\*(TW is a partial view into a systems's total tasks/threads "
 "which shows only some of the available fields/columns.  With these \\*(KSs, "
@@ -13754,13 +14034,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1884
+#: ../top/top.1:1923
 #, no-wrap
 msgid "B<Up>,B<PgUp>\\ \\ :I<Scroll-Tasks >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1890
+#: ../top/top.1:1929
 msgid ""
 "Move the view up toward the first task row, until the first task is "
 "displayed at the top of the \\*(CW.  The I<Up> \\*(KA moves a single line "
@@ -13768,13 +14048,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1891
+#: ../top/top.1:1930
 #, no-wrap
 msgid "B<Down>,B<PgDn>\\ \\ :I<Scroll-Tasks >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1897
+#: ../top/top.1:1936
 msgid ""
 "Move the view down toward the last task row, until the last task is the only "
 "task displayed at the top of the \\*(CW.  The I<Down> \\*(KA moves a single "
@@ -13782,18 +14062,18 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1898
+#: ../top/top.1:1937
 #, no-wrap
 msgid "B<Left>,B<Right>\\ \\ :I<Scroll-Columns >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1901
+#: ../top/top.1:1940
 msgid "Move the view of displayable fields horizontally one column at a time."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1906
+#: ../top/top.1:1945
 msgid ""
 "\\*(NT As a reminder, some fields/columns are not fixed-width but allocated "
 "all remaining screen width when visible.  When scrolling right or left, that "
@@ -13801,7 +14081,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1912
+#: ../top/top.1:1951
 msgid ""
 "Additionally, there are special provisions for any variable width field when "
 "positioned as the last displayed field.  Once that field is reached via the "
@@ -13811,31 +14091,31 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1913
+#: ../top/top.1:1952
 #, no-wrap
 msgid "B<Home>\\ \\ :I<Jump-to-Home-Position >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1916
+#: ../top/top.1:1955
 msgid "Reposition the display to the un-scrolled coordinates."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1917
+#: ../top/top.1:1956
 #, no-wrap
 msgid "B<End>\\ \\ :I<Jump-to-End-Position >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1921
+#: ../top/top.1:1960
 msgid ""
 "Reposition the display so that the rightmost column reflects the last "
 "displayable field and the bottom task row represents the last task."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1926
+#: ../top/top.1:1965
 msgid ""
 "\\*(NT From this position it is still possible to scrollI< down> andI< "
 "right> using the \\*(KAs.  This is true until a single column and a single "
@@ -13843,13 +14123,13 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1927
+#: ../top/top.1:1966
 #, no-wrap
 msgid "B<C>\\ \\ :I<Show-scroll-coordinates> toggle "
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1933
+#: ../top/top.1:1972
 msgid ""
 "Toggle an informational message which is displayed whenever the message line "
 "is not otherwise being used.  That message will take one of two forms "
@@ -13857,7 +14137,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1937
+#: ../top/top.1:1976
 #, no-wrap
 msgid ""
 "  B<scroll coordinates: y = n/n (tasks), x = n/n (fields)>\n"
@@ -13865,7 +14145,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1945
+#: ../top/top.1:1984
 msgid ""
 "The coordinates shown as B<n>/B<n> are relative to the upper left corner of "
 "the \\*(CW.  The additional `B<+\\ nn>' represents the displacement into a "
@@ -13875,26 +14155,26 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1947
+#: ../top/top.1:1986
 #, no-wrap
 msgid "B<y = n/n (tasks) >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1952
+#: ../top/top.1:1991
 msgid ""
 "The first B<n> represents the topmost visible task and is controlled by "
 "\\*(KSs.  The second B<n> is updated automatically to reflect total tasks."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1953
+#: ../top/top.1:1992
 #, no-wrap
 msgid "B<x = n/n (fields) >"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1959
+#: ../top/top.1:1998
 msgid ""
 "The first B<n> represents the leftmost displayed column and is controlled by "
 "\\*(KSs.  The second B<n> is the total number of displayable fields and is "
@@ -13902,14 +14182,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1964 ../top/top.1:2023
+#: ../top/top.1:2003 ../top/top.1:2062
 msgid ""
 "The above \\*(CIs areB< always> available in \\*(FM butB< never> available "
 "in \\*(AM if the \\*(CW's \\*(TD has been toggled \\*F."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1968
+#: ../top/top.1:2007
 msgid ""
 "\\*(NT When any form of filtering is active, you can expect some slight "
 "aberrations when scrolling since not all tasks will be visible.  This is "
@@ -13918,26 +14198,26 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:1970
+#: ../top/top.1:2009
 #, no-wrap
 msgid "5d. SEARCHING in a Window"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:1973
+#: ../top/top.1:2012
 msgid ""
 "You can use these \\*(CIs to locate a task row containing a particular value."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1974
+#: ../top/top.1:2013
 #, no-wrap
 msgid "B<L>\\ \\ :I<Locate-a-string>"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1979
+#: ../top/top.1:2018
 msgid ""
 "You will be prompted for the case-sensitive string to locate starting from "
 "the current window coordinates.  There are no restrictions on search string "
@@ -13945,7 +14225,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1983
+#: ../top/top.1:2022
 msgid ""
 "Searches are not limited to values from a single field or column.  All of "
 "the values displayed in a task row are allowed in a search string.  You may "
@@ -13953,27 +14233,27 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1986
+#: ../top/top.1:2025
 msgid ""
 "Keying E<lt>EnterE<gt> with no input will effectively disable the `&' key "
 "until a new search string is entered."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:1987
+#: ../top/top.1:2026
 #, no-wrap
 msgid "B<&>\\ \\ :I<Locate-next>"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1991
+#: ../top/top.1:2030
 msgid ""
 "Assuming a search string has been established, \\*(We will attempt to locate "
 "the next occurrence."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:1998
+#: ../top/top.1:2037
 msgid ""
 "When a match is found, the current window is repositioned vertically so the "
 "task row containing that string is first.  The scroll coordinates message "
@@ -13982,58 +14262,58 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2001
+#: ../top/top.1:2040
 msgid ""
 "The availability of a matching string will be influenced by the following "
 "factors."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2002
+#: ../top/top.1:2041
 #, no-wrap
 msgid "a. Which fields are displayable from the total available,"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2005
+#: ../top/top.1:2044
 msgid "\\*(Xt 3b. MANAGING Fields."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2005
+#: ../top/top.1:2044
 #, no-wrap
 msgid "b. Scrolling a window vertically and/or horizontally,"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2008
+#: ../top/top.1:2047
 msgid "\\*(Xt 5c. SCROLLING a Window."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2008
+#: ../top/top.1:2047
 #, no-wrap
 msgid "c. The state of the command/command-line toggle,"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2011
+#: ../top/top.1:2050
 msgid "\\*(Xc `c' \\*(CI."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2011
+#: ../top/top.1:2050
 #, no-wrap
 msgid "d. The stability of the chosen sort column,"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2014
+#: ../top/top.1:2053
 msgid "for example PID is good but %CPU bad."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2020
+#: ../top/top.1:2059
 msgid ""
 "If a search fails, restoring the \\*(CW home (unscrolled) position, "
 "scrolling horizontally, displaying command-lines or choosing a more stable "
@@ -14041,7 +14321,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2029
+#: ../top/top.1:2068
 msgid ""
 "\\*(NT Whenever a Search is active in a window, \\*(We will turn column "
 "highlighting \\*F to prevent false matches on internal non-display escape "
@@ -14052,22 +14332,22 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:2031
+#: ../top/top.1:2070
 #, no-wrap
 msgid "5e. FILTERING in a Window"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:2037
+#: ../top/top.1:2076
 msgid ""
 "You can use this `Other Filter' feature to establish selection criteria "
 "which will then determine which tasks are shown in the \\*(CW.  Such filters "
-"can be made presistent if preserved in the rcfile via the 'W' \\*(CI."
+"can be made persistent if preserved in the rcfile via the 'W' \\*(CI."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2043
+#: ../top/top.1:2082
 msgid ""
 "Establishing a filter requires: 1) a field name; 2) an operator; and 3) a "
 "selection value, as a minimum.  This is the most complex of \\*(We's user "
@@ -14077,60 +14357,60 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2045
+#: ../top/top.1:2084
 msgid "B<Filter Basics>"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2046
+#: ../top/top.1:2085
 #, no-wrap
 msgid "1. field names are case sensitive and spelled as in the header"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2048
+#: ../top/top.1:2087
 #, no-wrap
 msgid "2. selection values need not comprise the full displayed field"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2050
+#: ../top/top.1:2089
 #, no-wrap
 msgid "3. a selection is either case insensitive or sensitive to case"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2052
+#: ../top/top.1:2091
 #, no-wrap
 msgid "4. the default is inclusion, prepending `!' denotes exclusions"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2054
+#: ../top/top.1:2093
 #, no-wrap
 msgid "5. multiple selection criteria can be applied to a \\*(TW"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2056
+#: ../top/top.1:2095
 #, no-wrap
 msgid "6. inclusion and exclusion criteria can be used simultaneously"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2058
+#: ../top/top.1:2097
 #, no-wrap
 msgid "7. the 1 equality and 2 relational filters can be freely mixed"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2060
+#: ../top/top.1:2099
 #, no-wrap
 msgid "8. separate unique filters are maintained for each \\*(TW"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2068
+#: ../top/top.1:2107
 msgid ""
 "If a field is not turned on or is not currently in view, then your selection "
 "criteria will not affect the display.  Later, should a filtered field become "
@@ -14138,42 +14418,42 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2071
+#: ../top/top.1:2110
 msgid "B<Keyboard Summary>"
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2071
+#: ../top/top.1:2110
 #, no-wrap
 msgid "\\ \\ B<o>\\ \\ :I<Other-Filter> (lower case)"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2075
+#: ../top/top.1:2114
 msgid ""
 "You will be prompted to establish a filter that B<ignores case> when "
 "matching."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2076
+#: ../top/top.1:2115
 #, no-wrap
 msgid "\\ \\ B<O>\\ \\ :I<Other-Filter> (upper case)"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2079
+#: ../top/top.1:2118
 msgid "You will be prompted to establish a B<case sensitive> filter."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2080
+#: ../top/top.1:2119
 #, no-wrap
 msgid "\\ B<^O>\\ \\ :I<Show-Active-Filters> (Ctrl key + `o')"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2084
+#: ../top/top.1:2123
 msgid ""
 "This can serve as a reminder of which filters are active in the \\*(CW.  A "
 "summary will be shown on the message line until you press the "
@@ -14181,26 +14461,26 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2085
+#: ../top/top.1:2124
 #, no-wrap
 msgid "\\ \\ B<=>\\ \\ :I<Reset-Filtering> in current window"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2089
+#: ../top/top.1:2128
 msgid ""
 "This clears all of your selection criteria in the \\*(CW.  It also has "
 "additional impact so please \\*(Xt 4a. GLOBAL Commands."
 msgstr ""
 
 #. type: TP
-#: ../top/top.1:2090
+#: ../top/top.1:2129
 #, no-wrap
 msgid "\\ \\ B<+>\\ \\ :I<Reset-Filtering> in all windows"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2095
+#: ../top/top.1:2134
 msgid ""
 "This clears the selection criteria in all windows, assuming you are in "
 "\\*(AM.  As with the `=' \\*(CI, it too has additional consequences so you "
@@ -14208,12 +14488,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2098
+#: ../top/top.1:2137
 msgid "B<Input Requirements>"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2104
+#: ../top/top.1:2143
 msgid ""
 "When prompted for selection criteria, the data you provide must take one of "
 "two forms.  There are 3 required pieces of information, with a 4th as "
@@ -14222,7 +14502,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2109
+#: ../top/top.1:2148
 #, no-wrap
 msgid ""
 "        #1           B<#2>  #3              ( required )\n"
@@ -14232,7 +14512,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2114
+#: ../top/top.1:2153
 msgid ""
 "Items #1, #3 and #4 should be self-explanatory.  Item B<#2> represents both "
 "a required I<delimiter> and the I<operator> which must be one of either "
@@ -14240,7 +14520,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2123
+#: ../top/top.1:2162
 msgid ""
 "The `=' equality operator requires only a partial match and that can reduce "
 "your `if-value' input requirements.  The `E<gt>' or `E<lt>' relational "
@@ -14251,7 +14531,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2130
+#: ../top/top.1:2169
 msgid ""
 "If you establish a relational filter and you B<have> changed the default "
 "Numeric or Character I<justification>, that filter is likely to fail.  When "
@@ -14262,7 +14542,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2134
+#: ../top/top.1:2173
 msgid ""
 "If your filtered results appear suspect, simply altering justification or "
 "scaling may yet achieve the desired objective.  See the `j', `J' and `e' "
@@ -14270,19 +14550,19 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2137
+#: ../top/top.1:2176
 msgid "B<Potential Problems>"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2141
+#: ../top/top.1:2180
 msgid ""
 "These B<GROUP> filters could produce the exact same results or the second "
 "one might not display anything at all, just a blank \\*(TW."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2144
+#: ../top/top.1:2183
 #, no-wrap
 msgid ""
 "     GROUP=root        ( only the same results when )\n"
@@ -14290,7 +14570,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2149
+#: ../top/top.1:2188
 msgid ""
 "Either of these B<RES> filters might yield inconsistent and/or misleading "
 "results, depending on the current memory scaling factor.  Or both filters "
@@ -14298,7 +14578,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2152
+#: ../top/top.1:2191
 #, no-wrap
 msgid ""
 "     RESE<gt>9999          ( only the same results when )\n"
@@ -14306,7 +14586,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2158
+#: ../top/top.1:2197
 msgid ""
 "This B<nMin> filter illustrates a problem unique to scalable fields.  This "
 "particular field can display a maximum of 4 digits, beyond which values are "
@@ -14315,18 +14595,18 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2160
+#: ../top/top.1:2199
 #, no-wrap
 msgid "     nMinE<gt>9999         ( always a blank \\*(TW )\n"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2164
+#: ../top/top.1:2203
 msgid "B<Potential Solutions>"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2171
+#: ../top/top.1:2210
 msgid ""
 "These examples illustrate how Other Filtering can be creatively applied to "
 "achieve almost any desired result.  Single quotes are sometimes shown to "
@@ -14336,7 +14616,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2176
+#: ../top/top.1:2215
 msgid ""
 "Assuming field B<nTH> is displayed, the first filter will result in only "
 "multi-threaded processes being shown.  It also reminds us that a trailing "
@@ -14345,7 +14625,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2179
+#: ../top/top.1:2218
 #, no-wrap
 msgid ""
 "     !nTH=` 1 '                ( ' for clarity only )\n"
@@ -14353,20 +14633,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2183
+#: ../top/top.1:2222
 msgid ""
 "With Forest View mode active and the B<COMMAND> column in view, this filter "
 "effectively collapses child processes so that just 3 levels are shown."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2185
+#: ../top/top.1:2224
 #, no-wrap
 msgid "     !COMMAND=`       `- '     ( ' for clarity only )\n"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2193
+#: ../top/top.1:2232
 msgid ""
 "The final two filters appear as in response to the status request key (^O).  "
 "In reality, each filter would have required separate input.  The B<PR> "
@@ -14377,7 +14657,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2196
+#: ../top/top.1:2235
 #, no-wrap
 msgid ""
 "     `PRE<gt>20' + `!PR=-'         ( 2 for right result )\n"
@@ -14385,7 +14665,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2205
+#: ../top/top.1:2244
 msgid ""
 "\\*(NT Whenever Other Filtering is active in a window, \\*(We will turn "
 "column highlighting \\*F to prevent false matches on internal non-display "
@@ -14396,7 +14676,7 @@ msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: SH
-#: ../top/top.1:2208
+#: ../top/top.1:2247
 #, fuzzy, no-wrap
 #| msgid "FILES"
 msgid "6. FILES"
@@ -14404,26 +14684,26 @@ msgstr "FILER"
 
 #.  ----------------------------------------------------------------------
 #. type: SS
-#: ../top/top.1:2210
+#: ../top/top.1:2249
 #, no-wrap
 msgid "6a. PERSONAL Configuration File"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:2213
+#: ../top/top.1:2252
 msgid "This file is created or updated via the 'W' \\*(CI."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2216
+#: ../top/top.1:2255
 msgid ""
 "The legacy version is written as `$HOME/.your-name-4-\\*(We' + `rc' with a "
 "leading period."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2221
+#: ../top/top.1:2260
 msgid ""
 "A newly created \\*(CF is written as procps/your-name-4-\\*(We' + `rc' "
 "without a leading period.  The procps directory will be subordinate to "
@@ -14432,12 +14712,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2223
+#: ../top/top.1:2262
 msgid "While not intended to be edited manually, here is the general layout:"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2233
+#: ../top/top.1:2272
 #, no-wrap
 msgid ""
 "    global   # line  1: the program name/alias notation\n"
@@ -14452,7 +14732,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2237
+#: ../top/top.1:2276
 msgid ""
 "If a valid absolute path to the rcfile cannot be established, customizations "
 "made to a running \\*(We will be impossible to preserve."
@@ -14460,14 +14740,14 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:2239
+#: ../top/top.1:2278
 #, no-wrap
 msgid "6b. ADDING INSPECT Entries"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:2246
+#: ../top/top.1:2285
 msgid ""
 "To exploit the `Y' \\*(CI, you must add entries at theB< end> of the \\*(We "
 "personal \\*(CF.  Such entries simply reflect a file to be read or command/"
@@ -14476,14 +14756,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2249
+#: ../top/top.1:2288
 msgid ""
 "If you don't know the location or name of your \\*(We rcfile, use the `W' "
 "\\*(CI to rewrite it and note those details."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2255
+#: ../top/top.1:2294
 msgid ""
 "Inspect entries can be added with a redirected echo or by editing the "
 "\\*(CF.  Redirecting an echo risks overwriting the rcfile should it replace "
@@ -14493,7 +14773,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2260
+#: ../top/top.1:2299
 msgid ""
 "Those Inspect entries beginning with a `#' character are ignored, regardless "
 "of content.  Otherwise they consist of the following 3 elements, each of "
@@ -14501,7 +14781,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2265
+#: ../top/top.1:2304
 #, no-wrap
 msgid ""
 "  .type:  literal `file' or `pipe'\n"
@@ -14510,7 +14790,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2272
+#: ../top/top.1:2311
 msgid ""
 "The two types of Inspect entries areI< not> interchangeable.  Those "
 "designated `B<file>' will be accessed using fopen and must reference a "
@@ -14520,7 +14800,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2276
+#: ../top/top.1:2315
 msgid ""
 "If the file or pipeline represented in your `.fmts' deals with the specific "
 "PID input or accepted when prompted, then the format string must also "
@@ -14528,7 +14808,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2280
+#: ../top/top.1:2319
 #, no-wrap
 msgid ""
 "  .fmts=  /proc/I<%d>/numa_maps\n"
@@ -14536,20 +14816,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2285
+#: ../top/top.1:2324
 msgid ""
 "For `B<pipe>' type entries only, you may also wish to redirect stderr to "
 "stdout for a more comprehensive result.  Thus the format string becomes:"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2288
+#: ../top/top.1:2327
 #, no-wrap
 msgid "  .fmts=  pmap -x %dI< 2E<gt>&1>\n"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2295
+#: ../top/top.1:2334
 msgid ""
 "Here are examples of both types of Inspect entries as they might appear in "
 "the rcfile.  The first entry will be ignored due to the initial `#' "
@@ -14558,7 +14838,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2301
+#: ../top/top.1:2340
 #, no-wrap
 msgid ""
 "  # pipe ^I Sockets ^I lsof -n -P -i 2E<gt>&1\n"
@@ -14568,7 +14848,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2308
+#: ../top/top.1:2347
 msgid ""
 "Except for the commented entry above, these next examples show what could be "
 "echoed to achieve similar results, assuming the rcfile name was `.toprc'.  "
@@ -14578,7 +14858,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2313
+#: ../top/top.1:2352
 #, no-wrap
 msgid ""
 "  \"pipe\\etOpen Files\\etlsof -P -p %d 2E<gt>&1\" E<gt>E<gt> ~/.toprc\n"
@@ -14587,7 +14867,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2322
+#: ../top/top.1:2361
 msgid ""
 "If any inspect entry you create produces output with unprintable characters "
 "they will be displayed in either the ^C notation or hexadecimal E<lt>FFE<gt> "
@@ -14598,7 +14878,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2328
+#: ../top/top.1:2367
 #, no-wrap
 msgid ""
 "  # next would have contained `\\et' ...\n"
@@ -14608,7 +14888,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2334
+#: ../top/top.1:2373
 msgid ""
 "\\*(NT Some programs might rely on I<SIGINT> to end.  Therefore, if a "
 "`B<pipe>' such as the following is established, one must use Ctrl-C to "
@@ -14617,13 +14897,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2337
+#: ../top/top.1:2376
 #, no-wrap
 msgid "  pipe ^I Trace ^I /usr/bin/strace -p %d 2E<gt>&1\n"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2343
+#: ../top/top.1:2382
 msgid ""
 "Lastly, while `B<pipe>' type entries have been discussed in terms of "
 "pipelines and commands, there is nothing to prevent you from including I< "
@@ -14632,7 +14912,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2349
+#: ../top/top.1:2388
 msgid ""
 "For example, as the number of your Inspect entries grows over time, the "
 "`Options:' row will be truncated when screen width is exceeded.  That does "
@@ -14642,7 +14922,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2354
+#: ../top/top.1:2393
 #, no-wrap
 msgid ""
 "  Inspection Pause at pid ...\n"
@@ -14651,7 +14931,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2360
+#: ../top/top.1:2399
 msgid ""
 "The entries in the \\*(We rcfile would have a number for the `.name' element "
 "and the `help' entry would identify a shell script you've written explaining "
@@ -14661,14 +14941,14 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:2362
+#: ../top/top.1:2401
 #, no-wrap
 msgid "6c. SYSTEM Configuration File"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:2367
+#: ../top/top.1:2406
 msgid ""
 "This \\*(CF represents defaults for users who have not saved their own "
 "\\*(CF.  The format mirrors exactly the personal \\*(CF and can also include "
@@ -14676,51 +14956,51 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2369
+#: ../top/top.1:2408
 msgid "Creating it is a simple process."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2372
+#: ../top/top.1:2411
 msgid ""
 "1. Configure \\*(We appropriately for your installation and preserve that "
 "configuration with the `W' \\*(CI."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2374
+#: ../top/top.1:2413
 msgid "2. Add and test any desired `inspect' entries."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2376
+#: ../top/top.1:2415
 msgid "3. Copy that \\*(CF to the I</etc/> directory as `B<topdefaultrc>'."
 msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:2378
+#: ../top/top.1:2417
 #, no-wrap
 msgid "6d. SYSTEM Restrictions File"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:2382
+#: ../top/top.1:2421
 msgid ""
 "The presence of this file will influence which version of the help screen is "
 "shown to an ordinary user."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2386
+#: ../top/top.1:2425
 msgid ""
 "More importantly, it will limit what ordinary users are allowed to do when "
 "\\*(We is running.  They will not be able to issue the following commands."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2390
+#: ../top/top.1:2429
 #, no-wrap
 msgid ""
 "    k        Kill a task\n"
@@ -14729,19 +15009,19 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2395
+#: ../top/top.1:2434
 msgid ""
 "This \\*(CF is not created by \\*(We.  Rather, it is created manually and "
 "placed it in the I</etc/> directory as `B<toprc>'."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2397
+#: ../top/top.1:2436
 msgid "It should have exactly two lines, as shown in this example:"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2400
+#: ../top/top.1:2439
 #, no-wrap
 msgid ""
 "    s        # line 1: secure mode switch\n"
@@ -14751,14 +15031,14 @@ msgstr ""
 #.  ......................................................................
 #.  ----------------------------------------------------------------------
 #. type: SH
-#: ../top/top.1:2404
+#: ../top/top.1:2443
 #, no-wrap
 msgid "7. STUPID TRICKS Sampler"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:2409
+#: ../top/top.1:2448
 msgid ""
 "Many of these tricks work best when you give \\*(We a scheduling boost.  So "
 "plan on starting him with a nice value of -10, assuming you've got the "
@@ -14767,7 +15047,7 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:2411
+#: ../top/top.1:2450
 #, no-wrap
 msgid "7a. Kernel Magic"
 msgstr ""
@@ -14776,12 +15056,12 @@ msgstr ""
 #.  sorry, just can't help it -- don't ya love the sound of this?
 #.  ( apparently AM static was a potential concern )
 #. type: Plain text
-#: ../top/top.1:2416
+#: ../top/top.1:2455
 msgid "For these stupid tricks, \\*(We needs \\*(FM."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2423
+#: ../top/top.1:2462
 msgid ""
 "The user interface, through prompts and help, intentionally implies that the "
 "delay interval is limited to tenths of a second.  However, you're free to "
@@ -14790,14 +15070,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2426
+#: ../top/top.1:2465
 msgid ""
 "For this experiment, under x-windows open an xterm and maximize it.  Then do "
 "the following:"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2435
+#: ../top/top.1:2474
 #, no-wrap
 msgid ""
 "  . provide a scheduling boost and tiny delay via:\n"
@@ -14811,14 +15091,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2439
+#: ../top/top.1:2478
 msgid ""
 "What you'll see is a very busy Linux doing what he's always done for you, "
 "but there was no program available to illustrate this."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2445
+#: ../top/top.1:2484
 msgid ""
 "Under an xterm using `white-on-black' colors, on \\*(We's Color Mapping "
 "screen set the task color to black and be sure that task highlighting is set "
@@ -14826,14 +15106,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2448
+#: ../top/top.1:2487
 msgid ""
 "After bringing the most active processes into view, what you'll see are the "
 "ghostly images of just the currently running tasks."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2454
+#: ../top/top.1:2493
 msgid ""
 "Delete the existing rcfile, or create a new symlink.  Start this new version "
 "then type `T' (a secret key, \\*(Xt 4c. Task Area Commands, SORTING) "
@@ -14841,7 +15121,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2459
+#: ../top/top.1:2498
 msgid ""
 "Your display will be refreshed at three times the rate of the former \\*(We, "
 "a 300% speed advantage.  As \\*(We climbs the TIME ladder, be as patient as "
@@ -14851,19 +15131,19 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:2461
+#: ../top/top.1:2500
 #, no-wrap
 msgid "7b. Bouncing Windows"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:2464
+#: ../top/top.1:2503
 msgid "For these stupid tricks, \\*(We needs \\*(AM."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2470
+#: ../top/top.1:2509
 msgid ""
 "With 3 or 4 \\*(TDs visible, pick any window other than the last and turn "
 "idle processes \\*F using the `i' \\*(CT.  Depending on where you applied "
@@ -14872,7 +15152,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2476
+#: ../top/top.1:2515
 msgid ""
 "Set each window's summary lines differently: one with no memory (`m'); "
 "another with no states (`t'); maybe one with nothing at all, just the "
@@ -14881,7 +15161,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2481
+#: ../top/top.1:2520
 msgid ""
 "Display all 4 windows and for each, in turn, set idle processes to \\*F "
 "using the `i' \\*(CT.  You've just entered the \"extreme bounce\" zone."
@@ -14889,19 +15169,19 @@ msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:2483
+#: ../top/top.1:2522
 #, no-wrap
 msgid "7c. The Big Bird Window"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:2486
+#: ../top/top.1:2525
 msgid "This stupid trick also requires \\*(AM."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2491
+#: ../top/top.1:2530
 msgid ""
 "Display all 4 windows and make sure that 1:Def is the \\*(CW.  Then, keep "
 "increasing window size with the `n' \\*(CI until all the other \\*(TDs are "
@@ -14909,35 +15189,35 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2495
+#: ../top/top.1:2534
 msgid ""
 "When they've all been displaced, toggle between all visible/invisible "
 "windows using the `_' \\*(CT.  Then ponder this:"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2497
+#: ../top/top.1:2536
 #, no-wrap
 msgid "   is \\*(We fibbing or telling honestly your imposed truth?\n"
 msgstr ""
 
 #.  ......................................................................
 #. type: SS
-#: ../top/top.1:2499
+#: ../top/top.1:2538
 #, no-wrap
 msgid "7d. The Ol' Switcheroo"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:2503
+#: ../top/top.1:2542
 msgid ""
 "This stupid trick works best without \\*(AM, since justification is active "
 "on a per window basis."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2508
+#: ../top/top.1:2547
 msgid ""
 "Start \\*(We and make COMMAND the last (rightmost) column displayed.  If "
 "necessary, use the `c' \\*(CT to display command lines and ensure that "
@@ -14945,7 +15225,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2512
+#: ../top/top.1:2551
 msgid ""
 "Then use the up/down arrow keys to position the display so that some "
 "truncated command lines are shown (`+' in last position).  You may have to "
@@ -14953,12 +15233,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2514
+#: ../top/top.1:2553
 msgid "Lastly, use the `j' \\*(CT to make the COMMAND column right justified."
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2518
+#: ../top/top.1:2557
 msgid ""
 "Now use the right arrow key to reach the COMMAND column.  Continuing with "
 "the right arrow key, watch closely the direction of travel for the command "
@@ -14966,20 +15246,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2521
+#: ../top/top.1:2560
 #, no-wrap
 msgid "   some lines travel left, while others travel right\n"
 msgstr ""
 
 #. type: Plain text
-#: ../top/top.1:2523
+#: ../top/top.1:2562
 #, no-wrap
 msgid "   eventually all lines will Switcheroo, and move right\n"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: SH
-#: ../top/top.1:2525
+#: ../top/top.1:2564
 #, fuzzy, no-wrap
 #| msgid "BUGS"
 msgid "8. BUGS"
@@ -14987,7 +15267,7 @@ msgstr "FEL"
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:2530
+#: ../top/top.1:2569
 msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE .>"
 msgstr ""
 "Skicka felrapporter till E<.UR procps@freelists.org> E<.UE .>\n"
@@ -14996,14 +15276,14 @@ msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: SH
-#: ../top/top.1:2532
+#: ../top/top.1:2571
 #, no-wrap
 msgid "9. SEE Also"
 msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
-#: ../top/top.1:2540
+#: ../top/top.1:2579
 #, fuzzy
 #| msgid "B<free>(1), B<ps>(1), B<top>(1), B<uptime>(1), B<utmp>(5), B<who>(1)"
 msgid ""
@@ -15021,7 +15301,7 @@ msgstr "PROCPS_USERLEN"
 #. type: TH
 #: ../doc/procps.3:19 ../doc/procps_misc.3:20 ../doc/procps_pids.3:19
 #, no-wrap
-msgid "January 2021"
+msgid "February 2021"
 msgstr ""
 
 #. type: TH
@@ -15120,7 +15400,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../doc/procps.3:74 ../doc/procps_pids.3:69
-msgid "Link with I<-lprocps>."
+msgid "Link with I<-lproc-2>."
 msgstr ""
 
 #. type: SS
@@ -15148,9 +15428,9 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:93 ../doc/procps_pids.3:88
+#: ../doc/procps.3:93
 msgid ""
-"As part of each interface there are two unique items.  The `noop' and "
+"As part of each interface there are two unique enumerators.  The `noop' and "
 "`extra' items exist to hold user values.  They are never set by the library, "
 "but the `extra' result will be zeroed with each library interaction."
 msgstr ""
@@ -15187,26 +15467,52 @@ msgstr ""
 #. type: Plain text
 #: ../doc/procps.3:114
 msgid ""
-"Optionally, a user may choose to sort results returned from a B<reap> "
-"function call.  The B<sort> function parameters I<stacks> and I<numstacked> "
-"would normally be those returned in the `reaped' structure."
+"The B<get> function is used to retrieve a `result' structure for a single "
+"`item'.  Alternatively, a B<GET> macro is available when only the return "
+"value is of interest."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:117
+msgid ""
+"The B<select> function can retrieve multiple `result' structures in a single "
+"`stack'."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:123
+msgid ""
+"For unpredictable variable outcomes, the B<diskstats>, B<slabinfo> and "
+"B<stat> interfaces export a B<reap> function.  It is used to retrieve "
+"multiple `stacks' each containing multiple `result' structures.  Optionally, "
+"a user may choose to B<sort> those results."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:130 ../doc/procps_pids.3:123
+msgid ""
+"To exploit any `stack', and access individual `result' structures, a "
+"I<relative_enum> is required as shown in the B<VAL> macro defined in the "
+"header file.  Such values could be hard coded as: 0 through numitems-1.  "
+"However, this need is typically satisfied by creating your own enumerators "
+"corresponding to the order of the `items' array."
 msgstr ""
 
 #. type: SS
-#: ../doc/procps.3:115 ../doc/procps_pids.3:111
+#: ../doc/procps.3:131 ../doc/procps_pids.3:124
 #, no-wrap
 msgid "Caveats"
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:118
+#: ../doc/procps.3:134
 msgid ""
 "The B<new>, B<ref>, B<unref>, B<get> and B<select> functions are available "
 "in all five interfaces."
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:123 ../doc/procps_pids.3:123
+#: ../doc/procps.3:139 ../doc/procps_pids.3:136
 msgid ""
 "For the B<new> and B<unref> functions, the address of an I<info> struct "
 "pointer must be supplied.  With B<new> it must have been initialized to "
@@ -15215,73 +15521,79 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:127
+#: ../doc/procps.3:143
 msgid ""
 "In the case of the B<diskstats> interface, a I<name> parameter on the B<get> "
 "and B<select> functions identifies a disk or partition name"
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:133
+#: ../doc/procps.3:147
 msgid ""
-"The B<diskstats>, B<slabinfo> and B<stat> interfaces support unpredictable "
-"variable outcomes.  As such, they export a B<reap> function to retrieve "
-"multiple `stacks' with a single invocation.  These same interfaces also "
-"provide a B<sort> function."
+"For the B<stat> interface, a I<what> parameter on the B<reap> function "
+"identifies whether data for just CPUs or both CPUs and NUMA nodes is to be "
+"gathered."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps.3:151
+msgid ""
+"When using the B<sort> function, the parameters I<stacks> and I<numstacked> "
+"would normally be those returned in the `reaped' structure."
 msgstr ""
 
 #. type: SH
-#: ../doc/procps.3:134 ../doc/procps_misc.3:134 ../doc/procps_pids.3:143
+#: ../doc/procps.3:152 ../doc/procps_misc.3:134 ../doc/procps_pids.3:157
 #, no-wrap
 msgid "RETURN VALUE"
 msgstr ""
 
 #. type: SS
-#: ../doc/procps.3:135 ../doc/procps_pids.3:144
+#: ../doc/procps.3:153 ../doc/procps_pids.3:158
 #, no-wrap
 msgid "Functions Returning an `int'"
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:138 ../doc/procps_misc.3:138 ../doc/procps_pids.3:147
+#: ../doc/procps.3:156 ../doc/procps_misc.3:138 ../doc/procps_pids.3:161
 msgid ""
 "An error will be indicated by a negative number that is always the inverse "
 "of some well known errno.h value."
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:142 ../doc/procps_pids.3:151
+#: ../doc/procps.3:160 ../doc/procps_pids.3:165
 msgid ""
 "Success is indicated by a zero return value.  However, the B<ref> and "
 "B<unref> functions return the current I<info> structure reference count."
 msgstr ""
 
 #. type: SS
-#: ../doc/procps.3:143 ../doc/procps_misc.3:139 ../doc/procps_pids.3:152
+#: ../doc/procps.3:161 ../doc/procps_misc.3:139 ../doc/procps_pids.3:166
 #, no-wrap
 msgid "Functions Returning an `address'"
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:146 ../doc/procps_misc.3:142 ../doc/procps_pids.3:155
+#: ../doc/procps.3:164 ../doc/procps_misc.3:142 ../doc/procps_pids.3:169
 msgid ""
 "An error will be indicated by a NULL return pointer with the reason found in "
 "the formal errno value."
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:148
+#: ../doc/procps.3:166
 msgid "Success is indicated by a pointer to the named structure."
 msgstr ""
 
 #. type: SH
-#: ../doc/procps.3:149 ../doc/procps_pids.3:160
+#: ../doc/procps.3:167 ../doc/procps_pids.3:174
 #, no-wrap
 msgid "DEBUGGING"
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:155 ../doc/procps_pids.3:166
+#: ../doc/procps.3:173 ../doc/procps_pids.3:180
 msgid ""
 "To aid in program development, there is a provision that can help ensure "
 "`result' member references agree with library expectations.  It assumes that "
@@ -15289,48 +15601,48 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:158 ../doc/procps_pids.3:169
+#: ../doc/procps.3:176 ../doc/procps_pids.3:183
 msgid ""
 "This feature can be activated through either of the following methods and "
-"any discrepancies will be wrtten to B<stderr>."
+"any discrepancies will be written to B<stderr>."
 msgstr ""
 
 #. type: IP
-#: ../doc/procps.3:159 ../doc/procps_pids.3:170
+#: ../doc/procps.3:177 ../doc/procps_pids.3:184
 #, fuzzy, no-wrap
 #| msgid "1"
 msgid "1)"
 msgstr "1"
 
 #. type: Plain text
-#: ../doc/procps.3:162 ../doc/procps_pids.3:173
+#: ../doc/procps.3:180 ../doc/procps_pids.3:187
 msgid ""
 "Add CFLAGS='-DXTRA_PROCPS_DEBUG' to any other ./configure options employed."
 msgstr ""
 
 #. type: IP
-#: ../doc/procps.3:163 ../doc/procps_pids.3:174
+#: ../doc/procps.3:181 ../doc/procps_pids.3:188
 #, fuzzy, no-wrap
 #| msgid "2"
 msgid "2)"
 msgstr "2"
 
 #. type: Plain text
-#: ../doc/procps.3:166
+#: ../doc/procps.3:184
 msgid ""
 "Add #include E<lt>procps/xtra-procps-debug.hE<gt> to any program I<after> "
 "the named interface includes."
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:171 ../doc/procps_pids.3:182
+#: ../doc/procps.3:189 ../doc/procps_pids.3:196
 msgid ""
 "This verification feature incurs substantial overhead.  Therefore, it is "
 "important that it I<not> be activated for a production/release build."
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps.3:175
+#: ../doc/procps.3:193
 #, fuzzy
 #| msgid "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 msgid "B<procps_misc>(3)  B<procps_pids>(3)  B<proc>(5)."
@@ -15404,7 +15716,7 @@ msgstr ""
 #. type: Plain text
 #: ../doc/procps_misc.3:57
 #, no-wrap
-msgid "Link with I<-lprocps>.\n"
+msgid "Link with I<-lproc-2>.\n"
 msgstr ""
 
 #. type: Plain text
@@ -15694,6 +16006,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
+#: ../doc/procps_pids.3:88
+msgid ""
+"As part of this interface there are two unique enumerators.  The `noop' and "
+"`extra' items exist to hold user values.  They are never set by the library, "
+"but the `extra' result will be zeroed with each library interaction."
+msgstr ""
+
+#. type: Plain text
 #: ../doc/procps_pids.3:94
 msgid ""
 "The pids.h file will be an essential document during user program "
@@ -15718,15 +16038,24 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps_pids.3:110
+#: ../doc/procps_pids.3:109
 msgid ""
-"Optionally, a user may choose to sort results returned from a B<reap> or "
-"B<select> function call.  The B<sort> function parameters I<stacks> and "
-"I<numstacked> would normally be those returned in the `pids_fetch' structure."
+"The B<get> function is an iterator for successive PIDs/TIDs, returning those "
+"`items' previously identified via B<new> or B<reset>."
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps_pids.3:118
+#: ../doc/procps_pids.3:116
+msgid ""
+"Two functions support unpredictable variable outcomes.  The B<reap> function "
+"gathers data for all processes while the B<select> function deals with "
+"specific PIDs or UIDs.  Both can return multiple `stacks' each containing "
+"multiple `result' structures.  Optionally, a user may choose to B<sort> such "
+"results"
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:131
 msgid ""
 "The E<lt>pidsE<gt> API differs from others in that those items of interest "
 "must be provided at B<new> or B<reset> time, the latter being unique to this "
@@ -15735,34 +16064,40 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps_pids.3:127
+#: ../doc/procps_pids.3:139
 msgid ""
-"The B<get> function is an iterator, for successive PIDs/TIDs, returning "
-"those items previously identified via B<new> or B<reset>."
+"The B<get> and B<reap> functions use the I<which> parameter to specify "
+"whether just tasks or both tasks and threads are to be fetched."
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps_pids.3:134
+#: ../doc/procps_pids.3:144
 msgid ""
 "The B<select> function requires an array of PIDs or UIDs as I<these> along "
 "with I<numthese> to identify which processes are to be fetched.  This "
-"function then operates as a subset of B<reap> while returning those items "
-"previously identified via B<new> or B<reset>."
+"function then operates as a subset of B<reap>."
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps_pids.3:142
+#: ../doc/procps_pids.3:148
+msgid ""
+"When using the B<sort> function, the parameters I<stacks> and I<numstacked> "
+"would normally be those returned in the `pids_fetch' structure."
+msgstr ""
+
+#. type: Plain text
+#: ../doc/procps_pids.3:156
 msgid ""
 "Lastly, a B<fatal_proc_unmounted> function may be called before any other "
 "function to ensure that the /proc/ directory is mounted.  As such, the "
 "I<info> parameter would be NULL and the I<return_self> parameter zero.  If, "
 "however, some items are desired for the issuing program (a I<return_self> "
-"other than zero) then the B<new> call must precede it to obtain the required "
-"I<info> pointer."
+"other than zero) then the B<new> call must precede it to identify the "
+"I<items> and obtain the required I<info> pointer."
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps_pids.3:159
+#: ../doc/procps_pids.3:173
 msgid ""
 "Success is indicated by a pointer to the named structure.  However, if one "
 "survives the B<fatal_proc_unmounted> call, NULL is always returned when "
@@ -15770,18 +16105,31 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps_pids.3:177
+#: ../doc/procps_pids.3:191
 msgid ""
 "Add #include E<lt>procps/xtra-procps-debug.hE<gt> to any program I<after> "
 "the #include E<lt>procps/pids.hE<gt>."
 msgstr ""
 
 #. type: Plain text
-#: ../doc/procps_pids.3:186
+#: ../doc/procps_pids.3:200
 #, fuzzy
 #| msgid "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 msgid "B<procps>(3)  B<procps_misc>(3)  B<proc>(5)."
 msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
+
+#, no-wrap
+#~ msgid "June 2011"
+#~ msgstr "Juni 2011"
+
+#, fuzzy, no-wrap
+#~| msgid "2018-02-19"
+#~ msgid "2020-02-27"
+#~ msgstr "2018-02-19"
+
+#, no-wrap
+#~ msgid "2020-12-06"
+#~ msgstr "2020-12-06"
 
 #~ msgid "Please send bug reports to E<.MT procps@freelists.org> E<.ME>"
 #~ msgstr ""
