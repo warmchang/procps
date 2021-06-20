@@ -64,7 +64,7 @@ memory statistics and data for other users requires root privileges
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "April 2021" "procps-ng" "User Commands"
+.TH TOP 1 "June 2021" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 .nh
 
@@ -1036,7 +1036,25 @@ is currently sleeping.
 Running tasks will display a dash (`\-') in this column.
 
 .TP 4
-55.\fB nDRT \*(Em Dirty Pages Count \fR
+55.\fB ioR \*(Em I/O Bytes Read \fR
+The number of bytes a process caused to be fetched from the storage layer.
+
+.TP 4
+56.\fB ioRop \*(Em I/O Read Operations \fR
+The number of read I/O operations (syscalls) for a process.
+Such calls might not result in actual physical disk I/O.
+
+.TP 4
+57.\fB ioW \*(Em I/O Bytes Written \fR
+The number of bytes a process caused to be sent to the storage layer.
+
+.TP 4
+58.\fB ioWop \*(Em I/O Write Operations \fR
+The number of write I/O operations (syscalls) for a process.
+Such calls might not result in actual physical disk I/O.
+
+.TP 4
+59.\fB nDRT \*(Em Dirty Pages Count \fR
 The number of pages that have been modified since they were last
 written to \*(AS.
 Dirty pages must be written to \*(AS before the corresponding physical
@@ -1045,7 +1063,7 @@ memory location can be used for some other virtual page.
 This field was deprecated with linux 2.6 and is always zero.
 
 .TP 4
-56.\fB nMaj \*(Em Major Page Fault Count \fR
+60.\fB nMaj \*(Em Major Page Fault Count \fR
 The number of\fB major\fR page faults that have occurred for a task.
 A page fault occurs when a process attempts to read from or write to a
 virtual page that is not currently present in its address space.
@@ -1053,7 +1071,7 @@ A major page fault is when \*(AS access is involved in making that
 page available.
 
 .TP 4
-57.\fB nMin \*(Em Minor Page Fault count \fR
+61.\fB nMin \*(Em Minor Page Fault count \fR
 The number of\fB minor\fR page faults that have occurred for a task.
 A page fault occurs when a process attempts to read from or write to a
 virtual page that is not currently present in its address space.
@@ -1061,50 +1079,50 @@ A minor page fault does not involve \*(AS access in making that
 page available.
 
 .TP 4
-58.\fB nTH \*(Em Number of Threads \fR
+62.\fB nTH \*(Em Number of Threads \fR
 The number of threads associated with a process.
 
 .TP 4
-59.\fB nsIPC \*(Em IPC namespace \fR
+63.\fB nsIPC \*(Em IPC namespace \fR
 The Inode of the namespace used to isolate interprocess communication (IPC)
 resources such as System V IPC objects and POSIX message queues.
 
 .TP 4
-60.\fB nsMNT \*(Em MNT namespace \fR
+64.\fB nsMNT \*(Em MNT namespace \fR
 The Inode of the namespace used to isolate filesystem mount points thus
 offering different views of the filesystem hierarchy.
 
 .TP 4
-61.\fB nsNET \*(Em NET namespace \fR
+65.\fB nsNET \*(Em NET namespace \fR
 The Inode of the namespace used to isolate resources such as network devices,
 IP addresses, IP routing, port numbers, etc.
 
 .TP 4
-62.\fB nsPID \*(Em PID namespace \fR
+66.\fB nsPID \*(Em PID namespace \fR
 The Inode of the namespace used to isolate process ID numbers
 meaning they need not remain unique.
 Thus, each such namespace could have its own `init/systemd' (PID #1) to
 manage various initialization tasks and reap orphaned child processes.
 
 .TP 4
-63.\fB nsUSER \*(Em USER namespace \fR
+67.\fB nsUSER \*(Em USER namespace \fR
 The Inode of the namespace used to isolate the user and group ID numbers.
 Thus, a process could have a normal unprivileged user ID outside a user
 namespace while having a user ID of 0, with full root privileges, inside
 that namespace.
 
 .TP 4
-64.\fB nsUTS \*(Em UTS namespace \fR
+68.\fB nsUTS \*(Em UTS namespace \fR
 The Inode of the namespace used to isolate hostname and NIS domain name.
 UTS simply means "UNIX Time-sharing System".
 
 .TP 4
-65.\fB vMj \*(Em Major Page Fault Count Delta\fR
+69.\fB vMj \*(Em Major Page Fault Count Delta\fR
 The number of\fB major\fR page faults that have occurred since the
 last update (see nMaj).
 
 .TP 4
-66.\fB vMn \*(Em Minor Page Fault Count Delta\fR
+70.\fB vMn \*(Em Minor Page Fault Count Delta\fR
 The number of\fB minor\fR page faults that have occurred since the
 last update (see nMin).
 
