@@ -332,6 +332,18 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'USS' = 6 */
    Head_nlstab[EU_USS] = _("USS");
    Desc_nlstab[EU_USS] = _("Unique RSS, KiB");
+/* Translation Hint: maximum 'ioR' = 6 */
+   Head_nlstab[EU_IRB] = _("ioR");
+   Desc_nlstab[EU_IRB] = _("I/O Bytes Read");
+/* Translation Hint: maximum 'ioRop' = 5 */
+   Head_nlstab[EU_IRO] = _("ioRop");
+   Desc_nlstab[EU_IRO] = _("I/O Read Operations");
+/* Translation Hint: maximum 'ioW' = 6 */
+   Head_nlstab[EU_IWB] = _("ioW");
+   Desc_nlstab[EU_IWB] = _("I/O Bytes Written");
+/* Translation Hint: maximum 'ioWop' = 5 */
+   Head_nlstab[EU_IWO] = _("ioWop");
+   Desc_nlstab[EU_IWO] = _("I/O Write Operations");
 }
 
 

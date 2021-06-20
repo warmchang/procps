@@ -1677,8 +1677,12 @@ static struct {
    {     6,  SK_Kb,  A_right,  PIDS_SMAP_PSS_ANON  },  // ul_int   EU_PZA
    {     6,  SK_Kb,  A_right,  PIDS_SMAP_PSS_FILE  },  // ul_int   EU_PZF
    {     6,  SK_Kb,  A_right,  PIDS_SMAP_PSS_SHMEM },  // ul_int   EU_PZS
-   {     6,  SK_Kb,  A_right,  PIDS_SMAP_PRV_TOTAL }   // ul_int   EU_USS
-#define eu_LAST        EU_USS
+   {     6,  SK_Kb,  A_right,  PIDS_SMAP_PRV_TOTAL },  // ul_int   EU_USS
+   {     6,     -1,  A_right,  PIDS_IO_READ_BYTES  },  // ul_int   EU_IRB
+   {     5,     -1,  A_right,  PIDS_IO_READ_OPS    },  // ul_int   EU_IRO
+   {     6,     -1,  A_right,  PIDS_IO_WRITE_BYTES },  // ul_int   EU_IWB
+   {     5,     -1,  A_right,  PIDS_IO_WRITE_OPS   }   // ul_int   EU_IWO
+#define eu_LAST        EU_IWO
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -5908,6 +5912,10 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
    /* ul_int, scale_num */
          case EU_FL1:        // PIDS_FLT_MAJ
          case EU_FL2:        // PIDS_FLT_MIN
+         case EU_IRB:        // PIDS_IO_READ_BYTES
+         case EU_IRO:        // PIDS_IO_READ_OPS
+         case EU_IWB:        // PIDS_IO_WRITE_BYTES
+         case EU_IWO:        // PIDS_IO_WRITE_OPS
             cp = scale_num(rSv(i, ul_int), W, Jn);
             break;
    /* ul_int, scale_pcnt */

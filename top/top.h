@@ -190,6 +190,7 @@ enum pflag {
    EU_LID,
    EU_EXE,
    EU_RSS, EU_PSS, EU_PZA, EU_PZF, EU_PZS, EU_USS,
+   EU_IRB, EU_IRO, EU_IWB, EU_IWO,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
    EU_MAXPFLGS
@@ -485,7 +486,7 @@ typedef struct WIN_t {
 #define RCF_EYECATCHER  "Config File (Linux processes with windows)\n"
 #define RCF_PLUS_H      "\\]^_`abcdefghij"
 #define RCF_PLUS_J      "klmnopqrstuvwxyz"
-#define RCF_VERSION_ID  'j'
+#define RCF_VERSION_ID  'k'
 
         /* The default fields displayed and their order, if nothing is
            specified by the loser, oops user.
