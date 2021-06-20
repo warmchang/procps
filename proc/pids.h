@@ -78,13 +78,13 @@ enum pids_item {
     PIDS_ID_TGID,           //    s_int        status: Tgid
     PIDS_ID_TID,            //    s_int        from /proc/<pid>/task/<tid>
     PIDS_ID_TPGID,          //    s_int        stat: tty_pgrp
-    PIDS_IO_READ_BYTES,     //   ul_int        io: bytes read
-    PIDS_IO_READ_CHARS,     //   ul_int        io: characters read
-    PIDS_IO_READ_OPS,       //   ul_int        io: read operations
-    PIDS_IO_WRITE_BYTES,    //   ul_int        io: bytes written
-    PIDS_IO_WRITE_CBYTES,   //   ul_int        io: cancelled write bytes
-    PIDS_IO_WRITE_CHARS,    //   ul_int        io: characters written
-    PIDS_IO_WRITE_OPS,      //   ul_int        io: write operations
+    PIDS_IO_READ_BYTES,     //   ul_int        io: read_bytes
+    PIDS_IO_READ_CHARS,     //   ul_int        io: rchar
+    PIDS_IO_READ_OPS,       //   ul_int        io: syscr
+    PIDS_IO_WRITE_BYTES,    //   ul_int        io: write_bytes
+    PIDS_IO_WRITE_CBYTES,   //   ul_int        io: cancelled_write_bytes
+    PIDS_IO_WRITE_CHARS,    //   ul_int        io: wchar
+    PIDS_IO_WRITE_OPS,      //   ul_int        io: syscw
     PIDS_LXCNAME,           //      str        derived from CGROUP 'lxc.payload'
     PIDS_MEM_CODE,          //   ul_int        derived from MEM_CODE_PGS, as KiB
     PIDS_MEM_CODE_PGS,      //   ul_int        statm: trs
