@@ -415,13 +415,19 @@ static void bye_bye (const char *str) {
    procps_pids_unref(&Pids_ctx);
    procps_stat_unref(&Stat_ctx);
 
+   /* we'll only have a 'str' if called by error_exit() |
+      not ever from the sig_endpgm() signal handler ... | */
    if (str) {
       fputs(str, stderr);
       exit(EXIT_FAILURE);
    }
-   if (Batch) {
-      write(fileno(stdout), "\n", sizeof("\n"));
-   }
+   /* this could happen when called from several places |
+      including that sig_endpgm().  thus we must use an |
+      async-signal-safe write function just in case ... |
+      (thanks: Shaohua Zhan shaohua.zhan@windriver.com) | */
+   if (Batch)
+      write(fileno(stdout), "\n", sizeof("\n") - 1);
+
    exit(EXIT_SUCCESS);
 } // end: bye_bye
 
