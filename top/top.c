@@ -569,13 +569,21 @@ static void bye_bye (const char *str) {
 #endif // end: OFF_HST_HASH
 
    numa_uninit();
+
+   /* we'll only have a 'str' if called by error_exit() |
+      or that xalloc_our_handler() function. if we were |
+      called from a sig_endpgm(), that parm is NULL ... | */
    if (str) {
       fputs(str, stderr);
       exit(EXIT_FAILURE);
    }
-   if (Batch) {
-      write(fileno(stdout), "\n", sizeof("\n"));
-   }
+   /* this could happen when called from several places |
+      including that sig_endpgm().  thus we must use an |
+      async-signal-safe write function just in case ... |
+      (thanks: Shaohua Zhan shaohua.zhan@windriver.com) | */
+   if (Batch)
+      write(fileno(stdout), "\n", sizeof("\n") - 1);
+
    exit(EXIT_SUCCESS);
 } // end: bye_bye
 
