@@ -10,6 +10,7 @@ procps-ng-NEXT
   * ps: Add PSS and USS fields                             issue #112
   * slabtop: Don't combine d and o options                 issue #160
   * top: exploit some library smaps_rollup provisions      issue #112
+  * top: added four new IO accounting fields               issue #184
 
 procps-ng-3.3.17
 ---------------
