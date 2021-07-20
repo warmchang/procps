@@ -2354,11 +2354,13 @@ static void cpus_refresh (void) {
    Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items));
    if (!Stat_reap)
       error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
+#ifndef PRETEND0NUMA
    // adapt to changes in total numa nodes (assuming it's even possible)
    if (Stat_reap->numa->total && Stat_reap->numa->total != Numa_node_tot) {
       Numa_node_tot = Stat_reap->numa->total;
       Numa_node_sel = -1;
    }
+#endif
    if (Stat_reap->cpus->total && Stat_reap->cpus->total != Cpu_cnt) {
       Cpu_cnt = Stat_reap->cpus->total;
 #ifdef PRETEND48CPU
@@ -3259,7 +3261,9 @@ static void before (char *me) {
       error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(-rc)));
    if (!(Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items))))
       error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
+#ifndef PRETEND0NUMA
    Numa_node_tot = Stat_reap->numa->total;
+#endif
    Cpu_cnt = Stat_reap->cpus->total;
 #ifdef PRETEND48CPU
    Cpu_cnt = 48;
