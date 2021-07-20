@@ -73,6 +73,24 @@ static size_t iolen = LINELEN;
 static int pattern_match(const char *string, const char *pat);
 static int DisplayAll(const char *restrict const path);
 
+static inline bool is_proc_path(
+	const char *path)
+{
+    char *resolved_path;
+
+    if ( (resolved_path = realpath(path, NULL)) == NULL)
+	return false;
+
+    if (strncmp(PROC_PATH, resolved_path, strlen(PROC_PATH)) == 0) {
+	free(resolved_path);
+	return true;
+    }
+
+    xwarnx(_("Path is not under %s: %s"), PROC_PATH, path);
+    free(resolved_path);
+    return false;
+}
+
 static void slashdot(char *restrict p, char old, char new)
 {
 	int warned = 1;
@@ -201,6 +219,11 @@ static int ReadSetting(const char *restrict const name)
 	}
 	if ((ts.st_mode & S_IRUSR) == 0)
 		goto out;
+
+	if (!is_proc_path(tmpname)) {
+	    rc = -1;
+	    goto out;
+	}
 
 	if (S_ISDIR(ts.st_mode)) {
 		size_t len;
@@ -430,6 +453,11 @@ static int WriteSetting(const char *setting)
 			rc = -1;
 		}
 		goto out;
+	}
+
+	if (!is_proc_path(tmpname)) {
+	    rc = -1;
+	    goto out;
 	}
 
 	if ((ts.st_mode & S_IWUSR) == 0) {
