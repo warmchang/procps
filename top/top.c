@@ -5574,7 +5574,6 @@ static void summary_show (void) {
 
       cpus_refresh();
 
-      if (!Numa_node_tot) goto numa_nope;
       if (CHKw(w, View_CPUNOD)) {
          if (Numa_node_sel < 0) {
 numa_oops:
@@ -5612,12 +5611,11 @@ numa_oops:
                }
             }
          }
-      } else
 
-numa_nope:
-      if (CHKw(w, View_CPUSUM)) {
+      } else if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
          Msg_row += cpu_tics(Stat_reap->summary, N_txt(WORD_allcpus_txt), 1);
+
       } else {
          // display each cpu's states separately, screen height permitting...
 #ifdef PRETEND48CPU
