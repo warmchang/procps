@@ -187,17 +187,17 @@ typedef struct proc_t {
 #define PROCPATHLEN 64  // must hold /proc/2000222000/task/2000222000/cmdline
 
 typedef struct PROCTAB {
-    DIR*        procfs;
+    DIR        *procfs;
 //    char deBug0[64];
-    DIR*        taskdir;  // for threads
+    DIR        *taskdir;  // for threads
 //    char deBug1[64];
     pid_t       taskdir_user;  // for threads
     int(*finder)(struct PROCTAB *__restrict const, proc_t *__restrict const);
     proc_t*(*reader)(struct PROCTAB *__restrict const, proc_t *__restrict const);
     int(*taskfinder)(struct PROCTAB *__restrict const, const proc_t *__restrict const, proc_t *__restrict const, char *__restrict const);
     proc_t*(*taskreader)(struct PROCTAB *__restrict const, proc_t *__restrict const, char *__restrict const);
-    pid_t*      pids;   // pids of the procs
-    uid_t*      uids;   // uids of procs
+    pid_t      *pids;   // pids of the procs
+    uid_t      *uids;   // uids of procs
     int         nuid;   // cannot really sentinel-terminate unsigned short[]
     int         i;  // generic
     unsigned    flags;
@@ -261,7 +261,7 @@ typedef struct PROCTAB {
 
 // Function definitions
 // Initialize a PROCTAB structure holding needed call-to-call persistent data
-PROCTAB* openproc(unsigned flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */ );
+PROCTAB *openproc(unsigned flags, ... /* pid_t *| uid_t *| dev_t *| char *[, int n] */ );
 // Retrieve the next process or task matching the criteria set by the openproc().
 //
 // Note: When NULL is used as the readproc 'p' or readeither 'x'
@@ -272,10 +272,10 @@ PROCTAB* openproc(unsigned flags, ... /* pid_t*|uid_t*|dev_t*|char* [, int n] */
 //       only before first use.  Thereafter, the library will manage such
 //       a passed proc_t, freeing any additional acquired memory associated
 //       with the previous process or thread.
-proc_t* readproc(PROCTAB *__restrict const PT, proc_t *__restrict p);
-proc_t* readeither(PROCTAB *__restrict const PT, proc_t *__restrict x);
+proc_t *readproc(PROCTAB *__restrict const PT, proc_t *__restrict p);
+proc_t *readeither(PROCTAB *__restrict const PT, proc_t *__restrict x);
 int look_up_our_self(proc_t *p);
-void closeproc(PROCTAB* PT);
-char** vectorize_this_str(const char* src);
+void closeproc(PROCTAB *PT);
+char **vectorize_this_str(const char *src);
 
 #endif

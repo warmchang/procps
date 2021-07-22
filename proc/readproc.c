@@ -481,12 +481,12 @@ wrap_up:
 
 ///////////////////////////////////////////////////////////////////////
 
-static inline void oomscore2proc(const char* S, proc_t *restrict P)
+static inline void oomscore2proc(const char *S, proc_t *restrict P)
 {
     sscanf(S, "%d", &P->oom_score);
 }
 
-static inline void oomadj2proc(const char* S, proc_t *restrict P)
+static inline void oomadj2proc(const char *S, proc_t *restrict P)
 {
     sscanf(S, "%d", &P->oom_adj);
 }
@@ -554,10 +554,10 @@ static int sd2proc (proc_t *restrict p) {
 
 // Reads /proc/*/stat files, being careful not to trip over processes with
 // names like ":-) 1 2 3 4 5 6".
-static int stat2proc (const char* S, proc_t *restrict P) {
+static int stat2proc (const char *S, proc_t *restrict P) {
     char buf[64], raw[64];
     size_t num;
-    char* tmp;
+    char *tmp;
 
 ENTER(0x160);
 
@@ -635,13 +635,13 @@ LEAVE(0x160);
 
 /////////////////////////////////////////////////////////////////////////
 
-static void statm2proc(const char* s, proc_t *restrict P) {
+static void statm2proc(const char *s, proc_t *restrict P) {
     sscanf(s, "%lu %lu %lu %lu %lu %lu %lu",
            &P->size, &P->resident, &P->share,
            &P->trs, &P->lrs, &P->drs, &P->dt);
 }
 
-static void io2proc(const char* s, proc_t *restrict P) {
+static void io2proc(const char *s, proc_t *restrict P) {
     int num;
     num = sscanf(s, "rchar: %lu wchar: %lu syscr: %lu syscw: %lu read_bytes: %lu write_bytes: %lu cancelled_write_bytes: %lu",
             &P->rchar, &P->wchar, &P->syscr,
@@ -652,7 +652,7 @@ static void io2proc(const char* s, proc_t *restrict P) {
     // guy will extract some %lu data. Considering the number of items,
     // we are between small enough to use a sscanf and large enough for
     // a search.h approach. Thus we roll (get it?) our own custom code.
-static void smaps2proc (const char* s, proc_t *restrict P) {
+static void smaps2proc (const char *s, proc_t *restrict P) {
   #define enMAX (int)((sizeof(smaptab) / sizeof(smaptab[0])))
     // 1st proc_t data field
   #define fZERO tid
@@ -751,7 +751,7 @@ static int file2str(const char *directory, const char *what, struct utlbuf_s *ub
 }
 
 
-static char** file2strvec(const char* directory, const char* what) {
+static char **file2strvec(const char *directory, const char *what) {
     char buf[2048];     /* read buf bytes at a time */
     char *p, *rbuf = 0, *endbuf, **q, **ret, *strp;
     int fd, tot = 0, n, c, end_of_file = 0;
@@ -830,7 +830,7 @@ static char** file2strvec(const char* directory, const char* what) {
     // this is the former under utilized 'read_cmdline', which has been
     // generalized in support of these new libproc flags:
     //     PROC_EDITCGRPCVT, PROC_EDITCMDLCVT and PROC_EDITENVRCVT
-static int read_unvectored(char *restrict const dst, unsigned sz, const char* whom, const char *what, char sep) {
+static int read_unvectored(char *restrict const dst, unsigned sz, const char *whom, const char *what, char sep) {
     char path[PROCPATHLEN];
     int fd, len;
     unsigned n = 0;
@@ -870,7 +870,7 @@ static int read_unvectored(char *restrict const dst, unsigned sz, const char* wh
 }
 
 
-char** vectorize_this_str (const char* src) {
+char **vectorize_this_str (const char *src) {
  #define pSZ  (sizeof(char*))
     char *cpy, **vec;
     size_t adj, tot;
@@ -891,7 +891,7 @@ char** vectorize_this_str (const char* src) {
 
     // This littl' guy just serves those true vectorized fields
     // ( when a /proc source field didn't exist )
-static int vectorize_dash_rc (char*** vec) {
+static int vectorize_dash_rc (char ***vec) {
     if (!(*vec = vectorize_this_str("-")))
         return 1;
     return 0;
@@ -900,7 +900,7 @@ static int vectorize_dash_rc (char*** vec) {
 
     // This routine reads a 'cgroup' for the designated proc_t and
     // guarantees the caller a valid proc_t.cgroup pointer.
-static int fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
+static int fill_cgroup_cvt (const char *directory, proc_t *restrict p) {
  #define vMAX ( MAX_BUFSZ - (int)(dst - dst_buffer) )
     char *src, *dst, *grp, *eob, *name;
     int tot, x, len;
@@ -935,7 +935,7 @@ static int fill_cgroup_cvt (const char* directory, proc_t *restrict p) {
     // This routine reads a 'cmdline' for the designated proc_t, "escapes"
     // the result into a single string while guaranteeing the caller a
     // valid proc_t.cmdline pointer.
-static int fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
+static int fill_cmdline_cvt (const char *directory, proc_t *restrict p) {
  #define uFLG ( ESC_BRACKETS | ESC_DEFUNCT )
     if (read_unvectored(src_buffer, MAX_BUFSZ, directory, "cmdline", ' '))
         escape_str(dst_buffer, src_buffer, MAX_BUFSZ);
@@ -951,7 +951,7 @@ static int fill_cmdline_cvt (const char* directory, proc_t *restrict p) {
 
     // This routine reads an 'environ' for the designated proc_t and
     // guarantees the caller a valid proc_t.environ pointer.
-static int fill_environ_cvt (const char* directory, proc_t *restrict p) {
+static int fill_environ_cvt (const char *directory, proc_t *restrict p) {
     dst_buffer[0] = '\0';
     if (read_unvectored(src_buffer, MAX_BUFSZ, directory, "environ", ' '))
         escape_str(dst_buffer, src_buffer, MAX_BUFSZ);
@@ -1093,7 +1093,7 @@ static char *readlink_exe (const char *path){
 // This reads process info from /proc in the traditional way, for one process.
 // The pid (tgid? tid?) is already in p, and a path to it in path, with some
 // room to spare.
-static proc_t* simple_readproc(PROCTAB *restrict const PT, proc_t *restrict const p) {
+static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict const p) {
     static struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status
     static struct stat sb;     // stat() buffer
     char *restrict const path = PT->path;
@@ -1214,7 +1214,7 @@ next_proc:
 // This reads /proc/*/task/* data, for one task.
 // t is the POSIX thread  (task group member, generally not the leader)
 // path is a path to the task, with some room to spare.
-static proc_t* simple_readtask(PROCTAB *restrict const PT, proc_t *restrict const t, char *restrict const path) {
+static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict const t, char *restrict const path) {
     static struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status
     static struct stat sb;     // stat() buffer
     unsigned flags = PT->flags;
@@ -1401,7 +1401,7 @@ static int listed_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
  * the same logic can follow through as for the no-PID list case.  This is
  * fairly complex, but it does try to not to do any unnecessary work.
  */
-proc_t* readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
+proc_t *readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
   proc_t *ret;
 
   free_acquired(p);
@@ -1426,7 +1426,7 @@ out:
 // the next unique process or task available.  If no more are available,
 // return a null pointer (boolean false).  Use the passed buffer instead
 // of allocating space if it is non-NULL.
-proc_t* readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
+proc_t *readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
     static proc_t skel_p;    // skeleton proc_t, only uses tid + tgid
     static proc_t *new_p;    // for process/task transitions
     static int canary;
@@ -1470,11 +1470,11 @@ end_procs:
 //////////////////////////////////////////////////////////////////////////////////
 
 // initiate a process table scan
-PROCTAB* openproc(unsigned flags, ...) {
+PROCTAB *openproc(unsigned flags, ...) {
     va_list ap;
     struct stat sbuf;
     static int did_stat;
-    PROCTAB* PT = calloc(1, sizeof(PROCTAB));
+    PROCTAB *PT = calloc(1, sizeof(PROCTAB));
 
     if (!PT)
         return NULL;
@@ -1519,7 +1519,7 @@ PROCTAB* openproc(unsigned flags, ...) {
 
 
 // terminate a process table scan
-void closeproc(PROCTAB* PT) {
+void closeproc(PROCTAB *PT) {
     if (PT){
         if (PT->procfs) closedir(PT->procfs);
         if (PT->taskdir) closedir(PT->taskdir);

@@ -26,7 +26,7 @@
 #include "wchan.h"  // to verify prototype
 
 
-const char * lookup_wchan (int pid) {
+const char *lookup_wchan (int pid) {
    static char buf[64];
    const char *ret = buf;
    ssize_t num;
