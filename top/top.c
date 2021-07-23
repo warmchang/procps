@@ -1702,7 +1702,7 @@ static struct {
    , {  -1, -1, -1,  PIDS_TIME_START  }  // ull_int  ( if Show_FOREST, eu_TIME_START )
    , {  -1, -1, -1,  PIDS_ID_FUID     }  // u_int    ( if a usrseltyp, eu_ID_FUID    )
    , {  -1, -1, -1,  PIDS_extra       }  // s_ch     ( if Show_FOREST, eu_TREE_HID   )
-   , {  -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_LVL   )
+   , {  -1, -1, -1,  PIDS_extra       }  // s_int    ( if Show_FOREST, eu_TREE_LVL   )
    , {  -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_ADD   )
  #undef A_left
  #undef A_right
@@ -4364,11 +4364,11 @@ static int  Hide_tot;                       // total used in above array |
          * This little recursive guy was the real forest view workhorse. |
          * He fills in the Tree_ppt array and also sets the child indent |
          * level which is stored in an 'extra' result struct as a u_int. | */
-static void forest_adds (const int self, unsigned level) {
+static void forest_adds (const int self, int level) {
   // tailored 'results stack value' extractor macros
  #define rSv(E,X) PID_VAL(E, s_int, Seed_ppt[X])
   // if xtra-procps-debug.h active, can't use PID_VAL with assignment
- #define rSv_Lvl  Tree_ppt[Tree_idx]->head[eu_TREE_LVL].result.u_int
+ #define rSv_Lvl  Tree_ppt[Tree_idx]->head[eu_TREE_LVL].result.s_int
    int i;
 
    if (Tree_idx < PIDSmaxt) {               // immunize against insanity |
@@ -4414,20 +4414,20 @@ static void forest_begin (WIN_t *q) {
             error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
 #endif
       for (i = 0; i < PIDSmaxt; i++) {         // avoid hidepid distorts |
-         if (!PID_VAL(eu_TREE_LVL, u_int, Seed_ppt[i])) // parents lvl 0 |
+         if (!PID_VAL(eu_TREE_LVL, s_int, Seed_ppt[i])) // parents lvl 0 |
             forest_adds(i, 0);                 // add parents + children |
       }
 
       /* we use up to three additional 'PIDS_extra' results in our stack |
             eu_TREE_HID (s_ch) :  where 'x' == collapsed & 'z' == unseen |
-            eu_TREE_LVL (u_int):  where level number is stored (0 - 100) |
+            eu_TREE_LVL (s_int):  where level number is stored (0 - 100) |
             eu_TREE_ADD (u_int):  where a children's tics stored (maybe) | */
       for (i = 0; i < Hide_tot; i++) {
 
         // if have xtra-procps-debug.h, cannpt use PID_VAL w/ assignment |
        #define rSv(E,T,X)  Tree_ppt[X]->head[E].result.T
        #define rSv_Pid(X)  rSv(EU_PID, s_int, X)
-       #define rSv_Lvl(X)  rSv(eu_TREE_LVL, u_int, X)
+       #define rSv_Lvl(X)  rSv(eu_TREE_LVL, s_int, X)
        #define rSv_Hid(X)  rSv(eu_TREE_HID, s_ch, X)
         /* next 2 aren't needed if TREE_VCPUOFF but they cost us nothing |
            & the EU_CPU slot will now always be present (even if it's 0) | */
@@ -4439,7 +4439,7 @@ static void forest_begin (WIN_t *q) {
                if (rSv_Pid(j) == Hide_pid[i]) {
                   int parent = j;
                   int children = 0;
-                  unsigned level = rSv_Lvl(parent);
+                  int level = rSv_Lvl(parent);
                   while (j+1 < PIDSmaxt && rSv_Lvl(j+1) > level) {
                      ++j;
                      rSv_Hid(j) = 'z';
@@ -4478,7 +4478,7 @@ static void forest_begin (WIN_t *q) {
 static inline const char *forest_colour (const WIN_t *q, struct pids_stack *p) {
   // tailored 'results stack value' extractor macros
  #define rSv(E)   PID_VAL(E, str, p)
- #define rSv_Lvl  PID_VAL(eu_TREE_LVL, u_int, p)
+ #define rSv_Lvl  PID_VAL(eu_TREE_LVL, s_int, p)
  #define rSv_Hid  PID_VAL(eu_TREE_HID, s_ch, p)
 #ifndef SCROLLVAR_NO
    static char buf[1024*64*2]; // the same as libray's max buffer size
@@ -5778,7 +5778,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
 
    /* we use up to three additional 'PIDS_extra' results in our stacks
          eu_TREE_HID (s_ch) : where 'x' == collapsed and 'z' == unseen
-         eu_TREE_LVL (u_int): where a level number is stored (0 - 100)
+         eu_TREE_LVL (s_int): where a level number is stored (0 - 100)
          eu_TREE_ADD (u_int): where children's tics are stored (maybe) */
 #ifndef TREE_VWINALL
    if (q == Curwin)            // note: the following is NOT indented
