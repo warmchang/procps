@@ -4035,9 +4035,9 @@ static void win_names (WIN_t *q, const char *name) {
 static void win_reset (WIN_t *q) {
          SETw(q, Show_IDLEPS | Show_TASKON);
 #ifndef SCROLLVAR_NO
-         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = q->varcolbeg = 0;
+         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = q->varcolbeg = q->focus_pid = 0;
 #else
-         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = 0;
+         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = q->focus_pid = 0;
 #endif
          Monpidsidx = 0;
          osel_clear(q);
@@ -4347,7 +4347,7 @@ static inline int wins_usrselect (const WIN_t *q, struct pids_stack *p) {
         /*
          * We try keeping most existing code unaware of these activities |
          * ( plus, maintain alphabetical order within carefully chosen ) |
-         * ( names having the prefixes forest_a, forest_b and forest_c ) |
+         * ( names beginning forest_a, forest_b, forest_c and forest_d ) |
          * ( with each name exactly 1 letter more than its predecessor ) | */
 static struct pids_stack **Seed_ppt;        // temporary win ppt pointer |
 static struct pids_stack **Tree_ppt;        // forest_begin resizes this |
@@ -4473,9 +4473,36 @@ static void forest_begin (WIN_t *q) {
 
 
         /*
+         * When there's a 'focus_pid' established for a window, this guy |
+         * determines that window's 'focus_beg' plus 'focus_end' values. |
+         * But, if the pid can no longer be found, he'll turn off focus! | */
+static void forest_config (WIN_t *q) {
+  // tailored 'results stack value' extractor macro
+ #define rSv(x) PID_VAL(eu_TREE_LVL, s_int, q->ppt[(x)])
+   int i, level;
+
+   for (i = 0; i < PIDSmaxt; i++) {
+      if (q->focus_pid == PID_VAL(EU_PID, s_int, q->ppt[i])) {
+         level = rSv(i);
+         q->focus_beg = i;
+         break;
+      }
+   }
+   if (i == PIDSmaxt)
+      q->focus_pid = q->begtask = 0;
+   else {
+      while (i+1 < PIDSmaxt && rSv(i+1) > level)
+         ++i;
+      q->focus_end = i + 1;  // make 'focus_end' a proper fencpost
+   }
+ #undef rSv
+} // end: forest_config
+
+
+        /*
          * This guy adds the artwork to either 'cmd' or 'cmdline' values |
-         * when we're in forest view mode otherwise he just returns them | */
-static inline const char *forest_colour (const WIN_t *q, struct pids_stack *p) {
+         * if we are in forest view mode otherwise he just returns them. | */
+static inline const char *forest_display (const WIN_t *q, struct pids_stack *p) {
   // tailored 'results stack value' extractor macros
  #define rSv(E)   PID_VAL(E, str, p)
  #define rSv_Lvl  PID_VAL(eu_TREE_LVL, s_int, p)
@@ -4505,7 +4532,7 @@ static inline const char *forest_colour (const WIN_t *q, struct pids_stack *p) {
  #undef rSv
  #undef rSv_Lvl
  #undef rSv_Hid
-} // end: forest_colour
+} // end: forest_display
 
 /*######  Interactive Input Tertiary support  ############################*/
 
@@ -4772,7 +4799,6 @@ static void keys_global (int ch) {
       case 'e':
          if (++Rc.task_mscale > SK_Pb) Rc.task_mscale = SK_Kb;
          break;
-      case 'F':
       case 'f':
          fields_utility();
          break;
@@ -5025,6 +5051,15 @@ static void keys_task (int ch) {
       case 'c':
          VIZTOGw(w, Show_CMDLIN);
          break;
+      case 'F':
+         if (VIZCHKw(w)) {
+            if (CHKw(w, Show_FOREST)) {
+               int n = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
+               if (w->focus_pid == n) w->focus_pid = 0;
+               else w->focus_pid = n;
+            }
+         }
+         break;
       case 'i':
       {  static WIN_t *w_sav;
          static int beg_sav;
@@ -5081,6 +5116,7 @@ static void keys_task (int ch) {
             if (!ENUviz(w, EU_CMD))
                show_msg(fmtmk(N_fmt(FOREST_modes_fmt) , CHKw(w, Show_FOREST)
                   ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
+            if (!CHKw(w, Show_FOREST)) w->focus_pid = 0;
          }
          break;
       case 'v':
@@ -5475,13 +5511,13 @@ static void do_key (int ch) {
       char keys[SMLBUFSIZ];
    } key_tab[] = {
       { keys_global,
-         { '?', 'B', 'd', 'E', 'e', 'F', 'f', 'g', 'H', 'h'
+         { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,
-         { '#', '<', '>', 'b', 'c', 'i', 'J', 'j', 'n', 'O', 'o'
+         { '#', '<', '>', 'b', 'c', 'F', 'i', 'J', 'j', 'n', 'O', 'o'
          , 'R', 'S', 'U', 'u', 'V', 'v', 'x', 'y', 'z'
          , kbd_CtrlO, '\0' } },
       { keys_window,
@@ -5970,7 +6006,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             break;
    /* str, make_str with varialbe width + additional decoration */
          case EU_CMD:        // PIDS_CMD or PIDS_CMDLINE
-            varUTF8(forest_colour(q, p));
+            varUTF8(forest_display(q, p));
             break;
          default:            // keep gcc happy
             continue;
@@ -6029,32 +6065,34 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
 static void window_hlp (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    int i, reversed;
+   int beg = w->focus_pid ? w->focus_beg : 0;
+   int end = w->focus_pid ? w->focus_end : PIDSmaxt;
 
    SETw(w, NOPRINT_xxx);
    w->begtask += w->begnext;
    // next 'if' will force a forward scan ...
-   if (w->begtask <= 0) { w->begtask = 0; w->begnext = +1; }
-   else if (w->begtask >= PIDSmaxt) w->begtask = PIDSmaxt - 1;
+   if (w->begtask <= beg) { w->begtask = beg; w->begnext = +1; }
+   else if (w->begtask >= end) w->begtask = end - 1;
 
    reversed = 0;
    // potentially scroll forward ...
-   if (w->begnext > 0) {
+   if (w->begnext > beg) {
 fwd_redux:
-      for (i = w->begtask; i < PIDSmaxt; i++) {
+      for (i = w->begtask; i < end; i++) {
          if (wins_usrselect(w, w->ppt[i])
          && (*task_show(w, w->ppt[i])))
             break;
       }
-      if (i < PIDSmaxt) {
+      if (i < end) {
          w->begtask = i;
          goto wrap_up;
       }
       // no luck forward, so let's try backward
-      w->begtask = PIDSmaxt - 1;
+      w->begtask = end - 1;
    }
 
    // potentially scroll backward ...
-   for (i = w->begtask; i > 0; i--) {
+   for (i = w->begtask; i > beg; i--) {
       if (wins_usrselect(w, w->ppt[i])
       && (*task_show(w, w->ppt[i])))
          break;
@@ -6062,9 +6100,9 @@ fwd_redux:
    w->begtask = i;
 
    // reached the top, but maybe this guy ain't visible
-   if (!w->begtask && !reversed) {
-      if (!(wins_usrselect(w, w->ppt[0]))
-      || (!(*task_show(w, w->ppt[0])))) {
+   if (w->begtask == beg && !reversed) {
+      if (!(wins_usrselect(w, w->ppt[beg]))
+      || (!(*task_show(w, w->ppt[beg])))) {
          reversed = 1;
          goto fwd_redux;
       }
@@ -6083,16 +6121,17 @@ static int window_show (WIN_t *q, int wmax) {
     ( actual 'running' tasks will be a subset of those selected ) */
  #define isBUSY(x)   (0 < PID_VAL(EU_CPU, u_int, (x)))
  #define winMIN(a,b) (((a) < (b)) ? (a) : (b))
-   int i, lwin;
+   int i, lwin, numtasks;
 
    // Display Column Headings -- and distract 'em while we sort (maybe)
    PUFF("\n%s%s%s", q->capclr_hdr, q->columnhdr, Caps_endline);
    // and just in case 'Monpids' is active but matched no processes ...
    if (!PIDSmaxt) return 1;                         // 1 for the column header
 
-   if (CHKw(q, Show_FOREST))
+   if (CHKw(q, Show_FOREST)) {
       forest_begin(q);
-   else {
+      if (q->focus_pid) forest_config(q);
+   } else {
       enum pids_item item = Fieldstab[q->rc.sortindx].item;
       if (item == PIDS_CMD && CHKw(q, Show_CMDLIN))
          item = PIDS_CMDLINE;
@@ -6108,16 +6147,17 @@ static int window_show (WIN_t *q, int wmax) {
    i = q->begtask;
    lwin = 1;                                        // 1 for the column header
    wmax = winMIN(wmax, q->winlines + 1);            // ditto for winlines, too
+   numtasks = q->focus_pid ? winMIN(q->focus_end, PIDSmaxt) : PIDSmaxt;
 
    /* the least likely scenario is also the most costly, so we'll try to avoid
       checking some stuff with each iteration and check it just once... */
    if (CHKw(q, Show_IDLEPS) && !q->usrseltyp)
-      while (i < PIDSmaxt && lwin < wmax) {
+      while (i < numtasks && lwin < wmax) {
          if (*task_show(q, q->ppt[i++]))
             ++lwin;
       }
    else
-      while (i < PIDSmaxt && lwin < wmax) {
+      while (i < numtasks && lwin < wmax) {
          if ((CHKw(q, Show_IDLEPS) || isBUSY(q->ppt[i]))
          && wins_usrselect(q, q->ppt[i])
          && *task_show(q, q->ppt[i]))
