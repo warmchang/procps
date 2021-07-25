@@ -51,6 +51,7 @@
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
 //#define TOG4_NOFORCE            /* no force 2 abreast mode with '4' toggle */
 //#define TOG4_NOTRUNC            /* ensure no truncation in 2 abreast mode  */
+//#define TREE_FOCUS_X            /* 'F' resets forest view indentation to 0 */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
 //#define TREE_SCANALL            /* rescan array w/ forest view, avoid sort */
 //#define TREE_VALTMRK            /* use an indented '+' with collapsed pids */

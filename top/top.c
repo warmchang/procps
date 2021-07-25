@@ -4478,7 +4478,8 @@ static void forest_begin (WIN_t *q) {
          * But, if the pid can no longer be found, he'll turn off focus! | */
 static void forest_config (WIN_t *q) {
   // tailored 'results stack value' extractor macro
- #define rSv(x) PID_VAL(eu_TREE_LVL, s_int, q->ppt[(x)])
+  // (TREE_FOCUS_X can't use PID_VAL w/ assignment)
+ #define rSv(x)  q->ppt[x]->head[eu_TREE_LVL].result.s_int
    int i, level;
 
    for (i = 0; i < PIDSmaxt; i++) {
@@ -4491,8 +4492,15 @@ static void forest_config (WIN_t *q) {
    if (i == PIDSmaxt)
       q->focus_pid = q->begtask = 0;
    else {
+#ifdef TREE_FOCUS_X
+      int j = rSv(i);
+      rSv(i) = 0;
+      while (i+1 < PIDSmaxt && rSv(i+1) > level)
+         rSv(++i) -= j;
+#else
       while (i+1 < PIDSmaxt && rSv(i+1) > level)
          ++i;
+#endif
       q->focus_end = i + 1;  // make 'focus_end' a proper fencpost
    }
  #undef rSv
