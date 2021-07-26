@@ -6122,6 +6122,9 @@ wrap_up:
 } // end: window_hlp
 
 
+        /*
+         * Squeeze as many tasks as we can into a single window,
+         * after sorting the passed proc table. */
 static int window_show (WIN_t *q, int wmax) {
  #define sORDER  CHKw(q, Qsrt_NORMAL) ? PIDS_SORT_DESCEND : PIDS_SORT_ASCEND
  /* the isBUSY macro determines if a task is 'active' --
