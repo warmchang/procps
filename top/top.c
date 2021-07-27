@@ -4321,9 +4321,11 @@ static void wins_stage_2 (void) {
         /*
          * Determine if this task matches the 'u/U' selection
          * criteria for a given window */
-static inline int wins_usrselect (const WIN_t *q, struct pids_stack *p) {
+static inline int wins_usrselect (const WIN_t *q, int idx) {
   // a tailored 'results stack value' extractor macro
  #define rSv(E)  PID_VAL(E, u_int, p)
+   struct pids_stack *p = q->ppt[idx];
+
    switch(q->usrseltyp) {
       case 0:                                    // uid selection inactive
          return 1;
@@ -4510,7 +4512,7 @@ static void forest_config (WIN_t *q) {
         /*
          * This guy adds the artwork to either 'cmd' or 'cmdline' values |
          * if we are in forest view mode otherwise he just returns them. | */
-static inline const char *forest_display (const WIN_t *q, struct pids_stack *p) {
+static inline const char *forest_display (const WIN_t *q, int idx) {
   // tailored 'results stack value' extractor macros
  #define rSv(E)   PID_VAL(E, str, p)
  #define rSv_Lvl  PID_VAL(eu_TREE_LVL, s_int, p)
@@ -4520,6 +4522,7 @@ static inline const char *forest_display (const WIN_t *q, struct pids_stack *p) 
 #else
    static char buf[ROWMINSIZ];
 #endif
+   struct pids_stack *p = q->ppt[idx];
    const char *which = (CHKw(q, Show_CMDLIN)) ? rSv(eu_CMDLINE) : rSv(EU_CMD);
 
    if (!CHKw(q, Show_FOREST) || rSv_Lvl == 0) return which;
@@ -4568,7 +4571,7 @@ static inline int find_ofs (const WIN_t *q, const char *buf) {
    /* This is currently the only true prototype required by top.
       It is placed here, instead of top.h, to avoid one compiler
       warning when the top_nls.c source was compiled separately. */
-static const char *task_show (const WIN_t *q, struct pids_stack *p);
+static const char *task_show (const WIN_t *q, int idx);
 
 static void find_string (int ch) {
  #define reDUX (found) ? N_txt(WORD_another_txt) : ""
@@ -4593,7 +4596,7 @@ static void find_string (int ch) {
    if (Curwin->findstr[0]) {
       SETw(Curwin, NOPRINT_xxx);
       for (i = Curwin->begtask; i < PIDSmaxt; i++) {
-         const char *row = task_show(Curwin, Curwin->ppt[i]);
+         const char *row = task_show(Curwin, i);
          if (*row && -1 < find_ofs(Curwin, row)) {
             found = 1;
             if (i == Curwin->begtask) continue;
@@ -5801,7 +5804,7 @@ numa_oops:
         /*
          * Build the information for a single task row and
          * display the results or return them to the caller. */
-static const char *task_show (const WIN_t *q, struct pids_stack *p) {
+static const char *task_show (const WIN_t *q, int idx) {
   // a tailored 'results stack value' extractor macro
  #define rSv(E,T)  PID_VAL(E, T, p)
 #ifndef SCROLLVAR_NO
@@ -5816,6 +5819,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
  #define makeVAR(S) cp = make_str(S, q->varcolsz, Js, AUTOX_NO)
  #define varUTF8(S) cp = make_str_utf8(S, q->varcolsz, Js, AUTOX_NO)
 #endif
+   struct pids_stack *p = q->ppt[idx];
    static char rbuf[ROWMINSIZ];
    char *rp;
    int x;
@@ -6014,7 +6018,7 @@ static const char *task_show (const WIN_t *q, struct pids_stack *p) {
             break;
    /* str, make_str with varialbe width + additional decoration */
          case EU_CMD:        // PIDS_CMD or PIDS_CMDLINE
-            varUTF8(forest_display(q, p));
+            varUTF8(forest_display(q, idx));
             break;
          default:            // keep gcc happy
             continue;
@@ -6087,8 +6091,8 @@ static void window_hlp (void) {
    if (w->begnext > beg) {
 fwd_redux:
       for (i = w->begtask; i < end; i++) {
-         if (wins_usrselect(w, w->ppt[i])
-         && (*task_show(w, w->ppt[i])))
+         if (wins_usrselect(w, i)
+         && (*task_show(w, i)))
             break;
       }
       if (i < end) {
@@ -6101,16 +6105,16 @@ fwd_redux:
 
    // potentially scroll backward ...
    for (i = w->begtask; i > beg; i--) {
-      if (wins_usrselect(w, w->ppt[i])
-      && (*task_show(w, w->ppt[i])))
+      if (wins_usrselect(w, i)
+      && (*task_show(w, i)))
          break;
    }
    w->begtask = i;
 
    // reached the top, but maybe this guy ain't visible
    if (w->begtask == beg && !reversed) {
-      if (!(wins_usrselect(w, w->ppt[beg]))
-      || (!(*task_show(w, w->ppt[beg])))) {
+      if (!(wins_usrselect(w, beg))
+      || (!(*task_show(w, beg)))) {
          reversed = 1;
          goto fwd_redux;
       }
@@ -6164,14 +6168,14 @@ static int window_show (WIN_t *q, int wmax) {
       checking some stuff with each iteration and check it just once... */
    if (CHKw(q, Show_IDLEPS) && !q->usrseltyp)
       while (i < numtasks && lwin < wmax) {
-         if (*task_show(q, q->ppt[i++]))
+         if (*task_show(q, i++))
             ++lwin;
       }
    else
       while (i < numtasks && lwin < wmax) {
          if ((CHKw(q, Show_IDLEPS) || isBUSY(q->ppt[i]))
-         && wins_usrselect(q, q->ppt[i])
-         && *task_show(q, q->ppt[i]))
+         && wins_usrselect(q, i)
+         && *task_show(q, i))
             ++lwin;
          ++i;
       }
