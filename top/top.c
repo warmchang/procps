@@ -4895,21 +4895,28 @@ static inline const char *forest_display (const WIN_t *q, int idx) {
 #endif
    const proc_t *p = q->ppt[idx];
    const char *which = (CHKw(q, Show_CMDLIN)) ? *p->cmdline : p->cmd;
+   int level = p->pad_3;
 
-   if (!CHKw(q, Show_FOREST) || !p->pad_3) return which;
+#ifdef TREE_FOCUS_X
+   if (q->focus_pid) {
+      if (idx >= q->focus_beg && idx < q->focus_end)
+         level -= q->focus_lvl;
+   }
+#endif
+   if (!CHKw(q, Show_FOREST) || !level) return which;
 #ifndef TREE_VWINALL
    if (q == Curwin)            // note: the following is NOT indented
 #endif
    if (p->pad_2 == 'x') {
 #ifdef TREE_VALTMRK
-      snprintf(buf, sizeof(buf), "%*s%s", (4 * p->pad_3), "`+ ", which);
+      snprintf(buf, sizeof(buf), "%*s%s", (4 * level), "`+ ", which);
 #else
-      snprintf(buf, sizeof(buf), "+%*s%s", ((4 * p->pad_3) - 1), "`- ", which);
+      snprintf(buf, sizeof(buf), "+%*s%s", ((4 * level) - 1), "`- ", which);
 #endif
       return buf;
    }
-   if (p->pad_3 > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
-   else snprintf(buf, sizeof(buf), "%*s%s", (4 * p->pad_3), " `- ", which);
+   if (level > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
+   else snprintf(buf, sizeof(buf), "%*s%s", (4 * level), " `- ", which);
    return buf;
 } // end: forest_display
 
@@ -4931,6 +4938,9 @@ static void forest_excluded (WIN_t *q) {
    if (i == Frame_maxtask)
       q->focus_pid = q->begtask = 0;
    else {
+#ifdef TREE_FOCUS_X
+      q->focus_lvl = level;
+#endif
       while (i+1 < Frame_maxtask && q->ppt[i+1]->pad_3 > level)
          ++i;
       q->focus_end = i + 1;  // make 'focus_end' a proper fencpost
