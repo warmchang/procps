@@ -1,7 +1,7 @@
 .ig
 . manual page for NEW and IMPROVED linux top
 .
-. Copyright (c) 2002-2020, by: James C. Warner
+. Copyright (c) 2002-2021, by: James C. Warner
 .
 . This file may be copied under the terms of the GNU Public License.
 ..
@@ -62,7 +62,7 @@
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "September 2020" "procps-ng" "User Commands"
+.TH TOP 1 "July 2020" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 .nh
 
@@ -1123,9 +1123,9 @@ depending on the context in which they are issued.
         C, l, t, m, 1, 2, 3, 4, !
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, J, j, x, y, z
-        Content:     c, f, F, o, O, S, u, U, V, v
+        Content:     c, F, f, O, o, S, U, u, V, v
         Size:        #, i, n
-        Sorting:     <, >, f, F, R
+        Sorting:     <, >, f, R
   4d.\fI Color-Mapping \fR
         <Ret>, a, B, b, H, M, q, S, T, w, z, 0 \- 7
   5b.\fI Commands-for-Windows \fR
@@ -1168,8 +1168,8 @@ those \*(CIs applicable to \*(AM.
 .TP 7
 \ \ \ \fB=\fR\ \ :\fIExit-Display-Limits \fR
 Removes restrictions on what is shown.
-This command will reverse any `i' (idle tasks), `n' (max tasks)
-and `v' (hide children) commands that might be active.
+This command will reverse any `i' (idle tasks), `n' (max tasks),
+`v' (hide children) and `F' focus commands that might be active.
 It also provides for an exit from PID monitoring, User filtering,
 Other filtering, Locate processing and Combine Cpus mode.
 
@@ -1466,7 +1466,7 @@ It requires a terminal with a minimum width of 80 columns.
 If a terminal's width is decreased below the minimum while \*(We
 is running, \*(We reverts to the normal `1' toggle \*F state.
 
-To avoid truncation when displaying detailed \*(Pu statistcs,
+To avoid truncation when displaying detailed \*(Pu statistics,
 as opposed to the graphic representations, a minimum width
 of 165 columns would be required.
 
@@ -1574,14 +1574,28 @@ is currently visible.
 Later, should that field come into view, the change you applied will be seen.
 
 .TP 7
-\ \ \ \fBf\fR | \fBF\fR\ \ :\fIFields-Management \fR
-These keys display a separate screen where you can change which fields are
+\ \ \ \fBF\fR\ \ :\fIMaintain-Parent-Focus\fR toggle \fR
+When in forest view mode, this key serves as a toggle to retain focus
+on a target task, presumably one with forked children.
+If forest view mode is \*F this key has no effect.
+
+The toggle is applied to the first (topmost) process in the \*(CW.
+Once established, that task is always displayed as the first (topmost)
+process along with its forked children.
+All other processes will be suppressed.
+
+\*(NT keys like `i' (idle tasks), `n' (max tasks), `v' (hide children)
+and User/Other filtering remain accessible and can impact what is displayed.
+
+.TP 7
+\ \ \ \fBf\fR\ \ :\fIFields-Management \fR
+This key displays a separate screen where you can change which fields are
 displayed, their order and also designate the sort field.
-For additional information on these \*(CIs
+For additional information on this \*(CI
 \*(Xt 3b. MANAGING Fields.
 
 .TP 7
-\ \ \ \fBo\fR | \fBO\fR\ \ :\fIOther-Filtering \fR
+\ \ \ \fBO\fR | \fBo\fR\ \ :\fIOther-Filtering \fR
 You will be prompted for the selection criteria which then determines
 which tasks will be shown in the \*(CW.
 Your criteria can be made case sensitive or case can be ignored.
@@ -1607,7 +1621,7 @@ If you wish to know in advance whether or not Cumulative mode is in
 effect, simply ask for help and view the window summary on the second line.
 
 .TP 7
-\ \ \ \fBu\fR | \fBU\fR\ \ :\fIShow-Specific-User-Only \fR
+\ \ \ \fBU\fR | \fBu\fR\ \ :\fIShow-Specific-User-Only \fR
 You will be prompted for the\fB uid\fR or\fB name\fR of the user to display.
 The \-u option matches on \fB effective\fR user whereas the \-U option
 matches on\fB any\fR user (real, effective, saved, or filesystem).
@@ -1716,8 +1730,8 @@ The following \*(CIs will\fB always\fR be honored whether or not
 the current sort field is visible.
 
 .TP 7
-\ \ \ \fBf\fR | \fBF\fR\ \ :\fIFields-Management \fR
-These keys display a separate screen where you can change which field
+\ \ \ \fBf\fR\ \ :\fIFields-Management \fR
+This key displays a separate screen where you can change which field
 is used as the sort column, among other functions.
 This can be a convenient way to simply verify the current sort field,
 when running \*(We with column highlighting turned \*F.
@@ -1818,8 +1832,8 @@ as the only display element.
 *\ \ \fB=\fR | \fB+\fR\ \ :\fIEqualize/Reset-Window(s) \fR
 The `=' key forces the \*(CW's \*(TD to be visible.
 It also reverses any active `i' (idle tasks), `n' (max tasks), `u/U'
-(user filter), `o/O' (other filter), `v' (hide children), `L' (locate)
-and `!' (combine cpus) commands.
+(user filter), `o/O' (other filter), `v' (hide children), `F' focused,
+`L' (locate) and `!' (combine cpus) commands.
 Also, if the window had been scrolled, it will be reset with this command.
 \*(XT 5c. SCROLLING a Window for additional information regarding vertical
 and horizontal scrolling.

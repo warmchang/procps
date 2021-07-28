@@ -1,6 +1,7 @@
 procps-ng-NEXT
 ---------------
   * Rename pwait to pidwait
+  * top: 'F' key is now a new forest view 'focus' toggle
 
 procps-ng-3.3.17
 ---------------
