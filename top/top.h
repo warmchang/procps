@@ -366,6 +366,9 @@ typedef struct WIN_t {
    int    focus_pid;                   // target pid when 'F' toggle is active
    int    focus_beg;                   // ppt index where 'F' toggle has begun
    int    focus_end;                   // ppt index where 'F' toggle has ended
+#ifdef TREE_FOCUS_X
+   int    focus_lvl;                   // the indentation level of parent task
+#endif
    struct pids_stack **ppt;            // this window's stacks ptr array
    struct WIN_t *next,                 // next window in window stack
                 *prev;                 // prior window in window stack

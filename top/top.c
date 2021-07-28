@@ -4480,8 +4480,7 @@ static void forest_begin (WIN_t *q) {
          * But, if the pid can no longer be found, he'll turn off focus! | */
 static void forest_config (WIN_t *q) {
   // tailored 'results stack value' extractor macro
-  // (TREE_FOCUS_X can't use PID_VAL w/ assignment)
- #define rSv(x)  q->ppt[x]->head[eu_TREE_LVL].result.s_int
+ #define rSv(x) PID_VAL(eu_TREE_LVL, s_int, q->ppt[(x)])
    int i, level;
 
    for (i = 0; i < PIDSmaxt; i++) {
@@ -4495,14 +4494,10 @@ static void forest_config (WIN_t *q) {
       q->focus_pid = q->begtask = 0;
    else {
 #ifdef TREE_FOCUS_X
-      int j = rSv(i);
-      rSv(i) = 0;
-      while (i+1 < PIDSmaxt && rSv(i+1) > level)
-         rSv(++i) -= j;
-#else
+      q->focus_lvl = rSv(i);
+#endif
       while (i+1 < PIDSmaxt && rSv(i+1) > level)
          ++i;
-#endif
       q->focus_end = i + 1;  // make 'focus_end' a proper fencpost
    }
  #undef rSv
@@ -4524,21 +4519,28 @@ static inline const char *forest_display (const WIN_t *q, int idx) {
 #endif
    struct pids_stack *p = q->ppt[idx];
    const char *which = (CHKw(q, Show_CMDLIN)) ? rSv(eu_CMDLINE) : rSv(EU_CMD);
+   int level = rSv_Lvl;
 
-   if (!CHKw(q, Show_FOREST) || rSv_Lvl == 0) return which;
+#ifdef TREE_FOCUS_X
+   if (q->focus_pid) {
+      if (idx >= q->focus_beg && idx < q->focus_end)
+         level -= q->focus_lvl;
+   }
+#endif
+   if (!CHKw(q, Show_FOREST) || level == 0) return which;
 #ifndef TREE_VWINALL
    if (q == Curwin)            // note: the following is NOT indented
 #endif
    if (rSv_Hid == 'x') {
 #ifdef TREE_VALTMRK
-      snprintf(buf, sizeof(buf), "%*s%s", (4 * rSv_Lvl), "`+ ", which);
+      snprintf(buf, sizeof(buf), "%*s%s", (4 * level), "`+ ", which);
 #else
-      snprintf(buf, sizeof(buf), "+%*s%s", ((4 * rSv_Lvl) - 1), "`- ", which);
+      snprintf(buf, sizeof(buf), "+%*s%s", ((4 * level) - 1), "`- ", which);
 #endif
       return buf;
    }
-   if (rSv_Lvl > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
-   else snprintf(buf, sizeof(buf), "%*s%s", (4 * rSv_Lvl), " `- ", which);
+   if (level > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
+   else snprintf(buf, sizeof(buf), "%*s%s", (4 * level), " `- ", which);
    return buf;
  #undef rSv
  #undef rSv_Lvl
