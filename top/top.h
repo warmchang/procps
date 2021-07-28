@@ -438,6 +438,9 @@ typedef struct WIN_t {
    int    osel_tot;                    // total of other selection criteria
    char  *findstr;                     // window's current/active search string
    int    findlen;                     // above's strlen, without call overhead
+   int    focus_pid;                   // target pid when 'F' toggle is active
+   int    focus_beg;                   // ppt index where 'F' toggle has begun
+   int    focus_end;                   // ppt index where 'F' toggle has ended
    proc_t **ppt;                       // this window's proc_t ptr array
    struct WIN_t *next,                 // next window in window stack
                 *prev;                 // prior window in window stack
@@ -789,7 +792,8 @@ typedef struct WIN_t {
 //atic int           forest_based (const proc_t **x, const proc_t **y);
 #endif
 //atic void          forest_create (WIN_t *q);
-//atic inline const char *forest_display (const WIN_t *q, const proc_t *p);
+//atic inline const char *forest_display (const WIN_t *q, int idx);
+//atic void          forest_excluded (WIN_t *q);
 /*------  Interactive Input Tertiary support  ----------------------------*/
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);
