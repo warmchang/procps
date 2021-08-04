@@ -222,42 +222,42 @@ typedef struct PROCTAB {
 // argument is the length of the list (currently only used for lists of user
 // id's since uid_t supports no convenient termination sentinel.)
 
-#define PROC_FILLMEM         0x0001 // read statm
-#define PROC_FILLARG         0x0002 // alloc and fill in `cmdline' vectors
-#define PROC_FILLENV         0x0004 // alloc and fill in `environ' vectors
-#define PROC_FILLUSR         0x0008 // resolve user id number -> user name
-#define PROC_FILLGRP         0x0010 // resolve group id number -> group name
-#define PROC_FILLSTATUS      0x0020 // read status
-#define PROC_FILLSTAT        0x0040 // read stat
-#define PROC_FILLCGROUP      0x0200 // alloc and fill in `cgroup` vectors
-#define PROC_FILLOOM         0x0800 // fill in proc_t oom_score and oom_adj
-#define PROC_FILLNS          0x8000 // fill in proc_t namespace information
-#define PROC_FILLSYSTEMD    0x80000 // fill in proc_t systemd information
-#define PROC_FILL_LXC      0x800000 // fill in proc_t lxcname, if possible
-#define PROC_FILL_LUID     0x400000 // fill in proc_t luid (login user id)
-#define PROC_FILL_EXE      0x200000 // fill in proc_t exe path + pgm name
-#define PROC_FILLIO      0x01000000 // fill in proc_t io information
-#define PROC_FILLSMAPS   0x02000000 // fill in proc_t smaps_rollup stuff
+#define PROC_FILLMEM         0x00000001 // read statm
+#define PROC_FILLARG         0x00000002 // alloc and fill in `cmdline' vectors
+#define PROC_FILLENV         0x00000004 // alloc and fill in `environ' vectors
+#define PROC_FILLUSR         0x00000008 // resolve user id number -> user name
+#define PROC_FILLGRP         0x00000010 // resolve group id number -> group name
+#define PROC_FILLSTATUS      0x00000020 // read status
+#define PROC_FILLSTAT        0x00000040 // read stat
+#define PROC_FILLCGROUP      0x00000080 // alloc and fill in `cgroup` vectors
+#define PROC_FILLOOM         0x00000100 // fill in proc_t oom_score and oom_adj
+#define PROC_FILLNS          0x00000200 // fill in proc_t namespace information
+#define PROC_FILLSYSTEMD     0x00000400 // fill in proc_t systemd information
+#define PROC_FILL_LXC        0x00000800 // fill in proc_t lxcname, if possible
+#define PROC_FILL_LUID       0x00001000 // fill in proc_t luid (login user id)
+#define PROC_FILL_EXE        0x00002000 // fill in proc_t exe path + pgm name
+#define PROC_FILLIO          0x00004000 // fill in proc_t io information
+#define PROC_FILLSMAPS       0x00008000 // fill in proc_t smaps_rollup stuff
 
 // consider only processes with one of the passed:
-#define PROC_PID             0x1000  // process id numbers ( 0   terminated)
-#define PROC_UID             0x4000  // user id numbers    ( length needed )
+#define PROC_PID             0x00010000  // process id numbers ( 0 terminated  )
+#define PROC_UID             0x00020000  // user id numbers    ( length needed )
 // Note: the above 2 values must NOT change without also changing pids.h !!!
 
-#define PROC_EDITCGRPCVT    0x10000 // edit `cgroup' as regular string
-#define PROC_EDITCMDLCVT    0x20000 // edit `cmdline' as regular string
-#define PROC_EDITENVRCVT    0x40000 // edit `environ' as regular string
+#define PROC_EDITCGRPCVT     0x00040000 // edit `cgroup' as regular string
+#define PROC_EDITCMDLCVT     0x00080000 // edit `cmdline' as regular string
+#define PROC_EDITENVRCVT     0x00100000 // edit `environ' as regular string
 
 // these three also require the PROC_FILLSTATUS flage
-#define PROC_FILL_OUSERS   ( 0x0080 | PROC_FILLSTATUS ) // obtain other user names
-#define PROC_FILL_OGROUPS  ( 0x0100 | PROC_FILLSTATUS ) // obtain other group names
-#define PROC_FILL_SUPGRP   ( 0x0400 | PROC_FILLSTATUS ) // obtain supplementary group names
+#define PROC_FILL_OUSERS   ( 0x00200000 | PROC_FILLSTATUS ) // obtain other user names
+#define PROC_FILL_OGROUPS  ( 0x00400000 | PROC_FILLSTATUS ) // obtain other group names
+#define PROC_FILL_SUPGRP   ( 0x00800000 | PROC_FILLSTATUS ) // obtain supplementary group names
 
 // it helps to give app code a few spare bits
-#define PROC_SPARE_1     0x04000000
-#define PROC_SPARE_2     0x08000000
-#define PROC_SPARE_3     0x10000000
-#define PROC_SPARE_4     0x20000000
+#define PROC_SPARE_1         0x10000000
+#define PROC_SPARE_2         0x20000000
+#define PROC_SPARE_3         0x40000000
+#define PROC_SPARE_4         0x80000000
 
 // Function definitions
 // Initialize a PROCTAB structure holding needed call-to-call persistent data
