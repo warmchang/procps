@@ -604,7 +604,7 @@ That scaling is influenced via the `e' \*(CI or established for startup
 through a build option.
 
 .TP 4
- 1.\fB %CPU \*(Em \*(PU Usage \fR
+\fB%CPU \*(Em \*(PU Usage \fR
 The task's share of the elapsed \*(PU time since the last screen update,
 expressed as a percentage of total \*(PU time.
 
@@ -625,13 +625,13 @@ those unseen children.
 the `V' and `v' toggles.
 
 .TP 4
- 2.\fB %MEM \*(Em Memory Usage (RES) \fR
+\fB%MEM \*(Em Memory Usage (RES) \fR
 A task's currently resident share of available \*(MP.
 
 \*(XX.
 
 .TP 4
- 3.\fB CGNAME \*(Em Control Group Name \fR
+\fBCGNAME \*(Em Control Group Name \fR
 The name of the control group to which a process belongs,
 or `\-' if not applicable for that process.
 
@@ -640,7 +640,7 @@ groups as shown under the next heading (CGROUPS).
 And as is true there, this field is also variable width.
 
 .TP 4
- 4.\fB CGROUPS \*(Em Control Groups \fR
+\fBCGROUPS \*(Em Control Groups \fR
 The names of the control group(s) to which a process belongs,
 or `\-' if not applicable for that process.
 
@@ -661,14 +661,14 @@ Even so, such variable width fields could still suffer truncation.
 any truncated data.
 
 .TP 4
- 5.\fB CODE \*(Em Code Size (KiB) \fR
+\fBCODE \*(Em Code Size (KiB) \fR
 The amount of \*(MP currently devoted to executable code, also known
 as the Text Resident Set size or TRS.
 
 \*(XX.
 
 .TP 4
- 6.\fB COMMAND \*(Em Command\fB Name\fR or Command\fB Line \fR
+\fBCOMMAND \*(Em Command\fB Name\fR or Command\fB Line \fR
 Display the command line used to start a task or the name of the associated
 program.
 You toggle between command\fI line\fR and\fI name\fR with `c', which is both
@@ -692,7 +692,7 @@ displayed (the `c' \*(CI.)
 any truncated data.
 
 .TP 4
- 7.\fB DATA \*(Em Data + Stack Size (KiB) \fR
+\fBDATA \*(Em Data + Stack Size (KiB) \fR
 The amount of private memory \fIreserved\fR by a process.
 It is also known as the Data Resident Set or DRS.
 Such memory may not yet be mapped to \*(MP (RES) but will always be
@@ -701,7 +701,7 @@ included in the \*(MV (VIRT) amount.
 \*(XX.
 
 .TP 4
- 8.\fB ENVIRON \*(Em Environment variables \fR
+\fBENVIRON \*(Em Environment variables \fR
 Display all of the environment variables, if any, as seen by the
 respective processes.
 These variables will be displayed in their raw native order, not the
@@ -716,7 +716,7 @@ This is especially true for this field.
 any truncated data.
 
 .TP 4
- 9.\fB EXE \*(Em Executable Path \fR
+\fBEXE \*(Em Executable Path \fR
 Where available, this is the full path to the executable,
 including the program name.
 
@@ -725,31 +725,31 @@ When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
 
 .TP 4
-10.\fB Flags \*(Em Task Flags \fR
+\fBFlags \*(Em Task Flags \fR
 This column represents the task's current scheduling flags which are
 expressed in hexadecimal notation and with zeros suppressed.
 These flags are officially documented in <linux/sched.h>.
 
 .TP 4
-11.\fB GID \*(Em Group Id \fR
+\fBGID \*(Em Group Id \fR
 The\fI effective\fR group ID.
 
 .TP 4
-12.\fB GROUP \*(Em Group Name \fR
+\fBGROUP \*(Em Group Name \fR
 The\fI effective\fR group name.
 
 .TP 4
-13.\fB LOGID \*(Em Login User Id \fR
+\fBLOGID \*(Em Login User Id \fR
 The user ID used at\fI login\fR.
 When -1 is displayed it means this information is not available.
 
 .TP 4
-14.\fB LXC \*(Em Lxc Container Name \fR
+\fBLXC \*(Em Lxc Container Name \fR
 The name of the lxc container within which a task is running.
 If a process is not running inside a container, a dash (`\-') will be shown.
 
 .TP 4
-15.\fB NI \*(Em Nice Value \fR
+\fBNI \*(Em Nice Value \fR
 The nice value of the task.
 A negative nice value means higher priority, whereas a positive nice value
 means lower priority.
@@ -757,26 +757,26 @@ Zero in this field simply means priority will not be adjusted in determining
 a task's dispatch-ability.
 
 .TP 4
-16.\fB NU \*(Em Last known NUMA node \fR
+\fBNU \*(Em Last known NUMA node \fR
 A number representing the NUMA node associated with the last used processor (`P').
 When -1 is displayed it means that NUMA information is not available.
 
 \*(XC `'2' and `3' \*(CIs for additional NUMA provisions affecting the \*(SA.
 
 .TP 4
-17.\fB OOMa \*(Em Out of Memory Adjustment Factor \fR
+\fBOOMa \*(Em Out of Memory Adjustment Factor \fR
 The value, ranging from -1000 to +1000, added to the current out of memory
 score (OOMs) which is then used to determine which task to kill when memory
 is exhausted.
 
 .TP 4
-18.\fB OOMs \*(Em Out of Memory Score \fR
+\fBOOMs \*(Em Out of Memory Score \fR
 The value, ranging from 0 to +1000, used to select task(s) to kill when memory
 is exhausted.
 Zero translates to `never kill' whereas 1000 means `always kill'.
 
 .TP 4
-19.\fB P \*(Em Last used \*(PU (SMP) \fR
+\fBP \*(Em Last used \*(PU (SMP) \fR
 A number representing the last used processor.
 In a true SMP environment this will likely change frequently since the kernel
 intentionally uses weak affinity.
@@ -785,7 +785,7 @@ processes to change \*(PUs more often (because of the extra demand for
 \*(Pu time).
 
 .TP 4
-20.\fB PGRP \*(Em Process Group Id \fR
+\fBPGRP \*(Em Process Group Id \fR
 Every process is member of a unique process group which is used for
 distribution of signals and by terminals to arbitrate requests for their
 input and output.
@@ -795,7 +795,7 @@ By convention, this value equals the process ID (\*(Xa PID) of the first
 member of a process group, called the process group leader.
 
 .TP 4
-21.\fB PID \*(Em Process Id \fR
+\fBPID \*(Em Process Id \fR
 The task's unique process ID, which periodically wraps, though never
 restarting at zero.
 In kernel terms, it is a dispatchable entity defined by a task_struct.
@@ -806,11 +806,11 @@ a thread group ID for the thread group leader (\*(Xa TGID);
 and a TTY process group ID for the process group leader (\*(Xa TPGID).
 
 .TP 4
-22.\fB PPID \*(Em Parent Process Id \fR
+\fBPPID \*(Em Parent Process Id \fR
 The process ID (pid) of a task's parent.
 
 .TP 4
-23.\fB PR \*(Em Priority \fR
+\fBPR \*(Em Priority \fR
 The scheduling priority of the task.
 If you see `rt' in this field, it means the task is running
 under real time scheduling priority.
@@ -820,7 +820,7 @@ the operating itself was not preemptible.
 And while the 2.6 kernel can be made mostly preemptible, it is not always so.
 
 .TP 4
-24.\fB PSS \*(Em Proportional Resident Memory, smaps (KiB) \fR
+\fBPSS \*(Em Proportional Resident Memory, smaps (KiB) \fR
 The proportion of this task's share of `RSS' where each page is divided by
 the number of processes sharing it.
 It is also the sum of the `PSan', `PSfd' and `PSsh' fields.
@@ -831,11 +831,11 @@ pages shared with another process, its `PSS' would be 1500 (times page size).
 \*(ZX.
 
 .PP
-25.\fB PSan \*(Em Proportional Anonymous Memory, smaps (KiB) \fR
+\fBPSan \*(Em Proportional Anonymous Memory, smaps (KiB) \fR
 .br
-26.\fB PSfd \*(Em Proportional File Memory, smaps (KiB) \fR
+\fBPSfd \*(Em Proportional File Memory, smaps (KiB) \fR
 .br
-27.\fB PSsh \*(Em Proportional Shmem Memory, smaps (KiB) \fR
+\fBPSsh \*(Em Proportional Shmem Memory, smaps (KiB) \fR
 .RS 4
 As was true for `PSS' above (total proportional resident memory),
 these fields represent the proportion of this task's share of each type
@@ -845,7 +845,7 @@ of memory divided by the number of processes sharing it.
 .RE
 
 .TP 4
-28.\fB RES \*(Em Resident Memory Size (KiB) \fR
+\fBRES \*(Em Resident Memory Size (KiB) \fR
 A subset of the virtual address space (VIRT) representing the non-swapped
 \*(MP a task is currently using.
 It is also the sum of the `RSan', `RSfd' and `RSsh' fields.
@@ -860,7 +860,7 @@ modified, act as a dedicated \*(MS and thus will never impact SWAP.
 \*(XX.
 
 .TP 4
-29.\fB RSS \*(Em Resident Memory, smaps (KiB) \fR
+\fBRSS \*(Em Resident Memory, smaps (KiB) \fR
 Another, more precise view of process non-swapped \*(MP.
 It is obtained from the `smaps_rollup' file and is
 generally slightly larger than that shown for `RES'.
@@ -868,35 +868,35 @@ generally slightly larger than that shown for `RES'.
 \*(ZX.
 
 .TP 4
-30.\fB RSan \*(Em Resident Anonymous Memory Size (KiB) \fR
+\fBRSan \*(Em Resident Anonymous Memory Size (KiB) \fR
 A subset of resident memory (RES) representing private pages not
 mapped to a file.
 
 .TP 4
-31.\fB RSfd \*(Em Resident File-Backed Memory Size (KiB) \fR
+\fBRSfd \*(Em Resident File-Backed Memory Size (KiB) \fR
 A subset of resident memory (RES) representing the implicitly shared
 pages supporting program images and shared libraries.
 It also includes explicit file mappings, both private and shared.
 
 .TP 4
-32.\fB RSlk \*(Em Resident Locked Memory Size (KiB) \fR
+\fBRSlk \*(Em Resident Locked Memory Size (KiB) \fR
 A subset of resident memory (RES) which cannot be swapped out.
 
 .TP 4
-33.\fB RSsh \*(Em Resident Shared Memory Size (KiB) \fR
+\fBRSsh \*(Em Resident Shared Memory Size (KiB) \fR
 A subset of resident memory (RES) representing the explicitly shared
 anonymous shm*/mmap pages.
 
 .TP 4
-34.\fB RUID \*(Em Real User Id \fR
+\fBRUID \*(Em Real User Id \fR
 The\fI real\fR user ID.
 
 .TP 4
-35.\fB RUSER \*(Em Real User Name \fR
+\fBRUSER \*(Em Real User Name \fR
 The\fI real\fR user name.
 
 .TP 4
-36.\fB S \*(Em Process Status \fR
+\fBS \*(Em Process Status \fR
 The status of the task which can be one of:
     \fBD\fR = uninterruptible sleep
     \fBI\fR = idle
@@ -912,7 +912,7 @@ Even without a true SMP machine, you may see numerous tasks in this state
 depending on \*(We's delay interval and nice value.
 
 .TP 4
-37.\fB SHR \*(Em Shared Memory Size (KiB) \fR
+\fBSHR \*(Em Shared Memory Size (KiB) \fR
 A subset of resident memory (RES) that may be used by other processes.
 It will include shared anonymous pages and shared file-backed pages.
 It also includes private pages mapped to files representing
@@ -921,7 +921,7 @@ program images and shared libraries.
 \*(XX.
 
 .TP 4
-38.\fB SID \*(Em Session Id \fR
+\fBSID \*(Em Session Id \fR
 A session is a collection of process groups (\*(Xa PGRP),
 usually established by the login shell.
 A newly forked process joins the session of its creator.
@@ -930,11 +930,11 @@ member of the session, called the session leader, which is usually the
 login shell.
 
 .TP 4
-39.\fB SUID \*(Em Saved User Id \fR
+\fBSUID \*(Em Saved User Id \fR
 The\fI saved\fR user ID.
 
 .TP 4
-40.\fB SUPGIDS \*(Em Supplementary Group IDs \fR
+\fBSUPGIDS \*(Em Supplementary Group IDs \fR
 The IDs of any supplementary group(s) established at login or
 inherited from a task's parent.
 They are displayed in a comma delimited list.
@@ -944,7 +944,7 @@ When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
 
 .TP 4
-41.\fB SUPGRPS \*(Em Supplementary Group Names \fR
+\fBSUPGRPS \*(Em Supplementary Group Names \fR
 The names of any supplementary group(s) established at login or
 inherited from a task's parent.
 They are displayed in a comma delimited list.
@@ -954,24 +954,24 @@ When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
 
 .TP 4
-42.\fB SUSER \*(Em Saved User Name \fR
+\fBSUSER \*(Em Saved User Name \fR
 The\fI saved\fR user name.
 
 .TP 4
-43.\fB SWAP \*(Em Swapped Size (KiB) \fR
+\fBSWAP \*(Em Swapped Size (KiB) \fR
 The formerly resident portion of a task's address space written
 to the \*(MS when \*(MP becomes over committed.
 
 \*(XX.
 
 .TP 4
-44.\fB TGID \*(Em Thread Group Id \fR
+\fBTGID \*(Em Thread Group Id \fR
 The ID of the thread group to which a task belongs.
 It is the PID of the thread group leader.
 In kernel terms, it represents those tasks that share an mm_struct.
 
 .TP 4
-45.\fB TIME \*(Em \*(PU Time \fR
+\fBTIME \*(Em \*(PU Time \fR
 Total \*(PU time the task has used since it started.
 When Cumulative mode is \*O, each process is listed with the \*(Pu
 time that it and its dead children have used.
@@ -979,19 +979,19 @@ You toggle Cumulative mode with `S', which is both a \*(CO and an \*(CI.
 \*(XC `S' \*(CI for additional information regarding this mode.
 
 .TP 4
-46.\fB TIME+ \*(Em \*(PU Time, hundredths \fR
+\fBTIME+ \*(Em \*(PU Time, hundredths \fR
 The same as TIME, but reflecting more granularity through hundredths
 of a second.
 
 .TP 4
-47.\fB TPGID \*(Em Tty Process Group Id \fR
+\fBTPGID \*(Em Tty Process Group Id \fR
 The process group ID of the foreground process for the connected tty,
 or \-1 if a process is not connected to a terminal.
 By convention, this value equals the process ID (\*(Xa PID) of the
 process group leader (\*(Xa PGRP).
 
 .TP 4
-48.\fB TTY \*(Em Controlling Tty \fR
+\fBTTY \*(Em Controlling Tty \fR
 The name of the controlling terminal.
 This is usually the device (serial port, pty, etc.) from which the
 process was started, and which it uses for input or output.
@@ -999,22 +999,22 @@ However, a task need not be associated with a terminal, in which case
 you'll see `?' displayed.
 
 .TP 4
-49.\fB UID \*(Em User Id \fR
+\fBUID \*(Em User Id \fR
 The\fI effective\fR user ID of the task's owner.
 
 .TP 4
-50.\fB USED \*(Em Memory in Use (KiB) \fR
+\fBUSED \*(Em Memory in Use (KiB) \fR
 This field represents the non-swapped \*(MP a task is using (RES) plus
 the swapped out portion of its address space (SWAP).
 
 \*(XX.
 
 .TP 4
-51.\fB USER \*(Em User Name \fR
+\fBUSER \*(Em User Name \fR
 The\fI effective\fR user name of the task's owner.
 
 .TP 4
-52.\fB USS \*(Em Unique Set Size \fR
+\fBUSS \*(Em Unique Set Size \fR
 The non-swapped portion of \*(MP (`RSS') not shared with
 any other process.
 It is derived from the `smaps_rollup' file.
@@ -1022,7 +1022,7 @@ It is derived from the `smaps_rollup' file.
 \*(ZX.
 
 .TP 4
-53.\fB VIRT \*(Em Virtual Memory Size (KiB) \fR
+\fBVIRT \*(Em Virtual Memory Size (KiB) \fR
 The total amount of \*(MV used by the task.
 It includes all code, data and shared libraries plus pages that have been
 swapped out and pages that have been mapped but not used.
@@ -1030,33 +1030,33 @@ swapped out and pages that have been mapped but not used.
 \*(XX.
 
 .TP 4
-54.\fB WCHAN \*(Em Sleeping in Function \fR
+\fBWCHAN \*(Em Sleeping in Function \fR
 This field will show the name of the kernel function in which the task
 is currently sleeping.
 Running tasks will display a dash (`\-') in this column.
 
 .TP 4
-55.\fB ioR \*(Em I/O Bytes Read \fR
+\fBioR \*(Em I/O Bytes Read \fR
 The number of bytes a process caused to be fetched from the storage layer.
 
 Root privileges are required to display `io' data for other users.
 
 .TP 4
-56.\fB ioRop \*(Em I/O Read Operations \fR
+\fBioRop \*(Em I/O Read Operations \fR
 The number of read I/O operations (syscalls) for a process.
 Such calls might not result in actual physical disk I/O.
 
 .TP 4
-57.\fB ioW \*(Em I/O Bytes Written \fR
+\fBioW \*(Em I/O Bytes Written \fR
 The number of bytes a process caused to be sent to the storage layer.
 
 .TP 4
-58.\fB ioWop \*(Em I/O Write Operations \fR
+\fBioWop \*(Em I/O Write Operations \fR
 The number of write I/O operations (syscalls) for a process.
 Such calls might not result in actual physical disk I/O.
 
 .TP 4
-59.\fB nDRT \*(Em Dirty Pages Count \fR
+\fBnDRT \*(Em Dirty Pages Count \fR
 The number of pages that have been modified since they were last
 written to \*(AS.
 Dirty pages must be written to \*(AS before the corresponding physical
@@ -1065,7 +1065,7 @@ memory location can be used for some other virtual page.
 This field was deprecated with linux 2.6 and is always zero.
 
 .TP 4
-60.\fB nMaj \*(Em Major Page Fault Count \fR
+\fBnMaj \*(Em Major Page Fault Count \fR
 The number of\fB major\fR page faults that have occurred for a task.
 A page fault occurs when a process attempts to read from or write to a
 virtual page that is not currently present in its address space.
@@ -1073,7 +1073,7 @@ A major page fault is when \*(AS access is involved in making that
 page available.
 
 .TP 4
-61.\fB nMin \*(Em Minor Page Fault count \fR
+\fBnMin \*(Em Minor Page Fault count \fR
 The number of\fB minor\fR page faults that have occurred for a task.
 A page fault occurs when a process attempts to read from or write to a
 virtual page that is not currently present in its address space.
@@ -1081,50 +1081,50 @@ A minor page fault does not involve \*(AS access in making that
 page available.
 
 .TP 4
-62.\fB nTH \*(Em Number of Threads \fR
+\fBnTH \*(Em Number of Threads \fR
 The number of threads associated with a process.
 
 .TP 4
-63.\fB nsIPC \*(Em IPC namespace \fR
+\fBnsIPC \*(Em IPC namespace \fR
 The Inode of the namespace used to isolate interprocess communication (IPC)
 resources such as System V IPC objects and POSIX message queues.
 
 .TP 4
-64.\fB nsMNT \*(Em MNT namespace \fR
+\fBnsMNT \*(Em MNT namespace \fR
 The Inode of the namespace used to isolate filesystem mount points thus
 offering different views of the filesystem hierarchy.
 
 .TP 4
-65.\fB nsNET \*(Em NET namespace \fR
+\fBnsNET \*(Em NET namespace \fR
 The Inode of the namespace used to isolate resources such as network devices,
 IP addresses, IP routing, port numbers, etc.
 
 .TP 4
-66.\fB nsPID \*(Em PID namespace \fR
+\fBnsPID \*(Em PID namespace \fR
 The Inode of the namespace used to isolate process ID numbers
 meaning they need not remain unique.
 Thus, each such namespace could have its own `init/systemd' (PID #1) to
 manage various initialization tasks and reap orphaned child processes.
 
 .TP 4
-67.\fB nsUSER \*(Em USER namespace \fR
+\fBnsUSER \*(Em USER namespace \fR
 The Inode of the namespace used to isolate the user and group ID numbers.
 Thus, a process could have a normal unprivileged user ID outside a user
 namespace while having a user ID of 0, with full root privileges, inside
 that namespace.
 
 .TP 4
-68.\fB nsUTS \*(Em UTS namespace \fR
+\fBnsUTS \*(Em UTS namespace \fR
 The Inode of the namespace used to isolate hostname and NIS domain name.
 UTS simply means "UNIX Time-sharing System".
 
 .TP 4
-69.\fB vMj \*(Em Major Page Fault Count Delta\fR
+\fBvMj \*(Em Major Page Fault Count Delta\fR
 The number of\fB major\fR page faults that have occurred since the
 last update (see nMaj).
 
 .TP 4
-70.\fB vMn \*(Em Minor Page Fault Count Delta\fR
+\fBvMn \*(Em Minor Page Fault Count Delta\fR
 The number of\fB minor\fR page faults that have occurred since the
 last update (see nMin).
 
