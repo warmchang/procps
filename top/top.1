@@ -64,7 +64,7 @@ memory statistics and data for other users requires root privileges
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "July 2021" "procps-ng" "User Commands"
+.TH TOP 1 "August 2021" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 .nh
 
@@ -1529,16 +1529,17 @@ node will be shown until the `1', `2' or `4' \*(CT is pressed.
 This \*(CI is only available if a system has the requisite NUMA support.
 
 .TP 7
-\ \ \ \fB4\fR\ \ :\fIDisplay-Cpus-Two-Abreast \fR
-This command turns the `1' toggle \*F for individual \*(Pu display
-but prints the results two abreast.
+\ \ \ \fB4\fR\ \ :\fIDisplay-Two-Abreast \fR
+This command turns the `1' toggle \*F, thus showing individual
+processors, and prints \*(PU and Memory results two abreast.
 It requires a terminal with a minimum width of 80 columns.
 If a terminal's width is decreased below the minimum while \*(We
-is running, \*(We reverts to the normal `1' toggle \*F state.
+is running, \*(We reverts to showing \*(PU and Memory results
+on separate lines.
 
-To avoid truncation when displaying detailed \*(Pu statistics,
+To avoid truncation when displaying detailed statistics,
 as opposed to the graphic representations, a minimum width
-of 165 columns would be required.
+of 165 columns would be required when the `4' toggle is \*O.
 
 .TP 7
 \ \ \ \fB!\fR\ \ :\fICombine-Cpus-Mode \fR

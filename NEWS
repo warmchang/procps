@@ -15,6 +15,7 @@ procps-ng-NEXT
   * top: exploit some library smaps_rollup provisions      issue #112
   * top: added four new IO accounting fields               issue #184
   * top: 'F' key is now a new forest view 'focus' toggle
+  * top: summary area memory lines can print two abreast
 
 procps-ng-3.3.17
 ---------------
