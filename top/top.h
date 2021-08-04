@@ -51,6 +51,7 @@
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
 //#define TOG4_NOFORCE            /* no force 2 abreast mode with '4' toggle */
 //#define TOG4_NOTRUNC            /* ensure no truncation in 2 abreast mode  */
+//#define TOG4_OFF_MEM            /* don't show memory statistics 2 abreast  */
 //#define TOG4_OFF_SEP            /* don't show two abreast visual separator */
 //#define TREE_FOCUS_X            /* 'F' resets forest view indentation to 0 */
 //#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
@@ -684,10 +685,10 @@ typedef struct WIN_t {
 //atic void          keys_task (int ch);
 //atic void          keys_window (int ch);
 //atic void          keys_xtra (int ch);
-/*------  Cpu Display Secondary Support (summary_show helpers)  ----------*/
-//atic inline int    cpu_see (const char *str, int nobuf);
-//atic int           cpu_tics (struct stat_stack *this, const char *pfx, int nobuf);
-//atic int           cpu_unify (struct stat_stack *this, int nobuf);
+/*------  Secondary summary display support (summary_show helpers)  ------*/
+//atic inline int    sum_see (const char *str, int nobuf);
+//atic int           sum_tics (struct stat_stack *this, const char *pfx, int nobuf);
+//atic int           sum_unify (struct stat_stack *this, int nobuf);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void          do_key (int ch);
 //atic void          summary_show (void);
