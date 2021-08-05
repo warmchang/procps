@@ -590,7 +590,7 @@ This table may help in interpreting the scaled values displayed:
 Listed below are \*(We's available process fields (columns).
 They are shown in strict ascii alphabetical order.
 You may customize their position and whether or not they are displayable
-with the `f' or `F' (Fields Management) \*(CIs.
+with the `f' (Fields Management) \*(CI.
 
 Any field is selectable as the sort field, and you control whether they
 are sorted high-to-low or low-to-high.
@@ -629,6 +629,30 @@ the `V' and `v' toggles.
 A task's currently resident share of available \*(MP.
 
 \*(XX.
+
+.TP 4
+\fBAGID \*(Em Autogroup Identifier \fR
+The autogroup identifier associated with a process.
+This feature operates in conjunction with the CFS scheduler
+to improve interactive desktop performance.
+
+When /proc/sys/kernel/sched_autogroup_enable is set, a new
+autogroup is created with each new session (\*(Xa SID).
+All subsequently forked processes in that session inherit membership in
+this autogroup.
+The kernel then attempts to equalize distribution of CPU cycles
+across such groups.
+Thus, an autogroup with many \*(PU intensive processes (e.g make -j)
+will not dominate an autogroup with only one or two processes.
+
+When -1 is displayed it means this information is not available.
+
+.TP 4
+\fBAGNI \*(Em Autogroup Nice Value \fR
+The autogroup nice value which affects scheduling of all processes
+in that group.
+A negative nice value means higher priority, whereas a positive nice
+value means lower priority.
 
 .TP 4
 \fBCGNAME \*(Em Control Group Name \fR
@@ -755,6 +779,10 @@ A negative nice value means higher priority, whereas a positive nice value
 means lower priority.
 Zero in this field simply means priority will not be adjusted in determining
 a task's dispatch-ability.
+
+\*(NT This value only affects scheduling priority relative to other processes
+in the same autogroup.
+\*(XC `AGID' and `AGNI' fields for additional information on autogroups.
 
 .TP 4
 \fBNU \*(Em Last known NUMA node \fR
@@ -1131,7 +1159,7 @@ last update (see nMin).
 .\" ......................................................................
 .SS 3b. MANAGING Fields
 .\" ----------------------------------------------------------------------
-After pressing the \*(CI `f' or `F' (Fields Management) you will be presented
+After pressing the \*(CI `f' (Fields Management) you will be presented
 with a screen showing: 1) the \*(CW name; 2) the designated sort field;
 3) all fields in their current order along with descriptions.
 Entries marked with an asterisk are the currently displayed fields,
