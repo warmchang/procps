@@ -238,7 +238,7 @@ static const char Osel_window_fmts[] = "window #%d, osel_tot=%d\n";
 static const char Osel_filterO_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%s\n";
 static const char Osel_filterI_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%*s\n";
 
-        /* Support for 2 abreast Cpu display (if terminal is wide enough) */
+        /* Support for 2 abreast display (if terminal is wide enough) */
 #ifdef TOG4_OFF_SEP
 static char Double_sp[] =  "   ";
 #define DOUBLE_space  (sizeof(Double_sp) - 1)
@@ -5791,18 +5791,18 @@ static void keys_xtra (int ch) {
 // show_msg(fmtmk("%s sort compatibility key honored", xmsg));
 } // end: keys_xtra
 
-/*######  Cpu Display Secondary support (summary_show helpers)  ##########*/
+/*######  Secondary summary display support (summary_show helpers)  ######*/
 
         /*
          * note how alphabetical order is maintained within carefully chosen |
-         * function names such as: (s)cpu_see, (t)cpu_tics, and (u)cpu_unify |
+         * function names such as: (s)sum_see, (t)sum_tics, and (u)sum_unify |
          * with every name exactly 1 letter more than the preceding function |
          * ( surely, this must make us run much more efficiently. amirite? ) | */
 
         /*
          * Cpu *Helper* function to show the percentages for one or two cpus |
          * as a single line. We return the number of lines actually printed. | */
-static inline int cpu_see (const char *str, int nobuf) {
+static inline int sum_see (const char *str, int nobuf) {
    static char row[ROWMINSIZ];
    static int tog;
    char *p;
@@ -5820,7 +5820,7 @@ static inline int cpu_see (const char *str, int nobuf) {
    row[0] = '\0';
    tog = 0;
    return 1;
-} // end: cpu_see
+} // end: sum_see
 
 
         /*
@@ -5831,8 +5831,8 @@ static inline int cpu_see (const char *str, int nobuf) {
          *    2) modest smp boxes with ample room for each cpu's percentages |
          *    3) massive smp guys leaving little or no room for that process |
          *       display and thus requiring the '1', '4', or '!' cpu toggles |
-         * ( we return the number of lines printed, as reported by cpu_see ) | */
-static int cpu_tics (CPU_t *cpu, const char *pfx, int nobuf) {
+         * ( we return the number of lines printed, as reported by sum_see ) | */
+static int sum_tics (CPU_t *cpu, const char *pfx, int nobuf) {
    /* we'll trim to zero if we get negative time ticks,
       which has happened with some SMP kernels (pre-2.4?)
       and when cpus are dynamically added or removed */
@@ -5881,24 +5881,24 @@ static int cpu_tics (CPU_t *cpu, const char *pfx, int nobuf) {
       snprintf(syst, sizeof(syst), gtab[ix].syst, (int)((pct_syst * Graph_adj) + .4), gtab[ix].type);
 #endif
       snprintf(dual, sizeof(dual), "%s%s", user, syst);
-      return cpu_see(fmtmk("%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1"
+      return sum_see(fmtmk("%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1"
          , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, dual), nobuf);
    } else {
-      return cpu_see(fmtmk(Cpu_States_fmts, pfx
+      return sum_see(fmtmk(Cpu_States_fmts, pfx
          , (float)u_frme * scale, (float)s_frme * scale
          , (float)n_frme * scale, (float)i_frme * scale
          , (float)w_frme * scale, (float)x_frme * scale
          , (float)y_frme * scale, (float)z_frme * scale), nobuf);
    }
  #undef TRIMz
-} // end: cpu_tics
+} // end: sum_tics
 
 
         /*
          * Cpu *Helper* function to combine additional cpu statistics in our |
          * efforts to reduce the total number of processors that'll be shown |
-         * ( we return the number of lines printed, as reported by cpu_see ) | */
-static int cpu_unify (CPU_t *cpu, int nobuf) {
+         * ( we return the number of lines printed, as reported by sum_see ) | */
+static int sum_unify (CPU_t *cpu, int nobuf) {
    static CPU_t accum;
    static int ix, beg;
    char pfx[16];
@@ -5916,14 +5916,14 @@ static int cpu_unify (CPU_t *cpu, int nobuf) {
    if (!ix) beg = cpu->id;
    if (nobuf || ix >= Curwin->rc.combine_cpus) {
       snprintf(pfx, sizeof(pfx), "%-7.7s:", fmtmk("%d-%d", beg, cpu->id));
-      n = cpu_tics(&accum, pfx, nobuf);
+      n = sum_tics(&accum, pfx, nobuf);
       memset(&accum, 0, sizeof(CPU_t));
       ix = 0;
       return n;
    }
    ++ix;
    return 0;
-} // end: cpu_unify
+} // end: sum_unify
 
 /*######  Main Screen routines  ##########################################*/
 
@@ -6038,7 +6038,7 @@ static void summary_show (void) {
       if (CHKw(w, View_CPUNOD)) {
          if (Numa_node_sel < 0) {
             // display the 1st /proc/stat line, then the nodes (if room)
-            Msg_row += cpu_tics(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
+            Msg_row += sum_tics(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
             // display each cpu node's states
             for (i = 0; i < Numa_node_tot; i++) {
                CPU_t *nod_ptr = &Cpu_tics[1 + smp_num_cpus + i];
@@ -6047,7 +6047,7 @@ static void summary_show (void) {
                if (nod_ptr->id) {
 #endif
                snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), i);
-               Msg_row += cpu_tics(nod_ptr, tmp, 1);
+               Msg_row += sum_tics(nod_ptr, tmp, 1);
 #ifndef OFF_NUMASKIP
                }
 #endif
@@ -6055,7 +6055,7 @@ static void summary_show (void) {
          } else {
             // display the node summary, then the associated cpus (if room)
             snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
-            Msg_row += cpu_tics(&Cpu_tics[1 + smp_num_cpus + Numa_node_sel], tmp, 1);
+            Msg_row += sum_tics(&Cpu_tics[1 + smp_num_cpus + Numa_node_sel], tmp, 1);
 #ifdef PRETEND48CPU
             for (i = 0; i < Cpu_true_tot; i++) {
 #else
@@ -6064,7 +6064,7 @@ static void summary_show (void) {
                if (Numa_node_sel == Cpu_tics[i].node) {
                   if (!isROOM(anyFLG, 1)) break;
                   snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_tics[i].id);
-                  Msg_row += cpu_tics(&Cpu_tics[i], tmp, 1);
+                  Msg_row += sum_tics(&Cpu_tics[i], tmp, 1);
                }
             }
          }
@@ -6072,18 +6072,18 @@ static void summary_show (void) {
 numa_nope:
       if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
-         Msg_row += cpu_tics(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
+         Msg_row += sum_tics(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
       } else {
          // display each cpu's states separately, screen height permitting...
          if (w->rc.combine_cpus) {
             for (i = 0; i < Cpu_faux_tot; i++) {
-               Msg_row += cpu_unify(&Cpu_tics[i], (i+1 >= Cpu_faux_tot));
+               Msg_row += sum_unify(&Cpu_tics[i], (i+1 >= Cpu_faux_tot));
                if (!isROOM(anyFLG, 1)) break;
             }
          } else {
             for (i = 0; i < Cpu_faux_tot; i++) {
                snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_tics[i].id);
-               Msg_row += cpu_tics(&Cpu_tics[i], tmp, (i+1 >= Cpu_faux_tot));
+               Msg_row += sum_tics(&Cpu_tics[i], tmp, (i+1 >= Cpu_faux_tot));
                if (!isROOM(anyFLG, 1)) break;
             }
          }
@@ -6097,6 +6097,11 @@ numa_nope:
     #define mkM(x) (float)kb_main_ ## x / scT(div)
     #define mkS(x) (float)kb_swap_ ## x / scT(div)
     #define prT(b,z) { if (9 < snprintf(b, 10, scT(fmts), z)) b[8] = '+'; }
+#ifdef TOG4_OFF_MEM
+    #define memPARM 1
+#else
+    #define memPARM 0
+#endif
       static struct {
          float div;
          const char *fmts;
@@ -6139,7 +6144,7 @@ numa_nope:
             { "%-.*s~7", "%-.*s~8", "%-.*s~8", Graph_bars },
             { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
          };
-         char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ];
+         char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ], row[ROWMINSIZ];
          float pct_used, pct_misc, pct_swap;
          int ix, num_used, num_misc;
 
@@ -6166,26 +6171,35 @@ numa_nope:
          snprintf(dual, sizeof(dual), "%s%s", used, util);
          snprintf(util, sizeof(util), gtab[ix].swap, (int)((pct_swap * Graph_adj) + .5), gtab[ix].type);
          prT(bfT(0), mkM(total)); prT(bfT(1), mkS(total));
-         show_special(0, fmtmk( "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1\n%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1\n"
-            , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, dual
-            , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, util));
+
+         snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1"
+            , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, dual);
+         Msg_row += sum_see(row, memPARM);
+         snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1"
+            , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, util);
+         Msg_row += sum_see(row, memPARM);
       } else {
+         char row[MEDBUFSIZ];
          unsigned long kb_main_my_misc = kb_main_buffers + kb_main_cached;
          prT(bfT(0), mkM(total)); prT(bfT(1), mkM(free));
          prT(bfT(2), mkM(used));  prT(bfT(3), mkM(my_misc));
          prT(bfT(4), mkS(total)); prT(bfT(5), mkS(free));
          prT(bfT(6), mkS(used));  prT(bfT(7), mkM(available));
-         show_special(0, fmtmk(N_unq(MEMORY_lines_fmt)
-            , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3)
+
+         snprintf(row, sizeof(row), N_unq(MEMORY_line1_fmt)
+            , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3));
+         Msg_row += sum_see(row, memPARM);
+         snprintf(row, sizeof(row), N_unq(MEMORY_line2_fmt)
             , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
-            , N_txt(WORD_abv_mem_txt)));
+            , N_txt(WORD_abv_mem_txt));
+         Msg_row += sum_see(row, memPARM);
       }
-      Msg_row += 2;
     #undef bfT
     #undef scT
     #undef mkM
     #undef mkS
     #undef prT
+    #undef memPARM
    } // end: View_MEMORY
 
  #undef isROOM

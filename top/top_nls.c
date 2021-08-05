@@ -675,10 +675,11 @@ static void build_uniq_nlstab (void) {
    Uniq_nlstab[STATE_lin2x7_fmt] = _("%s~3"
       "%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3");
 
-/* Translation Hint: this must be translated as 2 lines with words above & below aligned */
-   Uniq_nlstab[MEMORY_lines_fmt] = _(""
-      "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3\n"
-      "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3\n");
+/* Translation Hint: next 2 must be treated together, with WORDS above & below aligned */
+   Uniq_nlstab[MEMORY_line1_fmt] = _(""
+      "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3    ");
+   Uniq_nlstab[MEMORY_line2_fmt] = _(""
+      "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3");
 
 /* Translation Hint:
    .  The next 2 headers for 'Inspection' must each be 3 lines or less
