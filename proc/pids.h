@@ -37,6 +37,8 @@ enum pids_item {
     PIDS_ADDR_CURR_EIP,     //   ul_int        stat: eip
     PIDS_ADDR_CURR_ESP,     //   ul_int        stat: esp
     PIDS_ADDR_STACK_START,  //   ul_int        stat: start_stack
+    PIDS_AUTOGRP_ID,        //    s_int        autogroup
+    PIDS_AUTOGRP_NICE,      //    s_int        autogroup
     PIDS_CGNAME,            //      str        derived from CGROUP ':name='
     PIDS_CGROUP,            //      str        cgroup
     PIDS_CGROUP_V,          //     strv        cgroup, as *str[]

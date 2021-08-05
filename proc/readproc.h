@@ -177,7 +177,9 @@ typedef struct proc_t {
         *lxcname,       // n/a             lxc container name
         *exe;           // exe             executable path + name
     int
-        luid;           // loginuid        user id at login
+        luid,           // loginuid        user id at login
+        autogrp_id,     // autogroup       autogroup number (id)
+        autogrp_nice;   // autogroup       autogroup nice value
 } proc_t;
 
 // PROCTAB: data structure holding the persistent information readproc needs
@@ -252,6 +254,9 @@ typedef struct PROCTAB {
 #define PROC_FILL_OUSERS   ( 0x00200000 | PROC_FILLSTATUS ) // obtain other user names
 #define PROC_FILL_OGROUPS  ( 0x00400000 | PROC_FILLSTATUS ) // obtain other group names
 #define PROC_FILL_SUPGRP   ( 0x00800000 | PROC_FILLSTATUS ) // obtain supplementary group names
+
+// and let's put new flags here ...
+#define PROC_FILLAUTOGRP     0x01000000 // fill in proc_t autogroup stuff
 
 // it helps to give app code a few spare bits
 #define PROC_SPARE_1         0x10000000

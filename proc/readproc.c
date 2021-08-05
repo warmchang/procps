@@ -1066,6 +1066,28 @@ static char *readlink_exe (const char *path){
 }
 
 
+    // Provide the autogroup fields (or -1 if not available)
+static void autogroup_fill (const char *path, proc_t *p) {
+    char buf[PROCPATHLEN], *str;
+    int fd, in;
+
+    p->autogrp_id = -1;
+    snprintf(buf, sizeof(buf), "%s/autogroup", path);
+    if ((fd = open(buf, O_RDONLY, 0)) != -1) {
+        in = read(fd, buf, sizeof(buf) - 1);
+        close(fd);
+        if (in > 0) {
+            buf[in] = '\0';
+            if ((str = strstr(buf, "-")))
+                p->autogrp_id = atoi(++str);
+            if ((str = strstr(buf, "nice")))
+                p->autogrp_nice = atoi(str + sizeof("nice"));
+             // above sizeof includes null, skips space ahead of #
+        }
+    }
+}
+
+
 ///////////////////////////////////////////////////////////////////////
 
 /* These are some nice GNU C expression subscope "inline" functions.
@@ -1203,6 +1225,9 @@ static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
             rc += 1;
     }
 
+    if (flags & PROC_FILLAUTOGRP)               // value the 2 autogroup fields
+        autogroup_fill(path, p);
+
     if (rc == 0) return p;
     errno = ENOMEM;
 next_proc:
@@ -1321,6 +1346,9 @@ static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
 
     if (flags & PROC_FILL_LUID)
         t->luid = login_uid(path);
+
+    if (flags & PROC_FILLAUTOGRP)               // value the 2 autogroup fields
+        autogroup_fill(path, t);
 
     if (rc == 0) return t;
     errno = ENOMEM;

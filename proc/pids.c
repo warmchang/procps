@@ -152,6 +152,8 @@ REG_set(ADDR_CODE_START,  ul_int,  start_code)
 REG_set(ADDR_CURR_EIP,    ul_int,  kstk_eip)
 REG_set(ADDR_CURR_ESP,    ul_int,  kstk_esp)
 REG_set(ADDR_STACK_START, ul_int,  start_stack)
+REG_set(AUTOGRP_ID,       s_int,   autogrp_id)
+REG_set(AUTOGRP_NICE,     s_int,   autogrp_nice)
 STR_set(CGNAME,                    cgname)
 STR_set(CGROUP,                    cgroup)
 VEC_set(CGROUP_V,                  cgroup_v)
@@ -390,6 +392,8 @@ srtDECL(noop) {
 #define x_ogroup   PROC_FILL_OGROUPS
 #define x_ouser    PROC_FILL_OUSERS
 #define x_supgrp   PROC_FILL_SUPGRP
+   // placed here so an 'f' prefix wouldn't make 'em first
+#define z_autogrp  PROC_FILLAUTOGRP
 
 typedef void (*SET_t)(struct pids_info *, struct pids_result *, proc_t *);
 typedef void (*FRE_t)(struct pids_result *);
@@ -431,6 +435,8 @@ static struct {
     { RS(ADDR_CURR_EIP),     f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(ADDR_CURR_ESP),     f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(ADDR_STACK_START),  f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(AUTOGRP_ID),        z_autogrp,  NULL,      QS(s_int),     0,        TS(s_int)   },
+    { RS(AUTOGRP_NICE),      z_autogrp,  NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(CGNAME),            x_cgroup,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(CGROUP),            x_cgroup,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(CGROUP_V),          v_cgroup,   FF(strv),  QS(strv),      0,        TS(strv)    },
@@ -609,6 +615,7 @@ enum pids_item PIDS_logical_end = MAXTABLE(Item_table);
 #undef x_ogroup
 #undef x_ouser
 #undef x_supgrp
+#undef z_autogrp
 
 
 // ___ History Support Private Functions ||||||||||||||||||||||||||||||||||||||
