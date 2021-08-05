@@ -1692,8 +1692,10 @@ static struct {
    {     6,     -1,  A_right,  PIDS_IO_READ_BYTES  },  // ul_int   EU_IRB
    {     5,     -1,  A_right,  PIDS_IO_READ_OPS    },  // ul_int   EU_IRO
    {     6,     -1,  A_right,  PIDS_IO_WRITE_BYTES },  // ul_int   EU_IWB
-   {     5,     -1,  A_right,  PIDS_IO_WRITE_OPS   }   // ul_int   EU_IWO
-#define eu_LAST        EU_IWO
+   {     5,     -1,  A_right,  PIDS_IO_WRITE_OPS   },  // ul_int   EU_IWO
+   {     5,     -1,  A_right,  PIDS_AUTOGRP_ID     },  // s_int    EU_AGI
+   {     4,     -1,  A_right,  PIDS_AUTOGRP_NICE   }   // s_int    EU_AGN
+#define eu_LAST        EU_AGN
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -5894,6 +5896,7 @@ static const char *task_show (const WIN_t *q, int idx) {
             cp = make_num(rSv(EU_LID, s_int), W, Jn, EU_LID, 0);
             break;
    /* s_int, make_num without auto width */
+         case EU_AGI:        // PIDS_AUTOGRP_ID
          case EU_NMA:        // PIDS_PROCESSOR_NODE
          case EU_PGD:        // PIDS_ID_PGRP
          case EU_PID:        // PIDS_ID_PID
@@ -5905,6 +5908,7 @@ static const char *task_show (const WIN_t *q, int idx) {
             cp = make_num(rSv(i, s_int), W, Jn, AUTOX_NO, 0);
             break;
    /* s_int, make_num without auto width, but with zero supression */
+         case EU_AGN:        // PIDS_AUTOGRP_NICE
          case EU_NCE:        // PIDS_NICE
          case EU_OOA:        // PIDS_OOM_ADJ
          case EU_OOM:        // PIDS_OOM_SCORE

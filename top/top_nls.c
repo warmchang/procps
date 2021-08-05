@@ -344,6 +344,12 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'ioWop' = 5 */
    Head_nlstab[EU_IWO] = _("ioWop");
    Desc_nlstab[EU_IWO] = _("I/O Write Operations");
+/* Translation Hint: maximum 'AGID' = 5 */
+   Head_nlstab[EU_AGI] = _("AGID");
+   Desc_nlstab[EU_AGI] = _("Autogroup Identifier");
+/* Translation Hint: maximum 'AGNI' = 4 */
+   Head_nlstab[EU_AGN] = _("AGNI");
+   Desc_nlstab[EU_AGN] = _("Autogroup Nice Value");
 }
 
 

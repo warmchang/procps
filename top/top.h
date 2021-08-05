@@ -195,6 +195,7 @@ enum pflag {
    EU_EXE,
    EU_RSS, EU_PSS, EU_PZA, EU_PZF, EU_PZS, EU_USS,
    EU_IRB, EU_IRO, EU_IWB, EU_IWO,
+   EU_AGI, EU_AGN,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
    EU_MAXPFLGS
