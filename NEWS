@@ -2,6 +2,7 @@ procps-ng-NEXT
 ---------------
   * Rename pwait to pidwait
   * top: 'F' key is now a new forest view 'focus' toggle
+  * top: summary area memory lines can print two abreast
 
 procps-ng-3.3.17
 ---------------
