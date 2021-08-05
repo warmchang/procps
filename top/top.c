@@ -224,7 +224,7 @@ static int Numa_node_sel = -1;
            commands -- which are now both 4-way toggles */
 #define GRAPH_prefix  25     // beginning text + opening '['
 #define GRAPH_actual  100    // the actual bars or blocks
-#define GRAPH_suffix  2      // ending ']' + trailing space
+#define GRAPH_suffix  1      // ending ']'
 static float Graph_adj;      // bars/blocks scaling factor
 static int   Graph_len;      // scaled length (<= GRAPH_actual)
 static const char Graph_blks[] = "                                                                                                    ";
@@ -239,8 +239,13 @@ static const char Osel_filterO_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%s\n";
 static const char Osel_filterI_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%*s\n";
 
         /* Support for 2 abreast Cpu display (if terminal is wide enough) */
-static char Double_sp[] =  "     ";
+#ifdef TOG4_OFF_SEP
+static char Double_sp[] =  "   ";
 #define DOUBLE_space  (sizeof(Double_sp) - 1)
+#else
+static char Double_sp[] =  " ~1 ~6 ";
+#define DOUBLE_space  (sizeof(Double_sp) - 5)    // 1 for null, 4 unprintable
+#endif
 #ifdef TOG4_NOTRUNC
  #define DOUBLE_limit  (160 + DOUBLE_space)
 #else
@@ -1968,7 +1973,7 @@ static void adj_geometry (void) {
    else Graph_len = 80 - GRAPH_prefix - GRAPH_suffix;
    if (Screen_cols < DOUBLE_limit) Curwin->rc.double_up = 0;
    if (Curwin->rc.double_up) {
-      Graph_len = (Screen_cols - DOUBLE_space - (2 * (GRAPH_prefix + + GRAPH_suffix))) / 2;
+      Graph_len = (Screen_cols - DOUBLE_space - (2 * (GRAPH_prefix + GRAPH_suffix))) / 2;
       if (Graph_len > GRAPH_actual) Graph_len = GRAPH_actual;
    }
    Graph_adj = (float)Graph_len / 100.0;
