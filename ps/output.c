@@ -1464,6 +1464,16 @@ setREL1(ID_TGID)
   return len;
 }
 
+/************************ Linux autogroups ******************************/
+static int pr_agid(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(AUTOGRP_ID)
+  return snprintf(outbuf, COLWID, "%d", rSv(AUTOGRP_ID, s_int, pp));
+}
+static int pr_agnice(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(AUTOGRP_NICE)
+  return snprintf(outbuf, COLWID, "%d", rSv(AUTOGRP_NICE, s_int, pp));
+}
+
 ////////////////////////////// Test code /////////////////////////////////
 
 // like "args"
@@ -1578,6 +1588,8 @@ static const format_struct format_array[] = { /*
 {"acflg",     "ACFLG",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*acflag*/
 {"addr",      "ADDR",    pr_nop,           PIDS_noop,                4,    XXX,  AN|RIGHT},
 {"addr_1",    "ADDR",    pr_nop,           PIDS_noop,                1,    LNX,  AN|LEFT},
+{"ag_id",     "AGID",    pr_agid,          PIDS_AUTOGRP_ID,          5,    LNX,  AN|RIGHT},
+{"ag_nice",   "AGNI",    pr_agnice,        PIDS_AUTOGRP_NICE,        4,    LNX,  AN|RIGHT},
 {"alarm",     "ALARM",   pr_nop,           PIDS_noop,                5,    LNX,  AN|RIGHT},
 {"argc",      "ARGC",    pr_nop,           PIDS_noop,                4,    LNX,  PO|RIGHT},
 {"args",      "COMMAND", pr_args,          PIDS_CMDLINE,             27,   U98,  PO|UNLIMITED}, /*command*/
