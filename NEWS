@@ -4,10 +4,12 @@ procps-ng-NEXT
   * free: Add committed line option                        merge #25
   * library: renamed to libproc-2 and reset to 0:0:0
   * library: add support for accessing smaps_rollup        issue #112, #201
+  * library: add support for accessing autogroups
   * pkill: Check for lt- variants of program name          issue #192
   * ps: Add OOM and OOMADJ fields                          issue #198
   * ps: Add IO Accounting fields                           issue #184
   * ps: Add PSS and USS fields                             issue #112
+  * ps: Add two new autogroup fields
   * slabtop: Don't combine d and o options                 issue #160
   * sysctl: Check resolved path to be under /proc/sys      issue #179
   * top: added LOGID similar to 3.3.13 ps LUID
@@ -16,6 +18,7 @@ procps-ng-NEXT
   * top: added four new IO accounting fields               issue #184
   * top: 'F' key is now a new forest view 'focus' toggle
   * top: summary area memory lines can print two abreast
+  * top: added two new autogroup fields
 
 procps-ng-3.3.17
 ---------------
