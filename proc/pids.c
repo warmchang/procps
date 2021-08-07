@@ -1214,9 +1214,25 @@ PROCPS_EXPORT int procps_pids_new (
             , __FILE__, PIDS_SELECT_PID, PROC_PID);
         failed = 1;
     }
+    if (PIDS_SELECT_PID_THREADS != PIDS_SELECT_PID + 1) {
+        fprintf(stderr, "%s: header error: PIDS_SELECT_PID_THREADS = 0x%04x, should be 0x%04x\n"
+            , __FILE__, PIDS_SELECT_PID_THREADS, PIDS_SELECT_PID + 1);
+        failed = 1;
+    }
     if (PIDS_SELECT_UID != PROC_UID) {
         fprintf(stderr, "%s: header error: PIDS_SELECT_UID = 0x%04x, PROC_UID = 0x%04x\n"
             , __FILE__, PIDS_SELECT_UID, PROC_UID);
+        failed = 1;
+    }
+    if (PIDS_SELECT_UID_THREADS != PIDS_SELECT_UID + 1) {
+        fprintf(stderr, "%s: header error: PIDS_SELECT_UID_THREADS = 0x%04x, should be 0x%04x\n"
+            , __FILE__, PIDS_SELECT_UID_THREADS, PIDS_SELECT_UID + 1);
+        failed = 1;
+    }
+    // our select() function & select enumerators assume the following ...
+    if (PIDS_FETCH_THREADS_TOO != 1) {
+        fprintf(stderr, "%s: header error: PIDS_FETCH_THREADS_TOO = %d, should be 1\n"
+            , __FILE__, PIDS_FETCH_THREADS_TOO);
         failed = 1;
     }
     if (failed) _Exit(EXIT_FAILURE);
@@ -1533,7 +1549,8 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
         return NULL;
     if (numthese < 1 || numthese > FILL_ID_MAX)
         return NULL;
-    if (which != PIDS_SELECT_PID && which != PIDS_SELECT_UID)
+    if ((which != PIDS_SELECT_PID && which != PIDS_SELECT_UID)
+    && ((which != PIDS_SELECT_PID_THREADS && which != PIDS_SELECT_UID_THREADS)))
         return NULL;
     /* with items & numitems technically optional at 'new' time, it's
        expected 'reset' will have been called -- but just in case ... */
@@ -1547,7 +1564,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
 
     if (!pids_oldproc_open(&info->fetch_PT, (info->oldflags | which), ids, numthese))
         return NULL;
-    info->read_something = readproc;
+    info->read_something = (which & PIDS_FETCH_THREADS_TOO) ? readeither : readproc;
 
     rc = pids_stacks_fetch(info);
 

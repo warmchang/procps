@@ -1126,7 +1126,7 @@ static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
         goto next_proc;
 
     if ((flags & PROC_UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
-        goto next_proc;                 /* not one of the requested uids */
+        goto next_proc;                      /* not one of the requested uids */
 
     p->euid = sb.st_uid;                        /* need a way to get real uid */
     p->egid = sb.st_gid;                        /* need a way to get real gid */
@@ -1248,8 +1248,8 @@ static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
     if (stat(path, &sb) == -1)                  /* no such dirent (anymore) */
         goto next_task;
 
-//  if ((flags & PROC_UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
-//      goto next_task;                         /* not one of the requested uids */
+    if ((flags & PROC_UID) && !XinLN(uid_t, sb.st_uid, PT->uids, PT->nuid))
+        goto next_task;                      /* not one of the requested uids */
 
     t->euid = sb.st_uid;                        /* need a way to get real uid */
     t->egid = sb.st_gid;                        /* need a way to get real gid */

@@ -189,8 +189,10 @@ enum pids_fetch_type {
 };
 
 enum pids_select_type {
-    PIDS_SELECT_PID  = 0x10000,
-    PIDS_SELECT_UID  = 0x20000
+    PIDS_SELECT_PID         = 0x10000,
+    PIDS_SELECT_PID_THREADS = 0x10001,
+    PIDS_SELECT_UID         = 0x20000,
+    PIDS_SELECT_UID_THREADS = 0x20001
 };
 
 enum pids_sort_order {
