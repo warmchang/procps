@@ -2389,7 +2389,7 @@ static void procs_refresh (void) {
    static int n_alloc = -1;                      // size of windows stacks arrays
    double uptime_cur;
    float et;
-   int i;
+   int i, what;
 
    procps_uptime(&uptime_cur, NULL);
    et = uptime_cur - uptime_sav;
@@ -2398,8 +2398,12 @@ static void procs_refresh (void) {
    // if in Solaris mode, adjust our scaling for all cpus
    Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
 
-   if (Monpidsidx) Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, PIDS_SELECT_PID);
-   else Pids_reap = procps_pids_reap(Pids_ctx, Thread_mode ? PIDS_FETCH_THREADS_TOO : PIDS_FETCH_TASKS_ONLY);
+   what = Thread_mode ? PIDS_FETCH_THREADS_TOO : PIDS_FETCH_TASKS_ONLY;
+   if (Monpidsidx) {
+      what |= PIDS_SELECT_PID;
+      Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, what);
+   } else
+      Pids_reap = procps_pids_reap(Pids_ctx, what);
    if (!Pids_reap)
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
 
