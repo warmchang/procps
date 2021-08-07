@@ -1452,12 +1452,11 @@ out:
 //////////////////////////////////////////////////////////////////////////////////
 // readeither: return a pointer to a proc_t filled with requested info about
 // the next unique process or task available.  If no more are available,
-// return a null pointer (boolean false).  Use the passed buffer instead
-// of allocating space if it is non-NULL.
+// return a null pointer (boolean false).
 proc_t *readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
     static proc_t skel_p;    // skeleton proc_t, only uses tid + tgid
     static proc_t *new_p;    // for process/task transitions
-    static int canary;
+    static int canary, leader;
     char path[PROCPATHLEN];
     proc_t *ret;
 
@@ -1474,16 +1473,20 @@ next_proc:
         if (errno == ENOMEM) goto end_procs;
         // fills in the PT->path, plus skel_p.tid and skel_p.tgid
         if (!PT->finder(PT,&skel_p)) goto end_procs;       // simple_nextpid
+        leader = skel_p.tid;
         if (!task_dir_missing) break;
         if ((ret = PT->reader(PT,x))) return ret;          // simple_readproc
     }
 
 next_task:
     // fills in our path, plus x->tid and x->tgid
-    if ((!(PT->taskfinder(PT,&skel_p,x,path)))             // simple_nexttid
-    || (!(ret = PT->taskreader(PT,x,path)))) {             // simple_readtask
+    if (!(PT->taskfinder(PT,&skel_p,x,path)))              // simple_nexttid
         goto next_proc;
-    }
+    /* to avoid loss of some thread group leader data,
+       we must check its base dir, not its 'task' dir! */
+    if (x->tid == leader) ret = PT->reader(PT,x);          // simple_readproc
+    else ret = PT->taskreader(PT,x,path);                  // simple_readtask
+    if (!ret) goto next_proc;
     if (!new_p) {
         new_p = ret;
         canary = new_p->tid;
