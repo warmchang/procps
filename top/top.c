@@ -4796,6 +4796,7 @@ static void write_rcfile (void) {
 
 static void keys_global (int ch) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
+   int i;
 
    switch (ch) {
       case '?':
@@ -4835,7 +4836,8 @@ static void keys_global (int ch) {
          if (!CHKw(w, View_STATES))
             show_msg(fmtmk(N_fmt(THREADS_show_fmt)
                , Thread_mode ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
-         Winstk[0].begtask = Winstk[1].begtask = Winstk[2].begtask = Winstk[3].begtask = 0;
+         for (i = 0 ; i < GROUPSMAX; i++)
+            Winstk[i].begtask = Winstk[i].focus_pid = 0;
          // force an extra procs refresh to avoid %cpu distortions...
          Pseudo_row = PROC_XTRA;
          break;
