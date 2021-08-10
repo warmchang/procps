@@ -1405,16 +1405,29 @@ static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict con
 
 //////////////////////////////////////////////////////////////////////////////////
 // This "finds" processes in a list that was given to openproc().
-// Return non-zero on success. (tgid was handy)
-static int listed_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
-  char *restrict const path = PT->path;
-  pid_t tgid = *(PT->pids)++;
-  if(tgid){
-    snprintf(path, PROCPATHLEN, "/proc/%d", tgid);
-    p->tgid = tgid;
-    p->tid = tgid;  // they match for leaders
+// Return non-zero on success. (tgid is a real headache)
+static int listed_nextpid (PROCTAB *PT, proc_t *p) {
+  static struct utlbuf_s ub = { NULL, 0 };
+  pid_t pid = *(PT->pids)++;
+  char *path = PT->path;
+
+  if (pid) {
+    snprintf(path, PROCPATHLEN, "/proc/%d", pid);
+    p->tid = p->tgid = pid;        // this tgid may be a huge fib |
+
+    /* the 'status' directory is the only place where we find the |
+       task's real tgid. it's a bit expensive, but remember we're |
+       dealing with fewer processes, unlike the other 'next' guys |
+       (plus we need not parse the whole thing like status2proc)! | */
+
+    if (file2str(path, "status", &ub) != -1) {
+      char *str = strstr(ub.buf, "Tgid:");
+      if (str) {
+        p->tgid = atoi(str + 5);   // this tgid is the proper one |
+      }
+    }
   }
-  return tgid;
+  return pid;
 }
 
 
