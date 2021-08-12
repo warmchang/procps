@@ -51,7 +51,6 @@
 \#                           - the header width w/ all fields
 .ds WF approximately 250
 \#                           - pid monitoring limit
-.ds WP 20
 \#                      Xref's that depend on/mention other stuff --------
 .ds Xa see
 .ds XC See the
@@ -401,8 +400,11 @@ Such names are subject to NLS (National Language Support) translation.
 .TP 5
 \-\fBp\fR\ \ :\fIMonitor-PIDs\fR mode as:\fB\ \ \-pN1 -pN2 ...\fR\ \ or\fB\ \ \-pN1,N2,N3 ... \fR
 Monitor only processes with specified process IDs.
-This option can be given up to \*(WP times, or you can provide a comma delimited
-list with up to \*(WP pids.
+However, when combined with Threads mode (`H'), all processes in the
+thread group (\*(Xa TGID) of each monitored PID will also be shown.
+
+This option can be given up to 20 times, or you can provide a comma delimited
+list with up to 20 pids.
 Co-mingling both approaches is permitted.
 
 A pid value of zero will be treated as the process id of the \*(We program
