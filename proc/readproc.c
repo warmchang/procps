@@ -624,9 +624,8 @@ ENTER(0x160);
        &P->blkio_tics, &P->gtime, &P->cgtime
     );
 
-    if(!P->nlwp){
+    if(!P->nlwp)
       P->nlwp = 1;
-    }
 
     return 0;
 LEAVE(0x160);
@@ -1171,9 +1170,8 @@ static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     }
 
     // if multithreaded, some values are crap
-    if(p->nlwp > 1){
+    if(p->nlwp > 1)
       p->wchan = ~0ul;
-    }
 
     /* some number->text resolving which is time consuming */
     /* ( names are cached, so memcpy to arrays was silly ) */
@@ -1422,9 +1420,8 @@ static int listed_nextpid (PROCTAB *PT, proc_t *p) {
 
     if (file2str(path, "status", &ub) != -1) {
       char *str = strstr(ub.buf, "Tgid:");
-      if (str) {
+      if (str)
         p->tgid = atoi(str + 5);   // this tgid is the proper one |
-      }
     }
   }
   return pid;
