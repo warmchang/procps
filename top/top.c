@@ -5634,8 +5634,6 @@ static void summary_show (void) {
          , Pids_reap->counts->stopped, Pids_reap->counts->zombied));
       Msg_row += 1;
 
-      cpus_refresh();
-
       if (CHKw(w, View_CPUNOD)) {
          if (Numa_node_sel < 0) {
 numa_oops:
@@ -6280,6 +6278,7 @@ static void frame_make (void) {
 
    sysinfo_refresh(0);
    procs_refresh();
+   cpus_refresh();
 
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();
