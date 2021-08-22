@@ -1826,9 +1826,9 @@ static void build_headers (void) {
    int i;
 
    // ensure fields not visible incur no significant library costs
-   for (i = 0; i < MAXTBL(Fieldstab); i++) {
+   for (i = 0; i < MAXTBL(Fieldstab); i++)
       Pids_itms[i] = PIDS_extra;
-   }
+
    ckITEM(EU_PID);      // these 2 fields may not display,
    ckITEM(EU_STA);      // yet we'll always need them both
    ckITEM(EU_CMD);      // this is used with 'Y' (inspect)
@@ -2308,9 +2308,9 @@ static void zap_fieldstab (void) {
       Fieldstab[EU_CPN].width = digits;
    }
    digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Numa_node_tot);
-   if (2 < digits) {
+   if (2 < digits)
       Fieldstab[EU_NMA].width = digits;
-   }
+
    // and accommodate optional wider non-scalable columns (maybe)
    if (!AUTOX_MODE) {
       Fieldstab[EU_UED].width = Fieldstab[EU_URD].width
@@ -3733,9 +3733,8 @@ static void configs_reads (void) {
          p_home = NULL;
       }
    }
-   if (p_home) {
+   if (p_home)
       configs_path("%s/.%src", p_home, Myname);
-   }
 
    if (!(fp = fopen(Rc_name, "r"))) {
       p = getenv("XDG_CONFIG_HOME");
@@ -4850,9 +4849,9 @@ static void keys_global (int ch) {
             show_msg(N_txt(NOT_smp_cpus_txt));
          break;
       case 'k':
-         if (Secure_mode) {
+         if (Secure_mode)
             show_msg(N_txt(NOT_onsecure_txt));
-         } else {
+         else {
             int sig = SIGTERM,
                 def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]),
                 pid = get_int(fmtmk(N_txt(GET_pid2kill_fmt), def));
