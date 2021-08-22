@@ -1077,11 +1077,8 @@ static void autogroup_fill (const char *path, proc_t *p) {
         close(fd);
         if (in > 0) {
             buf[in] = '\0';
-            if ((str = strstr(buf, "-")))
-                p->autogrp_id = atoi(++str);
-            if ((str = strstr(buf, "nice")))
-                p->autogrp_nice = atoi(str + sizeof("nice"));
-             // above sizeof includes null, skips space ahead of #
+            sscanf(buf, "/autogroup-%d nice %d"
+                , &p->autogrp_id, &p->autogrp_nice);
         }
     }
 }
