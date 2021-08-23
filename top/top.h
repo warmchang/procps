@@ -44,6 +44,7 @@
 //#define OFF_STDERROR            /* disable our stderr buffering (redirect) */
 //#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
 //#define OFF_XTRAWIDE            /* disable our extra wide multi-byte logic */
+//#define PRETEND0NUMA            /* pretend that there ain't any numa nodes */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND48CPU            /* pretend we're smp with 48 ticsers (sic) */
 //#define PRETENDNOCAP            /* use a terminal without essential caps   */

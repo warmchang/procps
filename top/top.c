@@ -2853,7 +2853,9 @@ static void sysinfo_refresh (int forced) {
 #ifndef PRETEND48CPU
       cpuinfo();
 #endif
+#ifndef PRETEND0NUMA
       Numa_node_tot = numa_max_node() + 1;
+#endif
       sav_secs = cur_secs;
    }
 } // end: sysinfo_refresh
@@ -3696,7 +3698,9 @@ static void before (char *me) {
 #endif
 
    numa_init();
+#ifndef PRETEND0NUMA
    Numa_node_tot = numa_max_node() + 1;
+#endif
 
 #ifndef SIGRTMAX       // not available on hurd, maybe others too
 #define SIGRTMAX 32
