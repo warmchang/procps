@@ -6037,8 +6037,6 @@ static void summary_show (void) {
          , Frame_stopped, Frame_zombied));
       Msg_row += 1;
 
-      cpus_refresh();
-
       if (CHKw(w, View_CPUNOD)) {
          if (Numa_node_sel < 0) {
             // display the 1st /proc/stat line, then the nodes (if room)
@@ -6687,6 +6685,7 @@ static void frame_make (void) {
 
    sysinfo_refresh(0);
    procs_refresh();
+   cpus_refresh();
 
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();
