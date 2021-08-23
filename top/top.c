@@ -6039,8 +6039,6 @@ static void summary_show (void) {
 
       cpus_refresh();
 
-      if (!Numa_node_tot) goto numa_nope;
-
       if (CHKw(w, View_CPUNOD)) {
          if (Numa_node_sel < 0) {
             // display the 1st /proc/stat line, then the nodes (if room)
@@ -6074,11 +6072,11 @@ static void summary_show (void) {
                }
             }
          }
-      } else
-numa_nope:
-      if (CHKw(w, View_CPUSUM)) {
+
+      } else if (CHKw(w, View_CPUSUM)) {
          // display just the 1st /proc/stat line
          Msg_row += sum_tics(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
+
       } else {
          // display each cpu's states separately, screen height permitting...
          if (w->rc.combine_cpus) {
