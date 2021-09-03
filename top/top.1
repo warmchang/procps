@@ -1218,7 +1218,7 @@ depending on the context in which they are issued.
 .nf
   4a.\fI Global-Commands \fR
         <Ent/Sp> ?, =, 0,
-        A, B, d, E, e, g, h, H, I, k, q, r, s, W, X, Y, Z
+        A, B, d, E, e, g, H, h, I, k, q, r, s, W, X, Y, Z
   4b.\fI Summary-Area-Commands \fR
         C, l, t, m, 1, 2, 3, 4, !
   4c.\fI Task-Area-Commands \fR
@@ -1229,11 +1229,13 @@ depending on the context in which they are issued.
   4d.\fI Color-Mapping \fR
         <Ret>, a, B, b, H, M, q, S, T, w, z, 0 \- 7
   5b.\fI Commands-for-Windows \fR
-        \-, _, =, +, A, a, g, G, w
+        \-, _, =, +, A, a, G, g, w
   5c.\fI Scrolling-a-Window \fR
         C, Up, Dn, Left, Right, PgUp, PgDn, Home, End
   5d.\fI Searching-in-a-Window \fR
         L, &
+  5e.\fI Filtering-in-a-Window
+        O, o, ^O, =, +
 .fi
 
 .\" ......................................................................
@@ -1959,15 +1961,6 @@ whenever the \*(CW name loses its emphasis/color, that's a reminder
 the \*(TD is \*F and many commands will be restricted.
 
 .TP 7
-*\ \ \fBg\fR\ \ :\fIChoose-Another-Window/Field-Group \fR
-You will be prompted to enter a number between 1 and 4 designating the
-\*(FG which should be made the \*(CW.
-
-In \*(FM, this command is necessary to alter the \*(CW.
-In \*(AM, it is simply a less convenient alternative to the `a' and `w'
-commands.
-
-.TP 7
 \ \ \ \fBG\fR\ \ :\fIChange-Window/Field-Group-Name \fR
 You will be prompted for a new name to be applied to the \*(CW.
 It does not require that the window name be visible
@@ -1980,6 +1973,15 @@ The \*(CIs shown with an \*(AK have use beyond \*(AM.
     a, w       act the same with color mapping
                and fields management
 .fi
+
+.TP 7
+*\ \ \fBg\fR\ \ :\fIChoose-Another-Window/Field-Group \fR
+You will be prompted to enter a number between 1 and 4 designating the
+\*(FG which should be made the \*(CW.
+
+In \*(FM, this command is necessary to alter the \*(CW.
+In \*(AM, it is simply a less convenient alternative to the `a' and `w'
+commands.
 
 .\" ......................................................................
 .SS 5c. SCROLLING a Window
@@ -2177,13 +2179,13 @@ then be applied.
 
 .B Keyboard Summary
 .TP 6
+\ \ \fBO\fR\ \ :\fIOther-Filter\fR (upper case)
+You will be prompted to establish a \fBcase sensitive\fR filter.
+
+.TP 6
 \ \ \fBo\fR\ \ :\fIOther-Filter\fR (lower case)
 You will be prompted to establish a filter that \fBignores case\fR when
 matching.
-
-.TP 6
-\ \ \fBO\fR\ \ :\fIOther-Filter\fR (upper case)
-You will be prompted to establish a \fBcase sensitive\fR filter.
 
 .TP 6
 \ \fB^O\fR\ \ :\fIShow-Active-Filters\fR (Ctrl key + `o')
