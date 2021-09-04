@@ -19,6 +19,7 @@ procps-ng-NEXT
   * top: 'F' key is now a new forest view 'focus' toggle
   * top: summary area memory lines can print two abreast
   * top: added two new autogroup fields
+  * top: added long versions of command line options
 
 procps-ng-3.3.17
 ---------------
