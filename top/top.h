@@ -29,6 +29,7 @@
 //#define CASEUP_HEXES            /* show any hex values in upper case       */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
+//#define GETOPTFIX_NO            /* do not address getopt_long deficiencies */
 //#define INSP_JUSTNOT            /* don't smooth unprintable right margins  */
 //#define INSP_OFFDEMO            /* disable demo screens, issue msg instead */
 //#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents in a file  */
@@ -656,7 +657,7 @@ typedef struct WIN_t {
 //atic const char   *configs_file (FILE *fp, const char *name, float *delay);
 //atic int           configs_path (const char *const fmts, ...);
 //atic void          configs_reads (void);
-//atic void          parse_args (char **args);
+//atic void          parse_args (int argc, char **argv);
 //atic void          whack_terminal (void);
 /*------  Windows/Field Groups support  ----------------------------------*/
 //atic void          win_names (WIN_t *q, const char *name);
@@ -699,7 +700,7 @@ typedef struct WIN_t {
 /*------  Entry point plus two  ------------------------------------------*/
 //atic void          frame_hlp (int wix, int max);
 //atic void          frame_make (void);
-//     int           main (int dont_care_argc, char **argv);
+//     int           main (int argc, char *argv[]);
 
 #endif /* _Itop */
 

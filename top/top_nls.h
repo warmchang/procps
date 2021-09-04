@@ -78,7 +78,7 @@ enum norm_nls {
    OSEL_casenot_txt, OSEL_caseyes_txt, OSEL_errdelm_fmt, OSEL_errdups_txt,
    OSEL_errvalu_fmt, OSEL_prompts_fmt, OSEL_statlin_fmt, RC_bad_entry_fmt,
    RC_bad_files_fmt, SCROLL_coord_fmt, SELECT_clash_txt, THREADS_show_fmt,
-   TIME_accumed_fmt, UNKNOWN_cmds_txt, UNKNOWN_opts_fmt, USAGE_abbrev_txt,
+   TIME_accumed_fmt, UNKNOWN_cmds_txt, UNKNOWN_opts_fmt, VERSION_opts_fmt,
    WORD_abv_mem_txt, WORD_abv_swp_txt, WORD_allcpus_txt, WORD_another_txt,
    WORD_eachcpu_fmt, WORD_exclude_txt, WORD_include_txt, WORD_noneone_txt,
    WORD_process_txt, WORD_threads_txt, WRITE_rcfile_fmt, WRONG_switch_fmt,
