@@ -23,10 +23,6 @@
 .ds CF configuration file
 .ds CG `current' window/field group
 .ds CI interactive command
-\#                           - Note: our 'Command Line' used in 2 places
-\#                           ( and managed to fit in an 80x24 terminal )
-.ds CL \-\fBhv\fR|\-\fBbcEeHiOSs1\fR \-\fBd\fR secs \-\fBn\fR max \
-\-\fBu\fR|\fBU\fR user \-\fBp\fR pids \-\fBo\fR field \-\fBw\fR [cols] \fR
 .ds CO command\-line option
 .ds CT command toggle
 .ds CW `current' window
@@ -63,7 +59,7 @@ memory statistics and data for other users requires root privileges
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "August 2021" "procps-ng" "User Commands"
+.TH TOP 1 "September 2021" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 .nh
 
@@ -75,9 +71,7 @@ top \- display Linux processes
 .\" ----------------------------------------------------------------------
 .SH SYNOPSIS
 .\" ----------------------------------------------------------------------
-\*(WE \*(CL
-
-The traditional switches `\-' and whitespace are optional.
+\*(WE [options]
 
 .\" ----------------------------------------------------------------------
 .SH DESCRIPTION
@@ -299,33 +293,27 @@ as scalable columns and discussed under topic `3a. DESCRIPTIONS of Fields'.
 .\" ----------------------------------------------------------------------
 .SH 1. COMMAND-LINE Options
 .\" ----------------------------------------------------------------------
-The command-line syntax for \*(We consists of:
+Mandatory\fI arguments\fR to long options are mandatory for short
+options too.
+The equals sign can be used with either option form and whitespace
+before and/or after the `=' is permitted.
 
-  \*(CL
-
-The typically mandatory switch (`\-') and even whitespace are completely
-optional.
-
-.TP 5
-\-\fBh\fR | \-\fBv\fR\ \ :\fIHelp/Version \fR
-Show library version and the usage prompt, then quit.
-
-.TP 5
-\-\fBb\fR\ \ :\fIBatch-mode\fR operation \fR
+.TP 3
+\-\fBb\fR, \fB\-\-batch\fR
 Starts \*(We in Batch mode, which could be useful for sending output
 from \*(We to other programs or to a file.
 In this mode, \*(We will not accept input and runs until the iterations
 limit you've set with the `\-n' \*(CO or until killed.
 
-.TP 5
-\-\fBc\fR\ \ :\fICommand-line/Program-name\fR toggle \fR
+.TP 3
+\-\fBc\fR, \fB\-\-cmdline\-toggle\fR
 Starts \*(We with the last remembered `c' state reversed.
 Thus, if \*(We was displaying command lines, now that field will show program
 names, and vice versa.
 \*(XC `c' \*(CI for additional information.
 
-.TP 5
-\-\fBd\fR\ \ :\fIDelay-time\fR interval as:\ \ \fB-d ss.t\fR (\fIsecs\fR.\fItenths\fR) \fR
+.TP 3
+\-\fBd\fR, \fB\-\-delay\fR = \fISECS\fR [\fI.TENTHS\fR]\fR
 Specifies the delay between screen updates, and overrides the corresponding
 value in one's personal \*(CF or the startup default.
 Later this can be changed with the `d' or `s' \*(CIs.
@@ -335,21 +323,8 @@ In all cases, however, such changes are prohibited if \*(We is running
 in Secure mode, except for root (unless the `s' \*(CO was used).
 For additional information on Secure mode \*(Xt 6d. SYSTEM Restrictions File.
 
-.TP 5
-\-\fBe\fR\ \ :\fIEnforce-Task-Memory-Scaling\fR as:\ \ \fB-e  k\fR | \fBm\fR | \fBg\fR | \fBt\fR | \fBp\fR
-Instructs \*(We to force \*(TA memory to be scaled as:
-.nf
-   k \- kibibytes
-   m \- mebibytes
-   g \- gibibytes
-   t \- tebibytes
-   p \- pebibytes
-.fi
-
-Later this can be changed with the `e' \*(CT.
-
-.TP 5
-\-\fBE\fR\ \ :\fIEnforce-Summary-Memory-Scaling\fR as:\ \ \fB-E  k\fR | \fBm\fR | \fBg\fR | \fBt\fR | \fBp\fR | \fBe\fR
+.TP 3
+\-\fBE\fR, \fB\-\-scale-summary-mem\fR = \fIk\fR | \fIm\fR | \fIg\fR | \fIt\fR | \fIp\fR | \fIe\fR
 Instructs \*(We to force \*(SA memory to be scaled as:
 .nf
    k \- kibibytes
@@ -362,45 +337,64 @@ Instructs \*(We to force \*(SA memory to be scaled as:
 
 Later this can be changed with the `E' \*(CT.
 
-.TP 5
-\-\fBH\fR\ \ :\fIThreads-mode\fR operation \fR
+.TP 3
+\-\fBe\fR, \fB\-\-scale-task-mem\fR = \fIk\fR | \fIm\fR | \fIg\fR | \fIt\fR | \fIp\fR
+Instructs \*(We to force \*(TA memory to be scaled as:
+.nf
+   k \- kibibytes
+   m \- mebibytes
+   g \- gibibytes
+   t \- tebibytes
+   p \- pebibytes
+.fi
+
+Later this can be changed with the `e' \*(CT.
+
+.TP 3
+\-\fBH\fR, \fB\-\-threads-show\fR
 Instructs \*(We to display individual threads.
 Without this \*(CO a summation of all threads in each process is shown.
 Later this can be changed with the `H' \*(CI.
 
-.TP 5
-\-\fBi\fR\ \ :\fIIdle-process\fR toggle \fR
+.TP 3
+\-\fBh\fR, \fB\-\-help\fR
+Display usage help text, then quit.
+
+.TP 3
+\-\fBi\fR, \fB\-\-idle-toggle\fR
 Starts \*(We with the last remembered `i' state reversed.
 When this toggle is \*F, tasks that have not used any \*(PU since the
 last update will not be displayed.
 For additional information regarding this toggle
 \*(Xt 4c. TASK AREA Commands, SIZE.
 
-.TP 5
-\-\fBn\fR\ \ :\fINumber-of-iterations\fR limit as:\fB\ \ \-n number \fR
+.TP 3
+\-\fBn\fR, \fB\-\-iterations\fR = \fINUMBER\fR
 Specifies the maximum number of iterations, or frames, \*(We should
 produce before ending.
 
-.TP 5
-\-\fBo\fR\ \ :\fIOverride-sort-field\fR as:\fB\ \ \-o fieldname \fR
-Specifies the name of the field on which tasks will be sorted, independent
-of what is reflected in the configuration file.
-You can prepend a `+' or `\-' to the field name to also override the sort direction.
-A leading `+' will force sorting high to low, whereas a `\-' will ensure a low to high
-ordering.
-
-This option exists primarily to support automated/scripted batch mode
-operation.
-
-.TP 5
-\-\fBO\fR\ \ :\fIOutput-field-names \fR
-This option acts as a form of help for the above \-o option.
+.TP 3
+\-\fBO\fR, \fB\-\-list-fields\fR
+This option acts as a form of help for the \-o option shown below.
 It will cause \*(We to print each of the available field names on a
 separate line, then quit.
 Such names are subject to NLS (National Language Support) translation.
 
-.TP 5
-\-\fBp\fR\ \ :\fIMonitor-PIDs\fR mode as:\fB\ \ \-pN1 -pN2 ...\fR\ \ or\fB\ \ \-pN1,N2,N3 ... \fR
+.TP 3
+\-\fBo\fR, \fB\-\-sort-override\fR = \fIFIELDNAME\fR
+Specifies the name of the field on which tasks will be sorted, independent
+of what is reflected in the configuration file.
+You can prepend a `+' or `\-' to the field name to also override the sort
+direction.
+A leading `+' will force sorting high to low, whereas a `\-' will ensure
+a low to high ordering.
+
+This option exists primarily to support automated/scripted batch mode
+operation.
+
+.TP 3
+\-\fBp\fR, \fB\-\-pid\fR = \fIPIDLIST\fR \
+(as: \fI1\fR,\fI2\fR,\fI3\fR, ...\fR or \fR-p\fI1\fR -p\fI2\fR -p\fI3\fR ...)
 Monitor only processes with specified process IDs.
 However, when combined with Threads mode (`H'), all processes in the
 thread group (\*(Xa TGID) of each monitored PID will also be shown.
@@ -418,32 +412,46 @@ of these \*(CIs: `=', `u' or `U'.
 
 The `p', `u' and `U' \*(COs are mutually exclusive.
 
-.TP 5
-\-\fBs\fR\ \ :\fISecure-mode\fR operation \fR
-Starts \*(We with secure mode forced, even for root.
-This mode is far better controlled through a system \*(CF
-(\*(Xt 6. FILES).
-
-.TP 5
-\-\fBS\fR\ \ :\fICumulative-time\fR toggle \fR
+.TP 3
+\-\fBS\fR, \fB\-\-accum-time-toggle\fR
 Starts \*(We with the last remembered `S' state reversed.
 When Cumulative time mode is \*O, each process is listed with the \*(Pu
 time that it and its dead children have used.
 \*(XC `S' \*(CI for additional information regarding this mode.
 
-.TP 5
-\-\fBu\fR | \-\fBU\fR\ \ :\fIUser-filter-mode\fR as:\ \ \fB-u\fR | \fB-U number\fR or\fB name \fR
+.TP 3
+\-\fBs\fR, \fB\-\-secure-mode\fR
+Starts \*(We with secure mode forced, even for root.
+This mode is far better controlled through a system \*(CF
+(\*(Xt 6. FILES).
+
+.TP 3
+\-\fBU\fR, \fB\-\-filter-any-user\fR = \fIUSER\fR (as: \fInumber\fR or \fIname\fR)
 Display only processes with a user id or user name matching that given.
-The `\-u' option matches on \fI effective\fR user whereas the `\-U' option
-matches on\fI any\fR user (real, effective, saved, or filesystem).
+This option matches on\fI any\fR user (\fIreal\fR, \fIeffective\fR,
+\fIsaved\fR, or \fIfilesystem\fR).
 
 Prepending an exclamation point (`!') to the user id or name instructs \*(We
 to display only processes with users not matching the one provided.
 
-The `p', `u' and `U' \*(COs are mutually exclusive.
+The `p', `U' and `u' \*(COs are mutually exclusive.
 
-.TP 5
-\-\fBw\fR\ \ :\fIOutput-width-override\fR as:\ \ \fB-w\fR [\fB number\fR ] \fR
+.TP 3
+\-\fBu\fR, \fB\-\-filter-only-euser\fR = \fIUSER\fR (as: \fInumber\fR or \fIname\fR)
+Display only processes with a user id or user name matching that given.
+This option matches on the\fI effective\fR user id only.
+
+Prepending an exclamation point (`!') to the user id or name instructs \*(We
+to display only processes with users not matching the one provided.
+
+The `p', `U' and `u' \*(COs are mutually exclusive.
+
+.TP 3
+\-\fBV\fR, \fB\-\-version\fR
+Show library version, then quit.
+
+.TP 3
+\-\fBw\fR, \fB\-\-width\fR [=\fICOLUMNS\fR]
 In Batch mode, when used without an argument \*(We will format
 output using the COLUMNS= and LINES= environment variables, if set.
 Otherwise, width will be fixed at the maximum \*(WX columns.
@@ -454,13 +462,13 @@ In normal display mode, when used without an argument \*(We will\fI attempt\fR
 to format output using the COLUMNS= and LINES= environment variables, if set.
 With an argument, output width can only be decreased, not increased.
 Whether using environment variables or an argument with \-w, when\fI not\fR
-in Batch mode actual terminal dimensions can never be exceeded.
+in Batch mode actual, terminal dimensions can never be exceeded.
 
 \*(NT Without the use of this \*(CO, output width is always based on the
 terminal at which \*(We was invoked whether or not in Batch mode.
 
-.TP 5
-\-\fB1\fR\ \ :\fISingle/Separate-Cpu-States\fR toggle \fR
+.TP 3
+\-\fB1\fR, \fB\-\-single-cpu-toggle\fR
 Starts \*(We with the last remembered Cpu States portion of the \*(SA reversed.
 Either all \*(Pu information will be displayed in a single line or
 each \*(Pu will be displayed separately, depending on the state of the NUMA Node
