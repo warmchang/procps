@@ -21,6 +21,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <float.h>
+#include <getopt.h>
 #include <limits.h>
 #include <pwd.h>
 #include <signal.h>
@@ -4195,177 +4196,159 @@ default_or_error:
          *       and our job is to see if any of those options are to be
          *       overridden -- we'll force some on and negate others in our
          *       best effort to honor the loser's (oops, user's) wishes... */
-static void parse_args (char **args) {
-   /* differences between us and the former top:
-      -C (separate CPU states for SMP) is left to an rcfile
-      -u (user monitoring) added to compliment interactive 'u'
-      -p (pid monitoring) allows a comma delimited list
-      -q (zero delay) eliminated as redundant, incomplete and inappropriate
-            use: "nice -n-10 top -d0" to achieve what was only claimed
-      .  most switches act as toggles (not 'on' sw) for more user flexibility
-      .  no deprecated/illegal use of 'breakargv:' with goto
-      .  bunched args are actually handled properly and none are ignored
-      .  we tolerate NO whitespace and NO switches -- maybe too tolerant? */
-   static const char numbs_str[] = "+,-.0123456789";
+static void parse_args (int argc, char **argv) {
+    static const char sopts[] = "bcd:E:e:Hhin:Oo:p:SsU:u:Vw::1";
+    static const struct option lopts[] = {
+       { "batch-mode",        no_argument,       NULL, 'b' },
+       { "cmdline-toggle",    no_argument,       NULL, 'c' },
+       { "delay",             required_argument, NULL, 'd' },
+       { "scale-summary-mem", required_argument, NULL, 'E' },
+       { "scale-task-mem",    required_argument, NULL, 'e' },
+       { "threads-show",      no_argument,       NULL, 'H' },
+       { "help",              no_argument,       NULL, 'h' },
+       { "idle-toggle",       no_argument,       NULL, 'i' },
+       { "iterations",        required_argument, NULL, 'n' },
+       { "list-fields",       no_argument,       NULL, 'O' },
+       { "sort-override",     required_argument, NULL, 'o' },
+       { "pid",               required_argument, NULL, 'p' },
+       { "accum-time-toggle", no_argument,       NULL, 'S' },
+       { "secure-mode",       no_argument,       NULL, 's' },
+       { "filter-any-user",   required_argument, NULL, 'U' },
+       { "filter-only-euser", required_argument, NULL, 'u' },
+       { "version",           no_argument,       NULL, 'V' },
+       { "width",             optional_argument, NULL, 'w' },
+       { "single-cpu-toggle", no_argument,       NULL, '1' },
+       { NULL, 0, NULL, 0 }
+   };
    float tmp_delay = FLT_MAX;
-   int i;
+   int ch;
 
-   while (*args) {
-      const char *cp = *(args++);
+   while (-1 != (ch = getopt_long(argc, argv, sopts, lopts, NULL))) {
+      int i;
+      float tmp;
+      char *cp = optarg;
 
-      while (*cp) {
-         char ch;
-         float tmp;
+#ifndef GETOPTFIX_NO
+      /* first, let's plug some awful gaps in the getopt implementation,
+         especially relating to short options with (optional) arguments! */
+      if (!cp && optind < argc && argv[optind][0] != '-')
+         cp = argv[optind++];
+      if (cp) {
+         if (*cp == '=') ++cp;
+         if (*cp == '\0' && optind < argc) cp = argv[optind++];
+         if (!cp || *cp == '\0') error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
+      }
+#endif
+      switch (ch) {
+         case '1':   // ensure behavior identical to run-time toggle
+            if (CHKw(Curwin, View_CPUNOD)) OFFw(Curwin, View_CPUSUM);
+            else TOGw(Curwin, View_CPUSUM);
+            OFFw(Curwin, View_CPUNOD);
+            SETw(Curwin, View_STATES);
+            break;
+         case 'b':
+            Batch = 1;
+            break;
+         case 'c':
+            TOGw(Curwin, Show_CMDLIN);
+            break;
+         case 'd':
+            if (!mkfloat(cp, &tmp_delay, 0))
+               error_exit(fmtmk(N_fmt(BAD_delayint_fmt), cp));
+            if (0 > tmp_delay)
+               error_exit(N_txt(DELAY_badarg_txt));
+            continue;
+         case 'E':
+         {  const char *get = "kmgtpe", *got;
+            if (!(got = strchr(get, tolower(*cp))) || strlen(cp) > 1)
+               error_exit(fmtmk(N_fmt(BAD_memscale_fmt), cp));
+            Rc.summ_mscale = (int)(got - get);
+         }  continue;
+         case 'e':
+         {  const char *get = "kmgtp", *got;
+            if (!(got = strchr(get, tolower(*cp))) || strlen(cp) > 1)
+               error_exit(fmtmk(N_fmt(BAD_memscale_fmt), cp));
+            Rc.task_mscale = (int)(got - get);
+         }  continue;
+         case 'H':
+            Thread_mode = 1;
+            break;
+         case 'h':
+            puts(fmtmk(N_fmt(HELP_cmdline_fmt), Myname));
+            bye_bye(NULL);
+         case 'i':
+            TOGw(Curwin, Show_IDLEPS);
+            Curwin->rc.maxtasks = 0;
+            break;
+         case 'n':
+            if (!mkfloat(cp, &tmp, 1) || 1.0 > tmp)
+               error_exit(fmtmk(N_fmt(BAD_niterate_fmt), cp));
+            Loops = (int)tmp;
+            continue;
+         case 'O':
+            for (i = 0; i < EU_MAXPFLGS; i++)
+               puts(N_col(i));
+            bye_bye(NULL);
+         case 'o':
+            if (*cp == '+') { SETw(Curwin, Qsrt_NORMAL); ++cp; }
+            else if (*cp == '-') { OFFw(Curwin, Qsrt_NORMAL); ++cp; }
+            for (i = 0; i < EU_MAXPFLGS; i++)
+               if (!STRCMP(cp, N_col(i))) break;
+            if (i == EU_MAXPFLGS)
+               error_exit(fmtmk(N_fmt(XTRA_badflds_fmt), cp));
+            OFFw(Curwin, Show_FOREST);
+            Curwin->rc.sortindx = i;
+            continue;
+         case 'p':
+         {  int pid; char *p;
+            if (Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
+            do {
+               if (Monpidsidx >= MONPIDMAX)
+                  error_exit(fmtmk(N_fmt(LIMIT_exceed_fmt), MONPIDMAX));
+               if (1 != sscanf(cp, "%d", &pid)
+               || strpbrk(cp, "+-."))
+                  error_exit(fmtmk(N_fmt(BAD_mon_pids_fmt), cp));
+               if (!pid) pid = getpid();
+               for (i = 0; i < Monpidsidx; i++)
+                  if (Monpids[i] == pid) goto next_pid;
+               Monpids[Monpidsidx++] = pid;
+            next_pid:
+               if (!(p = strchr(cp, ','))) break;
+               cp = p + 1;
+            } while (*cp);
+         }  continue;
+         case 'S':
+            TOGw(Curwin, Show_CTIMES);
+            break;
+         case 's':
+            Secure_mode = 1;
+            break;
+         case 'U':
+         case 'u':
+         {  const char *errmsg;
+            if (Monpidsidx || Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
+            if ((errmsg = user_certify(Curwin, cp, ch))) error_exit(errmsg);
+         }  continue;
+         case 'V':
+            puts(fmtmk(N_fmt(VERSION_opts_fmt), Myname, PACKAGE_STRING));
+            bye_bye(NULL);
+         case 'w':
+            tmp = -1;
+            if (cp && (!mkfloat(cp, &tmp, 1) || tmp < W_MIN_COL || tmp > SCREENMAX))
+               error_exit(fmtmk(N_fmt(BAD_widtharg_fmt), cp));
+            Width_mode = (int)tmp;
+            continue;
+         default:
+            // we'll rely on getopt for any error message ...
+            bye_bye(NULL);
+      } // end: switch (ch)
+#ifndef GETOPTFIX_NO
+      if (cp) error_exit(fmtmk(N_fmt(UNKNOWN_opts_fmt), cp));
+#endif
+   } // end: while getopt_long
 
-         switch ((ch = *cp)) {
-            case '\0':
-               break;
-            case '-':
-               if (cp[1]) ++cp;
-               else if (*args) cp = *args++;
-               if (strspn(cp, "+,-."))
-                  error_exit(fmtmk(N_fmt(WRONG_switch_fmt)
-                     , cp, Myname, N_txt(USAGE_abbrev_txt)));
-               continue;
-            case '1':   // ensure behavior identical to run-time toggle
-               if (CHKw(Curwin, View_CPUNOD)) OFFw(Curwin, View_CPUSUM);
-               else TOGw(Curwin, View_CPUSUM);
-               OFFw(Curwin, View_CPUNOD);
-               SETw(Curwin, View_STATES);
-               goto bump_cp;
-            case 'b':
-               Batch = 1;
-               goto bump_cp;
-            case 'c':
-               TOGw(Curwin, Show_CMDLIN);
-               goto bump_cp;
-            case 'd':
-               if (cp[1]) ++cp;
-               else if (*args) cp = *args++;
-               else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
-               if (!mkfloat(cp, &tmp_delay, 0))
-                  error_exit(fmtmk(N_fmt(BAD_delayint_fmt), cp));
-               if (0 > tmp_delay)
-                  error_exit(N_txt(DELAY_badarg_txt));
-               break;
-            case 'e':
-            {  const char *get = "kmgtp", *got;
-               if (cp[1]) cp++;
-               else if (*args) cp = *args++;
-               else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
-               if (!(got = strchr(get, tolower(*cp))))
-                  error_exit(fmtmk(N_fmt(BAD_memscale_fmt), *cp));
-               Rc.task_mscale = (int)(got - get);
-            }  goto bump_cp;
-            case 'E':
-            {  const char *get = "kmgtpe", *got;
-               if (cp[1]) cp++;
-               else if (*args) cp = *args++;
-               else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
-               if (!(got = strchr(get, tolower(*cp))))
-                  error_exit(fmtmk(N_fmt(BAD_memscale_fmt), *cp));
-               Rc.summ_mscale = (int)(got - get);
-            }  goto bump_cp;
-            case 'H':
-               Thread_mode = 1;
-               goto bump_cp;
-            case 'h':
-            case 'v':
-               puts(fmtmk(N_fmt(HELP_cmdline_fmt)
-                  , PACKAGE_STRING, Myname, N_txt(USAGE_abbrev_txt)));
-               bye_bye(NULL);
-            case 'i':
-               TOGw(Curwin, Show_IDLEPS);
-               Curwin->rc.maxtasks = 0;
-               goto bump_cp;
-            case 'n':
-               if (cp[1]) cp++;
-               else if (*args) cp = *args++;
-               else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
-               if (!mkfloat(cp, &tmp, 1) || 1.0 > tmp)
-                  error_exit(fmtmk(N_fmt(BAD_niterate_fmt), cp));
-               Loops = (int)tmp;
-               break;
-            case 'o':
-               if (cp[1]) cp++;
-               else if (*args) cp = *args++;
-               else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
-               if (*cp == '+') { SETw(Curwin, Qsrt_NORMAL); ++cp; }
-               else if (*cp == '-') { OFFw(Curwin, Qsrt_NORMAL); ++cp; }
-               for (i = 0; i < EU_MAXPFLGS; i++)
-                  if (!STRCMP(cp, N_col(i))) break;
-               if (i == EU_MAXPFLGS)
-                  error_exit(fmtmk(N_fmt(XTRA_badflds_fmt), cp));
-               OFFw(Curwin, Show_FOREST);
-               Curwin->rc.sortindx = i;
-               cp += strlen(cp);
-               break;
-            case 'O':
-               for (i = 0; i < EU_MAXPFLGS; i++)
-                  puts(N_col(i));
-               bye_bye(NULL);
-            case 'p':
-            {  int pid; char *p;
-               if (Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
-               do {
-                  if (cp[1]) cp++;
-                  else if (*args) cp = *args++;
-                  else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
-                  if (Monpidsidx >= MONPIDMAX)
-                     error_exit(fmtmk(N_fmt(LIMIT_exceed_fmt), MONPIDMAX));
-                  if (1 != sscanf(cp, "%d", &pid)
-                  || strpbrk(cp, "+-."))
-                     error_exit(fmtmk(N_fmt(BAD_mon_pids_fmt), cp));
-                  if (!pid) pid = getpid();
-                  for (i = 0; i < Monpidsidx; i++)
-                     if (Monpids[i] == pid) goto next_pid;
-                  Monpids[Monpidsidx++] = pid;
-               next_pid:
-                  if (!(p = strchr(cp, ','))) break;
-                  cp = p;
-               } while (*cp);
-            }  break;
-            case 's':
-               Secure_mode = 1;
-               goto bump_cp;
-            case 'S':
-               TOGw(Curwin, Show_CTIMES);
-               goto bump_cp;
-            case 'u':
-            case 'U':
-            {  const char *errmsg;
-               if (Monpidsidx || Curwin->usrseltyp) error_exit(N_txt(SELECT_clash_txt));
-               if (cp[1]) cp++;
-               else if (*args) cp = *args++;
-               else error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
-               if ((errmsg = user_certify(Curwin, cp, ch))) error_exit(errmsg);
-               cp += strlen(cp);
-            }  break;
-            case 'w':
-            {  const char *pn = NULL;
-               int ai = 0, ci = 0;
-               tmp = -1;
-               if (cp[1]) pn = &cp[1];
-               else if (*args) { pn = *args; ai = 1; }
-               if (pn && !(ci = strspn(pn, numbs_str))) { ai = 0; pn = NULL; }
-               if (pn && (!mkfloat(pn, &tmp, 1) || tmp < W_MIN_COL || tmp > SCREENMAX))
-                  error_exit(fmtmk(N_fmt(BAD_widtharg_fmt), pn));
-               Width_mode = (int)tmp;
-               cp++;
-               args += ai;
-               if (pn) cp = pn + ci;
-            }  continue;
-            default :
-               error_exit(fmtmk(N_fmt(UNKNOWN_opts_fmt)
-                  , *cp, Myname, N_txt(USAGE_abbrev_txt)));
-         } // end: switch (*cp)
-
-         // advance cp and jump over any numerical args used above
-         if (*cp) cp += strspn(&cp[1], numbs_str);
-bump_cp:
-         if (*cp) ++cp;
-      } // end: while (*cp)
-   } // end: while (*args)
+   if (optind < argc)
+      error_exit(fmtmk(N_fmt(UNKNOWN_opts_fmt), argv[optind]));
 
    // fixup delay time, maybe...
    if (FLT_MAX > tmp_delay) {
@@ -6727,13 +6710,12 @@ static void frame_make (void) {
 
         /*
          * duh... */
-int main (int dont_care_argc, char **argv) {
-   (void)dont_care_argc;
+int main (int argc, char *argv[]) {
    before(*argv);
                                         //                 +-------------+
    wins_stage_1();                      //                 top (sic) slice
    configs_reads();                     //                 > spread etc, <
-   parse_args(&argv[1]);                //                 > lean stuff, <
+   parse_args(argc, argv);              //                 > lean stuff, <
    whack_terminal();                    //                 > onions etc. <
    wins_stage_2();                      //                 as bottom slice
                                         //                 +-------------+

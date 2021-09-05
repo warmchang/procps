@@ -330,27 +330,47 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[WRONG_switch_fmt] = _(""
       "inappropriate '%s'\n"
       "Usage:\n  %s%s");
-   Norm_nlstab[HELP_cmdline_fmt] = _(""
-      "  %s\n"
-      "Usage:\n  %s%s");
+   Norm_nlstab[HELP_cmdline_fmt] = _("\n"
+      "Usage:\n"
+      " %s [options]\n"
+      "\n"
+      "Options:\n"
+      " -b, --batch-mode               run in non-iteractive batch mode\n"
+      " -c, --cmdline-toggle           reverse last remembered 'c' state\n"
+      " -d, --delay=SECONDS            delay time between updates\n"
+      " -E, --scale-summary-mem=SCALE  scale memory as: k,m,g,t,p or e\n"
+      " -e, --scale-task-mem=SCALE     scale memory as: k,m,g,t or p\n"
+      " -H, --threads-show             display individual threads\n"
+      " -i, --idle-toggle              reverse last remembered 'i' state\n"
+      " -n, --iterations=NUMBER        maximum number of iterations\n"
+      " -O, --list-fields              output field names and exit\n"
+      " -o, --sort-override=FIELD      force sorting on FIELD name\n"
+      " -p, --pid=PIDLIST              monitor only specified process IDs\n"
+      " -S, --accum-time-toggle        reverse last remembered 'S' state\n"
+      " -s, --secure-mode              force secure mode operation\n"
+      " -U, --filter-any-user=USER     show only processes owned by USER\n"
+      " -u, --filter-only-euser=USER   show only processes owned by USER\n"
+      " -w, --width [=COLUMNS]         override terminal width\n"
+      " -1, --single-cpu-toggle        reverse last remembered '1' state\n"
+      "\n"
+      " -h, --help                     display this help and exit\n"
+      " -V, --version                  output version information and exit\n"
+      "\n"
+      "For more details see top(1).");
    Norm_nlstab[FAIL_statopn_fmt] = _("failed /proc/stat open: %s");
    Norm_nlstab[FAIL_openlib_fmt] = _("failed openproc: %s");
    Norm_nlstab[BAD_delayint_fmt] = _("bad delay interval '%s'");
    Norm_nlstab[BAD_niterate_fmt] = _("bad iterations argument '%s'");
    Norm_nlstab[LIMIT_exceed_fmt] = _("pid limit (%d) exceeded");
    Norm_nlstab[BAD_mon_pids_fmt] = _("bad pid '%s'");
-   Norm_nlstab[MISSING_args_fmt] = _("-%c requires argument");
+   Norm_nlstab[MISSING_args_fmt] = _("-%c argument missing");
    Norm_nlstab[BAD_widtharg_fmt] = _("bad width arg '%s'");
-   Norm_nlstab[UNKNOWN_opts_fmt] = _(""
-      "unknown option '%c'\n"
-      "Usage:\n  %s%s");
+   Norm_nlstab[UNKNOWN_opts_fmt] = _("unknown option '%s'");
    Norm_nlstab[DELAY_secure_txt] = _("-d disallowed in \"secure\" mode");
    Norm_nlstab[DELAY_badarg_txt] = _("-d requires positive argument");
    Norm_nlstab[ON_word_only_txt] = _("On");
    Norm_nlstab[OFF_one_word_txt] = _("Off");
-/* Translation Hint: Only the following words should be translated
-   .                 secs (seconds), max (maximum), user, field, cols (columns)*/
-   Norm_nlstab[USAGE_abbrev_txt] = _(" -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]");
+   Norm_nlstab[VERSION_opts_fmt] = _("%s from %s");
    Norm_nlstab[FAIL_statget_txt] = _("failed /proc/stat read");
    Norm_nlstab[FOREST_modes_fmt] = _("Forest mode %s");
    Norm_nlstab[FAIL_tty_get_txt] = _("failed tty get");
@@ -499,7 +519,7 @@ static void build_norm_nlstab (void) {
    .                 padding with extra spaces as necessary */
    Norm_nlstab[WORD_abv_mem_txt] = _("Mem ");
    Norm_nlstab[WORD_abv_swp_txt] = _("Swap");
-   Norm_nlstab[BAD_memscale_fmt] = _("bad memory scaling arg '%c'");
+   Norm_nlstab[BAD_memscale_fmt] = _("bad memory scaling arg '%s'");
    Norm_nlstab[XTRA_vforest_fmt] = _("PID to collapse/expand [default pid = %d]");
    Norm_nlstab[XTRA_size2up_txt] = _("terminal is not wide enough");
    Norm_nlstab[XTRA_modebad_txt] = _("wrong mode, command inactive");
