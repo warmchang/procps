@@ -293,8 +293,9 @@ as scalable columns and discussed under topic `3a. DESCRIPTIONS of Fields'.
 .\" ----------------------------------------------------------------------
 Mandatory\fI arguments\fR to long options are mandatory for short
 options too.
-The equals sign can be used with either option form and whitespace
-before and/or after the `=' is permitted.
+
+Although not required, the equals sign can be used with either option
+form and whitespace before and/or after the `=' is permitted.
 
 .TP 3
 \-\fBb\fR, \fB\-\-batch\fR
@@ -446,7 +447,7 @@ The `p', `U' and `u' \*(COs are mutually exclusive.
 
 .TP 3
 \-\fBV\fR, \fB\-\-version\fR
-Show library version, then quit.
+Display version information, then quit.
 
 .TP 3
 \-\fBw\fR, \fB\-\-width\fR [=\fICOLUMNS\fR]
@@ -460,7 +461,7 @@ In normal display mode, when used without an argument \*(We will\fI attempt\fR
 to format output using the COLUMNS= and LINES= environment variables, if set.
 With an argument, output width can only be decreased, not increased.
 Whether using environment variables or an argument with \-w, when\fI not\fR
-in Batch mode actual, terminal dimensions can never be exceeded.
+in Batch mode actual terminal dimensions can never be exceeded.
 
 \*(NT Without the use of this \*(CO, output width is always based on the
 terminal at which \*(We was invoked whether or not in Batch mode.

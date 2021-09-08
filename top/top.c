@@ -4235,8 +4235,10 @@ static void parse_args (int argc, char **argv) {
          cp = argv[optind++];
       if (cp) {
          if (*cp == '=') ++cp;
-         if (*cp == '\0' && optind < argc) cp = argv[optind++];
-         if (!cp || *cp == '\0') error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
+         /* here, if we're actually accessing argv[argc], we'll rely on
+            the required NULL delimiter which yields an error_exit next */
+         if (*cp == '\0') cp = argv[optind++];
+         if (!cp) error_exit(fmtmk(N_fmt(MISSING_args_fmt), ch));
       }
 #endif
       switch (ch) {
