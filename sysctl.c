@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
+ * Part of this code comes from systemd, especially sysctl.c
  * Changelog:
  *            v1.01:
  *                   - added -p <preload> to preload values from a file
@@ -40,6 +41,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include "c.h"
 #include "fileutils.h"
@@ -66,11 +68,33 @@ static bool PrintName;
 static bool PrintNewline;
 static bool IgnoreError;
 static bool Quiet;
+static bool DryRun;
 static char *pattern;
 
 #define LINELEN 4096
 static char *iobuf;
 static size_t iolen = LINELEN;
+
+typedef struct SysctlSetting {
+    char *key;
+    char *path;
+    char *value;
+    bool ignore_failure;
+    bool glob_exclude;
+    struct SysctlSetting *next;
+} SysctlSetting;
+
+typedef struct SettingList {
+    struct SysctlSetting *head;
+    struct SysctlSetting *tail;
+} SettingList;
+
+#define GLOB_CHARS "*?["
+static inline bool string_is_glob(const char *p)
+{
+    return !!strpbrk(p, GLOB_CHARS);
+}
+
 
 /* Function prototypes. */
 static int pattern_match(const char *string, const char *pat);
@@ -100,6 +124,81 @@ static void slashdot(char *restrict p, char old, char new)
 	}
 }
 
+static void setting_free(SysctlSetting *s) {
+    if (!s)
+	return;
+
+    free(s->key);
+    free(s->path);
+    free(s->value);
+    free(s);
+}
+
+static SysctlSetting *setting_new(
+	const char *key,
+	const char *value,
+	bool ignore_failure,
+    bool glob_exclude) {
+
+    SysctlSetting *s = NULL;
+    char *path = NULL;
+    int proc_len;
+
+    proc_len = strlen(PROC_PATH);
+    /* used to open the file */
+    path = xmalloc(strlen(key) + proc_len + 2);
+    strcpy(path, PROC_PATH);
+    if (key[0] == '-')
+        strcat(path + proc_len, key+1);
+    else
+        strcat(path + proc_len, key);
+    /* change . to / */
+    slashdot(path + proc_len, '.', '/');
+
+    s = xmalloc(sizeof(SysctlSetting));
+
+    *s = (SysctlSetting) {
+        .key = strdup(key),
+        .path = path,
+        .value = value? strdup(value): NULL,
+        .ignore_failure = ignore_failure,
+        .glob_exclude = glob_exclude,
+        .next = NULL,
+    };
+
+    return s;
+}
+
+static void settinglist_add(SettingList *l, SysctlSetting *s) {
+    SysctlSetting *old_tail;
+
+    if (!l)
+        return;
+
+    if (l->head == NULL)
+        l->head = s;
+
+    if (l->tail != NULL) {
+        old_tail = l->tail;
+        old_tail->next = s;
+    }
+    l->tail = s;
+}
+
+static SysctlSetting *settinglist_findpath(const SettingList *l, const char *path) {
+    SysctlSetting *node;
+
+    for (node=l->head; node != NULL; node = node->next) {
+        if (strcmp(node->path, path) == 0)
+            return node;
+    }
+    return NULL;
+}
+
+/* Function prototypes. */
+static int pattern_match(const char *string, const char *pat);
+static int DisplayAll(const char *restrict const path);
+
 /*
  * Display the usage format
  */
@@ -115,6 +214,7 @@ static void __attribute__ ((__noreturn__))
 	fputs(_("  -A                   alias of -a\n"), out);
 	fputs(_("  -X                   alias of -a\n"), out);
 	fputs(_("      --deprecated     include deprecated parameters to listing\n"), out);
+	fputs(_("      --dry-run        Print the key and values but do not write\n"), out);
 	fputs(_("  -b, --binary         print value without new line\n"), out);
 	fputs(_("  -e, --ignore         ignore unknown variables errors\n"), out);
 	fputs(_("  -N, --names          print variable names without values\n"), out);
@@ -135,6 +235,39 @@ static void __attribute__ ((__noreturn__))
 	fprintf(out, USAGE_MAN_TAIL("sysctl(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
+/*
+ * Strip left/leading side of a string
+ */
+static char *lstrip(char *line)
+{
+    char *start;
+
+    if (!line || !*line)
+        return line;
+
+    start = line;
+    while(isspace(*start)) start++;
+
+    return start;
+}
+
+/*
+ * Strip right/trailing side of a string
+ * by placing a \0
+ */
+static void rstrip(char *line)
+{
+    char *end;
+
+    if (!line || !*line)
+        return;
+
+    end = line + strlen(line) - 1;
+    while(end > line && isspace(*end)) end--;
+
+    end[1] = '\0';
 }
 
 /*
@@ -166,7 +299,7 @@ static char *StripLeadingAndTrailingSpaces(char *oneline)
  */
 static int ReadSetting(const char *restrict const name)
 {
-	int rc = 0;
+	int rc = EXIT_SUCCESS;
 	char *restrict tmpname;
 	char *restrict outname;
 	ssize_t rlen;
@@ -198,7 +331,7 @@ static int ReadSetting(const char *restrict const name)
 	if (stat(tmpname, &ts) < 0) {
 		if (!IgnoreError) {
 			xwarn(_("cannot stat %s"), tmpname);
-			rc = -1;
+			rc = EXIT_FAILURE;
 		}
 		goto out;
 	}
@@ -215,7 +348,7 @@ static int ReadSetting(const char *restrict const name)
 	}
 
 	if (pattern && !pattern_match(outname, pattern)) {
-		rc = 0;
+		rc = EXIT_SUCCESS;
 		goto out;
 	}
 
@@ -231,19 +364,19 @@ static int ReadSetting(const char *restrict const name)
 		case ENOENT:
 			if (!IgnoreError) {
 				xwarnx(_("\"%s\" is an unknown key"), outname);
-				rc = -1;
+				rc = EXIT_FAILURE;
 			}
 			break;
 		case EACCES:
 			xwarnx(_("permission denied on key '%s'"), outname);
-			rc = -1;
+			rc = EXIT_FAILURE;
 			break;
 		case EIO:	    /* Ignore stable_secret below /proc/sys/net/ipv6/conf */
-			rc = -1;
+			rc = EXIT_FAILURE;
 			break;
 		default:
 			xwarn(_("reading key \"%s\""), outname);
-			rc = -1;
+			rc = EXIT_FAILURE;
 			break;
 		}
 	} else {
@@ -279,7 +412,7 @@ static int ReadSetting(const char *restrict const name)
 			case EACCES:
 				xwarnx(_("permission denied on key '%s'"),
 				       outname);
-				rc = -1;
+				rc = EXIT_FAILURE;
 				break;
 			case EISDIR: {
 					size_t len;
@@ -291,11 +424,11 @@ static int ReadSetting(const char *restrict const name)
 					goto out;
 				}
 			case EIO:	    /* Ignore stable_secret below /proc/sys/net/ipv6/conf */
-				rc = -1;
+				rc = EXIT_FAILURE;
 				break;
 			default:
 				xwarnx(_("reading key \"%s\""), outname);
-				rc = -1;
+				rc = EXIT_FAILURE;
 			case 0:
 				break;
 			}
@@ -323,7 +456,7 @@ static int is_deprecated(char *filename)
  */
 static int DisplayAll(const char *restrict const path)
 {
-	int rc = 0;
+	int rc = EXIT_SUCCESS;
 	int rc2;
 	DIR *restrict dp;
 	struct dirent *restrict de;
@@ -333,7 +466,7 @@ static int DisplayAll(const char *restrict const path)
 
 	if (!dp) {
 		xwarnx(_("unable to open directory \"%s\""), path);
-		rc = -1;
+		rc = EXIT_FAILURE;
 	} else {
 		readdir(dp);	/* skip .  */
 		readdir(dp);	/* skip .. */
@@ -369,130 +502,183 @@ static int DisplayAll(const char *restrict const path)
 /*
  * Write a sysctl setting
  */
-static int WriteSetting(const char *setting)
-{
-	int rc = 0;
-	const char *name = setting;
-	const char *value;
-	const char *equals;
-	char *tmpname;
-	char *outname;
-	char *last_dot;
-	bool ignore_failure;
+static int WriteSetting(
+    const char *key,
+    const char *path,
+    const char *value,
+    const bool ignore_failure) {
 
-	FILE *fp;
+    int rc = EXIT_SUCCESS;
+    FILE *fp;
 	struct stat ts;
 
-	if (!name)
-		/* probably don't want to display this err */
-		return 0;
+    if (!key || !path)
+        return rc;
 
-	equals = strchr(setting, '=');
-
-	if (!equals) {
-		xwarnx(_("\"%s\" must be of the form name=value"),
-		       setting);
-		return -1;
-	}
-
-	/* point to the value in name=value */
-	value = equals + 1;
-
-	if (!*name || name == equals) {
-		xwarnx(_("malformed setting \"%s\""), setting);
-		return -2;
-	}
-
-	ignore_failure = name[0] == '-';
-	if (ignore_failure)
-	    name++;
-
-	/* used to open the file */
-	tmpname = xmalloc(equals - name + 1 + strlen(PROC_PATH));
-	strcpy(tmpname, PROC_PATH);
-	strncat(tmpname, name, (int) (equals - name));
-	tmpname[equals - name + strlen(PROC_PATH)] = 0;
-	/* change . to / */
-	slashdot(tmpname + strlen(PROC_PATH), '.', '/');
-
-	/* used to display the output */
-	outname = xmalloc(equals - name + 1);
-	strncpy(outname, name, (int) (equals - name));
-	outname[equals - name] = 0;
-	/* change / to . */
-	slashdot(outname, '/', '.');
-	last_dot = strrchr(outname, '.');
-	if (last_dot != NULL && is_deprecated(last_dot + 1)) {
-		xwarnx(_("%s is deprecated, value not set"), outname);
-		goto out;
-        }
-
-	if (stat(tmpname, &ts) < 0) {
+	if (stat(path, &ts) < 0) {
 		if (!IgnoreError) {
-			xwarn(_("cannot stat %s"), tmpname);
-			rc = -1;
+			xwarn(_("cannot stat %s"), path);
+			rc = EXIT_FAILURE;
 		}
-		goto out;
+        return rc;
 	}
 
 	if ((ts.st_mode & S_IWUSR) == 0) {
-		xwarn(_("setting key \"%s\""), outname);
-		goto out;
+		xwarn(_("setting key \"%s\""), key);
+        return rc;
 	}
 
 	if (S_ISDIR(ts.st_mode)) {
-		xwarn(_("setting key \"%s\""), outname);
-		goto out;
+		xwarn(_("setting key \"%s\""), key);
+        return rc;
 	}
 
-	fp = fprocopen(tmpname, "w");
-
-	if (!fp) {
-		switch (errno) {
-		case ENOENT:
-			if (!IgnoreError) {
-				xwarnx(_("\"%s\" is an unknown key%s"), outname, (ignore_failure?_(", ignoring"):""));
+    if (!DryRun) {
+        if ((fp = fprocopen(path, "w")) == NULL) {
+            switch (errno) {
+            case ENOENT:
+                if (!IgnoreError) {
+                    xwarnx(_("\"%s\" is an unknown key%s"),
+                           key, (ignore_failure?_(", ignoring"):""));
 				if (!ignore_failure)
-				    rc = -1;
+				    rc = EXIT_FAILURE;
 			}
 			break;
-		case EPERM:
-		case EROFS:
-		case EACCES:
-			xwarnx(_("permission denied on key \"%s\"%s"), outname, (ignore_failure?_(", ignoring"):""));
-			break;
-		default:
-			xwarn(_("setting key \"%s\"%s"), outname, (ignore_failure?_(", ignoring"):""));
-			break;
-		}
-		if (!ignore_failure && errno != ENOENT)
-		    rc = -1;
-	} else {
-		rc = fprintf(fp, "%s\n", value);
-		if (0 < rc)
-			rc = 0;
-		if (close_stream(fp) != 0)
-			xwarn(_("setting key \"%s\""), outname);
-		else if (rc == 0 && !Quiet) {
-			if (NameOnly) {
-				fprintf(stdout, "%s\n", outname);
-			} else {
-				if (PrintName) {
-					fprintf(stdout, "%s = %s\n",
-						outname, value);
-				} else {
-					if (PrintNewline)
-						fprintf(stdout, "%s\n", value);
-					else
-						fprintf(stdout, "%s", value);
-				}
-			}
-		}
-	}
-      out:
-	free(tmpname);
-	free(outname);
-	return rc;
+            case EPERM:
+            case EROFS:
+            case EACCES:
+                xwarnx(_("permission denied on key \"%s\"%s"),
+                       key, (ignore_failure?_(", ignoring"):""));
+                break;
+            default:
+                xwarn(_("setting key \"%s\"%s"),
+                      key, (ignore_failure?_(", ignoring"):""));
+                break;
+            }
+            if (!ignore_failure && errno != ENOENT)
+		    rc = EXIT_FAILURE;
+        } else {
+	    if (0 < fprintf(fp, "%s\n", value))
+		rc = EXIT_SUCCESS;
+            if (close_stream(fp) != 0) {
+                xwarn(_("setting key \"%s\""), path);
+                return rc;
+            }
+        }
+    }
+    if ((rc == EXIT_SUCCESS && !Quiet) || DryRun) {
+        if (NameOnly) {
+            printf("%s\n", value);
+        } else {
+            if (PrintName) {
+                printf("%s = %s\n", path, value);
+            } else {
+                if (PrintNewline)
+                    printf("%s\n", value);
+                else
+                    printf("%s", value);
+            }
+        }
+    }
+    return rc;
+}
+
+/*
+ * parse each configuration line, there are multiple ways of specifying
+ * a key/value here:
+ *
+ * key = value                               simple setting
+ * -key = value                              ignore errors
+ * key.pattern.*.with.glob = value           set keys that match glob
+ * -key.pattern.exclude.with.glob            dont set this value
+ * key.pattern.override.with.glob = value    set this glob match to value
+ *
+ */
+
+static SysctlSetting *parse_setting_line(
+    const char *path,
+    const int linenum,
+    char *line)
+{
+    SysctlSetting *s;
+    char *key;
+    char *value;
+    bool glob_exclude = FALSE;
+    bool ignore_failure = FALSE;
+
+    key = lstrip(line);
+    if (strlen(key) < 2)
+        return NULL;
+
+    /* skip over comments */
+    if (key[0] == '#' || key[0] == ';')
+        return NULL;
+
+    if (pattern && !pattern_match(key, pattern))
+        return NULL;
+
+    value = strchr(key, '=');
+    if (value == NULL) {
+        if (key[0] == '-') {
+            glob_exclude = TRUE;
+            key++;
+            value = NULL;
+            rstrip(key);
+        } else {
+            xwarnx(_("%s(%d): invalid syntax, continuing..."),
+                   path, linenum);
+            return NULL;
+        }
+    } else {
+        value[0]='\0';
+        if (key[0] == '-') {
+            ignore_failure = TRUE;
+            key++;
+        }
+        value++; // skip over =
+        value=lstrip(value);
+        rstrip(value);
+        rstrip(key);
+    }
+    return setting_new(key, value, ignore_failure, glob_exclude);
+}
+
+/* Go through the setting list, expand and sort out
+ * setting globs and actually write the settings out
+ */
+static int write_setting_list(const SettingList *sl)
+{
+    SysctlSetting *node;
+    int rc = EXIT_SUCCESS;
+
+    for (node=sl->head; node != NULL; node=node->next) {
+        if (node->glob_exclude)
+            continue;
+
+        if (string_is_glob(node->path)) {
+            char *gl_path;
+            glob_t globbuf;
+            int i;
+
+            if (glob(node->path, 0, NULL, &globbuf) != 0)
+                continue;
+
+            for(i=0; i < globbuf.gl_pathc; i++) {
+                if (settinglist_findpath(sl, globbuf.gl_pathv[i]))
+                    continue; // override or exclude
+
+                rc |= WriteSetting(node->key, globbuf.gl_pathv[i], node->value,
+                                   node->ignore_failure);
+            }
+        } else {
+            rc |= WriteSetting(node->key, node->path, node->value,
+                               node->ignore_failure);
+        }
+
+
+    }
+
+    return rc;
 }
 
 static int pattern_match(const char *string, const char *pat)
@@ -513,12 +699,12 @@ static int pattern_match(const char *string, const char *pat)
  * Preload the sysctl's from the conf file.  We parse the file and then
  * reform it (strip out whitespace).
  */
-static int Preload(const char *restrict const filename)
+static int Preload(SettingList *setlist, const char *restrict const filename)
 {
 	FILE *fp;
 	char *t;
 	int n = 0;
-	int rc = 0;
+	int rc = EXIT_SUCCESS;
 	ssize_t rlen;
 	char *name, *value;
 	glob_t globbuf;
@@ -547,62 +733,26 @@ static int Preload(const char *restrict const filename)
 		    ? stdin : fopen(globbuf.gl_pathv[j], "r");
 		if (!fp) {
 			xwarn(_("cannot open \"%s\""), globbuf.gl_pathv[j]);
-			rc = -1;
-			goto out;
+            return EXIT_FAILURE;
 		}
 
 		while ((rlen =  getline(&iobuf, &iolen, fp)) > 0) {
 			size_t offset;
+            SysctlSetting *setting;
 
 			n++;
 
 			if (rlen < 2)
 				continue;
 
-			t = StripLeadingAndTrailingSpaces(iobuf);
-			if (strlen(t) < 2)
-				continue;
-
-			if (*t == '#' || *t == ';')
-				continue;
-
-			name = strtok(t, "=");
-			if (!name || !*name) {
-				xwarnx(_("%s(%d): invalid syntax, continuing..."),
-				       globbuf.gl_pathv[j], n);
-				continue;
-			}
-
-			StripLeadingAndTrailingSpaces(name);
-
-			if (pattern && !pattern_match(name, pattern))
-				continue;
-
-			offset = strlen(name);
-			memmove(&iobuf[0], name, offset);
-			iobuf[offset++] = '=';
-
-			value = strtok(NULL, "\n\r");
-			if (!value || !*value) {
-				xwarnx(_("%s(%d): invalid syntax, continuing..."),
-				       globbuf.gl_pathv[j], n);
-				continue;
-			}
-
-			while ((*value == ' ' || *value == '\t') && *value != 0)
-				value++;
-
-			/* should NameOnly affect this? */
-			memmove(&iobuf[offset], value, strlen(value));
-			offset += strlen(value);
-			iobuf[offset] = '\0';
-
-			rc |= WriteSetting(iobuf);
+            if ( (setting = parse_setting_line(globbuf.gl_pathv[j], n, iobuf))
+                 == NULL)
+                continue;
+            settinglist_add(setlist, setting);
 		}
 
 		fclose(fp);
 	}
-out:
 	return rc;
 }
 
@@ -618,7 +768,7 @@ static int sortpairs(const void *A, const void *B)
 	return strcmp(a->name, b->name);
 }
 
-static int PreloadSystem(void)
+static int PreloadSystem(SettingList *setlist)
 {
 	unsigned di, i;
 	const char *dirs[] = {
@@ -630,7 +780,7 @@ static int PreloadSystem(void)
 	};
 	struct pair **cfgs = NULL;
 	unsigned ncfgs = 0;
-	int rc = 0;
+	int rc = EXIT_SUCCESS;
 	struct stat ts;
 	enum { nprealloc = 16 };
 
@@ -688,14 +838,14 @@ static int PreloadSystem(void)
 	for (i = 0; i < ncfgs; ++i) {
 		if (!Quiet)
 			printf(_("* Applying %s ...\n"), cfgs[i]->value);
-		rc |= Preload(cfgs[i]->value);
+		rc |= Preload(setlist, cfgs[i]->value);
 	}
 
 
 	if (stat(DEFAULT_PRELOAD, &ts) == 0 && S_ISREG(ts.st_mode)) {
 		if (!Quiet)
 			printf(_("* Applying %s ...\n"), DEFAULT_PRELOAD);
-		rc |= Preload(DEFAULT_PRELOAD);
+		rc |= Preload(setlist, DEFAULT_PRELOAD);
 	}
 
 	/* cleaning */
@@ -717,15 +867,19 @@ int main(int argc, char *argv[])
 	bool preloadfileOpt = false;
 	int ReturnCode = 0;
 	int c;
+    int rc;
 	const char *preloadfile = NULL;
+    SettingList *setlist;
 
 	enum {
 		DEPRECATED_OPTION = CHAR_MAX + 1,
-		SYSTEM_OPTION
+		SYSTEM_OPTION,
+        DRYRUN_OPTION
 	};
 	static const struct option longopts[] = {
 		{"all", no_argument, NULL, 'a'},
 		{"deprecated", no_argument, NULL, DEPRECATED_OPTION},
+		{"dry-run", no_argument, NULL, DRYRUN_OPTION},
 		{"binary", no_argument, NULL, 'b'},
 		{"ignore", no_argument, NULL, 'e'},
 		{"names", no_argument, NULL, 'N'},
@@ -753,6 +907,10 @@ int main(int argc, char *argv[])
 	IgnoreError = false;
 	Quiet = false;
 	IgnoreDeprecated = true;
+    DryRun = false;
+    setlist = xmalloc(sizeof(SettingList));
+    setlist->head = NULL;
+    setlist->tail = NULL;
 
 	if (argc < 2)
 		Usage(stderr);
@@ -805,7 +963,12 @@ int main(int argc, char *argv[])
 			break;
 		case SYSTEM_OPTION:
 			IgnoreError = true;
-			return PreloadSystem();
+			rc |= PreloadSystem(setlist);
+            rc |= write_setting_list(setlist);
+            return rc;
+        case DRYRUN_OPTION:
+            DryRun = true;
+            break;
 		case 'r':
 			pattern = xstrdup(optarg);
 			break;
@@ -833,15 +996,16 @@ int main(int argc, char *argv[])
 		int ret = EXIT_SUCCESS, i;
 		if (!preloadfile) {
 			if (!argc) {
-				ret |= Preload(DEFAULT_PRELOAD);
+				ret |= Preload(setlist, DEFAULT_PRELOAD);
 			}
 		} else {
 			/* This happens when -pfile option is
 			 * used without space. */
-			ret |= Preload(preloadfile);
+			ret |= Preload(setlist, preloadfile);
 		}
 		for (i = 0; i < argc; i++)
-			ret |= Preload(argv[i]);
+			ret |= Preload(setlist, argv[i]);
+        ret |= write_setting_list(setlist);
 		return ret;
 	}
 
@@ -855,9 +1019,14 @@ int main(int argc, char *argv[])
 		      program_invocation_short_name);
 
 	for ( ; *argv; argv++) {
-		if (WriteMode || strchr(*argv, '='))
-			ReturnCode += WriteSetting(*argv);
-		else
+		if (WriteMode || strchr(*argv, '=')) {
+            SysctlSetting *s;
+            if ( (s = parse_setting_line("command line", 0, *argv)) != NULL)
+                ReturnCode |= WriteSetting(s->key, s->path, s->value,
+                                           s->ignore_failure);
+            else
+                ReturnCode |= EXIT_FAILURE;
+        } else
 			ReturnCode += ReadSetting(*argv);
 	}
 	return ReturnCode;

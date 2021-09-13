@@ -1,0 +1,29 @@
+
+set sysctl ${topdir}sysctl
+
+set test "sysctl write from command line"
+spawn $sysctl --dry-run kernel.hostname=procps-test
+expect_pass "$test" "/proc/sys/kernel/hostname = procps-test"
+
+set test "sysctl write from configuration file"
+spawn $sysctl --dry-run -f ${topdir}testsuite/sysctl_glob_test.conf
+expect_pass "$test" "/proc/sys/fs/protected_fifos = 2\\s+/proc/sys/fs/protected_symlinks = 2\\s+/proc/sys/fs/protected_hardlinks = 1"
+
+set hostname_file "/proc/sys/kernel/hostname"
+if {[file exists ${hostname_file}]} {
+  if {[file writable ${hostname_file}]} {
+    unsupported "sysctl write: hostname file is writable"
+  } else {
+    set test "sysctl write unwritable file"
+    spawn $sysctl -q kernel.hostname=procpstest
+    expect_pass "$test" "sysctl: permission denied on key \"kernel.hostname\"\\s*$"
+    expect_spawn_retval "$test" 1
+
+    set test "sysctl write unwritable file ignored"
+    spawn $sysctl -q -- -kernel.hostname=procpstest
+    expect_pass "$test" "sysctl: permission denied on key \"kernel.hostname\", ignoring\\s*$"
+    expect_spawn_retval "$test" 0
+  }
+} else {
+  unsupported "sysctl write: hostname file doe not exist"
+}

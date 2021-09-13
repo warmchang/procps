@@ -1,6 +1,7 @@
 procps-ng-NEXT
 ---------------
   * Rename pwait to pidwait
+  * sysctl: Add support for systemd glob patterns          issue #191
   * top: 'F' key is now a new forest view 'focus' toggle
   * top: summary area memory lines can print two abreast
   * top: added long versions of command line options

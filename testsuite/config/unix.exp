@@ -136,6 +136,15 @@ proc expect_table_dsc { test match_header match_item } {
     #}
 }
 
+proc expect_spawn_retval { test retval } {
+    foreach {pid spawnid os_error_flag value} [wait] break
+
+    if {$value == $retval} {
+      return
+    }
+    fail "$test (exit value)"
+}
+
 proc make_pipeproc { } {
     global pipeproc_pid pipeproc_spawnid topdir
 
