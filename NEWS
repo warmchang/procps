@@ -11,6 +11,7 @@ procps-ng-NEXT
   * ps: Add PSS and USS fields                             issue #112
   * ps: Add two new autogroup fields
   * slabtop: Don't combine d and o options                 issue #160
+  * sysctl: Add support for systemd glob patterns          issue #191
   * sysctl: Check resolved path to be under /proc/sys      issue #179
   * top: added LOGID similar to 3.3.13 ps LUID
   * top: added EXE identical to 3.3.17 ps EXE
