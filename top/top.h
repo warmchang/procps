@@ -19,50 +19,50 @@
 #define _Itop
 
         /* Defines represented in configure.ac ----------------------------- */
-//#define BOOST_MEMORY            /* enable extra precision for mem fields   */
-//#define BOOST_PERCNT            /* enable extra precision for 2 % fields   */
+//#define BOOST_MEMORY            /* enable extra precision in memory fields */
+//#define BOOST_PERCNT            /* enable extra precision for two % fields */
 //#define ORIG_TOPDEFS            /* with no rcfile retain original defaults */
 //#define SIGNALS_LESS            /* favor reduced signal load over response */
 
         /* Development/Debugging defines ----------------------------------- */
-//#define ATEOJ_RPTSTD            /* report on misc stuff, at end-of-job     */
-//#define CASEUP_HEXES            /* show any hex values in upper case       */
+//#define ATEOJ_RPTSTD            /* report on some miscellany at end-of-job */
+//#define CASEUP_HEXES            /* show all those hex values in upper case */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
-//#define EQUCOLHDRYES            /* yes, do equalize column header lengths  */
+//#define EQUCOLHDRYES            /* yes, equalize the column header lengths */
 //#define GETOPTFIX_NO            /* do not address getopt_long deficiencies */
-//#define INSP_JUSTNOT            /* don't smooth unprintable right margins  */
+//#define INSP_JUSTNOT            /* do not smooth unprintable right margins */
 //#define INSP_OFFDEMO            /* disable demo screens, issue msg instead */
-//#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents in a file  */
-//#define INSP_SLIDE_1            /* when scrolling left/right don't move 8  */
+//#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents via a file */
+//#define INSP_SLIDE_1            /* when scrolling left/right, don't move 8 */
 //#define MEMGRAPH_OLD            /* don't use 'available' when graphing Mem */
 //#define OFF_SCROLLBK            /* disable tty emulators scrollback buffer */
 //#define OFF_STDERROR            /* disable our stderr buffering (redirect) */
-//#define OFF_STDIOLBF            /* disable our own stdout _IOFBF override  */
+//#define OFF_STDIOLBF            /* disable our own stdout 'IOFBF' override */
 //#define OFF_XTRAWIDE            /* disable our extra wide multi-byte logic */
 //#define PRETEND0NUMA            /* pretend that there ain't any numa nodes */
 //#define PRETEND48CPU            /* pretend we're smp with 48 ticsers (sic) */
-//#define PRETENDNOCAP            /* use a terminal without essential caps   */
-//#define QUICK_GRAPHS            /* use fast algorithm, accept +2% distort  */
+//#define PRETENDNOCAP            /* pretend terminal missing essential caps */
+//#define QUICK_GRAPHS            /* use fast algorithm & accept +2% distort */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
 //#define RECALL_FIXED            /* don't reorder saved strings if recalled */
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
-//#define SCROLLVAR_NO            /* disable intra-column horizontal scroll  */
-//#define SCROLLV_BY_1            /* when scrolling left/right don't move 8  */
+//#define SCROLLVAR_NO            /* disable intra-column horizontal scrolls */
+//#define SCROLLV_BY_1            /* when scrolling left/right do not move 8 */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
-//#define TERMIOS_ONLY            /* just limp along with native input only  */
+//#define TERMIOS_ONLY            /* use native input only (just limp along) */
 //#define TOG4_NOFORCE            /* no force 2 abreast mode with '4' toggle */
-//#define TOG4_NOTRUNC            /* ensure no truncation in 2 abreast mode  */
-//#define TOG4_OFF_MEM            /* don't show memory statistics 2 abreast  */
+//#define TOG4_NOTRUNC            /* ensure no truncation for 2 abreast mode */
+//#define TOG4_OFF_MEM            /* don't show two abreast memory statistic */
 //#define TOG4_OFF_SEP            /* don't show two abreast visual separator */
 //#define TREE_FOCUS_X            /* 'F' resets forest view indentation to 0 */
-//#define TREE_NORESET            /* sort keys do NOT force forest view OFF  */
+//#define TREE_NORESET            /* sort keys should not force 'V' view off */
 //#define TREE_SCANALL            /* rescan array w/ forest view, avoid sort */
 //#define TREE_VALTMRK            /* use an indented '+' with collapsed pids */
 //#define TREE_VCPUOFF            /* a collapsed parent excludes child's cpu */
 //#define TREE_VPROMPT            /* pid collapse/expand prompt, vs. top row */
 //#define TREE_VWINALL            /* pid collapse/expand impacts all windows */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
-//#define VALIDATE_NLS            /* validate the integrity of all nls tbls  */
+//#define VALIDATE_NLS            /* ensure the integrity of four nls tables */
 //#define WIDEN_COLUMN            /* base column widths on translated header */
 
 
