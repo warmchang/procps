@@ -6,7 +6,7 @@
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 .\" GNU General Public License for more details."
-.TH SYSCTL.CONF "5" "2020-06-04" "procps-ng" "File Formats"
+.TH SYSCTL.CONF "5" "2021-09-15" "procps-ng" "File Formats"
 .SH NAME
 sysctl.conf \- sysctl preload/configuration file
 .SH DESCRIPTION
@@ -41,6 +41,9 @@ Use
 or follow
 .BR sysctl (8)
 to list all possible parameters. The description of individual parameters can be found in the kernel documentation.
+
+Maximum supported line length of the value is 4096 characters due
+to a limitation of \fI/proc\fR entries in Linux kernel.
 .SH EXAMPLE
 .RS
 .sp
