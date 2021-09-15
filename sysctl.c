@@ -543,9 +543,8 @@ static int WriteSetting(
         return rc;
 	}
 
-	if (!is_proc_path(tmpname)) {
-	    rc = -1;
-	    goto out;
+	if (!is_proc_path(path)) {
+	    return EXIT_FAILURE;
 	}
 
 	if ((ts.st_mode & S_IWUSR) == 0) {
