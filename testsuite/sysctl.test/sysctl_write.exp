@@ -27,3 +27,7 @@ if {[file exists ${hostname_file}]} {
 } else {
   unsupported "sysctl write: hostname file doe not exist"
 }
+
+set test "sysctl write above /proc"
+spawn $sysctl /../../../etc=1
+expect_pass "$test" "sysctl: Path is not under /proc/sys/: /proc/sys//../../../etc"
