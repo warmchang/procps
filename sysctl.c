@@ -586,7 +586,7 @@ static int WriteSetting(
 		rc = EXIT_SUCCESS;
             if (close_stream(fp) != 0) {
                 xwarn(_("setting key \"%s\""), path);
-                return rc;
+                return EXIT_FAILURE;
             }
         }
     }
