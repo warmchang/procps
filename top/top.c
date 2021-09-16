@@ -417,9 +417,12 @@ static void bye_bye (const char *str) {
 }
 #endif // end: ATEOJ_RPTSTD
 
-   procps_meminfo_unref(&Mem_ctx);
-   procps_pids_unref(&Pids_ctx);
-   procps_stat_unref(&Stat_ctx);
+   // there's lots of signal-unsafe stuff in the following ...
+   if (Frames_signal != BREAK_sig) {
+      procps_pids_unref(&Pids_ctx);
+      procps_stat_unref(&Stat_ctx);
+      procps_meminfo_unref(&Mem_ctx);
+   }
 
    /* we'll only have a 'str' if called by error_exit() |
       not ever from the sig_endpgm() signal handler ... | */
@@ -444,6 +447,7 @@ static void error_exit (const char *str) __attribute__((__noreturn__));
 static void error_exit (const char *str) {
    static char buf[MEDBUFSIZ];
 
+   Frames_signal = BREAK_off;
    /* we'll use our own buffer so callers can still use fmtmk() and, after
       twelve long years, 2013 was the year we finally eliminated the leading
       tab character -- now our message can get lost in screen clutter too! */
