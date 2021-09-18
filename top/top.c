@@ -24,6 +24,8 @@
 #include <getopt.h>
 #include <limits.h>
 #include <pwd.h>
+#include <pthread.h>
+#include <semaphore.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -269,6 +271,21 @@ enum Rel_memitems {
    swp_TOT, swp_FRE, swp_USE };
         // mem stack results extractor macro, where e=rel enum
 #define MEM_VAL(e) MEMINFO_VAL(e, ul_int, Mem_stack, Mem_ctx)
+
+        /* Support for concurrent library updates via
+           multithreaded background processes */
+#ifndef THREADNO_CPU
+static pthread_t Thread_id_cpus;
+static sem_t Semaphore_cpus_beg, Semaphore_cpus_end;
+#endif
+#ifndef THREADNO_MEM
+static pthread_t Thread_id_memory;
+static sem_t Semaphore_memory_beg, Semaphore_memory_end;
+#endif
+#ifndef THREADNO_TSK
+static pthread_t Thread_id_tasks;
+static sem_t Semaphore_tasks_beg, Semaphore_tasks_end;
+#endif
 
 /*######  Tiny useful routine(s)  ########################################*/
 
@@ -348,9 +365,9 @@ static void bye_bye (const char *str) __attribute__((__noreturn__));
 static void bye_bye (const char *str) {
    sigset_t ss;
 
-// POSIX.1-2004 async-signal-safe: sigfillset, sigprocmask
+// POSIX.1 async-signal-safe: sigfillset, pthread_sigmask
    sigfillset(&ss);
-   sigprocmask(SIG_BLOCK, &ss, NULL);
+   pthread_sigmask(SIG_BLOCK, &ss, NULL);
    at_eoj();                 // restore tty in preparation for exit
 #ifdef ATEOJ_RPTSTD
 {
@@ -419,6 +436,24 @@ static void bye_bye (const char *str) {
 
    // there's lots of signal-unsafe stuff in the following ...
    if (Frames_signal != BREAK_sig) {
+#ifndef THREADNO_CPU
+      pthread_cancel(Thread_id_cpus);
+      pthread_join(Thread_id_cpus, NULL);
+      sem_destroy(&Semaphore_cpus_beg);
+      sem_destroy(&Semaphore_cpus_end);
+#endif
+#ifndef THREADNO_MEM
+      pthread_cancel(Thread_id_memory);
+      pthread_join(Thread_id_memory, NULL);
+      sem_destroy(&Semaphore_memory_beg);
+      sem_destroy(&Semaphore_memory_end);
+#endif
+#ifndef THREADNO_TSK
+      pthread_cancel(Thread_id_tasks);
+      pthread_join(Thread_id_tasks, NULL);
+      sem_destroy(&Semaphore_tasks_end);
+      sem_destroy(&Semaphore_tasks_beg);
+#endif
       procps_pids_unref(&Pids_ctx);
       procps_stat_unref(&Stat_ctx);
       procps_meminfo_unref(&Mem_ctx);
@@ -462,16 +497,16 @@ static void sig_abexit (int sig) __attribute__((__noreturn__));
 static void sig_abexit (int sig) {
    sigset_t ss;
 
-// POSIX.1-2004 async-signal-safe: sigfillset, sigprocmask, signal, sigemptyset, sigaddset, raise
+// POSIX.1 async-signal-safe: sigfillset, signal, sigemptyset, sigaddset, pthread_sigmask, raise
    sigfillset(&ss);
-   sigprocmask(SIG_BLOCK, &ss, NULL);
+   pthread_sigmask(SIG_BLOCK, &ss, NULL);
    at_eoj();                 // restore tty in preparation for exit
    fprintf(stderr, N_fmt(EXIT_signals_fmt)
       , sig, signal_number_to_name(sig), Myname);
    signal(sig, SIG_DFL);     // allow core dumps, if applicable
    sigemptyset(&ss);
    sigaddset(&ss, sig);
-   sigprocmask(SIG_UNBLOCK, &ss, NULL);
+   pthread_sigmask(SIG_UNBLOCK, &ss, NULL);
    raise(sig);               // ( plus set proper return code )
    _exit(EXIT_FAILURE);      // if default sig action is ignore
 } // end: sig_abexit
@@ -493,7 +528,7 @@ static void sig_endpgm (int dont_care_sig) {
          * Catches:
          *    SIGTSTP, SIGTTIN and SIGTTOU */
 static void sig_paused (int dont_care_sig) {
-// POSIX.1-2004 async-signal-safe: tcsetattr, tcdrain, raise
+// POSIX.1 async-signal-safe: tcsetattr, tcdrain, raise
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &Tty_original))
       error_exit(fmtmk(N_fmt(FAIL_tty_set_fmt), strerror(errno)));
    if (keypad_local) putp(keypad_local);
@@ -524,7 +559,7 @@ static void sig_paused (int dont_care_sig) {
          * Catches:
          *    SIGCONT and SIGWINCH */
 static void sig_resize (int dont_care_sig) {
-// POSIX.1-2004 async-signal-safe: tcdrain
+// POSIX.1 async-signal-safe: tcdrain
    tcdrain(STDOUT_FILENO);
    Frames_signal = BREAK_sig;
    (void)dont_care_sig;
@@ -2350,7 +2385,7 @@ static void zap_fieldstab (void) {
  #undef maX
 } // end: zap_fieldstab
 
-/*######  Library Interface  #############################################*/
+/*######  Library Interface (as separate threads)  #######################*/
 
         /*
          * This guy's responsible for interfacing with the library <stat> API
@@ -2360,6 +2395,9 @@ static void *cpus_refresh (void *unused) {
    enum stat_reap_type which;
 
    do {
+#ifndef THREADNO_CPU
+      sem_wait(&Semaphore_cpus_beg);
+#endif
       which = STAT_REAP_CPUS_ONLY;
       if (CHKw(Curwin, View_CPUNOD))
          which = STAT_REAP_NUMA_NODES_TOO;
@@ -2380,7 +2418,12 @@ static void *cpus_refresh (void *unused) {
          Cpu_cnt = 48;
 #endif
       }
+#ifndef THREADNO_CPU
+      sem_post(&Semaphore_cpus_end);
+   } while (1);
+#else
    } while (0);
+#endif
    return NULL;
    (void)unused;
 } // end: cpus_refresh
@@ -2394,6 +2437,9 @@ static void *memory_refresh (void *unused) {
    time_t cur_secs;
 
    do {
+#ifndef THREADNO_MEM
+      sem_wait(&Semaphore_memory_beg);
+#endif
       if (Frames_signal)
          sav_secs = 0;
       cur_secs = time(NULL);
@@ -2403,7 +2449,12 @@ static void *memory_refresh (void *unused) {
             error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__, strerror(errno)));
          sav_secs = cur_secs;
       }
+#ifndef THREADNO_MEM
+      sem_post(&Semaphore_memory_end);
+   } while (1);
+#else
    } while (0);
+#endif
    return NULL;
    (void)unused;
 } // end: memory_refresh
@@ -2423,6 +2474,9 @@ static void *tasks_refresh (void *unused) {
    int i, what;
 
    do {
+#ifndef THREADNO_TSK
+      sem_wait(&Semaphore_tasks_beg);
+#endif
       procps_uptime(&uptime_cur, NULL);
       et = uptime_cur - uptime_sav;
       if (et < 0.01) et = 0.005;
@@ -2451,7 +2505,12 @@ static void *tasks_refresh (void *unused) {
          for (i = 0; i < GROUPSMAX; i++)
             memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void *) * PIDSmaxt);
       }
+#ifndef THREADNO_TSK
+      sem_post(&Semaphore_tasks_end);
+   } while (1);
+#else
    } while (0);
+#endif
    return NULL;
    (void)unused;
  #undef nALIGN
@@ -3309,6 +3368,36 @@ static void before (char *me) {
    // we will identify specific items in the build_headers() function
    if ((rc = procps_pids_new(&Pids_ctx, Pids_itms, Pids_itms_tot)))
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(-rc)));
+
+   /* in case any of our threads have neen enabled, they'll inherit this mask
+      with everything blocked. therefore, signals go to the main thread (us). */
+   sigfillset(&sa.sa_mask);
+   pthread_sigmask(SIG_BLOCK, &sa.sa_mask, NULL);
+
+#ifndef THREADNO_CPU
+   if (0 != sem_init(&Semaphore_cpus_beg, 0, 0)
+   || (0 != sem_init(&Semaphore_cpus_end, 0, 0)))
+      error_exit(fmtmk(N_fmt(X_SEMAPHORES_fmt),__LINE__, strerror(errno)));
+   if (0 != pthread_create(&Thread_id_cpus, NULL, cpus_refresh, NULL))
+      error_exit(fmtmk(N_fmt(X_THREADINGS_fmt),__LINE__, strerror(errno)));
+   pthread_setname_np(Thread_id_cpus, "update cpus");
+#endif
+#ifndef THREADNO_MEM
+   if (0 != sem_init(&Semaphore_memory_beg, 0, 0)
+   || (0 != sem_init(&Semaphore_memory_end, 0, 0)))
+      error_exit(fmtmk(N_fmt(X_SEMAPHORES_fmt),__LINE__, strerror(errno)));
+   if (0 != pthread_create(&Thread_id_memory, NULL, memory_refresh, NULL))
+      error_exit(fmtmk(N_fmt(X_THREADINGS_fmt),__LINE__, strerror(errno)));
+   pthread_setname_np(Thread_id_memory, "update memory");
+#endif
+#ifndef THREADNO_TSK
+   if (0 != sem_init(&Semaphore_tasks_beg, 0, 0)
+   || (0 != sem_init(&Semaphore_tasks_end, 0, 0)))
+      error_exit(fmtmk(N_fmt(X_SEMAPHORES_fmt),__LINE__, strerror(errno)));
+   if (0 != pthread_create(&Thread_id_tasks, NULL, tasks_refresh, NULL))
+      error_exit(fmtmk(N_fmt(X_THREADINGS_fmt),__LINE__, strerror(errno)));
+   pthread_setname_np(Thread_id_tasks, "update tasks");
+#endif
 
 #ifndef SIGRTMAX       // not available on hurd, maybe others too
 #define SIGRTMAX 32
@@ -5623,6 +5712,12 @@ static void summary_show (void) {
       Msg_row += 1;
    } // end: View_LOADAV
 
+#ifdef THREADED_CPU
+   sem_wait(&Semaphore_cpus_end);
+#endif
+#ifdef THREADED_TSK
+   sem_wait(&Semaphore_tasks_end);
+#endif
    // Display Task and Cpu(s) States
    if (isROOM(View_STATES, 2)) {
       show_special(0, fmtmk(N_unq(STATE_line_1_fmt)
@@ -5711,6 +5806,9 @@ numa_oops:
       }
    } // end: View_STATES
 
+#ifdef THREADED_MEM
+   sem_wait(&Semaphore_memory_end);
+#endif
    // Display Memory and Swap stats
    if (isROOM(View_MEMORY, 2)) {
     #define bfT(n)  buftab[n].buf
@@ -6268,15 +6366,32 @@ static void frame_make (void) {
 
    // whoa either first time or thread/task mode change, (re)prime the pump...
    if (Pseudo_row == PROC_XTRA) {
+#ifndef THREADNO_TSK
+      sem_post(&Semaphore_tasks_beg);
+      sem_wait(&Semaphore_tasks_end);
+#else
       tasks_refresh(NULL);
+#endif
       usleep(LIB_USLEEP);
       putp(Cap_clr_scr);
    } else
       putp(Batch ? "\n\n" : Cap_home);
 
-   cpus_refresh(NULL);
-   memory_refresh(NULL);
+#ifndef THREADNO_TSK
+   sem_post(&Semaphore_tasks_beg);
+#else
    tasks_refresh(NULL);
+#endif
+#ifndef THREADNO_CPU
+   sem_post(&Semaphore_cpus_beg);
+#else
+   cpus_refresh(NULL);
+#endif
+#ifndef THREADNO_MEM
+   sem_post(&Semaphore_memory_beg);
+#else
+   memory_refresh(NULL);
+#endif
 
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();

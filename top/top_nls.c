@@ -569,6 +569,8 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[XTRA_size2up_txt] = _("terminal is not wide enough");
    Norm_nlstab[XTRA_modebad_txt] = _("wrong mode, command inactive");
    Norm_nlstab[XTRA_warnold_txt] = _("saving prevents older top from reading, save anyway?");
+   Norm_nlstab[X_SEMAPHORES_fmt] = _("failed sem_init() at %d: %s");
+   Norm_nlstab[X_THREADINGS_fmt] = _("failed pthread_create() at %d: %s");
 }
 
 
