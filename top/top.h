@@ -628,9 +628,9 @@ typedef struct WIN_t {
 //atic inline void   widths_resize (void);
 //atic void          zap_fieldstab (void);
 /*------  Library Interface  ---------------------------------------------*/
-//atic void          cpus_refresh (void);
-//atic void          procs_refresh (void);
-//atic void          sysinfo_refresh (int forced);
+//atic void         *cpus_refresh (void *unused);
+//atic void         *memory_refresh (void *unused);
+//atic void         *tasks_refresh (void *unused);
 /*------  Inspect Other Output  ------------------------------------------*/
 //atic void          insp_cnt_nl (void);
 #ifndef INSP_OFFDEMO

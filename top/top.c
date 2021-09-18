@@ -2356,37 +2356,63 @@ static void zap_fieldstab (void) {
          * This guy's responsible for interfacing with the library <stat> API
          * and reaping all cpu or numa node tics.
          * ( his task is now embarassingly small under the new api ) */
-static void cpus_refresh (void) {
+static void *cpus_refresh (void *unused) {
    enum stat_reap_type which;
 
-   which = STAT_REAP_CPUS_ONLY;
-   if (CHKw(Curwin, View_CPUNOD))
-      which = STAT_REAP_NUMA_NODES_TOO;
+   do {
+      which = STAT_REAP_CPUS_ONLY;
+      if (CHKw(Curwin, View_CPUNOD))
+         which = STAT_REAP_NUMA_NODES_TOO;
 
-   Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items));
-   if (!Stat_reap)
-      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
+      Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items));
+      if (!Stat_reap)
+         error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
 #ifndef PRETEND0NUMA
-   // adapt to changes in total numa nodes (assuming it's even possible)
-   if (Stat_reap->numa->total && Stat_reap->numa->total != Numa_node_tot) {
-      Numa_node_tot = Stat_reap->numa->total;
-      Numa_node_sel = -1;
-   }
+      // adapt to changes in total numa nodes (assuming it's even possible)
+      if (Stat_reap->numa->total && Stat_reap->numa->total != Numa_node_tot) {
+         Numa_node_tot = Stat_reap->numa->total;
+         Numa_node_sel = -1;
+      }
 #endif
-   if (Stat_reap->cpus->total && Stat_reap->cpus->total != Cpu_cnt) {
-      Cpu_cnt = Stat_reap->cpus->total;
+      if (Stat_reap->cpus->total && Stat_reap->cpus->total != Cpu_cnt) {
+         Cpu_cnt = Stat_reap->cpus->total;
 #ifdef PRETEND48CPU
-      Cpu_cnt = 48;
+         Cpu_cnt = 48;
 #endif
-   }
-   return;
+      }
+   } while (0);
+   return NULL;
+   (void)unused;
 } // end: cpus_refresh
+
+
+        /*
+         * This serves as our interface to the memory portion of libprocps.
+         * The sampling frequency is reduced in order to minimize overhead. */
+static void *memory_refresh (void *unused) {
+   static time_t sav_secs;
+   time_t cur_secs;
+
+   do {
+      if (Frames_signal)
+         sav_secs = 0;
+      cur_secs = time(NULL);
+
+      if (3 <= cur_secs - sav_secs) {
+         if (!(Mem_stack = procps_meminfo_select(Mem_ctx, Mem_items, MAXTBL(Mem_items))))
+            error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__, strerror(errno)));
+         sav_secs = cur_secs;
+      }
+   } while (0);
+   return NULL;
+   (void)unused;
+} // end: memory_refresh
 
 
         /*
          * This guy's responsible for interfacing with the library <pids> API
          * then refreshing the WIN_t ptr arrays, growing them as appropirate. */
-static void procs_refresh (void) {
+static void *tasks_refresh (void *unused) {
  #define nALIGN(n,m) (((n + m - 1) / m) * m)     // unconditionally align
  #define nALGN2(n,m) ((n + m - 1) & ~(m - 1))    // with power of 2 align
  #define n_reap  Pids_reap->counts->total
@@ -2396,57 +2422,42 @@ static void procs_refresh (void) {
    float et;
    int i, what;
 
-   procps_uptime(&uptime_cur, NULL);
-   et = uptime_cur - uptime_sav;
-   if (et < 0.01) et = 0.005;
-   uptime_sav = uptime_cur;
-   // if in Solaris mode, adjust our scaling for all cpus
-   Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
+   do {
+      procps_uptime(&uptime_cur, NULL);
+      et = uptime_cur - uptime_sav;
+      if (et < 0.01) et = 0.005;
+      uptime_sav = uptime_cur;
+      // if in Solaris mode, adjust our scaling for all cpus
+      Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
 
-   what = Thread_mode ? PIDS_FETCH_THREADS_TOO : PIDS_FETCH_TASKS_ONLY;
-   if (Monpidsidx) {
-      what |= PIDS_SELECT_PID;
-      Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, what);
-   } else
-      Pids_reap = procps_pids_reap(Pids_ctx, what);
-   if (!Pids_reap)
-      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
+      what = Thread_mode ? PIDS_FETCH_THREADS_TOO : PIDS_FETCH_TASKS_ONLY;
+      if (Monpidsidx) {
+         what |= PIDS_SELECT_PID;
+         Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, what);
+      } else
+         Pids_reap = procps_pids_reap(Pids_ctx, what);
+      if (!Pids_reap)
+         error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
 
-   // now refresh each window's stacks pointer array...
-   if (n_alloc < n_reap) {
-//    n_alloc = nALIGN(n_reap, 100);
-      n_alloc = nALGN2(n_reap, 128);
-      for (i = 0; i < GROUPSMAX; i++) {
-         Winstk[i].ppt = alloc_r(Winstk[i].ppt, sizeof(void *) * n_alloc);
-         memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void *) * PIDSmaxt);
+      // now refresh each window's stacks pointer array...
+      if (n_alloc < n_reap) {
+//       n_alloc = nALIGN(n_reap, 100);
+         n_alloc = nALGN2(n_reap, 128);
+         for (i = 0; i < GROUPSMAX; i++) {
+            Winstk[i].ppt = alloc_r(Winstk[i].ppt, sizeof(void *) * n_alloc);
+            memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void *) * PIDSmaxt);
+         }
+      } else {
+         for (i = 0; i < GROUPSMAX; i++)
+            memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void *) * PIDSmaxt);
       }
-   } else {
-      for (i = 0; i < GROUPSMAX; i++)
-         memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void *) * PIDSmaxt);
-   }
+   } while (0);
+   return NULL;
+   (void)unused;
  #undef nALIGN
  #undef nALGN2
  #undef n_reap
-} // end: procs_refresh
-
-
-        /*
-         * This serves as our interface to the memory portion of libprocps.
-         * The sampling frequency is reduced in order to minimize overhead. */
-static void sysinfo_refresh (int forced) {
-   static time_t sav_secs;
-   time_t cur_secs;
-
-   if (forced)
-      sav_secs = 0;
-   cur_secs = time(NULL);
-
-   if (3 <= cur_secs - sav_secs) {
-      if (!(Mem_stack = procps_meminfo_select(Mem_ctx, Mem_items, MAXTBL(Mem_items))))
-         error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__, strerror(errno)));
-      sav_secs = cur_secs;
-   }
-} // end: sysinfo_refresh
+} // end: tasks_refresh
 
 /*######  Inspect Other Output  ##########################################*/
 
@@ -5586,7 +5597,6 @@ static void do_key (int ch) {
 
    show_msg(N_txt(UNKNOWN_cmds_txt));
 all_done:
-   sysinfo_refresh(1);       // let's be more responsive to hot-pluggin'
    putp((Cursor_state = Cap_curs_hide));
 } // end: do_key
 
@@ -6258,15 +6268,15 @@ static void frame_make (void) {
 
    // whoa either first time or thread/task mode change, (re)prime the pump...
    if (Pseudo_row == PROC_XTRA) {
-      procs_refresh();
+      tasks_refresh(NULL);
       usleep(LIB_USLEEP);
       putp(Cap_clr_scr);
    } else
       putp(Batch ? "\n\n" : Cap_home);
 
-   sysinfo_refresh(0);
-   procs_refresh();
-   cpus_refresh();
+   cpus_refresh(NULL);
+   memory_refresh(NULL);
+   tasks_refresh(NULL);
 
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();
