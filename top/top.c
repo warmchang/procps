@@ -274,15 +274,15 @@ enum Rel_memitems {
 
         /* Support for concurrent library updates via
            multithreaded background processes */
-#ifndef THREADNO_CPU
+#ifdef THREADED_CPU
 static pthread_t Thread_id_cpus;
 static sem_t Semaphore_cpus_beg, Semaphore_cpus_end;
 #endif
-#ifndef THREADNO_MEM
+#ifdef THREADED_MEM
 static pthread_t Thread_id_memory;
 static sem_t Semaphore_memory_beg, Semaphore_memory_end;
 #endif
-#ifndef THREADNO_TSK
+#ifdef THREADED_TSK
 static pthread_t Thread_id_tasks;
 static sem_t Semaphore_tasks_beg, Semaphore_tasks_end;
 #endif
@@ -436,19 +436,19 @@ static void bye_bye (const char *str) {
 
    // there's lots of signal-unsafe stuff in the following ...
    if (Frames_signal != BREAK_sig) {
-#ifndef THREADNO_CPU
+#ifdef THREADED_CPU
       pthread_cancel(Thread_id_cpus);
       pthread_join(Thread_id_cpus, NULL);
       sem_destroy(&Semaphore_cpus_beg);
       sem_destroy(&Semaphore_cpus_end);
 #endif
-#ifndef THREADNO_MEM
+#ifdef THREADED_MEM
       pthread_cancel(Thread_id_memory);
       pthread_join(Thread_id_memory, NULL);
       sem_destroy(&Semaphore_memory_beg);
       sem_destroy(&Semaphore_memory_end);
 #endif
-#ifndef THREADNO_TSK
+#ifdef THREADED_TSK
       pthread_cancel(Thread_id_tasks);
       pthread_join(Thread_id_tasks, NULL);
       sem_destroy(&Semaphore_tasks_end);
@@ -2395,7 +2395,7 @@ static void *cpus_refresh (void *unused) {
    enum stat_reap_type which;
 
    do {
-#ifndef THREADNO_CPU
+#ifdef THREADED_CPU
       sem_wait(&Semaphore_cpus_beg);
 #endif
       which = STAT_REAP_CPUS_ONLY;
@@ -2418,7 +2418,7 @@ static void *cpus_refresh (void *unused) {
          Cpu_cnt = 48;
 #endif
       }
-#ifndef THREADNO_CPU
+#ifdef THREADED_CPU
       sem_post(&Semaphore_cpus_end);
    } while (1);
 #else
@@ -2437,7 +2437,7 @@ static void *memory_refresh (void *unused) {
    time_t cur_secs;
 
    do {
-#ifndef THREADNO_MEM
+#ifdef THREADED_MEM
       sem_wait(&Semaphore_memory_beg);
 #endif
       if (Frames_signal)
@@ -2449,7 +2449,7 @@ static void *memory_refresh (void *unused) {
             error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__, strerror(errno)));
          sav_secs = cur_secs;
       }
-#ifndef THREADNO_MEM
+#ifdef THREADED_MEM
       sem_post(&Semaphore_memory_end);
    } while (1);
 #else
@@ -2474,7 +2474,7 @@ static void *tasks_refresh (void *unused) {
    int i, what;
 
    do {
-#ifndef THREADNO_TSK
+#ifdef THREADED_TSK
       sem_wait(&Semaphore_tasks_beg);
 #endif
       procps_uptime(&uptime_cur, NULL);
@@ -2505,7 +2505,7 @@ static void *tasks_refresh (void *unused) {
          for (i = 0; i < GROUPSMAX; i++)
             memcpy(Winstk[i].ppt, Pids_reap->stacks, sizeof(void *) * PIDSmaxt);
       }
-#ifndef THREADNO_TSK
+#ifdef THREADED_TSK
       sem_post(&Semaphore_tasks_end);
    } while (1);
 #else
@@ -3374,7 +3374,7 @@ static void before (char *me) {
    sigfillset(&sa.sa_mask);
    pthread_sigmask(SIG_BLOCK, &sa.sa_mask, NULL);
 
-#ifndef THREADNO_CPU
+#ifdef THREADED_CPU
    if (0 != sem_init(&Semaphore_cpus_beg, 0, 0)
    || (0 != sem_init(&Semaphore_cpus_end, 0, 0)))
       error_exit(fmtmk(N_fmt(X_SEMAPHORES_fmt),__LINE__, strerror(errno)));
@@ -3382,7 +3382,7 @@ static void before (char *me) {
       error_exit(fmtmk(N_fmt(X_THREADINGS_fmt),__LINE__, strerror(errno)));
    pthread_setname_np(Thread_id_cpus, "update cpus");
 #endif
-#ifndef THREADNO_MEM
+#ifdef THREADED_MEM
    if (0 != sem_init(&Semaphore_memory_beg, 0, 0)
    || (0 != sem_init(&Semaphore_memory_end, 0, 0)))
       error_exit(fmtmk(N_fmt(X_SEMAPHORES_fmt),__LINE__, strerror(errno)));
@@ -3390,7 +3390,7 @@ static void before (char *me) {
       error_exit(fmtmk(N_fmt(X_THREADINGS_fmt),__LINE__, strerror(errno)));
    pthread_setname_np(Thread_id_memory, "update memory");
 #endif
-#ifndef THREADNO_TSK
+#ifdef THREADED_TSK
    if (0 != sem_init(&Semaphore_tasks_beg, 0, 0)
    || (0 != sem_init(&Semaphore_tasks_end, 0, 0)))
       error_exit(fmtmk(N_fmt(X_SEMAPHORES_fmt),__LINE__, strerror(errno)));
@@ -6366,7 +6366,7 @@ static void frame_make (void) {
 
    // whoa either first time or thread/task mode change, (re)prime the pump...
    if (Pseudo_row == PROC_XTRA) {
-#ifndef THREADNO_TSK
+#ifdef THREADED_TSK
       sem_post(&Semaphore_tasks_beg);
       sem_wait(&Semaphore_tasks_end);
 #else
@@ -6377,17 +6377,17 @@ static void frame_make (void) {
    } else
       putp(Batch ? "\n\n" : Cap_home);
 
-#ifndef THREADNO_TSK
+#ifdef THREADED_TSK
    sem_post(&Semaphore_tasks_beg);
 #else
    tasks_refresh(NULL);
 #endif
-#ifndef THREADNO_CPU
+#ifdef THREADED_CPU
    sem_post(&Semaphore_cpus_beg);
 #else
    cpus_refresh(NULL);
 #endif
-#ifndef THREADNO_MEM
+#ifdef THREADED_MEM
    sem_post(&Semaphore_memory_beg);
 #else
    memory_refresh(NULL);
