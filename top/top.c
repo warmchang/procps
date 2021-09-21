@@ -439,14 +439,14 @@ static void bye_bye (const char *str) {
 #ifdef THREADED_CPU
       pthread_cancel(Thread_id_cpus);
       pthread_join(Thread_id_cpus, NULL);
-      sem_destroy(&Semaphore_cpus_beg);
       sem_destroy(&Semaphore_cpus_end);
+      sem_destroy(&Semaphore_cpus_beg);
 #endif
 #ifdef THREADED_MEM
       pthread_cancel(Thread_id_memory);
       pthread_join(Thread_id_memory, NULL);
-      sem_destroy(&Semaphore_memory_beg);
       sem_destroy(&Semaphore_memory_end);
+      sem_destroy(&Semaphore_memory_beg);
 #endif
 #ifdef THREADED_TSK
       pthread_cancel(Thread_id_tasks);
