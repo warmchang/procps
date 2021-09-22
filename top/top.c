@@ -6356,26 +6356,10 @@ static void frame_make (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    int i, scrlins;
 
-   // check auto-sized width increases from the last iteration...
-   if (AUTOX_MODE && Autox_found)
-      widths_resize();
-
-   // deal with potential signal(s) since the last time around...
+   /* deal with potential signal(s) since the last time around
+      plus any input which may change 'tasks_refresh' needs... */
    if (Frames_signal)
       zap_fieldstab();
-
-   // whoa either first time or thread/task mode change, (re)prime the pump...
-   if (Pseudo_row == PROC_XTRA) {
-#ifdef THREADED_TSK
-      sem_post(&Semaphore_tasks_beg);
-      sem_wait(&Semaphore_tasks_end);
-#else
-      tasks_refresh(NULL);
-#endif
-      usleep(LIB_USLEEP);
-      putp(Cap_clr_scr);
-   } else
-      putp(Batch ? "\n\n" : Cap_home);
 
 #ifdef THREADED_TSK
    sem_post(&Semaphore_tasks_beg);
@@ -6392,6 +6376,23 @@ static void frame_make (void) {
 #else
    memory_refresh(NULL);
 #endif
+
+   // check auto-sized width increases from the last iteration...
+   if (AUTOX_MODE && Autox_found)
+      widths_resize();
+
+   // whoa either first time or thread/task mode change, (re)prime the pump...
+   if (Pseudo_row == PROC_XTRA) {
+      usleep(LIB_USLEEP);
+#ifdef THREADED_TSK
+      sem_wait(&Semaphore_tasks_end);
+      sem_post(&Semaphore_tasks_beg);
+#else
+      tasks_refresh(NULL);
+#endif
+      putp(Cap_clr_scr);
+   } else
+      putp(Batch ? "\n\n" : Cap_home);
 
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();
