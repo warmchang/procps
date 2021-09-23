@@ -4598,6 +4598,11 @@ static void forest_config (WIN_t *q) {
       while (i+1 < PIDSmaxt && rSv(i+1) > level)
          ++i;
       q->focus_end = i + 1;  // make 'focus_end' a proper fencpost
+      // watch out for newly forked/cloned tasks 'above' us ...
+      if (q->begtask < q->focus_beg) {
+         q->begtask = q->focus_beg;
+         q->begnext = 0;     // as 'mkVIZoff' but in any window
+      }
    }
  #undef rSv
 } // end: forest_config
@@ -6213,7 +6218,7 @@ static void window_hlp (void) {
 
    reversed = 0;
    // potentially scroll forward ...
-   if (w->begnext > beg) {
+   if (w->begnext > 0) {
 fwd_redux:
       for (i = w->begtask; i < end; i++) {
          if (wins_usrselect(w, i)
