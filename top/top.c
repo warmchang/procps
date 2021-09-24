@@ -4937,6 +4937,11 @@ static void forest_excluded (WIN_t *q) {
       while (i+1 < Frame_maxtask && q->ppt[i+1]->pad_3 > level)
          ++i;
       q->focus_end = i + 1;  // make 'focus_end' a proper fencpost
+      // watch out for newly forked/cloned tasks 'above' us ...
+      if (q->begtask < q->focus_beg) {
+         q->begtask = q->focus_beg;
+         q->begnext = 0;     // as 'mkVIZoff' but in any window
+      }
    }
 } // end: forest_excluded
 
@@ -6511,7 +6516,7 @@ static void window_hlp (void) {
 
    reversed = 0;
    // potentially scroll forward ...
-   if (w->begnext > beg) {
+   if (w->begnext > 0) {
 fwd_redux:
       for (i = w->begtask; i < end; i++) {
          if (wins_usrselect(w, i)
