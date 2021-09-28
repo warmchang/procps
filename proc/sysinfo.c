@@ -124,17 +124,17 @@ PROCPS_EXPORT int procps_loadavg(
         double *restrict av15)
 {
     double avg_1=0, avg_5=0, avg_15=0;
-    char savelocale[128];
+    locale_t tmplocale;
     int retval=0;
 
     FILE_TO_BUF(LOADAVG_FILE,loadavg_fd);
-    snprintf(savelocale, sizeof(savelocale), "%s", setlocale(LC_NUMERIC, NULL));
-    setlocale(LC_NUMERIC, "C");
-    if (sscanf(buf, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3) {
-        setlocale(LC_NUMERIC, savelocale);
+    tmplocale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
+    uselocale(tmplocale);
+    if (sscanf(buf, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3)
         retval = -ERANGE;
-    }
-    setlocale(LC_NUMERIC, savelocale);
+
+    uselocale(LC_GLOBAL_LOCALE);
+    freelocale(tmplocale);
     SET_IF_DESIRED(av1,  avg_1);
     SET_IF_DESIRED(av5,  avg_5);
     SET_IF_DESIRED(av15, avg_15);

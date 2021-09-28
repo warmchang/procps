@@ -69,25 +69,27 @@ PROCPS_EXPORT int procps_uptime(
         double *restrict idle_secs)
 {
     double up=0, idle=0;
-    char savelocale[128];
+    locale_t tmplocale;
     FILE *fp;
+    int rc;
 
     if ((fp = fopen(UPTIME_FILE, "r")) == NULL)
         return -errno;
 
-    snprintf(savelocale, sizeof(savelocale), "%s", setlocale(LC_NUMERIC, NULL));
-    setlocale(LC_NUMERIC, "C");
-    if (fscanf(fp, "%lf %lf", &up, &idle) < 2) {
-        setlocale(LC_NUMERIC, savelocale);
-        fclose(fp);
-        return -ERANGE;
-    }
+    tmplocale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
+    uselocale(tmplocale);
+    rc = fscanf(fp, "%lf %lf", &up, &idle);
     fclose(fp);
-    setlocale(LC_NUMERIC, savelocale);
+    uselocale(LC_GLOBAL_LOCALE);
+    freelocale(tmplocale);
+
     if (uptime_secs)
         *uptime_secs = up;
     if (idle_secs)
         *idle_secs = idle;
+
+    if (rc < 2)
+        return -ERANGE;
     return 0;
 }
 
@@ -103,14 +105,15 @@ PROCPS_EXPORT char *procps_uptime_sprint(void)
     int upminutes, uphours, updays, users;
     int pos;
     time_t realseconds;
-    struct tm *realtime;
+    struct tm realtime;
     double uptime_secs, idle_secs;
     double av1, av5, av15;
 
     upbuf[0] = '\0';
     if (time(&realseconds) < 0)
         return upbuf;
-    realtime = localtime(&realseconds);
+    localtime_r(&realseconds, &realtime);
+
     if (procps_uptime(&uptime_secs, &idle_secs) < 0)
         return upbuf;
 
@@ -119,7 +122,7 @@ PROCPS_EXPORT char *procps_uptime_sprint(void)
     upminutes = ((int) uptime_secs / (60)) % 60;
 
     pos = sprintf(upbuf, " %02d:%02d:%02d up ",
-        realtime->tm_hour, realtime->tm_min, realtime->tm_sec);
+        realtime.tm_hour, realtime.tm_min, realtime.tm_sec);
 
     if (updays)
         pos += sprintf(upbuf + pos, "%d %s, ", updays, (updays > 1) ? "days" : "day");
