@@ -965,7 +965,7 @@ static int fill_environ_cvt (const char *directory, proc_t *restrict p) {
     // tracking all names already seen thus avoiding the overhead of repeating
     // malloc() and free() calls.
 static char *lxc_containers (const char *path) {
-    static struct utlbuf_s ub = { NULL, 0 };   // util buffer for whole cgroup
+    static __thread struct utlbuf_s ub = { NULL, 0 };   // util buffer for whole cgroup
     static char lxc_none[] = "-";
     static char lxc_oops[] = "?";              // used when memory alloc fails
     /*
@@ -995,7 +995,7 @@ static char *lxc_containers (const char *path) {
         if ((p1 = strstr(ub.buf, (delim = lxc_delm1)))
         || ((p1 = strstr(ub.buf, (delim = lxc_delm2)))
         || ((p1 = strstr(ub.buf, (delim = lxc_delm3)))))) {
-            static struct lxc_ele {
+            static __thread struct lxc_ele {
                 struct lxc_ele *next;
                 char *name;
             } *anchor = NULL;
@@ -1112,8 +1112,8 @@ static void autogroup_fill (const char *path, proc_t *p) {
 // The pid (tgid? tid?) is already in p, and a path to it in path, with some
 // room to spare.
 static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict const p) {
-    static struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status
-    static struct stat sb;     // stat() buffer
+    static __thread struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status
+    static __thread struct stat sb;     // stat() buffer
     char *restrict const path = PT->path;
     unsigned flags = PT->flags;
     int rc = 0;
@@ -1235,8 +1235,8 @@ next_proc:
 // t is the POSIX thread  (task group member, generally not the leader)
 // path is a path to the task, with some room to spare.
 static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict const t, char *restrict const path) {
-    static struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status
-    static struct stat sb;     // stat() buffer
+    static __thread struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status
+    static __thread struct stat sb;     // stat() buffer
     unsigned flags = PT->flags;
     int rc = 0;
 
@@ -1356,7 +1356,7 @@ next_task:
 // This finds processes in /proc in the traditional way.
 // Return non-zero on success.
 static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
-  static struct dirent *ent;            /* dirent handle */
+  static __thread struct dirent *ent;   /* dirent handle */
   char *restrict const path = PT->path;
   for (;;) {
     ent = readdir(PT->procfs);
@@ -1374,7 +1374,7 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
 // This finds tasks in /proc/*/task/ in the traditional way.
 // Return non-zero on success.
 static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict const p, proc_t *restrict const t, char *restrict const path) {
-  static struct dirent *ent;            /* dirent handle */
+  static __thread struct dirent *ent;   /* dirent handle */
   if(PT->taskdir_user != p->tgid){
     if(PT->taskdir){
       closedir(PT->taskdir);
@@ -1402,7 +1402,7 @@ static int simple_nexttid(PROCTAB *restrict const PT, const proc_t *restrict con
 // This "finds" processes in a list that was given to openproc().
 // Return non-zero on success. (tgid is a real headache)
 static int listed_nextpid (PROCTAB *PT, proc_t *p) {
-  static struct utlbuf_s ub = { NULL, 0 };
+  static __thread struct utlbuf_s ub = { NULL, 0 };
   pid_t pid = *(PT->pids)++;
   char *path = PT->path;
 
@@ -1461,9 +1461,9 @@ out:
 // the next unique process or task available.  If no more are available,
 // return a null pointer (boolean false).
 proc_t *readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
-    static proc_t skel_p;    // skeleton proc_t, only uses tid + tgid
-    static proc_t *new_p;    // for process/task transitions
-    static int canary, leader;
+    static __thread proc_t skel_p;    // skeleton proc_t, only uses tid + tgid
+    static __thread proc_t *new_p;    // for process/task transitions
+    static __thread int canary, leader;
     char path[PROCPATHLEN];
     proc_t *ret;
 
@@ -1511,7 +1511,7 @@ end_procs:
 PROCTAB *openproc(unsigned flags, ...) {
     va_list ap;
     struct stat sbuf;
-    static int did_stat;
+    static __thread int did_stat;
     PROCTAB *PT = calloc(1, sizeof(PROCTAB));
 
     if (!PT)

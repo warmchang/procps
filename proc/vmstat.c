@@ -1193,7 +1193,7 @@ static int vmstat_read_failed (
     head = buf;
 
     for (;;) {
-        static ENTRY e;      // just to keep coverity off our backs (e.data)
+        static __thread ENTRY e;  // keep coverity off our backs (e.data)
         ENTRY *ep;
 
         if (!(tail = strchr(head, ' ')))
@@ -1376,7 +1376,7 @@ PROCPS_EXPORT struct vmstat_result *procps_vmstat_get (
         struct vmstat_info *info,
         enum vmstat_item item)
 {
-    static time_t sav_secs;
+    static __thread time_t sav_secs;
     time_t cur_secs;
 
     errno = EINVAL;

@@ -27,7 +27,7 @@
 
 
 const char *lookup_wchan (int pid) {
-   static char buf[64];
+   static __thread char buf[64];
    const char *ret = buf;
    ssize_t num;
    int fd;

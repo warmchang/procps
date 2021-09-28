@@ -990,7 +990,7 @@ PROCPS_EXPORT struct stat_result *procps_stat_get (
         struct stat_info *info,
         enum stat_item item)
 {
-    static time_t sav_secs;
+    static __thread time_t sav_secs;
     time_t cur_secs;
 
     errno = EINVAL;

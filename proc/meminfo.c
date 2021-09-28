@@ -669,7 +669,7 @@ static int meminfo_read_failed (
     head = buf;
 
     for (;;) {
-        static ENTRY e;      // just to keep coverity off our backs (e.data)
+        static __thread ENTRY e;  // keep coverity off our backs (e.data)
         ENTRY *ep;
 
         if (!(tail = strchr(head, ':')))
@@ -882,7 +882,7 @@ PROCPS_EXPORT struct meminfo_result *procps_meminfo_get (
         struct meminfo_info *info,
         enum meminfo_item item)
 {
-    static time_t sav_secs;
+    static __thread time_t sav_secs;
     time_t cur_secs;
 
     errno = EINVAL;

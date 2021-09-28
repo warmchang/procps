@@ -839,7 +839,7 @@ PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
         struct slabinfo_info *info,
         enum slabinfo_item item)
 {
-    static time_t sav_secs;
+    static __thread time_t sav_secs;
     time_t cur_secs;
 
     errno = EINVAL;

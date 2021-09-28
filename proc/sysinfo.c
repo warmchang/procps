@@ -49,14 +49,14 @@ static int loadavg_fd = -1;
 // and would need 1258 if the obsolete fields were there.
 // As of 3.13 /proc/vmstat needs 2623,
 // and /proc/stat needs 3076.
-static char buf[8192];
+static __thread char buf[8192];
 
 /* This macro opens filename only if necessary and seeks to 0 so
  * that successive calls to the functions are more efficient.
  * It also reads the current contents of the file into the global buf.
  */
 #define FILE_TO_BUF(filename, fd) do{				\
-    static int local_n;						\
+    static __thread int local_n;						\
     if (fd == -1 && (fd = open(filename, O_RDONLY)) == -1) {	\
 	fputs(BAD_OPEN_MESSAGE, stderr);			\
 	fflush(NULL);						\
@@ -158,7 +158,7 @@ PROCPS_EXPORT unsigned int procps_pid_length(void)
 {
     FILE *fp;
     char pidbuf[24];
-    static int pid_length=0;
+    static __thread int pid_length=0;
 
     if (pid_length)
         return pid_length;

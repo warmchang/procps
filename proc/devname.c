@@ -325,7 +325,7 @@ static int ctty_name(char *restrict const buf, int pid) {
 
 /* number --> name */
 unsigned dev_to_tty(char *restrict ret, unsigned chop, dev_t dev_t_dev, int pid, unsigned int flags) {
-  static char buf[TTY_NAME_SIZE];
+  static __thread char buf[TTY_NAME_SIZE];
   char *restrict tmp = buf;
   unsigned dev = dev_t_dev;
   unsigned i = 0;

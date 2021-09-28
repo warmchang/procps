@@ -91,7 +91,7 @@ static inline void esc_ctl (unsigned char *str, int len) {
 }
 
 int escape_str (unsigned char *dst, const unsigned char *src, int bufsize) {
-   static int utf_sw = 0;
+   static __thread int utf_sw = 0;
    int n;
 
    if (utf_sw == 0) {

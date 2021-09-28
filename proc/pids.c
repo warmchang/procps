@@ -1123,7 +1123,7 @@ static int pids_stacks_fetch (
  #define n_alloc  info->fetch.n_alloc
  #define n_inuse  info->fetch.n_inuse
  #define n_saved  info->fetch.n_alloc_save
-    static proc_t task;    // static for initial zeroes + later dynamic free(s)
+    static __thread proc_t task;  // static for initial 0's + later free(s)
     struct stacks_extent *ext;
 
     // initialize stuff -----------------------------------
@@ -1367,7 +1367,7 @@ PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
         struct pids_info *info,
         int return_self)
 {
-    static proc_t self;
+    static __thread proc_t self;
     struct stacks_extent *ext;
 
     /* this is very likely the *only* newlib function where the
@@ -1404,7 +1404,7 @@ PROCPS_EXPORT struct pids_stack *procps_pids_get (
         struct pids_info *info,
         enum pids_fetch_type which)
 {
-    static proc_t task;    // static for initial zeroes + later dynamic free(s)
+    static __thread proc_t task;  // static for initial 0's + later free(s)
 
     errno = EINVAL;
     if (info == NULL)
