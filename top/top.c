@@ -6361,6 +6361,10 @@ static void frame_make (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    int i, scrlins;
 
+   // check auto-sized width increases from the last iteration...
+   if (AUTOX_MODE && Autox_found)
+      widths_resize();
+
    /* deal with potential signal(s) since the last time around
       plus any input which may change 'tasks_refresh' needs... */
    if (Frames_signal)
@@ -6381,10 +6385,6 @@ static void frame_make (void) {
 #else
    memory_refresh(NULL);
 #endif
-
-   // check auto-sized width increases from the last iteration...
-   if (AUTOX_MODE && Autox_found)
-      widths_resize();
 
    // whoa either first time or thread/task mode change, (re)prime the pump...
    if (Pseudo_row == PROC_XTRA) {
