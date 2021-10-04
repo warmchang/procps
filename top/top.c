@@ -225,7 +225,7 @@ static int Numa_node_sel = -1;
            commands -- which are now both 4-way toggles */
 #define GRAPH_prefix  25     // beginning text + opening '['
 #define GRAPH_actual  100    // the actual bars or blocks
-#define GRAPH_suffix  1      // ending ']'
+#define GRAPH_suffix  2      // ending ']' + trailing space
 static float Graph_adj;      // bars/blocks scaling factor
 static int   Graph_len;      // scaled length (<= GRAPH_actual)
 static const char Graph_blks[] = "                                                                                                    ";
@@ -1975,6 +1975,7 @@ static void adj_geometry (void) {
    if (Screen_cols < DOUBLE_limit) Curwin->rc.double_up = 0;
    if (Curwin->rc.double_up) {
       Graph_len = (Screen_cols - DOUBLE_space - (2 * (GRAPH_prefix + GRAPH_suffix))) / 2;
+      Graph_len += (Screen_cols % 2) ? 0 : 1;
       if (Graph_len > GRAPH_actual) Graph_len = GRAPH_actual;
    }
    Graph_adj = (float)Graph_len / 100.0;
