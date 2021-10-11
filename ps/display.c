@@ -638,6 +638,7 @@ int main(int argc, char *argv[]){
     case SIGKILL:  /* can not catch */
     case SIGSTOP:  /* can not catch */
     case SIGWINCH: /* don't care if window size changes */
+    case SIGURG:   /* Urgent condition on socket (4.2BSD) */
       ;
     }
   } while (0);
