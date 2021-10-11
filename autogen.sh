@@ -30,10 +30,6 @@ test -f free.c || {
 	echo "The autoheader command is part of the GNU autoconf package."
 	DIE=1
 }
-(libtool --version) < /dev/null > /dev/null || {
-	echo "You must have libtool-2 installed to generate procps-ng build system."
-	DIE=1
-}
 (automake --version) < /dev/null > /dev/null || {
 	echo "You must have automake installed to generate procps-ng build system."
 	DIE=1
