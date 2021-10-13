@@ -11,6 +11,7 @@ procps-ng-NEXT
   * ps: Add IO Accounting fields                           issue #184
   * ps: Add PSS and USS fields                             issue #112
   * ps: Add two new autogroup fields
+  * ps: Ignore SIGURG                                      merge !142
   * slabtop: Don't combine d and o options                 issue #160
   * sysctl: Add support for systemd glob patterns          issue #191
   * sysctl: Check resolved path to be under /proc/sys      issue #179
