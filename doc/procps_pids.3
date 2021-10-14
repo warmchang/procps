@@ -172,9 +172,20 @@ However, if one survives the \fBfatal_proc_unmounted\fR call,
 NULL is always returned when \fIreturn_self\fR is zero.
 
 .SH DEBUGGING
-To aid in program development, there is a provision that can
-help ensure `result' member references agree with library
-expectations.
+To aid in program development, there are two procps-ng provisions
+that can be exploited.
+
+The first is a supplied file named `libproc.supp' which may be
+useful when developing a \fImulti-threaded\fR application.
+When used with the valgrind `--suppressions=' option, warnings
+associated with the procps library itself are avoided.
+
+Such warnings arise because the library handles heap based
+allocations in a thread-safe manner.
+A \fIsingle-threaded\fR application will not receive those warnings.
+
+The second provision can help ensure `result' member references
+agree with library expectations.
 It assumes that a supplied macro in the header file is
 used to access the `result' value.
 
@@ -183,7 +194,7 @@ methods and any discrepancies will be written to \fBstderr\fR.
 
 .IP 1) 3
 Add CFLAGS='-DXTRA_PROCPS_DEBUG' to any other ./configure
-options employed.
+options your project may employ.
 
 .IP 2) 3
 Add #include <procps/xtra-procps-debug.h> to any program
