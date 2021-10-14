@@ -365,9 +365,13 @@ static void bye_bye (const char *str) __attribute__((__noreturn__));
 static void bye_bye (const char *str) {
    sigset_t ss;
 
-// POSIX.1 async-signal-safe: sigfillset, pthread_sigmask
+// POSIX.1 async-signal-safe: sigfillset, sigprocmask, pthread_sigmask
    sigfillset(&ss);
+#if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
    pthread_sigmask(SIG_BLOCK, &ss, NULL);
+#else
+   sigprocmask(SIG_BLOCK, &ss, NULL);
+#endif
    at_eoj();                 // restore tty in preparation for exit
 #ifdef ATEOJ_RPTSTD
 {
@@ -497,16 +501,24 @@ static void sig_abexit (int sig) __attribute__((__noreturn__));
 static void sig_abexit (int sig) {
    sigset_t ss;
 
-// POSIX.1 async-signal-safe: sigfillset, signal, sigemptyset, sigaddset, pthread_sigmask, raise
+// POSIX.1 async-signal-safe: sigfillset, signal, sigemptyset, sigaddset, sigprocmask, pthread_sigmask, raise
    sigfillset(&ss);
+#if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
    pthread_sigmask(SIG_BLOCK, &ss, NULL);
+#else
+   sigprocmask(SIG_BLOCK, &ss, NULL);
+#endif
    at_eoj();                 // restore tty in preparation for exit
    fprintf(stderr, N_fmt(EXIT_signals_fmt)
       , sig, signal_number_to_name(sig), Myname);
    signal(sig, SIG_DFL);     // allow core dumps, if applicable
    sigemptyset(&ss);
    sigaddset(&ss, sig);
+#if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
    pthread_sigmask(SIG_UNBLOCK, &ss, NULL);
+#else
+   sigprocmask(SIG_UNBLOCK, &ss, NULL);
+#endif
    raise(sig);               // ( plus set proper return code )
    _exit(EXIT_FAILURE);      // if default sig action is ignore
 } // end: sig_abexit
@@ -3370,10 +3382,12 @@ static void before (char *me) {
    if ((rc = procps_pids_new(&Pids_ctx, Pids_itms, Pids_itms_tot)))
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(-rc)));
 
-   /* in case any of our threads have neen enabled, they'll inherit this mask
+#if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
+   /* in case any of our threads have been enabled, they'll inherit this mask
       with everything blocked. therefore, signals go to the main thread (us). */
    sigfillset(&sa.sa_mask);
    pthread_sigmask(SIG_BLOCK, &sa.sa_mask, NULL);
+#endif
 
 #ifdef THREADED_CPU
    if (0 != sem_init(&Semaphore_cpus_beg, 0, 0)
