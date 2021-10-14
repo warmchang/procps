@@ -1,0 +1,46 @@
+#
+#  This is a warning-suppression file for valgrind supplied by libproc
+#  to be used with the option: --suppressions=<path-for>/libproc.supp.
+#
+#  Memory leak warnings will only be encountered when a multi-threaded
+#  program has used the 'procps_pids' interface. That is because this
+#  library employs heap based memory in a thread safe manner. However,
+#  such memory will not be freed until the address space is reclaimed.
+#
+#  When a sibling thread using this 'procps_pids' API ends, or if some
+#  other thread in that address space calls 'pthread_cancel()' on such
+#  a thread, valgrind may warn that some memory was 'definitely lost'.
+#
+#  Any such warnings are dependent on the 'pids_item' enumerators that
+#  have been specified using 'procps_pids_new' or 'procps_pids_reset'.
+#
+#  A single-threaded application should not experience these warnings.
+#
+
+## for most of the 'definitely lost' warnings,
+## up to 4 blocks ranging from 1024 to 2048 bytes each
+{
+   HEAP_BASED_TLS_file2str
+   Memcheck:Leak
+   ...
+   fun:file2str
+}
+
+## for the remaining 'definitely lost' warnings,
+## a block for each active lxc container, 16 bytes + sizeof name
+{
+   HEAP_BASED_TLS_lxc
+   Memcheck:Leak
+   ...
+   fun:lxc_containers
+}
+
+## in case an installed library has been stripped,
+## this embraces both of the above warning categories
+{
+   HEAP_BASED_TLS_library
+   Memcheck:Leak
+   ...
+   obj:/usr/*lib*/libproc*
+   obj:/usr/local/*lib*/libproc*
+}

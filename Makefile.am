@@ -113,7 +113,8 @@ endif
 procpsngdir = $(docdir)
 dist_procpsng_DATA = \
 	Documentation/bugs.md \
-	Documentation/FAQ
+	Documentation/FAQ \
+	Documentation/libproc.supp
 
 if BUILD_PIDOF
 if !CYGWIN
