@@ -25,6 +25,7 @@ procps-ng-NEXT
   * top: summary area memory lines can print two abreast
   * top: added two new autogroup fields
   * top: added long versions of command line options
+  * uptime: print short/pretty format correctly            issue #217
   * vmstat: add -y option to remove first line             merge !72
 
 procps-ng-3.3.17

@@ -160,13 +160,49 @@ PROCPS_EXPORT char *procps_uptime_sprint_short(void)
     if (procps_uptime(&uptime_secs, &idle_secs) < 0)
         return shortbuf;
 
-    updecades =  (int) uptime_secs / (60*60*24*365*10);
+    if (uptime_secs>60*60*24*365*10) {
+      updecades = (int) uptime_secs / (60*60*24*365*10);
+      uptime_secs -= updecades*60*60*24*365*10;
+    }
+    else {
+      updecades = 0;
+    }
+    if (uptime_secs>60*60*24*365) {
+      upyears = (int) uptime_secs / (60*60*24*365);
+      uptime_secs -= upyears*60*60*24*365;
+    }
+    else {
+      upyears = 0;
+    }
+    if (uptime_secs>60*60*24*7) {
+      upweeks = (int) uptime_secs / (60*60*24*7);
+      uptime_secs -= upweeks*60*60*24*7;
+    }
+    else {
+      upweeks = 0;
+    }
+    if (uptime_secs>60*60*24) {
+      updays = (int) uptime_secs / (60*60*24);
+      uptime_secs -= updays*60*60*24;
+    }
+    else {
+      updays = 0;
+    }
+    if (uptime_secs>60*60) {
+        uphours = (int) uptime_secs / (60*60);
+        uptime_secs -= uphours*60*60;
+    }
+    if (uptime_secs>60) {
+        upminutes = (int) uptime_secs / 60;
+        uptime_secs -= upminutes*60;
+    }
+    /*updecades =  (int) uptime_secs / (60*60*24*365*10);
     upyears =   ((int) uptime_secs / (60*60*24*365)) % 10;
     upweeks =   ((int) uptime_secs / (60*60*24*7)) % 52;
     updays  =   ((int) uptime_secs / (60*60*24)) % 7;
     uphours =   ((int) uptime_secs / (60*60)) % 24;
     upminutes = ((int) uptime_secs / (60)) % 60;
-
+*/
     strcat(shortbuf, "up ");
 
     if (updecades) {
