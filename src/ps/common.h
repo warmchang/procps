@@ -181,8 +181,8 @@ makEXT(noop)
 // --- <pids> interface end ||||||||||||||||||||||||||||||||||||||||||||||
 
 
-#if 0
-#define trace(...) printf(## __VA_ARGS__)
+#if TRACE
+#define trace(...) fprintf(stderr, __VA_ARGS__)
 #else
 #define trace(...)
 #endif
