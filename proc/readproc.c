@@ -58,8 +58,8 @@ extern void __cyg_profile_func_enter(void*,void*);
 
 // utility buffers of MAX_BUFSZ bytes each, available to
 // any function following an openproc() call
-static char *src_buffer,
-            *dst_buffer;
+static __thread char *src_buffer,
+                     *dst_buffer;
 #define MAX_BUFSZ 1024*64*2
 
 // dynamic 'utility' buffer support for file2str() calls

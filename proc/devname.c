@@ -60,7 +60,7 @@ typedef struct tty_map_node {
   char name[16];
 } tty_map_node;
 
-static tty_map_node *tty_map = NULL;
+static __thread tty_map_node *tty_map = NULL;
 
 /* Load /proc/tty/drivers for device name mapping use. */
 static void load_drivers(void){

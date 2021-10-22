@@ -38,7 +38,7 @@
 
 static char ERRname[] = "?";
 
-static struct pwbuf {
+static __thread struct pwbuf {
     struct pwbuf *next;
     uid_t uid;
     char name[P_G_SZ];
@@ -67,7 +67,7 @@ char *pwcache_get_user(uid_t uid) {
     return((*p)->name);
 }
 
-static struct grpbuf {
+static __thread struct grpbuf {
     struct grpbuf *next;
     gid_t gid;
     char name[P_G_SZ];
