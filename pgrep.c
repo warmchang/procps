@@ -247,8 +247,12 @@ static int strict_atol (const char *restrict str, long *restrict value)
 
     for ( ; *str; ++str) {
         if (! isdigit (*str))
-            return (0);
+            return 0;
+        if (res >= LONG_MAX / 10)
+            return 0;
         res *= 10;
+        if (res >= LONG_MAX - (*str - '0'))
+            return 0;
         res += *str - '0';
     }
     *value = sign * res;
@@ -323,7 +327,7 @@ static int conv_uid (const char *restrict name, struct el *restrict e)
         xwarnx(_("invalid user name: %s"), name);
         return 0;
     }
-    e->num = (int) pwd->pw_uid;
+    e->num = pwd->pw_uid;
     return 1;
 }
 
@@ -340,7 +344,7 @@ static int conv_gid (const char *restrict name, struct el *restrict e)
         xwarnx(_("invalid group name: %s"), name);
         return 0;
     }
-    e->num = (int) grp->gr_gid;
+    e->num = grp->gr_gid;
     return 1;
 }
 

@@ -7,6 +7,7 @@ procps-ng-NEXT
   * library: add support for accessing autogroups
   * pkill: Check for lt- variants of program name          issue #192
   * pgrep: Add newline after regex error message           merge #91
+  * pgrep: Fix selection where uid/gid > 2^31              merge !146
   * ps: Add OOM and OOMADJ fields                          issue #198
   * ps: Add IO Accounting fields                           issue #184
   * ps: Add PSS and USS fields                             issue #112
