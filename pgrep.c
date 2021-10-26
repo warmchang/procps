@@ -72,11 +72,13 @@ enum pids_item Items[] = {
     PIDS_CMD,
     PIDS_CMDLINE,
     PIDS_STATE,
-    PIDS_TIME_ELAPSED
+    PIDS_TIME_ELAPSED,
+    PIDS_CGROUP_V
 };
 enum rel_items {
     EU_PID, EU_PPID, EU_PGRP, EU_EUID, EU_RUID, EU_RGID, EU_SESSION,
-    EU_TGID, EU_STARTTIME, EU_TTYNAME, EU_CMD, EU_CMDLINE, EU_STA, EU_ELAPSED
+    EU_TGID, EU_STARTTIME, EU_TTYNAME, EU_CMD, EU_CMDLINE, EU_STA, EU_ELAPSED,
+    EU_CGROUP
 };
 #define grow_size(x) do { \
 	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
@@ -127,6 +129,7 @@ static struct el *opt_term = NULL;
 static struct el *opt_euid = NULL;
 static struct el *opt_ruid = NULL;
 static struct el *opt_nslist = NULL;
+static struct el *opt_cgroup = NULL;
 static char *opt_pattern = NULL;
 static char *opt_pidfile = NULL;
 static char *opt_runstates = NULL;
@@ -177,6 +180,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
     fputs(_(" -F, --pidfile <file>      read PIDs from file\n"), fp);
     fputs(_(" -L, --logpidfile          fail if PID file is not locked\n"), fp);
     fputs(_(" -r, --runstates <state>   match runstates [D,S,Z,...]\n"), fp);
+    fputs(_(" --cgroup <grp,...>        match by cgroup v2 names\n"), fp);
     fputs(_(" --ns <PID>                match the processes that belong to the same\n"
         "                           namespace as <pid>\n"), fp);
     fputs(_(" --nslist <ns,...>         list which namespaces will be considered for\n"
@@ -455,6 +459,35 @@ static int match_ns (const int pid,
     return found;
 }
 
+static int cgroup_cmp(const char *restrict cgroup,
+                        const char *restrict path)
+{
+    if (cgroup == NULL || path == NULL)
+        return 1;
+    // Cgroup v2 have 0::
+    if (strncmp("0::", cgroup, 3) == 0) {
+        return strcmp(cgroup+3, path);
+    } //might try for cgroup v1 later
+    return 1;
+}
+
+
+static int match_cgroup_list(char **values,
+                        const struct el *restrict list)
+{
+	if (list != NULL && values != NULL) {
+        int i, j;
+        for (i = list[0].num; i > 0; i--) {
+            for (j=0; values[j] && values[j][0]; j++) {
+                if (! cgroup_cmp (values[j], list[i].str)) {
+                    return 1;
+                }
+			}
+        }
+    }
+    return 0;
+}
+
 static void output_numlist (const struct el *restrict list, int num)
 {
     int i;
@@ -535,6 +568,7 @@ static struct el * select_procs (int *num)
 #define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, stack, info)
 #define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack, info)
 #define PIDS_GETSCH(e) PIDS_VAL(EU_ ## e, s_ch, stack, info)
+#define PIDS_GETSTV(e) PIDS_VAL(EU_ ## e, strv, stack, info)
     struct pids_info *info=NULL;
     struct procps_ns nsp;
     struct pids_stack *stack;
@@ -568,7 +602,7 @@ static struct el * select_procs (int *num)
               _("Error reading reference namespace information\n"));
     }
 
-    if (procps_pids_new(&info, Items, 14) < 0)
+    if (procps_pids_new(&info, Items, 15) < 0)
         xerrx(EXIT_FATAL,
               _("Unable to create pid info structure"));
     which = PIDS_FETCH_TASKS_ONLY;
@@ -606,6 +640,8 @@ static struct el * select_procs (int *num)
         else if (opt_term)
             match = match_strlist(PIDS_GETSTR(TTYNAME), opt_term);
         else if (opt_runstates && ! strchr(opt_runstates, PIDS_GETSCH(STA)))
+            match = 0;
+        else if (opt_cgroup && ! match_cgroup_list (PIDS_GETSTV(CGROUP), opt_cgroup))
             match = 0;
 
         task_cmdline = PIDS_GETSTR(CMDLINE);
@@ -681,6 +717,7 @@ static struct el * select_procs (int *num)
 #undef PIDS_GETUNT
 #undef PIDS_GETULL
 #undef PIDS_GETSTR
+#undef PIDS_GETSTV
 }
 
 static int signal_option(int *argc, char **argv)
@@ -718,10 +755,12 @@ static void parse_opts (int argc, char **argv)
         SIGNAL_OPTION = CHAR_MAX + 1,
         NS_OPTION,
         NSLIST_OPTION,
+        CGROUP_OPTION,
     };
     static const struct option longopts[] = {
         {"signal", required_argument, NULL, SIGNAL_OPTION},
         {"count", no_argument, NULL, 'c'},
+        {"cgroup", required_argument, NULL, CGROUP_OPTION},
         {"delimiter", required_argument, NULL, 'd'},
         {"list-name", no_argument, NULL, 'l'},
         {"list-full", no_argument, NULL, 'a'},
@@ -919,6 +958,12 @@ static void parse_opts (int argc, char **argv)
         case 'q':
             sigval.sival_int = atoi(optarg);
             use_sigqueue = true;
+            break;
+        case CGROUP_OPTION:
+            opt_cgroup = split_list (optarg, conv_str);
+            if (opt_cgroup == NULL)
+                usage ('?');
+            ++criteria_count;
             break;
         case 'h':
         case '?':
