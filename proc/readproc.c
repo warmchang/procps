@@ -784,7 +784,10 @@ static char **file2strvec(const char *directory, const char *what) {
 
         if (n <= 0) break;         /* unneeded (end_of_file = 1) but avoid realloc */
         rbuf = realloc(rbuf, tot + n);          /* allocate more memory */
-        if (!rbuf) return NULL;
+        if (!rbuf) {
+            close(fd);
+            return NULL;
+        }
         memcpy(rbuf + tot, buf, n);             /* copy buffer into it */
         tot += n;                               /* increment total byte ctr */
         if (end_of_file)
@@ -1546,11 +1549,18 @@ PROCTAB *openproc(unsigned flags, ...) {
     va_end(ap);
 
     if (!src_buffer
-    && !(src_buffer = malloc(MAX_BUFSZ)))
+    && !(src_buffer = malloc(MAX_BUFSZ))) {
+        closedir(PT->procfs);
+        free(PT);
         return NULL;
+    }
     if (!dst_buffer
-    && !(dst_buffer = malloc(MAX_BUFSZ)))
+    && !(dst_buffer = malloc(MAX_BUFSZ))) {
+        closedir(PT->procfs);
+        free(src_buffer);
+        free(PT);
         return NULL;
+    }
 
     return PT;
 }
