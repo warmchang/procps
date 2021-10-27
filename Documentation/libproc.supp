@@ -3,7 +3,7 @@
 #  to be used with the option: --suppressions=<path-for>/libproc.supp.
 #
 #  Memory leak warnings will only be encountered when a multi-threaded
-#  program has used the 'procps_pids' interface. That is because this
+#  program has called the 'procps_pids' interface. That's because this
 #  library employs heap based memory in a thread safe manner. However,
 #  such memory will not be freed until the address space is reclaimed.
 #
