@@ -286,6 +286,9 @@ static sem_t Semaphore_memory_beg, Semaphore_memory_end;
 static pthread_t Thread_id_tasks;
 static sem_t Semaphore_tasks_beg, Semaphore_tasks_end;
 #endif
+#if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
+static pthread_t Thread_id_main;
+#endif
 
 /*######  Tiny useful routine(s)  ########################################*/
 
@@ -440,6 +443,11 @@ static void bye_bye (const char *str) {
 
    // there's lots of signal-unsafe stuff in the following ...
    if (Frames_signal != BREAK_sig) {
+#if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
+      /* can not execute any cleanup from a sibling thread and
+         we will violate proper indentation to minimize impact */
+      if (pthread_equal(Thread_id_main, pthread_self())) {
+#endif
 #ifdef THREADED_CPU
       pthread_cancel(Thread_id_cpus);
       pthread_join(Thread_id_cpus, NULL);
@@ -461,6 +469,9 @@ static void bye_bye (const char *str) {
       procps_pids_unref(&Pids_ctx);
       procps_stat_unref(&Stat_ctx);
       procps_meminfo_unref(&Mem_ctx);
+#if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
+      }
+#endif
    }
 
    /* we'll only have a 'str' if called by error_exit() |
@@ -3383,6 +3394,7 @@ static void before (char *me) {
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(-rc)));
 
 #if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
+   Thread_id_main = pthread_self();
    /* in case any of our threads have been enabled, they'll inherit this mask
       with everything blocked. therefore, signals go to the main thread (us). */
    sigfillset(&sa.sa_mask);
