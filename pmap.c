@@ -909,9 +909,12 @@ static int config_read (char *rc_filename)
 }
 
 
-static int config_create (char *rc_filename)
+static int config_create (const char *rc_filename)
 {
 	FILE *f;
+
+	if (rc_filename == NULL)
+		return 0;
 
 	/* check if rc exists */
 	f = fopen(rc_filename, "r");
