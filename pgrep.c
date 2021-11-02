@@ -534,7 +534,7 @@ static regex_t * do_regcomp (void)
 
         if (re_err) {
             regerror (re_err, preg, errbuf, sizeof(errbuf));
-            xerrx(EXIT_USAGE, errbuf);
+            xerrx(EXIT_USAGE, _("regex error: %s"), errbuf);
         }
     }
     return preg;
