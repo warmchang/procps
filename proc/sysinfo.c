@@ -56,7 +56,7 @@ static __thread char buf[8192];
  * It also reads the current contents of the file into the global buf.
  */
 #define FILE_TO_BUF(filename, fd) do{				\
-    static __thread int local_n;						\
+    static __thread int local_n;				\
     if (fd == -1 && (fd = open(filename, O_RDONLY)) == -1) {	\
 	fputs(BAD_OPEN_MESSAGE, stderr);			\
 	fflush(NULL);						\
