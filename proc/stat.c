@@ -145,6 +145,7 @@ struct stat_info {
     struct stat_result get_this;       // for return to caller after a get
     struct item_support reap_items;    // items used for reap (shared among 3)
     struct item_support select_items;  // items unique to select
+    time_t sav_secs;                   // used by procps_stat_get to limit i/o
 };
 
 
@@ -990,7 +991,6 @@ PROCPS_EXPORT struct stat_result *procps_stat_get (
         struct stat_info *info,
         enum stat_item item)
 {
-    static __thread time_t sav_secs;
     time_t cur_secs;
 
     errno = EINVAL;
@@ -1003,10 +1003,10 @@ PROCPS_EXPORT struct stat_result *procps_stat_get (
     /* we will NOT read the source file with every call - rather, we'll offer
        a granularity of 1 second between reads ... */
     cur_secs = time(NULL);
-    if (1 <= cur_secs - sav_secs) {
+    if (1 <= cur_secs - info->sav_secs) {
         if (stat_read_failed(info))
             return NULL;
-        sav_secs = cur_secs;
+        info->sav_secs = cur_secs;
     }
 
     info->get_this.item = item;

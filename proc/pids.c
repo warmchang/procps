@@ -96,6 +96,8 @@ struct pids_info {
     struct stacks_extent *get_ext;     // for active 'get' (also within 'extents')
     enum pids_fetch_type get_type;     // last known type of 'get' request
     int seterr;                        // an ENOMEM encountered during assign
+    proc_t get_proc;                   // the proc_t used by procps_pids_get
+    proc_t fetch_proc;                 // the proc_t used by pids_stacks_fetch
 };
 
 
@@ -1123,7 +1125,6 @@ static int pids_stacks_fetch (
  #define n_alloc  info->fetch.n_alloc
  #define n_inuse  info->fetch.n_inuse
  #define n_saved  info->fetch.n_alloc_save
-    static __thread proc_t task;  // static for initial 0's + later free(s)
     struct stacks_extent *ext;
 
     // initialize stuff -----------------------------------
@@ -1140,7 +1141,7 @@ static int pids_stacks_fetch (
 
     // iterate stuff --------------------------------------
     n_inuse = 0;
-    while (info->read_something(info->fetch_PT, &task)) {
+    while (info->read_something(info->fetch_PT, &info->fetch_proc)) {
         if (!(n_inuse < n_alloc)) {
             n_alloc += STACKS_GROW;
             if (!(info->fetch.anchor = realloc(info->fetch.anchor, sizeof(void *) * n_alloc))
@@ -1148,9 +1149,9 @@ static int pids_stacks_fetch (
                 return -1;   // here, errno was set to ENOMEM
             memcpy(info->fetch.anchor + n_inuse, ext->stacks, sizeof(void *) * STACKS_GROW);
         }
-        if (!pids_proc_tally(info, &info->fetch.counts, &task))
+        if (!pids_proc_tally(info, &info->fetch.counts, &info->fetch_proc))
             return -1;       // here, errno was set to ENOMEM
-        if (!pids_assign_results(info, info->fetch.anchor[n_inuse++], &task))
+        if (!pids_assign_results(info, info->fetch.anchor[n_inuse++], &info->fetch_proc))
             return -1;       // here, errno was set to ENOMEM
     }
     /* while the possibility is extremely remote, the readproc.c (read_something) |
@@ -1404,7 +1405,6 @@ PROCPS_EXPORT struct pids_stack *procps_pids_get (
         struct pids_info *info,
         enum pids_fetch_type which)
 {
-    static __thread proc_t task;  // static for initial 0's + later free(s)
 
     errno = EINVAL;
     if (info == NULL)
@@ -1432,9 +1432,9 @@ fresh_start:
     }
     errno = 0;
 
-    if (NULL == info->read_something(info->get_PT, &task))
+    if (NULL == info->read_something(info->get_PT, &info->get_proc))
         return NULL;
-    if (!pids_assign_results(info, info->get_ext->stacks[0], &task))
+    if (!pids_assign_results(info, info->get_ext->stacks[0], &info->get_proc))
         return NULL;
     return info->get_ext->stacks[0];
 } // end: procps_pids_get

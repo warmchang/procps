@@ -133,6 +133,7 @@ struct slabinfo_info {
     struct fetch_support fetch;      // support for procps_slabinfo_reap
     struct slabs_node nul_node;      // used by slabinfo_get/select
     struct slabinfo_result get_this; // used by slabinfo_get
+    time_t sav_secs;                 // used by slabinfo_get
 };
 
 
@@ -839,7 +840,6 @@ PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
         struct slabinfo_info *info,
         enum slabinfo_item item)
 {
-    static __thread time_t sav_secs;
     time_t cur_secs;
 
     errno = EINVAL;
@@ -852,10 +852,10 @@ PROCPS_EXPORT struct slabinfo_result *procps_slabinfo_get (
     /* we will NOT read the slabinfo file with every call - rather, we'll offer
        a granularity of 1 second between reads ... */
     cur_secs = time(NULL);
-    if (1 <= cur_secs - sav_secs) {
+    if (1 <= cur_secs - info->sav_secs) {
         if (slabinfo_read_failed(info))
             return NULL;
-        sav_secs = cur_secs;
+        info->sav_secs = cur_secs;
     }
 
     info->get_this.item = item;

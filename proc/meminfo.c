@@ -135,6 +135,7 @@ struct meminfo_info {
     struct stacks_extent *extents;
     struct hsearch_data hashtab;
     struct meminfo_result get_this;
+    time_t sav_secs;
 };
 
 
@@ -882,7 +883,6 @@ PROCPS_EXPORT struct meminfo_result *procps_meminfo_get (
         struct meminfo_info *info,
         enum meminfo_item item)
 {
-    static __thread time_t sav_secs;
     time_t cur_secs;
 
     errno = EINVAL;
@@ -895,10 +895,10 @@ PROCPS_EXPORT struct meminfo_result *procps_meminfo_get (
     /* we will NOT read the meminfo file with every call - rather, we'll offer
        a granularity of 1 second between reads ... */
     cur_secs = time(NULL);
-    if (1 <= cur_secs - sav_secs) {
+    if (1 <= cur_secs - info->sav_secs) {
         if (meminfo_read_failed(info))
             return NULL;
-        sav_secs = cur_secs;
+        info->sav_secs = cur_secs;
     }
 
     info->get_this.item = item;
