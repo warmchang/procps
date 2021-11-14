@@ -890,8 +890,8 @@ static void sum_format(void)
     printf(_("%13lld stolen cpu ticks\n"), TICv(sstat_STO));
     printf(_("%13lld non-nice guest cpu ticks\n"), TICv(sstat_GST));
     printf(_("%13lld nice guest cpu ticks\n"), TICv(sstat_GNI));
-    printf(_("%13lu pages paged in\n"), VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int));
-    printf(_("%13lu pages paged out\n"), VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int));
+    printf(_("%13lu K paged in\n"), VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int));
+    printf(_("%13lu K paged out\n"), VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int));
     printf(_("%13lu pages swapped in\n"), VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int));
     printf(_("%13lu pages swapped out\n"), VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int));
     printf(_("%13lu interrupts\n"), SYSv(sstat_INT));
