@@ -1703,7 +1703,7 @@ static struct {
    {     3,     -1,  A_right,  PIDS_PRIORITY       },  // s_int    EU_PRI
    {     3,     -1,  A_right,  PIDS_NICE           },  // s_int    EU_NCE
    {     3,     -1,  A_right,  PIDS_NLWP           },  // s_int    EU_THD
-   {     0,     -1,  A_right,  PIDS_PROCESSOR      },  // u_int    EU_CPN
+   {     0,     -1,  A_right,  PIDS_PROCESSOR      },  // s_int    EU_CPN
    {     5,     -1,  A_right,  PIDS_TICS_ALL_DELTA },  // u_int    EU_CPU
    {     6,     -1,  A_right,  PIDS_TICS_ALL       },  // ull_int  EU_TME
    {     9,     -1,  A_right,  PIDS_TICS_ALL       },  // ull_int  EU_TM2
@@ -6029,6 +6029,7 @@ static const char *task_show (const WIN_t *q, int idx) {
             break;
    /* s_int, make_num without auto width */
          case EU_AGI:        // PIDS_AUTOGRP_ID
+         case EU_CPN:        // PIDS_PROCESSOR
          case EU_NMA:        // PIDS_PROCESSOR_NODE
          case EU_PGD:        // PIDS_ID_PGRP
          case EU_PID:        // PIDS_ID_PID
@@ -6080,10 +6081,6 @@ static const char *task_show (const WIN_t *q, int idx) {
             if (u > Cpu_pmax) u = Cpu_pmax;
             cp = scale_pcnt(u, W, Jn);
          }
-            break;
-   /* u_int, make_num without auto width */
-         case EU_CPN:        // PIDS_PROCESSOR
-            cp = make_num(rSv(EU_CPN, u_int), W, Jn, AUTOX_NO, 0);
             break;
    /* u_int, make_num with auto width */
          case EU_GID:        // PIDS_ID_EGID

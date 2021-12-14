@@ -1013,7 +1013,7 @@ setREL1(RSS_RLIM)
 /* should print leading tilde ('~') if process is bound to the CPU */
 static int pr_psr(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(PROCESSOR)
-  return snprintf(outbuf, COLWID, "%d", rSv(PROCESSOR, u_int, pp));
+  return snprintf(outbuf, COLWID, "%d", rSv(PROCESSOR, s_int, pp));
 }
 
 static int pr_pss(char *restrict const outbuf, const proc_t *restrict const pp){
