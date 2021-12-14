@@ -110,7 +110,7 @@ enum pids_item {
     PIDS_OOM_SCORE,         //    s_int        oom_score
     PIDS_PRIORITY,          //    s_int        stat: priority
     PIDS_PRIORITY_RT,       //    s_int        stat: rt_priority
-    PIDS_PROCESSOR,         //    u_int        stat: task_cpu
+    PIDS_PROCESSOR,         //    s_int        stat: task_cpu
     PIDS_PROCESSOR_NODE,    //    s_int        derived from PROCESSOR, see numa(3)
     PIDS_RSS,               //   ul_int        stat: rss
     PIDS_RSS_RLIM,          //   ul_int        stat: rsslim
