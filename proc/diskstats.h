@@ -86,6 +86,8 @@ struct diskstats_reaped {
     struct diskstats_stack **stacks;
 };
 
+struct diskstats_info;
+
 
 #define DISKSTATS_TYPE_DISK       -11111
 #define DISKSTATS_TYPE_PARTITION  -22222
@@ -97,8 +99,6 @@ struct diskstats_reaped {
 #define DISKSTATS_VAL( relative_enum, type, stack, info ) \
     stack -> head [ relative_enum ] . result . type
 
-
-struct diskstats_info;
 
 int procps_diskstats_new   (struct diskstats_info **info);
 int procps_diskstats_ref   (struct diskstats_info  *info);

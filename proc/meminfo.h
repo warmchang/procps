@@ -182,6 +182,8 @@ struct meminfo_stack {
     struct meminfo_result *head;
 };
 
+struct meminfo_info;
+
 
 #define MEMINFO_GET( info, actual_enum, type ) ( { \
     struct meminfo_result *r = procps_meminfo_get( info, actual_enum ); \
@@ -190,8 +192,6 @@ struct meminfo_stack {
 #define MEMINFO_VAL( relative_enum, type, stack, info ) \
     stack -> head [ relative_enum ] . result . type
 
-
-struct meminfo_info;
 
 int procps_meminfo_new   (struct meminfo_info **info);
 int procps_meminfo_ref   (struct meminfo_info  *info);

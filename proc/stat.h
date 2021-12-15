@@ -119,6 +119,8 @@ struct stat_reaped {
     struct stat_reap *numa;
 };
 
+struct stat_info;
+
 
     // STAT_TIC_ID value for /proc/stat cpu summary
 #define STAT_SUMMARY_ID    -11111
@@ -134,8 +136,6 @@ struct stat_reaped {
 #define STAT_VAL( relative_enum, type, stack, info ) \
     stack -> head [ relative_enum ] . result . type
 
-
-struct stat_info;
 
 int procps_stat_new   (struct stat_info **info);
 int procps_stat_ref   (struct stat_info  *info);

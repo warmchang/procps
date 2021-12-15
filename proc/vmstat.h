@@ -351,6 +351,8 @@ struct vmstat_stack {
     struct vmstat_result *head;
 };
 
+struct vmstat_info;
+
 
 #define VMSTAT_GET( info, actual_enum, type ) ( { \
     struct vmstat_result *r = procps_vmstat_get( info, actual_enum ); \
@@ -359,8 +361,6 @@ struct vmstat_stack {
 #define VMSTAT_VAL( relative_enum, type, stack, info ) \
     stack -> head [ relative_enum ] . result . type
 
-
-struct vmstat_info;
 
 int procps_vmstat_new   (struct vmstat_info **info);
 int procps_vmstat_ref   (struct vmstat_info  *info);

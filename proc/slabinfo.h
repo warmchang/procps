@@ -95,6 +95,8 @@ struct slabinfo_reaped {
     struct slabinfo_stack **stacks;
 };
 
+struct slabinfo_info;
+
 
 #define SLABINFO_GET( info, actual_enum, type ) ( { \
     struct slabinfo_result *r = procps_slabinfo_get( info, actual_enum ); \
@@ -103,8 +105,6 @@ struct slabinfo_reaped {
 #define SLABINFO_VAL( relative_enum, type, stack, info ) \
     stack -> head [ relative_enum ] . result . type
 
-
-struct slabinfo_info;
 
 int procps_slabinfo_new   (struct slabinfo_info **info);
 int procps_slabinfo_ref   (struct slabinfo_info  *info);

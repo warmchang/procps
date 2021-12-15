@@ -228,12 +228,12 @@ struct pids_fetch {
     struct pids_stack **stacks;
 };
 
+struct pids_info;
+
 
 #define PIDS_VAL( relative_enum, type, stack, info ) \
     stack -> head [ relative_enum ] . result . type
 
-
-struct pids_info;
 
 int procps_pids_new   (struct pids_info **info, enum pids_item *items, int numitems);
 int procps_pids_ref   (struct pids_info  *info);
