@@ -571,6 +571,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[XTRA_warnold_txt] = _("saving prevents older top from reading, save anyway?");
    Norm_nlstab[X_SEMAPHORES_fmt] = _("failed sem_init() at %d: %s");
    Norm_nlstab[X_THREADINGS_fmt] = _("failed pthread_create() at %d: %s");
+   Norm_nlstab[X_RESTRICTED_txt] = _("sorry, restricted namespace with reduced functionality");
 }
 
 

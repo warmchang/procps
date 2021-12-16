@@ -289,6 +289,10 @@ static sem_t Semaphore_tasks_beg, Semaphore_tasks_end;
 #if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
 static pthread_t Thread_id_main;
 #endif
+
+        /* Support for a namespace with proc mounted subset=pid,
+           ( we'll limit our display to task information only ). */
+static int Restrict_some = 0;
 
 /*######  Tiny useful routine(s)  ########################################*/
 
@@ -3368,20 +3372,22 @@ static void before (char *me) {
 
    // get the total cpus (and, if possible, numa node total)
    if ((rc = procps_stat_new(&Stat_ctx)))
-      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(-rc)));
-   if (!(Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items))))
-      error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
+      Restrict_some = Cpu_cnt = 1;
+   else {
+      if (!(Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items))))
+         error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
 #ifndef PRETEND0NUMA
-   Numa_node_tot = Stat_reap->numa->total;
+      Numa_node_tot = Stat_reap->numa->total;
 #endif
-   Cpu_cnt = Stat_reap->cpus->total;
+      Cpu_cnt = Stat_reap->cpus->total;
 #ifdef PRETEND48CPU
-   Cpu_cnt = 48;
+      Cpu_cnt = 48;
 #endif
+   }
 
    // prepare for memory stats from new library API ...
    if ((rc = procps_meminfo_new(&Mem_ctx)))
-      error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__, strerror(-rc)));
+      Restrict_some = 1;
 
    // establish max depth for newlib pids stack (# of result structs)
    Pids_itms = alloc_c(sizeof(enum pids_item) * MAXTBL(Fieldstab));
@@ -5047,6 +5053,10 @@ static void keys_global (int ch) {
 static void keys_summary (int ch) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
 
+   if (Restrict_some && ch != 'C') {
+      show_msg(N_txt(X_RESTRICTED_txt));
+      return;
+   }
    switch (ch) {
       case '!':
          if (CHKw(w, View_CPUSUM) || CHKw(w, View_CPUNOD))
@@ -5734,6 +5744,22 @@ static void summary_show (void) {
    char tmp[MEDBUFSIZ];
    int i;
 
+   if (Restrict_some) {
+#ifdef THREADED_TSK
+      sem_wait(&Semaphore_tasks_end);
+#endif
+      // Display Task States only
+      if (isROOM(View_STATES, 1)) {
+         show_special(0, fmtmk(N_unq(STATE_line_1_fmt)
+            , Thread_mode ? N_txt(WORD_threads_txt) : N_txt(WORD_process_txt)
+            , PIDSmaxt, Pids_reap->counts->running
+            , Pids_reap->counts->sleeping + Pids_reap->counts->other
+            , Pids_reap->counts->stopped, Pids_reap->counts->zombied));
+         Msg_row += 1;
+      }
+      goto restrict_end;
+   }
+
    // Display Uptime and Loadavg
    if (isROOM(View_LOADAV, 1)) {
       if (!Rc.mode_altscr)
@@ -5951,6 +5977,7 @@ numa_oops:
     #undef memPARM
    } // end: View_MEMORY
 
+restrict_end:
  #undef isROOM
  #undef anyFLG
 } // end: summary_show
@@ -6061,6 +6088,10 @@ static const char *task_show (const WIN_t *q, int idx) {
             break;
    /* s_int, scale_pcnt with special handling */
          case EU_CPU:        // PIDS_TICS_ALL_DELTA
+            if (Restrict_some) {
+               cp = justify_pad("?", W, Jn);
+               break;
+            }
          {  float u = (float)rSv(EU_CPU, u_int);
             int n = rSv(EU_THD, s_int);
 #ifndef TREE_VCPUOFF
@@ -6130,6 +6161,10 @@ static const char *task_show (const WIN_t *q, int idx) {
             break;
    /* ul_int, scale_pcnt */
          case EU_MEM:        // derive from PIDS_MEM_RES
+            if (Restrict_some) {
+               cp = justify_pad("?", W, Jn);
+               break;
+            }
             cp = scale_pcnt((float)rSv(EU_MEM, ul_int) * 100 / MEM_VAL(mem_TOT), W, Jn);
             break;
    /* ul_int, make_str with special handling */
@@ -6399,16 +6434,19 @@ static void frame_make (void) {
 #else
    tasks_refresh(NULL);
 #endif
+
+   if (!Restrict_some) {
 #ifdef THREADED_CPU
-   sem_post(&Semaphore_cpus_beg);
+      sem_post(&Semaphore_cpus_beg);
 #else
-   cpus_refresh(NULL);
+      cpus_refresh(NULL);
 #endif
 #ifdef THREADED_MEM
-   sem_post(&Semaphore_memory_beg);
+      sem_post(&Semaphore_memory_beg);
 #else
-   memory_refresh(NULL);
+      memory_refresh(NULL);
 #endif
+   }
 
    // whoa either first time or thread/task mode change, (re)prime the pump...
    if (Pseudo_row == PROC_XTRA) {
