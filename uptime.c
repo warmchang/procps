@@ -44,7 +44,7 @@ static void print_uptime_since()
 
     /* Get the uptime and calculate when that was */
 	if (procps_uptime(&uptime_secs, &idle_secs) < 0)
-		xerrx(EXIT_FAILURE, "uptime");
+		xerr(EXIT_FAILURE, _("Cannot get system uptime"));
     up_since_secs = (time_t) ((now - uptime_secs) + 0.5);
 
     /* Show this */
@@ -72,6 +72,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 int main(int argc, char **argv)
 {
     int c, p = 0;
+    char *uptime_str;
 
     static const struct option longopts[] = {
         {"pretty", no_argument, NULL, 'p'},
@@ -110,8 +111,13 @@ int main(int argc, char **argv)
         usage(stderr);
 
     if (p)
-        printf("%s\n", procps_uptime_sprint_short());
+        uptime_str = procps_uptime_sprint_short();
     else
-        printf("%s\n", procps_uptime_sprint());
+        uptime_str = procps_uptime_sprint();
+
+    if (!uptime_str || uptime_str[0] == '\0')
+       xerr(EXIT_FAILURE, _("Cannot get system uptime"));
+
+    printf("%s\n", uptime_str);
     return EXIT_SUCCESS;
 }

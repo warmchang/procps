@@ -86,29 +86,36 @@ static int wide_signals;  /* true if we have room */
 
 static time_t seconds_since_1970;
 
-static unsigned int boot_time;
-static unsigned long memory_total;
 
 extern long Hertz;
 
 
-static void get_boot_time(void)
+static unsigned int boot_time(void)
 {
+    static unsigned int boot_time = 0;
     struct stat_info *stat_info = NULL;
-    if (procps_stat_new(&stat_info) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create NEW ystem stat structure"));
-    boot_time = STAT_GET(stat_info, STAT_SYS_TIME_OF_BOOT, ul_int);
-    procps_stat_unref(&stat_info);
+    if (boot_time == 0) {
+        if (procps_stat_new(&stat_info) < 0)
+             xerrx(EXIT_FAILURE, _("Unable to get system boot time"));
+        boot_time = STAT_GET(stat_info, STAT_SYS_TIME_OF_BOOT, ul_int);
+        procps_stat_unref(&stat_info);
+    }
+    return boot_time;
 }
 
-static void get_memory_total()
+static unsigned long memory_total()
 {
+    static unsigned long memory_total = 0;
     struct meminfo_info *mem_info = NULL;
-    if (procps_meminfo_new(&mem_info) < 0)
-	xerrx(EXIT_FAILURE,
-		_("Unable to create meminfo structure"));
-    memory_total = MEMINFO_GET(mem_info, MEMINFO_MEM_TOTAL, ul_int);
-    procps_meminfo_unref(&mem_info);
+
+    if (memory_total == 0) {
+        if (procps_meminfo_new(&mem_info) < 0)
+	        xerrx(EXIT_FAILURE,
+                  _("Unable to get total memory"));
+       memory_total = MEMINFO_GET(mem_info, MEMINFO_MEM_TOTAL, ul_int);
+       procps_meminfo_unref(&mem_info);
+    }
+    return memory_total;
 }
 
 #define SECURE_ESCAPE_ARGS(dst, bytes, cells) do { \
@@ -901,7 +908,7 @@ static int pr_bsdstart(char *restrict const outbuf, const proc_t *restrict const
   time_t start;
   time_t seconds_ago;
 setREL1(TIME_START)
-  start = boot_time + rSv(TIME_START, ull_int, pp) / Hertz;
+  start = boot_time() + rSv(TIME_START, ull_int, pp) / Hertz;
   seconds_ago = seconds_since_1970 - start;
   if(seconds_ago < 0) seconds_ago=0;
   if(seconds_ago > 3600*24)  snprintf(outbuf, COLWID, "%s", ctime(&start)+4);
@@ -1029,7 +1036,7 @@ static int pr_pmem(char *restrict const outbuf, const proc_t *restrict const pp)
   unsigned long pmem;
 setREL1(VM_RSS)
   pmem = 0;
-  pmem = rSv(VM_RSS, ul_int, pp) * 1000ULL / memory_total;
+  pmem = rSv(VM_RSS, ul_int, pp) * 1000ULL / memory_total();
   if (pmem > 999) pmem = 999;
   return snprintf(outbuf, COLWID, "%2u.%u", (unsigned)(pmem/10), (unsigned)(pmem%10));
 }
@@ -1037,7 +1044,7 @@ setREL1(VM_RSS)
 static int pr_lstart(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t t;
 setREL1(TIME_START)
-  t = boot_time + rSv(TIME_START, ull_int, pp) / Hertz;
+  t = boot_time() + rSv(TIME_START, ull_int, pp) / Hertz;
   return snprintf(outbuf, COLWID, "%24.24s", ctime(&t));
 }
 
@@ -1062,7 +1069,7 @@ setREL1(TIME_START)
   our_time = localtime(&seconds_since_1970);   /* not reentrant */
   tm_year = our_time->tm_year;
   tm_yday = our_time->tm_yday;
-  t = boot_time + rSv(TIME_START, ull_int, pp) / Hertz;
+  t = boot_time() + rSv(TIME_START, ull_int, pp) / Hertz;
   proc_time = localtime(&t); /* not reentrant, this corrupts our_time */
   fmt = "%H:%M";                                   /* 03:02 23:59 */
   if(tm_yday != proc_time->tm_yday) fmt = "%b%d";  /* Jun06 Aug27 */
@@ -1076,7 +1083,7 @@ static int pr_start(char *restrict const outbuf, const proc_t *restrict const pp
   time_t t;
   char *str;
 setREL1(TIME_START)
-  t = boot_time + rSv(TIME_START, ull_int, pp) / Hertz;
+  t = boot_time() + rSv(TIME_START, ull_int, pp) / Hertz;
   str = ctime(&t);
   if(str[8]==' ')  str[8]='0';
   if(str[11]==' ') str[11]='0';
@@ -2292,7 +2299,5 @@ void init_output(void)
     // available space:  page_size*outbuf_pages-SPACE_AMOUNT
     seconds_since_1970 = time(NULL);
 
-    get_boot_time();
-    get_memory_total();
     check_header_width();
 }

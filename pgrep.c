@@ -585,12 +585,8 @@ static struct el * select_procs (int *num)
     char *cmdoutput = xmalloc(cmdlen);
     char *task_cmdline;
     enum pids_fetch_type which;
-    double uptime_secs;
 
     preg = do_regcomp();
-
-    if (procps_uptime(&uptime_secs, NULL) < 0)
-        xerrx(EXIT_FAILURE, "uptime");
 
     if (opt_newest) saved_start_time =  0ULL;
     else saved_start_time = ~0ULL;

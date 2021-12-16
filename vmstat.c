@@ -373,7 +373,6 @@ static void new_format(void)
 
     sleep_half = (sleep_time / 2);
     hz = procps_hertz_get();
-    new_header();
 
     if (procps_vmstat_new(&vm_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create vmstat structure"));
@@ -381,6 +380,7 @@ static void new_format(void)
         xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));
     if (procps_meminfo_new(&mem_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
+    new_header();
 
     pgpgin[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int);
     pgpgout[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int);

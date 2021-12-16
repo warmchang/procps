@@ -7,7 +7,7 @@
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH PGREP "1" "2021-10-26" "procps-ng" "User Commands"
+.TH PGREP "1" "2021-12-25" "procps-ng" "User Commands"
 .SH NAME
 pgrep, pkill, pidwait \- look up, signal, or wait for processes based on name and other attributes
 .SH SYNOPSIS
@@ -266,6 +266,10 @@ or
 .B pidwait
 process will never report itself as a
 match.
+.PP
+The
+.B \-O \-\-older
+option will silently fail if /proc is mounted with the \fIsubset=pid\fR option.
 .SH BUGS
 The options
 .B \-n
