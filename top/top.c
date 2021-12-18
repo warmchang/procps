@@ -5757,7 +5757,7 @@ static void summary_show (void) {
             , Pids_reap->counts->stopped, Pids_reap->counts->zombied));
          Msg_row += 1;
       }
-      goto restrict_end;
+      return;
    }
 
    // Display Uptime and Loadavg
@@ -5977,7 +5977,6 @@ numa_oops:
     #undef memPARM
    } // end: View_MEMORY
 
-restrict_end:
  #undef isROOM
  #undef anyFLG
 } // end: summary_show
@@ -6088,12 +6087,12 @@ static const char *task_show (const WIN_t *q, int idx) {
             break;
    /* s_int, scale_pcnt with special handling */
          case EU_CPU:        // PIDS_TICS_ALL_DELTA
+         {  float u = (float)rSv(EU_CPU, u_int);
+            int n = rSv(EU_THD, s_int);
             if (Restrict_some) {
                cp = justify_pad("?", W, Jn);
                break;
             }
-         {  float u = (float)rSv(EU_CPU, u_int);
-            int n = rSv(EU_THD, s_int);
 #ifndef TREE_VCPUOFF
  #ifndef TREE_VWINALL
             if (q == Curwin) // note: the following is NOT indented
