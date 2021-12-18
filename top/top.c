@@ -2073,7 +2073,7 @@ static void calibrate_fields (void) {
    build_headers();
 
    if ((rc = procps_pids_reset(Pids_ctx, Pids_itms, Pids_itms_tot)))
-      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(-rc)));
+      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt), __LINE__, strerror(-rc)));
 } // end: calibrate_fields
 
 
@@ -2432,7 +2432,7 @@ static void *cpus_refresh (void *unused) {
 
       Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items));
       if (!Stat_reap)
-         error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
+         error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt), __LINE__, strerror(errno)));
 #ifndef PRETEND0NUMA
       // adapt to changes in total numa nodes (assuming it's even possible)
       if (Stat_reap->numa->total && Stat_reap->numa->total != Numa_node_tot) {
@@ -2474,7 +2474,7 @@ static void *memory_refresh (void *unused) {
 
       if (3 <= cur_secs - sav_secs) {
          if (!(Mem_stack = procps_meminfo_select(Mem_ctx, Mem_items, MAXTBL(Mem_items))))
-            error_exit(fmtmk(N_fmt(LIB_errormem_fmt),__LINE__, strerror(errno)));
+            error_exit(fmtmk(N_fmt(LIB_errormem_fmt), __LINE__, strerror(errno)));
          sav_secs = cur_secs;
       }
 #ifdef THREADED_MEM
@@ -2519,7 +2519,7 @@ static void *tasks_refresh (void *unused) {
       } else
          Pids_reap = procps_pids_reap(Pids_ctx, what);
       if (!Pids_reap)
-         error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
+         error_exit(fmtmk(N_fmt(LIB_errorpid_fmt), __LINE__, strerror(errno)));
 
       // now refresh each window's stacks pointer array...
       if (n_alloc < n_reap) {
@@ -3375,7 +3375,7 @@ static void before (char *me) {
       Restrict_some = Cpu_cnt = 1;
    else {
       if (!(Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items))))
-         error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt),__LINE__, strerror(errno)));
+         error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt), __LINE__, strerror(errno)));
 #ifndef PRETEND0NUMA
       Numa_node_tot = Stat_reap->numa->total;
 #endif
@@ -3397,7 +3397,7 @@ static void before (char *me) {
    Pids_itms_tot = MAXTBL(Fieldstab);
    // we will identify specific items in the build_headers() function
    if ((rc = procps_pids_new(&Pids_ctx, Pids_itms, Pids_itms_tot)))
-      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(-rc)));
+      error_exit(fmtmk(N_fmt(LIB_errorpid_fmt), __LINE__, strerror(-rc)));
 
 #if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
    Thread_id_main = pthread_self();
@@ -3410,25 +3410,25 @@ static void before (char *me) {
 #ifdef THREADED_CPU
    if (0 != sem_init(&Semaphore_cpus_beg, 0, 0)
    || (0 != sem_init(&Semaphore_cpus_end, 0, 0)))
-      error_exit(fmtmk(N_fmt(X_SEMAPHORES_fmt),__LINE__, strerror(errno)));
+      error_exit(fmtmk(N_fmt(X_SEMAPHORES_fmt), __LINE__, strerror(errno)));
    if (0 != pthread_create(&Thread_id_cpus, NULL, cpus_refresh, NULL))
-      error_exit(fmtmk(N_fmt(X_THREADINGS_fmt),__LINE__, strerror(errno)));
+      error_exit(fmtmk(N_fmt(X_THREADINGS_fmt), __LINE__, strerror(errno)));
    pthread_setname_np(Thread_id_cpus, "update cpus");
 #endif
 #ifdef THREADED_MEM
    if (0 != sem_init(&Semaphore_memory_beg, 0, 0)
    || (0 != sem_init(&Semaphore_memory_end, 0, 0)))
-      error_exit(fmtmk(N_fmt(X_SEMAPHORES_fmt),__LINE__, strerror(errno)));
+      error_exit(fmtmk(N_fmt(X_SEMAPHORES_fmt), __LINE__, strerror(errno)));
    if (0 != pthread_create(&Thread_id_memory, NULL, memory_refresh, NULL))
-      error_exit(fmtmk(N_fmt(X_THREADINGS_fmt),__LINE__, strerror(errno)));
+      error_exit(fmtmk(N_fmt(X_THREADINGS_fmt), __LINE__, strerror(errno)));
    pthread_setname_np(Thread_id_memory, "update memory");
 #endif
 #ifdef THREADED_TSK
    if (0 != sem_init(&Semaphore_tasks_beg, 0, 0)
    || (0 != sem_init(&Semaphore_tasks_end, 0, 0)))
-      error_exit(fmtmk(N_fmt(X_SEMAPHORES_fmt),__LINE__, strerror(errno)));
+      error_exit(fmtmk(N_fmt(X_SEMAPHORES_fmt), __LINE__, strerror(errno)));
    if (0 != pthread_create(&Thread_id_tasks, NULL, tasks_refresh, NULL))
-      error_exit(fmtmk(N_fmt(X_THREADINGS_fmt),__LINE__, strerror(errno)));
+      error_exit(fmtmk(N_fmt(X_THREADINGS_fmt), __LINE__, strerror(errno)));
    pthread_setname_np(Thread_id_tasks, "update tasks");
 #endif
 
@@ -4545,7 +4545,7 @@ static void forest_begin (WIN_t *q) {
 #ifndef TREE_SCANALL
       if (!(procps_pids_sort(Pids_ctx, Seed_ppt, PIDSmaxt
          , PIDS_TIME_START, PIDS_SORT_ASCEND)))
-            error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
+            error_exit(fmtmk(N_fmt(LIB_errorpid_fmt), __LINE__, strerror(errno)));
 #endif
       for (i = 0; i < PIDSmaxt; i++) {         // avoid hidepid distorts |
          if (!PID_VAL(eu_TREE_LVL, s_int, Seed_ppt[i])) // parents lvl 0 |
@@ -6341,7 +6341,7 @@ static int window_show (WIN_t *q, int wmax) {
       else if (item == PIDS_TICS_ALL && CHKw(q, Show_CTIMES))
          item = PIDS_TICS_ALL_C;
       if (!(procps_pids_sort(Pids_ctx, q->ppt , PIDSmaxt, item, sORDER)))
-         error_exit(fmtmk(N_fmt(LIB_errorpid_fmt),__LINE__, strerror(errno)));
+         error_exit(fmtmk(N_fmt(LIB_errorpid_fmt), __LINE__, strerror(errno)));
    }
 
    if (mkVIZyes) window_hlp();
