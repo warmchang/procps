@@ -3,7 +3,8 @@
 # translated/* are put in distribution but not found in VCS
 #
 # run:
-#   make -C man-po po4a-dist
+#   rm man-po/man.stamp
+#   make -C man-po man.stamp
 # To update man page translations
 
 
