@@ -2,7 +2,7 @@
  * stat.h - cpu/numa related declarations for libprocps
  *
  * Copyright (C) 2015 Craig Small <csmall@dropbear.xyz>
- * Copyright (C) 2015-2021 Jim Warner <james.warner@comcast.net>
+ * Copyright (C) 2015-2022 Jim Warner <james.warner@comcast.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

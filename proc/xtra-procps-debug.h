@@ -1,7 +1,7 @@
 /*
  * libprocps - Library to read proc filesystem
  *
- * Copyright (C) 2016 Jim Warner <james.warner@comcast.net>
+ * Copyright (C) 2016-2022 Jim Warner <james.warner@comcast.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

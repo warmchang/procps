@@ -1,6 +1,6 @@
 /*
  * NUMA node support for <PIDS> & <STAT> interfaces
- * Copyright 2017 by James C. Warmer
+ * Copyright 2017-2022 by James C. Warmer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
