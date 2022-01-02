@@ -139,6 +139,7 @@ static void slashdot(char *restrict p, char old, char new)
 	}
 }
 
+#if 0  // avoid '-Wunused-function' warning
 static void setting_free(SysctlSetting *s) {
     if (!s)
 	return;
@@ -148,6 +149,7 @@ static void setting_free(SysctlSetting *s) {
     free(s->value);
     free(s);
 }
+#endif
 
 static SysctlSetting *setting_new(
 	const char *key,
@@ -285,6 +287,7 @@ static void rstrip(char *line)
     end[1] = '\0';
 }
 
+#if 0  // avoid '-Wunused-function' warning
 /*
  * Strip the leading and trailing spaces from a string
  */
@@ -308,6 +311,7 @@ static char *StripLeadingAndTrailingSpaces(char *oneline)
 
 	return t;
 }
+#endif
 
 /*
  * Read a sysctl setting
