@@ -890,7 +890,7 @@ int main(int argc, char *argv[])
 	bool preloadfileOpt = false;
 	int ReturnCode = 0;
 	int c;
-    int rc;
+	int rc = 0;
 	const char *preloadfile = NULL;
     SettingList *setlist;
 
