@@ -641,8 +641,7 @@ static void statm2proc(const char *s, proc_t *restrict P) {
 }
 
 static void io2proc(const char *s, proc_t *restrict P) {
-    int num;
-    num = sscanf(s, "rchar: %lu wchar: %lu syscr: %lu syscw: %lu read_bytes: %lu write_bytes: %lu cancelled_write_bytes: %lu",
+    sscanf(s, "rchar: %lu wchar: %lu syscr: %lu syscw: %lu read_bytes: %lu write_bytes: %lu cancelled_write_bytes: %lu",
             &P->rchar, &P->wchar, &P->syscr,
             &P->syscw, &P->read_bytes, &P->write_bytes, &P->cancelled_write_bytes);
 }
