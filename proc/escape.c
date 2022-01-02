@@ -90,7 +90,7 @@ static inline void esc_ctl (unsigned char *str, int len) {
    }
 }
 
-int escape_str (unsigned char *dst, const unsigned char *src, int bufsize) {
+int escape_str (char *dst, const char *src, int bufsize) {
    static __thread int utf_sw = 0;
    int n;
 
@@ -106,13 +106,13 @@ int escape_str (unsigned char *dst, const unsigned char *src, int bufsize) {
    }
    if (n >= bufsize) n = bufsize-1;
    if (utf_sw < 0)
-      esc_all(dst);
+      esc_all((unsigned char *)dst);
    else
-      esc_ctl(dst, n);
+      esc_ctl((unsigned char *)dst, n);
    return n;
 }
 
-int escape_command (unsigned char *outbuf, const proc_t *pp, int bytes, unsigned flags) {
+int escape_command (char *outbuf, const proc_t *pp, int bytes, unsigned flags) {
    int overhead = 0;
    int end = 0;
 
