@@ -1069,7 +1069,7 @@ static char *readlink_exe (const char *path){
 
     // Provide the autogroup fields (or -1 if not available)
 static void autogroup_fill (const char *path, proc_t *p) {
-    char buf[PROCPATHLEN], *str;
+    char buf[PROCPATHLEN];
     int fd, in;
 
     p->autogrp_id = -1;
