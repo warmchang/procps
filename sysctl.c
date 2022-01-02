@@ -624,7 +624,6 @@ static SysctlSetting *parse_setting_line(
     const int linenum,
     char *line)
 {
-    SysctlSetting *s;
     char *key;
     char *value;
     bool glob_exclude = FALSE;
@@ -680,7 +679,6 @@ static int write_setting_list(const SettingList *sl)
             continue;
 
         if (string_is_glob(node->path)) {
-            char *gl_path;
             glob_t globbuf;
             int i;
 
@@ -726,11 +724,9 @@ static int pattern_match(const char *string, const char *pat)
 static int Preload(SettingList *setlist, const char *restrict const filename)
 {
 	FILE *fp;
-	char *t;
 	int n = 0;
 	int rc = EXIT_SUCCESS;
 	ssize_t rlen;
-	char *name, *value;
 	glob_t globbuf;
 	int globerr;
 	int globflg;
@@ -761,7 +757,6 @@ static int Preload(SettingList *setlist, const char *restrict const filename)
 		}
 
 		while ((rlen =  getline(&iobuf, &iolen, fp)) > 0) {
-			size_t offset;
             SysctlSetting *setting;
 
 			n++;
