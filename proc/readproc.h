@@ -203,6 +203,7 @@ typedef struct PROCTAB {
     uid_t      *uids;   // uids of procs
     int         nuid;   // cannot really sentinel-terminate unsigned short[]
     int         i;  // generic
+    int         hide_kernel;  // getenv LIBPROC_HIDE_KERNEL was set
     unsigned    flags;
     unsigned    u;  // generic
     void *      vp; // generic

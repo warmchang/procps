@@ -1225,7 +1225,10 @@ static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLAUTOGRP)               // value the 2 autogroup fields
         autogroup_fill(path, p);
 
-    if (rc == 0) return p;
+    // openproc() ensured that a ppid will be present when needed ...
+    if (rc == 0)
+        return (PT->hide_kernel && (p->ppid == 2 || p->tid == 2)) ? NULL : p;
+
     errno = ENOMEM;
 next_proc:
     return NULL;
@@ -1514,10 +1517,13 @@ PROCTAB *openproc(unsigned flags, ...) {
     va_list ap;
     struct stat sbuf;
     static __thread int did_stat;
+    static __thread int hide_kernel = -1;
     PROCTAB *PT = calloc(1, sizeof(PROCTAB));
 
     if (!PT)
         return NULL;
+    if (hide_kernel < 0)
+        hide_kernel = (NULL != getenv("LIBPROC_HIDE_KERNEL"));
     if (!did_stat){
         task_dir_missing = stat("/proc/self/task", &sbuf);
         did_stat = 1;
@@ -1546,6 +1552,13 @@ PROCTAB *openproc(unsigned flags, ...) {
         PT->nuid = va_arg(ap, int);
     }
     va_end(ap);
+
+    if (hide_kernel > 0) {
+        PT->hide_kernel = 1;
+        // we'll need the ppid, ensure it's obtained via cheapest means ...
+        if (!(PT->flags & (PROC_FILLSTAT | PROC_FILLSTATUS)))
+            PT->flags |= PROC_FILLSTAT;
+    }
 
     if (!src_buffer
     && !(src_buffer = malloc(MAX_BUFSZ))) {
