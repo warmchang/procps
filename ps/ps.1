@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS "1" "2021-06-16" "procps-ng" "User Commands"
+.TH PS "1" "January 2022" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -1948,6 +1948,13 @@ Force obsolete command line interpretation.
 .TP
 .B LC_TIME
 Date format.
+.TP
+.B LIBPROC_HIDE_KERNEL
+Set this to any value to hide kernel threads normally displayed with the
+.B -e
+option. This is equivalent to selecting
+.B --ppid 2 -p 2 --deselect
+instead. Also works in BSD mode.
 .TP
 .B PS_COLORS
 Not currently supported.

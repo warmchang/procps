@@ -131,12 +131,13 @@ The remaining Table of Contents
        b. ADDING INSPECT Entries
        c. SYSTEM Configuration File
        d. SYSTEM Restrictions File
-    7. STUPID TRICKS Sampler
+    7. ENVIRONMENT VARIABLE(S)
+    8. STUPID TRICKS Sampler
        a. Kernel Magic
        b. Bouncing Windows
        c. The Big Bird Window
        d. The Ol' Switcheroo
-    8. BUGS, 9. SEE Also
+    9. BUGS, 10. SEE Also
 .fi
 
 .\" ......................................................................
@@ -2518,9 +2519,17 @@ It should have exactly two lines, as shown in this example:
     5.0      # line 2: delay interval in seconds
 .fi
 
-.\" ......................................................................
 .\" ----------------------------------------------------------------------
-.SH 7. STUPID TRICKS Sampler
+.SH 7. ENVIRONMENT VARIABLE(S)
+.\" ----------------------------------------------------------------------
+The value set for the following is unimportant, just its presence.
+
+.IP LIBPROC_HIDE_KERNEL
+This will prevent display of any kernel threads and exclude such processes
+from the \*(SA Tasks/Threads counts.
+
+.\" ----------------------------------------------------------------------
+.SH 8. STUPID TRICKS Sampler
 .\" ----------------------------------------------------------------------
 Many of these tricks work best when you give \*(We a scheduling boost.
 So plan on starting him with a nice value of \-10, assuming you've got
@@ -2641,14 +2650,14 @@ of travel for the command lines being shown.
    eventually all lines will Switcheroo, and move right
 
 .\" ----------------------------------------------------------------------
-.SH 8. BUGS
+.SH 9. BUGS
 .\" ----------------------------------------------------------------------
 Please send bug reports to
 .UR procps@freelists.org
 .UE .
 
  \" ----------------------------------------------------------------------
-.SH 9. SEE Also
+.SH 10. SEE Also
 .\" ----------------------------------------------------------------------
 .BR free (1),
 .BR ps (1),

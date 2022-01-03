@@ -205,6 +205,14 @@ This verification feature incurs substantial overhead.
 Therefore, it is important that it \fInot\fR be activated
 for a production/release build.
 
+.SH ENVIRONMENT VARIABLE(S)
+The value set for the following is unimportant, just its presence.
+
+.IP LIBPROC_HIDE_KERNEL
+This will hide kernel threads which would otherwise be returned with a
+.BR procps_get ", " procps_select " or " procps_reap
+call.
+
 .SH SEE ALSO
 .BR procps (3)
 .BR procps_misc (3)
